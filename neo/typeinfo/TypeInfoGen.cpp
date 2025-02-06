@@ -1059,7 +1059,6 @@ void idTypeInfoGen::CreateTypeInfo( const char* path )
 {
 	int i, j, inheritance;
 	idStr fileName;
-	idFileList* files;
 	idParser src;
 
 	common->Printf( "Type Info Generator v" TYPE_INFO_GEN_VERSION " (c) 2004 id Software\n" );

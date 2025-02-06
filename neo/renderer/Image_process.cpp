@@ -1128,10 +1128,10 @@ byte* R_GenerateCubeMapSideFromPanoramaImage( const byte* in, int srcWidth, int 
 	const idMat4 toDoomTransform( idAngles( -90, 0, -90 ).ToMat3(), vec3_origin );
 
 	byte* dstFaceData = ( byte* )out;// + face * dstFaceDataSize;
-	for( int y = 0; y < dstFaceSize; y++ )
+	for( uint32 y = 0; y < dstFaceSize; y++ )
 	{
 		byte* dstRowData = ( byte* )dstFaceData + y * dstPitch;
-		for( int  x = 0; x < dstFaceSize; x++ )
+		for( uint32  x = 0; x < dstFaceSize; x++ )
 		{
 			// Cubemap (u,v) on current face.
 			const float uu = 2.0f * x * invDstFaceSizef - 1.0f;
