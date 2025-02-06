@@ -643,7 +643,7 @@ void idCommonLocal::Frame()
 		frameTiming.finishSyncTime = Sys_Microseconds();
 
 		// RB: slow down engine in background so it does not eat up so many resources along other 3D tools
-		if( !com_activeApp.GetBool() /* and not VR */ )
+		if( !com_activeApp.GetBool() && !IsServer() /* and not VR */ )
 		{
 			const float backgroundEngineHz = 15.0f;
 			com_engineHz_denominator = 100LL * backgroundEngineHz;
