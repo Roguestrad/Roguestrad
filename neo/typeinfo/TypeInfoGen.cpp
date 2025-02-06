@@ -1405,7 +1405,7 @@ void idTypeInfoGen::WriteTypeInfo( const char* fileName ) const
 			}
 			else
 			{
-				filecpp->WriteFloatString( "\treturn __super::Invoke(functionName, param1);\n\n" );
+				filecpp->WriteFloatString( "\treturn %s::Invoke(functionName, param1);\n\n", info->superType.c_str() );
 			}
 			filecpp->WriteFloatString( "};\n\n" );
 		}
@@ -1496,7 +1496,7 @@ void idTypeInfoGen::WriteTypeInfo( const char* fileName ) const
 			}
 			else
 			{
-				filecpp->WriteFloatString( "\treturn __super::HasNativeFunction(functionName);\n\n" );
+				filecpp->WriteFloatString( "\treturn %s::HasNativeFunction(functionName);\n\n", info->superType.c_str() );
 			}
 			filecpp->WriteFloatString( "};\n\n" );
 		}

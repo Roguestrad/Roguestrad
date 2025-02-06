@@ -32,25 +32,25 @@ bool idClass::HasNativeFunction(const char *functionName) {
 
 intptr_t idForce::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idClass::Invoke(functionName, param1);
 
 };
 
 bool idForce::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idClass::HasNativeFunction(functionName);
 
 };
 
 intptr_t idForce_Constant::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idForce::Invoke(functionName, param1);
 
 };
 
 bool idForce_Constant::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idForce::HasNativeFunction(functionName);
 
 };
 
@@ -64,7 +64,7 @@ intptr_t idForce_Drag::Invoke(const char *functionName, void *param1) {
 		GetDraggedPosition();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idForce::Invoke(functionName, param1);
 
 };
 
@@ -76,7 +76,7 @@ bool idForce_Drag::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 233549) { // GetDraggedPosition
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idForce::HasNativeFunction(functionName);
 
 };
 
@@ -86,7 +86,7 @@ intptr_t idForce_Grab::Invoke(const char *functionName, void *param1) {
 		GetDistanceToGoal();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idForce::Invoke(functionName, param1);
 
 };
 
@@ -95,31 +95,31 @@ bool idForce_Grab::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 213643) { // GetDistanceToGoal
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idForce::HasNativeFunction(functionName);
 
 };
 
 intptr_t idForce_Field::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idForce::Invoke(functionName, param1);
 
 };
 
 bool idForce_Field::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idForce::HasNativeFunction(functionName);
 
 };
 
 intptr_t idForce_Spring::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idForce::Invoke(functionName, param1);
 
 };
 
 bool idForce_Spring::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idForce::HasNativeFunction(functionName);
 
 };
 
@@ -205,7 +205,7 @@ intptr_t idPhysics_Static::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 213576) { // GetAngularEndTime
 		return (intptr_t)GetAngularEndTime();
 	};
-	return __super::Invoke(functionName, param1);
+	return idPhysics::Invoke(functionName, param1);
 
 };
 
@@ -280,7 +280,7 @@ bool idPhysics_Static::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 213576) { // GetAngularEndTime
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPhysics::HasNativeFunction(functionName);
 
 };
 
@@ -366,7 +366,7 @@ intptr_t idPhysics_StaticMulti::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 213576) { // GetAngularEndTime
 		return (intptr_t)GetAngularEndTime();
 	};
-	return __super::Invoke(functionName, param1);
+	return idPhysics::Invoke(functionName, param1);
 
 };
 
@@ -441,7 +441,7 @@ bool idPhysics_StaticMulti::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 213576) { // GetAngularEndTime
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPhysics::HasNativeFunction(functionName);
 
 };
 
@@ -538,7 +538,7 @@ intptr_t idPhysics_Base::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 181023) { // IsOutsideWorld
 		return (intptr_t)IsOutsideWorld();
 	};
-	return __super::Invoke(functionName, param1);
+	return idPhysics::Invoke(functionName, param1);
 
 };
 
@@ -622,7 +622,7 @@ bool idPhysics_Base::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 181023) { // IsOutsideWorld
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPhysics::HasNativeFunction(functionName);
 
 };
 
@@ -668,7 +668,7 @@ intptr_t idPhysics_Actor::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 209529) { // EvaluateContacts
 		return (intptr_t)EvaluateContacts();
 	};
-	return __super::Invoke(functionName, param1);
+	return idPhysics_Base::Invoke(functionName, param1);
 
 };
 
@@ -707,7 +707,7 @@ bool idPhysics_Actor::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 209529) { // EvaluateContacts
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPhysics_Base::HasNativeFunction(functionName);
 
 };
 
@@ -764,7 +764,7 @@ intptr_t idPhysics_Monster::Invoke(const char *functionName, void *param1) {
 		Rest();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idPhysics_Actor::Invoke(functionName, param1);
 
 };
 
@@ -812,7 +812,7 @@ bool idPhysics_Monster::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 49945) { // Rest
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPhysics_Actor::HasNativeFunction(functionName);
 
 };
 
@@ -940,7 +940,7 @@ intptr_t idPhysics_Player::Invoke(const char *functionName, void *param1) {
 		DropTimers();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idPhysics_Actor::Invoke(functionName, param1);
 
 };
 
@@ -1045,7 +1045,7 @@ bool idPhysics_Player::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 127768) { // DropTimers
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPhysics_Actor::HasNativeFunction(functionName);
 
 };
 
@@ -1137,7 +1137,7 @@ intptr_t idPhysics_Parametric::Invoke(const char *functionName, void *param1) {
 		Rest();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idPhysics_Base::Invoke(functionName, param1);
 
 };
 
@@ -1218,7 +1218,7 @@ bool idPhysics_Parametric::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 49945) { // Rest
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPhysics_Base::HasNativeFunction(functionName);
 
 };
 
@@ -1305,7 +1305,7 @@ intptr_t idPhysics_RigidBody::Invoke(const char *functionName, void *param1) {
 		DebugDraw();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idPhysics_Base::Invoke(functionName, param1);
 
 };
 
@@ -1377,7 +1377,7 @@ bool idPhysics_RigidBody::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 109030) { // DebugDraw
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPhysics_Base::HasNativeFunction(functionName);
 
 };
 
@@ -1514,7 +1514,7 @@ intptr_t idPhysics_AF::Invoke(const char *functionName, void *param1) {
 		DebugDraw();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idPhysics_Base::Invoke(functionName, param1);
 
 };
 
@@ -1625,7 +1625,7 @@ bool idPhysics_AF::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 109030) { // DebugDraw
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPhysics_Base::HasNativeFunction(functionName);
 
 };
 
@@ -1658,7 +1658,7 @@ intptr_t idAnimatedEntity::Invoke(const char *functionName, void *param1) {
 		Event_ClearAllJoints();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -1685,7 +1685,7 @@ bool idAnimatedEntity::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 258459) { // Event_ClearAllJoints
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -1703,7 +1703,7 @@ intptr_t idCursor3D::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -1718,7 +1718,7 @@ bool idCursor3D::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -1736,7 +1736,7 @@ intptr_t idGrabber::Invoke(const char *functionName, void *param1) {
 		ApplyShake();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -1751,7 +1751,7 @@ bool idGrabber::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 124817) { // ApplyShake
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -1769,7 +1769,7 @@ intptr_t idMultiModelAF::Invoke(const char *functionName, void *param1) {
 		Present();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -1784,7 +1784,7 @@ bool idMultiModelAF::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 90014) { // Present
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -1794,7 +1794,7 @@ intptr_t idChain::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMultiModelAF::Invoke(functionName, param1);
 
 };
 
@@ -1803,7 +1803,7 @@ bool idChain::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMultiModelAF::HasNativeFunction(functionName);
 
 };
 
@@ -1847,7 +1847,7 @@ intptr_t idAFAttachment::Invoke(const char *functionName, void *param1) {
 		UnlinkCombat();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAnimatedEntity::Invoke(functionName, param1);
 
 };
 
@@ -1883,7 +1883,7 @@ bool idAFAttachment::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 152332) { // UnlinkCombat
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAnimatedEntity::HasNativeFunction(functionName);
 
 };
 
@@ -1945,7 +1945,7 @@ intptr_t idAFEntity_Base::Invoke(const char *functionName, void *param1) {
 		ShowEditingDialog();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAnimatedEntity::Invoke(functionName, param1);
 
 };
 
@@ -1996,7 +1996,7 @@ bool idAFEntity_Base::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 218178) { // ShowEditingDialog
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAnimatedEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2017,7 +2017,7 @@ intptr_t idAFEntity_Gibbable::Invoke(const char *functionName, void *param1) {
 		InitSkeletonModel();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Base::Invoke(functionName, param1);
 
 };
 
@@ -2035,7 +2035,7 @@ bool idAFEntity_Gibbable::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 220901) { // InitSkeletonModel
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Base::HasNativeFunction(functionName);
 
 };
 
@@ -2053,7 +2053,7 @@ intptr_t idAFEntity_Generic::Invoke(const char *functionName, void *param1) {
 		KeepRunningPhysics();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Gibbable::Invoke(functionName, param1);
 
 };
 
@@ -2068,7 +2068,7 @@ bool idAFEntity_Generic::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 238202) { // KeepRunningPhysics
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Gibbable::HasNativeFunction(functionName);
 
 };
 
@@ -2102,7 +2102,7 @@ intptr_t idAFEntity_WithAttachedHead::Invoke(const char *functionName, void *par
 		UnlinkCombat();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Gibbable::Invoke(functionName, param1);
 
 };
 
@@ -2129,7 +2129,7 @@ bool idAFEntity_WithAttachedHead::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 152332) { // UnlinkCombat
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Gibbable::HasNativeFunction(functionName);
 
 };
 
@@ -2143,7 +2143,7 @@ intptr_t idAFEntity_Vehicle::Invoke(const char *functionName, void *param1) {
 		GetSteerAngle();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Base::Invoke(functionName, param1);
 
 };
 
@@ -2155,7 +2155,7 @@ bool idAFEntity_Vehicle::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 161405) { // GetSteerAngle
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Base::HasNativeFunction(functionName);
 
 };
 
@@ -2169,7 +2169,7 @@ intptr_t idAFEntity_VehicleSimple::Invoke(const char *functionName, void *param1
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Vehicle::Invoke(functionName, param1);
 
 };
 
@@ -2181,7 +2181,7 @@ bool idAFEntity_VehicleSimple::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Vehicle::HasNativeFunction(functionName);
 
 };
 
@@ -2195,7 +2195,7 @@ intptr_t idAFEntity_VehicleFourWheels::Invoke(const char *functionName, void *pa
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Vehicle::Invoke(functionName, param1);
 
 };
 
@@ -2207,7 +2207,7 @@ bool idAFEntity_VehicleFourWheels::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Vehicle::HasNativeFunction(functionName);
 
 };
 
@@ -2221,7 +2221,7 @@ intptr_t idAFEntity_VehicleSixWheels::Invoke(const char *functionName, void *par
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Vehicle::Invoke(functionName, param1);
 
 };
 
@@ -2233,7 +2233,7 @@ bool idAFEntity_VehicleSixWheels::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Vehicle::HasNativeFunction(functionName);
 
 };
 
@@ -2251,7 +2251,7 @@ intptr_t idAFEntity_VehicleAutomated::Invoke(const char *functionName, void *par
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_VehicleSixWheels::Invoke(functionName, param1);
 
 };
 
@@ -2266,7 +2266,7 @@ bool idAFEntity_VehicleAutomated::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_VehicleSixWheels::HasNativeFunction(functionName);
 
 };
 
@@ -2284,7 +2284,7 @@ intptr_t idAFEntity_SteamPipe::Invoke(const char *functionName, void *param1) {
 		InitSteamRenderEntity();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Base::Invoke(functionName, param1);
 
 };
 
@@ -2299,7 +2299,7 @@ bool idAFEntity_SteamPipe::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 278530) { // InitSteamRenderEntity
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Base::HasNativeFunction(functionName);
 
 };
 
@@ -2313,7 +2313,7 @@ intptr_t idAFEntity_ClawFourFingers::Invoke(const char *functionName, void *para
 		Event_StopFingers();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Base::Invoke(functionName, param1);
 
 };
 
@@ -2325,7 +2325,7 @@ bool idAFEntity_ClawFourFingers::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 222404) { // Event_StopFingers
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Base::HasNativeFunction(functionName);
 
 };
 
@@ -2355,7 +2355,7 @@ intptr_t idHarvestable::Invoke(const char *functionName, void *param1) {
 		Event_SpawnHarvestTrigger();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2379,7 +2379,7 @@ bool idHarvestable::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 339354) { // Event_SpawnHarvestTrigger
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2397,7 +2397,7 @@ intptr_t idAFEntity_Harvest::Invoke(const char *functionName, void *param1) {
 		Event_SpawnHarvestEntity();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_WithAttachedHead::Invoke(functionName, param1);
 
 };
 
@@ -2412,7 +2412,7 @@ bool idAFEntity_Harvest::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 326927) { // Event_SpawnHarvestEntity
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_WithAttachedHead::HasNativeFunction(functionName);
 
 };
 
@@ -2422,7 +2422,7 @@ intptr_t idSpawnableEntity::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2431,7 +2431,7 @@ bool idSpawnableEntity::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2441,7 +2441,7 @@ intptr_t idPlayerStart::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2450,7 +2450,7 @@ bool idPlayerStart::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2464,7 +2464,7 @@ intptr_t idActivator::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2476,7 +2476,7 @@ bool idActivator::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2490,7 +2490,7 @@ intptr_t idPathCorner::Invoke(const char *functionName, void *param1) {
 		Event_RandomPath();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2502,7 +2502,7 @@ bool idPathCorner::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 204439) { // Event_RandomPath
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2524,7 +2524,7 @@ intptr_t idDamagable::Invoke(const char *functionName, void *param1) {
 		Event_RestoreDamagable();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2542,7 +2542,7 @@ bool idDamagable::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 288410) { // Event_RestoreDamagable
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2552,7 +2552,7 @@ intptr_t idExplodable::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2561,7 +2561,7 @@ bool idExplodable::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2579,7 +2579,7 @@ intptr_t idSpring::Invoke(const char *functionName, void *param1) {
 		Event_LinkSpring();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2594,7 +2594,7 @@ bool idSpring::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 206949) { // Event_LinkSpring
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2620,7 +2620,7 @@ intptr_t idForceField::Invoke(const char *functionName, void *param1) {
 		Event_FindTargets();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2641,7 +2641,7 @@ bool idForceField::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 219288) { // Event_FindTargets
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2678,7 +2678,7 @@ intptr_t idAnimated::Invoke(const char *functionName, void *param1) {
 		Event_GetAnimationLength();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Gibbable::Invoke(functionName, param1);
 
 };
 
@@ -2708,7 +2708,7 @@ bool idAnimated::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 318263) { // Event_GetAnimationLength
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Gibbable::HasNativeFunction(functionName);
 
 };
 
@@ -2734,7 +2734,7 @@ intptr_t idStaticEntity::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2755,7 +2755,7 @@ bool idStaticEntity::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2765,7 +2765,7 @@ intptr_t idFuncEmitter::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idStaticEntity::Invoke(functionName, param1);
 
 };
 
@@ -2774,7 +2774,7 @@ bool idFuncEmitter::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idStaticEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2788,7 +2788,7 @@ intptr_t idFuncShootProjectile::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idStaticEntity::Invoke(functionName, param1);
 
 };
 
@@ -2800,7 +2800,7 @@ bool idFuncShootProjectile::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idStaticEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2814,7 +2814,7 @@ intptr_t idFuncSmoke::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2826,7 +2826,7 @@ bool idFuncSmoke::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2840,7 +2840,7 @@ intptr_t idFuncSplat::Invoke(const char *functionName, void *param1) {
 		Event_Splat();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idFuncEmitter::Invoke(functionName, param1);
 
 };
 
@@ -2852,7 +2852,7 @@ bool idFuncSplat::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 139643) { // Event_Splat
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idFuncEmitter::HasNativeFunction(functionName);
 
 };
 
@@ -2866,7 +2866,7 @@ intptr_t idTextEntity::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2878,7 +2878,7 @@ bool idTextEntity::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2891,7 +2891,7 @@ intptr_t idLocationEntity::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 138280) { // GetLocation
 		return (intptr_t)GetLocation();
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2903,7 +2903,7 @@ bool idLocationEntity::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 138280) { // GetLocation
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2913,7 +2913,7 @@ intptr_t idLocationSeparatorEntity::Invoke(const char *functionName, void *param
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2922,7 +2922,7 @@ bool idLocationSeparatorEntity::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2932,7 +2932,7 @@ intptr_t idVacuumSeparatorEntity::Invoke(const char *functionName, void *param1)
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2941,7 +2941,7 @@ bool idVacuumSeparatorEntity::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2951,7 +2951,7 @@ intptr_t idVacuumEntity::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -2960,7 +2960,7 @@ bool idVacuumEntity::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -2982,7 +2982,7 @@ intptr_t idBeam::Invoke(const char *functionName, void *param1) {
 		Event_MatchTarget();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3000,7 +3000,7 @@ bool idBeam::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 218295) { // Event_MatchTarget
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3010,7 +3010,7 @@ intptr_t idLiquid::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3019,7 +3019,7 @@ bool idLiquid::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3033,7 +3033,7 @@ intptr_t idShaking::Invoke(const char *functionName, void *param1) {
 		BeginShaking();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3045,7 +3045,7 @@ bool idShaking::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 148900) { // BeginShaking
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3059,7 +3059,7 @@ intptr_t idEarthQuake::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3071,7 +3071,7 @@ bool idEarthQuake::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3081,7 +3081,7 @@ intptr_t idFuncPortal::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3090,7 +3090,7 @@ bool idFuncPortal::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3100,7 +3100,7 @@ intptr_t idFuncAASPortal::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3109,7 +3109,7 @@ bool idFuncAASPortal::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3119,7 +3119,7 @@ intptr_t idFuncAASObstacle::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3128,7 +3128,7 @@ bool idFuncAASObstacle::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3138,7 +3138,7 @@ intptr_t idFuncRadioChatter::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3147,7 +3147,7 @@ bool idFuncRadioChatter::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3161,7 +3161,7 @@ intptr_t idPhantomObjects::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3173,7 +3173,7 @@ bool idPhantomObjects::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3187,7 +3187,7 @@ intptr_t idShockwave::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3199,7 +3199,7 @@ bool idShockwave::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3213,7 +3213,7 @@ intptr_t idFuncMountedObject::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3225,7 +3225,7 @@ bool idFuncMountedObject::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3243,7 +3243,7 @@ intptr_t idFuncMountedWeapon::Invoke(const char *functionName, void *param1) {
 		Event_PostSpawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idFuncMountedObject::Invoke(functionName, param1);
 
 };
 
@@ -3258,7 +3258,7 @@ bool idFuncMountedWeapon::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 195811) { // Event_PostSpawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idFuncMountedObject::HasNativeFunction(functionName);
 
 };
 
@@ -3272,7 +3272,7 @@ intptr_t idPortalSky::Invoke(const char *functionName, void *param1) {
 		Event_PostSpawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3284,7 +3284,7 @@ bool idPortalSky::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 195811) { // Event_PostSpawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3478,7 +3478,7 @@ intptr_t idActor::Invoke(const char *functionName, void *param1) {
 		Event_GetWaitState();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAFEntity_Gibbable::Invoke(functionName, param1);
 
 };
 
@@ -3631,7 +3631,7 @@ bool idActor::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 231666) { // Event_GetWaitState
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAFEntity_Gibbable::HasNativeFunction(functionName);
 
 };
 
@@ -3682,7 +3682,7 @@ intptr_t idProjectile::Invoke(const char *functionName, void *param1) {
 		Event_GetProjectileState();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3724,7 +3724,7 @@ bool idProjectile::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 320254) { // Event_GetProjectileState
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3738,7 +3738,7 @@ intptr_t idGuidedProjectile::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idProjectile::Invoke(functionName, param1);
 
 };
 
@@ -3750,7 +3750,7 @@ bool idGuidedProjectile::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idProjectile::HasNativeFunction(functionName);
 
 };
 
@@ -3768,7 +3768,7 @@ intptr_t idSoulCubeMissile::Invoke(const char *functionName, void *param1) {
 		ReturnToOwner();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idGuidedProjectile::Invoke(functionName, param1);
 
 };
 
@@ -3783,7 +3783,7 @@ bool idSoulCubeMissile::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 169855) { // ReturnToOwner
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idGuidedProjectile::HasNativeFunction(functionName);
 
 };
 
@@ -3805,7 +3805,7 @@ intptr_t idBFGProjectile::Invoke(const char *functionName, void *param1) {
 		Event_RemoveBeams();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idProjectile::Invoke(functionName, param1);
 
 };
 
@@ -3823,7 +3823,7 @@ bool idBFGProjectile::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 218449) { // Event_RemoveBeams
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idProjectile::HasNativeFunction(functionName);
 
 };
 
@@ -3837,7 +3837,7 @@ intptr_t idHomingProjectile::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idProjectile::Invoke(functionName, param1);
 
 };
 
@@ -3849,7 +3849,7 @@ bool idHomingProjectile::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idProjectile::HasNativeFunction(functionName);
 
 };
 
@@ -3883,7 +3883,7 @@ intptr_t idDebris::Invoke(const char *functionName, void *param1) {
 		Event_Fizzle();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -3910,7 +3910,7 @@ bool idDebris::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 154212) { // Event_Fizzle
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -3940,7 +3940,7 @@ intptr_t iceWeaponObject::Invoke(const char *functionName, void *param1) {
 		IsHolstered();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idClass::Invoke(functionName, param1);
 
 };
 
@@ -3967,7 +3967,7 @@ bool iceWeaponObject::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 139817) { // IsHolstered
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idClass::HasNativeFunction(functionName);
 
 };
 
@@ -4276,7 +4276,7 @@ intptr_t idWeapon::Invoke(const char *functionName, void *param1) {
 		Event_StopWeaponSmoke();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAnimatedEntity::Invoke(functionName, param1);
 
 };
 
@@ -4531,7 +4531,7 @@ bool idWeapon::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 278872) { // Event_StopWeaponSmoke
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAnimatedEntity::HasNativeFunction(functionName);
 
 };
 
@@ -4625,7 +4625,7 @@ intptr_t idLight::Invoke(const char *functionName, void *param1) {
 		Event_UpdateModelTarget();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -4697,7 +4697,7 @@ bool idLight::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 303418) { // Event_UpdateModelTarget
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -4767,7 +4767,7 @@ intptr_t EnvironmentProbe::Invoke(const char *functionName, void *param1) {
 		Event_Off();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -4821,7 +4821,7 @@ bool EnvironmentProbe::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 109741) { // Event_Off
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -4843,7 +4843,7 @@ intptr_t idWorldspawn::Invoke(const char *functionName, void *param1) {
 		Event_Remove();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -4861,7 +4861,7 @@ bool idWorldspawn::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 153439) { // Event_Remove
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -4902,7 +4902,7 @@ intptr_t idItem::Invoke(const char *functionName, void *param1) {
 		Event_RespawnFx();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -4935,7 +4935,7 @@ bool idItem::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 193570) { // Event_RespawnFx
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -4945,7 +4945,7 @@ intptr_t idItemPowerup::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idItem::Invoke(functionName, param1);
 
 };
 
@@ -4954,7 +4954,7 @@ bool idItemPowerup::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idItem::HasNativeFunction(functionName);
 
 };
 
@@ -4968,7 +4968,7 @@ intptr_t idObjective::Invoke(const char *functionName, void *param1) {
 		Event_GetPlayerPos();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idItem::Invoke(functionName, param1);
 
 };
 
@@ -4980,31 +4980,31 @@ bool idObjective::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 232865) { // Event_GetPlayerPos
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idItem::HasNativeFunction(functionName);
 
 };
 
 intptr_t idVideoCDItem::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idItem::Invoke(functionName, param1);
 
 };
 
 bool idVideoCDItem::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idItem::HasNativeFunction(functionName);
 
 };
 
 intptr_t idPDAItem::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idItem::Invoke(functionName, param1);
 
 };
 
 bool idPDAItem::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idItem::HasNativeFunction(functionName);
 
 };
 
@@ -5022,7 +5022,7 @@ intptr_t idMoveableItem::Invoke(const char *functionName, void *param1) {
 		Event_DropToFloor();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idItem::Invoke(functionName, param1);
 
 };
 
@@ -5037,7 +5037,7 @@ bool idMoveableItem::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 219076) { // Event_DropToFloor
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idItem::HasNativeFunction(functionName);
 
 };
 
@@ -5075,7 +5075,7 @@ intptr_t idItemTeam::Invoke(const char *functionName, void *param1) {
 		UpdateGuis();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMoveableItem::Invoke(functionName, param1);
 
 };
 
@@ -5105,19 +5105,19 @@ bool idItemTeam::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 125953) { // UpdateGuis
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMoveableItem::HasNativeFunction(functionName);
 
 };
 
 intptr_t idMoveablePDAItem::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idMoveableItem::Invoke(functionName, param1);
 
 };
 
 bool idMoveablePDAItem::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idMoveableItem::HasNativeFunction(functionName);
 
 };
 
@@ -5127,7 +5127,7 @@ intptr_t idItemRemover::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -5136,7 +5136,7 @@ bool idItemRemover::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -5150,7 +5150,7 @@ intptr_t idObjectiveComplete::Invoke(const char *functionName, void *param1) {
 		Event_GetPlayerPos();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idItemRemover::Invoke(functionName, param1);
 
 };
 
@@ -5162,7 +5162,7 @@ bool idObjectiveComplete::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 232865) { // Event_GetPlayerPos
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idItemRemover::HasNativeFunction(functionName);
 
 };
 
@@ -5730,7 +5730,7 @@ intptr_t idPlayer::Invoke(const char *functionName, void *param1) {
 		Event_StartWarp();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idActor::Invoke(functionName, param1);
 
 };
 
@@ -6183,7 +6183,7 @@ bool idPlayer::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 194887) { // Event_StartWarp
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idActor::HasNativeFunction(functionName);
 
 };
 
@@ -6273,7 +6273,7 @@ intptr_t idMover::Invoke(const char *functionName, void *param1) {
 		Event_IsRotating();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -6342,7 +6342,7 @@ bool idMover::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 207359) { // Event_IsRotating
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -6352,7 +6352,7 @@ intptr_t idSplinePath::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -6361,7 +6361,7 @@ bool idSplinePath::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -6403,7 +6403,7 @@ intptr_t idElevator::Invoke(const char *functionName, void *param1) {
 		Event_SetGuiStates();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMover::Invoke(functionName, param1);
 
 };
 
@@ -6436,7 +6436,7 @@ bool idElevator::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 233629) { // Event_SetGuiStates
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMover::HasNativeFunction(functionName);
 
 };
 
@@ -6518,7 +6518,7 @@ intptr_t idMover_Binary::Invoke(const char *functionName, void *param1) {
 		Event_InitGuiTargets();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -6584,7 +6584,7 @@ bool idMover_Binary::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 262020) { // Event_InitGuiTargets
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -6671,7 +6671,7 @@ intptr_t idDoor::Invoke(const char *functionName, void *param1) {
 		Event_ClosePortal();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMover_Binary::Invoke(functionName, param1);
 
 };
 
@@ -6740,7 +6740,7 @@ bool idDoor::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 220884) { // Event_ClosePortal
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMover_Binary::HasNativeFunction(functionName);
 
 };
 
@@ -6766,7 +6766,7 @@ intptr_t idPlat::Invoke(const char *functionName, void *param1) {
 		PostBind();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMover_Binary::Invoke(functionName, param1);
 
 };
 
@@ -6787,7 +6787,7 @@ bool idPlat::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 98395) { // PostBind
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMover_Binary::HasNativeFunction(functionName);
 
 };
 
@@ -6801,7 +6801,7 @@ intptr_t idMover_Periodic::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -6813,7 +6813,7 @@ bool idMover_Periodic::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -6823,7 +6823,7 @@ intptr_t idRotater::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMover_Periodic::Invoke(functionName, param1);
 
 };
 
@@ -6832,7 +6832,7 @@ bool idRotater::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMover_Periodic::HasNativeFunction(functionName);
 
 };
 
@@ -6842,7 +6842,7 @@ intptr_t idBobber::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMover_Periodic::Invoke(functionName, param1);
 
 };
 
@@ -6851,7 +6851,7 @@ bool idBobber::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMover_Periodic::HasNativeFunction(functionName);
 
 };
 
@@ -6861,7 +6861,7 @@ intptr_t idPendulum::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMover_Periodic::Invoke(functionName, param1);
 
 };
 
@@ -6870,7 +6870,7 @@ bool idPendulum::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMover_Periodic::HasNativeFunction(functionName);
 
 };
 
@@ -6880,7 +6880,7 @@ intptr_t idRiser::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMover_Periodic::Invoke(functionName, param1);
 
 };
 
@@ -6889,7 +6889,7 @@ bool idRiser::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMover_Periodic::HasNativeFunction(functionName);
 
 };
 
@@ -6907,7 +6907,7 @@ intptr_t idCameraView::Invoke(const char *functionName, void *param1) {
 		Event_SetAttachments();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idCamera::Invoke(functionName, param1);
 
 };
 
@@ -6922,7 +6922,7 @@ bool idCameraView::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 264827) { // Event_SetAttachments
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idCamera::HasNativeFunction(functionName);
 
 };
 
@@ -6960,7 +6960,7 @@ intptr_t idCameraAnim::Invoke(const char *functionName, void *param1) {
 		Event_SetCallback();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idCamera::Invoke(functionName, param1);
 
 };
 
@@ -6990,7 +6990,7 @@ bool idCameraAnim::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 214718) { // Event_SetCallback
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idCamera::HasNativeFunction(functionName);
 
 };
 
@@ -7040,7 +7040,7 @@ intptr_t idMoveable::Invoke(const char *functionName, void *param1) {
 		Event_IsAtRest();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -7082,7 +7082,7 @@ bool idMoveable::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 174863) { // Event_IsAtRest
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -7100,7 +7100,7 @@ intptr_t idBarrel::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idMoveable::Invoke(functionName, param1);
 
 };
 
@@ -7115,7 +7115,7 @@ bool idBarrel::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idMoveable::HasNativeFunction(functionName);
 
 };
 
@@ -7160,7 +7160,7 @@ intptr_t idExplodingBarrel::Invoke(const char *functionName, void *param1) {
 		Event_TriggerTargets();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idBarrel::Invoke(functionName, param1);
 
 };
 
@@ -7196,79 +7196,79 @@ bool idExplodingBarrel::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 265462) { // Event_TriggerTargets
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idBarrel::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
 bool idTarget::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_Remove::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_Remove::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_Show::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_Show::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_Damage::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_Damage::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_SessionCommand::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_SessionCommand::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_EndLevel::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_EndLevel::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
@@ -7278,7 +7278,7 @@ intptr_t idTarget_WaitForButton::Invoke(const char *functionName, void *param1) 
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
@@ -7287,43 +7287,43 @@ bool idTarget_WaitForButton::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_SetGlobalShaderTime::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_SetGlobalShaderTime::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_SetShaderParm::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_SetShaderParm::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_SetShaderTime::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_SetShaderTime::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
@@ -7333,7 +7333,7 @@ intptr_t idTarget_FadeEntity::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
@@ -7342,31 +7342,31 @@ bool idTarget_FadeEntity::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_LightFadeIn::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_LightFadeIn::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_LightFadeOut::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_LightFadeOut::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
@@ -7376,7 +7376,7 @@ intptr_t idTarget_Give::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
@@ -7385,19 +7385,19 @@ bool idTarget_Give::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_GiveEmail::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_GiveEmail::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
@@ -7407,7 +7407,7 @@ intptr_t idTarget_SetModel::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
@@ -7416,7 +7416,7 @@ bool idTarget_SetModel::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
@@ -7438,7 +7438,7 @@ intptr_t idTarget_SetInfluence::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
@@ -7456,19 +7456,19 @@ bool idTarget_SetInfluence::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_SetKeyVal::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_SetKeyVal::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
@@ -7478,7 +7478,7 @@ intptr_t idTarget_SetFov::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
@@ -7487,55 +7487,55 @@ bool idTarget_SetFov::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_SetPrimaryObjective::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_SetPrimaryObjective::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_LockDoor::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_LockDoor::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_CallObjectFunction::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_CallObjectFunction::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_EnableLevelWeapons::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_EnableLevelWeapons::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
@@ -7553,7 +7553,7 @@ intptr_t idTarget_Tip::Invoke(const char *functionName, void *param1) {
 		Event_GetPlayerPos();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
@@ -7568,67 +7568,67 @@ bool idTarget_Tip::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 232865) { // Event_GetPlayerPos
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_GiveSecurity::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_GiveSecurity::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_RemoveWeapons::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_RemoveWeapons::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_LevelTrigger::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_LevelTrigger::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_Checkpoint::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_Checkpoint::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_EnableStamina::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_EnableStamina::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
@@ -7638,7 +7638,7 @@ intptr_t idTarget_FadeSoundClass::Invoke(const char *functionName, void *param1)
 		Event_RestoreVolume();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
@@ -7647,31 +7647,31 @@ bool idTarget_FadeSoundClass::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 253902) { // Event_RestoreVolume
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_RumbleJoystick::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_RumbleJoystick::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTarget_Achievement::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTarget::Invoke(functionName, param1);
 
 };
 
 bool idTarget_Achievement::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTarget::HasNativeFunction(functionName);
 
 };
 
@@ -7704,7 +7704,7 @@ intptr_t idTrigger::Invoke(const char *functionName, void *param1) {
 		Event_Disable();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -7731,7 +7731,7 @@ bool idTrigger::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 162724) { // Event_Disable
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -7741,7 +7741,7 @@ intptr_t idTrigger_Multi::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTrigger::Invoke(functionName, param1);
 
 };
 
@@ -7750,7 +7750,7 @@ bool idTrigger_Multi::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTrigger::HasNativeFunction(functionName);
 
 };
 
@@ -7760,7 +7760,7 @@ intptr_t idTrigger_EntityName::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTrigger::Invoke(functionName, param1);
 
 };
 
@@ -7769,7 +7769,7 @@ bool idTrigger_EntityName::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTrigger::HasNativeFunction(functionName);
 
 };
 
@@ -7791,7 +7791,7 @@ intptr_t idTrigger_Timer::Invoke(const char *functionName, void *param1) {
 		Event_Timer();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTrigger::Invoke(functionName, param1);
 
 };
 
@@ -7809,7 +7809,7 @@ bool idTrigger_Timer::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 139267) { // Event_Timer
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTrigger::HasNativeFunction(functionName);
 
 };
 
@@ -7819,7 +7819,7 @@ intptr_t idTrigger_Count::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTrigger::Invoke(functionName, param1);
 
 };
 
@@ -7828,7 +7828,7 @@ bool idTrigger_Count::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTrigger::HasNativeFunction(functionName);
 
 };
 
@@ -7838,7 +7838,7 @@ intptr_t idTrigger_Hurt::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTrigger::Invoke(functionName, param1);
 
 };
 
@@ -7847,19 +7847,19 @@ bool idTrigger_Hurt::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTrigger::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTrigger_Fade::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idTrigger::Invoke(functionName, param1);
 
 };
 
 bool idTrigger_Fade::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idTrigger::HasNativeFunction(functionName);
 
 };
 
@@ -7885,7 +7885,7 @@ intptr_t idTrigger_Touch::Invoke(const char *functionName, void *param1) {
 		TouchEntities();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTrigger::Invoke(functionName, param1);
 
 };
 
@@ -7906,7 +7906,7 @@ bool idTrigger_Touch::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 169188) { // TouchEntities
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTrigger::HasNativeFunction(functionName);
 
 };
 
@@ -7916,7 +7916,7 @@ intptr_t idTrigger_Flag::Invoke(const char *functionName, void *param1) {
 		Spawn();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idTrigger_Multi::Invoke(functionName, param1);
 
 };
 
@@ -7925,7 +7925,7 @@ bool idTrigger_Flag::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 63102) { // Spawn
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idTrigger_Multi::HasNativeFunction(functionName);
 
 };
 
@@ -7955,7 +7955,7 @@ intptr_t idSound::Invoke(const char *functionName, void *param1) {
 		Event_Off();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -7979,7 +7979,7 @@ bool idSound::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 109741) { // Event_Off
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -8023,7 +8023,7 @@ intptr_t idEntityFx::Invoke(const char *functionName, void *param1) {
 		CleanUp();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -8059,19 +8059,19 @@ bool idEntityFx::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 83058) { // CleanUp
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
 intptr_t idTeleporter::Invoke(const char *functionName, void *param1) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::Invoke(functionName, param1);
+	return idEntityFx::Invoke(functionName, param1);
 
 };
 
 bool idTeleporter::HasNativeFunction(const char *functionName) {
 	int functionNameHash = idStr::Hash(functionName);
-	return __super::HasNativeFunction(functionName);
+	return idEntityFx::HasNativeFunction(functionName);
 
 };
 
@@ -8131,7 +8131,7 @@ intptr_t idSecurityCamera::Invoke(const char *functionName, void *param1) {
 		Event_AddLight();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -8179,7 +8179,7 @@ bool idSecurityCamera::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 173084) { // Event_AddLight
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -8212,7 +8212,7 @@ intptr_t idBrittleFracture::Invoke(const char *functionName, void *param1) {
 		FindNeighbours();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -8239,7 +8239,7 @@ bool idBrittleFracture::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 180056) { // FindNeighbours
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -8795,7 +8795,7 @@ intptr_t idAI::Invoke(const char *functionName, void *param1) {
 		Event_CanReachEnemy();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idActor::Invoke(functionName, param1);
 
 };
 
@@ -9239,7 +9239,7 @@ bool idAI::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 240412) { // Event_CanReachEnemy
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idActor::HasNativeFunction(functionName);
 
 };
 
@@ -9256,7 +9256,7 @@ intptr_t idCombatNode::Invoke(const char *functionName, void *param1) {
 		Event_MarkUsed();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idEntity::Invoke(functionName, param1);
 
 };
 
@@ -9271,7 +9271,7 @@ bool idCombatNode::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 176427) { // Event_MarkUsed
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idEntity::HasNativeFunction(functionName);
 
 };
 
@@ -9303,7 +9303,7 @@ intptr_t iceAI_Follower::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 199463) { // state_talk_anim
 		return (intptr_t)state_talk_anim((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idAI::Invoke(functionName, param1);
 
 };
 
@@ -9333,7 +9333,7 @@ bool iceAI_Follower::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 199463) { // state_talk_anim
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAI::HasNativeFunction(functionName);
 
 };
 
@@ -9370,7 +9370,7 @@ intptr_t iceMonsterBossVagary::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 155616) { // combat_range
 		return (intptr_t)combat_range((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idAI::Invoke(functionName, param1);
 
 };
 
@@ -9403,7 +9403,7 @@ bool iceMonsterBossVagary::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 155616) { // combat_range
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAI::HasNativeFunction(functionName);
 
 };
 
@@ -9434,7 +9434,7 @@ intptr_t iceMonsterDemonHellknight::Invoke(const char *functionName, void *param
 	if(functionNameHash == 155616) { // combat_range
 		return (intptr_t)combat_range((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idAI::Invoke(functionName, param1);
 
 };
 
@@ -9461,7 +9461,7 @@ bool iceMonsterDemonHellknight::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 155616) { // combat_range
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAI::HasNativeFunction(functionName);
 
 };
 
@@ -9501,7 +9501,7 @@ intptr_t iceMonsterDemonImp::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 239426) { // combat_dodge_right
 		return (intptr_t)combat_dodge_right((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idAI::Invoke(functionName, param1);
 
 };
 
@@ -9537,7 +9537,7 @@ bool iceMonsterDemonImp::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 239426) { // combat_dodge_right
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAI::HasNativeFunction(functionName);
 
 };
 
@@ -9571,7 +9571,7 @@ intptr_t iceMonsterLostSoul::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 186330) { // combat_retreat
 		return (intptr_t)combat_retreat((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idAI::Invoke(functionName, param1);
 
 };
 
@@ -9601,7 +9601,7 @@ bool iceMonsterLostSoul::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 186330) { // combat_retreat
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAI::HasNativeFunction(functionName);
 
 };
 
@@ -9632,7 +9632,7 @@ intptr_t iceMonsterFlyingCacodemon::Invoke(const char *functionName, void *param
 	if(functionNameHash == 155616) { // combat_range
 		return (intptr_t)combat_range((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idAI::Invoke(functionName, param1);
 
 };
 
@@ -9659,7 +9659,7 @@ bool iceMonsterFlyingCacodemon::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 155616) { // combat_range
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAI::HasNativeFunction(functionName);
 
 };
 
@@ -9687,7 +9687,7 @@ intptr_t iceMonsterZombie::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 154980) { // combat_melee
 		return (intptr_t)combat_melee((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idAI::Invoke(functionName, param1);
 
 };
 
@@ -9711,7 +9711,7 @@ bool iceMonsterZombie::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 154980) { // combat_melee
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAI::HasNativeFunction(functionName);
 
 };
 
@@ -9735,7 +9735,7 @@ intptr_t iceMonsterZombieSawyer::Invoke(const char *functionName, void *param1) 
 	if(functionNameHash == 154980) { // combat_melee
 		return (intptr_t)combat_melee((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceMonsterZombie::Invoke(functionName, param1);
 
 };
 
@@ -9756,7 +9756,7 @@ bool iceMonsterZombieSawyer::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 154980) { // combat_melee
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceMonsterZombie::HasNativeFunction(functionName);
 
 };
 
@@ -9784,7 +9784,7 @@ intptr_t iceMonsterZombieBernie::Invoke(const char *functionName, void *param1) 
 	if(functionNameHash == 154980) { // combat_melee
 		return (intptr_t)combat_melee((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceMonsterZombie::Invoke(functionName, param1);
 
 };
 
@@ -9808,7 +9808,7 @@ bool iceMonsterZombieBernie::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 154980) { // combat_melee
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceMonsterZombie::HasNativeFunction(functionName);
 
 };
 
@@ -9836,7 +9836,7 @@ intptr_t iceMonsterZombieMorgue::Invoke(const char *functionName, void *param1) 
 	if(functionNameHash == 154980) { // combat_melee
 		return (intptr_t)combat_melee((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceMonsterZombie::Invoke(functionName, param1);
 
 };
 
@@ -9860,7 +9860,7 @@ bool iceMonsterZombieMorgue::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 154980) { // combat_melee
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceMonsterZombie::HasNativeFunction(functionName);
 
 };
 
@@ -9897,7 +9897,7 @@ intptr_t iceMonsterZombieSecurityPistol::Invoke(const char *functionName, void *
 	if(functionNameHash == 223812) { // combat_dodge_left
 		return (intptr_t)combat_dodge_left((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceMonsterZombie::Invoke(functionName, param1);
 
 };
 
@@ -9930,7 +9930,7 @@ bool iceMonsterZombieSecurityPistol::HasNativeFunction(const char *functionName)
 	if(functionNameHash == 223812) { // combat_dodge_left
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceMonsterZombie::HasNativeFunction(functionName);
 
 };
 
@@ -9969,7 +9969,7 @@ intptr_t iceMonsterZombieCommandoTentacle::Invoke(const char *functionName, void
 		tentacle_attack_start();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return iceMonsterZombie::Invoke(functionName, param1);
 
 };
 
@@ -10002,7 +10002,7 @@ bool iceMonsterZombieCommandoTentacle::HasNativeFunction(const char *functionNam
 	if(functionNameHash == 287526) { // tentacle_attack_start
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceMonsterZombie::HasNativeFunction(functionName);
 
 };
 
@@ -10039,7 +10039,7 @@ intptr_t iceMonsterZombieCommandoChaingun::Invoke(const char *functionName, void
 	if(functionNameHash == 157412) { // stand_attack
 		return (intptr_t)stand_attack((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idAI::Invoke(functionName, param1);
 
 };
 
@@ -10072,7 +10072,7 @@ bool iceMonsterZombieCommandoChaingun::HasNativeFunction(const char *functionNam
 	if(functionNameHash == 157412) { // stand_attack
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAI::HasNativeFunction(functionName);
 
 };
 
@@ -10139,7 +10139,7 @@ intptr_t iceMonster_Turret::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 179561) { // state_Disabled
 		return (intptr_t)state_Disabled((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idAI::Invoke(functionName, param1);
 
 };
 
@@ -10199,7 +10199,7 @@ bool iceMonster_Turret::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 179561) { // state_Disabled
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAI::HasNativeFunction(functionName);
 
 };
 
@@ -10254,7 +10254,7 @@ intptr_t iceBot::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 180698) { // state_Attacked
 		return (intptr_t)state_Attacked((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return idPlayer::Invoke(functionName, param1);
 
 };
 
@@ -10302,7 +10302,7 @@ bool iceBot::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 180698) { // state_Attacked
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idPlayer::HasNativeFunction(functionName);
 
 };
 
@@ -10324,7 +10324,7 @@ intptr_t idTestModel::Invoke(const char *functionName, void *param1) {
 		Event_Footstep();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return idAnimatedEntity::Invoke(functionName, param1);
 
 };
 
@@ -10342,7 +10342,7 @@ bool idTestModel::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 183671) { // Event_Footstep
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idAnimatedEntity::HasNativeFunction(functionName);
 
 };
 
@@ -10366,7 +10366,7 @@ intptr_t iceWeaponFist::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 132482) { // GetFireAnim
 		return (intptr_t)GetFireAnim();
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10390,7 +10390,7 @@ bool iceWeaponFist::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 132482) { // GetFireAnim
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10411,7 +10411,7 @@ intptr_t iceWeaponPistol::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 72819) { // Reload
 		return (intptr_t)Reload((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10432,7 +10432,7 @@ bool iceWeaponPistol::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 72819) { // Reload
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10461,7 +10461,7 @@ intptr_t iceWeaponFlashlight::Invoke(const char *functionName, void *param1) {
 		UpdateLightIntensity();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10488,7 +10488,7 @@ bool iceWeaponFlashlight::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 268148) { // UpdateLightIntensity
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10509,7 +10509,7 @@ intptr_t iceWeaponPDA::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 72819) { // Reload
 		return (intptr_t)Reload((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10530,7 +10530,7 @@ bool iceWeaponPDA::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 72819) { // Reload
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10551,7 +10551,7 @@ intptr_t iceWeaponShotgun::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 72819) { // Reload
 		return (intptr_t)Reload((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10572,7 +10572,7 @@ bool iceWeaponShotgun::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 72819) { // Reload
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10597,7 +10597,7 @@ intptr_t iceWeaponDoubleShotgun::Invoke(const char *functionName, void *param1) 
 		EjectBrass();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10621,7 +10621,7 @@ bool iceWeaponDoubleShotgun::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 123479) { // EjectBrass
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10642,7 +10642,7 @@ intptr_t iceWeaponMachineGun::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 72819) { // Reload
 		return (intptr_t)Reload((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10663,7 +10663,7 @@ bool iceWeaponMachineGun::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 72819) { // Reload
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10684,7 +10684,7 @@ intptr_t iceWeaponPlasmaGun::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 72819) { // Reload
 		return (intptr_t)Reload((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10705,7 +10705,7 @@ bool iceWeaponPlasmaGun::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 72819) { // Reload
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10738,7 +10738,7 @@ intptr_t iceWeaponChainGun::Invoke(const char *functionName, void *param1) {
 		SpinDown();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10768,7 +10768,7 @@ bool iceWeaponChainGun::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 100305) { // SpinDown
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10793,7 +10793,7 @@ intptr_t iceWeaponRocketLauncher::Invoke(const char *functionName, void *param1)
 		UpdateSkin();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10817,7 +10817,7 @@ bool iceWeaponRocketLauncher::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 125553) { // UpdateSkin
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10842,7 +10842,7 @@ intptr_t iceWeaponBFG::Invoke(const char *functionName, void *param1) {
 		OverCharge();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10866,7 +10866,7 @@ bool iceWeaponBFG::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 123325) { // OverCharge
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10907,7 +10907,7 @@ intptr_t iceWeaponHandgrenade::Invoke(const char *functionName, void *param1) {
 		ExplodeInHand();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10943,7 +10943,7 @@ bool iceWeaponHandgrenade::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 160314) { // ExplodeInHand
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -10964,7 +10964,7 @@ intptr_t iceWeaponChainsaw::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 72819) { // Reload
 		return (intptr_t)Reload((stateParms_t *)param1);
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -10985,7 +10985,7 @@ bool iceWeaponChainsaw::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 72819) { // Reload
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -11026,7 +11026,7 @@ intptr_t iceWeaponGrabber::Invoke(const char *functionName, void *param1) {
 		UpdateGuiLight();
 		return 0;
 	};
-	return __super::Invoke(functionName, param1);
+	return iceWeaponObject::Invoke(functionName, param1);
 
 };
 
@@ -11062,7 +11062,7 @@ bool iceWeaponGrabber::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 176832) { // UpdateGuiLight
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return iceWeaponObject::HasNativeFunction(functionName);
 
 };
 
@@ -11139,7 +11139,7 @@ intptr_t idThread::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 159226) { // GetThreadName
 		return (intptr_t)GetThreadName();
 	};
-	return __super::Invoke(functionName, param1);
+	return idClass::Invoke(functionName, param1);
 
 };
 
@@ -11205,7 +11205,7 @@ bool idThread::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 159226) { // GetThreadName
 		return true;
 	};
-	return __super::HasNativeFunction(functionName);
+	return idClass::HasNativeFunction(functionName);
 
 };
 
