@@ -24,20 +24,19 @@ This file contains the following sections:
 
 1. [About the Port](#about)
 2. [".plan"](#plan)
-3. [May or may not ".plan"](#plan2)
-4. [Renderer Features Explained](#render)
-5. [TrenchBroom Mapping Support](#trenchbroom)
-6. [General Notes](#notes)
-7. [License](#license)
-8. [Getting the Source Code ](#source)
-9. [Compiling on Windows](#compile_windows)
-10. [Compiling on Linux](#compile_linux)
-11. [Compiling on macOS](#compile_macos)
-12. [Installation](#installation)
-13. [New Console Variables](#console)
-14. [Known Issues](#issues)
-15. [Bug Reports](#reports)
-16. [FAQ](#faq)
+3. [Renderer Features Explained](#render)
+4. [TrenchBroom Mapping Support](#trenchbroom)
+5. [General Notes](#notes)
+6. [License](#license)
+7. [Getting the Source Code ](#source)
+8. [Compiling on Windows](#compile_windows)
+9. [Compiling on Linux](#compile_linux)
+10. [Compiling on macOS](#compile_macos)
+11. [Installation](#installation)
+12. [New Console Variables](#console)
+13. [Known Issues](#issues)
+14. [Bug Reports](#reports)
+15. [FAQ](#faq)
 	
 
 
@@ -47,7 +46,7 @@ This file contains the following sections:
 
 `RBDOOM-3-BFG is a modernization effort of DOOM-3-BFG.`
 
-RBDOOM-3-BFG is based on DOOM-3-BFG and the goal of this port is to bring DOOM-3-BFG up to latest technology in 2024 making it closer to Doom 2016 while still remaining a DOOM 3 port regarding the gameplay. 
+RBDOOM-3-BFG is based on DOOM-3-BFG and the goal of this port is to bring DOOM-3-BFG up to latest technology in 2025 making it closer to Doom 2016 while still remaining a DOOM 3 port regarding the gameplay. 
 
 I started this project in 2012 and focused on making this code being future proof so other cool projects can build interesting things on top of it without the need to fix a lot of stuff first. Over 40 people all over the world contributed cool patches. Some results are:
 
@@ -59,7 +58,7 @@ I started this project in 2012 and focused on making this code being future proo
 	* All 3 light types (point, spot, parallel/sun) are supported which means parallel lights (sun) use
 	scene independent cascaded shadow mapping.
 * True internal 64 bit HDR lighting with filmic ACES tone mapping and gamma-correct rendering in linear RGB space
-* Temporal Antialiasing (TAA) as a cheap alternative for MSAA and that works well with HDR and also improves PBR lighting
+* SMAA and Temporal Antialiasing (TAA) as cheap alternatives for MSAA
 * Filmic post process effects like Chromatic Aberration and Dithering
 * Retro Rendering modes for the nostalgia of the 8-bit and 16-bit eras including the Commodore 64, Amstrad CPC 6128, Sega Genesis and Sony PSX
 * Screen Space Ambient Occlusion used to only dim down the Global Illumination contribution like in the Frostbite engine
@@ -114,18 +113,6 @@ You can fork RBDOOM-3-BFG and create a new renamed binary that includes all requ
 # ".plan" <a name="plan"></a>
 
 If you want to see what is planned or in progress in a Trello/Kanban style manner look here: [RBDOOM-3-BFG projects](https://github.com/RobertBeckebans/RBDOOM-3-BFG/projects)
-
-Short term goals:
-* Node based Imgui particle editor
-* Flash support through Adobe Animate or Blender
-* Raytracing for accelerating the probe baking and optionally adding realtime global illumination
-
----
-# May or may not ".plan" <a name="plan2"></a>
-* Replace traditional multipass forward shading with a faster forward+ solution
-* [Volumetric Lighting](http://www.alexandre-pestana.com/volumetric-lights/)
-* ReSTIR or some other realtime path tracing
-* Optional alternative collision detection and physics with PhysX 5 or Jolt
 
 ---
 # Renderer Features Explained <a name="render"></a>
@@ -328,7 +315,7 @@ r_useSSAO 1 darkens the corners of the scene and also removes too much ambient a
 """
 -->
 ## Filmic Post Processing
-If you enable it with r_useFilmicPostProcessing 1 then you play DOOM 3 BFG the optics of a Zack Snyder movie.
+If you enable it with r_useFilmicPostFX 1 then you play DOOM 3 BFG the optics of a Zack Snyder movie.
 
 It adds chromatic abberation and filmic dithering using Blue Noise.
 The effect is heavy and is usually aimed in Film production to mix real camera footage with CG generated content.
@@ -375,11 +362,11 @@ Directory                          | Description
 RBDOOM-3-BFG/base/                 | Doom 3 BFG media directory ( models, textures, sounds, maps, etc. )
 RBDOOM-3-BFG/neo/                  | RBDOOM-3-BFG source code ( renderer, game code for multiple games, OS layer, etc. )
 RBDOOM-3-BFG/build/                | Build folder for CMake
-RBDOOM-3-BFG/tools/runtimedeps     | Visual Studio C++ Redistributables if you have problems to start the engine or the tools
 RBDOOM-3-BFG/tools/trenchbroom     | TrenchBroomBFG level editor customized for DOOM 3 and RBDOOM-3-BFG
 RBDOOM-3-BFG/tools/darkradiant     | DarkRadiant level editor with an additional config for RBDOOM-3-BFG
 RBDOOM-3-BFG/tools/bfgpakexlorer   | BFG Resource File Manager by George Kalampokis aka Mr.GK
 RBDOOM-3-BFG/tools/optick-profiler | Optick is a super-lightweight C++ profiler for Games
+RBDOOM-3-BFG/tools/runtimedeps     | Visual Studio C++ Redistributables if you have problems to start the engine or the tools
 
 The GPL release does not contain any game data, the game data is still
 covered by the original EULA and must be obeyed as usual.
@@ -629,7 +616,7 @@ Name                                   | Description
 r_graphicsAPI                          | Default DX12, can be either DX12 or Vulkan on Windows
 r_antiAliasing                         | Different Anti-Aliasing modes
 r_exposure [0 .. 1]                    | Default 0.5, controls brightness and affects HDR -> sRGB Rec. 709 exposure key. This is what you change in the video brightness options
-r_useSSAO [0 .. 1]                     | Use Screen Space Ambient Occlusion to darken the corners in the scene and give it more depth
+r_useSSAO [0, 1]                     | Use Screen Space Ambient Occlusion to darken the corners in the scene and give it more depth
 r_forceAmbient                         | Default 0.5, controls additional brightness by Global Illumination 
 r_useFilmicPostFX [0, 1]               | Apply several post process effects to mimic a filmic look
 r_useCRTPostFX [0 .. 2]                | CRT monitor/TV filter
@@ -638,6 +625,7 @@ r_renderMode [0 .. 9]				   | Default 0 = Doom, 1 = CGA, 2 = CGA Highres, 3 = Co
 ## Modding Support
 Name                              | Description
 :--------------------------------------| :------------------------------------------------
+listCvars `[new]`                      | Option that lists all cvars that have been added to this sourceport
 dmap mapfile                           | Command: Compiles a .map to its corresponding BSP .proc, Collision .cm files and Area Awareness System (AI navigation) .aas files. Just type dmap to list all options
 dmap `[glview]` mapfile                | DMap option that exports the BSP areas and portals to .obj for debugging purposes
 bakeEnvironmentProbes                  | Command after loading a map. Captures all env_probe entities and stores them to disc
@@ -648,11 +636,11 @@ exportImagesToTrenchBroom              | Command: Decompresses and saves all TB 
 exportModelsToTrenchBroom              | Command: Saves all binarized models to base/_tb/*.obj files
 convertMapToValve220 `<map>`           | Command: Saves *_valve220.map version of the given map. This makes it editable with TrenchBroomBFG. 
 convertMapQuakeToDoom `<map>`          | Command: Expects a Quake 1 .map in the Valve220 format and does some Doom 3 specific fixes
-makeZooMapForModels                    | Command: Makes a Source engine style zoo map with mapobject/models like .blwo, .base et cetera and saves it to maps/zoomaps/zoo_models.map. This helps mappers to get a good overview of the trememdous amount of custom models available in Doom 3 BFG by sorting them into categories and arranging them in 3D. It also filters models so that only modular models are picked that can be reused in new maps.
 exportEntityDefsToBlender              | Command: Exports all entity and model defs to base/_bl/entities.json for usage in Blender before loading a map.
 exportMapToOBJ                         | Command: Convert .map file to .obj/.mtl
 swf_show                               | Cvar: Draws the bounding box of instanced Flash sprites in red and their names
 makeMaterials `<folder>`               | Command: Make a .mtr file based on PBR naming conventions
+makeZooMapForModels                    | Command: Makes a Source engine style zoo map with mapobject/models like .blwo, .base et cetera and saves it to maps/zoomaps/zoo_models.map. This helps mappers to get a good overview of the trememdous amount of custom models available in Doom 3 BFG by sorting them into categories and arranging them in 3D. It also filters models so that only modular models are picked that can be reused in new maps.
 
 
 ---
@@ -682,14 +670,18 @@ You can find your qconsole.log on Windows in C:\Users\<your user name>\Saved Gam
 ---
 # FAQ <a name="faq"></a>
 
-**Q**: Why bother with DOOM-3-BFG in 2021?
+**Q**: Why bother with DOOM-3-BFG in 2025?
 **A**: It is fun, period. Doom 3 is from 2004 but it is still an impressive and entertaining game. In 2011 id Software added many results from the development of Rage like its own Flash SWF and ActionScript 2 interpreter, proper support for gamepads and widescreens. It also combines the gamecode for Doom 3 and its missionpacks and runs it in a seperate thread and it has many multithreaded rendering optimizations. 
 DOOM-3 and DOOM-3-BFG are some of the most transparent games available where you can open all files and inspect how the game was built.
 Unlike Quake 1-3, DOOM-3-BFG shipped with all level .map sources for 47 single player maps.
 There is plenty of stuff you can learn from it like solid run & gun core gameplay, AI, animations, client/server multiplayer, level design or simple and elegant engine design.
 
-**Q**: Why bother with DOOM-3-BFG in 2023?
-**A**: The engine compiles faster than opening a project in Unity. Maybe you just appreciate that it doesn't require more than 300 MB of RAM and 1024 MB of VRAM while running a complex game like Doom 3.
+**Q**: Why bother with the DOOM-3-BFG engine in 2025?
+**A**: The engine compiles faster than opening a project in Unity or Unreal. Maybe you just appreciate that it doesn't require more than 300 MB of RAM and 3072 MB of VRAM while running a complex game like Doom 3. Maybe it is just nice that it can run Epic's Sun Temple demo with over 230 fps @ 1080p on a Geforce 2070 Super unlike UE4.
+
+<!-- 
+<img src="https://i.imgur.com/cwwr4z5.png" width="800">
+-->
 
 **Q**: Can I use this engine to make a commercial game?
 **A**: You can but don't bother me to give you free support and you probably should use Unreal Engine 4/5. I am a full time game developer and usually don't have time for any free support. I recommend that you have moderate C++ skills even if you are an artist. Technical designers (coders who became artists) might benefit most from this engine. Keep in mind that the GPL license will lock you out of the console markets because you can't use proprietary APIs covered by NDAs. However you can sell your game on Steam without problems.

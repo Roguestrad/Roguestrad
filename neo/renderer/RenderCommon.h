@@ -98,10 +98,11 @@ struct drawSurf_t
 	const idMaterial* 		material;			// may be NULL for shadow volumes
 	uint64					extraGLState;		// Extra GL state |'d with material->stage[].drawStateBits
 	float					sort;				// material->sort, modified by gui / entity sort offsets
-	const float* 				shaderRegisters;	// evaluated and adjusted for referenceShaders
+	const float* 			shaderRegisters;	// evaluated and adjusted for referenceShaders
 	drawSurf_t* 			nextOnLight;		// viewLight chains
 	drawSurf_t** 			linkChain;			// defer linking to lights to a serial section to avoid a mutex
 	idScreenRect			scissorRect;		// for scissor clipping, local inside renderView viewport
+	const struct portalArea_s*	area;			// RB: if != NULL then the area provides valid lightgrid
 };
 
 // areas have references to hold all the lights and entities in them
@@ -422,17 +423,6 @@ struct viewEntity_t
 	// parallelAddModels will build a chain of surfaces here that will need to
 	// be linked to the lights or added to the drawsurf list in a serial code section
 	drawSurf_t* 			drawSurfs;
-
-	// RB: use light grid of the best area this entity is in
-	bool					useLightGrid;
-	idImage* 				lightGridAtlasImage;
-	int						lightGridAtlasSingleProbeSize; // including border
-	int						lightGridAtlasBorderSize;
-
-	idVec3					lightGridOrigin;
-	idVec3					lightGridSize;
-	int						lightGridBounds[3];
-	// RB end
 };
 
 // RB: viewEnvprobes are allocated on the frame temporary stack memory
@@ -1200,8 +1190,6 @@ extern idCVar r_singleEntity;				// suppress all but one entity
 extern idCVar r_singleEnvprobe;				// suppress all but one envprobe
 extern idCVar r_singleArea;					// only draw the portal area the view is actually in
 extern idCVar r_singleSurface;				// suppress all but one surface on each entity
-extern idCVar r_shadowPolygonOffset;		// bias value added to depth test for stencil shadow drawing
-extern idCVar r_shadowPolygonFactor;		// scale value for stencil shadow drawing
 
 extern idCVar r_orderIndexes;				// perform index reorganization to optimize vertex use
 
@@ -1233,7 +1221,8 @@ extern idCVar r_shadowMapSplitWeight;
 extern idCVar r_shadowMapLodScale;
 extern idCVar r_shadowMapLodBias;
 extern idCVar r_shadowMapPolygonFactor;
-extern idCVar r_shadowMapPolygonOffset;
+extern idCVar r_dxShadowMapPolygonOffset;
+extern idCVar r_vkShadowMapPolygonOffset;
 extern idCVar r_shadowMapOccluderFacing;
 extern idCVar r_shadowMapRegularDepthBiasScale;
 extern idCVar r_shadowMapSunDepthBiasScale;

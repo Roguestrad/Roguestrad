@@ -1339,7 +1339,7 @@ CONSOLE_COMMAND( makePaletteHeader, "load a .pal palette, build an image from it
 		rgb = colors[ i ];
 		idLib::Printf( "\tRGB( %d, %d, %d ),\n", ( int )rgb[0], ( int )rgb[1], ( int )rgb[2] );
 	}
-	idLib::Printf( "};\n\n", numColors );
+	idLib::Printf( "};\n\n" );
 
 	// calc the median absolute deviation
 	idVec3 median = Median( colors );

@@ -452,6 +452,7 @@ sysEvent_t Sys_GetEvent()
 						// DG: un-pause the game when focus is gained, that also re-grabs the input
 						//     disabling the cursor is now done once in GLimp_Init() because it should always be disabled
 						cvarSystem->SetCVarBool( "com_pause", false );
+						cvarSystem->SetCVarBool( "com_activeApp", true );
 						// DG end
 						break;
 					}
@@ -459,6 +460,7 @@ sysEvent_t Sys_GetEvent()
 					case SDL_WINDOWEVENT_FOCUS_LOST:
 						// DG: pause the game when focus is lost, that also un-grabs the input
 						cvarSystem->SetCVarBool( "com_pause", true );
+						cvarSystem->SetCVarBool( "com_activeApp", false );
 						// DG end
 						break;
 
@@ -694,22 +696,59 @@ sysEvent_t Sys_GetEvent()
 
 			// GameController
 			case SDL_JOYAXISMOTION:
+			case SDL_JOYBALLMOTION:
 			case SDL_JOYHATMOTION:
 			case SDL_JOYBUTTONDOWN:
 			case SDL_JOYBUTTONUP:
 			case SDL_JOYDEVICEADDED:
 			case SDL_JOYDEVICEREMOVED:
+			case SDL_JOYBATTERYUPDATED:
 				// Avoid 'unknown event' spam
 				continue;
 
 			case SDL_CONTROLLERAXISMOTION:
+			{
+				extern idCVar joy_deadZone;
+				static int controllerAxisRemap[][2] =
+				{
+					{K_JOY_STICK1_LEFT, K_JOY_STICK1_RIGHT},	// Left Stick X Axis: SDL_CONTROLLER_AXIS_LEFTX
+					{K_JOY_STICK1_UP, K_JOY_STICK1_DOWN},		// Left Stick Y Axis: SDL_CONTROLLER_AXIS_LEFTY
+					{K_JOY_STICK2_LEFT, K_JOY_STICK2_RIGHT},	// Right Stick X Axis: SDL_CONTROLLER_AXIS_RIGHTX
+					{K_JOY_STICK2_UP, K_JOY_STICK2_DOWN},		// Right Stick Y Axis: SDL_CONTROLLER_AXIS_RIGHTY
+					{K_NONE, K_NONE},							// Null padding: SDL_CONTROLLER_AXIS_TRIGGERLEFT
+					{K_NONE, K_NONE},							// Null padding: SDL_CONTROLLER_AXIS_TRIGGERRIGHT
+				};
+
 				res.evType = SE_JOYSTICK;
 				res.evValue = J_AXIS_LEFT_X + ( ev.caxis.axis - SDL_CONTROLLER_AXIS_LEFTX );
 				res.evValue2 = ev.caxis.value;
 
 				joystick_polls.Append( joystick_poll_t( res.evValue, res.evValue2 ) );
-				return res;
 
+				// SRS - Synthesize joystick axis key presses to enable navigation in game menus and the PDA
+				if( ev.caxis.axis <= SDL_CONTROLLER_AXIS_RIGHTY )
+				{
+					int axisIndex = ( ev.caxis.axis - SDL_CONTROLLER_AXIS_LEFTX );
+					bool stickNeg = static_cast<float>( ev.caxis.value ) / 32767.0f < - joy_deadZone.GetFloat();
+					bool stickPos = static_cast<float>( ev.caxis.value ) / 32767.0f >   joy_deadZone.GetFloat();
+
+					if( buttonStates[controllerAxisRemap[axisIndex][0]] != stickNeg )
+					{
+						buttonStates[controllerAxisRemap[axisIndex][0]] = stickNeg;
+						res.evType = SE_KEY;
+						res.evValue = controllerAxisRemap[axisIndex][0];
+						res.evValue2 = stickNeg ? 1 : 0;
+					}
+					else if( buttonStates[controllerAxisRemap[axisIndex][1]] != stickPos )
+					{
+						buttonStates[controllerAxisRemap[axisIndex][1]] = stickPos;
+						res.evType = SE_KEY;
+						res.evValue = controllerAxisRemap[axisIndex][1];
+						res.evValue2 = stickPos ? 1 : 0;
+					}
+				}
+				return res;
+			}
 			case SDL_CONTROLLERBUTTONDOWN:
 			case SDL_CONTROLLERBUTTONUP:
 				static int controllerButtonRemap[][2] =
@@ -738,6 +777,18 @@ sysEvent_t Sys_GetEvent()
 				joystick_polls.Append( joystick_poll_t( controllerButtonRemap[ev.cbutton.button][1], res.evValue2 ) );
 				return res;
 
+			case SDL_CONTROLLERDEVICEADDED:
+			case SDL_CONTROLLERDEVICEREMOVED:
+			case SDL_CONTROLLERDEVICEREMAPPED:
+			case SDL_CONTROLLERTOUCHPADDOWN:
+			case SDL_CONTROLLERTOUCHPADMOTION:
+			case SDL_CONTROLLERTOUCHPADUP:
+			case SDL_CONTROLLERSENSORUPDATE:
+				//case SDL_CONTROLLERUPDATECOMPLETE_RESERVED_FOR_SDL3:
+				//case SDL_CONTROLLERSTEAMHANDLEUPDATED:
+				// Avoid more 'unknown event' spam
+				continue;
+
 			case SDL_QUIT:
 				PushConsoleEvent( "quit" );
 				res = no_more_events; // don't handle next event, just quit.
@@ -756,7 +807,10 @@ sysEvent_t Sys_GetEvent()
 				}
 				continue; // just handle next event
 
+			// Avoid 'unknown event' spam
+			case SDL_TEXTEDITING:
 			case SDL_KEYMAPCHANGED:
+			case SDL_CLIPBOARDUPDATE:
 				continue; // just handle next event
 
 			default:
