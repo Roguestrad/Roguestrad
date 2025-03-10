@@ -165,8 +165,6 @@ idCVar r_offsetFactor( "r_offsetfactor", "0", CVAR_RENDERER | CVAR_FLOAT, "polyg
 #endif
 // RB end
 
-idCVar r_shadowPolygonOffset( "r_shadowPolygonOffset", "-1", CVAR_RENDERER | CVAR_FLOAT, "bias value added to depth test for stencil shadow drawing" );
-idCVar r_shadowPolygonFactor( "r_shadowPolygonFactor", "0", CVAR_RENDERER | CVAR_FLOAT, "scale value for stencil shadow drawing" );
 idCVar r_subviewOnly( "r_subviewOnly", "0", CVAR_RENDERER | CVAR_BOOL, "1 = don't render main view, allowing subviews to be debugged" );
 idCVar r_testGamma( "r_testGamma", "0", CVAR_RENDERER | CVAR_FLOAT, "if > 0 draw a grid pattern to test gamma levels", 0, 195 );
 idCVar r_testGammaBias( "r_testGammaBias", "0", CVAR_RENDERER | CVAR_FLOAT, "if > 0 draw a grid pattern to test gamma levels" );
@@ -260,10 +258,11 @@ idCVar r_shadowMapSplitWeight( "r_shadowMapSplitWeight", "0.9", CVAR_RENDERER | 
 idCVar r_shadowMapLodScale( "r_shadowMapLodScale", "1.4", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "" );
 idCVar r_shadowMapLodBias( "r_shadowMapLodBias", "0", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "" );
 idCVar r_shadowMapPolygonFactor( "r_shadowMapPolygonFactor", "2", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "polygonOffset factor for drawing shadow buffer" );
-idCVar r_shadowMapPolygonOffset( "r_shadowMapPolygonOffset", "3000", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "polygonOffset units for drawing shadow buffer" );
+idCVar r_dxShadowMapPolygonOffset( "r_dxShadowMapPolygonOffset", "0.1", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "polygonOffset units for drawing shadow buffer" );
+idCVar r_vkShadowMapPolygonOffset( "r_vkShadowMapPolygonOffset", "1", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "polygonOffset units for drawing shadow buffer" );
 idCVar r_shadowMapOccluderFacing( "r_shadowMapOccluderFacing", "2", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "0 = front faces, 1 = back faces, 2 = twosided" );
 idCVar r_shadowMapRegularDepthBiasScale( "r_shadowMapRegularDepthBiasScale", "0.999", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "shadowmap bias to fight shadow acne for point and spot lights" );
-idCVar r_shadowMapSunDepthBiasScale( "r_shadowMapSunDepthBiasScale", "0.999991", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "shadowmap bias to fight shadow acne for cascaded shadow mapping with parallel lights" );
+idCVar r_shadowMapSunDepthBiasScale( "r_shadowMapSunDepthBiasScale", "0.999", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "shadowmap bias to fight shadow acne for cascaded shadow mapping with parallel lights" );
 
 // RB: HDR parameters
 idCVar r_hdrAutoExposure( "r_hdrAutoExposure", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_NEW, "EXPENSIVE: enables adapative HDR tone mapping otherwise the exposure is derived by r_exposure" );
@@ -368,6 +367,13 @@ bool R_UseTemporalAA()
 bool R_UseHiZ()
 {
 	// TODO check for driver problems here
+#if defined(__linux__)
+	if( glConfig.vendor == VENDOR_INTEL && glConfig.gpuType == GPU_TYPE_OTHER )
+	{
+		// SRS - Disable HiZ to work-around Linux driver issues on Intel iGPUs
+		return false;
+	}
+#endif
 	return r_useHierarchicalDepthBuffer.GetBool();
 }
 

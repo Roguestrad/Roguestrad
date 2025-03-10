@@ -296,9 +296,8 @@ LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 			soundSystem->SetMute( !win32.activeApp );
 			// DG: set com_pause so game pauses when focus is lost
 			// and continues when focus is regained
-#ifdef NDEBUG
 			cvarSystem->SetCVarBool( "com_pause", !win32.activeApp );
-#endif
+			cvarSystem->SetCVarBool( "com_activeApp", win32.activeApp );
 			// DG end
 
 			// we do not actually grab or release the mouse here,

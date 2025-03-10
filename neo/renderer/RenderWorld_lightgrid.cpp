@@ -497,7 +497,8 @@ void idRenderWorldLocal::WriteLightGrid( idFile* fp, const LightGrid& lightGrid 
 	{
 		const lightGridPoint_t* gridPoint = &lightGrid.lightGridPoints[i];
 
-		fp->WriteFloatString( "/* lgp %i */ %d ( %f %f %f )", i, ( int )gridPoint->valid, gridPoint->origin[0], gridPoint->origin[1], gridPoint->origin[2] );
+		//fp->WriteFloatString( "/* lgp %i */ %d ( %f %f %f )", i, ( int )gridPoint->valid, gridPoint->origin[0], gridPoint->origin[1], gridPoint->origin[2] );
+		fp->WriteFloatString( " %d ( %f %f %f )", ( int )gridPoint->valid, gridPoint->origin[0], gridPoint->origin[1], gridPoint->origin[2] );
 
 #if STORE_LIGHTGRID_SHDATA
 		// spherical harmonic

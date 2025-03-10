@@ -53,7 +53,7 @@ struct PS_OUT
 
 
 #define RESOLUTION_DIVISOR 4.0
-#define NUM_COLORS 32 // original 27
+#define NUM_COLORS 31 // original 27
 
 
 float3 Average( float3 pal[NUM_COLORS] )
@@ -233,7 +233,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #endif
 	};
 
-#elif 1
+#elif 0
 	// Tweaked LOSPEC CPC BOY PALETTE which is less saturated by Arne Niklas Jansson
 	// https://lospec.com/palette-list/cpc-boy
 
@@ -277,6 +277,48 @@ void main( PS_IN fragment, out PS_OUT result )
 	const float3 deviation = RGB( 66, 57, 63 );
 
 #elif 1
+
+	// https://lospec.com/palette-list/ruzzi-cpc
+	const float3 palette[NUM_COLORS] = // 31
+	{
+		RGB( 0, 0, 28 ), // dark blue
+		RGB( 28, 0, 28 ), // dark magenta
+		RGB( 33, 30, 32 ),
+		RGB( 85, 85, 104 ),
+
+		RGB( 36, 14, 11 ),
+		RGB( 26, 34, 114 ),
+		RGB( 68, 118, 16 ),
+		RGB( 129, 16, 51 ),
+		RGB( 50, 131, 113 ),
+		RGB( 124, 36, 136 ),
+		RGB( 151, 122, 44 ),
+		RGB( 16, 55, 218 ),
+		RGB( 143, 136, 132 ),
+		RGB( 222, 18, 92 ),
+		RGB( 100, 222, 21 ),
+		RGB( 32, 144, 210 ),
+		RGB( 120, 58, 220 ),
+		RGB( 74, 228, 112 ),
+		RGB( 223, 39, 158 ),
+		RGB( 236, 126, 74 ),
+		RGB( 174, 228, 38 ),
+		RGB( 136, 151, 219 ),
+		RGB( 49, 234, 203 ),
+		RGB( 163, 236, 128 ),
+		RGB( 238, 142, 151 ),
+		RGB( 224, 60, 223 ),
+		RGB( 249, 234, 56 ),
+		RGB( 152, 244, 218 ),
+		RGB( 239, 157, 228 ),
+		RGB( 252, 244, 144 ),
+		RGB( 255, 255, 233 ),
+	};
+
+	const float3 medianAbsoluteDeviation = RGB( 175, 6, 56 );
+	const float3 deviation = RGB( 67, 70, 62 );
+
+#elif 0
 
 	// https://lospec.com/palette-list/ancientheritage30
 	const float3 palette[NUM_COLORS] = // 30
@@ -403,8 +445,8 @@ void main( PS_IN fragment, out PS_OUT result )
 	float2 uvPixelated = floor( fragment.position.xy / RESOLUTION_DIVISOR ) * RESOLUTION_DIVISOR;
 
 	float3 quantizationPeriod = _float3( 1.0 / NUM_COLORS );
-	float3 quantDeviation = deviation; //Deviation( palette );
-	quantDeviation = medianAbsoluteDeviation;
+	float3 quantDeviation = Deviation( palette );
+	//quantDeviation = medianAbsoluteDeviation;
 
 	// get pixellated base color
 	float4 color = t_BaseColor.Sample( s_LinearClamp, uvPixelated * rpWindowCoord.xy );

@@ -242,14 +242,11 @@ void main( PS_IN fragment, out PS_OUT result )
 		gridCoord[j] = int( floor( v ) );
 		frac[ j ] = v - gridCoord[ j ];
 
-		/*
-		if( gridCoord[i] < 0 )
+		if( gridCoord[j] < 0 )
 		{
-			gridCoord[i] = 0;
+			gridCoord[j] = 0;
 		}
-		else
-		*/
-		if( gridCoord[j] >= lightGridBounds[j] - 1 )
+		else if( gridCoord[j] >= lightGridBounds[j] - 1 )
 		{
 			gridCoord[j] = lightGridBounds[j] - 1;
 		}

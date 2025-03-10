@@ -156,11 +156,11 @@ ID_INLINE void idImage::DeriveOpts()
 				opts.format = FMT_DEPTH;
 				break;
 
-			// sp begin
+			// SP begin
 			case TD_DEPTH_STENCIL:
 				opts.format = FMT_DEPTH_STENCIL;
 				break;
-			// sp end
+			// SP end
 
 			case TD_SHADOW_ARRAY:
 				opts.format = FMT_SHADOW_ARRAY;
@@ -200,6 +200,7 @@ ID_INLINE void idImage::DeriveOpts()
 				opts.format = FMT_DXT5;
 				opts.colorFormat = CFM_YCOCG_DXT5;
 				break;
+
 			case TD_SPECULAR:
 				opts.gammaMips = true;
 				opts.format = FMT_DXT1;
@@ -223,16 +224,19 @@ ID_INLINE void idImage::DeriveOpts()
 				opts.format = FMT_DXT5;
 				opts.colorFormat = CFM_DEFAULT;
 				break;
+
 			case TD_BUMP:
 				opts.format = FMT_DXT5;
 				opts.colorFormat = CFM_NORMAL_DXT5;
 				break;
+
 			case TD_FONT:
 				opts.format = FMT_DXT1;
 				opts.colorFormat = CFM_GREEN_ALPHA;
 				opts.numLevels = 4; // We only support 4 levels because we align to 16 in the exporter
 				opts.gammaMips = true;
 				break;
+
 			case TD_LIGHT:
 				// RB: TODO check binary format version
 				// D3 BFG assets require RGB565 but it introduces color banding
@@ -240,16 +244,20 @@ ID_INLINE void idImage::DeriveOpts()
 				opts.format = FMT_RGB565; //FMT_RGBA8;
 				opts.gammaMips = true;
 				break;
+
 			case TD_LOOKUP_TABLE_MONO:
 				opts.format = FMT_INT8;
 				break;
+
 			case TD_LOOKUP_TABLE_ALPHA:
 				opts.format = FMT_ALPHA;
 				break;
+
 			case TD_LOOKUP_TABLE_RGB1:
 			case TD_LOOKUP_TABLE_RGBA:
 				opts.format = FMT_RGBA8;
 				break;
+
 			// motorsep 05-17-2015; added this for uncompressed cubemap/skybox textures
 			case TD_HIGHQUALITY_CUBE:
 				opts.colorFormat = CFM_DEFAULT;
@@ -261,6 +269,13 @@ ID_INLINE void idImage::DeriveOpts()
 				opts.format = FMT_DXT5;
 				opts.gammaMips = true;
 				break;
+			// motorsep end
+
+			case TD_HDRI:
+				opts.format = FMT_R11G11B10F;
+				//opts.numLevels = 1;
+				break;
+
 			default:
 				assert( false );
 				opts.format = FMT_RGBA8;
@@ -364,9 +379,6 @@ void idImage::GenerateImage( const byte* pic, int width, int height, textureFilt
 #if defined( USE_NVRHI ) && !defined( DMAP )
 		if( commandList )
 		{
-			const nvrhi::FormatInfo& info = nvrhi::getFormatInfo( texture->getDesc().format );
-			const int bytesPerBlock = info.bytesPerBlock;
-
 			commandList->beginTrackingTextureState( texture, nvrhi::AllSubresources, nvrhi::ResourceStates::Common );
 
 			for( int i = 0; i < im.NumImages(); i++ )
@@ -439,15 +451,8 @@ void idImage::GenerateCubeImage( const byte* pic[6], int size, textureFilter_t f
 	AllocImage();
 
 #if defined( USE_NVRHI ) && !defined( DMAP )
-	int numChannels = 4;
-	int bytesPerPixel = numChannels;
-	if( opts.format == FMT_ALPHA || opts.format == FMT_DXT1 || opts.format == FMT_INT8 || opts.format == FMT_R8 )
-	{
-		bytesPerPixel = 1;
-	}
-
-	const nvrhi::FormatInfo& info = nvrhi::getFormatInfo( texture->getDesc().format );
-	bytesPerPixel = info.bytesPerBlock;
+	//const nvrhi::FormatInfo& info = nvrhi::getFormatInfo( texture->getDesc().format );
+	//bytesPerPixel = info.bytesPerBlock;
 
 	commandList->beginTrackingTextureState( texture, nvrhi::AllSubresources, nvrhi::ResourceStates::Common );
 
@@ -555,9 +560,6 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 	// RB: the following does not load the source images from disk because pic is NULL
 	// but it tries to get the timestamp to see if we have a newer file than the one in the compressed .bimage
 
-	// TODO also check for alternative names like .png suffices or _rmao.png or even _rmaod.png files
-	// to support the PBR code path
-
 	if( com_productionMode.GetInteger() != 0 )
 	{
 		sourceFileTime = FILE_NOT_FOUND_TIMESTAMP;
@@ -574,7 +576,7 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 		{
 			opts.textureType = TT_2D_ARRAY;
 		}
-		else if( cubeFiles == CF_NATIVE || cubeFiles == CF_CAMERA || cubeFiles == CF_QUAKE1 || cubeFiles == CF_SINGLE )
+		else if( cubeFiles == CF_NATIVE || cubeFiles == CF_CAMERA || cubeFiles == CF_QUAKE1 || cubeFiles == CF_SINGLE || cubeFiles == CF_PANORAMA )
 		{
 			opts.textureType = TT_CUBIC;
 			repeat = TR_CLAMP;
@@ -605,6 +607,12 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 
 	idStrStatic< MAX_OSPATH > generatedName = GetName();
 	GetGeneratedName( generatedName, usage, cubeFiles );
+
+	//if( generatedName.Find( "textures/base_floor/a_stairs_d02", false ) >= 0 )
+	//{
+	// #924
+	//int c = 1;
+	//}
 
 	// RB: try to load the .bimage and skip if sourceFileTime is newer
 	idBinaryImage im( generatedName );
@@ -701,10 +709,6 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 		}
 		else if( header.colorFormat != opts.colorFormat )
 		{
-			binarizeReason = va( "binarize: mismatch color format '%s'", generatedName.c_str() );
-		}
-		else if( header.colorFormat != opts.colorFormat )
-		{
 			binarizeReason = va( "binarize: mismatched color format '%s'", generatedName.c_str() );
 		}
 		else if( header.textureType != opts.textureType )
@@ -714,7 +718,7 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 		//else if( toolUsage )
 		//	binarizeReason = va( "binarize: tool usage '%s'", generatedName.c_str() );
 
-		if( cubeFiles == CF_NATIVE || cubeFiles == CF_CAMERA || cubeFiles == CF_QUAKE1 || cubeFiles == CF_SINGLE )
+		if( cubeFiles == CF_NATIVE || cubeFiles == CF_CAMERA || cubeFiles == CF_QUAKE1 || cubeFiles == CF_SINGLE ||  cubeFiles == CF_PANORAMA )
 		{
 			int size;
 			byte* pics[6];
@@ -737,7 +741,11 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 			DeriveOpts();
 
 			// foresthale 2014-05-30: give a nice progress display when binarizing
-			commonLocal.LoadPacifierBinarizeFilename( generatedName.c_str(), binarizeReason.c_str() );
+			if( !globalImages->cacheImages )
+			{
+				commonLocal.LoadPacifierBinarizeFilename( generatedName.c_str(), binarizeReason.c_str() );
+			}
+
 			if( opts.numLevels > 1 )
 			{
 				commonLocal.LoadPacifierBinarizeProgressTotal( opts.width * opts.width * 6 * 4 / 3 );
@@ -796,8 +804,6 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 				memset( clear.Ptr(), 0, clear.Size() );
 
 #if defined( USE_NVRHI ) && !defined( DMAP )
-				const nvrhi::FormatInfo& info = nvrhi::getFormatInfo( texture->getDesc().format );
-
 				commandList->beginTrackingTextureState( texture, nvrhi::AllSubresources, nvrhi::ResourceStates::Common );
 				for( int level = 0; level < opts.numLevels; level++ )
 				{
@@ -832,14 +838,21 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 			// RB: convert to compressed DXT or whatever choosen target format
 			if( cubeFiles == CF_2D_PACKED_MIPCHAIN )
 			{
-				commonLocal.LoadPacifierBinarizeFilename( generatedName.c_str(), binarizeReason.c_str() );
+				if( !globalImages->cacheImages )
+				{
+					commonLocal.LoadPacifierBinarizeFilename( generatedName.c_str(), binarizeReason.c_str() );
+				}
 				commonLocal.LoadPacifierBinarizeProgressTotal( width * opts.height );
 
 				im.Load2DAtlasMipchainFromMemory( width, opts.height, pic, opts.numLevels, opts.format, opts.colorFormat );
 			}
 			else
 			{
-				commonLocal.LoadPacifierBinarizeFilename( generatedName.c_str(), binarizeReason.c_str() );
+				if( !globalImages->cacheImages )
+				{
+					commonLocal.LoadPacifierBinarizeFilename( generatedName.c_str(), binarizeReason.c_str() );
+				}
+
 				if( opts.numLevels > 1 )
 				{
 					commonLocal.LoadPacifierBinarizeProgressTotal( opts.width * opts.height * 4 / 3 );
@@ -870,9 +883,6 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 	AllocImage();
 
 #if defined( USE_NVRHI ) && !defined( DMAP )
-	const nvrhi::FormatInfo& info = nvrhi::getFormatInfo( texture->getDesc().format );
-	const int bytesPerPixel = info.bytesPerBlock / info.blockSize;
-
 	commandList->beginTrackingTextureState( texture, nvrhi::AllSubresources, nvrhi::ResourceStates::Common );
 
 	for( int i = 0; i < im.NumImages(); i++ )
@@ -880,45 +890,7 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 		const bimageImage_t& img = im.GetImageHeader( i );
 		const byte* pic = im.GetImageData( i );
 
-#if 0
-		if( opts.format == FMT_RGB565 )
-		{
-			int bufferW = img.width;
-			int bufferH = img.height;
-
-			if( IsCompressed() )
-			{
-				bufferW = ( img.width + 3 ) & ~3;
-				bufferH = ( img.height + 3 ) & ~3;
-			}
-
-			int size = bufferW * bufferH * BitsForFormat( opts.format ) / 8;
-
-			byte* data = ( byte* )Mem_Alloc16( size, TAG_IMAGE );
-			memcpy( data, pic, size );
-
-			byte* imgData = ( byte* )pic;
-			for( int j = 0; j < size; j += 2 )
-			{
-				data[i] = imgData[i + 1];
-				data[i + 1] = imgData[i];
-			}
-
-			commandList->writeTexture( texture, img.destZ, img.level, data, GetRowPitch( opts.format, img.width ) );
-
-			Mem_Free16( data );
-		}
-		else
-#endif
-		{
-			int bufferW = img.width;
-			if( IsCompressed() )
-			{
-				bufferW = ( img.width + 3 ) & ~3;
-			}
-
-			commandList->writeTexture( texture, img.destZ, img.level, pic, GetRowPitch( opts.format, img.width ) );
-		}
+		commandList->writeTexture( texture, img.destZ, img.level, pic, GetRowPitch( opts.format, img.width ) );
 	}
 	commandList->setPermanentTextureState( texture, nvrhi::ResourceStates::ShaderResource );
 	commandList->commitBarriers();
@@ -983,25 +955,9 @@ void idImage::UploadScratch( const byte* data, int cols, int rows, nvrhi::IComma
 		}
 
 #if defined( USE_NVRHI )
-		int numChannels = 4;
-		int bytesPerPixel = numChannels;
-		if( opts.format == FMT_ALPHA || opts.format == FMT_DXT1 || opts.format == FMT_INT8 || opts.format == FMT_R8 )
-		{
-			bytesPerPixel = 1;
-		}
-
-		const nvrhi::FormatInfo& info = nvrhi::getFormatInfo( texture->getDesc().format );
-		bytesPerPixel = info.bytesPerBlock;
-
 		SetSamplerState( TF_LINEAR, TR_CLAMP );
 
 		commandList->beginTrackingTextureState( texture, nvrhi::AllSubresources, nvrhi::ResourceStates::Common );
-
-		int bufferW = opts.width;
-		if( IsCompressed() )
-		{
-			bufferW = ( opts.width + 3 ) & ~3;
-		}
 
 		for( int i = 0; i < 6; i++ )
 		{
@@ -1032,23 +988,7 @@ void idImage::UploadScratch( const byte* data, int cols, int rows, nvrhi::IComma
 
 		if( data != NULL && commandList != NULL )
 		{
-			int numChannels = 4;
-			int bytesPerPixel = numChannels;
-			if( opts.format == FMT_ALPHA || opts.format == FMT_DXT1 || opts.format == FMT_INT8 || opts.format == FMT_R8 || opts.format == FMT_LUM8 )
-			{
-				bytesPerPixel = 1;
-			}
-
-			const nvrhi::FormatInfo& info = nvrhi::getFormatInfo( texture->getDesc().format );
-			bytesPerPixel = info.bytesPerBlock;
-
 			SetSamplerState( TF_LINEAR, TR_REPEAT );
-
-			int bufferW = opts.width;
-			if( IsCompressed() )
-			{
-				bufferW = ( opts.width + 3 ) & ~3;
-			}
 
 			commandList->beginTrackingTextureState( texture, nvrhi::AllSubresources, nvrhi::ResourceStates::Common );
 
@@ -1242,7 +1182,7 @@ void idImage::Reload( bool force, nvrhi::ICommandList* commandList )
 	if( !force )
 	{
 		ID_TIME_T current;
-		if( cubeFiles == CF_NATIVE || cubeFiles == CF_CAMERA || cubeFiles == CF_QUAKE1 || cubeFiles == CF_SINGLE )
+		if( cubeFiles == CF_NATIVE || cubeFiles == CF_CAMERA || cubeFiles == CF_QUAKE1 || cubeFiles == CF_SINGLE || cubeFiles == CF_PANORAMA )
 		{
 			R_LoadCubeImages( imgName, cubeFiles, NULL, NULL, &current );
 		}

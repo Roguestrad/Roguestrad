@@ -1285,6 +1285,17 @@ void idMaterial::ParseFragmentMap( idLexer& src, newShaderStage_t* newStage )
 			cubeMap = CF_SINGLE;
 			continue;
 		}
+		if( !token.Icmp( "panoramaMap" ) )
+		{
+			cubeMap = CF_PANORAMA;
+			continue;
+		}
+		if( !token.Icmp( "hdriMap" ) )
+		{
+			cubeMap = CF_PANORAMA;
+			td = TD_HDRI;
+			continue;
+		}
 		if( !token.Icmp( "nearest" ) )
 		{
 			tf = TF_NEAREST;
@@ -1804,6 +1815,24 @@ void idMaterial::ParseStage( idLexer& src, const textureRepeat_t trpDefault )
 			idStr::Copynz( imageName, str, sizeof( imageName ) );
 			cubeMap = CF_SINGLE;
 			td = TD_HIGHQUALITY_CUBE;
+			continue;
+		}
+
+		if( !token.Icmp( "panoramaMap" ) )
+		{
+			str = R_ParsePastImageProgram( src );
+			idStr::Copynz( imageName, str, sizeof( imageName ) );
+			cubeMap = CF_PANORAMA;
+			td = TD_HIGHQUALITY_CUBE;
+			continue;
+		}
+
+		if( !token.Icmp( "hdriMap" ) )
+		{
+			str = R_ParsePastImageProgram( src );
+			idStr::Copynz( imageName, str, sizeof( imageName ) );
+			cubeMap = CF_PANORAMA;
+			td = TD_HDRI;
 			continue;
 		}
 
@@ -4144,7 +4173,7 @@ CONSOLE_COMMAND_SHIP( makeMaterials, "Make .mtr file from a models or textures f
 
 				if( testStamp != FILE_NOT_FOUND_TIMESTAMP )
 				{
-					if( name.Cmp( "_normal_opengl" ) == 0 )
+					if( name.Cmp( "_nor_dx" ) == 0 || name.Cmp( "_normal_directx" ) == 0 || ueMode )
 					{
 						mtrBuffer += va( "\tnormalmap invertGreen( %s )\n", testName.c_str() );
 					}

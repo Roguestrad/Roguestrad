@@ -1175,7 +1175,7 @@ void idRenderBackend::DrawSingleInteraction( drawInteraction_t* din, bool useFas
 	const textureUsage_t specUsage = din->specularImage->GetUsage();
 
 	// RB begin
-	if( useIBL && currentSpace->useLightGrid && r_useLightGrid.GetBool() )
+	if( useIBL && din->surf->area != NULL && r_useLightGrid.GetBool() )
 	{
 		idVec4 probeMins, probeMaxs, probeCenter;
 
@@ -1197,9 +1197,11 @@ void idRenderBackend::DrawSingleInteraction( drawInteraction_t* din, bool useFas
 		SetVertexParm( RENDERPARM_WOBBLESKY_Z, probeCenter.ToFloatPtr() );
 
 		// use rpGlobalLightOrigin for lightGrid center
-		idVec4 lightGridOrigin( currentSpace->lightGridOrigin.x, currentSpace->lightGridOrigin.y, currentSpace->lightGridOrigin.z, 1.0f );
-		idVec4 lightGridSize( currentSpace->lightGridSize.x, currentSpace->lightGridSize.y, currentSpace->lightGridSize.z, 1.0f );
-		idVec4 lightGridBounds( currentSpace->lightGridBounds[0], currentSpace->lightGridBounds[1], currentSpace->lightGridBounds[2], 1.0f );
+		const LightGrid& lightGrid = din->surf->area->lightGrid;
+
+		idVec4 lightGridOrigin( lightGrid.lightGridOrigin.x, lightGrid.lightGridOrigin.y, lightGrid.lightGridOrigin.z, 1.0f );
+		idVec4 lightGridSize( lightGrid.lightGridSize.x, lightGrid.lightGridSize.y, lightGrid.lightGridSize.z, 1.0f );
+		idVec4 lightGridBounds( lightGrid.lightGridBounds[0], lightGrid.lightGridBounds[1], lightGrid.lightGridBounds[2], 1.0f );
 
 		renderProgManager.SetUniformValue( RENDERPARM_GLOBALLIGHTORIGIN, lightGridOrigin.ToFloatPtr() );
 		renderProgManager.SetUniformValue( RENDERPARM_JITTERTEXSCALE, lightGridSize.ToFloatPtr() );
@@ -1207,10 +1209,10 @@ void idRenderBackend::DrawSingleInteraction( drawInteraction_t* din, bool useFas
 
 		// individual probe sizes on the atlas image
 		idVec4 probeSize;
-		probeSize[0] = currentSpace->lightGridAtlasSingleProbeSize - currentSpace->lightGridAtlasBorderSize;
-		probeSize[1] = currentSpace->lightGridAtlasSingleProbeSize;
-		probeSize[2] = currentSpace->lightGridAtlasBorderSize;
-		probeSize[3] = float( currentSpace->lightGridAtlasSingleProbeSize - currentSpace->lightGridAtlasBorderSize ) / currentSpace->lightGridAtlasSingleProbeSize;
+		probeSize[0] = lightGrid.imageSingleProbeSize - lightGrid.imageBorderSize;
+		probeSize[1] = lightGrid.imageSingleProbeSize;
+		probeSize[2] = lightGrid.imageBorderSize;
+		probeSize[3] = float( lightGrid.imageSingleProbeSize - lightGrid.imageBorderSize ) / lightGrid.imageSingleProbeSize;
 		renderProgManager.SetUniformValue( RENDERPARM_SCREENCORRECTIONFACTOR, probeSize.ToFloatPtr() ); // rpScreenCorrectionFactor
 
 		// specular cubemap blend weights
@@ -1254,9 +1256,9 @@ void idRenderBackend::DrawSingleInteraction( drawInteraction_t* din, bool useFas
 		}
 
 		GL_SelectTexture( INTERACTION_TEXUNIT_AMBIENT_CUBE1 );
-		currentSpace->lightGridAtlasImage->Bind();
+		lightGrid.GetIrradianceImage()->Bind();
 
-		idVec2i res = currentSpace->lightGridAtlasImage->GetUploadResolution();
+		idVec2i res = lightGrid.GetIrradianceImage()->GetUploadResolution();
 		idVec4 textureSize( res.x, res.y, 1.0f / res.x, 1.0f / res.y );
 
 		renderProgManager.SetUniformValue( RENDERPARM_CASCADEDISTANCES, textureSize.ToFloatPtr() );
@@ -3010,12 +3012,9 @@ void idRenderBackend::SetupShadowMapMatrices( viewLight_t* vLight, int side, idR
 		lightProjectionMatrix[1 * 4 + 2] = 0.0f;
 		lightProjectionMatrix[2 * 4 + 2] = -0.999f; // adjust value to prevent imprecision issues
 
-#if 0 //defined( USE_NVRHI )
 		// the D3D clip space Z is in range [0,1] instead of [-1,1]
-		lightProjectionMatrix[3 * 4 + 2] = -zNear;
-#else
+		// FIXME -1.0f * zNear kills shadow depth
 		lightProjectionMatrix[3 * 4 + 2] = -2.0f * zNear;
-#endif
 
 		lightProjectionMatrix[0 * 4 + 3] = 0.0f;
 		lightProjectionMatrix[1 * 4 + 3] = 0.0f;
@@ -3094,21 +3093,28 @@ void idRenderBackend::ShadowMapPassPerforated( const drawSurf_t** drawSurfs, int
 	// like a no-change-required
 	GL_State( glState | GLS_POLYGON_OFFSET );
 
+	const float polygonFactor = r_shadowMapPolygonFactor.GetFloat();
+	float polygonOffset = r_dxShadowMapPolygonOffset.GetFloat();
+	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
+	{
+		polygonOffset = r_vkShadowMapPolygonOffset.GetFloat();
+	}
+
 	switch( r_shadowMapOccluderFacing.GetInteger() )
 	{
 		case 0:
 			GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_FRONTSIDED );
-			GL_PolygonOffset( r_shadowMapPolygonFactor.GetFloat(), r_shadowMapPolygonOffset.GetFloat() );
+			GL_PolygonOffset( polygonFactor, polygonOffset );
 			break;
 
 		case 1:
 			GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_BACKSIDED );
-			GL_PolygonOffset( -r_shadowMapPolygonFactor.GetFloat(), -r_shadowMapPolygonOffset.GetFloat() );
+			GL_PolygonOffset( -polygonFactor, -polygonOffset );
 			break;
 
 		default:
 			GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_TWOSIDED );
-			GL_PolygonOffset( r_shadowMapPolygonFactor.GetFloat(), r_shadowMapPolygonOffset.GetFloat() );
+			GL_PolygonOffset( polygonFactor, polygonOffset );
 			break;
 	}
 
@@ -3316,21 +3322,28 @@ void idRenderBackend::ShadowMapPassFast( const drawSurf_t* drawSurfs, viewLight_
 	// like a no-change-required
 	GL_State( glState | GLS_POLYGON_OFFSET );
 
+	const float polygonFactor = r_shadowMapPolygonFactor.GetFloat();
+	float polygonOffset = r_dxShadowMapPolygonOffset.GetFloat();
+	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
+	{
+		polygonOffset = r_vkShadowMapPolygonOffset.GetFloat();
+	}
+
 	switch( r_shadowMapOccluderFacing.GetInteger() )
 	{
 		case 0:
 			GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_FRONTSIDED );
-			GL_PolygonOffset( r_shadowMapPolygonFactor.GetFloat(), r_shadowMapPolygonOffset.GetFloat() );
+			GL_PolygonOffset( polygonFactor, polygonOffset );
 			break;
 
 		case 1:
 			GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_BACKSIDED );
-			GL_PolygonOffset( -r_shadowMapPolygonFactor.GetFloat(), -r_shadowMapPolygonOffset.GetFloat() );
+			GL_PolygonOffset( -polygonFactor, -polygonOffset );
 			break;
 
 		default:
 			GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_TWOSIDED );
-			GL_PolygonOffset( r_shadowMapPolygonFactor.GetFloat(), r_shadowMapPolygonOffset.GetFloat() );
+			GL_PolygonOffset( polygonFactor, polygonOffset );
 			break;
 	}
 
@@ -5731,6 +5744,7 @@ void idRenderBackend::DrawViewInternal( const viewDef_t* _viewDef, const int ste
 	//-------------------------------------------------
 	if( R_UseHiZ() && is3D )
 	{
+		OPTICK_GPU_EVENT( "Render_HiZ" );
 		renderLog.OpenBlock( "Render_HiZ" );
 
 		commandList->clearTextureFloat( globalImages->hierarchicalZbufferImage->GetTextureHandle(), nvrhi::AllSubresources, nvrhi::Color( 1.f ) );
@@ -5805,7 +5819,10 @@ void idRenderBackend::DrawViewInternal( const viewDef_t* _viewDef, const int ste
 	//-------------------------------------------------
 	// resolve the screen for SSR
 	//-------------------------------------------------
+	if( is3D && r_useSSR.GetBool() && R_UseHiZ() )
 	{
+		OPTICK_GPU_EVENT( "Resolve_Screen4SSR" );
+
 		if( R_GetMSAASamples() > 1 )
 		{
 			renderLog.OpenBlock( "Resolve to _currentRender" );

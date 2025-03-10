@@ -447,7 +447,7 @@ textures/common/occlusion
 // so it works as a blocker for the lightgrid
 textures/common/black
 {
-	qer_editorimage textures/common/shadow.tga
+	qer_editorimage textures/common/black.tga
 	nonsolid
 	forceshadows
 	forceOpaque
