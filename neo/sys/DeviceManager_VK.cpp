@@ -366,9 +366,9 @@ private:
 #endif
 
 private:
-	static VKAPI_ATTR VkBool32 VKAPI_CALL vulkanDebugCallback(
-		VkDebugReportFlagsEXT flags,
-		VkDebugReportObjectTypeEXT objType,
+	static VKAPI_ATTR vk::Bool32 VKAPI_CALL vulkanDebugCallback(
+		vk::DebugReportFlagsEXT flags,
+		vk::DebugReportObjectTypeEXT objType,
 		uint64_t obj,
 		size_t location,
 		int32_t code,
@@ -388,23 +388,23 @@ private:
 			}
 		}
 
-		if( flags & VK_DEBUG_REPORT_ERROR_BIT_EXT )
+		if( flags & vk::DebugReportFlagBitsEXT::eError )
 		{
 			idLib::Printf( "[Vulkan] ERROR location=0x%zx code=%d, layerPrefix='%s'] %s\n", location, code, layerPrefix, msg );
 		}
-		else if( flags & VK_DEBUG_REPORT_WARNING_BIT_EXT )
+		else if( flags & vk::DebugReportFlagBitsEXT::eWarning )
 		{
 			idLib::Printf( "[Vulkan] WARNING location=0x%zx code=%d, layerPrefix='%s'] %s\n", location, code, layerPrefix, msg );
 		}
-		else if( flags & VK_DEBUG_REPORT_PERFORMANCE_WARNING_BIT_EXT )
+		else if( flags & vk::DebugReportFlagBitsEXT::ePerformanceWarning )
 		{
 			idLib::Printf( "[Vulkan] PERFORMANCE WARNING location=0x%zx code=%d, layerPrefix='%s'] %s\n", location, code, layerPrefix, msg );
 		}
-		else if( flags & VK_DEBUG_REPORT_INFORMATION_BIT_EXT )
+		else if( flags & vk::DebugReportFlagBitsEXT::eInformation )
 		{
 			idLib::Printf( "[Vulkan] INFO location=0x%zx code=%d, layerPrefix='%s'] %s\n", location, code, layerPrefix, msg );
 		}
-		else if( flags & VK_DEBUG_REPORT_DEBUG_BIT_EXT )
+		else if( flags & vk::DebugReportFlagBitsEXT::eDebug )
 		{
 			idLib::Printf( "[Vulkan] DEBUG location=0x%zx code=%d, layerPrefix='%s'] %s\n", location, code, layerPrefix, msg );
 		}
@@ -640,7 +640,11 @@ void DeviceManager_VK::installDebugCallback()
 						   vk::DebugReportFlagBitsEXT::eWarning |
 						   //   vk::DebugReportFlagBitsEXT::eInformation |
 						   vk::DebugReportFlagBitsEXT::ePerformanceWarning )
+#if VK_HEADER_VERSION >= 304
 				.setPfnCallback( vulkanDebugCallback )
+#else
+				.setPfnCallback( reinterpret_cast<PFN_vkDebugReportCallbackEXT>( vulkanDebugCallback ) )
+#endif
 				.setPUserData( this );
 
 	const vk::Result res = m_VulkanInstance.createDebugReportCallbackEXT( &info, nullptr, &m_DebugReportCallback );
@@ -1251,13 +1255,20 @@ bool DeviceManager_VK::CreateDeviceAndSwapChain()
 	m_DeviceParams.enableNvrhiValidationLayer = r_useValidationLayers.GetInteger() > 0;
 	m_DeviceParams.enableDebugRuntime = r_useValidationLayers.GetInteger() > 1;
 
+	// SRS - DynamicLoader is in a separate namespace in newer versions of Vulkan-Hpp
+#if VK_HEADER_VERSION >= 301
+	using VulkanDynamicLoader = vk::detail::DynamicLoader;
+#else
+	using VulkanDynamicLoader = vk::DynamicLoader;
+#endif
+
 	if( m_DeviceParams.enableDebugRuntime )
 	{
 #if defined(__APPLE__) && defined( USE_MoltenVK )
 	}
 
 	// SRS - when USE_MoltenVK defined, load libMoltenVK vs. the default libvulkan
-	static const vk::DynamicLoader dl( "libMoltenVK.dylib" );
+	static const VulkanDynamicLoader dl( "libMoltenVK.dylib" );
 #else
 		enabledExtensions.layers.insert( "VK_LAYER_KHRONOS_validation" );
 
@@ -1276,7 +1287,7 @@ bool DeviceManager_VK::CreateDeviceAndSwapChain()
 	}
 
 	// SRS - make static so ~DynamicLoader() does not prematurely unload vulkan dynamic lib
-	static const vk::DynamicLoader dl;
+	static const VulkanDynamicLoader dl;
 #endif
 	vkGetInstanceProcAddr = dl.getProcAddress<PFN_vkGetInstanceProcAddr>( "vkGetInstanceProcAddr" );
 	VULKAN_HPP_DEFAULT_DISPATCHER.init( vkGetInstanceProcAddr );

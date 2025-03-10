@@ -4575,7 +4575,7 @@ void idGameLocal::AlertAI( idEntity* ent )
 	if( ent && ent->IsType( idActor::Type ) )
 	{
 		// alert them for the next frame
-		lastAIAlertTime = time + 1;
+		lastAIAlertTime = framenum + 1;
 		lastAIAlertEntity = static_cast<idActor*>( ent );
 
 // jmarshall
@@ -4600,14 +4600,7 @@ idGameLocal::GetAlertEntity
 */
 idActor* idGameLocal::GetAlertEntity()
 {
-	int timeGroup = 0;
-	if( lastAIAlertTime && lastAIAlertEntity.GetEntity() )
-	{
-		timeGroup = lastAIAlertEntity.GetEntity()->timeGroup;
-	}
-	SetTimeState ts( timeGroup );
-
-	if( lastAIAlertTime >= time )
+	if( lastAIAlertTime >= framenum )
 	{
 		return lastAIAlertEntity.GetEntity();
 	}
