@@ -7,7 +7,7 @@
 
 	This file has been generated with the Type Info Generator v1.1 (c) 2004 id Software
 
-	957 constants
+	958 constants
 	92 enums
 	471 classes/structs/unions
 	3 templates
@@ -800,11 +800,12 @@ static constantInfo_t constantInfo[] = {
 	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_RENDERMODE", "5" },
 	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_AMBIENT_BRIGHTNESS", "6" },
 	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_SSAO", "7" },
-	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_FILMIC_POSTFX", "8" },
-	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_CRT_POSTFX", "9" },
-	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_BRIGHTNESS", "10" },
-	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_VOLUME", "11" },
-	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::MAX_SYSTEM_FIELDS", "12" },
+	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_BLOOD_REFLECTIONS", "8" },
+	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_FILMIC_POSTFX", "9" },
+	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_CRT_POSTFX", "10" },
+	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_BRIGHTNESS", "11" },
+	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::SYSTEM_FIELD_VOLUME", "12" },
+	{ "int", "idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::MAX_SYSTEM_FIELDS", "13" },
 	{ "int", "SHELL_AREA_INVALID", "-1" },
 	{ "int", "SHELL_AREA_START", "0" },
 	{ "int", "SHELL_AREA_ROOT", "1" },
@@ -2007,11 +2008,12 @@ static enumValueInfo_t idMenuScreen_Shell_SystemOptions_idMenuDataSource_SystemS
 	{ "SYSTEM_FIELD_RENDERMODE", 5 },
 	{ "SYSTEM_FIELD_AMBIENT_BRIGHTNESS", 6 },
 	{ "SYSTEM_FIELD_SSAO", 7 },
-	{ "SYSTEM_FIELD_FILMIC_POSTFX", 8 },
-	{ "SYSTEM_FIELD_CRT_POSTFX", 9 },
-	{ "SYSTEM_FIELD_BRIGHTNESS", 10 },
-	{ "SYSTEM_FIELD_VOLUME", 11 },
-	{ "MAX_SYSTEM_FIELDS", 12 },
+	{ "SYSTEM_FIELD_BLOOD_REFLECTIONS", 8 },
+	{ "SYSTEM_FIELD_FILMIC_POSTFX", 9 },
+	{ "SYSTEM_FIELD_CRT_POSTFX", 10 },
+	{ "SYSTEM_FIELD_BRIGHTNESS", 11 },
+	{ "SYSTEM_FIELD_VOLUME", 12 },
+	{ "MAX_SYSTEM_FIELDS", 13 },
 	{ NULL, 0 }
 };
 
@@ -2676,6 +2678,7 @@ static classVariableInfo_t idDeclModelDef_typeInfo[] = {
 	{ "const idDeclSkin *", "skin", (intptr_t)(&((idDeclModelDef *)0)->skin), sizeof( ((idDeclModelDef *)0)->skin ) },
 	{ "bool", "hasCustomRotationSet", (intptr_t)(&((idDeclModelDef *)0)->hasCustomRotationSet), sizeof( ((idDeclModelDef *)0)->hasCustomRotationSet ) },
 	{ "idAngles", "originalRotation", (intptr_t)(&((idDeclModelDef *)0)->originalRotation), sizeof( ((idDeclModelDef *)0)->originalRotation ) },
+	{ "idImportOptions", "importOptions", (intptr_t)(&((idDeclModelDef *)0)->importOptions), sizeof( ((idDeclModelDef *)0)->importOptions ) },
 	{ NULL, 0 }
 };
 
@@ -7071,6 +7074,7 @@ static classVariableInfo_t idMenuScreen_Shell_SystemOptions_idMenuDataSource_Sys
 	{ "int", "originalRenderMode", (intptr_t)(&((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalRenderMode), sizeof( ((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalRenderMode ) },
 	{ "float", "originalAmbientBrightness", (intptr_t)(&((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalAmbientBrightness), sizeof( ((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalAmbientBrightness ) },
 	{ "int", "originalSSAO", (intptr_t)(&((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalSSAO), sizeof( ((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalSSAO ) },
+	{ "int", "originalBloodReflections", (intptr_t)(&((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalBloodReflections), sizeof( ((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalBloodReflections ) },
 	{ "int", "originalPostProcessing", (intptr_t)(&((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalPostProcessing), sizeof( ((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalPostProcessing ) },
 	{ "int", "originalCRTPostFX", (intptr_t)(&((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalCRTPostFX), sizeof( ((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->originalCRTPostFX ) },
 	{ "idList < vidMode_t >", "modeList", (intptr_t)(&((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->modeList), sizeof( ((idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings *)0)->modeList ) },

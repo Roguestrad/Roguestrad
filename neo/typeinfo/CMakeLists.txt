@@ -99,7 +99,7 @@ if(MSVC)
 
     add_executable(typeinfogen ${TP_SOURCES_ALL} ${TP_INCLUDES_ALL})
 	add_dependencies(typeinfogen idlib)
-	target_link_libraries(typeinfogen idlib winmm)
+	target_link_libraries(typeinfogen idlib winmm Shlwapi)
 	
 else()
 	if (USE_PRECOMPILED_HEADERS)

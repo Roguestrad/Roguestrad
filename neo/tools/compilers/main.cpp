@@ -232,42 +232,64 @@ void Sys_VPrintf( const char* fmt, va_list arg )
 	tuiLog.AddLog( "%s", msg );
 }
 
-// RB: Converts UTF-8 path to wchar_t* with \\?\ prefix for long path support
+// RB: Returns absolute path with \\?\ prefix for long path support
 wchar_t* MakeWindowsLongPathW( const char* utf8Path )
 {
+	if( !utf8Path || !utf8Path[0] )
+	{
+		return NULL;
+	}
+
 	int utf16Len = MultiByteToWideChar( CP_UTF8, 0, utf8Path, -1, NULL, 0 );
 	if( utf16Len == 0 )
 	{
 		return NULL;
 	}
 
-	// +4 for \\?\ prefix, +1 for null terminator
-	wchar_t* wPath = ( wchar_t* )malloc( ( utf16Len + 5 ) * sizeof( wchar_t ) );
+	// Allocate temporary buffer for initial conversion
+	wchar_t* tempPath = ( wchar_t* )malloc( utf16Len * sizeof( wchar_t ) );
+	if( !tempPath )
+	{
+		return NULL;
+	}
+
+	// Perform UTF-8 to UTF-16 conversion
+	if( MultiByteToWideChar( CP_UTF8, 0, utf8Path, -1, tempPath, utf16Len ) == 0 )
+	{
+		free( tempPath );
+		return NULL;
+	}
+
+	// Replace forward slashes with backslashes
+	for( int i = 0; tempPath[i]; i++ )
+	{
+		if( tempPath[i] == L'/' )
+		{
+			tempPath[i] = L'\\';
+		}
+	}
+
+	// Convert to absolute path
+	wchar_t fullPath[MAX_OSPATH];
+	if( GetFullPathNameW( tempPath, MAX_OSPATH, fullPath, NULL ) == 0 )
+	{
+		free( tempPath );
+		return NULL;
+	}
+	free( tempPath );
+
+	// +4 for \\?\ prefix +1 for null terminator
+	size_t fullPathLen = wcslen( fullPath );
+	wchar_t* wPath = ( wchar_t* )malloc( ( fullPathLen + 5 ) * sizeof( wchar_t ) );
 	if( !wPath )
 	{
 		return NULL;
 	}
 
-	wPath[0] = L'\\';
-	wPath[1] = L'\\';
-	wPath[2] = L'?';
-	wPath[3] = L'\\';
-
-	// Convert UTF-8 to UTF-16 after the prefix
-	if( MultiByteToWideChar( CP_UTF8, 0, utf8Path, -1, wPath + 4, utf16Len ) == 0 )
-	{
-		free( wPath );
-		return NULL;
-	}
-
-	// Replace forward slashes with backslashes
-	for( int i = 4; wPath[i]; i++ )
-	{
-		if( wPath[i] == L'/' )
-		{
-			wPath[i] = L'\\';
-		}
-	}
+	// Add \\?\ prefix for long path support
+	swprintf( wPath, fullPathLen + 5, L"\\\\?\\%s", fullPath );
+	//wcscpy( wPath, L"\\\\?\\" );
+	//wcscat( wPath, fullPath );
 
 	return wPath;
 }
