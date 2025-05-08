@@ -144,6 +144,12 @@ public:
 	virtual void			List() const {}
 	virtual void			Print() const {}
 
+	// RB
+	ID_TIME_T				GetSourceFileTimestamp() const
+	{
+		return 0;
+	}
+
 	static idDeclNullSkinBase instance;
 };
 
