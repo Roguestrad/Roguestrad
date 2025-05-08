@@ -117,6 +117,7 @@ public:
 	virtual bool				SourceFileChanged() const;
 	virtual void				MakeDefault();
 	virtual bool				EverReferenced() const;
+	virtual ID_TIME_T			GetSourceFileTimestamp() const; // RB
 
 protected:
 	virtual bool				SetDefaultText();
@@ -4726,6 +4727,24 @@ bool idDeclLocal::SourceFileChanged() const
 
 	return false;
 }
+
+// RB begin
+ID_TIME_T idDeclLocal::GetSourceFileTimestamp() const
+{
+	ID_TIME_T newTimestamp;
+	int newLength = fileSystem->ReadFile( GetFileName(), NULL, &newTimestamp );
+
+	if( newLength <= 0 )
+	{
+		if( sourceFile->fileSize <= 0 )
+		{
+			return FILE_NOT_FOUND_TIMESTAMP;
+		}
+	}
+
+	return newTimestamp;
+}
+// RB end
 
 /*
 =================

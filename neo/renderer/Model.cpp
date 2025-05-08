@@ -73,6 +73,7 @@ idRenderModelStatic::idRenderModelStatic()
 	hasInteractingSurfaces = true;
 	hasShadowCastingSurfaces = true;
 	timeStamp = 0;
+	declTimeStamp = 0;
 	numInvertedJoints = 0;
 	jointsInverted = NULL;
 	jointsInvertedBuffer = 0;
@@ -382,7 +383,7 @@ void idRenderModelStatic::InitFromFile( const char* fileName, const idImportOpti
 idRenderModelStatic::LoadBinaryModel
 ========================
 */
-bool idRenderModelStatic::LoadBinaryModel( idFile* file, const ID_TIME_T sourceTimeStamp )
+bool idRenderModelStatic::LoadBinaryModel( idFile* file, const ID_TIME_T sourceTimeStamp, const ID_TIME_T declSourceTimeStampUnused )
 {
 	if( file == NULL )
 	{
@@ -966,6 +967,18 @@ ID_TIME_T idRenderModelStatic::Timestamp() const
 {
 	return timeStamp;
 }
+
+// RB begin
+ID_TIME_T idRenderModelStatic::DeclTimestamp() const
+{
+	return declTimeStamp;
+}
+
+const char* idRenderModelStatic::GetModelDefName() const
+{
+	return declModelDefName;
+}
+// RB end
 
 /*
 ================

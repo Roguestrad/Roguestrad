@@ -4004,6 +4004,8 @@ CONSOLE_COMMAND_SHIP( makeMaterials, "Make .mtr file from a models or textures f
 	}
 
 	idStr folderName = args.Argv( args.Argc() - 1 );
+	folderName.StripTrailing( '/' );
+
 	idFileList* files = fileSystem->ListFilesTree( folderName, ".png|.tga|.jpg|.exr" );
 
 	idStr mtrBuffer;

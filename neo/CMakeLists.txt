@@ -65,7 +65,10 @@ option(OPTICK
 option(RETAIL
 		"Strip certain developer features and cheats from shipping builds" OFF)
 
-set(NVRHI_INSTALL OFF)
+option(FLATPAK
+		"Strip certain developer features and cheats from flatpak builds" OFF)
+
+#set(NVRHI_INSTALL OFF)
 
 set(CPU_TYPE "" CACHE STRING "When set, passes this string as CPU-ID which will be embedded into the binary.")
 
@@ -79,6 +82,13 @@ if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)|(e2k)|(E2K)" AND 
 	option(USE_INTRINSICS_SSE "Compile using x86 MMX/SSE intrinsics (e.g SSE SIMD instructions)" ON)
 else()
 	option(USE_INTRINSICS_SSE "Compile using x86 MMX/SSE intrinsics (e.g SSE SIMD instructions)" OFF)
+endif()
+
+# SRS - Turn on NEON intrinsics for arm but not when cross-compiling from Apple arm64 to x86_64
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "(arm64)|(ARM64)|(aarch64)|(AArch64)" AND NOT CMAKE_OSX_ARCHITECTURES MATCHES "x86_64")
+	option(USE_INTRINSICS_NEON "Compile using arm NEON intrinsics (e.g NEON SIMD instructions)" ON)
+else()
+	option(USE_INTRINSICS_NEON "Compile using arm NEON intrinsics (e.g NEON SIMD instructions)" OFF)
 endif()
 
 if(FFMPEG AND BINKDEC)
@@ -268,6 +278,11 @@ if (USE_INTRINSICS_SSE)
 	add_definitions(-DUSE_INTRINSICS_SSE)
 endif()
 
+if (USE_INTRINSICS_NEON)
+	add_definitions(-DUSE_INTRINSICS_NEON)
+	add_definitions(-DSTBI_NEON)
+endif()
+
 if(STANDALONE)
 	add_definitions(-DSTANDALONE)
 
@@ -432,15 +447,23 @@ endif()
 
 add_subdirectory(idlib)
 
-# RB: there haven't been requests for a separate map compiler executable by macOS users
-# and it is ok to not support it until someone also supports TrenchBroomBFG on macOS
-if(NOT APPLE)
-	add_subdirectory(tools/compilers)
-endif()
-
 if(USE_INTRINSICS_SSE)
 	add_subdirectory(libs/moc)
 	set(MASKED_OCCLUSION_LIBRARY MaskedOcclusionCulling)
+endif()
+
+if(USE_INTRINSICS_SSE OR USE_INTRINSICS_NEON)
+	add_subdirectory(libs/ispc_texcomp)
+	set(ISPC_TEXCOMP_LIBRARY ispc_texcomp)
+
+	#set(ISPC_TEXCOMP_LIBRARY Compressonator_MD)
+	#link_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/compressonator/lib)
+endif()
+
+# RB: there haven't been requests for a separate map compiler executable by macOS users
+# and it is ok to not support it until someone also supports TrenchBroomBFG on macOS
+if(NOT APPLE AND NOT FLATPAK)
+	add_subdirectory(tools/compilers)
 endif()
 
 file(GLOB NATVIS_SOURCES .natvis)
@@ -1449,7 +1472,8 @@ if(MSVC)
 		#eaxguid
 		iphlpapi
 		winmm
-		wsock32.lib
+		wsock32
+		Shlwapi
 		${Vulkan_LIBRARIES}
 		${OpenAL_LIBRARIES}
 		${FFmpeg_LIBRARIES}
@@ -1704,9 +1728,9 @@ endif()
 
 # needs to come after nvrhi_d3d11 etc. for link order
 target_link_libraries(RBDoom3BFG nvrhi)
-target_link_libraries(RBDoom3BFG ShaderMakeBlob ${MASKED_OCCLUSION_LIBRARY})
+target_link_libraries(RBDoom3BFG ShaderMakeBlob ${MASKED_OCCLUSION_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
 
 add_subdirectory(shaders)
 add_dependencies(Shaders ShaderMake)
-add_dependencies(RBDoom3BFG Shaders ${MASKED_OCCLUSION_LIBRARY})
+add_dependencies(RBDoom3BFG Shaders ${MASKED_OCCLUSION_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
 

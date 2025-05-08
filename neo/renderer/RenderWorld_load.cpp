@@ -131,7 +131,9 @@ idRenderModel* idRenderWorldLocal::ReadBinaryModel( idFile* fileIn )
 	fileIn->ReadString( name );
 	idRenderModel* model = renderModelManager->AllocModel();
 	model->InitEmpty( name );
-	if( model->LoadBinaryModel( fileIn, mapTimeStamp ) )
+
+	// RB: declSourceTimeStamp is not important here
+	if( model->LoadBinaryModel( fileIn, mapTimeStamp, 0 ) )
 	{
 		return model;
 	}
@@ -309,24 +311,6 @@ idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName
 	}
 
 	return model;
-}
-
-/*
-================
-idRenderWorldLocal::ReadBinaryShadowModel
-================
-*/
-idRenderModel* idRenderWorldLocal::ReadBinaryShadowModel( idFile* fileIn )
-{
-	idStrStatic< MAX_OSPATH > name;
-	fileIn->ReadString( name );
-	idRenderModel* model = renderModelManager->AllocModel();
-	model->InitEmpty( name );
-	if( model->LoadBinaryModel( fileIn, mapTimeStamp ) )
-	{
-		return model;
-	}
-	return NULL;
 }
 
 /*

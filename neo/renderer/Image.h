@@ -34,13 +34,12 @@ If you have questions concerning this license or the applicable additional terms
 
 enum textureType_t
 {
-	TT_DISABLED,
-	TT_2D,
-	TT_CUBIC,
-	// RB begin
-	TT_2D_ARRAY,
-	TT_2D_MULTISAMPLE,
-	// RB end
+	// RB: renamed to DDT_ to solve conflict with AMD compressonator
+	DTT_DISABLED,
+	DTT_2D,
+	DTT_CUBIC,
+	DTT_2D_ARRAY,		// new
+	DTT_2D_MULTISAMPLE,	// new
 };
 
 /*
@@ -97,7 +96,8 @@ enum textureFormat_t
 	FMT_Y16_X16,		// 32 bpp
 	FMT_RGB565,			// 16 bpp
 
-	// ^-- used in BFG edition, don't change above for .bimage compatibility
+	// ^-- used in BFG edition, don't change above for original .bimage compatibility
+
 	FMT_ETC1_RGB8_OES,	// 4 bpp
 	FMT_SHADOW_ARRAY,	// 32 bpp * 6
 	FMT_RG16F,			// 32 bpp
@@ -106,11 +106,20 @@ enum textureFormat_t
 	FMT_R32F,			// 32 bpp
 	FMT_R11G11B10F,		// 32 bpp
 
-	// ^-- used up until RBDOOM-3-BFG 1.3
-	FMT_R8,
-	FMT_DEPTH_STENCIL,  // 32 bpp
-	FMT_RGBA16S,		// 64 bpp
-	FMT_SRGB8,
+	// ^-- used up until RBDOOM-3-BFG 1.5 == BIMAGE_VERSION_BFG
+
+	FMT_BC6H,			// 8 bpp
+	FMT_BC7,			// 8 bpp
+
+	// ^-- introduced with RBDOOM-3-BFG 1.6 >= BIMAGE_VERSION_BC6
+
+	//------------------------
+	// Render targets only
+	//------------------------
+
+	FMT_R8F,			// 8 bpp, RT only
+	FMT_DEPTH_STENCIL,  // 32 bpp, RT only
+	FMT_RGBA16S,		// 64 bpp, RT only
 };
 
 int BitsForFormat( textureFormat_t format );
@@ -171,7 +180,7 @@ ID_INLINE idImageOpts::idImageOpts()
 	width			= 0;
 	height			= 0;
 	numLevels		= 0;
-	textureType		= TT_2D;
+	textureType		= DTT_2D;
 	gammaMips		= false;
 	readback		= false;
 	isRenderTarget	= false;
@@ -223,14 +232,14 @@ typedef enum
 	TD_SPECULAR_PBR_RMAO,	// may be compressed, and always zeros the alpha channel, linear RGB R = roughness, G = metal, B = ambient occlusion
 	TD_SPECULAR_PBR_RMAOD,	// may be compressed, alpha channel contains displacement map
 	TD_HIGHQUALITY_CUBE,	// motorsep - Uncompressed cubemap texture (RGB colorspace)
-	TD_LOWQUALITY_CUBE,		// motorsep - Compressed cubemap texture (RGB colorspace DXT5)
+	TD_LOWQUALITY_CUBE,		// motorsep - REMOVED
 	TD_SHADOW_ARRAY,		// 2D depth buffer array for shadow mapping
 	TD_RG16F,				// BRDF lookup table
 	TD_RGBA16F,				// RT = render target format only, not written to disk
 	TD_RGBA16S,				// RT only
 	TD_RGBA32F,				// RT only
-	TD_R11G11B10F,			// memory efficient HDR RGB format with only 32bpp
-	// ^-- used up until RBDOOM-3-BFG 1.3
+	TD_HDR_LIGHTPROBE,		// RB: 2D HDR octahedron probes stored as R11G11B10F in v1.3 - v1.5 and BC6 now
+	// ^-- used up until RBDOOM-3-BFG 1.5
 	TD_HDRI,				// RB: R11G11B10F or BC6
 	// RB end
 	TD_R32F,				// RT only
@@ -370,7 +379,7 @@ public:
 
 	bool		IsCompressed() const
 	{
-		return ( opts.format == FMT_DXT1 || opts.format == FMT_DXT5 );
+		return ( opts.format == FMT_DXT1 || opts.format == FMT_DXT5 || opts.format == FMT_BC6H || opts.format == FMT_BC7 );
 	}
 
 	textureUsage_t GetUsage() const
