@@ -285,7 +285,6 @@ public:
 	void					ReadBinaryAreaPortals( idFile* file );
 	void					ReadBinaryNodes( idFile* file );
 	idRenderModel* 			ReadBinaryModel( idFile* file );
-	idRenderModel* 			ReadBinaryShadowModel( idFile* file );
 
 	//--------------------------
 	// RenderWorld_portals.cpp

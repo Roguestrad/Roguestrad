@@ -3,7 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2013-2024 Robert Beckebans
+Copyright (C) 2013-2025 Robert Beckebans
 Copyright (C) 2014-2016 Kot in Action Creative Artel
 Copyright (C) 2016-2017 Dustin Land
 Copyright (C) 2022 Stephen Pridham
@@ -82,6 +82,10 @@ int BitsForFormat( textureFormat_t format )
 			return 32;
 		case FMT_R11G11B10F:
 			return 32;
+		case FMT_BC6H:
+			return 8;
+		case FMT_BC7:
+			return 8;
 		// RB end
 		case FMT_DEPTH:
 			return 32;
@@ -91,7 +95,7 @@ int BitsForFormat( textureFormat_t format )
 			return 16;
 		case FMT_Y16_X16:
 			return 32;
-		case FMT_R8:
+		case FMT_R8F:
 			return 4;
 		default:
 			assert( 0 );
@@ -109,6 +113,10 @@ int BlockSizeForFormat( const textureFormat_t& format )
 			return 8;
 		case FMT_DXT5:
 			return 16;
+		case FMT_BC6H:
+			return 16;
+		case FMT_BC7:
+			return 16;
 		default:
 			return 1;
 	}
@@ -122,7 +130,7 @@ Returns the row bytes for the given image.
 */
 int GetRowPitch( const textureFormat_t& format, int width )
 {
-	bool bc = ( format == FMT_DXT1 || format == FMT_DXT5 );
+	bool bc = ( format == FMT_DXT1 || format == FMT_DXT5 || format == FMT_BC6H || format == FMT_BC7 );
 
 	if( bc )
 	{
@@ -150,48 +158,6 @@ ID_INLINE void idImage::DeriveOpts()
 			case TD_COVERAGE:
 				opts.format = FMT_DXT1;
 				opts.colorFormat = CFM_GREEN_ALPHA;
-				break;
-
-			case TD_DEPTH:
-				opts.format = FMT_DEPTH;
-				break;
-
-			// SP begin
-			case TD_DEPTH_STENCIL:
-				opts.format = FMT_DEPTH_STENCIL;
-				break;
-			// SP end
-
-			case TD_SHADOW_ARRAY:
-				opts.format = FMT_SHADOW_ARRAY;
-				break;
-
-			case TD_RG16F:
-				opts.format = FMT_RG16F;
-				break;
-
-			case TD_RGBA16F:
-				opts.format = FMT_RGBA16F;
-				break;
-
-			case TD_RGBA16S:
-				opts.format = FMT_RGBA16S;
-				break;
-
-			case TD_RGBA32F:
-				opts.format = FMT_RGBA32F;
-				break;
-
-			case TD_R32F:
-				opts.format = FMT_R32F;
-				break;
-
-			case TD_R8F:
-				opts.format = FMT_R8;
-				break;
-
-			case TD_R11G11B10F:
-				opts.format = FMT_R11G11B10F;
 				break;
 
 			case TD_DIFFUSE:
@@ -241,7 +207,11 @@ ID_INLINE void idImage::DeriveOpts()
 				// RB: TODO check binary format version
 				// D3 BFG assets require RGB565 but it introduces color banding
 				// mods would prefer FMT_RGBA8
-				opts.format = FMT_RGB565; //FMT_RGBA8;
+#if defined(STANDALONE)
+				opts.format = FMT_RGBA8;
+#else
+				opts.format = FMT_RGB565;
+#endif
 				opts.gammaMips = true;
 				break;
 
@@ -258,22 +228,61 @@ ID_INLINE void idImage::DeriveOpts()
 				opts.format = FMT_RGBA8;
 				break;
 
+			case TD_HDR_LIGHTPROBE:
+				opts.format = FMT_BC6H;
+				break;
+
+			case TD_HDRI:
+				opts.format = FMT_BC6H;
+				//opts.numLevels = 1;
+				break;
+
 			// motorsep 05-17-2015; added this for uncompressed cubemap/skybox textures
 			case TD_HIGHQUALITY_CUBE:
 				opts.colorFormat = CFM_DEFAULT;
 				opts.format = FMT_RGBA8;
 				opts.gammaMips = true;
 				break;
-			case TD_LOWQUALITY_CUBE:
-				opts.colorFormat = CFM_DEFAULT; // CFM_YCOCG_DXT5;
-				opts.format = FMT_DXT5;
-				opts.gammaMips = true;
-				break;
-			// motorsep end
 
-			case TD_HDRI:
-				opts.format = FMT_R11G11B10F;
-				//opts.numLevels = 1;
+
+			//------------------------
+			// Render targets only
+			//------------------------
+
+			case TD_DEPTH:
+				opts.format = FMT_DEPTH;
+				break;
+
+			case TD_DEPTH_STENCIL:
+				opts.format = FMT_DEPTH_STENCIL;
+				break;
+
+			case TD_SHADOW_ARRAY:
+				opts.format = FMT_SHADOW_ARRAY;
+				break;
+
+			case TD_RG16F:
+				opts.format = FMT_RG16F;
+				break;
+
+			case TD_RGBA16F:
+				opts.format = FMT_RGBA16F;
+				break;
+
+			case TD_RGBA16S:
+				opts.format = FMT_RGBA16S;
+				break;
+
+			case TD_RGBA32F:
+				opts.format = FMT_RGBA32F;
+				break;
+
+			case TD_R32F:
+				opts.format = FMT_R32F;
+				break;
+
+			case TD_R8F:
+				opts.format = FMT_R8F;
 				break;
 
 			default:
@@ -298,7 +307,7 @@ ID_INLINE void idImage::DeriveOpts()
 			{
 				temp_width >>= 1;
 				temp_height >>= 1;
-				if( ( opts.format == FMT_DXT1 || opts.format == FMT_DXT5 || opts.format == FMT_ETC1_RGB8_OES ) &&
+				if( ( opts.format == FMT_DXT1 || opts.format == FMT_DXT5 || opts.format == FMT_BC6H || opts.format == FMT_ETC1_RGB8_OES ) &&
 						( ( temp_width & 0x3 ) != 0 || ( temp_height & 0x3 ) != 0 ) )
 				{
 					break;
@@ -337,7 +346,7 @@ void idImage::GenerateImage( const byte* pic, int width, int height, textureFilt
 	usage = usageParm;
 	cubeFiles = _cubeFiles;
 
-	opts.textureType = ( sampleCount > 1 ) ? TT_2D_MULTISAMPLE : TT_2D;
+	opts.textureType = ( sampleCount > 1 ) ? DTT_2D_MULTISAMPLE : DTT_2D;
 	opts.width = width;
 	opts.height = height;
 	opts.numLevels = 0;
@@ -354,7 +363,7 @@ void idImage::GenerateImage( const byte* pic, int width, int height, textureFilt
 	DeriveOpts();
 
 	// RB: allow pic == NULL for internal framebuffer images
-	if( pic == NULL || opts.textureType == TT_2D_MULTISAMPLE )
+	if( pic == NULL || opts.textureType == DTT_2D_MULTISAMPLE )
 	{
 		AllocImage();
 		isLoaded = true;
@@ -425,7 +434,7 @@ void idImage::GenerateCubeImage( const byte* pic[6], int size, textureFilter_t f
 	usage = usageParm;
 	cubeFiles = CF_NATIVE;
 
-	opts.textureType = TT_CUBIC;
+	opts.textureType = DTT_CUBIC;
 	opts.width = size;
 	opts.height = size;
 	opts.numLevels = 0;
@@ -491,7 +500,7 @@ void idImage::GenerateShadowArray( int width, int height, textureFilter_t filter
 	cubeFiles = CF_2D_ARRAY;
 	byte* pic = nullptr;
 
-	opts.textureType = TT_2D_ARRAY;
+	opts.textureType = DTT_2D_ARRAY;
 	opts.width = width;
 	opts.height = height;
 	opts.numLevels = 0;
@@ -565,7 +574,7 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 		sourceFileTime = FILE_NOT_FOUND_TIMESTAMP;
 		if( cubeFiles != CF_2D )
 		{
-			opts.textureType = TT_CUBIC;
+			opts.textureType = DTT_CUBIC;
 			repeat = TR_CLAMP;
 		}
 	}
@@ -574,17 +583,17 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 		// RB: added CF_2D_ARRAY
 		if( cubeFiles == CF_2D_ARRAY )
 		{
-			opts.textureType = TT_2D_ARRAY;
+			opts.textureType = DTT_2D_ARRAY;
 		}
 		else if( cubeFiles == CF_NATIVE || cubeFiles == CF_CAMERA || cubeFiles == CF_QUAKE1 || cubeFiles == CF_SINGLE || cubeFiles == CF_PANORAMA )
 		{
-			opts.textureType = TT_CUBIC;
+			opts.textureType = DTT_CUBIC;
 			repeat = TR_CLAMP;
 			R_LoadCubeImages( GetName(), cubeFiles, NULL, NULL, &sourceFileTime, cubeMapSize );
 		}
 		else
 		{
-			opts.textureType = TT_2D;
+			opts.textureType = DTT_2D;
 			R_LoadImageProgram( GetName(), NULL, NULL, NULL, &sourceFileTime, &usage );
 		}
 	}
@@ -665,12 +674,9 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 
 	if( ( fileSystem->InProductionMode() && binaryFileTime != FILE_NOT_FOUND_TIMESTAMP ) || ( ( binaryFileTime != FILE_NOT_FOUND_TIMESTAMP )
 			&& ( header.colorFormat == opts.colorFormat )
-#if ( defined( __APPLE__ ) && defined( USE_VULKAN ) ) || defined( USE_NVRHI )
-			// SRS - Handle case when image read is cached and RGB565 format conversion is already done
-			&& ( header.format == opts.format || ( header.format == FMT_RGB565 && opts.format == FMT_RGBA8 ) )
-#else
-			&& ( header.format == opts.format )
-#endif
+			// SRS: handle case when image read is cached and RGB565 format conversion is already done
+			// RB: allow R11G11B10 instead of BC6
+			&& ( header.format == opts.format || ( header.format == FMT_RGBA8 && opts.format == FMT_RGB565 ) || ( header.format == FMT_R11G11B10F && opts.format == FMT_BC6H ) )
 			&& ( header.textureType == opts.textureType )
 																							) )
 	{
@@ -678,18 +684,8 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 		opts.height = header.height;
 		opts.numLevels = header.numLevels;
 		opts.colorFormat = ( textureColor_t )header.colorFormat;
-#if ( defined( __APPLE__ ) && defined( USE_VULKAN ) ) || defined( USE_NVRHI )
-		// SRS - Set in-memory format to FMT_RGBA8 for converted FMT_RGB565 image
-		if( header.format == FMT_RGB565 )
-		{
-			opts.format = FMT_RGBA8;
-		}
-		else
-#endif
-		{
-			opts.format = ( textureFormat_t )header.format;
-		}
-
+		opts.format = ( textureFormat_t )header.format;
+		opts.format = ( textureFormat_t )header.format;
 		opts.textureType = ( textureType_t )header.textureType;
 
 		if( cvarSystem->GetCVarBool( "fs_buildresources" ) )
@@ -733,7 +729,7 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 
 			repeat = TR_CLAMP;
 
-			opts.textureType = TT_CUBIC;
+			opts.textureType = DTT_CUBIC;
 			opts.width = size;
 			opts.height = size;
 			opts.numLevels = 0;
@@ -910,7 +906,10 @@ void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandL
 
 void idImage::DeferredLoadImage()
 {
-	globalImages->imagesToLoad.AddUnique( this );
+	if( !globalImages->cacheImages )
+	{
+		globalImages->imagesToLoad.AddUnique( this );
+	}
 }
 
 void idImage::DeferredPurgeImage()
@@ -940,7 +939,7 @@ void idImage::UploadScratch( const byte* data, int cols, int rows, nvrhi::IComma
 			pic[i] = data + cols * rows * 4 * i;
 		}
 
-		if( opts.textureType != TT_CUBIC || usage != TD_LOOKUP_TABLE_RGBA )
+		if( opts.textureType != DTT_CUBIC || usage != TD_LOOKUP_TABLE_RGBA )
 		{
 			GenerateCubeImage( pic, cols, TF_LINEAR, TD_LOOKUP_TABLE_RGBA, commandList );
 			return;
@@ -998,7 +997,7 @@ void idImage::UploadScratch( const byte* data, int cols, int rows, nvrhi::IComma
 			commandList->commitBarriers();
 		}
 #else
-		if( opts.textureType != TT_2D || usage != TD_LOOKUP_TABLE_RGBA )
+		if( opts.textureType != DTT_2D || usage != TD_LOOKUP_TABLE_RGBA )
 		{
 			GenerateImage( data, cols, rows, TF_LINEAR, TR_REPEAT, TD_LOOKUP_TABLE_RGBA, commandList );
 			return;
@@ -1065,18 +1064,18 @@ void idImage::Print() const
 
 	switch( opts.textureType )
 	{
-		case TT_2D:
+		case DTT_2D:
 			common->Printf( "      " );
 			break;
-		case TT_CUBIC:
+		case DTT_CUBIC:
 			common->Printf( "C     " );
 			break;
 
-		case TT_2D_ARRAY:
+		case DTT_2D_ARRAY:
 			common->Printf( "2D-A  " );
 			break;
 
-		case TT_2D_MULTISAMPLE:
+		case DTT_2D_MULTISAMPLE:
 			common->Printf( "2D-MS " );
 			break;
 
@@ -1107,14 +1106,15 @@ void idImage::Print() const
 			NAME_FORMAT( RGBA16F );
 			NAME_FORMAT( RGBA32F );
 			NAME_FORMAT( R32F );
-			NAME_FORMAT( R8 );
+			NAME_FORMAT( R8F );
 			NAME_FORMAT( R11G11B10F );
+			NAME_FORMAT( BC6H );
+			NAME_FORMAT( BC7 );
 			// RB end
 			NAME_FORMAT( DEPTH );
 			NAME_FORMAT( DEPTH_STENCIL );
 			NAME_FORMAT( X16 );
 			NAME_FORMAT( Y16_X16 );
-			NAME_FORMAT( SRGB8 );
 		default:
 			common->Printf( "<%3i>", opts.format );
 			break;

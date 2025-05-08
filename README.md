@@ -420,10 +420,12 @@ Existing repositories can be updated manually:
 3. Download and install the latest Vulkan SDK from LunarG: https://www.lunarg.com/vulkan-sdk/
 You can skip this step if you compile with DX12 only by adding -DUSE_VULKAN=OFF to the CMake options.
 
-4. Generate the VS2022 projects using CMake by doubleclicking a matching configuration .bat file in the `DoomCode/neo/` folder.
+4. Download ISPC from https://github.com/ispc/ispc/releases and unpack the binary to `DoomCode/tools/ispc/bin/ispc.exe`
+
+5. Generate the VS2022 projects using CMake by doubleclicking a matching configuration .bat file in the `DoomCode/neo/` folder.
 Recommended in this case is `cmake-vs2022-win64-no-ffmpeg.bat`
 
-5. Use the VS2022 solution to compile what you need:
+6. Use the VS2022 solution to compile what you need:
 	`DoomCode/build/RBDoom3BFG.sln`
 	
 
@@ -448,18 +450,19 @@ Recommended in this case is `cmake-vs2022-win64-no-ffmpeg.bat`
 	On Debian or Ubuntu:
 
 		> sudo apt install cmake libsdl2-dev libopenal-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libvulkan-dev libncurses-dev
+		> sudo snap install ispc
 	
 	On Fedora
 		
-		> sudo dnf install cmake clang SDL2-devel openal-devel compat-ffmpeg4-devel ncurses-devel vulkan-devel
+		> sudo dnf install cmake clang ispc SDL2-devel openal-devel compat-ffmpeg4-devel ncurses-devel vulkan-devel
 	
 	On ArchLinux 
 	
-		> sudo pacman -S sdl2 cmake openal ffmpeg
+		> sudo pacman -S sdl2 cmake ispc openal ffmpeg
 
 	On openSUSE
 	
-		> sudo zypper install cmake libSDL2-devel openal-soft-devel
+		> sudo zypper install cmake ispc libSDL2-devel openal-soft-devel
 
 	You don't need FFmpeg to be installed. You can turn it off by adding -DFFMPEG=OFF and -DBINKDEC=ON to the CMake options. It is enabled by default because the bundled libbinkdec is slow during development if compiled for Debug mode.
 
@@ -495,13 +498,13 @@ Recommended in this case is `cmake-vs2022-win64-no-ffmpeg.bat`
 
 2.	You need the following dependencies in order to compile RBDoom3BFG with all features:
 
-		> brew install cmake sdl2 openal-soft ffmpeg (for single arch libraries only)
+		> brew install cmake ispc sdl2 openal-soft ffmpeg (for single arch libraries only)
 		or
-		> sudo port install cmake libsdl2 +universal openal-soft +universal (for universal arch libraries)
+		> sudo port install cmake ispc libsdl2 +universal openal-soft +universal (for universal arch libraries)
 		
 	You don't need FFmpeg to be installed. You can turn it off by adding -DFFMPEG=OFF and -DBINKDEC=ON to the CMake options. For debug builds FFmpeg is enabled by default because the bundled libbinkdec is slow during development if compiled for Debug mode.  For release, retail and universal builds FFmpeg is disabled and libbinkdec is enabled by default.
 	
-	The Vulkan SDK 1.3.231.1 or later must be installed and can be obtained from https://vulkan.lunarg.com/sdk/home#mac
+	The Vulkan SDK 1.3.275.0 or later must be installed and can be obtained from https://vulkan.lunarg.com/sdk/home#mac
 
 3. Generate the Makefiles using CMake:
 
@@ -628,8 +631,8 @@ Name                              | Description
 listCvars `[new]`                      | Option that lists all cvars that have been added to this sourceport
 dmap mapfile                           | Command: Compiles a .map to its corresponding BSP .proc, Collision .cm files and Area Awareness System (AI navigation) .aas files. Just type dmap to list all options
 dmap `[glview]` mapfile                | DMap option that exports the BSP areas and portals to .obj for debugging purposes
-bakeEnvironmentProbes                  | Command after loading a map. Captures all env_probe entities and stores them to disc
-bakeLightGrids [`<switches>`...]       | `<Switches>` limit[num] : max probes per BSP area (default 16384) bounce[num] : number of bounces or number of light reuse (default 1) grid( xdim ydim zdim ) : light grid size steps into each direction (default 64 64 128)
+bakeEnvironmentProbes `mt[num]`        | Command after loading a map. Captures all env_probe entities and stores them to disc
+bakeLightGrids [`<switches>`...]       | `<Switches>` limit[num] : max probes per BSP area (default 16384) bounce[num] : number of bounces or number of light reuse (default 1) grid( xdim ydim zdim ) : light grid size steps into each direction (default 64 64 128) mt[num] : number of threads used for baking (default max logical cores)
 exportScriptEvents                     | Command: Generates a new script/doom_events.script that reflects all registered class events in the idClass C++ system. The gamecode still needs to be extended to add the original comments of the events
 exportFGD `[nomodels]`                 | Command: Exports all entity defs to base/_tb/*.fgd for usage in convertMapToValve220 `<map>`           | 
 exportImagesToTrenchBroom              | Command: Decompresses and saves all TB relevant .bimage images to base/_tb/*.png files

@@ -1047,15 +1047,6 @@ void R_LoadImage( const char* cname, byte** pic, int* width, int* height, ID_TIM
 			name = origName;
 		}
 	}
-#if 0
-	else if( usage && *usage == TD_R11G11B10F )
-	{
-		name.StripFileExtension();
-
-		ext = "exr";
-		name.DefaultFileExtension( ".exr" );
-	}
-#endif
 
 retry:
 

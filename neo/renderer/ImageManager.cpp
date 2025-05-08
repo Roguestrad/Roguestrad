@@ -554,7 +554,7 @@ idImage* idImageManager::ScratchImage( const char* _name, idImageOpts* imgOpts, 
 
 	// clamp is the only repeat mode that makes sense for cube maps, but
 	// some platforms let them stay in repeat mode and get border seam issues
-	if( imgOpts->textureType == TT_CUBIC && repeat != TR_CLAMP )
+	if( imgOpts->textureType == DTT_CUBIC && repeat != TR_CLAMP )
 	{
 		repeat = TR_CLAMP;
 	}
@@ -1135,16 +1135,16 @@ void idImageManager::CacheGlobalIlluminationData_f( const idCmdArgs& args )
 		{
 			if( idStr::FindText( filename, "_spec" ) != -1 )
 			{
-				globalImages->ImageFromFile( filename, TF_DEFAULT, TR_CLAMP, TD_R11G11B10F, CF_2D_PACKED_MIPCHAIN );
+				globalImages->ImageFromFile( filename, TF_DEFAULT, TR_CLAMP, TD_HDR_LIGHTPROBE, CF_2D_PACKED_MIPCHAIN );
 			}
 			else
 			{
-				globalImages->ImageFromFile( filename, TF_LINEAR, TR_CLAMP, TD_R11G11B10F, CF_2D_PACKED_MIPCHAIN );
+				globalImages->ImageFromFile( filename, TF_LINEAR, TR_CLAMP, TD_HDR_LIGHTPROBE, CF_2D_PACKED_MIPCHAIN );
 			}
 		}
 		else if( idStr::FindText( filename, "lightgrid" ) != -1 )
 		{
-			globalImages->ImageFromFile( filename, TF_LINEAR, TR_CLAMP, TD_R11G11B10F, CF_2D );
+			globalImages->ImageFromFile( filename, TF_LINEAR, TR_CLAMP, TD_HDR_LIGHTPROBE, CF_2D );
 		}
 
 		progressBar.Increment( true );
