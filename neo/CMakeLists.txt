@@ -1486,7 +1486,7 @@ if(MSVC)
 			COMMENT "Generating neo/d3xp/gamesys/GameTypeInfo.h"
 			)
 	
-	target_link_libraries(DoomIcedHellfire
+	target_link_libraries(${APP_NAME}
 		idlib
 		${DirectX_LIBRARIES}
 		dbghelp
@@ -1708,7 +1708,7 @@ else()
 
 	# call typeinfogen to generate neo/d3xp/gamesys/GameTypeInfo.h
 	add_custom_command(
-			TARGET DoomIcedHellfire
+			TARGET ${APP_NAME}
 			PRE_BUILD
 			DEPENDS typeinfogen
 			COMMAND typeinfogen
@@ -1772,7 +1772,7 @@ if(CMAKE_GENERATOR MATCHES "^Visual Studio .*" AND MSVC)
 			#message (STATUS "No [DBG_CMD_]${entry} entry set")
 		endif()
 	endforeach()
-	set_property(TARGET DoomIcedHellfire PROPERTY VS_DEBUGGER_COMMAND_ARGUMENTS ${finalArgs})
+	set_property(TARGET ${APP_NAME} PROPERTY VS_DEBUGGER_COMMAND_ARGUMENTS ${finalArgs})
 endif()
 
 # needs to come after nvrhi_d3d11 etc. for link order
