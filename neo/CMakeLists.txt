@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 if(NOT DEFINED APP_NAME)
 	# RB: This sets the name of the .exe and is the only line needed for a different mod executable.
 	# If you want to make a different game then you also need to change neo/framework/Licensee.h
-    set(APP_NAME RBDoom3BFG)
+    set(APP_NAME RBDoomVR)
 endif()
 project(${APP_NAME})
 
@@ -1456,7 +1456,7 @@ if(MSVC)
 	add_executable(${APP_NAME} WIN32 ${RBDOOM3_INCLUDES} ${RBDOOM3_SOURCES})
 	add_dependencies(${APP_NAME} idlib)
 	# copy OpenVR dlls
-	add_custom_command(TARGET RBDoom3BFG
+	add_custom_command(TARGET ${APP_NAME}
 				POST_BUILD
 				COMMAND ${CMAKE_COMMAND} -E copy
 				${CMAKE_CURRENT_SOURCE_DIR}/extern/openvr/bin/win64/openvr_api.dll ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR})
