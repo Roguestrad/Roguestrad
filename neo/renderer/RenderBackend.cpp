@@ -503,7 +503,7 @@ void idRenderBackend::PrepareStageTexturing( const shaderStage_t* pStage,  const
 
 			GL_SelectTexture( 0 );
 
-			if( r_useSSR.GetBool() && R_UseHiZ() && !viewDef->globalProbeBounds.IsCleared() )
+			if( r_useSSR.GetBool() && R_UseHiZ() ) //&& !viewDef->globalProbeBounds.IsCleared() )
 			{
 				if( surf->jointCache )
 				{
