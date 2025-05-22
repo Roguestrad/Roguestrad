@@ -2068,7 +2068,6 @@ void idRenderBackend::GL_EndFrame()
 	uint32_t swapIndex = deviceManager->GetCurrentBackBufferIndex();
 
 	OPTICK_EVENT( "EndFrame" );
-	//OPTICK_TAG( "Firing to swapIndex", swapIndex );
 
 	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
 	{
@@ -2088,6 +2087,7 @@ void idRenderBackend::GL_EndFrame()
 	if( vrSystem->IsActive() )
 	{
 		vrSystem->SubmitStereoRenders( commandList, globalImages->stereoRenderImages[0], globalImages->stereoRenderImages[1] );
+		vrSystem->PreSwap();
 	}
 
 	// update jitter for perspective matrix
