@@ -947,7 +947,12 @@ void VRSystem_Valve::PostSwap()
 	//vr::VRCompositor()->PostPresentHandoff();
 
 	vr::TrackedDevicePose_t rTrackedDevicePose[ vr::k_unMaxTrackedDeviceCount ];
-	vr::VRCompositor()->WaitGetPoses( rTrackedDevicePose, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
+
+	{
+		OPTICK_CATEGORY( "VR_WaitGetPoses", Optick::Category::Wait );
+
+		vr::VRCompositor()->WaitGetPoses( rTrackedDevicePose, vr::k_unMaxTrackedDeviceCount, NULL, 0 );
+	}
 
 	UpdateControllers();
 

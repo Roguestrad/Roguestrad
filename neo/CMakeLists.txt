@@ -20,7 +20,7 @@ option(STANDALONE
 		"Skip DOOM-3-BFG base/ folder and use content/ instead" OFF)
 
 option(DOOM_CLASSIC
-		"Build with Doom 1 & 2" ON)
+		"Build with Doom 1 & 2" OFF)
 
 option(FORCE_COLOR_OUTPUT
 		"Always produce ANSI-colored output (GNU/Clang only)." OFF)
