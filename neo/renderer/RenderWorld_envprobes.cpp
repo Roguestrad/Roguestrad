@@ -3,7 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2020-2021 Robert Beckebans
+Copyright (C) 2020-2025 Robert Beckebans
 Copyright (C) 2022 Stephen Pridham
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
@@ -938,6 +938,40 @@ CONSOLE_COMMAND_SHIP( bakeEnvironmentProbes, "Bake environment probes", NULL )
 	int sysHeight = renderSystem->GetHeight();
 
 	bool useThreads = true;
+	int numThreads = JOBLIST_PARALLELISM_MAX_CORES;
+
+	bool helpRequested = false;
+	idStr option;
+
+	for( int i = 1; i < args.Argc(); i++ )
+	{
+		option = args.Argv( i );
+		option.StripLeading( '-' );
+
+		if( option.IcmpPrefix( "mt" ) == 0 )
+		{
+			option.StripLeading( "mt" );
+			int threads = atoi( option );
+			if( threads > 0 )
+			{
+				int maxCores = parallelJobManager->GetLogicalCpuCores();
+				numThreads = idMath::ClampInt( 1, maxCores, threads );
+			}
+		}
+		else if( option.Icmp( "h" ) == 0 || option.Icmp( "help" ) == 0 )
+		{
+			helpRequested = true;
+			break;
+		}
+	}
+
+	if( helpRequested )
+	{
+		idLib::Printf( "USAGE: bakeEnvironmentProbes [<switches>...]\n\n" );
+		idLib::Printf( "<Switches>\n" );
+		idLib::Printf( " mt[num] : number of threads used for baking (default max logical cores)\n" );
+		return;
+	}
 
 	baseName = tr.primaryWorld->mapName;
 	baseName.StripFileExtension();
@@ -1109,7 +1143,7 @@ CONSOLE_COMMAND_SHIP( bakeEnvironmentProbes, "Bake environment probes", NULL )
 		common->UpdateScreen( false );
 
 		//tr.envprobeJobList->Submit();
-		tr.envprobeJobList->Submit( NULL, JOBLIST_PARALLELISM_MAX_CORES );
+		tr.envprobeJobList->Submit( NULL, numThreads );
 		tr.envprobeJobList->Wait();
 	}
 
@@ -1135,11 +1169,11 @@ CONSOLE_COMMAND_SHIP( bakeEnvironmentProbes, "Bake environment probes", NULL )
 		// generate .bimage file
 		if( job->outHeight == RADIANCE_OCTAHEDRON_SIZE )
 		{
-			globalImages->ImageFromFile( job->filename, TF_DEFAULT, TR_CLAMP, TD_R11G11B10F, CF_2D_PACKED_MIPCHAIN );
+			globalImages->ImageFromFile( job->filename, TF_DEFAULT, TR_CLAMP, TD_HDR_LIGHTPROBE, CF_2D_PACKED_MIPCHAIN );
 		}
 		else
 		{
-			globalImages->ImageFromFile( job->filename, TF_LINEAR, TR_CLAMP, TD_R11G11B10F, CF_2D_PACKED_MIPCHAIN );
+			globalImages->ImageFromFile( job->filename, TF_LINEAR, TR_CLAMP, TD_HDR_LIGHTPROBE, CF_2D_PACKED_MIPCHAIN );
 		}
 
 		Mem_Free( job->outBuffer );
@@ -1168,6 +1202,8 @@ CONSOLE_COMMAND_SHIP( bakeEnvironmentProbes, "Bake environment probes", NULL )
 		def->irradianceImage->Reload( true, commandList );
 		def->radianceImage->Reload( true, commandList );
 	}
+
+	globalImages->LoadDeferredImages( commandList );
 
 	commandList->close();
 	deviceManager->GetDevice()->executeCommandList( commandList );

@@ -34,9 +34,8 @@ This file contains the following sections:
 10. [Compiling on macOS](#compile_macos)
 11. [Installation](#installation)
 12. [New Console Variables](#console)
-13. [Known Issues](#issues)
-14. [Bug Reports](#reports)
-15. [FAQ](#faq)
+13. [Bug Reports](#reports)
+14. [FAQ](#faq)
 	
 
 
@@ -46,7 +45,7 @@ This file contains the following sections:
 
 `RBDOOM-3-BFG is a modernization effort of DOOM-3-BFG.`
 
-RBDOOM-3-BFG is based on DOOM-3-BFG and the goal of this port is to bring DOOM-3-BFG up to latest technology in 2025 making it closer to Doom 2016 while still remaining a DOOM 3 port regarding the gameplay. 
+RBDOOM-3-BFG is based on DOOM-3-BFG and the goal of this port is to bring DOOM-3-BFG up to latest technology in 2025 making it closer to Doom 2016 while still remaining a DOOM 3 port regarding the gameplay.
 
 I started this project in 2012 and focused on making this code being future proof so other cool projects can build interesting things on top of it without the need to fix a lot of stuff first. Over 40 people all over the world contributed cool patches. Some results are:
 
@@ -363,7 +362,6 @@ RBDOOM-3-BFG/base/                 | Doom 3 BFG media directory ( models, textur
 RBDOOM-3-BFG/neo/                  | RBDOOM-3-BFG source code ( renderer, game code for multiple games, OS layer, etc. )
 RBDOOM-3-BFG/build/                | Build folder for CMake
 RBDOOM-3-BFG/tools/trenchbroom     | TrenchBroomBFG level editor customized for DOOM 3 and RBDOOM-3-BFG
-RBDOOM-3-BFG/tools/darkradiant     | DarkRadiant level editor with an additional config for RBDOOM-3-BFG
 RBDOOM-3-BFG/tools/bfgpakexlorer   | BFG Resource File Manager by George Kalampokis aka Mr.GK
 RBDOOM-3-BFG/tools/optick-profiler | Optick is a super-lightweight C++ profiler for Games
 RBDOOM-3-BFG/tools/runtimedeps     | Visual Studio C++ Redistributables if you have problems to start the engine or the tools
@@ -420,10 +418,12 @@ Existing repositories can be updated manually:
 3. Download and install the latest Vulkan SDK from LunarG: https://www.lunarg.com/vulkan-sdk/
 You can skip this step if you compile with DX12 only by adding -DUSE_VULKAN=OFF to the CMake options.
 
-4. Generate the VS2022 projects using CMake by doubleclicking a matching configuration .bat file in the `DoomCode/neo/` folder.
+4. Download ISPC from https://github.com/ispc/ispc/releases and unpack the binary to `DoomCode/tools/ispc/bin/ispc.exe`
+
+5. Generate the VS2022 projects using CMake by doubleclicking a matching configuration .bat file in the `DoomCode/neo/` folder.
 Recommended in this case is `cmake-vs2022-win64-no-ffmpeg.bat`
 
-5. Use the VS2022 solution to compile what you need:
+6. Use the VS2022 solution to compile what you need:
 	`DoomCode/build/RBDoom3BFG.sln`
 	
 
@@ -431,7 +431,7 @@ Recommended in this case is `cmake-vs2022-win64-no-ffmpeg.bat`
 
 6. Download ffmpeg-4.2.2-win64-shared.zip from https://github.com/advancedfx/ffmpeg.zeranoe.com-builds-mirror/releases
 
-7. Extract the FFmpeg DLLs to your current build directory under RBDOOM-3-BFG/build/
+7. Extract the FFmpeg DLLs to the `DoomCode/` main folder
 
 
 ---
@@ -448,18 +448,19 @@ Recommended in this case is `cmake-vs2022-win64-no-ffmpeg.bat`
 	On Debian or Ubuntu:
 
 		> sudo apt install cmake libsdl2-dev libopenal-dev libavcodec-dev libavformat-dev libavutil-dev libswscale-dev libvulkan-dev libncurses-dev
+		> sudo snap install ispc
 	
 	On Fedora
 		
-		> sudo dnf install cmake clang SDL2-devel openal-devel compat-ffmpeg4-devel ncurses-devel vulkan-devel
+		> sudo dnf install cmake clang ispc SDL2-devel openal-devel compat-ffmpeg4-devel ncurses-devel vulkan-devel
 	
 	On ArchLinux 
 	
-		> sudo pacman -S sdl2 cmake openal ffmpeg
+		> sudo pacman -S sdl2 cmake ispc openal ffmpeg
 
 	On openSUSE
 	
-		> sudo zypper install cmake libSDL2-devel openal-soft-devel
+		> sudo zypper install cmake ispc libSDL2-devel openal-soft-devel
 
 	You don't need FFmpeg to be installed. You can turn it off by adding -DFFMPEG=OFF and -DBINKDEC=ON to the CMake options. It is enabled by default because the bundled libbinkdec is slow during development if compiled for Debug mode.
 
@@ -495,13 +496,13 @@ Recommended in this case is `cmake-vs2022-win64-no-ffmpeg.bat`
 
 2.	You need the following dependencies in order to compile RBDoom3BFG with all features:
 
-		> brew install cmake sdl2 openal-soft ffmpeg (for single arch libraries only)
+		> brew install cmake ispc sdl2 openal-soft ffmpeg (for single arch libraries only)
 		or
-		> sudo port install cmake libsdl2 +universal openal-soft +universal (for universal arch libraries)
+		> sudo port install cmake ispc libsdl2 +universal openal-soft +universal (for universal arch libraries)
 		
 	You don't need FFmpeg to be installed. You can turn it off by adding -DFFMPEG=OFF and -DBINKDEC=ON to the CMake options. For debug builds FFmpeg is enabled by default because the bundled libbinkdec is slow during development if compiled for Debug mode.  For release, retail and universal builds FFmpeg is disabled and libbinkdec is enabled by default.
 	
-	The Vulkan SDK 1.3.231.1 or later must be installed and can be obtained from https://vulkan.lunarg.com/sdk/home#mac
+	The Vulkan SDK 1.3.275.0 or later must be installed and can be obtained from https://vulkan.lunarg.com/sdk/home#mac
 
 3. Generate the Makefiles using CMake:
 
@@ -539,19 +540,11 @@ Recommended in this case is `cmake-vs2022-win64-no-ffmpeg.bat`
 
 <a href="https://www.moddb.com/mods/rbdoom-3-bfg" title="View RBDOOM-3-BFG on Mod DB" target="_blank"><img src="https://button.moddb.com/popularity/medium/mods/49231.png" alt="RBDOOM-3-BFG" /></a>
 
-There are usually 2 kinds of RBDOOM-3-BFG packages. The Full and the Lite version.
-With the Full version you have the Win64 binaries, the baked environment probes and lightgrid data for all BFG single player maps like RBDOOM-3-BFG-1.3.0.42-`full`-win64-20211030-git-b4e0366.7z (6.18 GB download). 
-
-The Lite version has the `lite` in the filename like RBDOOM-3-BFG-1.5.1.2-lite-win64-20230523-git-39ae120.7z.
-Those packages don't ship with the precomputed light data but have everything else needed to run the mod and the tools like the custom TrenchBroom build.
-
 2. Make a new `DoomBFG` folder
 
 3. Copy `base/` from your Steam Doom 3 BFG folder into `DoomBFG`
 
-4. Download the RBDOOM-3-BFG 1.3.0 full package from the RBDOOM-3-BFG ModDB page and extract it over `DoomBFG`
-
-5. Do the same with the newest version version which acts like a patch
+4. Extract it over `DoomBFG`
 
 This should also work fine with your GOG installation.
 
@@ -628,8 +621,8 @@ Name                              | Description
 listCvars `[new]`                      | Option that lists all cvars that have been added to this sourceport
 dmap mapfile                           | Command: Compiles a .map to its corresponding BSP .proc, Collision .cm files and Area Awareness System (AI navigation) .aas files. Just type dmap to list all options
 dmap `[glview]` mapfile                | DMap option that exports the BSP areas and portals to .obj for debugging purposes
-bakeEnvironmentProbes                  | Command after loading a map. Captures all env_probe entities and stores them to disc
-bakeLightGrids [`<switches>`...]       | `<Switches>` limit[num] : max probes per BSP area (default 16384) bounce[num] : number of bounces or number of light reuse (default 1) grid( xdim ydim zdim ) : light grid size steps into each direction (default 64 64 128)
+bakeEnvironmentProbes `mt[num]`        | Command after loading a map. Captures all env_probe entities and stores them to disc
+bakeLightGrids [`<switches>`...]       | `<Switches>` limit[num] : max probes per BSP area (default 16384) bounce[num] : number of bounces or number of light reuse (default 1) grid( xdim ydim zdim ) : light grid size steps into each direction (default 64 64 128) mt[num] : number of threads used for baking (default max logical cores)
 exportScriptEvents                     | Command: Generates a new script/doom_events.script that reflects all registered class events in the idClass C++ system. The gamecode still needs to be extended to add the original comments of the events
 exportFGD `[nomodels]`                 | Command: Exports all entity defs to base/_tb/*.fgd for usage in convertMapToValve220 `<map>`           | 
 exportImagesToTrenchBroom              | Command: Decompresses and saves all TB relevant .bimage images to base/_tb/*.png files
@@ -642,14 +635,6 @@ swf_show                               | Cvar: Draws the bounding box of instanc
 makeMaterials `<folder>`               | Command: Make a .mtr file based on PBR naming conventions
 makeZooMapForModels                    | Command: Makes a Source engine style zoo map with mapobject/models like .blwo, .base et cetera and saves it to maps/zoomaps/zoo_models.map. This helps mappers to get a good overview of the trememdous amount of custom models available in Doom 3 BFG by sorting them into categories and arranging them in 3D. It also filters models so that only modular models are picked that can be reused in new maps.
 
-
----
-# Known Issues <a name="issues"></a>
-
-* Some lights cause shadow acne with shadow mapping or look off ("Peter panning" problem).
-* Some shadows in the original campaigns might almost disappear due to bad light properties like light center near outside of the bounding box. This has been partially fixed by patching those light entities.
-
----
 # Bug Reports <a name="reports"></a>
 
 The best way for telling about a bug is by submitting a bug report at our GitHub bug tracker page:
@@ -693,5 +678,5 @@ https://discord.gg/Q3E9rUFnnP
 **A**: Apart from the Git log diffs, you can look for `// RB` in the source code. Many other contributors commented their changes in the same way. I enforced the usage of Astyle in this project which also makes it alot easier to compare it against other ports of DOOM-3-BFG. Simply format the other ports with Astyle like I do in neo/astyle-code.bat and you can compare the code easily in WinMerge or KDiff3.
 
 **Q**: How do I open the .resource files?
-**A**: If you install this package you can start the engine, open the console and run exec extract_resources.cfg. This will create a basedev/ folder next to your base/ folder with the indidividual files like .mtr materials or .def entity declarations.
+**A**: If you install this package you can start the engine, open the console and run exec extract_resources.cfg. This will create a baseref/ folder next to your base/ folder with the indidividual files like .mtr materials or .def entity declarations.
 
