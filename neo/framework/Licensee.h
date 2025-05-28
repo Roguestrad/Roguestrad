@@ -44,7 +44,7 @@ If you have questions concerning this license or the applicable additional terms
 // RB end
 
 // jmarshall
-#define ENGINE_BRANCH					"Basic VR"
+#define ENGINE_BRANCH					"OpenVR 4"
 // jmarshall end
 
 #ifdef STANDALONE

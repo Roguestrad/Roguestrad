@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2016 Leyland Needham
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -1077,9 +1078,10 @@ idUsercmdGenLocal::VRControlMove
 */
 idCVar vr_turnCrouch( "vr_turnCrouch", "1", CVAR_BOOL | CVAR_ARCHIVE | CVAR_NEW, "press down to crouch from the turn axis mode." );
 idCVar vr_turnJump( "vr_turnJump", "1", CVAR_BOOL | CVAR_ARCHIVE | CVAR_NEW, "press up to jump from the turn axis mode." );
+idCVar vr_snapTurnAngle( "vr_snapTurnAngle", "45", CVAR_FLOAT | CVAR_ARCHIVE | CVAR_NEW, "Angle in degrees for VR snap turning", 10, 90 );
 
-extern idCVar vr_leftAxis;
-extern idCVar vr_rightAxis;
+extern idCVar vr_leftAxisMode;
+extern idCVar vr_rightAxisMode;
 
 void idUsercmdGenLocal::VRControlMove()
 {
@@ -1093,7 +1095,7 @@ void idUsercmdGenLocal::VRControlMove()
 	leftAxis.Zero();
 	rightAxis.Zero();
 
-	if( vr_leftAxis.GetInteger() == 0 && vrSystem->GetLeftControllerAxis( leftAxis ) )
+	if( vr_leftAxisMode.GetInteger() == 0 && vrSystem->GetLeftControllerAxis( leftAxis ) )
 	{
 		wasPressed = vrSystem->LeftControllerWasPressed();
 		isPressed = vrSystem->LeftControllerIsPressed();
@@ -1101,7 +1103,7 @@ void idUsercmdGenLocal::VRControlMove()
 		moving = true;
 	}
 
-	if( vr_rightAxis.GetInteger() == 0 && vrSystem->GetRightControllerAxis( rightAxis ) )
+	if( vr_rightAxisMode.GetInteger() == 0 && vrSystem->GetRightControllerAxis( rightAxis ) )
 	{
 		wasPressed |= vrSystem->RightControllerWasPressed();
 		isPressed |= vrSystem->RightControllerIsPressed();
@@ -1323,44 +1325,68 @@ void idUsercmdGenLocal::VRControlMove()
 	}
 
 	// analog turning
-	bool turning = false;
-	leftAxis.Zero();
-	rightAxis.Zero();
+    bool turning = false;
+    leftAxis.Zero();
+    rightAxis.Zero();
 
-	if( vr_leftAxis.GetInteger() == 1 )
-	{
-		vrSystem->GetLeftControllerAxis( leftAxis );
-		turning = true;
-	}
+    if( vr_leftAxisMode.GetInteger() == 1 )
+    {
+        vrSystem->GetLeftControllerAxis( leftAxis );
+        turning = true;
+    }
 
-	if( vr_rightAxis.GetInteger() == 1 )
-	{
-		vrSystem->GetRightControllerAxis( rightAxis );
-		turning = true;
-	}
+    if( vr_rightAxisMode.GetInteger() == 1 || vr_rightAxisMode.GetInteger() == 2 )
+    {
+        vrSystem->GetRightControllerAxis( rightAxis );
+        turning = true;
+    }
 
-	if( turning )
-	{
-		axis = leftAxis + rightAxis;
-		const float threshold =			joy_deadZone.GetFloat();
-		const float range =				joy_range.GetFloat();
-		const transferFunction_t shape = ( transferFunction_t )joy_gammaLook.GetInteger();
-		const bool mergedThreshold =	joy_mergedThreshold.GetBool();
-		const float yawSpeed =			joy_yawSpeed.GetFloat();
-		idGame* game = common->Game();
-		const float aimAssist = game != NULL ? game->GetAimAssistSensitivity() : 1.0f;
-		idVec2 rightMapped = JoypadFunction( axis, aimAssist, threshold, range, shape, mergedThreshold );
-		viewangles[YAW] += MS2SEC( pollTime - lastPollTime ) * -rightMapped.x * yawSpeed;
+    if( turning )
+    {
+        axis = leftAxis + rightAxis;
+        const float threshold = joy_deadZone.GetFloat();
+        const float range = joy_range.GetFloat();
+        const transferFunction_t shape = ( transferFunction_t )joy_gammaLook.GetInteger();
+        const bool mergedThreshold = joy_mergedThreshold.GetBool();
+        const float yawSpeed = joy_yawSpeed.GetFloat();
+        idGame* game = common->Game();
+        const float aimAssist = game != NULL ? game->GetAimAssistSensitivity() : 1.0f;
+        idVec2 rightMapped = JoypadFunction( axis, aimAssist, threshold, range, shape, mergedThreshold );
 
-		if( vr_turnCrouch.GetBool() && rightMapped.y < -0.5f )
-		{
-			cmd.buttons |= BUTTON_CROUCH;
-		}
-		else if( vr_turnJump.GetBool() &&  rightMapped.y > 0.5f )
-		{
-			cmd.buttons |= BUTTON_JUMP;
-		}
-	}
+        if( vr_rightAxisMode.GetInteger() == 1 )
+        {
+            // Continuous turning
+            viewangles[YAW] += MS2SEC( pollTime - lastPollTime ) * -rightMapped.x * yawSpeed;
+
+            if( vr_turnCrouch.GetBool() && rightMapped.y < -0.5f )
+            {
+                cmd.buttons |= BUTTON_CROUCH;
+            }
+            else if( vr_turnJump.GetBool() && rightMapped.y > 0.5f )
+            {
+                cmd.buttons |= BUTTON_JUMP;
+            }
+        }
+        else if( vr_rightAxisMode.GetInteger() == 2 )
+        {
+            // Snap turning
+            static bool snapTurnTriggered = false;
+            if( rightMapped.x > 0.5f && !snapTurnTriggered )
+            {
+                viewangles[YAW] -= vr_snapTurnAngle.GetFloat(); // Right turn
+                snapTurnTriggered = true;
+            }
+            else if( rightMapped.x < -0.5f && !snapTurnTriggered )
+            {
+                viewangles[YAW] += vr_snapTurnAngle.GetFloat(); // Left turn
+                snapTurnTriggered = true;
+            }
+            else if( fabs( rightMapped.x ) < 0.3f )
+            {
+                snapTurnTriggered = false; // Reset when stick returns to neutral
+            }
+        }
+    }
 
 	if( vrLeftGrab )
 	{

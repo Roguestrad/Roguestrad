@@ -421,8 +421,8 @@ int VRSystem_Valve::ReturnGameInputEvent( const int n, int& action, int& value )
 	return 1;
 }
 
-idCVar vr_leftAxis( "vr_leftAxis", "0", CVAR_INTEGER | CVAR_ARCHIVE | CVAR_NEW, "left axis mode" );
-idCVar vr_rightAxis( "vr_rightAxis", "4", CVAR_INTEGER | CVAR_ARCHIVE | CVAR_NEW, "right axis mode" );
+idCVar vr_leftAxisMode( "vr_leftAxisMode", "0", CVAR_INTEGER | CVAR_ARCHIVE | CVAR_NEW, "left axis mode" );
+idCVar vr_rightAxisMode( "vr_rightAxisMode", "2", CVAR_INTEGER | CVAR_ARCHIVE | CVAR_NEW, "right axis mode (0=movement, 1=turning, 2=snap turning, 3-5=dpad modes)" );
 
 int VRSystem_Valve::AxisToDPad( int mode, float x, float y )
 {
@@ -574,7 +574,7 @@ void VRSystem_Valve::GenButtonEvent( uint32_t button, bool left, bool pressed )
 				static int gameLeftLastKey;
 				if( pressed )
 				{
-					int dir = AxisToDPad( vr_leftAxis.GetInteger(), m_LeftControllerState.rAxis[0].x, m_LeftControllerState.rAxis[0].y );
+					int dir = AxisToDPad( vr_leftAxisMode.GetInteger(), m_LeftControllerState.rAxis[0].x, m_LeftControllerState.rAxis[0].y );
 					if( dir != -1 )
 					{
 						gameLeftLastKey = K_VR_LEFT_DPAD_LEFT + dir;
@@ -610,7 +610,7 @@ void VRSystem_Valve::GenButtonEvent( uint32_t button, bool left, bool pressed )
 				static int gameRightLastKey;
 				if( pressed )
 				{
-					int dir = AxisToDPad( vr_rightAxis.GetInteger(), m_RightControllerState.rAxis[0].x, m_RightControllerState.rAxis[0].y );
+					int dir = AxisToDPad( vr_rightAxisMode.GetInteger(), m_RightControllerState.rAxis[0].x, m_RightControllerState.rAxis[0].y );
 					if( dir != -1 )
 					{
 						gameRightLastKey = K_VR_RIGHT_DPAD_LEFT + dir;
@@ -646,67 +646,67 @@ void VRSystem_Valve::GenButtonEvent( uint32_t button, bool left, bool pressed )
 
 void VRSystem_Valve::GenJoyAxisEvents()
 {
-	if( m_leftController != vr::k_unTrackedDeviceIndexInvalid )
-	{
-		vr::VRControllerState_t& state = m_LeftControllerState;
-		hmd->GetControllerState( m_leftController, &state, sizeof( state ) );
+    if( m_leftController != vr::k_unTrackedDeviceIndexInvalid )
+    {
+        vr::VRControllerState_t& state = m_LeftControllerState;
+        hmd->GetControllerState( m_leftController, &state, sizeof( state ) );
 
-		// dpad modes
-		if( !openVRLeftTouchpad )
-		{
-			static int gameLeftLastKey;
+        // dpad modes
+        if( !openVRLeftTouchpad )
+        {
+            static int gameLeftLastKey;
 
-			if( state.rAxis[0].x * state.rAxis[0].x + state.rAxis[0].y * state.rAxis[0].y > 0.25f )
-			{
-				int dir = AxisToDPad( vr_leftAxis.GetInteger(), m_LeftControllerState.rAxis[0].x, m_LeftControllerState.rAxis[0].y );
-				if( dir != -1 )
-				{
-					gameLeftLastKey = K_VR_LEFT_DPAD_LEFT + dir;
-					GameEventQue( gameLeftLastKey, 1 );
-				}
-				else
-				{
-					gameLeftLastKey = K_NONE;
-				}
-			}
-			else if( gameLeftLastKey != K_NONE )
-			{
-				GameEventQue( gameLeftLastKey, 0 );
-				gameLeftLastKey = K_NONE;
-			}
-		}
-	}
+            if( state.rAxis[0].x * state.rAxis[0].x + state.rAxis[0].y * state.rAxis[0].y > 0.25f )
+            {
+                int dir = AxisToDPad( vr_leftAxisMode.GetInteger(), m_LeftControllerState.rAxis[0].x, m_LeftControllerState.rAxis[0].y );
+                if( dir != -1 )
+                {
+                    gameLeftLastKey = K_VR_LEFT_DPAD_LEFT + dir;
+                    GameEventQue( gameLeftLastKey, 1 );
+                }
+                else
+                {
+                    gameLeftLastKey = K_NONE;
+                }
+            }
+            else if( gameLeftLastKey != K_NONE )
+            {
+                GameEventQue( gameLeftLastKey, 0 );
+                gameLeftLastKey = K_NONE;
+            }
+        }
+    }
 
-	if( m_rightController != vr::k_unTrackedDeviceIndexInvalid )
-	{
-		vr::VRControllerState_t& state = m_RightControllerState;
-		hmd->GetControllerState( m_rightController, &state, sizeof( state ) );
+    if( m_rightController != vr::k_unTrackedDeviceIndexInvalid )
+    {
+        vr::VRControllerState_t& state = m_RightControllerState;
+        hmd->GetControllerState( m_rightController, &state, sizeof( state ) );
 
-		// dpad modes
-		if( !openVRRightTouchpad )
-		{
-			static int gameRightLastKey;
+        if( vr_rightAxisMode.GetInteger() != 2 && !openVRRightTouchpad )
+        {
+            // dpad modes
+            static int gameRightLastKey;
 
-			if( state.rAxis[0].x * state.rAxis[0].x + state.rAxis[0].y * state.rAxis[0].y > 0.25f )
-			{
-				int dir = AxisToDPad( vr_rightAxis.GetInteger(), m_RightControllerState.rAxis[0].x, m_RightControllerState.rAxis[0].y );
-				if( dir != -1 )
-				{
-					gameRightLastKey = K_VR_RIGHT_DPAD_LEFT + dir;
-					GameEventQue( gameRightLastKey, 1 );
-				}
-				else
-				{
-					gameRightLastKey = K_NONE;
-				}
-			}
-			else if( gameRightLastKey != K_NONE )
-			{
-				GameEventQue( gameRightLastKey, 0 );
-				gameRightLastKey = K_NONE;
-			}
-		}
-	}
+            if( state.rAxis[0].x * state.rAxis[0].x + state.rAxis[0].y * state.rAxis[0].y > 0.25f )
+            {
+                int dir = AxisToDPad( vr_rightAxisMode.GetInteger(), m_RightControllerState.rAxis[0].x, m_RightControllerState.rAxis[0].y );
+                if( dir != -1 )
+                {
+                    gameRightLastKey = K_VR_RIGHT_DPAD_LEFT + dir;
+                    GameEventQue( gameRightLastKey, 1 );
+                }
+                else
+                {
+                    gameRightLastKey = K_NONE;
+                }
+            }
+            else if( gameRightLastKey != K_NONE )
+            {
+                GameEventQue( gameRightLastKey, 0 );
+                gameRightLastKey = K_NONE;
+            }
+        }
+    }
 }
 
 void VRSystem_Valve::GenMouseEvents()

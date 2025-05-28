@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2016 Leyland Needham
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -40,6 +41,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 // usercmd_t->button bits
+// these can be pressed simutanously
 const int BUTTON_ATTACK			= BIT( 0 );
 const int BUTTON_RUN			= BIT( 1 );
 const int BUTTON_ZOOM			= BIT( 2 );
@@ -56,6 +58,7 @@ const int BUTTON_RECENTER		= BIT( 10 );
 // Leyland end
 
 // usercmd_t->impulse commands
+// only one impulse event for each usercmd_t 
 const int IMPULSE_0				= 0;			// weap 0
 const int IMPULSE_1				= 1;			// weap 1 Carl: grabber
 const int IMPULSE_2				= 2;			// weap 2
