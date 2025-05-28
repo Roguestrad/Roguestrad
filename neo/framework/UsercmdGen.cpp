@@ -4,6 +4,7 @@
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 Copyright (C) 2016 Leyland Needham
+Copyright (C) 2025 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -1369,7 +1370,7 @@ void idUsercmdGenLocal::VRControlMove()
         }
         else if( vr_rightAxisMode.GetInteger() == 2 && !vrRightGrab )
         {
-            // Snap turning
+            // RB: Snap turning
             static bool snapTurnTriggered = false;
             if( rightMapped.x > 0.5f && !snapTurnTriggered )
             {
@@ -1385,6 +1386,20 @@ void idUsercmdGenLocal::VRControlMove()
             {
                 snapTurnTriggered = false; // Reset when stick returns to neutral
             }
+
+			/*TODO 
+			// RB: Crouch toggle
+            static bool toggleCrouchTriggered = false;
+            if( rightMapped.y < -0.5f && !toggleCrouchTriggered )
+            {
+                toggled_crouch.SetKeyState( ButtonState( UB_MOVEDOWN ), true );
+                toggleCrouchTriggered = true;
+            }
+            else if( fabs( rightMapped.y ) < 0.3f )
+            {
+                toggleCrouchTriggered = false; // Reset when stick returns to neutral
+            }
+			*/
         }
     }
 
