@@ -1367,7 +1367,7 @@ void idUsercmdGenLocal::VRControlMove()
                 cmd.buttons |= BUTTON_JUMP;
             }
         }
-        else if( vr_rightAxisMode.GetInteger() == 2 )
+        else if( vr_rightAxisMode.GetInteger() == 2 && !vrRightGrab )
         {
             // Snap turning
             static bool snapTurnTriggered = false;
