@@ -1326,82 +1326,82 @@ void idUsercmdGenLocal::VRControlMove()
 	}
 
 	// analog turning
-    bool turning = false;
-    leftAxis.Zero();
-    rightAxis.Zero();
+	bool turning = false;
+	leftAxis.Zero();
+	rightAxis.Zero();
 
-    if( vr_leftAxisMode.GetInteger() == 1 )
-    {
-        vrSystem->GetLeftControllerAxis( leftAxis );
-        turning = true;
-    }
+	if( vr_leftAxisMode.GetInteger() == 1 )
+	{
+		vrSystem->GetLeftControllerAxis( leftAxis );
+		turning = true;
+	}
 
-    if( vr_rightAxisMode.GetInteger() == 1 || vr_rightAxisMode.GetInteger() == 2 )
-    {
-        vrSystem->GetRightControllerAxis( rightAxis );
-        turning = true;
-    }
+	if( vr_rightAxisMode.GetInteger() == 1 || vr_rightAxisMode.GetInteger() == 2 )
+	{
+		vrSystem->GetRightControllerAxis( rightAxis );
+		turning = true;
+	}
 
-    if( turning )
-    {
-        axis = leftAxis + rightAxis;
-        const float threshold = joy_deadZone.GetFloat();
-        const float range = joy_range.GetFloat();
-        const transferFunction_t shape = ( transferFunction_t )joy_gammaLook.GetInteger();
-        const bool mergedThreshold = joy_mergedThreshold.GetBool();
-        const float yawSpeed = joy_yawSpeed.GetFloat();
-        idGame* game = common->Game();
-        const float aimAssist = game != NULL ? game->GetAimAssistSensitivity() : 1.0f;
-        idVec2 rightMapped = JoypadFunction( axis, aimAssist, threshold, range, shape, mergedThreshold );
+	if( turning )
+	{
+		axis = leftAxis + rightAxis;
+		const float threshold = joy_deadZone.GetFloat();
+		const float range = joy_range.GetFloat();
+		const transferFunction_t shape = ( transferFunction_t )joy_gammaLook.GetInteger();
+		const bool mergedThreshold = joy_mergedThreshold.GetBool();
+		const float yawSpeed = joy_yawSpeed.GetFloat();
+		idGame* game = common->Game();
+		const float aimAssist = game != NULL ? game->GetAimAssistSensitivity() : 1.0f;
+		idVec2 rightMapped = JoypadFunction( axis, aimAssist, threshold, range, shape, mergedThreshold );
 
-        if( vr_rightAxisMode.GetInteger() == 1 )
-        {
-            // Continuous turning
-            viewangles[YAW] += MS2SEC( pollTime - lastPollTime ) * -rightMapped.x * yawSpeed;
+		if( vr_rightAxisMode.GetInteger() == 1 )
+		{
+			// Continuous turning
+			viewangles[YAW] += MS2SEC( pollTime - lastPollTime ) * -rightMapped.x * yawSpeed;
 
-            if( vr_turnCrouch.GetBool() && rightMapped.y < -0.5f )
-            {
-                cmd.buttons |= BUTTON_CROUCH;
-            }
-            else if( vr_turnJump.GetBool() && rightMapped.y > 0.5f )
-            {
-                cmd.buttons |= BUTTON_JUMP;
-            }
-        }
-        else if( vr_rightAxisMode.GetInteger() == 2 && !vrRightGrab )
-        {
-            // RB: Snap turning
-            static bool snapTurnTriggered = false;
-            if( rightMapped.x > 0.5f && !snapTurnTriggered )
-            {
-                viewangles[YAW] -= vr_snapTurnAngle.GetFloat(); // Right turn
-                snapTurnTriggered = true;
-            }
-            else if( rightMapped.x < -0.5f && !snapTurnTriggered )
-            {
-                viewangles[YAW] += vr_snapTurnAngle.GetFloat(); // Left turn
-                snapTurnTriggered = true;
-            }
-            else if( fabs( rightMapped.x ) < 0.3f )
-            {
-                snapTurnTriggered = false; // Reset when stick returns to neutral
-            }
+			if( vr_turnCrouch.GetBool() && rightMapped.y < -0.5f )
+			{
+				cmd.buttons |= BUTTON_CROUCH;
+			}
+			else if( vr_turnJump.GetBool() && rightMapped.y > 0.5f )
+			{
+				cmd.buttons |= BUTTON_JUMP;
+			}
+		}
+		else if( vr_rightAxisMode.GetInteger() == 2 && !vrRightGrab )
+		{
+			// RB: Snap turning
+			static bool snapTurnTriggered = false;
+			if( rightMapped.x > 0.5f && !snapTurnTriggered )
+			{
+				viewangles[YAW] -= vr_snapTurnAngle.GetFloat(); // Right turn
+				snapTurnTriggered = true;
+			}
+			else if( rightMapped.x < -0.5f && !snapTurnTriggered )
+			{
+				viewangles[YAW] += vr_snapTurnAngle.GetFloat(); // Left turn
+				snapTurnTriggered = true;
+			}
+			else if( fabs( rightMapped.x ) < 0.3f )
+			{
+				snapTurnTriggered = false; // Reset when stick returns to neutral
+			}
 
-			/*TODO 
+			/*TODO
 			// RB: Crouch toggle
-            static bool toggleCrouchTriggered = false;
-            if( rightMapped.y < -0.5f && !toggleCrouchTriggered )
-            {
-                toggled_crouch.SetKeyState( ButtonState( UB_MOVEDOWN ), true );
-                toggleCrouchTriggered = true;
-            }
-            else if( fabs( rightMapped.y ) < 0.3f )
-            {
-                toggleCrouchTriggered = false; // Reset when stick returns to neutral
-            }
+			static bool toggleCrouchTriggered = false;
+			if( rightMapped.y < -0.5f && !toggleCrouchTriggered )
+			{
+			    toggled_crouch.SetKeyState( ButtonState( UB_MOVEDOWN ), true );
+			    toggleCrouchTriggered = true;
+			}
+			else if( fabs( rightMapped.y ) < 0.3f )
+			{
+			    toggleCrouchTriggered = false; // Reset when stick returns to neutral
+			}
 			*/
-        }
-    }
+		}
+	}
 
 	if( vrLeftGrab )
 	{

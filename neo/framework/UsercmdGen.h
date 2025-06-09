@@ -58,7 +58,7 @@ const int BUTTON_RECENTER		= BIT( 10 );
 // Leyland end
 
 // usercmd_t->impulse commands
-// only one impulse event for each usercmd_t 
+// only one impulse event for each usercmd_t
 const int IMPULSE_0				= 0;			// weap 0
 const int IMPULSE_1				= 1;			// weap 1 Carl: grabber
 const int IMPULSE_2				= 2;			// weap 2
