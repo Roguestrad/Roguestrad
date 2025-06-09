@@ -6810,7 +6810,7 @@ void idRenderBackend::PostProcess( const void* data )
 	}
 #endif
 
-	if( r_useFilmicPostFX.GetBool() || r_renderMode.GetInteger() > 0 )
+	if( ( r_useFilmicPostFX.GetBool() && !vrSystem->IsActive() ) || r_renderMode.GetInteger() > 0 )
 	{
 		OPTICK_GPU_EVENT( "Render_FilmicPostFX" );
 
