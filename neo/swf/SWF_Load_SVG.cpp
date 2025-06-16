@@ -199,13 +199,22 @@ void idSWF::WriteSVG( const char* filename )
 					*/
 
 					file->WriteFloatString( "points=\"" );
-					for( int v = 0; v < fillDraw.indices.Num(); v++ )
+					for( int k = 0; k < fillDraw.indices.Num(); k += 3 )
 					{
-						const uint16& vertIndex = fillDraw.indices[v];
+						const uint16& i1 = fillDraw.indices[k + 0];
+						const uint16& i2 = fillDraw.indices[k + 1];
+						const uint16& i3 = fillDraw.indices[k + 2];
 
-						const idVec2& vert = fillDraw.startVerts[vertIndex];
+						const idVec2& v1 = fillDraw.startVerts[i1];
+						const idVec2& v2 = fillDraw.startVerts[i2];
+						const idVec2& v3 = fillDraw.startVerts[i3];
 
-						file->WriteFloatString( "%f,%f ", vert.x, vert.y );
+						file->WriteFloatString( "%f,%f ", v1.x, v1.y );
+						file->WriteFloatString( "%f,%f ", v2.x, v2.y );
+						file->WriteFloatString( "%f,%f ", v3.x, v3.y );
+
+						// close the triangle
+						file->WriteFloatString( "%f,%f ", v1.x, v1.y );
 					}
 					file->WriteFloatString( "\"" );
 

@@ -34,7 +34,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma warning(disable: 4355) // 'this' : used in base member initializer list
 
 idCVar swf_loadBinary( "swf_loadBinary", "1", CVAR_BOOL, "used to set whether to load binary swf from generated" );
-idCVar swf_exportLua( "swf_exportLua", "1", CVAR_BOOL, "" );
 
 idCVar swf_debugScript( "swf_debugScript", "", CVAR_INIT | CVAR_ROM | CVAR_NEW, "name of script or Lua instance that should connect to remote debugger" );
 
