@@ -258,7 +258,7 @@ void Framebuffer::ReloadImages()
 
 	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
 	{
-		globalImages->taaMotionVectorsImage[i]->Reload( false, backend.commandList );
+		globalImages->taaMotionVectorsImage[i]->Reload( false, backEnd.commandList );
 		globalImages->taaFeedback1Image[i]->Reload( false, backEnd.commandList );
 		globalImages->taaFeedback2Image[i]->Reload( false, backEnd.commandList );
 	}
