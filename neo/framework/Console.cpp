@@ -1508,7 +1508,7 @@ void idConsoleLocal::DrawSolidConsole( float frac )
 
 	}
 
-	idStr builddate = va( "%s %s", __DATE__, __TIME__ );
+	idStr builddate = va( "%s %s", ID__DATE__, ID__TIME__ );
 	i = builddate.Length();
 
 	for( x = 0; x < i; x++ )
