@@ -292,6 +292,8 @@ void Framebuffer::ReloadImages()
 		}
 	}
 
+	backEnd.commandList->close();
+	deviceManager->GetDevice()->executeCommandList( backEnd.commandList );
 }
 
 void Framebuffer::Bind()
