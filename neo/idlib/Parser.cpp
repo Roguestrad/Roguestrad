@@ -1150,6 +1150,7 @@ int idParser::Directive_include( idToken* token, bool supressWarning )
 		// try relative to the current file
 		path = scriptstack->GetFileName();
 		path.StripFilename();
+
 		// first remove any trailing path overlap with token
 		idStr token_path = *token;
 		if( !path.StripTrailingOnce( token_path.StripFilename() ) )
@@ -1158,6 +1159,7 @@ int idParser::Directive_include( idToken* token, bool supressWarning )
 			path += "/";
 		}
 		path += *token;
+
 		// try assuming a full os path from GetFileName()
 		if( !script->LoadFile( path, true ) )
 		{
