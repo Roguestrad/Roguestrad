@@ -50,7 +50,12 @@ void idSWF::WriteSVG( const char* filename )
 
 	// missing timestamp, frameRate
 	// \tviewBox=\"0 0 600 300\"\n
-	file->WriteFloatString( "<svg\n\txmlns=\"http://www.w3.org/2000/svg\"\n\txmlns:xlink=\"http://www.w3.org/1999/xlink\"\n\twidth=\"%i\"\n\theight=\"%i\"\n >\n", ( int ) frameWidth, ( int ) frameHeight );
+	file->WriteFloatString(
+		"<svg\n"
+		"\txmlns=\"http://www.w3.org/2000/svg\"\n"
+		"\txmlns:xlink=\"http://www.w3.org/1999/xlink\"\n"
+		"\twidth=\"%i\"\n"
+		"\theight=\"%i\"\n >\n", ( int ) frameWidth, ( int ) frameHeight );
 
 	file->WriteFloatString( "\t<defs>\n" );
 	for( int i = 0; i < dictionary.Num(); i++ )
@@ -97,11 +102,6 @@ void idSWF::WriteSVG( const char* filename )
 				{
 					idSWFShapeDrawFill& fillDraw = shape->fillDraws[d];
 
-					//f( exportBitmapShapesOnly && fillDraw.style.type != 4 )
-					//{
-					//	continue;
-					//}
-
 					if( fillDraw.style.type == 4 )
 					{
 						int bitmapID = fillDraw.style.bitmapID;
@@ -125,15 +125,8 @@ void idSWF::WriteSVG( const char* filename )
 
 					//<!-- Example of the same polygon shape with stroke and no fill -->
 					// <polygon points="100,100 150,25 150,75 200,0" fill="none" stroke="black" />
+					file->WriteFloatString( "\t\t\t<polygon " );
 
-					if( fillDraw.style.type == 0 )
-					{
-						file->WriteFloatString( "\t\t\t<polygon " );
-					}
-					else
-					{
-						file->WriteFloatString( "\t\t\t<polygonline " );
-					}
 
 					// TODO sub types
 					// 0 = linear, 2 = radial, 3 = focal; 0 = repeat, 1 = clamp, 2 = near repeat, 3 = near clamp
@@ -169,19 +162,14 @@ void idSWF::WriteSVG( const char* filename )
 					}
 					*/
 
-					// TODO colors
-					/*
 					if( fillDraw.style.type == 0 )
 					{
-						idVec4 color = fillDraw.style.startColor.ToVec4();
-						file->WriteFloatString( "\t\t\t\t\t<StartColor r=\"%f\" g=\"%f\" b=\"%f\" a=\"%f\"/>\n",
-												color.x, color.y, color.z, color.w );
-
-						color = fillDraw.style.endColor.ToVec4();
-						file->WriteFloatString( "\t\t\t\t\t<EndColor r=\"%f\" g=\"%f\" b=\"%f\" a=\"%f\"/>\n",
-												color.x, color.y, color.z, color.w );
+						// solid fill draw
+						const swfColorRGBA_t& color = fillDraw.style.startColor;
+						file->WriteFloatString( " fill=\"rgba(%i,%i,%i,%i)\" ", ( int )( color.r ), ( int )( color.g ), ( int )( color.b ), ( int )( color.a ) );
 					}
 
+					/*
 					if( fillDraw.style.type > 0 )
 					{
 						swfMatrix_t m = fillDraw.style.startMatrix;
@@ -221,52 +209,23 @@ void idSWF::WriteSVG( const char* filename )
 				}
 
 				// export line draws
-#if 0
 				for( int d = 0; d < shape->lineDraws.Num(); d++ )
 				{
 					const idSWFShapeDrawLine& lineDraw = shape->lineDraws[d];
 
-					file->WriteFloatString( "\t\t\t<LineDraw>\n" );
-
-					file->WriteFloatString( "\t\t\t\t<LineStyle startWidth=\"%i\" endWidth=\"%i\">\n", lineDraw.style.startWidth, lineDraw.style.endWidth );
-
-					idVec4 color = lineDraw.style.startColor.ToVec4();
-					file->WriteFloatString( "\t\t\t\t\t<StartColor r=\"%f\" g=\"%f\" b=\"%f\" a=\"%f\"/>\n",
-											color.x, color.y, color.z, color.w );
-
-					idVec4 endColor = lineDraw.style.endColor.ToVec4();
-					if( color != endColor )
-					{
-						file->WriteFloatString( "\t\t\t\t\t<EndColor r=\"%f\" g=\"%f\" b=\"%f\" a=\"%f\"/>\n",
-												endColor.x, endColor.y, endColor.z, endColor.w );
-					}
-
-					file->WriteFloatString( "\t\t\t\t</LineStyle>\n" );
+					const swfColorRGBA_t& color = lineDraw.style.startColor;
+					file->WriteFloatString(
+						"\t\t\t<polyline fill=\"none\" stroke=\"rgba(%d, %d, %d, %f)\" stroke-width=\"%f\" points=\"",
+						( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a, lineDraw.style.startWidth
+					);
 
 					for( int v = 0; v < lineDraw.startVerts.Num(); v++ )
 					{
 						const idVec2& vert = lineDraw.startVerts[v];
-
-						file->WriteFloatString( "\t\t\t\t<StartVertex x=\"%f\" y=\"%f\"/>\n", vert.x, vert.y );
+						file->WriteFloatString( "%f,%f ", vert.x, vert.y );
 					}
-
-					for( int v = 0; v < lineDraw.endVerts.Num(); v++ )
-					{
-						const idVec2& vert = lineDraw.endVerts[v];
-
-						file->WriteFloatString( "\t\t\t\t<EndVertex x=\"%f\" y=\"%f\"/>\n",	vert.x, vert.y );
-					}
-
-					file->WriteFloatString( "\t\t\t\t<Indices num=\"%i\">", lineDraw.indices.Num() );
-					for( int v = 0; v < lineDraw.indices.Num(); v++ )
-					{
-						const uint16& vert = lineDraw.indices[v];
-
-						file->WriteFloatString( "%i ", vert );
-					}
-					file->WriteFloatString( "</Indices>\n" );
+					file->WriteFloatString( "\"/>\n" );
 				}
-#endif
 
 				file->WriteFloatString( "\t\t</g>\n" );
 				break;
