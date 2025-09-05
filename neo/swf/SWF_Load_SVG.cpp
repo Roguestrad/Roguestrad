@@ -2,7 +2,7 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 2013-2024 Robert Beckebans
+Copyright (C) 2025 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -62,7 +62,6 @@ void idSWF::WriteSVG( const char* filename )
 	{
 		const idSWFDictionaryEntry& entry = dictionary[i];
 
-		//file->WriteFloatString( "\t<DictionaryEntry type=\"%s\">\n", idSWF::GetDictTypeName( dictionary[i].type ) );
 		switch( dictionary[i].type )
 		{
 			/*
@@ -166,7 +165,7 @@ void idSWF::WriteSVG( const char* filename )
 					{
 						// solid fill draw
 						const swfColorRGBA_t& color = fillDraw.style.startColor;
-						file->WriteFloatString( " fill=\"rgba(%i,%i,%i,%i)\" ", ( int )( color.r ), ( int )( color.g ), ( int )( color.b ), ( int )( color.a ) );
+						file->WriteFloatString( "fill=\"rgba(%i,%i,%i,%i)\" ", ( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ) );
 					}
 
 					/*
@@ -216,7 +215,7 @@ void idSWF::WriteSVG( const char* filename )
 					const swfColorRGBA_t& color = lineDraw.style.startColor;
 					file->WriteFloatString(
 						"\t\t\t<polyline fill=\"none\" stroke=\"rgba(%d, %d, %d, %f)\" stroke-width=\"%f\" points=\"",
-						( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a, lineDraw.style.startWidth
+						( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ), lineDraw.style.startWidth
 					);
 
 					for( int v = 0; v < lineDraw.startVerts.Num(); v++ )
@@ -239,111 +238,26 @@ void idSWF::WriteSVG( const char* filename )
 
 			case SWF_DICT_FONT:
 			{
-				// TODO
-
-				//const idSWFFont* font = dictionary[i].font;
-
-				//file->WriteFloatString( "\t\t<Font characterID=\"%i\" name=\"%s\" ascent=\"%i\" descent=\"%i\" leading=\"%i\" glyphsNum=\"%i\">\n",
-				//						i, font->fontID->GetName(), font->ascent, font->descent, font->leading, font->glyphs.Num() );
-
 #if 0
-				for( int g = 0; g < font->glyphs.Num(); g++ )
-				{
-					file->WriteFloatString( "\t\t\t<Glyph code=\"%i\" advance=\"%i\"/>\n", font->glyphs[g].code, font->glyphs[g].advance );
-
-#if 0
-					for( int v = 0; v < font->glyphs[g].verts.Num(); v++ )
-					{
-						const idVec2& vert = font->glyphs[g].verts[v];
-
-						file->WriteFloatString( "\t\t\t\t<Vertex x=\"%f\" y=\"%f\"/>\n", vert.x, vert.y );
-					}
-
-					file->WriteFloatString( "\t\t\t\t<Indices num=\"%i\">", font->glyphs[g].indices.Num() );
-					for( int v = 0; v < font->glyphs[g].indices.Num(); v++ )
-					{
-						const uint16& vert = font->glyphs[g].indices[v];
-
-						file->WriteFloatString( "%i ", vert );
-					}
-					file->WriteFloatString( "</Indices>\n" );
-
-					file->WriteFloatString( "\t\t\t</Glyph>\n" );
+				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
+				const idSWFFont* font = dictionary[i].font;
+				file->WriteFloatString(
+					"\t\t\t<style>@font-face { font-family: '%s'; src: local('%s'), url('fonts/%s.ttf') format('truetype'); }</style>\n",
+					font->fontID->GetName(), font->fontID->GetName(), font->fontID->GetName()
+				);
+				file->WriteFloatString( "\t\t</g>\n" );
 #endif
-				}
-#endif
-				//file->WriteFloatString( "\t\t</Font>\n" );
 				break;
 			}
 
 			case SWF_DICT_TEXT:
 			{
 				// RB: not used in BFG files
-
-				const idSWFText* text = dictionary[i].text;
-
-				file->WriteFloatString( "\t\t<Text characterID=\"%i\">\n", i );
-
-				float x = text->bounds.tl.y;
-				float y = text->bounds.tl.x;
-				float width = fabs( text->bounds.br.y - text->bounds.tl.y );
-				float height = fabs( text->bounds.br.x - text->bounds.tl.x );
-
-				file->WriteFloatString( "\t\t\t<Bounds x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" />\n", x, y, width, height );
-
-				//file->WriteBig( text->bounds.tl );
-				//file->WriteBig( text->bounds.br );
-
-				//file->WriteBigArray( ( float* )&text->matrix, 6 );
-
-				swfMatrix_t m = text->matrix;
-				file->WriteFloatString( "\t\t\t<Matrix>%f %f %f %f %f %f</Matrix>\n",
-										m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );
-
-				//file->WriteBig( text->textRecords.Num() );
-				for( int t = 0; t < text->textRecords.Num(); t++ )
-				{
-					const idSWFTextRecord& textRecord = text->textRecords[t];
-
-					file->WriteFloatString( "\t\t\t\t<Record fontID=\"%i\" xOffet=\"%i\" yOffset=\"%i\" textHeight=\"%f\" firstGlyph=\"%i\" numGlyphs=\"%i\">\n",
-											textRecord.fontID, textRecord.xOffset, textRecord.yOffset, textRecord.textHeight, textRecord.firstGlyph, textRecord.numGlyphs );
-
-					idVec4 color = textRecord.color.ToVec4();
-					file->WriteFloatString( "\t\t\t\t\t<Color r=\"%f\" g=\"%f\" b=\"%f\" a=\"%f\"/>\n",
-											color.x, color.y, color.z, color.w );
-
-					file->WriteFloatString( "\t\t\t\t</Record>\n" );
-
-					/*file->WriteBig( textRecord.fontID );
-					file->Write( &textRecord.color, 4 );
-					file->WriteBig( textRecord.xOffset );
-					file->WriteBig( textRecord.yOffset );
-					file->WriteBig( textRecord.textHeight );
-					file->WriteBig( textRecord.firstGlyph );
-					file->WriteBig( textRecord.numGlyphs );*/
-				}
-
-				for( int g = 0; g < text->glyphs.Num(); g++ )
-				{
-					file->WriteFloatString( "\t\t\t\t<Glyph index=\"%i\" advance=\"%i\">\n", text->glyphs[g].index, text->glyphs[g].advance );
-				}
-
-				/*
-				file->WriteBig( text->glyphs.Num() );
-				for( int g = 0; g < text->glyphs.Num(); g++ )
-				{
-					file->WriteBig( text->glyphs[g].index );
-					file->WriteBig( text->glyphs[g].advance );
-				}
-				*/
-
-				file->WriteFloatString( "\t\t</Text>\n" );
 				break;
 			}
 
 			case SWF_DICT_EDITTEXT:
 			{
-#if 0
 				const idSWFEditText* et = dictionary[i].edittext;
 
 				idStr initialText = idStr::CStyleQuote( et->initialText.c_str() );
@@ -359,45 +273,25 @@ void idSWF::WriteSVG( const char* filename )
 					initialText = "\"Email text goes in here\"";
 				}
 
-				file->WriteFloatString( "\t\t<EditText characterID=\"%i\" flags=\"%i\" fontID=\"%i\" fontHeight=\"%i\" maxLength=\"%i\" align=\"%s\" leftMargin=\"%i\" rightMargin=\"%i\" indent=\"%i\" leading=\"%i\" variable=\"%s\" initialText=\"%s\">\n",
-										i,
-										et->flags, et->fontID, et->fontHeight, et->maxLength, idSWF::GetEditTextAlignName( et->align ),
-										et->leftMargin, et->rightMargin, et->indent, et->leading,
-										et->variable.c_str(), et->initialText.c_str() );
+				// notice ALIGN_JUSTIFY is not supported in SVG
+				idStr alignStr = ( et->align == SWF_ET_ALIGN_LEFT ) ? "start" :
+								 ( et->align == SWF_ET_ALIGN_CENTER ) ? "middle" :
+								 ( et->align == SWF_ET_ALIGN_RIGHT ) ? "end" : "start";
 
-				float x = et->bounds.tl.y;
-				float y = et->bounds.tl.x;
-				float width = fabs( et->bounds.br.y - et->bounds.tl.y );
-				float height = fabs( et->bounds.br.x - et->bounds.tl.x );
+				const swfColorRGBA_t& color = et->color;
+				float fontSize = SWFTWIP( et->fontHeight ); // SWF font height is in twips
 
-				file->WriteFloatString( "\t\t\t<Bounds x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" />\n", x, y, width, height );
-
-				idVec4 color = et->color.ToVec4();
-				file->WriteFloatString( "\t\t\t<Color r=\"%f\" g=\"%f\" b=\"%f\" a=\"%f\"/>\n",
-										color.x, color.y, color.z, color.w );
-
-				file->WriteFloatString( "\t\t</EditText>\n" );
-
-				//file->WriteBig( et->bounds.tl );
-				//file->WriteBig( et->bounds.br );
-				//file->WriteBig( et->flags );
-				//file->WriteBig( et->fontID );
-				//file->WriteBig( et->fontHeight );
-				//file->Write( &et->color, 4 );
-				//file->WriteBig( et->maxLength );
-				//file->WriteBig( et->align );
-				//file->WriteBig( et->leftMargin );
-				//file->WriteBig( et->rightMargin );
-				//file->WriteBig( et->indent );
-				//file->WriteBig( et->leading );
-				//file->WriteString( et->variable );
-				//file->WriteString( et->initialText );
-#endif
+				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
+				file->WriteFloatString(
+					"\t\t\t<text x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d,%d,%d,%f)\" text-anchor=\"%s\">%s</text>\n",
+					et->bounds.tl.x, et->bounds.br.y, GetFontName( et->fontID ), fontSize,
+					( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ),
+					alignStr.c_str(), et->initialText.c_str()
+				);
+				file->WriteFloatString( "\t\t</g>\n" );
 				break;
 			}
 		}
-
-		//file->WriteFloatString( "\t</DictionaryEntry>\n" );
 	}
 
 	file->WriteFloatString( "\t</defs>\n" );
