@@ -165,7 +165,7 @@ void idSWF::WriteSVG( const char* filename )
 					{
 						// solid fill draw
 						const swfColorRGBA_t& color = fillDraw.style.startColor;
-						file->WriteFloatString( "fill=\"rgba(%i,%i,%i,%i)\" ", ( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ) );
+						file->WriteFloatString( "fill=\"rgba(%d, %d, %d, %f)\" ", ( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ) );
 					}
 
 					/*
