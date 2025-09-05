@@ -1170,7 +1170,7 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 		}
 	}
 
-	idFileList* files = fileSystem->ListFilesTree( "generated", ".bswf", true, true );
+	idFileList* files = fileSystem->ListFilesTree( "generated/swf", ".bswf", true, true );
 
 	for( int f = 0; f < files->GetList().Num(); f++ )
 	{
@@ -1183,14 +1183,6 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 			continue;
 		}
 #endif
-
-		/*
-		idFileLocal bFile = fileSystem->OpenFileRead( bswfName );
-		if( bFile == NULL )
-		{
-			continue;
-		}
-		*/
 
 		bswfName.StripLeadingOnce( "generated/" );
 
