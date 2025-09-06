@@ -1,3 +1,48 @@
+<!--
+```
+██████╗  ██████╗  ██████╗ ██╗   ██╗███████╗███████╗████████╗██████╗  █████╗ ██████╗ 
+██╔══██╗██╔═══██╗██╔════╝ ██║   ██║██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗
+██████╔╝██║   ██║██║  ███╗██║   ██║█████╗  ███████╗   ██║   ██████╔╝███████║██║  ██║
+██╔══██╗██║   ██║██║   ██║██║   ██║██╔══╝  ╚════██║   ██║   ██╔══██╗██╔══██║██║  ██║
+██║  ██║╚██████╔╝╚██████╔╝╚██████╔╝███████╗███████║   ██║   ██║  ██║██║  ██║██████╔╝
+╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝ ╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ 
+```
+
+
+logo created with https://www.asciiart.eu/text-to-ascii-art
+ANSI Shadow setting
+>
+-->
+
+<p align="center">
+	<img src="docs/logos/roguestrad_dark.png" alt="Roguestrad Logo" width="480">
+</p>
+
+# Roguestrad - Retro 3D Engine
+
+Roguestrad is a standalone game engine forked from [RBDOOM-3-BFG](https://github.com/RobertBeckebans/RBDOOM-3-BFG), designed as a modernized foundation for indie developers.
+Unlike its parent project, Roguestrad intentionally breaks compatibility with Doom 3 BFG in order to evolve into a more flexible and developer-friendly engine.
+
+⚠️ Roguestrad is under active development — everything is subject to change at any time.
+
+Key differences will include:
+
+- Native C++ Gameplay Code: Built on the Icedhellfire branch, Roguestrad uses native C++ for gameplay elements like weapons and monsters, eliminating reliance on legacy DoomScript.
+
+- TypeScript Scripting: Introduces TypeScript as a modern scripting option, replacing DoomScript to provide a more accessible and powerful scripting experience.
+
+- Unit System: Adopts a new unit system where 1 game unit = 1 centimeter (instead of 1 inch), aligning with modern engines like Unreal for intuitive world-building.
+
+- Retro Aesthetic Focus: Roguestrad is designed for games with 90s aesthetics, evoking the look and feel of classic consoles like the Sega Saturn, PlayStation 1 (PS1), and PlayStation 2 (PS2). It is not intended to compete with modern engines like Unreal or Unity but instead focuses on delivering a nostalgic, retro 3D experience.
+
+- Precomputed Lighting: Incorporates a precomputed lighting system similar to id Tech 3, optimizing performance for retro-styled games while maintaining visual fidelity reminiscent of early 3D engines.
+
+- Sandbox for Original Games: Prioritizes flexibility for creating new, original games rather than preserving compatibility with Doom 3 BFG.
+
+
+
+<!-- 
+
 ```
     ____   ____   ____                           _____  ____   ______ ______
    / __ \ / __ ) / __ \ ____   ____   ____ ___  |__  / / __ ) / ____// ____/
@@ -282,37 +327,11 @@ Left: No global illumination. Ambient is pitch black like in original Doom 3. Ri
 
 <img src="https://i.imgur.com/LRJBJwV.png" width="384"> <img src="https://i.imgur.com/GPD2aIr.png" width="384">
 
-<!--
-<img src="https://i.imgur.com/PVAXGui.png" width="384"> <img src="https://i.imgur.com/NleLuWY.png" width="384">
-
-<img src="https://i.imgur.com/vxAgY2S.png" width="384"> <img src="https://i.imgur.com/8avH7DY.png" width="384">
-
-<img src="https://i.imgur.com/KESmZld.png" width="384"> <img src="https://i.imgur.com/lHc7Pb9.png" width="384">
--->
 <img src="https://i.imgur.com/qIq1xPi.png" width="384"> <img src="https://i.imgur.com/tGoceNP.png" width="384">
 
 <img src="https://i.imgur.com/45YCeSf.png" width="384"> <img src="https://i.imgur.com/GBDbml1.png" width="384">
 
-<!--
-Some examples that show additional environment lighting on all assets.
 
-<img src="https://i.imgur.com/xBPa2Y8.png" width="384"> <img src="https://i.imgur.com/MCjwFE7.png" width="384">
-
-
-## HDR
-
-Left: Wrong original Blinn-Phong in sRGB gamma space. Right: Gamma correct HDR rendering in linear RBG + ACES Film Tonemapping 
-
-<img src="https://i.imgur.com/z5GRIFa.png" width="384"> <img src="https://i.imgur.com/4WJGNzX.png" width="384">
-
-<img src="https://i.imgur.com/6R42aoG.png" width="384"> <img src="https://i.imgur.com/A7VLpRM.png" width="384">
-
-## Screen Space Ambient Occlusion
-r_useSSAO 1 darkens the corners of the scene and also removes too much ambient added by the Global Illumination.
-
-<img src="https://i.imgur.com/AP2tBVd.png" width="384"> <img src="https://i.imgur.com/dJ1dY4X.png" width="384">
-"""
--->
 ## Filmic Post Processing
 If you enable it with r_useFilmicPostFX 1 then you play DOOM 3 BFG the optics of a Zack Snyder movie.
 
@@ -666,9 +685,7 @@ There is plenty of stuff you can learn from it like solid run & gun core gamepla
 **Q**: Why bother with the DOOM-3-BFG engine in 2025?
 **A**: The engine compiles faster than opening a project in Unity or Unreal. Maybe you just appreciate that it doesn't require more than 300 MB of RAM and 3072 MB of VRAM while running a complex game like Doom 3. Maybe it is just nice that it can run Epic's Sun Temple demo with over 230 fps @ 1080p on a Geforce 2070 Super unlike UE4.
 
-<!-- 
-<img src="https://i.imgur.com/cwwr4z5.png" width="800">
--->
+
 
 **Q**: Can I use this engine to make a commercial game?
 **A**: You can but don't bother me to give you free support and you probably should use Unreal Engine 4/5. I am a full time game developer and usually don't have time for any free support. I recommend that you have moderate C++ skills even if you are an artist. Technical designers (coders who became artists) might benefit most from this engine. Keep in mind that the GPL license will lock you out of the console markets because you can't use proprietary APIs covered by NDAs. However you can sell your game on Steam without problems.
@@ -681,4 +698,4 @@ https://discord.gg/Q3E9rUFnnP
 
 **Q**: How do I open the .resource files?
 **A**: If you install this package you can start the engine, open the console and run exec extract_resources.cfg. This will create a baseref/ folder next to your base/ folder with the indidividual files like .mtr materials or .def entity declarations.
-
+-->
