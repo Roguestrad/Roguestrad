@@ -15,7 +15,7 @@ ANSI Shadow setting
 -->
 
 <p align="center">
-	<img src="docs/logos/roguestrad_dark.png" alt="Roguestrad Logo" width="480">
+	<img src="docs/logos/Roguestrad_dark.png" alt="Roguestrad Logo" width="480">
 </p>
 
 # Roguestrad - Retro 3D Engine
