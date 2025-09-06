@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.10)
 if(NOT DEFINED APP_NAME)
 	# RB: This sets the name of the .exe and is the only line needed for a different mod executable.
 	# If you want to make a different game then you also need to change neo/framework/Licensee.h
-    set(APP_NAME RBDoom3BFG)
+    set(APP_NAME DoomIcedHellfire)
 endif()
 project(${APP_NAME})
 
@@ -20,7 +20,7 @@ option(STANDALONE
 		"Skip DOOM-3-BFG base/ folder and use content/ instead" OFF)
 
 option(DOOM_CLASSIC
-		"Build with Doom 1 & 2" ON)
+		"Build with Doom 1 & 2" OFF)
 
 option(FORCE_COLOR_OUTPUT
 		"Always produce ANSI-colored output (GNU/Clang only)." OFF)
@@ -180,12 +180,12 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
 		add_definitions(-DUSE_EXCEPTIONS)
 	#endif()
 	
-	add_compile_options(-Wno-pragmas -Wno-unused-variable -Wno-switch -Wno-unused-value -Winvalid-pch -Wno-multichar)
+	add_compile_options(-Wno-pragmas -Wno-unused-variable -Wno-switch -Wno-unused-value -Winvalid-pch -Wno-multichar -Wno-inconsistent-missing-override)
 	if(CMAKE_C_COMPILER_ID MATCHES "Clang")
 		# add clang-specific settings for warnings (the second one make sure clang doesn't complain
 		# about unknown -W flags, like -Wno-unused-but-set-variable)
 		# SRS - Add -Wno-expansion-to-defined, Wno-nullability-completeness and -Wno-shorten-64-to-32 to list of warning settings
-		add_compile_options(-Wno-local-type-template-args -Wno-unknown-warning-option -Wno-inline-new-delete -Wno-switch-enum -Wno-expansion-to-defined -Wno-nullability-completeness -Wno-shorten-64-to-32)
+		add_compile_options(-Wno-local-type-template-args -Wno-unknown-warning-option -Wno-inline-new-delete -Wno-switch-enum -Wno-expansion-to-defined -Wno-nullability-completeness -Wno-shorten-64-to-32 -fms-extensions)
 	endif()
 	
 	if(NOT CMAKE_CROSSCOMPILING AND ONATIVE)
@@ -453,6 +453,7 @@ if(OPTICK)
 endif()
 
 add_subdirectory(idlib)
+add_subdirectory(typeinfo)
 
 if(USE_INTRINSICS_SSE)
 	add_subdirectory(libs/moc)
@@ -716,6 +717,15 @@ set(GAMED3XP_SOURCES
 file(GLOB GAMED3XP_AI_INCLUDES d3xp/ai/*.h)
 file(GLOB GAMED3XP_AI_SOURCES d3xp/ai/*.cpp)
 
+file(GLOB GAMED3XP_MONSTER_INCLUDES d3xp/monsters/*.h)
+file(GLOB GAMED3XP_MONSTER_SOURCES d3xp/monsters/*.cpp)
+
+file(GLOB GAMED3XP_BOTS_INCLUDES d3xp/bots/*.h)
+file(GLOB GAMED3XP_BOTS_SOURCES d3xp/bots/*.cpp)
+
+file(GLOB GAMED3XP_WEAPON_INCLUDES d3xp/weapons/*.h)
+file(GLOB GAMED3XP_WEAPON_SOURCES d3xp/weapons/*.cpp)
+
 file(GLOB GAMED3XP_ANIM_INCLUDES d3xp/anim/*.h)
 file(GLOB GAMED3XP_ANIM_SOURCES d3xp/anim/*.cpp)
 
@@ -723,6 +733,8 @@ file(GLOB GAMED3XP_GAMESYS_INCLUDES d3xp/gamesys/*.h)
 set(GAMED3XP_GAMESYS_SOURCES
 	#d3xp/gamesys/Callbacks.cpp
 	d3xp/gamesys/Class.cpp
+	d3xp/gamesys/State.cpp
+	d3xp/gamesys/GameTypeInfo.cpp
 	#d3xp/gamesys/DebugGraph.cpp
 	d3xp/gamesys/Event.cpp
 	d3xp/gamesys/SaveGame.cpp
@@ -913,6 +925,15 @@ source_group("game-d3xp" FILES ${GAMED3XP_SOURCES})
 source_group("game-d3xp\\ai" FILES ${GAMED3XP_AI_INCLUDES})
 source_group("game-d3xp\\ai" FILES ${GAMED3XP_AI_SOURCES})
 
+source_group("game-d3xp\\monsters" FILES ${GAMED3XP_MONSTER_INCLUDES})
+source_group("game-d3xp\\monsters" FILES ${GAMED3XP_MONSTER_SOURCES})
+
+source_group("game-d3xp\\bots" FILES ${GAMED3XP_BOTS_INCLUDES})
+source_group("game-d3xp\\bots" FILES ${GAMED3XP_BOTS_SOURCES})
+
+source_group("game-d3xp\\weapons" FILES ${GAMED3XP_WEAPON_INCLUDES})
+source_group("game-d3xp\\weapons" FILES ${GAMED3XP_WEAPON_SOURCES})
+
 source_group("game-d3xp\\anim" FILES ${GAMED3XP_ANIM_INCLUDES})
 source_group("game-d3xp\\anim" FILES ${GAMED3XP_ANIM_SOURCES})
 
@@ -990,7 +1011,10 @@ set(RBDOOM3_INCLUDES
 			${GAMED3XP_AI_INCLUDES} 
 			${GAMED3XP_ANIM_INCLUDES} 
 			${GAMED3XP_GAMESYS_INCLUDES} 
+			${GAMED3XP_BOTS_INCLUDES}
 			${GAMED3XP_MENUS_INCLUDES}
+			${GAMED3XP_MONSTER_INCLUDES}
+			${GAMED3XP_WEAPON_INCLUDES}
 			${GAMED3XP_PHYSICS_INCLUDES}
 			${GAMED3XP_SCRIPT_INCLUDES}
 			)
@@ -1028,6 +1052,9 @@ set(RBDOOM3_SOURCES
 			
 			${GAMED3XP_SOURCES}
 			${GAMED3XP_AI_SOURCES}
+			${GAMED3XP_MONSTER_SOURCES}
+			${GAMED3XP_BOTS_SOURCES}
+			${GAMED3XP_WEAPON_SOURCES}
 			${GAMED3XP_ANIM_SOURCES}
 			${GAMED3XP_GAMESYS_SOURCES}
 			${GAMED3XP_MENUS_SOURCES}
@@ -1172,6 +1199,7 @@ if(MSVC)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder.cpp)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder_SSE2.cpp)
 	
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES d3xp/gamesys/Class.cpp)
 		#foreach( src_file ${RBDOOM3_PRECOMPILED_SOURCES} )
 		#	message(STATUS "-include precompiled.h for ${src_file}")
 		#endforeach()
@@ -1200,7 +1228,7 @@ if(MSVC)
 	list(APPEND RBDOOM3_SOURCES ${WIN32_RESOURCES})
 	
 	add_executable(${APP_NAME} WIN32 ${RBDOOM3_INCLUDES} ${RBDOOM3_SOURCES})
-	add_dependencies(${APP_NAME} idlib)
+	add_dependencies(${APP_NAME} idlib typeinfogen)
     
     if(USE_DX12)
 		add_dependencies(${APP_NAME} nvrhi_d3d12)
@@ -1209,6 +1237,17 @@ if(MSVC)
 	if(USE_VULKAN)
 		add_dependencies(${APP_NAME} nvrhi_vk)
 	endif()
+	
+	# call typeinfogen to generate neo/d3xp/gamesys/GameTypeInfo.h
+	add_custom_command(
+			TARGET ${APP_NAME}
+			PRE_BUILD
+			DEPENDS typeinfogen
+			COMMAND typeinfogen
+			WORKING_DIRECTORY ..
+			COMMENT "Generating neo/d3xp/gamesys/GameTypeInfo.h"
+			)
+	
 	target_link_libraries(${APP_NAME}
 		idlib
 		${DirectX_LIBRARIES}
@@ -1401,7 +1440,7 @@ else()
 
 	if (USE_PRECOMPILED_HEADERS)
 		# make sure precompiled header is created before executable is compiled
-		add_dependencies(${APP_NAME} precomp_header_rbdoom3bfg)
+		add_dependencies(${APP_NAME} precomp_header_rbdoom3bfg idlib typeinfogen)
 		
 		if(WIN32)
 			set(remove_command "del")
@@ -1428,6 +1467,16 @@ else()
 			)
 		endif()
 	endif()
+
+	# call typeinfogen to generate neo/d3xp/gamesys/GameTypeInfo.h
+	add_custom_command(
+			TARGET ${APP_NAME}
+			PRE_BUILD
+			DEPENDS typeinfogen
+			COMMAND typeinfogen
+			WORKING_DIRECTORY ..
+			COMMENT "Generating neo/d3xp/gamesys/GameTypeInfo.h"
+			)
 
 	if(NOT WIN32)
         if(NOT APPLE)
@@ -1466,6 +1515,26 @@ if(OPTICK)
 	target_compile_definitions(${APP_NAME} PUBLIC USE_OPTICK=1)
 else()
 	target_compile_definitions(${APP_NAME} PUBLIC USE_OPTICK=0)
+endif()
+
+#setup visual studio with command arguments given 
+if(CMAKE_GENERATOR MATCHES "^Visual Studio .*" AND MSVC)
+	message(STATUS "Checking ${CMAKE_CONFIGURATION_TYPES} for debug command options")
+	set (finalArgs "")
+	foreach(entry IN LISTS CMAKE_CONFIGURATION_TYPES)
+		if (NOT ${DBG_CMD_${entry}} STREQUAL "")
+			set (targetCmdFile "${CMAKE_CURRENT_SOURCE_DIR}/${DBG_CMD_${entry}}")
+			if(NOT EXISTS ${targetCmdFile})			
+				message (FATAL_ERROR "DBG_CMD_${entry} cant load \"${targetCmdFile}\" because it does not exist")
+			else()
+				file(READ ${targetCmdFile} cmdARGS_${entry})
+				set (finalArgs "${finalArgs}$<$<CONFIG:${entry}>:${cmdARGS_${entry}}>")
+			endif()
+		else()
+			#message (STATUS "No [DBG_CMD_]${entry} entry set")
+		endif()
+	endforeach()
+	set_property(TARGET ${APP_NAME} PROPERTY VS_DEBUGGER_COMMAND_ARGUMENTS ${finalArgs})
 endif()
 
 # needs to come after nvrhi_d3d11 etc. for link order

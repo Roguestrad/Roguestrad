@@ -29,7 +29,9 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MENUSCREEN_H__
 #define __MENUSCREEN_H__
 
-#ifndef __TYPEINFOGEN__
+#ifdef __TYPEINFOGEN__
+	#define VR_OPTIONS 0
+#else
 	#include "../../renderer/RenderCommon.h"
 #endif
 

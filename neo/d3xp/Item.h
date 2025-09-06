@@ -77,6 +77,13 @@ public:
 	virtual void			Think();
 	virtual void			Present();
 
+// jmarshall
+	int						GetModelIndex() const
+	{
+		return modelindex;
+	}
+// jmarshall end
+
 	enum
 	{
 		EVENT_PICKUP = idEntity::EVENT_MAXEVENTS,
@@ -108,6 +115,9 @@ private:
 	bool					spin;
 	bool					pulse;
 	bool					canPickUp;
+// jmarshall
+	int						modelindex;
+// jmarshall end
 
 	// for item pulse effect
 	int						itemShellHandle;

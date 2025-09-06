@@ -57,7 +57,7 @@ If you have questions concerning this license or the applicable additional terms
 // DG end
 
 // jmarshall
-#define ENGINE_BRANCH					"master"
+#define ENGINE_BRANCH					"Iced-Hellfire-Dev"
 // jmarshall end
 
 #ifdef STANDALONE

@@ -342,6 +342,9 @@ bool idAASBuild::GetAreaForLeafNode( idBrushBSPNode* node, int* areaNum )
 	area.numFaces = 0;
 	area.reach = NULL;
 	area.rev_reach = NULL;
+// jmarshall
+	area.firstEdge = file->edgeIndex.Num();
+// jmarshall end
 
 	for( p = node->GetPortals(); p; p = p->Next( s ) )
 	{
@@ -364,6 +367,9 @@ bool idAASBuild::GetAreaForLeafNode( idBrushBSPNode* node, int* areaNum )
 			file->faces[abs( faceNum )].areas[1] = file->areas.Num();
 		}
 	}
+// jmarshall
+	area.numEdges = file->edgeIndex.Num() - area.firstEdge;
+// jmarshall end
 
 	if( !area.numFaces )
 	{

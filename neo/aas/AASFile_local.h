@@ -61,7 +61,13 @@ public:
 	virtual void				PushPointIntoAreaNum( int areaNum, idVec3& point ) const;
 	virtual bool				Trace( aasTrace_t& trace, const idVec3& start, const idVec3& end ) const;
 	virtual void				PrintInfo() const;
-
+// jmarshall
+	virtual bool				HasNewFeatures() const
+	{
+		return hasNewFeatures;
+	}
+	float						GetFloorDistance( int areaNum, const idPlane& floorPlane, const idVec3& point, const float bboxHeight, const float maxEdgeDist );
+// jmarshall end
 public:
 	bool						Load( const idStr& fileName, unsigned int mapFileCRC );
 	bool						Write( const idStr& fileName, unsigned int mapFileCRC );
@@ -95,6 +101,9 @@ private:
 	int							AreaContentsTravelFlags( int areaNum ) const;
 	idVec3						AreaReachableGoal( int areaNum ) const;
 	int							NumReachabilities() const;
+
+private:
+	bool						hasNewFeatures;
 };
 
 #endif /* !__AASFILELOCAL_H__ */

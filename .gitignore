@@ -44,3 +44,6 @@ neo/.vscode/
 neo/cmake-build-*/
 neo/bin/
 /tools/
+neo/d3xp/gamesys/GameTypeInfo.h
+neo/d3xp/gamesys/GameTypeInfo.cpp
+

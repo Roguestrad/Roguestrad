@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -45,10 +46,36 @@ const float	AI_FLY_DAMPENING			= 0.15f;
 const float	AI_HEARING_RANGE			= 2048.0f;
 const int	DEFAULT_FLY_OFFSET			= 68;
 
+// jmarshall begin
+
+//
+// attack flags
+//
+#define ATTACK_DODGE_LEFT	1
+#define ATTACK_DODGE_RIGHT	2
+#define ATTACK_COMBAT_NODE	4
+#define ATTACK_MELEE		8
+#define ATTACK_LEAP			16
+#define ATTACK_MISSILE		32
+#define ATTACK_SPECIAL1		64
+#define ATTACK_SPECIAL2		128
+#define ATTACK_SPECIAL3		256
+#define ATTACK_SPECIAL4		512
+
+
+#define AI_NOT_ACTIVATED	0
+#define AI_CHASING_ENEMY	1
+#define AI_LOST				2
+#define AI_PATH_FOLLOWING	3
+#define AI_ATTACK_NODE		4
+
 #define ATTACK_IGNORE			0
 #define ATTACK_ON_DAMAGE		1
 #define ATTACK_ON_ACTIVATE		2
 #define ATTACK_ON_SIGHT			4
+
+#define ALL_PARTICLES	-1		// used with setSmokeVisibility
+// jmarshall end
 
 typedef struct ballistics_s
 {
@@ -82,7 +109,7 @@ typedef enum
 	MOVE_TO_ENEMYHEIGHT,
 	MOVE_TO_ENTITY,
 	MOVE_OUT_OF_RANGE,
-	MOVE_TO_ATTACK_POSITION,
+	MOVE_TO_ATTACK_POSITION, // RB: only used by the sentry AI
 	MOVE_TO_COVER,
 	MOVE_TO_POSITION,
 	MOVE_TO_POSITION_DIRECT,
@@ -224,50 +251,6 @@ public:
 	int						anim;
 };
 
-class idAASFindCover : public idAASCallback
-{
-public:
-	idAASFindCover( const idVec3& hideFromPos );
-	~idAASFindCover();
-
-	virtual bool		TestArea( const idAAS* aas, int areaNum );
-
-private:
-	pvsHandle_t			hidePVS;
-	int					PVSAreas[ idEntity::MAX_PVS_AREAS ];
-};
-
-class idAASFindAreaOutOfRange : public idAASCallback
-{
-public:
-	idAASFindAreaOutOfRange( const idVec3& targetPos, float maxDist );
-
-	virtual bool		TestArea( const idAAS* aas, int areaNum );
-
-private:
-	idVec3				targetPos;
-	float				maxDistSqr;
-};
-
-class idAASFindAttackPosition : public idAASCallback
-{
-public:
-	idAASFindAttackPosition( const idAI* self, const idMat3& gravityAxis, idEntity* target, const idVec3& targetPos, const idVec3& fireOffset );
-	~idAASFindAttackPosition();
-
-	virtual bool		TestArea( const idAAS* aas, int areaNum );
-
-private:
-	const idAI*			self;
-	idEntity*			target;
-	idBounds			excludeBounds;
-	idVec3				targetPos;
-	idVec3				fireOffset;
-	idMat3				gravityAxis;
-	pvsHandle_t			targetPVS;
-	int					PVSAreas[ idEntity::MAX_PVS_AREAS ];
-};
-
 class idAI : public idActor
 {
 public:
@@ -281,9 +264,12 @@ public:
 
 	void					Spawn();
 	void					HeardSound( idEntity* ent, const char* action );
+	idEntity*				HeardSound( int ignore_team );
 	idActor*					GetEnemy() const;
 	void					TalkTo( idActor* actor );
 	talkState_t				GetTalkState() const;
+
+	float					EnemyRange();
 
 	bool					GetAimDir( const idVec3& firePos, idEntity* aimAtEnt, const idEntity* ignore, idVec3& aimDir ) const;
 
@@ -294,18 +280,37 @@ public:
 
 	// Finds a path around dynamic obstacles.
 	static bool				FindPathAroundObstacles( const idPhysics* physics, const idAAS* aas, const idEntity* ignore, const idVec3& startPos, const idVec3& seekPos, obstaclePath_t& path );
+
 	// Frees any nodes used for the dynamic obstacle avoidance.
 	static void				FreeObstacleAvoidanceNodes();
+
 	// Predicts movement, returns true if a stop event was triggered.
 	static bool				PredictPath( const idEntity* ent, const idAAS* aas, const idVec3& start, const idVec3& velocity, int totalTime, int frameTime, int stopEvent, predictedPath_t& path );
+
 	// Return true if the trajectory of the clip model is collision free.
 	static bool				TestTrajectory( const idVec3& start, const idVec3& end, float zVel, float gravity, float time, float max_height, const idClipModel* clip, int clipmask, const idEntity* ignore, const idEntity* targetEntity, int drawtime );
+
 	// Finds the best collision free trajectory for a clip model.
 	static bool				PredictTrajectory( const idVec3& firePos, const idVec3& target, float projectileSpeed, const idVec3& projGravity, const idClipModel* clip, int clipmask, float max_height, const idEntity* ignore, const idEntity* targetEntity, int drawtime, idVec3& aimDir );
 
 	virtual void			Gib( const idVec3& dir, const char* damageDefName );
 
+// jmarshall begin
 protected:
+	virtual void			Init() { }
+
+	virtual bool			checkForEnemy( float use_fov );
+private:
+	void					idle_followPathEntities( idEntity* pathnode );
+protected:
+
+	idScriptBool			ambush;
+	idScriptBool			ignoreEnemies;			// used to disable enemy checks during attack_path
+	idScriptBool			stay_on_attackpath;		// used to disable enemy checks during attack_path
+	idScriptBool			ignore_sight;
+	idScriptBool			idle_sight_fov;
+// jmarshall end
+
 	// navigation
 	idAAS* 					aas;
 	int						travelFlags;
@@ -427,6 +432,8 @@ protected:
 
 	bool					spawnClearMoveables;
 
+	bool					isAwake; // jmarshall
+
 	idHashTable<funcEmitter_t> funcEmitters;
 
 	idEntityPtr<idHarvestable>	harvestEnt;
@@ -437,6 +444,9 @@ protected:
 	idScriptBool			AI_PAIN;
 	idScriptFloat			AI_SPECIAL_DAMAGE;
 	idScriptBool			AI_DEAD;
+	idScriptBool			AI_RUN; // jmarshall
+	idScriptBool			blocked; // jmarshall: its stupid they had two block states.
+	idScriptBool			AI_ATTACKING; // jmarshall
 	idScriptBool			AI_ENEMY_VISIBLE;
 	idScriptBool			AI_ENEMY_IN_FOV;
 	idScriptBool			AI_ENEMY_DEAD;
@@ -452,6 +462,9 @@ protected:
 	idScriptBool			AI_HIT_ENEMY;
 	idScriptBool			AI_PUSHED;
 
+	idScriptFloat			run_distance; // jmarshall
+	idScriptFloat			walk_turn; // jmarshall
+
 	//
 	// ai/ai.cpp
 	//
@@ -462,8 +475,30 @@ protected:
 	void					Activate( idEntity* activator );
 public:
 	int						ReactionTo( const idEntity* ent );
+
+// jmarshall begin
+	virtual idThread*		ConstructScriptObject();
+	void					ClearEnemy();
 protected:
-	bool					CheckForEnemy();
+	virtual void			AI_Begin() { };
+	virtual int				check_attacks()
+	{
+		return 0;
+	}
+	virtual void			do_attack( int attack_flags ) { }
+
+	void					enemy_dead();
+
+	void					PlayCustomAnim( idStr animname, float blendIn, float blendOut );
+	void					PlayCustomCycle( idStr animname, float blendTime );
+
+	void					trigger_wakeup_targets();
+
+	void					sight_enemy();
+
+	void					CallConstructor();
+// jmarshall end
+
 	void					EnemyDead();
 	virtual bool			CanPlayChatterSounds() const;
 	void					SetChatSound();
@@ -526,7 +561,6 @@ protected:
 	// effects
 	const idDeclParticle*	SpawnParticlesOnJoint( particleEmitter_t& pe, const char* particleName, const char* jointName );
 	void					SpawnParticles( const char* keyName );
-	bool					ParticlesActive();
 
 	// turning
 	bool					FacingIdeal();
@@ -535,11 +569,15 @@ protected:
 	bool					TurnToward( const idVec3& pos );
 
 	// enemy management
-	void					ClearEnemy();
 	bool					EnemyPositionValid() const;
 	void					SetEnemyPosition();
 	void					UpdateEnemyPosition();
 	void					SetEnemy( idActor* newEnemy );
+
+// jmarshall begin
+	bool					CanReachEntity( idEntity* ent );
+	bool					CanReachEnemy();
+// jmarshall end
 
 	// attacks
 	void					CreateProjectileClipModel() const;
@@ -563,23 +601,80 @@ protected:
 	void					UpdateParticles();
 	void					TriggerParticles( const char* jointName );
 
+// jmarshall begin
+	void					combat_lost();
+
+	idEntity*				GetCombatNode();
+
+	bool					TestAnimMove( const char* animname );
+// jmarshall end
+
 	void					TriggerFX( const char* joint, const char* fx );
 	idEntity*				StartEmitter( const char* name, const char* joint, const char* particle );
 	idEntity*				GetEmitter( const char* name );
 	void					StopEmitter( const char* name );
 
+// jmarshall begin
+	idEntity*				FindEnemyInCombatNodes();
+
+	// State utilities that are nested states.
+	stateResult_t			check_blocked( stateParms_t* parms, bool& result );
+	stateResult_t			combat_chase( stateParms_t* parms, bool& result );
+// jmarshall end
+
 	// AI script state management
 	void					LinkScriptVariables();
 	void					UpdateAIScript();
 
+// jmarshall begin
+	bool					MeleeAttackToJoint( const char* jointname, const char* meleeDefName );
+
+	idEntity*				GetClosestHiddenTarget( const char* type );
+
+	// AI States
+	stateResult_t			state_Spawner( stateParms_t* parms );
+	stateResult_t			state_WakeUp( stateParms_t* parms );
+	stateResult_t			wake_on_attackcone( stateParms_t* parms );
+	stateResult_t			walk_on_trigger( stateParms_t* parms );
+	stateResult_t			wake_on_trigger( stateParms_t* parms );
+	stateResult_t			wake_on_enemy( stateParms_t* parms );
+	stateResult_t			wait_for_enemy( stateParms_t* parms );
+	stateResult_t			state_TriggerAnim( stateParms_t* parms );
+	stateResult_t			state_TeleportTriggered( stateParms_t* parms );
+	stateResult_t			state_TriggerHidden( stateParms_t* parms );
+	stateResult_t			wake_call_constructor( stateParms_t* parms );
+	stateResult_t			state_Killed( stateParms_t* parms );
+	stateResult_t			state_Dead( stateParms_t* parms );
+	stateResult_t			combat_wander( stateParms_t* parms );
+	stateResult_t			state_LostCombat( stateParms_t* parms );
+	stateResult_t			state_LostCombat_No_Node( stateParms_t* parms );
+	stateResult_t			state_LostCombat_Node( stateParms_t* parms );
+	stateResult_t			state_LostCombat_Finish( stateParms_t* parms );
+	stateResult_t			state_Combat( stateParms_t* parms );
+
+	bool					CanHitEnemy();
+	bool					EntityInAttackCone( idEntity* ent );
+
+	float					EnemyRange2D();
+	float					TestChargeAttack();
+
+	idVec3					GetEnemyEyePos();
+// jmarshall end
+
 	//
 	// ai/ai_events.cpp
 	//
+	idVec3					GetJumpVelocity( const idVec3& pos, float speed, float max_height );
 	void					Event_Activate( idEntity* activator );
+	idActor*				FindEnemy( int useFOV );
+	idActor*				FindEnemyAI( int useFOV );
+
 	void					Event_Touch( idEntity* other, trace_t* trace );
 	void					Event_FindEnemy( int useFOV );
 	void					Event_FindEnemyAI( int useFOV );
+	void					Event_CheckForEnemy( float use_fov );
 	void					Event_FindEnemyInCombatNodes();
+	idVec3					PredictEnemyPos( float time );
 	void					Event_ClosestReachableEnemyOfEntity( idEntity* team_mate );
 	void					Event_HeardSound( int ignore_team );
 	void					Event_SetEnemy( idEntity* ent );
@@ -587,6 +682,7 @@ protected:
 	void					Event_MuzzleFlash( const char* jointname );
 	void					Event_CreateMissile( const char* jointname );
 	void					Event_AttackMissile( const char* jointname );
+	bool					TestAnimMoveTowardEnemy( const char* animname );
 	void					Event_FireMissileAtTarget( const char* jointname, const char* targetname );
 	void					Event_LaunchMissile( const idVec3& muzzle, const idAngles& ang );
 	void					Event_LaunchHomingMissile();
@@ -594,12 +690,14 @@ protected:
 	void					Event_LaunchProjectile( const char* entityDefName );
 	void					Event_AttackMelee( const char* meleeDefName );
 	void					Event_DirectDamage( idEntity* damageTarget, const char* damageDefName );
+	bool					CanHitEnemyFromAnim( const char* animname );
 	void					Event_RadiusDamageFromJoint( const char* jointname, const char* damageDefName );
 	void					Event_BeginAttack( const char* name );
 	void					Event_EndAttack();
 	void					Event_MeleeAttackToJoint( const char* jointname, const char* meleeDefName );
 	void					Event_RandomPath();
 	void					Event_CanBecomeSolid();
+	bool					CanBecomeSolid();
 	void					Event_BecomeSolid();
 	void					Event_BecomeNonSolid();
 	void					Event_BecomeRagdoll();
@@ -638,12 +736,14 @@ protected:
 	void					Event_SetTalkState( int state );
 	void					Event_EnemyRange();
 	void					Event_EnemyRange2D();
+	void					Event_IsAwake();
 	void					Event_GetEnemy();
 	void					Event_GetEnemyPos();
 	void					Event_GetEnemyEyePos();
 	void					Event_PredictEnemyPos( float time );
 	void					Event_CanHitEnemy();
 	void					Event_CanHitEnemyFromAnim( const char* animname );
+	bool					CanHitEnemyFromJoint( const char* jointname );
 	void					Event_CanHitEnemyFromJoint( const char* jointname );
 	void					Event_EnemyPositionValid();
 	void					Event_ChargeAttack( const char* damageDef );
@@ -714,6 +814,21 @@ protected:
 	void					Event_StartEmitter( const char* name, const char* joint, const char* particle );
 	void					Event_GetEmitter( const char* name );
 	void					Event_StopEmitter( const char* name );
+
+// jmarshall begin
+private:
+	// These are used by the lost combat state.
+	float					allow_attack;
+	float					lost_time;
+	idEntity*				lost_combat_node;
+
+	float					attack_flags;
+
+	bool					supportsNative;
+
+	idStr					lastStateName;
+	stateParms_t			storedState;
+// jmarshall end
 };
 
 class idCombatNode : public idEntity
@@ -745,5 +860,55 @@ private:
 	void				Event_Activate( idEntity* activator );
 	void				Event_MarkUsed();
 };
+
+class iceAI_Follower : public idAI
+{
+public:
+	CLASS_PROTOTYPE( iceAI_Follower );
+
+	virtual void			Init() override;
+private:
+	bool inCustomAnim;
+	idEntity* leader;
+private:
+	stateResult_t state_idle( stateParms_t* parms );
+	stateResult_t state_idle_frame( stateParms_t* parms );
+	stateResult_t state_follow( stateParms_t* parms );
+	stateResult_t state_follow_frame( stateParms_t* parms );
+	stateResult_t state_get_closer( stateParms_t* parms );
+	stateResult_t state_killed( stateParms_t* parms );
+	stateResult_t state_talk_anim( stateParms_t* parms );
+};
+
+//
+// Bosses
+//
+#include "../monsters/Monster_boss_vagary.h"
+
+//
+// Demons
+//
+#include "../monsters/Monster_demon_hellknight.h"
+#include "../monsters/Monster_demon_imp.h"
+
+//
+// Flying Monsters
+//
+#include "../monsters/Monster_flying_lostsoul.h"
+#include "../monsters/Monster_flying_cacodemon.h"
+
+//
+// Zombie Monsters
+//
+#include "../monsters/Monster_zombie.h"
+#include "../monsters/Monster_zombie_sawyer.h"
+#include "../monsters/Monster_zombie_bernie.h"
+#include "../monsters/Monster_zombie_morgue.h"
+#include "../monsters/Monster_zombie_security_pistol.h"
+#include "../monsters/Monster_zombie_commando_tentacle.h"
+#include "../monsters/monster_zombie_commando_cgun.h"
+#include "../monsters/Monster_turret.h"
+
+#include "../bots/Bot.h"
 
 #endif /* !__AI_H__ */

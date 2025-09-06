@@ -4,6 +4,7 @@
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 Copyright (C) 2012 Robert Beckebans
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -33,11 +34,16 @@ instancing of objects.
 
 */
 
+#define private		public
+#define protected	public
+#define TYPEINFO_IGNORE
+#define _ALLOW_KEYWORD_MACROS
+
 #include "precompiled.h"
 #pragma hdrstop
 
-
 #include "../Game_local.h"
+#include "GameTypeInfo.h"
 
 
 /***********************************************************************
@@ -265,6 +271,16 @@ bool	idClass::initialized	= false;
 int		idClass::typeNumBits	= 0;
 int		idClass::memused		= 0;
 int		idClass::numobjects		= 0;
+
+/*
+================
+idClass::GetTypeNumBits
+================
+*/
+int	idClass::GetTypeNumBits()
+{
+	return typeNumBits;
+}
 
 /*
 ================

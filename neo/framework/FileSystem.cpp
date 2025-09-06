@@ -336,7 +336,7 @@ idCVar	idFileSystemLocal::fs_debugBGL( "fs_debugBGL", "0", CVAR_SYSTEM | CVAR_BO
 idCVar	idFileSystemLocal::fs_copyfiles( "fs_copyfiles", "0", CVAR_SYSTEM | CVAR_INIT | CVAR_BOOL, "Copy every file touched to fs_savepath" );
 idCVar	idFileSystemLocal::fs_buildResources( "fs_buildresources", "0", CVAR_SYSTEM | CVAR_BOOL | CVAR_INIT, "Copy every file touched to a resource file" );
 idCVar	idFileSystemLocal::fs_game( "fs_game", "", CVAR_SYSTEM | CVAR_INIT | CVAR_SERVERINFO, "mod path" );
-idCVar  idFileSystemLocal::fs_game_base( "fs_game_base", "", CVAR_SYSTEM | CVAR_INIT | CVAR_SERVERINFO, "alternate mod path, searched after the main fs_game path, before the basedir" );
+idCVar  idFileSystemLocal::fs_game_base( "fs_game_base", "mod_icedhellfire", CVAR_SYSTEM | CVAR_INIT | CVAR_SERVERINFO, "alternate mod path, searched after the main fs_game path, before the basedir" );
 
 idCVar	fs_basepath( "fs_basepath", "", CVAR_SYSTEM | CVAR_INIT, "" );
 idCVar	fs_savepath( "fs_savepath", "", CVAR_SYSTEM | CVAR_INIT, "" );
@@ -3393,6 +3393,7 @@ void idFileSystemLocal::Init()
 		doom2019Found = true;
 	}
 
+#ifndef __TYPEINFOGEN__
 	// if we can't find default.cfg, assume that the paths are
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
@@ -3401,6 +3402,7 @@ void idFileSystemLocal::Init()
 	{
 		common->FatalError( "Couldn't load default.cfg" );
 	}
+#endif
 }
 
 /*
@@ -3415,6 +3417,7 @@ void idFileSystemLocal::Restart()
 
 	Startup();
 
+#ifndef __TYPEINFOGEN__
 	// if we can't find default.cfg, assume that the paths are
 	// busted and error out now, rather than getting an unreadable
 	// graphics screen when the font fails to load
@@ -3422,6 +3425,7 @@ void idFileSystemLocal::Restart()
 	{
 		common->FatalError( "Couldn't load default.cfg" );
 	}
+#endif
 }
 
 /*

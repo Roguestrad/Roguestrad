@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -1786,3 +1787,74 @@ bool idAI::PredictTrajectory( const idVec3& firePos, const idVec3& target, float
 	// there is no collision free trajectory
 	return false;
 }
+
+// jmarshall begin
+/*
+=====================
+idAI::idle_followPathEntities
+=====================
+*/
+void idAI::idle_followPathEntities( idEntity* pathnode )
+{
+	idStr nodeaction;
+	idStr triggername;
+	idEntity* triggerent;
+	idEntity* current_path;
+	idEntity* next_path;
+
+	current_path = pathnode;
+	do
+	{
+		next_path = idPathCorner::RandomPath( current_path, NULL );
+		nodeaction = current_path->GetKey( "classname" );
+		if( scriptObject.GetFunction( nodeaction ) )
+		{
+
+			//#ifdef _D3XP
+			// trigger an entity right when the path corner is accepted
+			idStr pretriggername;
+			idEntity* pretriggerent;
+			pretriggername = current_path->GetKey( "pretrigger" );
+			if( pretriggername != "" )
+			{
+				pretriggerent = gameLocal.GetEntity( pretriggername );
+				if( pretriggerent )
+				{
+					pretriggerent->Event_ActivateTargets( this );
+				}
+			}
+			//#endif
+
+//			Event_CallFunction(nodeaction);
+			scriptThread->ClearStack();
+			scriptThread->PushEntity( this );
+			scriptThread->CallFunction( scriptObject.GetFunction( nodeaction ), false );
+		}
+		else
+		{
+			idLib::Warning( "'%s' encountered an unsupported path entity '%s' on entity '%s'\n", GetName(), nodeaction.c_str(), current_path->GetName() );
+			return;
+		}
+
+		if( checkForEnemy( true ) )
+		{
+			return;
+		}
+
+		// trigger any entities the path had targeted
+		triggername = current_path->GetKey( "trigger" );
+		if( triggername != "" )
+		{
+			triggerent = gameLocal.GetEntity( triggername );
+			if( triggerent )
+			{
+				triggerent->Event_ActivateTargets( this );
+			}
+		}
+
+		current_path = next_path;
+	}
+	while( !( !current_path ) );
+}
+// jmarshall end
+

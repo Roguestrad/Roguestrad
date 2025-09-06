@@ -295,6 +295,8 @@ public:
 	int						Contents( const idVec3& start,
 									  const idClipModel* mdl, const idMat3& trmAxis, int contentMask, const idEntity* passEntity );
 
+	int						PointContents( const idVec3 p );
+
 	// special case translations versus the rest of the world
 	bool					TracePoint( trace_t& results, const idVec3& start, const idVec3& end,
 										int contentMask, const idEntity* passEntity );
@@ -340,6 +342,7 @@ private:
 	idBounds				worldBounds;
 	idClipModel				temporaryClipModel;
 	idClipModel				defaultClipModel;
+	cmHandle_t				worldCollisionModel;
 	mutable int				touchCount;
 	// statistics
 	int						numTranslations;

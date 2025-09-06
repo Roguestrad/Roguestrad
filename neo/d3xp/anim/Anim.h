@@ -358,13 +358,15 @@ private:
 	bool						ParseAnim( idLexer& src, int numDefaultAnims, const idStr& defaultCommands );
 
 private:
-	idVec3						offset;
+	idVec3									offset;
 	idList<jointInfo_t, TAG_ANIM>			joints;
 	idList<int, TAG_ANIM>					jointParents;
 	idList<int, TAG_ANIM>					channelJoints[ ANIM_NumAnimChannels ];
-	idRenderModel* 				modelHandle;
-	idList<idAnim*, TAG_ANIM>			anims;
-	const idDeclSkin* 			skin;
+	idRenderModel* 							modelHandle;
+	idList<idAnim*, TAG_ANIM>				anims;
+	const idDeclSkin* 						skin;
+	bool									hasCustomRotationSet;	// HarrievG
+	idAngles								originalRotation;		// HarrievG
 
 	idImportOptions				importOptions; // RB
 };

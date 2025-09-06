@@ -1500,31 +1500,6 @@ CONSOLE_COMMAND( testmap, "tests a map", idCmdSystem::ArgCompletion_MapName )
 }
 
 
-/*
-==================
-Common_TestMap_f
-
 // TODO finish this
-==================
-*/
 #if 0
-CONSOLE_COMMAND( bakemap, "loads a map and bakes environment probes", idCmdSystem::ArgCompletion_MapName )
-{
-	idStr map, string;
-
-	map = args.Argv( 1 );
-	if( !map.Length() )
-	{
-		return;
-	}
-	map.StripFileExtension();
-
-	cmdSystem->BufferCommandText( CMD_EXEC_NOW, "disconnect" );
-
-	sprintf( string, "devmap %s.map", map.c_str() );
-	cmdSystem->BufferCommandText( CMD_EXEC_NOW, string );
-
-	sprintf( string, "bakeEnvironmentProbes" );
-	cmdSystem->BufferCommandText( CMD_EXEC_NOW, string );
-}
 #endif

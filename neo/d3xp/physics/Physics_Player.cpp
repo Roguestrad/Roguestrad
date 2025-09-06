@@ -1713,6 +1713,7 @@ idPhysics_Player::idPhysics_Player()
 	ladderNormal.Zero();
 	waterLevel = WATERLEVEL_NONE;
 	waterType = 0;
+	clientPusherLocked = false;			// SRS - initialize to unlocked at start
 }
 
 /*

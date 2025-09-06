@@ -1,0 +1,114 @@
+/***********************************************************************
+
+ai_monster_flying_lostsoul.script
+
+monster_flying_lostsoul
+
+***********************************************************************/
+
+#define LOSTSOUL_CHARGE_SPEED		440
+
+object monster_flying_lostsoul : monster_base {
+	// anim states
+	void		Torso_Idle();
+	void		Torso_Fly();
+	void		Torso_Charge();
+	void		Torso_Pain();
+	void		Torso_MeleeAttack();
+};
+
+/***********************************************************************
+
+	Torso animation control
+
+***********************************************************************/
+
+void monster_flying_lostsoul::Torso_Idle() {
+	playCycle( ANIMCHANNEL_TORSO, "idle" );
+	
+	eachFrame {
+		if ( AI_PAIN ) {
+			animState( ANIMCHANNEL_TORSO, "Torso_Pain", 0 );
+		}
+		if ( AI_FORWARD ) {
+			animState( ANIMCHANNEL_TORSO, "Torso_Fly", 4 );
+		}
+	}
+}
+
+void monster_flying_lostsoul::Torso_Fly() {
+	playCycle( ANIMCHANNEL_TORSO, "fly" );
+	
+	eachFrame {
+		if ( AI_PAIN ) {
+			animState( ANIMCHANNEL_TORSO, "Torso_Pain", 0 );
+		}
+		if ( !AI_FORWARD ) {
+			animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+		}
+	}
+}
+
+void monster_flying_lostsoul::Torso_Charge() {
+	float dist;
+	float endtime;
+	
+	playCycle( ANIMCHANNEL_TORSO, "charge" );	
+	
+	fadeSound ( SND_CHANNEL_VOICE2, 0, 0 );
+	startSound( "snd_charge", SND_CHANNEL_VOICE2, false );
+	
+	dist = distanceTo( getEnemy() ) + 256;
+	endtime = sys.getTime() + dist / LOSTSOUL_CHARGE_SPEED;
+	while( !AI_PAIN && ( sys.getTime() < endtime ) ) {
+		if ( sys.influenceActive() ) {
+			break;
+		}
+		if ( testMeleeAttack() ) {
+			attackMelee( "melee_lostsoul_charge" );
+			break;
+		}
+		waitFrame();
+	}
+	
+	attackEnd();
+	fadeSound ( SND_CHANNEL_VOICE2, -60, 1 );
+	finishAction( "charge_attack" );
+
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+}
+
+void monster_flying_lostsoul::Torso_Pain() {
+	string animname;
+	float nextpain;
+	float currenttime;
+	
+	animname = getPainAnim();
+	playAnim( ANIMCHANNEL_TORSO, animname );
+
+	nextpain = sys.getTime() + 0.25;
+	
+	while( !animDone( ANIMCHANNEL_TORSO, 2 ) ) {
+		if ( AI_PAIN ) {
+			currenttime = sys.getTime();
+			if ( currenttime > nextpain ) {
+				animState( ANIMCHANNEL_TORSO, "Torso_Pain", 0 );
+			}
+		}
+		waitFrame();
+	}
+
+	finishAction( "pain" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 2 );
+}
+
+void monster_flying_lostsoul::Torso_MeleeAttack() {
+	playAnim( ANIMCHANNEL_TORSO, "melee_attack" );
+
+	while( !animDone( ANIMCHANNEL_TORSO, 4 ) ) {
+		waitFrame();
+	}
+	
+	finishAction( "melee_attack" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+}

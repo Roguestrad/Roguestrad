@@ -226,12 +226,17 @@ idVoiceChatMgr::SetTalkerGroup
 void idVoiceChatMgr::SetTalkerGroup( const lobbyUser_t* user, int lobbyType, int groupIndex )
 {
 	int i = FindTalkerIndex( user, lobbyType );
-
-	if( !verify( i != -1 ) )
+// jmarshall - bots
+	//if( !verify( i != -1 ) )
+	//{
+	//	idLib::Printf( "SetTalkerGroup: Talker not found.\n" );
+	//	return;
+	//}
+	if( i == -1 )
 	{
-		idLib::Printf( "SetTalkerGroup: Talker not found.\n" );
 		return;
 	}
+// jmarshall end
 
 	// Assign the new group index to this talker
 	talkers[i].groupIndex = groupIndex;

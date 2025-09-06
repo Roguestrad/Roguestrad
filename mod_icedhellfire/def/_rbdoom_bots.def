@@ -1,0 +1,11 @@
+entityDef player_doommarine_mp_bot 
+{
+	"inherit"		"player_doommarine_mp"
+	"spawnclass"	"iceBot"
+}
+
+entityDef player_doommarine_ctf_bot 
+{
+	"inherit"		"player_doommarine_ctf"
+	"spawnclass"	"iceBot"
+}	

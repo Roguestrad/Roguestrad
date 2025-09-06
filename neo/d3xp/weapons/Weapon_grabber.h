@@ -1,0 +1,69 @@
+/*
+===========================================================================
+
+Doom 3 BFG Edition GPL Source Code
+Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
+
+This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
+
+Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Doom 3 BFG Edition Source Code is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
+
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+
+If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+
+===========================================================================
+*/
+
+#pragma once
+
+class iceWeaponGrabber : public iceWeaponObject
+{
+public:
+	CLASS_PROTOTYPE( iceWeaponGrabber );
+
+	virtual void			Init( idWeapon* weapon );
+
+	stateResult_t			Raise( stateParms_t* parms );
+	stateResult_t			Lower( stateParms_t* parms );
+	stateResult_t			Idle( stateParms_t* parms );
+	stateResult_t			Fire( stateParms_t* parms );
+	stateResult_t			Reload( stateParms_t* parms );
+private:
+	void		StartActive();
+	void		StopActive();
+
+	void		StartWarningSound();
+	void		UpdateWarningSound();
+
+	void		UpdateGuiLight();
+
+	const idSoundShader* snd_fireloop;
+	const idSoundShader* snd_electroloop;
+	const idSoundShader* snd_mainfire;
+	const idSoundShader* snd_cangrab;
+	const idSoundShader* snd_warning;
+	const idSoundShader* snd_stopfire;
+private:
+	float		next_attack;
+
+	float		fireStartTime;
+	bool		warningBeep1;
+	bool		warningBeep2;
+	bool		warningBeep3;
+	bool		warningBeep4;
+
+	float		grabberState;
+};

@@ -63,6 +63,8 @@ extern idCVar	g_healthTakeTime;
 extern idCVar	g_healthTakeAmt;
 extern idCVar	g_healthTakeLimit;
 
+extern idCVar	g_debugState;
+
 extern idCVar	g_showPVS;
 extern idCVar	g_showTargets;
 extern idCVar	g_showTriggers;
@@ -241,6 +243,7 @@ extern idCVar	g_xp_bind_run_once;
 
 extern idCVar	aas_test;
 extern idCVar	aas_showAreas;
+extern idCVar	aas_showBotAreas;
 extern idCVar	aas_showPath;
 extern idCVar	aas_showFlyPath;
 extern idCVar	aas_showWallEdges;

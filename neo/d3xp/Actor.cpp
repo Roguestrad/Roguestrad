@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -136,6 +137,8 @@ void idAnimState::Init( idActor* owner, idAnimator* _animator, int animchannel )
 	}
 	thread->EndThread();
 	thread->ManualControl();
+
+	stateThread.SetOwner( owner );
 }
 
 /*
@@ -156,10 +159,12 @@ idAnimState::SetState
 */
 void idAnimState::SetState( const char* statename, int blendFrames )
 {
+	bool hasNative = self->HasNativeFunction( statename );
+
 	const function_t* func;
 
 	func = self->scriptObject.GetFunction( statename );
-	if( !func )
+	if( !func && !hasNative )
 	{
 		assert( 0 );
 		gameLocal.Error( "Can't find function '%s' in object '%s'", statename, self->scriptObject.GetTypeName() );
@@ -169,7 +174,14 @@ void idAnimState::SetState( const char* statename, int blendFrames )
 	disabled = false;
 	animBlendFrames = blendFrames;
 	lastAnimBlendFrames = blendFrames;
-	thread->CallFunction( self, func, true );
+	if( !hasNative )
+	{
+		thread->CallFunction( self, func, true );
+	}
+	else
+	{
+		stateThread.SetState( statename, animBlendFrames );
+	}
 
 	animBlendFrames = blendFrames;
 	lastAnimBlendFrames = blendFrames;
@@ -345,7 +357,15 @@ bool idAnimState::UpdateState()
 		thread->DisableDebugInfo();
 	}
 
-	thread->Execute();
+	bool hasNative = self->HasNativeFunction( state );
+	if( !hasNative )
+	{
+		thread->Execute();
+	}
+	else
+	{
+		stateThread.Execute();
+	}
 
 	return true;
 }
@@ -1454,16 +1474,18 @@ idThread* idActor::ConstructScriptObject()
 
 	// call script object's constructor
 	constructor = scriptObject.GetConstructor();
-	if( !constructor )
+
+	// jmarshall
+	if( constructor )
 	{
-		gameLocal.Error( "Missing constructor on '%s' for entity '%s'", scriptObject.GetTypeName(), name.c_str() );
+		//gameLocal.Error( "Missing constructor on '%s' for entity '%s'", scriptObject.GetTypeName(), name.c_str() );
+		// init the script object's data
+		scriptObject.ClearObject();
+
+		// just set the current function on the script.  we'll execute in the subclasses.
+		scriptThread->CallFunction( this, constructor, true );
 	}
-
-	// init the script object's data
-	scriptObject.ClearObject();
-
-	// just set the current function on the script.  we'll execute in the subclasses.
-	scriptThread->CallFunction( this, constructor, true );
+	// jmarshall end
 
 	return scriptThread;
 }
@@ -1518,8 +1540,17 @@ void idActor::SetState( const char* statename )
 {
 	const function_t* newState;
 
-	newState = GetScriptFunction( statename );
-	SetState( newState );
+	// jmarshall
+	if( HasNativeFunction( statename ) )
+	{
+		stateThread.SetState( statename );
+	}
+	else
+	{
+		newState = GetScriptFunction( statename );
+		SetState( newState );
+	}
+	// jmarshall end
 }
 
 /*
@@ -2056,6 +2087,15 @@ bool idActor::HasEnemies() const
 
 	return false;
 }
+/*
+================
+idActor::AnimDone
+================
+*/
+bool idActor::AnimDone( int channel, int blendFrames )
+{
+	return GetAnimStateVar( channel ).AnimDone( blendFrames );
+}
 
 /*
 ================
@@ -2170,7 +2210,7 @@ void idActor::SetAnimState( int channel, const char* statename, int blendFrames 
 	func = scriptObject.GetFunction( statename );
 	if( !func )
 	{
-		assert( 0 );
+		//jmarshall assert( 0 );
 		gameLocal.Error( "Can't find function '%s' in object '%s'", statename, scriptObject.GetTypeName() );
 	}
 
@@ -2226,6 +2266,27 @@ const char* idActor::GetAnimState( int channel ) const
 			gameLocal.Error( "idActor::GetAnimState: Unknown anim group" );
 			return NULL;
 			break;
+	}
+}
+
+/*
+=====================
+idActor::GetAnimStateVar
+=====================
+*/
+idAnimState& idActor::GetAnimStateVar( int channel )
+{
+	switch( channel )
+	{
+		case ANIMCHANNEL_LEGS:
+			return legsAnim;
+		case ANIMCHANNEL_TORSO:
+			return torsoAnim;
+		case ANIMCHANNEL_HEAD:
+			return headAnim;
+		default:
+			gameLocal.Error( "idActor::GetAnimState: Unknown anim channel" );
+			return torsoAnim;
 	}
 }
 
@@ -2522,8 +2583,20 @@ void idActor::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir
 		gameLocal.Error( "Unknown damageDef '%s'", damageDefName );
 		return;
 	}
+// jmarshall - added min/max damage support.
+	//int	damage = damageDef->GetInt( "damage" ) * damageScale;
+	int minDamage = damageDef->GetInt( "minDamage", "-1" );
+	int maxDamage = damageDef->GetInt( "maxDamage", "-1" );
+	int damage = -1;
+	if( minDamage == -1 || maxDamage == -1 )
+	{
+		int damageBase = damageDef->GetInt( "damage" );
+		minDamage = damageBase - ( damageBase * 0.2f );
+		maxDamage = damageBase + ( damageBase * 0.2f );
+	}
 
-	int	damage = damageDef->GetInt( "damage" ) * damageScale;
+	damage = rvRandom::irand( minDamage, maxDamage ) * damageScale;
+// jmarshall
 	damage = GetDamageForLocation( damage, location );
 
 	// inform the attacker that they hit someone
@@ -3670,28 +3743,37 @@ idActor::Event_AnimDone
 */
 void idActor::Event_AnimDone( int channel, int blendFrames )
 {
+	idThread::ReturnInt( AnimDone( channel, blendFrames ) );
+}
+
+/*
+===============
+idActor::Event_AnimDone
+===============
+*/
+bool idActor::AnimDone( int channel, int blendFrames ) const
+{
 	bool result;
 
 	switch( channel )
 	{
-		case ANIMCHANNEL_HEAD :
+		case ANIMCHANNEL_HEAD:
 			result = headAnim.AnimDone( blendFrames );
-			idThread::ReturnInt( result );
 			break;
 
-		case ANIMCHANNEL_TORSO :
+		case ANIMCHANNEL_TORSO:
 			result = torsoAnim.AnimDone( blendFrames );
-			idThread::ReturnInt( result );
 			break;
 
-		case ANIMCHANNEL_LEGS :
+		case ANIMCHANNEL_LEGS:
 			result = legsAnim.AnimDone( blendFrames );
-			idThread::ReturnInt( result );
 			break;
 
 		default:
 			gameLocal.Error( "Unknown anim group" );
 	}
+
+	return result;
 }
 
 /*
@@ -3733,10 +3815,10 @@ void idActor::Event_CheckAnim( int channel, const char* animname )
 
 /*
 ================
-idActor::Event_ChooseAnim
+idActor::ChooseAnim
 ================
 */
-void idActor::Event_ChooseAnim( int channel, const char* animname )
+idStr idActor::ChooseAnim( int channel, const char* animname )
 {
 	int anim;
 
@@ -3747,18 +3829,54 @@ void idActor::Event_ChooseAnim( int channel, const char* animname )
 		{
 			if( head.GetEntity() )
 			{
-				idThread::ReturnString( head.GetEntity()->GetAnimator()->AnimFullName( anim ) );
-				return;
+				return head.GetEntity()->GetAnimator()->AnimFullName( anim );
 			}
 		}
 		else
 		{
-			idThread::ReturnString( animator.AnimFullName( anim ) );
-			return;
+			return animator.AnimFullName( anim );
 		}
 	}
 
-	idThread::ReturnString( "" );
+	return "";
+}
+
+/*
+================
+idActor::Event_ChooseAnim
+================
+*/
+void idActor::Event_ChooseAnim( int channel, const char* animname )
+{
+	idThread::ReturnString( ChooseAnim( channel, animname ) );
+}
+
+/*
+================
+idActor::Event_AnimLength
+================
+*/
+float idActor::AnimLength( int channel, const char* animname )
+{
+	int anim;
+
+	anim = GetAnim( channel, animname );
+	if( anim )
+	{
+		if( channel == ANIMCHANNEL_HEAD )
+		{
+			if( head.GetEntity() )
+			{
+				return ( MS2SEC( head.GetEntity()->GetAnimator()->AnimLength( anim ) ) );
+			}
+		}
+		else
+		{
+			return ( MS2SEC( animator.AnimLength( anim ) ) );
+		}
+	}
+
+	return ( 0.0f );
 }
 
 /*
@@ -3768,27 +3886,7 @@ idActor::Event_AnimLength
 */
 void idActor::Event_AnimLength( int channel, const char* animname )
 {
-	int anim;
-
-	anim = GetAnim( channel, animname );
-	if( anim )
-	{
-		if( channel == ANIMCHANNEL_HEAD )
-		{
-			if( head.GetEntity() )
-			{
-				idThread::ReturnFloat( MS2SEC( head.GetEntity()->GetAnimator()->AnimLength( anim ) ) );
-				return;
-			}
-		}
-		else
-		{
-			idThread::ReturnFloat( MS2SEC( animator.AnimLength( anim ) ) );
-			return;
-		}
-	}
-
-	idThread::ReturnFloat( 0.0f );
+	idThread::ReturnFloat( AnimLength( channel, animname ) );
 }
 
 /*
@@ -3841,7 +3939,16 @@ idActor::Event_NextEnemy
 */
 void idActor::Event_NextEnemy( idEntity* ent )
 {
-	idActor* actor;
+	idThread::ReturnEntity( NextEnemy( ent ) );
+}
+/*
+================
+idActor::NextEnemy
+================
+*/
+idActor* idActor::NextEnemy( idEntity* ent )
+{
+	idActor* actor = NULL;
 
 	if( !ent || ( ent == this ) )
 	{
@@ -3865,12 +3972,11 @@ void idActor::Event_NextEnemy( idEntity* ent )
 	{
 		if( !actor->fl.hidden )
 		{
-			idThread::ReturnEntity( actor );
-			return;
+			return actor;
 		}
 	}
 
-	idThread::ReturnEntity( NULL );
+	return NULL;
 }
 
 /*
@@ -3923,6 +4029,14 @@ idActor::Event_SetState
 */
 void idActor::Event_SetState( const char* name )
 {
+	// jmarshall begin
+	if( HasNativeFunction( name ) )
+	{
+		stateThread.SetState( name );
+		return;
+	}
+	// jmarshall end
+
 	idealState = GetScriptFunction( name );
 	if( idealState == state )
 	{

@@ -1,0 +1,91 @@
+/***********************************************************************
+
+ai_monster_zombie_morgues.script
+
+monster_zombie_morgue
+
+***********************************************************************/
+
+object monster_zombie_morgue : monster_zombie_base {
+	// torso anim states
+	void		Torso_Idle();
+	void		Torso_Pain();
+	void		Torso_MeleeAttack();
+	
+	// legs anim states
+	void		Legs_Idle();
+	void		Legs_Run();
+};
+
+/***********************************************************************
+
+	Torso animation control
+
+***********************************************************************/
+
+void monster_zombie_morgue::Torso_Idle() {
+	idleAnim( ANIMCHANNEL_TORSO, "idle" );
+	
+	while( !AI_PAIN ) {
+		waitFrame();
+	}
+	
+	animState( ANIMCHANNEL_TORSO, "Torso_Pain", 2 );
+}
+
+void monster_zombie_morgue::Torso_Pain() {
+	string animname;
+	float nextpain;
+	float currenttime;
+	
+	animname = getPainAnim();
+	playAnim( ANIMCHANNEL_TORSO, animname );
+
+	nextpain = sys.getTime() + 0.25;
+	
+	while( !animDone( ANIMCHANNEL_TORSO, 4 ) ) {
+		if ( AI_PAIN ) {
+			currenttime = sys.getTime();
+			if ( currenttime > nextpain ) {
+				animState( ANIMCHANNEL_TORSO, "Torso_Pain", 8 );
+			}
+		}
+		waitFrame();
+	}
+
+	finishAction( "pain" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+}
+
+void monster_zombie_morgue::Torso_MeleeAttack() {
+	playAnim( ANIMCHANNEL_TORSO, "melee_attack" );
+
+	while( !animDone( ANIMCHANNEL_TORSO, 4 ) ) {
+		waitFrame();
+	}
+	
+	finishAction( "melee_attack" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 8 );
+}
+
+/***********************************************************************
+
+	Legs animation control
+
+***********************************************************************/
+
+void monster_zombie_morgue::Legs_Idle() {
+	idleAnim( ANIMCHANNEL_LEGS, "idle" );
+
+	eachFrame {
+		if ( AI_FORWARD )					{ animState( ANIMCHANNEL_LEGS, "Legs_Run", 8 ); }
+	}
+}
+
+void monster_zombie_morgue::Legs_Run() {
+	playCycle( ANIMCHANNEL_LEGS, "run" );
+	
+	eachFrame {
+		if ( !AI_FORWARD )					{ animState( ANIMCHANNEL_LEGS, "Legs_Idle", 8 ); }
+	}
+}

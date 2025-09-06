@@ -28,7 +28,8 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef PREDICTED_VALUE_H_
 #define PREDICTED_VALUE_H_
 
-#include "Game_local.h"
+//#include "Game_local.h"
+#pragma once
 
 /*
 ================================================

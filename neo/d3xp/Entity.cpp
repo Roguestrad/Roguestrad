@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -1814,6 +1815,63 @@ bool idEntity::UpdateRenderEntity( renderEntity_t* renderEntity, const renderVie
 
 	return false;
 }
+
+/*
+==============
+idEntity::GetKey
+==============
+*/
+// jmarshall
+const char* idEntity::GetKey( const char* key )
+{
+	const char* value;
+
+	spawnArgs.GetString( key, "", &value );
+
+	return value;
+}
+
+/*
+==============
+idEntity::GetFloat
+==============
+*/
+
+float idEntity::GetFloat( const char* key )
+{
+	return spawnArgs.GetFloat( key, "0" );
+}
+
+/*
+==============
+idEntity::GetInt
+==============
+*/
+int idEntity::GetInt( const char* key )
+{
+	return spawnArgs.GetInt( key, "0" );
+}
+
+/*
+==============
+idEntity::GetBool
+==============
+*/
+bool idEntity::GetBool( const char* key )
+{
+	return spawnArgs.GetBool( key, "0" );
+}
+
+/*
+================
+idEntity::GetOrigin
+================
+*/
+idVec3 idEntity::GetOrigin() const
+{
+	return GetLocalCoordinates( GetPhysics()->GetOrigin() );
+}
+// jmarshall end
 
 /*
 ================
@@ -4403,7 +4461,7 @@ bool idEntity::HandleGuiCommands( idEntity* entityGui, const char* cmds )
 					}
 					msg += token2.c_str();
 				}
-				common->Printf( "ent gui 0x%x '%s': %s\n", entityNumber, name.c_str(), msg.c_str() );
+				idLib::Printf( "ent gui 0x%x '%s': %s\n", entityNumber, name.c_str(), msg.c_str() );
 				continue;
 			}
 
@@ -5284,6 +5342,19 @@ void idEntity::Event_GetSize()
 
 /*
 ================
+idEntity::Event_GetSize
+================
+*/
+idVec3 idEntity::GetSize()
+{
+	idBounds bounds;
+
+	bounds = GetPhysics()->GetBounds();
+	return ( bounds[1] - bounds[0] );
+}
+
+/*
+================
 idEntity::Event_GetMins
 ================
 */
@@ -5307,18 +5378,27 @@ void idEntity::Event_GetMaxs()
 idEntity::Event_Touches
 ================
 */
-void idEntity::Event_Touches( idEntity* ent )
+bool idEntity::Touches( idEntity* ent )
 {
 	if( !ent )
 	{
-		idThread::ReturnInt( false );
-		return;
+		return false;
 	}
 
 	const idBounds& myBounds = GetPhysics()->GetAbsBounds();
 	const idBounds& entBounds = ent->GetPhysics()->GetAbsBounds();
 
-	idThread::ReturnInt( myBounds.IntersectsBounds( entBounds ) );
+	return ( myBounds.IntersectsBounds( entBounds ) );
+}
+
+/*
+================
+idEntity::Event_Touches
+================
+*/
+void idEntity::Event_Touches( idEntity* ent )
+{
+	idThread::ReturnInt( Touches( ent ) );
 }
 
 /*
@@ -5391,6 +5471,33 @@ void idEntity::Event_GetNextKey( const char* prefix, const char* lastMatch )
 
 /*
 ================
+idEntity::GetNextKey
+================
+*/
+idStr idEntity::GetNextKey( const char* prefix, const char* lastMatch )
+{
+	const idKeyValue* kv;
+	const idKeyValue* previous;
+
+	if( *lastMatch )
+	{
+		previous = spawnArgs.FindKey( lastMatch );
+	}
+	else
+	{
+		previous = NULL;
+	}
+
+	kv = spawnArgs.MatchPrefix( prefix, previous );
+	if( !kv )
+	{
+		return "";
+	}
+	return kv->GetKey();
+}
+
+/*
+================
 idEntity::Event_SetKey
 ================
 */
@@ -5456,10 +5563,10 @@ void idEntity::Event_GetVectorKey( const char* key )
 
 /*
 ================
-idEntity::Event_GetEntityKey
+idEntity::GetEntityKey
 ================
 */
-void idEntity::Event_GetEntityKey( const char* key )
+idEntity* idEntity::GetEntityKey( const char* key )
 {
 	idEntity* ent;
 	const char* entname;
@@ -5467,7 +5574,7 @@ void idEntity::Event_GetEntityKey( const char* key )
 	if( !spawnArgs.GetString( key, NULL, &entname ) )
 	{
 		idThread::ReturnEntity( NULL );
-		return;
+		return NULL;
 	}
 
 	ent = gameLocal.FindEntity( entname );
@@ -5476,7 +5583,17 @@ void idEntity::Event_GetEntityKey( const char* key )
 		gameLocal.Warning( "Couldn't find entity '%s' specified in '%s' key in entity '%s'", entname, key, name.c_str() );
 	}
 
-	idThread::ReturnEntity( ent );
+	return ent;
+}
+
+/*
+================
+idEntity::Event_GetEntityKey
+================
+*/
+void idEntity::Event_GetEntityKey( const char* key )
+{
+	idThread::ReturnEntity( GetEntityKey( key ) );
 }
 
 /*

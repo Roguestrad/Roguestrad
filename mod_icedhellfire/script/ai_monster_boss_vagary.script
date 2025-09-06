@@ -1,0 +1,190 @@
+/***********************************************************************
+
+ai_monster_boss_vagary.script
+
+monster_boss_vagary
+
+***********************************************************************/
+
+#define VAGARY_ATTACK_RATE			1.5
+#define VAGARY_DODGE_RATE			4
+#define	VAGARY_PAIN_DELAY			0.25
+#define	VAGARY_TURRET_TO_IDLE		4
+#define	VAGARY_THROW_SPEED			1200
+#define VAGARY_THROW_SPEED2			( VAGARY_THROW_SPEED + 300 )
+#define	VAGARY_THROW_DIST			200
+#define VAGARY_THROW_MIN			'-512 -512 -512'
+#define	VAGARY_THROW_MAX			'512 512 512'
+#define VAGARY_THROW_OFFSET			64
+#define VAGARY_NOFOVTIME			4
+
+// anim blend times
+#define	VAGARY_PAIN_TO_IDLE			2
+#define VAGARY_PAIN_TO_PAIN			0
+#define VAGARY_SIGHT_TO_IDLE		4
+#define	VAGARY_MELEE_TO_IDLE		4
+#define VAGARY_RANGE_TO_IDLE		4
+#define VAGARY_DODGE_LEFT_TO_IDLE	4
+#define	VAGARY_DODGE_RIGHT_TO_IDLE	4
+#define VAGARY_WAIT_TO_OUT			4
+#define	VAGARY_IN_TO_WAIT			4
+#define	VAGARY_WALK_TO_WAIT			4
+#define VAGARY_WALK_TO_ACTION		4
+#define VAGARY_ACTION_TO_IDLE		4
+#define VAGARY_WALK_TO_DODGE_LEFT	4
+#define VAGARY_WALK_TO_DODGE_RIGHT	4
+#define VAGARY_IDLE_TO_PAIN			0
+#define VAGARY_IDLE_TO_WALK			4
+#define VAGARY_IDLE_TO_SIGHT		4
+#define VAGARY_WALK_TO_IDLE			4
+#define VAGARY_WALK_TO_RANGEATTACK	4
+#define VAGARY_IDLE_TO_RANGEATTACK	4
+#define VAGARY_WALK_TO_MELEE		4
+#define VAGARY_IDLE_TO_TURRETATTACK	4
+#define VAGARY_TURRETATTACK_TO_IDLE	4
+
+object monster_boss_vagary : monster_base {
+	// torso anim states
+	void		Torso_Idle();
+	void		Torso_Pain();
+	void		Torso_MeleeAttack();
+	void		Torso_RangeAttack();
+	void		Torso_TurretAttack();
+	
+	// legs anim states
+	void		Legs_Idle();
+	void		Legs_Walk();
+	void		Legs_DodgeLeft();
+	void		Legs_DodgeRight();
+};
+
+/***********************************************************************
+
+	Torso animation control
+
+***********************************************************************/
+
+void monster_boss_vagary::Torso_Idle() {
+	idleAnim( ANIMCHANNEL_TORSO, "stand" );
+	
+	while( !AI_PAIN ) {
+		waitFrame();
+	}
+	
+	animState( ANIMCHANNEL_TORSO, "Torso_Pain", VAGARY_IDLE_TO_PAIN );
+}
+
+void monster_boss_vagary::Torso_Pain() {
+	string animname;
+	float nextpain;
+	float currenttime;
+	
+	animname = getPainAnim();
+	playAnim( ANIMCHANNEL_TORSO, animname );
+
+	nextpain = sys.getTime() + VAGARY_PAIN_DELAY;
+	
+	while( !animDone( ANIMCHANNEL_TORSO, VAGARY_PAIN_TO_IDLE ) ) {
+		if ( AI_PAIN ) {
+			currenttime = sys.getTime();
+			if ( currenttime > nextpain ) {
+				animState( ANIMCHANNEL_TORSO, "Torso_Pain", VAGARY_PAIN_TO_PAIN );
+			}
+		}
+		waitFrame();
+	}
+
+	finishAction( "pain" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", VAGARY_PAIN_TO_IDLE );
+}
+
+void monster_boss_vagary::Torso_MeleeAttack() {
+	playAnim( ANIMCHANNEL_TORSO, "melee_attack" );
+
+	while( !animDone( ANIMCHANNEL_TORSO, VAGARY_MELEE_TO_IDLE ) ) {
+		waitFrame();
+	}
+	
+	finishAction( "melee_attack" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", VAGARY_MELEE_TO_IDLE );
+}
+
+void monster_boss_vagary::Torso_RangeAttack() {
+	disablePain();
+	faceEnemy();
+
+	playAnim( ANIMCHANNEL_TORSO, "range_attack" );
+	while( !animDone( ANIMCHANNEL_TORSO, VAGARY_RANGE_TO_IDLE ) ) {
+		lookAtEnemy( 1 );	
+		waitFrame();
+	}
+
+	finishAction( "range_attack" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", VAGARY_RANGE_TO_IDLE );
+}
+
+void monster_boss_vagary::Torso_TurretAttack() {
+	allowMovement( false );
+	disablePain();
+	faceEnemy();
+
+	playAnim( ANIMCHANNEL_TORSO, "range_attack" );
+	while( !animDone( ANIMCHANNEL_TORSO, VAGARY_TURRET_TO_IDLE ) ) {
+		waitFrame();
+	}
+
+	finishAction( "turret_attack" );
+	allowMovement( true );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+}
+
+/***********************************************************************
+
+	Legs animation control
+
+***********************************************************************/
+
+void monster_boss_vagary::Legs_Idle() {
+	idleAnim( ANIMCHANNEL_LEGS, "stand" );
+
+	while( !AI_FORWARD ) {
+	//while( 1 ) {
+		waitFrame();
+	}
+	
+	animState( ANIMCHANNEL_LEGS, "Legs_Walk", VAGARY_IDLE_TO_WALK );
+}
+
+void monster_boss_vagary::Legs_Walk() {
+	playCycle( ANIMCHANNEL_LEGS, "walk" );
+	
+	while( AI_FORWARD )	{
+		waitFrame();
+	}
+	
+	animState( ANIMCHANNEL_LEGS, "Legs_Idle", VAGARY_WALK_TO_IDLE );
+}
+
+void monster_boss_vagary::Legs_DodgeLeft() {
+	playAnim( ANIMCHANNEL_LEGS, "evade_left" );
+
+	while( !animDone( ANIMCHANNEL_LEGS, VAGARY_DODGE_LEFT_TO_IDLE ) ) {
+		waitFrame();
+	}
+	
+	finishAction( "strafe" );
+	animState( ANIMCHANNEL_LEGS, "Legs_Idle", VAGARY_DODGE_LEFT_TO_IDLE );
+}
+
+void monster_boss_vagary::Legs_DodgeRight() {
+	playAnim( ANIMCHANNEL_LEGS, "evade_right" );
+
+	while( !animDone( ANIMCHANNEL_LEGS, VAGARY_DODGE_RIGHT_TO_IDLE ) ) {
+		waitFrame();
+	}
+
+	finishAction( "strafe" );
+	animState( ANIMCHANNEL_LEGS, "Legs_Idle", VAGARY_DODGE_RIGHT_TO_IDLE );
+}
+
+

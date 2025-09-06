@@ -1,0 +1,1204 @@
+/***********************************************************************
+
+ai_monster_base.script
+
+base class for all monsters.  implements common behavior.
+
+***********************************************************************/
+
+//
+// attack flags
+//
+#define ATTACK_DODGE_LEFT	1
+#define ATTACK_DODGE_RIGHT	2
+#define ATTACK_COMBAT_NODE	4
+#define ATTACK_MELEE		8
+#define ATTACK_LEAP			16
+#define ATTACK_MISSILE		32
+#define ATTACK_SPECIAL1		64
+#define ATTACK_SPECIAL2		128
+#define ATTACK_SPECIAL3		256
+#define ATTACK_SPECIAL4		512
+
+
+#define AI_NOT_ACTIVATED	0
+#define AI_CHASING_ENEMY	1
+#define AI_LOST				2
+#define AI_PATH_FOLLOWING	3
+#define AI_ATTACK_NODE		4
+
+/***********************************************************************
+
+	base class for monsters
+
+***********************************************************************/
+
+object monster_base : ai {
+	float		customBlendOut;
+	entity		current_path;
+	entity		next_path;
+	boolean		resurrect;
+	boolean		ignore_lostcombat;
+	boolean		blocked;
+
+	// common animation functions
+	void		Torso_CustomCycle();
+	void		Torso_CustomAnim();
+	void		Torso_Sight();
+	void		Torso_Death();
+	void		Legs_Idle();
+	void		Legs_Death();
+
+	// attack checks
+	// these functions are meant to be implemented by subclasses.
+	// by default, they do nothing.
+	float		check_attacks();
+	void		do_attack( float attack_flags );
+	boolean		checkTurretAttack();				// tests if monster can still do a turret attack from current location
+	
+	void		supports_native(); // jmarshall
+
+	// common functions
+	void		init();
+	void		state_Begin();
+	void		monster_begin();
+	void		archvile_minion();
+	boolean		can_resurrect();
+	void		monster_resurrect( entity enemy );
+	void		wait_for_enemy();
+	void		sight_enemy();
+	void		enemy_dead();
+	void		combat_turret_node( entity node );
+	void		combat_attack_cone( entity node );
+	void		combat_ainode( entity node );
+	void		combat_lost();
+	void		playCustomCycle( string animname, float blendTime );
+	void		playCustomAnim( string animname, float blendIn, float blendOut );
+	void		checkNodeAnim( entity node, string prefix, string anim );
+	void		trigger_wakeup_targets();
+	void 		state_FollowAlternatePath();
+	void 		follow_alternate_path1();
+	void 		follow_alternate_path2();
+	void 		follow_alternate_path3();
+
+	// path following
+	void 		idle_followPathEntities( entity pathnode );
+	void 		path_corner();
+	void 		path_anim();
+	void 		path_cycleanim();
+	void 		path_turn();
+	void 		path_wait();
+	void 		path_waitfortrigger();
+	void 		path_hide();
+	void 		path_show();
+	void		path_attack();
+};
+
+void monster_base::supports_native() {
+	// Let's idAI know we support native states.
+}
+
+/***********************************************************************
+
+	Torso animation control
+
+***********************************************************************/
+
+void monster_base::Torso_CustomCycle() {
+	eachFrame {
+		;
+	}
+}
+
+void monster_base::Torso_CustomAnim() {
+	while( !animDone( ANIMCHANNEL_TORSO, customBlendOut ) ) {
+		waitFrame();
+	}
+	
+	finishAction( "customAnim" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", customBlendOut );
+}
+
+void monster_base::Torso_Sight() {
+	string animname;
+	float blendFrames;
+	
+	if ( !getIntKey( "walk_on_sight" ) ) {
+		overrideAnim( ANIMCHANNEL_LEGS );
+	}
+
+	animname = self.getKey( "on_activate" );
+	if ( self.getKey( "on_activate_blend" ) ) {
+		blendFrames = self.getIntKey( "on_activate_blend" );
+	} else {
+		blendFrames = 4;
+	}
+
+	if ( animname != "" ) {
+		if ( hasAnim( ANIMCHANNEL_TORSO, animname ) ) {
+			playAnim( ANIMCHANNEL_TORSO, animname );
+		
+			while( !animDone( ANIMCHANNEL_TORSO, blendFrames ) ) {
+				waitFrame();
+			}
+		}
+	}
+	
+	finishAction( "sight" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", blendFrames );
+}
+
+void monster_base::Torso_Death() {
+	finishAction( "dead" );
+}
+
+void monster_base::Legs_Idle() {
+	// implemented by subclasses
+}
+
+void monster_base::Legs_Death() {
+}
+
+/***********************************************************************
+
+	AI
+
+***********************************************************************/
+
+/*
+=====================
+monster_base::init
+=====================
+*/
+void monster_base::init() {
+	ignoreEnemies		= false;
+	run_distance		= 0;
+	walk_turn			= 360;
+	ambush				= getIntKey( "ambush" );
+	ignore_lostcombat	= getIntKey( "ignore_lostcombat" );
+	stay_on_attackpath	= getIntKey( "stay_on_attackpath" );
+	idle_sight_fov		= true;
+	run					= false;
+	
+	//_D3XP: Allow AI to be invulnerable always
+	float nodamage;
+	nodamage = getIntKey("no_damage");
+	if(nodamage) {
+		ignoreDamage();
+	}
+}
+
+/*
+=====================
+monster_base::state_Begin
+
+Initial state for monsters.  Called after spawn and when monster is resurrected.
+=====================
+*/
+void monster_base::state_Begin() {
+}
+
+/*
+=====================
+monster_base::do_attack
+
+Performs an attack based on which bits are set on the attack_flags.
+
+Implemented by subclasses
+=====================
+*/
+void monster_base::do_attack( float attack_flags ) {
+}
+
+/*
+=====================
+monster_base::check_attacks
+
+Returns flags stating which attacks can be performed this frame.
+
+Implemented by subclasses
+=====================
+*/
+float monster_base::check_attacks() {
+	return 0;
+}
+
+/*
+=====================
+monster_base::playCustomCycle
+=====================
+*/
+void monster_base::playCustomCycle( string animname, float blendTime ) {
+	animState( ANIMCHANNEL_TORSO, "Torso_CustomCycle", blendTime );
+	overrideAnim( ANIMCHANNEL_LEGS );
+	playCycle( ANIMCHANNEL_TORSO, animname );
+}
+
+/*
+=====================
+monster_base::playCustomAnim
+=====================
+*/
+void monster_base::playCustomAnim( string animname, float blendIn, float blendOut ) {
+	customBlendOut = blendOut;
+	animState( ANIMCHANNEL_TORSO, "Torso_CustomAnim", blendIn );
+	overrideAnim( ANIMCHANNEL_LEGS );
+	playAnim( ANIMCHANNEL_TORSO, animname );
+}
+
+/*
+=====================
+monster_base::trigger_wakeup_targets
+=====================
+*/
+void monster_base::trigger_wakeup_targets() {
+	string key;
+	string name;
+	entity ent;
+
+	key = getNextKey( "wakeup_target", "" );
+	while( key != "" ) {
+		name = getKey( key );
+		ent = sys.getEntity( name );
+		if ( !ent ) {
+			sys.warning( "Unknown wakeup_target '" + name + "' on entity '" + getName() + "'" );
+		} else {
+			sys.trigger( ent );
+		}
+		key = getNextKey( "wakeup_target", key );
+	}
+}
+
+/*
+=====================
+monster_base::monster_begin
+=====================
+*/
+void monster_base::monster_begin() {
+
+}
+
+/*
+=====================
+monster_base::archvile_minion
+=====================
+*/
+void monster_base::archvile_minion() {
+	hide();
+	resurrect = true;
+	AI_DEAD = true;
+}
+
+/*
+=====================
+monster_base::can_resurrect
+=====================
+*/
+boolean monster_base::can_resurrect() {
+	if ( !AI_DEAD ) {
+		return false;
+	}
+
+	if ( !isHidden() ) {
+		return false;
+	}
+
+    if ( !canBecomeSolid() ) {
+		return false;
+	}
+	
+	return true;
+}
+
+/*
+=====================
+monster_base::state_Resurrect
+=====================
+*/
+void monster_base::state_Resurrect() {
+	float health;
+	vector ang;
+
+	AI_DEAD = false;
+
+	stopMove();
+	hide();
+	stopRagdoll();
+	restorePosition();
+
+	waitUntil( canBecomeSolid() );
+
+	health = getFloatKey( "health" );
+	setHealth( health );
+
+	ang_y = getFloatKey( "angle" );
+	setAngles( ang );
+	turnTo( ang_y );
+
+	clearBurn();
+	allowDamage();
+
+	setState( "state_Begin" );
+}
+
+/*
+=====================
+monster_base::monster_resurrect
+=====================
+*/
+void monster_base::monster_resurrect( entity enemy ) {
+	// mark them as not dead so we don't get resurrected twice this frame
+	AI_DEAD = false;
+	if ( enemy ) {
+		setEnemy( enemy );
+	} else {
+		setEnemy( $player1 );
+	}
+	setState( "state_Resurrect" );
+}
+
+/*
+=====================
+monster_base::wait_for_enemy
+=====================
+*/
+void monster_base::wait_for_enemy() {
+	// prevent an infinite loop when in notarget
+	AI_PAIN = false;
+
+	stopMove();
+	
+	while( !AI_PAIN && !getEnemy() ) {
+		if ( checkForEnemy( idle_sight_fov ) ) {
+			break;
+		}
+		waitFrame();
+	}
+}
+
+/*
+=====================
+monster_base::sight_enemy
+=====================
+*/
+void monster_base::sight_enemy() {
+	string animname;
+
+	faceEnemy();
+	animname = self.getKey( "on_activate" );
+	if ( animname != "" ) {
+		// don't go dormant during on_activate anims since they
+		// may end up floating in air during no gravity anims.
+		setNeverDormant( true );
+		if ( getIntKey( "walk_on_sight" ) ) {
+			moveToEnemy();
+		}
+		animState( ANIMCHANNEL_TORSO, "Torso_Sight", 4 );
+		waitAction( "sight" );
+		setNeverDormant( getFloatKey( "neverdormant" ) );
+	}
+}
+
+/*
+=====================
+monster_base::enemy_dead
+=====================
+*/
+void monster_base::enemy_dead() {
+	AI_ENEMY_DEAD = false;
+	checkForEnemy( false );
+	if ( !getEnemy() ) {
+		waitFrame();  // avoid infinite loops
+		setState( "state_Idle" );
+	} else {
+		setState( "state_Combat" );
+	}
+}
+
+/*
+=====================
+monster_base::idle_followPathEntities
+=====================
+*/
+void monster_base::idle_followPathEntities( entity pathnode ) {
+	string nodeaction;
+	string triggername;
+	entity triggerent;
+	
+	current_path = pathnode;
+	do {
+		next_path = current_path.randomPath();
+		nodeaction = current_path.getKey( "classname" );
+		if ( hasFunction( nodeaction ) ) {
+		
+	//#ifdef _D3XP
+			// trigger an entity right when the path corner is accepted
+			string pretriggername;
+			entity pretriggerent;
+			pretriggername = current_path.getKey( "pretrigger" );
+			if ( pretriggername != "" ) {
+				pretriggerent = sys.getEntity( pretriggername );
+				if ( pretriggerent ) {
+					pretriggerent.activate( self );
+				}
+			}
+	//#endif
+			
+			callFunction( nodeaction );
+		} else {
+			sys.warning( "'" + getName() + "' encountered an unsupported path entity '" + nodeaction + "' on entity '" + current_path.getName() + "'\n" );
+			return;
+		}
+
+		if ( checkForEnemy( true ) ) {
+			return;
+		}
+		
+		// trigger any entities the path had targeted
+		triggername = current_path.getKey( "trigger" );
+		if ( triggername != "" ) {
+			triggerent = sys.getEntity( triggername );
+			if ( triggerent ) {
+				triggerent.activate( self );
+			}
+		}
+
+		current_path = next_path;
+	} while( !( !current_path ) );
+}
+
+/***********************************************************************
+
+	path functions
+
+***********************************************************************/
+
+/*
+=====================
+monster_base::path_corner
+=====================
+*/
+void monster_base::path_corner() {
+	string customAnim;
+
+	if ( current_path.getKey( "run" ) != "" ) {
+		run = current_path.getIntKey( "run" );
+	}
+	customAnim = current_path.getKey( "anim" );
+
+	while( 1 ) {
+		if ( customAnim != "" ) {
+			playCustomCycle( customAnim, 4 );
+		}
+		moveToEntity( current_path );
+		waitFrame();
+		while( !AI_MOVE_DONE ) {
+			if ( sys.influenceActive() ) {
+				break;
+			}
+			if ( checkForEnemy( true ) ) {
+				break;
+			}
+			waitFrame();
+		}
+
+		if ( customAnim != "" ) {
+			animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+		}
+
+		if ( sys.influenceActive() ) {
+			stopMove();
+			while( sys.influenceActive() ) {
+				waitFrame();
+			}
+			continue;
+		}
+		break;
+	}
+
+	if ( AI_DEST_UNREACHABLE ) {
+		// Can't reach
+		sys.warning( "entity '" + getName() + "' couldn't reach path_corner '" + current_path.getName() + "'" );
+		waitFrame();
+	}
+}
+
+/*
+=====================
+monster_base::path_anim
+=====================
+*/
+void monster_base::path_anim() {
+	string animname;
+	float  ang;
+	float  blend_in;
+	float  blend_out;
+
+	animname = current_path.getKey( "anim" );
+	blend_in = current_path.getIntKey( "blend_in" );
+	blend_out = current_path.getIntKey( "blend_out" );
+
+	if ( current_path.getKey( "angle" ) != "" ) {
+		ang = current_path.getFloatKey( "angle" );
+		turnTo( ang );
+		while( !facingIdeal() ) {
+			if ( checkForEnemy( true ) ) {
+				return;
+			}
+			waitFrame();
+		}
+	}
+
+	playCustomAnim( animname, blend_in, blend_out );
+	while( !animDone( ANIMCHANNEL_TORSO, blend_out ) ) {
+		if ( checkForEnemy( true ) ) {
+			break;
+		}
+		waitFrame();
+	}
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", blend_out );
+}
+
+/*
+=====================
+monster_base::path_cycleanim
+=====================
+*/
+void monster_base::path_cycleanim() {
+	string animname;
+	vector ang;
+	float  blend_in;
+	float  blend_out;
+	float  waittime;
+
+	animname = current_path.getKey( "anim" );
+	blend_in = current_path.getIntKey( "blend_in" );
+	blend_out = current_path.getIntKey( "blend_out" );
+	ang = current_path.getAngles();
+	turnTo( ang_y );
+	while( !facingIdeal() ) {
+		if ( checkForEnemy( true ) ) {
+			return;
+		}
+		waitFrame();
+	}
+	playCustomCycle( animname, blend_in );
+
+	waittime = current_path.getFloatKey( "wait" );
+	if ( waittime ) {
+		waittime += sys.getTime();
+		while( sys.getTime() < waittime ) {
+			if ( checkForEnemy( true ) ) {
+				return;
+			}
+			waitFrame();
+		}
+	} else {
+		AI_ACTIVATED = false;
+		while( !AI_ACTIVATED ) {
+			if ( checkForEnemy( true ) ) {
+				return;
+			}
+			waitFrame();
+		}
+	}
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", blend_out );
+}
+
+/*
+=====================
+monster_base::path_turn
+=====================
+*/
+void monster_base::path_turn() {
+	vector ang;
+
+	ang = current_path.getAngles();
+	turnTo( ang_y );
+	while( !facingIdeal() ) {
+		if ( checkForEnemy( true ) ) {
+			return;
+		}
+		waitFrame();
+	}
+}
+
+/*
+=====================
+monster_base::path_wait
+=====================
+*/
+void monster_base::path_wait() {
+	float waittime;
+
+	waittime = current_path.getFloatKey( "wait" );
+	waittime += sys.getTime();
+	while( sys.getTime() < waittime ) {
+		if ( checkForEnemy( true ) ) {
+			return;
+		}
+		waitFrame();
+	}
+}
+
+/*
+=====================
+monster_base::path_waitfortrigger
+=====================
+*/
+void monster_base::path_waitfortrigger() {
+	AI_ACTIVATED = false;
+	while( !AI_ACTIVATED ) {
+		if ( checkForEnemy( true ) ) {
+			return;
+		}
+		waitFrame();
+	}
+	AI_ACTIVATED = false;
+}
+			
+/*
+=====================
+monster_base::path_hide
+=====================
+*/
+void monster_base::path_hide() {
+	hide();
+}
+
+/*
+=====================
+monster_base::path_show
+=====================
+*/
+void monster_base::path_show() {
+	waitUntil( canBecomeSolid() );
+	show();
+}
+
+/*
+=====================
+monster_base::path_attack
+=====================
+*/
+void monster_base::path_attack() {
+	entity	enemy;
+	float	delta;
+	boolean do_run;
+	float	range;
+	float	attack_flags;
+
+	enemy = current_path.getEntityKey( "enemy" );	
+	if ( !enemy ) {
+		return;
+	}
+
+	setEnemy( enemy );
+	locateEnemy();
+
+	AI_ACTIVATED = false;
+	while( !AI_ACTIVATED && !( !enemy ) ) {
+		stopMove();
+		while( sys.influenceActive() ) {
+			waitFrame();
+		}
+		if ( enemyRange() > run_distance ) {
+			do_run = true;
+		} else {
+			do_run = false;
+		}
+
+		// set our enemy again in case we were shot by the player
+		setEnemy( enemy );
+		if ( AI_ENEMY_DEAD ) {
+			break;
+		}
+		moveToEnemy();
+		if ( AI_MOVE_DONE ) {
+			locateEnemy();
+			moveToEnemy();
+			if ( AI_MOVE_DONE ) {
+				// prevent runaway loops if monster can't reach enemy
+				waitFrame();
+			}
+		}
+		while( !AI_ACTIVATED && !AI_MOVE_DONE && !AI_DEST_UNREACHABLE && !( !enemy ) ) {
+			// set our enemy again in case we were shot by the player
+			setEnemy( enemy );
+			if ( AI_ENEMY_DEAD ) {
+				break;
+			}
+
+			moveToEnemy();
+
+			if ( AI_ENEMY_IN_FOV ) {
+				lookAtEnemy( 1 );
+			}
+
+			if ( sys.influenceActive() ) {
+				break;
+			}
+			attack_flags = check_attacks();
+			if ( attack_flags ) {
+				do_attack( attack_flags );
+			}
+			
+			range = enemyRange();
+			if ( range > run_distance ) {
+				do_run = true;
+			}
+			
+			delta = getTurnDelta();
+			if ( ( delta > walk_turn ) || ( delta < -walk_turn ) ) {
+				run = false;
+			} else {
+				run = do_run;
+			}
+
+			waitFrame();
+		}
+		stopMove();
+	}
+}
+
+/***********************************************************************
+
+	Combat
+
+***********************************************************************/
+
+
+/*
+=====================
+monster_base::checkTurretAttack
+
+tests if monster can still do a turret attack from current location
+=====================
+*/
+boolean monster_base::checkTurretAttack() {
+	return canHitEnemy();
+}
+
+/*
+=====================
+monster_base::combat_turret_node
+=====================
+*/
+void monster_base::combat_turret_node( entity node ) {
+	vector	pos;
+	float	min_wait;
+	float	max_wait;
+	float	num_shots;
+	float	wait_end;
+	float	current_time;
+	float	count;
+	boolean	exit;
+	boolean do_melee;
+
+	min_wait = node.getFloatKey( "min_wait" );
+	max_wait = node.getFloatKey( "max_wait" );
+	num_shots = node.getFloatKey( "num_shots" );
+
+	pos = node.getOrigin();
+
+	exit = false;
+	while( !AI_ENEMY_DEAD ) {
+		if ( !node ) {
+			// level designers sometimes remove the combat node, so check for it so the thread doesn't get killed
+			break;
+		}
+		// run to the combat node
+		allowMovement( true );
+		run = true;
+
+		moveToEntity( node );
+		while( !AI_MOVE_DONE ) {
+			if ( sys.influenceActive() ) {
+				stopMove();
+				while( sys.influenceActive() ) {
+                    waitFrame();
+				}
+				moveToEntity( node );
+			}
+
+			if ( !node ) {
+				// level designers sometimes remove the combat node, so check for it so the thread doesn't get killed
+				break;
+			}
+
+			if ( AI_ENEMY_IN_FOV ) {
+				lookAtEnemy( 1 );
+			}
+			// exit out if we can't get there or we can do a melee attack
+			do_melee = testMeleeAttack();
+			if ( AI_DEST_UNREACHABLE || do_melee ) {
+				animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+				return;
+			}
+			waitFrame();
+		}
+
+		if ( !AI_ENEMY_VISIBLE ) {
+			waitFrame();
+			continue;
+		}
+
+		if ( !checkTurretAttack() ) {
+			waitFrame();
+			continue;
+		}
+
+		if ( !node ) {
+			// level designers sometimes remove the combat node, so check for it so the thread doesn't get killed
+			break;
+		}
+
+		faceEnemy();
+		allowMovement( false );
+
+		// make sure he's precisely at the node
+		slideTo( pos, 0.25 );
+		waitUntil( AI_MOVE_DONE );
+		faceEnemy();
+	
+		// do our attack
+		allowMovement( false );
+		
+		count = int( sys.random( num_shots ) ) + 1;
+		while( count > 0 ) {
+			if ( sys.influenceActive() ) {
+				break;
+			}
+			if ( !node ) {
+				// level designers sometimes remove the combat node, so check for it so the thread doesn't get killed
+				exit = true;
+				break;
+			}
+			animState( ANIMCHANNEL_TORSO, "Torso_TurretAttack", 4 );
+			while( inAnimState( ANIMCHANNEL_TORSO, "Torso_TurretAttack" ) ) {
+				if ( AI_ENEMY_IN_FOV ) {
+					lookAtEnemy( 1 );
+				}
+				waitFrame();
+			}
+			if ( testMeleeAttack() || AI_ENEMY_DEAD ) {
+				exit = true;
+				break;
+			}
+			count--;
+		}
+
+		if ( exit ) {
+			break;
+		}
+		
+		faceEnemy();
+		current_time = sys.getTime();
+		wait_end = current_time + min_wait + sys.random( max_wait - min_wait );
+		while( sys.influenceActive() || ( sys.getTime() < wait_end ) ) {
+			if ( AI_ENEMY_IN_FOV ) {
+				lookAtEnemy( 1 );
+			}
+			// exit out if we can do a melee attack or enemy is dead
+			// level designers sometimes remove the combat node, so check for it so the thread doesn't get killed
+			if ( testMeleeAttack() || AI_ENEMY_DEAD || !node ) {
+				exit = true;
+				break;
+			}
+			waitFrame();
+		}
+		
+		if ( exit ) {
+			break;
+		}
+	}
+	
+	if ( node ) {
+		// we're done with the node, so get rid of it so we don't use it again
+		node.remove();
+	}
+	
+	allowMovement( true );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+}
+
+/*
+=====================
+monster_base::checkNodeAnim
+=====================
+*/
+void monster_base::checkNodeAnim( entity node, string prefix, string anim ) {
+	if ( !hasAnim( ANIMCHANNEL_TORSO, prefix + "_" + anim ) ) {
+		sys.error( "AI node '" + node.getName() + "' specifies missing anim '" + prefix + "_" + anim + "' on monster '" + getName() + "'" );
+	}
+}
+
+/*
+=====================
+monster_base::combat_attack_cone
+=====================
+*/
+void monster_base::combat_attack_cone( entity node ) {
+	vector	ang;
+	vector	pos;
+	float	min_wait;
+	float	max_wait;
+	float	num_shots;
+	float	wait_end;
+	float	current_time;
+	float	count;
+	boolean	exit;
+	boolean	attack;
+	boolean do_melee;
+	boolean dont_wait;
+	string	prefix;
+
+	// run to the combat node
+	run = true;
+	moveToEntity( node );
+	while( !AI_MOVE_DONE ) {
+		if ( AI_ENEMY_IN_FOV ) {
+			lookAtEnemy( 1 );
+		}
+		// exit out if we can't get there or we can do a melee attack
+		do_melee = testMeleeAttack();
+		if ( AI_DEST_UNREACHABLE || do_melee || !enemyInCombatCone( node, false ) || AI_ENEMY_DEAD || !node ) {
+			animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+			return;
+		}
+		waitFrame();
+	}
+
+	if ( !node ) {
+		// level designers sometimes remove the combat node, so check for it so the thread doesn't get killed
+		animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+		return;
+	}
+
+	// set our anim prefix
+	prefix = node.getKey( "anim" );
+	if ( prefix == "" ) {
+		sys.error( "Missing 'anim' key on entity '" + node.getName() + "'" );
+	}
+	setAnimPrefix( prefix );
+	checkNodeAnim( node, prefix, "out" );
+	checkNodeAnim( node, prefix, "fire" );
+	checkNodeAnim( node, prefix, "in" );
+	checkNodeAnim( node, prefix, "wait" );
+	
+	min_wait = node.getFloatKey( "min_wait" );
+	max_wait = node.getFloatKey( "max_wait" );
+	num_shots = node.getFloatKey( "num_shots" );
+	dont_wait = getIntKey( "wake_on_attackcone" );
+	if ( dont_wait ) {
+		setKey( "wake_on_attackcone", "0" );
+	}
+
+	// face the direction the node points
+	ang = node.getAngles();
+	turnTo( ang_y );
+	
+	exit = false;
+	attack = false;
+	pos = node.getOrigin();
+	while( !( !node ) && enemyInCombatCone( node, true ) ) {
+		allowMovement( false );
+
+		// play the wait animation
+		playCustomCycle( "wait", 4 );
+		
+		// make sure he's precisely at the node
+		slideTo( pos, 0.5 );
+		current_time = sys.getTime();
+		if ( dont_wait ) {
+			dont_wait = false;
+			wait_end = current_time + 0.5;
+		} else {
+			wait_end = current_time + min_wait + sys.random( max_wait - min_wait );
+		}
+		while( sys.influenceActive() || !AI_MOVE_DONE || !facingIdeal() || ( current_time < wait_end ) ) {
+			if ( AI_ENEMY_IN_FOV ) {
+				lookAtEnemy( 1 );
+			}
+			// exit out if we can do a melee attack or enemy has left the combat cone
+			if ( testMeleeAttack() ) {
+				exit = true;
+				break;
+			}
+			if ( !node || !enemyInCombatCone( node, false ) ) {
+				exit = true;
+				break;
+			}
+			waitFrame();
+			current_time = sys.getTime();
+		}
+		
+		if ( exit ) {
+			break;
+		}
+
+		// do our attack
+		allowMovement( true );
+		playCustomAnim( "out", 4, 0 );
+		while( !animDone( ANIMCHANNEL_TORSO, 0 ) ) {
+			if ( AI_ENEMY_IN_FOV ) {
+				lookAtEnemy( 1 );
+			}
+			if ( testMeleeAttack() ) {
+				exit = true;
+				break;
+			}
+			if ( !node || !enemyInCombatCone( node, true ) ) {
+				exit = true;
+				break;
+			}				
+			waitFrame();
+		}
+		
+		if ( exit ) {
+			break;
+		}
+
+		AI_DAMAGE = false;
+		allowMovement( false );
+		count = int( sys.random( num_shots ) ) + 1;
+		while( !AI_DAMAGE && ( count > 0 ) ) {
+			if ( sys.influenceActive() ) {
+				break;
+			}
+			playCustomAnim( "fire", 0, 0 );
+			while( !animDone( ANIMCHANNEL_TORSO, 0 ) ) {
+				if ( sys.influenceActive() ) {
+					break;
+				}
+				if ( AI_ENEMY_IN_FOV ) {
+					lookAtEnemy( 1 );
+				}
+				if ( testMeleeAttack() ) {
+					exit = true;
+					break;
+				}
+				if ( !node || !enemyInCombatCone( node, true ) ) {
+					exit = true;
+					break;
+				}				
+				waitFrame();
+			}
+			attack = true;
+			
+			if ( testMeleeAttack() ) {
+				exit = true;
+				break;
+			}
+			if ( !node || !enemyInCombatCone( node, true ) ) {
+				exit = true;
+				break;
+			}				
+			count--;
+		}
+		AI_DAMAGE = false;
+		
+		if ( exit ) {
+			break;
+		}
+
+		allowMovement( true );
+		playCustomAnim( "in", 0, 4 );
+		while( !animDone( ANIMCHANNEL_TORSO, 4 ) ) {
+			if ( AI_ENEMY_IN_FOV ) {
+				lookAtEnemy( 1 );
+			}
+			if ( testMeleeAttack() ) {
+				exit = true;
+				break;
+			}
+			if ( !node || !enemyInCombatCone( node, true ) ) {
+				exit = true;
+				break;
+			}				
+			waitFrame();
+		}
+		
+		if ( exit ) {
+			break;
+		}
+	}
+	
+	if ( !( !node ) && attack ) {
+		// mark the node as used in case it's single use
+		node.markUsed();
+	}
+	
+	allowMovement( true );
+	setAnimPrefix( "" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+	animState( ANIMCHANNEL_LEGS, "Legs_Idle", 4 );
+}
+
+/*
+=====================
+monster_base::combat_ainode
+=====================
+*/
+void monster_base::combat_ainode( entity node ) {
+	if ( node.getKey( "classname" ) == "ai_attackcone_turret" ) {
+		combat_turret_node( node );
+	} else {
+		combat_attack_cone( node );
+	}
+}
+
+/*
+=====================
+monster_base::combat_lost
+=====================
+*/
+void monster_base::combat_lost() {
+
+}
+
+/*
+=====================
+monster_base::state_FollowAlternatePath
+=====================
+*/
+void monster_base::state_FollowAlternatePath() {
+	if ( inAnimState( ANIMCHANNEL_TORSO, "Torso_CustomCycle" ) || inAnimState( ANIMCHANNEL_TORSO, "Torso_CustomAnim" ) ) {
+		animState( ANIMCHANNEL_TORSO, "Torso_Idle", 8 );
+	}
+
+	ignoreEnemies = true;
+	idle_followPathEntities( current_path );
+	ignoreEnemies = false;
+	setState( "state_Idle" );
+}
+
+/*
+=====================
+monster_base::follow_alternate_path1
+=====================
+*/
+void monster_base::follow_alternate_path1() {
+	current_path = getEntityKey( "alt_path1" );
+	setState( "state_FollowAlternatePath" );
+}
+
+/*
+=====================
+monster_base::follow_alternate_path2
+=====================
+*/
+void monster_base::follow_alternate_path2() {
+	current_path = getEntityKey( "alt_path2" );
+	setState( "state_FollowAlternatePath" );
+}
+
+/*
+=====================
+monster_base::follow_alternate_path3
+=====================
+*/
+void monster_base::follow_alternate_path3() {
+	current_path = getEntityKey( "alt_path2" );
+	setState( "state_FollowAlternatePath" );
+}

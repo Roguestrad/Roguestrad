@@ -160,3 +160,114 @@ float idMath::BitsToFloat( int i, int exponentBits, int mantissaBits )
 	value = sign << IEEE_FLT_SIGN_BIT | ( exponent + IEEE_FLT_EXPONENT_BIAS ) << IEEE_FLT_MANTISSA_BITS | mantissa;
 	return *reinterpret_cast<float*>( &value );
 }
+
+/*
+===================
+idMath::Distance
+===================
+*/
+float idMath::Distance( idVec3 p1, idVec3 p2 )
+{
+	idVec3 v = p2 - p1;
+	return v.Length();
+}
+
+/*
+===================
+idMath::DistanceSquared
+===================
+*/
+float idMath::DistanceSquared( idVec3 p1, idVec3 p2 )
+{
+	idVec3 v = p2 - p1;
+	return v.LengthSqr();
+}
+
+/*
+========================
+idMath::CrossProduct
+========================
+*/
+idVec3 idMath::CrossProduct( const idVec3& a, const idVec3& b )
+{
+	return a.Cross( b );
+}
+
+/*
+========================
+idMath::CreateVector
+========================
+*/
+idVec3 idMath::CreateVector( float x, float y, float z )
+{
+	return idVec3( x, y, z );
+}
+
+/*
+========================
+idMath::CreateVector
+========================
+*/
+idVec4 idMath::CreateVector( float x, float y, float z, float w )
+{
+	return idVec4( x, y, z, w );
+}
+
+/*
+========================
+idMath::ReflectVector
+========================
+*/
+idVec3 idMath::ReflectVector( idVec3 vector, idVec3 normal )
+{
+	float n = 2 * DotProduct( vector, normal );
+	return vector - normal * n;
+}
+
+
+// ================================================================================================
+// jscott: fast and reliable random routines
+// ================================================================================================
+
+unsigned long rvRandom::mSeed;
+
+float rvRandom::flrand( float min, float max )
+{
+	float	result;
+
+	mSeed = ( mSeed * 214013L ) + 2531011;
+	// Note: the shift and divide cannot be combined as this breaks the routine
+	result = ( float )( mSeed >> 17 );						// 0 - 32767 range
+	result = ( ( result * ( max - min ) ) * ( 1.0f / 32768.0f ) ) + min;
+	return( result );
+}
+
+float rvRandom::flrand()
+{
+	return flrand( 0.0f, 1.0f );
+}
+
+float rvRandom::flrand( const idVec2& v )
+{
+	return flrand( v[0], v[1] );
+}
+
+int rvRandom::irand( int min, int max )
+{
+	int		result;
+
+	max++;
+	mSeed = ( mSeed * 214013L ) + 2531011;
+	result = mSeed >> 17;
+	result = ( ( result * ( max - min ) ) >> 15 ) + min;
+	return( result );
+}
+
+// Try to get a seed independent of the random number system
+
+int rvRandom::Init()
+{
+	mSeed *= ( unsigned long )Sys_Milliseconds();
+
+	return( mSeed );
+}

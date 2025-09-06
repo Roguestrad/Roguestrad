@@ -577,6 +577,16 @@ public:
 
 	int 										GetReturnedInteger();
 
+// RAVEN BEGIN
+// abahr: adding helper functions for other types
+	float										GetReturnedFloat();
+	idVec3										GetReturnedVec3();
+	idEntity* GetReturnedEntity();
+	const char* GetReturnedString();
+	bool										GetReturnedBool();
+// RAVEN END
+
+
 	void										ReturnFloat( float value );
 	void										ReturnInteger( int value );
 	void										ReturnVector( idVec3 const& vec );
@@ -628,6 +638,50 @@ ID_INLINE int idProgram::GetReturnedInteger()
 {
 	return *returnDef->value.intPtr;
 }
+
+
+// RAVEN BEGIN
+// abahr: adding helper functions for other types
+/*
+================
+idProgram::GetReturnedFloat
+================
+*/
+ID_INLINE float idProgram::GetReturnedFloat()
+{
+	return *returnDef->value.floatPtr;
+}
+
+/*
+================
+idProgram::GetReturnedVec3
+================
+*/
+ID_INLINE idVec3 idProgram::GetReturnedVec3()
+{
+	return *returnDef->value.vectorPtr;
+}
+
+/*
+================
+idProgram::GetReturnedString
+================
+*/
+ID_INLINE const char* idProgram::GetReturnedString()
+{
+	return returnDef->value.stringPtr;
+}
+
+/*
+================
+idProgram::GetReturnedBool
+================
+*/
+ID_INLINE bool idProgram::GetReturnedBool()
+{
+	return GetReturnedInteger() != 0;
+}
+// RAVEN END
 
 /*
 ================

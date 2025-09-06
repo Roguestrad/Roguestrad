@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -122,7 +123,20 @@ public:
 	virtual void				ShowWalkPath( const idVec3& origin, int goalAreaNum, const idVec3& goalOrigin ) const;
 	virtual void				ShowFlyPath( const idVec3& origin, int goalAreaNum, const idVec3& goalOrigin ) const;
 	virtual bool				FindNearestGoal( aasGoal_t& goal, int areaNum, const idVec3 origin, const idVec3& target, int travelFlags, aasObstacle_t* obstacles, int numObstacles, idAASCallback& callback ) const;
+// jmarshall
+	virtual const idBounds&		DefaultSearchBounds() const;
+	virtual int					AdjustPositionAndGetArea( idVec3& origin );
+	virtual void				ShowArea( const idVec3& origin ) const;
+	virtual void				DrawAreas() const;
+// jmarshall end
 
+// jmarshall
+	virtual idAASFile*			GetAASFile()
+	{
+		return file;
+	}
+	virtual void				DrawArea( int areaNum ) const;
+// jmarshall end
 private:
 	idAASFile* 					file;
 	idStr						name;
@@ -176,13 +190,10 @@ private:	// pathing
 	idVec3						SubSampleFlyPath( int areaNum, const idVec3& origin, const idVec3& start, const idVec3& end, int travelFlags, int& endAreaNum ) const;
 
 private:	// debug
-	const idBounds& 			DefaultSearchBounds() const;
 	void						DrawCone( const idVec3& origin, const idVec3& dir, float radius, const idVec4& color ) const;
-	void						DrawArea( int areaNum ) const;
 	void						DrawFace( int faceNum, bool side ) const;
 	void						DrawEdge( int edgeNum, bool arrow ) const;
 	void						DrawReachability( const idReachability* reach ) const;
-	void						ShowArea( const idVec3& origin ) const;
 	void						ShowWallEdges( const idVec3& origin ) const;
 	void						ShowHideArea( const idVec3& origin, int targerAreaNum ) const;
 	bool						PullPlayer( const idVec3& origin, int toAreaNum ) const;

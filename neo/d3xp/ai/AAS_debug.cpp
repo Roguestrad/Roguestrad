@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -31,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AAS_local.h"
 #include "../Game_local.h"		// for cvars and debug drawing
-
+#include "AASCallback_FindCoverArea.h"
 
 /*
 ============
@@ -168,7 +169,8 @@ idAASLocal::DrawArea
 */
 void idAASLocal::DrawArea( int areaNum ) const
 {
-	int i, numFaces, firstFace;
+// jmarshall
+	int i, numEdges, firstEdge;
 	const aasArea_t* area;
 	idReachability* reach;
 
@@ -177,19 +179,21 @@ void idAASLocal::DrawArea( int areaNum ) const
 		return;
 	}
 
+	if( !file->HasNewFeatures() )
+	{
+		idLib::Warning( "idAASLocal::DrawArea requires new features!\n" );
+		return;
+	}
+
 	area = &file->GetArea( areaNum );
-	numFaces = area->numFaces;
-	firstFace = area->firstFace;
+	numEdges = area->numEdges;
+	firstEdge = area->firstEdge;
 
-	for( i = 0; i < numFaces; i++ )
+	for( i = 0; i < numEdges; i++ )
 	{
-		DrawFace( abs( file->GetFaceIndex( firstFace + i ) ), file->GetFaceIndex( firstFace + i ) < 0 );
+		DrawEdge( abs( file->GetEdgeIndex( firstEdge + i ) ), false );
 	}
-
-	for( reach = area->reach; reach; reach = reach->next )
-	{
-		DrawReachability( reach );
-	}
+// jmarshall end
 }
 
 /*
@@ -201,6 +205,33 @@ const idBounds& idAASLocal::DefaultSearchBounds() const
 {
 	return file->GetSettings().boundingBoxes[0];
 }
+
+/*
+============
+idAASLocal::DrawAreas
+============
+*/
+// jmarshall
+void idAASLocal::DrawAreas() const
+{
+	int viewAreaNum = PointReachableAreaNum( gameLocal.GetLocalPlayer()->GetOrigin(), DefaultSearchBounds(), ( AREA_REACHABLE_WALK | AREA_REACHABLE_FLY ) );
+
+	DrawArea( viewAreaNum );
+
+	aasArea_t area = file->GetArea( viewAreaNum );
+	idReachability* reach = area.reach;
+
+	int numRenderedAreas = 0;
+	while( reach != NULL && numRenderedAreas < 230 )
+	{
+		int areaNum = reach->toAreaNum;
+		DrawArea( areaNum );
+
+		reach = reach->next;
+		numRenderedAreas++;
+	}
+}
+// jmarshall end
 
 /*
 ============
@@ -424,7 +455,7 @@ void idAASLocal::ShowHideArea( const idVec3& origin, int targetAreaNum ) const
 
 	DrawCone( target, idVec3( 0, 0, 1 ), 16.0f, colorYellow );
 
-	idAASFindCover findCover( target );
+	idAASCallback_FindCoverArea findCover( target );
 	if( FindNearestGoal( goal, areaNum, origin, target, TFL_WALK | TFL_AIR, obstacles, numObstacles, findCover ) )
 	{
 		DrawArea( goal.areaNum );
@@ -570,10 +601,12 @@ void idAASLocal::Test( const idVec3& origin )
 	{
 		ShowHideArea( origin, aas_showHideArea.GetInteger() );
 	}
+// jmarshall - expanded on this.
 	if( aas_showAreas.GetBool() )
 	{
 		ShowArea( origin );
 	}
+// jmarshall end
 	if( aas_showWallEdges.GetBool() )
 	{
 		ShowWallEdges( origin );

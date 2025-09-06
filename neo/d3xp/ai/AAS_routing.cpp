@@ -1361,7 +1361,7 @@ bool idAASLocal::FindNearestGoal( aasGoal_t& goal, int areaNum, const idVec3 ori
 	}
 
 	// if the first area is valid goal, just return the origin
-	if( callback.TestArea( this, areaNum ) )
+	if( callback.AreaIsGoal( this, areaNum ) )
 	{
 		goal.areaNum = areaNum;
 		goal.origin = origin;
@@ -1537,7 +1537,7 @@ bool idAASLocal::FindNearestGoal( aasGoal_t& goal, int areaNum, const idVec3 ori
 				if( !bestTravelTime || t < bestTravelTime )
 				{
 					// if the area is not visible to the target
-					if( callback.TestArea( this, reach->toAreaNum ) )
+					if( callback.AreaIsGoal( this, reach->toAreaNum ) )
 					{
 						bestTravelTime = t;
 						bestAreaNum = reach->toAreaNum;

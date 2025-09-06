@@ -104,7 +104,15 @@ private:
 
 	void						Event_Execute();
 	void						Event_SetThreadName( const char* name );
-
+public:
+	void						PushBool( bool value );
+	void						PushString( const char* string );
+	void						PushEntity( const idEntity* ent );
+	void						PushVec3( const idVec3& value );
+	void						PushFloat( float value );
+	void						PushInt( int value );
+	void						ClearStack();
+public:
 	//
 	// script callable Events
 	//

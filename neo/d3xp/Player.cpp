@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -2317,8 +2318,6 @@ idPlayer::Save
 */
 void idPlayer::Save( idSaveGame* savefile ) const
 {
-	int i;
-
 	savefile->WriteUsercmd( usercmd );
 	playerView.Save( savefile );
 
@@ -2362,8 +2361,6 @@ void idPlayer::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( hudPowerup );
 	savefile->WriteInt( lastHudPowerup );
 	savefile->WriteInt( hudPowerupDuration );
-
-
 
 	savefile->WriteInt( heartRate );
 
@@ -2418,7 +2415,7 @@ void idPlayer::Save( idSaveGame* savefile ) const
 	savefile->WriteStaticObject( physicsObj );
 
 	savefile->WriteInt( aasLocation.Num() );
-	for( i = 0; i < aasLocation.Num(); i++ )
+	for( int i = 0; i < aasLocation.Num(); i++ )
 	{
 		savefile->WriteInt( aasLocation[ i ].areaNum );
 		savefile->WriteVec3( aasLocation[ i ].pos );
@@ -2482,11 +2479,11 @@ void idPlayer::Save( idSaveGame* savefile ) const
 
 	savefile->WriteObject( privateCameraView );
 
-	for( i = 0; i < NUM_LOGGED_VIEW_ANGLES; i++ )
+	for( int i = 0; i < NUM_LOGGED_VIEW_ANGLES; i++ )
 	{
 		savefile->WriteAngles( loggedViewAngles[ i ] );
 	}
-	for( i = 0; i < NUM_LOGGED_ACCELS; i++ )
+	for( int i = 0; i < NUM_LOGGED_ACCELS; i++ )
 	{
 		savefile->WriteInt( loggedAccel[ i ].time );
 		savefile->WriteVec3( loggedAccel[ i ].dir );
@@ -2529,7 +2526,7 @@ void idPlayer::Save( idSaveGame* savefile ) const
 	//}
 
 	savefile->WriteInt( weaponToggles.Num() );
-	for( i = 0; i < weaponToggles.Num(); i++ )
+	for( int i = 0; i < weaponToggles.Num(); i++ )
 	{
 		WeaponToggle_t* weaponToggle = weaponToggles.GetIndex( i );
 		savefile->WriteString( weaponToggle->name );
@@ -2584,7 +2581,6 @@ idPlayer::Restore
 */
 void idPlayer::Restore( idRestoreGame* savefile )
 {
-	int	  i;
 	int	  num;
 	float set;
 
@@ -2632,7 +2628,7 @@ void idPlayer::Restore( idRestoreGame* savefile )
 		pdaMenu->Initialize( "pda", common->SW() );
 	}
 
-	for( i = 0; i < inventory.emails.Num(); i++ )
+	for( int i = 0; i < inventory.emails.Num(); i++ )
 	{
 		GetPDA()->AddEmail( inventory.emails[i] );
 	}
@@ -2721,7 +2717,7 @@ void idPlayer::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( num );
 	aasLocation.SetGranularity( 1 );
 	aasLocation.SetNum( num );
-	for( i = 0; i < num; i++ )
+	for( int i = 0; i < num; i++ )
 	{
 		savefile->ReadInt( aasLocation[ i ].areaNum );
 		savefile->ReadVec3( aasLocation[ i ].pos );
@@ -2797,11 +2793,11 @@ void idPlayer::Restore( idRestoreGame* savefile )
 
 	savefile->ReadObject( reinterpret_cast<idClass*&>( privateCameraView ) );
 
-	for( i = 0; i < NUM_LOGGED_VIEW_ANGLES; i++ )
+	for( int i = 0; i < NUM_LOGGED_VIEW_ANGLES; i++ )
 	{
 		savefile->ReadAngles( loggedViewAngles[ i ] );
 	}
-	for( i = 0; i < NUM_LOGGED_ACCELS; i++ )
+	for( int i = 0; i < NUM_LOGGED_ACCELS; i++ )
 	{
 		savefile->ReadInt( loggedAccel[ i ].time );
 		savefile->ReadVec3( loggedAccel[ i ].dir );
@@ -2853,7 +2849,7 @@ void idPlayer::Restore( idRestoreGame* savefile )
 
 	int weaponToggleCount;
 	savefile->ReadInt( weaponToggleCount );
-	for( i = 0; i < weaponToggleCount; i++ )
+	for( int i = 0; i < weaponToggleCount; i++ )
 	{
 		WeaponToggle_t newToggle;
 		memset( &newToggle, 0, sizeof( newToggle ) );
@@ -3863,23 +3859,24 @@ void idPlayer::FireWeapon()
 				}
 				SelectWeapon( previousWeapon, false );
 			}
-			if( ( weapon_bloodstone >= 0 ) && ( currentWeapon == weapon_bloodstone ) && inventory.weapons & ( 1 << weapon_bloodstone_active1 ) && weapon.GetEntity()->GetStatus() == WP_READY )
-			{
-				// tell it to switch to the previous weapon. Only do this once to prevent
-				// weapon toggling messing up the previous weapon
-				if( idealWeapon == weapon_bloodstone )
-				{
-					if( previousWeapon == weapon_bloodstone || previousWeapon == -1 )
-					{
-						NextBestWeapon();
-					}
-					else
-					{
-						//Since this is a toggle weapon just select itself and it will toggle to the last weapon
-						SelectWeapon( weapon_bloodstone, false );
-					}
-				}
-			}
+// jmarshall - bloodstone
+			//if( ( weapon_bloodstone >= 0 ) && ( currentWeapon == weapon_bloodstone ) && inventory.weapons & ( 1 << weapon_bloodstone_active1 ) && weapon.GetEntity()->GetStatus() == WP_READY )
+			//{
+			//	// tell it to switch to the previous weapon. Only do this once to prevent
+			//	// weapon toggling messing up the previous weapon
+			//	if( idealWeapon == weapon_bloodstone )
+			//	{
+			//		if( previousWeapon == weapon_bloodstone || previousWeapon == -1 )
+			//		{
+			//			NextBestWeapon();
+			//		}
+			//		else
+			//		{
+			//			//Since this is a toggle weapon just select itself and it will toggle to the last weapon
+			//			SelectWeapon( weapon_bloodstone, false );
+			//		}
+			//	}
+			//}
 		}
 		else
 		{
@@ -9313,18 +9310,21 @@ void idPlayer::Think()
 	}
 
 	// Make sure voice groups are set to the right team
-	if( common->IsMultiplayer() && session->GetState() >= idSession::INGAME && entityNumber < MAX_CLIENTS )  		// The entityNumber < MAX_CLIENTS seems to quiet the static analyzer
+	if( !IsBot() )
 	{
-		// Make sure we're on the right team (at the lobby level)
-		const int voiceTeam = spectating ? LOBBY_SPECTATE_TEAM_FOR_VOICE_CHAT : team;
+		if( common->IsMultiplayer() && session->GetState() >= idSession::INGAME && entityNumber < MAX_CLIENTS )  		// The entityNumber < MAX_CLIENTS seems to quiet the static analyzer
+		{
+			// Make sure we're on the right team (at the lobby level)
+			const int voiceTeam = spectating ? LOBBY_SPECTATE_TEAM_FOR_VOICE_CHAT : team;
 
-		//idLib::Printf( "SERVER: Sending voice %i / %i\n", entityNumber, voiceTeam );
+			//idLib::Printf( "SERVER: Sending voice %i / %i\n", entityNumber, voiceTeam );
 
-		// Update lobby team
-		session->GetActingGameStateLobbyBase().SetLobbyUserTeam( gameLocal.lobbyUserIDs[ entityNumber ], voiceTeam );
+			// Update lobby team
+			session->GetActingGameStateLobbyBase().SetLobbyUserTeam( gameLocal.lobbyUserIDs[entityNumber], voiceTeam );
 
-		// Update voice groups to match in case something changed
-		session->SetVoiceGroupsToTeams();
+			// Update voice groups to match in case something changed
+			session->SetVoiceGroupsToTeams();
+		}
 	}
 }
 
@@ -9771,7 +9771,18 @@ void idPlayer::CalcDamagePoints( idEntity* inflictor, idEntity* attacker, const 
 	int		armorSave;
 
 	damageDef->GetInt( "damage", "20", damage );
-	damage = GetDamageForLocation( damage, location );
+// jmarshall
+	//damage = GetDamageForLocation( damage, location );
+	int minDamage = damageDef->GetInt( "minDamage", "-1" );
+	int maxDamage = damageDef->GetInt( "maxDamage", "-1" );
+	if( minDamage == -1 || maxDamage == -1 )
+	{
+		int damageBase = damageDef->GetInt( "damage" );
+		minDamage = damageBase - ( damageBase * 0.2f );
+		maxDamage = damageBase + ( damageBase * 0.2f );
+	}
+	damage = rvRandom::irand( minDamage, maxDamage );
+// jmarshall end
 
 	idPlayer* player = attacker->IsType( idPlayer::Type ) ? static_cast<idPlayer*>( attacker ) : NULL;
 	if( !common->IsMultiplayer() )
@@ -10065,7 +10076,6 @@ inflictor, attacker, dir, and point can be NULL for environmental effects
 void idPlayer::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir,
 					   const char* damageDefName, const float damageScale, const int location )
 {
-	idVec3		kick;
 	int			damage;
 	int			armorSave;
 
@@ -10211,6 +10221,12 @@ void idPlayer::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& di
 	{
 		// Server will deal his damage normally
 		ServerDealDamage( finalDamage, *inflictor, *attacker, dir, damageDefName, location );
+// jmarshall
+		if( attacker->IsType( iceBot::Type ) )
+		{
+			attacker->InflictedDamageEvent( this );
+		}
+// jmarshall end
 	}
 	else if( attacker->GetEntityNumber() == gameLocal.GetLocalClientNum() )
 	{
@@ -10840,7 +10856,7 @@ void idPlayer::CalculateRenderView()
 
 	if( renderView->fov_y == 0 )
 	{
-		common->Error( "renderView->fov_y == 0" );
+		idLib::Error( "renderView->fov_y == 0" );
 	}
 
 	if( g_showviewpos.GetBool() )
@@ -12075,7 +12091,7 @@ void idPlayer::ReadFromSnapshot( const idBitMsg& msg )
 			}
 			else
 			{
-				common->Warning( "NET: no damage def for damage feedback '%d'\n", lastDamageDef );
+				idLib::Warning( "NET: no damage def for damage feedback '%d'\n", lastDamageDef );
 			}
 
 			if( IsLocallyControlled() )
@@ -12787,4 +12803,47 @@ gameExpansionType_t idPlayer::GetExpansionType() const
 		return GAME_D3LE;
 	}
 	return GAME_UNKNOWN;
+}
+
+/*
+===============
+idPlayer::IsShooting
+==============
+*/
+bool idPlayer::IsShooting()
+{
+	return AI_ATTACK_HELD;
+}
+
+/*
+===============
+idPlayer::GetViewHeight
+==============
+*/
+float idPlayer::GetViewHeight()
+{
+	float newEyeOffset = 0;
+
+	if( spectating )
+	{
+		newEyeOffset = 0.0f;
+	}
+	else if( health <= 0 )
+	{
+		newEyeOffset = pm_deadviewheight.GetFloat();
+	}
+	else if( physicsObj.IsCrouching() )
+	{
+		newEyeOffset = pm_crouchviewheight.GetFloat();
+	}
+	else if( GetBindMaster() && GetBindMaster()->IsType( idAFEntity_Vehicle::Type ) )
+	{
+		newEyeOffset = 0.0f;
+	}
+	else
+	{
+		newEyeOffset = pm_normalviewheight.GetFloat();
+	}
+
+	return newEyeOffset;
 }

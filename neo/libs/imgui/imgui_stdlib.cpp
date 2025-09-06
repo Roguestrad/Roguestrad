@@ -17,7 +17,10 @@
 #include "sys/sys_threading.h"
 
 #include "CmdArgs.h"
+// memory management and arrays
+#include "Heap.h"
 #include "containers/Sort.h"
+#include "containers/List.h"
 #include "Str.h"
 
 struct InputTextCallback_UserData

@@ -34,6 +34,27 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../tools/imgui/afeditor/AfEditor.h"
 
+CONSOLE_COMMAND_SHIP( addBot, "adds a bot to a multiplayer game", NULL )
+{
+	if( args.Argc() < 2 )
+	{
+		common->Warning( "USAGE: addbot <botfile> e.g. addbot major or addbot dark - see botfiles/bots for more details\n" );
+		return;
+	}
+	gameLocal.AddBot( args.Argv( 1 ) );
+}
+
+CONSOLE_COMMAND_SHIP( fillbots, "fills the match with bots", NULL )
+{
+	gameLocal.AddBot( "dark" );
+	gameLocal.AddBot( "major" );
+	gameLocal.AddBot( "gargoyle" );
+	gameLocal.AddBot( "skelebot" );
+	gameLocal.AddBot( "sly" );
+	gameLocal.AddBot( "neko" );
+	gameLocal.AddBot( "sarge" );
+}
+
 /*
 ==================
 Cmd_GetFloatArg
@@ -2691,13 +2712,6 @@ void Cmd_SetActorState_f( const idCmdArgs& args )
 	actor->PostEventMS( &AI_SetState, 0, args.Argv( 2 ) );
 }
 
-#if 0
-// not used
-static void ArgCompletion_DefFile( const idCmdArgs& args, void( *callback )( const char* s ) )
-{
-	cmdSystem->ArgCompletion_FolderExtension( args, callback, "def/", true, ".def", NULL );
-}
-#endif
 
 /*
 ===============

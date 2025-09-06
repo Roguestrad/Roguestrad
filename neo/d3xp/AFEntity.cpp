@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -4037,14 +4038,14 @@ void idHarvestable::Event_Touch( idEntity* other, trace_t* trace )
 
 				//Lock the player from harvesting to prevent multiple harvests when only one is needed
 				thePlayer->harvest_lock = true;
-
-				idWeapon* weap = ( idWeapon* )thePlayer->weapon.GetEntity();
-				if( weap )
-				{
-					//weap->PostEventMS(&EV_Weapon_State, 0, "Charge", 8);
-					weap->ProcessEvent( &EV_Weapon_State, "Charge", 8 );
-				}
-
+// jmarshall - look at
+				//idWeapon* weap = ( idWeapon* )thePlayer->weapon.GetEntity();
+				//if( weap )
+				//{
+				//	//weap->PostEventMS(&EV_Weapon_State, 0, "Charge", 8);
+				//	weap->ProcessEvent( &EV_Weapon_State, "Charge", 8 );
+				//}
+// jmarshall end
 				BeginBurn();
 				BeginFX();
 

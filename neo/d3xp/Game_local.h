@@ -5,6 +5,7 @@ Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 Copyright (C) 2014-2016 Robert Beckebans
 Copyright (C) 2014-2016 Kot in Action Creative Artel
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -51,6 +52,9 @@ extern idSoundWorld* 				gameSoundWorld;
 // the "gameversion" client command will print this plus compile date
 #define	GAME_VERSION		"baseDOOM-1"
 
+#define GAME_FRAMETIME	0.016		// 16 milliseconds
+#define USERCMD_HZ 90
+
 // classes used by idGameLocal
 class idEntity;
 class idActor;
@@ -69,6 +73,7 @@ class idEditEntities;
 class idLocationEntity;
 class idMenuHandler_Shell;
 class EnvironmentProbe; // RB
+class iceBot;
 
 const int MAX_CLIENTS			= MAX_PLAYERS;
 const int MAX_CLIENTS_IN_PVS	= MAX_CLIENTS >> 3;
@@ -87,6 +92,7 @@ constexpr const char* BRUSH_ORIGIN_KEY = "__brushOrigin";
 void gameError( const char* fmt, ... );
 
 #include "gamesys/Event.h"
+#include "gamesys/State.h"
 #include "gamesys/Class.h"
 #include "gamesys/SysCvar.h"
 #include "gamesys/SysCmds.h"
@@ -287,6 +293,12 @@ enum slowmoState_t
 	SLOWMO_STATE_RAMPDOWN
 };
 
+struct iceGameDelayRemoveEntry_t
+{
+	int32_t		removeTime;
+	idEntity*	entity;
+};
+
 //============================================================================
 
 class idGameLocal : public idGame
@@ -451,6 +463,37 @@ public:
 	idMapFile* 				GetLevelMap();
 	const char* 			GetMapName() const;
 
+// jmarshall begin
+	float					SysScriptTime() const
+	{
+		return MS2SEC( realClientTime );
+	}
+	float					SysScriptFrameTime() const
+	{
+		return MS2SEC( time - previousTime );
+	}
+
+	void					DelayRemoveEntity( idEntity* entity, int delay );
+
+	bool					InfluenceActive() const;
+	idEntity*				GetEntity( const char* name );
+
+	float					Random( float range );
+	float					RandomDelay( float min, float max );
+	float					RandomTime( float delay );
+	float					DelayTime( float delay );
+
+	idEntity*				Spawn( const char* classname );
+
+// jmarshall - bots
+	void					AddBot( const char* name );
+	int						TravelTimeToGoal( const idVec3& origin, const idVec3& goal );
+	int						GetBotItemEntry( const char* name );
+	void					Trace( trace_t& results, const idVec3& start, const idVec3& end, int contentMask, int passEntity );
+	void					AlertBots( idPlayer* player, idVec3 alert_position );
+
+// jmarshall end
+
 	int						NumAAS() const;
 	idAAS* 					GetAAS( int num ) const;
 	idAAS* 					GetAAS( const char* name ) const;
@@ -582,6 +625,21 @@ public:
 	{
 		return nextGibTime;
 	};
+// jmarshall
+	idAAS*					GetBotAAS()
+	{
+		return bot_aas;
+	}
+
+	void					RegisterBot( iceBot* bot )
+	{
+		registeredBots.AddUnique( bot );
+	}
+	void					UnRegisterBot( iceBot* bot )
+	{
+		registeredBots.Remove( bot );
+	}
+// jmarshall end
 
 	virtual bool				InhibitControls();
 	virtual bool				IsPDAOpen() const;
@@ -718,7 +776,10 @@ private:
 
 	void					InitScriptForMap();
 	void					SetScriptFPS( const float com_engineHz );
-	void					SpawnPlayer( int clientNum );
+// jmarshall - bots
+	void					RunBotFrame( idUserCmdMgr& cmdMgr );
+	void					SpawnPlayer( int clientNum, bool isBot, const char* botName );
+// jmarshall end
 
 	void					InitConsoleCommands();
 	void					ShutdownConsoleCommands();
@@ -734,6 +795,15 @@ private:
 	static int				sortSpawnPoints( const void* ptr1, const void* ptr2 );
 
 	bool					SimulateProjectiles();
+
+// jmarshall
+	const idDeclEntityDef* botItemTable;;
+
+	idList<iceBot*> registeredBots;
+	idList<iceGameDelayRemoveEntry_t> delayRemoveEntities;
+
+	idAAS*					bot_aas;
+// jmarshall end
 };
 
 //============================================================================
@@ -870,6 +940,7 @@ typedef enum
 #define	MASK_OPAQUE					(CONTENTS_OPAQUE)
 #define	MASK_SHOT_RENDERMODEL		(CONTENTS_SOLID|CONTENTS_RENDERMODEL)
 #define	MASK_SHOT_BOUNDINGBOX		(CONTENTS_SOLID|CONTENTS_BODY)
+#define	MASK_SHOT					(CONTENTS_SOLID|CONTENTS_BODY|CONTENTS_CORPSE) // jmarshall
 
 const float DEFAULT_GRAVITY			= 1066.0f;
 #define DEFAULT_GRAVITY_STRING		"1066"
@@ -929,6 +1000,23 @@ const int	CINEMATIC_SKIP_DELAY	= SEC2MS( 2.0f );
 
 #include "ai/AI.h"
 #include "anim/Anim_Testmodel.h"
+
+// jmarshall
+#include "weapons/Weapon_fist.h"
+#include "weapons/Weapon_pistol.h"
+#include "weapons/Weapon_flashlight.h"
+#include "weapons/Weapon_pda.h"
+#include "weapons/Weapon_shotgun.h"
+#include "weapons/Weapon_double_shotgun.h"
+#include "weapons/Weapon_machinegun.h"
+#include "weapons/Weapon_plasmagun.h"
+#include "weapons/Weapon_chaingun.h"
+#include "weapons/Weapon_rocketlauncher.h"
+#include "weapons/Weapon_bfg.h"
+#include "weapons/Weapon_handgrenade.h"
+#include "weapons/Weapon_chainsaw.h"
+#include "weapons/Weapon_grabber.h"
+// jmarshall end
 
 // menus
 #include "menus/MenuWidget.h"

@@ -1,0 +1,105 @@
+/***********************************************************************
+
+monster_flying_cacodemon.script
+
+monster_flying_cacodemon
+
+***********************************************************************/
+
+object monster_flying_cacodemon : monster_base {
+
+	// anim states
+	void		Torso_Idle();
+	void		Torso_Fly();
+	void		Torso_Pain();
+	void		Torso_MeleeAttack();
+	void		Torso_RangeAttack();
+	void		Torso_TurretAttack();
+};
+
+/***********************************************************************
+
+	Torso animation control
+
+***********************************************************************/
+
+void monster_flying_cacodemon::Torso_Idle() {
+	playCycle( ANIMCHANNEL_TORSO, "idle" );
+	
+	eachFrame {
+		if ( AI_PAIN )		{ animState( ANIMCHANNEL_TORSO, "Torso_Pain", 2 ); }
+		if ( AI_FORWARD )	{ animState( ANIMCHANNEL_TORSO, "Torso_Fly", 4 ); }
+	}
+}
+
+void monster_flying_cacodemon::Torso_Fly() {
+	playCycle( ANIMCHANNEL_TORSO, "fly" );
+	
+	eachFrame {
+		if ( AI_PAIN )		{ animState( ANIMCHANNEL_TORSO, "Torso_Pain", 2 ); }	
+		if ( !AI_FORWARD )	{ animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 ); }
+	}
+}
+
+void monster_flying_cacodemon::Torso_Pain() {
+	string animname;
+	float nextpain;
+	float currenttime;
+	
+	animname = getPainAnim();
+	playAnim( ANIMCHANNEL_TORSO, animname );
+
+	nextpain = sys.getTime() + 0.25;
+	
+	while( !animDone( ANIMCHANNEL_TORSO, 2 ) ) {
+		if ( AI_PAIN ) {
+			currenttime = sys.getTime();
+			if ( currenttime > nextpain ) {
+				animState( ANIMCHANNEL_TORSO, "Torso_Pain", 2 );
+			}
+		}
+		waitFrame();
+	}
+
+	finishAction( "pain" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 2 );
+}
+
+void monster_flying_cacodemon::Torso_MeleeAttack() {
+	playAnim( ANIMCHANNEL_TORSO, "melee_attack" );
+	
+	while( !animDone( ANIMCHANNEL_TORSO, 4 ) ) {
+		waitFrame();
+	}
+	
+	finishAction( "melee_attack" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+}
+
+void monster_flying_cacodemon::Torso_RangeAttack() {
+	disablePain();
+	faceEnemy();
+
+	playAnim( ANIMCHANNEL_TORSO, "range_attack" );
+	while( !animDone( ANIMCHANNEL_TORSO, 4 ) ) {
+		faceEnemy();
+		waitFrame();
+	}
+
+	finishAction( "range_attack" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+}
+
+void monster_flying_cacodemon::Torso_TurretAttack() {
+	disablePain();
+	faceEnemy();
+
+	playAnim( ANIMCHANNEL_TORSO, "range_attack" );
+	while( !animDone( ANIMCHANNEL_TORSO, 4 ) ) {
+		faceEnemy();
+		waitFrame();
+	}
+
+	finishAction( "turret_attack" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 4 );
+}

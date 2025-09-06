@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -310,3 +311,17 @@ void idAASLocal::GetEdge( int edgeNum, idVec3& start, idVec3& end ) const
 	start = file->GetVertex( v[INT32_SIGNBITSET( edgeNum )] );
 	end = file->GetVertex( v[INT32_SIGNBITNOTSET( edgeNum )] );
 }
+
+// jmarshall begin
+/*
+============
+idAASLocal::AdjustPositionAndGetArea
+============
+*/
+int idAASLocal::AdjustPositionAndGetArea( idVec3& origin )
+{
+	int area = PointReachableAreaNum( origin, DefaultSearchBounds(), AREA_REACHABLE_WALK );
+	PushPointIntoAreaNum( area, origin );
+	return area;
+}
+// jmarshall end

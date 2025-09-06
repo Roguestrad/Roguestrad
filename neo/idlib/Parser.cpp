@@ -1772,12 +1772,13 @@ int idParser::EvaluateTokens( idToken* tokens, signed int* intvalue, double* flo
 			}
 			case TT_NUMBER:
 			{
-				if( lastwasvalue )
-				{
-					idParser::Error( "syntax error in #if/#elif" );
-					error = 1;
-					break;
-				}
+				// RB: FIXME this shit breaks typeinfogen
+				//if( lastwasvalue )
+				//{
+				//	idParser::Error( "syntax error in #if/#elif" );
+				//	error = 1;
+				//	break;
+				//}
 				//v = (value_t *) GetClearedMemory(sizeof(value_t));
 				AllocValue( v );
 				if( negativevalue )
@@ -4068,3 +4069,38 @@ bool idParser::EndOfFile()
 	return true;
 }
 
+/*
+================
+idParser::Parse1DMatrixLegacy
+================
+*/
+// jmarshall
+int idParser::Parse1DMatrixLegacy( int x, float* m )
+{
+	int i;
+
+	if( !idParser::ExpectTokenString( "{" ) )
+	{
+		return false;
+	}
+
+	for( i = 0; i < x; i++ )
+	{
+		m[i] = idParser::ParseFloat();
+
+		if( i < x - 1 )
+		{
+			if( !idParser::ExpectTokenString( "," ) )
+			{
+				return false;
+			}
+		}
+	}
+
+	if( !idParser::ExpectTokenString( "}" ) )
+	{
+		return false;
+	}
+	return true;
+}
+// jmarshall end

@@ -82,6 +82,8 @@ public:
 
 	float			PlaneDistance( const idPlane& plane ) const;
 	int				PlaneSide( const idPlane& plane, const float epsilon = ON_EPSILON ) const;
+	idVec3			GetSize( void ) const;							//Tels: Get the size of the bounds, that is b1 - b0
+	bool			IsBackwards() const;							//stgatilov: checks if any size is negative
 
 	bool			ContainsPoint( const idVec3& p ) const;			// includes touching
 	bool			IntersectsBounds( const idBounds& a ) const;	// includes touching
@@ -101,6 +103,7 @@ public:
 	void			FromBoundsRotation( const idBounds& bounds, const idVec3& origin, const idMat3& axis, const idRotation& rotation );
 
 	void			ToPoints( idVec3 points[8] ) const;
+
 	idSphere		ToSphere() const;
 
 	void			AxisProjection( const idVec3& dir, float& min, float& max ) const;
@@ -407,6 +410,19 @@ ID_INLINE idBounds& idBounds::RotateSelf( const idMat3& rotation )
 {
 	FromTransformedBounds( *this, vec3_origin, rotation );
 	return *this;
+}
+
+/**
+* Tels: Get the size of the bounds, that is b1 - b0
+*/
+ID_INLINE idVec3 idBounds::GetSize( void ) const
+{
+	return idVec3( b[1].x - b[0].x, b[1].y - b[0].y, b[1].z - b[0].z );
+}
+
+ID_INLINE bool idBounds::IsBackwards( void ) const
+{
+	return b[1].x < b[0].x || b[1].y < b[0].y || b[1].z < b[0].z;
 }
 
 ID_INLINE bool idBounds::ContainsPoint( const idVec3& p ) const

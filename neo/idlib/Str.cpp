@@ -2596,3 +2596,94 @@ CONSOLE_COMMAND( testStrId, "prints a localized string", 0 )
 	idStrId str( va( "#%s", args.Argv( 1 ) ) );
 	idLib::Printf( "%s = %s\n", args.Argv( 1 ), str.GetLocalizedString() );
 }
+
+
+// RAVEN BEGIN
+// abahr
+/*
+================
+idStr::Split
+================
+*/
+void idStr::Split( const char* source, idList<idStr>& list, const char delimiter, const char groupDelimiter )
+{
+	const idStr localSource( source );
+	int sourceLength = localSource.Length();
+	idStr element;
+	int startIndex = 0;
+	int endIndex = -1;
+	char currentChar = '\0';
+
+	list.Clear();
+	while( startIndex < sourceLength )
+	{
+		currentChar = localSource[startIndex];
+		if( currentChar == groupDelimiter )
+		{
+			endIndex = localSource.Find( groupDelimiter, ++startIndex );
+			if( endIndex == -1 )
+			{
+				common->Error( "Couldn't find expected char %c in idStr::Split\n", groupDelimiter );
+			}
+			element = localSource.Mid( startIndex, endIndex );
+			element.Strip( groupDelimiter );
+			list.Append( element );
+			element.Clear();
+			startIndex = endIndex + 1;
+			continue;
+		}
+		else if( currentChar == delimiter )
+		{
+			element += '\0';
+			list.Append( element );
+			element.Clear();
+			endIndex = ++startIndex;
+			continue;
+		}
+
+		startIndex++;
+		element += currentChar;
+	}
+
+	if( element.Length() )
+	{
+		element += '\0';
+		list.Append( element );
+	}
+}
+
+/*
+================
+idStr::Split
+================
+*/
+void idStr::Split( idList<idStr>& list, const char delimiter, const char groupDelimiter )
+{
+	Split( c_str(), list, delimiter, groupDelimiter );
+}
+// RAVEN END
+
+// jmarshall
+/*
+===================
+idStr::StripDoubleQuotes
+===================
+*/
+void idStr::StripDoubleQuotes()
+{
+	idStr temp = *this;
+	char* string = ( char* )temp.c_str();
+
+	if( *string == '\"' )
+	{
+		strcpy( string, string + 1 );
+	}
+
+	if( string[strlen( string ) - 1] == '\"' )
+	{
+		string[strlen( string ) - 1] = '\0';
+	}
+
+	*this = string;
+}
+// jmarshall end

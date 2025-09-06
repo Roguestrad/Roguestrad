@@ -4,6 +4,7 @@
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 Copyright (C) 2012 Robert Beckebans
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -134,7 +135,10 @@ public:																	\
 	static	idTypeInfo						Type;						\
 	static	idClass							*CreateInstance();	\
 	virtual	idTypeInfo						*GetType() const;		\
+	virtual intptr_t Invoke(const char* functionName, void *param1) override; \
+	virtual bool	 HasNativeFunction(const char* functionName) override; \
 	static	idEventFunc<nameofclass>		eventCallbacks[]
+
 
 /*
 ================
@@ -247,6 +251,30 @@ public:
 	void						FindUninitializedMemory();
 
 	virtual void				SharedThink() { }
+
+// jmarshall
+	template< typename T >
+	T* Cast()
+	{
+		return this ? ( IsType( T::Type ) ? static_cast<T*>( this ) : NULL ) : NULL;
+	}
+
+	template< typename T >
+	const T* Cast() const
+	{
+		return this ? ( IsType( T::Type ) ? static_cast<const T*>( this ) : NULL ) : NULL;
+	}
+
+	virtual void			StateThreadChanged() { };
+// jmarshall end
+
+	virtual idClass* InvokeChild()
+	{
+		return NULL;
+	}
+	virtual intptr_t Invoke( const char* functionName, void* param1 );
+	virtual bool	 HasNativeFunction( const char* functionName );
+
 	void						Save( idSaveGame* savefile ) const {};
 	void						Restore( idRestoreGame* savefile ) {};
 
@@ -303,19 +331,17 @@ public:
 	{
 		return types.Num();
 	}
-	static int					GetTypeNumBits()
-	{
-		return typeNumBits;
-	}
+	static int					GetTypeNumBits();
+
 	static idTypeInfo* 			GetType( int num );
+
+	void						Event_SafeRemove();
 
 private:
 	classSpawnFunc_t			CallSpawnFunc( idTypeInfo* cls );
 
 	bool						PostEventArgs( const idEventDef* ev, int time, int numargs, ... );
 	bool						ProcessEventArgs( const idEventDef* ev, int numargs, ... );
-
-	void						Event_SafeRemove();
 
 	static bool					initialized;
 	static idList<idTypeInfo*, TAG_IDCLASS>	types;

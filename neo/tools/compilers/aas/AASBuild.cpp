@@ -918,7 +918,7 @@ bool idAASBuild::Build( const idStr& fileName, const idAASSettings* settings )
 	{
 		bsp.LeakFile( name );
 		delete mapFile;
-		common->Printf( "%s has no outside", name.c_str() );
+		common->Warning( "%s has no outside", name.c_str() );
 		return false;
 	}
 

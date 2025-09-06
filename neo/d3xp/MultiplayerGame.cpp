@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -107,7 +108,17 @@ const char* idMultiplayerGame::GlobalSoundStrings[] =
 	"sound/vo/ctf/flag_taken_yours.wav",
 	"sound/vo/ctf/flag_taken_theirs.wav",
 	"sound/vo/ctf/flag_dropped_yours.wav",
-	"sound/vo/ctf/flag_dropped_theirs.wav"
+	"sound/vo/ctf/flag_dropped_theirs.wav",
+// jmarshall
+	"sound/feedback/leadgained.wav",
+	"sound/feedback/leadlost.wav",
+	"sound/feedback/leadtied.wav",
+	"sound/feedback/welcomedom.ogg",
+	"sound/feedback/1fragleft.wav",
+	"sound/feedback/2fragsleft.wav",
+	"sound/feedback/3fragsleft.wav",
+	"sound/feedback/prepareforbattle.wav"
+// jmarshall end
 };
 
 // handy verbose
@@ -221,7 +232,14 @@ void idMultiplayerGame::SpawnPlayer( int clientNum )
 		{
 			p->tourneyRank++;
 		}
+// jmarshall
+		p->netname = lobby.GetLobbyUserName( lobbyUserID );
+// jmarshall end
 	}
+
+// jmarshall - this goes here so the bot gets the correct clientnum.
+	playerState[clientNum].clientnum = clientNum;
+// jmarshall end
 }
 
 /*
@@ -297,9 +315,32 @@ void idMultiplayerGame::UpdatePlayerRanks()
 	idPlayer* players[MAX_CLIENTS];
 	idEntity* ent;
 	idPlayer* player;
+	// jmarshall
+	mpPlayerState_t* playerStateSorted[MAX_CLIENTS];
+	int leadFragCount = 0;
+	bool tiedScore = false;
+	// jmarshall end
 
 	memset( players, 0, sizeof( players ) );
 	numRankedPlayers = 0;
+
+// jmarshall
+	memset( playerStateSorted, 0, sizeof( playerStateSorted ) );
+	numRankedPlayers = 0;
+
+	// Find the highest current frag count.
+	for( j = 0; j < gameLocal.numClients; j++ )
+	{
+		if( leadFragCount < playerState[j].fragCount )
+		{
+			leadFragCount = playerState[j].fragCount;
+		}
+		else if( leadFragCount == playerState[j].fragCount && leadFragCount > 0 )
+		{
+			tiedScore = true;
+		}
+	}
+// jmarshall end
 
 	for( i = 0; i < gameLocal.numClients; i++ )
 	{
@@ -358,17 +399,104 @@ void idMultiplayerGame::UpdatePlayerRanks()
 				for( k = numRankedPlayers; k > j; k-- )
 				{
 					players[ k ] = players[ k - 1 ];
+					// jmarshall
+					playerStateSorted[k] = &playerState[k - 1];
 				}
 				players[ j ] = player;
+
+				// jmarshall
+				playerStateSorted[j] = &playerState[i];
 				break;
 			}
 		}
 		if( j == numRankedPlayers )
 		{
 			players[ numRankedPlayers ] = player;
+
+			// jmarshall
+			playerStateSorted[numRankedPlayers] = &playerState[i];
 		}
 		numRankedPlayers++;
 	}
+
+	// jmarshall
+	bool clientFeedbackList[MAX_CLIENTS] = { };
+
+	// Check for rank changes.
+	if( gameLocal.gameType == GAME_DM && gameState >= GAMEON && leadFragCount > 0 )
+	{
+		for( j = 0; j < gameLocal.numClients; j++ )
+		{
+			if( playerStateSorted[j] == NULL )
+			{
+				continue;
+			}
+
+			if( !tiedScore && ( playerStateSorted[j]->currentLeader == LEAD_STATUS_NOLEAD || playerStateSorted[j]->currentLeader == LEAD_STATUS_NOTSET ) && j == 0 )
+			{
+				PlayGlobalSound( playerStateSorted[j]->clientnum, SND_LEADGAINED, NULL );
+				clientFeedbackList[playerStateSorted[j]->clientnum] = true;
+				playerStateSorted[j]->currentLeader = LEAD_STATUS_INLEAD;
+				playerStateSorted[j]->tiednotified = false;
+			}
+			else if( ( playerStateSorted[j]->currentLeader == LEAD_STATUS_INLEAD || playerStateSorted[j]->currentLeader == LEAD_STATUS_NOTSET ) && j > 0 )
+			{
+				PlayGlobalSound( playerStateSorted[j]->clientnum, SND_LEADLOST, NULL );
+				clientFeedbackList[playerStateSorted[j]->clientnum] = true;
+				playerStateSorted[j]->currentLeader = LEAD_STATUS_NOLEAD;
+				playerStateSorted[j]->tiednotified = false;
+			}
+			else if( tiedScore && playerStateSorted[j]->fragCount == leadFragCount )
+			{
+				if( !playerStateSorted[j]->tiednotified )
+				{
+					playerStateSorted[j]->currentLeader = LEAD_STATUS_NOLEAD;
+					PlayGlobalSound( playerStateSorted[j]->clientnum, SND_LEADTIED, NULL );
+					clientFeedbackList[playerStateSorted[j]->clientnum] = true;
+					playerStateSorted[j]->tiednotified = true;
+				}
+			}
+			else if( playerStateSorted[j]->currentLeader == LEAD_STATUS_NOLEAD )
+			{
+				playerStateSorted[j]->tiednotified = false;
+			}
+		}
+	}
+
+	if( common->IsServer() )
+	{
+		if( ( si_fragLimit.GetInteger() - leadFragCount ) == killsRemainingMessageState )
+		{
+			for( j = 0; j < gameLocal.numClients; j++ )
+			{
+				if( playerStateSorted[j] == NULL )
+				{
+					continue;
+				}
+
+				if( !clientFeedbackList[j] )
+				{
+					switch( killsRemainingMessageState )
+					{
+						case 3:
+							PlayGlobalSound( playerStateSorted[j]->clientnum, SND_THREEFRAG, NULL );
+							break;
+
+						case 2:
+							PlayGlobalSound( playerStateSorted[j]->clientnum, SND_TWOFRAG, NULL );
+							break;
+
+						case 1:
+							PlayGlobalSound( playerStateSorted[j]->clientnum, SND_ONEFRAG, NULL );
+							break;
+					}
+				}
+			}
+			killsRemainingMessageState--;
+		}
+	}
+
+	// jmarshall end
 
 	memcpy( rankedPlayers, players, sizeof( players ) );
 }
@@ -1352,7 +1480,9 @@ void idMultiplayerGame::NewState( gameState_t news, idPlayer* player )
 
 			teamPoints[0] = 0;
 			teamPoints[1] = 0;
-
+			// jmarshall
+			killsRemainingMessageState = 3;
+			// jmarshall end
 			PlayGlobalSound( -1, SND_FIGHT );
 			matchStartedTime = gameLocal.serverTime;
 
@@ -1443,6 +1573,10 @@ void idMultiplayerGame::NewState( gameState_t news, idPlayer* player )
 			outMsg.InitWrite( msgBuf, sizeof( msgBuf ) );
 			outMsg.WriteLong( warmupEndTime );
 			session->GetActingGameStateLobbyBase().SendReliable( GAME_RELIABLE_MESSAGE_WARMUPTIME, outMsg, false );
+
+			// jmarshall
+			PlayGlobalSound( -1, SND_PREPAREFORBATTLE );
+			// jmarshall end
 
 			// Reset all the scores.
 			for( i = 0; i < gameLocal.numClients; i++ )

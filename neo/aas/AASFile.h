@@ -39,6 +39,9 @@ If you have questions concerning this license or the applicable additional terms
 
 #define AAS_FILEID					"DewmAAS"
 #define AAS_FILEVERSION				"1.07"
+// jmarshall
+#define AAS_ICE_FILEVERSION			"1.07-ICE"
+// jmarshall end
 
 // travel flags
 #define TFL_INVALID					BIT(0)		// not valid
@@ -175,6 +178,10 @@ typedef struct aasArea_s
 	int							travelFlags;		// travel flags for traveling through this area
 	idReachability* 			reach;				// reachabilities that start from this area
 	idReachability* 			rev_reach;			// reachabilities that lead to this area
+// jmarshall
+	int							firstEdge;
+	int							numEdges;
+// jmarshall end
 } aasArea_t;
 
 // nodes of the bsp tree
@@ -429,6 +436,9 @@ public:
 	virtual idBounds			EdgeBounds( int edgeNum ) const = 0;
 	virtual idBounds			FaceBounds( int faceNum ) const = 0;
 	virtual idBounds			AreaBounds( int areaNum ) const = 0;
+// jmarshall
+	virtual bool				HasNewFeatures() const = 0;
+// jmarshall end
 
 	virtual int					PointAreaNum( const idVec3& origin ) const = 0;
 	virtual int					PointReachableAreaNum( const idVec3& origin, const idBounds& searchBounds, const int areaFlags, const int excludeTravelFlags ) const = 0;

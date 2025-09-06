@@ -5,6 +5,7 @@ Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
 Copyright (C) 2014-2021 Robert Beckebans
 Copyright (C) 2014-2016 Kot in Action Creative Artel
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -365,6 +366,13 @@ void idGameLocal::Init()
 		return;
 	}
 
+	// jmarshall: load in the bot itemtable.
+	botItemTable = FindEntityDef( "bot_itemtable", false );
+	if( botItemTable == NULL )
+	{
+		common->FatalError( "Failed to find bot_itemtable decl!\n" );
+	}
+
 	// allocate space for the aas
 	const idKeyValue* kv = dict->MatchPrefix( "type" );
 	while( kv != NULL )
@@ -374,7 +382,15 @@ void idGameLocal::Init()
 		aasNames.Append( kv->GetValue() );
 		kv = dict->MatchPrefix( "type", kv );
 	}
+// jmarshall
+	// init all the bot systems.
+	botCharacterStatsManager.Init();
+	botFuzzyWeightManager.Init();
+	botWeaponInfoManager.Init();
+	botGoalManager.BotSetupGoalAI();
 
+	rvRandom::Init();
+// jmarshall end
 	gamestate = GAMESTATE_NOMAP;
 
 	Printf( "...%d aas types\n", aasList.Num() );
@@ -1066,6 +1082,9 @@ void idGameLocal::LoadMap( const char* mapName, int randseed )
 		aasList[ i ]->Init( idStr( mapFileName ).SetFileExtension( aasNames[ i ] ).c_str(), mapFile->GetGeometryCRC() );
 	}
 
+	// jmarshall: aas48 for bots
+	bot_aas = GetAAS( "aas48" );
+
 	// clear the smoke particle free list
 	smokeParticles->Init();
 
@@ -1373,6 +1392,12 @@ void idGameLocal::InitFromNewMap( const char* mapName, idRenderWorld* renderWorl
 
 	// free up any unused animations
 	animationLib.FlushUnusedAnims();
+// jmarshall
+	if( common->IsMultiplayer() && common->IsServer() )
+	{
+		botGoalManager.InitLevelItems();
+	}
+// jmarshall end
 
 	gamestate = GAMESTATE_ACTIVE;
 
@@ -2171,7 +2196,9 @@ const char* idGameLocal::GetMPPlayerDefName() const
 idGameLocal::SpawnPlayer
 ============
 */
-void idGameLocal::SpawnPlayer( int clientNum )
+// jmarshall - bot support
+void idGameLocal::SpawnPlayer( int clientNum, bool isBot, const char* botName )
+// jmarshall end
 {
 	idEntity*	ent;
 	idDict		args;
@@ -2183,10 +2210,26 @@ void idGameLocal::SpawnPlayer( int clientNum )
 	args.Set( "name", va( "player%d", clientNum + 1 ) );
 	if( common->IsMultiplayer() )
 	{
-		args.Set( "classname", GetMPPlayerDefName() );
+// jmarshall - bot support.
+		if( isBot )
+		{
+			args.Set( "classname", va( "%s_bot", GetMPPlayerDefName() ) );
+			args.Set( "botname", botName );
+		}
+		else
+		{
+			args.Set( "classname", GetMPPlayerDefName() );
+		}
+// jmarshall end
 	}
 	else
 	{
+// jmarshall - bot support
+		if( isBot )
+		{
+			gameLocal.Error( "Bots not supported in singleplayer games!\n" );
+		}
+// jmarshall end
 		// precache the player
 		args.Set( "classname", gameLocal.world->spawnArgs.GetString( "def_player", "player_doommarine" ) );
 	}
@@ -2664,6 +2707,18 @@ void idGameLocal::RunFrame( idUserCmdMgr& cmdMgr, gameReturn_t& ret )
 	SyncPlayersWithLobbyUsers( false );
 	ServerSendNetworkSyncCvars();
 
+// jmarshall
+	for( int i = 0; i < delayRemoveEntities.Num(); i++ )
+	{
+		if( gameLocal.time > delayRemoveEntities[i].removeTime )
+		{
+			delayRemoveEntities[i].entity->PostEventMS( &EV_Remove, 0 );
+			delayRemoveEntities.RemoveIndex( i );
+		}
+	}
+// jmarshall end
+
+
 	player = GetLocalPlayer();
 
 	if( !common->IsMultiplayer() && g_stopTime.GetBool() )
@@ -2734,7 +2789,13 @@ void idGameLocal::RunFrame( idUserCmdMgr& cmdMgr, gameReturn_t& ret )
 
 			// update our gravity vector if needed.
 			UpdateGravity();
-
+// jmarshall
+			// run the frame for the bots.
+			if( common->IsServer() )
+			{
+				RunBotFrame( cmdMgr );
+			}
+// jmarshall end
 			// create a merged pvs for all players
 			SetupPlayerPVS();
 
@@ -3301,6 +3362,22 @@ void idGameLocal::CallObjectFrameCommand( idEntity* ent, const char* frameComman
 {
 	const function_t* func;
 
+// jmarshall
+	if( ent->HasNativeFunction( frameCommand ) )
+	{
+		ent->Invoke( frameCommand, NULL );
+		return;
+	}
+	else if( ent->InvokeChild() != NULL )
+	{
+		if( ent->InvokeChild()->HasNativeFunction( frameCommand ) )
+		{
+			ent->InvokeChild()->Invoke( frameCommand, NULL );
+			return;
+		}
+	}
+// jmarshall end
+
 	func = ent->scriptObject.GetFunction( frameCommand );
 	if( !func )
 	{
@@ -3399,6 +3476,16 @@ void idGameLocal::RunDebugInfo()
 	{
 		return;
 	}
+// jmarshall
+	if( aas_showBotAreas.GetBool() )
+	{
+		idAAS* aas = bot_aas;
+		if( aas )
+		{
+			aas->DrawAreas();
+		}
+	}
+// jmarshall end
 
 	const idVec3& origin = player->GetPhysics()->GetOrigin();
 
@@ -4490,6 +4577,19 @@ void idGameLocal::AlertAI( idEntity* ent )
 		// alert them for the next frame
 		lastAIAlertTime = framenum + 1;
 		lastAIAlertEntity = static_cast<idActor*>( ent );
+
+// jmarshall
+		// Alert any bots near were we just exploded.
+		if( common->IsMultiplayer() && common->IsServer() )
+		{
+			idPlayer* player = ent->Cast<idPlayer>();
+			if( player )
+			{
+				AlertBots( player, ent->GetOrigin() );
+			}
+
+		}
+// jmarshall end
 	}
 }
 
@@ -5061,6 +5161,7 @@ bool idGameLocal::SkipCinematic()
 	{
 		skipCinematic = true;
 		cinematicMaxSkipTime = gameLocal.time + SEC2MS( g_cinematicMaxSkipTime.GetFloat() );
+
 		// SRS - Skip the remainder of the currently playing cinematic sound
 		soundSystem->GetPlayingSoundWorld()->Skip( cinematicMaxSkipTime );
 	}
@@ -6099,4 +6200,273 @@ bool idGameLocal::SimulateProjectiles()
 	return moreProjectiles;
 }
 
+
+
+// jmarshall
+/*
+===============
+idGameLocal::DelayRemoveEntity
+===============
+*/
+void idGameLocal::DelayRemoveEntity( idEntity* entity, int delay )
+{
+	iceGameDelayRemoveEntry_t entry;
+	entry.entity = entity;
+	entry.removeTime = gameLocal.time + delay;
+	delayRemoveEntities.Append( entry );
+}
+// jmarshall end
+
+/*
+===============
+idGameLocal::InfluenceActive
+===============
+*/
+bool idGameLocal::InfluenceActive() const
+{
+	idPlayer* player;
+
+	player = gameLocal.GetLocalPlayer();
+	if( player != NULL && player->GetInfluenceLevel() )
+	{
+		return true;
+	}
+
+	return false;
+}
+/*
+==================
+Random
+==================
+*/
+float idGameLocal::Random( float range )
+{
+	float result;
+
+	result = gameLocal.random.RandomFloat();
+	return range * result;
+}
+
+
+/*
+==================
+RandomDelay
+==================
+*/
+float idGameLocal::RandomDelay( float min, float max )
+{
+	float t;
+
+	t = SysScriptTime();
+	t += min + Random( max - min );
+
+	return t;
+}
+
+/*
+==================
+DelayTime
+==================
+*/
+float idGameLocal::DelayTime( float delay )
+{
+	float t;
+
+	t = SysScriptTime();
+	t += delay;
+	t += Random( 2 ) - 1;
+
+	return t;
+}
+
+
+/*
+==================
+RandomTime
+==================
+*/
+float idGameLocal::RandomTime( float delay )
+{
+	float t;
+	float result;
+
+	t = SysScriptTime();
+
+	result = gameLocal.random.RandomFloat();
+	t += delay * result;
+
+	return t;
+}
+
+/*
+================
+idThread::Event_Spawn
+================
+*/
+idEntity* idGameLocal::Spawn( const char* classname )
+{
+	idEntity* ent;
+	idDict dict;
+
+	dict.Set( "classname", classname );
+	gameLocal.SpawnEntityDef( dict, &ent );
+	return ent;
+}
+
+/*
+================
+idGameLocal::GetEntity
+================
+*/
+idEntity* idGameLocal::GetEntity( const char* name )
+{
+	int			entnum;
+	idEntity* ent;
+
+	assert( name );
+
+	if( name[0] == '*' )
+	{
+		entnum = atoi( &name[1] );
+		if( ( entnum < 0 ) || ( entnum >= MAX_GENTITIES ) )
+		{
+			Error( "Entity number in string out of range." );
+			return NULL;
+		}
+		return entities[entnum];
+	}
+	else
+	{
+		ent = gameLocal.FindEntity( name );
+		return ent;
+	}
+}
+
+/*
+================
+idGameLocal::AddBot
+================
+*/
+// jmarshall - bots
+void idGameLocal::AddBot( const char* name )
+{
+	if( !common->IsMultiplayer() )
+	{
+		common->Warning( "You can only add bots during a multiplayer game!\n" );
+		return;
+	}
+
+	if( !common->IsServer() )
+	{
+		common->Warning( "Only the server can add bots!\n" );
+		return;
+	}
+
+	session->GetActingGameStateLobbyBase().AllocLobbyUserSlotForBot( name );
+}
+
+/*
+================
+idGameLocal::TravelTimeToGoal
+================
+*/
+int idGameLocal::TravelTimeToGoal( const idVec3& origin, const idVec3& goal )
+{
+	idAAS* aas = bot_aas;
+
+	if( aas == NULL )
+	{
+		gameLocal.Error( "idGameLocal::TraveTimeToGoal: No AAS loaded...\n" );
+		return NULL;
+	}
+	//int originArea = aas->PointAreaNum(origin);
+	//idVec3 _goal = goal;
+	//int goalArea = aas->AdjustPositionAndGetArea(_goal);
+	//return aas->TravelTimeToGoalArea(originArea, origin, goalArea, TFL_WALK);
+
+	idVec3 org = origin;
+	int curAreaNum = aas->AdjustPositionAndGetArea( org );
+	int goalArea = aas->PointAreaNum( goal );
+	int travelTime;
+	idReachability* reach;
+	if( !aas->RouteToGoalArea( curAreaNum, org, goalArea, TFL_WALK | TFL_AIR, travelTime, &reach ) )
+	{
+		return NULL;
+	}
+
+	//int goalArea = aas->PointAreaNum(goal);
+	//aas->ShowWalkPath(origin, goalArea, goal);
+
+	return travelTime;
+}
+
+/*
+===============
+idGameLocal::GetBotItemEntry
+===============
+*/
+int idGameLocal::GetBotItemEntry( const char* name )
+{
+	const idKeyValue* keyvalue = botItemTable->dict.FindKey( name );
+	if( !keyvalue )
+	{
+		gameLocal.Warning( "GetBotItemModelIndex: Doesn't have key %s\n", name );
+		return 9;
+	}
+
+	return botItemTable->dict.GetInt( name );
+}
+
+/*
+===============
+idGameLocal::Trace
+===============
+*/
+void idGameLocal::Trace( trace_t& results, const idVec3& start, const idVec3& end, int contentMask, int passEntity )
+{
+	idMat3 axis;
+	axis.Identity();
+
+	if( passEntity == -1 )
+	{
+		clip.Translation( results, start, end, NULL, axis, CONTENTS_SOLID, NULL );
+	}
+	else
+	{
+		clip.Translation( results, start, end, NULL, axis, CONTENTS_SOLID, entities[passEntity] );
+	}
+}
+
+/*
+===================
+idGameLocal::AlertBots
+===================
+*/
+void idGameLocal::AlertBots( idPlayer* player, idVec3 alert_position )
+{
+	for( int i = 0; i < MAX_CLIENTS; i++ )
+	{
+		iceBot* bot = NULL;
+
+		if( entities[i] == NULL )
+		{
+			continue;
+		}
+
+		bot = entities[i]->Cast<iceBot>();
+		if( bot == NULL )
+		{
+			continue;
+		}
+
+		trace_t tr;
+		Trace( tr, alert_position, bot->GetRenderEntity()->origin, CONTENTS_SOLID, 0 );
+
+		if( tr.fraction == 1.0f )
+		{
+			bot->SetEnemy( player, player->GetOrigin() );
+		}
+	}
+}
+// jmarshall end
 

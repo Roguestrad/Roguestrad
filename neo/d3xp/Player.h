@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -242,7 +243,7 @@ public:
 	void					RechargeAmmo( idPlayer* owner );
 	bool					CanGive( idPlayer* owner, const idDict& spawnArgs, const char* statname, const char* value );
 
-private:
+public:
 	idArray< idPredictedValue< int >, AMMO_NUMTYPES >		ammo;
 	idArray< idPredictedValue< int >, MAX_WEAPONS >			clip;
 };
@@ -404,7 +405,9 @@ public:
 	int						tourneyRank;		// for tourney cycling - the higher, the more likely to play next - server
 	int						tourneyLine;		// client side - our spot in the wait line. 0 means no info.
 	int						spawnedTime;		// when client first enters the game
-
+// jmarshall
+	idStr					netname;
+// jmarshall end
 	bool					carryingFlag;		// is the player carrying the flag?
 
 	idEntityPtr<idEntity>	teleportEntity;		// while being teleported, this is set to the entity we'll use for exit
@@ -457,6 +460,9 @@ public:
 	virtual void			Hide();
 	virtual void			Show();
 
+	bool					IsShooting();
+	float					GetViewHeight();
+
 	void					Init();
 	void					PrepareForRestart();
 	virtual void			Restart();
@@ -464,7 +470,7 @@ public:
 	void					SetupWeaponEntity();
 	void					SelectInitialSpawnPoint( idVec3& origin, idAngles& angles );
 	void					SpawnFromSpawnSpot();
-	void					SpawnToPoint( const idVec3&	spawn_origin, const idAngles& spawn_angles );
+	virtual void			SpawnToPoint( const idVec3&	spawn_origin, const idAngles& spawn_angles );
 	void					SetClipModel();	// spectator mode uses a different bbox size
 
 	void					SavePersistantInfo();
@@ -478,6 +484,11 @@ public:
 
 	void					UpdateConditions();
 	void					SetViewAngles( const idAngles& angles );
+
+	virtual bool			IsBot()
+	{
+		return false;
+	}
 
 	// Controller Shake
 	void					ControllerShakeFromDamage( int damage );
@@ -596,8 +607,8 @@ public:
 	void					AddProjectilesFired( int count );
 	void					AddProjectileHits( int count );
 	void					SetLastHitTime( int time );
-	void					LowerWeapon();
-	void					RaiseWeapon();
+	TYPEINFO_IGNORE void	LowerWeapon();
+	TYPEINFO_IGNORE void	RaiseWeapon();
 	void					WeaponLoweringCallback();
 	void					WeaponRisingCallback();
 	void					RemoveWeapon( const char* weap );
@@ -793,6 +804,11 @@ public:
 	{
 		numProjectileKills = 0;
 	}
+
+	int						GetPrevWeapon()
+	{
+		return previousWeapon;
+	}
 private:
 	// Stats & achievements
 	idAchievementManager	achievementManager;
@@ -937,7 +953,6 @@ private:
 	idAngles				GunTurningOffset();
 	idVec3					GunAcceleratingOffset();
 
-	void					UseObjects();
 	void					CrashLand( const idVec3& oldOrigin, const idVec3& oldVelocity );
 	void					BobCycle( const idVec3& pushVelocity );
 	void					UpdateViewAngles();
@@ -967,7 +982,7 @@ private:
 	bool					WeaponAvailable( const char* name );
 
 	void					UseVehicle();
-
+public:
 	void					Event_GetButtons();
 	void					Event_GetMove();
 	void					Event_GetViewAngles();
@@ -979,7 +994,6 @@ private:
 	void					Event_SelectWeapon( const char* weaponName );
 	void					Event_GetWeaponEntity();
 	void					Event_OpenPDA();
-	void					Event_PDAAvailable();
 	void					Event_InPDA();
 	void					Event_ExitTeleporter();
 	void					Event_HideTip();

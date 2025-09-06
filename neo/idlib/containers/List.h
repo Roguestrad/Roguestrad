@@ -160,6 +160,8 @@ public:
 	_type_& 		Alloc();											// returns reference to a new data element at the end of the list
 	int				Append( const _type_ & obj );						// append element
 	int				Append( const idList& other );						// append list
+	int				AddGrow( const _type_& obj );							// append with exponential growth (like std::vector::push_back)
+	void			Reverse();											// stgatilov: reverse order of elements
 	int				AddUnique( const _type_ & obj );					// add unique element
 	int				Insert( const _type_ & obj, int index = 0 );		// insert the element at the given index
 	int				FindIndex( const _type_ & obj ) const;				// find the index for the given element
@@ -893,6 +895,60 @@ ID_INLINE int idList<_type_, _tag_>::Append( _type_ const& obj )
 	return num - 1;
 }
 
+/*
+================
+idList<type>::AddGrow
+Increases the size of the list by one element and copies the supplied data into it.
+Returns the index of the new element.
+stgatilov: this method is different from Append, because it grows exponentially like std::vector.
+This allows to grow to size N in O(N) time.
+================
+*/
+template< typename _type_, memTag_t _tag_ >
+ID_INLINE int idList<_type_, _tag_>::AddGrow( _type_ const& obj )
+{
+	if( num == size )
+	{
+		int newsize;
+
+		if( granularity == 0 )  	// this is a hack to fix our memset classes
+		{
+			granularity = 16;
+		}
+		newsize = ( size * 3 ) >> 1;			// + 50% size
+		newsize += granularity;				// round up to granularity
+		newsize -= newsize % granularity;	//
+		Resize( newsize );
+	}
+
+	list[num] = obj;
+	num++;
+
+	return num - 1;
+}
+
+/*
+================
+idSwap<type>
+================
+*/
+template< typename _type_, memTag_t _tag_ = TAG_IDLIB_LIST >
+ID_INLINE void idSwap( _type_& a, _type_& b )
+{
+	_type_ c = a;
+	a = b;
+	b = c;
+}
+
+template< typename _type_, memTag_t _tag_ >
+ID_INLINE void idList<_type_, _tag_>::Reverse()
+{
+	int k = ( num >> 1 );
+	for( int i = 0; i < k; i++ )
+	{
+		idSwap<_type_>( list[i], list[num - 1 - i] );
+	}
+}
 
 /*
 ================

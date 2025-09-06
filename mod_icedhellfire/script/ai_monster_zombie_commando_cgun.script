@@ -1,0 +1,331 @@
+/***********************************************************************
+
+ai_monster_zombie_commando_cgun.script
+
+monster_zombie_commando_cgun
+
+***********************************************************************/
+
+#define ZOMBIE_CGUN_RUNDISTANCE					192
+#define ZOMBIE_CGUN_WALKTURN					65
+#define ZOMBIE_CGUN_DODGE_RATE					3
+#define ZOMBIE_CGUN_ATTACK_DELAY_MIN			0.5
+#define ZOMBIE_CGUN_ATTACK_DELAY_MAX			2
+#define ZOMBIE_CGUN_ATTACK_MAX_LENGTH			2.5
+#define ZOMBIE_CGUN_ATTACK_MIN_LENGTH			1
+#define ZOMBIE_CGUN_WAIT_MIN_LENGTH				0.3
+#define ZOMBIE_CGUN_WAIT_MAX_LENGTH				1.5
+#define ZOMBIE_CGUN_CROUCH_ATTACK_MAX_LENGTH	15
+#define ZOMBIE_CGUN_CROUCH_ATTACK_MIN_LENGTH	3
+#define ZOMBIE_CGUN_STAND_ATTACK_MAX_LENGTH		15
+#define ZOMBIE_CGUN_STAND_ATTACK_MIN_LENGTH		3
+#define ZOMBIE_CGUN_MIN_SHOT_TIME				0.5
+#define ZOMBIE_CGUN_NOFOVTIME					4
+
+#define ATTACK_ZCC_CROUCHFIRE					ATTACK_SPECIAL1
+
+object monster_zombie_commando_cgun : monster_base {
+	boolean		fire;
+	boolean		crouch_fire;
+	boolean		step_left;
+	boolean		step_right;
+	float		nextDodge;
+	float		nextAttack;
+	float		nextNoFOVAttack;
+
+	// torso anim states
+	void		Torso_Idle();
+	void		Torso_Pain();
+	void		Torso_RangeAttack();
+	void		Torso_CrouchAttack();
+	
+	// legs anim states
+	void		Legs_Idle();
+	void		Legs_Walk();
+	void		Legs_Run();
+	void		Legs_DodgeLeft();
+	void		Legs_DodgeRight();
+	void		Legs_StepLeft();
+	void		Legs_StepRight();
+};
+
+/***********************************************************************
+
+	Torso animation control
+
+***********************************************************************/
+
+void monster_zombie_commando_cgun::Torso_Idle() {
+	idleAnim( ANIMCHANNEL_TORSO, "range_attack_aim" );
+	
+	eachFrame {
+		if ( AI_PAIN ) {
+			Torso_Pain();
+			idleAnim( ANIMCHANNEL_TORSO, "range_attack_aim" );
+		}
+		if ( fire ) {
+			animState( ANIMCHANNEL_TORSO, "Torso_RangeAttack", 8 );
+		}
+		if ( crouch_fire ) {
+			animState( ANIMCHANNEL_TORSO, "Torso_CrouchAttack", 8 );
+		}
+	}
+}
+
+void monster_zombie_commando_cgun::Torso_Pain() {
+	string animname;
+
+	animname = getPainAnim();
+	setBlendFrames( ANIMCHANNEL_TORSO, 3 );
+	playAnim( ANIMCHANNEL_TORSO, animname );
+
+	while( !animDone( ANIMCHANNEL_TORSO, 12 ) ) {
+		waitFrame();
+	}
+
+	preventPain( 0.6 );
+	
+	finishAction( "pain" );
+	setBlendFrames( ANIMCHANNEL_TORSO, 12 );
+}
+
+void monster_zombie_commando_cgun::Torso_RangeAttack() {
+	float endtime;
+	float mintime;
+	
+	setAnimPrefix( "" );
+		
+	playAnim( ANIMCHANNEL_TORSO, "range_attack" );
+	while( !animDone( ANIMCHANNEL_TORSO, 12 ) ) {
+		if ( AI_PAIN ) {
+			Torso_Pain();
+		}
+		waitFrame();
+	}
+	
+	mintime = sys.getTime() + ZOMBIE_CGUN_MIN_SHOT_TIME;
+	while( fire || ( sys.getTime() < mintime ) ) {
+		playAnim( ANIMCHANNEL_TORSO, "range_attack_loop" );
+		while( ( fire || ( sys.getTime() < mintime ) ) && !animDone( ANIMCHANNEL_TORSO, 12 ) ) {
+			if ( sys.influenceActive() ) {
+				fire = false;
+				mintime = 0;
+				break;
+			}
+			if ( AI_PAIN ) {
+				Torso_Pain();
+			}
+			waitFrame();
+		}
+	}
+	
+	if ( !animDone( ANIMCHANNEL_TORSO, 8 ) ) {
+		setBlendFrames( ANIMCHANNEL_TORSO, 8 );
+	}
+	
+	playAnim( ANIMCHANNEL_TORSO, "range_attack_end" );
+	while( !animDone( ANIMCHANNEL_TORSO, 12 ) ) {
+		if ( AI_PAIN ) {
+			Torso_Pain();
+		}
+		waitFrame();
+	}
+	
+	finishAction( "range_attack" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 12 );
+}
+
+void monster_zombie_commando_cgun::Torso_TurretAttack() {
+	float endtime;
+	
+	setAnimPrefix( "" );
+
+	playAnim( ANIMCHANNEL_TORSO, "range_attack" );
+	while( !animDone( ANIMCHANNEL_TORSO, 8 ) ) {
+		if ( AI_PAIN ) {
+			Torso_Pain();
+		}
+		waitFrame();
+	}
+	
+	endtime = RandomDelay( ZOMBIE_CGUN_ATTACK_MIN_LENGTH, ZOMBIE_CGUN_ATTACK_MAX_LENGTH );
+	while( ( sys.getTime() < endtime ) && canHitEnemyFromAnim( "range_attack_loop" ) ) {
+		playAnim( ANIMCHANNEL_TORSO, "range_attack_loop" );
+		while( !animDone( ANIMCHANNEL_TORSO, 8 ) ) {
+			if ( sys.influenceActive() ) {
+				endtime = 0;
+				break;
+			}
+			if ( AI_PAIN ) {
+				Torso_Pain();
+			}
+			waitFrame();
+		}
+	}
+	
+	if ( !animDone( ANIMCHANNEL_TORSO, 8 ) ) {
+		setBlendFrames( ANIMCHANNEL_TORSO, 8 );
+	}
+	
+	playAnim( ANIMCHANNEL_TORSO, "range_attack_end" );
+	while( !animDone( ANIMCHANNEL_TORSO, 8 ) ) {
+		if ( AI_PAIN ) {
+			Torso_Pain();
+		}
+		waitFrame();
+	}
+
+	finishAction( "turret_attack" );
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 8 );
+}
+
+void monster_zombie_commando_cgun::Torso_CrouchAttack() {
+	float endtime;
+	float mintime;
+	
+	overrideAnim( ANIMCHANNEL_LEGS );
+	
+	setAnimPrefix( "crouch" );
+
+	playAnim( ANIMCHANNEL_TORSO, "range_attack" );
+	while( !animDone( ANIMCHANNEL_TORSO, 8 ) ) {
+		if ( AI_PAIN ) {
+			Torso_Pain();
+		}
+		waitFrame();
+	}
+	
+	mintime = sys.getTime() + ZOMBIE_CGUN_MIN_SHOT_TIME;
+	while( crouch_fire || ( sys.getTime() < mintime ) ) {
+		endtime = RandomDelay( ZOMBIE_CGUN_ATTACK_MIN_LENGTH, ZOMBIE_CGUN_ATTACK_MAX_LENGTH );
+		while( ( crouch_fire || ( sys.getTime() < mintime ) ) && ( sys.getTime() < endtime ) ) {
+			playAnim( ANIMCHANNEL_TORSO, "range_attack_loop" );
+			while( !animDone( ANIMCHANNEL_TORSO, 8 ) ) {
+				if ( sys.influenceActive() ) {
+					crouch_fire = false;
+					endtime = 0;
+					break;
+				}
+
+				if ( AI_PAIN ) {
+					Torso_Pain();
+				}
+				waitFrame();
+			}
+		}
+
+		if ( !crouch_fire ) {
+			break;
+		}
+
+		playCycle( ANIMCHANNEL_TORSO, "range_attack_aim" );
+		endtime = RandomDelay( ZOMBIE_CGUN_WAIT_MIN_LENGTH, ZOMBIE_CGUN_WAIT_MAX_LENGTH );
+		while( crouch_fire && ( sys.getTime() < endtime ) ) {
+			if ( sys.influenceActive() ) {
+				crouch_fire = false;
+				endtime = 0;
+				break;
+			}
+			if ( AI_PAIN ) {
+				Torso_Pain();
+			}
+			waitFrame();
+		}
+	}
+	
+	playAnim( ANIMCHANNEL_TORSO, "range_attack_end" );
+	while( !animDone( ANIMCHANNEL_TORSO, 8 ) ) {
+		if ( AI_PAIN ) {
+			Torso_Pain();
+		}
+		waitFrame();
+	}
+	
+	finishAction( "crouch_attack" );
+	setAnimPrefix( "" );
+	
+	animState( ANIMCHANNEL_TORSO, "Torso_Idle", 8 );
+}
+
+/***********************************************************************
+
+	Legs animation control
+
+***********************************************************************/
+
+void monster_zombie_commando_cgun::Legs_Idle() {
+	idleAnim( ANIMCHANNEL_LEGS, "range_attack_aim" );
+
+	eachFrame {
+		if ( run && AI_FORWARD )	{ animState( ANIMCHANNEL_LEGS, "Legs_Run", 8 ); }
+		if ( AI_FORWARD )			{ animState( ANIMCHANNEL_LEGS, "Legs_Walk", 8 ); }
+		if ( step_left )			{ animState( ANIMCHANNEL_LEGS, "Legs_StepLeft", 8 ); }
+		if ( step_right )			{ animState( ANIMCHANNEL_LEGS, "Legs_StepRight", 8 ); }
+	}
+}
+
+void monster_zombie_commando_cgun::Legs_Walk() {
+	playCycle( ANIMCHANNEL_LEGS, "walk" );
+	
+	eachFrame {
+		if ( run && AI_FORWARD )	{ animState( ANIMCHANNEL_LEGS, "Legs_Run", 8 ); }
+		if ( !AI_FORWARD )			{ animState( ANIMCHANNEL_LEGS, "Legs_Idle", 8 ); }
+	}
+}
+
+void monster_zombie_commando_cgun::Legs_Run() {
+	playCycle( ANIMCHANNEL_LEGS, "run" );
+	
+	eachFrame {
+		if ( !run && AI_FORWARD )	{ animState( ANIMCHANNEL_LEGS, "Legs_Walk", 8 ); }
+		if ( !AI_FORWARD )			{ animState( ANIMCHANNEL_LEGS, "Legs_Idle", 8 ); }
+	}
+}
+
+void monster_zombie_commando_cgun::Legs_DodgeLeft() {
+	playAnim( ANIMCHANNEL_LEGS, "evade_left" );
+
+	while( !animDone( ANIMCHANNEL_LEGS, 8 ) ) {
+		waitFrame();
+	}
+	
+	finishAction( "strafe" );
+	animState( ANIMCHANNEL_LEGS, "Legs_Idle", 8 );
+}
+
+void monster_zombie_commando_cgun::Legs_DodgeRight() {
+	playAnim( ANIMCHANNEL_LEGS, "evade_right" );
+
+	while( !animDone( ANIMCHANNEL_LEGS, 8 ) ) {
+		waitFrame();
+	}
+
+	finishAction( "strafe" );
+	animState( ANIMCHANNEL_LEGS, "Legs_Idle", 8 );
+}
+
+void monster_zombie_commando_cgun::Legs_StepLeft() {
+	playAnim( ANIMCHANNEL_LEGS, "step_left" );
+
+	while( !animDone( ANIMCHANNEL_LEGS, 8 ) ) {
+		waitFrame();
+	}
+	
+	step_left = false;
+	finishAction( "sidestep" );
+	animState( ANIMCHANNEL_LEGS, "Legs_Idle", 8 );
+}
+
+void monster_zombie_commando_cgun::Legs_StepRight() {
+	playAnim( ANIMCHANNEL_LEGS, "step_right" );
+
+	while( !animDone( ANIMCHANNEL_LEGS, 8 ) ) {
+		waitFrame();
+	}
+
+	step_right = false;
+	finishAction( "sidestep" );
+	animState( ANIMCHANNEL_LEGS, "Legs_Idle", 8 );
+}
+
+

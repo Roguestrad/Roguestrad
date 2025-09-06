@@ -330,5 +330,21 @@ ID_INLINE int idLexer::GetFlags()
 	return idLexer::flags;
 }
 
+// jmarshall
+class iceScopedLexerBaseFolder
+{
+public:
+	iceScopedLexerBaseFolder( const char* baseFolder )
+	{
+		idLexer::SetBaseFolder( baseFolder );
+	}
+
+	~iceScopedLexerBaseFolder()
+	{
+		idLexer::SetBaseFolder( "" );
+	}
+};
+// jmarshall end
+
 #endif /* !__LEXER_H__ */
 

@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2021 Justin Marshall
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -273,6 +274,14 @@ public:
 	void					UpdatePVSAreas( const idVec3& pos );
 	void					BecomeReplicated();
 
+// jmarshall
+	float					GetFloat( const char* key );
+	const char*				GetKey( const char* key );
+	int						GetInt( const char* key );
+	bool					GetBool( const char* key );
+	virtual void			InflictedDamageEvent( idEntity* target ) { }
+// jmarshall end
+
 	// visuals
 	virtual void			Present();
 	virtual renderEntity_t* GetRenderEntity();
@@ -299,6 +308,9 @@ public:
 	const int* 				GetPVSAreas();
 	void					ClearPVSAreas();
 	bool					PhysicsTeamInPVS( pvsHandle_t pvsHandle );
+
+	// jmarshall
+	virtual void			CallNativeEvent( idStr& name ) { };
 
 	// animation
 	virtual bool			UpdateAnimationControllers();
@@ -548,6 +560,21 @@ protected:
 		return axisDelta;
 	}
 
+public:
+	int GetIntKey( const char* key )
+	{
+		int value;
+		spawnArgs.GetInt( key, "0", value );
+		return value;
+	}
+
+	float GetFloatKey( const char* key )
+	{
+		float value;
+		spawnArgs.GetFloat( key, "0", value );
+		return value;
+	}
+
 private:
 	idPhysics_Static		defaultPhysicsObj;					// default physics object
 	idPhysics* 				physics;							// physics used for this entity
@@ -650,8 +677,10 @@ public:
 	void					Event_GetAngularVelocity();
 	void					Event_SetSize( const idVec3& mins, const idVec3& maxs );
 	void					Event_GetSize();
+	idVec3					GetSize(); // jmarshall
 	void					Event_GetMins();
 	void					Event_GetMaxs();
+	bool					Touches( idEntity* ent ); // jmarshall
 	void					Event_Touches( idEntity* ent );
 	void					Event_SetGuiParm( const char* key, const char* val );
 	void					Event_SetGuiFloat( const char* key, float f );
@@ -662,6 +691,7 @@ public:
 	void					Event_GetFloatKey( const char* key );
 	void					Event_GetVectorKey( const char* key );
 	void					Event_GetEntityKey( const char* key );
+	idEntity*				GetEntityKey( const char* key ); // jmarshall
 	void					Event_RestorePosition();
 	void					Event_UpdateCameraTarget();
 	void					Event_DistanceTo( idEntity* ent );
@@ -747,7 +777,7 @@ protected:
 	idAnimator				animator;
 	damageEffect_t* 		damageEffects;
 
-private:
+public:
 	void					Event_GetJointHandle( const char* jointname );
 	void 					Event_ClearAllJoints();
 	void 					Event_ClearJoint( jointHandle_t jointnum );
@@ -760,6 +790,7 @@ private:
 
 class SetTimeState
 {
+private:
 	bool					activated;
 	bool					previousFast;
 	bool					fast;
