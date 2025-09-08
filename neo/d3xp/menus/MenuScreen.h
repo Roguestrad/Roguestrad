@@ -420,69 +420,7 @@ private:
 	bool						isMpPause;
 };
 
-#if defined(USE_DOOMCLASSIC)
-//*
-//================================================
-//idMenuScreen_Shell_PressStart
-//================================================
-//*/
-class idMenuScreen_Shell_PressStart : public idMenuScreen
-{
-public:
-	idMenuScreen_Shell_PressStart() :
-		startButton( NULL ),
-		options( NULL ),
-		itemList( NULL ),
-		doomCover( NULL ),
-		doom2Cover( NULL ),
-		doom3Cover( NULL )
-	{
-	}
-	virtual void				Initialize( idMenuHandler* data );
-	virtual void				Update();
-	virtual void				ShowScreen( const mainMenuTransition_t transitionType );
-	virtual void				HideScreen( const mainMenuTransition_t transitionType );
-	virtual bool				HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
-private:
-	idMenuWidget_Button* 		startButton;
-	idMenuWidget_DynamicList* 	options;
-	idMenuWidget_Carousel* 		itemList;
-	const idMaterial* 			doomCover;
-	const idMaterial* 			doom2Cover;
-	const idMaterial* 			doom3Cover;
-};
 
-//*
-//================================================
-//idMenuScreen_Shell_PressStart
-//================================================
-//*/
-class idMenuScreen_Shell_GameSelect : public idMenuScreen
-{
-public:
-	idMenuScreen_Shell_GameSelect() :
-		startButton( NULL ),
-		options( NULL ),
-		itemList( NULL ),
-		doomCover( NULL ),
-		doom2Cover( NULL ),
-		doom3Cover( NULL )
-	{
-	}
-	virtual void				Initialize( idMenuHandler* data );
-	virtual void				Update();
-	virtual void				ShowScreen( const mainMenuTransition_t transitionType );
-	virtual void				HideScreen( const mainMenuTransition_t transitionType );
-	virtual bool				HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
-private:
-	idMenuWidget_Button* 		startButton;
-	idMenuWidget_DynamicList* 	options;
-	idMenuWidget_Carousel* 		itemList;
-	const idMaterial* 			doomCover;
-	const idMaterial* 			doom2Cover;
-	const idMaterial* 			doom3Cover;
-};
-#endif
 
 //*
 //================================================

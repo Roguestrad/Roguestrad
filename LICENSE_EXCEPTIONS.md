@@ -523,20 +523,6 @@ Every source file includes an explicit dual-license for you to choose from.
 
 
 
-Timidity
----------------------------------------------------------------------------
-neo/libs/timidity/*
-
-Copyright (c) 1995 Tuukka Toivonen 
-
-From http://www.cgs.fi/~tt/discontinued.html :
-
-If you'd like to continue hacking on TiMidity, feel free. I'm
-hereby extending the TiMidity license agreement: you can now 
-select the most convenient license for your needs from (1) the
-GNU GPL, (2) the GNU LGPL, or (3) the Perl Artistic License.  
-
-
 
 TinyEXR
 ---------------------------------------------------------------------------

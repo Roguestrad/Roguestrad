@@ -6686,11 +6686,7 @@ void idRenderBackend::CRTPostProcess()
 	GL_Scissor( 0, 0, screenWidth, screenHeight );
 
 #if CRT_QUARTER_RES
-#if defined(USE_DOOMCLASSIC)
-	bool quarterRes = r_useCRTPostFX.GetInteger() == 3 && ( !game->Shell_IsActive() && !game->IsPDAOpen() || ( !console->Active() && ( common->GetCurrentGame() == DOOM_CLASSIC || common->GetCurrentGame() == DOOM2_CLASSIC ) ) );
-#else
 	bool quarterRes = false; //r_useCRTPostFX.GetInteger() == 3 && ( !game->Shell_IsActive() && !game->IsPDAOpen() && !console->Active() );
-#endif
 #else
 	bool quarterRes = false;
 #endif

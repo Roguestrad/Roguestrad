@@ -267,16 +267,6 @@ public:
 		showShellRequested = true;
 	}
 
-	// RB begin
-#if defined(USE_DOOMCLASSIC)
-	virtual currentGame_t		GetCurrentGame() const
-	{
-		return currentGame;
-	}
-	virtual void				SwitchToGame( currentGame_t newGame );
-#endif
-	// RB end
-
 public:
 	void	Draw();			// called by gameThread
 
@@ -681,22 +671,6 @@ private:
 
 	bool				showShellRequested;
 
-	// RB begin
-#if defined(USE_DOOMCLASSIC)
-	currentGame_t		currentGame;
-	currentGame_t		idealCurrentGame;		// Defer game switching so that bad things don't happen in the middle of the frame.
-	const idMaterial* 	doomClassicMaterial;
-
-	static const int			DOOMCLASSIC_RENDERWIDTH = 320 * 3;
-	static const int			DOOMCLASSIC_RENDERHEIGHT = 200 * 3;
-	static const int			DOOMCLASSIC_BYTES_PER_PIXEL = 4;
-	static const int			DOOMCLASSIC_IMAGE_SIZE_IN_BYTES = DOOMCLASSIC_RENDERWIDTH * DOOMCLASSIC_RENDERHEIGHT * DOOMCLASSIC_BYTES_PER_PIXEL;
-	static constexpr float		DOOM_CLASSIC_HZ = 35.0f;
-
-	idArray< byte, DOOMCLASSIC_IMAGE_SIZE_IN_BYTES >	doomClassicImageData;
-#endif
-	// RB end
-
 private:
 	void	InitCommands();
 	void	InitSIMD();
@@ -758,22 +732,7 @@ private:
 
 	void	MoveToNewMap( const char* mapName, bool devmap );
 
-	void	PlayIntroGui();
-
 	void	ScrubSaveGameFileName( idStr& saveFileName ) const;
-
-	// RB begin
-#if defined(USE_DOOMCLASSIC)
-	// Doom classic support
-	void	RunDoomClassicFrame();
-	void	RenderDoomClassic();
-	bool	IsPlayingDoomClassic() const
-	{
-		return GetCurrentGame() != DOOM3_BFG;
-	}
-	void	PerformGameSwitch();
-#endif
-	// RB end
 };
 
 extern idCommonLocal commonLocal;

@@ -259,9 +259,6 @@ protected:
 	// Overall state of the session
 	enum state_t
 	{
-#if defined( USE_DOOMCLASSIC )
-		STATE_PRESS_START,							// We are at press start
-#endif
 		STATE_IDLE,									// We are at the main menu
 		STATE_PARTY_LOBBY_HOST,						// We are in the party lobby menu as host
 		STATE_PARTY_LOBBY_PEER,						// We are in the party lobby menu as a peer
@@ -349,9 +346,6 @@ public:
 	}
 	virtual sessionState_t	GetBackState();
 	virtual void			Cancel();
-#if defined( USE_DOOMCLASSIC )
-	virtual void			MoveToPressStart();
-#endif
 	virtual void			FinishDisconnect();
 	virtual bool			ShouldShowMigratingDialog() const;	// Note this is not in sys_session.h
 	virtual bool			IsCurrentLobbyMigrating() const;
@@ -836,10 +830,6 @@ protected:
 	// this is called when the game finished and we are in the end match recap
 	void	MatchFinishedInternal();
 	void	EndMatchForMigration();
-
-#if defined( USE_DOOMCLASSIC )
-	void	MoveToPressStart( gameDialogMessages_t msg );
-#endif
 
 	// Voice chat
 	void	SendVoiceAudio();

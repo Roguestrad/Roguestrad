@@ -248,11 +248,7 @@ void idSessionLocalWin::Shutdown()
 	MoveToMainMenu();
 
 	// Wait until we fully shutdown
-#if defined( USE_DOOMCLASSIC )
-	while( localState != STATE_IDLE && localState != STATE_PRESS_START )
-#else
 	while( localState != STATE_IDLE )
-#endif
 	{
 		Pump();
 	}
