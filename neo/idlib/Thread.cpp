@@ -256,8 +256,18 @@ int idSysThread::ThreadProc( idSysThread* thread )
 	{
 		idLib::Warning( "Fatal error in thread %s: %s", thread->GetName(), ex.GetError() );
 
-		// We don't handle threads terminating unexpectedly very well, so just terminate the whole process
-		exit( 0 );
+#if 0
+		// RB: failed experiment
+		if( idStr::Cmp( thread->GetName(), "Game/Draw" ) == 0 )
+		{
+			idLib::Error( "Fatal error in game thread: %s", ex.GetError() );
+		}
+		else
+#endif
+		{
+			// We don't handle threads terminating unexpectedly very well, so just terminate the whole process
+			exit( 0 );
+		}
 	}
 
 	thread->isRunning = false;
