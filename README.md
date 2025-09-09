@@ -8,7 +8,6 @@
 ╚═╝  ╚═╝ ╚═════╝  ╚═════╝  ╚═════╝ ╚══════╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ 
 ```
 
-
 logo created with https://www.asciiart.eu/text-to-ascii-art
 ANSI Shadow setting
 >
@@ -18,7 +17,13 @@ ANSI Shadow setting
 	<img src="docs/logos/Roguestrad_dark.png" alt="Roguestrad Logo" width="480">
 </p>
 
-# Roguestrad - Retro 3D Engine
+This file contains the following sections:
+
+1. [Roguestrad - Retro 3D Engine](#about)
+2. [".plan"](#plan)
+3. [License](#license)
+
+# Roguestrad - Retro 3D Engine <a name="about"></a>
 
 Roguestrad is a standalone game engine forked from [RBDOOM-3-BFG](https://github.com/RobertBeckebans/RBDOOM-3-BFG), designed as a modernized foundation for indie developers.
 Unlike its parent project, Roguestrad intentionally breaks compatibility with Doom 3 BFG in order to evolve into a more flexible and developer-friendly engine.
@@ -27,17 +32,44 @@ Unlike its parent project, Roguestrad intentionally breaks compatibility with Do
 
 Key differences will include:
 
-- Native C++ Gameplay Code: Built on the Icedhellfire branch, Roguestrad uses native C++ for gameplay elements like weapons and monsters, eliminating reliance on legacy DoomScript.
+- Native C++ Gameplay & Instant Framework: Roguestrad leverages the Icedhellfire branch to deliver gameplay systems—such as weapons and monsters—entirely in C++. Legacy DoomScript is not needed. The engine includes a comprehensive, ready-to-use gameplay framework with all core Doom 3 features, enabling you to start building your game immediately without extensive scripting or boilerplate.
 
 - TypeScript Scripting: Introduces TypeScript as a modern scripting option, replacing DoomScript to provide a more accessible and powerful scripting experience.
 
 - Unit System: Adopts a new unit system where 1 game unit = 1 centimeter (instead of 1 inch), aligning with modern engines like Unreal for intuitive world-building.
 
-- Retro Aesthetic Focus: Roguestrad is designed for games with 90s aesthetics, evoking the look and feel of classic consoles like the Sega Saturn, PlayStation 1 (PS1), and PlayStation 2 (PS2). It is not intended to compete with modern engines like Unreal or Unity but instead focuses on delivering a nostalgic, retro 3D experience.
+- Retro Aesthetic Focus: Roguestrad is designed for games with 90s aesthetics, evoking the look and feel of classic consoles like the Sega Saturn or Sony PlayStation 1 & 2. It is not intended to compete with modern engines like Unreal or Unity but instead focuses on delivering a nostalgic, retro 3D experience.
 
 - Precomputed Lighting: Incorporates a precomputed lighting system similar to id Tech 3, optimizing performance for retro-styled games while maintaining visual fidelity reminiscent of early 3D engines.
 
 - Sandbox for Original Games: Prioritizes flexibility for creating new, original games rather than preserving compatibility with Doom 3 BFG.
+
+# ".plan" <a name="plan"></a>
+
+Roguestrad uses an iterative development style, with ongoing updates and changes. You can follow the current ".plan" and see what's planned or in progress on our Kanban board: [Roguestrad Projects](https://github.com/orgs/Roguestrad/projects/2)
+
+# License <a name="license"></a>
+
+<p align="center">
+	<img src="docs/logos/GPLv3_Logo.svg" alt="Roguestrad Logo" width="320">
+</p>
+
+Roguestrad is based on the Doom 3 BFG Edition Source Code and therefore uses the same license.
+
+> ⚠️ **Note:** ️️️️The game data included with demo templates each have their own separate license. Please refer to the documentation in each demo template folder for specific licensing details.
+
+See LICENSE.md for the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
+
+Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+ADDITIONAL TERMS:  The Doom 3 BFG Edition GPL Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU GPL which accompanied the Doom 3 BFG Edition GPL Source Code.  If not, please request a copy in writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
+
+See LICENSE_EXCEPTIONS.md for all parts of the code that are not covered by the GPL.
+
+> ⚠️ **Note:** ️️️️ Keep in mind that the GPL license will lock you out of the console markets because you can't use proprietary APIs covered by NDAs. However you can sell your game on Steam without problems and there are already Doom 3 engine based games in the Steam marketplace.
 
 
 
