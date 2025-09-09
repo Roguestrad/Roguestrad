@@ -58,8 +58,6 @@ Roguestrad is based on the Doom 3 BFG Edition Source Code and therefore uses the
 
 > ⚠️ **Note:** ️️️️The game data included with demo templates each have their own separate license. Please refer to the documentation in each demo template folder for specific licensing details.
 
-See LICENSE.md for the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007
-
 Doom 3 BFG Edition Source Code is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
@@ -67,7 +65,9 @@ the Free Software Foundation, either version 3 of the License, or
 
 ADDITIONAL TERMS:  The Doom 3 BFG Edition GPL Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU GPL which accompanied the Doom 3 BFG Edition GPL Source Code.  If not, please request a copy in writing from id Software at id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
-See LICENSE_EXCEPTIONS.md for all parts of the code that are not covered by the GPL.
+See [LICENSE.md](LICENSE.md) for the GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007.
+
+See [LICENSE_EXCEPTIONS.md](LICENSE_EXCEPTIONS.md) for all parts of the code that are not covered by the GPL.
 
 > ⚠️ **Note:** ️️️️ Keep in mind that the GPL license will lock you out of the console markets because you can't use proprietary APIs covered by NDAs. However you can sell your game on Steam without problems and there are already Doom 3 engine based games in the Steam marketplace.
 
