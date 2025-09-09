@@ -36,7 +36,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "renderer/RenderBackend.h"
 
 
-idCVar imgui_showDemoWindow( "imgui_showDemoWindow", "0", CVAR_GUI | CVAR_BOOL, "show big ImGui demo window" );
+static idCVar imgui_showDemoWindow( "imgui_showDemoWindow", "0", CVAR_GUI | CVAR_BOOL, "show big ImGui demo window" );
+static idCVar imgui_showSimpleNodeEditorExample( "imgui_showSimpleNodeEditorExample", "0", CVAR_GUI | CVAR_BOOL, "" );
 
 // our custom ImGui functions from BFGimgui.h
 
@@ -88,6 +89,53 @@ bool ImGui::DragVec3fitLabel( const char* label, idVec3& v, float v_speed,
 }
 
 // the ImGui hooks to integrate it into the engine
+
+
+// NODE EDITOR EXAMPLE AND TEST
+#include "../extern/imgui-node-editor/imgui_node_editor.h"
+namespace ed = ax::NodeEditor;
+
+static ax::NodeEditor::EditorContext* g_EDcontext = nullptr;
+
+void ED_Simple_OnStart()
+{
+	ed::Config config;
+	config.SettingsFile = "Simple.json";
+	g_EDcontext = ed::CreateEditor( &config );
+}
+
+void ED_Simple_OnStop( ax::NodeEditor::EditorContext* context )
+{
+	ed::DestroyEditor( context );
+}
+
+void ED_OnFrame( float deltaTime )
+{
+	auto& io = ImGui::GetIO();
+
+	ImGui::Text( "FPS: %.2f (%.2gms)", io.Framerate, io.Framerate ? 1000.0f / io.Framerate : 0.0f );
+
+	ImGui::Separator();
+
+	ed::SetCurrentEditor( g_EDcontext );
+	ed::Begin( "My Editor", ImVec2( 0.0, 0.0f ) );
+	int uniqueId = 1;
+	// Start drawing nodes.
+	ed::BeginNode( uniqueId++ );
+	ImGui::Text( "Node A" );
+	ed::BeginPin( uniqueId++, ed::PinKind::Input );
+	ImGui::Text( "-> In" );
+	ed::EndPin();
+	ImGui::SameLine();
+	ed::BeginPin( uniqueId++, ed::PinKind::Output );
+	ImGui::Text( "Out ->" );
+	ed::EndPin();
+	ed::EndNode();
+	ed::End();
+	ed::SetCurrentEditor( nullptr );
+
+	//ImGui::ShowMetricsWindow();
+}
 
 
 
@@ -243,7 +291,7 @@ void SetClipboardText( void*, const char* text )
 
 bool ShowWindows()
 {
-	return ( ImGuiTools::AreEditorsActive() || imgui_showDemoWindow.GetBool() || com_showFPS.GetInteger() > 1 );
+	return ( ImGuiTools::AreEditorsActive() || imgui_showDemoWindow.GetBool() || imgui_showSimpleNodeEditorExample.GetBool() || com_showFPS.GetInteger() > 1 );
 }
 
 bool UseInput()
@@ -912,9 +960,31 @@ void Render()
 
 		ImGuiTools::DrawToolWindows();
 
+		// do standard demo window test
 		if( imgui_showDemoWindow.GetBool() )
 		{
 			ImGui::ShowDemoWindow();
+		}
+
+		// do simple node editor test
+		if( imgui_showSimpleNodeEditorExample.GetBool() )
+		{
+			if( !g_EDcontext )
+			{
+				ED_Simple_OnStart();
+			}
+
+			ImGuiIO& io = ImGui::GetIO();
+
+			ED_OnFrame( io.DeltaTime );
+		}
+		else
+		{
+			if( g_EDcontext )
+			{
+				ED_Simple_OnStop( g_EDcontext );
+				g_EDcontext = nullptr;
+			}
 		}
 
 		ImGui::Render();
