@@ -200,15 +200,18 @@ if(CMAKE_COMPILER_IS_GNUCC OR CMAKE_C_COMPILER_ID MATCHES "Clang")
 
 	# SRS - Make sure OSX can find system headers and add support for minimum OSX runtime version
     if(APPLE)
+		# SRS - CMAKE_OSX_SYSROOT and CMAKE_OSX_DEPLOYMENT_TARGET are now defined by macOS build scripts prior to execution of CMake's project() statement.
+		#       This approach supports CMake 4.0+ and earlier versions. Note -isysroot and -mmacosx-version-min still required for PCH command line builds.
+		if(USE_PRECOMPILED_HEADERS AND NOT CMAKE_GENERATOR MATCHES "Xcode")
+			if(CMAKE_OSX_SYSROOT)
+				add_compile_options(-isysroot ${CMAKE_OSX_SYSROOT})
+			endif()
+			if(CMAKE_OSX_DEPLOYMENT_TARGET)
+				add_compile_options(-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET})
+			endif()
+		endif()
 		# SRS - Also add -fasm-blocks otherwise Xcode complains and -Qunused-arguments to silence MMX/SSE unused arg warnings when compiling for Apple arm64
 		add_compile_options(-fasm-blocks -Qunused-arguments)
-        if(CMAKE_OSX_SYSROOT)
-            add_compile_options(-isysroot ${CMAKE_OSX_SYSROOT})
-            message(STATUS "Using macOS sysroot: " ${CMAKE_OSX_SYSROOT})
-        endif()
-		if(CMAKE_OSX_DEPLOYMENT_TARGET)
-			add_compile_options(-mmacosx-version-min=${CMAKE_OSX_DEPLOYMENT_TARGET})
-		endif()
 	endif()
 
     set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -ggdb -D_DEBUG -O0")
@@ -325,16 +328,16 @@ else()
 endif()
 
 #SRS - move rapidjson before vulkan and other includes to prioritize bundled iterator fixes
-if (USE_SYSTEM_RAPIDJSON)
+if(USE_SYSTEM_RAPIDJSON)
 	find_package(rapidjson)
-endif (USE_SYSTEM_RAPIDJSON)
+endif()
 
-if (RAPIDJSON_FOUND)
+if(RAPIDJSON_FOUND)
 	include_directories("${RAPIDJSON_INCLUDE_DIRS}")
 	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${RAPIDJSON_CXX_FLAGS}")
-else (RAPIDJSON_FOUND)
+else()
 	include_directories("libs/rapidjson/include")
-endif (RAPIDJSON_FOUND)
+endif()
 
 include_directories("libs/imgui")
 include_directories("libs/mikktspace")
@@ -377,8 +380,8 @@ if(USE_VULKAN)
 		include_directories(${Vulkan_INCLUDE_DIRS})
 
 		# SRS - ShaderMake uses DXC_CUSTOM_PATH as fallback if dxc for SPIRV not found by other means
-		if(Vulkan_dxc_exe_FOUND AND NOT DEFINED DXC_CUSTOM_PATH)
-			set(DXC_CUSTOM_PATH ${Vulkan_dxc_EXECUTABLE})
+		if(Vulkan_dxc_exe_FOUND AND NOT DXC_CUSTOM_PATH)
+			get_filename_component(DXC_CUSTOM_PATH ${Vulkan_dxc_EXECUTABLE} DIRECTORY)
 		endif()
 
         if(APPLE)
@@ -505,13 +508,14 @@ file(GLOB RENDERER_COLOR_INCLUDES renderer/Color/*.h)
 file(GLOB RENDERER_COLOR_SOURCES renderer/Color/*.cpp)
 file(GLOB RENDERER_DXT_INCLUDES renderer/DXT/*.h)
 file(GLOB RENDERER_DXT_SOURCES renderer/DXT/*.cpp)
-file(GLOB RENDERER_PASSES_INCLUDES renderer/Passes/*.h)
-file(GLOB RENDERER_PASSES_SOURCES renderer/Passes/*.cpp)
+
 
 file(GLOB RENDERER_SMAA_INCLUDES renderer/SMAA/*.h)
 
 file(GLOB RENDERER_NVRHI_INCLUDES renderer/NVRHI/*.h)
 file(GLOB RENDERER_NVRHI_SOURCES renderer/NVRHI/*.cpp)
+file(GLOB RENDERER_PASSES_INCLUDES renderer/Passes/*.h)
+file(GLOB RENDERER_PASSES_SOURCES renderer/Passes/*.cpp)
 
 file(GLOB IRRXML_INCLUDES libs/irrxml/src/*.h)
 file(GLOB IRRXML_SOURCES libs/irrxml/src/*.cpp)
@@ -830,14 +834,14 @@ source_group("engine\\renderer" FILES ${RENDERER_SOURCES})
 source_group("engine\\renderer\\Color" FILES ${RENDERER_COLOR_INCLUDES})
 source_group("engine\\renderer\\Color" FILES ${RENDERER_COLOR_SOURCES})
 
-source_group("engine\\renderer\\Passes" FILES ${RENDERER_PASSES_INCLUDES})
-source_group("engine\\renderer\\Passes" FILES ${RENDERER_PASSES_SOURCES})
-
 source_group("engine\\renderer\\DXT" FILES ${RENDERER_DXT_INCLUDES})
 source_group("engine\\renderer\\DXT" FILES ${RENDERER_DXT_SOURCES})
 
 source_group("engine\\renderer\\NVRHI" FILES ${RENDERER_NVRHI_INCLUDES})
 source_group("engine\\renderer\\NVRHI" FILES ${RENDERER_NVRHI_SOURCES})
+
+source_group("engine\\renderer\\Passes" FILES ${RENDERER_PASSES_INCLUDES})
+source_group("engine\\renderer\\Passes" FILES ${RENDERER_PASSES_SOURCES})
 
 source_group("engine\\renderer\\SMAA" FILES ${RENDERER_SMAA_INCLUDES})
 
@@ -965,10 +969,6 @@ set(RBDOOM3_INCLUDES
 			${RENDERER_INCLUDES}
 			${RENDERER_COLOR_INCLUDES}
 			${RENDERER_DXT_INCLUDES}
-			${RENDERER_JOBS_INCLUDES}
-			${RENDERER_JOBS_DYNAMICSHADOWVOLUME_INCLUDES}
-			${RENDERER_JOBS_PRELIGHTSHADOWVOLUME_INCLUDES}
-			${RENDERER_JOBS_STATICSHADOWVOLUME_INCLUDES}
 			${RENDERER_PASSES_INCLUDES}
 			
 			${RENDERER_SMAA_INCLUDES}
@@ -1019,10 +1019,6 @@ set(RBDOOM3_SOURCES
 			${RENDERER_SOURCES}
 			${RENDERER_COLOR_SOURCES}
 			${RENDERER_DXT_SOURCES}
-			${RENDERER_JOBS_SOURCES}
-			${RENDERER_JOBS_DYNAMICSHADOWVOLUME_SOURCES}
-			${RENDERER_JOBS_PRELIGHTSHADOWVOLUME_SOURCES}
-			${RENDERER_JOBS_STATICSHADOWVOLUME_SOURCES}
 			${RENDERER_PASSES_SOURCES}
 			${IRRXML_SOURCES}
 			${FRAMEWORK_IMGUI_SOURCES}

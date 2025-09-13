@@ -337,7 +337,7 @@ public:
 	float				depthBias;
 
 private:
-	uint64				glStateBits;
+	uint64				glStateBits;			// for all render APIs
 
 	const viewDef_t* 	viewDef;
 

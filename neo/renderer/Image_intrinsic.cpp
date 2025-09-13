@@ -290,11 +290,6 @@ static void R_HDR_RGBA16FImage_ResNative_UAV( idImage* image, nvrhi::ICommandLis
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true, true );
 }
 
-static void R_HDR_RGBA16SImage_ResNative_UAV( idImage* image, nvrhi::ICommandList* commandList )
-{
-	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RGBA16S, nullptr, true, true );
-}
-
 static void R_HDR_RGBA16FImage_ResGui( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, SCREEN_WIDTH, SCREEN_HEIGHT, TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true );
@@ -1099,8 +1094,8 @@ void idImageManager::CreateIntrinsicImages()
 	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
 	{
 		taaMotionVectorsImage[i] = ImageFromFunction( va( "_taaMotionVectors_%i", i ), R_HDR_RG16FImage_ResNative ); // RB: could be shared with _currentNormals.zw
-		taaFeedback1Image[i] = ImageFromFunction( va( "_taaFeedback1_%i", i ), R_HDR_RGBA16SImage_ResNative_UAV );
-		taaFeedback2Image[i] = ImageFromFunction( va( "_taaFeedback2_%i", i ), R_HDR_RGBA16SImage_ResNative_UAV );
+		taaFeedback1Image[i] = ImageFromFunction( va( "_taaFeedback1_%i", i ), R_HDR_RGBA16FImage_ResNative_UAV );
+		taaFeedback2Image[i] = ImageFromFunction( va( "_taaFeedback2_%i", i ), R_HDR_RGBA16FImage_ResNative_UAV );
 	}
 	taaResolvedImage = ImageFromFunction( "_taaResolved", R_HDR_RGBA16FImage_ResNative_UAV );
 
