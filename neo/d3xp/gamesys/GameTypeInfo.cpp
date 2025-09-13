@@ -874,6 +874,13 @@ intptr_t idPhysics_Player::Invoke(const char *functionName, void *param1) {
 		SnapToNextState();
 		return 0;
 	};
+	if(functionNameHash == 138822) { // ShouldBlink
+		return (intptr_t)ShouldBlink();
+	};
+	if(functionNameHash == 159465) { // GetHeadOffset
+		GetHeadOffset();
+		return 0;
+	};
 	if(functionNameHash == 101816) { // Friction
 		Friction();
 		return 0;
@@ -992,6 +999,12 @@ bool idPhysics_Player::HasNativeFunction(const char *functionName) {
 		return true;
 	};
 	if(functionNameHash == 192377) { // SnapToNextState
+		return true;
+	};
+	if(functionNameHash == 138822) { // ShouldBlink
+		return true;
+	};
+	if(functionNameHash == 159465) { // GetHeadOffset
 		return true;
 	};
 	if(functionNameHash == 101816) { // Friction
@@ -5176,6 +5189,30 @@ intptr_t idPlayer::Invoke(const char *functionName, void *param1) {
 		Think();
 		return 0;
 	};
+	if(functionNameHash == 144457) { // SetupPDASlot
+		SetupPDASlot();
+		return 0;
+	};
+	if(functionNameHash == 126296) { // FreePDASlot
+		FreePDASlot();
+		return 0;
+	};
+	if(functionNameHash == 155286) { // UpdatePDASlot
+		UpdatePDASlot();
+		return 0;
+	};
+	if(functionNameHash == 213232) { // SetupHolsterSlot
+		SetupHolsterSlot();
+		return 0;
+	};
+	if(functionNameHash == 194547) { // FreeHolsterSlot
+		FreeHolsterSlot();
+		return 0;
+	};
+	if(functionNameHash == 224585) { // UpdateHolsterSlot
+		UpdateHolsterSlot();
+		return 0;
+	};
 	if(functionNameHash == 205759) { // UpdateLaserSight
 		UpdateLaserSight();
 		return 0;
@@ -5269,6 +5306,21 @@ intptr_t idPlayer::Invoke(const char *functionName, void *param1) {
 		CalculateFirstPersonView();
 		return 0;
 	};
+	if(functionNameHash == 138822) { // ShouldBlink
+		return (intptr_t)ShouldBlink();
+	};
+	if(functionNameHash == 179786) { // CalculateWaist
+		CalculateWaist();
+		return 0;
+	};
+	if(functionNameHash == 213968) { // CalculateLeftHand
+		CalculateLeftHand();
+		return 0;
+	};
+	if(functionNameHash == 229501) { // CalculateRightHand
+		CalculateRightHand();
+		return 0;
+	};
 	if(functionNameHash == 266853) { // UpdateSpectatingText
 		UpdateSpectatingText();
 		return 0;
@@ -5305,6 +5357,12 @@ intptr_t idPlayer::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 165808) { // ClearPowerUps
 		ClearPowerUps();
 		return 0;
+	};
+	if(functionNameHash == 195378) { // LeftImpulseSlot
+		return (intptr_t)LeftImpulseSlot();
+	};
+	if(functionNameHash == 210650) { // RightImpulseSlot
+		return (intptr_t)RightImpulseSlot();
 	};
 	if(functionNameHash == 72819) { // Reload
 		Reload();
@@ -5537,6 +5595,10 @@ intptr_t idPlayer::Invoke(const char *functionName, void *param1) {
 	if(functionNameHash == 165154) { // GetPrevWeapon
 		return (intptr_t)GetPrevWeapon();
 	};
+	if(functionNameHash == 196343) { // GetVRFaceForward
+		GetVRFaceForward();
+		return 0;
+	};
 	if(functionNameHash == 127156) { // StopFiring
 		StopFiring();
 		return 0;
@@ -5742,6 +5804,24 @@ bool idPlayer::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 61762) { // Think
 		return true;
 	};
+	if(functionNameHash == 144457) { // SetupPDASlot
+		return true;
+	};
+	if(functionNameHash == 126296) { // FreePDASlot
+		return true;
+	};
+	if(functionNameHash == 155286) { // UpdatePDASlot
+		return true;
+	};
+	if(functionNameHash == 213232) { // SetupHolsterSlot
+		return true;
+	};
+	if(functionNameHash == 194547) { // FreeHolsterSlot
+		return true;
+	};
+	if(functionNameHash == 224585) { // UpdateHolsterSlot
+		return true;
+	};
 	if(functionNameHash == 205759) { // UpdateLaserSight
 		return true;
 	};
@@ -5814,6 +5894,18 @@ bool idPlayer::HasNativeFunction(const char *functionName) {
 	if(functionNameHash == 323196) { // CalculateFirstPersonView
 		return true;
 	};
+	if(functionNameHash == 138822) { // ShouldBlink
+		return true;
+	};
+	if(functionNameHash == 179786) { // CalculateWaist
+		return true;
+	};
+	if(functionNameHash == 213968) { // CalculateLeftHand
+		return true;
+	};
+	if(functionNameHash == 229501) { // CalculateRightHand
+		return true;
+	};
 	if(functionNameHash == 266853) { // UpdateSpectatingText
 		return true;
 	};
@@ -5842,6 +5934,12 @@ bool idPlayer::HasNativeFunction(const char *functionName) {
 		return true;
 	};
 	if(functionNameHash == 165808) { // ClearPowerUps
+		return true;
+	};
+	if(functionNameHash == 195378) { // LeftImpulseSlot
+		return true;
+	};
+	if(functionNameHash == 210650) { // RightImpulseSlot
 		return true;
 	};
 	if(functionNameHash == 72819) { // Reload
@@ -6034,6 +6132,9 @@ bool idPlayer::HasNativeFunction(const char *functionName) {
 		return true;
 	};
 	if(functionNameHash == 165154) { // GetPrevWeapon
+		return true;
+	};
+	if(functionNameHash == 196343) { // GetVRFaceForward
 		return true;
 	};
 	if(functionNameHash == 127156) { // StopFiring

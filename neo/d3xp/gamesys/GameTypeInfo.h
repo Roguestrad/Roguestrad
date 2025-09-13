@@ -7,9 +7,9 @@
 
 	This file has been generated with the Type Info Generator v1.1 (c) 2004 id Software
 
-	958 constants
-	92 enums
-	471 classes/structs/unions
+	964 constants
+	93 enums
+	472 classes/structs/unions
 	3 templates
 	8 max inheritance level for 'iceMonsterZombieSawyer'
 
@@ -512,6 +512,12 @@ static constantInfo_t constantInfo[] = {
 	{ "int", "INFLUENCE_LEVEL1", "1" },
 	{ "int", "INFLUENCE_LEVEL2", "2" },
 	{ "int", "INFLUENCE_LEVEL3", "3" },
+	{ "int", "SLOT_NONE", "-1" },
+	{ "int", "SLOT_LEFT_HIP", "0" },
+	{ "int", "SLOT_RIGHT_HIP", "1" },
+	{ "int", "SLOT_RIGHT_BACK_BOTTOM", "2" },
+	{ "int", "SLOT_RIGHT_BACK_TOP", "3" },
+	{ "int", "SLOT_COUNT", "4" },
 	{ "int", "idPlayer::EVENT_IMPULSE", "2" },
 	{ "int", "idPlayer::EVENT_EXIT_TELEPORTER", "3" },
 	{ "int", "idPlayer::EVENT_ABORT_TELEPORTER", "4" },
@@ -1596,7 +1602,17 @@ static enumValueInfo_t enum_46_typeInfo[] = {
 	{ NULL, 0 }
 };
 
-static enumValueInfo_t idPlayer_enum_47_typeInfo[] = {
+static enumValueInfo_t slotIndex_t_typeInfo[] = {
+	{ "SLOT_NONE", -1 },
+	{ "SLOT_LEFT_HIP", 0 },
+	{ "SLOT_RIGHT_HIP", 1 },
+	{ "SLOT_RIGHT_BACK_BOTTOM", 2 },
+	{ "SLOT_RIGHT_BACK_TOP", 3 },
+	{ "SLOT_COUNT", 4 },
+	{ NULL, 0 }
+};
+
+static enumValueInfo_t idPlayer_enum_48_typeInfo[] = {
 	{ "EVENT_IMPULSE", 2 },
 	{ "EVENT_EXIT_TELEPORTER", 3 },
 	{ "EVENT_ABORT_TELEPORTER", 4 },
@@ -1656,7 +1672,7 @@ static enumValueInfo_t moverState_t_typeInfo[] = {
 	{ NULL, 0 }
 };
 
-static enumValueInfo_t idExplodingBarrel_enum_53_typeInfo[] = {
+static enumValueInfo_t idExplodingBarrel_enum_54_typeInfo[] = {
 	{ "EVENT_EXPLODE", 2 },
 	{ "EVENT_MAXEVENTS", 3 },
 	{ NULL, 0 }
@@ -1670,7 +1686,7 @@ static enumValueInfo_t idExplodingBarrel_explode_state_t_typeInfo[] = {
 	{ NULL, 0 }
 };
 
-static enumValueInfo_t idSecurityCamera_enum_55_typeInfo[] = {
+static enumValueInfo_t idSecurityCamera_enum_56_typeInfo[] = {
 	{ "SCANNING", 0 },
 	{ "LOSINGINTEREST", 1 },
 	{ "ALERT", 2 },
@@ -1678,7 +1694,7 @@ static enumValueInfo_t idSecurityCamera_enum_55_typeInfo[] = {
 	{ NULL, 0 }
 };
 
-static enumValueInfo_t idBrittleFracture_enum_56_typeInfo[] = {
+static enumValueInfo_t idBrittleFracture_enum_57_typeInfo[] = {
 	{ "EVENT_PROJECT_DECAL", 2 },
 	{ "EVENT_SHATTER", 3 },
 	{ "EVENT_MAXEVENTS", 4 },
@@ -2119,7 +2135,7 @@ static enumValueInfo_t menuSounds_t_typeInfo[] = {
 	{ NULL, 0 }
 };
 
-static enumValueInfo_t enum_91_typeInfo[] = {
+static enumValueInfo_t enum_92_typeInfo[] = {
 	{ "OP_RETURN", 0 },
 	{ "OP_UINC_F", 1 },
 	{ "OP_UINCP_F", 2 },
@@ -2295,16 +2311,17 @@ static enumTypeInfo_t enumTypeInfo[] = {
 	{ "enum_44", enum_44_typeInfo },
 	{ "enum_45", enum_45_typeInfo },
 	{ "enum_46", enum_46_typeInfo },
-	{ "idPlayer::enum_47", idPlayer_enum_47_typeInfo },
+	{ "slotIndex_t", slotIndex_t_typeInfo },
+	{ "idPlayer::enum_48", idPlayer_enum_48_typeInfo },
 	{ "idMover::moveStage_t", idMover_moveStage_t_typeInfo },
 	{ "idMover::moverCommand_t", idMover_moverCommand_t_typeInfo },
 	{ "idMover::moverDir_t", idMover_moverDir_t_typeInfo },
 	{ "idElevator::elevatorState_t", idElevator_elevatorState_t_typeInfo },
 	{ "moverState_t", moverState_t_typeInfo },
-	{ "idExplodingBarrel::enum_53", idExplodingBarrel_enum_53_typeInfo },
+	{ "idExplodingBarrel::enum_54", idExplodingBarrel_enum_54_typeInfo },
 	{ "idExplodingBarrel::explode_state_t", idExplodingBarrel_explode_state_t_typeInfo },
-	{ "idSecurityCamera::enum_55", idSecurityCamera_enum_55_typeInfo },
-	{ "idBrittleFracture::enum_56", idBrittleFracture_enum_56_typeInfo },
+	{ "idSecurityCamera::enum_56", idSecurityCamera_enum_56_typeInfo },
+	{ "idBrittleFracture::enum_57", idBrittleFracture_enum_57_typeInfo },
 	{ "moveType_t", moveType_t_typeInfo },
 	{ "moveCommand_t", moveCommand_t_typeInfo },
 	{ "talkState_t", talkState_t_typeInfo },
@@ -2339,7 +2356,7 @@ static enumTypeInfo_t enumTypeInfo[] = {
 	{ "pdaHandlerWidgets_t", pdaHandlerWidgets_t_typeInfo },
 	{ "scoreboardHandlerWidgets_t", scoreboardHandlerWidgets_t_typeInfo },
 	{ "menuSounds_t", menuSounds_t_typeInfo },
-	{ "enum_91", enum_91_typeInfo },
+	{ "enum_92", enum_92_typeInfo },
 	{ NULL, NULL }
 };
 
@@ -3027,6 +3044,7 @@ static classVariableInfo_t idGameLocal_typeInfo[] = {
 	{ "slowmoState_t", "slowmoState", (intptr_t)(&((idGameLocal *)0)->slowmoState), sizeof( ((idGameLocal *)0)->slowmoState ) },
 	{ "float", "slowmoScale", (intptr_t)(&((idGameLocal *)0)->slowmoScale), sizeof( ((idGameLocal *)0)->slowmoScale ) },
 	{ "bool", "quickSlowmoReset", (intptr_t)(&((idGameLocal *)0)->quickSlowmoReset), sizeof( ((idGameLocal *)0)->quickSlowmoReset ) },
+	{ "bool", "mapIsIntro", (intptr_t)(&((idGameLocal *)0)->mapIsIntro), sizeof( ((idGameLocal *)0)->mapIsIntro ) },
 	{ "idStr", "mapFileName", (intptr_t)(&((idGameLocal *)0)->mapFileName), sizeof( ((idGameLocal *)0)->mapFileName ) },
 	{ "idMapFile *", "mapFile", (intptr_t)(&((idGameLocal *)0)->mapFile), sizeof( ((idGameLocal *)0)->mapFile ) },
 	{ "bool", "mapCycleLoaded", (intptr_t)(&((idGameLocal *)0)->mapCycleLoaded), sizeof( ((idGameLocal *)0)->mapCycleLoaded ) },
@@ -3249,6 +3267,13 @@ static classVariableInfo_t idPhysics_Player_typeInfo[] = {
 	{ "playerPState_t", "saved", (intptr_t)(&((idPhysics_Player *)0)->saved), sizeof( ((idPhysics_Player *)0)->saved ) },
 	{ "playerPState_t", "previous", (intptr_t)(&((idPhysics_Player *)0)->previous), sizeof( ((idPhysics_Player *)0)->previous ) },
 	{ "playerPState_t", "next", (intptr_t)(&((idPhysics_Player *)0)->next), sizeof( ((idPhysics_Player *)0)->next ) },
+	{ "idMat3", "vrFaceForward", (intptr_t)(&((idPhysics_Player *)0)->vrFaceForward), sizeof( ((idPhysics_Player *)0)->vrFaceForward ) },
+	{ "bool", "vrHadHeadOrigin", (intptr_t)(&((idPhysics_Player *)0)->vrHadHeadOrigin), sizeof( ((idPhysics_Player *)0)->vrHadHeadOrigin ) },
+	{ "idVec3", "vrLastHeadOrigin", (intptr_t)(&((idPhysics_Player *)0)->vrLastHeadOrigin), sizeof( ((idPhysics_Player *)0)->vrLastHeadOrigin ) },
+	{ "idVec3", "vrDelta", (intptr_t)(&((idPhysics_Player *)0)->vrDelta), sizeof( ((idPhysics_Player *)0)->vrDelta ) },
+	{ "idVec3", "headOrigin", (intptr_t)(&((idPhysics_Player *)0)->headOrigin), sizeof( ((idPhysics_Player *)0)->headOrigin ) },
+	{ "bool", "blink", (intptr_t)(&((idPhysics_Player *)0)->blink), sizeof( ((idPhysics_Player *)0)->blink ) },
+	{ "bool", "headBumped", (intptr_t)(&((idPhysics_Player *)0)->headBumped), sizeof( ((idPhysics_Player *)0)->headBumped ) },
 	{ "float", "walkSpeed", (intptr_t)(&((idPhysics_Player *)0)->walkSpeed), sizeof( ((idPhysics_Player *)0)->walkSpeed ) },
 	{ "float", "crouchSpeed", (intptr_t)(&((idPhysics_Player *)0)->crouchSpeed), sizeof( ((idPhysics_Player *)0)->crouchSpeed ) },
 	{ "float", "maxStepHeight", (intptr_t)(&((idPhysics_Player *)0)->maxStepHeight), sizeof( ((idPhysics_Player *)0)->maxStepHeight ) },
@@ -4535,6 +4560,7 @@ static classVariableInfo_t idWeapon_typeInfo[] = {
 	{ "idMat3", "playerViewAxis", (intptr_t)(&((idWeapon *)0)->playerViewAxis), sizeof( ((idWeapon *)0)->playerViewAxis ) },
 	{ "idVec3", "viewWeaponOrigin", (intptr_t)(&((idWeapon *)0)->viewWeaponOrigin), sizeof( ((idWeapon *)0)->viewWeaponOrigin ) },
 	{ "idMat3", "viewWeaponAxis", (intptr_t)(&((idWeapon *)0)->viewWeaponAxis), sizeof( ((idWeapon *)0)->viewWeaponAxis ) },
+	{ "bool", "hasMuzzle", (intptr_t)(&((idWeapon *)0)->hasMuzzle), sizeof( ((idWeapon *)0)->hasMuzzle ) },
 	{ "idVec3", "muzzleOrigin", (intptr_t)(&((idWeapon *)0)->muzzleOrigin), sizeof( ((idWeapon *)0)->muzzleOrigin ) },
 	{ "idMat3", "muzzleAxis", (intptr_t)(&((idWeapon *)0)->muzzleAxis), sizeof( ((idWeapon *)0)->muzzleAxis ) },
 	{ "idVec3", "pushVelocity", (intptr_t)(&((idWeapon *)0)->pushVelocity), sizeof( ((idWeapon *)0)->pushVelocity ) },
@@ -4588,6 +4614,7 @@ static classVariableInfo_t idWeapon_typeInfo[] = {
 	{ "jointHandle_t", "smokeJointView", (intptr_t)(&((idWeapon *)0)->smokeJointView), sizeof( ((idWeapon *)0)->smokeJointView ) },
 	{ "idHashTable < WeaponParticle_t >", "weaponParticles", (intptr_t)(&((idWeapon *)0)->weaponParticles), sizeof( ((idWeapon *)0)->weaponParticles ) },
 	{ "idHashTable < WeaponLight_t >", "weaponLights", (intptr_t)(&((idWeapon *)0)->weaponLights), sizeof( ((idWeapon *)0)->weaponLights ) },
+	{ "idDeclSkinWrapper", "vrWrapperSkin", (intptr_t)(&((idWeapon *)0)->vrWrapperSkin), sizeof( ((idWeapon *)0)->vrWrapperSkin ) },
 	{ "const idSoundShader *", "sndHum", (intptr_t)(&((idWeapon *)0)->sndHum), sizeof( ((idWeapon *)0)->sndHum ) },
 	{ "const idDeclParticle *", "weaponSmoke", (intptr_t)(&((idWeapon *)0)->weaponSmoke), sizeof( ((idWeapon *)0)->weaponSmoke ) },
 	{ "int", "weaponSmokeStartTime", (intptr_t)(&((idWeapon *)0)->weaponSmokeStartTime), sizeof( ((idWeapon *)0)->weaponSmokeStartTime ) },
@@ -4990,12 +5017,24 @@ static classVariableInfo_t aasLocation_t_typeInfo[] = {
 	{ NULL, 0 }
 };
 
+static classVariableInfo_t slot_t_typeInfo[] = {
+	{ "idVec3", "origin", (intptr_t)(&((slot_t *)0)->origin), sizeof( ((slot_t *)0)->origin ) },
+	{ "float", "radiusSq", (intptr_t)(&((slot_t *)0)->radiusSq), sizeof( ((slot_t *)0)->radiusSq ) },
+	{ NULL, 0 }
+};
+
 static classVariableInfo_t idPlayer_typeInfo[] = {
 	{ "usercmd_t", "oldCmd", (intptr_t)(&((idPlayer *)0)->oldCmd), sizeof( ((idPlayer *)0)->oldCmd ) },
 	{ "usercmd_t", "usercmd", (intptr_t)(&((idPlayer *)0)->usercmd), sizeof( ((idPlayer *)0)->usercmd ) },
 	{ "idPlayerView", "playerView", (intptr_t)(&((idPlayer *)0)->playerView), sizeof( ((idPlayer *)0)->playerView ) },
 	{ "renderEntity_t", "laserSightRenderEntity", (intptr_t)(&((idPlayer *)0)->laserSightRenderEntity), sizeof( ((idPlayer *)0)->laserSightRenderEntity ) },
 	{ "qhandle_t", "laserSightHandle", (intptr_t)(&((idPlayer *)0)->laserSightHandle), sizeof( ((idPlayer *)0)->laserSightHandle ) },
+	{ "renderEntity_t", "pdaRenderEntity", (intptr_t)(&((idPlayer *)0)->pdaRenderEntity), sizeof( ((idPlayer *)0)->pdaRenderEntity ) },
+	{ "qhandle_t", "pdaModelDefHandle", (intptr_t)(&((idPlayer *)0)->pdaModelDefHandle), sizeof( ((idPlayer *)0)->pdaModelDefHandle ) },
+	{ "renderEntity_t", "holsterRenderEntity", (intptr_t)(&((idPlayer *)0)->holsterRenderEntity), sizeof( ((idPlayer *)0)->holsterRenderEntity ) },
+	{ "qhandle_t", "holsterModelDefHandle", (intptr_t)(&((idPlayer *)0)->holsterModelDefHandle), sizeof( ((idPlayer *)0)->holsterModelDefHandle ) },
+	{ "idMat3", "holsterAxis", (intptr_t)(&((idPlayer *)0)->holsterAxis), sizeof( ((idPlayer *)0)->holsterAxis ) },
+	{ "int", "holsteredWeapon", (intptr_t)(&((idPlayer *)0)->holsteredWeapon), sizeof( ((idPlayer *)0)->holsteredWeapon ) },
 	{ "bool", "noclip", (intptr_t)(&((idPlayer *)0)->noclip), sizeof( ((idPlayer *)0)->noclip ) },
 	{ "bool", "godmode", (intptr_t)(&((idPlayer *)0)->godmode), sizeof( ((idPlayer *)0)->godmode ) },
 	{ "bool", "spawnAnglesSet", (intptr_t)(&((idPlayer *)0)->spawnAnglesSet), sizeof( ((idPlayer *)0)->spawnAnglesSet ) },
@@ -5102,6 +5141,18 @@ static classVariableInfo_t idPlayer_typeInfo[] = {
 	{ "int", "maxRespawnTime", (intptr_t)(&((idPlayer *)0)->maxRespawnTime), sizeof( ((idPlayer *)0)->maxRespawnTime ) },
 	{ "idVec3", "firstPersonViewOrigin", (intptr_t)(&((idPlayer *)0)->firstPersonViewOrigin), sizeof( ((idPlayer *)0)->firstPersonViewOrigin ) },
 	{ "idMat3", "firstPersonViewAxis", (intptr_t)(&((idPlayer *)0)->firstPersonViewAxis), sizeof( ((idPlayer *)0)->firstPersonViewAxis ) },
+	{ "idVec3", "flashlightOrigin", (intptr_t)(&((idPlayer *)0)->flashlightOrigin), sizeof( ((idPlayer *)0)->flashlightOrigin ) },
+	{ "idMat3", "flashlightAxis", (intptr_t)(&((idPlayer *)0)->flashlightAxis), sizeof( ((idPlayer *)0)->flashlightAxis ) },
+	{ "idVec3", "hmdOrigin", (intptr_t)(&((idPlayer *)0)->hmdOrigin), sizeof( ((idPlayer *)0)->hmdOrigin ) },
+	{ "idMat3", "hmdAxis", (intptr_t)(&((idPlayer *)0)->hmdAxis), sizeof( ((idPlayer *)0)->hmdAxis ) },
+	{ "idVec3", "leftHandOrigin", (intptr_t)(&((idPlayer *)0)->leftHandOrigin), sizeof( ((idPlayer *)0)->leftHandOrigin ) },
+	{ "idMat3", "leftHandAxis", (intptr_t)(&((idPlayer *)0)->leftHandAxis), sizeof( ((idPlayer *)0)->leftHandAxis ) },
+	{ "slotIndex_t", "leftHandSlot", (intptr_t)(&((idPlayer *)0)->leftHandSlot), sizeof( ((idPlayer *)0)->leftHandSlot ) },
+	{ "idVec3", "rightHandOrigin", (intptr_t)(&((idPlayer *)0)->rightHandOrigin), sizeof( ((idPlayer *)0)->rightHandOrigin ) },
+	{ "idMat3", "rightHandAxis", (intptr_t)(&((idPlayer *)0)->rightHandAxis), sizeof( ((idPlayer *)0)->rightHandAxis ) },
+	{ "slotIndex_t", "rightHandSlot", (intptr_t)(&((idPlayer *)0)->rightHandSlot), sizeof( ((idPlayer *)0)->rightHandSlot ) },
+	{ "idVec3", "waistOrigin", (intptr_t)(&((idPlayer *)0)->waistOrigin), sizeof( ((idPlayer *)0)->waistOrigin ) },
+	{ "idMat3", "waistAxis", (intptr_t)(&((idPlayer *)0)->waistAxis), sizeof( ((idPlayer *)0)->waistAxis ) },
 	{ "idDragEntity", "dragEntity", (intptr_t)(&((idPlayer *)0)->dragEntity), sizeof( ((idPlayer *)0)->dragEntity ) },
 	{ "idFuncMountedObject *", "mountedObject", (intptr_t)(&((idPlayer *)0)->mountedObject), sizeof( ((idPlayer *)0)->mountedObject ) },
 	{ "idEntityPtr < idLight >", "enviroSuitLight", (intptr_t)(&((idPlayer *)0)->enviroSuitLight), sizeof( ((idPlayer *)0)->enviroSuitLight ) },
@@ -5135,6 +5186,12 @@ static classVariableInfo_t idPlayer_typeInfo[] = {
 	{ "idVec3", "viewBob", (intptr_t)(&((idPlayer *)0)->viewBob), sizeof( ((idPlayer *)0)->viewBob ) },
 	{ "int", "landChange", (intptr_t)(&((idPlayer *)0)->landChange), sizeof( ((idPlayer *)0)->landChange ) },
 	{ "int", "landTime", (intptr_t)(&((idPlayer *)0)->landTime), sizeof( ((idPlayer *)0)->landTime ) },
+	{ "bool", "hasCameraFirstFrame", (intptr_t)(&((idPlayer *)0)->hasCameraFirstFrame), sizeof( ((idPlayer *)0)->hasCameraFirstFrame ) },
+	{ "idVec3", "lastHeadOrigin", (intptr_t)(&((idPlayer *)0)->lastHeadOrigin), sizeof( ((idPlayer *)0)->lastHeadOrigin ) },
+	{ "idMat3", "lastHeadAxisInv", (intptr_t)(&((idPlayer *)0)->lastHeadAxisInv), sizeof( ((idPlayer *)0)->lastHeadAxisInv ) },
+	{ "bool", "hadBodyYaw", (intptr_t)(&((idPlayer *)0)->hadBodyYaw), sizeof( ((idPlayer *)0)->hadBodyYaw ) },
+	{ "float", "oldBodyYaw", (intptr_t)(&((idPlayer *)0)->oldBodyYaw), sizeof( ((idPlayer *)0)->oldBodyYaw ) },
+	{ "idMat3", "vrFaceForward", (intptr_t)(&((idPlayer *)0)->vrFaceForward), sizeof( ((idPlayer *)0)->vrFaceForward ) },
 	{ "int", "currentWeapon", (intptr_t)(&((idPlayer *)0)->currentWeapon), sizeof( ((idPlayer *)0)->currentWeapon ) },
 	{ "idPredictedValue < int >", "idealWeapon", (intptr_t)(&((idPlayer *)0)->idealWeapon), sizeof( ((idPlayer *)0)->idealWeapon ) },
 	{ "int", "previousWeapon", (intptr_t)(&((idPlayer *)0)->previousWeapon), sizeof( ((idPlayer *)0)->previousWeapon ) },
@@ -7615,6 +7672,7 @@ static classTypeInfo_t classTypeInfo[] = {
 	{ "idInventory", "", sizeof(idInventory), idInventory_typeInfo },
 	{ "loggedAccel_t", "", sizeof(loggedAccel_t), loggedAccel_t_typeInfo },
 	{ "aasLocation_t", "", sizeof(aasLocation_t), aasLocation_t_typeInfo },
+	{ "slot_t", "", sizeof(slot_t), slot_t_typeInfo },
 	{ "idPlayer", "idActor", sizeof(idPlayer), idPlayer_typeInfo },
 	{ "idMover::moveState_t", "", sizeof(idMover::moveState_t), idMover_moveState_t_typeInfo },
 	{ "idMover::rotationState_t", "", sizeof(idMover::rotationState_t), idMover_rotationState_t_typeInfo },

@@ -326,7 +326,6 @@ void idCommonLocal::Draw()
 
 		loadGUI->Render( renderSystem, Sys_Milliseconds() );
 	}
-		tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
 	else if( game && game->Shell_IsActive() )
 	{
 		bool gameDraw = game->Draw( game->GetLocalClientNum() );
