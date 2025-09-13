@@ -1353,27 +1353,30 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		LoadGameDLL();
 
 		// Leyland VR
-		// check if we need to set default bindings for vr
-		bool vrHasBinding = false;
-		for( int i = K_VR_FIRST_KEY; i <= K_VR_LAST_KEY; i++ )
+		if( vrSystem->IsActive() )
 		{
-			const char* binding = idKeyInput::GetBinding( i );
-			if( binding && binding[0] != 0 )
+			// check if we need to set default bindings for vr
+			bool vrHasBinding = false;
+			for( int i = K_VR_FIRST_KEY; i <= K_VR_LAST_KEY; i++ )
 			{
-				vrHasBinding = true;
-				break;
+				const char* binding = idKeyInput::GetBinding( i );
+				if( binding && binding[0] != 0 )
+				{
+					vrHasBinding = true;
+					break;
+				}
 			}
-		}
 
-		if( !vrHasBinding )
-		{
-			idKeyInput::SetBinding( K_VR_LEFT_MENU, "_impulse19" );			// toggle PDA
-			idKeyInput::SetBinding( K_VR_LEFT_TRIGGER, "_moveup" );			// jump
-			idKeyInput::SetBinding( K_VR_LEFT_A, "_impulse16" );			// toggle flashlight
-			idKeyInput::SetBinding( K_VR_RIGHT_DPAD_LEFT, "_impulse15" );	// previous weapon
-			idKeyInput::SetBinding( K_VR_RIGHT_DPAD_RIGHT, "_impulse14" );	// next weapon
-			idKeyInput::SetBinding( K_VR_RIGHT_TRIGGER, "_attack" );
-			idKeyInput::SetBinding( K_VR_RIGHT_A, "_impulse13" );			// reload weapon
+			if( !vrHasBinding )
+			{
+				idKeyInput::SetBinding( K_VR_LEFT_MENU, "_impulse19" );			// toggle PDA
+				idKeyInput::SetBinding( K_VR_LEFT_TRIGGER, "_moveup" );			// jump
+				idKeyInput::SetBinding( K_VR_LEFT_A, "_impulse16" );			// toggle flashlight
+				idKeyInput::SetBinding( K_VR_RIGHT_DPAD_LEFT, "_impulse15" );	// previous weapon
+				idKeyInput::SetBinding( K_VR_RIGHT_DPAD_RIGHT, "_impulse14" );	// next weapon
+				idKeyInput::SetBinding( K_VR_RIGHT_TRIGGER, "_attack" );
+				idKeyInput::SetBinding( K_VR_RIGHT_A, "_impulse13" );			// reload weapon
+			}
 		}
 		// Leyland end
 
