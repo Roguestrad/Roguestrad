@@ -1776,7 +1776,7 @@ renderView_t* idActor::GetRenderView()
 {
 	renderView_t* rv = idEntity::GetRenderView();
 	rv->viewaxis = viewAxis;
-	rv->vieworg = GetEyePosition();
+	rv->vieworg[STEREOPOS_MONO] = GetEyePosition();
 	return rv;
 }
 

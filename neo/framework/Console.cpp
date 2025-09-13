@@ -353,8 +353,20 @@ float idConsoleLocal::DrawFPS( float y )
 		}
 
 		ImVec2 pos;
-		pos.x = renderSystem->GetWidth() - statsWindowWidth;
-		pos.y = 0;
+
+		if( vrSystem->IsActive() )
+		{
+			statsWindowWidth *= 1.25f;
+			statsWindowHeight *= 1.25f;
+
+			pos.x = ( renderSystem->GetWidth() / 2.0f ) - statsWindowWidth / 2.0f;
+			pos.y = renderSystem->GetHeight() / 4.0f;
+		}
+		else
+		{
+			pos.x = renderSystem->GetWidth() - statsWindowWidth;
+			pos.y = 0;
+		}
 
 		ImGui::SetNextWindowPos( pos );
 		ImGui::SetNextWindowSize( ImVec2( statsWindowWidth, statsWindowHeight ) );

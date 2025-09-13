@@ -251,8 +251,9 @@ public:
 	// Returns false for hands, grenades, and chainsaw.
 	// Can't be const because a frame may need to be created.
 	bool					GetMuzzlePositionWithHacks( idVec3& origin, idMat3& axis );
+	bool					GetMuzzlePosition( idVec3& origin, idMat3& axis ); // Leyland VR
 
-	void					GetProjectileLaunchOriginAndAxis( idVec3& origin, idMat3& axis );
+	bool					GetInverseHandle( idVec3& origin, idMat3& axis ); // Leyland VR
 
 	const idDeclEntityDef* GetDeclEntityDef()
 	{
@@ -296,6 +297,7 @@ private:
 	idMat3					viewWeaponAxis;
 
 	// the muzzle bone's position, used for launching projectiles and trailing smoke
+	bool					hasMuzzle;	// Leyland VR
 	idVec3					muzzleOrigin;
 	idMat3					muzzleAxis;
 
@@ -376,6 +378,8 @@ private:
 
 	idHashTable<WeaponParticle_t>	weaponParticles;
 	idHashTable<WeaponLight_t>		weaponLights;
+
+	idDeclSkinWrapper		vrWrapperSkin;	// Leyland VR
 
 	// sound
 	const idSoundShader* 	sndHum;

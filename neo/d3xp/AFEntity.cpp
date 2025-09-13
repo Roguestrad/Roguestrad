@@ -506,6 +506,34 @@ void idAFAttachment::Think()
 	}
 }
 
+// Leyland VR
+/*
+================
+idAfAttachment::GetPhysicsToVisualTransform
+================
+*/
+idCVar vr_chibi( "vr_chibi", "1.1", CVAR_FLOAT | CVAR_ARCHIVE | CVAR_NEW, "changes the size of human heads." );
+
+bool idAFAttachment::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis )
+{
+	// RB: only do this in VR
+	if( vrSystem->IsActive() )
+	{
+		const float scale = vr_chibi.GetFloat();
+		if( scale > 0.0f && scale != 1.0f )
+		{
+			static const idVec3 offset( -1.8f, 0, -8.0f );
+			axis = mat3_identity * scale;
+			origin = ( scale - 1.0f ) / scale * offset;
+
+			return true;
+		}
+	}
+
+	return false;
+}
+// Leyland end
+
 /*
 ================
 idAFAttachment::SetCombatModel

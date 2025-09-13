@@ -136,10 +136,26 @@ void idSWF::Render( idRenderSystem* gui, int time, bool isSplitscreen )
 		}
 	}
 
-	const float pixelAspect = renderSystem->GetPixelAspect();
-	const float sysWidth = renderSystem->GetWidth() * ( pixelAspect > 1.0f ? pixelAspect : 1.0f );
-	const float sysHeight = renderSystem->GetHeight() / ( pixelAspect < 1.0f ? pixelAspect : 1.0f );
+	// Leyland VR
+	float sysWidth, sysHeight;
+	if( vrSystem->IsActive() )
+	{
+		sysWidth = renderSystem->GetVirtualWidth();
+		sysHeight = renderSystem->GetVirtualHeight();
+	}
+	else
+	{
+		const float pixelAspect = renderSystem->GetPixelAspect();
+		sysWidth = renderSystem->GetWidth() * ( pixelAspect > 1.0f ? pixelAspect : 1.0f );
+		sysHeight = renderSystem->GetHeight() / ( pixelAspect < 1.0f ? pixelAspect : 1.0f );
+	}
+
 	float scale = swfScale * sysHeight / ( float )frameHeight;
+
+	if( vrSystem->IsActive() && isHUD )
+	{
+		scale *= 0.75f;
+	}
 
 	swfRenderState_t renderState;
 	renderState.stereoDepth = ( stereoDepthType_t )mainspriteInstance->GetStereoDepth();
@@ -151,6 +167,15 @@ void idSWF::Render( idRenderSystem* gui, int time, bool isSplitscreen )
 	renderBorder = renderState.matrix.tx / scale;
 
 	scaleToVirtual.Set( ( float )renderSystem->GetVirtualWidth() / sysWidth, ( float )renderSystem->GetVirtualHeight() / sysHeight );
+
+	if( tr.guiModel->GetMode() == GUIMODE_SHELL )
+	{
+		renderState.activeMasks = STENCIL_INCR;
+		gui->SetGLState( GLStateForRenderState( renderState ) );
+		DrawStretchPic( 0.0f, 0.0f, sysWidth, sysHeight, 0, 0, 1, 1, white );
+		renderState.activeMasks = 1;
+	}
+	// Leyland end
 
 	RenderSprite( gui, mainspriteInstance, renderState, time, isSplitscreen );
 
@@ -186,6 +211,15 @@ void idSWF::Render( idRenderSystem* gui, int time, bool isSplitscreen )
 		{
 			DrawStretchPic( mouse.x, mouse.y, 32.0f, 32.0f, 0, 0, 1, 1, guiCursor_hand );
 		}
+	}
+
+	// Leyland VR
+	if( tr.guiModel->GetMode() == GUIMODE_SHELL )
+	{
+		renderState.activeMasks = STENCIL_DECR;
+		gui->SetGLState( GLStateForRenderState( renderState ) );
+		DrawStretchPic( 0.0f, 0.0f, sysWidth, sysHeight, 0, 0, 1, 1, white );
+		renderState.activeMasks = 0;
 	}
 
 	// restore the GL State
@@ -324,9 +358,27 @@ void idSWF::RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* spriteInstan
 				float widthAdj = swf_titleSafe.GetFloat() * frameWidth;
 				float heightAdj = swf_titleSafe.GetFloat() * frameHeight;
 
-				const float pixelAspect = renderSystem->GetPixelAspect();
-				const float sysWidth = renderSystem->GetWidth() * ( pixelAspect > 1.0f ? pixelAspect : 1.0f );
-				const float sysHeight = renderSystem->GetHeight() / ( pixelAspect < 1.0f ? pixelAspect : 1.0f );
+				// Leyland VR
+				float sysWidth, sysHeight;
+				if( vrSystem->IsActive() )
+				{
+					sysWidth = renderSystem->GetVirtualWidth();
+					sysHeight = renderSystem->GetVirtualHeight();
+					if( isHUD )
+					{
+						static float hudWidthAdj = 320;
+						static float hudHeightAdj = 78;
+						widthAdj = hudWidthAdj;
+						heightAdj = hudHeightAdj;
+					}
+				}
+				else
+				{
+					const float pixelAspect = renderSystem->GetPixelAspect();
+					sysWidth = renderSystem->GetWidth() * ( pixelAspect > 1.0f ? pixelAspect : 1.0f );
+					sysHeight = renderSystem->GetHeight() / ( pixelAspect < 1.0f ? pixelAspect : 1.0f );
+				}
+				// Leyland end
 
 				if( display.spriteInstance->name.Icmp( "_fullScreen" ) == 0 )
 				{

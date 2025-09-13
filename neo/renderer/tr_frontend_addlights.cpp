@@ -272,7 +272,7 @@ static void R_AddSingleLight( viewLight_t* vLight )
 		vLight->scissorRect.zmin = projected[0][2];
 		vLight->scissorRect.zmax = projected[1][2];
 
-		const bool viewInsideLight = !idRenderMatrix::CullPointToMVP( light->baseLightProject, viewDef->renderView.vieworg, true );
+		const bool viewInsideLight = !idRenderMatrix::CullPointToMVP( light->baseLightProject, viewDef->renderView.vieworg[STEREOPOS_CULLING], true );
 
 		// RB: test surface visibility by drawing the triangles of the bounds
 #if defined(USE_INTRINSICS_SSE)

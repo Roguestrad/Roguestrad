@@ -237,15 +237,89 @@ const int RDF_NOAMBIENT		= BIT( 1 ); // don't render indirect lighting
 const int RDF_IRRADIANCE	= BIT( 2 ); // render into 256^2 HDR render target for irradiance/radiance GGX calculation
 const int RDF_UNDERWATER	= BIT( 3 ); // TODO enable automatic underwater caustics and fog
 
+enum stereoOrigin_t
+{
+	STEREOPOS_MONO,			// old view origin or in VR, middle between the eyes where it derived from
+	STEREOPOS_LEFT,			// only in VR: left
+	STEREOPOS_RIGHT,		// only in VR: right but both share the same viewaxis
+	STEREOPOS_CULLING,		// only in VR: combined which is behind both eyes
+	STEREOPOS_MAX
+};
+
 typedef struct renderView_s
 {
+private:
+	float					fov_x, fov_y;									// as degrees like before
+	float					fov_left, fov_right, fov_top, fov_bottom;		// as tangents
+
+public:
+
+	// assumes tangents
+	void					SetFov( const idVec4& fov )
+	{
+		fov_left = fov[0];
+		fov_right = fov[1];
+		fov_bottom = fov[2];
+		fov_top = fov[3];
+
+		fov_x = ( atan( fov_right ) - atan( fov_left ) ) * idMath::M_RAD2DEG;
+		fov_y = ( atan( fov_top ) - atan( fov_bottom ) ) * idMath::M_RAD2DEG;
+	}
+
+	// assumes degrees
+	void					SetFovXY( float fovX, float fovY )
+	{
+		fov_x = fovX;
+		fov_y = fovY;
+
+		//fovX = tan( fov_x * 0.5f * idMath::M_DEG2RAD );
+		//fovY = tan( fov_y * 0.5f * idMath::M_DEG2RAD );
+
+		fovX = tan( fov_x * idMath::PI / 360.0f );
+		fovY = tan( fov_y * idMath::PI / 360.0f );
+
+		fov_left = -fovX;
+		fov_right = fovX;
+		fov_bottom = -fovY;
+		fov_top = fovY;
+	}
+
+	// returns fov in degrees like in old Doom 3
+	void					GetFovXY( float& fovX, float& fovY ) const
+	{
+		fovX = fov_x;
+		fovY = fov_y;
+
+		//fov_x = ( atan( fov_right ) - atan( fov_left ) ) * idMath::M_RAD2DEG;
+		//fov_y = ( atan( fov_top ) - atan( fov_bottom ) ) * idMath::M_RAD2DEG;
+	}
+
+	float					GetFovLeft() const
+	{
+		return fov_left;
+	}
+
+	float					GetFovRight() const
+	{
+		return fov_right;
+	}
+
+	float					GetFovTop() const
+	{
+		return fov_top;
+	}
+
+	float					GetFovBottom() const
+	{
+		return fov_bottom;
+	}
+
 	// player views will set this to a non-zero integer for model suppress / allow
 	// subviews (mirrors, cameras, etc) will always clear it to zero
 	int						viewID;
 
-	float					fov_x, fov_y;		// in degrees
-	idVec3					vieworg;			// has already been adjusted for stereo world seperation
-	idVec3					vieworg_weapon;		// has already been adjusted for stereo world seperation
+	idVec3					vieworg[STEREOPOS_MAX];			// has already been adjusted for stereo world seperation
+	//idVec3				vieworg_weapon;		// has already been adjusted for stereo world seperation
 	idMat3					viewaxis;			// transformation matrix, view looks down the positive X axis
 
 	bool					cramZNear;			// for cinematics, we want to set ZNear much lower
@@ -258,10 +332,18 @@ typedef struct renderView_s
 	const idMaterial*		globalMaterial;							// used to override everything draw
 
 	// the viewEyeBuffer may be of a different polarity than stereoScreenSeparation if the eyes have been swapped
+#if VR_EMITSTEREO
 	int						viewEyeBuffer;				// -1 = left eye, 1 = right eye, 0 = monoscopic view or GUI
+#endif
 	float					stereoScreenSeparation;		// projection matrix horizontal offset, positive or negative based on camera eye
 
 	int						rdflags;			// RB: RDF_NOSHADOWS, etc
+
+	// Leyland: for last moment visual correction and reduction of lag
+	bool					vrHadHead;
+	idVec3					vrHeadOrigin;
+	idMat3					vrHeadAxis;
+	idMat3					vrMoveAxis;
 } renderView_t;
 
 

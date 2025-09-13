@@ -1010,6 +1010,8 @@ void idProjectile::Event_GetProjectileState()
 idProjectile::Explode
 ================
 */
+idCVar vr_hapticDistMin( "vr_hapticDistMin", "160", CVAR_FLOAT | CVAR_NEW, "distance when falloff occurs" );
+
 void idProjectile::Explode( const trace_t& collision, idEntity* ignore )
 {
 	const char* fxname, *light_shader, *sndExplode;
@@ -1053,21 +1055,40 @@ void idProjectile::Explode( const trace_t& collision, idEntity* ignore )
 		{
 			damage = 200;
 		}
-		float damageScale = idMath::ClampFloat( 0.25f, 1.0f, ( float )damage * ( 1.0f / 200.0f ) );	// 50...200 -> min...max rumble
+
+		// Leyland VR
+		float damageScale = ( float )damage * ( 1.0f / 200.0f );
+
+		idVec3 dir = GetPhysics()->GetOrigin() - player->GetPhysics()->GetOrigin();
 
 		// distance
-		float dist = ( GetPhysics()->GetOrigin() - player->GetPhysics()->GetOrigin() ).LengthFast();
-		float distScale = 1.0f - idMath::ClampFloat( 0.0f, 1.0f, ( dist * ( 1.0f / 4000.0f ) ) + 0.25f );		// 0...4000 -> max...min rumble
+		float dist = dir.LengthSqr();
+		float minDist = vr_hapticDistMin.GetFloat();
+		minDist *= minDist;
+		if( dist < 1 )
+		{
+			dist = 1;
+		}
+		float distScale = minDist / dist;
 
-		distScale *= damageScale;	// apply damage scale here, weaker damage produces less rumble
+		// apply damage scale here, weaker damage produces less rumble
+		float rumbleScale = idMath::ClampFloat( 0.0f, 0.75f, distScale * damageScale );
 
 		// determine rumble
-		float highMag = distScale;
-		int highDuration = idMath::Ftoi( 300.0f * distScale );
-		float lowMag = distScale * 0.75f;
-		int lowDuration = idMath::Ftoi( 500.0f * distScale );
+		float highMag = rumbleScale;
+		int highDuration = idMath::Ftoi( 300.0f * rumbleScale );
+		float lowMag = rumbleScale * 0.75f;
+		int lowDuration = idMath::Ftoi( 500.0f * rumbleScale );
 
-		player->SetControllerShake( highMag, highDuration, lowMag, lowDuration );
+		if( player->usercmd.vrHasRightController )
+		{
+			player->SetControllerShake( highMag, lowDuration, dir );
+		}
+		else
+		{
+			player->SetControllerShake( highMag, highDuration, lowMag, lowDuration );
+		}
+		// Leyland end
 	}
 
 	// stop sound

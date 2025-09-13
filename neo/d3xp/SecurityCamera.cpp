@@ -284,10 +284,11 @@ idSecurityCamera::GetRenderView
 renderView_t* idSecurityCamera::GetRenderView()
 {
 	renderView_t* rv = idEntity::GetRenderView();
-	rv->fov_x = scanFov;
-	rv->fov_y = scanFov;
+
+	// Leyland VR: new FOV definition
+	rv->SetFovXY( scanFov, scanFov );
 	rv->viewaxis = GetAxis().ToAngles().ToMat3();
-	rv->vieworg = GetPhysics()->GetOrigin() + viewOffset;
+	rv->vieworg[STEREOPOS_MONO] = GetPhysics()->GetOrigin() + viewOffset;
 	return rv;
 }
 

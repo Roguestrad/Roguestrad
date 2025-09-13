@@ -523,7 +523,7 @@ static void R_FindClosestEnvironmentProbes()
 		return;
 	}
 
-	idVec3 testOrigin = tr.viewDef->renderView.vieworg;
+	idVec3 testOrigin = tr.viewDef->renderView.vieworg[STEREOPOS_CULLING];
 
 	// sort by distance
 	// RB: each Doom 3 level has ~50 - 150 probes so this should be ok for each frame
@@ -639,7 +639,7 @@ static void R_FindClosestEnvironmentProbes2()
 		return;
 	}
 
-	idVec3 testOrigin = tr.viewDef->renderView.vieworg;
+	idVec3 testOrigin = tr.viewDef->renderView.vieworg[STEREOPOS_CULLING];
 
 	// sort by distance
 	// RB: each Doom 3 level has ~50 - 150 probes so this should be ok for each frame
@@ -812,12 +812,18 @@ void R_RenderView( viewDef_t* parms )
 	tr.viewDef->taaFrameCount = tr.frameCount;
 
 	// setup the matrix for world space to eye space
-	R_SetupViewMatrix( tr.viewDef );
+	R_SetupViewMatrix( tr.viewDef, STEREOPOS_CULLING );
 
 	// we need to set the projection matrix before doing
 	// portal-to-screen scissor calculations
-	R_SetupProjectionMatrix( tr.viewDef, true );
-	R_SetupProjectionMatrix( tr.viewDef, false );
+#if VR_EMITSTEREO
+	R_SetupProjectionMatrix( tr.viewDef, true, tr.viewDef->renderView.viewEyeBuffer );
+	R_SetupProjectionMatrix( tr.viewDef, false, tr.viewDef->renderView.viewEyeBuffer );
+#else
+	// combined view for culling requires full FOV of both eyes
+	R_SetupProjectionMatrix( tr.viewDef, true, 2 );
+	R_SetupProjectionMatrix( tr.viewDef, false, 2 );
+#endif
 
 	// RB: we need a unprojection matrix to calculate the vertex position based on the depth image value
 	// for some post process shaders

@@ -3,6 +3,8 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2016 Leyland Needham
+Copyright (C) 2025 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -46,7 +48,7 @@ idCVar joy_deltaPerMSLook( "joy_deltaPerMSLook", "0.003", CVAR_FLOAT | CVAR_ARCH
 idCVar in_mouseSpeed( "in_mouseSpeed", "1",	CVAR_ARCHIVE | CVAR_FLOAT, "speed at which the mouse moves", 0.25f, 4.0f );
 idCVar in_alwaysRun( "in_alwaysRun", "1", CVAR_SYSTEM | CVAR_ARCHIVE | CVAR_BOOL, "always run (reverse _speed button) - only in MP" );
 
-idCVar in_useJoystick( "in_useJoystick", "0", CVAR_ARCHIVE | CVAR_BOOL, "enables/disables the gamepad for PC use" );
+idCVar in_useJoystick( "in_useJoystick", "1", CVAR_ARCHIVE | CVAR_BOOL, "enables/disables the gamepad for PC use" );
 idCVar in_joystickRumble( "in_joystickRumble", "1", CVAR_SYSTEM | CVAR_ARCHIVE | CVAR_BOOL, "enable joystick rumble" );
 idCVar in_invertLook( "in_invertLook", "0", CVAR_ARCHIVE | CVAR_BOOL, "inverts the look controls so the forward looks up (flight controls) - the proper way to play games!" );
 idCVar in_mouseInvertLook( "in_mouseInvertLook", "0", CVAR_ARCHIVE | CVAR_BOOL, "inverts the look controls so the forward looks up (flight controls) - the proper way to play games!" );
@@ -129,6 +131,7 @@ userCmdString_t	userCmdStrings[] =
 	{ "_zoom",			UB_ZOOM },
 	{ "_showScores",	UB_SHOWSCORES },
 	{ "_use",			UB_USE },
+	{ "_recenter",		UB_RECENTER },// Leyland VR
 
 	{ "_impulse0",		UB_IMPULSE0 },
 	{ "_impulse1",		UB_IMPULSE1 },
@@ -261,6 +264,8 @@ private:
 	void			HandleJoystickAxis( int keyNum, float unclampedValue, float threshold, bool positive );
 	void			JoystickMove();
 	void			JoystickMove2();
+	void			VRControlMove();	// Leyland VR
+	void			VRTrackedMove();	// Leyland VR
 	void			MouseMove();
 	void			CmdButtons();
 
@@ -269,12 +274,23 @@ private:
 	void			Mouse();
 	void			Keyboard();
 	void			Joystick( int deviceNum );
+	void			VRControllers();	// Leyland VR
 
 	void			Key( int keyNum, bool down );
 
 	idVec3			viewangles;
 	int				impulseSequence;
 	int				impulse;
+
+	// Leyland VR
+	int				vrClickCount;
+	bool			vrTouched;
+	idVec2			vrTouchedAxis;
+	bool			vrPressed;
+	int				vrPressedTime;
+	bool			vrLeftGrab;
+	bool			vrRightGrab;
+	// Leyland end
 
 	buttonState_t	toggled_crouch;
 	buttonState_t	toggled_run;
@@ -345,6 +361,14 @@ idUsercmdGenLocal::idUsercmdGenLocal()
 
 	impulseSequence = 0;
 	impulse = 0;
+
+	// Leyland VR
+	vrClickCount = 0;
+	vrTouched = false;
+	vrPressed = false;
+	vrLeftGrab = false;
+	vrRightGrab = false;
+	// Leyland end
 
 	toggled_crouch.Clear();
 	toggled_run.Clear();
@@ -1047,6 +1071,382 @@ void idUsercmdGenLocal::JoystickMove2()
 	HandleJoystickAxis( K_JOY_TRIGGER2, joystickAxis[ AXIS_RIGHT_TRIG ], triggerThreshold, true );
 }
 
+// Leyland VR
+/*
+=================
+idUsercmdGenLocal::VRControlMove
+=================
+*/
+idCVar vr_turnCrouch( "vr_turnCrouch", "1", CVAR_BOOL | CVAR_ARCHIVE | CVAR_NEW, "press down to crouch from the turn axis mode." );
+idCVar vr_turnJump( "vr_turnJump", "1", CVAR_BOOL | CVAR_ARCHIVE | CVAR_NEW, "press up to jump from the turn axis mode." );
+idCVar vr_snapTurnAngle( "vr_snapTurnAngle", "45", CVAR_FLOAT | CVAR_ARCHIVE | CVAR_NEW, "Angle in degrees for VR snap turning", 10, 90 );
+
+extern idCVar vr_leftAxisMode;
+extern idCVar vr_rightAxisMode;
+
+void idUsercmdGenLocal::VRControlMove()
+{
+	idVec2 axis, leftAxis, rightAxis;
+
+	// analog moving
+	bool moving = false;
+	bool wasPressed = false;
+	bool isPressed = false;
+	bool touchpad = false;
+	leftAxis.Zero();
+	rightAxis.Zero();
+
+	if( vr_leftAxisMode.GetInteger() == 0 && vrSystem->GetLeftControllerAxis( leftAxis ) )
+	{
+		wasPressed = vrSystem->LeftControllerWasPressed();
+		isPressed = vrSystem->LeftControllerIsPressed();
+		touchpad = vrSystem->HasLeftTouchpad();
+		moving = true;
+	}
+
+	if( vr_rightAxisMode.GetInteger() == 0 && vrSystem->GetRightControllerAxis( rightAxis ) )
+	{
+		wasPressed |= vrSystem->RightControllerWasPressed();
+		isPressed |= vrSystem->RightControllerIsPressed();
+		touchpad |= vrSystem->HasRightTouchpad();
+		moving = true;
+	}
+
+	if( moving )
+	{
+		axis = leftAxis + rightAxis;
+		if( vr_relativeAxis.GetBool() )
+		{
+			if( !vrTouched )
+			{
+				vrTouched = true;
+				vrTouchedAxis = axis;
+				axis.Zero();
+			}
+			else
+			{
+				axis -= vrTouchedAxis;
+			}
+		}
+
+		if( wasPressed )
+		{
+			vrClickCount++;
+		}
+
+		bool held = false;
+		if( isPressed )
+		{
+			if( !vrPressed )
+			{
+				vrPressedTime = pollTime;
+				vrPressed = true;
+			}
+			else
+			{
+				if( ( pollTime - vrPressedTime ) > 500 )
+				{
+					held = true;
+				}
+			}
+		}
+		else
+		{
+			vrPressed = false;
+		}
+
+		const int moveMode = vr_moveMode.GetInteger();
+		float moveSpeed = 1.f;
+		bool standing = !( cmd.buttons & BUTTON_CROUCH );
+
+		if( moveMode >= 10 && moveMode <= 16 )
+		{
+			moveSpeed = vr_moveSpeed.GetFloat();
+		}
+
+		bool move = false;
+		switch( moveMode )
+		{
+			case 0:
+			case 10:
+				move = true;
+				break;
+			case 1:
+			case 11:
+				move = true;
+				if( vrPressed )
+				{
+					cmd.buttons |= BUTTON_RUN;
+				}
+				break;
+			case 2:
+			case 12:
+				if( vrClickCount > 0 )
+				{
+					cmd.buttons |= BUTTON_RUN;
+				}
+				move = true;
+				break;
+			case 3:
+			case 13:
+				if( vrClickCount > 0 )
+				{
+					move = true;
+				}
+				break;
+			case 4:
+			case 14:
+				if( vrClickCount > 0 )
+				{
+					move = true;
+				}
+				if( held )
+				{
+					cmd.buttons |= BUTTON_RUN;
+				}
+				break;
+			case 5:
+			case 15:
+				if( vrClickCount > 0 )
+				{
+					move = true;
+				}
+				if( vrClickCount > 1 )
+				{
+					cmd.buttons |= BUTTON_RUN;
+				}
+				break;
+			case 6:
+			case 16:
+				if( vrPressed )
+				{
+					move = true;
+				}
+				break;
+			case 7:
+				if( vrClickCount > 0 )
+				{
+					move = true;
+				}
+				if( vrClickCount < 2 )
+				{
+					moveSpeed = vr_moveSpeed.GetFloat();
+				}
+				if( held || ( vrPressed && vrClickCount >= 2 ) )
+				{
+					cmd.buttons |= BUTTON_RUN;
+				}
+				break;
+			case 8:
+				move = true;
+				if( vrClickCount < 1 )
+				{
+					moveSpeed = vr_moveSpeed.GetFloat();
+				}
+				if( held || ( vrPressed && vrClickCount > 0 ) )
+				{
+					cmd.buttons |= BUTTON_RUN;
+				}
+				break;
+			case 9:
+				move = true;
+				if( vrClickCount < 1 )
+				{
+					moveSpeed = vr_moveSpeed.GetFloat();
+				}
+				else if( held )
+				{
+					cmd.buttons |= BUTTON_RUN;
+				}
+				break;
+		}
+
+		if( !standing )
+		{
+			moveSpeed = 0.6f + 0.4f * moveSpeed;
+		}
+
+		if( move )
+		{
+			if( vr_forwardOnly.GetBool() )
+			{
+				cmd.forwardmove = idMath::ClampChar( cmd.forwardmove + KEY_MOVESPEED * moveSpeed );
+			}
+			else if( touchpad )
+			{
+				float response = vr_responseCurve.GetFloat();
+				if( moveSpeed < 1.0f )
+				{
+					response -= ( 1.0f - moveSpeed ) * 2.0f;
+					if( response < -1.0f )
+					{
+						response = -1.0f;
+					}
+				}
+				if( response != 0 )
+				{
+					float lenSq = axis.LengthSqr();
+					if( lenSq > 0.0f )
+					{
+						float len = sqrtf( lenSq );
+						float dif = lenSq - len;
+						float newLen = len + dif * response;
+						axis *= newLen / len;
+					}
+				}
+				CircleToSquare( axis.x, axis.y );
+				cmd.forwardmove = idMath::ClampChar( cmd.forwardmove + KEY_MOVESPEED * axis.y * moveSpeed );
+				if( vr_strafing.GetBool() )
+				{
+					cmd.rightmove = idMath::ClampChar( cmd.rightmove + KEY_MOVESPEED * axis.x * moveSpeed );
+				}
+			}
+			else
+			{
+				const float threshold =			joy_deadZone.GetFloat();
+				const float range =				joy_range.GetFloat();
+				const transferFunction_t shape = ( transferFunction_t )joy_gammaLook.GetInteger();
+				const bool mergedThreshold =	joy_mergedThreshold.GetBool();
+				idVec2 leftMapped = JoypadFunction( axis, 1.0f, threshold, range, shape, mergedThreshold );
+				CircleToSquare( leftMapped.x, leftMapped.y );
+				leftMapped *= moveSpeed;
+				cmd.forwardmove = idMath::ClampChar( cmd.forwardmove + KEY_MOVESPEED * leftMapped.y );
+				if( vr_strafing.GetBool() )
+				{
+					cmd.rightmove = idMath::ClampChar( cmd.rightmove + KEY_MOVESPEED * leftMapped.x );
+				}
+			}
+		}
+	}
+	else
+	{
+		vrClickCount = 0;
+		vrTouched = false;
+		vrPressed = false;
+	}
+
+	// analog turning
+	bool turning = false;
+	leftAxis.Zero();
+	rightAxis.Zero();
+
+	if( vr_leftAxisMode.GetInteger() == 1 )
+	{
+		vrSystem->GetLeftControllerAxis( leftAxis );
+		turning = true;
+	}
+
+	if( vr_rightAxisMode.GetInteger() == 1 || vr_rightAxisMode.GetInteger() == 2 )
+	{
+		vrSystem->GetRightControllerAxis( rightAxis );
+		turning = true;
+	}
+
+	if( turning )
+	{
+		axis = leftAxis + rightAxis;
+		const float threshold = joy_deadZone.GetFloat();
+		const float range = joy_range.GetFloat();
+		const transferFunction_t shape = ( transferFunction_t )joy_gammaLook.GetInteger();
+		const bool mergedThreshold = joy_mergedThreshold.GetBool();
+		const float yawSpeed = joy_yawSpeed.GetFloat();
+		idGame* game = common->Game();
+		const float aimAssist = game != NULL ? game->GetAimAssistSensitivity() : 1.0f;
+		idVec2 rightMapped = JoypadFunction( axis, aimAssist, threshold, range, shape, mergedThreshold );
+
+		if( vr_rightAxisMode.GetInteger() == 1 )
+		{
+			// Continuous turning
+			viewangles[YAW] += MS2SEC( pollTime - lastPollTime ) * -rightMapped.x * yawSpeed;
+
+			if( vr_turnCrouch.GetBool() && rightMapped.y < -0.5f )
+			{
+				cmd.buttons |= BUTTON_CROUCH;
+			}
+			else if( vr_turnJump.GetBool() && rightMapped.y > 0.5f )
+			{
+				cmd.buttons |= BUTTON_JUMP;
+			}
+		}
+		else if( vr_rightAxisMode.GetInteger() == 2 && !vrRightGrab )
+		{
+			// RB: Snap turning
+			static bool snapTurnTriggered = false;
+			if( rightMapped.x > 0.5f && !snapTurnTriggered )
+			{
+				viewangles[YAW] -= vr_snapTurnAngle.GetFloat(); // Right turn
+				snapTurnTriggered = true;
+			}
+			else if( rightMapped.x < -0.5f && !snapTurnTriggered )
+			{
+				viewangles[YAW] += vr_snapTurnAngle.GetFloat(); // Left turn
+				snapTurnTriggered = true;
+			}
+			else if( fabs( rightMapped.x ) < 0.3f )
+			{
+				snapTurnTriggered = false; // Reset when stick returns to neutral
+			}
+
+			/*TODO
+			// RB: Crouch toggle
+			static bool toggleCrouchTriggered = false;
+			if( rightMapped.y < -0.5f && !toggleCrouchTriggered )
+			{
+			    toggled_crouch.SetKeyState( ButtonState( UB_MOVEDOWN ), true );
+			    toggleCrouchTriggered = true;
+			}
+			else if( fabs( rightMapped.y ) < 0.3f )
+			{
+			    toggleCrouchTriggered = false; // Reset when stick returns to neutral
+			}
+			*/
+		}
+	}
+
+	if( vrLeftGrab )
+	{
+		cmd.buttons |= BUTTON_LEFT_GRAB;
+	}
+	if( vrRightGrab )
+	{
+		cmd.buttons |= BUTTON_RIGHT_GRAB;
+	}
+}
+
+/*
+=================
+idUsercmdGenLocal::VRTrackedMove
+=================
+*/
+void idUsercmdGenLocal::VRTrackedMove()
+{
+	cmd.vrHasHead = vrSystem->GetHead( cmd.vrHeadOrigin, cmd.vrHeadAxis );
+	if( !cmd.vrHasHead )
+	{
+		cmd.vrHeadAxis.Identity();
+		cmd.vrHasLeftController = false;
+		cmd.vrLeftControllerAxis.Identity();
+		cmd.vrHasRightController = false;
+		cmd.vrRightControllerAxis.Identity();
+		return;
+	}
+
+	cmd.vrHasLeftController = vrSystem->GetLeftController( cmd.vrLeftControllerOrigin, cmd.vrLeftControllerAxis );
+	cmd.vrHasRightController = vrSystem->GetRightController( cmd.vrRightControllerOrigin, cmd.vrRightControllerAxis );
+	if( !cmd.vrHasLeftController || !cmd.vrHasRightController )
+	{
+		cmd.vrHasLeftController = false;
+		cmd.vrLeftControllerAxis.Identity();
+		cmd.vrHasRightController = false;
+		cmd.vrRightControllerAxis.Identity();
+	}
+
+	if( !vr_seated.GetBool() && cmd.vrHeadOrigin.z < 12 * 4.5f )
+	{
+		cmd.buttons |= BUTTON_CROUCH;
+	}
+}
+
 /*
 ==============
 idUsercmdGenLocal::CmdButtons
@@ -1088,6 +1488,12 @@ void idUsercmdGenLocal::CmdButtons()
 	{
 		cmd.buttons |= BUTTON_CROUCH;
 	}
+	// Leyland VR
+	if( ButtonState( UB_RECENTER ) )
+	{
+		cmd.buttons |= BUTTON_RECENTER;
+	}
+	// Leyland end
 }
 
 /*
@@ -1149,6 +1555,16 @@ void idUsercmdGenLocal::MakeCurrent()
 		// aim assist
 		AimAssist();
 
+		// Leyland VR
+		if( vrSystem->IsActive() )
+		{
+			VRTrackedMove();
+
+			// VR joystick movement
+			VRControlMove();
+		}
+		// Leyland end
+
 		// check to make sure the angles haven't wrapped
 		if( viewangles[PITCH] - oldAngles[PITCH] > 90 )
 		{
@@ -1163,6 +1579,13 @@ void idUsercmdGenLocal::MakeCurrent()
 	{
 		mouseDx = 0;
 		mouseDy = 0;
+
+		// Leyland VR
+		if( vrSystem->IsActive() )
+		{
+			VRTrackedMove();
+		}
+		// Leyland end
 	}
 
 	for( int i = 0; i < 3; i++ )
@@ -1240,6 +1663,14 @@ void idUsercmdGenLocal::InitForNewMap()
 {
 	impulseSequence = 0;
 	impulse = 0;
+
+	// Leyland VR
+	vrClickCount = 0;
+	vrTouched = false;
+	vrPressed = false;
+	vrLeftGrab = false;
+	vrRightGrab = false;
+	// Leyland end
 
 	toggled_crouch.Clear();
 	toggled_run.Clear();
@@ -1475,6 +1906,40 @@ void idUsercmdGenLocal::Joystick( int deviceNum )
 }
 
 /*
+===============
+Leyland VR
+
+idUsercmdGenLocal::VRControllers
+===============
+*/
+void idUsercmdGenLocal::VRControllers()
+{
+	int numEvents = vrSystem->PollGameInputEvents();
+
+	for( int i = 0; i < numEvents; i++ )
+	{
+		int button;
+		int value;
+
+		if( vrSystem->ReturnGameInputEvent( i, button, value ) )
+		{
+			bool down = value != 0;
+			Key( button, down );
+
+			if( button == K_VR_LEFT_GRIP )
+			{
+				vrLeftGrab = down;
+			}
+			else if( button == K_VR_RIGHT_GRIP )
+			{
+				vrRightGrab = down;
+				cmd.buttons |= BUTTON_RIGHT_GRAB;
+			}
+		}
+	}
+}
+
+/*
 ================
 idUsercmdGenLocal::MouseState
 ================
@@ -1515,6 +1980,13 @@ void idUsercmdGenLocal::BuildCurrentUsercmd( int deviceNum )
 	{
 		Joystick( deviceNum );
 	}
+
+	// Leyland VR
+	if( vrSystem->IsActive() )
+	{
+		VRControllers();
+	}
+	// Leyland end
 
 	// create the usercmd
 	MakeCurrent();

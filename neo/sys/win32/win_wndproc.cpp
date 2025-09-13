@@ -3,7 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2012 Robert Beckebans
+Copyright (C) 2012-2024 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -181,7 +181,8 @@ LONG WINAPI MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 		case WM_WINDOWPOSCHANGED:
 			// SRS - Needed by ResizeImages() to resize before the start of a frame
 			// SRS - Aspect ratio constraints are controlled by WIN_Sizing() above
-			if( renderSystem->IsInitialized() && win32.hDC != NULL )
+			// RB - don't mess with the swapchain size in VR mode
+			if( renderSystem->IsInitialized() && win32.hDC != NULL && !vrSystem->IsActive() )
 			{
 				RECT rect;
 				if( ::GetClientRect( win32.hWnd, &rect ) )

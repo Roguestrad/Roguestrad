@@ -7,3 +7,6 @@
 [submodule "neo/extern/imgui-node-editor"]
 	path = neo/extern/imgui-node-editor
 	url = https://github.com/RobertBeckebans/imgui-node-editor.git
+[submodule "neo/extern/openvr"]
+	path = neo/extern/openvr
+	url = https://github.com/ValveSoftware/openvr.git

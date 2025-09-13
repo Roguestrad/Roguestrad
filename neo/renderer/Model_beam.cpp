@@ -141,7 +141,7 @@ idRenderModel* idRenderModelBeam::InstantiateDynamicModel( const struct renderEn
 	idVec3	localView, localTarget;
 	float	modelMatrix[16];
 	R_AxisToModelMatrix( renderEntity->axis, renderEntity->origin, modelMatrix );
-	R_GlobalPointToLocal( modelMatrix, viewDef->renderView.vieworg, localView );
+	R_GlobalPointToLocal( modelMatrix, viewDef->renderView.vieworg[STEREOPOS_MONO], localView );
 	R_GlobalPointToLocal( modelMatrix, target, localTarget );
 
 	idVec3	major = localTarget;

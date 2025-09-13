@@ -101,7 +101,7 @@ public:
 	float					GetMaxStepHeight() const;
 	void					SetMaxJumpHeight( const float newMaxJumpHeight );
 	void					SetMovementType( const pmtype_t type );
-	void					SetPlayerInput( const usercmd_t& cmd, const idVec3& forwardVector );
+	void					SetPlayerInput( const usercmd_t& cmd, const idVec3& forwardVector, const idMat3& faceForward ); // Leyland VR
 	void					SetKnockBack( const int knockBackTime );
 	void					SetDebugLevel( bool set );
 	// feed back from last physics frame
@@ -155,6 +155,17 @@ public:	// common physics interface
 		previous = current;
 	}
 
+	// Leyland VR
+	bool					ShouldBlink() const
+	{
+		return blink;
+	}
+	const idVec3& 			GetHeadOffset() const
+	{
+		return headOrigin;
+	}
+	// Leyland end
+
 private:
 	// player physics state
 	playerPState_t			current;
@@ -163,6 +174,16 @@ private:
 	// physics state for client interpolation
 	playerPState_t			previous;
 	playerPState_t			next;
+
+	// Leyland VR
+	idMat3					vrFaceForward;
+	bool					vrHadHeadOrigin;
+	idVec3					vrLastHeadOrigin;
+	idVec3					vrDelta;
+	idVec3					headOrigin;
+	bool					blink;
+	bool					headBumped;
+	// Leyland end
 
 	// properties
 	float					walkSpeed;

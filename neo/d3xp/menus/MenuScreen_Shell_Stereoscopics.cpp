@@ -350,7 +350,7 @@ idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::LoadData
 void idMenuScreen_Shell_Stereoscopics::idMenuDataSource_StereoSettings::LoadData()
 {
 
-	fields[ STEREO_FIELD_ENABLE ].SetInteger( 0 ); //vr_enable.GetInteger() );
+	fields[ STEREO_FIELD_ENABLE ].SetInteger( vr_enable.GetInteger() );
 
 	fields[ STEREO_FIELD_SEPERATION ].SetFloat( 100.0f * ( stereoRender_interOccularCentimeters.GetFloat() / MAX_INTEROCCULAR_DISTANCE ) );
 

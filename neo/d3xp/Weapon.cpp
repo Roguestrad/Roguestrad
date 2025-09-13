@@ -601,6 +601,14 @@ void idWeapon::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( zoomFov );
 
 	savefile->ReadJoint( barrelJointView );
+
+	// Leyland VR
+	if( barrelJointView == INVALID_JOINT && idStr::Icmp( "weapon_grabber", weaponDef->GetName() ) == 0 )
+	{
+		barrelJointView = animator.GetJointHandle( "particle_upper" );
+	}
+	// Leyland end
+
 	savefile->ReadJoint( flashJointView );
 	savefile->ReadJoint( ejectJointView );
 	savefile->ReadJoint( guiLightJointView );
@@ -1077,6 +1085,14 @@ void idWeapon::GetWeaponDef( const char* objectname, int ammoinclip )
 
 	// find some joints in the model for locating effects
 	barrelJointView = animator.GetJointHandle( "barrel" );
+
+	// Leyland VR
+	if( barrelJointView == INVALID_JOINT && idStr::Icmp( "weapon_grabber", weaponDef->GetName() ) == 0 )
+	{
+		barrelJointView = animator.GetJointHandle( "particle_upper" );
+	}
+	// Leyland end
+
 	flashJointView = animator.GetJointHandle( "flash" );
 	ejectJointView = animator.GetJointHandle( "eject" );
 	guiLightJointView = animator.GetJointHandle( "guiLight" );
@@ -1506,7 +1522,8 @@ void idWeapon::UpdateFlashPosition()
 	// the flash has an explicit joint for locating it
 	GetGlobalJointTransform( true, flashJointView, muzzleFlash.origin, muzzleFlash.axis );
 
-	if( isPlayerFlashlight )
+	// Leyland VR
+	if( isPlayerFlashlight && ( !vrSystem->IsActive() || vrSystem->IsSeated() ) )
 	{
 		static float pscale = 2.0f;
 		static float yscale = 0.25f;
@@ -2345,8 +2362,18 @@ bool idWeapon::GetMuzzlePositionWithHacks( idVec3& origin, idMat3& axis )
 	// workaround hacks...
 	const idStr& weaponIconName = pdaIcon;
 
-	origin = playerViewOrigin;
-	axis = playerViewAxis;
+	// Leyland VR
+	if( vrSystem->IsActive() && !vrSystem->IsSeated() )
+	{
+		origin = viewWeaponOrigin;
+		axis = viewWeaponAxis;
+	}
+	else
+	{
+		origin = playerViewOrigin;
+		axis = playerViewAxis;
+	}
+	// Leyland end
 
 	if( weaponIconName == "guis/assets/hud/icons/grenade_new.tga" )
 	{
@@ -2421,6 +2448,239 @@ bool idWeapon::GetMuzzlePositionWithHacks( idVec3& origin, idMat3& axis )
 	return true;
 }
 
+// Leyland VR
+bool idWeapon::GetMuzzlePosition( idVec3& origin, idMat3& axis )
+{
+	origin = muzzleOrigin;
+	axis = muzzleAxis;
+	return hasMuzzle;
+}
+
+/*
+================
+idWeapon::GetHandle
+================
+*/
+bool idWeapon::GetInverseHandle( idVec3& origin, idMat3& axis )
+{
+	const idStr& weaponIconName = pdaIcon;
+
+	char* jointName = NULL;
+
+	if( weaponIconName == "guis/assets/hud/icons/chainsaw_new.tga" )
+	{
+		jointName = "chainsaw";
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/pistol_new.tga" )
+	{
+		jointName = "Bod";
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/shotgun_new.tga" )
+	{
+		jointName = "body";
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/machinegun_new.tga" )
+	{
+		//jointName = "Ext";
+		jointName = "Bod";
+		//jointName = "Rhand";
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/chaingun_new.tga" )
+	{
+		jointName = "chaingun";
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/grenade_new.tga" )
+	{
+		return false;
+		//jointName = "Rhand";
+		jointName = "nadebody";
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/plasmagun_new.tga" )
+	{
+		jointName = "pgbody2";
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/rocketlauncher_new.tga" )
+	{
+		jointName = "RLBODY";
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/bfg_new.tga" )
+	{
+		jointName = "Body";
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/soul_cube.tga" )
+	{
+		return false;
+		jointName = "Rhand1";
+	}
+	else if( idStr::Icmp( "weapon_grabber", weaponDef->GetName() ) == 0 )
+	{
+		jointName = "grabber_root";
+	}
+	else if( idStr::Icmp( "weapon_shotgun_double", weaponDef->GetName() ) == 0 )
+	{
+		jointName = "gunbody";
+	}
+
+	if( !jointName )
+	{
+		return false;
+	}
+
+	jointHandle_t joint = animator.GetJointHandle( jointName );
+
+	static jointHandle_t jointOverride = INVALID_JOINT;
+	if( jointOverride != INVALID_JOINT )
+	{
+		joint = jointOverride;
+	}
+
+	if( joint == INVALID_JOINT )
+	{
+		return false;
+	}
+
+	if( !animator.GetJointTransform( joint, gameLocal.time, origin, axis ) )
+	{
+		return false;
+	}
+
+	// inverse axis
+	idVec3 dir = axis[0];
+	idVec3 up = axis[1];
+	idVec3 left = -axis[2];
+	axis[0] = dir;
+	axis[1] = left;
+	axis[2] = up;
+	axis = axis.Inverse();
+
+	// inverse origin
+	origin = axis * -origin;
+
+	if( weaponIconName == "guis/assets/hud/icons/chainsaw_new.tga" )
+	{
+		static idAngles csAngle1( 0, 90, 0 );
+		static idAngles csAngle2( 0, 0, -9 );
+		static idAngles csAngle3( -20, 0, 0 );
+		idMat3 csAxis = csAngle1.ToMat3() * csAngle2.ToMat3() * csAngle3.ToMat3();
+		idAngles tempAngles = csAxis.ToAngles();
+		axis = axis * csAxis;
+
+		static idVec3 csOrigin( -2, 1.4f, -3 );
+		origin = csAxis * origin + csOrigin;
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/pistol_new.tga" )
+	{
+		static idAngles pistolAngles( 14, 0, 0 );
+		static idVec3 pistolOrigin( 0, 0, -1.5f );
+		idMat3 pistolAxis = pistolAngles.ToMat3();
+		axis = axis * pistolAxis;
+		origin = pistolAxis * origin + pistolOrigin;
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/shotgun_new.tga" )
+	{
+		static idAngles shotgunAngle1( 0, -92, 0 );
+		static idAngles shotgunAngle2( 14, 0, 0 );
+		static idAngles shotgunAngle3( 0, 0, 0 );
+		idMat3 shotgunAxis = shotgunAngle1.ToMat3() * shotgunAngle2.ToMat3() * shotgunAngle3.ToMat3();
+		axis = axis * shotgunAxis;
+
+		static idVec3 shotgunOrigin( -2, 0, -3 );
+		origin = shotgunAxis * origin + shotgunOrigin;
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/machinegun_new.tga" )
+	{
+		static idAngles mgAngle1( 0, 26, 0 );
+		static idAngles mgAngle2( 17, 0, 0 );
+		static idAngles mgAngle3( 0, 0, -4 );
+		idMat3 mgAxis = mgAngle1.ToMat3() * mgAngle2.ToMat3() * mgAngle3.ToMat3();
+		idAngles tempAngles = mgAxis.ToAngles();
+		axis = axis * mgAxis;
+
+		static idVec3 mgOrigin( -4, -2, 0 );
+		origin = mgAxis * origin + mgOrigin;
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/chaingun_new.tga" )
+	{
+		static idAngles chaingunAngle1( 14, 0, 0 );
+		static idAngles chaingunAngle2( 0, 0, 0 );
+		static idAngles chaingunAngle3( 0, 0, 0 );
+		idMat3 chaingunAxis = chaingunAngle1.ToMat3() * chaingunAngle2.ToMat3() * chaingunAngle3.ToMat3();
+		axis = axis * chaingunAxis;
+
+		static idVec3 chaingunOrigin( 0, 0, -10 );
+		origin = chaingunAxis * origin + chaingunOrigin;
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/grenade_new.tga" )
+	{
+		static idAngles grenadeAngle1( 0, -99, 0 );
+		static idAngles grenadeAngle2( 0, 0, -45 );
+		static idAngles grenadeAngle3( 0, 0, 0 );
+		idMat3 grenadeAxis = grenadeAngle1.ToMat3() * grenadeAngle2.ToMat3() * grenadeAngle3.ToMat3();
+		axis = axis * grenadeAxis;
+
+		static idVec3 grenadeOrigin( 0, 0, 0 );
+		origin = grenadeAxis * origin + grenadeOrigin;
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/plasmagun_new.tga" )
+	{
+		static idAngles pgAngle1( 0, 90, 0 );
+		static idAngles pgAngle2( 0, 0, 0 );
+		static idAngles pgAngle3( 0, 0, 0 );
+		idMat3 pgAxis = pgAngle1.ToMat3() * pgAngle2.ToMat3() * pgAngle3.ToMat3();
+		axis = axis * pgAxis;
+
+		static idVec3 pgOrigin( -1.5f, 0, -1.5f );
+		origin = pgAxis * origin + pgOrigin;
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/rocketlauncher_new.tga" )
+	{
+		static idAngles rlAngle1( 0, 90, 0 );
+		static idAngles rlAngle2( 23, 0, 0 );
+		static idAngles rlAngle3( 0, 0, 0 );
+		idMat3 rlAxis = rlAngle1.ToMat3() * rlAngle2.ToMat3() * rlAngle3.ToMat3();
+		axis = axis * rlAxis;
+
+		static idVec3 rlOrigin( -1.5f, 0, -2 );
+		origin = rlAxis * origin + rlOrigin;
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/bfg_new.tga" )
+	{
+		static idAngles bfgAngle1( 14, 0, 0 );
+		static idAngles bfgAngle2( 0, 0, 0 );
+		static idAngles bfgAngle3( 0, 0, 0 );
+		idMat3 bfgAxis = bfgAngle1.ToMat3() * bfgAngle2.ToMat3() * bfgAngle3.ToMat3();
+		axis = axis * bfgAxis;
+
+		static idVec3 bfgOrigin( 0, 0, 0 );
+		origin = bfgAxis * origin + bfgOrigin;
+	}
+	else if( weaponIconName == "guis/assets/hud/icons/soul_cube.tga" )
+	{
+		static idAngles cubeAngle1( 180, 0, 0 );
+		static idAngles cubeAngle2( 0, 99, 0 );
+		static idAngles cubeAngle3( 0, 0, -45 );
+		idMat3 cubeAxis = cubeAngle1.ToMat3() * cubeAngle2.ToMat3() * cubeAngle3.ToMat3();
+		axis = axis * cubeAxis;
+
+		static idVec3 cubeOrigin( 0, 0, 0 );
+		origin = cubeAxis * origin + cubeOrigin;
+	}
+	else if( idStr::Icmp( "weapon_shotgun_double", weaponDef->GetName() ) == 0 )
+	{
+		static idAngles shotgunAngle1( 0, 88, 0 );
+		static idAngles shotgunAngle2( 0, 0, 0 );
+		static idAngles shotgunAngle3( 0, 0, 0 );
+		idMat3 shotgunAxis = shotgunAngle1.ToMat3() * shotgunAngle2.ToMat3() * shotgunAngle3.ToMat3();
+		axis = axis * shotgunAxis;
+
+		static idVec3 shotgunOrigin( -4, 0, -3 );
+		origin = shotgunAxis * origin + shotgunOrigin;
+	}
+
+	return true;
+}
+// Leyland end
+
 /*
 ================
 idWeapon::PresentWeapon
@@ -2431,33 +2691,94 @@ void idWeapon::PresentWeapon( bool showViewModel )
 	playerViewOrigin = owner->firstPersonViewOrigin;
 	playerViewAxis = owner->firstPersonViewAxis;
 
+	// Leyland VR
+	bool hidden = false;
 	if( isPlayerFlashlight )
 	{
-		viewWeaponOrigin = playerViewOrigin;
-		viewWeaponAxis = playerViewAxis;
+		bool doAdjust = true;
 
-		fraccos = cos( ( gameLocal.framenum & 255 ) / 127.0f * idMath::PI );
+		if( vrSystem->IsActive() )
+		{
+			viewWeaponOrigin = owner->flashlightOrigin;
+			viewWeaponAxis = owner->flashlightAxis;
 
-		static unsigned int divisor = 32;
-		unsigned int val = ( gameLocal.framenum + gameLocal.framenum / divisor ) & 255;
-		fraccos2 = cos( val / 127.0f * idMath::PI );
+			if( owner->usercmd.vrHasLeftController )
+			{
+				static idAngles flAngle1( 0, 85, 0 );
+				static idAngles flAngle2( 112, 0, 0 );
+				static idAngles flAngle3( 0, 1, 0 );
+				idMat3 flAxis = flAngle1.ToMat3() * flAngle2.ToMat3() * flAngle3.ToMat3();
+				idAngles tempAngles = flAxis.ToAngles();
+				viewWeaponAxis = flAxis * viewWeaponAxis;
 
-		static idVec3 baseAdjustPos = idVec3( -8.0f, -20.0f, -10.0f );		// rt, fwd, up
-		static float pscale = 0.5f;
-		static float yscale = 0.125f;
-		idVec3 adjustPos = baseAdjustPos;// + ( idVec3( fraccos, 0.0f, fraccos2 ) * scale );
-		viewWeaponOrigin += adjustPos.x * viewWeaponAxis[1] + adjustPos.y * viewWeaponAxis[0] + adjustPos.z * viewWeaponAxis[2];
-//		viewWeaponOrigin += owner->viewBob;
+				static idVec3 flOrigin( 6.5, -6.75, -18.75 );
+				viewWeaponOrigin += viewWeaponAxis * flOrigin;
 
-		static idAngles baseAdjustAng = idAngles( 88.0f, 10.0f, 0.0f );		//
-		idAngles adjustAng = baseAdjustAng + idAngles( fraccos * pscale, fraccos2 * yscale, 0.0f );
-//		adjustAng += owner->GetViewBobAngles();
-		viewWeaponAxis = adjustAng.ToMat3() * viewWeaponAxis;
+				doAdjust = false;
+			}
+		}
+		else
+		{
+			viewWeaponOrigin = playerViewOrigin;
+			viewWeaponAxis = playerViewAxis;
+		}
+
+		if( doAdjust )
+		{
+			fraccos = cos( ( gameLocal.framenum & 255 ) / 127.0f * idMath::PI );
+
+			static unsigned int divisor = 32;
+			unsigned int val = ( gameLocal.framenum + gameLocal.framenum / divisor ) & 255;
+			fraccos2 = cos( val / 127.0f * idMath::PI );
+
+			static idVec3 baseAdjustPos = idVec3( -8.0f, -20.0f, -10.0f );		// rt, fwd, up
+			static float pscale = 0.5f;
+			static float yscale = 0.125f;
+			idVec3 adjustPos = baseAdjustPos;// + ( idVec3( fraccos, 0.0f, fraccos2 ) * scale );
+			viewWeaponOrigin += adjustPos.x * viewWeaponAxis[1] + adjustPos.y * viewWeaponAxis[0] + adjustPos.z * viewWeaponAxis[2];
+			//		viewWeaponOrigin += owner->viewBob;
+
+			static idAngles baseAdjustAng = idAngles( 88.0f, 10.0f, 0.0f );		//
+			idAngles adjustAng = baseAdjustAng + idAngles( fraccos * pscale, fraccos2 * yscale, 0.0f );
+			//		adjustAng += owner->GetViewBobAngles();
+			viewWeaponAxis = adjustAng.ToMat3() * viewWeaponAxis;
+		}
 	}
 	else
 	{
-		// calculate weapon position based on player movement bobbing
-		owner->CalculateViewWeaponPos( viewWeaponOrigin, viewWeaponAxis );
+		bool shouldHide = false;
+		static idVec3 invOrigin;
+		static idMat3 invAxis;
+		if( vrSystem->IsActive()
+				&& owner->usercmd.vrHasLeftController
+				&& owner->usercmd.vrHasRightController
+				&& GetInverseHandle( invOrigin, invAxis ) )
+		{
+			// remove pitch
+			float pitch = idMath::M_RAD2DEG * asin( playerViewAxis[0][2] );
+			idAngles angles( pitch, 0, 0 );
+			viewWeaponAxis = angles.ToMat3() * playerViewAxis;
+
+			// apply controller tracking
+			const idMat3& vrFaceForward = owner->GetVRFaceForward();
+
+			viewWeaponOrigin = owner->hmdOrigin + viewWeaponAxis * vrFaceForward * ( owner->usercmd.vrRightControllerOrigin - owner->usercmd.vrHeadOrigin );
+			angles.Set( 45.f, 0.f, 0.f );
+			idMat3 vrRightControllerAxis = owner->usercmd.vrRightControllerAxis * vrFaceForward;
+
+			viewWeaponAxis = angles.ToMat3() * vrRightControllerAxis * viewWeaponAxis;
+
+			// recenter weapon to controller
+			viewWeaponOrigin += viewWeaponAxis * invOrigin;
+			viewWeaponAxis = invAxis * viewWeaponAxis;
+		}
+		else
+		{
+			// calculate weapon position based on player movement bobbing
+			owner->CalculateViewWeaponPos( viewWeaponOrigin, viewWeaponAxis );
+			shouldHide = ( pdaIcon == "guis/assets/hud/icons/fists_new.tga" );
+		}
+		// Leyland end
 
 		// hide offset is for dropping the gun when approaching a GUI or NPC
 		// This is simpler to manage than doing the weapon put-away animation
@@ -2477,6 +2798,7 @@ void idWeapon::PresentWeapon( bool showViewModel )
 		}
 		else
 		{
+			hidden = shouldHide && hide; // Leyland VR
 			hideOffset = hideEnd;
 			if( hide && disabled )
 			{
@@ -2487,6 +2809,21 @@ void idWeapon::PresentWeapon( bool showViewModel )
 
 		// kick up based on repeat firing
 		MuzzleRise( viewWeaponOrigin, viewWeaponAxis );
+
+		// Leyland VR
+		if( barrelJointView != INVALID_JOINT )
+		{
+			// there is an explicit joint for the muzzle
+			hasMuzzle = GetMuzzlePositionWithHacks( muzzleOrigin, muzzleAxis );
+		}
+		else
+		{
+			// go straight out of the view
+			hasMuzzle = false;
+			muzzleOrigin = playerViewOrigin;
+			muzzleAxis = playerViewAxis;
+		}
+		// Leyland end
 	}
 
 	// set the physics position and orientation
@@ -2509,7 +2846,7 @@ void idWeapon::PresentWeapon( bool showViewModel )
 	renderEntity.weaponDepthHack = g_useWeaponDepthHack.GetBool();
 
 	// present the model
-	if( showViewModel )
+	if( showViewModel && !hidden ) // Leyland VR
 	{
 		Present();
 	}
@@ -2541,27 +2878,34 @@ void idWeapon::PresentWeapon( bool showViewModel )
 	// muzzle smoke
 	if( showViewModel && !disabled && weaponSmoke && ( weaponSmokeStartTime != 0 ) )
 	{
+		// Leyland VR: separate smoke transform
+
 		// use the barrel joint if available
+		idVec3 smokeOrigin;
+		idMat3 smokeAxis;
 
 		if( smokeJointView != INVALID_JOINT )
 		{
-			GetGlobalJointTransform( true, smokeJointView, muzzleOrigin, muzzleAxis );
+			GetGlobalJointTransform( true, smokeJointView, smokeOrigin, smokeAxis );
 		}
 		else if( barrelJointView != INVALID_JOINT )
 		{
-			GetGlobalJointTransform( true, barrelJointView, muzzleOrigin, muzzleAxis );
+			//GetGlobalJointTransform( true, barrelJointView, muzzleOrigin, muzzleAxis );
+			smokeOrigin = muzzleOrigin;
+			smokeAxis = muzzleAxis;
 		}
 		else
 		{
 			// default to going straight out the view
-			muzzleOrigin = playerViewOrigin;
-			muzzleAxis = playerViewAxis;
+			smokeOrigin = playerViewOrigin;
+			smokeAxis = playerViewAxis;
 		}
 		// spit out a particle
-		if( !gameLocal.smokeParticles->EmitSmoke( weaponSmoke, weaponSmokeStartTime, gameLocal.random.RandomFloat(), muzzleOrigin, muzzleAxis, timeGroup /*_D3XP*/ ) )
+		if( !gameLocal.smokeParticles->EmitSmoke( weaponSmoke, weaponSmokeStartTime, gameLocal.random.RandomFloat(), smokeOrigin, smokeAxis, timeGroup /*_D3XP*/ ) )
 		{
 			weaponSmokeStartTime = ( continuousSmoke ) ? gameLocal.time : 0;
 		}
+		// Leyland end
 	}
 
 	if( showViewModel && strikeSmoke && strikeSmokeStartTime != 0 )
@@ -2584,21 +2928,25 @@ void idWeapon::PresentWeapon( bool showViewModel )
 			{
 				if( part->smoke )
 				{
+					// Leyland VR: separate smoke transform
+					idVec3 smokeOrigin;
+					idMat3 smokeAxis;
 					if( part->joint != INVALID_JOINT )
 					{
-						GetGlobalJointTransform( true, part->joint, muzzleOrigin, muzzleAxis );
+						GetGlobalJointTransform( true, part->joint, smokeOrigin, smokeAxis );
 					}
 					else
 					{
 						// default to going straight out the view
-						muzzleOrigin = playerViewOrigin;
-						muzzleAxis = playerViewAxis;
+						smokeOrigin = playerViewOrigin;
+						smokeAxis = playerViewAxis;
 					}
-					if( !gameLocal.smokeParticles->EmitSmoke( part->particle, part->startTime, gameLocal.random.RandomFloat(), muzzleOrigin, muzzleAxis, timeGroup /*_D3XP*/ ) )
+					if( !gameLocal.smokeParticles->EmitSmoke( part->particle, part->startTime, gameLocal.random.RandomFloat(), smokeOrigin, smokeAxis, timeGroup /*_D3XP*/ ) )
 					{
 						part->active = false;	// all done
 						part->startTime = 0;
 					}
+					// Leyland end
 				}
 				else
 				{
@@ -2701,10 +3049,44 @@ void idWeapon::PresentWeapon( bool showViewModel )
 	float lowMagnitude = weaponDef->dict.GetFloat( "controllerConstantShakeLowMag" );
 	int lowDuration = weaponDef->dict.GetInt( "controllerConstantShakeLowTime" );
 
+	// Leyland VR
 	if( owner->IsLocallyControlled() )
 	{
-		owner->SetControllerShake( highMagnitude, highDuration, lowMagnitude, lowDuration );
+		if( owner->usercmd.vrHasRightController )
+		{
+			float mag = ( highMagnitude > lowMagnitude ) ? highMagnitude : lowMagnitude;
+			int dur = ( highDuration > lowDuration ) ? highDuration : lowDuration;
+			owner->SetControllerShake( mag, dur, 0, 0 );
+		}
+		else
+		{
+			owner->SetControllerShake( highMagnitude, highDuration, lowMagnitude, lowDuration );
+		}
 	}
+
+	if( vrSystem->IsActive() && !isPlayerFlashlight )
+	{
+		if( !owner->usercmd.vrHasRightController )
+		{
+			if( &vrWrapperSkin == renderEntity.customSkin )
+			{
+				// unwrap the skin
+				renderEntity.customSkin = vrWrapperSkin.GetWrapped();
+				UpdateVisuals();
+			}
+		}
+		else if( pdaIcon != "guis/assets/hud/icons/fists_new.tga" )
+		{
+			if( &vrWrapperSkin != renderEntity.customSkin )
+			{
+				vrWrapperSkin.SetWrapper( tr.vrSkin );
+				vrWrapperSkin.SetWrapped( renderEntity.customSkin );
+				renderEntity.customSkin = &vrWrapperSkin;
+				UpdateVisuals();
+			}
+		}
+	}
+	// Leyland VR
 }
 
 /*
@@ -3537,11 +3919,23 @@ void idWeapon::Event_SetSkin( const char* skinname )
 		skinDecl = declManager->FindSkin( skinname );
 	}
 
+	// Leyland VR: hide hands and arms
+	const idDeclSkin* currentSkin;
+	if( vrSystem->IsActive() && !isPlayerFlashlight )
+	{
+		currentSkin = vrWrapperSkin.GetWrapped();
+	}
+	else
+	{
+		currentSkin = renderEntity.customSkin;
+	}
+
 	// Don't update if the skin hasn't changed.
-	if( renderEntity.customSkin == skinDecl && worldModel.GetEntity() != NULL && worldModel.GetEntity()->GetSkin() == skinDecl )
+	if( currentSkin == skinDecl && worldModel.GetEntity() != NULL && worldModel.GetEntity()->GetSkin() == skinDecl )
 	{
 		return;
 	}
+	// Leyland end
 
 	renderEntity.customSkin = skinDecl;
 	UpdateVisuals();
@@ -3713,32 +4107,6 @@ void idWeapon::Event_CreateProjectile()
 
 /*
 ================
-idWeapon::GetProjectileLaunchOriginAndAxis
-================
-*/
-void idWeapon::GetProjectileLaunchOriginAndAxis( idVec3& origin, idMat3& axis )
-{
-	assert( owner != NULL );
-
-	// calculate the muzzle position
-	if( barrelJointView != INVALID_JOINT && projectileDict.GetBool( "launchFromBarrel" ) )
-	{
-		// there is an explicit joint for the muzzle
-		// GetGlobalJointTransform( true, barrelJointView, muzzleOrigin, muzzleAxis );
-		GetMuzzlePositionWithHacks( origin, axis );
-	}
-	else
-	{
-		// go straight out of the view
-		origin = playerViewOrigin;
-		axis = playerViewAxis;
-	}
-
-	axis = playerViewAxis;	// Fix for plasma rifle not firing correctly on initial shot of a burst fire
-}
-
-/*
-================
 idWeapon::Event_LaunchProjectiles
 ================
 */
@@ -3824,9 +4192,6 @@ void idWeapon::Event_LaunchProjectiles( int num_projectiles, float spread, float
 		worldModel.GetEntity()->SetShaderParm( SHADERPARM_DIVERSITY, renderEntity.shaderParms[ SHADERPARM_DIVERSITY ] );
 		worldModel.GetEntity()->SetShaderParm( SHADERPARM_TIMEOFFSET, renderEntity.shaderParms[ SHADERPARM_TIMEOFFSET ] );
 	}
-
-	// calculate the muzzle position
-	GetProjectileLaunchOriginAndAxis( muzzleOrigin, muzzleAxis );
 
 	// add some to the kick time, incrementally moving repeat firing weapons back
 	if( kick_endtime < gameLocal.realClientTime )
@@ -4043,19 +4408,6 @@ void idWeapon::Event_LaunchProjectilesEllipse( int num_projectiles, float spread
 		worldModel.GetEntity()->SetShaderParm( SHADERPARM_TIMEOFFSET, renderEntity.shaderParms[ SHADERPARM_TIMEOFFSET ] );
 	}
 
-	// calculate the muzzle position
-	if( barrelJointView != INVALID_JOINT && projectileDict.GetBool( "launchFromBarrel" ) )
-	{
-		// there is an explicit joint for the muzzle
-		GetGlobalJointTransform( true, barrelJointView, muzzleOrigin, muzzleAxis );
-	}
-	else
-	{
-		// go straight out of the view
-		muzzleOrigin = playerViewOrigin;
-		muzzleAxis = playerViewAxis;
-	}
-
 	// add some to the kick time, incrementally moving repeat firing weapons back
 	if( kick_endtime < gameLocal.time )
 	{
@@ -4078,11 +4430,13 @@ void idWeapon::Event_LaunchProjectilesEllipse( int num_projectiles, float spread
 
 		for( i = 0; i < num_projectiles; i++ )
 		{
+			// Leyland VR: use new muzzle axis
+
 			//Ellipse Form
 			spin = ( float )DEG2RAD( 360.0f ) * gameLocal.random.RandomFloat();
 			anga = idMath::Sin( spreadRadA * gameLocal.random.RandomFloat() );
 			angb = idMath::Sin( spreadRadB * gameLocal.random.RandomFloat() );
-			dir = playerViewAxis[ 0 ] + playerViewAxis[ 2 ] * ( angb * idMath::Sin( spin ) ) - playerViewAxis[ 1 ] * ( anga * idMath::Cos( spin ) );
+			dir = muzzleAxis[ 0 ] + muzzleAxis[ 2 ] * ( angb * idMath::Sin( spin ) ) - muzzleAxis[ 1 ] * ( anga * idMath::Cos( spin ) );
 			dir.Normalize();
 
 			gameLocal.SpawnEntityDef( projectileDict, &ent );
@@ -4101,10 +4455,10 @@ void idWeapon::Event_LaunchProjectilesEllipse( int num_projectiles, float spread
 			// make sure the projectile starts inside the bounding box of the owner
 			if( i == 0 )
 			{
-				muzzle_pos = muzzleOrigin + playerViewAxis[ 0 ] * 2.0f;
-				if( ( ownerBounds - projBounds ).RayIntersection( muzzle_pos, playerViewAxis[0], distance ) )
+				muzzle_pos = muzzleOrigin + muzzleAxis[ 0 ] * 2.0f;
+				if( ( ownerBounds - projBounds ).RayIntersection( muzzle_pos, muzzleAxis[0], distance ) )
 				{
-					start = muzzle_pos + distance * playerViewAxis[0];
+					start = muzzle_pos + distance * muzzleAxis[0];
 				}
 				else
 				{
@@ -4113,6 +4467,7 @@ void idWeapon::Event_LaunchProjectilesEllipse( int num_projectiles, float spread
 				gameLocal.clip.Translation( tr, start, muzzle_pos, proj->GetPhysics()->GetClipModel(), proj->GetPhysics()->GetClipModel()->GetAxis(), MASK_SHOT_RENDERMODEL, owner );
 				muzzle_pos = tr.endpos;
 			}
+			// Leyland end
 
 			proj->Launch( muzzle_pos, dir, pushVelocity, fuseOffset, power );
 		}
@@ -4284,8 +4639,20 @@ void idWeapon::Event_Melee()
 
 	if( !common->IsClient() )
 	{
-		idVec3 start = playerViewOrigin;
-		idVec3 end = start + playerViewAxis[0] * ( meleeDistance * owner->PowerUpModifier( MELEE_DISTANCE ) );
+		// Leyland VR
+		idVec3 start, end;
+		if( vrSystem->IsActive() && !vrSystem->IsSeated() )
+		{
+			start = viewWeaponOrigin;
+			end = start + viewWeaponAxis[0] * ( meleeDistance * owner->PowerUpModifier( MELEE_DISTANCE ) );
+		}
+		else
+		{
+			start = playerViewOrigin;
+			end = start + playerViewAxis[0] * ( meleeDistance * owner->PowerUpModifier( MELEE_DISTANCE ) );
+		}
+		// Leyland end
+
 		gameLocal.clip.TracePoint( tr, start, end, MASK_SHOT_RENDERMODEL, owner );
 		if( tr.fraction < 1.0f )
 		{

@@ -171,7 +171,12 @@ idCVar r_testGammaBias( "r_testGammaBias", "0", CVAR_RENDERER | CVAR_FLOAT, "if 
 idCVar r_lightScale( "r_lightScale", "3", CVAR_ARCHIVE | CVAR_RENDERER | CVAR_FLOAT, "all light intensities are multiplied by this", 0, 100 );
 idCVar r_flareSize( "r_flareSize", "1", CVAR_RENDERER | CVAR_FLOAT, "scale the flare deforms from the material def" );
 
-idCVar r_useScissor( "r_useScissor", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT, "scissor clip as portals and lights are processed" );
+#if VR_EMITSTEREO
+	idCVar r_useScissor( "r_useScissor", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT, "scissor clip as portals and lights are processed" );
+#else
+	idCVar r_useScissor( "r_useScissor", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT, "scissor clip as portals and lights are processed" );
+#endif
+
 idCVar r_useLightDepthBounds( "r_useLightDepthBounds", "1", CVAR_RENDERER | CVAR_BOOL, "use depth bounds test on lights to reduce both shadow and interaction fill" );
 idCVar r_useShadowDepthBounds( "r_useShadowDepthBounds", "1", CVAR_RENDERER | CVAR_BOOL, "use depth bounds test on individual shadow volumes to reduce shadow fill" );
 
@@ -234,9 +239,7 @@ idCVar r_materialOverride( "r_materialOverride", "", CVAR_RENDERER, "overrides a
 
 idCVar r_debugRenderToTexture( "r_debugRenderToTexture", "0", CVAR_RENDERER | CVAR_INTEGER, "" );
 
-idCVar stereoRender_enable( "stereoRender_enable", "0", CVAR_INTEGER | CVAR_ARCHIVE, "1 = side-by-side compressed, 2 = top and bottom compressed, 3 = side-by-side, 4 = 720 frame packed, 5 = interlaced, 6 = OpenGL quad buffer" );
 idCVar stereoRender_swapEyes( "stereoRender_swapEyes", "0", CVAR_BOOL | CVAR_ARCHIVE, "reverse eye adjustments" );
-idCVar stereoRender_deGhost( "stereoRender_deGhost", "0.05", CVAR_FLOAT | CVAR_ARCHIVE, "subtract from opposite eye to reduce ghosting" );
 
 idCVar r_useVirtualScreenResolution( "r_useVirtualScreenResolution", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_ARCHIVE | CVAR_NEW, "do 2D rendering at 640x480 and stretch to the current resolution" );
 
@@ -249,7 +252,7 @@ idCVar r_shadowMapImageSize( "r_shadowMapImageSize", "1024", CVAR_RENDERER | CVA
 idCVar r_shadowMapJitterScale( "r_shadowMapJitterScale", "2.5", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "scale factor for jitter offset" );
 //idCVar r_shadowMapBiasScale( "r_shadowMapBiasScale", "0.0001", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "scale factor for jitter bias" );
 idCVar r_shadowMapRandomizeJitter( "r_shadowMapRandomizeJitter", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NEW, "randomly offset jitter texture each draw" );
-idCVar r_shadowMapSamples( "r_shadowMapSamples", "16", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "1, 4, 12 or 16", 1, 64 );
+idCVar r_shadowMapSamples( "r_shadowMapSamples", "4", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "1, 4, 12 or 16", 1, 64 );
 idCVar r_shadowMapSplits( "r_shadowMapSplits", "3", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "number of splits for cascaded shadow mapping with parallel lights", 0, 4 );
 idCVar r_shadowMapSplitWeight( "r_shadowMapSplitWeight", "0.9", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "" );
 idCVar r_shadowMapLodScale( "r_shadowMapLodScale", "1.4", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "" );
@@ -301,7 +304,7 @@ idCVar r_ssrStride( "r_ssrStride", "12", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, 
 idCVar r_ssrZThickness( "r_ssrZThickness", "2", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "" );
 
 idCVar r_useTemporalAA( "r_useTemporalAA", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NEW, "only disable for debugging" );
-idCVar r_taaJitter( "r_taaJitter", "1", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "0: None, 1: MSAA, 2: Halton, 3: R2 Sequence, 4: White Noise" );
+idCVar r_taaJitter( "r_taaJitter", "2", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "0: None, 1: MSAA, 2: Halton, 3: R2 Sequence, 4: White Noise" );
 idCVar r_taaEnableHistoryClamping( "r_taaEnableHistoryClamping", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NEW, "" );
 idCVar r_taaClampingFactor( "r_taaClampingFactor", "1.0", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "" );
 idCVar r_taaNewFrameWeight( "r_taaNewFrameWeight", "0.1", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "" );
@@ -426,7 +429,35 @@ void R_SetNewMode( const bool fullInit )
 
 		glimpParms_t	parms;
 
-		if( r_fullscreen.GetInteger() <= 0 )
+		// Koz
+		// Create a window for the SteamVR desktop texture
+		if( vrSystem->IsActive() )
+		{
+			// force a windowed mode
+			r_fullscreen.SetInteger( 0 );
+
+			// RB: use full target resolution for the moment
+			// so window management, device manager and Steam VR talk the same resolution
+			idVec2i resolution = vrSystem->GetRenderResolution();
+
+			// the window should be a quarter of the render resolution
+			idVec2i windowRes = resolution >> 2;
+
+			r_windowWidth.SetInteger( windowRes.x );
+			r_windowHeight.SetInteger( windowRes.y );
+
+			// force Vsync off for hmd
+			r_swapInterval.SetInteger( 0 );
+
+			parms.x = r_windowX.GetInteger();
+			parms.y = r_windowY.GetInteger();
+			parms.width = r_windowWidth.GetInteger();
+			parms.height = r_windowHeight.GetInteger();
+			parms.fullScreen = r_fullscreen.GetInteger();
+			parms.displayHz = 0;		// ignored
+		}
+		// Koz end
+		else if( r_fullscreen.GetInteger() <= 0 )
 		{
 			// use explicit position / size for window
 			parms.x = r_windowX.GetInteger();
@@ -588,7 +619,7 @@ static void R_ReloadSurface_f( const idCmdArgs& args )
 	}
 
 	// start far enough away that we don't hit the player model
-	start = tr.primaryView->renderView.vieworg + tr.primaryView->renderView.viewaxis[0] * 16;
+	start = tr.primaryView->renderView.vieworg[STEREOPOS_MONO] + tr.primaryView->renderView.viewaxis[0] * 16;
 	end = start + tr.primaryView->renderView.viewaxis[0] * 1000.0f;
 	if( !tr.primaryWorld->Trace( mt, start, end, 0.0f, false ) )
 	{
@@ -1258,6 +1289,7 @@ Saves out env/<basename>_ft.tga, etc
 RB: This is outdated and probably a relict from Rage. It could be updated to dump panorama images for tools like Blender or Substance Painter
 ==================
 */
+/*
 void R_EnvShot_f( const idCmdArgs& args )
 {
 	idStr		fullname;
@@ -1269,7 +1301,7 @@ void R_EnvShot_f( const idCmdArgs& args )
 	int			blends;
 	const char*  extension;
 	int			size;
-	int         res_w, res_h, old_fov_x, old_fov_y;
+	int         res_w, res_h, old_fov_left, old_fov_right, old_fov_bottom, old_fov_top;
 
 	res_w = renderSystem->GetWidth();
 	res_h = renderSystem->GetHeight();
@@ -1348,8 +1380,10 @@ void R_EnvShot_f( const idCmdArgs& args )
 
 	// so we return to that axis and fov after the fact.
 	oldAxis = primary.renderView.viewaxis;
-	old_fov_x = primary.renderView.fov_x;
-	old_fov_y = primary.renderView.fov_y;
+	old_fov_left = primary.renderView.fov_left;
+	old_fov_right = primary.renderView.fov_right;
+	old_fov_bottom = primary.renderView.fov_bottom;
+	old_fov_top = primary.renderView.fov_top;
 
 	for( i = 0 ; i < 6 ; i++ )
 	{
@@ -1357,7 +1391,8 @@ void R_EnvShot_f( const idCmdArgs& args )
 
 		extension = envDirection[ i ];
 
-		ref.fov_x = ref.fov_y = 90;
+		ref.fov_right = ref.fov_top = 1;
+		ref.fov_left = ref.fov_bottom = -1;
 		ref.viewaxis = axis[i];
 		fullname.Format( "env/%s%s", baseName, extension );
 
@@ -1366,14 +1401,17 @@ void R_EnvShot_f( const idCmdArgs& args )
 
 	// restore the original resolution, axis and fov
 	ref.viewaxis = oldAxis;
-	ref.fov_x = old_fov_x;
-	ref.fov_y = old_fov_y;
+	ref.fov_left = old_fov_left;
+	ref.fov_right = old_fov_right;
+	ref.fov_bottom = old_fov_bottom;
+	ref.fov_top = old_fov_top;
 	cvarSystem->SetCVarInteger( "r_windowWidth", res_w );
 	cvarSystem->SetCVarInteger( "r_windowHeight", res_h );
 	R_SetNewMode( false ); // the same as "vid_restart"
 
 	common->Printf( "Wrote a env set with the name %s\n", baseName );
 }
+*/
 
 //============================================================================
 
@@ -1602,6 +1640,10 @@ void R_InitMaterials()
 	tr.defaultProjectedLight = declManager->FindMaterial( "lights/defaultProjectedLight" );
 	tr.whiteMaterial = declManager->FindMaterial( "_white", false );
 	tr.charSetMaterial = declManager->FindMaterial( "textures/bigchars" );
+	if( !tr.vrSkin )
+	{
+		tr.vrSkin = new idDeclSkinVR();
+	}
 
 	// RB: create implicit material
 	tr.imgGuiMaterial = declManager->FindMaterial( "_imguiFont", true );
@@ -1674,7 +1716,36 @@ void R_TouchGui_f( const idCmdArgs& args )
 	uiManager->Touch( gui );
 }
 
+/*
+=================
+VR_ResetPose_f
+=================
+*/
+void VR_ResetPose_f( const idCmdArgs& args )
+{
+	if( vrSystem->IsActive() )
+	{
+		vrSystem->ResetPose();
+	}
+}
 
+/*
+=================
+VR_LogDevices_f
+=================
+*/
+
+void VR_LogDevices_f( const idCmdArgs& args )
+{
+	if( vrSystem->IsActive() )
+	{
+		vrSystem->LogDevices();
+	}
+}
+
+
+/*
+=================
 
 /*
 =================
@@ -1689,7 +1760,7 @@ void R_InitCommands()
 	cmdSystem->AddCommand( "listGuis", R_ListGuis_f, CMD_FL_RENDERER, "lists guis" );
 	cmdSystem->AddCommand( "touchGui", R_TouchGui_f, CMD_FL_RENDERER, "touches a gui" );
 	cmdSystem->AddCommand( "screenshot", R_ScreenShot_f, CMD_FL_RENDERER, "takes a screenshot" );
-	cmdSystem->AddCommand( "envshot", R_EnvShot_f, CMD_FL_RENDERER, "takes an environment shot" );
+	//cmdSystem->AddCommand( "envshot", R_EnvShot_f, CMD_FL_RENDERER, "takes an environment shot" );
 	cmdSystem->AddCommand( "envToSky", R_TransformEnvToSkybox_f, CMD_FL_RENDERER | CMD_FL_CHEAT, "transforms environment textures to sky box textures" );
 	cmdSystem->AddCommand( "skyToEnv", R_TransformSkyboxToEnv_f, CMD_FL_RENDERER | CMD_FL_CHEAT, "transforms sky box textures to environment textures" );
 	cmdSystem->AddCommand( "gfxInfo", GfxInfo_f, CMD_FL_RENDERER, "show graphics info" );
@@ -1703,6 +1774,8 @@ void R_InitCommands()
 	cmdSystem->AddCommand( "listRenderLightDefs", R_ListRenderLightDefs_f, CMD_FL_RENDERER, "lists the light defs" );
 	cmdSystem->AddCommand( "listModes", R_ListModes_f, CMD_FL_RENDERER, "lists all video modes" );
 	cmdSystem->AddCommand( "reloadSurface", R_ReloadSurface_f, CMD_FL_RENDERER, "reloads the decl and images for selected surface" );
+	cmdSystem->AddCommand( "vr_resetPose", VR_ResetPose_f, CMD_FL_RENDERER, "recenters VR" );
+	cmdSystem->AddCommand( "vr_logDevices", VR_LogDevices_f, CMD_FL_RENDERER, "log device info" );
 }
 
 /*
@@ -1731,6 +1804,7 @@ void idRenderSystemLocal::Clear()
 	currentRenderCrop = 0;
 	currentColorNativeBytesOrder = 0xFFFFFFFF;
 	currentGLState = 0;
+	currentStereoDepth = STEREO_DEPTH_TYPE_NONE;
 	guiRecursionLevel = 0;
 	guiModel = NULL;
 	memset( gammaTable, 0, sizeof( gammaTable ) );
@@ -2562,6 +2636,11 @@ idRenderSystemLocal::GetWidth
 */
 int idRenderSystemLocal::GetWidth() const
 {
+	if( vrSystem->IsActive() )
+	{
+		return vrSystem->GetRenderResolution().x;
+	}
+
 	// do something similar in case the VR API requires it
 	/*
 	if( glConfig.stereo3Dmode == STEREO3D_SIDE_BY_SIDE || glConfig.stereo3Dmode == STEREO3D_SIDE_BY_SIDE_COMPRESSED )
@@ -2580,6 +2659,11 @@ idRenderSystemLocal::GetHeight
 */
 int idRenderSystemLocal::GetHeight() const
 {
+	if( vrSystem->IsActive() )
+	{
+		return vrSystem->GetRenderResolution().y;
+	}
+
 	// do something similar in case the VR API requires it
 	/*
 	if( glConfig.stereo3Dmode == STEREO3D_HDMI_720 )
@@ -2618,11 +2702,11 @@ idRenderSystemLocal::GetVirtualWidth
 */
 int idRenderSystemLocal::GetVirtualWidth() const
 {
-// jmarshall - never strech
-	//if( r_useVirtualScreenResolution.GetBool() )
-	//{
-	//	return SCREEN_WIDTH;
-	//}
+	// RB: use lower res for VR guis
+	if( r_useVirtualScreenResolution.GetBool() || vrSystem->IsActive() )
+	{
+		return SCREEN_WIDTH;
+	}
 // jmarshall end
 	return glConfig.nativeScreenWidth / 2;
 }
@@ -2634,11 +2718,11 @@ idRenderSystemLocal::GetVirtualHeight
 */
 int idRenderSystemLocal::GetVirtualHeight() const
 {
-// jmarshall - never strech
-	//if( r_useVirtualScreenResolution.GetBool() )
-	//{
-	//	return SCREEN_HEIGHT;
-	//}
+	// RB: use lower res for VR guis
+	if( r_useVirtualScreenResolution.GetBool() || vrSystem->IsActive() )
+	{
+		return SCREEN_HEIGHT;
+	}
 // jmarshall end
 	return glConfig.nativeScreenHeight / 2;
 }

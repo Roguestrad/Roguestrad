@@ -337,6 +337,15 @@ endif()
 include_directories("libs/imgui")
 include_directories("libs/mikktspace")
 
+if(WIN32)
+	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/openvr/lib/win64)
+else()
+	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/openvr/lib/linux64)
+endif()
+
+set(OPENVR_LIBRARY "openvr_api")
+include_directories("extern/openvr/headers")
+
 macro(SET_OPTION option value)
   set(${option} ${value} CACHE "" INTERNAL FORCE)
 endmacro()
@@ -638,6 +647,8 @@ file(GLOB UI_SOURCES ui/*.cpp)
 file(GLOB SWF_INCLUDES swf/*.h)
 file(GLOB SWF_SOURCES swf/*.cpp)
 
+file(GLOB VR_INCLUDES vr/*.h)
+file(GLOB VR_SOURCES vr/*.cpp)
 set(GAMED3XP_INCLUDES
 	d3xp/Achievements.h
 	d3xp/Actor.h
@@ -896,6 +907,9 @@ source_group("libs\\rapidjson" FILES ${RAPIDJSON_INCLUDES})
 source_group("libs\\oggvorbis" FILES ${OGGVORBIS_INCLUDES})
 source_group("libs\\oggvorbis" FILES ${OGGVORBIS_SOURCES})
 
+source_group("vr" FILES ${VR_INCLUDES})
+source_group("vr" FILES ${VR_SOURCES})
+
 source_group("game-d3xp" FILES ${GAMED3XP_INCLUDES})
 source_group("game-d3xp" FILES ${GAMED3XP_SOURCES})
 
@@ -974,6 +988,7 @@ set(RBDOOM3_INCLUDES
 			${OPTICK_INCLUDES}
 			${UI_INCLUDES}
 			${SWF_INCLUDES}
+			${VR_INCLUDES}
 			${COMMON_INCLUDES}
 			
 			${COMPILER_INCLUDES}
@@ -1020,6 +1035,7 @@ set(RBDOOM3_SOURCES
 			${OPTICK_SOURCES}
 			${UI_SOURCES}
 			${SWF_SOURCES}
+			${VR_SOURCES}
 			${COMMON_SOURCES}
 			
 			${COMPILER_AAS_SOURCES}
@@ -1191,6 +1207,12 @@ if(MSVC)
 	
 	add_executable(${APP_NAME} WIN32 ${RBDOOM3_INCLUDES} ${RBDOOM3_SOURCES})
 	add_dependencies(${APP_NAME} idlib typeinfogen)
+	# copy OpenVR dlls
+	add_custom_command(TARGET ${APP_NAME}
+				POST_BUILD
+				COMMAND ${CMAKE_COMMAND} -E copy
+				${CMAKE_CURRENT_SOURCE_DIR}/extern/openvr/bin/win64/openvr_api.dll ${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR})
+		
     
     if(USE_DX12)
 		add_dependencies(${APP_NAME} nvrhi_d3d12)
@@ -1223,6 +1245,7 @@ if(MSVC)
 		${OpenAL_LIBRARIES}
 		${FFmpeg_LIBRARIES}
         ${ZLIB_LIBRARY}
+        ${OPENVR_LIBRARY}
 		${CMAKE_DL_LIBS}
 		)
 		
@@ -1446,6 +1469,7 @@ else()
 			${OPENAL_LIBRARY}
 			${FFMPEG_LIBRARIES}
             ${ZLIB_LIBRARY}
+            ${OPENVR_LIBRARY}
 	    	${CMAKE_DL_LIBS}
 			)
 	endif()

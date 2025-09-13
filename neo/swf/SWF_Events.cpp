@@ -461,16 +461,28 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 		// Mouse position in screen space needs to be converted to SWF space
 		if( event->evType == SE_MOUSE_ABSOLUTE )
 		{
-			const float pixelAspect = renderSystem->GetPixelAspect();
-			const float sysWidth = renderSystem->GetWidth() * ( pixelAspect > 1.0f ? pixelAspect : 1.0f );
-			const float sysHeight = renderSystem->GetHeight() / ( pixelAspect < 1.0f ? pixelAspect : 1.0f );
-			float scale = swfScale * sysHeight / ( float )frameHeight;
-			float invScale = 1.0f / scale;
-			float tx = 0.5f * ( sysWidth - ( frameWidth * scale ) );
-			float ty = 0.5f * ( sysHeight - ( frameHeight * scale ) );
+			// Leyland VR
+			if( vrSystem->IsActive() )
+			{
+				float scaleX = frameWidth / renderSystem->GetWidth();
+				float scaleY = frameHeight / renderSystem->GetHeight();
+				mouseX = idMath::Ftoi( event->evValue * scaleX );
+				mouseY = idMath::Ftoi( event->evValue2 * scaleY );
+			}
+			else
+			{
+				const float pixelAspect = renderSystem->GetPixelAspect();
+				const float sysWidth = renderSystem->GetWidth() * ( pixelAspect > 1.0f ? pixelAspect : 1.0f );
+				const float sysHeight = renderSystem->GetHeight() / ( pixelAspect < 1.0f ? pixelAspect : 1.0f );
+				float scale = swfScale * sysHeight / ( float )frameHeight;
+				float invScale = 1.0f / scale;
+				float tx = 0.5f * ( sysWidth - ( frameWidth * scale ) );
+				float ty = 0.5f * ( sysHeight - ( frameHeight * scale ) );
 
-			mouseX = idMath::Ftoi( ( static_cast<float>( event->evValue ) - tx ) * invScale );
-			mouseY = idMath::Ftoi( ( static_cast<float>( event->evValue2 ) - ty ) * invScale );
+				mouseX = idMath::Ftoi( ( static_cast<float>( event->evValue ) - tx ) * invScale );
+				mouseY = idMath::Ftoi( ( static_cast<float>( event->evValue2 ) - ty ) * invScale );
+			}
+			// Leyland end
 		}
 		else
 		{

@@ -59,6 +59,30 @@ idCVar pm_clientAuthoritative_minSpeedSquared( "pm_clientAuthoritative_minSpeedS
 
 extern idCVar g_demoMode;
 
+// Leyland VR
+const idVec3 neckOffset( -3, 0, -5 );
+const int waistZ = -28.f;
+
+idCVar vr_slotDebug( "vr_slotDebug", "0", CVAR_BOOL | CVAR_NEW, "slot debug visualation" );
+idCVar vr_slotMag( "vr_slotMag", "0.1", CVAR_FLOAT | CVAR_ARCHIVE | CVAR_NEW, "slot vibration magnitude (0 is off)" );
+idCVar vr_slotDur( "vr_slotDur", "18", CVAR_INTEGER | CVAR_ARCHIVE | CVAR_NEW, "slot vibration duration in milliseconds" );
+idCVar vr_slotDisable( "vr_slotDisable", "1", CVAR_BOOL | CVAR_ARCHIVE | CVAR_NEW, "slot disable" );
+
+slot_t slots[SLOT_COUNT] =
+{
+	{ idVec3( 0, 9, -8 ), 9.0f * 9.0f },
+	{ idVec3( 0, -9, -8 ), 9.0f * 9.0f },
+	{ idVec3( -9, -4, 0 ), 9.0f * 9.0f },
+	{ idVec3( -9, -4, -waistZ - neckOffset.z ), 9.0f * 9.0f },
+};
+
+idAngles pdaAngle1( 0, -90, 0 );
+idAngles pdaAngle2( 0, 0, 76.5 );
+idAngles pdaAngle3( 0, 0, 0 );
+
+extern idCVar g_useWeaponDepthHack;
+// Leyland end
+
 /*
 ===============================================================================
 
@@ -1488,6 +1512,14 @@ idPlayer::idPlayer():
 	laserSightHandle	= -1;
 	memset( &laserSightRenderEntity, 0, sizeof( laserSightRenderEntity ) );
 
+	// Leyland VR
+	pdaModelDefHandle = -1;
+	memset( &pdaRenderEntity, 0, sizeof( pdaRenderEntity ) );
+
+	holsterModelDefHandle = -1;
+	memset( &holsterRenderEntity, 0, sizeof( holsterRenderEntity ) );
+	// Leyland end
+
 	weapon					= NULL;
 	primaryObjective		= NULL;
 
@@ -1552,6 +1584,11 @@ idPlayer::idPlayer():
 	viewBob					= vec3_zero;
 	landChange				= 0;
 	landTime				= 0;
+
+	// Leyland VR
+	hasCameraFirstFrame		= false;
+	hadBodyYaw	= false;
+	// Leyland end
 
 	currentWeapon			= -1;
 	previousWeapon			= -1;
@@ -1999,6 +2036,11 @@ void idPlayer::Init()
 	memset( &laserSightRenderEntity, 0, sizeof( laserSightRenderEntity ) );
 	laserSightRenderEntity.hModel = renderModelManager->FindModel( "_BEAM" );
 	laserSightRenderEntity.customShader = declManager->FindMaterial( "stereoRenderLaserSight" );
+
+	// Leyland VR
+	SetupPDASlot();
+	holsteredWeapon = weapon_fists;
+	// Leyland end
 }
 
 /*
@@ -2285,6 +2327,11 @@ Release any resources used by the player.
 */
 idPlayer::~idPlayer()
 {
+	// Leyland VR
+	FreePDASlot();
+	FreeHolsterSlot();
+	// Leyland end
+
 	delete weapon.GetEntity();
 	weapon = NULL;
 
@@ -2900,6 +2947,11 @@ void idPlayer::Restore( idRestoreGame* savefile )
 	memset( &laserSightRenderEntity, 0, sizeof( laserSightRenderEntity ) );
 	laserSightRenderEntity.hModel = renderModelManager->FindModel( "_BEAM" );
 	laserSightRenderEntity.customShader = declManager->FindMaterial( "stereoRenderLaserSight" );
+
+	// Leyland VR
+	SetupPDASlot();
+	holsteredWeapon = weapon_fists;
+	// Leyland end
 
 	for( int i = 0; i < MAX_PLAYER_PDA; i++ )
 	{
@@ -3799,7 +3851,18 @@ void idPlayer::WeaponFireFeedback( const idDict* weaponDef )
 
 	if( IsLocallyControlled() )
 	{
-		SetControllerShake( highMagnitude, highDuration, lowMagnitude, lowDuration );
+		// Leyland VR
+		if( usercmd.vrHasRightController )
+		{
+			float mag = ( highMagnitude > lowMagnitude ) ? highMagnitude : lowMagnitude;
+			int dur = ( highDuration > lowDuration ) ? highDuration : lowDuration;
+			SetControllerShake( mag, dur, 0, 0 );
+		}
+		else
+		{
+			SetControllerShake( highMagnitude, highDuration, lowMagnitude, lowDuration );
+		}
+		// Leyland end
 	}
 }
 
@@ -5032,6 +5095,63 @@ void idPlayer::GiveItem( const char* itemname )
 	gameLocal.SpawnEntityDef( args );
 }
 
+// Leyland VR
+bool idPlayer::LeftImpulseSlot()
+{
+	if( !usercmd.vrHasLeftController )
+	{
+		return false;
+	}
+
+	if( leftHandSlot == SLOT_LEFT_HIP )
+	{
+		if( !common->IsMultiplayer() )
+		{
+			if( objectiveSystemOpen )
+			{
+				TogglePDA();
+			}
+			else if( weapon_pda >= 0 )
+			{
+				SelectWeapon( weapon_pda, true );
+			}
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool idPlayer::RightImpulseSlot()
+{
+	if( !usercmd.vrHasRightController )
+	{
+		return false;
+	}
+
+	if( rightHandSlot == SLOT_RIGHT_HIP )
+	{
+		SetupHolsterSlot();
+		return true;
+	}
+
+	if( rightHandSlot == SLOT_RIGHT_BACK_BOTTOM )
+	{
+		PrevWeapon();
+		return true;
+	}
+
+	if( rightHandSlot == SLOT_RIGHT_BACK_TOP )
+	{
+		NextWeapon();
+		return true;
+	}
+
+	return false;
+}
+// Leyland end
+
 /*
 ==================
 idPlayer::SlotForWeapon
@@ -5177,7 +5297,12 @@ void idPlayer::NextWeapon()
 		{
 			continue;
 		}
-
+		// Leyland VR
+		if( w == holsteredWeapon && holsteredWeapon != weapon_fists )
+		{
+			continue;
+		}
+		// Leyland end
 		const char* weap = spawnArgs.GetString( va( "def_weapon%d", w ) );
 		if( !spawnArgs.GetBool( va( "weapon%d_cycle", w ) ) && !( !idStr::Icmp( "weapon_flashlight", weap ) && UsesClassicFlashlight() ) )
 		{
@@ -5262,6 +5387,12 @@ void idPlayer::PrevWeapon()
 		{
 			continue;
 		}
+		// Leyland VR
+		if( w == holsteredWeapon && holsteredWeapon != weapon_fists )
+		{
+			continue;
+		}
+		// Leyland end
 		const char* weap = spawnArgs.GetString( va( "def_weapon%d", w ) );
 
 		//GK: And another def HACK for the original flashlight
@@ -6586,8 +6717,18 @@ void idPlayer::UpdateFocus()
 		return;
 	}
 
-	start = GetEyePosition();
-	end = start + firstPersonViewAxis[0] * 80.0f;
+	// Leyland VR
+	if( vrSystem->IsActive() )
+	{
+		start = hmdOrigin;
+		end = start + hmdAxis[0] * 80.0f;
+	}
+	else
+	{
+		start = GetEyePosition();
+		end = start + firstPersonViewAxis[0] * 80.0f;
+	}
+	// Leyland VR
 
 	// player identification -> names to the hud
 	if( common->IsMultiplayer() && IsLocallyControlled() )
@@ -7122,7 +7263,13 @@ void idPlayer::BobCycle( const idVec3& pushVelocity )
 	{
 		bob = 6;
 	}
-	viewBob[2] += bob;
+
+	// Leyland VR
+	if( !vrSystem->IsActive() )
+	{
+		viewBob[2] += bob;
+	}
+	// Leyland
 
 	// add fall height
 	delta = gameLocal.time - landTime;
@@ -7171,6 +7318,12 @@ void idPlayer::SetViewAngles( const idAngles& angles )
 idPlayer::UpdateViewAngles
 ================
 */
+
+// Leyland VR
+idCVar vr_moveDirection( "vr_moveDirection", "1", CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW, "Selects forward move direction from: 0 - head, 1 - left hand (default), 2 - right hand" );
+idCVar vr_turnSlack( "vr_turnSlack", "0", CVAR_ARCHIVE | CVAR_FLOAT | CVAR_NEW, "How much the weapon yaw turns before head follows, in degrees" );
+// Leyland end
+
 void idPlayer::UpdateViewAngles()
 {
 	int i;
@@ -7181,6 +7334,7 @@ void idPlayer::UpdateViewAngles()
 		// no view changes at all, but we still want to update the deltas or else when
 		// we get out of this mode, our view will snap to a kind of random angle
 		UpdateDeltaViewAngles( viewAngles );
+		hadBodyYaw = false; // Leyland VR
 		return;
 	}
 
@@ -7197,6 +7351,7 @@ void idPlayer::UpdateViewAngles()
 			viewAngles.roll = 40.0f;
 			viewAngles.pitch = -15.0f;
 		}
+		hadBodyYaw = false; // Leyland VR
 		return;
 	}
 
@@ -7216,10 +7371,25 @@ void idPlayer::UpdateViewAngles()
 			viewAngles[i] = idMath::AngleNormalize180( SHORT2ANGLE( usercmd.angles[i] ) + deltaViewAngles[i] );
 		}
 	}
+
+	// Leyland VR
+	if( ( usercmd.buttons & BUTTON_RECENTER ) != 0 && hadBodyYaw )
+	{
+		viewAngles.yaw = oldBodyYaw;
+		hadBodyYaw = false;
+	}
+
 	if( !centerView.IsDone( gameLocal.time ) )
 	{
 		viewAngles.pitch = centerView.GetCurrentValue( gameLocal.time );
 	}
+
+	if( vrSystem->IsActive() && !vr_seated.GetBool() )
+	{
+		viewAngles.pitch = 0;
+		viewAngles.roll = 0;
+	}
+	// Leyland end
 
 	// clamp the pitch
 	if( noclip )
@@ -7265,6 +7435,82 @@ void idPlayer::UpdateViewAngles()
 
 		viewAngles.pitch = Min( viewAngles.pitch, pm_maxviewpitch.GetFloat() * restrict );
 		viewAngles.pitch = Max( viewAngles.pitch, pm_minviewpitch.GetFloat() * restrict );
+	}
+
+	// Leyland VR
+	if( vrSystem->IsActive() )
+	{
+		if( vr_seated.GetBool() )
+		{
+			float delta;
+			if( hadBodyYaw )
+			{
+				delta = oldBodyYaw - viewAngles[YAW];
+				while( delta > 180 )
+				{
+					delta -= 360;
+				}
+				while( delta < -180 )
+				{
+					delta += 360;
+				}
+				float slack = vr_turnSlack.GetFloat();
+				if( delta > slack )
+				{
+					delta = slack;
+					oldBodyYaw = viewAngles[YAW] + slack;
+				}
+				else if( delta < -slack )
+				{
+					delta = -slack;
+					oldBodyYaw = viewAngles[YAW] - slack;
+				}
+			}
+			else
+			{
+				oldBodyYaw = viewAngles[YAW];
+				delta = 0;
+			}
+
+			hadBodyYaw = !( usercmd.buttons & BUTTON_RECENTER );
+
+			vrFaceForward = vrSystem->GetSeatedAxisInverse() * idAngles( 0, delta, 0 ).ToMat3();
+		}
+		else if( usercmd.vrHasHead )
+		{
+			float yaw;
+			if( vr_moveDirection.GetInteger() == 1 && usercmd.vrHasLeftController )
+			{
+				yaw = usercmd.vrLeftControllerAxis.ToAngles().yaw;
+			}
+			else if( vr_moveDirection.GetInteger() == 2 && usercmd.vrHasRightController )
+			{
+				yaw = usercmd.vrRightControllerAxis.ToAngles().yaw;
+			}
+			else
+			{
+				yaw = usercmd.vrHeadAxis.ToAngles().yaw;
+			}
+
+			vrFaceForward = idAngles( 0, -yaw, 0 ).ToMat3();
+			if( hadBodyYaw )
+			{
+				viewAngles[YAW] += yaw - oldBodyYaw;
+			}
+
+			hadBodyYaw = true;
+			oldBodyYaw = yaw;
+		}
+		else
+		{
+			vrFaceForward.Identity();
+			hadBodyYaw = false;
+		}
+	}
+	else
+	{
+		vrFaceForward.Identity();
+		hadBodyYaw = false;
 	}
 
 	UpdateDeltaViewAngles( viewAngles );
@@ -7585,6 +7831,7 @@ void idPlayer::TogglePDA()
 	if( pdaMenu != NULL )
 	{
 		objectiveSystemOpen = !objectiveSystemOpen;
+		tr.guiModel->ActivateVRShell( objectiveSystemOpen ); // Leyland VR
 		pdaMenu->ActivateMenu( objectiveSystemOpen );
 
 		if( objectiveSystemOpen )
@@ -7716,7 +7963,7 @@ idPlayer::PerformImpulse
 */
 void idPlayer::PerformImpulse( int impulse )
 {
-	bool isIntroMap = ( idStr::FindText( gameLocal.GetMapFileName(), "mars_city1" ) >= 0 );
+	bool isIntroMap = gameLocal.IsMapIntro(); // Leyland VR: little perf optimization
 
 	// Normal 1 - 0 Keys.
 	if( impulse >= IMPULSE_0 && impulse <= IMPULSE_12 && !isIntroMap )
@@ -7910,10 +8157,28 @@ void idPlayer::EvaluateControls()
 		}
 	}
 
-	if( usercmd.impulseSequence != oldImpulseSequence )
+	// Leyland VR
+	bool grabbed = false;
+	if( ( usercmd.buttons & BUTTON_LEFT_GRAB ) && !( oldButtons & BUTTON_LEFT_GRAB ) )
+	{
+		if( LeftImpulseSlot() )
+		{
+			grabbed = true;
+		}
+	}
+	if( ( usercmd.buttons & BUTTON_RIGHT_GRAB ) && !( oldButtons & BUTTON_RIGHT_GRAB ) )
+	{
+		if( RightImpulseSlot() )
+		{
+			grabbed = true;
+		}
+	}
+
+	if( !grabbed && usercmd.impulseSequence != oldImpulseSequence )
 	{
 		PerformImpulse( usercmd.impulse );
 	}
+	// Leyland end
 
 	if( forceScoreBoard )
 	{
@@ -8296,7 +8561,8 @@ void idPlayer::Move_Interpolated( float fraction )
 		idMat3	axis;
 		GetViewPos( org, axis );
 
-		physicsObj.SetPlayerInput( usercmd, axis[0] );
+		// Leyland VR: separate look direction
+		physicsObj.SetPlayerInput( usercmd, axis[0], vrFaceForward );
 	}
 
 	// FIXME: physics gets disabled somehow
@@ -8438,7 +8704,8 @@ void idPlayer::Move()
 		idMat3	axis;
 		GetViewPos( org, axis );
 
-		physicsObj.SetPlayerInput( usercmd, axis[0] );
+		// Leyland VR: separate look direction
+		physicsObj.SetPlayerInput( usercmd, axis[0], vrFaceForward );
 	}
 
 	// FIXME: physics gets disabled somehow
@@ -8925,6 +9192,223 @@ bool idPlayer::HandleGuiEvents( const sysEvent_t* ev )
 	return handled;
 }
 
+// Leyland VR
+/*
+==============
+idPlayer::SetupPDASlot
+==============
+*/
+void idPlayer::SetupPDASlot()
+{
+	FreePDASlot();
+
+	if( vr_slotDisable.GetBool() )
+	{
+		return;
+	}
+
+	memset( &pdaRenderEntity, 0, sizeof( pdaRenderEntity ) );
+	pdaRenderEntity.hModel = renderModelManager->FindModel( "models/items/pda/pda_world.lwo" );
+	if( pdaRenderEntity.hModel )
+	{
+		pdaRenderEntity.hModel->Reset();
+		pdaRenderEntity.bounds = pdaRenderEntity.hModel->Bounds( &pdaRenderEntity );
+	}
+	pdaRenderEntity.shaderParms[ SHADERPARM_RED ]	= 1.0f;
+	pdaRenderEntity.shaderParms[ SHADERPARM_GREEN ] = 1.0f;
+	pdaRenderEntity.shaderParms[ SHADERPARM_BLUE ]	= 1.0f;
+	pdaRenderEntity.shaderParms[3] = 1.0f;
+	pdaRenderEntity.shaderParms[ SHADERPARM_TIMEOFFSET ] = 0.0f;
+	pdaRenderEntity.shaderParms[5] = 0.0f;
+	pdaRenderEntity.shaderParms[6] = 0.0f;
+	pdaRenderEntity.shaderParms[7] = 0.0f;
+}
+
+/*
+==============
+idPlayer::FreePDASlot
+==============
+*/
+void idPlayer::FreePDASlot()
+{
+	if( pdaModelDefHandle != -1 )
+	{
+		gameRenderWorld->FreeEntityDef( pdaModelDefHandle );
+		pdaModelDefHandle = -1;
+	}
+}
+
+/*
+==============
+idPlayer::UpdatePDASlot
+==============
+*/
+void idPlayer::UpdatePDASlot()
+{
+	if( vr_slotDisable.GetBool() )
+	{
+		return;
+	}
+	if( inventory.pdas.Num() && pdaRenderEntity.hModel )
+	{
+		pdaRenderEntity.timeGroup = timeGroup;
+
+		pdaRenderEntity.entityNum = ENTITYNUM_NONE;
+
+		idMat3 pdaAxis = pdaAngle1.ToMat3() * pdaAngle2.ToMat3() * pdaAngle3.ToMat3();
+
+		pdaRenderEntity.axis = pdaAxis * waistAxis;
+		pdaRenderEntity.origin = waistOrigin + slots[SLOT_LEFT_HIP].origin * waistAxis;
+
+		pdaRenderEntity.allowSurfaceInViewID = entityNumber + 1;
+		pdaRenderEntity.weaponDepthHack = g_useWeaponDepthHack.GetBool();
+
+		if( pdaModelDefHandle == -1 )
+		{
+			pdaModelDefHandle = gameRenderWorld->AddEntityDef( &pdaRenderEntity );
+		}
+		else
+		{
+			gameRenderWorld->UpdateEntityDef( pdaModelDefHandle, &pdaRenderEntity );
+		}
+	}
+}
+
+/*
+==============
+idPlayer::SetupHolsterSlot
+==============
+*/
+void idPlayer::SetupHolsterSlot()
+{
+	if( !weapon.GetEntity()->IsReady() )
+	{
+		return;
+	}
+
+	const char* modelname;
+	idRenderModel* renderModel;
+
+	FreeHolsterSlot();
+	if( vr_slotDisable.GetBool() )
+	{
+		return;
+	}
+
+	// can we holster?
+	if( !( modelname = weapon->weaponDef->dict.GetString( "model" ) ) ||
+			strcmp( modelname, "models/weapons/soulcube/w_soulcube.lwo" ) == 0 ||
+			strcmp( modelname, "_DEFAULT" ) == 0 ||
+			strcmp( modelname, "models/items/grenade_ammo/grenade.lwo" ) == 0 ||
+			!( renderModel = renderModelManager->FindModel( modelname ) ) )
+	{
+		// can't holster, just unholster
+		if( holsteredWeapon != weapon_fists )
+		{
+			SelectWeapon( holsteredWeapon, false );
+			holsteredWeapon = weapon_fists;
+		}
+		return;
+	}
+
+	// we can holster! so unholster or change weapons
+	int previousWeapon = currentWeapon;
+	if( holsteredWeapon == weapon_fists )
+	{
+		NextWeapon();
+	}
+	else
+	{
+		SelectWeapon( holsteredWeapon, false );
+	}
+	holsteredWeapon = previousWeapon;
+
+	memset( &holsterRenderEntity, 0, sizeof( holsterRenderEntity ) );
+	holsterRenderEntity.hModel = renderModel;
+	if( holsterRenderEntity.hModel )
+	{
+		holsterRenderEntity.hModel->Reset();
+		holsterRenderEntity.bounds = holsterRenderEntity.hModel->Bounds( &holsterRenderEntity );
+	}
+	holsterRenderEntity.shaderParms[ SHADERPARM_RED ]	= 1.0f;
+	holsterRenderEntity.shaderParms[ SHADERPARM_GREEN ] = 1.0f;
+	holsterRenderEntity.shaderParms[ SHADERPARM_BLUE ]	= 1.0f;
+	holsterRenderEntity.shaderParms[3] = 1.0f;
+	holsterRenderEntity.shaderParms[ SHADERPARM_TIMEOFFSET ] = 0.0f;
+	holsterRenderEntity.shaderParms[5] = 0.0f;
+	holsterRenderEntity.shaderParms[6] = 0.0f;
+	holsterRenderEntity.shaderParms[7] = 0.0f;
+
+	if( strcmp( modelname, "models/weapons/pistol/w_pistol.lwo" ) == 0 )
+	{
+		holsterAxis = idAngles( 90, 0, 0 ).ToMat3();
+	}
+	else if( strcmp( modelname, "models/weapons/shotgun/w_shotgun2.lwo" ) == 0 ||
+			 strcmp( modelname, "models/weapons/bfg/bfg_world.lwo" ) == 0 )
+	{
+		holsterAxis = idAngles( 0, -90, -90 ).ToMat3();
+	}
+	else if( strcmp( modelname, "models/weapons/grabber/grabber_world.ase" ) == 0 )
+	{
+		holsterAxis = idAngles( -90, 180, 0 ).ToMat3() * 0.5f;
+	}
+	else
+	{
+		holsterAxis = idAngles( 0, 90, 90 ).ToMat3();
+	}
+}
+
+/*
+==============
+idPlayer::FreeHolsterSlot
+==============
+*/
+void idPlayer::FreeHolsterSlot()
+{
+	if( holsterModelDefHandle != -1 )
+	{
+		gameRenderWorld->FreeEntityDef( holsterModelDefHandle );
+		holsterModelDefHandle = -1;
+	}
+}
+
+/*
+==============
+idPlayer::UpdateHolsterSlot
+==============
+*/
+void idPlayer::UpdateHolsterSlot()
+{
+	if( vr_slotDisable.GetBool() )
+	{
+		FreeHolsterSlot();
+		holsteredWeapon = weapon_fists;
+		return;
+	}
+	if( holsterRenderEntity.hModel )
+	{
+		holsterRenderEntity.timeGroup = timeGroup;
+
+		holsterRenderEntity.entityNum = ENTITYNUM_NONE;
+
+		holsterRenderEntity.axis = holsterAxis * waistAxis;
+		holsterRenderEntity.origin = waistOrigin + slots[SLOT_RIGHT_HIP].origin * waistAxis;
+
+		holsterRenderEntity.allowSurfaceInViewID = entityNumber + 1;
+		holsterRenderEntity.weaponDepthHack = g_useWeaponDepthHack.GetBool();
+
+		if( holsterModelDefHandle == -1 )
+		{
+			holsterModelDefHandle = gameRenderWorld->AddEntityDef( &holsterRenderEntity );
+		}
+		else
+		{
+			gameRenderWorld->UpdateEntityDef( holsterModelDefHandle, &holsterRenderEntity );
+		}
+	}
+}
+// Leyland end
+
 /*
 ==============
 idPlayer::UpdateLaserSight
@@ -8948,7 +9432,7 @@ void idPlayer::UpdateLaserSight()
 			!weapon.GetEntity()->ShowCrosshair() ||
 			AI_DEAD ||
 			weapon->IsHidden() ||
-			!weapon->GetMuzzlePositionWithHacks( muzzleOrigin, muzzleAxis ) )
+			!weapon->GetMuzzlePosition( muzzleOrigin, muzzleAxis ) ) // Leyland: use GetMuzzlePosition
 	{
 		// hide it
 		laserSightRenderEntity.allowSurfaceInViewID = -1;
@@ -9325,6 +9809,21 @@ void idPlayer::Think()
 			// Update voice groups to match in case something changed
 			session->SetVoiceGroupsToTeams();
 		}
+
+	// Leyland VR
+	UpdatePDASlot();
+	UpdateHolsterSlot();
+
+	if( vr_slotDebug.GetBool() )
+	{
+		for( int i = 0; i < SLOT_COUNT; i++ )
+		{
+			idVec3 origin = waistOrigin + slots[i].origin * waistAxis;
+			idSphere tempSphere( origin, sqrtf( slots[i].radiusSq ) );
+			gameRenderWorld->DebugSphere( colorWhite, tempSphere, 18, true );
+		}
+	}
+	// Leyland end
 	}
 }
 
@@ -9910,13 +10409,58 @@ void idPlayer::ControllerShakeFromDamage( int damage )
 		// >= 100 damage - will be 300 Mag
 		float highMag = ( Max( damage, 100 ) / 100.0f ) * maxMagScale;
 		int highDuration = idMath::Ftoi( ( Max( damage, 100 ) / 100.0f ) * maxDurScale );
-		float lowMag = highMag * 0.75f;
-		int lowDuration = idMath::Ftoi( highDuration );
 
-		SetControllerShake( highMag, highDuration, lowMag, lowDuration );
+		// Leyland VR
+		if( usercmd.vrHasRightController )
+		{
+			SetControllerShake( highMag, highDuration, highMag, highDuration );
+		}
+		else
+		{
+			float lowMag = highMag * 0.75f;
+			int lowDuration = idMath::Ftoi( highDuration );
+			SetControllerShake( highMag, highDuration, lowMag, lowDuration );
+		}
+		// Leyland end
 	}
 
 }
+
+// Leyland VR
+/*
+============
+idPlayer::ControllerShakeFromDamage
+============
+*/
+void idPlayer::ControllerShakeFromDamage( int damage, const idVec3& dir )
+{
+
+	// If the player is local. SHAkkkkkkeeee!
+	if( common->IsMultiplayer() && IsLocallyControlled() )
+	{
+
+		int maxMagScale = pm_controllerShake_damageMaxMag.GetFloat();
+		int maxDurScale = pm_controllerShake_damageMaxDur.GetFloat();
+
+		// determine rumble
+		// >= 100 damage - will be 300 Mag
+		float highMag = ( Max( damage, 100 ) / 100.0f ) * maxMagScale;
+		int highDuration = idMath::Ftoi( ( Max( damage, 100 ) / 100.0f ) * maxDurScale );
+
+		if( usercmd.vrHasRightController )
+		{
+			SetControllerShake( highMag, highDuration, dir );
+		}
+		else
+		{
+			float lowMag = highMag * 0.75f;
+			int lowDuration = idMath::Ftoi( highDuration );
+			SetControllerShake( highMag, highDuration, lowMag, lowDuration );
+		}
+	}
+}
+// Leyland end
+
 
 /*
 ============
@@ -10140,6 +10684,7 @@ void idPlayer::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& di
 		idVec3 kick = dir;
 		kick.Normalize();
 		kick *= g_knockback.GetFloat() * knockback * attackerPushScale / 200.0f;
+		kick *= vr_knockbackScale.GetFloat(); // Leyland VR
 		physicsObj.SetLinearVelocity( physicsObj.GetLinearVelocity() + kick );
 
 		// set the timer so that the player can't cancel out the movement immediately
@@ -10201,7 +10746,8 @@ void idPlayer::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& di
 
 	if( common->IsMultiplayer() && IsLocallyControlled() )
 	{
-		ControllerShakeFromDamage( damage );
+		// Leyland VR: added direction
+		ControllerShakeFromDamage( damage, dir );
 	}
 
 	// The client needs to know the final damage amount for predictive pain animations.
@@ -10530,12 +11076,53 @@ void idPlayer::CalculateViewWeaponPos( idVec3& origin, idMat3& axis )
 	idAngles	angles;
 	int			delta;
 
-	// CalculateRenderView must have been called first
-	const idVec3& viewOrigin = firstPersonViewOrigin;
-	const idMat3& viewAxis = firstPersonViewAxis;
-
 	// these cvars are just for hand tweaking before moving a value to the weapon def
 	idVec3	gunpos( g_gun_x.GetFloat(), g_gun_y.GetFloat(), g_gun_z.GetFloat() );
+
+	// Leyland VR
+	if( vrSystem->IsActive() && !vrSystem->IsSeated() )
+	{
+		// if we are here, this is a fallback for not being able to hold a weapon
+		origin = hmdOrigin;
+
+		if( usercmd.vrHasRightController )
+		{
+			// remove pitch
+			//float pitch = idMath::M_RAD2DEG * asin(firstPersonViewAxis[0][2]);
+			//axis = idAngles(pitch, 0, 0).ToMat3() * firstPersonViewAxis;
+			axis = firstPersonViewAxis;
+
+			idVec3 dir = ( usercmd.vrRightControllerOrigin - usercmd.vrHeadOrigin ) * vrFaceForward;
+			dir.z += 12;
+			dir = idAngles( 0, 18.f, 0 ).ToMat3() * dir;
+			dir.NormalizeFast();
+			axis = dir.ToMat3() * axis;
+		}
+		else
+		{
+			axis = hmdAxis;
+			gunpos.x += 8;
+			gunpos.z -= 5;
+		}
+
+		origin += axis * gunpos;
+		return;
+	}
+
+	// CalculateRenderView must have been called first
+	idVec3 viewOrigin;
+	idMat3 viewAxis;
+	if( vrSystem->IsActive() )
+	{
+		viewOrigin = flashlightOrigin;
+		viewAxis = flashlightAxis;
+	}
+	else
+	{
+		viewOrigin = firstPersonViewOrigin;
+		viewAxis = firstPersonViewAxis;
+	}
+	// Leyland end
 
 	// as the player changes direction, the gun will take a small lag
 	idVec3	gunOfs = GunAcceleratingOffset();
@@ -10582,11 +11169,16 @@ void idPlayer::CalculateViewWeaponPos( idVec3& origin, idMat3& axis )
 	}
 
 	// speed sensitive idle drift
-	scale = xyspeed + 40.0f;
-	fracsin = scale * sin( MS2SEC( gameLocal.time ) ) * 0.01f;
-	angles.roll		+= fracsin;
-	angles.yaw		+= fracsin;
-	angles.pitch	+= fracsin;
+	// Leyland: skip in VR
+	if( !IsGameStereoRendered() )
+	{
+		scale = xyspeed + 40.0f;
+		fracsin = scale * sin( MS2SEC( gameLocal.time ) ) * 0.01f;
+		angles.roll		+= fracsin;
+		angles.yaw		+= fracsin;
+		angles.pitch	+= fracsin;
+	}
+	// Leyland end
 
 	// decoupled weapon aiming in head mounted displays
 	angles.pitch += independentWeaponPitchAngle;
@@ -10596,6 +11188,46 @@ void idPlayer::CalculateViewWeaponPos( idVec3& origin, idMat3& axis )
 
 	axis = scaledMat * viewAxis;
 }
+
+// Leyland VR
+/*
+===============
+idPlayer::CalculateVRView
+===============
+*/
+bool idPlayer::CalculateVRView( idVec3& origin, idMat3& axis, bool overridePitch )
+{
+	if( !usercmd.vrHasHead )
+	{
+		return false;
+	}
+
+	if( overridePitch )
+	{
+		float pitch = idMath::M_RAD2DEG * asin( axis[0][2] );
+		idAngles angles( pitch, 0, 0 );
+		axis = angles.ToMat3() * axis;
+	}
+
+	if( !vr_seated.GetBool() )
+	{
+		if( overridePitch )
+		{
+			origin.z -= eyeOffset.z;
+			// ignore x and y
+			origin += axis[2] * usercmd.vrHeadOrigin.z;
+		}
+	}
+	else
+	{
+		origin += ( usercmd.vrHeadOrigin - vrSystem->GetSeatedOrigin() ) * vrFaceForward * axis;
+	}
+
+	axis = usercmd.vrHeadAxis * vrFaceForward * axis;
+
+	return true;
+}
+// Leyland end
 
 /*
 ===============
@@ -10669,7 +11301,7 @@ void idPlayer::OffsetThirdPersonView( float angle, float range, float height, bo
 	angles.pitch = - RAD2DEG( atan2( focusPoint.z, focusDist ) );
 	angles.yaw -= angle;
 
-	renderView->vieworg = view;
+	renderView->vieworg[STEREOPOS_MONO] = view;
 	renderView->viewaxis = angles.ToMat3() * physicsObj.GetGravityAxis();
 	renderView->viewID = 0;
 }
@@ -10692,7 +11324,9 @@ idVec3 idPlayer::GetEyePosition() const
 	{
 		org = GetPhysics()->GetOrigin();
 	}
-	return org + ( GetPhysics()->GetGravityNormal() * -eyeOffset.z );
+
+	// Leyland VR: use head offset
+	return org + ( GetPhysics()->GetGravityNormal() * -eyeOffset.z ) + physicsObj.GetHeadOffset();
 }
 
 /*
@@ -10716,16 +11350,29 @@ void idPlayer::GetViewPos( idVec3& origin, idMat3& axis ) const
 	else
 	{
 		origin = GetEyePosition() + viewBob;
-		angles = viewAngles + viewBobAngles + playerView.AngleOffset();
+
+		// Leyland: skip bobbing
+		if( vrSystem->IsActive() )
+		{
+			angles = viewAngles + playerView.AngleOffset();
+		}
+		else
+		{
+			angles = viewAngles + viewBobAngles + playerView.AngleOffset();
+		}
 
 		axis = angles.ToMat3() * physicsObj.GetGravityAxis();
 
-		// Move pivot point down so looking straight ahead is a no-op on the Z
-		const idVec3& gravityVector = physicsObj.GetGravityNormal();
-		origin += gravityVector * g_viewNodalZ.GetFloat();
+		if( !vrSystem->IsActive() )
+		{
+			// Move pivot point down so looking straight ahead is a no-op on the Z
+			const idVec3& gravityVector = physicsObj.GetGravityNormal();
+			origin += gravityVector * g_viewNodalZ.GetFloat();
 
-		// adjust the origin based on the camera nodal distance (eye distance from neck)
-		origin += axis[0] * g_viewNodalX.GetFloat() + axis[2] * g_viewNodalZ.GetFloat();
+			// adjust the origin based on the camera nodal distance (eye distance from neck)
+			origin += axis[0] * g_viewNodalX.GetFloat() + axis[2] * g_viewNodalZ.GetFloat();
+		}
+		// Leyland end
 	}
 }
 
@@ -10761,7 +11408,190 @@ void idPlayer::CalculateFirstPersonView()
 		firstPersonViewAxis = firstPersonViewAxis * playerView.ShakeAxis();
 #endif
 	}
+
+	// Leyland VR
+	if( vrSystem->IsActive() )
+	{
+		hmdAxis = firstPersonViewAxis;
+		hmdOrigin = firstPersonViewOrigin;
+
+		if( vr_seated.GetBool() )
+		{
+			hmdOrigin.z += 5.f;
+		}
+
+		CalculateVRView( hmdOrigin, hmdAxis, true );
+
+		CalculateLeftHand();
+		CalculateRightHand();
+		CalculateWaist();
+
+		if( vrSystem->IsSeated() )
+		{
+			const idVec3& seatedOrigin = vrSystem->GetSeatedOrigin();
+
+			flashlightOrigin = hmdOrigin + hmdAxis[2] * -5;
+
+			if( vr_aimLook.GetBool() )
+			{
+				flashlightAxis = vrFaceForward * hmdAxis;
+			}
+			else
+			{
+				idVec3 pelvis( 0, 0, -27.f );
+				idVec3 neck = ( usercmd.vrHeadOrigin - seatedOrigin + usercmd.vrHeadAxis[2] * -5 ) * vrFaceForward;
+				idMat3 shoulderAxis;
+				shoulderAxis[2] = neck - pelvis;
+				shoulderAxis[2].NormalizeFast();
+				shoulderAxis[0].Set( 1, 0, 0 );
+				shoulderAxis[1] = shoulderAxis[2].Cross( shoulderAxis[0] );
+				shoulderAxis[1].NormalizeFast();
+				shoulderAxis[0] = shoulderAxis[1].Cross( shoulderAxis[2] );
+				shoulderAxis[0].NormalizeFast();
+
+				flashlightAxis = shoulderAxis * firstPersonViewAxis;
+			}
+		}
+		else
+		{
+			flashlightOrigin = leftHandOrigin;
+			flashlightAxis = leftHandAxis;
+		}
+	}
+	// Leyland end
 }
+
+// Leyland VR
+void idPlayer::CalculateWaist()
+{
+	waistOrigin = hmdAxis * neckOffset + hmdOrigin;
+	waistOrigin.z += waistZ;
+
+	if( hmdAxis[0].z < 0 ) // looking down
+	{
+		if( hmdAxis[2].z > 0 )
+		{
+			// use a point between head forward and upward
+			float h = hmdAxis[2].z - hmdAxis[0].z;
+			float x = -hmdAxis[0].z / h;
+			float y = hmdAxis[2].z / h;
+			idVec3 i = hmdAxis[0] * y + hmdAxis[2] * x;
+			float yaw = atan2( i.y, i.x ) * idMath::M_RAD2DEG;
+			waistAxis = idAngles( 0, yaw, 0 ).ToMat3();
+		}
+		else
+		{
+			// use a point between head backward and upward
+			float h = -hmdAxis[2].z - hmdAxis[0].z;
+			float x = -hmdAxis[0].z / h;
+			float y = hmdAxis[2].z / h;
+			idVec3 i = hmdAxis[0] * y + hmdAxis[2] * x;
+			float yaw = atan2( i.y, i.x ) * idMath::M_RAD2DEG;
+			waistAxis = idAngles( 0, yaw, 0 ).ToMat3();
+		}
+	}
+	else // fallback
+	{
+		waistAxis = idAngles( 0, hmdAxis.ToAngles().yaw, 0 ).ToMat3();
+	}
+}
+
+void idPlayer::CalculateLeftHand()
+{
+	slotIndex_t oldSlot = leftHandSlot;
+	slotIndex_t slot = SLOT_NONE;
+
+	if( usercmd.vrHasLeftController )
+	{
+		// remove pitch
+		idMat3 axis = firstPersonViewAxis;
+		//float pitch = idMath::M_RAD2DEG * asin(axis[0][2]);
+		//idAngles angles(pitch, 0, 0);
+		//axis = angles.ToMat3() * axis;
+		leftHandOrigin = hmdOrigin + ( usercmd.vrLeftControllerOrigin - usercmd.vrHeadOrigin ) * vrFaceForward * axis;
+		leftHandAxis = usercmd.vrLeftControllerAxis * vrFaceForward * axis;
+
+		if( !vr_slotDisable.GetBool() )
+		{
+			for( int i = 0; i < SLOT_COUNT; i++ )
+			{
+				idVec3 origin = waistOrigin + slots[i].origin * waistAxis;
+				if( ( leftHandOrigin - origin ).LengthSqr() < slots[i].radiusSq )
+				{
+					slot = ( slotIndex_t )i;
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		leftHandOrigin = hmdOrigin + hmdAxis[2] * -5;
+		leftHandAxis = hmdAxis;
+	}
+
+	if( oldSlot != slot )
+	{
+		SetControllerShake( 0, 0, vr_slotMag.GetFloat(), vr_slotDur.GetInteger() );
+	}
+
+	leftHandSlot = slot;
+}
+
+void idPlayer::CalculateRightHand()
+{
+	slotIndex_t oldSlot = rightHandSlot;
+	slotIndex_t slot = SLOT_NONE;
+
+	if( usercmd.vrHasRightController )
+	{
+		// remove pitch
+		idMat3 axis = firstPersonViewAxis;
+		//float pitch = idMath::M_RAD2DEG * asin(axis[0][2]);
+		//idAngles angles(pitch, 0, 0);
+		//axis = angles.ToMat3() * axis;
+		rightHandOrigin = hmdOrigin + ( usercmd.vrRightControllerOrigin - usercmd.vrHeadOrigin ) * vrFaceForward * axis;
+		rightHandAxis = usercmd.vrRightControllerAxis * vrFaceForward * axis;
+
+		if( !vr_slotDisable.GetBool() )
+		{
+			for( int i = 0; i < SLOT_COUNT; i++ )
+			{
+				idVec3 origin = waistOrigin + slots[i].origin * waistAxis;
+				if( ( rightHandOrigin - origin ).LengthSqr() < slots[i].radiusSq )
+				{
+					slot = ( slotIndex_t )i;
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		rightHandOrigin = hmdOrigin + hmdAxis[2] * -5;
+		rightHandAxis = hmdAxis;
+	}
+
+	if( oldSlot != slot )
+	{
+		SetControllerShake( vr_slotMag.GetFloat(), vr_slotDur.GetInteger(), 0, 0 );
+	}
+
+	rightHandSlot = slot;
+}
+
+/*
+==================
+idPlayer::ShouldBlink
+
+Returns true if the view needs to be darkened
+==================
+*/
+bool idPlayer::ShouldBlink()
+{
+	return physicsObj.ShouldBlink();
+}
+// Leyland end
 
 /*
 ==================
@@ -10805,9 +11635,15 @@ void idPlayer::CalculateRenderView()
 
 	renderView->viewID = 0;
 
+	// Leyland VR
+	bool overridePitch = false;
+	bool camera;
+	// Leyland end
+
 	// check if we should be drawing from a camera's POV
 	if( !noclip && ( gameLocal.GetCamera() || privateCameraView ) )
 	{
+		camera = true;
 		// get origin, axis, and fov
 		if( privateCameraView )
 		{
@@ -10820,9 +11656,10 @@ void idPlayer::CalculateRenderView()
 	}
 	else
 	{
+		camera = false;
 		if( g_stopTime.GetBool() )
 		{
-			renderView->vieworg = firstPersonViewOrigin;
+			renderView->vieworg[STEREOPOS_MONO] = firstPersonViewOrigin;
 			renderView->viewaxis = firstPersonViewAxis;
 
 			if( !pm_thirdPerson.GetBool() )
@@ -10843,7 +11680,8 @@ void idPlayer::CalculateRenderView()
 		}
 		else
 		{
-			renderView->vieworg = firstPersonViewOrigin;
+			overridePitch = true;
+			renderView->vieworg[STEREOPOS_MONO] = firstPersonViewOrigin;
 			renderView->viewaxis = firstPersonViewAxis;
 
 			// set the viewID to the clientNum + 1, so we can suppress the right player bodies and
@@ -10851,17 +11689,82 @@ void idPlayer::CalculateRenderView()
 			renderView->viewID = entityNumber + 1;
 		}
 
-		gameLocal.CalcFov( CalcFov( true ), renderView->fov_x, renderView->fov_y );
+		// Leyland VR
+		float fov_x, fov_y;
+		gameLocal.CalcFov( CalcFov( true ), fov_x, fov_y );
+		renderView->SetFovXY( fov_x, fov_y );
+		// Leyland end
 	}
 
-	if( renderView->fov_y == 0 )
+	// Leyland VR
+	if( vrSystem->IsActive() )
 	{
-		idLib::Error( "renderView->fov_y == 0" );
+		if( camera )
+		{
+			if( !hasCameraFirstFrame )
+			{
+				hasCameraFirstFrame = usercmd.vrHasHead;
+
+				if( vr_seated.GetBool() || !hasCameraFirstFrame )
+				{
+					lastHeadOrigin = vrSystem->GetSeatedOrigin();
+					lastHeadAxisInv = vrSystem->GetSeatedAxisInverse();
+					tr.guiModel->SetVRShell( lastHeadOrigin, vrSystem->GetSeatedAxis() );
+				}
+				else
+				{
+					lastHeadOrigin = usercmd.vrHeadOrigin;
+					float yaw = usercmd.vrHeadAxis.ToAngles().yaw;
+					lastHeadAxisInv = idAngles( 0, -yaw, 0 ).ToMat3();
+					tr.guiModel->SetVRShell( lastHeadOrigin, idAngles( 0, yaw, 0 ).ToMat3() );
+				}
+			}
+
+			renderView->vrMoveAxis = lastHeadAxisInv * renderView->viewaxis;
+			renderView->vieworg[STEREOPOS_MONO] += ( usercmd.vrHeadOrigin - lastHeadOrigin ) * renderView->vrMoveAxis;
+			renderView->viewaxis = usercmd.vrHeadAxis * renderView->vrMoveAxis;
+			renderView->vrHadHead = usercmd.vrHasHead;
+			renderView->vrHeadOrigin = usercmd.vrHeadOrigin;
+			renderView->vrHeadAxis = usercmd.vrHeadAxis;
+		}
+		else
+		{
+			hasCameraFirstFrame = false;
+
+			if( overridePitch )
+			{
+				if( vr_seated.GetBool() )
+				{
+					renderView->vieworg[STEREOPOS_MONO].z += 5.f;
+				}
+			}
+
+			CalculateVRView( renderView->vieworg[STEREOPOS_MONO], renderView->viewaxis, overridePitch );
+
+			renderView->vrHadHead = usercmd.vrHasHead;
+			renderView->vrHeadOrigin = usercmd.vrHeadOrigin;
+			renderView->vrHeadAxis = usercmd.vrHeadAxis;
+
+			if( usercmd.vrHasHead )
+			{
+				renderView->vrMoveAxis = vrFaceForward * firstPersonViewAxis;
+			}
+			else
+			{
+				renderView->vrMoveAxis.Identity();
+			}
+		}
 	}
+
+	//if( renderView->fov_bottom == renderView->fov_top )
+	//{
+	//	common->Error( "renderView->fov_y == 0" );
+	//}
+	// Leyland end
 
 	if( g_showviewpos.GetBool() )
 	{
-		gameLocal.Printf( "%s : %s\n", renderView->vieworg.ToString(), renderView->viewaxis.ToAngles().ToString() );
+		gameLocal.Printf( "%s : %s\n", renderView->vieworg[STEREOPOS_MONO].ToString(), renderView->viewaxis.ToAngles().ToString() );
 	}
 }
 
@@ -11839,7 +12742,7 @@ bool idPlayer::GetPhysicsToSoundTransform( idVec3& origin, idMat3& axis )
 
 		memset( &view, 0, sizeof( view ) );
 		camera->GetViewParms( &view );
-		origin = view.vieworg;
+		origin = view.vieworg[STEREOPOS_MONO];
 		axis = view.viewaxis;
 		return true;
 	}
@@ -12649,6 +13552,26 @@ void idPlayer::FreeModelDef()
 	}
 }
 
+// Leyland VR
+void idPlayer::SetControllerShake( float magnitude, int duration, const idVec3& direction )
+{
+	idVec3 dir = direction;
+	dir.Normalize();
+	idVec3 left = leftHandOrigin - rightHandOrigin;
+	float side = left * dir * 0.5 + 0.5;
+
+	// push magnitude up so the middle doesn't feel as weak
+	float invSide = 1.0 - side;
+	float rightSide = 1.0 - side * side;
+	float leftSide = 1.0 - invSide * invSide;
+
+	float leftMag = magnitude * leftSide;
+	float rightMag = magnitude * rightSide;
+
+	SetControllerShake( rightMag, duration, leftMag, duration );
+}
+// Leyland end
+
 /*
 ========================
 idView::SetControllerShake
@@ -12656,16 +13579,24 @@ idView::SetControllerShake
 */
 void idPlayer::SetControllerShake( float highMagnitude, int highDuration, float lowMagnitude, int lowDuration )
 {
+	// Leyland VR
+	if( !highDuration && !lowDuration )
+	{
+		controllerShakeTimeGroup = gameLocal.selectedGroup;
+		return;
+	}
+	// Leyland end
 
 	// the main purpose of having these buffer is so multiple, individual shake events can co-exist with each other,
 	// for instance, a constant low rumble from the chainsaw when it's idle and a harsh rumble when it's being used.
+	int time = gameLocal.GetTime();
 
 	// find active buffer with similar magnitude values
 	int activeBufferWithSimilarMags = -1;
 	int inactiveBuffer = -1;
 	for( int i = 0; i < MAX_SHAKE_BUFFER; i++ )
 	{
-		if( gameLocal.GetTime() <= controllerShakeHighTime[i] || gameLocal.GetTime() <= controllerShakeLowTime[i] )
+		if( time <= controllerShakeHighTime[i] || time <= controllerShakeLowTime[i] )
 		{
 			if( idMath::Fabs( highMagnitude - controllerShakeHighMag[i] ) <= 0.1f && idMath::Fabs( lowMagnitude - controllerShakeLowMag[i] ) <= 0.1f )
 			{
@@ -12687,12 +13618,12 @@ void idPlayer::SetControllerShake( float highMagnitude, int highDuration, float 
 		// average the magnitudes and adjust the time
 		controllerShakeHighMag[ activeBufferWithSimilarMags ] += highMagnitude;
 		controllerShakeHighMag[ activeBufferWithSimilarMags ] *= 0.5f;
+		controllerShakeHighTime[ activeBufferWithSimilarMags ] = time + highDuration;
 
 		controllerShakeLowMag[ activeBufferWithSimilarMags ] += lowMagnitude;
 		controllerShakeLowMag[ activeBufferWithSimilarMags ] *= 0.5f;
+		controllerShakeLowTime[ activeBufferWithSimilarMags ] = time + lowDuration;
 
-		controllerShakeHighTime[ activeBufferWithSimilarMags ] = gameLocal.GetTime() + highDuration;
-		controllerShakeLowTime[ activeBufferWithSimilarMags ] = gameLocal.GetTime() + lowDuration;
 		controllerShakeTimeGroup = gameLocal.selectedGroup;
 		return;
 	}
@@ -12704,8 +13635,8 @@ void idPlayer::SetControllerShake( float highMagnitude, int highDuration, float 
 
 	controllerShakeHighMag[ inactiveBuffer ] = highMagnitude;
 	controllerShakeLowMag[ inactiveBuffer ] = lowMagnitude;
-	controllerShakeHighTime[ inactiveBuffer ] = gameLocal.GetTime() + highDuration;
-	controllerShakeLowTime[ inactiveBuffer ] = gameLocal.GetTime() + lowDuration;
+	controllerShakeHighTime[ inactiveBuffer ] = time + highDuration;
+	controllerShakeLowTime[ inactiveBuffer ] = time + lowDuration;
 	controllerShakeTimeGroup = gameLocal.selectedGroup;
 }
 

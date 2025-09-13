@@ -150,7 +150,7 @@ private:
 	void				GetCurrentBindingLayout( int bindingLayoutType );
 	void				ResizeImages();
 
-	void				DrawViewInternal( const viewDef_t* viewDef, const int stereoEye );
+	void				DrawViewInternal( const viewDef_t* viewDef, const int stereoEye, const stereoOrigin_t stereoOrigin );
 	void				DrawView( const void* data, const int stereoEye );
 	void				CopyRender( const void* data );
 
@@ -164,32 +164,32 @@ private:
 	void				FillDepthBufferFast( drawSurf_t** drawSurfs, int numDrawSurfs );
 
 	void				T_BlendLight( const drawSurf_t* drawSurfs, const viewLight_t* vLight );
-	void				BlendLight( const drawSurf_t* drawSurfs, const drawSurf_t* drawSurfs2, const viewLight_t* vLight );
+	void				BlendLight( const drawSurf_t* drawSurfs, const drawSurf_t* drawSurfs2, const viewLight_t* vLight, const stereoOrigin_t stereoOrigin );
 	void				T_BasicFog( const drawSurf_t* drawSurfs, const idPlane fogPlanes[ 4 ], const idRenderMatrix* inverseBaseLightProject );
-	void				FogPass( const drawSurf_t* drawSurfs,  const drawSurf_t* drawSurfs2, const viewLight_t* vLight );
-	void				FogAllLights();
+	void				FogPass( const drawSurf_t* drawSurfs,  const drawSurf_t* drawSurfs2, const viewLight_t* vLight, const stereoOrigin_t stereoOrigin );
+	void				FogAllLights( const stereoOrigin_t stereoOrigin );
 
 	void				SetupInteractionStage( const shaderStage_t* surfaceStage, const float* surfaceRegs, const float lightColor[4],
 			idVec4 matrix[2], float color[4] );
 
-	void				DrawInteractions( const viewDef_t* _viewDef );
+	void				DrawInteractions( const viewDef_t* _viewDef, const stereoOrigin_t stereoOrigin );
 	void				DrawSingleInteraction( drawInteraction_t* din, bool useFastPath, bool useIBL, bool setInteractionShader );
 	int					DrawShaderPasses( const drawSurf_t* const* const drawSurfs, const int numDrawSurfs,
-										  const float guiStereoScreenOffset, const int stereoEye );
+										  const float guiStereoScreenOffset, const int stereoEye, const stereoOrigin_t stereoOrigin );
 
-	void				RenderInteractions( const drawSurf_t* surfList, const viewLight_t* vLight, int depthFunc, bool performStencilTest, bool useLightDepthBounds );
+	void				RenderInteractions( const drawSurf_t* surfList, const viewLight_t* vLight, int depthFunc, bool performStencilTest, bool useLightDepthBounds, stereoOrigin_t stereoOrigin );
 
 	// RB
-	void				AmbientPass( const drawSurf_t* const* drawSurfs, int numDrawSurfs, bool fillGbuffer );
+	void				AmbientPass( const drawSurf_t* const* drawSurfs, int numDrawSurfs, bool fillGbuffer, const stereoOrigin_t stereoOrigin );
 
-	void				SetupShadowMapMatrices( viewLight_t* vLight, int side, idRenderMatrix& lightProjectionRenderMatrix, idRenderMatrix& lightViewRenderMatrix );
-	void				ShadowMapPassFast( const drawSurf_t* drawSurfs, viewLight_t* vLight, int side, bool atlas );
+	void				SetupShadowMapMatrices( viewLight_t* vLight, int side, idRenderMatrix& lightProjectionRenderMatrix, idRenderMatrix& lightViewRenderMatrix, const stereoOrigin_t stereoOrigin );
+	void				ShadowMapPassFast( const drawSurf_t* drawSurfs, viewLight_t* vLight, int side, bool atlas, const stereoOrigin_t stereoOrigin );
 	void				ShadowMapPassPerforated( const drawSurf_t** drawSurfs, int numDrawSurfs, viewLight_t* vLight, int side, const idRenderMatrix& lightProjectionRenderMatrix, const idRenderMatrix& lightViewRenderMatrix );
 
-	void				ShadowAtlasPass( const viewDef_t* _viewDef );
+	void				ShadowAtlasPass( const viewDef_t* _viewDef, const stereoOrigin_t stereoOrigin );
 
-	void				DrawMotionVectors();
-	void				TemporalAAPass( const viewDef_t* _viewDef );
+	void				DrawMotionVectors( const int stereoEye );
+	void				TemporalAAPass( const viewDef_t* _viewDef, const int stereoEye );
 
 	// RB: outdated HDR stuff
 	void				Bloom( const viewDef_t* viewDef );
@@ -277,7 +277,7 @@ private:
 
 //	void				GL_Color( float* color );
 
-	void				SetBuffer( const void* data );
+	void				SetBuffer( const void* data, const int stereoEye );
 
 private:
 	void				DBG_SimpleSurfaceSetup( const drawSurf_t* drawSurf );
@@ -347,7 +347,7 @@ private:
 	bool				currentRenderCopied;	// true if any material has already referenced _currentRender
 
 	idRenderMatrix		prevMVP[2];				// world MVP from previous frame for motion blur
-	bool				prevViewsValid;
+	bool				prevViewsValid[2];
 
 	// RB begin
 	// TODO remove
@@ -383,7 +383,7 @@ private:
 	SsaoPass*						ssaoPass;
 	MipMapGenPass*					hiZGenPass;
 	TonemapPass*					toneMapPass;
-	TemporalAntiAliasingPass*		taaPass;
+	TemporalAntiAliasingPass*		taaPass[2];		// two separate history buffers for VR
 
 	BindingCache					bindingCache;
 	SamplerCache					samplerCache;

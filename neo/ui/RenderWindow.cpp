@@ -161,7 +161,7 @@ void idRenderWindow::Draw( int time, float x, float y )
 	Render( time );
 
 	memset( &refdef, 0, sizeof( refdef ) );
-	refdef.vieworg = viewOffset.ToVec3();;
+	refdef.vieworg[STEREOPOS_MONO] = viewOffset.ToVec3();
 	//refdef.vieworg.Set(-128, 0, 0);
 
 	refdef.viewaxis.Identity();
@@ -170,8 +170,8 @@ void idRenderWindow::Draw( int time, float x, float y )
 	refdef.shaderParms[2] = 1;
 	refdef.shaderParms[3] = 1;
 
-	refdef.fov_x = 90;
-	refdef.fov_y = 2 * atan( ( float )drawRect.h / drawRect.w ) * idMath::M_RAD2DEG;
+	// Leyland VR: new FOV definition
+	refdef.SetFovXY( 90, 2 * atan( ( float )drawRect.h / drawRect.w ) * idMath::M_RAD2DEG );
 
 	refdef.time[0] = time;
 	refdef.time[1] = time;

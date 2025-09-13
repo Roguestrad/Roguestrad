@@ -643,7 +643,7 @@ void idRenderSystemLocal::OnFrame()
 	}
 
 	// start far enough away that we don't hit the player model
-	start = tr.primaryView->renderView.vieworg + tr.primaryView->renderView.viewaxis[0] * 32;
+	start = tr.primaryView->renderView.vieworg[STEREOPOS_MONO] + tr.primaryView->renderView.viewaxis[0] * 32;
 	end = start + tr.primaryView->renderView.viewaxis[0] * 1000.0f;
 	if( !tr.primaryWorld->Trace( mt, start, end, 0.0f, false ) )
 	{
@@ -1031,13 +1031,13 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 
 		idVec4 localViewOrigin( 1.0f );
 		idVec4 globalViewOrigin;
-		globalViewOrigin.x = viewDef->renderView.vieworg.x;
-		globalViewOrigin.y = viewDef->renderView.vieworg.y;
-		globalViewOrigin.z = viewDef->renderView.vieworg.z;
+		globalViewOrigin.x = viewDef->renderView.vieworg[STEREOPOS_MONO].x;
+		globalViewOrigin.y = viewDef->renderView.vieworg[STEREOPOS_MONO].y;
+		globalViewOrigin.z = viewDef->renderView.vieworg[STEREOPOS_MONO].z;
 		globalViewOrigin.w = 1.0f;
 
 		//inverseBaseModelProject.TransformPoint( globalViewOrigin, localViewOrigin );
-		R_GlobalPointToLocal( modelMatrix, viewDef->renderView.vieworg, localViewOrigin.ToVec3() );
+		R_GlobalPointToLocal( modelMatrix, viewDef->renderView.vieworg[STEREOPOS_MONO], localViewOrigin.ToVec3() );
 
 		renderProgManager.SetUniformValue( RENDERPARM_LOCALVIEWORIGIN, localViewOrigin.ToFloatPtr() ); // rpLocalViewOrigin
 
@@ -1112,7 +1112,7 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 			return;
 		}
 
-		idVec3 testOrigin = viewDef->renderView.vieworg;
+		idVec3 testOrigin = viewDef->renderView.vieworg[STEREOPOS_MONO];
 		//testOrigin += viewDef->renderView.viewaxis[0] * 150.0f;
 		//testOrigin -= viewDef->renderView.viewaxis[2] * 16.0f;
 
@@ -1236,7 +1236,7 @@ void idRenderBackend::DBG_ShowLightGrid()
 	axis.Identity();
 
 	// only show current area
-	int cameraArea = tr.primaryWorld->PointInArea( viewDef->renderView.vieworg );
+	int cameraArea = tr.primaryWorld->PointInArea( viewDef->renderView.vieworg[STEREOPOS_MONO] );
 	if( cameraArea == -1 && r_showLightGrid.GetInteger() < 3 )
 	{
 		return;
@@ -1279,7 +1279,7 @@ void idRenderBackend::DBG_ShowLightGrid()
 				continue;
 			}
 
-			idVec3 distanceToCam = gridPoint->origin - viewDef->renderView.vieworg;
+			idVec3 distanceToCam = gridPoint->origin - viewDef->renderView.vieworg[STEREOPOS_MONO];
 			if( distanceToCam.LengthSqr() > ( 1024 * 1024 ) && r_showLightGrid.GetInteger() < 3 )
 			{
 				continue;
@@ -1297,15 +1297,15 @@ void idRenderBackend::DBG_ShowLightGrid()
 
 			idVec4 localViewOrigin( 1.0f );
 			idVec4 globalViewOrigin;
-			globalViewOrigin.x = viewDef->renderView.vieworg.x;
-			globalViewOrigin.y = viewDef->renderView.vieworg.y;
-			globalViewOrigin.z = viewDef->renderView.vieworg.z;
+			globalViewOrigin.x = viewDef->renderView.vieworg[STEREOPOS_MONO].x;
+			globalViewOrigin.y = viewDef->renderView.vieworg[STEREOPOS_MONO].y;
+			globalViewOrigin.z = viewDef->renderView.vieworg[STEREOPOS_MONO].z;
 			globalViewOrigin.w = 1.0f;
 
 			float modelMatrix[16];
 			R_AxisToModelMatrix( axis, gridPointOrigin, modelMatrix );
 
-			R_GlobalPointToLocal( modelMatrix, viewDef->renderView.vieworg, localViewOrigin.ToVec3() );
+			R_GlobalPointToLocal( modelMatrix, viewDef->renderView.vieworg[STEREOPOS_MONO], localViewOrigin.ToVec3() );
 
 			renderProgManager.SetUniformValue( RENDERPARM_LOCALVIEWORIGIN, localViewOrigin.ToFloatPtr() ); // rpLocalViewOrigin
 
@@ -1398,7 +1398,7 @@ void idRenderBackend::DBG_ShowLightGrid()
 
 		renderProgManager.BindShader_Color();
 
-		lightOrigin = viewDef->renderView.vieworg;
+		lightOrigin = viewDef->renderView.vieworg[STEREOPOS_MONO];
 		lightOrigin += viewDef->renderView.viewaxis[0] * 150.0f;
 		lightOrigin -= viewDef->renderView.viewaxis[2] * 16.0f;
 
@@ -2361,7 +2361,7 @@ void idRenderBackend::DBG_TestImage()
 		imageCb->Bind();
 
 		// SRS - When rendering in 2D skip sRGB to linear conversion
-		if( viewDef->viewEntitys )
+		if( viewDef->viewEntitys && viewDef->guiMode == GUIMODE_NONE )
 		{
 			renderProgManager.BindShader_Bink();
 		}
@@ -2376,7 +2376,7 @@ void idRenderBackend::DBG_TestImage()
 		image->Bind();
 
 		// SRS - When rendering in 2D skip sRGB to linear conversion
-		if( viewDef->viewEntitys )
+		if( viewDef->viewEntitys && viewDef->guiMode == GUIMODE_NONE )
 		{
 			renderProgManager.BindShader_TextureVertexColor();
 		}
@@ -2440,7 +2440,7 @@ void idRenderBackend::DBG_RenderDebugTools( drawSurf_t** drawSurfs, int numDrawS
 	OPTICK_GPU_EVENT( "Render_DebugTools" );
 
 	// don't do much if this was a 2D rendering
-	if( !viewDef->viewEntitys )
+	if( !viewDef->viewEntitys || viewDef->guiMode != GUIMODE_NONE )
 	{
 		DBG_TestImage();
 		DBG_ShowLines();

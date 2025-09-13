@@ -350,6 +350,7 @@ void idGameLocal::Init()
 		//have the correct xp binds
 		cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "exec default.cfg\n" );
 		cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "seta g_xp_bind_run_once 1\n" );
+		cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "exec autoexec.cfg\n" ); // Leyland VR
 		cmdSystem->ExecuteCommandBuffer();
 	}
 
@@ -990,6 +991,7 @@ void idGameLocal::LoadMap( const char* mapName, int randseed )
 		}
 	}
 	mapFileName = mapFile->GetName();
+	mapIsIntro = ( idStr::FindText( mapFileName, "mars_city1" ) >= 0 );// Leyland VR
 
 	// load the collision map
 	collisionModelManager->LoadMap( mapFile, false );
@@ -2978,7 +2980,7 @@ void idGameLocal::BuildReturnValue( gameReturn_t& ret )
 
 	if( GetLocalPlayer() != NULL )
 	{
-		GetLocalPlayer()->GetControllerShake( ret.vibrationLow, ret.vibrationHigh );
+		GetLocalPlayer()->GetControllerShake( ret.vibrationHigh, ret.vibrationLow );
 	}
 	else
 	{
@@ -5924,6 +5926,7 @@ void idGameLocal::Shell_Cleanup()
 {
 	if( shellHandler != NULL )
 	{
+		tr.guiModel->ActivateVRShell( false );
 		delete shellHandler;
 		shellHandler = NULL;
 	}
@@ -5995,6 +5998,8 @@ void idGameLocal::Shell_Show( bool show )
 {
 	if( shellHandler != NULL )
 	{
+		// TODO VR UI Review
+		tr.guiModel->ActivateVRShell( show );
 		shellHandler->ActivateMenu( show );
 	}
 }
@@ -6036,6 +6041,7 @@ void idGameLocal::Shell_Render()
 {
 	if( shellHandler != NULL )
 	{
+		tr.guiModel->SetMode( GUIMODE_SHELL );
 		shellHandler->Update();
 	}
 }
@@ -6049,6 +6055,7 @@ void idGameLocal::Shell_ResetMenu()
 {
 	if( shellHandler != NULL )
 	{
+		tr.guiModel->ActivateVRShell( false );
 		delete shellHandler;
 		shellHandler = new( TAG_SWF ) idMenuHandler_Shell();
 	}

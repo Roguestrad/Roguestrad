@@ -35,12 +35,12 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-#define GAME_NAME						"DOOM 3: BFG Edition"		// appears on window titles and errors
+#define GAME_NAME						"Roguestrad"		// appears on window titles and errors
 
 // RB: changed home folder so we don't break the savegame of the original game
-#define SAVE_PATH						"\\id Software\\RBDOOM 3 BFG"
+#define SAVE_PATH						"\\Mycompany\\Roguestrad"		// TODO: replace this for your game
 
-#define ENGINE_VERSION					"RBDOOM 3 BFG 1.6.0"	// printed in console
+#define ENGINE_VERSION					"Roguestrad build 1"	// printed in console
 // RB end
 
 // DG begin
@@ -57,7 +57,7 @@ If you have questions concerning this license or the applicable additional terms
 // DG end
 
 // jmarshall
-#define ENGINE_BRANCH					"Iced-Hellfire-Dev"
+#define ENGINE_BRANCH					"master"
 // jmarshall end
 
 #ifdef STANDALONE
@@ -94,3 +94,4 @@ If you have questions concerning this license or the applicable additional terms
 #define GOGPATH_ID						"1733124578"
 
 #define VR_OPTIONS						0
+#define VR_EMITSTEREO					0

@@ -278,6 +278,18 @@ void idRenderSystemLocal::SetGLState( const uint64 glState )
 
 /*
 =============
+Leyland VR
+
+idRenderSystemLocal::SetStereoDepth
+=============
+*/
+void idRenderSystemLocal::SetStereoDepth( enum stereoDepthType_t stereoDepth )
+{
+	currentStereoDepth = stereoDepth;
+}
+
+/*
+=============
 idRenderSystemLocal::DrawFilled
 =============
 */
@@ -314,7 +326,8 @@ void idRenderSystemLocal::DrawStretchPic( const idVec4& topLeft, const idVec4& t
 		return;
 	}
 
-	idDrawVert* verts = guiModel->AllocTris( 4, quadPicIndexes, 6, material, currentGLState, STEREO_DEPTH_TYPE_NONE );
+	// Leyland VR
+	idDrawVert* verts = guiModel->AllocTris( 4, quadPicIndexes, 6, material, currentGLState, currentStereoDepth );
 	if( verts == NULL )
 	{
 		return;
@@ -375,7 +388,8 @@ void idRenderSystemLocal::DrawStretchTri( const idVec2& p1, const idVec2& p2, co
 
 	triIndex_t tempIndexes[3] = { 1, 0, 2 };
 
-	idDrawVert* verts = guiModel->AllocTris( 3, tempIndexes, 3, material, currentGLState, STEREO_DEPTH_TYPE_NONE );
+	// Leyland VR
+	idDrawVert* verts = guiModel->AllocTris( 3, tempIndexes, 3, material, currentGLState, currentStereoDepth );
 	if( verts == NULL )
 	{
 		return;
@@ -949,6 +963,7 @@ void idRenderSystemLocal::CaptureRenderToImage( const char* imageName, bool clea
 
 	copyRenderCommand_t* cmd = ( copyRenderCommand_t* )R_GetCommandBuffer( sizeof( *cmd ) );
 	cmd->commandId = RC_COPY_RENDER;
+	cmd->viewEyeBuffer = tr.guiModel->GetViewEyeBuffer(); // Leyland VR
 	cmd->x = rc.x1;
 	cmd->y = rc.y1;
 	cmd->imageWidth = rc.GetWidth();

@@ -59,8 +59,10 @@ void R_LocalVectorToGlobal( const float modelMatrix[16], const idVec3& in, idVec
 void R_GlobalPlaneToLocal( const float modelMatrix[16], const idPlane& in, idPlane& out );
 void R_LocalPlaneToGlobal( const float modelMatrix[16], const idPlane& in, idPlane& out );
 
-void R_SetupViewMatrix( viewDef_t* viewDef );
-void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter );
+void R_SetupViewMatrix( viewDef_t* viewDef, stereoOrigin_t so );
+
+// stereoEye 2 == ignore VR eye specific FOV and use the combined full FOV
+void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stereoEye );
 
 // RB begin
 void R_SetupUnprojection( viewDef_t* viewDef );

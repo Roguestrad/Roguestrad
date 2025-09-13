@@ -250,7 +250,8 @@ void idRenderBackend::Init()
 
 	prevMVP[0] = renderMatrix_identity;
 	prevMVP[1] = renderMatrix_identity;
-	prevViewsValid = false;
+	prevViewsValid[0] = false;
+	prevViewsValid[1] = false;
 
 	currentVertexBuffer = nullptr;
 	currentIndexBuffer = nullptr;
@@ -2038,19 +2039,22 @@ void idRenderBackend::GL_StartFrame()
 		toneMapPass->Init( deviceManager->GetDevice(), &commonPasses, createParms, globalFramebuffers.ldrFBO->GetApiObject() );
 	}
 
-	if( !taaPass )
+	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
 	{
-		TemporalAntiAliasingPass::CreateParameters taaParams;
-		taaParams.sourceDepth = globalImages->currentDepthImage->GetTextureHandle();
-		taaParams.motionVectors = globalImages->taaMotionVectorsImage->GetTextureHandle();
-		taaParams.unresolvedColor = globalImages->currentRenderHDRImage->GetTextureHandle();
-		taaParams.resolvedColor = globalImages->taaResolvedImage->GetTextureHandle();
-		taaParams.feedback1 = globalImages->taaFeedback1Image->GetTextureHandle();
-		taaParams.feedback2 = globalImages->taaFeedback2Image->GetTextureHandle();
-		taaParams.motionVectorStencilMask = 0; //0x01;
-		taaParams.useCatmullRomFilter = true;
-		taaPass = new TemporalAntiAliasingPass();
-		taaPass->Init( deviceManager->GetDevice(), &commonPasses, NULL, taaParams );
+		if( !taaPass[i] )
+		{
+			TemporalAntiAliasingPass::CreateParameters taaParams;
+			taaParams.sourceDepth = globalImages->currentDepthImage->GetTextureHandle();
+			taaParams.motionVectors = globalImages->taaMotionVectorsImage[i]->GetTextureHandle();
+			taaParams.unresolvedColor = globalImages->currentRenderHDRImage->GetTextureHandle();
+			taaParams.resolvedColor = globalImages->taaResolvedImage->GetTextureHandle();
+			taaParams.feedback1 = globalImages->taaFeedback1Image[i]->GetTextureHandle();
+			taaParams.feedback2 = globalImages->taaFeedback2Image[i]->GetTextureHandle();
+			taaParams.motionVectorStencilMask = 0; //0x01;
+			taaParams.useCatmullRomFilter = true;
+			taaPass[i] = new TemporalAntiAliasingPass();
+			taaPass[i]->Init( deviceManager->GetDevice(), &commonPasses, NULL, taaParams );
+		}
 	}
 }
 
@@ -2064,7 +2068,6 @@ void idRenderBackend::GL_EndFrame()
 	uint32_t swapIndex = deviceManager->GetCurrentBackBufferIndex();
 
 	OPTICK_EVENT( "EndFrame" );
-	//OPTICK_TAG( "Firing to swapIndex", swapIndex );
 
 	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
 	{
@@ -2081,8 +2084,15 @@ void idRenderBackend::GL_EndFrame()
 	// SRS - execute after EndFrame() to avoid need for barrier command list on Vulkan
 	deviceManager->GetDevice()->executeCommandList( commandList );
 
+	if( vrSystem->IsActive() )
+	{
+		vrSystem->SubmitStereoRenders( commandList, globalImages->stereoRenderImages[0], globalImages->stereoRenderImages[1] );
+		vrSystem->PreSwap();
+	}
+
 	// update jitter for perspective matrix
-	taaPass->AdvanceFrame();
+	taaPass[0]->AdvanceFrame();
+	taaPass[1]->AdvanceFrame();
 }
 
 /*
@@ -2110,6 +2120,13 @@ void idRenderBackend::GL_BlockingSwapBuffers()
 	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
 	{
 		tr.InvalidateSwapBuffers();
+	}
+
+	// RB: it is suggested by the OpenVR samples to run vr::VRCompositor()->WaitGetPoses right after
+	// swapping the swapchain images
+	if( vrSystem->IsActive() )
+	{
+		vrSystem->PostSwap();
 	}
 }
 
@@ -2265,6 +2282,14 @@ void idRenderBackend::GL_Clear( bool color, bool depth, bool stencil, byte stenc
 		nvrhi::utils::ClearColorAttachment( commandList, globalFramebuffers.ldrFBO->GetApiObject(), 0, colorValue );
 	}
 
+	if( clearVR && vrSystem->IsActive() && stereoEye == 1 )
+	{
+		for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
+		{
+			nvrhi::utils::ClearColorAttachment( commandList, globalFramebuffers.vrStereoFBO[i]->GetApiObject(), 0, colorValue );
+		}
+	}
+
 	if( depth || stencil )
 	{
 		// make sure both depth and stencil are handled
@@ -2364,11 +2389,15 @@ void idRenderBackend::ClearCaches()
 		toneMapPass = nullptr;
 	}
 
-	if( taaPass )
+	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
 	{
-		delete taaPass;
-		taaPass = nullptr;
+		if( taaPass[i] )
+		{
+			delete taaPass[i];
+			taaPass[i] = nullptr;
+		}
 	}
+
 
 	currentVertexBuffer = nullptr;
 	currentIndexBuffer = nullptr;
@@ -2415,7 +2444,7 @@ void idRenderBackend::DrawFlickerBox()
 idRenderBackend::SetBuffer
 =============
 */
-void idRenderBackend::SetBuffer( const void* data )
+void idRenderBackend::SetBuffer( const void* data, const int stereoEye )
 {
 	// see which draw buffer we want to render the frame to
 
@@ -2517,6 +2546,144 @@ Renders the draw list twice, with slight modifications for left eye / right eye
 */
 void idRenderBackend::StereoRenderExecuteBackEndCommands( const emptyCommand_t* const allCmds )
 {
+	GL_StartFrame();
+
+	nvrhi::ObjectType commandObject = nvrhi::ObjectTypes::D3D12_GraphicsCommandList;
+	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
+	{
+		commandObject = nvrhi::ObjectTypes::VK_CommandBuffer;
+	}
+	OPTICK_GPU_CONTEXT( ( void* ) commandList->getNativeObject( commandObject ) );
+
+	void* textureId = globalImages->hierarchicalZbufferImage->GetTextureID();
+
+	// RB: we need to load all images left before rendering
+	// this can be expensive here because of the runtime image compression
+	//globalImages->LoadDeferredImages( commandList );
+
+	uint64 backEndStartTime = Sys_Microseconds();
+
+	// In stereoRender mode, the front end has generated two RC_DRAW_VIEW commands
+	// with slightly different origins for each eye.
+
+	// TODO: only do the copy after the final view has been rendered, not mirror subviews?
+
+	// SRS - Save glConfig.timerQueryAvailable state so it can be disabled for RC_DRAW_VIEW_GUI then restored after it is finished
+	const bool timerQueryAvailable = glConfig.timerQueryAvailable;
+
+	// Render the 3D draw views from the screen origin so all the screen relative
+	// texture mapping works properly, then copy the portion we are going to use
+	// off to a texture.
+	bool foundEye[2] = { false, false };
+
+	for( int stereoEye = 1; stereoEye >= -1; stereoEye -= 2 )
+	{
+		// set up the target texture we will draw to
+		const int targetEye = ( stereoEye == 1 ) ? 1 : 0;
+
+		// capture only timestamps for the first eye
+		if( stereoEye == -1 )
+		{
+			glConfig.timerQueryAvailable = false;
+		}
+
+		bool drawView3D = false;
+
+		// Set the back end into a known default state to fix any stale render state issues
+		GL_SetDefaultState();
+
+		renderProgManager.Unbind();
+		renderProgManager.ZeroUniforms();
+
+		for( const emptyCommand_t* cmds = allCmds; cmds != NULL; cmds = ( const emptyCommand_t* )cmds->next )
+		{
+			switch( cmds->commandId )
+			{
+				case RC_NOP:
+					break;
+
+				case RC_DRAW_VIEW_GUI:
+				case RC_DRAW_VIEW_3D:
+				{
+#if VR_EMITSTEREO
+					const drawSurfsCommand_t* const dsc = ( const drawSurfsCommand_t* )cmds;
+					const viewDef_t&			eyeViewDef = *dsc->viewDef;
+
+					if( eyeViewDef.renderView.viewEyeBuffer && eyeViewDef.renderView.viewEyeBuffer != stereoEye )
+					{
+						// this is the render view for the other eye
+						continue;
+					}
+#endif
+
+					foundEye[ targetEye ] = true;
+					DrawView( cmds, stereoEye );
+					break;
+				}
+
+				case RC_SET_BUFFER:
+					SetBuffer( cmds, stereoEye );
+					break;
+
+				case RC_COPY_RENDER:
+					CopyRender( cmds );
+					break;
+
+				case RC_POST_PROCESS:
+				{
+#if VR_EMITSTEREO
+					postProcessCommand_t* cmd = ( postProcessCommand_t* )cmds;
+					if( cmd->viewDef->renderView.viewEyeBuffer != stereoEye )
+					{
+						break;
+					}
+#endif
+					PostProcess( cmds );
+					break;
+				}
+
+				case RC_CRT_POST_PROCESS:
+					break;
+
+				default:
+					common->Error( "StereoRenderExecuteBackEndCommands: bad commandId" );
+					break;
+			}
+		}
+
+		// capture only timestamps for the first eye
+		if( stereoEye == -1 )
+		{
+			glConfig.timerQueryAvailable = timerQueryAvailable;
+		}
+
+		// copy LDR result to DX12 / Vulkan stereo image
+		{
+			OPTICK_GPU_EVENT( "Blit_StereoImage" );
+			renderLog.OpenBlock( "Blit_StereoImage", colorBlue );
+
+			BlitParameters blitParms;
+			blitParms.sourceTexture = ( nvrhi::ITexture* )globalImages->ldrImage->GetTextureID();
+			blitParms.targetFramebuffer = globalFramebuffers.vrStereoFBO[ targetEye ]->GetApiObject();
+			blitParms.targetViewport = nvrhi::Viewport( renderSystem->GetWidth(), renderSystem->GetHeight() );
+			commonPasses.BlitTexture( commandList, blitParms, &bindingCache );
+
+			renderLog.CloseBlock();
+		}
+	}
+
+	// perform the final compositing / warping / deghosting to the actual framebuffer(s)
+	assert( foundEye[0] && foundEye[1] );
+
+	GL_SetDefaultState();
+
+	DrawFlickerBox();
+
+	// SRS - capture backend timing before GL_EndFrame() since it can block when r_mvkSynchronousQueueSubmits is enabled on macOS/MoltenVK
+	uint64 backEndFinishTime = Sys_Microseconds();
+	pc.cpuTotalMicroSec = backEndFinishTime - backEndStartTime;
+
+	GL_EndFrame();
 }
 
 void idRenderBackend::ImGui_RenderDrawLists( ImDrawData* draw_data )

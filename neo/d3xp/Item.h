@@ -187,6 +187,7 @@ public:
 	CLASS_PROTOTYPE( idVideoCDItem );
 
 	virtual bool			GiveToPlayer( idPlayer* player, unsigned int giveFlags );
+	virtual bool			GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis );	// Leyland VR
 };
 
 class idPDAItem : public idItem

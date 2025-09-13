@@ -34,6 +34,7 @@ static const int MAX_SHADOWMAP_RESOLUTIONS = 5;
 static const int MAX_BLOOM_BUFFERS = 2;
 static const int MAX_GLOW_BUFFERS = 2;
 static const int MAX_SSAO_BUFFERS = 2;
+static const int MAX_STEREO_BUFFERS = 2;
 static const int MAX_HIERARCHICAL_ZBUFFERS = 6; // native resolution + 5 MIP LEVELS
 
 static const int ENVPROBE_CAPTURE_SIZE = 256;
@@ -145,7 +146,7 @@ struct globalFramebuffers_t
 	Framebuffer*				hdrFBO;
 	Framebuffer*				ldrFBO;
 	Framebuffer*				postProcFBO; // HDR16 used by 3D effects like heatHaze
-	Framebuffer*				taaMotionVectorsFBO;
+	Framebuffer*				taaMotionVectorsFBO[MAX_STEREO_BUFFERS];
 	Framebuffer*				taaResolvedFBO;
 	Framebuffer*				envprobeFBO;
 	Framebuffer*				bloomRenderFBO[MAX_BLOOM_BUFFERS];
@@ -159,6 +160,10 @@ struct globalFramebuffers_t
 	Framebuffer*				smaaBlendFBO;
 	Framebuffer*				guiRenderTargetFBO;
 	Framebuffer*				accumFBO;
+	Framebuffer*				vrPDAFBO;
+	Framebuffer*				vrHUDFBO;
+	Framebuffer*				vrStereoFBO[MAX_STEREO_BUFFERS];
+	Framebuffer*				vrHmdEyeFBO[MAX_STEREO_BUFFERS];
 };
 
 extern globalFramebuffers_t globalFramebuffers;

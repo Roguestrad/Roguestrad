@@ -1269,9 +1269,9 @@ CONSOLE_COMMAND_SHIP( bakeLightGrids, "Bake irradiance/vis light grid data", NUL
 								ref.rdflags |= RDF_NOAMBIENT;
 							}
 
-							ref.fov_x = ref.fov_y = 90;
+							ref.SetFovXY( 90, 90 );
 
-							ref.vieworg = gridPoint->origin;
+							ref.vieworg[STEREOPOS_MONO] = gridPoint->origin;
 							ref.viewaxis = tr.cubeAxis[ side ];
 
 							// discard anything currently on the list

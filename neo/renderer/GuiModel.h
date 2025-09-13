@@ -52,6 +52,25 @@ public:
 
 	void		Clear();
 
+	// Leyland VR
+	void	SetViewEyeBuffer( int veb );
+	int		GetViewEyeBuffer()
+	{
+		return viewEyeBuffer;
+	}
+
+	void	SetMode( guiMode_t a_mode );
+	guiMode_t	GetMode()
+	{
+		return mode;
+	}
+
+	bool	UpdateVRShell();
+	void	ActivateVRShell( bool b );
+	bool	GetVRShell( idVec3& origin, idMat3& axis );
+	void	SetVRShell( const idVec3& origin, const idMat3& axis );
+	// Leyland end
+
 	// allocates memory for verts and indexes in frame-temporary buffer memory
 	void		BeginFrame();
 
@@ -73,10 +92,22 @@ public:
 private:
 	void		AdvanceSurf();
 
+	// Leyland VR
+	int							viewEyeBuffer;				// -1 = left eye, 1 = right eye, 0 = monoscopic view or GUI
+
+	guiMode_t					mode;
+
+	bool						vrShellActive;
+	bool						vrShellNeedsUpdate;
+	idVec3						vrShellOrigin;
+	idMat3						vrShellAxis;
+	// Leyland end
+
 	guiModelSurface_t* 			surf;
 
 	float						shaderParms[ MAX_ENTITY_SHADER_PARMS ];
 
+	static const float STEREO_DEPTH_DISABLE; // Leyland VR
 	static const float STEREO_DEPTH_NEAR;
 	static const float STEREO_DEPTH_MID;
 	static const float STEREO_DEPTH_FAR;

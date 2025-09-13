@@ -95,10 +95,10 @@ idCVar com_activeApp( "com_activeApp", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_NOCHE
 
 extern idCVar g_demoMode;
 
-idCVar com_engineHz( "com_engineHz", "60", CVAR_FLOAT | CVAR_ARCHIVE, "Frames per second the engine runs at", 10.0f, 1024.0f );
-float com_engineHz_latched = 60.0f; // Latched version of cvar, updated between map loads
+idCVar com_engineHz( "com_engineHz", "90", CVAR_FLOAT | CVAR_ARCHIVE, "Frames per second the engine runs at", 10.0f, 1024.0f );
+float com_engineHz_latched = 90.0f; // Latched version of cvar, updated between map loads
 const int64 com_engineHz_numerator = 100LL * 1000LL;
-int64 com_engineHz_denominator = 100LL * 60LL;
+int64 com_engineHz_denominator = 100LL * 90LL;
 
 // RB begin
 int com_editors = 0;
@@ -855,11 +855,6 @@ idCommonLocal::RenderSplash
 */
 void idCommonLocal::RenderSplash()
 {
-	//const emptyCommand_t* renderCommands = NULL;
-
-	// RB: this is the same as Doom 3 renderSystem->BeginFrame()
-	//renderCommands = renderSystem->SwapCommandBuffers_FinishCommandBuffers();
-
 	const float sysWidth = renderSystem->GetWidth() * renderSystem->GetPixelAspect();
 	const float sysHeight = renderSystem->GetHeight();
 	const float sysAspect = sysWidth / sysHeight;
@@ -885,8 +880,6 @@ void idCommonLocal::RenderSplash()
 	const emptyCommand_t* cmd = renderSystem->SwapCommandBuffers( &time_frontend, &time_backend, &time_moc, &time_gpu, &stats_backend, &stats_frontend );
 	renderSystem->RenderCommandBuffers( cmd );
 
-	// RB: this is the same as Doom 3 renderSystem->EndFrame()
-	//renderSystem->SwapCommandBuffers_FinishRendering( &time_frontend, &time_backend, &time_moc, &time_gpu );
 }
 
 /*
@@ -1273,6 +1266,9 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		// if any archived cvars are modified after this, we will trigger a writing of the config file
 		cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 
+		// RB: query VR APIs and see if we need to initialize the renderer in VR mode
+		VRSystem::Init();
+
 		// init OpenGL, which will open a window and connect sound and input hardware
 		renderSystem->InitBackend();
 
@@ -1355,6 +1351,31 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 
 		// load the game dll
 		LoadGameDLL();
+
+		// Leyland VR
+		// check if we need to set default bindings for vr
+		bool vrHasBinding = false;
+		for( int i = K_VR_FIRST_KEY; i <= K_VR_LAST_KEY; i++ )
+		{
+			const char* binding = idKeyInput::GetBinding( i );
+			if( binding && binding[0] != 0 )
+			{
+				vrHasBinding = true;
+				break;
+			}
+		}
+
+		if( !vrHasBinding )
+		{
+			idKeyInput::SetBinding( K_VR_LEFT_MENU, "_impulse19" );			// toggle PDA
+			idKeyInput::SetBinding( K_VR_LEFT_TRIGGER, "_moveup" );			// jump
+			idKeyInput::SetBinding( K_VR_LEFT_A, "_impulse16" );			// toggle flashlight
+			idKeyInput::SetBinding( K_VR_RIGHT_DPAD_LEFT, "_impulse15" );	// previous weapon
+			idKeyInput::SetBinding( K_VR_RIGHT_DPAD_RIGHT, "_impulse14" );	// next weapon
+			idKeyInput::SetBinding( K_VR_RIGHT_TRIGGER, "_attack" );
+			idKeyInput::SetBinding( K_VR_RIGHT_A, "_impulse13" );			// reload weapon
+		}
+		// Leyland end
 
 		// On the PC touch them all so they get included in the resource build
 		if( !fileSystem->UsingResourceFiles() )
@@ -1757,6 +1778,14 @@ idCommonLocal::ProcessEvent
 */
 bool idCommonLocal::ProcessEvent( const sysEvent_t* event )
 {
+	// Leyland: moved this up
+	if( Dialog().IsDialogActive() )
+	{
+		Dialog().HandleDialogEvent( event );
+		return true;
+	}
+	// Leyland end
+
 	// hitting escape anywhere brings up the menu
 	if( game && game->IsInGame() )
 	{
@@ -1804,12 +1833,6 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t* event )
 	}
 	if( session->ProcessInputEvent( event ) )
 	{
-		return true;
-	}
-
-	if( Dialog().IsDialogActive() )
-	{
-		Dialog().HandleDialogEvent( event );
 		return true;
 	}
 

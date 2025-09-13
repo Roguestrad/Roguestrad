@@ -577,8 +577,9 @@ void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::AdjustFi
 
 		case SYSTEM_FIELD_FRAMERATE:
 		{
-			static const int numValues = 2;
-			static const int values[numValues] = { 60, 120 };
+			// Leyland VR: added 90Hz mode
+			static const int numValues = 3;
+			static const int values[numValues] = { 60, 90, 120 };
 			com_engineHz.SetInteger( AdjustOption( com_engineHz.GetInteger(), values, numValues, adjustAmount ) );
 			break;
 		}

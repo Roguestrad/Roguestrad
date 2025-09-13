@@ -314,18 +314,31 @@ void idGrabber::StartDrag( idEntity* grabEnt, int id )
 	saveGravity = phys->GetGravity();
 	phys->SetGravity( vec3_origin );
 
+	// Leyland VR: use GetMuzzlePosition
+	idVec3 muzzleOrigin;
+	idMat3 muzzleAxis;
+	if( !thePlayer->weapon.GetEntity()->GetMuzzlePosition( muzzleOrigin, muzzleAxis ) )
+	{
+		muzzleOrigin = thePlayer->firstPersonViewOrigin;
+		muzzleAxis = thePlayer->firstPersonViewAxis;
+	}
+
 	// hold it directly in front of player
-	localPlayerPoint = ( thePlayer->firstPersonViewAxis[0] * HOLD_DISTANCE ) * thePlayer->firstPersonViewAxis.Transpose();
+	localPlayerPoint = ( muzzleAxis[0] * HOLD_DISTANCE ) * muzzleAxis.Transpose();
 
 	// Set the ending time for the hold
 	endTime = gameLocal.time + g_grabberHoldSeconds.GetFloat() * 1000;
 
 	// Start up the Force_Drag to bring it in
 	drag.Init( g_grabberDamping.GetFloat() );
-	drag.SetPhysics( phys, clipModelId, thePlayer->firstPersonViewOrigin + localPlayerPoint * thePlayer->firstPersonViewAxis );
+	drag.SetPhysics( phys, clipModelId, muzzleOrigin + localPlayerPoint * muzzleAxis );
 
 	// start the screen warp
-	warpId = thePlayer->playerView.AddWarp( phys->GetOrigin(), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 160, 2000 );
+	if( !vrSystem->IsActive() )
+	{
+		warpId = thePlayer->playerView.AddWarp( phys->GetOrigin(), SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2, 160, 2000 );
+	}
+	// Leyland end
 }
 
 /*
@@ -402,15 +415,25 @@ void idGrabber::StopDrag( bool dropOnly )
 		}
 		else
 		{
+			// Leyland VR: use GetMuzzlePosition
+			idVec3 muzzleOrigin;
+			idMat3 muzzleAxis;
+			if( !thePlayer->weapon.GetEntity()->GetMuzzlePosition( muzzleOrigin, muzzleAxis ) )
+			{
+				muzzleOrigin = thePlayer->firstPersonViewOrigin;
+				muzzleAxis = thePlayer->firstPersonViewAxis;
+			}
+
 			// Shoot the object forward
-			ent->ApplyImpulse( thePlayer, 0, ent->GetPhysics()->GetOrigin(), thePlayer->firstPersonViewAxis[0] * THROW_SCALE * ent->GetPhysics()->GetMass() );
+			ent->ApplyImpulse( thePlayer, 0, ent->GetPhysics()->GetOrigin(), muzzleAxis[0] * THROW_SCALE * ent->GetPhysics()->GetMass() );
 			thePlayer->StartSoundShader( declManager->FindSound( "grabber_release" ), SND_CHANNEL_WEAPON, 0, false, NULL );
 
 			// Orient projectiles away from the player
 			if( ent->IsType( idProjectile::Type ) )
 			{
 				idPlayer* player = owner.GetEntity();
-				idAngles ang = player->firstPersonViewAxis[0].ToAngles();
+				idAngles ang = muzzleAxis[0].ToAngles();
+				// Leyland end
 
 				ang.pitch += 90.f;
 				ent->GetPhysics()->SetAxis( ang.ToMat3() );
@@ -522,16 +545,25 @@ int idGrabber::Update( idPlayer* player, bool hide )
 
 	owner = player;
 
+	// Leyland VR: use GetMuzzlePosition
+	idVec3 muzzleOrigin;
+	idMat3 muzzleAxis;
+	if( !player->weapon.GetEntity()->GetMuzzlePosition( muzzleOrigin, muzzleAxis ) )
+	{
+		muzzleOrigin = player->firstPersonViewOrigin;
+		muzzleAxis = player->firstPersonViewAxis;
+	}
+
 	// if no entity selected for dragging
 	if( !dragEnt.GetEntity() )
 	{
 		idBounds bounds;
-		idVec3 end = player->firstPersonViewOrigin + player->firstPersonViewAxis[0] * dragTraceDist;
+		idVec3 end = muzzleOrigin + muzzleAxis[0] * dragTraceDist;
 
 		bounds.Zero();
 		bounds.ExpandSelf( TRACE_BOUNDS_SIZE );
 
-		gameLocal.clip.TraceBounds( trace, player->firstPersonViewOrigin, end, bounds, MASK_SHOT_RENDERMODEL | CONTENTS_PROJECTILE | CONTENTS_MOVEABLECLIP, player );
+		gameLocal.clip.TraceBounds( trace, muzzleOrigin, end, bounds, MASK_SHOT_RENDERMODEL | CONTENTS_PROJECTILE | CONTENTS_MOVEABLECLIP, player );
 		// If the trace hit something
 		if( trace.fraction < 1.0f )
 		{
@@ -649,7 +681,7 @@ int idGrabber::Update( idPlayer* player, bool hide )
 		}
 
 		// Set and evaluate drag force
-		goalPos = player->firstPersonViewOrigin + localPlayerPoint * player->firstPersonViewAxis;
+		goalPos = muzzleOrigin + localPlayerPoint * muzzleAxis;
 
 		drag.SetGoalPosition( goalPos );
 		drag.Evaluate( gameLocal.time );
@@ -661,14 +693,14 @@ int idGrabber::Update( idPlayer* player, bool hide )
 			idVec3 toPlayerVelocity, objectCenter;
 			float toPlayerSpeed;
 
-			toPlayerVelocity = -player->firstPersonViewAxis[0];
+			toPlayerVelocity = -muzzleAxis[0];
 			toPlayerSpeed = entPhys->GetLinearVelocity() * toPlayerVelocity;
 
 			if( toPlayerSpeed > 64.f )
 			{
 				objectCenter = entPhys->GetAbsBounds().GetCenter();
 
-				theWall.SetNormal( player->firstPersonViewAxis[0] );
+				theWall.SetNormal( muzzleAxis[0] );
 				theWall.FitThroughPoint( goalPos );
 
 				if( theWall.Side( objectCenter, 0.1f ) == PLANESIDE_BACK )
@@ -700,7 +732,7 @@ int idGrabber::Update( idPlayer* player, bool hide )
 		// Orient projectiles away from the player
 		if( dragEnt.GetEntity()->IsType( idProjectile::Type ) )
 		{
-			idAngles ang = player->firstPersonViewAxis[0].ToAngles();
+			idAngles ang = muzzleAxis[0].ToAngles();
 			ang.pitch += 90.f;
 			entPhys->SetAxis( ang.ToMat3() );
 		}
@@ -725,6 +757,7 @@ int idGrabber::Update( idPlayer* player, bool hide )
 		// Currently holding an object
 		return 2;
 	}
+	// Leyland end
 
 	// Not holding, nothing to hold
 	return 0;

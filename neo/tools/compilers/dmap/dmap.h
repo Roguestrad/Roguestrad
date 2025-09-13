@@ -359,12 +359,17 @@ void		FreeDMapFile();
 struct interAreaPortal_t
 {
 	int				area0, area1;
-	side_t*			side = NULL;
+	side_t*			side;
 
 	// RB begin
 	int				polygonId;
 	idFixedWinding	w;
 	// RB end
+
+	interAreaPortal_t()
+	{
+		side = NULL;
+	}
 };
 
 extern idList<interAreaPortal_t> interAreaPortals;

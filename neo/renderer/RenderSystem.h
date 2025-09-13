@@ -69,10 +69,20 @@ typedef enum
 
 enum stereoDepthType_t
 {
-	STEREO_DEPTH_TYPE_NONE,
+	STEREO_DEPTH_TYPE_DISABLE = -1,	// Leyland VR
+	STEREO_DEPTH_TYPE_NONE = 0,
 	STEREO_DEPTH_TYPE_NEAR,
 	STEREO_DEPTH_TYPE_MID,
 	STEREO_DEPTH_TYPE_FAR
+};
+
+// Leyland VR: for different automatic distances
+enum guiMode_t
+{
+	GUIMODE_NONE,
+	GUIMODE_SHELL,
+	GUIMODE_HUD,
+	GUIMODE_FULLSCREEN,
 };
 
 enum graphicsVendor_t
@@ -301,6 +311,8 @@ public:
 	virtual uint32			GetColor() = 0;
 
 	virtual void			SetGLState( const uint64 glState ) = 0;
+
+	virtual void			SetStereoDepth( enum stereoDepthType_t ) = 0; // Leyland VR
 
 	virtual void			DrawFilled( const idVec4& color, float x, float y, float w, float h ) = 0;
 	virtual void			DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial* material, float z = 0.0f ) = 0;

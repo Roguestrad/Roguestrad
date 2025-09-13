@@ -603,10 +603,10 @@ public:
 	idImage*			blueNoiseImage256;
 	idImage*			currentRenderHDRImage;
 	idImage*			ldrImage;						// tonemapped result which can be used for further post processing
-	idImage*			taaMotionVectorsImage;			// motion vectors for TAA projection
+	idImage*			taaMotionVectorsImage[2];		// motion vectors for TAA projection, doubled for VR
+	idImage*			taaFeedback1Image[2];
+	idImage*			taaFeedback2Image[2];
 	idImage*			taaResolvedImage;
-	idImage*			taaFeedback1Image;
-	idImage*			taaFeedback2Image;
 	idImage*			bloomRenderImage[2];
 	idImage*			envprobeHDRImage;
 	idImage*			envprobeDepthImage;
@@ -627,6 +627,11 @@ public:
 	idImage*			brdfLutImage;
 	idImage*			defaultUACIrradianceCube;
 	idImage*			defaultUACRadianceCube;
+
+	idImage*			vrPDAImage;						// copy target of LDR FBO for displaying menus and PDA onto the PDA model
+	idImage*			vrHUDImage;						// copy target of LDR FBO for displaying onto the 3D HUD model
+	idImage*			stereoRenderImages[2];
+	idImage*			hmdEyeImages[2];
 	// RB end
 	idImage* 			scratchImage;
 	idImage* 			scratchImage2;

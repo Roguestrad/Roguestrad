@@ -190,7 +190,7 @@ static drawSurf_t* R_TubeDeform( drawSurf_t* surf )
 	// we need the view direction to project the minor axis of the tube
 	// as the view changes
 	idVec3	localView;
-	R_GlobalPointToLocal( surf->space->modelMatrix, tr.viewDef->renderView.vieworg, localView );
+	R_GlobalPointToLocal( surf->space->modelMatrix, tr.viewDef->renderView.vieworg[STEREOPOS_MONO], localView );
 
 	// the srfTriangles_t are in frame memory and will be automatically disposed of
 	srfTriangles_t* newTri = ( srfTriangles_t* )R_ClearedFrameAlloc( sizeof( *newTri ), FRAME_ALLOC_SURFACE_TRIANGLES );
@@ -412,7 +412,7 @@ static drawSurf_t* R_FlareDeform( drawSurf_t* surf )
 
 	// if viewer is behind the plane, draw nothing
 	idVec3 localViewer;
-	R_GlobalPointToLocal( surf->space->modelMatrix, tr.viewDef->renderView.vieworg, localViewer );
+	R_GlobalPointToLocal( surf->space->modelMatrix, tr.viewDef->renderView.vieworg[STEREOPOS_MONO], localViewer );
 	float distFromPlane = localViewer * plane.Normal() + plane[3];
 	if( distFromPlane <= 0 )
 	{

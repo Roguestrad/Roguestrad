@@ -159,7 +159,7 @@ bool idRenderWorldLocal::CullEntityByPortals( const idRenderEntityLocal* entity,
 			// the entity frustum planes face inward, so the planes that have the
 			// view origin on the positive side will be the "back" faces of the entity,
 			// which must have some fragment inside the portal stack planes to be visible
-			if( frustumPlanes[i].Distance( tr.viewDef->renderView.vieworg ) <= 0.0f )
+			if( frustumPlanes[i].Distance( tr.viewDef->renderView.vieworg[STEREOPOS_CULLING] ) <= 0.0f )
 			{
 				continue;
 			}
@@ -301,7 +301,7 @@ bool idRenderWorldLocal::CullLightByPortals( const idRenderLightLocal* light, co
 			// the light frustum planes face inward, so the planes that have the
 			// view origin on the positive side will be the "back" faces of the light,
 			// which must have some fragment inside the the portal stack planes to be visible
-			if( frustumPlanes[i].Distance( tr.viewDef->renderView.vieworg ) <= 0.0f )
+			if( frustumPlanes[i].Distance( tr.viewDef->renderView.vieworg[STEREOPOS_CULLING] ) <= 0.0f )
 			{
 				continue;
 			}
@@ -817,7 +817,7 @@ void idRenderWorldLocal::FindViewLightsAndEntities()
 		// note that the center of projection for flowing through portals may
 		// be a different point than initialViewAreaOrigin for subviews that
 		// may have the viewOrigin in a solid/invalid area
-		FlowViewThroughPortals( tr.viewDef->renderView.vieworg, 5, tr.viewDef->frustums[FRUSTUM_PRIMARY] );
+		FlowViewThroughPortals( tr.viewDef->renderView.vieworg[STEREOPOS_CULLING], 5, tr.viewDef->frustums[FRUSTUM_PRIMARY] );
 	}
 }
 

@@ -757,6 +757,13 @@ bool Init( int windowWidth, int windowHeight )
 	g_DisplaySize.y = windowHeight;
 	io.DisplaySize = g_DisplaySize;
 
+
+	if( vrSystem->IsActive() )
+	{
+		// we use the full render resolution so compensate this by scaling up the fonts
+		io.FontGlobalScale = 1.25f;
+	}
+
 	// RB: FIXME double check
 	io.SetClipboardTextFn = SetClipboardText;
 	io.GetClipboardTextFn = GetClipboardText;

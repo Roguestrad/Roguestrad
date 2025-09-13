@@ -28,7 +28,6 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
-#include "../renderer/Image.h"
 #include "../renderer/DXT/DXTCodec.h"
 
 #pragma warning(disable: 4355) // 'this' : used in base member initializer list
@@ -125,6 +124,8 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	filename.ToLower();
 	filename.BackSlashesToSlashes();
 	filename.SetFileExtension( ".swf" );
+
+	isHUD = ( filename.Find( "hud", false ) != -1 );	// Leyland VR
 
 	timestamp = fileSystem->GetTimestamp( filename );
 
@@ -697,9 +698,8 @@ idSWF::GetPlatform
 */
 int	idSWF::GetPlatform()
 {
-
-
-	if( in_useJoystick.GetBool() || forceNonPCPlatform )
+	// Leyland VR
+	if( in_useJoystick.GetBool() || vrSystem->IsActive() || forceNonPCPlatform )
 	{
 		forceNonPCPlatform = false;
 		return 0;

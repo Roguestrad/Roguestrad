@@ -34,6 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "RenderCommon.h"
 #include "imgui.h"
 
+const float idGuiModel::STEREO_DEPTH_DISABLE = -1.0f; // Leyland VR
 const float idGuiModel::STEREO_DEPTH_NEAR = 0.0f;
 const float idGuiModel::STEREO_DEPTH_MID  = 0.5f;
 const float idGuiModel::STEREO_DEPTH_FAR  = 1.0f;
@@ -50,6 +51,15 @@ idGuiModel::idGuiModel()
 	{
 		shaderParms[i] = 1.0f;
 	}
+
+	// Leyland VR
+	viewEyeBuffer = 0;
+	mode = GUIMODE_SHELL;
+	vrShellActive = false;
+	vrShellNeedsUpdate = true;
+	vrShellOrigin.Zero();
+	vrShellAxis.Identity();
+	// Leyland end
 }
 
 /*
@@ -64,6 +74,123 @@ void idGuiModel::Clear()
 	surfaces.SetNum( 0 );
 	AdvanceSurf();
 }
+
+// Leyland VR
+/*
+================
+idGuiModel::SetViewEyeBuffer
+================
+*/
+void idGuiModel::SetViewEyeBuffer( int veb )
+{
+	if( veb == viewEyeBuffer )
+	{
+		return;
+	}
+	EmitFullScreen();
+	Clear();
+	viewEyeBuffer = veb;
+}
+
+/*
+================
+idGuiModel::SetMode
+================
+*/
+void idGuiModel::SetMode( guiMode_t a_mode )
+{
+	if( a_mode != mode )
+	{
+		EmitFullScreen();
+		Clear();
+	}
+	mode = a_mode;
+}
+
+/*
+================
+idGuiModel::UpdateVRShell
+================
+*/
+bool idGuiModel::UpdateVRShell()
+{
+	if( vr_seated.GetBool() )
+	{
+		vrShellOrigin = vrSystem->GetSeatedOrigin();
+		vrShellAxis = vrSystem->GetSeatedAxis();
+		return true;
+	}
+
+	vrShellNeedsUpdate = !vrSystem->GetHead( vrShellOrigin, vrShellAxis );
+	if( vrShellNeedsUpdate )
+	{
+		return false;
+	}
+
+	idVec3 forward;
+	if( vrShellAxis[0].z > 0.707f ) // head pitched up
+	{
+		forward = -vrShellAxis[2];
+	}
+	else if( vrShellAxis[0].z < -0.707f ) // head pitched down
+	{
+		forward = vrShellAxis[2];
+	}
+	else
+	{
+		forward = vrShellAxis[0];
+	}
+
+	static idVec3 up( 0, 0, 1 );
+	forward.ProjectOntoPlane( up );
+	forward.Normalize();
+	vrShellAxis = forward.ToMat3();
+
+	return true;
+}
+
+/*
+================
+idGuiModel::ActivateVRShell
+================
+*/
+void idGuiModel::ActivateVRShell( bool b )
+{
+	if( !vrShellActive && b )
+	{
+		vrShellNeedsUpdate = true;
+	}
+	vrShellActive = b;
+}
+
+/*
+================
+idGuiModel::GetVRShell
+================
+*/
+bool idGuiModel::GetVRShell( idVec3& origin, idMat3& axis )
+{
+	if( vrShellNeedsUpdate && !UpdateVRShell() )
+	{
+		return false;
+	}
+	origin = vrShellOrigin;
+	axis = vrShellAxis;
+	return true;
+}
+
+/*
+================
+idGuiModel::SetVRShell
+================
+*/
+void idGuiModel::SetVRShell( const idVec3& origin, const idMat3& axis )
+{
+	vrShellOrigin = origin;
+	vrShellAxis = axis;
+	vrShellNeedsUpdate = false;
+}
+// Leyland end
 
 /*
 ================
@@ -173,22 +300,62 @@ void idGuiModel::EmitSurfaces( float modelMatrix[16], float modelViewMatrix[16],
 			// override sort with the stereoDepth
 			//drawSurf->sort = stereoDepth;
 
+			// Leyland VR
+			float zoffset = 0;
+
+			static float zoffsetNone = 0;
+			static float zoffsetNear = 0;
+			static float zoffsetMid = 32;
+			static float zoffsetFar = 64;
+
 			switch( guiSurf.stereoType )
 			{
 				case STEREO_DEPTH_TYPE_NEAR:
 					drawSurf->sort = STEREO_DEPTH_NEAR;
+					zoffset = zoffsetNear;
 					break;
 				case STEREO_DEPTH_TYPE_MID:
 					drawSurf->sort = STEREO_DEPTH_MID;
+					zoffset = zoffsetMid;
 					break;
 				case STEREO_DEPTH_TYPE_FAR:
 					drawSurf->sort = STEREO_DEPTH_FAR;
+					zoffset = zoffsetFar;
+					break;
+				case STEREO_DEPTH_TYPE_DISABLE:
+					drawSurf->sort = STEREO_DEPTH_DISABLE;
 					break;
 				case STEREO_DEPTH_TYPE_NONE:
 				default:
 					drawSurf->sort = defaultStereoDepth;
+					zoffset = zoffsetNone;
 					break;
 			}
+
+			if( vrSystem->IsActive() )
+			{
+				int minIndex = indexPointer[guiSurf.firstIndex];
+				int maxIndex = minIndex;
+				int endIndex = guiSurf.firstIndex + guiSurf.numIndexes;
+				for( int j = guiSurf.firstIndex + 1; j < endIndex; j++ )
+				{
+					int index = indexPointer[j];
+					assert( index < numVerts );
+					if( index < minIndex )
+					{
+						minIndex = index;
+					}
+					if( index > maxIndex )
+					{
+						maxIndex = index;
+					}
+				}
+				for( int index = minIndex; index <= maxIndex; index++ )
+				{
+					vertexPointer[index].xyz.z -= zoffset;
+				}
+			}
+			// Leyland end
 		}
 	}
 }
@@ -230,7 +397,7 @@ void idGuiModel::EmitFullScreen( Framebuffer* renderTarget )
 	SCOPED_PROFILE_EVENT( "Gui::EmitFullScreen" );
 
 	viewDef_t* viewDef = ( viewDef_t* )R_ClearedFrameAlloc( sizeof( *viewDef ), FRAME_ALLOC_VIEW_DEF );
-	viewDef->is2Dgui = true;
+	viewDef->guiMode = mode;
 
 	if( renderTarget )
 	{
@@ -245,7 +412,7 @@ void idGuiModel::EmitFullScreen( Framebuffer* renderTarget )
 		tr.GetCroppedViewport( &viewDef->viewport );
 	}
 
-	bool stereoEnabled = false; //( renderSystem->GetStereo3DMode() != STEREO3D_OFF );
+	bool stereoEnabled = vrSystem->IsActive();
 	if( stereoEnabled )
 	{
 		const float screenSeparation = GetScreenSeparationForGuis();
@@ -254,7 +421,9 @@ void idGuiModel::EmitFullScreen( Framebuffer* renderTarget )
 		viewDef->renderView.stereoScreenSeparation = screenSeparation;
 
 		extern idCVar stereoRender_swapEyes;
-		viewDef->renderView.viewEyeBuffer = 0;	// render to both buffers
+#if VR_EMITSTEREO
+		viewDef->renderView.viewEyeBuffer = viewEyeBuffer;
+#endif
 		if( stereoRender_swapEyes.GetBool() )
 		{
 			viewDef->renderView.stereoScreenSeparation = -screenSeparation;
@@ -330,8 +499,9 @@ void idGuiModel::EmitFullScreen( Framebuffer* renderTarget )
 
 	tr.viewDef = viewDef;
 
+	// Leyland VR: link as entity
 	EmitSurfaces( viewDef->worldSpace.modelMatrix, viewDef->worldSpace.modelViewMatrix,
-				  false /* depthHack */ , stereoEnabled /* stereoDepthSort */, false /* link as entity */ );
+				  false /* depthHack */ , stereoEnabled /* stereoDepthSort */, true /* link as entity */ );
 
 	tr.viewDef = oldViewDef;
 
@@ -383,6 +553,16 @@ void idGuiModel::EmitImGui( ImDrawData* drawData )
 				0.0f,
 				1.0f
 			};
+
+			// RB: just use the full view for now in VR mode instead of transforming
+			// the scissor in the renderer backend into the new GUIMODE_* target rectangle
+			if( vrSystem->IsActive() )
+			{
+				clipRect.x1 = 0;
+				clipRect.y1 = io.DisplaySize.y;
+				clipRect.x2 = io.DisplaySize.x;
+				clipRect.y2 = 0;
+			}
 
 			idDrawVert* verts = AllocTris( numVerts, indexBufferOffset, numIndexes, mat, tr.currentGLState, STEREO_DEPTH_TYPE_NONE, clipRect );
 			if( verts == NULL )

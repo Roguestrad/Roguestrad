@@ -1921,9 +1921,10 @@ renderView_t* idEntity::GetRenderView()
 	}
 	memset( renderView, 0, sizeof( *renderView ) );
 
-	renderView->vieworg = GetPhysics()->GetOrigin();
-	renderView->fov_x = 120;
-	renderView->fov_y = 120;
+	renderView->vieworg[STEREOPOS_MONO] = GetPhysics()->GetOrigin();
+
+	// Leyland VR: new FOV definition
+	renderView->SetFovXY( 120, 120 );
 	renderView->viewaxis = GetPhysics()->GetAxis();
 
 	// copy global shader parms

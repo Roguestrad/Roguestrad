@@ -567,7 +567,7 @@ struct viewDef_t
 	bool				isXraySubview;
 
 	bool				isEditor;
-	bool				is2Dgui;
+	guiMode_t			guiMode;	// Leyland VR
 
 	bool                isObliqueProjection;    // true if this view has an oblique projection
 	int					numClipPlanes;			// mirrors will often use a single clip plane
@@ -693,6 +693,7 @@ struct copyRenderCommand_t
 {
 	renderCommand_t		commandId;
 	renderCommand_t* 	next;
+	int					viewEyeBuffer;// Leyland VR
 	int					x;
 	int					y;
 	int					imageWidth;
@@ -898,6 +899,7 @@ public:
 	virtual void			SetColor( const idVec4& color );
 	virtual uint32			GetColor();
 	virtual void			SetGLState( const uint64 glState ) ;
+	virtual void			SetStereoDepth( enum stereoDepthType_t );// Leyland VR
 	virtual void			DrawFilled( const idVec4& color, float x, float y, float w, float h );
 	virtual void			DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial* material, float z = 0.0f );
 	virtual void			DrawStretchPic( const idVec4& topLeft, const idVec4& topRight, const idVec4& bottomRight, const idVec4& bottomLeft, const idMaterial* material, float z = 0.0f );
@@ -991,6 +993,7 @@ public:
 	const idMaterial* 		defaultPointLight;
 	const idMaterial* 		defaultProjectedLight;
 	const idMaterial* 		defaultMaterial;
+	const idDeclSkin* 		vrSkin;// Leyland VR
 	idImage* 				testImage;
 	idCinematic* 			testVideo;
 	int						testVideoStartTime;
@@ -1010,6 +1013,7 @@ public:
 	int						guiRecursionLevel;		// to prevent infinite overruns
 	uint32					currentColorNativeBytesOrder;
 	uint64					currentGLState;
+	enum stereoDepthType_t	currentStereoDepth;// Leyland VR
 	class idGuiModel* 		guiModel;
 
 	idList<idFont*, TAG_FONT>		fonts;
@@ -1199,9 +1203,6 @@ extern idCVar r_debugPolygonFilled;
 extern idCVar r_materialOverride;			// override all materials
 
 extern idCVar r_debugRenderToTexture;
-
-extern idCVar stereoRender_enable;
-extern idCVar stereoRender_deGhost;			// subtract from opposite eye to reduce ghosting
 
 // RB begin
 extern idCVar r_useGPUSkinning;
@@ -1755,6 +1756,40 @@ void RB_SetVertexColorParms( stageVertexColor_t svc );
 
 
 
+/*
+=============================================================
+
+VR
+
+=============================================================
+*/
+
+#include "../vr/VRSystem.h"
+
+class idDeclSkinVR : public idDeclSkin
+{
+public:
+	idDeclSkinVR()
+	{
+		base = &idDeclNullSkinBase::instance;
+
+		const idMaterial* nodraw = declManager->FindMaterial( "textures/common/nodraw" );
+
+		skinMapping_t map;
+
+		map.from = declManager->FindMaterial( "models/characters/player/arm2" );
+		map.to = nodraw;
+		mappings.Append( map );
+
+		map.from = declManager->FindMaterial( "models/weapons/berserk/fist" );
+		map.to = nodraw;
+		mappings.Append( map );
+
+		map.from = declManager->FindMaterial( "models/weapons/hands/hand" );
+		map.to = nodraw;
+		mappings.Append( map );
+	}
+};
 
 //=============================================
 

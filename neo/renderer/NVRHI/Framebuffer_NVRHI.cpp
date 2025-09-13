@@ -151,10 +151,12 @@ void Framebuffer::ResizeFramebuffers( bool reloadImages )
 			nvrhi::FramebufferDesc()
 			.addColorAttachment( globalImages->currentRenderImage->texture ) );
 
-	globalFramebuffers.taaMotionVectorsFBO = new Framebuffer( "_taaMotionVectors",
-			nvrhi::FramebufferDesc()
-			.addColorAttachment( globalImages->taaMotionVectorsImage->texture ) );
-
+	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
+	{
+		globalFramebuffers.taaMotionVectorsFBO[i] = new Framebuffer( va( "_taaMotionVectors%i", i ),
+				nvrhi::FramebufferDesc()
+				.addColorAttachment( globalImages->taaMotionVectorsImage[i]->texture ) );
+	}
 	globalFramebuffers.taaResolvedFBO = new Framebuffer( "_taaResolved",
 			nvrhi::FramebufferDesc()
 			.addColorAttachment( globalImages->taaResolvedImage->texture ) );
@@ -214,6 +216,29 @@ void Framebuffer::ResizeFramebuffers( bool reloadImages )
 			nvrhi::FramebufferDesc()
 			.addColorAttachment( globalImages->accumImage->texture ) );
 
+	if( vrSystem->IsActive() )
+	{
+		globalFramebuffers.vrPDAFBO = new Framebuffer( "_vrPDA",
+				nvrhi::FramebufferDesc()
+				.addColorAttachment( globalImages->vrPDAImage->texture ) );
+
+		globalFramebuffers.vrHUDFBO = new Framebuffer( "_vrHUD",
+				nvrhi::FramebufferDesc()
+				.addColorAttachment( globalImages->vrHUDImage->texture ) );
+
+		for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
+		{
+			globalFramebuffers.vrStereoFBO[i] = new Framebuffer( va( "_stereoRender%i", i ),
+					nvrhi::FramebufferDesc()
+					.addColorAttachment( globalImages->stereoRenderImages[i]->texture ) );
+
+			globalFramebuffers.vrHmdEyeFBO[i] = new Framebuffer( va( "_hmdEye%i", i ),
+					nvrhi::FramebufferDesc()
+					.addColorAttachment( globalImages->hmdEyeImages[i]->texture )
+					.setDepthAttachment( globalImages->currentDepthImage->texture ) );
+		}
+	}
+
 	Framebuffer::Unbind();
 }
 
@@ -230,9 +255,13 @@ void Framebuffer::ReloadImages()
 	}
 	globalImages->hierarchicalZbufferImage->Reload( false, backEnd.commandList );
 	globalImages->gbufferNormalsRoughnessImage->Reload( false, backEnd.commandList );
-	globalImages->taaMotionVectorsImage->Reload( false, backEnd.commandList );
-	globalImages->taaFeedback1Image->Reload( false, backEnd.commandList );
-	globalImages->taaFeedback2Image->Reload( false, backEnd.commandList );
+
+	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
+	{
+		globalImages->taaMotionVectorsImage[i]->Reload( false, backEnd.commandList );
+		globalImages->taaFeedback1Image[i]->Reload( false, backEnd.commandList );
+		globalImages->taaFeedback2Image[i]->Reload( false, backEnd.commandList );
+	}
 	globalImages->taaResolvedImage->Reload( false, backEnd.commandList );
 
 	globalImages->smaaInputImage->Reload( false, backEnd.commandList );
@@ -250,6 +279,19 @@ void Framebuffer::ReloadImages()
 	}
 	globalImages->guiEdit->Reload( false, backEnd.commandList );
 	globalImages->accumImage->Reload( false, backEnd.commandList );
+
+	if( vrSystem->IsActive() )
+	{
+		globalImages->vrPDAImage->Reload( false, backEnd.commandList );
+		globalImages->vrHUDImage->Reload( false, backEnd.commandList );
+
+		for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
+		{
+			globalImages->stereoRenderImages[i]->Reload( false, backEnd.commandList );
+			globalImages->hmdEyeImages[i]->Reload( false, backEnd.commandList );
+		}
+	}
+
 	backEnd.commandList->close();
 	deviceManager->GetDevice()->executeCommandList( backEnd.commandList );
 }

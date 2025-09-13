@@ -229,6 +229,8 @@ void idCommonLocal::DrawLoadPacifierProgressbar()
 		return;
 	}
 
+	tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
+
 	float loadPacifierProgress = float( loadPacifierCount ) / loadPacifierExpectedCount;
 
 	// draw our basic overlay
@@ -266,6 +268,7 @@ void idCommonLocal::Draw()
 		// (we want to see progress of the loading gui binarize too)
 		if( loadGUI != NULL )
 		{
+			tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
 			loadGUI->Render( renderSystem, Sys_Milliseconds() );
 		}
 
@@ -274,6 +277,8 @@ void idCommonLocal::Draw()
 
 		if( loadPacifierBinarizeActive )
 		{
+			tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
+
 			// update our progress estimates
 			int time = Sys_Milliseconds();
 			if( loadPacifierBinarizeProgress > 0.0f )
@@ -313,12 +318,15 @@ void idCommonLocal::Draw()
 	}
 	else if( loadGUI != NULL )
 	{
+		tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
+
 		// foresthale 2014-05-30: showing a black background looks better than flickering in widescreen
 		renderSystem->SetColor( colorBlack );
 		renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
 
 		loadGUI->Render( renderSystem, Sys_Milliseconds() );
 	}
+		tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
 	else if( game && game->Shell_IsActive() )
 	{
 		bool gameDraw = game->Draw( game->GetLocalClientNum() );
@@ -361,18 +369,26 @@ void idCommonLocal::Draw()
 		SCOPED_PROFILE_EVENT( "Post-Draw" );
 
 		// draw Imgui before the console
+		tr.guiModel->SetMode( GUIMODE_HUD );
+		tr.guiModel->SetViewEyeBuffer( 0 );
 		ImGuiHook::Render();
 
 		// draw the wipe material on top of this if it hasn't completed yet
 		DrawWipeModel();
 
+		tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
 		Dialog().Render( loadGUI != NULL );
 
 		// draw the half console / notify console on top of everything
+		tr.guiModel->SetMode( GUIMODE_HUD ); // Leyland VR
+		tr.guiModel->SetViewEyeBuffer( 0 );
 		console->Draw( false );
 
 		// old CRT TV simulation has to be last or it breaks the immersion
-		renderSystem->DrawCRTPostFX();
+		if( !vrSystem->IsActive() )
+		{
+			renderSystem->DrawCRTPostFX();
+		}
 	}
 }
 
@@ -427,10 +443,30 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 idCommonLocal::ProcessGameReturn
 ================
 */
+idCVar vr_hapticScale( "vr_hapticScale", "0.1", CVAR_FLOAT | CVAR_ARCHIVE | CVAR_NEW, "" );
+idCVar vr_hapticMax( "vr_hapticMax", "3999", CVAR_INTEGER | CVAR_NEW, "0 - 3999, for debug purposes" );
 void idCommonLocal::ProcessGameReturn( const gameReturn_t& ret )
 {
 	// set joystick rumble
-	if( in_useJoystick.GetBool() && in_joystickRumble.GetBool() && !game->Shell_IsActive() && session->GetSignInManager().GetMasterInputDevice() >= 0 )
+	// Leyland VR
+	if( vrSystem->IsActive() && !vrSystem->IsSeated() && !game->Shell_IsActive() )
+	{
+		int leftDur = vr_hapticScale.GetFloat() * ret.vibrationLow;
+		if( leftDur > vr_hapticMax.GetInteger() )
+		{
+			leftDur = vr_hapticMax.GetInteger();
+		}
+
+		int rightDur = vr_hapticScale.GetFloat() * ret.vibrationHigh;
+		if( rightDur > vr_hapticMax.GetInteger() )
+		{
+			rightDur = vr_hapticMax.GetInteger();
+		}
+
+		vrSystem->HapticPulse( leftDur, rightDur );
+	}
+	// Leyland end
+	else if( in_useJoystick.GetBool() && in_joystickRumble.GetBool() && !game->Shell_IsActive() && session->GetSignInManager().GetMasterInputDevice() >= 0 )
 	{
 		Sys_SetRumble( session->GetSignInManager().GetMasterInputDevice(), ret.vibrationLow, ret.vibrationHigh );		// Only set the rumble on the active controller
 	}
@@ -535,9 +571,25 @@ void idCommonLocal::Frame()
 		{
 			// RB: don't release the mouse when opening a PDA or menu
 			// SRS - but always release at main menu after exiting game or demo
-			if( console->Active() || !mapSpawned || ImGuiTools::ReleaseMouseForTools() )
+			if( vrSystem->IsActive() )
 			{
-				Sys_GrabMouseCursor( false );
+				// RB: translating absolute mouse coords is broken with the tiny window in VR mode
+				// only leave the window when the console is open
+				if( console->Active() )
+				{
+					Sys_GrabMouseCursor( false );
+				}
+				else
+				{
+					Sys_GrabMouseCursor( true );
+				}
+			}
+			else
+			{
+				if( console->Active() || !mapSpawned || ImGuiTools::ReleaseMouseForTools() )
+				{
+					Sys_GrabMouseCursor( false );
+				}
 			}
 			usercmdGen->InhibitUsercmd( INHIBIT_SESSION, true );
 			chatting = true;
@@ -625,7 +677,6 @@ void idCommonLocal::Frame()
 		int numGameFrames = 0;
 
 		{
-
 			OPTICK_CATEGORY( "Wait for Frame", Optick::Category::Wait );
 
 			for( ;; )
@@ -689,6 +740,12 @@ void idCommonLocal::Frame()
 
 				if( numGameFrames > 0 )
 				{
+					// // Leyland VR: debt forgiveness
+					//if( gameTimeResidual < frameDelay / 4.0f )
+					//{
+					//	gameTimeResidual = 0;
+					//}
+
 					// ready to actually run them
 					break;
 				}

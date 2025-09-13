@@ -29,6 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
+idDeclNullSkinBase idDeclNullSkinBase::instance; // Leyland VR
 
 /*
 =================
@@ -207,3 +208,70 @@ const idMaterial* idDeclSkin::RemapShaderBySkin( const idMaterial* shader ) cons
 	// didn't find a match or wildcard, so stay the same
 	return shader;
 }
+
+// Leyland VR
+/*
+===============
+idDeclSkinWrapper::idDeclSkinWrapper
+===============
+*/
+idDeclSkinWrapper::idDeclSkinWrapper()
+{
+	base = &idDeclNullSkinBase::instance;
+	wrapper = NULL;
+	wrapped = NULL;
+}
+
+/*
+===============
+idDeclSkinWrapper::RemapShaderBySkin
+===============
+*/
+const idMaterial* idDeclSkinWrapper::RemapShaderBySkin( const idMaterial* shader ) const
+{
+	if( wrapper )
+	{
+		const idMaterial* result = wrapper->RemapShaderBySkin( shader );
+		if( result != shader )
+		{
+			return result;
+		}
+	}
+
+	if( wrapped )
+	{
+		return wrapped->RemapShaderBySkin( shader );
+	}
+
+	// didn't find a match or wildcard, so stay the same
+	return shader;
+}
+
+/*
+===============
+idDeclSkinWrapper::SetWrapper
+===============
+*/
+void idDeclSkinWrapper::SetWrapper( const idDeclSkin* skin )
+{
+	wrapper = skin;
+}
+
+/*
+===============
+idDeclSkinWrapper::SetWrapped
+===============
+*/
+void idDeclSkinWrapper::SetWrapped( const idDeclSkin* skin )
+{
+	wrapped = skin;
+	if( wrapped )
+	{
+		base = skin->base;
+	}
+	else
+	{
+		base = &idDeclNullSkinBase::instance;
+	}
+}
+// Leyland end

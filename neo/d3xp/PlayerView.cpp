@@ -255,6 +255,13 @@ which will determine the head kick direction
 */
 void idPlayerView::DamageImpulse( idVec3 localKickDir, const idDict* damageDef )
 {
+	// Leyland VR
+	if( vrSystem->IsActive() )
+	{
+		return;
+	}
+	// Leyland end
+
 	//
 	// double vision effect
 	//
@@ -348,6 +355,13 @@ Called when a weapon fires, generates head twitches, etc
 */
 void idPlayerView::WeaponFireFeedback( const idDict* weaponDef )
 {
+	// Leyland VR
+	if( vrSystem->IsActive() )
+	{
+		return;
+	}
+	// Leyland end
+
 	int recoilTime = weaponDef->GetInt( "recoilTime" );
 	// don't shorten a damage kick in progress
 	if( recoilTime && kickFinishTime < gameLocal.slow.time )
@@ -435,27 +449,39 @@ void idPlayerView::SingleView( const renderView_t* view, idMenuHandler_HUD* hudM
 		return;
 	}
 
+	// Leyland VR
+	// everything here gets drawn twice in stereoscopic and needs to know which buffer.
+#if VR_EMITSTEREO
+	tr.guiModel->SetViewEyeBuffer( view->viewEyeBuffer );
+#endif
+
 	// place the sound origin for the player
-	gameSoundWorld->PlaceListener( view->vieworg, view->viewaxis, player->entityNumber + 1 );
+	gameSoundWorld->PlaceListener( view->vieworg[STEREOPOS_MONO], view->viewaxis, player->entityNumber + 1 );
 
 	// if the objective system is up, don't do normal drawing
 	if( player->objectiveSystemOpen )
 	{
 		if( player->pdaMenu != NULL )
 		{
+			tr.guiModel->SetMode( GUIMODE_SHELL );
 			player->pdaMenu->Update();
 		}
+
+		tr.guiModel->SetViewEyeBuffer( 0 );
 		return;
 	}
 
 	// hack the shake in at the very last moment, so it can't cause any consistency problems
 	renderView_t hackedView = *view;
-	hackedView.viewaxis = hackedView.viewaxis * ShakeAxis();
+	if( !vrSystem->IsActive() )
+	{
+		hackedView.viewaxis = hackedView.viewaxis * ShakeAxis();
+	}
 
 	if( gameLocal.portalSkyEnt.GetEntity() && gameLocal.IsPortalSkyAcive() && g_enablePortalSky.GetBool() )
 	{
 		renderView_t portalView = hackedView;
-		portalView.vieworg = gameLocal.portalSkyEnt.GetEntity()->GetPhysics()->GetOrigin();
+		portalView.vieworg[STEREOPOS_MONO] = gameLocal.portalSkyEnt.GetEntity()->GetPhysics()->GetOrigin();
 		gameRenderWorld->RenderScene( &portalView );
 		renderSystem->CaptureRenderToImage( "_currentRender" );
 
@@ -463,10 +489,12 @@ void idPlayerView::SingleView( const renderView_t* view, idMenuHandler_HUD* hudM
 	}
 
 	// process the frame
+	tr.guiModel->SetMode( GUIMODE_FULLSCREEN );
 	fxManager->Process( &hackedView );
 
 	if( !hudManager )
 	{
+		tr.guiModel->SetViewEyeBuffer( 0 );
 		return;
 	}
 
@@ -497,10 +525,13 @@ void idPlayerView::SingleView( const renderView_t* view, idMenuHandler_HUD* hudM
 				}
 			}
 		}
+
+		tr.guiModel->SetMode( GUIMODE_HUD );
 		player->DrawHUD( hudManager );
 
 		if( player->spectating )
 		{
+			tr.guiModel->SetViewEyeBuffer( 0 );
 			return;
 		}
 
@@ -548,15 +579,23 @@ void idPlayerView::SingleView( const renderView_t* view, idMenuHandler_HUD* hudM
 
 		if( bfgVision )
 		{
+			tr.guiModel->SetMode( GUIMODE_FULLSCREEN );
+			float extend = -0.5f * vrSystem->GetScreenSeparation() * renderSystem->GetVirtualWidth();
+#if VR_EMITSTEREO
+			float offset = -extend * view->viewEyeBuffer;
+#else
+			// RB TODO
+			float offset = 0.0f;
+#endif
 			renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f );
-			renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, 0.0f, 1.0f, 1.0f, bfgMaterial );
+			renderSystem->DrawStretchPic( offset - extend, 0.0f, renderSystem->GetVirtualWidth() + extend * 2, renderSystem->GetVirtualHeight(), 0.0f, 0.0f, 1.0f, 1.0f, bfgMaterial );
 		}
-
 	}
 
 	// test a single material drawn over everything
 	if( g_testPostProcess.GetString()[0] )
 	{
+		tr.guiModel->SetMode( GUIMODE_FULLSCREEN );
 		const idMaterial* mtr = declManager->FindMaterial( g_testPostProcess.GetString(), false );
 		if( !mtr )
 		{
@@ -569,6 +608,9 @@ void idPlayerView::SingleView( const renderView_t* view, idMenuHandler_HUD* hudM
 			renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, 0.0f, 1.0f, 1.0f, mtr );
 		}
 	}
+
+	tr.guiModel->SetViewEyeBuffer( 0 );
+	// Leyland end
 }
 
 
@@ -687,11 +729,10 @@ float CentimetersToWorldUnits( const float cm )
 float	CalculateWorldSeparation(
 	const float screenSeparation,
 	const float convergenceDistance,
-	const float fov_x_degrees )
+	const float fov_right )
 {
 
-	const float fovRadians = DEG2RAD( fov_x_degrees );
-	const float screen = tan( fovRadians * 0.5f ) * fabs( screenSeparation );
+	const float screen = fov_right * fabs( screenSeparation );
 	const float worldSeparation = screen * convergenceDistance / 0.5f;
 
 	return worldSeparation;
@@ -701,22 +742,29 @@ stereoDistances_t	CaclulateStereoDistances(
 	const float	interOcularCentimeters,		// distance between two eyes, typically 6.0 - 7.0
 	const float screenWidthCentimeters,		// read from operating system
 	const float convergenceWorldUnits,		// pass 0 for head mounted display mode
-	const float	fov_x_degrees )  			// edge to edge horizontal field of view, typically 60 - 90
+	const float	fov_right )  				// edge to edge horizontal field of view, typically 60 - 90
 {
 
 	stereoDistances_t	dists = {};
 
-	if( convergenceWorldUnits == 0.0f )
+	// Leyland VR
+	if( convergenceWorldUnits == 0.0f || vrSystem->IsActive() )
 	{
 		// head mounted display mode
-		dists.worldSeparation = CentimetersToInches( interOcularCentimeters * 0.5 );
-		dists.screenSeparation = 0.0f;
+		dists.worldSeparation = vrSystem->GetHalfIPD();// CentimetersToInches( interOcularCentimeters * 0.5 );
+		dists.screenSeparation = vrSystem->GetScreenSeparation();
+
+		idVec4 fov = vrSystem->GetFOV( 1 );
+		float tanRoverN = Max( fov.x, fov.y );
+		dists.combinedSeperation = dists.worldSeparation * ( 1.0f / tanRoverN );
+
 		return dists;
 	}
+	// Leyland end
 
 	// 3DTV mode
 	dists.screenSeparation = 0.5f * interOcularCentimeters / screenWidthCentimeters;
-	dists.worldSeparation = CalculateWorldSeparation( dists.screenSeparation, convergenceWorldUnits, fov_x_degrees );
+	dists.worldSeparation = CalculateWorldSeparation( dists.screenSeparation, convergenceWorldUnits, fov_right );
 
 	return dists;
 }
@@ -724,10 +772,10 @@ stereoDistances_t	CaclulateStereoDistances(
 float	GetScreenSeparationForGuis()
 {
 	const stereoDistances_t dists = CaclulateStereoDistances(
-										stereoRender_interOccularCentimeters.GetFloat(),
+										vrSystem->GetHalfIPD() * 2.0f,
 										renderSystem->GetPhysicalScreenWidthInCentimeters(),
 										stereoRender_convergence.GetFloat(),
-										80.0f /* fov */ );
+										tan( 80.0f * 0.5f * idMath::M_DEG2RAD ) /* fov */ ); // Leyland VR
 
 	return dists.screenSeparation;
 }
@@ -747,16 +795,71 @@ void idPlayerView::EmitStereoEyeView( const int eye, idMenuHandler_HUD* hudManag
 
 	renderView_t eyeView = *view;
 
+	// Leyland VR
+	if( vrSystem->IsActive() )
+	{
+		const int targetEye = ( eye == 1 ) ? 1 : 0;
+		eyeView.SetFov( vrSystem->GetFOV( targetEye ) );
+	}
+
+	// first chance update of VR head tracking
+	idVec3 vrHeadOrigin;
+	idMat3 vrHeadAxis;
+	if( player->usercmd.vrHasHead && vrSystem->GetHead( vrHeadOrigin, vrHeadAxis ) )
+	{
+		idVec3 vrDeltaOrigin = ( vrHeadOrigin - player->usercmd.vrHeadOrigin ) * eyeView.vrMoveAxis;
+		idMat3 vrDeltaAxis = vrHeadAxis * player->usercmd.vrHeadAxis.Inverse();
+
+		eyeView.vieworg[STEREOPOS_MONO] += vrDeltaOrigin;
+		eyeView.viewaxis = vrDeltaAxis * eyeView.viewaxis;
+		eyeView.vrHeadOrigin = vrHeadOrigin;
+		eyeView.vrHeadAxis = vrHeadAxis;
+	}
+
 	const stereoDistances_t dists = CaclulateStereoDistances(
-										stereoRender_interOccularCentimeters.GetFloat(),
+										vrSystem->GetHalfIPD() * 2.0f,
 										renderSystem->GetPhysicalScreenWidthInCentimeters(),
 										stereoRender_convergence.GetFloat(),
-										view->fov_x );
+										view->GetFovRight() );
 
-	eyeView.vieworg += eye * dists.worldSeparation * eyeView.viewaxis[1];
+	if( vrSystem->IsActive() )
+	{
+#if VR_EMITSTEREO
+		eyeView.vieworg[STEREOPOS_LEFT] = eyeView.vieworg[STEREOPOS_MONO] + ( 1 * dists.worldSeparation ) * eyeView.viewaxis[1];
+		eyeView.vieworg[STEREOPOS_RIGHT] = eyeView.vieworg[STEREOPOS_MONO] + ( -1 * dists.worldSeparation ) * eyeView.viewaxis[1];
 
-	eyeView.viewEyeBuffer = stereoRender_swapEyes.GetBool() ? eye : -eye;
-	eyeView.stereoScreenSeparation = eye * dists.screenSeparation;
+		if( eye == 1 )
+		{
+			eyeView.vieworg[STEREOPOS_MONO] = eyeView.vieworg[STEREOPOS_LEFT];
+		}
+		else
+		{
+			eyeView.vieworg[STEREOPOS_MONO] = eyeView.vieworg[STEREOPOS_RIGHT];
+		}
+		eyeView.vieworg[STEREOPOS_CULLING] = eyeView.vieworg[STEREOPOS_MONO];
+
+		eyeView.viewEyeBuffer = stereoRender_swapEyes.GetBool() ? eye : -eye;
+		//eyeView.viewEyeBuffer = -eye;
+#else
+		eyeView.vieworg[STEREOPOS_LEFT] = eyeView.vieworg[STEREOPOS_MONO] + ( 1 * dists.worldSeparation ) * eyeView.viewaxis[1];
+		eyeView.vieworg[STEREOPOS_RIGHT] = eyeView.vieworg[STEREOPOS_MONO] + ( -1 * dists.worldSeparation ) * eyeView.viewaxis[1];
+
+		// offset view origin for combined frustum
+		// see formular https://github.com/RobertBeckebans/RBDOOM-3-BFG/issues/878
+		eyeView.vieworg[STEREOPOS_CULLING] = eyeView.vieworg[STEREOPOS_MONO] - ( dists.combinedSeperation * eyeView.viewaxis[0] );
+
+		//eyeView.vieworg[STEREOPOS_MONO] += eye * vrSystem->GetHalfIPD() * eyeView.viewaxis[1];
+#endif
+
+		// we are using fov instead
+		eyeView.stereoScreenSeparation = 0.0f;
+	}
+	else
+	{
+		eyeView.vieworg[STEREOPOS_MONO] += eye * dists.worldSeparation * eyeView.viewaxis[1];
+		eyeView.stereoScreenSeparation = eye * dists.screenSeparation;
+	}
+	// Leyland end
 
 	SingleView( &eyeView, hudManager );
 }
@@ -770,7 +873,7 @@ The crosshair is swapped for a laser sight in stereo rendering
 */
 bool	IsGameStereoRendered()
 {
-	return false;
+	return vrSystem->IsActive();
 }
 
 int EyeForHalfRateFrame( const int frameCount )
@@ -783,23 +886,95 @@ int EyeForHalfRateFrame( const int frameCount )
 idPlayerView::RenderPlayerView
 ===================
 */
+// Leyland VR
+idCVar vr_cinematicMode( "vr_cinematicMode", "0", CVAR_BOOL | CVAR_ARCHIVE | CVAR_NEW, "Adds a black frame around cinematics." );
+idCVar vr_blink( "vr_blink", "1", CVAR_FLOAT | CVAR_ARCHIVE | CVAR_NEW, "Darkens the screen when head bumps walls and objects." );
+// Leyland end
+
 void idPlayerView::RenderPlayerView( idMenuHandler_HUD* hudManager )
 {
 	const renderView_t* view = player->GetRenderView();
-#if 0
-	if( renderSystem->GetStereo3DMode() != STEREO3D_OFF )
+	if( vrSystem->IsActive() )
 	{
+		int eye = 0;
+
 		// render both eye views each frame on the PC
-		for( int eye = 1 ; eye >= -1 ; eye -= 2 )
+#if VR_EMITSTEREO
+		for( eye = 1 ; eye >= -1 ; eye -= 2 )
+#endif
 		{
 			EmitStereoEyeView( eye, hudManager );
 		}
 	}
 	else
-#endif
 	{
-		SingleView( view, hudManager );
+		renderView_t eyeView = *view;
+
+		eyeView.vieworg[STEREOPOS_RIGHT] = eyeView.vieworg[STEREOPOS_MONO];
+		eyeView.vieworg[STEREOPOS_LEFT] = eyeView.vieworg[STEREOPOS_MONO];
+		eyeView.vieworg[STEREOPOS_CULLING] = eyeView.vieworg[STEREOPOS_MONO];
+
+		SingleView( &eyeView, hudManager );
 	}
+
+	// Leyland VR
+	if( gameLocal.inCinematic && vr_cinematicMode.GetBool() )
+	{
+		tr.guiModel->SetMode( GUIMODE_SHELL );
+		renderSystem->SetColor4( 0, 0, 0, 255 );
+
+		int width = renderSystem->GetVirtualWidth();
+		int height = renderSystem->GetVirtualHeight();
+		int blockwidth = width * 4;
+		int blockheight = height * 4;
+
+		renderSystem->DrawStretchPic(
+			-blockwidth, -blockheight,
+			blockwidth, blockheight,
+			0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
+		renderSystem->DrawStretchPic(
+			0, -blockheight,
+			width, blockheight,
+			0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
+		renderSystem->DrawStretchPic(
+			width, -blockheight,
+			blockwidth, blockheight,
+			0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
+
+		renderSystem->DrawStretchPic(
+			-blockwidth, 0,
+			blockwidth, height,
+			0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
+		renderSystem->DrawStretchPic(
+			width, 0,
+			blockwidth, height,
+			0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
+
+		renderSystem->DrawStretchPic(
+			-blockwidth, height,
+			blockwidth, blockheight,
+			0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
+		renderSystem->DrawStretchPic(
+			0, height,
+			width, blockheight,
+			0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
+		renderSystem->DrawStretchPic(
+			width, height,
+			blockwidth, blockheight,
+			0.0f, 0.0f, 1.0f, 1.0f, declManager->FindMaterial( "_white" ) );
+
+		renderSystem->SetGLState( 0 );
+	}
+
+	if( vr_blink.GetFloat() > 0.f && player->ShouldBlink() )
+	{
+		Fade( idVec4( 0, 0, 0, vr_blink.GetFloat() ), 0 );
+		Fade( idVec4( 0, 0, 0, 0 ), 33 );
+	}
+
+	tr.guiModel->SetMode( GUIMODE_FULLSCREEN );
+	// Leyland end
+
 	ScreenFade();
 }
 
@@ -1351,6 +1526,13 @@ void FullscreenFX_Warp::HighQuality()
 	center.x = renderSystem->GetVirtualWidth() / 2.0f;
 	center.y = renderSystem->GetVirtualHeight() / 2.0f;
 	radius = 200;
+
+	// Leyland VR
+	if( vrSystem->IsActive() )
+	{
+		center.x += renderSystem->GetVirtualWidth() * vrSystem->GetScreenSeparation() * tr.guiModel->GetViewEyeBuffer() * 0.5;
+	}
+	// Leyland end
 
 	for( float i = 0; i < 360; i += STEP )
 	{
@@ -1932,6 +2114,10 @@ void FullscreenFXManager::Process( const renderView_t* view )
 		return;
 	}
 
+	// Leyland VR
+	renderSystem->SetStereoDepth( STEREO_DEPTH_TYPE_DISABLE );
+	// Leyland end
+
 	// do the process
 	for( int i = 0; i < fx.Num(); i++ )
 	{
@@ -1974,6 +2160,10 @@ void FullscreenFXManager::Process( const renderView_t* view )
 			Blendback( pfx->GetFadeAlpha() );
 		}
 	}
+
+	// Leyland VR
+	renderSystem->SetStereoDepth( STEREO_DEPTH_TYPE_NONE );
+	// Leyland end
 }
 
 

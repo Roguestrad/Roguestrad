@@ -919,7 +919,7 @@ void idRenderModelGLTF::DrawJoints( const struct renderEntity_s* ent, const view
 	bounds.FromTransformedBounds( ent->bounds, vec3_zero, ent->axis );
 	common->RW()->DebugBounds( colorMagenta, bounds, ent->origin );
 
-	if( ( r_jointNameScale.GetFloat() != 0.0f ) && ( bounds.Expand( 128.0f ).ContainsPoint( view->renderView.vieworg - ent->origin ) ) )
+	if( ( r_jointNameScale.GetFloat() != 0.0f ) && ( bounds.Expand( 128.0f ).ContainsPoint( view->renderView.vieworg[STEREOPOS_MONO] - ent->origin ) ) )
 	{
 		idVec3	offset( 0, 0, r_jointNameOffset.GetFloat() );
 		float	scale;

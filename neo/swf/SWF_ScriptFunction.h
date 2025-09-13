@@ -263,9 +263,13 @@ private:
 
 	struct ActionBlock
 	{
-		ActionBlock*		parent = NULL;
+		ActionBlock*		parent;
 		idStr				line;
 		idList<ActionBlock>	blocks;
+		ActionBlock()
+		{
+			parent = NULL;
+		}
 	};
 	idList<ActionBlock>		actionBlocks;
 	ActionBlock*			currentBlock;

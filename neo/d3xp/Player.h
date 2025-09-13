@@ -260,6 +260,24 @@ typedef struct
 	idVec3	pos;
 } aasLocation_t;
 
+// Leyland VR
+enum slotIndex_t
+{
+	SLOT_NONE = -1,
+	SLOT_LEFT_HIP,
+	SLOT_RIGHT_HIP,
+	SLOT_RIGHT_BACK_BOTTOM,
+	SLOT_RIGHT_BACK_TOP,
+	SLOT_COUNT
+};
+
+struct slot_t
+{
+	idVec3 origin;
+	float radiusSq;
+};
+// Leyland end
+
 class idPlayer : public idActor
 {
 public:
@@ -288,6 +306,16 @@ public:
 
 	renderEntity_t			laserSightRenderEntity;	// replace crosshair for 3DTV
 	qhandle_t				laserSightHandle;
+
+	// Leyland VR
+	renderEntity_t			pdaRenderEntity;					// used to present a model to the renderer
+	qhandle_t				pdaModelDefHandle;					// handle to static renderer model
+
+	renderEntity_t			holsterRenderEntity;					// used to present a model to the renderer
+	qhandle_t				holsterModelDefHandle;					// handle to static renderer model
+	idMat3					holsterAxis;
+	int						holsteredWeapon;
+	// Leyland end
 
 	bool					noclip;
 	bool					godmode;
@@ -427,6 +455,25 @@ public:
 	idVec3					firstPersonViewOrigin;
 	idMat3					firstPersonViewAxis;
 
+	// Leyland VR
+	idVec3					flashlightOrigin;
+	idMat3					flashlightAxis;
+
+	idVec3					hmdOrigin;
+	idMat3					hmdAxis;
+
+	idVec3					leftHandOrigin;
+	idMat3					leftHandAxis;
+	slotIndex_t				leftHandSlot;
+
+	idVec3					rightHandOrigin;
+	idMat3					rightHandAxis;
+	slotIndex_t				rightHandSlot;
+
+	idVec3					waistOrigin;
+	idMat3					waistAxis;
+	// Leyland end
+
 	idDragEntity			dragEntity;
 
 	idFuncMountedObject*		mountedObject;
@@ -450,6 +497,14 @@ public:
 
 	void					Spawn();
 	void					Think();
+
+	void					SetupPDASlot();
+	void					FreePDASlot();
+	void					UpdatePDASlot();
+
+	void					SetupHolsterSlot();
+	void					FreeHolsterSlot();
+	void					UpdateHolsterSlot();
 
 	void					UpdateLaserSight();
 
@@ -492,6 +547,8 @@ public:
 
 	// Controller Shake
 	void					ControllerShakeFromDamage( int damage );
+	void					ControllerShakeFromDamage( int damage, const idVec3& dir ); // Leyland VR
+	void					SetControllerShake( float magnitude, int duration, const idVec3& direction ); // Leyland VR
 	void					SetControllerShake( float highMagnitude, int highDuration, float lowMagnitude, int lowDuration );
 	void					ResetControllerShake();
 	void					GetControllerShake( int& highMagnitude, int& lowMagnitude ) const;
@@ -527,6 +584,16 @@ public:
 	renderView_t* 			GetRenderView();
 	void					CalculateRenderView();	// called every tic by player code
 	void					CalculateFirstPersonView();
+
+	// Leyland VR
+	bool					ShouldBlink();
+
+	void					CalculateWaist();
+	void					CalculateLeftHand();
+	void					CalculateRightHand();
+
+	bool					CalculateVRView( idVec3& origin, idMat3& axis, bool overridePitch );
+	// Leyland end
 
 	void					AddChatMessage( int index, int alpha, const idStr& message );
 	void					UpdateSpectatingText();
@@ -591,6 +658,11 @@ public:
 	void					ClearPowerUps();
 	bool					PowerUpActive( int powerup ) const;
 	float					PowerUpModifier( int type );
+
+	// Leyland VR
+	bool					LeftImpulseSlot();
+	bool					RightImpulseSlot();
+	// Leyland end
 
 	int						SlotForWeapon( const char* weaponName );
 	void					Reload();
@@ -809,6 +881,13 @@ public:
 	{
 		return previousWeapon;
 	}
+	
+	// Leyland VR
+	const idMat3&			GetVRFaceForward()
+	{
+		return vrFaceForward;
+	}
+	// Leyland end
 private:
 	// Stats & achievements
 	idAchievementManager	achievementManager;
@@ -840,6 +919,16 @@ private:
 	int						landChange;
 	int						landTime;
 
+	// Leyland VR
+	bool					hasCameraFirstFrame;
+	idVec3					lastHeadOrigin;
+	idMat3					lastHeadAxisInv;
+
+	bool					hadBodyYaw;
+	float					oldBodyYaw;
+
+	idMat3					vrFaceForward;
+	// Leyland end
 
 	int						currentWeapon;
 	idPredictedValue< int >	idealWeapon;

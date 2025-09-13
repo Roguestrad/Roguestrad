@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2016 Leyland Needham
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -40,6 +41,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 // usercmd_t->button bits
+// these can be pressed simutanously
 const int BUTTON_ATTACK			= BIT( 0 );
 const int BUTTON_RUN			= BIT( 1 );
 const int BUTTON_ZOOM			= BIT( 2 );
@@ -49,19 +51,26 @@ const int BUTTON_JUMP			= BIT( 5 );
 const int BUTTON_CROUCH			= BIT( 6 );
 const int BUTTON_CHATTING		= BIT( 7 );
 
+// Leyland VR
+const int BUTTON_LEFT_GRAB		= BIT( 8 );
+const int BUTTON_RIGHT_GRAB		= BIT( 9 );
+const int BUTTON_RECENTER		= BIT( 10 );
+// Leyland end
+
 // usercmd_t->impulse commands
+// only one impulse event for each usercmd_t
 const int IMPULSE_0				= 0;			// weap 0
-const int IMPULSE_1				= 1;			// weap 1
+const int IMPULSE_1				= 1;			// weap 1 Carl: grabber
 const int IMPULSE_2				= 2;			// weap 2
 const int IMPULSE_3				= 3;			// weap 3
-const int IMPULSE_4				= 4;			// weap 4
+const int IMPULSE_4				= 4;			// weap 4 Carl: double barreled shotgun
 const int IMPULSE_5				= 5;			// weap 5
 const int IMPULSE_6				= 6;			// weap 6
 const int IMPULSE_7				= 7;			// weap 7
 const int IMPULSE_8				= 8;			// weap 8
 const int IMPULSE_9				= 9;			// weap 9
 const int IMPULSE_10			= 10;			// weap 10
-const int IMPULSE_11			= 11;			// weap 11
+const int IMPULSE_11			= 11;			// weap 11 Carl: single barreled shotgun
 const int IMPULSE_12			= 12;			// weap 12
 const int IMPULSE_13			= 13;			// weap reload
 const int IMPULSE_14			= 14;			// weap next
@@ -71,6 +80,7 @@ const int IMPULSE_18			= 18;			// center view
 const int IMPULSE_19			= 19;			// show PDA/SCORES
 const int IMPULSE_22			= 22;			// spectate
 const int IMPULSE_25			= 25;			// Envirosuit light
+const int IMPULSE_26			= 26;			// Carl: Fists
 const int IMPULSE_27			= 27;			// Chainsaw
 const int IMPULSE_28			= 28;			// quick 0
 const int IMPULSE_29			= 29;			// quick 1
@@ -92,18 +102,22 @@ public:
 		mx(),
 		my(),
 		pos( 0.0f, 0.0f, 0.0f ),
-		speedSquared( 0.0f )
+		speedSquared( 0.0f ),
+		vrHeadOrigin( 0, 0, 0 )
 	{
 		angles[0] = 0;
 		angles[1] = 0;
 		angles[2] = 0;
+		vrHasHead = false;
+		vrHasLeftController = false;
+		vrHasRightController = false;
 	}
 
 	// Syncronized
 	short		angles[3];						// view angles
 	signed char	forwardmove;					// forward/backward movement
 	signed char	rightmove;						// left/right movement
-	byte		buttons;						// buttons
+	uint16		buttons;						// buttons
 	int			clientGameMilliseconds;			// time this usercmd was sent from the client
 	int			serverGameMilliseconds;			// interpolated server time this was applied on
 	uint16		fireCount;						// number of times we've fired
@@ -118,6 +132,19 @@ public:
 	// Clients are authoritative on their positions
 	idVec3		pos;
 	float		speedSquared;
+
+	// Leyland VR
+	bool		vrHasHead;
+	idMat3		vrHeadAxis;
+	idVec3		vrHeadOrigin;
+
+	bool		vrHasLeftController;
+	idMat3		vrLeftControllerAxis;
+	idVec3		vrLeftControllerOrigin;
+	bool		vrHasRightController;
+	idMat3		vrRightControllerAxis;
+	idVec3		vrRightControllerOrigin;
+	// Leyland end
 
 public:
 	void		Serialize( class idSerializer& s, const usercmd_t& base );
@@ -151,6 +178,7 @@ typedef enum
 	UB_ZOOM,
 	UB_SHOWSCORES,
 	UB_USE,
+	UB_RECENTER,	// Leyland VR
 
 	UB_IMPULSE0,
 	UB_IMPULSE1,

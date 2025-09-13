@@ -253,6 +253,28 @@ keyname_t keynames[] =
 	NAMEKEY2( JOY_TRIGGER1 ),
 	NAMEKEY2( JOY_TRIGGER2 ),
 
+	// Leyland VR
+	NAMEKEY2( VR_LEFT_MENU ),
+	NAMEKEY2( VR_LEFT_DPAD_LEFT ),
+	NAMEKEY2( VR_LEFT_DPAD_UP ),
+	NAMEKEY2( VR_LEFT_DPAD_RIGHT ),
+	NAMEKEY2( VR_LEFT_DPAD_DOWN ),
+	NAMEKEY2( VR_LEFT_AXIS ),
+	NAMEKEY2( VR_LEFT_TRIGGER ),
+	NAMEKEY2( VR_LEFT_GRIP ),
+	NAMEKEY2( VR_LEFT_A ),
+
+	NAMEKEY2( VR_RIGHT_MENU ),
+	NAMEKEY2( VR_RIGHT_DPAD_LEFT ),
+	NAMEKEY2( VR_RIGHT_DPAD_UP ),
+	NAMEKEY2( VR_RIGHT_DPAD_RIGHT ),
+	NAMEKEY2( VR_RIGHT_DPAD_DOWN ),
+	NAMEKEY2( VR_RIGHT_AXIS ),
+	NAMEKEY2( VR_RIGHT_TRIGGER ),
+	NAMEKEY2( VR_RIGHT_GRIP ),
+	NAMEKEY2( VR_RIGHT_A ),
+	// Leyland end
+
 	//------------------------
 	// Aliases to make it easier to bind or to support old configs
 	//------------------------
@@ -546,6 +568,21 @@ Key_Unbindall_f
 void Key_Unbindall_f( const idCmdArgs& args )
 {
 	for( int i = 0; i < K_LAST_KEY; i++ )
+	{
+		idKeyInput::SetBinding( i, "" );
+	}
+}
+
+/*
+===================
+Leyland VR
+
+Key_Unbindallvr_f
+===================
+*/
+void Key_Unbindallvr_f( const idCmdArgs& args )
+{
+	for( int i = K_VR_FIRST_KEY; i <= K_VR_LAST_KEY; i++ )
 	{
 		idKeyInput::SetBinding( i, "" );
 	}
@@ -947,6 +984,9 @@ void idKeyInput::Init()
 	cmdSystem->AddCommand( "unbind", Key_Unbind_f, CMD_FL_SYSTEM, "unbinds any command from a key", idKeyInput::ArgCompletion_KeyName );
 	cmdSystem->AddCommand( "unbindall", Key_Unbindall_f, CMD_FL_SYSTEM, "unbinds any commands from all keys" );
 	cmdSystem->AddCommand( "listBinds", Key_ListBinds_f, CMD_FL_SYSTEM, "lists key bindings" );
+
+	// Leyland VR
+	cmdSystem->AddCommand( "unbindallvr", Key_Unbindallvr_f, CMD_FL_SYSTEM, "unbinds any commands from vr keys" );
 }
 
 /*
