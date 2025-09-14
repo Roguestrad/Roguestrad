@@ -1,4 +1,4 @@
-include(../compileshaders.cmake)
+include(compileshaders.cmake)
 
 file(GLOB globalshaders "BRDF.inc.hlsl" "global_inc.hlsl" "vulkan.hlsli")
 file(GLOB builtins "builtin/*.hlsl")
@@ -35,7 +35,7 @@ if(STANDALONE)
     compile_shaders_all_platforms(
         TARGET Shaders
         CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/shaders.cfg
-        OUTPUT_BASE ${CMAKE_CURRENT_SOURCE_DIR}/../../content/renderprogs2
+        OUTPUT_BASE ${CMAKE_CURRENT_SOURCE_DIR}/../../../content/renderprogs2
         SHADER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
         SOURCES ${shaders}
     )
@@ -43,7 +43,7 @@ else()
     compile_shaders_all_platforms(
         TARGET Shaders
         CONFIG ${CMAKE_CURRENT_SOURCE_DIR}/shaders.cfg
-        OUTPUT_BASE ${CMAKE_CURRENT_SOURCE_DIR}/../../mod_icedhellfire/renderprogs2 # This path scheme is a bit odd.
+        OUTPUT_BASE ${CMAKE_CURRENT_SOURCE_DIR}/../../../mod_icedhellfire/renderprogs2 # This path scheme is a bit odd.
         SHADER_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}
         SOURCES ${shaders}
     )

@@ -1634,7 +1634,7 @@ endif()
 target_link_libraries(${APP_NAME} nvrhi)
 target_link_libraries(${APP_NAME} ShaderMakeBlob ${MASKED_OCCLUSION_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
 
-add_subdirectory(shaders)
+add_subdirectory(engine/shaders)
 add_dependencies(Shaders ShaderMake)
 add_dependencies(${APP_NAME} Shaders ${MASKED_OCCLUSION_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
 
