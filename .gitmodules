@@ -1,12 +1,12 @@
 [submodule "neo/extern/nvrhi"]
-	path = neo/extern/nvrhi
+	path = code/extern/nvrhi
 	url = https://github.com/RobertBeckebans/nvrhi.git
 [submodule "neo/extern/ShaderMake"]
-	path = neo/extern/ShaderMake
+	path = code/extern/ShaderMake
 	url = https://github.com/RobertBeckebans/ShaderMake.git	
 [submodule "neo/extern/imgui-node-editor"]
-	path = neo/extern/imgui-node-editor
+	path = code/extern/imgui-node-editor
 	url = https://github.com/RobertBeckebans/imgui-node-editor.git
 [submodule "neo/extern/openvr"]
-	path = neo/extern/openvr
+	path = code/extern/openvr
 	url = https://github.com/ValveSoftware/openvr.git
