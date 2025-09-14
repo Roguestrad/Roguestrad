@@ -83,6 +83,12 @@ set(ID_PRECOMPILED_SOURCES ${ID_SOURCES_ALL})
 list(REMOVE_ITEM ID_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/geometry/RenderMatrix.cpp)
 list(REMOVE_ITEM ID_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/SoftwareCache.cpp)
 
+include_directories(
+	.
+	../libs/lua/src
+	../libs/luawrapper
+)
+
 if(MSVC)
     list(REMOVE_ITEM ID_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precompiled.cpp)
 
@@ -97,12 +103,10 @@ if(MSVC)
             PROPERTIES
             COMPILE_FLAGS "/Yuprecompiled.h"
             OBJECT_DEPENDS "precompiled.pch"
-            )
+           )			
 
     add_library(idlib ${ID_SOURCES_ALL} ${ID_INCLUDES_ALL})
 else()
-
-	include_directories(.)
 
 	if (USE_PRECOMPILED_HEADERS)
 		foreach( src_file ${ID_PRECOMPILED_SOURCES} )

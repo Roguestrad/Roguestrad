@@ -3,7 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2013 Robert Beckebans
+Copyright (C) 2013-2015 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -34,15 +34,18 @@ If you have questions concerning this license or the applicable additional terms
 #include "SWF_Bitstream.h"
 // RB begin
 #include "SWF_File.h"
+#include "../libs/lua/src/lua.hpp"
+extern "C"
+{
+#include "../libs/luasocket/src/luasocket.h"
+}
 // RB end
-#include "SWF_ScriptVar.h"
-#include "SWF_Sprites.h"
-#include "SWF_ScriptObject.h"
-#include "SWF_ParmList.h"
-#include "SWF_ScriptFunction.h"
-#include "SWF_SpriteInstance.h"
-#include "SWF_ShapeParser.h"
-#include "SWF_TextInstance.h"
+
+class idSWFShape;
+class idSWFSprite;
+class idSWFFont;
+class idSWFText;
+class idSWFEditText;
 
 class idSWFDictionaryEntry
 {
@@ -67,6 +70,15 @@ public:
 	idVec4				channelScale;
 };
 
+#include "SWF_ScriptVar.h"
+#include "SWF_Sprites.h"
+#include "SWF_ScriptObject.h"
+#include "SWF_ParmList.h"
+#include "SWF_ScriptFunction.h"
+#include "SWF_SpriteInstance.h"
+#include "SWF_ShapeParser.h"
+#include "SWF_TextInstance.h"
+
 struct purgableSwfImage_t
 {
 	purgableSwfImage_t()
@@ -86,7 +98,7 @@ This class handles loading and rendering SWF files
 class idSWF
 {
 public:
-	idSWF( const char* filename, idSoundWorld* soundWorld, bool exportJSON = false, bool exportSWF = false );
+	idSWF( const char* filename, idSoundWorld* soundWorld, bool exportJSON = false, bool exportSWF = false, bool exportSVG = false );
 	~idSWF();
 
 	bool	IsLoaded()
@@ -135,10 +147,7 @@ public:
 		inhibitControl = val;
 	}
 
-	void SetGlobal( const char* name, const idSWFScriptVar& value )
-	{
-		globals->Set( name, value );
-	}
+	void SetGlobal( const char* name, const idSWFScriptVar& value ); // RB: added Lua hook
 	void SetGlobalNative( const char* name, idSWFScriptNativeVariable* native )
 	{
 		globals->SetNative( name, native );
@@ -407,8 +416,8 @@ private:
 	void			Metadata( idSWFBitStream& bitstream );
 	void			SetBackgroundColor( idSWFBitStream& bitstream );
 
-	void			LoadXML( const char* filename );
-	void			WriteXML( const char* filename );
+	void			LoadSVG( const char* filename );
+	void			WriteSVG( const char* filename );
 
 	bool			LoadJSON( const char* filename );
 	void			WriteJSON( const char* filename );
@@ -529,10 +538,35 @@ public:
 	// RB begin
 	static const char* GetDictTypeName( swfDictType_t type );
 	static const char* GetEditTextAlignName( swfEditTextAlign_t align );
+	const char*		   GetFontName( int fontID );
+	const char*		   GetBlendModeName( uint8 blendMode );
 	// RB end
 	static const char* GetTagName( swfTag_t tag );
 	static const char* GetActionName( swfAction_t action );
 
+	// RB: LUA INTEGRATION
+	static void*				LuaAlloc( void* ud, void* ptr, size_t osize, size_t nsize );
+	static int					LuaPanic( lua_State* L );
+
+public:
+	lua_State*					GetLuaState() const
+	{
+		return luaState;
+	}
+
+private:
+	static int					LuaNativeScriptFunctionCall( lua_State* L );
+	static int					LuaGlobalVarCallback( lua_State* L );
+	static idSWFSpriteInstance* luaSpriteInstance;
+	static inline void			SetLuaSpriteInstance( idSWFSpriteInstance* spriteInstance )
+	{
+		luaSpriteInstance = spriteInstance;
+	}
+
+	lua_State*					luaState;
+	// RB end
 };
+
+void lua_printstack( lua_State* L );
 
 #endif // !__SWF_H__

@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2015 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -193,6 +194,7 @@ public:
 		uint32 dataLength;
 	};
 	idList< swfAction_t, TAG_SWF > actions;
+	idList< swfAction_t, TAG_SWF > luaActions;
 
 	idSWFScriptFunction_Script* actionScript;
 
@@ -232,12 +234,28 @@ public:
 	void					SwapDepths( int depth1, int depth2 );
 
 	void					DoAction( idSWFBitStream& bitstream );
+	void					DoLua( idSWFBitStream& bitstream ); // RB
 
 	idSWFSpriteInstance* 	FindChildSprite( const char* childName );
 	idSWFSpriteInstance* 	ResolveTarget( const char* targetName );
 	uint32					FindFrame( const char* frameLabel ) const;
 	bool					FrameExists( const char* frameLabel ) const;
 	bool					IsBetweenFrames( const char* frameLabel1, const char* frameLabel2 ) const;
+
+	// RB begin
+	static int				Lua_new( lua_State* L );
+	static int				Lua_gc( lua_State* L );
+	static int				Lua_index( lua_State* L );
+	static int				Lua_newindex( lua_State* L );
+	static int				Lua_tostring( lua_State* L );
+
+	static int				Lua_stop( lua_State* L );
+	static int				Lua_play( lua_State* L );
+	static int				Lua_gotoAndPlay( lua_State* L );
+	static int				Lua_gotoAndStop( lua_State* L );
+
+	static int				LuaRegister_idSWFSpriteInstance( lua_State* L );
+	// RB end
 };
 
 /*

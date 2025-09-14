@@ -61,6 +61,57 @@ const char* idSWF::GetEditTextAlignName( swfEditTextAlign_t align )
 			return "????";
 	}
 }
+
+const char* idSWF::GetFontName( int fontID )
+{
+	idSWFDictionaryEntry* fontEntry = FindDictionaryEntry( fontID, SWF_DICT_FONT );
+	if( fontEntry == NULL )
+	{
+		idLib::Warning( "idSWF::RenderEditText: NULL Font" );
+		return "Arial"; // Fallback
+	}
+
+	idSWFFont* swfFont = fontEntry->font;
+
+	return swfFont->fontID->GetName();
+}
+
+const char* idSWF::GetBlendModeName( uint8 blendMode )
+{
+	switch( blendMode )
+	{
+		case 1:
+			return "normal";
+		case 2:
+			return "layer";
+		case 3:
+			return "multiply";
+		case 4:
+			return "screen";
+		case 5:
+			return "lighten";
+		case 6:
+			return "darken";
+		case 7:
+			return "difference";
+		case 8:
+			return "add"; // or "overlay" depending on context
+		case 9:
+			return "subtract";
+		case 10:
+			return "invert";
+		case 11:
+			return "alpha";
+		case 12:
+			return "erase";
+		case 13:
+			return "overlay";
+		case 14:
+			return "hardlight";
+		default:
+			return "normal";
+	}
+}
 // RB end
 
 /*

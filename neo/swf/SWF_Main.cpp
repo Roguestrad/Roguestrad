@@ -32,11 +32,14 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma warning(disable: 4355) // 'this' : used in base member initializer list
 
-idCVar swf_loadBinary( "swf_loadBinary", "1", CVAR_INTEGER, "used to set whether to load binary swf from generated" );
+idCVar swf_loadBinary( "swf_loadBinary", "1", CVAR_BOOL, "used to set whether to load binary swf from generated" );
+
+idCVar swf_debugScript( "swf_debugScript", "", CVAR_INIT | CVAR_ROM | CVAR_NEW, "name of script or Lua instance that should connect to remote debugger" );
 
 int idSWF::mouseX = -1;
 int idSWF::mouseY = -1;
 bool idSWF::isMouseInClientArea = false;
+idSWFSpriteInstance* idSWF::luaSpriteInstance = NULL;
 
 extern idCVar in_useJoystick;
 
@@ -47,9 +50,8 @@ extern idCVar in_useJoystick;
 idSWF::idSWF
 ===================
 */
-idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON, bool exportSWF )
+idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON, bool exportSWF, bool exportSVG )
 {
-
 	atlasMaterial = NULL;
 
 	swfScale = 1.0f;
@@ -144,9 +146,15 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	bool loadedFromJSON = false;
 	if( swf_loadBinary.GetBool() )
 	{
-		if( timestamp == FILE_NOT_FOUND_TIMESTAMP )
+		if( jsonSourceTime != FILE_NOT_FOUND_TIMESTAMP )
 		{
 			timestamp = jsonSourceTime;
+		}
+
+		// don't binarize stuff on export
+		if( exportJSON || exportSWF )
+		{
+			timestamp = FILE_NOT_FOUND_TIMESTAMP;
 		}
 
 		if( !LoadBinary( binaryFileName, timestamp ) )
@@ -184,6 +192,15 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 		WriteJSON( jsonFileName );
 	}
 
+	if( exportSVG )
+	{
+		idStr svgFileName = "exported/";
+		svgFileName += filename;
+		svgFileName.SetFileExtension( ".svg" );
+
+		WriteSVG( svgFileName );
+	}
+
 	idStr atlasFileName = binaryFileName;
 	atlasFileName.SetFileExtension( ".png" );
 	atlasMaterial = declManager->FindMaterial( atlasFileName );
@@ -192,7 +209,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	int atlasExportImageWidth = 0;
 	int atlasExportImageHeight = 0;
 
-	if( /*!loadedFromJSON &&*/ ( exportJSON || exportSWF ) )
+	if( /*!loadedFromJSON &&*/ ( exportJSON || exportSWF || exportSVG ) )
 	{
 		// try loading the TGA first
 		ID_TIME_T timestamp;
@@ -347,6 +364,25 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	}
 	// RB end
 
+	// RB: Lua
+	const bool initLua = !exportJSON && !exportSWF;
+
+	lua_State* L = luaState = NULL;
+	if( initLua )
+	{
+		L = luaState = lua_newstate( LuaAlloc, NULL );
+		if( L )
+		{
+			lua_atpanic( L, &LuaPanic );
+		}
+
+		luaL_openlibs( L );
+		luaopen_socket_core( L ); // for remote debugging
+
+		idSWFSpriteInstance::LuaRegister_idSWFSpriteInstance( L );
+	}
+
+	// RB: also use globals->Set to register functions into the Lua state
 	globals = idSWFScriptObject::Alloc();
 	globals->Set( "_global", globals );
 
@@ -360,21 +396,24 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	scriptFunction_shortcutKeys_clear.Call( shortcutKeys, idSWFParmList() );
 	globals->Set( "shortcutKeys", shortcutKeys );
 
-	globals->Set( "deactivate", scriptFunction_deactivate.Bind( this ) );
-	globals->Set( "inhibitControl", scriptFunction_inhibitControl.Bind( this ) );
-	globals->Set( "useInhibit", scriptFunction_useInhibit.Bind( this ) );
-	globals->Set( "precacheSound", scriptFunction_precacheSound.Bind( this ) );
-	globals->Set( "playSound", scriptFunction_playSound.Bind( this ) );
-	globals->Set( "stopSounds", scriptFunction_stopSounds.Bind( this ) );
-	globals->Set( "getPlatform", scriptFunction_getPlatform.Bind( this ) );
-	globals->Set( "getTruePlatform", scriptFunction_getTruePlatform.Bind( this ) );
-	globals->Set( "getLocalString", scriptFunction_getLocalString.Bind( this ) );
-	globals->Set( "swapPS3Buttons", scriptFunction_swapPS3Buttons.Bind( this ) );
-	globals->Set( "_root", mainspriteInstance->scriptObject );
-	globals->Set( "strReplace", scriptFunction_strReplace.Bind( this ) );
-	globals->Set( "getCVarInteger", scriptFunction_getCVarInteger.Bind( this ) );
-	globals->Set( "setCVarInteger", scriptFunction_setCVarInteger.Bind( this ) );
+	SetGlobal( "deactivate", scriptFunction_deactivate.Bind( this ) );
+	SetGlobal( "inhibitControl", scriptFunction_inhibitControl.Bind( this ) );
+	SetGlobal( "useInhibit", scriptFunction_useInhibit.Bind( this ) );
+	SetGlobal( "precacheSound", scriptFunction_precacheSound.Bind( this ) );
+	SetGlobal( "playSound", scriptFunction_playSound.Bind( this ) );
+	SetGlobal( "stopSounds", scriptFunction_stopSounds.Bind( this ) );
+	SetGlobal( "getPlatform", scriptFunction_getPlatform.Bind( this ) );
+	SetGlobal( "getTruePlatform", scriptFunction_getTruePlatform.Bind( this ) );
+	SetGlobal( "getLocalString", scriptFunction_getLocalString.Bind( this ) );
+	SetGlobal( "swapPS3Buttons", scriptFunction_swapPS3Buttons.Bind( this ) );
 
+	// TODO probably don't do this in Lua case and make it an __index
+	SetGlobal( "_root", mainspriteInstance->scriptObject );
+	SetGlobal( "strReplace", scriptFunction_strReplace.Bind( this ) );
+	SetGlobal( "getCVarInteger", scriptFunction_getCVarInteger.Bind( this ) );
+	SetGlobal( "setCVarInteger", scriptFunction_setCVarInteger.Bind( this ) );
+
+	// TODO check if we need these below for Lua
 	globals->Set( "acos", scriptFunction_acos.Bind( this ) );
 	globals->Set( "cos", scriptFunction_cos.Bind( this ) );
 	globals->Set( "sin", scriptFunction_sin.Bind( this ) );
@@ -392,6 +431,66 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	globals->SetNative( "cropToHeight", swfScriptVar_crop.Bind( this ) );
 	globals->SetNative( "cropToFit", swfScriptVar_crop.Bind( this ) );
 	globals->SetNative( "crop", swfScriptVar_crop.Bind( this ) );
+
+	if( initLua )
+	{
+		//ID_TIME_T luaTimestamp;
+		idStr luaFileName = filename;
+		luaFileName.SetFileExtension( ".lua" );
+
+		char* luaSrc;
+
+		int luaLen = fileSystem->ReadFile( luaFileName, ( void** ) &luaSrc );
+		if( luaSrc != NULL )
+		{
+			int result = luaL_loadbuffer( L, luaSrc, luaLen, luaFileName );
+			if( result == LUA_ERRSYNTAX )
+			{
+				idLib::Error( "Compile of file %s failed: %s ", luaFileName.c_str(), lua_tostring( L, -1 ) );
+				lua_pop( L, 1 );
+			}
+
+			fileSystem->FreeFile( luaSrc );
+
+			lua_printstack( L );
+
+			if( lua_pcall( L, 0, 0, NULL ) )
+			{
+				const char* functionName = lua_tostring( L, -1 );
+				idLib::Error( "Cannot pcall: %s", functionName );
+				lua_pop( L, 1 );
+			}
+
+			lua_printstack( L );
+
+			// start remote debugging
+			if( idStr::Icmp( swf_debugScript.GetString(), luaFileName ) == 0 )
+			{
+				lua_getglobal( L, "start_remote_debugger" ); // ... ( function | nil )
+
+				if( lua_isfunction( L, -1 ) )
+				{
+					int status = lua_pcall( L, 0, 0, NULL );
+					if( status != 0 )
+					{
+						idLib::Warning( "idSWF( %s ): error running function: swf_load\n", luaFileName.c_str(), lua_tostring( L, -1 ) );
+
+						// remove warning from stack
+						lua_pop( L, 1 ); // ...
+					}
+				}
+				else
+				{
+					// ... nil
+					lua_pop( L, 1 ); // ...
+				}
+			}
+		}
+
+		lua_printstack( L );
+	}
+	// RB end
+
 
 	// Do this to touch any external references (like sounds)
 	// But disable script warnings because many globals won't have been created yet
@@ -499,6 +598,73 @@ bool idSWF::InhibitControl()
 	}
 	return ( inhibitControl && useInhibtControl );
 }
+
+
+// RB begin
+void idSWF::SetGlobal( const char* name, const idSWFScriptVar& value )
+{
+	globals->Set( name, value );
+
+	if( luaState && ( value.IsFunction() || value.IsObject() || value.IsNumeric() ) )
+	{
+		lua_State* L = luaState;
+
+		if( value.IsNumeric() )
+		{
+#if 1
+			if( value.GetType() == idSWFScriptVar::SWF_VAR_BOOL )
+			{
+				bool b = value.ToBool();
+
+				lua_pushboolean( L, b );
+				lua_pushcclosure( L, LuaGlobalVarCallback, 1 );
+				lua_setglobal( L, name );
+			}
+			else if( value.GetType() == idSWFScriptVar::SWF_VAR_INTEGER )
+			{
+				int n = value.ToInteger();
+
+				lua_pushnumber( L, n );
+				lua_pushcclosure( L, LuaGlobalVarCallback, 1 );
+				lua_setglobal( L, name );
+			}
+			else if( value.GetType() == idSWFScriptVar::SWF_VAR_FLOAT )
+			{
+				float f = value.ToFloat();
+
+				lua_pushnumber( L, f );
+				lua_pushcclosure( L, LuaGlobalVarCallback, 1 );
+				lua_setglobal( L, name );
+			}
+
+			//lua_printstack( L );
+#endif
+		}
+		else if( value.IsFunction() ) //|| value.IsObject() )
+		{
+			lua_getglobal( L, name ); // ... ( function | nil )
+
+			if( lua_isfunction( L, -1 ) )
+			{
+				// already added
+			}
+			else
+			{
+				// ... nil
+				lua_pop( L, 1 ); // ...
+
+				// http://stackoverflow.com/questions/2907221/get-the-lua-command-when-a-c-function-is-called
+
+				lua_pushstring( L, name );
+				lua_pushcclosure( L, LuaNativeScriptFunctionCall, 1 );
+				lua_setglobal( L, name );
+			}
+		}
+
+		//lua_printstack( L );
+	}
+}
+// RB end
 
 /*
 ===================
@@ -1004,7 +1170,7 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 		}
 	}
 
-	idFileList* files = fileSystem->ListFilesTree( "generated", ".bswf", true, true );
+	idFileList* files = fileSystem->ListFilesTree( "generated/swf", ".bswf", true, true );
 
 	for( int f = 0; f < files->GetList().Num(); f++ )
 	{
@@ -1018,17 +1184,9 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 		}
 #endif
 
-		/*
-		idFileLocal bFile = fileSystem->OpenFileRead( bswfName );
-		if( bFile == NULL )
-		{
-			continue;
-		}
-		*/
-
 		bswfName.StripLeadingOnce( "generated/" );
 
-		idSWF* swf = new idSWF( bswfName, NULL, true, true ); //exportSWF );
+		idSWF* swf = new idSWF( bswfName, NULL, true, true, true ); //exportSWF );
 		delete swf;
 	}
 

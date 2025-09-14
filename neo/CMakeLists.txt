@@ -649,6 +649,108 @@ file(GLOB SWF_SOURCES swf/*.cpp)
 
 file(GLOB VR_INCLUDES vr/*.h)
 file(GLOB VR_SOURCES vr/*.cpp)
+
+set(LUA_INCLUDES
+	libs/lua/src/lapi.h
+	libs/lua/src/lauxlib.h
+	libs/lua/src/lcode.h
+	libs/lua/src/lctype.h
+	libs/lua/src/ldebug.h
+	libs/lua/src/ldo.h
+	libs/lua/src/lfunc.h
+	libs/lua/src/lgc.h
+	libs/lua/src/llex.h
+	libs/lua/src/llimits.h
+	libs/lua/src/lmem.h
+	libs/lua/src/lobject.h
+	libs/lua/src/lopcodes.h
+	libs/lua/src/lparser.h
+	libs/lua/src/lstate.h
+	libs/lua/src/lstring.h
+	libs/lua/src/ltable.h
+	libs/lua/src/ltm.h
+	libs/lua/src/lua.h
+	libs/lua/src/luaconf.h
+	libs/lua/src/lualib.h
+	libs/lua/src/lundump.h
+	libs/lua/src/lvm.h
+	libs/lua/src/lzio.h
+	libs/lua/src/lua.hpp
+	)
+	
+set(LUA_SOURCES
+	libs/lua/src/lapi.c
+	libs/lua/src/lauxlib.c
+	libs/lua/src/lbaselib.cpp
+	libs/lua/src/lbitlib.c
+	libs/lua/src/lcode.c
+	libs/lua/src/lcorolib.c
+	libs/lua/src/lctype.c
+	libs/lua/src/ldblib.c
+	libs/lua/src/ldebug.c
+	libs/lua/src/ldo.c
+	libs/lua/src/ldump.c
+	libs/lua/src/lfunc.c
+	libs/lua/src/lgc.c
+	#linit.c
+	libs/lua/src/liolib.c
+	libs/lua/src/llex.c
+	libs/lua/src/lmathlib.c
+	libs/lua/src/lmem.c
+	libs/lua/src/loadlib.c
+	libs/lua/src/lobject.c
+	libs/lua/src/lopcodes.c
+	libs/lua/src/loslib.c
+	libs/lua/src/lparser.c
+	libs/lua/src/lstate.c
+	libs/lua/src/lstring.c
+	libs/lua/src/lstrlib.c
+	libs/lua/src/ltable.c
+	libs/lua/src/ltablib.c
+	libs/lua/src/ltm.c
+	#libs/lua/src/lua.c
+	libs/lua/src/lundump.c
+	libs/lua/src/lvm.c
+	libs/lua/src/lzio.c
+	)
+	
+set(LUAWRAPPER_INCLUDES
+	libs/luawrapper/luawrapper.hpp
+	libs/luawrapper/luawrapperutil.hpp
+	)
+	
+file(GLOB LUASOCKET_INCLUDES libs/luasocket/src/*.h)
+
+set(LUASOCKET_SOURCES
+	libs/luasocket/src/luasocket.c
+	libs/luasocket/src/timeout.c
+	libs/luasocket/src/buffer.c
+	libs/luasocket/src/io.c
+	libs/luasocket/src/auxiliar.c
+	libs/luasocket/src/options.c
+	libs/luasocket/src/inet.c
+	libs/luasocket/src/tcp.c
+	libs/luasocket/src/udp.c
+	libs/luasocket/src/except.c
+	libs/luasocket/src/select.c
+	# Modules belonging mime-core
+	#$(COMPAT)/compat-5.1.o \
+	libs/luasocket/src/mime.c
+
+	libs/luasocket/src/buffer.c
+	libs/luasocket/src/auxiliar.c
+	libs/luasocket/src/options.c
+	libs/luasocket/src/timeout.c
+	libs/luasocket/src/io.c
+	)
+	
+if(WIN32)
+	list(APPEND LUASOCKET_SOURCES libs/luasocket/src/wsocket.c)
+else()
+	list(APPEND LUASOCKET_SOURCES libs/luasocket/src/unix.c)
+	list(APPEND LUASOCKET_SOURCES libs/luasocket/src/usocket.c)
+endif()
+
 set(GAMED3XP_INCLUDES
 	d3xp/Achievements.h
 	d3xp/Actor.h
@@ -910,6 +1012,14 @@ source_group("libs\\oggvorbis" FILES ${OGGVORBIS_SOURCES})
 source_group("vr" FILES ${VR_INCLUDES})
 source_group("vr" FILES ${VR_SOURCES})
 
+source_group("libs\\lua" FILES ${LUA_INCLUDES})
+source_group("libs\\lua" FILES ${LUA_SOURCES})
+
+source_group("libs\\luawrapper" FILES ${LUAWRAPPER_INCLUDES})
+
+source_group("libs\\luasocket" FILES ${LUASOCKET_INCLUDES})
+source_group("libs\\luasocket" FILES ${LUASOCKET_SOURCES})
+
 source_group("game-d3xp" FILES ${GAMED3XP_INCLUDES})
 source_group("game-d3xp" FILES ${GAMED3XP_SOURCES})
 
@@ -989,6 +1099,9 @@ set(RBDOOM3_INCLUDES
 			${UI_INCLUDES}
 			${SWF_INCLUDES}
 			${VR_INCLUDES}
+			${LUA_INCLUDES}
+			${LUAWRAPPER_INCLUDES}
+			${LUASOCKET_INCLUDES}
 			${COMMON_INCLUDES}
 			
 			${COMPILER_INCLUDES}
@@ -1036,6 +1149,8 @@ set(RBDOOM3_SOURCES
 			${UI_SOURCES}
 			${SWF_SOURCES}
 			${VR_SOURCES}
+			${LUA_SOURCES}
+			${LUASOCKET_SOURCES}
 			${COMMON_SOURCES}
 			
 			${COMPILER_AAS_SOURCES}
@@ -1076,6 +1191,9 @@ add_definitions(-D__DOOM__)
 include_directories(
 			.
 			idlib
+			libs/lua/src
+			libs/luawrapper
+			
             )
 
 if(MSVC)
@@ -1171,7 +1289,7 @@ if(MSVC)
 	
 	if(USE_PRECOMPILED_HEADERS) 
 		set(RBDOOM3_PRECOMPILED_SOURCES ${RBDOOM3_SOURCES})
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${TIMIDITY_SOURCES} ${ZLIB_SOURCES} ${BINKDEC_SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES} ${MIKKTSPACE_SOURCES} ${OGGVORBIS_SOURCES} ${OPTICK_SOURCES})
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${ZLIB_SOURCES} ${BINKDEC_SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES} ${MIKKTSPACE_SOURCES} ${OGGVORBIS_SOURCES} ${OPTICK_SOURCES} ${LUA_SOURCES} ${LUASOCKET_SOURCES})
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/minizip/ioapi.c)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTDecoder.cpp)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder.cpp)
@@ -1324,7 +1442,7 @@ else()
 		# because some definitions (e.g. -D__IDLIB__ -D__DOOM_DLL__) differ
 
 		set(RBDOOM3_PRECOMPILED_SOURCES ${RBDOOM3_SOURCES})
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${TIMIDITY_SOURCES} ${ZLIB_SOURCES} ${BINKDEC_SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES} ${MIKKTSPACE_SOURCES} ${OGGVORBIS_SOURCES} ${OPTICK_SOURCES})
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${ZLIB_SOURCES} ${BINKDEC_SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES} ${MIKKTSPACE_SOURCES} ${OGGVORBIS_SOURCES} ${OPTICK_SOURCES} ${LUA_SOURCES} ${LUASOCKET_SOURCES})
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/minizip/ioapi.c)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTDecoder.cpp)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder.cpp)
