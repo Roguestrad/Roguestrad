@@ -881,7 +881,7 @@ public:
 	{
 		return previousWeapon;
 	}
-	
+
 	// Leyland VR
 	const idMat3&			GetVRFaceForward()
 	{

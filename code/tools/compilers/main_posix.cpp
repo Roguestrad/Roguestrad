@@ -1189,12 +1189,12 @@ public:
 	virtual void				LoadPacifierBinarizeProgressTotal( int total ) {}
 	virtual void				LoadPacifierBinarizeProgressIncrement( int step ) {}
 
-	virtual void				DmapPacifierFilename( const char* filename, const char* reason )
+	virtual void				RogmapPacifierFilename( const char* filename, const char* reason )
 	{
 		stateUI.statusWindowHeader.Format( "%s | %s", filename, reason );
 	}
 
-	virtual void				DmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... )
+	virtual void				RogmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... )
 	{
 		char msg[STATUS_TEXT_SIZE];
 
@@ -1212,7 +1212,7 @@ public:
 		}
 	}
 
-	virtual void				DmapPacifierCompileProgressTotal( int total )
+	virtual void				RogmapPacifierCompileProgressTotal( int total )
 	{
 		count = 0;
 		expectedCount = total;
@@ -1222,7 +1222,7 @@ public:
 		stateUI.progress = 0;
 	}
 
-	virtual void				DmapPacifierCompileProgressIncrement( int step )
+	virtual void				RogmapPacifierCompileProgressIncrement( int step )
 	{
 		count += step;
 
@@ -1274,7 +1274,7 @@ int com_editors = 0;
 ==============================================================
 */
 
-int Dmap_NoGui( int argc, char** argv )
+int Rogmap_NoGui( int argc, char** argv )
 {
 	commonLocal.com_refreshOnPrint = false;
 
@@ -1313,7 +1313,7 @@ int Dmap_NoGui( int argc, char** argv )
 	fileSystem->Init();
 	declManager->InitTool();
 
-	Dmap_f( args );
+	Rogmap_f( args );
 
 	return 0;
 }
@@ -1326,7 +1326,7 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 
 int main( int argc, char** argv )
 {
-	return Dmap_NoGui( argc, argv );
+	return Rogmap_NoGui( argc, argv );
 }
 
 #elif 1
@@ -1407,7 +1407,7 @@ int main( int argc, char** argv )
 	{
 		if( idStr::Icmp( argv[ i ], "-t" ) == 0 || idStr::Icmp( argv[ i ], "-nogui" ) == 0 )
 		{
-			return Dmap_NoGui( argc, argv );
+			return Rogmap_NoGui( argc, argv );
 		}
 	}
 
@@ -1454,7 +1454,7 @@ int main( int argc, char** argv )
 	fileSystem->Init();
 	declManager->InitTool();
 
-	Dmap_f( args );
+	Rogmap_f( args );
 
 #if 0
 	while( true )

@@ -40,7 +40,7 @@ If you have questions concerning this license or the applicable additional terms
 extern idCVar		dmap_verbose;
 
 // map processing (also see SuperOptimizeOccluders in tr_local.h)
-void Dmap_f( const idCmdArgs& args );
+void Rogmap_f( const idCmdArgs& args );
 
 // AAS file compiler
 void RunAAS_f( const idCmdArgs& args );

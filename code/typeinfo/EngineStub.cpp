@@ -720,10 +720,10 @@ public:
 	virtual void				LoadPacifierBinarizeProgressTotal( int total ) {}
 	virtual void				LoadPacifierBinarizeProgressIncrement( int step ) {}
 
-	virtual void				DmapPacifierFilename( const char* filename, const char* reason ) {}
-	virtual void				DmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... ) {}
-	virtual void				DmapPacifierCompileProgressTotal( int total ) {}
-	virtual void				DmapPacifierCompileProgressIncrement( int step ) {}
+	virtual void				RogmapPacifierFilename( const char* filename, const char* reason ) {}
+	virtual void				RogmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... ) {}
+	virtual void				RogmapPacifierCompileProgressTotal( int total ) {}
+	virtual void				RogmapPacifierCompileProgressIncrement( int step ) {}
 };
 
 idCommonLocal		commonLocal;

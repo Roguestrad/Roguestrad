@@ -11,8 +11,8 @@ set(MC_SOURCES
 	precompiled.cpp
 	)
 
-file(GLOB MC_DMAP_INCLUDES dmap/*.h)
-file(GLOB MC_DMAP_SOURCES dmap/*.cpp)
+file(GLOB MC_DMAP_INCLUDES rogmap/*.h)
+file(GLOB MC_DMAP_SOURCES rogmap/*.cpp)
 
 if(WIN32)
 	list(APPEND MC_SOURCES main.cpp)
@@ -209,18 +209,20 @@ set(MC_SOURCES_ALL
 
 source_group("main" FILES ${MC_INCLUDES})
 source_group("main" FILES ${MC_SOURCES})
-source_group("dmap" FILES ${MC_DMAP_INCLUDES})
-source_group("dmap" FILES ${MC_DMAP_SOURCES})
+source_group("rogmap" FILES ${MC_DMAP_INCLUDES})
+source_group("rogmap" FILES ${MC_DMAP_SOURCES})
+source_group("aasbuild" FILES ${MC_AASBUILD_INCLUDES})
+source_group("aasbuild" FILES ${MC_AASBUILD_SOURCES})
 source_group("engine\\framework" FILES ${MC_FRAMEWORK_INCLUDES})
 source_group("engine\\framework" FILES ${MC_FRAMEWORK_SOURCES})
 source_group("engine\\renderer" FILES ${MC_RENDERER_INCLUDES})
 source_group("engine\\renderer" FILES ${MC_RENDERER_SOURCES})
 source_group("engine\\aas" FILES ${MC_AAS_INCLUDES})
 source_group("engine\\aas" FILES ${MC_AAS_SOURCES})
-source_group("aasbuild" FILES ${MC_AASBUILD_INCLUDES})
-source_group("aasbuild" FILES ${MC_AASBUILD_SOURCES})
-source_group("engine\\cm" FILES ${MC_CM_INCLUDES})
-source_group("engine\\cm" FILES ${MC_CM_SOURCES})
+source_group("engine\\collision" FILES ${MC_CM_INCLUDES})
+source_group("engine\\collision" FILES ${MC_CM_SOURCES})
+source_group("engine\\decls" FILES ${MC_DECLS_INCLUDES})
+source_group("engine\\decls" FILES ${MC_DECLS_SOURCES})
 
 source_group("libs\\mikktspace" FILES ${MC_MIKKTSPACE_INCLUDES})
 source_group("libs\\mikktspace" FILES ${MC_MIKKTSPACE_SOURCES})
@@ -233,9 +235,6 @@ source_group("libs\\zlib" FILES ${MC_ZLIB_INCLUDES})
 source_group("libs\\zlib" FILES ${MC_ZLIB_SOURCES})
 source_group("libs\\zlib\\minizip" FILES ${MC_MINIZIP_INCLUDES})
 source_group("libs\\zlib\\minizip" FILES ${MC_MINIZIP_SOURCES})
-
-source_group("decls" FILES ${MC_DECLS_INCLUDES})
-source_group("decls" FILES ${MC_DECLS_SOURCES})
 
 set(MC_PRECOMPILED_SOURCES ${MC_SOURCES_ALL})
 list(REMOVE_ITEM MC_PRECOMPILED_SOURCES ${MC_MIKKTSPACE_SOURCES} ${MC_IMGUI_SOURCES} ${MC_IMTUI_SOURCES} ${MC_ZLIB_SOURCES} ${MC_MINIZIP_SOURCES})
@@ -284,13 +283,13 @@ if(MSVC)
 			COMPILE_FLAGS "/wd4244 /wd4267 /wd4996"
 			)
 
-    add_executable(rbdmap ${MC_SOURCES_ALL} ${MC_INCLUDES_ALL})
-	add_dependencies(rbdmap idlib  ${ISPC_TEXCOMP_LIBRARY})
-	target_link_libraries(rbdmap idlib winmm imtui-pdcurses Shlwapi ${ZLIB_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
+    add_executable(rogmap ${MC_SOURCES_ALL} ${MC_INCLUDES_ALL})
+	add_dependencies(rogmap idlib  ${ISPC_TEXCOMP_LIBRARY})
+	target_link_libraries(rogmap idlib winmm imtui-pdcurses Shlwapi ${ZLIB_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
 
 	# set MSVC default debug directory on executable	
 	if(CMAKE_MAJOR_VERSION EQUAL 3 AND CMAKE_MINOR_VERSION GREATER_EQUAL 8)
-		set_target_properties(rbdmap PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/..")
+		set_target_properties(rogmap PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/..")
 	endif()
 	
 else()
@@ -323,17 +322,17 @@ else()
 			LIST(APPEND _compiler_FLAGS "-D${item}")
 		ENDFOREACH(item)
 
-		# SRS - USE_OPTICK not useful for rbdmap, but definition required to avoid mismatch with idlib precompiled header
+		# SRS - USE_OPTICK not useful for rogmap, but definition required to avoid mismatch with idlib precompiled header
 		if(OPTICK)
 			LIST(APPEND _compiler_FLAGS -DUSE_OPTICK=1)
 		else()
 			LIST(APPEND _compiler_FLAGS -DUSE_OPTICK=0)
 		endif()
 
-		add_custom_target(precomp_header_rbdmap ALL
+		add_custom_target(precomp_header_rogmap ALL
 						COMMAND ${CMAKE_CXX_COMPILER} ${_compiler_FLAGS} -x c++-header precompiled.h -o precompiled.h.gch
 						WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-						COMMENT "Creating tools/compilers/precompiled.h.gch for rbdmap"
+						COMMENT "Creating tools/compilers/precompiled.h.gch for rogmap"
 						)
 	endif()
 
@@ -345,11 +344,11 @@ else()
 			COMPILE_FLAGS "-Wno-stringop-overread -Wno-deprecated-non-prototype"
 			)
 
-	add_executable(rbdmap ${MC_SOURCES_ALL} ${MC_INCLUDES_ALL})
-	add_dependencies(rbdmap idlib ${ISPC_TEXCOMP_LIBRARY})
+	add_executable(rogmap ${MC_SOURCES_ALL} ${MC_INCLUDES_ALL})
+	add_dependencies(rogmap idlib ${ISPC_TEXCOMP_LIBRARY})
 
 	if (USE_PRECOMPILED_HEADERS)
-		add_dependencies(rbdmap precomp_header_rbdmap)
+		add_dependencies(rogmap precomp_header_rogmap)
 
 		if(WIN32)
 			set(remove_command "del")
@@ -361,16 +360,16 @@ else()
 
 		# SRS - delete precompiled header file after executable is compiled: command line build case
 		if(CMAKE_GENERATOR MATCHES "Makefiles" OR CMAKE_GENERATOR MATCHES "Ninja")
-			add_custom_target(rm_precomp_header_rbdmap ALL
+			add_custom_target(rm_precomp_header_rogmap ALL
 					COMMAND ${remove_command} "precompiled.h.gch"
 					WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 					COMMENT "remove tools/compilers/precompiled.h.gch"
 					)
-			add_dependencies(rm_precomp_header_rbdmap rbdmap)
+			add_dependencies(rm_precomp_header_rogmap rogmap)
 
 		# SRS - delete precompiled header files after executable is compiled: IDE build case (e.g. Xcode)
 		else()
-			add_custom_command(TARGET rbdmap POST_BUILD
+			add_custom_command(TARGET rogmap POST_BUILD
 					# SRS - added wildcards to remove tmp files from cmake ZERO_CHECK regeneration
 					COMMAND ${remove_command} "${idlib_dir_slash}precompiled.h*.gch*"
 					COMMAND ${remove_command} "precompiled.h*.gch*"
@@ -380,7 +379,7 @@ else()
 		endif()
 	endif()
 
-	target_link_libraries(rbdmap idlib ${CURSES_NCURSES_LIBRARY} ${ZLIB_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
+	target_link_libraries(rogmap idlib ${CURSES_NCURSES_LIBRARY} ${ZLIB_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
 endif()
 	
 

@@ -162,11 +162,11 @@ bool ProcessModels()
 {
 	bool oldVerbose = dmap_verbose.GetBool();
 
-	common->DmapPacifierCompileProgressTotal( dmapGlobals.numEntities );
+	common->RogmapPacifierCompileProgressTotal( dmapGlobals.numEntities );
 
 	idStrStatic<128> entityInfo;
 
-	for( dmapGlobals.entityNum = 0; dmapGlobals.entityNum < dmapGlobals.numEntities; dmapGlobals.entityNum++, common->DmapPacifierCompileProgressIncrement( 1 ) )
+	for( dmapGlobals.entityNum = 0; dmapGlobals.entityNum < dmapGlobals.numEntities; dmapGlobals.entityNum++, common->RogmapPacifierCompileProgressIncrement( 1 ) )
 	{
 		uEntity_t* entity = &dmapGlobals.uEntities[dmapGlobals.entityNum];
 		if( !entity->primitives )
@@ -177,11 +177,11 @@ bool ProcessModels()
 		//ImGui::Text( " Source code      :
 		if( dmapGlobals.entityNum == 0 )
 		{
-			common->DmapPacifierInfo( "Current entity   : worldspawn" );
+			common->RogmapPacifierInfo( "Current entity   : worldspawn" );
 		}
 		else
 		{
-			common->DmapPacifierInfo( "Current entity   : %s", entity->mapEntity->epairs.GetString( "name" ) );
+			common->RogmapPacifierInfo( "Current entity   : %s", entity->mapEntity->epairs.GetString( "name" ) );
 		}
 
 		common->VerbosePrintf( "############### entity %i ###############\n", dmapGlobals.entityNum );
@@ -215,13 +215,13 @@ bool ProcessModels()
 
 /*
 ============
-DmapHelp
+RogmapHelp
 ============
 */
-void DmapHelp()
+void RogmapHelp()
 {
 	common->Printf(
-		"Usage: dmap [options] mapfile\n"
+		"Usage: rogmap [options] mapfile\n"
 		"Options:\n"
 		"noCurves               = don't process curves\n"
 		"noCM                   = don't create collision map\n"
@@ -236,10 +236,10 @@ void DmapHelp()
 
 /*
 ============
-ResetDmapGlobals
+ResetRogmapGlobals
 ============
 */
-void ResetDmapGlobals()
+void ResetRogmapGlobals()
 {
 	dmapGlobals.mapFileBase[0] = '\0';
 	dmapGlobals.dmapFile = NULL;
@@ -272,10 +272,10 @@ void ResetDmapGlobals()
 
 /*
 ============
-Dmap
+Rogmap
 ============
 */
-void Dmap( const idCmdArgs& args )
+void Rogmap( const idCmdArgs& args )
 {
 	int			i;
 	int			start, end;
@@ -285,11 +285,11 @@ void Dmap( const idCmdArgs& args )
 	bool		noCM = false;
 	bool		noAAS = false;
 
-	ResetDmapGlobals();
+	ResetRogmapGlobals();
 
 	if( args.Argc() < 2 )
 	{
-		DmapHelp();
+		RogmapHelp();
 		return;
 	}
 
@@ -442,7 +442,7 @@ void Dmap( const idCmdArgs& args )
 		passedName = "maps/" + passedName;
 	}
 
-	common->DmapPacifierFilename( passedName, "Compiling BSP .proc" );
+	common->RogmapPacifierFilename( passedName, "Compiling BSP .proc" );
 
 	idStr stripped = passedName;
 	stripped.StripFileExtension();
@@ -505,7 +505,7 @@ void Dmap( const idCmdArgs& args )
 	end = Sys_Milliseconds();
 	common->Printf( "-----------------------\n" );
 	common->Printf( "%5.0f seconds for dmap\n", ( end - start ) * 0.001f );
-	common->DmapPacifierInfo( "%5.0f seconds for dmap\n", ( end - start ) * 0.001f );
+	common->RogmapPacifierInfo( "%5.0f seconds for dmap\n", ( end - start ) * 0.001f );
 
 	if( !leaked )
 	{
@@ -516,7 +516,7 @@ void Dmap( const idCmdArgs& args )
 			cmdSystem->BufferCommandText( CMD_EXEC_NOW, "disconnect" );
 #endif
 
-			common->DmapPacifierFilename( passedName, "Generating .cm collision map" );
+			common->RogmapPacifierFilename( passedName, "Generating .cm collision map" );
 
 			// create the collision map
 			start = Sys_Milliseconds();
@@ -528,7 +528,7 @@ void Dmap( const idCmdArgs& args )
 			end = Sys_Milliseconds();
 			common->Printf( "-------------------------------------\n" );
 			common->Printf( "%5.0f seconds to create collision map\n", ( end - start ) * 0.001f );
-			common->DmapPacifierInfo( "%5.0f seconds to create collision map\n", ( end - start ) * 0.001f );
+			common->RogmapPacifierInfo( "%5.0f seconds to create collision map\n", ( end - start ) * 0.001f );
 		}
 
 		if( !noAAS && !region )
@@ -537,11 +537,11 @@ void Dmap( const idCmdArgs& args )
 			RunAAS_f( args );
 		}
 
-		common->DmapPacifierFilename( passedName, "Done" );
+		common->RogmapPacifierFilename( passedName, "Done" );
 	}
 	else
 	{
-		common->DmapPacifierFilename( passedName, "Failed due to errors. Quit program." );
+		common->RogmapPacifierFilename( passedName, "Failed due to errors. Quit program." );
 	}
 
 
@@ -554,17 +554,17 @@ void Dmap( const idCmdArgs& args )
 
 /*
 ============
-Dmap_f
+Rogmap_f
 ============
 */
-void Dmap_f( const idCmdArgs& args )
+void Rogmap_f( const idCmdArgs& args )
 {
-	common->ClearWarnings( "running dmap" );
+	common->ClearWarnings( "running rogmap" );
 
 	// refresh the screen each time we print so it doesn't look
 	// like it is hung
 	common->SetRefreshOnPrint( true );
-	Dmap( args );
+	Rogmap( args );
 	common->SetRefreshOnPrint( false );
 
 	common->PrintWarnings();

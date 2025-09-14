@@ -1000,7 +1000,7 @@ void idDeclManagerLocal::Init2()
 ===================
 idDeclManagerLocal::InitTool
 
-RB: only called by rbdmap
+RB: only called by rogmap
 ===================
 */
 

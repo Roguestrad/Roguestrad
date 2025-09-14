@@ -865,8 +865,8 @@ file(GLOB COMPILER_INCLUDES tools/compilers/*.h)
 file(GLOB COMPILER_AAS_INCLUDES tools/compilers/aas/*.h)
 file(GLOB COMPILER_AAS_SOURCES tools/compilers/aas/*.cpp)
 
-file(GLOB COMPILER_DMAP_INCLUDES tools/compilers/dmap/*.h)
-file(GLOB COMPILER_DMAP_SOURCES tools/compilers/dmap/*.cpp)
+file(GLOB COMPILER_ROGMAP_INCLUDES tools/compilers/rogmap/*.h)
+file(GLOB COMPILER_ROGMAP_SOURCES tools/compilers/rogmap/*.cpp)
 
 set(TOOLS_INCLUDES tools/edit_public.h)
 
@@ -1052,8 +1052,8 @@ source_group("tools\\compilers" FILES ${COMPILER_INCLUDES})
 source_group("tools\\compilers\\aasbuild" FILES ${COMPILER_AAS_INCLUDES})
 source_group("tools\\compilers\\aasbuild" FILES ${COMPILER_AAS_SOURCES})
 
-source_group("tools\\compilers\\dmap" FILES ${COMPILER_DMAP_INCLUDES})
-source_group("tools\\compilers\\dmap" FILES ${COMPILER_DMAP_SOURCES})
+source_group("tools\\compilers\\rogmap" FILES ${COMPILER_ROGMAP_INCLUDES})
+source_group("tools\\compilers\\rogmap" FILES ${COMPILER_ROGMAP_SOURCES})
 
 source_group("tools" FILES ${TOOLS_INCLUDES})
 
@@ -1103,7 +1103,7 @@ set(RBDOOM3_INCLUDES
 			
 			${COMPILER_INCLUDES}
 			${COMPILER_AAS_INCLUDES} ${COMPILER_AAS_SOURCES}
-			${COMPILER_DMAP_INCLUDES} ${COMPILER_DMAP_SOURCES}
+			${COMPILER_ROGMAP_INCLUDES} ${COMPILER_ROGMAP_SOURCES}
 			
 			${TOOLS_INCLUDES}
 			${IMGUI_EDITOR_INCLUDES}

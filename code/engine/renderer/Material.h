@@ -645,7 +645,7 @@ public:
 	}
 
 	// returns true if this material takes precedence over other in coplanar cases
-	bool				HasHigherDmapPriority( const idMaterial& other ) const
+	bool				HasHigherRogmapPriority( const idMaterial& other ) const
 	{
 		return ( IsDrawn() && !other.IsDrawn() ) ||
 			   ( Coverage() < other.Coverage() );

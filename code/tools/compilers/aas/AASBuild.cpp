@@ -848,7 +848,7 @@ bool idAASBuild::Build( const idStr& fileName, const idAASSettings* settings )
 	}
 
 	name.SetFileExtension( aasSettings->fileExtension );
-	common->DmapPacifierFilename( name, "Compiling AAS" );
+	common->RogmapPacifierFilename( name, "Compiling AAS" );
 	name.SetFileExtension( "map" );
 
 	// load map file brushes
@@ -972,7 +972,7 @@ bool idAASBuild::Build( const idStr& fileName, const idAASSettings* settings )
 	delete mapFile;
 
 	common->Printf( "%6d seconds to create AAS\n", ( Sys_Milliseconds() - startTime ) / 1000 );
-	common->DmapPacifierInfo( "%6d seconds to create AAS\n", ( Sys_Milliseconds() - startTime ) / 1000 );
+	common->RogmapPacifierInfo( "%6d seconds to create AAS\n", ( Sys_Milliseconds() - startTime ) / 1000 );
 
 	return true;
 }

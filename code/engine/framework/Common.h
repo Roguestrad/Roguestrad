@@ -347,10 +347,10 @@ public:
 	virtual void				LoadPacifierBinarizeProgressTotal( int total ) = 0;
 	virtual void				LoadPacifierBinarizeProgressIncrement( int step ) = 0;
 
-	virtual void				DmapPacifierFilename( const char* filename, const char* reason ) = 0;
-	virtual void				DmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... ) = 0;
-	virtual void				DmapPacifierCompileProgressTotal( int total ) = 0;
-	virtual void				DmapPacifierCompileProgressIncrement( int step ) = 0;
+	virtual void				RogmapPacifierFilename( const char* filename, const char* reason ) = 0;
+	virtual void				RogmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... ) = 0;
+	virtual void				RogmapPacifierCompileProgressTotal( int total ) = 0;
+	virtual void				RogmapPacifierCompileProgressIncrement( int step ) = 0;
 };
 
 extern idCommon* 		common;

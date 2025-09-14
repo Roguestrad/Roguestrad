@@ -9810,20 +9810,20 @@ void idPlayer::Think()
 			session->SetVoiceGroupsToTeams();
 		}
 
-	// Leyland VR
-	UpdatePDASlot();
-	UpdateHolsterSlot();
+		// Leyland VR
+		UpdatePDASlot();
+		UpdateHolsterSlot();
 
-	if( vr_slotDebug.GetBool() )
-	{
-		for( int i = 0; i < SLOT_COUNT; i++ )
+		if( vr_slotDebug.GetBool() )
 		{
-			idVec3 origin = waistOrigin + slots[i].origin * waistAxis;
-			idSphere tempSphere( origin, sqrtf( slots[i].radiusSq ) );
-			gameRenderWorld->DebugSphere( colorWhite, tempSphere, 18, true );
+			for( int i = 0; i < SLOT_COUNT; i++ )
+			{
+				idVec3 origin = waistOrigin + slots[i].origin * waistAxis;
+				idSphere tempSphere( origin, sqrtf( slots[i].radiusSq ) );
+				gameRenderWorld->DebugSphere( colorWhite, tempSphere, 18, true );
+			}
 		}
-	}
-	// Leyland end
+		// Leyland end
 	}
 }
 

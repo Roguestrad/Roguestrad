@@ -1208,12 +1208,12 @@ public:
 	virtual void				LoadPacifierBinarizeProgressTotal( int total ) {}
 	virtual void				LoadPacifierBinarizeProgressIncrement( int step ) {}
 
-	virtual void				DmapPacifierFilename( const char* filename, const char* reason )
+	virtual void				RogmapPacifierFilename( const char* filename, const char* reason )
 	{
 		stateUI.statusWindowHeader.Format( "%s | %s", filename, reason );
 	}
 
-	virtual void				DmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... )
+	virtual void				RogmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... )
 	{
 		char msg[STATUS_TEXT_SIZE];
 
@@ -1231,7 +1231,7 @@ public:
 		}
 	}
 
-	virtual void				DmapPacifierCompileProgressTotal( int total )
+	virtual void				RogmapPacifierCompileProgressTotal( int total )
 	{
 		count = 0;
 		expectedCount = total;
@@ -1241,7 +1241,7 @@ public:
 		stateUI.progress = 0;
 	}
 
-	virtual void				DmapPacifierCompileProgressIncrement( int step )
+	virtual void				RogmapPacifierCompileProgressIncrement( int step )
 	{
 		count += step;
 
@@ -1293,7 +1293,7 @@ int com_editors = 0;
 ==============================================================
 */
 
-int Dmap_NoGui( int argc, char** argv )
+int Rogmap_NoGui( int argc, char** argv )
 {
 	commonLocal.com_refreshOnPrint = false;
 
@@ -1332,7 +1332,7 @@ int Dmap_NoGui( int argc, char** argv )
 	fileSystem->Init();
 	declManager->InitTool();
 
-	Dmap_f( args );
+	Rogmap_f( args );
 
 	return 0;
 }
@@ -1345,11 +1345,10 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 
 int main( int argc, char** argv )
 {
-	return Dmap_NoGui( argc, argv );
+	return Rogmap_NoGui( argc, argv );
 }
 
-#elif 1
-
+#else
 
 void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 {
@@ -1373,8 +1372,8 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 		ImGui::SetNextWindowSize( wSize, ImGuiCond_Always );
 	}
 
-	//idStr title = va( "RBDMAP version %s %s", ENGINE_VERSION, BUILD_STRING );
-	idStr title = va( "RBDMAP version %s %s %s %s", ENGINE_VERSION, BUILD_STRING, ID__DATE__, ID__TIME__ );
+	//idStr title = va( "Rogmap version %s %s", ENGINE_VERSION, BUILD_STRING );
+	idStr title = va( "Rogmap version %s %s %s %s", ENGINE_VERSION, BUILD_STRING, ID__DATE__, ID__TIME__ );
 	ImGui::Begin( title.c_str(), nullptr,
 				  ImGuiWindowFlags_NoCollapse |
 				  ImGuiWindowFlags_NoResize |
@@ -1411,7 +1410,7 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 	}
 
 	ImGui::Text( " %s", stateUI.statusActiveTool.c_str() );
-	ImGui::Text( " Source code      : https://github.com/RobertBeckebans/RBDOOM-3-BFG" );
+	ImGui::Text( " Source code      : https://github.com/Roguestrad/Roguestrad" );
 	ImGui::End();
 
 	ImGui::Render();
@@ -1426,7 +1425,7 @@ int main( int argc, char** argv )
 	{
 		if( idStr::Icmp( argv[ i ], "-t" ) == 0 || idStr::Icmp( argv[ i ], "-nogui" ) == 0 )
 		{
-			return Dmap_NoGui( argc, argv );
+			return Rogmap_NoGui( argc, argv );
 		}
 	}
 
@@ -1473,7 +1472,7 @@ int main( int argc, char** argv )
 	fileSystem->Init();
 	declManager->InitTool();
 
-	Dmap_f( args );
+	Rogmap_f( args );
 
 #if 1
 	// maybe only do this if dmap has a leaked BSP
@@ -1482,70 +1481,6 @@ int main( int argc, char** argv )
 		common->UpdateScreen( false );
 	}
 #endif
-
-	ImTui_ImplText_Shutdown();
-	ImTui_ImplNcurses_Shutdown();
-
-	return 0;
-}
-#else
-
-#include "imtui/imtui.h"
-#include "imtui/imtui-impl-ncurses.h"
-#include "imtui/imtui-demo.h"
-
-void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
-{
-}
-
-int main()
-{
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-
-	auto screen = ImTui_ImplNcurses_Init( true );
-	ImTui_ImplText_Init();
-
-	stateUI.ChangeColorScheme( false );
-
-	bool demo = true;
-	int nframes = 0;
-	float fval = 1.23f;
-
-	while( true )
-	{
-		ImTui_ImplNcurses_NewFrame();
-		ImTui_ImplText_NewFrame();
-
-		ImGui::NewFrame();
-
-		ImGui::SetNextWindowPos( ImVec2( 4, 27 ), ImGuiCond_Once );
-		ImGui::SetNextWindowSize( ImVec2( 50.0, 10.0 ), ImGuiCond_Once );
-		ImGui::Begin( "Hello, world!" );
-		ImGui::Text( "NFrames = %d", nframes++ );
-		ImGui::Text( "Mouse Pos : x = %g, y = %g", ImGui::GetIO().MousePos.x, ImGui::GetIO().MousePos.y );
-		ImGui::Text( "Time per frame %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate );
-		ImGui::Text( "Float:" );
-		ImGui::SameLine();
-		ImGui::SliderFloat( "##float", &fval, 0.0f, 10.0f );
-
-#ifndef __EMSCRIPTEN__
-		ImGui::Text( "%s", "" );
-		if( ImGui::Button( "Exit program", { ImGui::GetContentRegionAvail().x, 2 } ) )
-		{
-			break;
-		}
-#endif
-
-		ImGui::End();
-
-		ImTui::ShowDemoWindow( &demo );
-
-		ImGui::Render();
-
-		ImTui_ImplText_RenderDrawData( ImGui::GetDrawData(), screen );
-		ImTui_ImplNcurses_DrawScreen();
-	}
 
 	ImTui_ImplText_Shutdown();
 	ImTui_ImplNcurses_Shutdown();
