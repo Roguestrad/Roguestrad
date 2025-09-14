@@ -37,7 +37,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <idlib/Dict.h>
 #include "../../edit_public.h"
 
-#include "../imgui/BFGimgui.h"
+#include "engine/imgui/BFGimgui.h"
 #include "../imgui/ImGuizmo.h"
 
 namespace ImGuiTools

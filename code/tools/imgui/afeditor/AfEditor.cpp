@@ -32,8 +32,8 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AfEditor.h"
 
-#include "../imgui/BFGimgui.h"
-#include "../framework/DeclAF.h"
+#include "engine/imgui/BFGimgui.h"
+#include "engine/decls/DeclAF.h"
 
 #include "../util/Imgui_IdWidgets.h"
 

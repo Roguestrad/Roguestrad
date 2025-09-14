@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AfPropertyEditor.h"
 
-#include "../imgui/BFGimgui.h"
+#include "engine/imgui/BFGimgui.h"
 
 namespace ImGuiTools
 {

@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "../renderer/Image.h"
+#include "../engine/renderer/Image.h"
 
 
 idCVar gltf_MapSceneName( "gltf_MapSceneName", "Scene", CVAR_SYSTEM , "Scene to use when d-mapping a gltf/glb" );

@@ -27,7 +27,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 #include "precompiled.h"
-#include "../sys/sys_local.h"
+#include "../engine/sys/sys_local.h"
 #pragma hdrstop
 
 #include "TypeInfoGen.h"

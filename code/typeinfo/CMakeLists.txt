@@ -17,36 +17,31 @@ list(APPEND TP_SOURCES EngineStubPosix.cpp)
 endif()
 
 set(TP_FRAMEWORK_INCLUDES 
-	../framework/CmdSystem.h
-	../framework/CVarSystem.h
-	../framework/File.h
-	../framework/File_Manifest.h
-	../framework/File_Resource.h
-	../framework/File_Zip.h
-	../framework/FileSystem.h
-	../framework/Licensee.h
+	../engine/framework/CmdSystem.h
+	../engine/framework/CVarSystem.h
+	../engine/framework/File.h
+	../engine/framework/File_Manifest.h
+	../engine/framework/File_Resource.h
+	../engine/framework/File_Zip.h
+	../engine/framework/FileSystem.h
+	../engine/framework/Licensee.h
 	../idlib/precompiled.h
 	)
 set(TP_FRAMEWORK_SOURCES
-	../framework/CmdSystem.cpp
-	../framework/CVarSystem.cpp
-	../framework/File.cpp
-	../framework/File_Manifest.cpp
-	../framework/File_Resource.cpp
-	../framework/File_Zip.cpp
-	../framework/FileSystem.cpp
+	../engine/framework/CmdSystem.cpp
+	../engine/framework/CVarSystem.cpp
+	../engine/framework/File.cpp
+	../engine/framework/File_Manifest.cpp
+	../engine/framework/File_Resource.cpp
+	../engine/framework/File_Zip.cpp
+	../engine/framework/FileSystem.cpp
 	)
 	
-#if(NOT ZLIB_FOUND)
-	file(GLOB TP_ZLIB_INCLUDES ../libs/zlib/*.h)
-	file(GLOB TP_ZLIB_SOURCES ../libs/zlib/*.c)
-	list(APPEND TP_ZLIB_SOURCES ../libs/zlib/minizip/unzip.cpp)
-	list(APPEND TP_ZLIB_SOURCES ../libs/zlib/minizip/ioapi.c)
-#else (NOT ZLIB_FOUND)
-#	set(TP_ZLIB_INCLUDES "")
-#	set(TP_ZLIB_SOURCES "")
-#endif()
 
+file(GLOB TP_ZLIB_INCLUDES ../libs/zlib/*.h)
+file(GLOB TP_ZLIB_SOURCES ../libs/zlib/*.c)
+list(APPEND TP_ZLIB_SOURCES ../libs/zlib/minizip/unzip.cpp)
+list(APPEND TP_ZLIB_SOURCES ../libs/zlib/minizip/ioapi.c)
 
 set(TP_INCLUDES_ALL
 			${TP_INCLUDES}

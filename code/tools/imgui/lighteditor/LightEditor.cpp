@@ -33,10 +33,9 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "LightEditor.h"
 
-#include "../imgui/BFGimgui.h"
-
-#include "renderer/Material.h"
-#include "renderer/Image.h"
+#include "engine/imgui/BFGimgui.h"
+#include "engine/renderer/Material.h"
+#include "engine/renderer/Image.h"
 
 namespace ImGuiTools
 {

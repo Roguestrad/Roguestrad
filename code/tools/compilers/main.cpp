@@ -31,9 +31,9 @@ If you have questions concerning this license or the applicable additional terms
 
 #include <shlwapi.h>  // for PathMatchSpecW
 
-#include "../sys/sys_local.h"
-#include "../framework/EventLoop.h"
-#include "../framework/DeclManager.h"
+#include "../engine/sys/sys_local.h"
+#include "../engine/framework/EventLoop.h"
+#include "../engine/decls/DeclManager.h"
 
 #include <direct.h>
 #include <io.h>

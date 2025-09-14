@@ -98,7 +98,7 @@ initscr
 **man-end****************************************************************/
 
 #include <stdlib.h>
-#include "../../../../framework/Licensee.h" // RB: for ID__DATE__ and ID__TIME__
+#include "../../../../engine/framework/Licensee.h" // RB: for ID__DATE__ and ID__TIME__
 
 char ttytype[128];
 

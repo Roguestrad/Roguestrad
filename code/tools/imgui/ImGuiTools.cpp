@@ -30,8 +30,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "../imgui/BFGimgui.h"
-#include "../idlib/CmdArgs.h"
+#include "engine/imgui/BFGimgui.h"
+#include "idlib/CmdArgs.h"
 
 #include "afeditor/AfEditor.h"
 #include "lighteditor/LightEditor.h"

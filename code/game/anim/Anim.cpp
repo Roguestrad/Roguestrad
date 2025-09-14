@@ -31,7 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 
 
 #include "../Game_local.h"
-#include "../../renderer/Model_gltf.h"
+#include "../../engine/renderer/Model_gltf.h"
 
 idCVar binaryLoadAnim( "binaryLoadAnim", "1", 0, "enable binary load/write of idMD5Anim" );
 

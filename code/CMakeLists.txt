@@ -480,38 +480,35 @@ endif()
 
 file(GLOB NATVIS_SOURCES .natvis)
 
-file(GLOB AAS_INCLUDES aas/*.h)
-file(GLOB AAS_SOURCES aas/*.cpp)
+file(GLOB AAS_INCLUDES engine/aas/*.h)
+file(GLOB AAS_SOURCES engine/aas/*.cpp)
 
-file(GLOB CM_INCLUDES cm/*.h)
-file(GLOB CM_SOURCES cm/*.cpp)
+file(GLOB CM_INCLUDES engine/collision/*.h)
+file(GLOB CM_SOURCES engine/collision/*.cpp)
 
-file(GLOB FRAMEWORK_INCLUDES framework/*.h)
-file(GLOB FRAMEWORK_SOURCES framework/*.cpp)
+file(GLOB FRAMEWORK_INCLUDES engine/framework/*.h)
+file(GLOB FRAMEWORK_SOURCES engine/framework/*.cpp)
 
-file(GLOB FRAMEWORK_DECLS_INCLUDES framework/Decl*.h)
-file(GLOB FRAMEWORK_DECLS_SOURCES framework/Decl*.cpp)
+file(GLOB FRAMEWORK_DECLS_INCLUDES engine/decls/Decl*.h)
+file(GLOB FRAMEWORK_DECLS_SOURCES engine/decls/Decl*.cpp)
 
-list(REMOVE_ITEM FRAMEWORK_INCLUDES ${FRAMEWORK_DECLS_INCLUDES})
-list(REMOVE_ITEM FRAMEWORK_SOURCES ${FRAMEWORK_DECLS_SOURCES})
+file(GLOB FRAMEWORK_IMGUI_INCLUDES engine/imgui/*.h)
+file(GLOB FRAMEWORK_IMGUI_SOURCES engine/imgui/*.cpp)
 
-file(GLOB FRAMEWORK_IMGUI_INCLUDES imgui/*.h)
-file(GLOB FRAMEWORK_IMGUI_SOURCES imgui/*.cpp)
-
-file(GLOB RENDERER_INCLUDES renderer/*.h)
-file(GLOB RENDERER_SOURCES renderer/*.cpp)
-file(GLOB RENDERER_COLOR_INCLUDES renderer/Color/*.h)
-file(GLOB RENDERER_COLOR_SOURCES renderer/Color/*.cpp)
-file(GLOB RENDERER_DXT_INCLUDES renderer/DXT/*.h)
-file(GLOB RENDERER_DXT_SOURCES renderer/DXT/*.cpp)
+file(GLOB RENDERER_INCLUDES engine/renderer/*.h)
+file(GLOB RENDERER_SOURCES engine/renderer/*.cpp)
+file(GLOB RENDERER_COLOR_INCLUDES engine/renderer/Color/*.h)
+file(GLOB RENDERER_COLOR_SOURCES engine/renderer/Color/*.cpp)
+file(GLOB RENDERER_DXT_INCLUDES engine/renderer/DXT/*.h)
+file(GLOB RENDERER_DXT_SOURCES engine/renderer/DXT/*.cpp)
 
 
-file(GLOB RENDERER_SMAA_INCLUDES renderer/SMAA/*.h)
+file(GLOB RENDERER_SMAA_INCLUDES engine/renderer/SMAA/*.h)
 
-file(GLOB RENDERER_NVRHI_INCLUDES renderer/NVRHI/*.h)
-file(GLOB RENDERER_NVRHI_SOURCES renderer/NVRHI/*.cpp)
-file(GLOB RENDERER_PASSES_INCLUDES renderer/Passes/*.h)
-file(GLOB RENDERER_PASSES_SOURCES renderer/Passes/*.cpp)
+file(GLOB RENDERER_NVRHI_INCLUDES engine/renderer/NVRHI/*.h)
+file(GLOB RENDERER_NVRHI_SOURCES engine/renderer/NVRHI/*.cpp)
+file(GLOB RENDERER_PASSES_INCLUDES engine/renderer/Passes/*.h)
+file(GLOB RENDERER_PASSES_SOURCES engine/renderer/Passes/*.cpp)
 
 file(GLOB IRRXML_INCLUDES libs/irrxml/src/*.h)
 file(GLOB IRRXML_SOURCES libs/irrxml/src/*.cpp)
@@ -551,50 +548,50 @@ file(GLOB MINIZIP_INCLUDES libs/zlib/minizip/*.h)
 file(GLOB MINIZIP_SOURCES libs/zlib/minizip/*.c libs/zlib/minizip/*.cpp)
 
 set(SOUND_INCLUDES
-	sound/snd_local.h
-	sound/sound.h
-	sound/SoundVoice.h
-	sound/WaveFile.h
-	sound/CinematicAudio.h)
+	engine/sound/snd_local.h
+	engine/sound/sound.h
+	engine/sound/SoundVoice.h
+	engine/sound/WaveFile.h
+	engine/sound/CinematicAudio.h)
 	
 set(SOUND_SOURCES
-	sound/snd_decoder.cpp
-	sound/snd_emitter.cpp
-	sound/snd_shader.cpp
-	sound/snd_system.cpp
-	sound/snd_world.cpp
-	sound/SoundVoice.cpp
-	sound/WaveFile.cpp)
+	engine/sound/snd_decoder.cpp
+	engine/sound/snd_emitter.cpp
+	engine/sound/snd_shader.cpp
+	engine/sound/snd_system.cpp
+	engine/sound/snd_world.cpp
+	engine/sound/SoundVoice.cpp
+	engine/sound/WaveFile.cpp)
 	
 set(XAUDIO2_INCLUDES
-	sound/XAudio2/XA2_SoundHardware.h
-	sound/XAudio2/XA2_SoundSample.h
-	sound/XAudio2/XA2_SoundVoice.h
-	sound/Xaudio2/XA2_CinematicAudio.h)
+	engine/sound/XAudio2/XA2_SoundHardware.h
+	engine/sound/XAudio2/XA2_SoundSample.h
+	engine/sound/XAudio2/XA2_SoundVoice.h
+	engine/sound/Xaudio2/XA2_CinematicAudio.h)
 	
 set(XAUDIO2_SOURCES
-	sound/XAudio2/XA2_SoundHardware.cpp
-	sound/XAudio2/XA2_SoundSample.cpp
-	sound/XAudio2/XA2_SoundVoice.cpp
-	sound/Xaudio2/XA2_CinematicAudio.cpp)
+	engine/sound/XAudio2/XA2_SoundHardware.cpp
+	engine/sound/XAudio2/XA2_SoundSample.cpp
+	engine/sound/XAudio2/XA2_SoundVoice.cpp
+	engine/sound/Xaudio2/XA2_CinematicAudio.cpp)
 	
 set(OPENAL_INCLUDES
-	sound/OpenAL/AL_SoundHardware.h
-	sound/OpenAL/AL_SoundSample.h
-	sound/OpenAL/AL_SoundVoice.h
-	sound/OpenAL/AL_CinematicAudio.h)
+	engine/sound/OpenAL/AL_SoundHardware.h
+	engine/sound/OpenAL/AL_SoundSample.h
+	engine/sound/OpenAL/AL_SoundVoice.h
+	engine/sound/OpenAL/AL_CinematicAudio.h)
 	
 set(OPENAL_SOURCES
-	sound/OpenAL/AL_SoundHardware.cpp
-	sound/OpenAL/AL_SoundSample.cpp
-	sound/OpenAL/AL_SoundVoice.cpp
-	sound/OpenAL/AL_CinematicAudio.cpp)
+	engine/sound/OpenAL/AL_SoundHardware.cpp
+	engine/sound/OpenAL/AL_SoundSample.cpp
+	engine/sound/OpenAL/AL_SoundVoice.cpp
+	engine/sound/OpenAL/AL_CinematicAudio.cpp)
 
 set(STUBAUDIO_INCLUDES
-	sound/stub/SoundStub.h)
+	engine/sound/stub/SoundStub.h)
 
 set(STUBAUDIO_SOURCES
-	sound/stub/SoundSample.cpp)
+	engine/sound/stub/SoundSample.cpp)
 	
 set(OGGVORBIS_INCLUDES
 	libs/oggvorbis/ogg/ogg.h
@@ -628,27 +625,27 @@ set(OGGVORBIS_SOURCES
 
 file(GLOB RAPIDJSON_INCLUDES libs/rapidjson/include/rapidjson/*.h)
 	
-file(GLOB SYS_INCLUDES sys/*.h)
-file(GLOB SYS_SOURCES sys/*.cpp)
+file(GLOB SYS_INCLUDES engine/sys/*.h)
+file(GLOB SYS_SOURCES engine/sys/*.cpp)
 
 if(NOT USE_DX12)
-	get_filename_component(devicemanager_dx12_cpp_full_path ${CMAKE_CURRENT_SOURCE_DIR}/sys/DeviceManager_DX12.cpp ABSOLUTE)
+	get_filename_component(devicemanager_dx12_cpp_full_path ${CMAKE_CURRENT_SOURCE_DIR}/engine/sys/DeviceManager_DX12.cpp ABSOLUTE)
 	list(REMOVE_ITEM SYS_SOURCES "${devicemanager_dx12_cpp_full_path}")
 endif()
 
 if(NOT USE_VULKAN)
-	get_filename_component(devicemanager_vk_cpp_full_path ${CMAKE_CURRENT_SOURCE_DIR}/sys/DeviceManager_VK.cpp ABSOLUTE)
+	get_filename_component(devicemanager_vk_cpp_full_path ${CMAKE_CURRENT_SOURCE_DIR}/engine/sys/DeviceManager_VK.cpp ABSOLUTE)
 	list(REMOVE_ITEM SYS_SOURCES "${devicemanager_vk_cpp_full_path}")
 endif()
 
-file(GLOB UI_INCLUDES ui/*.h)
-file(GLOB UI_SOURCES ui/*.cpp)
+file(GLOB UI_INCLUDES engine/ui/*.h)
+file(GLOB UI_SOURCES engine/ui/*.cpp)
 
-file(GLOB SWF_INCLUDES swf/*.h)
-file(GLOB SWF_SOURCES swf/*.cpp)
+file(GLOB SWF_INCLUDES engine/swf/*.h)
+file(GLOB SWF_SOURCES engine/swf/*.cpp)
 
-file(GLOB VR_INCLUDES vr/*.h)
-file(GLOB VR_SOURCES vr/*.cpp)
+file(GLOB VR_INCLUDES engine/vr/*.h)
+file(GLOB VR_SOURCES engine/vr/*.cpp)
 
 set(LUA_INCLUDES
 	libs/lua/src/lapi.h
@@ -884,38 +881,38 @@ file(GLOB IMGUI_EDITOR_UTIL_SOURCES tools/imgui/util/*.cpp)
 
 file(GLOB_RECURSE WIN32_INCLUDES sys/win32/*.h)
 set(WIN32_SOURCES
-	sys/win32/win_glimp.cpp
-	sys/win32/win_input.cpp
-	sys/win32/win_main.cpp
-	sys/win32/win_shared.cpp
-	sys/win32/win_snd.cpp
-	sys/win32/win_syscon.cpp
-	sys/win32/win_taskkeyhook.cpp
-	sys/win32/win_wndproc.cpp)
+	engine/sys/win32/win_glimp.cpp
+	engine/sys/win32/win_input.cpp
+	engine/sys/win32/win_main.cpp
+	engine/sys/win32/win_shared.cpp
+	engine/sys/win32/win_snd.cpp
+	engine/sys/win32/win_syscon.cpp
+	engine/sys/win32/win_taskkeyhook.cpp
+	engine/sys/win32/win_wndproc.cpp)
 
 if(MSVC)
-	list(APPEND WIN32_SOURCES sys/win32/win_cpu.cpp)
+	list(APPEND WIN32_SOURCES engine/sys/win32/win_cpu.cpp)
 endif()
 
 set(WIN32_RESOURCES
-	sys/win32/rc/res/doom.ico
-	sys/win32/rc/doom.rc
+	engine/sys/win32/rc/res/doom.ico
+	engine/sys/win32/rc/doom.rc
 	)
 
-file(GLOB POSIX_INCLUDES sys/posix/*.h)
-file(GLOB POSIX_SOURCES sys/posix/*.cpp)
+file(GLOB POSIX_INCLUDES engine/sys/posix/*.h)
+file(GLOB POSIX_SOURCES engine/sys/posix/*.cpp)
 
-file(GLOB COMMON_INCLUDES sys/common/*.h)
-file(GLOB COMMON_SOURCES sys/common/*.cpp)
+file(GLOB COMMON_INCLUDES engine/sys/common/*.h)
+file(GLOB COMMON_SOURCES engine/sys/common/*.cpp)
 
-file(GLOB SDL_INCLUDES sys/sdl/*.h)
-file(GLOB SDL_SOURCES sys/sdl/*.cpp)
+file(GLOB SDL_INCLUDES engine/sys/sdl/*.h)
+file(GLOB SDL_SOURCES engine/sys/sdl/*.cpp)
 
 source_group("engine\\aas" FILES ${AAS_INCLUDES})
 source_group("engine\\aas" FILES ${AAS_SOURCES})
 
-source_group("engine\\cm" FILES ${CM_INCLUDES})
-source_group("engine\\cm" FILES ${CM_SOURCES})
+source_group("engine\\collision" FILES ${CM_INCLUDES})
+source_group("engine\\collision" FILES ${CM_SOURCES})
 
 source_group("engine\\framework" FILES ${FRAMEWORK_INCLUDES})
 source_group("engine\\framework" FILES ${FRAMEWORK_SOURCES})
@@ -977,6 +974,9 @@ source_group("engine\\ui-flash" FILES ${SWF_SOURCES})
 source_group("engine\\sys" FILES ${SYS_INCLUDES})
 source_group("engine\\sys" FILES ${SYS_SOURCES})
 
+source_group("engine\\vr" FILES ${VR_INCLUDES})
+source_group("engine\\vr" FILES ${VR_SOURCES})
+
 source_group("libs\\irrxml" FILES ${IRRXML_INCLUDES})
 source_group("libs\\irrxml" FILES ${IRRXML_SOURCES})
 
@@ -1008,9 +1008,6 @@ source_group("libs\\rapidjson" FILES ${RAPIDJSON_INCLUDES})
 
 source_group("libs\\oggvorbis" FILES ${OGGVORBIS_INCLUDES})
 source_group("libs\\oggvorbis" FILES ${OGGVORBIS_SOURCES})
-
-source_group("vr" FILES ${VR_INCLUDES})
-source_group("vr" FILES ${VR_SOURCES})
 
 source_group("libs\\lua" FILES ${LUA_INCLUDES})
 source_group("libs\\lua" FILES ${LUA_SOURCES})
@@ -1291,9 +1288,9 @@ if(MSVC)
 		set(RBDOOM3_PRECOMPILED_SOURCES ${RBDOOM3_SOURCES})
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${ZLIB_SOURCES} ${BINKDEC_SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES} ${MIKKTSPACE_SOURCES} ${OGGVORBIS_SOURCES} ${OPTICK_SOURCES} ${LUA_SOURCES} ${LUASOCKET_SOURCES})
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/minizip/ioapi.c)
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTDecoder.cpp)
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder.cpp)
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder_SSE2.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTDecoder.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTEncoder.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTEncoder_SSE2.cpp)
 	
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES game/gamesys/Class.cpp)
 		#foreach( src_file ${RBDOOM3_PRECOMPILED_SOURCES} )
@@ -1307,7 +1304,7 @@ if(MSVC)
 			OBJECT_DEPENDS "precompiled.pch"
 		)
 		
-		set_source_files_properties(framework/precompiled.cpp
+		set_source_files_properties(engine/framework/precompiled.cpp
 			PROPERTIES
 			COMPILE_FLAGS "/Ycprecompiled.h"
 			OBJECT_OUTPUTS "precompiled.pch"
@@ -1444,9 +1441,9 @@ else()
 		set(RBDOOM3_PRECOMPILED_SOURCES ${RBDOOM3_SOURCES})
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${ZLIB_SOURCES} ${BINKDEC_SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES} ${MIKKTSPACE_SOURCES} ${OGGVORBIS_SOURCES} ${OPTICK_SOURCES} ${LUA_SOURCES} ${LUASOCKET_SOURCES})
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/minizip/ioapi.c)
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTDecoder.cpp)
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder.cpp)
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder_SSE2.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTDecoder.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTEncoder.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTEncoder_SSE2.cpp)
 
 		foreach( src_file ${RBDOOM3_PRECOMPILED_SOURCES} )
 			#message(STATUS "-include precompiled.h for ${src_file}")

@@ -28,7 +28,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 #include "../Game_local.h"
-#include "../../renderer/RenderCommon.h"
+#include "engine/renderer/RenderCommon.h"
 
 const static int NUM_SETTING_OPTIONS = 7;
 

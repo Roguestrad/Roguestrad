@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AfBodyEditor.h"
 
-#include "../imgui/BFGimgui.h"
+#include "engine/imgui/BFGimgui.h"
 
 static const char* bodyTypeNames[] =
 {

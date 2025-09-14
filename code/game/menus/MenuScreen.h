@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef __TYPEINFOGEN__
 	#define VR_OPTIONS 0
 #else
-	#include "../../renderer/RenderCommon.h"
+	#include "../../engine/renderer/RenderCommon.h"
 #endif
 
 enum mainMenuTransition_t

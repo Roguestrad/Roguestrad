@@ -20,90 +20,89 @@ else()
 	list(APPEND MC_SOURCES main_posix.cpp)
 endif()
 
-file(GLOB MC_AAS_INCLUDES ../../aas/*.h)
-file(GLOB MC_AAS_SOURCES ../../aas/*.cpp)
+file(GLOB MC_AAS_INCLUDES ../../engine/aas/*.h)
+file(GLOB MC_AAS_SOURCES ../../engine/aas/*.cpp)
 
 file(GLOB MC_AASBUILD_INCLUDES aas/*.h)
 file(GLOB MC_AASBUILD_SOURCES aas/*.cpp)
 
-file(GLOB MC_CM_INCLUDES ../../cm/*.h)
-file(GLOB MC_CM_SOURCES ../../cm/*.cpp)
+file(GLOB MC_CM_INCLUDES ../../engine/collision/*.h)
+file(GLOB MC_CM_SOURCES ../../engine/collision/*.cpp)
 
 set(MC_DECLS_INCLUDES
-	../../framework/DeclManager.h
-	../../framework/DeclEntityDef.h
-	../../framework/DeclSkin.h
-	../../framework/DeclTable.h
+	../../engine/decls/DeclManager.h
+	../../engine/decls/DeclEntityDef.h
+	../../engine/decls/DeclSkin.h
+	../../engine/decls/DeclTable.h
 	../../game/anim/Anim.h
 	)
 set(MC_DECLS_SOURCES
-	../../framework/DeclManager.cpp
-	../../framework/DeclEntityDef.cpp
-	../../framework/DeclSkin.cpp
-	../../framework/DeclTable.cpp
+	../../engine/decls/DeclManager.cpp
+	../../engine/decls/DeclEntityDef.cpp
+	../../engine/decls/DeclSkin.cpp
+	../../engine/decls/DeclTable.cpp
 	../../game/anim/Anim.cpp
 	../../game/anim/Anim_Blend.cpp
 	)
 
 set(MC_FRAMEWORK_INCLUDES 
-	../../framework/CmdSystem.h
-	../../framework/CVarSystem.h
-	../../framework/File.h
-	../../framework/File_Manifest.h
-	../../framework/File_Resource.h
-	../../framework/File_Zip.h
-	../../framework/FileSystem.h
-	../../framework/Licensee.h
+	../../engine/framework/CmdSystem.h
+	../../engine/framework/CVarSystem.h
+	../../engine/framework/File.h
+	../../engine/framework/File_Manifest.h
+	../../engine/framework/File_Resource.h
+	../../engine/framework/File_Zip.h
+	../../engine/framework/FileSystem.h
+	../../engine/framework/Licensee.h
 	../../idlib/precompiled.h
 	)
 set(MC_FRAMEWORK_SOURCES
-	../../framework/CmdSystem.cpp
-	../../framework/CVarSystem.cpp
-	../../framework/File.cpp
-	../../framework/File_Manifest.cpp
-	../../framework/File_Resource.cpp
-	../../framework/File_Zip.cpp
-	../../framework/FileSystem.cpp
+	../../engine/framework/CmdSystem.cpp
+	../../engine/framework/CVarSystem.cpp
+	../../engine/framework/File.cpp
+	../../engine/framework/File_Manifest.cpp
+	../../engine/framework/File_Resource.cpp
+	../../engine/framework/File_Zip.cpp
+	../../engine/framework/FileSystem.cpp
 	)
 
 set(MC_RENDERER_INCLUDES 
-	../../renderer/BinaryImage.h
-	../../renderer/Color/ColorSpace.h
-	../../renderer/Image.h
-	../../renderer/Material.h
-	#../../renderer/VertexCache.h
-	../../renderer/ModelManager.h
-	../../renderer/Model.h
-	../../renderer/Model_gltf.h
-	../../renderer/Model_ase.h
-	../../renderer/Model_lwo.h
-	../../renderer/Model_ma.h
-	../../renderer/Model_obj.h
+	../../engine/renderer/BinaryImage.h
+	../../engine/renderer/Color/ColorSpace.h
+	../../engine/renderer/Image.h
+	../../engine/renderer/Material.h
+	../../engine/renderer/ModelManager.h
+	../../engine/renderer/Model.h
+	../../engine/renderer/Model_gltf.h
+	../../engine/renderer/Model_ase.h
+	../../engine/renderer/Model_lwo.h
+	../../engine/renderer/Model_ma.h
+	../../engine/renderer/Model_obj.h
 	)
 set(MC_RENDERER_SOURCES
-	../../renderer/BinaryImage.cpp
-	../../renderer/Color/ColorSpace.cpp
-	../../renderer/DXT/DXTEncoder.cpp
-	../../renderer/DXT/DXTEncoder_SSE2.cpp
-	../../renderer/GLMatrix.cpp
-	../../renderer/ImageManager.cpp
-	../../renderer/Image_files.cpp
-	#../../renderer/Image_intrinsic.cpp TODO
-	../../renderer/Image_load.cpp
-	../../renderer/Image_process.cpp
-	../../renderer/Image_program.cpp
-	../../stub/Image_stub.cpp
-	../../renderer/Material.cpp
-	../../renderer/tr_trisurf.cpp
-	#../../renderer/VertexCache.cpp
-	../../renderer/ModelManager.cpp
-	../../renderer/Model.cpp
-	../../renderer/Model_gltf.cpp
-	#../../renderer/Model_md5.cpp
-	../../renderer/Model_ase.cpp
-	../../renderer/Model_lwo.cpp
-	../../renderer/Model_ma.cpp
-	../../renderer/Model_obj.cpp
+	../../engine/renderer/BinaryImage.cpp
+	../../engine/renderer/Color/ColorSpace.cpp
+	../../engine/renderer/DXT/DXTEncoder.cpp
+	../../engine/renderer/DXT/DXTEncoder_SSE2.cpp
+	../../engine/renderer/GLMatrix.cpp
+	../../engine/renderer/ImageManager.cpp
+	../../engine/renderer/Image_files.cpp
+	#../../engine/renderer/Image_intrinsic.cpp TODO
+	../../engine/renderer/Image_load.cpp
+	../../engine/renderer/Image_process.cpp
+	../../engine/renderer/Image_program.cpp
+	../../engine/stub/Image_stub.cpp
+	../../engine/renderer/Material.cpp
+	../../engine/renderer/tr_trisurf.cpp
+	#../../engine/renderer/VertexCache.cpp
+	../../engine/renderer/ModelManager.cpp
+	../../engine/renderer/Model.cpp
+	../../engine/renderer/Model_gltf.cpp
+	#../../engine/renderer/Model_md5.cpp
+	../../engine/renderer/Model_ase.cpp
+	../../engine/renderer/Model_lwo.cpp
+	../../engine/renderer/Model_ma.cpp
+	../../engine/renderer/Model_obj.cpp
 	)
 	
 file(GLOB MC_MIKKTSPACE_INCLUDES ../../libs/mikktspace/*.h)
@@ -245,6 +244,7 @@ include_directories(
 	.
 	../../idlib
 	../../libs/
+	../../engine/
 	)
 
 if(MSVC)
