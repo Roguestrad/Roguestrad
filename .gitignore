@@ -1,7 +1,7 @@
 build*
 eclipse*
 xcode*
-neo/ipch
+code/ipch
 *~
 *.gch
 *.dll
@@ -13,6 +13,7 @@ neo/ipch
 *.crc
 .DS_Store
 imgui.ini
+Simple.json
 
 base/autoexec.cfg
 base/classicmusic/
@@ -37,13 +38,13 @@ GRTAGS
 GSYMS
 GTAGS
 HTML/
-neo/.kdev4
-neo/neo.kdev4
-neo/.idea/
-neo/.vscode/
-neo/cmake-build-*/
-neo/bin/
+code/.kdev4
+code/code.kdev4
+code/.idea/
+code/.vscode/
+code/cmake-build-*/
+code/bin/
 /tools/
-neo/d3xp/gamesys/GameTypeInfo.h
-neo/d3xp/gamesys/GameTypeInfo.cpp
+code/game/gamesys/GameTypeInfo.h
+code/game/gamesys/GameTypeInfo.cpp
 

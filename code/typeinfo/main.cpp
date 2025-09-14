@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "TypeInfoGen.h"
 
-#define SOURCE_CODE_BASE_FOLDER "neo"
+#define SOURCE_CODE_BASE_FOLDER "code"
 
 idSession* 			session = NULL;
 
@@ -59,13 +59,13 @@ int main( int argc, char** argv )
 	cvarSystem->Init();
 	idCVar::RegisterStaticVars();
 
-	cvarSystem->SetCVarString( "fs_game", "neo" );
+	cvarSystem->SetCVarString( "fs_game", "code" );
 	fileSystem->Init();
 
 	generator = new idTypeInfoGen;
 
-	sourcePath = "d3xp";
-	fileName = "d3xp/gamesys/GameTypeInfo";
+	sourcePath = "game";
+	fileName = "game/gamesys/GameTypeInfo";
 
 	generator->AddDefine( "__cplusplus" );
 	generator->AddDefine( "GAME_DLL" );

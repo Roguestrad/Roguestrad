@@ -1004,7 +1004,7 @@ RB: only called by rbdmap
 ===================
 */
 
-#include "../d3xp/anim/Anim.h"
+#include "../game/anim/Anim.h"
 
 void idDeclManagerLocal::InitTool()
 {
@@ -2189,7 +2189,7 @@ struct LocalEvar_t
 	idStr desc;
 };
 
-#include <d3xp/anim/Anim.h> // idDeclModelDef
+#include <game/anim/Anim.h> // idDeclModelDef
 
 void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args )
 {

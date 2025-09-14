@@ -134,7 +134,7 @@ constexpr uint32 NUM_FRAME_DATA	= 3;
 #include "../aas/AASFileManager.h"
 
 // game
-#include "../d3xp/Game.h"
+#include "../game/Game.h"
 
 // Session / Network
 #include "../sys/LightweightCompression.h"

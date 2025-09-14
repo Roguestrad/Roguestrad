@@ -34,15 +34,15 @@ set(MC_DECLS_INCLUDES
 	../../framework/DeclEntityDef.h
 	../../framework/DeclSkin.h
 	../../framework/DeclTable.h
-	../../d3xp/anim/Anim.h
+	../../game/anim/Anim.h
 	)
 set(MC_DECLS_SOURCES
 	../../framework/DeclManager.cpp
 	../../framework/DeclEntityDef.cpp
 	../../framework/DeclSkin.cpp
 	../../framework/DeclTable.cpp
-	../../d3xp/anim/Anim.cpp
-	../../d3xp/anim/Anim_Blend.cpp
+	../../game/anim/Anim.cpp
+	../../game/anim/Anim_Blend.cpp
 	)
 
 set(MC_FRAMEWORK_INCLUDES 

@@ -1066,7 +1066,7 @@ void idTypeInfoGen::CreateTypeInfo( const char* path )
 
 	{
 
-		fileName = "neo/d3xp/game_precompiled.cpp";
+		fileName = "code/game/game_precompiled.cpp";
 
 		common->Printf( "processing '%s' for type info...\n", fileName.c_str() );
 

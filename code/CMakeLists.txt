@@ -752,116 +752,116 @@ else()
 endif()
 
 set(GAMED3XP_INCLUDES
-	d3xp/Achievements.h
-	d3xp/Actor.h
-	d3xp/AF.h
-	d3xp/AFEntity.h
-	d3xp/AimAssist.h
-	d3xp/BrittleFracture.h
-	d3xp/Camera.h
-	d3xp/Entity.h
-	d3xp/EnvironmentProbe.h
-	d3xp/Fx.h
-	d3xp/Game.h
-	d3xp/GameEdit.h
-	d3xp/Game_local.h
-	d3xp/Grabber.h
-	d3xp/IK.h
-	d3xp/Item.h
-	d3xp/Leaderboards.h
-	d3xp/Light.h
-	d3xp/Misc.h
-	d3xp/Moveable.h
-	d3xp/Mover.h
-	d3xp/MultiplayerGame.h
-	d3xp/Player.h
-	d3xp/PlayerIcon.h
-	d3xp/PlayerView.h
-	d3xp/PredictedValue.h
-	d3xp/Projectile.h
-	d3xp/Pvs.h
-	d3xp/SecurityCamera.h
-	d3xp/SmokeParticles.h
-	d3xp/Sound.h
-	d3xp/Target.h
-	d3xp/Trigger.h
-	d3xp/Weapon.h
-	d3xp/WorldSpawn.h)
+	game/Achievements.h
+	game/Actor.h
+	game/AF.h
+	game/AFEntity.h
+	game/AimAssist.h
+	game/BrittleFracture.h
+	game/Camera.h
+	game/Entity.h
+	game/EnvironmentProbe.h
+	game/Fx.h
+	game/Game.h
+	game/GameEdit.h
+	game/Game_local.h
+	game/Grabber.h
+	game/IK.h
+	game/Item.h
+	game/Leaderboards.h
+	game/Light.h
+	game/Misc.h
+	game/Moveable.h
+	game/Mover.h
+	game/MultiplayerGame.h
+	game/Player.h
+	game/PlayerIcon.h
+	game/PlayerView.h
+	game/PredictedValue.h
+	game/Projectile.h
+	game/Pvs.h
+	game/SecurityCamera.h
+	game/SmokeParticles.h
+	game/Sound.h
+	game/Target.h
+	game/Trigger.h
+	game/Weapon.h
+	game/WorldSpawn.h)
 	
 set(GAMED3XP_SOURCES
-	d3xp/Achievements.cpp
-	d3xp/Actor.cpp
-	d3xp/AF.cpp
-	d3xp/AFEntity.cpp
-	d3xp/AimAssist.cpp
-	d3xp/BrittleFracture.cpp
-	d3xp/Camera.cpp
-	d3xp/Entity.cpp
-	d3xp/EnvironmentProbe.cpp
-	d3xp/Fx.cpp
-	d3xp/GameEdit.cpp
-	d3xp/Game_local.cpp
-	d3xp/Game_network.cpp
-	d3xp/Grabber.cpp
-	d3xp/IK.cpp
-	d3xp/Item.cpp
-	d3xp/Leaderboards.cpp
-	d3xp/Light.cpp
-	d3xp/Misc.cpp
-	d3xp/Moveable.cpp
-	d3xp/Mover.cpp
-	d3xp/MultiplayerGame.cpp
-	d3xp/Player.cpp
-	d3xp/PlayerIcon.cpp
-	d3xp/PlayerView.cpp
-	d3xp/precompiled.cpp
-	d3xp/Projectile.cpp
-	d3xp/Pvs.cpp
-	d3xp/SecurityCamera.cpp
-	d3xp/SmokeParticles.cpp
-	d3xp/Sound.cpp
-	d3xp/Target.cpp
-	d3xp/Trigger.cpp
-	d3xp/Weapon.cpp
-	d3xp/WorldSpawn.cpp)
+	game/Achievements.cpp
+	game/Actor.cpp
+	game/AF.cpp
+	game/AFEntity.cpp
+	game/AimAssist.cpp
+	game/BrittleFracture.cpp
+	game/Camera.cpp
+	game/Entity.cpp
+	game/EnvironmentProbe.cpp
+	game/Fx.cpp
+	game/GameEdit.cpp
+	game/Game_local.cpp
+	game/Game_network.cpp
+	game/Grabber.cpp
+	game/IK.cpp
+	game/Item.cpp
+	game/Leaderboards.cpp
+	game/Light.cpp
+	game/Misc.cpp
+	game/Moveable.cpp
+	game/Mover.cpp
+	game/MultiplayerGame.cpp
+	game/Player.cpp
+	game/PlayerIcon.cpp
+	game/PlayerView.cpp
+	game/precompiled.cpp
+	game/Projectile.cpp
+	game/Pvs.cpp
+	game/SecurityCamera.cpp
+	game/SmokeParticles.cpp
+	game/Sound.cpp
+	game/Target.cpp
+	game/Trigger.cpp
+	game/Weapon.cpp
+	game/WorldSpawn.cpp)
 
-file(GLOB GAMED3XP_AI_INCLUDES d3xp/ai/*.h)
-file(GLOB GAMED3XP_AI_SOURCES d3xp/ai/*.cpp)
+file(GLOB GAMED3XP_AI_INCLUDES game/ai/*.h)
+file(GLOB GAMED3XP_AI_SOURCES game/ai/*.cpp)
 
-file(GLOB GAMED3XP_MONSTER_INCLUDES d3xp/monsters/*.h)
-file(GLOB GAMED3XP_MONSTER_SOURCES d3xp/monsters/*.cpp)
+file(GLOB GAMED3XP_MONSTER_INCLUDES game/monsters/*.h)
+file(GLOB GAMED3XP_MONSTER_SOURCES game/monsters/*.cpp)
 
-file(GLOB GAMED3XP_BOTS_INCLUDES d3xp/bots/*.h)
-file(GLOB GAMED3XP_BOTS_SOURCES d3xp/bots/*.cpp)
+file(GLOB GAMED3XP_BOTS_INCLUDES game/bots/*.h)
+file(GLOB GAMED3XP_BOTS_SOURCES game/bots/*.cpp)
 
-file(GLOB GAMED3XP_WEAPON_INCLUDES d3xp/weapons/*.h)
-file(GLOB GAMED3XP_WEAPON_SOURCES d3xp/weapons/*.cpp)
+file(GLOB GAMED3XP_WEAPON_INCLUDES game/weapons/*.h)
+file(GLOB GAMED3XP_WEAPON_SOURCES game/weapons/*.cpp)
 
-file(GLOB GAMED3XP_ANIM_INCLUDES d3xp/anim/*.h)
-file(GLOB GAMED3XP_ANIM_SOURCES d3xp/anim/*.cpp)
+file(GLOB GAMED3XP_ANIM_INCLUDES game/anim/*.h)
+file(GLOB GAMED3XP_ANIM_SOURCES game/anim/*.cpp)
 
-file(GLOB GAMED3XP_GAMESYS_INCLUDES d3xp/gamesys/*.h)
+file(GLOB GAMED3XP_GAMESYS_INCLUDES game/gamesys/*.h)
 set(GAMED3XP_GAMESYS_SOURCES
-	#d3xp/gamesys/Callbacks.cpp
-	d3xp/gamesys/Class.cpp
-	d3xp/gamesys/State.cpp
-	d3xp/gamesys/GameTypeInfo.cpp
-	#d3xp/gamesys/DebugGraph.cpp
-	d3xp/gamesys/Event.cpp
-	d3xp/gamesys/SaveGame.cpp
-	d3xp/gamesys/SysCmds.cpp
-	d3xp/gamesys/SysCvar.cpp
-	#d3xp/gamesys/TypeInfo.cpp
+	#game/gamesys/Callbacks.cpp
+	game/gamesys/Class.cpp
+	game/gamesys/State.cpp
+	game/gamesys/GameTypeInfo.cpp
+	#game/gamesys/DebugGraph.cpp
+	game/gamesys/Event.cpp
+	game/gamesys/SaveGame.cpp
+	game/gamesys/SysCmds.cpp
+	game/gamesys/SysCvar.cpp
+	#game/gamesys/TypeInfo.cpp
 	)
 
-file(GLOB GAMED3XP_MENUS_INCLUDES d3xp/menus/*.h)
-file(GLOB GAMED3XP_MENUS_SOURCES d3xp/menus/*.cpp)
+file(GLOB GAMED3XP_MENUS_INCLUDES game/menus/*.h)
+file(GLOB GAMED3XP_MENUS_SOURCES game/menus/*.cpp)
 	
-file(GLOB GAMED3XP_PHYSICS_INCLUDES d3xp/physics/*.h)
-file(GLOB GAMED3XP_PHYSICS_SOURCES d3xp/physics/*.cpp)
+file(GLOB GAMED3XP_PHYSICS_INCLUDES game/physics/*.h)
+file(GLOB GAMED3XP_PHYSICS_SOURCES game/physics/*.cpp)
 
-file(GLOB GAMED3XP_SCRIPT_INCLUDES d3xp/script/*.h)
-file(GLOB GAMED3XP_SCRIPT_SOURCES d3xp/script/*.cpp)
+file(GLOB GAMED3XP_SCRIPT_INCLUDES game/script/*.h)
+file(GLOB GAMED3XP_SCRIPT_SOURCES game/script/*.cpp)
 
 file(GLOB COMPILER_INCLUDES tools/compilers/*.h)
 
@@ -1020,35 +1020,35 @@ source_group("libs\\luawrapper" FILES ${LUAWRAPPER_INCLUDES})
 source_group("libs\\luasocket" FILES ${LUASOCKET_INCLUDES})
 source_group("libs\\luasocket" FILES ${LUASOCKET_SOURCES})
 
-source_group("game-d3xp" FILES ${GAMED3XP_INCLUDES})
-source_group("game-d3xp" FILES ${GAMED3XP_SOURCES})
+source_group("game" FILES ${GAMED3XP_INCLUDES})
+source_group("game" FILES ${GAMED3XP_SOURCES})
 
-source_group("game-d3xp\\ai" FILES ${GAMED3XP_AI_INCLUDES})
-source_group("game-d3xp\\ai" FILES ${GAMED3XP_AI_SOURCES})
+source_group("game\\ai" FILES ${GAMED3XP_AI_INCLUDES})
+source_group("game\\ai" FILES ${GAMED3XP_AI_SOURCES})
 
-source_group("game-d3xp\\monsters" FILES ${GAMED3XP_MONSTER_INCLUDES})
-source_group("game-d3xp\\monsters" FILES ${GAMED3XP_MONSTER_SOURCES})
+source_group("game\\monsters" FILES ${GAMED3XP_MONSTER_INCLUDES})
+source_group("game\\monsters" FILES ${GAMED3XP_MONSTER_SOURCES})
 
-source_group("game-d3xp\\bots" FILES ${GAMED3XP_BOTS_INCLUDES})
-source_group("game-d3xp\\bots" FILES ${GAMED3XP_BOTS_SOURCES})
+source_group("game\\bots" FILES ${GAMED3XP_BOTS_INCLUDES})
+source_group("game\\bots" FILES ${GAMED3XP_BOTS_SOURCES})
 
-source_group("game-d3xp\\weapons" FILES ${GAMED3XP_WEAPON_INCLUDES})
-source_group("game-d3xp\\weapons" FILES ${GAMED3XP_WEAPON_SOURCES})
+source_group("game\\weapons" FILES ${GAMED3XP_WEAPON_INCLUDES})
+source_group("game\\weapons" FILES ${GAMED3XP_WEAPON_SOURCES})
 
-source_group("game-d3xp\\anim" FILES ${GAMED3XP_ANIM_INCLUDES})
-source_group("game-d3xp\\anim" FILES ${GAMED3XP_ANIM_SOURCES})
+source_group("game\\anim" FILES ${GAMED3XP_ANIM_INCLUDES})
+source_group("game\\anim" FILES ${GAMED3XP_ANIM_SOURCES})
 
-source_group("game-d3xp\\gamesys" FILES ${GAMED3XP_GAMESYS_INCLUDES})
-source_group("game-d3xp\\gamesys" FILES ${GAMED3XP_GAMESYS_SOURCES})
+source_group("game\\gamesys" FILES ${GAMED3XP_GAMESYS_INCLUDES})
+source_group("game\\gamesys" FILES ${GAMED3XP_GAMESYS_SOURCES})
 
-source_group("game-d3xp\\menus" FILES ${GAMED3XP_MENUS_INCLUDES})
-source_group("game-d3xp\\menus" FILES ${GAMED3XP_MENUS_SOURCES})
+source_group("game\\menus" FILES ${GAMED3XP_MENUS_INCLUDES})
+source_group("game\\menus" FILES ${GAMED3XP_MENUS_SOURCES})
 
-source_group("game-d3xp\\physics" FILES ${GAMED3XP_PHYSICS_INCLUDES})
-source_group("game-d3xp\\physics" FILES ${GAMED3XP_PHYSICS_SOURCES})
+source_group("game\\physics" FILES ${GAMED3XP_PHYSICS_INCLUDES})
+source_group("game\\physics" FILES ${GAMED3XP_PHYSICS_SOURCES})
 
-source_group("game-d3xp\\script" FILES ${GAMED3XP_SCRIPT_INCLUDES})
-source_group("game-d3xp\\script" FILES ${GAMED3XP_SCRIPT_SOURCES})
+source_group("game\\script" FILES ${GAMED3XP_SCRIPT_INCLUDES})
+source_group("game\\script" FILES ${GAMED3XP_SCRIPT_SOURCES})
 
 source_group("tools\\compilers" FILES ${COMPILER_INCLUDES})
 
@@ -1295,7 +1295,7 @@ if(MSVC)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder.cpp)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/renderer/DXT/DXTEncoder_SSE2.cpp)
 	
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES d3xp/gamesys/Class.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES game/gamesys/Class.cpp)
 		#foreach( src_file ${RBDOOM3_PRECOMPILED_SOURCES} )
 		#	message(STATUS "-include precompiled.h for ${src_file}")
 		#endforeach()
@@ -1340,14 +1340,14 @@ if(MSVC)
 		add_dependencies(${APP_NAME} nvrhi_vk)
 	endif()
 	
-	# call typeinfogen to generate neo/d3xp/gamesys/GameTypeInfo.h
+	# call typeinfogen to generate code/game/gamesys/GameTypeInfo.h
 	add_custom_command(
 			TARGET ${APP_NAME}
 			PRE_BUILD
 			DEPENDS typeinfogen
 			COMMAND typeinfogen
 			WORKING_DIRECTORY ..
-			COMMENT "Generating neo/d3xp/gamesys/GameTypeInfo.h"
+			COMMENT "Generating code/game/gamesys/GameTypeInfo.h"
 			)
 	
 	target_link_libraries(${APP_NAME}
@@ -1563,14 +1563,14 @@ else()
 		endif()
 	endif()
 
-	# call typeinfogen to generate neo/d3xp/gamesys/GameTypeInfo.h
+	# call typeinfogen to generate code/game/gamesys/GameTypeInfo.h
 	add_custom_command(
 			TARGET ${APP_NAME}
 			PRE_BUILD
 			DEPENDS typeinfogen
 			COMMAND typeinfogen
 			WORKING_DIRECTORY ..
-			COMMENT "Generating neo/d3xp/gamesys/GameTypeInfo.h"
+			COMMENT "Generating code/game/gamesys/GameTypeInfo.h"
 			)
 
 	if(NOT WIN32)

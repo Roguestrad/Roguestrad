@@ -37,8 +37,8 @@ If you have questions concerning this license or the applicable additional terms
 
 // HVG_TODO: this has to be moved out before release
 #if !defined( DMAP )
-	#include "d3xp/anim/Anim.h"
-	#include "d3xp/Game_local.h"
+	#include "game/anim/Anim.h"
+	#include "game/Game_local.h"
 #endif
 
 idCVar r_useCachedDynamicModels( "r_useCachedDynamicModels", "1", CVAR_RENDERER | CVAR_BOOL, "cache snapshots of dynamic models" );

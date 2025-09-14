@@ -690,7 +690,7 @@ void idRenderModelManagerLocal::RemoveModel( idRenderModel* model )
 idRenderModelManagerLocal::ReloadModels
 =================
 */
-#include "../d3xp/anim/Anim.h" // RB: required for idDeclModelDef
+#include "../game/anim/Anim.h" // RB: required for idDeclModelDef
 
 void idRenderModelManagerLocal::ReloadModels( bool forceAll )
 {
