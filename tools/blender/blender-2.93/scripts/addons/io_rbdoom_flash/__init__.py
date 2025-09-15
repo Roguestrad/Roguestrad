@@ -12,9 +12,9 @@ from math import *
 
 #jsonfilename = "C:\\Projects\\RBDOOM-3-BFG\\base\\exported\\swf\\shell.json"
 #jsonfilename = "C:\\Projects\\RBDOOM-3-BFG\\mod_ragetoolkit\\exported\\swf\\hud.json"
-jsonfilename = "C:\\Projects\\RBDOOM-3-BFG\\mod_swftests\\exported\\swf\\dialog.json"
+jsonfilename = "C:\\Projects\\Roguestrad\\mod_swftests\\exported\\swf\\hud.json"
 
-basepath = "C:\\Projects\\RBDOOM-3-BFG\\mod_swftests\\exported\\"
+basepath = "C:\\Projects\\Roguestrad\\mod_swftests\\exported\\"
 
 start = time.time() 
 data = json.loads( open( jsonfilename ).read() )

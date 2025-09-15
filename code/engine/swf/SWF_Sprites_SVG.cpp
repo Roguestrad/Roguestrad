@@ -2,8 +2,7 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2024 Robert Beckebans
+Copyright (C) 2025 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -34,6 +33,11 @@ void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList< idSWFDicti
 {
 	f->WriteFloatString( "\t\t<g id=\"%i\" >\n", characterID );
 
+	// Select frame 0 for static export; could be extended to use frameLabels (e.g., "rollOn")
+	int frameStart = frameOffsets[0];
+	int frameEnd = ( frameCount > 1 ) ? frameOffsets[1] : commands.Num();
+
+	//for (int i = frameStart; i < frameEnd; i++)
 	for( int i = 0; i < commands.Num(); i++ )
 	{
 		idSWFSprite::swfSpriteCommand_t& command = commands[i];
@@ -41,7 +45,6 @@ void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList< idSWFDicti
 		command.stream.Rewind();
 		switch( command.tag )
 		{
-
 #define HANDLE_SWF_TAG( x ) case Tag_##x: WriteSVG_##x( f, command.stream, characterID, i, dict ); break;
 				HANDLE_SWF_TAG( PlaceObject2 );
 				//HANDLE_SWF_TAG( PlaceObject3 );
@@ -71,27 +74,6 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 	if( ( flags1 & PlaceFlagHasCharacter ) != 0 )
 	{
 		characterID = bitstream.ReadU16();
-
-		const idSWFDictionaryEntry& entry = dict[ characterID ];
-
-		switch( entry.type )
-		{
-			case SWF_DICT_MORPH:
-			case SWF_DICT_SHAPE:
-			case SWF_DICT_TEXT:
-			case SWF_DICT_EDITTEXT:
-			case SWF_DICT_SPRITE:
-			{
-				file->WriteFloatString( "\t\t\t<use xlink:href=\"#%i\" ", characterID );
-				break;
-			}
-
-				//case SWF_DICT_SPRITE:
-				//{
-				//	//dictionary[i].sprite->WriteSVG( file, i, dictionary );
-				//	break;
-				//}
-		}
 	}
 
 	if( characterID == -1 )
@@ -99,31 +81,71 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 		return;
 	}
 
+	idStr filterID;
+	idStr transform;
+
 	if( ( flags1 & PlaceFlagHasMatrix ) != 0 )
 	{
 		swfMatrix_t m;
-
 		bitstream.ReadMatrix( m );
 
-		//file->WriteFloatString( ",\n\t\t\t\t\t\"startMatrix\": [ %f, %f, %f, %f, %f, %f ]", m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );
+		//file->WriteFloatString( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
 
-		// TODO scaling
-
-		file->WriteFloatString( "transform=\"translate(%f,%f)\" ", m.tx, m.ty );
+		// breaks SVG preview in VSC but is correct in browser
+		transform.Format( "transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ", m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );
 	}
 
+	// color transformations are emulated by SVG filters and need be defined before use
 	if( ( flags1 & PlaceFlagHasColorTransform ) != 0 )
 	{
 		swfColorXform_t cxf;
 		bitstream.ReadColorXFormRGBA( cxf );
 
-		idVec4 color = cxf.mul;
-		//file->WriteFloatString( ",\n\t\t\t\t\t\"mulColor\": [ %f, %f, %f, %f ]", color.x, color.y, color.z, color.w );
-
-		color = cxf.add;
-		if( color != vec4_origin )
+		if( cxf.mul != vec4_one || cxf.add != vec4_zero )
 		{
-			//file->WriteFloatString( ",\n\t\t\t\t\t\"addColor\": [ %f, %f, %f, %f ]", color.x, color.y, color.z, color.w );
+			filterID.Format( "cf_%i_%i", characterID, commandID );
+
+			file->WriteFloatString(
+				"\t\t\t<filter id=\"%s\">\n"
+				"\t\t\t\t<feColorMatrix type=\"matrix\" values=\""
+				"%f 0 0 0 %f "
+				"0 %f 0 0 %f "
+				"0 0 %f 0 %f "
+				"0 0 0 %f 0\" />\n"
+				"\t\t\t</filter>\n",
+				filterID.c_str(),
+				cxf.mul.x, cxf.add.x,
+				cxf.mul.y, cxf.add.y,
+				cxf.mul.z, cxf.add.z,
+				cxf.mul.w
+			);
+		}
+	}
+
+	const idSWFDictionaryEntry& entry = dict[ characterID ];
+	switch( entry.type )
+	{
+		case SWF_DICT_MORPH:
+		case SWF_DICT_SHAPE:
+		case SWF_DICT_TEXT:
+		case SWF_DICT_EDITTEXT:
+		case SWF_DICT_SPRITE:
+		{
+			file->WriteFloatString( "\t\t\t<use xlink:href=\"#%i\" ", characterID );
+			break;
+		}
+	}
+
+	if( ( flags1 & PlaceFlagHasMatrix ) != 0 )
+	{
+		file->WriteFloatString( "%s", transform.c_str() );
+	}
+
+	if( ( flags1 & PlaceFlagHasColorTransform ) != 0 )
+	{
+		if( !filterID.IsEmpty() )
+		{
+			file->WriteFloatString( "filter=\"url(#%s)\" />\n", filterID.c_str() );
 		}
 	}
 

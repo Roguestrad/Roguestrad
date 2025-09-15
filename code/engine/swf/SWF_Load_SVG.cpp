@@ -82,20 +82,6 @@ void idSWF::WriteSVG( const char* filename )
 				//file->WriteFloatString( "\t\t<g id=\"%i\" visibility=\"hidden\">\n", i );
 				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
 
-				float x = shape->startBounds.tl.y;
-				float y = shape->startBounds.tl.x;
-				float width = fabs( shape->startBounds.br.y - shape->startBounds.tl.y );
-				float height = fabs( shape->startBounds.br.x - shape->startBounds.tl.x );
-
-				//file->WriteFloatString( "\t\t\t<StartBounds x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" />\n", x, y, width, height );
-
-				x = shape->endBounds.tl.y;
-				y = shape->endBounds.tl.x;
-				width = fabs( shape->endBounds.br.y - shape->endBounds.tl.y );
-				height = fabs( shape->endBounds.br.x - shape->endBounds.tl.x );
-
-				//file->WriteFloatString( "\t\t\t<EndBounds x=\"%f\" y=\"%f\" width=\"%f\" height=\"%f\" />\n", x, y, width, height );
-
 				// export fill draws
 				for( int d = 0; d < shape->fillDraws.Num(); d++ )
 				{
@@ -283,7 +269,7 @@ void idSWF::WriteSVG( const char* filename )
 
 				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
 				file->WriteFloatString(
-					"\t\t\t<text x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d,%d,%d,%f)\" text-anchor=\"%s\">%s</text>\n",
+					"\t\t\t<text x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\">%s</text>\n",
 					et->bounds.tl.x, et->bounds.br.y, GetFontName( et->fontID ), fontSize,
 					( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ),
 					alignStr.c_str(), et->initialText.c_str()
