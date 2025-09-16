@@ -55,7 +55,7 @@ Roguestrad follows a lean and focused design that values clarity and simplicity 
 
 - KISS (Keep It Simple, Stupid): Avoid overengineering and keep systems understandable. No questionable trends like ECS, Data-Oriented Design or Realtime Raytracing that add a lot of complexity but zero gibs to your boomer shooter.
 
-- YAGNI (You Aren’t Gonna Need It): No hair simulation, no fantasy programming languages without a debugger. Roguestrad builds on what has proven itself in id Tech 3 and 4 era games, focusing instead on mechanics that actually enrich gameplay — such as double jumps, dashes, or combo scoring systems.
+YAGNI (You Aren’t Gonna Need It): No hair simulation, no obscure programming languages without a debugger, and no visual scripting. Visual scripting often impedes collaboration in team environments, complicates seamless merging with Git, and is poorly suited for AI coding tools. Roguestrad focuses on proven approaches from the id Tech 3 and 4 era, prioritizing gameplay mechanics that genuinely enhance player experience — like double jumps, dashes, or combo scoring systems.
 
 👉 Roguestrad is not a general-purpose engine for building racing games, MMOs, or giant sandboxes. Its discipline and DNA remain firmly grounded in action-oriented design principles.
 
