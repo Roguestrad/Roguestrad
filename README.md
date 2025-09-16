@@ -51,11 +51,11 @@ Key differences will include:
 
 Roguestrad follows a lean and focused design that values clarity and simplicity over feature bloat. Its core mission is to empower developers who want to create classic run & gun gameplay with a modernized blend of id Tech 3, 4 & 5.
 
-- Orthodox C++ for simplicity: Clean, straightforward code without unnecessary abstractions. Easy to understand, extend, profile, and maintain. Roguestrad skips the fancy-pants tech flexing of overengineered language abuse. 
+- Orthodox C++ for simplicity: Clean, straightforward code without unnecessary abstractions. Easy to understand, extend, profile, and maintain. Game dev is hard enough - Roguestrad skips the fancy-pants tech flexing of overengineered language abuse, making C++ as easy as C# coding.
 
 - KISS (Keep It Simple, Stupid): Avoid overengineering and keep systems understandable. No questionable trends like ECS, Data-Oriented Design or Realtime Raytracing that add a lot of complexity but zero gibs to your boomer shooter.
 
-YAGNI (You Aren’t Gonna Need It): No hair simulation, no obscure languages without debuggers, and definitely no visual scripting. Visual scripting bogs down team collaboration, sabotages Git’s automagic merging, and stumps AI coding tools. Roguestrad builds on id Tech 3 and 4’s rock-solid tech—like precomputed lighting and C++ — but spices up boomer shooters with fragging-fresh gameplay: double jumps, dashes, and combo scoring systems to keep enemies blasting in style.
+- YAGNI (You Aren’t Gonna Need It): No hair simulation, no obscure languages without debuggers, and definitely no visual scripting. Visual scripting bogs down team collaboration, sabotages Git’s automagic merging, and stumps AI coding tools. Roguestrad builds on id Tech 3 and 4’s rock-solid tech—like precomputed lighting and C++ — but spices up boomer shooters with fragging-fresh gameplay: double jumps, dashes, and combo scoring systems to keep enemies blasting in style.
 
 👉 Roguestrad is not a general-purpose engine for building racing games, MMOs, or giant sandboxes. Its discipline and DNA remain firmly grounded in action-oriented design principles.
 
