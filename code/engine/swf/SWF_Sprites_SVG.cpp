@@ -89,10 +89,17 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 		swfMatrix_t m;
 		bitstream.ReadMatrix( m );
 
-		transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
+		//transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
 
-		// breaks SVG preview in VSC but is correct in browser
-		//transform.Format( "transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ", m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );
+		transform.Format(
+			"transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ",
+			m.xx,  // a
+			m.yx,  // b (instead of m.yy)
+			m.xy,  // c
+			m.yy,  // d (instead of m.yx)
+			m.tx,  // e
+			m.ty   // f
+		);
 	}
 
 	// color transformations are emulated by SVG filters and need be defined before use
