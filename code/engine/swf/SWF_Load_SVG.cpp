@@ -108,11 +108,6 @@ void idSWF::WriteSVG( const char* filename )
 						continue;
 					}
 
-					//<!-- Example of the same polygon shape with stroke and no fill -->
-					// <polygon points="100,100 150,25 150,75 200,0" fill="none" stroke="black" />
-					file->WriteFloatString( "\t\t\t<polygon " );
-
-
 					// TODO sub types
 					// 0 = linear, 2 = radial, 3 = focal; 0 = repeat, 1 = clamp, 2 = near repeat, 3 = near clamp
 					/*
@@ -147,11 +142,12 @@ void idSWF::WriteSVG( const char* filename )
 					}
 					*/
 
+					idStr fillColor = "";
 					if( fillDraw.style.type == 0 )
 					{
 						// solid fill draw
 						const swfColorRGBA_t& color = fillDraw.style.startColor;
-						file->WriteFloatString( "fill=\"rgba(%d, %d, %d, %f)\" ", ( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ) );
+						fillColor.Format( "fill=\"rgba(%d, %d, %d, %f)\"", ( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ) );
 					}
 
 					/*
@@ -170,7 +166,6 @@ void idSWF::WriteSVG( const char* filename )
 					}
 					*/
 
-					file->WriteFloatString( "points=\"" );
 					for( int k = 0; k < fillDraw.indices.Num(); k += 3 )
 					{
 						const uint16& i1 = fillDraw.indices[k + 0];
@@ -181,16 +176,11 @@ void idSWF::WriteSVG( const char* filename )
 						const idVec2& v2 = fillDraw.startVerts[i2];
 						const idVec2& v3 = fillDraw.startVerts[i3];
 
-						file->WriteFloatString( "%f,%f ", v1.x, v1.y );
-						file->WriteFloatString( "%f,%f ", v2.x, v2.y );
-						file->WriteFloatString( "%f,%f ", v3.x, v3.y );
-
-						// close the triangle
-						file->WriteFloatString( "%f,%f ", v1.x, v1.y );
+						file->WriteFloatString(
+							"\t\t\t<polygon %s points=\"%f,%f %f,%f %f,%f\" />\n",
+							fillColor.c_str(), v1.x, v1.y, v2.x, v2.y, v3.x, v3.y
+						);
 					}
-					file->WriteFloatString( "\"" );
-
-					file->WriteFloatString( "/>\n" );
 				}
 
 				// export line draws

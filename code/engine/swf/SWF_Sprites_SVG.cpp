@@ -89,10 +89,10 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 		swfMatrix_t m;
 		bitstream.ReadMatrix( m );
 
-		//file->WriteFloatString( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
+		transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
 
 		// breaks SVG preview in VSC but is correct in browser
-		transform.Format( "transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ", m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );
+		//transform.Format( "transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ", m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );
 	}
 
 	// color transformations are emulated by SVG filters and need be defined before use
@@ -101,9 +101,23 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 		swfColorXform_t cxf;
 		bitstream.ReadColorXFormRGBA( cxf );
 
+		// RB: this adds a lot bloat
 		if( cxf.mul != vec4_one || cxf.add != vec4_zero )
 		{
 			filterID.Format( "cf_%i_%i", characterID, commandID );
+
+			idVec4 colorMul = colorWhite;
+			if( cxf.mul != vec4_one )
+			{
+				colorMul = cxf.mul;
+			}
+			colorMul.w = 1.0f; // for debugging only, without most elements are invisible
+
+			idVec4 colorAdd = vec4_zero; //colorBlack
+			if( cxf.add != vec4_zero )
+			{
+				colorAdd = cxf.add;
+			}
 
 			file->WriteFloatString(
 				"\t\t\t<filter id=\"%s\">\n"
@@ -111,13 +125,13 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 				"%f 0 0 0 %f "
 				"0 %f 0 0 %f "
 				"0 0 %f 0 %f "
-				"0 0 0 %f 0\" />\n"
+				"0 0 0 %f %f\" />\n"
 				"\t\t\t</filter>\n",
 				filterID.c_str(),
-				cxf.mul.x, cxf.add.x,
-				cxf.mul.y, cxf.add.y,
-				cxf.mul.z, cxf.add.z,
-				cxf.mul.w
+				colorMul.x, colorAdd.x,
+				colorMul.y, colorAdd.y,
+				colorMul.z, colorAdd.z,
+				colorMul.w, colorAdd.w
 			);
 		}
 	}
