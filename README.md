@@ -27,7 +27,7 @@ This file contains the following sections:
 # Roguestrad - Retro 3D Engine <a name="about"></a>
 
 Roguestrad is a standalone game engine forked from [RBDOOM-3-BFG](https://github.com/RobertBeckebans/RBDOOM-3-BFG), designed as a modernized foundation for indie developers.
-Unlike its parent project, Roguestrad intentionally breaks compatibility with Doom 3 BFG in order to evolve into a more flexible and developer-friendly engine.
+Unlike its parent project, Roguestrad intentionally breaks compatibility with Doom 3 BFG in order to evolve into a more flexible and developer-friendly engine. Pronounce it ‘Rogue-strad,’ in a nod to the Amstrad CPC, the founder's childhood gaming rig.
 
 > ⚠️ Roguestrad is under active development — everything is subject to change at any time.
 
