@@ -57,6 +57,8 @@ void idSWF::WriteSVG( const char* filename )
 		"\twidth=\"%i\"\n"
 		"\theight=\"%i\"\n >\n", ( int ) frameWidth, ( int ) frameHeight );
 
+	const bool exportUnfolded = true;
+
 	file->WriteFloatString( "\t<defs>\n" );
 	for( int i = 0; i < dictionary.Num(); i++ )
 	{
@@ -208,7 +210,10 @@ void idSWF::WriteSVG( const char* filename )
 
 			case SWF_DICT_SPRITE:
 			{
-				dictionary[i].sprite->WriteSVG( file, i, dictionary );
+				if( !exportUnfolded )
+				{
+					dictionary[i].sprite->WriteSVG( file, i, dictionary );
+				}
 				break;
 			}
 
@@ -272,7 +277,18 @@ void idSWF::WriteSVG( const char* filename )
 
 	file->WriteFloatString( "\t</defs>\n" );
 
-	mainsprite->WriteSVG( file, dictionary.Num(), dictionary );
+	if( exportUnfolded )
+	{
+		int characterID = dictionary.Num();
+		swfMatrix_t identityMatrix;
+		swfColorXform_t identityColor;
+
+		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, identityMatrix, identityColor, 2 );
+	}
+	else
+	{
+		mainsprite->WriteSVG( file, dictionary.Num(), dictionary );
+	}
 
 	file->WriteFloatString( "</svg>\n" );
 }

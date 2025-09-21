@@ -63,6 +63,9 @@ public:
 	void	WriteSVG( idFile* f, int characterID, const idList< idSWFDictionaryEntry, TAG_SWF >& dict );
 	void	WriteSVG_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList< idSWFDictionaryEntry, TAG_SWF >& dict );
 
+	void	WriteSVGUnfolded_r( idFile* f, int characterID, const idList< idSWFDictionaryEntry, TAG_SWF >& dict, const swfMatrix_t& parentMatrix, const swfColorXform_t& parentColor, int indent );
+	void	WriteSVGUnfolded_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList< idSWFDictionaryEntry, TAG_SWF >& dict, const swfMatrix_t& parentMatrix, const swfColorXform_t& parentColor, int indent );
+
 	void	WriteSWF( idFile_SWF& f, int characterID );
 
 	uint16	GetFrameCount()

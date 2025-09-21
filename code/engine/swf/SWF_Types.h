@@ -67,6 +67,7 @@ struct swfHeader_t
 	byte version;
 	uint32 fileLength;
 };
+
 struct swfRect_t
 {
 	swfRect_t();
@@ -108,6 +109,7 @@ struct swfRect_t
 	}
 	// RB end
 };
+
 struct swfMatrix_t
 {
 	swfMatrix_t();
@@ -143,6 +145,7 @@ struct swfMatrix_t
 	}
 	// RB end
 };
+
 struct swfColorRGB_t
 {
 	swfColorRGB_t();
