@@ -152,17 +152,22 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 		swfMatrix_t m;
 		bitstream.ReadMatrix( m );
 
-		//transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
-
-		transform.Format(
-			"transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ",
-			m.xx,  // a
-			m.yx,  // b (instead of m.yy)
-			m.xy,  // c
-			m.yy,  // d (instead of m.yx)
-			m.tx,  // e
-			m.ty   // f
-		);
+		if( m.xx != 1.0f || m.yy != 1.0f || m.xy != 0.0f || m.yx != 0.0f )
+		{
+			transform.Format(
+				"transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ",
+				m.xx,  // a
+				m.yx,  // b (instead of m.yy)
+				m.xy,  // c
+				m.yy,  // d (instead of m.yx)
+				m.tx,  // e
+				m.ty   // f
+			);
+		}
+		else if( m.tx != 0.0f || m.ty != 0.0f )
+		{
+			transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
+		}
 	}
 
 	// color transformations are emulated by SVG filters and need be defined before use
@@ -293,17 +298,22 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file, idSWFBitStream& b
 		bitstream.ReadMatrix( m );
 		localMatrix = m;
 
-		//transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
-
-		transform.Format(
-			"transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ",
-			m.xx,  // a
-			m.yx,  // b (instead of m.yy)
-			m.xy,  // c
-			m.yy,  // d (instead of m.yx)
-			m.tx,  // e
-			m.ty   // f
-		);
+		if( m.xx != 1.0f || m.yy != 1.0f || m.xy != 0.0f || m.yx != 0.0f )
+		{
+			transform.Format(
+				"transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ",
+				m.xx,  // a
+				m.yx,  // b (instead of m.yy)
+				m.xy,  // c
+				m.yy,  // d (instead of m.yx)
+				m.tx,  // e
+				m.ty   // f
+			);
+		}
+		else if( m.tx != 0.0f || m.ty != 0.0f )
+		{
+			transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
+		}
 	}
 	swfMatrix_t combinedMatrix = CombineMatrix( parentMatrix, localMatrix );
 
