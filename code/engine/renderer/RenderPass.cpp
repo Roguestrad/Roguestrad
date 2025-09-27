@@ -1,25 +1,25 @@
 /*
-* Copyright (c) 2014-2021, NVIDIA CORPORATION. All rights reserved.
-* Copyright (C) 2022 Stephen Pridham (id Tech 4x integration)
-*
-* Permission is hereby granted, free of charge, to any person obtaining a
-* copy of this software and associated documentation files (the "Software"),
-* to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense,
-* and/or sell copies of the Software, and to permit persons to whom the
-* Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-* THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-* DEALINGS IN THE SOFTWARE.
-*/
+ * Copyright (c) 2014-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (C) 2022 Stephen Pridham (id Tech 4x integration)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
 #include "precompiled.h"
 #pragma hdrstop
@@ -31,53 +31,43 @@
 
 static triIndex_t quadPicIndexes[6] = { 3, 0, 2, 2, 0, 1 };
 
-#define MAX_VERTS 8000
+#define MAX_VERTS	8000
 #define MAX_INDEXES 120000
 
 idDrawVert* BasicTriangle::AllocVerts( int vertCount, triIndex_t* tempIndexes, int indexCount )
 {
-	if( numIndexes + indexCount > MAX_INDEXES )
-	{
+	if( numIndexes + indexCount > MAX_INDEXES ) {
 		static int warningFrame = 0;
-		if( warningFrame != tr.frameCount )
-		{
+		if( warningFrame != tr.frameCount ) {
 			warningFrame = tr.frameCount;
 			idLib::Warning( "idGuiModel::AllocTris: MAX_INDEXES exceeded" );
 		}
 		return NULL;
 	}
 
-	if( numVerts + vertCount > MAX_VERTS )
-	{
+	if( numVerts + vertCount > MAX_VERTS ) {
 		static int warningFrame = 0;
-		if( warningFrame != tr.frameCount )
-		{
+		if( warningFrame != tr.frameCount ) {
 			warningFrame = tr.frameCount;
 			idLib::Warning( "idGuiModel::AllocTris: MAX_VERTS exceeded" );
 		}
 		return NULL;
 	}
 
-
-	int startVert = numVerts;
+	int startVert  = numVerts;
 	int startIndex = numIndexes;
 
 	numVerts += vertCount;
 	numIndexes += indexCount;
 
-	if( ( startIndex & 1 ) || ( indexCount & 1 ) )
-	{
+	if( ( startIndex & 1 ) || ( indexCount & 1 ) ) {
 		// slow for write combined memory!
 		// this should be very rare, since quads are always an even index count
-		for( int i = 0; i < indexCount; i++ )
-		{
+		for( int i = 0; i < indexCount; i++ ) {
 			indexPointer[startIndex + i] = startVert + tempIndexes[i];
 		}
-	}
-	else
-	{
-		for( int i = 0; i < indexCount; i += 2 )
-		{
+	} else {
+		for( int i = 0; i < indexCount; i += 2 ) {
 			WriteIndexPair( indexPointer + startIndex + i, startVert + tempIndexes[i], startVert + tempIndexes[i + 1] );
 		}
 	}
@@ -91,43 +81,33 @@ bool BasicTriangle::Init()
 	int f = renderProgManager.FindShader( "vertbuffershaders.hlsl", SHADER_STAGE_FRAGMENT );
 
 	vertexShader = renderProgManager.GetShader( v );
-	pixelShader = renderProgManager.GetShader( f );
+	pixelShader	 = renderProgManager.GetShader( f );
 
-	if( !vertexShader || !pixelShader )
-	{
+	if( !vertexShader || !pixelShader ) {
 		return false;
 	}
 
 	commandList = GetDevice()->createCommandList();
 
-	nvrhi::VertexAttributeDesc attributes[] =
-	{
-		nvrhi::VertexAttributeDesc()
-		.setName( "POSITION" )
-		.setFormat( nvrhi::Format::RGB32_FLOAT )
-		.setOffset( offsetof( idDrawVert, xyz ) )
-		.setElementStride( sizeof( idDrawVert ) ),
-		//nvrhi::VertexAttributeDesc()
+	nvrhi::VertexAttributeDesc attributes[] = {
+		nvrhi::VertexAttributeDesc().setName( "POSITION" ).setFormat( nvrhi::Format::RGB32_FLOAT ).setOffset( offsetof( idDrawVert, xyz ) ).setElementStride( sizeof( idDrawVert ) ),
+		// nvrhi::VertexAttributeDesc()
 		//	.setName( "NORMAL" )
 		//	.setFormat( nvrhi::Format::RGBA8_UINT )
 		//	.setOffset( offsetof( idDrawVert, normal ) )
 		//	.setElementStride( sizeof( idDrawVert ) ),
-		//nvrhi::VertexAttributeDesc()
+		// nvrhi::VertexAttributeDesc()
 		//	.setName( "COLOR" )
 		//	.setFormat( nvrhi::Format::RGBA8_UINT )
 		//	.setOffset( offsetof( idDrawVert, color ) )
 		//	.setElementStride( sizeof( idDrawVert ) ),
-		//nvrhi::VertexAttributeDesc()
+		// nvrhi::VertexAttributeDesc()
 		//	.setName( "COLOR2" )
 		//	.setFormat( nvrhi::Format::RGBA8_UINT )
 		//	.setOffset( offsetof( idDrawVert, color2 ) )
 		//	.setElementStride( sizeof( idDrawVert ) ),
-		nvrhi::VertexAttributeDesc()
-		.setName( "UV" )
-		.setFormat( nvrhi::Format::RG16_FLOAT )
-		.setOffset( offsetof( idDrawVert, st ) )
-		.setElementStride( sizeof( idDrawVert ) ),
-		//nvrhi::VertexAttributeDesc()
+		nvrhi::VertexAttributeDesc().setName( "UV" ).setFormat( nvrhi::Format::RG16_FLOAT ).setOffset( offsetof( idDrawVert, st ) ).setElementStride( sizeof( idDrawVert ) ),
+		// nvrhi::VertexAttributeDesc()
 		//	.setName( "TANGENT" )
 		//	.setFormat( nvrhi::Format::RGBA8_UINT )
 		//	.setOffset( offsetof( idDrawVert, tangent ) )
@@ -139,31 +119,26 @@ bool BasicTriangle::Init()
 	material = declManager->FindMaterial( "guis/rml/shell/textures/invader" );
 
 	commandList->open();
-	for( int i = 0; i < material->GetNumStages(); i++ )
-	{
+	for( int i = 0; i < material->GetNumStages(); i++ ) {
 		material->GetStage( i )->texture.image->ActuallyLoadImage( true, commandList );
 	}
 	commandList->close();
 	GetDevice()->executeCommandList( commandList );
 	GetDevice()->runGarbageCollection();
 
-	nvrhi::ITexture* texture = ( nvrhi::ITexture* )material->GetStage( 0 )->texture.image->GetTextureID();
+	nvrhi::ITexture*   texture = ( nvrhi::ITexture* )material->GetStage( 0 )->texture.image->GetTextureID();
 
 	CommonRenderPasses commonPasses;
 	commonPasses.Init( GetDevice() );
 
-	idUniformBuffer& ubo = renderProgManager.BindingParamUbo();
+	idUniformBuffer&	  ubo = renderProgManager.BindingParamUbo();
 
 	nvrhi::BindingSetDesc bindingSetDesc;
-	bindingSetDesc.bindings =
-	{
-		nvrhi::BindingSetItem::ConstantBuffer( 0, ubo.GetAPIObject(), nvrhi::BufferRange( ubo.GetOffset(), ubo.GetSize() ) ),
+	bindingSetDesc.bindings = { nvrhi::BindingSetItem::ConstantBuffer( 0, ubo.GetAPIObject(), nvrhi::BufferRange( ubo.GetOffset(), ubo.GetSize() ) ),
 		nvrhi::BindingSetItem::Texture_SRV( 0, texture ),
-		nvrhi::BindingSetItem::Sampler( 0, commonPasses.m_AnisotropicWrapSampler )
-	};
+		nvrhi::BindingSetItem::Sampler( 0, commonPasses.m_AnisotropicWrapSampler ) };
 
-	if( !nvrhi::utils::CreateBindingSetAndLayout( GetDevice(), nvrhi::ShaderType::All, 0, bindingSetDesc, bindingLayout, bindingSet ) )
-	{
+	if( !nvrhi::utils::CreateBindingSetAndLayout( GetDevice(), nvrhi::ShaderType::All, 0, bindingSetDesc, bindingLayout, bindingSet ) ) {
 		common->Error( "Couldn't create the binding set or layout" );
 		return false;
 	}
@@ -183,29 +158,29 @@ void BasicTriangle::Animate( float fElapsedTimeSeconds )
 void BasicTriangle::RenderFrontend()
 {
 	vertexBlock = vertexCache.AllocVertex( NULL, MAX_VERTS, sizeof( idDrawVert ), commandList );
-	indexBlock = vertexCache.AllocIndex( NULL, MAX_INDEXES, sizeof( triIndex_t ), commandList );
+	indexBlock	= vertexCache.AllocIndex( NULL, MAX_INDEXES, sizeof( triIndex_t ), commandList );
 
 	vertexPointer = ( idDrawVert* )vertexCache.MappedVertexBuffer( vertexBlock );
-	indexPointer = ( triIndex_t* )vertexCache.MappedIndexBuffer( indexBlock );
-	numVerts = 0;
-	numIndexes = 0;
+	indexPointer  = ( triIndex_t* )vertexCache.MappedIndexBuffer( indexBlock );
+	numVerts	  = 0;
+	numIndexes	  = 0;
 
-	idDrawVert* verts = AllocVerts( 4, quadPicIndexes, 6 );
+	idDrawVert*			   verts = AllocVerts( 4, quadPicIndexes, 6 );
 
-	uint32_t currentColorNativeBytesOrder = LittleLong( PackColor( idVec4( 255, 255, 255, 255 ) ) );
+	uint32_t			   currentColorNativeBytesOrder = LittleLong( PackColor( idVec4( 255, 255, 255, 255 ) ) );
 
-	float x = 0.f;
-	float y = 0.f;
-	float w = renderSystem->GetWidth();
-	float h = renderSystem->GetHeight();
-	float s1 = 0.0f, t1 = 0.0f, s2 = 1.0f, t2 = 1.0f;
+	float				   x  = 0.f;
+	float				   y  = 0.f;
+	float				   w  = renderSystem->GetWidth();
+	float				   h  = renderSystem->GetHeight();
+	float				   s1 = 0.0f, t1 = 0.0f, s2 = 1.0f, t2 = 1.0f;
 
-	idVec4 topLeft( x, y, s1, t1 );
-	idVec4 topRight( x + w, y, s2, t1 );
-	idVec4 bottomRight( x + w, y + h, s2, t2 );
-	idVec4 bottomLeft( x, y + h, s1, t2 );
+	idVec4				   topLeft( x, y, s1, t1 );
+	idVec4				   topRight( x + w, y, s2, t1 );
+	idVec4				   bottomRight( x + w, y + h, s2, t2 );
+	idVec4				   bottomLeft( x, y + h, s1, t2 );
 
-	float z = 0.0f;
+	float				   z = 0.0f;
 
 	ALIGNTYPE16 idDrawVert localVerts[4];
 
@@ -243,24 +218,22 @@ void BasicTriangle::RenderFrontend()
 
 	WriteDrawVerts16( verts, localVerts, 4 );
 
-	for( int i = 0; i < 6; i += 2 )
-	{
+	for( int i = 0; i < 6; i += 2 ) {
 		WriteIndexPair( indexPointer + i, quadPicIndexes[i], quadPicIndexes[i + 1] );
 	}
 }
 
 void BasicTriangle::Render( nvrhi::IFramebuffer* framebuffer )
 {
-	if( !pipeline )
-	{
+	if( !pipeline ) {
 		nvrhi::GraphicsPipelineDesc psoDesc;
-		psoDesc.VS = vertexShader;
-		psoDesc.PS = pixelShader;
-		psoDesc.inputLayout = inputLayout;
-		psoDesc.bindingLayouts = { bindingLayout };
-		psoDesc.primType = nvrhi::PrimitiveType::TriangleList;
+		psoDesc.VS											  = vertexShader;
+		psoDesc.PS											  = pixelShader;
+		psoDesc.inputLayout									  = inputLayout;
+		psoDesc.bindingLayouts								  = { bindingLayout };
+		psoDesc.primType									  = nvrhi::PrimitiveType::TriangleList;
 		psoDesc.renderState.depthStencilState.depthTestEnable = false;
-		//psoDesc.renderState.rasterState.frontCounterClockwise = true;
+		// psoDesc.renderState.rasterState.frontCounterClockwise = true;
 
 		pipeline = GetDevice()->createGraphicsPipeline( psoDesc, framebuffer );
 	}
@@ -272,14 +245,14 @@ void BasicTriangle::Render( nvrhi::IFramebuffer* framebuffer )
 
 	nvrhi::utils::ClearColorAttachment( commandList, framebuffer, 0, nvrhi::Color( 0.f ) );
 
-	float w = framebuffer->getFramebufferInfo().width;
-	float h = framebuffer->getFramebufferInfo().height;
+	float		   w = framebuffer->getFramebufferInfo().width;
+	float		   h = framebuffer->getFramebufferInfo().height;
 
 	idRenderMatrix projectionMatrix;
 	{
 		// orthographic matrix
 		float xScale = 1.0f / w;
-		float yScale = -1.0f / h;  // flip y
+		float yScale = -1.0f / h; // flip y
 		float zScale = 1.0f;
 
 		float projMat[16];
@@ -315,17 +288,13 @@ void BasicTriangle::Render( nvrhi::IFramebuffer* framebuffer )
 	renderProgManager.CommitConstantBuffer( commandList, true );
 
 	idVertexBuffer* vertexBuffer;
-	uint vertOffset = 0;
+	uint			vertOffset = 0;
 	{
-		if( vertexCache.CacheIsStatic( vertexBlock ) )
-		{
+		if( vertexCache.CacheIsStatic( vertexBlock ) ) {
 			vertexBuffer = &vertexCache.staticData.vertexBuffer;
-		}
-		else
-		{
+		} else {
 			const uint64 frameNum = ( int )( vertexBlock >> VERTCACHE_FRAME_SHIFT ) & VERTCACHE_FRAME_MASK;
-			if( frameNum != ( ( vertexCache.currentFrame ) & VERTCACHE_FRAME_MASK ) )
-			{
+			if( frameNum != ( ( vertexCache.currentFrame ) & VERTCACHE_FRAME_MASK ) ) {
 				idLib::Warning( "RB_DrawElementsWithCounters, vertexBuffer == NULL" );
 				return;
 			}
@@ -336,17 +305,13 @@ void BasicTriangle::Render( nvrhi::IFramebuffer* framebuffer )
 
 	vertCacheHandle_t indexBlockTemp = indexBlock + ( ( int64 )( 0 * sizeof( triIndex_t ) ) << VERTCACHE_OFFSET_SHIFT );
 
-	idIndexBuffer* indexBuffer;
-	uint indexOffset = 0;
-	if( vertexCache.CacheIsStatic( indexBlockTemp ) )
-	{
+	idIndexBuffer*	  indexBuffer;
+	uint			  indexOffset = 0;
+	if( vertexCache.CacheIsStatic( indexBlockTemp ) ) {
 		indexBuffer = &vertexCache.staticData.indexBuffer;
-	}
-	else
-	{
+	} else {
 		const uint64 frameNum = ( int )( indexBlockTemp >> VERTCACHE_FRAME_SHIFT ) & VERTCACHE_FRAME_MASK;
-		if( frameNum != ( ( vertexCache.currentFrame ) & VERTCACHE_FRAME_MASK ) )
-		{
+		if( frameNum != ( ( vertexCache.currentFrame ) & VERTCACHE_FRAME_MASK ) ) {
 			idLib::Warning( "RB_DrawElementsWithCounters, indexBuffer == NULL" );
 			return;
 		}
@@ -355,11 +320,11 @@ void BasicTriangle::Render( nvrhi::IFramebuffer* framebuffer )
 	indexOffset = ( uint )( indexBlock >> VERTCACHE_OFFSET_SHIFT ) & VERTCACHE_OFFSET_MASK;
 
 	nvrhi::GraphicsState state;
-	state.bindings = { bindingSet };
-	state.indexBuffer = { indexBuffer->GetAPIObject(), nvrhi::Format::R16_UINT, indexOffset };
+	state.bindings		= { bindingSet };
+	state.indexBuffer	= { indexBuffer->GetAPIObject(), nvrhi::Format::R16_UINT, indexOffset };
 	state.vertexBuffers = { { vertexBuffer->GetAPIObject(), 0, vertOffset } };
-	state.pipeline = pipeline;
-	state.framebuffer = framebuffer;
+	state.pipeline		= pipeline;
+	state.framebuffer	= framebuffer;
 	state.viewport.addViewportAndScissorRect( framebuffer->getFramebufferInfo().getViewport() );
 
 	commandList->setGraphicsState( state );

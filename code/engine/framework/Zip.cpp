@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -37,12 +38,11 @@ Contains external code for building ZipFiles.
 
 #include "Zip.h"
 
-
 // #undef STDC
 
 idCVar zip_verbosity( "zip_verbosity", "0", CVAR_BOOL, "1 = verbose logging when building zip files" );
-#define	DEFAULT_COMPRESSION_LEVEL	(5)	/* 1 == Compress faster, 9 == Compress better */
-#define DEFAULT_WRITEBUFFERSIZE (16384)
+#define DEFAULT_COMPRESSION_LEVEL ( 5 ) /* 1 == Compress faster, 9 == Compress better */
+#define DEFAULT_WRITEBUFFERSIZE	  ( 16384 )
 
 /*
  * DG: all the zip implementation has been updated to minizip 1.1 and is in framework/minizip/zip.cpp
@@ -106,17 +106,15 @@ builds a zip file of all the files in the specified folder, overwriting if neces
 */
 bool idZipBuilder::Build( const char* zipPath, const char* folder, bool cleanFolder )
 {
-	zipFileName = zipPath;
+	zipFileName		 = zipPath;
 	sourceFolderName = folder;
 
-	if( !CreateZipFile( false ) )
-	{
+	if( !CreateZipFile( false ) ) {
 		// don't clean the folder if the zip fails
 		return false;
 	}
 
-	if( cleanFolder )
-	{
+	if( cleanFolder ) {
 		CleanSourceFolder();
 	}
 	return true;
@@ -132,21 +130,18 @@ updates a zip file with the files in the specified folder
 bool idZipBuilder::Update( const char* zipPath, const char* folder, bool cleanFolder )
 {
 	// if this file doesn't exist, just build it
-	if( fileSystem->GetTimestamp( zipPath ) == FILE_NOT_FOUND_TIMESTAMP )
-	{
+	if( fileSystem->GetTimestamp( zipPath ) == FILE_NOT_FOUND_TIMESTAMP ) {
 		return Build( zipPath, folder, cleanFolder );
 	}
-	zipFileName = zipPath;
+	zipFileName		 = zipPath;
 	sourceFolderName = folder;
 
-	if( !CreateZipFile( true ) )
-	{
+	if( !CreateZipFile( true ) ) {
 		// don't clean the folder if the zip fails
 		return false;
 	}
 
-	if( cleanFolder )
-	{
+	if( cleanFolder ) {
 		CleanSourceFolder();
 	}
 	return true;
@@ -160,13 +155,12 @@ idZipBuilder::GetFileTime
 bool idZipBuilder::GetFileTime( const idStr& filename, unsigned long* dostime ) const
 {
 	// RB: FIXME
-#if defined(_WIN32)
+#if defined( _WIN32 )
 	{
-		FILETIME filetime;
+		FILETIME		filetime;
 		WIN32_FIND_DATA fileData;
 		HANDLE			findHandle = FindFirstFile( filename.c_str(), &fileData );
-		if( findHandle != INVALID_HANDLE_VALUE )
-		{
+		if( findHandle != INVALID_HANDLE_VALUE ) {
 			FileTimeToLocalFileTime( &( fileData.ftLastWriteTime ), &filetime );
 			FileTimeToDosDateTime( &filetime, ( ( LPWORD )dostime ) + 1, ( ( LPWORD )dostime ) + 0 );
 			FindClose( findHandle );
@@ -187,23 +181,18 @@ idZipBuilder::IsFiltered
 */
 bool idZipBuilder::IsFiltered( const idStr& filename ) const
 {
-	if( filterExts.Num() == 0 && uncompressedFilterExts.Num() == 0 )
-	{
+	if( filterExts.Num() == 0 && uncompressedFilterExts.Num() == 0 ) {
 		return false;
 	}
-	for( int j = 0; j < filterExts.Num(); j++ )
-	{
+	for( int j = 0; j < filterExts.Num(); j++ ) {
 		idStr fileExt = idStr( "." + filterExts[j] );
-		if( filename.Right( fileExt.Length() ).Icmp( fileExt ) == 0 )
-		{
+		if( filename.Right( fileExt.Length() ).Icmp( fileExt ) == 0 ) {
 			return false;
 		}
 	}
-	for( int j = 0; j < uncompressedFilterExts.Num(); j++ )
-	{
+	for( int j = 0; j < uncompressedFilterExts.Num(); j++ ) {
 		idStr fileExt = idStr( "." + uncompressedFilterExts[j] );
-		if( filename.Right( fileExt.Length() ).Icmp( fileExt ) == 0 )
-		{
+		if( filename.Right( fileExt.Length() ).Icmp( fileExt ) == 0 ) {
 			return false;
 		}
 	}
@@ -217,15 +206,12 @@ idZipBuilder::IsUncompressed
 */
 bool idZipBuilder::IsUncompressed( const idStr& filename ) const
 {
-	if( uncompressedFilterExts.Num() == 0 )
-	{
+	if( uncompressedFilterExts.Num() == 0 ) {
 		return false;
 	}
-	for( int j = 0; j < uncompressedFilterExts.Num(); j++ )
-	{
+	for( int j = 0; j < uncompressedFilterExts.Num(); j++ ) {
 		idStr fileExt = idStr( "." + uncompressedFilterExts[j] );
-		if( filename.Right( fileExt.Length() ).Icmp( fileExt ) == 0 )
-		{
+		if( filename.Right( fileExt.Length() ).Icmp( fileExt ) == 0 ) {
 			return true;
 		}
 	}
@@ -255,7 +241,7 @@ bool idZipBuilder::CreateZipFile( bool appendFiles )
 	sourceFolderName.StripTrailing( "\\" );
 	sourceFolderName.StripTrailing( "/" );
 
-#if 0
+	#if 0
 	// attempt to check the file out
 	if( !Sys_IsFileWritable( zipFileName ) )
 	{
@@ -268,7 +254,7 @@ bool idZipBuilder::CreateZipFile( bool appendFiles )
 			idLib::Printf( "Checked out: %s\n", zipFileName.c_str() );
 		}
 	}
-#endif
+	#endif
 
 	// if not appending, set the file size to zero to "create it from scratch"
 	if( !appendFiles )
@@ -419,7 +405,6 @@ bool idZipBuilder::CreateZipFile( bool appendFiles )
 
 	return false;
 #endif
-
 }
 
 /*
@@ -427,7 +412,7 @@ bool idZipBuilder::CreateZipFile( bool appendFiles )
 idZipBuilder::CreateZipFileFromFileList
 ========================
 */
-bool idZipBuilder::CreateZipFileFromFileList( const char* name, const idList< idFile_Memory* >& srcFiles )
+bool idZipBuilder::CreateZipFileFromFileList( const char* name, const idList<idFile_Memory*>& srcFiles )
 {
 	zipFileName = name;
 	return CreateZipFileFromFiles( srcFiles );
@@ -437,38 +422,33 @@ bool idZipBuilder::CreateZipFileFromFileList( const char* name, const idList< id
 idZipBuilder::CreateZipFileFromFiles
 ========================
 */
-bool idZipBuilder::CreateZipFileFromFiles( const idList< idFile_Memory* >& srcFiles )
+bool idZipBuilder::CreateZipFileFromFiles( const idList<idFile_Memory*>& srcFiles )
 {
-	if( zipFileName.IsEmpty() )
-	{
+	if( zipFileName.IsEmpty() ) {
 		idLib::Warning( "[%s] - invalid parameters!", __FUNCTION__ );
 		return false;
 	}
 
 	// need to clear the filesystem's zip cache before we can open and write
-	//fileSystem->ClearZipCache();
+	// fileSystem->ClearZipCache();
 
 	idLib::Printf( "Building zip file: '%s'\n", zipFileName.c_str() );
 
 	// do not allow overwrite as this should be a tempfile attempt to check the file out
-	if( !Sys_IsFileWritable( zipFileName ) )
-	{
+	if( !Sys_IsFileWritable( zipFileName ) ) {
 		idLib::PrintfIf( zip_verbosity.GetBool(), "File %s not writable, cannot proceed.\n", zipFileName.c_str() );
 		return false;
 	}
 
 	// open the zip file
 	zipFile zf = zipOpen( zipFileName, 0 );
-	if( zf == NULL )
-	{
+	if( zf == NULL ) {
 		idLib::Warning( "[%s] - error opening file '%s'!", __FUNCTION__, zipFileName.c_str() );
 		return false;
 	}
 
 	// add the files to the zip file
-	for( int i = 0; i < srcFiles.Num(); i++ )
-	{
-
+	for( int i = 0; i < srcFiles.Num(); i++ ) {
 		// add each file to the zip file
 		zip_fileinfo zi;
 		memset( &zi, 0, sizeof( zip_fileinfo ) );
@@ -479,32 +459,38 @@ bool idZipBuilder::CreateZipFileFromFiles( const idList< idFile_Memory* >& srcFi
 		idLib::PrintfIf( zip_verbosity.GetBool(), "...Adding: '%s' ", src->GetName() );
 
 		int compressionMethod = Z_DEFLATED;
-		if( IsUncompressed( src->GetName() ) )
-		{
+		if( IsUncompressed( src->GetName() ) ) {
 			compressionMethod = 0;
 		}
 
-		int errcode = zipOpenNewFileInZip3( zf, src->GetName(), &zi, NULL, 0, NULL, 0, NULL /* comment*/,
-											compressionMethod,	DEFAULT_COMPRESSION_LEVEL, 0, -MAX_WBITS, DEF_MEM_LEVEL,
-											Z_DEFAULT_STRATEGY, NULL /*password*/, 0 /*fileCRC*/ );
+		int errcode = zipOpenNewFileInZip3( zf,
+			src->GetName(),
+			&zi,
+			NULL,
+			0,
+			NULL,
+			0,
+			NULL /* comment*/,
+			compressionMethod,
+			DEFAULT_COMPRESSION_LEVEL,
+			0,
+			-MAX_WBITS,
+			DEF_MEM_LEVEL,
+			Z_DEFAULT_STRATEGY,
+			NULL /*password*/,
+			0 /*fileCRC*/ );
 
-		if( errcode != ZIP_OK )
-		{
+		if( errcode != ZIP_OK ) {
 			idLib::Warning( "Error opening file in zipfile!" );
 			continue;
-		}
-		else
-		{
+		} else {
 			// copy the file data into the zip file
 			idTempArray<byte> buffer( DEFAULT_WRITEBUFFERSIZE );
-			size_t total = 0;
-			while( size_t bytesRead = src->Read( buffer.Ptr(), buffer.Size() ) )
-			{
-				if( bytesRead > 0 )
-				{
+			size_t			  total = 0;
+			while( size_t bytesRead = src->Read( buffer.Ptr(), buffer.Size() ) ) {
+				if( bytesRead > 0 ) {
 					errcode = zipWriteInFileInZip( zf, buffer.Ptr(), ( unsigned int )bytesRead );
-					if( errcode != ZIP_OK )
-					{
+					if( errcode != ZIP_OK ) {
 						idLib::Warning( "Error writing to zipfile (%" PRIuSIZE " bytes)!", bytesRead );
 						continue;
 					}
@@ -515,8 +501,7 @@ bool idZipBuilder::CreateZipFileFromFiles( const idList< idFile_Memory* >& srcFi
 		}
 
 		errcode = zipCloseFileInZip( zf );
-		if( errcode != ZIP_OK )
-		{
+		if( errcode != ZIP_OK ) {
 			idLib::Warning( "Error zipping source file!" );
 			continue;
 		}
@@ -525,8 +510,7 @@ bool idZipBuilder::CreateZipFileFromFiles( const idList< idFile_Memory* >& srcFi
 
 	// close the zip file
 	int closeError = zipClose( zf, zipFileName );
-	if( closeError != ZIP_OK )
-	{
+	if( closeError != ZIP_OK ) {
 		idLib::Warning( "[%s] - error closing file '%s'!", __FUNCTION__, zipFileName.c_str() );
 		return false;
 	}
@@ -548,16 +532,14 @@ zipFile idZipBuilder::CreateZipFile( const char* name )
 	idLib::Printf( "Creating zip file: '%s'\n", name );
 
 	// do not allow overwrite as this should be a tempfile attempt to check the file out
-	if( !Sys_IsFileWritable( name ) )
-	{
+	if( !Sys_IsFileWritable( name ) ) {
 		idLib::PrintfIf( zip_verbosity.GetBool(), "File %s not writable, cannot proceed.\n", name );
 		return NULL;
 	}
 
 	// open the zip file
 	zipFile zf = zipOpen( name, 0 );
-	if( zf == NULL )
-	{
+	if( zf == NULL ) {
 		idLib::Warning( "[%s] - error opening file '%s'!", __FUNCTION__, name );
 	}
 	return zf;
@@ -576,43 +558,47 @@ bool idZipBuilder::AddFile( zipFile zf, idFile_Memory* src, bool deleteFile )
 	zip_fileinfo zi;
 	memset( &zi, 0, sizeof( zip_fileinfo ) );
 
-
 	src->MakeReadOnly();
 
 	idLib::PrintfIf( zip_verbosity.GetBool(), "...Adding: '%s' ", src->GetName() );
 
 	int compressionMethod = Z_DEFLATED;
-	if( IsUncompressed( src->GetName() ) )
-	{
+	if( IsUncompressed( src->GetName() ) ) {
 		compressionMethod = Z_NO_COMPRESSION;
 	}
 
-	int errcode = zipOpenNewFileInZip3( zf, src->GetName(), &zi, NULL, 0, NULL, 0, NULL /* comment*/,
-										compressionMethod,	DEFAULT_COMPRESSION_LEVEL, 0, -MAX_WBITS, DEF_MEM_LEVEL,
-										Z_DEFAULT_STRATEGY, NULL /*password*/, 0 /*fileCRC*/ );
+	int errcode = zipOpenNewFileInZip3( zf,
+		src->GetName(),
+		&zi,
+		NULL,
+		0,
+		NULL,
+		0,
+		NULL /* comment*/,
+		compressionMethod,
+		DEFAULT_COMPRESSION_LEVEL,
+		0,
+		-MAX_WBITS,
+		DEF_MEM_LEVEL,
+		Z_DEFAULT_STRATEGY,
+		NULL /*password*/,
+		0 /*fileCRC*/ );
 
-	if( errcode != ZIP_OK )
-	{
+	if( errcode != ZIP_OK ) {
 		idLib::Warning( "Error opening file in zipfile!" );
-		if( deleteFile )
-		{
+		if( deleteFile ) {
 			src->Clear( true );
 			delete src;
 		}
 		return false;
-	}
-	else
-	{
+	} else {
 		// copy the file data into the zip file
 		idTempArray<byte> buffer( DEFAULT_WRITEBUFFERSIZE );
-		size_t total = 0;
-		while( size_t bytesRead = src->Read( buffer.Ptr(), buffer.Size() ) )
-		{
-			if( bytesRead > 0 )
-			{
+		size_t			  total = 0;
+		while( size_t bytesRead = src->Read( buffer.Ptr(), buffer.Size() ) ) {
+			if( bytesRead > 0 ) {
 				errcode = zipWriteInFileInZip( zf, buffer.Ptr(), ( unsigned int )bytesRead );
-				if( errcode != ZIP_OK )
-				{
+				if( errcode != ZIP_OK ) {
 					idLib::Warning( "Error writing to zipfile (%" PRIuSIZE " bytes)!", bytesRead );
 					continue;
 				}
@@ -623,19 +609,16 @@ bool idZipBuilder::AddFile( zipFile zf, idFile_Memory* src, bool deleteFile )
 	}
 
 	errcode = zipCloseFileInZip( zf );
-	if( errcode != ZIP_OK )
-	{
+	if( errcode != ZIP_OK ) {
 		idLib::Warning( "Error zipping source file!" );
-		if( deleteFile )
-		{
+		if( deleteFile ) {
 			src->Clear( true );
 			delete src;
 		}
 		return false;
 	}
 	idLib::PrintfIf( zip_verbosity.GetBool(), "\n" );
-	if( deleteFile )
-	{
+	if( deleteFile ) {
 		src->Clear( true );
 		delete src;
 	}
@@ -653,8 +636,7 @@ void idZipBuilder::CloseZipFile( zipFile zf )
 {
 	// close the zip file
 	int closeError = zipClose( zf, zipFileName );
-	if( closeError != ZIP_OK )
-	{
+	if( closeError != ZIP_OK ) {
 		idLib::Warning( "[%s] - error closing file '%s'!", __FUNCTION__, zipFileName.c_str() );
 	}
 	idLib::PrintfIf( zip_verbosity.GetBool(), "Done.\n" );
@@ -748,7 +730,7 @@ idZipBuilder::BuildMapFolderZip
 ========================
 */
 const char* ZIP_FILE_EXTENSION = "pk4";
-bool idZipBuilder::BuildMapFolderZip( const char* mapFileName )
+bool		idZipBuilder::BuildMapFolderZip( const char* mapFileName )
 {
 	idStr zipFileName = mapFileName;
 	zipFileName.SetFileExtension( ZIP_FILE_EXTENSION );
@@ -759,8 +741,7 @@ bool idZipBuilder::BuildMapFolderZip( const char* mapFileName )
 	zip.AddUncompressedFileFilters( "genmodel|sbcm|tbcm|" );
 	bool success = zip.Build( zipFileName, pathToZip, true );
 	// even if the zip build failed we want to clear the source folder so no contributing files are left around
-	if( !success )
-	{
+	if( !success ) {
 		zip.CleanSourceFolder();
 	}
 	return success;
@@ -782,8 +763,7 @@ bool idZipBuilder::UpdateMapFolderZip( const char* mapFileName )
 	zip.AddUncompressedFileFilters( "genmodel|sbcm|tbcm|" );
 	bool success = zip.Update( zipFileName, pathToZip, true );
 	// even if the zip build failed we want to clear the source folder so no contributing files are left around
-	if( !success )
-	{
+	if( !success ) {
 		zip.CleanSourceFolder();
 	}
 	return success;
@@ -794,7 +774,7 @@ bool idZipBuilder::UpdateMapFolderZip( const char* mapFileName )
 idZipBuilder::CombineFiles
 ========================
 */
-idFile_Memory* idZipBuilder::CombineFiles( const idList< idFile_Memory* >& srcFiles )
+idFile_Memory* idZipBuilder::CombineFiles( const idList<idFile_Memory*>& srcFiles )
 {
 	idFile_Memory* destFile = NULL;
 
@@ -900,7 +880,7 @@ CONSOLE_COMMAND( testZipBuilderCombineFiles, "test routine for memory zip file b
 idZipBuilder::ExtractFiles
 ========================
 */
-bool idZipBuilder::ExtractFiles( idFile_Memory*& srcFile, idList< idFile_Memory* >& destFiles )
+bool idZipBuilder::ExtractFiles( idFile_Memory*& srcFile, idList<idFile_Memory*>& destFiles )
 {
 	bool ret = false;
 

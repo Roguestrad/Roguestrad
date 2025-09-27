@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -43,39 +44,27 @@ void idMenuWidget_Carousel::Initialize( idMenuHandler* data )
 
 		idSWFScriptVar Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 		{
-
-			if( widget == NULL )
-			{
+			if( widget == NULL ) {
 				return idSWFScriptVar();
 			}
 
-			if( widget->GetMoveDiff() != 0 )
-			{
+			if( widget->GetMoveDiff() != 0 ) {
 				int diff = widget->GetMoveDiff();
 				diff--;
 
-				if( widget->GetScrollLeft() )
-				{
+				if( widget->GetScrollLeft() ) {
 					widget->SetViewIndex( widget->GetViewIndex() - 1 );
-				}
-				else
-				{
+				} else {
 					widget->SetViewIndex( widget->GetViewIndex() + 1 );
 				}
 
-				if( diff > 0 )
-				{
-					if( widget->GetScrollLeft() )
-					{
+				if( diff > 0 ) {
+					if( widget->GetScrollLeft() ) {
 						widget->MoveToIndex( ( widget->GetNumVisibleOptions() / 2 ) + diff );
-					}
-					else
-					{
+					} else {
 						widget->MoveToIndex( diff );
 					}
-				}
-				else
-				{
+				} else {
 					widget->SetMoveDiff( 0 );
 				}
 			}
@@ -83,12 +72,12 @@ void idMenuWidget_Carousel::Initialize( idMenuHandler* data )
 			widget->Update();
 			return idSWFScriptVar();
 		}
+
 	private:
-		idMenuWidget_Carousel* 	widget;
+		idMenuWidget_Carousel* widget;
 	};
 
-	if( GetSWFObject() != NULL )
-	{
+	if( GetSWFObject() != NULL ) {
 		GetSWFObject()->SetGlobal( "refreshCarousel", new idCarouselRefresh( this ) );
 	}
 }
@@ -100,48 +89,35 @@ idMenuWidget_Carousel::Update
 */
 void idMenuWidget_Carousel::Update()
 {
-
-	if( GetSWFObject() == NULL )
-	{
+	if( GetSWFObject() == NULL ) {
 		return;
 	}
 
 	idSWFScriptObject& root = GetSWFObject()->GetRootObject();
 
-	if( !BindSprite( root ) )
-	{
+	if( !BindSprite( root ) ) {
 		return;
 	}
 
 	int midPoint = GetNumVisibleOptions() / 2 + 1;
-	for( int optionIndex = 0; optionIndex < GetNumVisibleOptions(); ++optionIndex )
-	{
-
+	for( int optionIndex = 0; optionIndex < GetNumVisibleOptions(); ++optionIndex ) {
 		int listIndex = viewIndex + optionIndex;
-		if( optionIndex >= midPoint )
-		{
+		if( optionIndex >= midPoint ) {
 			listIndex = viewIndex - ( optionIndex - ( midPoint - 1 ) );
 		}
 
 		idMenuWidget& child = GetChildByIndex( optionIndex );
 		child.SetSpritePath( GetSpritePath(), va( "item%d", optionIndex ) );
-		if( child.BindSprite( root ) )
-		{
-			if( listIndex < 0 || listIndex >= GetTotalNumberOfOptions() )
-			{
+		if( child.BindSprite( root ) ) {
+			if( listIndex < 0 || listIndex >= GetTotalNumberOfOptions() ) {
 				child.SetState( WIDGET_STATE_HIDDEN );
-			}
-			else
-			{
-				idMenuWidget_Button* const button = dynamic_cast< idMenuWidget_Button* >( &child );
-				button->SetImg( imgList[ listIndex ] );
+			} else {
+				idMenuWidget_Button* const button = dynamic_cast<idMenuWidget_Button*>( &child );
+				button->SetImg( imgList[listIndex] );
 				child.Update();
-				if( optionIndex == focusIndex )
-				{
+				if( optionIndex == focusIndex ) {
 					child.SetState( WIDGET_STATE_SELECTING );
-				}
-				else
-				{
+				} else {
 					child.SetState( WIDGET_STATE_NORMAL );
 				}
 			}
@@ -157,9 +133,8 @@ idMenuWidget_Carousel::SetListImages
 void idMenuWidget_Carousel::SetListImages( idList<const idMaterial*>& list )
 {
 	imgList.Clear();
-	for( int i = 0; i < list.Num(); ++i )
-	{
-		imgList.Append( list[ i ] );
+	for( int i = 0; i < list.Num(); ++i ) {
+		imgList.Append( list[i] );
 	}
 }
 
@@ -180,15 +155,13 @@ idMenuWidget_Carousel::MoveToFirstItem
 */
 void idMenuWidget_Carousel::MoveToFirstItem( bool instant )
 {
-	if( instant )
-	{
-		moveDiff = 0;
-		viewIndex = 0;
+	if( instant ) {
+		moveDiff	= 0;
+		viewIndex	= 0;
 		moveToIndex = 0;
 
 		idSWFScriptObject& root = GetSWFObject()->GetRootObject();
-		if( BindSprite( root ) )
-		{
+		if( BindSprite( root ) ) {
 			GetSprite()->StopFrame( 1 );
 		}
 
@@ -203,15 +176,13 @@ idMenuWidget_Carousel::MoveToLastItem
 */
 void idMenuWidget_Carousel::MoveToLastItem( bool instant )
 {
-	if( instant )
-	{
-		moveDiff = 0;
-		viewIndex = GetTotalNumberOfOptions() - 1;
+	if( instant ) {
+		moveDiff	= 0;
+		viewIndex	= GetTotalNumberOfOptions() - 1;
 		moveToIndex = GetTotalNumberOfOptions() - 1;
 
 		idSWFScriptObject& root = GetSWFObject()->GetRootObject();
-		if( BindSprite( root ) )
-		{
+		if( BindSprite( root ) ) {
 			GetSprite()->StopFrame( 1 );
 		}
 		Update();
@@ -225,20 +196,17 @@ idMenuWidget_Carousel::Update
 */
 void idMenuWidget_Carousel::MoveToIndex( int index, bool instant )
 {
-
 	idLib::Printf( "moveToIndex %i\n", index );
 
-	if( instant )
-	{
-		viewIndex = index;
-		moveDiff = 0;
+	if( instant ) {
+		viewIndex	= index;
+		moveDiff	= 0;
 		moveToIndex = viewIndex;
 
 		idLib::Printf( "moveDiff = %i\n", moveDiff );
 
 		idSWFScriptObject& root = GetSWFObject()->GetRootObject();
-		if( BindSprite( root ) )
-		{
+		if( BindSprite( root ) ) {
 			GetSprite()->StopFrame( 1 );
 		}
 
@@ -246,10 +214,9 @@ void idMenuWidget_Carousel::MoveToIndex( int index, bool instant )
 		return;
 	}
 
-	if( index == 0 )
-	{
+	if( index == 0 ) {
 		fastScroll = false;
-		moveDiff = 0;
+		moveDiff   = 0;
 
 		idLib::Printf( "moveDiff = %i\n", moveDiff );
 
@@ -258,62 +225,44 @@ void idMenuWidget_Carousel::MoveToIndex( int index, bool instant )
 	}
 
 	int midPoint = GetNumVisibleOptions() / 2;
-	scrollLeft = false;
-	if( index > midPoint )
-	{
-		moveDiff = index - midPoint;
+	scrollLeft	 = false;
+	if( index > midPoint ) {
+		moveDiff   = index - midPoint;
 		scrollLeft = true;
-	}
-	else
-	{
+	} else {
 		moveDiff = index;
 	}
 
 	idLib::Printf( "moveDiff = %i\n", moveDiff );
 
-	if( scrollLeft )
-	{
+	if( scrollLeft ) {
 		moveToIndex = viewIndex - moveDiff;
-		if( moveToIndex < 0 )
-		{
+		if( moveToIndex < 0 ) {
 			moveToIndex = 0;
-			int diff = 0 - moveToIndex;
+			int diff	= 0 - moveToIndex;
 			moveDiff -= diff;
 		}
-	}
-	else
-	{
+	} else {
 		moveToIndex = viewIndex + moveDiff;
-		if( moveToIndex >= GetTotalNumberOfOptions() )
-		{
-			moveDiff = GetTotalNumberOfOptions() - GetViewIndex() - 1;
+		if( moveToIndex >= GetTotalNumberOfOptions() ) {
+			moveDiff	= GetTotalNumberOfOptions() - GetViewIndex() - 1;
 			moveToIndex = GetTotalNumberOfOptions() - 1;
 		}
 	}
 
 	idLib::Printf( "moveDiff = %i\n", moveDiff );
 
-	if( moveDiff != 0 )
-	{
-		if( moveDiff > 1 )
-		{
-			if( scrollLeft )
-			{
+	if( moveDiff != 0 ) {
+		if( moveDiff > 1 ) {
+			if( scrollLeft ) {
 				GetSprite()->PlayFrame( "leftFast" );
-			}
-			else
-			{
+			} else {
 				GetSprite()->PlayFrame( "rightFast" );
 			}
-		}
-		else
-		{
-			if( scrollLeft )
-			{
+		} else {
+			if( scrollLeft ) {
 				GetSprite()->PlayFrame( "left" );
-			}
-			else
-			{
+			} else {
 				GetSprite()->PlayFrame( "right" );
 			}
 		}
@@ -321,4 +270,3 @@ void idMenuWidget_Carousel::MoveToIndex( int index, bool instant )
 
 	idLib::Printf( "moveDiff = %i\n", moveDiff );
 }
-

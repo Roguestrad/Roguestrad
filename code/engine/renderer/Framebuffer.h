@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,87 +32,70 @@ If you have questions concerning this license or the applicable additional terms
 #define __FRAMEBUFFER_H__
 
 static const int MAX_SHADOWMAP_RESOLUTIONS = 5;
-static const int MAX_BLOOM_BUFFERS = 2;
-static const int MAX_GLOW_BUFFERS = 2;
-static const int MAX_SSAO_BUFFERS = 2;
-static const int MAX_STEREO_BUFFERS = 2;
+static const int MAX_BLOOM_BUFFERS		   = 2;
+static const int MAX_GLOW_BUFFERS		   = 2;
+static const int MAX_SSAO_BUFFERS		   = 2;
+static const int MAX_STEREO_BUFFERS		   = 2;
 static const int MAX_HIERARCHICAL_ZBUFFERS = 6; // native resolution + 5 MIP LEVELS
 
-static const int ENVPROBE_CAPTURE_SIZE = 256;
-static const int RADIANCE_OCTAHEDRON_SIZE = 512;
+static const int ENVPROBE_CAPTURE_SIZE		= 256;
+static const int RADIANCE_OCTAHEDRON_SIZE	= 512;
 static const int IRRADIANCE_OCTAHEDRON_SIZE = 30 + 2;
 
 // RB: shadow resolutions used in 1.3
-//static	int shadowMapResolutions[MAX_SHADOWMAP_RESOLUTIONS] = { 2048, 1024, 512, 512, 256 };
+// static	int shadowMapResolutions[MAX_SHADOWMAP_RESOLUTIONS] = { 2048, 1024, 512, 512, 256 };
 
 // if we use higher resolutions than this than the shadow casting lights don't fit into the 16384^2 atlas anymore
-static	int shadowMapResolutions[MAX_SHADOWMAP_RESOLUTIONS] = { 1024, 512, 256, 256, 128 };
-
+static int		 shadowMapResolutions[MAX_SHADOWMAP_RESOLUTIONS] = { 1024, 512, 256, 256, 128 };
 
 class Framebuffer
 {
 public:
-
 	Framebuffer( const char* name, int width, int height );
 	Framebuffer( const char* name, const nvrhi::FramebufferDesc& desc );
 
 	virtual ~Framebuffer();
 
-	static void				Init();
-	static void				Shutdown();
-	static void				CheckFramebuffers();
-	static Framebuffer*		Find( const char* name );
-	static void				ResizeFramebuffers( bool reloadImages = true );
-	static void				ReloadImages();
+	static void			Init();
+	static void			Shutdown();
+	static void			CheckFramebuffers();
+	static Framebuffer* Find( const char* name );
+	static void			ResizeFramebuffers( bool reloadImages = true );
+	static void			ReloadImages();
 
-	void					Bind();
-	bool					IsBound();
-	static void				Unbind();
-	static bool				IsDefaultFramebufferActive();
-	static Framebuffer*		GetActiveFramebuffer();
+	void				Bind();
+	bool				IsBound();
+	static void			Unbind();
+	static bool			IsDefaultFramebufferActive();
+	static Framebuffer* GetActiveFramebuffer();
 
-	void					AddColorBuffer( int format, int index, int multiSamples = 0 );
-	void					AddDepthBuffer( int format, int multiSamples = 0 );
-	void					AddStencilBuffer( int format, int multiSamples = 0 );
+	void				AddColorBuffer( int format, int index, int multiSamples = 0 );
+	void				AddDepthBuffer( int format, int multiSamples = 0 );
+	void				AddStencilBuffer( int format, int multiSamples = 0 );
 
-	void					AttachImage2D( int target, idImage* image, int index, int mipmapLod = 0 );
-	void					AttachImageDepth( int target, idImage* image );
-	void					AttachImageDepthLayer( idImage* image, int layer );
+	void				AttachImage2D( int target, idImage* image, int index, int mipmapLod = 0 );
+	void				AttachImageDepth( int target, idImage* image );
+	void				AttachImageDepthLayer( idImage* image, int layer );
 
 	// check for OpenGL errors
-	void					Check();
-	uint32_t				GetFramebuffer() const
-	{
-		return frameBuffer;
-	}
+	void				Check();
+	uint32_t			GetFramebuffer() const { return frameBuffer; }
 
-	int						GetWidth() const
-	{
-		return width;
-	}
+	int					GetWidth() const { return width; }
 
-	int						GetHeight() const
-	{
-		return height;
-	}
+	int					GetHeight() const { return height; }
 
-	bool					IsMultiSampled() const
-	{
-		return msaaSamples;
-	}
+	bool				IsMultiSampled() const { return msaaSamples; }
 
-	void					Resize( int width_, int height_ )
+	void				Resize( int width_, int height_ )
 	{
-		width = width_;
+		width  = width_;
 		height = height_;
 	}
 
-	nvrhi::IFramebuffer*	GetApiObject()
-	{
-		return apiObject;
-	}
+	nvrhi::IFramebuffer* GetApiObject() { return apiObject; }
 
-	idScreenRect			GetViewPortInfo() const;
+	idScreenRect		 GetViewPortInfo() const;
 
 private:
 	idStr						fboName;
@@ -135,35 +119,34 @@ private:
 
 	nvrhi::FramebufferHandle	apiObject;
 
-	static idList<Framebuffer*>	framebuffers;
+	static idList<Framebuffer*> framebuffers;
 };
 
-struct globalFramebuffers_t
-{
-	idList<Framebuffer*>		swapFramebuffers;
-	Framebuffer*				shadowAtlasFBO;
-	Framebuffer*				shadowFBO[MAX_SHADOWMAP_RESOLUTIONS][6];
-	Framebuffer*				hdrFBO;
-	Framebuffer*				ldrFBO;
-	Framebuffer*				postProcFBO; // HDR16 used by 3D effects like heatHaze
-	Framebuffer*				taaMotionVectorsFBO[MAX_STEREO_BUFFERS];
-	Framebuffer*				taaResolvedFBO;
-	Framebuffer*				envprobeFBO;
-	Framebuffer*				bloomRenderFBO[MAX_BLOOM_BUFFERS];
-	Framebuffer*				glowFBO[MAX_GLOW_BUFFERS];	// unused
-	Framebuffer*				transparencyFBO;			// unused
-	Framebuffer*				ambientOcclusionFBO[MAX_SSAO_BUFFERS];
-	Framebuffer*				csDepthFBO[MAX_HIERARCHICAL_ZBUFFERS];
-	Framebuffer*				geometryBufferFBO;
-	Framebuffer*				smaaInputFBO;
-	Framebuffer*				smaaEdgesFBO;
-	Framebuffer*				smaaBlendFBO;
-	Framebuffer*				guiRenderTargetFBO;
-	Framebuffer*				accumFBO;
-	Framebuffer*				vrPDAFBO;
-	Framebuffer*				vrHUDFBO;
-	Framebuffer*				vrStereoFBO[MAX_STEREO_BUFFERS];
-	Framebuffer*				vrHmdEyeFBO[MAX_STEREO_BUFFERS];
+struct globalFramebuffers_t {
+	idList<Framebuffer*> swapFramebuffers;
+	Framebuffer*		 shadowAtlasFBO;
+	Framebuffer*		 shadowFBO[MAX_SHADOWMAP_RESOLUTIONS][6];
+	Framebuffer*		 hdrFBO;
+	Framebuffer*		 ldrFBO;
+	Framebuffer*		 postProcFBO; // HDR16 used by 3D effects like heatHaze
+	Framebuffer*		 taaMotionVectorsFBO[MAX_STEREO_BUFFERS];
+	Framebuffer*		 taaResolvedFBO;
+	Framebuffer*		 envprobeFBO;
+	Framebuffer*		 bloomRenderFBO[MAX_BLOOM_BUFFERS];
+	Framebuffer*		 glowFBO[MAX_GLOW_BUFFERS]; // unused
+	Framebuffer*		 transparencyFBO;			// unused
+	Framebuffer*		 ambientOcclusionFBO[MAX_SSAO_BUFFERS];
+	Framebuffer*		 csDepthFBO[MAX_HIERARCHICAL_ZBUFFERS];
+	Framebuffer*		 geometryBufferFBO;
+	Framebuffer*		 smaaInputFBO;
+	Framebuffer*		 smaaEdgesFBO;
+	Framebuffer*		 smaaBlendFBO;
+	Framebuffer*		 guiRenderTargetFBO;
+	Framebuffer*		 accumFBO;
+	Framebuffer*		 vrPDAFBO;
+	Framebuffer*		 vrHUDFBO;
+	Framebuffer*		 vrStereoFBO[MAX_STEREO_BUFFERS];
+	Framebuffer*		 vrHmdEyeFBO[MAX_STEREO_BUFFERS];
 };
 
 extern globalFramebuffers_t globalFramebuffers;

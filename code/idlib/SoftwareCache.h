@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,8 +29,8 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SOFTWARECACHE_H__
 #define __SOFTWARECACHE_H__
 
-#ifdef _MSC_VER // DG: #pragma warning is MSVC specific
-	#pragma warning( disable : 4324 )	// structure was padded due to __declspec(align())
+#ifdef _MSC_VER						  // DG: #pragma warning is MSVC specific
+	#pragma warning( disable : 4324 ) // structure was padded due to __declspec(align())
 #endif
 /*
 ================================================================================================
@@ -91,7 +92,7 @@ COMMON MISTAKES:
    and wait for DMAs.
 
    void cellSpursJobMain2( CellSpursJobContext2 * stInfo, CellSpursJob256 * job ) {
-      globalDmaTag = stInfo->dmaTag;	// for ODS objects
+	  globalDmaTag = stInfo->dmaTag;	// for ODS objects
    }
 
 2. ODS objects can consume quite a bit of stack space. You may have to increase the SPU job
@@ -113,15 +114,10 @@ COMMON MISTAKES:
 
 extern uint32 globalDmaTag;
 
-#define MAX_DMA_SIZE					( 1 << 14 )
-#define ODS_ROUND16( x )				( ( x + 15 ) & ~15 )
+#define MAX_DMA_SIZE	 ( 1 << 14 )
+#define ODS_ROUND16( x ) ( ( x + 15 ) & ~15 )
 
-enum streamBufferType_t
-{
-	SBT_DOUBLE		= 2,
-	SBT_QUAD		= 4
-};
-
+enum streamBufferType_t { SBT_DOUBLE = 2, SBT_QUAD = 4 };
 
 /*
 ================================================================================================
@@ -136,14 +132,11 @@ enum streamBufferType_t
 idSoftwareCache
 ================================================
 */
-template< typename _type_, int _entries_ = 8, int _associativity_ = 4, bool aligned = false >
+template<typename _type_, int _entries_ = 8, int _associativity_ = 4, bool aligned = false>
 class ALIGNTYPE128 idSoftwareCache
 {
 public:
-	void Prefetch( const _type_ * obj )
-	{
-		::Prefetch( obj, 0 );
-	}
+	void Prefetch( const _type_* obj ) { ::Prefetch( obj, 0 ); }
 };
 
 /*
@@ -151,31 +144,19 @@ public:
 idODSObject
 ================================================
 */
-template< typename _type_ >
+template<typename _type_>
 class idODSObject
 {
 public:
-	idODSObject( const _type_ * obj ) : objectPtr( obj ) {}
-	operator const _type_& () const
+	idODSObject( const _type_* obj ) :
+		objectPtr( obj )
 	{
-		return *objectPtr;
 	}
-	const _type_* operator->() const
-	{
-		return objectPtr;
-	}
-	const _type_& Get() const
-	{
-		return *objectPtr;
-	}
-	const _type_* Ptr() const
-	{
-		return objectPtr;
-	}
-	const _type_* OriginalPtr() const
-	{
-		return objectPtr;
-	}
+	operator const _type_&() const { return *objectPtr; }
+	const _type_* operator->() const { return objectPtr; }
+	const _type_& Get() const { return *objectPtr; }
+	const _type_* Ptr() const { return objectPtr; }
+	const _type_* OriginalPtr() const { return objectPtr; }
 
 private:
 	const _type_* objectPtr;
@@ -186,31 +167,19 @@ private:
 idODSCachedObject
 ================================================
 */
-template< typename _type_, typename _cache_ >
+template<typename _type_, typename _cache_>
 class idODSCachedObject
 {
 public:
-	idODSCachedObject( const _type_ * obj, _cache_ & cache ) : objectPtr( obj ) {}
-	operator const _type_& () const
+	idODSCachedObject( const _type_* obj, _cache_& cache ) :
+		objectPtr( obj )
 	{
-		return *objectPtr;
 	}
-	const _type_* operator->() const
-	{
-		return objectPtr;
-	}
-	const _type_& Get() const
-	{
-		return *objectPtr;
-	}
-	const _type_* Ptr() const
-	{
-		return objectPtr;
-	}
-	const _type_* OriginalPtr() const
-	{
-		return objectPtr;
-	}
+	operator const _type_&() const { return *objectPtr; }
+	const _type_* operator->() const { return objectPtr; }
+	const _type_& Get() const { return *objectPtr; }
+	const _type_* Ptr() const { return objectPtr; }
+	const _type_* OriginalPtr() const { return objectPtr; }
 
 private:
 	const _type_* objectPtr;
@@ -221,11 +190,13 @@ private:
 idODSArray
 ================================================
 */
-template< typename _type_, int max >
+template<typename _type_, int max>
 class idODSArray
 {
 public:
-	idODSArray( const _type_ * array, int num ) : arrayPtr( array ), arrayNum( num )
+	idODSArray( const _type_* array, int num ) :
+		arrayPtr( array ),
+		arrayNum( num )
 	{
 		assert( num <= max );
 		Prefetch( array, 0 );
@@ -235,18 +206,12 @@ public:
 		assert( index >= 0 && index < arrayNum );
 		return arrayPtr[index];
 	}
-	const _type_* Ptr() const
-	{
-		return arrayPtr;
-	}
-	const int Num() const
-	{
-		return arrayNum;
-	}
+	const _type_* Ptr() const { return arrayPtr; }
+	const int	  Num() const { return arrayNum; }
 
 private:
 	const _type_* arrayPtr;
-	int arrayNum;
+	int			  arrayNum;
 };
 
 /*
@@ -254,15 +219,15 @@ private:
 idODSIndexedArray
 ================================================
 */
-template< typename _elemType_, typename _indexType_, int max >
+template<typename _elemType_, typename _indexType_, int max>
 class idODSIndexedArray
 {
 public:
-	idODSIndexedArray( const _elemType_ * array, const _indexType_ * index, int num ) : arrayNum( num )
+	idODSIndexedArray( const _elemType_* array, const _indexType_* index, int num ) :
+		arrayNum( num )
 	{
 		assert( num <= max );
-		for( int i = 0; i < num; i++ )
-		{
+		for( int i = 0; i < num; i++ ) {
 			Prefetch( arrayPtr, abs( index[i] ) * sizeof( _elemType_ ) );
 			arrayPtr[i] = array + abs( index[i] );
 		}
@@ -270,20 +235,19 @@ public:
 	const _elemType_& operator[]( int index ) const
 	{
 		assert( index >= 0 && index < arrayNum );
-		return * arrayPtr[index];
+		return *arrayPtr[index];
 	}
 	void ReplicateUpToMultipleOfFour()
 	{
 		assert( ( max & 3 ) == 0 );
-		while( ( arrayNum & 3 ) != 0 )
-		{
+		while( ( arrayNum & 3 ) != 0 ) {
 			arrayPtr[arrayNum++] = arrayPtr[0];
 		}
 	}
 
 private:
 	const _elemType_* arrayPtr[max];
-	int arrayNum;
+	int				  arrayNum;
 };
 
 /*
@@ -291,11 +255,11 @@ private:
 idODSStreamedOutputArray
 ================================================
 */
-template< typename _type_, int _bufferSize_ >
+template<typename _type_, int _bufferSize_>
 class ALIGNTYPE16 idODSStreamedOutputArray
 {
 public:
-	idODSStreamedOutputArray( _type_ * array, int* numElements, int maxElements ) :
+	idODSStreamedOutputArray( _type_* array, int* numElements, int maxElements ) :
 		localNum( 0 ),
 		outArray( array ),
 		outNum( numElements ),
@@ -306,31 +270,25 @@ public:
 		compile_time_assert( _bufferSize_ * sizeof( _type_ ) < MAX_DMA_SIZE );
 		assert_16_byte_aligned( array );
 	}
-	~idODSStreamedOutputArray()
-	{
-		*outNum = localNum;
-	}
+	~idODSStreamedOutputArray() { *outNum = localNum; }
 
-	int			Num() const
-	{
-		return localNum;
-	}
-	void		Append( _type_ element )
+	int	 Num() const { return localNum; }
+	void Append( _type_ element )
 	{
 		assert( localNum < outMax );
 		outArray[localNum++] = element;
 	}
-	_type_& 	Alloc()
+	_type_& Alloc()
 	{
 		assert( localNum < outMax );
 		return outArray[localNum++];
 	}
 
 private:
-	int			localNum;
-	_type_* 	outArray;
-	int* 		outNum;
-	int			outMax;
+	int		localNum;
+	_type_* outArray;
+	int*	outNum;
+	int		outMax;
 };
 
 /*
@@ -338,11 +296,11 @@ private:
 idODSStreamedArray
 ================================================
 */
-template< typename _type_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1 >
+template<typename _type_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1>
 class ALIGNTYPE16 idODSStreamedArray
 {
 public:
-	idODSStreamedArray( const _type_ * array, const int numElements ) :
+	idODSStreamedArray( const _type_* array, const int numElements ) :
 		cachedArrayStart( 0 ),
 		cachedArrayEnd( 0 ),
 		streamArrayEnd( 0 ),
@@ -376,23 +334,20 @@ public:
 	// the elements starting at the index returned by the second-from-last call to FetchNextBatch()
 	// can still be accessed. This is useful when the algorithm needs to successively access
 	// an odd number of elements at the same time that may cross a single buffer boundary.
-	int				FetchNextBatch()
+	int FetchNextBatch()
 	{
 		// If not everything has been streamed already.
-		if( cachedArrayEnd < inArrayNum )
-		{
-			cachedArrayEnd = streamArrayEnd;
+		if( cachedArrayEnd < inArrayNum ) {
+			cachedArrayEnd	 = streamArrayEnd;
 			cachedArrayStart = Max( cachedArrayEnd - _bufferSize_ * ( _sbt_ - 1 ), 0 );
 
 			// Flush the last batch of elements that is no longer accessible.
 			FlushArray( inArray, ( cachedArrayStart - _bufferSize_ ) * sizeof( _type_ ), cachedArrayStart * sizeof( _type_ ) );
 
 			// Prefetch the next batch of elements.
-			if( streamArrayEnd < inArrayNum )
-			{
+			if( streamArrayEnd < inArrayNum ) {
 				streamArrayEnd = Min( streamArrayEnd + _bufferSize_, inArrayNum );
-				for( unsigned int offset = cachedArrayEnd * sizeof( _type_ ); offset < streamArrayEnd * sizeof( _type_ ); offset += CACHE_LINE_SIZE )
-				{
+				for( unsigned int offset = cachedArrayEnd * sizeof( _type_ ); offset < streamArrayEnd * sizeof( _type_ ); offset += CACHE_LINE_SIZE ) {
 					Prefetch( inArray, offset );
 				}
 			}
@@ -406,25 +361,22 @@ public:
 	// at the index returned by the second-from-last call to FetchNextBatch() can still be accessed.
 	// This is useful when the algorithm needs to successively access an odd number of elements
 	// at the same time that may cross a single buffer boundary.
-	const _type_& 	operator[]( int index ) const
+	const _type_& operator[]( int index ) const
 	{
 		assert( ( index >= cachedArrayStart && index < cachedArrayEnd ) || ( cachedArrayEnd == inArrayNum && index >= inArrayNum && index < inArrayNumRoundedUp ) );
-		if( _roundUpToMultiple_ > 1 )
-		{
-			index &= ( index - inArrayNum ) >> 31;
-		}
+		if( _roundUpToMultiple_ > 1 ) { index &= ( index - inArrayNum ) >> 31; }
 		return inArray[index];
 	}
 
 private:
-	int				cachedArrayStart;
-	int				cachedArrayEnd;
-	int				streamArrayEnd;
-	const _type_* 	inArray;
-	int				inArrayNum;
-	int				inArrayNumRoundedUp;
+	int			  cachedArrayStart;
+	int			  cachedArrayEnd;
+	int			  streamArrayEnd;
+	const _type_* inArray;
+	int			  inArrayNum;
+	int			  inArrayNumRoundedUp;
 
-	static void FlushArray( const void* flushArray, int flushStart, int flushEnd )
+	static void	  FlushArray( const void* flushArray, int flushStart, int flushEnd )
 	{
 #if 0
 		// arrayFlushBase is rounded up so we do not flush anything before the array.
@@ -456,11 +408,11 @@ NOTE: currently the size of array elements must be a multiple of 16 bytes.
 An index with offsets and more complex logic is needed to support other sizes.
 ================================================
 */
-template< typename _elemType_, typename _indexType_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1 >
+template<typename _elemType_, typename _indexType_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1>
 class ALIGNTYPE16 idODSStreamedIndexedArray
 {
 public:
-	idODSStreamedIndexedArray( const _elemType_ * array, const int numElements, const _indexType_ * index, const int numIndices ) :
+	idODSStreamedIndexedArray( const _elemType_* array, const int numElements, const _indexType_* index, const int numIndices ) :
 		cachedArrayStart( 0 ),
 		cachedArrayEnd( 0 ),
 		streamArrayEnd( 0 ),
@@ -477,7 +429,7 @@ public:
 		compile_time_assert( ( ( _bufferSize_ * sizeof( _indexType_ ) ) & 15 ) == 0 );
 		compile_time_assert( _bufferSize_ * sizeof( _indexType_ ) < MAX_DMA_SIZE );
 		compile_time_assert( _bufferSize_ * sizeof( _elemType_ ) < MAX_DMA_SIZE );
-		compile_time_assert( ( sizeof( _elemType_ ) & 15 ) == 0 );	// to avoid complexity due to cellDmaListGet
+		compile_time_assert( ( sizeof( _elemType_ ) & 15 ) == 0 ); // to avoid complexity due to cellDmaListGet
 		compile_time_assert( _roundUpToMultiple_ >= 1 );
 		assert_16_byte_aligned( index );
 		assert_16_byte_aligned( array );
@@ -507,16 +459,14 @@ public:
 	// the elements starting at the index returned by the second-from-last call to FetchNextBatch()
 	// can still be accessed. This is useful when the algorithm needs to successively access
 	// an odd number of elements at the same time that may cross a single buffer boundary.
-	int				FetchNextBatch()
+	int FetchNextBatch()
 	{
 		// If not everything has been streamed already.
-		if( cachedArrayEnd < inIndexNum )
-		{
-			if( streamIndexEnd > 0 )
-			{
-				cachedArrayEnd = streamArrayEnd;
+		if( cachedArrayEnd < inIndexNum ) {
+			if( streamIndexEnd > 0 ) {
+				cachedArrayEnd	 = streamArrayEnd;
 				cachedArrayStart = Max( cachedArrayEnd - _bufferSize_ * ( _sbt_ - 1 ), 0 );
-				cachedIndexEnd = streamIndexEnd;
+				cachedIndexEnd	 = streamIndexEnd;
 				cachedIndexStart = Max( cachedIndexEnd - _bufferSize_ * ( _sbt_ - 1 ), 0 );
 
 				// Flush the last batch of indices that are no longer accessible.
@@ -525,11 +475,9 @@ public:
 				FlushArray( inArray, ( cachedArrayStart - _bufferSize_ ) * sizeof( _elemType_ ), cachedArrayStart * sizeof( _elemType_ ) );
 
 				// Prefetch the next batch of elements.
-				if( streamArrayEnd < inIndexNum )
-				{
+				if( streamArrayEnd < inIndexNum ) {
 					streamArrayEnd = cachedIndexEnd;
-					for( int i = cachedArrayEnd; i < streamArrayEnd; i++ )
-					{
+					for( int i = cachedArrayEnd; i < streamArrayEnd; i++ ) {
 						assert( i >= cachedIndexStart && i < cachedIndexEnd );
 						assert( inIndex[i] >= 0 && inIndex[i] < inArrayNum );
 
@@ -539,11 +487,9 @@ public:
 			}
 
 			// Prefetch the next batch of indices.
-			if( streamIndexEnd < inIndexNum )
-			{
+			if( streamIndexEnd < inIndexNum ) {
 				streamIndexEnd = Min( streamIndexEnd + _bufferSize_, inIndexNum );
-				for( unsigned int offset = cachedIndexEnd * sizeof( _indexType_ ); offset < streamIndexEnd * sizeof( _indexType_ ); offset += CACHE_LINE_SIZE )
-				{
+				for( unsigned int offset = cachedIndexEnd * sizeof( _indexType_ ); offset < streamIndexEnd * sizeof( _indexType_ ); offset += CACHE_LINE_SIZE ) {
 					Prefetch( inIndex, offset );
 				}
 			}
@@ -560,27 +506,24 @@ public:
 	const _elemType_& operator[]( int index ) const
 	{
 		assert( ( index >= cachedArrayStart && index < cachedArrayEnd ) || ( cachedArrayEnd == inIndexNum && index >= inIndexNum && index < inIndexNumRoundedUp ) );
-		if( _roundUpToMultiple_ > 1 )
-		{
-			index &= ( index - inIndexNum ) >> 31;
-		}
+		if( _roundUpToMultiple_ > 1 ) { index &= ( index - inIndexNum ) >> 31; }
 		return inArray[inIndex[index]];
 	}
 
 private:
-	int					cachedArrayStart;
-	int					cachedArrayEnd;
-	int					streamArrayEnd;
-	int					cachedIndexStart;
-	int					cachedIndexEnd;
-	int					streamIndexEnd;
-	const _elemType_* 	inArray;
-	int					inArrayNum;
-	const _indexType_* 	inIndex;
-	int					inIndexNum;
-	int					inIndexNumRoundedUp;
+	int				   cachedArrayStart;
+	int				   cachedArrayEnd;
+	int				   streamArrayEnd;
+	int				   cachedIndexStart;
+	int				   cachedIndexEnd;
+	int				   streamIndexEnd;
+	const _elemType_*  inArray;
+	int				   inArrayNum;
+	const _indexType_* inIndex;
+	int				   inIndexNum;
+	int				   inIndexNumRoundedUp;
 
-	static void FlushArray( const void* flushArray, int flushStart, int flushEnd )
+	static void		   FlushArray( const void* flushArray, int flushStart, int flushEnd )
 	{
 #if 0
 		// arrayFlushBase is rounded up so we do not flush anything before the array.
@@ -598,6 +541,5 @@ private:
 #endif
 	}
 };
-
 
 #endif // !__SOFTWARECACHE_H__

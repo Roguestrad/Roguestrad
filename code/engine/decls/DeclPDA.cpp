@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -71,144 +72,110 @@ bool idDeclPDA::Parse( const char* text, const int textLength, bool allowBinaryV
 	idLexer src;
 	idToken token;
 
-	idStr baseStrId = va( "#str_%s_pda_", GetName() );
+	idStr	baseStrId = va( "#str_%s_pda_", GetName() );
 
 	src.LoadMemory( text, textLength, GetFileName(), GetLineNum() );
 	src.SetFlags( DECL_LEXER_FLAGS );
 	src.SkipUntilString( "{" );
 
 	// scan through, identifying each individual parameter
-	while( 1 )
-	{
-
-		if( !src.ReadToken( &token ) )
-		{
+	while( 1 ) {
+		if( !src.ReadToken( &token ) ) {
 			break;
 		}
 
-		if( token == "}" )
-		{
+		if( token == "}" ) {
 			break;
 		}
 
-		if( !token.Icmp( "name" ) )
-		{
+		if( !token.Icmp( "name" ) ) {
 			src.ReadToken( &token );
 
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				pdaName = token;
-			}
-			else
-			{
+			} else {
 				pdaName = idLocalization::GetString( baseStrId + "name" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "fullname" ) )
-		{
+		if( !token.Icmp( "fullname" ) ) {
 			src.ReadToken( &token );
 
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				fullName = token;
-			}
-			else
-			{
+			} else {
 				fullName = idLocalization::GetString( baseStrId + "fullname" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "icon" ) )
-		{
+		if( !token.Icmp( "icon" ) ) {
 			src.ReadToken( &token );
 			icon = token;
 			continue;
 		}
 
-		if( !token.Icmp( "id" ) )
-		{
+		if( !token.Icmp( "id" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				id = token;
-			}
-			else
-			{
+			} else {
 				id = idLocalization::GetString( baseStrId + "id" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "post" ) )
-		{
+		if( !token.Icmp( "post" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				post = token;
-			}
-			else
-			{
+			} else {
 				post = idLocalization::GetString( baseStrId + "post" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "title" ) )
-		{
+		if( !token.Icmp( "title" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				title = token;
-			}
-			else
-			{
+			} else {
 				title = idLocalization::GetString( baseStrId + "title" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "security" ) )
-		{
+		if( !token.Icmp( "security" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				security = token;
-			}
-			else
-			{
+			} else {
 				security = idLocalization::GetString( baseStrId + "security" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "pda_email" ) )
-		{
+		if( !token.Icmp( "pda_email" ) ) {
 			src.ReadToken( &token );
 			emails.Append( static_cast<const idDeclEmail*>( declManager->FindType( DECL_EMAIL, token ) ) );
 			continue;
 		}
 
-		if( !token.Icmp( "pda_audio" ) )
-		{
+		if( !token.Icmp( "pda_audio" ) ) {
 			src.ReadToken( &token );
 			audios.Append( static_cast<const idDeclAudio*>( declManager->FindType( DECL_AUDIO, token ) ) );
 			continue;
 		}
 
-		if( !token.Icmp( "pda_video" ) )
-		{
+		if( !token.Icmp( "pda_video" ) ) {
 			src.ReadToken( &token );
 			videos.Append( static_cast<const idDeclVideo*>( declManager->FindType( DECL_VIDEO, token ) ) );
 			continue;
 		}
-
 	}
 
-	if( src.HadError() )
-	{
+	if( src.HadError() ) {
 		src.Warning( "PDA decl '%s' had a parse error", GetName() );
 		return false;
 	}
@@ -225,10 +192,10 @@ idDeclPDA::DefaultDefinition
 */
 const char* idDeclPDA::DefaultDefinition() const
 {
-	return
-		"{\n"
-		"\t"		"name  \"default pda\"\n"
-		"}";
+	return "{\n"
+		   "\t"
+		   "name  \"default pda\"\n"
+		   "}";
 }
 
 /*
@@ -253,18 +220,14 @@ idDeclPDA::RemoveAddedEmailsAndVideos
 void idDeclPDA::RemoveAddedEmailsAndVideos() const
 {
 	int num = emails.Num();
-	if( originalEmails < num )
-	{
-		while( num && num > originalEmails )
-		{
+	if( originalEmails < num ) {
+		while( num && num > originalEmails ) {
 			emails.RemoveIndex( --num );
 		}
 	}
 	num = videos.Num();
-	if( originalVideos < num )
-	{
-		while( num && num > originalVideos )
-		{
+	if( originalVideos < num ) {
+		while( num && num > originalVideos ) {
 			videos.RemoveIndex( --num );
 		}
 	}
@@ -320,105 +283,80 @@ bool idDeclEmail::Parse( const char* _text, const int textLength, bool allowBina
 	idLexer src;
 	idToken token;
 
-	idStr baseStrId = va( "#str_%s_email_", GetName() );
+	idStr	baseStrId = va( "#str_%s_email_", GetName() );
 
 	src.LoadMemory( _text, textLength, GetFileName(), GetLineNum() );
-	src.SetFlags( LEXFL_NOSTRINGCONCAT | LEXFL_ALLOWPATHNAMES |	LEXFL_ALLOWMULTICHARLITERALS | LEXFL_ALLOWBACKSLASHSTRINGCONCAT | LEXFL_NOFATALERRORS );
+	src.SetFlags( LEXFL_NOSTRINGCONCAT | LEXFL_ALLOWPATHNAMES | LEXFL_ALLOWMULTICHARLITERALS | LEXFL_ALLOWBACKSLASHSTRINGCONCAT | LEXFL_NOFATALERRORS );
 	src.SkipUntilString( "{" );
 
 	text = "";
 	// scan through, identifying each individual parameter
-	while( 1 )
-	{
-
-		if( !src.ReadToken( &token ) )
-		{
+	while( 1 ) {
+		if( !src.ReadToken( &token ) ) {
 			break;
 		}
 
-		if( token == "}" )
-		{
+		if( token == "}" ) {
 			break;
 		}
 
-		if( !token.Icmp( "subject" ) )
-		{
+		if( !token.Icmp( "subject" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				subject = token;
-			}
-			else
-			{
+			} else {
 				subject = idLocalization::GetString( baseStrId + "subject" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "to" ) )
-		{
+		if( !token.Icmp( "to" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				to = token;
-			}
-			else
-			{
+			} else {
 				to = idLocalization::GetString( baseStrId + "to" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "from" ) )
-		{
+		if( !token.Icmp( "from" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				from = token;
-			}
-			else
-			{
+			} else {
 				from = idLocalization::GetString( baseStrId + "from" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "date" ) )
-		{
+		if( !token.Icmp( "date" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				date = token;
-			}
-			else
-			{
+			} else {
 				date = idLocalization::GetString( baseStrId + "date" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "text" ) )
-		{
+		if( !token.Icmp( "text" ) ) {
 			src.ReadToken( &token );
-			if( token != "{" )
-			{
+			if( token != "{" ) {
 				src.Warning( "Email decl '%s' had a parse error", GetName() );
 				return false;
 			}
-			while( src.ReadToken( &token ) && token != "}" )
-			{
+			while( src.ReadToken( &token ) && token != "}" ) {
 				text += token;
 			}
-			if( !g_useOldPDAStrings.GetBool() )
-			{
+			if( !g_useOldPDAStrings.GetBool() ) {
 				text = idLocalization::GetString( baseStrId + "text" );
 			}
 			continue;
 		}
 	}
 
-	if( src.HadError() )
-	{
+	if( src.HadError() ) {
 		src.Warning( "Email decl '%s' had a parse error", GetName() );
 		return false;
 	}
@@ -432,14 +370,18 @@ idDeclEmail::DefaultDefinition
 */
 const char* idDeclEmail::DefaultDefinition() const
 {
-	return
-		"{\n"
-		"\t"	"{\n"
-		"\t\t"		"to\t5Mail recipient\n"
-		"\t\t"		"subject\t5Nothing\n"
-		"\t\t"		"from\t5No one\n"
-		"\t"	"}\n"
-		"}";
+	return "{\n"
+		   "\t"
+		   "{\n"
+		   "\t\t"
+		   "to\t5Mail recipient\n"
+		   "\t\t"
+		   "subject\t5Nothing\n"
+		   "\t\t"
+		   "from\t5No one\n"
+		   "\t"
+		   "}\n"
+		   "}";
 }
 
 /*
@@ -491,79 +433,62 @@ bool idDeclVideo::Parse( const char* text, const int textLength, bool allowBinar
 	idLexer src;
 	idToken token;
 
-	idStr baseStrId = va( "#str_%s_video_", GetName() );
+	idStr	baseStrId = va( "#str_%s_video_", GetName() );
 
 	src.LoadMemory( text, textLength, GetFileName(), GetLineNum() );
-	src.SetFlags( LEXFL_NOSTRINGCONCAT | LEXFL_ALLOWPATHNAMES |	LEXFL_ALLOWMULTICHARLITERALS | LEXFL_ALLOWBACKSLASHSTRINGCONCAT | LEXFL_NOFATALERRORS );
+	src.SetFlags( LEXFL_NOSTRINGCONCAT | LEXFL_ALLOWPATHNAMES | LEXFL_ALLOWMULTICHARLITERALS | LEXFL_ALLOWBACKSLASHSTRINGCONCAT | LEXFL_NOFATALERRORS );
 	src.SkipUntilString( "{" );
 
 	// scan through, identifying each individual parameter
-	while( 1 )
-	{
-
-		if( !src.ReadToken( &token ) )
-		{
+	while( 1 ) {
+		if( !src.ReadToken( &token ) ) {
 			break;
 		}
 
-		if( token == "}" )
-		{
+		if( token == "}" ) {
 			break;
 		}
 
-		if( !token.Icmp( "name" ) )
-		{
+		if( !token.Icmp( "name" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				videoName = token;
-			}
-			else
-			{
+			} else {
 				videoName = idLocalization::GetString( baseStrId + "name" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "preview" ) )
-		{
+		if( !token.Icmp( "preview" ) ) {
 			src.ReadToken( &token );
 			preview = declManager->FindMaterial( token );
 			continue;
 		}
 
-		if( !token.Icmp( "video" ) )
-		{
+		if( !token.Icmp( "video" ) ) {
 			src.ReadToken( &token );
 			video = declManager->FindMaterial( token );
 			continue;
 		}
 
-		if( !token.Icmp( "info" ) )
-		{
+		if( !token.Icmp( "info" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				info = token;
-			}
-			else
-			{
+			} else {
 				info = idLocalization::GetString( baseStrId + "info" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "audio" ) )
-		{
+		if( !token.Icmp( "audio" ) ) {
 			src.ReadToken( &token );
 			audio = declManager->FindSound( token );
 			continue;
 		}
-
 	}
 
-	if( src.HadError() )
-	{
+	if( src.HadError() ) {
 		src.Warning( "Video decl '%s' had a parse error", GetName() );
 		return false;
 	}
@@ -577,12 +502,14 @@ idDeclVideo::DefaultDefinition
 */
 const char* idDeclVideo::DefaultDefinition() const
 {
-	return
-		"{\n"
-		"\t"	"{\n"
-		"\t\t"		"name\t5Default Video\n"
-		"\t"	"}\n"
-		"}";
+	return "{\n"
+		   "\t"
+		   "{\n"
+		   "\t\t"
+		   "name\t5Default Video\n"
+		   "\t"
+		   "}\n"
+		   "}";
 }
 
 /*
@@ -634,64 +561,50 @@ bool idDeclAudio::Parse( const char* text, const int textLength, bool allowBinar
 	idLexer src;
 	idToken token;
 
-	idStr baseStrId = va( "#str_%s_audio_", GetName() );
+	idStr	baseStrId = va( "#str_%s_audio_", GetName() );
 
 	src.LoadMemory( text, textLength, GetFileName(), GetLineNum() );
-	src.SetFlags( LEXFL_NOSTRINGCONCAT | LEXFL_ALLOWPATHNAMES |	LEXFL_ALLOWMULTICHARLITERALS | LEXFL_ALLOWBACKSLASHSTRINGCONCAT | LEXFL_NOFATALERRORS );
+	src.SetFlags( LEXFL_NOSTRINGCONCAT | LEXFL_ALLOWPATHNAMES | LEXFL_ALLOWMULTICHARLITERALS | LEXFL_ALLOWBACKSLASHSTRINGCONCAT | LEXFL_NOFATALERRORS );
 	src.SkipUntilString( "{" );
 
 	// scan through, identifying each individual parameter
-	while( 1 )
-	{
-
-		if( !src.ReadToken( &token ) )
-		{
+	while( 1 ) {
+		if( !src.ReadToken( &token ) ) {
 			break;
 		}
 
-		if( token == "}" )
-		{
+		if( token == "}" ) {
 			break;
 		}
 
-		if( !token.Icmp( "name" ) )
-		{
+		if( !token.Icmp( "name" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				audioName = token;
-			}
-			else
-			{
+			} else {
 				audioName = idLocalization::GetString( baseStrId + "name" );
 			}
 			continue;
 		}
 
-		if( !token.Icmp( "audio" ) )
-		{
+		if( !token.Icmp( "audio" ) ) {
 			src.ReadToken( &token );
 			audio = declManager->FindSound( token );
 			continue;
 		}
 
-		if( !token.Icmp( "info" ) )
-		{
+		if( !token.Icmp( "info" ) ) {
 			src.ReadToken( &token );
-			if( g_useOldPDAStrings.GetBool() )
-			{
+			if( g_useOldPDAStrings.GetBool() ) {
 				info = token;
-			}
-			else
-			{
+			} else {
 				info = idLocalization::GetString( baseStrId + "info" );
 			}
 			continue;
 		}
 	}
 
-	if( src.HadError() )
-	{
+	if( src.HadError() ) {
 		src.Warning( "Audio decl '%s' had a parse error", GetName() );
 		return false;
 	}
@@ -705,12 +618,14 @@ idDeclAudio::DefaultDefinition
 */
 const char* idDeclAudio::DefaultDefinition() const
 {
-	return
-		"{\n"
-		"\t"	"{\n"
-		"\t\t"		"name\t5Default Audio\n"
-		"\t"	"}\n"
-		"}";
+	return "{\n"
+		   "\t"
+		   "{\n"
+		   "\t\t"
+		   "name\t5Default Audio\n"
+		   "\t"
+		   "}\n"
+		   "}";
 }
 
 /*

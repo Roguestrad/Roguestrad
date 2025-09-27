@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -35,9 +36,7 @@ Contains the RenderLog declaration.
 ================================================================================================
 */
 
-
-enum renderLogMainBlock_t
-{
+enum renderLogMainBlock_t {
 	// each block will require to allocate 2 GPU query timestamps
 	MRB_GPU_TIME,
 	MRB_BEGIN_DRAWING_VIEW,
@@ -64,8 +63,6 @@ enum renderLogMainBlock_t
 	MRB_TOTAL_QUERIES = MRB_TOTAL * 2,
 };
 
-
-
 /*
 ================================================
 idRenderLog
@@ -77,38 +74,35 @@ idRenderLog
 class idRenderLog
 {
 private:
-	renderLogMainBlock_t mainBlock;
+	renderLogMainBlock_t											  mainBlock;
 
-	nvrhi::CommandListHandle		commandList;
+	nvrhi::CommandListHandle										  commandList;
 
-	uint64							frameCounter;
-	uint32							frameParity;
+	uint64															  frameCounter;
+	uint32															  frameParity;
 
-	idStaticList<nvrhi::TimerQueryHandle, MRB_TOTAL* NUM_FRAME_DATA> timerQueries;
-	idStaticList<bool, MRB_TOTAL* NUM_FRAME_DATA> timerUsed;
+	idStaticList<nvrhi::TimerQueryHandle, MRB_TOTAL * NUM_FRAME_DATA> timerQueries;
+	idStaticList<bool, MRB_TOTAL * NUM_FRAME_DATA>					  timerUsed;
 
 public:
 	idRenderLog();
 
-	void		Init();
-	void		Shutdown();
+	void Init();
+	void Shutdown();
 
-	void		StartFrame( nvrhi::ICommandList* _commandList );
-	void		EndFrame();
-	void		Close() {}
-	int			Active()
-	{
-		return 0;
-	}
+	void StartFrame( nvrhi::ICommandList* _commandList );
+	void EndFrame();
+	void Close() { }
+	int	 Active() { return 0; }
 
-	void		OpenBlock( const char* label, const idVec4& color = colorBlack );
-	void		CloseBlock();
-	void		OpenMainBlock( renderLogMainBlock_t block );
-	void		CloseMainBlock( int block = -1 );
+	void OpenBlock( const char* label, const idVec4& color = colorBlack );
+	void CloseBlock();
+	void OpenMainBlock( renderLogMainBlock_t block );
+	void CloseMainBlock( int block = -1 );
 
-	void		Printf( VERIFY_FORMAT_STRING const char* fmt, ... ) {}
+	void Printf( VERIFY_FORMAT_STRING const char* fmt, ... ) { }
 
-	void		FetchGPUTimers( backEndCounters_t& pc );
+	void FetchGPUTimers( backEndCounters_t& pc );
 };
 
 extern idRenderLog renderLog;

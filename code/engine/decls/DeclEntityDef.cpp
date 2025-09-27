@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,7 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "precompiled.h"
 #pragma hdrstop
-
 
 /*
 =================
@@ -58,39 +58,33 @@ idDeclEntityDef::Parse
 bool idDeclEntityDef::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
-	idToken	token, token2;
+	idToken token, token2;
 
 	src.LoadMemory( text, textLength, GetFileName(), GetLineNum() );
 	src.SetFlags( DECL_LEXER_FLAGS );
 	src.SkipUntilString( "{" );
 
-	while( 1 )
-	{
-		if( !src.ReadToken( &token ) )
-		{
+	while( 1 ) {
+		if( !src.ReadToken( &token ) ) {
 			break;
 		}
 
-		if( !token.Icmp( "}" ) )
-		{
+		if( !token.Icmp( "}" ) ) {
 			break;
 		}
-		if( token.type != TT_STRING )
-		{
+		if( token.type != TT_STRING ) {
 			src.Warning( "Expected quoted string, but found '%s'", token.c_str() );
 			MakeDefault();
 			return false;
 		}
 
-		if( !src.ReadToken( &token2 ) )
-		{
+		if( !src.ReadToken( &token2 ) ) {
 			src.Warning( "Unexpected end of file" );
 			MakeDefault();
 			return false;
 		}
 
-		if( dict.FindKey( token ) )
-		{
+		if( dict.FindKey( token ) ) {
 			src.Warning( "'%s' already defined", token.c_str() );
 		}
 		dict.Set( token, token2 );
@@ -107,24 +101,18 @@ bool idDeclEntityDef::Parse( const char* text, const int textLength, bool allowB
 	idList<const idDeclEntityDef*> defList;
 
 	// RB: don't grab properties of inherited parent when exporting to FGD
-	if( !( com_editors & EDITOR_EXPORTDEFS ) )
-	{
-		while( 1 )
-		{
+	if( !( com_editors & EDITOR_EXPORTDEFS ) ) {
+		while( 1 ) {
 			const idKeyValue* kv;
 			kv = dict.MatchPrefix( "inherit", NULL );
-			if( !kv )
-			{
+			if( !kv ) {
 				break;
 			}
 
 			const idDeclEntityDef* copy = static_cast<const idDeclEntityDef*>( declManager->FindType( DECL_ENTITYDEF, kv->GetValue(), false ) );
-			if( !copy )
-			{
+			if( !copy ) {
 				src.Warning( "Unknown entityDef '%s' inherited by '%s'", kv->GetValue().c_str(), GetName() );
-			}
-			else
-			{
+			} else {
 				defList.Append( copy );
 			}
 
@@ -134,16 +122,14 @@ bool idDeclEntityDef::Parse( const char* text, const int textLength, bool allowB
 	}
 
 	// now copy over the inherited key / value pairs
-	for( int i = 0 ; i < defList.Num() ; i++ )
-	{
-		dict.SetDefaults( &defList[ i ]->dict );
+	for( int i = 0; i < defList.Num(); i++ ) {
+		dict.SetDefaults( &defList[i]->dict );
 	}
 
 	// precache all referenced media
 	// do this as long as we arent in modview
 #if !defined( DMAP )
-	if( !( com_editors & ( EDITOR_AAS | EDITOR_EXPORTDEFS ) ) )
-	{
+	if( !( com_editors & ( EDITOR_AAS | EDITOR_EXPORTDEFS ) ) ) {
 		game->CacheDictionaryMedia( &dict );
 	}
 #endif
@@ -158,10 +144,10 @@ idDeclEntityDef::DefaultDefinition
 */
 const char* idDeclEntityDef::DefaultDefinition() const
 {
-	return
-		"{\n"
-		"\t"	"\"DEFAULTED\"\t\"1\"\n"
-		"}";
+	return "{\n"
+		   "\t"
+		   "\"DEFAULTED\"\t\"1\"\n"
+		   "}";
 }
 
 /*

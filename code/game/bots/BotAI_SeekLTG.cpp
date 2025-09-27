@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,8 +39,7 @@ iceBot::state_SeekLTG
 */
 stateResult_t iceBot::state_SeekLTG( stateParms_t* parms )
 {
-	if( BotIsDead( &bs ) )
-	{
+	if( BotIsDead( &bs ) ) {
 		stateThread.SetState( "state_Respawn" );
 		return SRESULT_DONE_FRAME;
 	}
@@ -49,23 +49,19 @@ stateResult_t iceBot::state_SeekLTG( stateParms_t* parms )
 	// No Enemy.
 	bs.enemy = -1;
 
-	//if there is an enemy
-	if( BotFindEnemy( &bs, -1 ) )
-	{
-		if( BotWantsToRetreat( &bs ) )
-		{
-			//keep the current long term goal and retreat
-			//AIEnter_Battle_Retreat(bs, "seek ltg: found enemy");
+	// if there is an enemy
+	if( BotFindEnemy( &bs, -1 ) ) {
+		if( BotWantsToRetreat( &bs ) ) {
+			// keep the current long term goal and retreat
+			// AIEnter_Battle_Retreat(bs, "seek ltg: found enemy");
 			stateThread.SetState( "state_Retreat" );
 			return SRESULT_DONE_FRAME;
-		}
-		else
-		{
-			//trap_BotResetLastAvoidReach(bs.ms);
-			//empty the goal stack
+		} else {
+			// trap_BotResetLastAvoidReach(bs.ms);
+			// empty the goal stack
 			botGoalManager.BotEmptyGoalStack( bs.gs );
 
-			//go fight
+			// go fight
 			stateThread.SetState( "state_BattleFight" );
 			return SRESULT_DONE_FRAME;
 		}

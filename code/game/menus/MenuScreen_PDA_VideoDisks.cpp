@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,15 +37,12 @@ static const int MAX_VIDEO_ITEMS = 5;
 idMenuScreen_PDA_VideoDisks::Initialize
 ========================
 */
-void idMenuScreen_PDA_VideoDisks::Initialize( idMenuHandler* data )
+void			 idMenuScreen_PDA_VideoDisks::Initialize( idMenuHandler* data )
 {
-
-	if( data != NULL )
-	{
+	if( data != NULL ) {
 		menuGUI = data->GetGUI();
 	}
 	SetSpritePath( "menuVideo" );
-
 
 	videoDetails.SetSpritePath( GetSpritePath(), "info", "details" );
 	videoDetails.Initialize( data );
@@ -58,8 +56,7 @@ void idMenuScreen_PDA_VideoDisks::Initialize( idMenuHandler* data )
 	pdaVideoList.SetNumVisibleOptions( MAX_VIDEO_ITEMS );
 	pdaVideoList.SetWrappingAllowed( true );
 	pdaVideoList.SetNoAutoFree( true );
-	while( pdaVideoList.GetChildren().Num() < MAX_VIDEO_ITEMS )
-	{
+	while( pdaVideoList.GetChildren().Num() < MAX_VIDEO_ITEMS ) {
 		idMenuWidget_Button* const buttonWidget = new( TAG_SWF ) idMenuWidget_Button();
 		buttonWidget->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_SELECT_PDA_VIDEO, pdaVideoList.GetChildren().Num() );
 		buttonWidget->RegisterEventObserver( &videoDetails );
@@ -94,44 +91,34 @@ idMenuScreen_PDA_VideoDisks::Update
 */
 void idMenuScreen_PDA_VideoDisks::Update()
 {
-
 	idPlayer* player = gameLocal.GetLocalPlayer();
 
-	if( menuData != NULL )
-	{
-		idMenuWidget_CommandBar* cmdBar = dynamic_cast< idMenuWidget_CommandBar* const >( menuData->GetChildFromIndex( PDA_WIDGET_CMD_BAR ) );
-		if( cmdBar != NULL )
-		{
+	if( menuData != NULL ) {
+		idMenuWidget_CommandBar* cmdBar = dynamic_cast<idMenuWidget_CommandBar* const>( menuData->GetChildFromIndex( PDA_WIDGET_CMD_BAR ) );
+		if( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
-			if( menuData->GetPlatform() != 2 )
-			{
+			if( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_01345";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
 
-			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_TAB );
+			buttonInfo		  = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_TAB );
 			buttonInfo->label = "";
 			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
 
-			if( player != NULL && player->GetInventory().videos.Num() > 0 )
-			{
-				if( player->GetVideoMaterial() == NULL )
-				{
+			if( player != NULL && player->GetInventory().videos.Num() > 0 ) {
+				if( player->GetVideoMaterial() == NULL ) {
 					buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
-					if( menuData->GetPlatform() != 2 )
-					{
+					if( menuData->GetPlatform() != 2 ) {
 						buttonInfo->label = "#str_swf_play";
 					}
 					buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
-				}
-				else
-				{
+				} else {
 					buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
-					if( menuData->GetPlatform() != 2 )
-					{
+					if( menuData->GetPlatform() != 2 ) {
 						buttonInfo->label = "#str_swf_stop";
 					}
 					buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
@@ -140,42 +127,34 @@ void idMenuScreen_PDA_VideoDisks::Update()
 		}
 	}
 
-	if( player != NULL )
-	{
-		//if ( pdaVideoList == NULL ) {
+	if( player != NULL ) {
+		// if ( pdaVideoList == NULL ) {
 		//	idMenuScreen::Update();
 		//	return;
-		//}
+		// }
 
-		idSWFScriptObject& root = GetSWFObject()->GetRootObject();
-		int index = pdaVideoList.GetViewIndex();
+		idSWFScriptObject& root	 = GetSWFObject()->GetRootObject();
+		int				   index = pdaVideoList.GetViewIndex();
 		const idDeclVideo* video = player->GetVideo( index );
 
-		if( video == NULL )
-		{
+		if( video == NULL ) {
 			idMenuScreen::Update();
 			return;
 		}
 
-		if( player->GetVideoMaterial() != NULL )
-		{
+		if( player->GetVideoMaterial() != NULL ) {
 			// update video material
-			if( BindSprite( root ) && GetSprite() != NULL )
-			{
+			if( BindSprite( root ) && GetSprite() != NULL ) {
 				idSWFSpriteInstance* videoSprite = GetSprite()->GetScriptObject()->GetNestedSprite( "info", "details", "video", "img" );
-				const idMaterial* mat = player->GetVideoMaterial();
+				const idMaterial*	 mat		 = player->GetVideoMaterial();
 
-				if( videoSprite != NULL && mat != NULL )
-				{
+				if( videoSprite != NULL && mat != NULL ) {
 					videoSprite->SetMaterial( mat );
 				}
 			}
-		}
-		else
-		{
+		} else {
 			idSWFSpriteInstance* videoSprite = GetSprite()->GetScriptObject()->GetNestedSprite( "info", "details", "video", "img" );
-			if( videoSprite != NULL )
-			{
+			if( videoSprite != NULL ) {
 				videoSprite->SetMaterial( video->GetPreview() );
 			}
 		}
@@ -191,18 +170,14 @@ idMenuScreen_PDA_VideoDisks::ShowScreen
 */
 void idMenuScreen_PDA_VideoDisks::ShowScreen( const mainMenuTransition_t transitionType )
 {
-
 	videoItems.Clear();
 	idPlayer* player = gameLocal.GetLocalPlayer();
-	if( player != NULL )
-	{
+	if( player != NULL ) {
 		int numVideos = player->GetInventory().videos.Num();
-		for( int i = 0; i < numVideos; ++i )
-		{
+		for( int i = 0; i < numVideos; ++i ) {
 			const idDeclVideo* video = player->GetVideo( i );
-			if( video != NULL )
-			{
-				idList< idStr > item;
+			if( video != NULL ) {
+				idList<idStr> item;
 				item.Append( video->GetVideoName() );
 				videoItems.Append( item );
 			}
@@ -221,24 +196,19 @@ idMenuScreen_PDA_VideoDisks::ToggleVideoDiskPlay
 */
 void idMenuScreen_PDA_VideoDisks::ToggleVideoDiskPlay()
 {
-
 	idPlayer* player = gameLocal.GetLocalPlayer();
-	if( player == NULL )
-	{
+	if( player == NULL ) {
 		return;
 	}
 
-
-	int index = pdaVideoList.GetViewIndex();
+	int				   index = pdaVideoList.GetViewIndex();
 	const idDeclVideo* video = player->GetVideo( index );
 
-	if( video == NULL )
-	{
+	if( video == NULL ) {
 		return;
 	}
 
-	if( video == activeVideo )
-	{
+	if( video == activeVideo ) {
 		player->EndVideoDisk();
 		activeVideo = NULL;
 		return;
@@ -246,12 +216,9 @@ void idMenuScreen_PDA_VideoDisks::ToggleVideoDiskPlay()
 
 	activeVideo = video;
 
-	if( player->GetVideoMaterial() == NULL )
-	{
+	if( player->GetVideoMaterial() == NULL ) {
 		player->PlayVideoDisk( video );
-	}
-	else
-	{
+	} else {
 		player->EndVideoDisk();
 	}
 }
@@ -263,32 +230,26 @@ idMenuScreen_PDA_VideoDisks::SelectedVideoToPlay
 */
 void idMenuScreen_PDA_VideoDisks::SelectedVideoToPlay( int index )
 {
-
 	idPlayer* player = gameLocal.GetLocalPlayer();
-	if( player == NULL )
-	{
+	if( player == NULL ) {
 		return;
 	}
 
 	player->EndVideoDisk();
-	if( menuData != NULL )
-	{
-		idMenuHandler_PDA* pdaHandler = dynamic_cast< idMenuHandler_PDA* const >( menuData );
+	if( menuData != NULL ) {
+		idMenuHandler_PDA* pdaHandler = dynamic_cast<idMenuHandler_PDA* const>( menuData );
 		pdaHandler->ClearVideoPlaying();
 	}
-
 
 	pdaVideoList.SetViewIndex( pdaVideoList.GetViewOffset() + index );
 	pdaVideoList.SetFocusIndex( index );
 	const idDeclVideo* video = player->GetVideo( pdaVideoList.GetViewOffset() + index );
 
-	if( video == NULL )
-	{
+	if( video == NULL ) {
 		return;
 	}
 
-	if( video == activeVideo )
-	{
+	if( video == activeVideo ) {
 		activeVideo = NULL;
 		return;
 	}
@@ -296,8 +257,6 @@ void idMenuScreen_PDA_VideoDisks::SelectedVideoToPlay( int index )
 	activeVideo = video;
 
 	player->PlayVideoDisk( video );
-
-
 }
 
 /*
@@ -317,49 +276,39 @@ idMenuScreen_PDA_VideoDisks::HandleAction
 */
 bool idMenuScreen_PDA_VideoDisks::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
-
-	if( menuData == NULL )
-	{
+	if( menuData == NULL ) {
 		return true;
 	}
 
-	if( menuData->ActiveScreen() != PDA_AREA_VIDEO_DISKS )
-	{
+	if( menuData->ActiveScreen() != PDA_AREA_VIDEO_DISKS ) {
 		return false;
 	}
 
-	widgetAction_t actionType = action.GetType();
-	const idSWFParmList& parms = action.GetParms();
+	widgetAction_t		 actionType = action.GetType();
+	const idSWFParmList& parms		= action.GetParms();
 
-	switch( actionType )
-	{
-		case WIDGET_ACTION_GO_BACK:
-		{
+	switch( actionType ) {
+		case WIDGET_ACTION_GO_BACK: {
 			menuData->SetNextScreen( PDA_AREA_INVALID, MENU_TRANSITION_ADVANCE );
 			return true;
 		}
-		case WIDGET_ACTION_START_REPEATER:
-		{
+		case WIDGET_ACTION_START_REPEATER: {
 			idWidgetAction repeatAction;
-			widgetAction_t repeatActionType = static_cast< widgetAction_t >( parms[ 0 ].ToInteger() );
+			widgetAction_t repeatActionType = static_cast<widgetAction_t>( parms[0].ToInteger() );
 			assert( parms.Num() == 2 );
-			repeatAction.Set( repeatActionType, parms[ 1 ] );
-			if( menuData != NULL )
-			{
+			repeatAction.Set( repeatActionType, parms[1] );
+			if( menuData != NULL ) {
 				menuData->StartWidgetActionRepeater( widget, repeatAction, event );
 			}
 			return true;
 		}
-		case WIDGET_ACTION_STOP_REPEATER:
-		{
-			if( menuData != NULL )
-			{
+		case WIDGET_ACTION_STOP_REPEATER: {
+			if( menuData != NULL ) {
 				menuData->ClearWidgetActionRepeater();
 			}
 			return true;
 		}
-		case WIDGET_ACTION_PRESS_FOCUSED:
-		{
+		case WIDGET_ACTION_PRESS_FOCUSED: {
 			ToggleVideoDiskPlay();
 			Update();
 			return true;

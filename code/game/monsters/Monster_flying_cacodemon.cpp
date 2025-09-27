@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -32,8 +33,8 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-#define CACO_ATTACK_RATE	3
-#define CACO_NOFOVTIME		4
+#define CACO_ATTACK_RATE 3
+#define CACO_NOFOVTIME	 4
 
 CLASS_DECLARATION( idAI, iceMonsterFlyingCacodemon )
 END_CLASS
@@ -77,23 +78,20 @@ iceMonsterFlyingCacodemon::state_Idle
 */
 stateResult_t iceMonsterFlyingCacodemon::state_Idle( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
-		if( wait_for_enemy( parms ) == SRESULT_DONE )
-		{
+	if( parms->stage == 0 ) {
+		if( wait_for_enemy( parms ) == SRESULT_DONE ) {
 			parms->stage = 1;
 		}
 
 		return SRESULT_WAIT;
 	}
 
-	nextAttack = 0;
+	nextAttack		= 0;
 	nextNoFOVAttack = 0;
 
 	Event_SetState( "state_Combat" );
 	return SRESULT_DONE;
 }
-
 
 /*
 =====================
@@ -103,17 +101,12 @@ iceMonsterFlyingCacodemon::do_attack
 void iceMonsterFlyingCacodemon::do_attack( int attack_flags )
 {
 	nextNoFOVAttack = gameLocal.SysScriptTime() + CACO_NOFOVTIME;
-	if( attack_flags & ATTACK_COMBAT_NODE )
-	{
-		//combat_ainode(combat_node);
+	if( attack_flags & ATTACK_COMBAT_NODE ) {
+		// combat_ainode(combat_node);
 		gameLocal.Error( "Combat_Node fix me\n" );
-	}
-	else if( attack_flags & ATTACK_MELEE )
-	{
+	} else if( attack_flags & ATTACK_MELEE ) {
 		SetState( "combat_melee" );
-	}
-	else if( attack_flags & ATTACK_MISSILE )
-	{
+	} else if( attack_flags & ATTACK_MISSILE ) {
 		SetState( "combat_range" );
 	}
 }
@@ -127,32 +120,26 @@ int iceMonsterFlyingCacodemon::check_attacks()
 {
 	float currentTime;
 	float canMelee;
-	int attack_flags;
+	int	  attack_flags;
 
 	attack_flags = 0;
 
-	canMelee = TestMelee();
+	canMelee	= TestMelee();
 	currentTime = gameLocal.SysScriptTime();
-	if( !canMelee )
-	{
+	if( !canMelee ) {
 		combat_node = GetCombatNode();
-		if( combat_node )
-		{
+		if( combat_node ) {
 			attack_flags |= ATTACK_COMBAT_NODE;
 		}
 	}
 
-	if( canMelee )
-	{
+	if( canMelee ) {
 		attack_flags |= ATTACK_MELEE;
 	}
 
-	if( ( ( gameLocal.SysScriptTime() > nextNoFOVAttack ) && AI_ENEMY_VISIBLE ) || AI_ENEMY_IN_FOV )
-	{
-		if( !CanReachEnemy() || ( currentTime >= nextAttack ) )
-		{
-			if( CanHitEnemyFromAnim( "range_attack" ) )
-			{
+	if( ( ( gameLocal.SysScriptTime() > nextNoFOVAttack ) && AI_ENEMY_VISIBLE ) || AI_ENEMY_IN_FOV ) {
+		if( !CanReachEnemy() || ( currentTime >= nextAttack ) ) {
+			if( CanHitEnemyFromAnim( "range_attack" ) ) {
 				attack_flags |= ATTACK_MISSILE;
 			}
 		}
@@ -168,8 +155,7 @@ monster_zombie::combat_range
 */
 stateResult_t iceMonsterFlyingCacodemon::combat_range( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
+	if( parms->stage == 0 ) {
 		Event_FaceEnemy();
 		Event_AnimState( ANIMCHANNEL_TORSO, "Torso_RangeAttack", 4 );
 		SetWaitState( "range_attack" );
@@ -177,17 +163,15 @@ stateResult_t iceMonsterFlyingCacodemon::combat_range( stateParms_t* parms )
 		return SRESULT_WAIT;
 	}
 
-	if( parms->stage == 1 )
-	{
-		if( waitState == "" )
-		{
+	if( parms->stage == 1 ) {
+		if( waitState == "" ) {
 			parms->stage = 2;
 		}
 		return SRESULT_WAIT;
 	}
 
 	// don't attack for a bit
-	nextAttack = gameLocal.DelayTime( CACO_ATTACK_RATE );
+	nextAttack		= gameLocal.DelayTime( CACO_ATTACK_RATE );
 	nextNoFOVAttack = gameLocal.SysScriptTime() + CACO_NOFOVTIME;
 
 	return SRESULT_DONE;
@@ -200,8 +184,7 @@ monster_zombie::combat_melee
 */
 stateResult_t iceMonsterFlyingCacodemon::combat_melee( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
+	if( parms->stage == 0 ) {
 		Event_FaceEnemy();
 		Event_AnimState( ANIMCHANNEL_TORSO, "Torso_MeleeAttack", 4 );
 		SetWaitState( "melee_attack" );
@@ -209,10 +192,8 @@ stateResult_t iceMonsterFlyingCacodemon::combat_melee( stateParms_t* parms )
 		return SRESULT_WAIT;
 	}
 
-	if( parms->stage == 1 )
-	{
-		if( waitState == "" )
-		{
+	if( parms->stage == 1 ) {
+		if( waitState == "" ) {
 			parms->stage = 2;
 		}
 		return SRESULT_WAIT;
@@ -220,4 +201,3 @@ stateResult_t iceMonsterFlyingCacodemon::combat_melee( stateParms_t* parms )
 
 	return SRESULT_DONE;
 }
-

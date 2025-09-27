@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -44,12 +45,11 @@ If you have questions concerning this license or the applicable additional terms
 
 const int MIN_OGGVORBIS_MEMORY = 768 * 1024;
 
-extern "C"
-{
-	void* _decoder_malloc( size_t size );
-	void* _decoder_calloc( size_t num, size_t size );
-	void* _decoder_realloc( void* memblock, size_t size );
-	void _decoder_free( void* memblock );
+extern "C" {
+void* _decoder_malloc( size_t size );
+void* _decoder_calloc( size_t num, size_t size );
+void* _decoder_realloc( void* memblock, size_t size );
+void  _decoder_free( void* memblock );
 }
 
 void* _decoder_malloc( size_t size )
@@ -79,7 +79,6 @@ void _decoder_free( void* memblock )
 	free( ( byte* )memblock );
 }
 
-
 /*
 ===================================================================================
 
@@ -108,20 +107,13 @@ int FS_SeekOGG( void* fh, ogg_int64_t to, int type )
 {
 	fsOrigin_t retype = FS_SEEK_SET;
 
-	if( type == SEEK_CUR )
-	{
+	if( type == SEEK_CUR ) {
 		retype = FS_SEEK_CUR;
-	}
-	else if( type == SEEK_END )
-	{
+	} else if( type == SEEK_END ) {
 		retype = FS_SEEK_END;
-	}
-	else if( type == SEEK_SET )
-	{
+	} else if( type == SEEK_SET ) {
 		retype = FS_SEEK_SET;
-	}
-	else
-	{
+	} else {
 		common->FatalError( "fs_seekOGG: seek without type\n" );
 	}
 	idFile* f = reinterpret_cast<idFile*>( fh );
@@ -160,10 +152,10 @@ int ov_openFile( idFile* f, OggVorbis_File* vf )
 
 	memset( vf, 0, sizeof( OggVorbis_File ) );
 
-	callbacks.read_func = FS_ReadOGG;
-	callbacks.seek_func = FS_SeekOGG;
+	callbacks.read_func	 = FS_ReadOGG;
+	callbacks.seek_func	 = FS_SeekOGG;
 	callbacks.close_func = FS_CloseOGG;
-	callbacks.tell_func = FS_TellOGG;
+	callbacks.tell_func	 = FS_TellOGG;
 	return ov_open_callbacks( ( void* )f, vf, NULL, -1, callbacks );
 }
 
@@ -174,9 +166,9 @@ idSoundDecoder_Vorbis::idSoundDecoder_Vorbis
 */
 idSoundDecoder_Vorbis::idSoundDecoder_Vorbis()
 {
-	sample = nullptr;
+	sample	   = nullptr;
 	vorbisFile = nullptr;
-	mhmmio = nullptr;
+	mhmmio	   = nullptr;
 }
 
 /*
@@ -186,18 +178,15 @@ idSoundDecoder_Vorbis::~idSoundDecoder_Vorbis
 */
 idSoundDecoder_Vorbis::~idSoundDecoder_Vorbis()
 {
-	if( sample )
-	{
+	if( sample ) {
 		sample = nullptr;
 	}
 
-	if( vorbisFile )
-	{
+	if( vorbisFile ) {
 		delete vorbisFile;
 	}
 
-	if( mhmmio )
-	{
+	if( mhmmio ) {
 		fileSystem->CloseFile( mhmmio );
 		mhmmio = nullptr;
 	}
@@ -212,11 +201,11 @@ void idSoundDecoder_Vorbis::GetFormat( idWaveFile::waveFmt_t& format )
 {
 	vorbis_info* vi = ov_info( vorbisFile, -1 );
 
-	format.basic.samplesPerSec = vi->rate;
-	format.basic.numChannels = vi->channels;
-	format.basic.bitsPerSample = sizeof( short ) * 8;
-	format.basic.formatTag = idWaveFile::FORMAT_PCM;
-	format.basic.blockSize = format.basic.numChannels * format.basic.bitsPerSample / 8;
+	format.basic.samplesPerSec	= vi->rate;
+	format.basic.numChannels	= vi->channels;
+	format.basic.bitsPerSample	= sizeof( short ) * 8;
+	format.basic.formatTag		= idWaveFile::FORMAT_PCM;
+	format.basic.blockSize		= format.basic.numChannels * format.basic.bitsPerSample / 8;
 	format.basic.avgBytesPerSec = format.basic.samplesPerSec * format.basic.blockSize;
 }
 
@@ -235,7 +224,7 @@ void idSoundDecoder_Vorbis::Seek( int samplePos )
 idSoundDecoder_Vorbis::IsEOS
 ====================
 */
-bool idSoundDecoder_Vorbis::IsEOS( void )
+bool idSoundDecoder_Vorbis::IsEOS()
 {
 	int64 size = ov_pcm_total( this->vorbisFile, -1 );
 	return ov_pcm_tell( vorbisFile ) >= size;
@@ -246,10 +235,10 @@ bool idSoundDecoder_Vorbis::IsEOS( void )
 idSoundDecoder_Vorbis::Size
 ====================
 */
-int64_t idSoundDecoder_Vorbis::Size( void )
+int64_t idSoundDecoder_Vorbis::Size()
 {
-	vorbis_info* vi = ov_info( vorbisFile, -1 );
-	int64 mdwSize = ov_pcm_total( vorbisFile, -1 ) * vi->channels;
+	vorbis_info* vi		 = ov_info( vorbisFile, -1 );
+	int64		 mdwSize = ov_pcm_total( vorbisFile, -1 ) * vi->channels;
 	return mdwSize * sizeof( short );
 }
 
@@ -258,7 +247,7 @@ int64_t idSoundDecoder_Vorbis::Size( void )
 idSoundDecoder_Vorbis::CompressedSize
 ====================
 */
-int64_t idSoundDecoder_Vorbis::CompressedSize( void )
+int64_t idSoundDecoder_Vorbis::CompressedSize()
 {
 	return ov_pcm_total( this->vorbisFile, -1 );
 }
@@ -270,25 +259,21 @@ idSoundDecoder_Vorbis::Read
 */
 int idSoundDecoder_Vorbis::Read( void* pBuffer, int dwSizeToRead )
 {
-	int total = dwSizeToRead;
-	char* bufferPtr = ( char* )pBuffer;
-	OggVorbis_File* ov = ( OggVorbis_File* )vorbisFile;
+	int				total	  = dwSizeToRead;
+	char*			bufferPtr = ( char* )pBuffer;
+	OggVorbis_File* ov		  = ( OggVorbis_File* )vorbisFile;
 
-	do
-	{
+	do {
 		int ret = ov_read( ov, bufferPtr, total >= 4096 ? 4096 : total, Swap_IsBigEndian(), 2, 1, &ov->stream );
-		if( ret == 0 )
-		{
+		if( ret == 0 ) {
 			break;
 		}
-		if( ret < 0 )
-		{
+		if( ret < 0 ) {
 			return -1;
 		}
 		bufferPtr += ret;
 		total -= ret;
-	}
-	while( total > 0 );
+	} while( total > 0 );
 
 	dwSizeToRead = ( byte* )bufferPtr - ( byte* )pBuffer;
 
@@ -302,35 +287,31 @@ idSoundDecoder_Vorbis::Open
 */
 bool idSoundDecoder_Vorbis::Open( const char* fileName )
 {
-	if( mhmmio )
-	{
+	if( mhmmio ) {
 		fileSystem->CloseFile( mhmmio );
 		mhmmio = nullptr;
 	}
 
-	if( vorbisFile != nullptr )
-	{
+	if( vorbisFile != nullptr ) {
 		delete vorbisFile;
 		vorbisFile = nullptr;
 	}
 
 	mhmmio = fileSystem->OpenFileRead( fileName );
-	if( !mhmmio )
-	{
+	if( !mhmmio ) {
 		return false;
 	}
 
 	vorbisFile = new OggVorbis_File;
 
-	if( ov_openFile( mhmmio, vorbisFile ) < 0 )
-	{
+	if( ov_openFile( mhmmio, vorbisFile ) < 0 ) {
 		delete vorbisFile;
 		fileSystem->CloseFile( mhmmio );
 		common->FatalError( "ov_openFile failed" );
 		return false;
 	}
 
-	//this->sample = sample;		// SRS - self assignment not needed here
+	// this->sample = sample;		// SRS - self assignment not needed here
 
 	return true;
 }

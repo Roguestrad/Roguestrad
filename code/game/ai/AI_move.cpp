@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -35,10 +36,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "AASCallback_FindCoverArea.h"
 #include "AASCallback_FindAttackPosition.h"
 
-
-static const char* moveCommandString[NUM_MOVE_COMMANDS] =
-{
-	"MOVE_NONE",
+static const char* moveCommandString[NUM_MOVE_COMMANDS] = { "MOVE_NONE",
 	"MOVE_FACE_ENEMY",
 	"MOVE_FACE_ENTITY",
 	"MOVE_TO_ENEMY",
@@ -50,8 +48,7 @@ static const char* moveCommandString[NUM_MOVE_COMMANDS] =
 	"MOVE_TO_POSITION",
 	"MOVE_TO_POSITION_DIRECT",
 	"MOVE_SLIDE_TO_POSITION",
-	"MOVE_WANDER"
-};
+	"MOVE_WANDER" };
 
 /*
 =====================
@@ -60,25 +57,25 @@ idMoveState::idMoveState
 */
 idMoveState::idMoveState()
 {
-	moveType = MOVETYPE_ANIM;
+	moveType	= MOVETYPE_ANIM;
 	moveCommand = MOVE_NONE;
-	moveStatus = MOVE_STATUS_DONE;
+	moveStatus	= MOVE_STATUS_DONE;
 	moveDest.Zero();
 	moveDir.Set( 1.0f, 0.0f, 0.0f );
 	goalEntity = NULL;
 	goalEntityOrigin.Zero();
-	toAreaNum = 0;
-	startTime = 0;
-	duration = 0;
-	speed = 0.0f;
-	range = 0.0f;
-	wanderYaw = 0;
+	toAreaNum	   = 0;
+	startTime	   = 0;
+	duration	   = 0;
+	speed		   = 0.0f;
+	range		   = 0.0f;
+	wanderYaw	   = 0;
 	nextWanderTime = 0;
-	blockTime = 0;
-	obstacle = NULL;
+	blockTime	   = 0;
+	obstacle	   = NULL;
 	lastMoveOrigin = vec3_origin;
-	lastMoveTime = 0;
-	anim = 0;
+	lastMoveTime   = 0;
+	anim		   = 0;
 }
 
 /*
@@ -137,7 +134,6 @@ void idMoveState::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( anim );
 }
 
-
 /*
 =====================
 idAI::Event_GetMoveType
@@ -155,22 +151,17 @@ idAI::Event_SetMoveTypes
 */
 void idAI::Event_SetMoveType( int moveType )
 {
-	if( ( moveType < 0 ) || ( moveType >= NUM_MOVETYPES ) )
-	{
+	if( ( moveType < 0 ) || ( moveType >= NUM_MOVETYPES ) ) {
 		gameLocal.Error( "Invalid movetype %d", moveType );
 	}
 
 	move.moveType = static_cast<moveType_t>( moveType );
-	if( move.moveType == MOVETYPE_FLY )
-	{
+	if( move.moveType == MOVETYPE_FLY ) {
 		travelFlags = TFL_WALK | TFL_AIR | TFL_FLY;
-	}
-	else
-	{
+	} else {
 		travelFlags = TFL_WALK | TFL_AIR;
 	}
 }
-
 
 /*
 =====================
@@ -192,8 +183,7 @@ void idAI::Event_RestoreMove()
 	idVec3 goalPos;
 	idVec3 dest;
 
-	switch( savedMove.moveCommand )
-	{
+	switch( savedMove.moveCommand ) {
 		case MOVE_NONE:
 			StopMove( savedMove.moveStatus );
 			break;
@@ -247,8 +237,7 @@ void idAI::Event_RestoreMove()
 			break;
 	}
 
-	if( GetMovePos( goalPos ) )
-	{
+	if( GetMovePos( goalPos ) ) {
 		CheckObstacleAvoidance( goalPos, dest );
 	}
 }
@@ -263,7 +252,6 @@ void idAI::Event_AllowMovement( float flag )
 	allowMove = ( flag != 0.0f );
 }
 
-
 /***********************************************************************
 
 	navigation
@@ -277,16 +265,16 @@ idAI::KickObstacles
 */
 void idAI::KickObstacles( const idVec3& dir, float force, idEntity* alwaysKick )
 {
-	int i, numListedClipModels;
-	idBounds clipBounds;
-	idEntity* obEnt;
+	int			 i, numListedClipModels;
+	idBounds	 clipBounds;
+	idEntity*	 obEnt;
 	idClipModel* clipModel;
 	idClipModel* clipModelList[MAX_GENTITIES];
-	int clipmask;
-	idVec3 org;
-	idVec3 forceVec;
-	idVec3 delta;
-	idVec2 perpendicular;
+	int			 clipmask;
+	idVec3		 org;
+	idVec3		 forceVec;
+	idVec3		 delta;
+	idVec2		 perpendicular;
 
 	org = physicsObj.GetOrigin();
 
@@ -295,25 +283,21 @@ void idAI::KickObstacles( const idVec3& dir, float force, idEntity* alwaysKick )
 	clipBounds.TranslateSelf( dir * 32.0f );
 	clipBounds.ExpandSelf( 8.0f );
 	clipBounds.AddPoint( org );
-	clipmask = physicsObj.GetClipMask();
+	clipmask			= physicsObj.GetClipMask();
 	numListedClipModels = gameLocal.clip.ClipModelsTouchingBounds( clipBounds, clipmask, clipModelList, MAX_GENTITIES );
-	for( i = 0; i < numListedClipModels; i++ )
-	{
+	for( i = 0; i < numListedClipModels; i++ ) {
 		clipModel = clipModelList[i];
-		obEnt = clipModel->GetEntity();
-		if( obEnt == alwaysKick )
-		{
+		obEnt	  = clipModel->GetEntity();
+		if( obEnt == alwaysKick ) {
 			// we'll kick this one outside the loop
 			continue;
 		}
 
-		if( !clipModel->IsTraceModel() )
-		{
+		if( !clipModel->IsTraceModel() ) {
 			continue;
 		}
 
-		if( obEnt->IsType( idMoveable::Type ) && obEnt->GetPhysics()->IsPushable() )
-		{
+		if( obEnt->IsType( idMoveable::Type ) && obEnt->GetPhysics()->IsPushable() ) {
 			delta = obEnt->GetPhysics()->GetOrigin() - org;
 			delta.NormalizeFast();
 			perpendicular.x = -delta.y;
@@ -325,8 +309,7 @@ void idAI::KickObstacles( const idVec3& dir, float force, idEntity* alwaysKick )
 		}
 	}
 
-	if( alwaysKick )
-	{
+	if( alwaysKick ) {
 		delta = alwaysKick->GetPhysics()->GetOrigin() - org;
 		delta.NormalizeFast();
 		perpendicular.x = -delta.y;
@@ -347,14 +330,11 @@ bool ValidForBounds( const idAASSettings* settings, const idBounds& bounds )
 {
 	int i;
 
-	for( i = 0; i < 3; i++ )
-	{
-		if( bounds[0][i] < settings->boundingBoxes[0][0][i] )
-		{
+	for( i = 0; i < 3; i++ ) {
+		if( bounds[0][i] < settings->boundingBoxes[0][0][i] ) {
 			return false;
 		}
-		if( bounds[1][i] > settings->boundingBoxes[0][1][i] )
-		{
+		if( bounds[1][i] > settings->boundingBoxes[0][1][i] ) {
 			return false;
 		}
 	}
@@ -372,21 +352,16 @@ void idAI::SetAAS()
 
 	spawnArgs.GetString( "use_aas", NULL, use_aas );
 	aas = gameLocal.GetAAS( use_aas );
-	if( aas )
-	{
+	if( aas ) {
 		const idAASSettings* settings = aas->GetSettings();
-		if( settings )
-		{
-			if( !ValidForBounds( settings, physicsObj.GetBounds() ) )
-			{
+		if( settings ) {
+			if( !ValidForBounds( settings, physicsObj.GetBounds() ) ) {
 				gameLocal.Error( "%s cannot use use_aas %s\n", name.c_str(), use_aas.c_str() );
 			}
 			float height = settings->maxStepHeight;
 			physicsObj.SetMaxStepHeight( height );
 			return;
-		}
-		else
-		{
+		} else {
 			aas = NULL;
 		}
 	}
@@ -400,14 +375,11 @@ idAI::DrawRoute
 */
 void idAI::DrawRoute() const
 {
-	if( aas && move.toAreaNum && move.moveCommand != MOVE_NONE && move.moveCommand != MOVE_WANDER && move.moveCommand != MOVE_FACE_ENEMY && move.moveCommand != MOVE_FACE_ENTITY && move.moveCommand != MOVE_TO_POSITION_DIRECT )
-	{
-		if( move.moveType == MOVETYPE_FLY )
-		{
+	if( aas && move.toAreaNum && move.moveCommand != MOVE_NONE && move.moveCommand != MOVE_WANDER && move.moveCommand != MOVE_FACE_ENEMY && move.moveCommand != MOVE_FACE_ENTITY &&
+		move.moveCommand != MOVE_TO_POSITION_DIRECT ) {
+		if( move.moveType == MOVETYPE_FLY ) {
 			aas->ShowFlyPath( physicsObj.GetOrigin(), move.toAreaNum, move.moveDest );
-		}
-		else
-		{
+		} else {
 			aas->ShowWalkPath( physicsObj.GetOrigin(), move.toAreaNum, move.moveDest );
 		}
 	}
@@ -420,30 +392,21 @@ idAI::ReachedPos
 */
 bool idAI::ReachedPos( const idVec3& pos, const moveCommand_t moveCommand ) const
 {
-	if( move.moveType == MOVETYPE_SLIDE )
-	{
+	if( move.moveType == MOVETYPE_SLIDE ) {
 		idBounds bnds( idVec3( -4, -4.0f, -8.0f ), idVec3( 4.0f, 4.0f, 64.0f ) );
 		bnds.TranslateSelf( physicsObj.GetOrigin() );
-		if( bnds.ContainsPoint( pos ) )
-		{
+		if( bnds.ContainsPoint( pos ) ) {
 			return true;
 		}
-	}
-	else
-	{
-		if( ( moveCommand == MOVE_TO_ENEMY ) || ( moveCommand == MOVE_TO_ENTITY ) )
-		{
-			if( physicsObj.GetAbsBounds().IntersectsBounds( idBounds( pos ).Expand( 8.0f ) ) )
-			{
+	} else {
+		if( ( moveCommand == MOVE_TO_ENEMY ) || ( moveCommand == MOVE_TO_ENTITY ) ) {
+			if( physicsObj.GetAbsBounds().IntersectsBounds( idBounds( pos ).Expand( 8.0f ) ) ) {
 				return true;
 			}
-		}
-		else
-		{
+		} else {
 			idBounds bnds( idVec3( -16.0, -16.0f, -8.0f ), idVec3( 16.0, 16.0f, 64.0f ) );
 			bnds.TranslateSelf( physicsObj.GetOrigin() );
-			if( bnds.ContainsPoint( pos ) )
-			{
+			if( bnds.ContainsPoint( pos ) ) {
 				return true;
 			}
 		}
@@ -458,26 +421,22 @@ idAI::PointReachableAreaNum
 */
 int idAI::PointReachableAreaNum( const idVec3& pos, const float boundsScale ) const
 {
-	int areaNum;
-	idVec3 size;
+	int		 areaNum;
+	idVec3	 size;
 	idBounds bounds;
 
-	if( !aas )
-	{
+	if( !aas ) {
 		return 0;
 	}
 
-	size = aas->GetSettings()->boundingBoxes[0][1] * boundsScale;
+	size	  = aas->GetSettings()->boundingBoxes[0][1] * boundsScale;
 	bounds[0] = -size;
-	size.z = 32.0f;
+	size.z	  = 32.0f;
 	bounds[1] = size;
 
-	if( move.moveType == MOVETYPE_FLY )
-	{
+	if( move.moveType == MOVETYPE_FLY ) {
 		areaNum = aas->PointReachableAreaNum( pos, bounds, AREA_REACHABLE_WALK | AREA_REACHABLE_FLY );
-	}
-	else
-	{
+	} else {
 		areaNum = aas->PointReachableAreaNum( pos, bounds, AREA_REACHABLE_WALK );
 	}
 
@@ -494,31 +453,25 @@ bool idAI::PathToGoal( aasPath_t& path, int areaNum, const idVec3& origin, int g
 	idVec3 org;
 	idVec3 goal;
 
-	if( !aas )
-	{
+	if( !aas ) {
 		return false;
 	}
 
 	org = origin;
 	aas->PushPointIntoAreaNum( areaNum, org );
-	if( !areaNum )
-	{
+	if( !areaNum ) {
 		return false;
 	}
 
 	goal = goalOrigin;
 	aas->PushPointIntoAreaNum( goalAreaNum, goal );
-	if( !goalAreaNum )
-	{
+	if( !goalAreaNum ) {
 		return false;
 	}
 
-	if( move.moveType == MOVETYPE_FLY )
-	{
+	if( move.moveType == MOVETYPE_FLY ) {
 		return aas->FlyPathToGoal( path, areaNum, org, goalAreaNum, goal, travelFlags );
-	}
-	else
-	{
+	} else {
 		return aas->WalkPathToGoal( path, areaNum, org, goalAreaNum, goal, travelFlags );
 	}
 }
@@ -535,20 +488,18 @@ are from the goal, so try to break the goals up into shorter distances.
 */
 float idAI::TravelDistance( const idVec3& start, const idVec3& end ) const
 {
-	int			fromArea;
-	int			toArea;
-	float		dist;
-	idVec2		delta;
-	aasPath_t	path;
+	int		  fromArea;
+	int		  toArea;
+	float	  dist;
+	idVec2	  delta;
+	aasPath_t path;
 
-	if( !aas )
-	{
+	if( !aas ) {
 		// no aas, so just take the straight line distance
 		delta = end.ToVec2() - start.ToVec2();
-		dist = delta.LengthFast();
+		dist  = delta.LengthFast();
 
-		if( ai_debugMove.GetBool() )
-		{
+		if( ai_debugMove.GetBool() ) {
 			gameRenderWorld->DebugLine( colorBlue, start, end, 1, false );
 			gameRenderWorld->DrawText( va( "%d", ( int )dist ), ( start + end ) * 0.5f, 0.1f, colorWhite, gameLocal.GetLocalPlayer()->viewAngles.ToMat3() );
 		}
@@ -557,22 +508,19 @@ float idAI::TravelDistance( const idVec3& start, const idVec3& end ) const
 	}
 
 	fromArea = PointReachableAreaNum( start );
-	toArea = PointReachableAreaNum( end );
+	toArea	 = PointReachableAreaNum( end );
 
-	if( !fromArea || !toArea )
-	{
+	if( !fromArea || !toArea ) {
 		// can't seem to get there
 		return -1;
 	}
 
-	if( fromArea == toArea )
-	{
+	if( fromArea == toArea ) {
 		// same area, so just take the straight line distance
 		delta = end.ToVec2() - start.ToVec2();
-		dist = delta.LengthFast();
+		dist  = delta.LengthFast();
 
-		if( ai_debugMove.GetBool() )
-		{
+		if( ai_debugMove.GetBool() ) {
 			gameRenderWorld->DebugLine( colorBlue, start, end, 1, false );
 			gameRenderWorld->DrawText( va( "%d", ( int )dist ), ( start + end ) * 0.5f, 0.1f, colorWhite, gameLocal.GetLocalPlayer()->viewAngles.ToMat3() );
 		}
@@ -581,20 +529,15 @@ float idAI::TravelDistance( const idVec3& start, const idVec3& end ) const
 	}
 
 	idReachability* reach;
-	int travelTime;
-	if( !aas->RouteToGoalArea( fromArea, start, toArea, travelFlags, travelTime, &reach ) )
-	{
+	int				travelTime;
+	if( !aas->RouteToGoalArea( fromArea, start, toArea, travelFlags, travelTime, &reach ) ) {
 		return -1;
 	}
 
-	if( ai_debugMove.GetBool() )
-	{
-		if( move.moveType == MOVETYPE_FLY )
-		{
+	if( ai_debugMove.GetBool() ) {
+		if( move.moveType == MOVETYPE_FLY ) {
 			aas->ShowFlyPath( start, toArea, end );
-		}
-		else
-		{
+		} else {
 			aas->ShowWalkPath( start, toArea, end );
 		}
 	}
@@ -609,26 +552,25 @@ idAI::StopMove
 */
 void idAI::StopMove( moveStatus_t status )
 {
-	AI_MOVE_DONE = true;
-	AI_FORWARD = false;
-	move.moveCommand = MOVE_NONE;
-	move.moveStatus = status;
-	move.toAreaNum = 0;
-	move.goalEntity = NULL;
-	move.moveDest = physicsObj.GetOrigin();
+	AI_MOVE_DONE		= true;
+	AI_FORWARD			= false;
+	move.moveCommand	= MOVE_NONE;
+	move.moveStatus		= status;
+	move.toAreaNum		= 0;
+	move.goalEntity		= NULL;
+	move.moveDest		= physicsObj.GetOrigin();
 	AI_DEST_UNREACHABLE = false;
 	AI_OBSTACLE_IN_PATH = false;
-	AI_BLOCKED = false;
-	move.startTime = gameLocal.time;
-	move.duration = 0;
-	move.range = 0.0f;
-	move.speed = 0.0f;
-	move.anim = 0;
+	AI_BLOCKED			= false;
+	move.startTime		= gameLocal.time;
+	move.duration		= 0;
+	move.range			= 0.0f;
+	move.speed			= 0.0f;
+	move.anim			= 0;
 	move.moveDir.Zero();
 	move.lastMoveOrigin.Zero();
 	move.lastMoveTime = gameLocal.time;
 }
-
 
 /*
 =====================
@@ -640,21 +582,20 @@ Continually face the enemy's last known position.  MoveDone is always true in th
 bool idAI::FaceEnemy()
 {
 	idActor* enemyEnt = enemy.GetEntity();
-	if( !enemyEnt )
-	{
+	if( !enemyEnt ) {
 		StopMove( MOVE_STATUS_DEST_NOT_FOUND );
 		return false;
 	}
 
 	TurnToward( lastVisibleEnemyPos );
-	move.goalEntity = enemyEnt;
-	move.moveDest = physicsObj.GetOrigin();
-	move.moveCommand = MOVE_FACE_ENEMY;
-	move.moveStatus = MOVE_STATUS_WAITING;
-	move.startTime = gameLocal.time;
-	move.speed = 0.0f;
-	AI_MOVE_DONE = true;
-	AI_FORWARD = false;
+	move.goalEntity		= enemyEnt;
+	move.moveDest		= physicsObj.GetOrigin();
+	move.moveCommand	= MOVE_FACE_ENEMY;
+	move.moveStatus		= MOVE_STATUS_WAITING;
+	move.startTime		= gameLocal.time;
+	move.speed			= 0.0f;
+	AI_MOVE_DONE		= true;
+	AI_FORWARD			= false;
 	AI_DEST_UNREACHABLE = false;
 
 	return true;
@@ -669,22 +610,21 @@ Continually face the entity position.  MoveDone is always true in this case.
 */
 bool idAI::FaceEntity( idEntity* ent )
 {
-	if( !ent )
-	{
+	if( !ent ) {
 		StopMove( MOVE_STATUS_DEST_NOT_FOUND );
 		return false;
 	}
 
 	idVec3 entityOrg = ent->GetPhysics()->GetOrigin();
 	TurnToward( entityOrg );
-	move.goalEntity = ent;
-	move.moveDest = physicsObj.GetOrigin();
-	move.moveCommand = MOVE_FACE_ENTITY;
-	move.moveStatus = MOVE_STATUS_WAITING;
-	move.startTime = gameLocal.time;
-	move.speed = 0.0f;
-	AI_MOVE_DONE = true;
-	AI_FORWARD = false;
+	move.goalEntity		= ent;
+	move.moveDest		= physicsObj.GetOrigin();
+	move.moveCommand	= MOVE_FACE_ENTITY;
+	move.moveStatus		= MOVE_STATUS_WAITING;
+	move.startTime		= gameLocal.time;
+	move.speed			= 0.0f;
+	AI_MOVE_DONE		= true;
+	AI_FORWARD			= false;
 	AI_DEST_UNREACHABLE = false;
 
 	return true;
@@ -697,24 +637,22 @@ idAI::DirectMoveToPosition
 */
 bool idAI::DirectMoveToPosition( const idVec3& pos )
 {
-	if( ReachedPos( pos, move.moveCommand ) )
-	{
+	if( ReachedPos( pos, move.moveCommand ) ) {
 		StopMove( MOVE_STATUS_DONE );
 		return true;
 	}
 
-	move.moveDest = pos;
-	move.goalEntity = NULL;
-	move.moveCommand = MOVE_TO_POSITION_DIRECT;
-	move.moveStatus = MOVE_STATUS_MOVING;
-	move.startTime = gameLocal.time;
-	move.speed = fly_speed;
-	AI_MOVE_DONE = false;
+	move.moveDest		= pos;
+	move.goalEntity		= NULL;
+	move.moveCommand	= MOVE_TO_POSITION_DIRECT;
+	move.moveStatus		= MOVE_STATUS_MOVING;
+	move.startTime		= gameLocal.time;
+	move.speed			= fly_speed;
+	AI_MOVE_DONE		= false;
 	AI_DEST_UNREACHABLE = false;
-	AI_FORWARD = true;
+	AI_FORWARD			= true;
 
-	if( move.moveType == MOVETYPE_FLY )
-	{
+	if( move.moveType == MOVETYPE_FLY ) {
 		idVec3 dir = pos - physicsObj.GetOrigin();
 		dir.Normalize();
 		dir *= fly_speed;
@@ -733,21 +671,20 @@ bool idAI::MoveToEnemyHeight()
 {
 	idActor* enemyEnt = enemy.GetEntity();
 
-	if( !enemyEnt || ( move.moveType != MOVETYPE_FLY ) )
-	{
+	if( !enemyEnt || ( move.moveType != MOVETYPE_FLY ) ) {
 		StopMove( MOVE_STATUS_DEST_NOT_FOUND );
 		return false;
 	}
 
-	move.moveDest.z = lastVisibleEnemyPos.z + enemyEnt->EyeOffset().z + fly_offset;
-	move.goalEntity = enemyEnt;
-	move.moveCommand = MOVE_TO_ENEMYHEIGHT;
-	move.moveStatus = MOVE_STATUS_MOVING;
-	move.startTime = gameLocal.time;
-	move.speed = 0.0f;
-	AI_MOVE_DONE = false;
+	move.moveDest.z		= lastVisibleEnemyPos.z + enemyEnt->EyeOffset().z + fly_offset;
+	move.goalEntity		= enemyEnt;
+	move.moveCommand	= MOVE_TO_ENEMYHEIGHT;
+	move.moveStatus		= MOVE_STATUS_MOVING;
+	move.startTime		= gameLocal.time;
+	move.speed			= 0.0f;
+	AI_MOVE_DONE		= false;
 	AI_DEST_UNREACHABLE = false;
-	AI_FORWARD = false;
+	AI_FORWARD			= false;
 
 	return true;
 }
@@ -759,20 +696,17 @@ idAI::MoveToEnemy
 */
 bool idAI::MoveToEnemy()
 {
-	int			areaNum;
-	aasPath_t	path;
-	idActor* enemyEnt = enemy.GetEntity();
+	int		  areaNum;
+	aasPath_t path;
+	idActor*  enemyEnt = enemy.GetEntity();
 
-	if( !enemyEnt )
-	{
+	if( !enemyEnt ) {
 		StopMove( MOVE_STATUS_DEST_NOT_FOUND );
 		return false;
 	}
 
-	if( ReachedPos( lastVisibleReachableEnemyPos, MOVE_TO_ENEMY ) )
-	{
-		if( !ReachedPos( lastVisibleEnemyPos, MOVE_TO_ENEMY ) || !AI_ENEMY_VISIBLE )
-		{
+	if( ReachedPos( lastVisibleReachableEnemyPos, MOVE_TO_ENEMY ) ) {
+		if( !ReachedPos( lastVisibleEnemyPos, MOVE_TO_ENEMY ) || !AI_ENEMY_VISIBLE ) {
 			StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 			AI_DEST_UNREACHABLE = true;
 			return false;
@@ -784,53 +718,46 @@ bool idAI::MoveToEnemy()
 	idVec3 pos = lastVisibleReachableEnemyPos;
 
 	move.toAreaNum = 0;
-	if( aas )
-	{
+	if( aas ) {
 		move.toAreaNum = PointReachableAreaNum( pos );
 		aas->PushPointIntoAreaNum( move.toAreaNum, pos );
 
 		areaNum = PointReachableAreaNum( physicsObj.GetOrigin() );
-		if( !PathToGoal( path, areaNum, physicsObj.GetOrigin(), move.toAreaNum, pos ) )
-		{
+		if( !PathToGoal( path, areaNum, physicsObj.GetOrigin(), move.toAreaNum, pos ) ) {
 			AI_DEST_UNREACHABLE = true;
 			return false;
 		}
 	}
 
-	if( !move.toAreaNum )
-	{
+	if( !move.toAreaNum ) {
 		// if only trying to update the enemy position
-		if( move.moveCommand == MOVE_TO_ENEMY )
-		{
-			if( !aas )
-			{
+		if( move.moveCommand == MOVE_TO_ENEMY ) {
+			if( !aas ) {
 				// keep the move destination up to date for wandering
 				move.moveDest = pos;
 			}
 			return false;
 		}
 
-		if( !NewWanderDir( pos ) )
-		{
+		if( !NewWanderDir( pos ) ) {
 			StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 			AI_DEST_UNREACHABLE = true;
 			return false;
 		}
 	}
 
-	if( move.moveCommand != MOVE_TO_ENEMY )
-	{
+	if( move.moveCommand != MOVE_TO_ENEMY ) {
 		move.moveCommand = MOVE_TO_ENEMY;
-		move.startTime = gameLocal.time;
+		move.startTime	 = gameLocal.time;
 	}
 
-	move.moveDest = pos;
-	move.goalEntity = enemyEnt;
-	move.speed = fly_speed;
-	move.moveStatus = MOVE_STATUS_MOVING;
-	AI_MOVE_DONE = false;
+	move.moveDest		= pos;
+	move.goalEntity		= enemyEnt;
+	move.speed			= fly_speed;
+	move.moveStatus		= MOVE_STATUS_MOVING;
+	AI_MOVE_DONE		= false;
 	AI_DEST_UNREACHABLE = false;
-	AI_FORWARD = true;
+	AI_FORWARD			= true;
 
 	return true;
 }
@@ -842,77 +769,67 @@ idAI::MoveToEntity
 */
 bool idAI::MoveToEntity( idEntity* ent )
 {
-	int			areaNum;
-	aasPath_t	path;
-	idVec3		pos;
+	int		  areaNum;
+	aasPath_t path;
+	idVec3	  pos;
 
-	if( !ent )
-	{
+	if( !ent ) {
 		StopMove( MOVE_STATUS_DEST_NOT_FOUND );
 		return false;
 	}
 
 	pos = ent->GetPhysics()->GetOrigin();
-	if( ( move.moveType != MOVETYPE_FLY ) && ( ( move.moveCommand != MOVE_TO_ENTITY ) || ( move.goalEntityOrigin != pos ) ) )
-	{
+	if( ( move.moveType != MOVETYPE_FLY ) && ( ( move.moveCommand != MOVE_TO_ENTITY ) || ( move.goalEntityOrigin != pos ) ) ) {
 		ent->GetFloorPos( 64.0f, pos );
 	}
 
-	if( ReachedPos( pos, MOVE_TO_ENTITY ) )
-	{
+	if( ReachedPos( pos, MOVE_TO_ENTITY ) ) {
 		StopMove( MOVE_STATUS_DONE );
 		return true;
 	}
 
 	move.toAreaNum = 0;
-	if( aas )
-	{
+	if( aas ) {
 		move.toAreaNum = PointReachableAreaNum( pos );
 		aas->PushPointIntoAreaNum( move.toAreaNum, pos );
 
 		areaNum = PointReachableAreaNum( physicsObj.GetOrigin() );
-		if( !PathToGoal( path, areaNum, physicsObj.GetOrigin(), move.toAreaNum, pos ) )
-		{
+		if( !PathToGoal( path, areaNum, physicsObj.GetOrigin(), move.toAreaNum, pos ) ) {
 			AI_DEST_UNREACHABLE = true;
 			return false;
 		}
 	}
 
-	if( !move.toAreaNum )
-	{
+	if( !move.toAreaNum ) {
 		// if only trying to update the entity position
-		if( move.moveCommand == MOVE_TO_ENTITY )
-		{
-			if( !aas )
-			{
+		if( move.moveCommand == MOVE_TO_ENTITY ) {
+			if( !aas ) {
 				// keep the move destination up to date for wandering
 				move.moveDest = pos;
 			}
 			return false;
 		}
 
-		if( !NewWanderDir( pos ) )
-		{
+		if( !NewWanderDir( pos ) ) {
 			StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 			AI_DEST_UNREACHABLE = true;
 			return false;
 		}
 	}
 
-	if( ( move.moveCommand != MOVE_TO_ENTITY ) || ( move.goalEntity.GetEntity() != ent ) )
-	{
-		move.startTime = gameLocal.time;
-		move.goalEntity = ent;
+	if( ( move.moveCommand != MOVE_TO_ENTITY ) || ( move.goalEntity.GetEntity() != ent ) ) {
+		move.startTime	 = gameLocal.time;
+		move.goalEntity	 = ent;
 		move.moveCommand = MOVE_TO_ENTITY;
 	}
 
-	move.moveDest = pos;
+	move.moveDest		  = pos;
 	move.goalEntityOrigin = ent->GetPhysics()->GetOrigin();
-	move.moveStatus = MOVE_STATUS_MOVING;
-	move.speed = fly_speed;
-	AI_MOVE_DONE = false;
-	AI_DEST_UNREACHABLE = false;
-	AI_FORWARD = true;
+	move.moveStatus		  = MOVE_STATUS_MOVING;
+	move.speed			  = fly_speed;
+	AI_MOVE_DONE		  = false;
+	AI_DEST_UNREACHABLE	  = false;
+	AI_FORWARD			  = true;
 
 	return true;
 }
@@ -924,59 +841,53 @@ idAI::MoveOutOfRange
 */
 bool idAI::MoveOutOfRange( idEntity* ent, float range )
 {
-	int				areaNum;
-	aasObstacle_t	obstacle;
-	aasGoal_t		goal;
-	idBounds		bounds;
-	idVec3			pos;
+	int			  areaNum;
+	aasObstacle_t obstacle;
+	aasGoal_t	  goal;
+	idBounds	  bounds;
+	idVec3		  pos;
 
-	if( !aas || !ent )
-	{
+	if( !aas || !ent ) {
 		StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 		AI_DEST_UNREACHABLE = true;
 		return false;
 	}
 
 	const idVec3& org = physicsObj.GetOrigin();
-	areaNum = PointReachableAreaNum( org );
+	areaNum			  = PointReachableAreaNum( org );
 
 	// consider the entity the monster is getting close to as an obstacle
 	obstacle.absBounds = ent->GetPhysics()->GetAbsBounds();
 
-	if( ent == enemy.GetEntity() )
-	{
+	if( ent == enemy.GetEntity() ) {
 		pos = lastVisibleEnemyPos;
-	}
-	else
-	{
+	} else {
 		pos = ent->GetPhysics()->GetOrigin();
 	}
 
 	idAASCallback_FindAreaOutOfRange findGoal( pos, range );
-	if( !aas->FindNearestGoal( goal, areaNum, org, pos, travelFlags, &obstacle, 1, findGoal ) )
-	{
+	if( !aas->FindNearestGoal( goal, areaNum, org, pos, travelFlags, &obstacle, 1, findGoal ) ) {
 		StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 		AI_DEST_UNREACHABLE = true;
 		return false;
 	}
 
-	if( ReachedPos( goal.origin, move.moveCommand ) )
-	{
+	if( ReachedPos( goal.origin, move.moveCommand ) ) {
 		StopMove( MOVE_STATUS_DONE );
 		return true;
 	}
 
-	move.moveDest = goal.origin;
-	move.toAreaNum = goal.areaNum;
-	move.goalEntity = ent;
-	move.moveCommand = MOVE_OUT_OF_RANGE;
-	move.moveStatus = MOVE_STATUS_MOVING;
-	move.range = range;
-	move.speed = fly_speed;
-	move.startTime = gameLocal.time;
-	AI_MOVE_DONE = false;
+	move.moveDest		= goal.origin;
+	move.toAreaNum		= goal.areaNum;
+	move.goalEntity		= ent;
+	move.moveCommand	= MOVE_OUT_OF_RANGE;
+	move.moveStatus		= MOVE_STATUS_MOVING;
+	move.range			= range;
+	move.speed			= fly_speed;
+	move.startTime		= gameLocal.time;
+	AI_MOVE_DONE		= false;
 	AI_DEST_UNREACHABLE = false;
-	AI_FORWARD = true;
+	AI_FORWARD			= true;
 
 	return true;
 }
@@ -988,37 +899,32 @@ idAI::MoveToAttackPosition
 */
 bool idAI::MoveToAttackPosition( idEntity* ent, int attack_anim )
 {
-	int				areaNum;
-	aasObstacle_t	obstacle;
-	aasGoal_t		goal;
-	idBounds		bounds;
-	idVec3			pos;
+	int			  areaNum;
+	aasObstacle_t obstacle;
+	aasGoal_t	  goal;
+	idBounds	  bounds;
+	idVec3		  pos;
 
-	if( !aas || !ent )
-	{
+	if( !aas || !ent ) {
 		StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 		AI_DEST_UNREACHABLE = true;
 		return false;
 	}
 
 	const idVec3& org = physicsObj.GetOrigin();
-	areaNum	= PointReachableAreaNum( org );
+	areaNum			  = PointReachableAreaNum( org );
 
 	// consider the entity the monster is getting close to as an obstacle
 	obstacle.absBounds = ent->GetPhysics()->GetAbsBounds();
 
-	if( ent == enemy.GetEntity() )
-	{
+	if( ent == enemy.GetEntity() ) {
 		pos = lastVisibleEnemyPos;
-	}
-	else
-	{
+	} else {
 		pos = ent->GetPhysics()->GetOrigin();
 	}
 
-	idAASCallback_FindAttackPosition findGoal( this, physicsObj.GetGravityAxis(), ent, pos, missileLaunchOffset[ attack_anim ] );
-	if( !aas->FindNearestGoal( goal, areaNum, org, pos, travelFlags, &obstacle, 1, findGoal ) )
-	{
+	idAASCallback_FindAttackPosition findGoal( this, physicsObj.GetGravityAxis(), ent, pos, missileLaunchOffset[attack_anim] );
+	if( !aas->FindNearestGoal( goal, areaNum, org, pos, travelFlags, &obstacle, 1, findGoal ) ) {
 		StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 		AI_DEST_UNREACHABLE = true;
 		return false;
@@ -1046,48 +952,44 @@ idAI::MoveToPosition
 */
 bool idAI::MoveToPosition( const idVec3& pos )
 {
-	idVec3		org;
-	int			areaNum;
-	aasPath_t	path;
+	idVec3	  org;
+	int		  areaNum;
+	aasPath_t path;
 
-	if( ReachedPos( pos, move.moveCommand ) )
-	{
+	if( ReachedPos( pos, move.moveCommand ) ) {
 		StopMove( MOVE_STATUS_DONE );
 		return true;
 	}
 
-	org = pos;
+	org			   = pos;
 	move.toAreaNum = 0;
-	if( aas )
-	{
+	if( aas ) {
 		move.toAreaNum = PointReachableAreaNum( org );
 		aas->PushPointIntoAreaNum( move.toAreaNum, org );
 
 		areaNum = PointReachableAreaNum( physicsObj.GetOrigin() );
-		if( !PathToGoal( path, areaNum, physicsObj.GetOrigin(), move.toAreaNum, org ) )
-		{
+		if( !PathToGoal( path, areaNum, physicsObj.GetOrigin(), move.toAreaNum, org ) ) {
 			StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 			AI_DEST_UNREACHABLE = true;
 			return false;
 		}
 	}
 
-	if( !move.toAreaNum && !NewWanderDir( org ) )
-	{
+	if( !move.toAreaNum && !NewWanderDir( org ) ) {
 		StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 		AI_DEST_UNREACHABLE = true;
 		return false;
 	}
 
-	move.moveDest = org;
-	move.goalEntity = NULL;
-	move.moveCommand = MOVE_TO_POSITION;
-	move.moveStatus = MOVE_STATUS_MOVING;
-	move.startTime = gameLocal.time;
-	move.speed = fly_speed;
-	AI_MOVE_DONE = false;
+	move.moveDest		= org;
+	move.goalEntity		= NULL;
+	move.moveCommand	= MOVE_TO_POSITION;
+	move.moveStatus		= MOVE_STATUS_MOVING;
+	move.startTime		= gameLocal.time;
+	move.speed			= fly_speed;
+	AI_MOVE_DONE		= false;
 	AI_DEST_UNREACHABLE = false;
-	AI_FORWARD = true;
+	AI_FORWARD			= true;
 
 	return true;
 }
@@ -1099,48 +1001,45 @@ idAI::MoveToCover
 */
 bool idAI::MoveToCover( idEntity* entity, const idVec3& hideFromPos )
 {
-	int				areaNum;
-	aasObstacle_t	obstacle;
-	aasGoal_t		hideGoal;
-	idBounds		bounds;
+	int			  areaNum;
+	aasObstacle_t obstacle;
+	aasGoal_t	  hideGoal;
+	idBounds	  bounds;
 
-	if( !aas || !entity )
-	{
+	if( !aas || !entity ) {
 		StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 		AI_DEST_UNREACHABLE = true;
 		return false;
 	}
 
 	const idVec3& org = physicsObj.GetOrigin();
-	areaNum = PointReachableAreaNum( org );
+	areaNum			  = PointReachableAreaNum( org );
 
 	// consider the entity the monster tries to hide from as an obstacle
 	obstacle.absBounds = entity->GetPhysics()->GetAbsBounds();
 
 	idAASCallback_FindCoverArea findCover( hideFromPos );
-	if( !aas->FindNearestGoal( hideGoal, areaNum, org, hideFromPos, travelFlags, &obstacle, 1, findCover ) )
-	{
+	if( !aas->FindNearestGoal( hideGoal, areaNum, org, hideFromPos, travelFlags, &obstacle, 1, findCover ) ) {
 		StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 		AI_DEST_UNREACHABLE = true;
 		return false;
 	}
 
-	if( ReachedPos( hideGoal.origin, move.moveCommand ) )
-	{
+	if( ReachedPos( hideGoal.origin, move.moveCommand ) ) {
 		StopMove( MOVE_STATUS_DONE );
 		return true;
 	}
 
-	move.moveDest = hideGoal.origin;
-	move.toAreaNum = hideGoal.areaNum;
-	move.goalEntity = entity;
-	move.moveCommand = MOVE_TO_COVER;
-	move.moveStatus = MOVE_STATUS_MOVING;
-	move.startTime = gameLocal.time;
-	move.speed = fly_speed;
-	AI_MOVE_DONE = false;
+	move.moveDest		= hideGoal.origin;
+	move.toAreaNum		= hideGoal.areaNum;
+	move.goalEntity		= entity;
+	move.moveCommand	= MOVE_TO_COVER;
+	move.moveStatus		= MOVE_STATUS_MOVING;
+	move.startTime		= gameLocal.time;
+	move.speed			= fly_speed;
+	AI_MOVE_DONE		= false;
 	AI_DEST_UNREACHABLE = false;
-	AI_FORWARD = true;
+	AI_FORWARD			= true;
 
 	return true;
 }
@@ -1154,21 +1053,19 @@ bool idAI::SlideToPosition( const idVec3& pos, float time )
 {
 	StopMove( MOVE_STATUS_DONE );
 
-	move.moveDest = pos;
-	move.goalEntity = NULL;
-	move.moveCommand = MOVE_SLIDE_TO_POSITION;
-	move.moveStatus = MOVE_STATUS_MOVING;
-	move.startTime = gameLocal.time;
-	move.duration = idPhysics::SnapTimeToPhysicsFrame( SEC2MS( time ) );
-	AI_MOVE_DONE = false;
+	move.moveDest		= pos;
+	move.goalEntity		= NULL;
+	move.moveCommand	= MOVE_SLIDE_TO_POSITION;
+	move.moveStatus		= MOVE_STATUS_MOVING;
+	move.startTime		= gameLocal.time;
+	move.duration		= idPhysics::SnapTimeToPhysicsFrame( SEC2MS( time ) );
+	AI_MOVE_DONE		= false;
 	AI_DEST_UNREACHABLE = false;
-	AI_FORWARD = false;
+	AI_FORWARD			= false;
 
-	if( move.duration > 0 )
-	{
+	if( move.duration > 0 ) {
 		move.moveDir = ( pos - physicsObj.GetOrigin() ) / MS2SEC( move.duration );
-		if( move.moveType != MOVETYPE_FLY )
-		{
+		if( move.moveType != MOVETYPE_FLY ) {
 			move.moveDir.z = 0.0f;
 		}
 		move.speed = move.moveDir.LengthFast();
@@ -1187,19 +1084,18 @@ bool idAI::WanderAround()
 	StopMove( MOVE_STATUS_DONE );
 
 	move.moveDest = physicsObj.GetOrigin() + viewAxis[0] * physicsObj.GetGravityAxis() * 256.0f;
-	if( !NewWanderDir( move.moveDest ) )
-	{
+	if( !NewWanderDir( move.moveDest ) ) {
 		StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 		AI_DEST_UNREACHABLE = true;
 		return false;
 	}
 
 	move.moveCommand = MOVE_WANDER;
-	move.moveStatus = MOVE_STATUS_MOVING;
-	move.startTime = gameLocal.time;
-	move.speed = fly_speed;
-	AI_MOVE_DONE = false;
-	AI_FORWARD = true;
+	move.moveStatus	 = MOVE_STATUS_MOVING;
+	move.startTime	 = gameLocal.time;
+	move.speed		 = fly_speed;
+	AI_MOVE_DONE	 = false;
+	AI_FORWARD		 = true;
 
 	return true;
 }
@@ -1212,42 +1108,34 @@ idAI::CanReachEntity
 */
 bool idAI::CanReachEntity( idEntity* ent )
 {
-	aasPath_t	path;
-	int			toAreaNum;
-	int			areaNum;
-	idVec3		pos;
+	aasPath_t path;
+	int		  toAreaNum;
+	int		  areaNum;
+	idVec3	  pos;
 
-	if( !ent )
-	{
+	if( !ent ) {
 		return false;
 	}
 
-	if( move.moveType != MOVETYPE_FLY )
-	{
-		if( !ent->GetFloorPos( 64.0f, pos ) )
-		{
+	if( move.moveType != MOVETYPE_FLY ) {
+		if( !ent->GetFloorPos( 64.0f, pos ) ) {
 			return false;
 		}
-		if( ent->IsType( idActor::Type ) && static_cast<idActor*>( ent )->OnLadder() )
-		{
+		if( ent->IsType( idActor::Type ) && static_cast<idActor*>( ent )->OnLadder() ) {
 			return false;
 		}
-	}
-	else
-	{
+	} else {
 		pos = ent->GetPhysics()->GetOrigin();
 	}
 
 	toAreaNum = PointReachableAreaNum( pos );
-	if( !toAreaNum )
-	{
+	if( !toAreaNum ) {
 		return false;
 	}
 
 	const idVec3& org = physicsObj.GetOrigin();
-	areaNum = PointReachableAreaNum( org );
-	if( !toAreaNum || !PathToGoal( path, areaNum, org, toAreaNum, pos ) )
-	{
+	areaNum			  = PointReachableAreaNum( org );
+	if( !toAreaNum || !PathToGoal( path, areaNum, org, toAreaNum, pos ) ) {
 		return false;
 	}
 
@@ -1261,45 +1149,36 @@ idAI::CanReachEnemy
 */
 bool idAI::CanReachEnemy()
 {
-	aasPath_t	path;
-	int			toAreaNum;
-	int			areaNum;
-	idVec3		pos;
-	idActor* enemyEnt;
+	aasPath_t path;
+	int		  toAreaNum;
+	int		  areaNum;
+	idVec3	  pos;
+	idActor*  enemyEnt;
 
 	enemyEnt = enemy.GetEntity();
-	if( !enemyEnt )
-	{
+	if( !enemyEnt ) {
 		return false;
 	}
 
-	if( move.moveType != MOVETYPE_FLY )
-	{
-		if( enemyEnt->OnLadder() )
-		{
+	if( move.moveType != MOVETYPE_FLY ) {
+		if( enemyEnt->OnLadder() ) {
 			return false;
 		}
 		enemyEnt->GetAASLocation( aas, pos, toAreaNum );
-	}
-	else
-	{
-		pos = enemyEnt->GetPhysics()->GetOrigin();
+	} else {
+		pos		  = enemyEnt->GetPhysics()->GetOrigin();
 		toAreaNum = PointReachableAreaNum( pos );
 	}
 
-	if( !toAreaNum )
-	{
+	if( !toAreaNum ) {
 		return false;
 	}
 
 	const idVec3& org = physicsObj.GetOrigin();
-	areaNum = PointReachableAreaNum( org );
-	if( !PathToGoal( path, areaNum, org, toAreaNum, pos ) )
-	{
+	areaNum			  = PointReachableAreaNum( org );
+	if( !PathToGoal( path, areaNum, org, toAreaNum, pos ) ) {
 		return false;
-	}
-	else
-	{
+	} else {
 		return true;
 	}
 }
@@ -1323,23 +1202,21 @@ idAI::StepDirection
 bool idAI::StepDirection( float dir )
 {
 	predictedPath_t path;
-	idVec3 org;
+	idVec3			org;
 
 	move.wanderYaw = dir;
-	move.moveDir = idAngles( 0, move.wanderYaw, 0 ).ToForward();
+	move.moveDir   = idAngles( 0, move.wanderYaw, 0 ).ToForward();
 
 	org = physicsObj.GetOrigin();
 
 	idAI::PredictPath( this, aas, org, move.moveDir * 48.0f, 1000, 1000, ( move.moveType == MOVETYPE_FLY ) ? SE_BLOCKED : ( SE_ENTER_OBSTACLE | SE_BLOCKED | SE_ENTER_LEDGE_AREA ), path );
 
-	if( path.blockingEntity && ( ( move.moveCommand == MOVE_TO_ENEMY ) || ( move.moveCommand == MOVE_TO_ENTITY ) ) && ( path.blockingEntity == move.goalEntity.GetEntity() ) )
-	{
+	if( path.blockingEntity && ( ( move.moveCommand == MOVE_TO_ENEMY ) || ( move.moveCommand == MOVE_TO_ENTITY ) ) && ( path.blockingEntity == move.goalEntity.GetEntity() ) ) {
 		// don't report being blocked if we ran into our goal entity
 		return true;
 	}
 
-	if( ( move.moveType == MOVETYPE_FLY ) && ( path.endEvent == SE_BLOCKED ) )
-	{
+	if( ( move.moveType == MOVETYPE_FLY ) && ( path.endEvent == SE_BLOCKED ) ) {
 		float z;
 
 		move.moveDir = path.endVelocity * 1.0f / 48.0f;
@@ -1349,8 +1226,7 @@ bool idAI::StepDirection( float dir )
 
 		idVec3 floorPos = path.endPos;
 		idAI::PredictPath( this, aas, floorPos, move.moveDir * 48.0f, 1000, 1000, SE_BLOCKED, path );
-		if( !path.endEvent )
-		{
+		if( !path.endEvent ) {
 			move.moveDir.z = -1.0f;
 			return true;
 		}
@@ -1360,22 +1236,17 @@ bool idAI::StepDirection( float dir )
 
 		idVec3 ceilingPos = path.endPos;
 
-		for( z = org.z; z <= ceilingPos.z + 64.0f; z += 64.0f )
-		{
+		for( z = org.z; z <= ceilingPos.z + 64.0f; z += 64.0f ) {
 			idVec3 start;
-			if( z <= ceilingPos.z )
-			{
+			if( z <= ceilingPos.z ) {
 				start.x = org.x;
 				start.y = org.y;
 				start.z = z;
-			}
-			else
-			{
+			} else {
 				start = ceilingPos;
 			}
 			idAI::PredictPath( this, aas, start, move.moveDir * 48.0f, 1000, 1000, SE_BLOCKED, path );
-			if( !path.endEvent )
-			{
+			if( !path.endEvent ) {
 				move.moveDir.z = 1.0f;
 				return true;
 			}
@@ -1393,110 +1264,83 @@ idAI::NewWanderDir
 */
 bool idAI::NewWanderDir( const idVec3& dest )
 {
-	float	deltax, deltay;
-	float	d[3];
-	float	tdir, olddir, turnaround;
+	float deltax, deltay;
+	float d[3];
+	float tdir, olddir, turnaround;
 
 	move.nextWanderTime = gameLocal.time + ( gameLocal.random.RandomFloat() * 500 + 500 );
 
-	olddir = idMath::AngleNormalize360( ( int )( current_yaw / 45 ) * 45 );
+	olddir	   = idMath::AngleNormalize360( ( int )( current_yaw / 45 ) * 45 );
 	turnaround = idMath::AngleNormalize360( olddir - 180 );
 
 	idVec3 org = physicsObj.GetOrigin();
-	deltax = dest.x - org.x;
-	deltay = dest.y - org.y;
-	if( deltax > 10 )
-	{
+	deltax	   = dest.x - org.x;
+	deltay	   = dest.y - org.y;
+	if( deltax > 10 ) {
 		d[1] = 0;
-	}
-	else if( deltax < -10 )
-	{
+	} else if( deltax < -10 ) {
 		d[1] = 180;
-	}
-	else
-	{
+	} else {
 		d[1] = DI_NODIR;
 	}
 
-	if( deltay < -10 )
-	{
+	if( deltay < -10 ) {
 		d[2] = 270;
-	}
-	else if( deltay > 10 )
-	{
+	} else if( deltay > 10 ) {
 		d[2] = 90;
-	}
-	else
-	{
+	} else {
 		d[2] = DI_NODIR;
 	}
 
 	// try direct route
-	if( d[1] != DI_NODIR && d[2] != DI_NODIR )
-	{
-		if( d[1] == 0 )
-		{
+	if( d[1] != DI_NODIR && d[2] != DI_NODIR ) {
+		if( d[1] == 0 ) {
 			tdir = d[2] == 90 ? 45 : 315;
-		}
-		else
-		{
+		} else {
 			tdir = d[2] == 90 ? 135 : 215;
 		}
 
-		if( tdir != turnaround && StepDirection( tdir ) )
-		{
+		if( tdir != turnaround && StepDirection( tdir ) ) {
 			return true;
 		}
 	}
 
 	// try other directions
-	if( ( gameLocal.random.RandomInt() & 1 ) || idMath::Fabs( deltay ) > idMath::Fabs( deltax ) )
-	{
+	if( ( gameLocal.random.RandomInt() & 1 ) || idMath::Fabs( deltay ) > idMath::Fabs( deltax ) ) {
 		tdir = d[1];
 		d[1] = d[2];
 		d[2] = tdir;
 	}
 
-	if( d[1] != DI_NODIR && d[1] != turnaround && StepDirection( d[1] ) )
-	{
+	if( d[1] != DI_NODIR && d[1] != turnaround && StepDirection( d[1] ) ) {
 		return true;
 	}
 
-	if( d[2] != DI_NODIR && d[2] != turnaround && StepDirection( d[2] ) )
-	{
+	if( d[2] != DI_NODIR && d[2] != turnaround && StepDirection( d[2] ) ) {
 		return true;
 	}
 
 	// there is no direct path to the player, so pick another direction
-	if( olddir != DI_NODIR && StepDirection( olddir ) )
-	{
+	if( olddir != DI_NODIR && StepDirection( olddir ) ) {
 		return true;
 	}
 
 	// randomly determine direction of search
-	if( gameLocal.random.RandomInt() & 1 )
-	{
-		for( tdir = 0; tdir <= 315; tdir += 45 )
-		{
-			if( tdir != turnaround && StepDirection( tdir ) )
-			{
+	if( gameLocal.random.RandomInt() & 1 ) {
+		for( tdir = 0; tdir <= 315; tdir += 45 ) {
+			if( tdir != turnaround && StepDirection( tdir ) ) {
 				return true;
 			}
 		}
-	}
-	else
-	{
-		for( tdir = 315; tdir >= 0; tdir -= 45 )
-		{
-			if( tdir != turnaround && StepDirection( tdir ) )
-			{
+	} else {
+		for( tdir = 315; tdir >= 0; tdir -= 45 ) {
+			if( tdir != turnaround && StepDirection( tdir ) ) {
 				return true;
 			}
 		}
 	}
 
-	if( turnaround != DI_NODIR && StepDirection( turnaround ) )
-	{
+	if( turnaround != DI_NODIR && StepDirection( turnaround ) ) {
 		return true;
 	}
 
@@ -1512,16 +1356,15 @@ idAI::GetMovePos
 */
 bool idAI::GetMovePos( idVec3& seekPos )
 {
-	int			areaNum;
-	aasPath_t	path;
-	bool		result;
-	idVec3		org;
+	int		  areaNum;
+	aasPath_t path;
+	bool	  result;
+	idVec3	  org;
 
-	org = physicsObj.GetOrigin();
+	org		= physicsObj.GetOrigin();
 	seekPos = org;
 
-	switch( move.moveCommand )
-	{
+	switch( move.moveCommand ) {
 		case MOVE_NONE:
 			seekPos = move.moveDest;
 			return false;
@@ -1535,8 +1378,7 @@ bool idAI::GetMovePos( idVec3& seekPos )
 
 		case MOVE_TO_POSITION_DIRECT:
 			seekPos = move.moveDest;
-			if( ReachedPos( move.moveDest, move.moveCommand ) )
-			{
+			if( ReachedPos( move.moveDest, move.moveCommand ) ) {
 				StopMove( MOVE_STATUS_DONE );
 			}
 			return false;
@@ -1548,83 +1390,63 @@ bool idAI::GetMovePos( idVec3& seekPos )
 			break;
 	}
 
-	if( move.moveCommand == MOVE_TO_ENTITY )
-	{
+	if( move.moveCommand == MOVE_TO_ENTITY ) {
 		MoveToEntity( move.goalEntity.GetEntity() );
 	}
 
 	move.moveStatus = MOVE_STATUS_MOVING;
-	result = false;
-	if( gameLocal.time > move.blockTime )
-	{
-		if( move.moveCommand == MOVE_WANDER )
-		{
+	result			= false;
+	if( gameLocal.time > move.blockTime ) {
+		if( move.moveCommand == MOVE_WANDER ) {
 			move.moveDest = org + viewAxis[0] * physicsObj.GetGravityAxis() * 256.0f;
-		}
-		else
-		{
-			if( ReachedPos( move.moveDest, move.moveCommand ) )
-			{
+		} else {
+			if( ReachedPos( move.moveDest, move.moveCommand ) ) {
 				StopMove( MOVE_STATUS_DONE );
 				seekPos = org;
 				return false;
 			}
 		}
 
-		if( aas && move.toAreaNum )
-		{
+		if( aas && move.toAreaNum ) {
 			areaNum = PointReachableAreaNum( org );
-			if( PathToGoal( path, areaNum, org, move.toAreaNum, move.moveDest ) )
-			{
-				seekPos = path.moveGoal;
-				result = true;
+			if( PathToGoal( path, areaNum, org, move.toAreaNum, move.moveDest ) ) {
+				seekPos				= path.moveGoal;
+				result				= true;
 				move.nextWanderTime = 0;
-			}
-			else
-			{
+			} else {
 				AI_DEST_UNREACHABLE = true;
 			}
 		}
 	}
 
-	if( !result )
-	{
+	if( !result ) {
 		// wander around
-		if( ( gameLocal.time > move.nextWanderTime ) || !StepDirection( move.wanderYaw ) )
-		{
+		if( ( gameLocal.time > move.nextWanderTime ) || !StepDirection( move.wanderYaw ) ) {
 			result = NewWanderDir( move.moveDest );
-			if( !result )
-			{
+			if( !result ) {
 				StopMove( MOVE_STATUS_DEST_UNREACHABLE );
 				AI_DEST_UNREACHABLE = true;
-				seekPos = org;
+				seekPos				= org;
 				return false;
 			}
-		}
-		else
-		{
+		} else {
 			result = true;
 		}
 
 		seekPos = org + move.moveDir * 2048.0f;
-		if( ai_debugMove.GetBool() )
-		{
+		if( ai_debugMove.GetBool() ) {
 			gameRenderWorld->DebugLine( colorYellow, org, seekPos, 1, true );
 		}
-	}
-	else
-	{
+	} else {
 		AI_DEST_UNREACHABLE = false;
 	}
 
-	if( result && ( ai_debugMove.GetBool() ) )
-	{
+	if( result && ( ai_debugMove.GetBool() ) ) {
 		gameRenderWorld->DebugLine( colorCyan, physicsObj.GetOrigin(), seekPos );
 	}
 
 	return result;
 }
-
 
 /***********************************************************************
 
@@ -1639,36 +1461,30 @@ idAI::Turn
 */
 void idAI::Turn()
 {
-	float diff;
-	float diff2;
-	float turnAmount;
+	float		diff;
+	float		diff2;
+	float		turnAmount;
 	animFlags_t animflags;
 
-	if( !turnRate )
-	{
+	if( !turnRate ) {
 		return;
 	}
 
 	// check if the animator has marker this anim as non-turning
-	if( !legsAnim.Disabled() && !legsAnim.AnimDone( 0 ) )
-	{
+	if( !legsAnim.Disabled() && !legsAnim.AnimDone( 0 ) ) {
 		animflags = legsAnim.GetAnimFlags();
-	}
-	else
-	{
+	} else {
 		animflags = torsoAnim.GetAnimFlags();
 	}
-	if( animflags.ai_no_turn )
-	{
+	if( animflags.ai_no_turn ) {
 		return;
 	}
 
-	if( anim_turn_angles && animflags.anim_turn )
-	{
+	if( anim_turn_angles && animflags.anim_turn ) {
 		idMat3 rotateAxis;
 
 		// set the blend between no turn and full turn
-		float frac = anim_turn_amount / anim_turn_angles;
+		float  frac = anim_turn_amount / anim_turn_angles;
 		animator.CurrentAnim( ANIMCHANNEL_LEGS )->SetSyncedAnimWeight( 0, 1.0f - frac );
 		animator.CurrentAnim( ANIMCHANNEL_LEGS )->SetSyncedAnimWeight( 1, frac );
 		animator.CurrentAnim( ANIMCHANNEL_TORSO )->SetSyncedAnimWeight( 0, 1.0f - frac );
@@ -1677,43 +1493,33 @@ void idAI::Turn()
 		// get the total rotation from the start of the anim
 		animator.GetDeltaRotation( 0, gameLocal.time, rotateAxis );
 		current_yaw = idMath::AngleNormalize180( anim_turn_yaw + rotateAxis[0].ToYaw() );
-	}
-	else
-	{
+	} else {
 		diff = idMath::AngleNormalize180( ideal_yaw - current_yaw );
 		turnVel += AI_TURN_SCALE * diff * MS2SEC( gameLocal.time - gameLocal.previousTime );
-		if( turnVel > turnRate )
-		{
+		if( turnVel > turnRate ) {
 			turnVel = turnRate;
-		}
-		else if( turnVel < -turnRate )
-		{
+		} else if( turnVel < -turnRate ) {
 			turnVel = -turnRate;
 		}
 		turnAmount = turnVel * MS2SEC( gameLocal.time - gameLocal.previousTime );
-		if( ( diff >= 0.0f ) && ( turnAmount >= diff ) )
-		{
-			turnVel = diff / MS2SEC( gameLocal.time - gameLocal.previousTime );
+		if( ( diff >= 0.0f ) && ( turnAmount >= diff ) ) {
+			turnVel	   = diff / MS2SEC( gameLocal.time - gameLocal.previousTime );
 			turnAmount = diff;
-		}
-		else if( ( diff <= 0.0f ) && ( turnAmount <= diff ) )
-		{
-			turnVel = diff / MS2SEC( gameLocal.time - gameLocal.previousTime );
+		} else if( ( diff <= 0.0f ) && ( turnAmount <= diff ) ) {
+			turnVel	   = diff / MS2SEC( gameLocal.time - gameLocal.previousTime );
 			turnAmount = diff;
 		}
 		current_yaw += turnAmount;
 		current_yaw = idMath::AngleNormalize180( current_yaw );
-		diff2 = idMath::AngleNormalize180( ideal_yaw - current_yaw );
-		if( idMath::Fabs( diff2 ) < 0.1f )
-		{
+		diff2		= idMath::AngleNormalize180( ideal_yaw - current_yaw );
+		if( idMath::Fabs( diff2 ) < 0.1f ) {
 			current_yaw = ideal_yaw;
 		}
 	}
 
 	viewAxis = idAngles( 0, current_yaw, 0 ).ToMat3();
 
-	if( ai_debugMove.GetBool() )
-	{
+	if( ai_debugMove.GetBool() ) {
 		const idVec3& org = physicsObj.GetOrigin();
 		gameRenderWorld->DebugLine( colorRed, org, org + idAngles( 0, ideal_yaw, 0 ).ToForward() * 64, 1 );
 		gameRenderWorld->DebugLine( colorGreen, org, org + idAngles( 0, current_yaw, 0 ).ToForward() * 48, 1 );
@@ -1730,14 +1536,12 @@ bool idAI::FacingIdeal()
 {
 	float diff;
 
-	if( !turnRate )
-	{
+	if( !turnRate ) {
 		return true;
 	}
 
 	diff = idMath::AngleNormalize180( current_yaw - ideal_yaw );
-	if( idMath::Fabs( diff ) < 0.01f )
-	{
+	if( idMath::Fabs( diff ) < 0.01f ) {
 		// force it to be exact
 		current_yaw = ideal_yaw;
 		return true;
@@ -1753,7 +1557,7 @@ idAI::TurnToward
 */
 bool idAI::TurnToward( float yaw )
 {
-	ideal_yaw = idMath::AngleNormalize180( yaw );
+	ideal_yaw	= idMath::AngleNormalize180( yaw );
 	bool result = FacingIdeal();
 	return result;
 }
@@ -1767,21 +1571,19 @@ bool idAI::TurnToward( const idVec3& pos )
 {
 	idVec3 dir;
 	idVec3 local_dir;
-	float lengthSqr;
+	float  lengthSqr;
 
 	dir = pos - physicsObj.GetOrigin();
 	physicsObj.GetGravityAxis().ProjectVector( dir, local_dir );
 	local_dir.z = 0.0f;
-	lengthSqr = local_dir.LengthSqr();
-	if( lengthSqr > Square( 2.0f ) || ( lengthSqr > Square( 0.1f ) && enemy.GetEntity() == NULL ) )
-	{
+	lengthSqr	= local_dir.LengthSqr();
+	if( lengthSqr > Square( 2.0f ) || ( lengthSqr > Square( 0.1f ) && enemy.GetEntity() == NULL ) ) {
 		ideal_yaw = idMath::AngleNormalize180( local_dir.ToYaw() );
 	}
 
 	bool result = FacingIdeal();
 	return result;
 }
-
 
 /***********************************************************************
 
@@ -1799,8 +1601,7 @@ void idAI::ApplyImpulse( idEntity* ent, int id, const idVec3& point, const idVec
 	// FIXME: Jim take a look at this and see if this is a reasonable thing to do
 	// instead of a spawnArg flag.. Sabaoth is the only slide monster ( and should be the only one for D3 )
 	// and we don't want him taking physics impulses as it can knock him off the path
-	if( move.moveType != MOVETYPE_STATIC && move.moveType != MOVETYPE_SLIDE )
-	{
+	if( move.moveType != MOVETYPE_STATIC && move.moveType != MOVETYPE_SLIDE ) {
 		idActor::ApplyImpulse( ent, id, point, impulse );
 	}
 }
@@ -1818,13 +1619,12 @@ void idAI::GetMoveDelta( const idMat3& oldaxis, const idMat3& axis, idVec3& delt
 	animator.GetDelta( gameLocal.previousTime, gameLocal.time, delta );
 	delta = axis * delta;
 
-	if( modelOffset != vec3_zero )
-	{
+	if( modelOffset != vec3_zero ) {
 		// the pivot of the monster's model is around its origin, and not around the bounding
 		// box's origin, so we have to compensate for this when the model is offset so that
 		// the monster still appears to rotate around it's origin.
 		oldModelOrigin = modelOffset * oldaxis;
-		modelOrigin = modelOffset * axis;
+		modelOrigin	   = modelOffset * axis;
 		delta += oldModelOrigin - modelOrigin;
 	}
 
@@ -1838,51 +1638,41 @@ idAI::CheckObstacleAvoidance
 */
 void idAI::CheckObstacleAvoidance( const idVec3& goalPos, idVec3& newPos )
 {
-	idEntity* obstacle;
-	obstaclePath_t	path;
-	idVec3			dir;
-	float			dist;
-	bool			foundPath;
+	idEntity*	   obstacle;
+	obstaclePath_t path;
+	idVec3		   dir;
+	float		   dist;
+	bool		   foundPath;
 
-	if( ignore_obstacles )
-	{
-		newPos = goalPos;
+	if( ignore_obstacles ) {
+		newPos		  = goalPos;
 		move.obstacle = NULL;
 		return;
 	}
 
 	const idVec3& origin = physicsObj.GetOrigin();
 
-	obstacle = NULL;
+	obstacle			= NULL;
 	AI_OBSTACLE_IN_PATH = false;
-	foundPath = FindPathAroundObstacles( &physicsObj, aas, enemy.GetEntity(), origin, goalPos, path );
-	if( ai_showObstacleAvoidance.GetBool() )
-	{
+	foundPath			= FindPathAroundObstacles( &physicsObj, aas, enemy.GetEntity(), origin, goalPos, path );
+	if( ai_showObstacleAvoidance.GetBool() ) {
 		gameRenderWorld->DebugLine( colorBlue, goalPos + idVec3( 1.0f, 1.0f, 0.0f ), goalPos + idVec3( 1.0f, 1.0f, 64.0f ), 1 );
 		gameRenderWorld->DebugLine( foundPath ? colorYellow : colorRed, path.seekPos, path.seekPos + idVec3( 0.0f, 0.0f, 64.0f ), 1 );
 	}
 
-	if( !foundPath )
-	{
+	if( !foundPath ) {
 		// couldn't get around obstacles
-		if( path.firstObstacle )
-		{
+		if( path.firstObstacle ) {
 			AI_OBSTACLE_IN_PATH = true;
-			if( physicsObj.GetAbsBounds().Expand( 2.0f ).IntersectsBounds( path.firstObstacle->GetPhysics()->GetAbsBounds() ) )
-			{
+			if( physicsObj.GetAbsBounds().Expand( 2.0f ).IntersectsBounds( path.firstObstacle->GetPhysics()->GetAbsBounds() ) ) {
 				obstacle = path.firstObstacle;
 			}
-		}
-		else if( path.startPosObstacle )
-		{
+		} else if( path.startPosObstacle ) {
 			AI_OBSTACLE_IN_PATH = true;
-			if( physicsObj.GetAbsBounds().Expand( 2.0f ).IntersectsBounds( path.startPosObstacle->GetPhysics()->GetAbsBounds() ) )
-			{
+			if( physicsObj.GetAbsBounds().Expand( 2.0f ).IntersectsBounds( path.startPosObstacle->GetPhysics()->GetAbsBounds() ) ) {
 				obstacle = path.startPosObstacle;
 			}
-		}
-		else
-		{
+		} else {
 			// Blocked by wall
 			move.moveStatus = MOVE_STATUS_BLOCKED_BY_WALL;
 		}
@@ -1900,9 +1690,7 @@ void idAI::CheckObstacleAvoidance( const idVec3& goalPos, idVec3& newPos )
 			obstacle = path.startPosObstacle;
 		}
 #endif
-	}
-	else if( path.seekPosObstacle )
-	{
+	} else if( path.seekPosObstacle ) {
 		// if the AI is very close to the path.seekPos already and path.seekPosObstacle != NULL
 		// then we want to push the path.seekPosObstacle entity out of the way
 		AI_OBSTACLE_IN_PATH = true;
@@ -1911,39 +1699,29 @@ void idAI::CheckObstacleAvoidance( const idVec3& goalPos, idVec3& newPos )
 		dir = goalPos - origin;
 		dir.Normalize();
 		dist = ( path.seekPos - origin ) * dir;
-		if( dist < 1.0f )
-		{
+		if( dist < 1.0f ) {
 			obstacle = path.seekPosObstacle;
 		}
 	}
 
 	// if we had an obstacle, set our move status based on the type, and kick it out of the way if it's a moveable
-	if( obstacle )
-	{
-		if( obstacle->IsType( idActor::Type ) )
-		{
+	if( obstacle ) {
+		if( obstacle->IsType( idActor::Type ) ) {
 			// monsters aren't kickable
-			if( obstacle == enemy.GetEntity() )
-			{
+			if( obstacle == enemy.GetEntity() ) {
 				move.moveStatus = MOVE_STATUS_BLOCKED_BY_ENEMY;
-			}
-			else
-			{
+			} else {
 				move.moveStatus = MOVE_STATUS_BLOCKED_BY_MONSTER;
 			}
-		}
-		else
-		{
+		} else {
 			// try kicking the object out of the way
 			move.moveStatus = MOVE_STATUS_BLOCKED_BY_OBJECT;
 		}
 		newPos = obstacle->GetPhysics()->GetOrigin();
-		//newPos = path.seekPos;
+		// newPos = path.seekPos;
 		move.obstacle = obstacle;
-	}
-	else
-	{
-		newPos = path.seekPos;
+	} else {
+		newPos		  = path.seekPos;
 		move.obstacle = NULL;
 	}
 }
@@ -1956,16 +1734,16 @@ idAI::DeadMove
 void idAI::DeadMove()
 {
 	idVec3				delta;
-	monsterMoveResult_t	moveResult;
+	monsterMoveResult_t moveResult;
 
-	idVec3 org = physicsObj.GetOrigin();
+	idVec3				org = physicsObj.GetOrigin();
 
 	GetMoveDelta( viewAxis, viewAxis, delta );
 	physicsObj.SetDelta( delta );
 
 	RunPhysics();
 
-	moveResult = physicsObj.GetMoveResult();
+	moveResult	= physicsObj.GetMoveResult();
 	AI_ONGROUND = physicsObj.OnGround();
 }
 
@@ -1980,76 +1758,57 @@ void idAI::AnimMove()
 	idVec3				delta;
 	idVec3				goalDelta;
 	float				goalDist;
-	monsterMoveResult_t	moveResult;
+	monsterMoveResult_t moveResult;
 	idVec3				newDest;
 
-	idVec3 oldorigin = physicsObj.GetOrigin();
-	idMat3 oldaxis = viewAxis;
+	idVec3				oldorigin = physicsObj.GetOrigin();
+	idMat3				oldaxis	  = viewAxis;
 
 	AI_BLOCKED = false;
 
-	if( move.moveCommand < NUM_NONMOVING_COMMANDS )
-	{
+	if( move.moveCommand < NUM_NONMOVING_COMMANDS ) {
 		move.lastMoveOrigin.Zero();
 		move.lastMoveTime = gameLocal.time;
 	}
 
 	move.obstacle = NULL;
-	if( ( move.moveCommand == MOVE_FACE_ENEMY ) && enemy.GetEntity() )
-	{
+	if( ( move.moveCommand == MOVE_FACE_ENEMY ) && enemy.GetEntity() ) {
 		TurnToward( lastVisibleEnemyPos );
 		goalPos = oldorigin;
-	}
-	else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() )
-	{
+	} else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() ) {
 		TurnToward( move.goalEntity.GetEntity()->GetPhysics()->GetOrigin() );
 		goalPos = oldorigin;
-	}
-	else if( GetMovePos( goalPos ) )
-	{
-		if( move.moveCommand != MOVE_WANDER )
-		{
+	} else if( GetMovePos( goalPos ) ) {
+		if( move.moveCommand != MOVE_WANDER ) {
 			CheckObstacleAvoidance( goalPos, newDest );
 			TurnToward( newDest );
-		}
-		else
-		{
+		} else {
 			TurnToward( goalPos );
 		}
 	}
 
 	Turn();
 
-	if( move.moveCommand == MOVE_SLIDE_TO_POSITION )
-	{
-		if( gameLocal.time < move.startTime + move.duration )
-		{
+	if( move.moveCommand == MOVE_SLIDE_TO_POSITION ) {
+		if( gameLocal.time < move.startTime + move.duration ) {
 			goalPos = move.moveDest - move.moveDir * MS2SEC( move.startTime + move.duration - gameLocal.time );
-			delta = goalPos - oldorigin;
+			delta	= goalPos - oldorigin;
 			delta.z = 0.0f;
-		}
-		else
-		{
-			delta = move.moveDest - oldorigin;
+		} else {
+			delta	= move.moveDest - oldorigin;
 			delta.z = 0.0f;
 			StopMove( MOVE_STATUS_DONE );
 		}
-	}
-	else if( allowMove )
-	{
+	} else if( allowMove ) {
 		GetMoveDelta( oldaxis, viewAxis, delta );
-	}
-	else
-	{
+	} else {
 		delta.Zero();
 	}
 
-	if( move.moveCommand == MOVE_TO_POSITION )
-	{
+	if( move.moveCommand == MOVE_TO_POSITION ) {
 		goalDelta = move.moveDest - oldorigin;
-		goalDist = goalDelta.LengthFast();
-		if( goalDist < delta.LengthFast() )
-		{
+		goalDist  = goalDelta.LengthFast();
+		if( goalDist < delta.LengthFast() ) {
 			delta = goalDelta;
 		}
 	}
@@ -2060,21 +1819,16 @@ void idAI::AnimMove()
 
 	RunPhysics();
 
-	if( ai_debugMove.GetBool() )
-	{
+	if( ai_debugMove.GetBool() ) {
 		gameRenderWorld->DebugLine( colorCyan, oldorigin, physicsObj.GetOrigin(), 5000 );
 	}
 
 	moveResult = physicsObj.GetMoveResult();
-	if( !af_push_moveables && attack.Length() && TestMelee() )
-	{
+	if( !af_push_moveables && attack.Length() && TestMelee() ) {
 		DirectDamage( attack, enemy.GetEntity() );
-	}
-	else
-	{
+	} else {
 		idEntity* blockEnt = physicsObj.GetSlideMoveEntity();
-		if( blockEnt != NULL && blockEnt->IsType( idMoveable::Type ) && blockEnt->GetPhysics()->IsPushable() )
-		{
+		if( blockEnt != NULL && blockEnt->IsType( idMoveable::Type ) && blockEnt->GetPhysics()->IsPushable() ) {
 			KickObstacles( viewAxis[0], kickForce, blockEnt );
 		}
 	}
@@ -2084,13 +1838,11 @@ void idAI::AnimMove()
 	AI_ONGROUND = physicsObj.OnGround();
 
 	idVec3 org = physicsObj.GetOrigin();
-	if( oldorigin != org )
-	{
+	if( oldorigin != org ) {
 		TouchTriggers();
 	}
 
-	if( ai_debugMove.GetBool() )
-	{
+	if( ai_debugMove.GetBool() ) {
 		gameRenderWorld->DebugBounds( colorMagenta, physicsObj.GetBounds(), org, 1 );
 		gameRenderWorld->DebugBounds( colorMagenta, physicsObj.GetBounds(), move.moveDest, 1 );
 		gameRenderWorld->DebugLine( colorYellow, org + EyeOffset(), org + EyeOffset() + viewAxis[0] * physicsObj.GetGravityAxis() * 16.0f, 1, true );
@@ -2111,8 +1863,8 @@ idVec3 Seek( idVec3& vel, const idVec3& org, const idVec3& goal, float predictio
 
 	// predict our position
 	predictedPos = org + vel * prediction;
-	goalDelta = goal - predictedPos;
-	seekVel = goalDelta * MS2SEC( gameLocal.time - gameLocal.previousTime );
+	goalDelta	 = goal - predictedPos;
+	seekVel		 = goalDelta * MS2SEC( gameLocal.time - gameLocal.previousTime );
 
 	return seekVel;
 }
@@ -2128,64 +1880,52 @@ void idAI::SlideMove()
 	idVec3				delta;
 	idVec3				goalDelta;
 	float				goalDist;
-	monsterMoveResult_t	moveResult;
+	monsterMoveResult_t moveResult;
 	idVec3				newDest;
 
-	idVec3 oldorigin = physicsObj.GetOrigin();
-	idMat3 oldaxis = viewAxis;
+	idVec3				oldorigin = physicsObj.GetOrigin();
+	idMat3				oldaxis	  = viewAxis;
 
 	AI_BLOCKED = false;
 
-	if( move.moveCommand < NUM_NONMOVING_COMMANDS )
-	{
+	if( move.moveCommand < NUM_NONMOVING_COMMANDS ) {
 		move.lastMoveOrigin.Zero();
 		move.lastMoveTime = gameLocal.time;
 	}
 
 	move.obstacle = NULL;
-	if( ( move.moveCommand == MOVE_FACE_ENEMY ) && enemy.GetEntity() )
-	{
+	if( ( move.moveCommand == MOVE_FACE_ENEMY ) && enemy.GetEntity() ) {
 		TurnToward( lastVisibleEnemyPos );
 		goalPos = move.moveDest;
-	}
-	else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() )
-	{
+	} else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() ) {
 		TurnToward( move.goalEntity.GetEntity()->GetPhysics()->GetOrigin() );
 		goalPos = move.moveDest;
-	}
-	else if( GetMovePos( goalPos ) )
-	{
+	} else if( GetMovePos( goalPos ) ) {
 		CheckObstacleAvoidance( goalPos, newDest );
 		TurnToward( newDest );
 		goalPos = newDest;
 	}
 
-	if( move.moveCommand == MOVE_SLIDE_TO_POSITION )
-	{
-		if( gameLocal.time < move.startTime + move.duration )
-		{
+	if( move.moveCommand == MOVE_SLIDE_TO_POSITION ) {
+		if( gameLocal.time < move.startTime + move.duration ) {
 			goalPos = move.moveDest - move.moveDir * MS2SEC( move.startTime + move.duration - gameLocal.time );
-		}
-		else
-		{
+		} else {
 			goalPos = move.moveDest;
 			StopMove( MOVE_STATUS_DONE );
 		}
 	}
 
-	if( move.moveCommand == MOVE_TO_POSITION )
-	{
+	if( move.moveCommand == MOVE_TO_POSITION ) {
 		goalDelta = move.moveDest - oldorigin;
-		goalDist = goalDelta.LengthFast();
-		if( goalDist < delta.LengthFast() )
-		{
+		goalDist  = goalDelta.LengthFast();
+		if( goalDist < delta.LengthFast() ) {
 			delta = goalDelta;
 		}
 	}
 
-	idVec3 vel = physicsObj.GetLinearVelocity();
-	float z = vel.z;
-	idVec3  predictedPos = oldorigin + vel * AI_SEEK_PREDICTION;
+	idVec3 vel			= physicsObj.GetLinearVelocity();
+	float  z			= vel.z;
+	idVec3 predictedPos = oldorigin + vel * AI_SEEK_PREDICTION;
 
 	// seek the goal position
 	goalDelta = goalPos - predictedPos;
@@ -2193,44 +1933,33 @@ void idAI::SlideMove()
 	vel += goalDelta * MS2SEC( gameLocal.time - gameLocal.previousTime );
 
 	// cap our speed
-	vel = vel.Truncate( fly_speed );
+	vel	  = vel.Truncate( fly_speed );
 	vel.z = z;
 	physicsObj.SetLinearVelocity( vel );
 	physicsObj.UseVelocityMove( true );
 	RunPhysics();
 
-	if( ( move.moveCommand == MOVE_FACE_ENEMY ) && enemy.GetEntity() )
-	{
+	if( ( move.moveCommand == MOVE_FACE_ENEMY ) && enemy.GetEntity() ) {
 		TurnToward( lastVisibleEnemyPos );
-	}
-	else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() )
-	{
+	} else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() ) {
 		TurnToward( move.goalEntity.GetEntity()->GetPhysics()->GetOrigin() );
-	}
-	else if( move.moveCommand != MOVE_NONE )
-	{
-		if( vel.ToVec2().LengthSqr() > 0.1f )
-		{
+	} else if( move.moveCommand != MOVE_NONE ) {
+		if( vel.ToVec2().LengthSqr() > 0.1f ) {
 			TurnToward( vel.ToYaw() );
 		}
 	}
 	Turn();
 
-	if( ai_debugMove.GetBool() )
-	{
+	if( ai_debugMove.GetBool() ) {
 		gameRenderWorld->DebugLine( colorCyan, oldorigin, physicsObj.GetOrigin(), 5000 );
 	}
 
 	moveResult = physicsObj.GetMoveResult();
-	if( !af_push_moveables && attack.Length() && TestMelee() )
-	{
+	if( !af_push_moveables && attack.Length() && TestMelee() ) {
 		DirectDamage( attack, enemy.GetEntity() );
-	}
-	else
-	{
+	} else {
 		idEntity* blockEnt = physicsObj.GetSlideMoveEntity();
-		if( blockEnt != NULL && blockEnt->IsType( idMoveable::Type ) && blockEnt->GetPhysics()->IsPushable() )
-		{
+		if( blockEnt != NULL && blockEnt->IsType( idMoveable::Type ) && blockEnt->GetPhysics()->IsPushable() ) {
 			KickObstacles( viewAxis[0], kickForce, blockEnt );
 		}
 	}
@@ -2240,13 +1969,11 @@ void idAI::SlideMove()
 	AI_ONGROUND = physicsObj.OnGround();
 
 	idVec3 org = physicsObj.GetOrigin();
-	if( oldorigin != org )
-	{
+	if( oldorigin != org ) {
 		TouchTriggers();
 	}
 
-	if( ai_debugMove.GetBool() )
-	{
+	if( ai_debugMove.GetBool() ) {
 		gameRenderWorld->DebugBounds( colorMagenta, physicsObj.GetBounds(), org, 1 );
 		gameRenderWorld->DebugBounds( colorMagenta, physicsObj.GetBounds(), move.moveDest, 1 );
 		gameRenderWorld->DebugLine( colorYellow, org + EyeOffset(), org + EyeOffset() + viewAxis[0] * physicsObj.GetGravityAxis() * 16.0f, 1, true );
@@ -2261,51 +1988,39 @@ idAI::AdjustFlyingAngles
 */
 void idAI::AdjustFlyingAngles()
 {
-	idVec3	vel;
-	float 	speed;
-	float 	roll;
-	float 	pitch;
+	idVec3 vel;
+	float  speed;
+	float  roll;
+	float  pitch;
 
 	vel = physicsObj.GetLinearVelocity();
 
 	speed = vel.Length();
-	if( speed < 5.0f )
-	{
-		roll = 0.0f;
+	if( speed < 5.0f ) {
+		roll  = 0.0f;
 		pitch = 0.0f;
-	}
-	else
-	{
+	} else {
 		roll = vel * viewAxis[1] * -fly_roll_scale / fly_speed;
-		if( roll > fly_roll_max )
-		{
+		if( roll > fly_roll_max ) {
 			roll = fly_roll_max;
-		}
-		else if( roll < -fly_roll_max )
-		{
+		} else if( roll < -fly_roll_max ) {
 			roll = -fly_roll_max;
 		}
 
 		pitch = vel * viewAxis[2] * -fly_pitch_scale / fly_speed;
-		if( pitch > fly_pitch_max )
-		{
+		if( pitch > fly_pitch_max ) {
 			pitch = fly_pitch_max;
-		}
-		else if( pitch < -fly_pitch_max )
-		{
+		} else if( pitch < -fly_pitch_max ) {
 			pitch = -fly_pitch_max;
 		}
 	}
 
-	fly_roll = fly_roll * 0.95f + roll * 0.05f;
+	fly_roll  = fly_roll * 0.95f + roll * 0.05f;
 	fly_pitch = fly_pitch * 0.95f + pitch * 0.05f;
 
-	if( flyTiltJoint != INVALID_JOINT )
-	{
+	if( flyTiltJoint != INVALID_JOINT ) {
 		animator.SetJointAxis( flyTiltJoint, JOINTMOD_WORLD, idAngles( fly_pitch, 0.0f, fly_roll ).ToMat3() );
-	}
-	else
-	{
+	} else {
 		viewAxis = idAngles( fly_pitch, current_yaw, fly_roll ).ToMat3();
 	}
 }
@@ -2317,16 +2032,14 @@ idAI::AddFlyBob
 */
 void idAI::AddFlyBob( idVec3& vel )
 {
-	idVec3	fly_bob_add;
-	float	t;
+	idVec3 fly_bob_add;
+	float  t;
 
-	if( fly_bob_strength )
-	{
-		t = MS2SEC( gameLocal.time + entityNumber * 497 );
+	if( fly_bob_strength ) {
+		t			= MS2SEC( gameLocal.time + entityNumber * 497 );
 		fly_bob_add = ( viewAxis[1] * idMath::Sin16( t * fly_bob_horz ) + viewAxis[2] * idMath::Sin16( t * fly_bob_vert ) ) * fly_bob_strength;
 		vel += fly_bob_add * MS2SEC( gameLocal.time - gameLocal.previousTime );
-		if( ai_debugMove.GetBool() )
-		{
+		if( ai_debugMove.GetBool() ) {
 			const idVec3& origin = physicsObj.GetOrigin();
 			gameRenderWorld->DebugArrow( colorOrange, origin, origin + fly_bob_add, 0 );
 		}
@@ -2340,46 +2053,39 @@ idAI::AdjustFlyHeight
 */
 void idAI::AdjustFlyHeight( idVec3& vel, const idVec3& goalPos )
 {
-	const idVec3& origin = physicsObj.GetOrigin();
+	const idVec3&	origin = physicsObj.GetOrigin();
 	predictedPath_t path;
 	idVec3			end;
 	idVec3			dest;
 	trace_t			trace;
-	idActor* enemyEnt;
+	idActor*		enemyEnt;
 	bool			goLower;
 
 	// make sure we're not flying too high to get through doors
 	goLower = false;
-	if( origin.z > goalPos.z )
-	{
-		dest = goalPos;
+	if( origin.z > goalPos.z ) {
+		dest   = goalPos;
 		dest.z = origin.z + 128.0f;
 		idAI::PredictPath( this, aas, goalPos, dest - origin, 1000, 1000, SE_BLOCKED, path );
-		if( path.endPos.z < origin.z )
-		{
+		if( path.endPos.z < origin.z ) {
 			idVec3 addVel = Seek( vel, origin, path.endPos, AI_SEEK_PREDICTION );
 			vel.z += addVel.z;
 			goLower = true;
 		}
 
-		if( ai_debugMove.GetBool() )
-		{
+		if( ai_debugMove.GetBool() ) {
 			gameRenderWorld->DebugBounds( goLower ? colorRed : colorGreen, physicsObj.GetBounds(), path.endPos, 1 );
 		}
 	}
 
-	if( !goLower )
-	{
+	if( !goLower ) {
 		// make sure we don't fly too low
 		end = origin;
 
 		enemyEnt = enemy.GetEntity();
-		if( enemyEnt )
-		{
+		if( enemyEnt ) {
 			end.z = lastVisibleEnemyPos.z + lastVisibleEnemyEyeOffset.z + fly_offset;
-		}
-		else
-		{
+		} else {
 			// just use the default eye height for the player
 			end.z = goalPos.z + DEFAULT_FLY_OFFSET + fly_offset;
 		}
@@ -2419,12 +2125,9 @@ void idAI::AdjustFlySpeed( idVec3& vel )
 	// gradually speed up/slow down to desired speed
 	speed = vel.Normalize();
 	speed += ( move.speed - speed ) * MS2SEC( gameLocal.time - gameLocal.previousTime );
-	if( speed < 0.0f )
-	{
+	if( speed < 0.0f ) {
 		speed = 0.0f;
-	}
-	else if( move.speed && ( speed > move.speed ) )
-	{
+	} else if( move.speed && ( speed > move.speed ) ) {
 		speed = move.speed;
 	}
 
@@ -2438,19 +2141,13 @@ idAI::FlyTurn
 */
 void idAI::FlyTurn()
 {
-	if( move.moveCommand == MOVE_FACE_ENEMY )
-	{
+	if( move.moveCommand == MOVE_FACE_ENEMY ) {
 		TurnToward( lastVisibleEnemyPos );
-	}
-	else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() )
-	{
+	} else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() ) {
 		TurnToward( move.goalEntity.GetEntity()->GetPhysics()->GetOrigin() );
-	}
-	else if( move.speed > 0.0f )
-	{
+	} else if( move.speed > 0.0f ) {
 		const idVec3& vel = physicsObj.GetLinearVelocity();
-		if( vel.ToVec2().LengthSqr() > 0.1f )
-		{
+		if( vel.ToVec2().LengthSqr() > 0.1f ) {
 			TurnToward( vel.ToYaw() );
 		}
 	}
@@ -2464,41 +2161,36 @@ idAI::FlyMove
 */
 void idAI::FlyMove()
 {
-	idVec3	goalPos;
-	idVec3	oldorigin;
-	idVec3	newDest;
+	idVec3 goalPos;
+	idVec3 oldorigin;
+	idVec3 newDest;
 
 	AI_BLOCKED = false;
-	if( ( move.moveCommand != MOVE_NONE ) && ReachedPos( move.moveDest, move.moveCommand ) )
-	{
+	if( ( move.moveCommand != MOVE_NONE ) && ReachedPos( move.moveDest, move.moveCommand ) ) {
 		StopMove( MOVE_STATUS_DONE );
 	}
 
-	if( ai_debugMove.GetBool() )
-	{
-		gameLocal.Printf( "%d: %s: %s, vel = %.2f, sp = %.2f, maxsp = %.2f\n", gameLocal.time, name.c_str(), moveCommandString[move.moveCommand], physicsObj.GetLinearVelocity().Length(), move.speed, fly_speed );
+	if( ai_debugMove.GetBool() ) {
+		gameLocal.Printf(
+			"%d: %s: %s, vel = %.2f, sp = %.2f, maxsp = %.2f\n", gameLocal.time, name.c_str(), moveCommandString[move.moveCommand], physicsObj.GetLinearVelocity().Length(), move.speed, fly_speed );
 	}
 
-	if( move.moveCommand != MOVE_TO_POSITION_DIRECT )
-	{
+	if( move.moveCommand != MOVE_TO_POSITION_DIRECT ) {
 		idVec3 vel = physicsObj.GetLinearVelocity();
 
-		if( GetMovePos( goalPos ) )
-		{
+		if( GetMovePos( goalPos ) ) {
 			CheckObstacleAvoidance( goalPos, newDest );
 			goalPos = newDest;
 		}
 
-		if( move.speed )
-		{
+		if( move.speed ) {
 			FlySeekGoal( vel, goalPos );
 		}
 
 		// add in bobbing
 		AddFlyBob( vel );
 
-		if( enemy.GetEntity() && ( move.moveCommand != MOVE_TO_POSITION ) )
-		{
+		if( enemy.GetEntity() && ( move.moveCommand != MOVE_TO_POSITION ) ) {
 			AdjustFlyHeight( vel, goalPos );
 		}
 
@@ -2518,33 +2210,25 @@ void idAI::FlyMove()
 	physicsObj.ForceDeltaMove( disableGravity );
 	RunPhysics();
 
-	monsterMoveResult_t	moveResult = physicsObj.GetMoveResult();
-	if( !af_push_moveables && attack.Length() && TestMelee() )
-	{
+	monsterMoveResult_t moveResult = physicsObj.GetMoveResult();
+	if( !af_push_moveables && attack.Length() && TestMelee() ) {
 		DirectDamage( attack, enemy.GetEntity() );
-	}
-	else
-	{
+	} else {
 		idEntity* blockEnt = physicsObj.GetSlideMoveEntity();
-		if( blockEnt != NULL && blockEnt->IsType( idMoveable::Type ) && blockEnt->GetPhysics()->IsPushable() )
-		{
+		if( blockEnt != NULL && blockEnt->IsType( idMoveable::Type ) && blockEnt->GetPhysics()->IsPushable() ) {
 			KickObstacles( viewAxis[0], kickForce, blockEnt );
-		}
-		else if( moveResult == MM_BLOCKED )
-		{
+		} else if( moveResult == MM_BLOCKED ) {
 			move.blockTime = gameLocal.time + 500;
-			AI_BLOCKED = true;
+			AI_BLOCKED	   = true;
 		}
 	}
 
 	idVec3 org = physicsObj.GetOrigin();
-	if( oldorigin != org )
-	{
+	if( oldorigin != org ) {
 		TouchTriggers();
 	}
 
-	if( ai_debugMove.GetBool() )
-	{
+	if( ai_debugMove.GetBool() ) {
 		gameRenderWorld->DebugLine( colorCyan, oldorigin, physicsObj.GetOrigin(), 4000 );
 		gameRenderWorld->DebugBounds( colorOrange, physicsObj.GetBounds(), org, 1 );
 		gameRenderWorld->DebugBounds( colorMagenta, physicsObj.GetBounds(), move.moveDest, 1 );
@@ -2564,21 +2248,15 @@ void idAI::StaticMove()
 {
 	idActor* enemyEnt = enemy.GetEntity();
 
-	if( AI_DEAD )
-	{
+	if( AI_DEAD ) {
 		return;
 	}
 
-	if( ( move.moveCommand == MOVE_FACE_ENEMY ) && enemyEnt )
-	{
+	if( ( move.moveCommand == MOVE_FACE_ENEMY ) && enemyEnt ) {
 		TurnToward( lastVisibleEnemyPos );
-	}
-	else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() )
-	{
+	} else if( ( move.moveCommand == MOVE_FACE_ENTITY ) && move.goalEntity.GetEntity() ) {
 		TurnToward( move.goalEntity.GetEntity()->GetPhysics()->GetOrigin() );
-	}
-	else if( move.moveCommand != MOVE_NONE )
-	{
+	} else if( move.moveCommand != MOVE_NONE ) {
 		TurnToward( move.moveDest );
 	}
 	Turn();
@@ -2588,13 +2266,11 @@ void idAI::StaticMove()
 
 	AI_ONGROUND = false;
 
-	if( !af_push_moveables && attack.Length() && TestMelee() )
-	{
+	if( !af_push_moveables && attack.Length() && TestMelee() ) {
 		DirectDamage( attack, enemyEnt );
 	}
 
-	if( ai_debugMove.GetBool() )
-	{
+	if( ai_debugMove.GetBool() ) {
 		const idVec3& org = physicsObj.GetOrigin();
 		gameRenderWorld->DebugBounds( colorMagenta, physicsObj.GetBounds(), org, 1 );
 		gameRenderWorld->DebugLine( colorBlue, org, move.moveDest, 1, true );

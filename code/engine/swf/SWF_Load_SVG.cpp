@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,7 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-
 /*
 ===================
 idSWF::WriteSVG
@@ -36,11 +36,10 @@ idSWF::WriteSVG
 */
 void idSWF::WriteSVG( const char* filename )
 {
-	const bool exportBitmapShapesOnly = false;
+	const bool	exportBitmapShapesOnly = false;
 
 	idFileLocal file( fileSystem->OpenFileWrite( filename, "fs_basepath" ) );
-	if( file == NULL )
-	{
+	if( file == NULL ) {
 		return;
 	}
 
@@ -50,50 +49,45 @@ void idSWF::WriteSVG( const char* filename )
 
 	// missing timestamp, frameRate
 	// \tviewBox=\"0 0 600 300\"\n
-	file->WriteFloatString(
-		"<svg\n"
-		"\txmlns=\"http://www.w3.org/2000/svg\"\n"
-		"\txmlns:xlink=\"http://www.w3.org/1999/xlink\"\n"
-		"\twidth=\"%i\"\n"
-		"\theight=\"%i\"\n >\n", ( int ) frameWidth, ( int ) frameHeight );
+	file->WriteFloatString( "<svg\n"
+							"\txmlns=\"http://www.w3.org/2000/svg\"\n"
+							"\txmlns:xlink=\"http://www.w3.org/1999/xlink\"\n"
+							"\twidth=\"%i\"\n"
+							"\theight=\"%i\"\n >\n",
+		( int )frameWidth,
+		( int )frameHeight );
 
 	const bool exportUnfolded = true;
 
 	file->WriteFloatString( "\t<defs>\n" );
-	for( int i = 0; i < dictionary.Num(); i++ )
-	{
+	for( int i = 0; i < dictionary.Num(); i++ ) {
 		const idSWFDictionaryEntry& entry = dictionary[i];
 
-		switch( dictionary[i].type )
-		{
-			/*
-			case SWF_DICT_IMAGE:
-			{
-				file->WriteFloatString( "\t\t<image id=\"%i\" ", i );
-				file->WriteFloatString( "xlink:href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), i );
-				file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", entry.imageSize[0], entry.imageSize[1] );
-				break;
-			}
-			*/
+		switch( dictionary[i].type ) {
+				/*
+				case SWF_DICT_IMAGE:
+				{
+					file->WriteFloatString( "\t\t<image id=\"%i\" ", i );
+					file->WriteFloatString( "xlink:href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), i );
+					file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", entry.imageSize[0], entry.imageSize[1] );
+					break;
+				}
+				*/
 
 			case SWF_DICT_MORPH:
-			case SWF_DICT_SHAPE:
-			{
+			case SWF_DICT_SHAPE: {
 				idSWFShape* shape = dictionary[i].shape;
 
-				//file->WriteFloatString( "\t\t<g id=\"%i\" visibility=\"hidden\">\n", i );
+				// file->WriteFloatString( "\t\t<g id=\"%i\" visibility=\"hidden\">\n", i );
 				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
 
 				// export fill draws
-				for( int d = 0; d < shape->fillDraws.Num(); d++ )
-				{
+				for( int d = 0; d < shape->fillDraws.Num(); d++ ) {
 					idSWFShapeDrawFill& fillDraw = shape->fillDraws[d];
 
-					if( fillDraw.style.type == 4 )
-					{
+					if( fillDraw.style.type == 4 ) {
 						int bitmapID = fillDraw.style.bitmapID;
-						if( bitmapID == 65535 )
-						{
+						if( bitmapID == 65535 ) {
 							continue;
 						}
 
@@ -104,9 +98,7 @@ void idSWF::WriteSVG( const char* filename )
 						file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", bitmapEntry.imageSize[0], bitmapEntry.imageSize[1] );
 
 						continue;
-					}
-					else if( exportBitmapShapesOnly )
-					{
+					} else if( exportBitmapShapesOnly ) {
 						continue;
 					}
 
@@ -145,8 +137,7 @@ void idSWF::WriteSVG( const char* filename )
 					*/
 
 					idStr fillColor = "";
-					if( fillDraw.style.type == 0 )
-					{
+					if( fillDraw.style.type == 0 ) {
 						// solid fill draw
 						const swfColorRGBA_t& color = fillDraw.style.startColor;
 						fillColor.Format( "fill=\"rgba(%d, %d, %d, %f)\"", ( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ) );
@@ -168,8 +159,7 @@ void idSWF::WriteSVG( const char* filename )
 					}
 					*/
 
-					for( int k = 0; k < fillDraw.indices.Num(); k += 3 )
-					{
+					for( int k = 0; k < fillDraw.indices.Num(); k += 3 ) {
 						const uint16& i1 = fillDraw.indices[k + 0];
 						const uint16& i2 = fillDraw.indices[k + 1];
 						const uint16& i3 = fillDraw.indices[k + 2];
@@ -178,26 +168,23 @@ void idSWF::WriteSVG( const char* filename )
 						const idVec2& v2 = fillDraw.startVerts[i2];
 						const idVec2& v3 = fillDraw.startVerts[i3];
 
-						file->WriteFloatString(
-							"\t\t\t<polygon %s points=\"%f,%f %f,%f %f,%f\" />\n",
-							fillColor.c_str(), v1.x, v1.y, v2.x, v2.y, v3.x, v3.y
-						);
+						file->WriteFloatString( "\t\t\t<polygon %s points=\"%f,%f %f,%f %f,%f\" />\n", fillColor.c_str(), v1.x, v1.y, v2.x, v2.y, v3.x, v3.y );
 					}
 				}
 
 				// export line draws
-				for( int d = 0; d < shape->lineDraws.Num(); d++ )
-				{
+				for( int d = 0; d < shape->lineDraws.Num(); d++ ) {
 					const idSWFShapeDrawLine& lineDraw = shape->lineDraws[d];
 
-					const swfColorRGBA_t& color = lineDraw.style.startColor;
-					file->WriteFloatString(
-						"\t\t\t<polyline fill=\"none\" stroke=\"rgba(%d, %d, %d, %f)\" stroke-width=\"%f\" points=\"",
-						( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ), lineDraw.style.startWidth
-					);
+					const swfColorRGBA_t&	  color = lineDraw.style.startColor;
+					file->WriteFloatString( "\t\t\t<polyline fill=\"none\" stroke=\"rgba(%d, %d, %d, %f)\" stroke-width=\"%f\" points=\"",
+						( int )( color.r ),
+						( int )( color.g ),
+						( int )( color.b ),
+						color.a * ( 1.0f / 255.0f ),
+						lineDraw.style.startWidth );
 
-					for( int v = 0; v < lineDraw.startVerts.Num(); v++ )
-					{
+					for( int v = 0; v < lineDraw.startVerts.Num(); v++ ) {
 						const idVec2& vert = lineDraw.startVerts[v];
 						file->WriteFloatString( "%f,%f ", vert.x, vert.y );
 					}
@@ -208,17 +195,14 @@ void idSWF::WriteSVG( const char* filename )
 				break;
 			}
 
-			case SWF_DICT_SPRITE:
-			{
-				if( !exportUnfolded )
-				{
+			case SWF_DICT_SPRITE: {
+				if( !exportUnfolded ) {
 					dictionary[i].sprite->WriteSVG( file, i, dictionary );
 				}
 				break;
 			}
 
-			case SWF_DICT_FONT:
-			{
+			case SWF_DICT_FONT: {
 #if 0
 				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
 				const idSWFFont* font = dictionary[i].font;
@@ -231,44 +215,42 @@ void idSWF::WriteSVG( const char* filename )
 				break;
 			}
 
-			case SWF_DICT_TEXT:
-			{
+			case SWF_DICT_TEXT: {
 				// RB: not used in BFG files
 				break;
 			}
 
-			case SWF_DICT_EDITTEXT:
-			{
+			case SWF_DICT_EDITTEXT: {
 				const idSWFEditText* et = dictionary[i].edittext;
 
-				idStr initialText = idStr::CStyleQuote( et->initialText.c_str() );
+				idStr				 initialText = idStr::CStyleQuote( et->initialText.c_str() );
 
 				// RB: ugly hack but necessary for exporting pda.json
-				//if( initialText.Cmp( "\"It\\'s DONE bay-bee!\"") == 0 )
-				if( idStr::FindText( initialText, "bay-bee" ) > -1 )
-				{
+				// if( initialText.Cmp( "\"It\\'s DONE bay-bee!\"") == 0 )
+				if( idStr::FindText( initialText, "bay-bee" ) > -1 ) {
 					initialText = "\"It is DONE bay-bee!\"";
-				}
-				else if( idStr::FindText( initialText, "Email text goes in" ) > -1 )
-				{
+				} else if( idStr::FindText( initialText, "Email text goes in" ) > -1 ) {
 					initialText = "\"Email text goes in here\"";
 				}
 
 				// notice ALIGN_JUSTIFY is not supported in SVG
-				idStr alignStr = ( et->align == SWF_ET_ALIGN_LEFT ) ? "start" :
-								 ( et->align == SWF_ET_ALIGN_CENTER ) ? "middle" :
-								 ( et->align == SWF_ET_ALIGN_RIGHT ) ? "end" : "start";
+				idStr				  alignStr = ( et->align == SWF_ET_ALIGN_LEFT ) ? "start" : ( et->align == SWF_ET_ALIGN_CENTER ) ? "middle" : ( et->align == SWF_ET_ALIGN_RIGHT ) ? "end" : "start";
 
-				const swfColorRGBA_t& color = et->color;
-				float fontSize = SWFTWIP( et->fontHeight ); // SWF font height is in twips
+				const swfColorRGBA_t& color	   = et->color;
+				float				  fontSize = SWFTWIP( et->fontHeight ); // SWF font height is in twips
 
 				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
-				file->WriteFloatString(
-					"\t\t\t<text x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\">%s</text>\n",
-					et->bounds.tl.x, et->bounds.br.y, GetFontName( et->fontID ), fontSize,
-					( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ),
-					alignStr.c_str(), et->initialText.c_str()
-				);
+				file->WriteFloatString( "\t\t\t<text x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\">%s</text>\n",
+					et->bounds.tl.x,
+					et->bounds.br.y,
+					GetFontName( et->fontID ),
+					fontSize,
+					( int )( color.r ),
+					( int )( color.g ),
+					( int )( color.b ),
+					color.a * ( 1.0f / 255.0f ),
+					alignStr.c_str(),
+					et->initialText.c_str() );
 				file->WriteFloatString( "\t\t</g>\n" );
 				break;
 			}
@@ -277,16 +259,13 @@ void idSWF::WriteSVG( const char* filename )
 
 	file->WriteFloatString( "\t</defs>\n" );
 
-	if( exportUnfolded )
-	{
-		int characterID = dictionary.Num();
-		swfMatrix_t identityMatrix;
+	if( exportUnfolded ) {
+		int				characterID = dictionary.Num();
+		swfMatrix_t		identityMatrix;
 		swfColorXform_t identityColor;
 
 		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, identityMatrix, identityColor, 2 );
-	}
-	else
-	{
+	} else {
 		mainsprite->WriteSVG( file, dictionary.Num(), dictionary );
 	}
 

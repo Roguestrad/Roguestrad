@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,35 +39,28 @@ idSignInManagerWin
 class idSignInManagerWin : public idSignInManagerBase
 {
 public:
-
-	idSignInManagerWin() : dlcVersionChecked( false ) {}
-	virtual ~idSignInManagerWin() {}
+	idSignInManagerWin() :
+		dlcVersionChecked( false )
+	{
+	}
+	virtual ~idSignInManagerWin() { }
 
 	//==========================================================================================
 	// idSignInManagerBase interface
 	//==========================================================================================
-	virtual void					Pump();
-	virtual void					Shutdown();
-	virtual int						GetNumLocalUsers() const
-	{
-		return localUsers.Num();
-	}
-	virtual idLocalUser* 			GetLocalUserByIndex( int index )
-	{
-		return &localUsers[index];
-	}
-	virtual const idLocalUser* 		GetLocalUserByIndex( int index ) const
-	{
-		return &localUsers[index];
-	}
-	virtual void					RemoveLocalUserByIndex( int index );
-	virtual void					RegisterLocalUser( int inputDevice );		// Register a local user to the passed in controller
+	virtual void			   Pump();
+	virtual void			   Shutdown();
+	virtual int				   GetNumLocalUsers() const { return localUsers.Num(); }
+	virtual idLocalUser*	   GetLocalUserByIndex( int index ) { return &localUsers[index]; }
+	virtual const idLocalUser* GetLocalUserByIndex( int index ) const { return &localUsers[index]; }
+	virtual void			   RemoveLocalUserByIndex( int index );
+	virtual void			   RegisterLocalUser( int inputDevice ); // Register a local user to the passed in controller
 
-	bool							CreateNewUser( winUserState_t& state );
+	bool					   CreateNewUser( winUserState_t& state );
 
 private:
-	idStaticList< idLocalUserWin, MAX_INPUT_DEVICES >	localUsers;
-	bool												dlcVersionChecked;
+	idStaticList<idLocalUserWin, MAX_INPUT_DEVICES> localUsers;
+	bool											dlcVersionChecked;
 };
 
 #endif

@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -30,17 +31,16 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 #include "../snd_local.h"
-#if defined(USE_DOOMCLASSIC)
+#if defined( USE_DOOMCLASSIC )
 	#include "../../../doomclassic/doom/i_sound.h"
 #endif
 
-idCVar s_showLevelMeter( "s_showLevelMeter", "0", CVAR_BOOL | CVAR_ARCHIVE, "Show VU meter" );
-idCVar s_meterTopTime( "s_meterTopTime", "1000", CVAR_INTEGER | CVAR_ARCHIVE, "How long (in milliseconds) peaks are displayed on the VU meter" );
-idCVar s_meterPosition( "s_meterPosition", "100 100 20 200", CVAR_ARCHIVE, "VU meter location (x y w h)" );
-idCVar s_device( "s_device", "-1", CVAR_INTEGER | CVAR_ARCHIVE, "Which audio device to use (listDevices to list, -1 for default)" );
-idCVar s_showPerfData( "s_showPerfData", "0", CVAR_BOOL, "Show XAudio2 Performance data" );
+idCVar		  s_showLevelMeter( "s_showLevelMeter", "0", CVAR_BOOL | CVAR_ARCHIVE, "Show VU meter" );
+idCVar		  s_meterTopTime( "s_meterTopTime", "1000", CVAR_INTEGER | CVAR_ARCHIVE, "How long (in milliseconds) peaks are displayed on the VU meter" );
+idCVar		  s_meterPosition( "s_meterPosition", "100 100 20 200", CVAR_ARCHIVE, "VU meter location (x y w h)" );
+idCVar		  s_device( "s_device", "-1", CVAR_INTEGER | CVAR_ARCHIVE, "Which audio device to use (listDevices to list, -1 for default)" );
+idCVar		  s_showPerfData( "s_showPerfData", "0", CVAR_BOOL, "Show XAudio2 Performance data" );
 extern idCVar s_volume_dB;
-
 
 /*
 ========================
@@ -49,14 +49,14 @@ idSoundHardware_OpenAL::idSoundHardware_OpenAL
 */
 idSoundHardware_OpenAL::idSoundHardware_OpenAL()
 {
-	openalDevice = NULL;
+	openalDevice  = NULL;
 	openalContext = NULL;
 
-	//vuMeterRMS = NULL;
-	//vuMeterPeak = NULL;
+	// vuMeterRMS = NULL;
+	// vuMeterPeak = NULL;
 
-	//outputChannels = 0;
-	//channelMask = 0;
+	// outputChannels = 0;
+	// channelMask = 0;
 
 	voices.SetNum( 0 );
 	zombieVoices.SetNum( 0 );
@@ -67,18 +67,13 @@ idSoundHardware_OpenAL::idSoundHardware_OpenAL()
 
 void idSoundHardware_OpenAL::PrintDeviceList( const char* list )
 {
-	if( !list || *list == '\0' )
-	{
+	if( !list || *list == '\0' ) {
 		idLib::Printf( "    !!! none !!!\n" );
-	}
-	else
-	{
-		do
-		{
+	} else {
+		do {
 			idLib::Printf( "    %s\n", list );
 			list += strlen( list ) + 1;
-		}
-		while( *list != '\0' );
+		} while( *list != '\0' );
 	}
 }
 
@@ -86,17 +81,14 @@ void idSoundHardware_OpenAL::PrintALCInfo( ALCdevice* device )
 {
 	ALCint major, minor;
 
-	if( device )
-	{
+	if( device ) {
 		const ALCchar* devname = NULL;
 		idLib::Printf( "\n" );
-		if( alcIsExtensionPresent( device, "ALC_ENUMERATE_ALL_EXT" ) != AL_FALSE )
-		{
+		if( alcIsExtensionPresent( device, "ALC_ENUMERATE_ALL_EXT" ) != AL_FALSE ) {
 			devname = alcGetString( device, ALC_ALL_DEVICES_SPECIFIER );
 		}
 
-		if( CheckALCErrors( device ) != ALC_NO_ERROR || !devname )
-		{
+		if( CheckALCErrors( device ) != ALC_NO_ERROR || !devname ) {
 			devname = alcGetString( device, ALC_DEVICE_SPECIFIER );
 		}
 
@@ -105,17 +97,15 @@ void idSoundHardware_OpenAL::PrintALCInfo( ALCdevice* device )
 	alcGetIntegerv( device, ALC_MAJOR_VERSION, 1, &major );
 	alcGetIntegerv( device, ALC_MINOR_VERSION, 1, &minor );
 
-	if( CheckALCErrors( device ) == ALC_NO_ERROR )
-	{
+	if( CheckALCErrors( device ) == ALC_NO_ERROR ) {
 		idLib::Printf( "ALC version: %d.%d\n", major, minor );
 	}
 
-	if( device )
-	{
+	if( device ) {
 		idLib::Printf( "OpenAL extensions: %s", alGetString( AL_EXTENSIONS ) );
 
-		//idLib::Printf("ALC extensions:");
-		//printList(alcGetString(device, ALC_EXTENSIONS), ' ');
+		// idLib::Printf("ALC extensions:");
+		// printList(alcGetString(device, ALC_EXTENSIONS), ' ');
 		CheckALCErrors( device );
 	}
 }
@@ -126,35 +116,29 @@ void idSoundHardware_OpenAL::PrintALInfo()
 	idLib::Printf( "OpenAL renderer string: %s\n", alGetString( AL_RENDERER ) );
 	idLib::Printf( "OpenAL version string: %s\n", alGetString( AL_VERSION ) );
 	idLib::Printf( "OpenAL extensions: %s", alGetString( AL_EXTENSIONS ) );
-	//PrintList(alGetString(AL_EXTENSIONS), ' ');
+	// PrintList(alGetString(AL_EXTENSIONS), ' ');
 	CheckALErrors();
 }
 
 void listDevices_f( const idCmdArgs& args )
 {
 	idLib::Printf( "Available playback devices:\n" );
-	if( alcIsExtensionPresent( NULL, "ALC_ENUMERATE_ALL_EXT" ) != AL_FALSE )
-	{
+	if( alcIsExtensionPresent( NULL, "ALC_ENUMERATE_ALL_EXT" ) != AL_FALSE ) {
 		idSoundHardware_OpenAL::PrintDeviceList( alcGetString( NULL, ALC_ALL_DEVICES_SPECIFIER ) );
-	}
-	else
-	{
+	} else {
 		idSoundHardware_OpenAL::PrintDeviceList( alcGetString( NULL, ALC_DEVICE_SPECIFIER ) );
 	}
 
-	//idLib::Printf("Available capture devices:\n");
-	//printDeviceList(alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER));
+	// idLib::Printf("Available capture devices:\n");
+	// printDeviceList(alcGetString(NULL, ALC_CAPTURE_DEVICE_SPECIFIER));
 
-	if( alcIsExtensionPresent( NULL, "ALC_ENUMERATE_ALL_EXT" ) != AL_FALSE )
-	{
+	if( alcIsExtensionPresent( NULL, "ALC_ENUMERATE_ALL_EXT" ) != AL_FALSE ) {
 		idLib::Printf( "Default playback device: %s\n", alcGetString( NULL, ALC_DEFAULT_ALL_DEVICES_SPECIFIER ) );
-	}
-	else
-	{
-		idLib::Printf( "Default playback device: %s\n",  alcGetString( NULL, ALC_DEFAULT_DEVICE_SPECIFIER ) );
+	} else {
+		idLib::Printf( "Default playback device: %s\n", alcGetString( NULL, ALC_DEFAULT_DEVICE_SPECIFIER ) );
 	}
 
-	//idLib::Printf("Default capture device: %s\n", alcGetString(NULL, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
+	// idLib::Printf("Default capture device: %s\n", alcGetString(NULL, ALC_CAPTURE_DEFAULT_DEVICE_SPECIFIER));
 
 	idSoundHardware_OpenAL::PrintALCInfo( NULL );
 
@@ -173,15 +157,13 @@ void idSoundHardware_OpenAL::Init()
 	common->Printf( "Setup OpenAL device and context... " );
 
 	openalDevice = alcOpenDevice( NULL );
-	if( openalDevice == NULL )
-	{
+	if( openalDevice == NULL ) {
 		common->FatalError( "idSoundHardware_OpenAL::Init: alcOpenDevice() failed\n" );
 		return;
 	}
 
 	openalContext = alcCreateContext( openalDevice, NULL );
-	if( alcMakeContextCurrent( openalContext ) == 0 )
-	{
+	if( alcMakeContextCurrent( openalContext ) == 0 ) {
 		common->FatalError( "idSoundHardware_OpenAL::Init: alcMakeContextCurrent( %p) failed\n", openalContext );
 		return;
 	}
@@ -193,14 +175,14 @@ void idSoundHardware_OpenAL::Init()
 	common->Printf( "OpenAL version: %s\n", alGetString( AL_VERSION ) );
 	common->Printf( "OpenAL extensions: %s\n", alGetString( AL_EXTENSIONS ) );
 
-	//pMasterVoice->SetVolume( DBtoLinear( s_volume_dB.GetFloat() ) );
+	// pMasterVoice->SetVolume( DBtoLinear( s_volume_dB.GetFloat() ) );
 
-	//outputChannels = deviceDetails.OutputFormat.Format.nChannels;
-	//channelMask = deviceDetails.OutputFormat.dwChannelMask;
+	// outputChannels = deviceDetails.OutputFormat.Format.nChannels;
+	// channelMask = deviceDetails.OutputFormat.dwChannelMask;
 
-	//idSoundVoice::InitSurround( outputChannels, channelMask );
+	// idSoundVoice::InitSurround( outputChannels, channelMask );
 
-#if defined(USE_DOOMCLASSIC)
+#if defined( USE_DOOMCLASSIC )
 	// ---------------------
 	// Initialize the Doom classic sound system.
 	// ---------------------
@@ -263,8 +245,7 @@ void idSoundHardware_OpenAL::Init()
 	voices.SetNum( voices.Max() );
 	freeVoices.SetNum( voices.Max() );
 	zombieVoices.SetNum( 0 );
-	for( int i = 0; i < voices.Num(); i++ )
-	{
+	for( int i = 0; i < voices.Num(); i++ ) {
 		freeVoices[i] = &voices[i];
 	}
 }
@@ -276,15 +257,14 @@ idSoundHardware_OpenAL::Shutdown
 */
 void idSoundHardware_OpenAL::Shutdown()
 {
-	for( int i = 0; i < voices.Num(); i++ )
-	{
-		voices[ i ].DestroyInternal();
+	for( int i = 0; i < voices.Num(); i++ ) {
+		voices[i].DestroyInternal();
 	}
 	voices.Clear();
 	freeVoices.Clear();
 	zombieVoices.Clear();
 
-#if defined(USE_DOOMCLASSIC)
+#if defined( USE_DOOMCLASSIC )
 	// ---------------------
 	// Shutdown the Doom classic sound system.
 	// ---------------------
@@ -320,14 +300,11 @@ idSoundHardware_OpenAL::AllocateVoice
 */
 idSoundVoice* idSoundHardware_OpenAL::AllocateVoice( const idSoundSample* leadinSample, const idSoundSample* loopingSample )
 {
-	if( leadinSample == NULL )
-	{
+	if( leadinSample == NULL ) {
 		return NULL;
 	}
-	if( loopingSample != NULL )
-	{
-		if( ( leadinSample->format.basic.formatTag != loopingSample->format.basic.formatTag ) || ( leadinSample->format.basic.numChannels != loopingSample->format.basic.numChannels ) )
-		{
+	if( loopingSample != NULL ) {
+		if( ( leadinSample->format.basic.formatTag != loopingSample->format.basic.formatTag ) || ( leadinSample->format.basic.numChannels != loopingSample->format.basic.numChannels ) ) {
 			idLib::Warning( "Leadin/looping format mismatch: %s & %s", leadinSample->GetName(), loopingSample->GetName() );
 			loopingSample = NULL;
 		}
@@ -336,20 +313,16 @@ idSoundVoice* idSoundHardware_OpenAL::AllocateVoice( const idSoundSample* leadin
 	// Try to find a free voice that matches the format
 	// But fallback to the last free voice if none match the format
 	idSoundVoice* voice = NULL;
-	for( int i = 0; i < freeVoices.Num(); i++ )
-	{
-		if( freeVoices[i]->IsPlaying() )
-		{
+	for( int i = 0; i < freeVoices.Num(); i++ ) {
+		if( freeVoices[i]->IsPlaying() ) {
 			continue;
 		}
 		voice = ( idSoundVoice* )freeVoices[i];
-		if( voice->CompatibleFormat( ( idSoundSample_OpenAL* )leadinSample ) )
-		{
+		if( voice->CompatibleFormat( ( idSoundSample_OpenAL* )leadinSample ) ) {
 			break;
 		}
 	}
-	if( voice != NULL )
-	{
+	if( voice != NULL ) {
 		voice->Create( leadinSample, loopingSample );
 		freeVoices.Remove( voice );
 		return voice;
@@ -379,40 +352,31 @@ idSoundHardware_OpenAL::Update
 */
 void idSoundHardware_OpenAL::Update()
 {
-	if( openalDevice == NULL )
-	{
+	if( openalDevice == NULL ) {
 		int nowTime = Sys_Milliseconds();
-		if( lastResetTime + 1000 < nowTime )
-		{
+		if( lastResetTime + 1000 < nowTime ) {
 			lastResetTime = nowTime;
 			Init();
 		}
 		return;
 	}
 
-	if( soundSystem->IsMuted() )
-	{
+	if( soundSystem->IsMuted() ) {
 		alListenerf( AL_GAIN, 0.0f );
-	}
-	else
-	{
+	} else {
 		alListenerf( AL_GAIN, DBtoLinear( s_volume_dB.GetFloat() ) );
 	}
 
 	// IXAudio2SourceVoice::Stop() has been called for every sound on the
 	// zombie list, but it is documented as asyncronous, so we have to wait
 	// until it actually reports that it is no longer playing.
-	for( int i = 0; i < zombieVoices.Num(); i++ )
-	{
+	for( int i = 0; i < zombieVoices.Num(); i++ ) {
 		zombieVoices[i]->FlushSourceBuffers();
-		if( !zombieVoices[i]->IsPlaying() )
-		{
+		if( !zombieVoices[i]->IsPlaying() ) {
 			freeVoices.Append( zombieVoices[i] );
 			zombieVoices.RemoveIndexFast( i );
 			i--;
-		}
-		else
-		{
+		} else {
 			static int playingZombies;
 			playingZombies++;
 		}
@@ -423,7 +387,8 @@ void idSoundHardware_OpenAL::Update()
 	{
 		XAUDIO2_PERFORMANCE_DATA perfData;
 		pXAudio2->GetPerformanceData( &perfData );
-		idLib::Printf( "Voices: %d/%d CPU: %.2f%% Mem: %dkb\n", perfData.ActiveSourceVoiceCount, perfData.TotalSourceVoiceCount, perfData.AudioCyclesSinceLastQuery / ( float )perfData.TotalCyclesSinceLastQuery, perfData.MemoryUsageInBytes / 1024 );
+		idLib::Printf( "Voices: %d/%d CPU: %.2f%% Mem: %dkb\n", perfData.ActiveSourceVoiceCount, perfData.TotalSourceVoiceCount, perfData.AudioCyclesSinceLastQuery / ( float
+	)perfData.TotalCyclesSinceLastQuery, perfData.MemoryUsageInBytes / 1024 );
 	}
 	*/
 
@@ -492,5 +457,3 @@ void idSoundHardware_OpenAL::Update()
 	}
 	*/
 }
-
-

@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -35,7 +36,6 @@ If you have questions concerning this license or the applicable additional terms
 TODO: CRC on each block
 
 */
-
 
 /*
 ========================
@@ -64,12 +64,12 @@ idCVar sgf_testCorruption( "sgf_testCorruption", "-1", CVAR_INTEGER, "test corru
 // this is supposed to get faster going from -15 to -9, but it gets slower as well as worse compression
 idCVar sgf_windowBits( "sgf_windowBits", "-15", CVAR_INTEGER, "zlib window bits" );
 
-bool idFile_SaveGamePipelined::cancelToTerminate = false;
+bool   idFile_SaveGamePipelined::cancelToTerminate = false;
 
 class idSGFcompressThread : public idSysThread
 {
 public:
-	virtual int			Run()
+	virtual int Run()
 	{
 		sgf->CompressBlock();
 		return 0;
@@ -79,7 +79,7 @@ public:
 class idSGFdecompressThread : public idSysThread
 {
 public:
-	virtual int			Run()
+	virtual int Run()
 	{
 		sgf->DecompressBlock();
 		return 0;
@@ -89,7 +89,7 @@ public:
 class idSGFwriteThread : public idSysThread
 {
 public:
-	virtual int			Run()
+	virtual int Run()
 	{
 		sgf->WriteBlock();
 		return 0;
@@ -99,7 +99,7 @@ public:
 class idSGFreadThread : public idSysThread
 {
 public:
-	virtual int			Run()
+	virtual int Run()
 	{
 		sgf->ReadBlock();
 		return 0;
@@ -137,12 +137,11 @@ idFile_SaveGamePipelined::idFile_SaveGamePipelined() :
 	buildVersion( "" ),
 	saveFormatVersion( 0 )
 {
-
 	memset( &zStream, 0, sizeof( zStream ) );
 	memset( compressed, 0, sizeof( compressed ) );
 	memset( uncompressed, 0, sizeof( uncompressed ) );
 	zStream.zalloc = ZlibAlloc;
-	zStream.zfree = ZlibFree;
+	zStream.zfree  = ZlibFree;
 }
 
 /*
@@ -155,23 +154,19 @@ idFile_SaveGamePipelined::~idFile_SaveGamePipelined()
 	Finish();
 
 	// free the threads
-	if( compressThread != NULL )
-	{
+	if( compressThread != NULL ) {
 		delete compressThread;
 		compressThread = NULL;
 	}
-	if( decompressThread != NULL )
-	{
+	if( decompressThread != NULL ) {
 		delete decompressThread;
 		decompressThread = NULL;
 	}
-	if( readThread != NULL )
-	{
+	if( readThread != NULL ) {
 		delete readThread;
 		readThread = NULL;
 	}
-	if( writeThread != NULL )
-	{
+	if( writeThread != NULL ) {
 		delete writeThread;
 		writeThread = NULL;
 	}
@@ -183,7 +178,7 @@ idFile_SaveGamePipelined::~idFile_SaveGamePipelined()
 		} */
 
 	dataZlib = NULL;
-	dataIO = NULL;
+	dataIO	 = NULL;
 }
 
 /*
@@ -203,8 +198,7 @@ idFile_SaveGamePipelined::ReadSaveFormatVersion
 */
 bool idFile_SaveGamePipelined::ReadSaveFormatVersion()
 {
-	if( ReadBig( pointerSize ) <= 0 )
-	{
+	if( ReadBig( pointerSize ) <= 0 ) {
 		return false;
 	}
 	return ReadBig( saveFormatVersion ) != 0;
@@ -217,13 +211,10 @@ idFile_SaveGamePipelined::GetPointerSize
 */
 int idFile_SaveGamePipelined::GetPointerSize() const
 {
-	if( pointerSize == 0 )
-	{
+	if( pointerSize == 0 ) {
 		// in original savegames we weren't saving the pointer size, so the 2 high bytes of the save version will be 0
 		return 4;
-	}
-	else
-	{
+	} else {
 		return pointerSize;
 	}
 }
@@ -235,12 +226,9 @@ idFile_SaveGamePipelined::Finish
 */
 void idFile_SaveGamePipelined::Finish()
 {
-	if( mode == WRITE )
-	{
-
+	if( mode == WRITE ) {
 		// wait for the compression thread to complete, which may kick off a write
-		if( compressThread != NULL )
-		{
+		if( compressThread != NULL ) {
 			compressThread->WaitForThread();
 		}
 
@@ -248,18 +236,14 @@ void idFile_SaveGamePipelined::Finish()
 		zLibFlushType = Z_FINISH;
 		FlushUncompressedBlock();
 
-		if( compressThread != NULL )
-		{
+		if( compressThread != NULL ) {
 			compressThread->WaitForThread();
 		}
 
-		if( writeThread != NULL )
-		{
+		if( writeThread != NULL ) {
 			// wait for the IO thread to exit
 			writeThread->WaitForThread();
-		}
-		else if( nativeFile == NULL && !nativeFileEndHit )
-		{
+		} else if( nativeFile == NULL && !nativeFileEndHit ) {
 			// wait for the last block to be consumed
 			blockRequested.Wait();
 			finished = true;
@@ -270,23 +254,16 @@ void idFile_SaveGamePipelined::Finish()
 		// free zlib tables
 		deflateEnd( &zStream );
 
-	}
-	else if( mode == READ )
-	{
-
+	} else if( mode == READ ) {
 		// wait for the decompression thread to complete, which may kick off a read
-		if( decompressThread != NULL )
-		{
+		if( decompressThread != NULL ) {
 			decompressThread->WaitForThread();
 		}
 
-		if( readThread != NULL )
-		{
+		if( readThread != NULL ) {
 			// wait for the IO thread to exit
 			readThread->WaitForThread();
-		}
-		else if( nativeFile == NULL && !nativeFileEndHit )
-		{
+		} else if( nativeFile == NULL && !nativeFileEndHit ) {
 			// wait for the last block to be consumed
 			blockAvailable.Wait();
 			finished = true;
@@ -308,45 +285,32 @@ idFile_SaveGamePipelined::Abort
 */
 void idFile_SaveGamePipelined::Abort()
 {
-	if( mode == WRITE )
-	{
-
-		if( compressThread != NULL )
-		{
+	if( mode == WRITE ) {
+		if( compressThread != NULL ) {
 			compressThread->WaitForThread();
 		}
-		if( writeThread != NULL )
-		{
+		if( writeThread != NULL ) {
 			writeThread->WaitForThread();
-		}
-		else if( nativeFile == NULL && !nativeFileEndHit )
-		{
+		} else if( nativeFile == NULL && !nativeFileEndHit ) {
 			blockRequested.Wait();
 			finished = true;
-			dataIO = NULL;
-			bytesIO = 0;
+			dataIO	 = NULL;
+			bytesIO	 = 0;
 			blockAvailable.Raise();
 			blockFinished.Wait();
 		}
 
-	}
-	else if( mode == READ )
-	{
-
-		if( decompressThread != NULL )
-		{
+	} else if( mode == READ ) {
+		if( decompressThread != NULL ) {
 			decompressThread->WaitForThread();
 		}
-		if( readThread != NULL )
-		{
+		if( readThread != NULL ) {
 			readThread->WaitForThread();
-		}
-		else if( nativeFile == NULL && !nativeFileEndHit )
-		{
+		} else if( nativeFile == NULL && !nativeFileEndHit ) {
 			blockAvailable.Wait();
 			finished = true;
-			dataIO = NULL;
-			bytesIO = 0;
+			dataIO	 = NULL;
+			bytesIO	 = 0;
 			blockRequested.Raise();
 			blockFinished.Wait();
 		}
@@ -372,17 +336,15 @@ bool idFile_SaveGamePipelined::OpenForWriting( const char* const filename, bool 
 {
 	assert( mode == CLOSED );
 
-	name = filename;
-	osPath = filename;
-	mode = WRITE;
-	nativeFile = NULL;
+	name		 = filename;
+	osPath		 = filename;
+	mode		 = WRITE;
+	nativeFile	 = NULL;
 	numChecksums = 0;
 
-	if( useNativeFile )
-	{
+	if( useNativeFile ) {
 		nativeFile = fileSystem->OpenFileWrite( filename );
-		if( nativeFile == NULL )
-		{
+		if( nativeFile == NULL ) {
 			return false;
 		}
 	}
@@ -390,35 +352,31 @@ bool idFile_SaveGamePipelined::OpenForWriting( const char* const filename, bool 
 	// raw deflate with no header / checksum
 	// use max memory for fastest compression
 	// optimize for higher speed
-	//mem.PushHeap();
+	// mem.PushHeap();
 	int status = deflateInit2( &zStream, Z_BEST_SPEED, Z_DEFLATED, sgf_windowBits.GetInteger(), 9, Z_DEFAULT_STRATEGY );
-	//mem.PopHeap();
-	if( status != Z_OK )
-	{
+	// mem.PopHeap();
+	if( status != Z_OK ) {
 		idLib::FatalError( "idFile_SaveGamePipelined::OpenForWriting: deflateInit2() error %i", status );
 	}
 
 	// initial buffer setup
 	zStream.avail_out = COMPRESSED_BLOCK_SIZE;
-	zStream.next_out = ( Bytef* )compressed;
+	zStream.next_out  = ( Bytef* )compressed;
 
-	if( sgf_checksums.GetBool() )
-	{
+	if( sgf_checksums.GetBool() ) {
 		zStream.avail_out -= sizeof( uint32 );
 	}
 
-	if( sgf_threads.GetInteger() >= 1 )
-	{
-		compressThread = new( TAG_IDFILE ) idSGFcompressThread();
+	if( sgf_threads.GetInteger() >= 1 ) {
+		compressThread		= new( TAG_IDFILE ) idSGFcompressThread();
 		compressThread->sgf = this;
 		// DG: change threadname from "SGF_CompressThread" to "SGF_Compress", because Linux
 		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
 		compressThread->StartWorkerThread( "SGF_Compress", CORE_2B, THREAD_NORMAL );
 		// DG end
 	}
-	if( nativeFile != NULL && sgf_threads.GetInteger() >= 2 )
-	{
-		writeThread = new( TAG_IDFILE ) idSGFwriteThread();
+	if( nativeFile != NULL && sgf_threads.GetInteger() >= 2 ) {
+		writeThread		 = new( TAG_IDFILE ) idSGFwriteThread();
 		writeThread->sgf = this;
 		writeThread->StartWorkerThread( "SGF_WriteThread", CORE_2A, THREAD_NORMAL );
 	}
@@ -435,50 +393,44 @@ bool idFile_SaveGamePipelined::OpenForWriting( idFile* file )
 {
 	assert( mode == CLOSED );
 
-	if( file == NULL )
-	{
+	if( file == NULL ) {
 		return false;
 	}
 
-	name = file->GetName();
-	osPath = file->GetFullPath();
-	mode = WRITE;
-	nativeFile = file;
+	name		 = file->GetName();
+	osPath		 = file->GetFullPath();
+	mode		 = WRITE;
+	nativeFile	 = file;
 	numChecksums = 0;
-
 
 	// raw deflate with no header / checksum
 	// use max memory for fastest compression
 	// optimize for higher speed
-	//mem.PushHeap();
+	// mem.PushHeap();
 	int status = deflateInit2( &zStream, Z_BEST_SPEED, Z_DEFLATED, sgf_windowBits.GetInteger(), 9, Z_DEFAULT_STRATEGY );
-	//mem.PopHeap();
-	if( status != Z_OK )
-	{
+	// mem.PopHeap();
+	if( status != Z_OK ) {
 		idLib::FatalError( "idFile_SaveGamePipelined::OpenForWriting: deflateInit2() error %i", status );
 	}
 
 	// initial buffer setup
 	zStream.avail_out = COMPRESSED_BLOCK_SIZE;
-	zStream.next_out = ( Bytef* )compressed;
+	zStream.next_out  = ( Bytef* )compressed;
 
-	if( sgf_checksums.GetBool() )
-	{
+	if( sgf_checksums.GetBool() ) {
 		zStream.avail_out -= sizeof( uint32 );
 	}
 
-	if( sgf_threads.GetInteger() >= 1 )
-	{
-		compressThread = new( TAG_IDFILE ) idSGFcompressThread();
+	if( sgf_threads.GetInteger() >= 1 ) {
+		compressThread		= new( TAG_IDFILE ) idSGFcompressThread();
 		compressThread->sgf = this;
 		// DG: change threadname from "SGF_CompressThread" to "SGF_Compress", because Linux
 		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
 		compressThread->StartWorkerThread( "SGF_Compress", CORE_2B, THREAD_NORMAL );
 		// DG end
 	}
-	if( nativeFile != NULL && sgf_threads.GetInteger() >= 2 )
-	{
-		writeThread = new( TAG_IDFILE ) idSGFwriteThread();
+	if( nativeFile != NULL && sgf_threads.GetInteger() >= 2 ) {
+		writeThread		 = new( TAG_IDFILE ) idSGFwriteThread();
 		writeThread->sgf = this;
 		writeThread->StartWorkerThread( "SGF_WriteThread", CORE_2A, THREAD_NORMAL );
 	}
@@ -499,17 +451,15 @@ bool idFile_SaveGamePipelined::NextWriteBlock( blockForIO_t* block )
 {
 	assert( mode == WRITE );
 
-	blockRequested.Raise();		// the background thread is done with the last block
+	blockRequested.Raise(); // the background thread is done with the last block
 
-	if( nativeFileEndHit )
-	{
+	if( nativeFileEndHit ) {
 		return false;
 	}
 
-	blockAvailable.Wait();	// wait for a new block to come through the pipeline
+	blockAvailable.Wait(); // wait for a new block to come through the pipeline
 
-	if( finished || block == NULL )
-	{
+	if( finished || block == NULL ) {
 		nativeFileEndHit = true;
 		blockRequested.Raise();
 		blockFinished.Raise();
@@ -518,10 +468,10 @@ bool idFile_SaveGamePipelined::NextWriteBlock( blockForIO_t* block )
 
 	compressedLength += bytesIO;
 
-	block->data = dataIO;
+	block->data	 = dataIO;
 	block->bytes = bytesIO;
 
-	dataIO = NULL;
+	dataIO	= NULL;
 	bytesIO = 0;
 
 	return true;
@@ -545,7 +495,7 @@ void idFile_SaveGamePipelined::WriteBlock()
 
 	nativeFile->Write( dataIO, bytesIO );
 
-	dataIO = NULL;
+	dataIO	= NULL;
 	bytesIO = 0;
 }
 
@@ -569,35 +519,27 @@ Modifies:
 void idFile_SaveGamePipelined::FlushCompressedBlock()
 {
 	// block until the background thread is done with the last block
-	if( writeThread != NULL )
-	{
+	if( writeThread != NULL ) {
 		writeThread->WaitForThread();
 	}
-	if( nativeFile == NULL )
-	{
-		if( !nativeFileEndHit )
-		{
+	if( nativeFile == NULL ) {
+		if( !nativeFileEndHit ) {
 			blockRequested.Wait();
 		}
 	}
 
 	// prepare the next block to be written out
-	dataIO = &compressed[ compressedConsumedBytes & ( COMPRESSED_BUFFER_SIZE - 1 ) ];
-	bytesIO = compressedProducedBytes - compressedConsumedBytes;
+	dataIO					= &compressed[compressedConsumedBytes & ( COMPRESSED_BUFFER_SIZE - 1 )];
+	bytesIO					= compressedProducedBytes - compressedConsumedBytes;
 	compressedConsumedBytes = compressedProducedBytes;
 
-	if( writeThread != NULL )
-	{
+	if( writeThread != NULL ) {
 		// signal a new block is available to be written out
 		writeThread->SignalWork();
-	}
-	else if( nativeFile != NULL )
-	{
+	} else if( nativeFile != NULL ) {
 		// write syncronously
 		WriteBlock();
-	}
-	else
-	{
+	} else {
 		// signal a new block is available to be written out
 		blockAvailable.Raise();
 	}
@@ -621,33 +563,27 @@ Modifies:
 */
 void idFile_SaveGamePipelined::CompressBlock()
 {
-	zStream.next_in = ( Bytef* )dataZlib;
-	zStream.avail_in = ( uInt ) bytesZlib;
+	zStream.next_in	 = ( Bytef* )dataZlib;
+	zStream.avail_in = ( uInt )bytesZlib;
 
-	dataZlib = NULL;
+	dataZlib  = NULL;
 	bytesZlib = 0;
 
 	// if this is the finish block, we may need to write
 	// multiple buffers even after all input has been consumed
-	while( zStream.avail_in > 0 || zLibFlushType == Z_FINISH )
-	{
-
+	while( zStream.avail_in > 0 || zLibFlushType == Z_FINISH ) {
 		const int zstat = deflate( &zStream, zLibFlushType );
 
-		if( zstat != Z_OK && zstat != Z_STREAM_END )
-		{
+		if( zstat != Z_OK && zstat != Z_STREAM_END ) {
 			idLib::FatalError( "idFile_SaveGamePipelined::CompressBlock: deflate() returned %i", zstat );
 		}
 
-		if( zStream.avail_out == 0 || zLibFlushType == Z_FINISH )
-		{
-
-			if( sgf_checksums.GetBool() )
-			{
-				size_t blockSize = zStream.total_out + numChecksums * sizeof( uint32 ) - compressedProducedBytes;
-				uint32 checksum = MD5_BlockChecksum( zStream.next_out - blockSize, blockSize );
-				zStream.next_out[0] = ( ( checksum >>  0 ) & 0xFF );
-				zStream.next_out[1] = ( ( checksum >>  8 ) & 0xFF );
+		if( zStream.avail_out == 0 || zLibFlushType == Z_FINISH ) {
+			if( sgf_checksums.GetBool() ) {
+				size_t blockSize	= zStream.total_out + numChecksums * sizeof( uint32 ) - compressedProducedBytes;
+				uint32 checksum		= MD5_BlockChecksum( zStream.next_out - blockSize, blockSize );
+				zStream.next_out[0] = ( ( checksum >> 0 ) & 0xFF );
+				zStream.next_out[1] = ( ( checksum >> 8 ) & 0xFF );
 				zStream.next_out[2] = ( ( checksum >> 16 ) & 0xFF );
 				zStream.next_out[3] = ( ( checksum >> 24 ) & 0xFF );
 				numChecksums++;
@@ -656,8 +592,7 @@ void idFile_SaveGamePipelined::CompressBlock()
 			// flush the output buffer IO
 			compressedProducedBytes = zStream.total_out + numChecksums * sizeof( uint32 );
 			FlushCompressedBlock();
-			if( zstat == Z_STREAM_END )
-			{
+			if( zstat == Z_STREAM_END ) {
 				assert( zLibFlushType == Z_FINISH );
 				zStreamEndHit = true;
 				return;
@@ -666,10 +601,9 @@ void idFile_SaveGamePipelined::CompressBlock()
 			assert( 0 == ( compressedProducedBytes & ( COMPRESSED_BLOCK_SIZE - 1 ) ) );
 
 			zStream.avail_out = COMPRESSED_BLOCK_SIZE;
-			zStream.next_out = ( Bytef* )&compressed[ compressedProducedBytes & ( COMPRESSED_BUFFER_SIZE - 1 ) ];
+			zStream.next_out  = ( Bytef* )&compressed[compressedProducedBytes & ( COMPRESSED_BUFFER_SIZE - 1 )];
 
-			if( sgf_checksums.GetBool() )
-			{
+			if( sgf_checksums.GetBool() ) {
 				zStream.avail_out -= sizeof( uint32 );
 			}
 		}
@@ -696,24 +630,20 @@ Modifies:
 void idFile_SaveGamePipelined::FlushUncompressedBlock()
 {
 	// block until the background thread has completed
-	if( compressThread != NULL )
-	{
+	if( compressThread != NULL ) {
 		// make sure thread has completed the last work
 		compressThread->WaitForThread();
 	}
 
 	// prepare the next block to be consumed by Zlib
-	dataZlib = &uncompressed[ uncompressedConsumedBytes & ( UNCOMPRESSED_BUFFER_SIZE - 1 ) ];
-	bytesZlib = uncompressedProducedBytes - uncompressedConsumedBytes;
+	dataZlib				  = &uncompressed[uncompressedConsumedBytes & ( UNCOMPRESSED_BUFFER_SIZE - 1 )];
+	bytesZlib				  = uncompressedProducedBytes - uncompressedConsumedBytes;
 	uncompressedConsumedBytes = uncompressedProducedBytes;
 
-	if( compressThread != NULL )
-	{
+	if( compressThread != NULL ) {
 		// signal thread for more work
 		compressThread->SignalWork();
-	}
-	else
-	{
+	} else {
 		// run syncronously
 		CompressBlock();
 	}
@@ -730,16 +660,13 @@ Modifies:
 */
 int idFile_SaveGamePipelined::Write( const void* buffer, int length )
 {
-	if( buffer == NULL || length <= 0 )
-	{
+	if( buffer == NULL || length <= 0 ) {
 		return 0;
 	}
 
-#if 1	// quick and dirty fix for user-initiated forced shutdown during a savegame
-	if( cancelToTerminate )
-	{
-		if( mode != CLOSED )
-		{
+#if 1 // quick and dirty fix for user-initiated forced shutdown during a savegame
+	if( cancelToTerminate ) {
+		if( mode != CLOSED ) {
 			Abort();
 		}
 		return 0;
@@ -747,14 +674,13 @@ int idFile_SaveGamePipelined::Write( const void* buffer, int length )
 #endif
 
 	assert( mode == WRITE );
-	size_t lengthRemaining = length;
-	const byte* buffer_p = ( const byte* )buffer;
-	while( lengthRemaining > 0 )
-	{
-		const size_t ofsInBuffer = uncompressedProducedBytes & ( UNCOMPRESSED_BUFFER_SIZE - 1 );
-		const size_t ofsInBlock = uncompressedProducedBytes & ( UNCOMPRESSED_BLOCK_SIZE - 1 );
+	size_t		lengthRemaining = length;
+	const byte* buffer_p		= ( const byte* )buffer;
+	while( lengthRemaining > 0 ) {
+		const size_t ofsInBuffer	  = uncompressedProducedBytes & ( UNCOMPRESSED_BUFFER_SIZE - 1 );
+		const size_t ofsInBlock		  = uncompressedProducedBytes & ( UNCOMPRESSED_BLOCK_SIZE - 1 );
 		const size_t remainingInBlock = UNCOMPRESSED_BLOCK_SIZE - ofsInBlock;
-		const size_t copyToBlock = ( lengthRemaining < remainingInBlock ) ? lengthRemaining : remainingInBlock;
+		const size_t copyToBlock	  = ( lengthRemaining < remainingInBlock ) ? lengthRemaining : remainingInBlock;
 
 		memcpy( uncompressed + ofsInBuffer, buffer_p, copyToBlock );
 		uncompressedProducedBytes += copyToBlock;
@@ -762,8 +688,7 @@ int idFile_SaveGamePipelined::Write( const void* buffer, int length )
 		buffer_p += copyToBlock;
 		lengthRemaining -= copyToBlock;
 
-		if( copyToBlock == remainingInBlock )
-		{
+		if( copyToBlock == remainingInBlock ) {
 			FlushUncompressedBlock();
 		}
 	}
@@ -787,50 +712,44 @@ bool idFile_SaveGamePipelined::OpenForReading( const char* const filename, bool 
 {
 	assert( mode == CLOSED );
 
-	name = filename;
-	osPath = filename;
-	mode = READ;
-	nativeFile = NULL;
+	name		 = filename;
+	osPath		 = filename;
+	mode		 = READ;
+	nativeFile	 = NULL;
 	numChecksums = 0;
 
-	if( useNativeFile )
-	{
+	if( useNativeFile ) {
 		nativeFile = fileSystem->OpenFileRead( filename );
-		if( nativeFile == NULL )
-		{
+		if( nativeFile == NULL ) {
 			return false;
 		}
 	}
 
 	// init zlib for raw inflate with a 32k dictionary
-	//mem.PushHeap();
+	// mem.PushHeap();
 	int status = inflateInit2( &zStream, sgf_windowBits.GetInteger() );
-	//mem.PopHeap();
-	if( status != Z_OK )
-	{
+	// mem.PopHeap();
+	if( status != Z_OK ) {
 		idLib::FatalError( "idFile_SaveGamePipelined::OpenForReading: inflateInit2() error %i", status );
 	}
 
 	// spawn threads
-	if( sgf_threads.GetInteger() >= 1 )
-	{
-		decompressThread = new( TAG_IDFILE ) idSGFdecompressThread();
+	if( sgf_threads.GetInteger() >= 1 ) {
+		decompressThread	  = new( TAG_IDFILE ) idSGFdecompressThread();
 		decompressThread->sgf = this;
 		// DG: change threadname from "SGF_DecompressThread" to "SGF_Decompress", because Linux
 		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
 		decompressThread->StartWorkerThread( "SGF_Decompress", CORE_2B, THREAD_NORMAL );
 		// DG end
 	}
-	if( nativeFile != NULL && sgf_threads.GetInteger() >= 2 )
-	{
-		readThread = new( TAG_IDFILE ) idSGFreadThread();
+	if( nativeFile != NULL && sgf_threads.GetInteger() >= 2 ) {
+		readThread		= new( TAG_IDFILE ) idSGFreadThread();
 		readThread->sgf = this;
 		readThread->StartWorkerThread( "SGF_ReadThread", CORE_2A, THREAD_NORMAL );
 	}
 
 	return true;
 }
-
 
 /*
 ============================
@@ -841,46 +760,41 @@ bool idFile_SaveGamePipelined::OpenForReading( idFile* file )
 {
 	assert( mode == CLOSED );
 
-	if( file == NULL )
-	{
+	if( file == NULL ) {
 		return false;
 	}
 
-	name = file->GetName();
-	osPath = file->GetFullPath();
-	mode = READ;
-	nativeFile = file;
+	name		 = file->GetName();
+	osPath		 = file->GetFullPath();
+	mode		 = READ;
+	nativeFile	 = file;
 	numChecksums = 0;
 
 	// init zlib for raw inflate with a 32k dictionary
-	//mem.PushHeap();
+	// mem.PushHeap();
 	int status = inflateInit2( &zStream, sgf_windowBits.GetInteger() );
-	//mem.PopHeap();
-	if( status != Z_OK )
-	{
+	// mem.PopHeap();
+	if( status != Z_OK ) {
 		idLib::FatalError( "idFile_SaveGamePipelined::OpenForReading: inflateInit2() error %i", status );
 	}
 
 	// spawn threads
-	if( sgf_threads.GetInteger() >= 1 )
-	{
-		decompressThread = new( TAG_IDFILE ) idSGFdecompressThread();
+	if( sgf_threads.GetInteger() >= 1 ) {
+		decompressThread	  = new( TAG_IDFILE ) idSGFdecompressThread();
 		decompressThread->sgf = this;
 		// DG: change threadname from "SGF_DecompressThread" to "SGF_Decompress", because Linux
 		// has a 15 (+ \0) char limit for threadnames. also, "thread" in a threadname is redundant
 		decompressThread->StartWorkerThread( "SGF_Decompress", CORE_1B, THREAD_NORMAL );
 		// DG end
 	}
-	if( nativeFile != NULL && sgf_threads.GetInteger() >= 2 )
-	{
-		readThread = new( TAG_IDFILE ) idSGFreadThread();
+	if( nativeFile != NULL && sgf_threads.GetInteger() >= 2 ) {
+		readThread		= new( TAG_IDFILE ) idSGFreadThread();
 		readThread->sgf = this;
 		readThread->StartWorkerThread( "SGF_ReadThread", CORE_1A, THREAD_NORMAL );
 	}
 
 	return true;
 }
-
 
 /*
 ============================
@@ -901,17 +815,15 @@ bool idFile_SaveGamePipelined::NextReadBlock( blockForIO_t* block, size_t lastRe
 	assert( ( lastReadBytes & ( COMPRESSED_BLOCK_SIZE - 1 ) ) == 0 || block == NULL );
 	compressedProducedBytes += lastReadBytes;
 
-	blockAvailable.Raise();		// a new block is available for the pipeline to consume
+	blockAvailable.Raise(); // a new block is available for the pipeline to consume
 
-	if( nativeFileEndHit )
-	{
+	if( nativeFileEndHit ) {
 		return false;
 	}
 
-	blockRequested.Wait();		// wait for the last block to be consumed by the pipeline
+	blockRequested.Wait(); // wait for the last block to be consumed by the pipeline
 
-	if( finished || block == NULL )
-	{
+	if( finished || block == NULL ) {
 		nativeFileEndHit = true;
 		blockAvailable.Raise();
 		blockFinished.Raise();
@@ -919,7 +831,7 @@ bool idFile_SaveGamePipelined::NextReadBlock( blockForIO_t* block, size_t lastRe
 	}
 
 	assert( 0 == ( compressedProducedBytes & ( COMPRESSED_BLOCK_SIZE - 1 ) ) );
-	block->data = & compressed[compressedProducedBytes & ( COMPRESSED_BUFFER_SIZE - 1 )];
+	block->data	 = &compressed[compressedProducedBytes & ( COMPRESSED_BUFFER_SIZE - 1 )];
 	block->bytes = COMPRESSED_BLOCK_SIZE;
 
 	return true;
@@ -942,17 +854,15 @@ void idFile_SaveGamePipelined::ReadBlock()
 {
 	assert( nativeFile != NULL );
 	// normally run in a separate thread
-	if( nativeFileEndHit )
-	{
+	if( nativeFileEndHit ) {
 		return;
 	}
 	// when we are reading the last block of the file, we may not fill the entire block
 	assert( 0 == ( compressedProducedBytes & ( COMPRESSED_BLOCK_SIZE - 1 ) ) );
-	byte* dest = &compressed[ compressedProducedBytes & ( COMPRESSED_BUFFER_SIZE - 1 ) ];
+	byte*  dest	   = &compressed[compressedProducedBytes & ( COMPRESSED_BUFFER_SIZE - 1 )];
 	size_t ioBytes = nativeFile->Read( dest, COMPRESSED_BLOCK_SIZE );
 	compressedProducedBytes += ioBytes;
-	if( ioBytes != COMPRESSED_BLOCK_SIZE )
-	{
+	if( ioBytes != COMPRESSED_BLOCK_SIZE ) {
 		nativeFileEndHit = true;
 	}
 }
@@ -974,35 +884,26 @@ Modifies:
 void idFile_SaveGamePipelined::PumpCompressedBlock()
 {
 	// block until the background thread is done with the last block
-	if( readThread != NULL )
-	{
+	if( readThread != NULL ) {
 		readThread->WaitForThread();
-	}
-	else if( nativeFile == NULL )
-	{
-		if( !nativeFileEndHit )
-		{
+	} else if( nativeFile == NULL ) {
+		if( !nativeFileEndHit ) {
 			blockAvailable.Wait();
 		}
 	}
 
 	// fetch the next block read in
-	dataIO = &compressed[ compressedConsumedBytes & ( COMPRESSED_BUFFER_SIZE - 1 ) ];
-	bytesIO = compressedProducedBytes - compressedConsumedBytes;
+	dataIO					= &compressed[compressedConsumedBytes & ( COMPRESSED_BUFFER_SIZE - 1 )];
+	bytesIO					= compressedProducedBytes - compressedConsumedBytes;
 	compressedConsumedBytes = compressedProducedBytes;
 
-	if( readThread != NULL )
-	{
+	if( readThread != NULL ) {
 		// signal read thread to read another block
 		readThread->SignalWork();
-	}
-	else if( nativeFile != NULL )
-	{
+	} else if( nativeFile != NULL ) {
 		// run syncronously
 		ReadBlock();
-	}
-	else
-	{
+	} else {
 		// request a new block
 		blockRequested.Raise();
 	}
@@ -1036,50 +937,39 @@ Modifies:
 */
 void idFile_SaveGamePipelined::DecompressBlock()
 {
-	if( zStreamEndHit )
-	{
+	if( zStreamEndHit ) {
 		return;
 	}
 
 	assert( ( uncompressedProducedBytes & ( UNCOMPRESSED_BLOCK_SIZE - 1 ) ) == 0 );
-	zStream.next_out = ( Bytef* )&uncompressed[ uncompressedProducedBytes & ( UNCOMPRESSED_BUFFER_SIZE - 1 ) ];
+	zStream.next_out  = ( Bytef* )&uncompressed[uncompressedProducedBytes & ( UNCOMPRESSED_BUFFER_SIZE - 1 )];
 	zStream.avail_out = UNCOMPRESSED_BLOCK_SIZE;
 
-	while( zStream.avail_out > 0 )
-	{
-		if( zStream.avail_in == 0 )
-		{
-			do
-			{
+	while( zStream.avail_out > 0 ) {
+		if( zStream.avail_in == 0 ) {
+			do {
 				PumpCompressedBlock();
-				if( bytesIO == 0 && nativeFileEndHit )
-				{
+				if( bytesIO == 0 && nativeFileEndHit ) {
 					// don't try to decompress any more if there is no more data
 					zStreamEndHit = true;
 					return;
 				}
-			}
-			while( bytesIO == 0 );
+			} while( bytesIO == 0 );
 
-			zStream.next_in = ( Bytef* ) dataIO;
-			zStream.avail_in = ( uInt ) bytesIO;
+			zStream.next_in	 = ( Bytef* )dataIO;
+			zStream.avail_in = ( uInt )bytesIO;
 
-			dataIO = NULL;
+			dataIO	= NULL;
 			bytesIO = 0;
 
-			if( sgf_checksums.GetBool() )
-			{
-				if( sgf_testCorruption.GetInteger() == numChecksums )
-				{
+			if( sgf_checksums.GetBool() ) {
+				if( sgf_testCorruption.GetInteger() == numChecksums ) {
 					zStream.next_in[0] ^= 0xFF;
 				}
 				zStream.avail_in -= sizeof( uint32 );
 				uint32 checksum = MD5_BlockChecksum( zStream.next_in, zStream.avail_in );
-				if(	!verify( zStream.next_in[zStream.avail_in + 0] == ( ( checksum >>  0 ) & 0xFF ) ) ||
-						!verify( zStream.next_in[zStream.avail_in + 1] == ( ( checksum >>  8 ) & 0xFF ) ) ||
-						!verify( zStream.next_in[zStream.avail_in + 2] == ( ( checksum >> 16 ) & 0xFF ) ) ||
-						!verify( zStream.next_in[zStream.avail_in + 3] == ( ( checksum >> 24 ) & 0xFF ) ) )
-				{
+				if( !verify( zStream.next_in[zStream.avail_in + 0] == ( ( checksum >> 0 ) & 0xFF ) ) || !verify( zStream.next_in[zStream.avail_in + 1] == ( ( checksum >> 8 ) & 0xFF ) ) ||
+					!verify( zStream.next_in[zStream.avail_in + 2] == ( ( checksum >> 16 ) & 0xFF ) ) || !verify( zStream.next_in[zStream.avail_in + 3] == ( ( checksum >> 24 ) & 0xFF ) ) ) {
 					// don't try to decompress any more if the checksum is wrong
 					zStreamEndHit = true;
 					return;
@@ -1092,14 +982,12 @@ void idFile_SaveGamePipelined::DecompressBlock()
 
 		uncompressedProducedBytes = zStream.total_out;
 
-		if( zstat == Z_STREAM_END )
-		{
+		if( zstat == Z_STREAM_END ) {
 			// don't try to decompress any more
 			zStreamEndHit = true;
 			return;
 		}
-		if( zstat != Z_OK )
-		{
+		if( zstat != Z_OK ) {
 			idLib::Warning( "idFile_SaveGamePipelined::DecompressBlock: inflate() returned %i", zstat );
 			zStreamEndHit = true;
 			return;
@@ -1127,24 +1015,20 @@ Modifies:
 */
 void idFile_SaveGamePipelined::PumpUncompressedBlock()
 {
-	if( decompressThread != NULL )
-	{
+	if( decompressThread != NULL ) {
 		// make sure thread has completed the last work
 		decompressThread->WaitForThread();
 	}
 
 	// fetch the next block produced by Zlib
-	dataZlib = &uncompressed[ uncompressedConsumedBytes & ( UNCOMPRESSED_BUFFER_SIZE - 1 ) ];
-	bytesZlib = uncompressedProducedBytes - uncompressedConsumedBytes;
+	dataZlib				  = &uncompressed[uncompressedConsumedBytes & ( UNCOMPRESSED_BUFFER_SIZE - 1 )];
+	bytesZlib				  = uncompressedProducedBytes - uncompressedConsumedBytes;
 	uncompressedConsumedBytes = uncompressedProducedBytes;
 
-	if( decompressThread != NULL )
-	{
+	if( decompressThread != NULL ) {
 		// signal thread for more work
 		decompressThread->SignalWork();
-	}
-	else
-	{
+	} else {
 		// run syncronously
 		DecompressBlock();
 	}
@@ -1161,23 +1045,19 @@ Modifies:
 */
 int idFile_SaveGamePipelined::Read( void* buffer, int length )
 {
-	if( buffer == NULL || length <= 0 )
-	{
+	if( buffer == NULL || length <= 0 ) {
 		return 0;
 	}
 
 	assert( mode == READ );
 
-	size_t ioCount = 0;
+	size_t ioCount		   = 0;
 	size_t lengthRemaining = length;
-	byte* buffer_p = ( byte* )buffer;
-	while( lengthRemaining > 0 )
-	{
-		while( bytesZlib == 0 )
-		{
+	byte*  buffer_p		   = ( byte* )buffer;
+	while( lengthRemaining > 0 ) {
+		while( bytesZlib == 0 ) {
 			PumpUncompressedBlock();
-			if( bytesZlib == 0 && zStreamEndHit )
-			{
+			if( bytesZlib == 0 && zStreamEndHit ) {
 				return ioCount;
 			}
 		}
@@ -1212,28 +1092,27 @@ static void TestProcessFile( const char* const filename )
 {
 	idLib::Printf( "Processing %s:\n", filename );
 	// load some test data
-	void* testData;
-	const int testDataLength = fileSystem->ReadFile( filename, &testData, NULL );
+	void*					  testData;
+	const int				  testDataLength = fileSystem->ReadFile( filename, &testData, NULL );
 
-	const char* const outFileName = "junk/savegameTest.bin";
-	idFile_SaveGamePipelined* saveFile = new( TAG_IDFILE ) idFile_SaveGamePipelined;
+	const char* const		  outFileName = "junk/savegameTest.bin";
+	idFile_SaveGamePipelined* saveFile	  = new( TAG_IDFILE ) idFile_SaveGamePipelined;
 	saveFile->OpenForWriting( outFileName, true );
 
 	const uint64 startWriteMicroseconds = Sys_Microseconds();
 
 	saveFile->Write( testData, testDataLength );
-	delete saveFile;		// final flush
-	const int readDataLength = fileSystem->GetFileLength( outFileName );
+	delete saveFile; // final flush
+	const int	 readDataLength = fileSystem->GetFileLength( outFileName );
 
 	const uint64 endWriteMicroseconds = Sys_Microseconds();
-	const uint64 writeMicroseconds = endWriteMicroseconds - startWriteMicroseconds;
+	const uint64 writeMicroseconds	  = endWriteMicroseconds - startWriteMicroseconds;
 
-	idLib::Printf( "%lld microseconds to compress %i bytes to %i written bytes = %4.1f MB/s\n",
-				   writeMicroseconds, testDataLength, readDataLength, ( float )readDataLength / writeMicroseconds );
+	idLib::Printf( "%lld microseconds to compress %i bytes to %i written bytes = %4.1f MB/s\n", writeMicroseconds, testDataLength, readDataLength, ( float )readDataLength / writeMicroseconds );
 
-	void* readData = ( void* )Mem_Alloc( testDataLength, TAG_SAVEGAMES );
+	void*					  readData = ( void* )Mem_Alloc( testDataLength, TAG_SAVEGAMES );
 
-	const uint64 startReadMicroseconds = Sys_Microseconds();
+	const uint64			  startReadMicroseconds = Sys_Microseconds();
 
 	idFile_SaveGamePipelined* loadFile = new( TAG_IDFILE ) idFile_SaveGamePipelined;
 	loadFile->OpenForReading( outFileName, true );
@@ -1241,25 +1120,20 @@ static void TestProcessFile( const char* const filename )
 	delete loadFile;
 
 	const uint64 endReadMicroseconds = Sys_Microseconds();
-	const uint64 readMicroseconds = endReadMicroseconds - startReadMicroseconds;
+	const uint64 readMicroseconds	 = endReadMicroseconds - startReadMicroseconds;
 
 	idLib::Printf( "%lld microseconds to decompress = %4.1f MB/s\n", readMicroseconds, ( float )testDataLength / readMicroseconds );
 
 	int comparePoint;
-	for( comparePoint = 0; comparePoint < testDataLength; comparePoint++ )
-	{
-		if( ( ( byte* )readData )[comparePoint] != ( ( byte* )testData )[comparePoint] )
-		{
+	for( comparePoint = 0; comparePoint < testDataLength; comparePoint++ ) {
+		if( ( ( byte* )readData )[comparePoint] != ( ( byte* )testData )[comparePoint] ) {
 			break;
 		}
 	}
-	if( comparePoint != testDataLength )
-	{
+	if( comparePoint != testDataLength ) {
 		idLib::Printf( "Compare failed at %i.\n", comparePoint );
 		assert( 0 );
-	}
-	else
-	{
+	} else {
 		idLib::Printf( "Compare succeeded.\n" );
 	}
 	Mem_Free( readData );
@@ -1278,8 +1152,7 @@ CONSOLE_COMMAND( TestSaveGameFile, "Exercises the pipelined savegame code", 0 )
 #else
 	// test every file in base (found a fencepost error >100 files in originally!)
 	idFileList* fileList = fileSystem->ListFiles( "", "" );
-	for( int i = 0; i < fileList->GetNumFiles(); i++ )
-	{
+	for( int i = 0; i < fileList->GetNumFiles(); i++ ) {
 		TestProcessFile( fileList->GetFile( i ) );
 		common->UpdateConsoleDisplay();
 	}
@@ -1298,13 +1171,13 @@ CONSOLE_COMMAND( TestCompressionSpeeds, "Compares zlib and our code", 0 )
 
 	idLib::Printf( "Processing %s:\n", filename );
 	// load some test data
-	void* testData;
-	const int testDataLength = fileSystem->ReadFile( filename, &testData, NULL );
+	void*		   testData;
+	const int	   testDataLength = fileSystem->ReadFile( filename, &testData, NULL );
 
-	const int startWriteMicroseconds = Sys_Microseconds();
+	const int	   startWriteMicroseconds = Sys_Microseconds();
 
-	idCompressor* compressor = idCompressor::AllocLZW();
-//	idFile *f = fileSystem->OpenFileWrite( "junk/lzwTest.bin" );
+	idCompressor*  compressor = idCompressor::AllocLZW();
+	//	idFile *f = fileSystem->OpenFileWrite( "junk/lzwTest.bin" );
 	idFile_Memory* f = new( TAG_IDFILE ) idFile_Memory( "junk/lzwTest.bin" );
 	compressor->Init( f, true, 8 );
 
@@ -1316,10 +1189,7 @@ CONSOLE_COMMAND( TestCompressionSpeeds, "Compares zlib and our code", 0 )
 	delete f;
 
 	const int endWriteMicroseconds = Sys_Microseconds();
-	const int writeMicroseconds = endWriteMicroseconds - startWriteMicroseconds;
+	const int writeMicroseconds	   = endWriteMicroseconds - startWriteMicroseconds;
 
-	idLib::Printf( "%i microseconds to compress %i bytes to %i written bytes = %4.1f MB/s\n",
-				   writeMicroseconds, testDataLength, readDataLength, ( float )readDataLength / writeMicroseconds );
-
+	idLib::Printf( "%i microseconds to compress %i bytes to %i written bytes = %4.1f MB/s\n", writeMicroseconds, testDataLength, readDataLength, ( float )readDataLength / writeMicroseconds );
 }
-

@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -43,7 +44,7 @@ If you have questions concerning this license or the applicable additional terms
 #endif
 
 // DG: Note: On Linux you need at least (e)glibc 2.12 to be able to set the threadname
-//#define DEBUG_THREADS
+// #define DEBUG_THREADS
 
 typedef void* ( *pthread_function_t )( void* );
 
@@ -52,9 +53,9 @@ typedef void* ( *pthread_function_t )( void* );
 Sys_SetThreadName
 
 caedes: This should be seen as a helper-function for Sys_CreateThread() only.
-        (re)setting the name of a running thread seems like a bad idea and
-        currently (fresh d3 bfg source) isn't done anyway.
-        Furthermore SDL doesn't support it
+		(re)setting the name of a running thread seems like a bad idea and
+		currently (fresh d3 bfg source) isn't done anyway.
+		Furthermore SDL doesn't support it
 
 ========================
 */
@@ -62,22 +63,21 @@ caedes: This should be seen as a helper-function for Sys_CreateThread() only.
 static int Sys_SetThreadName( pthread_t handle, const char* name )
 {
 	int ret = 0;
-#ifdef __linux__
+	#ifdef __linux__
 	// NOTE: linux only supports threadnames up to 16chars *including* terminating NULL
 	// http://man7.org/linux/man-pages/man3/pthread_setname_np.3.html
 	// on my machine a longer name (eg "JobListProcessor_0") caused an ENOENT error (instead of ERANGE)
 	assert( strlen( name ) < 16 );
 
 	ret = pthread_setname_np( handle, name );
-	if( ret != 0 )
-	{
+	if( ret != 0 ) {
 		idLib::common->Printf( "Setting threadname \"%s\" failed, reason: %s (%i)\n", name, strerror( errno ), errno );
 	}
-#elif defined(__FreeBSD__)
+	#elif defined( __FreeBSD__ )
 	// according to http://www.freebsd.org/cgi/man.cgi?query=pthread_set_name_np&sektion=3
 	// the interface is void pthread_set_name_np(pthread_t tid, const char *name);
 	pthread_set_name_np( handle, name ); // doesn't return anything
-#endif
+	#endif
 	/* TODO: OSX:
 		// according to http://stackoverflow.com/a/7989973
 		// this needs to be called in the thread to be named!
@@ -92,16 +92,15 @@ static int Sys_SetThreadName( pthread_t handle, const char* name )
 static int Sys_GetThreadName( pthread_t handle, char* namebuf, size_t buflen )
 {
 	int ret = 0;
-#ifdef __linux__
+	#ifdef __linux__
 	ret = pthread_getname_np( handle, namebuf, buflen );
-	if( ret != 0 )
-	{
+	if( ret != 0 ) {
 		idLib::common->Printf( "Getting threadname failed, reason: %s (%i)\n", strerror( errno ), errno );
 	}
-#elif defined(__FreeBSD__)
+	#elif defined( __FreeBSD__ )
 	// seems like there is no pthread_getname_np equivalent on FreeBSD
 	idStr::snPrintf( namebuf, buflen, "Can't read threadname on this platform!" );
-#endif
+	#endif
 	/* TODO: OSX:
 		// int pthread_getname_np(pthread_t, char*, size_t);
 	*/
@@ -110,8 +109,6 @@ static int Sys_GetThreadName( pthread_t handle, char* namebuf, size_t buflen )
 }
 
 #endif // DEBUG_THREADS
-
-
 
 /*
 ========================
@@ -123,29 +120,25 @@ uintptr_t Sys_CreateThread( xthread_t function, void* parms, xthreadPriority pri
 	pthread_attr_t attr;
 	pthread_attr_init( &attr );
 
-	if( pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_JOINABLE ) != 0 )
-	{
+	if( pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_JOINABLE ) != 0 ) {
 		idLib::common->FatalError( "ERROR: pthread_attr_setdetachstate %s failed\n", name );
 		return ( uintptr_t )0;
 	}
 
 	pthread_t handle;
-	if( pthread_create( ( pthread_t* )&handle, &attr, ( pthread_function_t )function, parms ) != 0 )
-	{
+	if( pthread_create( ( pthread_t* )&handle, &attr, ( pthread_function_t )function, parms ) != 0 ) {
 		idLib::common->FatalError( "ERROR: pthread_create %s failed\n", name );
 		return ( uintptr_t )0;
 	}
 
-#if defined(DEBUG_THREADS)
-	if( Sys_SetThreadName( handle, name ) != 0 )
-	{
+#if defined( DEBUG_THREADS )
+	if( Sys_SetThreadName( handle, name ) != 0 ) {
 		idLib::common->Warning( "Warning: pthread_setname_np %s failed\n", name );
 		return ( uintptr_t )0;
 	}
 #endif
 
 	pthread_attr_destroy( &attr );
-
 
 #if 0
 	// RB: realtime policies require root privileges
@@ -220,7 +213,6 @@ uintptr_t Sys_CreateThread( xthread_t function, void* parms, xthreadPriority pri
 	return ( uintptr_t )handle;
 }
 
-
 /*
 ========================
 Sys_GetCurrentThreadID
@@ -245,27 +237,25 @@ Sys_DestroyThread
 */
 void Sys_DestroyThread( uintptr_t threadHandle )
 {
-	if( threadHandle == 0 )
-	{
+	if( threadHandle == 0 ) {
 		return;
 	}
 
-	char	name[128];
+	char name[128];
 	name[0] = '\0';
 
-#if defined(DEBUG_THREADS)
+#if defined( DEBUG_THREADS )
 	Sys_GetThreadName( ( pthread_t )threadHandle, name, sizeof( name ) );
 #endif
 
-#if 0 //!defined(__ANDROID__)
+#if 0 //! defined(__ANDROID__)
 	if( pthread_cancel( ( pthread_t )threadHandle ) != 0 )
 	{
 		idLib::common->FatalError( "ERROR: pthread_cancel %s failed\n", name );
 	}
 #endif
 
-	if( pthread_join( ( pthread_t )threadHandle, NULL ) != 0 )
-	{
+	if( pthread_join( ( pthread_t )threadHandle, NULL ) != 0 ) {
 		idLib::common->FatalError( "ERROR: pthread_join %s failed\n", name );
 	}
 }
@@ -277,12 +267,12 @@ Sys_Yield
 */
 void Sys_Yield()
 {
-// SRS - pthread_yield() is deprecated on linux
-//#if defined(__ANDROID__) || defined(__APPLE__)
+	// SRS - pthread_yield() is deprecated on linux
+	// #if defined(__ANDROID__) || defined(__APPLE__)
 	sched_yield();
-//#else
-//	pthread_yield();
-//#endif
+	// #else
+	//	pthread_yield();
+	// #endif
 }
 
 /*
@@ -309,7 +299,7 @@ void Sys_SignalCreate( signalHandle_t& handle, bool manualReset )
 
 	// the inital state is always "not signaled"
 	handle.signaled = false;
-	handle.waiting = 0;
+	handle.waiting	= 0;
 #if 0
 	pthread_mutexattr_t attr;
 
@@ -323,7 +313,6 @@ void Sys_SignalCreate( signalHandle_t& handle, bool manualReset )
 #endif
 
 	pthread_cond_init( &handle.cond, NULL );
-
 }
 
 /*
@@ -335,7 +324,7 @@ void Sys_SignalDestroy( signalHandle_t& handle )
 {
 	// CloseHandle( handle );
 	handle.signaled = false;
-	handle.waiting = 0;
+	handle.waiting	= 0;
 	pthread_mutex_destroy( &handle.mutex );
 	pthread_cond_destroy( &handle.cond );
 }
@@ -350,23 +339,17 @@ void Sys_SignalRaise( signalHandle_t& handle )
 	// SetEvent( handle );
 	pthread_mutex_lock( &handle.mutex );
 
-	if( handle.manualReset )
-	{
+	if( handle.manualReset ) {
 		// signaled until reset
 		handle.signaled = true;
 		// wake *all* threads waiting on this cond
 		pthread_cond_broadcast( &handle.cond );
-	}
-	else
-	{
+	} else {
 		// automode: signaled until first thread is released
-		if( handle.waiting > 0 )
-		{
+		if( handle.waiting > 0 ) {
 			// there are waiting threads => release one
 			pthread_cond_signal( &handle.cond );
-		}
-		else
-		{
+		} else {
 			// no waiting threads, save signal
 			handle.signaled = true;
 			// while the MSDN documentation is a bit unspecific about what happens
@@ -396,7 +379,6 @@ void Sys_SignalClear( signalHandle_t& handle )
 	pthread_mutex_unlock( &handle.mutex );
 }
 
-
 /*
 ========================
 Sys_SignalWait
@@ -404,42 +386,38 @@ Sys_SignalWait
 */
 bool Sys_SignalWait( signalHandle_t& handle, int timeout )
 {
-	//DWORD result = WaitForSingleObject( handle, timeout == idSysSignal::WAIT_INFINITE ? INFINITE : timeout );
-	//assert( result == WAIT_OBJECT_0 || ( timeout != idSysSignal::WAIT_INFINITE && result == WAIT_TIMEOUT ) );
-	//return ( result == WAIT_OBJECT_0 );
+	// DWORD result = WaitForSingleObject( handle, timeout == idSysSignal::WAIT_INFINITE ? INFINITE : timeout );
+	// assert( result == WAIT_OBJECT_0 || ( timeout != idSysSignal::WAIT_INFINITE && result == WAIT_TIMEOUT ) );
+	// return ( result == WAIT_OBJECT_0 );
 
 	int status;
 	pthread_mutex_lock( &handle.mutex );
 
 	if( handle.signaled ) // there is a signal that hasn't been used yet
 	{
-		if( ! handle.manualReset ) // for auto-mode only one thread may be released - this one.
+		if( !handle.manualReset ) // for auto-mode only one thread may be released - this one.
 		{
 			handle.signaled = false;
 		}
 
 		status = 0; // success!
-	}
-	else // we'll have to wait for a signal
+	} else			// we'll have to wait for a signal
 	{
 		++handle.waiting;
-		if( timeout == idSysSignal::WAIT_INFINITE )
-		{
+		if( timeout == idSysSignal::WAIT_INFINITE ) {
 			status = pthread_cond_wait( &handle.cond, &handle.mutex );
-		}
-		else
-		{
+		} else {
 			timespec ts;
 
 			clock_gettime( CLOCK_REALTIME, &ts );
 
 			// DG: handle timeouts > 1s better
 			ts.tv_nsec += ( timeout % 1000 ) * 1000000; // millisec to nanosec
-			ts.tv_sec  += timeout / 1000;
+			ts.tv_sec += timeout / 1000;
 			if( ts.tv_nsec >= 1000000000 ) // nanoseconds are more than one second
 			{
 				ts.tv_nsec -= 1000000000; // remove one second in nanoseconds
-				ts.tv_sec += 1; // add one second to seconds
+				ts.tv_sec += 1;			  // add one second to seconds
 			}
 			// DG end
 			status = pthread_cond_timedwait( &handle.cond, &handle.mutex, &ts );
@@ -452,7 +430,6 @@ bool Sys_SignalWait( signalHandle_t& handle, int timeout )
 	assert( status == 0 || ( timeout != idSysSignal::WAIT_INFINITE && status == ETIMEDOUT ) );
 
 	return ( status == 0 );
-
 }
 
 /*
@@ -496,10 +473,8 @@ Sys_MutexLock
 */
 bool Sys_MutexLock( mutexHandle_t& handle, bool blocking )
 {
-	if( pthread_mutex_trylock( &handle ) != 0 )
-	{
-		if( !blocking )
-		{
+	if( pthread_mutex_trylock( &handle ) != 0 ) {
+		if( !blocking ) {
 			return false;
 		}
 		pthread_mutex_lock( &handle );
@@ -514,7 +489,7 @@ Sys_MutexUnlock
 */
 void Sys_MutexUnlock( mutexHandle_t& handle )
 {
-	pthread_mutex_unlock( & handle );
+	pthread_mutex_unlock( &handle );
 }
 
 /*
@@ -554,7 +529,7 @@ Sys_InterlockedAdd
 */
 interlockedInt_t Sys_InterlockedAdd( interlockedInt_t& value, interlockedInt_t i )
 {
-	//return InterlockedExchangeAdd( & value, i ) + i;
+	// return InterlockedExchangeAdd( & value, i ) + i;
 	return __sync_add_and_fetch( &value, i );
 }
 
@@ -565,7 +540,7 @@ Sys_InterlockedSub
 */
 interlockedInt_t Sys_InterlockedSub( interlockedInt_t& value, interlockedInt_t i )
 {
-	//return InterlockedExchangeAdd( & value, - i ) - i;
+	// return InterlockedExchangeAdd( & value, - i ) - i;
 	return __sync_sub_and_fetch( &value, i );
 }
 
@@ -576,7 +551,7 @@ Sys_InterlockedExchange
 */
 interlockedInt_t Sys_InterlockedExchange( interlockedInt_t& value, interlockedInt_t exchange )
 {
-	//return InterlockedExchange( & value, exchange );
+	// return InterlockedExchange( & value, exchange );
 
 	// source: http://gcc.gnu.org/onlinedocs/gcc-4.1.1/gcc/Atomic-Builtins.html
 	// These builtins perform an atomic compare and swap. That is, if the current value of *ptr is oldval, then write newval into *ptr.
@@ -590,7 +565,7 @@ Sys_InterlockedCompareExchange
 */
 interlockedInt_t Sys_InterlockedCompareExchange( interlockedInt_t& value, interlockedInt_t comparand, interlockedInt_t exchange )
 {
-	//return InterlockedCompareExchange( & value, exchange, comparand );
+	// return InterlockedCompareExchange( & value, exchange, comparand );
 	return __sync_val_compare_and_swap( &value, comparand, exchange );
 }
 
@@ -609,7 +584,7 @@ Sys_InterlockedExchangePointer
 */
 void* Sys_InterlockedExchangePointer( void*& ptr, void* exchange )
 {
-	//return InterlockedExchangePointer( & ptr, exchange );
+	// return InterlockedExchangePointer( & ptr, exchange );
 	return __sync_val_compare_and_swap( &ptr, ptr, exchange );
 }
 
@@ -620,6 +595,6 @@ Sys_InterlockedCompareExchangePointer
 */
 void* Sys_InterlockedCompareExchangePointer( void*& ptr, void* comparand, void* exchange )
 {
-	//return InterlockedCompareExchangePointer( & ptr, exchange, comparand );
+	// return InterlockedCompareExchangePointer( & ptr, exchange, comparand );
 	return __sync_val_compare_and_swap( &ptr, comparand, exchange );
 }

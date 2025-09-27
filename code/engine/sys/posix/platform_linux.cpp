@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "../../idlib/precompiled.h"
 #include "../posix/posix_public.h"
 #include "../sys_local.h"
-//#include "local.h"
+// #include "local.h"
 
 #include <pthread.h>
 #include <errno.h>
@@ -42,7 +43,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <dirent.h>
 
 static const char** cmdargv = NULL;
-static int cmdargc = 0;
+static int			cmdargc = 0;
 // DG end
 
 // RB begin
@@ -61,18 +62,17 @@ Sys_EXEPath
 */
 const char* Sys_EXEPath()
 {
-	static char	buf[ 1024 ];
+	static char buf[1024];
 	idStr		linkpath;
 	int			len;
 
-	buf[ 0 ] = '\0';
+	buf[0] = '\0';
 	sprintf( linkpath, "/proc/%d/exe", getpid() );
 	len = readlink( linkpath.c_str(), buf, sizeof( buf ) );
-	if( len == -1 )
-	{
+	if( len == -1 ) {
 		Sys_Printf( "couldn't stat exe path link %s\n", linkpath.c_str() );
 		// RB: fixed array subscript is below array bounds
-		buf[ 0 ] = '\0';
+		buf[0] = '\0';
 		// RB end
 	}
 	return buf;
@@ -105,15 +105,14 @@ Sys_ClockTicksPerSecond
 */
 double Sys_ClockTicksPerSecond()
 {
-	static bool		init = false;
-	static double	ret;
+	static bool	  init = false;
+	static double ret;
 
-	if( init )
-	{
+	if( init ) {
 		return ret;
 	}
 
-	ret = MeasureClockTicks();
+	ret	 = MeasureClockTicks();
 	init = true;
 	common->Printf( "measured CPU frequency: %g MHz\n", ret / 1000000.0 );
 	return ret;
@@ -131,83 +130,69 @@ numCPUPackages		- the total number of packages (physical processors)
 // RB begin
 void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCPUPackages )
 {
-	static bool		init = false;
-	static bool		CPUCoresIsFound = false; // needed for sysconf()
-	static bool		SiblingsIsFound = false; // needed for sysconf()
-	static double	ret;
+	static bool	  init			  = false;
+	static bool	  CPUCoresIsFound = false; // needed for sysconf()
+	static bool	  SiblingsIsFound = false; // needed for sysconf()
+	static double ret;
 
-	static int		s_numLogicalCPUCores;
-	static int		s_numPhysicalCPUCores;
-	static int		s_numCPUPackages;
+	static int	  s_numLogicalCPUCores;
+	static int	  s_numPhysicalCPUCores;
+	static int	  s_numCPUPackages;
 
-	int		fd, len, pos, end;
-	char	buf[ 4096 ];
-	char	number[100];
+	int			  fd, len, pos, end;
+	char		  buf[4096];
+	char		  number[100];
 
-	if( init )
-	{
+	if( init ) {
 		numPhysicalCPUCores = s_numPhysicalCPUCores;
-		numLogicalCPUCores = s_numLogicalCPUCores;
-		numCPUPackages = s_numCPUPackages;
+		numLogicalCPUCores	= s_numLogicalCPUCores;
+		numCPUPackages		= s_numCPUPackages;
 	}
 
 	s_numPhysicalCPUCores = 1;
-	s_numLogicalCPUCores = 1;
-	s_numCPUPackages = 1;
+	s_numLogicalCPUCores  = 1;
+	s_numCPUPackages	  = 1;
 
 	fd = open( "/proc/cpuinfo", O_RDONLY );
-	if( fd != -1 )
-	{
+	if( fd != -1 ) {
 		len = read( fd, buf, 4096 );
 		close( fd );
 		pos = 0;
-		while( pos < len )
-		{
-			if( !idStr::Cmpn( buf + pos, "cpu cores", 9 ) )
-			{
+		while( pos < len ) {
+			if( !idStr::Cmpn( buf + pos, "cpu cores", 9 ) ) {
 				pos = strchr( buf + pos, ':' ) - buf + 2;
 				end = strchr( buf + pos, '\n' ) - buf;
-				if( pos < len && end < len )
-				{
+				if( pos < len && end < len ) {
 					idStr::Copynz( number, buf + pos, sizeof( number ) );
 					assert( ( end - pos ) > 0 && ( end - pos ) < sizeof( number ) );
-					number[ end - pos ] = '\0';
+					number[end - pos] = '\0';
 
 					int processor = atoi( number );
 
-					if( ( processor ) > s_numPhysicalCPUCores )
-					{
+					if( ( processor ) > s_numPhysicalCPUCores ) {
 						s_numPhysicalCPUCores = processor;
-						CPUCoresIsFound = true;
+						CPUCoresIsFound		  = true;
 					}
-				}
-				else
-				{
+				} else {
 					common->Printf( "failed parsing /proc/cpuinfo\n" );
 					CPUCoresIsFound = false;
 					break;
 				}
-			}
-			else if( !idStr::Cmpn( buf + pos, "siblings", 8 ) )
-			{
+			} else if( !idStr::Cmpn( buf + pos, "siblings", 8 ) ) {
 				pos = strchr( buf + pos, ':' ) - buf + 2;
 				end = strchr( buf + pos, '\n' ) - buf;
-				if( pos < len && end < len )
-				{
+				if( pos < len && end < len ) {
 					idStr::Copynz( number, buf + pos, sizeof( number ) );
 					assert( ( end - pos ) > 0 && ( end - pos ) < sizeof( number ) );
-					number[ end - pos ] = '\0';
+					number[end - pos] = '\0';
 
 					int coreId = atoi( number );
 
-					if( ( coreId ) > s_numLogicalCPUCores )
-					{
+					if( ( coreId ) > s_numLogicalCPUCores ) {
 						s_numLogicalCPUCores = coreId;
-						SiblingsIsFound = true;
+						SiblingsIsFound		 = true;
 					}
-				}
-				else
-				{
+				} else {
 					common->Printf( "failed parsing /proc/cpuinfo\n" );
 					SiblingsIsFound = false;
 					break;
@@ -216,32 +201,27 @@ void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCP
 
 			pos = strchr( buf + pos, '\n' ) - buf + 1;
 		}
-		if( CPUCoresIsFound == false && SiblingsIsFound == false )
-		{
+		if( CPUCoresIsFound == false && SiblingsIsFound == false ) {
 			common->Printf( "failed parsing /proc/cpuinfo\n" );
 			common->Printf( "alternative method used\n" );
 			s_numPhysicalCPUCores = sysconf( _SC_NPROCESSORS_CONF ); // _SC_NPROCESSORS_ONLN may not be reliable on Android
+			s_numLogicalCPUCores  = s_numPhysicalCPUCores;			 // hack for CPU without Hyper-Threading (HT) technology
+		} else if( CPUCoresIsFound == true && SiblingsIsFound == false ) {
 			s_numLogicalCPUCores = s_numPhysicalCPUCores; // hack for CPU without Hyper-Threading (HT) technology
 		}
-		else if( CPUCoresIsFound == true && SiblingsIsFound == false )
-		{
-			s_numLogicalCPUCores = s_numPhysicalCPUCores; // hack for CPU without Hyper-Threading (HT) technology
-		}
-	}
-	else
-	{
+	} else {
 		common->Printf( "failed to read /proc/cpuinfo\n" );
 		common->Printf( "alternative method used\n" );
 		s_numPhysicalCPUCores = sysconf( _SC_NPROCESSORS_CONF ); // _SC_NPROCESSORS_ONLN may not be reliable on Android
-		s_numLogicalCPUCores = s_numPhysicalCPUCores; // hack for CPU without Hyper-Threading (HT) technology
+		s_numLogicalCPUCores  = s_numPhysicalCPUCores;			 // hack for CPU without Hyper-Threading (HT) technology
 	}
 
 	common->Printf( "/proc/cpuinfo CPU processors: %d\n", s_numPhysicalCPUCores );
 	common->Printf( "/proc/cpuinfo CPU logical cores: %d\n", s_numLogicalCPUCores );
 
 	numPhysicalCPUCores = s_numPhysicalCPUCores;
-	numLogicalCPUCores = s_numLogicalCPUCores;
-	numCPUPackages = s_numCPUPackages;
+	numLogicalCPUCores	= s_numLogicalCPUCores;
+	numCPUPackages		= s_numCPUPackages;
 }
 // RB end
 
@@ -257,42 +237,30 @@ if the command contains spaces, system() is used. Otherwise the more straightfor
 void Sys_DoStartProcess( const char* exeName, bool dofork )
 {
 	bool use_system = false;
-	if( strchr( exeName, ' ' ) )
-	{
+	if( strchr( exeName, ' ' ) ) {
 		use_system = true;
-	}
-	else
-	{
+	} else {
 		// set exec rights when it's about a single file to execute
 		struct stat buf;
-		if( stat( exeName, &buf ) == -1 )
-		{
+		if( stat( exeName, &buf ) == -1 ) {
 			printf( "stat %s failed: %s\n", exeName, strerror( errno ) );
-		}
-		else
-		{
-			if( chmod( exeName, buf.st_mode | S_IXUSR ) == -1 )
-			{
+		} else {
+			if( chmod( exeName, buf.st_mode | S_IXUSR ) == -1 ) {
 				printf( "cmod +x %s failed: %s\n", exeName, strerror( errno ) );
 			}
 		}
 	}
-	if( dofork )
-	{
-		switch( fork() )
-		{
+	if( dofork ) {
+		switch( fork() ) {
 			case -1:
 				// main thread
 				break;
 			case 0:
-				if( use_system )
-				{
+				if( use_system ) {
 					printf( "system %s\n", exeName );
 					system( exeName );
 					_exit( 0 );
-				}
-				else
-				{
+				} else {
 					printf( "execl %s\n", exeName );
 					execl( exeName, exeName, NULL );
 					printf( "execl failed: %s\n", strerror( errno ) );
@@ -300,17 +268,12 @@ void Sys_DoStartProcess( const char* exeName, bool dofork )
 				}
 				break;
 		}
-	}
-	else
-	{
-		if( use_system )
-		{
+	} else {
+		if( use_system ) {
 			printf( "system %s\n", exeName );
 			system( exeName );
-			sleep( 1 );	// on some systems I've seen that starting the new process and exiting this one should not be too close
-		}
-		else
-		{
+			sleep( 1 ); // on some systems I've seen that starting the new process and exiting this one should not be too close
+		} else {
 			printf( "execl %s\n", exeName );
 			execl( exeName, exeName, NULL );
 			printf( "execl failed: %s\n", strerror( errno ) );
@@ -325,7 +288,9 @@ void Sys_DoStartProcess( const char* exeName, bool dofork )
  Sys_DoPreferences
  ==================
  */
-void Sys_DoPreferences() { }
+void Sys_DoPreferences()
+{
+}
 
 #if 0
 /*
@@ -385,24 +350,22 @@ mem consistency stuff
 
 #ifdef ID_MCHECK
 
-const char* mcheckstrings[] =
-{
+const char* mcheckstrings[] = {
 	"MCHECK_DISABLED",
 	"MCHECK_OK",
-	"MCHECK_FREE",	// block freed twice
-	"MCHECK_HEAD",	// memory before the block was clobbered
-	"MCHECK_TAIL"	// memory after the block was clobbered
+	"MCHECK_FREE", // block freed twice
+	"MCHECK_HEAD", // memory before the block was clobbered
+	"MCHECK_TAIL"  // memory after the block was clobbered
 };
 
 void abrt_func( mcheck_status status )
 {
-	Sys_Printf( "memory consistency failure: %s\n", mcheckstrings[ status + 1 ] );
+	Sys_Printf( "memory consistency failure: %s\n", mcheckstrings[status + 1] );
 	Posix_SetExit( EXIT_FAILURE );
 	common->Quit();
 }
 
 #endif
-
 
 /*
 ========================
@@ -428,56 +391,47 @@ void Sys_ReLaunch()
 	//       " +set com_skipIntroVideos 1" to the other commandline arguments in this function.
 
 	int ret = fork();
-	if( ret < 0 )
-	{
+	if( ret < 0 ) {
 		idLib::Error( "Sys_ReLaunch(): Couldn't fork(), reason: %s ", strerror( errno ) );
 	}
 
-	if( ret == 0 )
-	{
+	if( ret == 0 ) {
 		// child process
 
 		// get our own session so we don't depend on the (soon to be killed)
 		// parent process anymore - else we'll freeze
 		pid_t sId = setsid();
-		if( sId == ( pid_t ) - 1 )
-		{
+		if( sId == ( pid_t )-1 ) {
 			idLib::Error( "Sys_ReLaunch(): setsid() failed! Reason: %s ", strerror( errno ) );
 		}
 
 		// close all FDs (except for stdin/out/err) so we don't leak FDs
 		DIR* devfd = opendir( "/dev/fd" );
-		if( devfd != NULL )
-		{
-			//struct dirent entry;
+		if( devfd != NULL ) {
+			// struct dirent entry;
 			struct dirent* result;
-			//while( readdir_r( devfd, &entry, &result ) == 0 )
-			// SRS - readdir_r() is deprecated on linux, readdir() is thread safe with different dir streams
-			while( ( result = readdir( devfd ) ) != NULL )
-			{
+			// while( readdir_r( devfd, &entry, &result ) == 0 )
+			//  SRS - readdir_r() is deprecated on linux, readdir() is thread safe with different dir streams
+			while( ( result = readdir( devfd ) ) != NULL ) {
 				const char* filename = result->d_name;
-				char* endptr = NULL;
-				long int fd = strtol( filename, &endptr, 0 );
-				if( endptr != filename && fd > STDERR_FILENO )
-				{
+				char*		endptr	 = NULL;
+				long int	fd		 = strtol( filename, &endptr, 0 );
+				if( endptr != filename && fd > STDERR_FILENO ) {
 					close( fd );
 				}
 			}
-		}
-		else
-		{
+		} else {
 			idLib::Warning( "Sys_ReLaunch(): Couldn't open /dev/fd/ - will leak file descriptors. Reason: %s", strerror( errno ) );
 		}
 
 		// + 3 because "+set" "com_skipIntroVideos" "1" - and note that while we'll skip
 		// one (the first) cmdargv argument, we need one more pointer for NULL at the end.
-		int argc = cmdargc + 3;
+		int			 argc = cmdargc + 3;
 		const char** argv = ( const char** )calloc( argc, sizeof( char* ) );
 
-		int i;
-		for( i = 0; i < cmdargc - 1; ++i )
-		{
-			argv[i] = cmdargv[i + 1];    // ignore cmdargv[0] == executable name
+		int			 i;
+		for( i = 0; i < cmdargc - 1; ++i ) {
+			argv[i] = cmdargv[i + 1]; // ignore cmdargv[0] == executable name
 		}
 
 		// add +set com_skipIntroVideos 1
@@ -494,9 +448,7 @@ void Sys_ReLaunch()
 		// we only get here if execv() fails, else the executable is restarted
 		idLib::Error( "Sys_ReLaunch(): WTF exec() failed! Reason: %s ", strerror( errno ) );
 
-	}
-	else
-	{
+	} else {
 		// original process
 		// just do a clean shutdown
 		cmdSystem->AppendCommandText( "quit\n" );
@@ -522,34 +474,23 @@ int main( int argc, const char** argv )
 #endif
 
 	// Setting memory allocators
-	OPTICK_SET_MEMORY_ALLOCATOR(
-		[]( size_t size ) -> void* { return operator new( size ); },
-		[]( void* p )
-	{
-		operator delete( p );
-	},
-	[]()
-	{
-		/* Do some TLS initialization here if needed */
-	}
-	);
+	OPTICK_SET_MEMORY_ALLOCATOR( []( size_t size ) -> void* { return operator new( size ); },
+		[]( void* p ) { operator delete( p ); },
+		[]() {
+			/* Do some TLS initialization here if needed */
+		} );
 
 	Posix_EarlyInit();
 
-	if( argc > 1 )
-	{
+	if( argc > 1 ) {
 		common->Init( argc - 1, &argv[1], NULL );
-	}
-	else
-	{
+	} else {
 		common->Init( 0, NULL, NULL );
 	}
 
 	Posix_LateInit();
 
-
-	while( 1 )
-	{
+	while( 1 ) {
 		OPTICK_FRAME( "MainThread" );
 
 		common->Frame();

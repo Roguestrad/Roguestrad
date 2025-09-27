@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,7 +39,7 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-static const int DELAY_DORMANT_TIME = 3000;
+static const int		DELAY_DORMANT_TIME = 3000;
 
 extern const idEventDef EV_PostSpawn;
 extern const idEventDef EV_FindTargets;
@@ -61,53 +62,49 @@ extern const idEventDef EV_StopSound;
 extern const idEventDef EV_CacheSoundShader;
 
 // Think flags
-enum
-{
-	TH_ALL					= -1,
-	TH_THINK				= 1,		// run think function each frame
-	TH_PHYSICS				= 2,		// run physics each frame
-	TH_ANIMATE				= 4,		// update animation each frame
-	TH_UPDATEVISUALS		= 8,		// update renderEntity
-	TH_UPDATEPARTICLES		= 16
+enum {
+	TH_ALL			   = -1,
+	TH_THINK		   = 1, // run think function each frame
+	TH_PHYSICS		   = 2, // run physics each frame
+	TH_ANIMATE		   = 4, // update animation each frame
+	TH_UPDATEVISUALS   = 8, // update renderEntity
+	TH_UPDATEPARTICLES = 16
 };
 
 //
 // Signals
 // make sure to change script/doom_defs.script if you add any, or change their order
 //
-typedef enum
-{
-	SIG_TOUCH,				// object was touched
-	SIG_USE,				// object was used
-	SIG_TRIGGER,			// object was activated
-	SIG_REMOVED,			// object was removed from the game
-	SIG_DAMAGE,				// object was damaged
-	SIG_BLOCKED,			// object was blocked
+typedef enum {
+	SIG_TOUCH,	 // object was touched
+	SIG_USE,	 // object was used
+	SIG_TRIGGER, // object was activated
+	SIG_REMOVED, // object was removed from the game
+	SIG_DAMAGE,	 // object was damaged
+	SIG_BLOCKED, // object was blocked
 
-	SIG_MOVER_POS1,			// mover at position 1 (door closed)
-	SIG_MOVER_POS2,			// mover at position 2 (door open)
-	SIG_MOVER_1TO2,			// mover changing from position 1 to 2
-	SIG_MOVER_2TO1,			// mover changing from position 2 to 1
+	SIG_MOVER_POS1, // mover at position 1 (door closed)
+	SIG_MOVER_POS2, // mover at position 2 (door open)
+	SIG_MOVER_1TO2, // mover changing from position 1 to 2
+	SIG_MOVER_2TO1, // mover changing from position 2 to 1
 
 	NUM_SIGNALS
 } signalNum_t;
 
 // FIXME: At some point we may want to just limit it to one thread per signal, but
 // for now, I'm allowing multiple threads.  We should reevaluate this later in the project
-#define MAX_SIGNAL_THREADS 16		// probably overkill, but idList uses a granularity of 16
+#define MAX_SIGNAL_THREADS 16 // probably overkill, but idList uses a granularity of 16
 
-struct signal_t
-{
-	int					threadnum;
-	const function_t*	function;
+struct signal_t {
+	int				  threadnum;
+	const function_t* function;
 };
 
 class signalList_t
 {
 public:
-	idList<signal_t, TAG_ENTITY> signal[ NUM_SIGNALS ];
+	idList<signal_t, TAG_ENTITY> signal[NUM_SIGNALS];
 };
-
 
 /*
 ================================================
@@ -126,118 +123,112 @@ the client would never handle it. By incrementing a wrapped counter, we are guar
 the state change no matter what happens at the net layer).
 ================================================
 */
-template < int max >
-struct idNetEvent
-{
-	idNetEvent() : count( 0 ), lastCount( 0 ) { }
-	void	Set()
+template<int max>
+struct idNetEvent {
+	idNetEvent() :
+		count( 0 ),
+		lastCount( 0 )
 	{
-		count = ( ( count + 1 ) % max );
 	}
-	bool	Get()
+	void Set() { count = ( ( count + 1 ) % max ); }
+	bool Get()
 	{
-		if( count != lastCount )
-		{
+		if( count != lastCount ) {
 			lastCount = count;
 			return true;
 		}
 		return false;
 	}
-	void	Serialize( idSerializer& ser )
+	void Serialize( idSerializer& ser )
 	{
-		if( count >= max )
-		{
-			idLib::Warning( "idNetEvent. count %d > max %d", count, max );
-		}
+		if( count >= max ) { idLib::Warning( "idNetEvent. count %d > max %d", count, max ); }
 		ser.SerializeUMax( count, max );
 	}
 
 public:
-	static const int	Maximum = max;
-	int		count;
-	int		lastCount;
+	static const int Maximum = max;
+	int				 count;
+	int				 lastCount;
 };
 
-typedef idNetEvent< 7 > netBoolEvent_t;
+typedef idNetEvent<7> netBoolEvent_t;
 
-inline void	WriteToBitMsg( const netBoolEvent_t& netEvent, idBitMsg& msg )
+inline void			  WriteToBitMsg( const netBoolEvent_t& netEvent, idBitMsg& msg )
 {
 	msg.WriteBits( netEvent.count, idMath::BitsForInteger( netBoolEvent_t::Maximum ) );
 
 	assert( netEvent.count <= netBoolEvent_t::Maximum );
 }
 
-inline void	ReadFromBitMsg( netBoolEvent_t& netEvent, const idBitMsg& msg )
+inline void ReadFromBitMsg( netBoolEvent_t& netEvent, const idBitMsg& msg )
 {
 	netEvent.count = msg.ReadBits( idMath::BitsForInteger( netBoolEvent_t::Maximum ) );
 
 	assert( netEvent.count <= netBoolEvent_t::Maximum );
 }
 
-
 class idEntity : public idClass
 {
 public:
-	static const int		MAX_PVS_AREAS = 4;
-	static const uint32		INVALID_PREDICTION_KEY = 0xFFFFFFFF;
+	static const int						  MAX_PVS_AREAS			 = 4;
+	static const uint32						  INVALID_PREDICTION_KEY = 0xFFFFFFFF;
 
-	int						entityNumber;			// index into the entity list
-	int						entityDefNumber;		// index into the entity def list
+	int										  entityNumber;	   // index into the entity list
+	int										  entityDefNumber; // index into the entity def list
 
-	idLinkList<idEntity>	spawnNode;				// for being linked into spawnedEntities list
-	idLinkList<idEntity>	activeNode;				// for being linked into activeEntities list
-	idLinkList<idEntity>	aimAssistNode;			// linked into gameLocal.aimAssistEntities
+	idLinkList<idEntity>					  spawnNode;	 // for being linked into spawnedEntities list
+	idLinkList<idEntity>					  activeNode;	 // for being linked into activeEntities list
+	idLinkList<idEntity>					  aimAssistNode; // linked into gameLocal.aimAssistEntities
 
-	idLinkList<idEntity>	snapshotNode;			// for being linked into snapshotEntities list
-	int						snapshotChanged;		// used to detect snapshot state changes
-	int						snapshotBits;			// number of bits this entity occupied in the last snapshot
-	bool					snapshotStale;			// Set to true if this entity is considered stale in the snapshot
+	idLinkList<idEntity>					  snapshotNode;	   // for being linked into snapshotEntities list
+	int										  snapshotChanged; // used to detect snapshot state changes
+	int										  snapshotBits;	   // number of bits this entity occupied in the last snapshot
+	bool									  snapshotStale;   // Set to true if this entity is considered stale in the snapshot
 
-	idStr					name;					// name of entity
-	idDict					spawnArgs;				// key/value pairs used to spawn and initialize entity
-	idScriptObject			scriptObject;			// contains all script defined data for this entity
+	idStr									  name;			// name of entity
+	idDict									  spawnArgs;	// key/value pairs used to spawn and initialize entity
+	idScriptObject							  scriptObject; // contains all script defined data for this entity
 
-	int						thinkFlags;				// TH_? flags
-	int						dormantStart;			// time that the entity was first closed off from player
-	bool					cinematic;				// during cinematics, entity will only think if cinematic is set
+	int										  thinkFlags;	// TH_? flags
+	int										  dormantStart; // time that the entity was first closed off from player
+	bool									  cinematic;	// during cinematics, entity will only think if cinematic is set
 
-	renderView_t* 			renderView;				// for camera views from this entity
-	idEntity* 				cameraTarget;			// any remoteRenderMap shaders will use this
+	renderView_t*							  renderView;	// for camera views from this entity
+	idEntity*								  cameraTarget; // any remoteRenderMap shaders will use this
 
-	idList< idEntityPtr<idEntity>, TAG_ENTITY >	targets;		// when this entity is activated these entities entity are activated
+	idList<idEntityPtr<idEntity>, TAG_ENTITY> targets; // when this entity is activated these entities entity are activated
 
-	int						health;					// FIXME: do all objects really need health?
+	int										  health; // FIXME: do all objects really need health?
 
-	struct entityFlags_s
-	{
-		bool				notarget			: 1;	// if true never attack or target this entity
-		bool				noknockback			: 1;	// if true no knockback from hits
-		bool				takedamage			: 1;	// if true this entity can be damaged
-		bool				hidden				: 1;	// if true this entity is not visible
-		bool				bindOrientated		: 1;	// if true both the master orientation is used for binding
-		bool				solidForTeam		: 1;	// if true this entity is considered solid when a physics team mate pushes entities
-		bool				forcePhysicsUpdate	: 1;	// if true always update from the physics whether the object moved or not
-		bool				selected			: 1;	// if true the entity is selected for editing
-		bool				neverDormant		: 1;	// if true the entity never goes dormant
-		bool				isDormant			: 1;	// if true the entity is dormant
-		bool				hasAwakened			: 1;	// before a monster has been awakened the first time, use full PVS for dormant instead of area-connected
-		bool				networkSync			: 1; // if true the entity is synchronized over the network
-		bool				grabbed				: 1;	// if true object is currently being grabbed
-		bool				skipReplication		: 1; // don't replicate this entity over the network.
+	struct entityFlags_s {
+		bool notarget			: 1; // if true never attack or target this entity
+		bool noknockback		: 1; // if true no knockback from hits
+		bool takedamage			: 1; // if true this entity can be damaged
+		bool hidden				: 1; // if true this entity is not visible
+		bool bindOrientated		: 1; // if true both the master orientation is used for binding
+		bool solidForTeam		: 1; // if true this entity is considered solid when a physics team mate pushes entities
+		bool forcePhysicsUpdate : 1; // if true always update from the physics whether the object moved or not
+		bool selected			: 1; // if true the entity is selected for editing
+		bool neverDormant		: 1; // if true the entity never goes dormant
+		bool isDormant			: 1; // if true the entity is dormant
+		bool hasAwakened		: 1; // before a monster has been awakened the first time, use full PVS for dormant instead of area-connected
+		bool networkSync		: 1; // if true the entity is synchronized over the network
+		bool grabbed			: 1; // if true object is currently being grabbed
+		bool skipReplication	: 1; // don't replicate this entity over the network.
 	} fl;
 
-	int						timeGroup;
+	int				  timeGroup;
 
-	bool					noGrab;
+	bool			  noGrab;
 
-	renderEntity_t			xrayEntity;
-	qhandle_t				xrayEntityHandle;
-	const idDeclSkin* 		xraySkin;
+	renderEntity_t	  xrayEntity;
+	qhandle_t		  xrayEntityHandle;
+	const idDeclSkin* xraySkin;
 
-	void					DetermineTimeGroup( bool slowmo );
+	void			  DetermineTimeGroup( bool slowmo );
 
-	void					SetGrabbedState( bool grabbed );
-	bool					IsGrabbed();
+	void			  SetGrabbedState( bool grabbed );
+	bool			  IsGrabbed();
 
 public:
 	ABSTRACT_PROTOTYPE( idEntity );
@@ -250,37 +241,34 @@ public:
 	void					Save( idSaveGame* savefile ) const;
 	void					Restore( idRestoreGame* savefile );
 
-	const char* 			GetEntityDefName() const;
+	const char*				GetEntityDefName() const;
 	void					SetName( const char* name );
-	const char* 			GetName() const;
+	const char*				GetName() const;
 	virtual void			UpdateChangeableSpawnArgs( const idDict* source );
-	int						GetEntityNumber() const
-	{
-		return entityNumber;
-	}
+	int						GetEntityNumber() const { return entityNumber; }
 
 	// clients generate views based on all the player specific options,
 	// cameras have custom code, and everything else just uses the axis orientation
-	virtual renderView_t* 	GetRenderView();
+	virtual renderView_t*	GetRenderView();
 
 	// thinking
 	virtual void			Think();
-	bool					CheckDormant();	// dormant == on the active list, but out of PVS
-	virtual	void			DormantBegin();	// called when entity becomes dormant
-	virtual	void			DormantEnd();		// called when entity wakes from being dormant
+	bool					CheckDormant(); // dormant == on the active list, but out of PVS
+	virtual void			DormantBegin(); // called when entity becomes dormant
+	virtual void			DormantEnd();	// called when entity wakes from being dormant
 	bool					IsActive() const;
 	void					BecomeActive( int flags );
 	void					BecomeInactive( int flags );
 	void					UpdatePVSAreas( const idVec3& pos );
 	void					BecomeReplicated();
 
-// jmarshall
+	// jmarshall
 	float					GetFloat( const char* key );
 	const char*				GetKey( const char* key );
 	int						GetInt( const char* key );
 	bool					GetBool( const char* key );
 	virtual void			InflictedDamageEvent( idEntity* target ) { }
-// jmarshall end
+	// jmarshall end
 
 	// visuals
 	virtual void			Present();
@@ -288,7 +276,7 @@ public:
 	virtual int				GetModelDefHandle();
 	virtual void			SetModel( const char* modelname );
 	void					SetSkin( const idDeclSkin* skin );
-	const idDeclSkin* 		GetSkin() const;
+	const idDeclSkin*		GetSkin() const;
 	void					SetShaderParm( int parmnum, float value );
 	virtual void			SetColor( float red, float green, float blue );
 	virtual void			SetColor( const idVec3& color );
@@ -305,28 +293,28 @@ public:
 	void					UpdateModelTransform();
 	virtual void			ProjectOverlay( const idVec3& origin, const idVec3& dir, float size, const char* material );
 	int						GetNumPVSAreas();
-	const int* 				GetPVSAreas();
+	const int*				GetPVSAreas();
 	void					ClearPVSAreas();
 	bool					PhysicsTeamInPVS( pvsHandle_t pvsHandle );
 
 	// jmarshall
-	virtual void			CallNativeEvent( idStr& name ) { };
+	virtual void			CallNativeEvent( idStr& name ) {};
 
 	// animation
 	virtual bool			UpdateAnimationControllers();
 	bool					UpdateRenderEntity( renderEntity_t* renderEntity, const renderView_t* renderView );
 	static bool				ModelCallback( renderEntity_t* renderEntity, const renderView_t* renderView );
-	virtual idAnimator* 	GetAnimator();	// returns animator object used by this entity
+	virtual idAnimator*		GetAnimator(); // returns animator object used by this entity
 
 	// sound
 	virtual bool			CanPlayChatterSounds() const;
 	bool					StartSound( const char* soundName, const s_channelType channel, int soundShaderFlags, bool broadcast, int* length );
 	bool					StartSoundShader( const idSoundShader* shader, const s_channelType channel, int soundShaderFlags, bool broadcast, int* length );
-	void					StopSound( const s_channelType channel, bool broadcast );	// pass SND_CHANNEL_ANY to stop all sounds
+	void					StopSound( const s_channelType channel, bool broadcast ); // pass SND_CHANNEL_ANY to stop all sounds
 	void					SetSoundVolume( float volume );
 	void					UpdateSound();
 	int						GetListenerId() const;
-	idSoundEmitter* 		GetSoundEmitter() const;
+	idSoundEmitter*			GetSoundEmitter() const;
 	void					FreeSoundEmitter( bool immediate );
 
 	// entity binding
@@ -342,11 +330,11 @@ public:
 	void					Unbind();
 	bool					IsBound() const;
 	bool					IsBoundTo( idEntity* master ) const;
-	idEntity* 				GetBindMaster() const;
+	idEntity*				GetBindMaster() const;
 	jointHandle_t			GetBindJoint() const;
 	int						GetBindBody() const;
-	idEntity* 				GetTeamMaster() const;
-	idEntity* 				GetNextTeamEntity() const;
+	idEntity*				GetTeamMaster() const;
+	idEntity*				GetNextTeamEntity() const;
 	void					ConvertLocalToWorldTransform( idVec3& offset, idMat3& axis );
 	idVec3					GetLocalVector( const idVec3& vec ) const;
 	idVec3					GetLocalCoordinates( const idVec3& vec ) const;
@@ -360,7 +348,7 @@ public:
 	void					SetPhysics( idPhysics* phys );
 
 	// get the physics object used by this entity
-	idPhysics* 				GetPhysics() const;
+	idPhysics*				GetPhysics() const;
 
 	// restore physics pointer for save games
 	void					RestorePhysics( idPhysics* phys );
@@ -424,7 +412,7 @@ public:
 	virtual bool			CanDamage( const idVec3& origin, idVec3& damagePoint ) const;
 
 	// applies damage to this entity
-	virtual	void			Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir, const char* damageDefName, const float damageScale, const int location );
+	virtual void			Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir, const char* damageDefName, const float damageScale, const int location );
 
 	// adds a damage effect like overlays, blood, sparks, debris etc.
 	virtual void			AddDamageEffect( const trace_t& collision, const idVec3& velocity, const char* damageDefName );
@@ -440,7 +428,7 @@ public:
 
 	// scripting
 	virtual bool			ShouldConstructScriptObjectAtSpawn() const;
-	virtual idThread* 		ConstructScriptObject();
+	virtual idThread*		ConstructScriptObject();
 	virtual void			DeconstructScriptObject();
 	void					SetSignal( signalNum_t signalnum, idThread* thread, const function_t* function );
 	void					ClearSignal( idThread* thread, signalNum_t signalnum );
@@ -465,100 +453,57 @@ public:
 	idCurve_Spline<idVec3>* GetSpline() const;
 	virtual void			ShowEditingDialog();
 
-	enum
-	{
-		EVENT_STARTSOUNDSHADER,
-		EVENT_STOPSOUNDSHADER,
-		EVENT_MAXEVENTS
-	};
+	enum { EVENT_STARTSOUNDSHADER, EVENT_STOPSOUNDSHADER, EVENT_MAXEVENTS };
 
 	// Called on clients in an MP game, does the actual interpolation for the entity.
 	// This function will eventually replace ClientPredictionThink completely.
-	virtual void			ClientThink( const int curTime, const float fraction, const bool predict );
+	virtual void ClientThink( const int curTime, const float fraction, const bool predict );
 
-	virtual void			ClientPredictionThink();
-	virtual void			WriteToSnapshot( idBitMsg& msg ) const;
-	void					ReadFromSnapshot_Ex( const idBitMsg& msg );
-	virtual void			ReadFromSnapshot( const idBitMsg& msg );
-	virtual bool			ServerReceiveEvent( int event, int time, const idBitMsg& msg );
-	virtual bool			ClientReceiveEvent( int event, int time, const idBitMsg& msg );
+	virtual void ClientPredictionThink();
+	virtual void WriteToSnapshot( idBitMsg& msg ) const;
+	void		 ReadFromSnapshot_Ex( const idBitMsg& msg );
+	virtual void ReadFromSnapshot( const idBitMsg& msg );
+	virtual bool ServerReceiveEvent( int event, int time, const idBitMsg& msg );
+	virtual bool ClientReceiveEvent( int event, int time, const idBitMsg& msg );
 
-	void					WriteBindToSnapshot( idBitMsg& msg ) const;
-	void					ReadBindFromSnapshot( const idBitMsg& msg );
-	void					WriteColorToSnapshot( idBitMsg& msg ) const;
-	void					ReadColorFromSnapshot( const idBitMsg& msg );
-	void					WriteGUIToSnapshot( idBitMsg& msg ) const;
-	void					ReadGUIFromSnapshot( const idBitMsg& msg );
+	void		 WriteBindToSnapshot( idBitMsg& msg ) const;
+	void		 ReadBindFromSnapshot( const idBitMsg& msg );
+	void		 WriteColorToSnapshot( idBitMsg& msg ) const;
+	void		 ReadColorFromSnapshot( const idBitMsg& msg );
+	void		 WriteGUIToSnapshot( idBitMsg& msg ) const;
+	void		 ReadGUIFromSnapshot( const idBitMsg& msg );
 
-	void					ServerSendEvent( int eventId, const idBitMsg* msg, bool saveEvent, lobbyUserID_t excluding = lobbyUserID_t() ) const;
-	void					ClientSendEvent( int eventId, const idBitMsg* msg ) const;
+	void		 ServerSendEvent( int eventId, const idBitMsg* msg, bool saveEvent, lobbyUserID_t excluding = lobbyUserID_t() ) const;
+	void		 ClientSendEvent( int eventId, const idBitMsg* msg ) const;
 
-	void					SetUseClientInterpolation( bool use )
-	{
-		useClientInterpolation = use;
-	}
+	void		 SetUseClientInterpolation( bool use ) { useClientInterpolation = use; }
 
-	void					SetSkipReplication( const bool skip )
-	{
-		fl.skipReplication = skip;
-	}
-	bool					GetSkipReplication() const
-	{
-		return fl.skipReplication;
-	}
-	bool					IsReplicated() const
-	{
-		return  GetEntityNumber() < ENTITYNUM_FIRST_NON_REPLICATED;
-	}
+	void		 SetSkipReplication( const bool skip ) { fl.skipReplication = skip; }
+	bool		 GetSkipReplication() const { return fl.skipReplication; }
+	bool		 IsReplicated() const { return GetEntityNumber() < ENTITYNUM_FIRST_NON_REPLICATED; }
 
-	void					CreateDeltasFromOldOriginAndAxis( const idVec3& oldOrigin, const idMat3& oldAxis );
-	void					DecayOriginAndAxisDelta();
-	uint32					GetPredictedKey()
-	{
-		return predictionKey;
-	}
-	void					SetPredictedKey( uint32 key_ )
-	{
-		predictionKey = key_;
-	}
+	void		 CreateDeltasFromOldOriginAndAxis( const idVec3& oldOrigin, const idMat3& oldAxis );
+	void		 DecayOriginAndAxisDelta();
+	uint32		 GetPredictedKey() { return predictionKey; }
+	void		 SetPredictedKey( uint32 key_ ) { predictionKey = key_; }
 
-	void					FlagNewSnapshot();
+	void		 FlagNewSnapshot();
 
-	idEntity*				GetTeamChain()
-	{
-		return teamChain;
-	}
+	idEntity*	 GetTeamChain() { return teamChain; }
 
 	// It is only safe to interpolate if this entity has received two snapshots.
-	enum interpolationBehavior_t
-	{
-		USE_NO_INTERPOLATION,
-		USE_LATEST_SNAP_ONLY,
-		USE_INTERPOLATION
-	};
+	enum interpolationBehavior_t { USE_NO_INTERPOLATION, USE_LATEST_SNAP_ONLY, USE_INTERPOLATION };
 
-	interpolationBehavior_t GetInterpolationBehavior() const
-	{
-		return interpolationBehavior;
-	}
-	unsigned int			GetNumSnapshotsReceived() const
-	{
-		return snapshotsReceived;
-	}
+	interpolationBehavior_t GetInterpolationBehavior() const { return interpolationBehavior; }
+	unsigned int			GetNumSnapshotsReceived() const { return snapshotsReceived; }
 
 protected:
-	renderEntity_t			renderEntity;						// used to present a model to the renderer
-	int						modelDefHandle;						// handle to static renderer model
-	refSound_t				refSound;							// used to present sound to the audio engine
+	renderEntity_t renderEntity;   // used to present a model to the renderer
+	int			   modelDefHandle; // handle to static renderer model
+	refSound_t	   refSound;	   // used to present sound to the audio engine
 
-	idVec3					GetOriginDelta() const
-	{
-		return originDelta;
-	}
-	idMat3					GetAxisDelta() const
-	{
-		return axisDelta;
-	}
+	idVec3		   GetOriginDelta() const { return originDelta; }
+	idMat3		   GetAxisDelta() const { return axisDelta; }
 
 public:
 	int GetIntKey( const char* key )
@@ -576,137 +521,137 @@ public:
 	}
 
 private:
-	idPhysics_Static		defaultPhysicsObj;					// default physics object
-	idPhysics* 				physics;							// physics used for this entity
-	idEntity* 				bindMaster;							// entity bound to if unequal NULL
-	jointHandle_t			bindJoint;							// joint bound to if unequal INVALID_JOINT
-	int						bindBody;							// body bound to if unequal -1
-	idEntity* 				teamMaster;							// master of the physics team
-	idEntity* 				teamChain;							// next entity in physics team
-	bool					useClientInterpolation;				// disables interpolation for some objects (handy for weapon world models)
-	int						numPVSAreas;						// number of renderer areas the entity covers
-	int						PVSAreas[MAX_PVS_AREAS];			// numbers of the renderer areas the entity covers
+	idPhysics_Static		defaultPhysicsObj;		 // default physics object
+	idPhysics*				physics;				 // physics used for this entity
+	idEntity*				bindMaster;				 // entity bound to if unequal NULL
+	jointHandle_t			bindJoint;				 // joint bound to if unequal INVALID_JOINT
+	int						bindBody;				 // body bound to if unequal -1
+	idEntity*				teamMaster;				 // master of the physics team
+	idEntity*				teamChain;				 // next entity in physics team
+	bool					useClientInterpolation;	 // disables interpolation for some objects (handy for weapon world models)
+	int						numPVSAreas;			 // number of renderer areas the entity covers
+	int						PVSAreas[MAX_PVS_AREAS]; // numbers of the renderer areas the entity covers
 
-	signalList_t* 			signals;
+	signalList_t*			signals;
 
-	int						mpGUIState;							// local cache to avoid systematic SetStateInt
+	int						mpGUIState; // local cache to avoid systematic SetStateInt
 
-	uint32					predictionKey;						// Unique key used to sync predicted ents (projectiles) in MP.
+	uint32					predictionKey; // Unique key used to sync predicted ents (projectiles) in MP.
 
 	// Delta values that are set when the server or client disagree on where the render model should be. If this happens,
 	// they resolve it through DecayOriginAndAxisDelta()
 	idVec3					originDelta;
 	idMat3					axisDelta;
 
-	interpolationBehavior_t	interpolationBehavior;
+	interpolationBehavior_t interpolationBehavior;
 	unsigned int			snapshotsReceived;
 
 private:
-	void					FixupLocalizedStrings();
+	void		FixupLocalizedStrings();
 
-	bool					DoDormantTests();				// dormant == on the active list, but out of PVS
+	bool		DoDormantTests(); // dormant == on the active list, but out of PVS
 
 	// physics
 	// initialize the default physics
-	void					InitDefaultPhysics( const idVec3& origin, const idMat3& axis, const idDeclEntityDef* def );
+	void		InitDefaultPhysics( const idVec3& origin, const idMat3& axis, const idDeclEntityDef* def );
 
 	// update visual position from the physics
-	void					UpdateFromPhysics( bool moveBack );
+	void		UpdateFromPhysics( bool moveBack );
 
 	// get physics timestep
-	virtual int				GetPhysicsTimeStep() const;
+	virtual int GetPhysicsTimeStep() const;
 
 	// entity binding
-	bool					InitBind( idEntity* master );		// initialize an entity binding
-	void					FinishBind();					// finish an entity binding
-	void					RemoveBinds();				// deletes any entities bound to this object
-	void					QuitTeam();					// leave the current team
+	bool		InitBind( idEntity* master ); // initialize an entity binding
+	void		FinishBind();				  // finish an entity binding
+	void		RemoveBinds();				  // deletes any entities bound to this object
+	void		QuitTeam();					  // leave the current team
 
-	void					UpdatePVSAreas();
+	void		UpdatePVSAreas();
 
 	// events
 public:
-// jmarshall
-	idVec3					GetOrigin() const;
-	float					DistanceTo( idEntity* ent );
-	float					DistanceTo( const idVec3& pos ) const;
-	idStr					GetNextKey( const char* prefix, const char* lastMatch );
-// jmarshall end
+	// jmarshall
+	idVec3		   GetOrigin() const;
+	float		   DistanceTo( idEntity* ent );
+	float		   DistanceTo( const idVec3& pos ) const;
+	idStr		   GetNextKey( const char* prefix, const char* lastMatch );
+	// jmarshall end
 
-	idVec3					GetOriginBrushOffset() const;
-	virtual idVec3			GetEditOrigin() const;			// RB: used by idEditEntities
+	idVec3		   GetOriginBrushOffset() const;
+	virtual idVec3 GetEditOrigin() const; // RB: used by idEditEntities
 
-	void					Event_GetName();
-	void					Event_SetName( const char* name );
-	void					Event_FindTargets();
-	void					Event_ActivateTargets( idEntity* activator );
-	void					Event_NumTargets();
-	void					Event_GetTarget( float index );
-	void					Event_RandomTarget( const char* ignore );
-	void					Event_Bind( idEntity* master );
-	void					Event_BindPosition( idEntity* master );
-	void					Event_BindToJoint( idEntity* master, const char* jointname, float orientated );
-	void					Event_Unbind();
-	void					Event_RemoveBinds();
-	void					Event_SpawnBind();
-	void					Event_SetOwner( idEntity* owner );
-	void					Event_SetModel( const char* modelname );
-	void					Event_SetSkin( const char* skinname );
-	void					Event_GetShaderParm( int parmnum );
-	void					Event_SetShaderParm( int parmnum, float value );
-	void					Event_SetShaderParms( float parm0, float parm1, float parm2, float parm3 );
-	void					Event_SetColor( float red, float green, float blue );
-	void					Event_GetColor();
-	void					Event_IsHidden();
-	void					Event_Hide();
-	void					Event_Show();
-	void					Event_CacheSoundShader( const char* soundName );
-	void					Event_StartSoundShader( const char* soundName, int channel );
-	void					Event_StopSound( int channel, int netSync );
-	void					Event_StartSound( const char* soundName, int channel, int netSync );
-	void					Event_FadeSound( int channel, float to, float over );
-	void					Event_GetWorldOrigin();
-	void					Event_SetWorldOrigin( idVec3 const& org );
-	void					Event_GetOrigin();
-	void					Event_SetOrigin( const idVec3& org );
-	void					Event_GetAngles();
-	void					Event_SetAngles( const idAngles& ang );
-	void					Event_SetLinearVelocity( const idVec3& velocity );
-	void					Event_GetLinearVelocity();
-	void					Event_SetAngularVelocity( const idVec3& velocity );
-	void					Event_GetAngularVelocity();
-	void					Event_SetSize( const idVec3& mins, const idVec3& maxs );
-	void					Event_GetSize();
-	idVec3					GetSize(); // jmarshall
-	void					Event_GetMins();
-	void					Event_GetMaxs();
-	bool					Touches( idEntity* ent ); // jmarshall
-	void					Event_Touches( idEntity* ent );
-	void					Event_SetGuiParm( const char* key, const char* val );
-	void					Event_SetGuiFloat( const char* key, float f );
-	void					Event_GetNextKey( const char* prefix, const char* lastMatch );
-	void					Event_SetKey( const char* key, const char* value );
-	void					Event_GetKey( const char* key );
-	void					Event_GetIntKey( const char* key );
-	void					Event_GetFloatKey( const char* key );
-	void					Event_GetVectorKey( const char* key );
-	void					Event_GetEntityKey( const char* key );
-	idEntity*				GetEntityKey( const char* key ); // jmarshall
-	void					Event_RestorePosition();
-	void					Event_UpdateCameraTarget();
-	void					Event_DistanceTo( idEntity* ent );
-	void					Event_DistanceToPoint( const idVec3& point );
-	void					Event_StartFx( const char* fx );
-	void					Event_WaitFrame();
-	void					Event_Wait( float time );
-	void					Event_HasFunction( const char* name );
-	void					Event_CallFunction( const char* name );
-	void					Event_SetNeverDormant( int enable );
-	void					Event_SetGui( int guiNum, const char* guiName );
-	void					Event_PrecacheGui( const char* guiName );
-	void					Event_GetGuiParm( int guiNum, const char* key );
-	void					Event_GetGuiParmFloat( int guiNum, const char* key );
-	void					Event_GuiNamedEvent( int guiNum, const char* event );
+	void		   Event_GetName();
+	void		   Event_SetName( const char* name );
+	void		   Event_FindTargets();
+	void		   Event_ActivateTargets( idEntity* activator );
+	void		   Event_NumTargets();
+	void		   Event_GetTarget( float index );
+	void		   Event_RandomTarget( const char* ignore );
+	void		   Event_Bind( idEntity* master );
+	void		   Event_BindPosition( idEntity* master );
+	void		   Event_BindToJoint( idEntity* master, const char* jointname, float orientated );
+	void		   Event_Unbind();
+	void		   Event_RemoveBinds();
+	void		   Event_SpawnBind();
+	void		   Event_SetOwner( idEntity* owner );
+	void		   Event_SetModel( const char* modelname );
+	void		   Event_SetSkin( const char* skinname );
+	void		   Event_GetShaderParm( int parmnum );
+	void		   Event_SetShaderParm( int parmnum, float value );
+	void		   Event_SetShaderParms( float parm0, float parm1, float parm2, float parm3 );
+	void		   Event_SetColor( float red, float green, float blue );
+	void		   Event_GetColor();
+	void		   Event_IsHidden();
+	void		   Event_Hide();
+	void		   Event_Show();
+	void		   Event_CacheSoundShader( const char* soundName );
+	void		   Event_StartSoundShader( const char* soundName, int channel );
+	void		   Event_StopSound( int channel, int netSync );
+	void		   Event_StartSound( const char* soundName, int channel, int netSync );
+	void		   Event_FadeSound( int channel, float to, float over );
+	void		   Event_GetWorldOrigin();
+	void		   Event_SetWorldOrigin( idVec3 const& org );
+	void		   Event_GetOrigin();
+	void		   Event_SetOrigin( const idVec3& org );
+	void		   Event_GetAngles();
+	void		   Event_SetAngles( const idAngles& ang );
+	void		   Event_SetLinearVelocity( const idVec3& velocity );
+	void		   Event_GetLinearVelocity();
+	void		   Event_SetAngularVelocity( const idVec3& velocity );
+	void		   Event_GetAngularVelocity();
+	void		   Event_SetSize( const idVec3& mins, const idVec3& maxs );
+	void		   Event_GetSize();
+	idVec3		   GetSize(); // jmarshall
+	void		   Event_GetMins();
+	void		   Event_GetMaxs();
+	bool		   Touches( idEntity* ent ); // jmarshall
+	void		   Event_Touches( idEntity* ent );
+	void		   Event_SetGuiParm( const char* key, const char* val );
+	void		   Event_SetGuiFloat( const char* key, float f );
+	void		   Event_GetNextKey( const char* prefix, const char* lastMatch );
+	void		   Event_SetKey( const char* key, const char* value );
+	void		   Event_GetKey( const char* key );
+	void		   Event_GetIntKey( const char* key );
+	void		   Event_GetFloatKey( const char* key );
+	void		   Event_GetVectorKey( const char* key );
+	void		   Event_GetEntityKey( const char* key );
+	idEntity*	   GetEntityKey( const char* key ); // jmarshall
+	void		   Event_RestorePosition();
+	void		   Event_UpdateCameraTarget();
+	void		   Event_DistanceTo( idEntity* ent );
+	void		   Event_DistanceToPoint( const idVec3& point );
+	void		   Event_StartFx( const char* fx );
+	void		   Event_WaitFrame();
+	void		   Event_Wait( float time );
+	void		   Event_HasFunction( const char* name );
+	void		   Event_CallFunction( const char* name );
+	void		   Event_SetNeverDormant( int enable );
+	void		   Event_SetGui( int guiNum, const char* guiName );
+	void		   Event_PrecacheGui( const char* guiName );
+	void		   Event_GetGuiParm( int guiNum, const char* key );
+	void		   Event_GetGuiParmFloat( int guiNum, const char* key );
+	void		   Event_GuiNamedEvent( int guiNum, const char* event );
 };
 
 ID_INLINE float idEntity::DistanceTo( idEntity* ent )
@@ -727,14 +672,13 @@ ID_INLINE float idEntity::DistanceTo( const idVec3& pos ) const
 ===============================================================================
 */
 
-typedef struct damageEffect_s
-{
-	jointHandle_t			jointNum;
-	idVec3					localOrigin;
-	idVec3					localNormal;
-	int						time;
-	const idDeclParticle*	type;
-	struct damageEffect_s* 	next;
+typedef struct damageEffect_s {
+	jointHandle_t		   jointNum;
+	idVec3				   localOrigin;
+	idVec3				   localNormal;
+	int					   time;
+	const idDeclParticle*  type;
+	struct damageEffect_s* next;
 } damageEffect_t;
 
 class idAnimatedEntity : public idEntity
@@ -745,62 +689,57 @@ public:
 	idAnimatedEntity();
 	~idAnimatedEntity();
 
-	void					Save( idSaveGame* savefile ) const;
-	void					Restore( idRestoreGame* savefile );
+	void				Save( idSaveGame* savefile ) const;
+	void				Restore( idRestoreGame* savefile );
 
-	virtual void			ClientPredictionThink();
-	virtual void			ClientThink( const int curTime, const float fraction, const bool predict );
-	virtual void			Think();
+	virtual void		ClientPredictionThink();
+	virtual void		ClientThink( const int curTime, const float fraction, const bool predict );
+	virtual void		Think();
 
-	void					UpdateAnimation();
+	void				UpdateAnimation();
 
-	virtual idAnimator* 	GetAnimator();
-	virtual void			SetModel( const char* modelname );
+	virtual idAnimator* GetAnimator();
+	virtual void		SetModel( const char* modelname );
 
-	bool					GetJointWorldTransform( jointHandle_t jointHandle, int currentTime, idVec3& offset, idMat3& axis );
-	bool					GetJointTransformForAnim( jointHandle_t jointHandle, int animNum, int currentTime, idVec3& offset, idMat3& axis ) const;
+	bool				GetJointWorldTransform( jointHandle_t jointHandle, int currentTime, idVec3& offset, idMat3& axis );
+	bool				GetJointTransformForAnim( jointHandle_t jointHandle, int animNum, int currentTime, idVec3& offset, idMat3& axis ) const;
 
-	virtual int				GetDefaultSurfaceType() const;
-	virtual void			AddDamageEffect( const trace_t& collision, const idVec3& velocity, const char* damageDefName );
-	void					AddLocalDamageEffect( jointHandle_t jointNum, const idVec3& localPoint, const idVec3& localNormal, const idVec3& localDir, const idDeclEntityDef* def, const idMaterial* collisionMaterial );
-	void					UpdateDamageEffects();
+	virtual int			GetDefaultSurfaceType() const;
+	virtual void		AddDamageEffect( const trace_t& collision, const idVec3& velocity, const char* damageDefName );
+	void AddLocalDamageEffect( jointHandle_t jointNum, const idVec3& localPoint, const idVec3& localNormal, const idVec3& localDir, const idDeclEntityDef* def, const idMaterial* collisionMaterial );
+	void UpdateDamageEffects();
 
-	virtual bool			ClientReceiveEvent( int event, int time, const idBitMsg& msg );
+	virtual bool ClientReceiveEvent( int event, int time, const idBitMsg& msg );
 
-	enum
-	{
-		EVENT_ADD_DAMAGE_EFFECT = idEntity::EVENT_MAXEVENTS,
-		EVENT_MAXEVENTS
-	};
+	enum { EVENT_ADD_DAMAGE_EFFECT = idEntity::EVENT_MAXEVENTS, EVENT_MAXEVENTS };
 
 protected:
-	idAnimator				animator;
-	damageEffect_t* 		damageEffects;
+	idAnimator		animator;
+	damageEffect_t* damageEffects;
 
 public:
-	void					Event_GetJointHandle( const char* jointname );
-	void 					Event_ClearAllJoints();
-	void 					Event_ClearJoint( jointHandle_t jointnum );
-	void 					Event_SetJointPos( jointHandle_t jointnum, jointModTransform_t transform_type, const idVec3& pos );
-	void 					Event_SetJointAngle( jointHandle_t jointnum, jointModTransform_t transform_type, const idAngles& angles );
-	void 					Event_GetJointPos( jointHandle_t jointnum );
-	void 					Event_GetJointAngle( jointHandle_t jointnum );
+	void Event_GetJointHandle( const char* jointname );
+	void Event_ClearAllJoints();
+	void Event_ClearJoint( jointHandle_t jointnum );
+	void Event_SetJointPos( jointHandle_t jointnum, jointModTransform_t transform_type, const idVec3& pos );
+	void Event_SetJointAngle( jointHandle_t jointnum, jointModTransform_t transform_type, const idAngles& angles );
+	void Event_GetJointPos( jointHandle_t jointnum );
+	void Event_GetJointAngle( jointHandle_t jointnum );
 };
-
 
 class SetTimeState
 {
 private:
-	bool					activated;
-	bool					previousFast;
-	bool					fast;
+	bool activated;
+	bool previousFast;
+	bool fast;
 
 public:
 	SetTimeState();
 	SetTimeState( int timeGroup );
 	~SetTimeState();
 
-	void					PushState( int timeGroup );
+	void PushState( int timeGroup );
 };
 
 ID_INLINE SetTimeState::SetTimeState()
@@ -816,30 +755,21 @@ ID_INLINE SetTimeState::SetTimeState( int timeGroup )
 
 ID_INLINE void SetTimeState::PushState( int timeGroup )
 {
-
 	// Don't mess with time in Multiplayer
-	if( !common->IsMultiplayer() )
-	{
-
+	if( !common->IsMultiplayer() ) {
 		activated = true;
 
 		// determine previous fast setting
-		if( gameLocal.time == gameLocal.slow.time )
-		{
+		if( gameLocal.time == gameLocal.slow.time ) {
 			previousFast = false;
-		}
-		else
-		{
+		} else {
 			previousFast = true;
 		}
 
 		// determine new fast setting
-		if( timeGroup )
-		{
+		if( timeGroup ) {
 			fast = true;
-		}
-		else
-		{
+		} else {
 			fast = false;
 		}
 
@@ -850,8 +780,7 @@ ID_INLINE void SetTimeState::PushState( int timeGroup )
 
 ID_INLINE SetTimeState::~SetTimeState()
 {
-	if( activated && !common->IsMultiplayer() )
-	{
+	if( activated && !common->IsMultiplayer() ) {
 		// set previous correct time
 		gameLocal.SelectTimeGroup( previousFast );
 	}

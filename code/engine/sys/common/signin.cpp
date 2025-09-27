@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,10 +37,10 @@ If you have questions concerning this license or the applicable additional terms
 	#include <unistd.h>
 #endif
 #ifdef _DEBUG
-	idCVar win_userPersistent( "win_userPersistent", "1", CVAR_BOOL, "debugging cvar for profile persistence status" );
-	idCVar win_userOnline( "win_userOnline", "1", CVAR_BOOL, "debugging cvar for profile online status" );
-	idCVar win_isInParty( "win_isInParty", "0", CVAR_BOOL, "debugging cvar for platform party status" );
-	idCVar win_partyCount( "win_partyCount", "0", CVAR_INTEGER, "debugginc var for platform party count" );
+idCVar win_userPersistent( "win_userPersistent", "1", CVAR_BOOL, "debugging cvar for profile persistence status" );
+idCVar win_userOnline( "win_userOnline", "1", CVAR_BOOL, "debugging cvar for profile online status" );
+idCVar win_isInParty( "win_isInParty", "0", CVAR_BOOL, "debugging cvar for platform party status" );
+idCVar win_partyCount( "win_partyCount", "0", CVAR_INTEGER, "debugginc var for platform party count" );
 #endif
 
 // DG: D3BFG got the username from steam, in the GPL release it just uses the hostname.
@@ -52,7 +53,7 @@ idCVar ui_name( "ui_name", "", CVAR_ARCHIVE, "player name - leave empty for defa
 idSignInManagerWin::Shutdown
 ========================
 */
-void idSignInManagerWin::Shutdown()
+void   idSignInManagerWin::Shutdown()
 {
 }
 
@@ -63,11 +64,9 @@ idSignInManagerWin::Pump
 */
 void idSignInManagerWin::Pump()
 {
-
 	// If we have more users than we need, then set to the lower amount
 	// (don't remove the master user though)
-	if( localUsers.Num() > 1 && localUsers.Num() > maxDesiredLocalUsers )
-	{
+	if( localUsers.Num() > 1 && localUsers.Num() > maxDesiredLocalUsers ) {
 		localUsers.SetNum( maxDesiredLocalUsers );
 	}
 
@@ -75,15 +74,13 @@ void idSignInManagerWin::Pump()
 	// If we don't have enough, then make sure we do
 	// NOTE - We always want at least one user on windows for now,
 	// and this master user will always use controller 0
-	while( localUsers.Num() < minDesiredLocalUsers )
-	{
+	while( localUsers.Num() < minDesiredLocalUsers ) {
 		RegisterLocalUser( localUsers.Num() );
 	}
 #endif
 
 	// See if we need to save settings on any of the profiles
-	for( int i = 0; i < localUsers.Num(); i++ )
-	{
+	for( int i = 0; i < localUsers.Num(); i++ ) {
 		localUsers[i].Pump();
 	}
 }
@@ -106,8 +103,7 @@ idSignInManagerWin::RegisterLocalUser
 */
 void idSignInManagerWin::RegisterLocalUser( int inputDevice )
 {
-	if( GetLocalUserByInputDevice( inputDevice ) != NULL )
-	{
+	if( GetLocalUserByInputDevice( inputDevice ) != NULL ) {
 		return;
 	}
 
@@ -115,8 +111,7 @@ void idSignInManagerWin::RegisterLocalUser( int inputDevice )
 	// DG: support for ui_name
 	const char* nameSource = ui_name.GetString();
 
-	if( idStr::Length( nameSource ) == 0 )
-	{
+	if( idStr::Length( nameSource ) == 0 ) {
 		// ui_name was empty => default to hostname
 #ifdef _WIN32
 		DWORD len = 128;
@@ -129,14 +124,12 @@ void idSignInManagerWin::RegisterLocalUser( int inputDevice )
 	// DG end
 
 	idStr name( nameSource );
-	int nameLength = name.Length();
-	if( idStr::IsValidUTF8( nameSource, nameLength ) )
-	{
+	int	  nameLength = name.Length();
+	if( idStr::IsValidUTF8( nameSource, nameLength ) ) {
 		int nameIndex = 0;
-		int numChars = 0;
+		int numChars  = 0;
 		name.Empty();
-		while( nameIndex < nameLength && numChars++ < idLocalUserWin::MAX_GAMERTAG_CHARS )
-		{
+		while( nameIndex < nameLength && numChars++ < idLocalUserWin::MAX_GAMERTAG_CHARS ) {
 			uint32 c = idStr::UTF8Char( nameSource, nameIndex );
 			name.AppendUTF8Char( c );
 		}
@@ -159,15 +152,13 @@ idSignInManagerWin::CreateNewUser
 */
 bool idSignInManagerWin::CreateNewUser( winUserState_t& state )
 {
-	//idScopedGlobalHeap	everythingHereGoesInTheGlobalHeap;	// users obviously persist across maps
+	// idScopedGlobalHeap	everythingHereGoesInTheGlobalHeap;	// users obviously persist across maps
 
 	RemoveAllLocalUsers();
 	RegisterLocalUser( state.inputDevice );
 
-	if( localUsers.Num() > 0 )
-	{
-		if( !localUsers[0].VerifyUserState( state ) )
-		{
+	if( localUsers.Num() > 0 ) {
+		if( !localUsers[0].VerifyUserState( state ) ) {
 			RemoveAllLocalUsers();
 		}
 	}

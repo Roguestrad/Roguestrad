@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -41,7 +42,7 @@ works
 IsPointer
 ========================
 */
-template< typename type >
+template<typename type>
 bool IsPointer( type )
 {
 	return false;
@@ -52,7 +53,7 @@ bool IsPointer( type )
 IsPointer
 ========================
 */
-template< typename type >
+template<typename type>
 bool IsPointer( type* )
 {
 	return true;
@@ -67,57 +68,55 @@ performing EndianSwapping.
 class idSwap
 {
 public:
-	//#define SwapBytes( x, y )		(x) ^= (y) ^= (x) ^= (y)
-#define SwapBytes( x, y )		{ byte t = (x); (x) = (y); (y) = t; }
-
-	template<class type> static void Little( type& c )
-	{
-		// byte swapping pointers is pointless because we should never store pointers on disk
-		assert( !IsPointer( c ) );
-
+	// #define SwapBytes( x, y )		(x) ^= (y) ^= (x) ^= (y)
+#define SwapBytes( x, y ) \
+	{                     \
+		byte t = ( x );   \
+		( x )  = ( y );   \
+		( y )  = t;       \
 	}
 
-	template<class type> static void Big( type& c )
+	template<class type>
+	static void Little( type& c )
+	{
+		// byte swapping pointers is pointless because we should never store pointers on disk
+		assert( !IsPointer( c ) );
+	}
+
+	template<class type>
+	static void Big( type& c )
 	{
 		// byte swapping pointers is pointless because we should never store pointers on disk
 		assert( !IsPointer( c ) );
 
-		if( sizeof( type ) == 1 )
-		{
-		}
-		else if( sizeof( type ) == 2 )
-		{
+		if( sizeof( type ) == 1 ) {
+		} else if( sizeof( type ) == 2 ) {
 			byte* b = ( byte* )&c;
 			SwapBytes( b[0], b[1] );
-		}
-		else if( sizeof( type ) == 4 )
-		{
+		} else if( sizeof( type ) == 4 ) {
 			byte* b = ( byte* )&c;
 			SwapBytes( b[0], b[3] );
 			SwapBytes( b[1], b[2] );
-		}
-		else if( sizeof( type ) == 8 )
-		{
+		} else if( sizeof( type ) == 8 ) {
 			byte* b = ( byte* )&c;
 			SwapBytes( b[0], b[7] );
 			SwapBytes( b[1], b[6] );
 			SwapBytes( b[2], b[5] );
 			SwapBytes( b[3], b[4] );
-		}
-		else
-		{
+		} else {
 			assert( false );
 		}
 	}
 
-	template<class type> static void LittleArray( type* c, int count )
+	template<class type>
+	static void LittleArray( type* c, int count )
 	{
 	}
 
-	template<class type> static void BigArray( type* c, int count )
+	template<class type>
+	static void BigArray( type* c, int count )
 	{
-		for( int i = 0; i < count; i++ )
-		{
+		for( int i = 0; i < count; i++ ) {
 			Big( c[i] );
 		}
 	}
@@ -125,16 +124,16 @@ public:
 	static void SixtetsForInt( byte* out, int src )
 	{
 		byte* b = ( byte* )&src;
-		out[0] = ( b[0] & 0xfc ) >> 2;
-		out[1] = ( ( b[0] & 0x3 ) << 4 ) + ( ( b[1] & 0xf0 ) >> 4 );
-		out[2] = ( ( b[1] & 0xf ) << 2 ) + ( ( b[2] & 0xc0 ) >> 6 );
-		out[3] = b[2] & 0x3f;
+		out[0]	= ( b[0] & 0xfc ) >> 2;
+		out[1]	= ( ( b[0] & 0x3 ) << 4 ) + ( ( b[1] & 0xf0 ) >> 4 );
+		out[2]	= ( ( b[1] & 0xf ) << 2 ) + ( ( b[2] & 0xc0 ) >> 6 );
+		out[3]	= b[2] & 0x3f;
 	}
 
 	static int IntForSixtets( byte* in )
 	{
-		int ret = 0;
-		byte* b = ( byte* )&ret;
+		int	  ret = 0;
+		byte* b	  = ( byte* )&ret;
 		b[0] |= in[0] << 2;
 		b[0] |= ( in[1] & 0x30 ) >> 4;
 		b[1] |= ( in[1] & 0xf ) << 4;
@@ -144,11 +143,17 @@ public:
 		return ret;
 	}
 
-public:		// specializations
+public:				 // specializations
 #ifndef ID_SWAP_LITE // avoid dependency avalanche for SPU code
-#define SWAP_VECTOR( x ) \
-	static void Little( x &c ) { LittleArray( c.ToFloatPtr(), c.GetDimension() ); } \
-	static void Big( x &c ) {    BigArray( c.ToFloatPtr(), c.GetDimension() ); }
+	#define SWAP_VECTOR( x )                                 \
+		static void Little( x& c )                           \
+		{                                                    \
+			LittleArray( c.ToFloatPtr(), c.GetDimension() ); \
+		}                                                    \
+		static void Big( x& c )                              \
+		{                                                    \
+			BigArray( c.ToFloatPtr(), c.GetDimension() );    \
+		}
 
 	SWAP_VECTOR( idVec2 );
 	SWAP_VECTOR( idVec3 );
@@ -207,7 +212,8 @@ public:
 #endif
 	}
 
-	template<class type> void Little( type& c )
+	template<class type>
+	void Little( type& c )
 	{
 		idSwap::Little( c );
 #ifdef _DEBUG
@@ -215,7 +221,8 @@ public:
 #endif
 	}
 
-	template<class type> void Big( type& c )
+	template<class type>
+	void Big( type& c )
 	{
 		idSwap::Big( c );
 #ifdef _DEBUG
@@ -223,7 +230,8 @@ public:
 #endif
 	}
 
-	template<class type> void LittleArray( type* c, int count )
+	template<class type>
+	void LittleArray( type* c, int count )
 	{
 		idSwap::LittleArray( c, count );
 #ifdef _DEBUG
@@ -231,7 +239,8 @@ public:
 #endif
 	}
 
-	template<class type> void BigArray( type* c, int count )
+	template<class type>
+	void BigArray( type* c, int count )
 	{
 		idSwap::BigArray( c, count );
 #ifdef _DEBUG
@@ -245,7 +254,7 @@ private:
 #endif
 };
 
-#define BIG32(v) ((((uint32)(v)) >> 24) | (((uint32)(v) & 0x00FF0000) >> 8) | (((uint32)(v) & 0x0000FF00) << 8) | ((uint32)(v) << 24))
-#define BIG16(v) ((((uint16)(v)) >> 8) | ((uint16)(v) << 8))
+#define BIG32( v ) ( ( ( ( uint32 )( v ) ) >> 24 ) | ( ( ( uint32 )( v ) & 0x00FF0000 ) >> 8 ) | ( ( ( uint32 )( v ) & 0x0000FF00 ) << 8 ) | ( ( uint32 )( v ) << 24 ) )
+#define BIG16( v ) ( ( ( ( uint16 )( v ) ) >> 8 ) | ( ( uint16 )( v ) << 8 ) )
 
 #endif // !__SWAP_H__

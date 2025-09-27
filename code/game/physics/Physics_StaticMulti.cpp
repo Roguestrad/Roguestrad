@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,13 +30,12 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-
 #include "../Game_local.h"
 
 CLASS_DECLARATION( idPhysics, idPhysics_StaticMulti )
 END_CLASS
 
-staticPState_t defaultState;
+staticPState_t			  defaultState;
 staticInterpolatePState_t defaultInterpolateState;
 
 /*
@@ -45,8 +45,8 @@ idPhysics_StaticMulti::idPhysics_StaticMulti
 */
 idPhysics_StaticMulti::idPhysics_StaticMulti()
 {
-	self = NULL;
-	hasMaster = false;
+	self		 = NULL;
+	hasMaster	 = false;
 	isOrientated = false;
 
 	defaultState.origin.Zero();
@@ -55,7 +55,7 @@ idPhysics_StaticMulti::idPhysics_StaticMulti()
 	defaultState.localAxis.Identity();
 
 	defaultInterpolateState.origin.Zero();
-	defaultInterpolateState.axis = defaultState.axis.ToQuat();
+	defaultInterpolateState.axis	  = defaultState.axis.ToQuat();
 	defaultInterpolateState.localAxis = defaultInterpolateState.axis;
 	defaultInterpolateState.localOrigin.Zero();
 
@@ -76,13 +76,11 @@ idPhysics_StaticMulti::~idPhysics_StaticMulti
 */
 idPhysics_StaticMulti::~idPhysics_StaticMulti()
 {
-	if( self && self->GetPhysics() == this )
-	{
+	if( self && self->GetPhysics() == this ) {
 		self->SetPhysics( NULL );
 	}
 	idForce::DeletePhysics( this );
-	for( int i = 0; i < clipModels.Num(); i++ )
-	{
+	for( int i = 0; i < clipModels.Num(); i++ ) {
 		delete clipModels[i];
 	}
 }
@@ -99,8 +97,7 @@ void idPhysics_StaticMulti::Save( idSaveGame* savefile ) const
 	savefile->WriteObject( self );
 
 	savefile->WriteInt( current.Num() );
-	for( i = 0; i < current.Num(); i++ )
-	{
+	for( i = 0; i < current.Num(); i++ ) {
 		savefile->WriteVec3( current[i].origin );
 		savefile->WriteMat3( current[i].axis );
 		savefile->WriteVec3( current[i].localOrigin );
@@ -108,8 +105,7 @@ void idPhysics_StaticMulti::Save( idSaveGame* savefile ) const
 	}
 
 	savefile->WriteInt( clipModels.Num() );
-	for( i = 0; i < clipModels.Num(); i++ )
-	{
+	for( i = 0; i < clipModels.Num(); i++ ) {
 		savefile->WriteClipModel( clipModels[i] );
 	}
 
@@ -130,8 +126,7 @@ void idPhysics_StaticMulti::Restore( idRestoreGame* savefile )
 
 	savefile->ReadInt( num );
 	current.AssureSize( num );
-	for( i = 0; i < num; i++ )
-	{
+	for( i = 0; i < num; i++ ) {
 		savefile->ReadVec3( current[i].origin );
 		savefile->ReadMat3( current[i].axis );
 		savefile->ReadVec3( current[i].localOrigin );
@@ -140,8 +135,7 @@ void idPhysics_StaticMulti::Restore( idRestoreGame* savefile )
 
 	savefile->ReadInt( num );
 	clipModels.SetNum( num );
-	for( i = 0; i < num; i++ )
-	{
+	for( i = 0; i < num; i++ ) {
 		savefile->ReadClipModel( clipModels[i] );
 	}
 
@@ -167,12 +161,10 @@ idPhysics_StaticMulti::RemoveIndex
 */
 void idPhysics_StaticMulti::RemoveIndex( int id, bool freeClipModel )
 {
-	if( id < 0 || id >= clipModels.Num() )
-	{
+	if( id < 0 || id >= clipModels.Num() ) {
 		return;
 	}
-	if( clipModels[id] && freeClipModel )
-	{
+	if( clipModels[id] && freeClipModel ) {
 		delete clipModels[id];
 		clipModels[id] = NULL;
 	}
@@ -191,27 +183,21 @@ void idPhysics_StaticMulti::SetClipModel( idClipModel* model, float density, int
 
 	assert( self );
 
-	if( id >= clipModels.Num() )
-	{
+	if( id >= clipModels.Num() ) {
 		current.AssureSize( id + 1, defaultState );
 		clipModels.AssureSize( id + 1, NULL );
 	}
 
-	if( clipModels[id] && clipModels[id] != model && freeOld )
-	{
+	if( clipModels[id] && clipModels[id] != model && freeOld ) {
 		delete clipModels[id];
 	}
 	clipModels[id] = model;
-	if( clipModels[id] )
-	{
+	if( clipModels[id] ) {
 		clipModels[id]->Link( gameLocal.clip, self, id, current[id].origin, current[id].axis );
-
 	}
 
-	for( i = clipModels.Num() - 1; i >= 1; i-- )
-	{
-		if( clipModels[i] )
-		{
+	for( i = clipModels.Num() - 1; i >= 1; i-- ) {
+		if( clipModels[i] ) {
 			break;
 		}
 	}
@@ -221,8 +207,7 @@ void idPhysics_StaticMulti::SetClipModel( idClipModel* model, float density, int
 	// Assure that on first setup, our next/previous is the same as current.
 	previous.SetNum( current.Num() );
 	next.SetNum( previous.Num() );
-	for( int curIdx = 0; curIdx < current.Num(); curIdx++ )
-	{
+	for( int curIdx = 0; curIdx < current.Num(); curIdx++ ) {
 		previous[curIdx] = ConvertPStateToInterpolateState( current[curIdx] );
 		previous[curIdx] = next[curIdx];
 	}
@@ -235,8 +220,7 @@ idPhysics_StaticMulti::GetClipModel
 */
 idClipModel* idPhysics_StaticMulti::GetClipModel( int id ) const
 {
-	if( id >= 0 && id < clipModels.Num() && clipModels[id] )
-	{
+	if( id >= 0 && id < clipModels.Num() && clipModels[id] ) {
 		return clipModels[id];
 	}
 	return gameLocal.clip.DefaultClipModel();
@@ -280,19 +264,13 @@ void idPhysics_StaticMulti::SetContents( int contents, int id )
 {
 	int i;
 
-	if( id >= 0 && id < clipModels.Num() )
-	{
-		if( clipModels[id] )
-		{
+	if( id >= 0 && id < clipModels.Num() ) {
+		if( clipModels[id] ) {
 			clipModels[id]->SetContents( contents );
 		}
-	}
-	else if( id == -1 )
-	{
-		for( i = 0; i < clipModels.Num(); i++ )
-		{
-			if( clipModels[i] )
-			{
+	} else if( id == -1 ) {
+		for( i = 0; i < clipModels.Num(); i++ ) {
+			if( clipModels[i] ) {
 				clipModels[i]->SetContents( contents );
 			}
 		}
@@ -308,19 +286,13 @@ int idPhysics_StaticMulti::GetContents( int id ) const
 {
 	int i, contents = 0;
 
-	if( id >= 0 && id < clipModels.Num() )
-	{
-		if( clipModels[id] )
-		{
+	if( id >= 0 && id < clipModels.Num() ) {
+		if( clipModels[id] ) {
 			contents = clipModels[id]->GetContents();
 		}
-	}
-	else if( id == -1 )
-	{
-		for( i = 0; i < clipModels.Num(); i++ )
-		{
-			if( clipModels[i] )
-			{
+	} else if( id == -1 ) {
+		for( i = 0; i < clipModels.Num(); i++ ) {
+			if( clipModels[i] ) {
 				contents |= clipModels[i]->GetContents();
 			}
 		}
@@ -354,30 +326,23 @@ idPhysics_StaticMulti::GetBounds
 */
 const idBounds& idPhysics_StaticMulti::GetBounds( int id ) const
 {
-	int i;
+	int				i;
 	static idBounds bounds;
 
-	if( id >= 0 && id < clipModels.Num() )
-	{
-		if( clipModels[id] )
-		{
+	if( id >= 0 && id < clipModels.Num() ) {
+		if( clipModels[id] ) {
 			return clipModels[id]->GetBounds();
 		}
 	}
-	if( id == -1 )
-	{
+	if( id == -1 ) {
 		bounds.Clear();
-		for( i = 0; i < clipModels.Num(); i++ )
-		{
-			if( clipModels[i] )
-			{
+		for( i = 0; i < clipModels.Num(); i++ ) {
+			if( clipModels[i] ) {
 				bounds.AddBounds( clipModels[i]->GetAbsBounds() );
 			}
 		}
-		for( i = 0; i < clipModels.Num(); i++ )
-		{
-			if( clipModels[i] )
-			{
+		for( i = 0; i < clipModels.Num(); i++ ) {
+			if( clipModels[i] ) {
 				bounds[0] -= clipModels[i]->GetOrigin();
 				bounds[1] -= clipModels[i]->GetOrigin();
 				break;
@@ -395,23 +360,18 @@ idPhysics_StaticMulti::GetAbsBounds
 */
 const idBounds& idPhysics_StaticMulti::GetAbsBounds( int id ) const
 {
-	int i;
+	int				i;
 	static idBounds absBounds;
 
-	if( id >= 0 && id < clipModels.Num() )
-	{
-		if( clipModels[id] )
-		{
+	if( id >= 0 && id < clipModels.Num() ) {
+		if( clipModels[id] ) {
 			return clipModels[id]->GetAbsBounds();
 		}
 	}
-	if( id == -1 )
-	{
+	if( id == -1 ) {
 		absBounds.Clear();
-		for( i = 0; i < clipModels.Num(); i++ )
-		{
-			if( clipModels[i] )
-			{
+		for( i = 0; i < clipModels.Num(); i++ ) {
+			if( clipModels[i] ) {
 				absBounds.AddBounds( clipModels[i]->GetAbsBounds() );
 			}
 		}
@@ -427,26 +387,20 @@ idPhysics_StaticMulti::Evaluate
 */
 bool idPhysics_StaticMulti::Evaluate( int timeStepMSec, int endTimeMSec )
 {
-	int i;
+	int	   i;
 	idVec3 masterOrigin;
 	idMat3 masterAxis;
 
-	if( hasMaster )
-	{
+	if( hasMaster ) {
 		self->GetMasterPosition( masterOrigin, masterAxis );
-		for( i = 0; i < clipModels.Num(); i++ )
-		{
+		for( i = 0; i < clipModels.Num(); i++ ) {
 			current[i].origin = masterOrigin + current[i].localOrigin * masterAxis;
-			if( isOrientated )
-			{
+			if( isOrientated ) {
 				current[i].axis = current[i].localAxis * masterAxis;
-			}
-			else
-			{
+			} else {
 				current[i].axis = current[i].localAxis;
 			}
-			if( clipModels[i] )
-			{
+			if( clipModels[i] ) {
 				clipModels[i]->Link( gameLocal.clip, self, i, current[i].origin, current[i].axis );
 			}
 		}
@@ -466,19 +420,15 @@ bool idPhysics_StaticMulti::Interpolate( const float fraction )
 {
 	// If the sizes don't match, just use the latest version.
 	// TODO: This might cause visual snapping, is there a better solution?
-	if( current.Num() != previous.Num() ||
-			current.Num() != next.Num() )
-	{
+	if( current.Num() != previous.Num() || current.Num() != next.Num() ) {
 		current.SetNum( next.Num() );
-		for( int i = 0; i < next.Num(); ++i )
-		{
+		for( int i = 0; i < next.Num(); ++i ) {
 			current[i] = InterpolateStaticPState( next[i], next[i], 1.0f );
 		}
 		return true;
 	}
 
-	for( int i = 0; i < current.Num(); ++i )
-	{
+	for( int i = 0; i < current.Num(); ++i ) {
 		current[i] = InterpolateStaticPState( previous[i], next[i], fraction );
 	}
 
@@ -608,32 +558,22 @@ void idPhysics_StaticMulti::SetOrigin( const idVec3& newOrigin, int id )
 	idVec3 masterOrigin;
 	idMat3 masterAxis;
 
-	if( id >= 0 && id < clipModels.Num() )
-	{
+	if( id >= 0 && id < clipModels.Num() ) {
 		current[id].localOrigin = newOrigin;
-		if( hasMaster )
-		{
+		if( hasMaster ) {
 			self->GetMasterPosition( masterOrigin, masterAxis );
 			current[id].origin = masterOrigin + newOrigin * masterAxis;
-		}
-		else
-		{
+		} else {
 			current[id].origin = newOrigin;
 		}
-		if( clipModels[id] )
-		{
+		if( clipModels[id] ) {
 			clipModels[id]->Link( gameLocal.clip, self, id, current[id].origin, current[id].axis );
 		}
-	}
-	else if( id == -1 )
-	{
-		if( hasMaster )
-		{
+	} else if( id == -1 ) {
+		if( hasMaster ) {
 			self->GetMasterPosition( masterOrigin, masterAxis );
 			Translate( masterOrigin + masterAxis * newOrigin - current[0].origin );
-		}
-		else
-		{
+		} else {
 			Translate( newOrigin - current[0].origin );
 		}
 	}
@@ -649,35 +589,25 @@ void idPhysics_StaticMulti::SetAxis( const idMat3& newAxis, int id )
 	idVec3 masterOrigin;
 	idMat3 masterAxis;
 
-	if( id >= 0 && id < clipModels.Num() )
-	{
+	if( id >= 0 && id < clipModels.Num() ) {
 		current[id].localAxis = newAxis;
-		if( hasMaster && isOrientated )
-		{
+		if( hasMaster && isOrientated ) {
 			self->GetMasterPosition( masterOrigin, masterAxis );
 			current[id].axis = newAxis * masterAxis;
-		}
-		else
-		{
+		} else {
 			current[id].axis = newAxis;
 		}
-		if( clipModels[id] )
-		{
+		if( clipModels[id] ) {
 			clipModels[id]->Link( gameLocal.clip, self, id, current[id].origin, current[id].axis );
 		}
-	}
-	else if( id == -1 )
-	{
-		idMat3 axis;
+	} else if( id == -1 ) {
+		idMat3	   axis;
 		idRotation rotation;
 
-		if( hasMaster )
-		{
+		if( hasMaster ) {
 			self->GetMasterPosition( masterOrigin, masterAxis );
 			axis = current[0].axis.Transpose() * ( newAxis * masterAxis );
-		}
-		else
-		{
+		} else {
 			axis = current[0].axis.Transpose() * newAxis;
 		}
 		rotation = axis.ToRotation();
@@ -696,25 +626,19 @@ void idPhysics_StaticMulti::Translate( const idVec3& translation, int id )
 {
 	int i;
 
-	if( id >= 0 && id < clipModels.Num() )
-	{
+	if( id >= 0 && id < clipModels.Num() ) {
 		current[id].localOrigin += translation;
 		current[id].origin += translation;
 
-		if( clipModels[id] )
-		{
+		if( clipModels[id] ) {
 			clipModels[id]->Link( gameLocal.clip, self, id, current[id].origin, current[id].axis );
 		}
-	}
-	else if( id == -1 )
-	{
-		for( i = 0; i < clipModels.Num(); i++ )
-		{
+	} else if( id == -1 ) {
+		for( i = 0; i < clipModels.Num(); i++ ) {
 			current[i].localOrigin += translation;
 			current[i].origin += translation;
 
-			if( clipModels[i] )
-			{
+			if( clipModels[i] ) {
 				clipModels[i]->Link( gameLocal.clip, self, i, current[i].origin, current[i].axis );
 			}
 		}
@@ -728,53 +652,41 @@ idPhysics_StaticMulti::Rotate
 */
 void idPhysics_StaticMulti::Rotate( const idRotation& rotation, int id )
 {
-	int i;
+	int	   i;
 	idVec3 masterOrigin;
 	idMat3 masterAxis;
 
-	if( id >= 0 && id < clipModels.Num() )
-	{
+	if( id >= 0 && id < clipModels.Num() ) {
 		current[id].origin *= rotation;
 		current[id].axis *= rotation.ToMat3();
 
-		if( hasMaster )
-		{
+		if( hasMaster ) {
 			self->GetMasterPosition( masterOrigin, masterAxis );
 			current[id].localAxis *= rotation.ToMat3();
 			current[id].localOrigin = ( current[id].origin - masterOrigin ) * masterAxis.Transpose();
-		}
-		else
-		{
-			current[id].localAxis = current[id].axis;
+		} else {
+			current[id].localAxis	= current[id].axis;
 			current[id].localOrigin = current[id].origin;
 		}
 
-		if( clipModels[id] )
-		{
+		if( clipModels[id] ) {
 			clipModels[id]->Link( gameLocal.clip, self, id, current[id].origin, current[id].axis );
 		}
-	}
-	else if( id == -1 )
-	{
-		for( i = 0; i < clipModels.Num(); i++ )
-		{
+	} else if( id == -1 ) {
+		for( i = 0; i < clipModels.Num(); i++ ) {
 			current[i].origin *= rotation;
 			current[i].axis *= rotation.ToMat3();
 
-			if( hasMaster )
-			{
+			if( hasMaster ) {
 				self->GetMasterPosition( masterOrigin, masterAxis );
 				current[i].localAxis *= rotation.ToMat3();
 				current[i].localOrigin = ( current[i].origin - masterOrigin ) * masterAxis.Transpose();
-			}
-			else
-			{
-				current[i].localAxis = current[i].axis;
+			} else {
+				current[i].localAxis   = current[i].axis;
 				current[i].localOrigin = current[i].origin;
 			}
 
-			if( clipModels[i] )
-			{
+			if( clipModels[i] ) {
 				clipModels[i]->Link( gameLocal.clip, self, i, current[i].origin, current[i].axis );
 			}
 		}
@@ -788,16 +700,12 @@ idPhysics_StaticMulti::GetOrigin
 */
 const idVec3& idPhysics_StaticMulti::GetOrigin( int id ) const
 {
-	if( id >= 0 && id < clipModels.Num() )
-	{
+	if( id >= 0 && id < clipModels.Num() ) {
 		return current[id].origin;
 	}
-	if( clipModels.Num() )
-	{
+	if( clipModels.Num() ) {
 		return current[0].origin;
-	}
-	else
-	{
+	} else {
 		return vec3_origin;
 	}
 }
@@ -809,16 +717,12 @@ idPhysics_StaticMulti::GetAxis
 */
 const idMat3& idPhysics_StaticMulti::GetAxis( int id ) const
 {
-	if( id >= 0 && id < clipModels.Num() )
-	{
+	if( id >= 0 && id < clipModels.Num() ) {
 		return current[id].axis;
 	}
-	if( clipModels.Num() )
-	{
+	if( clipModels.Num() ) {
 		return current[0].axis;
-	}
-	else
-	{
+	} else {
 		return mat3_identity;
 	}
 }
@@ -924,17 +828,11 @@ int idPhysics_StaticMulti::ClipContents( const idClipModel* model ) const
 	int i, contents;
 
 	contents = 0;
-	for( i = 0; i < clipModels.Num(); i++ )
-	{
-		if( clipModels[i] )
-		{
-			if( model )
-			{
-				contents |= gameLocal.clip.ContentsModel( clipModels[i]->GetOrigin(), clipModels[i], clipModels[i]->GetAxis(), -1,
-							model->Handle(), model->GetOrigin(), model->GetAxis() );
-			}
-			else
-			{
+	for( i = 0; i < clipModels.Num(); i++ ) {
+		if( clipModels[i] ) {
+			if( model ) {
+				contents |= gameLocal.clip.ContentsModel( clipModels[i]->GetOrigin(), clipModels[i], clipModels[i]->GetAxis(), -1, model->Handle(), model->GetOrigin(), model->GetAxis() );
+			} else {
 				contents |= gameLocal.clip.Contents( clipModels[i]->GetOrigin(), clipModels[i], clipModels[i]->GetAxis(), -1, NULL );
 			}
 		}
@@ -951,10 +849,8 @@ void idPhysics_StaticMulti::DisableClip()
 {
 	int i;
 
-	for( i = 0; i < clipModels.Num(); i++ )
-	{
-		if( clipModels[i] )
-		{
+	for( i = 0; i < clipModels.Num(); i++ ) {
+		if( clipModels[i] ) {
 			clipModels[i]->Disable();
 		}
 	}
@@ -969,10 +865,8 @@ void idPhysics_StaticMulti::EnableClip()
 {
 	int i;
 
-	for( i = 0; i < clipModels.Num(); i++ )
-	{
-		if( clipModels[i] )
-		{
+	for( i = 0; i < clipModels.Num(); i++ ) {
+		if( clipModels[i] ) {
 			clipModels[i]->Enable();
 		}
 	}
@@ -987,10 +881,8 @@ void idPhysics_StaticMulti::UnlinkClip()
 {
 	int i;
 
-	for( i = 0; i < clipModels.Num(); i++ )
-	{
-		if( clipModels[i] )
-		{
+	for( i = 0; i < clipModels.Num(); i++ ) {
+		if( clipModels[i] ) {
 			clipModels[i]->Unlink();
 		}
 	}
@@ -1005,10 +897,8 @@ void idPhysics_StaticMulti::LinkClip()
 {
 	int i;
 
-	for( i = 0; i < clipModels.Num(); i++ )
-	{
-		if( clipModels[i] )
-		{
+	for( i = 0; i < clipModels.Num(); i++ ) {
+		if( clipModels[i] ) {
 			clipModels[i]->Link( gameLocal.clip, self, i, current[i].origin, current[i].axis );
 		}
 	}
@@ -1139,36 +1029,27 @@ idPhysics_StaticMulti::SetMaster
 */
 void idPhysics_StaticMulti::SetMaster( idEntity* master, const bool orientated )
 {
-	int i;
+	int	   i;
 	idVec3 masterOrigin;
 	idMat3 masterAxis;
 
-	if( master )
-	{
-		if( !hasMaster )
-		{
+	if( master ) {
+		if( !hasMaster ) {
 			// transform from world space to master space
 			self->GetMasterPosition( masterOrigin, masterAxis );
-			for( i = 0; i < clipModels.Num(); i++ )
-			{
+			for( i = 0; i < clipModels.Num(); i++ ) {
 				current[i].localOrigin = ( current[i].origin - masterOrigin ) * masterAxis.Transpose();
-				if( orientated )
-				{
+				if( orientated ) {
 					current[i].localAxis = current[i].axis * masterAxis.Transpose();
-				}
-				else
-				{
+				} else {
 					current[i].localAxis = current[i].axis;
 				}
 			}
-			hasMaster = true;
+			hasMaster	 = true;
 			isOrientated = orientated;
 		}
-	}
-	else
-	{
-		if( hasMaster )
-		{
+	} else {
+		if( hasMaster ) {
 			hasMaster = false;
 		}
 	}
@@ -1221,14 +1102,13 @@ idPhysics_StaticMulti::WriteToSnapshot
 */
 void idPhysics_StaticMulti::WriteToSnapshot( idBitMsg& msg ) const
 {
-	int i;
+	int		i;
 	idCQuat quat, localQuat;
 
 	msg.WriteByte( current.Num() );
 
-	for( i = 0; i < current.Num(); i++ )
-	{
-		quat = current[i].axis.ToCQuat();
+	for( i = 0; i < current.Num(); i++ ) {
+		quat	  = current[i].axis.ToCQuat();
 		localQuat = current[i].localAxis.ToCQuat();
 
 		msg.WriteFloat( current[i].origin[0] );
@@ -1253,7 +1133,7 @@ idPhysics_StaticMulti::ReadFromSnapshot
 */
 void idPhysics_StaticMulti::ReadFromSnapshot( const idBitMsg& msg )
 {
-	int i, num;
+	int		i, num;
 	idCQuat quat, localQuat;
 
 	num = msg.ReadByte();
@@ -1263,8 +1143,7 @@ void idPhysics_StaticMulti::ReadFromSnapshot( const idBitMsg& msg )
 
 	next.SetNum( num );
 
-	for( i = 0; i < current.Num(); i++ )
-	{
+	for( i = 0; i < current.Num(); i++ ) {
 		next[i] = ReadStaticInterpolatePStateFromSnapshot( msg );
 	}
 }

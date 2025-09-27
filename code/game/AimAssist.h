@@ -19,15 +19,16 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 ===========================================================================
 */
 
-#ifndef	__AIMASSIST_H__
-#define	__AIMASSIST_H__
+#ifndef __AIMASSIST_H__
+#define __AIMASSIST_H__
 
 /*
 ================================================================================================
@@ -47,39 +48,35 @@ hit a Target.
 class idAimAssist
 {
 public:
-
-	idAimAssist() : player( NULL ), angleCorrection( ang_zero ), frictionScalar( 1.0f ), lastTargetPos( vec3_zero ) {}
-
-	void		Init( idPlayer* player );
-	void		Update();
-	void		GetAngleCorrection( idAngles& correction ) const
+	idAimAssist() :
+		player( NULL ),
+		angleCorrection( ang_zero ),
+		frictionScalar( 1.0f ),
+		lastTargetPos( vec3_zero )
 	{
-		correction = angleCorrection;
-	}
-	float		GetFrictionScalar() const
-	{
-		return frictionScalar;
 	}
 
-	idEntity* 	GetLastTarget()
-	{
-		return targetEntity;
-	}
-	idEntity* 	FindAimAssistTarget( idVec3& targetPos );
+	void	  Init( idPlayer* player );
+	void	  Update();
+	void	  GetAngleCorrection( idAngles& correction ) const { correction = angleCorrection; }
+	float	  GetFrictionScalar() const { return frictionScalar; }
+
+	idEntity* GetLastTarget() { return targetEntity; }
+	idEntity* FindAimAssistTarget( idVec3& targetPos );
 
 private:
-	void		UpdateNewAimAssist();
-	float		ComputeEntityAimAssistScore( const idVec3& targetPos, const idVec3& cameraPos, const idMat3& cameraAxis );
-	bool		ComputeTargetPos( idEntity* pTarget, idVec3& primaryTargetPos, idVec3& secondaryTargetPos );
-	float		ComputeFrictionRadius( float distanceToTarget );
-	void		UpdateAdhesion( idEntity* pTarget, const idVec3& targetPos );
-	void		UpdateFriction( idEntity* pTarget, const idVec3& targetPos );
+	void				  UpdateNewAimAssist();
+	float				  ComputeEntityAimAssistScore( const idVec3& targetPos, const idVec3& cameraPos, const idMat3& cameraAxis );
+	bool				  ComputeTargetPos( idEntity* pTarget, idVec3& primaryTargetPos, idVec3& secondaryTargetPos );
+	float				  ComputeFrictionRadius( float distanceToTarget );
+	void				  UpdateAdhesion( idEntity* pTarget, const idVec3& targetPos );
+	void				  UpdateFriction( idEntity* pTarget, const idVec3& targetPos );
 
-	idPlayer* 				player;						// player associated with this object
-	idAngles				angleCorrection;			// the angle delta to apply for aim assistance
-	float					frictionScalar;				// friction scalar
-	idEntityPtr<idEntity>	targetEntity;				// the last target we had (updated every frame)
-	idVec3					lastTargetPos;				// the last target position ( updated every frame );
+	idPlayer*			  player;		   // player associated with this object
+	idAngles			  angleCorrection; // the angle delta to apply for aim assistance
+	float				  frictionScalar;  // friction scalar
+	idEntityPtr<idEntity> targetEntity;	   // the last target we had (updated every frame)
+	idVec3				  lastTargetPos;   // the last target position ( updated every frame );
 };
 
 #endif // !__AIMASSIST_H__

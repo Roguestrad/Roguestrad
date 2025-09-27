@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,12 +37,11 @@ const static int NUM_DEV_OPTIONS = 8;
 idMenuScreen_Shell_Dev::Initialize
 ========================
 */
-void idMenuScreen_Shell_Dev::Initialize( idMenuHandler* data )
+void			 idMenuScreen_Shell_Dev::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
 
-	if( data != NULL )
-	{
+	if( data != NULL ) {
 		menuGUI = data->GetGUI();
 	}
 
@@ -52,8 +52,7 @@ void idMenuScreen_Shell_Dev::Initialize( idMenuHandler* data )
 	options->SetSpritePath( GetSpritePath(), "info", "options" );
 	options->SetWrappingAllowed( true );
 
-	while( options->GetChildren().Num() < NUM_DEV_OPTIONS )
-	{
+	while( options->GetChildren().Num() < NUM_DEV_OPTIONS ) {
 		idMenuWidget_Button* const buttonWidget = new( TAG_SWF ) idMenuWidget_Button();
 		buttonWidget->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_PRESS_FOCUSED, options->GetChildren().Num() );
 		buttonWidget->Initialize( data );
@@ -78,7 +77,8 @@ void idMenuScreen_Shell_Dev::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RELEASE ) );
 	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN_LSTICK ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK ) );
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_SCROLL_UP_START_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK ) );
-	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE ) );
+	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE )
+		.Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE ) );
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
@@ -89,7 +89,6 @@ idMenuScreen_Shell_Dev::SetupDevOptions
 */
 void idMenuScreen_Shell_Dev::SetupDevOptions()
 {
-
 	devOptions.Clear();
 
 	devOptions.Append( devOption_t( "game/mars_city1", "Mars City 1" ) );
@@ -145,12 +144,11 @@ void idMenuScreen_Shell_Dev::SetupDevOptions()
 	devOptions.Append( devOption_t( "game/pdas", "PDAs" ) );
 	devOptions.Append( devOption_t( "testmaps/test_box", "Box" ) );
 
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
+	idList<idList<idStr, TAG_IDLIB_LIST_MENU>, TAG_IDLIB_LIST_MENU> menuOptions;
 
-	for( int i = 0; i < devOptions.Num(); ++i )
-	{
-		idList< idStr > option;
-		option.Append( devOptions[ i ].name );
+	for( int i = 0; i < devOptions.Num(); ++i ) {
+		idList<idStr> option;
+		option.Append( devOptions[i].name );
 		menuOptions.Append( option );
 	}
 
@@ -164,24 +162,19 @@ idMenuScreen_Shell_Dev::Update
 */
 void idMenuScreen_Shell_Dev::Update()
 {
-
-	if( menuData != NULL )
-	{
+	if( menuData != NULL ) {
 		idMenuWidget_CommandBar* cmdBar = menuData->GetCmdBar();
-		if( cmdBar != NULL )
-		{
+		if( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
-			if( menuData->GetPlatform() != 2 )
-			{
+			if( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
-			if( menuData->GetPlatform() != 2 )
-			{
+			if( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
@@ -189,24 +182,20 @@ void idMenuScreen_Shell_Dev::Update()
 	}
 
 	idSWFScriptObject& root = GetSWFObject()->GetRootObject();
-	if( BindSprite( root ) )
-	{
+	if( BindSprite( root ) ) {
 		idSWFTextInstance* heading = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtHeading" );
-		if( heading != NULL )
-		{
+		if( heading != NULL ) {
 			heading->SetText( "DEV" );
 			heading->SetStrokeInfo( true, 0.75f, 1.75f );
 		}
 
 		idSWFSpriteInstance* gradient = GetSprite()->GetScriptObject()->GetNestedSprite( "info", "gradient" );
-		if( gradient != NULL && heading != NULL )
-		{
+		if( gradient != NULL && heading != NULL ) {
 			gradient->SetXPos( heading->GetTextLength() );
 		}
 	}
 
-	if( btnBack != NULL )
-	{
+	if( btnBack != NULL ) {
 		btnBack->BindSprite( root );
 	}
 
@@ -240,50 +229,40 @@ idMenuScreen_Shell_Dev::HandleAction h
 */
 bool idMenuScreen_Shell_Dev::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
-
-	if( menuData == NULL )
-	{
+	if( menuData == NULL ) {
 		return true;
 	}
 
-	if( menuData->ActiveScreen() != SHELL_AREA_DEV )
-	{
+	if( menuData->ActiveScreen() != SHELL_AREA_DEV ) {
 		return false;
 	}
 
-	widgetAction_t actionType = action.GetType();
-	const idSWFParmList& parms = action.GetParms();
+	widgetAction_t		 actionType = action.GetType();
+	const idSWFParmList& parms		= action.GetParms();
 
-	switch( actionType )
-	{
-		case WIDGET_ACTION_GO_BACK:
-		{
+	switch( actionType ) {
+		case WIDGET_ACTION_GO_BACK: {
 			menuData->SetNextScreen( SHELL_AREA_ROOT, MENU_TRANSITION_SIMPLE );
 			return true;
 		}
-		case WIDGET_ACTION_PRESS_FOCUSED:
-		{
-			if( options == NULL )
-			{
+		case WIDGET_ACTION_PRESS_FOCUSED: {
+			if( options == NULL ) {
 				return true;
 			}
 
 			int selectionIndex = options->GetViewIndex();
-			if( parms.Num() == 1 )
-			{
+			if( parms.Num() == 1 ) {
 				selectionIndex = parms[0].ToInteger();
 			}
 
-			if( options->GetFocusIndex() != selectionIndex - options->GetViewOffset() )
-			{
+			if( options->GetFocusIndex() != selectionIndex - options->GetViewOffset() ) {
 				options->SetFocusIndex( selectionIndex );
 				options->SetViewIndex( options->GetViewOffset() + selectionIndex );
 			}
 
 			int mapIndex = options->GetViewIndex();
-			if( ( mapIndex < devOptions.Num() ) && ( devOptions[ mapIndex ].map != NULL ) )
-			{
-				cmdSystem->AppendCommandText( va( "devmap %s\n", devOptions[ mapIndex ].map ) );
+			if( ( mapIndex < devOptions.Num() ) && ( devOptions[mapIndex].map != NULL ) ) {
+				cmdSystem->AppendCommandText( va( "devmap %s\n", devOptions[mapIndex].map ) );
 			}
 
 			return true;

@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,7 +39,6 @@ Worldspawn class.  Each map has one worldspawn which handles global spawnargs.
 
 #include "Game_local.h"
 
-
 const idEventDef EV_PlayBackgroundMusic( "<playBackgroundMusic>", NULL );
 
 /*
@@ -49,9 +49,9 @@ Every map should have exactly one worldspawn.
 ================
 */
 CLASS_DECLARATION( idEntity, idWorldspawn )
-EVENT( EV_Remove,				idWorldspawn::Event_Remove )
-EVENT( EV_SafeRemove,			idWorldspawn::Event_Remove )
-EVENT( EV_PlayBackgroundMusic,	idWorldspawn::Event_PlayBackgroundMusic )
+EVENT( EV_Remove, idWorldspawn::Event_Remove )
+EVENT( EV_SafeRemove, idWorldspawn::Event_Remove )
+EVENT( EV_PlayBackgroundMusic, idWorldspawn::Event_PlayBackgroundMusic )
 END_CLASS
 
 /*
@@ -61,10 +61,10 @@ idWorldspawn::Spawn
 */
 void idWorldspawn::Spawn()
 {
-	idStr				scriptname;
-	idThread*			thread;
-	const function_t*	func;
-	const idKeyValue*	kv;
+	idStr			  scriptname;
+	idThread*		  thread;
+	const function_t* func;
+	const idKeyValue* kv;
 
 	assert( gameLocal.world == NULL );
 	gameLocal.world = this;
@@ -75,22 +75,19 @@ void idWorldspawn::Spawn()
 	SetMusicTrack();
 
 	// disable stamina on hell levels
-	if( spawnArgs.GetBool( "no_stamina" ) )
-	{
+	if( spawnArgs.GetBool( "no_stamina" ) ) {
 		pm_stamina.SetFloat( 0.0f );
 	}
 
 	// load script
 	scriptname = gameLocal.GetMapName();
 	scriptname.SetFileExtension( ".script" );
-	if( fileSystem->ReadFile( scriptname, NULL, NULL ) > 0 )
-	{
+	if( fileSystem->ReadFile( scriptname, NULL, NULL ) > 0 ) {
 		gameLocal.program.CompileFile( scriptname );
 
 		// call the main function by default
 		func = gameLocal.program.FindFunction( "main" );
-		if( func != NULL )
-		{
+		if( func != NULL ) {
 			thread = new idThread( func );
 			thread->DelayedStart( 0 );
 		}
@@ -98,11 +95,9 @@ void idWorldspawn::Spawn()
 
 	// call any functions specified in worldspawn
 	kv = spawnArgs.MatchPrefix( "call" );
-	while( kv != NULL )
-	{
+	while( kv != NULL ) {
 		func = gameLocal.program.FindFunction( kv->GetValue() );
-		if( func == NULL )
-		{
+		if( func == NULL ) {
 			gameLocal.Error( "Function '%s' not found in script for '%s' key on worldspawn", kv->GetValue().c_str(), kv->GetKey().c_str() );
 		}
 
@@ -136,8 +131,7 @@ void idWorldspawn::Restore( idRestoreGame* savefile )
 	SetMusicTrack();
 
 	// disable stamina on hell levels
-	if( spawnArgs.GetBool( "no_stamina" ) )
-	{
+	if( spawnArgs.GetBool( "no_stamina" ) ) {
 		pm_stamina.SetFloat( 0.0f );
 	}
 }
@@ -149,8 +143,7 @@ idWorldspawn::~idWorldspawn
 */
 idWorldspawn::~idWorldspawn()
 {
-	if( gameLocal.world == this )
-	{
+	if( gameLocal.world == this ) {
 		gameLocal.world = NULL;
 	}
 }
@@ -169,22 +162,18 @@ void idWorldspawn::Event_Remove()
 void idWorldspawn::SetMusicTrack()
 {
 	idStr music = spawnArgs.GetString( "music", "" );
-	if( music != "" )
-	{
+	if( music != "" ) {
 		musicTrack = music;
 
 		// play it after a few seconds
 		PostEventSec( &EV_PlayBackgroundMusic, 3 );
-	}
-	else
-	{
+	} else {
 		// scan for music/track*.ogg files the user installed
-		idFileList*	soundTracks;
-		soundTracks =  fileSystem->ListFilesTree( "music", ".ogg", true );
+		idFileList* soundTracks;
+		soundTracks = fileSystem->ListFilesTree( "music", ".ogg", true );
 
-		if( soundTracks->GetList().Num() )
-		{
-			idStr mapnameShort = gameLocal.GetMapName();
+		if( soundTracks->GetList().Num() ) {
+			idStr	  mapnameShort = gameLocal.GetMapName();
 
 			// make sure that every map has a unique soundtrack
 			idStrList mapList;
@@ -215,7 +204,7 @@ void idWorldspawn::SetMusicTrack()
 			mapList.AddUnique( "game/caverns1" );
 			mapList.AddUnique( "game/caverns2" );
 			mapList.AddUnique( "game/hellhole" );
-			//mapList.AddUnique(NULL, "-DOOM 3 Expansion-" ) );
+			// mapList.AddUnique(NULL, "-DOOM 3 Expansion-" ) );
 			mapList.AddUnique( "game/erebus1" );
 			mapList.AddUnique( "game/erebus2" );
 			mapList.AddUnique( "game/erebus3" );
@@ -228,7 +217,7 @@ void idWorldspawn::SetMusicTrack()
 			mapList.AddUnique( "game/phobos4" );
 			mapList.AddUnique( "game/deltax" );
 			mapList.AddUnique( "game/hell" );
-			//mapList.AddUnique(NULL, "-Lost Missions-" ) );
+			// mapList.AddUnique(NULL, "-Lost Missions-" ) );
 			mapList.AddUnique( "game/le_enpro1" );
 			mapList.AddUnique( "game/le_enpro2" );
 			mapList.AddUnique( "game/le_underground" );
@@ -239,18 +228,15 @@ void idWorldspawn::SetMusicTrack()
 			mapList.AddUnique( "game/le_hell_post" );
 
 			int mapIndex = -1;
-			for( int i = 0; i < mapList.Num(); i++ )
-			{
-				const char* mapStr = mapList[ i ].c_str();
-				if( mapnameShort.Find( mapStr ) != -1 )
-				{
+			for( int i = 0; i < mapList.Num(); i++ ) {
+				const char* mapStr = mapList[i].c_str();
+				if( mapnameShort.Find( mapStr ) != -1 ) {
 					mapIndex = i;
 					break;
 				}
 			}
 
-			if( mapIndex == -1 )
-			{
+			if( mapIndex == -1 ) {
 				// unknown map
 				mapIndex = idStr::Hash( gameLocal.GetMapName() );
 			}
@@ -258,16 +244,14 @@ void idWorldspawn::SetMusicTrack()
 			mapIndex %= soundTracks->GetList().Num();
 
 			// skip it for mars_city1
-			if( mapnameShort.Find( "mars_city1" ) == -1 )
-			{
-				musicTrack = soundTracks->GetList()[ mapIndex ];
+			if( mapnameShort.Find( "mars_city1" ) == -1 ) {
+				musicTrack = soundTracks->GetList()[mapIndex];
 
 				const idSoundShader* soundShader = declManager->FindSound( musicTrack );
-				if( soundShader->GetState() == DS_DEFAULTED )
-				{
+				if( soundShader->GetState() == DS_DEFAULTED ) {
 					// this is bad, we have no sound shader found that enables the loop
 					// this will only play the music until it ends
-					musicTrack = soundTracks->GetList()[ mapIndex ];
+					musicTrack = soundTracks->GetList()[mapIndex];
 				}
 
 				// play it after a few seconds
@@ -282,8 +266,7 @@ void idWorldspawn::SetMusicTrack()
 
 void idWorldspawn::Event_PlayBackgroundMusic()
 {
-	if( !musicTrack.IsEmpty() )
-	{
+	if( !musicTrack.IsEmpty() ) {
 		common->Printf( "Playing custom music sound track: %s\n", musicTrack.c_str() );
 		gameSoundWorld->PlayShaderDirectly( musicTrack, SND_CHANNEL_MUSIC );
 	}

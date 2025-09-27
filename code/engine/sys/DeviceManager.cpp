@@ -1,27 +1,27 @@
 /*
-* Copyright (c) 2014-2021, NVIDIA CORPORATION. All rights reserved.
-* Copyright (C) 2022 Stephen Pridham (id Tech 4x integration)
-* Copyright (C) 2023 Stephen Saunders (id Tech 4x integration)
-* Copyright (C) 2023 Robert Beckebans (id Tech 4x integration)
-*
-* Permission is hereby granted, free of charge, to any person obtaining a
-* copy of this software and associated documentation files (the "Software"),
-* to deal in the Software without restriction, including without limitation
-* the rights to use, copy, modify, merge, publish, distribute, sublicense,
-* and/or sell copies of the Software, and to permit persons to whom the
-* Software is furnished to do so, subject to the following conditions:
-*
-* The above copyright notice and this permission notice shall be included in
-* all copies or substantial portions of the Software.
-*
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-* IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-* FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
-* THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-* LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-* FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
-* DEALINGS IN THE SOFTWARE.
-*/
+ * Copyright (c) 2014-2021, NVIDIA CORPORATION. All rights reserved.
+ * Copyright (C) 2022 Stephen Pridham (id Tech 4x integration)
+ * Copyright (C) 2023 Stephen Saunders (id Tech 4x integration)
+ * Copyright (C) 2023 Robert Beckebans (id Tech 4x integration)
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
+ * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
 
 #include "precompiled.h"
 #pragma hdrstop
@@ -30,8 +30,7 @@
 
 DeviceManager* DeviceManager::Create( nvrhi::GraphicsAPI api )
 {
-	switch( api )
-	{
+	switch( api ) {
 #if USE_DX11
 		case nvrhi::GraphicsAPI::D3D11:
 			return CreateD3D11();
@@ -52,14 +51,13 @@ DeviceManager* DeviceManager::Create( nvrhi::GraphicsAPI api )
 
 void DeviceManager::GetWindowDimensions( int& width, int& height )
 {
-	width = m_DeviceParams.backBufferWidth;
+	width  = m_DeviceParams.backBufferWidth;
 	height = m_DeviceParams.backBufferHeight;
 }
 
 graphicsVendor_t DeviceManager::getGPUVendor( uint32_t vendorID ) const
 {
-	switch( vendorID )
-	{
+	switch( vendorID ) {
 		case 0x10DE:
 			return VENDOR_NVIDIA;
 		case 0x1002:
@@ -80,8 +78,7 @@ void DeviceManager::BackBufferResizing()
 
 void DeviceManager::BackBufferResized()
 {
-	if( tr.IsInitialized() )
-	{
+	if( tr.IsInitialized() ) {
 		Framebuffer::ResizeFramebuffers();
 	}
 }
@@ -98,8 +95,7 @@ nvrhi::IFramebuffer* DeviceManager::GetCurrentFramebuffer()
 
 nvrhi::IFramebuffer* DeviceManager::GetFramebuffer( uint32_t index )
 {
-	if( index < ( uint32_t )globalFramebuffers.swapFramebuffers.Num() )
-	{
+	if( index < ( uint32_t )globalFramebuffers.swapFramebuffers.Num() ) {
 		return globalFramebuffers.swapFramebuffers[index]->GetApiObject();
 	}
 
@@ -119,8 +115,7 @@ DefaultMessageCallback& DefaultMessageCallback::GetInstance()
 
 void DefaultMessageCallback::message( nvrhi::MessageSeverity severity, const char* messageText )
 {
-	switch( severity )
-	{
+	switch( severity ) {
 		case nvrhi::MessageSeverity::Info:
 			common->Printf( messageText );
 			break;

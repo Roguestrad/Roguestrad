@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -66,8 +67,7 @@ const idMat3& idRotation::ToMat3() const
 	float x2, y2, z2;
 	float a, c, s, x, y, z;
 
-	if( axisValid )
-	{
+	if( axisValid ) {
 		return axis;
 	}
 
@@ -94,17 +94,17 @@ const idMat3& idRotation::ToMat3() const
 	wy = c * y2;
 	wz = c * z2;
 
-	axis[ 0 ][ 0 ] = 1.0f - ( yy + zz );
-	axis[ 0 ][ 1 ] = xy - wz;
-	axis[ 0 ][ 2 ] = xz + wy;
+	axis[0][0] = 1.0f - ( yy + zz );
+	axis[0][1] = xy - wz;
+	axis[0][2] = xz + wy;
 
-	axis[ 1 ][ 0 ] = xy + wz;
-	axis[ 1 ][ 1 ] = 1.0f - ( xx + zz );
-	axis[ 1 ][ 2 ] = yz - wx;
+	axis[1][0] = xy + wz;
+	axis[1][1] = 1.0f - ( xx + zz );
+	axis[1][2] = yz - wx;
 
-	axis[ 2 ][ 0 ] = xz - wy;
-	axis[ 2 ][ 1 ] = yz + wx;
-	axis[ 2 ][ 2 ] = 1.0f - ( xx + yy );
+	axis[2][0] = xz - wy;
+	axis[2][1] = yz + wx;
+	axis[2][2] = 1.0f - ( xx + yy );
 
 	axisValid = true;
 
@@ -139,12 +139,9 @@ idRotation::Normalize180
 void idRotation::Normalize180()
 {
 	angle -= floor( angle / 360.0f ) * 360.0f;
-	if( angle > 180.0f )
-	{
+	if( angle > 180.0f ) {
 		angle -= 360.0f;
-	}
-	else if( angle < -180.0f )
-	{
+	} else if( angle < -180.0f ) {
 		angle += 360.0f;
 	}
 }
@@ -157,12 +154,9 @@ idRotation::Normalize360
 void idRotation::Normalize360()
 {
 	angle -= floor( angle / 360.0f ) * 360.0f;
-	if( angle > 360.0f )
-	{
+	if( angle > 360.0f ) {
 		angle -= 360.0f;
-	}
-	else if( angle < 0.0f )
-	{
+	} else if( angle < 0.0f ) {
 		angle += 360.0f;
 	}
 }

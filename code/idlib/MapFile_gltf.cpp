@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -33,31 +34,27 @@ If you have questions concerning this license or the applicable additional terms
 // files import as y-up. Use this transform to change the model to z-up.
 static const idMat4 blenderToDoomTransform( idAngles( 0.0f, 0.0f, 90 ).ToMat3(), vec3_origin );
 
-MapPolygonMesh* MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* prim, gltfData* _data , const idMat4& transform )
+MapPolygonMesh*		MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* prim, gltfData* _data, const idMat4& transform )
 {
-	MapPolygonMesh* mesh = new MapPolygonMesh();
-	gltfAccessor* accessor = _data->AccessorList()[prim->indices];
-	gltfBufferView* bv = _data->BufferViewList()[accessor->bufferView];
-	gltfData* data = bv->parent;
+	MapPolygonMesh* mesh	 = new MapPolygonMesh();
+	gltfAccessor*	accessor = _data->AccessorList()[prim->indices];
+	gltfBufferView* bv		 = _data->BufferViewList()[accessor->bufferView];
+	gltfData*		data	 = bv->parent;
 
-	gltfMaterial* mat = NULL;
-	if( prim->material != -1 )
-	{
+	gltfMaterial*	mat = NULL;
+	if( prim->material != -1 ) {
 		mat = _data->MaterialList()[prim->material];
 	}
 
-	gltfBuffer* buff = data->BufferList()[bv->buffer];
-	uint idxDataSize = sizeof( uint ) * accessor->count;
-	uint* indices = ( uint* ) Mem_ClearedAlloc( idxDataSize , TAG_IDLIB_GLTF );
+	gltfBuffer*	  buff		  = data->BufferList()[bv->buffer];
+	uint		  idxDataSize = sizeof( uint ) * accessor->count;
+	uint*		  indices	  = ( uint* )Mem_ClearedAlloc( idxDataSize, TAG_IDLIB_GLTF );
 
-	idFile_Memory idxBin = idFile_Memory( "gltfChunkIndices",
-										  ( const char* )( ( data->GetData( bv->buffer ) + bv->byteOffset + accessor->byteOffset ) ), bv->byteLength );
+	idFile_Memory idxBin = idFile_Memory( "gltfChunkIndices", ( const char* )( ( data->GetData( bv->buffer ) + bv->byteOffset + accessor->byteOffset ) ), bv->byteLength );
 
-	for( int i = 0; i < accessor->count; i++ )
-	{
+	for( int i = 0; i < accessor->count; i++ ) {
 		idxBin.Read( ( void* )( &indices[i] ), accessor->typeSize );
-		if( bv->byteStride )
-		{
+		if( bv->byteStride ) {
 			idxBin.Seek( bv->byteStride - accessor->typeSize, FS_SEEK_CUR );
 		}
 	}
@@ -68,16 +65,12 @@ MapPolygonMesh* MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* p
 	mesh->polygons.SetNum( polyCount );
 
 	int cnt = 0;
-	for( int i = 0; i < accessor->count; i += 3 )
-	{
+	for( int i = 0; i < accessor->count; i += 3 ) {
 		MapPolygon& polygon = mesh->polygons[cnt++];
 
-		if( mat != NULL )
-		{
+		if( mat != NULL ) {
 			polygon.SetMaterial( mat->name );
-		}
-		else
-		{
+		} else {
 			polygon.SetMaterial( "textures/base_wall/snpanel2rust" );
 		}
 
@@ -91,31 +84,25 @@ MapPolygonMesh* MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* p
 	Mem_Free( indices );
 	bool sizeSet = false;
 
-	//for( const auto& attrib : prim->attributes )
-	for( int a = 0; a < prim->attributes.Num(); a++ )
-	{
+	// for( const auto& attrib : prim->attributes )
+	for( int a = 0; a < prim->attributes.Num(); a++ ) {
 		gltfMesh_Primitive_Attribute* attrib = prim->attributes[a];
 
-		gltfAccessor* attrAcc = data->AccessorList()[attrib->accessorIndex];
-		gltfBufferView* attrBv = data->BufferViewList()[attrAcc->bufferView];
-		gltfData* attrData = attrBv->parent;
-		gltfBuffer* attrbuff = attrData->BufferList()[attrBv->buffer];
+		gltfAccessor*				  attrAcc  = data->AccessorList()[attrib->accessorIndex];
+		gltfBufferView*				  attrBv   = data->BufferViewList()[attrAcc->bufferView];
+		gltfData*					  attrData = attrBv->parent;
+		gltfBuffer*					  attrbuff = attrData->BufferList()[attrBv->buffer];
 
-		idFile_Memory bin = idFile_Memory( "gltfChunkVertices",
-										   ( const char* )( ( attrData->GetData( attrBv->buffer ) + attrBv->byteOffset + attrAcc->byteOffset ) ), attrBv->byteLength );
+		idFile_Memory bin = idFile_Memory( "gltfChunkVertices", ( const char* )( ( attrData->GetData( attrBv->buffer ) + attrBv->byteOffset + attrAcc->byteOffset ) ), attrBv->byteLength );
 
-		if( !sizeSet )
-		{
+		if( !sizeSet ) {
 			mesh->verts.AssureSize( attrAcc->count );
 			sizeSet = true;
 		}
 
-		switch( attrib->type )
-		{
-			case gltfMesh_Primitive_Attribute::Type::Position:
-			{
-				for( int i = 0; i < attrAcc->count; i++ )
-				{
+		switch( attrib->type ) {
+			case gltfMesh_Primitive_Attribute::Type::Position: {
+				for( int i = 0; i < attrAcc->count; i++ ) {
 					idVec3 pos;
 
 					bin.Read( ( void* )( &pos.x ), attrAcc->typeSize );
@@ -129,8 +116,7 @@ MapPolygonMesh* MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* p
 					mesh->verts[i].xyz.y = pos.y;
 					mesh->verts[i].xyz.z = pos.z;
 
-					if( attrBv->byteStride )
-					{
+					if( attrBv->byteStride ) {
 						bin.Seek( attrBv->byteStride - ( 3 * attrAcc->typeSize ), FS_SEEK_CUR );
 					}
 				}
@@ -138,17 +124,14 @@ MapPolygonMesh* MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* p
 				break;
 			}
 
-			case gltfMesh_Primitive_Attribute::Type::Normal:
-			{
+			case gltfMesh_Primitive_Attribute::Type::Normal: {
 				idVec3 vec;
-				for( int i = 0; i < attrAcc->count; i++ )
-				{
+				for( int i = 0; i < attrAcc->count; i++ ) {
 					idVec3 vec;
 					bin.Read( ( void* )( &vec.x ), attrAcc->typeSize );
 					bin.Read( ( void* )( &vec.y ), attrAcc->typeSize );
 					bin.Read( ( void* )( &vec.z ), attrAcc->typeSize );
-					if( attrBv->byteStride )
-					{
+					if( attrBv->byteStride ) {
 						bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
 					}
 
@@ -166,36 +149,30 @@ MapPolygonMesh* MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* p
 				break;
 			}
 
-			case gltfMesh_Primitive_Attribute::Type::TexCoord0:
-			{
+			case gltfMesh_Primitive_Attribute::Type::TexCoord0: {
 				idVec2 vec;
-				for( int i = 0; i < attrAcc->count; i++ )
-				{
+				for( int i = 0; i < attrAcc->count; i++ ) {
 					bin.Read( ( void* )( &vec.x ), attrAcc->typeSize );
 					bin.Read( ( void* )( &vec.y ), attrAcc->typeSize );
-					if( attrBv->byteStride )
-					{
+					if( attrBv->byteStride ) {
 						bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
 					}
 
-					//vec.y = 1.0f - vec.y;
+					// vec.y = 1.0f - vec.y;
 					mesh->verts[i].SetTexCoord( vec );
 				}
 
 				break;
 			}
 
-			case gltfMesh_Primitive_Attribute::Type::Tangent:
-			{
+			case gltfMesh_Primitive_Attribute::Type::Tangent: {
 				idVec4 vec;
-				for( int i = 0; i < attrAcc->count; i++ )
-				{
+				for( int i = 0; i < attrAcc->count; i++ ) {
 					bin.Read( ( void* )( &vec.x ), attrAcc->typeSize );
 					bin.Read( ( void* )( &vec.y ), attrAcc->typeSize );
 					bin.Read( ( void* )( &vec.z ), attrAcc->typeSize );
 					bin.Read( ( void* )( &vec.w ), attrAcc->typeSize );
-					if( attrBv->byteStride )
-					{
+					if( attrBv->byteStride ) {
 						bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
 					}
 
@@ -211,90 +188,99 @@ MapPolygonMesh* MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* p
 				break;
 			}
 
-			case gltfMesh_Primitive_Attribute::Type::Weight:
-			{
+			case gltfMesh_Primitive_Attribute::Type::Weight: {
 				idVec4 vec;
-				for( int i = 0; i < attrAcc->count; i++ )
-				{
+				for( int i = 0; i < attrAcc->count; i++ ) {
 					bin.Read( ( void* )( &vec.x ), attrAcc->typeSize );
 					bin.Read( ( void* )( &vec.y ), attrAcc->typeSize );
 					bin.Read( ( void* )( &vec.z ), attrAcc->typeSize );
 					bin.Read( ( void* )( &vec.w ), attrAcc->typeSize );
-					if( attrBv->byteStride )
-					{
+					if( attrBv->byteStride ) {
 						bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
 					}
 
 					mesh->verts[i].SetColor2( PackColor( vec ) );
-
 				}
 				break;
 			}
 
 			case gltfMesh_Primitive_Attribute::Type::Color0:
-				//case gltfMesh_Primitive_Attribute::Type::Color1:
-				//case gltfMesh_Primitive_Attribute::Type::Color2:
-				//case gltfMesh_Primitive_Attribute::Type::Color3:
-			{
-				if( attrAcc->typeSize == 4 )
+				// case gltfMesh_Primitive_Attribute::Type::Color1:
+				// case gltfMesh_Primitive_Attribute::Type::Color2:
+				// case gltfMesh_Primitive_Attribute::Type::Color3:
 				{
-					idVec4 vec;
+					if( attrAcc->typeSize == 4 ) {
+						idVec4 vec;
 
-					assert( sizeof( vec ) == ( attrAcc->typeSize * 4 ) );
+						assert( sizeof( vec ) == ( attrAcc->typeSize * 4 ) );
 
-					for( int i = 0; i < attrAcc->count; i++ )
-					{
-						bin.Read( ( void* )( &vec[0] ), attrAcc->typeSize );
-						bin.Read( ( void* )( &vec[1] ), attrAcc->typeSize );
-						bin.Read( ( void* )( &vec[2] ), attrAcc->typeSize );
-						bin.Read( ( void* )( &vec[3] ), attrAcc->typeSize );
-						if( attrBv->byteStride )
-						{
-							bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
+						for( int i = 0; i < attrAcc->count; i++ ) {
+							bin.Read( ( void* )( &vec[0] ), attrAcc->typeSize );
+							bin.Read( ( void* )( &vec[1] ), attrAcc->typeSize );
+							bin.Read( ( void* )( &vec[2] ), attrAcc->typeSize );
+							bin.Read( ( void* )( &vec[3] ), attrAcc->typeSize );
+							if( attrBv->byteStride ) {
+								bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
+							}
+
+							mesh->verts[i].color[0] = idMath::Ftob( vec.x * 255.0f );
+							mesh->verts[i].color[1] = idMath::Ftob( vec.y * 255.0f );
+							mesh->verts[i].color[2] = idMath::Ftob( vec.z * 255.0f );
+							mesh->verts[i].color[3] = 255;
 						}
+					} else if( attrAcc->typeSize == 2 ) {
+						uint16_t vec[4];
 
-						mesh->verts[i].color[0] = idMath::Ftob( vec.x * 255.0f );
-						mesh->verts[i].color[1] = idMath::Ftob( vec.y * 255.0f );
-						mesh->verts[i].color[2] = idMath::Ftob( vec.z * 255.0f );
-						mesh->verts[i].color[3] = 255;
+						assert( sizeof( vec ) == ( attrAcc->typeSize * 4 ) );
+
+						for( int i = 0; i < attrAcc->count; i++ ) {
+							bin.Read( ( void* )( &vec[0] ), attrAcc->typeSize );
+							bin.Read( ( void* )( &vec[1] ), attrAcc->typeSize );
+							bin.Read( ( void* )( &vec[2] ), attrAcc->typeSize );
+							bin.Read( ( void* )( &vec[3] ), attrAcc->typeSize );
+							if( attrBv->byteStride ) {
+								bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
+							}
+
+							mesh->verts[i].color[0] = idMath::Ftob( ( vec[0] * 1.0f / 65335 ) * 255.0f );
+							mesh->verts[i].color[1] = idMath::Ftob( ( vec[1] * 1.0f / 65335 ) * 255.0f );
+							mesh->verts[i].color[2] = idMath::Ftob( ( vec[2] * 1.0f / 65335 ) * 255.0f );
+							mesh->verts[i].color[3] = 255;
+						}
+					} else {
+						uint8_t vec[4];
+						for( int i = 0; i < attrAcc->count; i++ ) {
+							assert( sizeof( vec ) == ( attrAcc->typeSize * 4 ) );
+
+							bin.Read( ( void* )( &vec[0] ), attrAcc->typeSize );
+							bin.Read( ( void* )( &vec[1] ), attrAcc->typeSize );
+							bin.Read( ( void* )( &vec[2] ), attrAcc->typeSize );
+							bin.Read( ( void* )( &vec[3] ), attrAcc->typeSize );
+							if( attrBv->byteStride ) {
+								bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
+							}
+
+							mesh->verts[i].color[0] = vec[0];
+							mesh->verts[i].color[1] = vec[1];
+							mesh->verts[i].color[2] = vec[2];
+							mesh->verts[i].color[3] = vec[3];
+						}
 					}
+					break;
 				}
-				else if( attrAcc->typeSize == 2 )
-				{
+
+			case gltfMesh_Primitive_Attribute::Type::Joints: {
+				if( attrAcc->typeSize == 2 ) {
 					uint16_t vec[4];
 
 					assert( sizeof( vec ) == ( attrAcc->typeSize * 4 ) );
 
-					for( int i = 0; i < attrAcc->count; i++ )
-					{
+					for( int i = 0; i < attrAcc->count; i++ ) {
 						bin.Read( ( void* )( &vec[0] ), attrAcc->typeSize );
 						bin.Read( ( void* )( &vec[1] ), attrAcc->typeSize );
 						bin.Read( ( void* )( &vec[2] ), attrAcc->typeSize );
 						bin.Read( ( void* )( &vec[3] ), attrAcc->typeSize );
-						if( attrBv->byteStride )
-						{
-							bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
-						}
-
-						mesh->verts[i].color[0] = idMath::Ftob( ( vec[0] * 1.0f / 65335 ) * 255.0f );
-						mesh->verts[i].color[1] = idMath::Ftob( ( vec[1] * 1.0f / 65335 ) * 255.0f );
-						mesh->verts[i].color[2] = idMath::Ftob( ( vec[2] * 1.0f / 65335 ) * 255.0f );
-						mesh->verts[i].color[3] = 255;
-					}
-				}
-				else
-				{
-					uint8_t vec[4];
-					for( int i = 0; i < attrAcc->count; i++ )
-					{
-						assert( sizeof( vec ) == ( attrAcc->typeSize * 4 ) );
-
-						bin.Read( ( void* )( &vec[0] ), attrAcc->typeSize );
-						bin.Read( ( void* )( &vec[1] ), attrAcc->typeSize );
-						bin.Read( ( void* )( &vec[2] ), attrAcc->typeSize );
-						bin.Read( ( void* )( &vec[3] ), attrAcc->typeSize );
-						if( attrBv->byteStride )
-						{
+						if( attrBv->byteStride ) {
 							bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
 						}
 
@@ -303,48 +289,16 @@ MapPolygonMesh* MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* p
 						mesh->verts[i].color[2] = vec[2];
 						mesh->verts[i].color[3] = vec[3];
 					}
-				}
-				break;
-			}
-
-			case gltfMesh_Primitive_Attribute::Type::Joints:
-			{
-				if( attrAcc->typeSize == 2 )
-				{
-					uint16_t vec[4];
-
-					assert( sizeof( vec ) == ( attrAcc->typeSize * 4 ) );
-
-					for( int i = 0; i < attrAcc->count; i++ )
-					{
-						bin.Read( ( void* )( &vec[0] ), attrAcc->typeSize );
-						bin.Read( ( void* )( &vec[1] ), attrAcc->typeSize );
-						bin.Read( ( void* )( &vec[2] ), attrAcc->typeSize );
-						bin.Read( ( void* )( &vec[3] ), attrAcc->typeSize );
-						if( attrBv->byteStride )
-						{
-							bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
-						}
-
-						mesh->verts[i].color[0] = vec[0];
-						mesh->verts[i].color[1] = vec[1];
-						mesh->verts[i].color[2] = vec[2];
-						mesh->verts[i].color[3] = vec[3];
-					}
-				}
-				else
-				{
+				} else {
 					uint8_t vec[4];
-					for( int i = 0; i < attrAcc->count; i++ )
-					{
+					for( int i = 0; i < attrAcc->count; i++ ) {
 						assert( sizeof( vec ) == ( attrAcc->typeSize * 4 ) );
 
 						bin.Read( ( void* )( &vec[0] ), attrAcc->typeSize );
 						bin.Read( ( void* )( &vec[1] ), attrAcc->typeSize );
 						bin.Read( ( void* )( &vec[2] ), attrAcc->typeSize );
 						bin.Read( ( void* )( &vec[3] ), attrAcc->typeSize );
-						if( attrBv->byteStride )
-						{
+						if( attrBv->byteStride ) {
 							bin.Seek( attrBv->byteStride - ( attrib->elementSize * attrAcc->typeSize ), FS_SEEK_CUR );
 						}
 
@@ -357,7 +311,6 @@ MapPolygonMesh* MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* p
 				break;
 			}
 		}
-
 	}
 
 	mesh->SetContents();
@@ -372,19 +325,16 @@ static void ProcessSceneNode_r( idMapEntity* newEntity, gltfNode* node, const id
 	gltfData::ResolveNodeMatrix( node );
 	idMat4 nodeToWorldTransform = parentTransform * node->matrix;
 
-	if( node->mesh != -1 )
-	{
+	if( node->mesh != -1 ) {
 		// bring mesh data into entity space
 		idMat4 nodeToEntityTransform = worldToEntityTransform * nodeToWorldTransform;
 
-		for( auto* prim : data->MeshList()[node->mesh]->primitives )
-		{
+		for( auto* prim : data->MeshList()[node->mesh]->primitives ) {
 			newEntity->AddPrimitive( MapPolygonMesh::ConvertFromMeshGltf( prim, data, blenderToDoomTransform * nodeToEntityTransform ) );
 		}
 	}
 
-	for( auto& child : node->children )
-	{
+	for( auto& child : node->children ) {
 		ProcessSceneNode_r( newEntity, nodeList[child], nodeToWorldTransform, worldToEntityTransform, data );
 	}
 }
@@ -394,16 +344,13 @@ static void AddMeshesToWorldspawn_r( idMapEntity* entity, gltfNode* node, const 
 	gltfData::ResolveNodeMatrix( node );
 	idMat4 nodeToWorldTransform = parentTransform * node->matrix;
 
-	if( node->mesh != -1 )
-	{
-		for( auto prim : data->MeshList()[node->mesh]->primitives )
-		{
+	if( node->mesh != -1 ) {
+		for( auto prim : data->MeshList()[node->mesh]->primitives ) {
 			entity->AddPrimitive( MapPolygonMesh::ConvertFromMeshGltf( prim, data, blenderToDoomTransform * nodeToWorldTransform ) );
 		}
 	}
 
-	for( auto& child : node->children )
-	{
+	for( auto& child : node->children ) {
 		AddMeshesToWorldspawn_r( entity, data->NodeList()[child], nodeToWorldTransform, data );
 	}
 };
@@ -412,13 +359,11 @@ static void ResolveLight( gltfData* data, idMapEntity* newEntity, gltfNode* node
 {
 	assert( node && node->extensions.KHR_lights_punctual );
 
-	int lightID = node->extensions.KHR_lights_punctual->light;
-	gltfExt_KHR_lights_punctual* light = nullptr;
-	auto& ext = data->ExtensionsList();
-	for( auto& it : ext )
-	{
-		if( it->KHR_lights_punctual.Num() )
-		{
+	int							 lightID = node->extensions.KHR_lights_punctual->light;
+	gltfExt_KHR_lights_punctual* light	 = nullptr;
+	auto&						 ext	 = data->ExtensionsList();
+	for( auto& it : ext ) {
+		if( it->KHR_lights_punctual.Num() ) {
 			assert( lightID + 1 <= it->KHR_lights_punctual.Num() );
 			light = it->KHR_lights_punctual[lightID];
 		}
@@ -428,49 +373,43 @@ static void ResolveLight( gltfData* data, idMapEntity* newEntity, gltfNode* node
 
 	newEntity->epairs.Set( "classname", "light" );
 
-	//newEntity->epairs.SetMatrix( "rotation", mat3_default );
+	// newEntity->epairs.SetMatrix( "rotation", mat3_default );
 	newEntity->epairs.SetVector( "_color", light->color );
 
-	switch( gltfExt_KHR_lights_punctual::resolveType( light->type ) )
-	{
+	switch( gltfExt_KHR_lights_punctual::resolveType( light->type ) ) {
 		default:
 			common->Warning( "Unsupported Light Type" );
 			break;
 
-		case gltfExt_KHR_lights_punctual::Directional:
-		{
+		case gltfExt_KHR_lights_punctual::Directional: {
 			common->Warning( "KHR_lights_punctual::Directional not implemented" );
 			break;
 		}
 
-		case gltfExt_KHR_lights_punctual::Point:
-		{
+		case gltfExt_KHR_lights_punctual::Point: {
 			float radius = 300;
-			if( light->range != -1 )
-			{
+			if( light->range != -1 ) {
 				radius = light->range;
 			}
 
 			newEntity->epairs.SetVector( "light_radius", idVec3( radius ) );
 
 			idStr texture;
-			if( !newEntity->epairs.GetString( "texture", "", texture ) )
-			{
+			if( !newEntity->epairs.GetString( "texture", "", texture ) ) {
 				newEntity->epairs.Set( "texture", "lights/biground1" );
 			}
 			break;
 		}
 
-		case gltfExt_KHR_lights_punctual::Spot:
-		{
+		case gltfExt_KHR_lights_punctual::Spot: {
 			// RB: this code is based on Cmd_TestLight_f which sets the light properties in world space
 			idMat4 entityToWorldTransform = mat4_identity;
 			gltfData::ResolveNodeMatrix( node, &entityToWorldTransform );
-			float fov = tan( light->spot.outerConeAngle ) / 2 ;
+			float  fov = tan( light->spot.outerConeAngle ) / 2;
 
 			// HarrievG: TODO cleanup this was done by try & error until it worked
-			idQuat q = ( entityToWorldTransform ).ToMat3().ToQuat();
-			q = idAngles( 90.0f, 0.0, -90.0f ).ToQuat() * q * idAngles( 180.0f, 180.0f, -90.0f ).ToQuat();
+			idQuat q	= ( entityToWorldTransform ).ToMat3().ToQuat();
+			q			= idAngles( 90.0f, 0.0, -90.0f ).ToQuat() * q * idAngles( 180.0f, 180.0f, -90.0f ).ToQuat();
 			idMat3 axis = q.ToMat3();
 			newEntity->epairs.SetVector( "light_target", axis[0] );
 			newEntity->epairs.SetVector( "light_right", axis[1] * -fov );
@@ -479,8 +418,7 @@ static void ResolveLight( gltfData* data, idMapEntity* newEntity, gltfNode* node
 			newEntity->epairs.SetVector( "light_end", axis[0] * ( light->range - 16 ) );
 
 			idStr texture;
-			if( !newEntity->epairs.GetString( "texture", "", texture ) )
-			{
+			if( !newEntity->epairs.GetString( "texture", "", texture ) ) {
 				newEntity->epairs.Set( "texture", "lights/spot01" );
 			}
 			break;
@@ -489,26 +427,22 @@ static void ResolveLight( gltfData* data, idMapEntity* newEntity, gltfNode* node
 		case gltfExt_KHR_lights_punctual::count:
 			break;
 	}
-
 }
 
 static void ResolveEntity( gltfData* data, idMapEntity* newEntity, gltfNode* node )
 {
 	const char* classname = node->extras.strPairs.GetString( "classname" );
 
-	if( node->name.Length() )
-	{
-		idStr name;
+	if( node->name.Length() ) {
+		idStr	  name;
 		idStrList names;
 		gltfNode* parent = node->parent;
-		while( parent )
-		{
+		while( parent ) {
 			names.Alloc() = parent->name;
-			parent = parent->parent;
+			parent		  = parent->parent;
 		}
 
-		for( int i = names.Num() ; i >= 1 ; i-- )
-		{
+		for( int i = names.Num(); i >= 1; i-- ) {
 			name += names[i - 1] + ".";
 		}
 		newEntity->epairs.Set( "name", name + node->name );
@@ -529,8 +463,7 @@ static void ResolveEntity( gltfData* data, idMapEntity* newEntity, gltfNode* nod
 
 	newEntity->epairs.SetVector( "origin", origin );
 
-	if( node->extensions.KHR_lights_punctual != nullptr )
-	{
+	if( node->extensions.KHR_lights_punctual != nullptr ) {
 		ResolveLight( data, newEntity, node );
 		return;
 	}
@@ -563,21 +496,18 @@ static void ResolveEntity( gltfData* data, idMapEntity* newEntity, gltfNode* nod
 		newEntity->epairs.SetMatrix( "rotation", rot );
 	}
 #else
-	if( node->camera >= 0 && !newEntity->epairs.FindKey( "rotation" ) )
-	{
+	if( node->camera >= 0 && !newEntity->epairs.FindKey( "rotation" ) ) {
 		idQuat q = entityToWorldTransform.ToMat3().ToQuat();
-		q = idAngles( 90.0f, 0.0, -90.0f ).ToQuat() * q * blenderToDoomTransform.ToMat3().ToQuat();
+		q		 = idAngles( 90.0f, 0.0, -90.0f ).ToQuat() * q * blenderToDoomTransform.ToMat3().ToQuat();
 		newEntity->epairs.SetMatrix( "rotation", q.ToMat3() );
-	}
-	else
-	{
+	} else {
 		idQuat q = entityToWorldTransform.ToMat3().ToQuat();
-		q = idAngles( 0.0f, 0.0f, -90.0f ).ToQuat() * q * blenderToDoomTransform.ToMat3().ToQuat();
-		newEntity->epairs.SetMatrix( "rotation",  q.ToMat3() );
+		q		 = idAngles( 0.0f, 0.0f, -90.0f ).ToQuat() * q * blenderToDoomTransform.ToMat3().ToQuat();
+		newEntity->epairs.SetMatrix( "rotation", q.ToMat3() );
 
 		// FIXME this should be
-		//idMat3 rot = ( blenderToDoomTransform * entityToWorldTransform ).ToMat3();
-		//newEntity->epairs.SetMatrix( "rotation",  rot );
+		// idMat3 rot = ( blenderToDoomTransform * entityToWorldTransform ).ToMat3();
+		// newEntity->epairs.SetMatrix( "rotation",  rot );
 	}
 #endif
 
@@ -591,45 +521,37 @@ static void ResolveEntity( gltfData* data, idMapEntity* newEntity, gltfNode* nod
 #endif
 }
 
-static int FindEntities_r( gltfData* data, idMapEntity::EntityListRef entities, gltfNode* node , idDict epairs , idMapEntity* worldspawn )
+static int FindEntities_r( gltfData* data, idMapEntity::EntityListRef entities, gltfNode* node, idDict epairs, idMapEntity* worldspawn )
 {
-	int entityCount = 0;
+	int			entityCount = 0;
 
 	const char* classname = node->extras.strPairs.GetString( "classname" );
 
 	// skip all nodes with "worldspawn." or "BSP" in the name
-	if( idStr::Icmpn( node->name, "BSP", 3 ) == 0 || idStr::Icmpn( node->name, "worldspawn.", 11 ) == 0 )
-	{
+	if( idStr::Icmpn( node->name, "BSP", 3 ) == 0 || idStr::Icmpn( node->name, "worldspawn.", 11 ) == 0 ) {
 		AddMeshesToWorldspawn_r( worldspawn, node, mat4_identity, data );
-	}
-	else
-	{
+	} else {
 		idStr classnameStr = node->extras.strPairs.GetString( "classname" );
 
 		// skip everything that is not an entity except lights
-		if( !classnameStr.IsEmpty() || node->extensions.KHR_lights_punctual )
-		{
+		if( !classnameStr.IsEmpty() || node->extensions.KHR_lights_punctual ) {
 			auto* newEntity = new( TAG_IDLIB_GLTF ) idMapEntity();
 			entities.Append( newEntity );
 			newEntity->epairs.Copy( epairs );
 			epairs.Clear();
 			ResolveEntity( data, newEntity, node );
 			entityCount++;
-		}
-		else
-		{
+		} else {
 			idStr bindTarget = node->extras.strPairs.GetString( "bind" );
 
-			if( !bindTarget.IsEmpty() )
-			{
+			if( !bindTarget.IsEmpty() ) {
 				epairs.Set( "bind", bindTarget );
 			}
 		}
 	}
 
-	for( auto& child : node->children )
-	{
-		entityCount += FindEntities_r( data, entities, data->NodeList()[child], epairs , worldspawn );
+	for( auto& child : node->children ) {
+		entityCount += FindEntities_r( data, entities, data->NodeList()[child], epairs, worldspawn );
 	}
 
 	return entityCount;
@@ -643,49 +565,40 @@ int idMapEntity::GetEntities( gltfData* data, EntityListRef entities, int sceneI
 
 	bool wpSet = false;
 
-	int entityCount = 0;
-	for( auto& nodeID :  data->SceneList()[sceneID]->nodes )
-	{
-		auto* node = data->NodeList()[nodeID];
+	int	 entityCount = 0;
+	for( auto& nodeID : data->SceneList()[sceneID]->nodes ) {
+		auto*		node	  = data->NodeList()[nodeID];
 		const char* classname = node->extras.strPairs.GetString( "classname" );
 
-		bool isWorldSpawn = idStr::Icmp( classname, "worldspawn" ) == 0;
-		if( isWorldSpawn )
-		{
+		bool		isWorldSpawn = idStr::Icmp( classname, "worldspawn" ) == 0;
+		if( isWorldSpawn ) {
 			assert( !wpSet );
 			worldspawn->epairs.Copy( node->extras.strPairs );
 			wpSet = true;
-		}
-		else
-		{
+		} else {
 			// account all meshes starting with "worldspawn." or "BSP" in the name
-			if( idStr::Icmpn( node->name, "BSP", 3 ) == 0 || idStr::Icmpn( node->name, "worldspawn.", 11 ) == 0 )
-			{
+			if( idStr::Icmpn( node->name, "BSP", 3 ) == 0 || idStr::Icmpn( node->name, "worldspawn.", 11 ) == 0 ) {
 				AddMeshesToWorldspawn_r( worldspawn, node, mat4_identity, data );
-			}
-			else
-			{
-				idStr classnameStr = node->extras.strPairs.GetString( "classname" );
-				idStr model = node->extras.strPairs.GetString( "model" );
+			} else {
+				idStr	   classnameStr = node->extras.strPairs.GetString( "classname" );
+				idStr	   model		= node->extras.strPairs.GetString( "model" );
 
 				// inline should be false by default because drag n drop in the asset browser in Blender is Append by default
 				// however it would break previous maps
 
 				// in Doom 3 maps inline entities have as model key the same name as the entity name
 				const bool defaultInline = ( idStr::Icmp( model.c_str(), node->name.c_str() ) == 0 );
-				bool skipInline = !node->extras.strPairs.GetBool( "inline", defaultInline );
-				idDict epairs;
+				bool	   skipInline	 = !node->extras.strPairs.GetBool( "inline", defaultInline );
+				idDict	   epairs;
 
 				// skip everything that is not an entity except lights
-				if( !classnameStr.IsEmpty() || node->extensions.KHR_lights_punctual )
-				{
+				if( !classnameStr.IsEmpty() || node->extensions.KHR_lights_punctual ) {
 					idMapEntity* newEntity = new( TAG_IDLIB_GLTF ) idMapEntity();
 					entities.Append( newEntity );
 					ResolveEntity( data, newEntity, node );
 
 					// add meshes from all subnodes
-					if( !skipInline )
-					{
+					if( !skipInline ) {
 						gltfData::ResolveNodeMatrix( node );
 						idMat4 entityToWorldTransform = node->matrix;
 						idMat4 worldToEntityTransform = entityToWorldTransform.Inverse();
@@ -693,21 +606,17 @@ int idMapEntity::GetEntities( gltfData* data, EntityListRef entities, int sceneI
 					}
 
 					entityCount++;
-				}
-				else
-				{
+				} else {
 					idStr bindTarget = node->extras.strPairs.GetString( "bind" );
 
-					if( !bindTarget.IsEmpty() )
-					{
+					if( !bindTarget.IsEmpty() ) {
 						epairs.Copy( node->extras.strPairs );
 					}
 				}
 
 				// add entities from all subnodes
-				for( auto& child : node->children )
-				{
-					entityCount += FindEntities_r( data, entities, data->NodeList()[child] , epairs, worldspawn );
+				for( auto& child : node->children ) {
+					entityCount += FindEntities_r( data, entities, data->NodeList()[child], epairs, worldspawn );
 				}
 			}
 		}

@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -40,15 +41,13 @@ extern idCVar win_partyCount;
 idLocalUserWin::Init
 ========================
 */
-void idLocalUserWin::Init( int inputDevice_, const char* gamertag_, int numLocalUsers )
+void		  idLocalUserWin::Init( int inputDevice_, const char* gamertag_, int numLocalUsers )
 {
-	if( numLocalUsers == 1 )     // Check for 1, since this is now incremented before we get in here
+	if( numLocalUsers == 1 ) // Check for 1, since this is now incremented before we get in here
 	{
 		// This is the master user
 		gamertag = gamertag_;
-	}
-	else
-	{
+	} else {
 		// On steam, we need to generate a name based off the master user for split-screen users.
 		// We use the number of users on the system to generate the name rather than the device
 		// number so that it is always consistently "username (2)" for the second player.
@@ -122,9 +121,7 @@ idLocalUserWin::VerifyUserState
 */
 bool idLocalUserWin::VerifyUserState( winUserState_t& state )
 {
-
-	if( state.inputDevice != inputDevice )
-	{
+	if( state.inputDevice != inputDevice ) {
 		return false;
 	}
 	return true;

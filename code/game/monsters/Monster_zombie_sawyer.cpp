@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -32,8 +33,8 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-#define SAWYER_SMOKE_PARTICLES	0
-#define SAWYER_BLOOD_PARTICLES	1
+#define SAWYER_SMOKE_PARTICLES 0
+#define SAWYER_BLOOD_PARTICLES 1
 
 CLASS_DECLARATION( iceMonsterZombie, iceMonsterZombieSawyer )
 END_CLASS
@@ -72,10 +73,8 @@ iceMonsterZombieSawyer::state_Idle
 */
 stateResult_t iceMonsterZombieSawyer::state_Idle( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
-		if( wait_for_enemy( parms ) == SRESULT_DONE )
-		{
+	if( parms->stage == 0 ) {
+		if( wait_for_enemy( parms ) == SRESULT_DONE ) {
 			parms->stage = 1;
 		}
 
@@ -96,8 +95,7 @@ int iceMonsterZombieSawyer::check_attacks()
 	int attack_flags;
 
 	attack_flags = 0;
-	if( TestMelee() )
-	{
+	if( TestMelee() ) {
 		attack_flags |= ATTACK_MELEE;
 	}
 
@@ -111,8 +109,7 @@ iceMonsterZombieSawyer::do_attack
 */
 void iceMonsterZombieSawyer::do_attack( int attack_flags )
 {
-	if( attack_flags & ATTACK_MELEE )
-	{
+	if( attack_flags & ATTACK_MELEE ) {
 		AI_ATTACKING = true;
 		SetState( "combat_melee" );
 	}
@@ -125,49 +122,41 @@ iceMonsterZombieSawyer::combat_melee
 */
 stateResult_t iceMonsterZombieSawyer::combat_melee( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
+	if( parms->stage == 0 ) {
 		next_hit_time = 0;
-		smoke_frames = 0;
+		smoke_frames  = 0;
 
 		Event_LookAtEnemy( 100 );
 		Event_FaceEnemy();
 		Event_AnimState( ANIMCHANNEL_TORSO, "Torso_MeleeAttack", 8 );
-		//SetWaitState("melee_attack");
+		// SetWaitState("melee_attack");
 		parms->stage = 1;
 		return SRESULT_WAIT;
 	}
 
-	if( parms->stage == 1 )
-	{
-		if( InAnimState( ANIMCHANNEL_TORSO, "Torso_MeleeAttack" ) )
-		{
-			if( gameLocal.SysScriptTime() > next_hit_time )
-			{
+	if( parms->stage == 1 ) {
+		if( InAnimState( ANIMCHANNEL_TORSO, "Torso_MeleeAttack" ) ) {
+			if( gameLocal.SysScriptTime() > next_hit_time ) {
 				next_hit_time = gameLocal.SysScriptTime() + 0.025;
 				Event_SetSmokeVisibility( SAWYER_BLOOD_PARTICLES, 1 );
 				smoke_frames = 4;
 			}
 
-			if( smoke_frames > 0 )
-			{
+			if( smoke_frames > 0 ) {
 				smoke_frames--;
-				if( !smoke_frames )
-				{
+				if( !smoke_frames ) {
 					Event_SetSmokeVisibility( SAWYER_BLOOD_PARTICLES, 0 );
 				}
 			}
-		}
-		else
-		{
+		} else {
 			parms->stage = 2;
 		}
 		return SRESULT_WAIT;
 	}
 
-	//waitAction("melee_attack");
+	// waitAction("melee_attack");
 	Event_SetSmokeVisibility( SAWYER_BLOOD_PARTICLES, 0 );
 	Event_LookAtEnemy( 1 );
-	//AI_ATTACKING = false;
+	// AI_ATTACKING = false;
 	return SRESULT_DONE;
 }

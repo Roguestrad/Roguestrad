@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -34,24 +35,24 @@ Event are used for scheduling tasks and for linking script commands.
 #ifndef __SYS_EVENT_H__
 #define __SYS_EVENT_H__
 
-#define D_EVENT_MAXARGS				8			// if changed, enable the CREATE_EVENT_CODE define in Event.cpp to generate switch statement for idClass::ProcessEventArgPtr.
+#define D_EVENT_MAXARGS		8 // if changed, enable the CREATE_EVENT_CODE define in Event.cpp to generate switch statement for idClass::ProcessEventArgPtr.
 // running the game will then generate c:\doom\base\events.txt, the contents of which should be copied into the switch statement.
 
 // RB: from dhewm3
 // stack size of idVec3, aligned to native pointer size
-#define E_EVENT_SIZEOF_VEC			((sizeof(idVec3) + (sizeof(intptr_t) - 1)) & ~(sizeof(intptr_t) - 1))
+#define E_EVENT_SIZEOF_VEC	( ( sizeof( idVec3 ) + ( sizeof( intptr_t ) - 1 ) ) & ~( sizeof( intptr_t ) - 1 ) )
 // RB end
 
-#define D_EVENT_VOID				( ( char )0 )
-#define D_EVENT_INTEGER				'd'
-#define D_EVENT_FLOAT				'f'
-#define D_EVENT_VECTOR				'v'
-#define D_EVENT_STRING				's'
-#define D_EVENT_ENTITY				'e'
-#define	D_EVENT_ENTITY_NULL			'E'			// event can handle NULL entity pointers
-#define D_EVENT_TRACE				't'
+#define D_EVENT_VOID		( ( char )0 )
+#define D_EVENT_INTEGER		'd'
+#define D_EVENT_FLOAT		'f'
+#define D_EVENT_VECTOR		'v'
+#define D_EVENT_STRING		's'
+#define D_EVENT_ENTITY		'e'
+#define D_EVENT_ENTITY_NULL 'E' // event can handle NULL entity pointers
+#define D_EVENT_TRACE		't'
 
-#define MAX_EVENTS					4096
+#define MAX_EVENTS			4096
 
 class idClass;
 class idTypeInfo;
@@ -59,34 +60,34 @@ class idTypeInfo;
 class idEventDef
 {
 private:
-	const char*					name;
-	const char*					formatspec;
-	unsigned int				formatspecIndex;
-	int							returnType;
-	int							numargs;
-	size_t						argsize;
-	int							argOffset[ D_EVENT_MAXARGS ];
-	int							eventnum;
-	const idEventDef* 			next;
+	const char*		   name;
+	const char*		   formatspec;
+	unsigned int	   formatspecIndex;
+	int				   returnType;
+	int				   numargs;
+	size_t			   argsize;
+	int				   argOffset[D_EVENT_MAXARGS];
+	int				   eventnum;
+	const idEventDef*  next;
 
-	static idEventDef* 			eventDefList[MAX_EVENTS];
-	static int					numEventDefs;
+	static idEventDef* eventDefList[MAX_EVENTS];
+	static int		   numEventDefs;
 
 public:
 	idEventDef( const char* command, const char* formatspec = NULL, char returnType = 0 );
 
-	const char*					GetName() const;
-	const char*					GetArgFormat() const;
-	unsigned int				GetFormatspecIndex() const;
-	char						GetReturnType() const;
-	int							GetEventNum() const;
-	int							GetNumArgs() const;
-	size_t						GetArgSize() const;
-	int							GetArgOffset( int arg ) const;
+	const char*				 GetName() const;
+	const char*				 GetArgFormat() const;
+	unsigned int			 GetFormatspecIndex() const;
+	char					 GetReturnType() const;
+	int						 GetEventNum() const;
+	int						 GetNumArgs() const;
+	size_t					 GetArgSize() const;
+	int						 GetArgOffset( int arg ) const;
 
-	static int					NumEventCommands();
-	static const idEventDef*		GetEventCommand( int eventnum );
-	static const idEventDef*		FindEvent( const char* name );
+	static int				 NumEventCommands();
+	static const idEventDef* GetEventCommand( int eventnum );
+	static const idEventDef* FindEvent( const char* name );
 };
 
 class idSaveGame;
@@ -95,44 +96,42 @@ class idRestoreGame;
 class idEvent
 {
 private:
-	const idEventDef*			eventdef;
-	byte*						data;
-	int							time;
-	idClass*						object;
-	const idTypeInfo*			typeinfo;
+	const idEventDef*								 eventdef;
+	byte*											 data;
+	int												 time;
+	idClass*										 object;
+	const idTypeInfo*								 typeinfo;
 
-	idLinkList<idEvent>			eventNode;
+	idLinkList<idEvent>								 eventNode;
 
 	static idDynamicBlockAlloc<byte, 16 * 1024, 256> eventDataAllocator;
 
-
 public:
-	static bool					initialized;
+	static bool initialized;
 
 	~idEvent();
 
-	static idEvent*				Alloc( const idEventDef* evdef, int numargs, va_list args );
+	static idEvent* Alloc( const idEventDef* evdef, int numargs, va_list args );
 	// RB: 64 bit fix, changed int to intptr_t
-	static void					CopyArgs( const idEventDef* evdef, int numargs, va_list args, intptr_t data[ D_EVENT_MAXARGS ] );
+	static void		CopyArgs( const idEventDef* evdef, int numargs, va_list args, intptr_t data[D_EVENT_MAXARGS] );
 	// RB end
 
-	void						Free();
-	void						Schedule( idClass* object, const idTypeInfo* cls, int time );
-	byte*						GetData();
+	void			Free();
+	void			Schedule( idClass* object, const idTypeInfo* cls, int time );
+	byte*			GetData();
 
-	static void					CancelEvents( const idClass* obj, const idEventDef* evdef = NULL );
-	static void					ClearEventList();
-	static void					ServiceEvents();
-	static void					ServiceFastEvents();
-	static void					Init();
-	static void					Shutdown();
+	static void		CancelEvents( const idClass* obj, const idEventDef* evdef = NULL );
+	static void		ClearEventList();
+	static void		ServiceEvents();
+	static void		ServiceFastEvents();
+	static void		Init();
+	static void		Shutdown();
 
 	// save games
-	static void					Save( idSaveGame* savefile );					// archives object for save game file
-	static void					Restore( idRestoreGame* savefile );				// unarchives object from save game file
-	static void					SaveTrace( idSaveGame* savefile, const trace_t& trace );
-	static void					RestoreTrace( idRestoreGame* savefile, trace_t& trace );
-
+	static void		Save( idSaveGame* savefile );		// archives object for save game file
+	static void		Restore( idRestoreGame* savefile ); // unarchives object from save game file
+	static void		SaveTrace( idSaveGame* savefile, const trace_t& trace );
+	static void		RestoreTrace( idRestoreGame* savefile, trace_t& trace );
 };
 
 /*
@@ -213,7 +212,7 @@ idEventDef::GetArgOffset
 ID_INLINE int idEventDef::GetArgOffset( int arg ) const
 {
 	assert( ( arg >= 0 ) && ( arg < D_EVENT_MAXARGS ) );
-	return argOffset[ arg ];
+	return argOffset[arg];
 }
 
 /*

@@ -32,68 +32,45 @@ Project: The Dark Mod (http://www.thedarkmod.com/)
  * Contains self-reference, hence is not trivially relocatable.
  */
 
-template< class type, int N >
+template<class type, int N>
 class idFlexList
 {
 public:
 	~idFlexList()
 	{
-		if( list != autoStore )
-		{
-			delete[] list;
-		}
+		if( list != autoStore ) { delete[] list; }
 	}
 	idFlexList()
 	{
 		list = autoStore;
-		num = 0;
+		num	 = 0;
 		size = N;
 	}
-	void Clear()
-	{
-		num = 0;
-	}
+	void Clear() { num = 0; }
 	void ClearFree()
 	{
-		if( list != autoStore )
-		{
-			delete[] list;
-		}
+		if( list != autoStore ) { delete[] list; }
 		list = autoStore;
-		num = 0;
+		num	 = 0;
 		size = N;
 	}
 
 	void SetNum( int newNum )
 	{
-		if( newNum > size )
-		{
+		if( newNum > size ) {
 			int newSize = newNum;
-			if( newSize < 2 * size )
-			{
-				newSize = 2 * size;    //ensure exponential growth
+			if( newSize < 2 * size ) {
+				newSize = 2 * size; // ensure exponential growth
 			}
 			Grow( newSize );
 		}
 		num = newNum;
 	}
 
-	ID_FORCE_INLINE int Num( void ) const
-	{
-		return num;
-	}
-	int	NumAllocated( void ) const
-	{
-		return size;
-	}
-	ID_FORCE_INLINE type* Ptr( void )
-	{
-		return list;
-	}
-	ID_FORCE_INLINE const type* Ptr( void ) const
-	{
-		return list;
-	}
+	ID_FORCE_INLINE int			Num() const { return num; }
+	int							NumAllocated() const { return size; }
+	ID_FORCE_INLINE type*		Ptr() { return list; }
+	ID_FORCE_INLINE const type* Ptr() const { return list; }
 
 	ID_FORCE_INLINE const type& operator[]( int index ) const
 	{
@@ -116,28 +93,21 @@ public:
 		return list[num - 1];
 	}
 
-	int	AddGrow( type obj )
+	int AddGrow( type obj )
 	{
-		if( num == size )
-		{
-			Grow( 2 * size );
-		}
-		int idx = num++;
+		if( num == size ) { Grow( 2 * size ); }
+		int idx	  = num++;
 		list[idx] = obj;
 		return idx;
 	}
 
-	ID_FORCE_INLINE type Pop( void )
-	{
-		return list[--num];
-	}
+	ID_FORCE_INLINE type Pop() { return list[--num]; }
 
-	void Append( int k, const type* arr )
+	void				 Append( int k, const type* arr )
 	{
 		int base = num;
 		SetNum( base + k );
-		for( int i = 0; i < k; i++ )
-		{
+		for( int i = 0; i < k; i++ ) {
 			list[base + i] = arr[i];
 		}
 	}
@@ -146,27 +116,23 @@ private:
 	void Grow( int newSize )
 	{
 		type* newList = new type[newSize];
-		for( int i = 0; i < num; i++ )
-		{
+		for( int i = 0; i < num; i++ ) {
 			newList[i] = list[i];
 		}
-		if( list != autoStore )
-		{
-			delete[] list;
-		}
+		if( list != autoStore ) { delete[] list; }
 		list = newList;
 		size = newSize;
 	}
 
-	//noncopyable!
-	//moving automatic storage around is not worth it
-	idFlexList( const idFlexList& ) = delete;
-	idFlexList& operator= ( const idFlexList& ) = delete;
+	// noncopyable!
+	// moving automatic storage around is not worth it
+	idFlexList( const idFlexList& )			   = delete;
+	idFlexList& operator=( const idFlexList& ) = delete;
 
-	int num;
-	int size;
-	type* list;
-	type autoStore[N];
+	int			num;
+	int			size;
+	type*		list;
+	type		autoStore[N];
 };
 
 #endif

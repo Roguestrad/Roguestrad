@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -41,20 +42,18 @@ idMenuHandler::idMenuHandler()
 {
 	scrollingMenu = false;
 	scrollCounter = 0;
-	activeScreen = -1;
-	nextScreen = -1;
-	transition = -1;
-	platform = 0;
-	gui = NULL;
-	cmdBar = NULL;
+	activeScreen  = -1;
+	nextScreen	  = -1;
+	transition	  = -1;
+	platform	  = 0;
+	gui			  = NULL;
+	cmdBar		  = NULL;
 
-	for( int index = 0; index < MAX_SCREEN_AREAS; ++index )
-	{
-		menuScreens[ index ] = NULL;
+	for( int index = 0; index < MAX_SCREEN_AREAS; ++index ) {
+		menuScreens[index] = NULL;
 	}
 
 	sounds.SetNum( NUM_GUI_SOUNDS );
-
 }
 
 /*
@@ -78,7 +77,6 @@ void idMenuHandler::Initialize( const char* swfFile, idSoundWorld* sw )
 	gui = new idSWF( swfFile, sw );
 
 	platform = 2;
-
 }
 
 /*
@@ -101,18 +99,15 @@ idMenuHandler::GetChildFromIndex
 */
 idMenuWidget* idMenuHandler::GetChildFromIndex( int index )
 {
-
-	if( children.Num() == 0 )
-	{
+	if( children.Num() == 0 ) {
 		return NULL;
 	}
 
-	if( index > children.Num() )
-	{
+	if( index > children.Num() ) {
 		return NULL;
 	}
 
-	return children[ index ];
+	return children[index];
 }
 
 /*
@@ -123,8 +118,7 @@ idMenuHandler::GetPlatform
 int idMenuHandler::GetPlatform( bool realPlatform )
 {
 	// Leyland VR: added vrSystem
-	if( platform == 2 && ( in_useJoystick.GetBool() || vrSystem->IsActive() ) && !realPlatform )
-	{
+	if( platform == 2 && ( in_useJoystick.GetBool() || vrSystem->IsActive() ) && !realPlatform ) {
 		return 0;
 	}
 
@@ -138,30 +132,24 @@ idMenuHandler::GetPlatform
 */
 void idMenuHandler::PlaySound( menuSounds_t type, int channel )
 {
-
-	if( gui == NULL )
-	{
+	if( gui == NULL ) {
 		return;
 	}
 
-	if( type >= sounds.Num() )
-	{
+	if( type >= sounds.Num() ) {
 		return;
 	}
 
-	if( sounds[ type ].IsEmpty() )
-	{
+	if( sounds[type].IsEmpty() ) {
 		return;
 	}
 
 	int c = SCHANNEL_ANY;
-	if( channel != -1 )
-	{
+	if( channel != -1 ) {
 		c = channel;
 	}
 
-	gui->PlaySound( sounds[ type ], c );
-
+	gui->PlaySound( sounds[type], c );
 }
 
 /*
@@ -181,18 +169,15 @@ idMenuHandler::Cleanup
 */
 void idMenuHandler::Cleanup()
 {
-	for( int index = 0; index < children.Num(); ++index )
-	{
-		assert( children[ index ]->GetRefCount() > 0 );
-		children[ index ]->Release();
+	for( int index = 0; index < children.Num(); ++index ) {
+		assert( children[index]->GetRefCount() > 0 );
+		children[index]->Release();
 	}
 	children.Clear();
 
-	for( int index = 0; index < MAX_SCREEN_AREAS; ++index )
-	{
-		if( menuScreens[ index ] != NULL )
-		{
-			menuScreens[ index ]->Release();
+	for( int index = 0; index < MAX_SCREEN_AREAS; ++index ) {
+		if( menuScreens[index] != NULL ) {
+			menuScreens[index]->Release();
 		}
 	}
 
@@ -207,7 +192,6 @@ idMenuHandler::TriggerMenu
 */
 void idMenuHandler::TriggerMenu()
 {
-
 }
 
 /*
@@ -217,8 +201,7 @@ idMenuHandler::IsActive
 */
 bool idMenuHandler::IsActive()
 {
-	if( gui == NULL )
-	{
+	if( gui == NULL ) {
 		return false;
 	}
 
@@ -232,39 +215,35 @@ idMenuHandler::ActivateMenu
 */
 void idMenuHandler::ActivateMenu( bool show )
 {
-
-	if( gui == NULL )
-	{
+	if( gui == NULL ) {
 		return;
 	}
 
-	if( !show )
-	{
+	if( !show ) {
 		gui->Activate( show );
 		return;
 	}
-
 
 	class idSWFScriptFunction_updateMenuDisplay : public idSWFScriptFunction_RefCounted
 	{
 	public:
 		idSWFScriptFunction_updateMenuDisplay( idSWF* _gui, idMenuHandler* _handler )
 		{
-			gui = _gui;
+			gui		= _gui;
 			handler = _handler;
 		}
 		idSWFScriptVar Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 		{
-			if( handler != NULL )
-			{
+			if( handler != NULL ) {
 				int screen = parms[0].ToInteger();
 				handler->UpdateMenuDisplay( screen );
 			}
 
 			return idSWFScriptVar();
 		}
+
 	private:
-		idSWF* gui;
+		idSWF*		   gui;
 		idMenuHandler* handler;
 	};
 
@@ -277,13 +256,13 @@ void idMenuHandler::ActivateMenu( bool show )
 		}
 		idSWFScriptVar Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 		{
-			if( handler != NULL )
-			{
+			if( handler != NULL ) {
 				handler->TriggerMenu();
 			}
 
 			return idSWFScriptVar();
 		}
+
 	private:
 		idMenuHandler* handler;
 	};
@@ -301,11 +280,9 @@ idMenuHandler::Update
 */
 void idMenuHandler::Update()
 {
-
 	PumpWidgetActionRepeater();
 
-	if( gui != NULL && gui->IsActive() )
-	{
+	if( gui != NULL && gui->IsActive() ) {
 		gui->Render( renderSystem, Sys_Milliseconds() );
 	}
 }
@@ -317,10 +294,8 @@ idMenuHandler::UpdateChildren
 */
 void idMenuHandler::UpdateChildren()
 {
-	for( int index = 0; index < children.Num(); ++index )
-	{
-		if( children[ index ] != NULL )
-		{
+	for( int index = 0; index < children.Num(); ++index ) {
+		if( children[index] != NULL ) {
 			children[index]->Update();
 		}
 	}
@@ -333,14 +308,11 @@ idMenuHandler::UpdateMenuDisplay
 */
 void idMenuHandler::UpdateMenuDisplay( int menu )
 {
-
-	if( menuScreens[ menu ] != NULL )
-	{
-		menuScreens[ menu ]->Update();
+	if( menuScreens[menu] != NULL ) {
+		menuScreens[menu]->Update();
 	}
 
 	UpdateChildren();
-
 }
 
 /*
@@ -350,9 +322,7 @@ idMenuHandler::Update
 */
 bool idMenuHandler::HandleGuiEvent( const sysEvent_t* sev )
 {
-
-	if( gui != NULL && activeScreen != -1 )
-	{
+	if( gui != NULL && activeScreen != -1 ) {
 		return gui->HandleEvent( sev );
 	}
 
@@ -366,68 +336,53 @@ idMenuHandler::Update
 */
 bool idMenuHandler::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
+	widgetAction_t		 actionType = action.GetType();
+	const idSWFParmList& parms		= action.GetParms();
 
-	widgetAction_t actionType = action.GetType();
-	const idSWFParmList& parms = action.GetParms();
-
-	switch( actionType )
-	{
-		case WIDGET_ACTION_ADJUST_FIELD:
-		{
-			if( widget != NULL && widget->GetDataSource() != NULL )
-			{
-				widget->GetDataSource()->AdjustField( widget->GetDataSourceFieldIndex(), parms[ 0 ].ToInteger() );
+	switch( actionType ) {
+		case WIDGET_ACTION_ADJUST_FIELD: {
+			if( widget != NULL && widget->GetDataSource() != NULL ) {
+				widget->GetDataSource()->AdjustField( widget->GetDataSourceFieldIndex(), parms[0].ToInteger() );
 				widget->Update();
 			}
 			return true;
 		}
-		case WIDGET_ACTION_FUNCTION:
-		{
-			if( verify( action.GetScriptFunction() != NULL ) )
-			{
+		case WIDGET_ACTION_FUNCTION: {
+			if( verify( action.GetScriptFunction() != NULL ) ) {
 				action.GetScriptFunction()->Call( event.thisObject, event.parms );
 			}
 			return true;
 		}
-		case WIDGET_ACTION_PRESS_FOCUSED:
-		{
-			idMenuScreen* const screen = menuScreens[ activeScreen ];
-			if( screen != NULL )
-			{
+		case WIDGET_ACTION_PRESS_FOCUSED: {
+			idMenuScreen* const screen = menuScreens[activeScreen];
+			if( screen != NULL ) {
 				idWidgetEvent pressEvent( WIDGET_EVENT_PRESS, 0, event.thisObject, idSWFParmList() );
 				screen->ReceiveEvent( pressEvent );
 			}
 			return true;
 		}
-		case WIDGET_ACTION_START_REPEATER:
-		{
+		case WIDGET_ACTION_START_REPEATER: {
 			idWidgetAction repeatAction;
-			widgetAction_t repeatActionType = static_cast< widgetAction_t >( parms[ 0 ].ToInteger() );
+			widgetAction_t repeatActionType = static_cast<widgetAction_t>( parms[0].ToInteger() );
 			assert( parms.Num() >= 2 );
 			int repeatDelay = DEFAULT_REPEAT_TIME;
-			if( parms.Num() >= 3 )
-			{
+			if( parms.Num() >= 3 ) {
 				repeatDelay = parms[2].ToInteger();
 			}
-			repeatAction.Set( repeatActionType, parms[ 1 ], repeatDelay );
+			repeatAction.Set( repeatActionType, parms[1], repeatDelay );
 			StartWidgetActionRepeater( widget, repeatAction, event );
 			return true;
 		}
-		case WIDGET_ACTION_STOP_REPEATER:
-		{
+		case WIDGET_ACTION_STOP_REPEATER: {
 			ClearWidgetActionRepeater();
 			return true;
 		}
 	}
 
-	if( !widget->GetHandlerIsParent() )
-	{
-		for( int index = 0; index < children.Num(); ++index )
-		{
-			if( children[index] != NULL )
-			{
-				if( children[index]->HandleAction( action, event, widget, forceHandled ) )
-				{
+	if( !widget->GetHandlerIsParent() ) {
+		for( int index = 0; index < children.Num(); ++index ) {
+			if( children[index] != NULL ) {
+				if( children[index]->HandleAction( action, event, widget, forceHandled ) ) {
 					return true;
 				}
 			}
@@ -444,25 +399,21 @@ idMenuHandler::StartWidgetActionRepeater
 */
 void idMenuHandler::StartWidgetActionRepeater( idMenuWidget* widget, const idWidgetAction& action, const idWidgetEvent& event )
 {
-	if( actionRepeater.isActive && actionRepeater.action == action )
-	{
-		return;	// don't attempt to reactivate an already active repeater
+	if( actionRepeater.isActive && actionRepeater.action == action ) {
+		return; // don't attempt to reactivate an already active repeater
 	}
 
-	actionRepeater.isActive = true;
-	actionRepeater.action = action;
-	actionRepeater.widget = widget;
-	actionRepeater.event = event;
+	actionRepeater.isActive		  = true;
+	actionRepeater.action		  = action;
+	actionRepeater.widget		  = widget;
+	actionRepeater.event		  = event;
 	actionRepeater.numRepetitions = 0;
 	actionRepeater.nextRepeatTime = 0;
-	actionRepeater.screenIndex = activeScreen;	// repeaters are cleared between screens
+	actionRepeater.screenIndex	  = activeScreen; // repeaters are cleared between screens
 
-	if( action.GetParms().Num() == 2 )
-	{
-		actionRepeater.repeatDelay = action.GetParms()[ 1 ].ToInteger();
-	}
-	else
-	{
+	if( action.GetParms().Num() == 2 ) {
+		actionRepeater.repeatDelay = action.GetParms()[1].ToInteger();
+	} else {
 		actionRepeater.repeatDelay = DEFAULT_REPEAT_TIME;
 	}
 
@@ -477,34 +428,28 @@ idMenuHandler::PumpWidgetActionRepeater
 */
 void idMenuHandler::PumpWidgetActionRepeater()
 {
-	if( !actionRepeater.isActive )
-	{
+	if( !actionRepeater.isActive ) {
 		return;
 	}
 
-	if( activeScreen != actionRepeater.screenIndex || nextScreen != activeScreen )    // || common->IsDialogActive() ) {
+	if( activeScreen != actionRepeater.screenIndex || nextScreen != activeScreen ) // || common->IsDialogActive() ) {
 	{
 		actionRepeater.isActive = false;
 		return;
 	}
 
-	if( actionRepeater.nextRepeatTime > Sys_Milliseconds() )
-	{
+	if( actionRepeater.nextRepeatTime > Sys_Milliseconds() ) {
 		return;
 	}
 
 	// need to hold down longer on the first iteration before we continue to scroll
-	if( actionRepeater.numRepetitions == 0 )
-	{
+	if( actionRepeater.numRepetitions == 0 ) {
 		actionRepeater.nextRepeatTime = Sys_Milliseconds() + 400;
-	}
-	else
-	{
+	} else {
 		actionRepeater.nextRepeatTime = Sys_Milliseconds() + actionRepeater.repeatDelay;
 	}
 
-	if( verify( actionRepeater.widget != NULL ) )
-	{
+	if( verify( actionRepeater.widget != NULL ) ) {
 		actionRepeater.widget->HandleAction( actionRepeater.action, actionRepeater.event, actionRepeater.widget );
 		actionRepeater.numRepetitions++;
 	}

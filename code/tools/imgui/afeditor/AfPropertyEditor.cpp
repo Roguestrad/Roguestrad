@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,13 +37,13 @@ If you have questions concerning this license or the applicable additional terms
 
 namespace ImGuiTools
 {
-AfPropertyEditor::AfPropertyEditor( idDeclAF* newDecl )
-	: decl( newDecl )
-	, contentWidget( MakePhysicsContentsSelector() )
-	, clipMaskWidget( MakePhysicsContentsSelector() )
-	, linearTolerance( 0 )
-	, angularTolerance( 0 )
-	, currentModel( 0 )
+AfPropertyEditor::AfPropertyEditor( idDeclAF* newDecl ) :
+	decl( newDecl ),
+	contentWidget( MakePhysicsContentsSelector() ),
+	clipMaskWidget( MakePhysicsContentsSelector() ),
+	linearTolerance( 0 ),
+	angularTolerance( 0 ),
+	currentModel( 0 )
 {
 	contentWidget.UpdateWithBitFlags( decl->contents );
 	clipMaskWidget.UpdateWithBitFlags( decl->clipMask );
@@ -58,18 +59,15 @@ bool AfPropertyEditor::Do()
 {
 	bool changed = false;
 
-	if( ImGui::CollapsingHeader( "MD5" ) )
-	{
-		if( ImGui::Combo( "Models", &currentModel, StringListItemGetter, &modelDefs, modelDefs.Num() ) )
-		{
+	if( ImGui::CollapsingHeader( "MD5" ) ) {
+		if( ImGui::Combo( "Models", &currentModel, StringListItemGetter, &modelDefs, modelDefs.Num() ) ) {
 			decl->model = modelDefs[currentModel];
-			changed = true;
+			changed		= true;
 		}
 		ImGui::InputText( "Skin", &decl->skin, ImGuiInputTextFlags_CharsNoBlank );
 	}
 
-	if( ImGui::CollapsingHeader( "Default Collision Detection" ) )
-	{
+	if( ImGui::CollapsingHeader( "Default Collision Detection" ) ) {
 		ImGui::Checkbox( "Self Collision", &decl->selfCollision );
 		ImGui::BeginListBox( "Contents" );
 		changed = DoMultiSelect( &contentWidget, &decl->contents ) || changed;
@@ -80,16 +78,14 @@ bool AfPropertyEditor::Do()
 		ImGui::EndListBox();
 	}
 
-	if( ImGui::CollapsingHeader( "Default Friction" ) )
-	{
+	if( ImGui::CollapsingHeader( "Default Friction" ) ) {
 		changed = ImGui::DragFloat( "Linear", &decl->defaultLinearFriction, 0.01f, -100000.f, 100000.f, "%.2f" ) || changed;
 		changed = ImGui::DragFloat( "Angular", &decl->defaultAngularFriction, 0.01f, -100000.f, 100000.f, "%.2f" ) || changed;
 		changed = ImGui::DragFloat( "Contact", &decl->defaultContactFriction, 0.01f, -100000.f, 100000.f, "%.2f" ) || changed;
 		changed = ImGui::DragFloat( "Constraint", &decl->defaultConstraintFriction, 0.01f, -100000.f, 100000.f, "%.2f" ) || changed;
 	}
 
-	if( ImGui::CollapsingHeader( "Mass" ) )
-	{
+	if( ImGui::CollapsingHeader( "Mass" ) ) {
 		changed = changed || ImGui::InputFloat( "Total Mass", &decl->totalMass, 1.0f, 50.0f, "%.0f" );
 		ImGui::SameLine();
 		HelpMarker( "The total mass of the articulated figure.\n"
@@ -98,14 +94,13 @@ bool AfPropertyEditor::Do()
 					"the total mass of the articulated figure equals the given mass." );
 	}
 
-	if( ImGui::CollapsingHeader( "Suspend Speed" ) )
-	{
+	if( ImGui::CollapsingHeader( "Suspend Speed" ) ) {
 		changed = changed || ImGui::InputFloat2( "Linear Velocity", ( float* )&decl->suspendVelocity, "%.0f" );
 		changed = changed || ImGui::InputFloat2( "Linear Acceleration", ( float* )&decl->suspendAcceleration, "%.0f" );
 	}
 
 	// TODO(Stephen): Figure out what these properties are for.
-	//if (ImGui::CollapsingHeader("Suspend Movement"))
+	// if (ImGui::CollapsingHeader("Suspend Movement"))
 	//{
 	//	ImGui::InputInt("No Move Time", (int*)&decl->noMoveTime);
 	//	ImGui::InputInt("Linear Tolerance", &linearTolerance);
@@ -122,14 +117,11 @@ void AfPropertyEditor::UpdateModelDefList()
 	// update the model list.
 	const int totalModelDefs = declManager->GetNumDecls( DECL_MODELDEF );
 	modelDefs.AssureSize( totalModelDefs );
-	for( int i = 0; i < totalModelDefs; i++ )
-	{
+	for( int i = 0; i < totalModelDefs; i++ ) {
 		const idDecl* modelDef = declManager->DeclByIndex( DECL_MODELDEF, i, false );
-		if( modelDef )
-		{
+		if( modelDef ) {
 			modelDefs[i] = modelDef->GetName();
-			if( decl->model == modelDef->GetName() )
-			{
+			if( decl->model == modelDef->GetName() ) {
 				currentModel = i;
 			}
 		}

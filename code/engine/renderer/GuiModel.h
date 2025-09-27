@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -30,14 +31,13 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "ScreenRect.h"
 
-struct guiModelSurface_t
-{
-	const idMaterial* 	material;
-	uint64				glState;
-	int					firstIndex;
-	int					numIndexes;
-	stereoDepthType_t	stereoType;
-	idScreenRect		clipRect;
+struct guiModelSurface_t {
+	const idMaterial* material;
+	uint64			  glState;
+	int				  firstIndex;
+	int				  numIndexes;
+	stereoDepthType_t stereoType;
+	idScreenRect	  clipRect;
 };
 
 class idRenderMatrix;
@@ -53,22 +53,16 @@ public:
 	void		Clear();
 
 	// Leyland VR
-	void	SetViewEyeBuffer( int veb );
-	int		GetViewEyeBuffer()
-	{
-		return viewEyeBuffer;
-	}
+	void		SetViewEyeBuffer( int veb );
+	int			GetViewEyeBuffer() { return viewEyeBuffer; }
 
-	void	SetMode( guiMode_t a_mode );
-	guiMode_t	GetMode()
-	{
-		return mode;
-	}
+	void		SetMode( guiMode_t a_mode );
+	guiMode_t	GetMode() { return mode; }
 
-	bool	UpdateVRShell();
-	void	ActivateVRShell( bool b );
-	bool	GetVRShell( idVec3& origin, idMat3& axis );
-	void	SetVRShell( const idVec3& origin, const idMat3& axis );
+	bool		UpdateVRShell();
+	void		ActivateVRShell( bool b );
+	bool		GetVRShell( idVec3& origin, idMat3& axis );
+	void		SetVRShell( const idVec3& origin, const idMat3& axis );
 	// Leyland end
 
 	// allocates memory for verts and indexes in frame-temporary buffer memory
@@ -83,47 +77,45 @@ public:
 
 	// the returned pointer will be in write-combined memory, so only make contiguous
 	// 32 bit writes and never read from it.
-	idDrawVert* AllocTris( int numVerts, const triIndex_t* indexes, int numIndexes, const idMaterial* material,
-						   const uint64 glState, const stereoDepthType_t stereoType );
-	idDrawVert* AllocTris( int numVerts, const triIndex_t* indexes, int numIndexes, const idMaterial* material,
-						   const uint64 glState, const stereoDepthType_t stereoType, const idScreenRect& clipRect );
+	idDrawVert* AllocTris( int numVerts, const triIndex_t* indexes, int numIndexes, const idMaterial* material, const uint64 glState, const stereoDepthType_t stereoType );
+	idDrawVert* AllocTris(
+		int numVerts, const triIndex_t* indexes, int numIndexes, const idMaterial* material, const uint64 glState, const stereoDepthType_t stereoType, const idScreenRect& clipRect );
 
 	//---------------------------
 private:
-	void		AdvanceSurf();
+	void								 AdvanceSurf();
 
 	// Leyland VR
-	int							viewEyeBuffer;				// -1 = left eye, 1 = right eye, 0 = monoscopic view or GUI
+	int									 viewEyeBuffer; // -1 = left eye, 1 = right eye, 0 = monoscopic view or GUI
 
-	guiMode_t					mode;
+	guiMode_t							 mode;
 
-	bool						vrShellActive;
-	bool						vrShellNeedsUpdate;
-	idVec3						vrShellOrigin;
-	idMat3						vrShellAxis;
+	bool								 vrShellActive;
+	bool								 vrShellNeedsUpdate;
+	idVec3								 vrShellOrigin;
+	idMat3								 vrShellAxis;
 	// Leyland end
 
-	guiModelSurface_t* 			surf;
+	guiModelSurface_t*					 surf;
 
-	float						shaderParms[ MAX_ENTITY_SHADER_PARMS ];
+	float								 shaderParms[MAX_ENTITY_SHADER_PARMS];
 
-	static const float STEREO_DEPTH_DISABLE; // Leyland VR
-	static const float STEREO_DEPTH_NEAR;
-	static const float STEREO_DEPTH_MID;
-	static const float STEREO_DEPTH_FAR;
+	static const float					 STEREO_DEPTH_DISABLE; // Leyland VR
+	static const float					 STEREO_DEPTH_NEAR;
+	static const float					 STEREO_DEPTH_MID;
+	static const float					 STEREO_DEPTH_FAR;
 
 	// if we exceed these limits we stop rendering GUI surfaces
-	static const int MAX_INDEXES = ( 20000 * 6 );
-	static const int MAX_VERTS	 = ( 20000 * 4 );
+	static const int					 MAX_INDEXES = ( 20000 * 6 );
+	static const int					 MAX_VERTS	 = ( 20000 * 4 );
 
-	vertCacheHandle_t			vertexBlock;
-	vertCacheHandle_t			indexBlock;
-	idDrawVert* 				vertexPointer;
-	triIndex_t* 				indexPointer;
+	vertCacheHandle_t					 vertexBlock;
+	vertCacheHandle_t					 indexBlock;
+	idDrawVert*							 vertexPointer;
+	triIndex_t*							 indexPointer;
 
-	int							numVerts;
-	int							numIndexes;
+	int									 numVerts;
+	int									 numIndexes;
 
-	idList<guiModelSurface_t, TAG_MODEL>	surfaces;
+	idList<guiModelSurface_t, TAG_MODEL> surfaces;
 };
-

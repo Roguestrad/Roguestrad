@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -46,19 +47,18 @@ idZipContainer::Init
 */
 bool idZipContainer::Init( const char* _fileName )
 {
-	unzFile			uf;
-	int				err;
+	unzFile			  uf;
+	int				  err;
 	unz_global_info64 gi;
-	char			filename_inzip[MAX_ZIPPED_FILE_NAME];
-	unz_file_info64	file_info;
-	int				fs_numHeaderLongs;
-	int* 			fs_headerLongs;
-	int				len;
+	char			  filename_inzip[MAX_ZIPPED_FILE_NAME];
+	unz_file_info64	  file_info;
+	int				  fs_numHeaderLongs;
+	int*			  fs_headerLongs;
+	int				  len;
 
 	{
 		idFileLocal f = fileSystem->OpenExplicitFileRead( _fileName );
-		if( !f )
-		{
+		if( !f ) {
 			return false;
 		}
 		f->Seek( 0, FS_SEEK_END );
@@ -67,35 +67,31 @@ bool idZipContainer::Init( const char* _fileName )
 
 	fs_numHeaderLongs = 0;
 
-	uf = unzOpen( _fileName );
+	uf	= unzOpen( _fileName );
 	err = unzGetGlobalInfo64( uf, &gi );
 
-	if( err != UNZ_OK )
-	{
+	if( err != UNZ_OK ) {
 		idLib::Warning( "Unable to open zip file %s", _fileName );
 		return false;
 	}
 
-	fileName = _fileName;
-	zipFileHandle = uf;
+	fileName		 = _fileName;
+	zipFileHandle	 = uf;
 	numFileResources = gi.number_entry;
-	//TODO store total length = len;
+	// TODO store total length = len;
 
 	cacheTable.SetNum( numFileResources );
 
 	unzGoToFirstFile( uf );
 	fs_headerLongs = ( int* )Mem_ClearedAlloc( gi.number_entry * sizeof( int ), TAG_IDFILE );
-	for( int i = 0; i < numFileResources; i++ )
-	{
-		idZipCacheEntry& rt = cacheTable[ i ];
+	for( int i = 0; i < numFileResources; i++ ) {
+		idZipCacheEntry& rt = cacheTable[i];
 
 		err = unzGetCurrentFileInfo64( uf, &file_info, filename_inzip, sizeof( filename_inzip ), NULL, 0, NULL, 0 );
-		if( err != UNZ_OK )
-		{
+		if( err != UNZ_OK ) {
 			break;
 		}
-		if( file_info.uncompressed_size > 0 )
-		{
+		if( file_info.uncompressed_size > 0 ) {
 			fs_headerLongs[fs_numHeaderLongs++] = LittleLong( file_info.crc );
 		}
 
@@ -109,18 +105,17 @@ bool idZipContainer::Init( const char* _fileName )
 		rt.length = file_info.uncompressed_size;
 
 		// add the file to the hash
-		const int key = cacheHash.GenerateKey( rt.filename, false );
-		bool found = false;
-		//for ( int index = cacheHash.GetFirst( key ); index != idHashIndex::NULL_INDEX; index = cacheHash.GetNext( index ) ) {
+		const int key	= cacheHash.GenerateKey( rt.filename, false );
+		bool	  found = false;
+		// for ( int index = cacheHash.GetFirst( key ); index != idHashIndex::NULL_INDEX; index = cacheHash.GetNext( index ) ) {
 		//	idResourceCacheEntry & rtc = cacheTable[ index ];
 		//	if ( idStr::Icmp( rtc.filename, rt.filename ) == 0 ) {
 		//		found = true;
 		//		break;
 		//	}
-		//}
-		if( !found )
-		{
-			//idLib::Printf( "rez file name: %s\n", rt.filename.c_str() );
+		// }
+		if( !found ) {
+			// idLib::Printf( "rez file name: %s\n", rt.filename.c_str() );
 			cacheHash.Add( key, i );
 		}
 
@@ -130,11 +125,9 @@ bool idZipContainer::Init( const char* _fileName )
 
 	// ignore all binary paks
 	int confHash = cacheHash.GenerateKey( BINARY_CONFIG, false );
-	for( int index = cacheHash.GetFirst( confHash ); index != idHashIndex::NULL_INDEX; index = cacheHash.GetNext( index ) )
-	{
-		idZipCacheEntry& rtc = cacheTable[ index ];
-		if( idStr::Icmp( rtc.filename, BINARY_CONFIG ) == 0 )
-		{
+	for( int index = cacheHash.GetFirst( confHash ); index != idHashIndex::NULL_INDEX; index = cacheHash.GetNext( index ) ) {
+		idZipCacheEntry& rtc = cacheTable[index];
+		if( idStr::Icmp( rtc.filename, BINARY_CONFIG ) == 0 ) {
 			zipFileHandle = NULL;
 			unzClose( uf );
 			cacheTable.Clear();
@@ -193,29 +186,25 @@ idFile_InZip* idZipContainer::OpenFile( const idZipCacheEntry& rt, const char* r
 
 	// clone handle and assign a new internal filestream to zip file to it
 	unzFile uf = unzReOpen( fileName, zipFileHandle );
-	if( uf == NULL )
-	{
+	if( uf == NULL ) {
 		common->FatalError( "Couldn't reopen %s", fileName.c_str() );
 	}
 
 	// the following stuff is needed to get the uncompress filesize (for file->fileSize)
-	char	filename_inzip[MAX_ZIPPED_FILE_NAME];
-	unz_file_info64	file_info;
-	int err = unzGetCurrentFileInfo64( uf, &file_info, filename_inzip, sizeof( filename_inzip ), NULL, 0, NULL, 0 );
-	if( err != UNZ_OK )
-	{
+	char			filename_inzip[MAX_ZIPPED_FILE_NAME];
+	unz_file_info64 file_info;
+	int				err = unzGetCurrentFileInfo64( uf, &file_info, filename_inzip, sizeof( filename_inzip ), NULL, 0, NULL, 0 );
+	if( err != UNZ_OK ) {
 		common->FatalError( "Couldn't get file info for %s in %s, pos %llu", relativePath, fileName.c_str(), rt.offset );
 	}
 
 	// create idFile_InZip and set fields accordingly
 	idFile_InZip* file = new idFile_InZip();
-	file->z = uf;
-	file->name = relativePath;
-	file->fullPath = fileName + "/" + relativePath;
-	file->zipFilePos = rt.offset;
-	file->fileSize = file_info.uncompressed_size;
+	file->z			   = uf;
+	file->name		   = relativePath;
+	file->fullPath	   = fileName + "/" + relativePath;
+	file->zipFilePos   = rt.offset;
+	file->fileSize	   = file_info.uncompressed_size;
 
 	return file;
 }
-
-

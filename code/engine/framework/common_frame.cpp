@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -51,22 +52,22 @@ which should also be nicely contained.
 
 */
 #define DEFAULT_FIXED_TIC "0"
-#define DEFAULT_NO_SLEEP "0"
+#define DEFAULT_NO_SLEEP  "0"
 
-idCVar com_deltaTimeClamp( "com_deltaTimeClamp", "50", CVAR_INTEGER, "don't process more than this time in a single frame" );
+idCVar		  com_deltaTimeClamp( "com_deltaTimeClamp", "50", CVAR_INTEGER, "don't process more than this time in a single frame" );
 
-idCVar com_fixedTic( "com_fixedTic", DEFAULT_FIXED_TIC, CVAR_BOOL, "run a single game frame per render frame" );
-idCVar com_noSleep( "com_noSleep", DEFAULT_NO_SLEEP, CVAR_BOOL, "don't sleep if the game is running too fast" );
-idCVar com_smp( "com_smp", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_NOCHEAT, "run the game and draw code in a separate thread" );
-idCVar com_skipGameDraw( "com_skipGameDraw", "0", CVAR_SYSTEM | CVAR_BOOL, "" );
+idCVar		  com_fixedTic( "com_fixedTic", DEFAULT_FIXED_TIC, CVAR_BOOL, "run a single game frame per render frame" );
+idCVar		  com_noSleep( "com_noSleep", DEFAULT_NO_SLEEP, CVAR_BOOL, "don't sleep if the game is running too fast" );
+idCVar		  com_smp( "com_smp", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_NOCHEAT, "run the game and draw code in a separate thread" );
+idCVar		  com_skipGameDraw( "com_skipGameDraw", "0", CVAR_SYSTEM | CVAR_BOOL, "" );
 
-idCVar com_sleepGame( "com_sleepGame", "0", CVAR_SYSTEM | CVAR_INTEGER, "intentionally add a sleep in the game time" );
-idCVar com_sleepDraw( "com_sleepDraw", "0", CVAR_SYSTEM | CVAR_INTEGER, "intentionally add a sleep in the draw time" );
-idCVar com_sleepRender( "com_sleepRender", "0", CVAR_SYSTEM | CVAR_INTEGER, "intentionally add a sleep in the render time" );
+idCVar		  com_sleepGame( "com_sleepGame", "0", CVAR_SYSTEM | CVAR_INTEGER, "intentionally add a sleep in the game time" );
+idCVar		  com_sleepDraw( "com_sleepDraw", "0", CVAR_SYSTEM | CVAR_INTEGER, "intentionally add a sleep in the draw time" );
+idCVar		  com_sleepRender( "com_sleepRender", "0", CVAR_SYSTEM | CVAR_INTEGER, "intentionally add a sleep in the render time" );
 
-idCVar net_drawDebugHud( "net_drawDebugHud", "0", CVAR_SYSTEM | CVAR_INTEGER, "0 = None, 1 = Hud 1, 2 = Hud 2, 3 = Snapshots" );
+idCVar		  net_drawDebugHud( "net_drawDebugHud", "0", CVAR_SYSTEM | CVAR_INTEGER, "0 = None, 1 = Hud 1, 2 = Hud 2, 3 = Snapshots" );
 
-idCVar timescale( "timescale", "1", CVAR_SYSTEM | CVAR_FLOAT, "Number of game frames to run per render frame", 0.001f, 100.0f );
+idCVar		  timescale( "timescale", "1", CVAR_SYSTEM | CVAR_FLOAT, "Number of game frames to run per render frame", 0.001f, 100.0f );
 
 extern idCVar in_useJoystick;
 extern idCVar in_joystickRumble;
@@ -79,60 +80,47 @@ Run in a background thread for performance, but can also
 be called directly in the foreground thread for comparison.
 ===============
 */
-int idGameThread::Run()
+int			  idGameThread::Run()
 {
 	commonLocal.frameTiming.startGameTime = Sys_Microseconds();
 
 	// debugging tool to test frame dropping behavior
-	if( com_sleepGame.GetInteger() )
-	{
+	if( com_sleepGame.GetInteger() ) {
 		Sys_Sleep( com_sleepGame.GetInteger() );
 	}
 
-	if( numGameFrames == 0 )
-	{
+	if( numGameFrames == 0 ) {
 		// Ensure there's no stale gameReturn data from a paused game
 		ret = gameReturn_t();
 	}
 
-	if( isClient )
-	{
+	if( isClient ) {
 		// run the game logic
-		for( int i = 0; i < numGameFrames; i++ )
-		{
+		for( int i = 0; i < numGameFrames; i++ ) {
 			SCOPED_PROFILE_EVENT( "Client Prediction" );
-			if( userCmdMgr )
-			{
+			if( userCmdMgr ) {
 				game->ClientRunFrame( *userCmdMgr, ( i == numGameFrames - 1 ), ret );
 			}
-			if( ret.syncNextGameFrame || ret.sessionCommand[0] != 0 )
-			{
+			if( ret.syncNextGameFrame || ret.sessionCommand[0] != 0 ) {
 				break;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		// run the game logic
-		for( int i = 0; i < numGameFrames; i++ )
-		{
+		for( int i = 0; i < numGameFrames; i++ ) {
 			SCOPED_PROFILE_EVENT( "GameTic" );
-			if( userCmdMgr )
-			{
+			if( userCmdMgr ) {
 				game->RunFrame( *userCmdMgr, ret );
 			}
-			if( ret.syncNextGameFrame || ret.sessionCommand[0] != 0 )
-			{
+			if( ret.syncNextGameFrame || ret.sessionCommand[0] != 0 ) {
 				break;
 			}
 		}
 	}
 
 	// we should have consumed all of our usercmds
-	if( userCmdMgr )
-	{
-		if( userCmdMgr->HasUserCmdForPlayer( game->GetLocalClientNum() ) )
-		{
+	if( userCmdMgr ) {
+		if( userCmdMgr->HasUserCmdForPlayer( game->GetLocalClientNum() ) ) {
 			idLib::Printf( "idGameThread::Run: didn't consume all usercmds\n" );
 		}
 	}
@@ -179,20 +167,16 @@ gameReturn_t idGameThread::RunGameAndDraw( int numGameFrames_, idUserCmdMgr& use
 
 	// start the thread going
 	// foresthale 2014-05-12: also check com_editors as many of them are not particularly thread-safe (editLights for example)
-	if( !com_smp.GetBool() || com_editors != 0 )
-	{
+	if( !com_smp.GetBool() || com_editors != 0 ) {
 		// run it in the main thread so PIX profiling catches everything
 		Run();
-	}
-	else
-	{
+	} else {
 		this->SignalWork();
 	}
 
 	// return the latched result while the thread runs in the background
 	return latchedRet;
 }
-
 
 /*
 ===============
@@ -203,16 +187,13 @@ Draw the fade material over everything that has been drawn
 */
 void idCommonLocal::DrawWipeModel()
 {
-
-	if( wipeStartTime >= wipeStopTime )
-	{
+	if( wipeStartTime >= wipeStopTime ) {
 		return;
 	}
 
 	int currentTime = Sys_Milliseconds();
 
-	if( !wipeHold && currentTime > wipeStopTime )
-	{
+	if( !wipeHold && currentTime > wipeStopTime ) {
 		return;
 	}
 
@@ -224,8 +205,7 @@ void idCommonLocal::DrawWipeModel()
 // RB begin
 void idCommonLocal::DrawLoadPacifierProgressbar()
 {
-	if( loadPacifierExpectedCount <= 0 )
-	{
+	if( loadPacifierExpectedCount <= 0 ) {
 		return;
 	}
 
@@ -236,7 +216,7 @@ void idCommonLocal::DrawLoadPacifierProgressbar()
 	// draw our basic overlay
 	renderSystem->SetColor( idVec4( 0.55f, 0.0f, 0.0f, 1.0f ) );
 	renderSystem->DrawStretchPic( 0, renderSystem->GetVirtualHeight() - 64, renderSystem->GetVirtualWidth(), 16, 0, 0, 1, 1, whiteMaterial );
-	//renderSystem->SetColor( idVec4( 0.0f, 0.5f, 0.8f, 1.0f ) );
+	// renderSystem->SetColor( idVec4( 0.0f, 0.5f, 0.8f, 1.0f ) );
 	renderSystem->SetColor( colorGold );
 	renderSystem->DrawStretchPic( 0, renderSystem->GetVirtualHeight() - 64, loadPacifierProgress * renderSystem->GetVirtualWidth(), 16, 0, 0, 1, 1, whiteMaterial );
 
@@ -252,13 +232,11 @@ idCommonLocal::Draw
 void idCommonLocal::Draw()
 {
 	// debugging tool to test frame dropping behavior
-	if( com_sleepDraw.GetInteger() )
-	{
+	if( com_sleepDraw.GetInteger() ) {
 		Sys_Sleep( com_sleepDraw.GetInteger() );
 	}
 
-	if( loadPacifierBinarizeActive || LoadPacifierRunning() )
-	{
+	if( loadPacifierBinarizeActive || LoadPacifierRunning() ) {
 		// foresthale 2014-05-30: when binarizing an asset we show a special
 		// overlay indicating progress
 		renderSystem->SetColor( colorBlack );
@@ -266,8 +244,7 @@ void idCommonLocal::Draw()
 
 		// render the loading gui (idSWF actually) if it is loaded
 		// (we want to see progress of the loading gui binarize too)
-		if( loadGUI != NULL )
-		{
+		if( loadGUI != NULL ) {
 			tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
 			loadGUI->Render( renderSystem, Sys_Milliseconds() );
 		}
@@ -275,49 +252,42 @@ void idCommonLocal::Draw()
 		// draw general progress bar
 		DrawLoadPacifierProgressbar();
 
-		if( loadPacifierBinarizeActive )
-		{
+		if( loadPacifierBinarizeActive ) {
 			tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
 
 			// update our progress estimates
 			int time = Sys_Milliseconds();
-			if( loadPacifierBinarizeProgress > 0.0f )
-			{
+			if( loadPacifierBinarizeProgress > 0.0f ) {
 				loadPacifierBinarizeTimeLeft = ( 1.0 - loadPacifierBinarizeProgress ) * ( time - loadPacifierBinarizeStartTime ) * 0.001f / loadPacifierBinarizeProgress;
-			}
-			else
-			{
+			} else {
 				loadPacifierBinarizeTimeLeft = -1.0f;
 			}
 
 			// prepare our strings
 			const char* text;
-			if( loadPacifierBinarizeTimeLeft >= 99.5f )
-			{
+			if( loadPacifierBinarizeTimeLeft >= 99.5f ) {
 				text = va( "Binarizing %3.0f%% ETA %2.0f minutes", loadPacifierBinarizeProgress * 100.0f, loadPacifierBinarizeTimeLeft / 60.0f );
-			}
-			else if( loadPacifierBinarizeTimeLeft )
-			{
+			} else if( loadPacifierBinarizeTimeLeft ) {
 				text = va( "Binarizing %3.0f%% ETA %2.0f seconds", loadPacifierBinarizeProgress * 100.0f, loadPacifierBinarizeTimeLeft );
-			}
-			else
-			{
+			} else {
 				text = va( "Binarizing %3.0f%%", loadPacifierBinarizeProgress * 100.0f );
 			}
 
 			// draw our basic overlay
 			renderSystem->SetColor( idVec4( 0.0f, 0.0f, 0.0f, 0.75f ) );
 			renderSystem->DrawStretchPic( 0, renderSystem->GetVirtualHeight() - 48, renderSystem->GetVirtualWidth(), 48, 0, 0, 1, 1, whiteMaterial );
-			//renderSystem->SetColor( idVec4( 0.0f, 0.5f, 0.8f, 1.0f ) );
+			// renderSystem->SetColor( idVec4( 0.0f, 0.5f, 0.8f, 1.0f ) );
 			renderSystem->SetColor( colorBrown );
 			renderSystem->DrawStretchPic( 0, renderSystem->GetVirtualHeight() - 48, loadPacifierBinarizeProgress * renderSystem->GetVirtualWidth(), 16, 0, 0, 1, 1, whiteMaterial );
 			renderSystem->DrawSmallStringExt( 0, renderSystem->GetVirtualHeight() - 48, loadPacifierBinarizeFilename.c_str(), idVec4( 1.0f, 1.0f, 1.0f, 1.0f ), true );
-			renderSystem->DrawSmallStringExt( 0, renderSystem->GetVirtualHeight() - 32, va( "%s %d/%d lvls", loadPacifierBinarizeInfo.c_str(), loadPacifierBinarizeMiplevel, loadPacifierBinarizeMiplevelTotal ), idVec4( 1.0f, 1.0f, 1.0f, 1.0f ), true );
+			renderSystem->DrawSmallStringExt( 0,
+				renderSystem->GetVirtualHeight() - 32,
+				va( "%s %d/%d lvls", loadPacifierBinarizeInfo.c_str(), loadPacifierBinarizeMiplevel, loadPacifierBinarizeMiplevelTotal ),
+				idVec4( 1.0f, 1.0f, 1.0f, 1.0f ),
+				true );
 			renderSystem->DrawSmallStringExt( 0, renderSystem->GetVirtualHeight() - 16, text, idVec4( 1.0f, 1.0f, 1.0f, 1.0f ), true );
 		}
-	}
-	else if( loadGUI != NULL )
-	{
+	} else if( loadGUI != NULL ) {
 		tr.guiModel->SetMode( GUIMODE_SHELL ); // Leyland VR
 
 		// foresthale 2014-05-30: showing a black background looks better than flickering in widescreen
@@ -325,41 +295,31 @@ void idCommonLocal::Draw()
 		renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
 
 		loadGUI->Render( renderSystem, Sys_Milliseconds() );
-	}
-	else if( game && game->Shell_IsActive() )
-	{
+	} else if( game && game->Shell_IsActive() ) {
 		bool gameDraw = game->Draw( game->GetLocalClientNum() );
-		if( !gameDraw )
-		{
+		if( !gameDraw ) {
 			renderSystem->SetColor( colorBlack );
 			renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
 		}
 		game->Shell_Render();
-	}
-	else if( mapSpawned )
-	{
+	} else if( mapSpawned ) {
 		bool gameDraw = false;
 
 		// normal drawing for both single and multi player
-		if( !com_skipGameDraw.GetBool() && Game()->GetLocalClientNum() >= 0 )
-		{
+		if( !com_skipGameDraw.GetBool() && Game()->GetLocalClientNum() >= 0 ) {
 			// draw the game view
-			int	start = Sys_Milliseconds();
-			if( game )
-			{
+			int start = Sys_Milliseconds();
+			if( game ) {
 				gameDraw = game->Draw( Game()->GetLocalClientNum() );
 			}
 			int end = Sys_Milliseconds();
-			time_gameDraw += ( end - start );	// note time used for com_speeds
+			time_gameDraw += ( end - start ); // note time used for com_speeds
 		}
-		if( !gameDraw )
-		{
+		if( !gameDraw ) {
 			renderSystem->SetColor( colorBlack );
 			renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
 		}
-	}
-	else
-	{
+	} else {
 		renderSystem->SetColor4( 0, 0, 0, 1 );
 		renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
 	}
@@ -384,8 +344,7 @@ void idCommonLocal::Draw()
 		console->Draw( false );
 
 		// old CRT TV simulation has to be last or it breaks the immersion
-		if( !vrSystem->IsActive() )
-		{
+		if( !vrSystem->IsActive() ) {
 			renderSystem->DrawCRTPostFX();
 		}
 	}
@@ -401,8 +360,7 @@ This is an out-of-sequence screen update, not the normal game rendering
 // DG: added possibility to *not* release mouse in UpdateScreen(), it fucks up the view angle for screenshots
 void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 {
-	if( insideUpdateScreen || com_shuttingDown )
-	{
+	if( insideUpdateScreen || com_shuttingDown ) {
 		return;
 	}
 	insideUpdateScreen = true;
@@ -411,29 +369,27 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 	gameThread.WaitForThread();
 
 	// release the mouse capture back to the desktop
-	if( releaseMouse )
-	{
+	if( releaseMouse ) {
 		Sys_GrabMouseCursor( false );
 	}
 	// DG end
 
 	// build all the draw commands without running a new game tic
 	Draw();
-	frameTiming.finishDrawTime = Sys_Microseconds();    // SRS - Added frame timing for out-of-sequence updates (e.g. used in timedemo "twice" mode)
+	frameTiming.finishDrawTime = Sys_Microseconds(); // SRS - Added frame timing for out-of-sequence updates (e.g. used in timedemo "twice" mode)
 
 	// foresthale 2014-03-01: note: the only place that has captureToImage=true is idAutoRender::StartBackgroundAutoSwaps
-	if( captureToImage )
-	{
+	if( captureToImage ) {
 		renderSystem->CaptureRenderToImage( "_currentRender", false );
 	}
 
 	// this should exit right after vsync, with the GPU idle and ready to draw
-	frameTiming.startRenderTime = Sys_Microseconds();   // SRS - Added frame timing for out-of-sequence updates (e.g. used in timedemo "twice" mode)
-	const emptyCommand_t* cmd = renderSystem->SwapCommandBuffers( &time_frontend, &time_backend, &time_moc, &time_gpu, &stats_backend, &stats_frontend );
+	frameTiming.startRenderTime = Sys_Microseconds(); // SRS - Added frame timing for out-of-sequence updates (e.g. used in timedemo "twice" mode)
+	const emptyCommand_t* cmd	= renderSystem->SwapCommandBuffers( &time_frontend, &time_backend, &time_moc, &time_gpu, &stats_backend, &stats_frontend );
 
 	// get the GPU busy with new commands
 	renderSystem->RenderCommandBuffers( cmd );
-	frameTiming.finishRenderTime = Sys_Microseconds();  // SRS - Added frame timing for out-of-sequence updates (e.g. used in timedemo "twice" mode)
+	frameTiming.finishRenderTime = Sys_Microseconds(); // SRS - Added frame timing for out-of-sequence updates (e.g. used in timedemo "twice" mode)
 
 	insideUpdateScreen = false;
 }
@@ -444,68 +400,50 @@ idCommonLocal::ProcessGameReturn
 */
 idCVar vr_hapticScale( "vr_hapticScale", "0.1", CVAR_FLOAT | CVAR_ARCHIVE | CVAR_NEW, "" );
 idCVar vr_hapticMax( "vr_hapticMax", "3999", CVAR_INTEGER | CVAR_NEW, "0 - 3999, for debug purposes" );
-void idCommonLocal::ProcessGameReturn( const gameReturn_t& ret )
+void   idCommonLocal::ProcessGameReturn( const gameReturn_t& ret )
 {
 	// set joystick rumble
 	// Leyland VR
-	if( vrSystem->IsActive() && !vrSystem->IsSeated() && !game->Shell_IsActive() )
-	{
+	if( vrSystem->IsActive() && !vrSystem->IsSeated() && !game->Shell_IsActive() ) {
 		int leftDur = vr_hapticScale.GetFloat() * ret.vibrationLow;
-		if( leftDur > vr_hapticMax.GetInteger() )
-		{
+		if( leftDur > vr_hapticMax.GetInteger() ) {
 			leftDur = vr_hapticMax.GetInteger();
 		}
 
 		int rightDur = vr_hapticScale.GetFloat() * ret.vibrationHigh;
-		if( rightDur > vr_hapticMax.GetInteger() )
-		{
+		if( rightDur > vr_hapticMax.GetInteger() ) {
 			rightDur = vr_hapticMax.GetInteger();
 		}
 
 		vrSystem->HapticPulse( leftDur, rightDur );
 	}
 	// Leyland end
-	else if( in_useJoystick.GetBool() && in_joystickRumble.GetBool() && !game->Shell_IsActive() && session->GetSignInManager().GetMasterInputDevice() >= 0 )
-	{
-		Sys_SetRumble( session->GetSignInManager().GetMasterInputDevice(), ret.vibrationLow, ret.vibrationHigh );		// Only set the rumble on the active controller
-	}
-	else
-	{
-		for( int i = 0; i < MAX_INPUT_DEVICES; i++ )
-		{
+	else if( in_useJoystick.GetBool() && in_joystickRumble.GetBool() && !game->Shell_IsActive() && session->GetSignInManager().GetMasterInputDevice() >= 0 ) {
+		Sys_SetRumble( session->GetSignInManager().GetMasterInputDevice(), ret.vibrationLow, ret.vibrationHigh ); // Only set the rumble on the active controller
+	} else {
+		for( int i = 0; i < MAX_INPUT_DEVICES; i++ ) {
 			Sys_SetRumble( i, 0, 0 );
 		}
 	}
 
 	syncNextGameFrame = ret.syncNextGameFrame;
 
-	if( ret.sessionCommand[0] )
-	{
+	if( ret.sessionCommand[0] ) {
 		idCmdArgs args;
 
 		args.TokenizeString( ret.sessionCommand, false );
 
-		if( !idStr::Icmp( args.Argv( 0 ), "map" ) )
-		{
+		if( !idStr::Icmp( args.Argv( 0 ), "map" ) ) {
 			MoveToNewMap( args.Argv( 1 ), false );
-		}
-		else if( !idStr::Icmp( args.Argv( 0 ), "devmap" ) )
-		{
+		} else if( !idStr::Icmp( args.Argv( 0 ), "devmap" ) ) {
 			MoveToNewMap( args.Argv( 1 ), true );
-		}
-		else if( !idStr::Icmp( args.Argv( 0 ), "died" ) )
-		{
-			if( !IsMultiplayer() )
-			{
+		} else if( !idStr::Icmp( args.Argv( 0 ), "died" ) ) {
+			if( !IsMultiplayer() ) {
 				game->Shell_Show( true );
 			}
-		}
-		else if( !idStr::Icmp( args.Argv( 0 ), "disconnect" ) )
-		{
+		} else if( !idStr::Icmp( args.Argv( 0 ), "disconnect" ) ) {
 			cmdSystem->BufferCommandText( CMD_EXEC_INSERT, "stoprecording ; disconnect" );
-		}
-		else if( !idStr::Icmp( args.Argv( 0 ), "endOfDemo" ) )
-		{
+		} else if( !idStr::Icmp( args.Argv( 0 ), "endOfDemo" ) ) {
 			cmdSystem->BufferCommandText( CMD_EXEC_NOW, "endOfDemo" );
 		}
 	}
@@ -521,20 +459,18 @@ extern idCVar com_activeApp;
 idCommonLocal::Frame
 =================
 */
-void idCommonLocal::Frame()
+void		  idCommonLocal::Frame()
 {
-	try
-	{
+	try {
 		SCOPED_PROFILE_EVENT( "Common::Frame" );
 
 		// This is the only place this is incremented
 		idLib::frameNumber++;
 
-		//OPTICK_TAG( "N", idLib::frameNumber );
+		// OPTICK_TAG( "N", idLib::frameNumber );
 
 		// allow changing SIMD usage on the fly
-		if( com_forceGenericSIMD.IsModified() )
-		{
+		if( com_forceGenericSIMD.IsModified() ) {
 			idSIMD::InitProcessor( "doom", com_forceGenericSIMD.GetBool() );
 			com_forceGenericSIMD.ClearModified();
 		}
@@ -553,8 +489,7 @@ void idCommonLocal::Frame()
 		ImGuiHook::NewFrame();
 
 		// Activate the shell if it's been requested
-		if( showShellRequested && game )
-		{
+		if( showShellRequested && game ) {
 			game->Shell_Show( true );
 			showShellRequested = false;
 		}
@@ -564,46 +499,34 @@ void idCommonLocal::Frame()
 
 		// DG: Add pause from com_pause cvar
 		// RB begin
-		if( com_pause.GetInteger() || console->Active() || Dialog().IsDialogActive() || session->IsSystemUIShowing()
-				|| ( game && game->InhibitControls() ) ||  ImGuiTools::ReleaseMouseForTools() )
-			// RB end, DG end
+		if( com_pause.GetInteger() || console->Active() || Dialog().IsDialogActive() || session->IsSystemUIShowing() || ( game && game->InhibitControls() ) || ImGuiTools::ReleaseMouseForTools() )
+		// RB end, DG end
 		{
 			// RB: don't release the mouse when opening a PDA or menu
 			// SRS - but always release at main menu after exiting game or demo
-			if( vrSystem->IsActive() )
-			{
+			if( vrSystem->IsActive() ) {
 				// RB: translating absolute mouse coords is broken with the tiny window in VR mode
 				// only leave the window when the console is open
-				if( console->Active() )
-				{
+				if( console->Active() ) {
 					Sys_GrabMouseCursor( false );
-				}
-				else
-				{
+				} else {
 					Sys_GrabMouseCursor( true );
 				}
-			}
-			else
-			{
-				if( console->Active() || !mapSpawned || ImGuiTools::ReleaseMouseForTools() )
-				{
+			} else {
+				if( console->Active() || !mapSpawned || ImGuiTools::ReleaseMouseForTools() ) {
 					Sys_GrabMouseCursor( false );
 				}
 			}
 			usercmdGen->InhibitUsercmd( INHIBIT_SESSION, true );
 			chatting = true;
-		}
-		else
-		{
+		} else {
 			Sys_GrabMouseCursor( true );
 			usercmdGen->InhibitUsercmd( INHIBIT_SESSION, false );
 		}
 
 		// RB begin
-		const bool pauseGame = ( !mapSpawned
-								 || ( !IsMultiplayer()
-									  && ( Dialog().IsDialogPausing() || session->IsSystemUIShowing()
-										   || ( game && game->Shell_IsActive() ) || com_pause.GetInteger() ) ) );
+		const bool pauseGame =
+			( !mapSpawned || ( !IsMultiplayer() && ( Dialog().IsDialogPausing() || session->IsSystemUIShowing() || ( game && game->Shell_IsActive() ) || com_pause.GetInteger() ) ) );
 		// RB end
 
 		//--------------------------------------------
@@ -615,16 +538,13 @@ void idCommonLocal::Frame()
 		//--------------------------------------------
 		// this should exit right after vsync, with the GPU idle and ready to draw
 		// This may block if the GPU isn't finished renderng the previous frame.
-		frameTiming.startSyncTime = Sys_Microseconds();
+		frameTiming.startSyncTime			 = Sys_Microseconds();
 		const emptyCommand_t* renderCommands = NULL;
 
 		// foresthale 2014-05-12: also check com_editors as many of them are not particularly thread-safe (editLights for example)
-		if( com_smp.GetBool() && com_editors == 0 )
-		{
+		if( com_smp.GetBool() && com_editors == 0 ) {
 			renderCommands = renderSystem->SwapCommandBuffers( &time_frontend, &time_backend, &time_moc, &time_gpu, &stats_backend, &stats_frontend );
-		}
-		else
-		{
+		} else {
 			// the GPU will stay idle through command generation for minimal
 			// input latency
 			renderSystem->SwapCommandBuffers_FinishRendering( &time_frontend, &time_backend, &time_moc, &time_gpu, &stats_backend, &stats_frontend );
@@ -632,17 +552,14 @@ void idCommonLocal::Frame()
 		frameTiming.finishSyncTime = Sys_Microseconds();
 
 		// RB: slow down engine in background so it does not eat up so many resources along other 3D tools
-		if( !com_activeApp.GetBool() && !IsServer() /* and not VR */ )
-		{
+		if( !com_activeApp.GetBool() && !IsServer() /* and not VR */ ) {
 			const float backgroundEngineHz = 15.0f;
-			com_engineHz_denominator = 100LL * backgroundEngineHz;
-			com_engineHz_latched = backgroundEngineHz;
-		}
-		else
-		{
+			com_engineHz_denominator	   = 100LL * backgroundEngineHz;
+			com_engineHz_latched		   = backgroundEngineHz;
+		} else {
 			// allow com_engineHz to be changed between map loads
 			com_engineHz_denominator = 100LL * com_engineHz.GetFloat();
-			com_engineHz_latched = com_engineHz.GetFloat();
+			com_engineHz_latched	 = com_engineHz.GetFloat();
 		}
 		// RB end
 
@@ -678,12 +595,11 @@ void idCommonLocal::Frame()
 		{
 			OPTICK_CATEGORY( "Wait for Frame", Optick::Category::Wait );
 
-			for( ;; )
-			{
-				const int thisFrameTime = Sys_Milliseconds();
-				static int lastFrameTime = thisFrameTime;	// initialized only the first time
-				const int deltaMilliseconds = thisFrameTime - lastFrameTime;
-				lastFrameTime = thisFrameTime;
+			for( ;; ) {
+				const int  thisFrameTime	 = Sys_Milliseconds();
+				static int lastFrameTime	 = thisFrameTime; // initialized only the first time
+				const int  deltaMilliseconds = thisFrameTime - lastFrameTime;
+				lastFrameTime				 = thisFrameTime;
 
 				// if there was a large gap in time since the last frame, or the frame
 				// rate is very very low, limit the number of frames we will run
@@ -704,16 +620,14 @@ void idCommonLocal::Frame()
 				*/
 
 				// debug cvar to force multiple game tics
-				if( com_fixedTic.GetInteger() > 0 )
-				{
+				if( com_fixedTic.GetInteger() > 0 ) {
 					numGameFrames = com_fixedTic.GetInteger();
 					gameFrame += numGameFrames;
 					gameTimeResidual = 0;
 					break;
 				}
 
-				if( syncNextGameFrame )
-				{
+				if( syncNextGameFrame ) {
 					// don't sleep at all
 					syncNextGameFrame = false;
 					gameFrame++;
@@ -722,13 +636,11 @@ void idCommonLocal::Frame()
 					break;
 				}
 
-				for( ;; )
-				{
+				for( ;; ) {
 					// How much time to wait before running the next frame,
 					// based on com_engineHz
 					const int frameDelay = FRAME_TO_MSEC( gameFrame + 1 ) - FRAME_TO_MSEC( gameFrame );
-					if( gameTimeResidual < frameDelay )
-					{
+					if( gameTimeResidual < frameDelay ) {
 						break;
 					}
 					gameTimeResidual -= frameDelay;
@@ -737,10 +649,9 @@ void idCommonLocal::Frame()
 					// if there is enough residual left, we may run additional frames
 				}
 
-				if( numGameFrames > 0 )
-				{
+				if( numGameFrames > 0 ) {
 					// // Leyland VR: debt forgiveness
-					//if( gameTimeResidual < frameDelay / 4.0f )
+					// if( gameTimeResidual < frameDelay / 4.0f )
 					//{
 					//	gameTimeResidual = 0;
 					//}
@@ -752,8 +663,7 @@ void idCommonLocal::Frame()
 				// if we are vsyncing, we always want to run at least one game
 				// frame and never sleep, which might happen due to scheduling issues
 				// if we were just looking at real time.
-				if( com_noSleep.GetBool() )
-				{
+				if( com_noSleep.GetBool() ) {
 					numGameFrames = 1;
 					gameFrame += numGameFrames;
 					gameTimeResidual = 0;
@@ -770,8 +680,7 @@ void idCommonLocal::Frame()
 		// don't run any frames when paused
 		// RB: reset numGameFrames here so we use the sleep above
 		// and don't run as many frames as possible on the GPU
-		if( pauseGame )
-		{
+		if( pauseGame ) {
 			numGameFrames = 0;
 		}
 
@@ -786,26 +695,21 @@ void idCommonLocal::Frame()
 		session->Pump();
 		session->ProcessSnapAckQueue();
 
-		if( session->GetState() == idSession::LOADING )
-		{
+		if( session->GetState() == idSession::LOADING ) {
 			// If the session reports we should be loading a map, load it!
 			ExecuteMapChange();
 			mapSpawnData.savegameFile = NULL;
 			mapSpawnData.persistentPlayerInfo.Clear();
 			return;
-		}
-		else if( session->GetState() != idSession::INGAME && mapSpawned )
-		{
+		} else if( session->GetState() != idSession::INGAME && mapSpawned ) {
 			// If the game is running, but the session reports we are not in a game, disconnect
 			// This happens when a server disconnects us or we sign out
 			LeaveGame();
 			return;
 		}
 
-		if( mapSpawned && !pauseGame )
-		{
-			if( IsClient() )
-			{
+		if( mapSpawned && !pauseGame ) {
+			if( IsClient() ) {
 				RunNetworkSnapshotFrame();
 			}
 		}
@@ -821,33 +725,27 @@ void idCommonLocal::Frame()
 		//--------------------------------------------
 
 		// get the previous usercmd for bypassed head tracking transform
-		const usercmd_t	previousCmd = usercmdGen->GetCurrentUsercmd();
+		const usercmd_t previousCmd = usercmdGen->GetCurrentUsercmd();
 
 		// build a new usercmd
-		int deviceNum = session->GetSignInManager().GetMasterInputDevice();
+		int				deviceNum = session->GetSignInManager().GetMasterInputDevice();
 		usercmdGen->BuildCurrentUsercmd( deviceNum );
-		if( deviceNum == -1 )
-		{
-			for( int i = 0; i < MAX_INPUT_DEVICES; i++ )
-			{
+		if( deviceNum == -1 ) {
+			for( int i = 0; i < MAX_INPUT_DEVICES; i++ ) {
 				Sys_PollJoystickInputEvents( i );
 				Sys_EndJoystickInputEvents();
 			}
 		}
-		if( pauseGame )
-		{
+		if( pauseGame ) {
 			usercmdGen->Clear();
 		}
 
 		usercmd_t newCmd = usercmdGen->GetCurrentUsercmd();
 
 		// Store server game time - don't let time go past last SS time in case we are extrapolating
-		if( IsClient() )
-		{
+		if( IsClient() ) {
 			newCmd.serverGameMilliseconds = Min( Game()->GetServerGameTimeMs(), Game()->GetSSEndTime() );
-		}
-		else
-		{
+		} else {
 			newCmd.serverGameMilliseconds = Game()->GetServerGameTimeMs();
 		}
 
@@ -856,8 +754,7 @@ void idCommonLocal::Frame()
 		// Stuff a copy of this userCmd for each game frame we are going to run.
 		// Ideally, the usercmds would be built in another thread so you could
 		// still get 60hz control accuracy when the game is running slower.
-		for( int i = 0 ; i < numGameFrames ; i++ )
-		{
+		for( int i = 0; i < numGameFrames; i++ ) {
 			newCmd.clientGameMilliseconds = FRAME_TO_MSEC( gameFrame - numGameFrames + i + 1 );
 			userCmdMgr.PutUserCmdForPlayer( game->GetLocalClientNum(), newCmd );
 		}
@@ -868,8 +765,7 @@ void idCommonLocal::Frame()
 		frameTiming.startRenderTime = Sys_Microseconds();
 
 		// foresthale 2014-05-12: also check com_editors as many of them are not particularly thread-safe (editLights for example)
-		if( !com_smp.GetBool() || com_editors != 0 )
-		{
+		if( !com_smp.GetBool() || com_editors != 0 ) {
 			// in non-smp mode, run the commands we just generated, instead of
 			// frame-delayed ones from a background thread
 			renderCommands = renderSystem->SwapCommandBuffers_FinishCommandBuffers();
@@ -880,8 +776,7 @@ void idCommonLocal::Frame()
 		// ASAP to minimize the pipeline bubble.
 		//----------------------------------------
 		renderSystem->RenderCommandBuffers( renderCommands );
-		if( com_sleepRender.GetInteger() > 0 )
-		{
+		if( com_sleepRender.GetInteger() > 0 ) {
 			// debug tool to test frame adaption
 			Sys_Sleep( com_sleepRender.GetInteger() );
 		}
@@ -903,21 +798,17 @@ void idCommonLocal::Frame()
 		SendSnapshots();
 
 		// Render the sound system using the latest commands from the game thread
-		if( pauseGame )
-		{
+		if( pauseGame ) {
 			soundWorld->Pause();
 			soundSystem->SetPlayingSoundWorld( menuSoundWorld );
 			soundSystem->SetMute( false );
-		}
-		else
-		{
+		} else {
 			soundWorld->UnPause();
 			soundSystem->SetPlayingSoundWorld( soundWorld );
 			soundSystem->SetMute( false );
 		}
 		// SRS - Mute all sound output when dialog waiting or window not in focus (mutes Doom3, Classic, Cinematic Audio)
-		if( Dialog().IsDialogPausing() || session->IsSystemUIShowing() || com_pause.GetInteger() )
-		{
+		if( Dialog().IsDialogPausing() || session->IsSystemUIShowing() || com_pause.GetInteger() ) {
 			soundSystem->SetMute( true );
 		}
 
@@ -927,34 +818,29 @@ void idCommonLocal::Frame()
 		ProcessGameReturn( ret );
 
 		idLobbyBase& lobby = session->GetActivePlatformLobbyBase();
-		if( lobby.HasActivePeers() )
-		{
-			if( net_drawDebugHud.GetInteger() == 1 )
-			{
+		if( lobby.HasActivePeers() ) {
+			if( net_drawDebugHud.GetInteger() == 1 ) {
 				lobby.DrawDebugNetworkHUD();
 			}
-			if( net_drawDebugHud.GetInteger() == 2 )
-			{
+			if( net_drawDebugHud.GetInteger() == 2 ) {
 				lobby.DrawDebugNetworkHUD2();
 			}
 			lobby.DrawDebugNetworkHUD_ServerSnapshotMetrics( net_drawDebugHud.GetInteger() == 3 );
 		}
 
 		// report timing information
-		if( com_speeds.GetBool() )
-		{
-			static int lastTime = Sys_Milliseconds();
-			int	nowTime = Sys_Milliseconds();
-			int	com_frameMsec = nowTime - lastTime;
-			lastTime = nowTime;
+		if( com_speeds.GetBool() ) {
+			static int lastTime		 = Sys_Milliseconds();
+			int		   nowTime		 = Sys_Milliseconds();
+			int		   com_frameMsec = nowTime - lastTime;
+			lastTime				 = nowTime;
 			Printf( "frame:%d all:%3d gfr:%3d rf:%3lld bk:%3lld\n", idLib::frameNumber, com_frameMsec, time_gameFrame, time_frontend / 1000, time_backend / 1000 );
 			time_gameFrame = 0;
-			time_gameDraw = 0;
+			time_gameDraw  = 0;
 		}
 
 		// the FPU stack better be empty at this point or some bad code or compiler bug left values on the stack
-		if( !Sys_FPU_StackIsEmpty() )
-		{
+		if( !Sys_FPU_StackIsEmpty() ) {
 			Printf( "%s", Sys_FPU_GetState() );
 			FatalError( "idCommon::Frame: the FPU stack is not empty at the end of the frame\n" );
 		}
@@ -962,9 +848,7 @@ void idCommonLocal::Frame()
 		mainFrameTiming = frameTiming;
 
 		session->GetSaveGameManager().Pump();
-	}
-	catch( idException& )
-	{
+	} catch( idException& ) {
 		// kill loading gui
 		delete loadGUI;
 		loadGUI = NULL;
@@ -977,5 +861,3 @@ void idCommonLocal::Frame()
 		return;
 	}
 }
-
-

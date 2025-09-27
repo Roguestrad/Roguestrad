@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -34,10 +35,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "gltfParser.h"
 #include "gltfExtras.h"
 
-
-static const byte BCANIM_VERSION = 100;
-static const unsigned int BCANIM_MAGIC = ( 'A' << 24 ) | ( 'C' << 16 ) | ( 'B' << 8 ) | BCANIM_VERSION;
-#define CAMERA_ANIM_BINARYFILE_EXT	"bcanim"
+static const byte		  BCANIM_VERSION = 100;
+static const unsigned int BCANIM_MAGIC	 = ( 'A' << 24 ) | ( 'C' << 16 ) | ( 'B' << 8 ) | BCANIM_VERSION;
+#define CAMERA_ANIM_BINARYFILE_EXT "bcanim"
 static const idMat4 blenderToDoomTransform( idAngles( 0.0f, 0.0f, 90 ).ToMat3(), vec3_origin );
 /*
 ===============================================================================
@@ -81,10 +81,9 @@ renderView_t* idCamera::GetRenderView()
 const idEventDef EV_Camera_SetAttachments( "<getattachments>", NULL );
 
 CLASS_DECLARATION( idCamera, idCameraView )
-EVENT( EV_Activate,				idCameraView::Event_Activate )
+EVENT( EV_Activate, idCameraView::Event_Activate )
 EVENT( EV_Camera_SetAttachments, idCameraView::Event_SetAttachments )
 END_CLASS
-
 
 /*
 ===============
@@ -93,8 +92,8 @@ idCameraView::idCameraView
 */
 idCameraView::idCameraView()
 {
-	fov = 90.0f;
-	attachedTo = NULL;
+	fov			 = 90.0f;
+	attachedTo	 = NULL;
 	attachedView = NULL;
 }
 
@@ -140,21 +139,15 @@ idCameraView::Event_Activate
 */
 void idCameraView::Event_Activate( idEntity* activator )
 {
-	if( spawnArgs.GetBool( "trigger" ) )
-	{
-		if( gameLocal.GetCamera() != this )
-		{
-			if( g_debugCinematic.GetBool() )
-			{
+	if( spawnArgs.GetBool( "trigger" ) ) {
+		if( gameLocal.GetCamera() != this ) {
+			if( g_debugCinematic.GetBool() ) {
 				gameLocal.Printf( "%d: '%s' start\n", gameLocal.framenum, GetName() );
 			}
 
 			gameLocal.SetCamera( this );
-		}
-		else
-		{
-			if( g_debugCinematic.GetBool() )
-			{
+		} else {
+			if( g_debugCinematic.GetBool() ) {
 				gameLocal.Printf( "%d: '%s' stop\n", gameLocal.framenum, GetName() );
 			}
 			gameLocal.SetCamera( NULL );
@@ -169,14 +162,12 @@ idCameraView::Stop
 */
 void idCameraView::Stop()
 {
-	if( g_debugCinematic.GetBool() )
-	{
+	if( g_debugCinematic.GetBool() ) {
 		gameLocal.Printf( "%d: '%s' stop\n", gameLocal.framenum, GetName() );
 	}
 	gameLocal.SetCamera( NULL );
 	ActivateTargets( gameLocal.GetLocalPlayer() );
 }
-
 
 /*
 =====================
@@ -186,12 +177,10 @@ idCameraView::Spawn
 void idCameraView::SetAttachment( idEntity** e, const char* p )
 {
 	const char* cam = spawnArgs.GetString( p );
-	if( strlen( cam ) )
-	{
+	if( strlen( cam ) ) {
 		*e = gameLocal.FindEntity( cam );
 	}
 }
-
 
 /*
 =====================
@@ -202,8 +191,7 @@ void idCameraView::Spawn()
 {
 	// if no target specified use ourself
 	const char* cam = spawnArgs.GetString( "cameraTarget" );
-	if( strlen( cam ) == 0 )
-	{
+	if( strlen( cam ) == 0 ) {
 		spawnArgs.Set( "cameraTarget", spawnArgs.GetString( "name" ) );
 	}
 	fov = spawnArgs.GetFloat( "fov", "90" );
@@ -222,32 +210,25 @@ void idCameraView::GetViewParms( renderView_t* view )
 {
 	assert( view );
 
-	if( view == NULL )
-	{
+	if( view == NULL ) {
 		return;
 	}
 
-	idVec3 dir;
+	idVec3	  dir;
 	idEntity* ent;
 
-	if( attachedTo )
-	{
+	if( attachedTo ) {
 		ent = attachedTo;
-	}
-	else
-	{
+	} else {
 		ent = this;
 	}
 
 	view->vieworg[STEREOPOS_MONO] = ent->GetPhysics()->GetOrigin();
-	if( attachedView )
-	{
+	if( attachedView ) {
 		dir = attachedView->GetPhysics()->GetOrigin() - view->vieworg[STEREOPOS_MONO];
 		dir.Normalize();
 		view->viewaxis = dir.ToMat3();
-	}
-	else
-	{
+	} else {
 		view->viewaxis = ent->GetPhysics()->GetAxis();
 	}
 
@@ -270,12 +251,11 @@ const idEventDef EV_Camera_Start( "start", NULL );
 const idEventDef EV_Camera_Stop( "stop", NULL );
 
 CLASS_DECLARATION( idCamera, idCameraAnim )
-EVENT( EV_Thread_SetCallback,	idCameraAnim::Event_SetCallback )
-EVENT( EV_Camera_Stop,			idCameraAnim::Event_Stop )
-EVENT( EV_Camera_Start,			idCameraAnim::Event_Start )
-EVENT( EV_Activate,				idCameraAnim::Event_Activate )
+EVENT( EV_Thread_SetCallback, idCameraAnim::Event_SetCallback )
+EVENT( EV_Camera_Stop, idCameraAnim::Event_Stop )
+EVENT( EV_Camera_Start, idCameraAnim::Event_Start )
+EVENT( EV_Activate, idCameraAnim::Event_Activate )
 END_CLASS
-
 
 /*
 =====================
@@ -287,10 +267,9 @@ idCameraAnim::idCameraAnim()
 	threadNum = 0;
 	offset.Zero();
 	frameRate = 0;
-	cycle = 1;
+	cycle	  = 1;
 	starttime = 0;
 	activator = NULL;
-
 }
 
 /*
@@ -300,8 +279,7 @@ idCameraAnim::~idCameraAnim
 */
 idCameraAnim::~idCameraAnim()
 {
-	if( gameLocal.GetCamera() == this )
-	{
+	if( gameLocal.GetCamera() == this ) {
 		gameLocal.SetCamera( NULL );
 	}
 }
@@ -345,12 +323,9 @@ idCameraAnim::Spawn
 */
 void idCameraAnim::Spawn()
 {
-	if( spawnArgs.GetVector( "old_origin", "0 0 0", offset ) )
-	{
+	if( spawnArgs.GetVector( "old_origin", "0 0 0", offset ) ) {
 		offset = GetPhysics()->GetOrigin() - offset;
-	}
-	else
-	{
+	} else {
 		offset.Zero();
 	}
 
@@ -374,78 +349,59 @@ void idCameraAnim::LoadAnim()
 	int			numCuts;
 	int			i;
 	idStr		filename;
-	const char*	key;
+	const char* key;
 	idStr		gltfFileName;
 	int			animID = -1;
 	idStr		animName;
 	bool		isGLTF = false;
 
 	key = spawnArgs.GetString( "anim" );
-	if( !key )
-	{
+	if( !key ) {
 		gameLocal.Error( "Missing 'anim' key on '%s'", name.c_str() );
 	}
 
 	filename = spawnArgs.GetString( va( "anim %s", key ) );
-	if( !filename.Length() )
-	{
+	if( !filename.Length() ) {
 		gltfFileName = key;
 		gltfManager::ExtractIdentifier( gltfFileName, animID, animName );
-		if( animName.Length() )
-		{
+		if( animName.Length() ) {
 			isGLTF = true;
-		}
-		else
-		{
+		} else {
 			// RB: TrenchBroom interop use anim.<name> instead so we can build this up using the FGD files
 			filename = spawnArgs.GetString( va( "anim.%s", key ) );
-			if( !filename.Length() )
-			{
+			if( !filename.Length() ) {
 				gameLocal.Error( "Missing 'anim.%s' key on '%s'", key, name.c_str() );
 			}
 			// RB end
 		}
 	}
 
-
 	// check for generated file
-	idStrStatic< MAX_OSPATH > generatedFileName = "generated/cameraanim/";
+	idStrStatic<MAX_OSPATH> generatedFileName = "generated/cameraanim/";
 	generatedFileName.AppendPath( key );
 	generatedFileName.SetFileExtension( CAMERA_ANIM_BINARYFILE_EXT );
 
 	ID_TIME_T currentTimeStamp = FILE_NOT_FOUND_TIMESTAMP;
-	if( isGLTF )
-	{
+	if( isGLTF ) {
 		currentTimeStamp = fileSystem->GetTimestamp( gltfFileName );
-	}
-	else
-	{
+	} else {
 		currentTimeStamp = fileSystem->GetTimestamp( key );
 	}
-
 
 	// if we are reloading the same map, check the timestamp
 	// and try to skip all the work
 	ID_TIME_T generatedTimeStamp = fileSystem->GetTimestamp( generatedFileName );
-	ID_TIME_T sourceTimeStamp = currentTimeStamp;
+	ID_TIME_T sourceTimeStamp	 = currentTimeStamp;
 
-
-	if( ( generatedTimeStamp != FILE_NOT_FOUND_TIMESTAMP ) && ( sourceTimeStamp != 0 ) && ( sourceTimeStamp < generatedTimeStamp ) )
-	{
+	if( ( generatedTimeStamp != FILE_NOT_FOUND_TIMESTAMP ) && ( sourceTimeStamp != 0 ) && ( sourceTimeStamp < generatedTimeStamp ) ) {
 		idFileLocal file( fileSystem->OpenFileReadMemory( generatedFileName ) );
 		LoadBinaryCamAnim( file, currentTimeStamp );
-	}
-	else
-	{
-		if( isGLTF )
-		{
+	} else {
+		if( isGLTF ) {
 			gltfLoadAnim( gltfFileName, animName );
-		}
-		else
-		{
+		} else {
 			filename.SetFileExtension( MD5_CAMERA_EXT );
-			if( !parser.LoadFile( filename ) )
-			{
+			if( !parser.LoadFile( filename ) ) {
 				gameLocal.Error( "Unable to load '%s' on '%s'", filename.c_str(), name.c_str() );
 			}
 
@@ -456,8 +412,7 @@ void idCameraAnim::LoadAnim()
 
 			parser.ExpectTokenString( MD5_VERSION_STRING );
 			version = parser.ParseInt();
-			if( version != MD5_VERSION )
-			{
+			if( version != MD5_VERSION ) {
 				parser.Error( "Invalid version %d.  Should be version %d\n", version, MD5_VERSION );
 			}
 
@@ -468,24 +423,21 @@ void idCameraAnim::LoadAnim()
 			// parse num frames
 			parser.ExpectTokenString( "numFrames" );
 			numFrames = parser.ParseInt();
-			if( numFrames <= 0 )
-			{
+			if( numFrames <= 0 ) {
 				parser.Error( "Invalid number of frames: %d", numFrames );
 			}
 
 			// parse framerate
 			parser.ExpectTokenString( "frameRate" );
 			frameRate = parser.ParseInt();
-			if( frameRate <= 0 )
-			{
+			if( frameRate <= 0 ) {
 				parser.Error( "Invalid framerate: %d", frameRate );
 			}
 
 			// parse num cuts
 			parser.ExpectTokenString( "numCuts" );
 			numCuts = parser.ParseInt();
-			if( ( numCuts < 0 ) || ( numCuts > numFrames ) )
-			{
+			if( ( numCuts < 0 ) || ( numCuts > numFrames ) ) {
 				parser.Error( "Invalid number of camera cuts: %d", numCuts );
 			}
 
@@ -493,11 +445,9 @@ void idCameraAnim::LoadAnim()
 			parser.ExpectTokenString( "cuts" );
 			parser.ExpectTokenString( "{" );
 			cameraCuts.SetNum( numCuts );
-			for( i = 0; i < numCuts; i++ )
-			{
-				cameraCuts[ i ] = parser.ParseInt();
-				if( ( cameraCuts[ i ] < 1 ) || ( cameraCuts[ i ] >= numFrames ) )
-				{
+			for( i = 0; i < numCuts; i++ ) {
+				cameraCuts[i] = parser.ParseInt();
+				if( ( cameraCuts[i] < 1 ) || ( cameraCuts[i] >= numFrames ) ) {
 					parser.Error( "Invalid camera cut" );
 				}
 			}
@@ -507,11 +457,10 @@ void idCameraAnim::LoadAnim()
 			parser.ExpectTokenString( "camera" );
 			parser.ExpectTokenString( "{" );
 			camera.SetNum( numFrames );
-			for( i = 0; i < numFrames; i++ )
-			{
-				parser.Parse1DMatrix( 3, camera[ i ].t.ToFloatPtr() );
-				parser.Parse1DMatrix( 3, camera[ i ].q.ToFloatPtr() );
-				camera[ i ].fov = parser.ParseFloat();
+			for( i = 0; i < numFrames; i++ ) {
+				parser.Parse1DMatrix( 3, camera[i].t.ToFloatPtr() );
+				parser.Parse1DMatrix( 3, camera[i].q.ToFloatPtr() );
+				camera[i].fov = parser.ParseFloat();
 			}
 			parser.ExpectTokenString( "}" );
 		}
@@ -529,13 +478,11 @@ idCameraAnim::Start
 void idCameraAnim::Start()
 {
 	cycle = spawnArgs.GetInt( "cycle" );
-	if( !cycle )
-	{
+	if( !cycle ) {
 		cycle = 1;
 	}
 
-	if( g_debugCinematic.GetBool() )
-	{
+	if( g_debugCinematic.GetBool() ) {
 		gameLocal.Printf( "%d: '%s' start\n", gameLocal.framenum, GetName() );
 	}
 
@@ -544,8 +491,7 @@ void idCameraAnim::Start()
 	BecomeActive( TH_THINK );
 
 	// if the player has already created the renderview for this frame, have him update it again so that the camera starts this frame
-	if( gameLocal.GetLocalPlayer()->GetRenderView()->time[TIME_GROUP2] == gameLocal.fast.time )
-	{
+	if( gameLocal.GetLocalPlayer()->GetRenderView()->time[TIME_GROUP2] == gameLocal.fast.time ) {
 		gameLocal.GetLocalPlayer()->CalculateRenderView();
 	}
 }
@@ -557,17 +503,14 @@ idCameraAnim::Stop
 */
 void idCameraAnim::Stop()
 {
-	if( gameLocal.GetCamera() == this )
-	{
-		if( g_debugCinematic.GetBool() )
-		{
+	if( gameLocal.GetCamera() == this ) {
+		if( g_debugCinematic.GetBool() ) {
 			gameLocal.Printf( "%d: '%s' stop\n", gameLocal.framenum, GetName() );
 		}
 
 		BecomeInactive( TH_THINK );
 		gameLocal.SetCamera( NULL );
-		if( threadNum )
-		{
+		if( threadNum ) {
 			idThread::ObjectMoveDone( threadNum, this );
 			threadNum = 0;
 		}
@@ -591,25 +534,23 @@ idCameraAnim::GetViewParms
 */
 void idCameraAnim::GetViewParms( renderView_t* view )
 {
-	int				realFrame;
-	int				frame;
-	int				frameTime;
-	float			lerp;
-	float			invlerp;
-	cameraFrame_t*	camFrame;
-	int				i;
-	int				cut;
-	idQuat			q1, q2, q3;
-	float			fov_x, fov_y;
+	int			   realFrame;
+	int			   frame;
+	int			   frameTime;
+	float		   lerp;
+	float		   invlerp;
+	cameraFrame_t* camFrame;
+	int			   i;
+	int			   cut;
+	idQuat		   q1, q2, q3;
+	float		   fov_x, fov_y;
 
 	assert( view );
-	if( !view )
-	{
+	if( !view ) {
 		return;
 	}
 
-	if( camera.Num() == 0 )
-	{
+	if( camera.Num() == 0 ) {
 		// we most likely are in the middle of a restore
 		// FIXME: it would be better to fix it so this doesn't get called during a restore
 		return;
@@ -617,63 +558,52 @@ void idCameraAnim::GetViewParms( renderView_t* view )
 
 	SetTimeState ts( timeGroup );
 
-	frameTime	= ( gameLocal.time - starttime ) * frameRate;
-	frame		= frameTime / 1000;
-	lerp		= ( frameTime % 1000 ) * 0.001f;
+	frameTime = ( gameLocal.time - starttime ) * frameRate;
+	frame	  = frameTime / 1000;
+	lerp	  = ( frameTime % 1000 ) * 0.001f;
 
 	// skip any frames where camera cuts occur
 	realFrame = frame;
-	cut = 0;
-	for( i = 0; i < cameraCuts.Num(); i++ )
-	{
-		if( frame < cameraCuts[ i ] )
-		{
+	cut		  = 0;
+	for( i = 0; i < cameraCuts.Num(); i++ ) {
+		if( frame < cameraCuts[i] ) {
 			break;
 		}
 		frame++;
 		cut++;
 	}
 
-	if( g_debugCinematic.GetBool() )
-	{
-		int prevFrameTime	= ( gameLocal.previousTime - starttime ) * frameRate;
-		int prevFrame		= prevFrameTime / 1000;
+	if( g_debugCinematic.GetBool() ) {
+		int prevFrameTime = ( gameLocal.previousTime - starttime ) * frameRate;
+		int prevFrame	  = prevFrameTime / 1000;
 		int prevCut;
 
 		prevCut = 0;
-		for( i = 0; i < cameraCuts.Num(); i++ )
-		{
-			if( prevFrame < cameraCuts[ i ] )
-			{
+		for( i = 0; i < cameraCuts.Num(); i++ ) {
+			if( prevFrame < cameraCuts[i] ) {
 				break;
 			}
 			prevFrame++;
 			prevCut++;
 		}
 
-		if( prevCut != cut )
-		{
+		if( prevCut != cut ) {
 			gameLocal.Printf( "%d: '%s' cut %d\n", gameLocal.framenum, GetName(), cut );
 		}
 	}
 
 	// clamp to the first frame.  also check if this is a one frame anim.  one frame anims would end immediately,
 	// but since they're mainly used for static cams anyway, just stay on it infinitely.
-	if( ( frame < 0 ) || ( camera.Num() < 2 ) )
-	{
-		view->viewaxis = camera[ 0 ].q.ToQuat().ToMat3();
-		view->vieworg[STEREOPOS_MONO] = camera[ 0 ].t + offset;
-		fov_x = camera[ 0 ].fov;
-	}
-	else if( frame > camera.Num() - 2 )
-	{
-		if( cycle > 0 )
-		{
+	if( ( frame < 0 ) || ( camera.Num() < 2 ) ) {
+		view->viewaxis				  = camera[0].q.ToQuat().ToMat3();
+		view->vieworg[STEREOPOS_MONO] = camera[0].t + offset;
+		fov_x						  = camera[0].fov;
+	} else if( frame > camera.Num() - 2 ) {
+		if( cycle > 0 ) {
 			cycle--;
 		}
 
-		if( cycle != 0 )
-		{
+		if( cycle != 0 ) {
 			// advance start time so that we loop
 			starttime += ( ( camera.Num() - cameraCuts.Num() ) * 1000 ) / frameRate;
 			GetViewParms( view );
@@ -681,38 +611,31 @@ void idCameraAnim::GetViewParms( renderView_t* view )
 		}
 
 		Stop();
-		if( gameLocal.GetCamera() != NULL )
-		{
+		if( gameLocal.GetCamera() != NULL ) {
 			// we activated another camera when we stopped, so get it's viewparms instead
 			gameLocal.GetCamera()->GetViewParms( view );
 			return;
-		}
-		else
-		{
+		} else {
 			// just use our last frame
-			camFrame = &camera[ camera.Num() - 1 ];
-			view->viewaxis = camFrame->q.ToQuat().ToMat3();
+			camFrame					  = &camera[camera.Num() - 1];
+			view->viewaxis				  = camFrame->q.ToQuat().ToMat3();
 			view->vieworg[STEREOPOS_MONO] = camFrame->t + offset;
-			fov_x = camFrame->fov;
+			fov_x						  = camFrame->fov;
 		}
-	}
-	else if( lerp == 0.0f )
-	{
-		camFrame = &camera[ frame ];
-		view->viewaxis = camFrame[ 0 ].q.ToMat3();
-		view->vieworg[STEREOPOS_MONO] = camFrame[ 0 ].t + offset;
-		fov_x = camFrame[ 0 ].fov;
-	}
-	else
-	{
-		camFrame = &camera[ frame ];
-		invlerp = 1.0f - lerp;
-		q1 = camFrame[ 0 ].q.ToQuat();
-		q2 = camFrame[ 1 ].q.ToQuat();
+	} else if( lerp == 0.0f ) {
+		camFrame					  = &camera[frame];
+		view->viewaxis				  = camFrame[0].q.ToMat3();
+		view->vieworg[STEREOPOS_MONO] = camFrame[0].t + offset;
+		fov_x						  = camFrame[0].fov;
+	} else {
+		camFrame = &camera[frame];
+		invlerp	 = 1.0f - lerp;
+		q1		 = camFrame[0].q.ToQuat();
+		q2		 = camFrame[1].q.ToQuat();
 		q3.Slerp( q1, q2, lerp );
-		view->viewaxis = q3.ToMat3();
-		view->vieworg[STEREOPOS_MONO] = camFrame[ 0 ].t * invlerp + camFrame[ 1 ].t * lerp + offset;
-		fov_x = camFrame[ 0 ].fov * invlerp + camFrame[ 1 ].fov * lerp;
+		view->viewaxis				  = q3.ToMat3();
+		view->vieworg[STEREOPOS_MONO] = camFrame[0].t * invlerp + camFrame[1].t * lerp + offset;
+		fov_x						  = camFrame[0].fov * invlerp + camFrame[1].fov * lerp;
 	}
 
 	// Leyland VR: new FOV definition
@@ -738,8 +661,7 @@ void idCameraAnim::GetViewParms( renderView_t* view )
 	}
 #endif
 
-	if( g_showcamerainfo.GetBool() )
-	{
+	if( g_showcamerainfo.GetBool() ) {
 		gameLocal.Printf( "^5Frame: ^7%d/%d\n\n\n", realFrame + 1, camera.Num() - cameraCuts.Num() );
 	}
 }
@@ -752,12 +674,9 @@ idCameraAnim::Event_Activate
 void idCameraAnim::Event_Activate( idEntity* _activator )
 {
 	activator = _activator;
-	if( thinkFlags & TH_THINK )
-	{
+	if( thinkFlags & TH_THINK ) {
 		Stop();
-	}
-	else
-	{
+	} else {
 		Start();
 	}
 }
@@ -766,165 +685,134 @@ void idCameraAnim::Event_Activate( idEntity* _activator )
 void idCameraAnim::gltfLoadAnim( idStr gltfFileName, idStr animName )
 {
 	GLTF_Parser gltf;
-	if( gltf.Load( gltfFileName ) )
-	{
-		gltfData* data = gltf.currentAsset;
-		auto& accessors = data->AccessorList();
-		auto& nodes = data->NodeList();
+	if( gltf.Load( gltfFileName ) ) {
+		gltfData* data		= gltf.currentAsset;
+		auto&	  accessors = data->AccessorList();
+		auto&	  nodes		= data->NodeList();
 
 		gltfNode* cameraNode = data->GetNode( name );
 		assert( cameraNode );
 
 		gltfAnimation* anim = data->GetAnimation( animName, data->GetNodeIndex( cameraNode ) );
 
-		if( anim == nullptr )
-		{
+		if( anim == nullptr ) {
 			gameLocal.Error( "Missing 'anim.%s' on '%s'", animName.c_str(), gltfFileName.c_str() );
 		}
-		//check for
+		// check for
 		cameraCuts.Clear();
 		cameraCuts.SetGranularity( 1 );
 		camera.Clear();
 		camera.SetGranularity( 1 );
 		frameRate = 24;
-		for( auto channel : anim->channels )
-		{
-			auto* sampler = anim->samplers[channel->sampler];
-			auto* input = accessors[sampler->input];
-			auto* output = accessors[sampler->output];
-			auto* target = nodes[channel->target.node];
+		for( auto channel : anim->channels ) {
+			auto*		   sampler = anim->samplers[channel->sampler];
+			auto*		   input   = accessors[sampler->input];
+			auto*		   output  = accessors[sampler->output];
+			auto*		   target  = nodes[channel->target.node];
 
 			idList<float>& timeStamps = data->GetAccessorView( input );
-			int frames = timeStamps.Num();
-			if( !camera.Num() )
-			{
+			int			   frames	  = timeStamps.Num();
+			if( !camera.Num() ) {
 				cameraFrame_t t;
 				t.fov = data->CameraList()[target->camera]->perspective.yfov * 100.0f;
-				t.q = mat3_identity.ToCQuat();
-				t.t = vec3_origin;
-				for( int i = 0; i < frames; i++ )
-				{
+				t.q	  = mat3_identity.ToCQuat();
+				t.t	  = vec3_origin;
+				for( int i = 0; i < frames; i++ ) {
 					camera.Alloc() = t;
 				}
 			}
-			//This has to be replaced for correct interpolation between frames
-			// but, if exported with frame sampling set to 1, were all good :D
-			for( int i = 0; i < frames; i++ )
-			{
+			// This has to be replaced for correct interpolation between frames
+			//  but, if exported with frame sampling set to 1, were all good :D
+			for( int i = 0; i < frames; i++ ) {
 				cameraFrame_t& cameraFrame = camera[i];
 
 				cameraFrame.fov = data->CameraList()[target->camera]->perspective.yfov * 100.0f;
-				switch( channel->target.TRS )
-				{
+				switch( channel->target.TRS ) {
 					default:
 						break;
 					case gltfAnimation_Channel_Target::none:
 						break;
-					case gltfAnimation_Channel_Target::rotation:
-					{
+					case gltfAnimation_Channel_Target::rotation: {
 						idList<idQuat*>& values = data->GetAccessorView<idQuat>( output );
-						if( values.Num() > i )
-						{
-							idQuat q = ( *values[i] );
-							q = idAngles( 90.0f, 0.0, -90.0f ).ToQuat()
-								* q.Inverse()
-								* blenderToDoomTransform.ToMat3().ToQuat();
+						if( values.Num() > i ) {
+							idQuat q	  = ( *values[i] );
+							q			  = idAngles( 90.0f, 0.0, -90.0f ).ToQuat() * q.Inverse() * blenderToDoomTransform.ToMat3().ToQuat();
 							cameraFrame.q = q.ToCQuat();
 
-							//This has to be replaced with correct interpolation between frames.
-							if( ( ( i + 1 ) == frames ) && ( frames < camera.Num() ) )
-							{
-								while( i++ < camera.Num() - 1 )
-								{
+							// This has to be replaced with correct interpolation between frames.
+							if( ( ( i + 1 ) == frames ) && ( frames < camera.Num() ) ) {
+								while( i++ < camera.Num() - 1 ) {
 									camera[i].q = cameraFrame.q;
 								}
 							}
 						}
 
-					}
-					break;
-					case gltfAnimation_Channel_Target::translation:
-					{
+					} break;
+					case gltfAnimation_Channel_Target::translation: {
 						idList<idVec3*>& values = data->GetAccessorView<idVec3>( output );
-						if( values.Num() > i )
-						{
-							idVec3 val = *values[i];
+						if( values.Num() > i ) {
+							idVec3 val	  = *values[i];
 							cameraFrame.t = blenderToDoomTransform * val;
 
-							//This has to be replaced with correct interpolation between frames.
-							if( ( ( i + 1 ) == frames ) && ( frames < camera.Num() ) )
-							{
-								while( i++ < camera.Num() - 1 )
-								{
+							// This has to be replaced with correct interpolation between frames.
+							if( ( ( i + 1 ) == frames ) && ( frames < camera.Num() ) ) {
+								while( i++ < camera.Num() - 1 ) {
 									camera[i].t = cameraFrame.t;
 								}
 							}
 						}
-					}
-					break;
-					case gltfAnimation_Channel_Target::scale:
-					{
+					} break;
+					case gltfAnimation_Channel_Target::scale: {
 						idList<idVec3*>& values = data->GetAccessorView<idVec3>( output );
-						if( values.Num() > i )
-						{
+						if( values.Num() > i ) {
 							gameLocal.Printf( "^5Frame: ^7%i ignored scale on /%s \n\n\n", i, anim->name.c_str() );
 						}
-					}
-					break;
+					} break;
 				}
 			}
 		}
 
-		//check for extra anim data
-		if( anim->extras.json.Length() )
-		{
+		// check for extra anim data
+		if( anim->extras.json.Length() ) {
 			gltfItemArray animExtras;
 			GLTFARRAYITEM( animExtras, CameraLensFrames, gltfExtra_CameraLensFrames );
 			idLexer lexer( LEXFL_ALLOWPATHNAMES | LEXFL_ALLOWMULTICHARLITERALS | LEXFL_NOSTRINGESCAPECHARS );
 			lexer.LoadMemory( anim->extras.json, anim->extras.json.Size(), "idCameraAnim_gltfExtra", 0 );
-			animExtras.Parse( &lexer , true );
+			animExtras.Parse( &lexer, true );
 
-			if( CameraLensFrames->item )
-			{
+			if( CameraLensFrames->item ) {
 				auto* lensFrameValues = ( idList<double, TAG_IDLIB_LIST>* )CameraLensFrames->item;
 
-				if( lensFrameValues )
-				{
+				if( lensFrameValues ) {
 					assert( lensFrameValues->Num() == camera.Num() );
-					for( int i = 0; i < lensFrameValues->Num(); i++ )
-					{
+					for( int i = 0; i < lensFrameValues->Num(); i++ ) {
 						camera[i].fov = ( float )( *lensFrameValues )[i];
 					}
 				}
 
-				//Dont forget to free! normally a gltfPropertyArray destructor frees the itemdata
+				// Dont forget to free! normally a gltfPropertyArray destructor frees the itemdata
 				delete CameraLensFrames->item;
 			}
 		}
-	}
-	else
-	{
+	} else {
 		gameLocal.Error( "Missing 'anim' key on '%s'", name.c_str() );
 	}
 }
 
 void idCameraAnim::WriteBinaryCamAnim( idFile* file, ID_TIME_T* _timeStamp /*= NULL*/ )
 {
-	if( file != NULL )
-	{
+	if( file != NULL ) {
 		file->WriteBig( BCANIM_MAGIC );
 		file->WriteInt( frameRate );
 		file->WriteInt( cameraCuts.Num() );
 
-		for( auto cut : cameraCuts )
-		{
+		for( auto cut : cameraCuts ) {
 			file->WriteInt( cut );
 		}
 
 		file->WriteInt( camera.Num() );
 
-		for( auto cam : camera )
-		{
+		for( auto cam : camera ) {
 			file->WriteBig( cam.fov );
 			file->WriteBigArray( cam.q.ToFloatPtr(), 3 );
 			file->WriteVec3( cam.t );
@@ -934,12 +822,10 @@ void idCameraAnim::WriteBinaryCamAnim( idFile* file, ID_TIME_T* _timeStamp /*= N
 
 bool idCameraAnim::LoadBinaryCamAnim( idFile* file, const ID_TIME_T sourceTimeStamp )
 {
-	if( file != NULL )
-	{
+	if( file != NULL ) {
 		unsigned int magic = 0;
 		file->ReadBig( magic );
-		if( magic != BCANIM_MAGIC )
-		{
+		if( magic != BCANIM_MAGIC ) {
 			return false;
 		}
 
@@ -949,8 +835,7 @@ bool idCameraAnim::LoadBinaryCamAnim( idFile* file, const ID_TIME_T sourceTimeSt
 
 		file->ReadInt( count );
 
-		for( int i = 0; i < count; i++ )
-		{
+		for( int i = 0; i < count; i++ ) {
 			file->ReadInt( cameraCuts.Alloc() );
 		}
 
@@ -958,8 +843,7 @@ bool idCameraAnim::LoadBinaryCamAnim( idFile* file, const ID_TIME_T sourceTimeSt
 
 		file->ReadInt( count );
 		int i = 0;
-		for( i = 0; i < count; i++ )
-		{
+		for( i = 0; i < count; i++ ) {
 			cameraFrame_t& cam = camera.Alloc();
 			file->ReadBig( cam.fov );
 			file->ReadBigArray( cam.q.ToFloatPtr(), 3 );
@@ -1001,13 +885,10 @@ idCameraAnim::Event_SetCallback
 */
 void idCameraAnim::Event_SetCallback()
 {
-	if( ( gameLocal.GetCamera() == this ) && !threadNum )
-	{
+	if( ( gameLocal.GetCamera() == this ) && !threadNum ) {
 		threadNum = idThread::CurrentThreadNum();
 		idThread::ReturnInt( true );
-	}
-	else
-	{
+	} else {
 		idThread::ReturnInt( false );
 	}
 }

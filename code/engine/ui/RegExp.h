@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -39,25 +40,22 @@ public:
 	idRegister();
 	idRegister( const char* p, int t );
 
-	enum REGTYPE { VEC4 = 0, FLOAT, BOOL, INT, STRING, VEC2, VEC3, RECTANGLE, NUMTYPES } ;
-	static int REGCOUNT[NUMTYPES];
+	enum REGTYPE { VEC4 = 0, FLOAT, BOOL, INT, STRING, VEC2, VEC3, RECTANGLE, NUMTYPES };
+	static int	   REGCOUNT[NUMTYPES];
 
-	bool				enabled;
-	short				type;
-	idStr				name;
-	int					regCount;
-	unsigned short		regs[4];
-	idWinVar* 			var;
+	bool		   enabled;
+	short		   type;
+	idStr		   name;
+	int			   regCount;
+	unsigned short regs[4];
+	idWinVar*	   var;
 
-	void				SetToRegs( float* registers );
-	void				GetFromRegs( float* registers );
-	void				CopyRegs( idRegister* src );
-	void				Enable( bool b )
-	{
-		enabled = b;
-	}
-	void				WriteToSaveGame( idFile* savefile );
-	void				ReadFromSaveGame( idFile* savefile );
+	void		   SetToRegs( float* registers );
+	void		   GetFromRegs( float* registers );
+	void		   CopyRegs( idRegister* src );
+	void		   Enable( bool b ) { enabled = b; }
+	void		   WriteToSaveGame( idFile* savefile );
+	void		   ReadFromSaveGame( idFile* savefile );
 };
 
 ID_INLINE idRegister::idRegister()
@@ -70,8 +68,8 @@ ID_INLINE idRegister::idRegister( const char* p, int t )
 	type = t;
 	assert( t >= 0 && t < NUMTYPES );
 	regCount = REGCOUNT[t];
-	enabled = ( type == STRING ) ? false : true;
-	var = NULL;
+	enabled	 = ( type == STRING ) ? false : true;
+	var		 = NULL;
 };
 
 ID_INLINE void idRegister::CopyRegs( idRegister* src )
@@ -85,22 +83,21 @@ ID_INLINE void idRegister::CopyRegs( idRegister* src )
 class idRegisterList
 {
 public:
-
 	idRegisterList();
 	~idRegisterList();
 
-	void				AddReg( const char* name, int type, idTokenParser* src, idWindow* win, idWinVar* var );
-	void				AddReg( const char* name, int type, idVec4 data, idWindow* win, idWinVar* var );
+	void		AddReg( const char* name, int type, idTokenParser* src, idWindow* win, idWinVar* var );
+	void		AddReg( const char* name, int type, idVec4 data, idWindow* win, idWinVar* var );
 
-	idRegister* 		FindReg( const char* name );
-	void				SetToRegs( float* registers );
-	void				GetFromRegs( float* registers );
-	void				Reset();
-	void				WriteToSaveGame( idFile* savefile );
-	void				ReadFromSaveGame( idFile* savefile );
+	idRegister* FindReg( const char* name );
+	void		SetToRegs( float* registers );
+	void		GetFromRegs( float* registers );
+	void		Reset();
+	void		WriteToSaveGame( idFile* savefile );
+	void		ReadFromSaveGame( idFile* savefile );
 
 private:
-	idList<idRegister*>	regs;
+	idList<idRegister*> regs;
 	idHashIndex			regHash;
 };
 

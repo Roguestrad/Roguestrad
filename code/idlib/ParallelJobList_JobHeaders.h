@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -39,7 +40,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "sys/sys_defines.h"
 
-#include <stddef.h>					// for offsetof
+#include <stddef.h> // for offsetof
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
@@ -49,31 +50,29 @@ If you have questions concerning this license or the applicable additional terms
 #include <stdint.h>
 
 // RB begin
-#if defined(__MINGW32__)
-	//#include <sal.h> 	// RB: missing __analysis_assume
+#if defined( __MINGW32__ )
+	// #include <sal.h> 	// RB: missing __analysis_assume
 	#include <malloc.h> // DG: _alloca16 needs that
 
 	#ifndef __analysis_assume
 		#define __analysis_assume( x )
 	#endif
 
-#elif defined(__linux__)
+#elif defined( __linux__ )
 	#include <malloc.h> // DG: _alloca16 needs that
 	#include <signal.h>
 	// RB end
 	// Yamagi begin
-#elif defined(__FreeBSD__)
+#elif defined( __FreeBSD__ )
 	#include <signal.h>
 #endif
 // Yamagi end
 
 #ifdef _MSC_VER
 	#include <intrin.h>
-	#pragma warning( disable : 4100 )	// unreferenced formal parameter
-	#pragma warning( disable : 4127 )	// conditional expression is constant
+	#pragma warning( disable : 4100 ) // unreferenced formal parameter
+	#pragma warning( disable : 4127 ) // conditional expression is constant
 #endif
-
-
 
 #include "sys/sys_assert.h"
 #include "sys/sys_types.h"

@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -37,32 +38,32 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-typedef idList<idStr> idStrList;
+typedef idList<idStr>  idStrList;
 typedef idList<idStr*> idStrPtrList;
-typedef idStr* idStrPtr;
+typedef idStr*		   idStrPtr;
 
 ///*
 //================
-//idListSortCompare<idStrPtr>
+// idListSortCompare<idStrPtr>
 //
-//Compares two pointers to strings. Used to sort a list of string pointers alphabetically in idList<idStr>::Sort.
+// Compares two pointers to strings. Used to sort a list of string pointers alphabetically in idList<idStr>::Sort.
 //================
 //*/
-//template<>
-//ID_INLINE int idListSortCompare<idStrPtr, memTag_t _tag_ >( const idStrPtr *a, const idStrPtr *b ) {
+// template<>
+// ID_INLINE int idListSortCompare<idStrPtr, memTag_t _tag_ >( const idStrPtr *a, const idStrPtr *b ) {
 //	return ( *a )->Icmp( **b );
 //}
 
 ///*
 //================
-//idStrList::Sort
+// idStrList::Sort
 //
-//Sorts the list of strings alphabetically. Creates a list of pointers to the actual strings and sorts the
-//pointer list. Then copies the strings into another list using the ordered list of pointers.
+// Sorts the list of strings alphabetically. Creates a list of pointers to the actual strings and sorts the
+// pointer list. Then copies the strings into another list using the ordered list of pointers.
 //================
 //*/
-//template<>
-//ID_INLINE void idStrList::Sort( cmp_t *compare ) {
+// template<>
+// ID_INLINE void idStrList::Sort( cmp_t *compare ) {
 //	int i;
 //
 //	if ( !num ) {
@@ -90,13 +91,13 @@ typedef idStr* idStrPtr;
 
 ///*
 //================
-//idStrList::SortSubSection
+// idStrList::SortSubSection
 //
-//Sorts a subsection of the list of strings alphabetically.
+// Sorts a subsection of the list of strings alphabetically.
 //================
 //*/
-//template<>
-//ID_INLINE void idStrList::SortSubSection( int startIndex, int endIndex, cmp_t *compare ) {
+// template<>
+// ID_INLINE void idStrList::SortSubSection( int startIndex, int endIndex, cmp_t *compare ) {
 //	int i, s;
 //
 //	if ( !num ) {
@@ -139,12 +140,11 @@ template<>
 ID_INLINE size_t idStrList::Size() const
 {
 	size_t s;
-	int i;
+	int	   i;
 
 	s = sizeof( *this );
-	for( i = 0; i < Num(); i++ )
-	{
-		s += ( *this )[ i ].Size();
+	for( i = 0; i < Num(); i++ ) {
+		s += ( *this )[i].Size();
 	}
 
 	return s;
@@ -160,24 +160,24 @@ ID_INLINE size_t idStrList::Size() const
 //
 ///*
 //================
-//idListSortComparePaths
+// idListSortComparePaths
 //
-//Compares two pointers to strings. Used to sort a list of string pointers alphabetically in idList<idStr>::Sort.
+// Compares two pointers to strings. Used to sort a list of string pointers alphabetically in idList<idStr>::Sort.
 //================
 //*/
-//template<class idStrPtr>
-//ID_INLINE int idListSortComparePaths( const idStrPtr *a, const idStrPtr *b ) {
+// template<class idStrPtr>
+// ID_INLINE int idListSortComparePaths( const idStrPtr *a, const idStrPtr *b ) {
 //	return ( *a )->IcmpPath( **b );
 //}
 
 ///*
 //================
-//idStrListSortPaths
+// idStrListSortPaths
 //
-//Sorts the list of path strings alphabetically and makes sure folders come first.
+// Sorts the list of path strings alphabetically and makes sure folders come first.
 //================
 //*/
-//ID_INLINE void idStrListSortPaths( idStrList &list ) {
+// ID_INLINE void idStrListSortPaths( idStrList &list ) {
 //	int i;
 //
 //	if ( !list.Num() ) {

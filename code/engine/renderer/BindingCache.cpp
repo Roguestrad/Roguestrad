@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,11 +32,11 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "BindingCache.h"
 
-BindingCache::BindingCache()
-	: device( nullptr )
-	, bindingSets()
-	, bindingHash()
-	, mutex()
+BindingCache::BindingCache() :
+	device( nullptr ),
+	bindingSets(),
+	bindingHash(),
+	mutex()
 {
 }
 
@@ -53,11 +54,9 @@ nvrhi::BindingSetHandle BindingCache::GetCachedBindingSet( const nvrhi::BindingS
 	mutex.Lock();
 
 	nvrhi::BindingSetHandle result = nullptr;
-	for( int i = bindingHash.First( hash ); i != -1; i = bindingHash.Next( i ) )
-	{
+	for( int i = bindingHash.First( hash ); i != -1; i = bindingHash.Next( i ) ) {
 		nvrhi::BindingSetHandle bindingSet = bindingSets[i];
-		if( *bindingSet->getDesc() == desc )
-		{
+		if( *bindingSet->getDesc() == desc ) {
 			result = bindingSet;
 			break;
 		}
@@ -65,8 +64,7 @@ nvrhi::BindingSetHandle BindingCache::GetCachedBindingSet( const nvrhi::BindingS
 
 	mutex.Unlock();
 
-	if( result )
-	{
+	if( result ) {
 		assert( result->getDesc() && *result->getDesc() == desc );
 	}
 
@@ -82,11 +80,9 @@ nvrhi::BindingSetHandle BindingCache::GetOrCreateBindingSet( const nvrhi::Bindin
 	mutex.Lock();
 
 	nvrhi::BindingSetHandle result = nullptr;
-	for( int i = bindingHash.First( hash ); i != -1; i = bindingHash.Next( i ) )
-	{
+	for( int i = bindingHash.First( hash ); i != -1; i = bindingHash.Next( i ) ) {
 		nvrhi::BindingSetHandle bindingSet = bindingSets[i];
-		if( *bindingSet->getDesc() == desc )
-		{
+		if( *bindingSet->getDesc() == desc ) {
 			result = bindingSet;
 			break;
 		}
@@ -94,8 +90,7 @@ nvrhi::BindingSetHandle BindingCache::GetOrCreateBindingSet( const nvrhi::Bindin
 
 	mutex.Unlock();
 
-	if( !result )
-	{
+	if( !result ) {
 		mutex.Lock();
 
 		result = device->createBindingSet( desc, layout );
@@ -106,8 +101,7 @@ nvrhi::BindingSetHandle BindingCache::GetOrCreateBindingSet( const nvrhi::Bindin
 		mutex.Unlock();
 	}
 
-	if( result )
-	{
+	if( result ) {
 		assert( result->getDesc() && *result->getDesc() == desc );
 	}
 
@@ -120,8 +114,7 @@ void BindingCache::Clear()
 	// will try to gain a conflicting mutex lock and cause an abort signal
 
 	mutex.Lock();
-	for( int i = 0; i < bindingSets.Num(); i++ )
-	{
+	for( int i = 0; i < bindingSets.Num(); i++ ) {
 		bindingSets[i].Reset();
 	}
 	bindingSets.Clear();
@@ -150,11 +143,9 @@ nvrhi::SamplerHandle SamplerCache::GetOrCreateSampler( nvrhi::SamplerDesc desc )
 	mutex.Lock();
 
 	nvrhi::SamplerHandle result = nullptr;
-	for( int i = samplerHash.First( hash ); i != -1; i = samplerHash.Next( i ) )
-	{
+	for( int i = samplerHash.First( hash ); i != -1; i = samplerHash.Next( i ) ) {
 		nvrhi::SamplerHandle sampler = samplers[i];
-		if( sampler->getDesc() == desc )
-		{
+		if( sampler->getDesc() == desc ) {
 			result = sampler;
 			break;
 		}
@@ -162,8 +153,7 @@ nvrhi::SamplerHandle SamplerCache::GetOrCreateSampler( nvrhi::SamplerDesc desc )
 
 	mutex.Unlock();
 
-	if( !result )
-	{
+	if( !result ) {
 		mutex.Lock();
 
 		result = device->createSampler( desc );
@@ -174,8 +164,7 @@ nvrhi::SamplerHandle SamplerCache::GetOrCreateSampler( nvrhi::SamplerDesc desc )
 		mutex.Unlock();
 	}
 
-	if( result )
-	{
+	if( result ) {
 		assert( result->getDesc() == desc );
 	}
 

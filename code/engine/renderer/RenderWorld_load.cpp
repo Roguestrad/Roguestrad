@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,7 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "RenderCommon.h"
-
 
 /*
 ================
@@ -44,14 +44,12 @@ void idRenderWorldLocal::FreeWorld()
 	FreeDefs();
 
 	// free all the portals and check light/model references
-	for( int i = 0; i < numPortalAreas; i++ )
-	{
-		portalArea_t*	area;
-		portal_t*		portal, *nextPortal;
+	for( int i = 0; i < numPortalAreas; i++ ) {
+		portalArea_t* area;
+		portal_t *	  portal, *nextPortal;
 
 		area = &portalAreas[i];
-		for( portal = area->portals; portal; portal = nextPortal )
-		{
+		for( portal = area->portals; portal; portal = nextPortal ) {
 			nextPortal = portal->next;
 			delete portal->w;
 			R_StaticFree( portal );
@@ -61,41 +59,35 @@ void idRenderWorldLocal::FreeWorld()
 		area->lightGrid.lightGridPoints.Clear();
 
 		// there shouldn't be any remaining lightRefs or entityRefs
-		if( area->lightRefs.areaNext != &area->lightRefs )
-		{
+		if( area->lightRefs.areaNext != &area->lightRefs ) {
 			common->Error( "FreeWorld: unexpected remaining lightRefs" );
 		}
-		if( area->entityRefs.areaNext != &area->entityRefs )
-		{
+		if( area->entityRefs.areaNext != &area->entityRefs ) {
 			common->Error( "FreeWorld: unexpected remaining entityRefs" );
 		}
 	}
 
-	if( portalAreas )
-	{
+	if( portalAreas ) {
 		R_StaticFree( portalAreas );
-		portalAreas = NULL;
+		portalAreas	   = NULL;
 		numPortalAreas = 0;
 		R_StaticFree( areaScreenRect );
 		areaScreenRect = NULL;
 	}
 
-	if( doublePortals )
-	{
+	if( doublePortals ) {
 		R_StaticFree( doublePortals );
-		doublePortals = NULL;
+		doublePortals		= NULL;
 		numInterAreaPortals = 0;
 	}
 
-	if( areaNodes )
-	{
+	if( areaNodes ) {
 		R_StaticFree( areaNodes );
 		areaNodes = NULL;
 	}
 
 	// free all the inline idRenderModels
-	for( int i = 0; i < localModels.Num(); i++ )
-	{
+	for( int i = 0; i < localModels.Num(); i++ ) {
 		renderModelManager->RemoveModel( localModels[i] );
 		delete localModels[i];
 	}
@@ -114,8 +106,7 @@ idRenderWorldLocal::TouchWorldModels
 */
 void idRenderWorldLocal::TouchWorldModels()
 {
-	for( int i = 0; i < localModels.Num(); i++ )
-	{
+	for( int i = 0; i < localModels.Num(); i++ ) {
 		renderModelManager->CheckModel( localModels[i]->Name() );
 	}
 }
@@ -127,20 +118,19 @@ idRenderWorldLocal::ReadBinaryShadowModel
 */
 idRenderModel* idRenderWorldLocal::ReadBinaryModel( idFile* fileIn )
 {
-	idStrStatic< MAX_OSPATH > name;
+	idStrStatic<MAX_OSPATH> name;
 	fileIn->ReadString( name );
 	idRenderModel* model = renderModelManager->AllocModel();
 	model->InitEmpty( name );
 
 	// RB: declSourceTimeStamp is not important here
-	if( model->LoadBinaryModel( fileIn, mapTimeStamp, 0 ) )
-	{
+	if( model->LoadBinaryModel( fileIn, mapTimeStamp, 0 ) ) {
 		return model;
 	}
 	return NULL;
 }
 
-extern idCVar binaryLoadRenderModels;
+extern idCVar  binaryLoadRenderModels;
 
 /*
 ================
@@ -159,21 +149,18 @@ idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName
 	idRenderModel* model = renderModelManager->AllocModel();
 	model->InitEmpty( token );
 
-	if( fileOut != NULL )
-	{
+	if( fileOut != NULL ) {
 		// write out the type so the binary reader knows what to instantiate
 		fileOut->WriteString( "model" );
 		fileOut->WriteString( token );
 	}
 
 	int numSurfaces = src->ParseInt();
-	if( numSurfaces < 0 )
-	{
+	if( numSurfaces < 0 ) {
 		src->Error( "R_ParseModel: bad numSurfaces" );
 	}
 
-	for( int i = 0; i < numSurfaces; i++ )
-	{
+	for( int i = 0; i < numSurfaces; i++ ) {
 		src->ExpectTokenString( "{" );
 
 		src->ExpectAnyToken( &token );
@@ -184,65 +171,57 @@ idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName
 		( ( idMaterial* )surf.shader )->AddReference();
 
 		srfTriangles_t* tri = R_AllocStaticTriSurf();
-		surf.geometry = tri;
+		surf.geometry		= tri;
 
-		tri->numVerts = src->ParseInt();
+		tri->numVerts	= src->ParseInt();
 		tri->numIndexes = src->ParseInt();
 
 		// parse the vertices
 		idTempArray<float> verts( tri->numVerts * 8 );
-		for( int j = 0; j < tri->numVerts; j++ )
-		{
+		for( int j = 0; j < tri->numVerts; j++ ) {
 			src->Parse1DMatrix( 8, &verts[j * 8] );
 		}
 
 		// parse the indices
 		idTempArray<triIndex_t> indexes( tri->numIndexes );
-		for( int j = 0; j < tri->numIndexes; j++ )
-		{
+		for( int j = 0; j < tri->numIndexes; j++ ) {
 			indexes[j] = src->ParseInt();
 		}
 
 #if 1
 		// find the island that each vertex belongs to
-		idTempArray<int> vertIslands( tri->numVerts );
+		idTempArray<int>  vertIslands( tri->numVerts );
 		idTempArray<bool> trisVisited( tri->numIndexes );
 		vertIslands.Zero();
 		trisVisited.Zero();
 		int numIslands = 0;
-		for( int j = 0; j < tri->numIndexes; j += 3 )
-		{
-			if( trisVisited[j] )
-			{
+		for( int j = 0; j < tri->numIndexes; j += 3 ) {
+			if( trisVisited[j] ) {
 				continue;
 			}
 
-			int islandNum = ++numIslands;
+			int islandNum				= ++numIslands;
 			vertIslands[indexes[j + 0]] = islandNum;
 			vertIslands[indexes[j + 1]] = islandNum;
 			vertIslands[indexes[j + 2]] = islandNum;
-			trisVisited[j] = true;
+			trisVisited[j]				= true;
 
 			idList<int> queue;
 			queue.Append( j );
-			for( int n = 0; n < queue.Num(); n++ )
-			{
+			for( int n = 0; n < queue.Num(); n++ ) {
 				int t = queue[n];
-				for( int k = 0; k < tri->numIndexes; k += 3 )
-				{
-					if( trisVisited[k] )
-					{
+				for( int k = 0; k < tri->numIndexes; k += 3 ) {
+					if( trisVisited[k] ) {
 						continue;
 					}
-					bool connected =	indexes[t + 0] == indexes[k + 0] || indexes[t + 0] == indexes[k + 1] || indexes[t + 0] == indexes[k + 2] ||
-										indexes[t + 1] == indexes[k + 0] || indexes[t + 1] == indexes[k + 1] || indexes[t + 1] == indexes[k + 2] ||
-										indexes[t + 2] == indexes[k + 0] || indexes[t + 2] == indexes[k + 1] || indexes[t + 2] == indexes[k + 2];
-					if( connected )
-					{
+					bool connected = indexes[t + 0] == indexes[k + 0] || indexes[t + 0] == indexes[k + 1] || indexes[t + 0] == indexes[k + 2] || indexes[t + 1] == indexes[k + 0] ||
+									 indexes[t + 1] == indexes[k + 1] || indexes[t + 1] == indexes[k + 2] || indexes[t + 2] == indexes[k + 0] || indexes[t + 2] == indexes[k + 1] ||
+									 indexes[t + 2] == indexes[k + 2];
+					if( connected ) {
 						vertIslands[indexes[k + 0]] = islandNum;
 						vertIslands[indexes[k + 1]] = islandNum;
 						vertIslands[indexes[k + 2]] = islandNum;
-						trisVisited[k] = true;
+						trisVisited[k]				= true;
 						queue.Append( k );
 					}
 				}
@@ -250,16 +229,13 @@ idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName
 		}
 
 		// center the texture coordinates for each island for maximum 16-bit precision
-		for( int j = 1; j <= numIslands; j++ )
-		{
+		for( int j = 1; j <= numIslands; j++ ) {
 			float minS = idMath::INFINITUM;
 			float minT = idMath::INFINITUM;
 			float maxS = -idMath::INFINITUM;
 			float maxT = -idMath::INFINITUM;
-			for( int k = 0; k < tri->numVerts; k++ )
-			{
-				if( vertIslands[k] == j )
-				{
+			for( int k = 0; k < tri->numVerts; k++ ) {
+				if( vertIslands[k] == j ) {
 					minS = Min( minS, verts[k * 8 + 3] );
 					maxS = Max( maxS, verts[k * 8 + 3] );
 					minT = Min( minT, verts[k * 8 + 4] );
@@ -268,10 +244,8 @@ idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName
 			}
 			const float averageS = idMath::Ftoi( ( minS + maxS ) * 0.5f );
 			const float averageT = idMath::Ftoi( ( minT + maxT ) * 0.5f );
-			for( int k = 0; k < tri->numVerts; k++ )
-			{
-				if( vertIslands[k] == j )
-				{
+			for( int k = 0; k < tri->numVerts; k++ ) {
+				if( vertIslands[k] == j ) {
 					verts[k * 8 + 3] -= averageS;
 					verts[k * 8 + 4] -= averageT;
 				}
@@ -280,8 +254,7 @@ idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName
 #endif
 
 		R_AllocStaticTriSurfVerts( tri, tri->numVerts );
-		for( int j = 0; j < tri->numVerts; j++ )
-		{
+		for( int j = 0; j < tri->numVerts; j++ ) {
 			tri->verts[j].xyz[0] = verts[j * 8 + 0];
 			tri->verts[j].xyz[1] = verts[j * 8 + 1];
 			tri->verts[j].xyz[2] = verts[j * 8 + 2];
@@ -290,8 +263,7 @@ idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName
 		}
 
 		R_AllocStaticTriSurfIndexes( tri, tri->numIndexes );
-		for( int j = 0; j < tri->numIndexes; j++ )
-		{
+		for( int j = 0; j < tri->numIndexes; j++ ) {
 			tri->indexes[j] = indexes[j];
 		}
 		src->ExpectTokenString( "}" );
@@ -305,8 +277,7 @@ idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName
 	// RB: FIXME add check for mikktspace
 	model->FinishSurfaces( false );
 
-	if( fileOut != NULL && model->SupportsBinaryModel() && binaryLoadRenderModels.GetBool() )
-	{
+	if( fileOut != NULL && model->SupportsBinaryModel() && binaryLoadRenderModels.GetBool() ) {
 		model->WriteBinaryModel( fileOut, &mapTimeStamp );
 	}
 
@@ -321,18 +292,14 @@ idRenderWorldLocal::SetupAreaRefs
 void idRenderWorldLocal::SetupAreaRefs()
 {
 	connectedAreaNum = 0;
-	for( int i = 0; i < numPortalAreas; i++ )
-	{
+	for( int i = 0; i < numPortalAreas; i++ ) {
 		portalAreas[i].areaNum = i;
 
-		portalAreas[i].lightRefs.areaNext =
-			portalAreas[i].lightRefs.areaPrev = &portalAreas[i].lightRefs;
+		portalAreas[i].lightRefs.areaNext = portalAreas[i].lightRefs.areaPrev = &portalAreas[i].lightRefs;
 
-		portalAreas[i].entityRefs.areaNext =
-			portalAreas[i].entityRefs.areaPrev = &portalAreas[i].entityRefs;
+		portalAreas[i].entityRefs.areaNext = portalAreas[i].entityRefs.areaPrev = &portalAreas[i].entityRefs;
 
-		portalAreas[i].envprobeRefs.areaNext =
-			portalAreas[i].envprobeRefs.areaPrev = &portalAreas[i].envprobeRefs;
+		portalAreas[i].envprobeRefs.areaNext = portalAreas[i].envprobeRefs.areaPrev = &portalAreas[i].envprobeRefs;
 	}
 }
 
@@ -346,53 +313,45 @@ void idRenderWorldLocal::ParseInterAreaPortals( idLexer* src, idFile* fileOut )
 	src->ExpectTokenString( "{" );
 
 	numPortalAreas = src->ParseInt();
-	if( numPortalAreas < 0 )
-	{
+	if( numPortalAreas < 0 ) {
 		src->Error( "R_ParseInterAreaPortals: bad numPortalAreas" );
 		return;
 	}
 
-	if( fileOut != NULL )
-	{
+	if( fileOut != NULL ) {
 		// write out the type so the binary reader knows what to instantiate
 		fileOut->WriteString( "interAreaPortals" );
 	}
 
-
-	portalAreas = ( portalArea_t* )R_ClearedStaticAlloc( numPortalAreas * sizeof( portalAreas[0] ) );
-	areaScreenRect = ( idScreenRect* ) R_ClearedStaticAlloc( numPortalAreas * sizeof( idScreenRect ) );
+	portalAreas	   = ( portalArea_t* )R_ClearedStaticAlloc( numPortalAreas * sizeof( portalAreas[0] ) );
+	areaScreenRect = ( idScreenRect* )R_ClearedStaticAlloc( numPortalAreas * sizeof( idScreenRect ) );
 
 	// set the doubly linked lists
 	SetupAreaRefs();
 
 	numInterAreaPortals = src->ParseInt();
-	if( numInterAreaPortals < 0 )
-	{
+	if( numInterAreaPortals < 0 ) {
 		src->Error( "R_ParseInterAreaPortals: bad numInterAreaPortals" );
 		return;
 	}
 
-	if( fileOut != NULL )
-	{
+	if( fileOut != NULL ) {
 		fileOut->WriteBig( numPortalAreas );
 		fileOut->WriteBig( numInterAreaPortals );
 	}
 
-	doublePortals = ( doublePortal_t* )R_ClearedStaticAlloc( numInterAreaPortals *
-					sizeof( doublePortals [0] ) );
+	doublePortals = ( doublePortal_t* )R_ClearedStaticAlloc( numInterAreaPortals * sizeof( doublePortals[0] ) );
 
-	for( int i = 0; i < numInterAreaPortals; i++ )
-	{
-		int		numPoints, a1, a2;
-		idWinding*	w;
-		portal_t*	p;
+	for( int i = 0; i < numInterAreaPortals; i++ ) {
+		int		   numPoints, a1, a2;
+		idWinding* w;
+		portal_t*  p;
 
 		numPoints = src->ParseInt();
-		a1 = src->ParseInt();
-		a2 = src->ParseInt();
+		a1		  = src->ParseInt();
+		a2		  = src->ParseInt();
 
-		if( fileOut != NULL )
-		{
+		if( fileOut != NULL ) {
 			fileOut->WriteBig( numPoints );
 			fileOut->WriteBig( a1 );
 			fileOut->WriteBig( a2 );
@@ -400,12 +359,10 @@ void idRenderWorldLocal::ParseInterAreaPortals( idLexer* src, idFile* fileOut )
 
 		w = new( TAG_RENDER_WINDING ) idWinding( numPoints );
 		w->SetNumPoints( numPoints );
-		for( int j = 0; j < numPoints; j++ )
-		{
+		for( int j = 0; j < numPoints; j++ ) {
 			src->Parse1DMatrix( 3, ( *w )[j].ToFloatPtr() );
 
-			if( fileOut != NULL )
-			{
+			if( fileOut != NULL ) {
 				fileOut->WriteBig( ( *w )[j].x );
 				fileOut->WriteBig( ( *w )[j].y );
 				fileOut->WriteBig( ( *w )[j].z );
@@ -416,25 +373,25 @@ void idRenderWorldLocal::ParseInterAreaPortals( idLexer* src, idFile* fileOut )
 		}
 
 		// add the portal to a1
-		p = ( portal_t* )R_ClearedStaticAlloc( sizeof( *p ) );
-		p->intoArea = a2;
+		p				= ( portal_t* )R_ClearedStaticAlloc( sizeof( *p ) );
+		p->intoArea		= a2;
 		p->doublePortal = &doublePortals[i];
-		p->w = w;
+		p->w			= w;
 		p->w->GetPlane( p->plane );
 
-		p->next = portalAreas[a1].portals;
+		p->next					= portalAreas[a1].portals;
 		portalAreas[a1].portals = p;
 
 		doublePortals[i].portals[0] = p;
 
 		// reverse it for a2
-		p = ( portal_t* )R_ClearedStaticAlloc( sizeof( *p ) );
-		p->intoArea = a1;
+		p				= ( portal_t* )R_ClearedStaticAlloc( sizeof( *p ) );
+		p->intoArea		= a1;
 		p->doublePortal = &doublePortals[i];
-		p->w = w->Reverse();
+		p->w			= w->Reverse();
 		p->w->GetPlane( p->plane );
 
-		p->next = portalAreas[a2].portals;
+		p->next					= portalAreas[a2].portals;
 		portalAreas[a2].portals = p;
 
 		doublePortals[i].portals[1] = p;
@@ -450,23 +407,21 @@ idRenderWorldLocal::ParseInterAreaPortals
 */
 void idRenderWorldLocal::ReadBinaryAreaPortals( idFile* file )
 {
-
 	file->ReadBig( numPortalAreas );
 	file->ReadBig( numInterAreaPortals );
 
-	portalAreas = ( portalArea_t* )R_ClearedStaticAlloc( numPortalAreas * sizeof( portalAreas[0] ) );
-	areaScreenRect = ( idScreenRect* ) R_ClearedStaticAlloc( numPortalAreas * sizeof( idScreenRect ) );
+	portalAreas	   = ( portalArea_t* )R_ClearedStaticAlloc( numPortalAreas * sizeof( portalAreas[0] ) );
+	areaScreenRect = ( idScreenRect* )R_ClearedStaticAlloc( numPortalAreas * sizeof( idScreenRect ) );
 
 	// set the doubly linked lists
 	SetupAreaRefs();
 
-	doublePortals = ( doublePortal_t* )R_ClearedStaticAlloc( numInterAreaPortals * sizeof( doublePortals [0] ) );
+	doublePortals = ( doublePortal_t* )R_ClearedStaticAlloc( numInterAreaPortals * sizeof( doublePortals[0] ) );
 
-	for( int i = 0; i < numInterAreaPortals; i++ )
-	{
-		int		numPoints, a1, a2;
-		idWinding*	w;
-		portal_t*	p;
+	for( int i = 0; i < numInterAreaPortals; i++ ) {
+		int		   numPoints, a1, a2;
+		idWinding* w;
+		portal_t*  p;
 
 		file->ReadBig( numPoints );
 		file->ReadBig( a1 );
@@ -475,43 +430,41 @@ void idRenderWorldLocal::ReadBinaryAreaPortals( idFile* file )
 		w = new( TAG_RENDER_WINDING ) idWinding( numPoints );
 		w->SetNumPoints( numPoints );
 
-		for( int j = 0; j < numPoints; j++ )
-		{
-			file->ReadBig( ( *w )[ j ][ 0 ] );
-			file->ReadBig( ( *w )[ j ][ 1 ] );
-			file->ReadBig( ( *w )[ j ][ 2 ] );
+		for( int j = 0; j < numPoints; j++ ) {
+			file->ReadBig( ( *w )[j][0] );
+			file->ReadBig( ( *w )[j][1] );
+			file->ReadBig( ( *w )[j][2] );
 
 			// no texture coordinates
-			( *w )[ j ][ 3 ] = 0;
-			( *w )[ j ][ 4 ] = 0;
+			( *w )[j][3] = 0;
+			( *w )[j][4] = 0;
 		}
 
 		// add the portal to a1
-		p = ( portal_t* )R_ClearedStaticAlloc( sizeof( *p ) );
-		p->intoArea = a2;
+		p				= ( portal_t* )R_ClearedStaticAlloc( sizeof( *p ) );
+		p->intoArea		= a2;
 		p->doublePortal = &doublePortals[i];
-		p->w = w;
+		p->w			= w;
 		p->w->GetPlane( p->plane );
 
-		p->next = portalAreas[a1].portals;
+		p->next					= portalAreas[a1].portals;
 		portalAreas[a1].portals = p;
 
 		doublePortals[i].portals[0] = p;
 
 		// reverse it for a2
-		p = ( portal_t* )R_ClearedStaticAlloc( sizeof( *p ) );
-		p->intoArea = a1;
+		p				= ( portal_t* )R_ClearedStaticAlloc( sizeof( *p ) );
+		p->intoArea		= a1;
 		p->doublePortal = &doublePortals[i];
-		p->w = w->Reverse();
+		p->w			= w->Reverse();
 		p->w->GetPlane( p->plane );
 
-		p->next = portalAreas[a2].portals;
+		p->next					= portalAreas[a2].portals;
 		portalAreas[a2].portals = p;
 
 		doublePortals[i].portals[1] = p;
 	}
 }
-
 
 /*
 ================
@@ -523,26 +476,22 @@ void idRenderWorldLocal::ParseNodes( idLexer* src, idFile* fileOut )
 	src->ExpectTokenString( "{" );
 
 	numAreaNodes = src->ParseInt();
-	if( numAreaNodes < 0 )
-	{
+	if( numAreaNodes < 0 ) {
 		src->Error( "R_ParseNodes: bad numAreaNodes" );
 	}
 	areaNodes = ( areaNode_t* )R_ClearedStaticAlloc( numAreaNodes * sizeof( areaNodes[0] ) );
 
-	if( fileOut != NULL )
-	{
+	if( fileOut != NULL ) {
 		// write out the type so the binary reader knows what to instantiate
 		fileOut->WriteString( "nodes" );
 	}
 
-	if( fileOut != NULL )
-	{
+	if( fileOut != NULL ) {
 		fileOut->WriteBig( numAreaNodes );
 	}
 
-	for( int i = 0; i < numAreaNodes; i++ )
-	{
-		areaNode_t*	node;
+	for( int i = 0; i < numAreaNodes; i++ ) {
+		areaNode_t* node;
 
 		node = &areaNodes[i];
 
@@ -551,16 +500,14 @@ void idRenderWorldLocal::ParseNodes( idLexer* src, idFile* fileOut )
 		node->children[0] = src->ParseInt();
 		node->children[1] = src->ParseInt();
 
-		if( fileOut != NULL )
-		{
-			fileOut->WriteBig( node->plane[ 0 ] );
-			fileOut->WriteBig( node->plane[ 1 ] );
-			fileOut->WriteBig( node->plane[ 2 ] );
-			fileOut->WriteBig( node->plane[ 3 ] );
-			fileOut->WriteBig( node->children[ 0 ] );
-			fileOut->WriteBig( node->children[ 1 ] );
+		if( fileOut != NULL ) {
+			fileOut->WriteBig( node->plane[0] );
+			fileOut->WriteBig( node->plane[1] );
+			fileOut->WriteBig( node->plane[2] );
+			fileOut->WriteBig( node->plane[3] );
+			fileOut->WriteBig( node->children[0] );
+			fileOut->WriteBig( node->children[1] );
 		}
-
 	}
 
 	src->ExpectTokenString( "}" );
@@ -575,15 +522,14 @@ void idRenderWorldLocal::ReadBinaryNodes( idFile* file )
 {
 	file->ReadBig( numAreaNodes );
 	areaNodes = ( areaNode_t* )R_ClearedStaticAlloc( numAreaNodes * sizeof( areaNodes[0] ) );
-	for( int i = 0; i < numAreaNodes; i++ )
-	{
-		areaNode_t* node = &areaNodes[ i ];
-		file->ReadBig( node->plane[ 0 ] );
-		file->ReadBig( node->plane[ 1 ] );
-		file->ReadBig( node->plane[ 2 ] );
-		file->ReadBig( node->plane[ 3 ] );
-		file->ReadBig( node->children[ 0 ] );
-		file->ReadBig( node->children[ 1 ] );
+	for( int i = 0; i < numAreaNodes; i++ ) {
+		areaNode_t* node = &areaNodes[i];
+		file->ReadBig( node->plane[0] );
+		file->ReadBig( node->plane[1] );
+		file->ReadBig( node->plane[2] );
+		file->ReadBig( node->plane[3] );
+		file->ReadBig( node->children[0] );
+		file->ReadBig( node->children[1] );
 	}
 }
 
@@ -594,37 +540,28 @@ idRenderWorldLocal::CommonChildrenArea_r
 */
 int idRenderWorldLocal::CommonChildrenArea_r( areaNode_t* node )
 {
-	int	nums[2];
+	int nums[2];
 
-	for( int i = 0; i < 2; i++ )
-	{
-		if( node->children[i] <= 0 )
-		{
+	for( int i = 0; i < 2; i++ ) {
+		if( node->children[i] <= 0 ) {
 			nums[i] = -1 - node->children[i];
-		}
-		else
-		{
-			nums[i] = CommonChildrenArea_r( &areaNodes[ node->children[i] ] );
+		} else {
+			nums[i] = CommonChildrenArea_r( &areaNodes[node->children[i]] );
 		}
 	}
 
 	// solid nodes will match any area
-	if( nums[0] == AREANUM_SOLID )
-	{
+	if( nums[0] == AREANUM_SOLID ) {
 		nums[0] = nums[1];
 	}
-	if( nums[1] == AREANUM_SOLID )
-	{
+	if( nums[1] == AREANUM_SOLID ) {
 		nums[1] = nums[0];
 	}
 
-	int	common;
-	if( nums[0] == nums[1] )
-	{
+	int common;
+	if( nums[0] == nums[1] ) {
 		common = nums[0];
-	}
-	else
-	{
+	} else {
 		common = CHILDREN_HAVE_MULTIPLE_AREAS;
 	}
 
@@ -643,16 +580,16 @@ Sets up for a single area world
 void idRenderWorldLocal::ClearWorld()
 {
 	numPortalAreas = 1;
-	portalAreas = ( portalArea_t* )R_ClearedStaticAlloc( sizeof( portalAreas[0] ) );
-	areaScreenRect = ( idScreenRect* ) R_ClearedStaticAlloc( sizeof( idScreenRect ) );
+	portalAreas	   = ( portalArea_t* )R_ClearedStaticAlloc( sizeof( portalAreas[0] ) );
+	areaScreenRect = ( idScreenRect* )R_ClearedStaticAlloc( sizeof( idScreenRect ) );
 
 	SetupAreaRefs();
 
 	// even though we only have a single area, create a node
 	// that has both children pointing at it so we don't need to
 	//
-	areaNodes = ( areaNode_t* )R_ClearedStaticAlloc( sizeof( areaNodes[0] ) );
-	areaNodes[0].plane[3] = 1;
+	areaNodes				 = ( areaNode_t* )R_ClearedStaticAlloc( sizeof( areaNodes[0] ) );
+	areaNodes[0].plane[3]	 = 1;
 	areaNodes[0].children[0] = -1;
 	areaNodes[0].children[1] = -1;
 }
@@ -668,40 +605,33 @@ void idRenderWorldLocal::FreeDefs()
 {
 	generateAllInteractionsCalled = false;
 
-	if( interactionTable )
-	{
+	if( interactionTable ) {
 		R_StaticFree( interactionTable );
 		interactionTable = NULL;
 	}
 
 	// free all lightDefs
-	for( int i = 0; i < lightDefs.Num(); i++ )
-	{
+	for( int i = 0; i < lightDefs.Num(); i++ ) {
 		idRenderLightLocal* light = lightDefs[i];
-		if( light != NULL && light->world == this )
-		{
+		if( light != NULL && light->world == this ) {
 			FreeLightDef( i );
 			lightDefs[i] = NULL;
 		}
 	}
 
 	// free all entityDefs
-	for( int i = 0; i < entityDefs.Num(); i++ )
-	{
-		idRenderEntityLocal*	 mod = entityDefs[i];
-		if( mod != NULL && mod->world == this )
-		{
+	for( int i = 0; i < entityDefs.Num(); i++ ) {
+		idRenderEntityLocal* mod = entityDefs[i];
+		if( mod != NULL && mod->world == this ) {
 			FreeEntityDef( i );
 			entityDefs[i] = NULL;
 		}
 	}
 
 	// RB: free all envprobeDefs
-	for( int i = 0; i < envprobeDefs.Num(); i++ )
-	{
+	for( int i = 0; i < envprobeDefs.Num(); i++ ) {
 		RenderEnvprobeLocal* ep = envprobeDefs[i];
-		if( ep != NULL && ep->world == this )
-		{
+		if( ep != NULL && ep->world == this ) {
 			FreeEnvprobeDef( i );
 			envprobeDefs[i] = NULL;
 		}
@@ -709,14 +639,12 @@ void idRenderWorldLocal::FreeDefs()
 	// RB end
 
 	// Reset decals and overlays
-	for( int i = 0; i < decals.Num(); i++ )
-	{
-		decals[i].entityHandle = -1;
+	for( int i = 0; i < decals.Num(); i++ ) {
+		decals[i].entityHandle	= -1;
 		decals[i].lastStartTime = 0;
 	}
-	for( int i = 0; i < overlays.Num(); i++ )
-	{
-		overlays[i].entityHandle = -1;
+	for( int i = 0; i < overlays.Num(); i++ ) {
+		overlays[i].entityHandle  = -1;
 		overlays[i].lastStartTime = 0;
 	}
 }
@@ -731,13 +659,12 @@ is still useful for displaying a bare model
 */
 bool idRenderWorldLocal::InitFromMap( const char* name )
 {
-	idLexer* 		src;
-	idToken			token;
-	idRenderModel* 	lastModel;
+	idLexer*	   src;
+	idToken		   token;
+	idRenderModel* lastModel;
 
 	// if this is an empty world, initialize manually
-	if( !name || !name[0] )
-	{
+	if( !name || !name[0] ) {
 		FreeWorld();
 		mapName.Clear();
 		ClearWorld();
@@ -745,11 +672,11 @@ bool idRenderWorldLocal::InitFromMap( const char* name )
 	}
 
 	// load it
-	idStrStatic< MAX_OSPATH > filename = name;
+	idStrStatic<MAX_OSPATH> filename = name;
 	filename.SetFileExtension( PROC_FILE_EXT );
 
 	// check for generated file
-	idStrStatic< MAX_OSPATH > generatedFileName = filename;
+	idStrStatic<MAX_OSPATH> generatedFileName = filename;
 	generatedFileName.Insert( "generated/", 0 );
 	generatedFileName.SetFileExtension( "bproc" );
 
@@ -757,10 +684,8 @@ bool idRenderWorldLocal::InitFromMap( const char* name )
 	// and try to skip all the work
 	ID_TIME_T currentTimeStamp = fileSystem->GetTimestamp( filename );
 
-	if( name == mapName )
-	{
-		if( fileSystem->InProductionMode() || ( currentTimeStamp != FILE_NOT_FOUND_TIMESTAMP && currentTimeStamp == mapTimeStamp ) )
-		{
+	if( name == mapName ) {
+		if( fileSystem->InProductionMode() || ( currentTimeStamp != FILE_NOT_FOUND_TIMESTAMP && currentTimeStamp == mapTimeStamp ) ) {
 			common->Printf( "idRenderWorldLocal::InitFromMap: retaining existing map\n" );
 			FreeDefs();
 			TouchWorldModels();
@@ -775,95 +700,75 @@ bool idRenderWorldLocal::InitFromMap( const char* name )
 	FreeWorld();
 
 	// see if we have a generated version of this
-	static const byte BPROC_VERSION_BFG = 1;
-	static const byte BPROC_VERSION_MOC_DATA = 2;
-	static const byte BPROC_VERSION = BPROC_VERSION_MOC_DATA;
-
+	static const byte		  BPROC_VERSION_BFG		 = 1;
+	static const byte		  BPROC_VERSION_MOC_DATA = 2;
+	static const byte		  BPROC_VERSION			 = BPROC_VERSION_MOC_DATA;
 
 	static const unsigned int BPROC_MAGIC_BFG = ( 'P' << 24 ) | ( 'R' << 16 ) | ( 'O' << 8 ) | BPROC_VERSION_BFG;
-	static const unsigned int BPROC_MAGIC = ( 'P' << 24 ) | ( 'R' << 16 ) | ( 'O' << 8 ) | BPROC_VERSION;
-	bool loaded = false;
-	idFileLocal file( fileSystem->OpenFileReadMemory( generatedFileName ) );
-	if( file != NULL )
-	{
+	static const unsigned int BPROC_MAGIC	  = ( 'P' << 24 ) | ( 'R' << 16 ) | ( 'O' << 8 ) | BPROC_VERSION;
+	bool					  loaded		  = false;
+	idFileLocal				  file( fileSystem->OpenFileReadMemory( generatedFileName ) );
+	if( file != NULL ) {
 		int numEntries = 0;
-		int magic = 0;
+		int magic	   = 0;
 		file->ReadBig( magic );
-		if( magic == BPROC_MAGIC_BFG || magic == BPROC_MAGIC )
-		{
+		if( magic == BPROC_MAGIC_BFG || magic == BPROC_MAGIC ) {
 			file->ReadBig( numEntries );
 			file->ReadString( mapName );
 			file->ReadBig( mapTimeStamp );
 			loaded = true;
-			for( int i = 0; i < numEntries; i++ )
-			{
-				idStrStatic< MAX_OSPATH > type;
+			for( int i = 0; i < numEntries; i++ ) {
+				idStrStatic<MAX_OSPATH> type;
 				file->ReadString( type );
 				type.ToLower();
-				if( type == "model" )
-				{
+				if( type == "model" ) {
 					idRenderModel* lastModel = ReadBinaryModel( file );
-					if( lastModel == NULL )
-					{
+					if( lastModel == NULL ) {
 						loaded = false;
 						break;
 					}
 					renderModelManager->AddModel( lastModel );
 					localModels.Append( lastModel );
-				}
-				else if( type == "shadowmodel" && magic == BPROC_MAGIC_BFG )
-				{
+				} else if( type == "shadowmodel" && magic == BPROC_MAGIC_BFG ) {
 					// RB: the original BFG .bproc just saved all models as "shadowmodel"
 					idRenderModel* lastModel = ReadBinaryModel( file );
-					if( lastModel == NULL )
-					{
+					if( lastModel == NULL ) {
 						loaded = false;
 						break;
 					}
 					renderModelManager->AddModel( lastModel );
 					localModels.Append( lastModel );
-				}
-				else if( type == "interareaportals" )
-				{
+				} else if( type == "interareaportals" ) {
 					ReadBinaryAreaPortals( file );
-				}
-				else if( type == "nodes" )
-				{
+				} else if( type == "nodes" ) {
 					ReadBinaryNodes( file );
-				}
-				else
-				{
+				} else {
 					idLib::Error( "Binary proc file failed, unexpected type %s\n", type.c_str() );
 				}
 			}
 		}
 	}
 
-	if( !loaded )
-	{
+	if( !loaded ) {
 		src = new( TAG_RENDER ) idLexer( filename, LEXFL_NOSTRINGCONCAT | LEXFL_NODOLLARPRECOMPILE );
-		if( !src->IsLoaded() )
-		{
+		if( !src->IsLoaded() ) {
 			common->Printf( "idRenderWorldLocal::InitFromMap: %s not found\n", filename.c_str() );
 			ClearWorld();
 			return false;
 		}
 
-
-		mapName = name;
+		mapName		 = name;
 		mapTimeStamp = currentTimeStamp;
 
-		if( !src->ReadToken( &token ) || token.Icmp( PROC_FILE_ID ) )
-		{
+		if( !src->ReadToken( &token ) || token.Icmp( PROC_FILE_ID ) ) {
 			common->Printf( "idRenderWorldLocal::InitFromMap: bad id '%s' instead of '%s'\n", token.c_str(), PROC_FILE_ID );
 			delete src;
 			return false;
 		}
 
-		int numEntries = 0;
+		int			numEntries = 0;
 		idFileLocal outputFile( fileSystem->OpenFileWrite( generatedFileName, "fs_basepath" ) );
-		if( outputFile != NULL )
-		{
+		if( outputFile != NULL ) {
 			int magic = BPROC_MAGIC;
 			outputFile->WriteBig( magic );
 			outputFile->WriteBig( numEntries );
@@ -872,18 +777,14 @@ bool idRenderWorldLocal::InitFromMap( const char* name )
 		}
 
 		// parse the file
-		while( 1 )
-		{
-			if( !src->ReadToken( &token ) )
-			{
+		while( 1 ) {
+			if( !src->ReadToken( &token ) ) {
 				break;
 			}
 
 			common->UpdateLevelLoadPacifier();
 
-
-			if( token == "model" )
-			{
+			if( token == "model" ) {
 				lastModel = ParseModel( src, name, currentTimeStamp, outputFile );
 
 				// add it to the model manager list
@@ -897,25 +798,22 @@ bool idRenderWorldLocal::InitFromMap( const char* name )
 				continue;
 			}
 
-			if( token == "shadowModel" )
-			{
+			if( token == "shadowModel" ) {
 				// RB: just parse the model but don't do anything with it
-				//lastModel = ParseShadowModel( src, outputFile );
+				// lastModel = ParseShadowModel( src, outputFile );
 				src->SkipBracedSection();
 				lastModel = NULL;
 				continue;
 			}
 
-			if( token == "interAreaPortals" )
-			{
+			if( token == "interAreaPortals" ) {
 				ParseInterAreaPortals( src, outputFile );
 
 				numEntries++;
 				continue;
 			}
 
-			if( token == "nodes" )
-			{
+			if( token == "nodes" ) {
 				ParseNodes( src, outputFile );
 
 				numEntries++;
@@ -927,21 +825,16 @@ bool idRenderWorldLocal::InitFromMap( const char* name )
 
 		delete src;
 
-		if( outputFile != NULL )
-		{
+		if( outputFile != NULL ) {
 			outputFile->Seek( 0, FS_SEEK_SET );
 			int magic = BPROC_MAGIC;
 			outputFile->WriteBig( magic );
 			outputFile->WriteBig( numEntries );
 		}
-
 	}
 
-
-
 	// if it was a trivial map without any areas, create a single area
-	if( !numPortalAreas )
-	{
+	if( !numPortalAreas ) {
 		ClearWorld();
 	}
 
@@ -964,16 +857,13 @@ idRenderWorldLocal::ClearPortalStates
 void idRenderWorldLocal::ClearPortalStates()
 {
 	// all portals start off open
-	for( int i = 0; i < numInterAreaPortals; i++ )
-	{
+	for( int i = 0; i < numInterAreaPortals; i++ ) {
 		doublePortals[i].blockingBits = PS_BLOCK_NONE;
 	}
 
 	// flood fill all area connections
-	for( int i = 0; i < numPortalAreas; i++ )
-	{
-		for( int j = 0; j < NUM_PORTAL_ATTRIBUTES; j++ )
-		{
+	for( int i = 0; i < numPortalAreas; i++ ) {
+		for( int j = 0; j < NUM_PORTAL_ATTRIBUTES; j++ ) {
 			connectedAreaNum++;
 			FloodConnectedAreas( &portalAreas[i], j );
 		}
@@ -990,20 +880,16 @@ void idRenderWorldLocal::AddWorldModelEntities()
 	// add the world model for each portal area
 	// we can't just call AddEntityDef, because that would place the references
 	// based on the bounding box, rather than explicitly into the correct area
-	for( int i = 0; i < numPortalAreas; i++ )
-	{
+	for( int i = 0; i < numPortalAreas; i++ ) {
 		common->UpdateLevelLoadPacifier();
 
-		idRenderEntityLocal*	 def = new( TAG_RENDER_ENTITY ) idRenderEntityLocal;
+		idRenderEntityLocal* def = new( TAG_RENDER_ENTITY ) idRenderEntityLocal;
 
 		// try and reuse a free spot
-		int index = entityDefs.FindNull();
-		if( index == -1 )
-		{
+		int					 index = entityDefs.FindNull();
+		if( index == -1 ) {
 			index = entityDefs.Append( def );
-		}
-		else
-		{
+		} else {
 			entityDefs[index] = def;
 		}
 
@@ -1011,26 +897,22 @@ void idRenderWorldLocal::AddWorldModelEntities()
 		def->world = this;
 
 		def->parms.hModel = renderModelManager->FindModel( va( "_area%i", i ) );
-		if( def->parms.hModel->IsDefaultModel() || !def->parms.hModel->IsStaticWorldModel() )
-		{
+		if( def->parms.hModel->IsDefaultModel() || !def->parms.hModel->IsStaticWorldModel() ) {
 			common->Error( "idRenderWorldLocal::InitFromMap: bad area model lookup" );
 		}
 
 		idRenderModel* hModel = def->parms.hModel;
 
-		for( int j = 0; j < hModel->NumSurfaces(); j++ )
-		{
+		for( int j = 0; j < hModel->NumSurfaces(); j++ ) {
 			const modelSurface_t* surf = hModel->Surface( j );
 
-			if( surf->shader->GetName() == idStr( "textures/smf/portal_sky" ) ||
-					surf->shader->IsPortalSky() )
-			{
+			if( surf->shader->GetName() == idStr( "textures/smf/portal_sky" ) || surf->shader->IsPortalSky() ) {
 				def->needsPortalSky = true;
 			}
 		}
 
 		// the local and global reference bounds are the same for area models
-		def->localReferenceBounds = def->parms.hModel->Bounds();
+		def->localReferenceBounds  = def->parms.hModel->Bounds();
 		def->globalReferenceBounds = def->parms.hModel->Bounds();
 
 		def->parms.axis[0][0] = 1.0f;
@@ -1063,12 +945,10 @@ bool idRenderWorldLocal::CheckAreaForPortalSky( int areaNum )
 {
 	assert( areaNum >= 0 && areaNum < numPortalAreas );
 
-	for( areaReference_t* ref = portalAreas[areaNum].entityRefs.areaNext; ref->entity; ref = ref->areaNext )
-	{
+	for( areaReference_t* ref = portalAreas[areaNum].entityRefs.areaNext; ref->entity; ref = ref->areaNext ) {
 		assert( ref->area == &portalAreas[areaNum] );
 
-		if( ref->entity && ref->entity->needsPortalSky )
-		{
+		if( ref->entity && ref->entity->needsPortalSky ) {
 			return true;
 		}
 	}
@@ -1083,5 +963,6 @@ ResetLocalRenderModels
 */
 void idRenderWorldLocal::ResetLocalRenderModels()
 {
-	localModels.Clear();	// Clear out the list when switching between expansion packs, so InitFromMap doesn't try to delete the list whose content has already been deleted by the model manager being re-started
+	localModels.Clear(); // Clear out the list when switching between expansion packs, so InitFromMap doesn't try to delete the list whose content has already been deleted by the model manager being
+						 // re-started
 }

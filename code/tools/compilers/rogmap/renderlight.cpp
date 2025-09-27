@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -39,20 +40,20 @@ idRenderLightLocal::idRenderLightLocal()
 	memset( &parms, 0, sizeof( parms ) );
 	memset( lightProject, 0, sizeof( lightProject ) );
 
-	lightHasMoved			= false;
-	world					= NULL;
-	index					= 0;
-	areaNum					= 0;
-	lastModifiedFrameNum	= 0;
-	lightShader				= NULL;
-	falloffImage			= NULL;
-	globalLightOrigin		= vec3_zero;
-	viewCount				= 0;
-	viewLight				= NULL;
-	references				= NULL;
-	foggedPortals			= NULL;
-	firstInteraction		= NULL;
-	lastInteraction			= NULL;
+	lightHasMoved		 = false;
+	world				 = NULL;
+	index				 = 0;
+	areaNum				 = 0;
+	lastModifiedFrameNum = 0;
+	lightShader			 = NULL;
+	falloffImage		 = NULL;
+	globalLightOrigin	 = vec3_zero;
+	viewCount			 = 0;
+	viewLight			 = NULL;
+	references			 = NULL;
+	foggedPortals		 = NULL;
+	firstInteraction	 = NULL;
+	lastInteraction		 = NULL;
 
 	baseLightProject.Zero();
 	inverseBaseLightProject.Zero();
@@ -103,13 +104,13 @@ static float R_ComputePointLightProjectionMatrix( idRenderLightLocal* light, idR
 	localProject[0][3] = 0.5f;
 	localProject[1][3] = 0.5f;
 	localProject[2][3] = 0.5f;
-	localProject[3][3] = 1.0f;	// identity perspective
+	localProject[3][3] = 1.0f; // identity perspective
 
 	return 1.0f;
 }
 
-static const float SPOT_LIGHT_MIN_Z_NEAR	= 8.0f;
-static const float SPOT_LIGHT_MIN_Z_FAR		= 16.0f;
+static const float SPOT_LIGHT_MIN_Z_NEAR = 8.0f;
+static const float SPOT_LIGHT_MIN_Z_FAR	 = 16.0f;
 
 /*
 ========================
@@ -118,15 +119,15 @@ R_ComputeSpotLightProjectionMatrix
 Computes the light projection matrix for a spot light.
 ========================
 */
-static float R_ComputeSpotLightProjectionMatrix( idRenderLightLocal* light, idRenderMatrix& localProject )
+static float	   R_ComputeSpotLightProjectionMatrix( idRenderLightLocal* light, idRenderMatrix& localProject )
 {
-	const float targetDistSqr = light->parms.target.LengthSqr();
-	const float invTargetDist = idMath::InvSqrt( targetDistSqr );
-	const float targetDist = invTargetDist * targetDistSqr;
+	const float	 targetDistSqr = light->parms.target.LengthSqr();
+	const float	 invTargetDist = idMath::InvSqrt( targetDistSqr );
+	const float	 targetDist	   = invTargetDist * targetDistSqr;
 
 	const idVec3 normalizedTarget = light->parms.target * invTargetDist;
-	const idVec3 normalizedRight = light->parms.right * ( 0.5f * targetDist / light->parms.right.LengthSqr() );
-	const idVec3 normalizedUp = light->parms.up * ( -0.5f * targetDist / light->parms.up.LengthSqr() );
+	const idVec3 normalizedRight  = light->parms.right * ( 0.5f * targetDist / light->parms.right.LengthSqr() );
+	const idVec3 normalizedUp	  = light->parms.up * ( -0.5f * targetDist / light->parms.up.LengthSqr() );
 
 	localProject[0][0] = normalizedRight[0];
 	localProject[0][1] = normalizedRight[1];
@@ -146,14 +147,14 @@ static float R_ComputeSpotLightProjectionMatrix( idRenderLightLocal* light, idRe
 	// Set the falloff vector.
 	// This is similar to the Z calculation for depth buffering, which means that the
 	// mapped texture is going to be perspective distorted heavily towards the zero end.
-	const float zNear = Max( light->parms.start * normalizedTarget, SPOT_LIGHT_MIN_Z_NEAR );
-	const float zFar = Max( light->parms.end * normalizedTarget, SPOT_LIGHT_MIN_Z_FAR );
+	const float zNear  = Max( light->parms.start * normalizedTarget, SPOT_LIGHT_MIN_Z_NEAR );
+	const float zFar   = Max( light->parms.end * normalizedTarget, SPOT_LIGHT_MIN_Z_FAR );
 	const float zScale = ( zNear + zFar ) / zFar;
 
 	localProject[2][0] = normalizedTarget[0] * zScale;
 	localProject[2][1] = normalizedTarget[1] * zScale;
 	localProject[2][2] = normalizedTarget[2] * zScale;
-	localProject[2][3] = - zNear * zScale;
+	localProject[2][3] = -zNear * zScale;
 
 	// now offset to the 0.0 - 1.0 texture range instead of -1.0 to 1.0 clip space range
 	idVec4 projectedTarget;
@@ -194,7 +195,7 @@ static float R_ComputeParallelLightProjectionMatrix( idRenderLightLocal* light, 
 	localProject[0][3] = 0.5f;
 	localProject[1][3] = 0.5f;
 	localProject[2][3] = 0.5f;
-	localProject[3][3] = 1.0f;	// identity perspective
+	localProject[3][3] = 1.0f; // identity perspective
 
 	return 1.0f;
 }
@@ -215,17 +216,12 @@ void R_DeriveLightData( idRenderLightLocal* light )
 	// ------------------------------------
 
 	idRenderMatrix localProject;
-	float zScale = 1.0f;
-	if( light->parms.parallel )
-	{
+	float		   zScale = 1.0f;
+	if( light->parms.parallel ) {
 		zScale = R_ComputeParallelLightProjectionMatrix( light, localProject );
-	}
-	else if( light->parms.pointLight )
-	{
+	} else if( light->parms.pointLight ) {
 		zScale = R_ComputePointLightProjectionMatrix( light, localProject );
-	}
-	else
-	{
+	} else {
 		zScale = R_ComputeSpotLightProjectionMatrix( light, localProject );
 	}
 
@@ -254,26 +250,21 @@ void R_DeriveLightData( idRenderLightLocal* light )
 	// transform the lightProject
 	float lightTransform[16];
 	R_AxisToModelMatrix( light->parms.axis, light->parms.origin, lightTransform );
-	for( int i = 0; i < 4; i++ )
-	{
+	for( int i = 0; i < 4; i++ ) {
 		idPlane temp = light->lightProject[i];
 		R_LocalPlaneToGlobal( lightTransform, temp, light->lightProject[i] );
 	}
 
 	// adjust global light origin for off center projections and parallel projections
 	// we are just faking parallel by making it a very far off center for now
-	if( light->parms.parallel )
-	{
+	if( light->parms.parallel ) {
 		idVec3 dir = light->parms.lightCenter;
-		if( dir.Normalize() == 0.0f )
-		{
+		if( dir.Normalize() == 0.0f ) {
 			// make point straight up if not specified
 			dir[2] = 1.0f;
 		}
 		light->globalLightOrigin = light->parms.origin + dir * 100000.0f;
-	}
-	else
-	{
+	} else {
 		light->globalLightOrigin = light->parms.origin + light->parms.axis * light->parms.lightCenter;
 	}
 
@@ -283,8 +274,7 @@ void R_DeriveLightData( idRenderLightLocal* light )
 	idRenderMatrix::CreateFromOriginAxis( light->parms.origin, light->parms.axis, lightMatrix );
 
 	idRenderMatrix inverseLightMatrix;
-	if( !idRenderMatrix::Inverse( lightMatrix, inverseLightMatrix ) )
-	{
+	if( !idRenderMatrix::Inverse( lightMatrix, inverseLightMatrix ) ) {
 		idLib::Warning( "lightMatrix invert failed" );
 	}
 
@@ -293,8 +283,7 @@ void R_DeriveLightData( idRenderLightLocal* light )
 
 	// Invert the light projection so we can deform zero-to-one cubes into
 	// the light model and calculate global bounds.
-	if( !idRenderMatrix::Inverse( light->baseLightProject, light->inverseBaseLightProject ) )
-	{
+	if( !idRenderMatrix::Inverse( light->baseLightProject, light->inverseBaseLightProject ) ) {
 		idLib::Warning( "baseLightProject invert failed" );
 	}
 
@@ -312,8 +301,7 @@ Frees all references and lit surfaces from the light
 void R_FreeLightDefDerivedData( idRenderLightLocal* ldef )
 {
 	// remove any portal fog references
-	for( doublePortal_t* dp = ldef->foggedPortals; dp != NULL; dp = dp->nextFoggedPortal )
-	{
+	for( doublePortal_t* dp = ldef->foggedPortals; dp != NULL; dp = dp->nextFoggedPortal ) {
 		dp->fogLight = NULL;
 	}
 
@@ -327,8 +315,7 @@ void R_FreeLightDefDerivedData( idRenderLightLocal* ldef )
 
 	// free all the references to the light
 	areaReference_t* nextRef = NULL;
-	for( areaReference_t* lref = ldef->references; lref != NULL; lref = nextRef )
-	{
+	for( areaReference_t* lref = ldef->references; lref != NULL; lref = nextRef ) {
 		nextRef = lref->ownerNext;
 
 		// unlink from the area
@@ -352,4 +339,3 @@ void R_CheckForEntityDefsUsingModel( idRenderModel* model )
 }
 
 #endif
-

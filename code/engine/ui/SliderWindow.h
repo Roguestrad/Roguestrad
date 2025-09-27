@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -35,31 +36,20 @@ class idSliderWindow : public idWindow
 {
 public:
 	idSliderWindow( idUserInterfaceLocal* gui );
-	virtual				~idSliderWindow();
+	virtual ~idSliderWindow();
 
-	void				InitWithDefaults( const char* _name, const idRectangle& rect, const idVec4& foreColor, const idVec4& matColor, const char* _background, const char* thumbShader, bool _vertical, bool _scrollbar );
+	void InitWithDefaults(
+		const char* _name, const idRectangle& rect, const idVec4& foreColor, const idVec4& matColor, const char* _background, const char* thumbShader, bool _vertical, bool _scrollbar );
 
 	void				SetRange( float _low, float _high, float _step );
-	float				GetLow()
-	{
-		return low;
-	}
-	float				GetHigh()
-	{
-		return high;
-	}
+	float				GetLow() { return low; }
+	float				GetHigh() { return high; }
 
 	void				SetValue( float _value );
-	float				GetValue()
-	{
-		return value;
-	};
+	float				GetValue() { return value; };
 
-	virtual size_t		Allocated()
-	{
-		return idWindow::Allocated();
-	};
-	virtual idWinVar* 	GetWinVarByName( const char* _name, bool winLookup = false, drawWin_t** owner = NULL );
+	virtual size_t		Allocated() { return idWindow::Allocated(); };
+	virtual idWinVar*	GetWinVarByName( const char* _name, bool winLookup = false, drawWin_t** owner = NULL );
 	virtual const char* HandleEvent( const sysEvent_t* event, bool* updateVisuals );
 	virtual void		PostParse();
 	virtual void		Draw( int time, float x, float y );
@@ -71,35 +61,34 @@ public:
 	void				RunNamedEvent( const char* eventName );
 
 private:
-	virtual bool		ParseInternalVar( const char* name, idTokenParser* src );
-	void				CommonInit();
-	void				InitCvar();
+	virtual bool	  ParseInternalVar( const char* name, idTokenParser* src );
+	void			  CommonInit();
+	void			  InitCvar();
 	// true: read the updated cvar from cvar system
 	// false: write to the cvar system
 	// force == true overrides liveUpdate 0
-	void				UpdateCvar( bool read, bool force = false );
+	void			  UpdateCvar( bool read, bool force = false );
 
-	idWinFloat			value;
-	float				low;
-	float				high;
-	float				thumbWidth;
-	float				thumbHeight;
-	float				stepSize;
-	float				lastValue;
-	idRectangle			thumbRect;
-	const idMaterial* 	thumbMat;
-	bool				vertical;
-	bool				verticalFlip;
-	bool				scrollbar;
-	idWindow* 			buddyWin;
-	idStr				thumbShader;
+	idWinFloat		  value;
+	float			  low;
+	float			  high;
+	float			  thumbWidth;
+	float			  thumbHeight;
+	float			  stepSize;
+	float			  lastValue;
+	idRectangle		  thumbRect;
+	const idMaterial* thumbMat;
+	bool			  vertical;
+	bool			  verticalFlip;
+	bool			  scrollbar;
+	idWindow*		  buddyWin;
+	idStr			  thumbShader;
 
-	idWinStr			cvarStr;
-	idCVar* 			cvar;
-	bool				cvar_init;
-	idWinBool			liveUpdate;
-	idWinStr			cvarGroup;
+	idWinStr		  cvarStr;
+	idCVar*			  cvar;
+	bool			  cvar_init;
+	idWinBool		  liveUpdate;
+	idWinStr		  cvarGroup;
 };
 
 #endif /* !__SLIDERWINDOW_H__ */
-

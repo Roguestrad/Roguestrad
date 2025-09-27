@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -35,9 +36,9 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idAI, iceAI_Follower )
 END_CLASS
 
-#define FOLLOW_MAXDIST	120
-#define FOLLOW_MINDIST	80
-#define FOLLOW_RUNDIST	180
+#define FOLLOW_MAXDIST 120
+#define FOLLOW_MINDIST 80
+#define FOLLOW_RUNDIST 180
 
 /*
 ================
@@ -47,7 +48,7 @@ iceAI_Follower::Init
 void iceAI_Follower::Init()
 {
 	inCustomAnim = false;
-	AI_RUN = false;
+	AI_RUN		 = false;
 
 	int mod;
 	spawnArgs.GetInt( "head_look", 0, mod );
@@ -86,8 +87,7 @@ iceAI_Follower::state_idle_frame
 */
 stateResult_t iceAI_Follower::state_idle_frame( stateParms_t* parms )
 {
-	if( AI_TALK )
-	{
+	if( AI_TALK ) {
 		PlayCustomAnim( "melee_attack1", 0, 0 );
 		stateThread.SetState( "state_talk_anim" );
 		return SRESULT_DONE;
@@ -96,7 +96,6 @@ stateResult_t iceAI_Follower::state_idle_frame( stateParms_t* parms )
 	return SRESULT_WAIT;
 }
 
-
 /*
 ================
 iceAI_Follower::state_idle_frame
@@ -104,8 +103,7 @@ iceAI_Follower::state_idle_frame
 */
 stateResult_t iceAI_Follower::state_talk_anim( stateParms_t* parms )
 {
-	if( AnimDone( ANIMCHANNEL_TORSO, 0 ) )
-	{
+	if( AnimDone( ANIMCHANNEL_TORSO, 0 ) ) {
 		stateThread.SetState( "state_follow" );
 		Event_AnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 0 );
 		Event_AnimState( ANIMCHANNEL_LEGS, "Legs_Idle", 0 );
@@ -122,8 +120,7 @@ iceAI_Follower::state_follow
 stateResult_t iceAI_Follower::state_follow( stateParms_t* parms )
 {
 	leader = talkTarget.GetEntity();
-	if( !leader )
-	{
+	if( !leader ) {
 		leader = gameLocal.GetLocalPlayer();
 	}
 
@@ -142,26 +139,21 @@ stateResult_t iceAI_Follower::state_follow_frame( stateParms_t* parms )
 {
 	Event_LookAtEntity( leader, 0.1f );
 
-	if( AI_TALK )
-	{
+	if( AI_TALK ) {
 		stateThread.SetState( "state_idle" );
 		return SRESULT_DONE;
 	}
 
-	if( DistanceTo( leader ) > FOLLOW_MAXDIST )
-	{
+	if( DistanceTo( leader ) > FOLLOW_MAXDIST ) {
 		leader = talkTarget.GetEntity();
-		if( !leader )
-		{
+		if( !leader ) {
 			leader = gameLocal.GetLocalPlayer();
 		}
 		Event_SetTalkTarget( NULL );
 		AI_RUN = false;
 		Event_MoveToEntity( leader );
 		stateThread.SetState( "state_get_closer" );
-	}
-	else
-	{
+	} else {
 		Event_FaceEntity( leader );
 	}
 	return SRESULT_WAIT;
@@ -175,24 +167,20 @@ iceAI_Follower::state_get_closer
 stateResult_t iceAI_Follower::state_get_closer( stateParms_t* parms )
 {
 	bool switchState = !( !AI_DEST_UNREACHABLE && !AI_MOVE_DONE && ( DistanceTo( leader ) > FOLLOW_MINDIST ) );
-	if( switchState )
-	{
+	if( switchState ) {
 		stateThread.SetState( "state_follow_frame" );
 		Event_StopMove();
 		return SRESULT_DONE;
 	}
 
 	Event_LookAtEntity( leader, 0.1f );
-	if( DistanceTo( leader ) > FOLLOW_RUNDIST )
-	{
+	if( DistanceTo( leader ) > FOLLOW_RUNDIST ) {
 		AI_RUN = true;
 	}
-	if( DistanceTo( leader ) < FOLLOW_MAXDIST )
-	{
+	if( DistanceTo( leader ) < FOLLOW_MAXDIST ) {
 		AI_RUN = false;
 	}
-	if( AI_TALK )
-	{
+	if( AI_TALK ) {
 		stateThread.SetState( "state_Idle" );
 	}
 	return SRESULT_WAIT;
@@ -208,4 +196,3 @@ stateResult_t iceAI_Follower::state_killed( stateParms_t* parms )
 	Event_StopMove();
 	return SRESULT_DONE;
 }
-

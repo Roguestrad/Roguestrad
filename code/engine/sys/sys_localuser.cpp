@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -47,13 +48,10 @@ void idLocalUser::Pump()
 	// Pump the profile
 	GetProfileMgr().Pump();
 
-	if( GetProfileMgr().GetProfile() != NULL && GetProfileMgr().GetProfile()->GetState() == idPlayerProfile::IDLE )
-	{
+	if( GetProfileMgr().GetProfile() != NULL && GetProfileMgr().GetProfile()->GetState() == idPlayerProfile::IDLE ) {
 		// Pump achievements
-		if( syncAchievementsRequested )
-		{
-			if( session->GetAchievementSystem().IsInitialized() )
-			{
+		if( syncAchievementsRequested ) {
+			if( session->GetAchievementSystem().IsInitialized() ) {
 				session->GetAchievementSystem().SyncAchievementBits( this );
 				syncAchievementsRequested = false;
 			}
@@ -114,8 +112,7 @@ idLocalUser::SetStatInt
 void idLocalUser::SetStatInt( int s, int v )
 {
 	idPlayerProfile* profile = GetProfile();
-	if( profile != NULL )
-	{
+	if( profile != NULL ) {
 		return profile->StatSetInt( s, v );
 	}
 }
@@ -128,8 +125,7 @@ idLocalUser::SetStatFloat
 void idLocalUser::SetStatFloat( int s, float v )
 {
 	idPlayerProfile* profile = GetProfile();
-	if( profile != NULL )
-	{
+	if( profile != NULL ) {
 		return profile->StatSetFloat( s, v );
 	}
 }
@@ -139,12 +135,11 @@ void idLocalUser::SetStatFloat( int s, float v )
 idLocalUser::GetStatInt
 ========================
 */
-int	idLocalUser::GetStatInt( int s )
+int idLocalUser::GetStatInt( int s )
 {
 	const idPlayerProfile* profile = GetProfile();
 
-	if( profile != NULL && s >= 0 )
-	{
+	if( profile != NULL && s >= 0 ) {
 		return profile->StatGetInt( s );
 	}
 
@@ -160,8 +155,7 @@ float idLocalUser::GetStatFloat( int s )
 {
 	const idPlayerProfile* profile = GetProfile();
 
-	if( profile != NULL )
-	{
+	if( profile != NULL ) {
 		return profile->StatGetFloat( s );
 	}
 
@@ -178,14 +172,12 @@ void idLocalUser::LoadProfileSettings()
 	idPlayerProfile* profile = GetProfileMgr().GetProfile();
 
 	// Lazy instantiation
-	if( profile == NULL )
-	{
+	if( profile == NULL ) {
 		// Create a new profile
 		profile = idPlayerProfile::CreatePlayerProfile( GetInputDevice() );
 	}
 
-	if( profile != NULL )
-	{
+	if( profile != NULL ) {
 		profile->LoadSettings();
 	}
 
@@ -200,8 +192,7 @@ idLocalUser::SaveProfileSettings
 void idLocalUser::SaveProfileSettings()
 {
 	idPlayerProfile* profile = GetProfileMgr().GetProfile();
-	if( profile != NULL )
-	{
+	if( profile != NULL ) {
 		profile->SaveSettings( true );
 	}
 

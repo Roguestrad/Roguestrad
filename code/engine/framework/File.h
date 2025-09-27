@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,107 +39,104 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 // mode parm for Seek
-typedef enum
-{
-	FS_SEEK_CUR,
-	FS_SEEK_END,
-	FS_SEEK_SET
-} fsOrigin_t;
+typedef enum { FS_SEEK_CUR, FS_SEEK_END, FS_SEEK_SET } fsOrigin_t;
 
 class idFileSystemLocal;
-
 
 class idFile
 {
 public:
-	virtual					~idFile() {};
+	virtual ~idFile() {};
 	// Get the name of the file.
-	virtual const char* 	GetName() const;
+	virtual const char* GetName() const;
 	// Get the full file path.
-	virtual const char* 	GetFullPath() const;
+	virtual const char* GetFullPath() const;
 	// Read data from the file to the buffer.
-	virtual int				Read( void* buffer, int len );
+	virtual int			Read( void* buffer, int len );
 	// Write data from the buffer to the file.
-	virtual int				Write( const void* buffer, int len );
+	virtual int			Write( const void* buffer, int len );
 	// Returns the length of the file.
-	virtual int				Length() const;
+	virtual int			Length() const;
 	// Return a time value for reload operations.
-	virtual ID_TIME_T		Timestamp() const;
+	virtual ID_TIME_T	Timestamp() const;
 	// Returns offset in file.
-	virtual int				Tell() const;
+	virtual int			Tell() const;
 	// Forces flush on files being writting to.
-	virtual void			ForceFlush();
+	virtual void		ForceFlush();
 	// Causes any buffered data to be written to the file.
-	virtual void			Flush();
+	virtual void		Flush();
 	// Seek on a file.
-	virtual int				Seek( long offset, fsOrigin_t origin );
+	virtual int			Seek( long offset, fsOrigin_t origin );
 	// Go back to the beginning of the file.
-	virtual void			Rewind();
+	virtual void		Rewind();
 	// Like fprintf.
-	virtual int				Printf( VERIFY_FORMAT_STRING const char* fmt, ... );
+	virtual int			Printf( VERIFY_FORMAT_STRING const char* fmt, ... );
 	// Like fprintf but with argument pointer
-	virtual int				VPrintf( const char* fmt, va_list arg );
+	virtual int			VPrintf( const char* fmt, va_list arg );
 	// Write a string with high precision floating point numbers to the file.
-	virtual int				WriteFloatString( VERIFY_FORMAT_STRING const char* fmt, ... );
+	virtual int			WriteFloatString( VERIFY_FORMAT_STRING const char* fmt, ... );
 
 	// Endian portable alternatives to Read(...)
-	virtual int				ReadInt( int& value );
-	virtual int				ReadUnsignedInt( unsigned int& value );
-	virtual int				ReadShort( short& value );
-	virtual int				ReadUnsignedShort( unsigned short& value );
-	virtual int				ReadChar( char& value );
-	virtual int				ReadUnsignedChar( unsigned char& value );
-	virtual int				ReadFloat( float& value );
-	virtual int				ReadBool( bool& value );
-	virtual int				ReadString( idStr& string );
-	virtual int				ReadVec2( idVec2& vec );
-	virtual int				ReadVec3( idVec3& vec );
-	virtual int				ReadVec4( idVec4& vec );
-	virtual int				ReadVec6( idVec6& vec );
-	virtual int				ReadMat3( idMat3& mat );
+	virtual int			ReadInt( int& value );
+	virtual int			ReadUnsignedInt( unsigned int& value );
+	virtual int			ReadShort( short& value );
+	virtual int			ReadUnsignedShort( unsigned short& value );
+	virtual int			ReadChar( char& value );
+	virtual int			ReadUnsignedChar( unsigned char& value );
+	virtual int			ReadFloat( float& value );
+	virtual int			ReadBool( bool& value );
+	virtual int			ReadString( idStr& string );
+	virtual int			ReadVec2( idVec2& vec );
+	virtual int			ReadVec3( idVec3& vec );
+	virtual int			ReadVec4( idVec4& vec );
+	virtual int			ReadVec6( idVec6& vec );
+	virtual int			ReadMat3( idMat3& mat );
 
 	// Endian portable alternatives to Write(...)
-	virtual int				WriteInt( const int value );
-	virtual int				WriteUnsignedInt( const unsigned int value );
-	virtual int				WriteShort( const short value );
-	virtual int				WriteUnsignedShort( unsigned short value );
-	virtual int				WriteChar( const char value );
-	virtual int				WriteUnsignedChar( const unsigned char value );
-	virtual int				WriteFloat( const float value );
-	virtual int				WriteBool( const bool value );
-	virtual int				WriteString( const char* string );
-	virtual int				WriteVec2( const idVec2& vec );
-	virtual int				WriteVec3( const idVec3& vec );
-	virtual int				WriteVec4( const idVec4& vec );
-	virtual int				WriteVec6( const idVec6& vec );
-	virtual int				WriteMat3( const idMat3& mat );
+	virtual int			WriteInt( const int value );
+	virtual int			WriteUnsignedInt( const unsigned int value );
+	virtual int			WriteShort( const short value );
+	virtual int			WriteUnsignedShort( unsigned short value );
+	virtual int			WriteChar( const char value );
+	virtual int			WriteUnsignedChar( const unsigned char value );
+	virtual int			WriteFloat( const float value );
+	virtual int			WriteBool( const bool value );
+	virtual int			WriteString( const char* string );
+	virtual int			WriteVec2( const idVec2& vec );
+	virtual int			WriteVec3( const idVec3& vec );
+	virtual int			WriteVec4( const idVec4& vec );
+	virtual int			WriteVec6( const idVec6& vec );
+	virtual int			WriteMat3( const idMat3& mat );
 
-	template<class type> ID_INLINE size_t ReadBig( type& c )
+	template<class type>
+	ID_INLINE size_t ReadBig( type& c )
 	{
 		size_t r = Read( &c, sizeof( c ) );
 		idSwap::Big( c );
 		return r;
 	}
 
-	template<class type> ID_INLINE size_t ReadBigArray( type* c, int count )
+	template<class type>
+	ID_INLINE size_t ReadBigArray( type* c, int count )
 	{
 		size_t r = Read( c, sizeof( c[0] ) * count );
 		idSwap::BigArray( c, count );
 		return r;
 	}
 
-	template<class type> ID_INLINE size_t WriteBig( const type& c )
+	template<class type>
+	ID_INLINE size_t WriteBig( const type& c )
 	{
 		type b = c;
 		idSwap::Big( b );
 		return Write( &b, sizeof( b ) );
 	}
 
-	template<class type> ID_INLINE size_t WriteBigArray( const type* c, int count )
+	template<class type>
+	ID_INLINE size_t WriteBigArray( const type* c, int count )
 	{
 		size_t r = 0;
-		for( int i = 0; i < count; i++ )
-		{
+		for( int i = 0; i < count; i++ ) {
 			r += WriteBig( c[i] );
 		}
 		return r;
@@ -152,265 +150,212 @@ idFile_Memory
 */
 class idFile_Memory : public idFile
 {
-	friend class			idFileSystemLocal;
+	friend class idFileSystemLocal;
 
 public:
-	idFile_Memory();	// file for writing without name
-	idFile_Memory( const char* name );	// file for writing
-	idFile_Memory( const char* name, char* data, int length );	// file for writing
-	idFile_Memory( const char* name, const char* data, int length );	// file for reading
-	virtual					~idFile_Memory();
+	idFile_Memory();												 // file for writing without name
+	idFile_Memory( const char* name );								 // file for writing
+	idFile_Memory( const char* name, char* data, int length );		 // file for writing
+	idFile_Memory( const char* name, const char* data, int length ); // file for reading
+	virtual ~idFile_Memory();
 
-	virtual const char* 	GetName() const
-	{
-		return name.c_str();
-	}
-	virtual const char* 	GetFullPath() const
-	{
-		return name.c_str();
-	}
-	virtual int				Read( void* buffer, int len );
-	virtual int				Write( const void* buffer, int len );
-	virtual int				Length() const;
-	virtual void			SetLength( size_t len );
-	virtual ID_TIME_T		Timestamp() const;
-	virtual int				Tell() const;
-	virtual void			ForceFlush();
-	virtual void			Flush();
-	virtual int				Seek( long offset, fsOrigin_t origin );
+	virtual const char* GetName() const { return name.c_str(); }
+	virtual const char* GetFullPath() const { return name.c_str(); }
+	virtual int			Read( void* buffer, int len );
+	virtual int			Write( const void* buffer, int len );
+	virtual int			Length() const;
+	virtual void		SetLength( size_t len );
+	virtual ID_TIME_T	Timestamp() const;
+	virtual int			Tell() const;
+	virtual void		ForceFlush();
+	virtual void		Flush();
+	virtual int			Seek( long offset, fsOrigin_t origin );
 
 	// Set the given length and don't allow the file to grow.
-	void					SetMaxLength( size_t len );
+	void				SetMaxLength( size_t len );
 	// changes memory file to read only
-	void					MakeReadOnly();
+	void				MakeReadOnly();
 	// Change the file to be writable
-	void					MakeWritable();
+	void				MakeWritable();
 	// clear the file
-	virtual void			Clear( bool freeMemory = true );
+	virtual void		Clear( bool freeMemory = true );
 	// set data for reading
-	void					SetData( const char* data, int length );
+	void				SetData( const char* data, int length );
 	// returns const pointer to the memory buffer
-	const char* 			GetDataPtr() const
-	{
-		return filePtr;
-	}
+	const char*			GetDataPtr() const { return filePtr; }
 	// returns pointer to the memory buffer
-	char* 					GetDataPtr()
-	{
-		return filePtr;
-	}
+	char*				GetDataPtr() { return filePtr; }
 	// set the file granularity
-	void					SetGranularity( int g )
+	void				SetGranularity( int g )
 	{
 		assert( g > 0 );
 		granularity = g;
 	}
-	void					PreAllocate( size_t len );
+	void   PreAllocate( size_t len );
 
 	// Doesn't change how much is allocated, but allows you to set the size of the file to smaller than it should be.
 	// Useful for stripping off a checksum at the end of the file
-	void					TruncateData( size_t len );
+	void   TruncateData( size_t len );
 
-	void					TakeDataOwnership();
+	void   TakeDataOwnership();
 
-	size_t					GetMaxLength()
-	{
-		return maxSize;
-	}
-	size_t					GetAllocated()
-	{
-		return allocated;
-	}
+	size_t GetMaxLength() { return maxSize; }
+	size_t GetAllocated() { return allocated; }
 
 protected:
-	idStr					name;			// name of the file
+	idStr name; // name of the file
 private:
-	int						mode;			// open mode
-	size_t					maxSize;		// maximum size of file
-	size_t					fileSize;		// size of the file
-	size_t					allocated;		// allocated size
-	int						granularity;	// file granularity
-	char* 					filePtr;		// buffer holding the file data
-	char* 					curPtr;			// current read/write pointer
+	int	   mode;		// open mode
+	size_t maxSize;		// maximum size of file
+	size_t fileSize;	// size of the file
+	size_t allocated;	// allocated size
+	int	   granularity; // file granularity
+	char*  filePtr;		// buffer holding the file data
+	char*  curPtr;		// current read/write pointer
 };
-
 
 class idFile_BitMsg : public idFile
 {
-	friend class			idFileSystemLocal;
+	friend class idFileSystemLocal;
 
 public:
 	idFile_BitMsg( idBitMsg& msg );
 	idFile_BitMsg( const idBitMsg& msg );
-	virtual					~idFile_BitMsg();
+	virtual ~idFile_BitMsg();
 
-	virtual const char* 	GetName() const
-	{
-		return name.c_str();
-	}
-	virtual const char* 	GetFullPath() const
-	{
-		return name.c_str();
-	}
-	virtual int				Read( void* buffer, int len );
-	virtual int				Write( const void* buffer, int len );
-	virtual int				Length() const;
-	virtual ID_TIME_T		Timestamp() const;
-	virtual int				Tell() const;
-	virtual void			ForceFlush();
-	virtual void			Flush();
-	virtual int				Seek( long offset, fsOrigin_t origin );
+	virtual const char* GetName() const { return name.c_str(); }
+	virtual const char* GetFullPath() const { return name.c_str(); }
+	virtual int			Read( void* buffer, int len );
+	virtual int			Write( const void* buffer, int len );
+	virtual int			Length() const;
+	virtual ID_TIME_T	Timestamp() const;
+	virtual int			Tell() const;
+	virtual void		ForceFlush();
+	virtual void		Flush();
+	virtual int			Seek( long offset, fsOrigin_t origin );
 
 private:
-	idStr					name;			// name of the file
-	int						mode;			// open mode
-	idBitMsg* 				msg;
+	idStr	  name; // name of the file
+	int		  mode; // open mode
+	idBitMsg* msg;
 };
-
 
 class idFile_Permanent : public idFile
 {
-	friend class			idFileSystemLocal;
+	friend class idFileSystemLocal;
 
 public:
 	idFile_Permanent();
-	virtual					~idFile_Permanent();
+	virtual ~idFile_Permanent();
 
-	virtual const char* 	GetName() const
-	{
-		return name.c_str();
-	}
-	virtual const char* 	GetFullPath() const
-	{
-		return fullPath.c_str();
-	}
-	virtual int				Read( void* buffer, int len );
-	virtual int				Write( const void* buffer, int len );
-	virtual int				Length() const;
-	virtual ID_TIME_T		Timestamp() const;
-	virtual int				Tell() const;
-	virtual void			ForceFlush();
-	virtual void			Flush();
-	virtual int				Seek( long offset, fsOrigin_t origin );
+	virtual const char* GetName() const { return name.c_str(); }
+	virtual const char* GetFullPath() const { return fullPath.c_str(); }
+	virtual int			Read( void* buffer, int len );
+	virtual int			Write( const void* buffer, int len );
+	virtual int			Length() const;
+	virtual ID_TIME_T	Timestamp() const;
+	virtual int			Tell() const;
+	virtual void		ForceFlush();
+	virtual void		Flush();
+	virtual int			Seek( long offset, fsOrigin_t origin );
 
 	// returns file pointer
-	idFileHandle			GetFilePtr()
-	{
-		return o;
-	}
+	idFileHandle		GetFilePtr() { return o; }
 
 private:
-	idStr					name;			// relative path of the file - relative path
-	idStr					fullPath;		// full file path - OS path
-	int						mode;			// open mode
-	int						fileSize;		// size of the file
-	idFileHandle			o;				// file handle
-	bool					handleSync;		// true if written data is immediately flushed
+	idStr		 name;		 // relative path of the file - relative path
+	idStr		 fullPath;	 // full file path - OS path
+	int			 mode;		 // open mode
+	int			 fileSize;	 // size of the file
+	idFileHandle o;			 // file handle
+	bool		 handleSync; // true if written data is immediately flushed
 };
 
 class idFile_Cached : public idFile_Permanent
 {
-	friend class			idFileSystemLocal;
+	friend class idFileSystemLocal;
+
 public:
 	idFile_Cached();
-	virtual					~idFile_Cached();
+	virtual ~idFile_Cached();
 
-	void					CacheData( uint64 offset, uint64 length );
+	void		CacheData( uint64 offset, uint64 length );
 
-	virtual int				Read( void* buffer, int len );
+	virtual int Read( void* buffer, int len );
 
-	virtual int				Tell() const;
-	virtual int				Seek( long offset, fsOrigin_t origin );
+	virtual int Tell() const;
+	virtual int Seek( long offset, fsOrigin_t origin );
 
 private:
-	uint64				internalFilePos;
-	uint64				bufferedStartOffset;
-	uint64				bufferedEndOffset;
-	byte* 				buffered;
+	uint64 internalFilePos;
+	uint64 bufferedStartOffset;
+	uint64 bufferedEndOffset;
+	byte*  buffered;
 };
-
 
 class idFile_InZip : public idFile
 {
-	//friend class			idFileSystemLocal;
-	friend class			idZipContainer;
+	// friend class			idFileSystemLocal;
+	friend class idZipContainer;
 
 public:
 	idFile_InZip();
-	virtual					~idFile_InZip();
+	virtual ~idFile_InZip();
 
-	virtual const char* 	GetName() const
-	{
-		return name.c_str();
-	}
-	virtual const char* 	GetFullPath() const
-	{
-		return fullPath.c_str();
-	}
-	virtual int				Read( void* buffer, int len );
-	virtual int				Write( const void* buffer, int len );
-	virtual int				Length() const;
-	virtual ID_TIME_T		Timestamp() const;
-	virtual int				Tell() const;
-	virtual void			ForceFlush();
-	virtual void			Flush();
-	virtual int				Seek( long offset, fsOrigin_t origin );
+	virtual const char* GetName() const { return name.c_str(); }
+	virtual const char* GetFullPath() const { return fullPath.c_str(); }
+	virtual int			Read( void* buffer, int len );
+	virtual int			Write( const void* buffer, int len );
+	virtual int			Length() const;
+	virtual ID_TIME_T	Timestamp() const;
+	virtual int			Tell() const;
+	virtual void		ForceFlush();
+	virtual void		Flush();
+	virtual int			Seek( long offset, fsOrigin_t origin );
 
 private:
-	idStr					name;			// name of the file in the pak
-	idStr					fullPath;		// full file path including pak file name
+	idStr	 name;	   // name of the file in the pak
+	idStr	 fullPath; // full file path including pak file name
 	// DG: use ZPOS64_T, it's the type minizip uses and should also work with zip64 files > 2GB
-	ZPOS64_T				zipFilePos;		// zip file info position in pak
+	ZPOS64_T zipFilePos; // zip file info position in pak
 	// DG end
-	int						fileSize;		// size of the file
-	void* 					z;				// unzip info
+	int		 fileSize; // size of the file
+	void*	 z;		   // unzip info
 };
 
 class idFile_InnerResource : public idFile
 {
-	friend class			idFileSystemLocal;
+	friend class idFileSystemLocal;
 
 public:
 	idFile_InnerResource( const char* _name, idFile* rezFile, int _offset, int _len );
-	virtual					~idFile_InnerResource();
+	virtual ~idFile_InnerResource();
 
-	virtual const char* 	GetName() const
-	{
-		return name.c_str();
-	}
-	virtual const char* 	GetFullPath() const
-	{
-		return name.c_str();
-	}
-	virtual int				Read( void* buffer, int len );
-	virtual int				Write( const void* buffer, int len )
+	virtual const char* GetName() const { return name.c_str(); }
+	virtual const char* GetFullPath() const { return name.c_str(); }
+	virtual int			Read( void* buffer, int len );
+	virtual int			Write( const void* buffer, int len )
 	{
 		assert( false );
 		return 0;
 	}
-	virtual int				Length() const
+	virtual int		  Length() const { return length; }
+	virtual ID_TIME_T Timestamp() const { return 0; }
+	virtual int		  Tell() const;
+	virtual int		  Seek( long offset, fsOrigin_t origin );
+	void			  SetResourceBuffer( byte* buf )
 	{
-		return length;
-	}
-	virtual ID_TIME_T		Timestamp() const
-	{
-		return 0;
-	}
-	virtual int				Tell() const;
-	virtual int				Seek( long offset, fsOrigin_t origin );
-	void					SetResourceBuffer( byte* buf )
-	{
-		resourceBuffer = buf;
+		resourceBuffer	= buf;
 		internalFilePos = 0;
 	}
 
 private:
-	idStr				name;				// name of the file in the pak
-	int					offset;				// offset in the resource file
-	int					length;				// size
-	idFile* 			resourceFile;		// actual file
-	int					internalFilePos;	// seek offset
-	byte* 				resourceBuffer;		// if using the temp save memory
+	idStr	name;			 // name of the file in the pak
+	int		offset;			 // offset in the resource file
+	int		length;			 // size
+	idFile* resourceFile;	 // actual file
+	int		internalFilePos; // seek offset
+	byte*	resourceBuffer;	 // if using the temp save memory
 };
 
 /*
@@ -425,7 +370,8 @@ class idFileLocal
 {
 public:
 	// Constructor that accepts and stores the file pointer.
-	idFileLocal( idFile* _file )	: file( _file )
+	idFileLocal( idFile* _file ) :
+		file( _file )
 	{
 	}
 
@@ -433,21 +379,13 @@ public:
 	~idFileLocal();
 
 	// Cast to a file pointer.
-	operator idFile* () const
-	{
-		return file;
-	}
+	operator idFile*() const { return file; }
 
 	// Member access operator for treating the wrapper as if it were the file, itself.
-	idFile* operator -> () const
-	{
-		return file;
-	}
+	idFile* operator->() const { return file; }
 
 protected:
-	idFile* file;	// The managed file pointer.
+	idFile* file; // The managed file pointer.
 };
-
-
 
 #endif /* !__FILE_H__ */

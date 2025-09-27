@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -39,24 +40,20 @@ to use the CONSOLE_COMMAND() macro inside idlib, so these must be here.
 idCommandLink* CommandLinks( idCommandLink* cl )
 {
 	static idCommandLink* commandLinks = NULL;
-	if( cl != NULL )
-	{
+	if( cl != NULL ) {
 		commandLinks = cl;
 	}
 	return commandLinks;
 }
 
-
 idCommandLink* commandLinks = NULL;
 
-idCommandLink::idCommandLink( const char* cmdName, cmdFunction_t function,
-							  const char* description, argCompletion_t argCompletion )
+idCommandLink::idCommandLink( const char* cmdName, cmdFunction_t function, const char* description, argCompletion_t argCompletion )
 {
 	next = CommandLinks();
 	CommandLinks( this );
-	cmdName_ = cmdName;
-	function_ = function;
-	description_ = description;
+	cmdName_	   = cmdName;
+	function_	   = function;
+	description_   = description;
 	argCompletion_ = argCompletion;
 }
-

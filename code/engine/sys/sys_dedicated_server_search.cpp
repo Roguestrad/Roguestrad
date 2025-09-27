@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -48,13 +49,10 @@ idDedicatedServerSearch::~idDedicatedServerSearch
 */
 idDedicatedServerSearch::~idDedicatedServerSearch()
 {
-	if( callback != NULL )
-	{
+	if( callback != NULL ) {
 		delete callback;
 	}
 }
-
-
 
 /*
 ========================
@@ -74,8 +72,7 @@ idDedicatedServerSearch::Clear
 */
 void idDedicatedServerSearch::Clear()
 {
-	if( callback != NULL )
-	{
+	if( callback != NULL ) {
 		delete callback;
 		callback = NULL;
 	}
@@ -91,20 +88,16 @@ void idDedicatedServerSearch::HandleQueryAck( lobbyAddress_t& addr, idBitMsg& ms
 {
 	bool found = false;
 	// Find the server this ack belongs to
-	for( int i = 0; i < list.Num(); i++ )
-	{
+	for( int i = 0; i < list.Num(); i++ ) {
 		serverInfoDedicated_t& query = list[i];
 
-
-		if( query.addr.Compare( addr ) )
-		{
+		if( query.addr.Compare( addr ) ) {
 			// Found the server
 			found = true;
 
 			bool canJoin = msg.ReadBool();
 
-			if( !canJoin )
-			{
+			if( !canJoin ) {
 				// If we can't join this server, then remove it
 				list.RemoveIndex( i-- );
 				break;
@@ -112,8 +105,7 @@ void idDedicatedServerSearch::HandleQueryAck( lobbyAddress_t& addr, idBitMsg& ms
 
 			query.serverInfo.Read( msg );
 			query.connectedPlayers.Clear();
-			for( int i = 0; i < query.serverInfo.numPlayers; i++ )
-			{
+			for( int i = 0; i < query.serverInfo.numPlayers; i++ ) {
 				idStr user;
 				msg.ReadString( user );
 				query.connectedPlayers.Append( user );
@@ -122,21 +114,17 @@ void idDedicatedServerSearch::HandleQueryAck( lobbyAddress_t& addr, idBitMsg& ms
 		}
 	}
 
-	if( !found )
-	{
+	if( !found ) {
 		bool canJoin = msg.ReadBool();
-		if( canJoin )
-		{
+		if( canJoin ) {
 			serverInfoDedicated_t newServer;
 			newServer.addr = addr;
 			newServer.serverInfo.Read( msg );
-			if( newServer.serverInfo.serverName.IsEmpty() )
-			{
+			if( newServer.serverInfo.serverName.IsEmpty() ) {
 				newServer.serverInfo.serverName = addr.ToString();
 			}
 			newServer.connectedPlayers.Clear();
-			for( int i = 0; i < newServer.serverInfo.numPlayers; i++ )
-			{
+			for( int i = 0; i < newServer.serverInfo.numPlayers; i++ ) {
 				idStr user;
 				msg.ReadString( user );
 				newServer.connectedPlayers.Append( user );
@@ -145,9 +133,7 @@ void idDedicatedServerSearch::HandleQueryAck( lobbyAddress_t& addr, idBitMsg& ms
 		}
 	}
 
-
-	if( callback != NULL )
-	{
+	if( callback != NULL ) {
 		callback->Call();
 	}
 }
@@ -159,8 +145,7 @@ idDedicatedServerSearch::GetAddrAtIndex
 */
 bool idDedicatedServerSearch::GetAddrAtIndex( netadr_t& addr, int i )
 {
-	if( i >= 0 && i < list.Num() )
-	{
+	if( i >= 0 && i < list.Num() ) {
 		addr = list[i].addr.netAddr;
 		return true;
 	}
@@ -174,8 +159,7 @@ idDedicatedServerSearch::DescribeServerAtIndex
 */
 const serverInfo_t* idDedicatedServerSearch::DescribeServerAtIndex( int i ) const
 {
-	if( i >= 0 && i < list.Num() )
-	{
+	if( i >= 0 && i < list.Num() ) {
 		return &list[i].serverInfo;
 	}
 	return NULL;
@@ -186,10 +170,9 @@ const serverInfo_t* idDedicatedServerSearch::DescribeServerAtIndex( int i ) cons
 idDedicatedServerSearch::GetServerPlayersAtIndex
 ========================
 */
-const idList< idStr >* idDedicatedServerSearch::GetServerPlayersAtIndex( int i ) const
+const idList<idStr>* idDedicatedServerSearch::GetServerPlayersAtIndex( int i ) const
 {
-	if( i >= 0 && i < list.Num() )
-	{
+	if( i >= 0 && i < list.Num() ) {
 		return &list[i].connectedPlayers;
 	}
 	return NULL;

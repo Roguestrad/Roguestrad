@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -43,13 +44,13 @@ public:
 	idSurface_SweptSpline();
 	~idSurface_SweptSpline();
 
-	void					SetSpline( idCurve_Spline<idVec4>* spline );
-	void					SetSweptSpline( idCurve_Spline<idVec4>* sweptSpline );
-	void					SetSweptCircle( const float radius );
+	void SetSpline( idCurve_Spline<idVec4>* spline );
+	void SetSweptSpline( idCurve_Spline<idVec4>* sweptSpline );
+	void SetSweptCircle( const float radius );
 
-	void					Tessellate( const int splineSubdivisions, const int sweptSplineSubdivisions );
+	void Tessellate( const int splineSubdivisions, const int sweptSplineSubdivisions );
 
-	void					Clear();
+	void Clear();
 
 protected:
 	idCurve_Spline<idVec4>* spline;
@@ -65,7 +66,7 @@ idSurface_SweptSpline::idSurface_SweptSpline
 */
 ID_INLINE idSurface_SweptSpline::idSurface_SweptSpline()
 {
-	spline = NULL;
+	spline		= NULL;
 	sweptSpline = NULL;
 }
 

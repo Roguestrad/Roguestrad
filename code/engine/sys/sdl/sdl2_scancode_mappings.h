@@ -13,7 +13,6 @@
  * it would be appreciated, of course.
  */
 
-
 #ifndef _SDL2_SCANCODE_TO_DINPUT_MAPPINGS_H_
 #define _SDL2_SCANCODE_TO_DINPUT_MAPPINGS_H_
 

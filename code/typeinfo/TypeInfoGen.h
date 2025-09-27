@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -44,58 +45,57 @@ If you have questions concerning this license or the applicable additional terms
 class idConstantInfo
 {
 public:
-	idStr						name;
-	idStr						type;
-	idStr						value;
+	idStr name;
+	idStr type;
+	idStr value;
 };
 
 class idEnumValueInfo
 {
 public:
-	idStr						name;
-	int							value;
+	idStr name;
+	int	  value;
 };
 
 class idEnumTypeInfo
 {
 public:
-	idStr						typeName;
-	idStr						scope;
-	bool						unnamed;
-	bool						isTemplate;
-	idList<idEnumValueInfo>		values;
+	idStr					typeName;
+	idStr					scope;
+	bool					unnamed;
+	bool					isTemplate;
+	idList<idEnumValueInfo> values;
 };
 
 class idClassVariableInfo
 {
 public:
-	idStr						name;
-	idStr						type;
-	int							bits;
+	idStr name;
+	idStr type;
+	int	  bits;
 };
-
 
 class rvmClassFunctionInfo
 {
 public:
-	idStr						returnType;
-	idStr						name;
-	bool						isConst;
-	bool						isStatic;
-	idStr						paramStateInput;
-	bool						isValidFunction;
+	idStr returnType;
+	idStr name;
+	bool  isConst;
+	bool  isStatic;
+	idStr paramStateInput;
+	bool  isValidFunction;
 };
 
 class idClassTypeInfo
 {
 public:
-	idStr						typeName;
-	idStr						superType;
-	idStr						scope;
-	bool						unnamed;
-	bool						isTemplate;
-	idList<idClassVariableInfo>	variables;
-	idList< rvmClassFunctionInfo> functions;
+	idStr						 typeName;
+	idStr						 superType;
+	idStr						 scope;
+	bool						 unnamed;
+	bool						 isTemplate;
+	idList<idClassVariableInfo>	 variables;
+	idList<rvmClassFunctionInfo> functions;
 };
 
 class idTypeInfoGen
@@ -104,32 +104,32 @@ public:
 	idTypeInfoGen();
 	~idTypeInfoGen();
 
-	void						AddDefine( const char* define );
-	void						CreateTypeInfo( const char* path );
-	void						WriteTypeInfo( const char* fileName ) const;
+	void AddDefine( const char* define );
+	void CreateTypeInfo( const char* path );
+	void WriteTypeInfo( const char* fileName ) const;
 
 private:
-	idStrList					defines;
+	idStrList				 defines;
 
-	idList<idConstantInfo*>	constants;
-	idList<idEnumTypeInfo*>	enums;
-	idList<idClassTypeInfo*>	classes;
+	idList<idConstantInfo*>	 constants;
+	idList<idEnumTypeInfo*>	 enums;
+	idList<idClassTypeInfo*> classes;
 
-	int							numTemplates;
-	int							maxInheritance;
-	idStr						maxInheritanceClass;
+	int						 numTemplates;
+	int						 maxInheritance;
+	idStr					 maxInheritanceClass;
 
-	int							GetInheritance( const char* typeName ) const;
-	int							EvaluateIntegerString( const idStr& string );
-	float						EvaluateFloatString( const idStr& string );
-	idConstantInfo* 			FindConstant( const char* name );
-	int							GetIntegerConstant( const char* scope, const char* name, idParser& src );
-	float						GetFloatConstant( const char* scope, const char* name, idParser& src );
-	int							ParseArraySize( const char* scope, idParser& src );
-	void						ParseConstantValue( const char* scope, idParser& src, idStr& value );
-	idEnumTypeInfo* 			ParseEnumType( const char* scope, bool isTemplate, bool typeDef, idParser& src );
-	idClassTypeInfo* 			ParseClassType( const char* scope, const char* templateArgs, bool isTemplate, bool typeDef, idParser& src );
-	void						ParseScope( const char* scope, bool isTemplate, idParser& src, idClassTypeInfo* typeInfo );
+	int						 GetInheritance( const char* typeName ) const;
+	int						 EvaluateIntegerString( const idStr& string );
+	float					 EvaluateFloatString( const idStr& string );
+	idConstantInfo*			 FindConstant( const char* name );
+	int						 GetIntegerConstant( const char* scope, const char* name, idParser& src );
+	float					 GetFloatConstant( const char* scope, const char* name, idParser& src );
+	int						 ParseArraySize( const char* scope, idParser& src );
+	void					 ParseConstantValue( const char* scope, idParser& src, idStr& value );
+	idEnumTypeInfo*			 ParseEnumType( const char* scope, bool isTemplate, bool typeDef, idParser& src );
+	idClassTypeInfo*		 ParseClassType( const char* scope, const char* templateArgs, bool isTemplate, bool typeDef, idParser& src );
+	void					 ParseScope( const char* scope, bool isTemplate, idParser& src, idClassTypeInfo* typeInfo );
 };
 
 #endif /* !__TYPEINFOGEN_H__ */

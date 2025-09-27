@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,7 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "precompiled.h"
 #pragma hdrstop
-
 
 #include "../Game_local.h"
 
@@ -44,11 +44,11 @@ idPhysics_Actor::idPhysics_Actor()
 {
 	clipModel = NULL;
 	SetClipModelAxis();
-	mass = 100.0f;
-	invMass = 1.0f / mass;
-	masterEntity = NULL;
-	masterYaw = 0.0f;
-	masterDeltaYaw = 0.0f;
+	mass			= 100.0f;
+	invMass			= 1.0f / mass;
+	masterEntity	= NULL;
+	masterYaw		= 0.0f;
+	masterDeltaYaw	= 0.0f;
 	groundEntityPtr = NULL;
 }
 
@@ -59,8 +59,7 @@ idPhysics_Actor::~idPhysics_Actor
 */
 idPhysics_Actor::~idPhysics_Actor()
 {
-	if( clipModel )
-	{
+	if( clipModel ) {
 		delete clipModel;
 		clipModel = NULL;
 	}
@@ -73,7 +72,6 @@ idPhysics_Actor::Save
 */
 void idPhysics_Actor::Save( idSaveGame* savefile ) const
 {
-
 	savefile->WriteClipModel( clipModel );
 	savefile->WriteMat3( clipModelAxis );
 
@@ -94,7 +92,6 @@ idPhysics_Actor::Restore
 */
 void idPhysics_Actor::Restore( idRestoreGame* savefile )
 {
-
 	savefile->ReadClipModel( clipModel );
 	savefile->ReadMat3( clipModelAxis );
 
@@ -116,19 +113,15 @@ idPhysics_Actor::SetClipModelAxis
 void idPhysics_Actor::SetClipModelAxis()
 {
 	// align clip model to gravity direction
-	if( ( gravityNormal[2] == -1.0f ) || ( gravityNormal == vec3_zero ) )
-	{
+	if( ( gravityNormal[2] == -1.0f ) || ( gravityNormal == vec3_zero ) ) {
 		clipModelAxis.Identity();
-	}
-	else
-	{
+	} else {
 		clipModelAxis[2] = -gravityNormal;
 		clipModelAxis[2].NormalVectors( clipModelAxis[0], clipModelAxis[1] );
 		clipModelAxis[1] = -clipModelAxis[1];
 	}
 
-	if( clipModel )
-	{
+	if( clipModel ) {
 		clipModel->Link( gameLocal.clip, self, 0, clipModel->GetOrigin(), clipModelAxis );
 	}
 }
@@ -171,12 +164,11 @@ idPhysics_Actor::SetClipModel
 void idPhysics_Actor::SetClipModel( idClipModel* model, const float density, int id, bool freeOld )
 {
 	assert( self );
-	assert( model );					// a clip model is required
-	assert( model->IsTraceModel() );	// and it should be a trace model
-	assert( density > 0.0f );			// density should be valid
+	assert( model );				 // a clip model is required
+	assert( model->IsTraceModel() ); // and it should be a trace model
+	assert( density > 0.0f );		 // density should be valid
 
-	if( clipModel && clipModel != model && freeOld )
-	{
+	if( clipModel && clipModel != model && freeOld ) {
 		delete clipModel;
 	}
 	clipModel = model;
@@ -211,7 +203,7 @@ idPhysics_Actor::SetMass
 void idPhysics_Actor::SetMass( float _mass, int id )
 {
 	assert( _mass > 0.0f );
-	mass = _mass;
+	mass	= _mass;
 	invMass = 1.0f / _mass;
 }
 
@@ -302,8 +294,7 @@ idPhysics_Actor::SetGravity
 */
 void idPhysics_Actor::SetGravity( const idVec3& newGravity )
 {
-	if( newGravity != gravityVector )
-	{
+	if( newGravity != gravityVector ) {
 		idPhysics_Base::SetGravity( newGravity );
 		SetClipModelAxis();
 	}
@@ -316,16 +307,11 @@ idPhysics_Actor::ClipTranslation
 */
 void idPhysics_Actor::ClipTranslation( trace_t& results, const idVec3& translation, const idClipModel* model ) const
 {
-	if( model )
-	{
-		gameLocal.clip.TranslationModel( results, clipModel->GetOrigin(), clipModel->GetOrigin() + translation,
-										 clipModel, clipModel->GetAxis(), clipMask,
-										 model->Handle(), model->GetOrigin(), model->GetAxis() );
-	}
-	else
-	{
-		gameLocal.clip.Translation( results, clipModel->GetOrigin(), clipModel->GetOrigin() + translation,
-									clipModel, clipModel->GetAxis(), clipMask, self );
+	if( model ) {
+		gameLocal.clip.TranslationModel(
+			results, clipModel->GetOrigin(), clipModel->GetOrigin() + translation, clipModel, clipModel->GetAxis(), clipMask, model->Handle(), model->GetOrigin(), model->GetAxis() );
+	} else {
+		gameLocal.clip.Translation( results, clipModel->GetOrigin(), clipModel->GetOrigin() + translation, clipModel, clipModel->GetAxis(), clipMask, self );
 	}
 }
 
@@ -336,16 +322,10 @@ idPhysics_Actor::ClipRotation
 */
 void idPhysics_Actor::ClipRotation( trace_t& results, const idRotation& rotation, const idClipModel* model ) const
 {
-	if( model )
-	{
-		gameLocal.clip.RotationModel( results, clipModel->GetOrigin(), rotation,
-									  clipModel, clipModel->GetAxis(), clipMask,
-									  model->Handle(), model->GetOrigin(), model->GetAxis() );
-	}
-	else
-	{
-		gameLocal.clip.Rotation( results, clipModel->GetOrigin(), rotation,
-								 clipModel, clipModel->GetAxis(), clipMask, self );
+	if( model ) {
+		gameLocal.clip.RotationModel( results, clipModel->GetOrigin(), rotation, clipModel, clipModel->GetAxis(), clipMask, model->Handle(), model->GetOrigin(), model->GetAxis() );
+	} else {
+		gameLocal.clip.Rotation( results, clipModel->GetOrigin(), rotation, clipModel, clipModel->GetAxis(), clipMask, self );
 	}
 }
 
@@ -356,13 +336,9 @@ idPhysics_Actor::ClipContents
 */
 int idPhysics_Actor::ClipContents( const idClipModel* model ) const
 {
-	if( model )
-	{
-		return gameLocal.clip.ContentsModel( clipModel->GetOrigin(), clipModel, clipModel->GetAxis(), -1,
-											 model->Handle(), model->GetOrigin(), model->GetAxis() );
-	}
-	else
-	{
+	if( model ) {
+		return gameLocal.clip.ContentsModel( clipModel->GetOrigin(), clipModel, clipModel->GetAxis(), -1, model->Handle(), model->GetOrigin(), model->GetAxis() );
+	} else {
 		return gameLocal.clip.Contents( clipModel->GetOrigin(), clipModel, clipModel->GetAxis(), -1, NULL );
 	}
 }
@@ -414,7 +390,6 @@ idPhysics_Actor::EvaluateContacts
 */
 bool idPhysics_Actor::EvaluateContacts()
 {
-
 	// get all the ground contacts
 	ClearContacts();
 	AddGroundContacts( clipModel );

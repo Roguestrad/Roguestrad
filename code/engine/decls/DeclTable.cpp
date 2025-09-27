@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,7 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-
 /*
 =================
 idDeclTable::TableLookup
@@ -37,46 +37,37 @@ idDeclTable::TableLookup
 */
 float idDeclTable::TableLookup( float index ) const
 {
-	int iIndex;
+	int	  iIndex;
 	float iFrac;
 
-	int domain = values.Num() - 1;
+	int	  domain = values.Num() - 1;
 
-	if( domain <= 1 )
-	{
+	if( domain <= 1 ) {
 		return 1.0f;
 	}
 
-	if( clamp )
-	{
+	if( clamp ) {
 		index *= ( domain - 1 );
-		if( index >= domain - 1 )
-		{
+		if( index >= domain - 1 ) {
 			return values[domain - 1];
-		}
-		else if( index <= 0 )
-		{
+		} else if( index <= 0 ) {
 			return values[0];
 		}
 		iIndex = idMath::Ftoi( index );
-		iFrac = index - iIndex;
-	}
-	else
-	{
+		iFrac  = index - iIndex;
+	} else {
 		index *= domain;
 
-		if( index < 0 )
-		{
+		if( index < 0 ) {
 			index += domain * idMath::Ceil( -index / domain );
 		}
 
 		iIndex = idMath::Ftoi( idMath::Floor( index ) );
-		iFrac = index - iIndex;
+		iFrac  = index - iIndex;
 		iIndex = iIndex % domain;
 	}
 
-	if( !snap )
-	{
+	if( !snap ) {
 		// we duplicated the 0 index at the end at creation time, so we
 		// don't need to worry about wrapping the filter
 		return values[iIndex] * ( 1.0f - iFrac ) + values[iIndex + 1] * iFrac;
@@ -102,7 +93,7 @@ idDeclTable::FreeData
 */
 void idDeclTable::FreeData()
 {
-	snap = false;
+	snap  = false;
 	clamp = false;
 	values.Clear();
 }
@@ -126,46 +117,35 @@ bool idDeclTable::Parse( const char* text, const int textLength, bool allowBinar
 {
 	idLexer src;
 	idToken token;
-	float v;
+	float	v;
 
 	src.LoadMemory( text, textLength, GetFileName(), GetLineNum() );
 	src.SetFlags( DECL_LEXER_FLAGS );
 	src.SkipUntilString( "{" );
 
-	snap = false;
+	snap  = false;
 	clamp = false;
 	values.Clear();
 
-	while( 1 )
-	{
-		if( !src.ReadToken( &token ) )
-		{
+	while( 1 ) {
+		if( !src.ReadToken( &token ) ) {
 			break;
 		}
 
-		if( token == "}" )
-		{
+		if( token == "}" ) {
 			break;
 		}
 
-		if( token.Icmp( "snap" ) == 0 )
-		{
+		if( token.Icmp( "snap" ) == 0 ) {
 			snap = true;
-		}
-		else if( token.Icmp( "clamp" ) == 0 )
-		{
+		} else if( token.Icmp( "clamp" ) == 0 ) {
 			clamp = true;
-		}
-		else if( token.Icmp( "{" ) == 0 )
-		{
-
-			while( 1 )
-			{
+		} else if( token.Icmp( "{" ) == 0 ) {
+			while( 1 ) {
 				bool errorFlag;
 
 				v = src.ParseFloat( &errorFlag );
-				if( errorFlag )
-				{
+				if( errorFlag ) {
 					// we got something non-numeric
 					MakeDefault();
 					return false;
@@ -174,12 +154,10 @@ bool idDeclTable::Parse( const char* text, const int textLength, bool allowBinar
 				values.Append( v );
 
 				src.ReadToken( &token );
-				if( token == "}" )
-				{
+				if( token == "}" ) {
 					break;
 				}
-				if( token == "," )
-				{
+				if( token == "," ) {
 					continue;
 				}
 				src.Warning( "expected comma or brace" );
@@ -187,9 +165,7 @@ bool idDeclTable::Parse( const char* text, const int textLength, bool allowBinar
 				return false;
 			}
 
-		}
-		else
-		{
+		} else {
 			src.Warning( "unknown token '%s'", token.c_str() );
 			MakeDefault();
 			return false;
@@ -198,7 +174,7 @@ bool idDeclTable::Parse( const char* text, const int textLength, bool allowBinar
 
 	// copy the 0 element to the end, so lerping doesn't
 	// need to worry about the wrap case
-	float val = values[0];		// template bug requires this to not be in the Append()?
+	float val = values[0]; // template bug requires this to not be in the Append()?
 	values.Append( val );
 
 	return true;

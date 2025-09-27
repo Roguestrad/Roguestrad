@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,7 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "precompiled.h"
 #pragma hdrstop
-
 
 #include "../Game_local.h"
 
@@ -42,11 +42,11 @@ idForce_Drag::idForce_Drag
 */
 idForce_Drag::idForce_Drag()
 {
-	damping			= 0.5f;
-	physics			= NULL;
-	id				= 0;
-	p				= vec3_zero;
-	dragPosition	= vec3_zero;
+	damping		 = 0.5f;
+	physics		 = NULL;
+	id			 = 0;
+	p			 = vec3_zero;
+	dragPosition = vec3_zero;
 }
 
 /*
@@ -65,8 +65,7 @@ idForce_Drag::Init
 */
 void idForce_Drag::Init( float damping )
 {
-	if( damping >= 0.0f && damping < 1.0f )
-	{
+	if( damping >= 0.0f && damping < 1.0f ) {
 		this->damping = damping;
 	}
 }
@@ -79,8 +78,8 @@ idForce_Drag::SetPhysics
 void idForce_Drag::SetPhysics( idPhysics* phys, int id, const idVec3& p )
 {
 	this->physics = phys;
-	this->id = id;
-	this->p = p;
+	this->id	  = id;
+	this->p		  = p;
 }
 
 /*
@@ -120,34 +119,30 @@ idForce_Drag::Evaluate
 */
 void idForce_Drag::Evaluate( int time )
 {
-	float l1, l2, mass;
-	idVec3 dragOrigin, dir1, dir2, velocity, centerOfMass;
-	idMat3 inertiaTensor;
-	idRotation rotation;
+	float		 l1, l2, mass;
+	idVec3		 dragOrigin, dir1, dir2, velocity, centerOfMass;
+	idMat3		 inertiaTensor;
+	idRotation	 rotation;
 	idClipModel* clipModel;
 
-	if( !physics )
-	{
+	if( !physics ) {
 		return;
 	}
 
 	clipModel = physics->GetClipModel( id );
-	if( clipModel != NULL && clipModel->IsTraceModel() )
-	{
+	if( clipModel != NULL && clipModel->IsTraceModel() ) {
 		clipModel->GetMassProperties( 1.0f, mass, centerOfMass, inertiaTensor );
-	}
-	else
-	{
+	} else {
 		centerOfMass.Zero();
 	}
 
 	centerOfMass = physics->GetOrigin( id ) + centerOfMass * physics->GetAxis( id );
-	dragOrigin = physics->GetOrigin( id ) + p * physics->GetAxis( id );
+	dragOrigin	 = physics->GetOrigin( id ) + p * physics->GetAxis( id );
 
 	dir1 = dragPosition - centerOfMass;
 	dir2 = dragOrigin - centerOfMass;
-	l1 = dir1.Normalize();
-	l2 = dir2.Normalize();
+	l1	 = dir1.Normalize();
+	l2	 = dir2.Normalize();
 
 	rotation.Set( centerOfMass, dir2.Cross( dir1 ), RAD2DEG( idMath::ACos( dir1 * dir2 ) ) );
 	physics->SetAngularVelocity( rotation.ToAngularVelocity() / MS2SEC( gameLocal.time - gameLocal.previousTime ), id );
@@ -163,8 +158,7 @@ idForce_Drag::RemovePhysics
 */
 void idForce_Drag::RemovePhysics( const idPhysics* phys )
 {
-	if( physics == phys )
-	{
+	if( physics == phys ) {
 		physics = NULL;
 	}
 }

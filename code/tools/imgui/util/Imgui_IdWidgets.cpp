@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -34,29 +35,15 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Imgui_IdWidgets.h"
 
-static const char* bodyContentsNames[5] =
-{
-	"solid",
-	"body",
-	"corpse",
-	"playerclip",
-	"monsterclip"
-};
+static const char* bodyContentsNames[5] = { "solid", "body", "corpse", "playerclip", "monsterclip" };
 
-static int contentMappingFlags[5] =
-{
-	CONTENTS_SOLID,
-	CONTENTS_BODY,
-	CONTENTS_CORPSE,
-	CONTENTS_PLAYERCLIP,
-	CONTENTS_MONSTERCLIP
-};
+static int		   contentMappingFlags[5] = { CONTENTS_SOLID, CONTENTS_BODY, CONTENTS_CORPSE, CONTENTS_PLAYERCLIP, CONTENTS_MONSTERCLIP };
 
-MultiSelectWidget::MultiSelectWidget( const char** aNames, int* contentMapping, int aNumEntries )
-	: names( aNames )
-	, contentMapping( contentMapping )
-	, numEntries( aNumEntries )
-	, selectables( nullptr )
+MultiSelectWidget::MultiSelectWidget( const char** aNames, int* contentMapping, int aNumEntries ) :
+	names( aNames ),
+	contentMapping( contentMapping ),
+	numEntries( aNumEntries ),
+	selectables( nullptr )
 {
 	selectables = ( bool* )Mem_Alloc( numEntries * sizeof( bool ), TAG_AF );
 	std::fill( selectables, selectables + numEntries, false );
@@ -75,8 +62,7 @@ void MultiSelectWidget::Update( int index, bool value )
 
 void MultiSelectWidget::UpdateWithBitFlags( int bitFlags )
 {
-	for( int i = 0; i < numEntries; i++ )
-	{
+	for( int i = 0; i < numEntries; i++ ) {
 		Update( i, bitFlags & contentMapping[i] );
 	}
 }
@@ -84,17 +70,12 @@ void MultiSelectWidget::UpdateWithBitFlags( int bitFlags )
 bool DoMultiSelect( MultiSelectWidget* widget, int* contents )
 {
 	bool pressed = false;
-	for( int i = 0; i < 5; i++ )
-	{
-		if( ImGui::Selectable( widget->names[i], &widget->selectables[i] ) )
-		{
+	for( int i = 0; i < 5; i++ ) {
+		if( ImGui::Selectable( widget->names[i], &widget->selectables[i] ) ) {
 			pressed = true;
-			if( widget->selectables[i] )
-			{
+			if( widget->selectables[i] ) {
 				*contents |= widget->contentMapping[i];
-			}
-			else
-			{
+			} else {
 				*contents &= ~widget->contentMapping[i];
 			}
 		}
@@ -106,8 +87,7 @@ bool DoMultiSelect( MultiSelectWidget* widget, int* contents )
 void HelpMarker( const char* desc )
 {
 	ImGui::TextDisabled( "(?)" );
-	if( ImGui::IsItemHovered() )
-	{
+	if( ImGui::IsItemHovered() ) {
 		ImGui::BeginTooltip();
 		ImGui::PushTextWrapPos( ImGui::GetFontSize() * 35.0f );
 		ImGui::TextUnformatted( desc );

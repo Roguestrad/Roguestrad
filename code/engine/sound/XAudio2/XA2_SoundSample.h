@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -40,94 +41,40 @@ public:
 	idSoundSample_XAudio2();
 
 	// Loads and initializes the resource based on the name.
-	virtual void	 LoadResource();
+	virtual void LoadResource();
 
-	void			SetName( const char* n )
-	{
-		name = n;
-	}
-	const char* 	GetName() const
-	{
-		return name;
-	}
-	ID_TIME_T		GetTimestamp() const
-	{
-		return timestamp;
-	}
+	void		 SetName( const char* n ) { name = n; }
+	const char*	 GetName() const { return name; }
+	ID_TIME_T	 GetTimestamp() const { return timestamp; }
 
 	// turns it into a beep
-	void			MakeDefault();
+	void		 MakeDefault();
 
 	// frees all data
-	void			FreeData();
+	void		 FreeData();
 
-	int				LengthInMsec() const
-	{
-		return SamplesToMsec( NumSamples(), SampleRate() );
-	}
-	int				SampleRate() const
-	{
-		return format.basic.samplesPerSec;
-	}
-	int				NumSamples() const
-	{
-		return playLength;
-	}
-	int				NumChannels() const
-	{
-		return format.basic.numChannels;
-	}
-	int				BufferSize() const
-	{
-		return totalBufferSize;
-	}
+	int			 LengthInMsec() const { return SamplesToMsec( NumSamples(), SampleRate() ); }
+	int			 SampleRate() const { return format.basic.samplesPerSec; }
+	int			 NumSamples() const { return playLength; }
+	int			 NumChannels() const { return format.basic.numChannels; }
+	int			 BufferSize() const { return totalBufferSize; }
 
-	bool			IsCompressed() const
-	{
-		return ( format.basic.formatTag != idWaveFile::FORMAT_PCM );
-	}
+	bool		 IsCompressed() const { return ( format.basic.formatTag != idWaveFile::FORMAT_PCM ); }
 
-	bool			IsDefault() const
-	{
-		return timestamp == FILE_NOT_FOUND_TIMESTAMP;
-	}
-	bool			IsLoaded() const
-	{
-		return loaded;
-	}
+	bool		 IsDefault() const { return timestamp == FILE_NOT_FOUND_TIMESTAMP; }
+	bool		 IsLoaded() const { return loaded; }
 
-	void			SetNeverPurge()
-	{
-		neverPurge = true;
-	}
-	bool			GetNeverPurge() const
-	{
-		return neverPurge;
-	}
+	void		 SetNeverPurge() { neverPurge = true; }
+	bool		 GetNeverPurge() const { return neverPurge; }
 
-	void			SetLevelLoadReferenced()
-	{
-		levelLoadReferenced = true;
-	}
-	void			ResetLevelLoadReferenced()
-	{
-		levelLoadReferenced = false;
-	}
-	bool			GetLevelLoadReferenced() const
-	{
-		return levelLoadReferenced;
-	}
+	void		 SetLevelLoadReferenced() { levelLoadReferenced = true; }
+	void		 ResetLevelLoadReferenced() { levelLoadReferenced = false; }
+	bool		 GetLevelLoadReferenced() const { return levelLoadReferenced; }
 
-	int				GetLastPlayedTime() const
-	{
-		return lastPlayedTime;
-	}
-	void			SetLastPlayedTime( int t )
-	{
-		lastPlayedTime = t;
-	}
+	int			 GetLastPlayedTime() const { return lastPlayedTime; }
+	void		 SetLastPlayedTime( int t ) { lastPlayedTime = t; }
 
-	float			GetAmplitude( int timeMS ) const;
+	float		 GetAmplitude( int timeMS ) const;
 
 protected:
 	friend class idSoundHardware_XAudio2;
@@ -135,40 +82,39 @@ protected:
 
 	~idSoundSample_XAudio2();
 
-	bool			LoadWav( const idStr& name );
-	bool			LoadOgg( const idStr& name );
-	bool			LoadAmplitude( const idStr& name );
-	void			WriteAllSamples( const idStr& sampleName );
-	bool			LoadGeneratedSample( const idStr& name );
-	void			WriteGeneratedSample( idFile* fileOut );
+	bool LoadWav( const idStr& name );
+	bool LoadOgg( const idStr& name );
+	bool LoadAmplitude( const idStr& name );
+	void WriteAllSamples( const idStr& sampleName );
+	bool LoadGeneratedSample( const idStr& name );
+	void WriteGeneratedSample( idFile* fileOut );
 
-	struct sampleBuffer_t
-	{
+	struct sampleBuffer_t {
 		void* buffer;
-		int bufferSize;
-		int numSamples;
+		int	  bufferSize;
+		int	  numSamples;
 	};
 
-	idStr			name;
+	idStr							  name;
 
-	ID_TIME_T		timestamp;
-	bool			loaded;
+	ID_TIME_T						  timestamp;
+	bool							  loaded;
 
-	bool			neverPurge;
-	bool			levelLoadReferenced;
-	bool			usesMapHeap;
+	bool							  neverPurge;
+	bool							  levelLoadReferenced;
+	bool							  usesMapHeap;
 
-	uint32			lastPlayedTime;
+	uint32							  lastPlayedTime;
 
-	int				totalBufferSize;	// total size of all the buffers
+	int								  totalBufferSize; // total size of all the buffers
 	idList<sampleBuffer_t, TAG_AUDIO> buffers;
 
-	int				playBegin;
-	int				playLength;
+	int								  playBegin;
+	int								  playLength;
 
-	idWaveFile::waveFmt_t	format;
+	idWaveFile::waveFmt_t			  format;
 
-	idList<byte, TAG_AMPLITUDE> amplitude;
+	idList<byte, TAG_AMPLITUDE>		  amplitude;
 };
 
 /*

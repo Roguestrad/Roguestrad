@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -41,21 +42,21 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 // RB: windows specific stuff should only be set on Windows
-#if defined(_WIN32)
+#if defined( _WIN32 )
 
-	#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS	// prevent auto literal to string conversion
+	#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS // prevent auto literal to string conversion
 
 	#ifndef _D3SDK
 		#ifndef GAME_DLL
 
-			#define WINVER				0x501
+			#define WINVER 0x501
 
 			#include <winsock2.h>
 			#include <mmsystem.h>
 			#include <mmreg.h>
 
-			#define DIRECTINPUT_VERSION  0x0800			// was 0x0700 with the old mssdk
-			#define DIRECTSOUND_VERSION  0x0800
+			#define DIRECTINPUT_VERSION 0x0800 // was 0x0700 with the old mssdk
+			#define DIRECTSOUND_VERSION 0x0800
 
 			#ifdef _MSC_VER
 				#include <dsound.h>
@@ -69,9 +70,9 @@ If you have questions concerning this license or the applicable additional terms
 				#endif
 
 				// RB begin
-				#if defined(__MINGW32__)
-					//#include <sal.h> 	// RB: missing __analysis_assume
-					// including <sal.h> breaks some STL crap ...
+				#if defined( __MINGW32__ )
+					// #include <sal.h> 	// RB: missing __analysis_assume
+					//  including <sal.h> breaks some STL crap ...
 
 					#ifndef __analysis_assume
 						#define __analysis_assume( x )
@@ -82,15 +83,13 @@ If you have questions concerning this license or the applicable additional terms
 
 			#endif
 
-
-
 			#include <dinput.h>
 
 		#endif /* !GAME_DLL */
-	#endif /* !_D3SDK */
+	#endif	   /* !_D3SDK */
 
 	// DG: intrinsics for GCC
-	#if defined(__GNUC__) && defined(__SSE2__)
+	#if defined( __GNUC__ ) && defined( __SSE2__ )
 		#include <emmintrin.h>
 
 		// TODO: else: alternative implementations?
@@ -98,19 +97,19 @@ If you have questions concerning this license or the applicable additional terms
 	// DG end
 
 	#ifdef _MSC_VER
-		#include <intrin.h>			// needed for intrinsics like _mm_setzero_si28
+		#include <intrin.h> // needed for intrinsics like _mm_setzero_si28
 
-		#pragma warning(disable : 4100)				// unreferenced formal parameter
-		#pragma warning(disable : 4127)				// conditional expression is constant
-		#pragma warning(disable : 4244)				// conversion to smaller type, possible loss of data
-		#pragma warning(disable : 4267)				// RB 'initializing': conversion from 'size_t' to 'int', possible loss of data
-		#pragma warning(disable : 4714)				// function marked as __forceinline not inlined
-		#pragma warning(disable : 4996)				// unsafe string operations
-	#endif // _MSC_VER
+		#pragma warning( disable : 4100 ) // unreferenced formal parameter
+		#pragma warning( disable : 4127 ) // conditional expression is constant
+		#pragma warning( disable : 4244 ) // conversion to smaller type, possible loss of data
+		#pragma warning( disable : 4267 ) // RB 'initializing': conversion from 'size_t' to 'int', possible loss of data
+		#pragma warning( disable : 4714 ) // function marked as __forceinline not inlined
+		#pragma warning( disable : 4996 ) // unsafe string operations
+	#endif								  // _MSC_VER
 
-	#include <windows.h>						// for gl.h
+	#include <windows.h> // for gl.h
 
-#elif defined(__linux__) || defined(__FreeBSD__)
+#elif defined( __linux__ ) || defined( __FreeBSD__ )
 
 	#include <signal.h>
 	#include <pthread.h>
@@ -118,9 +117,8 @@ If you have questions concerning this license or the applicable additional terms
 #endif // #if defined(_WIN32)
 // RB end
 
-#include <stdlib.h>							// no malloc.h on mac or unix
-#undef FindText								// fix namespace pollution
-
+#include <stdlib.h> // no malloc.h on mac or unix
+#undef FindText		// fix namespace pollution
 
 /*
 ================================================================================================

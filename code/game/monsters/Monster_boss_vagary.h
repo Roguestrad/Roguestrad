@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -32,38 +33,40 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
-
 class iceMonsterBossVagary : public idAI
 {
 public:
 	CLASS_PROTOTYPE( iceMonsterBossVagary );
-	virtual void				Init() override;
-	virtual void				AI_Begin() override;
+	virtual void Init() override;
+	virtual void AI_Begin() override;
 
-	virtual int					check_attacks() override;
-	virtual void				do_attack( int attack_flags ) override;
+	virtual int	 check_attacks() override;
+	virtual void do_attack( int attack_flags ) override;
+
 private:
 	idEntity* ChooseObjectToThrow( const idVec3& mins, const idVec3& maxs, float speed, float minDist, float offset );
-	void	ThrowObjectAtEnemy( idEntity* ent, float speed );
+	void	  ThrowObjectAtEnemy( idEntity* ent, float speed );
+
 private:
-	stateResult_t				state_Begin( stateParms_t* parms );
-	stateResult_t				state_Idle( stateParms_t* parms );
-	stateResult_t				combat_dodge_right( stateParms_t* parms );
-	stateResult_t				combat_dodge_left( stateParms_t* parms );
-	stateResult_t				combat_melee( stateParms_t* parms );
-	stateResult_t				combat_range( stateParms_t* parms );
+	stateResult_t state_Begin( stateParms_t* parms );
+	stateResult_t state_Idle( stateParms_t* parms );
+	stateResult_t combat_dodge_right( stateParms_t* parms );
+	stateResult_t combat_dodge_left( stateParms_t* parms );
+	stateResult_t combat_melee( stateParms_t* parms );
+	stateResult_t combat_range( stateParms_t* parms );
+
 private:
-	float		nextDodge;
-	float		nextAttack;
-	float		nextNoFOVAttack;
-	idEntity*	combat_node;
-	idEntity*	throwEntity;
-	int num;
-	int i;
-	idVec3	pos;
-	float	waitTime;
-	float	t;
-	idVec3	offset;
-	idVec3	vel;
-	float	start_offset;
+	float	  nextDodge;
+	float	  nextAttack;
+	float	  nextNoFOVAttack;
+	idEntity* combat_node;
+	idEntity* throwEntity;
+	int		  num;
+	int		  i;
+	idVec3	  pos;
+	float	  waitTime;
+	float	  t;
+	idVec3	  offset;
+	idVec3	  vel;
+	float	  start_offset;
 };

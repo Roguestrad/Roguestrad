@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,24 +30,42 @@ If you have questions concerning this license or the applicable additional terms
 #include "gltfParser.h"
 
 #ifndef gltfExtraParser
-#define gltfExtraParser(className,ptype)										\
-	class gltfExtra_##className : public parsable, public parseType<ptype>		\
-	{public:																	\
-		gltfExtra_##className( idStr Name ) : name( Name ){ item = nullptr; }	\
-		virtual void parse( idToken &token ) {parse(token,nullptr); }			\
-		virtual void parse( idToken &token , idLexer * parser );				\
-		virtual idStr &Name() { return name; }									\
-	private:																	\
-		idStr name;}
+	#define gltfExtraParser( className, ptype )                                \
+		class gltfExtra_##className : public parsable, public parseType<ptype> \
+		{                                                                      \
+		public:                                                                \
+			gltfExtra_##className( idStr Name ) :                              \
+				name( Name )                                                   \
+			{                                                                  \
+				item = nullptr;                                                \
+			}                                                                  \
+			virtual void parse( idToken& token )                               \
+			{                                                                  \
+				parse( token, nullptr );                                       \
+			}                                                                  \
+			virtual void   parse( idToken& token, idLexer* parser );           \
+			virtual idStr& Name()                                              \
+			{                                                                  \
+				return name;                                                   \
+			}                                                                  \
+                                                                               \
+		private:                                                               \
+			idStr name;                                                        \
+		}
 
 #endif
 
-//Helper macros for gltf data deserialize
-#define GLTFARRAYITEM(target,name,type) auto * name = new type (#name); target.AddItemDef((parsable*)name)
-#define GLTFARRAYITEMREF(target,name,type,ref) auto * name = new type (#name); target.AddItemDef((parsable*)name); name->Set(&ref)
+// Helper macros for gltf data deserialize
+#define GLTFARRAYITEM( target, name, type ) \
+	auto* name = new type( #name );         \
+	target.AddItemDef( ( parsable* )name )
+#define GLTFARRAYITEMREF( target, name, type, ref ) \
+	auto* name = new type( #name );                 \
+	target.AddItemDef( ( parsable* )name );         \
+	name->Set( &ref )
 
 #ifndef GLTF_EXTRAS_H
-#define GLTF_EXTRAS_H
+	#define GLTF_EXTRAS_H
 
 class gltfExtraStub
 {

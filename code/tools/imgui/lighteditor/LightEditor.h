@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -43,48 +44,43 @@ If you have questions concerning this license or the applicable additional terms
 namespace ImGuiTools
 {
 
-enum ELightType
-{
-	LIGHT_POINT,
-	LIGHT_SPOT,
-	LIGHT_SUN
-};
+enum ELightType { LIGHT_POINT, LIGHT_SPOT, LIGHT_SUN };
 
 class LightInfo
 {
 public:
-	ELightType	lightType;
+	ELightType lightType;
 
-	idStr		strTexture;
-	bool		equalRadius;
-	bool		explicitStartEnd;
-	idVec3		lightStart;
-	idVec3		lightEnd;
-	idVec3		lightUp;
-	idVec3		lightRight;
-	idVec3		lightTarget;
-	idVec3		lightCenter;
-	idVec3		color;
+	idStr	   strTexture;
+	bool	   equalRadius;
+	bool	   explicitStartEnd;
+	idVec3	   lightStart;
+	idVec3	   lightEnd;
+	idVec3	   lightUp;
+	idVec3	   lightRight;
+	idVec3	   lightTarget;
+	idVec3	   lightCenter;
+	idVec3	   color;
 
-	bool		hasLightOrigin;
-	idVec3		origin;
-	idAngles	angles;			// RBDOOM specific, saved to map as "angles"
-	idVec3		scale;			// not saved to .map
+	bool	   hasLightOrigin;
+	idVec3	   origin;
+	idAngles   angles; // RBDOOM specific, saved to map as "angles"
+	idVec3	   scale;  // not saved to .map
 
-	idVec3		lightRadius;
-	bool		castShadows;
-	bool		skipSpecular;
-	bool		hasCenter;
-	int			lightStyle;		// RBDOOM specific, saved to map as "style"
+	idVec3	   lightRadius;
+	bool	   castShadows;
+	bool	   skipSpecular;
+	bool	   hasCenter;
+	int		   lightStyle; // RBDOOM specific, saved to map as "style"
 
 	LightInfo();
 
-	void		Defaults();
-	void		DefaultPoint();
-	void		DefaultProjected();
-	void		DefaultSun();
-	void		FromDict( const idDict* e );
-	void		ToDict( idDict* e );
+	void Defaults();
+	void DefaultPoint();
+	void DefaultProjected();
+	void DefaultSun();
+	void FromDict( const idDict* e );
+	void ToDict( idDict* e );
 };
 
 class LightEditor
@@ -112,15 +108,15 @@ private:
 	int					currentStyleIndex;
 
 	ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-	ImGuizmo::MODE		mCurrentGizmoMode = ImGuizmo::WORLD;
+	ImGuizmo::MODE		mCurrentGizmoMode	   = ImGuizmo::WORLD;
 
-	bool				useSnap = false;
-	float				gridSnap[3] = { 4.0f, 4.0f, 4.0f };
-	float				angleSnap = 15.0f;
-	float				scaleSnap = 0.1f;
-	float				bounds[6] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
-	float				boundsSnap[3] = { 0.1f, 0.1f, 0.1f };
-	bool				boundSizing = false;
+	bool				useSnap			= false;
+	float				gridSnap[3]		= { 4.0f, 4.0f, 4.0f };
+	float				angleSnap		= 15.0f;
+	float				scaleSnap		= 0.1f;
+	float				bounds[6]		= { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
+	float				boundsSnap[3]	= { 0.1f, 0.1f, 0.1f };
+	bool				boundSizing		= false;
 	bool				boundSizingSnap = false;
 
 	bool				shortcutSaveMapEnabled;
@@ -150,23 +146,16 @@ private:
 	}
 
 public:
-
-	static LightEditor&	Instance();
+	static LightEditor& Instance();
 	static void			ReInit( const idDict* dict, idEntity* light );
 
-	inline void			ShowIt( bool show )
-	{
-		isShown = show;
-	}
+	inline void			ShowIt( bool show ) { isShown = show; }
 
-	inline bool			IsShown() const
-	{
-		return isShown;
-	}
+	inline bool			IsShown() const { return isShown; }
 
 	void				Draw();
 };
 
-} //namespace ImGuiTools
+} // namespace ImGuiTools
 
 #endif

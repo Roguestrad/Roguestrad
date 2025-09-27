@@ -22,7 +22,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -42,65 +43,55 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "PipelineCache.h"
 
-struct tmu_t
-{
-	unsigned int	current2DMap;
-	unsigned int	current2DArray;
-	unsigned int	currentCubeMap;
+struct tmu_t {
+	unsigned int current2DMap;
+	unsigned int current2DArray;
+	unsigned int currentCubeMap;
 };
 
 const int MAX_MULTITEXTURE_UNITS = 14;
 
-enum stencilFace_t
-{
-	STENCIL_FACE_FRONT,
-	STENCIL_FACE_BACK,
-	STENCIL_FACE_NUM
-};
+enum stencilFace_t { STENCIL_FACE_FRONT, STENCIL_FACE_BACK, STENCIL_FACE_NUM };
 
-struct gfxImpParms_t
-{
-	int		x;				// ignored in fullscreen
-	int		y;				// ignored in fullscreen
-	int		width;
-	int		height;
-	int		fullScreen;		// 0 = windowed, otherwise 1 based monitor number to go full screen on
+struct gfxImpParms_t {
+	int x; // ignored in fullscreen
+	int y; // ignored in fullscreen
+	int width;
+	int height;
+	int fullScreen; // 0 = windowed, otherwise 1 based monitor number to go full screen on
 	// -1 = borderless window for spanning multiple displays
-	int		displayHz;
-	int		multiSamples;
+	int displayHz;
+	int multiSamples;
 };
 
-#define MAX_DEBUG_LINES		16384
-#define MAX_DEBUG_TEXT		512
-#define MAX_DEBUG_POLYGONS	8192
+#define MAX_DEBUG_LINES	   16384
+#define MAX_DEBUG_TEXT	   512
+#define MAX_DEBUG_POLYGONS 8192
 
-struct debugLine_t
-{
-	idVec4		rgb;
-	idVec3		start;
-	idVec3		end;
-	bool		depthTest;
-	int			lifeTime;
+struct debugLine_t {
+	idVec4 rgb;
+	idVec3 start;
+	idVec3 end;
+	bool   depthTest;
+	int	   lifeTime;
 };
 
-struct debugText_t
-{
-	idStr		text;
-	idVec3		origin;
-	float		scale;
-	idVec4		color;
-	idMat3		viewAxis;
-	int			align;
-	int			lifeTime;
-	bool		depthTest;
+struct debugText_t {
+	idStr  text;
+	idVec3 origin;
+	float  scale;
+	idVec4 color;
+	idMat3 viewAxis;
+	int	   align;
+	int	   lifeTime;
+	bool   depthTest;
 };
 
-struct debugPolygon_t
-{
-	idVec4		rgb;
-	idWinding	winding;
-	bool		depthTest;
-	int			lifeTime;
+struct debugPolygon_t {
+	idVec4	  rgb;
+	idWinding winding;
+	bool	  depthTest;
+	int		  lifeTime;
 };
 
 void RB_SetMVP( const idRenderMatrix& mvp );
@@ -129,224 +120,205 @@ public:
 	idRenderBackend();
 	~idRenderBackend();
 
-	void				Init();
-	void				Shutdown();
+	void		Init();
+	void		Shutdown();
 
-	void				ExecuteBackEndCommands( const emptyCommand_t* cmds );
-	void				StereoRenderExecuteBackEndCommands( const emptyCommand_t* const allCmds );
-	void				GL_BlockingSwapBuffers();
+	void		ExecuteBackEndCommands( const emptyCommand_t* cmds );
+	void		StereoRenderExecuteBackEndCommands( const emptyCommand_t* const allCmds );
+	void		GL_BlockingSwapBuffers();
 
-	void				CheckCVars();
+	void		CheckCVars();
 
-	void				ClearCaches();
+	void		ClearCaches();
 
-	static void			ImGui_RenderDrawLists( ImDrawData* draw_data );
+	static void ImGui_RenderDrawLists( ImDrawData* draw_data );
 
-	void				DrawElementsWithCounters( const drawSurf_t* surf, bool shadowCounter = false );
+	void		DrawElementsWithCounters( const drawSurf_t* surf, bool shadowCounter = false );
 
 private:
-	void				DrawFlickerBox();
+	void DrawFlickerBox();
 
-	void				GetCurrentBindingLayout( int bindingLayoutType );
-	void				ResizeImages();
+	void GetCurrentBindingLayout( int bindingLayoutType );
+	void ResizeImages();
 
-	void				DrawViewInternal( const viewDef_t* viewDef, const int stereoEye, const stereoOrigin_t stereoOrigin );
-	void				DrawView( const void* data, const int stereoEye );
-	void				CopyRender( const void* data );
+	void DrawViewInternal( const viewDef_t* viewDef, const int stereoEye, const stereoOrigin_t stereoOrigin );
+	void DrawView( const void* data, const int stereoEye );
+	void CopyRender( const void* data );
 
-	void				BindVariableStageImage( const textureStage_t* texture, const float* shaderRegisters, nvrhi::ICommandList* commandList );
-	void				PrepareStageTexturing( const shaderStage_t* pStage, const drawSurf_t* surf );
-	void				FinishStageTexturing( const shaderStage_t* pStage, const drawSurf_t* surf );
+	void BindVariableStageImage( const textureStage_t* texture, const float* shaderRegisters, nvrhi::ICommandList* commandList );
+	void PrepareStageTexturing( const shaderStage_t* pStage, const drawSurf_t* surf );
+	void FinishStageTexturing( const shaderStage_t* pStage, const drawSurf_t* surf );
 
-	void				ResetViewportAndScissorToDefaultCamera( const viewDef_t* _viewDef );
+	void ResetViewportAndScissorToDefaultCamera( const viewDef_t* _viewDef );
 
-	void				FillDepthBufferGeneric( const drawSurf_t* const* drawSurfs, int numDrawSurfs );
-	void				FillDepthBufferFast( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void FillDepthBufferGeneric( const drawSurf_t* const* drawSurfs, int numDrawSurfs );
+	void FillDepthBufferFast( drawSurf_t** drawSurfs, int numDrawSurfs );
 
-	void				T_BlendLight( const drawSurf_t* drawSurfs, const viewLight_t* vLight );
-	void				BlendLight( const drawSurf_t* drawSurfs, const drawSurf_t* drawSurfs2, const viewLight_t* vLight, const stereoOrigin_t stereoOrigin );
-	void				T_BasicFog( const drawSurf_t* drawSurfs, const idPlane fogPlanes[ 4 ], const idRenderMatrix* inverseBaseLightProject );
-	void				FogPass( const drawSurf_t* drawSurfs,  const drawSurf_t* drawSurfs2, const viewLight_t* vLight, const stereoOrigin_t stereoOrigin );
-	void				FogAllLights( const stereoOrigin_t stereoOrigin );
+	void T_BlendLight( const drawSurf_t* drawSurfs, const viewLight_t* vLight );
+	void BlendLight( const drawSurf_t* drawSurfs, const drawSurf_t* drawSurfs2, const viewLight_t* vLight, const stereoOrigin_t stereoOrigin );
+	void T_BasicFog( const drawSurf_t* drawSurfs, const idPlane fogPlanes[4], const idRenderMatrix* inverseBaseLightProject );
+	void FogPass( const drawSurf_t* drawSurfs, const drawSurf_t* drawSurfs2, const viewLight_t* vLight, const stereoOrigin_t stereoOrigin );
+	void FogAllLights( const stereoOrigin_t stereoOrigin );
 
-	void				SetupInteractionStage( const shaderStage_t* surfaceStage, const float* surfaceRegs, const float lightColor[4],
-			idVec4 matrix[2], float color[4] );
+	void SetupInteractionStage( const shaderStage_t* surfaceStage, const float* surfaceRegs, const float lightColor[4], idVec4 matrix[2], float color[4] );
 
-	void				DrawInteractions( const viewDef_t* _viewDef, const stereoOrigin_t stereoOrigin );
-	void				DrawSingleInteraction( drawInteraction_t* din, bool useFastPath, bool useIBL, bool setInteractionShader );
-	int					DrawShaderPasses( const drawSurf_t* const* const drawSurfs, const int numDrawSurfs,
-										  const float guiStereoScreenOffset, const int stereoEye, const stereoOrigin_t stereoOrigin );
+	void DrawInteractions( const viewDef_t* _viewDef, const stereoOrigin_t stereoOrigin );
+	void DrawSingleInteraction( drawInteraction_t* din, bool useFastPath, bool useIBL, bool setInteractionShader );
+	int	 DrawShaderPasses( const drawSurf_t* const* const drawSurfs, const int numDrawSurfs, const float guiStereoScreenOffset, const int stereoEye, const stereoOrigin_t stereoOrigin );
 
-	void				RenderInteractions( const drawSurf_t* surfList, const viewLight_t* vLight, int depthFunc, bool performStencilTest, bool useLightDepthBounds, stereoOrigin_t stereoOrigin );
+	void RenderInteractions( const drawSurf_t* surfList, const viewLight_t* vLight, int depthFunc, bool performStencilTest, bool useLightDepthBounds, stereoOrigin_t stereoOrigin );
 
 	// RB
-	void				AmbientPass( const drawSurf_t* const* drawSurfs, int numDrawSurfs, bool fillGbuffer, const stereoOrigin_t stereoOrigin );
+	void AmbientPass( const drawSurf_t* const* drawSurfs, int numDrawSurfs, bool fillGbuffer, const stereoOrigin_t stereoOrigin );
 
-	void				SetupShadowMapMatrices( viewLight_t* vLight, int side, idRenderMatrix& lightProjectionRenderMatrix, idRenderMatrix& lightViewRenderMatrix, const stereoOrigin_t stereoOrigin );
-	void				ShadowMapPassFast( const drawSurf_t* drawSurfs, viewLight_t* vLight, int side, bool atlas, const stereoOrigin_t stereoOrigin );
-	void				ShadowMapPassPerforated( const drawSurf_t** drawSurfs, int numDrawSurfs, viewLight_t* vLight, int side, const idRenderMatrix& lightProjectionRenderMatrix, const idRenderMatrix& lightViewRenderMatrix );
+	void SetupShadowMapMatrices( viewLight_t* vLight, int side, idRenderMatrix& lightProjectionRenderMatrix, idRenderMatrix& lightViewRenderMatrix, const stereoOrigin_t stereoOrigin );
+	void ShadowMapPassFast( const drawSurf_t* drawSurfs, viewLight_t* vLight, int side, bool atlas, const stereoOrigin_t stereoOrigin );
+	void ShadowMapPassPerforated(
+		const drawSurf_t** drawSurfs, int numDrawSurfs, viewLight_t* vLight, int side, const idRenderMatrix& lightProjectionRenderMatrix, const idRenderMatrix& lightViewRenderMatrix );
 
-	void				ShadowAtlasPass( const viewDef_t* _viewDef, const stereoOrigin_t stereoOrigin );
+	void ShadowAtlasPass( const viewDef_t* _viewDef, const stereoOrigin_t stereoOrigin );
 
-	void				DrawMotionVectors( const int stereoEye );
-	void				TemporalAAPass( const viewDef_t* _viewDef, const int stereoEye );
+	void DrawMotionVectors( const int stereoEye );
+	void TemporalAAPass( const viewDef_t* _viewDef, const int stereoEye );
 
 	// RB: outdated HDR stuff
-	void				Bloom( const viewDef_t* viewDef );
+	void Bloom( const viewDef_t* viewDef );
 
-	void				DrawScreenSpaceAmbientOcclusion( const viewDef_t* _viewDef );
-	void				DrawScreenSpaceAmbientOcclusion2( const viewDef_t* _viewDef );
+	void DrawScreenSpaceAmbientOcclusion( const viewDef_t* _viewDef );
+	void DrawScreenSpaceAmbientOcclusion2( const viewDef_t* _viewDef );
 
 	// Experimental feature
-	void				MotionBlur();
+	void MotionBlur();
 
-	void				PostProcess( const void* data );
-	void				CRTPostProcess();
+	void PostProcess( const void* data );
+	void CRTPostProcess();
 
 private:
-	void				GL_StartFrame();
-	void				GL_EndFrame();
+	void GL_StartFrame();
+	void GL_EndFrame();
 
 public:
-	uint64				GL_GetCurrentState() const;
-	idVec2				GetCurrentPixelOffset( int frameIndex ) const;
+	uint64				 GL_GetCurrentState() const;
+	idVec2				 GetCurrentPixelOffset( int frameIndex ) const;
 
-	nvrhi::ICommandList* GL_GetCommandList() const
-	{
-		return commandList;
-	}
+	nvrhi::ICommandList* GL_GetCommandList() const { return commandList; }
 
 private:
-	uint64				GL_GetCurrentStateMinusStencil() const;
-	void				GL_SetDefaultState();
+	uint64		   GL_GetCurrentStateMinusStencil() const;
+	void		   GL_SetDefaultState();
 
-	void				GL_State( uint64 stateBits, bool forceGlState = false );
-//	void				GL_SeparateStencil( stencilFace_t face, uint64 stencilBits );
+	void		   GL_State( uint64 stateBits, bool forceGlState = false );
+	//	void				GL_SeparateStencil( stencilFace_t face, uint64 stencilBits );
 
-	void				GL_SelectTexture( int unit );
-//	void				GL_BindTexture( idImage* image );
+	void		   GL_SelectTexture( int unit );
+	//	void				GL_BindTexture( idImage* image );
 
-//	void				GL_CopyFrameBuffer( idImage* image, int x, int y, int imageWidth, int imageHeight );
-//	void				GL_CopyDepthBuffer( idImage* image, int x, int y, int imageWidth, int imageHeight );
+	//	void				GL_CopyFrameBuffer( idImage* image, int x, int y, int imageWidth, int imageHeight );
+	//	void				GL_CopyDepthBuffer( idImage* image, int x, int y, int imageWidth, int imageHeight );
 
 	// RB: HDR parm
-	void				GL_Clear( bool color, bool depth, bool stencil, byte stencilValue, float r, float g, float b, float a, bool clearHDR = false, bool clearVR = false, const int stereoEye = 0 );
+	void		   GL_Clear( bool color, bool depth, bool stencil, byte stencilValue, float r, float g, float b, float a, bool clearHDR = false, bool clearVR = false, const int stereoEye = 0 );
 
-	void				GL_DepthBoundsTest( const float zmin, const float zmax );
-	void				GL_PolygonOffset( float scale, float bias );
+	void		   GL_DepthBoundsTest( const float zmin, const float zmax );
+	void		   GL_PolygonOffset( float scale, float bias );
 
-	void				GL_Scissor( int x /* left*/, int y /* bottom */, int w, int h );
-	void				GL_Viewport( int x /* left */, int y /* bottom */, int w, int h );
+	void		   GL_Scissor( int x /* left*/, int y /* bottom */, int w, int h );
+	void		   GL_Viewport( int x /* left */, int y /* bottom */, int w, int h );
 
-	ID_INLINE void		GL_Scissor( const idScreenRect& rect )
-	{
-		GL_Scissor( rect.x1, rect.y1, rect.x2 - rect.x1 + 1, rect.y2 - rect.y1 + 1 );
-	}
-	ID_INLINE void		GL_Viewport( const idScreenRect& rect )
-	{
-		GL_Viewport( rect.x1, rect.y1, rect.x2 - rect.x1 + 1, rect.y2 - rect.y1 + 1 );
-	}
+	ID_INLINE void GL_Scissor( const idScreenRect& rect ) { GL_Scissor( rect.x1, rect.y1, rect.x2 - rect.x1 + 1, rect.y2 - rect.y1 + 1 ); }
+	ID_INLINE void GL_Viewport( const idScreenRect& rect ) { GL_Viewport( rect.x1, rect.y1, rect.x2 - rect.x1 + 1, rect.y2 - rect.y1 + 1 ); }
 
-	ID_INLINE void	GL_ViewportAndScissor( int x, int y, int w, int h )
+	ID_INLINE void GL_ViewportAndScissor( int x, int y, int w, int h )
 	{
 		GL_Viewport( x, y, w, h );
 		GL_Scissor( x, y, w, h );
 	}
 
-	ID_INLINE void	GL_ViewportAndScissor( const idScreenRect& rect )
+	ID_INLINE void GL_ViewportAndScissor( const idScreenRect& rect )
 	{
 		GL_Viewport( rect );
 		GL_Scissor( rect );
 	}
 
-	void				GL_Color( float r, float g, float b, float a );
-	ID_INLINE void		GL_Color( float r, float g, float b )
-	{
-		GL_Color( r, g, b, 1.0f );
-	}
+	void		   GL_Color( float r, float g, float b, float a );
+	ID_INLINE void GL_Color( float r, float g, float b ) { GL_Color( r, g, b, 1.0f ); }
 
-	ID_INLINE void		GL_Color( const idVec3& color )
-	{
-		GL_Color( color[0], color[1], color[2], 1.0f );
-	}
+	ID_INLINE void GL_Color( const idVec3& color ) { GL_Color( color[0], color[1], color[2], 1.0f ); }
 
-	ID_INLINE void		GL_Color( const idVec4& color )
-	{
-		GL_Color( color[0], color[1], color[2], color[3] );
-	}
+	ID_INLINE void GL_Color( const idVec4& color ) { GL_Color( color[0], color[1], color[2], color[3] ); }
 
-//	void				GL_Color( float* color );
+	//	void				GL_Color( float* color );
 
-	void				SetBuffer( const void* data, const int stereoEye );
+	void		   SetBuffer( const void* data, const int stereoEye );
 
 private:
-	void				DBG_SimpleSurfaceSetup( const drawSurf_t* drawSurf );
-	void				DBG_SimpleWorldSetup();
-	void				DBG_PolygonClear();
-	void				DBG_ShowDestinationAlpha();
-	void				DBG_ScanStencilBuffer();
-	void				DBG_CountStencilBuffer();
-	void				DBG_ColorByStencilBuffer();
-	void				DBG_ShowOverdraw();
-	void				DBG_ShowIntensity();
-	void				DBG_ShowDepthBuffer();
-	void				DBG_ShowLightCount();
-//	void				DBG_EnterWeaponDepthHack();
-//	void				DBG_EnterModelDepthHack( float depth );
-//	void				DBG_LeaveDepthHack();
-	void				DBG_RenderDrawSurfListWithFunction( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowSilhouette();
-	void				DBG_ShowTris( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowSurfaceInfo( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowViewEntitys( viewEntity_t* vModels );
-	void				DBG_ShowTexturePolarity( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowUnsmoothedTangents( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowTangentSpace( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowVertexColor( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowNormals( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowTextureVectors( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowDominantTris( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowEdges( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_ShowLights();
-	void				DBG_ShowLightGrid(); // RB
-	void				DBG_ShowViewEnvprobes(); // RB
-	void				DBG_ShowShadowMapLODs(); // RB
-	void				DBG_ShowPortals();
-	void				DBG_ShowDebugText();
-	void				DBG_ShowDebugLines();
-	void				DBG_ShowDebugPolygons();
-	void				DBG_ShowCenterOfProjection();
-	void				DBG_ShowLines();
-	void				DBG_TestGamma();
-	void				DBG_TestGammaBias();
-	void				DBG_TestImage();
-	void				DBG_ShowShadowMaps(); // RB
-	void				DBG_ShowTrace( drawSurf_t** drawSurfs, int numDrawSurfs );
-	void				DBG_RenderDebugTools( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_SimpleSurfaceSetup( const drawSurf_t* drawSurf );
+	void DBG_SimpleWorldSetup();
+	void DBG_PolygonClear();
+	void DBG_ShowDestinationAlpha();
+	void DBG_ScanStencilBuffer();
+	void DBG_CountStencilBuffer();
+	void DBG_ColorByStencilBuffer();
+	void DBG_ShowOverdraw();
+	void DBG_ShowIntensity();
+	void DBG_ShowDepthBuffer();
+	void DBG_ShowLightCount();
+	//	void				DBG_EnterWeaponDepthHack();
+	//	void				DBG_EnterModelDepthHack( float depth );
+	//	void				DBG_LeaveDepthHack();
+	void DBG_RenderDrawSurfListWithFunction( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowSilhouette();
+	void DBG_ShowTris( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowSurfaceInfo( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowViewEntitys( viewEntity_t* vModels );
+	void DBG_ShowTexturePolarity( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowUnsmoothedTangents( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowTangentSpace( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowVertexColor( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowNormals( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowTextureVectors( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowDominantTris( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowEdges( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_ShowLights();
+	void DBG_ShowLightGrid();	  // RB
+	void DBG_ShowViewEnvprobes(); // RB
+	void DBG_ShowShadowMapLODs(); // RB
+	void DBG_ShowPortals();
+	void DBG_ShowDebugText();
+	void DBG_ShowDebugLines();
+	void DBG_ShowDebugPolygons();
+	void DBG_ShowCenterOfProjection();
+	void DBG_ShowLines();
+	void DBG_TestGamma();
+	void DBG_TestGammaBias();
+	void DBG_TestImage();
+	void DBG_ShowShadowMaps(); // RB
+	void DBG_ShowTrace( drawSurf_t** drawSurfs, int numDrawSurfs );
+	void DBG_RenderDebugTools( drawSurf_t** drawSurfs, int numDrawSurfs );
 
 public:
-	backEndCounters_t	pc;
+	backEndCounters_t pc;
 
 	// surfaces used for code-based drawing
-	drawSurf_t			unitSquareSurface;
-	drawSurf_t			zeroOneCubeSurface;
-	drawSurf_t			zeroOneSphereSurface; // RB
-	drawSurf_t			testImageSurface;
+	drawSurf_t		  unitSquareSurface;
+	drawSurf_t		  zeroOneCubeSurface;
+	drawSurf_t		  zeroOneSphereSurface; // RB
+	drawSurf_t		  testImageSurface;
 
-	float				slopeScaleBias;
-	float				depthBias;
+	float			  slopeScaleBias;
+	float			  depthBias;
 
 private:
-	uint64				glStateBits;			// for all render APIs
+	uint64				glStateBits; // for all render APIs
 
-	const viewDef_t* 	viewDef;
+	const viewDef_t*	viewDef;
 
-	const viewEntity_t*	currentSpace;			// for detecting when a matrix must change
-	idScreenRect		currentScissor;			// for scissor clipping, local inside renderView viewport
+	const viewEntity_t* currentSpace;	// for detecting when a matrix must change
+	idScreenRect		currentScissor; // for scissor clipping, local inside renderView viewport
 
-	bool				currentRenderCopied;	// true if any material has already referenced _currentRender
+	bool				currentRenderCopied; // true if any material has already referenced _currentRender
 
-	idRenderMatrix		prevMVP[2];				// world MVP from previous frame for motion blur
+	idRenderMatrix		prevMVP[2]; // world MVP from previous frame for motion blur
 	bool				prevViewsValid[2];
 
 	// RB begin
@@ -360,53 +332,49 @@ private:
 	TileMap				tileMap;
 
 private:
-	idScreenRect					stateViewport;
-	idScreenRect					stateScissor;
+	idScreenRect																					   stateViewport;
+	idScreenRect																					   stateScissor;
 
-	idScreenRect					currentViewport;
-	nvrhi::BufferHandle				currentVertexBuffer;
-	uint							currentVertexOffset;
-	nvrhi::BufferHandle				currentIndexBuffer;
-	uint							currentIndexOffset;
-	nvrhi::BindingLayoutHandle		currentBindingLayout;
-	nvrhi::IBuffer*					currentJointBuffer;
-	uint							currentJointOffset;
-	nvrhi::GraphicsPipelineHandle	currentPipeline;
+	idScreenRect																					   currentViewport;
+	nvrhi::BufferHandle																				   currentVertexBuffer;
+	uint																							   currentVertexOffset;
+	nvrhi::BufferHandle																				   currentIndexBuffer;
+	uint																							   currentIndexOffset;
+	nvrhi::BindingLayoutHandle																		   currentBindingLayout;
+	nvrhi::IBuffer*																					   currentJointBuffer;
+	uint																							   currentJointOffset;
+	nvrhi::GraphicsPipelineHandle																	   currentPipeline;
 
-	idStaticList<nvrhi::BindingSetHandle, nvrhi::c_MaxBindingLayouts> currentBindingSets;
+	idStaticList<nvrhi::BindingSetHandle, nvrhi::c_MaxBindingLayouts>								   currentBindingSets;
 	idStaticList<idStaticList<nvrhi::BindingSetDesc, nvrhi::c_MaxBindingLayouts>, NUM_BINDING_LAYOUTS> pendingBindingSetDescs;
 
-	Framebuffer*					currentFrameBuffer;
-	Framebuffer*					lastFrameBuffer;
-	nvrhi::CommandListHandle		commandList;
-	CommonRenderPasses				commonPasses;
-	SsaoPass*						ssaoPass;
-	MipMapGenPass*					hiZGenPass;
-	TonemapPass*					toneMapPass;
-	TemporalAntiAliasingPass*		taaPass[2];		// two separate history buffers for VR
+	Framebuffer*																					   currentFrameBuffer;
+	Framebuffer*																					   lastFrameBuffer;
+	nvrhi::CommandListHandle																		   commandList;
+	CommonRenderPasses																				   commonPasses;
+	SsaoPass*																						   ssaoPass;
+	MipMapGenPass*																					   hiZGenPass;
+	TonemapPass*																					   toneMapPass;
+	TemporalAntiAliasingPass*																		   taaPass[2]; // two separate history buffers for VR
 
-	BindingCache					bindingCache;
-	SamplerCache					samplerCache;
-	PipelineCache					pipelineCache;
+	BindingCache																					   bindingCache;
+	SamplerCache																					   samplerCache;
+	PipelineCache																					   pipelineCache;
 
-	nvrhi::InputLayoutHandle		inputLayout;
+	nvrhi::InputLayoutHandle																		   inputLayout;
 
-	nvrhi::ShaderHandle             vertexShader;
-	nvrhi::ShaderHandle             pixelShader;
+	nvrhi::ShaderHandle																				   vertexShader;
+	nvrhi::ShaderHandle																				   pixelShader;
 
-	int								prevBindingLayoutType;
+	int																								   prevBindingLayoutType;
 
 public:
-
 	void				ResetPipelineCache();
 
 	void				SetCurrentImage( idImage* image );
 	idImage*			GetCurrentImage();
 	idImage*			GetImageAt( int index );
-	CommonRenderPasses& GetCommonPasses()
-	{
-		return commonPasses;
-	}
+	CommonRenderPasses& GetCommonPasses() { return commonPasses; }
 };
 
 #endif

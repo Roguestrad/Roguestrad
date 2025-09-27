@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -43,28 +44,26 @@ static const unsigned int BIMAGE_VERSION_BFG = 10;
 static const unsigned int BIMAGE_VERSION_BC6 = 11;
 
 static const unsigned int BIMAGE_MAGIC_BFG = ( 'B' << 0 ) | ( 'I' << 8 ) | ( 'M' << 16 ) | ( BIMAGE_VERSION_BFG << 24 );
-static const unsigned int BIMAGE_MAGIC = ( 'B' << 0 ) | ( 'I' << 8 ) | ( 'M' << 16 ) | ( BIMAGE_VERSION_BC6 << 24 );
+static const unsigned int BIMAGE_MAGIC	   = ( 'B' << 0 ) | ( 'I' << 8 ) | ( 'M' << 16 ) | ( BIMAGE_VERSION_BC6 << 24 );
 
-struct bimageImage_t
-{
-	int		level;		// mip
-	int		destZ;		// array slice
-	int		width;
-	int		height;
-	int		dataSize;	// dataSize bytes follow
+struct bimageImage_t {
+	int level; // mip
+	int destZ; // array slice
+	int width;
+	int height;
+	int dataSize; // dataSize bytes follow
 };
 
 #pragma pack( push, 1 )
-struct bimageFile_t
-{
-	ID_TIME_T	sourceFileTime;
-	int		headerMagic;
-	int		textureType;
-	int		format;
-	int		colorFormat;
-	int		width;
-	int		height;
-	int		numLevels;
+struct bimageFile_t {
+	ID_TIME_T sourceFileTime;
+	int		  headerMagic;
+	int		  textureType;
+	int		  format;
+	int		  colorFormat;
+	int		  width;
+	int		  height;
+	int		  numLevels;
 	// one or more bimageImage_t structures follow
 };
 #pragma pack( pop )

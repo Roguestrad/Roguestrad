@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -47,38 +48,32 @@ private:
 	bool morph;
 	bool lineStyle2;
 
-	struct swfSPEdge_t
-	{
+	struct swfSPEdge_t {
 		uint16 v0;
 		uint16 v1;
-		uint16 cp;	// control point if this is a curve, 0xFFFF otherwise
+		uint16 cp; // control point if this is a curve, 0xFFFF otherwise
 	};
-	struct swfSPMorphEdge_t
-	{
+	struct swfSPMorphEdge_t {
 		swfSPEdge_t start;
 		swfSPEdge_t end;
 	};
-	struct swfSPLineLoop_t
-	{
-		bool hole;
-		idList< uint16, TAG_SWF > vindex1;
-		idList< uint16, TAG_SWF > vindex2;
+	struct swfSPLineLoop_t {
+		bool					hole;
+		idList<uint16, TAG_SWF> vindex1;
+		idList<uint16, TAG_SWF> vindex2;
 	};
-	struct swfSPDrawFill_t
-	{
-		swfFillStyle_t style;
-		idList< swfSPMorphEdge_t, TAG_SWF > edges;
-		idList< swfSPLineLoop_t, TAG_SWF > loops;
+	struct swfSPDrawFill_t {
+		swfFillStyle_t					  style;
+		idList<swfSPMorphEdge_t, TAG_SWF> edges;
+		idList<swfSPLineLoop_t, TAG_SWF>  loops;
 	};
-	struct swfSPDrawLine_t
-	{
-		swfLineStyle_t style;
-		idList< swfSPMorphEdge_t, TAG_SWF > edges;
+	struct swfSPDrawLine_t {
+		swfLineStyle_t					  style;
+		idList<swfSPMorphEdge_t, TAG_SWF> edges;
 	};
-	idList< idVec2, TAG_SWF > verts;
-	idList< swfSPDrawFill_t, TAG_SWF > fillDraws;
-	idList< swfSPDrawLine_t, TAG_SWF > lineDraws;
-
+	idList<idVec2, TAG_SWF>			 verts;
+	idList<swfSPDrawFill_t, TAG_SWF> fillDraws;
+	idList<swfSPDrawLine_t, TAG_SWF> lineDraws;
 
 private:
 	void ParseShapes( idSWFBitStream& bitstream1, idSWFBitStream* bitstream2, bool swap );
@@ -87,9 +82,8 @@ private:
 	void MakeLoops();
 	void TriangulateSoup( idSWFShape& shape );
 	void TriangulateSoup( idSWFFontGlyph& shape );
-	int FindEarVert( const swfSPLineLoop_t& loop );
+	int	 FindEarVert( const swfSPLineLoop_t& loop );
 	void AddUniqueVert( idSWFShapeDrawFill& drawFill, const idVec2& start, const idVec2& end );
-
 };
 
 #endif // !__SWF_SHAPEPARSER_H__

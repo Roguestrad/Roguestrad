@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -37,42 +38,40 @@ If you have questions concerning this license or the applicable additional terms
 
 ==============================================================
 */
-#define MAX_ZIPPED_FILE_NAME	2048
+#define MAX_ZIPPED_FILE_NAME 2048
 
 class idZipContainer;
 
 class idZipCacheEntry
 {
 public:
-	idZipCacheEntry()
-	{
-		Clear();
-	}
+	idZipCacheEntry() { Clear(); }
 	void Clear()
 	{
 		filename.Empty();
 		offset = 0;
 		length = 0;
-		owner = NULL;
+		owner  = NULL;
 	}
 
 	// part of .pk4 file format
-	idStrStatic< MAX_ZIPPED_FILE_NAME >	filename;
-	ZPOS64_T			offset;
-	ZPOS64_T			length;		// uncompressed size
+	idStrStatic<MAX_ZIPPED_FILE_NAME> filename;
+	ZPOS64_T						  offset;
+	ZPOS64_T						  length; // uncompressed size
 
 	// helpers only in memory
-	idZipContainer* owner;
+	idZipContainer*					  owner;
 };
 
 class idZipContainer
 {
-	friend class	idFileSystemLocal;
+	friend class idFileSystemLocal;
+
 public:
 	idZipContainer()
 	{
-		zipFileHandle = NULL;
-		checksum = 0;
+		zipFileHandle	 = NULL;
+		checksum		 = 0;
 		numFileResources = 0;
 	}
 	~idZipContainer()
@@ -80,31 +79,22 @@ public:
 		unzClose( zipFileHandle );
 		cacheTable.Clear();
 	}
-	bool Init( const char* fileName );
+	bool		  Init( const char* fileName );
 	idFile_InZip* OpenFile( const idZipCacheEntry& rt, const char* relativePath );
 
-	const char* GetFileName() const
-	{
-		return fileName.c_str();
-	}
+	const char*	  GetFileName() const { return fileName.c_str(); }
 
-	int GetNumFileResources() const
-	{
-		return numFileResources;
-	}
+	int			  GetNumFileResources() const { return numFileResources; }
 
-	int	GetChecksum() const
-	{
-		return checksum;
-	}
+	int			  GetChecksum() const { return checksum; }
+
 private:
-	idStrStatic< 256 >	fileName;			// containst the full OS path unlike idResourcesContainer
-	unzFile 			zipFileHandle;		// open file handle
-	int					checksum;
-	int					numFileResources;		// number of file resources in this container
-	idList< idZipCacheEntry, TAG_RESOURCE>	cacheTable;
-	idHashIndex			cacheHash;
+	idStrStatic<256>					  fileName;		 // containst the full OS path unlike idResourcesContainer
+	unzFile								  zipFileHandle; // open file handle
+	int									  checksum;
+	int									  numFileResources; // number of file resources in this container
+	idList<idZipCacheEntry, TAG_RESOURCE> cacheTable;
+	idHashIndex							  cacheHash;
 };
-
 
 #endif /* !__FILE_ZIP_H__ */

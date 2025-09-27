@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,7 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#pragma warning( disable: 4189 ) // local variable is initialized but not referenced
+#pragma warning( disable : 4189 ) // local variable is initialized but not referenced
 
 /*
 ========================
@@ -37,114 +38,93 @@ idSWF::DefineFont2
 */
 void idSWF::DefineFont2( idSWFBitStream& bitstream )
 {
-	uint16 characterID = bitstream.ReadU16();
-	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_FONT );
-	if( entry == NULL )
-	{
+	uint16				  characterID = bitstream.ReadU16();
+	idSWFDictionaryEntry* entry		  = AddDictionaryEntry( characterID, SWF_DICT_FONT );
+	if( entry == NULL ) {
 		return;
 	}
-	uint8 flags = bitstream.ReadU8();
+	uint8 flags	   = bitstream.ReadU8();
 	uint8 language = bitstream.ReadU8();
 
-	char fontName[257];
+	char  fontName[257];
 	uint8 fontNameLength = bitstream.ReadU8();
 	memcpy( fontName, bitstream.ReadData( fontNameLength ), fontNameLength );
-	fontName[ fontNameLength ] = 0;
+	fontName[fontNameLength] = 0;
 
 	entry->font->fontID = renderSystem->RegisterFont( fontName );
 
 	uint16 numGlyphs = bitstream.ReadU16();
 	entry->font->glyphs.SetNum( numGlyphs );
 
-	if( flags & BIT( 3 ) )
-	{
+	if( flags & BIT( 3 ) ) {
 		// 32 bit offsets
-		uint32 offsetTableSize = ( numGlyphs + 1 ) * 4;
+		uint32		   offsetTableSize = ( numGlyphs + 1 ) * 4;
 		idSWFBitStream offsetStream( bitstream.ReadData( offsetTableSize ), offsetTableSize, false );
-		if( offsetStream.ReadU32() != offsetTableSize )
-		{
+		if( offsetStream.ReadU32() != offsetTableSize ) {
 			idLib::Warning( "idSWF::DefineFont2: first glyph offset != offsetTableSize" );
 			return;
 		}
 		uint32 previousOffset = offsetTableSize;
-		for( int i = 0; i < numGlyphs; i++ )
-		{
+		for( int i = 0; i < numGlyphs; i++ ) {
 			uint32 nextOffset = offsetStream.ReadU32();
-			uint32 shapeSize = nextOffset - previousOffset;
-			previousOffset = nextOffset;
-			idSWFBitStream shapeStream( bitstream.ReadData( shapeSize ), shapeSize, false );
+			uint32 shapeSize  = nextOffset - previousOffset;
+			previousOffset	  = nextOffset;
+			idSWFBitStream	 shapeStream( bitstream.ReadData( shapeSize ), shapeSize, false );
 			idSWFShapeParser swfShapeParser;
 			swfShapeParser.ParseFont( shapeStream, entry->font->glyphs[i] );
 		}
-	}
-	else
-	{
+	} else {
 		// 16 bit offsets
-		uint16 offsetTableSize = ( numGlyphs + 1 ) * 2;
+		uint16		   offsetTableSize = ( numGlyphs + 1 ) * 2;
 		idSWFBitStream offsetStream( bitstream.ReadData( offsetTableSize ), offsetTableSize, false );
-		if( offsetStream.ReadU16() != offsetTableSize )
-		{
+		if( offsetStream.ReadU16() != offsetTableSize ) {
 			idLib::Warning( "idSWF::DefineFont2: first glyph offset != offsetTableSize" );
 			return;
 		}
 		uint16 previousOffset = offsetTableSize;
-		for( int i = 0; i < numGlyphs; i++ )
-		{
+		for( int i = 0; i < numGlyphs; i++ ) {
 			uint16 nextOffset = offsetStream.ReadU16();
-			uint16 shapeSize = nextOffset - previousOffset;
-			previousOffset = nextOffset;
-			idSWFBitStream shapeStream( bitstream.ReadData( shapeSize ), shapeSize, false );
+			uint16 shapeSize  = nextOffset - previousOffset;
+			previousOffset	  = nextOffset;
+			idSWFBitStream	 shapeStream( bitstream.ReadData( shapeSize ), shapeSize, false );
 			idSWFShapeParser swfShapeParser;
 			swfShapeParser.ParseFont( shapeStream, entry->font->glyphs[i] );
 		}
 	}
-	if( flags & BIT( 2 ) )
-	{
+	if( flags & BIT( 2 ) ) {
 		// 16 bit codes
-		for( int i = 0; i < numGlyphs; i++ )
-		{
+		for( int i = 0; i < numGlyphs; i++ ) {
 			entry->font->glyphs[i].code = bitstream.ReadU16();
 		}
-	}
-	else
-	{
+	} else {
 		// 8 bit codes
-		for( int i = 0; i < numGlyphs; i++ )
-		{
+		for( int i = 0; i < numGlyphs; i++ ) {
 			entry->font->glyphs[i].code = bitstream.ReadU8();
 		}
 	}
-	if( flags & BIT( 7 ) )
-	{
-		entry->font->ascent = bitstream.ReadS16();
+	if( flags & BIT( 7 ) ) {
+		entry->font->ascent	 = bitstream.ReadS16();
 		entry->font->descent = bitstream.ReadS16();
 		entry->font->leading = bitstream.ReadS16();
-		for( int i = 0; i < numGlyphs; i++ )
-		{
+		for( int i = 0; i < numGlyphs; i++ ) {
 			entry->font->glyphs[i].advance = bitstream.ReadS16();
 		}
-		for( int i = 0; i < numGlyphs; i++ )
-		{
+		for( int i = 0; i < numGlyphs; i++ ) {
 			swfRect_t ignored;
 			bitstream.ReadRect( ignored );
 		}
 		uint16 kearningCount = bitstream.ReadU16();
-		if( flags & BIT( 2 ) )
-		{
-			for( int i = 0; i < kearningCount; i++ )
-			{
-				uint16 code1 = bitstream.ReadU16();
-				uint16 code2 = bitstream.ReadU16();
-				int16 adjustment = bitstream.ReadS16();
+		if( flags & BIT( 2 ) ) {
+			for( int i = 0; i < kearningCount; i++ ) {
+				uint16 code1	  = bitstream.ReadU16();
+				uint16 code2	  = bitstream.ReadU16();
+				int16  adjustment = bitstream.ReadS16();
 			}
-		}
-		else
-		{
-			for( int i = 0; i < kearningCount; i++ )
-			{
-				uint16 code1 = bitstream.ReadU8();
-				uint16 code2 = bitstream.ReadU8();
-				int16 adjustment = bitstream.ReadS16();
+		} else {
+			for( int i = 0; i < kearningCount; i++ ) {
+				uint16 code1	  = bitstream.ReadU8();
+				uint16 code2	  = bitstream.ReadU8();
+				int16  adjustment = bitstream.ReadS16();
 			}
 		}
 	}
@@ -167,10 +147,9 @@ idSWF::DefineTextX
 */
 void idSWF::DefineTextX( idSWFBitStream& bitstream, bool rgba )
 {
-	uint16 characterID = bitstream.ReadU16();
-	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_TEXT );
-	if( entry == NULL )
-	{
+	uint16				  characterID = bitstream.ReadU16();
+	idSWFDictionaryEntry* entry		  = AddDictionaryEntry( characterID, SWF_DICT_TEXT );
+	if( entry == NULL ) {
 		return;
 	}
 	idSWFText* text = entry->text;
@@ -178,52 +157,41 @@ void idSWF::DefineTextX( idSWFBitStream& bitstream, bool rgba )
 	bitstream.ReadRect( text->bounds );
 	bitstream.ReadMatrix( text->matrix );
 
-	uint8 glyphBits = bitstream.ReadU8();
+	uint8 glyphBits	  = bitstream.ReadU8();
 	uint8 advanceBits = bitstream.ReadU8();
 
-	while( true )
-	{
+	while( true ) {
 		uint8 flags = bitstream.ReadU8();
-		if( flags == 0 )
-		{
+		if( flags == 0 ) {
 			break;
 		}
 		idSWFTextRecord& textRecord = text->textRecords.Alloc();
 
-		if( flags & BIT( 3 ) )
-		{
+		if( flags & BIT( 3 ) ) {
 			textRecord.fontID = bitstream.ReadU16();
 		}
-		if( flags & BIT( 2 ) )
-		{
-			if( rgba )
-			{
+		if( flags & BIT( 2 ) ) {
+			if( rgba ) {
 				bitstream.ReadColorRGBA( textRecord.color );
-			}
-			else
-			{
+			} else {
 				bitstream.ReadColorRGB( textRecord.color );
 			}
 		}
-		if( flags & BIT( 0 ) )
-		{
+		if( flags & BIT( 0 ) ) {
 			textRecord.xOffset = bitstream.ReadS16();
 		}
-		if( flags & BIT( 1 ) )
-		{
+		if( flags & BIT( 1 ) ) {
 			textRecord.yOffset = bitstream.ReadS16();
 		}
-		if( flags & BIT( 3 ) )
-		{
+		if( flags & BIT( 3 ) ) {
 			textRecord.textHeight = bitstream.ReadU16();
 		}
 		textRecord.firstGlyph = text->glyphs.Num();
-		textRecord.numGlyphs = bitstream.ReadU8();
-		for( int i = 0; i < textRecord.numGlyphs; i++ )
-		{
+		textRecord.numGlyphs  = bitstream.ReadU8();
+		for( int i = 0; i < textRecord.numGlyphs; i++ ) {
 			swfGlyphEntry_t& glyph = text->glyphs.Alloc();
-			glyph.index = bitstream.ReadU( glyphBits );
-			glyph.advance = bitstream.ReadS( advanceBits );
+			glyph.index			   = bitstream.ReadU( glyphBits );
+			glyph.advance		   = bitstream.ReadS( advanceBits );
 		}
 	};
 }
@@ -255,102 +223,80 @@ idSWF::DefineEditText
 */
 void idSWF::DefineEditText( idSWFBitStream& bitstream )
 {
-	uint16 characterID = bitstream.ReadU16();
-	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_EDITTEXT );
-	if( entry == NULL )
-	{
+	uint16				  characterID = bitstream.ReadU16();
+	idSWFDictionaryEntry* entry		  = AddDictionaryEntry( characterID, SWF_DICT_EDITTEXT );
+	if( entry == NULL ) {
 		return;
 	}
 	idSWFEditText* edittext = entry->edittext;
 	bitstream.ReadRect( edittext->bounds );
 	bitstream.ResetBits();
-	bool hasText = bitstream.ReadBool();
-	bool wordWrap = bitstream.ReadBool();
-	bool multiline = bitstream.ReadBool();
-	bool password = bitstream.ReadBool();
-	bool readonly = bitstream.ReadBool();
+	bool hasText	  = bitstream.ReadBool();
+	bool wordWrap	  = bitstream.ReadBool();
+	bool multiline	  = bitstream.ReadBool();
+	bool password	  = bitstream.ReadBool();
+	bool readonly	  = bitstream.ReadBool();
 	bool hasTextColor = bitstream.ReadBool();
 	bool hasMaxLength = bitstream.ReadBool();
-	bool hasFont = bitstream.ReadBool();
+	bool hasFont	  = bitstream.ReadBool();
 	bool hasFontClass = bitstream.ReadBool();
-	bool autoSize = bitstream.ReadBool();
-	bool hasLayout = bitstream.ReadBool();
-	bool noSelect = bitstream.ReadBool();
-	bool border = bitstream.ReadBool();
-	bool wasStatic = bitstream.ReadBool();
-	bool html = bitstream.ReadBool();
-	bool useOutlines = bitstream.ReadBool();
-	if( hasFont )
-	{
-		edittext->fontID = bitstream.ReadU16();
+	bool autoSize	  = bitstream.ReadBool();
+	bool hasLayout	  = bitstream.ReadBool();
+	bool noSelect	  = bitstream.ReadBool();
+	bool border		  = bitstream.ReadBool();
+	bool wasStatic	  = bitstream.ReadBool();
+	bool html		  = bitstream.ReadBool();
+	bool useOutlines  = bitstream.ReadBool();
+	if( hasFont ) {
+		edittext->fontID	 = bitstream.ReadU16();
 		edittext->fontHeight = bitstream.ReadU16();
 	}
-	if( hasFontClass )
-	{
+	if( hasFontClass ) {
 		idStr fontClass = bitstream.ReadString();
 	}
-	if( hasTextColor )
-	{
+	if( hasTextColor ) {
 		bitstream.ReadColorRGBA( edittext->color );
 	}
-	if( hasMaxLength )
-	{
+	if( hasMaxLength ) {
 		edittext->maxLength = bitstream.ReadU16();
 	}
-	if( hasLayout )
-	{
-		edittext->align = ( swfEditTextAlign_t )bitstream.ReadU8();
-		edittext->leftMargin = bitstream.ReadU16();
+	if( hasLayout ) {
+		edittext->align		  = ( swfEditTextAlign_t )bitstream.ReadU8();
+		edittext->leftMargin  = bitstream.ReadU16();
 		edittext->rightMargin = bitstream.ReadU16();
-		edittext->indent = bitstream.ReadU16();
-		edittext->leading = bitstream.ReadS16();
+		edittext->indent	  = bitstream.ReadU16();
+		edittext->leading	  = bitstream.ReadS16();
 	}
 	edittext->variable = bitstream.ReadString();
-	if( hasText )
-	{
+	if( hasText ) {
 		const char* text = bitstream.ReadString();
-		idStr initialText;
+		idStr		initialText;
 
 		// convert html tags if necessary
-		for( int i = 0; text[i] != 0; i++ )
-		{
-			if( text[i] == '<' )
-			{
-				if( i != 0 && text[i + 1] == 'p' )
-				{
+		for( int i = 0; text[i] != 0; i++ ) {
+			if( text[i] == '<' ) {
+				if( i != 0 && text[i + 1] == 'p' ) {
 					initialText.Append( '\n' );
 				}
-				for( ; text[i] != 0 && text[i] != '>'; i++ )
-				{
+				for( ; text[i] != 0 && text[i] != '>'; i++ ) {
 				}
 				continue;
 			}
 			byte tc = ( byte )text[i];
-			if( tc == '&' )
-			{
+			if( tc == '&' ) {
 				idStr special;
-				for( i++; text[i] != 0 && text[i] != ';'; i++ )
-				{
+				for( i++; text[i] != 0 && text[i] != ';'; i++ ) {
 					special.Append( text[i] );
 				}
-				if( special.Icmp( "amp" ) == 0 )
-				{
+				if( special.Icmp( "amp" ) == 0 ) {
 					tc = '&';
-				}
-				else if( special.Icmp( "apos" ) == 0 )
-				{
+				} else if( special.Icmp( "apos" ) == 0 ) {
 					tc = '\'';
-				}
-				else if( special.Icmp( "lt" ) == 0 )
-				{
+				} else if( special.Icmp( "lt" ) == 0 ) {
 					tc = '<';
-				}
-				else if( special.Icmp( "gt" ) == 0 )
-				{
+				} else if( special.Icmp( "gt" ) == 0 ) {
 					tc = '>';
-				}
-				else if( special.Icmp( "quot" ) == 0 )
-				{
+				} else if( special.Icmp( "quot" ) == 0 ) {
 					tc = '\"';
 				}
 			}

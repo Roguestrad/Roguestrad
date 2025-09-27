@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,7 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifndef __GAME_TARGET_H__
 #define __GAME_TARGET_H__
-
 
 /*
 ===============================================================================
@@ -44,7 +44,6 @@ public:
 	CLASS_PROTOTYPE( idTarget );
 };
 
-
 /*
 ===============================================================================
 
@@ -59,9 +58,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_Remove );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -77,9 +75,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_Show );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -95,9 +92,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_Damage );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -113,9 +109,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_SessionCommand );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -131,10 +126,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_EndLevel );
 
 private:
-	void				Event_Activate( idEntity* activator );
-
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -149,10 +142,10 @@ class idTarget_WaitForButton : public idTarget
 public:
 	CLASS_PROTOTYPE( idTarget_WaitForButton );
 
-	void				Think();
+	void Think();
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -169,9 +162,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_SetGlobalShaderTime );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -187,9 +179,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_SetShaderParm );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -205,7 +196,7 @@ public:
 	CLASS_PROTOTYPE( idTarget_SetShaderTime );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -223,17 +214,17 @@ public:
 
 	idTarget_FadeEntity();
 
-	void				Save( idSaveGame* savefile ) const;
-	void				Restore( idRestoreGame* savefile );
+	void Save( idSaveGame* savefile ) const;
+	void Restore( idRestoreGame* savefile );
 
-	void				Think();
+	void Think();
 
 private:
-	idVec4				fadeFrom;
-	int					fadeStart;
-	int					fadeEnd;
+	idVec4 fadeFrom;
+	int	   fadeStart;
+	int	   fadeEnd;
 
-	void				Event_Activate( idEntity* activator );
+	void   Event_Activate( idEntity* activator );
 };
 
 /*
@@ -250,7 +241,7 @@ public:
 	CLASS_PROTOTYPE( idTarget_LightFadeIn );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -267,7 +258,7 @@ public:
 	CLASS_PROTOTYPE( idTarget_LightFadeOut );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -283,12 +274,11 @@ class idTarget_Give : public idTarget
 public:
 	CLASS_PROTOTYPE( idTarget_Give );
 
-	void				Spawn();
+	void Spawn();
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -304,7 +294,7 @@ public:
 	CLASS_PROTOTYPE( idTarget_GiveEmail );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -320,12 +310,11 @@ class idTarget_SetModel : public idTarget
 public:
 	CLASS_PROTOTYPE( idTarget_SetModel );
 
-	void				Spawn();
+	void Spawn();
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -335,13 +324,9 @@ idTarget_SetInfluence
 ===============================================================================
 */
 
-typedef struct SavedGui_s
-{
-	SavedGui_s()
-	{
-		memset( gui, 0, sizeof( idUserInterface* )*MAX_RENDERENTITY_GUI );
-	};
-	idUserInterface*	gui[MAX_RENDERENTITY_GUI];
+typedef struct SavedGui_s {
+	SavedGui_s() { memset( gui, 0, sizeof( idUserInterface* ) * MAX_RENDERENTITY_GUI ); };
+	idUserInterface* gui[MAX_RENDERENTITY_GUI];
 } SavedGui_t;
 
 class idTarget_SetInfluence : public idTarget
@@ -351,36 +336,35 @@ public:
 
 	idTarget_SetInfluence();
 
-	void				Save( idSaveGame* savefile ) const;
-	void				Restore( idRestoreGame* savefile );
+	void Save( idSaveGame* savefile ) const;
+	void Restore( idRestoreGame* savefile );
 
-	void				Spawn();
+	void Spawn();
 
 private:
-	void				Event_Activate( idEntity* activator );
-	void				Event_RestoreInfluence();
-	void				Event_GatherEntities();
-	void				Event_Flash( float flash, int out );
-	void				Event_ClearFlash( float flash );
-	void				Think();
+	void						   Event_Activate( idEntity* activator );
+	void						   Event_RestoreInfluence();
+	void						   Event_GatherEntities();
+	void						   Event_Flash( float flash, int out );
+	void						   Event_ClearFlash( float flash );
+	void						   Think();
 
-	idList<int, TAG_TARGET>			lightList;
-	idList<int, TAG_TARGET>			guiList;
-	idList<int, TAG_TARGET>			soundList;
-	idList<int, TAG_TARGET>			genericList;
-	float				flashIn;
-	float				flashOut;
-	float				delay;
-	idStr				flashInSound;
-	idStr				flashOutSound;
-	idEntity* 			switchToCamera;
-	idInterpolate<float>fovSetting;
-	bool				soundFaded;
-	bool				restoreOnTrigger;
+	idList<int, TAG_TARGET>		   lightList;
+	idList<int, TAG_TARGET>		   guiList;
+	idList<int, TAG_TARGET>		   soundList;
+	idList<int, TAG_TARGET>		   genericList;
+	float						   flashIn;
+	float						   flashOut;
+	float						   delay;
+	idStr						   flashInSound;
+	idStr						   flashOutSound;
+	idEntity*					   switchToCamera;
+	idInterpolate<float>		   fovSetting;
+	bool						   soundFaded;
+	bool						   restoreOnTrigger;
 
-	idList<SavedGui_t, TAG_TARGET>	savedGuiList;
+	idList<SavedGui_t, TAG_TARGET> savedGuiList;
 };
-
 
 /*
 ===============================================================================
@@ -396,9 +380,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_SetKeyVal );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -413,17 +396,16 @@ class idTarget_SetFov : public idTarget
 public:
 	CLASS_PROTOTYPE( idTarget_SetFov );
 
-	void				Save( idSaveGame* savefile ) const;
-	void				Restore( idRestoreGame* savefile );
+	void Save( idSaveGame* savefile ) const;
+	void Restore( idRestoreGame* savefile );
 
-	void				Think();
+	void Think();
 
 private:
-	idInterpolate<float>	fovSetting;
+	idInterpolate<float> fovSetting;
 
-	void				Event_Activate( idEntity* activator );
+	void				 Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -439,7 +421,7 @@ public:
 	CLASS_PROTOTYPE( idTarget_SetPrimaryObjective );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -450,13 +432,13 @@ idTarget_LockDoor
 ===============================================================================
 */
 
-class idTarget_LockDoor: public idTarget
+class idTarget_LockDoor : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_LockDoor );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -473,9 +455,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_CallObjectFunction );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -491,9 +472,8 @@ public:
 	CLASS_PROTOTYPE( idTarget_EnableLevelWeapons );
 
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
-
 
 /*
 ===============================================================================
@@ -510,17 +490,17 @@ public:
 
 	idTarget_Tip();
 
-	void				Spawn();
+	void Spawn();
 
-	void				Save( idSaveGame* savefile ) const;
-	void				Restore( idRestoreGame* savefile );
+	void Save( idSaveGame* savefile ) const;
+	void Restore( idRestoreGame* savefile );
 
 private:
-	idVec3				playerPos;
+	idVec3 playerPos;
 
-	void				Event_Activate( idEntity* activator );
-	void				Event_TipOff();
-	void				Event_GetPlayerPos();
+	void   Event_Activate( idEntity* activator );
+	void   Event_TipOff();
+	void   Event_GetPlayerPos();
 };
 
 /*
@@ -534,10 +514,10 @@ class idTarget_GiveSecurity : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_GiveSecurity );
-private:
-	void				Event_Activate( idEntity* activator );
-};
 
+private:
+	void Event_Activate( idEntity* activator );
+};
 
 /*
 ===============================================================================
@@ -550,10 +530,10 @@ class idTarget_RemoveWeapons : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_RemoveWeapons );
-private:
-	void				Event_Activate( idEntity* activator );
-};
 
+private:
+	void Event_Activate( idEntity* activator );
+};
 
 /*
 ===============================================================================
@@ -566,8 +546,9 @@ class idTarget_LevelTrigger : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_LevelTrigger );
+
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -581,8 +562,9 @@ class idTarget_Checkpoint : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_Checkpoint );
+
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -596,8 +578,9 @@ class idTarget_EnableStamina : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_EnableStamina );
+
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -611,9 +594,10 @@ class idTarget_FadeSoundClass : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_FadeSoundClass );
+
 private:
-	void				Event_Activate( idEntity* activator );
-	void				Event_RestoreVolume();
+	void Event_Activate( idEntity* activator );
+	void Event_RestoreVolume();
 };
 
 /*
@@ -628,8 +612,9 @@ class idTarget_RumbleJoystick : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_RumbleJoystick );
+
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 /*
@@ -644,8 +629,9 @@ class idTarget_Achievement : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_Achievement );
+
 private:
-	void				Event_Activate( idEntity* activator );
+	void Event_Activate( idEntity* activator );
 };
 
 #endif /* !__GAME_TARGET_H__ */

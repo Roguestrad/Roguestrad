@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -41,16 +42,16 @@ idForce_Spring::idForce_Spring
 */
 idForce_Spring::idForce_Spring()
 {
-	Kstretch		= 100.0f;
-	Kcompress		= 100.0f;
-	damping			= 0.0f;
-	restLength		= 0.0f;
-	physics1		= NULL;
-	id1				= 0;
-	p1				= vec3_zero;
-	physics2		= NULL;
-	id2				= 0;
-	p2				= vec3_zero;
+	Kstretch   = 100.0f;
+	Kcompress  = 100.0f;
+	damping	   = 0.0f;
+	restLength = 0.0f;
+	physics1   = NULL;
+	id1		   = 0;
+	p1		   = vec3_zero;
+	physics2   = NULL;
+	id2		   = 0;
+	p2		   = vec3_zero;
 }
 
 /*
@@ -69,9 +70,9 @@ idForce_Spring::InitSpring
 */
 void idForce_Spring::InitSpring( float Kstretch, float Kcompress, float damping, float restLength )
 {
-	this->Kstretch = Kstretch;
-	this->Kcompress = Kcompress;
-	this->damping = damping;
+	this->Kstretch	 = Kstretch;
+	this->Kcompress	 = Kcompress;
+	this->damping	 = damping;
 	this->restLength = restLength;
 }
 
@@ -83,11 +84,11 @@ idForce_Spring::SetPosition
 void idForce_Spring::SetPosition( idPhysics* physics1, int id1, const idVec3& p1, idPhysics* physics2, int id2, const idVec3& p2 )
 {
 	this->physics1 = physics1;
-	this->id1 = id1;
-	this->p1 = p1;
+	this->id1	   = id1;
+	this->p1	   = p1;
 	this->physics2 = physics2;
-	this->id2 = id2;
-	this->p2 = p2;
+	this->id2	   = id2;
+	this->p2	   = p2;
 }
 
 /*
@@ -97,70 +98,57 @@ idForce_Spring::Evaluate
 */
 void idForce_Spring::Evaluate( int time )
 {
-	float length;
-	idMat3 axis;
-	idVec3 pos1, pos2, velocity1, velocity2, force, dampingForce;
+	float		 length;
+	idMat3		 axis;
+	idVec3		 pos1, pos2, velocity1, velocity2, force, dampingForce;
 	impactInfo_t info;
 
-	pos1 = p1;
-	pos2 = p2;
+	pos1	  = p1;
+	pos2	  = p2;
 	velocity1 = velocity2 = vec3_origin;
 
-	if( physics1 )
-	{
+	if( physics1 ) {
 		axis = physics1->GetAxis( id1 );
 		pos1 = physics1->GetOrigin( id1 );
 		pos1 += p1 * axis;
-		if( damping > 0.0f )
-		{
+		if( damping > 0.0f ) {
 			physics1->GetImpactInfo( id1, pos1, &info );
 			velocity1 = info.velocity;
 		}
 	}
 
-	if( physics2 )
-	{
+	if( physics2 ) {
 		axis = physics2->GetAxis( id2 );
 		pos2 = physics2->GetOrigin( id2 );
 		pos2 += p2 * axis;
-		if( damping > 0.0f )
-		{
+		if( damping > 0.0f ) {
 			physics2->GetImpactInfo( id2, pos2, &info );
 			velocity2 = info.velocity;
 		}
 	}
 
-	force = pos2 - pos1;
+	force		 = pos2 - pos1;
 	dampingForce = ( damping * ( ( ( velocity2 - velocity1 ) * force ) / ( force * force ) ) ) * force;
-	length = force.Normalize();
+	length		 = force.Normalize();
 
 	// if the spring is stretched
-	if( length > restLength )
-	{
-		if( Kstretch > 0.0f )
-		{
+	if( length > restLength ) {
+		if( Kstretch > 0.0f ) {
 			force = ( Square( length - restLength ) * Kstretch ) * force - dampingForce;
-			if( physics1 )
-			{
+			if( physics1 ) {
 				physics1->AddForce( id1, pos1, force );
 			}
-			if( physics2 )
-			{
+			if( physics2 ) {
 				physics2->AddForce( id2, pos2, -force );
 			}
 		}
-	}
-	else
-	{
-		if( Kcompress > 0.0f )
-		{
+	} else {
+		if( Kcompress > 0.0f ) {
 			force = ( Square( length - restLength ) * Kcompress ) * force - dampingForce;
-			if( physics1 )
-			{
+			if( physics1 ) {
 				physics1->AddForce( id1, pos1, -force );
 			}
-			if( physics2 )
-			{
+			if( physics2 ) {
 				physics2->AddForce( id2, pos2, force );
 			}
 		}
@@ -174,12 +162,10 @@ idForce_Spring::RemovePhysics
 */
 void idForce_Spring::RemovePhysics( const idPhysics* phys )
 {
-	if( physics1 == phys )
-	{
+	if( physics1 == phys ) {
 		physics1 = NULL;
 	}
-	if( physics2 == phys )
-	{
+	if( physics2 == phys ) {
 		physics2 = NULL;
 	}
 }

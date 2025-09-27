@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -52,7 +53,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../idlib/Lib.h"
 #include "../idlib/gltfProperties.h"
 #include "../idlib/gltfParser.h"
-
 
 #include "sys/sys_filesystem.h"
 
@@ -88,15 +88,15 @@ If you have questions concerning this license or the applicable additional terms
 
 // We have expression parsing and evaluation code in multiple places:
 // materials, sound shaders, and guis. We should unify them.
-const int MAX_EXPRESSION_OPS = 4096;
-const int MAX_EXPRESSION_REGISTERS = 4096;
+const int		 MAX_EXPRESSION_OPS		  = 4096;
+const int		 MAX_EXPRESSION_REGISTERS = 4096;
 
 // renderer
 // everything that is needed by the backend needs
 // to be double buffered to allow it to run in
 // parallel on a dual cpu machine
 // SRS - use triple buffering for NVRHI with command queue event query sync method
-constexpr uint32 NUM_FRAME_DATA	= 3;
+constexpr uint32 NUM_FRAME_DATA = 3;
 
 #include "nvrhi/nvrhi.h"
 
@@ -122,7 +122,7 @@ constexpr uint32 NUM_FRAME_DATA	= 3;
 #include "../engine/ui/UserInterface.h"
 
 // RB: required for SWF extensions
-//#include "rapidjson/document.h"
+// #include "rapidjson/document.h"
 
 #include "../engine/swf/SWF.h"
 
@@ -188,6 +188,6 @@ constexpr uint32 NUM_FRAME_DATA	= 3;
 
 #undef min
 #undef max
-#include <algorithm>	// for min / max / swap
+#include <algorithm> // for min / max / swap
 
 #endif /* !__PRECOMPILED_H__ */

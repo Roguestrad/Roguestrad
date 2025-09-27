@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -37,28 +38,27 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-idSys* 			idLib::sys			= NULL;
-idCommon* 		idLib::common		= NULL;
-idCVarSystem* 	idLib::cvarSystem	= NULL;
-idFileSystem* 	idLib::fileSystem	= NULL;
-int				idLib::frameNumber	= 0;
-bool			idLib::mainThreadInitialized = 0;
-ID_TLS			idLib::isMainThread = 0;
+idSys*		  idLib::sys				   = NULL;
+idCommon*	  idLib::common				   = NULL;
+idCVarSystem* idLib::cvarSystem			   = NULL;
+idFileSystem* idLib::fileSystem			   = NULL;
+int			  idLib::frameNumber		   = 0;
+bool		  idLib::mainThreadInitialized = 0;
+ID_TLS		  idLib::isMainThread		   = 0;
 
-char idException::error[2048];
+char		  idException::error[2048];
 
 /*
 ================
 idLib::Init
 ================
 */
-void idLib::Init()
+void		  idLib::Init()
 {
-
 	assert( sizeof( bool ) == 1 );
 
-	isMainThread = 1;
-	mainThreadInitialized = 1;	// note that the thread-local isMainThread is now valid
+	isMainThread		  = 1;
+	mainThreadInitialized = 1; // note that the thread-local isMainThread is now valid
 
 	// initialize little/big endian conversion
 	Swap_Init();
@@ -73,7 +73,7 @@ void idLib::Init()
 	idMath::Init();
 
 	// test idMatX
-	//idMatX::Test();
+	// idMatX::Test();
 
 	// test idPolynomial
 #ifdef _DEBUG
@@ -91,7 +91,6 @@ idLib::ShutDown
 */
 void idLib::ShutDown()
 {
-
 	// shut down the dictionary string pools
 	idDict::Shutdown();
 
@@ -102,7 +101,6 @@ void idLib::ShutDown()
 	idSIMD::Shutdown();
 }
 
-
 /*
 ===============================================================================
 
@@ -112,51 +110,50 @@ void idLib::ShutDown()
 */
 
 // Color definitions (alphabetical order)
-const idVec4 colorAqua          = idVec4( 0.00f, 1.00f, 1.00f, 1.00f ); // #00FFFF
-const idVec4 colorBlack         = idVec4( 0.00f, 0.00f, 0.00f, 1.00f ); // #000000
-const idVec4 colorBlue          = idVec4( 0.00f, 0.00f, 1.00f, 1.00f ); // #0000FF
-const idVec4 colorBrown         = idVec4( 0.40f, 0.35f, 0.08f, 1.00f );
-const idVec4 colorBurlyWood     = idVec4( 0.87f, 0.72f, 0.53f, 1.00f ); // #DEB887
-const idVec4 colorCoral         = idVec4( 1.00f, 0.50f, 0.31f, 1.00f ); // #FF7F50
-const idVec4 colorCrimson       = idVec4( 0.86f, 0.08f, 0.24f, 1.00f ); // #DC143C
-const idVec4 colorCyan          = idVec4( 0.00f, 1.00f, 1.00f, 1.00f );
-const idVec4 colorDarkBlue      = idVec4( 0.00f, 0.00f, 0.55f, 1.00f ); // #00008B
-const idVec4 colorDarkCyan      = idVec4( 0.00f, 0.55f, 0.55f, 1.00f ); // #008B8B
-const idVec4 colorDarkGoldenRod = idVec4( 0.72f, 0.53f, 0.04f, 1.00f ); // #B8860B
-const idVec4 colorDarkKhaki     = idVec4( 0.74f, 0.72f, 0.42f, 1.00f ); // #BDB76B
-const idVec4 colorDarkSalmon    = idVec4( 0.91f, 0.59f, 0.48f, 1.00f ); // #E9967A
-const idVec4 colorDarkSlateGray = idVec4( 0.18f, 0.31f, 0.31f, 1.00f ); // #2F4F4F
-const idVec4 colorDkGrey        = idVec4( 0.25f, 0.25f, 0.25f, 1.00f );
-const idVec4 colorDodgerBlue    = idVec4( 0.12f, 0.56f, 1.00f, 1.00f ); // #1E90FF
-const idVec4 colorFuchsia       = idVec4( 1.00f, 0.00f, 1.00f, 1.00f ); // #FF00FF
-const idVec4 colorGold          = idVec4( 0.68f, 0.63f, 0.36f, 1.00f );
-const idVec4 colorGray          = idVec4( 0.50f, 0.50f, 0.50f, 1.00f ); // #808080
-const idVec4 colorGreen         = idVec4( 0.00f, 0.50f, 0.00f, 1.00f ); // #008000
-const idVec4 colorLightSeaGreen = idVec4( 0.13f, 0.70f, 0.67f, 1.00f ); // #20B2AA
+const idVec4 colorAqua			 = idVec4( 0.00f, 1.00f, 1.00f, 1.00f ); // #00FFFF
+const idVec4 colorBlack			 = idVec4( 0.00f, 0.00f, 0.00f, 1.00f ); // #000000
+const idVec4 colorBlue			 = idVec4( 0.00f, 0.00f, 1.00f, 1.00f ); // #0000FF
+const idVec4 colorBrown			 = idVec4( 0.40f, 0.35f, 0.08f, 1.00f );
+const idVec4 colorBurlyWood		 = idVec4( 0.87f, 0.72f, 0.53f, 1.00f ); // #DEB887
+const idVec4 colorCoral			 = idVec4( 1.00f, 0.50f, 0.31f, 1.00f ); // #FF7F50
+const idVec4 colorCrimson		 = idVec4( 0.86f, 0.08f, 0.24f, 1.00f ); // #DC143C
+const idVec4 colorCyan			 = idVec4( 0.00f, 1.00f, 1.00f, 1.00f );
+const idVec4 colorDarkBlue		 = idVec4( 0.00f, 0.00f, 0.55f, 1.00f ); // #00008B
+const idVec4 colorDarkCyan		 = idVec4( 0.00f, 0.55f, 0.55f, 1.00f ); // #008B8B
+const idVec4 colorDarkGoldenRod	 = idVec4( 0.72f, 0.53f, 0.04f, 1.00f ); // #B8860B
+const idVec4 colorDarkKhaki		 = idVec4( 0.74f, 0.72f, 0.42f, 1.00f ); // #BDB76B
+const idVec4 colorDarkSalmon	 = idVec4( 0.91f, 0.59f, 0.48f, 1.00f ); // #E9967A
+const idVec4 colorDarkSlateGray	 = idVec4( 0.18f, 0.31f, 0.31f, 1.00f ); // #2F4F4F
+const idVec4 colorDkGrey		 = idVec4( 0.25f, 0.25f, 0.25f, 1.00f );
+const idVec4 colorDodgerBlue	 = idVec4( 0.12f, 0.56f, 1.00f, 1.00f ); // #1E90FF
+const idVec4 colorFuchsia		 = idVec4( 1.00f, 0.00f, 1.00f, 1.00f ); // #FF00FF
+const idVec4 colorGold			 = idVec4( 0.68f, 0.63f, 0.36f, 1.00f );
+const idVec4 colorGray			 = idVec4( 0.50f, 0.50f, 0.50f, 1.00f ); // #808080
+const idVec4 colorGreen			 = idVec4( 0.00f, 0.50f, 0.00f, 1.00f ); // #008000
+const idVec4 colorLightSeaGreen	 = idVec4( 0.13f, 0.70f, 0.67f, 1.00f ); // #20B2AA
 const idVec4 colorLightSteelBlue = idVec4( 0.69f, 0.77f, 0.87f, 1.00f ); // #B0C4DE
-const idVec4 colorLtGrey        = idVec4( 0.75f, 0.75f, 0.75f, 1.00f );
-const idVec4 colorLime          = idVec4( 0.00f, 1.00f, 0.00f, 1.00f ); // #00FF00
-const idVec4 colorMagenta       = idVec4( 1.00f, 0.00f, 1.00f, 1.00f );
-const idVec4 colorMaroon        = idVec4( 0.50f, 0.00f, 0.00f, 1.00f ); // #800000
-const idVec4 colorMdGrey        = idVec4( 0.50f, 0.50f, 0.50f, 1.00f );
-const idVec4 colorNavy          = idVec4( 0.00f, 0.00f, 0.50f, 1.00f ); // #000080
-const idVec4 colorOlive         = idVec4( 0.50f, 0.50f, 0.00f, 1.00f ); // #808000
-const idVec4 colorOrange        = idVec4( 1.00f, 0.50f, 0.00f, 1.00f );
-const idVec4 colorPink          = idVec4( 0.73f, 0.40f, 0.48f, 1.00f );
-const idVec4 colorPurple        = idVec4( 0.60f, 0.00f, 0.60f, 1.00f );
-const idVec4 colorRed           = idVec4( 1.00f, 0.00f, 0.00f, 1.00f );
-const idVec4 colorSilver        = idVec4( 0.75f, 0.75f, 0.75f, 1.00f ); // #C0C0C0
-const idVec4 colorTeal          = idVec4( 0.00f, 0.50f, 0.50f, 1.00f ); // #008080
-const idVec4 colorWhite         = idVec4( 1.00f, 1.00f, 1.00f, 1.00f );
-const idVec4 colorYellow        = idVec4( 1.00f, 1.00f, 0.00f, 1.00f );
-
+const idVec4 colorLtGrey		 = idVec4( 0.75f, 0.75f, 0.75f, 1.00f );
+const idVec4 colorLime			 = idVec4( 0.00f, 1.00f, 0.00f, 1.00f ); // #00FF00
+const idVec4 colorMagenta		 = idVec4( 1.00f, 0.00f, 1.00f, 1.00f );
+const idVec4 colorMaroon		 = idVec4( 0.50f, 0.00f, 0.00f, 1.00f ); // #800000
+const idVec4 colorMdGrey		 = idVec4( 0.50f, 0.50f, 0.50f, 1.00f );
+const idVec4 colorNavy			 = idVec4( 0.00f, 0.00f, 0.50f, 1.00f ); // #000080
+const idVec4 colorOlive			 = idVec4( 0.50f, 0.50f, 0.00f, 1.00f ); // #808000
+const idVec4 colorOrange		 = idVec4( 1.00f, 0.50f, 0.00f, 1.00f );
+const idVec4 colorPink			 = idVec4( 0.73f, 0.40f, 0.48f, 1.00f );
+const idVec4 colorPurple		 = idVec4( 0.60f, 0.00f, 0.60f, 1.00f );
+const idVec4 colorRed			 = idVec4( 1.00f, 0.00f, 0.00f, 1.00f );
+const idVec4 colorSilver		 = idVec4( 0.75f, 0.75f, 0.75f, 1.00f ); // #C0C0C0
+const idVec4 colorTeal			 = idVec4( 0.00f, 0.50f, 0.50f, 1.00f ); // #008080
+const idVec4 colorWhite			 = idVec4( 1.00f, 1.00f, 1.00f, 1.00f );
+const idVec4 colorYellow		 = idVec4( 1.00f, 1.00f, 0.00f, 1.00f );
 
 /*
 ================
 PackColor
 ================
 */
-dword PackColor( const idVec4& color )
+dword		 PackColor( const idVec4& color )
 {
 	byte dx = idMath::Ftob( color.x * 255.0f );
 	byte dy = idMath::Ftob( color.y * 255.0f );
@@ -172,10 +169,8 @@ UnpackColor
 */
 void UnpackColor( const dword color, idVec4& unpackedColor )
 {
-	unpackedColor.Set( ( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ),
-					   ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ),
-					   ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ),
-					   ( ( color >> 24 ) & 255 ) * ( 1.0f / 255.0f ) );
+	unpackedColor.Set(
+		( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 24 ) & 255 ) * ( 1.0f / 255.0f ) );
 }
 
 /*
@@ -198,9 +193,7 @@ UnpackColor
 */
 void UnpackColor( const dword color, idVec3& unpackedColor )
 {
-	unpackedColor.Set( ( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ),
-					   ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ),
-					   ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ) );
+	unpackedColor.Set( ( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ) );
 }
 
 /*
@@ -210,8 +203,8 @@ idLib::FatalError
 */
 void idLib::FatalError( const char* fmt, ... )
 {
-	va_list		argptr;
-	char		text[MAX_STRING_CHARS];
+	va_list argptr;
+	char	text[MAX_STRING_CHARS];
 
 	va_start( argptr, fmt );
 	idStr::vsnPrintf( text, sizeof( text ), fmt, argptr );
@@ -219,7 +212,7 @@ void idLib::FatalError( const char* fmt, ... )
 
 	common->FatalError( "%s", text );
 
-#if !defined(_WIN32)
+#if !defined( _WIN32 )
 	// SRS - Added exit to silence build warning since FatalError has attribute noreturn
 	exit( EXIT_FAILURE );
 #endif
@@ -232,8 +225,8 @@ idLib::Error
 */
 void idLib::Error( const char* fmt, ... )
 {
-	va_list		argptr;
-	char		text[MAX_STRING_CHARS];
+	va_list argptr;
+	char	text[MAX_STRING_CHARS];
 
 	va_start( argptr, fmt );
 	idStr::vsnPrintf( text, sizeof( text ), fmt, argptr );
@@ -241,7 +234,7 @@ void idLib::Error( const char* fmt, ... )
 
 	common->Error( "%s", text );
 
-#if !defined(_WIN32)
+#if !defined( _WIN32 )
 	// SRS - Added exit to silence build warning since FatalError has attribute noreturn
 	exit( EXIT_FAILURE );
 #endif
@@ -254,8 +247,8 @@ idLib::Warning
 */
 void idLib::Warning( const char* fmt, ... )
 {
-	va_list		argptr;
-	char		text[MAX_STRING_CHARS];
+	va_list argptr;
+	char	text[MAX_STRING_CHARS];
 
 	va_start( argptr, fmt );
 	idStr::vsnPrintf( text, sizeof( text ), fmt, argptr );
@@ -271,13 +264,12 @@ idLib::WarningIf
 */
 void idLib::WarningIf( const bool test, const char* fmt, ... )
 {
-	if( !test )
-	{
+	if( !test ) {
 		return;
 	}
 
-	va_list		argptr;
-	char		text[MAX_STRING_CHARS];
+	va_list argptr;
+	char	text[MAX_STRING_CHARS];
 
 	va_start( argptr, fmt );
 	idStr::vsnPrintf( text, sizeof( text ), fmt, argptr );
@@ -293,10 +285,9 @@ idLib::Printf
 */
 void idLib::Printf( const char* fmt, ... )
 {
-	va_list		argptr;
+	va_list argptr;
 	va_start( argptr, fmt );
-	if( common )
-	{
+	if( common ) {
 		common->VPrintf( fmt, argptr );
 	}
 	va_end( argptr );
@@ -309,12 +300,11 @@ idLib::PrintfIf
 */
 void idLib::PrintfIf( const bool test, const char* fmt, ... )
 {
-	if( !test )
-	{
+	if( !test ) {
 		return;
 	}
 
-	va_list		argptr;
+	va_list argptr;
 	va_start( argptr, fmt );
 	common->VPrintf( fmt, argptr );
 	va_end( argptr );
@@ -329,60 +319,60 @@ void idLib::PrintfIf( const bool test, const char* fmt, ... )
 */
 
 // can't just use function pointers, or dll linkage can mess up
-static short( *_BigShort )( short l );
-static short( *_LittleShort )( short l );
-static int	( *_BigLong )( int l );
-static int	( *_LittleLong )( int l );
-static float( *_BigFloat )( float l );
-static float( *_LittleFloat )( float l );
-static void	( *_BigRevBytes )( void* bp, int elsize, int elcount );
-static void	( *_LittleRevBytes )( void* bp, int elsize, int elcount );
+static short ( *_BigShort )( short l );
+static short ( *_LittleShort )( short l );
+static int ( *_BigLong )( int l );
+static int ( *_LittleLong )( int l );
+static float ( *_BigFloat )( float l );
+static float ( *_LittleFloat )( float l );
+static void ( *_BigRevBytes )( void* bp, int elsize, int elcount );
+static void ( *_LittleRevBytes )( void* bp, int elsize, int elcount );
 static void ( *_LittleBitField )( void* bp, int elsize );
-static void	( *_SixtetsForInt )( byte* out, int src );
-static int	( *_IntForSixtets )( byte* in );
+static void ( *_SixtetsForInt )( byte* out, int src );
+static int ( *_IntForSixtets )( byte* in );
 
-short	BigShort( short l )
+short BigShort( short l )
 {
 	return _BigShort( l );
 }
-short	LittleShort( short l )
+short LittleShort( short l )
 {
 	return _LittleShort( l );
 }
-int		BigLong( int l )
+int BigLong( int l )
 {
 	return _BigLong( l );
 }
-int		LittleLong( int l )
+int LittleLong( int l )
 {
 	return _LittleLong( l );
 }
-float	BigFloat( float l )
+float BigFloat( float l )
 {
 	return _BigFloat( l );
 }
-float	LittleFloat( float l )
+float LittleFloat( float l )
 {
 	return _LittleFloat( l );
 }
-void	BigRevBytes( void* bp, int elsize, int elcount )
+void BigRevBytes( void* bp, int elsize, int elcount )
 {
 	_BigRevBytes( bp, elsize, elcount );
 }
-void	LittleRevBytes( void* bp, int elsize, int elcount )
+void LittleRevBytes( void* bp, int elsize, int elcount )
 {
 	_LittleRevBytes( bp, elsize, elcount );
 }
-void	LittleBitField( void* bp, int elsize )
+void LittleBitField( void* bp, int elsize )
 {
 	_LittleBitField( bp, elsize );
 }
 
-void	SixtetsForInt( byte* out, int src )
+void SixtetsForInt( byte* out, int src )
 {
 	_SixtetsForInt( out, src );
 }
-int		IntForSixtets( byte* in )
+int IntForSixtets( byte* in )
 {
 	return _IntForSixtets( in );
 }
@@ -394,7 +384,7 @@ ShortSwap
 */
 short ShortSwap( short l )
 {
-	byte    b1, b2;
+	byte b1, b2;
 
 	b1 = l & 255;
 	b2 = ( l >> 8 ) & 255;
@@ -419,7 +409,7 @@ LongSwap
 */
 int LongSwap( int l )
 {
-	byte    b1, b2, b3, b4;
+	byte b1, b2, b3, b4;
 
 	b1 = l & 255;
 	b2 = ( l >> 8 ) & 255;
@@ -434,7 +424,7 @@ int LongSwap( int l )
 LongNoSwap
 ================
 */
-int	LongNoSwap( int l )
+int LongNoSwap( int l )
 {
 	return l;
 }
@@ -446,14 +436,12 @@ FloatSwap
 */
 float FloatSwap( float f )
 {
-	union
-	{
-		float	f;
-		byte	b[4];
+	union {
+		float f;
+		byte  b[4];
 	} dat1, dat2;
 
-
-	dat1.f = f;
+	dat1.f	  = f;
 	dat2.b[0] = dat1.b[3];
 	dat2.b[1] = dat1.b[2];
 	dat2.b[2] = dat1.b[1];
@@ -487,15 +475,13 @@ RESULTS
 ===================================================================== */
 void RevBytesSwap( void* bp, int elsize, int elcount )
 {
-	unsigned char* p, *q;
+	unsigned char *p, *q;
 
-	p = ( unsigned char* ) bp;
+	p = ( unsigned char* )bp;
 
-	if( elsize == 2 )
-	{
+	if( elsize == 2 ) {
 		q = p + 1;
-		while( elcount-- )
-		{
+		while( elcount-- ) {
 			*p ^= *q;
 			*q ^= *p;
 			*p ^= *q;
@@ -505,11 +491,9 @@ void RevBytesSwap( void* bp, int elsize, int elcount )
 		return;
 	}
 
-	while( elcount-- )
-	{
+	while( elcount-- ) {
 		q = p + elsize - 1;
-		while( p < q )
-		{
+		while( p < q ) {
 			*p ^= *q;
 			*q ^= *p;
 			*p ^= *q;
@@ -535,18 +519,16 @@ void RevBytesSwap( void* bp, int elsize, int elcount )
  ===================================================================== */
 void RevBitFieldSwap( void* bp, int elsize )
 {
-	int i;
-	unsigned char* p, t, v;
+	int			   i;
+	unsigned char *p, t, v;
 
 	LittleRevBytes( bp, elsize, 1 );
 
-	p = ( unsigned char* ) bp;
-	while( elsize-- )
-	{
+	p = ( unsigned char* )bp;
+	while( elsize-- ) {
 		v = *p;
 		t = 0;
-		for( i = 7; i >= 0; i-- )
-		{
+		for( i = 7; i >= 0; i-- ) {
 			t <<= 1;
 			v >>= 1;
 			t |= v & 1;
@@ -583,10 +565,10 @@ SixtetsForIntLittle
 void SixtetsForIntLittle( byte* out, int src )
 {
 	byte* b = ( byte* )&src;
-	out[0] = ( b[0] & 0xfc ) >> 2;
-	out[1] = ( ( b[0] & 0x3 ) << 4 ) + ( ( b[1] & 0xf0 ) >> 4 );
-	out[2] = ( ( b[1] & 0xf ) << 2 ) + ( ( b[2] & 0xc0 ) >> 6 );
-	out[3] = b[2] & 0x3f;
+	out[0]	= ( b[0] & 0xfc ) >> 2;
+	out[1]	= ( ( b[0] & 0x3 ) << 4 ) + ( ( b[1] & 0xf0 ) >> 4 );
+	out[2]	= ( ( b[1] & 0xf ) << 2 ) + ( ( b[2] & 0xc0 ) >> 6 );
+	out[3]	= b[2] & 0x3f;
 }
 
 /*
@@ -597,8 +579,7 @@ TTimo: untested - that's the version from initial base64 encode
 */
 void SixtetsForIntBig( byte* out, int src )
 {
-	for( int i = 0 ; i < 4 ; i++ )
-	{
+	for( int i = 0; i < 4; i++ ) {
 		out[i] = src & 0x3f;
 		src >>= 6;
 	}
@@ -611,8 +592,8 @@ IntForSixtetsLittle
 */
 int IntForSixtetsLittle( byte* in )
 {
-	int ret = 0;
-	byte* b = ( byte* )&ret;
+	int	  ret = 0;
+	byte* b	  = ( byte* )&ret;
 	b[0] |= in[0] << 2;
 	b[0] |= ( in[1] & 0x30 ) >> 4;
 	b[1] |= ( in[1] & 0xf ) << 4;
@@ -645,38 +626,35 @@ Swap_Init
 */
 void Swap_Init()
 {
-	byte	swaptest[2] = {1, 0};
+	byte swaptest[2] = { 1, 0 };
 
 	// set the byte swapping variables in a portable manner
-	if( *( short* )swaptest == 1 )
-	{
+	if( *( short* )swaptest == 1 ) {
 		// little endian ex: x86
-		_BigShort = ShortSwap;
-		_LittleShort = ShortNoSwap;
-		_BigLong = LongSwap;
-		_LittleLong = LongNoSwap;
-		_BigFloat = FloatSwap;
-		_LittleFloat = FloatNoSwap;
-		_BigRevBytes = RevBytesSwap;
+		_BigShort		= ShortSwap;
+		_LittleShort	= ShortNoSwap;
+		_BigLong		= LongSwap;
+		_LittleLong		= LongNoSwap;
+		_BigFloat		= FloatSwap;
+		_LittleFloat	= FloatNoSwap;
+		_BigRevBytes	= RevBytesSwap;
 		_LittleRevBytes = RevBytesNoSwap;
 		_LittleBitField = RevBitFieldNoSwap;
-		_SixtetsForInt = SixtetsForIntLittle;
-		_IntForSixtets = IntForSixtetsLittle;
-	}
-	else
-	{
+		_SixtetsForInt	= SixtetsForIntLittle;
+		_IntForSixtets	= IntForSixtetsLittle;
+	} else {
 		// big endian ex: ppc
-		_BigShort = ShortNoSwap;
-		_LittleShort = ShortSwap;
-		_BigLong = LongNoSwap;
-		_LittleLong = LongSwap;
-		_BigFloat = FloatNoSwap;
-		_LittleFloat = FloatSwap;
-		_BigRevBytes = RevBytesNoSwap;
+		_BigShort		= ShortNoSwap;
+		_LittleShort	= ShortSwap;
+		_BigLong		= LongNoSwap;
+		_LittleLong		= LongSwap;
+		_BigFloat		= FloatNoSwap;
+		_LittleFloat	= FloatSwap;
+		_BigRevBytes	= RevBytesNoSwap;
 		_LittleRevBytes = RevBytesSwap;
 		_LittleBitField = RevBitFieldSwap;
-		_SixtetsForInt = SixtetsForIntBig;
-		_IntForSixtets = IntForSixtetsBig;
+		_SixtetsForInt	= SixtetsForIntBig;
+		_IntForSixtets	= IntForSixtetsBig;
 	}
 }
 
@@ -687,10 +665,9 @@ Swap_IsBigEndian
 */
 bool Swap_IsBigEndian()
 {
-	byte	swaptest[2] = {1, 0};
+	byte swaptest[2] = { 1, 0 };
 	return *( short* )swaptest != 1;
 }
-
 
 /*
 ========================

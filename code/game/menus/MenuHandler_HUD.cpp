@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,60 +37,44 @@ static const int TIP_DISPLAY_TIME = 5000;
 idMenuHandler_HUD::Update
 ========================
 */
-void idMenuHandler_HUD::Update()
+void			 idMenuHandler_HUD::Update()
 {
-
-	if( gui == NULL || !gui->IsActive() )
-	{
+	if( gui == NULL || !gui->IsActive() ) {
 		return;
 	}
 
-	if( nextScreen != activeScreen )
-	{
-
-		if( activeScreen > HUD_AREA_INVALID && activeScreen < HUD_NUM_AREAS && menuScreens[ activeScreen ] != NULL )
-		{
-			menuScreens[ activeScreen ]->HideScreen( static_cast<mainMenuTransition_t>( transition ) );
+	if( nextScreen != activeScreen ) {
+		if( activeScreen > HUD_AREA_INVALID && activeScreen < HUD_NUM_AREAS && menuScreens[activeScreen] != NULL ) {
+			menuScreens[activeScreen]->HideScreen( static_cast<mainMenuTransition_t>( transition ) );
 		}
 
-		if( nextScreen > HUD_AREA_INVALID && nextScreen < HUD_NUM_AREAS && menuScreens[ nextScreen ] != NULL )
-		{
-			menuScreens[ nextScreen ]->ShowScreen( static_cast<mainMenuTransition_t>( transition ) );
+		if( nextScreen > HUD_AREA_INVALID && nextScreen < HUD_NUM_AREAS && menuScreens[nextScreen] != NULL ) {
+			menuScreens[nextScreen]->ShowScreen( static_cast<mainMenuTransition_t>( transition ) );
 		}
 
-		transition = MENU_TRANSITION_INVALID;
+		transition	 = MENU_TRANSITION_INVALID;
 		activeScreen = nextScreen;
 	}
 
 	idPlayer* player = gameLocal.GetLocalPlayer();
-	if( player != NULL )
-	{
-		if( player->IsTipVisible() && autoHideTip && !hiding )
-		{
-			if( gameLocal.time >= tipStartTime + TIP_DISPLAY_TIME )
-			{
+	if( player != NULL ) {
+		if( player->IsTipVisible() && autoHideTip && !hiding ) {
+			if( gameLocal.time >= tipStartTime + TIP_DISPLAY_TIME ) {
 				player->HideTip();
 			}
 		}
 
-		if( player->IsSoundChannelPlaying( SND_CHANNEL_PDA_AUDIO ) && GetHud() != NULL )
-		{
+		if( player->IsSoundChannelPlaying( SND_CHANNEL_PDA_AUDIO ) && GetHud() != NULL ) {
 			GetHud()->UpdateAudioLog( true );
-		}
-		else
-		{
+		} else {
 			GetHud()->UpdateAudioLog( false );
 		}
 
-		if( radioMessage )
-		{
+		if( radioMessage ) {
 			GetHud()->UpdateCommunication( true, player );
-		}
-		else
-		{
+		} else {
 			GetHud()->UpdateCommunication( false, player );
 		}
-
 	}
 
 	idMenuHandler::Update();
@@ -102,26 +87,20 @@ idMenuHandler_HUD::ActivateMenu
 */
 void idMenuHandler_HUD::ActivateMenu( bool show )
 {
-
 	idMenuHandler::ActivateMenu( show );
 
 	idPlayer* player = gameLocal.GetLocalPlayer();
-	if( player == NULL )
-	{
+	if( player == NULL ) {
 		return;
 	}
 
-	if( show )
-	{
+	if( show ) {
 		activeScreen = HUD_AREA_INVALID;
-		nextScreen = HUD_AREA_PLAYING;
-	}
-	else
-	{
+		nextScreen	 = HUD_AREA_PLAYING;
+	} else {
 		activeScreen = HUD_AREA_INVALID;
-		nextScreen = HUD_AREA_INVALID;
+		nextScreen	 = HUD_AREA_INVALID;
 	}
-
 }
 
 /*
@@ -136,14 +115,13 @@ void idMenuHandler_HUD::Initialize( const char* swfFile, idSoundWorld* sw )
 	//---------------------
 	// Initialize the menus
 	//---------------------
-#define BIND_HUD_SCREEN( screenId, className, menuHandler )				\
-	menuScreens[ (screenId) ] = new className();						\
-	menuScreens[ (screenId) ]->Initialize( menuHandler );				\
-	menuScreens[ (screenId) ]->AddRef();
+#define BIND_HUD_SCREEN( screenId, className, menuHandler ) \
+	menuScreens[( screenId )] = new className();            \
+	menuScreens[( screenId )]->Initialize( menuHandler );   \
+	menuScreens[( screenId )]->AddRef();
 
-	for( int i = 0; i < HUD_NUM_AREAS; ++i )
-	{
-		menuScreens[ i ] = NULL;
+	for( int i = 0; i < HUD_NUM_AREAS; ++i ) {
+		menuScreens[i] = NULL;
 	}
 
 	BIND_HUD_SCREEN( HUD_AREA_PLAYING, idMenuScreen_HUD, this );
@@ -156,14 +134,11 @@ idMenuHandler_HUD::GetMenuScreen
 */
 idMenuScreen* idMenuHandler_HUD::GetMenuScreen( int index )
 {
-
-	if( index < 0 || index >= HUD_NUM_AREAS )
-	{
+	if( index < 0 || index >= HUD_NUM_AREAS ) {
 		return NULL;
 	}
 
-	return menuScreens[ index ];
-
+	return menuScreens[index];
 }
 
 /*
@@ -173,7 +148,7 @@ idMenuHandler_HUD::GetHud
 */
 idMenuScreen_HUD* idMenuHandler_HUD::GetHud()
 {
-	idMenuScreen_HUD* screen = dynamic_cast< idMenuScreen_HUD* >( menuScreens[ HUD_AREA_PLAYING ] );
+	idMenuScreen_HUD* screen = dynamic_cast<idMenuScreen_HUD*>( menuScreens[HUD_AREA_PLAYING] );
 	return screen;
 }
 
@@ -185,12 +160,11 @@ idMenuHandler_HUD::ShowTip
 void idMenuHandler_HUD::ShowTip( const char* title, const char* tip, bool autoHide )
 {
 	// SRS - Changed to assign autoHide to autoHideTip vs. assign autoHideTip to itself
-	autoHideTip = autoHide;
-	tipStartTime = gameLocal.time;
-	hiding = false;
+	autoHideTip				 = autoHide;
+	tipStartTime			 = gameLocal.time;
+	hiding					 = false;
 	idMenuScreen_HUD* screen = GetHud();
-	if( screen != NULL )
-	{
+	if( screen != NULL ) {
 		screen->ShowTip( title, tip );
 	}
 }
@@ -203,8 +177,7 @@ idMenuHandler_HUD::HideTip
 void idMenuHandler_HUD::HideTip()
 {
 	idMenuScreen_HUD* screen = GetHud();
-	if( screen != NULL && !hiding )
-	{
+	if( screen != NULL && !hiding ) {
 		screen->HideTip();
 	}
 	hiding = true;

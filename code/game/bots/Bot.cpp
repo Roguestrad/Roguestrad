@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -49,7 +50,7 @@ iceBot::iceBot
 */
 iceBot::iceBot()
 {
-	//bs.action = NULL;
+	// bs.action = NULL;
 	hasSpawned = false;
 	gameLocal.RegisterBot( this );
 }
@@ -71,12 +72,11 @@ iceBot::SetEnemy
 */
 void iceBot::SetEnemy( idPlayer* player, idVec3 origin )
 {
-	if( bs.enemy == -1 )
-	{
-		bs.enemy = player->entityNumber;
+	if( bs.enemy == -1 ) {
+		bs.enemy				= player->entityNumber;
 		bs.aggressiveAttackTime = gameLocal.SysScriptTime() + 2.0f;
-		bs.lastenemyorigin = origin;
-		//bs.action = &botAIBattleRetreat;
+		bs.lastenemyorigin		= origin;
+		// bs.action = &botAIBattleRetreat;
 		stateThread.SetState( "state_Attacked" );
 	}
 }
@@ -93,7 +93,7 @@ void iceBot::BotUpdateInventory()
 	bs.inventory[INVENTORY_SHOTGUN]			= HasWeapon( weapon_shotgun );
 	bs.inventory[INVENTORY_MACHINEGUN]		= HasWeapon( weapon_machinegun );
 	bs.inventory[INVENTORY_GRENADELAUNCHER] = 0;
-	bs.inventory[INVENTORY_ROCKETLAUNCHER]  = HasWeapon( weapon_rocketlauncher );
+	bs.inventory[INVENTORY_ROCKETLAUNCHER]	= HasWeapon( weapon_rocketlauncher );
 	bs.inventory[INVENTORY_LIGHTNING]		= 0;
 	bs.inventory[INVENTORY_RAILGUN]			= 0;
 	bs.inventory[INVENTORY_PLASMAGUN]		= HasWeapon( weapon_plasmagun );
@@ -120,7 +120,6 @@ void iceBot::BotUpdateInventory()
 	bs.inventory[INVENTORY_BLUEFLAG]		= 0;
 }
 
-
 /*
 ===================
 iceBot::Spawn
@@ -129,38 +128,35 @@ iceBot::Spawn
 void iceBot::Spawn()
 {
 	idStr botName;
-	char filename[256];
-	int errnum;
+	char  filename[256];
+	int	  errnum;
 
 	stateThread.SetOwner( this );
 
 	idPlayer::Spawn();
 
-	if( common->IsServer() )
-	{
-		weapon_machinegun = SlotForWeapon( "weapon_machinegun" );
-		weapon_shotgun = SlotForWeapon( "weapon_shotgun" );
-		weapon_plasmagun = SlotForWeapon( "weapon_plasmagun" );
+	if( common->IsServer() ) {
+		weapon_machinegun	  = SlotForWeapon( "weapon_machinegun" );
+		weapon_shotgun		  = SlotForWeapon( "weapon_shotgun" );
+		weapon_plasmagun	  = SlotForWeapon( "weapon_plasmagun" );
 		weapon_rocketlauncher = SlotForWeapon( "weapon_rocketlauncher" );
 
-		WP_MACHINEGUN = weapon_machinegun;
-		WP_SHOTGUN = weapon_shotgun;
-		WP_PLASMAGUN = weapon_plasmagun;
+		WP_MACHINEGUN	   = weapon_machinegun;
+		WP_SHOTGUN		   = weapon_shotgun;
+		WP_PLASMAGUN	   = weapon_plasmagun;
 		WP_ROCKET_LAUNCHER = weapon_rocketlauncher;
 
 		botName = spawnArgs.GetString( "botname" );
 
 		aas = gameLocal.GetBotAAS();
-		if( aas == NULL )
-		{
+		if( aas == NULL ) {
 			gameLocal.Error( "Missing AAS\n" );
 			return;
 		}
 
 		// Load in the bot character.
 		bs.character = botCharacterStatsManager.BotLoadCharacterFromFile( va( "bots/%s_c.c", botName.c_str() ), 1 );
-		if( !bs.character )
-		{
+		if( !bs.character ) {
 			gameLocal.Error( "Failed to load character file for bot %s\n", botName.c_str() );
 		}
 
@@ -170,29 +166,27 @@ void iceBot::Spawn()
 		// Get the bot items weights file name.
 		botCharacterStatsManager.Characteristic_String( bs.character, CHARACTERISTIC_ITEMWEIGHTS, filename, 256 );
 		errnum = botGoalManager.BotLoadItemWeights( bs.gs, filename );
-		if( errnum != BLERR_NOERROR )
-		{
+		if( errnum != BLERR_NOERROR ) {
 			gameLocal.Error( "Failed to load bot item weights!" );
 			botGoalManager.BotFreeGoalState( bs.gs );
 			return;
 		}
 
-		//allocate a weapon state
+		// allocate a weapon state
 		bs.ws = botWeaponInfoManager.BotAllocWeaponState();
 
-		//load the weapon weights
+		// load the weapon weights
 		botCharacterStatsManager.Characteristic_String( bs.character, CHARACTERISTIC_WEAPONWEIGHTS, filename, 256 );
 		errnum = botWeaponInfoManager.BotLoadWeaponWeights( bs.ws, filename );
-		if( errnum != BLERR_NOERROR )
-		{
+		if( errnum != BLERR_NOERROR ) {
 			//	trap_BotFreeGoalState(bs->gs);
 			botWeaponInfoManager.BotFreeWeaponState( bs.ws );
 			return;
 		}
 
-		bs.client = entityNumber;
-		bs.entitynum = entityNumber;
-		bs.setupcount = 4;
+		bs.client		  = entityNumber;
+		bs.entitynum	  = entityNumber;
+		bs.setupcount	  = 4;
 		bs.entergame_time = Bot_Time();
 
 		hasSpawned = true;
@@ -210,13 +204,11 @@ iceBot::Think
 */
 void iceBot::BotMoveToGoalOrigin( idVec3 goalOrigin )
 {
-	bs.botinput.dir = ( goalOrigin - firstPersonViewOrigin );
+	bs.botinput.dir		   = ( goalOrigin - firstPersonViewOrigin );
 	idAngles desiredAngles = bs.botinput.dir.ToAngles();
-	if( bs.enemy >= 0 )
-	{
+	if( bs.enemy >= 0 ) {
 		idPlayer* enemy = gameLocal.entities[bs.enemy]->Cast<idPlayer>();
-		if( enemy )
-		{
+		if( enemy ) {
 			desiredAngles = ( enemy->firstPersonViewOrigin - firstPersonViewOrigin ).ToAngles();
 		}
 	}
@@ -237,8 +229,7 @@ void iceBot::SpawnToPoint( const idVec3& spawn_origin, const idAngles& spawn_ang
 {
 	idPlayer::SpawnToPoint( spawn_origin, spawn_angles );
 
-	if( common->IsServer() )
-	{
+	if( common->IsServer() ) {
 		bs.ltg_time = 0;
 		stateThread.SetState( "state_SeekLTG" );
 	}
@@ -261,18 +252,16 @@ iceBot::ServerThink
 */
 void iceBot::ServerThink()
 {
-	bs.origin = GetPhysics()->GetOrigin();
-	bs.eye = GetEyePosition();
-	bs.thinktime = Bot_Time();
+	bs.origin				= GetPhysics()->GetOrigin();
+	bs.eye					= GetEyePosition();
+	bs.thinktime			= Bot_Time();
 	bs.botinput.actionflags = 0;
 
 	BotUpdateInventory();
 
-	if( bot_pathdebug.IsModified() )
-	{
-		if( bot_pathdebug.GetBool() )
-		{
-			bs.currentGoal.origin = gameLocal.GetLocalPlayer()->GetPhysics()->GetOrigin();
+	if( bot_pathdebug.IsModified() ) {
+		if( bot_pathdebug.GetBool() ) {
+			bs.currentGoal.origin	= gameLocal.GetLocalPlayer()->GetPhysics()->GetOrigin();
 			bs.currentGoal.framenum = gameLocal.framenum;
 		}
 
@@ -284,31 +273,24 @@ void iceBot::ServerThink()
 
 	// If we are moving along a set of waypoints, let's move along.
 	aasPath_t path;
-	//int myArea = aas->PointAreaNum(GetOrigin());
-	int goalArea = aas->PointAreaNum( bs.currentGoal.origin );
-	idVec3 org = bs.origin;
-	int curAreaNum = aas->AdjustPositionAndGetArea( org );
+	// int myArea = aas->PointAreaNum(GetOrigin());
+	int		  goalArea	 = aas->PointAreaNum( bs.currentGoal.origin );
+	idVec3	  org		 = bs.origin;
+	int		  curAreaNum = aas->AdjustPositionAndGetArea( org );
 
-	if( bot_debug.GetBool() )
-	{
-		if( bs.useRandomPosition )
-		{
+	if( bot_debug.GetBool() ) {
+		if( bs.useRandomPosition ) {
 			aas->ShowWalkPath( GetOrigin(), goalArea, bs.random_move_position );
-		}
-		else
-		{
+		} else {
 			aas->ShowWalkPath( GetOrigin(), goalArea, bs.currentGoal.origin );
 		}
 
 		aas->ShowArea( GetOrigin() );
 	}
 
-	if( bs.useRandomPosition )
-	{
+	if( bs.useRandomPosition ) {
 		aas->WalkPathToGoal( path, curAreaNum, org, goalArea, bs.random_move_position, TFL_WALK | TFL_AIR );
-	}
-	else
-	{
+	} else {
 		aas->WalkPathToGoal( path, curAreaNum, org, goalArea, bs.currentGoal.origin, TFL_WALK | TFL_AIR );
 	}
 
@@ -318,8 +300,8 @@ void iceBot::ServerThink()
 	bs.viewangles = bs.botinput.viewangles;
 
 	bs.useRandomPosition = false;
-	bs.attackerEntity = NULL; // Has to be consumed immedaitly.
-	bs.botinput.weapon = bs.weaponnum;
+	bs.attackerEntity	 = NULL; // Has to be consumed immedaitly.
+	bs.botinput.weapon	 = bs.weaponnum;
 }
 
 /*
@@ -332,20 +314,17 @@ void iceBot::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir,
 	idPlayer::Damage( inflictor, attacker, dir, damageDefName, damageScale, location );
 
 	idPlayer* player = attacker->Cast<idPlayer>();
-	if( health <= 0 )
-	{
-		if( player )
-		{
+	if( health <= 0 ) {
+		if( player ) {
 			BotSendChatMessage( DEATH, player->netname );
 		}
 	}
 
-	if( attacker == NULL )
-	{
+	if( attacker == NULL ) {
 		return;
 	}
 
-	//bs.attackerEntity = attacker;
+	// bs.attackerEntity = attacker;
 	SetEnemy( player, attacker->GetOrigin() );
 }
 
@@ -359,8 +338,7 @@ void iceBot::InflictedDamageEvent( idEntity* target )
 	idPlayer* player = target->Cast<idPlayer>();
 
 	// Don't flood the chat with death and insults.
-	if( !player->IsBot() && player->health <= 0 )
-	{
+	if( !player->IsBot() && player->health <= 0 ) {
 		BotSendChatMessage( KILL, player->netname );
 	}
 }
@@ -372,10 +350,10 @@ iceBot::PresenceTypeBoundingBox
 */
 void iceBot::PresenceTypeBoundingBox( int presencetype, idVec3& mins, idVec3& maxs )
 {
-	int index;
-	//bounding box size for each presence type
-	//idVec3 boxmins[3] = { {0, 0, 0}, {-15, -15, -24}, {-15, -15, -24} };
-	//idVec3 boxmaxs[3] = { {0, 0, 0}, { 15,  15,  32}, { 15,  15,   8} };
+	int	   index;
+	// bounding box size for each presence type
+	// idVec3 boxmins[3] = { {0, 0, 0}, {-15, -15, -24}, {-15, -15, -24} };
+	// idVec3 boxmaxs[3] = { {0, 0, 0}, { 15,  15,  32}, { 15,  15,   8} };
 
 	idVec3 boxmins[3];
 	idVec3 boxmaxs[3];
@@ -388,24 +366,17 @@ void iceBot::PresenceTypeBoundingBox( int presencetype, idVec3& mins, idVec3& ma
 	boxmaxs[1] = idVec3( 15, 15, 32 );
 	boxmaxs[2] = idVec3( 15, 15, 8 );
 
-
-	if( presencetype == PRESENCE_NORMAL )
-	{
+	if( presencetype == PRESENCE_NORMAL ) {
 		index = 1;
-	}
-	else if( presencetype == PRESENCE_CROUCH )
-	{
+	} else if( presencetype == PRESENCE_CROUCH ) {
 		index = 2;
-	}
-	else
-	{
-		//botimport.Print(PRT_FATAL, "AAS_PresenceTypeBoundingBox: unknown presence type\n");
+	} else {
+		// botimport.Print(PRT_FATAL, "AAS_PresenceTypeBoundingBox: unknown presence type\n");
 		index = 2;
 	}
 	mins = boxmins[index];
 	maxs = boxmaxs[index];
 }
-
 
 /*
 ===================
@@ -414,21 +385,17 @@ iceBot::Think
 */
 void iceBot::Think()
 {
-	if( !hasSpawned )
-	{
+	if( !hasSpawned ) {
 		return;
 	}
 
-	if( common->IsServer() )
-	{
+	if( common->IsServer() ) {
 		ServerThink();
 
-		if( bot_debug.GetBool() )
-		{
+		if( bot_debug.GetBool() ) {
 			idVec4 color;
 			color = idVec4( 1, 1, 1, 1 );
-			if( bs.enemy >= 0 )
-			{
+			if( bs.enemy >= 0 ) {
 				color = idVec4( 1, 0, 0, 1 );
 			}
 

@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,16 +30,15 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __COMMON_DIALOG_H__
 #define __COMMON_DIALOG_H__
 
-static const int	MAX_DIALOGS			= 4;		// maximum dialogs that can be open at one time
-static const int	PC_KEYBOARD_WAIT	= 20000;
+static const int MAX_DIALOGS	  = 4; // maximum dialogs that can be open at one time
+static const int PC_KEYBOARD_WAIT = 20000;
 
 /*
 ================================================
 Dialog box message types
 ================================================
 */
-enum gameDialogMessages_t
-{
+enum gameDialogMessages_t {
 	GDM_INVALID,
 	GDM_SWAP_DISKS_TO1,
 	GDM_SWAP_DISKS_TO2,
@@ -59,12 +59,12 @@ enum gameDialogMessages_t
 	GDM_HOST_CONNECTION_LOST_STATS,
 	GDM_FAILED_TO_LOAD_RANKINGS,
 	GDM_HOST_QUIT,
-	GDM_BECAME_HOST_PARTY,			// Became host of party
-	GDM_NEW_HOST_PARTY,				// Someone else became host of party
-	GDM_LOBBY_BECAME_HOST_GAME,		// In lobby, you became game host
-	GDM_LOBBY_NEW_HOST_GAME,		// In lobby, new game host was chosen (not you)
-	GDM_NEW_HOST_GAME,				// Host left/DC'd, someone else is new host, unranked game
-	GDM_NEW_HOST_GAME_STATS_DROPPED,// Host left/DC'd, someone else is new host, ranked game so stats were dropped
+	GDM_BECAME_HOST_PARTY,				// Became host of party
+	GDM_NEW_HOST_PARTY,					// Someone else became host of party
+	GDM_LOBBY_BECAME_HOST_GAME,			// In lobby, you became game host
+	GDM_LOBBY_NEW_HOST_GAME,			// In lobby, new game host was chosen (not you)
+	GDM_NEW_HOST_GAME,					// Host left/DC'd, someone else is new host, unranked game
+	GDM_NEW_HOST_GAME_STATS_DROPPED,	// Host left/DC'd, someone else is new host, ranked game so stats were dropped
 	GDM_BECAME_HOST_GAME,				// Host left/DC'd, you became host, unranked game
 	GDM_BECAME_HOST_GAME_STATS_DROPPED, // Host left/DC'd, you became host, ranked game so stats were dropped
 	GDM_LOBBY_DISBANDED,
@@ -186,8 +186,7 @@ enum gameDialogMessages_t
 Dialog box types
 ================================================
 */
-enum dialogType_t
-{
+enum dialogType_t {
 	DIALOG_INVALID = -1,
 	DIALOG_ACCEPT,
 	DIALOG_CONTINUE,
@@ -215,42 +214,42 @@ class idDialogInfo
 public:
 	idDialogInfo()
 	{
-		msg					= GDM_INVALID;
-		type				= DIALOG_ACCEPT;
-		acceptCB			= NULL;
-		cancelCB			= NULL;
-		altCBOne			= NULL;
-		altCBTwo			= NULL;
-		showing				= false;
-		clear				= false;
-		waitClear			= false;
-		pause				= false;
-		startTime			= 0;
-		killTime			= 0;
-		leaveOnClear		= false;
-		renderDuringLoad	= false;
+		msg				 = GDM_INVALID;
+		type			 = DIALOG_ACCEPT;
+		acceptCB		 = NULL;
+		cancelCB		 = NULL;
+		altCBOne		 = NULL;
+		altCBTwo		 = NULL;
+		showing			 = false;
+		clear			 = false;
+		waitClear		 = false;
+		pause			 = false;
+		startTime		 = 0;
+		killTime		 = 0;
+		leaveOnClear	 = false;
+		renderDuringLoad = false;
 	}
-	gameDialogMessages_t	msg;
-	dialogType_t			type;
-	idSWFScriptFunction* 	acceptCB;
-	idSWFScriptFunction* 	cancelCB;
-	idSWFScriptFunction* 	altCBOne;
-	idSWFScriptFunction* 	altCBTwo;
-	bool					showing;
-	bool					clear;
-	bool					waitClear;
-	bool					pause;
-	bool					forcePause;
-	bool					leaveOnClear;
-	bool					renderDuringLoad;
-	int						startTime;
-	int						killTime;
-	idStrStatic< 256 >		overrideMsg;
+	gameDialogMessages_t msg;
+	dialogType_t		 type;
+	idSWFScriptFunction* acceptCB;
+	idSWFScriptFunction* cancelCB;
+	idSWFScriptFunction* altCBOne;
+	idSWFScriptFunction* altCBTwo;
+	bool				 showing;
+	bool				 clear;
+	bool				 waitClear;
+	bool				 pause;
+	bool				 forcePause;
+	bool				 leaveOnClear;
+	bool				 renderDuringLoad;
+	int					 startTime;
+	int					 killTime;
+	idStrStatic<256>	 overrideMsg;
 
-	idStrId					txt1;
-	idStrId					txt2;
-	idStrId					txt3;
-	idStrId					txt4;
+	idStrId				 txt1;
+	idStrId				 txt2;
+	idStrId				 txt3;
+	idStrId				 txt4;
 };
 
 /*
@@ -261,8 +260,8 @@ idLoadScreenInfo
 class idLoadScreenInfo
 {
 public:
-	idStr	varName;
-	idStr	value;
+	idStr varName;
+	idStr value;
 };
 
 /*
@@ -276,53 +275,63 @@ public:
 class idCommonDialog
 {
 public:
-	void	Init();
-	void	Render( bool loading );
-	void	Shutdown();
-	void	Restart();
+	void  Init();
+	void  Render( bool loading );
+	void  Shutdown();
+	void  Restart();
 
-	bool	IsDialogPausing()
-	{
-		return dialogPause;
-	}
-	void	ClearDialogs( bool forceClear = false );
-	bool	HasDialogMsg( gameDialogMessages_t msg, bool* isNowActive );
-	void	AddDialog( gameDialogMessages_t msg, dialogType_t type, idSWFScriptFunction* acceptCallback, idSWFScriptFunction* cancelCallback, bool pause, const char* location = NULL, int lineNumber = 0, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
-	void	AddDynamicDialog( gameDialogMessages_t msg, const idStaticList< idSWFScriptFunction*, 4 >& callbacks, const idStaticList< idStrId, 4 >& optionText, bool pause, idStrStatic< 256 > overrideMsg, bool leaveOnMapHeapReset = false, bool waitOnAtlas = false, bool renderDuringLoad = false );
-	void	AddDialogIntVal( const char* name, int val );
-	bool	IsDialogActive();
-	void	ClearDialog( gameDialogMessages_t msg, const char* location = NULL, int lineNumber = 0 );
-	void	ShowSaveIndicator( bool show );
-	bool	HasAnyActiveDialog() const
-	{
-		return ( messageList.Num() > 0 ) && ( !messageList[0].clear );
-	}
+	bool  IsDialogPausing() { return dialogPause; }
+	void  ClearDialogs( bool forceClear = false );
+	bool  HasDialogMsg( gameDialogMessages_t msg, bool* isNowActive );
+	void  AddDialog( gameDialogMessages_t msg,
+		 dialogType_t					  type,
+		 idSWFScriptFunction*			  acceptCallback,
+		 idSWFScriptFunction*			  cancelCallback,
+		 bool							  pause,
+		 const char*					  location			  = NULL,
+		 int							  lineNumber		  = 0,
+		 bool							  leaveOnMapHeapReset = false,
+		 bool							  waitOnAtlas		  = false,
+		 bool							  renderDuringLoad	  = false );
+	void  AddDynamicDialog( gameDialogMessages_t	  msg,
+		 const idStaticList<idSWFScriptFunction*, 4>& callbacks,
+		 const idStaticList<idStrId, 4>&			  optionText,
+		 bool										  pause,
+		 idStrStatic<256>							  overrideMsg,
+		 bool										  leaveOnMapHeapReset = false,
+		 bool										  waitOnAtlas		  = false,
+		 bool										  renderDuringLoad	  = false );
+	void  AddDialogIntVal( const char* name, int val );
+	bool  IsDialogActive();
+	void  ClearDialog( gameDialogMessages_t msg, const char* location = NULL, int lineNumber = 0 );
+	void  ShowSaveIndicator( bool show );
+	bool  HasAnyActiveDialog() const { return ( messageList.Num() > 0 ) && ( !messageList[0].clear ); }
 
-	void	ClearAllDialogHack();
-	idStr	GetDialogMsg( gameDialogMessages_t msg, idStr& message, idStr& title );
-	bool	HandleDialogEvent( const sysEvent_t* sev );
+	void  ClearAllDialogHack();
+	idStr GetDialogMsg( gameDialogMessages_t msg, idStr& message, idStr& title );
+	bool  HandleDialogEvent( const sysEvent_t* sev );
 
 protected:
-	void	RemoveWaitDialogs();
-	void	ShowDialog( const idDialogInfo& info );
-	void	ShowNextDialog();
-	void	ActivateDialog( bool activate );
-	void	AddDialogInternal( idDialogInfo& info );
-	void	ReleaseCallBacks( int index );
+	void RemoveWaitDialogs();
+	void ShowDialog( const idDialogInfo& info );
+	void ShowNextDialog();
+	void ActivateDialog( bool activate );
+	void AddDialogInternal( idDialogInfo& info );
+	void ReleaseCallBacks( int index );
 
 private:
-	bool	dialogPause;
-	idSWF* 	dialog;
-	idSWF* 	saveIndicator;
-	bool	dialogShowingSaveIndicatorRequested;
-	int		dialogShowingSaveIndicatorTimeRemaining;
+	bool									dialogPause;
+	idSWF*									dialog;
+	idSWF*									saveIndicator;
+	bool									dialogShowingSaveIndicatorRequested;
+	int										dialogShowingSaveIndicatorTimeRemaining;
 
-	idStaticList< idDialogInfo, MAX_DIALOGS > messageList;
-	idStaticList< idLoadScreenInfo, 16 > loadScreenInfo;
+	idStaticList<idDialogInfo, MAX_DIALOGS> messageList;
+	idStaticList<idLoadScreenInfo, 16>		loadScreenInfo;
 
-	int		startSaveTime;		// with stopSaveTime, useful to pass 360 TCR# 047.  Need to keep the dialog on the screen for a minimum amount of time
-	int		stopSaveTime;
-	bool	dialogInUse;		// this is to prevent an active msg getting lost during a map heap reset
+	int										startSaveTime; // with stopSaveTime, useful to pass 360 TCR# 047.  Need to keep the dialog on the screen for a minimum amount of time
+	int										stopSaveTime;
+	bool									dialogInUse; // this is to prevent an active msg getting lost during a map heap reset
 };
 
 #endif

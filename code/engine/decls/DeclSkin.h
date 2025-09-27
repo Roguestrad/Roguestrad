@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -37,118 +38,63 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-typedef struct
-{
-	const idMaterial* 		from;			// 0 == any unmatched shader
-	const idMaterial* 		to;
+typedef struct {
+	const idMaterial* from; // 0 == any unmatched shader
+	const idMaterial* to;
 } skinMapping_t;
 
 class idDeclSkin : public idDecl
 {
 public:
-	virtual size_t			Size() const;
-	virtual bool			SetDefaultText();
-	virtual const char* 	DefaultDefinition() const;
-	virtual bool			Parse( const char* text, const int textLength, bool allowBinaryVersion );
-	virtual void			FreeData();
+	virtual size_t			  Size() const;
+	virtual bool			  SetDefaultText();
+	virtual const char*		  DefaultDefinition() const;
+	virtual bool			  Parse( const char* text, const int textLength, bool allowBinaryVersion );
+	virtual void			  FreeData();
 
-	virtual const idMaterial* 		RemapShaderBySkin( const idMaterial* shader ) const;// Leyland VR
+	virtual const idMaterial* RemapShaderBySkin( const idMaterial* shader ) const; // Leyland VR
 
 	// model associations are just for the preview dialog in the editor
-	const int				GetNumModelAssociations() const;
-	const char* 			GetAssociatedModel( int index ) const;
+	const int				  GetNumModelAssociations() const;
+	const char*				  GetAssociatedModel( int index ) const;
 
 protected:
-	idList<skinMapping_t, TAG_IDLIB_LIST_DECL>	mappings;
-	idStrList				associatedModels;
+	idList<skinMapping_t, TAG_IDLIB_LIST_DECL> mappings;
+	idStrList								   associatedModels;
 };
 
 // Leyland VR
 class idDeclNullSkinBase : public idDeclBase
 {
 public:
-	virtual const char* 	GetName() const
-	{
-		return "";
-	}
-	virtual declType_t		GetType() const
-	{
-		return DECL_SKIN;
-	}
-	virtual declState_t		GetState() const
-	{
-		return DS_PARSED;
-	}
-	virtual bool			IsImplicit() const
-	{
-		return false;
-	}
-	virtual bool			IsValid() const
-	{
-		return true;
-	}
-	virtual void			Invalidate() {}
-	virtual void			Reload() {}
-	virtual void			EnsureNotPurged() {}
-	virtual int				Index() const
-	{
-		return -1;
-	}
-	virtual int				GetLineNum() const
-	{
-		return 0;
-	}
-	virtual const char* 	GetFileName() const
-	{
-		return "";
-	}
-	virtual void			GetText( char* text ) const
-	{
-		text[0] = '\0';
-	}
-	virtual int				GetTextLength() const
-	{
-		return 1;
-	}
-	virtual void			SetText( const char* text ) {}
-	virtual bool			ReplaceSourceFileText()
-	{
-		return false;
-	}
-	virtual bool			SourceFileChanged() const
-	{
-		return false;
-	}
-	virtual void			MakeDefault() {}
-	virtual bool			EverReferenced() const
-	{
-		return false;
-	}
-	virtual bool			SetDefaultText()
-	{
-		return false;
-	}
-	virtual const char* 	DefaultDefinition() const
-	{
-		return "";
-	}
-	virtual bool			Parse( const char* text, const int textLength, bool allowBinaryVersion )
-	{
-		return false;
-	}
-	virtual void			FreeData() {}
-	virtual size_t			Size() const
-	{
-		return 0;
-	}
-	virtual void			List() const {}
-	virtual void			Print() const {}
+	virtual const char*		  GetName() const { return ""; }
+	virtual declType_t		  GetType() const { return DECL_SKIN; }
+	virtual declState_t		  GetState() const { return DS_PARSED; }
+	virtual bool			  IsImplicit() const { return false; }
+	virtual bool			  IsValid() const { return true; }
+	virtual void			  Invalidate() { }
+	virtual void			  Reload() { }
+	virtual void			  EnsureNotPurged() { }
+	virtual int				  Index() const { return -1; }
+	virtual int				  GetLineNum() const { return 0; }
+	virtual const char*		  GetFileName() const { return ""; }
+	virtual void			  GetText( char* text ) const { text[0] = '\0'; }
+	virtual int				  GetTextLength() const { return 1; }
+	virtual void			  SetText( const char* text ) { }
+	virtual bool			  ReplaceSourceFileText() { return false; }
+	virtual bool			  SourceFileChanged() const { return false; }
+	virtual void			  MakeDefault() { }
+	virtual bool			  EverReferenced() const { return false; }
+	virtual bool			  SetDefaultText() { return false; }
+	virtual const char*		  DefaultDefinition() const { return ""; }
+	virtual bool			  Parse( const char* text, const int textLength, bool allowBinaryVersion ) { return false; }
+	virtual void			  FreeData() { }
+	virtual size_t			  Size() const { return 0; }
+	virtual void			  List() const { }
+	virtual void			  Print() const { }
 
 	// RB
-	ID_TIME_T				GetSourceFileTimestamp() const
-	{
-		return 0;
-	}
+	ID_TIME_T				  GetSourceFileTimestamp() const { return 0; }
 
 	static idDeclNullSkinBase instance;
 };
@@ -159,18 +105,12 @@ public:
 	idDeclSkinWrapper();
 
 	virtual const idMaterial* RemapShaderBySkin( const idMaterial* shader ) const;
-	void SetWrapper( const idDeclSkin* skin );
-	void SetWrapped( const idDeclSkin* skin );
+	void					  SetWrapper( const idDeclSkin* skin );
+	void					  SetWrapped( const idDeclSkin* skin );
 
-	const idDeclSkin* GetWrapper()
-	{
-		return wrapper;
-	}
+	const idDeclSkin*		  GetWrapper() { return wrapper; }
 
-	const idDeclSkin* GetWrapped()
-	{
-		return wrapped;
-	}
+	const idDeclSkin*		  GetWrapped() { return wrapped; }
 
 protected:
 	const idDeclSkin* wrapper;

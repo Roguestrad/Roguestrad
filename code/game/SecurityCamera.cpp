@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,7 +39,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Game_local.h"
 
-
 /***********************************************************************
 
   idSecurityCamera
@@ -52,11 +52,11 @@ const idEventDef EV_SecurityCam_Alert( "<alert>" );
 const idEventDef EV_SecurityCam_AddLight( "<addLight>" );
 
 CLASS_DECLARATION( idEntity, idSecurityCamera )
-EVENT( EV_SecurityCam_ReverseSweep,		idSecurityCamera::Event_ReverseSweep )
-EVENT( EV_SecurityCam_ContinueSweep,	idSecurityCamera::Event_ContinueSweep )
-EVENT( EV_SecurityCam_Pause,			idSecurityCamera::Event_Pause )
-EVENT( EV_SecurityCam_Alert,			idSecurityCamera::Event_Alert )
-EVENT( EV_SecurityCam_AddLight,			idSecurityCamera::Event_AddLight )
+EVENT( EV_SecurityCam_ReverseSweep, idSecurityCamera::Event_ReverseSweep )
+EVENT( EV_SecurityCam_ContinueSweep, idSecurityCamera::Event_ContinueSweep )
+EVENT( EV_SecurityCam_Pause, idSecurityCamera::Event_Pause )
+EVENT( EV_SecurityCam_Alert, idSecurityCamera::Event_Alert )
+EVENT( EV_SecurityCam_AddLight, idSecurityCamera::Event_AddLight )
 END_CLASS
 
 /*
@@ -124,29 +124,27 @@ idSecurityCamera::Spawn
 */
 void idSecurityCamera::Spawn()
 {
-	idStr	str;
+	idStr str;
 
-	sweepAngle	= spawnArgs.GetFloat( "sweepAngle", "90" );
-	health		= spawnArgs.GetInt( "health", "100" );
-	scanFov		= spawnArgs.GetFloat( "scanFov", "90" );
-	scanDist	= spawnArgs.GetFloat( "scanDist", "200" );
-	flipAxis	= spawnArgs.GetBool( "flipAxis" );
+	sweepAngle = spawnArgs.GetFloat( "sweepAngle", "90" );
+	health	   = spawnArgs.GetInt( "health", "100" );
+	scanFov	   = spawnArgs.GetFloat( "scanFov", "90" );
+	scanDist   = spawnArgs.GetFloat( "scanDist", "200" );
+	flipAxis   = spawnArgs.GetBool( "flipAxis" );
 
-	modelAxis	= spawnArgs.GetInt( "modelAxis" );
-	if( modelAxis < 0 || modelAxis > 2 )
-	{
+	modelAxis = spawnArgs.GetInt( "modelAxis" );
+	if( modelAxis < 0 || modelAxis > 2 ) {
 		modelAxis = 0;
 	}
 
 	spawnArgs.GetVector( "viewOffset", "0 0 0", viewOffset );
 
-	if( spawnArgs.GetBool( "spotLight" ) )
-	{
+	if( spawnArgs.GetBool( "spotLight" ) ) {
 		PostEventMS( &EV_SecurityCam_AddLight, 0 );
 	}
 
 	negativeSweep = ( sweepAngle < 0 ) ? true : false;
-	sweepAngle = idMath::Fabs( sweepAngle );
+	sweepAngle	  = idMath::Fabs( sweepAngle );
 
 	scanFovCos = cos( scanFov * idMath::PI / 360.0f );
 
@@ -155,28 +153,24 @@ void idSecurityCamera::Spawn()
 	SetAlertMode( SCANNING );
 	BecomeActive( TH_THINK );
 
-	if( health )
-	{
+	if( health ) {
 		fl.takedamage = true;
 	}
 
 	pvsArea = gameLocal.pvs.GetPVSArea( GetPhysics()->GetOrigin() );
 	// if no target specified use ourself
 	str = spawnArgs.GetString( "cameraTarget" );
-	if( str.Length() == 0 )
-	{
+	if( str.Length() == 0 ) {
 		spawnArgs.Set( "cameraTarget", spawnArgs.GetString( "name" ) );
 	}
 
 	// check if a clip model is set
 	spawnArgs.GetString( "clipmodel", "", str );
-	if( !str[0] )
-	{
-		str = spawnArgs.GetString( "model" );		// use the visual model
+	if( !str[0] ) {
+		str = spawnArgs.GetString( "model" ); // use the visual model
 	}
 
-	if( !collisionModelManager->TrmFromModel( str, trm ) )
-	{
+	if( !collisionModelManager->TrmFromModel( str, trm ) ) {
 		gameLocal.Error( "idSecurityCamera '%s': cannot load collision model %s", name.c_str(), str.c_str() );
 		return;
 	}
@@ -194,19 +188,19 @@ idSecurityCamera::Event_AddLight
 */
 void idSecurityCamera::Event_AddLight()
 {
-	idDict	args;
-	idVec3	right, up, target, temp;
-	idVec3	dir;
-	float	radius;
-	idVec3	lightOffset;
-	idLight*	spotLight;
+	idDict	 args;
+	idVec3	 right, up, target, temp;
+	idVec3	 dir;
+	float	 radius;
+	idVec3	 lightOffset;
+	idLight* spotLight;
 
 	dir = GetAxis();
 	dir.NormalVectors( right, up );
 	target = GetPhysics()->GetOrigin() + dir * scanDist;
 
 	radius = tan( scanFov * idMath::PI / 360.0f );
-	up = dir + up * radius;
+	up	   = dir + up * radius;
 	up.Normalize();
 	up = GetPhysics()->GetOrigin() + up * scanDist;
 	up -= target;
@@ -236,8 +230,8 @@ idSecurityCamera::DrawFov
 */
 void idSecurityCamera::DrawFov()
 {
-	int i;
-	float radius, a, s, c, halfRadius;
+	int	   i;
+	float  radius, a, s, c, halfRadius;
 	idVec3 right, up;
 	idVec4 color( 1, 0, 0, 1 ), color2( 0, 0, 1, 1 );
 	idVec3 lastPoint, point, lastHalfPoint, halfPoint, center;
@@ -245,17 +239,16 @@ void idSecurityCamera::DrawFov()
 	idVec3 dir = GetAxis();
 	dir.NormalVectors( right, up );
 
-	radius = tan( scanFov * idMath::PI / 360.0f );
+	radius	   = tan( scanFov * idMath::PI / 360.0f );
 	halfRadius = radius * 0.5f;
-	lastPoint = dir + up * radius;
+	lastPoint  = dir + up * radius;
 	lastPoint.Normalize();
-	lastPoint = GetPhysics()->GetOrigin() + lastPoint * scanDist;
+	lastPoint	  = GetPhysics()->GetOrigin() + lastPoint * scanDist;
 	lastHalfPoint = dir + up * halfRadius;
 	lastHalfPoint.Normalize();
 	lastHalfPoint = GetPhysics()->GetOrigin() + lastHalfPoint * scanDist;
-	center = GetPhysics()->GetOrigin() + dir * scanDist;
-	for( i = 1; i < 12; i++ )
-	{
+	center		  = GetPhysics()->GetOrigin() + dir * scanDist;
+	for( i = 1; i < 12; i++ ) {
 		a = idMath::TWO_PI * i / 12.0f;
 		idMath::SinCos( a, s, c );
 		point = dir + right * s * radius + up * c * radius;
@@ -287,7 +280,7 @@ renderView_t* idSecurityCamera::GetRenderView()
 
 	// Leyland VR: new FOV definition
 	rv->SetFovXY( scanFov, scanFov );
-	rv->viewaxis = GetAxis().ToAngles().ToMat3();
+	rv->viewaxis				= GetAxis().ToAngles().ToMat3();
 	rv->vieworg[STEREOPOS_MONO] = GetPhysics()->GetOrigin() + viewOffset;
 	return rv;
 }
@@ -299,40 +292,35 @@ idSecurityCamera::CanSeePlayer
 */
 bool idSecurityCamera::CanSeePlayer()
 {
-	int i;
-	float dist;
-	idPlayer* ent;
-	trace_t tr;
-	idVec3 dir;
+	int			i;
+	float		dist;
+	idPlayer*	ent;
+	trace_t		tr;
+	idVec3		dir;
 	pvsHandle_t handle;
 
 	handle = gameLocal.pvs.SetupCurrentPVS( pvsArea );
 
-	for( i = 0; i < gameLocal.numClients; i++ )
-	{
-		ent = static_cast<idPlayer*>( gameLocal.entities[ i ] );
+	for( i = 0; i < gameLocal.numClients; i++ ) {
+		ent = static_cast<idPlayer*>( gameLocal.entities[i] );
 
-		if( !ent || ( ent->fl.notarget ) )
-		{
+		if( !ent || ( ent->fl.notarget ) ) {
 			continue;
 		}
 
 		// if there is no way we can see this player
-		if( !gameLocal.pvs.InCurrentPVS( handle, ent->GetPVSAreas(), ent->GetNumPVSAreas() ) )
-		{
+		if( !gameLocal.pvs.InCurrentPVS( handle, ent->GetPVSAreas(), ent->GetNumPVSAreas() ) ) {
 			continue;
 		}
 
-		dir = ent->GetPhysics()->GetOrigin() - GetPhysics()->GetOrigin();
+		dir	 = ent->GetPhysics()->GetOrigin() - GetPhysics()->GetOrigin();
 		dist = dir.Normalize();
 
-		if( dist > scanDist )
-		{
+		if( dist > scanDist ) {
 			continue;
 		}
 
-		if( dir * GetAxis() < scanFovCos )
-		{
+		if( dir * GetAxis() < scanFovCos ) {
 			continue;
 		}
 
@@ -341,8 +329,7 @@ bool idSecurityCamera::CanSeePlayer()
 		eye = ent->EyeOffset();
 
 		gameLocal.clip.TracePoint( tr, GetPhysics()->GetOrigin(), ent->GetPhysics()->GetOrigin() + eye, MASK_OPAQUE, this );
-		if( tr.fraction == 1.0 || ( gameLocal.GetTraceEntity( tr ) == ent ) )
-		{
+		if( tr.fraction == 1.0 || ( gameLocal.GetTraceEntity( tr ) == ent ) ) {
 			gameLocal.pvs.FreeCurrentPVS( handle );
 			return true;
 		}
@@ -360,11 +347,10 @@ idSecurityCamera::SetAlertMode
 */
 void idSecurityCamera::SetAlertMode( int alert )
 {
-	if( alert >= SCANNING && alert <= ACTIVATED )
-	{
+	if( alert >= SCANNING && alert <= ACTIVATED ) {
 		alertMode = alert;
 	}
-	renderEntity.shaderParms[ SHADERPARM_MODE ] = alertMode;
+	renderEntity.shaderParms[SHADERPARM_MODE] = alertMode;
 	UpdateVisuals();
 }
 
@@ -378,15 +364,12 @@ void idSecurityCamera::Think()
 	float pct;
 	float travel;
 
-	if( thinkFlags & TH_THINK )
-	{
-		if( g_showEntityInfo.GetBool() )
-		{
+	if( thinkFlags & TH_THINK ) {
+		if( g_showEntityInfo.GetBool() ) {
 			DrawFov();
 		}
 
-		if( health <= 0 )
-		{
+		if( health <= 0 ) {
 			BecomeInactive( TH_THINK );
 			return;
 		}
@@ -395,22 +378,16 @@ void idSecurityCamera::Think()
 	// run physics
 	RunPhysics();
 
-	if( thinkFlags & TH_THINK )
-	{
-		if( CanSeePlayer() )
-		{
-			if( alertMode == SCANNING )
-			{
-				float	sightTime;
+	if( thinkFlags & TH_THINK ) {
+		if( CanSeePlayer() ) {
+			if( alertMode == SCANNING ) {
+				float sightTime;
 
 				SetAlertMode( ALERT );
 				stopSweeping = gameLocal.time;
-				if( sweeping )
-				{
+				if( sweeping ) {
 					CancelEvents( &EV_SecurityCam_Pause );
-				}
-				else
-				{
+				} else {
 					CancelEvents( &EV_SecurityCam_ReverseSweep );
 				}
 				sweeping = false;
@@ -420,12 +397,9 @@ void idSecurityCamera::Think()
 				sightTime = spawnArgs.GetFloat( "sightTime", "5" );
 				PostEventSec( &EV_SecurityCam_Alert, sightTime );
 			}
-		}
-		else
-		{
-			if( alertMode == ALERT )
-			{
-				float	sightResume;
+		} else {
+			if( alertMode == ALERT ) {
+				float sightResume;
 
 				SetAlertMode( LOSINGINTEREST );
 				CancelEvents( &EV_SecurityCam_Alert );
@@ -434,18 +408,14 @@ void idSecurityCamera::Think()
 				PostEventSec( &EV_SecurityCam_ContinueSweep, sightResume );
 			}
 
-			if( sweeping )
-			{
+			if( sweeping ) {
 				idAngles a = GetPhysics()->GetAxis().ToAngles();
 
-				pct = ( gameLocal.time - sweepStart ) / ( sweepEnd - sweepStart );
+				pct	   = ( gameLocal.time - sweepStart ) / ( sweepEnd - sweepStart );
 				travel = pct * sweepAngle;
-				if( negativeSweep )
-				{
+				if( negativeSweep ) {
 					a.yaw = angle + travel;
-				}
-				else
-				{
+				} else {
 					a.yaw = angle - travel;
 				}
 
@@ -485,10 +455,10 @@ void idSecurityCamera::StartSweep()
 {
 	int speed;
 
-	sweeping = true;
+	sweeping   = true;
 	sweepStart = gameLocal.time;
-	speed = SEC2MS( SweepSpeed() );
-	sweepEnd = sweepStart + speed;
+	speed	   = SEC2MS( SweepSpeed() );
+	sweepEnd   = sweepStart + speed;
 	PostEventMS( &EV_SecurityCam_Pause, speed );
 	StartSound( "snd_moving", SND_CHANNEL_BODY, 0, false, NULL );
 }
@@ -501,12 +471,12 @@ idSecurityCamera::Event_ContinueSweep
 void idSecurityCamera::Event_ContinueSweep()
 {
 	float pct = ( stopSweeping - sweepStart ) / ( sweepEnd - sweepStart );
-	float f = gameLocal.time - ( sweepEnd - sweepStart ) * pct;
-	int speed;
+	float f	  = gameLocal.time - ( sweepEnd - sweepStart ) * pct;
+	int	  speed;
 
 	sweepStart = f;
-	speed = MS2SEC( SweepSpeed() );
-	sweepEnd = sweepStart + speed;
+	speed	   = MS2SEC( SweepSpeed() );
+	sweepEnd   = sweepStart + speed;
 	PostEventMS( &EV_SecurityCam_Pause, speed * ( 1.0 - pct ) );
 	StartSound( "snd_moving", SND_CHANNEL_BODY, 0, false, NULL );
 	SetAlertMode( SCANNING );
@@ -520,7 +490,7 @@ idSecurityCamera::Event_Alert
 */
 void idSecurityCamera::Event_Alert()
 {
-	float	wait;
+	float wait;
 
 	SetAlertMode( ACTIVATED );
 	StopSound( SND_CHANNEL_ANY, false );
@@ -539,7 +509,7 @@ idSecurityCamera::Event_ReverseSweep
 */
 void idSecurityCamera::Event_ReverseSweep()
 {
-	angle = GetPhysics()->GetAxis().ToAngles().yaw;
+	angle		  = GetPhysics()->GetAxis().ToAngles().yaw;
 	negativeSweep = !negativeSweep;
 	StartSweep();
 }
@@ -551,10 +521,10 @@ idSecurityCamera::Event_Pause
 */
 void idSecurityCamera::Event_Pause()
 {
-	float	sweepWait;
+	float sweepWait;
 
 	sweepWait = spawnArgs.GetFloat( "sweepWait", "0.5" );
-	sweeping = false;
+	sweeping  = false;
 	StopSound( SND_CHANNEL_ANY, false );
 	StartSound( "snd_stop", SND_CHANNEL_BODY, 0, false, NULL );
 	PostEventSec( &EV_SecurityCam_ReverseSweep, sweepWait );
@@ -570,8 +540,7 @@ void idSecurityCamera::Killed( idEntity* inflictor, idEntity* attacker, int dama
 	sweeping = false;
 	StopSound( SND_CHANNEL_ANY, false );
 	const char* fx = spawnArgs.GetString( "fx_destroyed" );
-	if( fx[0] != '\0' )
-	{
+	if( fx[0] != '\0' ) {
 		idEntityFx::StartFx( fx, NULL, NULL, this, true );
 	}
 
@@ -588,7 +557,6 @@ void idSecurityCamera::Killed( idEntity* inflictor, idEntity* attacker, int dama
 	physicsObj.DropToFloor();
 }
 
-
 /*
 ============
 idSecurityCamera::Pain
@@ -597,13 +565,11 @@ idSecurityCamera::Pain
 bool idSecurityCamera::Pain( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 	const char* fx = spawnArgs.GetString( "fx_damage" );
-	if( fx[0] != '\0' )
-	{
+	if( fx[0] != '\0' ) {
 		idEntityFx::StartFx( fx, NULL, NULL, this, true );
 	}
 	return true;
 }
-
 
 /*
 ================
@@ -615,31 +581,25 @@ Present is called to allow entities to generate refEntities, lights, etc for the
 void idSecurityCamera::Present()
 {
 	// don't present to the renderer if the entity hasn't changed
-	if( !( thinkFlags & TH_UPDATEVISUALS ) )
-	{
+	if( !( thinkFlags & TH_UPDATEVISUALS ) ) {
 		return;
 	}
 	BecomeInactive( TH_UPDATEVISUALS );
 
 	// camera target for remote render views
-	if( cameraTarget )
-	{
+	if( cameraTarget ) {
 		renderEntity.remoteRenderView = cameraTarget->GetRenderView();
 	}
 
 	// if set to invisible, skip
-	if( !renderEntity.hModel || IsHidden() )
-	{
+	if( !renderEntity.hModel || IsHidden() ) {
 		return;
 	}
 
 	// add to refresh list
-	if( modelDefHandle == -1 )
-	{
+	if( modelDefHandle == -1 ) {
 		modelDefHandle = gameRenderWorld->AddEntityDef( &renderEntity );
-	}
-	else
-	{
+	} else {
 		gameRenderWorld->UpdateEntityDef( modelDefHandle, &renderEntity );
 	}
 }

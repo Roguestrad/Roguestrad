@@ -22,7 +22,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -42,36 +43,35 @@ If you have questions concerning this license or the applicable additional terms
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;
 
-extern idCVar r_graphicsAPI;
+extern idCVar		  r_graphicsAPI;
 
-idCVar r_drawFlickerBox( "r_drawFlickerBox", "0", CVAR_RENDERER | CVAR_BOOL, "visual test for dropping frames" );
-idCVar stereoRender_warp( "stereoRender_warp", "0", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL, "use the optical warping renderprog instead of stereoDeGhost" );
-idCVar stereoRender_warpStrength( "stereoRender_warpStrength", "1.45", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_FLOAT, "amount of pre-distortion" );
+idCVar				  r_drawFlickerBox( "r_drawFlickerBox", "0", CVAR_RENDERER | CVAR_BOOL, "visual test for dropping frames" );
+idCVar				  stereoRender_warp( "stereoRender_warp", "0", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL, "use the optical warping renderprog instead of stereoDeGhost" );
+idCVar				  stereoRender_warpStrength( "stereoRender_warpStrength", "1.45", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_FLOAT, "amount of pre-distortion" );
 
-idCVar stereoRender_warpCenterX( "stereoRender_warpCenterX", "0.5", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "center for left eye, right eye will be 1.0 - this" );
-idCVar stereoRender_warpCenterY( "stereoRender_warpCenterY", "0.5", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "center for both eyes" );
-idCVar stereoRender_warpParmZ( "stereoRender_warpParmZ", "0", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "development parm" );
-idCVar stereoRender_warpParmW( "stereoRender_warpParmW", "0", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "development parm" );
-idCVar stereoRender_warpTargetFraction( "stereoRender_warpTargetFraction", "1.0", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "fraction of half-width the through-lens view covers" );
+idCVar				  stereoRender_warpCenterX( "stereoRender_warpCenterX", "0.5", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "center for left eye, right eye will be 1.0 - this" );
+idCVar				  stereoRender_warpCenterY( "stereoRender_warpCenterY", "0.5", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "center for both eyes" );
+idCVar				  stereoRender_warpParmZ( "stereoRender_warpParmZ", "0", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "development parm" );
+idCVar				  stereoRender_warpParmW( "stereoRender_warpParmW", "0", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "development parm" );
+idCVar				  stereoRender_warpTargetFraction( "stereoRender_warpTargetFraction", "1.0", CVAR_RENDERER | CVAR_FLOAT | CVAR_ARCHIVE, "fraction of half-width the through-lens view covers" );
 
-idCVar r_showSwapBuffers( "r_showSwapBuffers", "0", CVAR_BOOL, "Show timings from GL_BlockingSwapBuffers" );
-idCVar r_syncEveryFrame( "r_syncEveryFrame", "1", CVAR_BOOL, "Don't let the GPU buffer execution past swapbuffers" );
+idCVar				  r_showSwapBuffers( "r_showSwapBuffers", "0", CVAR_BOOL, "Show timings from GL_BlockingSwapBuffers" );
+idCVar				  r_syncEveryFrame( "r_syncEveryFrame", "1", CVAR_BOOL, "Don't let the GPU buffer execution past swapbuffers" );
 
-idCVar r_vkUploadBufferSizeMB( "r_vkUploadBufferSizeMB", "64", CVAR_INTEGER | CVAR_INIT | CVAR_NEW, "Size of gpu upload buffer (Vulkan only)" );
-
+idCVar				  r_vkUploadBufferSizeMB( "r_vkUploadBufferSizeMB", "64", CVAR_INTEGER | CVAR_INIT | CVAR_NEW, "Size of gpu upload buffer (Vulkan only)" );
 
 constexpr std::size_t MAX_IMAGE_PARMS = 16;
 
 class NvrhiContext
 {
 public:
-	int										currentImageParm = 0;
-	idArray< idImage*, MAX_IMAGE_PARMS >	imageParms;
-	idScreenRect							scissor;		// set by GL_Scissor
+	int								   currentImageParm = 0;
+	idArray<idImage*, MAX_IMAGE_PARMS> imageParms;
+	idScreenRect					   scissor; // set by GL_Scissor
 
-	void	operator=( NvrhiContext& other );
-	bool	operator==( NvrhiContext& other ) const;
-	bool	operator!=( NvrhiContext& other ) const;
+	void							   operator=( NvrhiContext& other );
+	bool							   operator==( NvrhiContext& other ) const;
+	bool							   operator!=( NvrhiContext& other ) const;
 };
 
 /*
@@ -82,8 +82,7 @@ NvrhiContext::operator=
 void NvrhiContext::operator=( NvrhiContext& other )
 {
 	currentImageParm = other.currentImageParm;
-	for( int i = 0; i < imageParms.Num(); i++ )
-	{
+	for( int i = 0; i < imageParms.Num(); i++ ) {
 		imageParms[i] = other.imageParms[i];
 	}
 
@@ -97,26 +96,21 @@ NvrhiContext::operator==
 */
 bool NvrhiContext::operator==( NvrhiContext& other ) const
 {
-	if( this == &other )
-	{
+	if( this == &other ) {
 		return true;
 	}
 
-	if( currentImageParm != other.currentImageParm )
-	{
+	if( currentImageParm != other.currentImageParm ) {
 		return false;
 	}
 
-	for( int i = 0; i < imageParms.Num(); i++ )
-	{
-		if( imageParms[i] != other.imageParms[i] )
-		{
+	for( int i = 0; i < imageParms.Num(); i++ ) {
+		if( imageParms[i] != other.imageParms[i] ) {
 			return false;
 		}
 	}
 
-	if( scissor != other.scissor )
-	{
+	if( scissor != other.scissor ) {
 		return false;
 	}
 
@@ -136,7 +130,6 @@ bool NvrhiContext::operator!=( NvrhiContext& other ) const
 static NvrhiContext context;
 static NvrhiContext prevContext;
 
-
 /*
 ==================
 idRenderBackend::Init
@@ -153,23 +146,19 @@ all renderSystem functions will still operate properly, notably the material
 and model information functions.
 ==================
 */
-void idRenderBackend::Init()
+void				idRenderBackend::Init()
 {
 	common->Printf( "----- idRenderBackend::Init -----\n" );
 
-	if( tr.IsInitialized() )
-	{
+	if( tr.IsInitialized() ) {
 		common->FatalError( "idRenderBackend::Init called while active" );
 	}
 
 	// SRS - create deviceManager here to prevent allocation loop via R_SetNewMode( true )
 	nvrhi::GraphicsAPI api = nvrhi::GraphicsAPI::D3D12;
-	if( !idStr::Icmp( r_graphicsAPI.GetString(), "vulkan" ) )
-	{
+	if( !idStr::Icmp( r_graphicsAPI.GetString(), "vulkan" ) ) {
 		api = nvrhi::GraphicsAPI::VULKAN;
-	}
-	else if( !idStr::Icmp( r_graphicsAPI.GetString(), "dx12" ) )
-	{
+	} else if( !idStr::Icmp( r_graphicsAPI.GetString(), "dx12" ) ) {
 		api = nvrhi::GraphicsAPI::D3D12;
 	}
 	deviceManager = DeviceManager::Create( api );
@@ -200,12 +189,12 @@ void idRenderBackend::Init()
 	pipelineCache.Init( deviceManager->GetDevice() );
 	commonPasses.Init( deviceManager->GetDevice() );
 	hiZGenPass = nullptr;
-	ssaoPass = nullptr;
+	ssaoPass   = nullptr;
 
 	// Maximum resolution of one tile within tiled shadow map. Resolution must be power of two and
 	// square, since quad-tree for managing tiles will not work correctly otherwise. Furthermore
 	// resolution must be at least 16.
-	const int MAX_TILE_RES = shadowMapResolutions[ 0 ];
+	const int MAX_TILE_RES = shadowMapResolutions[0];
 
 	// Specifies how many levels the quad-tree for managing tiles within tiled shadow map should
 	// have. The higher the value, the smaller the resolution of the smallest used tile will be.
@@ -217,11 +206,9 @@ void idRenderBackend::Init()
 
 	tr.SetInitialized();
 
-	if( !commandList )
-	{
+	if( !commandList ) {
 		nvrhi::CommandListParameters params = {};
-		if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
-		{
+		if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ) {
 			// SRS - set upload buffer size to avoid Vulkan staging buffer fragmentation
 			size_t maxBufferSize = ( size_t )( r_vkUploadBufferSizeMB.GetInteger() * 1024 * 1024 );
 			params.setUploadChunkSize( maxBufferSize );
@@ -244,22 +231,22 @@ void idRenderBackend::Init()
 	R_SetColorMappings();
 
 	slopeScaleBias = 0.f;
-	depthBias = 0.f;
+	depthBias	   = 0.f;
 
 	currentBindingSets.SetNum( currentBindingSets.Max() );
 	pendingBindingSetDescs.SetNum( pendingBindingSetDescs.Max() );
 
-	prevMVP[0] = renderMatrix_identity;
-	prevMVP[1] = renderMatrix_identity;
+	prevMVP[0]		  = renderMatrix_identity;
+	prevMVP[1]		  = renderMatrix_identity;
 	prevViewsValid[0] = false;
 	prevViewsValid[1] = false;
 
-	currentVertexBuffer = nullptr;
-	currentIndexBuffer = nullptr;
-	currentJointBuffer = nullptr;
-	currentVertexOffset = 0;
-	currentIndexOffset = 0;
-	currentJointOffset = 0;
+	currentVertexBuffer	  = nullptr;
+	currentIndexBuffer	  = nullptr;
+	currentJointBuffer	  = nullptr;
+	currentVertexOffset	  = 0;
+	currentIndexOffset	  = 0;
+	currentJointOffset	  = 0;
 	prevBindingLayoutType = -1;
 
 	deviceManager->GetDevice()->waitForIdle();
@@ -278,8 +265,7 @@ void idRenderBackend::Shutdown()
 	commonPasses.Shutdown();
 
 	// Delete current binding sets
-	for( int i = 0; i < currentBindingSets.Num(); i++ )
-	{
+	for( int i = 0; i < currentBindingSets.Num(); i++ ) {
 		currentBindingSets[i].Reset();
 	}
 
@@ -296,14 +282,13 @@ void idRenderBackend::Shutdown()
 	fhImmediateMode::Shutdown();
 
 #if defined( VULKAN_USE_PLATFORM_SDL )
-	VKimp_Shutdown( true );		// SRS - shutdown SDL on quit
+	VKimp_Shutdown( true ); // SRS - shutdown SDL on quit
 #else
 	GLimp_Shutdown();
 #endif
 
 	// SRS - delete deviceManager instance on backend shutdown
-	if( deviceManager )
-	{
+	if( deviceManager ) {
 		delete deviceManager;
 		deviceManager = NULL;
 	}
@@ -320,16 +305,12 @@ void idRenderBackend::DrawElementsWithCounters( const drawSurf_t* surf, bool sha
 	// get vertex buffer
 	//
 	const vertCacheHandle_t vbHandle = surf->ambientCache;
-	idVertexBuffer* vertexBuffer;
-	if( vertexCache.CacheIsStatic( vbHandle ) )
-	{
+	idVertexBuffer*			vertexBuffer;
+	if( vertexCache.CacheIsStatic( vbHandle ) ) {
 		vertexBuffer = &vertexCache.staticData.vertexBuffer;
-	}
-	else
-	{
+	} else {
 		const uint64 frameNum = static_cast<uint64>( vbHandle >> VERTCACHE_FRAME_SHIFT ) & VERTCACHE_FRAME_MASK;
-		if( frameNum != ( ( vertexCache.currentFrame - 1 ) & VERTCACHE_FRAME_MASK ) )
-		{
+		if( frameNum != ( ( vertexCache.currentFrame - 1 ) & VERTCACHE_FRAME_MASK ) ) {
 			idLib::Warning( "RB_DrawElementsWithCounters, vertexBuffer == NULL" );
 			return;
 		}
@@ -337,33 +318,27 @@ void idRenderBackend::DrawElementsWithCounters( const drawSurf_t* surf, bool sha
 	}
 	const uint vertOffset = static_cast<uint>( vbHandle >> VERTCACHE_OFFSET_SHIFT ) & VERTCACHE_OFFSET_MASK;
 
-	bool changeState = false;
+	bool	   changeState = false;
 
-	if( currentVertexOffset != vertOffset )
-	{
+	if( currentVertexOffset != vertOffset ) {
 		currentVertexOffset = vertOffset;
 	}
 
-	if( currentVertexBuffer != vertexBuffer->GetAPIObject() || !r_useStateCaching.GetBool() )
-	{
+	if( currentVertexBuffer != vertexBuffer->GetAPIObject() || !r_useStateCaching.GetBool() ) {
 		currentVertexBuffer = vertexBuffer->GetAPIObject();
-		changeState = true;
+		changeState			= true;
 	}
 
 	//
 	// get index buffer
 	//
 	const vertCacheHandle_t ibHandle = surf->indexCache;
-	idIndexBuffer* indexBuffer;
-	if( vertexCache.CacheIsStatic( ibHandle ) )
-	{
+	idIndexBuffer*			indexBuffer;
+	if( vertexCache.CacheIsStatic( ibHandle ) ) {
 		indexBuffer = &vertexCache.staticData.indexBuffer;
-	}
-	else
-	{
+	} else {
 		const uint64 frameNum = static_cast<uint64>( ibHandle >> VERTCACHE_FRAME_SHIFT ) & VERTCACHE_FRAME_MASK;
-		if( frameNum != ( ( vertexCache.currentFrame - 1 ) & VERTCACHE_FRAME_MASK ) )
-		{
+		if( frameNum != ( ( vertexCache.currentFrame - 1 ) & VERTCACHE_FRAME_MASK ) ) {
 			idLib::Warning( "RB_DrawElementsWithCounters, indexBuffer == NULL" );
 			return;
 		}
@@ -371,23 +346,21 @@ void idRenderBackend::DrawElementsWithCounters( const drawSurf_t* surf, bool sha
 	}
 	const uint indexOffset = static_cast<uint>( ibHandle >> VERTCACHE_OFFSET_SHIFT ) & VERTCACHE_OFFSET_MASK;
 
-	if( currentIndexOffset != indexOffset )
-	{
+	if( currentIndexOffset != indexOffset ) {
 		currentIndexOffset = indexOffset;
 	}
 
-	if( currentIndexBuffer != indexBuffer->GetAPIObject() || !r_useStateCaching.GetBool() )
-	{
+	if( currentIndexBuffer != indexBuffer->GetAPIObject() || !r_useStateCaching.GetBool() ) {
 		currentIndexBuffer = indexBuffer->GetAPIObject();
-		changeState = true;
+		changeState		   = true;
 	}
 
 	//
 	// get GPU Skinning joint buffer
 	//
 	const vertCacheHandle_t jointHandle = surf->jointCache;
-	currentJointBuffer = nullptr;
-	currentJointOffset = 0;
+	currentJointBuffer					= nullptr;
+	currentJointOffset					= 0;
 
 #if 0
 	if( jointHandle )
@@ -407,19 +380,14 @@ void idRenderBackend::DrawElementsWithCounters( const drawSurf_t* surf, bool sha
 	}
 #endif
 
-	if( jointHandle )
-	{
+	if( jointHandle ) {
 		const idUniformBuffer* jointBuffer = nullptr;
 
-		if( vertexCache.CacheIsStatic( jointHandle ) )
-		{
+		if( vertexCache.CacheIsStatic( jointHandle ) ) {
 			jointBuffer = &vertexCache.staticData.jointBuffer;
-		}
-		else
-		{
+		} else {
 			const uint64 frameNum = static_cast<uint64>( jointHandle >> VERTCACHE_FRAME_SHIFT ) & VERTCACHE_FRAME_MASK;
-			if( frameNum != ( ( vertexCache.currentFrame - 1 ) & VERTCACHE_FRAME_MASK ) )
-			{
+			if( frameNum != ( ( vertexCache.currentFrame - 1 ) & VERTCACHE_FRAME_MASK ) ) {
 				idLib::Warning( "RB_DrawElementsWithCounters, jointBuffer == NULL" );
 				return;
 			}
@@ -427,8 +395,7 @@ void idRenderBackend::DrawElementsWithCounters( const drawSurf_t* surf, bool sha
 		}
 
 		uint offset = static_cast<uint>( jointHandle >> VERTCACHE_OFFSET_SHIFT ) & VERTCACHE_OFFSET_MASK;
-		if( currentJointBuffer != jointBuffer->GetAPIObject() || currentJointOffset != offset )
-		{
+		if( currentJointBuffer != jointBuffer->GetAPIObject() || currentJointOffset != offset ) {
 			changeState = true;
 		}
 
@@ -439,51 +406,42 @@ void idRenderBackend::DrawElementsWithCounters( const drawSurf_t* surf, bool sha
 	//
 	// set up matching binding layout
 	//
-	const int bindingLayoutType = renderProgManager.BindingLayoutType();
+	const int															  bindingLayoutType = renderProgManager.BindingLayoutType();
 
-	idStaticList<nvrhi::BindingLayoutHandle, nvrhi::c_MaxBindingLayouts>* layouts
-		= renderProgManager.GetBindingLayout( bindingLayoutType );
+	idStaticList<nvrhi::BindingLayoutHandle, nvrhi::c_MaxBindingLayouts>* layouts = renderProgManager.GetBindingLayout( bindingLayoutType );
 
-	if( changeState || bindingLayoutType != prevBindingLayoutType || context != prevContext )
-	{
+	if( changeState || bindingLayoutType != prevBindingLayoutType || context != prevContext ) {
 		GetCurrentBindingLayout( bindingLayoutType );
 
-		for( int i = 0; i < layouts->Num(); i++ )
-		{
-			if( !currentBindingSets[i] || *currentBindingSets[i]->getDesc() != pendingBindingSetDescs[bindingLayoutType][i] || bindingLayoutType != prevBindingLayoutType )
-			{
+		for( int i = 0; i < layouts->Num(); i++ ) {
+			if( !currentBindingSets[i] || *currentBindingSets[i]->getDesc() != pendingBindingSetDescs[bindingLayoutType][i] || bindingLayoutType != prevBindingLayoutType ) {
 				currentBindingSets[i] = bindingCache.GetOrCreateBindingSet( pendingBindingSetDescs[bindingLayoutType][i], ( *layouts )[i] );
-				changeState = true;
+				changeState			  = true;
 			}
 		}
 	}
 
-	const int program = renderProgManager.CurrentProgram();
-	const PipelineKey key{ glStateBits, program, static_cast<int>( depthBias ), slopeScaleBias, currentFrameBuffer };
-	const auto pipeline = pipelineCache.GetOrCreatePipeline( key );
+	const int		  program = renderProgManager.CurrentProgram();
+	const PipelineKey key { glStateBits, program, static_cast<int>( depthBias ), slopeScaleBias, currentFrameBuffer };
+	const auto		  pipeline = pipelineCache.GetOrCreatePipeline( key );
 
-	if( currentPipeline != pipeline )
-	{
+	if( currentPipeline != pipeline ) {
 		currentPipeline = pipeline;
-		changeState = true;
+		changeState		= true;
 	}
 
-	if( !currentViewport.Equals( stateViewport ) )
-	{
+	if( !currentViewport.Equals( stateViewport ) ) {
 		stateViewport = currentViewport;
-		changeState = true;
+		changeState	  = true;
 	}
 
-	if( !context.scissor.Equals( stateScissor ) )
-	{
-		changeState = true;
+	if( !context.scissor.Equals( stateScissor ) ) {
+		changeState	 = true;
 		stateScissor = context.scissor;
 	}
 
-	if( renderProgManager.CommitConstantBuffer( commandList, bindingLayoutType != prevBindingLayoutType ) )
-	{
-		if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
-		{
+	if( renderProgManager.CommitConstantBuffer( commandList, bindingLayoutType != prevBindingLayoutType ) ) {
+		if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ) {
 			// Reset the graphics state if the constant buffer is written to since
 			// the render pass is ended for vulkan. setGraphicsState will
 			// reinstate the render pass.
@@ -494,34 +452,24 @@ void idRenderBackend::DrawElementsWithCounters( const drawSurf_t* surf, bool sha
 	//
 	// create new graphics state if necessary
 	//
-	if( changeState )
-	{
+	if( changeState ) {
 		nvrhi::GraphicsState state;
 
-		for( int i = 0; i < layouts->Num(); i++ )
-		{
+		for( int i = 0; i < layouts->Num(); i++ ) {
 			state.bindings.push_back( currentBindingSets[i] );
 		}
 
-		state.indexBuffer = { currentIndexBuffer, nvrhi::Format::R16_UINT, 0 };
+		state.indexBuffer	= { currentIndexBuffer, nvrhi::Format::R16_UINT, 0 };
 		state.vertexBuffers = { { currentVertexBuffer, 0, 0 } };
-		state.pipeline = pipeline;
-		state.framebuffer = currentFrameBuffer->GetApiObject();
+		state.pipeline		= pipeline;
+		state.framebuffer	= currentFrameBuffer->GetApiObject();
 
-		nvrhi::Viewport viewport{ ( float )currentViewport.x1,
-								  ( float )currentViewport.x2,
-								  ( float )currentViewport.y1,
-								  ( float )currentViewport.y2,
-								  0.0f,
-								  1.0f };
+		nvrhi::Viewport viewport { ( float )currentViewport.x1, ( float )currentViewport.x2, ( float )currentViewport.y1, ( float )currentViewport.y2, 0.0f, 1.0f };
 		state.viewport.addViewport( viewport );
 
-		if( !context.scissor.IsEmpty() )
-		{
+		if( !context.scissor.IsEmpty() ) {
 			state.viewport.addScissorRect( nvrhi::Rect( context.scissor.x1, context.scissor.x2, context.scissor.y1, context.scissor.y2 ) );
-		}
-		else
-		{
+		} else {
 			state.viewport.addScissorRect( nvrhi::Rect( viewport ) );
 		}
 
@@ -533,21 +481,18 @@ void idRenderBackend::DrawElementsWithCounters( const drawSurf_t* surf, bool sha
 	//
 	nvrhi::DrawArguments args;
 	args.startVertexLocation = currentVertexOffset / sizeof( idDrawVert );
-	args.startIndexLocation = currentIndexOffset / sizeof( triIndex_t );
-	args.vertexCount = surf->numIndexes;
+	args.startIndexLocation	 = currentIndexOffset / sizeof( triIndex_t );
+	args.vertexCount		 = surf->numIndexes;
 	commandList->drawIndexed( args );
 
 	// keep track of last context to avoid setting up the binding layout and binding set again.
-	prevContext = context;
+	prevContext			  = context;
 	prevBindingLayoutType = bindingLayoutType;
 
-	if( shadowCounter )
-	{
+	if( shadowCounter ) {
 		pc.c_shadowElements++;
 		pc.c_shadowIndexes += surf->numIndexes;
-	}
-	else
-	{
+	} else {
 		pc.c_drawElements++;
 		pc.c_drawIndexes += surf->numIndexes;
 	}
@@ -2008,54 +1953,48 @@ void idRenderBackend::GL_StartFrame()
 	// -------------------------
 	// make sure textures and render passes are initialized
 
-	void* textureId = globalImages->hierarchicalZbufferImage->GetTextureID();
+	void*		  textureId = globalImages->hierarchicalZbufferImage->GetTextureID();
 
 	// RB: we need to load all images left before rendering
 	// this can be expensive here because of the runtime image compression
-	//globalImages->LoadDeferredImages( commandList );
+	// globalImages->LoadDeferredImages( commandList );
 
 	extern idCVar r_useNewSsaoPass;
 
-	if( !ssaoPass && r_useNewSsaoPass.GetBool() )
-	{
-		ssaoPass = new SsaoPass(
-			deviceManager->GetDevice(),
-			&commonPasses, globalImages->currentDepthImage->GetTextureHandle(),
+	if( !ssaoPass && r_useNewSsaoPass.GetBool() ) {
+		ssaoPass = new SsaoPass( deviceManager->GetDevice(),
+			&commonPasses,
+			globalImages->currentDepthImage->GetTextureHandle(),
 			globalImages->gbufferNormalsRoughnessImage->GetTextureHandle(),
 			globalImages->ambientOcclusionImage[0]->GetTextureHandle() );
 	}
 
-	if( ( globalImages->hierarchicalZbufferImage->GetTextureID() != textureId || !hiZGenPass ) && R_UseHiZ() )
-	{
-		if( hiZGenPass )
-		{
+	if( ( globalImages->hierarchicalZbufferImage->GetTextureID() != textureId || !hiZGenPass ) && R_UseHiZ() ) {
+		if( hiZGenPass ) {
 			delete hiZGenPass;
 		}
 
 		hiZGenPass = new MipMapGenPass( deviceManager->GetDevice(), globalImages->hierarchicalZbufferImage->GetTextureHandle() );
 	}
 
-	if( !toneMapPass )
-	{
+	if( !toneMapPass ) {
 		TonemapPass::CreateParameters createParms;
 		toneMapPass = new TonemapPass();
 		toneMapPass->Init( deviceManager->GetDevice(), &commonPasses, createParms, globalFramebuffers.ldrFBO->GetApiObject() );
 	}
 
-	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
-	{
-		if( !taaPass[i] )
-		{
+	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ ) {
+		if( !taaPass[i] ) {
 			TemporalAntiAliasingPass::CreateParameters taaParams;
-			taaParams.sourceDepth = globalImages->currentDepthImage->GetTextureHandle();
-			taaParams.motionVectors = globalImages->taaMotionVectorsImage[i]->GetTextureHandle();
-			taaParams.unresolvedColor = globalImages->currentRenderHDRImage->GetTextureHandle();
-			taaParams.resolvedColor = globalImages->taaResolvedImage->GetTextureHandle();
-			taaParams.feedback1 = globalImages->taaFeedback1Image[i]->GetTextureHandle();
-			taaParams.feedback2 = globalImages->taaFeedback2Image[i]->GetTextureHandle();
-			taaParams.motionVectorStencilMask = 0; //0x01;
-			taaParams.useCatmullRomFilter = true;
-			taaPass[i] = new TemporalAntiAliasingPass();
+			taaParams.sourceDepth			  = globalImages->currentDepthImage->GetTextureHandle();
+			taaParams.motionVectors			  = globalImages->taaMotionVectorsImage[i]->GetTextureHandle();
+			taaParams.unresolvedColor		  = globalImages->currentRenderHDRImage->GetTextureHandle();
+			taaParams.resolvedColor			  = globalImages->taaResolvedImage->GetTextureHandle();
+			taaParams.feedback1				  = globalImages->taaFeedback1Image[i]->GetTextureHandle();
+			taaParams.feedback2				  = globalImages->taaFeedback2Image[i]->GetTextureHandle();
+			taaParams.motionVectorStencilMask = 0; // 0x01;
+			taaParams.useCatmullRomFilter	  = true;
+			taaPass[i]						  = new TemporalAntiAliasingPass();
 			taaPass[i]->Init( deviceManager->GetDevice(), &commonPasses, NULL, taaParams );
 		}
 	}
@@ -2072,8 +2011,7 @@ void idRenderBackend::GL_EndFrame()
 
 	OPTICK_EVENT( "EndFrame" );
 
-	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
-	{
+	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ) {
 		tr.SetReadyToPresent();
 	}
 
@@ -2087,8 +2025,7 @@ void idRenderBackend::GL_EndFrame()
 	// SRS - execute after EndFrame() to avoid need for barrier command list on Vulkan
 	deviceManager->GetDevice()->executeCommandList( commandList );
 
-	if( vrSystem->IsActive() )
-	{
+	if( vrSystem->IsActive() ) {
 		vrSystem->SubmitStereoRenders( commandList, globalImages->stereoRenderImages[0], globalImages->stereoRenderImages[1] );
 		vrSystem->PreSwap();
 	}
@@ -2110,7 +2047,7 @@ void idRenderBackend::GL_BlockingSwapBuffers()
 	uint32_t swapIndex = deviceManager->GetCurrentBackBufferIndex();
 
 	OPTICK_CATEGORY( "BlockingSwapBuffers", Optick::Category::Wait );
-	//OPTICK_TAG( "Waiting for swapIndex", swapIndex );
+	// OPTICK_TAG( "Waiting for swapIndex", swapIndex );
 
 	// Make sure that all frames have finished rendering
 	deviceManager->Present();
@@ -2120,15 +2057,13 @@ void idRenderBackend::GL_BlockingSwapBuffers()
 
 	renderLog.EndFrame();
 
-	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
-	{
+	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ) {
 		tr.InvalidateSwapBuffers();
 	}
 
 	// RB: it is suggested by the OpenVR samples to run vr::VRCompositor()->WaitGetPoses right after
 	// swapping the swapchain images
-	if( vrSystem->IsActive() )
-	{
+	if( vrSystem->IsActive() ) {
 		vrSystem->PostSwap();
 	}
 }
@@ -2168,8 +2103,7 @@ This routine is responsible for setting the most commonly changed state
 void idRenderBackend::GL_State( uint64 stateBits, bool forceGlState )
 {
 	glStateBits = stateBits | ( glStateBits & GLS_KEEP );
-	if( viewDef != NULL && viewDef->isMirror )
-	{
+	if( viewDef != NULL && viewDef->isMirror ) {
 		glStateBits |= GLS_MIRROR_VIEW;
 	}
 
@@ -2218,7 +2152,7 @@ idRenderBackend::GL_PolygonOffset
 void idRenderBackend::GL_PolygonOffset( float scale, float bias )
 {
 	slopeScaleBias = scale;
-	depthBias = bias;
+	depthBias	   = bias;
 }
 
 /*
@@ -2228,17 +2162,13 @@ idRenderBackend::GL_DepthBoundsTest
 */
 void idRenderBackend::GL_DepthBoundsTest( const float zmin, const float zmax )
 {
-	if( /*!glConfig.depthBoundsTestAvailable || */zmin > zmax )
-	{
+	if( /*!glConfig.depthBoundsTestAvailable || */ zmin > zmax ) {
 		return;
 	}
 
-	if( zmin == 0.0f && zmax == 0.0f )
-	{
+	if( zmin == 0.0f && zmax == 0.0f ) {
 		glStateBits = glStateBits & ~GLS_DEPTH_TEST_MASK;
-	}
-	else
-	{
+	} else {
 		glStateBits |= GLS_DEPTH_TEST_MASK;
 
 		// RB: current viewport should be always [0..1] but we store here the values for depth bounds testing
@@ -2272,39 +2202,32 @@ void idRenderBackend::GL_Clear( bool color, bool depth, bool stencil, byte stenc
 {
 	nvrhi::IFramebuffer* framebuffer = Framebuffer::GetActiveFramebuffer()->GetApiObject();
 
-	nvrhi::Color colorValue( r, g, b, a );
+	nvrhi::Color		 colorValue( r, g, b, a );
 
-	if( color )
-	{
+	if( color ) {
 		nvrhi::utils::ClearColorAttachment( commandList, framebuffer, 0, colorValue );
 	}
 
-	if( clearHDR )
-	{
+	if( clearHDR ) {
 		nvrhi::utils::ClearColorAttachment( commandList, globalFramebuffers.hdrFBO->GetApiObject(), 0, colorValue );
 		nvrhi::utils::ClearColorAttachment( commandList, globalFramebuffers.ldrFBO->GetApiObject(), 0, colorValue );
 	}
 
-	if( clearVR && vrSystem->IsActive() && stereoEye == 1 )
-	{
-		for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
-		{
+	if( clearVR && vrSystem->IsActive() && stereoEye == 1 ) {
+		for( int i = 0; i < MAX_STEREO_BUFFERS; i++ ) {
 			nvrhi::utils::ClearColorAttachment( commandList, globalFramebuffers.vrStereoFBO[i]->GetApiObject(), 0, colorValue );
 		}
 	}
 
-	if( depth || stencil )
-	{
+	if( depth || stencil ) {
 		// make sure both depth and stencil are handled
 
 		const nvrhi::FramebufferAttachment& attDepth = framebuffer->getDesc().depthAttachment;
-		if( attDepth.texture )
-		{
+		if( attDepth.texture ) {
 			commandList->clearDepthStencilTexture( attDepth.texture, nvrhi::AllSubresources, depth, 1.0f, stencil, stencilValue );
 		}
 	}
 }
-
 
 /*
 =================
@@ -2326,7 +2249,6 @@ uint64 idRenderBackend::GL_GetCurrentStateMinusStencil() const
 	return GL_GetCurrentState() & ~( GLS_STENCIL_OP_BITS | GLS_STENCIL_FUNC_BITS | GLS_STENCIL_FUNC_REF_BITS | GLS_STENCIL_FUNC_MASK_BITS );
 }
 
-
 /*
 =============
 idRenderBackend::CheckCVars
@@ -2337,23 +2259,20 @@ See if some cvars that we watch have changed
 void idRenderBackend::CheckCVars()
 {
 	// TODO remove, gamma stuff doesn't work and isn't used using the latest Nvidia drivers
-	if( r_gamma.IsModified() || r_brightness.IsModified() )
-	{
+	if( r_gamma.IsModified() || r_brightness.IsModified() ) {
 		r_gamma.ClearModified();
 		r_brightness.ClearModified();
 		R_SetColorMappings();
 	}
 
 	// SRS - support dynamic changes to vsync setting
-	if( r_swapInterval.IsModified() )
-	{
+	if( r_swapInterval.IsModified() ) {
 		r_swapInterval.ClearModified();
 		deviceManager->SetVsyncEnabled( r_swapInterval.GetInteger() );
 	}
 
 	// retro rendering
-	if( r_renderMode.IsModified() )
-	{
+	if( r_renderMode.IsModified() ) {
 		r_renderMode.ClearModified();
 
 		// clear caches because PSX rendering will use nearest texture filtering instead of linear
@@ -2374,41 +2293,35 @@ void idRenderBackend::ClearCaches()
 	bindingCache.Clear();
 	samplerCache.Clear();
 
-	if( hiZGenPass )
-	{
+	if( hiZGenPass ) {
 		delete hiZGenPass;
 		hiZGenPass = nullptr;
 	}
 
-	if( ssaoPass )
-	{
+	if( ssaoPass ) {
 		delete ssaoPass;
 		ssaoPass = nullptr;
 	}
 
-	if( toneMapPass )
-	{
+	if( toneMapPass ) {
 		delete toneMapPass;
 		toneMapPass = nullptr;
 	}
 
-	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ )
-	{
-		if( taaPass[i] )
-		{
+	for( int i = 0; i < MAX_STEREO_BUFFERS; i++ ) {
+		if( taaPass[i] ) {
 			delete taaPass[i];
 			taaPass[i] = nullptr;
 		}
 	}
 
-
-	currentVertexBuffer = nullptr;
-	currentIndexBuffer = nullptr;
-	currentJointBuffer = nullptr;
-	currentIndexOffset = -1;
-	currentVertexOffset = -1;
+	currentVertexBuffer	 = nullptr;
+	currentIndexBuffer	 = nullptr;
+	currentJointBuffer	 = nullptr;
+	currentIndexOffset	 = -1;
+	currentVertexOffset	 = -1;
 	currentBindingLayout = nullptr;
-	currentPipeline = nullptr;
+	currentPipeline		 = nullptr;
 }
 
 /*
@@ -2426,20 +2339,19 @@ idRenderBackend::DrawFlickerBox
 */
 void idRenderBackend::DrawFlickerBox()
 {
-	if( !r_drawFlickerBox.GetBool() )
-	{
+	if( !r_drawFlickerBox.GetBool() ) {
 		return;
 	}
-	//if( tr.frameCount & 1 )
+	// if( tr.frameCount & 1 )
 	//{
 	//	glClearColor( 1, 0, 0, 1 );
-	//}
-	//else
+	// }
+	// else
 	//{
 	//	glClearColor( 0, 1, 0, 1 );
-	//}
-	//glScissor( 0, 0, 256, 256 );
-	//glClear( GL_COLOR_BUFFER_BIT );
+	// }
+	// glScissor( 0, 0, 256, 256 );
+	// glClear( GL_COLOR_BUFFER_BIT );
 }
 
 /*
@@ -2453,12 +2365,11 @@ void idRenderBackend::SetBuffer( const void* data, const int stereoEye )
 
 	const setBufferCommand_t* cmd = ( const setBufferCommand_t* )data;
 
-	nvrhi::ObjectType commandObject = nvrhi::ObjectTypes::D3D12_GraphicsCommandList;
-	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
-	{
+	nvrhi::ObjectType		  commandObject = nvrhi::ObjectTypes::D3D12_GraphicsCommandList;
+	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ) {
 		commandObject = nvrhi::ObjectTypes::VK_CommandBuffer;
 	}
-	OPTICK_GPU_CONTEXT( ( void* ) commandList->getNativeObject( commandObject ) );
+	OPTICK_GPU_CONTEXT( ( void* )commandList->getNativeObject( commandObject ) );
 	OPTICK_GPU_EVENT( "SetBuffer" );
 
 	renderLog.OpenMainBlock( MRB_BEGIN_DRAWING_VIEW );
@@ -2471,25 +2382,17 @@ void idRenderBackend::SetBuffer( const void* data, const int stereoEye )
 	// clear screen for debugging
 	// automatically enable this with several other debug tools
 	// that might leave unrendered portions of the screen
-	if( r_clear.GetFloat() || idStr::Length( r_clear.GetString() ) != 1 || r_singleArea.GetBool() || r_showOverDraw.GetBool() )
-	{
+	if( r_clear.GetFloat() || idStr::Length( r_clear.GetString() ) != 1 || r_singleArea.GetBool() || r_showOverDraw.GetBool() ) {
 		OPTICK_GPU_EVENT( "Render_ClearBuffer" );
 
 		float c[3];
-		if( sscanf( r_clear.GetString(), "%f %f %f", &c[0], &c[1], &c[2] ) == 3 )
-		{
+		if( sscanf( r_clear.GetString(), "%f %f %f", &c[0], &c[1], &c[2] ) == 3 ) {
 			GL_Clear( true, false, false, 0, c[0], c[1], c[2], 1.0f, true, true );
-		}
-		else if( r_clear.GetInteger() == 2 )
-		{
+		} else if( r_clear.GetInteger() == 2 ) {
 			GL_Clear( true, false, false, 0, 0.0f, 0.0f, 0.0f, 1.0f, true, true );
-		}
-		else if( r_showOverDraw.GetBool() )
-		{
+		} else if( r_showOverDraw.GetBool() ) {
 			GL_Clear( true, false, false, 0, 1.0f, 1.0f, 1.0f, 1.0f, true, true );
-		}
-		else
-		{
+		} else {
 			GL_Clear( true, false, false, 0, 0.4f, 0.0f, 0.25f, 1.0f, true, true );
 		}
 	}
@@ -2497,7 +2400,6 @@ void idRenderBackend::SetBuffer( const void* data, const int stereoEye )
 	renderLog.CloseBlock();
 	renderLog.CloseMainBlock();
 }
-
 
 /*
 =============
@@ -2507,12 +2409,12 @@ idRenderBackend::idRenderBackend
 idRenderBackend::idRenderBackend()
 {
 	hiZGenPass = nullptr;
-	ssaoPass = nullptr;
+	ssaoPass   = nullptr;
 
 	memset( &glConfig, 0, sizeof( glConfig ) );
 
 	glConfig.uniformBufferOffsetAlignment = 256;
-	glConfig.timerQueryAvailable = true;
+	glConfig.timerQueryAvailable		  = true;
 }
 
 /*
@@ -2522,7 +2424,6 @@ idRenderBackend::~idRenderBackend
 */
 idRenderBackend::~idRenderBackend()
 {
-
 }
 
 /*
@@ -2532,11 +2433,11 @@ R_MakeStereoRenderImage
 */
 static void R_MakeStereoRenderImage( idImage* image )
 {
-	idImageOpts	opts;
-	opts.width = renderSystem->GetWidth();
-	opts.height = renderSystem->GetHeight();
+	idImageOpts opts;
+	opts.width	   = renderSystem->GetWidth();
+	opts.height	   = renderSystem->GetHeight();
 	opts.numLevels = 1;
-	opts.format = FMT_RGBA8;
+	opts.format	   = FMT_RGBA8;
 	image->AllocImage( opts, TF_LINEAR, TR_CLAMP );
 }
 
@@ -2552,19 +2453,18 @@ void idRenderBackend::StereoRenderExecuteBackEndCommands( const emptyCommand_t* 
 	GL_StartFrame();
 
 	nvrhi::ObjectType commandObject = nvrhi::ObjectTypes::D3D12_GraphicsCommandList;
-	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
-	{
+	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ) {
 		commandObject = nvrhi::ObjectTypes::VK_CommandBuffer;
 	}
-	OPTICK_GPU_CONTEXT( ( void* ) commandList->getNativeObject( commandObject ) );
+	OPTICK_GPU_CONTEXT( ( void* )commandList->getNativeObject( commandObject ) );
 
-	void* textureId = globalImages->hierarchicalZbufferImage->GetTextureID();
+	void*	   textureId = globalImages->hierarchicalZbufferImage->GetTextureID();
 
 	// RB: we need to load all images left before rendering
 	// this can be expensive here because of the runtime image compression
-	//globalImages->LoadDeferredImages( commandList );
+	// globalImages->LoadDeferredImages( commandList );
 
-	uint64 backEndStartTime = Sys_Microseconds();
+	uint64	   backEndStartTime = Sys_Microseconds();
 
 	// In stereoRender mode, the front end has generated two RC_DRAW_VIEW commands
 	// with slightly different origins for each eye.
@@ -2577,16 +2477,14 @@ void idRenderBackend::StereoRenderExecuteBackEndCommands( const emptyCommand_t* 
 	// Render the 3D draw views from the screen origin so all the screen relative
 	// texture mapping works properly, then copy the portion we are going to use
 	// off to a texture.
-	bool foundEye[2] = { false, false };
+	bool	   foundEye[2] = { false, false };
 
-	for( int stereoEye = 1; stereoEye >= -1; stereoEye -= 2 )
-	{
+	for( int stereoEye = 1; stereoEye >= -1; stereoEye -= 2 ) {
 		// set up the target texture we will draw to
 		const int targetEye = ( stereoEye == 1 ) ? 1 : 0;
 
 		// capture only timestamps for the first eye
-		if( stereoEye == -1 )
-		{
+		if( stereoEye == -1 ) {
 			glConfig.timerQueryAvailable = false;
 		}
 
@@ -2598,28 +2496,24 @@ void idRenderBackend::StereoRenderExecuteBackEndCommands( const emptyCommand_t* 
 		renderProgManager.Unbind();
 		renderProgManager.ZeroUniforms();
 
-		for( const emptyCommand_t* cmds = allCmds; cmds != NULL; cmds = ( const emptyCommand_t* )cmds->next )
-		{
-			switch( cmds->commandId )
-			{
+		for( const emptyCommand_t* cmds = allCmds; cmds != NULL; cmds = ( const emptyCommand_t* )cmds->next ) {
+			switch( cmds->commandId ) {
 				case RC_NOP:
 					break;
 
 				case RC_DRAW_VIEW_GUI:
-				case RC_DRAW_VIEW_3D:
-				{
+				case RC_DRAW_VIEW_3D: {
 #if VR_EMITSTEREO
-					const drawSurfsCommand_t* const dsc = ( const drawSurfsCommand_t* )cmds;
-					const viewDef_t&			eyeViewDef = *dsc->viewDef;
+					const drawSurfsCommand_t* const dsc		   = ( const drawSurfsCommand_t* )cmds;
+					const viewDef_t&				eyeViewDef = *dsc->viewDef;
 
-					if( eyeViewDef.renderView.viewEyeBuffer && eyeViewDef.renderView.viewEyeBuffer != stereoEye )
-					{
+					if( eyeViewDef.renderView.viewEyeBuffer && eyeViewDef.renderView.viewEyeBuffer != stereoEye ) {
 						// this is the render view for the other eye
 						continue;
 					}
 #endif
 
-					foundEye[ targetEye ] = true;
+					foundEye[targetEye] = true;
 					DrawView( cmds, stereoEye );
 					break;
 				}
@@ -2632,12 +2526,10 @@ void idRenderBackend::StereoRenderExecuteBackEndCommands( const emptyCommand_t* 
 					CopyRender( cmds );
 					break;
 
-				case RC_POST_PROCESS:
-				{
+				case RC_POST_PROCESS: {
 #if VR_EMITSTEREO
 					postProcessCommand_t* cmd = ( postProcessCommand_t* )cmds;
-					if( cmd->viewDef->renderView.viewEyeBuffer != stereoEye )
-					{
+					if( cmd->viewDef->renderView.viewEyeBuffer != stereoEye ) {
 						break;
 					}
 #endif
@@ -2655,8 +2547,7 @@ void idRenderBackend::StereoRenderExecuteBackEndCommands( const emptyCommand_t* 
 		}
 
 		// capture only timestamps for the first eye
-		if( stereoEye == -1 )
-		{
+		if( stereoEye == -1 ) {
 			glConfig.timerQueryAvailable = timerQueryAvailable;
 		}
 
@@ -2666,9 +2557,9 @@ void idRenderBackend::StereoRenderExecuteBackEndCommands( const emptyCommand_t* 
 			renderLog.OpenBlock( "Blit_StereoImage", colorBlue );
 
 			BlitParameters blitParms;
-			blitParms.sourceTexture = ( nvrhi::ITexture* )globalImages->ldrImage->GetTextureID();
-			blitParms.targetFramebuffer = globalFramebuffers.vrStereoFBO[ targetEye ]->GetApiObject();
-			blitParms.targetViewport = nvrhi::Viewport( renderSystem->GetWidth(), renderSystem->GetHeight() );
+			blitParms.sourceTexture		= ( nvrhi::ITexture* )globalImages->ldrImage->GetTextureID();
+			blitParms.targetFramebuffer = globalFramebuffers.vrStereoFBO[targetEye]->GetApiObject();
+			blitParms.targetViewport	= nvrhi::Viewport( renderSystem->GetWidth(), renderSystem->GetHeight() );
 			commonPasses.BlitTexture( commandList, blitParms, &bindingCache );
 
 			renderLog.CloseBlock();
@@ -2684,15 +2575,14 @@ void idRenderBackend::StereoRenderExecuteBackEndCommands( const emptyCommand_t* 
 
 	// SRS - capture backend timing before GL_EndFrame() since it can block when r_mvkSynchronousQueueSubmits is enabled on macOS/MoltenVK
 	uint64 backEndFinishTime = Sys_Microseconds();
-	pc.cpuTotalMicroSec = backEndFinishTime - backEndStartTime;
+	pc.cpuTotalMicroSec		 = backEndFinishTime - backEndStartTime;
 
 	GL_EndFrame();
 }
 
 void idRenderBackend::ImGui_RenderDrawLists( ImDrawData* draw_data )
 {
-	if( draw_data->CmdListsCount == 0 )
-	{
+	if( draw_data->CmdListsCount == 0 ) {
 		// Nothing to do.
 		return;
 	}
@@ -2709,8 +2599,8 @@ void idRenderBackend::ResizeImages()
 {
 	glimpParms_t parms;
 
-	parms.width = glConfig.nativeScreenWidth;
-	parms.height = glConfig.nativeScreenHeight;
+	parms.width		   = glConfig.nativeScreenWidth;
+	parms.height	   = glConfig.nativeScreenHeight;
 	parms.multiSamples = glConfig.multisamples;
 
 	deviceManager->UpdateWindowSize( parms );
@@ -2720,8 +2610,7 @@ void idRenderBackend::SetCurrentImage( idImage* image )
 {
 	// load the image if necessary (FIXME: not SMP safe!)
 	// RB: don't try again if last time failed
-	if( !image->IsLoaded() && !image->IsDefaulted() )
-	{
+	if( !image->IsLoaded() && !image->IsDefaulted() ) {
 		// TODO(Stephen): Fix me.
 		image->ActuallyLoadImage( true, commandList );
 	}
@@ -2743,4 +2632,3 @@ void idRenderBackend::ResetPipelineCache()
 {
 	pipelineCache.Clear();
 }
-

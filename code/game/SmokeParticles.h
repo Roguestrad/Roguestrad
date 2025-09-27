@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -51,23 +52,20 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-typedef struct singleSmoke_s
-{
-	struct singleSmoke_s* 		next;
-	int							privateStartTime;	// start time for this particular particle
-	int							index;				// particle index in system, 0 <= index < stage->totalParticles
-	idRandom					random;
-	idVec3						origin;
-	idMat3						axis;
-	int							timeGroup;
+typedef struct singleSmoke_s {
+	struct singleSmoke_s* next;
+	int					  privateStartTime; // start time for this particular particle
+	int					  index;			// particle index in system, 0 <= index < stage->totalParticles
+	idRandom			  random;
+	idVec3				  origin;
+	idMat3				  axis;
+	int					  timeGroup;
 } singleSmoke_t;
 
-typedef struct
-{
-	const idParticleStage* 		stage;
-	singleSmoke_t* 				smokes;
+typedef struct {
+	const idParticleStage* stage;
+	singleSmoke_t*		   smokes;
 } activeSmokeStage_t;
-
 
 class idSmokeParticles
 {
@@ -75,32 +73,31 @@ public:
 	idSmokeParticles();
 
 	// creats an entity covering the entire world that will call back each rendering
-	void						Init();
-	void						Shutdown();
+	void Init();
+	void Shutdown();
 
 	// spits out a particle, returning false if the system will not emit any more particles in the future
-	bool						EmitSmoke( const idDeclParticle* smoke, const int startTime, const float diversity,
-										   const idVec3& origin, const idMat3& axis, int timeGroup /*_D3XP*/ );
+	bool EmitSmoke( const idDeclParticle* smoke, const int startTime, const float diversity, const idVec3& origin, const idMat3& axis, int timeGroup /*_D3XP*/ );
 
 	// free old smokes
-	void						FreeSmokes();
+	void FreeSmokes();
 
 private:
-	bool						initialized;
+	bool									 initialized;
 
-	renderEntity_t				renderEntity;			// used to present a model to the renderer
-	int							renderEntityHandle;		// handle to static renderer model
+	renderEntity_t							 renderEntity;		 // used to present a model to the renderer
+	int										 renderEntityHandle; // handle to static renderer model
 
-	static const int			MAX_SMOKE_PARTICLES = 10000;
-	singleSmoke_t				smokes[MAX_SMOKE_PARTICLES];
+	static const int						 MAX_SMOKE_PARTICLES = 10000;
+	singleSmoke_t							 smokes[MAX_SMOKE_PARTICLES];
 
-	idList<activeSmokeStage_t, TAG_PARTICLE>	activeStages;
-	singleSmoke_t* 				freeSmokes;
-	int							numActiveSmokes;
-	int							currentParticleTime;	// don't need to recalculate if == view time
+	idList<activeSmokeStage_t, TAG_PARTICLE> activeStages;
+	singleSmoke_t*							 freeSmokes;
+	int										 numActiveSmokes;
+	int										 currentParticleTime; // don't need to recalculate if == view time
 
-	bool						UpdateRenderEntity( renderEntity_s* renderEntity, const renderView_t* renderView );
-	static bool					ModelCallback( renderEntity_s* renderEntity, const renderView_t* renderView );
+	bool									 UpdateRenderEntity( renderEntity_s* renderEntity, const renderView_t* renderView );
+	static bool								 ModelCallback( renderEntity_s* renderEntity, const renderView_t* renderView );
 };
 
 #endif /* !__SMOKEPARTICLES_H__ */

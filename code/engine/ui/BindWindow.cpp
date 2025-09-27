@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -34,14 +35,14 @@ If you have questions concerning this license or the applicable additional terms
 #include "UserInterfaceLocal.h"
 #include "BindWindow.h"
 
-
 void idBindWindow::CommonInit()
 {
-	bindName = "";
+	bindName	 = "";
 	waitingOnKey = false;
 }
 
-idBindWindow::idBindWindow( idUserInterfaceLocal* g ) : idWindow( g )
+idBindWindow::idBindWindow( idUserInterfaceLocal* g ) :
+	idWindow( g )
 {
 	gui = g;
 	CommonInit();
@@ -49,38 +50,28 @@ idBindWindow::idBindWindow( idUserInterfaceLocal* g ) : idWindow( g )
 
 idBindWindow::~idBindWindow()
 {
-
 }
-
 
 const char* idBindWindow::HandleEvent( const sysEvent_t* event, bool* updateVisuals )
 {
-	static char ret[ 256 ];
+	static char ret[256];
 
-	if( !( event->evType == SE_KEY && event->evValue2 ) )
-	{
+	if( !( event->evType == SE_KEY && event->evValue2 ) ) {
 		return "";
 	}
 
 	int key = event->evValue;
 
-	if( waitingOnKey )
-	{
+	if( waitingOnKey ) {
 		waitingOnKey = false;
-		if( key == K_ESCAPE )
-		{
+		if( key == K_ESCAPE ) {
 			idStr::snPrintf( ret, sizeof( ret ), "clearbind \"%s\"", bindName.GetName() );
-		}
-		else
-		{
+		} else {
 			idStr::snPrintf( ret, sizeof( ret ), "bind %i \"%s\"", key, bindName.GetName() );
 		}
 		return ret;
-	}
-	else
-	{
-		if( key == K_MOUSE1 )
-		{
+	} else {
+		if( key == K_MOUSE1 ) {
 			waitingOnKey = true;
 			gui->SetBindHandler( this );
 			return "";
@@ -92,9 +83,7 @@ const char* idBindWindow::HandleEvent( const sysEvent_t* event, bool* updateVisu
 
 idWinVar* idBindWindow::GetWinVarByName( const char* _name, bool fixup, drawWin_t** owner )
 {
-
-	if( idStr::Icmp( _name, "bind" ) == 0 )
-	{
+	if( idStr::Icmp( _name, "bind" ) == 0 ) {
 		return &bindName;
 	}
 
@@ -106,7 +95,7 @@ void idBindWindow::PostParse()
 	idWindow::PostParse();
 	bindName.SetGuiInfo( gui->GetStateDict(), bindName );
 	bindName.Update();
-	//bindName = state.GetString("bind");
+	// bindName = state.GetString("bind");
 	flags |= ( WIN_HOLDCAPTURE | WIN_CANFOCUS );
 }
 
@@ -114,26 +103,18 @@ void idBindWindow::Draw( int time, float x, float y )
 {
 	idVec4 color = foreColor;
 
-	idStr str;
-	if( waitingOnKey )
-	{
+	idStr  str;
+	if( waitingOnKey ) {
 		str = idLocalization::GetString( "#str_07000" );
-	}
-	else if( bindName.Length() )
-	{
+	} else if( bindName.Length() ) {
 		str = bindName.c_str();
-	}
-	else
-	{
+	} else {
 		str = idLocalization::GetString( "#str_07001" );
 	}
 
-	if( waitingOnKey || ( hover && !noEvents && Contains( gui->CursorX(), gui->CursorY() ) ) )
-	{
+	if( waitingOnKey || ( hover && !noEvents && Contains( gui->CursorX(), gui->CursorY() ) ) ) {
 		color = hoverColor;
-	}
-	else
-	{
+	} else {
 		hover = false;
 	}
 

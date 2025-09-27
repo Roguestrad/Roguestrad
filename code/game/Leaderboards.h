@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,24 +30,20 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __LEADERBOARDS_LOCAL_H__
 #define __LEADERBOARDS_LOCAL_H__
 
-
-struct leaderboardStats_t
-{
-	int		frags;
-	int		wins;
-	int		teamfrags;
-	int		deaths;
+struct leaderboardStats_t {
+	int frags;
+	int wins;
+	int teamfrags;
+	int deaths;
 };
 
-struct columnGameMode_t
-{
-
-	columnDef_t* 	columnDef;					// The Column definition for the game mode.
-	int				numColumns;
-	rankOrder_t		rankOrder;					// rank ordering of the game mode. (  RANK_GREATEST_FIRST, RANK_LEAST_FIRST )
-	bool			supportsAttachments;
-	bool			checkAgainstCurrent;
-	const char* 	abrevName;					// Leaderboard Game Mode Abrev.
+struct columnGameMode_t {
+	columnDef_t* columnDef; // The Column definition for the game mode.
+	int			 numColumns;
+	rankOrder_t	 rankOrder; // rank ordering of the game mode. (  RANK_GREATEST_FIRST, RANK_LEAST_FIRST )
+	bool		 supportsAttachments;
+	bool		 checkAgainstCurrent;
+	const char*	 abrevName; // Leaderboard Game Mode Abrev.
 };
 
 /*
@@ -57,19 +54,17 @@ struct columnGameMode_t
 ================================================================================================
 */
 
-
-
 // creates and stores all the leaderboards inside the internal map ( see Sys_FindLeaderboardDef on retrieving definition )
-void			LeaderboardLocal_Init();
+void						  LeaderboardLocal_Init();
 
 // Destroys any leaderboard definitions allocated by LeaderboardLocal_Init()
-void			LeaderboardLocal_Shutdown();
+void						  LeaderboardLocal_Shutdown();
 
 // Gets a leaderboard ID with map index and game type.
-int				LeaderboardLocal_GetID( int mapIndex, int gametype );
+int							  LeaderboardLocal_GetID( int mapIndex, int gametype );
 
 // Do it all function. Will create the column_t with the correct stats from the game type, and upload it to the leaderboard system.
-void			LeaderboardLocal_Upload( lobbyUserID_t lobbyUserID, int gameType, leaderboardStats_t& stats );
+void						  LeaderboardLocal_Upload( lobbyUserID_t lobbyUserID, int gameType, leaderboardStats_t& stats );
 
 extern const columnGameMode_t gameMode_columnDefs[];
 

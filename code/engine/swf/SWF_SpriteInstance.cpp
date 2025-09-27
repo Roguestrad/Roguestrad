@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -72,7 +73,7 @@ void idSWFSpriteInstance::Init( idSWFSprite* _sprite, idSWFSpriteInstance* _pare
 {
 	sprite = _sprite;
 	parent = _parent;
-	depth = _depth;
+	depth  = _depth;
 
 	frameCount = sprite->frameCount;
 
@@ -90,8 +91,7 @@ void idSWFSpriteInstance::Init( idSWFSprite* _sprite, idSWFSpriteInstance* _pare
 	actionScript->SetScope( scope );
 	actionScript->SetDefaultSprite( this );
 
-	for( int i = 0; i < sprite->doInitActions.Num(); i++ )
-	{
+	for( int i = 0; i < sprite->doInitActions.Num(); i++ ) {
 		actionScript->SetData( sprite->doInitActions[i].Ptr(), sprite->doInitActions[i].Length() );
 		actionScript->Call( scriptObject, idSWFParmList() );
 	}
@@ -106,8 +106,7 @@ idSWFSpriteInstance::~idSWFSpriteInstance
 */
 idSWFSpriteInstance::~idSWFSpriteInstance()
 {
-	if( parent != NULL )
-	{
+	if( parent != NULL ) {
 		parent->scriptObject->Set( name, idSWFScriptVar() );
 	}
 	FreeDisplayList();
@@ -125,12 +124,11 @@ idSWFSpriteInstance::FreeDisplayList
 */
 void idSWFSpriteInstance::FreeDisplayList()
 {
-	for( int i = 0; i < displayList.Num(); i++ )
-	{
+	for( int i = 0; i < displayList.Num(); i++ ) {
 		sprite->swf->spriteInstanceAllocator.Free( displayList[i].spriteInstance );
 		sprite->swf->textInstanceAllocator.Free( displayList[i].textInstance );
 	}
-	displayList.SetNum( 0 );	// not calling Clear() so we don't continuously re-allocate memory
+	displayList.SetNum( 0 ); // not calling Clear() so we don't continuously re-allocate memory
 	currentFrame = 0;
 }
 
@@ -141,20 +139,17 @@ idSWFSpriteInstance::FindDisplayEntry
 */
 swfDisplayEntry_t* idSWFSpriteInstance::FindDisplayEntry( int depth )
 {
-	int len = displayList.Num();
-	int mid = len;
+	int len	   = displayList.Num();
+	int mid	   = len;
 	int offset = 0;
-	while( mid > 0 )
-	{
+	while( mid > 0 ) {
 		mid = len >> 1;
-		if( displayList[offset + mid].depth <= depth )
-		{
+		if( displayList[offset + mid].depth <= depth ) {
 			offset += mid;
 		}
 		len -= mid;
 	}
-	if( displayList[offset].depth == depth )
-	{
+	if( displayList[offset].depth == depth ) {
 		return &displayList[offset];
 	}
 	return NULL;
@@ -168,33 +163,26 @@ idSWFSpriteInstance::AddDisplayEntry
 swfDisplayEntry_t* idSWFSpriteInstance::AddDisplayEntry( int depth, int characterID )
 {
 	int i = 0;
-	for( ; i < displayList.Num(); i++ )
-	{
-		if( displayList[i].depth == depth )
-		{
+	for( ; i < displayList.Num(); i++ ) {
+		if( displayList[i].depth == depth ) {
 			return NULL;
 		}
-		if( displayList[i].depth > depth )
-		{
+		if( displayList[i].depth > depth ) {
 			break;
 		}
 	}
 
-	swfDisplayEntry_t& display = displayList[ displayList.Insert( swfDisplayEntry_t(), i ) ];
-	display.depth = depth;
-	display.characterID = characterID;
+	swfDisplayEntry_t& display = displayList[displayList.Insert( swfDisplayEntry_t(), i )];
+	display.depth			   = depth;
+	display.characterID		   = characterID;
 
 	idSWFDictionaryEntry* dictEntry = sprite->swf->FindDictionaryEntry( characterID );
-	if( dictEntry != NULL )
-	{
-		if( dictEntry->type == SWF_DICT_SPRITE )
-		{
+	if( dictEntry != NULL ) {
+		if( dictEntry->type == SWF_DICT_SPRITE ) {
 			display.spriteInstance = sprite->swf->spriteInstanceAllocator.Alloc();
 			display.spriteInstance->Init( dictEntry->sprite, this, depth );
 			display.spriteInstance->RunTo( 1 );
-		}
-		else if( dictEntry->type == SWF_DICT_EDITTEXT )
-		{
+		} else if( dictEntry->type == SWF_DICT_EDITTEXT ) {
 			display.textInstance = sprite->swf->textInstanceAllocator.Alloc();
 			display.textInstance->Init( dictEntry->edittext, sprite->GetSWF() );
 		}
@@ -210,8 +198,7 @@ idSWFSpriteInstance::RemoveDisplayEntry
 void idSWFSpriteInstance::RemoveDisplayEntry( int depth )
 {
 	swfDisplayEntry_t* entry = FindDisplayEntry( depth );
-	if( entry != NULL )
-	{
+	if( entry != NULL ) {
 		sprite->swf->spriteInstanceAllocator.Free( entry->spriteInstance );
 		sprite->swf->textInstanceAllocator.Free( entry->textInstance );
 		displayList.RemoveIndex( displayList.IndexOf( entry ) );
@@ -223,7 +210,7 @@ void idSWFSpriteInstance::RemoveDisplayEntry( int depth )
 idSort_SpriteDepth
 ================================================
 */
-class idSort_SpriteDepth : public idSort_Quick< swfDisplayEntry_t, idSort_SpriteDepth >
+class idSort_SpriteDepth : public idSort_Quick<swfDisplayEntry_t, idSort_SpriteDepth>
 {
 public:
 	int Compare( const swfDisplayEntry_t& a, const swfDisplayEntry_t& b ) const
@@ -239,19 +226,14 @@ idSWFSpriteInstance::SwapDepths
 */
 void idSWFSpriteInstance::SwapDepths( int depth1, int depth2 )
 {
-	for( int i = 0; i < displayList.Num(); i++ )
-	{
-		if( displayList[i].depth == depth1 )
-		{
+	for( int i = 0; i < displayList.Num(); i++ ) {
+		if( displayList[i].depth == depth1 ) {
 			displayList[i].depth = depth2;
 
-		}
-		else if( displayList[i].depth == depth2 )
-		{
+		} else if( displayList[i].depth == depth2 ) {
 			displayList[i].depth = depth1;
 		}
-		if( displayList[i].spriteInstance != NULL )
-		{
+		if( displayList[i].spriteInstance != NULL ) {
 			displayList[i].spriteInstance->depth = displayList[i].depth;
 		}
 	}
@@ -266,41 +248,30 @@ idSWFSpriteInstance::Run
 */
 bool idSWFSpriteInstance::Run()
 {
-	if( !isVisible )
-	{
+	if( !isVisible ) {
 		return false;
 	}
 
-	if( childrenRunning )
-	{
+	if( childrenRunning ) {
 		childrenRunning = false;
-		for( int i = 0; i < displayList.Num(); i++ )
-		{
-			if( displayList[i].spriteInstance != NULL )
-			{
+		for( int i = 0; i < displayList.Num(); i++ ) {
+			if( displayList[i].spriteInstance != NULL ) {
 				Prefetch( displayList[i].spriteInstance, 0 );
 			}
 		}
-		for( int i = 0; i < displayList.Num(); i++ )
-		{
-			if( displayList[i].spriteInstance != NULL )
-			{
+		for( int i = 0; i < displayList.Num(); i++ ) {
+			if( displayList[i].spriteInstance != NULL ) {
 				childrenRunning |= displayList[i].spriteInstance->Run();
 			}
 		}
 	}
-	if( isPlaying )
-	{
-		if( currentFrame == frameCount )
-		{
-			if( frameCount > 1 )
-			{
+	if( isPlaying ) {
+		if( currentFrame == frameCount ) {
+			if( frameCount > 1 ) {
 				FreeDisplayList();
 				RunTo( 1 );
 			}
-		}
-		else
-		{
+		} else {
 			RunTo( currentFrame + 1 );
 		}
 	}
@@ -314,27 +285,23 @@ idSWFSpriteInstance::RunActions
 */
 bool idSWFSpriteInstance::RunActions()
 {
-	if( !isVisible )
-	{
+	if( !isVisible ) {
 		actions.SetNum( 0 );
 		luaActions.SetNum( 0 );
 		return false;
 	}
 
-	if( firstRun && scriptObject->HasProperty( "onLoad" ) )
-	{
-		firstRun = false;
+	if( firstRun && scriptObject->HasProperty( "onLoad" ) ) {
+		firstRun			  = false;
 		idSWFScriptVar onLoad = scriptObject->Get( "onLoad" );
 		onLoad.GetFunction()->Call( scriptObject, idSWFParmList() );
 	}
 
-	if( onEnterFrame.IsFunction() )
-	{
+	if( onEnterFrame.IsFunction() ) {
 		onEnterFrame.GetFunction()->Call( scriptObject, idSWFParmList() );
 	}
 
-	for( int i = 0; i < actions.Num(); i++ )
-	{
+	for( int i = 0; i < actions.Num(); i++ ) {
 		actionScript->SetData( actions[i].data, actions[i].dataLength );
 		actionScript->Call( scriptObject, idSWFParmList() );
 	}
@@ -345,40 +312,35 @@ bool idSWFSpriteInstance::RunActions()
 	idSWF::SetLuaSpriteInstance( this );
 
 	lua_State* L = sprite->GetSWF()->GetLuaState();
-	if( L )
-	{
-		for( int i = 0; i < luaActions.Num(); i++ )
-		{
-			const char* name = ( const char* ) luaActions[i].data;
+	if( L ) {
+		for( int i = 0; i < luaActions.Num(); i++ ) {
+			const char* name = ( const char* )luaActions[i].data;
 
-			//lua_printstack( L );
+			// lua_printstack( L );
 
 			lua_getglobal( L, name ); // ... ( function | nil )
 
-			if( lua_isfunction( L, -1 ) )
-			{
+			if( lua_isfunction( L, -1 ) ) {
 				// push self reference
-				luaW_push<idSWFSpriteInstance>( L, this );	// ... userdata function
+				luaW_push<idSWFSpriteInstance>( L, this ); // ... userdata function
 
-				//lua_printstack( L );
+				// lua_printstack( L );
 
 				if( lua_pcall( L, 1, 0, NULL ) != 0 ) // ... userdata
 				{
-					//lua_printstack( L );
+					// lua_printstack( L );
 
 					idLib::Warning( "idSWFSpriteInstance::RunActions( %s ): error running function: %s\n", name, lua_tostring( L, -1 ) );
 
 					// remove warning from stack
 					lua_pop( L, 1 ); // ...
 				}
-			}
-			else
-			{
+			} else {
 				// ... nil
 				lua_pop( L, 1 ); // ...
 			}
 
-			//lua_printstack( L );
+			// lua_printstack( L );
 		}
 	}
 
@@ -386,17 +348,13 @@ bool idSWFSpriteInstance::RunActions()
 #endif
 	// RB end
 
-	for( int i = 0; i < displayList.Num(); i++ )
-	{
-		if( displayList[i].spriteInstance != NULL )
-		{
+	for( int i = 0; i < displayList.Num(); i++ ) {
+		if( displayList[i].spriteInstance != NULL ) {
 			Prefetch( displayList[i].spriteInstance, 0 );
 		}
 	}
-	for( int i = 0; i < displayList.Num(); i++ )
-	{
-		if( displayList[i].spriteInstance != NULL )
-		{
+	for( int i = 0; i < displayList.Num(); i++ ) {
+		if( displayList[i].spriteInstance != NULL ) {
 			displayList[i].spriteInstance->RunActions();
 		}
 	}
@@ -411,8 +369,7 @@ idSWFSpriteInstance::NextFrame
 */
 void idSWFSpriteInstance::NextFrame()
 {
-	if( currentFrame < frameCount )
-	{
+	if( currentFrame < frameCount ) {
 		RunTo( currentFrame + 1 );
 	}
 }
@@ -424,8 +381,7 @@ idSWFSpriteInstance::PrevFrame
 */
 void idSWFSpriteInstance::PrevFrame()
 {
-	if( currentFrame > 1 )
-	{
+	if( currentFrame > 1 ) {
 		RunTo( currentFrame - 1 );
 	}
 }
@@ -437,8 +393,7 @@ idSWFSpriteInstance::Play
 */
 void idSWFSpriteInstance::Play()
 {
-	for( idSWFSpriteInstance* p = parent; p != NULL; p = p->parent )
-	{
+	for( idSWFSpriteInstance* p = parent; p != NULL; p = p->parent ) {
 		p->childrenRunning = true;
 	}
 	isPlaying = true;
@@ -461,33 +416,27 @@ idSWFSpriteInstance::RunTo
 */
 void idSWFSpriteInstance::RunTo( int targetFrame )
 {
-	if( targetFrame == currentFrame )
-	{
+	if( targetFrame == currentFrame ) {
 		return; // otherwise we'll re-run the current frame
 	}
-	if( targetFrame < currentFrame )
-	{
+	if( targetFrame < currentFrame ) {
 		FreeDisplayList();
 	}
-	if( targetFrame < 1 )
-	{
+	if( targetFrame < 1 ) {
 		return;
 	}
 
-	if( targetFrame > sprite->frameOffsets.Num() - 1 )
-	{
+	if( targetFrame > sprite->frameOffsets.Num() - 1 ) {
 		targetFrame = sprite->frameOffsets.Num() - 1;
 	}
 
-	//actions.Clear();
+	// actions.Clear();
 
-	uint32 firstActionCommand = sprite->frameOffsets[ targetFrame - 1 ];
+	uint32 firstActionCommand = sprite->frameOffsets[targetFrame - 1];
 
-	for( uint32 c = sprite->frameOffsets[ currentFrame ]; c < sprite->frameOffsets[ targetFrame ]; c++ )
-	{
-		idSWFSprite::swfSpriteCommand_t& command = sprite->commands[ c ];
-		if( ( command.tag == Tag_DoAction || command.tag == Tag_DoLua ) && c < firstActionCommand )
-		{
+	for( uint32 c = sprite->frameOffsets[currentFrame]; c < sprite->frameOffsets[targetFrame]; c++ ) {
+		idSWFSprite::swfSpriteCommand_t& command = sprite->commands[c];
+		if( ( command.tag == Tag_DoAction || command.tag == Tag_DoLua ) && c < firstActionCommand ) {
 			// Skip DoAction up to the firstActionCommand
 			// This is to properly support skipping to a specific frame
 			// for example if we're on frame 3 and skipping to frame 10, we want
@@ -496,15 +445,17 @@ void idSWFSpriteInstance::RunTo( int targetFrame )
 			continue;
 		}
 		command.stream.Rewind();
-		switch( command.tag )
-		{
-#define HANDLE_SWF_TAG( x ) case Tag_##x: x( command.stream ); break;
-				HANDLE_SWF_TAG( PlaceObject2 );
-				HANDLE_SWF_TAG( PlaceObject3 );
-				HANDLE_SWF_TAG( RemoveObject2 );
-				HANDLE_SWF_TAG( StartSound );
-				HANDLE_SWF_TAG( DoAction );
-				HANDLE_SWF_TAG( DoLua );
+		switch( command.tag ) {
+#define HANDLE_SWF_TAG( x )  \
+	case Tag_##x:            \
+		x( command.stream ); \
+		break;
+			HANDLE_SWF_TAG( PlaceObject2 );
+			HANDLE_SWF_TAG( PlaceObject3 );
+			HANDLE_SWF_TAG( RemoveObject2 );
+			HANDLE_SWF_TAG( StartSound );
+			HANDLE_SWF_TAG( DoAction );
+			HANDLE_SWF_TAG( DoLua );
 #undef HANDLE_SWF_TAG
 			default:
 				idLib::Printf( "Run Sprite: Unhandled tag %s\n", idSWF::GetTagName( command.tag ) );
@@ -523,8 +474,8 @@ void idSWFSpriteInstance::DoAction( idSWFBitStream& bitstream )
 {
 #if 1
 	swfAction_t& action = actions.Alloc();
-	action.data = bitstream.ReadData( bitstream.Length() );
-	action.dataLength = bitstream.Length();
+	action.data			= bitstream.ReadData( bitstream.Length() );
+	action.dataLength	= bitstream.Length();
 #endif
 }
 
@@ -532,8 +483,8 @@ void idSWFSpriteInstance::DoAction( idSWFBitStream& bitstream )
 void idSWFSpriteInstance::DoLua( idSWFBitStream& bitstream )
 {
 	swfAction_t& action = luaActions.Alloc();
-	action.data = bitstream.ReadData( bitstream.Length() );
-	action.dataLength = bitstream.Length();
+	action.data			= bitstream.ReadData( bitstream.Length() );
+	action.dataLength	= bitstream.Length();
 }
 // RB end
 
@@ -544,12 +495,9 @@ idSWFSpriteInstance::FindChildSprite
 */
 idSWFSpriteInstance* idSWFSpriteInstance::FindChildSprite( const char* targetName )
 {
-	for( int i = 0; i < displayList.Num(); i++ )
-	{
-		if( displayList[i].spriteInstance != NULL )
-		{
-			if( displayList[i].spriteInstance->name.Icmp( targetName ) == 0 )
-			{
+	for( int i = 0; i < displayList.Num(); i++ ) {
+		if( displayList[i].spriteInstance != NULL ) {
+			if( displayList[i].spriteInstance->name.Icmp( targetName ) == 0 ) {
 				return displayList[i].spriteInstance;
 			}
 		}
@@ -568,39 +516,30 @@ foo/bar
 */
 idSWFSpriteInstance* idSWFSpriteInstance::ResolveTarget( const char* targetName )
 {
-	if( targetName[0] == 0 )
-	{
+	if( targetName[0] == 0 ) {
 		return this;
 	}
 	idSWFSpriteInstance* target = this;
-	const char* c = targetName;
-	if( c[0] == '/' )
-	{
-		while( target->parent != NULL )
-		{
+	const char*			 c		= targetName;
+	if( c[0] == '/' ) {
+		while( target->parent != NULL ) {
 			target = target->parent;
 		}
 		c++;
 	}
 	idStrList spriteNames;
 	spriteNames.Append( c );
-	for( int index = 0, ofs = spriteNames[index].Find( '/' ); ofs != -1; index++, ofs = spriteNames[index].Find( '/' ) )
-	{
+	for( int index = 0, ofs = spriteNames[index].Find( '/' ); ofs != -1; index++, ofs = spriteNames[index].Find( '/' ) ) {
 		spriteNames.Append( spriteNames[index].c_str() + ofs + 1 );
 		spriteNames[index].CapLength( ofs );
 	}
-	for( int i = 0; i < spriteNames.Num(); i++ )
-	{
-		if( spriteNames[i] == ".." )
-		{
+	for( int i = 0; i < spriteNames.Num(); i++ ) {
+		if( spriteNames[i] == ".." ) {
 			target = target->parent;
-		}
-		else
-		{
+		} else {
 			target = target->FindChildSprite( spriteNames[i] );
 		}
-		if( target == NULL )
-		{
+		if( target == NULL ) {
 			// Everything is likely to fail after this point
 			idLib::Warning( "SWF: Could not resolve %s, %s not found", targetName, spriteNames[i].c_str() );
 			return this;
@@ -617,14 +556,11 @@ idSWFSpriteInstance::FindFrame
 uint32 idSWFSpriteInstance::FindFrame( const char* labelName ) const
 {
 	int frameNum = atoi( labelName );
-	if( frameNum > 0 )
-	{
+	if( frameNum > 0 ) {
 		return frameNum;
 	}
-	for( int i = 0; i < sprite->frameLabels.Num(); i++ )
-	{
-		if( sprite->frameLabels[i].frameLabel.Icmp( labelName ) == 0 )
-		{
+	for( int i = 0; i < sprite->frameLabels.Num(); i++ ) {
+		if( sprite->frameLabels[i].frameLabel.Icmp( labelName ) == 0 ) {
 			return sprite->frameLabels[i].frameNum;
 		}
 	}
@@ -640,15 +576,12 @@ idSWFSpriteInstance::FrameExists
 bool idSWFSpriteInstance::FrameExists( const char* labelName ) const
 {
 	int frameNum = atoi( labelName );
-	if( frameNum > 0 )
-	{
+	if( frameNum > 0 ) {
 		return frameNum <= sprite->frameCount;
 	}
 
-	for( int i = 0; i < sprite->frameLabels.Num(); i++ )
-	{
-		if( sprite->frameLabels[i].frameLabel.Icmp( labelName ) == 0 )
-		{
+	for( int i = 0; i < sprite->frameLabels.Num(); i++ ) {
+		if( sprite->frameLabels[i].frameLabel.Icmp( labelName ) == 0 ) {
 			return true;
 		}
 	}
@@ -676,35 +609,27 @@ void idSWFSpriteInstance::SetMaterial( const idMaterial* material, int width, in
 {
 	materialOverride = material;
 
-	if( materialOverride != NULL )
-	{
+	if( materialOverride != NULL ) {
 		// Converting this to a short should be safe since we don't support images larger than 8k anyway
-		if( materialOverride->GetStage( 0 ) != NULL && materialOverride->GetStage( 0 )->texture.cinematic != NULL )
-		{
-			materialWidth = 256;
+		if( materialOverride->GetStage( 0 ) != NULL && materialOverride->GetStage( 0 )->texture.cinematic != NULL ) {
+			materialWidth  = 256;
 			materialHeight = 256;
-		}
-		else
-		{
+		} else {
 			assert( materialOverride->GetImageWidth() > 0 && materialOverride->GetImageHeight() > 0 );
 			assert( materialOverride->GetImageWidth() <= 8192 && materialOverride->GetImageHeight() <= 8192 );
-			materialWidth = ( uint16 )materialOverride->GetImageWidth();
+			materialWidth  = ( uint16 )materialOverride->GetImageWidth();
 			materialHeight = ( uint16 )materialOverride->GetImageHeight();
 		}
-	}
-	else
-	{
-		materialWidth = 0;
+	} else {
+		materialWidth  = 0;
 		materialHeight = 0;
 	}
 
-	if( width >= 0 )
-	{
+	if( width >= 0 ) {
 		materialWidth = ( uint16 )width;
 	}
 
-	if( height >= 0 )
-	{
+	if( height >= 0 ) {
 		materialHeight = ( uint16 )height;
 	}
 }
@@ -717,10 +642,8 @@ idSWFSpriteInstance::SetVisible
 void idSWFSpriteInstance::SetVisible( bool visible )
 {
 	isVisible = visible;
-	if( isVisible )
-	{
-		for( idSWFSpriteInstance* p = parent; p != NULL; p = p->parent )
-		{
+	if( isVisible ) {
+		for( idSWFSpriteInstance* p = parent; p != NULL; p = p->parent ) {
 			p->childrenRunning = true;
 		}
 	}
@@ -733,15 +656,12 @@ idSWFSpriteInstance::PlayFrame
 */
 void idSWFSpriteInstance::PlayFrame( const idSWFParmList& parms )
 {
-	if( parms.Num() > 0 )
-	{
+	if( parms.Num() > 0 ) {
 		actions.Clear();
 		luaActions.Clear(); // RB
 		RunTo( FindFrame( parms[0].ToString() ) );
 		Play();
-	}
-	else
-	{
+	} else {
 		idLib::Warning( "gotoAndPlay: expected 1 parameter" );
 	}
 }
@@ -753,20 +673,14 @@ idSWFSpriteInstance::StopFrame
 */
 void idSWFSpriteInstance::StopFrame( const idSWFParmList& parms )
 {
-	if( parms.Num() > 0 )
-	{
-		if( parms[0].IsNumeric() && parms[0].ToInteger() < 1 )
-		{
+	if( parms.Num() > 0 ) {
+		if( parms[0].IsNumeric() && parms[0].ToInteger() < 1 ) {
 			RunTo( FindFrame( "1" ) );
-		}
-		else
-		{
+		} else {
 			RunTo( FindFrame( parms[0].ToString() ) );
 		}
 		Stop();
-	}
-	else
-	{
+	} else {
 		idLib::Warning( "gotoAndStop: expected 1 parameter" );
 	}
 }
@@ -778,14 +692,12 @@ idSWFSpriteInstance::GetXPos
 */
 float idSWFSpriteInstance::GetXPos() const
 {
-	if( parent == NULL )
-	{
+	if( parent == NULL ) {
 		return 0.0f;
 	}
 
 	swfDisplayEntry_t* thisDisplayEntry = parent->FindDisplayEntry( depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this ) {
 		idLib::Warning( "GetXPos: Couldn't find our display entry in our parent's display list for depth %d", depth );
 		return 0.0f;
 	}
@@ -800,14 +712,12 @@ idSWFSpriteInstance::GetYPos
 */
 float idSWFSpriteInstance::GetYPos( bool overallPos ) const
 {
-	if( parent == NULL )
-	{
+	if( parent == NULL ) {
 		return 0.0f;
 	}
 
 	swfDisplayEntry_t* thisDisplayEntry = parent->FindDisplayEntry( depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this ) {
 		idLib::Warning( "GetYPos: Couldn't find our display entry in our parents display list for depth %d", depth );
 		return 0.0f;
 	}
@@ -822,14 +732,12 @@ idSWFSpriteInstance::SetXPos
 */
 void idSWFSpriteInstance::SetXPos( float xPos )
 {
-	if( parent == NULL )
-	{
+	if( parent == NULL ) {
 		return;
 	}
 
 	swfDisplayEntry_t* thisDisplayEntry = parent->FindDisplayEntry( depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this ) {
 		idLib::Warning( "_y: Couldn't find our display entry in our parents display list" );
 		return;
 	}
@@ -844,14 +752,12 @@ idSWFSpriteInstance::SetYPos
 */
 void idSWFSpriteInstance::SetYPos( float yPos )
 {
-	if( parent == NULL )
-	{
+	if( parent == NULL ) {
 		return;
 	}
 
 	swfDisplayEntry_t* thisDisplayEntry = parent->FindDisplayEntry( depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this ) {
 		idLib::Warning( "_y: Couldn't find our display entry in our parents display list" );
 		return;
 	}
@@ -866,14 +772,12 @@ idSWFSpriteInstance::SetPos
 */
 void idSWFSpriteInstance::SetPos( float xPos, float yPos )
 {
-	if( parent == NULL )
-	{
+	if( parent == NULL ) {
 		return;
 	}
 
 	swfDisplayEntry_t* thisDisplayEntry = parent->FindDisplayEntry( depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this ) {
 		idLib::Warning( "_y: Couldn't find our display entry in our parents display list" );
 		return;
 	}
@@ -889,22 +793,20 @@ idSWFSpriteInstance::SetRotation
 */
 void idSWFSpriteInstance::SetRotation( float rot )
 {
-	if( parent == NULL )
-	{
+	if( parent == NULL ) {
 		return;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = parent->FindDisplayEntry( depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this ) {
 		idLib::Warning( "_rotation: Couldn't find our display entry in our parents display list" );
 		return;
 	}
 
 	swfMatrix_t& matrix = thisDisplayEntry->matrix;
-	float xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length();
-	float yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length();
+	float		 xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length();
+	float		 yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length();
 
-	float s, c;
+	float		 s, c;
 	idMath::SinCos( DEG2RAD( rot ), s, c );
 	matrix.xx = c * xscale;
 	matrix.yx = s * xscale;
@@ -919,27 +821,22 @@ idSWFSpriteInstance::SetScale
 */
 void idSWFSpriteInstance::SetScale( float x, float y )
 {
-	if( parent == NULL )
-	{
+	if( parent == NULL ) {
 		return;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = parent->FindDisplayEntry( depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this ) {
 		idLib::Warning( "scale: Couldn't find our display entry in our parents display list" );
 		return;
 	}
 
-	float newScale = x / 100.0f;
+	float  newScale = x / 100.0f;
 	// this is done funky to maintain the current rotation
 	idVec2 currentScale = thisDisplayEntry->matrix.Scale( idVec2( 1.0f, 0.0f ) );
-	if( currentScale.Normalize() == 0.0f )
-	{
+	if( currentScale.Normalize() == 0.0f ) {
 		thisDisplayEntry->matrix.xx = newScale;
 		thisDisplayEntry->matrix.yx = 0.0f;
-	}
-	else
-	{
+	} else {
 		thisDisplayEntry->matrix.xx = currentScale.x * newScale;
 		thisDisplayEntry->matrix.yx = currentScale.y * newScale;
 	}
@@ -947,13 +844,10 @@ void idSWFSpriteInstance::SetScale( float x, float y )
 	newScale = y / 100.0f;
 	// this is done funky to maintain the current rotation
 	currentScale = thisDisplayEntry->matrix.Scale( idVec2( 0.0f, 1.0f ) );
-	if( currentScale.Normalize() == 0.0f )
-	{
+	if( currentScale.Normalize() == 0.0f ) {
 		thisDisplayEntry->matrix.yy = newScale;
 		thisDisplayEntry->matrix.xy = 0.0f;
-	}
-	else
-	{
+	} else {
 		thisDisplayEntry->matrix.yy = currentScale.y * newScale;
 		thisDisplayEntry->matrix.xy = currentScale.x * newScale;
 	}
@@ -977,70 +871,56 @@ idSWFSpriteInstance::SetMoveToScale
 */
 bool idSWFSpriteInstance::UpdateMoveToScale( float speed )
 {
-
-	if( parent == NULL )
-	{
+	if( parent == NULL ) {
 		return false;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = parent->FindDisplayEntry( depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this ) {
 		idLib::Warning( "SetMoveToScale: Couldn't find our display entry in our parents display list" );
 		return false;
 	}
 
 	swfMatrix_t& matrix = thisDisplayEntry->matrix;
-	float xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length() * 100.0f;
-	float yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length() * 100.0f;
+	float		 xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length() * 100.0f;
+	float		 yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length() * 100.0f;
 
-	float toX = xscale;
-	if( moveToXScale >= 0.0f )
-	{
+	float		 toX = xscale;
+	if( moveToXScale >= 0.0f ) {
 		toX = moveToXScale * 100.0f;
 	}
 
 	float toY = yscale;
-	if( moveToYScale >= 0.0f )
-	{
+	if( moveToYScale >= 0.0f ) {
 		toY = moveToYScale * 100.0f;
 	}
 
-	int rXTo = idMath::Ftoi( toX + 0.5f );
-	int rYTo = idMath::Ftoi( toY + 0.5f );
+	int rXTo	= idMath::Ftoi( toX + 0.5f );
+	int rYTo	= idMath::Ftoi( toY + 0.5f );
 	int rXScale = idMath::Ftoi( xscale + 0.5f );
 	int rYScale = idMath::Ftoi( yscale + 0.5f );
 
-	if( rXTo == rXScale && rYTo == rYScale )
-	{
+	if( rXTo == rXScale && rYTo == rYScale ) {
 		return false;
 	}
 
 	float newXScale = xscale;
 	float newYScale = yscale;
 
-	if( rXTo != rXScale && toX >= 0.0f )
-	{
-		if( toX < xscale )
-		{
+	if( rXTo != rXScale && toX >= 0.0f ) {
+		if( toX < xscale ) {
 			newXScale -= speed;
 			newXScale = idMath::ClampFloat( toX, 100.0f, newXScale );
-		}
-		else if( toX > xscale )
-		{
+		} else if( toX > xscale ) {
 			newXScale += speed;
 			newXScale = idMath::ClampFloat( 0.0f, toX, newXScale );
 		}
 	}
 
-	if( rYTo != rYScale && toY >= 0.0f )
-	{
-		if( toY < yscale )
-		{
+	if( rYTo != rYScale && toY >= 0.0f ) {
+		if( toY < yscale ) {
 			newYScale -= speed;
 			newYScale = idMath::ClampFloat( toY, 100.0f, newYScale );
-		}
-		else if( toY > yscale )
-		{
+		} else if( toY > yscale ) {
 			newYScale += speed;
 			newYScale = idMath::ClampFloat( 0.0f, toY, newYScale );
 		}
@@ -1057,14 +937,12 @@ idSWFSpriteInstance::SetAlpha
 */
 void idSWFSpriteInstance::SetAlpha( float val )
 {
-	if( parent == NULL )
-	{
+	if( parent == NULL ) {
 		return;
 	}
 
 	swfDisplayEntry_t* thisDisplayEntry = parent->FindDisplayEntry( depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != this ) {
 		idLib::Warning( "_alpha: Couldn't find our display entry in our parents display list" );
 		return;
 	}
@@ -1076,15 +954,30 @@ void idSWFSpriteInstance::SetAlpha( float val )
 idSWFScriptObject_SpriteInstancePrototype
 ========================
 */
-#define SWF_SPRITE_FUNCTION_DEFINE( x ) idSWFScriptVar idSWFScriptObject_SpriteInstancePrototype::idSWFScriptFunction_##x::Call( idSWFScriptObject * thisObject, const idSWFParmList & parms )
-#define SWF_SPRITE_NATIVE_VAR_DEFINE_GET( x ) idSWFScriptVar idSWFScriptObject_SpriteInstancePrototype::idSWFScriptNativeVar_##x::Get( class idSWFScriptObject * object )
-#define SWF_SPRITE_NATIVE_VAR_DEFINE_SET( x ) void  idSWFScriptObject_SpriteInstancePrototype::idSWFScriptNativeVar_##x::Set( class idSWFScriptObject * object, const idSWFScriptVar & value )
+#define SWF_SPRITE_FUNCTION_DEFINE( x )		  idSWFScriptVar idSWFScriptObject_SpriteInstancePrototype::idSWFScriptFunction_##x::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
+#define SWF_SPRITE_NATIVE_VAR_DEFINE_GET( x ) idSWFScriptVar idSWFScriptObject_SpriteInstancePrototype::idSWFScriptNativeVar_##x::Get( class idSWFScriptObject* object )
+#define SWF_SPRITE_NATIVE_VAR_DEFINE_SET( x ) void idSWFScriptObject_SpriteInstancePrototype::idSWFScriptNativeVar_##x::Set( class idSWFScriptObject* object, const idSWFScriptVar& value )
 
-#define SWF_SPRITE_PTHIS_FUNC( x ) idSWFSpriteInstance * pThis = thisObject ? thisObject->GetSprite() : NULL; if ( !verify( pThis != NULL ) ) { idLib::Warning( "SWF: tried to call " x " on NULL sprite" ); return idSWFScriptVar(); }
-#define SWF_SPRITE_PTHIS_GET( x ) idSWFSpriteInstance * pThis = object ? object->GetSprite() : NULL; if ( pThis == NULL ) { return idSWFScriptVar(); }
-#define SWF_SPRITE_PTHIS_SET( x ) idSWFSpriteInstance * pThis = object ? object->GetSprite() : NULL; if ( pThis == NULL ) { return; }
+#define SWF_SPRITE_PTHIS_FUNC( x )                                            \
+	idSWFSpriteInstance* pThis = thisObject ? thisObject->GetSprite() : NULL; \
+	if( !verify( pThis != NULL ) ) {                                          \
+		idLib::Warning( "SWF: tried to call " x " on NULL sprite" );          \
+		return idSWFScriptVar();                                              \
+	}
+#define SWF_SPRITE_PTHIS_GET( x )                                     \
+	idSWFSpriteInstance* pThis = object ? object->GetSprite() : NULL; \
+	if( pThis == NULL ) {                                             \
+		return idSWFScriptVar();                                      \
+	}
+#define SWF_SPRITE_PTHIS_SET( x )                                     \
+	idSWFSpriteInstance* pThis = object ? object->GetSprite() : NULL; \
+	if( pThis == NULL ) {                                             \
+		return;                                                       \
+	}
 
-#define SWF_SPRITE_FUNCTION_SET( x ) scriptFunction_##x.AddRef(); Set( #x, &scriptFunction_##x );
+#define SWF_SPRITE_FUNCTION_SET( x ) \
+	scriptFunction_##x.AddRef();     \
+	Set( #x, &scriptFunction_##x );
 #define SWF_SPRITE_NATIVE_VAR_SET( x ) SetNative( #x, &swfScriptVar_##x );
 
 idSWFScriptObject_SpriteInstancePrototype::idSWFScriptObject_SpriteInstancePrototype()
@@ -1130,7 +1023,7 @@ idSWFScriptObject_SpriteInstancePrototype::idSWFScriptObject_SpriteInstanceProto
 	SWF_SPRITE_NATIVE_VAR_SET( xOffset );
 
 	SWF_SPRITE_NATIVE_VAR_SET( onEnterFrame );
-	//SWF_SPRITE_NATIVE_VAR_SET( onLoad );
+	// SWF_SPRITE_NATIVE_VAR_SET( onLoad );
 }
 
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _target )
@@ -1166,45 +1059,45 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _width )
 {
 	return 0.0f;
 }
-SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _width ) { }
+SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _width )
+{
+}
 
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _height )
 {
 	return 0.0f;
 }
-SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _height ) { }
+SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _height )
+{
+}
 
 SWF_SPRITE_FUNCTION_DEFINE( duplicateMovieClip )
 {
 	SWF_SPRITE_PTHIS_FUNC( "duplicateMovieClip" );
 
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		idLib::Warning( "Tried to duplicate root movie clip" );
 		return idSWFScriptVar();
 	}
-	if( parms.Num() < 2 )
-	{
+	if( parms.Num() < 2 ) {
 		idLib::Warning( "duplicateMovieClip: expected 2 parameters" );
 		return idSWFScriptVar();
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "duplicateMovieClip: Couldn't find our display entry in our parents display list" );
 		return idSWFScriptVar();
 	}
 
-	swfMatrix_t matrix = thisDisplayEntry->matrix;
-	swfColorXform_t cxf = thisDisplayEntry->cxf;
+	swfMatrix_t		   matrix = thisDisplayEntry->matrix;
+	swfColorXform_t	   cxf	  = thisDisplayEntry->cxf;
 
 	swfDisplayEntry_t* display = pThis->parent->AddDisplayEntry( 16384 + parms[1].ToInteger(), thisDisplayEntry->characterID );
-	if( display == NULL )
-	{
+	if( display == NULL ) {
 		return idSWFScriptVar();
 	}
 	display->matrix = matrix;
-	display->cxf = cxf;
+	display->cxf	= cxf;
 
 	idStr name = parms[0].ToString();
 	pThis->parent->scriptObject->Set( name, display->spriteInstance->scriptObject );
@@ -1218,15 +1111,12 @@ SWF_SPRITE_FUNCTION_DEFINE( gotoAndPlay )
 {
 	SWF_SPRITE_PTHIS_FUNC( "gotoAndPlay" );
 
-	if( parms.Num() > 0 )
-	{
+	if( parms.Num() > 0 ) {
 		pThis->actions.Clear();
 		pThis->luaActions.Clear(); // RB
 		pThis->RunTo( pThis->FindFrame( parms[0].ToString() ) );
 		pThis->Play();
-	}
-	else
-	{
+	} else {
 		idLib::Warning( "gotoAndPlay: expected 1 parameter" );
 	}
 	return idSWFScriptVar();
@@ -1236,21 +1126,15 @@ SWF_SPRITE_FUNCTION_DEFINE( gotoAndStop )
 {
 	SWF_SPRITE_PTHIS_FUNC( "gotoAndStop" );
 
-	if( parms.Num() > 0 )
-	{
+	if( parms.Num() > 0 ) {
 		// Flash forces frames values less than 1 to 1.
-		if( parms[0].IsNumeric() && parms[0].ToInteger() < 1 )
-		{
+		if( parms[0].IsNumeric() && parms[0].ToInteger() < 1 ) {
 			pThis->RunTo( pThis->FindFrame( "1" ) );
-		}
-		else
-		{
+		} else {
 			pThis->RunTo( pThis->FindFrame( parms[0].ToString() ) );
 		}
 		pThis->Stop();
-	}
-	else
-	{
+	} else {
 		idLib::Warning( "gotoAndStop: expected 1 parameter" );
 	}
 	return idSWFScriptVar();
@@ -1260,13 +1144,11 @@ SWF_SPRITE_FUNCTION_DEFINE( swapDepths )
 {
 	SWF_SPRITE_PTHIS_FUNC( "swapDepths" );
 
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		idLib::Warning( "Tried to swap depths on root movie clip" );
 		return idSWFScriptVar();
 	}
-	if( parms.Num() < 1 )
-	{
+	if( parms.Num() < 1 ) {
 		idLib::Warning( "swapDepths: expected 1 parameters" );
 		return idSWFScriptVar();
 	}
@@ -1327,13 +1209,11 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _y )
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _xscale )
 {
 	SWF_SPRITE_PTHIS_GET( "_xscale" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return 1.0f;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_xscale: Couldn't find our display entry in our parents display list" );
 		return 1.0f;
 	}
@@ -1343,26 +1223,21 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _xscale )
 SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _xscale )
 {
 	SWF_SPRITE_PTHIS_SET( "_xscale" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_xscale: Couldn't find our display entry in our parents display list" );
 		return;
 	}
-	float newScale = value.ToFloat() / 100.0f;
+	float  newScale = value.ToFloat() / 100.0f;
 	// this is done funky to maintain the current rotation
 	idVec2 currentScale = thisDisplayEntry->matrix.Scale( idVec2( 1.0f, 0.0f ) );
-	if( currentScale.Normalize() == 0.0f )
-	{
+	if( currentScale.Normalize() == 0.0f ) {
 		thisDisplayEntry->matrix.xx = newScale;
 		thisDisplayEntry->matrix.yx = 0.0f;
-	}
-	else
-	{
+	} else {
 		thisDisplayEntry->matrix.xx = currentScale.x * newScale;
 		thisDisplayEntry->matrix.yx = currentScale.y * newScale;
 	}
@@ -1371,13 +1246,11 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _xscale )
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _yscale )
 {
 	SWF_SPRITE_PTHIS_GET( "_yscale" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return 1.0f;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_yscale: Couldn't find our display entry in our parents display list" );
 		return 1.0f;
 	}
@@ -1387,26 +1260,21 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _yscale )
 SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _yscale )
 {
 	SWF_SPRITE_PTHIS_SET( "_yscale" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_yscale: Couldn't find our display entry in our parents display list" );
 		return;
 	}
-	float newScale = value.ToFloat() / 100.0f;
+	float  newScale = value.ToFloat() / 100.0f;
 	// this is done funky to maintain the current rotation
 	idVec2 currentScale = thisDisplayEntry->matrix.Scale( idVec2( 0.0f, 1.0f ) );
-	if( currentScale.Normalize() == 0.0f )
-	{
+	if( currentScale.Normalize() == 0.0f ) {
 		thisDisplayEntry->matrix.yy = newScale;
 		thisDisplayEntry->matrix.xy = 0.0f;
-	}
-	else
-	{
+	} else {
 		thisDisplayEntry->matrix.yy = currentScale.y * newScale;
 		thisDisplayEntry->matrix.xy = currentScale.x * newScale;
 	}
@@ -1415,13 +1283,11 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _yscale )
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _alpha )
 {
 	SWF_SPRITE_PTHIS_GET( "_alpha" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return 1.0f;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_alpha: Couldn't find our display entry in our parents display list" );
 		return 1.0f;
 	}
@@ -1438,28 +1304,23 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _alpha )
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _brightness )
 {
 	SWF_SPRITE_PTHIS_GET( "_brightness" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return 1.0f;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_brightness: Couldn't find our display entry in our parents display list" );
 		return 1.0f;
 	}
 	// This works as long as the user only used the "brightess" control in the editor
 	// If they used anything else (tint/advanced) then this will return fairly random values
-	const idVec4& mul = thisDisplayEntry->cxf.mul;
-	const idVec4& add = thisDisplayEntry->cxf.add;
-	float avgMul = ( mul.x + mul.y + mul.z ) / 3.0f;
-	float avgAdd = ( add.x + add.y + add.z ) / 3.0f;
-	if( avgAdd > 1.0f )
-	{
+	const idVec4& mul	 = thisDisplayEntry->cxf.mul;
+	const idVec4& add	 = thisDisplayEntry->cxf.add;
+	float		  avgMul = ( mul.x + mul.y + mul.z ) / 3.0f;
+	float		  avgAdd = ( add.x + add.y + add.z ) / 3.0f;
+	if( avgAdd > 1.0f ) {
 		return avgAdd;
-	}
-	else
-	{
+	} else {
 		return avgMul - 1.0f;
 	}
 }
@@ -1467,13 +1328,11 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _brightness )
 SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _brightness )
 {
 	SWF_SPRITE_PTHIS_SET( "_brightness" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_brightness: Couldn't find our display entry in our parents display list" );
 		return;
 	}
@@ -1481,8 +1340,7 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _brightness )
 	// Although the editor forces alpha to 100%
 	float b = value.ToFloat();
 	float c = 1.0f - b;
-	if( b < 0.0f )
-	{
+	if( b < 0.0f ) {
 		c = 1.0f + b;
 		b = 0.0f;
 	}
@@ -1500,10 +1358,8 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _visible )
 {
 	SWF_SPRITE_PTHIS_SET( "_visible" );
 	pThis->isVisible = value.ToBool();
-	if( pThis->isVisible )
-	{
-		for( idSWFSpriteInstance* p = pThis->parent; p != NULL; p = p->parent )
-		{
+	if( pThis->isVisible ) {
+		for( idSWFSpriteInstance* p = pThis->parent; p != NULL; p = p->parent ) {
 			p->childrenRunning = true;
 		}
 	}
@@ -1512,21 +1368,18 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _visible )
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _rotation )
 {
 	SWF_SPRITE_PTHIS_GET( "_rotation" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return 0.0f;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_rotation: Couldn't find our display entry in our parents display list" );
 		return 0.0f;
 	}
 	idVec2 scale = thisDisplayEntry->matrix.Scale( idVec2( 0.0f, 1.0f ) );
 	scale.Normalize();
 	float rotation = RAD2DEG( idMath::ACos( scale.y ) );
-	if( scale.x < 0.0f )
-	{
+	if( scale.x < 0.0f ) {
 		rotation = -rotation;
 	}
 	return rotation;
@@ -1535,21 +1388,19 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _rotation )
 SWF_SPRITE_NATIVE_VAR_DEFINE_SET( _rotation )
 {
 	SWF_SPRITE_PTHIS_SET( "_rotation" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return;
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_rotation: Couldn't find our display entry in our parents display list" );
 		return;
 	}
 	swfMatrix_t& matrix = thisDisplayEntry->matrix;
-	float xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length();
-	float yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length();
+	float		 xscale = matrix.Scale( idVec2( 1.0f, 0.0f ) ).Length();
+	float		 yscale = matrix.Scale( idVec2( 0.0f, 1.0f ) ).Length();
 
-	float s, c;
+	float		 s, c;
 	idMath::SinCos( DEG2RAD( value.ToFloat() ), s, c );
 	matrix.xx = c * xscale;
 	matrix.yx = s * xscale;
@@ -1584,13 +1435,11 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _framesloaded )
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _mousex )
 {
 	SWF_SPRITE_PTHIS_GET( "_mousex" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return pThis->sprite->GetSWF()->GetMouseX();
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_mousex: Couldn't find our display entry in our parents display list" );
 		return pThis->sprite->GetSWF()->GetMouseX();
 	}
@@ -1599,13 +1448,11 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _mousex )
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _mousey )
 {
 	SWF_SPRITE_PTHIS_GET( "_mousey" );
-	if( pThis->parent == NULL )
-	{
+	if( pThis->parent == NULL ) {
 		return pThis->sprite->GetSWF()->GetMouseY();
 	}
 	swfDisplayEntry_t* thisDisplayEntry = pThis->parent->FindDisplayEntry( pThis->depth );
-	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis )
-	{
+	if( thisDisplayEntry == NULL || thisDisplayEntry->spriteInstance != pThis ) {
 		idLib::Warning( "_mousey: Couldn't find our display entry in our parents display list" );
 		return pThis->sprite->GetSWF()->GetMouseY();
 	}
@@ -1639,12 +1486,9 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_GET( _stereoDepth )
 SWF_SPRITE_NATIVE_VAR_DEFINE_GET( material )
 {
 	SWF_SPRITE_PTHIS_GET( "material" );
-	if( pThis->materialOverride == NULL )
-	{
+	if( pThis->materialOverride == NULL ) {
 		return idSWFScriptVar();
-	}
-	else
-	{
+	} else {
 		return pThis->materialOverride->GetName();
 	}
 }
@@ -1652,12 +1496,9 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_GET( material )
 SWF_SPRITE_NATIVE_VAR_DEFINE_SET( material )
 {
 	SWF_SPRITE_PTHIS_SET( "material" );
-	if( !value.IsString() )
-	{
+	if( !value.IsString() ) {
 		pThis->materialOverride = NULL;
-	}
-	else
-	{
+	} else {
 		// God I hope this material was referenced during map load
 		pThis->SetMaterial( declManager->FindMaterial( value.ToString(), false ) );
 	}
@@ -1715,7 +1556,6 @@ SWF_SPRITE_NATIVE_VAR_DEFINE_SET( onEnterFrame )
 	pThis->onEnterFrame = value;
 }
 
-
 // LUA
 int idSWFSpriteInstance::Lua_gc( lua_State* L )
 {
@@ -1723,7 +1563,7 @@ int idSWFSpriteInstance::Lua_gc( lua_State* L )
 	idLib::Printf( "Lua says bye to sprite = %p\n", sprite );
 
 	// RB: already freed by delete desktop
-//	delete window;
+	//	delete window;
 
 	return 0;
 }
@@ -1731,42 +1571,30 @@ int idSWFSpriteInstance::Lua_gc( lua_State* L )
 int idSWFSpriteInstance::Lua_index( lua_State* L )
 {
 	idSWFSpriteInstance* sprite = luaW_check<idSWFSpriteInstance>( L, 1 );
-	if( sprite )
-	{
-		if( lua_isstring( L, 2 ) )
-		{
+	if( sprite ) {
+		if( lua_isstring( L, 2 ) ) {
 			char		buf[MAX_STRING_CHARS];
 
 			const char* field = luaL_checkstring( L, 2 );
 
 			// TODO more fields
-			if( idStr::Cmp( field, "_name" ) == 0 )
-			{
+			if( idStr::Cmp( field, "_name" ) == 0 ) {
 				sprintf( buf, "%s", sprite->name.c_str() );
 				lua_pushstring( L, buf );
 				return 1;
-			}
-			else if( idStr::Cmp( field, "_stereoDepth" ) == 0 )
-			{
+			} else if( idStr::Cmp( field, "_stereoDepth" ) == 0 ) {
 				lua_pushnumber( L, sprite->stereoDepth );
 				return 1;
-			}
-			else if( idStr::Cmp( field, "_visible" ) == 0 )
-			{
+			} else if( idStr::Cmp( field, "_visible" ) == 0 ) {
 				lua_pushboolean( L, sprite->isVisible );
 				return 1;
-			}
-			else if( idStr::Cmp( field, "_global" ) == 0 )
-			{
+			} else if( idStr::Cmp( field, "_global" ) == 0 ) {
 				return 0;
-			}
-			else
-			{
-				//common->Printf("Lua_index: tried to access '%s'\n", field );
+			} else {
+				// common->Printf("Lua_index: tried to access '%s'\n", field );
 
 				idSWFSpriteInstance* child = sprite->FindChildSprite( field );
-				if( child )
-				{
+				if( child ) {
 					luaW_push( L, child );
 					return 1;
 				}
@@ -1782,44 +1610,32 @@ int idSWFSpriteInstance::Lua_index( lua_State* L )
 int idSWFSpriteInstance::Lua_newindex( lua_State* L )
 {
 	idSWFSpriteInstance* sprite = luaW_check<idSWFSpriteInstance>( L, 1 );
-	if( sprite )
-	{
-		if( lua_isstring( L, 2 ) )
-		{
+	if( sprite ) {
+		if( lua_isstring( L, 2 ) ) {
 			const char* field = luaL_checkstring( L, 2 );
 
 			// TODO more fields
-			if( idStr::Cmp( field, "_visible" ) == 0 )
-			{
+			if( idStr::Cmp( field, "_visible" ) == 0 ) {
 				int b;
-				if( lua_isboolean( L, 3 ) )
-				{
+				if( lua_isboolean( L, 3 ) ) {
 					b = lua_toboolean( L, 3 );
-				}
-				else
-				{
+				} else {
 					b = luaL_checknumber( L, 3 );
 				}
 				sprite->isVisible = ( b != 0 );
-				if( sprite->isVisible )
-				{
-					for( idSWFSpriteInstance* p = sprite->parent; p != NULL; p = p->parent )
-					{
+				if( sprite->isVisible ) {
+					for( idSWFSpriteInstance* p = sprite->parent; p != NULL; p = p->parent ) {
 						p->childrenRunning = true;
 					}
 				}
 
 				return 0;
-			}
-			else if( idStr::Cmp( field, "_stereoDepth" ) == 0 )
-			{
-				int depth = luaL_checknumber( L, 3 );
+			} else if( idStr::Cmp( field, "_stereoDepth" ) == 0 ) {
+				int depth			= luaL_checknumber( L, 3 );
 				sprite->stereoDepth = depth;
 
 				return 0;
-			}
-			else
-			{
+			} else {
 				common->Printf( "Lua_newindex: tried to access '%s'\n", field );
 			}
 		}
@@ -1830,11 +1646,10 @@ int idSWFSpriteInstance::Lua_newindex( lua_State* L )
 
 int idSWFSpriteInstance::Lua_tostring( lua_State* L )
 {
-	char		buf[MAX_STRING_CHARS];
+	char				 buf[MAX_STRING_CHARS];
 
 	idSWFSpriteInstance* sprite = luaW_check<idSWFSpriteInstance>( L, 1 );
-	if( sprite )
-	{
+	if( sprite ) {
 		sprintf( buf, "Sprite: name='%s' ", sprite->name.c_str() );
 		lua_pushstring( L, buf );
 		return 1;
@@ -1846,8 +1661,7 @@ int idSWFSpriteInstance::Lua_tostring( lua_State* L )
 int idSWFSpriteInstance::Lua_stop( lua_State* L )
 {
 	idSWFSpriteInstance* sprite = luaW_check<idSWFSpriteInstance>( L, 1 );
-	if( sprite )
-	{
+	if( sprite ) {
 		sprite->Stop();
 	}
 
@@ -1857,8 +1671,7 @@ int idSWFSpriteInstance::Lua_stop( lua_State* L )
 int idSWFSpriteInstance::Lua_play( lua_State* L )
 {
 	idSWFSpriteInstance* sprite = luaW_check<idSWFSpriteInstance>( L, 1 );
-	if( sprite )
-	{
+	if( sprite ) {
 		sprite->Play();
 	}
 
@@ -1868,33 +1681,26 @@ int idSWFSpriteInstance::Lua_play( lua_State* L )
 int idSWFSpriteInstance::Lua_gotoAndPlay( lua_State* L )
 {
 	idSWFSpriteInstance* sprite = luaW_check<idSWFSpriteInstance>( L, 1 );
-	if( sprite )
-	{
+	if( sprite ) {
 		int args = lua_gettop( L );
 
-		if( args > 1 )
-		{
+		if( args > 1 ) {
 			sprite->actions.Clear();
 			sprite->luaActions.Clear(); // RB
 
 			int frame = 0;
 
-			if( lua_isstring( L, 2 ) )
-			{
+			if( lua_isstring( L, 2 ) ) {
 				const char* label = luaL_checkstring( L, 2 );
 
 				frame = sprite->FindFrame( label );
-			}
-			else if( lua_isnumber( L, 2 ) )
-			{
+			} else if( lua_isnumber( L, 2 ) ) {
 				frame = lua_tonumber( L, 2 );
 			}
 
 			sprite->RunTo( frame );
 			sprite->Play();
-		}
-		else
-		{
+		} else {
 			idLib::Warning( "gotoAndPlay: expected 1 parameter" );
 		}
 	}
@@ -1905,26 +1711,20 @@ int idSWFSpriteInstance::Lua_gotoAndPlay( lua_State* L )
 int idSWFSpriteInstance::Lua_gotoAndStop( lua_State* L )
 {
 	idSWFSpriteInstance* sprite = luaW_check<idSWFSpriteInstance>( L, 1 );
-	if( sprite )
-	{
+	if( sprite ) {
 		int args = lua_gettop( L );
 
-		if( args > 1 )
-		{
+		if( args > 1 ) {
 			int frame = 0;
 
 			// Flash forces frames values less than 1 to 1.
-			if( lua_isnumber( L, 2 ) )
-			{
+			if( lua_isnumber( L, 2 ) ) {
 				frame = lua_tonumber( L, 2 );
 
-				if( frame < 1 )
-				{
+				if( frame < 1 ) {
 					frame = 1;
 				}
-			}
-			else if( lua_isstring( L, 2 ) )
-			{
+			} else if( lua_isstring( L, 2 ) ) {
 				const char* label = luaL_checkstring( L, 2 );
 
 				frame = sprite->FindFrame( label );
@@ -1932,9 +1732,7 @@ int idSWFSpriteInstance::Lua_gotoAndStop( lua_State* L )
 
 			sprite->RunTo( frame );
 			sprite->Stop();
-		}
-		else
-		{
+		} else {
 			idLib::Warning( "gotoAndStop: expected 1 parameter" );
 		}
 	}
@@ -1942,35 +1740,32 @@ int idSWFSpriteInstance::Lua_gotoAndStop( lua_State* L )
 	return 0;
 }
 
-
-static const luaL_Reg Sprite_default[] =
-{
-//	{ "new",			idSWFSpriteInstance::Lua_new },
-//	{ "__postctor",		luaU_build<idSWFSpriteInstance> },
-//	{ "text",			idSWFSpriteInstance::Lua_text },
-	{NULL, NULL}
+static const luaL_Reg Sprite_default[] = {
+	//	{ "new",			idSWFSpriteInstance::Lua_new },
+	//	{ "__postctor",		luaU_build<idSWFSpriteInstance> },
+	//	{ "text",			idSWFSpriteInstance::Lua_text },
+	{ NULL, NULL }
 };
 
-static const luaL_Reg Sprite_meta[] =
-{
-//	{ "__new",			idSWFSpriteInstance::Lua_new},
-//	{ "__postctor",		luaU_build<idSWFSpriteInstance> },
-//	{ "clone",			luaU_clone<idSWFSpriteInstance> },
-	{ "__gc",			idSWFSpriteInstance::Lua_gc},
-	{ "__index",		idSWFSpriteInstance::Lua_index },
-	{ "__newindex",		idSWFSpriteInstance::Lua_newindex },
-	{ "__tostring",		idSWFSpriteInstance::Lua_tostring },
-	{ "stop",			idSWFSpriteInstance::Lua_stop },
-	{ "play",			idSWFSpriteInstance::Lua_play },
-	{ "gotoAndPlay",	idSWFSpriteInstance::Lua_gotoAndPlay },
-	{ "gotoAndStop",	idSWFSpriteInstance::Lua_gotoAndStop },
+static const luaL_Reg Sprite_meta[] = {
+	//	{ "__new",			idSWFSpriteInstance::Lua_new},
+	//	{ "__postctor",		luaU_build<idSWFSpriteInstance> },
+	//	{ "clone",			luaU_clone<idSWFSpriteInstance> },
+	{ "__gc", idSWFSpriteInstance::Lua_gc },
+	{ "__index", idSWFSpriteInstance::Lua_index },
+	{ "__newindex", idSWFSpriteInstance::Lua_newindex },
+	{ "__tostring", idSWFSpriteInstance::Lua_tostring },
+	{ "stop", idSWFSpriteInstance::Lua_stop },
+	{ "play", idSWFSpriteInstance::Lua_play },
+	{ "gotoAndPlay", idSWFSpriteInstance::Lua_gotoAndPlay },
+	{ "gotoAndStop", idSWFSpriteInstance::Lua_gotoAndStop },
 
 	// TODO
 	// nextFrame ?
 	// prevFrame ?
 	//
 
-	{NULL, NULL}
+	{ NULL, NULL }
 };
 
 int idSWFSpriteInstance::LuaRegister_idSWFSpriteInstance( lua_State* L )

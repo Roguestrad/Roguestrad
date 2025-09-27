@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -43,8 +44,8 @@ idCallback
 class idCallback
 {
 public:
-	virtual ~idCallback() {}
-	virtual void Call() = 0;
+	virtual ~idCallback() { }
+	virtual void		Call()		  = 0;
 	virtual idCallback* Clone() const = 0;
 };
 
@@ -58,19 +59,14 @@ Callback class that forwards the call to a c-style function
 class idCallbackStatic : public idCallback
 {
 public:
-	idCallbackStatic( void ( *f )() )
-	{
-		this->f = f;
-	}
-	void Call()
-	{
-		f();
-	}
+	idCallbackStatic( void ( *f )() ) { this->f = f; }
+	void		Call() { f(); }
 	idCallback* Clone() const
 	{
-		//idScopedGlobalHeap	everythingHereGoesInTheGlobalHeap;
+		// idScopedGlobalHeap	everythingHereGoesInTheGlobalHeap;
 		return new( TAG_FUNC_CALLBACK ) idCallbackStatic( f );
 	}
+
 private:
 	void ( *f )();
 };
@@ -82,7 +78,7 @@ idCallbackBindMem
 Callback class that forwards the call to a member function
 ================================================
 */
-template< class T >
+template<class T>
 class idCallbackBindMem : public idCallback
 {
 public:
@@ -91,14 +87,9 @@ public:
 		this->t = t;
 		this->f = f;
 	}
-	void Call()
-	{
-		( t->*f )();
-	}
-	idCallback* Clone() const
-	{
-		return new( TAG_FUNC_CALLBACK ) idCallbackBindMem( t, f );
-	}
+	void		Call() { ( t->*f )(); }
+	idCallback* Clone() const { return new( TAG_FUNC_CALLBACK ) idCallbackBindMem( t, f ); }
+
 private:
 	T* t;
 	void ( T::*f )();
@@ -111,7 +102,7 @@ idCallbackBindMemArg1
 Callback class that forwards the call to a member function with an additional constant parameter
 ================================================
 */
-template< class T, typename A1 >
+template<class T, typename A1>
 class idCallbackBindMemArg1 : public idCallback
 {
 public:
@@ -121,14 +112,9 @@ public:
 		a1( a1_ )
 	{
 	}
-	void Call()
-	{
-		( t->*f )( a1 );
-	}
-	idCallback* Clone() const
-	{
-		return new( TAG_FUNC_CALLBACK ) idCallbackBindMemArg1( t, f, a1 );
-	}
+	void		Call() { ( t->*f )( a1 ); }
+	idCallback* Clone() const { return new( TAG_FUNC_CALLBACK ) idCallbackBindMemArg1( t, f, a1 ); }
+
 private:
 	T* t;
 	void ( T::*f )( A1 );
@@ -137,7 +123,7 @@ private:
 	// hack to get to compile on the 360 with reference arguments
 	// with this on the PC, the MakeCallback function fails compilation because it's returning a copy
 	// therefore, the Arg1 callbacks can't have arguments that are references
-	//DISALLOW_COPY_AND_ASSIGN( idCallbackBindMemArg1 );
+	// DISALLOW_COPY_AND_ASSIGN( idCallbackBindMemArg1 );
 };
 
 /*
@@ -168,7 +154,7 @@ ID_INLINE_EXTERN idCallbackStatic MakeCallback( void ( *f )() )
 MakeCallback
 ========================
 */
-template < class T >
+template<class T>
 ID_INLINE_EXTERN idCallbackBindMem<T> MakeCallback( T* t, void ( T::*f )() )
 {
 	return idCallbackBindMem<T>( t, f );
@@ -179,11 +165,10 @@ ID_INLINE_EXTERN idCallbackBindMem<T> MakeCallback( T* t, void ( T::*f )() )
 MakeCallback
 ========================
 */
-template < class T, typename A1 >
+template<class T, typename A1>
 ID_INLINE_EXTERN idCallbackBindMemArg1<T, A1> MakeCallback( T* t, void ( T::*f )( A1 ), A1 a1 )
 {
 	return idCallbackBindMemArg1<T, A1>( t, f, a1 );
 }
 
 #endif // __CALLBACK_H__
-

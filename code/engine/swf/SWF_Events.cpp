@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,65 +37,49 @@ idSWF::HitTest
 */
 idSWFScriptObject* idSWF::HitTest( idSWFSpriteInstance* spriteInstance, const swfRenderState_t& renderState, int x, int y, idSWFScriptObject* parentObject )
 {
-
-	if( spriteInstance->parent != NULL )
-	{
+	if( spriteInstance->parent != NULL ) {
 		swfDisplayEntry_t* thisDisplayEntry = spriteInstance->parent->FindDisplayEntry( spriteInstance->depth );
-		if( thisDisplayEntry->cxf.mul.w + thisDisplayEntry->cxf.add.w < 0.001f )
-		{
+		if( thisDisplayEntry->cxf.mul.w + thisDisplayEntry->cxf.add.w < 0.001f ) {
 			return NULL;
 		}
 	}
 
-	if( !spriteInstance->isVisible )
-	{
+	if( !spriteInstance->isVisible ) {
 		return NULL;
 	}
 
-	if( spriteInstance->scriptObject->HasValidProperty( "onRelease" )
-			|| spriteInstance->scriptObject->HasValidProperty( "onPress" )
-			|| spriteInstance->scriptObject->HasValidProperty( "onRollOver" )
-			|| spriteInstance->scriptObject->HasValidProperty( "onRollOut" )
-			|| spriteInstance->scriptObject->HasValidProperty( "onDrag" )
-	  )
-	{
+	if( spriteInstance->scriptObject->HasValidProperty( "onRelease" ) || spriteInstance->scriptObject->HasValidProperty( "onPress" ) ||
+		spriteInstance->scriptObject->HasValidProperty( "onRollOver" ) || spriteInstance->scriptObject->HasValidProperty( "onRollOut" ) ||
+		spriteInstance->scriptObject->HasValidProperty( "onDrag" ) ) {
 		parentObject = spriteInstance->scriptObject;
 	}
 
 	// rather than returning the first object we find, we actually want to return the last object we find
 	idSWFScriptObject* returnObject = NULL;
 
-	float xOffset = spriteInstance->xOffset;
-	float yOffset = spriteInstance->yOffset;
+	float			   xOffset = spriteInstance->xOffset;
+	float			   yOffset = spriteInstance->yOffset;
 
-	for( int i = 0; i < spriteInstance->displayList.Num(); i++ )
-	{
+	for( int i = 0; i < spriteInstance->displayList.Num(); i++ ) {
 		const swfDisplayEntry_t& display = spriteInstance->displayList[i];
-		idSWFDictionaryEntry* entry = FindDictionaryEntry( display.characterID );
-		if( entry == NULL )
-		{
+		idSWFDictionaryEntry*	 entry	 = FindDictionaryEntry( display.characterID );
+		if( entry == NULL ) {
 			continue;
 		}
 		swfRenderState_t renderState2;
 		renderState2.matrix = display.matrix.Multiply( renderState.matrix );
-		renderState2.ratio = display.ratio;
+		renderState2.ratio	= display.ratio;
 
-		if( entry->type == SWF_DICT_SPRITE )
-		{
+		if( entry->type == SWF_DICT_SPRITE ) {
 			idSWFScriptObject* object = HitTest( display.spriteInstance, renderState2, x, y, parentObject );
-			if( object != NULL && object->Get( "_visible" ).ToBool() )
-			{
+			if( object != NULL && object->Get( "_visible" ).ToBool() ) {
 				returnObject = object;
 			}
-		}
-		else if( entry->type == SWF_DICT_SHAPE && ( parentObject != NULL ) )
-		{
+		} else if( entry->type == SWF_DICT_SHAPE && ( parentObject != NULL ) ) {
 			idSWFShape* shape = entry->shape;
-			for( int j = 0; j < shape->fillDraws.Num(); j++ )
-			{
+			for( int j = 0; j < shape->fillDraws.Num(); j++ ) {
 				const idSWFShapeDrawFill& fill = shape->fillDraws[j];
-				for( int k = 0; k < fill.indices.Num(); k += 3 )
-				{
+				for( int k = 0; k < fill.indices.Num(); k += 3 ) {
 					idVec2 xy1 = renderState2.matrix.Transform( fill.startVerts[fill.indices[k + 0]] );
 					idVec2 xy2 = renderState2.matrix.Transform( fill.startVerts[fill.indices[k + 1]] );
 					idVec2 xy3 = renderState2.matrix.Transform( fill.startVerts[fill.indices[k + 2]] );
@@ -108,87 +93,68 @@ idSWFScriptObject* idSWF::HitTest( idSWFSpriteInstance* spriteInstance, const sw
 					idVec3 p( x, y, 1.0f );
 					idVec3 signs = p * edgeEquations;
 
-					bool bx = signs.x > 0;
-					bool by = signs.y > 0;
-					bool bz = signs.z > 0;
-					if( bx == by && bx == bz )
-					{
+					bool   bx = signs.x > 0;
+					bool   by = signs.y > 0;
+					bool   bz = signs.z > 0;
+					if( bx == by && bx == bz ) {
 						// point inside
 						returnObject = parentObject;
 					}
 				}
 			}
-		}
-		else if( entry->type == SWF_DICT_MORPH )
-		{
+		} else if( entry->type == SWF_DICT_MORPH ) {
 			// FIXME: this should be roughly the same as SWF_DICT_SHAPE
-		}
-		else if( entry->type == SWF_DICT_TEXT )
-		{
+		} else if( entry->type == SWF_DICT_TEXT ) {
 			// FIXME: this should be roughly the same as SWF_DICT_SHAPE
-		}
-		else if( entry->type == SWF_DICT_EDITTEXT )
-		{
+		} else if( entry->type == SWF_DICT_EDITTEXT ) {
 			idSWFScriptObject* editObject = NULL;
 
-			if( display.textInstance->scriptObject.HasProperty( "onRelease" ) || display.textInstance->scriptObject.HasProperty( "onPress" ) )
-			{
+			if( display.textInstance->scriptObject.HasProperty( "onRelease" ) || display.textInstance->scriptObject.HasProperty( "onPress" ) ) {
 				// if the edit box itself can be clicked, then we want to return it when it's clicked on
 				editObject = &display.textInstance->scriptObject;
-			}
-			else if( parentObject != NULL )
-			{
+			} else if( parentObject != NULL ) {
 				// otherwise, we want to return the parent object
 				editObject = parentObject;
 			}
 
-			if( editObject == NULL )
-			{
+			if( editObject == NULL ) {
 				continue;
 			}
 
-			if( display.textInstance->text.IsEmpty() )
-			{
+			if( display.textInstance->text.IsEmpty() ) {
 				continue;
 			}
 
-			const idSWFEditText* shape = entry->edittext;
-			const idSWFEditText* text = display.textInstance->GetEditText();
-			float textLength = display.textInstance->GetTextLength();
+			const idSWFEditText* shape		= entry->edittext;
+			const idSWFEditText* text		= display.textInstance->GetEditText();
+			float				 textLength = display.textInstance->GetTextLength();
 
-			float lengthDiff = fabs( shape->bounds.br.x - shape->bounds.tl.x ) - textLength;
+			float				 lengthDiff = fabs( shape->bounds.br.x - shape->bounds.tl.x ) - textLength;
 
-			idVec3 tl;
-			idVec3 tr;
-			idVec3 br;
-			idVec3 bl;
+			idVec3				 tl;
+			idVec3				 tr;
+			idVec3				 br;
+			idVec3				 bl;
 
-			float topOffset = 0.0f;
+			float				 topOffset = 0.0f;
 
-			if( text->align == SWF_ET_ALIGN_LEFT )
-			{
-				tl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x  + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
+			if( text->align == SWF_ET_ALIGN_LEFT ) {
+				tl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
 				tr.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x - lengthDiff + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
 				br.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x - lengthDiff + xOffset, shape->bounds.br.y + topOffset + yOffset ) );
 				bl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + xOffset, shape->bounds.br.y + topOffset + yOffset ) );
-			}
-			else if( text->align == SWF_ET_ALIGN_RIGHT )
-			{
+			} else if( text->align == SWF_ET_ALIGN_RIGHT ) {
 				tl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + lengthDiff + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
 				tr.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
 				br.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x + xOffset, shape->bounds.br.y + topOffset + yOffset ) );
 				bl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + lengthDiff + xOffset, shape->bounds.br.y + topOffset + yOffset ) );
-			}
-			else if( text->align == SWF_ET_ALIGN_CENTER )
-			{
+			} else if( text->align == SWF_ET_ALIGN_CENTER ) {
 				float middle = ( ( shape->bounds.br.x + xOffset ) + ( shape->bounds.tl.x + xOffset ) ) / 2.0f;
-				tl.ToVec2() = renderState2.matrix.Transform( idVec2( middle - ( textLength / 2.0f ), shape->bounds.tl.y + topOffset + yOffset ) );
-				tr.ToVec2() = renderState2.matrix.Transform( idVec2( middle + ( textLength / 2.0f ), shape->bounds.tl.y + topOffset + yOffset ) );
-				br.ToVec2() = renderState2.matrix.Transform( idVec2( middle + ( textLength / 2.0f ), shape->bounds.br.y + topOffset + yOffset ) );
-				bl.ToVec2() = renderState2.matrix.Transform( idVec2( middle - ( textLength / 2.0f ), shape->bounds.br.y + topOffset + yOffset ) );
-			}
-			else
-			{
+				tl.ToVec2()	 = renderState2.matrix.Transform( idVec2( middle - ( textLength / 2.0f ), shape->bounds.tl.y + topOffset + yOffset ) );
+				tr.ToVec2()	 = renderState2.matrix.Transform( idVec2( middle + ( textLength / 2.0f ), shape->bounds.tl.y + topOffset + yOffset ) );
+				br.ToVec2()	 = renderState2.matrix.Transform( idVec2( middle + ( textLength / 2.0f ), shape->bounds.br.y + topOffset + yOffset ) );
+				bl.ToVec2()	 = renderState2.matrix.Transform( idVec2( middle - ( textLength / 2.0f ), shape->bounds.br.y + topOffset + yOffset ) );
+			} else {
 				tl.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.tl.x + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
 				tr.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x + xOffset, shape->bounds.tl.y + topOffset + yOffset ) );
 				br.ToVec2() = renderState2.matrix.Transform( idVec2( shape->bounds.br.x + xOffset, shape->bounds.br.y + topOffset + yOffset ) );
@@ -209,11 +175,10 @@ idSWFScriptObject* idSWF::HitTest( idSWFSpriteInstance* spriteInstance, const sw
 			idVec3 p( x, y, 1.0f );
 			idVec3 signs = p * edgeEquations;
 
-			bool bx = signs.x > 0;
-			bool by = signs.y > 0;
-			bool bz = signs.z > 0;
-			if( bx == by && bx == bz )
-			{
+			bool   bx = signs.x > 0;
+			bool   by = signs.y > 0;
+			bool   bz = signs.z > 0;
+			if( bx == by && bx == bz ) {
 				// point inside top right triangle
 				returnObject = editObject;
 			}
@@ -227,8 +192,7 @@ idSWFScriptObject* idSWF::HitTest( idSWFSpriteInstance* spriteInstance, const sw
 			bx = signs.x > 0;
 			by = signs.y > 0;
 			bz = signs.z > 0;
-			if( bx == by && bx == bz )
-			{
+			if( bx == by && bx == bz ) {
 				// point inside bottom left triangle
 				returnObject = editObject;
 			}
@@ -244,42 +208,32 @@ idSWF::HandleEvent
 */
 bool idSWF::HandleEvent( const sysEvent_t* event )
 {
-	if( !IsLoaded() || !IsActive() || ( !inhibitControl && useInhibtControl ) )
-	{
+	if( !IsLoaded() || !IsActive() || ( !inhibitControl && useInhibtControl ) ) {
 		return false;
 	}
-	if( event->evType == SE_KEY )
-	{
-		if( event->evValue == K_MOUSE1 )
-		{
+	if( event->evType == SE_KEY ) {
+		if( event->evValue == K_MOUSE1 ) {
 			mouseEnabled = true;
 			idSWFScriptVar var;
-			if( event->evValue2 )
-			{
-
+			if( event->evValue2 ) {
 				idSWFScriptVar waitInput = globals->Get( "waitInput" );
-				if( waitInput.IsFunction() )
-				{
+				if( waitInput.IsFunction() ) {
 					useMouse = false;
 					idSWFParmList waitParms;
 					waitParms.Append( event->evValue );
 					waitInput.GetFunction()->Call( NULL, waitParms );
 					waitParms.Clear();
-				}
-				else
-				{
+				} else {
 					useMouse = true;
 				}
 
 				idSWFScriptObject* hitObject = HitTest( mainspriteInstance, swfRenderState_t(), mouseX, mouseY, NULL );
-				if( hitObject != NULL )
-				{
+				if( hitObject != NULL ) {
 					mouseObject = hitObject;
 					mouseObject->AddRef();
 
 					var = hitObject->Get( "onPress" );
-					if( var.IsFunction() )
-					{
+					if( var.IsFunction() ) {
 						idSWFParmList parms;
 						parms.Append( event->inputDevice );
 						var.GetFunction()->Call( hitObject, parms );
@@ -288,8 +242,7 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 					}
 
 					var = hitObject->Get( "onDrag" );
-					if( var.IsFunction() )
-					{
+					if( var.IsFunction() ) {
 						idSWFParmList parms;
 						parms.Append( mouseX );
 						parms.Append( mouseY );
@@ -304,14 +257,10 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 				parms.Append( hitObject );
 				Invoke( "setHitObject", parms );
 
-			}
-			else
-			{
-				if( mouseObject )
-				{
+			} else {
+				if( mouseObject ) {
 					var = mouseObject->Get( "onRelease" );
-					if( var.IsFunction() )
-					{
+					if( var.IsFunction() ) {
 						idSWFParmList parms;
 						parms.Append( mouseObject ); // FIXME: Remove this
 						var.GetFunction()->Call( mouseObject, parms );
@@ -319,59 +268,46 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 					mouseObject->Release();
 					mouseObject = NULL;
 				}
-				if( hoverObject )
-				{
+				if( hoverObject ) {
 					hoverObject->Release();
 					hoverObject = NULL;
 				}
 
-				if( var.IsFunction() )
-				{
+				if( var.IsFunction() ) {
 					return true;
 				}
 			}
 
 			return false;
 		}
-		const char* keyName = idKeyInput::KeyNumToString( ( keyNum_t )event->evValue );
-		idSWFScriptVar var = shortcutKeys->Get( keyName );
+		const char*	   keyName = idKeyInput::KeyNumToString( ( keyNum_t )event->evValue );
+		idSWFScriptVar var	   = shortcutKeys->Get( keyName );
 		// anything more than 32 levels of indirection we can be pretty sure is an infinite loop
-		for( int runaway = 0; runaway < 32; runaway++ )
-		{
+		for( int runaway = 0; runaway < 32; runaway++ ) {
 			idSWFParmList eventParms;
 			eventParms.Clear();
 			eventParms.Append( event->inputDevice );
-			if( var.IsString() )
-			{
+			if( var.IsString() ) {
 				// alias to another key
 				var = shortcutKeys->Get( var.ToString() );
 				continue;
-			}
-			else if( var.IsObject() )
-			{
+			} else if( var.IsObject() ) {
 				// if this object is a sprite, send fake mouse events to it
 				idSWFScriptObject* object = var.GetObject();
 				// make sure we don't send an onRelease event unless we have already sent that object an onPress
-				bool wasPressed = object->Get( "_pressed" ).ToBool();
+				bool			   wasPressed = object->Get( "_pressed" ).ToBool();
 				object->Set( "_pressed", event->evValue2 );
-				if( event->evValue2 )
-				{
+				if( event->evValue2 ) {
 					var = object->Get( "onPress" );
-				}
-				else if( wasPressed )
-				{
+				} else if( wasPressed ) {
 					var = object->Get( "onRelease" );
 				}
-				if( var.IsFunction() )
-				{
+				if( var.IsFunction() ) {
 					var.GetFunction()->Call( object, eventParms );
 					return true;
 				}
-			}
-			else if( var.IsFunction() )
-			{
-				if( event->evValue2 )
-				{
+			} else if( var.IsFunction() ) {
+				if( event->evValue2 ) {
 					// anonymous functions only respond to key down events
 					var.GetFunction()->Call( NULL, eventParms );
 					return true;
@@ -380,52 +316,40 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 			}
 
 			idSWFScriptVar useFunction = globals->Get( "useFunction" );
-			if( useFunction.IsFunction() && event->evValue2 )
-			{
+			if( useFunction.IsFunction() && event->evValue2 ) {
 				const char* action = idKeyInput::GetBinding( event->evValue );
-				if( idStr::Cmp( "_use", action ) == 0 )
-				{
+				if( idStr::Cmp( "_use", action ) == 0 ) {
 					useFunction.GetFunction()->Call( NULL, idSWFParmList() );
 				}
 			}
 
 			idSWFScriptVar waitInput = globals->Get( "waitInput" );
-			if( waitInput.IsFunction() )
-			{
+			if( waitInput.IsFunction() ) {
 				useMouse = false;
-				if( event->evValue2 )
-				{
+				if( event->evValue2 ) {
 					idSWFParmList waitParms;
 					waitParms.Append( event->evValue );
 					waitInput.GetFunction()->Call( NULL, waitParms );
 				}
-			}
-			else
-			{
+			} else {
 				useMouse = true;
 			}
 
 			idSWFScriptVar focusWindow = globals->Get( "focusWindow" );
-			if( focusWindow.IsObject() )
-			{
+			if( focusWindow.IsObject() ) {
 				idSWFScriptVar onKey = focusWindow.GetObject()->Get( "onKey" );
-				if( onKey.IsFunction() )
-				{
-
+				if( onKey.IsFunction() ) {
 					// make sure we don't send an onRelease event unless we have already sent that object an onPress
-					idSWFScriptObject* object = focusWindow.GetObject();
-					bool wasPressed = object->Get( "_kpressed" ).ToBool();
+					idSWFScriptObject* object	  = focusWindow.GetObject();
+					bool			   wasPressed = object->Get( "_kpressed" ).ToBool();
 					object->Set( "_kpressed", event->evValue2 );
-					if( event->evValue2 || wasPressed )
-					{
+					if( event->evValue2 || wasPressed ) {
 						idSWFParmList parms;
 						parms.Append( event->evValue );
 						parms.Append( event->evValue2 );
 						onKey.GetFunction()->Call( focusWindow.GetObject(), parms ).ToBool();
 						return true;
-					}
-					else if( event->evValue == K_LSHIFT || event->evValue == K_RSHIFT )
-					{
+					} else if( event->evValue == K_LSHIFT || event->evValue == K_RSHIFT ) {
 						idSWFParmList parms;
 						parms.Append( event->evValue );
 						parms.Append( event->evValue2 );
@@ -436,15 +360,11 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 			return false;
 		}
 		idLib::Warning( "Circular reference in %s shortcutKeys.%s", filename.c_str(), keyName );
-	}
-	else if( event->evType == SE_CHAR )
-	{
+	} else if( event->evType == SE_CHAR ) {
 		idSWFScriptVar focusWindow = globals->Get( "focusWindow" );
-		if( focusWindow.IsObject() )
-		{
+		if( focusWindow.IsObject() ) {
 			idSWFScriptVar onChar = focusWindow.GetObject()->Get( "onChar" );
-			if( onChar.IsFunction() )
-			{
+			if( onChar.IsFunction() ) {
 				idSWFParmList parms;
 				parms.Append( event->evValue );
 				parms.Append( idKeyInput::KeyNumToString( ( keyNum_t )event->evValue ) );
@@ -452,41 +372,32 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 				return true;
 			}
 		}
-	}
-	else if( event->evType == SE_MOUSE_ABSOLUTE || event->evType == SE_MOUSE )
-	{
-		mouseEnabled = true;
+	} else if( event->evType == SE_MOUSE_ABSOLUTE || event->evType == SE_MOUSE ) {
+		mouseEnabled		= true;
 		isMouseInClientArea = true;
 
 		// Mouse position in screen space needs to be converted to SWF space
-		if( event->evType == SE_MOUSE_ABSOLUTE )
-		{
+		if( event->evType == SE_MOUSE_ABSOLUTE ) {
 			// Leyland VR
-			if( vrSystem->IsActive() )
-			{
+			if( vrSystem->IsActive() ) {
 				float scaleX = frameWidth / renderSystem->GetWidth();
 				float scaleY = frameHeight / renderSystem->GetHeight();
-				mouseX = idMath::Ftoi( event->evValue * scaleX );
-				mouseY = idMath::Ftoi( event->evValue2 * scaleY );
-			}
-			else
-			{
+				mouseX		 = idMath::Ftoi( event->evValue * scaleX );
+				mouseY		 = idMath::Ftoi( event->evValue2 * scaleY );
+			} else {
 				const float pixelAspect = renderSystem->GetPixelAspect();
-				const float sysWidth = renderSystem->GetWidth() * ( pixelAspect > 1.0f ? pixelAspect : 1.0f );
-				const float sysHeight = renderSystem->GetHeight() / ( pixelAspect < 1.0f ? pixelAspect : 1.0f );
-				float scale = swfScale * sysHeight / ( float )frameHeight;
-				float invScale = 1.0f / scale;
-				float tx = 0.5f * ( sysWidth - ( frameWidth * scale ) );
-				float ty = 0.5f * ( sysHeight - ( frameHeight * scale ) );
+				const float sysWidth	= renderSystem->GetWidth() * ( pixelAspect > 1.0f ? pixelAspect : 1.0f );
+				const float sysHeight	= renderSystem->GetHeight() / ( pixelAspect < 1.0f ? pixelAspect : 1.0f );
+				float		scale		= swfScale * sysHeight / ( float )frameHeight;
+				float		invScale	= 1.0f / scale;
+				float		tx			= 0.5f * ( sysWidth - ( frameWidth * scale ) );
+				float		ty			= 0.5f * ( sysHeight - ( frameHeight * scale ) );
 
 				mouseX = idMath::Ftoi( ( static_cast<float>( event->evValue ) - tx ) * invScale );
 				mouseY = idMath::Ftoi( ( static_cast<float>( event->evValue2 ) - ty ) * invScale );
 			}
 			// Leyland end
-		}
-		else
-		{
-
+		} else {
 			mouseX += event->evValue;
 			mouseY += event->evValue2;
 
@@ -494,26 +405,20 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 			mouseY = Max( Min( mouseY, idMath::Ftoi( frameHeight ) ), 0 );
 		}
 
-		bool retVal = false;
+		bool			   retVal = false;
 
 		idSWFScriptObject* hitObject = HitTest( mainspriteInstance, swfRenderState_t(), mouseX, mouseY, NULL );
-		if( hitObject != NULL )
-		{
+		if( hitObject != NULL ) {
 			hasHitObject = true;
-		}
-		else
-		{
+		} else {
 			hasHitObject = false;
 		}
 
-		if( hitObject != hoverObject )
-		{
+		if( hitObject != hoverObject ) {
 			// First check to see if we should call onRollOut on our previous hoverObject
-			if( hoverObject != NULL )
-			{
+			if( hoverObject != NULL ) {
 				idSWFScriptVar var = hoverObject->Get( "onRollOut" );
-				if( var.IsFunction() )
-				{
+				if( var.IsFunction() ) {
 					var.GetFunction()->Call( hoverObject, idSWFParmList() );
 					retVal = true;
 				}
@@ -521,23 +426,19 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 				hoverObject = NULL;
 			}
 			// Then call onRollOver on our hitObject
-			if( hitObject != NULL )
-			{
+			if( hitObject != NULL ) {
 				hoverObject = hitObject;
 				hoverObject->AddRef();
 				idSWFScriptVar var = hitObject->Get( "onRollOver" );
-				if( var.IsFunction() )
-				{
+				if( var.IsFunction() ) {
 					var.GetFunction()->Call( hitObject, idSWFParmList() );
 					retVal = true;
 				}
 			}
 		}
-		if( mouseObject != NULL )
-		{
+		if( mouseObject != NULL ) {
 			idSWFScriptVar var = mouseObject->Get( "onDrag" );
-			if( var.IsFunction() )
-			{
+			if( var.IsFunction() ) {
 				idSWFParmList parms;
 				parms.Append( mouseX );
 				parms.Append( mouseY );
@@ -547,13 +448,9 @@ bool idSWF::HandleEvent( const sysEvent_t* event )
 			}
 		}
 		return retVal;
-	}
-	else if( event->evType == SE_MOUSE_LEAVE )
-	{
+	} else if( event->evType == SE_MOUSE_LEAVE ) {
 		isMouseInClientArea = false;
-	}
-	else if( event->evType == SE_JOYSTICK )
-	{
+	} else if( event->evType == SE_JOYSTICK ) {
 		idSWFParmList parms;
 		parms.Append( event->evValue );
 		parms.Append( event->evValue2 / 32.0f );

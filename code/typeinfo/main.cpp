@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -34,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #define SOURCE_CODE_BASE_FOLDER "code"
 
-idSession* 			session = NULL;
+idSession* session = NULL;
 
 /*
 ==============================================================
@@ -44,15 +45,15 @@ idSession* 			session = NULL;
 ==============================================================
 */
 
-int main( int argc, char** argv )
+int		   main( int argc, char** argv )
 {
-	idStr fileName, sourcePath;
+	idStr		   fileName, sourcePath;
 	idTypeInfoGen* generator;
 
-	idLib::common = common;
+	idLib::common	  = common;
 	idLib::cvarSystem = cvarSystem;
 	idLib::fileSystem = fileSystem;
-	//idLib::sys = sys;
+	// idLib::sys = sys;
 
 	idLib::Init();
 	cmdSystem->Init();
@@ -65,7 +66,7 @@ int main( int argc, char** argv )
 	generator = new idTypeInfoGen;
 
 	sourcePath = "game";
-	fileName = "game/gamesys/GameTypeInfo";
+	fileName   = "game/gamesys/GameTypeInfo";
 
 	generator->AddDefine( "__cplusplus" );
 	generator->AddDefine( "GAME_DLL" );
@@ -74,7 +75,7 @@ int main( int argc, char** argv )
 	generator->AddDefine( "__TYPEINFOGEN__" );
 	generator->AddDefine( "_WIN32" );
 	generator->AddDefine( "ID_VULKAN" );
-	//generator->AddDefine( "VR_OPTIONS" );
+	// generator->AddDefine( "VR_OPTIONS" );
 
 	generator->CreateTypeInfo( sourcePath );
 	generator->WriteTypeInfo( fileName );

@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -30,20 +31,18 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../renderer/DXT/DXTCodec.h"
 
-#pragma warning(disable: 4355) // 'this' : used in base member initializer list
+#pragma warning( disable : 4355 ) // 'this' : used in base member initializer list
 
-idCVar swf_loadBinary( "swf_loadBinary", "1", CVAR_BOOL, "used to set whether to load binary swf from generated" );
+idCVar				 swf_loadBinary( "swf_loadBinary", "1", CVAR_BOOL, "used to set whether to load binary swf from generated" );
 
-idCVar swf_debugScript( "swf_debugScript", "", CVAR_INIT | CVAR_ROM | CVAR_NEW, "name of script or Lua instance that should connect to remote debugger" );
+idCVar				 swf_debugScript( "swf_debugScript", "", CVAR_INIT | CVAR_ROM | CVAR_NEW, "name of script or Lua instance that should connect to remote debugger" );
 
-int idSWF::mouseX = -1;
-int idSWF::mouseY = -1;
-bool idSWF::isMouseInClientArea = false;
-idSWFSpriteInstance* idSWF::luaSpriteInstance = NULL;
+int					 idSWF::mouseX				= -1;
+int					 idSWF::mouseY				= -1;
+bool				 idSWF::isMouseInClientArea = false;
+idSWFSpriteInstance* idSWF::luaSpriteInstance	= NULL;
 
-extern idCVar in_useJoystick;
-
-
+extern idCVar		 in_useJoystick;
 
 /*
 ===================
@@ -59,10 +58,10 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 
 	random.SetSeed( Sys_Milliseconds() );
 
-	guiSolid = declManager->FindMaterial( "guiSolid" );
+	guiSolid		= declManager->FindMaterial( "guiSolid" );
 	guiCursor_arrow = declManager->FindMaterial( "ui/assets/guicursor_arrow" );
-	guiCursor_hand = declManager->FindMaterial( "ui/assets/guicursor_hand" );
-	white = declManager->FindMaterial( "_white" );
+	guiCursor_hand	= declManager->FindMaterial( "ui/assets/guicursor_hand" );
+	white			= declManager->FindMaterial( "_white" );
 
 	// RB:
 	debugFont = renderSystem->RegisterFont( "Arial Narrow" );
@@ -79,59 +78,53 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	tooltipButtonImage.Append( keyButtonImages_t( "<MOUSE2>", "guis/assets/hud/controller/mouse2", "", 64, 52, 0 ) );
 	tooltipButtonImage.Append( keyButtonImages_t( "<MOUSE3>", "guis/assets/hud/controller/mouse3", "", 64, 52, 0 ) );
 
-	for( int index = 0; index < tooltipButtonImage.Num(); index++ )
-	{
-		if( ( tooltipButtonImage[index].xbImage != NULL ) && ( tooltipButtonImage[index].xbImage[0] != '\0' ) )
-		{
+	for( int index = 0; index < tooltipButtonImage.Num(); index++ ) {
+		if( ( tooltipButtonImage[index].xbImage != NULL ) && ( tooltipButtonImage[index].xbImage[0] != '\0' ) ) {
 			declManager->FindMaterial( tooltipButtonImage[index].xbImage );
 		}
-		if( ( tooltipButtonImage[index].psImage != NULL ) && ( tooltipButtonImage[index].psImage[0] != '\0' ) )
-		{
+		if( ( tooltipButtonImage[index].psImage != NULL ) && ( tooltipButtonImage[index].psImage[0] != '\0' ) ) {
 			declManager->FindMaterial( tooltipButtonImage[index].psImage );
 		}
 	}
 
-	frameWidth = 0;
-	frameHeight = 0;
-	frameRate = 0;
+	frameWidth	   = 0;
+	frameHeight	   = 0;
+	frameRate	   = 0;
 	lastRenderTime = 0;
 
-	isActive = false;
-	inhibitControl = false;
+	isActive		 = false;
+	inhibitControl	 = false;
 	useInhibtControl = true;
 
-	crop = false;
-	blackbars = false;
-	paused = false;
+	crop		 = false;
+	blackbars	 = false;
+	paused		 = false;
 	hasHitObject = false;
 
-	useMouse = true;
-	mouseEnabled = false;
-	renderBorder = 0;
-	mouseObject = NULL;
-	hoverObject = NULL;
-	soundWorld = NULL;
+	useMouse		   = true;
+	mouseEnabled	   = false;
+	renderBorder	   = 0;
+	mouseObject		   = NULL;
+	hoverObject		   = NULL;
+	soundWorld		   = NULL;
 	forceNonPCPlatform = false;
 
-	if( idStr::Cmpn( filename_, "swf/", 4 ) != 0 )
-	{
+	if( idStr::Cmpn( filename_, "swf/", 4 ) != 0 ) {
 		// if it doesn't already have swf/ in front of it, add it
 		filename = "swf/";
 		filename += filename_;
-	}
-	else
-	{
+	} else {
 		filename = filename_;
 	}
 	filename.ToLower();
 	filename.BackSlashesToSlashes();
 	filename.SetFileExtension( ".swf" );
 
-	isHUD = ( filename.Find( "hud", false ) != -1 );	// Leyland VR
+	isHUD = ( filename.Find( "hud", false ) != -1 ); // Leyland VR
 
 	timestamp = fileSystem->GetTimestamp( filename );
 
-	mainsprite = new( TAG_SWF ) idSWFSprite( this );
+	mainsprite		   = new( TAG_SWF ) idSWFSprite( this );
 	mainspriteInstance = NULL;
 
 	idStr binaryFileName = "generated/";
@@ -143,48 +136,35 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	jsonFileName.SetFileExtension( ".json" );
 	ID_TIME_T jsonSourceTime = fileSystem->GetTimestamp( jsonFileName );
 
-	bool loadedFromJSON = false;
-	if( swf_loadBinary.GetBool() )
-	{
-		if( jsonSourceTime != FILE_NOT_FOUND_TIMESTAMP )
-		{
+	bool	  loadedFromJSON = false;
+	if( swf_loadBinary.GetBool() ) {
+		if( jsonSourceTime != FILE_NOT_FOUND_TIMESTAMP ) {
 			timestamp = jsonSourceTime;
 		}
 
 		// don't binarize stuff on export
-		if( exportJSON || exportSWF )
-		{
+		if( exportJSON || exportSWF ) {
 			timestamp = FILE_NOT_FOUND_TIMESTAMP;
 		}
 
-		if( !LoadBinary( binaryFileName, timestamp ) )
-		{
-			if( LoadJSON( jsonFileName ) )
-			{
+		if( !LoadBinary( binaryFileName, timestamp ) ) {
+			if( LoadJSON( jsonFileName ) ) {
 				loadedFromJSON = true;
 
 				WriteBinary( binaryFileName );
-			}
-			else if( LoadSWF( filename ) )
-			{
+			} else if( LoadSWF( filename ) ) {
 				WriteBinary( binaryFileName );
 			}
 		}
-	}
-	else
-	{
-		if( LoadJSON( jsonFileName ) )
-		{
+	} else {
+		if( LoadJSON( jsonFileName ) ) {
 			loadedFromJSON = true;
-		}
-		else
-		{
+		} else {
 			LoadSWF( filename );
 		}
 	}
 
-	if( exportJSON )
-	{
+	if( exportJSON ) {
 		idStr jsonFileName = "exported/";
 		jsonFileName += filename;
 		jsonFileName.SetFileExtension( ".json" );
@@ -192,8 +172,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 		WriteJSON( jsonFileName );
 	}
 
-	if( exportSVG )
-	{
+	if( exportSVG ) {
 		idStr svgFileName = "exported/";
 		svgFileName += filename;
 		svgFileName.SetFileExtension( ".svg" );
@@ -205,46 +184,41 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	atlasFileName.SetFileExtension( ".png" );
 	atlasMaterial = declManager->FindMaterial( atlasFileName );
 
-	byte* atlasExportImageRGBA = NULL;
-	int atlasExportImageWidth = 0;
-	int atlasExportImageHeight = 0;
+	byte* atlasExportImageRGBA	 = NULL;
+	int	  atlasExportImageWidth	 = 0;
+	int	  atlasExportImageHeight = 0;
 
-	if( /*!loadedFromJSON &&*/ ( exportJSON || exportSWF || exportSVG ) )
-	{
+	if( /*!loadedFromJSON &&*/ ( exportJSON || exportSWF || exportSVG ) ) {
 		// try loading the TGA first
 		ID_TIME_T timestamp;
-		//LoadTGA( atlasFileName.c_str(), &atlasExportImageRGBA, &atlasExportImageWidth, &atlasExportImageHeight, &timestamp );
+		// LoadTGA( atlasFileName.c_str(), &atlasExportImageRGBA, &atlasExportImageWidth, &atlasExportImageHeight, &timestamp );
 		LoadSTB_RGBA8( atlasFileName.c_str(), &atlasExportImageRGBA, &atlasExportImageWidth, &atlasExportImageHeight, &timestamp );
 
-		if( ( atlasExportImageRGBA == NULL ) || ( timestamp == FILE_NOT_FOUND_TIMESTAMP ) )
-		{
-			//idLib::Warning( "failed to load atlas '%s'", atlasFileName.c_str() );
+		if( ( atlasExportImageRGBA == NULL ) || ( timestamp == FILE_NOT_FOUND_TIMESTAMP ) ) {
+			// idLib::Warning( "failed to load atlas '%s'", atlasFileName.c_str() );
 
-			idStrStatic< MAX_OSPATH > generatedName = atlasFileName;
+			idStrStatic<MAX_OSPATH> generatedName = atlasFileName;
 			generatedName.StripFileExtension();
 			idImage::GetGeneratedName( generatedName, TD_DEFAULT, CF_2D );
 
 			idBinaryImage im( generatedName );
-			ID_TIME_T binaryFileTime = im.LoadFromGeneratedFile( FILE_NOT_FOUND_TIMESTAMP );
+			ID_TIME_T	  binaryFileTime = im.LoadFromGeneratedFile( FILE_NOT_FOUND_TIMESTAMP );
 
-			if( binaryFileTime != FILE_NOT_FOUND_TIMESTAMP )
-			{
-				const bimageFile_t& imgHeader = im.GetFileHeader();
-				const bimageImage_t& img = im.GetImageHeader( 0 );
+			if( binaryFileTime != FILE_NOT_FOUND_TIMESTAMP ) {
+				const bimageFile_t&	 imgHeader = im.GetFileHeader();
+				const bimageImage_t& img	   = im.GetImageHeader( 0 );
 
-				const byte* data = im.GetImageData( 0 );
+				const byte*			 data = im.GetImageData( 0 );
 
 				// RB: Images that are were DXT compressed and aren't multiples of 4 were padded out before compressing
 				// however the idBinaryImageData stores the original input width and height.
 				// We need multiples of 4 for the decompression routines
 
-				int	dxtWidth = img.width;
-				int	dxtHeight = img.height;
-				if( imgHeader.format == FMT_DXT5 || imgHeader.format == FMT_DXT1 )
-				{
-					if( ( img.width & 3 ) || ( img.height & 3 ) )
-					{
-						dxtWidth = ( img.width + 3 ) & ~3;
+				int					 dxtWidth  = img.width;
+				int					 dxtHeight = img.height;
+				if( imgHeader.format == FMT_DXT5 || imgHeader.format == FMT_DXT1 ) {
+					if( ( img.width & 3 ) || ( img.height & 3 ) ) {
+						dxtWidth  = ( img.width + 3 ) & ~3;
 						dxtHeight = ( img.height + 3 ) & ~3;
 					}
 				}
@@ -252,22 +226,17 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 				idTempArray<byte> rgba( dxtWidth * dxtHeight * 4 );
 				memset( rgba.Ptr(), 255, rgba.Size() );
 
-				if( imgHeader.format == FMT_DXT1 )
-				{
+				if( imgHeader.format == FMT_DXT1 ) {
 					idDxtDecoder dxt;
 					dxt.DecompressImageDXT1( data, rgba.Ptr(), dxtWidth, dxtHeight );
 
-					for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ )
-					{
+					for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ ) {
 						rgba[i * 4 + 3] = 255;
 					}
-				}
-				else if( imgHeader.format == FMT_DXT5 )
-				{
+				} else if( imgHeader.format == FMT_DXT5 ) {
 					idDxtDecoder dxt;
 
-					if( imgHeader.colorFormat == CFM_DEFAULT )
-					{
+					if( imgHeader.colorFormat == CFM_DEFAULT ) {
 						dxt.DecompressImageDXT5( data, rgba.Ptr(), dxtWidth, dxtHeight );
 
 						/*
@@ -277,37 +246,26 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 						}
 						*/
 					}
-				}
-				else if( imgHeader.format == FMT_LUM8 || imgHeader.format == FMT_INT8 )
-				{
+				} else if( imgHeader.format == FMT_LUM8 || imgHeader.format == FMT_INT8 ) {
 					// LUM8 and INT8 just read the red channel
 					byte* pic = rgba.Ptr();
-					for( int i = 0; i < img.dataSize; i++ )
-					{
-						pic[ i * 4 ] = data[ i ];
+					for( int i = 0; i < img.dataSize; i++ ) {
+						pic[i * 4] = data[i];
 					}
-				}
-				else if( imgHeader.format == FMT_ALPHA )
-				{
+				} else if( imgHeader.format == FMT_ALPHA ) {
 					// ALPHA reads the alpha channel
 					byte* pic = rgba.Ptr();
-					for( int i = 0; i < img.dataSize; i++ )
-					{
-						pic[ i * 4 + 3 ] = data[ i ];
+					for( int i = 0; i < img.dataSize; i++ ) {
+						pic[i * 4 + 3] = data[i];
 					}
-				}
-				else if( imgHeader.format == FMT_L8A8 )
-				{
+				} else if( imgHeader.format == FMT_L8A8 ) {
 					// L8A8 reads the alpha and red channels
 					byte* pic = rgba.Ptr();
-					for( int i = 0; i < img.dataSize / 2; i++ )
-					{
-						pic[ i * 4 + 0 ] = data[ i * 2 + 0 ];
-						pic[ i * 4 + 3 ] = data[ i * 2 + 1 ];
+					for( int i = 0; i < img.dataSize / 2; i++ ) {
+						pic[i * 4 + 0] = data[i * 2 + 0];
+						pic[i * 4 + 3] = data[i * 2 + 1];
 					}
-				}
-				else if( imgHeader.format == FMT_RGB565 )
-				{
+				} else if( imgHeader.format == FMT_RGB565 ) {
 					// FIXME
 					/*
 					byte* pic = rgba.Ptr();
@@ -318,13 +276,10 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 						img.data[ i * 2 + 1 ] = color & 0xFF;
 					}
 					*/
-				}
-				else
-				{
+				} else {
 					byte* pic = rgba.Ptr();
-					for( int i = 0; i < img.dataSize; i++ )
-					{
-						pic[ i ] = data[ i ];
+					for( int i = 0; i < img.dataSize; i++ ) {
+						pic[i] = data[i];
 					}
 				}
 
@@ -336,20 +291,17 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 
 				R_WritePNG( atlasFileNameExport, rgba.Ptr(), 4, img.width, img.height, "fs_basepath" );
 
-				if( exportSWF )
-				{
-					atlasExportImageWidth = img.width;
+				if( exportSWF ) {
+					atlasExportImageWidth  = img.width;
 					atlasExportImageHeight = img.height;
-					atlasExportImageRGBA = ( byte* ) Mem_Alloc( rgba.Size(), TAG_TEMP );
+					atlasExportImageRGBA   = ( byte* )Mem_Alloc( rgba.Size(), TAG_TEMP );
 					memcpy( atlasExportImageRGBA, rgba.Ptr(), rgba.Size() );
 				}
 			}
 		}
-
 	}
 
-	if( exportSWF )
-	{
+	if( exportSWF ) {
 		idStr swfFileName = "exported/";
 		swfFileName += filename;
 		swfFileName.SetFileExtension( ".swf" );
@@ -357,8 +309,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 		WriteSWF( swfFileName, atlasExportImageRGBA, atlasExportImageWidth, atlasExportImageHeight );
 	}
 
-	if( atlasExportImageRGBA != NULL )
-	{
+	if( atlasExportImageRGBA != NULL ) {
 		Mem_Free( atlasExportImageRGBA );
 		atlasExportImageRGBA = NULL;
 	}
@@ -368,11 +319,9 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	const bool initLua = !exportJSON && !exportSWF;
 
 	lua_State* L = luaState = NULL;
-	if( initLua )
-	{
+	if( initLua ) {
 		L = luaState = lua_newstate( LuaAlloc, NULL );
-		if( L )
-		{
+		if( L ) {
 			lua_atpanic( L, &LuaPanic );
 		}
 
@@ -432,20 +381,17 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	globals->SetNative( "cropToFit", swfScriptVar_crop.Bind( this ) );
 	globals->SetNative( "crop", swfScriptVar_crop.Bind( this ) );
 
-	if( initLua )
-	{
-		//ID_TIME_T luaTimestamp;
+	if( initLua ) {
+		// ID_TIME_T luaTimestamp;
 		idStr luaFileName = filename;
 		luaFileName.SetFileExtension( ".lua" );
 
 		char* luaSrc;
 
-		int luaLen = fileSystem->ReadFile( luaFileName, ( void** ) &luaSrc );
-		if( luaSrc != NULL )
-		{
+		int	  luaLen = fileSystem->ReadFile( luaFileName, ( void** )&luaSrc );
+		if( luaSrc != NULL ) {
 			int result = luaL_loadbuffer( L, luaSrc, luaLen, luaFileName );
-			if( result == LUA_ERRSYNTAX )
-			{
+			if( result == LUA_ERRSYNTAX ) {
 				idLib::Error( "Compile of file %s failed: %s ", luaFileName.c_str(), lua_tostring( L, -1 ) );
 				lua_pop( L, 1 );
 			}
@@ -454,8 +400,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 
 			lua_printstack( L );
 
-			if( lua_pcall( L, 0, 0, NULL ) )
-			{
+			if( lua_pcall( L, 0, 0, NULL ) ) {
 				const char* functionName = lua_tostring( L, -1 );
 				idLib::Error( "Cannot pcall: %s", functionName );
 				lua_pop( L, 1 );
@@ -464,23 +409,18 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 			lua_printstack( L );
 
 			// start remote debugging
-			if( idStr::Icmp( swf_debugScript.GetString(), luaFileName ) == 0 )
-			{
+			if( idStr::Icmp( swf_debugScript.GetString(), luaFileName ) == 0 ) {
 				lua_getglobal( L, "start_remote_debugger" ); // ... ( function | nil )
 
-				if( lua_isfunction( L, -1 ) )
-				{
+				if( lua_isfunction( L, -1 ) ) {
 					int status = lua_pcall( L, 0, 0, NULL );
-					if( status != 0 )
-					{
+					if( status != 0 ) {
 						idLib::Warning( "idSWF( %s ): error running function: swf_load\n", luaFileName.c_str(), lua_tostring( L, -1 ) );
 
 						// remove warning from stack
 						lua_pop( L, 1 ); // ...
 					}
-				}
-				else
-				{
+				} else {
 					// ... nil
 					lua_pop( L, 1 ); // ...
 				}
@@ -491,11 +431,10 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	}
 	// RB end
 
-
 	// Do this to touch any external references (like sounds)
 	// But disable script warnings because many globals won't have been created yet
 	extern idCVar swf_debug;
-	int debug = swf_debug.GetInteger();
+	int			  debug = swf_debug.GetInteger();
 	swf_debug.SetInteger( 0 );
 
 	mainspriteInstance->Run();
@@ -504,13 +443,11 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 
 	swf_debug.SetInteger( debug );
 
-	if( mouseX == -1 )
-	{
+	if( mouseX == -1 ) {
 		mouseX = ( frameWidth / 2 );
 	}
 
-	if( mouseY == -1 )
-	{
+	if( mouseY == -1 ) {
 		mouseY = ( frameHeight / 2 );
 	}
 
@@ -527,30 +464,24 @@ idSWF::~idSWF()
 	spriteInstanceAllocator.Free( mainspriteInstance );
 	delete mainsprite;
 
-	for( int i = 0 ; i < dictionary.Num() ; i++ )
-	{
-		if( dictionary[i].sprite )
-		{
+	for( int i = 0; i < dictionary.Num(); i++ ) {
+		if( dictionary[i].sprite ) {
 			delete dictionary[i].sprite;
 			dictionary[i].sprite = NULL;
 		}
-		if( dictionary[i].shape )
-		{
+		if( dictionary[i].shape ) {
 			delete dictionary[i].shape;
 			dictionary[i].shape = NULL;
 		}
-		if( dictionary[i].font )
-		{
+		if( dictionary[i].font ) {
 			delete dictionary[i].font;
 			dictionary[i].font = NULL;
 		}
-		if( dictionary[i].text )
-		{
+		if( dictionary[i].text ) {
 			delete dictionary[i].text;
 			dictionary[i].text = NULL;
 		}
-		if( dictionary[i].edittext )
-		{
+		if( dictionary[i].edittext ) {
 			delete dictionary[i].edittext;
 			dictionary[i].edittext = NULL;
 		}
@@ -572,8 +503,7 @@ when a SWF is deactivated, it rewinds the timeline back to the start
 */
 void idSWF::Activate( bool b )
 {
-	if( !isActive && b )
-	{
+	if( !isActive && b ) {
 		inhibitControl = false;
 		lastRenderTime = Sys_Milliseconds();
 
@@ -592,44 +522,35 @@ idSWF::InhibitControl
 */
 bool idSWF::InhibitControl()
 {
-	if( !IsLoaded() || !IsActive() )
-	{
+	if( !IsLoaded() || !IsActive() ) {
 		return false;
 	}
 	return ( inhibitControl && useInhibtControl );
 }
-
 
 // RB begin
 void idSWF::SetGlobal( const char* name, const idSWFScriptVar& value )
 {
 	globals->Set( name, value );
 
-	if( luaState && ( value.IsFunction() || value.IsObject() || value.IsNumeric() ) )
-	{
+	if( luaState && ( value.IsFunction() || value.IsObject() || value.IsNumeric() ) ) {
 		lua_State* L = luaState;
 
-		if( value.IsNumeric() )
-		{
+		if( value.IsNumeric() ) {
 #if 1
-			if( value.GetType() == idSWFScriptVar::SWF_VAR_BOOL )
-			{
+			if( value.GetType() == idSWFScriptVar::SWF_VAR_BOOL ) {
 				bool b = value.ToBool();
 
 				lua_pushboolean( L, b );
 				lua_pushcclosure( L, LuaGlobalVarCallback, 1 );
 				lua_setglobal( L, name );
-			}
-			else if( value.GetType() == idSWFScriptVar::SWF_VAR_INTEGER )
-			{
+			} else if( value.GetType() == idSWFScriptVar::SWF_VAR_INTEGER ) {
 				int n = value.ToInteger();
 
 				lua_pushnumber( L, n );
 				lua_pushcclosure( L, LuaGlobalVarCallback, 1 );
 				lua_setglobal( L, name );
-			}
-			else if( value.GetType() == idSWFScriptVar::SWF_VAR_FLOAT )
-			{
+			} else if( value.GetType() == idSWFScriptVar::SWF_VAR_FLOAT ) {
 				float f = value.ToFloat();
 
 				lua_pushnumber( L, f );
@@ -637,19 +558,15 @@ void idSWF::SetGlobal( const char* name, const idSWFScriptVar& value )
 				lua_setglobal( L, name );
 			}
 
-			//lua_printstack( L );
+			// lua_printstack( L );
 #endif
-		}
-		else if( value.IsFunction() ) //|| value.IsObject() )
+		} else if( value.IsFunction() ) //|| value.IsObject() )
 		{
 			lua_getglobal( L, name ); // ... ( function | nil )
 
-			if( lua_isfunction( L, -1 ) )
-			{
+			if( lua_isfunction( L, -1 ) ) {
 				// already added
-			}
-			else
-			{
+			} else {
 				// ... nil
 				lua_pop( L, 1 ); // ...
 
@@ -661,7 +578,7 @@ void idSWF::SetGlobal( const char* name, const idSWFScriptVar& value )
 			}
 		}
 
-		//lua_printstack( L );
+		// lua_printstack( L );
 	}
 }
 // RB end
@@ -673,16 +590,12 @@ idSWF::PlaySound
 */
 int idSWF::PlaySound( const char* sound, int channel, bool blocking )
 {
-	if( !IsActive() )
-	{
+	if( !IsActive() ) {
 		return -1;
 	}
-	if( soundWorld != NULL )
-	{
+	if( soundWorld != NULL ) {
 		return soundWorld->PlayShaderDirectly( sound, channel );
-	}
-	else
-	{
+	} else {
 		idLib::Warning( "No playing sound world on soundSystem in swf play sound!" );
 		return -1;
 	}
@@ -695,12 +608,9 @@ idSWF::PlaySound
 */
 void idSWF::StopSound( int channel )
 {
-	if( soundWorld != NULL )
-	{
+	if( soundWorld != NULL ) {
 		soundWorld->PlayShaderDirectly( NULL, channel );
-	}
-	else
-	{
+	} else {
 		idLib::Warning( "No playing sound world on soundSystem in swf play sound!" );
 	}
 }
@@ -758,8 +668,7 @@ idSWFScriptVar idSWF::idSWFScriptFunction_playSound::Call( idSWFScriptObject* th
 {
 	int channel = SCHANNEL_ANY;
 	// specific channel passed in
-	if( parms.Num() > 1 )
-	{
+	if( parms.Num() > 1 ) {
 		channel = parms[1].ToInteger();
 	}
 
@@ -775,10 +684,8 @@ idSWF::idSWFScriptFunction_stopSounds::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_stopSounds::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-
 	int channel = SCHANNEL_ANY;
-	if( parms.Num() == 1 )
-	{
+	if( parms.Num() == 1 ) {
 		channel = parms[0].ToInteger();
 	}
 
@@ -804,10 +711,8 @@ idSWFScriptFunction_GetPlatform::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_getTruePlatform::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-
 	return 2;
 }
-
 
 /*
 ========================
@@ -816,15 +721,13 @@ idSWFScriptFunction_GetPlatform::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_strReplace::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-
-	if( parms.Num() != 3 )
-	{
+	if( parms.Num() != 3 ) {
 		return "";
 	}
 
-	idStr str = parms[0].ToString();
+	idStr str		= parms[0].ToString();
 	idStr repString = parms[1].ToString();
-	idStr val = parms[2].ToString();
+	idStr val		= parms[2].ToString();
 	str.Replace( repString, val );
 
 	return str;
@@ -837,9 +740,7 @@ idSWFScriptFunction_GetPlatform::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_getLocalString::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-
-	if( parms.Num() == 0 )
-	{
+	if( parms.Num() == 0 ) {
 		return idSWFScriptVar();
 	}
 
@@ -862,11 +763,10 @@ bool idSWF::UseCircleForAccept()
 idSWF::GetPlatform
 ========================
 */
-int	idSWF::GetPlatform()
+int idSWF::GetPlatform()
 {
 	// Leyland VR
-	if( in_useJoystick.GetBool() || vrSystem->IsActive() || forceNonPCPlatform )
-	{
+	if( in_useJoystick.GetBool() || vrSystem->IsActive() || forceNonPCPlatform ) {
 		forceNonPCPlatform = false;
 		return 0;
 	}
@@ -912,8 +812,7 @@ idSWF::idSWFScriptFunction_acos::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_acos::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 1 )
-	{
+	if( parms.Num() != 1 ) {
 		return idSWFScriptVar();
 	}
 	return idMath::ACos( parms[0].ToFloat() );
@@ -926,8 +825,7 @@ idSWF::idSWFScriptFunction_cos::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_cos::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 1 )
-	{
+	if( parms.Num() != 1 ) {
 		return idSWFScriptVar();
 	}
 	return idMath::Cos( parms[0].ToFloat() );
@@ -940,8 +838,7 @@ idSWF::idSWFScriptFunction_sin::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_sin::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 1 )
-	{
+	if( parms.Num() != 1 ) {
 		return idSWFScriptVar();
 	}
 	return ( idMath::Sin( parms[0].ToFloat() ) );
@@ -954,8 +851,7 @@ idSWF::idSWFScriptFunction_round::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_round::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 1 )
-	{
+	if( parms.Num() != 1 ) {
 		return idSWFScriptVar();
 	}
 	int value = idMath::Ftoi( parms[0].ToFloat() + 0.5f );
@@ -969,8 +865,7 @@ idSWF::idSWFScriptFunction_pow::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_pow::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 2 )
-	{
+	if( parms.Num() != 2 ) {
 		return idSWFScriptVar();
 	}
 
@@ -986,8 +881,7 @@ idSWF::idSWFScriptFunction_pow::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_sqrt::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 1 )
-	{
+	if( parms.Num() != 1 ) {
 		return idSWFScriptVar();
 	}
 
@@ -1002,8 +896,7 @@ idSWF::idSWFScriptFunction_abs::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_abs::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 1 )
-	{
+	if( parms.Num() != 1 ) {
 		return idSWFScriptVar();
 	}
 
@@ -1020,8 +913,7 @@ idSWFScriptVar idSWF::idSWFScriptFunction_rand::Call( idSWFScriptObject* thisObj
 {
 	float min = 0.0f;
 	float max = 1.0f;
-	switch( parms.Num() )
-	{
+	switch( parms.Num() ) {
 		case 0:
 			break;
 		case 1:
@@ -1042,8 +934,7 @@ idSWFScriptFunction_floor::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_floor::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 1 || !parms[0].IsNumeric() )
-	{
+	if( parms.Num() != 1 || !parms[0].IsNumeric() ) {
 		idLib::Warning( "Invalid parameters specified for floor" );
 		return idSWFScriptVar();
 	}
@@ -1060,8 +951,7 @@ idSWFScriptFunction_ceil::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_ceil::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 1 || !parms[0].IsNumeric() )
-	{
+	if( parms.Num() != 1 || !parms[0].IsNumeric() ) {
 		idLib::Warning( "Invalid parameters specified for ceil" );
 		return idSWFScriptVar();
 	}
@@ -1078,8 +968,7 @@ idSWFScriptFunction_toUpper::Call
 */
 idSWFScriptVar idSWF::idSWFScriptFunction_toUpper::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
-	if( parms.Num() != 1 || !parms[0].IsString() )
-	{
+	if( parms.Num() != 1 || !parms[0].IsString() ) {
 		idLib::Warning( "Invalid parameters specified for toUpper" );
 		return idSWFScriptVar();
 	}
@@ -1123,13 +1012,11 @@ idSWFScriptVar idSWF::idSWFScriptFunction_shortcutKeys_clear::Call( idSWFScriptO
 	object->Set( "MWHEELUP", "MWHEEL_UP" );
 	object->Set( "K_TAB", "TAB" );
 
-
 	// FIXME: I'm an RTARD and didn't realize the keys all have "ARROW" after them
 	object->Set( "LEFTARROW", "LEFT" );
 	object->Set( "RIGHTARROW", "RIGHT" );
 	object->Set( "UPARROW", "UP" );
 	object->Set( "DOWNARROW", "DOWN" );
-
 
 	return idSWFScriptVar();
 }
@@ -1159,34 +1046,30 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 {
 	bool exportSWF = false;
 
-	for( int i = 1; i < args.Argc(); i++ )
-	{
+	for( int i = 1; i < args.Argc(); i++ ) {
 		idStr option = args.Argv( i );
 		option.StripLeading( '-' );
 
-		if( option.Icmp( "swf" ) == 0 )
-		{
+		if( option.Icmp( "swf" ) == 0 ) {
 			exportSWF = true;
 		}
 	}
 
 	idFileList* files = fileSystem->ListFilesTree( "generated/swf", ".bswf", true, true );
 
-	for( int f = 0; f < files->GetList().Num(); f++ )
-	{
-		idStr bswfName = files->GetList()[ f ];
+	for( int f = 0; f < files->GetList().Num(); f++ ) {
+		idStr bswfName = files->GetList()[f];
 
 #if 1
 		// only export hud for testing
-		if( idStr::Icmp( bswfName, "generated/swf/hud.bswf" ) != 0 )
-		{
+		if( idStr::Icmp( bswfName, "generated/swf/hud.bswf" ) != 0 ) {
 			continue;
 		}
 #endif
 
 		bswfName.StripLeadingOnce( "generated/" );
 
-		idSWF* swf = new idSWF( bswfName, NULL, true, true, true ); //exportSWF );
+		idSWF* swf = new idSWF( bswfName, NULL, true, true, true ); // exportSWF );
 		delete swf;
 	}
 

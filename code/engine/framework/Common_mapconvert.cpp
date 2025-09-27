@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,43 +32,38 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../renderer/Image.h"
 
-
-
 class OBJExporter
 {
 public:
-	struct OBJFace
-	{
-		const idMaterial*			material;
-		idList<idDrawVert>			verts;
-		idList<triIndex_t>			indexes;
+	struct OBJFace {
+		const idMaterial*  material;
+		idList<idDrawVert> verts;
+		idList<triIndex_t> indexes;
 	};
 
-	struct OBJObject
-	{
-		idStr						name;
-		idList<OBJFace>				faces;
+	struct OBJObject {
+		idStr			name;
+		idList<OBJFace> faces;
 	};
 
-	struct OBJGroup
-	{
-		idStr						name;
-		idList<OBJObject>			objects;
+	struct OBJGroup {
+		idStr			  name;
+		idList<OBJObject> objects;
 	};
 
-	idList<OBJGroup>				groups;
-	idList< const idMaterial* >		materials;
+	idList<OBJGroup>		  groups;
+	idList<const idMaterial*> materials;
 
-	void	ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush, int entityNum, int primitiveNum, const idMat4& transform );
-	void	ConvertPatchToOBJ( OBJGroup& group, const idMapPatch* patch, int entityNum, int primitiveNum, const idMat4& transform );
-	void	ConvertMeshToOBJ( OBJGroup& group, const MapPolygonMesh* mesh, int entityNum, int primitiveNum, const idMat4& transform );
+	void					  ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush, int entityNum, int primitiveNum, const idMat4& transform );
+	void					  ConvertPatchToOBJ( OBJGroup& group, const idMapPatch* patch, int entityNum, int primitiveNum, const idMat4& transform );
+	void					  ConvertMeshToOBJ( OBJGroup& group, const MapPolygonMesh* mesh, int entityNum, int primitiveNum, const idMat4& transform );
 
-	void	Write( const char* relativePath, const char* basePath = "fs_basepath" );
+	void					  Write( const char* relativePath, const char* basePath = "fs_basepath" );
 };
 
 void OBJExporter::Write( const char* relativePath, const char* basePath )
 {
-	idStrStatic< MAX_OSPATH > convertedFileName = relativePath;
+	idStrStatic<MAX_OSPATH> convertedFileName = relativePath;
 
 	convertedFileName.SetFileExtension( ".obj" );
 	idFileLocal objFile( fileSystem->OpenFileWrite( convertedFileName, basePath ) );
@@ -75,89 +71,74 @@ void OBJExporter::Write( const char* relativePath, const char* basePath )
 	convertedFileName.SetFileExtension( ".mtl" );
 	idFileLocal mtlFile( fileSystem->OpenFileWrite( convertedFileName, basePath ) );
 
-	int totalVerts = 0;
+	int			totalVerts = 0;
 
-	for( int g = 0; g < groups.Num(); g++ )
-	{
+	for( int g = 0; g < groups.Num(); g++ ) {
 		const OBJGroup& group = groups[g];
 
 		objFile->Printf( "g %s\n", group.name.c_str() );
 
-		for( int o = 0; o < group.objects.Num(); o++ )
-		{
+		for( int o = 0; o < group.objects.Num(); o++ ) {
 			const OBJObject& geometry = group.objects[o];
 
-			//objFile->Printf( "g %s\n", group.name.c_str() );
-			//objFile->Printf( "o %s\n", geometry.name.c_str() );
+			// objFile->Printf( "g %s\n", group.name.c_str() );
+			// objFile->Printf( "o %s\n", geometry.name.c_str() );
 
-			for( int i = 0; i < geometry.faces.Num(); i++ )
-			{
+			for( int i = 0; i < geometry.faces.Num(); i++ ) {
 				const OBJFace& face = geometry.faces[i];
 
-				for( int j = 0; j < face.verts.Num(); j++ )
-				{
+				for( int j = 0; j < face.verts.Num(); j++ ) {
 					const idVec3& v = face.verts[j].xyz;
 
 					objFile->Printf( "v %1.6f %1.6f %1.6f\n", v.x, v.y, v.z );
 				}
 
-				for( int j = 0; j < face.verts.Num(); j++ )
-				{
+				for( int j = 0; j < face.verts.Num(); j++ ) {
 					const idVec2& vST = face.verts[j].GetTexCoord();
 
 					objFile->Printf( "vt %1.6f %1.6f\n", vST.x, vST.y );
 				}
 
-				for( int j = 0; j < face.verts.Num(); j++ )
-				{
+				for( int j = 0; j < face.verts.Num(); j++ ) {
 					const idVec3& n = face.verts[j].GetNormal();
 
 					objFile->Printf( "vn %1.6f %1.6f %1.6f\n", n.x, n.y, n.z );
 				}
 
-				//objFile->Printf( "g %s\n", group.name.c_str() );
-				//objFile->Printf( "o %s\n", geometry.name.c_str() );
+				// objFile->Printf( "g %s\n", group.name.c_str() );
+				// objFile->Printf( "o %s\n", geometry.name.c_str() );
 				objFile->Printf( "usemtl %s\n", face.material->GetName() );
 
 				objFile->Printf( "f " );
-				//for( int j = 0; j < face.indexes.Num(); j++ )
+				// for( int j = 0; j < face.indexes.Num(); j++ )
 
 				// flip order for OBJ
-				for( int j = face.indexes.Num() - 1; j >= 0; j-- )
-				{
-					objFile->Printf( "%i/%i/%i ",
-									 face.indexes[j] + 1 + totalVerts,
-									 face.indexes[j] + 1 + totalVerts,
-									 face.indexes[j] + 1 + totalVerts );
+				for( int j = face.indexes.Num() - 1; j >= 0; j-- ) {
+					objFile->Printf( "%i/%i/%i ", face.indexes[j] + 1 + totalVerts, face.indexes[j] + 1 + totalVerts, face.indexes[j] + 1 + totalVerts );
 				}
 
 				objFile->Printf( "\n\n" );
 			}
 
-			for( int i = 0; i < geometry.faces.Num(); i++ )
-			{
+			for( int i = 0; i < geometry.faces.Num(); i++ ) {
 				const OBJFace& face = geometry.faces[i];
 				totalVerts += face.verts.Num();
 			}
 		}
 	}
 
-	for( int i = 0; i < materials.Num(); i++ )
-	{
+	for( int i = 0; i < materials.Num(); i++ ) {
 		const idMaterial* material = materials[i];
 
 		mtlFile->Printf( "newmtl %s\n", material->GetName() );
 
-		if( material->GetFastPathDiffuseImage() )
-		{
+		if( material->GetFastPathDiffuseImage() ) {
 			idStr path = material->GetFastPathDiffuseImage()->GetName();
 			path.SlashesToBackSlashes();
 			path.DefaultFileExtension( ".tga" );
 
 			mtlFile->Printf( "\tmap_Kd //..\\..\\..\\%s\n", path.c_str() );
-		}
-		else if( material->GetEditorImage() )
-		{
+		} else if( material->GetEditorImage() ) {
 			idStr path = material->GetEditorImage()->GetName();
 			path.SlashesToBackSlashes();
 			path.DefaultFileExtension( ".tga" );
@@ -165,11 +146,9 @@ void OBJExporter::Write( const char* relativePath, const char* basePath )
 			mtlFile->Printf( "\tmap_Kd //..\\..\\..\\%s\n", path.c_str() );
 		}
 
-
 		mtlFile->Printf( "\n" );
 	}
 }
-
 
 void OBJExporter::ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush, int entityNum, int primitiveNum, const idMat4& transform )
 {
@@ -178,67 +157,56 @@ void OBJExporter::ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush
 	geometry.name.Format( "Primitive.%i", primitiveNum );
 
 	// fix degenerate planes
-	idPlane* planes = ( idPlane* ) _alloca16( mapBrush->GetNumSides() * sizeof( planes[0] ) );
-	for( int i = 0; i < mapBrush->GetNumSides(); i++ )
-	{
+	idPlane* planes = ( idPlane* )_alloca16( mapBrush->GetNumSides() * sizeof( planes[0] ) );
+	for( int i = 0; i < mapBrush->GetNumSides(); i++ ) {
 		planes[i] = mapBrush->GetSide( i )->GetPlane();
 		planes[i].FixDegeneracies( DEGENERATE_DIST_EPSILON );
 	}
 
-	//idFixedWinding w;
+	// idFixedWinding w;
 	idList<idFixedWinding> planeWindings;
-	idBounds bounds;
+	idBounds			   bounds;
 	bounds.Clear();
 
-	int numVerts = 0;
-	int numIndexes = 0;
+	int	 numVerts	= 0;
+	int	 numIndexes = 0;
 
 	bool badBrush = false;
 
-
-
-	for( int i = 0; i < mapBrush->GetNumSides(); i++ )
-	{
-		idMapBrushSide* mapSide = mapBrush->GetSide( i );
+	for( int i = 0; i < mapBrush->GetNumSides(); i++ ) {
+		idMapBrushSide*	  mapSide = mapBrush->GetSide( i );
 
 		const idMaterial* material = declManager->FindMaterial( mapSide->GetMaterial() );
-		//contents |= ( material->GetContentFlags() & CONTENTS_REMOVE_UTIL );
+		// contents |= ( material->GetContentFlags() & CONTENTS_REMOVE_UTIL );
 		materials.AddUnique( material );
 
 		// chop base plane by other brush sides
 		idFixedWinding& w = planeWindings.Alloc();
 		w.BaseForPlane( -planes[i] );
 
-		if( !w.GetNumPoints() )
-		{
+		if( !w.GetNumPoints() ) {
 			common->Printf( "Entity %i, Brush %i: base winding has no points\n", entityNum, primitiveNum );
 			badBrush = true;
 		}
 
-		for( int j = 0; j < mapBrush->GetNumSides() && w.GetNumPoints(); j++ )
-		{
-			if( i == j )
-			{
+		for( int j = 0; j < mapBrush->GetNumSides() && w.GetNumPoints(); j++ ) {
+			if( i == j ) {
 				continue;
 			}
 
-
-			if( !w.ClipInPlace( -planes[j], 0 ) )
-			{
+			if( !w.ClipInPlace( -planes[j], 0 ) ) {
 				// no intersection
-				//badBrush = true;
+				// badBrush = true;
 				common->Printf( "Entity %i, Brush %i: no intersection with other brush plane\n", entityNum, primitiveNum );
-				//break;
+				// break;
 			}
 		}
 
-		if( w.GetNumPoints() <= 2 )
-		{
+		if( w.GetNumPoints() <= 2 ) {
 			continue;
 		}
 
-		for( int j = 0; j < w.GetNumPoints(); j++ )
-		{
+		for( int j = 0; j < w.GetNumPoints(); j++ ) {
 			const idVec3& v = w[j].ToVec3();
 			bounds.AddPoint( v );
 		}
@@ -247,13 +215,11 @@ void OBJExporter::ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush
 	// allocate the surface
 
 	// copy the data from the windings and build polygons
-	for( int i = 0; i < mapBrush->GetNumSides(); i++ )
-	{
+	for( int i = 0; i < mapBrush->GetNumSides(); i++ ) {
 		idMapBrushSide* mapSide = mapBrush->GetSide( i );
 
 		idFixedWinding& w = planeWindings[i];
-		if( !w.GetNumPoints() )
-		{
+		if( !w.GetNumPoints() ) {
 			continue;
 		}
 
@@ -261,9 +227,8 @@ void OBJExporter::ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush
 
 		face.material = declManager->FindMaterial( mapSide->GetMaterial() );
 
-		for( int j = 0; j < w.GetNumPoints(); j++ )
-		{
-			idDrawVert& dv = face.verts.Alloc();
+		for( int j = 0; j < w.GetNumPoints(); j++ ) {
+			idDrawVert&	  dv = face.verts.Alloc();
 
 			const idVec3& xyz = w[j].ToVec3();
 
@@ -278,21 +243,17 @@ void OBJExporter::ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush
 			st.y = ( xyz * texVec[1].ToVec3() ) + texVec[1][3];
 
 			// RB: support Valve 220 projection
-			if( ( mapSide->GetProjectionType() == idMapBrushSide::PROJECTION_VALVE220 ) )
-			{
+			if( ( mapSide->GetProjectionType() == idMapBrushSide::PROJECTION_VALVE220 ) ) {
 				const idMaterial* material = declManager->FindMaterial( mapSide->GetMaterial() );
 
 				// RB: TODO
-				idVec2i texSize;
+				idVec2i			  texSize;
 
-				idImage* image = material->GetEditorImage();
-				if( image != NULL )
-				{
+				idImage*		  image = material->GetEditorImage();
+				if( image != NULL ) {
 					texSize.x = image->GetUploadWidth();
 					texSize.y = image->GetUploadHeight();
-				}
-				else
-				{
+				} else {
 					texSize = mapSide->GetTextureSize();
 				}
 
@@ -308,10 +269,10 @@ void OBJExporter::ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush
 			// copy normal
 			dv.SetNormal( transform * mapSide->GetPlane().Normal() );
 
-			//if( dv->GetNormal().Length() < 0.9 || dv->GetNormal().Length() > 1.1 )
+			// if( dv->GetNormal().Length() < 0.9 || dv->GetNormal().Length() > 1.1 )
 			//{
 			//	common->Error( "Bad normal in TriListForSide" );
-			//}
+			// }
 		}
 
 #if 0
@@ -325,11 +286,10 @@ void OBJExporter::ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush
 #else
 		// export n-gon
 
-		//for( int j = 0; j < w.GetNumPoints(); j++ )
+		// for( int j = 0; j < w.GetNumPoints(); j++ )
 
 		// reverse order, so normal does not point inwards
-		for( int j = w.GetNumPoints() - 1; j >= 0; j-- )
-		{
+		for( int j = w.GetNumPoints() - 1; j >= 0; j-- ) {
 			face.indexes.Append( numVerts + j );
 		}
 #endif
@@ -337,7 +297,6 @@ void OBJExporter::ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush
 		numVerts += w.GetNumPoints();
 	}
 }
-
 
 void OBJExporter::ConvertPatchToOBJ( OBJGroup& group, const idMapPatch* patch, int entityNum, int primitiveNum, const idMat4& transform )
 {
@@ -347,22 +306,18 @@ void OBJExporter::ConvertPatchToOBJ( OBJGroup& group, const idMapPatch* patch, i
 
 	idSurface_Patch* cp = new idSurface_Patch( *patch );
 
-	if( patch->GetExplicitlySubdivided() )
-	{
+	if( patch->GetExplicitlySubdivided() ) {
 		cp->SubdivideExplicit( patch->GetHorzSubdivisions(), patch->GetVertSubdivisions(), true );
-	}
-	else
-	{
+	} else {
 		cp->Subdivide( DEFAULT_CURVE_MAX_ERROR, DEFAULT_CURVE_MAX_ERROR, DEFAULT_CURVE_MAX_LENGTH, true );
 	}
 
 	const idMaterial* material = declManager->FindMaterial( patch->GetMaterial() );
 	materials.AddUnique( material );
 
-	for( int i = 0; i < cp->GetNumIndexes(); i += 3 )
-	{
+	for( int i = 0; i < cp->GetNumIndexes(); i += 3 ) {
 		OBJExporter::OBJFace& face = geometry.faces.Alloc();
-		face.material = material;
+		face.material			   = material;
 
 		idDrawVert& dv0 = face.verts.Alloc();
 		idDrawVert& dv1 = face.verts.Alloc();
@@ -376,9 +331,9 @@ void OBJExporter::ConvertPatchToOBJ( OBJGroup& group, const idMapPatch* patch, i
 		dv1.xyz = ( transform * idVec4( dv1.xyz.x, dv1.xyz.y, dv1.xyz.z, 1 ) ).ToVec3();
 		dv2.xyz = ( transform * idVec4( dv2.xyz.x, dv2.xyz.y, dv2.xyz.z, 1 ) ).ToVec3();
 
-		//face.indexes.Append( cp->GetIndexes()[i + 0] );
-		//face.indexes.Append( cp->GetIndexes()[i + 1] );
-		//face.indexes.Append( cp->GetIndexes()[i + 2] );
+		// face.indexes.Append( cp->GetIndexes()[i + 0] );
+		// face.indexes.Append( cp->GetIndexes()[i + 1] );
+		// face.indexes.Append( cp->GetIndexes()[i + 2] );
 
 		face.indexes.Append( i + 0 );
 		face.indexes.Append( i + 1 );
@@ -396,22 +351,20 @@ void OBJExporter::ConvertMeshToOBJ( OBJGroup& group, const MapPolygonMesh* mesh,
 
 	const idList<idDrawVert>& verts = mesh->GetDrawVerts();
 
-	int numVerts = 0;
+	int						  numVerts = 0;
 
-	for( int i = 0; i < mesh->GetNumPolygons(); i++ )
-	{
+	for( int i = 0; i < mesh->GetNumPolygons(); i++ ) {
 		const MapPolygon& poly = mesh->GetFace( i );
 
 		const idMaterial* material = declManager->FindMaterial( poly.GetMaterial() );
 		materials.AddUnique( material );
 
 		OBJExporter::OBJFace& face = geometry.faces.Alloc();
-		face.material = material;
+		face.material			   = material;
 
 		const idList<int>& indexes = poly.GetIndexes();
 
-		for( int j = 0; j < verts.Num(); j++ )
-		{
+		for( int j = 0; j < verts.Num(); j++ ) {
 			idDrawVert& dv = face.verts.Alloc();
 
 			dv = verts[j];
@@ -432,8 +385,7 @@ void OBJExporter::ConvertMeshToOBJ( OBJGroup& group, const MapPolygonMesh* mesh,
 			face.indexes.Append( numVerts );
 		}
 #else
-		for( int j = 0; j < indexes.Num(); j++ )
-		{
+		for( int j = 0; j < indexes.Num(); j++ ) {
 			int index = indexes[j];
 
 			face.indexes.Append( numVerts + index );
@@ -444,20 +396,17 @@ void OBJExporter::ConvertMeshToOBJ( OBJGroup& group, const MapPolygonMesh* mesh,
 	}
 }
 
-
 CONSOLE_COMMAND( exportMapToOBJ, "Convert .map file to .obj/.mtl ", idCmdSystem::ArgCompletion_MapName )
 {
 	common->SetRefreshOnPrint( true );
 
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		common->Printf( "Usage: exportMapToOBJ <map>\n" );
 		return;
 	}
 
 	idStr filename = args.Argv( 1 );
-	if( !filename.Length() )
-	{
+	if( !filename.Length() ) {
 		return;
 	}
 	filename.StripFileExtension();
@@ -466,17 +415,14 @@ CONSOLE_COMMAND( exportMapToOBJ, "Convert .map file to .obj/.mtl ", idCmdSystem:
 	sprintf( mapName, "maps/%s.map", filename.c_str() );
 
 	idMapFile map;
-	if( map.Parse( mapName, false, false ) )
-	{
+	if( map.Parse( mapName, false, false ) ) {
 		OBJExporter exporter;
 
-		int count = map.GetNumEntities();
-		for( int j = 0; j < count; j++ )
-		{
+		int			count = map.GetNumEntities();
+		for( int j = 0; j < count; j++ ) {
 			idMapEntity* ent = map.GetEntity( j );
-			if( ent )
-			{
-				idStr classname = ent->epairs.GetString( "classname" );
+			if( ent ) {
+				idStr  classname = ent->epairs.GetString( "classname" );
 
 				idVec3 origin;
 				origin.Zero();
@@ -484,29 +430,21 @@ CONSOLE_COMMAND( exportMapToOBJ, "Convert .map file to .obj/.mtl ", idCmdSystem:
 				idMat3 rot;
 				rot.Identity();
 
-				if( ent->GetNumPrimitives() )
-				{
+				if( ent->GetNumPrimitives() ) {
 					OBJExporter::OBJGroup& group = exporter.groups.Alloc();
 
-					if( classname == "worldspawn" )
-					{
+					if( classname == "worldspawn" ) {
 						group.name = "BSP";
-					}
-					else
-					{
+					} else {
 						group.name = ent->epairs.GetString( "name" );
 
 						origin = ent->epairs.GetVector( "origin", "0 0 0" );
 
-						if( !ent->epairs.GetMatrix( "rotation", "1 0 0 0 1 0 0 0 1", rot ) )
-						{
+						if( !ent->epairs.GetMatrix( "rotation", "1 0 0 0 1 0 0 0 1", rot ) ) {
 							float angle = ent->epairs.GetFloat( "angle" );
-							if( angle != 0.0f )
-							{
+							if( angle != 0.0f ) {
 								rot = idAngles( 0.0f, angle, 0.0f ).ToMat3();
-							}
-							else
-							{
+							} else {
 								rot.Identity();
 							}
 						}
@@ -514,32 +452,28 @@ CONSOLE_COMMAND( exportMapToOBJ, "Convert .map file to .obj/.mtl ", idCmdSystem:
 
 					idMat4 transform( rot, origin );
 
-					for( int i = 0; i < ent->GetNumPrimitives(); i++ )
-					{
-						idMapPrimitive*	mapPrim;
+					for( int i = 0; i < ent->GetNumPrimitives(); i++ ) {
+						idMapPrimitive* mapPrim;
 
 						mapPrim = ent->GetPrimitive( i );
-						if( mapPrim->GetType() == idMapPrimitive::TYPE_BRUSH )
-						{
+						if( mapPrim->GetType() == idMapPrimitive::TYPE_BRUSH ) {
 							exporter.ConvertBrushToOBJ( group, static_cast<idMapBrush*>( mapPrim ), j, i, transform );
 							continue;
 						}
 
-						if( mapPrim->GetType() == idMapPrimitive::TYPE_PATCH )
-						{
+						if( mapPrim->GetType() == idMapPrimitive::TYPE_PATCH ) {
 							exporter.ConvertPatchToOBJ( group, static_cast<idMapPatch*>( mapPrim ), j, i, transform );
 							continue;
 						}
 
-						if( mapPrim->GetType() == idMapPrimitive::TYPE_MESH )
-						{
+						if( mapPrim->GetType() == idMapPrimitive::TYPE_MESH ) {
 							exporter.ConvertMeshToOBJ( group, static_cast<MapPolygonMesh*>( mapPrim ), j, i, transform );
 							continue;
 						}
 					}
 				}
 
-				//Hack: for info_location
+				// Hack: for info_location
 				/*
 				bool hasLocation = false;
 
@@ -573,15 +507,15 @@ CONSOLE_COMMAND( exportMapToOBJ, "Convert .map file to .obj/.mtl ", idCmdSystem:
 			}
 		}
 
-		idStrStatic< MAX_OSPATH > canonical = mapName;
+		idStrStatic<MAX_OSPATH> canonical = mapName;
 		canonical.ToLower();
 
-		idStrStatic< MAX_OSPATH > extension;
+		idStrStatic<MAX_OSPATH> extension;
 		canonical.ExtractFileExtension( extension );
 
-		idStrStatic< MAX_OSPATH > convertedFileName;
+		idStrStatic<MAX_OSPATH> convertedFileName;
 
-		//convertedFileName = "converted/";
+		// convertedFileName = "converted/";
 		convertedFileName = canonical;
 
 		exporter.Write( convertedFileName );
@@ -590,36 +524,17 @@ CONSOLE_COMMAND( exportMapToOBJ, "Convert .map file to .obj/.mtl ", idCmdSystem:
 	common->SetRefreshOnPrint( false );
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 CONSOLE_COMMAND( convertMap, "Convert .map file to new map format with polygons instead of brushes", idCmdSystem::ArgCompletion_MapNameNoJson )
 {
 	common->SetRefreshOnPrint( true );
 
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		common->Printf( "Usage: convertMap <map>\n" );
 		return;
 	}
 
 	idStr filename = args.Argv( 1 );
-	if( !filename.Length() )
-	{
+	if( !filename.Length() ) {
 		return;
 	}
 	filename.StripFileExtension();
@@ -628,17 +543,16 @@ CONSOLE_COMMAND( convertMap, "Convert .map file to new map format with polygons 
 	sprintf( mapName, "maps/%s.map", filename.c_str() );
 
 	idMapFile map;
-	if( map.Parse( mapName, true, false ) )
-	{
+	if( map.Parse( mapName, true, false ) ) {
 		map.ConvertToPolygonMeshFormat();
 
-		idStrStatic< MAX_OSPATH > canonical = mapName;
+		idStrStatic<MAX_OSPATH> canonical = mapName;
 		canonical.ToLower();
 
-		idStrStatic< MAX_OSPATH > extension;
+		idStrStatic<MAX_OSPATH> extension;
 		canonical.StripFileExtension();
 
-		idStrStatic< MAX_OSPATH > convertedFileName;
+		idStrStatic<MAX_OSPATH> convertedFileName;
 
 		convertedFileName = canonical;
 		convertedFileName += "_converted";
@@ -649,20 +563,17 @@ CONSOLE_COMMAND( convertMap, "Convert .map file to new map format with polygons 
 	common->SetRefreshOnPrint( false );
 }
 
-
 CONSOLE_COMMAND( convertMapToJSON, "Convert .map file to new .json map format with polygons instead of brushes", idCmdSystem::ArgCompletion_MapNameNoJson )
 {
 	common->SetRefreshOnPrint( true );
 
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		common->Printf( "Usage: convertMapToJSON <map>\n" );
 		return;
 	}
 
 	idStr filename = args.Argv( 1 );
-	if( !filename.Length() )
-	{
+	if( !filename.Length() ) {
 		return;
 	}
 	filename.StripFileExtension();
@@ -671,20 +582,19 @@ CONSOLE_COMMAND( convertMapToJSON, "Convert .map file to new .json map format wi
 	sprintf( mapName, "maps/%s.map", filename.c_str() );
 
 	idMapFile map;
-	if( map.Parse( mapName, true, false ) )
-	{
+	if( map.Parse( mapName, true, false ) ) {
 		map.ConvertToPolygonMeshFormat();
 
-		idStrStatic< MAX_OSPATH > canonical = mapName;
+		idStrStatic<MAX_OSPATH> canonical = mapName;
 		canonical.ToLower();
 
-		idStrStatic< MAX_OSPATH > extension;
+		idStrStatic<MAX_OSPATH> extension;
 		canonical.StripFileExtension();
 
-		idStrStatic< MAX_OSPATH > convertedFileName;
+		idStrStatic<MAX_OSPATH> convertedFileName;
 
 		convertedFileName = canonical;
-		//convertedFileName += "_converted";
+		// convertedFileName += "_converted";
 
 		map.WriteJSON( convertedFileName, ".json" );
 	}
@@ -696,15 +606,13 @@ CONSOLE_COMMAND_SHIP( convertMapToValve220, "Convert .map file to the Valve 220 
 {
 	common->SetRefreshOnPrint( true );
 
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		common->Printf( "Usage: convertMapToValve220 <map>\n" );
 		return;
 	}
 
 	idStr filename = args.Argv( 1 );
-	if( !filename.Length() )
-	{
+	if( !filename.Length() ) {
 		return;
 	}
 	filename.StripFileExtension();
@@ -713,8 +621,7 @@ CONSOLE_COMMAND_SHIP( convertMapToValve220, "Convert .map file to the Valve 220 
 	sprintf( mapName, "maps/%s.map", filename.c_str() );
 
 	idMapFile map;
-	if( map.Parse( mapName, true, false ) )
-	{
+	if( map.Parse( mapName, true, false ) ) {
 		// make sure we have access to all .bimage files for that map
 		fileSystem->BeginLevelLoad( filename, NULL, 0 );
 
@@ -722,13 +629,13 @@ CONSOLE_COMMAND_SHIP( convertMapToValve220, "Convert .map file to the Valve 220 
 
 		fileSystem->EndLevelLoad();
 
-		idStrStatic< MAX_OSPATH > canonical = mapName;
+		idStrStatic<MAX_OSPATH> canonical = mapName;
 		canonical.ToLower();
 
-		idStrStatic< MAX_OSPATH > extension;
+		idStrStatic<MAX_OSPATH> extension;
 		canonical.StripFileExtension();
 
-		idStrStatic< MAX_OSPATH > convertedFileName;
+		idStrStatic<MAX_OSPATH> convertedFileName;
 
 		convertedFileName = canonical;
 		convertedFileName += "_valve220";
@@ -741,19 +648,17 @@ CONSOLE_COMMAND_SHIP( convertMapToValve220, "Convert .map file to the Valve 220 
 
 CONSOLE_COMMAND( checkMapsForBrushEntities, "List all brush entities in all .map files", idCmdSystem::ArgCompletion_MapNameNoJson )
 {
-	//int totalImagesCount = 0;
+	// int totalImagesCount = 0;
 
 	idFileList* files = fileSystem->ListFilesTree( "maps/game", ".map", true, true );
 
-	idDict classTypeOverview;
+	idDict		classTypeOverview;
 
-	for( int f = 0; f < files->GetList().Num(); f++ )
-	{
-		idStr mapName = files->GetList()[ f ];
+	for( int f = 0; f < files->GetList().Num(); f++ ) {
+		idStr	  mapName = files->GetList()[f];
 
 		idMapFile map;
-		if( map.Parse( mapName, true, false ) )
-		{
+		if( map.Parse( mapName, true, false ) ) {
 			map.ClassifyEntitiesForTrenchBroom( classTypeOverview );
 		}
 	}
@@ -763,12 +668,10 @@ CONSOLE_COMMAND( checkMapsForBrushEntities, "List all brush entities in all .map
 	int n = classTypeOverview.GetNumKeyVals();
 
 	idLib::Printf( "BrushClasses:\n" );
-	for( int i = 0; i < n; i++ )
-	{
+	for( int i = 0; i < n; i++ ) {
 		const idKeyValue* kv = classTypeOverview.GetKeyVal( i );
 
-		if( kv->GetValue() == "BrushClass" )
-		{
+		if( kv->GetValue() == "BrushClass" ) {
 			idLib::Printf( "'%s'\n", kv->GetKey().c_str() );
 		}
 	}
@@ -787,31 +690,26 @@ CONSOLE_COMMAND( checkMapsForBrushEntities, "List all brush entities in all .map
 	*/
 
 	idLib::Printf( "\nMixedClasses:\n" );
-	for( int i = 0; i < n; i++ )
-	{
+	for( int i = 0; i < n; i++ ) {
 		const idKeyValue* kv = classTypeOverview.GetKeyVal( i );
 
-		if( kv->GetValue() == "Mixed" )
-		{
+		if( kv->GetValue() == "Mixed" ) {
 			idLib::Printf( "'%s'\n", kv->GetKey().c_str() );
 		}
 	}
 }
 
-
 CONSOLE_COMMAND_SHIP( convertMapQuakeToDoom, "Convert Quake .map in Valve 220 map format for Doom 3 BFG", idCmdSystem::ArgCompletion_MapNameNoJson )
 {
 	common->SetRefreshOnPrint( true );
 
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		common->Printf( "Usage: convertMapQuakeToDoom <map>\n" );
 		return;
 	}
 
 	idStr filename = args.Argv( 1 );
-	if( !filename.Length() )
-	{
+	if( !filename.Length() ) {
 		return;
 	}
 	filename.StripFileExtension();
@@ -820,19 +718,18 @@ CONSOLE_COMMAND_SHIP( convertMapQuakeToDoom, "Convert Quake .map in Valve 220 ma
 	sprintf( mapName, "maps/%s.map", filename.c_str() );
 
 	idMapFile map;
-	if( map.Parse( mapName, true, false ) )
-	{
+	if( map.Parse( mapName, true, false ) ) {
 		map.ConvertQuakeToDoom();
 
-		idStrStatic< MAX_OSPATH > canonical = mapName;
+		idStrStatic<MAX_OSPATH> canonical = mapName;
 		canonical.ToLower();
 
-		idStrStatic< MAX_OSPATH > extension;
+		idStrStatic<MAX_OSPATH> extension;
 		canonical.StripFileExtension();
 
-		//idStrStatic< MAX_OSPATH > convertedFileName;
-		//convertedFileName = canonical;
-		//convertedFileName += "_valve220";
+		// idStrStatic< MAX_OSPATH > convertedFileName;
+		// convertedFileName = canonical;
+		// convertedFileName += "_valve220";
 
 		map.Write( canonical, ".map" );
 	}

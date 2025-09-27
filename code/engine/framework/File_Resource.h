@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -42,16 +43,13 @@ class idResourceContainer;
 class idResourceCacheEntry
 {
 public:
-	idResourceCacheEntry()
-	{
-		Clear();
-	}
+	idResourceCacheEntry() { Clear(); }
 	void Clear()
 	{
 		filename.Empty();
 		offset = 0;
 		length = 0;
-		owner = NULL;
+		owner  = NULL;
 	}
 	size_t Read( idFile* f )
 	{
@@ -69,9 +67,9 @@ public:
 	}
 
 	// part of .resources file format
-	idStrStatic< 256 >	filename;
-	int					offset;							// into the resource file
-	int 				length;
+	idStrStatic<256>	 filename;
+	int					 offset; // into the resource file
+	int					 length;
 
 	// helpers only in memory
 	idResourceContainer* owner;
@@ -80,15 +78,15 @@ public:
 static const uint32 RESOURCE_FILE_MAGIC = 0xD000000D;
 class idResourceContainer
 {
-	friend class	idFileSystemLocal;
-	//friend class	idReadSpawnThread;
+	friend class idFileSystemLocal;
+	// friend class	idReadSpawnThread;
 public:
 	idResourceContainer()
 	{
-		resourceFile = NULL;
-		tableOffset = 0;
-		tableLength = 0;
-		resourceMagic = 0;
+		resourceFile	 = NULL;
+		tableOffset		 = 0;
+		tableLength		 = 0;
+		resourceMagic	 = 0;
 		numFileResources = 0;
 	}
 	~idResourceContainer()
@@ -96,35 +94,29 @@ public:
 		delete resourceFile;
 		cacheTable.Clear();
 	}
-	bool Init( const char* fileName );
+	bool		Init( const char* fileName );
 	static void WriteResourceFile( const char* fileName, const idStrList& manifest, const bool& _writeManifest );
 	static void WriteManifestFile( const char* name, const idStrList& list );
-	static int ReadManifestFile( const char* filename, idStrList& list );
+	static int	ReadManifestFile( const char* filename, idStrList& list );
 	static void ExtractResourceFile( const char* fileName, const char* outPath, bool copyWavs, bool all );
 	static void UpdateResourceFile( const char* filename, const idStrList& filesToAdd );
-	idFile* OpenFile( const char* fileName );
-	const char* GetFileName() const
-	{
-		return fileName.c_str();
-	}
-	void ReOpen();
+	idFile*		OpenFile( const char* fileName );
+	const char* GetFileName() const { return fileName.c_str(); }
+	void		ReOpen();
 
-	int GetNumFileResources() const
-	{
-		return numFileResources;
-	}
+	int			GetNumFileResources() const { return numFileResources; }
+
 private:
-	idStrStatic< 256 > fileName;
-	idFile* 	resourceFile;			// open file handle
+	idStrStatic<256>						   fileName;
+	idFile*									   resourceFile; // open file handle
 	// offset should probably be a 64 bit value for development, but 4 gigs won't fit on
 	// a DVD layer, so it isn't a retail limitation.
-	int		tableOffset;			// table offset
-	int		tableLength;			// table length
-	int		resourceMagic;			// magic
-	int		numFileResources;		// number of file resources in this container
-	idList< idResourceCacheEntry, TAG_RESOURCE>	cacheTable;
-	idHashIndex	cacheHash;
+	int										   tableOffset;		 // table offset
+	int										   tableLength;		 // table length
+	int										   resourceMagic;	 // magic
+	int										   numFileResources; // number of file resources in this container
+	idList<idResourceCacheEntry, TAG_RESOURCE> cacheTable;
+	idHashIndex								   cacheHash;
 };
-
 
 #endif /* !__FILE_RESOURCE_H__ */

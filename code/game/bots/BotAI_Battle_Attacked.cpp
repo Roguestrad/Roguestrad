@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -39,39 +40,35 @@ iceBot::state_Attacked
 stateResult_t iceBot::state_Attacked( stateParms_t* parms )
 {
 	// respawn if dead.
-	if( BotIsDead( &bs ) )
-	{
+	if( BotIsDead( &bs ) ) {
 		stateThread.SetState( "state_Respawn" );
 		return SRESULT_DONE_FRAME;
 	}
 
-	if( gameLocal.SysScriptTime() > bs.aggressiveAttackTime || bs.weaponnum == 0 )
-	{
+	if( gameLocal.SysScriptTime() > bs.aggressiveAttackTime || bs.weaponnum == 0 ) {
 		stateThread.SetState( "state_Retreat" );
 		return SRESULT_DONE;
 	}
 
 	// Ensure the target is a player.
 	idPlayer* entinfo = gameLocal.entities[bs.enemy]->Cast<idPlayer>();
-	if( !entinfo )
-	{
+	if( !entinfo ) {
 		stateThread.SetState( "state_SeekLTG" );
 		return SRESULT_DONE_FRAME;
 	}
 
 	// If our enemy is dead, search for another LTG.
-	if( EntityIsDead( entinfo ) )
-	{
+	if( EntityIsDead( entinfo ) ) {
 		stateThread.SetState( "state_SeekLTG" );
 		return SRESULT_DONE_FRAME;
 	}
 
 	bs.currentGoal.origin = bs.lastenemyorigin;
 
-	//aim at the enemy
+	// aim at the enemy
 	BotAimAtEnemy( &bs );
 
-	//attack the enemy if possible
+	// attack the enemy if possible
 	BotCheckAttack( &bs );
 
 	return SRESULT_WAIT;

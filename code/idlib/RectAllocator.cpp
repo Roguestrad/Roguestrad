@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,7 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "TileMap.h"
 #include "../libs/binpack2d/binpack2d.h"
-
 
 /*
 
@@ -52,22 +52,20 @@ or scale the input sizes down by that alignment and scale the outputPositions ba
 
 */
 
-float	RectPackingFraction( const idList<idVec2i>& inputSizes, const idVec2i totalSize )
+float RectPackingFraction( const idList<idVec2i>& inputSizes, const idVec2i totalSize )
 {
-	int	totalArea = totalSize.Area();
-	if( totalArea == 0 )
-	{
+	int totalArea = totalSize.Area();
+	if( totalArea == 0 ) {
 		return 0;
 	}
-	int	inputArea = 0;
-	for( int i = 0 ; i < inputSizes.Num() ; i++ )
-	{
+	int inputArea = 0;
+	for( int i = 0; i < inputSizes.Num(); i++ ) {
 		inputArea += inputSizes[i].Area();
 	}
 	return ( float )inputArea / totalArea;
 }
 
-class idSortrects : public idSort_Quick< int, idSortrects >
+class idSortrects : public idSort_Quick<int, idSortrects>
 {
 public:
 	int SizeMetric( idVec2i v ) const
@@ -87,15 +85,13 @@ public:
 void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX, const int imageMax )
 {
 	outputPositions.SetNum( inputSizes.Num() );
-	if( inputSizes.Num() == 0 )
-	{
+	if( inputSizes.Num() == 0 ) {
 		totalSize.Set( 0, 0 );
 		return;
 	}
 	idList<int> sizeRemap;
 	sizeRemap.SetNum( inputSizes.Num() );
-	for( int i = 0; i < inputSizes.Num(); i++ )
-	{
+	for( int i = 0; i < inputSizes.Num(); i++ ) {
 		sizeRemap[i] = i;
 	}
 
@@ -114,25 +110,20 @@ void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPo
 	// Somewhat better allocation could be had by checking all the combinations of x and y edges
 	// in the allocated rectangles, rather than just the corners of each rectangle, but it
 	// still does a pretty good job.
-	//static const int START_MAX = 1 << 14;
-	for( int i = 1; i < inputSizes.Num(); i++ )
-	{
-		idVec2i	best( 0, 0 );
-		idVec2i	bestMax( START_MAX, START_MAX );
-		idVec2i	size = inputSizes[sizeRemap[i]];
-		for( int j = 0; j < i; j++ )
-		{
-			for( int k = 1;  k < 4; k++ )
-			{
-				idVec2i	test;
-				for( int n = 0 ; n < 2 ; n++ )
-				{
+	// static const int START_MAX = 1 << 14;
+	for( int i = 1; i < inputSizes.Num(); i++ ) {
+		idVec2i best( 0, 0 );
+		idVec2i bestMax( START_MAX, START_MAX );
+		idVec2i size = inputSizes[sizeRemap[i]];
+		for( int j = 0; j < i; j++ ) {
+			for( int k = 1; k < 4; k++ ) {
+				idVec2i test;
+				for( int n = 0; n < 2; n++ ) {
 					test[n] = outputPositions[sizeRemap[j]][n] + ( ( k >> n ) & 1 ) * inputSizes[sizeRemap[j]][n];
 				}
 
-				idVec2i	newMax;
-				for( int n = 0 ; n < 2 ; n++ )
-				{
+				idVec2i newMax;
+				for( int n = 0; n < 2; n++ ) {
 					newMax[n] = Max( totalSize[n], test[n] + size[n] );
 				}
 				// widths must be multiples of 128 pixels / 32 DXT blocks to
@@ -142,85 +133,75 @@ void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPo
 
 				// don't let an image get larger than 1024 DXT block, or PS3 crashes
 				// FIXME: pass maxSize in as a parameter
-				//if( newMax[0] > 1024 || newMax[1] > 1024 )
+				// if( newMax[0] > 1024 || newMax[1] > 1024 )
 
-				if( imageMax > 0 && ( newMax[0] > imageMax || newMax[1] > imageMax ) )
-				{
+				if( imageMax > 0 && ( newMax[0] > imageMax || newMax[1] > imageMax ) ) {
 					continue;
 				}
 
 				// if we have already found a spot that keeps the image smaller, don't bother checking here
 				// This calculation biases the rect towards more square shapes instead of
 				// allowing it to extend in one dimension for a long time.
-				int	newSize = newMax.x * newMax.x + newMax.y * newMax.y;
-				int	bestSize = bestMax.x * bestMax.x + bestMax.y * bestMax.y;
-				if( newSize > bestSize )
-				{
+				int newSize	 = newMax.x * newMax.x + newMax.y * newMax.y;
+				int bestSize = bestMax.x * bestMax.x + bestMax.y * bestMax.y;
+				if( newSize > bestSize ) {
 					continue;
 				}
 
 				// if the image isn't required to grow, favor the location closest to the origin
-				if( newSize == bestSize && best.x + best.y < test.x + test.y )
-				{
+				if( newSize == bestSize && best.x + best.y < test.x + test.y ) {
 					continue;
 				}
 
 				// see if this spot overlaps any already allocated rect
 				int n = 0;
-				for( ; n < i; n++ )
-				{
-					const idVec2i& check = outputPositions[sizeRemap[n]];
+				for( ; n < i; n++ ) {
+					const idVec2i& check	 = outputPositions[sizeRemap[n]];
 					const idVec2i& checkSize = inputSizes[sizeRemap[n]];
-					if(	test.x + size.x > check.x &&
-							test.y + size.y > check.y &&
-							test.x < check.x + checkSize.x &&
-							test.y < check.y + checkSize.y )
-					{
+					if( test.x + size.x > check.x && test.y + size.y > check.y && test.x < check.x + checkSize.x && test.y < check.y + checkSize.y ) {
 						break;
 					}
 				}
-				if( n < i )
-				{
+				if( n < i ) {
 					// overlapped, can't use
 					continue;
 				}
-				best = test;
+				best	= test;
 				bestMax = newMax;
 			}
 		}
-		if( bestMax[0] == START_MAX )  	// FIXME: return an error code
+		if( bestMax[0] == START_MAX ) // FIXME: return an error code
 		{
 			idLib::FatalError( "RectAllocator: couldn't fit everything" );
 		}
 		outputPositions[sizeRemap[i]] = best;
-		totalSize = bestMax;
+		totalSize					  = bestMax;
 	}
 }
 
 // Maximum resolution of one tile within tiled shadow map. Resolution must be power of two and
 // square, since quad-tree for managing tiles will not work correctly otherwise. Furthermore
 // resolution must be at least 16.
-//#define MAX_TILE_RES 512
+// #define MAX_TILE_RES 512
 
 // Specifies how many levels the quad-tree for managing tiles within tiled shadow map should
 // have. The higher the value, the smaller the resolution of the smallest used tile will be.
 // In the current configuration of 8192 resolution and 8 levels, the smallest tile will have
 // a resolution of 64. 16 is the smallest allowed value for the min tile resolution.
-//#define NUM_QUAD_TREE_LEVELS 8
+// #define NUM_QUAD_TREE_LEVELS 8
 
-void RectAllocatorQuadTree( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int TILED_SM_RES, const int MAX_TILE_RES = 512, const int NUM_QUAD_TREE_LEVELS = 8 )
+void RectAllocatorQuadTree(
+	const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int TILED_SM_RES, const int MAX_TILE_RES = 512, const int NUM_QUAD_TREE_LEVELS = 8 )
 {
 	outputPositions.SetNum( inputSizes.Num() );
-	if( inputSizes.Num() == 0 )
-	{
+	if( inputSizes.Num() == 0 ) {
 		totalSize.Set( 0, 0 );
 		return;
 	}
 
 	idList<int> sizeRemap;
 	sizeRemap.SetNum( inputSizes.Num() );
-	for( int i = 0; i < inputSizes.Num(); i++ )
-	{
+	for( int i = 0; i < inputSizes.Num(); i++ ) {
 		sizeRemap[i] = i;
 	}
 
@@ -236,26 +217,21 @@ void RectAllocatorQuadTree( const idList<idVec2i>& inputSizes, idList<idVec2i>& 
 	totalSize.y = 0;
 
 	// initialize tile-map that will manage tiles within tiled shadow map
-	if( !tileMap.Init( TILED_SM_RES, MAX_TILE_RES, NUM_QUAD_TREE_LEVELS ) )
-	{
+	if( !tileMap.Init( TILED_SM_RES, MAX_TILE_RES, NUM_QUAD_TREE_LEVELS ) ) {
 		return;
 	}
 
-	for( int i = 0; i < inputSizes.Num(); i++ )
-	{
-		idVec2i	size = inputSizes[sizeRemap[i]];
+	for( int i = 0; i < inputSizes.Num(); i++ ) {
+		idVec2i size = inputSizes[sizeRemap[i]];
 
-		int area = Max( size.x, size.y );
+		int		area = Max( size.x, size.y );
 
-		Tile tile;
-		bool result = tileMap.GetTile( area, tile );
+		Tile	tile;
+		bool	result = tileMap.GetTile( area, tile );
 
-		if( !result )
-		{
+		if( !result ) {
 			outputPositions[sizeRemap[i]].Set( -1, -1 );
-		}
-		else
-		{
+		} else {
 			// convert from [-1..-1] -> [0..1] and flip y
 			idVec2 uvPos;
 			uvPos.x = tile.position.x * 0.5f + 0.5f;
@@ -264,13 +240,11 @@ void RectAllocatorQuadTree( const idList<idVec2i>& inputSizes, idList<idVec2i>& 
 			outputPositions[sizeRemap[i]].x = uvPos.x * TILED_SM_RES;
 			outputPositions[sizeRemap[i]].y = uvPos.y * TILED_SM_RES;
 
-			if( ( tile.position.x + tile.size ) > totalSize.x )
-			{
+			if( ( tile.position.x + tile.size ) > totalSize.x ) {
 				totalSize.x = tile.position.x + tile.size;
 			}
 
-			if( ( tile.position.y + tile.size ) > totalSize.y )
-			{
+			if( ( tile.position.y + tile.size ) > totalSize.y ) {
 				totalSize.y = tile.position.y + tile.size;
 			}
 		}
@@ -281,18 +255,23 @@ void RectAllocatorQuadTree( const idList<idVec2i>& inputSizes, idList<idVec2i>& 
 class MyContent
 {
 public:
-	int itemIndex;
+	int	  itemIndex;
 	idStr str;
-	MyContent() : str( "default string" ) {}
-	MyContent( const idStr& str ) : str( str ) {}
+	MyContent() :
+		str( "default string" )
+	{
+	}
+	MyContent( const idStr& str ) :
+		str( str )
+	{
+	}
 };
 
 void RectAllocatorBinPack2D( const idList<idVec2i>& inputSizes, const idStrList& inputNames, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX )
 {
 	outputPositions.SetNum( inputSizes.Num() );
 
-	if( inputSizes.Num() == 0 )
-	{
+	if( inputSizes.Num() == 0 ) {
 		totalSize.Set( 0, 0 );
 		return;
 	}
@@ -300,14 +279,13 @@ void RectAllocatorBinPack2D( const idList<idVec2i>& inputSizes, const idStrList&
 	// Create some 'content' to work on.
 	BinPack2D::ContentAccumulator<MyContent> inputContent;
 
-	for( int i = 0; i < inputSizes.Num(); i++ )
-	{
+	for( int i = 0; i < inputSizes.Num(); i++ ) {
 		// random size for this content
-		int width  = inputSizes[ i ].x;
-		int height = inputSizes[ i ].y;
+		int		  width	 = inputSizes[i].x;
+		int		  height = inputSizes[i].y;
 
 		// whatever data you want to associate with this content
-		MyContent mycontent( inputNames[ i ] );
+		MyContent mycontent( inputNames[i] );
 		mycontent.itemIndex = i;
 
 		// Add it
@@ -318,14 +296,13 @@ void RectAllocatorBinPack2D( const idList<idVec2i>& inputSizes, const idStrList&
 	inputContent.Sort();
 
 	// Create some bins! ( 2 bins, 128x128 in this example )
-	BinPack2D::CanvasArray<MyContent> canvasArray =
-		BinPack2D::UniformCanvasArrayBuilder<MyContent>( START_MAX, START_MAX, 2 ).Build();
+	BinPack2D::CanvasArray<MyContent>		 canvasArray = BinPack2D::UniformCanvasArrayBuilder<MyContent>( START_MAX, START_MAX, 2 ).Build();
 
 	// A place to store content that didnt fit into the canvas array.
 	BinPack2D::ContentAccumulator<MyContent> remainder;
 
 	// try to pack content into the bins.
-	bool success = canvasArray.Place( inputContent, remainder );
+	bool									 success = canvasArray.Place( inputContent, remainder );
 
 	// A place to store packed content.
 	BinPack2D::ContentAccumulator<MyContent> outputContent;
@@ -335,30 +312,27 @@ void RectAllocatorBinPack2D( const idList<idVec2i>& inputSizes, const idStrList&
 
 	// parse output.
 	typedef BinPack2D::Content<MyContent>::Vector::iterator binpack2d_iterator;
-	//idLib::Printf( "PLACED:\n" );
+	// idLib::Printf( "PLACED:\n" );
 
 	totalSize.x = 0;
 	totalSize.y = 0;
 
 	int i = 0;
-	for( binpack2d_iterator itor = outputContent.Get().begin(); itor != outputContent.Get().end(); itor++, i++ )
-	{
+	for( binpack2d_iterator itor = outputContent.Get().begin(); itor != outputContent.Get().end(); itor++, i++ ) {
 		const BinPack2D::Content<MyContent>& content = *itor;
 
 		// retreive your data.
-		const MyContent& myContent = content.content;
+		const MyContent&					 myContent = content.content;
 
-		int index = myContent.itemIndex;
-		outputPositions[ index ].x = content.coord.x;
-		outputPositions[ index ].y = content.coord.y;
+		int									 index = myContent.itemIndex;
+		outputPositions[index].x				   = content.coord.x;
+		outputPositions[index].y				   = content.coord.y;
 
-		if( ( content.coord.x + content.size.w ) > totalSize.x )
-		{
+		if( ( content.coord.x + content.size.w ) > totalSize.x ) {
 			totalSize.x = content.coord.x + content.size.w;
 		}
 
-		if( ( content.coord.y + content.size.h ) > totalSize.y )
-		{
+		if( ( content.coord.y + content.size.h ) > totalSize.y ) {
 			totalSize.y = content.coord.y + content.size.h;
 		}
 

@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -34,21 +35,22 @@ class iceWeaponGrabber : public iceWeaponObject
 public:
 	CLASS_PROTOTYPE( iceWeaponGrabber );
 
-	virtual void			Init( idWeapon* weapon );
+	virtual void  Init( idWeapon* weapon );
 
-	stateResult_t			Raise( stateParms_t* parms );
-	stateResult_t			Lower( stateParms_t* parms );
-	stateResult_t			Idle( stateParms_t* parms );
-	stateResult_t			Fire( stateParms_t* parms );
-	stateResult_t			Reload( stateParms_t* parms );
+	stateResult_t Raise( stateParms_t* parms );
+	stateResult_t Lower( stateParms_t* parms );
+	stateResult_t Idle( stateParms_t* parms );
+	stateResult_t Fire( stateParms_t* parms );
+	stateResult_t Reload( stateParms_t* parms );
+
 private:
-	void		StartActive();
-	void		StopActive();
+	void				 StartActive();
+	void				 StopActive();
 
-	void		StartWarningSound();
-	void		UpdateWarningSound();
+	void				 StartWarningSound();
+	void				 UpdateWarningSound();
 
-	void		UpdateGuiLight();
+	void				 UpdateGuiLight();
 
 	const idSoundShader* snd_fireloop;
 	const idSoundShader* snd_electroloop;
@@ -56,14 +58,15 @@ private:
 	const idSoundShader* snd_cangrab;
 	const idSoundShader* snd_warning;
 	const idSoundShader* snd_stopfire;
+
 private:
-	float		next_attack;
+	float next_attack;
 
-	float		fireStartTime;
-	bool		warningBeep1;
-	bool		warningBeep2;
-	bool		warningBeep3;
-	bool		warningBeep4;
+	float fireStartTime;
+	bool  warningBeep1;
+	bool  warningBeep2;
+	bool  warningBeep3;
+	bool  warningBeep4;
 
-	float		grabberState;
+	float grabberState;
 };

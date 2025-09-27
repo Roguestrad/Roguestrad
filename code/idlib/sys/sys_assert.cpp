@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -40,44 +41,39 @@ Contains the AssertMacro implementation.
 
 idCVar com_assertOutOfDebugger( "com_assertOutOfDebugger", "0", CVAR_BOOL, "by default, do not assert while not running under the debugger" );
 
-struct skippedAssertion_t
-{
+struct skippedAssertion_t {
 	skippedAssertion_t() :
 		file( NULL ),
 		line( -1 )
 	{
 	}
-	const char* 	file;
-	int				line;
+	const char* file;
+	int			line;
 };
-static idStaticList< skippedAssertion_t, 20 > skippedAssertions;
+static idStaticList<skippedAssertion_t, 20> skippedAssertions;
 
 /*
 ========================
 AssertFailed
 ========================
 */
-bool AssertFailed( const char* file, int line, const char* expression )
+bool										AssertFailed( const char* file, int line, const char* expression )
 {
 	// Set this to true to skip ALL assertions, including ones YOU CAUSE!
 	static volatile bool skipAllAssertions = false;
-	if( skipAllAssertions )
-	{
+	if( skipAllAssertions ) {
 		return false;
 	}
 
 	// Set this to true to skip ONLY this assertion
 	static volatile bool skipThisAssertion = false;
-	skipThisAssertion = false;
+	skipThisAssertion					   = false;
 
-	for( int i = 0; i < skippedAssertions.Num(); i++ )
-	{
-		if( skippedAssertions[i].file == file && skippedAssertions[i].line == line )
-		{
+	for( int i = 0; i < skippedAssertions.Num(); i++ ) {
+		if( skippedAssertions[i].file == file && skippedAssertions[i].line == line ) {
 			skipThisAssertion = true;
 			// Set breakpoint here to re-enable
-			if( !skipThisAssertion )
-			{
+			if( !skipThisAssertion ) {
 				skippedAssertions.RemoveIndexFast( i );
 			}
 			return false;
@@ -90,31 +86,29 @@ bool AssertFailed( const char* file, int line, const char* expression )
 #ifdef _WIN32
 	if( IsDebuggerPresent() || com_assertOutOfDebugger.GetBool() )
 #else
-	//if( com_assertOutOfDebugger.GetBool() )
+	// if( com_assertOutOfDebugger.GetBool() )
 #endif
-// RB end
+	// RB end
 	{
 #ifdef _WIN32
-#ifdef _MSC_VER
+	#ifdef _MSC_VER
 		__debugbreak();
-#else
+	#else
 		// DG: mingw support
 		DebugBreak();
-#endif
+	#endif
 #else // not _WIN32
-		// DG: POSIX support
+	  // DG: POSIX support
 		raise( SIGTRAP );
 		// DG: end
 #endif // _WIN32
 	}
 
-	if( skipThisAssertion )
-	{
+	if( skipThisAssertion ) {
 		skippedAssertion_t* skipped = skippedAssertions.Alloc();
-		skipped->file = file;
-		skipped->line = line;
+		skipped->file				= file;
+		skipped->line				= line;
 	}
 
 	return true;
 }
-

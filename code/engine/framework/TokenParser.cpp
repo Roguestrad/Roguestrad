@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,11 +32,10 @@ If you have questions concerning this license or the applicable additional terms
 
 void idTokenParser::LoadFromParser( idParser& parser, const char* guiName )
 {
-	idToken tok;
+	idToken		   tok;
 	idTokenIndexes tokIdxs;
 	tokIdxs.SetName( guiName );
-	while( parser.ReadToken( &tok ) )
-	{
+	while( parser.ReadToken( &tok ) ) {
 		tokIdxs.Append( tokens.AddUnique( idBinaryToken( tok ) ) );
 	}
 	guiTokenIndexes.Append( tokIdxs );
@@ -46,20 +46,17 @@ void idTokenParser::LoadFromFile( const char* filename )
 {
 	Clear();
 	idFile* inFile = fileSystem->OpenFileReadMemory( filename );
-	if( inFile != NULL )
-	{
+	if( inFile != NULL ) {
 		int num;
 		inFile->ReadBig( num );
 		guiTokenIndexes.SetNum( num );
-		for( int i = 0; i < num; i++ )
-		{
-			guiTokenIndexes[ i ].Read( inFile );
+		for( int i = 0; i < num; i++ ) {
+			guiTokenIndexes[i].Read( inFile );
 		}
 		inFile->ReadBig( num );
 		tokens.SetNum( num );
-		for( int i = 0; i < num; i++ )
-		{
-			tokens[ i ].Read( inFile );
+		for( int i = 0; i < num; i++ ) {
+			tokens[i].Read( inFile );
 		}
 	}
 	delete inFile;
@@ -68,22 +65,18 @@ void idTokenParser::LoadFromFile( const char* filename )
 
 void idTokenParser::WriteToFile( const char* filename )
 {
-	if( preloaded )
-	{
+	if( preloaded ) {
 		return;
 	}
 	idFile* outFile = fileSystem->OpenFileWrite( filename, "fs_basepath" );
-	if( outFile != NULL )
-	{
+	if( outFile != NULL ) {
 		outFile->WriteBig( ( int )guiTokenIndexes.Num() );
-		for( int i = 0; i < guiTokenIndexes.Num(); i++ )
-		{
-			guiTokenIndexes[ i ].Write( outFile );
+		for( int i = 0; i < guiTokenIndexes.Num(); i++ ) {
+			guiTokenIndexes[i].Write( outFile );
 		}
 		outFile->WriteBig( ( int )tokens.Num() );
-		for( int i = 0; i < tokens.Num(); i++ )
-		{
-			tokens[ i ].Write( outFile );
+		for( int i = 0; i < tokens.Num(); i++ ) {
+			tokens[i].Write( outFile );
 		}
 	}
 	delete outFile;
@@ -92,10 +85,8 @@ void idTokenParser::WriteToFile( const char* filename )
 bool idTokenParser::StartParsing( const char* filename )
 {
 	currentTokenList = -1;
-	for( int i = 0; i < guiTokenIndexes.Num(); i++ )
-	{
-		if( idStr::Icmp( filename, guiTokenIndexes[ i ].GetName() ) == 0 )
-		{
+	for( int i = 0; i < guiTokenIndexes.Num(); i++ ) {
+		if( idStr::Icmp( filename, guiTokenIndexes[i].GetName() ) == 0 ) {
 			currentTokenList = i;
 			break;
 		}
@@ -106,48 +97,42 @@ bool idTokenParser::StartParsing( const char* filename )
 
 bool idTokenParser::ReadToken( idToken* tok )
 {
-	if( currentToken >= 0 && currentToken < guiTokenIndexes[ currentTokenList ].Num() )
-	{
+	if( currentToken >= 0 && currentToken < guiTokenIndexes[currentTokenList].Num() ) {
 		tok->Clear();
-		idBinaryToken& btok = tokens[ guiTokenIndexes[ currentTokenList ][ currentToken ] ];
-		*tok = btok.token;
-		tok->type = btok.tokenType;
-		tok->subtype = btok.tokenSubType;
+		idBinaryToken& btok = tokens[guiTokenIndexes[currentTokenList][currentToken]];
+		*tok				= btok.token;
+		tok->type			= btok.tokenType;
+		tok->subtype		= btok.tokenSubType;
 		currentToken++;
 		return true;
 	}
 	return false;
 }
-int	idTokenParser::ExpectTokenString( const char* string )
+int idTokenParser::ExpectTokenString( const char* string )
 {
 	idToken token;
-	if( !ReadToken( &token ) )
-	{
+	if( !ReadToken( &token ) ) {
 		Error( "couldn't find expected '%s'", string );
 		return 0;
 	}
-	if( token != string )
-	{
+	if( token != string ) {
 		Error( "expected '%s' but found '%s'", string, token.c_str() );
 		return 0;
 	}
 	return 1;
 }
 // expect a certain token type
-int	idTokenParser::ExpectTokenType( int type, int subtype, idToken* token )
+int idTokenParser::ExpectTokenType( int type, int subtype, idToken* token )
 {
 	idStr str;
 
-	if( !ReadToken( token ) )
-	{
+	if( !ReadToken( token ) ) {
 		Error( "couldn't read expected token" );
 		return 0;
 	}
 
-	if( token->type != type )
-	{
-		switch( type )
-		{
+	if( token->type != type ) {
+		switch( type ) {
 			case TT_STRING:
 				str = "string";
 				break;
@@ -170,58 +155,44 @@ int	idTokenParser::ExpectTokenType( int type, int subtype, idToken* token )
 		Error( "expected a %s but found '%s'", str.c_str(), token->c_str() );
 		return 0;
 	}
-	if( token->type == TT_NUMBER )
-	{
-		if( ( token->subtype & subtype ) != subtype )
-		{
+	if( token->type == TT_NUMBER ) {
+		if( ( token->subtype & subtype ) != subtype ) {
 			str.Clear();
-			if( subtype & TT_DECIMAL )
-			{
+			if( subtype & TT_DECIMAL ) {
 				str = "decimal ";
 			}
-			if( subtype & TT_HEX )
-			{
+			if( subtype & TT_HEX ) {
 				str = "hex ";
 			}
-			if( subtype & TT_OCTAL )
-			{
+			if( subtype & TT_OCTAL ) {
 				str = "octal ";
 			}
-			if( subtype & TT_BINARY )
-			{
+			if( subtype & TT_BINARY ) {
 				str = "binary ";
 			}
-			if( subtype & TT_UNSIGNED )
-			{
+			if( subtype & TT_UNSIGNED ) {
 				str += "unsigned ";
 			}
-			if( subtype & TT_LONG )
-			{
+			if( subtype & TT_LONG ) {
 				str += "long ";
 			}
-			if( subtype & TT_FLOAT )
-			{
+			if( subtype & TT_FLOAT ) {
 				str += "float ";
 			}
-			if( subtype & TT_INTEGER )
-			{
+			if( subtype & TT_INTEGER ) {
 				str += "integer ";
 			}
 			str.StripTrailing( ' ' );
 			Error( "expected %s but found '%s'", str.c_str(), token->c_str() );
 			return 0;
 		}
-	}
-	else if( token->type == TT_PUNCTUATION )
-	{
-		if( subtype < 0 )
-		{
+	} else if( token->type == TT_PUNCTUATION ) {
+		if( subtype < 0 ) {
 			Error( "BUG: wrong punctuation subtype" );
 			return 0;
 		}
-		if( token->subtype != subtype )
-		{
-			//Error( "expected '%s' but found '%s'", idLexer::GetPunctuationFromId( subtype ), token->c_str() );
+		if( token->subtype != subtype ) {
+			// Error( "expected '%s' but found '%s'", idLexer::GetPunctuationFromId( subtype ), token->c_str() );
 			return 0;
 		}
 	}
@@ -230,8 +201,7 @@ int	idTokenParser::ExpectTokenType( int type, int subtype, idToken* token )
 // expect a token
 int idTokenParser::ExpectAnyToken( idToken* token )
 {
-	if( !ReadToken( token ) )
-	{
+	if( !ReadToken( token ) ) {
 		Error( "couldn't read expected token" );
 		return 0;
 	}
@@ -240,15 +210,14 @@ int idTokenParser::ExpectAnyToken( idToken* token )
 
 void idTokenParser::UnreadToken( const idToken* token )
 {
-	if( currentToken == 0 || currentToken >=  guiTokenIndexes[ currentTokenList ].Num() )
-	{
+	if( currentToken == 0 || currentToken >= guiTokenIndexes[currentTokenList].Num() ) {
 		idLib::common->FatalError( "idTokenParser::unreadToken, unread token twice\n" );
 	}
 	currentToken--;
 }
 void idTokenParser::Error( VERIFY_FORMAT_STRING const char* str, ... )
 {
-	char text[MAX_STRING_CHARS];
+	char	text[MAX_STRING_CHARS];
 	va_list ap;
 
 	va_start( ap, str );
@@ -259,7 +228,7 @@ void idTokenParser::Error( VERIFY_FORMAT_STRING const char* str, ... )
 }
 void idTokenParser::Warning( VERIFY_FORMAT_STRING const char* str, ... )
 {
-	char text[MAX_STRING_CHARS];
+	char	text[MAX_STRING_CHARS];
 	va_list ap;
 
 	va_start( ap, str );
@@ -271,18 +240,14 @@ void idTokenParser::Warning( VERIFY_FORMAT_STRING const char* str, ... )
 int idTokenParser::ParseInt()
 {
 	idToken token;
-	if( !ReadToken( &token ) )
-	{
+	if( !ReadToken( &token ) ) {
 		Error( "couldn't read expected integer" );
 		return 0;
 	}
-	if( token.type == TT_PUNCTUATION && token == "-" )
-	{
+	if( token.type == TT_PUNCTUATION && token == "-" ) {
 		ExpectTokenType( TT_NUMBER, TT_INTEGER, &token );
-		return -( ( signed int ) token.GetIntValue() );
-	}
-	else if( token.type != TT_NUMBER || token.subtype == TT_FLOAT )
-	{
+		return -( ( signed int )token.GetIntValue() );
+	} else if( token.type != TT_NUMBER || token.subtype == TT_FLOAT ) {
 		Error( "expected integer value, found '%s'", token.c_str() );
 	}
 	return token.GetIntValue();
@@ -291,8 +256,7 @@ int idTokenParser::ParseInt()
 bool idTokenParser::ParseBool()
 {
 	idToken token;
-	if( !ExpectTokenType( TT_NUMBER, 0, &token ) )
-	{
+	if( !ExpectTokenType( TT_NUMBER, 0, &token ) ) {
 		Error( "couldn't read expected boolean" );
 		return false;
 	}
@@ -303,37 +267,26 @@ bool idTokenParser::ParseBool()
 float idTokenParser::ParseFloat( bool* errorFlag )
 {
 	idToken token;
-	if( errorFlag )
-	{
+	if( errorFlag ) {
 		*errorFlag = false;
 	}
-	if( !ReadToken( &token ) )
-	{
-		if( errorFlag )
-		{
+	if( !ReadToken( &token ) ) {
+		if( errorFlag ) {
 			Warning( "couldn't read expected floating point number" );
 			*errorFlag = true;
-		}
-		else
-		{
+		} else {
 			Error( "couldn't read expected floating point number" );
 		}
 		return 0;
 	}
-	if( token.type == TT_PUNCTUATION && token == "-" )
-	{
+	if( token.type == TT_PUNCTUATION && token == "-" ) {
 		ExpectTokenType( TT_NUMBER, 0, &token );
 		return -token.GetFloatValue();
-	}
-	else if( token.type != TT_NUMBER )
-	{
-		if( errorFlag )
-		{
+	} else if( token.type != TT_NUMBER ) {
+		if( errorFlag ) {
 			Warning( "expected float value, found '%s'", token.c_str() );
 			*errorFlag = true;
-		}
-		else
-		{
+		} else {
 			Error( "expected float value, found '%s'", token.c_str() );
 		}
 	}

@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -41,64 +42,46 @@ generation.
 class idBinaryImage
 {
 public:
-	idBinaryImage( const char* name ) : imgName( name ) { }
-
-	const char* 		GetName() const
+	idBinaryImage( const char* name ) :
+		imgName( name )
 	{
-		return imgName.c_str();
-	}
-	void				SetName( const char* _name )
-	{
-		imgName = _name;
 	}
 
-	void				Load2DFromMemory( int width, int height, const byte* pic_const, int numLevels, textureFormat_t& textureFormat, textureColor_t& colorFormat, bool gammaMips );
-	void				Load2DAtlasMipchainFromMemory( int width, int height, const byte* pic_const, int numLevels, textureFormat_t& textureFormat, textureColor_t& colorFormat );
-	void				LoadCubeFromMemory( int width, const byte* pics[6], int numLevels, textureFormat_t& textureFormat, bool gammaMips );
+	const char*			 GetName() const { return imgName.c_str(); }
+	void				 SetName( const char* _name ) { imgName = _name; }
 
-	bool				LoadFromGeneratedFile( idFile* f, ID_TIME_T sourceFileTime );
-	ID_TIME_T			LoadFromGeneratedFile( ID_TIME_T sourceFileTime );
-	ID_TIME_T			WriteGeneratedFile( ID_TIME_T sourceFileTime );
+	void				 Load2DFromMemory( int width, int height, const byte* pic_const, int numLevels, textureFormat_t& textureFormat, textureColor_t& colorFormat, bool gammaMips );
+	void				 Load2DAtlasMipchainFromMemory( int width, int height, const byte* pic_const, int numLevels, textureFormat_t& textureFormat, textureColor_t& colorFormat );
+	void				 LoadCubeFromMemory( int width, const byte* pics[6], int numLevels, textureFormat_t& textureFormat, bool gammaMips );
 
-	const bimageFile_t& GetFileHeader()
-	{
-		return fileData;
-	}
+	bool				 LoadFromGeneratedFile( idFile* f, ID_TIME_T sourceFileTime );
+	ID_TIME_T			 LoadFromGeneratedFile( ID_TIME_T sourceFileTime );
+	ID_TIME_T			 WriteGeneratedFile( ID_TIME_T sourceFileTime );
 
-	int					NumImages()
-	{
-		return images.Num();
-	}
-	const bimageImage_t& 	GetImageHeader( int i ) const
-	{
-		return images[i];
-	}
-	const byte* 			GetImageData( int i ) const
-	{
-		return images[i].data;
-	}
-	static void			GetGeneratedFileName( idStr& gfn, const char* imageName );
+	const bimageFile_t&	 GetFileHeader() { return fileData; }
+
+	int					 NumImages() { return images.Num(); }
+	const bimageImage_t& GetImageHeader( int i ) const { return images[i]; }
+	const byte*			 GetImageData( int i ) const { return images[i].data; }
+	static void			 GetGeneratedFileName( idStr& gfn, const char* imageName );
 
 private:
-	idStr				imgName;			// game path, including extension (except for cube maps), may be an image program
-	bimageFile_t		fileData;
+	idStr		 imgName; // game path, including extension (except for cube maps), may be an image program
+	bimageFile_t fileData;
 
 	class idBinaryImageData : public bimageImage_t
 	{
 	public:
 		byte* data;
 
-		idBinaryImageData() : data( NULL ) { }
-		~idBinaryImageData()
+		idBinaryImageData() :
+			data( NULL )
 		{
-			Free();
 		}
+		~idBinaryImageData() { Free(); }
 		idBinaryImageData& operator=( idBinaryImageData& other )
 		{
-			if( this == &other )
-			{
-				return *this;
-			}
+			if( this == &other ) { return *this; }
 
 			Alloc( other.dataSize );
 			memcpy( data, other.data, other.dataSize );
@@ -106,21 +89,17 @@ private:
 		}
 		idBinaryImageData& operator=( idBinaryImageData&& other )
 		{
-			if( this == &other )
-			{
-				return *this;
-			}
-			dataSize = other.dataSize;
-			data = other.data;
+			if( this == &other ) { return *this; }
+			dataSize   = other.dataSize;
+			data	   = other.data;
 			other.data = NULL;
 			return *this;
 		}
 		void Free()
 		{
-			if( data != NULL )
-			{
+			if( data != NULL ) {
 				Mem_Free( data );
-				data = NULL;
+				data	 = NULL;
 				dataSize = 0;
 			}
 		}
@@ -128,14 +107,14 @@ private:
 		{
 			Free();
 			dataSize = size;
-			data = ( byte* )Mem_Alloc( size, TAG_CRAP );
+			data	 = ( byte* )Mem_Alloc( size, TAG_CRAP );
 		}
 	};
 
-	idList< idBinaryImageData, TAG_IDLIB_LIST_IMAGE > images;
+	idList<idBinaryImageData, TAG_IDLIB_LIST_IMAGE> images;
 
 private:
-	void				MakeGeneratedFileName( idStr& gfn );
+	void MakeGeneratedFileName( idStr& gfn );
 };
 
 #endif // __BINARYIMAGE_H__

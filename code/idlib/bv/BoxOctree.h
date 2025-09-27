@@ -27,18 +27,14 @@ private:
 	// indices of octree nodes which this object is attached to
 	idFlexList<int, 2> ids;
 	// bounds passed to idBoxOctree::Add (or idBoxOctree::Update)
-	idBounds bounds;
+	idBounds		   bounds;
 
 	friend class idBoxOctree;
 
 public:
 	// is the object with this handle already included in the octree?
-	ID_FORCE_INLINE bool IsLinked() const
-	{
-		return ids.Num() > 0;
-	}
+	ID_FORCE_INLINE bool IsLinked() const { return ids.Num() > 0; }
 };
-
 
 // Octree contains a set of objects, which geometrically are axis-aligned boxes.
 // Used mainly in idClip to store clipmodels of all entities in the world.
@@ -65,28 +61,26 @@ public:
 
 	// maximum number of objects per chunk
 	// if exceeded, then more chunks are chained in a linked list
-	static const int CHUNK_SIZE = 127;	// 4 KB chunk
+	static const int CHUNK_SIZE = 127; // 4 KB chunk
 
 	// critical number of objects which should ideally reside in smaller cells
 	// when this number of "small" objects is gathered, octree node is split into 8 subnodes
 	static const int SPLIT_SMALL_NUM = 90;
 
 	// link to single object
-	struct Link
-	{
-		Pointer object;
+	struct Link {
+		Pointer	 object;
 		idBounds bounds;
 	};
 	// a bunch of links to objects
-	struct Chunk
-	{
-		int num;
+	struct Chunk {
+		int	   num;
 		Chunk* next;
-		Link arr[CHUNK_SIZE];
+		Link   arr[CHUNK_SIZE];
 	};
 
 	// number of chunk pointers embedded in QueryResult object (same as CLIPARRAY_AUTOSIZE)
-	static const int RESULT_AUTOSIZE = 128;
+	static const int							RESULT_AUTOSIZE = 128;
 
 	// returned by Query methods
 	// called should walk through all objects mentioned in the returned chunks
@@ -128,32 +122,31 @@ private:
 	struct AddContext;
 	struct CellRanges;
 
-	int GetLevel( const idBounds& box ) const;
+	int		   GetLevel( const idBounds& box ) const;
 	CellRanges GetCellRanges( const idBounds& box, int maxDepth ) const;
-	void Query_r( QueryContext& ctx, int nodeIdx, const idBounds& cellBox, const idBounds& spaceBox ) const;
-	void Add_r( AddContext& ctx, int nodeIdx, const idBounds& cellBox );
-	void AddToNode( AddContext& ctx, int nodeIdx, const idBounds& cellBox );
+	void	   Query_r( QueryContext& ctx, int nodeIdx, const idBounds& cellBox, const idBounds& spaceBox ) const;
+	void	   Add_r( AddContext& ctx, int nodeIdx, const idBounds& cellBox );
+	void	   AddToNode( AddContext& ctx, int nodeIdx, const idBounds& cellBox );
 
-	struct OctreeNode
-	{
-		Chunk* links = nullptr;		// linked list of chunks attached to node
-		int firstSonIdx = -1;		// sons have indices [firstSonIdx .. firstSonIdx + 8)
-		short depth = 0;
-		short numSmall = 0;			// number of objects with GetLevel(obj) > depth
+	struct OctreeNode {
+		Chunk* links	   = nullptr; // linked list of chunks attached to node
+		int	   firstSonIdx = -1;	  // sons have indices [firstSonIdx .. firstSonIdx + 8)
+		short  depth	   = 0;
+		short  numSmall	   = 0; // number of objects with GetLevel(obj) > depth
 	};
 
 	// this function gives access to handle within an object
-	HandleGetter getHandle = nullptr;
+	HandleGetter			  getHandle = nullptr;
 
 	// space area at the root node, which is subdivided by octree
 	// note: objects may go outside worldBounds, but too many outliers will harm performance
-	idBounds worldBounds;
+	idBounds				  worldBounds;
 
 	// 1 / worldSize for each coordinate
-	idVec3 invWorldSize;
+	idVec3					  invWorldSize;
 
 	// all nodes of octree
-	idList<OctreeNode> nodes;
+	idList<OctreeNode>		  nodes;
 
 	// allocates ~4 MB blocks from where chunks are quickly allocated
 	idBlockAlloc<Chunk, 1024> allocator;

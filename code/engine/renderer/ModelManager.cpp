@@ -22,7 +22,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -34,67 +35,68 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Model_gltf.h"
 #include "Model_local.h"
-#include "RenderCommon.h"	// just for R_FreeWorldInteractions and R_CreateWorldInteractions
+#include "RenderCommon.h" // just for R_FreeWorldInteractions and R_CreateWorldInteractions
 
 #if !defined( DMAP )
 	#include <engine/sys/DeviceManager.h>
-	extern DeviceManager* deviceManager;
+extern DeviceManager* deviceManager;
 #endif
 
 extern idCVar r_vkUploadBufferSizeMB;
 
-idCVar binaryLoadRenderModels( "binaryLoadRenderModels", "1", CVAR_NEW, "enable binary load/write of render models" );
-idCVar preload_MapModels( "preload_MapModels", "1", CVAR_SYSTEM | CVAR_BOOL, "preload models during begin or end levelload" );
+idCVar		  binaryLoadRenderModels( "binaryLoadRenderModels", "1", CVAR_NEW, "enable binary load/write of render models" );
+idCVar		  preload_MapModels( "preload_MapModels", "1", CVAR_SYSTEM | CVAR_BOOL, "preload models during begin or end levelload" );
 
 // RB begin
-idCVar postLoadExportModels( "postLoadExportModels", "0", CVAR_BOOL | CVAR_RENDERER | CVAR_NEW, "export models after loading to OBJ model format" );
+idCVar		  postLoadExportModels( "postLoadExportModels", "0", CVAR_BOOL | CVAR_RENDERER | CVAR_NEW, "export models after loading to OBJ model format" );
 // RB end
 
 class idRenderModelManagerLocal : public idRenderModelManager
 {
 public:
 	idRenderModelManagerLocal();
-	virtual					~idRenderModelManagerLocal() {}
+	virtual ~idRenderModelManagerLocal()
+	{
+	}
 
-	virtual void			Init();
-	virtual void			Shutdown();
-	virtual idRenderModel* 	AllocModel();
-	virtual void			FreeModel( idRenderModel* model );
-	virtual idRenderModel* 	FindModel( const char* modelName, const idImportOptions* options = NULL );
-	virtual idRenderModel* 	CheckModel( const char* modelName );
-	virtual idRenderModel* 	DefaultModel();
-	virtual void			AddModel( idRenderModel* model );
-	virtual void			RemoveModel( idRenderModel* model );
-	virtual void			ReloadModels( bool forceAll = false );
-	virtual void			CreateMeshBuffers( nvrhi::ICommandList* commandList );
-	virtual void			FreeModelVertexCaches();
-	virtual void			WritePrecacheCommands( idFile* file );
-	virtual void			BeginLevelLoad();
-	virtual void			EndLevelLoad();
-	virtual void			Preload( const idPreloadManifest& manifest );
+	virtual void		   Init();
+	virtual void		   Shutdown();
+	virtual idRenderModel* AllocModel();
+	virtual void		   FreeModel( idRenderModel* model );
+	virtual idRenderModel* FindModel( const char* modelName, const idImportOptions* options = NULL );
+	virtual idRenderModel* CheckModel( const char* modelName );
+	virtual idRenderModel* DefaultModel();
+	virtual void		   AddModel( idRenderModel* model );
+	virtual void		   RemoveModel( idRenderModel* model );
+	virtual void		   ReloadModels( bool forceAll = false );
+	virtual void		   CreateMeshBuffers( nvrhi::ICommandList* commandList );
+	virtual void		   FreeModelVertexCaches();
+	virtual void		   WritePrecacheCommands( idFile* file );
+	virtual void		   BeginLevelLoad();
+	virtual void		   EndLevelLoad();
+	virtual void		   Preload( const idPreloadManifest& manifest );
 
-	virtual	void			PrintMemInfo( MemInfo_t* mi );
+	virtual void		   PrintMemInfo( MemInfo_t* mi );
 
 private:
-	idList<idRenderModel*, TAG_MODEL>	models;
-	idHashIndex							hash;
-	idRenderModel* 						defaultModel;
-	idRenderModel* 						beamModel;
-	idRenderModel* 						spriteModel;
-	bool								insideLevelLoad;		// don't actually load now
-	nvrhi::CommandListHandle			commandList;
+	idList<idRenderModel*, TAG_MODEL> models;
+	idHashIndex						  hash;
+	idRenderModel*					  defaultModel;
+	idRenderModel*					  beamModel;
+	idRenderModel*					  spriteModel;
+	bool							  insideLevelLoad; // don't actually load now
+	nvrhi::CommandListHandle		  commandList;
 
-	idRenderModel* 			GetModel( const char* modelName, bool createIfNotFound, const idImportOptions* options );
+	idRenderModel*					  GetModel( const char* modelName, bool createIfNotFound, const idImportOptions* options );
 
-	static void				PrintModel_f( const idCmdArgs& args );
-	static void				ListModels_f( const idCmdArgs& args );
-	static void				ReloadModels_f( const idCmdArgs& args );
-	static void				TouchModel_f( const idCmdArgs& args );
+	static void						  PrintModel_f( const idCmdArgs& args );
+	static void						  ListModels_f( const idCmdArgs& args );
+	static void						  ReloadModels_f( const idCmdArgs& args );
+	static void						  TouchModel_f( const idCmdArgs& args );
 };
 
-
-idRenderModelManagerLocal	localModelManager;
-idRenderModelManager* 		renderModelManager = &localModelManager;
+idRenderModelManagerLocal localModelManager;
+idRenderModelManager*	  renderModelManager = &localModelManager;
 
 /*
 ==============
@@ -103,9 +105,9 @@ idRenderModelManagerLocal::idRenderModelManagerLocal
 */
 idRenderModelManagerLocal::idRenderModelManagerLocal()
 {
-	defaultModel = NULL;
-	beamModel = NULL;
-	spriteModel = NULL;
+	defaultModel	= NULL;
+	beamModel		= NULL;
+	spriteModel		= NULL;
 	insideLevelLoad = false;
 }
 
@@ -116,17 +118,15 @@ idRenderModelManagerLocal::PrintModel_f
 */
 void idRenderModelManagerLocal::PrintModel_f( const idCmdArgs& args )
 {
-	idRenderModel*	model;
+	idRenderModel* model;
 
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		common->Printf( "usage: printModel <modelName>\n" );
 		return;
 	}
 
 	model = renderModelManager->CheckModel( args.Argv( 1 ) );
-	if( !model )
-	{
+	if( !model ) {
 		common->Printf( "model \"%s\" not found\n", args.Argv( 1 ) );
 		return;
 	}
@@ -141,18 +141,16 @@ idRenderModelManagerLocal::ListModels_f
 */
 void idRenderModelManagerLocal::ListModels_f( const idCmdArgs& args )
 {
-	int		totalMem = 0;
-	int		inUse = 0;
+	int totalMem = 0;
+	int inUse	 = 0;
 
 	common->Printf( " mem   srf verts tris\n" );
 	common->Printf( " ---   --- ----- ----\n" );
 
-	for( int i = 0; i < localModelManager.models.Num(); i++ )
-	{
-		idRenderModel*	model = localModelManager.models[i];
+	for( int i = 0; i < localModelManager.models.Num(); i++ ) {
+		idRenderModel* model = localModelManager.models[i];
 
-		if( !model->IsLoaded() )
-		{
+		if( !model->IsLoaded() ) {
 			continue;
 		}
 		model->List();
@@ -174,12 +172,9 @@ idRenderModelManagerLocal::ReloadModels_f
 */
 void idRenderModelManagerLocal::ReloadModels_f( const idCmdArgs& args )
 {
-	if( idStr::Icmp( args.Argv( 1 ), "all" ) == 0 )
-	{
+	if( idStr::Icmp( args.Argv( 1 ), "all" ) == 0 ) {
 		localModelManager.ReloadModels( true );
-	}
-	else
-	{
+	} else {
 		localModelManager.ReloadModels( false );
 	}
 }
@@ -193,10 +188,9 @@ Precache a specific model
 */
 void idRenderModelManagerLocal::TouchModel_f( const idCmdArgs& args )
 {
-	const char*	model = args.Argv( 1 );
+	const char* model = args.Argv( 1 );
 
-	if( !model[0] )
-	{
+	if( !model[0] ) {
 		common->Printf( "usage: touchModel <modelName>\n" );
 		return;
 	}
@@ -205,8 +199,7 @@ void idRenderModelManagerLocal::TouchModel_f( const idCmdArgs& args )
 	const bool captureToImage = false;
 	common->UpdateScreen( captureToImage );
 	idRenderModel* m = renderModelManager->CheckModel( model );
-	if( !m )
-	{
+	if( !m ) {
 		common->Printf( "...not found\n" );
 	}
 }
@@ -218,20 +211,17 @@ idRenderModelManagerLocal::WritePrecacheCommands
 */
 void idRenderModelManagerLocal::WritePrecacheCommands( idFile* f )
 {
-	for( int i = 0; i < models.Num(); i++ )
-	{
-		idRenderModel*	model = models[i];
+	for( int i = 0; i < models.Num(); i++ ) {
+		idRenderModel* model = models[i];
 
-		if( !model )
-		{
+		if( !model ) {
 			continue;
 		}
-		if( !model->IsReloadable() )
-		{
+		if( !model->IsReloadable() ) {
 			continue;
 		}
 
-		char	str[1024];
+		char str[1024];
 		idStr::snPrintf( str, sizeof( str ), "touchModel %s\n", model->Name() );
 		common->Printf( "%s", str );
 		f->Printf( "%s", str );
@@ -246,12 +236,10 @@ idRenderModelManagerLocal::Init
 void idRenderModelManagerLocal::Init()
 {
 #if !defined( DMAP )
-	if( !commandList )
-	{
+	if( !commandList ) {
 		nvrhi::CommandListParameters params = {};
-		params.enableImmediateExecution = false;
-		if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
-		{
+		params.enableImmediateExecution		= false;
+		if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ) {
 			// SRS - set upload buffer size to avoid Vulkan staging buffer fragmentation
 			size_t maxBufferSize = ( size_t )( r_vkUploadBufferSizeMB.GetInteger() * 1024 * 1024 );
 			params.setUploadChunkSize( maxBufferSize );
@@ -310,34 +298,29 @@ idRenderModelManagerLocal::GetModel
 */
 idRenderModel* idRenderModelManagerLocal::GetModel( const char* _modelName, bool createIfNotFound, const idImportOptions* options )
 {
-	if( !_modelName || !_modelName[0] )
-	{
+	if( !_modelName || !_modelName[0] ) {
 		return NULL;
 	}
 
-	idStrStatic< MAX_OSPATH > canonical = _modelName;
+	idStrStatic<MAX_OSPATH> canonical = _modelName;
 	canonical.ToLower();
 
-	idStrStatic< MAX_OSPATH > extension;
+	idStrStatic<MAX_OSPATH> extension;
 	canonical.ExtractFileExtension( extension );
 
 	bool isGLTF = false;
 	// HvG: GLTF 2 support
-	if( ( extension.Icmp( GLTF_GLB_EXT ) == 0 ) || ( extension.Icmp( GLTF_EXT ) == 0 ) )
-	{
+	if( ( extension.Icmp( GLTF_GLB_EXT ) == 0 ) || ( extension.Icmp( GLTF_EXT ) == 0 ) ) {
 		isGLTF = true;
 	}
 
 	// see if it is already present
 	int key = hash.GenerateKey( canonical, false );
-	for( int i = hash.First( key ); i != -1; i = hash.Next( i ) )
-	{
+	for( int i = hash.First( key ); i != -1; i = hash.Next( i ) ) {
 		idRenderModel* model = models[i];
 
-		if( canonical.Icmp( model->Name() ) == 0 )
-		{
-			if( !model->IsLoaded() )
-			{
+		if( canonical.Icmp( model->Name() ) == 0 ) {
+			if( !model->IsLoaded() ) {
 				// reload it if it was purged
 				idStr generatedFileName = "generated/rendermodels/";
 				generatedFileName.AppendPath( canonical );
@@ -347,51 +330,38 @@ idRenderModel* idRenderModelManagerLocal::GetModel( const char* _modelName, bool
 
 				ID_TIME_T sourceTimeStamp;
 
-				if( isGLTF )
-				{
+				if( isGLTF ) {
 					idStr gltfFileName = idStr( canonical );
-					int gltfMeshId = -1;
+					int	  gltfMeshId   = -1;
 					idStr gltfMeshName;
 					gltfManager::ExtractIdentifier( gltfFileName, gltfMeshId, gltfMeshName );
 
 					sourceTimeStamp = fileSystem->GetTimestamp( gltfFileName );
-				}
-				else
-				{
+				} else {
 					sourceTimeStamp = fileSystem->GetTimestamp( canonical );
 				}
 
-				if( model->SupportsBinaryModel() && binaryLoadRenderModels.GetBool() )
-				{
+				if( model->SupportsBinaryModel() && binaryLoadRenderModels.GetBool() ) {
 					idFileLocal file( fileSystem->OpenFileReadMemory( generatedFileName ) );
 					model->PurgeModel();
 
 					// RB: .bglb also stores the timestamp of the modelDef .def file so changing the modelDef will trigger a reimport
 					ID_TIME_T declSourceTimeStamp = 0;
-					if( options != NULL )
-					{
+					if( options != NULL ) {
 						declSourceTimeStamp = options->declSourceTimeStamp;
 					}
 
-					if( !model->LoadBinaryModel( file, sourceTimeStamp, declSourceTimeStamp ) )
-					{
-						if( isGLTF )
-						{
+					if( !model->LoadBinaryModel( file, sourceTimeStamp, declSourceTimeStamp ) ) {
+						if( isGLTF ) {
 							model->InitFromFile( canonical, options );
-						}
-						else
-						{
+						} else {
 							model->LoadModel();
 						}
 					}
-				}
-				else
-				{
+				} else {
 					model->LoadModel();
 				}
-			}
-			else if( insideLevelLoad && !model->IsLevelLoadReferenced() )
-			{
+			} else if( insideLevelLoad && !model->IsLevelLoadReferenced() ) {
 				// we are reusing a model already in memory, but
 				// touch all the materials to make sure they stay
 				// in memory as well
@@ -410,41 +380,29 @@ idRenderModel* idRenderModelManagerLocal::GetModel( const char* _modelName, bool
 	idRenderModel* model = NULL;
 
 	// HvG: GLTF 2 support
-	if( isGLTF )
-	{
-		model = new( TAG_MODEL ) idRenderModelGLTF;
+	if( isGLTF ) {
+		model  = new( TAG_MODEL ) idRenderModelGLTF;
 		isGLTF = true;
 	}
 	// RB: Wavefront OBJ
-	else if( ( extension.Icmp( "obj" ) == 0 )
-			 || ( extension.Icmp( "ase" ) == 0 ) || ( extension.Icmp( "lwo" ) == 0 )
-			 || ( extension.Icmp( "flt" ) == 0 ) || ( extension.Icmp( "ma" ) == 0 ) )
-	{
+	else if( ( extension.Icmp( "obj" ) == 0 ) || ( extension.Icmp( "ase" ) == 0 ) || ( extension.Icmp( "lwo" ) == 0 ) || ( extension.Icmp( "flt" ) == 0 ) || ( extension.Icmp( "ma" ) == 0 ) ) {
 		model = new( TAG_MODEL ) idRenderModelStatic;
 	}
 #if !defined( DMAP )
-	else if( extension.Icmp( MD5_MESH_EXT ) == 0 )
-	{
+	else if( extension.Icmp( MD5_MESH_EXT ) == 0 ) {
 		model = new( TAG_MODEL ) idRenderModelMD5;
-	}
-	else if( extension.Icmp( "md3" ) == 0 )
-	{
+	} else if( extension.Icmp( "md3" ) == 0 ) {
 		model = new( TAG_MODEL ) idRenderModelMD3;
-	}
-	else if( extension.Icmp( "prt" ) == 0 )
-	{
+	} else if( extension.Icmp( "prt" ) == 0 ) {
 		model = new( TAG_MODEL ) idRenderModelPrt;
-	}
-	else if( extension.Icmp( "liquid" ) == 0 )
-	{
+	} else if( extension.Icmp( "liquid" ) == 0 ) {
 		model = new( TAG_MODEL ) idRenderModelLiquid;
 	}
 #endif
 
-	idStrStatic< MAX_OSPATH > generatedFileName;
+	idStrStatic<MAX_OSPATH> generatedFileName;
 
-	if( model != NULL )
-	{
+	if( model != NULL ) {
 		generatedFileName = "generated/rendermodels/";
 		generatedFileName.AppendPath( canonical );
 		generatedFileName.SetFileExtension( va( "b%s", extension.c_str() ) );
@@ -452,47 +410,37 @@ idRenderModel* idRenderModelManagerLocal::GetModel( const char* _modelName, bool
 		// Get the timestamp on the original file, if it's newer than what is stored in binary model, regenerate it
 		ID_TIME_T sourceTimeStamp;
 
-		if( isGLTF )
-		{
+		if( isGLTF ) {
 			idStr gltfFileName = idStr( canonical );
-			int gltfMeshId = -1;
+			int	  gltfMeshId   = -1;
 			idStr gltfMeshName;
 			gltfManager::ExtractIdentifier( gltfFileName, gltfMeshId, gltfMeshName );
 
 			sourceTimeStamp = fileSystem->GetTimestamp( gltfFileName );
-		}
-		else
-		{
+		} else {
 			sourceTimeStamp = fileSystem->GetTimestamp( canonical );
 		}
 
 		idFileLocal file( fileSystem->OpenFileReadMemory( generatedFileName ) );
 
-		if( !model->SupportsBinaryModel() || !binaryLoadRenderModels.GetBool() )
-		{
+		if( !model->SupportsBinaryModel() || !binaryLoadRenderModels.GetBool() ) {
 			model->InitFromFile( canonical, options );
-		}
-		else
-		{
-			if( options != NULL )
-			{
+		} else {
+			if( options != NULL ) {
 				idLib::Printf( "Trying to load with options %s\n", generatedFileName.c_str() );
 			}
 
 			// RB: .bglb also stores the timestamp of the modelDef .def file so changing the modelDef will trigger a reimport
 			ID_TIME_T declSourceTimeStamp = 0;
-			if( options != NULL )
-			{
+			if( options != NULL ) {
 				declSourceTimeStamp = options->declSourceTimeStamp;
 			}
 
-			if( !model->LoadBinaryModel( file, sourceTimeStamp, declSourceTimeStamp ) )
-			{
+			if( !model->LoadBinaryModel( file, sourceTimeStamp, declSourceTimeStamp ) ) {
 				model->InitFromFile( canonical, options );
 
 				// RB: default models shouldn't be cached as binary models
-				if( !model->IsDefaultModel() )
-				{
+				if( !model->IsDefaultModel() ) {
 					idFileLocal outputFile( fileSystem->OpenFileWrite( generatedFileName, "fs_basepath" ) );
 					idLib::Printf( "Writing %s\n", generatedFileName.c_str() );
 					model->WriteBinaryModel( outputFile, &sourceTimeStamp );
@@ -505,54 +453,46 @@ idRenderModel* idRenderModelManagerLocal::GetModel( const char* _modelName, bool
 	}
 
 	// Not one of the known formats
-	if( model == NULL )
-	{
-		if( extension.Length() )
-		{
+	if( model == NULL ) {
+		if( extension.Length() ) {
 			common->Warning( "unknown model type '%s'", canonical.c_str() );
 		}
 
-		if( !createIfNotFound )
-		{
+		if( !createIfNotFound ) {
 			return NULL;
 		}
 
-		idRenderModelStatic*	smodel = new( TAG_MODEL ) idRenderModelStatic;
+		idRenderModelStatic* smodel = new( TAG_MODEL ) idRenderModelStatic;
 		smodel->InitEmpty( canonical );
 		smodel->MakeDefaultModel();
 
 		model = smodel;
 	}
 
-	if( cvarSystem->GetCVarBool( "fs_buildresources" ) )
-	{
+	if( cvarSystem->GetCVarBool( "fs_buildresources" ) ) {
 		fileSystem->AddModelPreload( canonical );
 	}
 	model->SetLevelLoadReferenced( true );
 
-	if( !createIfNotFound && model->IsDefaultModel() )
-	{
+	if( !createIfNotFound && model->IsDefaultModel() ) {
 		delete model;
 		model = NULL;
 
 		return NULL;
 	}
 
-	if( cvarSystem->GetCVarBool( "fs_buildgame" ) )
-	{
+	if( cvarSystem->GetCVarBool( "fs_buildgame" ) ) {
 		fileSystem->AddModelPreload( model->Name() );
 	}
 
 	// RB begin
 #if !defined( DMAP )
-	if( postLoadExportModels.GetBool() && ( model != defaultModel && model != beamModel && model != spriteModel ) )
-	{
-		idStrStatic< MAX_OSPATH > exportedFileName;
+	if( postLoadExportModels.GetBool() && ( model != defaultModel && model != beamModel && model != spriteModel ) ) {
+		idStrStatic<MAX_OSPATH> exportedFileName;
 
 		exportedFileName = "exported/rendermodels/";
 
-		if( com_editors & EDITOR_EXPORTDEFS )
-		{
+		if( com_editors & EDITOR_EXPORTDEFS ) {
 			exportedFileName = "_tb/";
 		}
 
@@ -560,11 +500,11 @@ idRenderModel* idRenderModelManagerLocal::GetModel( const char* _modelName, bool
 		exportedFileName.SetFileExtension( ".obj" );
 
 		ID_TIME_T sourceTimeStamp = fileSystem->GetTimestamp( canonical );
-		ID_TIME_T timeStamp = fileSystem->GetTimestamp( exportedFileName );
+		ID_TIME_T timeStamp		  = fileSystem->GetTimestamp( exportedFileName );
 
 		// TODO only update if generated has changed
 
-		//if( timeStamp == FILE_NOT_FOUND_TIMESTAMP )
+		// if( timeStamp == FILE_NOT_FOUND_TIMESTAMP )
 		{
 			idFileLocal objFile( fileSystem->OpenFileWrite( exportedFileName, "fs_basepath" ) );
 			idLib::Printf( "Writing %s\n", exportedFileName.c_str() );
@@ -600,27 +540,22 @@ idRenderModelManagerLocal::FreeModel
 */
 void idRenderModelManagerLocal::FreeModel( idRenderModel* model )
 {
-	if( !model )
-	{
+	if( !model ) {
 		return;
 	}
-	if( !dynamic_cast<idRenderModelStatic*>( model ) )
-	{
+	if( !dynamic_cast<idRenderModelStatic*>( model ) ) {
 		common->Error( "idRenderModelManager::FreeModel: model '%s' is not a static model", model->Name() );
 		return;
 	}
-	if( model == defaultModel )
-	{
+	if( model == defaultModel ) {
 		common->Error( "idRenderModelManager::FreeModel: can't free the default model" );
 		return;
 	}
-	if( model == beamModel )
-	{
+	if( model == beamModel ) {
 		common->Error( "idRenderModelManager::FreeModel: can't free the beam model" );
 		return;
 	}
-	if( model == spriteModel )
-	{
+	if( model == spriteModel ) {
 		common->Error( "idRenderModelManager::FreeModel: can't free the sprite model" );
 		return;
 	}
@@ -678,8 +613,7 @@ idRenderModelManagerLocal::RemoveModel
 void idRenderModelManagerLocal::RemoveModel( idRenderModel* model )
 {
 	int index = models.FindIndex( model );
-	if( index != -1 )
-	{
+	if( index != -1 ) {
 		hash.RemoveIndex( hash.GenerateKey( model->Name(), false ), index );
 		models.RemoveIndex( index );
 	}
@@ -695,87 +629,70 @@ idRenderModelManagerLocal::ReloadModels
 void idRenderModelManagerLocal::ReloadModels( bool forceAll )
 {
 #if !defined( DMAP )
-	if( forceAll )
-	{
+	if( forceAll ) {
 		common->Printf( "Reloading all model files...\n" );
-	}
-	else
-	{
+	} else {
 		common->Printf( "Checking for changed model files...\n" );
 	}
 
 	R_FreeDerivedData();
 
 	// skip the default model at index 0
-	for( int i = 1; i < models.Num(); i++ )
-	{
-		idRenderModel*	model = models[i];
+	for( int i = 1; i < models.Num(); i++ ) {
+		idRenderModel* model = models[i];
 
 		// we may want to allow world model reloading in the future, but we don't now
-		if( !model->IsReloadable() )
-		{
+		if( !model->IsReloadable() ) {
 			continue;
 		}
 
-		bool isGLTF = false;
+		bool  isGLTF   = false;
 		idStr filename = model->Name();
 		idStr extension;
 		idStr assetName = filename;
 		assetName.ExtractFileExtension( extension );
-		isGLTF = extension.Icmp( "glb" ) == 0 || extension.Icmp( "gltf" ) == 0;
+		isGLTF						   = extension.Icmp( "glb" ) == 0 || extension.Icmp( "gltf" ) == 0;
 		const idDeclModelDef* modelDef = NULL;
 
-		if( !forceAll )
-		{
+		if( !forceAll ) {
 			// check timestamp
 			ID_TIME_T current;
 
-			if( isGLTF )
-			{
+			if( isGLTF ) {
 				idStr meshName;
-				int meshID = -1;
+				int	  meshID = -1;
 				gltfManager::ExtractIdentifier( filename, meshID, meshName );
 			}
 
 			const char* modelDefName = model->GetModelDefName();
-			if( idStr::Cmp( modelDefName, "" ) != 0 )
-			{
+			if( idStr::Cmp( modelDefName, "" ) != 0 ) {
 				modelDef = static_cast<const idDeclModelDef*>( declManager->FindType( DECL_MODELDEF, modelDefName, false ) );
-				if( modelDef != NULL )
-				{
+				if( modelDef != NULL ) {
 					ID_TIME_T defCurrent = modelDef->GetSourceFileTimestamp();
 
 					fileSystem->ReadFile( filename, NULL, &current );
-					if( current <= model->Timestamp() && defCurrent <= model->DeclTimestamp() )
-					{
+					if( current <= model->Timestamp() && defCurrent <= model->DeclTimestamp() ) {
 						continue;
 					}
 				}
-			}
-			else
-			{
+			} else {
 				fileSystem->ReadFile( filename, NULL, &current );
-				if( current <= model->Timestamp() )
-				{
+				if( current <= model->Timestamp() ) {
 					continue;
 				}
 			}
 		}
 
 		const idImportOptions* options = NULL;
-		if( modelDef != NULL )
-		{
+		if( modelDef != NULL ) {
 			options = modelDef->GetImportOptions();
 		}
 
 		common->DPrintf( "^1Reloading %s.\n", model->Name() );
 
-		if( isGLTF )
-		{
+		if( isGLTF ) {
 			model->InitFromFile( model->Name(), options );
-		}
-		else
-		{
+		} else {
 			model->LoadModel();
 		}
 	}
@@ -788,8 +705,7 @@ void idRenderModelManagerLocal::ReloadModels( bool forceAll )
 
 void idRenderModelManagerLocal::CreateMeshBuffers( nvrhi::ICommandList* commandList )
 {
-	for( int i = 0; i < models.Num(); i++ )
-	{
+	for( int i = 0; i < models.Num(); i++ ) {
 		idRenderModel* model = models[i];
 
 		// Upload vertices and indices and shadow vertices into the vertex cache.
@@ -804,8 +720,7 @@ idRenderModelManagerLocal::FreeModelVertexCaches
 */
 void idRenderModelManagerLocal::FreeModelVertexCaches()
 {
-	for( int i = 0; i < models.Num(); i++ )
-	{
+	for( int i = 0; i < models.Num(); i++ ) {
 		idRenderModel* model = models[i];
 		model->FreeVertexCache();
 	}
@@ -820,13 +735,11 @@ void idRenderModelManagerLocal::BeginLevelLoad()
 {
 	insideLevelLoad = true;
 
-	for( int i = 0; i < models.Num(); i++ )
-	{
+	for( int i = 0; i < models.Num(); i++ ) {
 		idRenderModel* model = models[i];
 
 		// always reload all models
-		if( model->IsReloadable() )
-		{
+		if( model->IsReloadable() ) {
 			R_CheckForEntityDefsUsingModel( model );
 			model->PurgeModel();
 		}
@@ -846,39 +759,33 @@ idRenderModelManagerLocal::Preload
 */
 void idRenderModelManagerLocal::Preload( const idPreloadManifest& manifest )
 {
-	if( preload_MapModels.GetBool() )
-	{
+	if( preload_MapModels.GetBool() ) {
 		// preload this levels images
-		int	start = Sys_Milliseconds();
-		int numLoaded = 0;
-		idList< preloadSort_t > preloadSort;
+		int					  start		= Sys_Milliseconds();
+		int					  numLoaded = 0;
+		idList<preloadSort_t> preloadSort;
 		preloadSort.Resize( manifest.NumResources() );
-		for( int i = 0; i < manifest.NumResources(); i++ )
-		{
-			const preloadEntry_s& p = manifest.GetPreloadByIndex( i );
-			idResourceCacheEntry rc;
-			idStrStatic< MAX_OSPATH > filename;
-			if( p.resType == PRELOAD_MODEL )
-			{
+		for( int i = 0; i < manifest.NumResources(); i++ ) {
+			const preloadEntry_s&	p = manifest.GetPreloadByIndex( i );
+			idResourceCacheEntry	rc;
+			idStrStatic<MAX_OSPATH> filename;
+			if( p.resType == PRELOAD_MODEL ) {
 				filename = "generated/rendermodels/";
 				filename += p.resourceName;
-				idStrStatic< 16 > ext;
+				idStrStatic<16> ext;
 				filename.ExtractFileExtension( ext );
 				filename.SetFileExtension( va( "b%s", ext.c_str() ) );
 			}
-			if( p.resType == PRELOAD_PARTICLE )
-			{
+			if( p.resType == PRELOAD_PARTICLE ) {
 				filename = "generated/particles/";
 				filename += p.resourceName;
 				filename += ".bprt";
 			}
-			if( !filename.IsEmpty() )
-			{
-				if( fileSystem->GetResourceCacheEntry( filename, rc ) )
-				{
+			if( !filename.IsEmpty() ) {
+				if( fileSystem->GetResourceCacheEntry( filename, rc ) ) {
 					preloadSort_t ps = {};
-					ps.idx = i;
-					ps.ofs = rc.offset;
+					ps.idx			 = i;
+					ps.ofs			 = rc.offset;
 					preloadSort.Append( ps );
 				}
 			}
@@ -886,26 +793,21 @@ void idRenderModelManagerLocal::Preload( const idPreloadManifest& manifest )
 
 		preloadSort.SortWithTemplate( idSort_Preload() );
 
-		for( int i = 0; i < preloadSort.Num(); i++ )
-		{
-			const preloadSort_t& ps = preloadSort[ i ];
-			const preloadEntry_s& p = manifest.GetPreloadByIndex( ps.idx );
-			if( p.resType == PRELOAD_MODEL )
-			{
+		for( int i = 0; i < preloadSort.Num(); i++ ) {
+			const preloadSort_t&  ps = preloadSort[i];
+			const preloadEntry_s& p	 = manifest.GetPreloadByIndex( ps.idx );
+			if( p.resType == PRELOAD_MODEL ) {
 				idRenderModel* model = FindModel( p.resourceName );
-				if( model != NULL )
-				{
+				if( model != NULL ) {
 					model->SetLevelLoadReferenced( true );
 				}
-			}
-			else if( p.resType == PRELOAD_PARTICLE )
-			{
+			} else if( p.resType == PRELOAD_PARTICLE ) {
 				declManager->FindType( DECL_PARTICLE, p.resourceName );
 			}
 			numLoaded++;
 		}
 
-		int	end = Sys_Milliseconds();
+		int end = Sys_Milliseconds();
 		common->Printf( "%05d models preloaded ( or were already loaded ) in %5.1f seconds\n", numLoaded, ( end - start ) * 0.001 );
 		common->Printf( "----------------------------------------\n" );
 	}
@@ -923,18 +825,16 @@ void idRenderModelManagerLocal::EndLevelLoad()
 	int start = Sys_Milliseconds();
 
 	insideLevelLoad = false;
-	int	purgeCount = 0;
-	int	keepCount = 0;
-	int	loadCount = 0;
+	int purgeCount	= 0;
+	int keepCount	= 0;
+	int loadCount	= 0;
 
 	// purge any models not touched
-	for( int i = 0; i < models.Num(); i++ )
-	{
+	for( int i = 0; i < models.Num(); i++ ) {
 		idRenderModel* model = models[i];
 
-		if( !model->IsLevelLoadReferenced() && model->IsLoaded() && model->IsReloadable() )
-		{
-//			common->Printf( "purging %s\n", model->Name() );
+		if( !model->IsLevelLoadReferenced() && model->IsLoaded() && model->IsReloadable() ) {
+			//			common->Printf( "purging %s\n", model->Name() );
 
 			purgeCount++;
 
@@ -942,11 +842,8 @@ void idRenderModelManagerLocal::EndLevelLoad()
 
 			model->PurgeModel();
 
-		}
-		else
-		{
-
-//			common->Printf( "keeping %s\n", model->Name() );
+		} else {
+			//			common->Printf( "keeping %s\n", model->Name() );
 
 			keepCount++;
 		}
@@ -955,15 +852,12 @@ void idRenderModelManagerLocal::EndLevelLoad()
 	}
 
 	// load any new ones
-	for( int i = 0; i < models.Num(); i++ )
-	{
+	for( int i = 0; i < models.Num(); i++ ) {
 		common->UpdateLevelLoadPacifier();
-
 
 		idRenderModel* model = models[i];
 
-		if( model->IsLevelLoadReferenced() && !model->IsLoaded() && model->IsReloadable() )
-		{
+		if( model->IsLevelLoadReferenced() && !model->IsLoaded() && model->IsReloadable() ) {
 			loadCount++;
 			model->LoadModel();
 		}
@@ -972,20 +866,16 @@ void idRenderModelManagerLocal::EndLevelLoad()
 #if !defined( DMAP )
 	commandList->open();
 
-	for( int i = 0; i < models.Num(); i++ )
-	{
+	for( int i = 0; i < models.Num(); i++ ) {
 		idRenderModel* model = models[i];
 		model->CreateBuffers( commandList );
 	}
 
 	// create static vertex/index buffers for all models
-	for( int i = 0; i < models.Num(); i++ )
-	{
+	for( int i = 0; i < models.Num(); i++ ) {
 		idRenderModel* model = models[i];
-		if( model->IsLoaded() )
-		{
-			for( int j = 0; j < model->NumSurfaces(); j++ )
-			{
+		if( model->IsLoaded() ) {
+			for( int j = 0; j < model->NumSurfaces(); j++ ) {
 				R_CreateStaticBuffersForTri( *( model->Surface( j )->geometry ), commandList );
 			}
 		}
@@ -996,11 +886,10 @@ void idRenderModelManagerLocal::EndLevelLoad()
 #endif
 
 	// _D3XP added this
-	int	end = Sys_Milliseconds();
+	int end = Sys_Milliseconds();
 	common->Printf( "%5i models purged from previous level, ", purgeCount );
 	common->Printf( "%5i models kept.\n", keepCount );
-	if( loadCount )
-	{
+	if( loadCount ) {
 		common->Printf( "%5i new models loaded in %5.1f seconds\n", loadCount, ( end - start ) * 0.001 );
 	}
 	common->Printf( "---------------------------------------------------\n" );
@@ -1013,31 +902,26 @@ idRenderModelManagerLocal::PrintMemInfo
 */
 void idRenderModelManagerLocal::PrintMemInfo( MemInfo_t* mi )
 {
-	int i, j, totalMem = 0;
-	int* sortIndex;
+	int		i, j, totalMem = 0;
+	int*	sortIndex;
 	idFile* f;
 
 	f = fileSystem->OpenFileWrite( mi->filebase + "_models.txt" );
-	if( !f )
-	{
+	if( !f ) {
 		return;
 	}
 
 	// sort first
-	sortIndex = new( TAG_MODEL ) int[ localModelManager.models.Num()];
+	sortIndex = new( TAG_MODEL ) int[localModelManager.models.Num()];
 
-	for( i = 0; i <  localModelManager.models.Num(); i++ )
-	{
+	for( i = 0; i < localModelManager.models.Num(); i++ ) {
 		sortIndex[i] = i;
 	}
 
-	for( i = 0; i <  localModelManager.models.Num() - 1; i++ )
-	{
-		for( j = i + 1; j <  localModelManager.models.Num(); j++ )
-		{
-			if( localModelManager.models[sortIndex[i]]->Memory() <  localModelManager.models[sortIndex[j]]->Memory() )
-			{
-				int temp = sortIndex[i];
+	for( i = 0; i < localModelManager.models.Num() - 1; i++ ) {
+		for( j = i + 1; j < localModelManager.models.Num(); j++ ) {
+			if( localModelManager.models[sortIndex[i]]->Memory() < localModelManager.models[sortIndex[j]]->Memory() ) {
+				int temp	 = sortIndex[i];
 				sortIndex[i] = sortIndex[j];
 				sortIndex[j] = temp;
 			}
@@ -1045,13 +929,11 @@ void idRenderModelManagerLocal::PrintMemInfo( MemInfo_t* mi )
 	}
 
 	// print next
-	for( int i = 0; i < localModelManager.models.Num(); i++ )
-	{
-		idRenderModel*	model = localModelManager.models[sortIndex[i]];
-		int mem;
+	for( int i = 0; i < localModelManager.models.Num(); i++ ) {
+		idRenderModel* model = localModelManager.models[sortIndex[i]];
+		int			   mem;
 
-		if( !model->IsLoaded() )
-		{
+		if( !model->IsLoaded() ) {
 			continue;
 		}
 
@@ -1060,14 +942,12 @@ void idRenderModelManagerLocal::PrintMemInfo( MemInfo_t* mi )
 		f->Printf( "%s %s\n", idStr::FormatNumber( mem ).c_str(), model->Name() );
 	}
 
-	delete [] sortIndex;
+	delete[] sortIndex;
 	mi->modelAssetsTotal = totalMem;
 
 	f->Printf( "\nTotal model bytes allocated: %s\n", idStr::FormatNumber( totalMem ).c_str() );
 	fileSystem->CloseFile( f );
 }
-
-
 
 // RB: added Maya exporter options
 /*
@@ -1085,8 +965,8 @@ MayaError
 */
 void MayaError( const char* fmt, ... )
 {
-	va_list	argptr;
-	char	text[ 8192 ];
+	va_list argptr;
+	char	text[8192];
 
 	va_start( argptr, fmt );
 	idStr::vsnPrintf( text, sizeof( text ), fmt, argptr );
@@ -1095,54 +975,49 @@ void MayaError( const char* fmt, ... )
 	throw idException( text );
 }
 
-
 class idTokenizer
 {
 private:
-	int					currentToken;
-	idStrList			tokens;
+	int		  currentToken;
+	idStrList tokens;
 
 public:
 	idTokenizer()
 	{
 		Clear();
 	};
-	void				Clear()
+	void Clear()
 	{
 		currentToken = 0;
 		tokens.Clear();
 	};
 
-	int					SetTokens( const char* buffer );
-	const char*			NextToken( const char* errorstring = NULL );
+	int			SetTokens( const char* buffer );
+	const char* NextToken( const char* errorstring = NULL );
 
-	bool				TokenAvailable()
+	bool		TokenAvailable()
 	{
 		return currentToken < tokens.Num();
 	};
-	int					Num()
+	int Num()
 	{
 		return tokens.Num();
 	};
-	void				UnGetToken()
+	void UnGetToken()
 	{
-		if( currentToken > 0 )
-		{
+		if( currentToken > 0 ) {
 			currentToken--;
 		}
 	};
-	const char*			GetToken( int index )
+	const char* GetToken( int index )
 	{
-		if( ( index >= 0 ) && ( index < tokens.Num() ) )
-		{
-			return tokens[ index ];
-		}
-		else
-		{
+		if( ( index >= 0 ) && ( index < tokens.Num() ) ) {
+			return tokens[index];
+		} else {
 			return NULL;
 		}
 	};
-	const char*			CurrentToken()
+	const char* CurrentToken()
 	{
 		return GetToken( currentToken );
 	};
@@ -1161,22 +1036,18 @@ int idTokenizer::SetTokens( const char* buffer )
 
 	// tokenize commandline
 	cmd = buffer;
-	while( *cmd )
-	{
+	while( *cmd ) {
 		// skip whitespace
-		while( *cmd && isspace( *cmd ) )
-		{
+		while( *cmd && isspace( *cmd ) ) {
 			cmd++;
 		}
 
-		if( !*cmd )
-		{
+		if( !*cmd ) {
 			break;
 		}
 
 		idStr& current = tokens.Alloc();
-		while( *cmd && !isspace( *cmd ) )
-		{
+		while( *cmd && !isspace( *cmd ) ) {
 			current += *cmd;
 			cmd++;
 		}
@@ -1192,21 +1063,16 @@ idTokenizer::NextToken
 */
 const char* idTokenizer::NextToken( const char* errorstring )
 {
-	if( currentToken < tokens.Num() )
-	{
-		return tokens[ currentToken++ ];
+	if( currentToken < tokens.Num() ) {
+		return tokens[currentToken++];
 	}
 
-	if( errorstring )
-	{
+	if( errorstring ) {
 		MayaError( "Error: %s", errorstring );
 	}
 
 	return NULL;
 }
-
-
-
 
 /*
 ==============================================================================================
@@ -1216,8 +1082,8 @@ const char* idTokenizer::NextToken( const char* errorstring )
 ==============================================================================================
 */
 
-#define DEFAULT_ANIM_EPSILON	0.125f
-#define DEFAULT_QUAT_EPSILON	( 1.0f / 8192.0f )
+#define DEFAULT_ANIM_EPSILON 0.125f
+#define DEFAULT_QUAT_EPSILON ( 1.0f / 8192.0f )
 
 idImportOptions::idImportOptions()
 {
@@ -1247,7 +1113,7 @@ void idImportOptions::Reset()
 	reOrient			= ang_zero;
 	armature			= "";
 	noMikktspace		= false;
-	declSourceTimeStamp	= FILE_NOT_FOUND_TIMESTAMP;
+	declSourceTimeStamp = FILE_NOT_FOUND_TIMESTAMP;
 
 	src.Clear();
 	dest.Clear();
@@ -1263,12 +1129,12 @@ void idImportOptions::Reset()
 
 void idImportOptions::Init( const char* commandline, const char* ospath )
 {
-	idStr		token;
-	idNamePair	joints;
-	int			i;
-	idAnimGroup*	group;
-	idStr		sourceDir;
-	idStr		destDir;
+	idStr		 token;
+	idNamePair	 joints;
+	int			 i;
+	idAnimGroup* group;
+	idStr		 sourceDir;
+	idStr		 destDir;
 
 	Reset();
 
@@ -1297,291 +1163,211 @@ void idImportOptions::Init( const char* commandline, const char* ospath )
 	}
 	*/
 
-	//src = tokens.NextToken( "Missing source filename" );
-	//dest = src;
+	// src = tokens.NextToken( "Missing source filename" );
+	// dest = src;
 
-	for( token = tokens.NextToken(); token != ""; token = tokens.NextToken() )
-	{
-		if( token == "-" )
-		{
+	for( token = tokens.NextToken(); token != ""; token = tokens.NextToken() ) {
+		if( token == "-" ) {
 			token = tokens.NextToken( "Missing import parameter" );
 
-			if( token == "force" )
-			{
+			if( token == "force" ) {
 				// skip
-			}
-			else if( token == "game" )
-			{
+			} else if( token == "game" ) {
 				// parse game name
 				game = tokens.NextToken( "Expecting game name after -game" );
 
-			}
-			else if( token == "rename" )
-			{
+			} else if( token == "rename" ) {
 				// parse joint to rename
 				joints.from = tokens.NextToken( "Missing joint name for -rename.  Usage: -rename [joint name] [new name]" );
 				joints.to	= tokens.NextToken( "Missing new name for -rename.  Usage: -rename [joint name] [new name]" );
 				renamejoints.Append( joints );
 
-			}
-			else if( token == "prefix" )
-			{
+			} else if( token == "prefix" ) {
 				prefix = tokens.NextToken( "Missing name for -prefix.  Usage: -prefix [joint prefix]" );
 
-			}
-			else if( token == "parent" )
-			{
+			} else if( token == "parent" ) {
 				// parse joint to reparent
 				joints.from = tokens.NextToken( "Missing joint name for -parent.  Usage: -parent [joint name] [new parent]" );
 				joints.to	= tokens.NextToken( "Missing new parent for -parent.  Usage: -parent [joint name] [new parent]" );
 				remapjoints.Append( joints );
 
-			}
-			else if( !token.Icmp( "sourcedir" ) )
-			{
+			} else if( !token.Icmp( "sourcedir" ) ) {
 				// parse source directory
 				sourceDir = tokens.NextToken( "Missing filename for -sourcedir.  Usage: -sourcedir [directory]" );
 
-			}
-			else if( !token.Icmp( "destdir" ) )
-			{
+			} else if( !token.Icmp( "destdir" ) ) {
 				// parse destination directory
 				destDir = tokens.NextToken( "Missing filename for -destdir.  Usage: -destdir [directory]" );
 
-			}
-			else if( token == "dest" )
-			{
+			} else if( token == "dest" ) {
 				// parse destination filename
 				dest = tokens.NextToken( "Missing filename for -dest.  Usage: -dest [filename]" );
 
-			}
-			else if( token == "range" )
-			{
+			} else if( token == "range" ) {
 				// parse frame range to export
-				token		= tokens.NextToken( "Missing start frame for -range.  Usage: -range [start frame] [end frame]" );
-				startframe	= atoi( token );
-				token		= tokens.NextToken( "Missing end frame for -range.  Usage: -range [start frame] [end frame]" );
-				endframe	= atoi( token );
+				token	   = tokens.NextToken( "Missing start frame for -range.  Usage: -range [start frame] [end frame]" );
+				startframe = atoi( token );
+				token	   = tokens.NextToken( "Missing end frame for -range.  Usage: -range [start frame] [end frame]" );
+				endframe   = atoi( token );
 
-				if( startframe > endframe )
-				{
+				if( startframe > endframe ) {
 					MayaError( "Start frame is greater than end frame." );
 				}
 
-			}
-			else if( !token.Icmp( "cycleStart" ) )
-			{
+			} else if( !token.Icmp( "cycleStart" ) ) {
 				// parse start frame of cycle
-				token		= tokens.NextToken( "Missing cycle start frame for -cycleStart.  Usage: -cycleStart [first frame of cycle]" );
-				cycleStart	= atoi( token );
+				token	   = tokens.NextToken( "Missing cycle start frame for -cycleStart.  Usage: -cycleStart [first frame of cycle]" );
+				cycleStart = atoi( token );
 
-			}
-			else if( token == "scale" )
-			{
+			} else if( token == "scale" ) {
 				// parse scale
-				token	= tokens.NextToken( "Missing scale amount for -scale.  Usage: -scale [scale amount]" );
-				scale	= atof( token );
+				token = tokens.NextToken( "Missing scale amount for -scale.  Usage: -scale [scale amount]" );
+				scale = atof( token );
 
-			}
-			else if( token == "align" )
-			{
+			} else if( token == "align" ) {
 				// parse align joint
 				align = tokens.NextToken( "Missing joint name for -align.  Usage: -align [joint name]" );
 
-			}
-			else if( token == "rotate" )
-			{
+			} else if( token == "rotate" ) {
 				// parse angle rotation
-				token	= tokens.NextToken( "Missing value for -rotate.  Usage: -rotate [yaw]" );
-				rotate	= atof( token );
+				token  = tokens.NextToken( "Missing value for -rotate.  Usage: -rotate [yaw]" );
+				rotate = atof( token );
 
-			}
-			else if( token == "nomesh" )
-			{
+			} else if( token == "nomesh" ) {
 				ignoreMeshes = true;
 
-			}
-			else if( token == "nomikktspace" )
-			{
+			} else if( token == "nomikktspace" ) {
 				noMikktspace = true;
 
-			}
-			else if( token == "clearorigin" )
-			{
-				clearOrigin = true;
+			} else if( token == "clearorigin" ) {
+				clearOrigin		= true;
 				clearOriginAxis = true;
 
-			}
-			else if( token == "clearoriginaxis" )
-			{
+			} else if( token == "clearoriginaxis" ) {
 				clearOriginAxis = true;
 
-			}
-			else if( token == "addorigin" )
-			{
+			} else if( token == "addorigin" ) {
 				addOrigin = true;
-			}
-			else if( token == "transfermotion" )
-			{
-				token = tokens.NextToken( "Missing value for -transfermotion.  Usage: -transfermotion [bonename]" );
+			} else if( token == "transfermotion" ) {
+				token			   = tokens.NextToken( "Missing value for -transfermotion.  Usage: -transfermotion [bonename]" );
 				transferRootMotion = token;
-			}
-			else if( token == "ignorescale" )
-			{
+			} else if( token == "ignorescale" ) {
 				ignoreScale = true;
 
-			}
-			else if( token == "xyzprecision" )
-			{
+			} else if( token == "xyzprecision" ) {
 				// parse quaternion precision
-				token = tokens.NextToken( "Missing value for -xyzprecision.  Usage: -xyzprecision [precision]" );
+				token		 = tokens.NextToken( "Missing value for -xyzprecision.  Usage: -xyzprecision [precision]" );
 				xyzPrecision = atof( token );
-				if( xyzPrecision < 0.0f )
-				{
+				if( xyzPrecision < 0.0f ) {
 					MayaError( "Invalid value for -xyzprecision.  Must be >= 0" );
 				}
 
-			}
-			else if( token == "quatprecision" )
-			{
+			} else if( token == "quatprecision" ) {
 				// parse quaternion precision
-				token = tokens.NextToken( "Missing value for -quatprecision.  Usage: -quatprecision [precision]" );
+				token		  = tokens.NextToken( "Missing value for -quatprecision.  Usage: -quatprecision [precision]" );
 				quatPrecision = atof( token );
-				if( quatPrecision < 0.0f )
-				{
+				if( quatPrecision < 0.0f ) {
 					MayaError( "Invalid value for -quatprecision.  Must be >= 0" );
 				}
 
-			}
-			else if( token == "jointthreshold" )
-			{
+			} else if( token == "jointthreshold" ) {
 				// parse joint threshold
-				token			= tokens.NextToken( "Missing weight for -jointthreshold.  Usage: -jointthreshold [minimum joint weight]" );
-				jointThreshold	= atof( token );
+				token		   = tokens.NextToken( "Missing weight for -jointthreshold.  Usage: -jointthreshold [minimum joint weight]" );
+				jointThreshold = atof( token );
 
-			}
-			else if( token == "skipmesh" )
-			{
+			} else if( token == "skipmesh" ) {
 				token = tokens.NextToken( "Missing name for -skipmesh.  Usage: -skipmesh [name of mesh to skip]" );
 				skipmeshes.AddUnique( token );
 
-			}
-			else if( token == "keepmesh" )
-			{
+			} else if( token == "keepmesh" ) {
 				token = tokens.NextToken( "Missing name for -keepmesh.  Usage: -keepmesh [name of mesh to keep]" );
 				keepmeshes.AddUnique( token );
 
-			}
-			else if( token == "jointgroup" )
-			{
-				token	= tokens.NextToken( "Missing name for -jointgroup.  Usage: -jointgroup [group name] [joint1] [joint2]...[joint n]" );
+			} else if( token == "jointgroup" ) {
+				token = tokens.NextToken( "Missing name for -jointgroup.  Usage: -jointgroup [group name] [joint1] [joint2]...[joint n]" );
 				group = groups.Ptr();
-				for( i = 0; i < groups.Num(); i++, group++ )
-				{
-					if( group->name == token )
-					{
+				for( i = 0; i < groups.Num(); i++, group++ ) {
+					if( group->name == token ) {
 						break;
 					}
 				}
 
-				if( i >= groups.Num() )
-				{
+				if( i >= groups.Num() ) {
 					// create a new group
-					group = &groups.Alloc();
+					group		= &groups.Alloc();
 					group->name = token;
 				}
 
-				while( tokens.TokenAvailable() )
-				{
+				while( tokens.TokenAvailable() ) {
 					token = tokens.NextToken();
-					if( token[ 0 ] == '-' )
-					{
+					if( token[0] == '-' ) {
 						tokens.UnGetToken();
 						break;
 					}
 
 					group->joints.AddUnique( token );
 				}
-			}
-			else if( token == "group" )
-			{
+			} else if( token == "group" ) {
 				// add the list of groups to export (these don't affect the hierarchy)
-				while( tokens.TokenAvailable() )
-				{
+				while( tokens.TokenAvailable() ) {
 					token = tokens.NextToken();
-					if( token[ 0 ] == '-' )
-					{
+					if( token[0] == '-' ) {
 						tokens.UnGetToken();
 						break;
 					}
 
 					group = groups.Ptr();
-					for( i = 0; i < groups.Num(); i++, group++ )
-					{
-						if( group->name == token )
-						{
+					for( i = 0; i < groups.Num(); i++, group++ ) {
+						if( group->name == token ) {
 							break;
 						}
 					}
 
-					if( i >= groups.Num() )
-					{
+					if( i >= groups.Num() ) {
 						MayaError( "Unknown group '%s'", token.c_str() );
 					}
 
 					exportgroups.AddUnique( group );
 				}
-			}
-			else if( token == "keep" )
-			{
+			} else if( token == "keep" ) {
 				// add joints that are kept whether they're used by a mesh or not
-				while( tokens.TokenAvailable() )
-				{
+				while( tokens.TokenAvailable() ) {
 					token = tokens.NextToken();
-					if( token[ 0 ] == '-' )
-					{
+					if( token[0] == '-' ) {
 						tokens.UnGetToken();
 						break;
 					}
 					keepjoints.AddUnique( token );
 				}
-			}
-			else if( token == "reorient" )
-			{
-				while( tokens.TokenAvailable() )
-				{
+			} else if( token == "reorient" ) {
+				while( tokens.TokenAvailable() ) {
 					idAngles angle;
-					float x = atof( tokens.NextToken() );
-					float y = atof( tokens.NextToken() );
-					float z = atof( tokens.NextToken() );
-					reOrient = idAngles( x, y, z );
-					token = tokens.NextToken();
-					if( token[0] == '-' )
-					{
+					float	 x = atof( tokens.NextToken() );
+					float	 y = atof( tokens.NextToken() );
+					float	 z = atof( tokens.NextToken() );
+					reOrient   = idAngles( x, y, z );
+					token	   = tokens.NextToken();
+					if( token[0] == '-' ) {
 						tokens.UnGetToken();
 						break;
 					}
 				}
-			}
-			else if( token == "armature" )
-			{
+			} else if( token == "armature" ) {
 				armature = tokens.NextToken( "Missing skin name for -armature.  Usage: -armature [gltfSkin name]" );
-			}
-			else
-			{
+			} else {
 				MayaError( "Unknown option '%s'", token.c_str() );
 			}
 		}
 	}
 
 	token = src;
-	src = ospath;
+	src	  = ospath;
 	src.BackSlashesToSlashes();
 	src.AppendPath( sourceDir );
 	src.AppendPath( token );
 
 	token = dest;
-	dest = ospath;
+	dest  = ospath;
 	dest.BackSlashesToSlashes();
 	dest.AppendPath( destDir );
 	dest.AppendPath( token );
@@ -1590,8 +1376,7 @@ void idImportOptions::Init( const char* commandline, const char* ospath )
 	src.BackSlashesToSlashes();
 	dest.BackSlashesToSlashes();
 
-	if( skipmeshes.Num() && keepmeshes.Num() )
-	{
+	if( skipmeshes.Num() && keepmeshes.Num() ) {
 		MayaError( "Can't use -keepmesh and -skipmesh together." );
 	}
 }

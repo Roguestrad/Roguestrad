@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -37,62 +38,56 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-typedef struct
-{
-	int						vertexNum[3];
-	int						tVertexNum[3];
-	idVec3					faceNormal;
-	idVec3					vertexNormals[3];
-	byte					vertexColors[3][4];
+typedef struct {
+	int	   vertexNum[3];
+	int	   tVertexNum[3];
+	idVec3 faceNormal;
+	idVec3 vertexNormals[3];
+	byte   vertexColors[3][4];
 } aseFace_t;
 
-typedef struct
-{
-	int						timeValue;
+typedef struct {
+	int		   timeValue;
 
-	int						numVertexes;
-	int						numTVertexes;
-	int						numCVertexes;
-	int						numFaces;
-	int						numTVFaces;
-	int						numCVFaces;
+	int		   numVertexes;
+	int		   numTVertexes;
+	int		   numCVertexes;
+	int		   numFaces;
+	int		   numTVFaces;
+	int		   numCVFaces;
 
-	idVec3					transform[4];			// applied to normals
+	idVec3	   transform[4]; // applied to normals
 
-	bool					colorsParsed;
-	bool					normalsParsed;
-	idVec3* 				vertexes;
-	idVec2* 				tvertexes;
-	idVec3* 				cvertexes;
-	aseFace_t* 				faces;
+	bool	   colorsParsed;
+	bool	   normalsParsed;
+	idVec3*	   vertexes;
+	idVec2*	   tvertexes;
+	idVec3*	   cvertexes;
+	aseFace_t* faces;
 } aseMesh_t;
 
-typedef struct
-{
-	char					name[128];
-	float					uOffset, vOffset;		// max lets you offset by material without changing texCoords
-	float					uTiling, vTiling;		// multiply tex coords by this
-	float					angle;					// in clockwise radians
+typedef struct {
+	char  name[128];
+	float uOffset, vOffset; // max lets you offset by material without changing texCoords
+	float uTiling, vTiling; // multiply tex coords by this
+	float angle;			// in clockwise radians
 } aseMaterial_t;
 
-typedef struct
-{
-	char					name[128];
-	int						materialRef;
+typedef struct {
+	char						  name[128];
+	int							  materialRef;
 
-	aseMesh_t				mesh;
+	aseMesh_t					  mesh;
 
 	// frames are only present with animations
-	idList<aseMesh_t*, TAG_MODEL>		frames;			// aseMesh_t
+	idList<aseMesh_t*, TAG_MODEL> frames; // aseMesh_t
 } aseObject_t;
 
-typedef struct aseModel_s
-{
-	ID_TIME_T					timeStamp;
-	idList<aseMaterial_t*, TAG_MODEL>	materials;
-	idList<aseObject_t*, TAG_MODEL>	objects;
+typedef struct aseModel_s {
+	ID_TIME_T						  timeStamp;
+	idList<aseMaterial_t*, TAG_MODEL> materials;
+	idList<aseObject_t*, TAG_MODEL>	  objects;
 } aseModel_t;
-
 
 aseModel_t* ASE_Load( const char* fileName );
 void		ASE_Free( aseModel_t* ase );

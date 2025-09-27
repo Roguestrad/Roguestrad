@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -30,17 +31,15 @@ If you have questions concerning this license or the applicable additional terms
 
 class idDrawVert;
 
-enum GFXenum
-{
+enum GFXenum {
 	GFX_INVALID_ENUM = 0x0500,
-	GFX_LINES = 0x0001,
-	GFX_LINE_LOOP = 0x0002,
-	GFX_TRIANGLES = 0x0004,
-	GFX_QUADS = 0x0007,
-	GFX_QUAD_STRIP = 0x0008,
-	GFX_POLYGON = 0x0009,
+	GFX_LINES		 = 0x0001,
+	GFX_LINE_LOOP	 = 0x0002,
+	GFX_TRIANGLES	 = 0x0004,
+	GFX_QUADS		 = 0x0007,
+	GFX_QUAD_STRIP	 = 0x0008,
+	GFX_POLYGON		 = 0x0009,
 };
-
 
 class fhImmediateMode
 {
@@ -48,57 +47,54 @@ public:
 	explicit fhImmediateMode( nvrhi::ICommandList* _commandList, bool geometryOnly = false );
 	~fhImmediateMode();
 
-	void SetTexture( idImage* texture );
+	void		SetTexture( idImage* texture );
 
-	void Begin( GFXenum mode );
-	void TexCoord2f( float s, float t );
-	void TexCoord2fv( const float* v );
-	void Color3fv( const float* c );
-	void Color3f( float r, float g, float b );
-	void Color4f( float r, float g, float b, float a );
-	void Color4fv( const float* c );
-	void Color4ubv( const byte* bytes );
-	void Vertex3fv( const float* c );
-	void Vertex3f( float x, float y, float z );
-	void Vertex2f( float x, float y );
-	void End();
+	void		Begin( GFXenum mode );
+	void		TexCoord2f( float s, float t );
+	void		TexCoord2fv( const float* v );
+	void		Color3fv( const float* c );
+	void		Color3f( float r, float g, float b );
+	void		Color4f( float r, float g, float b, float a );
+	void		Color4fv( const float* c );
+	void		Color4ubv( const byte* bytes );
+	void		Vertex3fv( const float* c );
+	void		Vertex3f( float x, float y, float z );
+	void		Vertex2f( float x, float y );
+	void		End();
 
-	void Sphere( float radius, int rings, int sectors, bool inverse = false );
+	void		Sphere( float radius, int rings, int sectors, bool inverse = false );
 
-	GFXenum getCurrentMode() const
-	{
-		return currentMode;
-	}
+	GFXenum		getCurrentMode() const { return currentMode; }
 
 	static void AddTrianglesFromPolygon( fhImmediateMode& im, const idVec3* xyz, int num );
 
 	static void Init( nvrhi::ICommandList* commandList );
 	static void Shutdown();
 	static void ResetStats();
-	static int DrawCallCount();
-	static int DrawCallVertexSize();
+	static int	DrawCallCount();
+	static int	DrawCallVertexSize();
+
 private:
+	static void				 InitBuffers( nvrhi::ICommandList* commandList );
 
-	static void InitBuffers( nvrhi::ICommandList* commandList );
+	nvrhi::CommandListHandle commandList;
+	static idVertexBuffer	 vertexBuffer;
+	static idIndexBuffer	 indexBuffer;
 
-	nvrhi::CommandListHandle		commandList;
-	static idVertexBuffer			vertexBuffer;
-	static idIndexBuffer			indexBuffer;
+	bool					 geometryOnly;
+	float					 currentTexCoord[2] = {};
+	GFXenum					 currentMode;
+	byte					 currentColor[4];
+	idImage*				 currentTexture;
+	int						 drawVertsUsed;
 
-	bool		geometryOnly;
-	float		currentTexCoord[2] = {};
-	GFXenum		currentMode;
-	byte		currentColor[4];
-	idImage*	currentTexture;
-	int			drawVertsUsed;
+	// idDrawVert*                     vertexPointer;
+	// triIndex_t*                     indexPointer;
+	// int							    numVerts;
+	// int							    numIndexes;
 
-	//idDrawVert*                     vertexPointer;
-	//triIndex_t*                     indexPointer;
-	//int							    numVerts;
-	//int							    numIndexes;
-
-	static int drawCallCount;
-	static int drawCallVertexSize;
+	static int				 drawCallCount;
+	static int				 drawCallVertexSize;
 };
 
 class fhLineBuffer
@@ -113,7 +109,7 @@ public:
 	void Commit();
 
 private:
-	int verticesAllocated;
-	int verticesUsed;
+	int			verticesAllocated;
+	int			verticesUsed;
 	idDrawVert* vertices;
 };

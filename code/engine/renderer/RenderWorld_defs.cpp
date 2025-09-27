@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -69,34 +70,29 @@ Does not actually free the entityDef.
 void R_FreeEntityDefDerivedData( idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel )
 {
 	// free all the interactions
-	while( def->firstInteraction != NULL )
-	{
+	while( def->firstInteraction != NULL ) {
 		def->firstInteraction->UnlinkAndFree();
 	}
 	def->dynamicModelFrameCount = 0;
 
 	// clear the dynamic model if present
-	if( def->dynamicModel )
-	{
+	if( def->dynamicModel ) {
 		def->dynamicModel = NULL;
 	}
 
-	if( !keepDecals )
-	{
+	if( !keepDecals ) {
 		R_FreeEntityDefDecals( def );
 		R_FreeEntityDefOverlay( def );
 	}
 
-	if( !keepCachedDynamicModel )
-	{
+	if( !keepCachedDynamicModel ) {
 		delete def->cachedDynamicModel;
 		def->cachedDynamicModel = NULL;
 	}
 
 	// free the entityRefs from the areas
 	areaReference_t* next = NULL;
-	for( areaReference_t* ref = def->entityRefs; ref != NULL; ref = next )
-	{
+	for( areaReference_t* ref = def->entityRefs; ref != NULL; ref = next ) {
 		next = ref->ownerNext;
 
 		// unlink from the area
@@ -126,8 +122,7 @@ R_FreeEntityDefFadedDecals
 */
 void R_FreeEntityDefFadedDecals( idRenderEntityLocal* def, int time )
 {
-	if( def->decals != NULL )
-	{
+	if( def->decals != NULL ) {
 		def->decals->RemoveFadedDecals( time );
 	}
 }
@@ -154,34 +149,26 @@ Bumps tr.viewCount, which means viewCount can change many times each frame.
 */
 void R_CreateEntityRefs( idRenderEntityLocal* entity )
 {
-	if( entity->parms.hModel == NULL )
-	{
+	if( entity->parms.hModel == NULL ) {
 		entity->parms.hModel = renderModelManager->DefaultModel();
 	}
 
 	// if the entity hasn't been fully specified due to expensive animation calcs
 	// for md5 and particles, use the provided conservative bounds.
-	if( entity->parms.callback != NULL )
-	{
+	if( entity->parms.callback != NULL ) {
 		entity->localReferenceBounds = entity->parms.bounds;
-	}
-	else
-	{
+	} else {
 		entity->localReferenceBounds = entity->parms.hModel->Bounds( &entity->parms );
 	}
 
 	// some models, like empty particles, may not need to be added at all
-	if( entity->localReferenceBounds.IsCleared() )
-	{
+	if( entity->localReferenceBounds.IsCleared() ) {
 		return;
 	}
 
 	if( r_showUpdates.GetBool() &&
-			( entity->localReferenceBounds[1][0] - entity->localReferenceBounds[0][0] > 1024.0f ||
-			  entity->localReferenceBounds[1][1] - entity->localReferenceBounds[0][1] > 1024.0f ) )
-	{
-		common->Printf( "big entityRef: %f,%f\n", entity->localReferenceBounds[1][0] - entity->localReferenceBounds[0][0],
-						entity->localReferenceBounds[1][1] - entity->localReferenceBounds[0][1] );
+		( entity->localReferenceBounds[1][0] - entity->localReferenceBounds[0][0] > 1024.0f || entity->localReferenceBounds[1][1] - entity->localReferenceBounds[0][1] > 1024.0f ) ) {
+		common->Printf( "big entityRef: %f,%f\n", entity->localReferenceBounds[1][0] - entity->localReferenceBounds[0][0], entity->localReferenceBounds[1][1] - entity->localReferenceBounds[0][1] );
 	}
 
 	// derive entity data
@@ -223,13 +210,13 @@ static float R_ComputePointLightProjectionMatrix( idRenderLightLocal* light, idR
 	localProject[0][3] = 0.5f;
 	localProject[1][3] = 0.5f;
 	localProject[2][3] = 0.5f;
-	localProject[3][3] = 1.0f;	// identity perspective
+	localProject[3][3] = 1.0f; // identity perspective
 
 	return 1.0f;
 }
 
-static const float SPOT_LIGHT_MIN_Z_NEAR	= 8.0f;
-static const float SPOT_LIGHT_MIN_Z_FAR		= 16.0f;
+static const float SPOT_LIGHT_MIN_Z_NEAR = 8.0f;
+static const float SPOT_LIGHT_MIN_Z_FAR	 = 16.0f;
 
 /*
 ========================
@@ -238,15 +225,15 @@ R_ComputeSpotLightProjectionMatrix
 Computes the light projection matrix for a spot light.
 ========================
 */
-static float R_ComputeSpotLightProjectionMatrix( idRenderLightLocal* light, idRenderMatrix& localProject )
+static float	   R_ComputeSpotLightProjectionMatrix( idRenderLightLocal* light, idRenderMatrix& localProject )
 {
-	const float targetDistSqr = light->parms.target.LengthSqr();
-	const float invTargetDist = idMath::InvSqrt( targetDistSqr );
-	const float targetDist = invTargetDist * targetDistSqr;
+	const float	 targetDistSqr = light->parms.target.LengthSqr();
+	const float	 invTargetDist = idMath::InvSqrt( targetDistSqr );
+	const float	 targetDist	   = invTargetDist * targetDistSqr;
 
 	const idVec3 normalizedTarget = light->parms.target * invTargetDist;
-	const idVec3 normalizedRight = light->parms.right * ( 0.5f * targetDist / light->parms.right.LengthSqr() );
-	const idVec3 normalizedUp = light->parms.up * ( -0.5f * targetDist / light->parms.up.LengthSqr() );
+	const idVec3 normalizedRight  = light->parms.right * ( 0.5f * targetDist / light->parms.right.LengthSqr() );
+	const idVec3 normalizedUp	  = light->parms.up * ( -0.5f * targetDist / light->parms.up.LengthSqr() );
 
 	localProject[0][0] = normalizedRight[0];
 	localProject[0][1] = normalizedRight[1];
@@ -266,14 +253,14 @@ static float R_ComputeSpotLightProjectionMatrix( idRenderLightLocal* light, idRe
 	// Set the falloff vector.
 	// This is similar to the Z calculation for depth buffering, which means that the
 	// mapped texture is going to be perspective distorted heavily towards the zero end.
-	const float zNear = Max( light->parms.start * normalizedTarget, SPOT_LIGHT_MIN_Z_NEAR );
-	const float zFar = Max( light->parms.end * normalizedTarget, SPOT_LIGHT_MIN_Z_FAR );
+	const float zNear  = Max( light->parms.start * normalizedTarget, SPOT_LIGHT_MIN_Z_NEAR );
+	const float zFar   = Max( light->parms.end * normalizedTarget, SPOT_LIGHT_MIN_Z_FAR );
 	const float zScale = ( zNear + zFar ) / zFar;
 
 	localProject[2][0] = normalizedTarget[0] * zScale;
 	localProject[2][1] = normalizedTarget[1] * zScale;
 	localProject[2][2] = normalizedTarget[2] * zScale;
-	localProject[2][3] = - zNear * zScale;
+	localProject[2][3] = -zNear * zScale;
 
 	// now offset to the 0.0 - 1.0 texture range instead of -1.0 to 1.0 clip space range
 	idVec4 projectedTarget;
@@ -314,7 +301,7 @@ static float R_ComputeParallelLightProjectionMatrix( idRenderLightLocal* light, 
 	localProject[0][3] = 0.5f;
 	localProject[1][3] = 0.5f;
 	localProject[2][3] = 0.5f;
-	localProject[3][3] = 1.0f;	// identity perspective
+	localProject[3][3] = 1.0f; // identity perspective
 
 	return 1.0f;
 }
@@ -328,20 +315,13 @@ Fills everything in based on light->parms
 */
 void R_DeriveLightData( idRenderLightLocal* light )
 {
-
 	// decide which light shader we are going to use
-	if( light->parms.shader != NULL )
-	{
+	if( light->parms.shader != NULL ) {
 		light->lightShader = light->parms.shader;
-	}
-	else if( light->lightShader == NULL )
-	{
-		if( light->parms.pointLight )
-		{
+	} else if( light->lightShader == NULL ) {
+		if( light->parms.pointLight ) {
 			light->lightShader = tr.defaultPointLight;
-		}
-		else
-		{
+		} else {
 			light->lightShader = tr.defaultProjectedLight;
 		}
 	}
@@ -349,28 +329,24 @@ void R_DeriveLightData( idRenderLightLocal* light )
 	// get the falloff image
 	light->falloffImage = light->lightShader->LightFalloffImage();
 
-	if( light->falloffImage == NULL )
-	{
+	if( light->falloffImage == NULL ) {
 		// use the falloff from the default shader of the correct type
 		const idMaterial* defaultShader;
 
-		if( light->parms.pointLight )
-		{
+		if( light->parms.pointLight ) {
 			defaultShader = tr.defaultPointLight;
 
 			// Touch the default shader. to make sure it's decl has been parsed ( it might have been purged ).
-			declManager->Touch( static_cast< const idDecl*>( defaultShader ) );
+			declManager->Touch( static_cast<const idDecl*>( defaultShader ) );
 
 			light->falloffImage = defaultShader->LightFalloffImage();
 
-		}
-		else
-		{
+		} else {
 			// projected lights by default don't diminish with distance
 			defaultShader = tr.defaultProjectedLight;
 
 			// Touch the light shader. to make sure it's decl has been parsed ( it might have been purged ).
-			declManager->Touch( static_cast< const idDecl*>( defaultShader ) );
+			declManager->Touch( static_cast<const idDecl*>( defaultShader ) );
 
 			light->falloffImage = defaultShader->LightFalloffImage();
 		}
@@ -381,17 +357,12 @@ void R_DeriveLightData( idRenderLightLocal* light )
 	// ------------------------------------
 
 	idRenderMatrix localProject;
-	float zScale = 1.0f;
-	if( light->parms.parallel )
-	{
+	float		   zScale = 1.0f;
+	if( light->parms.parallel ) {
 		zScale = R_ComputeParallelLightProjectionMatrix( light, localProject );
-	}
-	else if( light->parms.pointLight )
-	{
+	} else if( light->parms.pointLight ) {
 		zScale = R_ComputePointLightProjectionMatrix( light, localProject );
-	}
-	else
-	{
+	} else {
 		zScale = R_ComputeSpotLightProjectionMatrix( light, localProject );
 	}
 
@@ -420,26 +391,21 @@ void R_DeriveLightData( idRenderLightLocal* light )
 	// transform the lightProject
 	float lightTransform[16];
 	R_AxisToModelMatrix( light->parms.axis, light->parms.origin, lightTransform );
-	for( int i = 0; i < 4; i++ )
-	{
+	for( int i = 0; i < 4; i++ ) {
 		idPlane temp = light->lightProject[i];
 		R_LocalPlaneToGlobal( lightTransform, temp, light->lightProject[i] );
 	}
 
 	// adjust global light origin for off center projections and parallel projections
 	// we are just faking parallel by making it a very far off center for now
-	if( light->parms.parallel )
-	{
+	if( light->parms.parallel ) {
 		idVec3 dir = light->parms.lightCenter;
-		if( dir.Normalize() == 0.0f )
-		{
+		if( dir.Normalize() == 0.0f ) {
 			// make point straight up if not specified
 			dir[2] = 1.0f;
 		}
 		light->globalLightOrigin = light->parms.origin + dir * 100000.0f;
-	}
-	else
-	{
+	} else {
 		light->globalLightOrigin = light->parms.origin + light->parms.axis * light->parms.lightCenter;
 	}
 
@@ -449,8 +415,7 @@ void R_DeriveLightData( idRenderLightLocal* light )
 	idRenderMatrix::CreateFromOriginAxis( light->parms.origin, light->parms.axis, lightMatrix );
 
 	idRenderMatrix inverseLightMatrix;
-	if( !idRenderMatrix::Inverse( lightMatrix, inverseLightMatrix ) )
-	{
+	if( !idRenderMatrix::Inverse( lightMatrix, inverseLightMatrix ) ) {
 		idLib::Warning( "lightMatrix invert failed" );
 	}
 
@@ -459,8 +424,7 @@ void R_DeriveLightData( idRenderLightLocal* light )
 
 	// Invert the light projection so we can deform zero-to-one cubes into
 	// the light model and calculate global bounds.
-	if( !idRenderMatrix::Inverse( light->baseLightProject, light->inverseBaseLightProject ) )
-	{
+	if( !idRenderMatrix::Inverse( light->baseLightProject, light->inverseBaseLightProject ) ) {
 		idLib::Warning( "baseLightProject invert failed" );
 	}
 
@@ -478,21 +442,18 @@ Frees all references and lit surfaces from the light
 void R_FreeLightDefDerivedData( idRenderLightLocal* ldef )
 {
 	// remove any portal fog references
-	for( doublePortal_t* dp = ldef->foggedPortals; dp != NULL; dp = dp->nextFoggedPortal )
-	{
+	for( doublePortal_t* dp = ldef->foggedPortals; dp != NULL; dp = dp->nextFoggedPortal ) {
 		dp->fogLight = NULL;
 	}
 
 	// free all the interactions
-	while( ldef->firstInteraction != NULL )
-	{
+	while( ldef->firstInteraction != NULL ) {
 		ldef->firstInteraction->UnlinkAndFree();
 	}
 
 	// free all the references to the light
 	areaReference_t* nextRef = NULL;
-	for( areaReference_t* lref = ldef->references; lref != NULL; lref = nextRef )
-	{
+	for( areaReference_t* lref = ldef->references; lref != NULL; lref = nextRef ) {
 		nextRef = lref->ownerNext;
 
 		// unlink from the area
@@ -508,7 +469,7 @@ void R_FreeLightDefDerivedData( idRenderLightLocal* ldef )
 // RB begin
 void R_RenderLightFrustum( const renderLight_t& renderLight, idPlane lightFrustum[6] )
 {
-	idRenderLightLocal	fakeLight;
+	idRenderLightLocal fakeLight;
 
 	fakeLight.parms = renderLight;
 
@@ -517,13 +478,10 @@ void R_RenderLightFrustum( const renderLight_t& renderLight, idPlane lightFrustu
 	idRenderMatrix::GetFrustumPlanes( lightFrustum, fakeLight.baseLightProject, true, true );
 
 	// the DOOM 3 frustum planes point outside the frustum
-	for( int i = 0; i < 6; i++ )
-	{
+	for( int i = 0; i < 6; i++ ) {
 		lightFrustum[i] = -lightFrustum[i];
 	}
 }
-
-
 
 /*
 =====================
@@ -535,41 +493,35 @@ The positive sides of the planes will be visible.
 */
 srfTriangles_t* R_PolytopeSurface( int numPlanes, const idPlane* planes, idWinding** windings )
 {
-	int i, j;
+	int				i, j;
 	srfTriangles_t* tri;
 
-	const int MAX_POLYTOPE_PLANES = 6;
+	const int		MAX_POLYTOPE_PLANES = 6;
 
-	idFixedWinding planeWindings[MAX_POLYTOPE_PLANES];
-	int numVerts, numIndexes;
+	idFixedWinding	planeWindings[MAX_POLYTOPE_PLANES];
+	int				numVerts, numIndexes;
 
-	if( numPlanes > MAX_POLYTOPE_PLANES )
-	{
+	if( numPlanes > MAX_POLYTOPE_PLANES ) {
 		common->Error( "R_PolytopeSurface: more than %d planes", MAX_POLYTOPE_PLANES );
 	}
 
-	numVerts = 0;
+	numVerts   = 0;
 	numIndexes = 0;
-	for( i = 0; i < numPlanes; i++ )
-	{
-		const idPlane& plane = planes[i];
-		idFixedWinding& w = planeWindings[i];
+	for( i = 0; i < numPlanes; i++ ) {
+		const idPlane&	plane = planes[i];
+		idFixedWinding& w	  = planeWindings[i];
 
 		w.BaseForPlane( plane );
-		for( j = 0; j < numPlanes; j++ )
-		{
+		for( j = 0; j < numPlanes; j++ ) {
 			const idPlane& plane2 = planes[j];
-			if( j == i )
-			{
+			if( j == i ) {
 				continue;
 			}
-			if( !w.ClipInPlace( -plane2, ON_EPSILON ) )
-			{
+			if( !w.ClipInPlace( -plane2, ON_EPSILON ) ) {
 				break;
 			}
 		}
-		if( w.GetNumPoints() <= 2 )
-		{
+		if( w.GetNumPoints() <= 2 ) {
 			continue;
 		}
 		numVerts += w.GetNumPoints();
@@ -582,32 +534,27 @@ srfTriangles_t* R_PolytopeSurface( int numPlanes, const idPlane* planes, idWindi
 	R_AllocStaticTriSurfIndexes( tri, numIndexes );
 
 	// copy the data from the windings
-	for( i = 0; i < numPlanes; i++ )
-	{
+	for( i = 0; i < numPlanes; i++ ) {
 		idFixedWinding& w = planeWindings[i];
-		if( !w.GetNumPoints() )
-		{
+		if( !w.GetNumPoints() ) {
 			continue;
 		}
-		for( j = 0 ; j < w.GetNumPoints() ; j++ )
-		{
-			tri->verts[tri->numVerts + j ].Clear();
-			tri->verts[tri->numVerts + j ].xyz = w[j].ToVec3();
+		for( j = 0; j < w.GetNumPoints(); j++ ) {
+			tri->verts[tri->numVerts + j].Clear();
+			tri->verts[tri->numVerts + j].xyz = w[j].ToVec3();
 		}
 
-		for( j = 1 ; j < w.GetNumPoints() - 1 ; j++ )
-		{
-			tri->indexes[ tri->numIndexes + 0 ] = tri->numVerts;
-			tri->indexes[ tri->numIndexes + 1 ] = tri->numVerts + j;
-			tri->indexes[ tri->numIndexes + 2 ] = tri->numVerts + j + 1;
+		for( j = 1; j < w.GetNumPoints() - 1; j++ ) {
+			tri->indexes[tri->numIndexes + 0] = tri->numVerts;
+			tri->indexes[tri->numIndexes + 1] = tri->numVerts + j;
+			tri->indexes[tri->numIndexes + 2] = tri->numVerts + j + 1;
 			tri->numIndexes += 3;
 		}
 		tri->numVerts += w.GetNumPoints();
 
 		// optionally save the winding
-		if( windings )
-		{
-			windings[i] = new idWinding( w.GetNumPoints() );
+		if( windings ) {
+			windings[i]	 = new idWinding( w.GetNumPoints() );
 			*windings[i] = w;
 		}
 	}
@@ -625,10 +572,8 @@ WindingCompletelyInsideLight
 */
 static bool WindingCompletelyInsideLight( const idWinding* w, const idRenderLightLocal* ldef )
 {
-	for( int i = 0; i < w->GetNumPoints(); i++ )
-	{
-		if( idRenderMatrix::CullPointToMVP( ldef->baseLightProject, ( *w )[i].ToVec3(), true ) )
-		{
+	for( int i = 0; i < w->GetNumPoints(); i++ ) {
+		if( idRenderMatrix::CullPointToMVP( ldef->baseLightProject, ( *w )[i].ToVec3(), true ) ) {
 			return false;
 		}
 	}
@@ -647,39 +592,33 @@ static void R_CreateLightDefFogPortals( idRenderLightLocal* ldef )
 {
 	ldef->foggedPortals = NULL;
 
-	if( !ldef->lightShader->IsFogLight() )
-	{
+	if( !ldef->lightShader->IsFogLight() ) {
 		return;
 	}
 
 	// some fog lights will explicitly disallow portal fogging
-	if( ldef->lightShader->TestMaterialFlag( MF_NOPORTALFOG ) )
-	{
+	if( ldef->lightShader->TestMaterialFlag( MF_NOPORTALFOG ) ) {
 		return;
 	}
 
-	for( areaReference_t* lref = ldef->references; lref != NULL; lref = lref->ownerNext )
-	{
+	for( areaReference_t* lref = ldef->references; lref != NULL; lref = lref->ownerNext ) {
 		// check all the models in this area
 		portalArea_t* area = lref->area;
 
-		for( portal_t* prt = area->portals; prt != NULL; prt = prt->next )
-		{
+		for( portal_t* prt = area->portals; prt != NULL; prt = prt->next ) {
 			doublePortal_t* dp = prt->doublePortal;
 
 			// we only handle a single fog volume covering a portal
 			// this will never cause incorrect drawing, but it may
 			// fail to cull a portal
-			if( dp->fogLight )
-			{
+			if( dp->fogLight ) {
 				continue;
 			}
 
-			if( WindingCompletelyInsideLight( prt->w, ldef ) )
-			{
-				dp->fogLight = ldef;
+			if( WindingCompletelyInsideLight( prt->w, ldef ) ) {
+				dp->fogLight		 = ldef;
 				dp->nextFoggedPortal = ldef->foggedPortals;
-				ldef->foggedPortals = dp;
+				ldef->foggedPortals	 = dp;
 			}
 		}
 	}
@@ -700,8 +639,7 @@ void R_CreateLightRefs( idRenderLightLocal* light )
 	// it is debatable if we want to use the entity origin or the center offset origin,
 	// but we definitely don't want to use a parallel offset origin
 	light->areaNum = light->world->PointInArea( light->globalLightOrigin );
-	if( light->areaNum == -1 )
-	{
+	if( light->areaNum == -1 ) {
 		light->areaNum = light->world->PointInArea( light->parms.origin );
 	}
 
@@ -745,15 +683,12 @@ void R_DeriveEnvprobeData( RenderEnvprobeLocal* probe )
 
 	// determine the areaNum for the envprobe origin, which may let us
 	// cull the envprobe if it is behind a closed door
-	int areaNum = probe->world->PointInArea( probe->parms.origin );
+	int	  areaNum = probe->world->PointInArea( probe->parms.origin );
 
-	if( areaNum != -1 )
-	{
+	if( areaNum != -1 ) {
 		// HACK: this should be in the gamecode and set by the entity properties
 		probe->globalProbeBounds = probe->world->AreaBounds( areaNum );
-	}
-	else
-	{
+	} else {
 		probe->globalProbeBounds.Clear();
 	}
 
@@ -784,11 +719,10 @@ void R_DeriveEnvprobeData( RenderEnvprobeLocal* probe )
 	idRenderMatrix::CreateFromOriginAxis( vec3_origin, axis, modelRenderMatrix );
 
 	// render from mins to maxs for debug rendering
-	//idRenderMatrix::CreateFromOriginAxis( probe->globalProbeBounds[0], axis, modelRenderMatrix );
+	// idRenderMatrix::CreateFromOriginAxis( probe->globalProbeBounds[0], axis, modelRenderMatrix );
 
 	idRenderMatrix inverseModelMatrix;
-	if( !idRenderMatrix::Inverse( modelRenderMatrix, inverseModelMatrix ) )
-	{
+	if( !idRenderMatrix::Inverse( modelRenderMatrix, inverseModelMatrix ) ) {
 		idLib::Warning( "lightMatrix invert failed" );
 	}
 
@@ -812,22 +746,22 @@ void R_DeriveEnvprobeData( RenderEnvprobeLocal* probe )
 
 	localBounds.FromPoints( corners2, 8 );
 #else
-	//idVec3 center = probe->globalProbeBounds.GetCenter();
+	// idVec3 center = probe->globalProbeBounds.GetCenter();
 
 	// offset it so it sits on 0 0 0
-	//center += center;
+	// center += center;
 
 	localBounds[0] = probe->globalProbeBounds[0] * 2;
 	localBounds[1] = probe->globalProbeBounds[1] * 2;
 
-	//idRenderMatrix::CreateFromOriginAxis( -probe->globalProbeBounds[0] * 2, axis, modelRenderMatrix );
+	// idRenderMatrix::CreateFromOriginAxis( -probe->globalProbeBounds[0] * 2, axis, modelRenderMatrix );
 #endif
 
 	// calculate the matrix that transforms the unit cube to exactly cover the model in world space
 	idRenderMatrix::OffsetScaleForBounds( modelRenderMatrix, localBounds, probe->inverseBaseProbeProject );
 
 	// calculate the global model bounds by inverse projecting the unit cube with the 'inverseBaseModelProject'
-	//idRenderMatrix::ProjectedBounds( probe->globalProbeBounds, probe->inverseBaseProbeProject, bounds_unitCube, false );
+	// idRenderMatrix::ProjectedBounds( probe->globalProbeBounds, probe->inverseBaseProbeProject, bounds_unitCube, false );
 }
 
 void R_CreateEnvprobeRefs( RenderEnvprobeLocal* probe )
@@ -851,8 +785,7 @@ void R_FreeEnvprobeDefDerivedData( RenderEnvprobeLocal* probe )
 {
 	// free all the references to the envprobe
 	areaReference_t* nextRef = NULL;
-	for( areaReference_t* lref = probe->references; lref != NULL; lref = nextRef )
-	{
+	for( areaReference_t* lref = probe->references; lref != NULL; lref = nextRef ) {
 		nextRef = lref->ownerNext;
 
 		// unlink from the area
@@ -882,36 +815,29 @@ ReloadModels and RegenerateWorld call this
 */
 void R_FreeDerivedData()
 {
-	for( int j = 0; j < tr.worlds.Num(); j++ )
-	{
+	for( int j = 0; j < tr.worlds.Num(); j++ ) {
 		idRenderWorldLocal* rw = tr.worlds[j];
 
-		for( int i = 0; i < rw->entityDefs.Num(); i++ )
-		{
+		for( int i = 0; i < rw->entityDefs.Num(); i++ ) {
 			idRenderEntityLocal* def = rw->entityDefs[i];
-			if( def == NULL )
-			{
+			if( def == NULL ) {
 				continue;
 			}
 			R_FreeEntityDefDerivedData( def, false, false );
 		}
 
-		for( int i = 0; i < rw->lightDefs.Num(); i++ )
-		{
+		for( int i = 0; i < rw->lightDefs.Num(); i++ ) {
 			idRenderLightLocal* light = rw->lightDefs[i];
-			if( light == NULL )
-			{
+			if( light == NULL ) {
 				continue;
 			}
 			R_FreeLightDefDerivedData( light );
 		}
 
 		// RB begin
-		for( int i = 0; i < rw->envprobeDefs.Num(); i++ )
-		{
+		for( int i = 0; i < rw->envprobeDefs.Num(); i++ ) {
 			RenderEnvprobeLocal* probe = rw->envprobeDefs[i];
-			if( probe == NULL )
-			{
+			if( probe == NULL ) {
 				continue;
 			}
 			R_FreeEnvprobeDefDerivedData( probe );
@@ -927,21 +853,17 @@ R_CheckForEntityDefsUsingModel
 */
 void R_CheckForEntityDefsUsingModel( idRenderModel* model )
 {
-	for( int j = 0; j < tr.worlds.Num(); j++ )
-	{
+	for( int j = 0; j < tr.worlds.Num(); j++ ) {
 		idRenderWorldLocal* rw = tr.worlds[j];
 
-		for( int i = 0; i < rw->entityDefs.Num(); i++ )
-		{
-			idRenderEntityLocal*	 def = rw->entityDefs[i];
-			if( !def )
-			{
+		for( int i = 0; i < rw->entityDefs.Num(); i++ ) {
+			idRenderEntityLocal* def = rw->entityDefs[i];
+			if( !def ) {
 				continue;
 			}
-			if( def->parms.hModel == model )
-			{
-				//assert( 0 );
-				// this should never happen but Radiant messes it up all the time so just free the derived data
+			if( def->parms.hModel == model ) {
+				// assert( 0 );
+				//  this should never happen but Radiant messes it up all the time so just free the derived data
 				R_FreeEntityDefDerivedData( def, false, false );
 			}
 		}
@@ -961,34 +883,26 @@ void R_ReCreateWorldReferences()
 	// shouldn't be optimized for a particular view
 	tr.viewDef = NULL;
 
-	for( int j = 0; j < tr.worlds.Num(); j++ )
-	{
+	for( int j = 0; j < tr.worlds.Num(); j++ ) {
 		idRenderWorldLocal* rw = tr.worlds[j];
 
-		for( int i = 0; i < rw->entityDefs.Num(); i++ )
-		{
+		for( int i = 0; i < rw->entityDefs.Num(); i++ ) {
 			idRenderEntityLocal* def = rw->entityDefs[i];
-			if( def == NULL )
-			{
+			if( def == NULL ) {
 				continue;
 			}
 			// the world model entities are put specifically in a single
 			// area, instead of just pushing their bounds into the tree
-			if( i < rw->numPortalAreas )
-			{
+			if( i < rw->numPortalAreas ) {
 				rw->AddEntityRefToArea( def, &rw->portalAreas[i] );
-			}
-			else
-			{
+			} else {
 				R_CreateEntityRefs( def );
 			}
 		}
 
-		for( int i = 0; i < rw->lightDefs.Num(); i++ )
-		{
+		for( int i = 0; i < rw->lightDefs.Num(); i++ ) {
 			idRenderLightLocal* light = rw->lightDefs[i];
-			if( light == NULL )
-			{
+			if( light == NULL ) {
 				continue;
 			}
 			renderLight_t parms = light->parms;
@@ -998,11 +912,9 @@ void R_ReCreateWorldReferences()
 		}
 
 		// RB begin
-		for( int i = 0; i < rw->envprobeDefs.Num(); i++ )
-		{
+		for( int i = 0; i < rw->envprobeDefs.Num(); i++ ) {
 			RenderEnvprobeLocal* probe = rw->envprobeDefs[i];
-			if( probe == NULL )
-			{
+			if( probe == NULL ) {
 				continue;
 			}
 			renderEnvironmentProbe_t parms = probe->parms;
@@ -1024,31 +936,25 @@ designers can easily test different color schemes
 */
 void R_ModulateLights_f( const idCmdArgs& args )
 {
-	if( !tr.primaryWorld )
-	{
+	if( !tr.primaryWorld ) {
 		return;
 	}
-	if( args.Argc() != 4 )
-	{
+	if( args.Argc() != 4 ) {
 		common->Printf( "usage: modulateLights <redFloat> <greenFloat> <blueFloat>\n" );
 		return;
 	}
 
 	float modulate[3];
-	for( int i = 0; i < 3; i++ )
-	{
+	for( int i = 0; i < 3; i++ ) {
 		modulate[i] = atof( args.Argv( i + 1 ) );
 	}
 
 	int count = 0;
-	for( int i = 0; i < tr.primaryWorld->lightDefs.Num(); i++ )
-	{
+	for( int i = 0; i < tr.primaryWorld->lightDefs.Num(); i++ ) {
 		idRenderLightLocal* light = tr.primaryWorld->lightDefs[i];
-		if( light != NULL )
-		{
+		if( light != NULL ) {
 			count++;
-			for( int j = 0; j < 3; j++ )
-			{
+			for( int j = 0; j < 3; j++ ) {
 				light->parms.shaderParms[j] *= modulate[j];
 			}
 		}

@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -45,11 +46,11 @@ If you have questions concerning this license or the applicable additional terms
 #include <fnmatch.h>
 
 // RB begin
-#if defined(__ANDROID__)
+#if defined( __ANDROID__ )
 	#include <android/log.h>
 #endif
 
-#if defined(__APPLE__)
+#if defined( __APPLE__ )
 	#include <SDL.h>
 #endif
 
@@ -58,60 +59,56 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "posix_public.h"
 
-#define					MAX_OSPATH 256
-#define					COMMAND_HISTORY 64
+#define MAX_OSPATH		256
+#define COMMAND_HISTORY 64
 
-static idStr			basepath;
-static idStr			savepath;
+static idStr		  basepath;
+static idStr		  savepath;
 
-static int				input_hide = 0;
+static int			  input_hide = 0;
 
-idEditField				input_field;
-static char				input_ret[256];
+idEditField			  input_field;
+static char			  input_ret[256];
 
-static idStr			history[ COMMAND_HISTORY ];	// cycle buffer
-static int				history_count = 0;			// buffer fill up
-static int				history_start = 0;			// current history start
-static int				history_current = 0;		// goes back in history
-idEditField				history_backup;				// the base edit line
+static idStr		  history[COMMAND_HISTORY]; // cycle buffer
+static int			  history_count	  = 0;		// buffer fill up
+static int			  history_start	  = 0;		// current history start
+static int			  history_current = 0;		// goes back in history
+idEditField			  history_backup;			// the base edit line
 
 // terminal support
-idCVar in_tty( "in_tty", "1", CVAR_BOOL | CVAR_INIT | CVAR_SYSTEM, "terminal tab-completion and history" );
+idCVar				  in_tty( "in_tty", "1", CVAR_BOOL | CVAR_INIT | CVAR_SYSTEM, "terminal tab-completion and history" );
 
-static bool				tty_enabled = false;
-static struct termios	tty_tc;
+static bool			  tty_enabled = false;
+static struct termios tty_tc;
 
 // pid - useful when you attach to gdb..
-idCVar com_pid( "com_pid", "0", CVAR_INTEGER | CVAR_INIT | CVAR_SYSTEM, "process id" );
+idCVar				  com_pid( "com_pid", "0", CVAR_INTEGER | CVAR_INIT | CVAR_SYSTEM, "process id" );
 
 // exit - quit - error --------------------------------------------------------
 
-static int set_exit = 0;
-static char exit_spawn[ 1024 ];
+static int			  set_exit = 0;
+static char			  exit_spawn[1024];
 
 /*
  ==============
  Sys_DefaultSavePath
  ==============
  */
-const char* Sys_DefaultSavePath()
+const char*			  Sys_DefaultSavePath()
 {
-#if defined(__APPLE__)
+#if defined( __APPLE__ )
 	char* base_path = SDL_GetPrefPath( "", "RBDOOM-3-BFG" );
-	if( base_path )
-	{
+	if( base_path ) {
 		savepath = base_path;
 		savepath.StripTrailing( '/' );
 		SDL_free( base_path );
 	}
 #else
 	const char* xdg_data_home = getenv( "XDG_DATA_HOME" );
-	if( xdg_data_home != NULL )
-	{
+	if( xdg_data_home != NULL ) {
 		sprintf( savepath, "%s/rbdoom3bfg", xdg_data_home );
-	}
-	else
-	{
+	} else {
 		sprintf( savepath, "%s/.local/share/rbdoom3bfg", getenv( "HOME" ) );
 	}
 #endif
@@ -126,31 +123,27 @@ Posix_Exit
 */
 void Posix_Exit( int ret )
 {
-	if( tty_enabled )
-	{
+	if( tty_enabled ) {
 		Sys_Printf( "shutdown terminal support\n" );
-		if( tcsetattr( 0, TCSADRAIN, &tty_tc ) == -1 )
-		{
+		if( tcsetattr( 0, TCSADRAIN, &tty_tc ) == -1 ) {
 			Sys_Printf( "tcsetattr failed: %s\n", strerror( errno ) );
 		}
 	}
 	// at this point, too late to catch signals
 	Posix_ClearSigs();
 
-	//if( asyncThread.threadHandle )
+	// if( asyncThread.threadHandle )
 	//{
 	//	Sys_DestroyThread( asyncThread );
-	//}
+	// }
 
 	// process spawning. it's best when it happens after everything has shut down
-	if( exit_spawn[0] )
-	{
+	if( exit_spawn[0] ) {
 		Sys_DoStartProcess( exit_spawn, false );
 	}
 	// in case of signal, handler tries a common->Quit
 	// we use set_exit to maintain a correct exit code
-	if( set_exit )
-	{
+	if( set_exit ) {
 		exit( set_exit );
 	}
 	exit( ret );
@@ -188,8 +181,7 @@ NOTE: might even want to add a small delay?
 */
 void idSysLocal::StartProcess( const char* exeName, bool quit )
 {
-	if( quit )
-	{
+	if( quit ) {
 		common->DPrintf( "Sys_StartProcess %s (delaying until final exit)\n", exeName );
 		Posix_SetExitSpawn( exeName );
 		cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "quit\n" );
@@ -227,9 +219,9 @@ void Sys_Shutdown()
 Sys_FPU_EnableExceptions
 ===============
 */
-//void Sys_FPU_EnableExceptions( int exceptions )
+// void Sys_FPU_EnableExceptions( int exceptions )
 //{
-//}
+// }
 
 /*
 ===============
@@ -252,30 +244,29 @@ double Sys_GetClockTicks()
 #if defined( __i386__ )
 	unsigned long lo, hi;
 
-	__asm__ __volatile__(
-		"push %%ebx\n"			\
-		"xor %%eax,%%eax\n"		\
-		"cpuid\n"					\
-		"rdtsc\n"					\
-		"mov %%eax,%0\n"			\
-		"mov %%edx,%1\n"			\
-		"pop %%ebx\n"
-		: "=r"( lo ), "=r"( hi ) );
-	return ( double ) lo + ( double ) 0xFFFFFFFF * hi;
+	__asm__ __volatile__( "push %%ebx\n"
+						  "xor %%eax,%%eax\n"
+						  "cpuid\n"
+						  "rdtsc\n"
+						  "mov %%eax,%0\n"
+						  "mov %%edx,%1\n"
+						  "pop %%ebx\n"
+						  : "=r"( lo ), "=r"( hi ) );
+	return ( double )lo + ( double )0xFFFFFFFF * hi;
 // RB begin
 #elif defined( __x86_64__ )
 	uint32_t lo, hi;
 	__asm__ __volatile__( "rdtsc" : "=a"( lo ), "=d"( hi ) );
 	return ( ( ( uint64_t )hi ) << 32 ) | lo;
 #else
-	//#error unsupported CPU
+	// #error unsupported CPU
 	struct timespec now;
 
 	clock_gettime( CLOCK_MONOTONIC, &now );
 
 	return now.tv_sec * 1000000000LL + now.tv_nsec;
 #endif
-// RB end
+	// RB end
 }
 
 /*
@@ -315,20 +306,19 @@ unsigned int sys_timeBase = 0;
 // RB end
 /* current time in ms, using sys_timeBase as origin
    NOTE: sys_timeBase*1000 + curtime -> ms since the Epoch
-     0x7fffffff ms - ~24 days
+	 0x7fffffff ms - ~24 days
 		 or is it 48 days? the specs say int, but maybe it's casted from unsigned int?
 */
-int Sys_Milliseconds()
+int			 Sys_Milliseconds()
 {
 	// DG: use clock_gettime on all platforms
 #if 1
-	int curtime;
+	int				curtime;
 	struct timespec ts;
 
 	clock_gettime( D3_CLOCK_TO_USE, &ts );
 
-	if( !sys_timeBase )
-	{
+	if( !sys_timeBase ) {
 		sys_timeBase = ts.tv_sec;
 		return ts.tv_nsec / 1000000;
 	}
@@ -338,13 +328,12 @@ int Sys_Milliseconds()
 	return curtime;
 #else
 	// gettimeofday() implementation
-	int curtime;
+	int			   curtime;
 	struct timeval tp;
 
 	gettimeofday( &tp, NULL );
 
-	if( !sys_timeBase )
-	{
+	if( !sys_timeBase ) {
 		sys_timeBase = tp.tv_sec;
 		return tp.tv_usec / 1000;
 	}
@@ -366,7 +355,7 @@ Sys_Microseconds
 */
 static uint64 sys_microTimeBase = 0;
 
-uint64 Sys_Microseconds()
+uint64		  Sys_Microseconds()
 {
 #if 0
 	static uint64 ticksPerMicrosecondTimes1024 = 0;
@@ -379,7 +368,7 @@ uint64 Sys_Microseconds()
 
 	return ( ( uint64 )( ( int64 )Sys_GetClockTicks() << 10 ) ) / ticksPerMicrosecondTimes1024;
 #elif 0
-	uint64 curtime;
+	uint64			curtime;
 	struct timespec ts;
 
 	clock_gettime( CLOCK_MONOTONIC, &ts );
@@ -388,13 +377,12 @@ uint64 Sys_Microseconds()
 
 	return curtime;
 #else
-	uint64 curtime;
+	uint64			curtime;
 	struct timespec ts;
 
 	clock_gettime( D3_CLOCK_TO_USE, &ts );
 
-	if( !sys_microTimeBase )
-	{
+	if( !sys_microTimeBase ) {
 		sys_microTimeBase = ts.tv_sec;
 		return ts.tv_nsec / 1000;
 	}
@@ -421,71 +409,56 @@ Try to be intelligent: if there is no BASE_GAMEDIR, try the next path
 const char* Sys_DefaultBasePath()
 {
 	struct stat st;
-	idStr testbase, exepath = {};
+	idStr		testbase, exepath = {};
 	basepath = Sys_EXEPath();
-	if( basepath.Length() )
-	{
-		exepath = basepath.StripFilename();
+	if( basepath.Length() ) {
+		exepath	 = basepath.StripFilename();
 		testbase = basepath;
 		testbase += "/";
 		testbase += BASE_GAMEDIR;
-		if( stat( testbase.c_str(), &st ) != -1 && S_ISDIR( st.st_mode ) )
-		{
+		if( stat( testbase.c_str(), &st ) != -1 && S_ISDIR( st.st_mode ) ) {
 			return basepath.c_str();
-		}
-		else
-		{
+		} else {
 			common->Printf( "no '%s' directory in exe path %s, skipping\n", BASE_GAMEDIR, basepath.c_str() );
 		}
 	}
-	if( basepath != Posix_Cwd() )
-	{
+	if( basepath != Posix_Cwd() ) {
 		basepath = Posix_Cwd();
 		testbase = basepath;
 		testbase += "/";
 		testbase += BASE_GAMEDIR;
-		if( stat( testbase.c_str(), &st ) != -1 && S_ISDIR( st.st_mode ) )
-		{
+		if( stat( testbase.c_str(), &st ) != -1 && S_ISDIR( st.st_mode ) ) {
 			return basepath.c_str();
-		}
-		else
-		{
+		} else {
 			common->Printf( "no '%s' directory in cwd path %s, skipping\n", BASE_GAMEDIR, basepath.c_str() );
 		}
 	}
-	if( exepath.Length() )
-	{
-#if defined(__APPLE__)
+	if( exepath.Length() ) {
+#if defined( __APPLE__ )
 		// SRS - Check for macOS app bundle resources path (up one dir level and down to Resources dir)
 		basepath = exepath;
 		basepath = basepath.StripFilename() + "/Resources";
 		testbase = basepath;
 		testbase += "/";
 		testbase += BASE_GAMEDIR;
-		if( stat( testbase.c_str(), &st ) != -1 && S_ISDIR( st.st_mode ) )
-		{
+		if( stat( testbase.c_str(), &st ) != -1 && S_ISDIR( st.st_mode ) ) {
 			return basepath.c_str();
-		}
-		else
-		{
+		} else {
 			common->Printf( "no '%s' directory in macOS app bundle resources path %s, skipping\n", BASE_GAMEDIR, basepath.c_str() );
 		}
 #endif
 		// SRS - Check for linux/macOS build path (directory structure with build dir and possible config suffix)
 		basepath = exepath;
-		basepath.StripFilename();						// up 1st dir level for single-config dev builds
+		basepath.StripFilename(); // up 1st dir level for single-config dev builds
 #if !defined( NO_MULTI_CONFIG )
-		basepath.StripFilename();						// up 2nd dir level for multi-config dev builds with Debug/Release/etc suffix
+		basepath.StripFilename(); // up 2nd dir level for multi-config dev builds with Debug/Release/etc suffix
 #endif
 		testbase = basepath;
 		testbase += "/";
 		testbase += BASE_GAMEDIR;
-		if( stat( testbase.c_str(), &st ) != -1 && S_ISDIR( st.st_mode ) )
-		{
+		if( stat( testbase.c_str(), &st ) != -1 && S_ISDIR( st.st_mode ) ) {
 			return basepath.c_str();
-		}
-		else
-		{
+		} else {
 			common->Printf( "no '%s' directory in build path %s, skipping\n", BASE_GAMEDIR, basepath.c_str() );
 		}
 	}
@@ -521,8 +494,7 @@ Sys_IsFileWritable
 bool Sys_IsFileWritable( const char* path )
 {
 	struct stat st;
-	if( stat( path, &st ) == -1 )
-	{
+	if( stat( path, &st ) == -1 ) {
 		return true;
 	}
 
@@ -534,12 +506,11 @@ bool Sys_IsFileWritable( const char* path )
 Sys_IsFolder
 ========================
 */
-sysFolder_t	 Sys_IsFolder( const char* path )
+sysFolder_t Sys_IsFolder( const char* path )
 {
 	struct stat buffer;
 
-	if( stat( path, &buffer ) < 0 )
-	{
+	if( stat( path, &buffer ) < 0 ) {
 		return FOLDER_ERROR;
 	}
 
@@ -556,11 +527,11 @@ Sys_ListFiles
 int Sys_ListFiles( const char* directory, const char* extension, idStrList& list )
 {
 	struct dirent* d;
-	DIR* fdir;
-	bool dironly = false;
-	char search[MAX_OSPATH];
-	struct stat st;
-	bool debug;
+	DIR*		   fdir;
+	bool		   dironly = false;
+	char		   search[MAX_OSPATH];
+	struct stat	   st;
+	bool		   debug;
 
 	list.Clear();
 
@@ -571,22 +542,17 @@ int Sys_ListFiles( const char* directory, const char* extension, idStrList& list
 	idStr pattern( "*" );
 
 	// passing a slash as extension will find directories
-	if( extension[0] == '/' && extension[1] == 0 )
-	{
+	if( extension[0] == '/' && extension[1] == 0 ) {
 		dironly = true;
-	}
-	else
-	{
+	} else {
 		// so we have *<extension>, the same as in the windows code basically
 		pattern += extension;
 	}
 	// DG end
 
 	// NOTE: case sensitivity of directory path can screw us up here
-	if( ( fdir = opendir( directory ) ) == NULL )
-	{
-		if( debug )
-		{
+	if( ( fdir = opendir( directory ) ) == NULL ) {
+		if( debug ) {
 			common->Printf( "Sys_ListFiles: opendir %s failed\n", directory );
 		}
 		return -1;
@@ -594,47 +560,41 @@ int Sys_ListFiles( const char* directory, const char* extension, idStrList& list
 
 	// DG: use readdir_r instead of readdir for thread safety
 	// the following lines are from the readdir_r manpage.. fscking ugly.
-	//int nameMax = pathconf( directory, _PC_NAME_MAX );
-	//if( nameMax == -1 )
+	// int nameMax = pathconf( directory, _PC_NAME_MAX );
+	// if( nameMax == -1 )
 	//{
 	//	nameMax = 255;
 	//}
-	//int direntLen = offsetof( struct dirent, d_name ) + nameMax + 1;
+	// int direntLen = offsetof( struct dirent, d_name ) + nameMax + 1;
 
-	//struct dirent* entry = ( struct dirent* )Mem_Alloc( direntLen, TAG_CRAP );
+	// struct dirent* entry = ( struct dirent* )Mem_Alloc( direntLen, TAG_CRAP );
 
-	//if( entry == NULL )
+	// if( entry == NULL )
 	//{
 	//	common->Warning( "Sys_ListFiles: Mem_Alloc for entry failed!" );
 	//	closedir( fdir );
 	//	return 0;
-	//}
+	// }
 
-	//while( readdir_r( fdir, entry, &d ) == 0 && d != NULL )
-	// SRS - readdir_r() is deprecated on linux, readdir() is thread safe with different dir streams
-	while( ( d = readdir( fdir ) ) != NULL )
-	{
+	// while( readdir_r( fdir, entry, &d ) == 0 && d != NULL )
+	//  SRS - readdir_r() is deprecated on linux, readdir() is thread safe with different dir streams
+	while( ( d = readdir( fdir ) ) != NULL ) {
 		// DG end
 		idStr::snPrintf( search, sizeof( search ), "%s/%s", directory, d->d_name );
-		if( stat( search, &st ) == -1 )
-		{
+		if( stat( search, &st ) == -1 ) {
 			continue;
 		}
-		if( !dironly )
-		{
+		if( !dironly ) {
 			// DG: the original code didn't work because d3 bfg abuses the extension
 			// to match whole filenames and patterns in the savegame-code, not just file extensions...
 			// so just use fnmatch() which supports matching shell wildcard patterns ("*.foo" etc)
 			// if we should ever need case insensitivity, use FNM_CASEFOLD as third flag
-			if( fnmatch( pattern.c_str(), d->d_name, 0 ) != 0 )
-			{
+			if( fnmatch( pattern.c_str(), d->d_name, 0 ) != 0 ) {
 				continue;
 			}
 			// DG end
 		}
-		if( ( dironly && !( st.st_mode & S_IFDIR ) ) ||
-				( !dironly && ( st.st_mode & S_IFDIR ) ) )
-		{
+		if( ( dironly && !( st.st_mode & S_IFDIR ) ) || ( !dironly && ( st.st_mode & S_IFDIR ) ) ) {
 			continue;
 		}
 
@@ -642,10 +602,9 @@ int Sys_ListFiles( const char* directory, const char* extension, idStrList& list
 	}
 
 	closedir( fdir );
-	//Mem_Free( entry );
+	// Mem_Free( entry );
 
-	if( debug )
-	{
+	if( debug ) {
 		common->Printf( "Sys_ListFiles: %d entries in %s\n", list.Num(), directory );
 	}
 
@@ -782,7 +741,9 @@ Sys_Init
 Posix_EarlyInit/Posix_LateInit is better
 =================
 */
-void Sys_Init() { }
+void Sys_Init()
+{
+}
 
 /*
 =================
@@ -791,9 +752,8 @@ Posix_Shutdown
 */
 void Posix_Shutdown()
 {
-	for( int i = 0; i < COMMAND_HISTORY; i++ )
-	{
-		history[ i ].Clear();
+	for( int i = 0; i < COMMAND_HISTORY; i++ ) {
+		history[i].Clear();
 	}
 }
 
@@ -807,8 +767,7 @@ TODO: OSX - use the native API instead? NSModule
 intptr_t Sys_DLL_Load( const char* path )
 {
 	void* handle = dlopen( path, RTLD_NOW );
-	if( !handle )
-	{
+	if( !handle ) {
 		Sys_Printf( "dlopen '%s' failed: %s\n", path, dlerror() );
 	}
 
@@ -824,11 +783,10 @@ Sys_DLL_GetProcAddress
 // RB: 64 bit fixes, changed int to intptr_t
 void* Sys_DLL_GetProcAddress( intptr_t handle, const char* sym )
 {
-// RB end
+	// RB end
 	const char* error;
-	void* ret = dlsym( ( void* )handle, sym );
-	if( ( error = dlerror() ) != NULL )
-	{
+	void*		ret = dlsym( ( void* )handle, sym );
+	if( ( error = dlerror() ) != NULL ) {
 		Sys_Printf( "dlsym '%s' failed: %s\n", sym, error );
 	}
 	return ret;
@@ -842,7 +800,7 @@ Sys_DLL_Unload
 // RB: 64 bit fixes, changed int to intptr_t
 void Sys_DLL_Unload( intptr_t handle )
 {
-// RB end
+	// RB end
 	dlclose( ( void* )handle );
 }
 
@@ -851,7 +809,9 @@ void Sys_DLL_Unload( intptr_t handle )
 Sys_ShowConsole
 ================
 */
-void Sys_ShowConsole( int visLevel, bool quitOnClose ) { }
+void Sys_ShowConsole( int visLevel, bool quitOnClose )
+{
+}
 
 // ---------------------------------------------------------------------------
 
@@ -870,7 +830,7 @@ ID_TIME_T Sys_FileTimeStamp( idFileHandle fp )
 
 void Sys_Sleep( int msec )
 {
-#if 0 // DG: I don't really care, this spams the console (and on windows this case isn't handled either)
+#if 0  // DG: I don't really care, this spams the console (and on windows this case isn't handled either)
 	// Furthermore, there are several Sys_Sleep( 10 ) calls throughout the code
 	if( msec < 20 )
 	{
@@ -885,14 +845,13 @@ void Sys_Sleep( int msec )
 		return;
 	}
 #endif // DG end
-	// use nanosleep? keep sleeping if signal interrupt?
+	   // use nanosleep? keep sleeping if signal interrupt?
 
 	// RB begin
-#if defined(__ANDROID__)
+#if defined( __ANDROID__ )
 	usleep( msec * 1000 );
 #else
-	if( usleep( msec * 1000 ) == -1 )
-	{
+	if( usleep( msec * 1000 ) == -1 ) {
 		Sys_Printf( "usleep: %s\n", strerror( errno ) );
 	}
 #endif
@@ -901,7 +860,7 @@ void Sys_Sleep( int msec )
 // stub pretty much everywhere - heavy calling
 void Sys_FlushCacheMemory( void* base, int bytes )
 {
-//  Sys_Printf("Sys_FlushCacheMemory stub\n");
+	//  Sys_Printf("Sys_FlushCacheMemory stub\n");
 }
 
 /*
@@ -964,13 +923,12 @@ returns in megabytes
 */
 int Sys_GetDriveFreeSpace( const char* path )
 {
-	int ret = 26;
+	int			   ret = 26;
 
 	struct statvfs st;
 
-	if( statvfs( path, &st ) == 0 )
-	{
-		unsigned long blocksize = st.f_bsize;
+	if( statvfs( path, &st ) == 0 ) {
+		unsigned long blocksize	 = st.f_bsize;
 		unsigned long freeblocks = st.f_bfree;
 
 		unsigned long free = blocksize * freeblocks;
@@ -988,13 +946,12 @@ Sys_GetDriveFreeSpaceInBytes
 */
 int64 Sys_GetDriveFreeSpaceInBytes( const char* path )
 {
-	int64 ret = 1;
+	int64		   ret = 1;
 
 	struct statvfs st;
 
-	if( statvfs( path, &st ) == 0 )
-	{
-		unsigned long blocksize = st.f_bsize;
+	if( statvfs( path, &st ) == 0 ) {
+		unsigned long blocksize	 = st.f_bsize;
 		unsigned long freeblocks = st.f_bfree;
 
 		unsigned long free = blocksize * freeblocks;
@@ -1025,7 +982,7 @@ Posix_EarlyInit
 */
 void Posix_EarlyInit()
 {
-	//memset( &asyncThread, 0, sizeof( asyncThread ) );
+	// memset( &asyncThread, 0, sizeof( asyncThread ) );
 
 	exit_spawn[0] = '\0';
 	Posix_InitSigs();
@@ -1033,7 +990,7 @@ void Posix_EarlyInit()
 	// set the base time
 	Sys_Milliseconds();
 
-	//Posix_InitPThreads();
+	// Posix_InitPThreads();
 }
 
 /*
@@ -1046,13 +1003,13 @@ void Posix_LateInit()
 	Posix_InitConsoleInput();
 	com_pid.SetInteger( getpid() );
 	common->Printf( "pid: %d\n", com_pid.GetInteger() );
-//	common->Printf( "%d MB System Memory\n", Sys_GetSystemRam() );
+	//	common->Printf( "%d MB System Memory\n", Sys_GetSystemRam() );
 
-//#ifndef ID_DEDICATED
-	//common->Printf( "%d MB Video Memory\n", Sys_GetVideoRam() );
-//#endif
+	// #ifndef ID_DEDICATED
+	// common->Printf( "%d MB Video Memory\n", Sys_GetVideoRam() );
+	// #endif
 
-	//Posix_StartAsyncThread();
+	// Posix_StartAsyncThread();
 }
 
 /*
@@ -1064,23 +1021,19 @@ void Posix_InitConsoleInput()
 {
 	struct termios tc;
 
-	if( in_tty.GetBool() )
-	{
-		if( isatty( STDIN_FILENO ) != 1 )
-		{
+	if( in_tty.GetBool() ) {
+		if( isatty( STDIN_FILENO ) != 1 ) {
 			Sys_Printf( "terminal support disabled: stdin is not a tty\n" );
 			in_tty.SetBool( false );
 			return;
 		}
-		if( tcgetattr( 0, &tty_tc ) == -1 )
-		{
+		if( tcgetattr( 0, &tty_tc ) == -1 ) {
 			Sys_Printf( "tcgetattr failed. disabling terminal support: %s\n", strerror( errno ) );
 			in_tty.SetBool( false );
 			return;
 		}
 		// make the input non blocking
-		if( fcntl( STDIN_FILENO, F_SETFL, fcntl( STDIN_FILENO, F_GETFL, 0 ) | O_NONBLOCK ) == -1 )
-		{
+		if( fcntl( STDIN_FILENO, F_SETFL, fcntl( STDIN_FILENO, F_GETFL, 0 ) | O_NONBLOCK ) == -1 ) {
 			Sys_Printf( "fcntl STDIN non blocking failed.  disabling terminal support: %s\n", strerror( errno ) );
 			in_tty.SetBool( false );
 			return;
@@ -1089,10 +1042,10 @@ void Posix_InitConsoleInput()
 		/*
 		  ECHO: don't echo input characters
 		  ICANON: enable canonical mode.  This  enables  the  special
-		  	characters  EOF,  EOL,  EOL2, ERASE, KILL, REPRINT,
-		  	STATUS, and WERASE, and buffers by lines.
+			characters  EOF,  EOL,  EOL2, ERASE, KILL, REPRINT,
+			STATUS, and WERASE, and buffers by lines.
 		  ISIG: when any of the characters  INTR,  QUIT,  SUSP,  or
-		  	DSUSP are received, generate the corresponding signal
+			DSUSP are received, generate the corresponding signal
 		*/
 		tc.c_lflag &= ~( ECHO | ICANON );
 		/*
@@ -1100,10 +1053,9 @@ void Posix_InitConsoleInput()
 		  INPCK enable input parity checking
 		*/
 		tc.c_iflag &= ~( ISTRIP | INPCK );
-		tc.c_cc[VMIN] = 1;
+		tc.c_cc[VMIN]  = 1;
 		tc.c_cc[VTIME] = 0;
-		if( tcsetattr( 0, TCSADRAIN, &tc ) == -1 )
-		{
+		if( tcsetattr( 0, TCSADRAIN, &tc ) == -1 ) {
 			Sys_Printf( "tcsetattr failed: %s\n", strerror( errno ) );
 			Sys_Printf( "terminal support may not work correctly. Use +set in_tty 0 to disable it\n" );
 		}
@@ -1117,17 +1069,13 @@ void Posix_InitConsoleInput()
 		tty_enabled = true;
 		// check the terminal type for the supported ones
 		char* term = getenv( "TERM" );
-		if( term )
-		{
-			if( strcmp( term, "linux" ) && strcmp( term, "xterm" ) && strcmp( term, "xterm-color" ) && strcmp( term, "screen" ) )
-			{
+		if( term ) {
+			if( strcmp( term, "linux" ) && strcmp( term, "xterm" ) && strcmp( term, "xterm-color" ) && strcmp( term, "screen" ) ) {
 				Sys_Printf( "WARNING: terminal type '%s' is unknown. terminal support may not work correctly\n", term );
 			}
 		}
 		Sys_Printf( "terminal support enabled ( use +set in_tty 0 to disabled )\n" );
-	}
-	else
-	{
+	} else {
 		Sys_Printf( "terminal support disabled\n" );
 	}
 }
@@ -1167,25 +1115,21 @@ void tty_Right()
 void tty_Hide()
 {
 	int len, buf_len;
-	if( !tty_enabled )
-	{
+	if( !tty_enabled ) {
 		return;
 	}
-	if( input_hide )
-	{
+	if( input_hide ) {
 		input_hide++;
 		return;
 	}
 	// clear after cursor
 	len = strlen( input_field.GetBuffer() ) - input_field.GetCursor();
-	while( len > 0 )
-	{
+	while( len > 0 ) {
 		tty_Right();
 		len--;
 	}
 	buf_len = strlen( input_field.GetBuffer() );
-	while( buf_len > 0 )
-	{
+	while( buf_len > 0 ) {
 		tty_Del();
 		buf_len--;
 	}
@@ -1196,28 +1140,24 @@ void tty_Hide()
 void tty_Show()
 {
 	//	int i;
-	if( !tty_enabled )
-	{
+	if( !tty_enabled ) {
 		return;
 	}
 	assert( input_hide > 0 );
 	input_hide--;
-	if( input_hide == 0 )
-	{
+	if( input_hide == 0 ) {
 		char* buf = input_field.GetBuffer();
-		if( buf[0] )
-		{
+		if( buf[0] ) {
 			write( STDOUT_FILENO, buf, strlen( buf ) );
 
 			// RB begin
-#if defined(__ANDROID__)
+#if defined( __ANDROID__ )
 			//__android_log_print(ANDROID_LOG_DEBUG, "RBDoom3_DEBUG", "%s", buf);
 #endif
 			// RB end
 
 			int back = strlen( buf ) - input_field.GetCursor();
-			while( back > 0 )
-			{
+			while( back > 0 ) {
 				tty_Left();
 				back--;
 			}
@@ -1228,8 +1168,7 @@ void tty_Show()
 void tty_FlushIn()
 {
 	char key;
-	while( read( 0, &key, 1 ) != -1 )
-	{
+	while( read( 0, &key, 1 ) != -1 ) {
 		Sys_Printf( "'%d' ", key );
 	}
 	Sys_Printf( "\n" );
@@ -1244,20 +1183,16 @@ Return NULL if a complete line is not ready.
 */
 char* Posix_ConsoleInput()
 {
-	if( tty_enabled )
-	{
-		int		ret;
-		char	key;
-		bool	hidden = false;
-		while( ( ret = read( STDIN_FILENO, &key, 1 ) ) > 0 )
-		{
-			if( !hidden )
-			{
+	if( tty_enabled ) {
+		int	 ret;
+		char key;
+		bool hidden = false;
+		while( ( ret = read( STDIN_FILENO, &key, 1 ) ) > 0 ) {
+			if( !hidden ) {
 				tty_Hide();
 				hidden = true;
 			}
-			switch( key )
-			{
+			switch( key ) {
 				case 1:
 					input_field.SetCursor( 0 );
 					break;
@@ -1274,14 +1209,11 @@ char* Posix_ConsoleInput()
 					tty_Show();
 					write( STDOUT_FILENO, &key, 1 );
 					input_field.Clear();
-					if( history_count < COMMAND_HISTORY )
-					{
-						history[ history_count ] = input_ret;
+					if( history_count < COMMAND_HISTORY ) {
+						history[history_count] = input_ret;
 						history_count++;
-					}
-					else
-					{
-						history[ history_start ] = input_ret;
+					} else {
+						history[history_start] = input_ret;
 						history_start++;
 						history_start %= COMMAND_HISTORY;
 					}
@@ -1290,32 +1222,27 @@ char* Posix_ConsoleInput()
 				case '\t':
 					input_field.AutoComplete();
 					break;
-				case 27:
-				{
+				case 27: {
 					// enter escape sequence mode
 					ret = read( STDIN_FILENO, &key, 1 );
-					if( ret <= 0 )
-					{
+					if( ret <= 0 ) {
 						Sys_Printf( "dropping sequence: '27' " );
 						tty_FlushIn();
 						assert( hidden );
 						tty_Show();
 						return NULL;
 					}
-					switch( key )
-					{
+					switch( key ) {
 						case 79:
 							ret = read( STDIN_FILENO, &key, 1 );
-							if( ret <= 0 )
-							{
+							if( ret <= 0 ) {
 								Sys_Printf( "dropping sequence: '27' '79' " );
 								tty_FlushIn();
 								assert( hidden );
 								tty_Show();
 								return NULL;
 							}
-							switch( key )
-							{
+							switch( key ) {
 								case 72:
 									// xterm only
 									input_field.SetCursor( 0 );
@@ -1332,24 +1259,19 @@ char* Posix_ConsoleInput()
 									return NULL;
 							}
 							break;
-						case 91:
-						{
+						case 91: {
 							ret = read( STDIN_FILENO, &key, 1 );
-							if( ret <= 0 )
-							{
+							if( ret <= 0 ) {
 								Sys_Printf( "dropping sequence: '27' '91' " );
 								tty_FlushIn();
 								assert( hidden );
 								tty_Show();
 								return NULL;
 							}
-							switch( key )
-							{
-								case 49:
-								{
+							switch( key ) {
+								case 49: {
 									ret = read( STDIN_FILENO, &key, 1 );
-									if( ret <= 0 || key != 126 )
-									{
+									if( ret <= 0 || key != 126 ) {
 										Sys_Printf( "dropping sequence: '27' '91' '49' '%d' ", key );
 										tty_FlushIn();
 										assert( hidden );
@@ -1360,11 +1282,9 @@ char* Posix_ConsoleInput()
 									input_field.SetCursor( 0 );
 									break;
 								}
-								case 50:
-								{
+								case 50: {
 									ret = read( STDIN_FILENO, &key, 1 );
-									if( ret <= 0 || key != 126 )
-									{
+									if( ret <= 0 || key != 126 ) {
 										Sys_Printf( "dropping sequence: '27' '91' '50' '%d' ", key );
 										tty_FlushIn();
 										assert( hidden );
@@ -1375,11 +1295,9 @@ char* Posix_ConsoleInput()
 									input_field.KeyDownEvent( K_INS );
 									break;
 								}
-								case 52:
-								{
+								case 52: {
 									ret = read( STDIN_FILENO, &key, 1 );
-									if( ret <= 0 || key != 126 )
-									{
+									if( ret <= 0 || key != 126 ) {
 										Sys_Printf( "dropping sequence: '27' '91' '52' '%d' ", key );
 										tty_FlushIn();
 										assert( hidden );
@@ -1390,19 +1308,16 @@ char* Posix_ConsoleInput()
 									input_field.SetCursor( strlen( input_field.GetBuffer() ) );
 									break;
 								}
-								case 51:
-								{
+								case 51: {
 									ret = read( STDIN_FILENO, &key, 1 );
-									if( ret <= 0 )
-									{
+									if( ret <= 0 ) {
 										Sys_Printf( "dropping sequence: '27' '91' '51' " );
 										tty_FlushIn();
 										assert( hidden );
 										tty_Show();
 										return NULL;
 									}
-									if( key == 126 )
-									{
+									if( key == 126 ) {
 										input_field.KeyDownEvent( K_DEL );
 										break;
 									}
@@ -1413,45 +1328,34 @@ char* Posix_ConsoleInput()
 									return NULL;
 								}
 								case 65:
-								case 66:
-								{
+								case 66: {
 									// history
-									if( history_current == 0 )
-									{
+									if( history_current == 0 ) {
 										history_backup = input_field;
 									}
-									if( key == 65 )
-									{
+									if( key == 65 ) {
 										// up
 										history_current++;
-									}
-									else
-									{
+									} else {
 										// down
 										history_current--;
 									}
 									// history_current cycle:
 									// 0: current edit
 									// 1 .. Min( COMMAND_HISTORY, history_count ): back in history
-									if( history_current < 0 )
-									{
+									if( history_current < 0 ) {
 										history_current = Min( COMMAND_HISTORY, history_count );
-									}
-									else
-									{
+									} else {
 										history_current %= Min( COMMAND_HISTORY, history_count ) + 1;
 									}
 									int index = -1;
-									if( history_current == 0 )
-									{
+									if( history_current == 0 ) {
 										input_field = history_backup;
-									}
-									else
-									{
+									} else {
 										index = history_start + Min( COMMAND_HISTORY, history_count ) - history_current;
 										index %= COMMAND_HISTORY;
 										assert( index >= 0 && index < COMMAND_HISTORY );
-										input_field.SetBuffer( history[ index ] );
+										input_field.SetBuffer( history[index] );
 									}
 									assert( hidden );
 									tty_Show();
@@ -1482,8 +1386,7 @@ char* Posix_ConsoleInput()
 					break;
 				}
 				default:
-					if( key >= ' ' )
-					{
+					if( key >= ' ' ) {
 						input_field.CharEvent( key );
 						break;
 					}
@@ -1494,50 +1397,43 @@ char* Posix_ConsoleInput()
 					return NULL;
 			}
 		}
-		if( hidden )
-		{
+		if( hidden ) {
 			tty_Show();
 		}
 		return NULL;
-	}
-	else
-	{
+	} else {
 		// disabled on OSX. works fine from a terminal, but launching from Finder is causing trouble
 		// I'm pretty sure it could be re-enabled if needed, and just handling the Finder failure case right (TTimo)
 #ifndef __APPLE__
 		// no terminal support - read only complete lines
-		int				len;
-		fd_set			fdset;
-		struct timeval	timeout;
+		int			   len;
+		fd_set		   fdset;
+		struct timeval timeout;
 
 		FD_ZERO( &fdset );
 		FD_SET( STDIN_FILENO, &fdset );
-		timeout.tv_sec = 0;
+		timeout.tv_sec	= 0;
 		timeout.tv_usec = 0;
-		if( select( 1, &fdset, NULL, NULL, &timeout ) == -1 || !FD_ISSET( 0, &fdset ) )
-		{
+		if( select( 1, &fdset, NULL, NULL, &timeout ) == -1 || !FD_ISSET( 0, &fdset ) ) {
 			return NULL;
 		}
 
 		len = read( 0, input_ret, sizeof( input_ret ) );
-		if( len == 0 )
-		{
+		if( len == 0 ) {
 			// EOF
 			return NULL;
 		}
 
-		if( len < 1 )
-		{
-			Sys_Printf( "read failed: %s\n", strerror( errno ) );	// something bad happened, cancel this line and print an error
+		if( len < 1 ) {
+			Sys_Printf( "read failed: %s\n", strerror( errno ) ); // something bad happened, cancel this line and print an error
 			return NULL;
 		}
 
-		if( len == sizeof( input_ret ) )
-		{
-			Sys_Printf( "read overflow\n" );	// things are likely to break, as input will be cut into pieces
+		if( len == sizeof( input_ret ) ) {
+			Sys_Printf( "read overflow\n" ); // things are likely to break, as input will be cut into pieces
 		}
 
-		input_ret[ len - 1 ] = '\0';		// rip off the \n and terminate
+		input_ret[len - 1] = '\0'; // rip off the \n and terminate
 		return input_ret;
 #endif
 	}
@@ -1574,9 +1470,9 @@ low level output
 
 void Sys_DebugPrintf( const char* fmt, ... )
 {
-#if defined(__ANDROID__)
-	va_list		argptr;
-	char		msg[4096];
+#if defined( __ANDROID__ )
+	va_list argptr;
+	char	msg[4096];
 
 	va_start( argptr, fmt );
 	idStr::vsnPrintf( msg, sizeof( msg ), fmt, argptr );
@@ -1597,7 +1493,7 @@ void Sys_DebugPrintf( const char* fmt, ... )
 
 void Sys_DebugVPrintf( const char* fmt, va_list arg )
 {
-#if defined(__ANDROID__)
+#if defined( __ANDROID__ )
 	__android_log_vprint( ANDROID_LOG_DEBUG, "RBDoom3_Debug", fmt, arg );
 #else
 	tty_Hide();
@@ -1608,9 +1504,9 @@ void Sys_DebugVPrintf( const char* fmt, va_list arg )
 
 void Sys_Printf( const char* fmt, ... )
 {
-#if defined(__ANDROID__)
-	va_list		argptr;
-	char		msg[4096];
+#if defined( __ANDROID__ )
+	va_list argptr;
+	char	msg[4096];
 
 	va_start( argptr, fmt );
 	idStr::vsnPrintf( msg, sizeof( msg ), fmt, argptr );
@@ -1631,7 +1527,7 @@ void Sys_Printf( const char* fmt, ... )
 
 void Sys_VPrintf( const char* fmt, va_list arg )
 {
-#if defined(__ANDROID__)
+#if defined( __ANDROID__ )
 	__android_log_vprint( ANDROID_LOG_DEBUG, "RBDoom3", fmt, arg );
 #else
 	tty_Hide();
@@ -1664,7 +1560,7 @@ Sys_SetLanguageFromSystem
 ================
 */
 extern idCVar sys_lang;
-void Sys_SetLanguageFromSystem()
+void		  Sys_SetLanguageFromSystem()
 {
 	sys_lang.SetString( Sys_DefaultLanguage() );
 }
@@ -1676,14 +1572,13 @@ Sys_OpenURL
 */
 void idSysLocal::OpenURL( const char* url, bool quit )
 {
-	const char*	script_path;
+	const char* script_path;
 	idFile*		script_file;
-	char		cmdline[ 1024 ];
+	char		cmdline[1024];
 
-	static bool	quit_spamguard = false;
+	static bool quit_spamguard = false;
 
-	if( quit_spamguard )
-	{
+	if( quit_spamguard ) {
 		common->DPrintf( "Sys_OpenURL: already in a doexit sequence, ignoring %s\n", url );
 		return;
 	}
@@ -1695,13 +1590,11 @@ void idSysLocal::OpenURL( const char* url, bool quit )
 	// look in the savepath first, then in the basepath
 	script_path = fileSystem->BuildOSPath( cvarSystem->GetCVarString( "fs_savepath" ), "", "openurl.sh" );
 	script_file = fileSystem->OpenExplicitFileRead( script_path );
-	if( !script_file )
-	{
+	if( !script_file ) {
 		script_path = fileSystem->BuildOSPath( cvarSystem->GetCVarString( "fs_basepath" ), "", "openurl.sh" );
 		script_file = fileSystem->OpenExplicitFileRead( script_path );
 	}
-	if( !script_file )
-	{
+	if( !script_file ) {
 		common->Printf( "Can't find URL script 'openurl.sh' in either savepath or basepath\n" );
 		common->Printf( "OpenURL '%s' failed\n", url );
 		return;
@@ -1709,16 +1602,13 @@ void idSysLocal::OpenURL( const char* url, bool quit )
 	fileSystem->CloseFile( script_file );
 
 	// if we are going to quit, only accept a single URL before quitting and spawning the script
-	if( quit )
-	{
+	if( quit ) {
 		quit_spamguard = true;
 	}
 
 	common->Printf( "URL script: %s\n", script_path );
 
 	// StartProcess is going to execute a system() call with that - hence the &
-	idStr::snPrintf( cmdline, 1024, "%s '%s' &",  script_path, url );
+	idStr::snPrintf( cmdline, 1024, "%s '%s' &", script_path, url );
 	sys->StartProcess( cmdline, quit );
 }
-
-

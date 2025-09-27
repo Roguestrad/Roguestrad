@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,8 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MENUDATA_H__
 #define __MENUDATA_H__
 
-enum shellAreas_t
-{
+enum shellAreas_t {
 	SHELL_AREA_INVALID = -1,
 	SHELL_AREA_START,
 	SHELL_AREA_ROOT,
@@ -65,8 +65,7 @@ enum shellAreas_t
 	SHELL_NUM_AREAS
 };
 
-enum shellState_t
-{
+enum shellState_t {
 	SHELL_STATE_INVALID = -1,
 	SHELL_STATE_PRESS_START,
 	SHELL_STATE_IDLE,
@@ -80,47 +79,19 @@ enum shellState_t
 	SHELL_STATE_IN_GAME
 };
 
-enum pdaAreas_t
-{
-	PDA_AREA_INVALID = -1,
-	PDA_AREA_USER_DATA,
-	PDA_AREA_USER_EMAIL,
-	PDA_AREA_VIDEO_DISKS,
-	PDA_AREA_INVENTORY,
-	PDA_NUM_AREAS
-};
+enum pdaAreas_t { PDA_AREA_INVALID = -1, PDA_AREA_USER_DATA, PDA_AREA_USER_EMAIL, PDA_AREA_VIDEO_DISKS, PDA_AREA_INVENTORY, PDA_NUM_AREAS };
 
-enum hudArea_t
-{
-	HUD_AREA_INVALID = -1,
-	HUD_AREA_PLAYING,
-	HUD_NUM_AREAS
-};
+enum hudArea_t { HUD_AREA_INVALID = -1, HUD_AREA_PLAYING, HUD_NUM_AREAS };
 
-enum scoreboardArea_t
-{
-	SCOREBOARD_AREA_INVALID = -1,
-	SCOREBOARD_AREA_DEFAULT,
-	SCOREBOARD_AREA_TEAM,
-	SCOREBOARD_AREA_CTF,
-	SCOREBOARD_NUM_AREAS
-};
+enum scoreboardArea_t { SCOREBOARD_AREA_INVALID = -1, SCOREBOARD_AREA_DEFAULT, SCOREBOARD_AREA_TEAM, SCOREBOARD_AREA_CTF, SCOREBOARD_NUM_AREAS };
 
-enum pdaHandlerWidgets_t
-{
-	PDA_WIDGET_NAV_BAR,
-	PDA_WIDGET_PDA_LIST,
-	PDA_WIDGET_PDA_LIST_SCROLLBAR,
-	PDA_WIDGET_CMD_BAR
-};
+enum pdaHandlerWidgets_t { PDA_WIDGET_NAV_BAR, PDA_WIDGET_PDA_LIST, PDA_WIDGET_PDA_LIST_SCROLLBAR, PDA_WIDGET_CMD_BAR };
 
-enum scoreboardHandlerWidgets_t
-{
+enum scoreboardHandlerWidgets_t {
 	SCOREBOARD_WIDGET_CMD_BAR,
 };
 
-enum menuSounds_t
-{
+enum menuSounds_t {
 	GUI_SOUND_MUSIC,
 	GUI_SOUND_SCROLL,
 	GUI_SOUND_ADVANCE,
@@ -133,13 +104,12 @@ enum menuSounds_t
 	NUM_GUI_SOUNDS,
 };
 
-static const int MAX_SCREEN_AREAS = 32;
-static const int DEFAULT_REPEAT_TIME = 150;
-static const int WAIT_START_TIME_LONG = 30000;
+static const int MAX_SCREEN_AREAS	   = 32;
+static const int DEFAULT_REPEAT_TIME   = 150;
+static const int WAIT_START_TIME_LONG  = 30000;
 static const int WAIT_START_TIME_SHORT = 5000;
 
-struct actionRepeater_t
-{
+struct actionRepeater_t {
 	actionRepeater_t() :
 		widget( NULL ),
 		numRepetitions( 0 ),
@@ -150,20 +120,19 @@ struct actionRepeater_t
 	{
 	}
 
-	idMenuWidget* 		widget;
-	idWidgetEvent		event;
-	idWidgetAction		action;
-	int					numRepetitions;
-	int					nextRepeatTime;
-	int					repeatDelay;
-	int					screenIndex;
-	bool				isActive;
+	idMenuWidget*  widget;
+	idWidgetEvent  event;
+	idWidgetAction action;
+	int			   numRepetitions;
+	int			   nextRepeatTime;
+	int			   repeatDelay;
+	int			   screenIndex;
+	bool		   isActive;
 };
 
 class mpScoreboardInfo
 {
 public:
-
 	mpScoreboardInfo() :
 		voiceState( VOICECHAT_DISPLAY_NONE ),
 		score( 0 ),
@@ -176,35 +145,32 @@ public:
 
 	mpScoreboardInfo( const mpScoreboardInfo& src )
 	{
-		voiceState = src.voiceState;
-		score = src.score;
-		wins = src.wins;
-		ping = src.ping;
+		voiceState	 = src.voiceState;
+		score		 = src.score;
+		wins		 = src.wins;
+		ping		 = src.ping;
 		spectateData = src.spectateData;
-		name = src.name;
-		team = src.team;
-		playerNum = src.playerNum;
+		name		 = src.name;
+		team		 = src.team;
+		playerNum	 = src.playerNum;
 	}
 
 	void operator=( const mpScoreboardInfo& src )
 	{
-		voiceState = src.voiceState;
-		score = src.score;
-		wins = src.wins;
-		ping = src.ping;
+		voiceState	 = src.voiceState;
+		score		 = src.score;
+		wins		 = src.wins;
+		ping		 = src.ping;
 		spectateData = src.spectateData;
-		name = src.name;
-		team = src.team;
-		playerNum = src.playerNum;
+		name		 = src.name;
+		team		 = src.team;
+		playerNum	 = src.playerNum;
 	}
 
 	bool operator!=( const mpScoreboardInfo& otherInfo ) const
 	{
-
-		if( otherInfo.score != score || otherInfo.wins != wins || otherInfo.ping != ping ||
-				otherInfo.spectateData != spectateData || otherInfo.name != name || otherInfo.team != team ||
-				otherInfo.playerNum != playerNum || otherInfo.voiceState != voiceState )
-		{
+		if( otherInfo.score != score || otherInfo.wins != wins || otherInfo.ping != ping || otherInfo.spectateData != spectateData || otherInfo.name != name || otherInfo.team != team ||
+			otherInfo.playerNum != playerNum || otherInfo.voiceState != voiceState ) {
 			return true;
 		}
 
@@ -213,11 +179,8 @@ public:
 
 	bool operator==( const mpScoreboardInfo& otherInfo ) const
 	{
-
-		if( otherInfo.score != score || otherInfo.wins != wins || otherInfo.ping != ping ||
-				otherInfo.spectateData != spectateData || otherInfo.name != name || otherInfo.team != team ||
-				otherInfo.playerNum != playerNum || otherInfo.voiceState != voiceState )
-		{
+		if( otherInfo.score != score || otherInfo.wins != wins || otherInfo.ping != ping || otherInfo.spectateData != spectateData || otherInfo.name != name || otherInfo.team != team ||
+			otherInfo.playerNum != playerNum || otherInfo.voiceState != voiceState ) {
 			return false;
 		}
 
@@ -225,14 +188,13 @@ public:
 	}
 
 	voiceStateDisplay_t voiceState;
-	int score;
-	int wins;
-	int ping;
-	int team;
-	int playerNum;
-	idStr spectateData;
-	idStr name;
-
+	int					score;
+	int					wins;
+	int					ping;
+	int					team;
+	int					playerNum;
+	idStr				spectateData;
+	idStr				name;
 };
 
 /*
@@ -244,73 +206,54 @@ class idMenuHandler
 {
 public:
 	idMenuHandler();
-	virtual					~idMenuHandler();
-	virtual void			Initialize( const char* swfFile, idSoundWorld* sw );
-	virtual void			Cleanup();
-	virtual void			Update();
-	virtual void			UpdateChildren();
-	virtual void			UpdateMenuDisplay( int menu );
-	virtual bool			HandleGuiEvent( const sysEvent_t* sev );
-	virtual bool			IsActive();
-	virtual void			ActivateMenu( bool show );
-	virtual void			TriggerMenu();
-	virtual bool			HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
-	virtual int				ActiveScreen()
-	{
-		return activeScreen;
-	}
-	virtual int				NextScreen()
-	{
-		return nextScreen;
-	}
-	virtual int				MenuTransition()
-	{
-		return transition;
-	}
-	virtual idMenuScreen* 	GetMenuScreen( int index )
-	{
-		return NULL;
-	}
-	virtual void			SetNextScreen( int screen, int trans )
+	virtual ~idMenuHandler();
+	virtual void		  Initialize( const char* swfFile, idSoundWorld* sw );
+	virtual void		  Cleanup();
+	virtual void		  Update();
+	virtual void		  UpdateChildren();
+	virtual void		  UpdateMenuDisplay( int menu );
+	virtual bool		  HandleGuiEvent( const sysEvent_t* sev );
+	virtual bool		  IsActive();
+	virtual void		  ActivateMenu( bool show );
+	virtual void		  TriggerMenu();
+	virtual bool		  HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
+	virtual int			  ActiveScreen() { return activeScreen; }
+	virtual int			  NextScreen() { return nextScreen; }
+	virtual int			  MenuTransition() { return transition; }
+	virtual idMenuScreen* GetMenuScreen( int index ) { return NULL; }
+	virtual void		  SetNextScreen( int screen, int trans )
 	{
 		nextScreen = screen;
 		transition = trans;
 	}
 
-	virtual void			StartWidgetActionRepeater( idMenuWidget* widget, const idWidgetAction& action, const idWidgetEvent& event );
-	virtual void			PumpWidgetActionRepeater();
-	virtual void			ClearWidgetActionRepeater();
-	virtual idSWF* 			GetGUI()
-	{
-		return gui;
-	}
-	virtual void			AddChild( idMenuWidget* widget );
-	virtual idMenuWidget* 	GetChildFromIndex( int index );
-	virtual int				GetPlatform( bool realPlatform = false );
-	virtual void			PlaySound( menuSounds_t type, int channel = -1 );
-	virtual void			StopSound( int channel = SCHANNEL_ANY );
+	virtual void			 StartWidgetActionRepeater( idMenuWidget* widget, const idWidgetAction& action, const idWidgetEvent& event );
+	virtual void			 PumpWidgetActionRepeater();
+	virtual void			 ClearWidgetActionRepeater();
+	virtual idSWF*			 GetGUI() { return gui; }
+	virtual void			 AddChild( idMenuWidget* widget );
+	virtual idMenuWidget*	 GetChildFromIndex( int index );
+	virtual int				 GetPlatform( bool realPlatform = false );
+	virtual void			 PlaySound( menuSounds_t type, int channel = -1 );
+	virtual void			 StopSound( int channel = SCHANNEL_ANY );
 
-	idMenuWidget_CommandBar* 	GetCmdBar()
-	{
-		return cmdBar;
-	}
+	idMenuWidget_CommandBar* GetCmdBar() { return cmdBar; }
 
 protected:
+	bool									   scrollingMenu;
+	int										   scrollCounter;
+	int										   activeScreen;
+	int										   nextScreen;
+	int										   transition;
+	int										   platform;
+	idSWF*									   gui;
+	actionRepeater_t						   actionRepeater;
+	idMenuScreen*							   menuScreens[MAX_SCREEN_AREAS];
+	idList<idMenuWidget*, TAG_IDLIB_LIST_MENU> children;
 
-	bool						scrollingMenu;
-	int							scrollCounter;
-	int							activeScreen;
-	int							nextScreen;
-	int							transition;
-	int							platform;
-	idSWF* 						gui;
-	actionRepeater_t			actionRepeater;
-	idMenuScreen* 				menuScreens[MAX_SCREEN_AREAS];
-	idList< idMenuWidget*, TAG_IDLIB_LIST_MENU>	children;
+	idStaticList<idStr, NUM_GUI_SOUNDS>		   sounds;
 
-	idStaticList< idStr, NUM_GUI_SOUNDS >		sounds;
-
-	idMenuWidget_CommandBar* 	cmdBar;
+	idMenuWidget_CommandBar*				   cmdBar;
 };
 
 /*
@@ -318,17 +261,16 @@ protected:
 lobbyPlayerInfo_t
 ================================================
 */
-struct lobbyPlayerInfo_t
-{
+struct lobbyPlayerInfo_t {
 	lobbyPlayerInfo_t() :
 		partyToken( 0 ),
 		voiceState( VOICECHAT_DISPLAY_NONE )
 	{
 	}
 
-	idStr					name;
-	int						partyToken;
-	voiceStateDisplay_t		voiceState;
+	idStr				name;
+	int					partyToken;
+	voiceStateDisplay_t voiceState;
 };
 
 /*
@@ -364,130 +306,83 @@ public:
 		marsRotation( NULL )
 	{
 	}
-	virtual void			Update();
-	virtual void			ActivateMenu( bool show );
-	virtual void			Initialize( const char* swfFile, idSoundWorld* sw );
-	virtual void			Cleanup();
-	virtual bool			HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
-	virtual idMenuScreen* 	GetMenuScreen( int index );
-	virtual bool			HandleGuiEvent( const sysEvent_t* sev );
+	virtual void		  Update();
+	virtual void		  ActivateMenu( bool show );
+	virtual void		  Initialize( const char* swfFile, idSoundWorld* sw );
+	virtual void		  Cleanup();
+	virtual bool		  HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
+	virtual idMenuScreen* GetMenuScreen( int index );
+	virtual bool		  HandleGuiEvent( const sysEvent_t* sev );
 
-	void					UpdateSavedGames();
-	void					ShowSmallFrame( bool show );
-	void					ShowMPFrame( bool show );
-	void					ShowLogo( bool show );
-	void					SetShellState( shellState_t s )
-	{
-		nextState = s;
-	}
-	bool					IsSmallFrameShowing()
-	{
-		return smallFrameShowing;
-	}
-	void					UpdateBGState();
-	void					GetMapName( int index, idStr& name );
-	void					GetModeName( int index, idStr& name );
+	void				  UpdateSavedGames();
+	void				  ShowSmallFrame( bool show );
+	void				  ShowMPFrame( bool show );
+	void				  ShowLogo( bool show );
+	void				  SetShellState( shellState_t s ) { nextState = s; }
+	bool				  IsSmallFrameShowing() { return smallFrameShowing; }
+	void				  UpdateBGState();
+	void				  GetMapName( int index, idStr& name );
+	void				  GetModeName( int index, idStr& name );
 
-	idMenuWidget* 			GetPacifier()
-	{
-		return pacifier;
-	}
-	idMenuWidget_MenuBar* 	GetMenuBar()
-	{
-		return menuBar;
-	}
-	bool					IsPacifierVisible() const
-	{
-		return ( pacifier != NULL && pacifier->GetSprite() != NULL ) ? pacifier->GetSprite()->IsVisible() : false;
-	}
-	void					ShowPacifier( const idStr& msg );
-	void					HidePacifier();
+	idMenuWidget*		  GetPacifier() { return pacifier; }
+	idMenuWidget_MenuBar* GetMenuBar() { return menuBar; }
+	bool				  IsPacifierVisible() const { return ( pacifier != NULL && pacifier->GetSprite() != NULL ) ? pacifier->GetSprite()->IsVisible() : false; }
+	void				  ShowPacifier( const idStr& msg );
+	void				  HidePacifier();
 
-	void					SetTimeRemaining( int time )
-	{
-		timeRemaining = time;
-	}
-	int						GetTimeRemaining()
-	{
-		return timeRemaining;
-	}
-	void					SetNewGameType( int type )
-	{
-		newGameType = type;
-	}
-	int						GetNewGameType()
-	{
-		return newGameType;
-	}
-	void					SetInGame( bool val )
-	{
-		inGame = val;
-	}
-	bool					GetInGame()
-	{
-		return inGame;
-	}
-	void					HandleExitGameBtn();
-	void					SetupPCOptions();
-	void					SetWaitForBinding( const char* bind )
+	void				  SetTimeRemaining( int time ) { timeRemaining = time; }
+	int					  GetTimeRemaining() { return timeRemaining; }
+	void				  SetNewGameType( int type ) { newGameType = type; }
+	int					  GetNewGameType() { return newGameType; }
+	void				  SetInGame( bool val ) { inGame = val; }
+	bool				  GetInGame() { return inGame; }
+	void				  HandleExitGameBtn();
+	void				  SetupPCOptions();
+	void				  SetWaitForBinding( const char* bind )
 	{
 		waitForBinding = true;
-		waitBind = bind;
+		waitBind	   = bind;
 	}
-	void					ClearWaitForBinding()
-	{
-		waitForBinding = false;
-	}
-	void					UpdateLeaderboard( const idLeaderboardCallback* callback );
-	void					UpdateLobby( idMenuWidget_LobbyList* lobbyList );
-	void					ShowDoomIntro();
-	void					ShowROEIntro();
-	void					ShowLEIntro();
-	void					StartGame( int index );
-	void					SetContinueWaitForEnumerate( bool wait )
-	{
-		continueWaitForEnumerate = wait;
-	}
-	void					SetCanContinue( bool valid );
-	void					SetGameComplete()
-	{
-		gameComplete = true;
-	}
-	bool					GetGameComplete()
-	{
-		return gameComplete;
-	}
+	void ClearWaitForBinding() { waitForBinding = false; }
+	void UpdateLeaderboard( const idLeaderboardCallback* callback );
+	void UpdateLobby( idMenuWidget_LobbyList* lobbyList );
+	void ShowDoomIntro();
+	void ShowROEIntro();
+	void ShowLEIntro();
+	void StartGame( int index );
+	void SetContinueWaitForEnumerate( bool wait ) { continueWaitForEnumerate = wait; }
+	void SetCanContinue( bool valid );
+	void SetGameComplete() { gameComplete = true; }
+	bool GetGameComplete() { return gameComplete; }
 
 private:
+	shellState_t							 state;
+	shellState_t							 nextState;
+	bool									 smallFrameShowing;
+	bool									 largeFrameShowing;
+	bool									 bgShowing;
+	bool									 waitForBinding;
+	const char*								 waitBind;
+	// idSysSignal				deviceRequestedSignal;
 
-	shellState_t			state;
-	shellState_t			nextState;
-	bool					smallFrameShowing;
-	bool					largeFrameShowing;
-	bool					bgShowing;
-	bool					waitForBinding;
-	const char* 			waitBind;
-	//idSysSignal				deviceRequestedSignal;
-
-	idList<const char*, TAG_IDLIB_LIST_MENU>	mpGameModes;
-	idList<mpMap_t, TAG_IDLIB_LIST_MENU>			mpGameMaps;
-	idMenuWidget_MenuBar* 	menuBar;
-	idMenuWidget* 			pacifier;
-	int						timeRemaining;
-	int						nextPeerUpdateMs;
-	int						newGameType;
-	bool					inGame;
-	bool					showingIntro;
-	bool					continueWaitForEnumerate;
-	bool					gameComplete;
-	idSWF* 					introGui;
-	const idSoundShader* 	typeSoundShader;
-	const idMaterial* 		doom3Intro;
-	const idMaterial* 		roeIntro;
-	const idMaterial* 		lmIntro;
-	const idMaterial* 		marsRotation;
-	idList< idStr, TAG_IDLIB_LIST_MENU>			navOptions;
-
+	idList<const char*, TAG_IDLIB_LIST_MENU> mpGameModes;
+	idList<mpMap_t, TAG_IDLIB_LIST_MENU>	 mpGameMaps;
+	idMenuWidget_MenuBar*					 menuBar;
+	idMenuWidget*							 pacifier;
+	int										 timeRemaining;
+	int										 nextPeerUpdateMs;
+	int										 newGameType;
+	bool									 inGame;
+	bool									 showingIntro;
+	bool									 continueWaitForEnumerate;
+	bool									 gameComplete;
+	idSWF*									 introGui;
+	const idSoundShader*					 typeSoundShader;
+	const idMaterial*						 doom3Intro;
+	const idMaterial*						 roeIntro;
+	const idMaterial*						 lmIntro;
+	const idMaterial*						 marsRotation;
+	idList<idStr, TAG_IDLIB_LIST_MENU>		 navOptions;
 };
 
 /*
@@ -506,33 +401,29 @@ public:
 	}
 	virtual ~idMenuHandler_PDA();
 
-	virtual void			Update();
-	virtual void			ActivateMenu( bool show );
-	virtual void			TriggerMenu();
-	virtual void			Initialize( const char* swfFile, idSoundWorld* sw );
-	virtual bool			HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
-	virtual idMenuScreen* 	GetMenuScreen( int index );
-	void					UpdateAudioLogPlaying( bool playing );
-	void					UdpateVideoPlaying( bool playing );
-	void					ClearVideoPlaying()
-	{
-		videoPlaying = false;
-	}
+	virtual void		  Update();
+	virtual void		  ActivateMenu( bool show );
+	virtual void		  TriggerMenu();
+	virtual void		  Initialize( const char* swfFile, idSoundWorld* sw );
+	virtual bool		  HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
+	virtual idMenuScreen* GetMenuScreen( int index );
+	void				  UpdateAudioLogPlaying( bool playing );
+	void				  UdpateVideoPlaying( bool playing );
+	void				  ClearVideoPlaying() { videoPlaying = false; }
 
-	bool					PlayPDAAudioLog( int pdaIndex, int audioIndex );
-	virtual void			Cleanup();
+	bool				  PlayPDAAudioLog( int pdaIndex, int audioIndex );
+	virtual void		  Cleanup();
 
 protected:
-
-	bool							audioLogPlaying;
-	bool							videoPlaying;
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU >		pdaNames;
-	idList< idStr, TAG_IDLIB_LIST_MENU >					navOptions;
-	const idDeclAudio* 				audioFile;
-	idMenuWidget_ScrollBar pdaScrollBar;
-	idMenuWidget_DynamicList pdaList;
-	idMenuWidget_NavBar navBar;
-	idMenuWidget_CommandBar commandBarWidget;
+	bool															audioLogPlaying;
+	bool															videoPlaying;
+	idList<idList<idStr, TAG_IDLIB_LIST_MENU>, TAG_IDLIB_LIST_MENU> pdaNames;
+	idList<idStr, TAG_IDLIB_LIST_MENU>								navOptions;
+	const idDeclAudio*												audioFile;
+	idMenuWidget_ScrollBar											pdaScrollBar;
+	idMenuWidget_DynamicList										pdaList;
+	idMenuWidget_NavBar												navBar;
+	idMenuWidget_CommandBar											commandBarWidget;
 };
 
 /*
@@ -543,7 +434,6 @@ idMenuHandler_PDA
 class idMenuHandler_HUD : public idMenuHandler
 {
 public:
-
 	idMenuHandler_HUD() :
 		autoHideTip( true ),
 		tipStartTime( 0 ),
@@ -552,26 +442,21 @@ public:
 	{
 	}
 
-	virtual void			Update();
-	virtual void			ActivateMenu( bool show );
-	virtual void			Initialize( const char* swfFile, idSoundWorld* sw );
-	virtual idMenuScreen* 	GetMenuScreen( int index );
+	virtual void		  Update();
+	virtual void		  ActivateMenu( bool show );
+	virtual void		  Initialize( const char* swfFile, idSoundWorld* sw );
+	virtual idMenuScreen* GetMenuScreen( int index );
 
-	idMenuScreen_HUD* 		GetHud();
-	void					ShowTip( const char* title, const char* tip, bool autoHide );
-	void					HideTip();
-	void					SetRadioMessage( bool show )
-	{
-		radioMessage = show;
-	}
+	idMenuScreen_HUD*	  GetHud();
+	void				  ShowTip( const char* title, const char* tip, bool autoHide );
+	void				  HideTip();
+	void				  SetRadioMessage( bool show ) { radioMessage = show; }
 
 protected:
-
-	bool	autoHideTip;
-	int		tipStartTime;
-	bool	hiding;
-	bool	radioMessage;
-
+	bool autoHideTip;
+	int	 tipStartTime;
+	bool hiding;
+	bool radioMessage;
 };
 
 /*
@@ -582,7 +467,6 @@ idMenuHandler_Scoreboard
 class idMenuHandler_Scoreboard : public idMenuHandler
 {
 public:
-
 	idMenuHandler_Scoreboard() :
 		redScore( 0 ),
 		blueScore( 0 ),
@@ -590,36 +474,33 @@ public:
 	{
 	}
 
-	virtual void			Update();
-	virtual void			TriggerMenu();
-	virtual void			ActivateMenu( bool show );
-	virtual void			Initialize( const char* swfFile, idSoundWorld* sw );
-	virtual idMenuScreen* 	GetMenuScreen( int index );
-	virtual bool			HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
+	virtual void		  Update();
+	virtual void		  TriggerMenu();
+	virtual void		  ActivateMenu( bool show );
+	virtual void		  Initialize( const char* swfFile, idSoundWorld* sw );
+	virtual idMenuScreen* GetMenuScreen( int index );
+	virtual bool		  HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled = false );
 
-	void					AddPlayerInfo( int index, voiceStateDisplay_t voiceState, int team, idStr name, int score, int wins, int ping, idStr spectateData );
-	void					UpdateScoreboard( idList< mpScoreboardInfo >& data, idStr gameInfo );
-	void					UpdateVoiceStates();
-	void					UpdateSpectating( idStr spectate, idStr follow );
-	void					SetTeamScores( int r, int b );
-	int						GetNumPlayers( int team );
-	void					SetActivationScreen( int screen, int trans );
-	void					ViewPlayerProfile( int slot );
-	void					MutePlayer( int slot );
-	void					GetUserID( int slot, lobbyUserID_t& luid );
-	void					UpdateScoreboardSelection();
+	void				  AddPlayerInfo( int index, voiceStateDisplay_t voiceState, int team, idStr name, int score, int wins, int ping, idStr spectateData );
+	void				  UpdateScoreboard( idList<mpScoreboardInfo>& data, idStr gameInfo );
+	void				  UpdateVoiceStates();
+	void				  UpdateSpectating( idStr spectate, idStr follow );
+	void				  SetTeamScores( int r, int b );
+	int					  GetNumPlayers( int team );
+	void				  SetActivationScreen( int screen, int trans );
+	void				  ViewPlayerProfile( int slot );
+	void				  MutePlayer( int slot );
+	void				  GetUserID( int slot, lobbyUserID_t& luid );
+	void				  UpdateScoreboardSelection();
 
 protected:
+	int											  redScore;
+	int											  blueScore;
+	int											  activationScreen;
 
-	int		redScore;
-	int		blueScore;
-	int		activationScreen;
-
-	idList< mpScoreboardInfo > scoreboardInfo;
-	idList< scoreboardInfo_t, TAG_IDLIB_LIST_MENU >		redInfo;
-	idList< scoreboardInfo_t, TAG_IDLIB_LIST_MENU>		blueInfo;
-
+	idList<mpScoreboardInfo>					  scoreboardInfo;
+	idList<scoreboardInfo_t, TAG_IDLIB_LIST_MENU> redInfo;
+	idList<scoreboardInfo_t, TAG_IDLIB_LIST_MENU> blueInfo;
 };
-
 
 #endif //__MENUDATA_H__

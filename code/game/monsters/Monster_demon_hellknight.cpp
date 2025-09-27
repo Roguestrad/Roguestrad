@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -33,13 +34,13 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-#define HELLKNIGHT_ATTACK_RATE			3
-#define	HELLKNIGHT_PAIN_DELAY			0.25
-#define HELLKNIGHT_NOFOVTIME			6
+#define HELLKNIGHT_ATTACK_RATE		   3
+#define HELLKNIGHT_PAIN_DELAY		   0.25
+#define HELLKNIGHT_NOFOVTIME		   6
 
-#define HELLKNIGHT_IDLE_TO_RANGEATTACK	4
-#define HELLKNIGHT_WALK_TO_MELEE		4
-#define HELLKNIGHT_WALK_TO_RANGEATTACK	4
+#define HELLKNIGHT_IDLE_TO_RANGEATTACK 4
+#define HELLKNIGHT_WALK_TO_MELEE	   4
+#define HELLKNIGHT_WALK_TO_RANGEATTACK 4
 
 CLASS_DECLARATION( idAI, iceMonsterDemonHellknight )
 END_CLASS
@@ -86,17 +87,15 @@ iceMonsterDemonHellknight::state_Idle
 */
 stateResult_t iceMonsterDemonHellknight::state_Idle( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
-		if( wait_for_enemy( parms ) == SRESULT_DONE )
-		{
+	if( parms->stage == 0 ) {
+		if( wait_for_enemy( parms ) == SRESULT_DONE ) {
 			parms->stage = 1;
 		}
 
 		return SRESULT_WAIT;
 	}
 
-	nextAttack = 0;
+	nextAttack		= 0;
 	nextNoFOVAttack = 0;
 
 	Event_SetState( "state_Combat" );
@@ -111,17 +110,12 @@ iceMonsterDemonHellknight::do_attack
 void iceMonsterDemonHellknight::do_attack( int attack_flags )
 {
 	nextNoFOVAttack = gameLocal.SysScriptTime() + HELLKNIGHT_NOFOVTIME;
-	if( attack_flags & ATTACK_COMBAT_NODE )
-	{
-		//combat_ainode(combat_node);
+	if( attack_flags & ATTACK_COMBAT_NODE ) {
+		// combat_ainode(combat_node);
 		gameLocal.Error( "Combat_Node fix me\n" );
-	}
-	else if( attack_flags & ATTACK_MELEE )
-	{
+	} else if( attack_flags & ATTACK_MELEE ) {
 		SetState( "combat_melee" );
-	}
-	else if( attack_flags & ATTACK_MISSILE )
-	{
+	} else if( attack_flags & ATTACK_MISSILE ) {
 		SetState( "combat_range" );
 	}
 }
@@ -133,48 +127,40 @@ iceMonsterDemonHellknight::check_attacks
 */
 int iceMonsterDemonHellknight::check_attacks()
 {
-	float	currentTime;
-	float	canMelee;
-	int	attack_flags;
-	idVec3	vel;
-	float	t;
-	idVec3	jumpTarget;
-	idStr	anim;
+	float  currentTime;
+	float  canMelee;
+	int	   attack_flags;
+	idVec3 vel;
+	float  t;
+	idVec3 jumpTarget;
+	idStr  anim;
 
 	attack_flags = 0;
 
-	canMelee = TestMelee();
+	canMelee	= TestMelee();
 	currentTime = gameLocal.SysScriptTime();
-	if( !canMelee )
-	{
+	if( !canMelee ) {
 		combat_node = GetCombatNode();
-		if( combat_node )
-		{
+		if( combat_node ) {
 			attack_flags |= ATTACK_COMBAT_NODE;
 		}
 	}
 
-	if( canMelee )
-	{
+	if( canMelee ) {
 		attack_flags |= ATTACK_MELEE;
 	}
 
-	if( ( ( gameLocal.SysScriptTime() > nextNoFOVAttack ) && AI_ENEMY_VISIBLE ) || AI_ENEMY_IN_FOV )
-	{
-		if( !CanReachEnemy() || ( currentTime >= nextAttack ) )
-		{
-// jmarshall: I've temp disabled range_attack_anim. I can't seem to pass in idStr to doomscript?
+	if( ( ( gameLocal.SysScriptTime() > nextNoFOVAttack ) && AI_ENEMY_VISIBLE ) || AI_ENEMY_IN_FOV ) {
+		if( !CanReachEnemy() || ( currentTime >= nextAttack ) ) {
+			// jmarshall: I've temp disabled range_attack_anim. I can't seem to pass in idStr to doomscript?
 			range_attack_anim = ChooseAnim( ANIMCHANNEL_LEGS, "turret_attack" );
-			if( CanHitEnemyFromAnim( range_attack_anim ) )
-			{
+			if( CanHitEnemyFromAnim( range_attack_anim ) ) {
 				attack_flags |= ATTACK_MISSILE;
 			}
 
 			anim = ChooseAnim( ANIMCHANNEL_LEGS, "range_attack" );
-			if( TestAnimMoveTowardEnemy( anim ) )
-			{
-				if( CanHitEnemyFromAnim( anim ) )
-				{
+			if( TestAnimMoveTowardEnemy( anim ) ) {
+				if( CanHitEnemyFromAnim( anim ) ) {
 					range_attack_anim = anim;
 					attack_flags |= ATTACK_MISSILE;
 				}
@@ -185,7 +171,6 @@ int iceMonsterDemonHellknight::check_attacks()
 	return attack_flags;
 }
 
-
 /*
 =====================
 monster_zombie::combat_range
@@ -193,11 +178,9 @@ monster_zombie::combat_range
 */
 stateResult_t iceMonsterDemonHellknight::combat_range( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
+	if( parms->stage == 0 ) {
 		Event_FaceEnemy();
-		if( !AI_ENEMY_IN_FOV )
-		{
+		if( !AI_ENEMY_IN_FOV ) {
 			parms->Wait( 0.4 );
 		}
 
@@ -205,25 +188,22 @@ stateResult_t iceMonsterDemonHellknight::combat_range( stateParms_t* parms )
 		return SRESULT_WAIT;
 	}
 
-	if( parms->stage == 1 )
-	{
+	if( parms->stage == 1 ) {
 		Event_AnimState( ANIMCHANNEL_TORSO, "Torso_RangeAttack", HELLKNIGHT_WALK_TO_RANGEATTACK );
 		SetWaitState( "range_attack" );
 		parms->stage = 2;
 		return SRESULT_WAIT;
 	}
 
-	if( parms->stage == 2 )
-	{
-		if( AnimDone( ANIMCHANNEL_TORSO, HELLKNIGHT_WALK_TO_RANGEATTACK ) )
-		{
+	if( parms->stage == 2 ) {
+		if( AnimDone( ANIMCHANNEL_TORSO, HELLKNIGHT_WALK_TO_RANGEATTACK ) ) {
 			parms->stage = 3;
 		}
 		return SRESULT_WAIT;
 	}
 
 	// don't attack for a bit
-	nextAttack = gameLocal.DelayTime( HELLKNIGHT_ATTACK_RATE );
+	nextAttack		= gameLocal.DelayTime( HELLKNIGHT_ATTACK_RATE );
 	nextNoFOVAttack = gameLocal.SysScriptTime() + HELLKNIGHT_NOFOVTIME;
 
 	return SRESULT_DONE;
@@ -236,8 +216,7 @@ monster_zombie::combat_melee
 */
 stateResult_t iceMonsterDemonHellknight::combat_melee( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
+	if( parms->stage == 0 ) {
 		Event_LookAtEnemy( 100 );
 		Event_FaceEnemy();
 		Event_AnimState( ANIMCHANNEL_TORSO, "Torso_MeleeAttack", HELLKNIGHT_WALK_TO_MELEE );
@@ -246,10 +225,8 @@ stateResult_t iceMonsterDemonHellknight::combat_melee( stateParms_t* parms )
 		return SRESULT_WAIT;
 	}
 
-	if( parms->stage == 1 )
-	{
-		if( waitState == "" )
-		{
+	if( parms->stage == 1 ) {
+		if( waitState == "" ) {
 			parms->stage = 2;
 		}
 		return SRESULT_WAIT;
@@ -259,4 +236,3 @@ stateResult_t iceMonsterDemonHellknight::combat_melee( stateParms_t* parms )
 
 	return SRESULT_DONE;
 }
-

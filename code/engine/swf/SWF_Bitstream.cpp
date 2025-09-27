@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -71,14 +72,13 @@ idSWFBitStream::operator=
 idSWFBitStream& idSWFBitStream::operator=( idSWFBitStream& other )
 {
 	Free();
-	free = other.free;
-	startp = other.startp;
-	readp = other.readp;
-	endp = other.endp;
-	currentBit = other.currentBit;
+	free		= other.free;
+	startp		= other.startp;
+	readp		= other.readp;
+	endp		= other.endp;
+	currentBit	= other.currentBit;
 	currentByte = other.currentByte;
-	if( other.free )
-	{
+	if( other.free ) {
 		// this is actually quite dangerous, but we need to do this
 		// because these things are copied around inside idList
 		other.free = false;
@@ -94,21 +94,20 @@ idSWFBitStream::operator=
 idSWFBitStream& idSWFBitStream::operator=( idSWFBitStream&& other )
 {
 	Free();
-	free = other.free;
-	startp = other.startp;
-	readp = other.readp;
-	endp = other.endp;
-	currentBit = other.currentBit;
+	free		= other.free;
+	startp		= other.startp;
+	readp		= other.readp;
+	endp		= other.endp;
+	currentBit	= other.currentBit;
 	currentByte = other.currentByte;
-	if( other.free )
-	{
+	if( other.free ) {
 		// this is actually quite dangerous, but we need to do this
 		// because these things are copied around inside idList
 		other.free = false;
 	}
-	other.readp = NULL;
-	other.endp = NULL;
-	other.currentBit = 0;
+	other.readp		  = NULL;
+	other.endp		  = NULL;
+	other.currentBit  = 0;
 	other.currentByte = 0;
 	return *this;
 }
@@ -120,14 +119,13 @@ idSWFBitStream::Free
 */
 void idSWFBitStream::Free()
 {
-	if( free )
-	{
+	if( free ) {
 		Mem_Free( ( void* )startp );
 	}
-	free = false;
+	free   = false;
 	startp = NULL;
-	endp = NULL;
-	readp = NULL;
+	endp   = NULL;
+	readp  = NULL;
 	ResetBits();
 }
 
@@ -140,18 +138,15 @@ void idSWFBitStream::Load( const byte* data, uint32 len, bool copy )
 {
 	Free();
 
-	if( copy )
-	{
-		free = true;
+	if( copy ) {
+		free   = true;
 		startp = ( const byte* )Mem_Alloc( len, TAG_SWF );
 		memcpy( ( byte* )startp, data, len );
-	}
-	else
-	{
-		free = false;
+	} else {
+		free   = false;
 		startp = data;
 	}
-	endp = startp + len;
+	endp  = startp + len;
 	readp = startp;
 
 	ResetBits();
@@ -165,12 +160,10 @@ idSWFBitStream::ReadEncodedU32
 uint32 idSWFBitStream::ReadEncodedU32()
 {
 	uint32 result = 0;
-	for( int i = 0; i < 5; i++ )
-	{
+	for( int i = 0; i < 5; i++ ) {
 		byte b = ReadU8();
 		result |= ( b & 0x7F ) << ( 7 * i );
-		if( ( b & 0x80 ) == 0 )
-		{
+		if( ( b & 0x80 ) == 0 ) {
 			return result;
 		}
 	}
@@ -186,8 +179,7 @@ const byte* idSWFBitStream::ReadData( int size )
 {
 	assert( readp >= startp && readp <= endp );
 	ResetBits();
-	if( readp + size > endp )
-	{
+	if( readp + size > endp ) {
 		// buffer overrun
 		assert( false );
 		readp = endp;
@@ -212,9 +204,8 @@ ID_FORCE_INLINE unsigned int idSWFBitStream::ReadInternalU( uint64& regCurrentBi
 	// this routine never reads more than 7 bits beyond the requested number of bits from the stream
 	// such that calling ResetBits() never discards more than 7 bits and aligns with the next byte
 	uint64 numExtraBytes = ( numBits - regCurrentBit + 7 ) >> 3;
-	regCurrentBit = regCurrentBit + ( numExtraBytes << 3 ) - numBits;
-	for( int i = 0; i < numExtraBytes; i++ )
-	{
+	regCurrentBit		 = regCurrentBit + ( numExtraBytes << 3 ) - numBits;
+	for( int i = 0; i < numExtraBytes; i++ ) {
 		regCurrentByte = ( regCurrentByte << 8 ) | readp[i];
 	}
 	readp += numExtraBytes;
@@ -262,22 +253,22 @@ idSWFBitStream::ReadRect
 */
 void idSWFBitStream::ReadRect( swfRect_t& rect )
 {
-	uint64 regCurrentBit = 0;
+	uint64 regCurrentBit  = 0;
 	uint64 regCurrentByte = 0;
 
-	int nBits = ReadInternalU( regCurrentBit, regCurrentByte, 5 );
+	int	   nBits = ReadInternalU( regCurrentBit, regCurrentByte, 5 );
 
-	int tl_x = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
-	int br_x = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
-	int tl_y = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
-	int br_y = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+	int	   tl_x = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+	int	   br_x = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+	int	   tl_y = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+	int	   br_y = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 
 	rect.tl.x = SWFTWIP( tl_x );
 	rect.br.x = SWFTWIP( br_x );
 	rect.tl.y = SWFTWIP( tl_y );
 	rect.br.y = SWFTWIP( br_y );
 
-	currentBit = regCurrentBit;
+	currentBit	= regCurrentBit;
 	currentByte = regCurrentByte;
 }
 
@@ -288,47 +279,40 @@ idSWFBitStream::ReadMatrix
 */
 void idSWFBitStream::ReadMatrix( swfMatrix_t& matrix )
 {
-	uint64 regCurrentBit = 0;
-	uint64 regCurrentByte = 0;
-
+	uint64		 regCurrentBit	= 0;
+	uint64		 regCurrentByte = 0;
 
 	unsigned int hasScale = ReadInternalU( regCurrentBit, regCurrentByte, 1 );
 
-	int xx;
-	int yy;
-	if( !hasScale )
-	{
+	int			 xx;
+	int			 yy;
+	if( !hasScale ) {
 		xx = 65536;
 		yy = 65536;
-	}
-	else
-	{
+	} else {
 		int nBits = ReadInternalU( regCurrentBit, regCurrentByte, 5 );
-		xx = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
-		yy = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+		xx		  = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+		yy		  = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 	}
 
 	unsigned int hasRotate = ReadInternalU( regCurrentBit, regCurrentByte, 1 );
 
-	int yx;
-	int xy;
-	if( !hasRotate )
-	{
+	int			 yx;
+	int			 xy;
+	if( !hasRotate ) {
 		yx = 0;
 		xy = 0;
-	}
-	else
-	{
+	} else {
 		int nBits = ReadInternalU( regCurrentBit, regCurrentByte, 5 );
-		yx = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
-		xy = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+		yx		  = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+		xy		  = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 	}
 
 	int nBits = ReadInternalU( regCurrentBit, regCurrentByte, 5 );
-	int tx = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
-	int ty = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+	int tx	  = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
+	int ty	  = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 
-	currentBit = regCurrentBit;
+	currentBit	= regCurrentBit;
 	currentByte = regCurrentByte;
 
 	matrix.xx = SWFFIXED16( xx );
@@ -337,7 +321,6 @@ void idSWFBitStream::ReadMatrix( swfMatrix_t& matrix )
 	matrix.xy = SWFFIXED16( xy );
 	matrix.tx = SWFTWIP( tx );
 	matrix.ty = SWFTWIP( ty );
-
 }
 
 /*
@@ -347,57 +330,48 @@ idSWFBitStream::ReadColorXFormRGBA
 */
 void idSWFBitStream::ReadColorXFormRGBA( swfColorXform_t& cxf )
 {
-	uint64 regCurrentBit = 0;
-	uint64 regCurrentByte = 0;
+	uint64		 regCurrentBit	= 0;
+	uint64		 regCurrentByte = 0;
 
 	unsigned int hasAddTerms = ReadInternalU( regCurrentBit, regCurrentByte, 1 );
 	unsigned int hasMulTerms = ReadInternalU( regCurrentBit, regCurrentByte, 1 );
-	int nBits = ReadInternalU( regCurrentBit, regCurrentByte, 4 );
+	int			 nBits		 = ReadInternalU( regCurrentBit, regCurrentByte, 4 );
 
-	union
-	{
+	union {
 		int i[4];
 	} m;
-	union
-	{
+	union {
 		int i[4];
 	} a;
 
-	if( !hasMulTerms )
-	{
+	if( !hasMulTerms ) {
 		m.i[0] = 256;
 		m.i[1] = 256;
 		m.i[2] = 256;
 		m.i[3] = 256;
-	}
-	else
-	{
+	} else {
 		m.i[0] = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 		m.i[1] = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 		m.i[2] = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 		m.i[3] = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 	}
 
-	if( !hasAddTerms )
-	{
+	if( !hasAddTerms ) {
 		a.i[0] = 0;
 		a.i[1] = 0;
 		a.i[2] = 0;
 		a.i[3] = 0;
-	}
-	else
-	{
+	} else {
 		a.i[0] = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 		a.i[1] = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 		a.i[2] = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 		a.i[3] = ReadInternalS( regCurrentBit, regCurrentByte, nBits );
 	}
 
-	currentBit = regCurrentBit;
+	currentBit	= regCurrentBit;
 	currentByte = regCurrentByte;
 
-	for( int i = 0; i < 4; i++ )
-	{
+	for( int i = 0; i < 4; i++ ) {
 		cxf.mul[i] = SWFFIXED8( m.i[i] );
 		cxf.add[i] = SWFFIXED8( a.i[i] );
 	}
@@ -447,16 +421,12 @@ idSWFBitStream::ReadGradient
 */
 void idSWFBitStream::ReadGradient( swfGradient_t& grad, bool rgba )
 {
-	grad.numGradients = ReadU8() & 0xF;	// the top 4 bits control spread and interpolation mode, but we ignore them
-	for( int i = 0; i < grad.numGradients; i++ )
-	{
+	grad.numGradients = ReadU8() & 0xF; // the top 4 bits control spread and interpolation mode, but we ignore them
+	for( int i = 0; i < grad.numGradients; i++ ) {
 		grad.gradientRecords[i].startRatio = ReadU8();
-		if( rgba )
-		{
+		if( rgba ) {
 			ReadColorRGBA( grad.gradientRecords[i].startColor );
-		}
-		else
-		{
+		} else {
 			ReadColorRGB( grad.gradientRecords[i].startColor );
 		}
 		grad.gradientRecords[i].endRatio = grad.gradientRecords[i].startRatio;
@@ -471,9 +441,8 @@ idSWFBitStream::ReadMorphGradient
 */
 void idSWFBitStream::ReadMorphGradient( swfGradient_t& grad )
 {
-	grad.numGradients = ReadU8() & 0xF;	// the top 4 bits control spread and interpolation mode, but we ignore them
-	for( int i = 0; i < grad.numGradients; i++ )
-	{
+	grad.numGradients = ReadU8() & 0xF; // the top 4 bits control spread and interpolation mode, but we ignore them
+	for( int i = 0; i < grad.numGradients; i++ ) {
 		grad.gradientRecords[i].startRatio = ReadU8();
 		ReadColorRGBA( grad.gradientRecords[i].startColor );
 		grad.gradientRecords[i].endRatio = ReadU8();

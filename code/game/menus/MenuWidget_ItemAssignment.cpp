@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,22 +32,18 @@ If you have questions concerning this license or the applicable additional terms
 
 void idMenuWidget_ItemAssignment::SetIcon( int index, const idMaterial* icon )
 {
-
-	if( index < 0 || index >= NUM_QUICK_SLOTS )
-	{
+	if( index < 0 || index >= NUM_QUICK_SLOTS ) {
 		return;
 	}
 
-	images[ index ] = icon;
+	images[index] = icon;
 }
 
 void idMenuWidget_ItemAssignment::FindFreeSpot()
 {
 	slotIndex = 0;
-	for( int i = 0; i < NUM_QUICK_SLOTS; ++i )
-	{
-		if( images[ i ] == NULL )
-		{
+	for( int i = 0; i < NUM_QUICK_SLOTS; ++i ) {
+		if( images[i] == NULL ) {
 			slotIndex = i;
 			break;
 		}
@@ -60,65 +57,48 @@ idMenuWidget_ItemAssignment::Update
 */
 void idMenuWidget_ItemAssignment::Update()
 {
-
-	if( GetSWFObject() == NULL )
-	{
+	if( GetSWFObject() == NULL ) {
 		return;
 	}
 
 	idSWFScriptObject& root = GetSWFObject()->GetRootObject();
 
-	if( !BindSprite( root ) )
-	{
+	if( !BindSprite( root ) ) {
 		return;
 	}
 
 	idSWFSpriteInstance* dpad = GetSprite()->GetScriptObject()->GetNestedSprite( "dpad" );
 
-	if( dpad != NULL )
-	{
+	if( dpad != NULL ) {
 		dpad->StopFrame( slotIndex + 2 );
 	}
 
-	for( int i = 0; i < NUM_QUICK_SLOTS; ++i )
-	{
+	for( int i = 0; i < NUM_QUICK_SLOTS; ++i ) {
 		idSWFSpriteInstance* item = GetSprite()->GetScriptObject()->GetNestedSprite( va( "item%d", i ) );
-		if( item != NULL )
-		{
-			if( i == slotIndex )
-			{
+		if( item != NULL ) {
+			if( i == slotIndex ) {
 				item->StopFrame( 2 );
-			}
-			else
-			{
+			} else {
 				item->StopFrame( 1 );
 			}
 		}
 
 		idSWFSpriteInstance* itemIcon = GetSprite()->GetScriptObject()->GetNestedSprite( va( "item%d", i ), "img" );
-		if( itemIcon != NULL )
-		{
-			if( images[ i ] != NULL )
-			{
+		if( itemIcon != NULL ) {
+			if( images[i] != NULL ) {
 				itemIcon->SetVisible( true );
-				itemIcon->SetMaterial( images[ i ] );
-			}
-			else
-			{
+				itemIcon->SetMaterial( images[i] );
+			} else {
 				itemIcon->SetVisible( false );
 			}
 		}
 
 		itemIcon = GetSprite()->GetScriptObject()->GetNestedSprite( va( "item%d", i ), "imgTop" );
-		if( itemIcon != NULL )
-		{
-			if( images[ i ] != NULL )
-			{
+		if( itemIcon != NULL ) {
+			if( images[i] != NULL ) {
 				itemIcon->SetVisible( true );
-				itemIcon->SetMaterial( images[ i ] );
-			}
-			else
-			{
+				itemIcon->SetMaterial( images[i] );
+			} else {
 				itemIcon->SetVisible( false );
 			}
 		}

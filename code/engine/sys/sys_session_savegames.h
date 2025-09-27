@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,10 +39,8 @@ class idSaveGameProcessorLoadFiles : public idSaveGameProcessor
 public:
 	DEFINE_CLASS( idSaveGameProcessorLoadFiles );
 
-	virtual bool	InitLoadFiles( const char* folder,
-								   const saveFileEntryList_t& files,
-								   idSaveGameManager::packageType_t type = idSaveGameManager::PACKAGE_GAME );
-	virtual bool	Process();
+	virtual bool InitLoadFiles( const char* folder, const saveFileEntryList_t& files, idSaveGameManager::packageType_t type = idSaveGameManager::PACKAGE_GAME );
+	virtual bool Process();
 };
 
 /*
@@ -54,8 +53,8 @@ class idSaveGameProcessorDelete : public idSaveGameProcessor
 public:
 	DEFINE_CLASS( idSaveGameProcessorDelete );
 
-	bool			InitDelete( const char* folder, idSaveGameManager::packageType_t type = idSaveGameManager::PACKAGE_GAME );
-	virtual bool	Process();
+	bool		 InitDelete( const char* folder, idSaveGameManager::packageType_t type = idSaveGameManager::PACKAGE_GAME );
+	virtual bool Process();
 };
 
 /*
@@ -69,11 +68,8 @@ public:
 	DEFINE_CLASS( idSaveGameProcessorSaveFiles );
 
 	// Passing in idSaveGameDetails so that we have a copy on output
-	bool			InitSave( const char* folder,
-							  const saveFileEntryList_t& files,
-							  const idSaveGameDetails& description,
-							  idSaveGameManager::packageType_t type = idSaveGameManager::PACKAGE_GAME );
-	virtual bool	Process();
+	bool		 InitSave( const char* folder, const saveFileEntryList_t& files, const idSaveGameDetails& description, idSaveGameManager::packageType_t type = idSaveGameManager::PACKAGE_GAME );
+	virtual bool Process();
 };
 
 /*
@@ -86,7 +82,7 @@ class idSaveGameProcessorEnumerateGames : public idSaveGameProcessor
 public:
 	DEFINE_CLASS( idSaveGameProcessorEnumerateGames );
 
-	virtual bool	Process();
+	virtual bool Process();
 };
 
 #endif

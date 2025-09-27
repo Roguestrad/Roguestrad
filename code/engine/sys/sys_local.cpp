@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -30,20 +31,17 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "sys_local.h"
 
-const char* sysLanguageNames[] =
-{
-	ID_LANG_ENGLISH, ID_LANG_FRENCH, ID_LANG_ITALIAN, ID_LANG_GERMAN, ID_LANG_SPANISH, ID_LANG_JAPANESE, NULL
-};
+const char* sysLanguageNames[] = { ID_LANG_ENGLISH, ID_LANG_FRENCH, ID_LANG_ITALIAN, ID_LANG_GERMAN, ID_LANG_SPANISH, ID_LANG_JAPANESE, NULL };
 
-const int numLanguages = sizeof( sysLanguageNames ) / sizeof sysLanguageNames[ 0 ] - 1;
+const int	numLanguages = sizeof( sysLanguageNames ) / sizeof sysLanguageNames[0] - 1;
 
 // RB: allow sys_lang to be saved to config so it has to be set per cmdline only a single time
-idCVar sys_lang( "sys_lang", ID_LANG_ENGLISH, CVAR_SYSTEM | CVAR_INIT | CVAR_ARCHIVE, "", sysLanguageNames, idCmdSystem::ArgCompletion_String<sysLanguageNames> );
+idCVar		sys_lang( "sys_lang", ID_LANG_ENGLISH, CVAR_SYSTEM | CVAR_INIT | CVAR_ARCHIVE, "", sysLanguageNames, idCmdSystem::ArgCompletion_String<sysLanguageNames> );
 
-idSysLocal			sysLocal;
-idSys* 				sys = &sysLocal;
+idSysLocal	sysLocal;
+idSys*		sys = &sysLocal;
 
-void idSysLocal::DebugPrintf( const char* fmt, ... )
+void		idSysLocal::DebugPrintf( const char* fmt, ... )
 {
 	va_list argptr;
 
@@ -130,22 +128,22 @@ void idSysLocal::DLL_GetFileName( const char* baseName, char* dllName, int maxLe
 sysEvent_t idSysLocal::GenerateMouseButtonEvent( int button, bool down )
 {
 	sysEvent_t ev;
-	ev.evType = SE_KEY;
-	ev.evValue = K_MOUSE1 + button - 1;
-	ev.evValue2 = down;
+	ev.evType	   = SE_KEY;
+	ev.evValue	   = K_MOUSE1 + button - 1;
+	ev.evValue2	   = down;
 	ev.evPtrLength = 0;
-	ev.evPtr = NULL;
+	ev.evPtr	   = NULL;
 	return ev;
 }
 
 sysEvent_t idSysLocal::GenerateMouseMoveEvent( int deltax, int deltay )
 {
 	sysEvent_t ev;
-	ev.evType = SE_MOUSE;
-	ev.evValue = deltax;
-	ev.evValue2 = deltay;
+	ev.evType	   = SE_MOUSE;
+	ev.evValue	   = deltax;
+	ev.evValue2	   = deltay;
 	ev.evPtrLength = 0;
-	ev.evPtr = NULL;
+	ev.evPtr	   = NULL;
 	return ev;
 }
 
@@ -164,58 +162,50 @@ const char* Sys_TimeStampToStr( ID_TIME_T timeStamp )
 	static char timeString[MAX_STRING_CHARS];
 	timeString[0] = '\0';
 
-	time_t ts = ( time_t )timeStamp;
-	tm*	time = localtime( &ts );
-	if( time == NULL )
-	{
+	time_t ts	= ( time_t )timeStamp;
+	tm*	   time = localtime( &ts );
+	if( time == NULL ) {
 		// String separated to prevent detection of trigraphs
-		return "??" "/" "??" "/" "???? ??:??";
+		return "??"
+			   "/"
+			   "??"
+			   "/"
+			   "???? ??:??";
 	}
 
 	idStr out;
 
 	idStr lang = cvarSystem->GetCVarString( "sys_lang" );
-	if( lang.Icmp( ID_LANG_ENGLISH ) == 0 )
-	{
+	if( lang.Icmp( ID_LANG_ENGLISH ) == 0 ) {
 		// english gets "month/day/year  hour:min" + "am" or "pm"
 		out = va( "%02d", time->tm_mon + 1 );
 		out += "/";
 		out += va( "%02d", time->tm_mday );
 		out += "/";
 		out += va( "%d", time->tm_year + 1900 );
-		out += " ";	// changed to spaces since flash doesn't recognize \t
-		if( time->tm_hour > 12 )
-		{
+		out += " "; // changed to spaces since flash doesn't recognize \t
+		if( time->tm_hour > 12 ) {
 			out += va( "%02d", time->tm_hour - 12 );
-		}
-		else if( time->tm_hour == 0 )
-		{
+		} else if( time->tm_hour == 0 ) {
 			out += "12";
-		}
-		else
-		{
+		} else {
 			out += va( "%02d", time->tm_hour );
 		}
 		out += ":";
 		out += va( "%02d", time->tm_min );
-		if( time->tm_hour >= 12 )
-		{
+		if( time->tm_hour >= 12 ) {
 			out += "pm";
-		}
-		else
-		{
+		} else {
 			out += "am";
 		}
-	}
-	else
-	{
+	} else {
 		// europeans get "day/month/year  24hour:min"
 		out = va( "%02d", time->tm_mday );
 		out += "/";
 		out += va( "%02d", time->tm_mon + 1 );
 		out += "/";
 		out += va( "%d", time->tm_year + 1900 );
-		out += " ";	// changed to spaces since flash doesn't recognize \t
+		out += " "; // changed to spaces since flash doesn't recognize \t
 		out += va( "%02d", time->tm_hour );
 		out += ":";
 		out += va( "%02d", time->tm_min );
@@ -234,7 +224,7 @@ const char* Sys_SecToStr( int sec )
 {
 	static char timeString[MAX_STRING_CHARS];
 
-	int weeks = sec / ( 3600 * 24 * 7 );
+	int			weeks = sec / ( 3600 * 24 * 7 );
 	sec -= weeks * ( 3600 * 24 * 7 );
 
 	int days = sec / ( 3600 * 24 );
@@ -246,16 +236,11 @@ const char* Sys_SecToStr( int sec )
 	int min = sec / 60;
 	sec -= min * 60;
 
-	if( weeks > 0 )
-	{
+	if( weeks > 0 ) {
 		idStr::snPrintf( timeString, sizeof( timeString ), "%dw, %dd, %d:%02d:%02d", weeks, days, hours, min, sec );
-	}
-	else if( days > 0 )
-	{
+	} else if( days > 0 ) {
 		idStr::snPrintf( timeString, sizeof( timeString ), "%dd, %d:%02d:%02d", days, hours, min, sec );
-	}
-	else
-	{
+	} else {
 		idStr::snPrintf( timeString, sizeof( timeString ), "%d:%02d:%02d", hours, min, sec );
 	}
 
@@ -271,9 +256,8 @@ int Sys_NumLangs()
 // get language name by index
 const char* Sys_Lang( int idx )
 {
-	if( idx >= 0 && idx < numLanguages )
-	{
-		return sysLanguageNames[ idx ];
+	if( idx >= 0 && idx < numLanguages ) {
+		return sysLanguageNames[idx];
 	}
 	return "";
 }
@@ -291,23 +275,21 @@ const char* Sys_DefaultLanguage()
 	// else if english exists, defaults to english
 	// otherwise, french
 
-	if( !fileSystem->UsingResourceFiles() )
-	{
+	if( !fileSystem->UsingResourceFiles() ) {
 		return ID_LANG_ENGLISH;
 	}
 
 	// GK: Prevent sys_lang to revert to english if is set manually
-	if( idStr::Icmp( ID_LANG_ENGLISH, sys_lang.GetString() ) != 0 )
-	{
+	if( idStr::Icmp( ID_LANG_ENGLISH, sys_lang.GetString() ) != 0 ) {
 		return sys_lang.GetString();
 	}
 
-	idStr fileName;
+	idStr		fileName;
 
-	//D3XP: Instead of just loading a single lang file for each language
-	//we are going to load all files that begin with the language name
-	//similar to the way pak files work. So you can place english001.lang
-	//to add new strings to the english language dictionary
+	// D3XP: Instead of just loading a single lang file for each language
+	// we are going to load all files that begin with the language name
+	// similar to the way pak files work. So you can place english001.lang
+	// to add new strings to the english language dictionary
 	idFileList* langFiles;
 	langFiles = fileSystem->ListFilesTree( "strings", ".lang", true );
 
@@ -316,59 +298,38 @@ const char* Sys_DefaultLanguage()
 	// Loop through the list and filter
 	idStrList currentLangList = langList;
 
-	idStr temp;
-	for( int i = 0; i < currentLangList.Num(); i++ )
-	{
-		temp = currentLangList[i];
-		temp = temp.Right( temp.Length() - strlen( "strings/" ) );
-		temp = temp.Left( temp.Length() - strlen( ".lang" ) );
+	idStr	  temp;
+	for( int i = 0; i < currentLangList.Num(); i++ ) {
+		temp			   = currentLangList[i];
+		temp			   = temp.Right( temp.Length() - strlen( "strings/" ) );
+		temp			   = temp.Left( temp.Length() - strlen( ".lang" ) );
 		currentLangList[i] = temp;
 	}
 
-	if( currentLangList.Num() <= 0 )
-	{
+	if( currentLangList.Num() <= 0 ) {
 		// call it English if no lang files exist
 		sys_lang.SetString( ID_LANG_ENGLISH );
-	}
-	else if( currentLangList.Num() == 1 )
-	{
+	} else if( currentLangList.Num() == 1 ) {
 		sys_lang.SetString( currentLangList[0] );
-	}
-	else
-	{
-		if( currentLangList.Find( ID_LANG_ENGLISH ) )
-		{
+	} else {
+		if( currentLangList.Find( ID_LANG_ENGLISH ) ) {
 			sys_lang.SetString( ID_LANG_ENGLISH );
-		}
-		else if( currentLangList.Find( ID_LANG_JAPANESE ) )
-		{
+		} else if( currentLangList.Find( ID_LANG_JAPANESE ) ) {
 			sys_lang.SetString( ID_LANG_JAPANESE );
-		}
-		else if( currentLangList.Find( ID_LANG_FRENCH ) )
-		{
+		} else if( currentLangList.Find( ID_LANG_FRENCH ) ) {
 			sys_lang.SetString( ID_LANG_FRENCH );
-		}
-		else if( currentLangList.Find( ID_LANG_GERMAN ) )
-		{
+		} else if( currentLangList.Find( ID_LANG_GERMAN ) ) {
 			sys_lang.SetString( ID_LANG_GERMAN );
-		}
-		else if( currentLangList.Find( ID_LANG_ITALIAN ) )
-		{
+		} else if( currentLangList.Find( ID_LANG_ITALIAN ) ) {
 			sys_lang.SetString( ID_LANG_GERMAN );
-		}
-		else if( currentLangList.Find( ID_LANG_SPANISH ) )
-		{
+		} else if( currentLangList.Find( ID_LANG_SPANISH ) ) {
 			sys_lang.SetString( ID_LANG_GERMAN );
-		}
-		else
-		{
+		} else {
 			sys_lang.SetString( currentLangList[0] );
 		}
 	}
 
 	fileSystem->FreeFileList( langFiles );
 
-	return sys_lang.GetString();// ID_LANG_ENGLISH;
-
-
+	return sys_lang.GetString(); // ID_LANG_ENGLISH;
 }

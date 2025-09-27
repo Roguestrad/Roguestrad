@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -44,8 +45,8 @@ void LightInfo::Defaults()
 {
 	lightType = LIGHT_POINT;
 
-	strTexture = "";
-	equalRadius = true;
+	strTexture		 = "";
+	equalRadius		 = true;
 	explicitStartEnd = false;
 	lightStart.Zero();
 	lightEnd.Zero();
@@ -56,67 +57,63 @@ void LightInfo::Defaults()
 	color[0] = color[1] = color[2] = 1.0f;
 
 	lightRadius.Zero();
-	castShadows = true;
+	castShadows	 = true;
 	skipSpecular = false;
-	hasCenter = false;
-	lightStyle = -1;
+	hasCenter	 = false;
+	lightStyle	 = -1;
 
 	hasLightOrigin = false;
 	angles.Zero();
 	scale.Set( 1, 1, 1 );
 }
 
-
 void LightInfo::DefaultPoint()
 {
-	idVec3 oldColor = color;
-	bool oldHasLightOrigin = hasLightOrigin;
+	idVec3 oldColor			 = color;
+	bool   oldHasLightOrigin = hasLightOrigin;
 	Defaults();
-	color = oldColor;
+	color		   = oldColor;
 	hasLightOrigin = oldHasLightOrigin;
 
-	lightType = LIGHT_POINT;
+	lightType	   = LIGHT_POINT;
 	lightRadius[0] = lightRadius[1] = lightRadius[2] = 300;
-	equalRadius = true;
+	equalRadius										 = true;
 }
 
 void LightInfo::DefaultProjected()
 {
-	idVec3 oldColor = color;
-	bool oldHasLightOrigin = hasLightOrigin;
+	idVec3 oldColor			 = color;
+	bool   oldHasLightOrigin = hasLightOrigin;
 	Defaults();
-	color = oldColor;
+	color		   = oldColor;
 	hasLightOrigin = oldHasLightOrigin;
 
-	lightType = LIGHT_SPOT;
+	lightType	   = LIGHT_SPOT;
 	lightTarget[2] = -256;
-	lightUp[1] = -128;
-	lightRight[0] = -128;
+	lightUp[1]	   = -128;
+	lightRight[0]  = -128;
 }
 
 void LightInfo::DefaultSun()
 {
-	idVec3 oldColor = color;
-	bool oldHasLightOrigin = hasLightOrigin;
+	idVec3 oldColor			 = color;
+	bool   oldHasLightOrigin = hasLightOrigin;
 	Defaults();
-	color = oldColor;
+	color		   = oldColor;
 	hasLightOrigin = oldHasLightOrigin;
 
 	lightType = LIGHT_SUN;
 	lightCenter.Set( 4, 4, 32 );
 	lightRadius[0] = lightRadius[1] = 2048;
-	lightRadius[2] = 1024;
-	equalRadius = false;
+	lightRadius[2]					= 1024;
+	equalRadius						= false;
 }
 
 void LightInfo::FromDict( const idDict* e )
 {
-	if( e->GetVector( "light_origin", "", origin ) )
-	{
+	if( e->GetVector( "light_origin", "", origin ) ) {
 		hasLightOrigin = true;
-	}
-	else
-	{
+	} else {
 		e->GetVector( "origin", "", origin );
 	}
 
@@ -128,66 +125,53 @@ void LightInfo::FromDict( const idDict* e )
 	lightEnd.Zero();
 	lightCenter.Zero();
 
-	castShadows = !e->GetBool( "noshadows" );
+	castShadows	 = !e->GetBool( "noshadows" );
 	skipSpecular = e->GetBool( "nospecular" );
 
 	strTexture = e->GetString( "texture" );
 
 	bool isParallel = e->GetBool( "parallel" );
 
-	if( !e->GetVector( "_color", "", color ) )
-	{
+	if( !e->GetVector( "_color", "", color ) ) {
 		// NOTE: like the game, imgui uses color values between 0.0 and 1.0
 		//       even though it displays them as 0 to 255
 		color[0] = color[1] = color[2] = 1.0f;
 	}
 
-	if( e->GetVector( "light_right", "", lightRight ) )
-	{
+	if( e->GetVector( "light_right", "", lightRight ) ) {
 		// projected light
 		lightType = LIGHT_SPOT;
 		e->GetVector( "light_target", "", lightTarget );
 		e->GetVector( "light_up", "", lightUp );
-		if( e->GetVector( "light_start", "", lightStart ) )
-		{
+		if( e->GetVector( "light_start", "", lightStart ) ) {
 			// explicit start and end points
 			explicitStartEnd = true;
-			if( !e->GetVector( "light_end", "", lightEnd ) )
-			{
+			if( !e->GetVector( "light_end", "", lightEnd ) ) {
 				// no end, use target
 				lightEnd = lightTarget;
 			}
-		}
-		else
-		{
+		} else {
 			explicitStartEnd = false;
 
 			// create a start a quarter of the way to the target
 			lightStart = lightTarget * 0.25;
-			lightEnd = lightTarget;
+			lightEnd   = lightTarget;
 		}
-	}
-	else
-	{
+	} else {
 		lightType = isParallel ? LIGHT_SUN : LIGHT_POINT;
 
-		if( e->GetVector( "light_radius", "", lightRadius ) )
-		{
+		if( e->GetVector( "light_radius", "", lightRadius ) ) {
 			equalRadius = ( lightRadius.x == lightRadius.y && lightRadius.x == lightRadius.z );
-		}
-		else
-		{
+		} else {
 			float radius = e->GetFloat( "light" );
-			if( radius == 0 )
-			{
+			if( radius == 0 ) {
 				radius = 300;
 			}
 			lightRadius[0] = lightRadius[1] = lightRadius[2] = radius;
-			equalRadius = true;
+			equalRadius										 = true;
 		}
 
-		if( e->GetVector( "light_center", "", lightCenter ) )
-		{
+		if( e->GetVector( "light_center", "", lightCenter ) ) {
 			hasCenter = true;
 		}
 	}
@@ -198,28 +182,23 @@ void LightInfo::FromDict( const idDict* e )
 	// get the rotation matrix in either full form, or single angle form
 	idMat3 axis;
 
-	if( !e->GetMatrix( "light_rotation", "1 0 0 0 1 0 0 0 1", axis ) )
-	{
-		if( !e->GetMatrix( "rotation", "1 0 0 0 1 0 0 0 1", axis ) )
-		{
+	if( !e->GetMatrix( "light_rotation", "1 0 0 0 1 0 0 0 1", axis ) ) {
+		if( !e->GetMatrix( "rotation", "1 0 0 0 1 0 0 0 1", axis ) ) {
 			// RB: TrenchBroom interop
 			// support "angles" like in Quake 3
 
-			if( e->GetAngles( "angles", "0 0 0", angles ) )
-			{
-				angles[ 0 ] = idMath::AngleNormalize360( angles[ 0 ] );
-				angles[ 1 ] = idMath::AngleNormalize360( angles[ 1 ] );
-				angles[ 2 ] = idMath::AngleNormalize360( angles[ 2 ] );
+			if( e->GetAngles( "angles", "0 0 0", angles ) ) {
+				angles[0] = idMath::AngleNormalize360( angles[0] );
+				angles[1] = idMath::AngleNormalize360( angles[1] );
+				angles[2] = idMath::AngleNormalize360( angles[2] );
 
 				axis = angles.ToMat3();
-			}
-			else
-			{
-				e->GetFloat( "angle", "0", angles[ 1 ] );
+			} else {
+				e->GetFloat( "angle", "0", angles[1] );
 
-				angles[ 0 ] = 0;
-				angles[ 1 ] = idMath::AngleNormalize360( angles[ 1 ] );
-				angles[ 2 ] = 0;
+				angles[0] = 0;
+				angles[1] = idMath::AngleNormalize360( angles[1] );
+				angles[2] = 0;
 
 				axis = angles.ToMat3();
 			}
@@ -239,12 +218,9 @@ void LightInfo::FromDict( const idDict* e )
 // and thus will contain pairs with value "" if the key should be removed from entity
 void LightInfo::ToDict( idDict* e )
 {
-	if( hasLightOrigin )
-	{
+	if( hasLightOrigin ) {
 		e->SetVector( "light_origin", origin );
-	}
-	else
-	{
+	} else {
 		e->SetVector( "origin", origin );
 	}
 
@@ -257,36 +233,26 @@ void LightInfo::ToDict( idDict* e )
 	e->Set( "noshadows", ( !castShadows ) ? "1" : "0" );
 	e->Set( "nospecular", ( skipSpecular ) ? "1" : "0" );
 
-	if( strTexture.Length() > 0 )
-	{
+	if( strTexture.Length() > 0 ) {
 		e->Set( "texture", strTexture );
-	}
-	else
-	{
+	} else {
 		e->Set( "texture", DELETE_VAL );
 	}
 
 	// NOTE: e->SetVector() uses precision of 2, not enough for color
 	e->Set( "_color", color.ToString( 4 ) );
 
-	if( lightType == LIGHT_POINT || lightType == LIGHT_SUN )
-	{
-		if( !equalRadius )
-		{
+	if( lightType == LIGHT_POINT || lightType == LIGHT_SUN ) {
+		if( !equalRadius ) {
 			e->SetVector( "light_radius", lightRadius );
-		}
-		else
-		{
+		} else {
 			idVec3 tmp( lightRadius[0] ); // x, y and z have the same value
 			e->SetVector( "light_radius", tmp );
 		}
 
-		if( hasCenter )
-		{
+		if( hasCenter ) {
 			e->SetVector( "light_center", lightCenter );
-		}
-		else
-		{
+		} else {
 			e->Set( "light_center", DELETE_VAL );
 		}
 
@@ -298,19 +264,14 @@ void LightInfo::ToDict( idDict* e )
 		e->Set( "light_right", DELETE_VAL );
 		e->Set( "light_start", DELETE_VAL );
 		e->Set( "light_end", DELETE_VAL );
-	}
-	else
-	{
+	} else {
 		e->SetVector( "light_target", lightTarget );
 		e->SetVector( "light_up", lightUp );
 		e->SetVector( "light_right", lightRight );
-		if( explicitStartEnd )
-		{
+		if( explicitStartEnd ) {
 			e->SetVector( "light_start", lightStart );
 			e->SetVector( "light_end", lightEnd );
-		}
-		else
-		{
+		} else {
 			e->Set( "light_start", DELETE_VAL );
 			e->Set( "light_end", DELETE_VAL );
 		}
@@ -322,30 +283,21 @@ void LightInfo::ToDict( idDict* e )
 	}
 
 	// RB: Quake 1 light styles
-	if( lightStyle != -1 && lightType != LIGHT_SUN )
-	{
+	if( lightStyle != -1 && lightType != LIGHT_SUN ) {
 		e->SetInt( "style", lightStyle );
-	}
-	else
-	{
+	} else {
 		e->Set( "style", DELETE_VAL );
 	}
 
 	e->Set( "rotation", DELETE_VAL );
 	e->Set( "light_rotation", DELETE_VAL );
 
-	if( hasLightOrigin )
-	{
+	if( hasLightOrigin ) {
 		e->SetAngles( "light_angles", angles );
-	}
-	else
-	{
-		if( angles.yaw != 0.0f || angles.pitch != 0.0f || angles.roll != 0.0f )
-		{
+	} else {
+		if( angles.yaw != 0.0f || angles.pitch != 0.0f || angles.roll != 0.0f ) {
 			e->SetAngles( "angles", angles );
-		}
-		else
-		{
+		} else {
 			e->Set( "angles", DELETE_VAL );
 		}
 	}
@@ -356,7 +308,6 @@ LightInfo::LightInfo()
 	Defaults();
 }
 
-
 // ########### LightEditor #############
 
 LightEditor& LightEditor::Instance()
@@ -364,7 +315,6 @@ LightEditor& LightEditor::Instance()
 	static LightEditor instance;
 	return instance;
 }
-
 
 // static
 void LightEditor::ReInit( const idDict* dict, idEntity* light )
@@ -376,48 +326,39 @@ void LightEditor::Init( const idDict* dict, idEntity* light )
 {
 	Reset();
 
-	if( textureNames.Num() == 0 )
-	{
+	if( textureNames.Num() == 0 ) {
 		LoadLightTextures();
 	}
 
-	if( styleNames.Num() == 0 )
-	{
+	if( styleNames.Num() == 0 ) {
 		LoadLightStyles();
 	}
 
-	if( dict )
-	{
+	if( dict ) {
 		original.FromDict( dict );
 		cur.FromDict( dict );
 
 		gameEdit->EntityGetOrigin( light, entityPos );
 
 		const char* name = dict->GetString( "name", NULL );
-		if( name )
-		{
+		if( name ) {
 			entityName = name;
-			//title.Format( "Light Editor: %s at (%s)", name, entityPos.ToString() );
-		}
-		else
-		{
-			//idassert( 0 && "LightEditor::Init(): Given entity has no 'name' property?!" );
+			// title.Format( "Light Editor: %s at (%s)", name, entityPos.ToString() );
+		} else {
+			// idassert( 0 && "LightEditor::Init(): Given entity has no 'name' property?!" );
 			entityName = gameEdit->GetUniqueEntityName( "light" );
 
-			//title.Format( "Light Editor: <unnamed> light at (%s)", entityPos.ToString() );
+			// title.Format( "Light Editor: <unnamed> light at (%s)", entityPos.ToString() );
 		}
 
 		title = "Light Editor";
 
 		currentTextureIndex = 0;
-		currentTexture = NULL;
-		if( original.strTexture.Length() > 0 )
-		{
+		currentTexture		= NULL;
+		if( original.strTexture.Length() > 0 ) {
 			const char* curTex = original.strTexture.c_str();
-			for( int i = 0; i < textureNames.Num(); ++i )
-			{
-				if( textureNames[i] == curTex )
-				{
+			for( int i = 0; i < textureNames.Num(); ++i ) {
+				if( textureNames[i] == curTex ) {
 					currentTextureIndex = i + 1; // remember, 0 is "<No Texture>"
 					LoadCurrentTexture();
 					break;
@@ -426,8 +367,7 @@ void LightEditor::Init( const idDict* dict, idEntity* light )
 		}
 
 		// RB: light styles
-		if( original.lightStyle >= 0 )
-		{
+		if( original.lightStyle >= 0 ) {
 			currentStyleIndex = original.lightStyle + 1;
 		}
 	}
@@ -437,7 +377,7 @@ void LightEditor::Init( const idDict* dict, idEntity* light )
 
 void LightEditor::Reset()
 {
-	title = "Light Editor: no Light selected!";
+	title		= "Light Editor: no Light selected!";
 	entityPos.x = idMath::INFINITUM;
 	entityPos.y = idMath::INFINITUM;
 	entityPos.z = idMath::INFINITUM;
@@ -445,37 +385,37 @@ void LightEditor::Reset()
 	original.Defaults();
 	cur.Defaults();
 
-	lightEntity = NULL;
-	currentTextureIndex = 0;
-	currentTexture = NULL;
+	lightEntity			   = NULL;
+	currentTextureIndex	   = 0;
+	currentTexture		   = NULL;
 	currentTextureMaterial = NULL;
-	currentStyleIndex = 0;
+	currentStyleIndex	   = 0;
 
 	mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
-	mCurrentGizmoMode = ImGuizmo::WORLD;
+	mCurrentGizmoMode	   = ImGuizmo::WORLD;
 
 	useSnap = false;
-	//snap = { 1.f, 1.f, 1.f };
-	//bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
-	//boundsSnap[] = { 0.1f, 0.1f, 0.1f };
-	boundSizing = false;
+	// snap = { 1.f, 1.f, 1.f };
+	// bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
+	// boundsSnap[] = { 0.1f, 0.1f, 0.1f };
+	boundSizing		= false;
 	boundSizingSnap = false;
 
-	shortcutSaveMapEnabled = true;
+	shortcutSaveMapEnabled		  = true;
 	shortcutDuplicateLightEnabled = true;
 }
 
 namespace
 {
-class idSort_textureNames : public idSort_Quick< idStr, idSort_textureNames >
-{
-public:
-	int Compare( const idStr& a, const idStr& b ) const
+	class idSort_textureNames : public idSort_Quick<idStr, idSort_textureNames>
 	{
-		return a.Icmp( b );
-	}
-};
-} //anon. namespace
+	public:
+		int Compare( const idStr& a, const idStr& b ) const
+		{
+			return a.Icmp( b );
+		}
+	};
+} // anon. namespace
 
 void LightEditor::LoadLightTextures()
 {
@@ -483,29 +423,24 @@ void LightEditor::LoadLightTextures()
 
 	int count = declManager->GetNumDecls( DECL_MATERIAL );
 
-	for( int i = 0; i < count; i++ )
-	{
+	for( int i = 0; i < count; i++ ) {
 		// just get the name of the light material
 		const idMaterial* mat = declManager->MaterialByIndex( i, false );
 
-		idStr matName = mat->GetName();
+		idStr			  matName = mat->GetName();
 		matName.ToLower();
 
-		if( matName.Icmpn( "lights/", strlen( "lights/" ) ) == 0 || matName.Icmpn( "fogs/", strlen( "fogs/" ) ) == 0 )
-		{
+		if( matName.Icmpn( "lights/", strlen( "lights/" ) ) == 0 || matName.Icmpn( "fogs/", strlen( "fogs/" ) ) == 0 ) {
 			// actually load the material
 			const idMaterial* material = declManager->FindMaterial( matName, false );
-			if( material != NULL )
-			{
+			if( material != NULL ) {
 				// check if the material has textures or is just a leftover from the development
 				idImage* editorImage = mat->GetLightEditorImage();
-				if( !editorImage->IsLoaded() )
-				{
+				if( !editorImage->IsLoaded() ) {
 					editorImage->DeferredLoadImage();
 				}
 
-				if( !editorImage->IsDefaulted() )
-				{
+				if( !editorImage->IsDefaulted() ) {
 					textureNames.Append( matName );
 				}
 			}
@@ -519,8 +454,7 @@ void LightEditor::LoadLightTextures()
 bool LightEditor::TextureItemsGetter( void* data, int idx, const char** outText )
 {
 	LightEditor* self = static_cast<LightEditor*>( data );
-	if( idx == 0 )
-	{
+	if( idx == 0 ) {
 		*outText = "<No Texture>";
 		return true;
 	}
@@ -528,8 +462,7 @@ bool LightEditor::TextureItemsGetter( void* data, int idx, const char** outText 
 	// as index 0 has special purpose, the "real" index is one less
 	--idx;
 
-	if( idx < 0 || idx >= self->textureNames.Num() )
-	{
+	if( idx < 0 || idx >= self->textureNames.Num() ) {
 		*outText = "<Invalid Index!>";
 		return false;
 	}
@@ -543,14 +476,11 @@ void LightEditor::LoadCurrentTexture()
 {
 	currentTexture = NULL;
 
-	if( currentTextureIndex > 0 && cur.strTexture.Length() > 0 )
-	{
+	if( currentTextureIndex > 0 && cur.strTexture.Length() > 0 ) {
 		const idMaterial* mat = declManager->FindMaterial( cur.strTexture, false );
-		if( mat != NULL )
-		{
+		if( mat != NULL ) {
 			currentTexture = mat->GetLightEditorImage();
-			if( currentTexture )
-			{
+			if( currentTexture ) {
 				// RB: create extra 2D material of the image for UI rendering
 
 				// HACK that deserves being called a hack
@@ -568,26 +498,20 @@ void LightEditor::LoadLightStyles()
 	styleNames.Clear();
 
 	const idDeclEntityDef* decl = static_cast<const idDeclEntityDef*>( declManager->FindType( DECL_ENTITYDEF, "light", false ) );
-	if( decl == NULL )
-	{
+	if( decl == NULL ) {
 		return;
 	}
 
 	int numStyles = decl->dict.GetInt( "num_styles", "0" );
-	if( numStyles > 0 )
-	{
-		for( int i = 0; i < numStyles; i++ )
-		{
+	if( numStyles > 0 ) {
+		for( int i = 0; i < numStyles; i++ ) {
 			idStr style = decl->dict.GetString( va( "light_style%d", i ) );
 			styleNames.Append( style );
 		}
-	}
-	else
-	{
+	} else {
 		// RB: it's not defined in entityDef light so use predefined Quake 1 table
-		for( int i = 0; i < 12; i++ )
-		{
-			idStr style( predef_lightstylesinfo[ i ] );
+		for( int i = 0; i < 12; i++ ) {
+			idStr style( predef_lightstylesinfo[i] );
 			styleNames.Append( style );
 		}
 	}
@@ -597,8 +521,7 @@ void LightEditor::LoadLightStyles()
 bool LightEditor::StyleItemsGetter( void* data, int idx, const char** outText )
 {
 	LightEditor* self = static_cast<LightEditor*>( data );
-	if( idx == 0 )
-	{
+	if( idx == 0 ) {
 		*outText = "<No Lightstyle>";
 		return true;
 	}
@@ -606,8 +529,7 @@ bool LightEditor::StyleItemsGetter( void* data, int idx, const char** outText )
 	// as index 0 has special purpose, the "real" index is one less
 	--idx;
 
-	if( idx < 0 || idx >= self->styleNames.Num() )
-	{
+	if( idx < 0 || idx >= self->styleNames.Num() ) {
 		*outText = "<Invalid Index!>";
 		return false;
 	}
@@ -619,8 +541,7 @@ bool LightEditor::StyleItemsGetter( void* data, int idx, const char** outText )
 
 void LightEditor::TempApplyChanges()
 {
-	if( lightEntity != NULL )
-	{
+	if( lightEntity != NULL ) {
 		idDict d;
 		cur.ToDict( &d );
 
@@ -633,12 +554,9 @@ void LightEditor::SaveChanges( bool saveMap )
 {
 	idDict d;
 	cur.ToDict( &d );
-	if( entityName[0] != '\0' )
-	{
+	if( entityName[0] != '\0' ) {
 		gameEdit->MapCopyDictToEntity( entityName, &d );
-	}
-	else if( entityPos.x != idMath::INFINITUM )
-	{
+	} else if( entityPos.x != idMath::INFINITUM ) {
 		entityName = gameEdit->GetUniqueEntityName( "light" );
 		d.Set( "name", entityName );
 
@@ -648,16 +566,14 @@ void LightEditor::SaveChanges( bool saveMap )
 
 	original = cur;
 
-	if( saveMap )
-	{
+	if( saveMap ) {
 		gameEdit->MapSave();
 	}
 }
 
 void LightEditor::CancelChanges()
 {
-	if( lightEntity != NULL )
-	{
+	if( lightEntity != NULL ) {
 		idDict d;
 		original.ToDict( &d );
 
@@ -668,8 +584,7 @@ void LightEditor::CancelChanges()
 
 void LightEditor::DuplicateLight()
 {
-	if( lightEntity != NULL )
-	{
+	if( lightEntity != NULL ) {
 		// store current light properties to game idMapFile
 		SaveChanges( false );
 
@@ -685,8 +600,7 @@ void LightEditor::DuplicateLight()
 		idEntity* light = NULL;
 		gameEdit->SpawnEntityDef( d, &light );
 
-		if( light )
-		{
+		if( light ) {
 			gameEdit->MapAddEntity( &d );
 			gameEdit->ClearEntitySelection();
 			gameEdit->AddSelectedEntity( light );
@@ -702,93 +616,67 @@ static float* vecToArr( idVec3& v )
 	return &v.x;
 }
 
-
-
 void LightEditor::Draw()
 {
-	bool changes = false;
+	bool changes  = false;
 	bool showTool = isShown;
 	bool isOpen;
 
-	if( ImGui::Begin( title, &isOpen ) )
-	{
+	if( ImGui::Begin( title, &isOpen ) ) {
 		// RB: handle arrow key inputs like in TrenchBroom
 		ImGuiIO& io = ImGui::GetIO();
 
 		// FIXME, escape does not work
-		if( io.KeysDown[K_ESCAPE] )
-		{
+		if( io.KeysDown[K_ESCAPE] ) {
 			CancelChanges();
 			showTool = false;
 		}
 
 		// TODO use view direction like just global values
-		if( io.KeyCtrl )
-		{
-			if( io.KeysDown[K_S] && shortcutSaveMapEnabled )
-			{
+		if( io.KeyCtrl ) {
+			if( io.KeysDown[K_S] && shortcutSaveMapEnabled ) {
 				SaveChanges( true );
 				shortcutSaveMapEnabled = false;
-			}
-			else if( io.KeysDown[K_D] && shortcutDuplicateLightEnabled )
-			{
+			} else if( io.KeysDown[K_D] && shortcutDuplicateLightEnabled ) {
 				DuplicateLight();
 				shortcutDuplicateLightEnabled = false;
 			}
-		}
-		else if( io.KeyAlt )
-		{
-			if( io.KeysDown[K_R] )
-			{
+		} else if( io.KeyAlt ) {
+			if( io.KeysDown[K_R] ) {
 				// reset rotation like in Blender
 				cur.angles.Zero();
 				changes = true;
-			}
-			else if( io.KeysDown[K_UPARROW] )
-			{
+			} else if( io.KeysDown[K_UPARROW] ) {
 				cur.origin.z += 1;
 				changes = true;
-			}
-			else if( io.KeysDown[K_DOWNARROW] )
-			{
+			} else if( io.KeysDown[K_DOWNARROW] ) {
 				cur.origin.z -= 1;
 				changes = true;
 			}
-		}
-		else if( io.KeysDown[K_RIGHTARROW] )
-		{
+		} else if( io.KeysDown[K_RIGHTARROW] ) {
 			cur.origin.x += 1;
 			changes = true;
-		}
-		else if( io.KeysDown[K_LEFTARROW] )
-		{
+		} else if( io.KeysDown[K_LEFTARROW] ) {
 			cur.origin.x -= 1;
 			changes = true;
-		}
-		else if( io.KeysDown[K_UPARROW] )
-		{
+		} else if( io.KeysDown[K_UPARROW] ) {
 			cur.origin.y += 1;
 			changes = true;
-		}
-		else if( io.KeysDown[K_DOWNARROW] )
-		{
+		} else if( io.KeysDown[K_DOWNARROW] ) {
 			cur.origin.y -= 1;
 			changes = true;
 		}
 
 		// reenable commands if keys were released
-		if( ( !io.KeyCtrl || !io.KeysDown[K_S] ) && !shortcutSaveMapEnabled )
-		{
+		if( ( !io.KeyCtrl || !io.KeysDown[K_S] ) && !shortcutSaveMapEnabled ) {
 			shortcutSaveMapEnabled = true;
 		}
 
-		if( ( !io.KeyCtrl || !io.KeysDown[K_D] ) && !shortcutDuplicateLightEnabled )
-		{
+		if( ( !io.KeyCtrl || !io.KeysDown[K_D] ) && !shortcutDuplicateLightEnabled ) {
 			shortcutDuplicateLightEnabled = true;
 		}
 
-		if( !entityName.IsEmpty() )
-		{
+		if( !entityName.IsEmpty() ) {
 			ImGui::SeparatorText( entityName.c_str() );
 		}
 
@@ -808,15 +696,11 @@ void LightEditor::Draw()
 
 		ImGui::Spacing();
 
-		if( lightSelectionRadioBtn == LIGHT_POINT || lightSelectionRadioBtn == LIGHT_SUN )
-		{
-			if( lightSelectionRadioBtn == LIGHT_POINT && lightSelectionRadioBtn != cur.lightType )
-			{
+		if( lightSelectionRadioBtn == LIGHT_POINT || lightSelectionRadioBtn == LIGHT_SUN ) {
+			if( lightSelectionRadioBtn == LIGHT_POINT && lightSelectionRadioBtn != cur.lightType ) {
 				cur.DefaultPoint();
 				changes = true;
-			}
-			else if( lightSelectionRadioBtn == LIGHT_SUN && lightSelectionRadioBtn != cur.lightType )
-			{
+			} else if( lightSelectionRadioBtn == LIGHT_SUN && lightSelectionRadioBtn != cur.lightType ) {
 				cur.DefaultSun();
 				changes = true;
 			}
@@ -826,39 +710,31 @@ void LightEditor::Draw()
 			changes |= ImGui::Checkbox( "Equilateral Radius", &cur.equalRadius );
 			ImGui::Text( "Radius:" );
 			ImGui::Indent();
-			if( cur.equalRadius )
-			{
-				if( ImGui::DragFloat( "##radEquil", &cur.lightRadius.x, 1.0f, 0.0f, 10000.0f, "%.1f" ) )
-				{
+			if( cur.equalRadius ) {
+				if( ImGui::DragFloat( "##radEquil", &cur.lightRadius.x, 1.0f, 0.0f, 10000.0f, "%.1f" ) ) {
 					cur.lightRadius.z = cur.lightRadius.y = cur.lightRadius.x;
-					changes = true;
+					changes								  = true;
 				}
-			}
-			else
-			{
+			} else {
 				changes |= ImGui::DragVec3( "##radXYZ", cur.lightRadius );
 			}
 			ImGui::Unindent();
 
 			ImGui::Spacing();
 
-			//changes |= ImGui::Checkbox( "Parallel", &cur.isParallel );
+			// changes |= ImGui::Checkbox( "Parallel", &cur.isParallel );
 
-			//ImGui::Spacing();
+			// ImGui::Spacing();
 
 			changes |= ImGui::Checkbox( "Center", &cur.hasCenter );
-			if( cur.hasCenter )
-			{
+			if( cur.hasCenter ) {
 				ImGui::Indent();
 				changes |= ImGui::DragVec3( "##centerXYZ", cur.lightCenter, 1.0f, 0.0f, 10000.0f, "%.1f" );
 				ImGui::Unindent();
 			}
 			ImGui::PopItemWidth(); // back to default alignment on right side
-		}
-		else if( lightSelectionRadioBtn == LIGHT_SPOT )
-		{
-			if( cur.lightType != lightSelectionRadioBtn )
-			{
+		} else if( lightSelectionRadioBtn == LIGHT_SPOT ) {
+			if( cur.lightType != lightSelectionRadioBtn ) {
 				cur.DefaultProjected();
 				changes = true;
 			}
@@ -872,8 +748,7 @@ void LightEditor::Draw()
 			changes |= ImGui::Checkbox( "Explicit start/end points", &cur.explicitStartEnd );
 
 			ImGui::Spacing();
-			if( cur.explicitStartEnd )
-			{
+			if( cur.explicitStartEnd ) {
 				changes |= ImGui::DragVec3( "Start", cur.lightStart, 1.0f, 0.0f, 0.0f, "%.1f" );
 				changes |= ImGui::DragVec3( "End", cur.lightEnd, 1.0f, 0.0f, 0.0f, "%.1f" );
 			}
@@ -885,71 +760,58 @@ void LightEditor::Draw()
 
 		ImGui::SeparatorText( "Transform" );
 
-		if( io.KeysDown[K_G] )
-		{
+		if( io.KeysDown[K_G] ) {
 			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 		}
 
-		if( io.KeysDown[K_R] )
-		{
+		if( io.KeysDown[K_R] ) {
 			mCurrentGizmoOperation = ImGuizmo::ROTATE;
 		}
 
-		//if( ImGui::IsKeyPressed( ImGuiKey_S ) )
-		if( io.KeysDown[K_S] )
-		{
+		// if( ImGui::IsKeyPressed( ImGuiKey_S ) )
+		if( io.KeysDown[K_S] ) {
 			mCurrentGizmoOperation = ImGuizmo::SCALE;
 		}
 
-		if( mCurrentGizmoOperation != ImGuizmo::SCALE )
-		{
-			if( ImGui::RadioButton( "Local", mCurrentGizmoMode == ImGuizmo::LOCAL ) )
-			{
+		if( mCurrentGizmoOperation != ImGuizmo::SCALE ) {
+			if( ImGui::RadioButton( "Local", mCurrentGizmoMode == ImGuizmo::LOCAL ) ) {
 				mCurrentGizmoMode = ImGuizmo::LOCAL;
 			}
 			ImGui::SameLine();
-			if( ImGui::RadioButton( "World", mCurrentGizmoMode == ImGuizmo::WORLD ) )
-			{
+			if( ImGui::RadioButton( "World", mCurrentGizmoMode == ImGuizmo::WORLD ) ) {
 				mCurrentGizmoMode = ImGuizmo::WORLD;
 			}
-		}
-		else
-		{
+		} else {
 			mCurrentGizmoMode = ImGuizmo::LOCAL;
 		}
 
-		if( ImGui::RadioButton( "Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE ) )
-		{
+		if( ImGui::RadioButton( "Translate", mCurrentGizmoOperation == ImGuizmo::TRANSLATE ) ) {
 			mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 		}
 		ImGui::SameLine();
-		if( ImGui::RadioButton( "Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE ) )
-		{
+		if( ImGui::RadioButton( "Rotate", mCurrentGizmoOperation == ImGuizmo::ROTATE ) ) {
 			mCurrentGizmoOperation = ImGuizmo::ROTATE;
 		}
 		ImGui::SameLine();
-		if( ImGui::RadioButton( "Scale", mCurrentGizmoOperation == ImGuizmo::SCALE ) )
-		{
+		if( ImGui::RadioButton( "Scale", mCurrentGizmoOperation == ImGuizmo::SCALE ) ) {
 			mCurrentGizmoOperation = ImGuizmo::SCALE;
 		}
-		//if( ImGui::RadioButton( "Universal", mCurrentGizmoOperation == ImGuizmo::UNIVERSAL ) )
+		// if( ImGui::RadioButton( "Universal", mCurrentGizmoOperation == ImGuizmo::UNIVERSAL ) )
 		//{
 		//	mCurrentGizmoOperation = ImGuizmo::UNIVERSAL;
-		//}
+		// }
 
 		changes |= ImGui::DragVec3( "Origin", cur.origin, 1.0f, 0.0f, 0.0f, "%.1f" );
 		changes |= ImGui::InputFloat3( "Angles", cur.angles.ToFloatPtr() );
-		//changes |= ImGui::DragVec3( "Angles", cur.origin, 1.0f, 0.0f, 0.0f, "%.1f" );
+		// changes |= ImGui::DragVec3( "Angles", cur.origin, 1.0f, 0.0f, 0.0f, "%.1f" );
 
 		ImGui::SeparatorText( "Snapping" );
 
 		ImGui::Checkbox( "Use Snapping", &useSnap );
-		//ImGui::SameLine();
+		// ImGui::SameLine();
 
-		if( useSnap )
-		{
-			switch( mCurrentGizmoOperation )
-			{
+		if( useSnap ) {
+			switch( mCurrentGizmoOperation ) {
 				case ImGuizmo::TRANSLATE:
 					ImGui::InputFloat3( "Grid Snap", &gridSnap[0] );
 					break;
@@ -980,8 +842,7 @@ void LightEditor::Draw()
 
 		ImGui::Spacing();
 
-		if( ImGui::Combo( "Texture", &currentTextureIndex, TextureItemsGetter, this, textureNames.Num() + 1 ) )
-		{
+		if( ImGui::Combo( "Texture", &currentTextureIndex, TextureItemsGetter, this, textureNames.Num() + 1 ) ) {
 			changes = true;
 
 			// -1 because 0 is "<No Texture>"
@@ -989,18 +850,15 @@ void LightEditor::Draw()
 			LoadCurrentTexture();
 		}
 
-		if( currentTextureMaterial != nullptr && currentTexture != nullptr )
-		{
+		if( currentTextureMaterial != nullptr && currentTexture != nullptr ) {
 			ImVec2 size( currentTexture->GetUploadWidth(), currentTexture->GetUploadHeight() );
 
-			ImGui::Image( ( void* )currentTextureMaterial, size, ImVec2( 0, 0 ), ImVec2( 1, 1 ),
-						  ImColor( 255, 255, 255, 255 ), ImColor( 255, 255, 255, 128 ) );
+			ImGui::Image( ( void* )currentTextureMaterial, size, ImVec2( 0, 0 ), ImVec2( 1, 1 ), ImColor( 255, 255, 255, 255 ), ImColor( 255, 255, 255, 128 ) );
 		}
 
 		ImGui::SeparatorText( "Flicker Style" );
 
-		if( ImGui::Combo( "Style", &currentStyleIndex, StyleItemsGetter, this, styleNames.Num() + 1 ) )
-		{
+		if( ImGui::Combo( "Style", &currentStyleIndex, StyleItemsGetter, this, styleNames.Num() + 1 ) ) {
 			changes = true;
 
 			// -1 because 0 is "<No Lightstyle>"
@@ -1018,29 +876,22 @@ void LightEditor::Draw()
 
 		ImGui::Spacing();
 
-		if( ImGui::Button( "Apply" ) )
-		{
+		if( ImGui::Button( "Apply" ) ) {
 			SaveChanges( false );
 			showTool = false;
-		}
-		else if( ImGui::SameLine(), ImGui::Button( "Cancel" ) )
-		{
+		} else if( ImGui::SameLine(), ImGui::Button( "Cancel" ) ) {
 			CancelChanges();
 			showTool = false;
 		}
 
 		viewDef_t viewDef;
-		if( gameEdit->PlayerGetRenderView( viewDef.renderView ) )
-		{
+		if( gameEdit->PlayerGetRenderView( viewDef.renderView ) ) {
 			ImGui::Separator();
 
 			ImGui::Text( "X: %f Y: %f", io.MousePos.x, io.MousePos.y );
-			if( ImGuizmo::IsUsing() )
-			{
+			if( ImGuizmo::IsUsing() ) {
 				ImGui::Text( "Using gizmo" );
-			}
-			else
-			{
+			} else {
 				ImGui::Text( ImGuizmo::IsOver() ? "Over gizmo" : "" );
 				ImGui::SameLine();
 				ImGui::Text( ImGuizmo::IsOver( ImGuizmo::TRANSLATE ) ? "Over translate gizmo" : "" );
@@ -1051,9 +902,9 @@ void LightEditor::Draw()
 			}
 		}
 
-		static bool use_work_area = true;
-		static ImGuiWindowFlags flags = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove
-										| ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoNav | ImGuiWindowFlags_NoInputs;// | ImGuiWindowFlags_MenuBar;
+		static bool				use_work_area = true;
+		static ImGuiWindowFlags flags		  = ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoNav |
+										ImGuiWindowFlags_NoInputs; // | ImGuiWindowFlags_MenuBar;
 
 		// We demonstrate using the full viewport area or the work area (without menu-bars, task-bars etc.)
 		// Based on your use case you may want one or the other.
@@ -1061,48 +912,41 @@ void LightEditor::Draw()
 		ImGui::SetNextWindowPos( use_work_area ? viewport->WorkPos : viewport->Pos );
 		ImGui::SetNextWindowSize( use_work_area ? viewport->WorkSize : viewport->Size );
 
-		if( ImGui::Begin( "Example: Fullscreen window", &showTool, flags ) )
-		{
-			if( ImGui::BeginMainMenuBar() )
-			{
-				if( ImGui::BeginMenu( "File" ) )
-				{
-					//ShowExampleMenuFile();
-					if( ImGui::MenuItem( "Save Map", "Ctrl+S" ) )
-					{
+		if( ImGui::Begin( "Example: Fullscreen window", &showTool, flags ) ) {
+			if( ImGui::BeginMainMenuBar() ) {
+				if( ImGui::BeginMenu( "File" ) ) {
+					// ShowExampleMenuFile();
+					if( ImGui::MenuItem( "Save Map", "Ctrl+S" ) ) {
 						SaveChanges( true );
 					}
 					ImGui::EndMenu();
 				}
-				if( ImGui::BeginMenu( "Edit" ) )
-				{
-					//if( ImGui::MenuItem( "Undo", "CTRL+Z" ) ) {}
-					//if( ImGui::MenuItem( "Redo", "CTRL+Y", false, false ) ) {} // Disabled item
+				if( ImGui::BeginMenu( "Edit" ) ) {
+					// if( ImGui::MenuItem( "Undo", "CTRL+Z" ) ) {}
+					// if( ImGui::MenuItem( "Redo", "CTRL+Y", false, false ) ) {} // Disabled item
 
-					//ImGui::Separator();
+					// ImGui::Separator();
 
-					//if( ImGui::MenuItem( "Cut", "CTRL+X" ) ) {}
-					//if( ImGui::MenuItem( "Copy", "CTRL+C" ) ) {}
-					//if( ImGui::MenuItem( "Paste", "CTRL+V" ) ) {}
+					// if( ImGui::MenuItem( "Cut", "CTRL+X" ) ) {}
+					// if( ImGui::MenuItem( "Copy", "CTRL+C" ) ) {}
+					// if( ImGui::MenuItem( "Paste", "CTRL+V" ) ) {}
 
-					if( ImGui::MenuItem( "Duplicate", "CTRL+D" ) )
-					{
+					if( ImGui::MenuItem( "Duplicate", "CTRL+D" ) ) {
 						DuplicateLight();
 					}
 
-					//if( ImGui::MenuItem( "Delete", "Backspace" ) )
+					// if( ImGui::MenuItem( "Delete", "Backspace" ) )
 					//{
-					// TODO
+					//  TODO
 					//	goto exitLightEditor;
-					//}
+					// }
 					ImGui::EndMenu();
 				}
 				ImGui::EndMainMenuBar();
 			}
 
 			// backup state before moving the light
-			if( !ImGuizmo::IsUsing() )
-			{
+			if( !ImGuizmo::IsUsing() ) {
 				curNotMoving = cur;
 			}
 
@@ -1110,44 +954,41 @@ void LightEditor::Draw()
 			// GIZMO
 			//
 
-			//ImGuiIO& io = ImGui::GetIO();
+			// ImGuiIO& io = ImGui::GetIO();
 			ImGuizmo::SetRect( 0, 0, io.DisplaySize.x, io.DisplaySize.y );
 			ImGuizmo::SetOrthographic( false );
 			ImGuizmo::SetDrawlist();
 
 			ImGuizmo::SetID( 0 );
 
-
-			//viewDef_t viewDef;
-			//if( gameEdit->PlayerGetRenderView( viewDef.renderView ) )
+			// viewDef_t viewDef;
+			// if( gameEdit->PlayerGetRenderView( viewDef.renderView ) )
 			{
 				R_SetupViewMatrix( &viewDef, STEREOPOS_MONO );
 				R_SetupProjectionMatrix( &viewDef, false, 2 );
 
-				float* cameraView = viewDef.worldSpace.modelViewMatrix;
+				float* cameraView		= viewDef.worldSpace.modelViewMatrix;
 				float* cameraProjection = viewDef.unjitteredProjectionMatrix;
 
 				idMat3 rotateMatrix = cur.angles.ToMat3();
-				idMat3 scaleMatrix = mat3_identity;
-				scaleMatrix[0][0] = 16;
-				scaleMatrix[1][1] = 16;
-				scaleMatrix[2][2] = 16;
+				idMat3 scaleMatrix	= mat3_identity;
+				scaleMatrix[0][0]	= 16;
+				scaleMatrix[1][1]	= 16;
+				scaleMatrix[2][2]	= 16;
 
-				idMat4 objectMatrix( scaleMatrix * rotateMatrix,  cur.origin );
+				idMat4 objectMatrix( scaleMatrix * rotateMatrix, cur.origin );
 				ImGuizmo::DrawCubes( cameraView, cameraProjection, objectMatrix.Transpose().ToFloatPtr(), 1 );
 
 				scaleMatrix[0][0] = 1;
 				scaleMatrix[1][1] = 1;
 				scaleMatrix[2][2] = 1;
 
-				idMat4 gizmoMatrix( scaleMatrix * rotateMatrix,  cur.origin );
-				idMat4 manipMatrix = gizmoMatrix.Transpose();
+				idMat4		 gizmoMatrix( scaleMatrix * rotateMatrix, cur.origin );
+				idMat4		 manipMatrix = gizmoMatrix.Transpose();
 
 				const float* snap = NULL;
-				if( useSnap )
-				{
-					switch( mCurrentGizmoOperation )
-					{
+				if( useSnap ) {
+					switch( mCurrentGizmoOperation ) {
 						case ImGuizmo::TRANSLATE:
 							snap = &gridSnap[0];
 							break;
@@ -1160,28 +1001,33 @@ void LightEditor::Draw()
 					}
 				}
 
-				ImGuizmo::Manipulate( cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, manipMatrix.ToFloatPtr(), NULL, useSnap ? snap : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL );
+				ImGuizmo::Manipulate( cameraView,
+					cameraProjection,
+					mCurrentGizmoOperation,
+					mCurrentGizmoMode,
+					manipMatrix.ToFloatPtr(),
+					NULL,
+					useSnap ? snap : NULL,
+					boundSizing ? bounds : NULL,
+					boundSizingSnap ? boundsSnap : NULL );
 
-				if( ImGuizmo::IsUsing() )
-				{
-					//if( mCurrentGizmoOperation == ImGuizmo::TRANSLATE )
+				if( ImGuizmo::IsUsing() ) {
+					// if( mCurrentGizmoOperation == ImGuizmo::TRANSLATE )
 					{
 						gizmoMatrix = manipMatrix.Transpose();
-						cur.origin = gizmoMatrix.GetTranslation();
+						cur.origin	= gizmoMatrix.GetTranslation();
 
 						changes = true;
 					}
 
-					if( ( mCurrentGizmoOperation & ImGuizmo::SCALE ) == 0 )
-					{
+					if( ( mCurrentGizmoOperation & ImGuizmo::SCALE ) == 0 ) {
 						idMat3 axis = gizmoMatrix.ToMat3();
-						cur.angles = axis.ToAngles();
+						cur.angles	= axis.ToAngles();
 
 						changes = true;
 					}
 
-					if( mCurrentGizmoOperation == ImGuizmo::SCALE )
-					{
+					if( mCurrentGizmoOperation == ImGuizmo::SCALE ) {
 						// Use DecomposeMatrixToComponents just for the scaling
 						float matrixTranslation[3], matrixRotation[3], matrixScale[3];
 						ImGuizmo::DecomposeMatrixToComponents( &manipMatrix[0][0], matrixTranslation, matrixRotation, matrixScale );
@@ -1190,22 +1036,18 @@ void LightEditor::Draw()
 						cur.scale.y = matrixScale[1];
 						cur.scale.z = matrixScale[2];
 
-						if( matrixScale[0] != 1.0f || matrixScale[1] != 1.0f || matrixScale[2] != 1.0f )
-						{
-							if( cur.lightType == LIGHT_SPOT )
-							{
-								cur.lightRight = curNotMoving.lightRight * matrixScale[0];
-								cur.lightUp = curNotMoving.lightUp * matrixScale[1];
+						if( matrixScale[0] != 1.0f || matrixScale[1] != 1.0f || matrixScale[2] != 1.0f ) {
+							if( cur.lightType == LIGHT_SPOT ) {
+								cur.lightRight	= curNotMoving.lightRight * matrixScale[0];
+								cur.lightUp		= curNotMoving.lightUp * matrixScale[1];
 								cur.lightTarget = curNotMoving.lightTarget * matrixScale[2];
-							}
-							else //if( cur.lightType == LIGHT_POINT )
+							} else // if( cur.lightType == LIGHT_POINT )
 							{
 								cur.lightRadius.x = curNotMoving.lightRadius.x * matrixScale[0];
 								cur.lightRadius.y = curNotMoving.lightRadius.y * matrixScale[1];
 								cur.lightRadius.z = curNotMoving.lightRadius.z * matrixScale[2];
 
-								if( matrixScale[0] != matrixScale[1] || matrixScale[1] != matrixScale[2] )
-								{
+								if( matrixScale[0] != matrixScale[1] || matrixScale[1] != matrixScale[2] ) {
 									cur.equalRadius = false;
 								}
 							}
@@ -1220,18 +1062,16 @@ void LightEditor::Draw()
 	}
 	ImGui::End();
 
-	if( changes )
-	{
+	if( changes ) {
 		TempApplyChanges();
 	}
 
-//exitLightEditor:
+	// exitLightEditor:
 
-	if( isShown && !showTool )
-	{
+	if( isShown && !showTool ) {
 		isShown = showTool;
 		SetReleaseToolMouse( false );
 	}
 }
 
-} //namespace ImGuiTools
+} // namespace ImGuiTools

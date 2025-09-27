@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -46,23 +47,23 @@ public:
 
 	void		Encode( const byte* from, int size );
 	void		Encode( const idStr& src );
-	int			DecodeLength() const; // minimum size in bytes of destination buffer for decoding
-	int			Decode( byte* to ) const; // does not append a \0 - needs a DecodeLength() bytes buffer
+	int			DecodeLength() const;		 // minimum size in bytes of destination buffer for decoding
+	int			Decode( byte* to ) const;	 // does not append a \0 - needs a DecodeLength() bytes buffer
 	void		Decode( idStr& dest ) const; // decodes the binary content to an idStr (a bit dodgy, \0 and other non-ascii are possible in the decoded content)
 	void		Decode( idFile* dest ) const;
 
-	const char*	c_str() const;
+	const char* c_str() const;
 
-	void 		operator=( const idStr& s );
+	void		operator=( const idStr& s );
 
 private:
-	byte* 		data;
-	int			len;
-	int			alloced;
+	byte* data;
+	int	  len;
+	int	  alloced;
 
-	void		Init();
-	void		Release();
-	void		EnsureAlloced( int size );
+	void  Init();
+	void  Release();
+	void  EnsureAlloced( int size );
 };
 
 ID_INLINE idBase64::idBase64()
@@ -88,27 +89,21 @@ ID_INLINE const char* idBase64::c_str() const
 
 ID_INLINE void idBase64::Init()
 {
-	len = 0;
+	len		= 0;
 	alloced = 0;
-	data = NULL;
+	data	= NULL;
 }
 
 ID_INLINE void idBase64::Release()
 {
-	if( data )
-	{
-		delete[] data;
-	}
+	if( data ) { delete[] data; }
 	Init();
 }
 
 ID_INLINE void idBase64::EnsureAlloced( int size )
 {
-	if( size > alloced )
-	{
-		Release();
-	}
-	data = new( TAG_IDLIB ) byte[size];
+	if( size > alloced ) { Release(); }
+	data	= new( TAG_IDLIB ) byte[size];
 	alloced = size;
 }
 

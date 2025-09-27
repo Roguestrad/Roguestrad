@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,7 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 // RB: missing __analysis_assume
-#if defined(__MINGW32__)
+#if defined( __MINGW32__ )
 	#include <sal.h>
 #endif
 // RB end
@@ -37,7 +38,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifdef _WIN32
 	#include <windows.h> // for DebugBreak
-#else // POSIX for raise()
+#else					 // POSIX for raise()
 	#include <signal.h>
 #endif
 
@@ -51,24 +52,22 @@ If you have questions concerning this license or the applicable additional terms
 
 uint32 globalDmaTag;
 
-bool SpursEmulationAssertFailed( const char* filename, int line, const char* expression )
+bool   SpursEmulationAssertFailed( const char* filename, int line, const char* expression )
 {
 	static bool halt = true;
-	if( halt )
-	{
+	if( halt ) {
 #ifdef _WIN32
-#ifdef _MSC_VER
+	#ifdef _MSC_VER
 		__debugbreak();
-#else
+	#else
 		// DG: mingw support
 		DebugBreak();
-#endif
+	#endif
 #else // not _WIN32
-		// DG: POSIX support
+	  // DG: POSIX support
 		raise( SIGTRAP );
 		// DG: end
 #endif // _WIN32
-
 	}
 	return true;
 }

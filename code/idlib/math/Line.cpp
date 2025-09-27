@@ -20,12 +20,10 @@ Project: The Dark Mod (http://www.thedarkmod.com/)
 
 idVec3 GetInverseMovementVelocity( const idVec3& start, const idVec3& end )
 {
-	auto inverse = []( float x ) -> float
-	{
-		//note: we change axis-aligned directions by at most 1e-10
+	auto inverse = []( float x ) -> float {
+		// note: we change axis-aligned directions by at most 1e-10
 		static const float MinDelta = 1e-10f;
-		if( idMath::Fabs( x ) < MinDelta )
-		{
+		if( idMath::Fabs( x ) < MinDelta ) {
 			x = x < 0.0f ? -MinDelta : MinDelta;
 		}
 		return 1.0f / x;
@@ -37,11 +35,7 @@ idVec3 GetInverseMovementVelocity( const idVec3& start, const idVec3& end )
 	return invVel;
 }
 
-bool MovingBoundsIntersectBounds(
-	const idVec3& startPosition, const idVec3& invVelocity, const idVec3& extent,
-	const idBounds& objBounds,
-	float paramsRange[2]
-)
+bool MovingBoundsIntersectBounds( const idVec3& startPosition, const idVec3& invVelocity, const idVec3& extent, const idBounds& objBounds, float paramsRange[2] )
 {
 	assert( !objBounds.IsBackwards() );
 	idVec3 pmin = objBounds[0] - extent;
@@ -50,8 +44,7 @@ bool MovingBoundsIntersectBounds(
 	idVec3 tmax = ( pmax - startPosition );
 	tmin.MulCW( invVelocity );
 	tmax.MulCW( invVelocity );
-	for( int d = 0; d < 3; d++ )
-	{
+	for( int d = 0; d < 3; d++ ) {
 		float a = tmin[d], b = tmax[d];
 		tmin[d] = idMath::Fmin( a, b );
 		tmax[d] = idMath::Fmax( a, b );

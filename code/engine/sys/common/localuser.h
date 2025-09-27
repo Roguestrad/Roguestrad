@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,9 +30,8 @@ If you have questions concerning this license or the applicable additional terms
 #define __WIN_LOCALUSER_H__
 
 // This is to quickly get/set the data needed for disc-swapping
-typedef struct
-{
-	int					inputDevice;
+typedef struct {
+	int inputDevice;
 } winUserState_t;
 
 /*
@@ -42,14 +42,17 @@ idLocalUserWin
 class idLocalUserWin : public idLocalUser
 {
 public:
-	static const int MAX_GAMERTAG = 64;			// max number of bytes for a gamertag
-	static const int MAX_GAMERTAG_CHARS = 16;	// max number of UTF-8 characters to show
+	static const int MAX_GAMERTAG		= 64; // max number of bytes for a gamertag
+	static const int MAX_GAMERTAG_CHARS = 16; // max number of UTF-8 characters to show
 
-	idLocalUserWin() : inputDevice( 0 ) {}
+	idLocalUserWin() :
+		inputDevice( 0 )
+	{
+	}
 
 	idLocalUserWin& operator=( idLocalUserWin&& other )
 	{
-		gamertag = std::move( other.gamertag );
+		gamertag	= std::move( other.gamertag );
 		inputDevice = other.inputDevice;
 		return *this;
 	}
@@ -57,47 +60,32 @@ public:
 	//==========================================================================================
 	// idLocalUser interface
 	//==========================================================================================
-	virtual bool				IsProfileReady() const;
-	virtual bool				IsOnline() const;
-	virtual bool				IsInParty() const;
-	virtual int					GetPartyCount() const;
-	virtual uint32				GetOnlineCaps() const
-	{
-		return ( IsPersistent() && IsOnline() ) ? ( CAP_IS_ONLINE | CAP_CAN_PLAY_ONLINE ) : 0;
-	}
-	virtual int					GetInputDevice() const
-	{
-		return inputDevice;
-	}
-	virtual const char* 		GetGamerTag() const
-	{
-		return gamertag.c_str();
-	}
-	virtual void				PumpPlatform() {}
+	virtual bool		IsProfileReady() const;
+	virtual bool		IsOnline() const;
+	virtual bool		IsInParty() const;
+	virtual int			GetPartyCount() const;
+	virtual uint32		GetOnlineCaps() const { return ( IsPersistent() && IsOnline() ) ? ( CAP_IS_ONLINE | CAP_CAN_PLAY_ONLINE ) : 0; }
+	virtual int			GetInputDevice() const { return inputDevice; }
+	virtual const char* GetGamerTag() const { return gamertag.c_str(); }
+	virtual void		PumpPlatform() { }
 
 	//==========================================================================================
 	// idLocalUserWin interface
 	//==========================================================================================
-	void						SetInputDevice( int inputDevice_ )
-	{
-		inputDevice = inputDevice_;
-	}
-	void						SetGamerTag( const char* gamerTag_ )
-	{
-		gamertag = gamerTag_;
-	}
-	winUserState_t				GetUserState()
+	void				SetInputDevice( int inputDevice_ ) { inputDevice = inputDevice_; }
+	void				SetGamerTag( const char* gamerTag_ ) { gamertag = gamerTag_; }
+	winUserState_t		GetUserState()
 	{
 		winUserState_t a = { inputDevice };
 		return a;
 	}
-	bool						VerifyUserState( winUserState_t& state );
+	bool VerifyUserState( winUserState_t& state );
 
-	void						Init( int inputDevice_, const char* gamertag_, int numLocalUsers );
+	void Init( int inputDevice_, const char* gamertag_, int numLocalUsers );
 
 private:
-	idStrStatic< MAX_GAMERTAG >	gamertag;
-	int							inputDevice;
+	idStrStatic<MAX_GAMERTAG> gamertag;
+	int						  inputDevice;
 };
 
 #endif // __WIN_LOCALUSER_H__

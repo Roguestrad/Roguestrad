@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "AAS_local.h"
-#include "../Game_local.h"		// for print and error
+#include "../Game_local.h" // for print and error
 
 #include "AASCallback_FindCoverArea.h"
 
@@ -42,8 +43,8 @@ idAASCallback_FindCoverArea::idAASCallback_FindCoverArea
 */
 idAASCallback_FindCoverArea::idAASCallback_FindCoverArea( const idVec3& hideFromPos )
 {
-	int			numPVSAreas;
-	idBounds	bounds( hideFromPos - idVec3( 16, 16, 0 ), hideFromPos + idVec3( 16, 16, 64 ) );
+	int		 numPVSAreas;
+	idBounds bounds( hideFromPos - idVec3( 16, 16, 0 ), hideFromPos + idVec3( 16, 16, 64 ) );
 
 	// setup PVS
 	numPVSAreas = gameLocal.pvs.GetPVSAreas( bounds, PVSAreas, MAX_PVS_AREAS );
@@ -67,16 +68,15 @@ idAASCallback_FindCoverArea::AreaIsGoal
 */
 bool idAASCallback_FindCoverArea::AreaIsGoal( const idAAS* aas, int areaNum )
 {
-	idVec3	areaCenter;
-	int		numPVSAreas;
-	int		PVSAreas[ MAX_PVS_AREAS ];
+	idVec3 areaCenter;
+	int	   numPVSAreas;
+	int	   PVSAreas[MAX_PVS_AREAS];
 
 	areaCenter = aas->AreaCenter( areaNum );
-	areaCenter[ 2 ] += 1.0f;
+	areaCenter[2] += 1.0f;
 
 	numPVSAreas = gameLocal.pvs.GetPVSAreas( idBounds( areaCenter ).Expand( 16.0f ), PVSAreas, MAX_PVS_AREAS );
-	if( !gameLocal.pvs.InCurrentPVS( hidePVS, PVSAreas, numPVSAreas ) )
-	{
+	if( !gameLocal.pvs.InCurrentPVS( hidePVS, PVSAreas, numPVSAreas ) ) {
 		return true;
 	}
 

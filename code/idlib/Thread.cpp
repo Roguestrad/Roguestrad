@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -65,8 +66,7 @@ idSysThread::~idSysThread
 idSysThread::~idSysThread()
 {
 	StopThread( true );
-	if( threadHandle )
-	{
+	if( threadHandle ) {
 		Sys_DestroyThread( threadHandle );
 	}
 }
@@ -78,8 +78,7 @@ idSysThread::StartThread
 */
 bool idSysThread::StartThread( const char* name_, core_t core, xthreadPriority priority, int stackSize )
 {
-	if( isRunning )
-	{
+	if( isRunning ) {
 		return false;
 	}
 
@@ -87,8 +86,7 @@ bool idSysThread::StartThread( const char* name_, core_t core, xthreadPriority p
 
 	isTerminating = false;
 
-	if( threadHandle )
-	{
+	if( threadHandle ) {
 		Sys_DestroyThread( threadHandle );
 	}
 
@@ -105,8 +103,7 @@ idSysThread::StartWorkerThread
 */
 bool idSysThread::StartWorkerThread( const char* name_, core_t core, xthreadPriority priority, int stackSize )
 {
-	if( isRunning )
-	{
+	if( isRunning ) {
 		return false;
 	}
 
@@ -126,25 +123,20 @@ idSysThread::StopThread
 */
 void idSysThread::StopThread( bool wait )
 {
-	if( !isRunning )
-	{
+	if( !isRunning ) {
 		return;
 	}
-	if( isWorker )
-	{
+	if( isWorker ) {
 		signalMutex.Lock();
 		moreWorkToDo = true;
 		signalWorkerDone.Clear();
 		isTerminating = true;
 		signalMoreWorkToDo.Raise();
 		signalMutex.Unlock();
-	}
-	else
-	{
+	} else {
 		isTerminating = true;
 	}
-	if( wait )
-	{
+	if( wait ) {
 		WaitForThread();
 	}
 }
@@ -156,12 +148,9 @@ idSysThread::WaitForThread
 */
 void idSysThread::WaitForThread()
 {
-	if( isWorker )
-	{
+	if( isWorker ) {
 		signalWorkerDone.Wait( idSysSignal::WAIT_INFINITE );
-	}
-	else if( isRunning )
-	{
+	} else if( isRunning ) {
 		Sys_DestroyThread( threadHandle );
 		threadHandle = 0;
 	}
@@ -174,8 +163,7 @@ idSysThread::SignalWork
 */
 void idSysThread::SignalWork()
 {
-	if( isWorker )
-	{
+	if( isWorker ) {
 		signalMutex.Lock();
 		moreWorkToDo = true;
 		signalWorkerDone.Clear();
@@ -191,11 +179,9 @@ idSysThread::IsWorkDone
 */
 bool idSysThread::IsWorkDone()
 {
-	if( isWorker )
-	{
+	if( isWorker ) {
 		// a timeout of 0 will return immediately with true if signaled
-		if( signalWorkerDone.Wait( 0 ) )
-		{
+		if( signalWorkerDone.Wait( 0 ) ) {
 			return true;
 		}
 	}
@@ -211,29 +197,22 @@ int idSysThread::ThreadProc( idSysThread* thread )
 {
 	int retVal = 0;
 
-	try
-	{
-		if( thread->isWorker )
-		{
-			for( ; ; )
-			{
+	try {
+		if( thread->isWorker ) {
+			for( ;; ) {
 				thread->signalMutex.Lock();
-				if( thread->moreWorkToDo )
-				{
+				if( thread->moreWorkToDo ) {
 					thread->moreWorkToDo = false;
 					thread->signalMoreWorkToDo.Clear();
 					thread->signalMutex.Unlock();
-				}
-				else
-				{
+				} else {
 					thread->signalWorkerDone.Raise();
 					thread->signalMutex.Unlock();
 					thread->signalMoreWorkToDo.Wait( idSysSignal::WAIT_INFINITE );
 					continue;
 				}
 
-				if( thread->isTerminating )
-				{
+				if( thread->isTerminating ) {
 					break;
 				}
 
@@ -243,17 +222,13 @@ int idSysThread::ThreadProc( idSysThread* thread )
 				retVal = thread->Run();
 			}
 			thread->signalWorkerDone.Raise();
-		}
-		else
-		{
+		} else {
 			// SRS - generalize thread instrumentation with correct Run() scope
 			OPTICK_THREAD( thread->GetName() );
 
 			retVal = thread->Run();
 		}
-	}
-	catch( idException& ex )
-	{
+	} catch( idException& ex ) {
 		idLib::Warning( "Fatal error in thread %s: %s", thread->GetName(), ex.GetError() );
 
 #if 0
@@ -331,10 +306,8 @@ TestWorkers
 void TestWorkers()
 {
 	idSysWorkerThreadGroup<idMyThread> workers( "myWorkers", 4 );
-	for( ; ; )
-	{
-		for( int i = 0; i < workers.GetNumThreads(); i++ )
-		{
+	for( ;; ) {
+		for( int i = 0; i < workers.GetNumThreads(); i++ ) {
 			// workers.GetThread( i )-> // setup work for this thread
 		}
 		workers.SignalWorkAndWait();

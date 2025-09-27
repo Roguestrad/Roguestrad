@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -40,22 +41,19 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-struct objObject_t
-{
-	idStrStatic< MAX_OSPATH >	material;
+struct objObject_t {
+	idStrStatic<MAX_OSPATH> material;
 
-	idList<idVec3>				vertexes;
-	idList<idVec2>				texcoords;
-	idList<idVec3>				normals;
-	idList<triIndex_t>			indexes;
+	idList<idVec3>			vertexes;
+	idList<idVec2>			texcoords;
+	idList<idVec3>			normals;
+	idList<triIndex_t>		indexes;
 };
 
-struct objModel_t
-{
-	ID_TIME_T							timeStamp;
-	idList<objObject_t*, TAG_MODEL>		objects;
+struct objModel_t {
+	ID_TIME_T						timeStamp;
+	idList<objObject_t*, TAG_MODEL> objects;
 };
-
 
 objModel_t* OBJ_Load( const char* fileName );
 void		OBJ_Free( objModel_t* obj );

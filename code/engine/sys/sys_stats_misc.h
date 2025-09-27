@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -53,42 +54,36 @@ the level for matchmaking, etc.
 ================================================================================================
 */
 
-const int MAX_LEADERBOARDS			= 256;
-const int MAX_LEADERBOARD_COLUMNS	= 16;
+const int MAX_LEADERBOARDS		  = 256;
+const int MAX_LEADERBOARD_COLUMNS = 16;
 
-enum aggregationMethod_t
-{
-	AGGREGATE_MIN,  // Write the new value if it is less than the existing value.
-	AGGREGATE_MAX,  // Write the new value if it is greater than the existing value.
-	AGGREGATE_SUM,  // Add the new value to the existing value and write the result.
+enum aggregationMethod_t {
+	AGGREGATE_MIN,	// Write the new value if it is less than the existing value.
+	AGGREGATE_MAX,	// Write the new value if it is greater than the existing value.
+	AGGREGATE_SUM,	// Add the new value to the existing value and write the result.
 	AGGREGATE_LAST, // Write the new value.
 };
 
-enum rankOrder_t
-{
+enum rankOrder_t {
 	RANK_GREATEST_FIRST, // Rank the in descending order, greatest score is best score
 	RANK_LEAST_FIRST,	 // Rank the in ascending order, lowest score is best score
 };
 
-enum statsColumnDisplayType_t
-{
+enum statsColumnDisplayType_t {
 	STATS_COLUMN_DISPLAY_NUMBER,
 	STATS_COLUMN_DISPLAY_TIME_MILLISECONDS,
 	STATS_COLUMN_DISPLAY_CASH,
 	STATS_COLUMN_NEVER_DISPLAY,
 };
 
-struct columnDef_t
-{
-	const char* 				locDisplayName;
-	int							bits;
-	aggregationMethod_t			aggregationMethod;
-	statsColumnDisplayType_t	displayType;
+struct columnDef_t {
+	const char*				 locDisplayName;
+	int						 bits;
+	aggregationMethod_t		 aggregationMethod;
+	statsColumnDisplayType_t displayType;
 };
 
-struct leaderboardDefinition_t
-{
-
+struct leaderboardDefinition_t {
 	leaderboardDefinition_t() :
 		id( -1 ),
 		numColumns( 0 ),
@@ -109,23 +104,24 @@ struct leaderboardDefinition_t
 	{
 	}
 
-	int32				id;
-	int32				numColumns;
-	const columnDef_t* 	columnDefs;
-	rankOrder_t			rankOrder;
-	bool				supportsAttachments;
-	bool				checkAgainstCurrent;		// Compare column 0 with the currently stored leaderboard, and only submit the new leaderboard if the new column 0 is better
-	idStr				boardName;					// Only used for display name within steam. If Empty, will generate. must be specifically set.
+	int32			   id;
+	int32			   numColumns;
+	const columnDef_t* columnDefs;
+	rankOrder_t		   rankOrder;
+	bool			   supportsAttachments;
+	bool			   checkAgainstCurrent; // Compare column 0 with the currently stored leaderboard, and only submit the new leaderboard if the new column 0 is better
+	idStr			   boardName;			// Only used for display name within steam. If Empty, will generate. must be specifically set.
 };
 
-struct column_t
-{
-	column_t( int64 value_ ) : value( value_ ) {}
-	column_t() {}
+struct column_t {
+	column_t( int64 value_ ) :
+		value( value_ )
+	{
+	}
+	column_t() { }
 
-	int64				value;
+	int64 value;
 };
-
 
 /*
 ================================================================================================
@@ -133,7 +129,7 @@ Contains the Achievement and LeaderBoard free function declarations.
 ================================================================================================
 */
 
-typedef int32			leaderboardHandle_t;
+typedef int32 leaderboardHandle_t;
 
 /*
 ================================================
@@ -144,13 +140,13 @@ class idLeaderBoardEntry
 {
 public:
 	static const int MAX_LEADERBOARD_COLUMNS = 16;
-	idStr username; // aka gamertag
-	int64 score;
-	int64 columns[ MAX_LEADERBOARD_COLUMNS ];
+	idStr			 username; // aka gamertag
+	int64			 score;
+	int64			 columns[MAX_LEADERBOARD_COLUMNS];
 };
 
 const leaderboardDefinition_t* Sys_FindLeaderboardDef( int id );
-leaderboardDefinition_t* 		Sys_CreateLeaderboardDef( int id_, int numColumns_, const columnDef_t* columnDefs_, rankOrder_t rankOrder_, bool supportsAttachments_, bool checkAgainstCurrent_ );
-void							Sys_DestroyLeaderboardDefs();
+leaderboardDefinition_t*	   Sys_CreateLeaderboardDef( int id_, int numColumns_, const columnDef_t* columnDefs_, rankOrder_t rankOrder_, bool supportsAttachments_, bool checkAgainstCurrent_ );
+void						   Sys_DestroyLeaderboardDefs();
 
 #endif // !__SYS_STATS_MISC_H__

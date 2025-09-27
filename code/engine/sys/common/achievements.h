@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,13 +39,13 @@ class idAchievementSystemWin : public idAchievementSystem
 public:
 	idAchievementSystemWin();
 
-	bool	IsInitialized();
-	void	AchievementUnlock( idLocalUser* user, const int achievementID );
-	void	AchievementLock( idLocalUser* user, const int achievementID );
-	void	AchievementLockAll( idLocalUser* user, const int maxId );
-	void	Pump();
-	bool	GetAchievementDescription( idLocalUser* user, const int id, achievementDescription_t& data ) const;
-	bool	GetAchievementState( idLocalUser* user, idArray< bool, idAchievementSystem::MAX_ACHIEVEMENTS >& achievements ) const;
+	bool IsInitialized();
+	void AchievementUnlock( idLocalUser* user, const int achievementID );
+	void AchievementLock( idLocalUser* user, const int achievementID );
+	void AchievementLockAll( idLocalUser* user, const int maxId );
+	void Pump();
+	bool GetAchievementDescription( idLocalUser* user, const int id, achievementDescription_t& data ) const;
+	bool GetAchievementState( idLocalUser* user, idArray<bool, idAchievementSystem::MAX_ACHIEVEMENTS>& achievements ) const;
 };
 
 #endif // __WIN_ACHIEVEMENTS_H__

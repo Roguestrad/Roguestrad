@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,21 +37,19 @@ idJointMat::ToJointQuat
 */
 idJointQuat idJointMat::ToJointQuat() const
 {
-	idJointQuat	jq;
+	idJointQuat jq;
 	float		trace;
 	float		s;
 	float		t;
-	int     	i;
+	int			i;
 	int			j;
 	int			k;
 
-	static int 	next[3] = { 1, 2, 0 };
+	static int	next[3] = { 1, 2, 0 };
 
 	trace = mat[0 * 4 + 0] + mat[1 * 4 + 1] + mat[2 * 4 + 2];
 
-	if( trace > 0.0f )
-	{
-
+	if( trace > 0.0f ) {
 		t = trace + 1.0f;
 		s = idMath::InvSqrt( t ) * 0.5f;
 
@@ -59,17 +58,12 @@ idJointQuat idJointMat::ToJointQuat() const
 		jq.q[1] = ( mat[2 * 4 + 0] - mat[0 * 4 + 2] ) * s;
 		jq.q[2] = ( mat[0 * 4 + 1] - mat[1 * 4 + 0] ) * s;
 
-	}
-	else
-	{
-
+	} else {
 		i = 0;
-		if( mat[1 * 4 + 1] > mat[0 * 4 + 0] )
-		{
+		if( mat[1 * 4 + 1] > mat[0 * 4 + 0] ) {
 			i = 1;
 		}
-		if( mat[2 * 4 + 2] > mat[i * 4 + i] )
-		{
+		if( mat[2 * 4 + 2] > mat[i * 4 + i] ) {
 			i = 2;
 		}
 		j = next[i];
@@ -87,7 +81,7 @@ idJointQuat idJointMat::ToJointQuat() const
 	jq.t[0] = mat[0 * 4 + 3];
 	jq.t[1] = mat[1 * 4 + 3];
 	jq.t[2] = mat[2 * 4 + 3];
-	jq.w = 0.0f;
+	jq.w	= 0.0f;
 
 	return jq;
 }

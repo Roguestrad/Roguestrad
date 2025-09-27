@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -55,47 +56,36 @@ idMenuWidget_Help::Update
 */
 void idMenuWidget_Help::Update()
 {
-
-	if( GetSWFObject() == NULL )
-	{
+	if( GetSWFObject() == NULL ) {
 		return;
 	}
 
 	idSWFScriptObject& root = GetSWFObject()->GetRootObject();
 
-	if( !BindSprite( root ) )
-	{
+	if( !BindSprite( root ) ) {
 		return;
 	}
 
 	const idStr& msg = ( lastHoveredMessage.Length() > 0 ) ? lastHoveredMessage : lastFocusedMessage;
-	if( msg.Length() > 0 && !hideMessage )
-	{
+	if( msg.Length() > 0 && !hideMessage ) {
 		// try to show it if...
 		//		- we are on the first frame
 		//		- we aren't still animating while being between the "show" and "shown" frames
 		//
-		if( GetSprite()->GetCurrentFrame() != GetSprite()->FindFrame( "shown" )
-				&& ( GetSprite()->GetCurrentFrame() == 1 || !( GetSprite()->IsPlaying() && GetSprite()->IsBetweenFrames( "show", "shown" ) ) ) )
-		{
+		if( GetSprite()->GetCurrentFrame() != GetSprite()->FindFrame( "shown" ) &&
+			( GetSprite()->GetCurrentFrame() == 1 || !( GetSprite()->IsPlaying() && GetSprite()->IsBetweenFrames( "show", "shown" ) ) ) ) {
 			GetSprite()->PlayFrame( "show" );
 		}
 
 		idSWFScriptObject* const textObject = GetSprite()->GetScriptObject()->GetNestedObj( "txtOption", "txtValue" );
-		if( textObject != NULL )
-		{
+		if( textObject != NULL ) {
 			idSWFTextInstance* const text = textObject->GetText();
 			text->SetText( msg );
 			text->SetStrokeInfo( true, 0.75f, 2.0f );
 		}
-	}
-	else
-	{
+	} else {
 		// try to hide it
-		if( GetSprite()->GetCurrentFrame() != 1
-				&& GetSprite()->GetCurrentFrame() != GetSprite()->FindFrame( "hidden" )
-				&& !GetSprite()->IsBetweenFrames( "hide", "hidden" ) )
-		{
+		if( GetSprite()->GetCurrentFrame() != 1 && GetSprite()->GetCurrentFrame() != GetSprite()->FindFrame( "hidden" ) && !GetSprite()->IsBetweenFrames( "hide", "hidden" ) ) {
 			GetSprite()->PlayFrame( "hide" );
 		}
 	}
@@ -108,46 +98,37 @@ idMenuWidget_Help::ObserveEvent
 */
 void idMenuWidget_Help::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
-	const idMenuWidget_Button* const button = dynamic_cast< const idMenuWidget_Button* >( &widget );
-	if( button == NULL )
-	{
+	const idMenuWidget_Button* const button = dynamic_cast<const idMenuWidget_Button*>( &widget );
+	if( button == NULL ) {
 		return;
 	}
 
-	switch( event.type )
-	{
-		case WIDGET_EVENT_FOCUS_ON:
-		{
-			hideMessage = false;
+	switch( event.type ) {
+		case WIDGET_EVENT_FOCUS_ON: {
+			hideMessage		   = false;
 			lastFocusedMessage = button->GetDescription();
 			lastHoveredMessage.Clear();
 			Update();
 			break;
 		}
-		case WIDGET_EVENT_FOCUS_OFF:
-		{
+		case WIDGET_EVENT_FOCUS_OFF: {
 			// Don't do anything when losing focus. Focus updates come in pairs, so we can
 			// skip doing anything on the "lost focus" event, and instead do updates on the
 			// "got focus" event.
 			break;
 		}
-		case WIDGET_EVENT_ROLL_OVER:
-		{
+		case WIDGET_EVENT_ROLL_OVER: {
 			idStr desc = button->GetDescription();
-			if( desc.IsEmpty() )
-			{
+			if( desc.IsEmpty() ) {
 				hideMessage = true;
-			}
-			else
-			{
-				hideMessage = false;
+			} else {
+				hideMessage		   = false;
 				lastHoveredMessage = button->GetDescription();
 			}
 			Update();
 			break;
 		}
-		case WIDGET_EVENT_ROLL_OUT:
-		{
+		case WIDGET_EVENT_ROLL_OUT: {
 			hideMessage = false;
 			lastHoveredMessage.Clear();
 			Update();
@@ -155,4 +136,3 @@ void idMenuWidget_Help::ObserveEvent( const idMenuWidget& widget, const idWidget
 		}
 	}
 }
-

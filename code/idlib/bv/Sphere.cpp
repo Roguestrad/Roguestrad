@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,26 +30,22 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-
 idSphere sphere_zero( vec3_zero, 0.0f );
-
 
 /*
 ================
 idSphere::PlaneDistance
 ================
 */
-float idSphere::PlaneDistance( const idPlane& plane ) const
+float	 idSphere::PlaneDistance( const idPlane& plane ) const
 {
 	float d;
 
 	d = plane.Distance( origin );
-	if( d > radius )
-	{
+	if( d > radius ) {
 		return d - radius;
 	}
-	if( d < -radius )
-	{
+	if( d < -radius ) {
 		return d + radius;
 	}
 	return 0.0f;
@@ -64,12 +61,10 @@ int idSphere::PlaneSide( const idPlane& plane, const float epsilon ) const
 	float d;
 
 	d = plane.Distance( origin );
-	if( d > radius + epsilon )
-	{
+	if( d > radius + epsilon ) {
 		return PLANESIDE_FRONT;
 	}
-	if( d < -radius - epsilon )
-	{
+	if( d < -radius - epsilon ) {
 		return PLANESIDE_BACK;
 	}
 	return PLANESIDE_CROSS;
@@ -85,22 +80,17 @@ idSphere::LineIntersection
 bool idSphere::LineIntersection( const idVec3& start, const idVec3& end ) const
 {
 	idVec3 r, s, e;
-	float a;
+	float  a;
 
 	s = start - origin;
 	e = end - origin;
 	r = e - s;
 	a = -s * r;
-	if( a <= 0 )
-	{
+	if( a <= 0 ) {
 		return ( s * s < radius * radius );
-	}
-	else if( a >= r * r )
-	{
+	} else if( a >= r * r ) {
 		return ( e * e < radius * radius );
-	}
-	else
-	{
+	} else {
 		r = s + ( a / ( r * r ) ) * r;
 		return ( r * r < radius * radius );
 	}
@@ -126,13 +116,12 @@ bool idSphere::RayIntersection( const idVec3& start, const idVec3& dir, float& s
 	c = p * p - radius * radius;
 	d = b * b - c * a;
 
-	if( d < 0.0f )
-	{
+	if( d < 0.0f ) {
 		return false;
 	}
 
 	sqrtd = idMath::Sqrt( d );
-	a = 1.0f / a;
+	a	  = 1.0f / a;
 
 	scale1 = ( -b + sqrtd ) * a;
 	scale2 = ( -b - sqrtd ) * a;
@@ -149,8 +138,8 @@ idSphere::FromPoints
 */
 void idSphere::FromPoints( const idVec3* points, const int numPoints )
 {
-	int i;
-	float radiusSqr, dist;
+	int	   i;
+	float  radiusSqr, dist;
 	idVec3 mins, maxs;
 
 	SIMDProcessor->MinMax( mins, maxs, points, numPoints );
@@ -158,11 +147,9 @@ void idSphere::FromPoints( const idVec3* points, const int numPoints )
 	origin = ( mins + maxs ) * 0.5f;
 
 	radiusSqr = 0.0f;
-	for( i = 0; i < numPoints; i++ )
-	{
+	for( i = 0; i < numPoints; i++ ) {
 		dist = ( points[i] - origin ).LengthSqr();
-		if( dist > radiusSqr )
-		{
+		if( dist > radiusSqr ) {
 			radiusSqr = dist;
 		}
 	}

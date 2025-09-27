@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -46,57 +47,53 @@ class idMat3;
 class idBounds;
 
 // trace model type
-typedef enum
-{
-	TRM_INVALID,		// invalid trm
-	TRM_BOX,			// box
-	TRM_OCTAHEDRON,		// octahedron
-	TRM_DODECAHEDRON,	// dodecahedron
-	TRM_CYLINDER,		// cylinder approximation
-	TRM_CONE,			// cone approximation
-	TRM_BONE,			// two tetrahedrons attached to each other
-	TRM_POLYGON,		// arbitrary convex polygon
-	TRM_POLYGONVOLUME,	// volume for arbitrary convex polygon
-	TRM_CUSTOM			// loaded from map model or ASE/LWO
+typedef enum {
+	TRM_INVALID,	   // invalid trm
+	TRM_BOX,		   // box
+	TRM_OCTAHEDRON,	   // octahedron
+	TRM_DODECAHEDRON,  // dodecahedron
+	TRM_CYLINDER,	   // cylinder approximation
+	TRM_CONE,		   // cone approximation
+	TRM_BONE,		   // two tetrahedrons attached to each other
+	TRM_POLYGON,	   // arbitrary convex polygon
+	TRM_POLYGONVOLUME, // volume for arbitrary convex polygon
+	TRM_CUSTOM		   // loaded from map model or ASE/LWO
 } traceModel_t;
 
 // these are bit cache limits
-#define MAX_TRACEMODEL_VERTS		64
-#define MAX_TRACEMODEL_EDGES		64
-#define MAX_TRACEMODEL_POLYS		32
-#define MAX_TRACEMODEL_POLYEDGES	32
+#define MAX_TRACEMODEL_VERTS	 64
+#define MAX_TRACEMODEL_EDGES	 64
+#define MAX_TRACEMODEL_POLYS	 32
+#define MAX_TRACEMODEL_POLYEDGES 32
 
 typedef idVec3 traceModelVert_t;
 
-typedef struct
-{
-	int					v[2];
-	idVec3				normal;
+typedef struct {
+	int	   v[2];
+	idVec3 normal;
 } traceModelEdge_t;
 
-typedef struct
-{
-	idVec3				normal;
-	float				dist;
-	idBounds			bounds;
-	int					numEdges;
-	int					edges[MAX_TRACEMODEL_POLYEDGES];
+typedef struct {
+	idVec3	 normal;
+	float	 dist;
+	idBounds bounds;
+	int		 numEdges;
+	int		 edges[MAX_TRACEMODEL_POLYEDGES];
 } traceModelPoly_t;
 
 class idTraceModel
 {
-
 public:
-	traceModel_t		type;
-	int					numVerts;
-	traceModelVert_t	verts[MAX_TRACEMODEL_VERTS];
-	int					numEdges;
-	traceModelEdge_t	edges[MAX_TRACEMODEL_EDGES + 1];
-	int					numPolys;
-	traceModelPoly_t	polys[MAX_TRACEMODEL_POLYS];
-	idVec3				offset;			// offset to center of model
-	idBounds			bounds;			// bounds of model
-	bool				isConvex;		// true when model is convex
+	traceModel_t	 type;
+	int				 numVerts;
+	traceModelVert_t verts[MAX_TRACEMODEL_VERTS];
+	int				 numEdges;
+	traceModelEdge_t edges[MAX_TRACEMODEL_EDGES + 1];
+	int				 numPolys;
+	traceModelPoly_t polys[MAX_TRACEMODEL_POLYS];
+	idVec3			 offset;   // offset to center of model
+	idBounds		 bounds;   // bounds of model
+	bool			 isConvex; // true when model is convex
 
 public:
 	idTraceModel();
@@ -108,62 +105,61 @@ public:
 	idTraceModel( const float length, const float width );
 
 	// axial box
-	void				SetupBox( const idBounds& boxBounds );
-	void				SetupBox( const float size );
+	void  SetupBox( const idBounds& boxBounds );
+	void  SetupBox( const float size );
 	// octahedron
-	void				SetupOctahedron( const idBounds& octBounds );
-	void				SetupOctahedron( const float size );
+	void  SetupOctahedron( const idBounds& octBounds );
+	void  SetupOctahedron( const float size );
 	// dodecahedron
-	void				SetupDodecahedron( const idBounds& dodBounds );
-	void				SetupDodecahedron( const float size );
+	void  SetupDodecahedron( const idBounds& dodBounds );
+	void  SetupDodecahedron( const float size );
 	// cylinder approximation
-	void				SetupCylinder( const idBounds& cylBounds, const int numSides );
-	void				SetupCylinder( const float height, const float width, const int numSides );
+	void  SetupCylinder( const idBounds& cylBounds, const int numSides );
+	void  SetupCylinder( const float height, const float width, const int numSides );
 	// cone approximation
-	void				SetupCone( const idBounds& coneBounds, const int numSides );
-	void				SetupCone( const float height, const float width, const int numSides );
+	void  SetupCone( const idBounds& coneBounds, const int numSides );
+	void  SetupCone( const float height, const float width, const int numSides );
 	// two tetrahedrons attached to each other
-	void				SetupBone( const float length, const float width );
+	void  SetupBone( const float length, const float width );
 	// arbitrary convex polygon
-	void				SetupPolygon( const idVec3* v, const int count );
-	void				SetupPolygon( const idWinding& w );
+	void  SetupPolygon( const idVec3* v, const int count );
+	void  SetupPolygon( const idWinding& w );
 	// generate edge normals
-	int					GenerateEdgeNormals();
+	int	  GenerateEdgeNormals();
 	// translate the trm
-	void				Translate( const idVec3& translation );
+	void  Translate( const idVec3& translation );
 	// rotate the trm
-	void				Rotate( const idMat3& rotation );
+	void  Rotate( const idMat3& rotation );
 	// shrink the model m units on all sides
-	void				Shrink( const float m );
+	void  Shrink( const float m );
 	// compare
-	bool				Compare( const idTraceModel& trm ) const;
-	bool				operator==(	const idTraceModel& trm ) const;
-	bool				operator!=(	const idTraceModel& trm ) const;
+	bool  Compare( const idTraceModel& trm ) const;
+	bool  operator==( const idTraceModel& trm ) const;
+	bool  operator!=( const idTraceModel& trm ) const;
 	// get the area of one of the polygons
-	float				GetPolygonArea( int polyNum ) const;
+	float GetPolygonArea( int polyNum ) const;
 	// get the silhouette edges
-	int					GetProjectionSilhouetteEdges( const idVec3& projectionOrigin, int silEdges[MAX_TRACEMODEL_EDGES] ) const;
-	int					GetParallelProjectionSilhouetteEdges( const idVec3& projectionDir, int silEdges[MAX_TRACEMODEL_EDGES] ) const;
+	int	  GetProjectionSilhouetteEdges( const idVec3& projectionOrigin, int silEdges[MAX_TRACEMODEL_EDGES] ) const;
+	int	  GetParallelProjectionSilhouetteEdges( const idVec3& projectionDir, int silEdges[MAX_TRACEMODEL_EDGES] ) const;
 	// calculate mass properties assuming an uniform density
-	void				GetMassProperties( const float density, float& mass, idVec3& centerOfMass, idMat3& inertiaTensor ) const;
+	void  GetMassProperties( const float density, float& mass, idVec3& centerOfMass, idMat3& inertiaTensor ) const;
 
 private:
-	void				InitBox();
-	void				InitOctahedron();
-	void				InitDodecahedron();
-	void				InitBone();
+	void InitBox();
+	void InitOctahedron();
+	void InitDodecahedron();
+	void InitBone();
 
-	void				ProjectionIntegrals( int polyNum, int a, int b, struct projectionIntegrals_s& integrals ) const;
-	void				PolygonIntegrals( int polyNum, int a, int b, int c, struct polygonIntegrals_s& integrals ) const;
-	void				VolumeIntegrals( struct volumeIntegrals_s& integrals ) const;
-	void				VolumeFromPolygon( idTraceModel& trm, float thickness ) const;
-	int					GetOrderedSilhouetteEdges( const int edgeIsSilEdge[MAX_TRACEMODEL_EDGES + 1], int silEdges[MAX_TRACEMODEL_EDGES] ) const;
+	void ProjectionIntegrals( int polyNum, int a, int b, struct projectionIntegrals_s& integrals ) const;
+	void PolygonIntegrals( int polyNum, int a, int b, int c, struct polygonIntegrals_s& integrals ) const;
+	void VolumeIntegrals( struct volumeIntegrals_s& integrals ) const;
+	void VolumeFromPolygon( idTraceModel& trm, float thickness ) const;
+	int	 GetOrderedSilhouetteEdges( const int edgeIsSilEdge[MAX_TRACEMODEL_EDGES + 1], int silEdges[MAX_TRACEMODEL_EDGES] ) const;
 };
-
 
 ID_INLINE idTraceModel::idTraceModel()
 {
-	type = TRM_INVALID;
+	type	 = TRM_INVALID;
 	numVerts = numEdges = numPolys = 0;
 	bounds.Zero();
 }
@@ -196,4 +192,3 @@ ID_INLINE bool idTraceModel::operator!=( const idTraceModel& trm ) const
 }
 
 #endif /* !__TRACEMODEL_H__ */
-

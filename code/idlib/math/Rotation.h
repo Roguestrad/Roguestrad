@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,14 +39,12 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-
 class idAngles;
 class idQuat;
 class idMat3;
 
 class idRotation
 {
-
 	friend class idAngles;
 	friend class idQuat;
 	friend class idMat3;
@@ -54,47 +53,46 @@ public:
 	idRotation();
 	idRotation( const idVec3& rotationOrigin, const idVec3& rotationVec, const float rotationAngle );
 
-	void				Set( const idVec3& rotationOrigin, const idVec3& rotationVec, const float rotationAngle );
-	void				SetOrigin( const idVec3& rotationOrigin );
-	void				SetVec( const idVec3& rotationVec );					// has to be normalized
-	void				SetVec( const float x, const float y, const float z );	// has to be normalized
-	void				SetAngle( const float rotationAngle );
-	void				Scale( const float s );
-	void				ReCalculateMatrix();
-	const idVec3& 		GetOrigin() const;
-	const idVec3& 		GetVec() const;
-	float				GetAngle() const;
+	void			  Set( const idVec3& rotationOrigin, const idVec3& rotationVec, const float rotationAngle );
+	void			  SetOrigin( const idVec3& rotationOrigin );
+	void			  SetVec( const idVec3& rotationVec );					 // has to be normalized
+	void			  SetVec( const float x, const float y, const float z ); // has to be normalized
+	void			  SetAngle( const float rotationAngle );
+	void			  Scale( const float s );
+	void			  ReCalculateMatrix();
+	const idVec3&	  GetOrigin() const;
+	const idVec3&	  GetVec() const;
+	float			  GetAngle() const;
 
-	idRotation			operator-() const;										// flips rotation
-	idRotation			operator*( const float s ) const;						// scale rotation
-	idRotation			operator/( const float s ) const;						// scale rotation
-	idRotation& 		operator*=( const float s );							// scale rotation
-	idRotation& 		operator/=( const float s );							// scale rotation
-	idVec3				operator*( const idVec3& v ) const;						// rotate vector
+	idRotation		  operator-() const;				  // flips rotation
+	idRotation		  operator*( const float s ) const;	  // scale rotation
+	idRotation		  operator/( const float s ) const;	  // scale rotation
+	idRotation&		  operator*=( const float s );		  // scale rotation
+	idRotation&		  operator/=( const float s );		  // scale rotation
+	idVec3			  operator*( const idVec3& v ) const; // rotate vector
 
-	friend idRotation	operator*( const float s, const idRotation& r );		// scale rotation
-	friend idVec3		operator*( const idVec3& v, const idRotation& r );		// rotate vector
-	friend idVec3& 		operator*=( idVec3& v, const idRotation& r );			// rotate vector
+	friend idRotation operator*( const float s, const idRotation& r );	 // scale rotation
+	friend idVec3	  operator*( const idVec3& v, const idRotation& r ); // rotate vector
+	friend idVec3&	  operator*=( idVec3& v, const idRotation& r );		 // rotate vector
 
-	idAngles			ToAngles() const;
-	idQuat				ToQuat() const;
-	const idMat3& 		ToMat3() const;
-	idMat4				ToMat4() const;
-	idVec3				ToAngularVelocity() const;
+	idAngles		  ToAngles() const;
+	idQuat			  ToQuat() const;
+	const idMat3&	  ToMat3() const;
+	idMat4			  ToMat4() const;
+	idVec3			  ToAngularVelocity() const;
 
-	void				RotatePoint( idVec3& point ) const;
+	void			  RotatePoint( idVec3& point ) const;
 
-	void				Normalize180();
-	void				Normalize360();
+	void			  Normalize180();
+	void			  Normalize360();
 
 private:
-	idVec3				origin;			// origin of rotation
-	idVec3				vec;			// normalized vector to rotate around
-	float				angle;			// angle of rotation in degrees
-	mutable idMat3		axis;			// rotation axis
-	mutable bool		axisValid;		// true if rotation axis is valid
+	idVec3		   origin;	  // origin of rotation
+	idVec3		   vec;		  // normalized vector to rotate around
+	float		   angle;	  // angle of rotation in degrees
+	mutable idMat3 axis;	  // rotation axis
+	mutable bool   axisValid; // true if rotation axis is valid
 };
-
 
 ID_INLINE idRotation::idRotation()
 {
@@ -102,17 +100,17 @@ ID_INLINE idRotation::idRotation()
 
 ID_INLINE idRotation::idRotation( const idVec3& rotationOrigin, const idVec3& rotationVec, const float rotationAngle )
 {
-	origin = rotationOrigin;
-	vec = rotationVec;
-	angle = rotationAngle;
+	origin	  = rotationOrigin;
+	vec		  = rotationVec;
+	angle	  = rotationAngle;
 	axisValid = false;
 }
 
 ID_INLINE void idRotation::Set( const idVec3& rotationOrigin, const idVec3& rotationVec, const float rotationAngle )
 {
-	origin = rotationOrigin;
-	vec = rotationVec;
-	angle = rotationAngle;
+	origin	  = rotationOrigin;
+	vec		  = rotationVec;
+	angle	  = rotationAngle;
 	axisValid = false;
 }
 
@@ -123,21 +121,21 @@ ID_INLINE void idRotation::SetOrigin( const idVec3& rotationOrigin )
 
 ID_INLINE void idRotation::SetVec( const idVec3& rotationVec )
 {
-	vec = rotationVec;
+	vec		  = rotationVec;
 	axisValid = false;
 }
 
 ID_INLINE void idRotation::SetVec( float x, float y, float z )
 {
-	vec[0] = x;
-	vec[1] = y;
-	vec[2] = z;
+	vec[0]	  = x;
+	vec[1]	  = y;
+	vec[2]	  = z;
 	axisValid = false;
 }
 
 ID_INLINE void idRotation::SetAngle( const float rotationAngle )
 {
-	angle = rotationAngle;
+	angle	  = rotationAngle;
 	axisValid = false;
 }
 
@@ -201,10 +199,7 @@ ID_INLINE idRotation& idRotation::operator/=( const float s )
 
 ID_INLINE idVec3 idRotation::operator*( const idVec3& v ) const
 {
-	if( !axisValid )
-	{
-		ToMat3();
-	}
+	if( !axisValid ) { ToMat3(); }
 	return ( ( v - origin ) * axis + origin );
 }
 
@@ -226,10 +221,7 @@ ID_INLINE idVec3& operator*=( idVec3& v, const idRotation& r )
 
 ID_INLINE void idRotation::RotatePoint( idVec3& point ) const
 {
-	if( !axisValid )
-	{
-		ToMat3();
-	}
+	if( !axisValid ) { ToMat3(); }
 	point = ( ( point - origin ) * axis + origin );
 }
 

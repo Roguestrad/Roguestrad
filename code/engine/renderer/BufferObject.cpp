@@ -22,7 +22,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -43,11 +44,10 @@ IsWriteCombined
 bool IsWriteCombined( void* base )
 {
 	MEMORY_BASIC_INFORMATION info;
-	SIZE_T size = VirtualQueryEx( GetCurrentProcess(), base, &info, sizeof( info ) );
-	if( size == 0 )
-	{
+	SIZE_T					 size = VirtualQueryEx( GetCurrentProcess(), base, &info, sizeof( info ) );
+	if( size == 0 ) {
 		DWORD error = GetLastError();
-		error = error;
+		error		= error;
 		return false;
 	}
 	bool isWriteCombined = ( ( info.AllocationProtect & PAGE_WRITECOMBINE ) != 0 );
@@ -55,7 +55,7 @@ bool IsWriteCombined( void* base )
 }
 #endif
 
-#if defined(USE_INTRINSICS_SSE)
+#if defined( USE_INTRINSICS_SSE )
 
 void CopyBuffer( byte* dst, const byte* src, int numBytes )
 {
@@ -63,8 +63,7 @@ void CopyBuffer( byte* dst, const byte* src, int numBytes )
 	assert_16_byte_aligned( src );
 
 	int i = 0;
-	for( ; i + 128 <= numBytes; i += 128 )
-	{
+	for( ; i + 128 <= numBytes; i += 128 ) {
 		__m128i d0 = _mm_load_si128( ( __m128i* )&src[i + 0 * 16] );
 		__m128i d1 = _mm_load_si128( ( __m128i* )&src[i + 1 * 16] );
 		__m128i d2 = _mm_load_si128( ( __m128i* )&src[i + 2 * 16] );
@@ -82,17 +81,14 @@ void CopyBuffer( byte* dst, const byte* src, int numBytes )
 		_mm_stream_si128( ( __m128i* )&dst[i + 6 * 16], d6 );
 		_mm_stream_si128( ( __m128i* )&dst[i + 7 * 16], d7 );
 	}
-	for( ; i + 16 <= numBytes; i += 16 )
-	{
+	for( ; i + 16 <= numBytes; i += 16 ) {
 		__m128i d = _mm_load_si128( ( __m128i* )&src[i] );
 		_mm_stream_si128( ( __m128i* )&dst[i], d );
 	}
-	for( ; i + 4 <= numBytes; i += 4 )
-	{
+	for( ; i + 4 <= numBytes; i += 4 ) {
 		*( uint32* )&dst[i] = *( const uint32* )&src[i];
 	}
-	for( ; i < numBytes; i++ )
-	{
+	for( ; i < numBytes; i++ ) {
 		dst[i] = src[i];
 	}
 	_mm_sfence();
@@ -124,17 +120,17 @@ idBufferObject::idBufferObject
 */
 idBufferObject::idBufferObject()
 {
-	size = 0;
+	size				= 0;
 	offsetInOtherBuffer = OWNS_BUFFER_FLAG;
-	usage = BU_STATIC;
+	usage				= BU_STATIC;
 
 	bufferHandle.Reset();
 	inputLayout.Reset();
 	buffer = NULL;
 
 #if defined( USE_AMD_ALLOCATOR )
-	vkBuffer = VK_NULL_HANDLE;
-	allocation = NULL;
+	vkBuffer	   = VK_NULL_HANDLE;
+	allocation	   = NULL;
 	allocationInfo = {};
 #endif
 }
@@ -165,16 +161,16 @@ idVertexBuffer::Reference
 void idVertexBuffer::Reference( const idVertexBuffer& other )
 {
 	assert( IsMapped() == false );
-	//assert( other.IsMapped() == false );	// this happens when building idTriangles while at the same time setting up idDrawVerts
+	// assert( other.IsMapped() == false );	// this happens when building idTriangles while at the same time setting up idDrawVerts
 	assert( other.GetSize() > 0 );
 
 	FreeBufferObject();
-	size = other.GetSize();					// this strips the MAPPED_FLAG
-	offsetInOtherBuffer = other.GetOffset();	// this strips the OWNS_BUFFER_FLAG
-	usage = other.usage;
-	bufferHandle = other.bufferHandle;
+	size				= other.GetSize();	 // this strips the MAPPED_FLAG
+	offsetInOtherBuffer = other.GetOffset(); // this strips the OWNS_BUFFER_FLAG
+	usage				= other.usage;
+	bufferHandle		= other.bufferHandle;
 
-#if defined ( USE_AMD_ALLOCATOR )
+#if defined( USE_AMD_ALLOCATOR )
 	allocationInfo = other.allocationInfo;
 #endif
 	assert( OwnsBuffer() == false );
@@ -188,18 +184,18 @@ idVertexBuffer::Reference
 void idVertexBuffer::Reference( const idVertexBuffer& other, int refOffset, int refSize )
 {
 	assert( IsMapped() == false );
-	//assert( other.IsMapped() == false );	// this happens when building idTriangles while at the same time setting up idDrawVerts
+	// assert( other.IsMapped() == false );	// this happens when building idTriangles while at the same time setting up idDrawVerts
 	assert( refOffset >= 0 );
 	assert( refSize >= 0 );
 	assert( refOffset + refSize <= other.GetSize() );
 
 	FreeBufferObject();
-	size = refSize;
+	size				= refSize;
 	offsetInOtherBuffer = other.GetOffset() + refOffset;
-	usage = other.usage;
-	bufferHandle = other.bufferHandle;
+	usage				= other.usage;
+	bufferHandle		= other.bufferHandle;
 
-#if defined ( USE_AMD_ALLOCATOR )
+#if defined( USE_AMD_ALLOCATOR )
 	allocationInfo = other.allocationInfo;
 #endif
 	assert( OwnsBuffer() == false );
@@ -231,16 +227,16 @@ idIndexBuffer::Reference
 void idIndexBuffer::Reference( const idIndexBuffer& other )
 {
 	assert( IsMapped() == false );
-	//assert( other.IsMapped() == false );	// this happens when building idTriangles while at the same time setting up triIndex_t
+	// assert( other.IsMapped() == false );	// this happens when building idTriangles while at the same time setting up triIndex_t
 	assert( other.GetSize() > 0 );
 
 	FreeBufferObject();
-	size = other.GetSize();					// this strips the MAPPED_FLAG
-	offsetInOtherBuffer = other.GetOffset();	// this strips the OWNS_BUFFER_FLAG
-	usage = other.usage;
-	bufferHandle = other.bufferHandle;
+	size				= other.GetSize();	 // this strips the MAPPED_FLAG
+	offsetInOtherBuffer = other.GetOffset(); // this strips the OWNS_BUFFER_FLAG
+	usage				= other.usage;
+	bufferHandle		= other.bufferHandle;
 
-#if defined ( USE_AMD_ALLOCATOR )
+#if defined( USE_AMD_ALLOCATOR )
 	allocationInfo = other.allocationInfo;
 #endif
 	assert( OwnsBuffer() == false );
@@ -254,18 +250,18 @@ idIndexBuffer::Reference
 void idIndexBuffer::Reference( const idIndexBuffer& other, int refOffset, int refSize )
 {
 	assert( IsMapped() == false );
-	//assert( other.IsMapped() == false );	// this happens when building idTriangles while at the same time setting up triIndex_t
+	// assert( other.IsMapped() == false );	// this happens when building idTriangles while at the same time setting up triIndex_t
 	assert( refOffset >= 0 );
 	assert( refSize >= 0 );
 	assert( refOffset + refSize <= other.GetSize() );
 
 	FreeBufferObject();
-	size = refSize;
+	size				= refSize;
 	offsetInOtherBuffer = other.GetOffset() + refOffset;
-	usage = other.usage;
-	bufferHandle = other.bufferHandle;
+	usage				= other.usage;
+	bufferHandle		= other.bufferHandle;
 
-#if defined ( USE_AMD_ALLOCATOR )
+#if defined( USE_AMD_ALLOCATOR )
 	allocationInfo = other.allocationInfo;
 #endif
 	assert( OwnsBuffer() == false );
@@ -301,12 +297,12 @@ void idUniformBuffer::Reference( const idUniformBuffer& other )
 	assert( other.GetSize() > 0 );
 
 	FreeBufferObject();
-	size = other.GetSize();					// this strips the MAPPED_FLAG
-	offsetInOtherBuffer = other.GetOffset();	// this strips the OWNS_BUFFER_FLAG
-	usage = other.usage;
-	bufferHandle = other.bufferHandle;
+	size				= other.GetSize();	 // this strips the MAPPED_FLAG
+	offsetInOtherBuffer = other.GetOffset(); // this strips the OWNS_BUFFER_FLAG
+	usage				= other.usage;
+	bufferHandle		= other.bufferHandle;
 
-#if defined ( USE_AMD_ALLOCATOR )
+#if defined( USE_AMD_ALLOCATOR )
 	allocationInfo = other.allocationInfo;
 #endif
 	assert( OwnsBuffer() == false );
@@ -326,12 +322,12 @@ void idUniformBuffer::Reference( const idUniformBuffer& other, int refOffset, in
 	assert( refOffset + refSize <= other.GetSize() );
 
 	FreeBufferObject();
-	size = refSize;
+	size				= refSize;
 	offsetInOtherBuffer = other.GetOffset() + refOffset;
-	usage = other.usage;
-	bufferHandle = other.bufferHandle;
+	usage				= other.usage;
+	bufferHandle		= other.bufferHandle;
 
-#if defined ( USE_AMD_ALLOCATOR )
+#if defined( USE_AMD_ALLOCATOR )
 	allocationInfo = other.allocationInfo;
 #endif
 	assert( OwnsBuffer() == false );

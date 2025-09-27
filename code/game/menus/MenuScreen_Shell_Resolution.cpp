@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -32,8 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 
 const static int NUM_SETTING_OPTIONS = 7;
 
-enum settingMenuCmds_t
-{
+enum settingMenuCmds_t {
 	SETTING_CMD_CONTROLS,
 	SETTING_CMD_GAMEPLAY,
 	SETTING_CMD_SYSTEM,
@@ -49,8 +49,7 @@ void idMenuScreen_Shell_Resolution::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
 
-	if( data != NULL )
-	{
+	if( data != NULL ) {
 		menuGUI = data->GetGUI();
 	}
 
@@ -61,8 +60,7 @@ void idMenuScreen_Shell_Resolution::Initialize( idMenuHandler* data )
 	options->SetSpritePath( GetSpritePath(), "info", "options" );
 	options->SetWrappingAllowed( true );
 
-	while( options->GetChildren().Num() < NUM_SETTING_OPTIONS )
-	{
+	while( options->GetChildren().Num() < NUM_SETTING_OPTIONS ) {
 		idMenuWidget_Button* const buttonWidget = new( TAG_SWF ) idMenuWidget_Button();
 		buttonWidget->Initialize( data );
 		buttonWidget->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_PRESS_FOCUSED, options->GetChildren().Num() );
@@ -86,7 +84,8 @@ void idMenuScreen_Shell_Resolution::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RELEASE ) );
 	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN_LSTICK ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_SCROLL_DOWN_START_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK ) );
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_SCROLL_UP_START_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK ) );
-	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE ) );
+	options->AddEventAction( WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE )
+		.Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_DOWN_LSTICK_RELEASE ) );
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
@@ -97,24 +96,19 @@ idMenuScreen_Shell_Resolution::Update
 */
 void idMenuScreen_Shell_Resolution::Update()
 {
-
-	if( menuData != NULL )
-	{
+	if( menuData != NULL ) {
 		idMenuWidget_CommandBar* cmdBar = menuData->GetCmdBar();
-		if( cmdBar != NULL )
-		{
+		if( cmdBar != NULL ) {
 			cmdBar->ClearAllButtons();
 			idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
-			if( menuData->GetPlatform() != 2 )
-			{
+			if( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_00395";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
 
 			buttonInfo = cmdBar->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
-			if( menuData->GetPlatform() != 2 )
-			{
+			if( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#str_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
@@ -122,24 +116,20 @@ void idMenuScreen_Shell_Resolution::Update()
 	}
 
 	idSWFScriptObject& root = GetSWFObject()->GetRootObject();
-	if( BindSprite( root ) )
-	{
+	if( BindSprite( root ) ) {
 		idSWFTextInstance* heading = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtHeading" );
-		if( heading != NULL )
-		{
+		if( heading != NULL ) {
 			heading->SetText( "#str_02154" );
 			heading->SetStrokeInfo( true, 0.75f, 1.75f );
 		}
 
 		idSWFSpriteInstance* gradient = GetSprite()->GetScriptObject()->GetNestedSprite( "info", "gradient" );
-		if( gradient != NULL && heading != NULL )
-		{
+		if( gradient != NULL && heading != NULL ) {
 			gradient->SetXPos( heading->GetTextLength() );
 		}
 	}
 
-	if( btnBack != NULL )
-	{
+	if( btnBack != NULL ) {
 		btnBack->BindSprite( root );
 	}
 
@@ -153,54 +143,44 @@ idMenuScreen_Shell_Resolution::ShowScreen
 */
 void idMenuScreen_Shell_Resolution::ShowScreen( const mainMenuTransition_t transitionType )
 {
-
-
 	originalOption.fullscreen = r_fullscreen.GetInteger();
-	originalOption.vidmode = r_vidMode.GetInteger();
+	originalOption.vidmode	  = r_vidMode.GetInteger();
 
-	idList< idList< idStr, TAG_IDLIB_LIST_MENU >, TAG_IDLIB_LIST_MENU > menuOptions;
+	idList<idList<idStr, TAG_IDLIB_LIST_MENU>, TAG_IDLIB_LIST_MENU> menuOptions;
 	menuOptions.Alloc().Alloc() = "#str_swf_disabled";
 	optionData.Append( optionData_t( 0, 0 ) );
 
-	int viewIndex = 0;
+	int	  viewIndex = 0;
 	// SRS - Added support for selecting borderless fullscreen window mode
 	idStr bw_str;
 	bw_str.Append( va( "%s", "Borderless Fullscreen" ) );
 	menuOptions.Alloc().Alloc() = bw_str;
 	optionData.Append( optionData_t( -2, 0 ) );
-	if( originalOption.fullscreen == -2 )
-	{
+	if( originalOption.fullscreen == -2 ) {
 		viewIndex = menuOptions.Num() - 1;
 	}
 	// SRS end
-	idList< idList<vidMode_t> > displays;
-	for( int displayNum = 0 ; ; displayNum++ )
-	{
+	idList<idList<vidMode_t>> displays;
+	for( int displayNum = 0;; displayNum++ ) {
 		idList<vidMode_t>& modeList = displays.Alloc();
-		if( !R_GetModeListForDisplay( displayNum, modeList ) )
-		{
+		if( !R_GetModeListForDisplay( displayNum, modeList ) ) {
 			displays.RemoveIndex( displays.Num() - 1 );
 			break;
 		}
 	}
-	for( int displayNum = 0 ; displayNum < displays.Num(); displayNum++ )
-	{
+	for( int displayNum = 0; displayNum < displays.Num(); displayNum++ ) {
 		idList<vidMode_t>& modeList = displays[displayNum];
-		for( int i = 0; i < modeList.Num(); i++ )
-		{
+		for( int i = 0; i < modeList.Num(); i++ ) {
 			const optionData_t thisOption( displayNum + 1, i );
-			if( originalOption == thisOption )
-			{
+			if( originalOption == thisOption ) {
 				viewIndex = menuOptions.Num();
 			}
 			idStr str;
-			if( displays.Num() > 1 )
-			{
+			if( displays.Num() > 1 ) {
 				str.Append( va( "%s %i: ", idLocalization::GetString( "#str_swf_monitor" ), displayNum + 1 ) );
 			}
 			str.Append( va( "%4i x %4i", modeList[i].width, modeList[i].height ) );
-			if( modeList[i].displayHz != 60 )
-			{
+			if( modeList[i].displayHz != 60 ) {
 				str.Append( va( " @ %dhz", modeList[i].displayHz ) );
 			}
 			menuOptions.Alloc().Alloc() = str;
@@ -211,18 +191,13 @@ void idMenuScreen_Shell_Resolution::ShowScreen( const mainMenuTransition_t trans
 	options->SetListData( menuOptions );
 	options->SetViewIndex( viewIndex );
 	const int topOfLastPage = menuOptions.Num() - NUM_SETTING_OPTIONS;
-	if( viewIndex < NUM_SETTING_OPTIONS )
-	{
+	if( viewIndex < NUM_SETTING_OPTIONS ) {
 		options->SetViewOffset( 0 );
 		options->SetFocusIndex( viewIndex );
-	}
-	else if( viewIndex >= topOfLastPage )
-	{
+	} else if( viewIndex >= topOfLastPage ) {
 		options->SetViewOffset( topOfLastPage );
 		options->SetFocusIndex( viewIndex - topOfLastPage );
-	}
-	else
-	{
+	} else {
 		options->SetViewOffset( viewIndex );
 		options->SetFocusIndex( 0 );
 	}
@@ -247,59 +222,46 @@ idMenuScreen_Shell_Resolution::HandleAction h
 */
 bool idMenuScreen_Shell_Resolution::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
-
-	if( menuData == NULL )
-	{
+	if( menuData == NULL ) {
 		return true;
 	}
 
-	if( menuData->ActiveScreen() != SHELL_AREA_RESOLUTION )
-	{
+	if( menuData->ActiveScreen() != SHELL_AREA_RESOLUTION ) {
 		return false;
 	}
 
-	widgetAction_t actionType = action.GetType();
-	const idSWFParmList& parms = action.GetParms();
+	widgetAction_t		 actionType = action.GetType();
+	const idSWFParmList& parms		= action.GetParms();
 
-	switch( actionType )
-	{
-		case WIDGET_ACTION_GO_BACK:
-		{
+	switch( actionType ) {
+		case WIDGET_ACTION_GO_BACK: {
 			menuData->SetNextScreen( SHELL_AREA_SYSTEM_OPTIONS, MENU_TRANSITION_SIMPLE );
 			return true;
 		}
-		case WIDGET_ACTION_PRESS_FOCUSED:
-		{
-			if( options != NULL )
-			{
+		case WIDGET_ACTION_PRESS_FOCUSED: {
+			if( options != NULL ) {
 				int selectionIndex = options->GetFocusIndex();
-				if( parms.Num() == 1 )
-				{
+				if( parms.Num() == 1 ) {
 					selectionIndex = parms[0].ToInteger();
 				}
 
-				if( options->GetFocusIndex() != selectionIndex )
-				{
+				if( options->GetFocusIndex() != selectionIndex ) {
 					options->SetFocusIndex( selectionIndex );
 					options->SetViewIndex( options->GetViewOffset() + selectionIndex );
 				}
 				const optionData_t& currentOption = optionData[options->GetViewIndex()];
 
-				if( currentOption == originalOption )
-				{
+				if( currentOption == originalOption ) {
 					// No change
 					menuData->SetNextScreen( SHELL_AREA_SYSTEM_OPTIONS, MENU_TRANSITION_SIMPLE );
 				}
 				// SRS - Added support for selecting borderless fullscreen window mode
-				else if( currentOption.fullscreen == 0 || currentOption.fullscreen == -2 )
-				{
+				else if( currentOption.fullscreen == 0 || currentOption.fullscreen == -2 ) {
 					// Changing to windowed or borderless fullscreen mode
 					r_fullscreen.SetInteger( currentOption.fullscreen );
 					cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "vid_restart\n" );
 					menuData->SetNextScreen( SHELL_AREA_SYSTEM_OPTIONS, MENU_TRANSITION_SIMPLE );
-				}
-				else
-				{
+				} else {
 					// Changing to fullscreen mode
 					r_fullscreen.SetInteger( currentOption.fullscreen );
 					r_vidMode.SetInteger( currentOption.vidmode );
@@ -312,23 +274,19 @@ bool idMenuScreen_Shell_Resolution::HandleAction( idWidgetAction& action, const 
 						idSWFFuncAcceptVideoChanges( idMenuHandler* _menu, gameDialogMessages_t _msg, const optionData_t& _optionData, bool _accept )
 						{
 							menuHandler = _menu;
-							msg = _msg;
-							optionData = _optionData;
-							accept = _accept;
+							msg			= _msg;
+							optionData	= _optionData;
+							accept		= _accept;
 						}
 						idSWFScriptVar Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 						{
 							common->Dialog().ClearDialog( msg );
-							if( accept )
-							{
+							if( accept ) {
 								cvarSystem->SetModifiedFlags( CVAR_ARCHIVE );
-								if( menuHandler != NULL )
-								{
+								if( menuHandler != NULL ) {
 									menuHandler->SetNextScreen( SHELL_AREA_SYSTEM_OPTIONS, MENU_TRANSITION_SIMPLE );
 								}
-							}
-							else
-							{
+							} else {
 								r_fullscreen.SetInteger( optionData.fullscreen );
 								r_vidMode.SetInteger( optionData.vidmode );
 								cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
@@ -336,13 +294,18 @@ bool idMenuScreen_Shell_Resolution::HandleAction( idWidgetAction& action, const 
 							}
 							return idSWFScriptVar();
 						}
+
 					private:
-						idMenuHandler* menuHandler;
+						idMenuHandler*		 menuHandler;
 						gameDialogMessages_t msg;
-						optionData_t optionData;
-						bool accept;
+						optionData_t		 optionData;
+						bool				 accept;
 					};
-					common->Dialog().AddDialog( GDM_CONFIRM_VIDEO_CHANGES, DIALOG_TIMER_ACCEPT_REVERT, new( TAG_SWF ) idSWFFuncAcceptVideoChanges( menuData, GDM_CONFIRM_VIDEO_CHANGES, currentOption, true ), new( TAG_SWF ) idSWFFuncAcceptVideoChanges( menuData, GDM_CONFIRM_VIDEO_CHANGES, originalOption, false ), false );
+					common->Dialog().AddDialog( GDM_CONFIRM_VIDEO_CHANGES,
+						DIALOG_TIMER_ACCEPT_REVERT,
+						new( TAG_SWF ) idSWFFuncAcceptVideoChanges( menuData, GDM_CONFIRM_VIDEO_CHANGES, currentOption, true ),
+						new( TAG_SWF ) idSWFFuncAcceptVideoChanges( menuData, GDM_CONFIRM_VIDEO_CHANGES, originalOption, false ),
+						false );
 				}
 				return true;
 			}

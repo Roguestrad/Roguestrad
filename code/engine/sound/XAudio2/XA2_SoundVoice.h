@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -41,70 +42,67 @@ public:
 	idSoundVoice_XAudio2();
 	~idSoundVoice_XAudio2();
 
-	void					Create( const idSoundSample* leadinSample, const idSoundSample* loopingSample );
+	void   Create( const idSoundSample* leadinSample, const idSoundSample* loopingSample );
 
 	// Start playing at a particular point in the buffer.  Does an Update() too
-	void					Start( int offsetMS, int ssFlags );
+	void   Start( int offsetMS, int ssFlags );
 
 	// Stop playing.
-	void					Stop();
+	void   Stop();
 
 	// Stop consuming buffers
-	void					Pause();
+	void   Pause();
 	// Start consuming buffers again
-	void					UnPause();
+	void   UnPause();
 
 	// Sends new position/volume/pitch information to the hardware
-	bool					Update();
+	bool   Update();
 
 	// returns the RMS levels of the most recently processed block of audio, SSF_FLICKER must have been passed to Start
-	float					GetAmplitude();
+	float  GetAmplitude();
 
 	// returns true if we can re-use this voice
-	bool					CompatibleFormat( idSoundSample_XAudio2* s );
+	bool   CompatibleFormat( idSoundSample_XAudio2* s );
 
-	uint32					GetSampleRate() const
-	{
-		return sampleRate;
-	}
+	uint32 GetSampleRate() const { return sampleRate; }
 
 	// callback function
-	void					OnBufferStart( idSoundSample_XAudio2* sample, int bufferNumber );
+	void   OnBufferStart( idSoundSample_XAudio2* sample, int bufferNumber );
 
 private:
 	friend class idSoundHardware_XAudio2;
 
 	// Returns true when all the buffers are finished processing
-	bool					IsPlaying();
+	bool				   IsPlaying();
 
 	// Called after the voice has been stopped
-	void					FlushSourceBuffers();
+	void				   FlushSourceBuffers();
 
 	// Destroy the internal hardware resource
-	void					DestroyInternal();
+	void				   DestroyInternal();
 
 	// Helper function used by the initial start as well as for looping a streamed buffer
-	int						RestartAt( int offsetSamples );
+	int					   RestartAt( int offsetSamples );
 
 	// Helper function to submit a buffer
-	int						SubmitBuffer( idSoundSample_XAudio2* sample, int bufferNumber, int offset );
+	int					   SubmitBuffer( idSoundSample_XAudio2* sample, int bufferNumber, int offset );
 
 	// Adjust the voice frequency based on the new sample rate for the buffer
-	void					SetSampleRate( uint32 newSampleRate, uint32 operationSet );
+	void				   SetSampleRate( uint32 newSampleRate, uint32 operationSet );
 
-	IXAudio2SourceVoice* 	pSourceVoice;
+	IXAudio2SourceVoice*   pSourceVoice;
 	idSoundSample_XAudio2* leadinSample;
 	idSoundSample_XAudio2* loopingSample;
 
 	// These are the fields from the sample format that matter to us for voice reuse
-	uint16					formatTag;
-	uint16					numChannels;
+	uint16				   formatTag;
+	uint16				   numChannels;
 
-	uint32					sourceVoiceRate;
-	uint32					sampleRate;
+	uint32				   sourceVoiceRate;
+	uint32				   sampleRate;
 
-	bool					hasVUMeter;
-	bool					paused;
+	bool				   hasVUMeter;
+	bool				   paused;
 };
 
 /*

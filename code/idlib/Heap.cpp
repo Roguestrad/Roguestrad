@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -48,15 +49,14 @@ Mem_Alloc16
 void* Mem_Alloc16( const size_t size, const memTag_t tag )
 // RB end
 {
-	if( !size )
-	{
+	if( !size ) {
 		return NULL;
 	}
 	const size_t paddedSize = ( size + 15 ) & ~15;
 #ifdef _WIN32
 	// this should work with MSVC and mingw, as long as __MSVCRT_VERSION__ >= 0x0700
 	return _aligned_malloc( paddedSize, 16 );
-#else // not _WIN32
+#else  // not _WIN32
 	// DG: the POSIX solution for linux etc
 	void* ret;
 	posix_memalign( &ret, 16, paddedSize );
@@ -72,13 +72,12 @@ Mem_Free16
 */
 void Mem_Free16( void* ptr )
 {
-	if( ptr == NULL )
-	{
+	if( ptr == NULL ) {
 		return;
 	}
 #ifdef _WIN32
 	_aligned_free( ptr );
-#else // not _WIN32
+#else  // not _WIN32
 	// DG: Linux/POSIX compatibility
 	// can use normal free() for aligned memory
 	free( ptr );
@@ -109,4 +108,3 @@ char* Mem_CopyString( const char* in )
 	strcpy( out, in );
 	return out;
 }
-

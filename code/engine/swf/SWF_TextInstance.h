@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,17 +29,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SWF_TEXTINSTANCE_H__
 #define __SWF_TEXTINSTANCE_H__
 
-struct subTimingWordData_t
-{
+struct subTimingWordData_t {
 	subTimingWordData_t()
 	{
-		startTime = 0;
+		startTime  = 0;
 		forceBreak = false;
 	}
 
 	idStr phrase;
-	int startTime;
-	bool forceBreak;
+	int	  startTime;
+	bool  forceBreak;
 };
 
 class idSWFTextInstance
@@ -47,131 +47,59 @@ public:
 	idSWFTextInstance();
 	~idSWFTextInstance();
 
-	void Init( idSWFEditText* editText, idSWF* _swf );
+	void				 Init( idSWFEditText* editText, idSWF* _swf );
 
-	idSWFScriptObject* GetScriptObject()
-	{
-		return &scriptObject;
-	}
+	idSWFScriptObject*	 GetScriptObject() { return &scriptObject; }
 
-	bool	GetHasDropShadow()
-	{
-		return useDropShadow;
-	}
-	bool	HasStroke()
-	{
-		return useStroke;
-	}
-	float	GetStrokeStrength()
-	{
-		return strokeStrength;
-	}
-	float	GetStrokeWeight()
-	{
-		return strokeWeight;
-	}
+	bool				 GetHasDropShadow() { return useDropShadow; }
+	bool				 HasStroke() { return useStroke; }
+	float				 GetStrokeStrength() { return strokeStrength; }
+	float				 GetStrokeWeight() { return strokeWeight; }
 
 	// used for when text has random render mode set
-	bool	IsGeneratingRandomText()
-	{
-		return generatingText;
-	}
-	void	StartRandomText( int time );
-	idStr	GetRandomText( int time );
-	void	StartParagraphText( int time );
-	idStr	GetParagraphText( int time );
-	bool	NeedsGenerateRandomText()
-	{
-		return triggerGenerate;
-	}
-	bool	NeedsSoundPlayed();
-	void	ClearPlaySound()
-	{
-		needsSoundUpdate = false;
-	}
-	idStr	GetSoundClip()
-	{
-		return soundClip;
-	}
-	void	SetIgnoreColor( bool ignore )
-	{
-		ignoreColor = ignore;
-	}
+	bool				 IsGeneratingRandomText() { return generatingText; }
+	void				 StartRandomText( int time );
+	idStr				 GetRandomText( int time );
+	void				 StartParagraphText( int time );
+	idStr				 GetParagraphText( int time );
+	bool				 NeedsGenerateRandomText() { return triggerGenerate; }
+	bool				 NeedsSoundPlayed();
+	void				 ClearPlaySound() { needsSoundUpdate = false; }
+	idStr				 GetSoundClip() { return soundClip; }
+	void				 SetIgnoreColor( bool ignore ) { ignoreColor = ignore; }
 
-	void	SetStrokeInfo( bool use, float strength = 0.75f, float weight = 1.75f );
-	int		CalcMaxScroll( int numLines = -1 );
-	int		CalcNumLines();
+	void				 SetStrokeInfo( bool use, float strength = 0.75f, float weight = 1.75f );
+	int					 CalcMaxScroll( int numLines = -1 );
+	int					 CalcNumLines();
 
 	// subtitle functions
-	void	SwitchSubtitleText( int time );
-	bool	UpdateSubtitle( int time );
-	bool	IsSubtitle()
-	{
-		return isSubtitle;
-	}
-	bool	IsUpdatingSubtitle()
-	{
-		return subUpdating;
-	}
-	void	SetSubEndIndex( int endChar, int time );
-	int		GetLastWordIndex()
-	{
-		return subLastWordIndex;
-	}
-	int		GetPrevLastWordIndex()
-	{
-		return subPrevLastWordIndex;
-	}
-	void	LastWordChanged( int wordCount, int time );
-	void	SetSubStartIndex( int value )
-	{
-		subCharStartIndex = value;
-	}
-	int		GetSubEndIndex()
-	{
-		return subCharEndIndex;
-	}
-	int		GetSubStartIndex()
-	{
-		return subCharStartIndex;
-	}
-	void	SetSubNextStartIndex( int value );
-	int		GetApporoximateSubtitleBreak( int time );
-	bool	SubNeedsSwitch()
-	{
-		return subNeedsSwitch;
-	}
-	idStr	GetPreviousText()
-	{
-		return subtitleText.c_str();
-	}
-	void	SubtitleComplete();
-	int		GetSubAlignment()
-	{
-		return subAlign;
-	}
-	idStr	GetSpeaker()
-	{
-		return subSpeaker.c_str();
-	}
-	void	SubtitleCleanup();
-	float	GetTextLength();
-	int		GetInputStartChar()
-	{
-		return inputTextStartChar;
-	}
-	void	SetInputStartCharacter( int c )
-	{
-		inputTextStartChar = c;
-	}
+	void				 SwitchSubtitleText( int time );
+	bool				 UpdateSubtitle( int time );
+	bool				 IsSubtitle() { return isSubtitle; }
+	bool				 IsUpdatingSubtitle() { return subUpdating; }
+	void				 SetSubEndIndex( int endChar, int time );
+	int					 GetLastWordIndex() { return subLastWordIndex; }
+	int					 GetPrevLastWordIndex() { return subPrevLastWordIndex; }
+	void				 LastWordChanged( int wordCount, int time );
+	void				 SetSubStartIndex( int value ) { subCharStartIndex = value; }
+	int					 GetSubEndIndex() { return subCharEndIndex; }
+	int					 GetSubStartIndex() { return subCharStartIndex; }
+	void				 SetSubNextStartIndex( int value );
+	int					 GetApporoximateSubtitleBreak( int time );
+	bool				 SubNeedsSwitch() { return subNeedsSwitch; }
+	idStr				 GetPreviousText() { return subtitleText.c_str(); }
+	void				 SubtitleComplete();
+	int					 GetSubAlignment() { return subAlign; }
+	idStr				 GetSpeaker() { return subSpeaker.c_str(); }
+	void				 SubtitleCleanup();
+	float				 GetTextLength();
+	int					 GetInputStartChar() { return inputTextStartChar; }
+	void				 SetInputStartCharacter( int c ) { inputTextStartChar = c; }
 
-	const idSWFEditText* GetEditText() const
+	const idSWFEditText* GetEditText() const { return editText; }
+	void				 SetText( idStr val )
 	{
-		return editText;
-	}
-	void	SetText( idStr val )
-	{
-		text = val;
+		text			 = val;
 		lengthCalculated = false;
 	}
 
@@ -180,89 +108,89 @@ public:
 	// In the new C++ standard, nested members of a friend class have access to private/protected members of the class granting friendship
 	// In C++03, nested members defined in a friend class do NOT have access to private/protected members of the class granting friendship
 
-	idSWFEditText* editText;
-	idSWF* 	swf;
+	idSWFEditText*						 editText;
+	idSWF*								 swf;
 
 	// this text instance's script object
-	idSWFScriptObject  scriptObject;
+	idSWFScriptObject					 scriptObject;
 
-	idStr text;
-	idStr randomtext;
-	idStr variable;
-	swfColorRGBA_t color;
+	idStr								 text;
+	idStr								 randomtext;
+	idStr								 variable;
+	swfColorRGBA_t						 color;
 
-	bool visible;
-	bool tooltip;
+	bool								 visible;
+	bool								 tooltip;
 
-	int selectionStart;
-	int selectionEnd;
-	bool ignoreColor;
+	int									 selectionStart;
+	int									 selectionEnd;
+	bool								 ignoreColor;
 
-	int scroll;
-	int scrollTime;
-	int maxscroll;
-	int maxLines;
-	float glyphScale;
-	swfRect_t bounds;
-	float linespacing;
+	int									 scroll;
+	int									 scrollTime;
+	int									 maxscroll;
+	int									 maxLines;
+	float								 glyphScale;
+	swfRect_t							 bounds;
+	float								 linespacing;
 
-	bool shiftHeld;
-	int lastInputTime;
+	bool								 shiftHeld;
+	int									 lastInputTime;
 
-	bool useDropShadow;
-	bool useStroke;
+	bool								 useDropShadow;
+	bool								 useStroke;
 
-	float strokeStrength;
-	float strokeWeight;
+	float								 strokeStrength;
+	float								 strokeWeight;
 
-	int		textLength;
-	bool	lengthCalculated;
+	int									 textLength;
+	bool								 lengthCalculated;
 
-	swfTextRenderMode_t renderMode;
-	bool		generatingText;
-	int			rndSpotsVisible;
-	int			rndSpacesVisible;
-	int			charMultiplier;
-	int			textSpotsVisible;
-	int			rndTime;
-	int			startRndTime;
-	int			prevReplaceIndex;
-	bool		triggerGenerate;
-	int			renderDelay;
-	bool		scrollUpdate;
-	idStr		soundClip;
-	bool		needsSoundUpdate;
-	idList<int, TAG_SWF>	indexArray;
-	idRandom2	rnd;
+	swfTextRenderMode_t					 renderMode;
+	bool								 generatingText;
+	int									 rndSpotsVisible;
+	int									 rndSpacesVisible;
+	int									 charMultiplier;
+	int									 textSpotsVisible;
+	int									 rndTime;
+	int									 startRndTime;
+	int									 prevReplaceIndex;
+	bool								 triggerGenerate;
+	int									 renderDelay;
+	bool								 scrollUpdate;
+	idStr								 soundClip;
+	bool								 needsSoundUpdate;
+	idList<int, TAG_SWF>				 indexArray;
+	idRandom2							 rnd;
 
 	// used for subtitles
-	bool		isSubtitle;
-	int			subLength;
-	int			subCharDisplayTime;
-	int			subAlign;
-	bool		subUpdating;
-	int			subCharStartIndex;
-	int			subNextStartIndex;
-	int			subCharEndIndex;
-	int			subDisplayTime;
-	int			subStartTime;
-	int			subSourceID;
-	idStr		subtitleText;
-	bool		subNeedsSwitch;
-	bool		subForceKillQueued;
-	bool		subForceKill;
-	int			subKillTimeDelay;
-	int			subSwitchTime;
-	int			subLastWordIndex;
-	int			subPrevLastWordIndex;
-	idStr		subSpeaker;
-	bool		subWaitClear;
-	bool		subInitialLine;
+	bool								 isSubtitle;
+	int									 subLength;
+	int									 subCharDisplayTime;
+	int									 subAlign;
+	bool								 subUpdating;
+	int									 subCharStartIndex;
+	int									 subNextStartIndex;
+	int									 subCharEndIndex;
+	int									 subDisplayTime;
+	int									 subStartTime;
+	int									 subSourceID;
+	idStr								 subtitleText;
+	bool								 subNeedsSwitch;
+	bool								 subForceKillQueued;
+	bool								 subForceKill;
+	int									 subKillTimeDelay;
+	int									 subSwitchTime;
+	int									 subLastWordIndex;
+	int									 subPrevLastWordIndex;
+	idStr								 subSpeaker;
+	bool								 subWaitClear;
+	bool								 subInitialLine;
 
 	// input text
-	int			inputTextStartChar;
+	int									 inputTextStartChar;
 
-	idList< subTimingWordData_t, TAG_SWF > subtitleTimingInfo;
+	idList<subTimingWordData_t, TAG_SWF> subtitleTimingInfo;
 };
 
 /*
@@ -278,12 +206,17 @@ public:
 	//----------------------------------
 	// Native Script Functions
 	//----------------------------------
-#define SWF_TEXT_FUNCTION_DECLARE( x ) \
-	class idSWFScriptFunction_##x : public idSWFScriptFunction_RefCounted { \
-	public: \
-		void			AddRef() {} \
-		void			Release() {} \
-		idSWFScriptVar Call( idSWFScriptObject * thisObject, const idSWFParmList & parms ); \
+#define SWF_TEXT_FUNCTION_DECLARE( x )                                                    \
+	class idSWFScriptFunction_##x : public idSWFScriptFunction_RefCounted                 \
+	{                                                                                     \
+	public:                                                                               \
+		void AddRef()                                                                     \
+		{                                                                                 \
+		}                                                                                 \
+		void Release()                                                                    \
+		{                                                                                 \
+		}                                                                                 \
+		idSWFScriptVar Call( idSWFScriptObject* thisObject, const idSWFParmList& parms ); \
 	} scriptFunction_##x;
 
 	SWF_TEXT_FUNCTION_DECLARE( onKey );

@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -45,41 +46,40 @@ public:
 	idGrabber();
 	~idGrabber();
 
-	void					Save( idSaveGame* savefile ) const;
-	void					Restore( idRestoreGame* savefile );
+	void Save( idSaveGame* savefile ) const;
+	void Restore( idRestoreGame* savefile );
 
-	void					Initialize();
-	void					SetDragDistance( float dist );
-	int						Update( idPlayer* player, bool hide );
+	void Initialize();
+	void SetDragDistance( float dist );
+	int	 Update( idPlayer* player, bool hide );
 
 private:
-	idEntityPtr<idEntity>	dragEnt;			// entity being dragged
-	idForce_Grab			drag;
-	idVec3					saveGravity;
+	idEntityPtr<idEntity> dragEnt; // entity being dragged
+	idForce_Grab		  drag;
+	idVec3				  saveGravity;
 
-	int						id;					// id of body being dragged
-	idVec3					localPlayerPoint;	// dragged point in player space
-	idEntityPtr<idPlayer>	owner;
-	int						oldImpulseSequence;
-	bool					holdingAF;
-	bool					shakeForceFlip;
-	int						endTime;
-	int						lastFiredTime;
-	int						dragFailTime;
-	int						startDragTime;
-	float					dragTraceDist;
-	int						savedContents;
-	int						savedClipmask;
+	int					  id;				// id of body being dragged
+	idVec3				  localPlayerPoint; // dragged point in player space
+	idEntityPtr<idPlayer> owner;
+	int					  oldImpulseSequence;
+	bool				  holdingAF;
+	bool				  shakeForceFlip;
+	int					  endTime;
+	int					  lastFiredTime;
+	int					  dragFailTime;
+	int					  startDragTime;
+	float				  dragTraceDist;
+	int					  savedContents;
+	int					  savedClipmask;
 
-	idBeam*					beam;
-	idBeam*					beamTarget;
+	idBeam*				  beam;
+	idBeam*				  beamTarget;
 
-	int						warpId;
+	int					  warpId;
 
-	bool					grabbableAI( const char* aiName );
-	void					StartDrag( idEntity* grabEnt, int id );
-	void					StopDrag( bool dropOnly );
-	void					UpdateBeams();
-	void					ApplyShake();
+	bool				  grabbableAI( const char* aiName );
+	void				  StartDrag( idEntity* grabEnt, int id );
+	void				  StopDrag( bool dropOnly );
+	void				  UpdateBeams();
+	void				  ApplyShake();
 };
-

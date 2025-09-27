@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -34,31 +35,30 @@ idCVar image_pixelLook( "image_pixelLook", "0", CVAR_BOOL | CVAR_ARCHIVE, "Turn 
 
 #include "../renderer/RenderCommon.h"
 
-
-
 /*
 ====================
 idImage::idImage
 ====================
 */
-idImage::idImage( const char* name ) : imgName( name )
+idImage::idImage( const char* name ) :
+	imgName( name )
 {
 	texture.Reset();
 
 	generatorFunction = NULL;
-	filter = TF_DEFAULT;
-	repeat = TR_REPEAT;
-	usage = TD_DEFAULT;
-	cubeFiles = CF_2D;
-	cubeMapSize = 0;
-	isLoaded = false;
+	filter			  = TF_DEFAULT;
+	repeat			  = TR_REPEAT;
+	usage			  = TD_DEFAULT;
+	cubeFiles		  = CF_2D;
+	cubeMapSize		  = 0;
+	isLoaded		  = false;
 
 	referencedOutsideLevelLoad = false;
-	levelLoadReferenced = false;
-	defaulted = false;
-	sourceFileTime = FILE_NOT_FOUND_TIMESTAMP;
-	binaryFileTime = FILE_NOT_FOUND_TIMESTAMP;
-	refCount = 0;
+	levelLoadReferenced		   = false;
+	defaulted				   = false;
+	sourceFileTime			   = FILE_NOT_FOUND_TIMESTAMP;
+	binaryFileTime			   = FILE_NOT_FOUND_TIMESTAMP;
+	refCount				   = 0;
 
 	DeferredLoadImage();
 }
@@ -179,7 +179,7 @@ idImage::PurgeImage
 */
 void idImage::PurgeImage()
 {
-	isLoaded = false;
+	isLoaded  = false;
 	defaulted = false;
 }
 
@@ -190,12 +190,10 @@ idImage::Resize
 */
 void idImage::Resize( int width, int height )
 {
-	if( opts.width == width && opts.height == height )
-	{
+	if( opts.width == width && opts.height == height ) {
 		return;
 	}
-	opts.width = width;
+	opts.width	= width;
 	opts.height = height;
 	AllocImage();
 }
-

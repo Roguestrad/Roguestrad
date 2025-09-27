@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -30,8 +31,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "sys_lobby_backend.h"
 #include "sys_lobby_backend_direct.h"
 
-extern idCVar net_port;
-extern idCVar net_ip;
+extern idCVar			   net_port;
+extern idCVar			   net_ip;
 
 extern idLobbyToSessionCB* lobbyToSessionCB;
 
@@ -71,12 +72,9 @@ void idLobbyBackendDirect::StartFinding( const idMatchParameters& p, int numPart
 	isLocal = MatchTypeIsLocal( p.matchFlags );
 	isHost	= false;
 
-	if( lobbyToSessionCB->CanJoinLocalHost() )
-	{
+	if( lobbyToSessionCB->CanJoinLocalHost() ) {
 		state = STATE_READY;
-	}
-	else
-	{
+	} else {
 		state = STATE_FAILED;
 	}
 }
@@ -86,7 +84,7 @@ void idLobbyBackendDirect::StartFinding( const idMatchParameters& p, int numPart
 idLobbyBackendDirect::GetSearchResults
 ========================
 */
-void idLobbyBackendDirect::GetSearchResults( idList< lobbyConnectInfo_t >& searchResults )
+void idLobbyBackendDirect::GetSearchResults( idList<lobbyConnectInfo_t>& searchResults )
 {
 	lobbyConnectInfo_t fakeResult;
 	searchResults.Clear();
@@ -100,22 +98,19 @@ idLobbyBackendDirect::JoinFromConnectInfo
 */
 void idLobbyBackendDirect::JoinFromConnectInfo( const lobbyConnectInfo_t& connectInfo )
 {
-	if( lobbyToSessionCB->CanJoinLocalHost() )
-	{
+	if( lobbyToSessionCB->CanJoinLocalHost() ) {
 		// TODO: "CanJoinLocalHost" == *must* join LocalHost ?!
 		Sys_StringToNetAdr( "localhost", &address, true );
 		address.port = net_port.GetInteger();
 		NET_VERBOSE_PRINT( "NET: idLobbyBackendDirect::JoinFromConnectInfo(): canJoinLocalHost\n" );
-	}
-	else
-	{
+	} else {
 		address = connectInfo.netAddr;
 		NET_VERBOSE_PRINT( "NET: idLobbyBackendDirect::JoinFromConnectInfo(): %s\n", Sys_NetAdrToString( address ) );
 	}
 
-	state		= STATE_READY;
-	isLocal		= false;
-	isHost		= false;
+	state	= STATE_READY;
+	isLocal = false;
+	isHost	= false;
 }
 
 /*
@@ -177,8 +172,7 @@ lobbyConnectInfo_t idLobbyBackendDirect::GetConnectInfo()
 	lobbyConnectInfo_t connectInfo;
 
 	// If we aren't the host, this lobby should have been joined through JoinFromConnectInfo
-	if( IsHost() )
-	{
+	if( IsHost() ) {
 		// If we are the host, give them our ip address
 		// DG: always using the first IP doesn't work, because on linux that's 127.0.0.1
 		// and even if not, this causes trouble with NAT.
@@ -187,8 +181,7 @@ lobbyConnectInfo_t idLobbyBackendDirect::GetConnectInfo()
 		// (which is the right behavior for the Direct backend, I guess).
 		// the client special case is in idLobby::HandleReliableMsg
 		const char* ip = net_ip.GetString();
-		if( ip == NULL || idStr::Length( ip ) == 0 || idStr::Icmp( ip, "localhost" ) == 0 )
-		{
+		if( ip == NULL || idStr::Length( ip ) == 0 || idStr::Icmp( ip, "localhost" ) == 0 ) {
 			ip = "0.0.0.0";
 		}
 		// DG end

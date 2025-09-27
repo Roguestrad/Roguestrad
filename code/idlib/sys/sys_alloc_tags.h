@@ -19,17 +19,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
 ===========================================================================
 */
-MEM_TAG( UNSET )		// This should never be used
-MEM_TAG( STATIC_EXE	)	// The static exe, generally how much memory we are using before our main() function ever runs
-MEM_TAG( DEBUG )		// Crap we don't care about, because it won't be in a retail build
-MEM_TAG( NEW )			// Crap allocated with new which hasn't been given an explicit tag
-MEM_TAG( BLOCKALLOC )	// Crap allocated with idBlockAlloc which hasn't been given an explicit tag
+MEM_TAG( UNSET )	  // This should never be used
+MEM_TAG( STATIC_EXE ) // The static exe, generally how much memory we are using before our main() function ever runs
+MEM_TAG( DEBUG )	  // Crap we don't care about, because it won't be in a retail build
+MEM_TAG( NEW )		  // Crap allocated with new which hasn't been given an explicit tag
+MEM_TAG( BLOCKALLOC ) // Crap allocated with idBlockAlloc which hasn't been given an explicit tag
 MEM_TAG( PHYSICAL )
 MEM_TAG( TRI_VERTS )
 MEM_TAG( TRI_INDEXES )
@@ -42,7 +43,7 @@ MEM_TAG( TRI_MIR_VERT )
 MEM_TAG( TRI_DUP_VERT )
 MEM_TAG( TRI_MOC_VERT )
 MEM_TAG( SRFTRIS )
-MEM_TAG( TEMP )			// Temp data which should be automatically freed at the end of the function
+MEM_TAG( TEMP ) // Temp data which should be automatically freed at the end of the function
 MEM_TAG( PAGE )
 MEM_TAG( DEFRAG_BLOCK )
 MEM_TAG( MATH )
@@ -93,7 +94,7 @@ MEM_TAG( COLLISION_QUERY )
 MEM_TAG( DECLTEXT )
 MEM_TAG( RSX )
 MEM_TAG( CVAR )
-MEM_TAG( CRAP )				// Crap allocated with new which hasn't been given an explicit tag
+MEM_TAG( CRAP ) // Crap allocated with new which hasn't been given an explicit tag
 MEM_TAG( CINEMATIC )
 MEM_TAG( FONT )
 MEM_TAG( MATERIAL )

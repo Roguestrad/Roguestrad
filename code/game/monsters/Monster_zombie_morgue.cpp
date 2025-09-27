@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -42,7 +43,6 @@ iceMonsterZombieMorgue::Init
 */
 void iceMonsterZombieMorgue::Init()
 {
-
 }
 
 /*
@@ -77,10 +77,8 @@ iceMonsterZombieMorgue::state_Idle
 */
 stateResult_t iceMonsterZombieMorgue::state_Idle( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
-		if( wait_for_enemy( parms ) == SRESULT_DONE )
-		{
+	if( parms->stage == 0 ) {
+		if( wait_for_enemy( parms ) == SRESULT_DONE ) {
 			parms->stage = 1;
 		}
 
@@ -98,26 +96,23 @@ monster_zombie::combat_melee
 */
 stateResult_t iceMonsterZombieMorgue::combat_melee( stateParms_t* parms )
 {
-	if( parms->stage == 0 )
-	{
+	if( parms->stage == 0 ) {
 		Event_LookAtEnemy( 100 );
 		Event_FaceEnemy();
 		Event_AnimState( ANIMCHANNEL_TORSO, "Torso_MeleeAttack", 8 );
-		//SetWaitState("melee_attack");
+		// SetWaitState("melee_attack");
 		parms->stage = 1;
 		return SRESULT_WAIT;
 	}
 
-	if( parms->stage == 1 )
-	{
-		if( AnimDone( ANIMCHANNEL_TORSO, 8 ) )
-		{
+	if( parms->stage == 1 ) {
+		if( AnimDone( ANIMCHANNEL_TORSO, 8 ) ) {
 			parms->stage = 2;
 		}
 		return SRESULT_WAIT;
 	}
 
-	//waitAction("melee_attack");
+	// waitAction("melee_attack");
 	Event_LookAtEnemy( 8 );
 	AI_ATTACKING = false;
 	return SRESULT_DONE;
@@ -133,8 +128,7 @@ int iceMonsterZombieMorgue::check_attacks()
 	int attack_flags;
 
 	attack_flags = 0;
-	if( TestMelee() )
-	{
+	if( TestMelee() ) {
 		attack_flags |= ATTACK_MELEE;
 	}
 
@@ -148,8 +142,7 @@ iceMonsterZombieMorgue::do_attack
 */
 void iceMonsterZombieMorgue::do_attack( int attack_flags )
 {
-	if( attack_flags & ATTACK_MELEE )
-	{
+	if( attack_flags & ATTACK_MELEE ) {
 		AI_ATTACKING = true;
 		SetState( "combat_melee" );
 	}

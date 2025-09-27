@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -42,27 +43,25 @@ If you have questions concerning this license or the applicable additional terms
 ===================================================================================
 */
 
-typedef struct parametricPState_s
-{
-	int										time;					// physics time
-	int										atRest;					// set when simulation is suspended
-	idVec3									origin;					// world origin
-	idAngles								angles;					// world angles
-	idMat3									axis;					// world axis
-	idVec3									localOrigin;			// local origin
-	idAngles								localAngles;			// local angles
-	idExtrapolate<idVec3>					linearExtrapolation;	// extrapolation based description of the position over time
-	idExtrapolate<idAngles>					angularExtrapolation;	// extrapolation based description of the orientation over time
-	idInterpolateAccelDecelLinear<idVec3>	linearInterpolation;	// interpolation based description of the position over time
-	idInterpolateAccelDecelLinear<idAngles>	angularInterpolation;	// interpolation based description of the orientation over time
-	idCurve_Spline<idVec3>* 				spline;					// spline based description of the position over time
-	idInterpolateAccelDecelLinear<float>	splineInterpolate;		// position along the spline over time
-	bool									useSplineAngles;		// set the orientation using the spline
+typedef struct parametricPState_s {
+	int										time;				  // physics time
+	int										atRest;				  // set when simulation is suspended
+	idVec3									origin;				  // world origin
+	idAngles								angles;				  // world angles
+	idMat3									axis;				  // world axis
+	idVec3									localOrigin;		  // local origin
+	idAngles								localAngles;		  // local angles
+	idExtrapolate<idVec3>					linearExtrapolation;  // extrapolation based description of the position over time
+	idExtrapolate<idAngles>					angularExtrapolation; // extrapolation based description of the orientation over time
+	idInterpolateAccelDecelLinear<idVec3>	linearInterpolation;  // interpolation based description of the position over time
+	idInterpolateAccelDecelLinear<idAngles> angularInterpolation; // interpolation based description of the orientation over time
+	idCurve_Spline<idVec3>*					spline;				  // spline based description of the position over time
+	idInterpolateAccelDecelLinear<float>	splineInterpolate;	  // position along the spline over time
+	bool									useSplineAngles;	  // set the orientation using the spline
 } parametricPState_t;
 
 class idPhysics_Parametric : public idPhysics_Base
 {
-
 public:
 	CLASS_PROTOTYPE( idPhysics_Parametric );
 
@@ -94,89 +93,89 @@ public:
 
 	void					GetAngles( idAngles& curAngles ) const;
 
-public:	// common physics interface
-	void					SetClipModel( idClipModel* model, float density, int id = 0, bool freeOld = true );
-	idClipModel* 			GetClipModel( int id = 0 ) const;
-	int						GetNumClipModels() const;
+public: // common physics interface
+	void			SetClipModel( idClipModel* model, float density, int id = 0, bool freeOld = true );
+	idClipModel*	GetClipModel( int id = 0 ) const;
+	int				GetNumClipModels() const;
 
-	void					SetMass( float mass, int id = -1 );
-	float					GetMass( int id = -1 ) const;
+	void			SetMass( float mass, int id = -1 );
+	float			GetMass( int id = -1 ) const;
 
-	void					SetContents( int contents, int id = -1 );
-	int						GetContents( int id = -1 ) const;
+	void			SetContents( int contents, int id = -1 );
+	int				GetContents( int id = -1 ) const;
 
-	const idBounds& 		GetBounds( int id = -1 ) const;
-	const idBounds& 		GetAbsBounds( int id = -1 ) const;
+	const idBounds& GetBounds( int id = -1 ) const;
+	const idBounds& GetAbsBounds( int id = -1 ) const;
 
-	bool					Evaluate( int timeStepMSec, int endTimeMSec );
-	bool					Interpolate( const float fraction );
-	void					UpdateTime( int endTimeMSec );
-	int						GetTime() const;
+	bool			Evaluate( int timeStepMSec, int endTimeMSec );
+	bool			Interpolate( const float fraction );
+	void			UpdateTime( int endTimeMSec );
+	int				GetTime() const;
 
-	void					Activate();
-	bool					IsAtRest() const;
-	int						GetRestStartTime() const;
-	bool					IsPushable() const;
+	void			Activate();
+	bool			IsAtRest() const;
+	int				GetRestStartTime() const;
+	bool			IsPushable() const;
 
-	void					SaveState();
-	void					RestoreState();
+	void			SaveState();
+	void			RestoreState();
 
-	void					SetOrigin( const idVec3& newOrigin, int id = -1 );
-	void					SetAxis( const idMat3& newAxis, int id = -1 );
+	void			SetOrigin( const idVec3& newOrigin, int id = -1 );
+	void			SetAxis( const idMat3& newAxis, int id = -1 );
 
-	void					Translate( const idVec3& translation, int id = -1 );
-	void					Rotate( const idRotation& rotation, int id = -1 );
+	void			Translate( const idVec3& translation, int id = -1 );
+	void			Rotate( const idRotation& rotation, int id = -1 );
 
-	const idVec3& 			GetOrigin( int id = 0 ) const;
-	const idMat3& 			GetAxis( int id = 0 ) const;
+	const idVec3&	GetOrigin( int id = 0 ) const;
+	const idMat3&	GetAxis( int id = 0 ) const;
 
-	void					SetLinearVelocity( const idVec3& newLinearVelocity, int id = 0 );
-	void					SetAngularVelocity( const idVec3& newAngularVelocity, int id = 0 );
+	void			SetLinearVelocity( const idVec3& newLinearVelocity, int id = 0 );
+	void			SetAngularVelocity( const idVec3& newAngularVelocity, int id = 0 );
 
-	const idVec3& 			GetLinearVelocity( int id = 0 ) const;
-	const idVec3& 			GetAngularVelocity( int id = 0 ) const;
+	const idVec3&	GetLinearVelocity( int id = 0 ) const;
+	const idVec3&	GetAngularVelocity( int id = 0 ) const;
 
-	void					DisableClip();
-	void					EnableClip();
+	void			DisableClip();
+	void			EnableClip();
 
-	void					UnlinkClip();
-	void					LinkClip();
+	void			UnlinkClip();
+	void			LinkClip();
 
-	void					SetMaster( idEntity* master, const bool orientated = true );
+	void			SetMaster( idEntity* master, const bool orientated = true );
 
-	const trace_t* 			GetBlockingInfo() const;
-	idEntity* 				GetBlockingEntity() const;
+	const trace_t*	GetBlockingInfo() const;
+	idEntity*		GetBlockingEntity() const;
 
-	int						GetLinearEndTime() const;
-	int						GetAngularEndTime() const;
+	int				GetLinearEndTime() const;
+	int				GetAngularEndTime() const;
 
-	void					WriteToSnapshot( idBitMsg& msg ) const;
-	void					ReadFromSnapshot( const idBitMsg& msg );
+	void			WriteToSnapshot( idBitMsg& msg ) const;
+	void			ReadFromSnapshot( const idBitMsg& msg );
 
 private:
 	// parametric physics state
-	parametricPState_t		current;
-	parametricPState_t		saved;
+	parametricPState_t			current;
+	parametricPState_t			saved;
 
-	physicsInterpolationState_t		previous;
-	physicsInterpolationState_t		next;
+	physicsInterpolationState_t previous;
+	physicsInterpolationState_t next;
 
 	// pusher
-	bool					isPusher;
-	idClipModel* 			clipModel;
-	int						pushFlags;
+	bool						isPusher;
+	idClipModel*				clipModel;
+	int							pushFlags;
 
 	// results of last evaluate
-	trace_t					pushResults;
-	bool					isBlocked;
+	trace_t						pushResults;
+	bool						isBlocked;
 
 	// master
-	bool					hasMaster;
-	bool					isOrientated;
+	bool						hasMaster;
+	bool						isOrientated;
 
 private:
-	bool					TestIfAtRest() const;
-	void					Rest();
+	bool TestIfAtRest() const;
+	void Rest();
 };
 
 #endif /* !__PHYSICS_PARAMETRIC_H__ */

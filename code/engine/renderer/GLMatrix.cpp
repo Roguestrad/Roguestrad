@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -76,7 +77,7 @@ R_MatrixMultiply
 */
 void R_MatrixMultiply( const float a[16], const float b[16], float out[16] )
 {
-#if defined(USE_INTRINSICS_SSE)
+#if defined( USE_INTRINSICS_SSE )
 	__m128 a0 = _mm_loadu_ps( a + 0 * 4 );
 	__m128 a1 = _mm_loadu_ps( a + 1 * 4 );
 	__m128 a2 = _mm_loadu_ps( a + 2 * 4 );
@@ -156,10 +157,8 @@ R_MatrixTranspose
 */
 void R_MatrixTranspose( const float in[16], float out[16] )
 {
-	for( int i = 0; i < 4; i++ )
-	{
-		for( int j = 0; j < 4; j++ )
-		{
+	for( int i = 0; i < 4; i++ ) {
+		for( int j = 0; j < 4; j++ ) {
 			out[i * 4 + j] = in[j * 4 + i];
 		}
 	}
@@ -172,20 +171,12 @@ R_TransformModelToClip
 */
 void R_TransformModelToClip( const idVec3& src, const float* modelMatrix, const float* projectionMatrix, idPlane& eye, idPlane& dst )
 {
-	for( int i = 0; i < 4; i++ )
-	{
-		eye[i] = 	modelMatrix[i + 0 * 4] * src[0] +
-					modelMatrix[i + 1 * 4] * src[1] +
-					modelMatrix[i + 2 * 4] * src[2] +
-					modelMatrix[i + 3 * 4];
+	for( int i = 0; i < 4; i++ ) {
+		eye[i] = modelMatrix[i + 0 * 4] * src[0] + modelMatrix[i + 1 * 4] * src[1] + modelMatrix[i + 2 * 4] * src[2] + modelMatrix[i + 3 * 4];
 	}
 
-	for( int i = 0; i < 4; i++ )
-	{
-		dst[i] = 	projectionMatrix[i + 0 * 4] * eye[0] +
-					projectionMatrix[i + 1 * 4] * eye[1] +
-					projectionMatrix[i + 2 * 4] * eye[2] +
-					projectionMatrix[i + 3 * 4] * eye[3];
+	for( int i = 0; i < 4; i++ ) {
+		dst[i] = projectionMatrix[i + 0 * 4] * eye[0] + projectionMatrix[i + 1 * 4] * eye[1] + projectionMatrix[i + 2 * 4] * eye[2] + projectionMatrix[i + 3 * 4] * eye[3];
 	}
 }
 
@@ -199,9 +190,9 @@ Clip to normalized device coordinates
 void R_TransformClipToDevice( const idPlane& clip, idVec3& ndc )
 {
 	const float invW = 1.0f / clip[3];
-	ndc[0] = clip[0] * invW;
-	ndc[1] = clip[1] * invW;
-	ndc[2] = clip[2] * invW;		// NOTE: in D3D this is in the range [0,1]
+	ndc[0]			 = clip[0] * invW;
+	ndc[1]			 = clip[1] * invW;
+	ndc[2]			 = clip[2] * invW; // NOTE: in D3D this is in the range [0,1]
 }
 
 /*
@@ -214,32 +205,26 @@ R_GlobalToNormalizedDeviceCoordinates
 #if !defined( DMAP )
 void R_GlobalToNormalizedDeviceCoordinates( const idVec3& global, idVec3& ndc )
 {
-	idPlane	view;
-	idPlane	clip;
+	idPlane			 view;
+	idPlane			 clip;
 
 	// _D3XP use tr.primaryView when there is no tr.viewDef
 	const viewDef_t* viewDef = ( tr.viewDef != NULL ) ? tr.viewDef : tr.primaryView;
 
-	for( int i = 0; i < 4; i ++ )
-	{
-		view[i] = 	viewDef->worldSpace.modelViewMatrix[i + 0 * 4] * global[0] +
-					viewDef->worldSpace.modelViewMatrix[i + 1 * 4] * global[1] +
-					viewDef->worldSpace.modelViewMatrix[i + 2 * 4] * global[2] +
-					viewDef->worldSpace.modelViewMatrix[i + 3 * 4];
+	for( int i = 0; i < 4; i++ ) {
+		view[i] = viewDef->worldSpace.modelViewMatrix[i + 0 * 4] * global[0] + viewDef->worldSpace.modelViewMatrix[i + 1 * 4] * global[1] + viewDef->worldSpace.modelViewMatrix[i + 2 * 4] * global[2] +
+				  viewDef->worldSpace.modelViewMatrix[i + 3 * 4];
 	}
 
-	for( int i = 0; i < 4; i ++ )
-	{
-		clip[i] = 	viewDef->projectionMatrix[i + 0 * 4] * view[0] +
-					viewDef->projectionMatrix[i + 1 * 4] * view[1] +
-					viewDef->projectionMatrix[i + 2 * 4] * view[2] +
-					viewDef->projectionMatrix[i + 3 * 4] * view[3];
+	for( int i = 0; i < 4; i++ ) {
+		clip[i] = viewDef->projectionMatrix[i + 0 * 4] * view[0] + viewDef->projectionMatrix[i + 1 * 4] * view[1] + viewDef->projectionMatrix[i + 2 * 4] * view[2] +
+				  viewDef->projectionMatrix[i + 3 * 4] * view[3];
 	}
 
 	const float invW = 1.0f / clip[3];
-	ndc[0] = clip[0] * invW;
-	ndc[1] = clip[1] * invW;
-	ndc[2] = clip[2] * invW;		// NOTE: in D3D this is in the range [0,1]
+	ndc[0]			 = clip[0] * invW;
+	ndc[1]			 = clip[1] * invW;
+	ndc[2]			 = clip[2] * invW; // NOTE: in D3D this is in the range [0,1]
 }
 #endif
 
@@ -373,24 +358,24 @@ void R_SetupViewMatrix( viewDef_t* viewDef, stereoOrigin_t stereoOrigin )
 	world->modelMatrix[2 * 4 + 2] = 1.0f;
 
 	// transform by the camera placement
-	const idVec3& origin = viewDef->renderView.vieworg[ stereoOrigin ];
-	const idMat3& axis = viewDef->renderView.viewaxis;
+	const idVec3& origin = viewDef->renderView.vieworg[stereoOrigin];
+	const idMat3& axis	 = viewDef->renderView.viewaxis;
 
-	float viewerMatrix[16];
+	float		  viewerMatrix[16];
 	viewerMatrix[0 * 4 + 0] = axis[0][0];
 	viewerMatrix[1 * 4 + 0] = axis[0][1];
 	viewerMatrix[2 * 4 + 0] = axis[0][2];
-	viewerMatrix[3 * 4 + 0] = - origin[0] * axis[0][0] - origin[1] * axis[0][1] - origin[2] * axis[0][2];
+	viewerMatrix[3 * 4 + 0] = -origin[0] * axis[0][0] - origin[1] * axis[0][1] - origin[2] * axis[0][2];
 
 	viewerMatrix[0 * 4 + 1] = axis[1][0];
 	viewerMatrix[1 * 4 + 1] = axis[1][1];
 	viewerMatrix[2 * 4 + 1] = axis[1][2];
-	viewerMatrix[3 * 4 + 1] = - origin[0] * axis[1][0] - origin[1] * axis[1][1] - origin[2] * axis[1][2];
+	viewerMatrix[3 * 4 + 1] = -origin[0] * axis[1][0] - origin[1] * axis[1][1] - origin[2] * axis[1][2];
 
 	viewerMatrix[0 * 4 + 2] = axis[2][0];
 	viewerMatrix[1 * 4 + 2] = axis[2][1];
 	viewerMatrix[2 * 4 + 2] = axis[2][2];
-	viewerMatrix[3 * 4 + 2] = - origin[0] * axis[2][0] - origin[1] * axis[2][1] - origin[2] * axis[2][2];
+	viewerMatrix[3 * 4 + 2] = -origin[0] * axis[2][0] - origin[1] * axis[2][1] - origin[2] * axis[2][2];
 
 	viewerMatrix[0 * 4 + 3] = 0.0f;
 	viewerMatrix[1 * 4 + 3] = 0.0f;
@@ -413,8 +398,6 @@ idCVar r_centerX( "r_centerX", "0", CVAR_FLOAT, "projection matrix center adjust
 idCVar r_centerY( "r_centerY", "0", CVAR_FLOAT, "projection matrix center adjust" );
 idCVar r_centerScale( "r_centerScale", "1", CVAR_FLOAT, "projection matrix center adjust" );
 
-
-
 #if !defined( DMAP )
 
 void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stereoEye )
@@ -424,14 +407,11 @@ void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stere
 	// for motion blurred anti-aliasing
 	float jitterx, jittery;
 
-	if( R_UseTemporalAA() && doJitter && !( viewDef->renderView.rdflags & RDF_IRRADIANCE ) )
-	{
+	if( R_UseTemporalAA() && doJitter && !( viewDef->renderView.rdflags & RDF_IRRADIANCE ) ) {
 		idVec2 jitter = backEnd.GetCurrentPixelOffset( viewDef->taaFrameCount );
-		jitterx = jitter.x;
-		jittery = jitter.y;
-	}
-	else
-	{
+		jitterx		  = jitter.x;
+		jittery		  = jitter.y;
+	} else {
 		jitterx = 0.0f;
 		jittery = 0.0f;
 	}
@@ -441,26 +421,25 @@ void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stere
 	//
 	const float zNear = ( viewDef->renderView.cramZNear ) ? ( r_znear.GetFloat() * 0.25f ) : r_znear.GetFloat();
 
-	const int viewWidth = viewDef->viewport.x2 - viewDef->viewport.x1 + 1;
-	const int viewHeight = viewDef->viewport.y2 - viewDef->viewport.y1 + 1;
+	const int	viewWidth  = viewDef->viewport.x2 - viewDef->viewport.x1 + 1;
+	const int	viewHeight = viewDef->viewport.y2 - viewDef->viewport.y1 + 1;
 
 	// TODO integrate jitterx += viewDef->renderView.stereoScreenSeparation;
 
-	float* projectionMatrix = doJitter ? viewDef->projectionMatrix : viewDef->unjitteredProjectionMatrix;
+	float*		projectionMatrix = doJitter ? viewDef->projectionMatrix : viewDef->unjitteredProjectionMatrix;
 
-#if 1
+	#if 1
 
-	if( vrSystem->IsActive() && stereoEye != 2 )
-	{
-		//int targetEye = viewDef->renderView.viewEyeBuffer == 1 ? 1 : 0;
-		int targetEye = stereoEye == 1 ? 1 : 0;
+	if( vrSystem->IsActive() && stereoEye != 2 ) {
+		// int targetEye = viewDef->renderView.viewEyeBuffer == 1 ? 1 : 0;
+		int	   targetEye = stereoEye == 1 ? 1 : 0;
 
 		idVec4 fov = vrSystem->GetFOV( targetEye );
 
-		float idx = 1.0f / ( fov.y - fov.x );
-		float idy = 1.0f / ( fov.w - fov.z );
-		float sx = ( fov.y + fov.x );
-		float sy = ( fov.w + fov.z );
+		float  idx = 1.0f / ( fov.y - fov.x );
+		float  idy = 1.0f / ( fov.w - fov.z );
+		float  sx  = ( fov.y + fov.x );
+		float  sy  = ( fov.w + fov.z );
 
 		float* projectionMatrix = doJitter ? viewDef->projectionMatrix : viewDef->unjitteredProjectionMatrix;
 
@@ -471,7 +450,7 @@ void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stere
 
 		projectionMatrix[0 * 4 + 1] = 0.0f;
 		projectionMatrix[1 * 4 + 1] = 2.0f * idy;
-		projectionMatrix[2 * 4 + 1] = sy * idy;	// normally 0
+		projectionMatrix[2 * 4 + 1] = sy * idy; // normally 0
 		projectionMatrix[3 * 4 + 1] = 0.0f;
 
 		projectionMatrix[0 * 4 + 2] = 0.0f;
@@ -483,16 +462,14 @@ void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stere
 		projectionMatrix[1 * 4 + 3] = 0.0f;
 		projectionMatrix[2 * 4 + 3] = -1.0f;
 		projectionMatrix[3 * 4 + 3] = 0.0f;
-	}
-	else
-	{
-		float ymax = zNear * viewDef->renderView.GetFovTop();
-		float ymin = zNear * viewDef->renderView.GetFovBottom();
+	} else {
+		float		ymax = zNear * viewDef->renderView.GetFovTop();
+		float		ymin = zNear * viewDef->renderView.GetFovBottom();
 
-		float xmax = zNear * viewDef->renderView.GetFovRight();
-		float xmin = zNear * viewDef->renderView.GetFovLeft();
+		float		xmax = zNear * viewDef->renderView.GetFovRight();
+		float		xmin = zNear * viewDef->renderView.GetFovLeft();
 
-		const float width = xmax - xmin;
+		const float width  = xmax - xmin;
 		const float height = ymax - ymin;
 
 		// this mimics the logic in the Donut Feature Demo
@@ -514,7 +491,7 @@ void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stere
 		// rasterize right at the wraparound point
 		projectionMatrix[0 * 4 + 2] = 0.0f;
 		projectionMatrix[1 * 4 + 2] = 0.0f;
-		projectionMatrix[2 * 4 + 2] = -0.999f;			// adjust value to prevent imprecision issues
+		projectionMatrix[2 * 4 + 2] = -0.999f; // adjust value to prevent imprecision issues
 
 		// RB: was -2.0f * zNear
 		// the transformation into window space has changed from [-1 .. 1] to [0 .. 1]
@@ -526,26 +503,26 @@ void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stere
 		projectionMatrix[3 * 4 + 3] = 0.0f;
 	}
 
-#else
+	#else
 
 	// alternative far plane at infinity Z for better precision in the distance but still no reversed depth buffer
 	// see Foundations of Game Engine Development 2, chapter 6.3
 
-	//float aspect = viewDef->renderView.fov_x / viewDef->renderView.fov_y;
-	//float aspect = viewDef->GetAspect();
+	// float aspect = viewDef->renderView.fov_x / viewDef->renderView.fov_y;
+	// float aspect = viewDef->GetAspect();
 
-	float fov_x = viewDef->renderView.GetFovRight() - viewDef->renderView.GetFovLeft();
-	float fov_y = viewDef->renderView.GetFovTop() - viewDef->renderView.GetFovBottom();
-	float aspect = fov_x / fov_y;
+	float		fov_x  = viewDef->renderView.GetFovRight() - viewDef->renderView.GetFovLeft();
+	float		fov_y  = viewDef->renderView.GetFovTop() - viewDef->renderView.GetFovBottom();
+	float		aspect = fov_x / fov_y;
 
-	float yScale = 1.0f / fov_y; //( tanf( 0.5f * DEG2RAD( viewDef->renderView.fov_y ) ) );
-	float xScale = yScale / aspect;
+	float		yScale = 1.0f / fov_y; //( tanf( 0.5f * DEG2RAD( viewDef->renderView.fov_y ) ) );
+	float		xScale = yScale / aspect;
 
-	const float epsilon = 1.9073486328125e-6F;	// 2^-19;
-	const float zFar = 160000;
+	const float epsilon = 1.9073486328125e-6F; // 2^-19;
+	const float zFar	= 160000;
 
-	float k = zFar / ( zFar - zNear );
-	//float k = 1.0f - epsilon;
+	float		k = zFar / ( zFar - zNear );
+	// float k = 1.0f - epsilon;
 
 	projectionMatrix[0 * 4 + 0] = xScale;
 	projectionMatrix[1 * 4 + 0] = 0.0f;
@@ -571,39 +548,36 @@ void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stere
 	projectionMatrix[2 * 4 + 3] = -1.0f;
 	projectionMatrix[3 * 4 + 3] = 0.0f;
 
-#endif
+	#endif
 
-	if( viewDef->renderView.flipProjection )
-	{
+	if( viewDef->renderView.flipProjection ) {
 		projectionMatrix[1 * 4 + 1] = -projectionMatrix[1 * 4 + 1];
 		projectionMatrix[1 * 4 + 3] = -projectionMatrix[1 * 4 + 3];
 	}
 
 	// SP Begin
-	if( viewDef->isObliqueProjection && doJitter )
-	{
+	if( viewDef->isObliqueProjection && doJitter ) {
 		R_ObliqueProjection( viewDef );
 	}
 	// SP End
 }
 
-
 // RB: standard OpenGL projection matrix
 void R_SetupProjectionMatrix2( const viewDef_t* viewDef, const float zNear, const float zFar, float projectionMatrix[16] )
 {
-	float ymax = viewDef->renderView.GetFovTop();
-	float ymin = viewDef->renderView.GetFovBottom();
+	float		ymax = viewDef->renderView.GetFovTop();
+	float		ymin = viewDef->renderView.GetFovBottom();
 
-	float xmax = viewDef->renderView.GetFovRight();
-	float xmin = viewDef->renderView.GetFovLeft();
+	float		xmax = viewDef->renderView.GetFovRight();
+	float		xmin = viewDef->renderView.GetFovLeft();
 
-	const float width = xmax - xmin;
+	const float width  = xmax - xmin;
 	const float height = ymax - ymin;
 
-	const int viewWidth = viewDef->viewport.x2 - viewDef->viewport.x1 + 1;
-	const int viewHeight = viewDef->viewport.y2 - viewDef->viewport.y1 + 1;
+	const int	viewWidth  = viewDef->viewport.x2 - viewDef->viewport.x1 + 1;
+	const int	viewHeight = viewDef->viewport.y2 - viewDef->viewport.y1 + 1;
 
-	float jitterx, jittery;
+	float		jitterx, jittery;
 	jitterx = 0.0f;
 	jittery = 0.0f;
 	jitterx = jitterx * width / viewWidth;
@@ -621,26 +595,25 @@ void R_SetupProjectionMatrix2( const viewDef_t* viewDef, const float zNear, cons
 
 	projectionMatrix[0 * 4 + 0] = 2.0f / width;
 	projectionMatrix[1 * 4 + 0] = 0.0f;
-	projectionMatrix[2 * 4 + 0] = ( xmax + xmin ) / width;	// normally 0
+	projectionMatrix[2 * 4 + 0] = ( xmax + xmin ) / width; // normally 0
 	projectionMatrix[3 * 4 + 0] = 0.0f;
 
 	projectionMatrix[0 * 4 + 1] = 0.0f;
 	projectionMatrix[1 * 4 + 1] = 2.0f / height;
-	projectionMatrix[2 * 4 + 1] = ( ymax + ymin ) / height;	// normally 0
+	projectionMatrix[2 * 4 + 1] = ( ymax + ymin ) / height; // normally 0
 	projectionMatrix[3 * 4 + 1] = 0.0f;
 
 	projectionMatrix[0 * 4 + 2] = 0.0f;
 	projectionMatrix[1 * 4 + 2] = 0.0f;
-	projectionMatrix[2 * 4 + 2] =  -( zFar + zNear ) / depth;		// -0.999f; // adjust value to prevent imprecision issues
-	projectionMatrix[3 * 4 + 2] = -2 * zFar * zNear / depth;	// -2.0f * zNear;
+	projectionMatrix[2 * 4 + 2] = -( zFar + zNear ) / depth; // -0.999f; // adjust value to prevent imprecision issues
+	projectionMatrix[3 * 4 + 2] = -2 * zFar * zNear / depth; // -2.0f * zNear;
 
 	projectionMatrix[0 * 4 + 3] = 0.0f;
 	projectionMatrix[1 * 4 + 3] = 0.0f;
 	projectionMatrix[2 * 4 + 3] = -1.0f;
 	projectionMatrix[3 * 4 + 3] = 0.0f;
 
-	if( viewDef->renderView.flipProjection )
-	{
+	if( viewDef->renderView.flipProjection ) {
 		projectionMatrix[1 * 4 + 1] = -viewDef->projectionMatrix[1 * 4 + 1];
 		projectionMatrix[1 * 4 + 3] = -viewDef->projectionMatrix[1 * 4 + 3];
 	}
@@ -667,30 +640,25 @@ void R_SetupUnprojection( viewDef_t* viewDef )
 
 void R_MatrixFullInverse( const float a[16], float r[16] )
 {
-	idMat4	am;
+	idMat4 am;
 
-	for( int i = 0 ; i < 4 ; i++ )
-	{
-		for( int j = 0 ; j < 4 ; j++ )
-		{
+	for( int i = 0; i < 4; i++ ) {
+		for( int j = 0; j < 4; j++ ) {
 			am[i][j] = a[j * 4 + i];
 		}
 	}
 
-//	idVec4 test( 100, 100, 100, 1 );
-//	idVec4	transformed, inverted;
-//	transformed = test * am;
+	//	idVec4 test( 100, 100, 100, 1 );
+	//	idVec4	transformed, inverted;
+	//	transformed = test * am;
 
-	if( !am.InverseSelf() )
-	{
+	if( !am.InverseSelf() ) {
 		common->Error( "Invert failed" );
 	}
-//	inverted = transformed * am;
+	//	inverted = transformed * am;
 
-	for( int i = 0 ; i < 4 ; i++ )
-	{
-		for( int j = 0 ; j < 4 ; j++ )
-		{
+	for( int i = 0; i < 4; i++ ) {
+		for( int j = 0; j < 4; j++ ) {
 			r[j * 4 + i] = am[i][j];
 		}
 	}
@@ -700,12 +668,10 @@ void R_MatrixFullInverse( const float a[16], float r[16] )
 // SP begin
 inline float sgn( float a )
 {
-	if( a > 0.0f )
-	{
+	if( a > 0.0f ) {
 		return ( 1.0f );
 	}
-	if( a < 0.0f )
-	{
+	if( a < 0.0f ) {
 		return ( -1.0f );
 	}
 	return ( 0.0f );
@@ -729,7 +695,7 @@ void ModifyProjectionMatrix( viewDef_t* viewDef, const idPlane& clipPlane )
 	idMat4 flipMatrix;
 	memcpy( &flipMatrix, &( s_flipMatrix[0] ), sizeof( float ) * 16 );
 
-	idVec4 vec = clipPlane.ToVec4();// * flipMatrix;
+	idVec4	vec = clipPlane.ToVec4(); // * flipMatrix;
 	idPlane newPlane( vec[0], vec[1], vec[2], vec[3] );
 
 	// Calculate the clip-space corner point opposite the clipping plane
@@ -737,25 +703,25 @@ void ModifyProjectionMatrix( viewDef_t* viewDef, const idPlane& clipPlane )
 	// transform it into camera space by multiplying it
 	// by the inverse of the projection matrix
 
-	//idVec4 q;
-	//q.x = (sgn(newPlane[0]) + viewDef->projectionMatrix[8]) / viewDef->projectionMatrix[0];
-	//q.y = (sgn(newPlane[1]) + viewDef->projectionMatrix[9]) / viewDef->projectionMatrix[5];
-	//q.z = -1.0F;
-	//q.w = (1.0F + viewDef->projectionMatrix[10]) / viewDef->projectionMatrix[14];
+	// idVec4 q;
+	// q.x = (sgn(newPlane[0]) + viewDef->projectionMatrix[8]) / viewDef->projectionMatrix[0];
+	// q.y = (sgn(newPlane[1]) + viewDef->projectionMatrix[9]) / viewDef->projectionMatrix[5];
+	// q.z = -1.0F;
+	// q.w = (1.0F + viewDef->projectionMatrix[10]) / viewDef->projectionMatrix[14];
 
-	idMat4 unprojection;
+	idMat4	unprojection;
 	R_MatrixFullInverse( viewDef->projectionMatrix, ( float* )&unprojection );
 	idVec4 q = unprojection * idVec4( sgn( newPlane[0] ), sgn( newPlane[1] ), 1.0f, 1.0f );
 
 	// Calculate the scaled plane vector
 	idVec4 c = newPlane.ToVec4() * ( 2.0f / ( q * newPlane.ToVec4() ) );
 
-	float matrix[16];
+	float  matrix[16];
 	std::memcpy( matrix, viewDef->projectionMatrix, sizeof( float ) * 16 );
 
 	// Replace the third row of the projection matrix
-	matrix[2] = c[0];
-	matrix[6] = c[1];
+	matrix[2]  = c[0];
+	matrix[6]  = c[1];
 	matrix[10] = c[2] + 1.0f;
 	matrix[14] = c[3];
 
@@ -770,7 +736,7 @@ credits to motorsep: https://github.com/motorsep/StormEngine2/blob/743a0f9581a10
 */
 void R_ObliqueProjection( viewDef_t* parms )
 {
-	float mvt[16]; // model view transpose
+	float	mvt[16]; // model view transpose
 	idPlane pB = parms->clipPlanes[0];
 	idPlane cp; // camera space plane
 	R_MatrixTranspose( parms->worldSpace.modelViewMatrix, mvt );
@@ -790,8 +756,8 @@ void R_ObliqueProjection( viewDef_t* parms )
 	float d = 2.0f / ( clipPlane * q );
 
 	// Replace the third row of the projection matrix
-	parms->projectionMatrix[2] = clipPlane[0] * d;
-	parms->projectionMatrix[6] = clipPlane[1] * d;
+	parms->projectionMatrix[2]	= clipPlane[0] * d;
+	parms->projectionMatrix[6]	= clipPlane[1] * d;
 	parms->projectionMatrix[10] = clipPlane[2] * d + 1.0f;
 	parms->projectionMatrix[14] = clipPlane[3] * d;
 }

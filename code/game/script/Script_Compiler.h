@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,11 +32,10 @@ If you have questions concerning this license or the applicable additional terms
 
 const char* const RESULT_STRING = "<RESULT>";
 
-typedef struct opcode_s
-{
+typedef struct opcode_s {
 	// RB begin
-	const char*	name;
-	const char*	opname;
+	const char* name;
+	const char* opname;
 	// RB end
 	int			priority;
 	bool		rightAssociative;
@@ -48,8 +48,7 @@ typedef struct opcode_s
 // OP_PUSH_OBJ:
 // OP_PUSH_OBJENT:
 
-enum
-{
+enum {
 	OP_RETURN,
 
 	OP_UINC_F,
@@ -193,8 +192,8 @@ enum
 	OP_BITAND,
 	OP_BITOR,
 
-	OP_BREAK,			// placeholder op.  not used in final code
-	OP_CONTINUE,		// placeholder op.  not used in final code
+	OP_BREAK,	 // placeholder op.  not used in final code
+	OP_CONTINUE, // placeholder op.  not used in final code
 
 	NUM_OPCODES
 };
@@ -202,87 +201,87 @@ enum
 class idCompiler
 {
 private:
-	static bool		punctuationValid[ 256 ];
+	static bool		   punctuationValid[256];
 	// RB begin
-	static const char*		punctuation[];
+	static const char* punctuation[];
 	// RB end
 
-	idParser		parser;
-	idParser*		parserPtr;
-	idToken			token;
+	idParser		   parser;
+	idParser*		   parserPtr;
+	idToken			   token;
 
-	idTypeDef*		immediateType;
-	eval_t			immediate;
+	idTypeDef*		   immediateType;
+	eval_t			   immediate;
 
-	bool			eof;
-	bool			console;
-	bool			callthread;
-	int				braceDepth;
-	int				loopDepth;
-	int				currentLineNumber;
-	int				currentFileNumber;
-	int				errorCount;
+	bool			   eof;
+	bool			   console;
+	bool			   callthread;
+	int				   braceDepth;
+	int				   loopDepth;
+	int				   currentLineNumber;
+	int				   currentFileNumber;
+	int				   errorCount;
 
-	idVarDef*		scope;				// the function being parsed, or NULL
-	const idVarDef*	basetype;			// for accessing fields
+	idVarDef*		   scope;	 // the function being parsed, or NULL
+	const idVarDef*	   basetype; // for accessing fields
 
-	float			Divide( float numerator, float denominator );
-	void			Error( VERIFY_FORMAT_STRING const char* error, ... ) const;
-	void			Warning( VERIFY_FORMAT_STRING const char* message, ... ) const;
-	idVarDef*		OptimizeOpcode( const opcode_t* op, idVarDef* var_a, idVarDef* var_b );
-	idVarDef*		EmitOpcode( const opcode_t* op, idVarDef* var_a, idVarDef* var_b );
-	idVarDef*		EmitOpcode( int op, idVarDef* var_a, idVarDef* var_b );
-	bool			EmitPush( idVarDef* expression, const idTypeDef* funcArg );
-	void			NextToken();
-	void			ExpectToken( const char* string );
-	bool			CheckToken( const char* string );
-	void			ParseName( idStr& name );
-	void			SkipOutOfFunction();
-	void			SkipToSemicolon();
-	idTypeDef*		CheckType();
-	idTypeDef*		ParseType();
-	idVarDef*		FindImmediate( const idTypeDef* type, const eval_t* eval, const char* string ) const;
-	idVarDef*		GetImmediate( idTypeDef* type, const eval_t* eval, const char* string );
-	idVarDef*		VirtualFunctionConstant( idVarDef* func );
-	idVarDef*		SizeConstant( int size );
-	idVarDef*		JumpConstant( int value );
-	idVarDef*		JumpDef( int jumpfrom, int jumpto );
-	idVarDef*		JumpTo( int jumpto );
-	idVarDef*		JumpFrom( int jumpfrom );
-	idVarDef*		ParseImmediate();
-	idVarDef*		EmitFunctionParms( int op, idVarDef* func, int startarg, int startsize, idVarDef* object );
-	idVarDef*		ParseFunctionCall( idVarDef* func );
-	idVarDef*		ParseObjectCall( idVarDef* object, idVarDef* func );
-	idVarDef*		ParseEventCall( idVarDef* object, idVarDef* func );
-	idVarDef*		ParseSysObjectCall( idVarDef* func );
-	idVarDef*		LookupDef( const char* name, const idVarDef* baseobj );
-	idVarDef*		ParseValue();
-	idVarDef*		GetTerm();
-	bool			TypeMatches( etype_t type1, etype_t type2 ) const;
-	idVarDef*		GetExpression( int priority );
-	idTypeDef*		GetTypeForEventArg( char argType );
-	void			PatchLoop( int start, int continuePos );
-	void			ParseReturnStatement();
-	void			ParseWhileStatement();
-	void			ParseForStatement();
-	void			ParseDoWhileStatement();
-	void			ParseIfStatement();
-	void			ParseStatement();
-	void			ParseObjectDef( const char* objname );
-	idTypeDef*		ParseFunction( idTypeDef* returnType, const char* name );
-	void			ParseFunctionDef( idTypeDef* returnType, const char* name );
-	void			ParseVariableDef( idTypeDef* type, const char* name );
-	void			ParseEventDef( idTypeDef* type, const char* name );
-	void			ParseDefs();
-	void			ParseNamespace( idVarDef* newScope );
+	float			   Divide( float numerator, float denominator );
+	void			   Error( VERIFY_FORMAT_STRING const char* error, ... ) const;
+	void			   Warning( VERIFY_FORMAT_STRING const char* message, ... ) const;
+	idVarDef*		   OptimizeOpcode( const opcode_t* op, idVarDef* var_a, idVarDef* var_b );
+	idVarDef*		   EmitOpcode( const opcode_t* op, idVarDef* var_a, idVarDef* var_b );
+	idVarDef*		   EmitOpcode( int op, idVarDef* var_a, idVarDef* var_b );
+	bool			   EmitPush( idVarDef* expression, const idTypeDef* funcArg );
+	void			   NextToken();
+	void			   ExpectToken( const char* string );
+	bool			   CheckToken( const char* string );
+	void			   ParseName( idStr& name );
+	void			   SkipOutOfFunction();
+	void			   SkipToSemicolon();
+	idTypeDef*		   CheckType();
+	idTypeDef*		   ParseType();
+	idVarDef*		   FindImmediate( const idTypeDef* type, const eval_t* eval, const char* string ) const;
+	idVarDef*		   GetImmediate( idTypeDef* type, const eval_t* eval, const char* string );
+	idVarDef*		   VirtualFunctionConstant( idVarDef* func );
+	idVarDef*		   SizeConstant( int size );
+	idVarDef*		   JumpConstant( int value );
+	idVarDef*		   JumpDef( int jumpfrom, int jumpto );
+	idVarDef*		   JumpTo( int jumpto );
+	idVarDef*		   JumpFrom( int jumpfrom );
+	idVarDef*		   ParseImmediate();
+	idVarDef*		   EmitFunctionParms( int op, idVarDef* func, int startarg, int startsize, idVarDef* object );
+	idVarDef*		   ParseFunctionCall( idVarDef* func );
+	idVarDef*		   ParseObjectCall( idVarDef* object, idVarDef* func );
+	idVarDef*		   ParseEventCall( idVarDef* object, idVarDef* func );
+	idVarDef*		   ParseSysObjectCall( idVarDef* func );
+	idVarDef*		   LookupDef( const char* name, const idVarDef* baseobj );
+	idVarDef*		   ParseValue();
+	idVarDef*		   GetTerm();
+	bool			   TypeMatches( etype_t type1, etype_t type2 ) const;
+	idVarDef*		   GetExpression( int priority );
+	idTypeDef*		   GetTypeForEventArg( char argType );
+	void			   PatchLoop( int start, int continuePos );
+	void			   ParseReturnStatement();
+	void			   ParseWhileStatement();
+	void			   ParseForStatement();
+	void			   ParseDoWhileStatement();
+	void			   ParseIfStatement();
+	void			   ParseStatement();
+	void			   ParseObjectDef( const char* objname );
+	idTypeDef*		   ParseFunction( idTypeDef* returnType, const char* name );
+	void			   ParseFunctionDef( idTypeDef* returnType, const char* name );
+	void			   ParseVariableDef( idTypeDef* type, const char* name );
+	void			   ParseEventDef( idTypeDef* type, const char* name );
+	void			   ParseDefs();
+	void			   ParseNamespace( idVarDef* newScope );
 
-public :
+public:
 	// RB: added const
-	static const opcode_t	opcodes[];
+	static const opcode_t opcodes[];
 	// RB end
 
 	idCompiler();
-	void			CompileFile( const char* text, const char* filename, bool console );
+	void CompileFile( const char* text, const char* filename, bool console );
 };
 
 #endif /* !__SCRIPT_COMPILER_H__ */

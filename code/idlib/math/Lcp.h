@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -60,21 +61,20 @@ unbounded x[i] and all x[i] with boxIndex[i] == -1.
 class idLCP
 {
 public:
-	static idLCP* 	AllocSquare();		// 'A' must be a square matrix
-	static idLCP* 	AllocSymmetric();	// 'A' must be a symmetric matrix
+	static idLCP* AllocSquare();	// 'A' must be a square matrix
+	static idLCP* AllocSymmetric(); // 'A' must be a symmetric matrix
 
-	virtual			~idLCP();
+	virtual ~idLCP();
 
-	virtual bool	Solve( const idMatX& A, idVecX& x, const idVecX& b, const idVecX& lo,
-						   const idVecX& hi, const int* boxIndex = NULL ) = 0;
+	virtual bool Solve( const idMatX& A, idVecX& x, const idVecX& b, const idVecX& lo, const idVecX& hi, const int* boxIndex = NULL ) = 0;
 
-	virtual void	SetMaxIterations( int max );
-	virtual int		GetMaxIterations();
+	virtual void SetMaxIterations( int max );
+	virtual int	 GetMaxIterations();
 
-	static void		Test_f( const idCmdArgs& args );
+	static void	 Test_f( const idCmdArgs& args );
 
 protected:
-	int				maxIterations;
+	int maxIterations;
 };
 
 #endif // !__MATH_LCP_H__

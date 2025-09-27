@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -44,11 +45,11 @@ idCVar vr_forwardOnly( "vr_forwardOnly", "0", CVAR_ARCHIVE | CVAR_BOOL | CVAR_NE
 idCVar vr_relativeAxis( "vr_relativeAxis", "0", CVAR_ARCHIVE | CVAR_BOOL | CVAR_NEW, "movement relative to initial touch" );
 idCVar vr_maxRadius( "vr_maxRadius", "0.9", CVAR_ARCHIVE | CVAR_FLOAT | CVAR_NEW, "smaller values make it easier to hit max movement speed" );
 idCVar vr_responseCurve( "vr_responseCurve", "0", CVAR_ARCHIVE | CVAR_FLOAT | CVAR_NEW, "interpoloate between linear and square curves, -1 for inverse square" );
-idCVar vr_moveMode( "vr_moveMode", "8", CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW, "0 touch walk | 1 touch walk & hold run | 2 touch walk & click run | 3 click walk | 4 click walk & hold run | 5 click walk & double click run | 6 hold walk" );
-idCVar vr_moveSpeed( "vr_moveSpeed", "0.5", CVAR_ARCHIVE | CVAR_FLOAT | CVAR_NEW, "Touchpad player movement speed is multiplied by this value. Set to 1 for normal speed, or between 0 and 1 for slower movement." );
-
+idCVar vr_moveMode( "vr_moveMode",
+	"8",
+	CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW,
+	"0 touch walk | 1 touch walk & hold run | 2 touch walk & click run | 3 click walk | 4 click walk & hold run | 5 click walk & double click run | 6 hold walk" );
+idCVar vr_moveSpeed(
+	"vr_moveSpeed", "0.5", CVAR_ARCHIVE | CVAR_FLOAT | CVAR_NEW, "Touchpad player movement speed is multiplied by this value. Set to 1 for normal speed, or between 0 and 1 for slower movement." );
 
 VRSystem* vrSystem = nullptr;
-
-
-

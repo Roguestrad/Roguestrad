@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -41,17 +42,17 @@ FRAME MEMORY ALLOCATION
 */
 
 static const unsigned int FRAME_ALLOC_ALIGNMENT = 128;
-static const unsigned int MAX_FRAME_MEMORY = 64 * 1024 * 1024;	// larger so that we can noclip on PC for dev purposes
+static const unsigned int MAX_FRAME_MEMORY		= 64 * 1024 * 1024; // larger so that we can noclip on PC for dev purposes
 
-idFrameData		smpFrameData[NUM_FRAME_DATA];
-idFrameData* 	frameData;
-unsigned int	smpFrame;
+idFrameData				  smpFrameData[NUM_FRAME_DATA];
+idFrameData*			  frameData;
+unsigned int			  smpFrame;
 
-//#define TRACK_FRAME_ALLOCS
+// #define TRACK_FRAME_ALLOCS
 
 #if defined( TRACK_FRAME_ALLOCS )
-	idSysInterlockedInteger frameAllocTypeCount[FRAME_ALLOC_MAX];
-	int frameHighWaterTypeCount[FRAME_ALLOC_MAX];
+idSysInterlockedInteger frameAllocTypeCount[FRAME_ALLOC_MAX];
+int						frameHighWaterTypeCount[FRAME_ALLOC_MAX];
 #endif
 
 /*
@@ -62,13 +63,11 @@ R_ToggleSmpFrame
 void R_ToggleSmpFrame()
 {
 	// update the highwater mark
-	if( frameData->frameMemoryAllocated.GetValue() > frameData->highWaterAllocated )
-	{
+	if( frameData->frameMemoryAllocated.GetValue() > frameData->highWaterAllocated ) {
 		frameData->highWaterAllocated = frameData->frameMemoryAllocated.GetValue();
 #if defined( TRACK_FRAME_ALLOCS )
 		frameData->highWaterUsed = frameData->frameMemoryUsed.GetValue();
-		for( int i = 0; i < FRAME_ALLOC_MAX; i++ )
-		{
+		for( int i = 0; i < FRAME_ALLOC_MAX; i++ ) {
 			frameHighWaterTypeCount[i] = frameAllocTypeCount[i].GetValue();
 		}
 #endif
@@ -88,16 +87,15 @@ void R_ToggleSmpFrame()
 	frameData->frameMemoryUsed.SetValue( 0 );
 
 #if defined( TRACK_FRAME_ALLOCS )
-	for( int i = 0; i < FRAME_ALLOC_MAX; i++ )
-	{
+	for( int i = 0; i < FRAME_ALLOC_MAX; i++ ) {
 		frameAllocTypeCount[i].SetValue( 0 );
 	}
 #endif
 
 	// clear the command chain and make a RC_NOP command the only thing on the list
 	frameData->cmdHead = frameData->cmdTail = ( emptyCommand_t* )R_FrameAlloc( sizeof( *frameData->cmdHead ), FRAME_ALLOC_DRAW_COMMAND );
-	frameData->cmdHead->commandId = RC_NOP;
-	frameData->cmdHead->next = NULL;
+	frameData->cmdHead->commandId			= RC_NOP;
+	frameData->cmdHead->next				= NULL;
 }
 
 /*
@@ -108,8 +106,7 @@ R_ShutdownFrameData
 void R_ShutdownFrameData()
 {
 	frameData = NULL;
-	for( int i = 0; i < NUM_FRAME_DATA; i++ )
-	{
+	for( int i = 0; i < NUM_FRAME_DATA; i++ ) {
 		Mem_Free16( smpFrameData[i].frameMemory );
 		smpFrameData[i].frameMemory = NULL;
 	}
@@ -124,13 +121,12 @@ void R_InitFrameData()
 {
 	R_ShutdownFrameData();
 
-	for( int i = 0; i < NUM_FRAME_DATA; i++ )
-	{
-		smpFrameData[i].frameMemory = ( byte* ) Mem_Alloc16( MAX_FRAME_MEMORY, TAG_RENDER );
+	for( int i = 0; i < NUM_FRAME_DATA; i++ ) {
+		smpFrameData[i].frameMemory = ( byte* )Mem_Alloc16( MAX_FRAME_MEMORY, TAG_RENDER );
 	}
 
 	// must be set before calling R_ToggleSmpFrame()
-	frameData = &smpFrameData[ 0 ];
+	frameData = &smpFrameData[0];
 
 	R_ToggleSmpFrame();
 }
@@ -161,17 +157,15 @@ void* R_FrameAlloc( int bytes, frameAllocType_t type )
 	bytes = ( bytes + FRAME_ALLOC_ALIGNMENT - 1 ) & ~( FRAME_ALLOC_ALIGNMENT - 1 );
 
 	// thread safe add
-	int	end = frameData->frameMemoryAllocated.Add( bytes );
-	if( end > MAX_FRAME_MEMORY )
-	{
+	int end = frameData->frameMemoryAllocated.Add( bytes );
+	if( end > MAX_FRAME_MEMORY ) {
 		idLib::Error( "R_FrameAlloc ran out of memory. bytes = %d, end = %d, highWaterAllocated = %d\n", bytes, end, frameData->highWaterAllocated );
 	}
 
 	byte* ptr = frameData->frameMemory + end - bytes;
 
 	// cache line clear the memory
-	for( int offset = 0; offset < bytes; offset += CACHE_LINE_SIZE )
-	{
+	for( int offset = 0; offset < bytes; offset += CACHE_LINE_SIZE ) {
 		ZeroCacheLine( ptr, offset );
 	}
 
@@ -209,8 +203,7 @@ void* R_StaticAlloc( int bytes, const memTag_t tag )
 	void* buf = Mem_Alloc( bytes, tag );
 
 	// don't exit on failure on zero length allocations since the old code didn't
-	if( buf == NULL && bytes != 0 )
-	{
+	if( buf == NULL && bytes != 0 ) {
 		common->FatalError( "R_StaticAlloc failed on %i bytes", bytes );
 	}
 	return buf;
@@ -256,21 +249,19 @@ static void R_SortDrawSurfs( drawSurf_t** drawSurfs, const int numDrawSurfs )
 {
 #if 1
 
-	uint64* indices = ( uint64* ) _alloca16( numDrawSurfs * sizeof( indices[0] ) );
+	uint64* indices = ( uint64* )_alloca16( numDrawSurfs * sizeof( indices[0] ) );
 
 	// sort the draw surfs based on:
 	// 1. sort value (largest first)
 	// 2. depth (smallest first)
 	// 3. index (largest first)
 	assert( numDrawSurfs <= 0xFFFF );
-	for( int i = 0; i < numDrawSurfs; i++ )
-	{
+	for( int i = 0; i < numDrawSurfs; i++ ) {
 		float sort = SS_POST_PROCESS - drawSurfs[i]->sort;
 		assert( sort >= 0.0f );
 
 		uint64 dist = 0;
-		if( drawSurfs[i]->frontEndGeo != NULL )
-		{
+		if( drawSurfs[i]->frontEndGeo != NULL ) {
 			float min = 0.0f;
 			float max = 1.0f;
 			idRenderMatrix::DepthBoundsForBounds( min, max, drawSurfs[i]->space->mvp, drawSurfs[i]->frontEndGeo->bounds );
@@ -281,69 +272,56 @@ static void R_SortDrawSurfs( drawSurf_t** drawSurfs, const int numDrawSurfs )
 	}
 
 	const int64 MAX_LEVELS = 128;
-	int64 lo[MAX_LEVELS];
-	int64 hi[MAX_LEVELS];
+	int64		lo[MAX_LEVELS];
+	int64		hi[MAX_LEVELS];
 
 	// Keep the top of the stack in registers to avoid load-hit-stores.
-	int64 st_lo = 0;
-	int64 st_hi = numDrawSurfs - 1;
-	int64 level = 0;
+	int64		st_lo = 0;
+	int64		st_hi = numDrawSurfs - 1;
+	int64		level = 0;
 
-	for( ; ; )
-	{
+	for( ;; ) {
 		int64 i = st_lo;
 		int64 j = st_hi;
-		if( j - i >= 4 && level < MAX_LEVELS - 1 )
-		{
+		if( j - i >= 4 && level < MAX_LEVELS - 1 ) {
 			uint64 pivot = indices[( i + j ) / 2];
-			do
-			{
-				while( indices[i] > pivot )
-				{
+			do {
+				while( indices[i] > pivot ) {
 					i++;
 				}
-				while( indices[j] < pivot )
-				{
+				while( indices[j] < pivot ) {
 					j--;
 				}
-				if( i > j )
-				{
+				if( i > j ) {
 					break;
 				}
-				uint64 h = indices[i];
+				uint64 h   = indices[i];
 				indices[i] = indices[j];
 				indices[j] = h;
-			}
-			while( ++i <= --j );
+			} while( ++i <= --j );
 
 			// No need for these iterations because we are always sorting unique values.
-			//while ( indices[j] == pivot && st_lo < j ) j--;
-			//while ( indices[i] == pivot && i < st_hi ) i++;
+			// while ( indices[j] == pivot && st_lo < j ) j--;
+			// while ( indices[i] == pivot && i < st_hi ) i++;
 
 			assert( level < MAX_LEVELS - 1 );
 			lo[level] = i;
 			hi[level] = st_hi;
-			st_hi = j;
+			st_hi	  = j;
 			level++;
-		}
-		else
-		{
-			for( ; i < j; j-- )
-			{
+		} else {
+			for( ; i < j; j-- ) {
 				int64 m = i;
-				for( int64 k = i + 1; k <= j; k++ )
-				{
-					if( indices[k] < indices[m] )
-					{
+				for( int64 k = i + 1; k <= j; k++ ) {
+					if( indices[k] < indices[m] ) {
 						m = k;
 					}
 				}
-				uint64 h = indices[m];
+				uint64 h   = indices[m];
 				indices[m] = indices[j];
 				indices[j] = h;
 			}
-			if( --level < 0 )
-			{
+			if( --level < 0 ) {
 				break;
 			}
 			st_lo = lo[level];
@@ -351,27 +329,23 @@ static void R_SortDrawSurfs( drawSurf_t** drawSurfs, const int numDrawSurfs )
 		}
 	}
 
-	drawSurf_t** newDrawSurfs = ( drawSurf_t** ) indices;
-	for( int i = 0; i < numDrawSurfs; i++ )
-	{
+	drawSurf_t** newDrawSurfs = ( drawSurf_t** )indices;
+	for( int i = 0; i < numDrawSurfs; i++ ) {
 		newDrawSurfs[i] = drawSurfs[numDrawSurfs - ( indices[i] & 0xFFFF )];
 	}
 	memcpy( drawSurfs, newDrawSurfs, numDrawSurfs * sizeof( drawSurfs[0] ) );
 
 #else
 
-	struct local_t
-	{
+	struct local_t {
 		static int R_QsortSurfaces( const void* a, const void* b )
 		{
 			const drawSurf_t* ea = *( drawSurf_t** )a;
 			const drawSurf_t* eb = *( drawSurf_t** )b;
-			if( ea->sort < eb->sort )
-			{
+			if( ea->sort < eb->sort ) {
 				return -1;
 			}
-			if( ea->sort > eb->sort )
-			{
+			if( ea->sort > eb->sort ) {
 				return 1;
 			}
 			return 0;
@@ -381,8 +355,7 @@ static void R_SortDrawSurfs( drawSurf_t** drawSurfs, const int numDrawSurfs )
 	// Add a sort offset so surfaces with equal sort orders still deterministically
 	// draw in the order they were added, at least within a given model.
 	float sorfOffset = 0.0f;
-	for( int i = 0; i < numDrawSurfs; i++ )
-	{
+	for( int i = 0; i < numDrawSurfs; i++ ) {
 		drawSurf[i]->sort += sorfOffset;
 		sorfOffset += 0.000001f;
 	}
@@ -396,35 +369,31 @@ static void R_SortDrawSurfs( drawSurf_t** drawSurfs, const int numDrawSurfs )
 // RB begin
 static void R_SetupSplitFrustums( viewDef_t* viewDef )
 {
-	idVec3			planeOrigin;
+	idVec3		planeOrigin;
 
 	const float zNearStart = ( viewDef->renderView.cramZNear ) ? ( r_znear.GetFloat() * 0.25f ) : r_znear.GetFloat();
-	float zFarEnd = 10000;
+	float		zFarEnd	   = 10000;
 
-	float zNear = zNearStart;
-	float zFar = zFarEnd;
+	float		zNear = zNearStart;
+	float		zFar  = zFarEnd;
 
-	float lambda = r_shadowMapSplitWeight.GetFloat();
-	float ratio = zFarEnd / zNearStart;
+	float		lambda = r_shadowMapSplitWeight.GetFloat();
+	float		ratio  = zFarEnd / zNearStart;
 
-	for( int i = 0; i < 6; i++ )
-	{
+	for( int i = 0; i < 6; i++ ) {
 		tr.viewDef->frustumSplitDistances[i] = idMath::INFINITUM;
 	}
 
-	for( int i = 1; i <= ( r_shadowMapSplits.GetInteger() + 1 ) && i < MAX_FRUSTUMS; i++ )
-	{
+	for( int i = 1; i <= ( r_shadowMapSplits.GetInteger() + 1 ) && i < MAX_FRUSTUMS; i++ ) {
 		float si = i / ( float )( r_shadowMapSplits.GetInteger() + 1 );
 
-		if( i > FRUSTUM_CASCADE1 )
-		{
+		if( i > FRUSTUM_CASCADE1 ) {
 			zNear = zFar - ( zFar * 0.005f );
 		}
 
 		zFar = 1.005f * lambda * ( zNearStart * powf( ratio, si ) ) + ( 1 - lambda ) * ( zNearStart + ( zFarEnd - zNearStart ) * si );
 
-		if( i <= r_shadowMapSplits.GetInteger() )
-		{
+		if( i <= r_shadowMapSplits.GetInteger() ) {
 			tr.viewDef->frustumSplitDistances[i - 1] = zFar;
 		}
 
@@ -442,22 +411,20 @@ static void R_SetupSplitFrustums( viewDef_t* viewDef )
 		idRenderMatrix::GetFrustumPlanes( tr.viewDef->frustums[i], tr.viewDef->frustumMVPs[i], false, true );
 
 		// the DOOM 3 frustum planes point outside the frustum
-		for( int j = 0; j < 6; j++ )
-		{
-			tr.viewDef->frustums[i][j] = - tr.viewDef->frustums[i][j];
+		for( int j = 0; j < 6; j++ ) {
+			tr.viewDef->frustums[i][j] = -tr.viewDef->frustums[i][j];
 		}
 
 		// remove the Z-near to avoid portals from being near clipped
-		if( i == FRUSTUM_CASCADE1 )
-		{
+		if( i == FRUSTUM_CASCADE1 ) {
 			tr.viewDef->frustums[i][4][3] -= r_znear.GetFloat();
 		}
 	}
 }
 
-class idSort_CompareEnvprobe : public idSort_Quick< RenderEnvprobeLocal*, idSort_CompareEnvprobe >
+class idSort_CompareEnvprobe : public idSort_Quick<RenderEnvprobeLocal*, idSort_CompareEnvprobe>
 {
-	idVec3	viewOrigin;
+	idVec3 viewOrigin;
 
 public:
 	idSort_CompareEnvprobe( const idVec3& origin )
@@ -470,13 +437,11 @@ public:
 		float adist = ( viewOrigin - a->parms.origin ).LengthSqr();
 		float bdist = ( viewOrigin - b->parms.origin ).LengthSqr();
 
-		if( adist < bdist )
-		{
+		if( adist < bdist ) {
 			return -1;
 		}
 
-		if( adist > bdist )
-		{
+		if( adist > bdist ) {
 			return 1;
 		}
 
@@ -491,26 +456,21 @@ static void R_FindClosestEnvironmentProbes()
 
 	tr.viewDef->irradianceImage = globalImages->defaultUACIrradianceCube;
 	tr.viewDef->radianceImageBlends.Set( 1, 0, 0, 0 );
-	for( int i = 0; i < 3; i++ )
-	{
+	for( int i = 0; i < 3; i++ ) {
 		tr.viewDef->radianceImages[i] = globalImages->defaultUACRadianceCube;
 	}
 
 	// early out
-	if( tr.viewDef->areaNum == -1 || tr.viewDef->isSubview )
-	{
+	if( tr.viewDef->areaNum == -1 || tr.viewDef->isSubview ) {
 		return;
 	}
 
 	idList<RenderEnvprobeLocal*, TAG_RENDER_ENVPROBE> viewEnvprobes;
-	for( int i = 0; i < tr.primaryWorld->envprobeDefs.Num(); i++ )
-	{
+	for( int i = 0; i < tr.primaryWorld->envprobeDefs.Num(); i++ ) {
 		RenderEnvprobeLocal* vProbe = tr.primaryWorld->envprobeDefs[i];
-		if( vProbe )
-		{
+		if( vProbe ) {
 			// check for being closed off behind a door
-			if( r_useLightAreaCulling.GetBool() && vProbe->areaNum != -1 && !tr.viewDef->connectedAreas[ vProbe->areaNum ] )
-			{
+			if( r_useLightAreaCulling.GetBool() && vProbe->areaNum != -1 && !tr.viewDef->connectedAreas[vProbe->areaNum] ) {
 				continue;
 			}
 
@@ -518,8 +478,7 @@ static void R_FindClosestEnvironmentProbes()
 		}
 	}
 
-	if( viewEnvprobes.Num() == 0 )
-	{
+	if( viewEnvprobes.Num() == 0 ) {
 		return;
 	}
 
@@ -529,23 +488,20 @@ static void R_FindClosestEnvironmentProbes()
 	// RB: each Doom 3 level has ~50 - 150 probes so this should be ok for each frame
 	viewEnvprobes.SortWithTemplate( idSort_CompareEnvprobe( testOrigin ) );
 
-	RenderEnvprobeLocal* nearest = viewEnvprobes[0];
+	RenderEnvprobeLocal* nearest  = viewEnvprobes[0];
 	tr.viewDef->globalProbeBounds = nearest->globalProbeBounds;
 
-	if( nearest->irradianceImage->IsLoaded() && !nearest->irradianceImage->IsDefaulted() )
-	{
+	if( nearest->irradianceImage->IsLoaded() && !nearest->irradianceImage->IsDefaulted() ) {
 		tr.viewDef->irradianceImage = nearest->irradianceImage;
 	}
 
 	// form a triangle of the 3 closest probes
 	idVec3 verts[3];
-	for( int i = 0; i < 3; i++ )
-	{
+	for( int i = 0; i < 3; i++ ) {
 		verts[i] = viewEnvprobes[0]->parms.origin;
 	}
 
-	for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ )
-	{
+	for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ ) {
 		RenderEnvprobeLocal* vProbe = viewEnvprobes[i];
 
 		verts[i] = vProbe->parms.origin;
@@ -559,19 +515,16 @@ static void R_FindClosestEnvironmentProbes()
 	idVec3 bary;
 
 	// find the barycentric coordinates
-	float denom = idWinding::TriangleArea( verts[0], verts[1], verts[2] );
-	if( denom == 0 )
-	{
+	float  denom = idWinding::TriangleArea( verts[0], verts[1], verts[2] );
+	if( denom == 0 ) {
 		// triangle is line
 		float t;
 
 		R_ClosestPointOnLineSegment( testOrigin, verts[0], verts[1], t );
 
 		bary.Set( 1.0f - t, t, 0 );
-	}
-	else
-	{
-		float	a, b, c;
+	} else {
+		float a, b, c;
 
 		a = idWinding::TriangleArea( closest, verts[1], verts[2] ) / denom;
 		b = idWinding::TriangleArea( closest, verts[2], verts[0] ) / denom;
@@ -582,18 +535,14 @@ static void R_FindClosestEnvironmentProbes()
 
 	tr.viewDef->radianceImageBlends.Set( bary.x, bary.y, bary.z, 0.0f );
 
-	for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ )
-	{
-		if( !viewEnvprobes[i]->radianceImage->IsDefaulted() )
-		{
+	for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ ) {
+		if( !viewEnvprobes[i]->radianceImage->IsDefaulted() ) {
 			tr.viewDef->radianceImages[i] = viewEnvprobes[i]->radianceImage;
 		}
 	}
 
-	if( tr.viewDef->radianceImages[0] == globalImages->defaultUACRadianceCube &&
-			tr.viewDef->radianceImages[1] == globalImages->defaultUACRadianceCube &&
-			tr.viewDef->radianceImages[2] == globalImages->defaultUACRadianceCube )
-	{
+	if( tr.viewDef->radianceImages[0] == globalImages->defaultUACRadianceCube && tr.viewDef->radianceImages[1] == globalImages->defaultUACRadianceCube &&
+		tr.viewDef->radianceImages[2] == globalImages->defaultUACRadianceCube ) {
 		// this didn't work so this is the way to tell the backend and avoid blood reflections
 		tr.viewDef->globalProbeBounds.Clear();
 	}
@@ -607,26 +556,21 @@ static void R_FindClosestEnvironmentProbes2()
 
 	tr.viewDef->irradianceImage = globalImages->defaultUACIrradianceCube;
 	tr.viewDef->radianceImageBlends.Set( 1, 0, 0, 0 );
-	for( int i = 0; i < 3; i++ )
-	{
+	for( int i = 0; i < 3; i++ ) {
 		tr.viewDef->radianceImages[i] = globalImages->defaultUACRadianceCube;
 	}
 
 	// early out
-	if( tr.viewDef->areaNum == -1 || tr.viewDef->isSubview )
-	{
+	if( tr.viewDef->areaNum == -1 || tr.viewDef->isSubview ) {
 		return;
 	}
 
 	idList<RenderEnvprobeLocal*, TAG_RENDER_ENVPROBE> viewEnvprobes;
-	for( int i = 0; i < tr.primaryWorld->envprobeDefs.Num(); i++ )
-	{
+	for( int i = 0; i < tr.primaryWorld->envprobeDefs.Num(); i++ ) {
 		RenderEnvprobeLocal* vProbe = tr.primaryWorld->envprobeDefs[i];
-		if( vProbe )
-		{
+		if( vProbe ) {
 			// check for being closed off behind a door
-			if( r_useLightAreaCulling.GetBool() && vProbe->areaNum != -1 && !tr.viewDef->connectedAreas[ vProbe->areaNum ] )
-			{
+			if( r_useLightAreaCulling.GetBool() && vProbe->areaNum != -1 && !tr.viewDef->connectedAreas[vProbe->areaNum] ) {
 				continue;
 			}
 
@@ -634,8 +578,7 @@ static void R_FindClosestEnvironmentProbes2()
 		}
 	}
 
-	if( viewEnvprobes.Num() == 0 )
-	{
+	if( viewEnvprobes.Num() == 0 ) {
 		return;
 	}
 
@@ -645,33 +588,30 @@ static void R_FindClosestEnvironmentProbes2()
 	// RB: each Doom 3 level has ~50 - 150 probes so this should be ok for each frame
 	viewEnvprobes.SortWithTemplate( idSort_CompareEnvprobe( testOrigin ) );
 
-	RenderEnvprobeLocal* nearest = viewEnvprobes[0];
+	RenderEnvprobeLocal* nearest  = viewEnvprobes[0];
 	tr.viewDef->globalProbeBounds = nearest->globalProbeBounds;
 
-	if( nearest->irradianceImage->IsLoaded() && !nearest->irradianceImage->IsDefaulted() )
-	{
+	if( nearest->irradianceImage->IsLoaded() && !nearest->irradianceImage->IsDefaulted() ) {
 		tr.viewDef->irradianceImage = nearest->irradianceImage;
 	}
 
-	static float oldBarycentricWeights[3] = {0};
-	static int oldIndexes[3] = {0};
-	static int timeInterpolateStart = 0;
+	static float oldBarycentricWeights[3] = { 0 };
+	static int	 oldIndexes[3]			  = { 0 };
+	static int	 timeInterpolateStart	  = 0;
 
 	// form a triangle of the 3 closest probes
-	int triIndexes[3];
-	idVec3 verts[3];
-	for( int i = 0; i < 3; i++ )
-	{
-		verts[i] = viewEnvprobes[0]->parms.origin;
-		triIndexes[i] =  viewEnvprobes[0]->index;
+	int			 triIndexes[3];
+	idVec3		 verts[3];
+	for( int i = 0; i < 3; i++ ) {
+		verts[i]	  = viewEnvprobes[0]->parms.origin;
+		triIndexes[i] = viewEnvprobes[0]->index;
 	}
 
 	bool triChanged = false;
-	for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ )
-	{
+	for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ ) {
 		RenderEnvprobeLocal* vProbe = viewEnvprobes[i];
 
-		verts[i] = vProbe->parms.origin;
+		verts[i]	  = vProbe->parms.origin;
 		triIndexes[i] = vProbe->index;
 	}
 
@@ -683,43 +623,38 @@ static void R_FindClosestEnvironmentProbes2()
 	// because one vertex is closer than before
 
 	static int numInterpolantsDuringChange = 0;
-	int numInterpolants = 0;
-	int interpolants[3];
-	int mapIndexes[3] = {0, 1, 2};
+	int		   numInterpolants			   = 0;
+	int		   interpolants[3];
+	int		   mapIndexes[3] = { 0, 1, 2 };
 
-	for( int i = 0; i < 3; i++ )
-	{
-		for( int j = 0; j < 3; j++ )
-		{
-			if( oldIndexes[i] == triIndexes[j] && numInterpolants < 3 )
-			{
+	for( int i = 0; i < 3; i++ ) {
+		for( int j = 0; j < 3; j++ ) {
+			if( oldIndexes[i] == triIndexes[j] && numInterpolants < 3 ) {
 				interpolants[numInterpolants] = i;
-				mapIndexes[numInterpolants] = j;
+				mapIndexes[numInterpolants]	  = j;
 				numInterpolants++;
 			}
 		}
 	}
 
-	if( numInterpolants != 3 )
-	{
-		triChanged = true;
-		timeInterpolateStart = Sys_Milliseconds();
+	if( numInterpolants != 3 ) {
+		triChanged					= true;
+		timeInterpolateStart		= Sys_Milliseconds();
 		numInterpolantsDuringChange = numInterpolants;
 
-		//idLib::Printf( "env_probe triangle changed!\n" );
+		// idLib::Printf( "env_probe triangle changed!\n" );
 	}
 
 	const int c_interpolationTimeframe = 2000.0f;
 
-	idVec3 closest = R_ClosestPointPointTriangle( testOrigin, verts[0], verts[1], verts[2] );
-	idVec3 barycentricWeights;
+	idVec3	  closest = R_ClosestPointPointTriangle( testOrigin, verts[0], verts[1], verts[2] );
+	idVec3	  barycentricWeights;
 
-	int time = Sys_Milliseconds();
+	int		  time = Sys_Milliseconds();
 
 	// find the barycentric coordinates
-	float denom = idWinding::TriangleArea( verts[0], verts[1], verts[2] );
-	if( denom == 0 )
-	{
+	float	  denom = idWinding::TriangleArea( verts[0], verts[1], verts[2] );
+	if( denom == 0 ) {
 		// triangle is a line
 		// this can be the case in long corridors
 		float t;
@@ -731,10 +666,8 @@ static void R_FindClosestEnvironmentProbes2()
 		oldBarycentricWeights[0] = barycentricWeights[0];
 		oldBarycentricWeights[1] = barycentricWeights[1];
 		oldBarycentricWeights[2] = barycentricWeights[2];
-	}
-	else
-	{
-		float	a, b, c;
+	} else {
+		float a, b, c;
 
 		a = idWinding::TriangleArea( closest, verts[1], verts[2] ) / denom;
 		b = idWinding::TriangleArea( closest, verts[2], verts[0] ) / denom;
@@ -743,24 +676,21 @@ static void R_FindClosestEnvironmentProbes2()
 		barycentricWeights.Set( a, b, c );
 
 		// are there at least 2 old matching indices then interpolate from the old barycentrics over time
-		if( numInterpolantsDuringChange == 2 && ( time < ( timeInterpolateStart + c_interpolationTimeframe ) ) )
-		{
+		if( numInterpolantsDuringChange == 2 && ( time < ( timeInterpolateStart + c_interpolationTimeframe ) ) ) {
 			float t = -float( timeInterpolateStart - time ) / c_interpolationTimeframe;
 
 			t = idMath::ClampFloat( 0.0f, 1.0f, t );
 
 			barycentricWeights[mapIndexes[0]] = Lerp( oldBarycentricWeights[interpolants[0]], barycentricWeights[mapIndexes[0]], t );
 			barycentricWeights[mapIndexes[1]] = Lerp( oldBarycentricWeights[interpolants[1]], barycentricWeights[mapIndexes[1]], t );
-			barycentricWeights.z = 1.0f - idMath::Sqrt( idMath::Fabs( barycentricWeights.x * barycentricWeights.x + barycentricWeights.y * barycentricWeights.y ) );
+			barycentricWeights.z			  = 1.0f - idMath::Sqrt( idMath::Fabs( barycentricWeights.x * barycentricWeights.x + barycentricWeights.y * barycentricWeights.y ) );
 
 #if 0
 			idLib::Printf( "start %i time %i lerp %.2f old[ %.2f %.2f %.2f] new [ %.2f %.2f %.2f]\n", timeInterpolateStart, time, t,
 						   oldBarycentricWeights[0], oldBarycentricWeights[1], oldBarycentricWeights[2],
 						   barycentricWeights.x, barycentricWeights.y, barycentricWeights.z );
 #endif
-		}
-		else
-		{
+		} else {
 			oldBarycentricWeights[0] = barycentricWeights[0];
 			oldBarycentricWeights[1] = barycentricWeights[1];
 			oldBarycentricWeights[2] = barycentricWeights[2];
@@ -773,18 +703,14 @@ static void R_FindClosestEnvironmentProbes2()
 
 	tr.viewDef->radianceImageBlends.Set( barycentricWeights.x, barycentricWeights.y, barycentricWeights.z, 0.0f );
 
-	for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ )
-	{
-		if( !viewEnvprobes[i]->radianceImage->IsDefaulted() )
-		{
+	for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ ) {
+		if( !viewEnvprobes[i]->radianceImage->IsDefaulted() ) {
 			tr.viewDef->radianceImages[i] = viewEnvprobes[i]->radianceImage;
 		}
 	}
 
-	if( tr.viewDef->radianceImages[0] == globalImages->defaultUACRadianceCube &&
-			tr.viewDef->radianceImages[1] == globalImages->defaultUACRadianceCube &&
-			tr.viewDef->radianceImages[2] == globalImages->defaultUACRadianceCube )
-	{
+	if( tr.viewDef->radianceImages[0] == globalImages->defaultUACRadianceCube && tr.viewDef->radianceImages[1] == globalImages->defaultUACRadianceCube &&
+		tr.viewDef->radianceImages[2] == globalImages->defaultUACRadianceCube ) {
 		// this didn't work so this is the way to tell the backend and avoid blood reflections
 		tr.viewDef->globalProbeBounds.Clear();
 	}
@@ -842,9 +768,8 @@ void R_RenderView( viewDef_t* parms )
 	idRenderMatrix::GetFrustumPlanes( tr.viewDef->frustums[FRUSTUM_PRIMARY], tr.viewDef->worldSpace.mvp, false, true );
 
 	// the DOOM 3 frustum planes point outside the frustum
-	for( int i = 0; i < 6; i++ )
-	{
-		tr.viewDef->frustums[FRUSTUM_PRIMARY][i] = - tr.viewDef->frustums[FRUSTUM_PRIMARY][i];
+	for( int i = 0; i < 6; i++ ) {
+		tr.viewDef->frustums[FRUSTUM_PRIMARY][i] = -tr.viewDef->frustums[FRUSTUM_PRIMARY][i];
 	}
 	// remove the Z-near to avoid portals from being near clipped
 	tr.viewDef->frustums[FRUSTUM_PRIMARY][4][3] -= r_znear.GetFloat();
@@ -879,11 +804,9 @@ void R_RenderView( viewDef_t* parms )
 	R_SortDrawSurfs( tr.viewDef->drawSurfs, tr.viewDef->numDrawSurfs );
 
 	// generate any subviews (mirrors, cameras, etc) before adding this view
-	if( R_GenerateSubViews( tr.viewDef->drawSurfs, tr.viewDef->numDrawSurfs ) )
-	{
+	if( R_GenerateSubViews( tr.viewDef->drawSurfs, tr.viewDef->numDrawSurfs ) ) {
 		// if we are debugging subviews, allow the skipping of the main view draw
-		if( r_subviewOnly.GetBool() )
-		{
+		if( r_subviewOnly.GetBool() ) {
 			return;
 		}
 	}
@@ -910,8 +833,7 @@ void R_RenderPostProcess( viewDef_t* parms )
 {
 	viewDef_t* oldView = tr.viewDef;
 
-	if( !( parms->renderView.rdflags & RDF_IRRADIANCE ) )
-	{
+	if( !( parms->renderView.rdflags & RDF_IRRADIANCE ) ) {
 		R_AddDrawPostProcess( parms );
 	}
 

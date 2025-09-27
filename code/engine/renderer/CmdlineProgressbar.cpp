@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -32,7 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "RenderCommon.h"
 #include "CmdlineProgressbar.h"
 
-
 void CommandlineProgressBar::Start()
 {
 	common->Printf( "0%%  10   20   30   40   50   60   70   80   90   100%%\n" );
@@ -43,28 +43,22 @@ void CommandlineProgressBar::Start()
 
 void CommandlineProgressBar::Increment( bool updateScreen )
 {
-	if( ( count + 1 ) >= nextTicCount )
-	{
+	if( ( count + 1 ) >= nextTicCount ) {
 		size_t ticsNeeded = ( size_t )( ( ( double )( count + 1 ) / expectedCount ) * 50.0 );
 
-		do
-		{
+		do {
 			common->Printf( "*" );
-		}
-		while( ++tics < ticsNeeded );
+		} while( ++tics < ticsNeeded );
 
 		nextTicCount = ( size_t )( ( tics / 50.0 ) * expectedCount );
-		if( count == ( expectedCount - 1 ) )
-		{
-			if( tics < 51 )
-			{
+		if( count == ( expectedCount - 1 ) ) {
+			if( tics < 51 ) {
 				common->Printf( "*" );
 			}
 			common->Printf( "\n" );
 		}
 
-		if( updateScreen )
-		{
+		if( updateScreen ) {
 			common->UpdateScreen( false );
 
 			// swap front / back buffers
@@ -77,15 +71,15 @@ void CommandlineProgressBar::Increment( bool updateScreen )
 
 void CommandlineProgressBar::Reset()
 {
-	count = 0;
-	tics = 0;
+	count		 = 0;
+	tics		 = 0;
 	nextTicCount = 0;
 }
 
 void CommandlineProgressBar::Reset( int expected )
 {
 	expectedCount = expected;
-	count = 0;
-	tics = 0;
-	nextTicCount = 0;
+	count		  = 0;
+	tics		  = 0;
+	nextTicCount  = 0;
 }

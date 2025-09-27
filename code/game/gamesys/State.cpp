@@ -9,7 +9,7 @@ const int HISTORY_COUNT = 50;
 stateParms_t::Wait
 =====================
 */
-void stateParms_t::Wait( float seconds )
+void	  stateParms_t::Wait( float seconds )
 {
 	time = gameLocal.time + SEC2MS( seconds );
 }
@@ -73,7 +73,7 @@ rvStateThread::rvStateThread
 rvStateThread::rvStateThread()
 {
 	owner		= NULL;
-	insertAfter	= NULL;
+	insertAfter = NULL;
 	lastResult	= SRESULT_DONE;
 
 	states.Clear();
@@ -110,14 +110,14 @@ rvStateThread::Post
 stateResult_t rvStateThread::PostState( const char* name, int blendFrames, int delay, int flags )
 {
 	stateCall_t* call;
-	call = new stateCall_t;
+	call					= new stateCall_t;
 	call->state				= name;
 	call->delay				= delay;
 	call->flags				= flags;
 	call->parms.blendFrames = blendFrames;
 	call->parms.time		= -1;
 	call->parms.stage		= 0;
-	call->parms.substage = 0;
+	call->parms.substage	= 0;
 	call->parms.param1		= 0;
 	call->parms.param2		= 0;
 
@@ -126,12 +126,9 @@ stateResult_t rvStateThread::PostState( const char* name, int blendFrames, int d
 
 	call->node.SetOwner( call );
 
-	if( fl.executing && insertAfter )
-	{
+	if( fl.executing && insertAfter ) {
 		call->node.InsertAfter( insertAfter->node );
-	}
-	else
-	{
+	} else {
 		call->node.AddToEnd( states );
 	}
 
@@ -161,14 +158,13 @@ stateResult_t rvStateThread::InterruptState( const char* name, int blendFrames, 
 	stateCall_t* call;
 
 	// Move all states to the front of the interrupted list in the same order
-	for( call = states.Prev(); call; call = states.Prev() )
-	{
+	for( call = states.Prev(); call; call = states.Prev() ) {
 		call->node.Remove();
 		call->node.AddToFront( interrupted );
 	}
 
 	// Nothing to insert after anymore
-	insertAfter = NULL;
+	insertAfter			= NULL;
 	fl.stateInterrupted = true;
 
 	// Post the state now
@@ -195,12 +191,10 @@ void rvStateThread::Clear( bool ignoreStateCalls )
 	stateCall_t* call;
 
 	// Clear all states from the main state list
-	for( call = states.Next(); call != NULL; call = states.Next() )
-	{
-		if( !ignoreStateCalls && ( call->flags & ( SFLAG_ONCLEAR | SFLAG_ONCLEARONLY ) ) )
-		{
-			//owner->ProcessState ( call->state, call->parms );
-			//owner->SetStateParms(call->parms);
+	for( call = states.Next(); call != NULL; call = states.Next() ) {
+		if( !ignoreStateCalls && ( call->flags & ( SFLAG_ONCLEAR | SFLAG_ONCLEARONLY ) ) ) {
+			// owner->ProcessState ( call->state, call->parms );
+			// owner->SetStateParms(call->parms);
 			owner->Invoke( call->state, &call->parms );
 		}
 		call->node.Remove();
@@ -208,11 +202,9 @@ void rvStateThread::Clear( bool ignoreStateCalls )
 	}
 
 	// Clear all interrupted states
-	for( call = interrupted.Next(); call != NULL; call = interrupted.Next() )
-	{
-		if( !ignoreStateCalls && ( call->flags & ( SFLAG_ONCLEAR | SFLAG_ONCLEARONLY ) ) )
-		{
-			//owner->ProcessState ( call->state, call->parms );
+	for( call = interrupted.Next(); call != NULL; call = interrupted.Next() ) {
+		if( !ignoreStateCalls && ( call->flags & ( SFLAG_ONCLEAR | SFLAG_ONCLEARONLY ) ) ) {
+			// owner->ProcessState ( call->state, call->parms );
 			//	owner->SetStateParms(call->parms);
 			owner->Invoke( call->state, &call->parms );
 		}
@@ -221,7 +213,7 @@ void rvStateThread::Clear( bool ignoreStateCalls )
 	}
 
 	insertAfter		= NULL;
-	fl.stateCleared	= true;
+	fl.stateCleared = true;
 
 	states.Clear();
 	interrupted.Clear();
@@ -234,20 +226,18 @@ rvStateThread::Execute
 */
 stateResult_t rvStateThread::Execute()
 {
-	stateCall_t*	call = NULL;
-	int				count;
-	const char*		stateName;
-	int				stateStage;
-	const char*		historyState[HISTORY_COUNT];
-	int				historyStage[HISTORY_COUNT];
-	int				historyStart;
-	int				historyEnd;
+	stateCall_t* call = NULL;
+	int			 count;
+	const char*	 stateName;
+	int			 stateStage;
+	const char*	 historyState[HISTORY_COUNT];
+	int			 historyStage[HISTORY_COUNT];
+	int			 historyStart;
+	int			 historyEnd;
 
 	// If our main state loop is empty copy over any states in the interrupted state
-	if( !states.Next() )
-	{
-		for( call = interrupted.Next(); call; call = interrupted.Next() )
-		{
+	if( !states.Next() ) {
+		for( call = interrupted.Next(); call; call = interrupted.Next() ) {
 			call->node.Remove();
 			call->node.AddToEnd( states );
 		}
@@ -255,8 +245,7 @@ stateResult_t rvStateThread::Execute()
 	}
 
 	// State thread is idle if there are no states
-	if( !states.Next() )
-	{
+	if( !states.Next() ) {
 		return SRESULT_IDLE;
 	}
 
@@ -267,15 +256,13 @@ stateResult_t rvStateThread::Execute()
 	historyStart = 0;
 	historyEnd	 = 0;
 
-	for( call = states.Next(); call && count < HISTORY_COUNT; call = states.Next(), ++count )
-	{
+	for( call = states.Next(); call && count < HISTORY_COUNT; call = states.Next(), ++count ) {
 		insertAfter			= call;
 		fl.stateCleared		= false;
-		fl.stateInterrupted	= false;
+		fl.stateInterrupted = false;
 
 		// If this state is only called when being cleared then just skip it
-		if( call->flags & SFLAG_ONCLEARONLY )
-		{
+		if( call->flags & SFLAG_ONCLEARONLY ) {
 			call->node.Remove();
 			delete call;
 			continue;
@@ -283,27 +270,23 @@ stateResult_t rvStateThread::Execute()
 
 		// If the call has a delay on it the time will be set to negative initially and then
 		// converted to game time.
-		if( call->parms.time <= 0 )
-		{
+		if( call->parms.time <= 0 ) {
 			call->parms.time = gameLocal.time;
 		}
 
 		// Check for delayed states
-		if( gameLocal.time < call->parms.time + call->delay )
-		{
+		if( gameLocal.time < call->parms.time + call->delay ) {
 			fl.executing = false;
 			return SRESULT_WAIT;
 		}
 
 		// Debugging
-		if( lastResult != SRESULT_WAIT )
-		{
+		if( lastResult != SRESULT_WAIT ) {
 			// Keep a history of the called states so we can dump them on an overflow
 			historyState[historyEnd] = call->state;
 			historyStage[historyEnd] = call->parms.stage;
-			historyEnd = ( historyEnd + 1 ) % HISTORY_COUNT;
-			if( historyEnd == historyStart )
-			{
+			historyEnd				 = ( historyEnd + 1 ) % HISTORY_COUNT;
+			if( historyEnd == historyStart ) {
 				historyStart = ( historyEnd + 1 ) % HISTORY_COUNT;
 			}
 		}
@@ -312,21 +295,16 @@ stateResult_t rvStateThread::Execute()
 		stateName  = call->state;
 		stateStage = call->parms.stage;
 
-		if( g_debugState.GetBool() )
-		{
-			if( call->parms.stage )
-			{
+		if( g_debugState.GetBool() ) {
+			if( call->parms.stage ) {
 				gameLocal.Printf( "%s: %s (%d)\n", ( ( idEntity* )owner )->GetClassname(), call->state.c_str(), call->parms.stage );
-			}
-			else
-			{
+			} else {
 				gameLocal.Printf( "%s: %s\n", ( ( idEntity* )owner )->GetClassname(), call->state.c_str() );
 			}
 		}
 
 		// HarrievG begin
-		if( !owner )
-		{
+		if( !owner ) {
 			call->node.Remove();
 			delete call;
 			continue;
@@ -335,8 +313,7 @@ stateResult_t rvStateThread::Execute()
 
 		// Actually call the state function
 		lastResult = ( stateResult_t )owner->Invoke( call->state, &call->parms );
-		switch( lastResult )
-		{
+		switch( lastResult ) {
 			case SRESULT_DONE_FRAME:
 				fl.executing = false;
 				return SRESULT_DONE;
@@ -350,22 +327,17 @@ stateResult_t rvStateThread::Execute()
 				return SRESULT_ERROR;
 		}
 
-		if( lastResult == SRESULT_DONE )
-		{
+		if( lastResult == SRESULT_DONE ) {
 			owner->StateThreadChanged();
 		}
 
 		// Dont remove the node if it was interrupted or cleared in the last process
-		if( !fl.stateCleared && !fl.stateInterrupted )
-		{
-			if( lastResult >= SRESULT_SETDELAY )
-			{
-				call->delay = lastResult - SRESULT_SETDELAY;
+		if( !fl.stateCleared && !fl.stateInterrupted ) {
+			if( lastResult >= SRESULT_SETDELAY ) {
+				call->delay		 = lastResult - SRESULT_SETDELAY;
 				call->parms.time = gameLocal.GetTime();
 				continue;
-			}
-			else if( lastResult >= SRESULT_SETSTAGE )
-			{
+			} else if( lastResult >= SRESULT_SETSTAGE ) {
 				call->parms.stage = lastResult - SRESULT_SETSTAGE;
 				continue;
 			}
@@ -376,57 +348,45 @@ stateResult_t rvStateThread::Execute()
 		}
 
 		// Finished the last state but wait a frame for next one
-		if( lastResult == SRESULT_DONE_WAIT )
-		{
+		if( lastResult == SRESULT_DONE_WAIT ) {
 			fl.executing = false;
 			return SRESULT_WAIT;
 		}
 	}
 
 	// Runaway state loop?
-	if( count >= HISTORY_COUNT )
-	{
+	if( count >= HISTORY_COUNT ) {
 		idFile* file;
 
 		fileSystem->RemoveFile( "statedump.txt" );
 		file = fileSystem->OpenFileWrite( "statedump.txt" );
 
-		for( ; historyStart != historyEnd; historyStart = ( historyStart + 1 ) % HISTORY_COUNT )
-		{
-			if( historyStage[historyStart] )
-			{
+		for( ; historyStart != historyEnd; historyStart = ( historyStart + 1 ) % HISTORY_COUNT ) {
+			if( historyStage[historyStart] ) {
 				gameLocal.Printf( "rvStateThread: %s (%d)\n", historyState[historyStart], historyStage[historyStart] );
-			}
-			else
-			{
+			} else {
 				gameLocal.Printf( "rvStateThread: %s\n", historyState[historyStart] );
 			}
-			if( file )
-			{
-				if( historyStage[historyStart] )
-				{
+			if( file ) {
+				if( historyStage[historyStart] ) {
 					file->Printf( "rvStateThread: %s (%d)\n", historyState[historyStart], historyStage[historyStart] );
-				}
-				else
-				{
+				} else {
 					file->Printf( "rvStateThread: %s\n", historyState[historyStart] );
 				}
 			}
 		}
-		if( file )
-		{
+		if( file ) {
 			fileSystem->CloseFile( file );
 		}
 
 		gameLocal.Error( "rvStateThread: run away state loop '%s'", name.c_str() );
 	}
 
-	insertAfter  = NULL;
+	insertAfter	 = NULL;
 	fl.executing = false;
 
 	// Move interrupted states back into the main state list when the main state list is empty
-	if( !states.Next() && interrupted.Next() )
-	{
+	if( !states.Next() && interrupted.Next() ) {
 		return Execute();
 	}
 
@@ -448,14 +408,12 @@ void rvStateThread::Save( idSaveGame* saveFile ) const
 	saveFile->Write( &fl, sizeof( fl ) );
 
 	saveFile->WriteInt( states.Num() );
-	for( idLinkList<stateCall_t>* node = states.NextNode(); node; node = node->NextNode() )
-	{
+	for( idLinkList<stateCall_t>* node = states.NextNode(); node; node = node->NextNode() ) {
 		node->Owner()->Save( saveFile );
 	}
 
 	saveFile->WriteInt( interrupted.Num() );
-	for( idLinkList<stateCall_t>* node = interrupted.NextNode(); node; node = node->NextNode() )
-	{
+	for( idLinkList<stateCall_t>* node = interrupted.NextNode(); node; node = node->NextNode() ) {
 		node->Owner()->Save( saveFile );
 	}
 
@@ -470,7 +428,7 @@ rvStateThread::Restore
 */
 void rvStateThread::Restore( idRestoreGame* saveFile, idClass* owner )
 {
-	int numStates;
+	int			 numStates;
 	stateCall_t* call = NULL;
 
 	saveFile->ReadString( name );
@@ -481,8 +439,7 @@ void rvStateThread::Restore( idRestoreGame* saveFile, idClass* owner )
 	saveFile->Read( &fl, sizeof( fl ) );
 
 	saveFile->ReadInt( numStates );
-	for( ; numStates > 0; numStates-- )
-	{
+	for( ; numStates > 0; numStates-- ) {
 		call = new stateCall_t;
 		assert( call );
 
@@ -493,8 +450,7 @@ void rvStateThread::Restore( idRestoreGame* saveFile, idClass* owner )
 	}
 
 	saveFile->ReadInt( numStates );
-	for( ; numStates > 0; numStates-- )
-	{
+	for( ; numStates > 0; numStates-- ) {
 		call = new stateCall_t;
 		assert( call );
 

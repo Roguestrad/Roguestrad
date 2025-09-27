@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -30,7 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "sys_savegame.h"
 #include "sys_session_savegames.h"
-
 
 class idSaveGameProcessorSaveProfile;
 class idSaveGameProcessorLoadProfile;
@@ -49,28 +49,28 @@ public:
 	~idProfileMgr();
 
 	// Not copyable because we use unique_ptrs.
-	idProfileMgr& operator=( const idProfileMgr& ) = delete;
+	idProfileMgr&	 operator=( const idProfileMgr& ) = delete;
 
 	// Called the first time it's asked to load
-	void				Init( idLocalUser* user );
+	void			 Init( idLocalUser* user );
 
-	void 				Pump();
-	idPlayerProfile* 	GetProfile();
-
-private:
-	void				LoadSettingsAsync();
-	void				SaveSettingsAsync();
-
-	void				OnLoadSettingsCompleted( idSaveLoadParms* parms );
-	void				OnSaveSettingsCompleted( idSaveLoadParms* parms );
+	void			 Pump();
+	idPlayerProfile* GetProfile();
 
 private:
-	std::unique_ptr< idSaveGameProcessorSaveProfile >	profileSaveProcessor;
-	std::unique_ptr< idSaveGameProcessorLoadProfile >	profileLoadProcessor;
+	void LoadSettingsAsync();
+	void SaveSettingsAsync();
 
-	idLocalUser* 						user;					// reference passed in
-	idPlayerProfile* 					profile;
-	saveGameHandle_t					handle;
+	void OnLoadSettingsCompleted( idSaveLoadParms* parms );
+	void OnSaveSettingsCompleted( idSaveLoadParms* parms );
+
+private:
+	std::unique_ptr<idSaveGameProcessorSaveProfile> profileSaveProcessor;
+	std::unique_ptr<idSaveGameProcessorLoadProfile> profileLoadProcessor;
+
+	idLocalUser*									user; // reference passed in
+	idPlayerProfile*								profile;
+	saveGameHandle_t								handle;
 };
 
 /*
@@ -85,13 +85,12 @@ public:
 
 	idSaveGameProcessorSaveProfile();
 
-	bool			InitSaveProfile( idPlayerProfile* profile, const char* folder );
-	virtual bool	Process();
+	bool		 InitSaveProfile( idPlayerProfile* profile, const char* folder );
+	virtual bool Process();
 
 private:
-	idFile_SaveGame* 	profileFile;
-	idPlayerProfile* 	profile;
-
+	idFile_SaveGame* profileFile;
+	idPlayerProfile* profile;
 };
 
 /*
@@ -107,14 +106,12 @@ public:
 	idSaveGameProcessorLoadProfile();
 	~idSaveGameProcessorLoadProfile();
 
-	bool			InitLoadProfile( idPlayerProfile* profile, const char* folder );
-	virtual bool	Process();
-
+	bool		 InitLoadProfile( idPlayerProfile* profile, const char* folder );
+	virtual bool Process();
 
 private:
-	idFile_SaveGame* 	profileFile;
-	idPlayerProfile* 	profile;
-
+	idFile_SaveGame* profileFile;
+	idPlayerProfile* profile;
 };
 
 // Synchronous check, just checks if a profile exists within the savegame location

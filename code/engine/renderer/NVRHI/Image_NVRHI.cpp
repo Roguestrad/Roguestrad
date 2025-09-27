@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -38,13 +39,13 @@ idCVar image_pixelLook( "image_pixelLook", "0", CVAR_BOOL | CVAR_ARCHIVE | CVAR_
 extern DeviceManager* deviceManager;
 
 #if defined( USE_AMD_ALLOCATOR )
-#include "vk_mem_alloc.h"
+	#include "vk_mem_alloc.h"
 
-extern VmaAllocator 	m_VmaAllocator;
+extern VmaAllocator	  m_VmaAllocator;
 
-int						idImage::garbageIndex = 0;
-idList< VkImage >		idImage::imageGarbage[ NUM_FRAME_DATA ] = {};
-idList< VmaAllocation > idImage::allocationGarbage[ NUM_FRAME_DATA ] = {};
+int					  idImage::garbageIndex						 = 0;
+idList<VkImage>		  idImage::imageGarbage[NUM_FRAME_DATA]		 = {};
+idList<VmaAllocation> idImage::allocationGarbage[NUM_FRAME_DATA] = {};
 
 /*
 ========================
@@ -70,33 +71,25 @@ pickImageUsage - copied from nvrhi vulkan-texture.cpp
 * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 * DEALINGS IN THE SOFTWARE.
 */
-VkImageUsageFlags pickImageUsage( const nvrhi::TextureDesc& desc )
+VkImageUsageFlags	  pickImageUsage( const nvrhi::TextureDesc& desc )
 {
 	const nvrhi::FormatInfo& formatInfo = nvrhi::getFormatInfo( desc.format );
 
-	VkImageUsageFlags usageFlags = VkImageUsageFlagBits::VK_IMAGE_USAGE_TRANSFER_SRC_BIT |
-								   VkImageUsageFlagBits::VK_IMAGE_USAGE_TRANSFER_DST_BIT |
-								   VkImageUsageFlagBits::VK_IMAGE_USAGE_SAMPLED_BIT;
+	VkImageUsageFlags usageFlags = VkImageUsageFlagBits::VK_IMAGE_USAGE_TRANSFER_SRC_BIT | VkImageUsageFlagBits::VK_IMAGE_USAGE_TRANSFER_DST_BIT | VkImageUsageFlagBits::VK_IMAGE_USAGE_SAMPLED_BIT;
 
-	if( desc.isRenderTarget )
-	{
-		if( formatInfo.hasDepth || formatInfo.hasStencil )
-		{
+	if( desc.isRenderTarget ) {
+		if( formatInfo.hasDepth || formatInfo.hasStencil ) {
 			usageFlags |= VkImageUsageFlagBits::VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
-		}
-		else
-		{
+		} else {
 			usageFlags |= VkImageUsageFlagBits::VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;
 		}
 	}
 
-	if( desc.isUAV )
-	{
+	if( desc.isUAV ) {
 		usageFlags |= VkImageUsageFlagBits::VK_IMAGE_USAGE_STORAGE_BIT;
 	}
 
-	if( desc.isShadingRateSurface )
-	{
+	if( desc.isShadingRateSurface ) {
 		usageFlags |= VkImageUsageFlagBits::VK_IMAGE_USAGE_FRAGMENT_SHADING_RATE_ATTACHMENT_BIT_KHR;
 	}
 
@@ -109,29 +102,30 @@ VkImageUsageFlags pickImageUsage( const nvrhi::TextureDesc& desc )
 idImage::idImage
 ====================
 */
-idImage::idImage( const char* name ) : imgName( name )
+idImage::idImage( const char* name ) :
+	imgName( name )
 {
 	texture.Reset();
 
 #if defined( USE_AMD_ALLOCATOR )
-	image = VK_NULL_HANDLE;
+	image	   = VK_NULL_HANDLE;
 	allocation = NULL;
 #endif
 
 	generatorFunction = NULL;
-	filter = TF_DEFAULT;
-	repeat = TR_REPEAT;
-	usage = TD_DEFAULT;
-	cubeFiles = CF_2D;
-	cubeMapSize = 0;
-	isLoaded = false;
+	filter			  = TF_DEFAULT;
+	repeat			  = TR_REPEAT;
+	usage			  = TD_DEFAULT;
+	cubeFiles		  = CF_2D;
+	cubeMapSize		  = 0;
+	isLoaded		  = false;
 
 	referencedOutsideLevelLoad = false;
-	levelLoadReferenced = false;
-	defaulted = false;
-	sourceFileTime = FILE_NOT_FOUND_TIMESTAMP;
-	binaryFileTime = FILE_NOT_FOUND_TIMESTAMP;
-	refCount = 0;
+	levelLoadReferenced		   = false;
+	defaulted				   = false;
+	sourceFileTime			   = FILE_NOT_FOUND_TIMESTAMP;
+	binaryFileTime			   = FILE_NOT_FOUND_TIMESTAMP;
+	refCount				   = 0;
 
 #if 0
 	// debugging code
@@ -173,21 +167,15 @@ void idImage::CreateSampler()
 {
 	sampler.Reset();
 
-	samplerDesc = nvrhi::SamplerDesc()
-				  .setAllFilters( false )
-				  .setAllAddressModes( nvrhi::SamplerAddressMode::Clamp )
-				  .setMaxAnisotropy( 1.0f );
+	samplerDesc = nvrhi::SamplerDesc().setAllFilters( false ).setAllAddressModes( nvrhi::SamplerAddressMode::Clamp ).setMaxAnisotropy( 1.0f );
 
-	if( opts.format == FMT_DEPTH || opts.format == FMT_DEPTH_STENCIL )
-	{
+	if( opts.format == FMT_DEPTH || opts.format == FMT_DEPTH_STENCIL ) {
 		samplerDesc.setReductionType( nvrhi::SamplerReductionType::Comparison );
 	}
 
-	switch( filter )
-	{
+	switch( filter ) {
 		case TF_DEFAULT:
-			samplerDesc.setAllFilters( true )
-			.setMaxAnisotropy( r_maxAnisotropicFiltering.GetInteger() );
+			samplerDesc.setAllFilters( true ).setMaxAnisotropy( r_maxAnisotropicFiltering.GetInteger() );
 			break;
 
 		case TF_LINEAR:
@@ -207,38 +195,33 @@ void idImage::CreateSampler()
 			idLib::FatalError( "idImage::CreateSampler: unrecognized texture filter %d", filter );
 	}
 
-	switch( repeat )
-	{
+	switch( repeat ) {
 		case TR_REPEAT:
-			samplerDesc.setAddressU( nvrhi::SamplerAddressMode::Repeat )
-			.setAddressV( nvrhi::SamplerAddressMode::Repeat )
-			.setAddressW( nvrhi::SamplerAddressMode::Repeat );
+			samplerDesc.setAddressU( nvrhi::SamplerAddressMode::Repeat ).setAddressV( nvrhi::SamplerAddressMode::Repeat ).setAddressW( nvrhi::SamplerAddressMode::Repeat );
 			break;
 
 		case TR_CLAMP:
-			samplerDesc.setAddressU( nvrhi::SamplerAddressMode::ClampToEdge )
-			.setAddressV( nvrhi::SamplerAddressMode::ClampToEdge )
-			.setAddressW( nvrhi::SamplerAddressMode::ClampToEdge );
+			samplerDesc.setAddressU( nvrhi::SamplerAddressMode::ClampToEdge ).setAddressV( nvrhi::SamplerAddressMode::ClampToEdge ).setAddressW( nvrhi::SamplerAddressMode::ClampToEdge );
 			break;
 
 		case TR_CLAMP_TO_ZERO_ALPHA:
 			samplerDesc.setBorderColor( nvrhi::Color( 0.f, 0.f, 0.f, 0.f ) )
-			.setAddressU( nvrhi::SamplerAddressMode::ClampToBorder )
-			.setAddressV( nvrhi::SamplerAddressMode::ClampToBorder )
-			.setAddressW( nvrhi::SamplerAddressMode::ClampToBorder );
+				.setAddressU( nvrhi::SamplerAddressMode::ClampToBorder )
+				.setAddressV( nvrhi::SamplerAddressMode::ClampToBorder )
+				.setAddressW( nvrhi::SamplerAddressMode::ClampToBorder );
 			break;
 
 		case TR_CLAMP_TO_ZERO:
 			samplerDesc.setBorderColor( nvrhi::Color( 0.f, 0.f, 0.f, 1.f ) )
-			.setAddressU( nvrhi::SamplerAddressMode::ClampToBorder )
-			.setAddressV( nvrhi::SamplerAddressMode::ClampToBorder )
-			.setAddressW( nvrhi::SamplerAddressMode::ClampToBorder );
+				.setAddressU( nvrhi::SamplerAddressMode::ClampToBorder )
+				.setAddressV( nvrhi::SamplerAddressMode::ClampToBorder )
+				.setAddressW( nvrhi::SamplerAddressMode::ClampToBorder );
 			break;
 		default:
 			idLib::FatalError( "idImage::CreateSampler: unrecognized texture repeat mode %d", repeat );
 	}
 
-	//sampler = deviceManager->GetDevice()->createSampler( samplerDesc );
+	// sampler = deviceManager->GetDevice()->createSampler( samplerDesc );
 }
 
 /*
@@ -308,10 +291,8 @@ idImage::GetSampler
 */
 void* idImage::GetSampler( SamplerCache& samplerCache )
 {
-	if( R_UsePixelatedLook() )
-	{
-		if( !sampler )
-		{
+	if( R_UsePixelatedLook() ) {
+		if( !sampler ) {
 			nvrhi::SamplerDesc sampDesc = samplerDesc;
 
 			// turn off linear filtering
@@ -319,11 +300,8 @@ void* idImage::GetSampler( SamplerCache& samplerCache )
 
 			sampler = samplerCache.GetOrCreateSampler( samplerDesc );
 		}
-	}
-	else
-	{
-		if( !sampler )
-		{
+	} else {
+		if( !sampler ) {
 			sampler = samplerCache.GetOrCreateSampler( samplerDesc );
 		}
 	}
@@ -346,12 +324,11 @@ void idImage::AllocImage()
 	PurgeImage();
 
 	nvrhi::Format format = nvrhi::Format::RGBA8_UINT;
-	int bpp = 4;
+	int			  bpp	 = 4;
 
 	CreateSampler();
 
-	switch( opts.format )
-	{
+	switch( opts.format ) {
 		case FMT_RGBA8:
 			format = nvrhi::Format::RGBA8_UNORM;
 			break;
@@ -402,12 +379,9 @@ void idImage::AllocImage()
 
 		case FMT_DEPTH_STENCIL:
 			// SRS - Check if D24S8 is supported, otherwise fall back to D32S8
-			if( deviceManager->m_DeviceParams.enableImageFormatD24S8 )
-			{
+			if( deviceManager->m_DeviceParams.enableImageFormatD24S8 ) {
 				format = nvrhi::Format::D24S8;
-			}
-			else
-			{
+			} else {
 				format = nvrhi::Format::D32S8;
 			}
 			break;
@@ -437,15 +411,15 @@ void idImage::AllocImage()
 			break;
 
 		case FMT_X16:
-			//internalFormat = GL_INTENSITY16;
-			//dataFormat = GL_LUMINANCE;
-			//dataType = GL_UNSIGNED_SHORT;
-			//format = nvrhi::Format::Lum
+			// internalFormat = GL_INTENSITY16;
+			// dataFormat = GL_LUMINANCE;
+			// dataType = GL_UNSIGNED_SHORT;
+			// format = nvrhi::Format::Lum
 			break;
 		case FMT_Y16_X16:
-			//internalFormat = GL_LUMINANCE16_ALPHA16;
-			//dataFormat = GL_LUMINANCE_ALPHA;
-			//dataType = GL_UNSIGNED_SHORT;
+			// internalFormat = GL_LUMINANCE16_ALPHA16;
+			// dataFormat = GL_LUMINANCE_ALPHA;
+			// dataType = GL_UNSIGNED_SHORT;
 			break;
 
 		// see http://what-when-how.com/Tutorial/topic-615ll9ug/Praise-for-OpenGL-ES-30-Programming-Guide-291.html
@@ -461,21 +435,19 @@ void idImage::AllocImage()
 	// have filled in the parms.  We must have the values set, or
 	// an image match from a shader before OpenGL starts would miss
 	// the generated texture
-	if( !tr.IsInitialized() )
-	{
+	if( !tr.IsInitialized() ) {
 		return;
 	}
 
-	uint originalWidth = opts.width;
+	uint originalWidth	= opts.width;
 	uint originalHeight = opts.height;
 
-	if( IsCompressed() )
-	{
-		originalWidth = ( originalWidth + 3 ) & ~3;
+	if( IsCompressed() ) {
+		originalWidth  = ( originalWidth + 3 ) & ~3;
 		originalHeight = ( originalHeight + 3 ) & ~3;
 	}
 
-	uint scaledWidth = originalWidth;
+	uint scaledWidth  = originalWidth;
 	uint scaledHeight = originalHeight;
 
 #if 0
@@ -500,126 +472,99 @@ void idImage::AllocImage()
 #endif
 
 	auto textureDesc = nvrhi::TextureDesc()
-					   .setDebugName( GetName() )
-					   .setDimension( nvrhi::TextureDimension::Texture2D )
-					   .setWidth( scaledWidth )
-					   .setHeight( scaledHeight )
-					   .setFormat( format )
-					   .setIsUAV( opts.isUAV )
-					   .setSampleCount( opts.samples )
-					   .setMipLevels( opts.numLevels );
+						   .setDebugName( GetName() )
+						   .setDimension( nvrhi::TextureDimension::Texture2D )
+						   .setWidth( scaledWidth )
+						   .setHeight( scaledHeight )
+						   .setFormat( format )
+						   .setIsUAV( opts.isUAV )
+						   .setSampleCount( opts.samples )
+						   .setMipLevels( opts.numLevels );
 
-	if( opts.colorFormat == CFM_GREEN_ALPHA )
-	{
+	if( opts.colorFormat == CFM_GREEN_ALPHA ) {
 		textureDesc.componentMapping.r = nvrhi::ComponentSwizzle::One;
 		textureDesc.componentMapping.g = nvrhi::ComponentSwizzle::One;
 		textureDesc.componentMapping.b = nvrhi::ComponentSwizzle::One;
 		textureDesc.componentMapping.a = nvrhi::ComponentSwizzle::Green;
-	}
-	else if( opts.format == FMT_LUM8 )
-	{
+	} else if( opts.format == FMT_LUM8 ) {
 		textureDesc.componentMapping.r = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.g = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.b = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.a = nvrhi::ComponentSwizzle::One;
-	}
-	else if( opts.format == FMT_L8A8 )
-	{
+	} else if( opts.format == FMT_L8A8 ) {
 		textureDesc.componentMapping.r = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.g = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.b = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.a = nvrhi::ComponentSwizzle::Green;
-	}
-	else if( opts.format == FMT_ALPHA )
-	{
+	} else if( opts.format == FMT_ALPHA ) {
 		textureDesc.componentMapping.r = nvrhi::ComponentSwizzle::One;
 		textureDesc.componentMapping.g = nvrhi::ComponentSwizzle::One;
 		textureDesc.componentMapping.b = nvrhi::ComponentSwizzle::One;
 		textureDesc.componentMapping.a = nvrhi::ComponentSwizzle::Red;
-	}
-	else if( opts.format == FMT_INT8 )
-	{
+	} else if( opts.format == FMT_INT8 ) {
 		textureDesc.componentMapping.r = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.g = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.b = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.a = nvrhi::ComponentSwizzle::Red;
-	}
-	else if( opts.format == FMT_R11G11B10F )
-	{
+	} else if( opts.format == FMT_R11G11B10F ) {
 		textureDesc.componentMapping.r = nvrhi::ComponentSwizzle::Red;
 		textureDesc.componentMapping.g = nvrhi::ComponentSwizzle::Green;
 		textureDesc.componentMapping.b = nvrhi::ComponentSwizzle::Blue;
 		textureDesc.componentMapping.a = nvrhi::ComponentSwizzle::One;
 	}
 
-	if( opts.isRenderTarget )
-	{
-		textureDesc.setInitialState( nvrhi::ResourceStates::RenderTarget )
-		.setClearValue( nvrhi::Color( 0.f ) )
-		.setIsRenderTarget( true )
-		.setKeepInitialState( true );
+	if( opts.isRenderTarget ) {
+		textureDesc.setInitialState( nvrhi::ResourceStates::RenderTarget ).setClearValue( nvrhi::Color( 0.f ) ).setIsRenderTarget( true ).setKeepInitialState( true );
 
-		if( opts.format == FMT_DEPTH || opts.format == FMT_DEPTH_STENCIL || opts.format == FMT_SHADOW_ARRAY )
-		{
-			textureDesc.setInitialState( nvrhi::ResourceStates::DepthWrite )
-			.setClearValue( nvrhi::Color( 1.f ) );
+		if( opts.format == FMT_DEPTH || opts.format == FMT_DEPTH_STENCIL || opts.format == FMT_SHADOW_ARRAY ) {
+			textureDesc.setInitialState( nvrhi::ResourceStates::DepthWrite ).setClearValue( nvrhi::Color( 1.f ) );
 		}
 
-		if( opts.isUAV )
-		{
+		if( opts.isUAV ) {
 			// TODO(Stephen): Probably make this an image option.
 			// This is a hack to make cszBuffer and ambient occlusion uav work.
 			textureDesc.setIsUAV( true );
 		}
 	}
 
-	if( opts.textureType == DTT_2D )
-	{
+	if( opts.textureType == DTT_2D ) {
 		textureDesc.setDimension( nvrhi::TextureDimension::Texture2D );
-	}
-	else if( opts.textureType == DTT_CUBIC )
-	{
+	} else if( opts.textureType == DTT_CUBIC ) {
 		textureDesc.setDimension( nvrhi::TextureDimension::TextureCube );
 		textureDesc.setArraySize( 6 );
-	}
-	else if( opts.textureType == DTT_2D_ARRAY )
-	{
+	} else if( opts.textureType == DTT_2D_ARRAY ) {
 		textureDesc.setDimension( nvrhi::TextureDimension::Texture2DArray );
 		textureDesc.setArraySize( 6 );
-	}
-	else if( opts.textureType == DTT_2D_MULTISAMPLE )
-	{
+	} else if( opts.textureType == DTT_2D_MULTISAMPLE ) {
 		textureDesc.setDimension( nvrhi::TextureDimension::Texture2DMS );
 		textureDesc.setArraySize( 1 );
 	}
 
 #if defined( USE_AMD_ALLOCATOR )
-	if( m_VmaAllocator )
-	{
+	if( m_VmaAllocator ) {
 		VkImageCreateInfo imageCreateInfo = { VK_STRUCTURE_TYPE_IMAGE_CREATE_INFO };
-		imageCreateInfo.flags = ( opts.textureType == DTT_CUBIC ) ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0;
-		imageCreateInfo.imageType = VK_IMAGE_TYPE_2D;
-		imageCreateInfo.format = static_cast< VkFormat >( nvrhi::vulkan::convertFormat( format ) );
-		imageCreateInfo.extent.width = scaledWidth;
-		imageCreateInfo.extent.height = scaledHeight;
-		imageCreateInfo.extent.depth = 1;
-		imageCreateInfo.mipLevels = opts.numLevels;
-		imageCreateInfo.arrayLayers = textureDesc.arraySize;
-		imageCreateInfo.samples = static_cast< VkSampleCountFlagBits >( opts.samples );
-		imageCreateInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
-		imageCreateInfo.usage = pickImageUsage( textureDesc );
-		imageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
-		imageCreateInfo.initialLayout = VK_IMAGE_LAYOUT_UNDEFINED;
+		imageCreateInfo.flags			  = ( opts.textureType == DTT_CUBIC ) ? VK_IMAGE_CREATE_CUBE_COMPATIBLE_BIT : 0;
+		imageCreateInfo.imageType		  = VK_IMAGE_TYPE_2D;
+		imageCreateInfo.format			  = static_cast<VkFormat>( nvrhi::vulkan::convertFormat( format ) );
+		imageCreateInfo.extent.width	  = scaledWidth;
+		imageCreateInfo.extent.height	  = scaledHeight;
+		imageCreateInfo.extent.depth	  = 1;
+		imageCreateInfo.mipLevels		  = opts.numLevels;
+		imageCreateInfo.arrayLayers		  = textureDesc.arraySize;
+		imageCreateInfo.samples			  = static_cast<VkSampleCountFlagBits>( opts.samples );
+		imageCreateInfo.tiling			  = VK_IMAGE_TILING_OPTIMAL;
+		imageCreateInfo.usage			  = pickImageUsage( textureDesc );
+		imageCreateInfo.sharingMode		  = VK_SHARING_MODE_EXCLUSIVE;
+		imageCreateInfo.initialLayout	  = VK_IMAGE_LAYOUT_UNDEFINED;
 
 		VmaAllocationCreateInfo allocCreateInfo = {};
-		allocCreateInfo.usage = VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
+		allocCreateInfo.usage					= VMA_MEMORY_USAGE_AUTO_PREFER_DEVICE;
 
 		VkResult result = vmaCreateImage( m_VmaAllocator, &imageCreateInfo, &allocCreateInfo, &image, &allocation, NULL );
 		assert( result == VK_SUCCESS );
 
 		texture = deviceManager->GetDevice()->createHandleForNativeTexture( nvrhi::ObjectTypes::VK_Image, image, textureDesc );
-	}
-	else
+	} else
 #endif
 	{
 		texture = deviceManager->GetDevice()->createTexture( textureDesc );
@@ -638,18 +583,17 @@ void idImage::PurgeImage()
 	texture.Reset();
 
 #if defined( USE_AMD_ALLOCATOR )
-	if( m_VmaAllocator && image != VK_NULL_HANDLE )
-	{
-		imageGarbage[ garbageIndex ].Append( image );
-		allocationGarbage[ garbageIndex ].Append( allocation );
+	if( m_VmaAllocator && image != VK_NULL_HANDLE ) {
+		imageGarbage[garbageIndex].Append( image );
+		allocationGarbage[garbageIndex].Append( allocation );
 
-		image = VK_NULL_HANDLE;
+		image	   = VK_NULL_HANDLE;
 		allocation = NULL;
 	}
 #endif
 
 	sampler.Reset();
-	isLoaded = false;
+	isLoaded  = false;
 	defaulted = false;
 }
 
@@ -660,11 +604,10 @@ idImage::Resize
 */
 void idImage::Resize( int width, int height )
 {
-	if( opts.width == width && opts.height == height )
-	{
+	if( opts.width == width && opts.height == height ) {
 		return;
 	}
-	opts.width = width;
+	opts.width	= width;
 	opts.height = height;
 	AllocImage();
 }
@@ -677,17 +620,15 @@ idImage::EmptyGarbage
 */
 void idImage::EmptyGarbage()
 {
-	if( m_VmaAllocator )
-	{
+	if( m_VmaAllocator ) {
 		garbageIndex = ( garbageIndex + 1 ) % NUM_FRAME_DATA;
 
-		idList< VkImage >& imagesToFree = imageGarbage[ garbageIndex ];
-		idList< VmaAllocation >& allocationsToFree = allocationGarbage[ garbageIndex ];
+		idList<VkImage>&	   imagesToFree		 = imageGarbage[garbageIndex];
+		idList<VmaAllocation>& allocationsToFree = allocationGarbage[garbageIndex];
 
-		const int numAllocations = allocationsToFree.Num();
-		for( int i = 0; i < numAllocations; ++i )
-		{
-			vmaDestroyImage( m_VmaAllocator, imagesToFree[ i ], allocationsToFree[ i ] );
+		const int			   numAllocations = allocationsToFree.Num();
+		for( int i = 0; i < numAllocations; ++i ) {
+			vmaDestroyImage( m_VmaAllocator, imagesToFree[i], allocationsToFree[i] );
 		}
 
 		imagesToFree.Clear();

@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -64,93 +65,50 @@ extern idCVar af_testSolid;
 
 namespace
 {
-static bool isShown = false;
+static bool				   isShown = false;
 
-static idDeclAF emptyDecl;
-static idDeclAF_Body emptyBody;
+static idDeclAF			   emptyDecl;
+static idDeclAF_Body	   emptyBody;
 static idDeclAF_Constraint emptyConstraint;
 
-static int linearTolerance = 10;
-static int angularTolerance = 10;
-static idStrStatic<256> currentBody;
-static int bodyLength = 8;
-static int bodyWidth = 16;
-static int bodyHeight = 20;
+static int				   linearTolerance	= 10;
+static int				   angularTolerance = 10;
+static idStrStatic<256>	   currentBody;
+static int				   bodyLength = 8;
+static int				   bodyWidth  = 16;
+static int				   bodyHeight = 20;
 
-static const char* bodyTypeNames[] =
-{
-	"box",
-	"octahedron",
-	"dedecahedron",
-	"cylinder",
-	"cone",
-	"bone",
-	"polygon",
-	"polygonvolume",
-	"custom"
+static const char*		   bodyTypeNames[] = { "box", "octahedron", "dedecahedron", "cylinder", "cone", "bone", "polygon", "polygonvolume", "custom" };
+
+int						   positionType			= 0;
+static const char*		   positionTypeNames[3] = { "coordinates", "bone center", "joint" };
+
+bool					   bodyContentsSelected[5] = {
+	  false,
+	  false,
+	  false,
+	  false,
 };
 
-int positionType = 0;
-static const char* positionTypeNames[3] =
-{
-	"coordinates",
-	"bone center",
-	"joint"
-};
+MultiSelectWidget  w1 = MakePhysicsContentsSelector();
+MultiSelectWidget  w2 = MakePhysicsContentsSelector();
 
-bool bodyContentsSelected[5] =
-{
-	false,
-	false,
-	false,
-	false,
-};
+int				   modifyJointType		= 0;
+static const char* modifyJointsNames[3] = { "orientation", "position", "both" };
 
-MultiSelectWidget w1 = MakePhysicsContentsSelector();
-MultiSelectWidget w2 = MakePhysicsContentsSelector();
+int				   constraintType								 = 2;
+static const char* constraintTypeNames[DECLAF_CONSTRAINT_SPRING] = { "fixed", "ballandsocket", "universal", "hinge", "slider", "spring" };
 
-int modifyJointType = 0;
-static const char* modifyJointsNames[3] =
-{
-	"orientation",
-	"position",
-	"both"
-};
+int				   constraintLimitType		   = 1;
+static const char* constraintLimitTypeNames[3] = { "none", "cone", "pyramid" };
 
-int constraintType = 2;
-static const char* constraintTypeNames[DECLAF_CONSTRAINT_SPRING] =
-{
-	"fixed",
-	"ballandsocket",
-	"universal",
-	"hinge",
-	"slider",
-	"spring"
-};
+int				   shaft1				  = 1;
+int				   shaft2				  = 1;
+int				   limitOrientation		  = 1;
+static const char* jointPointTypeNames[2] = { "bone", "angles" };
 
-int constraintLimitType = 1;
-static const char* constraintLimitTypeNames[3] =
-{
-	"none",
-	"cone",
-	"pyramid"
-};
-
-int shaft1 = 1;
-int shaft2 = 1;
-int limitOrientation = 1;
-static const char* jointPointTypeNames[2] =
-{
-	"bone",
-	"angles"
-};
-
-int anchorType = 0;
-static const char* anchorTypeNames[2] =
-{
-	"joint",
-	"coorindates"
-};
+int				   anchorType		  = 0;
+static const char* anchorTypeNames[2] = { "joint", "coorindates" };
 }
 
 namespace ImGuiTools
@@ -161,24 +119,23 @@ static bool ConstraintItemGetter( void* data, int index, const char** items );
 
 static bool CVarCheckBox( const char* label, idCVar* cvar );
 
-AfEditor::AfEditor()
-	: isShown( false )
-	, fileSelection( 0 )
-	, currentAf( 0 )
-	, currentConstraint( 0 )
-	, currentBodySelection( 0 )
-	, currentEntity( 0 )
-	, decl( nullptr )
-	, body( nullptr )
-	, constraint( nullptr )
-	, propertyEditor( nullptr )
+AfEditor::AfEditor() :
+	isShown( false ),
+	fileSelection( 0 ),
+	currentAf( 0 ),
+	currentConstraint( 0 ),
+	currentBodySelection( 0 ),
+	currentEntity( 0 ),
+	decl( nullptr ),
+	body( nullptr ),
+	constraint( nullptr ),
+	propertyEditor( nullptr )
 {
 }
 
 AfEditor::~AfEditor()
 {
-	if( propertyEditor )
-	{
+	if( propertyEditor ) {
 		delete propertyEditor;
 	}
 	bodyEditors.DeleteContents();
@@ -191,43 +148,35 @@ void AfEditor::Init()
 
 void AfEditor::Draw()
 {
-	bool showTool = isShown;
+	bool		showTool = isShown;
 	static char buff[256];
 
-	if( ImGui::Begin( "AF Editor", &showTool, ImGuiWindowFlags_MenuBar ) )
-	{
+	if( ImGui::Begin( "AF Editor", &showTool, ImGuiWindowFlags_MenuBar ) ) {
 		SetReleaseToolMouse( true );
 
-		bool changedAf = false;
+		bool changedAf		 = false;
 		bool openedAfBrowser = false;
-		bool clickedNew = false;
+		bool clickedNew		 = false;
 
-		if( ImGui::BeginMenuBar() )
-		{
-			if( ImGui::BeginMenu( "File" ) )
-			{
-				if( ImGui::MenuItem( "New", "Ctrl+N" ) )
-				{
+		if( ImGui::BeginMenuBar() ) {
+			if( ImGui::BeginMenu( "File" ) ) {
+				if( ImGui::MenuItem( "New", "Ctrl+N" ) ) {
 					clickedNew = true;
 				}
 
-				if( ImGui::MenuItem( "Open..", "Ctrl+O" ) )
-				{
+				if( ImGui::MenuItem( "Open..", "Ctrl+O" ) ) {
 					afList.shouldPopulate = true;
-					openedAfBrowser = true;
+					openedAfBrowser		  = true;
 				}
 
-				if( ImGui::MenuItem( "Save", "Ctrl+S" ) )
-				{
-					if( decl )
-					{
+				if( ImGui::MenuItem( "Save", "Ctrl+S" ) ) {
+					if( decl ) {
 						decl->Save();
 					}
 				}
 
 				// When the editor is closed. it should also set g_editEntities with ~= EDITOR_AF.
-				if( ImGui::MenuItem( "Close", "Ctrl+W" ) )
-				{
+				if( ImGui::MenuItem( "Close", "Ctrl+W" ) ) {
 					showTool = false;
 				}
 
@@ -236,28 +185,22 @@ void AfEditor::Draw()
 			ImGui::EndMenuBar();
 		}
 
-		if( clickedNew )
-		{
+		if( clickedNew ) {
 			ImGui::OpenPopup( "New Articulated Figure" );
 		}
 
-		if( ImGui::BeginPopupModal( "New Articulated Figure" ) )
-		{
-			if( afFiles.Num() == 0 )
-			{
+		if( ImGui::BeginPopupModal( "New Articulated Figure" ) ) {
+			if( afFiles.Num() == 0 ) {
 				idFileList* files = fileSystem->ListFiles( "af", ".af", true, true );
-				for( int i = 0; i < files->GetNumFiles(); i++ )
-				{
+				for( int i = 0; i < files->GetNumFiles(); i++ ) {
 					afFiles.Append( files->GetFile( i ) );
 				}
 				fileSystem->FreeFileList( files );
 			}
 
 			ImGui::BeginListBox( "##afFileSelect" );
-			for( int i = 0; i < afFiles.Num(); i++ )
-			{
-				if( ImGui::ListBox( "Files", &fileSelection, StringListItemGetter, &afFiles, afFiles.Num() ) )
-				{
+			for( int i = 0; i < afFiles.Num(); i++ ) {
+				if( ImGui::ListBox( "Files", &fileSelection, StringListItemGetter, &afFiles, afFiles.Num() ) ) {
 					fileName = afFiles[fileSelection];
 				}
 			}
@@ -267,17 +210,14 @@ void AfEditor::Draw()
 			ImGui::SmallButton( "New File" );
 
 			ImGui::InputText( "AF Name", &fileName );
-			if( ImGui::Button( "Create" ) )
-			{
+			if( ImGui::Button( "Create" ) ) {
 				idStr afName = fileName;
 				afName.StripPath();
 				afName.StripFileExtension();
 
-				if( !afName.IsEmpty() )
-				{
+				if( !afName.IsEmpty() ) {
 					idDeclAF* newDecl = static_cast<idDeclAF*>( const_cast<idDecl*>( declManager->FindType( DECL_AF, afName.c_str(), false ) ) );
-					if( !newDecl )
-					{
+					if( !newDecl ) {
 						// create it
 						newDecl = static_cast<idDeclAF*>( declManager->CreateNewDecl( DECL_AF, afName.c_str(), fileName.c_str() ) );
 					}
@@ -292,8 +232,7 @@ void AfEditor::Draw()
 			}
 
 			ImGui::SameLine();
-			if( ImGui::Button( "Close" ) )
-			{
+			if( ImGui::Button( "Close" ) ) {
 				afFiles.Clear();
 				ImGui::CloseCurrentPopup();
 			}
@@ -301,48 +240,37 @@ void AfEditor::Draw()
 			ImGui::EndPopup();
 		}
 
-		if( openedAfBrowser )
-		{
+		if( openedAfBrowser ) {
 			ImGui::OpenPopup( "Articulated Figure Browser" );
 		}
 
-		if( ImGui::BeginPopup( "Articulated Figure Browser" ) )
-		{
+		if( ImGui::BeginPopup( "Articulated Figure Browser" ) ) {
 			afList.populate();
 			afList.shouldPopulate = false;
-			if( afList.names.Num() > 0 )
-			{
+			if( afList.names.Num() > 0 ) {
 				ImGui::Combo( "Articulated Figures", &currentAf, &StringListItemGetter, &afList, afList.names.Num() );
-				if( ImGui::Button( "Select" ) )
-				{
+				if( ImGui::Button( "Select" ) ) {
 					idDeclAF* newDecl = static_cast<idDeclAF*>( const_cast<idDecl*>( declManager->FindType( DECL_AF, afList.names[currentAf], false ) ) );
-					if( newDecl )
-					{
+					if( newDecl ) {
 						OnNewDecl( newDecl );
 					}
 					ImGui::CloseCurrentPopup();
 				}
-			}
-			else
-			{
+			} else {
 				ImGui::Text( "There are no articulated figures!" );
 			}
 
 			ImGui::SameLine();
 
-			if( ImGui::Button( "Close" ) )
-			{
+			if( ImGui::Button( "Close" ) ) {
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::EndPopup();
 		}
 
-		if( decl )
-		{
-			if( ImGui::BeginTabBar( "Tab Bar" ) )
-			{
-				if( ImGui::BeginTabItem( "View" ) )
-				{
+		if( decl ) {
+			if( ImGui::BeginTabBar( "Tab Bar" ) ) {
+				if( ImGui::BeginTabItem( "View" ) ) {
 					CVarCheckBox( "Show Bodies", &af_showBodies );
 					CVarCheckBox( "Show Body Names", &af_showBodyNames );
 					CVarCheckBox( "Show Constraints", &af_showConstraints );
@@ -354,19 +282,15 @@ void AfEditor::Draw()
 					ImGui::EndTabItem();
 				}
 
-				if( ImGui::BeginTabItem( "Properties" ) )
-				{
-					if( propertyEditor )
-					{
+				if( ImGui::BeginTabItem( "Properties" ) ) {
+					if( propertyEditor ) {
 						changedAf = changedAf || propertyEditor->Do();
 					}
 					ImGui::EndTabItem();
 				}
 
-				if( ImGui::BeginTabItem( "Bodies##Tab" ) )
-				{
-					if( decl->bodies.Num() > 0 )
-					{
+				if( ImGui::BeginTabItem( "Bodies##Tab" ) ) {
+					if( decl->bodies.Num() > 0 ) {
 						ImGui::Combo( "Body", &currentBodySelection, BodyItemGetter, decl, decl->bodies.Num() );
 					}
 
@@ -374,30 +298,25 @@ void AfEditor::Draw()
 
 					static char bodyName[256] = { '\0' };
 
-					if( ImGui::Button( "New Body" ) )
-					{
+					if( ImGui::Button( "New Body" ) ) {
 						ImGui::OpenPopup( "Create a New Body" );
 					}
-					if( ImGui::BeginPopup( "Create a New Body" ) )
-					{
+					if( ImGui::BeginPopup( "Create a New Body" ) ) {
 						ImGui::Text( "Create a new body for the articulated figure" );
 						ImGui::InputText( "Body Name", &bodyName[0], 256 );
-						if( ImGui::Button( "Create" ) )
-						{
+						if( ImGui::Button( "Create" ) ) {
 							// added a new body
-							if( strlen( bodyName ) > 0 )
-							{
+							if( strlen( bodyName ) > 0 ) {
 								// TODO: Should do some data validation on the body name.
 								decl->NewBody( bodyName );
-								bodyName[0] = '\0';
+								bodyName[0]			 = '\0';
 								currentBodySelection = decl->bodies.Num() - 1;
 								bodyEditors.Append( new AfBodyEditor( decl, decl->bodies[currentBodySelection] ) );
 								ImGui::CloseCurrentPopup();
 							}
 						}
 						ImGui::SameLine();
-						if( ImGui::Button( "Cancel" ) )
-						{
+						if( ImGui::Button( "Cancel" ) ) {
 							ImGui::CloseCurrentPopup();
 						}
 						ImGui::EndPopup();
@@ -405,34 +324,28 @@ void AfEditor::Draw()
 
 					ImGui::Separator();
 
-					if( bodyEditors.Num() > currentBodySelection )
-					{
+					if( bodyEditors.Num() > currentBodySelection ) {
 						changedAf = changedAf || bodyEditors[currentBodySelection]->Do();
 
-						if( ImGui::Button( "Delete Body" ) )
-						{
+						if( ImGui::Button( "Delete Body" ) ) {
 							ImGui::OpenPopup( "Delete Body##2" );
 						}
 
-						if( ImGui::BeginPopupModal( "Delete Body##2" ) )
-						{
+						if( ImGui::BeginPopupModal( "Delete Body##2" ) ) {
 							ImGui::Text( "Are you sure you want to delete body %s?", decl->bodies[currentBodySelection]->name.c_str() );
 
-							if( ImGui::Button( "Yes" ) )
-							{
+							if( ImGui::Button( "Yes" ) ) {
 								delete bodyEditors[currentBodySelection];
 								bodyEditors.RemoveIndex( currentBodySelection );
 								decl->DeleteBody( decl->bodies[currentBodySelection]->name.c_str() );
 								currentBodySelection -= 1;
-								if( currentBodySelection < 0 )
-								{
+								if( currentBodySelection < 0 ) {
 									currentBodySelection = 0;
 								}
 								ImGui::CloseCurrentPopup();
 							}
 							ImGui::SameLine();
-							if( ImGui::Button( "No" ) )
-							{
+							if( ImGui::Button( "No" ) ) {
 								ImGui::CloseCurrentPopup();
 							}
 							ImGui::EndPopup();
@@ -442,30 +355,24 @@ void AfEditor::Draw()
 					ImGui::EndTabItem();
 				}
 
-				if( ImGui::BeginTabItem( "Constraints" ) )
-				{
-					if( decl->constraints.Num() > 0 )
-					{
+				if( ImGui::BeginTabItem( "Constraints" ) ) {
+					if( decl->constraints.Num() > 0 ) {
 						ImGui::Combo( "Constraint", &currentConstraint, ConstraintItemGetter, decl, decl->constraints.Num() );
 					}
 
 					static char constraintName[256] = { '\0' };
 
-					if( ImGui::Button( "New" ) )
-					{
+					if( ImGui::Button( "New" ) ) {
 						ImGui::OpenPopup( "New Constraint" );
 					}
 
-					if( ImGui::BeginPopupModal( "New Constraint" ) )
-					{
+					if( ImGui::BeginPopupModal( "New Constraint" ) ) {
 						ImGui::Text( "Create a new body for the articulated figure" );
 						ImGui::InputText( "Constraint Name", &constraintName[0], 256 );
 
-						if( ImGui::Button( "Create" ) )
-						{
+						if( ImGui::Button( "Create" ) ) {
 							// added a new body
-							if( strlen( constraintName ) > 0 )
-							{
+							if( strlen( constraintName ) > 0 ) {
 								decl->NewConstraint( constraintName );
 								constraintEditors.Append( new AfConstraintEditor( decl, decl->constraints[decl->constraints.Num() - 1] ) );
 								currentConstraint = constraintEditors.Num() - 1;
@@ -477,8 +384,7 @@ void AfEditor::Draw()
 
 						ImGui::SameLine();
 
-						if( ImGui::Button( "Cancel" ) )
-						{
+						if( ImGui::Button( "Cancel" ) ) {
 							ImGui::CloseCurrentPopup();
 						}
 
@@ -487,23 +393,19 @@ void AfEditor::Draw()
 
 					ImGui::SameLine();
 
-					if( ImGui::Button( "Delete" ) )
-					{
+					if( ImGui::Button( "Delete" ) ) {
 						ImGui::OpenPopup( "Delete Constraint##2" );
 					}
 
-					if( ImGui::BeginPopupModal( "Delete Constraint##2" ) )
-					{
+					if( ImGui::BeginPopupModal( "Delete Constraint##2" ) ) {
 						ImGui::Text( "Are you sure you want to delete constraint %s?", decl->constraints[currentConstraint]->name.c_str() );
 
-						if( ImGui::Button( "Yes" ) )
-						{
+						if( ImGui::Button( "Yes" ) ) {
 							delete constraintEditors[currentConstraint];
 							constraintEditors.RemoveIndex( currentConstraint );
 							decl->DeleteConstraint( decl->constraints[currentConstraint]->name.c_str() );
 							currentConstraint -= 1;
-							if( currentConstraint < 0 )
-							{
+							if( currentConstraint < 0 ) {
 								currentConstraint = 0;
 							}
 							ImGui::CloseCurrentPopup();
@@ -511,16 +413,14 @@ void AfEditor::Draw()
 
 						ImGui::SameLine();
 
-						if( ImGui::Button( "No" ) )
-						{
+						if( ImGui::Button( "No" ) ) {
 							ImGui::CloseCurrentPopup();
 						}
 
 						ImGui::EndPopup();
 					}
 
-					if( decl->constraints.Num() > currentConstraint )
-					{
+					if( decl->constraints.Num() > currentConstraint ) {
 						changedAf = constraintEditors[currentConstraint]->Do();
 					}
 
@@ -534,41 +434,32 @@ void AfEditor::Draw()
 			ImGui::Separator();
 			ImGui::NewLine();
 
-			try
-			{
-				if( ImGui::Button( "Spawn" ) )
-				{
-					if( afList.names.Num() > currentAf )
-					{
+			try {
+				if( ImGui::Button( "Spawn" ) ) {
+					if( afList.names.Num() > currentAf ) {
 						gameEdit->AF_SpawnEntity( afList.names[currentAf].c_str() );
 					}
 				}
 
 				ImGui::SameLine();
 
-				if( ImGui::Button( "Kill" ) )
-				{
+				if( ImGui::Button( "Kill" ) ) {
 					cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "deleteSelected\n" );
 				}
 
-				if( changedAf )
-				{
-					if( afList.names.Num() > currentAf )
-					{
+				if( changedAf ) {
+					if( afList.names.Num() > currentAf ) {
 						gameEdit->AF_UpdateEntities( afList.names[currentAf].c_str() );
 					}
 				}
-			}
-			catch( idException& exception )
-			{
+			} catch( idException& exception ) {
 				common->DWarning( "AfEditor exception %s", exception.GetError() );
 			}
 		}
 	}
 	ImGui::End();
 
-	if( isShown && !showTool )
-	{
+	if( isShown && !showTool ) {
 		// TODO: do the same as when pressing cancel?
 		isShown = showTool;
 		SetReleaseToolMouse( false );
@@ -578,8 +469,7 @@ void AfEditor::Draw()
 void AfEditor::OnNewDecl( idDeclAF* newDecl )
 {
 	decl = newDecl;
-	if( propertyEditor )
-	{
+	if( propertyEditor ) {
 		delete propertyEditor;
 	}
 	bodyEditors.DeleteContents();
@@ -587,13 +477,11 @@ void AfEditor::OnNewDecl( idDeclAF* newDecl )
 
 	propertyEditor = new AfPropertyEditor( newDecl );
 
-	for( int i = 0; i < decl->bodies.Num(); i++ )
-	{
+	for( int i = 0; i < decl->bodies.Num(); i++ ) {
 		bodyEditors.Append( new AfBodyEditor( decl, decl->bodies[i] ) );
 	}
 
-	for( int i = 0; i < decl->constraints.Num(); i++ )
-	{
+	for( int i = 0; i < decl->constraints.Num(); i++ ) {
 		constraintEditors.Append( new AfConstraintEditor( decl, decl->constraints[i] ) );
 	}
 }
@@ -611,16 +499,14 @@ void AfEditor::Enable( const idCmdArgs& args )
 
 void AfEditor::AfList::populate()
 {
-	if( !shouldPopulate )
-	{
+	if( !shouldPopulate ) {
 		return;
 	}
 
 	names.Clear();
 
 	int count = declManager->GetNumDecls( DECL_AF );
-	for( int i = 0; i < count; i++ )
-	{
+	for( int i = 0; i < count; i++ ) {
 		names.Append( static_cast<const idDeclAF*>( declManager->DeclByIndex( DECL_AF, i, false ) )->GetName() );
 	}
 }
@@ -628,13 +514,11 @@ void AfEditor::AfList::populate()
 bool BodyItemGetter( void* data, int index, const char** itemName )
 {
 	idDeclAF* decl = reinterpret_cast<idDeclAF*>( data );
-	if( !decl )
-	{
+	if( !decl ) {
 		return false;
 	}
 
-	if( index > decl->bodies.Num() )
-	{
+	if( index > decl->bodies.Num() ) {
 		return false;
 	}
 
@@ -648,13 +532,11 @@ bool BodyItemGetter( void* data, int index, const char** itemName )
 bool ConstraintItemGetter( void* data, int index, const char** items )
 {
 	idDeclAF* decl = reinterpret_cast<idDeclAF*>( data );
-	if( !decl )
-	{
+	if( !decl ) {
 		return false;
 	}
 
-	if( index > decl->constraints.Num() )
-	{
+	if( index > decl->constraints.Num() ) {
 		return false;
 	}
 
@@ -668,8 +550,7 @@ bool ConstraintItemGetter( void* data, int index, const char** items )
 static bool CVarCheckBox( const char* label, idCVar* cvar )
 {
 	bool value = cvar->GetBool();
-	if( ImGui::Checkbox( label, &value ) )
-	{
+	if( ImGui::Checkbox( label, &value ) ) {
 		cvar->SetBool( value );
 		return true;
 	}

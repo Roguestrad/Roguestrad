@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -30,16 +31,14 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../renderer/Font.h"
 #include "../renderer/Image.h"
-//#include "../../libs/rapidjson/include/rapidjson/document.h"
+// #include "../../libs/rapidjson/include/rapidjson/document.h"
 
 using namespace rapidjson;
 
-#pragma warning(disable: 4355) // 'this' : used in base member initializer list
+#pragma warning( disable : 4355 ) // 'this' : used in base member initializer list
 
-#define BSWF_VERSION 16		// bumped to 16 for storing atlas image dimensions for unbuffered loads
-#define BSWF_MAGIC ( ( 'B' << 24 ) | ( 'S' << 16 ) | ( 'W' << 8 ) | BSWF_VERSION )
-
-
+#define BSWF_VERSION 16 // bumped to 16 for storing atlas image dimensions for unbuffered loads
+#define BSWF_MAGIC	 ( ( 'B' << 24 ) | ( 'S' << 16 ) | ( 'W' << 8 ) | BSWF_VERSION )
 
 /*
 ===================
@@ -48,10 +47,8 @@ idSWF::LoadSWF
 */
 bool idSWF::LoadSWF( const char* fullpath )
 {
-
 	idFile* rawfile = fileSystem->OpenFileRead( fullpath );
-	if( rawfile == NULL )
-	{
+	if( rawfile == NULL ) {
 		idLib::Printf( "SWF File not found %s\n", fullpath );
 		return false;
 	}
@@ -59,31 +56,24 @@ bool idSWF::LoadSWF( const char* fullpath )
 	swfHeader_t header;
 	rawfile->Read( &header, sizeof( header ) );
 
-	if( header.W != 'W' || header.S != 'S' )
-	{
+	if( header.W != 'W' || header.S != 'S' ) {
 		idLib::Warning( "Wrong signature bytes" );
 		delete rawfile;
 		return false;
 	}
 
-	if( header.version > 9 )
-	{
+	if( header.version > 9 ) {
 		idLib::Warning( "Unsupported version %d", header.version );
 		delete rawfile;
 		return false;
 	}
 
 	bool compressed;
-	if( header.compression == 'F' )
-	{
+	if( header.compression == 'F' ) {
 		compressed = false;
-	}
-	else if( header.compression == 'C' )
-	{
+	} else if( header.compression == 'C' ) {
 		compressed = true;
-	}
-	else
-	{
+	} else {
 		idLib::Warning( "Unsupported compression type %c", header.compression );
 		delete rawfile;
 		return false;
@@ -94,15 +84,13 @@ bool idSWF::LoadSWF( const char* fullpath )
 	uint32 fileLength2 = header.fileLength - ( uint32 )sizeof( swfHeader_t );
 
 	// slurp the raw file into a giant array, which is somewhat atrocious when loading from the preload since it's already an idFile_Memory
-	byte* fileData = ( byte* )Mem_Alloc( fileLength2, TAG_SWF );
+	byte*  fileData = ( byte* )Mem_Alloc( fileLength2, TAG_SWF );
 	size_t fileSize = rawfile->Read( fileData, fileLength2 );
 	delete rawfile;
 
-	if( compressed )
-	{
+	if( compressed ) {
 		byte* uncompressed = ( byte* )Mem_Alloc( fileLength2, TAG_SWF );
-		if( !Inflate( fileData, ( int )fileSize, uncompressed, fileLength2 ) )
-		{
+		if( !Inflate( fileData, ( int )fileSize, uncompressed, fileLength2 ) ) {
 			idLib::Warning( "Inflate error" );
 			Mem_Free( uncompressed );
 			return false;
@@ -112,19 +100,18 @@ bool idSWF::LoadSWF( const char* fullpath )
 	}
 	idSWFBitStream bitstream( fileData, fileLength2, false );
 
-	swfRect_t frameSize;
+	swfRect_t	   frameSize;
 	bitstream.ReadRect( frameSize );
 
-	if( !frameSize.tl.Compare( vec2_zero ) )
-	{
+	if( !frameSize.tl.Compare( vec2_zero ) ) {
 		idLib::Warning( "Invalid frameSize top left" );
 		Mem_Free( fileData );
 		return false;
 	}
 
-	frameWidth = frameSize.br.x;
+	frameWidth	= frameSize.br.x;
 	frameHeight = frameSize.br.y;
-	frameRate = bitstream.ReadU16();
+	frameRate	= bitstream.ReadU16();
 
 	// parse everything
 	mainsprite->Load( bitstream, true );
@@ -145,15 +132,14 @@ bool idSWF::LoadSWF( const char* fullpath )
 void idSWF::WriteSWF( const char* swfFilename, const byte* atlasImageRGBA, int atlasImageWidth, int atlasImageHeight )
 {
 	idFile_SWF file( fileSystem->OpenFileWrite( swfFilename, "fs_basepath" ) );
-	if( file == NULL )
-	{
+	if( file == NULL ) {
 		return;
 	}
 
 	swfHeader_t header;
-	header.W = 'W';
-	header.S = 'S';
-	header.version = 9;
+	header.W		   = 'W';
+	header.S		   = 'S';
+	header.version	   = 9;
 	header.compression = 'F';
 
 	file.Write( &header, sizeof( header ) );
@@ -162,11 +148,11 @@ void idSWF::WriteSWF( const char* swfFilename, const byte* atlasImageRGBA, int a
 	frameSize.br.x = frameWidth;
 	frameSize.br.y = frameHeight;
 
-	//int fileSize1 = file->Length();
+	// int fileSize1 = file->Length();
 
 	file.WriteRect( frameSize );
 
-	//int fileSize2 = file->Length();
+	// int fileSize2 = file->Length();
 
 	file.WriteU16( frameRate );
 
@@ -175,53 +161,48 @@ void idSWF::WriteSWF( const char* swfFilename, const byte* atlasImageRGBA, int a
 	// write FileAttributes tag required for Flash version >= 8
 	file.WriteTagHeader( Tag_FileAttributes, 4 );
 
-	file.WriteUBits( 0, 1 );				// Reserved, must be 0
-	file.WriteUBits( 0, 1 );				// UseDirectBlit
-	file.WriteUBits( 0, 1 );				// UseGPU
-	file.WriteUBits( 0, 1 );				// HasMetadata
+	file.WriteUBits( 0, 1 ); // Reserved, must be 0
+	file.WriteUBits( 0, 1 ); // UseDirectBlit
+	file.WriteUBits( 0, 1 ); // UseGPU
+	file.WriteUBits( 0, 1 ); // HasMetadata
 
-	file.WriteUBits( 0, 1 );				// ActionScript3
-	file.WriteUBits( 0, 1 );				// Reserved, must be 0
-	file.WriteUBits( 0, 1 );				// UseNetwork
+	file.WriteUBits( 0, 1 ); // ActionScript3
+	file.WriteUBits( 0, 1 ); // Reserved, must be 0
+	file.WriteUBits( 0, 1 ); // UseNetwork
 
-	file.WriteUBits( 0, 24 );				// Reserved, must be 0
+	file.WriteUBits( 0, 24 ); // Reserved, must be 0
 
 	file.ByteAlign();
 
-	for( int i = 0; i < dictionary.Num(); i++ )
-	{
+	for( int i = 0; i < dictionary.Num(); i++ ) {
 		const idSWFDictionaryEntry& entry = dictionary[i];
 
-		switch( dictionary[i].type )
-		{
-			case SWF_DICT_IMAGE:
-			{
-				int width = entry.imageSize[0];
-				int height = entry.imageSize[1];
+		switch( dictionary[i].type ) {
+			case SWF_DICT_IMAGE: {
+				int				  width	 = entry.imageSize[0];
+				int				  height = entry.imageSize[1];
 
-				uint32 colorDataSize = width * height * 4;
+				uint32			  colorDataSize = width * height * 4;
 				idTempArray<byte> colorData( colorDataSize );
 
 				idTempArray<byte> pngData( colorDataSize );
 
-				for( int h = 0; h < height; h++ )
-				{
-					for( int w = 0; w < width; w++ )
-					{
-						int atlasPixelOfs = ( entry.imageAtlasOffset[0] + w + ( ( entry.imageAtlasOffset[1] + h ) * atlasImageWidth ) ) * 4;
+				for( int h = 0; h < height; h++ ) {
+					for( int w = 0; w < width; w++ ) {
+						int			atlasPixelOfs = ( entry.imageAtlasOffset[0] + w + ( ( entry.imageAtlasOffset[1] + h ) * atlasImageWidth ) ) * 4;
 
-						//atlasPixelOfs = idMath::ClampInt( atlasPixelOfs
+						// atlasPixelOfs = idMath::ClampInt( atlasPixelOfs
 
 						const byte* atlasPixel = atlasImageRGBA + atlasPixelOfs;
 
-						byte* pixel = &colorData[( w + ( h * width ) ) * 4];
+						byte*		pixel = &colorData[( w + ( h * width ) ) * 4];
 
 						pixel[0] = atlasPixel[3];
 						pixel[1] = atlasPixel[0];
 						pixel[2] = atlasPixel[1];
 						pixel[3] = atlasPixel[2];
 
-						pixel = &pngData[( w + ( h * width ) ) * 4];
+						pixel	 = &pngData[( w + ( h * width ) ) * 4];
 						pixel[0] = atlasPixel[0];
 						pixel[1] = atlasPixel[1];
 						pixel[2] = atlasPixel[2];
@@ -238,22 +219,21 @@ void idSWF::WriteSWF( const char* swfFilename, const byte* atlasImageRGBA, int a
 
 				// RB: add some extra space for zlib
 				idTempArray<byte> compressedData( width * height * 4 * 1.02 + 12 );
-				int compressedDataSize = compressedData.Size();
+				int				  compressedDataSize = compressedData.Size();
 
-				if( !Deflate( colorData.Ptr(), colorDataSize, ( byte* )compressedData.Ptr(), compressedDataSize ) )
-				{
+				if( !Deflate( colorData.Ptr(), colorDataSize, ( byte* )compressedData.Ptr(), compressedDataSize ) ) {
 					idLib::Warning( "DefineBitsLossless: Failed to deflate bitmap data" );
-					//return;
+					// return;
 				}
 
 				int tagLength = ( 2 + 1 + 2 + 2 ) + compressedDataSize;
 
 				file.WriteTagHeader( Tag_DefineBitsLossless2, tagLength );
 
-				file.WriteU16( i );						// characterID
-				file.WriteU8( 5 );						// format
-				file.WriteU16( width );					// width
-				file.WriteU16( height );				// height
+				file.WriteU16( i );		 // characterID
+				file.WriteU8( 5 );		 // format
+				file.WriteU16( width );	 // width
+				file.WriteU16( height ); // height
 				file->Write( compressedData.Ptr(), compressedDataSize );
 				break;
 			}
@@ -374,8 +354,7 @@ void idSWF::WriteSWF( const char* swfFilename, const byte* atlasImageRGBA, int a
 			}
 #endif
 
-			case SWF_DICT_SPRITE:
-			{
+			case SWF_DICT_SPRITE: {
 				dictionary[i].sprite->WriteSWF( file, i );
 				break;
 			}
@@ -403,19 +382,17 @@ idSWF::LoadBinary
 bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 {
 	idFile* f = fileSystem->OpenFileReadMemory( bfilename );
-	if( f == NULL || f->Length() <= 0 )
-	{
+	if( f == NULL || f->Length() <= 0 ) {
 		return false;
 	}
 
-	uint32 magic = 0;
+	uint32	  magic		 = 0;
 	ID_TIME_T btimestamp = 0;
 	f->ReadBig( magic );
 	f->ReadBig( btimestamp );
 
 	// RB: source might be from .resources, so we ignore the time stamp and assume a release build
-	if( magic != BSWF_MAGIC || ( !fileSystem->InProductionMode() && ( sourceTimeStamp != FILE_NOT_FOUND_TIMESTAMP ) && ( sourceTimeStamp != 0 ) && ( sourceTimeStamp != btimestamp ) ) )
-	{
+	if( magic != BSWF_MAGIC || ( !fileSystem->InProductionMode() && ( sourceTimeStamp != FILE_NOT_FOUND_TIMESTAMP ) && ( sourceTimeStamp != 0 ) && ( sourceTimeStamp != btimestamp ) ) ) {
 		delete f;
 		return false;
 	}
@@ -425,13 +402,11 @@ bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 	f->ReadBig( frameHeight );
 	f->ReadBig( frameRate );
 
-	if( mouseX == -1 )
-	{
+	if( mouseX == -1 ) {
 		mouseX = ( frameWidth / 2 );
 	}
 
-	if( mouseY == -1 )
-	{
+	if( mouseY == -1 ) {
 		mouseY = ( frameHeight / 2 );
 	}
 
@@ -440,48 +415,38 @@ bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 	int num = 0;
 	f->ReadBig( num );
 	dictionary.SetNum( num );
-	for( int i = 0; i < dictionary.Num(); i++ )
-	{
+	for( int i = 0; i < dictionary.Num(); i++ ) {
 		f->ReadBig( dictionary[i].type );
-		switch( dictionary[i].type )
-		{
-			case SWF_DICT_IMAGE:
-			{
+		switch( dictionary[i].type ) {
+			case SWF_DICT_IMAGE: {
 				idStr imageName;
 				f->ReadString( imageName );
-				if( imageName[0] == '.' )
-				{
+				if( imageName[0] == '.' ) {
 					// internal image in the atlas
 					dictionary[i].material = NULL;
-				}
-				else
-				{
+				} else {
 					dictionary[i].material = declManager->FindMaterial( imageName );
 				}
-				for( int j = 0 ; j < 2 ; j++ )
-				{
+				for( int j = 0; j < 2; j++ ) {
 					f->ReadBig( dictionary[i].imageSize[j] );
 					f->ReadBig( dictionary[i].imageAtlasOffset[j] );
 				}
-				for( int j = 0 ; j < 4 ; j++ )
-				{
+				for( int j = 0; j < 4; j++ ) {
 					f->ReadBig( dictionary[i].channelScale[j] );
 				}
 				break;
 			}
 			case SWF_DICT_MORPH:
-			case SWF_DICT_SHAPE:
-			{
+			case SWF_DICT_SHAPE: {
 				dictionary[i].shape = new( TAG_SWF ) idSWFShape;
-				idSWFShape* shape = dictionary[i].shape;
+				idSWFShape* shape	= dictionary[i].shape;
 				f->ReadBig( shape->startBounds.tl );
 				f->ReadBig( shape->startBounds.br );
 				f->ReadBig( shape->endBounds.tl );
 				f->ReadBig( shape->endBounds.br );
 				f->ReadBig( num );
 				shape->fillDraws.SetNum( num );
-				for( int d = 0; d < shape->fillDraws.Num(); d++ )
-				{
+				for( int d = 0; d < shape->fillDraws.Num(); d++ ) {
 					idSWFShapeDrawFill& fillDraw = shape->fillDraws[d];
 					f->ReadBig( fillDraw.style.type );
 					f->ReadBig( fillDraw.style.subType );
@@ -490,8 +455,7 @@ bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 					f->ReadBigArray( ( float* )&fillDraw.style.startMatrix, 6 );
 					f->ReadBigArray( ( float* )&fillDraw.style.endMatrix, 6 );
 					f->ReadBig( fillDraw.style.gradient.numGradients );
-					for( int g = 0; g < fillDraw.style.gradient.numGradients; g++ )
-					{
+					for( int g = 0; g < fillDraw.style.gradient.numGradients; g++ ) {
 						f->ReadBig( fillDraw.style.gradient.gradientRecords[g].startRatio );
 						f->ReadBig( fillDraw.style.gradient.gradientRecords[g].endRatio );
 						f->Read( &fillDraw.style.gradient.gradientRecords[g].startColor, 4 );
@@ -511,8 +475,7 @@ bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 				}
 				f->ReadBig( num );
 				shape->lineDraws.SetNum( num );
-				for( int d = 0; d < shape->lineDraws.Num(); d++ )
-				{
+				for( int d = 0; d < shape->lineDraws.Num(); d++ ) {
 					idSWFShapeDrawLine& lineDraw = shape->lineDraws[d];
 					f->ReadBig( lineDraw.style.startWidth );
 					f->ReadBig( lineDraw.style.endWidth );
@@ -530,17 +493,15 @@ bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 				}
 				break;
 			}
-			case SWF_DICT_SPRITE:
-			{
+			case SWF_DICT_SPRITE: {
 				dictionary[i].sprite = new( TAG_SWF ) idSWFSprite( this );
 				dictionary[i].sprite->Read( f );
 				break;
 			}
-			case SWF_DICT_FONT:
-			{
+			case SWF_DICT_FONT: {
 				dictionary[i].font = new( TAG_SWF ) idSWFFont;
-				idSWFFont* font = dictionary[i].font;
-				idStr fontName;
+				idSWFFont* font	   = dictionary[i].font;
+				idStr	   fontName;
 				f->ReadString( fontName );
 				font->fontID = renderSystem->RegisterFont( fontName );
 				f->ReadBig( font->ascent );
@@ -548,8 +509,7 @@ bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 				f->ReadBig( font->leading );
 				f->ReadBig( num );
 				font->glyphs.SetNum( num );
-				for( int g = 0; g < font->glyphs.Num(); g++ )
-				{
+				for( int g = 0; g < font->glyphs.Num(); g++ ) {
 					f->ReadBig( font->glyphs[g].code );
 					f->ReadBig( font->glyphs[g].advance );
 					f->ReadBig( num );
@@ -561,17 +521,15 @@ bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 				}
 				break;
 			}
-			case SWF_DICT_TEXT:
-			{
+			case SWF_DICT_TEXT: {
 				dictionary[i].text = new( TAG_SWF ) idSWFText;
-				idSWFText* text = dictionary[i].text;
+				idSWFText* text	   = dictionary[i].text;
 				f->ReadBig( text->bounds.tl );
 				f->ReadBig( text->bounds.br );
 				f->ReadBigArray( ( float* )&text->matrix, 6 );
 				f->ReadBig( num );
 				text->textRecords.SetNum( num );
-				for( int t = 0; t < text->textRecords.Num(); t++ )
-				{
+				for( int t = 0; t < text->textRecords.Num(); t++ ) {
 					idSWFTextRecord& textRecord = text->textRecords[t];
 					f->ReadBig( textRecord.fontID );
 					f->Read( &textRecord.color, 4 );
@@ -583,16 +541,14 @@ bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 				}
 				f->ReadBig( num );
 				text->glyphs.SetNum( num );
-				for( int g = 0; g < text->glyphs.Num(); g++ )
-				{
+				for( int g = 0; g < text->glyphs.Num(); g++ ) {
 					f->ReadBig( text->glyphs[g].index );
 					f->ReadBig( text->glyphs[g].advance );
 				}
 				break;
 			}
-			case SWF_DICT_EDITTEXT:
-			{
-				dictionary[i].edittext = new( TAG_SWF ) idSWFEditText;
+			case SWF_DICT_EDITTEXT: {
+				dictionary[i].edittext	= new( TAG_SWF ) idSWFEditText;
 				idSWFEditText* edittext = dictionary[i].edittext;
 				f->ReadBig( edittext->bounds.tl );
 				f->ReadBig( edittext->bounds.br );
@@ -625,8 +581,7 @@ idSWF::WriteBinary
 void idSWF::WriteBinary( const char* bfilename )
 {
 	idFileLocal file( fileSystem->OpenFileWrite( bfilename, "fs_basepath" ) );
-	if( file == NULL )
-	{
+	if( file == NULL ) {
 		return;
 	}
 	file->WriteBig( BSWF_MAGIC );
@@ -639,43 +594,33 @@ void idSWF::WriteBinary( const char* bfilename )
 	mainsprite->Write( file );
 
 	file->WriteBig( dictionary.Num() );
-	for( int i = 0; i < dictionary.Num(); i++ )
-	{
+	for( int i = 0; i < dictionary.Num(); i++ ) {
 		file->WriteBig( dictionary[i].type );
-		switch( dictionary[i].type )
-		{
-			case SWF_DICT_IMAGE:
-			{
-				if( dictionary[i].material )
-				{
+		switch( dictionary[i].type ) {
+			case SWF_DICT_IMAGE: {
+				if( dictionary[i].material ) {
 					file->WriteString( dictionary[i].material->GetName() );
-				}
-				else
-				{
+				} else {
 					file->WriteString( "." );
 				}
-				for( int j = 0 ; j < 2 ; j++ )
-				{
+				for( int j = 0; j < 2; j++ ) {
 					file->WriteBig( dictionary[i].imageSize[j] );
 					file->WriteBig( dictionary[i].imageAtlasOffset[j] );
 				}
-				for( int j = 0 ; j < 4 ; j++ )
-				{
+				for( int j = 0; j < 4; j++ ) {
 					file->WriteBig( dictionary[i].channelScale[j] );
 				}
 				break;
 			}
 			case SWF_DICT_MORPH:
-			case SWF_DICT_SHAPE:
-			{
+			case SWF_DICT_SHAPE: {
 				idSWFShape* shape = dictionary[i].shape;
 				file->WriteBig( shape->startBounds.tl );
 				file->WriteBig( shape->startBounds.br );
 				file->WriteBig( shape->endBounds.tl );
 				file->WriteBig( shape->endBounds.br );
 				file->WriteBig( shape->fillDraws.Num() );
-				for( int d = 0; d < shape->fillDraws.Num(); d++ )
-				{
+				for( int d = 0; d < shape->fillDraws.Num(); d++ ) {
 					idSWFShapeDrawFill& fillDraw = shape->fillDraws[d];
 					file->WriteBig( fillDraw.style.type );
 					file->WriteBig( fillDraw.style.subType );
@@ -684,8 +629,7 @@ void idSWF::WriteBinary( const char* bfilename )
 					file->WriteBigArray( ( float* )&fillDraw.style.startMatrix, 6 );
 					file->WriteBigArray( ( float* )&fillDraw.style.endMatrix, 6 );
 					file->WriteBig( fillDraw.style.gradient.numGradients );
-					for( int g = 0; g < fillDraw.style.gradient.numGradients; g++ )
-					{
+					for( int g = 0; g < fillDraw.style.gradient.numGradients; g++ ) {
 						file->WriteBig( fillDraw.style.gradient.gradientRecords[g].startRatio );
 						file->WriteBig( fillDraw.style.gradient.gradientRecords[g].endRatio );
 						file->Write( &fillDraw.style.gradient.gradientRecords[g].startColor, 4 );
@@ -701,8 +645,7 @@ void idSWF::WriteBinary( const char* bfilename )
 					file->WriteBigArray( fillDraw.indices.Ptr(), fillDraw.indices.Num() );
 				}
 				file->WriteBig( shape->lineDraws.Num() );
-				for( int d = 0; d < shape->lineDraws.Num(); d++ )
-				{
+				for( int d = 0; d < shape->lineDraws.Num(); d++ ) {
 					idSWFShapeDrawLine& lineDraw = shape->lineDraws[d];
 					file->WriteBig( lineDraw.style.startWidth );
 					file->WriteBig( lineDraw.style.endWidth );
@@ -717,21 +660,18 @@ void idSWF::WriteBinary( const char* bfilename )
 				}
 				break;
 			}
-			case SWF_DICT_SPRITE:
-			{
+			case SWF_DICT_SPRITE: {
 				dictionary[i].sprite->Write( file );
 				break;
 			}
-			case SWF_DICT_FONT:
-			{
+			case SWF_DICT_FONT: {
 				idSWFFont* font = dictionary[i].font;
 				file->WriteString( font->fontID->GetName() );
 				file->WriteBig( font->ascent );
 				file->WriteBig( font->descent );
 				file->WriteBig( font->leading );
 				file->WriteBig( font->glyphs.Num() );
-				for( int g = 0; g < font->glyphs.Num(); g++ )
-				{
+				for( int g = 0; g < font->glyphs.Num(); g++ ) {
 					file->WriteBig( font->glyphs[g].code );
 					file->WriteBig( font->glyphs[g].advance );
 					file->WriteBig( font->glyphs[g].verts.Num() );
@@ -741,15 +681,13 @@ void idSWF::WriteBinary( const char* bfilename )
 				}
 				break;
 			}
-			case SWF_DICT_TEXT:
-			{
+			case SWF_DICT_TEXT: {
 				idSWFText* text = dictionary[i].text;
 				file->WriteBig( text->bounds.tl );
 				file->WriteBig( text->bounds.br );
 				file->WriteBigArray( ( float* )&text->matrix, 6 );
 				file->WriteBig( text->textRecords.Num() );
-				for( int t = 0; t < text->textRecords.Num(); t++ )
-				{
+				for( int t = 0; t < text->textRecords.Num(); t++ ) {
 					idSWFTextRecord& textRecord = text->textRecords[t];
 					file->WriteBig( textRecord.fontID );
 					file->Write( &textRecord.color, 4 );
@@ -760,15 +698,13 @@ void idSWF::WriteBinary( const char* bfilename )
 					file->WriteBig( textRecord.numGlyphs );
 				}
 				file->WriteBig( text->glyphs.Num() );
-				for( int g = 0; g < text->glyphs.Num(); g++ )
-				{
+				for( int g = 0; g < text->glyphs.Num(); g++ ) {
 					file->WriteBig( text->glyphs[g].index );
 					file->WriteBig( text->glyphs[g].advance );
 				}
 				break;
 			}
-			case SWF_DICT_EDITTEXT:
-			{
+			case SWF_DICT_EDITTEXT: {
 				idSWFEditText* edittext = dictionary[i].edittext;
 				file->WriteBig( edittext->bounds.tl );
 				file->WriteBig( edittext->bounds.br );
@@ -789,7 +725,6 @@ void idSWF::WriteBinary( const char* bfilename )
 		}
 	}
 }
-
 
 /*
 ===================
@@ -821,4 +756,3 @@ void idSWF::SetBackgroundColor( idSWFBitStream& bitstream )
 {
 	bitstream.Seek( 4 ); // int
 }
-

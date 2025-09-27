@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -70,22 +71,22 @@ missing reload over a previously explicit definition
 */
 
 #define USE_COMPRESSED_DECLS
-//#define GET_HUFFMAN_FREQUENCIES
+// #define GET_HUFFMAN_FREQUENCIES
 
 class idDeclType
 {
 public:
-	idStr						typeName;
-	declType_t					type;
-	idDecl* 					( *allocator )();
+	idStr	   typeName;
+	declType_t type;
+	idDecl* ( *allocator )();
 };
 
 class idDeclFolder
 {
 public:
-	idStr						folder;
-	idStr						extension;
-	declType_t					defaultType;
+	idStr	   folder;
+	idStr	   extension;
+	declType_t defaultType;
 };
 
 class idDeclFile;
@@ -97,72 +98,72 @@ class idDeclLocal : public idDeclBase
 
 public:
 	idDeclLocal();
-	virtual 					~idDeclLocal() {};
-	virtual const char* 		GetName() const;
-	virtual declType_t			GetType() const;
-	virtual declState_t			GetState() const;
-	virtual bool				IsImplicit() const;
-	virtual bool				IsValid() const;
-	virtual void				Invalidate();
-	virtual void				Reload();
-	virtual void				EnsureNotPurged();
-	virtual int					Index() const;
-	virtual int					GetLineNum() const;
-	virtual const char* 		GetFileName() const;
-	virtual size_t				Size() const;
-	virtual void				GetText( char* text ) const;
-	virtual int					GetTextLength() const;
-	virtual void				SetText( const char* text );
-	virtual bool				ReplaceSourceFileText();
-	virtual bool				SourceFileChanged() const;
-	virtual void				MakeDefault();
-	virtual bool				EverReferenced() const;
-	virtual ID_TIME_T			GetSourceFileTimestamp() const; // RB
+	virtual ~idDeclLocal() {};
+	virtual const char* GetName() const;
+	virtual declType_t	GetType() const;
+	virtual declState_t GetState() const;
+	virtual bool		IsImplicit() const;
+	virtual bool		IsValid() const;
+	virtual void		Invalidate();
+	virtual void		Reload();
+	virtual void		EnsureNotPurged();
+	virtual int			Index() const;
+	virtual int			GetLineNum() const;
+	virtual const char* GetFileName() const;
+	virtual size_t		Size() const;
+	virtual void		GetText( char* text ) const;
+	virtual int			GetTextLength() const;
+	virtual void		SetText( const char* text );
+	virtual bool		ReplaceSourceFileText();
+	virtual bool		SourceFileChanged() const;
+	virtual void		MakeDefault();
+	virtual bool		EverReferenced() const;
+	virtual ID_TIME_T	GetSourceFileTimestamp() const; // RB
 
 protected:
-	virtual bool				SetDefaultText();
-	virtual const char* 		DefaultDefinition() const;
-	virtual bool				Parse( const char* text, const int textLength, bool allowBinaryVersion );
-	virtual void				FreeData();
-	virtual void				List() const;
-	virtual void				Print() const;
+	virtual bool		SetDefaultText();
+	virtual const char* DefaultDefinition() const;
+	virtual bool		Parse( const char* text, const int textLength, bool allowBinaryVersion );
+	virtual void		FreeData();
+	virtual void		List() const;
+	virtual void		Print() const;
 
 protected:
-	void						AllocateSelf();
+	void AllocateSelf();
 
 	// Parses the decl definition.
 	// After calling parse, a decl will be guaranteed usable.
-	void						ParseLocal();
+	void ParseLocal();
 
 	// Does a MakeDefualt, but flags the decl so that it
 	// will Parse() the next time the decl is found.
-	void						Purge();
+	void Purge();
 
 	// Set textSource possible with compression.
-	void						SetTextLocal( const char* text, const int length );
+	void SetTextLocal( const char* text, const int length );
 
 private:
-	idDecl* 					self;
+	idDecl*		 self;
 
-	idStr						name;					// name of the decl
-	char* 						textSource;				// decl text definition
-	int							textLength;				// length of textSource
-	int							compressedLength;		// compressed length
-	idDeclFile* 				sourceFile;				// source file in which the decl was defined
-	int							sourceTextOffset;		// offset in source file to decl text
-	int							sourceTextLength;		// length of decl text in source file
-	int							sourceLine;				// this is where the actual declaration token starts
-	int							checksum;				// checksum of the decl text
-	declType_t					type;					// decl type
-	declState_t					declState;				// decl state
-	int							index;					// index in the per-type list
+	idStr		 name;			   // name of the decl
+	char*		 textSource;	   // decl text definition
+	int			 textLength;	   // length of textSource
+	int			 compressedLength; // compressed length
+	idDeclFile*	 sourceFile;	   // source file in which the decl was defined
+	int			 sourceTextOffset; // offset in source file to decl text
+	int			 sourceTextLength; // length of decl text in source file
+	int			 sourceLine;	   // this is where the actual declaration token starts
+	int			 checksum;		   // checksum of the decl text
+	declType_t	 type;			   // decl type
+	declState_t	 declState;		   // decl state
+	int			 index;			   // index in the per-type list
 
-	bool						parsedOutsideLevelLoad;	// these decls will never be purged
-	bool						everReferenced;			// set to true if the decl was ever used
-	bool						referencedThisLevel;	// set to true when the decl is used for the current level
-	bool						redefinedInReload;		// used during file reloading to make sure a decl that has
+	bool		 parsedOutsideLevelLoad; // these decls will never be purged
+	bool		 everReferenced;		 // set to true if the decl was ever used
+	bool		 referencedThisLevel;	 // set to true when the decl is used for the current level
+	bool		 redefinedInReload;		 // used during file reloading to make sure a decl that has
 	// its source removed will be defaulted
-	idDeclLocal* 				nextInFile;				// next decl in the decl file
+	idDeclLocal* nextInFile; // next decl in the decl file
 };
 
 class idDeclFile
@@ -171,19 +172,19 @@ public:
 	idDeclFile();
 	idDeclFile( const char* fileName, declType_t defaultType );
 
-	void						Reload( bool force );
-	int							LoadAndParse();
+	void Reload( bool force );
+	int	 LoadAndParse();
 
 public:
-	idStr						fileName;
-	declType_t					defaultType;
+	idStr		 fileName;
+	declType_t	 defaultType;
 
-	ID_TIME_T						timestamp;
-	int							checksum;
-	int							fileSize;
-	int							numLines;
+	ID_TIME_T	 timestamp;
+	int			 checksum;
+	int			 fileSize;
+	int			 numLines;
 
-	idDeclLocal* 				decls;
+	idDeclLocal* decls;
 };
 
 class idDeclManagerLocal : public idDeclManager
@@ -191,102 +192,102 @@ class idDeclManagerLocal : public idDeclManager
 	friend class idDeclLocal;
 
 public:
-	virtual void				Init();
-	virtual void				Init2();
-	virtual void				InitTool();
-	virtual void				Shutdown();
-	virtual void				Reload( bool force );
-	virtual void				BeginLevelLoad();
-	virtual void				EndLevelLoad();
-	virtual void				RegisterDeclType( const char* typeName, declType_t type, idDecl * ( *allocator )() );
-	virtual void				RegisterDeclFolder( const char* folder, const char* extension, declType_t defaultType );
-	virtual int					GetChecksum() const;
-	virtual int					GetNumDeclTypes() const;
-	virtual int					GetNumDecls( declType_t type );
-	virtual const char* 		GetDeclNameFromType( declType_t type ) const;
-	virtual declType_t			GetDeclTypeFromName( const char* typeName ) const;
-	virtual const idDecl* 		FindType( declType_t type, const char* name, bool makeDefault = true );
-	virtual const idDecl* 		DeclByIndex( declType_t type, int index, bool forceParse = true );
+	virtual void			  Init();
+	virtual void			  Init2();
+	virtual void			  InitTool();
+	virtual void			  Shutdown();
+	virtual void			  Reload( bool force );
+	virtual void			  BeginLevelLoad();
+	virtual void			  EndLevelLoad();
+	virtual void			  RegisterDeclType( const char* typeName, declType_t type, idDecl* ( *allocator )() );
+	virtual void			  RegisterDeclFolder( const char* folder, const char* extension, declType_t defaultType );
+	virtual int				  GetChecksum() const;
+	virtual int				  GetNumDeclTypes() const;
+	virtual int				  GetNumDecls( declType_t type );
+	virtual const char*		  GetDeclNameFromType( declType_t type ) const;
+	virtual declType_t		  GetDeclTypeFromName( const char* typeName ) const;
+	virtual const idDecl*	  FindType( declType_t type, const char* name, bool makeDefault = true );
+	virtual const idDecl*	  DeclByIndex( declType_t type, int index, bool forceParse = true );
 
-	virtual const idDecl*		FindDeclWithoutParsing( declType_t type, const char* name, bool makeDefault = true );
-	virtual void				ReloadFile( const char* filename, bool force );
+	virtual const idDecl*	  FindDeclWithoutParsing( declType_t type, const char* name, bool makeDefault = true );
+	virtual void			  ReloadFile( const char* filename, bool force );
 
-	virtual void				ListType( const idCmdArgs& args, declType_t type );
-	virtual void				PrintType( const idCmdArgs& args, declType_t type );
+	virtual void			  ListType( const idCmdArgs& args, declType_t type );
+	virtual void			  PrintType( const idCmdArgs& args, declType_t type );
 
-	virtual idDecl* 			CreateNewDecl( declType_t type, const char* name, const char* fileName );
+	virtual idDecl*			  CreateNewDecl( declType_t type, const char* name, const char* fileName );
 
-	//BSM Added for the material editors rename capabilities
-	virtual bool				RenameDecl( declType_t type, const char* oldName, const char* newName );
+	// BSM Added for the material editors rename capabilities
+	virtual bool			  RenameDecl( declType_t type, const char* oldName, const char* newName );
 
-	virtual void				MediaPrint( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
-	virtual void				WritePrecacheCommands( idFile* f );
+	virtual void			  MediaPrint( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
+	virtual void			  WritePrecacheCommands( idFile* f );
 
-	virtual const idMaterial* 		FindMaterial( const char* name, bool makeDefault = true );
-	virtual const idMaterial* 		MaterialByIndex( int index, bool forceParse = true );
+	virtual const idMaterial* FindMaterial( const char* name, bool makeDefault = true );
+	virtual const idMaterial* MaterialByIndex( int index, bool forceParse = true );
 
-	virtual const idDeclSkin* 		FindSkin( const char* name, bool makeDefault = true );
-	virtual const idDeclSkin* 		SkinByIndex( int index, bool forceParse = true );
+	virtual const idDeclSkin* FindSkin( const char* name, bool makeDefault = true );
+	virtual const idDeclSkin* SkinByIndex( int index, bool forceParse = true );
 
 #if !defined( DMAP )
-	virtual const idSoundShader* 	FindSound( const char* name, bool makeDefault = true );
-	virtual const idSoundShader* 	SoundByIndex( int index, bool forceParse = true );
+	virtual const idSoundShader* FindSound( const char* name, bool makeDefault = true );
+	virtual const idSoundShader* SoundByIndex( int index, bool forceParse = true );
 #endif
 
-	virtual void					Touch( const idDecl* decl );
+	virtual void Touch( const idDecl* decl );
 
 public:
-	static void					MakeNameCanonical( const char* name, char* result, int maxLength );
-	idDeclLocal* 				FindTypeWithoutParsing( declType_t type, const char* name, bool makeDefault = true );
+	static void	 MakeNameCanonical( const char* name, char* result, int maxLength );
+	idDeclLocal* FindTypeWithoutParsing( declType_t type, const char* name, bool makeDefault = true );
 
-	idDeclType* 				GetDeclType( int type ) const
+	idDeclType*	 GetDeclType( int type ) const
 	{
 		return declTypes[type];
 	}
-	const idDeclFile* 			GetImplicitDeclFile() const
+	const idDeclFile* GetImplicitDeclFile() const
 	{
 		return &implicitDecls;
 	}
 
-	void						ConvertPDAsToStrings( const idCmdArgs& args );
+	void ConvertPDAsToStrings( const idCmdArgs& args );
 
 private:
-	idSysMutex					mutex;
+	idSysMutex								   mutex;
 
-	idList<idDeclType*, TAG_IDLIB_LIST_DECL>		declTypes;
-	idList<idDeclFolder*, TAG_IDLIB_LIST_DECL>		declFolders;
+	idList<idDeclType*, TAG_IDLIB_LIST_DECL>   declTypes;
+	idList<idDeclFolder*, TAG_IDLIB_LIST_DECL> declFolders;
 
-	idList<idDeclFile*, TAG_IDLIB_LIST_DECL>		loadedFiles;
-	idHashIndex					hashTables[DECL_MAX_TYPES];
-	idList<idDeclLocal*, TAG_IDLIB_LIST_DECL>		linearLists[DECL_MAX_TYPES];
-	idDeclFile					implicitDecls;	// this holds all the decls that were created because explicit
+	idList<idDeclFile*, TAG_IDLIB_LIST_DECL>   loadedFiles;
+	idHashIndex								   hashTables[DECL_MAX_TYPES];
+	idList<idDeclLocal*, TAG_IDLIB_LIST_DECL>  linearLists[DECL_MAX_TYPES];
+	idDeclFile								   implicitDecls; // this holds all the decls that were created because explicit
 	// text definitions were not found. Decls that became default
 	// because of a parse error are not in this list.
-	int							checksum;		// checksum of all loaded decl text
-	int							indent;			// for MediaPrint
-	bool						insideLevelLoad;
+	int										   checksum; // checksum of all loaded decl text
+	int										   indent;	 // for MediaPrint
+	bool									   insideLevelLoad;
 
-	static idCVar				decl_show;
+	static idCVar							   decl_show;
 
 private:
-	static void					ListDecls_f( const idCmdArgs& args );
-	static void					ReloadDecls_f( const idCmdArgs& args );
-	static void					TouchDecl_f( const idCmdArgs& args );
+	static void ListDecls_f( const idCmdArgs& args );
+	static void ReloadDecls_f( const idCmdArgs& args );
+	static void TouchDecl_f( const idCmdArgs& args );
 	// RB begin
-	static void                 ExportEntityDefsToBlender_f( const idCmdArgs& args );
-	static void                 ExportMaterialsToBlender_f( const idCmdArgs& args );
-	static void                 ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args );
-	static void                 ExportModelsToTrenchBroom_f( const idCmdArgs& args );
-	static void                 ExportImagesToTrenchBroom_f( const idCmdArgs& args );
+	static void ExportEntityDefsToBlender_f( const idCmdArgs& args );
+	static void ExportMaterialsToBlender_f( const idCmdArgs& args );
+	static void ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args );
+	static void ExportModelsToTrenchBroom_f( const idCmdArgs& args );
+	static void ExportImagesToTrenchBroom_f( const idCmdArgs& args );
 
-	static void                 MakeZooMapForModels_f( const idCmdArgs& args );
+	static void MakeZooMapForModels_f( const idCmdArgs& args );
 	// RB end
 };
 
-idCVar idDeclManagerLocal::decl_show( "decl_show", "0", CVAR_SYSTEM, "set to 1 to print parses, 2 to also print references", 0, 2, idCmdSystem::ArgCompletion_Integer<0, 2> );
+idCVar			   idDeclManagerLocal::decl_show( "decl_show", "0", CVAR_SYSTEM, "set to 1 to print parses, 2 to also print references", 0, 2, idCmdSystem::ArgCompletion_Integer<0, 2> );
 
-idDeclManagerLocal	declManagerLocal;
-idDeclManager* 		declManager = &declManagerLocal;
+idDeclManagerLocal declManagerLocal;
+idDeclManager*	   declManager = &declManagerLocal;
 
 /*
 ====================================================================================
@@ -296,78 +297,297 @@ idDeclManager* 		declManager = &declManagerLocal;
 ====================================================================================
 */
 
-const int MAX_HUFFMAN_SYMBOLS	= 256;
+const int		   MAX_HUFFMAN_SYMBOLS = 256;
 
-typedef struct huffmanNode_s
-{
-	int						symbol;
-	int						frequency;
-	struct huffmanNode_s* 	next;
-	struct huffmanNode_s* 	children[2];
+typedef struct huffmanNode_s {
+	int					  symbol;
+	int					  frequency;
+	struct huffmanNode_s* next;
+	struct huffmanNode_s* children[2];
 } huffmanNode_t;
 
-typedef struct huffmanCode_s
-{
-	unsigned int			bits[8]; // DG: use int instead of long for 64bit compatibility
-	int						numBits;
+typedef struct huffmanCode_s {
+	unsigned int bits[8]; // DG: use int instead of long for 64bit compatibility
+	int			 numBits;
 } huffmanCode_t;
 
 // compression ratio = 64%
-static int huffmanFrequencies[] =
-{
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00078fb6, 0x000352a7, 0x00000002, 0x00000001, 0x0002795e, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00049600, 0x000000dd, 0x00018732, 0x0000005a, 0x00000007, 0x00000092, 0x0000000a, 0x00000919,
-	0x00002dcf, 0x00002dda, 0x00004dfc, 0x0000039a, 0x000058be, 0x00002d13, 0x00014d8c, 0x00023c60,
-	0x0002ddb0, 0x0000d1fc, 0x000078c4, 0x00003ec7, 0x00003113, 0x00006b59, 0x00002499, 0x0000184a,
-	0x0000250b, 0x00004e38, 0x000001ca, 0x00000011, 0x00000020, 0x000023da, 0x00000012, 0x00000091,
-	0x0000000b, 0x00000b14, 0x0000035d, 0x0000137e, 0x000020c9, 0x00000e11, 0x000004b4, 0x00000737,
-	0x000006b8, 0x00001110, 0x000006b3, 0x000000fe, 0x00000f02, 0x00000d73, 0x000005f6, 0x00000be4,
-	0x00000d86, 0x0000014d, 0x00000d89, 0x0000129b, 0x00000db3, 0x0000015a, 0x00000167, 0x00000375,
-	0x00000028, 0x00000112, 0x00000018, 0x00000678, 0x0000081a, 0x00000677, 0x00000003, 0x00018112,
-	0x00000001, 0x000441ee, 0x000124b0, 0x0001fa3f, 0x00026125, 0x0005a411, 0x0000e50f, 0x00011820,
-	0x00010f13, 0x0002e723, 0x00003518, 0x00005738, 0x0002cc26, 0x0002a9b7, 0x0002db81, 0x0003b5fa,
-	0x000185d2, 0x00001299, 0x00030773, 0x0003920d, 0x000411cd, 0x00018751, 0x00005fbd, 0x000099b0,
-	0x00009242, 0x00007cf2, 0x00002809, 0x00005a1d, 0x00000001, 0x00005a1d, 0x00000001, 0x00000001,
+static int huffmanFrequencies[] = {
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00078fb6,
+	0x000352a7,
+	0x00000002,
+	0x00000001,
+	0x0002795e,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00049600,
+	0x000000dd,
+	0x00018732,
+	0x0000005a,
+	0x00000007,
+	0x00000092,
+	0x0000000a,
+	0x00000919,
+	0x00002dcf,
+	0x00002dda,
+	0x00004dfc,
+	0x0000039a,
+	0x000058be,
+	0x00002d13,
+	0x00014d8c,
+	0x00023c60,
+	0x0002ddb0,
+	0x0000d1fc,
+	0x000078c4,
+	0x00003ec7,
+	0x00003113,
+	0x00006b59,
+	0x00002499,
+	0x0000184a,
+	0x0000250b,
+	0x00004e38,
+	0x000001ca,
+	0x00000011,
+	0x00000020,
+	0x000023da,
+	0x00000012,
+	0x00000091,
+	0x0000000b,
+	0x00000b14,
+	0x0000035d,
+	0x0000137e,
+	0x000020c9,
+	0x00000e11,
+	0x000004b4,
+	0x00000737,
+	0x000006b8,
+	0x00001110,
+	0x000006b3,
+	0x000000fe,
+	0x00000f02,
+	0x00000d73,
+	0x000005f6,
+	0x00000be4,
+	0x00000d86,
+	0x0000014d,
+	0x00000d89,
+	0x0000129b,
+	0x00000db3,
+	0x0000015a,
+	0x00000167,
+	0x00000375,
+	0x00000028,
+	0x00000112,
+	0x00000018,
+	0x00000678,
+	0x0000081a,
+	0x00000677,
+	0x00000003,
+	0x00018112,
+	0x00000001,
+	0x000441ee,
+	0x000124b0,
+	0x0001fa3f,
+	0x00026125,
+	0x0005a411,
+	0x0000e50f,
+	0x00011820,
+	0x00010f13,
+	0x0002e723,
+	0x00003518,
+	0x00005738,
+	0x0002cc26,
+	0x0002a9b7,
+	0x0002db81,
+	0x0003b5fa,
+	0x000185d2,
+	0x00001299,
+	0x00030773,
+	0x0003920d,
+	0x000411cd,
+	0x00018751,
+	0x00005fbd,
+	0x000099b0,
+	0x00009242,
+	0x00007cf2,
+	0x00002809,
+	0x00005a1d,
+	0x00000001,
+	0x00005a1d,
+	0x00000001,
+	0x00000001,
 
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
-	0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001, 0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
+	0x00000001,
 };
 
-static huffmanCode_t huffmanCodes[MAX_HUFFMAN_SYMBOLS];
-static huffmanNode_t* huffmanTree = NULL;
-static int totalUncompressedLength = 0;
-static int totalCompressedLength = 0;
-static int maxHuffmanBits = 0;
-
+static huffmanCode_t  huffmanCodes[MAX_HUFFMAN_SYMBOLS];
+static huffmanNode_t* huffmanTree			  = NULL;
+static int			  totalUncompressedLength = 0;
+static int			  totalCompressedLength	  = 0;
+static int			  maxHuffmanBits		  = 0;
 
 /*
 ================
 ClearHuffmanFrequencies
 ================
 */
-void ClearHuffmanFrequencies()
+void				  ClearHuffmanFrequencies()
 {
 	int i;
 
-	for( i = 0; i < MAX_HUFFMAN_SYMBOLS; i++ )
-	{
+	for( i = 0; i < MAX_HUFFMAN_SYMBOLS; i++ ) {
 		huffmanFrequencies[i] = 1;
 	}
 }
@@ -379,26 +599,21 @@ InsertHuffmanNode
 */
 huffmanNode_t* InsertHuffmanNode( huffmanNode_t* firstNode, huffmanNode_t* node )
 {
-	huffmanNode_t* n, *lastNode;
+	huffmanNode_t *n, *lastNode;
 
 	lastNode = NULL;
-	for( n = firstNode; n; n = n->next )
-	{
-		if( node->frequency <= n->frequency )
-		{
+	for( n = firstNode; n; n = n->next ) {
+		if( node->frequency <= n->frequency ) {
 			break;
 		}
 		lastNode = n;
 	}
-	if( lastNode )
-	{
-		node->next = lastNode->next;
+	if( lastNode ) {
+		node->next	   = lastNode->next;
 		lastNode->next = node;
-	}
-	else
-	{
+	} else {
 		node->next = firstNode;
-		firstNode = node;
+		firstNode  = node;
 	}
 	return firstNode;
 }
@@ -410,21 +625,17 @@ BuildHuffmanCode_r
 */
 void BuildHuffmanCode_r( huffmanNode_t* node, huffmanCode_t code, huffmanCode_t codes[MAX_HUFFMAN_SYMBOLS] )
 {
-	if( node->symbol == -1 )
-	{
+	if( node->symbol == -1 ) {
 		huffmanCode_t newCode = code;
 		assert( code.numBits < sizeof( codes[0].bits ) * 8 );
 		newCode.numBits++;
-		if( code.numBits > maxHuffmanBits )
-		{
+		if( code.numBits > maxHuffmanBits ) {
 			maxHuffmanBits = newCode.numBits;
 		}
 		BuildHuffmanCode_r( node->children[0], newCode, codes );
 		newCode.bits[code.numBits >> 5] |= 1 << ( code.numBits & 31 );
 		BuildHuffmanCode_r( node->children[1], newCode, codes );
-	}
-	else
-	{
+	} else {
 		assert( code.numBits <= sizeof( codes[0].bits ) * 8 );
 		codes[node->symbol] = code;
 	}
@@ -437,8 +648,7 @@ FreeHuffmanTree_r
 */
 void FreeHuffmanTree_r( huffmanNode_t* node )
 {
-	if( node->symbol == -1 )
-	{
+	if( node->symbol == -1 ) {
 		FreeHuffmanTree_r( node->children[0] );
 		FreeHuffmanTree_r( node->children[1] );
 	}
@@ -452,14 +662,12 @@ HuffmanHeight_r
 */
 int HuffmanHeight_r( huffmanNode_t* node )
 {
-	if( node == NULL )
-	{
+	if( node == NULL ) {
 		return -1;
 	}
-	int left = HuffmanHeight_r( node->children[0] );
+	int left  = HuffmanHeight_r( node->children[0] );
 	int right = HuffmanHeight_r( node->children[1] );
-	if( left > right )
-	{
+	if( left > right ) {
 		return left + 1;
 	}
 	return right + 1;
@@ -472,31 +680,29 @@ SetupHuffman
 */
 void SetupHuffman()
 {
-	int i, height;
-	huffmanNode_t* firstNode, *node;
-	huffmanCode_t code;
+	int			   i, height;
+	huffmanNode_t *firstNode, *node;
+	huffmanCode_t  code;
 
 	firstNode = NULL;
-	for( i = 0; i < MAX_HUFFMAN_SYMBOLS; i++ )
-	{
-		node = new( TAG_DECL ) huffmanNode_t;
-		node->symbol = i;
-		node->frequency = huffmanFrequencies[i];
-		node->next = NULL;
+	for( i = 0; i < MAX_HUFFMAN_SYMBOLS; i++ ) {
+		node			  = new( TAG_DECL ) huffmanNode_t;
+		node->symbol	  = i;
+		node->frequency	  = huffmanFrequencies[i];
+		node->next		  = NULL;
 		node->children[0] = NULL;
 		node->children[1] = NULL;
-		firstNode = InsertHuffmanNode( firstNode, node );
+		firstNode		  = InsertHuffmanNode( firstNode, node );
 	}
 
-	for( i = 1; i < MAX_HUFFMAN_SYMBOLS; i++ )
-	{
-		node = new( TAG_DECL ) huffmanNode_t;
-		node->symbol = -1;
-		node->frequency = firstNode->frequency + firstNode->next->frequency;
-		node->next = NULL;
+	for( i = 1; i < MAX_HUFFMAN_SYMBOLS; i++ ) {
+		node			  = new( TAG_DECL ) huffmanNode_t;
+		node->symbol	  = -1;
+		node->frequency	  = firstNode->frequency + firstNode->next->frequency;
+		node->next		  = NULL;
 		node->children[0] = firstNode;
 		node->children[1] = firstNode->next;
-		firstNode = InsertHuffmanNode( firstNode->next->next, node );
+		firstNode		  = InsertHuffmanNode( firstNode->next->next, node );
 	}
 
 	maxHuffmanBits = 0;
@@ -516,8 +722,7 @@ ShutdownHuffman
 */
 void ShutdownHuffman()
 {
-	if( huffmanTree )
-	{
+	if( huffmanTree ) {
 		FreeHuffmanTree_r( huffmanTree );
 	}
 }
@@ -529,22 +734,19 @@ HuffmanCompressText
 */
 int HuffmanCompressText( const char* text, int textLength, byte* compressed, int maxCompressedSize )
 {
-	int i, j;
+	int		 i, j;
 	idBitMsg msg;
 
 	totalUncompressedLength += textLength;
 
 	msg.InitWrite( compressed, maxCompressedSize );
 	msg.BeginWriting();
-	for( i = 0; i < textLength; i++ )
-	{
+	for( i = 0; i < textLength; i++ ) {
 		const huffmanCode_t& code = huffmanCodes[( unsigned char )text[i]];
-		for( j = 0; j < ( code.numBits >> 5 ); j++ )
-		{
+		for( j = 0; j < ( code.numBits >> 5 ); j++ ) {
 			msg.WriteBits( code.bits[j], 32 );
 		}
-		if( code.numBits & 31 )
-		{
+		if( code.numBits & 31 ) {
 			msg.WriteBits( code.bits[j], code.numBits & 31 );
 		}
 	}
@@ -561,22 +763,19 @@ HuffmanDecompressText
 */
 int HuffmanDecompressText( char* text, int textLength, const byte* compressed, int compressedSize )
 {
-	int i, bit;
-	idBitMsg msg;
+	int			   i, bit;
+	idBitMsg	   msg;
 	huffmanNode_t* node;
 
 	msg.InitRead( compressed, compressedSize );
 	msg.SetSize( compressedSize );
 	msg.BeginReading();
-	for( i = 0; i < textLength; i++ )
-	{
+	for( i = 0; i < textLength; i++ ) {
 		node = huffmanTree;
-		do
-		{
-			bit = msg.ReadBits( 1 );
+		do {
+			bit	 = msg.ReadBits( 1 );
 			node = node->children[bit];
-		}
-		while( node->symbol == -1 );
+		} while( node->symbol == -1 );
 		text[i] = node->symbol;
 	}
 	text[i] = '\0';
@@ -590,18 +789,21 @@ ListHuffmanFrequencies_f
 */
 void ListHuffmanFrequencies_f( const idCmdArgs& args )
 {
-	int		i;
+	int	  i;
 	float compression;
 	compression = !totalUncompressedLength ? 100 : 100 * totalCompressedLength / totalUncompressedLength;
 	common->Printf( "// compression ratio = %d%%\n", ( int )compression );
 	common->Printf( "static int huffmanFrequencies[] = {\n" );
-	for( i = 0; i < MAX_HUFFMAN_SYMBOLS; i += 8 )
-	{
+	for( i = 0; i < MAX_HUFFMAN_SYMBOLS; i += 8 ) {
 		common->Printf( "\t0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x, 0x%08x,\n",
-						huffmanFrequencies[i + 0], huffmanFrequencies[i + 1],
-						huffmanFrequencies[i + 2], huffmanFrequencies[i + 3],
-						huffmanFrequencies[i + 4], huffmanFrequencies[i + 5],
-						huffmanFrequencies[i + 6], huffmanFrequencies[i + 7] );
+			huffmanFrequencies[i + 0],
+			huffmanFrequencies[i + 1],
+			huffmanFrequencies[i + 2],
+			huffmanFrequencies[i + 3],
+			huffmanFrequencies[i + 4],
+			huffmanFrequencies[i + 5],
+			huffmanFrequencies[i + 6],
+			huffmanFrequencies[i + 7] );
 	}
 	common->Printf( "}\n" );
 }
@@ -626,13 +828,13 @@ idDeclFile::idDeclFile
 */
 idDeclFile::idDeclFile( const char* fileName, declType_t defaultType )
 {
-	this->fileName = fileName;
+	this->fileName	  = fileName;
 	this->defaultType = defaultType;
-	this->timestamp = 0;
-	this->checksum = 0;
-	this->fileSize = 0;
-	this->numLines = 0;
-	this->decls = NULL;
+	this->timestamp	  = 0;
+	this->checksum	  = 0;
+	this->fileSize	  = 0;
+	this->numLines	  = 0;
+	this->decls		  = NULL;
 }
 
 /*
@@ -642,13 +844,13 @@ idDeclFile::idDeclFile
 */
 idDeclFile::idDeclFile()
 {
-	this->fileName = "<implicit file>";
+	this->fileName	  = "<implicit file>";
 	this->defaultType = DECL_MAX_TYPES;
-	this->timestamp = 0;
-	this->checksum = 0;
-	this->fileSize = 0;
-	this->numLines = 0;
-	this->decls = NULL;
+	this->timestamp	  = 0;
+	this->checksum	  = 0;
+	this->fileSize	  = 0;
+	this->numLines	  = 0;
+	this->decls		  = NULL;
 }
 
 /*
@@ -661,13 +863,11 @@ ForceReload will cause it to reload even if the timestamp hasn't changed
 void idDeclFile::Reload( bool force )
 {
 	// check for an unchanged timestamp
-	if( !force && timestamp != 0 )
-	{
-		ID_TIME_T	testTimeStamp;
+	if( !force && timestamp != 0 ) {
+		ID_TIME_T testTimeStamp;
 		fileSystem->ReadFile( fileName, NULL, &testTimeStamp );
 
-		if( testTimeStamp == timestamp )
-		{
+		if( testTimeStamp == timestamp ) {
 			return;
 		}
 	}
@@ -687,36 +887,33 @@ int c_savedMemory = 0;
 
 int idDeclFile::LoadAndParse()
 {
-	int			i, numTypes;
-	idLexer		src;
-	idToken		token;
-	int			startMarker;
-	char* 		buffer;
-	int			length, size;
-	int			sourceLine;
-	idStr		name;
+	int			 i, numTypes;
+	idLexer		 src;
+	idToken		 token;
+	int			 startMarker;
+	char*		 buffer;
+	int			 length, size;
+	int			 sourceLine;
+	idStr		 name;
 	idDeclLocal* newDecl;
-	bool		reparse;
+	bool		 reparse;
 
 	// load the text
 	common->DPrintf( "...loading '%s'\n", fileName.c_str() );
 	length = fileSystem->ReadFile( fileName, ( void** )&buffer, &timestamp );
-	if( length == -1 )
-	{
+	if( length == -1 ) {
 		common->FatalError( "couldn't load %s", fileName.c_str() );
 		return 0;
 	}
 
-	if( !src.LoadMemory( buffer, length, fileName ) )
-	{
+	if( !src.LoadMemory( buffer, length, fileName ) ) {
 		common->Error( "Couldn't parse %s", fileName.c_str() );
 		Mem_Free( buffer );
 		return 0;
 	}
 
 	// mark all the defs that were from the last reload of this file
-	for( idDeclLocal* decl = decls; decl; decl = decl->nextInFile )
-	{
+	for( idDeclLocal* decl = decls; decl; decl = decl->nextInFile ) {
 		decl->redefinedInReload = false;
 	}
 
@@ -727,15 +924,12 @@ int idDeclFile::LoadAndParse()
 	fileSize = length;
 
 	// scan through, identifying each individual declaration
-	while( 1 )
-	{
-
+	while( 1 ) {
 		startMarker = src.GetFileOffset();
-		sourceLine = src.GetLineNum();
+		sourceLine	= src.GetLineNum();
 
 		// parse the decl type name
-		if( !src.ReadToken( &token ) )
-		{
+		if( !src.ReadToken( &token ) ) {
 			break;
 		}
 
@@ -743,33 +937,23 @@ int idDeclFile::LoadAndParse()
 
 		// get the decl type from the type name
 		numTypes = declManagerLocal.GetNumDeclTypes();
-		for( i = 0; i < numTypes; i++ )
-		{
+		for( i = 0; i < numTypes; i++ ) {
 			idDeclType* typeInfo = declManagerLocal.GetDeclType( i );
-			if( typeInfo != NULL && typeInfo->typeName.Icmp( token ) == 0 )
-			{
-				identifiedType = ( declType_t ) typeInfo->type;
+			if( typeInfo != NULL && typeInfo->typeName.Icmp( token ) == 0 ) {
+				identifiedType = ( declType_t )typeInfo->type;
 				break;
 			}
 		}
 
-		if( i >= numTypes )
-		{
-
-			if( token.Icmp( "{" ) == 0 )
-			{
-
+		if( i >= numTypes ) {
+			if( token.Icmp( "{" ) == 0 ) {
 				// if we ever see an open brace, we somehow missed the [type] <name> prefix
 				src.Warning( "Missing decl name" );
 				src.SkipBracedSection( false );
 				continue;
 
-			}
-			else
-			{
-
-				if( defaultType == DECL_MAX_TYPES )
-				{
+			} else {
+				if( defaultType == DECL_MAX_TYPES ) {
 					src.Warning( "No type" );
 					continue;
 				}
@@ -780,14 +964,12 @@ int idDeclFile::LoadAndParse()
 		}
 
 		// now parse the name
-		if( !src.ReadToken( &token ) )
-		{
+		if( !src.ReadToken( &token ) ) {
 			src.Warning( "Type without definition at end of file" );
 			break;
 		}
 
-		if( !token.Icmp( "{" ) )
-		{
+		if( !token.Icmp( "{" ) ) {
 			// if we ever see an open brace, we somehow missed the [type] <name> prefix
 			src.Warning( "Missing decl name" );
 			src.SkipBracedSection( false );
@@ -795,8 +977,7 @@ int idDeclFile::LoadAndParse()
 		}
 
 		// FIXME: export decls are only used by the model exporter, they are skipped here for now
-		if( identifiedType == DECL_MODELEXPORT )
-		{
+		if( identifiedType == DECL_MODELEXPORT ) {
 			src.SkipBracedSection();
 			continue;
 		}
@@ -804,13 +985,11 @@ int idDeclFile::LoadAndParse()
 		name = token;
 
 		// make sure there's a '{'
-		if( !src.ReadToken( &token ) )
-		{
+		if( !src.ReadToken( &token ) ) {
 			src.Warning( "Type without definition at end of file" );
 			break;
 		}
-		if( token != "{" )
-		{
+		if( token != "{" ) {
 			src.Warning( "Expecting '{' but found '%s'", token.c_str() );
 			continue;
 		}
@@ -823,46 +1002,38 @@ int idDeclFile::LoadAndParse()
 		// look it up, possibly getting a newly created default decl
 		reparse = false;
 		newDecl = declManagerLocal.FindTypeWithoutParsing( identifiedType, name, false );
-		if( newDecl )
-		{
+		if( newDecl ) {
 			// update the existing copy
-			if( newDecl->sourceFile != this || newDecl->redefinedInReload )
-			{
-				src.Warning( "%s '%s' previously defined at %s:%i", declManagerLocal.GetDeclNameFromType( identifiedType ),
-							 name.c_str(), newDecl->sourceFile->fileName.c_str(), newDecl->sourceLine );
+			if( newDecl->sourceFile != this || newDecl->redefinedInReload ) {
+				src.Warning( "%s '%s' previously defined at %s:%i", declManagerLocal.GetDeclNameFromType( identifiedType ), name.c_str(), newDecl->sourceFile->fileName.c_str(), newDecl->sourceLine );
 				continue;
 			}
-			if( newDecl->declState != DS_UNPARSED )
-			{
+			if( newDecl->declState != DS_UNPARSED ) {
 				reparse = true;
 			}
-		}
-		else
-		{
+		} else {
 			// allow it to be created as a default, then add it to the per-file list
-			newDecl = declManagerLocal.FindTypeWithoutParsing( identifiedType, name, true );
+			newDecl				= declManagerLocal.FindTypeWithoutParsing( identifiedType, name, true );
 			newDecl->nextInFile = this->decls;
-			this->decls = newDecl;
+			this->decls			= newDecl;
 		}
 
 		newDecl->redefinedInReload = true;
 
-		if( newDecl->textSource )
-		{
+		if( newDecl->textSource ) {
 			Mem_Free( newDecl->textSource );
 			newDecl->textSource = NULL;
 		}
 
 		newDecl->SetTextLocal( buffer + startMarker, size );
-		newDecl->sourceFile = this;
+		newDecl->sourceFile		  = this;
 		newDecl->sourceTextOffset = startMarker;
 		newDecl->sourceTextLength = size;
-		newDecl->sourceLine = sourceLine;
-		newDecl->declState = DS_UNPARSED;
+		newDecl->sourceLine		  = sourceLine;
+		newDecl->declState		  = DS_UNPARSED;
 
 		// if it is currently in use, reparse it immedaitely
-		if( reparse )
-		{
+		if( reparse ) {
 			newDecl->ParseLocal();
 		}
 	}
@@ -872,14 +1043,12 @@ int idDeclFile::LoadAndParse()
 	Mem_Free( buffer );
 
 	// any defs that weren't redefinedInReload should now be defaulted
-	for( idDeclLocal* decl = decls ; decl ; decl = decl->nextInFile )
-	{
-		if( decl->redefinedInReload == false )
-		{
+	for( idDeclLocal* decl = decls; decl; decl = decl->nextInFile ) {
+		if( decl->redefinedInReload == false ) {
 			decl->MakeDefault();
 			decl->sourceTextOffset = decl->sourceFile->fileSize;
 			decl->sourceTextLength = 0;
-			decl->sourceLine = decl->sourceFile->numLines;
+			decl->sourceLine	   = decl->sourceFile->numLines;
 		}
 	}
 
@@ -901,7 +1070,7 @@ const char* listDeclStrings[] = { "current", "all", "ever", NULL };
 idDeclManagerLocal::Init
 ===================
 */
-void idDeclManagerLocal::Init()
+void		idDeclManagerLocal::Init()
 {
 	common->Printf( "----- Initializing Decls -----\n" );
 
@@ -916,24 +1085,24 @@ void idDeclManagerLocal::Init()
 #endif
 
 	// decls used throughout the engine
-	RegisterDeclType( "table",				DECL_TABLE,			idDeclAllocator<idDeclTable> );
-	RegisterDeclType( "material",			DECL_MATERIAL,		idDeclAllocator<idMaterial> );
-	RegisterDeclType( "skin",				DECL_SKIN,			idDeclAllocator<idDeclSkin> );
-	RegisterDeclType( "entityDef",			DECL_ENTITYDEF,		idDeclAllocator<idDeclEntityDef> );
+	RegisterDeclType( "table", DECL_TABLE, idDeclAllocator<idDeclTable> );
+	RegisterDeclType( "material", DECL_MATERIAL, idDeclAllocator<idMaterial> );
+	RegisterDeclType( "skin", DECL_SKIN, idDeclAllocator<idDeclSkin> );
+	RegisterDeclType( "entityDef", DECL_ENTITYDEF, idDeclAllocator<idDeclEntityDef> );
 
 #if !defined( DMAP )
-	RegisterDeclType( "sound",				DECL_SOUND,			idDeclAllocator<idSoundShader> );
-	RegisterDeclType( "mapDef",				DECL_MAPDEF,		idDeclAllocator<idDeclEntityDef> );
-	RegisterDeclType( "fx",					DECL_FX,			idDeclAllocator<idDeclFX> );
-	RegisterDeclType( "particle",			DECL_PARTICLE,		idDeclAllocator<idDeclParticle> );
-	RegisterDeclType( "articulatedFigure",	DECL_AF,			idDeclAllocator<idDeclAF> );
-	RegisterDeclType( "pda",				DECL_PDA,			idDeclAllocator<idDeclPDA> );
-	RegisterDeclType( "email",				DECL_EMAIL,			idDeclAllocator<idDeclEmail> );
-	RegisterDeclType( "video",				DECL_VIDEO,			idDeclAllocator<idDeclVideo> );
-	RegisterDeclType( "audio",				DECL_AUDIO,			idDeclAllocator<idDeclAudio> );
+	RegisterDeclType( "sound", DECL_SOUND, idDeclAllocator<idSoundShader> );
+	RegisterDeclType( "mapDef", DECL_MAPDEF, idDeclAllocator<idDeclEntityDef> );
+	RegisterDeclType( "fx", DECL_FX, idDeclAllocator<idDeclFX> );
+	RegisterDeclType( "particle", DECL_PARTICLE, idDeclAllocator<idDeclParticle> );
+	RegisterDeclType( "articulatedFigure", DECL_AF, idDeclAllocator<idDeclAF> );
+	RegisterDeclType( "pda", DECL_PDA, idDeclAllocator<idDeclPDA> );
+	RegisterDeclType( "email", DECL_EMAIL, idDeclAllocator<idDeclEmail> );
+	RegisterDeclType( "video", DECL_VIDEO, idDeclAllocator<idDeclVideo> );
+	RegisterDeclType( "audio", DECL_AUDIO, idDeclAllocator<idDeclAudio> );
 #endif
 
-	RegisterDeclFolder( "materials",		".mtr",				DECL_MATERIAL );
+	RegisterDeclFolder( "materials", ".mtr", DECL_MATERIAL );
 
 #if !defined( DMAP )
 	// add console commands
@@ -992,8 +1161,8 @@ void idDeclManagerLocal::Init()
 
 void idDeclManagerLocal::Init2()
 {
-	RegisterDeclFolder( "skins",			".skin",			DECL_SKIN );
-	RegisterDeclFolder( "sound",			".sndshd",			DECL_SOUND );
+	RegisterDeclFolder( "skins", ".skin", DECL_SKIN );
+	RegisterDeclFolder( "sound", ".sndshd", DECL_SOUND );
 }
 
 /*
@@ -1021,17 +1190,17 @@ void idDeclManagerLocal::InitTool()
 #endif
 
 	// decls used throughout the engine
-	RegisterDeclType( "table",				DECL_TABLE,			idDeclAllocator<idDeclTable> );
-	RegisterDeclType( "material",			DECL_MATERIAL,		idDeclAllocator<idMaterial> );
-	RegisterDeclType( "model",				DECL_MODELDEF,		idDeclAllocator<idDeclModelDef> );
-	RegisterDeclType( "export",				DECL_MODELEXPORT,	idDeclAllocator<idDecl> );
-	RegisterDeclType( "skin",				DECL_SKIN,			idDeclAllocator<idDeclSkin> );
-	RegisterDeclType( "entityDef",			DECL_ENTITYDEF,		idDeclAllocator<idDeclEntityDef> );
-	RegisterDeclType( "mapDef",				DECL_MAPDEF,		idDeclAllocator<idDeclEntityDef> );
+	RegisterDeclType( "table", DECL_TABLE, idDeclAllocator<idDeclTable> );
+	RegisterDeclType( "material", DECL_MATERIAL, idDeclAllocator<idMaterial> );
+	RegisterDeclType( "model", DECL_MODELDEF, idDeclAllocator<idDeclModelDef> );
+	RegisterDeclType( "export", DECL_MODELEXPORT, idDeclAllocator<idDecl> );
+	RegisterDeclType( "skin", DECL_SKIN, idDeclAllocator<idDeclSkin> );
+	RegisterDeclType( "entityDef", DECL_ENTITYDEF, idDeclAllocator<idDeclEntityDef> );
+	RegisterDeclType( "mapDef", DECL_MAPDEF, idDeclAllocator<idDeclEntityDef> );
 
-	RegisterDeclFolder( "materials",		".mtr",				DECL_MATERIAL );
-	RegisterDeclFolder( "skins",			".skin",			DECL_SKIN );
-	RegisterDeclFolder( "def",				".def",				DECL_ENTITYDEF );
+	RegisterDeclFolder( "materials", ".mtr", DECL_MATERIAL );
+	RegisterDeclFolder( "skins", ".skin", DECL_SKIN );
+	RegisterDeclFolder( "def", ".def", DECL_ENTITYDEF );
 
 	common->Printf( "------------------------------\n" );
 }
@@ -1043,22 +1212,18 @@ idDeclManagerLocal::Shutdown
 */
 void idDeclManagerLocal::Shutdown()
 {
-	int			i, j;
+	int			 i, j;
 	idDeclLocal* decl;
 
 	// free decls
-	for( i = 0; i < DECL_MAX_TYPES; i++ )
-	{
-		for( j = 0; j < linearLists[i].Num(); j++ )
-		{
+	for( i = 0; i < DECL_MAX_TYPES; i++ ) {
+		for( j = 0; j < linearLists[i].Num(); j++ ) {
 			decl = linearLists[i][j];
-			if( decl->self != NULL )
-			{
+			if( decl->self != NULL ) {
 				decl->self->FreeData();
 				delete decl->self;
 			}
-			if( decl->textSource )
-			{
+			if( decl->textSource ) {
 				Mem_Free( decl->textSource );
 				decl->textSource = NULL;
 			}
@@ -1087,8 +1252,7 @@ idDeclManagerLocal::Reload
 */
 void idDeclManagerLocal::Reload( bool force )
 {
-	for( int i = 0; i < loadedFiles.Num(); i++ )
-	{
+	for( int i = 0; i < loadedFiles.Num(); i++ ) {
 		loadedFiles[i]->Reload( force );
 	}
 }
@@ -1104,11 +1268,9 @@ void idDeclManagerLocal::BeginLevelLoad()
 
 	// clear all the referencedThisLevel flags and purge all the data
 	// so the next reference will cause a reparse
-	for( int i = 0; i < DECL_MAX_TYPES; i++ )
-	{
-		int	num = linearLists[i].Num();
-		for( int j = 0 ; j < num ; j++ )
-		{
+	for( int i = 0; i < DECL_MAX_TYPES; i++ ) {
+		int num = linearLists[i].Num();
+		for( int j = 0; j < num; j++ ) {
 			idDeclLocal* decl = linearLists[i][j];
 			decl->Purge();
 		}
@@ -1133,23 +1295,21 @@ void idDeclManagerLocal::EndLevelLoad()
 idDeclManagerLocal::RegisterDeclType
 ===================
 */
-void idDeclManagerLocal::RegisterDeclType( const char* typeName, declType_t type, idDecl * ( *allocator )() )
+void idDeclManagerLocal::RegisterDeclType( const char* typeName, declType_t type, idDecl* ( *allocator )() )
 {
 	idDeclType* declType;
 
-	if( type < declTypes.Num() && declTypes[( int )type] )
-	{
+	if( type < declTypes.Num() && declTypes[( int )type] ) {
 		common->Warning( "idDeclManager::RegisterDeclType: type '%s' already exists", typeName );
 		return;
 	}
 
-	declType = new( TAG_DECL ) idDeclType;
-	declType->typeName = typeName;
-	declType->type = type;
+	declType			= new( TAG_DECL ) idDeclType;
+	declType->typeName	= typeName;
+	declType->type		= type;
 	declType->allocator = allocator;
 
-	if( ( int )type + 1 > declTypes.Num() )
-	{
+	if( ( int )type + 1 > declTypes.Num() ) {
 		declTypes.AssureSize( ( int )type + 1, NULL );
 	}
 	declTypes[type] = declType;
@@ -1162,29 +1322,24 @@ idDeclManagerLocal::RegisterDeclFolder
 */
 void idDeclManagerLocal::RegisterDeclFolder( const char* folder, const char* extension, declType_t defaultType )
 {
-	int i, j;
-	idStr fileName;
+	int			  i, j;
+	idStr		  fileName;
 	idDeclFolder* declFolder;
-	idFileList* fileList;
-	idDeclFile* df;
+	idFileList*	  fileList;
+	idDeclFile*	  df;
 
 	// check whether this folder / extension combination already exists
-	for( i = 0; i < declFolders.Num(); i++ )
-	{
-		if( declFolders[i]->folder.Icmp( folder ) == 0 && declFolders[i]->extension.Icmp( extension ) == 0 )
-		{
+	for( i = 0; i < declFolders.Num(); i++ ) {
+		if( declFolders[i]->folder.Icmp( folder ) == 0 && declFolders[i]->extension.Icmp( extension ) == 0 ) {
 			break;
 		}
 	}
-	if( i < declFolders.Num() )
-	{
+	if( i < declFolders.Num() ) {
 		declFolder = declFolders[i];
-	}
-	else
-	{
-		declFolder = new( TAG_DECL ) idDeclFolder;
-		declFolder->folder = folder;
-		declFolder->extension = extension;
+	} else {
+		declFolder				= new( TAG_DECL ) idDeclFolder;
+		declFolder->folder		= folder;
+		declFolder->extension	= extension;
 		declFolder->defaultType = defaultType;
 		declFolders.Append( declFolder );
 	}
@@ -1193,24 +1348,18 @@ void idDeclManagerLocal::RegisterDeclFolder( const char* folder, const char* ext
 	fileList = fileSystem->ListFiles( declFolder->folder, declFolder->extension, true );
 
 	// load and parse decl files
-	for( i = 0; i < fileList->GetNumFiles(); i++ )
-	{
+	for( i = 0; i < fileList->GetNumFiles(); i++ ) {
 		fileName = declFolder->folder + "/" + fileList->GetFile( i );
 
 		// check whether this file has already been loaded
-		for( j = 0; j < loadedFiles.Num(); j++ )
-		{
-			if( fileName.Icmp( loadedFiles[j]->fileName ) == 0 )
-			{
+		for( j = 0; j < loadedFiles.Num(); j++ ) {
+			if( fileName.Icmp( loadedFiles[j]->fileName ) == 0 ) {
 				break;
 			}
 		}
-		if( j < loadedFiles.Num() )
-		{
+		if( j < loadedFiles.Num() ) {
 			df = loadedFiles[j];
-		}
-		else
-		{
+		} else {
 			df = new( TAG_DECL ) idDeclFile( fileName, defaultType );
 			loadedFiles.Append( df );
 		}
@@ -1227,36 +1376,31 @@ idDeclManagerLocal::GetChecksum
 */
 int idDeclManagerLocal::GetChecksum() const
 {
-	int i, j, total, num;
+	int	 i, j, total, num;
 	int* checksumData;
 
 	// get the total number of decls
 	total = 0;
-	for( i = 0; i < DECL_MAX_TYPES; i++ )
-	{
+	for( i = 0; i < DECL_MAX_TYPES; i++ ) {
 		total += linearLists[i].Num();
 	}
 
-	checksumData = ( int* ) _alloca16( total * 2 * sizeof( int ) );
+	checksumData = ( int* )_alloca16( total * 2 * sizeof( int ) );
 
 	total = 0;
-	for( i = 0; i < DECL_MAX_TYPES; i++ )
-	{
-		declType_t type = ( declType_t ) i;
+	for( i = 0; i < DECL_MAX_TYPES; i++ ) {
+		declType_t type = ( declType_t )i;
 
 		// FIXME: not particularly pretty but PDAs and associated decls are localized and should not be checksummed
-		if( type == DECL_PDA || type == DECL_VIDEO || type == DECL_AUDIO || type == DECL_EMAIL )
-		{
+		if( type == DECL_PDA || type == DECL_VIDEO || type == DECL_AUDIO || type == DECL_EMAIL ) {
 			continue;
 		}
 
 		num = linearLists[i].Num();
-		for( j = 0; j < num; j++ )
-		{
+		for( j = 0; j < num; j++ ) {
 			idDeclLocal* decl = linearLists[i][j];
 
-			if( decl->sourceFile == &implicitDecls )
-			{
+			if( decl->sourceFile == &implicitDecls ) {
 				continue;
 			}
 
@@ -1289,8 +1433,7 @@ const char* idDeclManagerLocal::GetDeclNameFromType( declType_t type ) const
 {
 	int typeIndex = ( int )type;
 
-	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL )
-	{
+	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL ) {
 		common->FatalError( "idDeclManager::GetDeclNameFromType: bad type: %i", typeIndex );
 	}
 	return declTypes[typeIndex]->typeName;
@@ -1305,10 +1448,8 @@ declType_t idDeclManagerLocal::GetDeclTypeFromName( const char* typeName ) const
 {
 	int i;
 
-	for( i = 0; i < declTypes.Num(); i++ )
-	{
-		if( declTypes[i] && declTypes[i]->typeName.Icmp( typeName ) == 0 )
-		{
+	for( i = 0; i < declTypes.Num(); i++ ) {
+		if( declTypes[i] && declTypes[i]->typeName.Icmp( typeName ) == 0 ) {
 			return ( declType_t )declTypes[i]->type;
 		}
 	}
@@ -1324,27 +1465,24 @@ External users will always cause the decl to be parsed before returning
 */
 const idDecl* idDeclManagerLocal::FindType( declType_t type, const char* name, bool makeDefault )
 {
-	idDeclLocal* decl;
+	idDeclLocal*			decl;
 
 	idScopedCriticalSection cs( mutex );
 
-	if( !name || !name[0] )
-	{
+	if( !name || !name[0] ) {
 		name = "_emptyName";
-		//common->Warning( "idDeclManager::FindType: empty %s name", GetDeclType( (int)type )->typeName.c_str() );
+		// common->Warning( "idDeclManager::FindType: empty %s name", GetDeclType( (int)type )->typeName.c_str() );
 	}
 
 	decl = FindTypeWithoutParsing( type, name, makeDefault );
-	if( !decl )
-	{
+	if( !decl ) {
 		return NULL;
 	}
 
 	decl->AllocateSelf();
 
 	// if it hasn't been parsed yet, parse it now
-	if( decl->declState == DS_UNPARSED )
-	{
+	if( decl->declState == DS_UNPARSED ) {
 		// GK: Let's hope I didn't break anything important with that
 		// RB answer: this should be no issue with Vulkan but could remain a problem with OpenGL
 #if 0
@@ -1363,7 +1501,7 @@ const idDecl* idDeclManagerLocal::FindType( declType_t type, const char* name, b
 
 	// mark it as referenced
 	decl->referencedThisLevel = true;
-	decl->everReferenced = true;
+	decl->everReferenced	  = true;
 
 	return decl->self;
 }
@@ -1377,8 +1515,7 @@ const idDecl* idDeclManagerLocal::FindDeclWithoutParsing( declType_t type, const
 {
 	idDeclLocal* decl;
 	decl = FindTypeWithoutParsing( type, name, makeDefault );
-	if( decl )
-	{
+	if( decl ) {
 		return decl->self;
 	}
 	return NULL;
@@ -1391,10 +1528,8 @@ idDeclManagerLocal::ReloadFile
 */
 void idDeclManagerLocal::ReloadFile( const char* filename, bool force )
 {
-	for( int i = 0; i < loadedFiles.Num(); i++ )
-	{
-		if( !loadedFiles[i]->fileName.Icmp( filename ) )
-		{
+	for( int i = 0; i < loadedFiles.Num(); i++ ) {
+		if( !loadedFiles[i]->fileName.Icmp( filename ) ) {
 			checksum ^= loadedFiles[i]->checksum;
 			loadedFiles[i]->Reload( force );
 			checksum ^= loadedFiles[i]->checksum;
@@ -1411,12 +1546,11 @@ int idDeclManagerLocal::GetNumDecls( declType_t type )
 {
 	int typeIndex = ( int )type;
 
-	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL )
-	{
+	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL ) {
 		common->FatalError( "idDeclManager::GetNumDecls: bad type: %i", typeIndex );
 		return 0;
 	}
-	return linearLists[ typeIndex ].Num();
+	return linearLists[typeIndex].Num();
 }
 
 /*
@@ -1428,21 +1562,18 @@ const idDecl* idDeclManagerLocal::DeclByIndex( declType_t type, int index, bool 
 {
 	int typeIndex = ( int )type;
 
-	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL )
-	{
+	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL ) {
 		common->FatalError( "idDeclManager::DeclByIndex: bad type: %i", typeIndex );
 		return NULL;
 	}
-	if( index < 0 || index >= linearLists[ typeIndex ].Num() )
-	{
+	if( index < 0 || index >= linearLists[typeIndex].Num() ) {
 		common->Error( "idDeclManager::DeclByIndex: out of range" );
 	}
-	idDeclLocal* decl = linearLists[ typeIndex ][ index ];
+	idDeclLocal* decl = linearLists[typeIndex][index];
 
 	decl->AllocateSelf();
 
-	if( forceParse && decl->declState == DS_UNPARSED )
-	{
+	if( forceParse && decl->declState == DS_UNPARSED ) {
 		decl->ParseLocal();
 	}
 
@@ -1469,73 +1600,51 @@ void idDeclManagerLocal::ListType( const idCmdArgs& args, declType_t type )
 {
 	bool all, ever;
 
-	if( !idStr::Icmp( args.Argv( 1 ), "all" ) )
-	{
+	if( !idStr::Icmp( args.Argv( 1 ), "all" ) ) {
 		all = true;
-	}
-	else
-	{
+	} else {
 		all = false;
 	}
-	if( !idStr::Icmp( args.Argv( 1 ), "ever" ) )
-	{
+	if( !idStr::Icmp( args.Argv( 1 ), "ever" ) ) {
 		ever = true;
-	}
-	else
-	{
+	} else {
 		ever = false;
 	}
 
 	common->Printf( "--------------------\n" );
 	int printed = 0;
-	int	count = linearLists[( int )type ].Num();
-	for( int i = 0 ; i < count ; i++ )
-	{
-		idDeclLocal* decl = linearLists[( int )type ][ i ];
+	int count	= linearLists[( int )type].Num();
+	for( int i = 0; i < count; i++ ) {
+		idDeclLocal* decl = linearLists[( int )type][i];
 
-		if( !all && decl->declState == DS_UNPARSED )
-		{
+		if( !all && decl->declState == DS_UNPARSED ) {
 			continue;
 		}
 
-		if( !all && !ever && !decl->referencedThisLevel )
-		{
+		if( !all && !ever && !decl->referencedThisLevel ) {
 			continue;
 		}
 
-		if( decl->parsedOutsideLevelLoad )
-		{
+		if( decl->parsedOutsideLevelLoad ) {
 			common->Printf( "!" );
-		}
-		else if( decl->referencedThisLevel )
-		{
+		} else if( decl->referencedThisLevel ) {
 			common->Printf( "*" );
-		}
-		else if( decl->everReferenced )
-		{
+		} else if( decl->everReferenced ) {
 			common->Printf( "." );
-		}
-		else
-		{
+		} else {
 			common->Printf( " " );
 		}
-		if( decl->declState == DS_DEFAULTED )
-		{
+		if( decl->declState == DS_DEFAULTED ) {
 			common->Printf( "D" );
-		}
-		else
-		{
+		} else {
 			common->Printf( " " );
 		}
 		common->Printf( "%4i: ", decl->index );
 		printed++;
-		if( decl->declState == DS_UNPARSED )
-		{
+		if( decl->declState == DS_UNPARSED ) {
 			// doesn't have any type specific data yet
 			common->Printf( "%s\n", decl->GetName() );
-		}
-		else
-		{
+		} else {
 			decl->self->List();
 		}
 	}
@@ -1552,37 +1661,31 @@ idDeclManagerLocal::PrintType
 void idDeclManagerLocal::PrintType( const idCmdArgs& args, declType_t type )
 {
 	// individual decl types may use additional command parameters
-	if( args.Argc() < 2 )
-	{
+	if( args.Argc() < 2 ) {
 		common->Printf( "USAGE: Print<decl type> <decl name> [type specific parms]\n" );
 		return;
 	}
 
 	// look it up, skipping the public path so it won't parse or reference
 	idDeclLocal* decl = FindTypeWithoutParsing( type, args.Argv( 1 ), false );
-	if( !decl )
-	{
-		common->Printf( "%s '%s' not found.\n", declTypes[ type ]->typeName.c_str(), args.Argv( 1 ) );
+	if( !decl ) {
+		common->Printf( "%s '%s' not found.\n", declTypes[type]->typeName.c_str(), args.Argv( 1 ) );
 		return;
 	}
 
 	// print information common to all decls
-	common->Printf( "%s %s:\n", declTypes[ type ]->typeName.c_str(), decl->name.c_str() );
+	common->Printf( "%s %s:\n", declTypes[type]->typeName.c_str(), decl->name.c_str() );
 	common->Printf( "source: %s:%i\n", decl->sourceFile->fileName.c_str(), decl->sourceLine );
 	common->Printf( "----------\n" );
-	if( decl->textSource != NULL )
-	{
+	if( decl->textSource != NULL ) {
 		char* declText = ( char* )_alloca( decl->textLength + 1 );
 		decl->GetText( declText );
 		common->Printf( "%s\n", declText );
-	}
-	else
-	{
+	} else {
 		common->Printf( "NO SOURCE\n" );
 	}
 	common->Printf( "----------\n" );
-	switch( decl->declState )
-	{
+	switch( decl->declState ) {
 		case DS_UNPARSED:
 			common->Printf( "Unparsed.\n" );
 			break;
@@ -1594,22 +1697,16 @@ void idDeclManagerLocal::PrintType( const idCmdArgs& args, declType_t type )
 			break;
 	}
 
-	if( decl->referencedThisLevel )
-	{
+	if( decl->referencedThisLevel ) {
 		common->Printf( "Currently referenced this level.\n" );
-	}
-	else if( decl->everReferenced )
-	{
+	} else if( decl->everReferenced ) {
 		common->Printf( "Referenced in a previous level.\n" );
-	}
-	else
-	{
+	} else {
 		common->Printf( "Never referenced.\n" );
 	}
 
 	// allow type-specific data to be printed
-	if( decl->self != NULL )
-	{
+	if( decl->self != NULL ) {
 		decl->self->Print();
 	}
 }
@@ -1624,13 +1721,12 @@ idDecl* idDeclManagerLocal::CreateNewDecl( declType_t type, const char* name, co
 	int typeIndex = ( int )type;
 	int i, hash;
 
-	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL || typeIndex >= DECL_MAX_TYPES )
-	{
+	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL || typeIndex >= DECL_MAX_TYPES ) {
 		common->FatalError( "idDeclManager::CreateNewDecl: bad type: %i", typeIndex );
 		return NULL;
 	}
 
-	char  canonicalName[MAX_STRING_CHARS];
+	char canonicalName[MAX_STRING_CHARS];
 
 	MakeNameCanonical( name, canonicalName, sizeof( canonicalName ) );
 
@@ -1639,10 +1735,8 @@ idDecl* idDeclManagerLocal::CreateNewDecl( declType_t type, const char* name, co
 
 	// see if it already exists
 	hash = hashTables[typeIndex].GenerateKey( canonicalName, false );
-	for( i = hashTables[typeIndex].First( hash ); i >= 0; i = hashTables[typeIndex].Next( i ) )
-	{
-		if( linearLists[typeIndex][i]->name.Icmp( canonicalName ) == 0 )
-		{
+	for( i = hashTables[typeIndex].First( hash ); i >= 0; i = hashTables[typeIndex].Next( i ) ) {
+		if( linearLists[typeIndex][i]->name.Icmp( canonicalName ) == 0 ) {
 			linearLists[typeIndex][i]->AllocateSelf();
 			return linearLists[typeIndex][i]->self;
 		}
@@ -1651,34 +1745,28 @@ idDecl* idDeclManagerLocal::CreateNewDecl( declType_t type, const char* name, co
 	idDeclFile* sourceFile;
 
 	// find existing source file or create a new one
-	for( i = 0; i < loadedFiles.Num(); i++ )
-	{
-		if( loadedFiles[i]->fileName.Icmp( fileName ) == 0 )
-		{
+	for( i = 0; i < loadedFiles.Num(); i++ ) {
+		if( loadedFiles[i]->fileName.Icmp( fileName ) == 0 ) {
 			break;
 		}
 	}
-	if( i < loadedFiles.Num() )
-	{
+	if( i < loadedFiles.Num() ) {
 		sourceFile = loadedFiles[i];
-	}
-	else
-	{
+	} else {
 		sourceFile = new( TAG_DECL ) idDeclFile( fileName, type );
 		loadedFiles.Append( sourceFile );
 	}
 
 	idDeclLocal* decl = new( TAG_DECL ) idDeclLocal;
-	decl->name = canonicalName;
-	decl->type = type;
-	decl->declState = DS_UNPARSED;
+	decl->name		  = canonicalName;
+	decl->type		  = type;
+	decl->declState	  = DS_UNPARSED;
 	decl->AllocateSelf();
-	idStr header = declTypes[typeIndex]->typeName;
+	idStr header	  = declTypes[typeIndex]->typeName;
 	idStr defaultText = decl->self->DefaultDefinition();
 
-
-	int size = header.Length() + 1 + idStr::Length( canonicalName ) + 1 + defaultText.Length();
-	char* declText = ( char* ) _alloca( size + 1 );
+	int	  size	   = header.Length() + 1 + idStr::Length( canonicalName ) + 1 + defaultText.Length();
+	char* declText = ( char* )_alloca( size + 1 );
 
 	memcpy( declText, header, header.Length() );
 	declText[header.Length()] = ' ';
@@ -1687,15 +1775,15 @@ idDecl* idDeclManagerLocal::CreateNewDecl( declType_t type, const char* name, co
 	memcpy( declText + header.Length() + 1 + idStr::Length( canonicalName ) + 1, defaultText, defaultText.Length() + 1 );
 
 	decl->SetTextLocal( declText, size );
-	decl->sourceFile = sourceFile;
+	decl->sourceFile	   = sourceFile;
 	decl->sourceTextOffset = sourceFile->fileSize;
 	decl->sourceTextLength = 0;
-	decl->sourceLine = sourceFile->numLines;
+	decl->sourceLine	   = sourceFile->numLines;
 
 	decl->ParseLocal();
 
 	// add this decl to the source file list
-	decl->nextInFile = sourceFile->decls;
+	decl->nextInFile  = sourceFile->decls;
 	sourceFile->decls = decl;
 
 	// add it to the hash table and linear list
@@ -1712,47 +1800,42 @@ idDeclManagerLocal::RenameDecl
 */
 bool idDeclManagerLocal::RenameDecl( declType_t type, const char* oldName, const char* newName )
 {
-
 	char canonicalOldName[MAX_STRING_CHARS];
 	MakeNameCanonical( oldName, canonicalOldName, sizeof( canonicalOldName ) );
 
 	char canonicalNewName[MAX_STRING_CHARS];
 	MakeNameCanonical( newName, canonicalNewName, sizeof( canonicalNewName ) );
 
-	idDeclLocal*	decl = NULL;
+	idDeclLocal* decl = NULL;
 
 	// make sure it already exists
-	int typeIndex = ( int )type;
-	int i, hash;
+	int			 typeIndex = ( int )type;
+	int			 i, hash;
 	hash = hashTables[typeIndex].GenerateKey( canonicalOldName, false );
-	for( i = hashTables[typeIndex].First( hash ); i >= 0; i = hashTables[typeIndex].Next( i ) )
-	{
-		if( linearLists[typeIndex][i]->name.Icmp( canonicalOldName ) == 0 )
-		{
+	for( i = hashTables[typeIndex].First( hash ); i >= 0; i = hashTables[typeIndex].Next( i ) ) {
+		if( linearLists[typeIndex][i]->name.Icmp( canonicalOldName ) == 0 ) {
 			decl = linearLists[typeIndex][i];
 			break;
 		}
 	}
-	if( !decl )
-	{
+	if( !decl ) {
 		return false;
 	}
 
-	//if ( !hashTables[(int)type].Get( canonicalOldName, &declPtr ) )
+	// if ( !hashTables[(int)type].Get( canonicalOldName, &declPtr ) )
 	//	return false;
 
-	//decl = *declPtr;
+	// decl = *declPtr;
 
-	//Change the name
+	// Change the name
 	decl->name = canonicalNewName;
 
-
 	// add it to the hash table
-	//hashTables[(int)decl->type].Set( decl->name, decl );
+	// hashTables[(int)decl->type].Set( decl->name, decl );
 	int newhash = hashTables[typeIndex].GenerateKey( canonicalNewName, false );
 	hashTables[typeIndex].Add( newhash, decl->index );
 
-	//Remove the old hash item
+	// Remove the old hash item
 	hashTables[typeIndex].Remove( hash, decl->index );
 
 	return true;
@@ -1767,16 +1850,14 @@ This is just used to nicely indent media caching prints
 */
 void idDeclManagerLocal::MediaPrint( const char* fmt, ... )
 {
-	if( !decl_show.GetInteger() )
-	{
+	if( !decl_show.GetInteger() ) {
 		return;
 	}
-	for( int i = 0 ; i < indent ; i++ )
-	{
+	for( int i = 0; i < indent; i++ ) {
 		common->Printf( "    " );
 	}
-	va_list		argptr;
-	char		buffer[1024];
+	va_list argptr;
+	char	buffer[1024];
 	va_start( argptr, fmt );
 	idStr::vsnPrintf( buffer, sizeof( buffer ), fmt, argptr );
 	va_end( argptr );
@@ -1792,27 +1873,23 @@ idDeclManagerLocal::WritePrecacheCommands
 */
 void idDeclManagerLocal::WritePrecacheCommands( idFile* f )
 {
-	for( int i = 0; i < declTypes.Num(); i++ )
-	{
+	for( int i = 0; i < declTypes.Num(); i++ ) {
 		int num;
 
-		if( declTypes[i] == NULL )
-		{
+		if( declTypes[i] == NULL ) {
 			continue;
 		}
 
 		num = linearLists[i].Num();
 
-		for( int j = 0 ; j < num ; j++ )
-		{
+		for( int j = 0; j < num; j++ ) {
 			idDeclLocal* decl = linearLists[i][j];
 
-			if( !decl->referencedThisLevel )
-			{
+			if( !decl->referencedThisLevel ) {
 				continue;
 			}
 
-			char	str[1024];
+			char str[1024];
 			idStr::snPrintf( str, sizeof( str ), "touch %s %s\n", declTypes[i]->typeName.c_str(), decl->GetName() );
 			common->Printf( "%s", str );
 			f->Printf( "%s", str );
@@ -1867,9 +1944,7 @@ idDeclManagerLocal::Touch
 */
 void idDeclManagerLocal::Touch( const idDecl* decl )
 {
-
-	if( decl->base->GetState() ==  DS_UNPARSED )
-	{
+	if( decl->base->GetState() == DS_UNPARSED ) {
 		// This should parse the decl as well.
 		FindType( decl->GetType(), decl->GetName() );
 	}
@@ -1885,29 +1960,20 @@ void idDeclManagerLocal::MakeNameCanonical( const char* name, char* result, int 
 	int i, lastDot;
 
 	lastDot = -1;
-	for( i = 0; i < maxLength && name[i] != '\0'; i++ )
-	{
+	for( i = 0; i < maxLength && name[i] != '\0'; i++ ) {
 		int c = name[i];
-		if( c == '\\' )
-		{
+		if( c == '\\' ) {
 			result[i] = '/';
-		}
-		else if( c == '.' )
-		{
-			lastDot = i;
+		} else if( c == '.' ) {
+			lastDot	  = i;
 			result[i] = c;
-		}
-		else
-		{
+		} else {
 			result[i] = idStr::ToLower( c );
 		}
 	}
-	if( lastDot != -1 )
-	{
+	if( lastDot != -1 ) {
 		result[lastDot] = '\0';
-	}
-	else
-	{
+	} else {
 		result[i] = '\0';
 	}
 }
@@ -1919,17 +1985,15 @@ idDeclManagerLocal::ListDecls_f
 */
 void idDeclManagerLocal::ListDecls_f( const idCmdArgs& args )
 {
-	int		i, j;
-	int		totalDecls = 0;
-	int		totalText = 0;
-	int		totalStructs = 0;
+	int i, j;
+	int totalDecls	 = 0;
+	int totalText	 = 0;
+	int totalStructs = 0;
 
-	for( i = 0; i < declManagerLocal.declTypes.Num(); i++ )
-	{
+	for( i = 0; i < declManagerLocal.declTypes.Num(); i++ ) {
 		int size, num;
 
-		if( declManagerLocal.declTypes[i] == NULL )
-		{
+		if( declManagerLocal.declTypes[i] == NULL ) {
 			continue;
 		}
 
@@ -1937,11 +2001,9 @@ void idDeclManagerLocal::ListDecls_f( const idCmdArgs& args )
 		totalDecls += num;
 
 		size = 0;
-		for( j = 0; j < num; j++ )
-		{
+		for( j = 0; j < num; j++ ) {
 			size += declManagerLocal.linearLists[i][j]->Size();
-			if( declManagerLocal.linearLists[i][j]->self != NULL )
-			{
+			if( declManagerLocal.linearLists[i][j]->self != NULL ) {
 				size += declManagerLocal.linearLists[i][j]->self->Size();
 			}
 		}
@@ -1950,9 +2012,8 @@ void idDeclManagerLocal::ListDecls_f( const idCmdArgs& args )
 		common->Printf( "%4ik %4i %s\n", size >> 10, num, declManagerLocal.declTypes[i]->typeName.c_str() );
 	}
 
-	for( i = 0 ; i < declManagerLocal.loadedFiles.Num() ; i++ )
-	{
-		idDeclFile*	df = declManagerLocal.loadedFiles[i];
+	for( i = 0; i < declManagerLocal.loadedFiles.Num(); i++ ) {
+		idDeclFile* df = declManagerLocal.loadedFiles[i];
 		totalText += df->fileSize;
 	}
 
@@ -1972,15 +2033,12 @@ A reload will never cause anything to be purged.
 */
 void idDeclManagerLocal::ReloadDecls_f( const idCmdArgs& args )
 {
-	bool	force;
+	bool force;
 
-	if( !idStr::Icmp( args.Argv( 1 ), "all" ) )
-	{
+	if( !idStr::Icmp( args.Argv( 1 ), "all" ) ) {
 		force = true;
 		common->Printf( "reloading all decl files:\n" );
-	}
-	else
-	{
+	} else {
 		force = false;
 		common->Printf( "reloading changed decl files:\n" );
 	}
@@ -1995,16 +2053,13 @@ idDeclManagerLocal::TouchDecl_f
 */
 void idDeclManagerLocal::TouchDecl_f( const idCmdArgs& args )
 {
-	int	i;
+	int i;
 
-	if( args.Argc() != 3 )
-	{
+	if( args.Argc() != 3 ) {
 		common->Printf( "usage: touch <type> <name>\n" );
 		common->Printf( "valid types: " );
-		for( int i = 0 ; i < declManagerLocal.declTypes.Num() ; i++ )
-		{
-			if( declManagerLocal.declTypes[i] )
-			{
+		for( int i = 0; i < declManagerLocal.declTypes.Num(); i++ ) {
+			if( declManagerLocal.declTypes[i] ) {
 				common->Printf( "%s ", declManagerLocal.declTypes[i]->typeName.c_str() );
 			}
 		}
@@ -2012,22 +2067,18 @@ void idDeclManagerLocal::TouchDecl_f( const idCmdArgs& args )
 		return;
 	}
 
-	for( i = 0; i < declManagerLocal.declTypes.Num(); i++ )
-	{
-		if( declManagerLocal.declTypes[i] && declManagerLocal.declTypes[i]->typeName.Icmp( args.Argv( 1 ) ) == 0 )
-		{
+	for( i = 0; i < declManagerLocal.declTypes.Num(); i++ ) {
+		if( declManagerLocal.declTypes[i] && declManagerLocal.declTypes[i]->typeName.Icmp( args.Argv( 1 ) ) == 0 ) {
 			break;
 		}
 	}
-	if( i >= declManagerLocal.declTypes.Num() )
-	{
+	if( i >= declManagerLocal.declTypes.Num() ) {
 		common->Printf( "unknown decl type '%s'\n", args.Argv( 1 ) );
 		return;
 	}
 
 	const idDecl* decl = declManagerLocal.FindType( ( declType_t )i, args.Argv( 2 ), false );
-	if( !decl )
-	{
+	if( !decl ) {
 		common->Printf( "%s '%s' not found\n", declManagerLocal.declTypes[i]->typeName.c_str(), args.Argv( 2 ) );
 	}
 }
@@ -2037,38 +2088,33 @@ void idDeclManagerLocal::TouchDecl_f( const idCmdArgs& args )
 
 void idDeclManagerLocal::ExportEntityDefsToBlender_f( const idCmdArgs& args )
 {
-	idStr jsonStringsFileName = "_bl/entities.json";
+	idStr		jsonStringsFileName = "_bl/entities.json";
 	idFileLocal file( fileSystem->OpenFileWrite( jsonStringsFileName, "fs_basepath" ) );
 
-	if( file == NULL )
-	{
+	if( file == NULL ) {
 		idLib::Printf( "Failed to entity declarations data to JSON.\n" );
 	}
 
 	int totalEntitiesCount = 0;
-	int totalModelsCount = 0;
+	int totalModelsCount   = 0;
 
 	// avoid media cache
 	com_editors |= EDITOR_EXPORTDEFS;
 
 	file->Printf( "{\n\t\"entities\": {" );
 
-	int count = declManagerLocal.linearLists[ DECL_ENTITYDEF ].Num();
-	for( int i = 0; i < count; i++ )
-	{
-		const idDeclEntityDef* decl = static_cast< const idDeclEntityDef* >( declManagerLocal.FindType( DECL_ENTITYDEF, declManagerLocal.linearLists[ DECL_ENTITYDEF ][ i ]->GetName(), false ) );
+	int count = declManagerLocal.linearLists[DECL_ENTITYDEF].Num();
+	for( int i = 0; i < count; i++ ) {
+		const idDeclEntityDef* decl = static_cast<const idDeclEntityDef*>( declManagerLocal.FindType( DECL_ENTITYDEF, declManagerLocal.linearLists[DECL_ENTITYDEF][i]->GetName(), false ) );
 
 		totalEntitiesCount++;
 
 		file->Printf( "\n\t\t\"%s\": {\n", decl->GetName() );
 		decl->dict.WriteJSON( file, "\t\t" );
 
-		if( i == ( count - 1 ) )
-		{
+		if( i == ( count - 1 ) ) {
 			file->Printf( "\t\t}\n" );
-		}
-		else
-		{
+		} else {
 			file->Printf( "\t\t},\n" );
 		}
 	}
@@ -2088,11 +2134,10 @@ void idDeclManagerLocal::ExportEntityDefsToBlender_f( const idCmdArgs& args )
 
 void idDeclManagerLocal::ExportMaterialsToBlender_f( const idCmdArgs& args )
 {
-	idStr jsonStringsFileName = "_bl/materials.json";
+	idStr		jsonStringsFileName = "_bl/materials.json";
 	idFileLocal file( fileSystem->OpenFileWrite( jsonStringsFileName, "fs_basepath" ) );
 
-	if( file == NULL )
-	{
+	if( file == NULL ) {
 		idLib::Printf( "Failed to entity declarations data to JSON.\n" );
 	}
 
@@ -2103,22 +2148,21 @@ void idDeclManagerLocal::ExportMaterialsToBlender_f( const idCmdArgs& args )
 
 	file->Printf( "{\n\t\"materials\": {" );
 
-	int count = declManagerLocal.linearLists[ DECL_MATERIAL ].Num();
+	int					   count = declManagerLocal.linearLists[DECL_MATERIAL].Num();
 
 	CommandlineProgressBar progressBar( count, renderSystem->GetWidth(), renderSystem->GetHeight() );
 	progressBar.Start();
 
-	for( int i = 0; i < count; i++ )
-	{
-		const idMaterial* material = static_cast< const idMaterial* >( declManagerLocal.FindType( DECL_MATERIAL, declManagerLocal.linearLists[ DECL_MATERIAL ][ i ]->GetName(), false ) );
+	for( int i = 0; i < count; i++ ) {
+		const idMaterial* material = static_cast<const idMaterial*>( declManagerLocal.FindType( DECL_MATERIAL, declManagerLocal.linearLists[DECL_MATERIAL][i]->GetName(), false ) );
 
-#if 0
+	#if 0
 		const char* matName = material->GetName();
 		if( idStr::FindText( matName, "textures/base_floor/ghotile3", false ) != -1 )
 		{
 			totalMaterialsCount++;
 		}
-#endif
+	#endif
 
 		material->ExportJSON( file, i == ( count - 1 ) );
 
@@ -2138,7 +2182,7 @@ void idDeclManagerLocal::ExportMaterialsToBlender_f( const idCmdArgs& args )
 	idLib::Printf( "Wrote %d Materials.\n", totalMaterialsCount );
 }
 
-class idSort_CompareEntityDefEntity : public idSort_Quick< const idDeclEntityDef*, idSort_CompareEntityDefEntity >
+class idSort_CompareEntityDefEntity : public idSort_Quick<const idDeclEntityDef*, idSort_CompareEntityDefEntity>
 {
 public:
 	int Compare( const idDeclEntityDef* const& a, const idDeclEntityDef* const& b ) const
@@ -2147,49 +2191,33 @@ public:
 	}
 };
 
-enum EVAR_TYPES
-{
-	EVAR_STRING,
-	EVAR_INT,
-	EVAR_FLOAT,
-	EVAR_BOOL,
-	EVAR_COLOR,
-	EVAR_MATERIAL,
-	EVAR_MODEL,
-	EVAR_GUI,
-	EVAR_SOUND
-};
+enum EVAR_TYPES { EVAR_STRING, EVAR_INT, EVAR_FLOAT, EVAR_BOOL, EVAR_COLOR, EVAR_MATERIAL, EVAR_MODEL, EVAR_GUI, EVAR_SOUND };
 
-struct evarPrefix_t
-{
-	int type;
+struct evarPrefix_t {
+	int			type;
 	const char* prefix;
 };
 
-static const evarPrefix_t EvarPrefixes[] =
-{
-	{ EVAR_STRING,  "editor_var " },
-	{ EVAR_INT,		"editor_int " },
-	{ EVAR_FLOAT,	"editor_float " },
-	{ EVAR_BOOL,	"editor_bool " },
-	{ EVAR_COLOR,	"editor_color " },
+static const evarPrefix_t EvarPrefixes[] = { { EVAR_STRING, "editor_var " },
+	{ EVAR_INT, "editor_int " },
+	{ EVAR_FLOAT, "editor_float " },
+	{ EVAR_BOOL, "editor_bool " },
+	{ EVAR_COLOR, "editor_color " },
 	{ EVAR_MATERIAL, "editor_mat " },
-	{ EVAR_MODEL,	"editor_model " },
-	{ EVAR_GUI,		"editor_gui " },
-	{ EVAR_SOUND,	"editor_snd "}
-};
+	{ EVAR_MODEL, "editor_model " },
+	{ EVAR_GUI, "editor_gui " },
+	{ EVAR_SOUND, "editor_snd " } };
 
-static const int NumEvarPrefixes = sizeof( EvarPrefixes ) / sizeof( evarPrefix_t );
+static const int		  NumEvarPrefixes = sizeof( EvarPrefixes ) / sizeof( evarPrefix_t );
 
-struct LocalEvar_t
-{
-	int	type;
+struct LocalEvar_t {
+	int	  type;
 	idStr fullname;
 	idStr name;
 	idStr desc;
 };
 
-#include <game/anim/Anim.h> // idDeclModelDef
+	#include <game/anim/Anim.h> // idDeclModelDef
 
 void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args )
 {
@@ -2201,35 +2229,30 @@ void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args 
 	// reload entities and skip "inherit" parsing because EDITOR_EXPORTDEFS is set
 	declManagerLocal.Reload( true );
 
-	int count = declManagerLocal.linearLists[ DECL_ENTITYDEF ].Num();
+	int														   count = declManagerLocal.linearLists[DECL_ENTITYDEF].Num();
 
-	static idList< const idDeclEntityDef*, TAG_IDLIB_LIST_DECL > defsSorted;//( count );
+	static idList<const idDeclEntityDef*, TAG_IDLIB_LIST_DECL> defsSorted; //( count );
 	defsSorted.AssureSize( count );
 
-	for( int i = 0; i < count; i++ )
-	{
-		const idDeclEntityDef* decl = static_cast< const idDeclEntityDef* >( declManagerLocal.FindType( DECL_ENTITYDEF, declManagerLocal.linearLists[ DECL_ENTITYDEF ][ i ]->GetName(), false ) );
+	for( int i = 0; i < count; i++ ) {
+		const idDeclEntityDef* decl = static_cast<const idDeclEntityDef*>( declManagerLocal.FindType( DECL_ENTITYDEF, declManagerLocal.linearLists[DECL_ENTITYDEF][i]->GetName(), false ) );
 
-		defsSorted[ i ] = decl;
+		defsSorted[i] = decl;
 	}
 
 	defsSorted.SortWithTemplate( idSort_CompareEntityDefEntity() );
 
 	bool exportModels = false;
 
-	if( !idStr::Icmp( args.Argv( 1 ), "nomodels" ) )
-	{
+	if( !idStr::Icmp( args.Argv( 1 ), "nomodels" ) ) {
 		exportModels = false;
 		common->Printf( "exporting entity decls to FGDs without models:\n" );
-	}
-	else
-	{
+	} else {
 		exportModels = true;
 		common->Printf( "exporting entity decls to FGDs with models:\n" );
 	}
 
-	if( exportModels )
-	{
+	if( exportModels ) {
 		postLoadExportModels.SetBool( true );
 	}
 
@@ -2312,251 +2335,200 @@ void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args 
 
 	solidClassNames.AddUnique( "func_static" ); // misc_model
 
-	for( int f = 0; f < filenames.Num(); f++ )
-	{
-		int totalEntitiesCount = 0;
-		int totalModelsCount = 0;
+	for( int f = 0; f < filenames.Num(); f++ ) {
+		int	  totalEntitiesCount = 0;
+		int	  totalModelsCount	 = 0;
 
 		idStr fgdFileName;
-		fgdFileName.Format( "_tb/fgd/DOOM-3-%s.fgd", filenames[ f ].c_str() );
+		fgdFileName.Format( "_tb/fgd/DOOM-3-%s.fgd", filenames[f].c_str() );
 		idFileLocal file( fileSystem->OpenFileWrite( fgdFileName, "fs_basepath" ) );
 
-		if( file == NULL )
-		{
+		if( file == NULL ) {
 			common->Printf( "Failed to entity declarations data to FGD.\n" );
 		}
 
 		file->Printf( "// DOOM 3 BFG game definition file (.fgd) generated by %s\n\n", ENGINE_VERSION );
 
-		for( int d = 0; d < count; d++ )
-		{
-			const idDeclEntityDef* decl = defsSorted[ d ];
+		for( int d = 0; d < count; d++ ) {
+			const idDeclEntityDef* decl = defsSorted[d];
 
 			totalEntitiesCount++;
 
 			// only include entityDefs with "editor_" values in them
-			if( /*f > 0 &&*/ !decl->dict.MatchPrefix( "editor_" ) )
-			{
-				bool parentHasEditorKeys = false;
+			if( /*f > 0 &&*/ !decl->dict.MatchPrefix( "editor_" ) ) {
+				bool				   parentHasEditorKeys = false;
 
 				const idDeclEntityDef* decl2 = decl;
-				while( 1 )
-				{
+				while( 1 ) {
 					const idKeyValue* kv;
 					kv = decl2->dict.MatchPrefix( "inherit", NULL );
-					if( !kv )
-					{
+					if( !kv ) {
 						break;
 					}
 
 					const idDeclEntityDef* super = static_cast<const idDeclEntityDef*>( declManager->FindType( DECL_ENTITYDEF, kv->GetValue(), false ) );
-					if( !super )
-					{
-						//src.Warning( "Unknown entityDef '%s' inherited by '%s'", kv->GetValue().c_str(), GetName() );
+					if( !super ) {
+						// src.Warning( "Unknown entityDef '%s' inherited by '%s'", kv->GetValue().c_str(), GetName() );
 						break;
-					}
-					else
-					{
+					} else {
 						decl2 = super;
 					}
 
-					if( decl2->dict.MatchPrefix( "editor_" ) )
-					{
+					if( decl2->dict.MatchPrefix( "editor_" ) ) {
 						parentHasEditorKeys = true;
 						break;
 					}
 				}
 
-				if( !parentHasEditorKeys )
-				{
+				if( !parentHasEditorKeys ) {
 					continue;
 				}
 			}
 
-			if( f > 1 )
-			{
+			if( f > 1 ) {
 				// ignore entities that begin with those prefices
 
 				bool ignore = false;
-				for( int i = 0; i < ignoreList.Num(); i++ )
-				{
-					const char* ignoreStr = ignoreList[ i ].c_str();
-					if( idStr::Icmpn( decl->GetName(), ignoreStr, ( int )strlen( ignoreStr ) ) == 0 )
-					{
+				for( int i = 0; i < ignoreList.Num(); i++ ) {
+					const char* ignoreStr = ignoreList[i].c_str();
+					if( idStr::Icmpn( decl->GetName(), ignoreStr, ( int )strlen( ignoreStr ) ) == 0 ) {
 						ignore = true;
 						break;
 					}
 				}
 
-				if( ignore )
-				{
+				if( ignore ) {
 					continue;
 				}
 			}
 
 			// ignore autogenerated model definitions for slim FGD
 			bool genmodel = false;
-			if( idStr::Icmpn( decl->GetName(), "genmodel_", 9 ) == 0 )
-			{
+			if( idStr::Icmpn( decl->GetName(), "genmodel_", 9 ) == 0 ) {
 				genmodel = true;
 			}
 
 			// filter multiplayer entities
-			bool multiplayer = ( idStr::FindText( decl->GetName(), "_mp", false ) != -1 ||
-								 idStr::FindText( decl->GetName(), "team_ctf", false ) != -1 ||
-								 idStr::FindText( decl->GetName(), "_coop", false ) != -1 );
+			bool multiplayer =
+				( idStr::FindText( decl->GetName(), "_mp", false ) != -1 || idStr::FindText( decl->GetName(), "team_ctf", false ) != -1 || idStr::FindText( decl->GetName(), "_coop", false ) != -1 );
 
-			if( f == 4 )
-			{
-				if( !multiplayer || genmodel )
-				{
+			if( f == 4 ) {
+				if( !multiplayer || genmodel ) {
 					continue;
 				}
-			}
-			else
-			{
-				if( multiplayer )
-				{
+			} else {
+				if( multiplayer ) {
 					continue;
 				}
 
-				if( ( f % 2 ) == 0 && genmodel )
-				{
+				if( ( f % 2 ) == 0 && genmodel ) {
 					continue;
 				}
 			}
 
 			bool solidClass = false;
-			for( int i = 0; i < solidClassNames.Num(); i++ )
-			{
-				const char* solidStr = solidClassNames[ i ].c_str();
+			for( int i = 0; i < solidClassNames.Num(); i++ ) {
+				const char* solidStr = solidClassNames[i].c_str();
 				if( idStr::Icmpn( decl->GetName(), solidStr, ( int )strlen( solidStr ) ) == 0 &&
-						!( idStr::FindText( decl->GetName(), "_model", false ) != -1 || idStr::FindText( decl->GetName(), "_amodel", false ) != -1 ) )
-				{
+					!( idStr::FindText( decl->GetName(), "_model", false ) != -1 || idStr::FindText( decl->GetName(), "_amodel", false ) != -1 ) ) {
 					solidClass = true;
 					break;
 				}
 			}
 
-			if( idStr::Icmp( decl->GetName(), "trigger_relay" ) == 0 )
-			{
+			if( idStr::Icmp( decl->GetName(), "trigger_relay" ) == 0 ) {
 				solidClass = false;
 			}
 
 			//
 			// build header
 			//
-			if( solidClass )
-			{
+			if( solidClass ) {
 				file->Printf( "@SolidClass " );
 			}
-			//else if( baseclass )
+			// else if( baseclass )
 			//{
 			//	file->Printf( "@BaseClass " );
-			//}
-			else
-			{
+			// }
+			else {
 				file->Printf( "@PointClass " );
 			}
 
 			const idKeyValue* kv;
 			kv = decl->dict.MatchPrefix( "inherit", NULL );
 
-			if( kv )
-			{
+			if( kv ) {
 				file->Printf( "base(%s) ", kv->GetValue().c_str() );
 			}
 
 			idStr text = "";
-			kv = decl->dict.MatchPrefix( "editor_usage" );
-			while( kv != NULL )
-			{
+			kv		   = decl->dict.MatchPrefix( "editor_usage" );
+			while( kv != NULL ) {
 				text += kv->GetValue();
-				if( !kv->GetValue().Length() || ( text[ text.Length() - 1 ] != '\n' ) )
-				{
+				if( !kv->GetValue().Length() || ( text[text.Length() - 1] != '\n' ) ) {
 					text += "\n";
 				}
 				kv = decl->dict.MatchPrefix( "editor_usage", kv );
 			}
 
-			if( text.IsEmpty() )
-			{
+			if( text.IsEmpty() ) {
 				text += "No description";
 			}
 
 			idVec3 color;
-			if( decl->dict.GetVector( "editor_color", "0 0 1", color ) )
-			{
+			if( decl->dict.GetVector( "editor_color", "0 0 1", color ) ) {
 				file->Printf( "color(%i %i %i) ", int( color.x * 255 ) & 0xFF, int( color.y * 255 ) & 0xFF, int( color.z * 255 ) & 0xFF );
 			}
 
-#if 0
+	#if 0
 			//if( idStr::Icmp( decl->GetName(), "monster_zombie_maint_bald" ) == 0 )
 			if( idStr::Icmp( decl->GetName(), "monster_demon_imp" ) == 0 )
 			{
 				text += " ";
 			}
-#endif
+	#endif
 
 			// write size of entity
 
-			idVec3 size;
+			idVec3	 size;
 			idBounds bounds;
-			bool writeSize = false;
+			bool	 writeSize = false;
 
-			if( decl->dict.GetVector( "mins", NULL, bounds[0] ) && decl->dict.GetVector( "maxs", NULL, bounds[1] ) )
-			{
-				if( bounds[0][0] > bounds[1][0] || bounds[0][1] > bounds[1][1] || bounds[0][2] > bounds[1][2] )
-				{
-					//gameLocal.Error( "Invalid bounds '%s'-'%s' on entity '%s'", bounds[0].ToString(), bounds[1].ToString(), name.c_str() );
-				}
-				else
-				{
+			if( decl->dict.GetVector( "mins", NULL, bounds[0] ) && decl->dict.GetVector( "maxs", NULL, bounds[1] ) ) {
+				if( bounds[0][0] > bounds[1][0] || bounds[0][1] > bounds[1][1] || bounds[0][2] > bounds[1][2] ) {
+					// gameLocal.Error( "Invalid bounds '%s'-'%s' on entity '%s'", bounds[0].ToString(), bounds[1].ToString(), name.c_str() );
+				} else {
 					writeSize = true;
 				}
-			}
-			else if( decl->dict.GetVector( "size", NULL, size ) )
-			{
-				if( ( size.x < 0.0f ) || ( size.y < 0.0f ) || ( size.z < 0.0f ) )
-				{
-					//gameLocal.Error( "Invalid size '%s' on entity '%s'", size.ToString(), name.c_str() );
-				}
-				else
-				{
+			} else if( decl->dict.GetVector( "size", NULL, size ) ) {
+				if( ( size.x < 0.0f ) || ( size.y < 0.0f ) || ( size.z < 0.0f ) ) {
+					// gameLocal.Error( "Invalid size '%s' on entity '%s'", size.ToString(), name.c_str() );
+				} else {
 					bounds[0].Set( size.x * -0.5f, size.y * -0.5f, 0.0f );
 					bounds[1].Set( size.x * 0.5f, size.y * 0.5f, size.z );
 
 					writeSize = true;
 				}
-			}
-			else
-			{
+			} else {
 				idStr str;
 				decl->dict.GetString( "editor_mins", "", str );
-				if( str != "?" )
-				{
-					if( decl->dict.GetVector( "editor_mins", "0 0 0", bounds[0] ) && decl->dict.GetVector( "editor_maxs", "0 0 0", bounds[1] ) )
-					{
+				if( str != "?" ) {
+					if( decl->dict.GetVector( "editor_mins", "0 0 0", bounds[0] ) && decl->dict.GetVector( "editor_maxs", "0 0 0", bounds[1] ) ) {
 						writeSize = true;
 					}
 				}
 			}
 
-			if( writeSize )
-			{
-				file->Printf( "size(%i %i %i, %i %i %i) ",
-							  int( bounds[0].x ), int( bounds[0].y ), int( bounds[0].z ),
-							  int( bounds[1].x ), int( bounds[1].y ), int( bounds[1].z ) );
+			if( writeSize ) {
+				file->Printf( "size(%i %i %i, %i %i %i) ", int( bounds[0].x ), int( bounds[0].y ), int( bounds[0].z ), int( bounds[1].x ), int( bounds[1].y ), int( bounds[1].z ) );
 			}
 
 			// collect editor specific spawn flags
 			idList<LocalEvar_t> evars;
 
-			for( int i = 0; i < NumEvarPrefixes; i++ )
-			{
+			for( int i = 0; i < NumEvarPrefixes; i++ ) {
 				kv = decl->dict.MatchPrefix( EvarPrefixes[i].prefix );
-				while( kv )
-				{
+				while( kv ) {
 					LocalEvar_t ev;
 					ev.fullname = kv->GetKey();
 					kv->GetKey().Right( kv->GetKey().Length() - strlen( EvarPrefixes[i].prefix ), ev.name );
@@ -2569,128 +2541,102 @@ void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args 
 
 			idDict dictToWrite;
 
-			if( idStr::Icmp( decl->GetName(), "light" ) == 0 )
-			{
+			if( idStr::Icmp( decl->GetName(), "light" ) == 0 ) {
 				// entityDef light
 
 				// add missing property to control the radius
 
 				LocalEvar_t ev;
 				ev.fullname = "editor_int light";
-				ev.name = "light";
-				ev.desc = "light radius";
-				ev.type = EVAR_INT;
+				ev.name		= "light";
+				ev.desc		= "light radius";
+				ev.type		= EVAR_INT;
 				evars.Append( ev );
 
 				dictToWrite.Set( "light", "300" );
 			}
 
-			if( idStr::Icmp( decl->GetName(), "light" ) == 0 ||
-					idStr::Icmp( decl->GetName(), "misc_model" ) == 0 ||
-					idStr::Icmp( decl->GetName(), "func_bobbing_model" ) == 0 ||
-					idStr::Icmp( decl->GetName(), "func_door_model" ) == 0 ||
-					idStr::Icmp( decl->GetName(), "func_mover_model" ) == 0 ||
-					idStr::Icmp( decl->GetName(), "func_mover_amodel" ) == 0 ||
-					idStr::Icmp( decl->GetName(), "func_plat_model" ) == 0 ||
-					idStr::Icmp( decl->GetName(), "func_rotating_model" ) == 0 )
-			{
+			if( idStr::Icmp( decl->GetName(), "light" ) == 0 || idStr::Icmp( decl->GetName(), "misc_model" ) == 0 || idStr::Icmp( decl->GetName(), "func_bobbing_model" ) == 0 ||
+				idStr::Icmp( decl->GetName(), "func_door_model" ) == 0 || idStr::Icmp( decl->GetName(), "func_mover_model" ) == 0 || idStr::Icmp( decl->GetName(), "func_mover_amodel" ) == 0 ||
+				idStr::Icmp( decl->GetName(), "func_plat_model" ) == 0 || idStr::Icmp( decl->GetName(), "func_rotating_model" ) == 0 ) {
 				// entities with dynamic models
 
 				LocalEvar_t ev;
 				ev.fullname = "editor_model model";
-				ev.name = "model";
-				ev.desc = "Model Selection (ex mapobjects/model.obj)";
-				ev.type = EVAR_MODEL;
+				ev.name		= "model";
+				ev.desc		= "Model Selection (ex mapobjects/model.obj)";
+				ev.type		= EVAR_MODEL;
 				evars.Append( ev );
 
 				ev.fullname = "editor_model proxymodel";
-				ev.name = "proxymodel";
-				ev.desc = "A proxy model in OBJ file format automatically set by RBDoom so it can be displayed in TrenchBroom";
-				ev.type = EVAR_MODEL;
+				ev.name		= "proxymodel";
+				ev.desc		= "A proxy model in OBJ file format automatically set by RBDoom so it can be displayed in TrenchBroom";
+				ev.type		= EVAR_MODEL;
 				evars.Append( ev );
 			}
 
-			for( int i = 0; i < decl->dict.GetNumKeyVals(); i++ )
-			{
+			for( int i = 0; i < decl->dict.GetNumKeyVals(); i++ ) {
 				kv = decl->dict.GetKeyVal( i );
 
-				if( kv->GetKey().IcmpPrefix( "editor_" ) == 0 )
-				{
+				if( kv->GetKey().IcmpPrefix( "editor_" ) == 0 ) {
 					continue;
 				}
 
-				if( kv->GetKey().Icmp( "classname" ) == 0 )
-				{
+				if( kv->GetKey().Icmp( "classname" ) == 0 ) {
 					continue;
 				}
 
-				if( kv->GetKey().Icmp( "inherit" ) == 0 )
-				{
+				if( kv->GetKey().Icmp( "inherit" ) == 0 ) {
 					continue;
 				}
 
 				// TODO FIXME cinematic md5camera animations
-				//if( kv->GetKey().IcmpPrefix( "anim" ) == 0 )
+				// if( kv->GetKey().IcmpPrefix( "anim" ) == 0 )
 				//{
 				//	continue;
 				//}
 
 				// is it an editor var or a regular spawn argument?
 				LocalEvar_t* ev = nullptr;
-				int vc = evars.Num();
-				for( int j = 0; j < vc; j++ )
-				{
-					if( evars[ j ].fullname.Icmp( kv->GetKey() ) == 0 )
-					{
-						ev = &evars[ j ];
+				int			 vc = evars.Num();
+				for( int j = 0; j < vc; j++ ) {
+					if( evars[j].fullname.Icmp( kv->GetKey() ) == 0 ) {
+						ev = &evars[j];
 						break;
 					}
 				}
 
 				// don't print the descriptive editor var itself yet
-				if( !ev )
-				{
-					//file->Printf( "\t%s(string)\n", kv->GetKey().c_str() );
+				if( !ev ) {
+					// file->Printf( "\t%s(string)\n", kv->GetKey().c_str() );
 
 					const idKeyValue* kv2 = dictToWrite.FindKey( kv->GetKey() );
-					if( !kv2 )
-					{
+					if( !kv2 ) {
 						dictToWrite.Set( kv->GetKey(), kv->GetValue() );
 					}
 				}
 			}
 
 			// add editor_vars that aren't already covered by the default vars
-			for( int i = 0; i < evars.Num(); i++ )
-			{
-				const LocalEvar_t* ev = &evars[ i ];
+			for( int i = 0; i < evars.Num(); i++ ) {
+				const LocalEvar_t* ev = &evars[i];
 
-				const idKeyValue* kv2 = dictToWrite.FindKey( ev->name );
-				if( !kv2 )
-				{
+				const idKeyValue*  kv2 = dictToWrite.FindKey( ev->name );
+				if( !kv2 ) {
 					dictToWrite.Set( ev->name, ev->desc );
 				}
 			}
 
 			// export models as OBJ
-			bool writeModel = false;
-			idStrStatic< MAX_OSPATH > exportedModelFileName;
+			bool					writeModel = false;
+			idStrStatic<MAX_OSPATH> exportedModelFileName;
 
-			if( idStr::Icmp( decl->GetName(), "light" ) != 0 &&
-					idStr::Icmp( decl->GetName(), "misc_model" ) != 0 &&
-					idStr::Icmp( decl->GetName(), "func_bobbing_model" ) != 0 &&
-					idStr::Icmp( decl->GetName(), "func_door_model" ) != 0 &&
-					idStr::Icmp( decl->GetName(), "func_elevator_model" ) != 0 &&
-					idStr::Icmp( decl->GetName(), "func_mover_model" ) != 0 &&
-					idStr::Icmp( decl->GetName(), "func_mover_amodel" ) != 0 &&
-					idStr::Icmp( decl->GetName(), "func_plat_model" ) != 0 &&
-					idStr::Icmp( decl->GetName(), "func_rotating_model" ) != 0 )
-			{
+			if( idStr::Icmp( decl->GetName(), "light" ) != 0 && idStr::Icmp( decl->GetName(), "misc_model" ) != 0 && idStr::Icmp( decl->GetName(), "func_bobbing_model" ) != 0 &&
+				idStr::Icmp( decl->GetName(), "func_door_model" ) != 0 && idStr::Icmp( decl->GetName(), "func_elevator_model" ) != 0 && idStr::Icmp( decl->GetName(), "func_mover_model" ) != 0 &&
+				idStr::Icmp( decl->GetName(), "func_mover_amodel" ) != 0 && idStr::Icmp( decl->GetName(), "func_plat_model" ) != 0 && idStr::Icmp( decl->GetName(), "func_rotating_model" ) != 0 ) {
 				const idKeyValue* kv = dictToWrite.FindKey( "model" );
-				if( kv )
-				{
-					if( kv->GetValue().Length() )
-					{
+				if( kv ) {
+					if( kv->GetValue().Length() ) {
 						declManager->MediaPrint( "Precaching model %s\n", kv->GetValue().c_str() );
 
 						// HACK
@@ -2698,18 +2644,14 @@ void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args 
 
 						// precache model/animations
 						const idDeclModelDef* modelDef = static_cast<const idDeclModelDef*>( declManager->FindType( DECL_MODELDEF, kv->GetValue(), false ) );
-						if( modelDef != NULL )
-						{
+						if( modelDef != NULL ) {
 							idRenderModel* renderModel = modelDef->ModelHandle();
-							if( renderModel )
-							{
+							if( renderModel ) {
 								exportedModelFileName = "_tb/";
 								exportedModelFileName.AppendPath( renderModel->Name() );
 								exportedModelFileName.SetFileExtension( ".obj" );
 							}
-						}
-						else
-						{
+						} else {
 							// there is no modelDef so use direct path
 							renderModelManager->FindModel( kv->GetValue() );
 
@@ -2721,87 +2663,48 @@ void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args 
 				}
 			}
 
-			if( writeModel && !exportedModelFileName.IsEmpty() )
-			{
+			if( writeModel && !exportedModelFileName.IsEmpty() ) {
 				file->Printf( "model({ \"path\": \"%s\" }) ", exportedModelFileName.c_str() );
-			}
-			else if( idStr::Icmp( decl->GetName(), "misc_model" ) == 0 ||
-					 idStr::Icmp( decl->GetName(), "func_animate" ) == 0 ||
-					 idStr::Icmp( decl->GetName(), "func_bobbing_model" ) == 0 ||
-					 idStr::Icmp( decl->GetName(), "func_door_model" ) == 0 ||
-					 idStr::Icmp( decl->GetName(), "func_elevator_model" ) == 0 ||
-					 idStr::Icmp( decl->GetName(), "func_mover_model" ) == 0 ||
-					 idStr::Icmp( decl->GetName(), "func_mover_amodel" ) == 0 ||
-					 idStr::Icmp( decl->GetName(), "func_plat_model" ) == 0 ||
-					 idStr::Icmp( decl->GetName(), "func_rotating_model" ) == 0 )
-			{
+			} else if( idStr::Icmp( decl->GetName(), "misc_model" ) == 0 || idStr::Icmp( decl->GetName(), "func_animate" ) == 0 || idStr::Icmp( decl->GetName(), "func_bobbing_model" ) == 0 ||
+					   idStr::Icmp( decl->GetName(), "func_door_model" ) == 0 || idStr::Icmp( decl->GetName(), "func_elevator_model" ) == 0 ||
+					   idStr::Icmp( decl->GetName(), "func_mover_model" ) == 0 || idStr::Icmp( decl->GetName(), "func_mover_amodel" ) == 0 || idStr::Icmp( decl->GetName(), "func_plat_model" ) == 0 ||
+					   idStr::Icmp( decl->GetName(), "func_rotating_model" ) == 0 ) {
 				// dynamic model that prefers a TB specific proxymodel
 				file->Printf( "model({{\n\tproxymodel -> { \"path\": proxymodel },\n\t{ \"path\": model }\n}})" );
-			}
-			else if( idStr::Icmp( decl->GetName(), "light" ) == 0 )
-			{
+			} else if( idStr::Icmp( decl->GetName(), "light" ) == 0 ) {
 				// default light sprite for TB editor sprites branch
-				//file->Printf( "model({ \"path\": \"sprites/light-bulb.png\", \"scale\": 0.03125 }) " );
+				// file->Printf( "model({ \"path\": \"sprites/light-bulb.png\", \"scale\": 0.03125 }) " );
 
 				file->Printf( "model({{\n\tproxymodel -> { \"path\": proxymodel },\n\t{ \"path\": \"sprites/light-bulb.png\", \"scale\": 0.03125 }\n}})" );
-			}
-			else if( idStr::Icmp( decl->GetName(), "speaker" ) == 0 )
-			{
+			} else if( idStr::Icmp( decl->GetName(), "speaker" ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/speaker.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmp( decl->GetName(), "env_probe" ) == 0 )
-			{
+			} else if( idStr::Icmp( decl->GetName(), "env_probe" ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/360-degree.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmpn( decl->GetName(), "ai_", 3 ) == 0 )
-			{
+			} else if( idStr::Icmpn( decl->GetName(), "ai_", 3 ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/ai.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmpn( decl->GetName(), "info_vacuum", 11 ) == 0 )
-			{
+			} else if( idStr::Icmpn( decl->GetName(), "info_vacuum", 11 ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/air-conditioning.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmpn( decl->GetName(), "info_location", 13 ) == 0 )
-			{
+			} else if( idStr::Icmpn( decl->GetName(), "info_location", 13 ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/information.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmpn( decl->GetName(), "item_objective", 14 ) == 0 )
-			{
+			} else if( idStr::Icmpn( decl->GetName(), "item_objective", 14 ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/objective.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmpn( decl->GetName(), "path_", 5 ) == 0 )
-			{
+			} else if( idStr::Icmpn( decl->GetName(), "path_", 5 ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/waypoint.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmp( decl->GetName(), "func_emitter" ) == 0 )
-			{
+			} else if( idStr::Icmp( decl->GetName(), "func_emitter" ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/bonfire.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmp( decl->GetName(), "func_fx" ) == 0 )
-			{
+			} else if( idStr::Icmp( decl->GetName(), "func_fx" ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/fx.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmp( decl->GetName(), "target_null" ) == 0 )
-			{
+			} else if( idStr::Icmp( decl->GetName(), "target_null" ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/info_notnull.png\", \"scale\": 0.25 }) " );
-			}
-			else if( idStr::Icmp( decl->GetName(), "target_checkpoint" ) == 0 )
-			{
+			} else if( idStr::Icmp( decl->GetName(), "target_checkpoint" ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/security-gate.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmpn( decl->GetName(), "target_", 7 ) == 0 )
-			{
+			} else if( idStr::Icmpn( decl->GetName(), "target_", 7 ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/gamepad.png\", \"scale\": 0.03125 }) " );
-			}
-			else if( idStr::Icmp( decl->GetName(), "trigger_relay" ) == 0 )
-			{
+			} else if( idStr::Icmp( decl->GetName(), "trigger_relay" ) == 0 ) {
 				file->Printf( "model({ \"path\": \"sprites/joystick.png\", \"scale\": 0.03125 }) " );
-			}
-			else
-			{
+			} else {
 				const idKeyValue* kv = dictToWrite.FindKey( "spawnclass" );
-				if( kv && kv->GetValue().Length() && idStr::Icmp( kv->GetValue(), "idCameraAnim" ) == 0 )
-				{
+				if( kv && kv->GetValue().Length() && idStr::Icmp( kv->GetValue(), "idCameraAnim" ) == 0 ) {
 					file->Printf( "model({ \"path\": \"sprites/camera.png\", \"scale\": 0.03125 }) " );
 				}
 			}
@@ -2809,39 +2712,34 @@ void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args 
 			file->Printf( "= %s : \"%s\"\n", decl->GetName(), text.c_str() );
 			file->Printf( "[\n" );
 
-			if( idStr::Icmp( decl->GetName(), "light" ) == 0 )
-			{
+			if( idStr::Icmp( decl->GetName(), "light" ) == 0 ) {
 				// RB: hardcode for now to have proper light styles combobox names
-				file->Printf(
-					"\tstyle(Choices) : \"Appearance\" : 0 =\n"
-					"\t[\n"
-					"\t\t0 : \"Normal\"\n"
-					"\t\t10: \"Fluorescent flicker\"\n"
-					"\t\t2 : \"Slow, strong pulse\"\n"
-					"\t\t11: \"Slow pulse, noblack\"\n"
-					"\t\t5 : \"Gentle pulse\"\n"
-					"\t\t1 : \"Flicker A\"\n"
-					"\t\t6 : \"Flicker B\"\n"
-					"\t\t3 : \"Candle A\"\n"
-					"\t\t7 : \"Candle B\"\n"
-					"\t\t8 : \"Candle C\"\n"
-					"\t\t4 : \"Fast strobe\"\n"
-					"\t\t9 : \"Slow strobe\"\n"
-					"\t]\n" );
+				file->Printf( "\tstyle(Choices) : \"Appearance\" : 0 =\n"
+							  "\t[\n"
+							  "\t\t0 : \"Normal\"\n"
+							  "\t\t10: \"Fluorescent flicker\"\n"
+							  "\t\t2 : \"Slow, strong pulse\"\n"
+							  "\t\t11: \"Slow pulse, noblack\"\n"
+							  "\t\t5 : \"Gentle pulse\"\n"
+							  "\t\t1 : \"Flicker A\"\n"
+							  "\t\t6 : \"Flicker B\"\n"
+							  "\t\t3 : \"Candle A\"\n"
+							  "\t\t7 : \"Candle B\"\n"
+							  "\t\t8 : \"Candle C\"\n"
+							  "\t\t4 : \"Fast strobe\"\n"
+							  "\t\t9 : \"Slow strobe\"\n"
+							  "\t]\n" );
 			}
 
-			for( int i = 0; i < dictToWrite.GetNumKeyVals(); i++ )
-			{
+			for( int i = 0; i < dictToWrite.GetNumKeyVals(); i++ ) {
 				kv = dictToWrite.GetKeyVal( i );
 
 				// is it an editor var or a regular spawn argument?
 				LocalEvar_t* ev = nullptr;
-				int vc = evars.Num();
-				for( int j = 0; j < vc; j++ )
-				{
-					if( evars[ j ].name.Icmp( kv->GetKey() ) == 0 )
-					{
-						ev = &evars[ j ];
+				int			 vc = evars.Num();
+				for( int j = 0; j < vc; j++ ) {
+					if( evars[j].name.Icmp( kv->GetKey() ) == 0 ) {
+						ev = &evars[j];
 						break;
 					}
 				}
@@ -2849,67 +2747,53 @@ void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args 
 				idStr cleanKey = kv->GetKey();
 				cleanKey.ReplaceChar( ' ', '.' );
 
-				if( cleanKey.Icmp( "color" ) == 0 )
-				{
+				if( cleanKey.Icmp( "color" ) == 0 ) {
 					cleanKey = "_color";
 				}
 
 				// don't print the descriptive editor var itself yet
-				if( ev )
-				{
+				if( ev ) {
 					file->Printf( "\t%s", cleanKey.c_str() );
 
-					switch( ev->type )
-					{
-						case EVAR_INT :
+					switch( ev->type ) {
+						case EVAR_INT:
 							file->Printf( "(integer)" );
 							break;
 
-						case EVAR_FLOAT :
+						case EVAR_FLOAT:
 							file->Printf( "(float)" );
 							break;
 
-						case EVAR_BOOL :
+						case EVAR_BOOL:
 							file->Printf( "(boolean)" );
 							break;
 
-						case EVAR_COLOR :
-						case EVAR_MATERIAL :
-						case EVAR_MODEL :
-						case EVAR_GUI :
-						case EVAR_SOUND :
-						case EVAR_STRING :
+						case EVAR_COLOR:
+						case EVAR_MATERIAL:
+						case EVAR_MODEL:
+						case EVAR_GUI:
+						case EVAR_SOUND:
+						case EVAR_STRING:
 						default:
 							file->Printf( "(string)" );
 							break;
 					}
 
-					if( !ev->desc.IsEmpty() && ev->desc.Icmp( kv->GetValue().c_str() ) )
-					{
-						if( ev->type != EVAR_INT && ev->type != EVAR_FLOAT && ev->type != EVAR_BOOL )
-						{
+					if( !ev->desc.IsEmpty() && ev->desc.Icmp( kv->GetValue().c_str() ) ) {
+						if( ev->type != EVAR_INT && ev->type != EVAR_FLOAT && ev->type != EVAR_BOOL ) {
 							file->Printf( " : \"%s\" : \"%s\"\n", ev->desc.c_str(), kv->GetValue().c_str() );
-						}
-						else
-						{
+						} else {
 							file->Printf( " : \"%s\" : %s\n", ev->desc.c_str(), kv->GetValue().c_str() );
 						}
-					}
-					else
-					{
+					} else {
 						file->Printf( " : \"%s\"\n", ev->desc.c_str() );
 					}
-				}
-				else
-				{
+				} else {
 					file->Printf( "\t%s(string) : \"\" : \"%s\"\n", cleanKey.c_str(), kv->GetValue().c_str() );
 				}
 			}
 
-
 			file->Printf( "]\n\n" );
-
-
 		}
 
 		file->Flush();
@@ -2918,64 +2802,56 @@ void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args 
 		common->Printf( "----------------------------\n" );
 		common->Printf( "Wrote %d Entities.\n", totalEntitiesCount );
 		common->Printf( "Wrote %d Models.\n", totalModelsCount );
-
 	}
 
 	com_editors &= ~EDITOR_EXPORTDEFS;
 
-	if( exportModels )
-	{
+	if( exportModels ) {
 		postLoadExportModels.SetBool( false );
 	}
 
-	//declManagerLocal.Reload( true );
+	// declManagerLocal.Reload( true );
 	common->FatalError( "Exporting successful, need to restart engine manually" );
 }
 
 void idDeclManagerLocal::ExportImagesToTrenchBroom_f( const idCmdArgs& args )
 {
-	int totalImagesCount = 0;
+	int					   totalImagesCount = 0;
 
-	idFileList* files = fileSystem->ListFilesTree( "generated", ".bimage", true, true );
+	idFileList*			   files = fileSystem->ListFilesTree( "generated", ".bimage", true, true );
 
 	CommandlineProgressBar progressBar( files->GetList().Num(), renderSystem->GetWidth(), renderSystem->GetHeight() );
 	progressBar.Start();
 
-	int	totalStart = Sys_Milliseconds();
+	int totalStart = Sys_Milliseconds();
 
-	for( int f = 0; f < files->GetList().Num(); f++ )
-	{
-		idStr imageName = files->GetList()[ f ];
+	for( int f = 0; f < files->GetList().Num(); f++ ) {
+		idStr imageName = files->GetList()[f];
 
 		progressBar.Increment( true );
 
-		if( idStr::Icmpn( imageName, "generated/images/env/maps/game/", 31 ) == 0 )
-		{
+		if( idStr::Icmpn( imageName, "generated/images/env/maps/game/", 31 ) == 0 ) {
 			// skip HDR cache data
 			continue;
 		}
 
-		if( idStr::FindText( imageName, "addnormals", false ) != -1 )
-		{
+		if( idStr::FindText( imageName, "addnormals", false ) != -1 ) {
 			continue;
 		}
 
-		if( idStr::FindText( imageName, "heightmap", false ) != -1 )
-		{
+		if( idStr::FindText( imageName, "heightmap", false ) != -1 ) {
 			continue;
 		}
 
-		if( idStr::FindText( imageName, "makealpha", false ) != -1 )
-		{
+		if( idStr::FindText( imageName, "makealpha", false ) != -1 ) {
 			continue;
 		}
 
-		if( idStr::FindText( imageName, "makeintensity", false ) != -1 )
-		{
+		if( idStr::FindText( imageName, "makeintensity", false ) != -1 ) {
 			continue;
 		}
 
-#if 0
+	#if 0
 		// only export decals for testing
 		if( idStr::Icmpn( imageName, "generated/images/textures/decals/", 33 ) != 0 )
 		{
@@ -2986,45 +2862,37 @@ void idDeclManagerLocal::ExportImagesToTrenchBroom_f( const idCmdArgs& args )
 		{
 			totalImagesCount++;
 		}
-#endif
-
+	#endif
 
 		idFileLocal bFile = fileSystem->OpenFileRead( imageName );
-		if( bFile == NULL )
-		{
+		if( bFile == NULL ) {
 			continue;
 		}
 
 		idBinaryImage im( imageName );
-		ID_TIME_T binaryFileTime = im.LoadFromGeneratedFile( bFile, FILE_NOT_FOUND_TIMESTAMP );
+		ID_TIME_T	  binaryFileTime = im.LoadFromGeneratedFile( bFile, FILE_NOT_FOUND_TIMESTAMP );
 
-		if( binaryFileTime != FILE_NOT_FOUND_TIMESTAMP )
-		{
-			const bimageFile_t& imgHeader = im.GetFileHeader();
-			const bimageImage_t& img = im.GetImageHeader( 0 );
+		if( binaryFileTime != FILE_NOT_FOUND_TIMESTAMP ) {
+			const bimageFile_t&	 imgHeader = im.GetFileHeader();
+			const bimageImage_t& img	   = im.GetImageHeader( 0 );
 
-			const byte* data = im.GetImageData( 0 );
+			const byte*			 data = im.GetImageData( 0 );
 
-			if( ( imgHeader.format == FMT_DXT5 || imgHeader.format == FMT_DXT1 ) && ( imgHeader.colorFormat != CFM_GREEN_ALPHA ) )
-			{
-				//idLib::Printf( "Exporting image '%s'\n", imageName.c_str() );
+			if( ( imgHeader.format == FMT_DXT5 || imgHeader.format == FMT_DXT1 ) && ( imgHeader.colorFormat != CFM_GREEN_ALPHA ) ) {
+				// idLib::Printf( "Exporting image '%s'\n", imageName.c_str() );
 
 				// RB: Images that are were DXT compressed and aren't multiples of 4 were padded out before compressing
 				// however the idBinaryImageData stores the original input width and height.
 				// We need multiples of 4 for the decompression routines
 
-				int	dxtWidth = 0;
-				int	dxtHeight = 0;
-				if( imgHeader.format == FMT_DXT5 || imgHeader.format == FMT_DXT1 )
-				{
-					if( ( img.width & 3 ) || ( img.height & 3 ) )
-					{
-						dxtWidth = ( img.width + 3 ) & ~3;
+				int dxtWidth  = 0;
+				int dxtHeight = 0;
+				if( imgHeader.format == FMT_DXT5 || imgHeader.format == FMT_DXT1 ) {
+					if( ( img.width & 3 ) || ( img.height & 3 ) ) {
+						dxtWidth  = ( img.width + 3 ) & ~3;
 						dxtHeight = ( img.height + 3 ) & ~3;
-					}
-					else
-					{
-						dxtWidth = img.width;
+					} else {
+						dxtWidth  = img.width;
 						dxtHeight = img.height;
 					}
 				}
@@ -3032,85 +2900,63 @@ void idDeclManagerLocal::ExportImagesToTrenchBroom_f( const idCmdArgs& args )
 				idTempArray<byte> rgba( dxtWidth * dxtHeight * 4 );
 				memset( rgba.Ptr(), 255, rgba.Size() );
 
-				if( imgHeader.format == FMT_DXT1 )
-				{
+				if( imgHeader.format == FMT_DXT1 ) {
 					idDxtDecoder dxt;
 					dxt.DecompressImageDXT1( data, rgba.Ptr(), dxtWidth, dxtHeight );
 
-					for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ )
-					{
+					for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ ) {
 						rgba[i * 4 + 3] = 255;
 					}
-				}
-				else if( imgHeader.format == FMT_DXT5 )
-				{
+				} else if( imgHeader.format == FMT_DXT5 ) {
 					idDxtDecoder dxt;
 
-					if( imgHeader.colorFormat == CFM_NORMAL_DXT5 )
-					{
+					if( imgHeader.colorFormat == CFM_NORMAL_DXT5 ) {
 						dxt.DecompressNormalMapDXT5( data, rgba.Ptr(), dxtWidth, dxtHeight );
 
-						for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ )
-						{
+						for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ ) {
 							rgba[i * 4 + 3] = 255;
 						}
-					}
-					else if( imgHeader.colorFormat == CFM_YCOCG_DXT5 )
-					{
+					} else if( imgHeader.colorFormat == CFM_YCOCG_DXT5 ) {
 						dxt.DecompressYCoCgDXT5( data, rgba.Ptr(), dxtWidth, dxtHeight );
 						idColorSpace::ConvertCoCg_YToRGB( rgba.Ptr(), rgba.Ptr(), dxtWidth, dxtHeight );
 
-						for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ )
-						{
+						for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ ) {
 							rgba[i * 4 + 3] = 255;
 						}
-					}
-					else
-					{
+					} else {
 						dxt.DecompressImageDXT5( data, rgba.Ptr(), dxtWidth, dxtHeight );
 
-						for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ )
-						{
+						for( int i = 0; i < ( dxtWidth * dxtHeight ); i++ ) {
 							rgba[i * 4 + 3] = 255;
 						}
 					}
 				}
 
-
 				imageName.StripLeadingOnce( "generated/images/" );
 
-				idStrStatic< MAX_OSPATH > exportName = "_tb/";
+				idStrStatic<MAX_OSPATH> exportName = "_tb/";
 				exportName += imageName;
 				int idx = exportName.Find( '#' );
 				exportName.CapLength( idx );
 
 				exportName.SetFileExtension( ".png" );
 
-				if( dxtWidth != img.width || dxtHeight != img.height )
-				{
+				if( dxtWidth != img.width || dxtHeight != img.height ) {
 					// scale DXT sized images back to the original size
 					byte* scaled = R_Dropsample( rgba.Ptr(), dxtWidth, dxtHeight, img.width, img.height );
 
-					if( img.width > 16 && img.height > 16 )
-					{
+					if( img.width > 16 && img.height > 16 ) {
 						R_WritePNG( exportName, scaled, 4, img.width, img.height, "fs_basepath" );
-					}
-					else
-					{
+					} else {
 						exportName.SetFileExtension( ".tga" );
 						R_WriteTGA( exportName, scaled, img.width, img.height, false, "fs_basepath" );
 					}
 
 					Mem_Free( scaled );
-				}
-				else
-				{
-					if( img.width > 16 && img.height > 16 )
-					{
+				} else {
+					if( img.width > 16 && img.height > 16 ) {
 						R_WritePNG( exportName, rgba.Ptr(), 4, img.width, img.height, "fs_basepath" );
-					}
-					else
-					{
+					} else {
 						exportName.SetFileExtension( ".tga" );
 						R_WriteTGA( exportName, rgba.Ptr(), img.width, img.height, false, "fs_basepath" );
 					}
@@ -3122,13 +2968,11 @@ void idDeclManagerLocal::ExportImagesToTrenchBroom_f( const idCmdArgs& args )
 	}
 	fileSystem->FreeFileList( files );
 
-	int	totalEnd = Sys_Milliseconds();
+	int totalEnd = Sys_Milliseconds();
 
 	common->Printf( "----------------------------\n" );
 	common->Printf( "Exported and decompressed %d images in %5.1f minutes.\n", totalImagesCount, ( totalEnd - totalStart ) / ( 1000.0f * 60 ) );
 }
-
-
 
 void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 {
@@ -3138,17 +2982,16 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 	// avoid media cache
 	com_editors |= EDITOR_EXPORTDEFS;
 
-	int totalModelsCount = 0;
-	int totalEntitiesCount = 0;
+	int			totalModelsCount   = 0;
+	int			totalEntitiesCount = 0;
 
 	idFileList* files = fileSystem->ListFilesTree( "generated", ".blwo|.base|.bmd5mesh", true, true );
 
 	// FGD header
-	idStr fgdFileName;
+	idStr		fgdFileName;
 	fgdFileName.Format( "_tb/fgd/DOOM-3-models.fgd" );
 	idFileLocal fgdFile( fileSystem->OpenFileWrite( fgdFileName, "fs_basepath" ) );
-	if( fgdFile == NULL )
-	{
+	if( fgdFile == NULL ) {
 		common->Printf( "Failed to write entity declarations data to FGD.\n" );
 	}
 
@@ -3158,11 +3001,13 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 	fgdFile->Printf( "\tspawnclass(string) : \"\" : \"idWorldspawn\"\n" );
 	fgdFile->Printf( "]\n\n" );
 
-	fgdFile->Printf( "@SolidClass color(0 127 204) = func_static : \"A brush model that just sits there, doing nothing.  Can be used for conditional walls and models. When triggered, toggles between visible and hidden (see hide). Entity is non-solid when hidden.\"\n[\n" );
-	//fgdFile->Printf( "name(string) : \"\" : \"\"\n" );
+	fgdFile->Printf( "@SolidClass color(0 127 204) = func_static : \"A brush model that just sits there, doing nothing.  Can be used for conditional walls and models. When triggered, toggles between "
+					 "visible and hidden (see hide). Entity is non-solid when hidden.\"\n[\n" );
+	// fgdFile->Printf( "name(string) : \"\" : \"\"\n" );
 	fgdFile->Printf( "\tspawnclass(string) : \"\" : \"idStaticEntity\"\n" );
 	fgdFile->Printf( "\tsolid(boolean) : \"whether the object should be solid or not.\" : 1\n" );
-	fgdFile->Printf( "\tnoclipmodel(boolean) : \"0 by default. Sets whether or not to generate a collision model for an ASE/LWO func_static at level load. (Set to 1 for stuff the player can't interact with. This will save memory.)\" : 0\n" );
+	fgdFile->Printf( "\tnoclipmodel(boolean) : \"0 by default. Sets whether or not to generate a collision model for an ASE/LWO func_static at level load. (Set to 1 for stuff the player can't "
+					 "interact with. This will save memory.)\" : 0\n" );
 	fgdFile->Printf( "\thide(boolean) : \"whether the object should be visible when spawned. you need to set a value for triggering on/off to work\"\n" );
 	fgdFile->Printf( "\tgui_noninteractive(boolean) : \"any gui attached will not be interactive\"\n" );
 	fgdFile->Printf( "\tinline(boolean) : \"If true, turn the model into map geometry at dmap time\"\n" );
@@ -3171,7 +3016,7 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 	fgdFile->Printf( "\tgui_demonic(string) : \"demonic gui attached to this statit, gui_demonic2 and gui_demonic3 also work\"\n]\n\n" );
 
 	fgdFile->Printf( "@PointClass base(func_static) color(0 127 204) model({{\n\tproxymodel -> { \"path\": proxymodel },\n\t{ \"path\": model }\n}}) = misc_model : \"Just a model\"\n[\n" );
-	//fgdFile->Printf( "name(string) : \"\" : \"\"\n" );
+	// fgdFile->Printf( "name(string) : \"\" : \"\"\n" );
 	fgdFile->Printf( "\t angles(string) : \"\" : \"0 0 0\"\n" );
 	fgdFile->Printf( "\tmodel(string) : \"Model Selection (ex mapobjects/model.obj)\"\n" );
 	fgdFile->Printf( "\tmodel(string) : \"\tA proxy model in OBJ file format automatically set by RBDoom so it can be displayed in TrenchBroom\"\n" );
@@ -3183,18 +3028,16 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 	idStr defFileName;
 	defFileName.Format( "def/_tb_models.def" );
 	idFileLocal defFile( fileSystem->OpenFileWrite( defFileName, "fs_basepath" ) );
-	if( defFile == NULL )
-	{
+	if( defFile == NULL ) {
 		common->Printf( "Failed to write entity declarations data to DEF.\n" );
 	}
 
 	defFile->Printf( "// DOOM 3 BFG models definition file (.def) generated by %s\n\n", ENGINE_VERSION );
 
-	for( int f = 0; f < files->GetList().Num(); f++ )
-	{
+	for( int f = 0; f < files->GetList().Num(); f++ ) {
 		totalModelsCount++;
 
-		idStr modelName = files->GetList()[ f ];
+		idStr modelName = files->GetList()[f];
 		modelName.StripLeadingOnce( "generated/rendermodels/" );
 
 		idStr ext;
@@ -3202,30 +3045,25 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 
 		bool dynamicModel = false;
 
-		if( ext.Icmp( "blwo" ) == 0 )
-		{
+		if( ext.Icmp( "blwo" ) == 0 ) {
 			modelName.SetFileExtension( "lwo" );
 		}
 
-		if( ext.Icmp( "base" ) == 0 )
-		{
+		if( ext.Icmp( "base" ) == 0 ) {
 			modelName.SetFileExtension( "ase" );
 		}
 
-		if( ext.Icmp( "bdae" ) == 0 )
-		{
+		if( ext.Icmp( "bdae" ) == 0 ) {
 			modelName.SetFileExtension( "dae" );
 		}
 
-		if( ext.Icmp( "bmd5mesh" ) == 0 )
-		{
+		if( ext.Icmp( "bmd5mesh" ) == 0 ) {
 			modelName.SetFileExtension( "md5mesh" );
 			dynamicModel = true;
 		}
 
 		// skip TB specific helper models
-		if( idStr::Icmpn( modelName, "_tb", 3 ) == 0 )
-		{
+		if( idStr::Icmpn( modelName, "_tb", 3 ) == 0 ) {
 			continue;
 		}
 
@@ -3234,25 +3072,22 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 		// make an OBJ version of the model for TrenchBroom
 		idRenderModel* renderModel = renderModelManager->FindModel( modelName );
 
-#if 0
+	#if 0
 		if( idStr::Icmpn( modelName, "models/mapobjects", 17 ) != 0 )
 		{
 			continue;
 		}
-#endif
+	#endif
 
-		if( idStr::Icmpn( modelName, "models/items", 12 ) == 0 )
-		{
+		if( idStr::Icmpn( modelName, "models/items", 12 ) == 0 ) {
 			continue;
 		}
 
-		if( idStr::Icmpn( modelName, "models/particles", 16 ) == 0 )
-		{
+		if( idStr::Icmpn( modelName, "models/particles", 16 ) == 0 ) {
 			continue;
 		}
 
-		if( idStr::Icmpn( modelName, "models/weapons", 14 ) == 0 )
-		{
+		if( idStr::Icmpn( modelName, "models/weapons", 14 ) == 0 ) {
 			continue;
 		}
 
@@ -3261,17 +3096,16 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 		bounds[1].Snap();
 
 		// put model as mapobject into the models FGD
-		if( !renderModel->IsDefaultModel() && bounds.GetVolume() > 0 && bounds.GetRadius() < 1400 )
-		{
-			idStrStatic< MAX_OSPATH > originalModelFileName;
+		if( !renderModel->IsDefaultModel() && bounds.GetVolume() > 0 && bounds.GetRadius() < 1400 ) {
+			idStrStatic<MAX_OSPATH> originalModelFileName;
 			originalModelFileName = modelName;
 
-			idStrStatic< MAX_OSPATH > exportedModelFileName;
+			idStrStatic<MAX_OSPATH> exportedModelFileName;
 			exportedModelFileName = "_tb/";
 			exportedModelFileName.AppendPath( modelName );
 			exportedModelFileName.SetFileExtension( ".obj" );
 
-			idStrStatic< MAX_OSPATH > entityName;
+			idStrStatic<MAX_OSPATH> entityName;
 			/*
 			if( idStr::Icmpn( modelName, "models/mapobjects", 17 ) == 0 )
 			{
@@ -3297,7 +3131,7 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 
 			fgdFile->Printf( "@PointClass " );
 
-#if 0
+	#if 0
 			if( bounds.GetVolume() > 0 )
 			{
 				fgdFile->Printf( "size(%i %i %i, %i %i %i) ",
@@ -3306,35 +3140,32 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 			}
 //#else
 			//fgdFile->Printf( "size(-8 -8 0, 8 8 16) " );
-#endif
+	#endif
 
 			fgdFile->Printf( "base(auto_generated_model) model({ \"path\": \"%s\" }) = %s : \"Display entity\"\n[\n", exportedModelFileName.c_str(), entityName.c_str() );
-			//fgdFile->Printf( "[\n\t angles(string) : \"\" : \"0 0 0\"\n]\n\n");
+			// fgdFile->Printf( "[\n\t angles(string) : \"\" : \"0 0 0\"\n]\n\n");
 			fgdFile->Printf( "\t proxymodel(string) : \"\" : \"%s\"\n", exportedModelFileName.c_str() );
 			fgdFile->Printf( "\t model(string) : \"\" : \"%s\"\n", originalModelFileName.c_str() );
 			fgdFile->Printf( "]\n\n", exportedModelFileName.c_str() );
 
-
 			// write .def file for Doom
-			//defFile->Printf( "base(auto_generated_model) model({ \"path\": \"%s\" }) = %s : \"Display entity\"\n[\n", exportedModelFileName.c_str(), entityName.c_str() );
+			// defFile->Printf( "base(auto_generated_model) model({ \"path\": \"%s\" }) = %s : \"Display entity\"\n[\n", exportedModelFileName.c_str(), entityName.c_str() );
 
 			defFile->Printf( "entityDef %s\n{\n", entityName.c_str() );
 			defFile->Printf( "\t \"inherit\"        \"misc_model\"\n" );
 			defFile->Printf( "\t \"proxymodel\"     \"%s\"\n", exportedModelFileName.c_str() );
 			defFile->Printf( "\t \"model\"          \"%s\"\n", originalModelFileName.c_str() );
-#if 0
+	#if 0
 			if( bounds.GetVolume() > 0 )
 			{
 				defFile->Printf( "\t \"editor_mins\"     \"%i %i %i\"\n", int( bounds[0].x ), int( bounds[0].y ), int( bounds[0].z ) );
 				defFile->Printf( "\t \"editor_maxs\"     \"%i %i %i\"\n", int( bounds[1].x ), int( bounds[1].y ), int( bounds[1].z ) );
 			}
-#endif
+	#endif
 			defFile->Printf( "}\n\n", exportedModelFileName.c_str() );
 
 			totalEntitiesCount++;
 		}
-
-
 	}
 	fileSystem->FreeFileList( files );
 
@@ -3350,7 +3181,6 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 
 	common->FatalError( "Exporting successful, need to restart manually" );
 }
-
 
 static idMapBrush* MakeUnitBrush( const idVec3& origin, const idVec3& scale, bool border )
 {
@@ -3379,12 +3209,12 @@ static idMapBrush* MakeUnitBrush( const idVec3& origin, const idVec3& scale, boo
 }
 )";
 
-	idLexer src( LEXFL_NOSTRINGCONCAT | LEXFL_NOSTRINGESCAPECHARS | LEXFL_ALLOWPATHNAMES );
+	idLexer		src( LEXFL_NOSTRINGCONCAT | LEXFL_NOSTRINGESCAPECHARS | LEXFL_ALLOWPATHNAMES );
 
-	src.LoadMemory( tbUnitBrush, strlen( tbUnitBrush), "DoomEdit Brush" );
+	src.LoadMemory( tbUnitBrush, strlen( tbUnitBrush ), "DoomEdit Brush" );
 	idMapBrush* brush = idMapBrush::ParseValve220( src, origin );
 
-	idMat3 axis;
+	idMat3		axis;
 	axis.Identity();
 
 	// unit brush is not really a unit brush but 2, 2, 2
@@ -3394,12 +3224,10 @@ static idMapBrush* MakeUnitBrush( const idVec3& origin, const idVec3& scale, boo
 
 	idMat4 transform( axis, origin );
 
-	for( int i = 0; i < brush->GetNumSides(); i++ )
-	{
+	for( int i = 0; i < brush->GetNumSides(); i++ ) {
 		auto side = brush->GetSide( i );
 
-		if( border )
-		{
+		if( border ) {
 			side->SetMaterial( "textures/decals/achtung" );
 		}
 
@@ -3413,7 +3241,6 @@ static idMapBrush* MakeUnitBrush( const idVec3& origin, const idVec3& scale, boo
 
 static idMapBrush* MakeCharBrush( const idVec3& brushOrigin, const idVec3& uvOrigin, int ch )
 {
-
 	const char* tbLetterBrush = R"(
 ( 0 -1 7 ) ( 0 0 7 ) ( 0 -1 8 ) common/nodraw [ 0 1 0 0 ] [ 0 0 -1 0 ] 0 0.5 0.5
 ( 0 -1 7 ) ( 0 -1 8 ) ( 1 -1 7 ) decals/alphabet6 [ 1 0 0 64 ] [ 0 0 -1 -224 ] 0 0.25 0.25
@@ -3425,13 +3252,12 @@ static idMapBrush* MakeCharBrush( const idVec3& brushOrigin, const idVec3& uvOri
 }
 )";
 
-	idLexer src( LEXFL_NOSTRINGCONCAT | LEXFL_NOSTRINGESCAPECHARS | LEXFL_ALLOWPATHNAMES );
+	idLexer		src( LEXFL_NOSTRINGCONCAT | LEXFL_NOSTRINGESCAPECHARS | LEXFL_ALLOWPATHNAMES );
 
-	src.LoadMemory( tbLetterBrush, strlen( tbLetterBrush), "DoomEdit Brush" );
+	src.LoadMemory( tbLetterBrush, strlen( tbLetterBrush ), "DoomEdit Brush" );
 	idMapBrush* brush = idMapBrush::ParseValve220( src, brushOrigin );
 
-	for( int i = 0; i < brush->GetNumSides(); i++ )
-	{
+	for( int i = 0; i < brush->GetNumSides(); i++ ) {
 		auto side = brush->GetSide( i );
 
 		side->planepts[0] += brushOrigin;
@@ -3445,15 +3271,12 @@ static idMapBrush* MakeCharBrush( const idVec3& brushOrigin, const idVec3& uvOri
 
 	ch &= 255;
 
-	if( ch >= 'A' && ch <= 'Z' )
-	{
+	if( ch >= 'A' && ch <= 'Z' ) {
 		ch -= 'A';
 
 		col = ch & 7;
 		row = ch / 8;
-	}
-	else if( ch >= 'a' && ch <= 'z' )
-	{
+	} else if( ch >= 'a' && ch <= 'z' ) {
 		ch = ch - 'a' + 3;
 
 		col = ch & 7;
@@ -3466,38 +3289,35 @@ static idMapBrush* MakeCharBrush( const idVec3& brushOrigin, const idVec3& uvOri
 	baseOffset.x = -uvOrigin.x * 4;
 	baseOffset.y = -uvOrigin.z * 4 + 32;
 
-	auto side = brush->GetSide( 1 );
-	side->texValve[ 0 ][ 3 ] = baseOffset.x + col * 32;
-	side->texValve[ 1 ][ 3 ] = baseOffset.y + row * 32;
+	auto side			 = brush->GetSide( 1 );
+	side->texValve[0][3] = baseOffset.x + col * 32;
+	side->texValve[1][3] = baseOffset.y + row * 32;
 
 	return brush;
 }
 
-
-idMapEntity*  MakeNamePlateFuncStatic( idMapFile* mapFile, float x, float y, float topHeight, const idStr& origTitle )
+idMapEntity* MakeNamePlateFuncStatic( idMapFile* mapFile, float x, float y, float topHeight, const idStr& origTitle )
 {
 	idMapEntity* mapEnt = new( TAG_SYSTEM ) idMapEntity();
 	mapFile->AddEntity( mapEnt );
 
-	idStrStatic< MAX_OSPATH > entityName;
+	idStrStatic<MAX_OSPATH> entityName;
 	entityName.Format( "info_board_%d", mapFile->GetNumEntities() );
 
 	mapEnt->epairs.Set( "classname", "func_static" );
 	mapEnt->epairs.Set( "name", entityName );
 	mapEnt->epairs.Set( "model", entityName );
 
-
-#if 1
+	#if 1
 	// add folder name as brushes
 	idStr title = origTitle;
 	title.ToUpper();
 
 	int numSlashes = 0;
-	int wordLen = 0;
-	for( int i = 0; i < title.Length(); i++ )
-	{
-		//float x = categoryPositions[ c ].x + category->modelGroupPositions[ g ].x;
-		//float y = -categoryPositions[ c ].y - category->modelGroupPositions[ g ].y;// - group->totalSize.y;
+	int wordLen	   = 0;
+	for( int i = 0; i < title.Length(); i++ ) {
+		// float x = categoryPositions[ c ].x + category->modelGroupPositions[ g ].x;
+		// float y = -categoryPositions[ c ].y - category->modelGroupPositions[ g ].y;// - group->totalSize.y;
 
 		idVec3 brushOrigin;
 		brushOrigin.x = x + wordLen * 8;
@@ -3510,50 +3330,45 @@ idMapEntity*  MakeNamePlateFuncStatic( idMapFile* mapFile, float x, float y, flo
 		uvOrigin.z = topHeight + numSlashes * 8;
 
 		wordLen++;
-		if( title[ i ] == '/' )
-		{
+		if( title[i] == '/' ) {
 			numSlashes++;
 			wordLen = 0;
 			continue;
 		}
 
-		idMapBrush* ch = MakeCharBrush( brushOrigin, uvOrigin, title[ i ] );
+		idMapBrush* ch = MakeCharBrush( brushOrigin, uvOrigin, title[i] );
 		mapEnt->AddPrimitive( ch );
 	}
-#else
+	#else
 	idVec3 origin;
-	origin.x = outputPositions[ g ].x + group->totalSize.x * 0.5;
-	origin.y = outputPositions[ g ].y;
+	origin.x = outputPositions[g].x + group->totalSize.x * 0.5;
+	origin.y = outputPositions[g].y;
 	origin.z = 128;
 
 	mapEnt->epairs.Set( "classname", "misc_model" );
 	mapEnt->epairs.Set( "model", "_tb/models/mapobjects/signs/ceilingsign/ceilingsign.obj" );
 	mapEnt->epairs.Set( "gui", "guis/signs/directional.gui" );
 	mapEnt->epairs.Set( "gui_parm1", group->folder );
-#endif
+	#endif
 
 	return mapEnt;
 }
 
-
-struct EntityInfo_t
-{
-	idBounds		bounds;
-	idMapEntity*	entity;
-	idVec2i			packedPos;
+struct EntityInfo_t {
+	idBounds	 bounds;
+	idMapEntity* entity;
+	idVec2i		 packedPos;
 };
 
 // leaf node that actually contains model files
-struct ModelsGroup_t
-{
-	idStrStatic< MAX_OSPATH >			path;			// e.g. models/mapobjects/doors/jumbodoor/
-	idList<EntityInfo_t*, TAG_SYSTEM>	entityList;		// model files in that folder
-	idVec2i								totalSize;
+struct ModelsGroup_t {
+	idStrStatic<MAX_OSPATH>			  path;		  // e.g. models/mapobjects/doors/jumbodoor/
+	idList<EntityInfo_t*, TAG_SYSTEM> entityList; // model files in that folder
+	idVec2i							  totalSize;
 };
 
 // higher level folder node
-struct Category_t
-{
+struct Category_t {
 	Category_t( const char* name )
 	{
 		tagNames.AddUnique( name );
@@ -3562,31 +3377,30 @@ struct Category_t
 	}
 
 	// data
-	idStrList							tagNames;		// e.g. hell, delta, cpu
-	idList<ModelsGroup_t*, TAG_SYSTEM>	modelGroups;
-	idList<idVec2i>						modelGroupPositions;
-	idVec2i								totalSize;
+	idStrList						   tagNames; // e.g. hell, delta, cpu
+	idList<ModelsGroup_t*, TAG_SYSTEM> modelGroups;
+	idList<idVec2i>					   modelGroupPositions;
+	idVec2i							   totalSize;
 
 	// tree
-	//idList<Category_t*, TAG_SYSTEM>		subFolders;
+	// idList<Category_t*, TAG_SYSTEM>		subFolders;
 };
 
-void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX = 16384, const int imageMax = -1 );
+void  RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX = 16384, const int imageMax = -1 );
 float RectPackingFraction( const idList<idVec2i>& inputSizes, const idVec2i totalSize );
 
-void RectAllocatorBinPack2D( const idList<idVec2i>& inputSizes, const idStrList& inputNames, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX );
-
+void  RectAllocatorBinPack2D( const idList<idVec2i>& inputSizes, const idStrList& inputNames, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX );
 
 // uses BFG Rectangle Atlas packer to pack models in 3D
-void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
+void  idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 {
-	int totalModelsCount = 0;
-	int totalEntitiesCount = 0;
+	int			 totalModelsCount	= 0;
+	int			 totalEntitiesCount = 0;
 
-	idFileList* files = fileSystem->ListFilesTree( "generated", ".blwo|.base|.bglb|.bobj|.bmd5mesh", true, true );
+	idFileList*	 files = fileSystem->ListFilesTree( "generated", ".blwo|.base|.bglb|.bobj|.bmd5mesh", true, true );
 
-	idStr mapName( "maps/zoomaps/zoo_models.map" );
-	idMapFile mapFile;
+	idStr		 mapName( "maps/zoomaps/zoo_models.map" );
+	idMapFile	 mapFile;
 
 	idMapEntity* worldspawn = new( TAG_SYSTEM ) idMapEntity();
 	mapFile.AddEntity( worldspawn );
@@ -3702,7 +3516,7 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 
 	categories.Append( new Category_t( "door" ) );
 	categories.Append( new Category_t( "outside" ) );
-	
+
 	auto teleCat = new Category_t( "teleporter" );
 	teleCat->tagNames.AddUnique( "tele" );
 	categories.Append( teleCat );
@@ -3714,18 +3528,15 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 	categories.Append( new Category_t( "railing" ) );
 	categories.Append( new Category_t( "pipe" ) );
 	categories.Append( new Category_t( "ladder" ) );
-	
-
 
 	// collect all folders that actually contain models and sort them into categories
 
 	idHashTable<ModelsGroup_t*> entitiesPerFolder;
 
-	for( int f = 0; f < files->GetList().Num() /*&& totalEntitiesCount < 100*/; f++ )
-	{
+	for( int f = 0; f < files->GetList().Num() /*&& totalEntitiesCount < 100*/; f++ ) {
 		totalModelsCount++;
 
-		idStr modelName = files->GetList()[ f ];
+		idStr modelName = files->GetList()[f];
 		modelName.StripLeadingOnce( "generated/rendermodels/" );
 
 		idStr ext;
@@ -3733,65 +3544,55 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 
 		bool dynamicModel = false;
 
-		if( ext.Icmp( "blwo" ) == 0 )
-		{
+		if( ext.Icmp( "blwo" ) == 0 ) {
 			modelName.SetFileExtension( "lwo" );
 		}
 
-		if( ext.Icmp( "base" ) == 0 )
-		{
+		if( ext.Icmp( "base" ) == 0 ) {
 			modelName.SetFileExtension( "ase" );
 		}
 
-		if( ext.Icmp( "bglb" ) == 0 )
-		{
+		if( ext.Icmp( "bglb" ) == 0 ) {
 			modelName.SetFileExtension( "glb" );
 		}
 
-		if( ext.Icmp( "bobj" ) == 0 )
-		{
+		if( ext.Icmp( "bobj" ) == 0 ) {
 			modelName.SetFileExtension( "obj" );
 		}
 
-		if( ext.Icmp( "bmd5mesh" ) == 0 )
-		{
+		if( ext.Icmp( "bmd5mesh" ) == 0 ) {
 			modelName.SetFileExtension( "md5mesh" );
 			dynamicModel = true;
 		}
 
 		// skip TB specific helper models
-		if( idStr::Icmpn( modelName, "_tb", 3 ) == 0 )
-		{
+		if( idStr::Icmpn( modelName, "_tb", 3 ) == 0 ) {
 			continue;
 		}
 
 		idRenderModel* renderModel = renderModelManager->FindModel( modelName );
 
 		// skip non modular models
-		bool ignore = false;
-		for( int i = 0; i < ignoreList.Num(); i++ )
-		{
-			const char* ignoreStr = ignoreList[ i ].c_str();
-			if( modelName.Find( ignoreStr ) != -1 )
-			{
+		bool		   ignore = false;
+		for( int i = 0; i < ignoreList.Num(); i++ ) {
+			const char* ignoreStr = ignoreList[i].c_str();
+			if( modelName.Find( ignoreStr ) != -1 ) {
 				ignore = true;
 				break;
 			}
 		}
 
-		if( ignore )
-		{
+		if( ignore ) {
 			continue;
 		}
 
-#if 1
+	#if 1
 		// discard everything that is not a mapobjects model
-		if( idStr::Icmpn( modelName, "models/mapobjects", 17 ) != 0 )
-		{
+		if( idStr::Icmpn( modelName, "models/mapobjects", 17 ) != 0 ) {
 			continue;
 		}
-#endif
-	
+	#endif
+
 		/*
 		if( idStr::Icmpn( modelName, "models/mapobjects/caves", 23 ) == 0 )
 		{
@@ -3799,18 +3600,15 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 		}
 		*/
 
-		if( idStr::Icmpn( modelName, "models/items", 12 ) == 0 )
-		{
+		if( idStr::Icmpn( modelName, "models/items", 12 ) == 0 ) {
 			continue;
 		}
 
-		if( idStr::Icmpn( modelName, "models/particles", 16 ) == 0 )
-		{
+		if( idStr::Icmpn( modelName, "models/particles", 16 ) == 0 ) {
 			continue;
 		}
 
-		if( idStr::Icmpn( modelName, "models/weapons", 14 ) == 0 )
-		{
+		if( idStr::Icmpn( modelName, "models/weapons", 14 ) == 0 ) {
 			continue;
 		}
 
@@ -3819,50 +3617,45 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 
 		// find models group or create it
 		ModelsGroup_t** groupptrptr = nullptr;
-		ModelsGroup_t* group = nullptr;
-		if( !entitiesPerFolder.Get( directory, &groupptrptr ) )
-		{
-			group = new( TAG_SYSTEM ) ModelsGroup_t;
+		ModelsGroup_t*	group		= nullptr;
+		if( !entitiesPerFolder.Get( directory, &groupptrptr ) ) {
+			group		= new( TAG_SYSTEM ) ModelsGroup_t;
 			group->path = directory;
 
 			entitiesPerFolder.Set( directory, group );
-		}
-		else
-		{
+		} else {
 			group = *groupptrptr;
 		}
 
 		idBounds bounds = renderModel->Bounds();
 
 		// put model as mapobject into the models FGD
-		if( !renderModel->IsDefaultModel() && bounds.GetVolume() > 0 && bounds.GetRadius() < 1400 )
-		{
+		if( !renderModel->IsDefaultModel() && bounds.GetVolume() > 0 && bounds.GetRadius() < 1400 ) {
 			idMapEntity* mapEnt = new( TAG_SYSTEM ) idMapEntity();
 			mapFile.AddEntity( mapEnt );
 
-			idStrStatic< MAX_OSPATH > entityName;
+			idStrStatic<MAX_OSPATH> entityName;
 			entityName.Format( "misc_model_%d", mapFile.GetNumEntities() );
 
 			mapEnt->epairs.Set( "classname", "misc_model" );
 			mapEnt->epairs.Set( "name", entityName );
-			
+
 			// .glb models are the fastest to load into TrenchBroom so skip proxymodel
-			if( ext.Icmp( "bglb" ) != 0 )
-			{
+			if( ext.Icmp( "bglb" ) != 0 ) {
 				// build TB compatible model name
-				idStrStatic< MAX_OSPATH > exportedModelFileName;
+				idStrStatic<MAX_OSPATH> exportedModelFileName;
 				exportedModelFileName = "_tb/";
 				exportedModelFileName.AppendPath( modelName );
 				exportedModelFileName.SetFileExtension( ".obj" );
 
 				mapEnt->epairs.Set( "proxymodel", exportedModelFileName );
 			}
-			
+
 			mapEnt->epairs.Set( "model", modelName );
 
 			EntityInfo_t* entInfo = new( TAG_SYSTEM ) EntityInfo_t;
-			entInfo->bounds = bounds;
-			entInfo->entity = mapEnt;
+			entInfo->bounds		  = bounds;
+			entInfo->entity		  = mapEnt;
 
 			group->entityList.Append( entInfo );
 
@@ -3871,68 +3664,57 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 	}
 	fileSystem->FreeFileList( files );
 
-
 	// BinPack2D is better, more efficient and can with all really big models but looks worse than the simple rectangle packer
 	const bool useBinpack2D = false;
 
 	// pack models by 2D AABB inside of a folder
-	for( int g = 0; g < entitiesPerFolder.Num(); g++ )
-	{
-		ModelsGroup_t* group = *entitiesPerFolder.GetIndex( g );
+	for( int g = 0; g < entitiesPerFolder.Num(); g++ ) {
+		ModelsGroup_t*	group = *entitiesPerFolder.GetIndex( g );
 
-		idList<idVec2i>	inputSizes;
+		idList<idVec2i> inputSizes;
 		idStrList		inputNames;
 		inputSizes.SetNum( group->entityList.Num() );
-		for( int e = 0; e < group->entityList.Num(); e++ )
-		{
-			EntityInfo_t* entInfo = group->entityList[ e ];
+		for( int e = 0; e < group->entityList.Num(); e++ ) {
+			EntityInfo_t* entInfo = group->entityList[e];
 
-			idBounds& b = entInfo->bounds;
-			const int offset = 64;
-			idVec2i allocSize( ( b[1][0] - b[0][0] ) + offset, ( b[1][1] - b[0][1] ) + offset );
+			idBounds&	  b		 = entInfo->bounds;
+			const int	  offset = 64;
+			idVec2i		  allocSize( ( b[1][0] - b[0][0] ) + offset, ( b[1][1] - b[0][1] ) + offset );
 
-			//idLib::Printf( "model size %ix%i in '%s'\n", allocSize.x, allocSize.y, group->folder.c_str() );
+			// idLib::Printf( "model size %ix%i in '%s'\n", allocSize.x, allocSize.y, group->folder.c_str() );
 
-			inputSizes[ e ] = allocSize;
+			inputSizes[e] = allocSize;
 			inputNames.Append( entInfo->entity->epairs.GetString( "model" ) );
 		}
 
-		idList<idVec2i>	outputPositions;
-		idVec2i	totalSize;
+		idList<idVec2i> outputPositions;
+		idVec2i			totalSize;
 
-		if( useBinpack2D )
-		{
+		if( useBinpack2D ) {
 			RectAllocatorBinPack2D( inputSizes, inputNames, outputPositions, totalSize, 1 << 17 );
-		}
-		else
-		{
+		} else {
 			RectAllocator( inputSizes, outputPositions, totalSize, 1 << 14 );
 		}
 
 		group->totalSize = totalSize;
 
-		for( int e = 0; e < group->entityList.Num(); e++ )
-		{
-			EntityInfo_t* entInfo = group->entityList[ e ];
+		for( int e = 0; e < group->entityList.Num(); e++ ) {
+			EntityInfo_t* entInfo = group->entityList[e];
 
-			entInfo->packedPos = outputPositions[ e ];
+			entInfo->packedPos = outputPositions[e];
 		}
 	}
 
 	// assign model folders to categories
-	for( int g = 0; g < entitiesPerFolder.Num(); g++ )
-	{
+	for( int g = 0; g < entitiesPerFolder.Num(); g++ ) {
 		ModelsGroup_t* group = *entitiesPerFolder.GetIndex( g );
 
-		bool inserted = false;
-		for( int i = 1; i < categories.Num(); i++ )
-		{
-			Category_t* category = categories[ i ];
+		bool		   inserted = false;
+		for( int i = 1; i < categories.Num(); i++ ) {
+			Category_t* category = categories[i];
 
-			for( int j = 0; j < category->tagNames.Num(); j++ )
-			{
-				if( group->path.Find( category->tagNames[ j ], false ) != -1 )
-				{
+			for( int j = 0; j < category->tagNames.Num(); j++ ) {
+				if( group->path.Find( category->tagNames[j], false ) != -1 ) {
 					category->modelGroups.Append( group );
 					inserted = true;
 					break;
@@ -3940,42 +3722,36 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 			}
 		}
 
-		if( !inserted )
-		{
-			categories[ 0 ]->modelGroups.Append( group );
+		if( !inserted ) {
+			categories[0]->modelGroups.Append( group );
 		}
 	}
 
 	// pack folders in categories
-	for( int i = 0; i < categories.Num(); i++ )
-	{
-		Category_t* category = categories[ i ];
-		
-		idList<idVec2i>	inputSizes;
+	for( int i = 0; i < categories.Num(); i++ ) {
+		Category_t*		category = categories[i];
+
+		idList<idVec2i> inputSizes;
 		inputSizes.SetNum( category->modelGroups.Num() );
-		idStrList		inputNames;
+		idStrList inputNames;
 
-		for( int g = 0; g < category->modelGroups.Num(); g++ )
-		{
-			ModelsGroup_t* group = category->modelGroups[ g ];
+		for( int g = 0; g < category->modelGroups.Num(); g++ ) {
+			ModelsGroup_t* group = category->modelGroups[g];
 
-			const int offset = 256;
-			idVec2i allocSize( group->totalSize.x + offset, group->totalSize.y + offset );
+			const int	   offset = 256;
+			idVec2i		   allocSize( group->totalSize.x + offset, group->totalSize.y + offset );
 
-			//idLib::Printf( "folder '%s' size %ix%i\n", group->path.c_str(), allocSize.x, allocSize.y );
+			// idLib::Printf( "folder '%s' size %ix%i\n", group->path.c_str(), allocSize.x, allocSize.y );
 
-			inputSizes[ g ] = allocSize;
+			inputSizes[g] = allocSize;
 			inputNames.Append( group->path );
 		}
-		
-		idVec2i	totalSize;
 
-		if( useBinpack2D )
-		{
+		idVec2i totalSize;
+
+		if( useBinpack2D ) {
 			RectAllocatorBinPack2D( inputSizes, inputNames, category->modelGroupPositions, totalSize, 1 << 17 );
-		}
-		else
-		{
+		} else {
 			RectAllocator( inputSizes, category->modelGroupPositions, totalSize, 1 << 14 );
 		}
 
@@ -3983,63 +3759,54 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 	}
 
 	// pack categories
-	idList<idVec2i>	inputSizes;
+	idList<idVec2i> inputSizes;
 	inputSizes.SetNum( categories.Num() );
-	idStrList		inputNames;
+	idStrList inputNames;
 
-	for( int i = 0; i < categories.Num(); i++ )
-	{
-		inputNames.Append( categories[ i ]->tagNames[ 0 ] );
+	for( int i = 0; i < categories.Num(); i++ ) {
+		inputNames.Append( categories[i]->tagNames[0] );
 	}
 
 	idList<idVec2i> categoryPositions;
-	idVec2i	totalSize;
+	idVec2i			totalSize;
 
-	for( int i = 0; i < categories.Num(); i++ )
-	{
-		Category_t* category = categories[ i ];
-		
-		const int offset = 256;
-		idVec2i allocSize( category->totalSize.x + offset, category->totalSize.y + offset );
+	for( int i = 0; i < categories.Num(); i++ ) {
+		Category_t* category = categories[i];
 
-		idLib::Printf( "category '%s' size %ix%i\n", category->tagNames[ 0 ].c_str(), allocSize.x, allocSize.y );
+		const int	offset = 256;
+		idVec2i		allocSize( category->totalSize.x + offset, category->totalSize.y + offset );
 
-		inputSizes[ i ] = allocSize;
+		idLib::Printf( "category '%s' size %ix%i\n", category->tagNames[0].c_str(), allocSize.x, allocSize.y );
+
+		inputSizes[i] = allocSize;
 
 		// smart allocator
-		if( useBinpack2D )
-		{
+		if( useBinpack2D ) {
 			RectAllocatorBinPack2D( inputSizes, inputNames, categoryPositions, totalSize, 1 << 17 );
-		}
-		else
-		{
+		} else {
 			RectAllocator( inputSizes, categoryPositions, totalSize, 1 << 14 );
 		}
 	}
 
 	// place entities inside packed folders
-	for( int c = 0; c < categories.Num(); c++ )
-	{
-		Category_t* category = categories[ c ];
-		
-		const int fontGridHeight = 128;
+	for( int c = 0; c < categories.Num(); c++ ) {
+		Category_t* category = categories[c];
 
-		float catHeight = 0;
+		const int	fontGridHeight = 128;
 
-		for( int g = 0; g < category->modelGroups.Num(); g++ )
-		{
-			ModelsGroup_t* group = category->modelGroups[ g ];
+		float		catHeight = 0;
+
+		for( int g = 0; g < category->modelGroups.Num(); g++ ) {
+			ModelsGroup_t* group = category->modelGroups[g];
 
 			// calculate top height of the entities in this group
 			// so we can place a name plate above the group
-			float topHeight = 0;
+			float		   topHeight = 0;
 
-			for( int e = 0; e < group->entityList.Num(); e++ )
-			{
-				EntityInfo_t* entInfo = group->entityList[ e ];
+			for( int e = 0; e < group->entityList.Num(); e++ ) {
+				EntityInfo_t* entInfo = group->entityList[e];
 
-				if( entInfo->bounds[1].z > topHeight )
-				{
+				if( entInfo->bounds[1].z > topHeight ) {
 					topHeight = entInfo->bounds[1].z;
 				}
 			}
@@ -4047,25 +3814,23 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 			topHeight += 128;
 			topHeight = idMath::Floor( topHeight / fontGridHeight ) * fontGridHeight;
 
-			if( topHeight > catHeight )
-			{
+			if( topHeight > catHeight ) {
 				catHeight = topHeight;
 			}
 
-			float x = categoryPositions[ c ].x + category->modelGroupPositions[ g ].x + group->totalSize.x * 0.5f;
-			float y = -categoryPositions[ c ].y - category->modelGroupPositions[ g ].y - group->totalSize.y;
+			float x = categoryPositions[c].x + category->modelGroupPositions[g].x + group->totalSize.x * 0.5f;
+			float y = -categoryPositions[c].y - category->modelGroupPositions[g].y - group->totalSize.y;
 
-			//idMapEntity* plateEnt = 
+			// idMapEntity* plateEnt =
 			MakeNamePlateFuncStatic( &mapFile, x, y, topHeight, group->path );
 
 			// move entities along with the upper packed categories
-			for( int e = 0; e < group->entityList.Num(); e++ )
-			{
-				EntityInfo_t* entInfo = group->entityList[ e ];
+			for( int e = 0; e < group->entityList.Num(); e++ ) {
+				EntityInfo_t* entInfo = group->entityList[e];
 
-				idVec3 origin;
-				origin.x = categoryPositions[ c ].x + category->modelGroupPositions[ g ].x + entInfo->packedPos.x -entInfo->bounds[0][0];
-				origin.y = -categoryPositions[ c ].y - category->modelGroupPositions[ g ].y - entInfo->packedPos.y -entInfo->bounds[1][1];
+				idVec3		  origin;
+				origin.x = categoryPositions[c].x + category->modelGroupPositions[g].x + entInfo->packedPos.x - entInfo->bounds[0][0];
+				origin.y = -categoryPositions[c].y - category->modelGroupPositions[g].y - entInfo->packedPos.y - entInfo->bounds[1][1];
 
 				// place entity above 0 if it goes below
 				origin.z = -entInfo->bounds[0].z + 1;
@@ -4075,31 +3840,31 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 		}
 
 		// put a name plate above the category with its main tag
-		float x = categoryPositions[ c ].x + category->totalSize.x * 0.5f;
-		float y = -categoryPositions[ c ].y - category->totalSize.y * 0.5f;
+		float x = categoryPositions[c].x + category->totalSize.x * 0.5f;
+		float y = -categoryPositions[c].y - category->totalSize.y * 0.5f;
 
 		catHeight += 128;
 		catHeight = idMath::Floor( catHeight / fontGridHeight ) * fontGridHeight;
 
-		idMapEntity* plateEnt = MakeNamePlateFuncStatic( &mapFile, x, y, catHeight, category->tagNames[ 0 ] );
+		idMapEntity* plateEnt = MakeNamePlateFuncStatic( &mapFile, x, y, catHeight, category->tagNames[0] );
 
-#if 0
+	#if 0
 		// place bottom place below
 		idVec3 origin( x, y, -32 );
 		idVec3 scale( category->totalSize.x, category->totalSize.y, 16 );
 			
 		idMapBrush* bottomPlate = MakeUnitBrush( origin, scale );
 		plateEnt->AddPrimitive( bottomPlate );
-#else
+	#else
 		// place border brushes
 
 		// back
-		float xx = x;
-		float yy = y + category->totalSize.y * 0.5f;
+		float		xx = x;
+		float		yy = y + category->totalSize.y * 0.5f;
 
-		idVec3 origin( xx, yy, -40 );
-		idVec3 scale( category->totalSize.x, 4, 16 );
-			
+		idVec3		origin( xx, yy, -40 );
+		idVec3		scale( category->totalSize.x, 4, 16 );
+
 		idMapBrush* bottomPlate = MakeUnitBrush( origin, scale, true );
 		worldspawn->AddPrimitive( bottomPlate );
 
@@ -4109,7 +3874,7 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 
 		origin.Set( xx, yy, -40 );
 		scale.Set( category->totalSize.x, 4, 16 );
-			
+
 		bottomPlate = MakeUnitBrush( origin, scale, true );
 		worldspawn->AddPrimitive( bottomPlate );
 
@@ -4129,10 +3894,10 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 
 		origin.Set( xx, yy, -40 );
 		scale.Set( 4, category->totalSize.y, 16 );
-			
+
 		bottomPlate = MakeUnitBrush( origin, scale, true );
 		worldspawn->AddPrimitive( bottomPlate );
-#endif
+	#endif
 	}
 
 	mapFile.ConvertToValve220Format( false );
@@ -4151,7 +3916,6 @@ void idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 }
 // RB  end
 
-
 #endif // #if !defined( DMAP )
 
 /*
@@ -4166,8 +3930,7 @@ idDeclLocal* idDeclManagerLocal::FindTypeWithoutParsing( declType_t type, const 
 	int typeIndex = ( int )type;
 	int i, hash;
 
-	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL || typeIndex >= DECL_MAX_TYPES )
-	{
+	if( typeIndex < 0 || typeIndex >= declTypes.Num() || declTypes[typeIndex] == NULL || typeIndex >= DECL_MAX_TYPES ) {
 		common->FatalError( "idDeclManager::FindTypeWithoutParsing: bad type: %i", typeIndex );
 		return NULL;
 	}
@@ -4178,36 +3941,32 @@ idDeclLocal* idDeclManagerLocal::FindTypeWithoutParsing( declType_t type, const 
 
 	// see if it already exists
 	hash = hashTables[typeIndex].GenerateKey( canonicalName, false );
-	for( i = hashTables[typeIndex].First( hash ); i >= 0; i = hashTables[typeIndex].Next( i ) )
-	{
-		if( linearLists[typeIndex][i]->name.Icmp( canonicalName ) == 0 )
-		{
+	for( i = hashTables[typeIndex].First( hash ); i >= 0; i = hashTables[typeIndex].Next( i ) ) {
+		if( linearLists[typeIndex][i]->name.Icmp( canonicalName ) == 0 ) {
 			// only print these when decl_show is set to 2, because it can be a lot of clutter
-			if( decl_show.GetInteger() > 1 )
-			{
-				MediaPrint( "referencing %s %s\n", declTypes[ type ]->typeName.c_str(), name );
+			if( decl_show.GetInteger() > 1 ) {
+				MediaPrint( "referencing %s %s\n", declTypes[type]->typeName.c_str(), name );
 			}
 			return linearLists[typeIndex][i];
 		}
 	}
 
-	if( !makeDefault )
-	{
+	if( !makeDefault ) {
 		return NULL;
 	}
 
-	idDeclLocal* decl = new( TAG_DECL ) idDeclLocal;
-	decl->self = NULL;
-	decl->name = canonicalName;
-	decl->type = type;
-	decl->declState = DS_UNPARSED;
-	decl->textSource = NULL;
-	decl->textLength = 0;
-	decl->sourceFile = &implicitDecls;
+	idDeclLocal* decl		  = new( TAG_DECL ) idDeclLocal;
+	decl->self				  = NULL;
+	decl->name				  = canonicalName;
+	decl->type				  = type;
+	decl->declState			  = DS_UNPARSED;
+	decl->textSource		  = NULL;
+	decl->textLength		  = 0;
+	decl->sourceFile		  = &implicitDecls;
 	decl->referencedThisLevel = false;
-	decl->everReferenced = false;
+	decl->everReferenced	  = false;
 	// SRS - initialize to false, otherwise all decls will be set to non-purgeable during Init()
-	decl->parsedOutsideLevelLoad = false;	// !insideLevelLoad;
+	decl->parsedOutsideLevelLoad = false; // !insideLevelLoad;
 
 	// add it to the linear list and hash table
 	decl->index = linearLists[typeIndex].Num();
@@ -4223,28 +3982,25 @@ idDeclManagerLocal::ConvertPDAsToStrings
 */
 void idDeclManagerLocal::ConvertPDAsToStrings( const idCmdArgs& args )
 {
-
-	idStr pdaStringsFileName = "temppdas/pdas.lang";
+	idStr		pdaStringsFileName = "temppdas/pdas.lang";
 	idFileLocal file( fileSystem->OpenFileWrite( pdaStringsFileName ) );
 
-	if( file == NULL )
-	{
+	if( file == NULL ) {
 		idLib::Printf( "Failed to Convert PDA data to Strings.\n" );
 	}
 
-	int totalEmailCount = 0;
-	int totalAudioCount = 0;
-	int totalVideoCount = 0;
-	idStr headEnd = "\t\"#str_%s_";
-	idStr tailEnd = "\"\t\"%s\"\n";
+	int	  totalEmailCount = 0;
+	int	  totalAudioCount = 0;
+	int	  totalVideoCount = 0;
+	idStr headEnd		  = "\t\"#str_%s_";
+	idStr tailEnd		  = "\"\t\"%s\"\n";
 	idStr temp;
 
-	int count = linearLists[ DECL_PDA ].Num();
-	for( int i = 0; i < count; i++ )
-	{
-		const idDeclPDA* decl = static_cast< const idDeclPDA* >( FindType( DECL_PDA, linearLists[ DECL_PDA ][ i ]->GetName(), false ) );
+	int	  count = linearLists[DECL_PDA].Num();
+	for( int i = 0; i < count; i++ ) {
+		const idDeclPDA* decl = static_cast<const idDeclPDA*>( FindType( DECL_PDA, linearLists[DECL_PDA][i]->GetName(), false ) );
 
-		idStr pdaBaseStrId = va( headEnd.c_str(), decl->GetName() );
+		idStr			 pdaBaseStrId = va( headEnd.c_str(), decl->GetName() );
 
 		temp = va( "\n\n//////// %s PDA ////////////\n", decl->GetName() );
 		file->Write( temp, temp.Length() );
@@ -4270,12 +4026,11 @@ void idDeclManagerLocal::ConvertPDAsToStrings( const idCmdArgs& args )
 		file->Write( temp, temp.Length() );
 
 		int emailCount = decl->GetNumEmails();
-		for( int emailIter = 0; emailIter < emailCount; emailIter++ )
-		{
+		for( int emailIter = 0; emailIter < emailCount; emailIter++ ) {
 			const idDeclEmail* email = decl->GetEmailByIndex( emailIter );
 
-			idStr emailBaseStrId = va( headEnd.c_str(), email->GetName() );
-			idStr emailBase = emailBaseStrId + "email_%s" + tailEnd;
+			idStr			   emailBaseStrId = va( headEnd.c_str(), email->GetName() );
+			idStr			   emailBase	  = emailBaseStrId + "email_%s" + tailEnd;
 
 			file->Write( "\t//Email\n", 9 );
 			// Date
@@ -4300,12 +4055,11 @@ void idDeclManagerLocal::ConvertPDAsToStrings( const idCmdArgs& args )
 		}
 
 		int audioCount = decl->GetNumAudios();
-		for( int audioIter = 0; audioIter < audioCount; audioIter++ )
-		{
+		for( int audioIter = 0; audioIter < audioCount; audioIter++ ) {
 			const idDeclAudio* audio = decl->GetAudioByIndex( audioIter );
 
-			idStr audioBaseStrId = va( headEnd.c_str(), audio->GetName() );
-			idStr audioBase = audioBaseStrId + "audio_%s" + tailEnd;
+			idStr			   audioBaseStrId = va( headEnd.c_str(), audio->GetName() );
+			idStr			   audioBase	  = audioBaseStrId + "audio_%s" + tailEnd;
 
 			file->Write( "\t//Audio\n", 9 );
 			// Name
@@ -4321,24 +4075,21 @@ void idDeclManagerLocal::ConvertPDAsToStrings( const idCmdArgs& args )
 		}
 	}
 
-	int infoEmailCount = linearLists[ DECL_EMAIL ].Num();
-	if( infoEmailCount > 0 )
-	{
+	int infoEmailCount = linearLists[DECL_EMAIL].Num();
+	if( infoEmailCount > 0 ) {
 		temp = "\n\n//////// PDA Info Emails ////////////\n";
 		file->Write( temp, temp.Length() );
 	}
-	for( int i = 0; i < infoEmailCount; i++ )
-	{
-		const idDeclEmail* email = static_cast< const idDeclEmail* >( FindType( DECL_EMAIL, linearLists[ DECL_EMAIL ][ i ]->GetName(), false ) );
+	for( int i = 0; i < infoEmailCount; i++ ) {
+		const idDeclEmail* email = static_cast<const idDeclEmail*>( FindType( DECL_EMAIL, linearLists[DECL_EMAIL][i]->GetName(), false ) );
 
-		idStr filename = email->base->GetFileName();
-		if( filename.Icmp( "newpdas/info_emails.pda" ) != 0 )
-		{
+		idStr			   filename = email->base->GetFileName();
+		if( filename.Icmp( "newpdas/info_emails.pda" ) != 0 ) {
 			continue;
 		}
 
 		idStr emailBaseStrId = va( "\t\"#str_%s_", email->GetName() );
-		idStr emailBase = emailBaseStrId + "email_%s" + tailEnd;
+		idStr emailBase		 = emailBaseStrId + "email_%s" + tailEnd;
 
 		file->Write( "\t//Email\n", 9 );
 
@@ -4363,18 +4114,16 @@ void idDeclManagerLocal::ConvertPDAsToStrings( const idCmdArgs& args )
 		totalEmailCount++;
 	}
 
-	int videoCount = linearLists[ DECL_VIDEO ].Num();
-	if( videoCount > 0 )
-	{
+	int videoCount = linearLists[DECL_VIDEO].Num();
+	if( videoCount > 0 ) {
 		temp = "\n\n//////// PDA Videos ////////////\n";
 		file->Write( temp, temp.Length() );
 	}
-	for( int i = 0; i < videoCount; i++ )
-	{
-		const idDeclVideo* video = static_cast< const idDeclVideo* >( FindType( DECL_VIDEO, linearLists[ DECL_VIDEO ][ i ]->GetName(), false ) );
+	for( int i = 0; i < videoCount; i++ ) {
+		const idDeclVideo* video = static_cast<const idDeclVideo*>( FindType( DECL_VIDEO, linearLists[DECL_VIDEO][i]->GetName(), false ) );
 
-		idStr videoBaseStrId = va( "\t\"#str_%s_", video->GetName() );
-		idStr videoBase = videoBaseStrId + "video_%s" + tailEnd;
+		idStr			   videoBaseStrId = va( "\t\"#str_%s_", video->GetName() );
+		idStr			   videoBase	  = videoBaseStrId + "video_%s" + tailEnd;
 
 		file->Write( "\t//Video\n", 9 );
 
@@ -4416,23 +4165,23 @@ idDeclLocal::idDeclLocal
 */
 idDeclLocal::idDeclLocal()
 {
-	name = "unnamed";
-	textSource = NULL;
-	textLength = 0;
-	compressedLength = 0;
-	sourceFile = NULL;
-	sourceTextOffset = 0;
-	sourceTextLength = 0;
-	sourceLine = 0;
-	checksum = 0;
-	type = DECL_ENTITYDEF;
-	index = 0;
-	declState = DS_UNPARSED;
+	name				   = "unnamed";
+	textSource			   = NULL;
+	textLength			   = 0;
+	compressedLength	   = 0;
+	sourceFile			   = NULL;
+	sourceTextOffset	   = 0;
+	sourceTextLength	   = 0;
+	sourceLine			   = 0;
+	checksum			   = 0;
+	type				   = DECL_ENTITYDEF;
+	index				   = 0;
+	declState			   = DS_UNPARSED;
 	parsedOutsideLevelLoad = false;
-	referencedThisLevel = false;
-	everReferenced = false;
-	redefinedInReload = false;
-	nextInFile = NULL;
+	referencedThisLevel	   = false;
+	everReferenced		   = false;
+	redefinedInReload	   = false;
+	nextInFile			   = NULL;
 }
 
 /*
@@ -4502,8 +4251,7 @@ idDeclLocal::EnsureNotPurged
 */
 void idDeclLocal::EnsureNotPurged()
 {
-	if( declState == DS_UNPARSED )
-	{
+	if( declState == DS_UNPARSED ) {
 		ParseLocal();
 	}
 }
@@ -4589,27 +4337,25 @@ idDeclLocal::SetTextLocal
 */
 void idDeclLocal::SetTextLocal( const char* text, const int length )
 {
-
 	Mem_Free( textSource );
 
 	checksum = MD5_BlockChecksum( text, length );
 
 #ifdef GET_HUFFMAN_FREQUENCIES
-	for( int i = 0; i < length; i++ )
-	{
+	for( int i = 0; i < length; i++ ) {
 		huffmanFrequencies[( ( const unsigned char* )text )[i]]++;
 	}
 #endif
 
 #ifdef USE_COMPRESSED_DECLS
-	int maxBytesPerCode = ( maxHuffmanBits + 7 ) >> 3;
-	byte* compressed = ( byte* )_alloca( length * maxBytesPerCode );
-	compressedLength = HuffmanCompressText( text, length, compressed, length * maxBytesPerCode );
-	textSource = ( char* )Mem_Alloc( compressedLength, TAG_DECLTEXT );
+	int	  maxBytesPerCode = ( maxHuffmanBits + 7 ) >> 3;
+	byte* compressed	  = ( byte* )_alloca( length * maxBytesPerCode );
+	compressedLength	  = HuffmanCompressText( text, length, compressed, length * maxBytesPerCode );
+	textSource			  = ( char* )Mem_Alloc( compressedLength, TAG_DECLTEXT );
 	memcpy( textSource, compressed, compressedLength );
 #else
 	compressedLength = length;
-	textSource = ( char* ) Mem_Alloc( length + 1, TAG_DECLTEXT );
+	textSource		 = ( char* )Mem_Alloc( length + 1, TAG_DECLTEXT );
 	memcpy( textSource, text, length );
 	textSource[length] = '\0';
 #endif
@@ -4623,13 +4369,12 @@ idDeclLocal::ReplaceSourceFileText
 */
 bool idDeclLocal::ReplaceSourceFileText()
 {
-	int oldFileLength, newFileLength;
+	int		oldFileLength, newFileLength;
 	idFile* file;
 
 	common->Printf( "Writing \'%s\' to \'%s\'...\n", GetName(), GetFileName() );
 
-	if( sourceFile == &declManagerLocal.implicitDecls )
-	{
+	if( sourceFile == &declManagerLocal.implicitDecls ) {
 		common->Warning( "Can't save implicit declaration %s.", GetName() );
 		return false;
 	}
@@ -4641,18 +4386,14 @@ bool idDeclLocal::ReplaceSourceFileText()
 	memset( buffer.Ptr(), 0, buffer.Size() );
 
 	// read original file
-	if( sourceFile->fileSize )
-	{
-
+	if( sourceFile->fileSize ) {
 		file = fileSystem->OpenFileRead( GetFileName() );
-		if( !file )
-		{
+		if( !file ) {
 			common->Warning( "Couldn't open %s for reading.", GetFileName() );
 			return false;
 		}
 
-		if( file->Length() != sourceFile->fileSize || file->Timestamp() != sourceFile->timestamp )
-		{
+		if( file->Length() != sourceFile->fileSize || file->Timestamp() != sourceFile->timestamp ) {
 			common->Warning( "The file %s has been modified outside of the engine.", GetFileName() );
 			return false;
 		}
@@ -4660,23 +4401,21 @@ bool idDeclLocal::ReplaceSourceFileText()
 		file->Read( buffer.Ptr(), oldFileLength );
 		fileSystem->CloseFile( file );
 
-		if( MD5_BlockChecksum( buffer.Ptr(), oldFileLength ) != ( unsigned int )sourceFile->checksum )
-		{
+		if( MD5_BlockChecksum( buffer.Ptr(), oldFileLength ) != ( unsigned int )sourceFile->checksum ) {
 			common->Warning( "The file %s has been modified outside of the engine.", GetFileName() );
 			return false;
 		}
 	}
 
 	// insert new text
-	char* declText = ( char* ) _alloca( textLength + 1 );
+	char* declText = ( char* )_alloca( textLength + 1 );
 	GetText( declText );
 	memmove( buffer.Ptr() + sourceTextOffset + textLength, buffer.Ptr() + sourceTextOffset + sourceTextLength, oldFileLength - sourceTextOffset - sourceTextLength );
 	memcpy( buffer.Ptr() + sourceTextOffset, declText, textLength );
 
 	// write out new file
 	file = fileSystem->OpenFileWrite( GetFileName(), "fs_basepath" );
-	if( !file )
-	{
+	if( !file ) {
 		common->Warning( "Couldn't open %s for writing.", GetFileName() );
 		return false;
 	}
@@ -4689,10 +4428,8 @@ bool idDeclLocal::ReplaceSourceFileText()
 	fileSystem->ReadFile( GetFileName(), NULL, &sourceFile->timestamp );
 
 	// move all decls in the same file
-	for( idDeclLocal* decl = sourceFile->decls; decl; decl = decl->nextInFile )
-	{
-		if( decl->sourceTextOffset > sourceTextOffset )
-		{
+	for( idDeclLocal* decl = sourceFile->decls; decl; decl = decl->nextInFile ) {
+		if( decl->sourceTextOffset > sourceTextOffset ) {
 			decl->sourceTextOffset += textLength - sourceTextLength;
 		}
 	}
@@ -4710,18 +4447,16 @@ idDeclLocal::SourceFileChanged
 */
 bool idDeclLocal::SourceFileChanged() const
 {
-	int newLength;
+	int		  newLength;
 	ID_TIME_T newTimestamp;
 
-	if( sourceFile->fileSize <= 0 )
-	{
+	if( sourceFile->fileSize <= 0 ) {
 		return false;
 	}
 
 	newLength = fileSystem->ReadFile( GetFileName(), NULL, &newTimestamp );
 
-	if( newLength != sourceFile->fileSize || newTimestamp != sourceFile->timestamp )
-	{
+	if( newLength != sourceFile->fileSize || newTimestamp != sourceFile->timestamp ) {
 		return true;
 	}
 
@@ -4732,12 +4467,10 @@ bool idDeclLocal::SourceFileChanged() const
 ID_TIME_T idDeclLocal::GetSourceFileTimestamp() const
 {
 	ID_TIME_T newTimestamp;
-	int newLength = fileSystem->ReadFile( GetFileName(), NULL, &newTimestamp );
+	int		  newLength = fileSystem->ReadFile( GetFileName(), NULL, &newTimestamp );
 
-	if( newLength <= 0 )
-	{
-		if( sourceFile->fileSize <= 0 )
-		{
+	if( newLength <= 0 ) {
+		if( sourceFile->fileSize <= 0 ) {
 			return FILE_NOT_FOUND_TIMESTAMP;
 		}
 	}
@@ -4753,7 +4486,7 @@ idDeclLocal::MakeDefault
 */
 void idDeclLocal::MakeDefault()
 {
-	static int recursionLevel;
+	static int	recursionLevel;
 	const char* defaultText;
 
 	declManagerLocal.MediaPrint( "DEFAULTED\n" );
@@ -4767,8 +4500,7 @@ void idDeclLocal::MakeDefault()
 	// cause an infinite loop, but normal default definitions could
 	// still reference other default definitions, so we can't
 	// just dump out on the first recursion
-	if( ++recursionLevel > 100 )
-	{
+	if( ++recursionLevel > 100 ) {
 		common->FatalError( "idDecl::MakeDefault: bad DefaultDefinition(): %s", defaultText );
 	}
 
@@ -4863,9 +4595,8 @@ idDeclLocal::AllocateSelf
 */
 void idDeclLocal::AllocateSelf()
 {
-	if( self == NULL )
-	{
-		self = declManagerLocal.GetDeclType( ( int )type )->allocator();
+	if( self == NULL ) {
+		self	   = declManagerLocal.GetDeclType( ( int )type )->allocator();
 		self->base = this;
 	}
 }
@@ -4887,8 +4618,7 @@ void idDeclLocal::ParseLocal()
 	declManagerLocal.MediaPrint( "parsing %s %s\n", declManagerLocal.declTypes[type]->typeName.c_str(), name.c_str() );
 
 	// if no text source try to generate default text
-	if( textSource == NULL )
-	{
+	if( textSource == NULL ) {
 		generatedDefaultText = self->SetDefaultText();
 	}
 
@@ -4896,8 +4626,7 @@ void idDeclLocal::ParseLocal()
 	declManagerLocal.indent++;
 
 	// no text immediately causes a MakeDefault()
-	if( textSource == NULL )
-	{
+	if( textSource == NULL ) {
 		MakeDefault();
 		declManagerLocal.indent--;
 		return;
@@ -4906,13 +4635,12 @@ void idDeclLocal::ParseLocal()
 	declState = DS_PARSED;
 
 	// parse
-	char* declText = ( char* ) _alloca( ( GetTextLength() + 1 ) * sizeof( char ) );
+	char* declText = ( char* )_alloca( ( GetTextLength() + 1 ) * sizeof( char ) );
 	GetText( declText );
 	self->Parse( declText, GetTextLength(), true );
 
 	// free generated text
-	if( generatedDefaultText )
-	{
+	if( generatedDefaultText ) {
 		Mem_Free( textSource );
 		textSource = NULL;
 		textLength = 0;
@@ -4930,8 +4658,7 @@ void idDeclLocal::Purge()
 {
 	// never purge things that were referenced outside level load,
 	// like the console and menu graphics
-	if( parsedOutsideLevelLoad )
-	{
+	if( parsedOutsideLevelLoad ) {
 		return;
 	}
 

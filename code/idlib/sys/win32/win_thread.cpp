@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -40,12 +41,11 @@ If you have questions concerning this license or the applicable additional terms
 	#define STACK_SIZE_PARAM_IS_A_RESERVATION 0x00010000
 #endif
 
-typedef struct tagTHREADNAME_INFO
-{
-	DWORD dwType;		// Must be 0x1000.
-	LPCSTR szName;		// Pointer to name (in user addr space).
-	DWORD dwThreadID;	// Thread ID (-1=caller thread).
-	DWORD dwFlags;		// Reserved for future use, must be zero.
+typedef struct tagTHREADNAME_INFO {
+	DWORD  dwType;	   // Must be 0x1000.
+	LPCSTR szName;	   // Pointer to name (in user addr space).
+	DWORD  dwThreadID; // Thread ID (-1=caller thread).
+	DWORD  dwFlags;	   // Reserved for future use, must be zero.
 } THREADNAME_INFO;
 
 /*
@@ -53,9 +53,9 @@ typedef struct tagTHREADNAME_INFO
 Sys_SetThreadName
 
 caedes: This should be seen as a helper-function for Sys_CreateThread() only.
-        (re)setting the name of a running thread seems like a bad idea and
-        currently (fresh d3 bfg source) isn't done anyway.
-        Furthermore SDL doesn't support it
+		(re)setting the name of a running thread seems like a bad idea and
+		currently (fresh d3 bfg source) isn't done anyway.
+		Furthermore SDL doesn't support it
 
 ========================
 */
@@ -65,20 +65,17 @@ static void Sys_SetThreadName( DWORD threadID, const char* name )
 	// this ugly mess is the official way to set a thread name on windows..
 	// see http://msdn.microsoft.com/en-us/library/xcb2z8hs.aspx
 
-
 	THREADNAME_INFO info;
-	info.dwType = 0x1000;
-	info.szName = name;
+	info.dwType		= 0x1000;
+	info.szName		= name;
 	info.dwThreadID = threadID;
-	info.dwFlags = 0;
+	info.dwFlags	= 0;
 
-	__try
-	{
+	__try {
 		RaiseException( MS_VC_EXCEPTION, 0, sizeof( info ) / sizeof( DWORD ), ( const ULONG_PTR* )&info );
 	}
 	// this much is just to keep /analyze quiet
-	__except( GetExceptionCode() == MS_VC_EXCEPTION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH )
-	{
+	__except( GetExceptionCode() == MS_VC_EXCEPTION ? EXCEPTION_EXECUTE_HANDLER : EXCEPTION_CONTINUE_SEARCH ) {
 		info.dwFlags = 0;
 	}
 #endif
@@ -91,7 +88,6 @@ Sys_Createthread
 */
 uintptr_t Sys_CreateThread( xthread_t function, void* parms, xthreadPriority priority, const char* name, core_t core, int stackSize, bool suspended )
 {
-
 	DWORD flags = ( suspended ? CREATE_SUSPENDED : 0 );
 	// Without this flag the 'dwStackSize' parameter to CreateThread specifies the "Stack Commit Size"
 	// and the "Stack Reserve Size" is set to the value specified at link-time.
@@ -109,34 +105,26 @@ uintptr_t Sys_CreateThread( xthread_t function, void* parms, xthreadPriority pri
 	// project settings, then we would still be reserving 50 x 16 = 800 MB of virtual address space.
 	flags |= STACK_SIZE_PARAM_IS_A_RESERVATION;
 
-	DWORD threadId;
-	HANDLE handle = CreateThread(	NULL,	// LPSECURITY_ATTRIBUTES lpsa, //-V513
-									stackSize,
-									( LPTHREAD_START_ROUTINE )function,
-									parms,
-									flags,
-									&threadId );
-	if( handle == 0 )
-	{
+	DWORD  threadId;
+	HANDLE handle = CreateThread( NULL, // LPSECURITY_ATTRIBUTES lpsa, //-V513
+		stackSize,
+		( LPTHREAD_START_ROUTINE )function,
+		parms,
+		flags,
+		&threadId );
+	if( handle == 0 ) {
 		idLib::common->FatalError( "CreateThread error: %i", GetLastError() );
 		return ( uintptr_t )0;
 	}
 	// TODO: when writing the SDL backend, just use this name when creating the thread
 	Sys_SetThreadName( threadId, name );
-	if( priority == THREAD_HIGHEST )
-	{
-		SetThreadPriority( ( HANDLE )handle, THREAD_PRIORITY_HIGHEST );		//  we better sleep enough to do this
-	}
-	else if( priority == THREAD_ABOVE_NORMAL )
-	{
+	if( priority == THREAD_HIGHEST ) {
+		SetThreadPriority( ( HANDLE )handle, THREAD_PRIORITY_HIGHEST ); //  we better sleep enough to do this
+	} else if( priority == THREAD_ABOVE_NORMAL ) {
 		SetThreadPriority( ( HANDLE )handle, THREAD_PRIORITY_ABOVE_NORMAL );
-	}
-	else if( priority == THREAD_BELOW_NORMAL )
-	{
+	} else if( priority == THREAD_BELOW_NORMAL ) {
 		SetThreadPriority( ( HANDLE )handle, THREAD_PRIORITY_BELOW_NORMAL );
-	}
-	else if( priority == THREAD_LOWEST )
-	{
+	} else if( priority == THREAD_LOWEST ) {
 		SetThreadPriority( ( HANDLE )handle, THREAD_PRIORITY_LOWEST );
 	}
 
@@ -144,7 +132,6 @@ uintptr_t Sys_CreateThread( xthread_t function, void* parms, xthreadPriority pri
 
 	return ( uintptr_t )handle;
 }
-
 
 /*
 ========================
@@ -163,8 +150,7 @@ Sys_DestroyThread
 */
 void Sys_DestroyThread( uintptr_t threadHandle )
 {
-	if( threadHandle == 0 )
-	{
+	if( threadHandle == 0 ) {
 		return;
 	}
 	WaitForSingleObject( ( HANDLE )threadHandle, INFINITE );
@@ -277,10 +263,8 @@ Sys_MutexLock
 */
 bool Sys_MutexLock( mutexHandle_t& handle, bool blocking )
 {
-	if( TryEnterCriticalSection( &handle ) == 0 )
-	{
-		if( !blocking )
-		{
+	if( TryEnterCriticalSection( &handle ) == 0 ) {
+		if( !blocking ) {
 			return false;
 		}
 		EnterCriticalSection( &handle );
@@ -295,7 +279,7 @@ Sys_MutexUnlock
 */
 void Sys_MutexUnlock( mutexHandle_t& handle )
 {
-	LeaveCriticalSection( & handle );
+	LeaveCriticalSection( &handle );
 }
 
 /*
@@ -316,8 +300,8 @@ interlockedInt_t Sys_InterlockedIncrement( interlockedInt_t& value )
 	// TODO: SDL_AtomicIncRef
 #ifdef InterlockedIncrementAcquire
 	// googling suggests that some experimental mingw code supports this too..
-	return InterlockedIncrementAcquire( & value );
-#elif defined(__GNUC__)
+	return InterlockedIncrementAcquire( &value );
+#elif defined( __GNUC__ )
 	return __sync_add_and_fetch( &value, 1 );
 #endif
 }
@@ -331,8 +315,8 @@ interlockedInt_t Sys_InterlockedDecrement( interlockedInt_t& value )
 {
 	// TODO: SDL_AtomicDecRef
 #ifdef InterlockedDecrementRelease
-	return InterlockedDecrementRelease( & value );
-#elif defined(__GNUC__)
+	return InterlockedDecrementRelease( &value );
+#elif defined( __GNUC__ )
 	return __sync_sub_and_fetch( &value, 1 );
 #endif
 }
@@ -344,7 +328,7 @@ Sys_InterlockedAdd
 */
 interlockedInt_t Sys_InterlockedAdd( interlockedInt_t& value, interlockedInt_t i )
 {
-	return InterlockedExchangeAdd( & value, i ) + i;
+	return InterlockedExchangeAdd( &value, i ) + i;
 }
 
 /*
@@ -354,7 +338,7 @@ Sys_InterlockedSub
 */
 interlockedInt_t Sys_InterlockedSub( interlockedInt_t& value, interlockedInt_t i )
 {
-	return InterlockedExchangeAdd( & value, - i ) - i;
+	return InterlockedExchangeAdd( &value, -i ) - i;
 }
 
 /*
@@ -364,7 +348,7 @@ Sys_InterlockedExchange
 */
 interlockedInt_t Sys_InterlockedExchange( interlockedInt_t& value, interlockedInt_t exchange )
 {
-	return InterlockedExchange( & value, exchange );
+	return InterlockedExchange( &value, exchange );
 }
 
 /*
@@ -374,7 +358,7 @@ Sys_InterlockedCompareExchange
 */
 interlockedInt_t Sys_InterlockedCompareExchange( interlockedInt_t& value, interlockedInt_t comparand, interlockedInt_t exchange )
 {
-	return InterlockedCompareExchange( & value, exchange, comparand );
+	return InterlockedCompareExchange( &value, exchange, comparand );
 }
 
 /*
@@ -392,7 +376,7 @@ Sys_InterlockedExchangePointer
 */
 void* Sys_InterlockedExchangePointer( void*& ptr, void* exchange )
 {
-	return InterlockedExchangePointer( & ptr, exchange );
+	return InterlockedExchangePointer( &ptr, exchange );
 }
 
 /*
@@ -402,5 +386,5 @@ Sys_InterlockedCompareExchangePointer
 */
 void* Sys_InterlockedCompareExchangePointer( void*& ptr, void* comparand, void* exchange )
 {
-	return InterlockedCompareExchangePointer( & ptr, exchange, comparand );
+	return InterlockedCompareExchangePointer( &ptr, exchange, comparand );
 }

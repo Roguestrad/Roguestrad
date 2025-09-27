@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,21 +37,21 @@ CLASS_DECLARATION( iceWeaponObject, iceWeaponGrabber )
 END_CLASS
 
 // blend times
-#define GRABBER_IDLE_TO_LOWER		4
-#define GRABBER_IDLE_TO_OPEN		4
-#define GRABBER_IDLE_TO_OPENFIRE	4
-#define GRABBER_OPEN_TO_CLOSE		4
-#define GRABBER_OPEN_TO_FIRE		4
-#define GRABBER_CLOSE_TO_OPEN		4
-#define GRABBER_CLOSE_TO_IDLE		4
-#define GRABBER_OPENFIRE_TO_FIRE	2
-#define GRABBER_FIRE_TO_CLOSE		4
-#define GRABBER_RAISE_TO_IDLE		4
+#define GRABBER_IDLE_TO_LOWER	 4
+#define GRABBER_IDLE_TO_OPEN	 4
+#define GRABBER_IDLE_TO_OPENFIRE 4
+#define GRABBER_OPEN_TO_CLOSE	 4
+#define GRABBER_OPEN_TO_FIRE	 4
+#define GRABBER_CLOSE_TO_OPEN	 4
+#define GRABBER_CLOSE_TO_IDLE	 4
+#define GRABBER_OPENFIRE_TO_FIRE 2
+#define GRABBER_FIRE_TO_CLOSE	 4
+#define GRABBER_RAISE_TO_IDLE	 4
 
-#define WARNING_BEEP_1				1.5
-#define WARNING_BEEP_2				2.25
-#define WARNING_BEEP_3				2.50
-#define WARNING_BEEP_4				2.75
+#define WARNING_BEEP_1			 1.5
+#define WARNING_BEEP_2			 2.25
+#define WARNING_BEEP_3			 2.50
+#define WARNING_BEEP_4			 2.75
 
 /*
 ===============
@@ -63,18 +64,17 @@ void iceWeaponGrabber::Init( idWeapon* weapon )
 
 	next_attack = 0;
 
-	snd_fireloop = FindSound( "snd_fireloop" );
+	snd_fireloop	= FindSound( "snd_fireloop" );
 	snd_electroloop = FindSound( "snd_electroloop" );
-	snd_mainfire = FindSound( "snd_mainfire" );
-	snd_cangrab = FindSound( "snd_cangrab" );
-	snd_warning = FindSound( "snd_warning" );
-	snd_stopfire = FindSound( "snd_stopfire" );
+	snd_mainfire	= FindSound( "snd_mainfire" );
+	snd_cangrab		= FindSound( "snd_cangrab" );
+	snd_warning		= FindSound( "snd_warning" );
+	snd_stopfire	= FindSound( "snd_stopfire" );
 
 	owner->Event_Grabber( true );
 
 	grabberState = -1;
 }
-
 
 /*
 ===============
@@ -83,22 +83,16 @@ iceWeaponGrabber::Raise
 */
 stateResult_t iceWeaponGrabber::Raise( stateParms_t* parms )
 {
-	enum RisingState
-	{
-		RISING_NOTSET = 0,
-		RISING_WAIT
-	};
+	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
 
-	switch( parms->stage )
-	{
+	switch( parms->stage ) {
 		case RISING_NOTSET:
 			owner->Event_PlayAnim( ANIMCHANNEL_ALL, "raise", false );
 			parms->stage = RISING_WAIT;
 			return SRESULT_WAIT;
 
 		case RISING_WAIT:
-			if( owner->Event_AnimDone( ANIMCHANNEL_ALL, GRABBER_RAISE_TO_IDLE ) )
-			{
+			if( owner->Event_AnimDone( ANIMCHANNEL_ALL, GRABBER_RAISE_TO_IDLE ) ) {
 				return SRESULT_DONE;
 			}
 			return SRESULT_WAIT;
@@ -107,7 +101,6 @@ stateResult_t iceWeaponGrabber::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-
 /*
 ===============
 iceWeaponGrabber::Lower
@@ -115,22 +108,16 @@ iceWeaponGrabber::Lower
 */
 stateResult_t iceWeaponGrabber::Lower( stateParms_t* parms )
 {
-	enum LoweringState
-	{
-		LOWERING_NOTSET = 0,
-		LOWERING_WAIT
-	};
+	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
 
-	switch( parms->stage )
-	{
+	switch( parms->stage ) {
 		case LOWERING_NOTSET:
 			owner->Event_PlayAnim( ANIMCHANNEL_ALL, "putaway", false );
 			parms->stage = LOWERING_WAIT;
 			return SRESULT_WAIT;
 
 		case LOWERING_WAIT:
-			if( owner->Event_AnimDone( ANIMCHANNEL_ALL, 0 ) )
-			{
+			if( owner->Event_AnimDone( ANIMCHANNEL_ALL, 0 ) ) {
 				SetState( "Holstered" );
 				return SRESULT_DONE;
 			}
@@ -153,11 +140,11 @@ if ( grabState == 1 || grabState == 2 ) {
 }
 ===============
 */
-//bool iceWeaponGrabber::CanFire()
+// bool iceWeaponGrabber::CanFire()
 //{
 //	int grabState = owner->Event_GrabberHasTarget();
 //	return grabState == 1 || grabState == 2;
-//}
+// }
 
 /*
 ===============
@@ -168,8 +155,7 @@ stateResult_t iceWeaponGrabber::Idle( stateParms_t* parms )
 {
 	int grabState = 0;
 
-	enum IdleState
-	{
+	enum IdleState {
 		IDLE_NOTSET = 0,
 		IDLE_WAIT,
 		IDLE_GRABBER_OPEN,
@@ -179,21 +165,16 @@ stateResult_t iceWeaponGrabber::Idle( stateParms_t* parms )
 	UpdateGuiLight();
 
 	grabState = owner->Event_GrabberHasTarget();
-	if( grabState == 1 || grabState == 2 )
-	{
+	if( grabState == 1 || grabState == 2 ) {
 		parms->stage = IDLE_GRABBER_OPEN;
 	}
 
-	switch( parms->stage )
-	{
+	switch( parms->stage ) {
 		case IDLE_NOTSET:
 			owner->Event_WeaponReady();
-			if( !owner->AmmoInClip() )
-			{
+			if( !owner->AmmoInClip() ) {
 				owner->Event_WeaponOutOfAmmo();
-			}
-			else
-			{
+			} else {
 				owner->Event_WeaponReady();
 			}
 
@@ -218,18 +199,14 @@ stateResult_t iceWeaponGrabber::Idle( stateParms_t* parms )
 			return SRESULT_WAIT;
 
 		case IDLE_GRABBER_OPEN_WAIT:
-			if( owner->Event_AnimDone( ANIMCHANNEL_ALL, 0 ) )
-			{
-				//owner->WeaponState( WP_FIRE, GRABBER_OPEN_TO_CLOSE );
+			if( owner->Event_AnimDone( ANIMCHANNEL_ALL, 0 ) ) {
+				// owner->WeaponState( WP_FIRE, GRABBER_OPEN_TO_CLOSE );
 				owner->BeginAttack();
 				return SRESULT_DONE;
-			}
-			else
-			{
+			} else {
 				grabState = owner->Event_GrabberHasTarget();
-				if( grabState == 3 )
-				{
-					//owner->WeaponState( WP_FIRE, GRABBER_OPEN_TO_CLOSE );
+				if( grabState == 3 ) {
+					// owner->WeaponState( WP_FIRE, GRABBER_OPEN_TO_CLOSE );
 					owner->BeginAttack();
 					return SRESULT_DONE;
 				}
@@ -237,7 +214,8 @@ stateResult_t iceWeaponGrabber::Idle( stateParms_t* parms )
 
 			UpdateGuiLight();
 			UpdateWarningSound();
-			return SRESULT_WAIT;;
+			return SRESULT_WAIT;
+			;
 	}
 
 	return SRESULT_DONE;
@@ -251,10 +229,10 @@ iceWeaponGrabber::StartWarningSound
 void iceWeaponGrabber::StartWarningSound()
 {
 	fireStartTime = gameLocal.realClientTime;
-	warningBeep1 = false;
-	warningBeep2 = false;
-	warningBeep3 = false;
-	warningBeep4 = false;
+	warningBeep1  = false;
+	warningBeep2  = false;
+	warningBeep3  = false;
+	warningBeep4  = false;
 }
 
 /*
@@ -291,27 +269,20 @@ iceWeaponGrabber::UpdateGuiLight
 */
 void iceWeaponGrabber::UpdateGuiLight()
 {
-
 	float newState = owner->Event_GrabberHasTarget();
-	if( newState != grabberState )
-	{
+	if( newState != grabberState ) {
 		grabberState = newState;
-		if( grabberState == 0 )
-		{
+		if( grabberState == 0 ) {
 			owner->Event_StartWeaponLight( "gLightBlue" );
 			owner->Event_StopWeaponLight( "gLightYellow" );
 			owner->Event_StopWeaponLight( "gLightRed" );
-		}
-		else if( grabberState == 1 )
-		{
-			//startSound("snd_cangrab", SND_CHANNEL_ITEM, false);
+		} else if( grabberState == 1 ) {
+			// startSound("snd_cangrab", SND_CHANNEL_ITEM, false);
 			owner->StartSoundShader( snd_cangrab, SND_CHANNEL_ITEM, 0, false, NULL );
 			owner->Event_StartWeaponLight( "gLightYellow" );
 			owner->Event_StopWeaponLight( "gLightBlue" );
 			owner->Event_StopWeaponLight( "gLightRed" );
-		}
-		else if( grabberState == 2 )
-		{
+		} else if( grabberState == 2 ) {
 			owner->Event_StartWeaponLight( "gLightRed" );
 			owner->Event_StopWeaponLight( "gLightBlue" );
 			owner->Event_StopWeaponLight( "gLightYellow" );
@@ -330,30 +301,25 @@ void iceWeaponGrabber::UpdateWarningSound()
 	float elapsed;
 
 	currentTime = gameLocal.realClientTime;
-	elapsed = currentTime - fireStartTime;
+	elapsed		= currentTime - fireStartTime;
 
-	if( elapsed > WARNING_BEEP_1 && !warningBeep1 )
-	{
+	if( elapsed > WARNING_BEEP_1 && !warningBeep1 ) {
 		owner->StartSoundShader( snd_warning, SND_CHANNEL_ITEM, 0, false, NULL );
 		warningBeep1 = true;
 	}
-	if( elapsed > WARNING_BEEP_2 && !warningBeep2 )
-	{
+	if( elapsed > WARNING_BEEP_2 && !warningBeep2 ) {
 		owner->StartSoundShader( snd_warning, SND_CHANNEL_ITEM, 0, false, NULL );
 		warningBeep2 = true;
 	}
-	if( elapsed > WARNING_BEEP_3 && !warningBeep3 )
-	{
+	if( elapsed > WARNING_BEEP_3 && !warningBeep3 ) {
 		owner->StartSoundShader( snd_warning, SND_CHANNEL_ITEM, 0, false, NULL );
 		warningBeep3 = true;
 	}
-	if( elapsed > WARNING_BEEP_4 && !warningBeep4 )
-	{
+	if( elapsed > WARNING_BEEP_4 && !warningBeep4 ) {
 		owner->StartSoundShader( snd_warning, SND_CHANNEL_ITEM, 0, false, NULL );
 		warningBeep4 = true;
 	}
 }
-
 
 /*
 ===============
@@ -362,19 +328,19 @@ iceWeaponGrabber::Fire
 */
 stateResult_t iceWeaponGrabber::Fire( stateParms_t* parms )
 {
-	//int grabState;
+	// int grabState;
 	//
-	//grabState = owner->Event_GrabberHasTarget();
+	// grabState = owner->Event_GrabberHasTarget();
 	//
-	//enum FIRE_State
+	// enum FIRE_State
 	//{
 	//	FIRE_NOTSET = 0,
 	//	FIRE_WAIT_GRABSTATE,
 	//	FIRE_ACTUALLY_FIRE,
 	//	FIRE_WAIT
-	//};
+	// };
 	//
-	//switch( parms->stage )
+	// switch( parms->stage )
 	//{
 	//	case FIRE_NOTSET:
 	//		next_attack = MS2SEC( gameLocal.realClientTime );
@@ -411,7 +377,7 @@ stateResult_t iceWeaponGrabber::Fire( stateParms_t* parms )
 	//			UpdateGuiLight();
 	//		}
 	//		break;
-	//}
+	// }
 	return SRESULT_DONE;
 }
 

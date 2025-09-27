@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -32,37 +33,34 @@ If you have questions concerning this license or the applicable additional terms
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;
 
-idCVar r_logLevel( "r_logLevel", "0", CVAR_BOOL, "1 = Named render events in RenderDoc but is slower if enabled" );
+idCVar				  r_logLevel( "r_logLevel", "0", CVAR_BOOL, "1 = Named render events in RenderDoc but is slower if enabled" );
 
-static const int LOG_LEVEL_BLOCKS_ONLY	= 1;
-static const int LOG_LEVEL_EVERYTHING	= 2;
+static const int	  LOG_LEVEL_BLOCKS_ONLY = 1;
+static const int	  LOG_LEVEL_EVERYTHING	= 2;
 
-const char* renderLogMainBlockLabels[] =
-{
-	ASSERT_ENUM_STRING( MRB_GPU_TIME,						0 ),
-	ASSERT_ENUM_STRING( MRB_BEGIN_DRAWING_VIEW,				1 ),
-	ASSERT_ENUM_STRING( MRB_FILL_DEPTH_BUFFER,				2 ),
-	ASSERT_ENUM_STRING( MRB_FILL_GEOMETRY_BUFFER,			3 ),
-	ASSERT_ENUM_STRING( MRB_SSAO_PASS,						4 ),
-	ASSERT_ENUM_STRING( MRB_AMBIENT_PASS,					5 ),
-	ASSERT_ENUM_STRING( MRB_SHADOW_ATLAS_PASS,				6 ),
-	ASSERT_ENUM_STRING( MRB_DRAW_INTERACTIONS,				7 ),
-	ASSERT_ENUM_STRING( MRB_DRAW_SHADER_PASSES,				8 ),
-	ASSERT_ENUM_STRING( MRB_FOG_ALL_LIGHTS,					9 ),
-	ASSERT_ENUM_STRING( MRB_BLOOM,							10 ),
-	ASSERT_ENUM_STRING( MRB_DRAW_SHADER_PASSES_POST,		11 ),
-	ASSERT_ENUM_STRING( MRB_DRAW_DEBUG_TOOLS,				12 ),
-	ASSERT_ENUM_STRING( MRB_CAPTURE_COLORBUFFER,			13 ),
-	ASSERT_ENUM_STRING( MRB_MOTION_VECTORS,					14 ),
-	ASSERT_ENUM_STRING( MRB_TAA,							15 ),
-	ASSERT_ENUM_STRING( MRB_TONE_MAP_PASS,					16 ),
-	ASSERT_ENUM_STRING( MRB_POSTPROCESS,					17 ),
-	ASSERT_ENUM_STRING( MRB_DRAW_GUI,                       18 ),
-	ASSERT_ENUM_STRING( MRB_CRT_POSTPROCESS,                19 ),
-	ASSERT_ENUM_STRING( MRB_TOTAL,							20 )
-};
+const char*			  renderLogMainBlockLabels[] = { ASSERT_ENUM_STRING( MRB_GPU_TIME, 0 ),
+			  ASSERT_ENUM_STRING( MRB_BEGIN_DRAWING_VIEW, 1 ),
+			  ASSERT_ENUM_STRING( MRB_FILL_DEPTH_BUFFER, 2 ),
+			  ASSERT_ENUM_STRING( MRB_FILL_GEOMETRY_BUFFER, 3 ),
+			  ASSERT_ENUM_STRING( MRB_SSAO_PASS, 4 ),
+			  ASSERT_ENUM_STRING( MRB_AMBIENT_PASS, 5 ),
+			  ASSERT_ENUM_STRING( MRB_SHADOW_ATLAS_PASS, 6 ),
+			  ASSERT_ENUM_STRING( MRB_DRAW_INTERACTIONS, 7 ),
+			  ASSERT_ENUM_STRING( MRB_DRAW_SHADER_PASSES, 8 ),
+			  ASSERT_ENUM_STRING( MRB_FOG_ALL_LIGHTS, 9 ),
+			  ASSERT_ENUM_STRING( MRB_BLOOM, 10 ),
+			  ASSERT_ENUM_STRING( MRB_DRAW_SHADER_PASSES_POST, 11 ),
+			  ASSERT_ENUM_STRING( MRB_DRAW_DEBUG_TOOLS, 12 ),
+			  ASSERT_ENUM_STRING( MRB_CAPTURE_COLORBUFFER, 13 ),
+			  ASSERT_ENUM_STRING( MRB_MOTION_VECTORS, 14 ),
+			  ASSERT_ENUM_STRING( MRB_TAA, 15 ),
+			  ASSERT_ENUM_STRING( MRB_TONE_MAP_PASS, 16 ),
+			  ASSERT_ENUM_STRING( MRB_POSTPROCESS, 17 ),
+			  ASSERT_ENUM_STRING( MRB_DRAW_GUI, 18 ),
+			  ASSERT_ENUM_STRING( MRB_CRT_POSTPROCESS, 19 ),
+			  ASSERT_ENUM_STRING( MRB_TOTAL, 20 ) };
 
-extern uint64 Sys_Microseconds();
+extern uint64		  Sys_Microseconds();
 
 /*
 ========================
@@ -71,15 +69,13 @@ PC_BeginNamedEvent
 FIXME: this is not thread safe on the PC
 ========================
 */
-void PC_BeginNamedEvent( const char* szName, const idVec4& color, nvrhi::ICommandList* commandList )
+void				  PC_BeginNamedEvent( const char* szName, const idVec4& color, nvrhi::ICommandList* commandList )
 {
-	if( r_logLevel.GetInteger() <= 0 )
-	{
+	if( r_logLevel.GetInteger() <= 0 ) {
 		return;
 	}
 
-	if( commandList )
-	{
+	if( commandList ) {
 		commandList->beginMarker( szName );
 	}
 }
@@ -91,13 +87,11 @@ PC_EndNamedEvent
 */
 void PC_EndNamedEvent( nvrhi::ICommandList* commandList )
 {
-	if( r_logLevel.GetInteger() <= 0 )
-	{
+	if( r_logLevel.GetInteger() <= 0 ) {
 		return;
 	}
 
-	if( commandList )
-	{
+	if( commandList ) {
 		commandList->endMarker();
 	}
 }
@@ -110,19 +104,17 @@ idRenderLog
 ================================================================================================
 */
 
-idRenderLog	renderLog;
-
+idRenderLog renderLog;
 
 idRenderLog::idRenderLog()
 {
 	frameCounter = 0;
-	frameParity = 0;
+	frameParity	 = 0;
 }
 
 void idRenderLog::Init()
 {
-	for( int i = 0; i < MRB_TOTAL * NUM_FRAME_DATA; i++ )
-	{
+	for( int i = 0; i < MRB_TOTAL * NUM_FRAME_DATA; i++ ) {
 		timerQueries.Append( deviceManager->GetDevice()->createTimerQuery() );
 		timerUsed.Append( false );
 	}
@@ -132,8 +124,7 @@ void idRenderLog::Shutdown()
 {
 	commandList = nullptr;
 
-	for( int i = 0; i < MRB_TOTAL * NUM_FRAME_DATA; i++ )
-	{
+	for( int i = 0; i < MRB_TOTAL * NUM_FRAME_DATA; i++ ) {
 		timerQueries[i].Reset();
 	}
 }
@@ -148,8 +139,6 @@ void idRenderLog::EndFrame()
 	commandList = nullptr;
 }
 
-
-
 /*
 ========================
 idRenderLog::OpenMainBlock
@@ -158,16 +147,14 @@ idRenderLog::OpenMainBlock
 void idRenderLog::OpenMainBlock( renderLogMainBlock_t block )
 {
 	// SRS - Use glConfig.timerQueryAvailable flag to control timestamp capture for all platforms
-	if( glConfig.timerQueryAvailable )
-	{
+	if( glConfig.timerQueryAvailable ) {
 		mainBlock = block;
 
 		int timerIndex = mainBlock + frameParity * MRB_TOTAL;
 
 		// SRS - Only issue a new start timer query if timer slot unused
-		if( !timerUsed[ timerIndex ] )
-		{
-			commandList->beginTimerQuery( timerQueries[ timerIndex ] );
+		if( !timerUsed[timerIndex] ) {
+			commandList->beginTimerQuery( timerQueries[timerIndex] );
 		}
 	}
 }
@@ -180,22 +167,19 @@ idRenderLog::CloseMainBlock
 void idRenderLog::CloseMainBlock( int _block )
 {
 	// SRS - Use glConfig.timerQueryAvailable flag to control timestamp capture for all platforms
-	if( glConfig.timerQueryAvailable )
-	{
+	if( glConfig.timerQueryAvailable ) {
 		renderLogMainBlock_t block = mainBlock;
 
-		if( _block != -1 )
-		{
+		if( _block != -1 ) {
 			block = renderLogMainBlock_t( _block );
 		}
 
 		int timerIndex = block + frameParity * MRB_TOTAL;
 
 		// SRS - Only issue a new end timer query if timer slot unused
-		if( !timerUsed[ timerIndex ] )
-		{
-			commandList->endTimerQuery( timerQueries[ timerIndex ] );
-			timerUsed[ timerIndex ] = true;
+		if( !timerUsed[timerIndex] ) {
+			commandList->endTimerQuery( timerQueries[timerIndex] );
+			timerUsed[timerIndex] = true;
 		}
 	}
 }
@@ -210,17 +194,14 @@ void idRenderLog::FetchGPUTimers( backEndCounters_t& pc )
 	frameCounter++;
 	frameParity = ( frameParity + 1 ) % NUM_FRAME_DATA;
 
-	for( int i = 0; i < MRB_TOTAL; i++ )
-	{
+	for( int i = 0; i < MRB_TOTAL; i++ ) {
 		int timerIndex = i + frameParity * MRB_TOTAL;
 
-		if( timerUsed[timerIndex] )
-		{
-			double time = deviceManager->GetDevice()->getTimerQueryTime( timerQueries[ timerIndex ] );
+		if( timerUsed[timerIndex] ) {
+			double time = deviceManager->GetDevice()->getTimerQueryTime( timerQueries[timerIndex] );
 			time *= 1000000.0; // seconds -> microseconds
 
-			switch( i )
-			{
+			switch( i ) {
 				case MRB_GPU_TIME:
 					pc.gpuMicroSec = time;
 					break;
@@ -302,7 +283,6 @@ void idRenderLog::FetchGPUTimers( backEndCounters_t& pc )
 		timerUsed[timerIndex] = false;
 	}
 }
-
 
 /*
 ========================

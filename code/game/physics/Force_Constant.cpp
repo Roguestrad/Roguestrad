@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -41,10 +42,10 @@ idForce_Constant::idForce_Constant
 */
 idForce_Constant::idForce_Constant()
 {
-	force		= vec3_zero;
-	physics		= NULL;
-	id			= 0;
-	point		= vec3_zero;
+	force	= vec3_zero;
+	physics = NULL;
+	id		= 0;
+	point	= vec3_zero;
 }
 
 /*
@@ -89,8 +90,8 @@ idForce_Constant::SetPosition
 void idForce_Constant::SetPosition( idPhysics* physics, int id, const idVec3& point )
 {
 	this->physics = physics;
-	this->id = id;
-	this->point = point;
+	this->id	  = id;
+	this->point	  = point;
 }
 
 /*
@@ -122,8 +123,7 @@ void idForce_Constant::Evaluate( int time )
 {
 	idVec3 p;
 
-	if( !physics )
-	{
+	if( !physics ) {
 		return;
 	}
 
@@ -139,8 +139,7 @@ idForce_Constant::RemovePhysics
 */
 void idForce_Constant::RemovePhysics( const idPhysics* phys )
 {
-	if( physics == phys )
-	{
+	if( physics == phys ) {
 		physics = NULL;
 	}
 }

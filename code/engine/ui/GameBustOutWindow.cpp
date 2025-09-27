@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -35,11 +36,11 @@ If you have questions concerning this license or the applicable additional terms
 #include "UserInterfaceLocal.h"
 #include "GameBustOutWindow.h"
 
-#define BALL_RADIUS		12.f
-#define BALL_SPEED		250.f
-#define BALL_MAXSPEED	450.f
+#define BALL_RADIUS		 12.f
+#define BALL_SPEED		 250.f
+#define BALL_MAXSPEED	 450.f
 
-#define S_UNIQUE_CHANNEL	6
+#define S_UNIQUE_CHANNEL 6
 
 /*
 *****************************************************************************
@@ -48,14 +49,14 @@ If you have questions concerning this license or the applicable additional terms
 */
 BOEntity::BOEntity( idGameBustOutWindow* _game )
 {
-	game = _game;
+	game	= _game;
 	visible = true;
 
 	materialName = "";
-	material = NULL;
+	material	 = NULL;
 	width = height = 8;
-	color = colorWhite;
-	powerup = POWERUP_NONE;
+	color		   = colorWhite;
+	powerup		   = POWERUP_NONE;
 
 	position.Zero();
 	velocity.Zero();
@@ -75,7 +76,6 @@ BOEntity::WriteToSaveGame
 */
 void BOEntity::WriteToSaveGame( idFile* savefile )
 {
-
 	savefile->Write( &visible, sizeof( visible ) );
 
 	game->WriteSaveGameString( materialName, savefile );
@@ -126,7 +126,7 @@ BOEntity::SetMaterial
 void BOEntity::SetMaterial( const char* name )
 {
 	materialName = name;
-	material = declManager->FindMaterial( name );
+	material	 = declManager->FindMaterial( name );
 	material->SetSort( SS_GUI );
 }
 
@@ -137,7 +137,7 @@ BOEntity::SetSize
 */
 void BOEntity::SetSize( float _width, float _height )
 {
-	width = _width;
+	width  = _width;
 	height = _height;
 }
 
@@ -171,9 +171,7 @@ BOEntity::Update
 */
 void BOEntity::Update( float timeslice, int guiTime )
 {
-
-	if( !visible )
-	{
+	if( !visible ) {
 		return;
 	}
 
@@ -181,12 +179,10 @@ void BOEntity::Update( float timeslice, int guiTime )
 	position += velocity * timeslice;
 
 	// Fade out the ent
-	if( fadeOut )
-	{
+	if( fadeOut ) {
 		color.w -= timeslice * 2.5;
 
-		if( color.w <= 0.f )
-		{
+		if( color.w <= 0.f ) {
 			color.w = 0.f;
 			removed = true;
 		}
@@ -200,8 +196,7 @@ BOEntity::Draw
 */
 void BOEntity::Draw()
 {
-	if( visible )
-	{
+	if( visible ) {
 		dc->DrawMaterialRotated( position.x, position.y, width, height, material, color, 1.0f, 1.0f, DEG2RAD( 0.f ) );
 	}
 }
@@ -215,17 +210,17 @@ BOBrick::BOBrick()
 {
 	ent = NULL;
 	x = y = width = height = 0;
-	powerup = POWERUP_NONE;
-	isBroken = false;
+	powerup				   = POWERUP_NONE;
+	isBroken			   = false;
 }
 
 BOBrick::BOBrick( BOEntity* _ent, float _x, float _y, float _width, float _height )
 {
-	ent = _ent;
-	x = _x;
-	y = _y;
-	width = _width;
-	height = _height;
+	ent		= _ent;
+	x		= _x;
+	y		= _y;
+	width	= _width;
+	height	= _height;
 	powerup = POWERUP_NONE;
 
 	isBroken = false;
@@ -298,13 +293,12 @@ BOBrick::checkCollision
 */
 collideDir_t BOBrick::checkCollision( idVec2 pos, idVec2 vel )
 {
-	idVec2	ptA, ptB;
-	float	dist;
+	idVec2		 ptA, ptB;
+	float		 dist;
 
-	collideDir_t	result = COLLIDE_NONE;
+	collideDir_t result = COLLIDE_NONE;
 
-	if( isBroken )
-	{
+	if( isBroken ) {
 		return result;
 	}
 
@@ -318,72 +312,52 @@ collideDir_t BOBrick::checkCollision( idVec2 pos, idVec2 vel )
 	ptB.x = x + width;
 	ptB.y = y + height;
 
-	if( vel.y < 0 && pos.y > ptA.y )
-	{
-		if( pos.x > ptA.x && pos.x < ptB.x )
-		{
+	if( vel.y < 0 && pos.y > ptA.y ) {
+		if( pos.x > ptA.x && pos.x < ptB.x ) {
 			dist = pos.y - ptA.y;
 
-			if( dist < BALL_RADIUS )
-			{
+			if( dist < BALL_RADIUS ) {
 				result = COLLIDE_DOWN;
 			}
-		}
-		else
-		{
-			if( pos.x <= ptA.x )
-			{
+		} else {
+			if( pos.x <= ptA.x ) {
 				vec = pos - ptA;
-			}
-			else
-			{
+			} else {
 				vec = pos - ptB;
 			}
 
-			if( ( idMath::Fabs( vec.y ) > idMath::Fabs( vec.x ) ) && ( vec.LengthFast() < BALL_RADIUS ) )
-			{
+			if( ( idMath::Fabs( vec.y ) > idMath::Fabs( vec.x ) ) && ( vec.LengthFast() < BALL_RADIUS ) ) {
 				result = COLLIDE_DOWN;
 			}
 		}
 	}
 
-	if( result == COLLIDE_NONE )
-	{
+	if( result == COLLIDE_NONE ) {
 		// Top
 		ptA.y = y;
 		ptB.y = y;
 
-		if( vel.y > 0 && pos.y < ptA.y )
-		{
-			if( pos.x > ptA.x && pos.x < ptB.x )
-			{
+		if( vel.y > 0 && pos.y < ptA.y ) {
+			if( pos.x > ptA.x && pos.x < ptB.x ) {
 				dist = ptA.y - pos.y;
 
-				if( dist < BALL_RADIUS )
-				{
+				if( dist < BALL_RADIUS ) {
 					result = COLLIDE_UP;
 				}
-			}
-			else
-			{
-				if( pos.x <= ptA.x )
-				{
+			} else {
+				if( pos.x <= ptA.x ) {
 					vec = pos - ptA;
-				}
-				else
-				{
+				} else {
 					vec = pos - ptB;
 				}
 
-				if( ( idMath::Fabs( vec.y ) > idMath::Fabs( vec.x ) ) && ( vec.LengthFast() < BALL_RADIUS ) )
-				{
+				if( ( idMath::Fabs( vec.y ) > idMath::Fabs( vec.x ) ) && ( vec.LengthFast() < BALL_RADIUS ) ) {
 					result = COLLIDE_UP;
 				}
 			}
 		}
 
-		if( result == COLLIDE_NONE )
-		{
+		if( result == COLLIDE_NONE ) {
 			// Left side
 			ptA.x = x;
 			ptA.y = y;
@@ -391,70 +365,50 @@ collideDir_t BOBrick::checkCollision( idVec2 pos, idVec2 vel )
 			ptB.x = x;
 			ptB.y = y + height;
 
-			if( vel.x > 0 && pos.x < ptA.x )
-			{
-				if( pos.y > ptA.y && pos.y < ptB.y )
-				{
+			if( vel.x > 0 && pos.x < ptA.x ) {
+				if( pos.y > ptA.y && pos.y < ptB.y ) {
 					dist = ptA.x - pos.x;
 
-					if( dist < BALL_RADIUS )
-					{
+					if( dist < BALL_RADIUS ) {
 						result = COLLIDE_LEFT;
 					}
-				}
-				else
-				{
-					if( pos.y <= ptA.y )
-					{
+				} else {
+					if( pos.y <= ptA.y ) {
 						vec = pos - ptA;
-					}
-					else
-					{
+					} else {
 						vec = pos - ptB;
 					}
 
-					if( ( idMath::Fabs( vec.x ) >= idMath::Fabs( vec.y ) ) && ( vec.LengthFast() < BALL_RADIUS ) )
-					{
+					if( ( idMath::Fabs( vec.x ) >= idMath::Fabs( vec.y ) ) && ( vec.LengthFast() < BALL_RADIUS ) ) {
 						result = COLLIDE_LEFT;
 					}
 				}
 			}
 
-			if( result == COLLIDE_NONE )
-			{
+			if( result == COLLIDE_NONE ) {
 				// Right side
 				ptA.x = x + width;
 				ptB.x = x + width;
 
-				if( vel.x < 0 && pos.x > ptA.x )
-				{
-					if( pos.y > ptA.y && pos.y < ptB.y )
-					{
+				if( vel.x < 0 && pos.x > ptA.x ) {
+					if( pos.y > ptA.y && pos.y < ptB.y ) {
 						dist = pos.x - ptA.x;
 
-						if( dist < BALL_RADIUS )
-						{
+						if( dist < BALL_RADIUS ) {
 							result = COLLIDE_LEFT;
 						}
-					}
-					else
-					{
-						if( pos.y <= ptA.y )
-						{
+					} else {
+						if( pos.y <= ptA.y ) {
 							vec = pos - ptA;
-						}
-						else
-						{
+						} else {
 							vec = pos - ptB;
 						}
 
-						if( ( idMath::Fabs( vec.x ) >= idMath::Fabs( vec.y ) ) && ( vec.LengthFast() < BALL_RADIUS ) )
-						{
+						if( ( idMath::Fabs( vec.x ) >= idMath::Fabs( vec.y ) ) && ( vec.LengthFast() < BALL_RADIUS ) ) {
 							result = COLLIDE_LEFT;
 						}
 					}
 				}
-
 			}
 		}
 	}
@@ -467,7 +421,8 @@ collideDir_t BOBrick::checkCollision( idVec2 pos, idVec2 vel )
 * idGameBustOutWindow
 ****************************************************************************
 */
-idGameBustOutWindow::idGameBustOutWindow( idUserInterfaceLocal* g ) : idWindow( g )
+idGameBustOutWindow::idGameBustOutWindow( idUserInterfaceLocal* g ) :
+	idWindow( g )
 {
 	gui = g;
 	CommonInit();
@@ -520,16 +475,14 @@ void idGameBustOutWindow::WriteToSaveGame( idFile* savefile )
 	int i;
 	int numberOfEnts = entities.Num();
 	savefile->Write( &numberOfEnts, sizeof( numberOfEnts ) );
-	for( i = 0; i < numberOfEnts; i++ )
-	{
+	for( i = 0; i < numberOfEnts; i++ ) {
 		entities[i]->WriteToSaveGame( savefile );
 	}
 
 	// Write Balls
 	numberOfEnts = balls.Num();
 	savefile->Write( &numberOfEnts, sizeof( numberOfEnts ) );
-	for( i = 0; i < numberOfEnts; i++ )
-	{
+	for( i = 0; i < numberOfEnts; i++ ) {
 		int ballIndex = entities.FindIndex( balls[i] );
 		savefile->Write( &ballIndex, sizeof( ballIndex ) );
 	}
@@ -537,8 +490,7 @@ void idGameBustOutWindow::WriteToSaveGame( idFile* savefile )
 	// Write Powerups
 	numberOfEnts = powerUps.Num();
 	savefile->Write( &numberOfEnts, sizeof( numberOfEnts ) );
-	for( i = 0; i < numberOfEnts; i++ )
-	{
+	for( i = 0; i < numberOfEnts; i++ ) {
 		int powerIndex = entities.FindIndex( powerUps[i] );
 		savefile->Write( &powerIndex, sizeof( powerIndex ) );
 	}
@@ -548,12 +500,10 @@ void idGameBustOutWindow::WriteToSaveGame( idFile* savefile )
 
 	// Write Bricks
 	int row;
-	for( row = 0; row < BOARD_ROWS; row++ )
-	{
+	for( row = 0; row < BOARD_ROWS; row++ ) {
 		numberOfEnts = board[row].Num();
 		savefile->Write( &numberOfEnts, sizeof( numberOfEnts ) );
-		for( i = 0; i < numberOfEnts; i++ )
-		{
+		for( i = 0; i < numberOfEnts; i++ ) {
 			board[row][i]->WriteToSaveGame( savefile );
 		}
 	}
@@ -604,8 +554,7 @@ void idGameBustOutWindow::ReadFromSaveGame( idFile* savefile )
 
 	// Read entities
 	savefile->Read( &numberOfEnts, sizeof( numberOfEnts ) );
-	for( i = 0; i < numberOfEnts; i++ )
-	{
+	for( i = 0; i < numberOfEnts; i++ ) {
 		BOEntity* ent;
 
 		ent = new( TAG_OLD_UI ) BOEntity( this );
@@ -615,8 +564,7 @@ void idGameBustOutWindow::ReadFromSaveGame( idFile* savefile )
 
 	// Read balls
 	savefile->Read( &numberOfEnts, sizeof( numberOfEnts ) );
-	for( i = 0; i < numberOfEnts; i++ )
-	{
+	for( i = 0; i < numberOfEnts; i++ ) {
 		int ballIndex;
 		savefile->Read( &ballIndex, sizeof( ballIndex ) );
 		balls.Append( entities[ballIndex] );
@@ -624,8 +572,7 @@ void idGameBustOutWindow::ReadFromSaveGame( idFile* savefile )
 
 	// Read powerups
 	savefile->Read( &numberOfEnts, sizeof( numberOfEnts ) );
-	for( i = 0; i < numberOfEnts; i++ )
-	{
+	for( i = 0; i < numberOfEnts; i++ ) {
 		int powerIndex;
 		savefile->Read( &powerIndex, sizeof( powerIndex ) );
 		balls.Append( entities[powerIndex] );
@@ -637,11 +584,9 @@ void idGameBustOutWindow::ReadFromSaveGame( idFile* savefile )
 
 	// Read board
 	int row;
-	for( row = 0; row < BOARD_ROWS; row++ )
-	{
+	for( row = 0; row < BOARD_ROWS; row++ ) {
 		savefile->Read( &numberOfEnts, sizeof( numberOfEnts ) );
-		for( i = 0; i < numberOfEnts; i++ )
-		{
+		for( i = 0; i < numberOfEnts; i++ ) {
 			BOBrick* brick = new( TAG_OLD_UI ) BOBrick();
 			brick->ReadFromSaveGame( savefile, this );
 			board[row].Append( brick );
@@ -657,23 +602,23 @@ idGameBustOutWindow::ResetGameState
 void idGameBustOutWindow::ResetGameState()
 {
 	gamerunning = false;
-	gameOver = false;
-	onFire = false;
-	onContinue = false;
-	onNewGame = false;
-	onNewLevel = false;
+	gameOver	= false;
+	onFire		= false;
+	onContinue	= false;
+	onNewGame	= false;
+	onNewLevel	= false;
 
 	// Game moves forward 16 milliseconds every frame
-	timeSlice = 0.016f;
+	timeSlice	   = 0.016f;
 	ballsRemaining = 3;
-	ballSpeed = BALL_SPEED;
-	ballsInPlay = 0;
-	updateScore = false;
-	numBricks = 0;
-	currentLevel = 1;
-	gameScore = 0;
-	bigPaddleTime = 0;
-	nextBallScore = gameScore + 10000;
+	ballSpeed	   = BALL_SPEED;
+	ballsInPlay	   = 0;
+	updateScore	   = false;
+	numBricks	   = 0;
+	currentLevel   = 1;
+	gameScore	   = 0;
+	bigPaddleTime  = 0;
+	nextBallScore  = gameScore + 10000;
 
 	ClearBoard();
 }
@@ -704,12 +649,12 @@ void idGameBustOutWindow::CommonInit()
 
 	ResetGameState();
 
-	numLevels = 0;
+	numLevels		= 0;
 	boardDataLoaded = false;
-	levelBoardData = NULL;
+	levelBoardData	= NULL;
 
 	// Create Paddle
-	ent = new( TAG_OLD_UI ) BOEntity( this );
+	ent	   = new( TAG_OLD_UI ) BOEntity( this );
 	paddle = new( TAG_OLD_UI ) BOBrick( ent, 260.f, 440.f, 96.f, 24.f );
 	paddle->ent->SetMaterial( "game/bustout/paddle" );
 }
@@ -721,23 +666,18 @@ idGameBustOutWindow::HandleEvent
 */
 const char* idGameBustOutWindow::HandleEvent( const sysEvent_t* event, bool* updateVisuals )
 {
-	int key = event->evValue;
+	int			key = event->evValue;
 
 	// need to call this to allow proper focus and capturing on embedded children
 	const char* ret = idWindow::HandleEvent( event, updateVisuals );
 
-	if( event->evType == SE_KEY )
-	{
-
-		if( !event->evValue2 )
-		{
+	if( event->evType == SE_KEY ) {
+		if( !event->evValue2 ) {
 			return ret;
 		}
-		if( key == K_MOUSE1 )
-		{
+		if( key == K_MOUSE1 ) {
 			// Mouse was clicked
-			if( ballsInPlay == 0 )
-			{
+			if( ballsInPlay == 0 ) {
 				BOEntity* ball = CreateNewBall();
 
 				ball->SetVisible( true );
@@ -749,9 +689,7 @@ const char* idGameBustOutWindow::HandleEvent( const sysEvent_t* event, bool* upd
 				ball->velocity.NormalizeFast();
 				ball->velocity *= ballSpeed;
 			}
-		}
-		else
-		{
+		} else {
 			return ret;
 		}
 	}
@@ -766,33 +704,27 @@ idGameBustOutWindow::ParseInternalVar
 */
 bool idGameBustOutWindow::ParseInternalVar( const char* _name, idTokenParser* src )
 {
-	if( idStr::Icmp( _name, "gamerunning" ) == 0 )
-	{
+	if( idStr::Icmp( _name, "gamerunning" ) == 0 ) {
 		gamerunning = src->ParseBool();
 		return true;
 	}
-	if( idStr::Icmp( _name, "onFire" ) == 0 )
-	{
+	if( idStr::Icmp( _name, "onFire" ) == 0 ) {
 		onFire = src->ParseBool();
 		return true;
 	}
-	if( idStr::Icmp( _name, "onContinue" ) == 0 )
-	{
+	if( idStr::Icmp( _name, "onContinue" ) == 0 ) {
 		onContinue = src->ParseBool();
 		return true;
 	}
-	if( idStr::Icmp( _name, "onNewGame" ) == 0 )
-	{
+	if( idStr::Icmp( _name, "onNewGame" ) == 0 ) {
 		onNewGame = src->ParseBool();
 		return true;
 	}
-	if( idStr::Icmp( _name, "onNewLevel" ) == 0 )
-	{
+	if( idStr::Icmp( _name, "onNewLevel" ) == 0 ) {
 		onNewLevel = src->ParseBool();
 		return true;
 	}
-	if( idStr::Icmp( _name, "numLevels" ) == 0 )
-	{
+	if( idStr::Icmp( _name, "numLevels" ) == 0 ) {
 		numLevels = src->ParseInt();
 
 		// Load all the level images
@@ -812,29 +744,19 @@ idWinVar* idGameBustOutWindow::GetWinVarByName( const char* _name, bool winLooku
 {
 	idWinVar* retVar = NULL;
 
-	if( idStr::Icmp( _name, "gamerunning" ) == 0 )
-	{
+	if( idStr::Icmp( _name, "gamerunning" ) == 0 ) {
 		retVar = &gamerunning;
-	}
-	else 	if( idStr::Icmp( _name, "onFire" ) == 0 )
-	{
+	} else if( idStr::Icmp( _name, "onFire" ) == 0 ) {
 		retVar = &onFire;
-	}
-	else 	if( idStr::Icmp( _name, "onContinue" ) == 0 )
-	{
+	} else if( idStr::Icmp( _name, "onContinue" ) == 0 ) {
 		retVar = &onContinue;
-	}
-	else 	if( idStr::Icmp( _name, "onNewGame" ) == 0 )
-	{
+	} else if( idStr::Icmp( _name, "onNewGame" ) == 0 ) {
 		retVar = &onNewGame;
-	}
-	else 	if( idStr::Icmp( _name, "onNewLevel" ) == 0 )
-	{
+	} else if( idStr::Icmp( _name, "onNewLevel" ) == 0 ) {
 		retVar = &onNewLevel;
 	}
 
-	if( retVar )
-	{
+	if( retVar ) {
 		return retVar;
 	}
 
@@ -860,11 +782,10 @@ void idGameBustOutWindow::Draw( int time, float x, float y )
 {
 	int i;
 
-	//Update the game every frame before drawing
+	// Update the game every frame before drawing
 	UpdateGame();
 
-	for( i = entities.Num() - 1; i >= 0; i-- )
-	{
+	for( i = entities.Num() - 1; i >= 0; i-- ) {
 		entities[i]->Draw();
 	}
 }
@@ -879,7 +800,6 @@ const char* idGameBustOutWindow::Activate( bool activate )
 	return "";
 }
 
-
 /*
 =============================
 idGameBustOutWindow::UpdateScore
@@ -887,24 +807,20 @@ idGameBustOutWindow::UpdateScore
 */
 void idGameBustOutWindow::UpdateScore()
 {
-
-	if( gameOver )
-	{
+	if( gameOver ) {
 		gui->HandleNamedEvent( "GameOver" );
 		return;
 	}
 
 	// Check for level progression
-	if( numBricks == 0 )
-	{
+	if( numBricks == 0 ) {
 		ClearBalls();
 
 		gui->HandleNamedEvent( "levelComplete" );
 	}
 
 	// Check for new ball score
-	if( gameScore >= nextBallScore )
-	{
+	if( gameScore >= nextBallScore ) {
 		ballsRemaining++;
 		gui->HandleNamedEvent( "extraBall" );
 
@@ -933,12 +849,9 @@ void idGameBustOutWindow::ClearBoard()
 
 	ballHitCeiling = false;
 
-	for( i = 0; i < BOARD_ROWS; i++ )
-	{
-		for( j = 0; j < board[i].Num(); j++ )
-		{
-
-			BOBrick* brick = board[i][j];
+	for( i = 0; i < BOARD_ROWS; i++ ) {
+		for( j = 0; j < board[i].Num(); j++ ) {
+			BOBrick* brick		= board[i][j];
 			brick->ent->removed = true;
 		}
 
@@ -953,8 +866,7 @@ idGameBustOutWindow::ClearPowerups
 */
 void idGameBustOutWindow::ClearPowerups()
 {
-	while( powerUps.Num() )
-	{
+	while( powerUps.Num() ) {
 		powerUps[0]->removed = true;
 		powerUps.RemoveIndex( 0 );
 	}
@@ -967,8 +879,7 @@ idGameBustOutWindow::ClearBalls
 */
 void idGameBustOutWindow::ClearBalls()
 {
-	while( balls.Num() )
-	{
+	while( balls.Num() ) {
 		balls[0]->removed = true;
 		balls.RemoveIndex( 0 );
 	}
@@ -983,35 +894,31 @@ idGameBustOutWindow::LoadBoardFiles
 */
 void idGameBustOutWindow::LoadBoardFiles()
 {
-	int i;
-	int w, h;
+	int		  i;
+	int		  w, h;
 	ID_TIME_T time;
-	int boardSize;
-	byte* currentBoard;
+	int		  boardSize;
+	byte*	  currentBoard;
 
-	if( boardDataLoaded )
-	{
+	if( boardDataLoaded ) {
 		return;
 	}
 
-	boardSize = 9 * 12 * 4;
+	boardSize	   = 9 * 12 * 4;
 	levelBoardData = ( byte* )Mem_Alloc( boardSize * numLevels, TAG_CRAP );
 
 	currentBoard = levelBoardData;
 
-	for( i = 0; i < numLevels; i++ )
-	{
+	for( i = 0; i < numLevels; i++ ) {
 		byte* pic;
-		idStr	name = "guis/assets/bustout/level";
+		idStr name = "guis/assets/bustout/level";
 		name += ( i + 1 );
 		name += ".tga";
 
 		R_LoadImage( name, &pic, &w, &h, &time, false, NULL );
 
-		if( pic != NULL )
-		{
-			if( w != 9 || h != 12 )
-			{
+		if( pic != NULL ) {
+			if( w != 9 || h != 12 ) {
 				common->DWarning( "Hell Bust-Out level image not correct dimensions! (%d x %d)", w, h );
 			}
 
@@ -1032,33 +939,30 @@ idGameBustOutWindow::SetCurrentBoard
 */
 void idGameBustOutWindow::SetCurrentBoard()
 {
-	int i, j;
-	int realLevel = ( ( currentLevel - 1 ) % numLevels );
-	int boardSize;
+	int	  i, j;
+	int	  realLevel = ( ( currentLevel - 1 ) % numLevels );
+	int	  boardSize;
 	byte* currentBoard;
-	float	bx = 11.f;
-	float	by = 24.f;
-	float	stepx = 619.f / 9.f;
-	float	stepy = ( 256 / 12.f );
+	float bx	= 11.f;
+	float by	= 24.f;
+	float stepx = 619.f / 9.f;
+	float stepy = ( 256 / 12.f );
 
-	boardSize = 9 * 12 * 4;
+	boardSize	 = 9 * 12 * 4;
 	currentBoard = levelBoardData + ( realLevel * boardSize );
 
-	for( j = 0; j < BOARD_ROWS; j++ )
-	{
+	for( j = 0; j < BOARD_ROWS; j++ ) {
 		bx = 11.f;
 
-		for( i = 0; i < 9; i++ )
-		{
+		for( i = 0; i < 9; i++ ) {
 			int pixelindex = ( j * 9 * 4 ) + ( i * 4 );
 
-			if( currentBoard[pixelindex + 3] )
-			{
-				idVec4 bcolor;
-				float pType = 0.f;
+			if( currentBoard[pixelindex + 3] ) {
+				idVec4	  bcolor;
+				float	  pType = 0.f;
 
-				BOEntity* bent = new( TAG_OLD_UI ) BOEntity( this );
-				BOBrick* brick = new( TAG_OLD_UI ) BOBrick( bent, bx, by, stepx, stepy );
+				BOEntity* bent	= new( TAG_OLD_UI ) BOEntity( this );
+				BOBrick*  brick = new( TAG_OLD_UI ) BOBrick( bent, bx, by, stepx, stepy );
 
 				bcolor.x = currentBoard[pixelindex + 0] / 255.f;
 				bcolor.y = currentBoard[pixelindex + 1] / 255.f;
@@ -1067,14 +971,10 @@ void idGameBustOutWindow::SetCurrentBoard()
 				brick->SetColor( bcolor );
 
 				pType = currentBoard[pixelindex + 3] / 255.f;
-				if( pType > 0.f && pType < 1.f )
-				{
-					if( pType < 0.5f )
-					{
+				if( pType > 0.f && pType < 1.f ) {
+					if( pType < 0.5f ) {
 						brick->powerup = POWERUP_BIGPADDLE;
-					}
-					else
-					{
+					} else {
 						brick->powerup = POWERUP_MULTIBALL;
 					}
 				}
@@ -1099,7 +999,7 @@ BOEntity* idGameBustOutWindow::CreateNewBall()
 {
 	BOEntity* ball;
 
-	ball = new( TAG_OLD_UI ) BOEntity( this );
+	ball			 = new( TAG_OLD_UI ) BOEntity( this );
 	ball->position.x = 300.f;
 	ball->position.y = 416.f;
 	ball->SetMaterial( "game/bustout/ball" );
@@ -1130,8 +1030,7 @@ BOEntity* idGameBustOutWindow::CreatePowerup( BOBrick* brick )
 
 	powerEnt->powerup = brick->powerup;
 
-	switch( powerEnt->powerup )
-	{
+	switch( powerEnt->powerup ) {
 		case POWERUP_BIGPADDLE:
 			powerEnt->SetMaterial( "game/bustout/powerup_bigpaddle" );
 			break;
@@ -1161,14 +1060,11 @@ void idGameBustOutWindow::UpdatePowerups()
 {
 	idVec2 pos;
 
-	for( int i = 0; i < powerUps.Num(); i++ )
-	{
+	for( int i = 0; i < powerUps.Num(); i++ ) {
 		BOEntity* pUp = powerUps[i];
 
 		// Check for powerup falling below screen
-		if( pUp->position.y > 480 )
-		{
-
+		if( pUp->position.y > 480 ) {
 			powerUps.RemoveIndex( i );
 			pUp->removed = true;
 			continue;
@@ -1179,30 +1075,24 @@ void idGameBustOutWindow::UpdatePowerups()
 		pos.y = pUp->position.y + ( pUp->height / 2 );
 
 		collideDir_t collision = paddle->checkCollision( pos, pUp->velocity );
-		if( collision != COLLIDE_NONE )
-		{
+		if( collision != COLLIDE_NONE ) {
 			BOEntity* ball;
 
 			// Give the powerup to the player
-			switch( pUp->powerup )
-			{
+			switch( pUp->powerup ) {
 				case POWERUP_BIGPADDLE:
 					bigPaddleTime = gui->GetTime() + 15000;
 					break;
 				case POWERUP_MULTIBALL:
 					// Create 2 new balls in the spot of the existing ball
-					for( int b = 0; b < 2; b++ )
-					{
-						ball = CreateNewBall();
+					for( int b = 0; b < 2; b++ ) {
+						ball		   = CreateNewBall();
 						ball->position = balls[0]->position;
 						ball->velocity = balls[0]->velocity;
 
-						if( b == 0 )
-						{
+						if( b == 0 ) {
 							ball->velocity.x -= 35.f;
-						}
-						else
-						{
+						} else {
 							ball->velocity.x += 35.f;
 						}
 						ball->velocity.NormalizeFast();
@@ -1238,17 +1128,14 @@ void idGameBustOutWindow::UpdatePaddle()
 	cursorPos.x = gui->CursorX();
 	cursorPos.y = gui->CursorY();
 
-	if( bigPaddleTime > gui->GetTime() )
-	{
-		paddle->x = cursorPos.x - 80.f;
-		paddle->width = 160;
+	if( bigPaddleTime > gui->GetTime() ) {
+		paddle->x		   = cursorPos.x - 80.f;
+		paddle->width	   = 160;
 		paddle->ent->width = 160;
 		paddle->ent->SetMaterial( "game/bustout/doublepaddle" );
-	}
-	else
-	{
-		paddle->x = cursorPos.x - 48.f;
-		paddle->width = 96;
+	} else {
+		paddle->x		   = cursorPos.x - 48.f;
+		paddle->width	   = 96;
 		paddle->ent->width = 96;
 		paddle->ent->SetMaterial( "game/bustout/paddle" );
 	}
@@ -1264,69 +1151,56 @@ idGameBustOutWindow::UpdateBall
 */
 void idGameBustOutWindow::UpdateBall()
 {
-	int ballnum, i, j;
-	bool playSoundBounce = false;
-	bool playSoundBrick = false;
-	static int bounceChannel = 1;
+	int		   ballnum, i, j;
+	bool	   playSoundBounce = false;
+	bool	   playSoundBrick  = false;
+	static int bounceChannel   = 1;
 
-	if( ballsInPlay == 0 )
-	{
+	if( ballsInPlay == 0 ) {
 		return;
 	}
 
-	for( ballnum = 0; ballnum < balls.Num(); ballnum++ )
-	{
+	for( ballnum = 0; ballnum < balls.Num(); ballnum++ ) {
 		BOEntity* ball = balls[ballnum];
 
 		// Check for ball going below screen, lost ball
-		if( ball->position.y > 480.f )
-		{
+		if( ball->position.y > 480.f ) {
 			ball->removed = true;
 			continue;
 		}
 
 		// Check world collision
-		if( ball->position.y < 20 && ball->velocity.y < 0 )
-		{
+		if( ball->position.y < 20 && ball->velocity.y < 0 ) {
 			ball->velocity.y = -ball->velocity.y;
 
 			// Increase ball speed when it hits ceiling
-			if( !ballHitCeiling )
-			{
+			if( !ballHitCeiling ) {
 				ballSpeed *= 1.25f;
 				ballHitCeiling = true;
 			}
 			playSoundBounce = true;
 		}
 
-		if( ball->position.x > 608 && ball->velocity.x > 0 )
-		{
+		if( ball->position.x > 608 && ball->velocity.x > 0 ) {
 			ball->velocity.x = -ball->velocity.x;
-			playSoundBounce = true;
-		}
-		else if( ball->position.x < 8 && ball->velocity.x < 0 )
-		{
+			playSoundBounce	 = true;
+		} else if( ball->position.x < 8 && ball->velocity.x < 0 ) {
 			ball->velocity.x = -ball->velocity.x;
-			playSoundBounce = true;
+			playSoundBounce	 = true;
 		}
 
 		// Check for Paddle collision
-		idVec2 ballCenter = ball->position + idVec2( BALL_RADIUS, BALL_RADIUS );
-		collideDir_t collision = paddle->checkCollision( ballCenter, ball->velocity );
+		idVec2		 ballCenter = ball->position + idVec2( BALL_RADIUS, BALL_RADIUS );
+		collideDir_t collision	= paddle->checkCollision( ballCenter, ball->velocity );
 
-		if( collision == COLLIDE_UP )
-		{
-			if( ball->velocity.y > 0 )
-			{
-				idVec2	paddleVec( paddleVelocity * 2, 0 );
-				float	centerX;
+		if( collision == COLLIDE_UP ) {
+			if( ball->velocity.y > 0 ) {
+				idVec2 paddleVec( paddleVelocity * 2, 0 );
+				float  centerX;
 
-				if( bigPaddleTime > gui->GetTime() )
-				{
+				if( bigPaddleTime > gui->GetTime() ) {
 					centerX = paddle->x + 80.f;
-				}
-				else
-				{
+				} else {
 					centerX = paddle->x + 48.f;
 				}
 
@@ -1340,36 +1214,29 @@ void idGameBustOutWindow::UpdateBall()
 
 				playSoundBounce = true;
 			}
-		}
-		else if( collision == COLLIDE_LEFT || collision == COLLIDE_RIGHT )
-		{
-			if( ball->velocity.y > 0 )
-			{
+		} else if( collision == COLLIDE_LEFT || collision == COLLIDE_RIGHT ) {
+			if( ball->velocity.y > 0 ) {
 				ball->velocity.x = -ball->velocity.x;
-				playSoundBounce = true;
+				playSoundBounce	 = true;
 			}
 		}
 
 		collision = COLLIDE_NONE;
 
 		// Check for collision with bricks
-		for( i = 0; i < BOARD_ROWS; i++ )
-		{
+		for( i = 0; i < BOARD_ROWS; i++ ) {
 			int num = board[i].Num();
 
-			for( j = 0; j < num; j++ )
-			{
+			for( j = 0; j < num; j++ ) {
 				BOBrick* brick = ( board[i] )[j];
 
 				collision = brick->checkCollision( ballCenter, ball->velocity );
-				if( collision )
-				{
+				if( collision ) {
 					// Now break the brick if there was a collision
-					brick->isBroken = true;
+					brick->isBroken		= true;
 					brick->ent->fadeOut = true;
 
-					if( brick->powerup > POWERUP_NONE )
-					{
+					if( brick->powerup > POWERUP_NONE ) {
 						verify( CreatePowerup( brick ) != NULL );
 					}
 
@@ -1378,8 +1245,7 @@ void idGameBustOutWindow::UpdateBall()
 					updateScore = true;
 
 					// Go ahead an forcibly remove the last brick, no fade
-					if( numBricks == 0 )
-					{
+					if( numBricks == 0 ) {
 						brick->ent->removed = true;
 					}
 					board[i].Remove( brick );
@@ -1387,63 +1253,48 @@ void idGameBustOutWindow::UpdateBall()
 				}
 			}
 
-			if( collision )
-			{
+			if( collision ) {
 				playSoundBrick = true;
 				break;
 			}
 		}
 
-		if( collision == COLLIDE_DOWN || collision == COLLIDE_UP )
-		{
+		if( collision == COLLIDE_DOWN || collision == COLLIDE_UP ) {
 			ball->velocity.y *= -1;
-		}
-		else if( collision == COLLIDE_LEFT || collision == COLLIDE_RIGHT )
-		{
+		} else if( collision == COLLIDE_LEFT || collision == COLLIDE_RIGHT ) {
 			ball->velocity.x *= -1;
 		}
 
-		if( playSoundBounce )
-		{
+		if( playSoundBounce ) {
 			common->SW()->PlayShaderDirectly( "arcade_ballbounce", bounceChannel );
-		}
-		else if( playSoundBrick )
-		{
+		} else if( playSoundBrick ) {
 			common->SW()->PlayShaderDirectly( "arcade_brickhit", bounceChannel );
 		}
 
-		if( playSoundBounce || playSoundBrick )
-		{
+		if( playSoundBounce || playSoundBrick ) {
 			bounceChannel++;
-			if( bounceChannel == 4 )
-			{
+			if( bounceChannel == 4 ) {
 				bounceChannel = 1;
 			}
 		}
 	}
 
 	// Check to see if any balls were removed from play
-	for( ballnum = 0; ballnum < balls.Num(); ballnum++ )
-	{
-		if( balls[ballnum]->removed )
-		{
+	for( ballnum = 0; ballnum < balls.Num(); ballnum++ ) {
+		if( balls[ballnum]->removed ) {
 			ballsInPlay--;
 			balls.RemoveIndex( ballnum );
 		}
 	}
 
 	// If all the balls were removed, update the game accordingly
-	if( ballsInPlay == 0 )
-	{
-		if( ballsRemaining == 0 )
-		{
+	if( ballsInPlay == 0 ) {
+		if( ballsRemaining == 0 ) {
 			gameOver = true;
 
 			// Game Over sound
 			common->SW()->PlayShaderDirectly( "arcade_sadsound", S_UNIQUE_CHANNEL );
-		}
-		else
-		{
+		} else {
 			ballsRemaining--;
 
 			// Ball was lost, but game is not over
@@ -1464,8 +1315,7 @@ void idGameBustOutWindow::UpdateGame()
 {
 	int i;
 
-	if( onNewGame )
-	{
+	if( onNewGame ) {
 		ResetGameState();
 
 		// Create Board
@@ -1473,54 +1323,45 @@ void idGameBustOutWindow::UpdateGame()
 
 		gamerunning = true;
 	}
-	if( onContinue )
-	{
-		gameOver = false;
+	if( onContinue ) {
+		gameOver	   = false;
 		ballsRemaining = 3;
 
 		onContinue = false;
 	}
-	if( onNewLevel )
-	{
+	if( onNewLevel ) {
 		currentLevel++;
 
 		ClearBoard();
 		SetCurrentBoard();
 
 		ballSpeed = BALL_SPEED * ( 1.f + ( ( float )currentLevel / 5.f ) );
-		if( ballSpeed > BALL_MAXSPEED )
-		{
+		if( ballSpeed > BALL_MAXSPEED ) {
 			ballSpeed = BALL_MAXSPEED;
 		}
 		updateScore = true;
-		onNewLevel = false;
+		onNewLevel	= false;
 	}
 
-	if( gamerunning == true )
-	{
-
+	if( gamerunning == true ) {
 		UpdatePaddle();
 		UpdateBall();
 		UpdatePowerups();
 
-		for( i = 0; i < entities.Num(); i++ )
-		{
+		for( i = 0; i < entities.Num(); i++ ) {
 			entities[i]->Update( timeSlice, gui->GetTime() );
 		}
 
 		// Delete entities that need to be deleted
-		for( i = entities.Num() - 1; i >= 0; i-- )
-		{
-			if( entities[i]->removed )
-			{
+		for( i = entities.Num() - 1; i >= 0; i-- ) {
+			if( entities[i]->removed ) {
 				BOEntity* ent = entities[i];
 				delete ent;
 				entities.RemoveIndex( i );
 			}
 		}
 
-		if( updateScore )
-		{
+		if( updateScore ) {
 			UpdateScore();
 			updateScore = false;
 		}

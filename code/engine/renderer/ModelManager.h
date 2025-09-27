@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -41,61 +42,61 @@ If you have questions concerning this license or the applicable additional terms
 class idNamePair
 {
 public:
-	idStr	from;
-	idStr	to;
+	idStr from;
+	idStr to;
 };
 
 class idAnimGroup
 {
 public:
-	idStr		name;
-	idStrList	joints;
+	idStr	  name;
+	idStrList joints;
 };
 
 class idImportOptions
 {
 public:
-	idStr					commandLine;
-	idStr					src;
-	idStr					dest;
-	idStr					game;
-	idStr					prefix;
-	float					scale;
-	bool					ignoreMeshes;
-	bool					clearOrigin;
-	bool					clearOriginAxis;
-	bool					addOrigin;
-	idStr					transferRootMotion;
-	bool					ignoreScale;
-	int						startframe;
-	int						endframe;
-	int						framerate;
-	float					xyzPrecision;
-	float					quatPrecision;
-	idStr					align;
-	idList<idNamePair>		renamejoints;
-	idList<idNamePair>		remapjoints;
-	idStrList				keepjoints;
-	idStrList				skipmeshes;
-	idStrList				keepmeshes;
-	idList<idAnimGroup*>	exportgroups;
-	idList<idAnimGroup>		groups;
-	float					rotate;
-	float					jointThreshold;
-	int						cycleStart;
-	idAngles				reOrient;
+	idStr				 commandLine;
+	idStr				 src;
+	idStr				 dest;
+	idStr				 game;
+	idStr				 prefix;
+	float				 scale;
+	bool				 ignoreMeshes;
+	bool				 clearOrigin;
+	bool				 clearOriginAxis;
+	bool				 addOrigin;
+	idStr				 transferRootMotion;
+	bool				 ignoreScale;
+	int					 startframe;
+	int					 endframe;
+	int					 framerate;
+	float				 xyzPrecision;
+	float				 quatPrecision;
+	idStr				 align;
+	idList<idNamePair>	 renamejoints;
+	idList<idNamePair>	 remapjoints;
+	idStrList			 keepjoints;
+	idStrList			 skipmeshes;
+	idStrList			 keepmeshes;
+	idList<idAnimGroup*> exportgroups;
+	idList<idAnimGroup>	 groups;
+	float				 rotate;
+	float				 jointThreshold;
+	int					 cycleStart;
+	idAngles			 reOrient;
 
 	// RB begin
-	idStr					armature;
-	bool					noMikktspace;
-	idStr					modelDefName;
-	idStr					modelDefFileName;
-	ID_TIME_T				declSourceTimeStamp;	// timestamp of the .def where this modelDef option comes from
+	idStr				 armature;
+	bool				 noMikktspace;
+	idStr				 modelDefName;
+	idStr				 modelDefFileName;
+	ID_TIME_T			 declSourceTimeStamp; // timestamp of the .def where this modelDef option comes from
 	// RB end
 
 	idImportOptions();
-	void					Reset();
-	void					Init( const char* commandline, const char* ospath );
+	void Reset();
+	void Init( const char* commandline, const char* ospath );
 };
 
 /*
@@ -111,65 +112,65 @@ public:
 class idRenderModelManager
 {
 public:
-	virtual					~idRenderModelManager() {}
+	virtual ~idRenderModelManager() { }
 
 	// registers console commands and clears the list
-	virtual	void			Init() = 0;
+	virtual void		   Init() = 0;
 
 	// frees all the models
-	virtual	void			Shutdown() = 0;
+	virtual void		   Shutdown() = 0;
 
 	// called only by renderer::BeginLevelLoad
-	virtual void			BeginLevelLoad() = 0;
+	virtual void		   BeginLevelLoad() = 0;
 
 	// called only by renderer::EndLevelLoad
-	virtual void			EndLevelLoad() = 0;
+	virtual void		   EndLevelLoad() = 0;
 
 	// called only by renderer::Preload
-	virtual void			Preload( const idPreloadManifest& manifest ) = 0;
+	virtual void		   Preload( const idPreloadManifest& manifest ) = 0;
 
 	// allocates a new empty render model.
-	virtual idRenderModel* 	AllocModel() = 0;
+	virtual idRenderModel* AllocModel() = 0;
 
 	// frees a render model
-	virtual void			FreeModel( idRenderModel* model ) = 0;
+	virtual void		   FreeModel( idRenderModel* model ) = 0;
 
 	// returns NULL if modelName is NULL or an empty string, otherwise
 	// it will create a default model if not loadable
-	virtual	idRenderModel* 	FindModel( const char* modelName, const idImportOptions* options = NULL ) = 0;
+	virtual idRenderModel* FindModel( const char* modelName, const idImportOptions* options = NULL ) = 0;
 
 	// returns NULL if not loadable
-	virtual	idRenderModel* 	CheckModel( const char* modelName ) = 0;
+	virtual idRenderModel* CheckModel( const char* modelName ) = 0;
 
 	// returns the default cube model
-	virtual	idRenderModel* 	DefaultModel() = 0;
+	virtual idRenderModel* DefaultModel() = 0;
 
 	// world map parsing will add all the inline models with this call
-	virtual	void			AddModel( idRenderModel* model ) = 0;
+	virtual void		   AddModel( idRenderModel* model ) = 0;
 
 	// when a world map unloads, it removes its internal models from the list
 	// before freeing them.
 	// There may be an issue with multiple renderWorlds that share data...
-	virtual	void			RemoveModel( idRenderModel* model ) = 0;
+	virtual void		   RemoveModel( idRenderModel* model ) = 0;
 
 	// the reloadModels console command calls this, but it can
 	// also be explicitly invoked
-	virtual	void			ReloadModels( bool forceAll = false ) = 0;
+	virtual void		   ReloadModels( bool forceAll = false ) = 0;
 
 	// loads the mesh vertices/indices into the vertex cache.
-	virtual void			CreateMeshBuffers( nvrhi::ICommandList* commandList ) = 0;
+	virtual void		   CreateMeshBuffers( nvrhi::ICommandList* commandList ) = 0;
 
 	// write "touchModel <model>" commands for each non-world-map model
-	virtual	void			WritePrecacheCommands( idFile* f ) = 0;
+	virtual void		   WritePrecacheCommands( idFile* f ) = 0;
 
 	// called during vid_restart
-	virtual	void			FreeModelVertexCaches() = 0;
+	virtual void		   FreeModelVertexCaches() = 0;
 
 	// print memory info
-	virtual	void			PrintMemInfo( MemInfo_t* mi ) = 0;
+	virtual void		   PrintMemInfo( MemInfo_t* mi ) = 0;
 };
 
 // this will be statically pointed at a private implementation
-extern	idRenderModelManager*	renderModelManager;
+extern idRenderModelManager* renderModelManager;
 
 #endif /* !__MODELMANAGER_H__ */

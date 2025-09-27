@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include <shlwapi.h>  // for PathMatchSpecW
+#include <shlwapi.h> // for PathMatchSpecW
 
 #include "../engine/sys/sys_local.h"
 #include "../engine/framework/EventLoop.h"
@@ -44,58 +45,51 @@ If you have questions concerning this license or the applicable additional terms
 
 idEventLoop* eventLoop;
 
-
-
 //-----------------------------------------------------------------------------
 // [SECTION] Example App: Debug Log / ShowExampleAppLog()
 //-----------------------------------------------------------------------------
 
-struct MyAppLog
-{
-	ImGuiTextBuffer     Buf;
-	ImGuiTextFilter     Filter;
-	ImVector<int>       LineOffsets;        // Index to lines offset. We maintain this with AddLog() calls, allowing us to have a random access on lines
+struct MyAppLog {
+	ImGuiTextBuffer Buf;
+	ImGuiTextFilter Filter;
+	ImVector<int>	LineOffsets; // Index to lines offset. We maintain this with AddLog() calls, allowing us to have a random access on lines
 
 	MyAppLog()
 	{
 		Clear();
 	}
 
-	void    Clear()
+	void Clear()
 	{
 		Buf.clear();
 		LineOffsets.clear();
 		LineOffsets.push_back( 0 );
 	}
 
-	void    AddLog( const char* fmt, ... ) IM_FMTARGS( 2 )
+	void AddLog( const char* fmt, ... ) IM_FMTARGS( 2 )
 	{
-		int old_size = Buf.size();
+		int		old_size = Buf.size();
 		va_list args;
 		va_start( args, fmt );
 		Buf.appendfv( fmt, args );
 		va_end( args );
 		for( int new_size = Buf.size(); old_size < new_size; old_size++ )
-			if( Buf[old_size] == '\n' )
-			{
+			if( Buf[old_size] == '\n' ) {
 				LineOffsets.push_back( old_size + 1 );
 			}
 	}
 
-	void    Draw( const char* title, bool* p_open = NULL )
+	void Draw( const char* title, bool* p_open = NULL )
 	{
-
 		{
 			auto wSize = ImGui::GetIO().DisplaySize;
 			ImGui::SetNextWindowPos( ImVec2( 0, 1 ), ImGuiCond_Always );
 			ImGui::SetNextWindowSize( ImVec2( wSize.x, wSize.y - 5 ), ImGuiCond_Always );
 		}
-		if( !ImGui::Begin( title, p_open, ImGuiWindowFlags_NoDecoration ) )
-		{
+		if( !ImGui::Begin( title, p_open, ImGuiWindowFlags_NoDecoration ) ) {
 			ImGui::End();
 			return;
 		}
-
 
 		bool copy = ImGui::Button( "Copy to Clipboard" );
 		ImGui::SameLine();
@@ -103,13 +97,12 @@ struct MyAppLog
 		ImGui::Separator();
 		ImGui::BeginChild( "scrolling", ImVec2( 0, 0 ), false, ImGuiWindowFlags_HorizontalScrollbar );
 
-		if( copy )
-		{
+		if( copy ) {
 			ImGui::LogToClipboard();
 		}
 
 		ImGui::PushStyleVar( ImGuiStyleVar_ItemSpacing, ImVec2( 0, 0 ) );
-		const char* buf = Buf.begin();
+		const char* buf		= Buf.begin();
 		const char* buf_end = Buf.end();
 #if 0
 		if( Filter.IsActive() )
@@ -142,12 +135,10 @@ struct MyAppLog
 			// Storing or skimming through the search result would make it possible (and would be recommended if you want to search through tens of thousands of entries)
 			ImGuiListClipper clipper;
 			clipper.Begin( LineOffsets.Size );
-			while( clipper.Step() )
-			{
-				for( int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++ )
-				{
+			while( clipper.Step() ) {
+				for( int line_no = clipper.DisplayStart; line_no < clipper.DisplayEnd; line_no++ ) {
 					const char* line_start = buf + LineOffsets[line_no];
-					const char* line_end = ( line_no + 1 < LineOffsets.Size ) ? ( buf + LineOffsets[line_no + 1] - 1 ) : buf_end;
+					const char* line_end   = ( line_no + 1 < LineOffsets.Size ) ? ( buf + LineOffsets[line_no + 1] - 1 ) : buf_end;
 					ImGui::TextUnformatted( line_start, line_end );
 				}
 			}
@@ -155,7 +146,7 @@ struct MyAppLog
 		}
 		ImGui::PopStyleVar();
 
-		//if( ImGui::GetScrollY() >= ImGui::GetScrollMaxY() )
+		// if( ImGui::GetScrollY() >= ImGui::GetScrollMaxY() )
 		{
 			ImGui::SetScrollHereY( 1.0f );
 		}
@@ -169,15 +160,14 @@ static MyAppLog tuiLog;
 
 #define MAXPRINTMSG 4096
 
-#define STDIO_PRINT( pre, post )	\
-	char msg[MAXPRINTMSG];			\
-	va_list argptr;					\
-	va_start( argptr, fmt );		\
+#define STDIO_PRINT( pre, post )                           \
+	char	msg[MAXPRINTMSG];                              \
+	va_list argptr;                                        \
+	va_start( argptr, fmt );                               \
 	idStr::vsnPrintf( msg, MAXPRINTMSG - 1, fmt, argptr ); \
-	msg[ sizeof( msg ) - 1 ] = '\0'; \
-	va_end( argptr );				\
-	Sys_Printf( "%s%s%s", pre, msg, post );			\
-
+	msg[sizeof( msg ) - 1] = '\0';                         \
+	va_end( argptr );                                      \
+	Sys_Printf( "%s%s%s", pre, msg, post );
 
 idCVar com_developer( "developer", "0", CVAR_BOOL | CVAR_SYSTEM, "developer mode" );
 idCVar com_productionMode( "com_productionMode", "0", CVAR_SYSTEM | CVAR_BOOL, "0 - no special behavior, 1 - building a production build, 2 - running a production build" );
@@ -190,22 +180,20 @@ idCVar com_productionMode( "com_productionMode", "0", CVAR_SYSTEM | CVAR_BOOL, "
 ==============================================================
 */
 
-
-
 /*
 ==============
 Sys_Printf
 ==============
 */
 
-void Sys_Printf( const char* fmt, ... )
+void   Sys_Printf( const char* fmt, ... )
 {
-	char msg[MAXPRINTMSG];
+	char	msg[MAXPRINTMSG];
 
 	va_list argptr;
 	va_start( argptr, fmt );
 	idStr::vsnPrintf( msg, MAXPRINTMSG - 1, fmt, argptr );
-	msg[ sizeof( msg ) - 1 ] = '\0';
+	msg[sizeof( msg ) - 1] = '\0';
 	va_end( argptr );
 
 	printf( msg );
@@ -224,7 +212,7 @@ void Sys_VPrintf( const char* fmt, va_list arg )
 	char msg[MAXPRINTMSG];
 
 	idStr::vsnPrintf( msg, MAXPRINTMSG - 1, fmt, arg );
-	msg[ sizeof( msg ) - 1 ] = '\0';
+	msg[sizeof( msg ) - 1] = '\0';
 
 	printf( msg );
 	OutputDebugString( msg );
@@ -235,61 +223,53 @@ void Sys_VPrintf( const char* fmt, va_list arg )
 // RB: Returns absolute path with \\?\ prefix for long path support
 wchar_t* MakeWindowsLongPathW( const char* utf8Path )
 {
-	if( !utf8Path || !utf8Path[0] )
-	{
+	if( !utf8Path || !utf8Path[0] ) {
 		return NULL;
 	}
 
 	int utf16Len = MultiByteToWideChar( CP_UTF8, 0, utf8Path, -1, NULL, 0 );
-	if( utf16Len == 0 )
-	{
+	if( utf16Len == 0 ) {
 		return NULL;
 	}
 
 	// Allocate temporary buffer for initial conversion
 	wchar_t* tempPath = ( wchar_t* )malloc( utf16Len * sizeof( wchar_t ) );
-	if( !tempPath )
-	{
+	if( !tempPath ) {
 		return NULL;
 	}
 
 	// Perform UTF-8 to UTF-16 conversion
-	if( MultiByteToWideChar( CP_UTF8, 0, utf8Path, -1, tempPath, utf16Len ) == 0 )
-	{
+	if( MultiByteToWideChar( CP_UTF8, 0, utf8Path, -1, tempPath, utf16Len ) == 0 ) {
 		free( tempPath );
 		return NULL;
 	}
 
 	// Replace forward slashes with backslashes
-	for( int i = 0; tempPath[i]; i++ )
-	{
-		if( tempPath[i] == L'/' )
-		{
+	for( int i = 0; tempPath[i]; i++ ) {
+		if( tempPath[i] == L'/' ) {
 			tempPath[i] = L'\\';
 		}
 	}
 
 	// Convert to absolute path
 	wchar_t fullPath[MAX_OSPATH];
-	if( GetFullPathNameW( tempPath, MAX_OSPATH, fullPath, NULL ) == 0 )
-	{
+	if( GetFullPathNameW( tempPath, MAX_OSPATH, fullPath, NULL ) == 0 ) {
 		free( tempPath );
 		return NULL;
 	}
 	free( tempPath );
 
 	// +4 for \\?\ prefix +1 for null terminator
-	size_t fullPathLen = wcslen( fullPath );
-	wchar_t* wPath = ( wchar_t* )malloc( ( fullPathLen + 5 ) * sizeof( wchar_t ) );
-	if( !wPath )
-	{
+	size_t	 fullPathLen = wcslen( fullPath );
+	wchar_t* wPath		 = ( wchar_t* )malloc( ( fullPathLen + 5 ) * sizeof( wchar_t ) );
+	if( !wPath ) {
 		return NULL;
 	}
 
 	// Add \\?\ prefix for long path support
 	swprintf( wPath, fullPathLen + 5, L"\\\\?\\%s", fullPath );
-	//wcscpy( wPath, L"\\\\?\\" );
-	//wcscat( wPath, fullPath );
+	// wcscpy( wPath, L"\\\\?\\" );
+	// wcscat( wPath, fullPath );
 
 	return wPath;
 }
@@ -305,25 +285,21 @@ void Sys_Mkdir( const char* path )
 	// RB: support paths longer than 260 characters
 
 	// ignore pure drive-letter paths like "C:"
-	if( strlen( path ) == 2 && path[1] == ':' && isalpha( path[0] ) )
-	{
+	if( strlen( path ) == 2 && path[1] == ':' && isalpha( path[0] ) ) {
 		return;
 	}
 
 	wchar_t* wPath = MakeWindowsLongPathW( path );
-	if( !wPath )
-	{
+	if( !wPath ) {
 		common->FatalError( "Failed to convert path to wide string: '%s'", path );
 		return;
 	}
 
-	if( !CreateDirectoryW( wPath, NULL ) )
-	{
+	if( !CreateDirectoryW( wPath, NULL ) ) {
 		DWORD err = GetLastError();
 
 		// don't fatal if directory already exists
-		if( err != ERROR_ALREADY_EXISTS )
-		{
+		if( err != ERROR_ALREADY_EXISTS ) {
 			common->FatalError( "CreateDirectoryW failed (error %lu)", err );
 		}
 	}
@@ -331,7 +307,6 @@ void Sys_Mkdir( const char* path )
 	free( wPath );
 	// RB end
 }
-
 
 /*
 ========================
@@ -342,15 +317,13 @@ bool Sys_Rmdir( const char* path )
 {
 	// RB: support paths longer than 260 characters
 	wchar_t* wPath = MakeWindowsLongPathW( path );
-	if( !wPath )
-	{
+	if( !wPath ) {
 		common->FatalError( "Failed to convert path to wide string: '%s'", path );
 		return false;
 	}
 
 	BOOL success = RemoveDirectoryW( wPath );
-	if( success == 0 )
-	{
+	if( success == 0 ) {
 		DWORD err = GetLastError();
 		common->FatalError( "RemoveDirectoryW failed (error %lu)", err );
 	}
@@ -382,16 +355,13 @@ static void ListFilesRecursive( const wchar_t* baseDir, const wchar_t* pattern, 
 	swprintf( searchPath, MAX_OSPATH, L"%s\\*", baseDir );
 
 	WIN32_FIND_DATAW findData;
-	HANDLE hFind = FindFirstFileW( searchPath, &findData );
-	if( hFind == INVALID_HANDLE_VALUE )
-	{
+	HANDLE			 hFind = FindFirstFileW( searchPath, &findData );
+	if( hFind == INVALID_HANDLE_VALUE ) {
 		return;
 	}
 
-	do
-	{
-		if( wcscmp( findData.cFileName, L"." ) == 0 || wcscmp( findData.cFileName, L".." ) == 0 )
-		{
+	do {
+		if( wcscmp( findData.cFileName, L"." ) == 0 || wcscmp( findData.cFileName, L".." ) == 0 ) {
 			continue;
 		}
 
@@ -400,25 +370,19 @@ static void ListFilesRecursive( const wchar_t* baseDir, const wchar_t* pattern, 
 
 		bool isDir = ( findData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY ) != 0;
 
-		if( isDir )
-		{
+		if( isDir ) {
 			ListFilesRecursive( fullPath, pattern, list, baseLen );
-		}
-		else if( PathMatchSpecW( findData.cFileName, pattern ) )
-		{
+		} else if( PathMatchSpecW( findData.cFileName, pattern ) ) {
 			char utf8Name[MAX_OSPATH];
-			int len = WideCharToMultiByte( CP_UTF8, 0, fullPath + baseLen, -1, utf8Name, sizeof( utf8Name ), NULL, NULL );
-			if( len > 0 )
-			{
+			int	 len = WideCharToMultiByte( CP_UTF8, 0, fullPath + baseLen, -1, utf8Name, sizeof( utf8Name ), NULL, NULL );
+			if( len > 0 ) {
 				list.Append( utf8Name );
 			}
 		}
-	}
-	while( FindNextFileW( hFind, &findData ) );
+	} while( FindNextFileW( hFind, &findData ) );
 
 	FindClose( hFind );
 }
-
 
 int Sys_ListFiles( const char* directory, const char* extension, idStrList& list )
 {
@@ -472,35 +436,31 @@ int Sys_ListFiles( const char* directory, const char* extension, idStrList& list
 #else
 	// RB: support paths longer than 260 characters
 	wchar_t* wDir = MakeWindowsLongPathW( directory );
-	if( !wDir )
-	{
+	if( !wDir ) {
 		common->FatalError( "Failed to convert path to wide string: '%s'", directory );
 		return -1;
 	}
 
 	idStr extPattern = "*";
-	if( extension && extension[0] )
-	{
+	if( extension && extension[0] ) {
 		extPattern += extension;
 	}
 
 	// convert extension pattern to wide string
-	int extLen = MultiByteToWideChar( CP_UTF8, 0, extPattern.c_str(), -1, NULL, 0 );
+	int		 extLen	  = MultiByteToWideChar( CP_UTF8, 0, extPattern.c_str(), -1, NULL, 0 );
 	wchar_t* wPattern = ( wchar_t* )malloc( extLen * sizeof( wchar_t ) );
-	if( !wPattern )
-	{
+	if( !wPattern ) {
 		free( wDir );
 		return -1;
 	}
 	MultiByteToWideChar( CP_UTF8, 0, extPattern.c_str(), -1, wPattern, extLen );
 
 	idStrList tempList;
-	size_t baseLen = wcslen( wDir );
+	size_t	  baseLen = wcslen( wDir );
 	ListFilesRecursive( wDir, wPattern, tempList, baseLen + 1 ); // +1 to skip path separator
 
 	// convert to forward slashes to tab completion works
-	for( auto& s : tempList )
-	{
+	for( auto& s : tempList ) {
 		s.BackSlashesToSlashes();
 		list.Append( s.c_str() );
 	}
@@ -511,8 +471,6 @@ int Sys_ListFiles( const char* directory, const char* extension, idStrList& list
 	// RB end
 #endif
 }
-
-
 
 int idEventLoop::JournalLevel() const
 {
@@ -527,17 +485,15 @@ Sys_IsFolder
 sysFolder_t Sys_IsFolder( const char* path )
 {
 	wchar_t* wPath = MakeWindowsLongPathW( path );
-	if( !wPath )
-	{
+	if( !wPath ) {
 		return FOLDER_ERROR;
 	}
 
 	struct _stat buffer;
-	int result = _wstat( wPath, &buffer );
+	int			 result = _wstat( wPath, &buffer );
 	free( wPath );
 
-	if( result < 0 )
-	{
+	if( result < 0 ) {
 		return FOLDER_ERROR;
 	}
 	return ( buffer.st_mode & _S_IFDIR ) != 0 ? FOLDER_YES : FOLDER_NO;
@@ -552,7 +508,6 @@ const char* Sys_Lang( int )
 {
 	return "";
 }
-
 
 /*
 =================
@@ -573,16 +528,15 @@ ID_TIME_T Sys_FileTimeStamp( idFileHandle fp )
 		in one second.
 	*/
 
-	SYSTEMTIME base_st =
-	{
-		1970,   // wYear
-		1,      // wMonth
-		0,      // wDayOfWeek
-		1,      // wDay
-		0,      // wHour
-		0,      // wMinute
-		0,      // wSecond
-		0       // wMilliseconds
+	SYSTEMTIME base_st = {
+		1970, // wYear
+		1,	  // wMonth
+		0,	  // wDayOfWeek
+		1,	  // wDay
+		0,	  // wHour
+		0,	  // wMinute
+		0,	  // wSecond
+		0	  // wMilliseconds
 	};
 
 	FILETIME base_ft;
@@ -605,7 +559,7 @@ double Sys_GetClockTicks()
 	LARGE_INTEGER li;
 
 	QueryPerformanceCounter( &li );
-	return ( double ) li.LowPart + ( double ) 0xFFFFFFFF * li.HighPart;
+	return ( double )li.LowPart + ( double )0xFFFFFFFF * li.HighPart;
 }
 
 /*
@@ -617,8 +571,7 @@ double Sys_ClockTicksPerSecond()
 {
 	static double ticks = 0;
 
-	if( !ticks )
-	{
+	if( !ticks ) {
 		LARGE_INTEGER li;
 		QueryPerformanceFrequency( &li );
 		ticks = li.QuadPart;
@@ -668,7 +621,6 @@ int Sys_Milliseconds()
 	return timeGetTime() - sys_timeBase;
 }
 
-
 /*
 ================
 Sys_Microseconds
@@ -678,8 +630,7 @@ uint64 Sys_Microseconds()
 {
 	static uint64 ticksPerMicrosecondTimes1024 = 0;
 
-	if( ticksPerMicrosecondTimes1024 == 0 )
-	{
+	if( ticksPerMicrosecondTimes1024 == 0 ) {
 		ticksPerMicrosecondTimes1024 = ( ( uint64 )Sys_ClockTicksPerSecond() << 10 ) / 1000000;
 		assert( ticksPerMicrosecondTimes1024 > 0 );
 	}
@@ -702,14 +653,14 @@ numCPUPackages          - the total number of packages (physical processors)
 void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCPUPackages )
 {
 	numPhysicalCPUCores = 1;
-	numLogicalCPUCores = 1;
-	numCPUPackages = 1;
+	numLogicalCPUCores	= 1;
+	numCPUPackages		= 1;
 }
 
 class idSysCmdline : public idSys
 {
 public:
-	virtual void			DebugPrintf( VERIFY_FORMAT_STRING const char* fmt, ... )
+	virtual void DebugPrintf( VERIFY_FORMAT_STRING const char* fmt, ... )
 	{
 		va_list argptr;
 
@@ -718,82 +669,96 @@ public:
 		va_end( argptr );
 	}
 
-	virtual void			DebugVPrintf( const char* fmt, va_list arg )
+	virtual void DebugVPrintf( const char* fmt, va_list arg )
 	{
 		Sys_VPrintf( fmt, arg );
 	}
 
-	virtual double			GetClockTicks()
+	virtual double GetClockTicks()
 	{
 		return Sys_GetClockTicks();
 	}
 
-	virtual double			ClockTicksPerSecond()
+	virtual double ClockTicksPerSecond()
 	{
 		return Sys_ClockTicksPerSecond();
 	}
 
-	virtual cpuid_t			GetProcessorId()
+	virtual cpuid_t GetProcessorId()
 	{
 		return CPUID_NONE;
 	}
 
-	virtual const char* 	GetProcessorString()
+	virtual const char* GetProcessorString()
 	{
 		return NULL;
 	}
-	virtual const char* 	FPU_GetState()
+	virtual const char* FPU_GetState()
 	{
 		return NULL;
 	}
-	virtual bool			FPU_StackIsEmpty()
+	virtual bool FPU_StackIsEmpty()
 	{
 		return false;
 	}
-	virtual void			FPU_SetFTZ( bool enable ) {}
-	virtual void			FPU_SetDAZ( bool enable ) {}
+	virtual void FPU_SetFTZ( bool enable )
+	{
+	}
+	virtual void FPU_SetDAZ( bool enable )
+	{
+	}
 
-	virtual void			FPU_EnableExceptions( int exceptions ) {}
+	virtual void FPU_EnableExceptions( int exceptions )
+	{
+	}
 
-	virtual bool			LockMemory( void* ptr, int bytes )
+	virtual bool LockMemory( void* ptr, int bytes )
 	{
 		return false;
 	}
-	virtual bool			UnlockMemory( void* ptr, int bytes )
+	virtual bool UnlockMemory( void* ptr, int bytes )
 	{
 		return false;
 	}
 
-	virtual int				DLL_Load( const char* dllName )
+	virtual int DLL_Load( const char* dllName )
 	{
 		return 0;
 	}
-	virtual void* 			DLL_GetProcAddress( int dllHandle, const char* procName )
+	virtual void* DLL_GetProcAddress( int dllHandle, const char* procName )
 	{
 		return NULL;
 	}
-	virtual void			DLL_Unload( int dllHandle ) {}
-	virtual void			DLL_GetFileName( const char* baseName, char* dllName, int maxLength ) {}
+	virtual void DLL_Unload( int dllHandle )
+	{
+	}
+	virtual void DLL_GetFileName( const char* baseName, char* dllName, int maxLength )
+	{
+	}
 
-	virtual sysEvent_t		GenerateMouseButtonEvent( int button, bool down )
+	virtual sysEvent_t GenerateMouseButtonEvent( int button, bool down )
 	{
 		sysEvent_t ev;
 		ev.evType = SE_NONE;
 		return ev;
 	}
-	virtual sysEvent_t		GenerateMouseMoveEvent( int deltax, int deltay )
+	virtual sysEvent_t GenerateMouseMoveEvent( int deltax, int deltay )
 	{
 		sysEvent_t ev;
 		ev.evType = SE_NONE;
 		return ev;
 	}
 
-	virtual void			OpenURL( const char* url, bool quit ) {}
-	virtual void			StartProcess( const char* exeName, bool quit ) {}
+	virtual void OpenURL( const char* url, bool quit )
+	{
+	}
+	virtual void StartProcess( const char* exeName, bool quit )
+	{
+	}
 };
 
-idSysCmdline		idSysLocal;
-idSys* 				sys = &idSysLocal;
+idSysCmdline idSysLocal;
+idSys*		 sys = &idSysLocal;
 
 /*
 ==============================================================
@@ -806,85 +771,77 @@ idSys* 				sys = &idSysLocal;
 namespace UI
 {
 
-enum class ColorScheme : int
-{
+enum class ColorScheme : int {
 	Default,
 	Dark,
 	Green,
 	COUNT,
 };
 
-struct State
-{
-	int hoveredWindowId = 0;
-	int statusWindowHeight = 4;
+struct State {
+	int			hoveredWindowId	   = 0;
+	int			statusWindowHeight = 4;
 
 	ColorScheme colorScheme = ColorScheme::Dark;
 
-	bool showHelpWelcome = false;
-	bool showHelpModal = false;
-	bool showStatusWindow = true;
+	bool		showHelpWelcome	 = false;
+	bool		showHelpModal	 = false;
+	bool		showStatusWindow = true;
 
 #define STATUS_TEXT_SIZE 512
-	idStrStatic<STATUS_TEXT_SIZE> statusWindowHeader =  "Initializing Doom Framework";
-	idStrStatic<STATUS_TEXT_SIZE> statusActiveTool = "-";
+	idStrStatic<STATUS_TEXT_SIZE> statusWindowHeader = "Initializing Doom Framework";
+	idStrStatic<STATUS_TEXT_SIZE> statusActiveTool	 = "-";
 
-	float progress = 1.0f;
+	float						  progress = 1.0f;
 
-	void ChangeColorScheme( bool inc = true )
+	void						  ChangeColorScheme( bool inc = true )
 	{
-		if( inc )
-		{
-			colorScheme = ( ColorScheme )( ( ( int ) colorScheme + 1 ) % ( ( int )ColorScheme::COUNT ) );
+		if( inc ) {
+			colorScheme = ( ColorScheme )( ( ( int )colorScheme + 1 ) % ( ( int )ColorScheme::COUNT ) );
 		}
 
 		ImVec4* colors = ImGui::GetStyle().Colors;
-		switch( colorScheme )
-		{
-			case ColorScheme::Default:
-			{
-				colors[ImGuiCol_Text]                   = ImVec4( 0.00f, 0.00f, 0.00f, 1.00f );
-				colors[ImGuiCol_TextDisabled]           = ImVec4( 0.60f, 0.60f, 0.60f, 1.00f );
-				colors[ImGuiCol_WindowBg]               = ImVec4( 0.96f, 0.96f, 0.94f, 1.00f );
-				colors[ImGuiCol_TitleBg]                = ImVec4( 1.00f, 0.40f, 0.00f, 1.00f );
-				colors[ImGuiCol_TitleBgActive]          = ImVec4( 1.00f, 0.40f, 0.00f, 1.00f );
-				colors[ImGuiCol_TitleBgCollapsed]       = ImVec4( 0.69f, 0.25f, 0.00f, 1.00f );
-				colors[ImGuiCol_ChildBg]                = ImVec4( 0.96f, 0.96f, 0.94f, 1.00f );
-				colors[ImGuiCol_PopupBg]                = ImVec4( 0.96f, 0.96f, 0.94f, 1.00f );
-				colors[ImGuiCol_ModalWindowDimBg]       = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
+		switch( colorScheme ) {
+			case ColorScheme::Default: {
+				colors[ImGuiCol_Text]			  = ImVec4( 0.00f, 0.00f, 0.00f, 1.00f );
+				colors[ImGuiCol_TextDisabled]	  = ImVec4( 0.60f, 0.60f, 0.60f, 1.00f );
+				colors[ImGuiCol_WindowBg]		  = ImVec4( 0.96f, 0.96f, 0.94f, 1.00f );
+				colors[ImGuiCol_TitleBg]		  = ImVec4( 1.00f, 0.40f, 0.00f, 1.00f );
+				colors[ImGuiCol_TitleBgActive]	  = ImVec4( 1.00f, 0.40f, 0.00f, 1.00f );
+				colors[ImGuiCol_TitleBgCollapsed] = ImVec4( 0.69f, 0.25f, 0.00f, 1.00f );
+				colors[ImGuiCol_ChildBg]		  = ImVec4( 0.96f, 0.96f, 0.94f, 1.00f );
+				colors[ImGuiCol_PopupBg]		  = ImVec4( 0.96f, 0.96f, 0.94f, 1.00f );
+				colors[ImGuiCol_ModalWindowDimBg] = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
 				break;
 			}
 
-			case ColorScheme::Dark:
-			{
-				colors[ImGuiCol_Text]                   = ImVec4( 1.00f, 1.00f, 1.00f, 1.00f );
-				colors[ImGuiCol_TextDisabled]           = ImVec4( 0.60f, 0.60f, 0.60f, 1.00f );
-				colors[ImGuiCol_WindowBg]               = ImVec4( 0.10f, 0.10f, 0.10f, 1.00f );
-				colors[ImGuiCol_TitleBg]                = ImVec4( 1.00f, 0.40f, 0.00f, 0.50f );
-				colors[ImGuiCol_TitleBgActive]          = ImVec4( 1.00f, 0.40f, 0.00f, 0.50f );
-				colors[ImGuiCol_TitleBgCollapsed]       = ImVec4( 0.69f, 0.25f, 0.00f, 0.50f );
-				colors[ImGuiCol_ChildBg]                = ImVec4( 0.10f, 0.10f, 0.10f, 1.00f );
-				colors[ImGuiCol_PopupBg]                = ImVec4( 0.20f, 0.20f, 0.20f, 1.00f );
-				colors[ImGuiCol_ModalWindowDimBg]       = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
+			case ColorScheme::Dark: {
+				colors[ImGuiCol_Text]			  = ImVec4( 1.00f, 1.00f, 1.00f, 1.00f );
+				colors[ImGuiCol_TextDisabled]	  = ImVec4( 0.60f, 0.60f, 0.60f, 1.00f );
+				colors[ImGuiCol_WindowBg]		  = ImVec4( 0.10f, 0.10f, 0.10f, 1.00f );
+				colors[ImGuiCol_TitleBg]		  = ImVec4( 1.00f, 0.40f, 0.00f, 0.50f );
+				colors[ImGuiCol_TitleBgActive]	  = ImVec4( 1.00f, 0.40f, 0.00f, 0.50f );
+				colors[ImGuiCol_TitleBgCollapsed] = ImVec4( 0.69f, 0.25f, 0.00f, 0.50f );
+				colors[ImGuiCol_ChildBg]		  = ImVec4( 0.10f, 0.10f, 0.10f, 1.00f );
+				colors[ImGuiCol_PopupBg]		  = ImVec4( 0.20f, 0.20f, 0.20f, 1.00f );
+				colors[ImGuiCol_ModalWindowDimBg] = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
 				break;
 			}
 
-			case ColorScheme::Green:
-			{
-				colors[ImGuiCol_Text]                   = ImVec4( 0.00f, 1.00f, 0.00f, 1.00f );
-				colors[ImGuiCol_TextDisabled]           = ImVec4( 0.60f, 0.60f, 0.60f, 1.00f );
-				colors[ImGuiCol_WindowBg]               = ImVec4( 0.10f, 0.10f, 0.10f, 1.00f );
-				colors[ImGuiCol_TitleBg]                = ImVec4( 0.25f, 0.25f, 0.25f, 1.00f );
-				colors[ImGuiCol_TitleBgActive]          = ImVec4( 0.25f, 0.25f, 0.25f, 1.00f );
-				colors[ImGuiCol_TitleBgCollapsed]       = ImVec4( 0.50f, 1.00f, 0.50f, 1.00f );
-				colors[ImGuiCol_ChildBg]                = ImVec4( 0.10f, 0.10f, 0.10f, 1.00f );
-				colors[ImGuiCol_PopupBg]                = ImVec4( 0.00f, 0.00f, 0.00f, 1.00f );
-				colors[ImGuiCol_ModalWindowDimBg]       = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
+			case ColorScheme::Green: {
+				colors[ImGuiCol_Text]			  = ImVec4( 0.00f, 1.00f, 0.00f, 1.00f );
+				colors[ImGuiCol_TextDisabled]	  = ImVec4( 0.60f, 0.60f, 0.60f, 1.00f );
+				colors[ImGuiCol_WindowBg]		  = ImVec4( 0.10f, 0.10f, 0.10f, 1.00f );
+				colors[ImGuiCol_TitleBg]		  = ImVec4( 0.25f, 0.25f, 0.25f, 1.00f );
+				colors[ImGuiCol_TitleBgActive]	  = ImVec4( 0.25f, 0.25f, 0.25f, 1.00f );
+				colors[ImGuiCol_TitleBgCollapsed] = ImVec4( 0.50f, 1.00f, 0.50f, 1.00f );
+				colors[ImGuiCol_ChildBg]		  = ImVec4( 0.10f, 0.10f, 0.10f, 1.00f );
+				colors[ImGuiCol_PopupBg]		  = ImVec4( 0.00f, 0.00f, 0.00f, 1.00f );
+				colors[ImGuiCol_ModalWindowDimBg] = ImVec4( 0.00f, 0.00f, 0.00f, 0.00f );
 				break;
 			}
 
-			default:
-			{
+			default: {
 			}
 		}
 	}
@@ -898,164 +855,179 @@ UI::State stateUI;
 class idCommonLocal : public idCommon
 {
 private:
-	int							count = 0;
-	int							expectedCount = 0;
-	size_t						tics = 0;
-	size_t						nextTicCount = 0;
+	int	   count		 = 0;
+	int	   expectedCount = 0;
+	size_t tics			 = 0;
+	size_t nextTicCount	 = 0;
 
 public:
-	bool						com_refreshOnPrint = true;		// update the screen every print for dmap
-	ImTui::TScreen*				screen;
-
+	bool			com_refreshOnPrint = true; // update the screen every print for dmap
+	ImTui::TScreen* screen;
 
 	// Initialize everything.
 	// if the OS allows, pass argc/argv directly (without executable name)
 	// otherwise pass the command line in a single string (without executable name)
-	virtual void				Init( int argc, const char* const* argv, const char* cmdline ) {}
+	virtual void	Init( int argc, const char* const* argv, const char* cmdline )
+	{
+	}
 
 	// Shuts down everything.
-	virtual void				Shutdown() {}
-	virtual bool				IsShuttingDown() const
+	virtual void Shutdown()
+	{
+	}
+	virtual bool IsShuttingDown() const
 	{
 		return false;
 	};
 
-	virtual	void				CreateMainMenu() {}
+	virtual void CreateMainMenu()
+	{
+	}
 
 	// Shuts down everything.
-	virtual void				Quit() {}
+	virtual void Quit()
+	{
+	}
 
 	// Returns true if common initialization is complete.
-	virtual bool				IsInitialized() const
+	virtual bool IsInitialized() const
 	{
 		return true;
 	};
 
 	// Called repeatedly as the foreground thread for rendering and game logic.
-	virtual void				Frame() {}
+	virtual void Frame()
+	{
+	}
 
 	// Redraws the screen, handling games, guis, console, etc
 	// in a modal manner outside the normal frame loop
-	virtual void				UpdateScreen( bool captureToImage, bool releaseMouse = true );
+	virtual void UpdateScreen( bool captureToImage, bool releaseMouse = true );
 
-	virtual void				UpdateLevelLoadPacifier() {}
-	virtual void				LoadPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... ) {}
-	virtual void				LoadPacifierProgressTotal( int total ) {}
-	virtual void				LoadPacifierProgressIncrement( int step ) {}
-	virtual bool				LoadPacifierRunning()
+	virtual void UpdateLevelLoadPacifier()
+	{
+	}
+	virtual void LoadPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... )
+	{
+	}
+	virtual void LoadPacifierProgressTotal( int total )
+	{
+	}
+	virtual void LoadPacifierProgressIncrement( int step )
+	{
+	}
+	virtual bool LoadPacifierRunning()
 	{
 		return false;
 	}
 
-
 	// Checks for and removes command line "+set var arg" constructs.
 	// If match is NULL, all set commands will be executed, otherwise
 	// only a set with the exact name.
-	virtual void				StartupVariable( const char* match ) {}
-
-	// Begins redirection of console output to the given buffer.
-	virtual void				BeginRedirect( char* buffer, int buffersize, void ( *flush )( const char* ) ) {}
-
-	// Stops redirection of console output.
-	virtual void				EndRedirect() {}
-
-	// Update the screen with every message printed.
-	virtual void				SetRefreshOnPrint( bool set )
+	virtual void StartupVariable( const char* match )
 	{
-		//com_refreshOnPrint = set;
 	}
 
-	virtual void			Printf( const char* fmt, ... )
+	// Begins redirection of console output to the given buffer.
+	virtual void BeginRedirect( char* buffer, int buffersize, void ( *flush )( const char* ) )
+	{
+	}
+
+	// Stops redirection of console output.
+	virtual void EndRedirect()
+	{
+	}
+
+	// Update the screen with every message printed.
+	virtual void SetRefreshOnPrint( bool set )
+	{
+		// com_refreshOnPrint = set;
+	}
+
+	virtual void Printf( const char* fmt, ... )
 	{
 		STDIO_PRINT( "", "" );
 
-		if( com_refreshOnPrint )
-		{
+		if( com_refreshOnPrint ) {
 			common->UpdateScreen( false );
 		}
 	}
 
-	virtual void			VPrintf( const char* fmt, va_list arg )
+	virtual void VPrintf( const char* fmt, va_list arg )
 	{
 		Sys_VPrintf( fmt, arg );
 
-		if( com_refreshOnPrint )
-		{
+		if( com_refreshOnPrint ) {
 			common->UpdateScreen( false );
 		}
 	}
 
-	virtual void			DPrintf( const char* fmt, ... )
+	virtual void DPrintf( const char* fmt, ... )
 	{
-		if( com_developer.GetBool() )
-		{
+		if( com_developer.GetBool() ) {
 			STDIO_PRINT( "", "" );
 
-			if( com_refreshOnPrint )
-			{
+			if( com_refreshOnPrint ) {
 				common->UpdateScreen( false );
 			}
 		}
 	}
 
-	virtual void			VerbosePrintf( const char* fmt, ... )
+	virtual void VerbosePrintf( const char* fmt, ... )
 	{
-		if( dmap_verbose.GetBool() )
-		{
+		if( dmap_verbose.GetBool() ) {
 			STDIO_PRINT( "", "" );
 
-			if( com_refreshOnPrint )
-			{
+			if( com_refreshOnPrint ) {
 				common->UpdateScreen( false );
 			}
 		}
 	}
 
-	virtual void			Warning( const char* fmt, ... )
+	virtual void Warning( const char* fmt, ... )
 	{
 		STDIO_PRINT( "WARNING: ", "\n" );
 
-		if( com_refreshOnPrint )
-		{
+		if( com_refreshOnPrint ) {
 			common->UpdateScreen( false );
 		}
 	}
 
-	virtual void			DWarning( const char* fmt, ... )
+	virtual void DWarning( const char* fmt, ... )
 	{
-		if( com_developer.GetBool() )
-		{
+		if( com_developer.GetBool() ) {
 			STDIO_PRINT( "WARNING: ", "\n" );
 
-			if( com_refreshOnPrint )
-			{
+			if( com_refreshOnPrint ) {
 				common->UpdateScreen( false );
 			}
 		}
 	}
 
 	// Prints all queued warnings.
-	virtual void				PrintWarnings() {}
+	virtual void PrintWarnings()
+	{
+	}
 
 	// Removes all queued warnings.
-	virtual void				ClearWarnings( const char* reason ) {}
+	virtual void ClearWarnings( const char* reason )
+	{
+	}
 
-	virtual void			Error( const char* fmt, ... )
+	virtual void Error( const char* fmt, ... )
 	{
 		STDIO_PRINT( "ERROR: ", "\n" );
 
-		if( com_refreshOnPrint )
-		{
+		if( com_refreshOnPrint ) {
 			common->UpdateScreen( false );
 		}
 		exit( 0 );
 	}
-	virtual void			FatalError( const char* fmt, ... )
+	virtual void FatalError( const char* fmt, ... )
 	{
 		STDIO_PRINT( "FATAL ERROR: ", "\n" );
 
-		if( com_refreshOnPrint )
-		{
+		if( com_refreshOnPrint ) {
 			common->UpdateScreen( false );
 		}
 		exit( 0 );
@@ -1074,59 +1046,59 @@ public:
 	};
 
 	// Directly sample a button.
-	virtual int					ButtonState( int key )
+	virtual int ButtonState( int key )
 	{
 		return 0;
 	};
 
 	// Directly sample a keystate.
-	virtual int					KeyState( int key )
+	virtual int KeyState( int key )
 	{
 		return 0;
 	};
 
 	// Returns true if a multiplayer game is running.
 	// CVars and commands are checked differently in multiplayer mode.
-	virtual bool				IsMultiplayer()
+	virtual bool IsMultiplayer()
 	{
 		return false;
 	};
-	virtual bool				IsServer()
+	virtual bool IsServer()
 	{
 		return false;
 	};
-	virtual bool				IsClient()
+	virtual bool IsClient()
 	{
 		return false;
 	};
 
 	// Returns true if the player has ever enabled the console
-	virtual bool				GetConsoleUsed()
+	virtual bool GetConsoleUsed()
 	{
 		return false;
 	};
 
 	// Returns the rate (in ms between snaps) that we want to generate snapshots
-	virtual int					GetSnapRate()
+	virtual int GetSnapRate()
 	{
 		return 0;
 	};
 
-	virtual void				NetReceiveReliable( int peer, int type, idBitMsg& msg ) { };
-	virtual void				NetReceiveSnapshot( class idSnapShot& ss ) { };
-	virtual void				NetReceiveUsercmds( int peer, idBitMsg& msg ) { };
+	virtual void NetReceiveReliable( int peer, int type, idBitMsg& msg ) {};
+	virtual void NetReceiveSnapshot( class idSnapShot& ss ) {};
+	virtual void NetReceiveUsercmds( int peer, idBitMsg& msg ) {};
 
 	// Processes the given event.
-	virtual	bool				ProcessEvent( const sysEvent_t* event )
+	virtual bool ProcessEvent( const sysEvent_t* event )
 	{
 		return false;
 	};
 
-	virtual bool				LoadGame( const char* saveName )
+	virtual bool LoadGame( const char* saveName )
 	{
 		return false;
 	};
-	virtual bool				SaveGame( const char* saveName )
+	virtual bool SaveGame( const char* saveName )
 	{
 		return false;
 	};
@@ -1157,23 +1129,37 @@ public:
 		return useless;
 	};
 
-	virtual void				OnSaveCompleted( idSaveLoadParms& parms ) {}
-	virtual void				OnLoadCompleted( idSaveLoadParms& parms ) {}
-	virtual void				OnLoadFilesCompleted( idSaveLoadParms& parms ) {}
-	virtual void				OnEnumerationCompleted( idSaveLoadParms& parms ) {}
-	virtual void				OnDeleteCompleted( idSaveLoadParms& parms ) {}
-	virtual void				TriggerScreenWipe( const char* _wipeMaterial, bool hold ) {}
+	virtual void OnSaveCompleted( idSaveLoadParms& parms )
+	{
+	}
+	virtual void OnLoadCompleted( idSaveLoadParms& parms )
+	{
+	}
+	virtual void OnLoadFilesCompleted( idSaveLoadParms& parms )
+	{
+	}
+	virtual void OnEnumerationCompleted( idSaveLoadParms& parms )
+	{
+	}
+	virtual void OnDeleteCompleted( idSaveLoadParms& parms )
+	{
+	}
+	virtual void TriggerScreenWipe( const char* _wipeMaterial, bool hold )
+	{
+	}
 
-	virtual void				OnStartHosting( idMatchParameters& parms ) {}
+	virtual void OnStartHosting( idMatchParameters& parms )
+	{
+	}
 
-	virtual int					GetGameFrame()
+	virtual int GetGameFrame()
 	{
 		return 0;
 	};
 
-	virtual void				LaunchExternalTitle( int titleIndex, int device, const lobbyConnectInfo_t* const connectInfo ) { };
+	virtual void			 LaunchExternalTitle( int titleIndex, int device, const lobbyConnectInfo_t* const connectInfo ) {};
 
-	virtual void				InitializeMPMapsModes() { };
+	virtual void			 InitializeMPMapsModes() {};
 	virtual const idStrList& GetModeList() const
 	{
 		static idStrList useless;
@@ -1190,73 +1176,85 @@ public:
 		return useless;
 	};
 
-	virtual void				ResetPlayerInput( int playerIndex ) {}
+	virtual void ResetPlayerInput( int playerIndex )
+	{
+	}
 
-	virtual bool				JapaneseCensorship() const
+	virtual bool JapaneseCensorship() const
 	{
 		return false;
 	};
 
-	virtual void				QueueShowShell() { };		// Will activate the shell on the next frame.
-	virtual void				InitTool( const toolFlag_t, const idDict*, idEntity* ) {}
+	virtual void QueueShowShell() {}; // Will activate the shell on the next frame.
+	virtual void InitTool( const toolFlag_t, const idDict*, idEntity* )
+	{
+	}
 
-	virtual void				LoadPacifierBinarizeFilename( const char* filename, const char* reason ) {}
-	virtual void				LoadPacifierBinarizeInfo( const char* info ) {}
-	virtual void				LoadPacifierBinarizeMiplevel( int level, int maxLevel ) {}
-	virtual void				LoadPacifierBinarizeProgress( float progress ) {}
-	virtual void				LoadPacifierBinarizeEnd() { };
-	virtual void				LoadPacifierBinarizeProgressTotal( int total ) {}
-	virtual void				LoadPacifierBinarizeProgressIncrement( int step ) {}
+	virtual void LoadPacifierBinarizeFilename( const char* filename, const char* reason )
+	{
+	}
+	virtual void LoadPacifierBinarizeInfo( const char* info )
+	{
+	}
+	virtual void LoadPacifierBinarizeMiplevel( int level, int maxLevel )
+	{
+	}
+	virtual void LoadPacifierBinarizeProgress( float progress )
+	{
+	}
+	virtual void LoadPacifierBinarizeEnd() {};
+	virtual void LoadPacifierBinarizeProgressTotal( int total )
+	{
+	}
+	virtual void LoadPacifierBinarizeProgressIncrement( int step )
+	{
+	}
 
-	virtual void				RogmapPacifierFilename( const char* filename, const char* reason )
+	virtual void RogmapPacifierFilename( const char* filename, const char* reason )
 	{
 		stateUI.statusWindowHeader.Format( "%s | %s", filename, reason );
 	}
 
-	virtual void				RogmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... )
+	virtual void RogmapPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... )
 	{
-		char msg[STATUS_TEXT_SIZE];
+		char	msg[STATUS_TEXT_SIZE];
 
 		va_list argptr;
 		va_start( argptr, fmt );
 		idStr::vsnPrintf( msg, STATUS_TEXT_SIZE - 1, fmt, argptr );
-		msg[ sizeof( msg ) - 1 ] = '\0';
+		msg[sizeof( msg ) - 1] = '\0';
 		va_end( argptr );
 
 		stateUI.statusActiveTool = msg;
 
-		if( com_refreshOnPrint )
-		{
+		if( com_refreshOnPrint ) {
 			UpdateScreen( false );
 		}
 	}
 
-	virtual void				RogmapPacifierCompileProgressTotal( int total )
+	virtual void RogmapPacifierCompileProgressTotal( int total )
 	{
-		count = 0;
+		count		  = 0;
 		expectedCount = total;
-		tics = 0;
-		nextTicCount = 0;
+		tics		  = 0;
+		nextTicCount  = 0;
 
 		stateUI.progress = 0;
 	}
 
-	virtual void				RogmapPacifierCompileProgressIncrement( int step )
+	virtual void RogmapPacifierCompileProgressIncrement( int step )
 	{
 		count += step;
 
 		stateUI.progress = float( count ) / expectedCount;
 
 		// don't refresh the UI with every step if there are e.g. 1300 steps
-		if( ( count + 1 ) >= nextTicCount )
-		{
+		if( ( count + 1 ) >= nextTicCount ) {
 			size_t ticsNeeded = ( size_t )( ( ( double )( count + 1 ) / expectedCount ) * 50.0 );
 
-			do
-			{
-				//common->Printf( "*" );
-			}
-			while( ++tics < ticsNeeded );
+			do {
+				// common->Printf( "*" );
+			} while( ++tics < ticsNeeded );
 
 			nextTicCount = ( size_t )( ( tics / 50.0 ) * expectedCount );
 			/*
@@ -1272,18 +1270,17 @@ public:
 			}
 			*/
 
-			if( com_refreshOnPrint )
-			{
+			if( com_refreshOnPrint ) {
 				common->UpdateScreen( false );
 			}
 		}
 	}
 };
 
-idCommonLocal		commonLocal;
-idCommon* common = &commonLocal;
+idCommonLocal commonLocal;
+idCommon*	  common = &commonLocal;
 
-int com_editors = 0;
+int			  com_editors = 0;
 
 /*
 ==============================================================
@@ -1293,14 +1290,14 @@ int com_editors = 0;
 ==============================================================
 */
 
-int Rogmap_NoGui( int argc, char** argv )
+int			  Rogmap_NoGui( int argc, char** argv )
 {
 	commonLocal.com_refreshOnPrint = false;
 
-	idLib::common = common;
+	idLib::common	  = common;
 	idLib::cvarSystem = cvarSystem;
 	idLib::fileSystem = fileSystem;
-	idLib::sys = sys;
+	idLib::sys		  = sys;
 
 	idLib::Init();
 	cmdSystem->Init();
@@ -1309,22 +1306,15 @@ int Rogmap_NoGui( int argc, char** argv )
 
 	// set cvars before filesystem init to use mod paths
 	idCmdArgs args;
-	for( int i = 0; i < argc; i++ )
-	{
-		if( idStr::Icmp( argv[ i ], "+set" ) == 0 )
-		{
-			if( ( i + 2 ) < argc )
-			{
-				cvarSystem->SetCVarString( argv[ i + 1 ], argv[ i + 2 ] );
+	for( int i = 0; i < argc; i++ ) {
+		if( idStr::Icmp( argv[i], "+set" ) == 0 ) {
+			if( ( i + 2 ) < argc ) {
+				cvarSystem->SetCVarString( argv[i + 1], argv[i + 2] );
 			}
 
 			i += 2;
-		}
-		else if( idStr::Icmp( argv[ i ], "-t" ) == 0 || idStr::Icmp( argv[ i ], "-nogui" ) == 0 )
-		{
-		}
-		else
-		{
+		} else if( idStr::Icmp( argv[i], "-t" ) == 0 || idStr::Icmp( argv[i], "-nogui" ) == 0 ) {
+		} else {
 			args.AppendArg( argv[i] );
 		}
 	}
@@ -1352,7 +1342,7 @@ int main( int argc, char** argv )
 
 void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 {
-	bool demo = true;
+	bool demo	 = true;
 	bool conOpen = true;
 
 	ImTui_ImplNcurses_NewFrame();
@@ -1362,8 +1352,7 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 
 	{
 		auto wSize = ImGui::GetIO().DisplaySize;
-		if( stateUI.showStatusWindow )
-		{
+		if( stateUI.showStatusWindow ) {
 			wSize.y -= stateUI.statusWindowHeight;
 		}
 		wSize.x = int( wSize.x );
@@ -1372,19 +1361,15 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 		ImGui::SetNextWindowSize( wSize, ImGuiCond_Always );
 	}
 
-	//idStr title = va( "Rogmap version %s %s", ENGINE_VERSION, BUILD_STRING );
+	// idStr title = va( "Rogmap version %s %s", ENGINE_VERSION, BUILD_STRING );
 	idStr title = va( "Rogmap version %s %s %s %s", ENGINE_VERSION, BUILD_STRING, ID__DATE__, ID__TIME__ );
-	ImGui::Begin( title.c_str(), nullptr,
-				  ImGuiWindowFlags_NoCollapse |
-				  ImGuiWindowFlags_NoResize |
-				  ImGuiWindowFlags_NoMove |
-				  ImGuiWindowFlags_NoScrollbar );
+	ImGui::Begin( title.c_str(), nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoScrollbar );
 
 	tuiLog.Draw( "Current Log:", &conOpen );
 
-	//ShowExampleAppConsole( &conOpen );
+	// ShowExampleAppConsole( &conOpen );
 
-	//ImTui::ShowDemoWindow( &demo );
+	// ImTui::ShowDemoWindow( &demo );
 
 	ImGui::End();
 
@@ -1394,18 +1379,12 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 		ImGui::SetNextWindowSize( ImVec2( wSize.x, stateUI.statusWindowHeight ), ImGuiCond_Always );
 	}
 
-	ImGui::Begin( stateUI.statusWindowHeader, nullptr,
-				  ImGuiWindowFlags_NoCollapse |
-				  ImGuiWindowFlags_NoResize |
-				  ImGuiWindowFlags_NoMove );
+	ImGui::Begin( stateUI.statusWindowHeader, nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove );
 
 	auto wSize = ImGui::GetIO().DisplaySize;
-	if( stateUI.progress < 1.0f )
-	{
+	if( stateUI.progress < 1.0f ) {
 		ImGui::ProgressBar( stateUI.progress, ImVec2( wSize.x, 0.0f ) );
-	}
-	else
-	{
+	} else {
 		ImGui::Text( " " );
 	}
 
@@ -1421,10 +1400,8 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 
 int main( int argc, char** argv )
 {
-	for( int i = 0; i < argc; i++ )
-	{
-		if( idStr::Icmp( argv[ i ], "-t" ) == 0 || idStr::Icmp( argv[ i ], "-nogui" ) == 0 )
-		{
+	for( int i = 0; i < argc; i++ ) {
+		if( idStr::Icmp( argv[i], "-t" ) == 0 || idStr::Icmp( argv[i], "-nogui" ) == 0 ) {
 			return Rogmap_NoGui( argc, argv );
 		}
 	}
@@ -1437,10 +1414,10 @@ int main( int argc, char** argv )
 
 	stateUI.ChangeColorScheme( false );
 
-	idLib::common = common;
+	idLib::common	  = common;
 	idLib::cvarSystem = cvarSystem;
 	idLib::fileSystem = fileSystem;
-	idLib::sys = sys;
+	idLib::sys		  = sys;
 
 	idLib::Init();
 	cmdSystem->Init();
@@ -1449,22 +1426,15 @@ int main( int argc, char** argv )
 
 	// set cvars before filesystem init to use mod paths
 	idCmdArgs args;
-	for( int i = 0; i < argc; i++ )
-	{
-		if( idStr::Icmp( argv[ i ], "+set" ) == 0 )
-		{
-			if( ( i + 2 ) < argc )
-			{
-				cvarSystem->SetCVarString( argv[ i + 1 ], argv[ i + 2 ] );
+	for( int i = 0; i < argc; i++ ) {
+		if( idStr::Icmp( argv[i], "+set" ) == 0 ) {
+			if( ( i + 2 ) < argc ) {
+				cvarSystem->SetCVarString( argv[i + 1], argv[i + 2] );
 			}
 
 			i += 2;
-		}
-		else if( idStr::Icmp( argv[ i ], "-t" ) == 0 || idStr::Icmp( argv[ i ], "-nogui" ) == 0 )
-		{
-		}
-		else
-		{
+		} else if( idStr::Icmp( argv[i], "-t" ) == 0 || idStr::Icmp( argv[i], "-nogui" ) == 0 ) {
+		} else {
 			args.AppendArg( argv[i] );
 		}
 	}
@@ -1474,13 +1444,12 @@ int main( int argc, char** argv )
 
 	Rogmap_f( args );
 
-#if 1
+	#if 1
 	// maybe only do this if dmap has a leaked BSP
-	while( true )
-	{
+	while( true ) {
 		common->UpdateScreen( false );
 	}
-#endif
+	#endif
 
 	ImTui_ImplText_Shutdown();
 	ImTui_ImplNcurses_Shutdown();

@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU
+General Public License which accompanied the Doom 3 Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,7 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "../../idlib/precompiled.h"
 #include "../posix/posix_public.h"
-//#include "../sys_local.h"
+// #include "../sys_local.h"
 
 #include <pthread.h>
 #include <errno.h>
@@ -47,7 +48,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <dirent.h>
 
 static const char** cmdargv = NULL;
-static int cmdargc = 0;
+static int			cmdargc = 0;
 // DG end
 
 /*
@@ -55,21 +56,17 @@ static int cmdargc = 0;
 Sys_EXEPath
 ==============
 */
-const char* Sys_EXEPath()
+const char*			Sys_EXEPath()
 {
-	char exe_path[PATH_MAX];
+	char		exe_path[PATH_MAX];
 	static char path[PATH_MAX];
-	uint32_t size = sizeof( exe_path );
+	uint32_t	size = sizeof( exe_path );
 
-	if( _NSGetExecutablePath( exe_path, &size ) != 0 )
-	{
+	if( _NSGetExecutablePath( exe_path, &size ) != 0 ) {
 		Sys_Printf( "buffer too small to store exe path, need size %u\n", size );
 		path[0] = '\0';
-	}
-	else
-	{
-		if( realpath( exe_path, path ) == NULL )
-		{
+	} else {
+		if( realpath( exe_path, path ) == NULL ) {
 			Sys_Printf( "exe path could not be resolved to a valid absolute path\n" );
 			// path variable contains exe_path on error, so just pass it through
 		}
@@ -104,24 +101,22 @@ Sys_ClockTicksPerSecond
 */
 double Sys_ClockTicksPerSecond()
 {
-	static bool		init = false;
-	static double	ret;
-	int64_t temp;
-	size_t len = sizeof( temp );
-	int status;
+	static bool	  init = false;
+	static double ret;
+	int64_t		  temp;
+	size_t		  len = sizeof( temp );
+	int			  status;
 
-	if( init )
-	{
+	if( init ) {
 		return ret;
 	}
 
 	status = sysctlbyname( "hw.cpufrequency", &temp, &len, NULL, 0 );
-	ret = double( temp );
+	ret	   = double( temp );
 
-	if( status == -1 )
-	{
+	if( status == -1 ) {
 		common->Printf( "couldn't read sysctlbyname\n" );
-		ret = MeasureClockTicks();
+		ret	 = MeasureClockTicks();
 		init = true;
 		common->Printf( "measured CPU frequency: %g MHz\n", ret / 1000000.0 );
 		return ret;
@@ -145,25 +140,23 @@ numCPUPackages		- the total number of packages (physical processors)
 // RB begin
 void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCPUPackages )
 {
-	static bool		init = false;
+	static bool init = false;
 
-	static int		s_numLogicalCPUCores;
-	static int		s_numPhysicalCPUCores;
-	static int		s_numCPUPackages;
+	static int	s_numLogicalCPUCores;
+	static int	s_numPhysicalCPUCores;
+	static int	s_numCPUPackages;
 
-	size_t len = sizeof( s_numPhysicalCPUCores );
+	size_t		len = sizeof( s_numPhysicalCPUCores );
 
-	if( init )
-	{
+	if( init ) {
 		numPhysicalCPUCores = s_numPhysicalCPUCores;
-		numLogicalCPUCores = s_numLogicalCPUCores;
-		numCPUPackages = s_numCPUPackages;
+		numLogicalCPUCores	= s_numLogicalCPUCores;
+		numCPUPackages		= s_numCPUPackages;
 	}
 
 	s_numPhysicalCPUCores = 1;
-	s_numLogicalCPUCores = 1;
-	s_numCPUPackages = 1;
-
+	s_numLogicalCPUCores  = 1;
+	s_numCPUPackages	  = 1;
 
 	sysctlbyname( "hw.physicalcpu", &s_numPhysicalCPUCores, &len, NULL, 0 );
 	sysctlbyname( "hw.logicalcpu", &s_numLogicalCPUCores, &len, NULL, 0 );
@@ -172,8 +165,8 @@ void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCP
 	common->Printf( "CPU logical cores: %d\n", s_numLogicalCPUCores );
 
 	numPhysicalCPUCores = s_numPhysicalCPUCores;
-	numLogicalCPUCores = s_numLogicalCPUCores;
-	numCPUPackages = s_numCPUPackages;
+	numLogicalCPUCores	= s_numLogicalCPUCores;
+	numCPUPackages		= s_numCPUPackages;
 }
 // RB end
 
@@ -189,42 +182,30 @@ if the command contains spaces, system() is used. Otherwise the more straightfor
 void Sys_DoStartProcess( const char* exeName, bool dofork )
 {
 	bool use_system = false;
-	if( strchr( exeName, ' ' ) )
-	{
+	if( strchr( exeName, ' ' ) ) {
 		use_system = true;
-	}
-	else
-	{
+	} else {
 		// set exec rights when it's about a single file to execute
 		struct stat buf;
-		if( stat( exeName, &buf ) == -1 )
-		{
+		if( stat( exeName, &buf ) == -1 ) {
 			printf( "stat %s failed: %s\n", exeName, strerror( errno ) );
-		}
-		else
-		{
-			if( chmod( exeName, buf.st_mode | S_IXUSR ) == -1 )
-			{
+		} else {
+			if( chmod( exeName, buf.st_mode | S_IXUSR ) == -1 ) {
 				printf( "cmod +x %s failed: %s\n", exeName, strerror( errno ) );
 			}
 		}
 	}
-	if( dofork )
-	{
-		switch( fork() )
-		{
+	if( dofork ) {
+		switch( fork() ) {
 			case -1:
 				// main thread
 				break;
 			case 0:
-				if( use_system )
-				{
+				if( use_system ) {
 					printf( "system %s\n", exeName );
 					system( exeName );
 					_exit( 0 );
-				}
-				else
-				{
+				} else {
 					printf( "execl %s\n", exeName );
 					execl( exeName, exeName, NULL );
 					printf( "execl failed: %s\n", strerror( errno ) );
@@ -232,17 +213,12 @@ void Sys_DoStartProcess( const char* exeName, bool dofork )
 				}
 				break;
 		}
-	}
-	else
-	{
-		if( use_system )
-		{
+	} else {
+		if( use_system ) {
 			printf( "system %s\n", exeName );
 			system( exeName );
-			sleep( 1 );	// on some systems I've seen that starting the new process and exiting this one should not be too close
-		}
-		else
-		{
+			sleep( 1 ); // on some systems I've seen that starting the new process and exiting this one should not be too close
+		} else {
 			printf( "execl %s\n", exeName );
 			execl( exeName, exeName, NULL );
 			printf( "execl failed: %s\n", strerror( errno ) );
@@ -257,7 +233,9 @@ void Sys_DoStartProcess( const char* exeName, bool dofork )
  Sys_DoPreferences
  ==================
  */
-void Sys_DoPreferences() { }
+void Sys_DoPreferences()
+{
+}
 
 #if 0
 /*
@@ -333,56 +311,47 @@ void Sys_ReLaunch()
 	//       " +set com_skipIntroVideos 1" to the other commandline arguments in this function.
 
 	int ret = fork();
-	if( ret < 0 )
-	{
+	if( ret < 0 ) {
 		idLib::Error( "Sys_ReLaunch(): Couldn't fork(), reason: %s ", strerror( errno ) );
 	}
 
-	if( ret == 0 )
-	{
+	if( ret == 0 ) {
 		// child process
 
 		// get our own session so we don't depend on the (soon to be killed)
 		// parent process anymore - else we'll freeze
 		pid_t sId = setsid();
-		if( sId == ( pid_t ) - 1 )
-		{
+		if( sId == ( pid_t )-1 ) {
 			idLib::Error( "Sys_ReLaunch(): setsid() failed! Reason: %s ", strerror( errno ) );
 		}
 
 		// close all FDs (except for stdin/out/err) so we don't leak FDs
 		DIR* devfd = opendir( "/dev/fd" );
-		if( devfd != NULL )
-		{
-			//struct dirent entry;
+		if( devfd != NULL ) {
+			// struct dirent entry;
 			struct dirent* result;
-			//while( readdir_r( devfd, &entry, &result ) == 0 )
-			// SRS - readdir_r() is deprecated on linux, readdir() is thread safe with different dir streams
-			while( ( result = readdir( devfd ) ) != NULL )
-			{
+			// while( readdir_r( devfd, &entry, &result ) == 0 )
+			//  SRS - readdir_r() is deprecated on linux, readdir() is thread safe with different dir streams
+			while( ( result = readdir( devfd ) ) != NULL ) {
 				const char* filename = result->d_name;
-				char* endptr = NULL;
-				long int fd = strtol( filename, &endptr, 0 );
-				if( endptr != filename && fd > STDERR_FILENO )
-				{
+				char*		endptr	 = NULL;
+				long int	fd		 = strtol( filename, &endptr, 0 );
+				if( endptr != filename && fd > STDERR_FILENO ) {
 					close( fd );
 				}
 			}
-		}
-		else
-		{
+		} else {
 			idLib::Warning( "Sys_ReLaunch(): Couldn't open /dev/fd/ - will leak file descriptors. Reason: %s", strerror( errno ) );
 		}
 
 		// + 3 because "+set" "com_skipIntroVideos" "1" - and note that while we'll skip
 		// one (the first) cmdargv argument, we need one more pointer for NULL at the end.
-		int argc = cmdargc + 3;
+		int			 argc = cmdargc + 3;
 		const char** argv = ( const char** )calloc( argc, sizeof( char* ) );
 
-		int i;
-		for( i = 0; i < cmdargc - 1; ++i )
-		{
-			argv[i] = cmdargv[i + 1];    // ignore cmdargv[0] == executable name
+		int			 i;
+		for( i = 0; i < cmdargc - 1; ++i ) {
+			argv[i] = cmdargv[i + 1]; // ignore cmdargv[0] == executable name
 		}
 
 		// add +set com_skipIntroVideos 1
@@ -399,9 +368,7 @@ void Sys_ReLaunch()
 		// we only get here if execv() fails, else the executable is restarted
 		idLib::Error( "Sys_ReLaunch(): WTF exec() failed! Reason: %s ", strerror( errno ) );
 
-	}
-	else
-	{
+	} else {
 		// original process
 		// just do a clean shutdown
 		cmdSystem->AppendCommandText( "quit\n" );
@@ -410,43 +377,37 @@ void Sys_ReLaunch()
 }
 
 // OS X 10.11 or earlier doesn't have native clock_gettime()
-int clock_gettime( /*clk_id_t*/ clockid_t clock, struct timespec* tp )   // SRS - use APPLE clockid_t
+int clock_gettime( /*clk_id_t*/ clockid_t clock, struct timespec* tp ) // SRS - use APPLE clockid_t
 {
-	switch( clock )
-	{
+	switch( clock ) {
 		case CLOCK_MONOTONIC_RAW:
-		case CLOCK_MONOTONIC:
-		{
-			clock_serv_t clock_ref;
-			mach_timespec_t tm;
+		case CLOCK_MONOTONIC: {
+			clock_serv_t	 clock_ref;
+			mach_timespec_t	 tm;
 			host_name_port_t self = mach_host_self();
 			memset( &tm, 0, sizeof( tm ) );
-			if( KERN_SUCCESS != host_get_clock_service( self, SYSTEM_CLOCK, &clock_ref ) )
-			{
+			if( KERN_SUCCESS != host_get_clock_service( self, SYSTEM_CLOCK, &clock_ref ) ) {
 				mach_port_deallocate( mach_task_self(), self );
 				return -1;
 			}
-			if( KERN_SUCCESS != clock_get_time( clock_ref, &tm ) )
-			{
+			if( KERN_SUCCESS != clock_get_time( clock_ref, &tm ) ) {
 				mach_port_deallocate( mach_task_self(), self );
 				return -1;
 			}
 			mach_port_deallocate( mach_task_self(), self );
 			mach_port_deallocate( mach_task_self(), clock_ref );
-			tp->tv_sec = tm.tv_sec;
+			tp->tv_sec	= tm.tv_sec;
 			tp->tv_nsec = tm.tv_nsec;
 			break;
 		}
 
 		case CLOCK_REALTIME:
-		default:
-		{
+		default: {
 			struct timeval now;
-			if( KERN_SUCCESS != gettimeofday( &now, NULL ) )
-			{
+			if( KERN_SUCCESS != gettimeofday( &now, NULL ) ) {
 				return -1;
 			}
-			tp->tv_sec  = now.tv_sec;
+			tp->tv_sec	= now.tv_sec;
 			tp->tv_nsec = now.tv_usec * 1000;
 			break;
 		}
@@ -461,7 +422,7 @@ main
 */
 int main( int argc, const char** argv )
 {
-	//extern idCVar r_useGPUSkinning;
+	// extern idCVar r_useGPUSkinning;
 
 	// DG: needed for Sys_ReLaunch()
 	cmdargc = argc;
@@ -469,26 +430,17 @@ int main( int argc, const char** argv )
 	// DG end
 
 	// Setting memory allocators
-	OPTICK_SET_MEMORY_ALLOCATOR(
-		[]( size_t size ) -> void* { return operator new( size ); },
-		[]( void* p )
-	{
-		operator delete( p );
-	},
-	[]()
-	{
-		/* Do some TLS initialization here if needed */
-	}
-	);
+	OPTICK_SET_MEMORY_ALLOCATOR( []( size_t size ) -> void* { return operator new( size ); },
+		[]( void* p ) { operator delete( p ); },
+		[]() {
+			/* Do some TLS initialization here if needed */
+		} );
 
 	Posix_EarlyInit();
 
-	if( argc > 1 )
-	{
+	if( argc > 1 ) {
 		common->Init( argc - 1, &argv[1], NULL );
-	}
-	else
-	{
+	} else {
 		common->Init( 0, NULL, NULL );
 	}
 
@@ -512,8 +464,7 @@ int main( int argc, const char** argv )
 
 	Posix_LateInit();
 
-	while( 1 )
-	{
+	while( 1 ) {
 		OPTICK_FRAME( "MainThread" );
 
 		common->Frame();

@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -39,7 +40,7 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-const int MAX_PUSHED_EVENTS =	64;
+const int MAX_PUSHED_EVENTS = 64;
 
 class idEventLoop
 {
@@ -47,43 +48,43 @@ public:
 	idEventLoop();
 	~idEventLoop();
 
-	void			Init();
+	void	   Init();
 
 	// Closes the journal file if needed.
-	void			Shutdown();
+	void	   Shutdown();
 
 	// It is possible to get an event at the beginning of a frame that
 	// has a time stamp lower than the last event from the previous frame.
-	sysEvent_t		GetEvent();
+	sysEvent_t GetEvent();
 
 	// Dispatches all pending events and returns the current time.
-	int				RunEventLoop( bool commandExecution = true );
+	int		   RunEventLoop( bool commandExecution = true );
 
 	// Gets the current time in a way that will be journaled properly,
 	// as opposed to Sys_Milliseconds(), which always reads a real timer.
-	int				Milliseconds();
+	int		   Milliseconds();
 
 	// Returns the journal level, 1 = record, 2 = play back.
-	int				JournalLevel() const;
+	int		   JournalLevel() const;
 
 	// Journal file.
-	idFile* 		com_journalFile;
-	idFile* 		com_journalDataFile;
+	idFile*	   com_journalFile;
+	idFile*	   com_journalDataFile;
 
 private:
 	// all events will have this subtracted from their time
-	int				initialTimeOffset;
+	int			  initialTimeOffset;
 
-	int				com_pushedEventsHead, com_pushedEventsTail;
-	sysEvent_t		com_pushedEvents[MAX_PUSHED_EVENTS];
+	int			  com_pushedEventsHead, com_pushedEventsTail;
+	sysEvent_t	  com_pushedEvents[MAX_PUSHED_EVENTS];
 
-	static idCVar	com_journal;
+	static idCVar com_journal;
 
-	sysEvent_t		GetRealEvent();
-	void			ProcessEvent( sysEvent_t ev );
-	void			PushEvent( sysEvent_t* event );
+	sysEvent_t	  GetRealEvent();
+	void		  ProcessEvent( sysEvent_t ev );
+	void		  PushEvent( sysEvent_t* event );
 };
 
-extern	idEventLoop*	eventLoop;
+extern idEventLoop* eventLoop;
 
 #endif /* !__EVENTLOOP_H__ */

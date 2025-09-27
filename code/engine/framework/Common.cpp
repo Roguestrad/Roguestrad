@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -40,12 +41,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;
 
-
-
-
 #include "../sys/sys_savegame.h"
-
-
 
 #if defined( _DEBUG )
 	#define BUILD_DEBUG "-debug"
@@ -53,23 +49,22 @@ extern DeviceManager* deviceManager;
 	#define BUILD_DEBUG ""
 #endif
 
-struct version_s
-{
+struct version_s {
 	version_s()
 	{
 		idStr::snPrintf( string, sizeof( string ), "%s.%d%s %s %s %s", ENGINE_VERSION, BUILD_NUMBER, BUILD_DEBUG, BUILD_STRING, ID__DATE__, ID__TIME__ );
 	}
-	char	string[256];
+	char string[256];
 } version;
 
 idCVar com_version( "si_version", version.string, CVAR_SYSTEM | CVAR_ROM | CVAR_SERVERINFO, "engine version" );
 idCVar com_forceGenericSIMD( "com_forceGenericSIMD", "0", CVAR_BOOL | CVAR_SYSTEM | CVAR_NOCHEAT, "force generic platform independent SIMD" );
 
 // RB: not allowing the console is a bit harsh for shipping builds
-#if 0 //def ID_RETAIL
+#if 0 // def ID_RETAIL
 	idCVar com_allowConsole( "com_allowConsole", "0", CVAR_BOOL | CVAR_SYSTEM | CVAR_INIT, "allow toggling console with the tilde key" );
 #else
-	idCVar com_allowConsole( "com_allowConsole", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_INIT, "allow toggling console with the tilde key" );
+idCVar com_allowConsole( "com_allowConsole", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_INIT, "allow toggling console with the tilde key" );
 #endif
 
 idCVar com_developer( "developer", "0", CVAR_BOOL | CVAR_SYSTEM | CVAR_NOCHEAT, "developer mode" );
@@ -95,34 +90,32 @@ idCVar com_activeApp( "com_activeApp", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_NOCHE
 
 extern idCVar g_demoMode;
 
-idCVar com_engineHz( "com_engineHz", "90", CVAR_FLOAT | CVAR_ARCHIVE, "Frames per second the engine runs at", 10.0f, 1024.0f );
-float com_engineHz_latched = 90.0f; // Latched version of cvar, updated between map loads
-const int64 com_engineHz_numerator = 100LL * 1000LL;
-int64 com_engineHz_denominator = 100LL * 90LL;
+idCVar		  com_engineHz( "com_engineHz", "90", CVAR_FLOAT | CVAR_ARCHIVE, "Frames per second the engine runs at", 10.0f, 1024.0f );
+float		  com_engineHz_latched	   = 90.0f; // Latched version of cvar, updated between map loads
+const int64	  com_engineHz_numerator   = 100LL * 1000LL;
+int64		  com_engineHz_denominator = 100LL * 90LL;
 
 // RB begin
-int com_editors = 0;
+int			  com_editors = 0;
 
-#if defined(_WIN32)
-	HWND com_hwndMsg = NULL;
+#if defined( _WIN32 )
+HWND com_hwndMsg = NULL;
 #endif
 // RB end
 
 #ifdef __DOOM_DLL__
-	idGame* 		game = NULL;
-	idGameEdit* 	gameEdit = NULL;
+idGame*		game	 = NULL;
+idGameEdit* gameEdit = NULL;
 #endif
 
-idCommonLocal	commonLocal;
-idCommon* 		common = &commonLocal;
+idCommonLocal commonLocal;
+idCommon*	  common = &commonLocal;
 
 #if defined( ID_RETAIL )
-	idCVar com_skipIntroVideos( "com_skipIntroVideos", "0", CVAR_BOOL , "skips intro videos" );
+idCVar com_skipIntroVideos( "com_skipIntroVideos", "0", CVAR_BOOL, "skips intro videos" );
 #else
-	idCVar com_skipIntroVideos( "com_skipIntroVideos", "1", CVAR_BOOL , "skips intro videos" );
+idCVar com_skipIntroVideos( "com_skipIntroVideos", "1", CVAR_BOOL, "skips intro videos" );
 #endif
-
-
 
 /*
 ==================
@@ -140,63 +133,62 @@ idCommonLocal::idCommonLocal() :
 	lastPacifierDialogState( false ),
 	showShellRequested( false )
 {
-
-	snapCurrent.localTime = -1;
-	snapPrevious.localTime = -1;
-	snapCurrent.serverTime = -1;
+	snapCurrent.localTime	= -1;
+	snapPrevious.localTime	= -1;
+	snapCurrent.serverTime	= -1;
 	snapPrevious.serverTime = -1;
-	snapTimeBuffered	= 0.0f;
-	effectiveSnapRate	= 0.0f;
-	totalBufferedTime	= 0;
-	totalRecvTime		= 0;
+	snapTimeBuffered		= 0.0f;
+	effectiveSnapRate		= 0.0f;
+	totalBufferedTime		= 0;
+	totalRecvTime			= 0;
 
 	com_fullyInitialized = false;
-	com_refreshOnPrint = false;
-	com_errorEntered = ERP_NONE;
-	com_shuttingDown = false;
-	com_isJapaneseSKU = false;
+	com_refreshOnPrint	 = false;
+	com_errorEntered	 = ERP_NONE;
+	com_shuttingDown	 = false;
+	com_isJapaneseSKU	 = false;
 
 	logFile = NULL;
 
 	strcpy( errorMessage, "" );
 
-	rd_buffer = NULL;
+	rd_buffer	  = NULL;
 	rd_buffersize = 0;
-	rd_flush = NULL;
+	rd_flush	  = NULL;
 
 	gameDLL = 0;
 
-	loadGUI = NULL;
-	nextLoadTip = 0;
-	isHellMap = false;
-	wipeForced = false;
+	loadGUI			  = NULL;
+	nextLoadTip		  = 0;
+	isHellMap		  = false;
+	wipeForced		  = false;
 	defaultLoadscreen = false;
 
 	menuSoundWorld = NULL;
 
-	insideUpdateScreen = false;
+	insideUpdateScreen	   = false;
 	insideExecuteMapChange = false;
 
 	mapSpawnData.savegameFile = NULL;
 
 	currentMapName.Clear();
 
-	renderWorld = NULL;
-	soundWorld = NULL;
+	renderWorld	   = NULL;
+	soundWorld	   = NULL;
 	menuSoundWorld = NULL;
 
-	gameFrame = 0;
-	gameTimeResidual = 0;
+	gameFrame		  = 0;
+	gameTimeResidual  = 0;
 	syncNextGameFrame = true;
-	mapSpawned = false;
-	timeDemo = TD_NO;
+	mapSpawned		  = false;
+	timeDemo		  = TD_NO;
 
 	nextSnapshotSendTime = 0;
-	nextUsercmdSendTime = 0;
+	nextUsercmdSendTime	 = 0;
 
 	clientPrediction = 0;
 
-	saveFile = NULL;
+	saveFile	= NULL;
 	stringsFile = NULL;
 
 	ClearWipe();
@@ -210,13 +202,11 @@ idCommonLocal::Quit
 void idCommonLocal::Quit()
 {
 	// don't try to shutdown if we are in a recursive error
-	if( !com_errorEntered )
-	{
+	if( !com_errorEntered ) {
 		Shutdown();
 	}
 	Sys_Quit();
 }
-
 
 /*
 ============================================================================
@@ -235,48 +225,41 @@ doom set test blah + map test
 ============================================================================
 */
 
-#define		MAX_CONSOLE_LINES	32
-int			com_numConsoleLines;
-idCmdArgs	com_consoleLines[MAX_CONSOLE_LINES];
+#define MAX_CONSOLE_LINES 32
+int		  com_numConsoleLines;
+idCmdArgs com_consoleLines[MAX_CONSOLE_LINES];
 
 /*
 ==================
 idCommonLocal::ParseCommandLine
 ==================
 */
-void idCommonLocal::ParseCommandLine( int argc, const char* const* argv )
+void	  idCommonLocal::ParseCommandLine( int argc, const char* const* argv )
 {
 	int i, current_count;
 
 	com_numConsoleLines = 0;
-	current_count = 0;
+	current_count		= 0;
 	// API says no program path
-	for( i = 0; i < argc; i++ )
-	{
-		if( idStr::Icmp( argv[ i ], "+connect_lobby" ) == 0 )
-		{
+	for( i = 0; i < argc; i++ ) {
+		if( idStr::Icmp( argv[i], "+connect_lobby" ) == 0 ) {
 			// Handle Steam bootable invites.
 
 			// RB begin
-#if defined(_WIN32)
-			session->HandleBootableInvite( _atoi64( argv[ i + 1 ] ) );
+#if defined( _WIN32 )
+			session->HandleBootableInvite( _atoi64( argv[i + 1] ) );
 #else
-			session->HandleBootableInvite( atol( argv[ i + 1 ] ) );
+			session->HandleBootableInvite( atol( argv[i + 1] ) );
 #endif
 			// RB end
-		}
-		else if( argv[ i ][ 0 ] == '+' )
-		{
+		} else if( argv[i][0] == '+' ) {
 			com_numConsoleLines++;
-			com_consoleLines[ com_numConsoleLines - 1 ].AppendArg( argv[ i ] + 1 );
-		}
-		else
-		{
-			if( !com_numConsoleLines )
-			{
+			com_consoleLines[com_numConsoleLines - 1].AppendArg( argv[i] + 1 );
+		} else {
+			if( !com_numConsoleLines ) {
 				com_numConsoleLines++;
 			}
-			com_consoleLines[ com_numConsoleLines - 1 ].AppendArg( argv[ i ] );
+			com_consoleLines[com_numConsoleLines - 1].AppendArg( argv[i] );
 		}
 	}
 }
@@ -291,14 +274,11 @@ skip loading of config file (DoomConfig.cfg)
 */
 bool idCommonLocal::SafeMode()
 {
-	int			i;
+	int i;
 
-	for( i = 0 ; i < com_numConsoleLines ; i++ )
-	{
-		if( !idStr::Icmp( com_consoleLines[ i ].Argv( 0 ), "safe" )
-				|| !idStr::Icmp( com_consoleLines[ i ].Argv( 0 ), "cvar_restart" ) )
-		{
-			com_consoleLines[ i ].Clear();
+	for( i = 0; i < com_numConsoleLines; i++ ) {
+		if( !idStr::Icmp( com_consoleLines[i].Argv( 0 ), "safe" ) || !idStr::Icmp( com_consoleLines[i].Argv( 0 ), "cvar_restart" ) ) {
+			com_consoleLines[i].Clear();
 			return true;
 		}
 	}
@@ -319,18 +299,15 @@ be after execing the config and default.
 void idCommonLocal::StartupVariable( const char* match )
 {
 	int i = 0;
-	while(	i < com_numConsoleLines )
-	{
-		if( strcmp( com_consoleLines[ i ].Argv( 0 ), "set" ) != 0 )
-		{
+	while( i < com_numConsoleLines ) {
+		if( strcmp( com_consoleLines[i].Argv( 0 ), "set" ) != 0 ) {
 			i++;
 			continue;
 		}
-		const char* s = com_consoleLines[ i ].Argv( 1 );
+		const char* s = com_consoleLines[i].Argv( 1 );
 
-		if( !match || !idStr::Icmp( s, match ) )
-		{
-			cvarSystem->SetCVarString( s, com_consoleLines[ i ].Argv( 2 ) );
+		if( !match || !idStr::Icmp( s, match ) ) {
+			cvarSystem->SetCVarString( s, com_consoleLines[i].Argv( 2 ) );
 		}
 		i++;
 	}
@@ -344,13 +321,11 @@ idCommonLocal::InitTool
 */
 void idCommonLocal::InitTool( const toolFlag_t tool, const idDict* dict, idEntity* entity )
 {
-	if( tool & EDITOR_LIGHT )
-	{
+	if( tool & EDITOR_LIGHT ) {
 		ImGuiTools::LightEditorInit( dict, entity );
 	}
 
-	if( tool & EDITOR_AF )
-	{
+	if( tool & EDITOR_AF ) {
 		ImGuiTools::AfEditorInit();
 	}
 }
@@ -370,10 +345,8 @@ will keep the demoloop from immediately starting
 void idCommonLocal::AddStartupCommands()
 {
 	// quote every token, so args with semicolons can work
-	for( int i = 0; i < com_numConsoleLines; i++ )
-	{
-		if( !com_consoleLines[i].Argc() )
-		{
+	for( int i = 0; i < com_numConsoleLines; i++ ) {
+		if( !com_consoleLines[i].Argc() ) {
 			continue;
 		}
 		// directly as tokenized so nothing gets screwed
@@ -389,8 +362,7 @@ idCommonLocal::WriteConfigToFile
 void idCommonLocal::WriteConfigToFile( const char* filename )
 {
 	idFile* f = fileSystem->OpenFileWrite( filename );
-	if( !f )
-	{
+	if( !f ) {
 		Printf( "Couldn't write %s.\n", filename );
 		return;
 	}
@@ -411,21 +383,18 @@ void idCommonLocal::WriteConfiguration()
 {
 	// if we are quiting without fully initializing, make sure
 	// we don't write out anything
-	if( !com_fullyInitialized )
-	{
+	if( !com_fullyInitialized ) {
 		return;
 	}
 
-	if( !( cvarSystem->GetModifiedFlags() & CVAR_ARCHIVE ) )
-	{
+	if( !( cvarSystem->GetModifiedFlags() & CVAR_ARCHIVE ) ) {
 		return;
 	}
 	cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 
 	// save to the profile
 	idLocalUser* user = session->GetSignInManager().GetMasterLocalUser();
-	if( user != NULL )
-	{
+	if( user != NULL ) {
 		user->SaveProfileSettings();
 	}
 
@@ -469,7 +438,7 @@ ButtonState()
 Returns the state of the button
 ===============
 */
-int	idCommonLocal::ButtonState( int key )
+int idCommonLocal::ButtonState( int key )
 {
 	return usercmdGen->ButtonState( key );
 }
@@ -480,7 +449,7 @@ ButtonState()
 Returns the state of the key
 ===============
 */
-int	idCommonLocal::KeyState( int key )
+int idCommonLocal::KeyState( int key )
 {
 	return usercmdGen->KeyState( key );
 }
@@ -498,8 +467,8 @@ CONSOLE_COMMAND( printMemInfo, "prints memory debugging data", NULL )
 	memset( &mi, 0, sizeof( mi ) );
 	mi.filebase = commonLocal.GetCurrentMapName();
 
-	renderSystem->PrintMemInfo( &mi );			// textures and models
-	soundSystem->PrintMemInfo( &mi );			// sounds
+	renderSystem->PrintMemInfo( &mi ); // textures and models
+	soundSystem->PrintMemInfo( &mi );  // sounds
 
 	common->Printf( " Used image memory: %s bytes\n", idStr::FormatNumber( mi.imageAssetsTotal ).c_str() );
 	mi.assetTotals += mi.imageAssetsTotal;
@@ -516,17 +485,19 @@ CONSOLE_COMMAND( printMemInfo, "prints memory debugging data", NULL )
 	idFile* f;
 
 	f = fileSystem->OpenFileAppend( "maps/printmeminfo.txt" );
-	if( !f )
-	{
+	if( !f ) {
 		return;
 	}
 
-	f->Printf( "total(%s ) image(%s ) model(%s ) sound(%s ): %s\n", idStr::FormatNumber( mi.assetTotals ).c_str(), idStr::FormatNumber( mi.imageAssetsTotal ).c_str(),
-			   idStr::FormatNumber( mi.modelAssetsTotal ).c_str(), idStr::FormatNumber( mi.soundAssetsTotal ).c_str(), mi.filebase.c_str() );
+	f->Printf( "total(%s ) image(%s ) model(%s ) sound(%s ): %s\n",
+		idStr::FormatNumber( mi.assetTotals ).c_str(),
+		idStr::FormatNumber( mi.imageAssetsTotal ).c_str(),
+		idStr::FormatNumber( mi.modelAssetsTotal ).c_str(),
+		idStr::FormatNumber( mi.soundAssetsTotal ).c_str(),
+		mi.filebase.c_str() );
 
 	fileSystem->CloseFile( f );
 }
-
 
 /*
 ==================
@@ -537,18 +508,14 @@ Just throw a fatal error to test error shutdown procedures.
 */
 CONSOLE_COMMAND( error, "causes an error", NULL )
 {
-	if( !com_developer.GetBool() )
-	{
+	if( !com_developer.GetBool() ) {
 		commonLocal.Printf( "error may only be used in developer mode\n" );
 		return;
 	}
 
-	if( args.Argc() > 1 )
-	{
+	if( args.Argc() > 1 ) {
 		commonLocal.FatalError( "Testing fatal error" );
-	}
-	else
-	{
+	} else {
 		commonLocal.Error( "Testing drop error" );
 	}
 }
@@ -562,17 +529,15 @@ Just freeze in place for a given number of seconds to test error recovery.
 */
 CONSOLE_COMMAND( freeze, "freezes the game for a number of seconds", NULL )
 {
-	float	s;
-	int		start, now;
+	float s;
+	int	  start, now;
 
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		commonLocal.Printf( "freeze <seconds>\n" );
 		return;
 	}
 
-	if( !com_developer.GetBool() )
-	{
+	if( !com_developer.GetBool() ) {
 		commonLocal.Printf( "freeze may only be used in developer mode\n" );
 		return;
 	}
@@ -581,11 +546,9 @@ CONSOLE_COMMAND( freeze, "freezes the game for a number of seconds", NULL )
 
 	start = eventLoop->Milliseconds();
 
-	while( 1 )
-	{
+	while( 1 ) {
 		now = eventLoop->Milliseconds();
-		if( ( now - start ) * 0.001f > s )
-		{
+		if( ( now - start ) * 0.001f > s ) {
 			break;
 		}
 	}
@@ -600,15 +563,14 @@ A way to force a bus error for development reasons
 */
 CONSOLE_COMMAND( crash, "causes a crash", NULL )
 {
-	if( !com_developer.GetBool() )
-	{
+	if( !com_developer.GetBool() ) {
 		commonLocal.Printf( "crash may only be used in developer mode\n" );
 		return;
 	}
 #ifdef __GNUC__
 	__builtin_trap();
 #else
-	* ( int* ) 0 = 0x12345678;
+	*( int* )0 = 0x12345678;
 #endif
 }
 
@@ -635,10 +597,9 @@ Write the config file to a specific name
 */
 CONSOLE_COMMAND_SHIP( writeConfig, "writes a config file", NULL )
 {
-	idStr	filename;
+	idStr filename;
 
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		commonLocal.Printf( "Usage: writeconfig <filename>\n" );
 		return;
 	}
@@ -759,15 +720,12 @@ idCommonLocal::FilterLangList
 */
 void idCommonLocal::FilterLangList( idStrList* list, idStr lang )
 {
-
 	idStr temp;
-	for( int i = 0; i < list->Num(); i++ )
-	{
+	for( int i = 0; i < list->Num(); i++ ) {
 		temp = ( *list )[i];
 		temp = temp.Right( temp.Length() - strlen( "strings/" ) );
 		temp = temp.Left( lang.Length() );
-		if( idStr::Icmp( temp, lang ) != 0 )
-		{
+		if( idStr::Icmp( temp, lang ) != 0 ) {
 			list->RemoveIndex( i );
 			i--;
 		}
@@ -780,16 +738,16 @@ idCommonLocal::InitLanguageDict
 ===============
 */
 extern idCVar sys_lang;
-void idCommonLocal::InitLanguageDict()
+void		  idCommonLocal::InitLanguageDict()
 {
-	idStr fileName;
+	idStr		fileName;
 
-	//D3XP: Instead of just loading a single lang file for each language
-	//we are going to load all files that begin with the language name
-	//similar to the way pak files work. So you can place english001.lang
-	//to add new strings to the english language dictionary
-	idFileList*	langFiles;
-	langFiles =  fileSystem->ListFilesTree( "strings", ".lang", true );
+	// D3XP: Instead of just loading a single lang file for each language
+	// we are going to load all files that begin with the language name
+	// similar to the way pak files work. So you can place english001.lang
+	// to add new strings to the english language dictionary
+	idFileList* langFiles;
+	langFiles = fileSystem->ListFilesTree( "strings", ".lang", true );
 
 	idStrList langList = langFiles->GetList();
 
@@ -797,8 +755,7 @@ void idCommonLocal::InitLanguageDict()
 	idStrList currentLangList = langList;
 	FilterLangList( &currentLangList, sys_lang.GetString() );
 
-	if( currentLangList.Num() == 0 )
-	{
+	if( currentLangList.Num() == 0 ) {
 		// reset to english and try to load again
 		sys_lang.SetString( ID_LANG_ENGLISH );
 		currentLangList = langList;
@@ -806,13 +763,11 @@ void idCommonLocal::InitLanguageDict()
 	}
 
 	idLocalization::ClearDictionary();
-	for( int i = 0; i < currentLangList.Num(); i++ )
-	{
-		//common->Printf("%s\n", currentLangList[i].c_str());
+	for( int i = 0; i < currentLangList.Num(); i++ ) {
+		// common->Printf("%s\n", currentLangList[i].c_str());
 		const byte* buffer = NULL;
-		int len = fileSystem->ReadFile( currentLangList[i], ( void** )&buffer );
-		if( len <= 0 )
-		{
+		int			len	   = fileSystem->ReadFile( currentLangList[i], ( void** )&buffer );
+		if( len <= 0 ) {
 			assert( false && "couldn't read the language dict file" );
 			break;
 		}
@@ -842,8 +797,7 @@ Com_FinishBuild_f
 */
 CONSOLE_COMMAND( finishBuild, "finishes the build process", NULL )
 {
-	if( game )
-	{
+	if( game ) {
 		game->CacheDictionaryMedia( NULL );
 	}
 }
@@ -855,21 +809,19 @@ idCommonLocal::RenderSplash
 */
 void idCommonLocal::RenderSplash()
 {
-	const float sysWidth = renderSystem->GetWidth() * renderSystem->GetPixelAspect();
-	const float sysHeight = renderSystem->GetHeight();
-	const float sysAspect = sysWidth / sysHeight;
+	const float sysWidth	 = renderSystem->GetWidth() * renderSystem->GetPixelAspect();
+	const float sysHeight	 = renderSystem->GetHeight();
+	const float sysAspect	 = sysWidth / sysHeight;
 	const float splashAspect = 16.0f / 9.0f;
-	const float adjustment = sysAspect / splashAspect;
-	const float barHeight = ( adjustment >= 1.0f ) ? 0.0f : ( 1.0f - adjustment ) * ( float )renderSystem->GetVirtualHeight() * 0.25f;
-	const float barWidth = ( adjustment <= 1.0f ) ? 0.0f : ( adjustment - 1.0f ) * ( float )renderSystem->GetVirtualWidth() * 0.25f;
-	if( barHeight > 0.0f )
-	{
+	const float adjustment	 = sysAspect / splashAspect;
+	const float barHeight	 = ( adjustment >= 1.0f ) ? 0.0f : ( 1.0f - adjustment ) * ( float )renderSystem->GetVirtualHeight() * 0.25f;
+	const float barWidth	 = ( adjustment <= 1.0f ) ? 0.0f : ( adjustment - 1.0f ) * ( float )renderSystem->GetVirtualWidth() * 0.25f;
+	if( barHeight > 0.0f ) {
 		renderSystem->SetColor( colorBlack );
 		renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), barHeight, 0, 0, 1, 1, whiteMaterial );
 		renderSystem->DrawStretchPic( 0, renderSystem->GetVirtualHeight() - barHeight, renderSystem->GetVirtualWidth(), barHeight, 0, 0, 1, 1, whiteMaterial );
 	}
-	if( barWidth > 0.0f )
-	{
+	if( barWidth > 0.0f ) {
 		renderSystem->SetColor( colorBlack );
 		renderSystem->DrawStretchPic( 0, 0, barWidth, renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
 		renderSystem->DrawStretchPic( renderSystem->GetVirtualWidth() - barWidth, 0, barWidth, renderSystem->GetVirtualHeight(), 0, 0, 1, 1, whiteMaterial );
@@ -879,7 +831,6 @@ void idCommonLocal::RenderSplash()
 
 	const emptyCommand_t* cmd = renderSystem->SwapCommandBuffers( &time_frontend, &time_backend, &time_moc, &time_gpu, &stats_backend, &stats_frontend );
 	renderSystem->RenderCommandBuffers( cmd );
-
 }
 
 /*
@@ -889,28 +840,27 @@ idCommonLocal::RenderBink
 */
 void idCommonLocal::RenderBink( const char* path )
 {
-	const float sysWidth = renderSystem->GetWidth() * renderSystem->GetPixelAspect();
-	const float sysHeight = renderSystem->GetHeight();
-	const float sysAspect = sysWidth / sysHeight;
+	const float sysWidth	= renderSystem->GetWidth() * renderSystem->GetPixelAspect();
+	const float sysHeight	= renderSystem->GetHeight();
+	const float sysAspect	= sysWidth / sysHeight;
 	const float movieAspect = ( 16.0f / 9.0f );
-	const float imageWidth = renderSystem->GetVirtualWidth() * movieAspect / sysAspect;
-	const float chop = 0.5f * ( renderSystem->GetVirtualWidth() - imageWidth );
+	const float imageWidth	= renderSystem->GetVirtualWidth() * movieAspect / sysAspect;
+	const float chop		= 0.5f * ( renderSystem->GetVirtualWidth() - imageWidth );
 
-	idStr materialText;
+	idStr		materialText;
 	materialText.Format( "{ translucent { videoMap %s } }", path );
 
 	idMaterial* material = const_cast<idMaterial*>( declManager->FindMaterial( "splashbink" ) );
-	material->FreeData();	// SRS - always free data before parsing, otherwise leaks occur
+	material->FreeData(); // SRS - always free data before parsing, otherwise leaks occur
 	material->Parse( materialText.c_str(), materialText.Length(), false );
 	material->ResetCinematicTime( Sys_Milliseconds() );
 
 	// SRS - Restored original calculation after implementing idCinematicLocal::GetStartTime() and fixing animationLength in idCinematicLocal::InitFromBinkDecFile()
-	int cinematicLength = material->CinematicLength();
-	int	mouseEvents[MAX_MOUSE_EVENTS][2];
+	int	 cinematicLength = material->CinematicLength();
+	int	 mouseEvents[MAX_MOUSE_EVENTS][2];
 
 	bool escapeEvent = false;
-	while( ( Sys_Milliseconds() <= ( material->GetCinematicStartTime() + cinematicLength ) ) && material->CinematicIsPlaying() )
-	{
+	while( ( Sys_Milliseconds() <= ( material->GetCinematicStartTime() + cinematicLength ) ) && material->CinematicIsPlaying() ) {
 		renderSystem->DrawStretchPic( chop, 0, imageWidth, renderSystem->GetVirtualHeight(), 0, 0, 1, 1, material );
 		const emptyCommand_t* cmd = renderSystem->SwapCommandBuffers( &time_frontend, &time_backend, &time_moc, &time_gpu, &stats_backend, &stats_frontend );
 		renderSystem->RenderCommandBuffers( cmd );
@@ -922,17 +872,13 @@ void idCommonLocal::RenderBink( const char* path )
 
 		// RB: allow to escape video by pressing anything
 		int numKeyEvents = Sys_PollKeyboardInputEvents();
-		if( numKeyEvents > 0 )
-		{
-			for( int i = 0; i < numKeyEvents; i++ )
-			{
-				int key;
+		if( numKeyEvents > 0 ) {
+			for( int i = 0; i < numKeyEvents; i++ ) {
+				int	 key;
 				bool state;
 
-				if( Sys_ReturnKeyboardInputEvent( i, key, state ) )
-				{
-					if( key == K_ESCAPE && state == true )
-					{
+				if( Sys_ReturnKeyboardInputEvent( i, key, state ) ) {
+					if( key == K_ESCAPE && state == true ) {
 						escapeEvent = true;
 					}
 					break;
@@ -943,13 +889,10 @@ void idCommonLocal::RenderBink( const char* path )
 		}
 
 		int numMouseEvents = Sys_PollMouseInputEvents( mouseEvents );
-		if( numMouseEvents > 0 )
-		{
-			for( int i = 0; i < numMouseEvents; i++ )
-			{
+		if( numMouseEvents > 0 ) {
+			for( int i = 0; i < numMouseEvents; i++ ) {
 				int action = mouseEvents[i][0];
-				switch( action )
-				{
+				switch( action ) {
 					case M_ACTION1:
 					case M_ACTION2:
 					case M_ACTION3:
@@ -961,26 +904,21 @@ void idCommonLocal::RenderBink( const char* path )
 						escapeEvent = true;
 						break;
 
-					default:	// some other undefined button
+					default: // some other undefined button
 						break;
 				}
 			}
 		}
 
 		int numJoystickEvents = Sys_PollJoystickInputEvents( 0 );
-		if( numJoystickEvents > 0 )
-		{
-			for( int i = 0; i < numJoystickEvents; i++ )
-			{
+		if( numJoystickEvents > 0 ) {
+			for( int i = 0; i < numJoystickEvents; i++ ) {
 				int action;
 				int value;
 
-				if( Sys_ReturnJoystickInputEvent( i, action, value ) )
-				{
-					if( action >= J_ACTION1 && action <= J_ACTION_MAX )
-					{
-						if( value != 0 )
-						{
+				if( Sys_ReturnJoystickInputEvent( i, action, value ) ) {
+					if( action >= J_ACTION1 && action <= J_ACTION_MAX ) {
+						if( value != 0 ) {
 							escapeEvent = true;
 							break;
 						}
@@ -991,8 +929,7 @@ void idCommonLocal::RenderBink( const char* path )
 			Sys_EndJoystickInputEvents();
 		}
 
-		if( escapeEvent )
-		{
+		if( escapeEvent ) {
 			break;
 		}
 
@@ -1014,7 +951,6 @@ void idCommonLocal::InitSIMD()
 	com_forceGenericSIMD.ClearModified();
 }
 
-
 /*
 =================
 idCommonLocal::LoadGameDLL
@@ -1023,69 +959,64 @@ idCommonLocal::LoadGameDLL
 void idCommonLocal::LoadGameDLL()
 {
 #ifdef __DOOM_DLL__
-	char			dllPath[ MAX_OSPATH ];
+	char		 dllPath[MAX_OSPATH];
 
-	gameImport_t	gameImport;
-	gameExport_t	gameExport;
-	GetGameAPI_t	GetGameAPI;
+	gameImport_t gameImport;
+	gameExport_t gameExport;
+	GetGameAPI_t GetGameAPI;
 
 	fileSystem->FindDLL( "game", dllPath, true );
 
-	if( !dllPath[ 0 ] )
-	{
+	if( !dllPath[0] ) {
 		common->FatalError( "couldn't find game dynamic library" );
 		return;
 	}
 	common->DPrintf( "Loading game DLL: '%s'\n", dllPath );
 	gameDLL = sys->DLL_Load( dllPath );
-	if( !gameDLL )
-	{
+	if( !gameDLL ) {
 		common->FatalError( "couldn't load game dynamic library" );
 		return;
 	}
 
 	const char* functionName = "GetGameAPI";
-	GetGameAPI = ( GetGameAPI_t ) Sys_DLL_GetProcAddress( gameDLL, functionName );
-	if( !GetGameAPI )
-	{
+	GetGameAPI				 = ( GetGameAPI_t )Sys_DLL_GetProcAddress( gameDLL, functionName );
+	if( !GetGameAPI ) {
 		Sys_DLL_Unload( gameDLL );
 		gameDLL = NULL;
 		common->FatalError( "couldn't find game DLL API" );
 		return;
 	}
 
-	gameImport.version					= GAME_API_VERSION;
-	gameImport.sys						= ::sys;
-	gameImport.common					= ::common;
-	gameImport.cmdSystem				= ::cmdSystem;
-	gameImport.cvarSystem				= ::cvarSystem;
-	gameImport.fileSystem				= ::fileSystem;
-	gameImport.renderSystem				= ::renderSystem;
-	gameImport.soundSystem				= ::soundSystem;
-	gameImport.renderModelManager		= ::renderModelManager;
-	gameImport.uiManager				= ::uiManager;
-	gameImport.declManager				= ::declManager;
-	gameImport.AASFileManager			= ::AASFileManager;
-	gameImport.collisionModelManager	= ::collisionModelManager;
+	gameImport.version				 = GAME_API_VERSION;
+	gameImport.sys					 = ::sys;
+	gameImport.common				 = ::common;
+	gameImport.cmdSystem			 = ::cmdSystem;
+	gameImport.cvarSystem			 = ::cvarSystem;
+	gameImport.fileSystem			 = ::fileSystem;
+	gameImport.renderSystem			 = ::renderSystem;
+	gameImport.soundSystem			 = ::soundSystem;
+	gameImport.renderModelManager	 = ::renderModelManager;
+	gameImport.uiManager			 = ::uiManager;
+	gameImport.declManager			 = ::declManager;
+	gameImport.AASFileManager		 = ::AASFileManager;
+	gameImport.collisionModelManager = ::collisionModelManager;
 
-	gameExport							= *GetGameAPI( &gameImport );
+	gameExport = *GetGameAPI( &gameImport );
 
-	if( gameExport.version != GAME_API_VERSION )
-	{
+	if( gameExport.version != GAME_API_VERSION ) {
 		Sys_DLL_Unload( gameDLL );
 		gameDLL = NULL;
 		common->FatalError( "wrong game DLL API version" );
 		return;
 	}
 
-	game								= gameExport.game;
-	gameEdit							= gameExport.gameEdit;
+	game	 = gameExport.game;
+	gameEdit = gameExport.gameEdit;
 
 #endif
 
 	// initialize the game object
-	if( game != NULL )
-	{
+	if( game != NULL ) {
 		game->Init();
 	}
 }
@@ -1097,8 +1028,7 @@ idCommonLocal::UnloadGameDLL
 */
 void idCommonLocal::CleanupShell()
 {
-	if( game != NULL )
-	{
+	if( game != NULL ) {
 		game->Shell_Cleanup();
 	}
 }
@@ -1110,21 +1040,18 @@ idCommonLocal::UnloadGameDLL
 */
 void idCommonLocal::UnloadGameDLL()
 {
-
 	// shut down the game object
-	if( game != NULL )
-	{
+	if( game != NULL ) {
 		game->Shutdown();
 	}
 
 #ifdef __DOOM_DLL__
 
-	if( gameDLL )
-	{
+	if( gameDLL ) {
 		Sys_DLL_Unload( gameDLL );
 		gameDLL = NULL;
 	}
-	game = NULL;
+	game	 = NULL;
 	gameEdit = NULL;
 
 #endif
@@ -1140,9 +1067,7 @@ bool idCommonLocal::IsInitialized() const
 	return com_fullyInitialized;
 }
 
-
 //======================================================================================
-
 
 /*
 =================
@@ -1151,13 +1076,12 @@ idCommonLocal::Init
 */
 void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline )
 {
-	try
-	{
+	try {
 		// set interface pointers used by idLib
-		idLib::sys			= sys;
-		idLib::common		= common;
-		idLib::cvarSystem	= cvarSystem;
-		idLib::fileSystem	= fileSystem;
+		idLib::sys		  = sys;
+		idLib::common	  = common;
+		idLib::cvarSystem = cvarSystem;
+		idLib::fileSystem = fileSystem;
 
 		// initialize idLib
 		idLib::Init();
@@ -1169,8 +1093,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		//::MessageBox( NULL, cmdline, "blah", MB_OK );
 		// parse command line options
 		idCmdArgs args;
-		if( cmdline )
-		{
+		if( cmdline ) {
 			// tokenize if the OS doesn't do it for us
 			args.TokenizeString( cmdline, true );
 			argv = args.GetArgs( &argc );
@@ -1208,8 +1131,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 
 		consoleUsed = com_allowConsole.GetBool();
 
-		if( Sys_AlreadyRunning() )
-		{
+		if( Sys_AlreadyRunning() ) {
 			Sys_Quit();
 		}
 
@@ -1220,7 +1142,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		fileSystem->Init();
 
 		const char* defaultLang = Sys_DefaultLanguage();
-		com_isJapaneseSKU = ( idStr::Icmp( defaultLang, ID_LANG_JAPANESE ) == 0 );
+		com_isJapaneseSKU		= ( idStr::Icmp( defaultLang, ID_LANG_JAPANESE ) == 0 );
 
 		// Allow the system to set a default lanugage
 		Sys_SetLanguageFromSystem();
@@ -1249,8 +1171,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 
 #ifdef CONFIG_FILE
 		// skip the config file if "safe" is on the command line
-		if( !SafeMode() && !g_demoMode.GetBool() )
-		{
+		if( !SafeMode() && !g_demoMode.GetBool() ) {
 			cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "exec " CONFIG_FILE "\n" );
 		}
 #endif
@@ -1274,7 +1195,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 
 		// Support up to 2 digits after the decimal point
 		com_engineHz_denominator = 100LL * com_engineHz.GetFloat();
-		com_engineHz_latched = com_engineHz.GetFloat();
+		com_engineHz_latched	 = com_engineHz.GetFloat();
 
 		// start the sound system, but don't do any hardware operations yet
 		soundSystem->Init();
@@ -1284,18 +1205,13 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 
 		whiteMaterial = declManager->FindMaterial( "_white" );
 
-		if( idStr::Icmp( sys_lang.GetString(), ID_LANG_FRENCH ) == 0 )
-		{
+		if( idStr::Icmp( sys_lang.GetString(), ID_LANG_FRENCH ) == 0 ) {
 			// If the user specified french, we show french no matter what SKU
 			splashScreen = declManager->FindMaterial( "guis/assets/splash/legal_french" );
-		}
-		else if( idStr::Icmp( defaultLang, ID_LANG_FRENCH ) == 0 )
-		{
+		} else if( idStr::Icmp( defaultLang, ID_LANG_FRENCH ) == 0 ) {
 			// If the lead sku is french (ie: europe), display figs
 			splashScreen = declManager->FindMaterial( "guis/assets/splash/legal_figs" );
-		}
-		else
-		{
+		} else {
 			// Otherwise show it in english
 			splashScreen = declManager->FindMaterial( "guis/assets/splash/legal_english" );
 		}
@@ -1303,17 +1219,14 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		// SP: Load in the splash screen images.
 		globalImages->LoadDeferredImages();
 
-		const int legalMinTime = 4000;
-		const bool showVideo = ( !com_skipIntroVideos.GetBool() && fileSystem->UsingResourceFiles() );
-		const bool showSplash = true;
-		if( showVideo )
-		{
+		const int  legalMinTime = 4000;
+		const bool showVideo	= ( !com_skipIntroVideos.GetBool() && fileSystem->UsingResourceFiles() );
+		const bool showSplash	= true;
+		if( showVideo ) {
 			RenderBink( "video\\loadvideo.bik" );
 			RenderSplash();
 			RenderSplash();
-		}
-		else if( showSplash )
-		{
+		} else if( showSplash ) {
 			idLib::Printf( "Skipping Intro Videos!\n" );
 			// display the legal splash screen
 			// No clue why we have to render this twice to show up...
@@ -1353,44 +1266,38 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		LoadGameDLL();
 
 		// Leyland VR
-		if( vrSystem->IsActive() )
-		{
+		if( vrSystem->IsActive() ) {
 			// check if we need to set default bindings for vr
 			bool vrHasBinding = false;
-			for( int i = K_VR_FIRST_KEY; i <= K_VR_LAST_KEY; i++ )
-			{
+			for( int i = K_VR_FIRST_KEY; i <= K_VR_LAST_KEY; i++ ) {
 				const char* binding = idKeyInput::GetBinding( i );
-				if( binding && binding[0] != 0 )
-				{
+				if( binding && binding[0] != 0 ) {
 					vrHasBinding = true;
 					break;
 				}
 			}
 
-			if( !vrHasBinding )
-			{
-				idKeyInput::SetBinding( K_VR_LEFT_MENU, "_impulse19" );			// toggle PDA
-				idKeyInput::SetBinding( K_VR_LEFT_TRIGGER, "_moveup" );			// jump
-				idKeyInput::SetBinding( K_VR_LEFT_A, "_impulse16" );			// toggle flashlight
-				idKeyInput::SetBinding( K_VR_RIGHT_DPAD_LEFT, "_impulse15" );	// previous weapon
-				idKeyInput::SetBinding( K_VR_RIGHT_DPAD_RIGHT, "_impulse14" );	// next weapon
+			if( !vrHasBinding ) {
+				idKeyInput::SetBinding( K_VR_LEFT_MENU, "_impulse19" );		   // toggle PDA
+				idKeyInput::SetBinding( K_VR_LEFT_TRIGGER, "_moveup" );		   // jump
+				idKeyInput::SetBinding( K_VR_LEFT_A, "_impulse16" );		   // toggle flashlight
+				idKeyInput::SetBinding( K_VR_RIGHT_DPAD_LEFT, "_impulse15" );  // previous weapon
+				idKeyInput::SetBinding( K_VR_RIGHT_DPAD_RIGHT, "_impulse14" ); // next weapon
 				idKeyInput::SetBinding( K_VR_RIGHT_TRIGGER, "_attack" );
-				idKeyInput::SetBinding( K_VR_RIGHT_A, "_impulse13" );			// reload weapon
+				idKeyInput::SetBinding( K_VR_RIGHT_A, "_impulse13" ); // reload weapon
 			}
 		}
 		// Leyland end
 
 		// On the PC touch them all so they get included in the resource build
-		if( !fileSystem->UsingResourceFiles() )
-		{
+		if( !fileSystem->UsingResourceFiles() ) {
 			declManager->FindMaterial( "guis/assets/splash/legal_english" );
 			declManager->FindMaterial( "guis/assets/splash/legal_french" );
 			declManager->FindMaterial( "guis/assets/splash/legal_figs" );
 			// register the japanese font so it gets included
 			renderSystem->RegisterFont( "DFPHeiseiGothicW7" );
 			// Make sure all videos get touched because you can bring videos from one map to another, they need to be included in all maps
-			for( int i = 0; i < declManager->GetNumDecls( DECL_VIDEO ); i++ )
-			{
+			for( int i = 0; i < declManager->GetNumDecls( DECL_VIDEO ); i++ ) {
 				declManager->DeclByIndex( DECL_VIDEO, i );
 			}
 		}
@@ -1401,7 +1308,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		// and demos, insuring that level specific models
 		// will be freed
 		renderWorld = renderSystem->AllocRenderWorld();
-		soundWorld = soundSystem->AllocSoundWorld( renderWorld );
+		soundWorld	= soundSystem->AllocSoundWorld( renderWorld );
 
 		menuSoundWorld = soundSystem->AllocSoundWorld( NULL );
 		menuSoundWorld->PlaceListener( vec3_origin, mat3_identity, 0 );
@@ -1413,8 +1320,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		InitializeMPMapsModes();
 
 		// leaderboards need to be initialized after InitializeMPMapsModes, which populates the MP Map list.
-		if( game != NULL )
-		{
+		if( game != NULL ) {
 			game->Leaderboards_Init();
 		}
 
@@ -1430,8 +1336,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		StartMenu( true );
 // SRS - changed ifndef to ifdef since legalMinTime should apply to retail builds, not dev builds
 #ifdef ID_RETAIL
-		while( Sys_Milliseconds() - legalStartTime < legalMinTime )
-		{
+		while( Sys_Milliseconds() - legalStartTime < legalMinTime ) {
 			RenderSplash();
 			Sys_GenerateEvents();
 			Sys_Sleep( 10 );
@@ -1446,9 +1351,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 
 		CheckStartupStorageRequirements();
 
-
-		if( preload_CommonAssets.GetBool() && fileSystem->UsingResourceFiles() )
-		{
+		if( preload_CommonAssets.GetBool() && fileSystem->UsingResourceFiles() ) {
 			idPreloadManifest manifest;
 			manifest.LoadManifest( "_common.preload" );
 			globalImages->Preload( manifest, false );
@@ -1462,13 +1365,10 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		globalImages->LoadDeferredImages();
 
 		// No longer need the splash screen
-		if( splashScreen != NULL )
-		{
-			for( int i = 0; i < splashScreen->GetNumStages(); i++ )
-			{
+		if( splashScreen != NULL ) {
+			for( int i = 0; i < splashScreen->GetNumStages(); i++ ) {
 				idImage* image = splashScreen->GetStage( i )->texture.image;
-				if( image != NULL )
-				{
+				if( image != NULL ) {
 					image->PurgeImage();
 				}
 			}
@@ -1477,9 +1377,7 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 		Printf( "--- Common Initialization Complete ---\n" );
 
 		idLib::Printf( "QA Timing IIS: %06dms\n", Sys_Milliseconds() );
-	}
-	catch( idException& )
-	{
+	} catch( idException& ) {
 		Sys_Error( "Error during initialization" );
 	}
 }
@@ -1491,13 +1389,10 @@ idCommonLocal::Shutdown
 */
 void idCommonLocal::Shutdown()
 {
-
-	if( com_shuttingDown )
-	{
+	if( com_shuttingDown ) {
 		return;
 	}
 	com_shuttingDown = true;
-
 
 	// Kill any pending saves...
 	printf( "session->GetSaveGameManager().CancelToTerminate();\n" );
@@ -1545,8 +1440,7 @@ void idCommonLocal::Shutdown()
 	session->Shutdown();
 
 	// shutdown, deallocate leaderboard definitions.
-	if( game != NULL )
-	{
+	if( game != NULL ) {
 		printf( "game->Leaderboards_Shutdown();\n" );
 		game->Leaderboards_Shutdown();
 	}
@@ -1639,8 +1533,7 @@ idCommonLocal::CreateMainMenu
 */
 void idCommonLocal::CreateMainMenu()
 {
-	if( game != NULL )
-	{
+	if( game != NULL ) {
 		// note which media we are going to need to load
 		declManager->BeginLevelLoad();
 		renderSystem->BeginLevelLoad();
@@ -1677,14 +1570,13 @@ void idCommonLocal::Stop( bool resetSession )
 
 	soundSystem->StopAllSounds();
 
-	insideUpdateScreen = false;
+	insideUpdateScreen	   = false;
 	insideExecuteMapChange = false;
 
 	// drop all guis
 	ExitMenu();
 
-	if( resetSession )
-	{
+	if( resetSession ) {
 		session->QuitMatchToTitle();
 	}
 }
@@ -1704,7 +1596,6 @@ void idCommonLocal::BusyWait()
 	session->UpdateSignInManager();
 	session->Pump();
 }
-
 
 /*
 ===============
@@ -1727,26 +1618,18 @@ idCommonLocal::WaitForSessionState
 */
 bool idCommonLocal::WaitForSessionState( idSession::sessionState_t desiredState )
 {
-	if( session->GetState() == desiredState )
-	{
+	if( session->GetState() == desiredState ) {
 		return true;
 	}
 
-	while( true )
-	{
+	while( true ) {
 		BusyWait();
 
 		idSession::sessionState_t sessionState = session->GetState();
-		if( sessionState == desiredState )
-		{
+		if( sessionState == desiredState ) {
 			return true;
 		}
-		if( sessionState != idSession::LOADING &&
-				sessionState != idSession::SEARCHING &&
-				sessionState != idSession::CONNECTING &&
-				sessionState != idSession::BUSY &&
-				sessionState != desiredState )
-		{
+		if( sessionState != idSession::LOADING && sessionState != idSession::SEARCHING && sessionState != idSession::CONNECTING && sessionState != idSession::BUSY && sessionState != desiredState ) {
 			return false;
 		}
 
@@ -1782,29 +1665,21 @@ idCommonLocal::ProcessEvent
 bool idCommonLocal::ProcessEvent( const sysEvent_t* event )
 {
 	// Leyland: moved this up
-	if( Dialog().IsDialogActive() )
-	{
+	if( Dialog().IsDialogActive() ) {
 		Dialog().HandleDialogEvent( event );
 		return true;
 	}
 	// Leyland end
 
 	// hitting escape anywhere brings up the menu
-	if( game && game->IsInGame() )
-	{
-		if( event->evType == SE_KEY && event->evValue2 == 1 && ( event->evValue == K_ESCAPE || event->evValue == K_JOY9 ) )
-		{
-			if( game->CheckInCinematic() )
-			{
+	if( game && game->IsInGame() ) {
+		if( event->evType == SE_KEY && event->evValue2 == 1 && ( event->evValue == K_ESCAPE || event->evValue == K_JOY9 ) ) {
+			if( game->CheckInCinematic() ) {
 				game->SkipCinematicScene();
-			}
-			else
-			{
-				if( !game->Shell_IsActive() )
-				{
+			} else {
+				if( !game->Shell_IsActive() ) {
 					// menus / etc
-					if( MenuEvent( event ) )
-					{
+					if( MenuEvent( event ) ) {
 						return true;
 					}
 
@@ -1812,14 +1687,11 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t* event )
 
 					StartMenu();
 					return true;
-				}
-				else
-				{
+				} else {
 					console->Close();
 
 					// menus / etc
-					if( MenuEvent( event ) )
-					{
+					if( MenuEvent( event ) ) {
 						return true;
 					}
 
@@ -1830,36 +1702,30 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t* event )
 	}
 
 	// let the pull-down console take it if desired
-	if( console->ProcessEvent( event, false ) )
-	{
+	if( console->ProcessEvent( event, false ) ) {
 		return true;
 	}
-	if( session->ProcessInputEvent( event ) )
-	{
+	if( session->ProcessInputEvent( event ) ) {
 		return true;
 	}
 
 	// menus / etc
-	if( MenuEvent( event ) )
-	{
+	if( MenuEvent( event ) ) {
 		return true;
 	}
 
-	if( ImGuiHook::InjectSysEvent( event ) )
-	{
+	if( ImGuiHook::InjectSysEvent( event ) ) {
 		return true;
 	}
 
 	// if we aren't in a game, force the console to take it
-	if( !mapSpawned )
-	{
+	if( !mapSpawned ) {
 		console->ProcessEvent( event, true );
 		return true;
 	}
 
 	// in game, exec bindings for all key downs
-	if( event->evType == SE_KEY && event->evValue2 == 1 )
-	{
+	if( event->evType == SE_KEY && event->evValue2 == 1 ) {
 		idKeyInput::ExecKeyBinding( event->evValue );
 		return true;
 	}
@@ -1884,12 +1750,11 @@ Common_WritePrecache_f
 */
 CONSOLE_COMMAND( writePrecache, "writes precache commands", NULL )
 {
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		common->Printf( "USAGE: writePrecache <execFile>\n" );
 		return;
 	}
-	idStr	str = args.Argv( 1 );
+	idStr str = args.Argv( 1 );
 	str.DefaultFileExtension( ".cfg" );
 	idFile* f = fileSystem->OpenFileWrite( str );
 	declManager->WritePrecacheCommands( f );
@@ -1916,12 +1781,9 @@ Common_Hitch_f
 */
 CONSOLE_COMMAND( hitch, "hitches the game", NULL )
 {
-	if( args.Argc() == 2 )
-	{
+	if( args.Argc() == 2 ) {
 		Sys_Sleep( atoi( args.Argv( 1 ) ) );
-	}
-	else
-	{
+	} else {
 		Sys_Sleep( 100 );
 	}
 }

@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -42,11 +43,10 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 // cinematic states
-typedef enum
-{
+typedef enum {
 	FMV_IDLE,
-	FMV_PLAY,			// play
-	FMV_EOF,			// all other conditions, i.e. stop/EOF/abort
+	FMV_PLAY, // play
+	FMV_EOF,  // all other conditions, i.e. stop/EOF/abort
 	FMV_ID_BLT,
 	FMV_ID_IDLE,
 	FMV_LOOPED,
@@ -56,15 +56,14 @@ typedef enum
 class idImage;
 
 // a cinematic stream generates an image buffer, which the caller will upload to a texture
-typedef struct
-{
-	int					imageWidth;
-	int					imageHeight;	// will be a power of 2
-	idImage*			imageY;
-	idImage*			imageCr;
-	idImage*			imageCb;
-	idImage*			image;
-	int					status;
+typedef struct {
+	int		 imageWidth;
+	int		 imageHeight; // will be a power of 2
+	idImage* imageY;
+	idImage* imageCr;
+	idImage* imageCb;
+	idImage* image;
+	int		 status;
 } cinData_t;
 
 class idCinematic
@@ -78,36 +77,36 @@ public:
 
 	// allocates and returns a private subclass that implements the methods
 	// This should be used instead of new
-	static idCinematic*	Alloc();
+	static idCinematic* Alloc();
 
 	// frees all allocated memory
-	virtual				~idCinematic();
+	virtual ~idCinematic();
 
 	// returns false if it failed to load
-	virtual bool		InitFromFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
+	virtual bool	  InitFromFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
 
 	// returns the length of the animation in milliseconds
-	virtual int			AnimationLength();
+	virtual int		  AnimationLength();
 
 	// RB: let us know wether this video went EOF or is still active
-	virtual bool        IsPlaying() const;
+	virtual bool	  IsPlaying() const;
 	// RB end
 
 	// the pointers in cinData_t will remain valid until the next UpdateForTime() call
-	virtual cinData_t	ImageForTime( int milliseconds, nvrhi::ICommandList* commandList );
+	virtual cinData_t ImageForTime( int milliseconds, nvrhi::ICommandList* commandList );
 
 	// closes the file and frees all allocated memory
-	virtual void		Close();
+	virtual void	  Close();
 
 	// sets the cinematic to start at that time (can be in the past)
-	virtual void		ResetTime( int time );
+	virtual void	  ResetTime( int time );
 
 	// gets the time the cinematic started
-	virtual int			GetStartTime();
+	virtual int		  GetStartTime();
 
-	virtual void		ExportToTGA( bool skipExisting = true );
+	virtual void	  ExportToTGA( bool skipExisting = true );
 
-	virtual float		GetFrameRate() const;
+	virtual float	  GetFrameRate() const;
 };
 
 /*
@@ -121,19 +120,15 @@ public:
 class idSndWindow : public idCinematic
 {
 public:
+	idSndWindow() { showWaveform = false; }
+	~idSndWindow() { }
 
-	idSndWindow()
-	{
-		showWaveform = false;
-	}
-	~idSndWindow() {}
-
-	bool				InitFromFile( const char* qpath, bool looping );
-	cinData_t			ImageForTime( int milliseconds );
-	int					AnimationLength();
+	bool	  InitFromFile( const char* qpath, bool looping );
+	cinData_t ImageForTime( int milliseconds );
+	int		  AnimationLength();
 
 private:
-	bool				showWaveform;
+	bool showWaveform;
 };
 
 #endif /* !__CINEMATIC_H__ */

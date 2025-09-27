@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,9 +37,9 @@ If you have questions concerning this license or the applicable additional terms
 //
 // The biggest reason these limitations exist is because if a newer profile is created and then loaded with a GMC
 // version, we have to support it.
-const int16		PROFILE_TAG					= ( 'D' << 8 ) | '3';
-const int8		PROFILE_VER_MAJOR			= 10;	// If this is changed, you should reset the minor version and remove all backward compatible code
-const int8		PROFILE_VER_MINOR			= 0;	// Within each major version, minor versions can be supported for backward compatibility
+const int16 PROFILE_TAG		  = ( 'D' << 8 ) | '3';
+const int8	PROFILE_VER_MAJOR = 10; // If this is changed, you should reset the minor version and remove all backward compatible code
+const int8	PROFILE_VER_MINOR = 0;	// Within each major version, minor versions can be supported for backward compatibility
 
 class idPlayerProfileLocal : public idPlayerProfile
 {
@@ -60,7 +61,7 @@ the data can be shared across computers.
 idPlayerProfile * CreatePlayerProfile
 ========================
 */
-idPlayerProfile* idPlayerProfile::CreatePlayerProfile( int deviceIndex )
+idPlayerProfile*	 idPlayerProfile::CreatePlayerProfile( int deviceIndex )
 {
 	playerProfiles[deviceIndex].SetDefaults();
 	playerProfiles[deviceIndex].deviceNum = deviceIndex;
@@ -78,10 +79,10 @@ idPlayerProfile::idPlayerProfile()
 
 	// Don't have these in SetDefaults because they're used for state management and SetDefaults is called when
 	// loading the profile
-	state				= IDLE;
-	requestedState		= IDLE;
-	deviceNum			= -1;
-	dirty				= false;
+	state		   = IDLE;
+	requestedState = IDLE;
+	deviceNum	   = -1;
+	dirty		   = false;
 }
 
 /*
@@ -91,19 +92,18 @@ idPlayerProfile::SetDefaults
 */
 void idPlayerProfile::SetDefaults()
 {
-	achievementBits = 0;
-	achievementBits2	= 0;
-	dlcReleaseVersion	= 0;
+	achievementBits	  = 0;
+	achievementBits2  = 0;
+	dlcReleaseVersion = 0;
 
 	stats.SetNum( MAX_PLAYER_PROFILE_STATS );
-	for( int i = 0; i < MAX_PLAYER_PROFILE_STATS; ++i )
-	{
+	for( int i = 0; i < MAX_PLAYER_PROFILE_STATS; ++i ) {
 		stats[i].i = 0;
 	}
 
-	leftyFlip = false;
+	leftyFlip	 = false;
 	customConfig = false;
-	configSet = 0;
+	configSet	 = 0;
 }
 
 /*
@@ -133,18 +133,16 @@ bool idPlayerProfile::Serialize( idSerializer& ser )
 
 	// Serialize version
 	ser.SerializePacked( magicNumber );
-	int16 tag = ( magicNumber >> 16 ) & 0xffff;
-	int8 majorVersion = ( magicNumber >> 8 ) & 0xff;
-	int8 minorVersion = magicNumber & 0xff;
+	int16 tag		   = ( magicNumber >> 16 ) & 0xffff;
+	int8  majorVersion = ( magicNumber >> 8 ) & 0xff;
+	int8  minorVersion = magicNumber & 0xff;
 	minorVersion;
 
-	if( tag != PROFILE_TAG )
-	{
+	if( tag != PROFILE_TAG ) {
 		return false;
 	}
 
-	if( majorVersion != PROFILE_VER_MAJOR )
-	{
+	if( majorVersion != PROFILE_VER_MAJOR ) {
 		return false;
 	}
 
@@ -178,25 +176,21 @@ bool idPlayerProfile::Serialize( idSerializer& ser )
 	int numStats = stats.Num();
 	ser.SerializePacked( numStats );
 	stats.SetNum( numStats );
-	for( int i = 0; i < numStats; ++i )
-	{
+	for( int i = 0; i < numStats; ++i ) {
 		ser.SerializePacked( stats[i].i );
 	}
 
 	ser.Serialize( leftyFlip );
 	ser.Serialize( configSet );
 
-	if( ser.IsReading() )
-	{
+	if( ser.IsReading() ) {
 		// Which binding is used on the console?
 		ser.Serialize( customConfig );
 
 		ExecConfig( false );
 
-		if( customConfig )
-		{
-			for( int i = 0; i < K_LAST_KEY; ++i )
-			{
+		if( customConfig ) {
+			for( int i = 0; i < K_LAST_KEY; ++i ) {
 				idStr bind;
 				ser.SerializeString( bind );
 #if 0
@@ -204,20 +198,15 @@ bool idPlayerProfile::Serialize( idSerializer& ser )
 #endif
 			}
 		}
-	}
-	else
-	{
-
-		if( !customConfig )
-		{
+	} else {
+		if( !customConfig ) {
 			ExecConfig( false );
 		}
 
 		customConfig = true;
 		ser.Serialize( customConfig );
 
-		for( int i = 0; i < K_LAST_KEY; ++i )
-		{
+		for( int i = 0; i < K_LAST_KEY; ++i ) {
 			idStr bind = idKeyInput::GetBinding( i );
 			ser.SerializeString( bind );
 		}
@@ -253,7 +242,7 @@ void idPlayerProfile::StatSetFloat( int s, float v )
 idPlayerProfile::StatGetInt
 ========================
 */
-int	idPlayerProfile::StatGetInt( int s ) const
+int idPlayerProfile::StatGetInt( int s ) const
 {
 	return stats[s].i;
 }
@@ -275,14 +264,11 @@ idPlayerProfile::SaveSettings
 */
 void idPlayerProfile::SaveSettings( bool forceDirty )
 {
-	if( state != SAVING )
-	{
-		if( forceDirty )
-		{
+	if( state != SAVING ) {
+		if( forceDirty ) {
 			MarkDirty( true );
 		}
-		if( GetRequestedState() == IDLE && IsDirty() )
-		{
+		if( GetRequestedState() == IDLE && IsDirty() ) {
 			SetRequestedState( SAVE_REQUESTED );
 		}
 	}
@@ -295,10 +281,8 @@ idPlayerProfile::SaveSettings
 */
 void idPlayerProfile::LoadSettings()
 {
-	if( state != LOADING )
-	{
-		if( verify( GetRequestedState() == IDLE ) )
-		{
+	if( state != LOADING ) {
+		if( verify( GetRequestedState() == IDLE ) ) {
 			SetRequestedState( LOAD_REQUESTED );
 		}
 	}
@@ -311,29 +295,24 @@ idPlayerProfile::SetAchievement
 */
 void idPlayerProfile::SetAchievement( const int id )
 {
-	if( id >= idAchievementSystem::MAX_ACHIEVEMENTS )
-	{
-		assert( false );		// FIXME: add another set of achievement bit flags
+	if( id >= idAchievementSystem::MAX_ACHIEVEMENTS ) {
+		assert( false ); // FIXME: add another set of achievement bit flags
 		return;
 	}
 
 	uint64 mask = 0;
-	if( id < 64 )
-	{
+	if( id < 64 ) {
 		mask = achievementBits;
 		achievementBits |= ( int64 )1 << id;
 		mask = ~mask & achievementBits;
-	}
-	else
-	{
+	} else {
 		mask = achievementBits2;
 		achievementBits2 |= ( int64 )1 << ( id - 64 );
 		mask = ~mask & achievementBits2;
 	}
 
 	// Mark the profile dirty if achievement bits changed
-	if( mask != 0 )
-	{
+	if( mask != 0 ) {
 		MarkDirty( true );
 	}
 }
@@ -345,18 +324,14 @@ idPlayerProfile::ClearAchievement
 */
 void idPlayerProfile::ClearAchievement( const int id )
 {
-	if( id >= idAchievementSystem::MAX_ACHIEVEMENTS )
-	{
-		assert( false );		// FIXME: add another set of achievement bit flags
+	if( id >= idAchievementSystem::MAX_ACHIEVEMENTS ) {
+		assert( false ); // FIXME: add another set of achievement bit flags
 		return;
 	}
 
-	if( id < 64 )
-	{
+	if( id < 64 ) {
 		achievementBits &= ~( ( int64 )1 << id );
-	}
-	else
-	{
+	} else {
 		achievementBits2 &= ~( ( int64 )1 << ( id - 64 ) );
 	}
 
@@ -370,18 +345,14 @@ idPlayerProfile::GetAchievement
 */
 bool idPlayerProfile::GetAchievement( const int id ) const
 {
-	if( id >= idAchievementSystem::MAX_ACHIEVEMENTS )
-	{
-		assert( false );		// FIXME: add another set of achievement bit flags
+	if( id >= idAchievementSystem::MAX_ACHIEVEMENTS ) {
+		assert( false ); // FIXME: add another set of achievement bit flags
 		return false;
 	}
 
-	if( id < 64 )
-	{
+	if( id < 64 ) {
 		return ( achievementBits & ( int64 )1 << id ) != 0;
-	}
-	else
-	{
+	} else {
 		return ( achievementBits2 & ( int64 )1 << ( id - 64 ) ) != 0;
 	}
 }
@@ -425,34 +396,27 @@ idPlayerProfile::ExecConfig
 */
 void idPlayerProfile::ExecConfig( bool save, bool forceDefault )
 {
-
 	int flags = 0;
-	if( !save )
-	{
+	if( !save ) {
 		flags = cvarSystem->GetModifiedFlags();
 	}
 
-	if( !customConfig || forceDefault )
-	{
+	if( !customConfig || forceDefault ) {
 		cmdSystem->AppendCommandText( "exec default.cfg\n" );
 		cmdSystem->AppendCommandText( "exec joy_360_0.cfg\n" );
 	}
 
-	if( leftyFlip )
-	{
+	if( leftyFlip ) {
 		cmdSystem->AppendCommandText( "exec joy_lefty.cfg\n" );
 		cmdSystem->AppendCommandText( "exec joy_360_0.cfg\n" );
-	}
-	else
-	{
+	} else {
 		cmdSystem->AppendCommandText( "exec joy_righty.cfg\n" );
 		cmdSystem->AppendCommandText( "exec joy_360_0.cfg\n" );
 	}
 
 	cmdSystem->ExecuteCommandBuffer();
 
-	if( !save )
-	{
+	if( !save ) {
 		cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 		cvarSystem->SetModifiedFlags( flags );
 	}
@@ -460,13 +424,11 @@ void idPlayerProfile::ExecConfig( bool save, bool forceDefault )
 
 CONSOLE_COMMAND( setProfileDefaults, "sets profile settings to default and saves", 0 )
 {
-	if( session->GetSignInManager().GetMasterLocalUser() == NULL )
-	{
+	if( session->GetSignInManager().GetMasterLocalUser() == NULL ) {
 		return;
 	}
 	idPlayerProfile* profile = session->GetSignInManager().GetMasterLocalUser()->GetProfile();
-	if( verify( profile != NULL ) )
-	{
+	if( verify( profile != NULL ) ) {
 		profile->SetDefaults();
 		profile->SaveSettings( true );
 	}

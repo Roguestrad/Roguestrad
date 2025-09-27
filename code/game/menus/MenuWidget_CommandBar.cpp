@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -48,16 +49,8 @@ COMMANDBAR
 ================================================================================================
 */
 
-static const char* const BUTTON_NAMES[] =
-{
-	"joy1",
-	"joy2",
-	"joy3",
-	"joy4",
-	"joy10",
-	"tab"
-};
-compile_time_assert( sizeof( BUTTON_NAMES ) / sizeof( BUTTON_NAMES[ 0 ] ) == idMenuWidget_CommandBar::MAX_BUTTONS );
+static const char* const BUTTON_NAMES[] = { "joy1", "joy2", "joy3", "joy4", "joy10", "tab" };
+compile_time_assert( sizeof( BUTTON_NAMES ) / sizeof( BUTTON_NAMES[0] ) == idMenuWidget_CommandBar::MAX_BUTTONS );
 
 /*
 ========================
@@ -66,8 +59,7 @@ idMenuWidget_CommandBar::ClearAllButtons
 */
 void idMenuWidget_CommandBar::ClearAllButtons()
 {
-	for( int index = 0; index < MAX_BUTTONS; ++index )
-	{
+	for( int index = 0; index < MAX_BUTTONS; ++index ) {
 		buttons[index].label.Clear();
 		buttons[index].action.Set( WIDGET_ACTION_NONE );
 	}
@@ -80,70 +72,59 @@ idMenuWidget_CommandBar::Update
 */
 void idMenuWidget_CommandBar::Update()
 {
-
-	if( GetSWFObject() == NULL )
-	{
+	if( GetSWFObject() == NULL ) {
 		return;
 	}
 
 	idSWFScriptObject& root = GetSWFObject()->GetRootObject();
 
-	if( !BindSprite( root ) )
-	{
+	if( !BindSprite( root ) ) {
 		return;
 	}
 
-	const int BASE_PADDING			= 35;
-	const int PER_BUTTON_PADDING	= 65;
-	const int ALIGNMENT_SCALE		= ( GetAlignment() == LEFT ) ? 1 : -1;
+	const int							BASE_PADDING	   = 35;
+	const int							PER_BUTTON_PADDING = 65;
+	const int							ALIGNMENT_SCALE	   = ( GetAlignment() == LEFT ) ? 1 : -1;
 
-	int xPos = ALIGNMENT_SCALE * BASE_PADDING;
+	int									xPos = ALIGNMENT_SCALE * BASE_PADDING;
 
 	// Setup the button order.
-	idStaticList< button_t, MAX_BUTTONS > buttonOrder;
-	for( int i = 0; i < buttonOrder.Max(); ++i )
-	{
-		buttonOrder.Append( static_cast< button_t >( i ) );
+	idStaticList<button_t, MAX_BUTTONS> buttonOrder;
+	for( int i = 0; i < buttonOrder.Max(); ++i ) {
+		buttonOrder.Append( static_cast<button_t>( i ) );
 	}
 
 	// NOTE: Special consideration is done for JPN PS3 where the standard accept button is
 	// swapped with the standard back button.  i.e. In US: X = Accept, O = Back, but in JPN
 	// X = Back, O = Accept.
-	if( GetSWFObject()->UseCircleForAccept() )
-	{
-		buttonOrder[ BUTTON_JOY2 ] = BUTTON_JOY1;
-		buttonOrder[ BUTTON_JOY1 ] = BUTTON_JOY2;
+	if( GetSWFObject()->UseCircleForAccept() ) {
+		buttonOrder[BUTTON_JOY2] = BUTTON_JOY1;
+		buttonOrder[BUTTON_JOY1] = BUTTON_JOY2;
 	}
 
 	// FIXME: handle animating in of the button bar?
 	GetSprite()->SetVisible( true );
 
 	idStr shortcutName;
-	for( int i = 0; i < buttonOrder.Num(); ++i )
-	{
-		const char* const buttonName = BUTTON_NAMES[ buttonOrder[ i ] ];
+	for( int i = 0; i < buttonOrder.Num(); ++i ) {
+		const char* const		   buttonName = BUTTON_NAMES[buttonOrder[i]];
 
 		idSWFSpriteInstance* const buttonSprite = GetSprite()->GetScriptObject()->GetSprite( buttonName );
-		if( buttonSprite == NULL )
-		{
+		if( buttonSprite == NULL ) {
 			continue;
 		}
 		idSWFTextInstance* const buttonText = buttonSprite->GetScriptObject()->GetText( "txt_info" );
-		if( buttonText == NULL )
-		{
+		if( buttonText == NULL ) {
 			continue;
 		}
 		idSWFSpriteInstance* const imageSprite = buttonSprite->GetScriptObject()->GetSprite( "img" );
-		if( imageSprite == NULL )
-		{
+		if( imageSprite == NULL ) {
 			continue;
 		}
 
-		if( buttons[ i ].action.GetType() != WIDGET_ACTION_NONE )
-		{
+		if( buttons[i].action.GetType() != WIDGET_ACTION_NONE ) {
 			idSWFScriptObject* const shortcutKeys = GetSWFObject()->GetGlobal( "shortcutKeys" ).GetObject();
-			if( verify( shortcutKeys != NULL ) )
-			{
+			if( verify( shortcutKeys != NULL ) ) {
 				buttonSprite->GetScriptObject()->Set( "onPress", new WrapWidgetSWFEvent( this, WIDGET_EVENT_COMMAND, i ) );
 
 				// bind the main action - need to use all caps here because shortcuts are stored that way
@@ -154,47 +135,37 @@ void idMenuWidget_CommandBar::Update()
 				// Some other keys have additional bindings. Remember that the button here is
 				// actually the virtual button, and the physical button could be swapped based
 				// on the UseCircleForAccept business on JPN PS3.
-				switch( i )
-				{
-					case BUTTON_JOY1:
-					{
+				switch( i ) {
+					case BUTTON_JOY1: {
 						shortcutKeys->Set( "ENTER", buttonSprite->GetScriptObject() );
 						break;
 					}
-					case BUTTON_JOY2:
-					{
+					case BUTTON_JOY2: {
 						shortcutKeys->Set( "ESCAPE", buttonSprite->GetScriptObject() );
 						shortcutKeys->Set( "BACKSPACE", buttonSprite->GetScriptObject() );
 						break;
 					}
-					case BUTTON_TAB:
-					{
+					case BUTTON_TAB: {
 						shortcutKeys->Set( "K_TAB", buttonSprite->GetScriptObject() );
 						break;
 					}
 				}
 			}
 
-			if( buttons[ i ].label.IsEmpty() )
-			{
+			if( buttons[i].label.IsEmpty() ) {
 				buttonSprite->SetVisible( false );
-			}
-			else
-			{
+			} else {
 				imageSprite->SetVisible( true );
 				imageSprite->StopFrame( menuData->GetPlatform() + 1 );
 				buttonSprite->SetVisible( true );
 				buttonSprite->SetXPos( xPos );
-				buttonText->SetText( buttons[ i ].label );
+				buttonText->SetText( buttons[i].label );
 				xPos += ALIGNMENT_SCALE * ( buttonText->GetTextLength() + PER_BUTTON_PADDING );
 			}
-		}
-		else
-		{
+		} else {
 			buttonSprite->SetVisible( false );
 			idSWFScriptObject* const shortcutKeys = GetSWFObject()->GetGlobal( "shortcutKeys" ).GetObject();
-			if( verify( shortcutKeys != NULL ) )
-			{
+			if( verify( shortcutKeys != NULL ) ) {
 				// RB: 64 bit fixes, changed NULL to 0
 				buttonSprite->GetScriptObject()->Set( "onPress", 0 );
 				// RB end
@@ -215,16 +186,12 @@ idMenuWidget_CommandBar::ReceiveEvent
 */
 bool idMenuWidget_CommandBar::ExecuteEvent( const idWidgetEvent& event )
 {
-	if( event.type == WIDGET_EVENT_COMMAND )
-	{
-		if( verify( event.arg >= 0 && event.arg < buttons.Num() ) )
-		{
-			HandleAction( buttons[ event.arg ].action, event, this );
+	if( event.type == WIDGET_EVENT_COMMAND ) {
+		if( verify( event.arg >= 0 && event.arg < buttons.Num() ) ) {
+			HandleAction( buttons[event.arg].action, event, this );
 		}
 		return true;
-	}
-	else
-	{
+	} else {
 		return idMenuWidget::ExecuteEvent( event );
 	}
 }

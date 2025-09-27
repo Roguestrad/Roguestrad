@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -33,73 +34,70 @@ class idUserInterfaceLocal;
 class idDeviceContext;
 class idSimpleWindow;
 
-typedef struct
-{
-	idWindow* win;
+typedef struct {
+	idWindow*		win;
 	idSimpleWindow* simp;
 } drawWin_t;
 
 class idSimpleWindow
 {
 	friend class idWindow;
+
 public:
 	idSimpleWindow( idWindow* win );
-	virtual			~idSimpleWindow();
-	void			Redraw( float x, float y );
-	void			StateChanged( bool redraw );
+	virtual ~idSimpleWindow();
+	void		 Redraw( float x, float y );
+	void		 StateChanged( bool redraw );
 
-	idStr			name;
+	idStr		 name;
 
-	idWinVar* 		GetWinVarByName( const char* _name );
-	int				GetWinVarOffset( idWinVar* wv, drawWin_t* owner );
-	size_t			Size();
+	idWinVar*	 GetWinVarByName( const char* _name );
+	int			 GetWinVarOffset( idWinVar* wv, drawWin_t* owner );
+	size_t		 Size();
 
-	idWindow*		GetParent()
-	{
-		return mParent;
-	}
+	idWindow*	 GetParent() { return mParent; }
 
-	virtual void	WriteToSaveGame( idFile* savefile );
-	virtual void	ReadFromSaveGame( idFile* savefile );
+	virtual void WriteToSaveGame( idFile* savefile );
+	virtual void ReadFromSaveGame( idFile* savefile );
 
 protected:
-	void 			CalcClientRect( float xofs, float yofs );
-	void 			SetupTransforms( float x, float y );
-	void 			DrawBackground( const idRectangle& drawRect );
-	void 			DrawBorderAndCaption( const idRectangle& drawRect );
+	void				  CalcClientRect( float xofs, float yofs );
+	void				  SetupTransforms( float x, float y );
+	void				  DrawBackground( const idRectangle& drawRect );
+	void				  DrawBorderAndCaption( const idRectangle& drawRect );
 
 	idUserInterfaceLocal* gui;
-	int 			flags;
-	idRectangle 	drawRect;			// overall rect
-	idRectangle 	clientRect;			// client area
-	idRectangle 	textRect;
-	idVec2			origin;
-	class idFont* 	font;
-	float 			matScalex;
-	float 			matScaley;
-	float 			borderSize;
-	int 			textAlign;
-	float 			textAlignx;
-	float 			textAligny;
-	int				textShadow;
+	int					  flags;
+	idRectangle			  drawRect;	  // overall rect
+	idRectangle			  clientRect; // client area
+	idRectangle			  textRect;
+	idVec2				  origin;
+	class idFont*		  font;
+	float				  matScalex;
+	float				  matScaley;
+	float				  borderSize;
+	int					  textAlign;
+	float				  textAlignx;
+	float				  textAligny;
+	int					  textShadow;
 
-	idWinStr		text;
-	idWinBool		visible;
-	idWinRectangle	rect;				// overall rect
-	idWinVec4		backColor;
-	idWinVec4		matColor;
-	idWinVec4		foreColor;
-	idWinVec4		borderColor;
-	idWinFloat		textScale;
-	idWinFloat		rotate;
-	idWinVec2		shear;
-	idWinBackground	backGroundName;
+	idWinStr			  text;
+	idWinBool			  visible;
+	idWinRectangle		  rect; // overall rect
+	idWinVec4			  backColor;
+	idWinVec4			  matColor;
+	idWinVec4			  foreColor;
+	idWinVec4			  borderColor;
+	idWinFloat			  textScale;
+	idWinFloat			  rotate;
+	idWinVec2			  shear;
+	idWinBackground		  backGroundName;
 
-	const idMaterial* background;
+	const idMaterial*	  background;
 
-	idWindow* 		mParent;
+	idWindow*			  mParent;
 
-	idWinBool	hideCursor;
+	idWinBool			  hideCursor;
 };
 
 #endif /* !__SIMPLEWIN_H__ */

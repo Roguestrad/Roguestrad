@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -29,8 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-enum browserCommand_t
-{
+enum browserCommand_t {
 	BROWSER_COMMAND_REFRESH_SERVERS,
 	BROWSER_COMMAND_SHOW_GAMERTAG,
 };
@@ -48,15 +48,21 @@ template<class T, class U>
 class idPair
 {
 public:
-	idPair() { }
-	idPair( const T& f, const U& s ) : first( f ), second( s ) { }
+	idPair()
+	{
+	}
+	idPair( const T& f, const U& s ) :
+		first( f ),
+		second( s )
+	{
+	}
 
-	const bool	operator==( const idPair<T, U>& rhs ) const
+	const bool operator==( const idPair<T, U>& rhs ) const
 	{
 		return ( rhs.first == first ) && ( rhs.second == second );
 	}
 
-	const bool	operator!=( const idPair<T, U>& rhs ) const
+	const bool operator!=( const idPair<T, U>& rhs ) const
 	{
 		return !( *this == rhs );
 	}
@@ -70,21 +76,16 @@ public:
 idSort_PlayerGamesList
 ================================================
 */
-class idSort_PlayerGamesList : public idSort_Quick< idPair< serverInfo_t, int >, idSort_PlayerGamesList >
+class idSort_PlayerGamesList : public idSort_Quick<idPair<serverInfo_t, int>, idSort_PlayerGamesList>
 {
 public:
-	int Compare( const idPair< serverInfo_t, int >& a, const idPair< serverInfo_t, int >& b ) const
+	int Compare( const idPair<serverInfo_t, int>& a, const idPair<serverInfo_t, int>& b ) const
 	{
-		if( a.first.joinable == b.first.joinable )
-		{
+		if( a.first.joinable == b.first.joinable ) {
 			return a.first.gameMode - b.first.gameMode;
-		}
-		else if( a.first.joinable )
-		{
+		} else if( a.first.joinable ) {
 			return 1;
-		}
-		else
-		{
+		} else {
 			return -1;
 		}
 	}
@@ -99,8 +100,7 @@ void idMenuScreen_Shell_GameBrowser::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
 
-	if( data != NULL )
-	{
+	if( data != NULL ) {
 		menuGUI = data->GetGUI();
 	}
 
@@ -124,8 +124,7 @@ void idMenuScreen_Shell_GameBrowser::Initialize( idMenuHandler* data )
 	helpWidget->SetSpritePath( GetSpritePath(), "info", "helpTooltip" );
 	AddChild( helpWidget );
 
-	while( listWidget->GetChildren().Num() < NUM_SERVER_LIST_ITEMS )
-	{
+	while( listWidget->GetChildren().Num() < NUM_SERVER_LIST_ITEMS ) {
 		idMenuWidget_ServerButton* buttonWidget = new idMenuWidget_ServerButton;
 		buttonWidget->AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_PRESS_FOCUSED, listWidget->GetChildren().Num() );
 		buttonWidget->SetState( WIDGET_STATE_HIDDEN );
@@ -148,45 +147,39 @@ idMenuScreen_Shell_GameBrowser::ShowScreen
 */
 void idMenuScreen_Shell_GameBrowser::ShowScreen( const mainMenuTransition_t transitionType )
 {
-	idMenuHandler_Shell* const mgr = dynamic_cast< idMenuHandler_Shell* >( menuData );
-	if( mgr == NULL )
-	{
+	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );
+	if( mgr == NULL ) {
 		return;
 	}
 
 	idSWFScriptObject& root = GetSWFObject()->GetRootObject();
-	if( BindSprite( root ) )
-	{
+	if( BindSprite( root ) ) {
 		idSWFTextInstance* heading = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtHeading" );
-		if( heading != NULL )
-		{
-			heading->SetText( "#str_swf_pwf_heading" );	// MULTIPLAYER
+		if( heading != NULL ) {
+			heading->SetText( "#str_swf_pwf_heading" ); // MULTIPLAYER
 			heading->SetStrokeInfo( true, 0.75f, 1.75f );
 		}
 
 		idSWFSpriteInstance* gradient = GetSprite()->GetScriptObject()->GetNestedSprite( "info", "gradient" );
-		if( gradient != NULL && heading != NULL )
-		{
+		if( gradient != NULL && heading != NULL ) {
 			gradient->SetXPos( heading->GetTextLength() );
 		}
 	}
 
 	listWidget->ClearGames();
 
-	if( mgr->GetCmdBar() != NULL )
-	{
+	if( mgr->GetCmdBar() != NULL ) {
 		idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
 
 		mgr->GetCmdBar()->ClearAllButtons();
 
 		buttonInfo = mgr->GetCmdBar()->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
-		if( menuData->GetPlatform() != 2 )
-		{
+		if( menuData->GetPlatform() != 2 ) {
 			buttonInfo->label = "#str_00395";
 		}
 		buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
 
-		buttonInfo = mgr->GetCmdBar()->GetButton( idMenuWidget_CommandBar::BUTTON_JOY3 );
+		buttonInfo		  = mgr->GetCmdBar()->GetButton( idMenuWidget_CommandBar::BUTTON_JOY3 );
 		buttonInfo->label = "#str_02276";
 		buttonInfo->action.Set( WIDGET_ACTION_COMMAND, BROWSER_COMMAND_REFRESH_SERVERS );
 	}
@@ -204,9 +197,8 @@ idMenuScreen_Shell_GameBrowser::HideScreen
 */
 void idMenuScreen_Shell_GameBrowser::HideScreen( const mainMenuTransition_t transitionType )
 {
-	idMenuHandler_Shell* const mgr = dynamic_cast< idMenuHandler_Shell* >( menuData );
-	if( mgr == NULL )
-	{
+	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );
+	if( mgr == NULL ) {
 		return;
 	}
 
@@ -224,15 +216,13 @@ idMenuScreen_Shell_GameBrowser::UpdateServerList
 */
 void idMenuScreen_Shell_GameBrowser::UpdateServerList()
 {
-	idMenuHandler_Shell* const mgr = dynamic_cast< idMenuHandler_Shell* >( menuData );
+	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );
 
-	if( mgr == NULL )
-	{
+	if( mgr == NULL ) {
 		return;
 	}
 
-	for( int i = 0; i < listWidget->GetChildren().Num(); ++i )
-	{
+	for( int i = 0; i < listWidget->GetChildren().Num(); ++i ) {
 		idMenuWidget& child = listWidget->GetChildByIndex( i );
 		child.SetState( WIDGET_STATE_HIDDEN );
 	}
@@ -252,45 +242,38 @@ idMenuScreen_Shell_GameBrowser::OnServerListReady
 */
 void idMenuScreen_Shell_GameBrowser::OnServerListReady()
 {
-	idMenuHandler_Shell* const mgr = dynamic_cast< idMenuHandler_Shell* >( menuData );
+	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );
 
-	if( mgr == NULL )
-	{
+	if( mgr == NULL ) {
 		return;
 	}
 
 	mgr->HidePacifier();
 
-	idList< idPair< serverInfo_t, int > > servers;
-	for( int i = 0; i < session->NumServers(); ++i )
-	{
+	idList<idPair<serverInfo_t, int>> servers;
+	for( int i = 0; i < session->NumServers(); ++i ) {
 		const serverInfo_t* const server = session->ServerInfo( i );
-		if( server != NULL && server->joinable )
-		{
-			idPair< serverInfo_t, int >& serverPair = servers.Alloc();
-			serverPair.first = *server;
-			serverPair.second = i;
+		if( server != NULL && server->joinable ) {
+			idPair<serverInfo_t, int>& serverPair = servers.Alloc();
+			serverPair.first					  = *server;
+			serverPair.second					  = i;
 		}
 	}
 
 	servers.SortWithTemplate( idSort_PlayerGamesList() );
 
 	listWidget->ClearGames();
-	for( int i = 0; i < servers.Num(); ++i )
-	{
-		idPair< serverInfo_t, int >& serverPair = servers[ i ];
+	for( int i = 0; i < servers.Num(); ++i ) {
+		idPair<serverInfo_t, int>& serverPair = servers[i];
 		DescribeServer( serverPair.first, serverPair.second );
 	}
 
-	if( servers.Num() > 0 )
-	{
+	if( servers.Num() > 0 ) {
 		listWidget->Update();
 		listWidget->SetViewOffset( 0 );
 		listWidget->SetViewIndex( 0 );
 		listWidget->SetFocusIndex( 0 );
-	}
-	else
-	{
+	} else {
 		listWidget->AddGame( "#str_swf_no_servers_found", idStrId(), idStr(), -1, 0, 0, false, false );
 		listWidget->Update();
 		listWidget->SetViewOffset( 0 );
@@ -298,36 +281,31 @@ void idMenuScreen_Shell_GameBrowser::OnServerListReady()
 		listWidget->SetFocusIndex( 0 );
 	}
 
-	if( mgr->GetCmdBar() != NULL )
-	{
+	if( mgr->GetCmdBar() != NULL ) {
 		idMenuWidget_CommandBar::buttonInfo_t* buttonInfo;
 
 		mgr->GetCmdBar()->ClearAllButtons();
 
-		if( servers.Num() > 0 )
-		{
+		if( servers.Num() > 0 ) {
 			buttonInfo = mgr->GetCmdBar()->GetButton( idMenuWidget_CommandBar::BUTTON_JOY1 );
-			if( menuData->GetPlatform() != 2 )
-			{
+			if( menuData->GetPlatform() != 2 ) {
 				buttonInfo->label = "#STR_SWF_SELECT";
 			}
 			buttonInfo->action.Set( WIDGET_ACTION_PRESS_FOCUSED );
 		}
 
 		buttonInfo = mgr->GetCmdBar()->GetButton( idMenuWidget_CommandBar::BUTTON_JOY2 );
-		if( menuData->GetPlatform() != 2 )
-		{
+		if( menuData->GetPlatform() != 2 ) {
 			buttonInfo->label = "#str_00395";
 		}
 		buttonInfo->action.Set( WIDGET_ACTION_GO_BACK );
 
-		buttonInfo = mgr->GetCmdBar()->GetButton( idMenuWidget_CommandBar::BUTTON_JOY3 );
+		buttonInfo		  = mgr->GetCmdBar()->GetButton( idMenuWidget_CommandBar::BUTTON_JOY3 );
 		buttonInfo->label = "#str_02276";
 		buttonInfo->action.Set( WIDGET_ACTION_COMMAND, BROWSER_COMMAND_REFRESH_SERVERS );
 
-		if( servers.Num() > 0 )
-		{
-			buttonInfo = mgr->GetCmdBar()->GetButton( idMenuWidget_CommandBar::BUTTON_JOY4 );
+		if( servers.Num() > 0 ) {
+			buttonInfo		  = mgr->GetCmdBar()->GetButton( idMenuWidget_CommandBar::BUTTON_JOY4 );
 			buttonInfo->label = "#str_swf_view_profile";
 			buttonInfo->action.Set( WIDGET_ACTION_COMMAND, BROWSER_COMMAND_SHOW_GAMERTAG );
 		}
@@ -343,40 +321,36 @@ idMenuScreen_Shell_GameBrowser::DescribeServers
 */
 void idMenuScreen_Shell_GameBrowser::DescribeServer( const serverInfo_t& server, const int index )
 {
+	idStr				  serverName;
+	int					  serverIndex = index;
+	bool				  joinable	  = false;
+	bool				  validMap	  = false;
+	int					  players	  = 0;
+	int					  maxPlayers  = 0;
+	idStrId				  mapName;
+	idStr				  modeName;
 
-	idStr serverName;
-	int serverIndex = index;
-	bool joinable = false;
-	bool validMap = false;
-	int players = 0;
-	int maxPlayers = 0;
-	idStrId mapName;
-	idStr modeName;
-
-	const idList< mpMap_t > maps = common->GetMapList();
-	const bool isMapValid = ( server.gameMap >= 0 ) && ( server.gameMap < maps.Num() );
-	if( !isMapValid )
-	{
-		validMap = false;
+	const idList<mpMap_t> maps		 = common->GetMapList();
+	const bool			  isMapValid = ( server.gameMap >= 0 ) && ( server.gameMap < maps.Num() );
+	if( !isMapValid ) {
+		validMap   = false;
 		serverName = server.serverName;
-		mapName = "#str_online_in_lobby";
-		modeName = "";
-		players = server.numPlayers;
+		mapName	   = "#str_online_in_lobby";
+		modeName   = "";
+		players	   = server.numPlayers;
 		maxPlayers = server.maxPlayers;
-		joinable = server.joinable;
-	}
-	else
-	{
-		mapName = common->GetMapList()[ server.gameMap ].mapName;
+		joinable   = server.joinable;
+	} else {
+		mapName = common->GetMapList()[server.gameMap].mapName;
 
 		const idStrList& modes = common->GetModeDisplayList();
-		idStr mode = idLocalization::GetString( modes[ idMath::ClampInt( 0, modes.Num() - 1, server.gameMode ) ] );
-		validMap = true;
-		serverName = server.serverName;
-		modeName = mode;
-		players = server.numPlayers;
-		maxPlayers = server.maxPlayers;
-		joinable = server.joinable;
+		idStr			 mode  = idLocalization::GetString( modes[idMath::ClampInt( 0, modes.Num() - 1, server.gameMode )] );
+		validMap			   = true;
+		serverName			   = server.serverName;
+		modeName			   = mode;
+		players				   = server.numPlayers;
+		maxPlayers			   = server.maxPlayers;
+		joinable			   = server.joinable;
 	}
 
 	listWidget->AddGame( serverName, mapName, modeName, serverIndex, players, maxPlayers, joinable, validMap );
@@ -389,42 +363,33 @@ idMenuScreen_Shell_GameBrowser::HandleAction h
 */
 bool idMenuScreen_Shell_GameBrowser::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandle )
 {
-	idMenuHandler_Shell* const mgr = dynamic_cast< idMenuHandler_Shell* >( menuData );
+	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );
 
-	if( mgr == NULL )
-	{
+	if( mgr == NULL ) {
 		return false;
 	}
 
-	if( mgr->ActiveScreen() != SHELL_AREA_BROWSER )
-	{
+	if( mgr->ActiveScreen() != SHELL_AREA_BROWSER ) {
 		return false;
 	}
 
-	widgetAction_t actionType = action.GetType();
-	const idSWFParmList& parms = action.GetParms();
+	widgetAction_t		 actionType = action.GetType();
+	const idSWFParmList& parms		= action.GetParms();
 
-	switch( actionType )
-	{
-		case WIDGET_ACTION_GO_BACK:
-		{
+	switch( actionType ) {
+		case WIDGET_ACTION_GO_BACK: {
 			menuData->SetNextScreen( SHELL_AREA_PARTY_LOBBY, MENU_TRANSITION_SIMPLE );
 			return true;
 		}
-		case WIDGET_ACTION_COMMAND:
-		{
-			switch( parms[ 0 ].ToInteger() )
-			{
-				case BROWSER_COMMAND_REFRESH_SERVERS:
-				{
+		case WIDGET_ACTION_COMMAND: {
+			switch( parms[0].ToInteger() ) {
+				case BROWSER_COMMAND_REFRESH_SERVERS: {
 					UpdateServerList();
 					break;
 				}
-				case BROWSER_COMMAND_SHOW_GAMERTAG:
-				{
+				case BROWSER_COMMAND_SHOW_GAMERTAG: {
 					int index = listWidget->GetServerIndex();
-					if( index != -1 )
-					{
+					if( index != -1 ) {
 						session->ShowServerGamerCardUI( index );
 					}
 					break;
@@ -432,24 +397,20 @@ bool idMenuScreen_Shell_GameBrowser::HandleAction( idWidgetAction& action, const
 			}
 			return true;
 		}
-		case WIDGET_ACTION_PRESS_FOCUSED:
-		{
+		case WIDGET_ACTION_PRESS_FOCUSED: {
 			int selectionIndex = listWidget->GetFocusIndex();
-			if( parms.Num() > 0 )
-			{
+			if( parms.Num() > 0 ) {
 				selectionIndex = parms[0].ToInteger();
 			}
 
-			if( selectionIndex != listWidget->GetFocusIndex() )
-			{
+			if( selectionIndex != listWidget->GetFocusIndex() ) {
 				listWidget->SetViewIndex( listWidget->GetViewOffset() + selectionIndex );
 				listWidget->SetFocusIndex( selectionIndex );
 				return true;
 			}
 
 			int index = listWidget->GetServerIndex();
-			if( index != -1 )
-			{
+			if( index != -1 ) {
 				session->ConnectToServer( index );
 			}
 			return true;

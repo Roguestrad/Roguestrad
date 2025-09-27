@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,32 +32,29 @@ If you have questions concerning this license or the applicable additional terms
 #define TILE_MAP_H
 
 // Tile specifies the position and size within a texture atlas.
-struct Tile
-{
-	Tile():
+struct Tile {
+	Tile() :
 		size( 0.0f )
 	{
 	}
 
 	idVec2 position;
-	float size;
+	float  size;
 };
 
 // TileNode of a quad-tree that efficiently packs all tiles in a limited area.
-struct TileNode
-{
-	TileNode():
+struct TileNode {
+	TileNode() :
 		level( 0 ),
 		minLevel( 0 )
 	{
-		for( unsigned int i = 0; i < 4; i++ )
-		{
+		for( unsigned int i = 0; i < 4; i++ ) {
 			childIndices[i] = -1;
 		}
 	}
 
-	idVec2 position;
-	int childIndices[4];
+	idVec2		 position;
+	int			 childIndices[4];
 	unsigned int level;
 	unsigned int minLevel;
 };
@@ -77,7 +75,7 @@ struct TileNode
 class TileMap
 {
 public:
-	TileMap():
+	TileMap() :
 		mapSize( 0.0f ),
 		log2MapSize( 0 ),
 		minAbsTileSize( 0.0f ),
@@ -89,10 +87,7 @@ public:
 	{
 	}
 
-	~TileMap()
-	{
-		Release();
-	}
+	~TileMap() { Release(); }
 
 	void Release();
 
@@ -103,20 +98,19 @@ public:
 	bool GetTile( float size, Tile& tile );
 
 private:
-	void BuildTree( TileNode& parentNode, unsigned int level );
+	void			 BuildTree( TileNode& parentNode, unsigned int level );
 
-	void FindNode( TileNode& parentNode, unsigned int level );
+	void			 FindNode( TileNode& parentNode, unsigned int level );
 
-	float			mapSize;
-	unsigned int	log2MapSize;
-	float			minAbsTileSize;
-	float			maxAbsTileSize;
-	unsigned int	numLevels;
+	float			 mapSize;
+	unsigned int	 log2MapSize;
+	float			 minAbsTileSize;
+	float			 maxAbsTileSize;
+	unsigned int	 numLevels;
 	idList<TileNode> tileNodeList;
-	unsigned int	numNodes;
-	unsigned int	nodeIndex;
-	TileNode*		foundNode;
+	unsigned int	 numNodes;
+	unsigned int	 nodeIndex;
+	TileNode*		 foundNode;
 };
-
 
 #endif

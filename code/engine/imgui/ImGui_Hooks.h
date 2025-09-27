@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,39 +32,37 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../sys/sys_public.h"
 
-
 namespace ImGuiHook
 {
 
-bool	Init( int windowWidth, int windowHeight );
+bool Init( int windowWidth, int windowHeight );
 
-bool	IsInitialized();
+bool IsInitialized();
 
 // tell imgui that the (game) window size has changed
-void	NotifyDisplaySizeChanged( int width, int height );
+void NotifyDisplaySizeChanged( int width, int height );
 
 // inject a sys event (keyboard, mouse, unicode character)
-bool	InjectSysEvent( const sysEvent_t* keyEvent );
+bool InjectSysEvent( const sysEvent_t* keyEvent );
 
 // inject the current mouse wheel delta for scrolling
-bool	InjectMouseWheel( int delta );
+bool InjectMouseWheel( int delta );
 
 // call this once per frame *before* calling ImGui::* commands to draw widgets etc
 // (but ideally after getting all new events)
-void	NewFrame();
+void NewFrame();
 
 // call this to enable custom ImGui windows which are not editors
-bool	IsReadyToRender();
+bool IsReadyToRender();
 
 // call this once per frame (at the end) - it'll render all ImGui::* commands
 // since NewFrame()
-void	Render();
+void Render();
 
-void	Destroy();
+void Destroy();
 
-bool	RightMouseActive();
+bool RightMouseActive();
 
-} //namespace ImGuiHook
-
+} // namespace ImGuiHook
 
 #endif /* NEO_IMGUI_IMGUI_HOOKS_H_ */

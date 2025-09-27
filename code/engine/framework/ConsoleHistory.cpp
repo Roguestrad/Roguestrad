@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,45 +32,37 @@ If you have questions concerning this license or the applicable additional terms
 
 idConsoleHistory consoleHistory;
 
-const char* HISTORY_FILE_NAME = "consoleHistory.txt";
+const char*		 HISTORY_FILE_NAME = "consoleHistory.txt";
 
 /*
 ========================
 idConsoleHistory::AddToHistory
 ========================
 */
-void idConsoleHistory::AddToHistory( const char* line, bool writeHistoryFile )
+void			 idConsoleHistory::AddToHistory( const char* line, bool writeHistoryFile )
 {
 	// empty lines never modify history
-	if( line == NULL )
-	{
+	if( line == NULL ) {
 		return;
 	}
 	const char* s;
-	for( s = line; *s != '\0'; s++ )
-	{
-		if( *s > ' ' )
-		{
+	for( s = line; *s != '\0'; s++ ) {
+		if( *s > ' ' ) {
 			break;
 		}
 	}
-	if( *s == '\0' )
-	{
+	if( *s == '\0' ) {
 		return;
 	}
 
 	// repeating the last command doesn't add to the list
-	if( historyLines[( numHistory - 1 ) & ( COMMAND_HISTORY - 1 )].Icmp( line ) == 0 )
-	{
-		if( historyLines[returnLine & ( COMMAND_HISTORY - 1 )].Icmp( line ) == 0 )
-		{
+	if( historyLines[( numHistory - 1 ) & ( COMMAND_HISTORY - 1 )].Icmp( line ) == 0 ) {
+		if( historyLines[returnLine & ( COMMAND_HISTORY - 1 )].Icmp( line ) == 0 ) {
 			// the command was retrieved from the history, so
 			// move the up point down so that up arrow will retrieve the same
 			// command again.
 			upPoint = returnLine;
-		}
-		else
-		{
+		} else {
 			// the command was typed again, so leave the up/down points alone
 		}
 		return;
@@ -77,24 +70,20 @@ void idConsoleHistory::AddToHistory( const char* line, bool writeHistoryFile )
 	// If we had previously retrieved older history commands with
 	// up arrow, the up/down point will be reset to the end where
 	// this command is added.
-	upPoint = numHistory;
+	upPoint	   = numHistory;
 	returnLine = numHistory;
-	downPoint = numHistory + 1;
-//	//mem.PushHeap();	// go to the system heap, not the current map heap
+	downPoint  = numHistory + 1;
+	//	//mem.PushHeap();	// go to the system heap, not the current map heap
 	historyLines[numHistory & ( COMMAND_HISTORY - 1 )] = line;
-//	//mem.PopHeap();
+	//	//mem.PopHeap();
 	numHistory++;
 
 	// write the history file to disk
-	if( writeHistoryFile )
-	{
+	if( writeHistoryFile ) {
 		idFile* f = fileSystem->OpenFileWrite( HISTORY_FILE_NAME );
-		if( f != NULL )
-		{
-			for( int i = numHistory - COMMAND_HISTORY; i < numHistory; i++ )
-			{
-				if( i < 0 )
-				{
+		if( f != NULL ) {
+			for( int i = numHistory - COMMAND_HISTORY; i < numHistory; i++ ) {
+				if( i < 0 ) {
 					continue;
 				}
 				f->Printf( "%s\n", historyLines[i & ( COMMAND_HISTORY - 1 )].c_str() );
@@ -112,32 +101,26 @@ idConsoleHistory::RetrieveFromHistory
 idStr idConsoleHistory::RetrieveFromHistory( bool backward )
 {
 	// if there are no commands in the history
-	if( numHistory == 0 )
-	{
+	if( numHistory == 0 ) {
 		return idStr( "" );
 	}
 	// move the history point
-	if( backward )
-	{
-		if( upPoint < numHistory - COMMAND_HISTORY || upPoint < 0 )
-		{
+	if( backward ) {
+		if( upPoint < numHistory - COMMAND_HISTORY || upPoint < 0 ) {
 			return idStr( "" );
 		}
 		returnLine = upPoint;
-		downPoint = upPoint + 1;
+		downPoint  = upPoint + 1;
 		upPoint--;
-	}
-	else
-	{
-		if( downPoint >= numHistory )
-		{
+	} else {
+		if( downPoint >= numHistory ) {
 			// DG: without this you'll get the last-but-one command when pressing UP
 			upPoint = downPoint - 1;
 			// DG end
 			return idStr( "" );
 		}
 		returnLine = downPoint;
-		upPoint = downPoint - 1;
+		upPoint	   = downPoint - 1;
 		downPoint++;
 	}
 	return historyLines[returnLine & ( COMMAND_HISTORY - 1 )];
@@ -151,17 +134,14 @@ idConsoleHistory::LoadHistoryFile
 void idConsoleHistory::LoadHistoryFile()
 {
 	idLexer lex;
-	if( lex.LoadFile( HISTORY_FILE_NAME, false ) )
-	{
-		while( 1 )
-		{
-			idStr	line;
+	if( lex.LoadFile( HISTORY_FILE_NAME, false ) ) {
+		while( 1 ) {
+			idStr line;
 			lex.ParseCompleteLine( line );
-			if( line.IsEmpty() )
-			{
+			if( line.IsEmpty() ) {
 				break;
 			}
-			line.StripTrailingWhitespace();	// remove the \n
+			line.StripTrailingWhitespace(); // remove the \n
 			AddToHistory( line, false );
 		}
 	}
@@ -174,17 +154,11 @@ idConsoleHistory::PrintHistory
 */
 void idConsoleHistory::PrintHistory()
 {
-	for( int i = numHistory - COMMAND_HISTORY; i < numHistory; i++ )
-	{
-		if( i < 0 )
-		{
+	for( int i = numHistory - COMMAND_HISTORY; i < numHistory; i++ ) {
+		if( i < 0 ) {
 			continue;
 		}
-		idLib::Printf( "%c%c%c%4i: %s\n",
-					   i == upPoint ? 'U' : ' ',
-					   i == downPoint ? 'D' : ' ',
-					   i == returnLine ? 'R' : ' ',
-					   i, historyLines[i & ( COMMAND_HISTORY - 1 )].c_str() );
+		idLib::Printf( "%c%c%c%4i: %s\n", i == upPoint ? 'U' : ' ', i == downPoint ? 'D' : ' ', i == returnLine ? 'R' : ' ', i, historyLines[i & ( COMMAND_HISTORY - 1 )].c_str() );
 	}
 }
 
@@ -195,8 +169,8 @@ idConsoleHistory::ClearHistory
 */
 void idConsoleHistory::ClearHistory()
 {
-	upPoint = 0;
-	downPoint = 0;
+	upPoint	   = 0;
+	downPoint  = 0;
 	returnLine = 0;
 	numHistory = 0;
 }

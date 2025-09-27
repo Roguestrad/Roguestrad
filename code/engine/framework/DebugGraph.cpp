@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -48,7 +49,6 @@ idDebugGraph::idDebugGraph( int numItems ) :
 	position( 100.0f, 100.0f, 100.0f, 100.0f ),
 	enable( true )
 {
-
 	Init( numItems );
 }
 
@@ -62,8 +62,7 @@ void idDebugGraph::Init( int numBars )
 	bars.SetNum( numBars );
 	labels.Clear();
 
-	for( int i = 0; i < numBars; i++ )
-	{
+	for( int i = 0; i < numBars; i++ ) {
 		bars[i].value = 0.0f;
 	}
 }
@@ -76,8 +75,8 @@ idDebugGraph::AddGridLine
 void idDebugGraph::AddGridLine( float value, const idVec4& color )
 {
 	graphPlot_t& line = grid.Alloc();
-	line.value = value;
-	line.color = color;
+	line.value		  = value;
+	line.color		  = color;
 }
 
 /*
@@ -87,19 +86,15 @@ idDebugGraph::SetValue
 */
 void idDebugGraph::SetValue( int b, float value, const idVec4& color )
 {
-	if( !enable )
-	{
+	if( !enable ) {
 		return;
 	}
-	if( b < 0 )
-	{
+	if( b < 0 ) {
 		bars.RemoveIndex( 0 );
 		graphPlot_t& graph = bars.Alloc();
-		graph.value = value;
-		graph.color = color;
-	}
-	else
-	{
+		graph.value		   = value;
+		graph.color		   = color;
+	} else {
 		bars[b].value = value;
 		bars[b].color = color;
 	}
@@ -112,8 +107,7 @@ idDebugGraph::SetLabel
 */
 void idDebugGraph::SetLabel( int b, const char* text )
 {
-	if( labels.Num() != bars.Num() )
-	{
+	if( labels.Num() != bars.Num() ) {
 		labels.SetNum( bars.Num() );
 	}
 	labels[b] = text;
@@ -126,98 +120,75 @@ idDebugGraph::Render
 */
 void idDebugGraph::Render( idRenderSystem* gui )
 {
-	if( !enable )
-	{
+	if( !enable ) {
 		return;
 	}
 
 	gui->DrawFilled( bgColor, position.x, position.y, position.z, position.w );
 
-	if( bars.Num() == 0 )
-	{
+	if( bars.Num() == 0 ) {
 		return;
 	}
 
-	if( sideways )
-	{
-		float barWidth = position.z - border * 2.0f;
+	if( sideways ) {
+		float barWidth	= position.z - border * 2.0f;
 		float barHeight = ( ( position.w - border ) / ( float )bars.Num() );
-		float barLeft = position.x + border;
-		float barTop = position.y + border;
+		float barLeft	= position.x + border;
+		float barTop	= position.y + border;
 
-		for( int i = 0; i < bars.Num(); i++ )
-		{
+		for( int i = 0; i < bars.Num(); i++ ) {
 			idVec4 rect( vec4_zero );
-			if( mode == GRAPH_LINE )
-			{
+			if( mode == GRAPH_LINE ) {
 				rect.Set( barLeft + barWidth * bars[i].value, barTop + i * barHeight, 1.0f, barHeight - border );
-			}
-			else if( mode == GRAPH_FILL )
-			{
+			} else if( mode == GRAPH_FILL ) {
 				rect.Set( barLeft, barTop + i * barHeight, barWidth * bars[i].value, barHeight - border );
-			}
-			else if( mode == GRAPH_FILL_REVERSE )
-			{
+			} else if( mode == GRAPH_FILL_REVERSE ) {
 				rect.Set( barLeft + barWidth, barTop + i * barHeight, barWidth - barWidth * bars[i].value, barHeight - border );
 			}
 			gui->DrawFilled( bars[i].color, rect.x, rect.y, rect.z, rect.w );
 		}
-		if( labels.Num() > 0 )
-		{
+		if( labels.Num() > 0 ) {
 			int maxLen = 0;
-			for( int i = 0; i < labels.Num(); i++ )
-			{
+			for( int i = 0; i < labels.Num(); i++ ) {
 				maxLen = Max( maxLen, labels[i].Length() );
 			}
 			idVec4 rect( position );
 			rect.x -= SMALLCHAR_WIDTH * maxLen;
 			rect.z = SMALLCHAR_WIDTH * maxLen;
 			gui->DrawFilled( bgColor, rect.x, rect.y, rect.z, rect.w );
-			for( int i = 0; i < labels.Num(); i++ )
-			{
+			for( int i = 0; i < labels.Num(); i++ ) {
 				idVec2 pos( barLeft - SMALLCHAR_WIDTH * maxLen, barTop + i * barHeight );
 				gui->DrawSmallStringExt( idMath::Ftoi( pos.x ), idMath::Ftoi( pos.y ), labels[i], fontColor, true );
 			}
 		}
-	}
-	else
-	{
-		float barWidth = ( ( position.z - border ) / ( float )bars.Num() );
+	} else {
+		float barWidth	= ( ( position.z - border ) / ( float )bars.Num() );
 		float barHeight = position.w - border * 2.0f;
-		float barLeft = position.x + border;
-		float barTop = position.y + border;
+		float barLeft	= position.x + border;
+		float barTop	= position.y + border;
 		float barBottom = barTop + barHeight;
 
-		for( int i = 0; i < grid.Num(); i++ )
-		{
+		for( int i = 0; i < grid.Num(); i++ ) {
 			idVec4 rect( position.x, barBottom - barHeight * grid[i].value, position.z, 1.0f );
 			gui->DrawFilled( grid[i].color, rect.x, rect.y, rect.z, rect.w );
 		}
-		for( int i = 0; i < bars.Num(); i++ )
-		{
+		for( int i = 0; i < bars.Num(); i++ ) {
 			idVec4 rect;
-			if( mode == GRAPH_LINE )
-			{
+			if( mode == GRAPH_LINE ) {
 				rect.Set( barLeft + i * barWidth, barBottom - barHeight * bars[i].value, barWidth - border, 1.0f );
-			}
-			else if( mode == GRAPH_FILL )
-			{
+			} else if( mode == GRAPH_FILL ) {
 				rect.Set( barLeft + i * barWidth, barBottom - barHeight * bars[i].value, barWidth - border, barHeight * bars[i].value );
-			}
-			else if( mode == GRAPH_FILL_REVERSE )
-			{
+			} else if( mode == GRAPH_FILL_REVERSE ) {
 				rect.Set( barLeft + i * barWidth, barTop, barWidth - border, barHeight * bars[i].value );
 			}
 			gui->DrawFilled( bars[i].color, rect.x, rect.y, rect.z, rect.w );
 		}
-		if( labels.Num() > 0 )
-		{
+		if( labels.Num() > 0 ) {
 			idVec4 rect( position );
 			rect.y += barHeight;
 			rect.w = SMALLCHAR_HEIGHT;
 			gui->DrawFilled( bgColor, rect.x, rect.y, rect.z, rect.w );
-			for( int i = 0; i < labels.Num(); i++ )
-			{
+			for( int i = 0; i < labels.Num(); i++ ) {
 				idVec2 pos( barLeft + i * barWidth, barBottom + border );
 				gui->DrawSmallStringExt( idMath::Ftoi( pos.x ), idMath::Ftoi( pos.y ), labels[i], fontColor, true );
 			}

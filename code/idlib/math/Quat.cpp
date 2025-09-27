@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -47,19 +48,16 @@ idQuat::ToRotation
 idRotation idQuat::ToRotation() const
 {
 	idVec3 vec;
-	float angle;
+	float  angle;
 
 	vec.x = x;
 	vec.y = y;
 	vec.z = z;
 	angle = idMath::ACos( w );
-	if( angle == 0.0f )
-	{
+	if( angle == 0.0f ) {
 		vec.Set( 0.0f, 0.0f, 1.0f );
-	}
-	else
-	{
-		//vec *= (1.0f / sin( angle ));
+	} else {
+		// vec *= (1.0f / sin( angle ));
 		vec.Normalize();
 		vec.FixDegenerateNormal();
 		angle *= 2.0f * idMath::M_RAD2DEG;
@@ -74,11 +72,11 @@ idQuat::ToMat3
 */
 idMat3 idQuat::ToMat3() const
 {
-	idMat3	mat;
-	float	wx, wy, wz;
-	float	xx, yy, yz;
-	float	xy, xz, zz;
-	float	x2, y2, z2;
+	idMat3 mat;
+	float  wx, wy, wz;
+	float  xx, yy, yz;
+	float  xy, xz, zz;
+	float  x2, y2, z2;
 
 	x2 = x + x;
 	y2 = y + y;
@@ -96,17 +94,17 @@ idMat3 idQuat::ToMat3() const
 	wy = w * y2;
 	wz = w * z2;
 
-	mat[ 0 ][ 0 ] = 1.0f - ( yy + zz );
-	mat[ 0 ][ 1 ] = xy - wz;
-	mat[ 0 ][ 2 ] = xz + wy;
+	mat[0][0] = 1.0f - ( yy + zz );
+	mat[0][1] = xy - wz;
+	mat[0][2] = xz + wy;
 
-	mat[ 1 ][ 0 ] = xy + wz;
-	mat[ 1 ][ 1 ] = 1.0f - ( xx + zz );
-	mat[ 1 ][ 2 ] = yz - wx;
+	mat[1][0] = xy + wz;
+	mat[1][1] = 1.0f - ( xx + zz );
+	mat[1][2] = yz - wx;
 
-	mat[ 2 ][ 0 ] = xz - wy;
-	mat[ 2 ][ 1 ] = yz + wx;
-	mat[ 2 ][ 2 ] = 1.0f - ( xx + yy );
+	mat[2][0] = xz - wy;
+	mat[2][1] = yz + wx;
+	mat[2][2] = 1.0f - ( xx + yy );
 
 	return mat;
 }
@@ -128,8 +126,7 @@ idQuat::ToCQuat
 */
 idCQuat idQuat::ToCQuat() const
 {
-	if( w < 0.0f )
-	{
+	if( w < 0.0f ) {
 		return idCQuat( -x, -y, -z );
 	}
 	return idCQuat( x, y, z );
@@ -170,40 +167,33 @@ Spherical linear interpolation between two quaternions.
 */
 idQuat& idQuat::Slerp( const idQuat& from, const idQuat& to, float t )
 {
-	idQuat	temp;
-	float	omega, cosom, sinom, scale0, scale1;
+	idQuat temp;
+	float  omega, cosom, sinom, scale0, scale1;
 
-	if( t <= 0.0f )
-	{
+	if( t <= 0.0f ) {
 		*this = from;
 		return *this;
 	}
 
-	if( t >= 1.0f )
-	{
+	if( t >= 1.0f ) {
 		*this = to;
 		return *this;
 	}
 
-	if( from == to )
-	{
+	if( from == to ) {
 		*this = to;
 		return *this;
 	}
 
 	cosom = from.x * to.x + from.y * to.y + from.z * to.z + from.w * to.w;
-	if( cosom < 0.0f )
-	{
-		temp = -to;
+	if( cosom < 0.0f ) {
+		temp  = -to;
 		cosom = -cosom;
-	}
-	else
-	{
+	} else {
 		temp = to;
 	}
 
-	if( ( 1.0f - cosom ) > 1e-6f )
-	{
+	if( ( 1.0f - cosom ) > 1e-6f ) {
 #if 0
 		omega = acos( cosom );
 		sinom = 1.0f / sin( omega );
@@ -211,14 +201,12 @@ idQuat& idQuat::Slerp( const idQuat& from, const idQuat& to, float t )
 		scale1 = sin( t * omega ) * sinom;
 #else
 		scale0 = 1.0f - cosom * cosom;
-		sinom = idMath::InvSqrt( scale0 );
-		omega = idMath::ATan16( scale0 * sinom, cosom );
+		sinom  = idMath::InvSqrt( scale0 );
+		omega  = idMath::ATan16( scale0 * sinom, cosom );
 		scale0 = idMath::Sin16( ( 1.0f - t ) * omega ) * sinom;
 		scale1 = idMath::Sin16( t * omega ) * sinom;
 #endif
-	}
-	else
-	{
+	} else {
 		scale0 = 1.0f - t;
 		scale1 = t;
 	}
@@ -237,20 +225,17 @@ traces out the exact same curve as Slerp but does not maintain a constant speed 
 */
 idQuat& idQuat::Lerp( const idQuat& from, const idQuat& to, const float t )
 {
-	if( t <= 0.0f )
-	{
+	if( t <= 0.0f ) {
 		*this = from;
 		return *this;
 	}
 
-	if( t >= 1.0f )
-	{
+	if( t >= 1.0f ) {
 		*this = to;
 		return *this;
 	}
 
-	if( from == to )
-	{
+	if( from == to ) {
 		*this = to;
 		return *this;
 	}

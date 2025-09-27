@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -28,27 +29,22 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef SYS_FILESYSTEM_H
 #define SYS_FILESYSTEM_H
 
-void			Sys_Mkdir( const char* path );
-bool			Sys_Rmdir( const char* path );
-bool			Sys_IsFileWritable( const char* path );
+void Sys_Mkdir( const char* path );
+bool Sys_Rmdir( const char* path );
+bool Sys_IsFileWritable( const char* path );
 
-enum sysFolder_t
-{
-	FOLDER_ERROR	= -1,
-	FOLDER_NO		= 0,
-	FOLDER_YES		= 1
-};
+enum sysFolder_t { FOLDER_ERROR = -1, FOLDER_NO = 0, FOLDER_YES = 1 };
 
 // returns FOLDER_YES if the specified path is a folder
-sysFolder_t		Sys_IsFolder( const char* path );
+sysFolder_t Sys_IsFolder( const char* path );
 
 // use fs_debug to verbose Sys_ListFiles
 // returns -1 if directory was not found (the list is cleared)
-int				Sys_ListFiles( const char* directory, const char* extension, idList<class idStr>& list );
+int			Sys_ListFiles( const char* directory, const char* extension, idList<class idStr>& list );
 
-const char* 	Sys_EXEPath();
-const char* 	Sys_CWD();
+const char* Sys_EXEPath();
+const char* Sys_CWD();
 
-const char* 	Sys_LaunchPath();
+const char* Sys_LaunchPath();
 
 #endif

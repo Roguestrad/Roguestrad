@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -45,71 +46,69 @@ public:
 	idSWFSprite( class idSWF* swf );
 	~idSWFSprite();
 
-	void	Load( idSWFBitStream& bitstream, bool parseDictionary );
+	void		 Load( idSWFBitStream& bitstream, bool parseDictionary );
 
-	void	Read( idFile* f );
-	void	Write( idFile* f );
+	void		 Read( idFile* f );
+	void		 Write( idFile* f );
 
 	// RB begin
-	void	ReadJSON( rapidjson::Value& entry );
+	void		 ReadJSON( rapidjson::Value& entry );
 
-	void	WriteJSON( idFile* f, idFile* luaFile, int characterID );
-	void	WriteJSON_PlaceObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
-	void	WriteJSON_PlaceObject3( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
-	void	WriteJSON_RemoveObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
-	void	WriteJSON_DoAction( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
-	void	WriteJSON_DoLua( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void		 WriteJSON( idFile* f, idFile* luaFile, int characterID );
+	void		 WriteJSON_PlaceObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void		 WriteJSON_PlaceObject3( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void		 WriteJSON_RemoveObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void		 WriteJSON_DoAction( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void		 WriteJSON_DoLua( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
 
-	void	WriteSVG( idFile* f, int characterID, const idList< idSWFDictionaryEntry, TAG_SWF >& dict );
-	void	WriteSVG_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList< idSWFDictionaryEntry, TAG_SWF >& dict );
+	void		 WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
+	void		 WriteSVG_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
 
-	void	WriteSVGUnfolded_r( idFile* f, int characterID, const idList< idSWFDictionaryEntry, TAG_SWF >& dict, const swfMatrix_t& parentMatrix, const swfColorXform_t& parentColor, int indent );
-	void	WriteSVGUnfolded_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList< idSWFDictionaryEntry, TAG_SWF >& dict, const swfMatrix_t& parentMatrix, const swfColorXform_t& parentColor, int indent );
+	void		 WriteSVGUnfolded_r( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict, const swfMatrix_t& parentMatrix, const swfColorXform_t& parentColor, int indent );
+	void		 WriteSVGUnfolded_PlaceObject2( idFile*		 f,
+				idSWFBitStream&								 bitstream,
+				int											 characterID,
+				int											 commandID,
+				const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
+				const swfMatrix_t&							 parentMatrix,
+				const swfColorXform_t&						 parentColor,
+				int											 indent );
 
-	void	WriteSWF( idFile_SWF& f, int characterID );
+	void		 WriteSWF( idFile_SWF& f, int characterID );
 
-	uint16	GetFrameCount()
-	{
-		return frameCount;
-	}
+	uint16		 GetFrameCount() { return frameCount; }
 	// RB end
 
-	class idSWF* GetSWF()
-	{
-		return swf;
-	}
+	class idSWF* GetSWF() { return swf; }
 
 private:
 	friend class idSWFSpriteInstance;
 	friend class idSWFScriptFunction_Script;
 
-	class idSWF* swf;	// this is required so things can access the dictionary, it would be kind of nice if we just had an idSWFDictionary pointer instead
+	class idSWF*			swf; // this is required so things can access the dictionary, it would be kind of nice if we just had an idSWFDictionary pointer instead
 
-	uint16	frameCount;
+	uint16					frameCount;
 
 	// frameOffsets contains offsets into the commands list for each frame
 	// the first command for frame 3 is frameOffsets[2] and the last command is frameOffsets[3]
-	idList< uint32, TAG_SWF >	frameOffsets;
+	idList<uint32, TAG_SWF> frameOffsets;
 
-	struct swfFrameLabel_t
-	{
-		idStr frameLabel;
+	struct swfFrameLabel_t {
+		idStr  frameLabel;
 		uint32 frameNum;
 	};
-	idList< swfFrameLabel_t, TAG_SWF > frameLabels;
+	idList<swfFrameLabel_t, TAG_SWF> frameLabels;
 
-	struct swfSpriteCommand_t
-	{
-		swfTag_t		tag;
-		idSWFBitStream	stream;
+	struct swfSpriteCommand_t {
+		swfTag_t	   tag;
+		idSWFBitStream stream;
 	};
-	idList< swfSpriteCommand_t, TAG_SWF > commands;
+	idList<swfSpriteCommand_t, TAG_SWF> commands;
 
 	//// [ES-BrianBugh 1/16/10] - There can be multiple DoInitAction tags, and all need to be executed.
-	idList<idSWFBitStream, TAG_SWF> doInitActions;
+	idList<idSWFBitStream, TAG_SWF>		doInitActions;
 
-	byte* commandBuffer;
-
+	byte*								commandBuffer;
 };
 
 #endif // !__SWF_SPRITES_H__

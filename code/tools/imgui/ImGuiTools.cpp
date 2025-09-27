@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -36,11 +37,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "afeditor/AfEditor.h"
 #include "lighteditor/LightEditor.h"
 
-
 extern idCVar g_editEntityMode;
 
-static bool releaseMouse = false;
-
+static bool	  releaseMouse = false;
 
 namespace ImGuiTools
 {
@@ -64,33 +63,26 @@ bool ReleaseMouseForTools()
 
 void DrawToolWindows()
 {
-	if( !AreEditorsActive() )
-	{
+	if( !AreEditorsActive() ) {
 		return;
 	}
 
-	if( LightEditor::Instance().IsShown() )
-	{
+	if( LightEditor::Instance().IsShown() ) {
 		LightEditor::Instance().Draw();
-	}
-	else if( AfEditor::Instance().IsShown() )
-	{
+	} else if( AfEditor::Instance().IsShown() ) {
 		AfEditor::Instance().Draw();
 	}
 }
 
 void LightEditorInit( const idDict* dict, idEntity* ent )
 {
-	if( dict == NULL || ent == NULL )
-	{
+	if( dict == NULL || ent == NULL ) {
 		return;
 	}
 
 	// NOTE: we can't access idEntity (it's just a declaration), because it should
 	// be game/mod specific. but we can at least check the spawnclass from the dict.
-	idassert( idStr::Icmp( dict->GetString( "spawnclass" ), "idLight" ) == 0
-			  && "LightEditorInit() must only be called with light entities or NULL!" );
-
+	idassert( idStr::Icmp( dict->GetString( "spawnclass" ), "idLight" ) == 0 && "LightEditorInit() must only be called with light entities or NULL!" );
 
 	LightEditor::Instance().ShowIt( true );
 	SetReleaseToolMouse( true );
@@ -104,4 +96,4 @@ void AfEditorInit()
 	SetReleaseToolMouse( true );
 }
 
-} //namespace ImGuiTools
+} // namespace ImGuiTools

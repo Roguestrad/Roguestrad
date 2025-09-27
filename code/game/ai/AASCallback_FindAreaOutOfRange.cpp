@@ -20,7 +20,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -31,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "AAS_local.h"
-#include "../Game_local.h"		// for print and error
+#include "../Game_local.h" // for print and error
 
 #include "AASCallback_FindAreaOutOfRange.h"
 
@@ -42,8 +43,8 @@ idAASCallback_FindAreaOutOfRange::idAASCallback_FindAreaOutOfRange
 */
 idAASCallback_FindAreaOutOfRange::idAASCallback_FindAreaOutOfRange( const idVec3& targetPos, float maxDist )
 {
-	this->targetPos		= targetPos;
-	this->maxDistSqr	= maxDist * maxDist;
+	this->targetPos	 = targetPos;
+	this->maxDistSqr = maxDist * maxDist;
 }
 
 /*
@@ -55,19 +56,16 @@ bool idAASCallback_FindAreaOutOfRange::AreaIsGoal( const idAAS* aas, int areaNum
 {
 	const idVec3& areaCenter = aas->AreaCenter( areaNum );
 
-	if( maxDistSqr > 0.0f )
-	{
+	if( maxDistSqr > 0.0f ) {
 		float dist = ( targetPos.ToVec2() - areaCenter.ToVec2() ).LengthSqr();
-		if( dist < maxDistSqr )
-		{
+		if( dist < maxDistSqr ) {
 			return false;
 		}
 	}
 
-	trace_t	trace;
+	trace_t trace;
 	gameLocal.clip.TracePoint( trace, targetPos, areaCenter + idVec3( 0.0f, 0.0f, 1.0f ), MASK_OPAQUE, NULL );
-	if( trace.fraction < 1.0f )
-	{
+	if( trace.fraction < 1.0f ) {
 		return false;
 	}
 

@@ -22,7 +22,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -33,46 +34,42 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "../RenderCommon.h"
-#include "../simplex.h"	// line font definition
+#include "../simplex.h" // line font definition
 #include "../ImmediateMode.h"
 
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;
 
-idCVar r_showCenterOfProjection( "r_showCenterOfProjection", "0", CVAR_RENDERER | CVAR_BOOL, "Draw a cross to show the center of projection" );
-idCVar r_showLines( "r_showLines", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = draw alternate horizontal lines, 2 = draw alternate vertical lines" );
+idCVar				  r_showCenterOfProjection( "r_showCenterOfProjection", "0", CVAR_RENDERER | CVAR_BOOL, "Draw a cross to show the center of projection" );
+idCVar				  r_showLines( "r_showLines", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = draw alternate horizontal lines, 2 = draw alternate vertical lines" );
 
+debugLine_t			  rb_debugLines[MAX_DEBUG_LINES];
+int					  rb_numDebugLines = 0;
+int					  rb_debugLineTime = 0;
 
+debugText_t			  rb_debugText[MAX_DEBUG_TEXT];
+int					  rb_numDebugText  = 0;
+int					  rb_debugTextTime = 0;
 
-debugLine_t		rb_debugLines[ MAX_DEBUG_LINES ];
-int				rb_numDebugLines = 0;
-int				rb_debugLineTime = 0;
+debugPolygon_t		  rb_debugPolygons[MAX_DEBUG_POLYGONS];
+int					  rb_numDebugPolygons = 0;
+int					  rb_debugPolygonTime = 0;
 
-debugText_t		rb_debugText[ MAX_DEBUG_TEXT ];
-int				rb_numDebugText = 0;
-int				rb_debugTextTime = 0;
+static void			  RB_DrawText( const char* text, const idVec3& origin, float scale, const idVec4& color, const idMat3& viewAxis, const int align );
 
-debugPolygon_t	rb_debugPolygons[ MAX_DEBUG_POLYGONS ];
-int				rb_numDebugPolygons = 0;
-int				rb_debugPolygonTime = 0;
-
-static void RB_DrawText( const char* text, const idVec3& origin, float scale, const idVec4& color, const idMat3& viewAxis, const int align );
-
-void RB_SetMVP( const idRenderMatrix& mvp );
+void				  RB_SetMVP( const idRenderMatrix& mvp );
 
 /*
 ================
 RB_DrawBounds
 ================
 */
-void RB_DrawBounds( const idBounds& bounds )
+void				  RB_DrawBounds( const idBounds& bounds )
 {
-	if( bounds.IsCleared() )
-	{
+	if( bounds.IsCleared() ) {
 		return;
 	}
 }
-
 
 /*
 ================
@@ -82,22 +79,20 @@ idRenderBackend::DBG_SimpleSurfaceSetup
 void idRenderBackend::DBG_SimpleSurfaceSetup( const drawSurf_t* drawSurf )
 {
 	// change the matrix if needed
-	if( drawSurf->space != currentSpace )
-	{
+	if( drawSurf->space != currentSpace ) {
 		// RB begin
 		RB_SetMVP( drawSurf->space->mvp );
-		//qglLoadMatrixf( drawSurf->space->modelViewMatrix );
-		// RB end
+		// qglLoadMatrixf( drawSurf->space->modelViewMatrix );
+		//  RB end
 		currentSpace = drawSurf->space;
 	}
 
 	// change the scissor if needed
-	if( !currentScissor.Equals( drawSurf->scissorRect ) && r_useScissor.GetBool() )
-	{
+	if( !currentScissor.Equals( drawSurf->scissorRect ) && r_useScissor.GetBool() ) {
 		GL_Scissor( viewDef->viewport.x1 + drawSurf->scissorRect.x1,
-					viewDef->viewport.y2 - drawSurf->scissorRect.y2,
-					drawSurf->scissorRect.x2 + 1 - drawSurf->scissorRect.x1,
-					drawSurf->scissorRect.y2 + 1 - drawSurf->scissorRect.y1 );
+			viewDef->viewport.y2 - drawSurf->scissorRect.y2,
+			drawSurf->scissorRect.x2 + 1 - drawSurf->scissorRect.x1,
+			drawSurf->scissorRect.y2 + 1 - drawSurf->scissorRect.y1 );
 
 		currentScissor = drawSurf->scissorRect;
 	}
@@ -117,10 +112,7 @@ void idRenderBackend::DBG_SimpleWorldSetup()
 	// RB end
 
 	// RB: (0, 0) starts in the upper left corner compared to OpenGL!
-	GL_Scissor( viewDef->viewport.x1 + viewDef->scissor.x1,
-				viewDef->viewport.y2 - viewDef->scissor.y2,
-				viewDef->scissor.x2 + 1 - viewDef->scissor.x1,
-				viewDef->scissor.y2 + 1 - viewDef->scissor.y1 );
+	GL_Scissor( viewDef->viewport.x1 + viewDef->scissor.x1, viewDef->viewport.y2 - viewDef->scissor.y2, viewDef->scissor.x2 + 1 - viewDef->scissor.x1, viewDef->scissor.y2 + 1 - viewDef->scissor.y1 );
 
 	currentScissor = viewDef->scissor;
 }
@@ -163,7 +155,6 @@ void idRenderBackend::DBG_ScanStencilBuffer()
 {
 }
 
-
 /*
 ===================
 idRenderBackend::DBG_CountStencilBuffer
@@ -195,36 +186,31 @@ idRenderBackend::DBG_ShowOverdraw
 */
 void idRenderBackend::DBG_ShowOverdraw()
 {
-	const idMaterial* 	material;
-	int					i;
-	drawSurf_t** 		drawSurfs;
-	const drawSurf_t* 	surf;
-	int					numDrawSurfs;
-	viewLight_t* 		vLight;
+	const idMaterial* material;
+	int				  i;
+	drawSurf_t**	  drawSurfs;
+	const drawSurf_t* surf;
+	int				  numDrawSurfs;
+	viewLight_t*	  vLight;
 
-	if( r_showOverDraw.GetInteger() == 0 )
-	{
+	if( r_showOverDraw.GetInteger() == 0 ) {
 		return;
 	}
 
 	material = declManager->FindMaterial( "textures/common/overdrawtest", false );
-	if( material == NULL )
-	{
+	if( material == NULL ) {
 		return;
 	}
 
-	drawSurfs = viewDef->drawSurfs;
+	drawSurfs	 = viewDef->drawSurfs;
 	numDrawSurfs = viewDef->numDrawSurfs;
 
 	int interactions = 0;
-	for( vLight = viewDef->viewLights; vLight; vLight = vLight->next )
-	{
-		for( surf = vLight->localInteractions; surf; surf = surf->nextOnLight )
-		{
+	for( vLight = viewDef->viewLights; vLight; vLight = vLight->next ) {
+		for( surf = vLight->localInteractions; surf; surf = surf->nextOnLight ) {
 			interactions++;
 		}
-		for( surf = vLight->globalInteractions; surf; surf = surf->nextOnLight )
-		{
+		for( surf = vLight->globalInteractions; surf; surf = surf->nextOnLight ) {
 			interactions++;
 		}
 	}
@@ -232,40 +218,34 @@ void idRenderBackend::DBG_ShowOverdraw()
 	// FIXME: can't frame alloc from the renderer back-end
 	drawSurf_t** newDrawSurfs = ( drawSurf_t** )R_FrameAlloc( numDrawSurfs + interactions * sizeof( newDrawSurfs[0] ), FRAME_ALLOC_DRAW_SURFACE_POINTER );
 
-	for( i = 0; i < numDrawSurfs; i++ )
-	{
+	for( i = 0; i < numDrawSurfs; i++ ) {
 		surf = drawSurfs[i];
-		if( surf->material )
-		{
+		if( surf->material ) {
 			const_cast<drawSurf_t*>( surf )->material = material;
 		}
 		newDrawSurfs[i] = const_cast<drawSurf_t*>( surf );
 	}
 
-	for( vLight = viewDef->viewLights; vLight; vLight = vLight->next )
-	{
-		for( surf = vLight->localInteractions; surf; surf = surf->nextOnLight )
-		{
+	for( vLight = viewDef->viewLights; vLight; vLight = vLight->next ) {
+		for( surf = vLight->localInteractions; surf; surf = surf->nextOnLight ) {
 			const_cast<drawSurf_t*>( surf )->material = material;
-			newDrawSurfs[i++] = const_cast<drawSurf_t*>( surf );
+			newDrawSurfs[i++]						  = const_cast<drawSurf_t*>( surf );
 		}
-		for( surf = vLight->globalInteractions; surf; surf = surf->nextOnLight )
-		{
+		for( surf = vLight->globalInteractions; surf; surf = surf->nextOnLight ) {
 			const_cast<drawSurf_t*>( surf )->material = material;
-			newDrawSurfs[i++] = const_cast<drawSurf_t*>( surf );
+			newDrawSurfs[i++]						  = const_cast<drawSurf_t*>( surf );
 		}
-		vLight->localInteractions = NULL;
+		vLight->localInteractions  = NULL;
 		vLight->globalInteractions = NULL;
 	}
 
-	switch( r_showOverDraw.GetInteger() )
-	{
+	switch( r_showOverDraw.GetInteger() ) {
 		case 1: // geometry overdraw
-			const_cast<viewDef_t*>( viewDef )->drawSurfs = newDrawSurfs;
+			const_cast<viewDef_t*>( viewDef )->drawSurfs	= newDrawSurfs;
 			const_cast<viewDef_t*>( viewDef )->numDrawSurfs = numDrawSurfs;
 			break;
 		case 2: // light interaction overdraw
-			const_cast<viewDef_t*>( viewDef )->drawSurfs = &newDrawSurfs[numDrawSurfs];
+			const_cast<viewDef_t*>( viewDef )->drawSurfs	= &newDrawSurfs[numDrawSurfs];
 			const_cast<viewDef_t*>( viewDef )->numDrawSurfs = interactions;
 			break;
 		case 3: // geometry + light interaction overdraw
@@ -288,7 +268,6 @@ void idRenderBackend::DBG_ShowIntensity()
 {
 }
 
-
 /*
 ===================
 idRenderBackend::DBG_ShowDepthBuffer
@@ -310,12 +289,11 @@ based on how many lights are effecting it
 */
 void idRenderBackend::DBG_ShowLightCount()
 {
-	int		i;
-	const drawSurf_t*	surf;
-	const viewLight_t*	vLight;
+	int				   i;
+	const drawSurf_t*  surf;
+	const viewLight_t* vLight;
 
-	if( !r_showLightCount.GetBool() )
-	{
+	if( !r_showLightCount.GetBool() ) {
 		return;
 	}
 
@@ -324,23 +302,17 @@ void idRenderBackend::DBG_ShowLightCount()
 	GL_Clear( false, false, true, 0, 0.0f, 0.0f, 0.0f, 0.0f );
 
 	// optionally count everything through walls
-	if( r_showLightCount.GetInteger() >= 2 )
-	{
+	if( r_showLightCount.GetInteger() >= 2 ) {
 		GL_State( GLS_DEPTHFUNC_EQUAL | GLS_STENCIL_OP_FAIL_KEEP | GLS_STENCIL_OP_ZFAIL_INCR | GLS_STENCIL_OP_PASS_INCR );
-	}
-	else
-	{
+	} else {
 		GL_State( GLS_DEPTHFUNC_EQUAL | GLS_STENCIL_OP_FAIL_KEEP | GLS_STENCIL_OP_ZFAIL_KEEP | GLS_STENCIL_OP_PASS_INCR );
 	}
 
 	globalImages->defaultImage->Bind();
 
-	for( vLight = viewDef->viewLights; vLight; vLight = vLight->next )
-	{
-		for( i = 0; i < 2; i++ )
-		{
-			for( surf = i ? vLight->localInteractions : vLight->globalInteractions; surf; surf = ( drawSurf_t* )surf->nextOnLight )
-			{
+	for( vLight = viewDef->viewLights; vLight; vLight = vLight->next ) {
+		for( i = 0; i < 2; i++ ) {
+			for( surf = i ? vLight->localInteractions : vLight->globalInteractions; surf; surf = ( drawSurf_t* )surf->nextOnLight ) {
 				DBG_SimpleSurfaceSetup( surf );
 				DrawElementsWithCounters( surf );
 			}
@@ -350,8 +322,7 @@ void idRenderBackend::DBG_ShowLightCount()
 	// display the results
 	DBG_ColorByStencilBuffer();
 
-	if( r_showLightCount.GetInteger() > 2 )
-	{
+	if( r_showLightCount.GetInteger() > 2 ) {
 		DBG_CountStencilBuffer();
 	}
 }
@@ -370,11 +341,9 @@ void idRenderBackend::DBG_RenderDrawSurfListWithFunction( drawSurf_t** drawSurfs
 {
 	currentSpace = NULL;
 
-	for( int i = 0 ; i < numDrawSurfs ; i++ )
-	{
+	for( int i = 0; i < numDrawSurfs; i++ ) {
 		const drawSurf_t* drawSurf = drawSurfs[i];
-		if( drawSurf == NULL )
-		{
+		if( drawSurf == NULL ) {
 			continue;
 		}
 
@@ -382,71 +351,58 @@ void idRenderBackend::DBG_RenderDrawSurfListWithFunction( drawSurf_t** drawSurfs
 
 		// RB begin
 #if 1
-		if( drawSurf->space != currentSpace )
-		{
+		if( drawSurf->space != currentSpace ) {
 			currentSpace = drawSurf->space;
 
 			RB_SetMVP( drawSurf->space->mvp );
 		}
 
 		// give every surface a different color
-		//static idVec4 colors[] = { colorRed, colorGreen, colorBlue, colorYellow, colorMagenta, colorCyan, colorWhite, colorPurple };
-		//GL_Color( colors[i & 7] );
-		//GL_Color( colors[drawSurf->ambientCache & 7] );
+		// static idVec4 colors[] = { colorRed, colorGreen, colorBlue, colorYellow, colorMagenta, colorCyan, colorWhite, colorPurple };
+		// GL_Color( colors[i & 7] );
+		// GL_Color( colors[drawSurf->ambientCache & 7] );
 #else
 
-		if( drawSurf->space != NULL )  	// is it ever NULL?  Do we need to check?
+		if( drawSurf->space != NULL ) // is it ever NULL?  Do we need to check?
 		{
 			// Set these values ahead of time so we don't have to reconstruct the matrices on the consoles
-			if( drawSurf->space->weaponDepthHack )
-			{
+			if( drawSurf->space->weaponDepthHack ) {
 				RB_SetWeaponDepthHack();
 			}
 
-			if( drawSurf->space->modelDepthHack != 0.0f )
-			{
+			if( drawSurf->space->modelDepthHack != 0.0f ) {
 				RB_SetModelDepthHack( drawSurf->space->modelDepthHack );
 			}
 
 			// change the matrix if needed
-			if( drawSurf->space != backEnd.currentSpace )
-			{
+			if( drawSurf->space != backEnd.currentSpace ) {
 				RB_LoadMatrixWithBypass( drawSurf->space->modelViewMatrix );
 			}
 
-			if( drawSurf->space->weaponDepthHack )
-			{
+			if( drawSurf->space->weaponDepthHack ) {
 				RB_EnterWeaponDepthHack();
 			}
 
-			if( drawSurf->space->modelDepthHack != 0.0f )
-			{
+			if( drawSurf->space->modelDepthHack != 0.0f ) {
 				RB_EnterModelDepthHack( drawSurf->space->modelDepthHack );
 			}
 		}
 #endif
 
-		if( drawSurf->jointCache )
-		{
+		if( drawSurf->jointCache ) {
 			GL_Color( colorRed );
 			renderProgManager.BindShader_ColorSkinned();
-		}
-		else
-		{
+		} else {
 			GL_Color( colorCyan );
 			renderProgManager.BindShader_Color();
 		}
 		// RB end
 
 		// change the scissor if needed
-		if( r_useScissor.GetBool() && !currentScissor.Equals( drawSurf->scissorRect ) )
-		{
+		if( r_useScissor.GetBool() && !currentScissor.Equals( drawSurf->scissorRect ) ) {
 			currentScissor = drawSurf->scissorRect;
 
-			GL_Scissor( viewDef->viewport.x1 + currentScissor.x1,
-						viewDef->viewport.y2 - currentScissor.y2,
-						currentScissor.x2 + 1 - currentScissor.x1,
-						currentScissor.y2 + 1 - currentScissor.y1 );
+			GL_Scissor( viewDef->viewport.x1 + currentScissor.x1, viewDef->viewport.y2 - currentScissor.y2, currentScissor.x2 + 1 - currentScissor.x1, currentScissor.y2 + 1 - currentScissor.y1 );
 		}
 
 		// render it
@@ -567,12 +523,10 @@ Debugging tool
 */
 void idRenderBackend::DBG_ShowTris( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
-
 	modelTrace_t mt;
-	idVec3 end;
+	idVec3		 end;
 
-	if( r_showTris.GetInteger() == 0 )
-	{
+	if( r_showTris.GetInteger() == 0 ) {
 		return;
 	}
 
@@ -580,12 +534,11 @@ void idRenderBackend::DBG_ShowTris( drawSurf_t** drawSurfs, int numDrawSurfs )
 
 	GL_PolygonOffset( -1.0f, -2.0f );
 
-	switch( r_showTris.GetInteger() )
-	{
+	switch( r_showTris.GetInteger() ) {
 		case 1: // only draw visible ones
 			GL_State( GLS_DEPTHMASK | GLS_ALPHAMASK | GLS_POLYMODE_LINE | GLS_POLYGON_OFFSET );
 			break;
-		case 2:	// draw all front facing
+		case 2: // draw all front facing
 		case 3: // draw all
 			GL_State( GLS_DEPTHMASK | GLS_ALPHAMASK | GLS_POLYMODE_LINE | GLS_POLYGON_OFFSET | GLS_DEPTHFUNC_ALWAYS );
 			break;
@@ -595,18 +548,16 @@ void idRenderBackend::DBG_ShowTris( drawSurf_t** drawSurfs, int numDrawSurfs )
 			break;
 	}
 
-	if( r_showTris.GetInteger() == 3 )
-	{
-		GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_TWOSIDED );       // SRS - Added parens to silence build warnings
+	if( r_showTris.GetInteger() == 3 ) {
+		GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_TWOSIDED ); // SRS - Added parens to silence build warnings
 	}
 
 	GL_Color( color );
 
 	DBG_RenderDrawSurfListWithFunction( drawSurfs, numDrawSurfs );
 
-	if( r_showTris.GetInteger() == 3 )
-	{
-		GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_FRONTSIDED );     // SRS - Added parens to silence build warnings
+	if( r_showTris.GetInteger() == 3 ) {
+		GL_State( ( glStateBits & ~( GLS_CULL_MASK ) ) | GLS_CULL_FRONTSIDED ); // SRS - Added parens to silence build warnings
 	}
 }
 
@@ -618,49 +569,42 @@ Debugging tool
 =====================
 */
 
-
-static idStr surfModelName, surfMatName;
+static idStr  surfModelName, surfMatName;
 static idVec3 surfPoint;
-static bool surfTraced = false;
+static bool	  surfTraced = false;
 
-
-void idRenderSystemLocal::OnFrame()
+void		  idRenderSystemLocal::OnFrame()
 {
 	// Do tracing at a safe time to avoid threading issues.
 	modelTrace_t mt;
-	idVec3 start, end;
+	idVec3		 start, end;
 
 	surfTraced = false;
 
-	if( !r_showSurfaceInfo.GetBool() )
-	{
+	if( !r_showSurfaceInfo.GetBool() ) {
 		return;
 	}
 
-	if( tr.primaryView == NULL )
-	{
+	if( tr.primaryView == NULL ) {
 		return;
 	}
 
 	// start far enough away that we don't hit the player model
 	start = tr.primaryView->renderView.vieworg[STEREOPOS_MONO] + tr.primaryView->renderView.viewaxis[0] * 32;
-	end = start + tr.primaryView->renderView.viewaxis[0] * 1000.0f;
-	if( !tr.primaryWorld->Trace( mt, start, end, 0.0f, false ) )
-	{
+	end	  = start + tr.primaryView->renderView.viewaxis[0] * 1000.0f;
+	if( !tr.primaryWorld->Trace( mt, start, end, 0.0f, false ) ) {
 		return;
 	}
 
-	surfPoint = mt.point;
+	surfPoint	  = mt.point;
 	surfModelName = mt.entity->hModel->Name();
-	surfMatName = mt.material->GetName();
-	surfTraced = true;
+	surfMatName	  = mt.material->GetName();
+	surfTraced	  = true;
 }
-
 
 void idRenderBackend::DBG_ShowSurfaceInfo( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
-	if( !r_showSurfaceInfo.GetBool() || !surfTraced )
-	{
+	if( !r_showSurfaceInfo.GetBool() || !surfTraced ) {
 		return;
 	}
 
@@ -675,12 +619,12 @@ void idRenderBackend::DBG_ShowSurfaceInfo( drawSurf_t** drawSurfs, int numDrawSu
 	RB_SetVertexColorParms( SVC_MODULATE );
 
 	renderProgManager.BindShader_TextureVertexColor();
-	//renderProgManager.CommitUniforms();
+	// renderProgManager.CommitUniforms();
 
 	GL_Color( 1, 1, 1 );
 
 	static float scale = -1;
-	static float bias = -2;
+	static float bias  = -2;
 
 	GL_PolygonOffset( scale, bias );
 	GL_State( GLS_DEPTHFUNC_ALWAYS | GLS_POLYMODE_LINE | GLS_POLYGON_OFFSET );
@@ -691,10 +635,8 @@ void idRenderBackend::DBG_ShowSurfaceInfo( drawSurf_t** drawSurfs, int numDrawSu
 	// transform the object verts into global space
 	// R_AxisToModelMatrix( mt.entity->axis, mt.entity->origin, matrix );
 
-	tr.primaryWorld->DrawText( surfModelName, surfPoint + tr.primaryView->renderView.viewaxis[2] * 12,
-							   0.35f, colorYellow, tr.primaryView->renderView.viewaxis );
-	tr.primaryWorld->DrawText( surfMatName, surfPoint,
-							   0.35f, colorCyan, tr.primaryView->renderView.viewaxis );
+	tr.primaryWorld->DrawText( surfModelName, surfPoint + tr.primaryView->renderView.viewaxis[2] * 12, 0.35f, colorYellow, tr.primaryView->renderView.viewaxis );
+	tr.primaryWorld->DrawText( surfMatName, surfPoint, 0.35f, colorCyan, tr.primaryView->renderView.viewaxis );
 }
 
 /*
@@ -706,22 +648,16 @@ Debugging tool
 */
 void idRenderBackend::DBG_ShowViewEntitys( viewEntity_t* vModels )
 {
-	if( !r_showViewEntitys.GetBool() )
-	{
+	if( !r_showViewEntitys.GetBool() ) {
 		return;
 	}
 
-	if( r_showViewEntitys.GetInteger() >= 2 )
-	{
+	if( r_showViewEntitys.GetInteger() >= 2 ) {
 		common->Printf( "view entities: " );
-		for( const viewEntity_t* vModel = vModels; vModel; vModel = vModel->next )
-		{
-			if( vModel->entityDef->IsDirectlyVisible() )
-			{
+		for( const viewEntity_t* vModel = vModels; vModel; vModel = vModel->next ) {
+			if( vModel->entityDef->IsDirectlyVisible() ) {
 				common->Printf( "<%i> ", vModel->entityDef->index );
-			}
-			else
-			{
+			} else {
 				common->Printf( "%i ", vModel->entityDef->index );
 			}
 		}
@@ -733,58 +669,45 @@ void idRenderBackend::DBG_ShowViewEntitys( viewEntity_t* vModels )
 	GL_Color( 1, 1, 1 );
 	GL_State( GLS_DEPTHFUNC_ALWAYS | GLS_POLYMODE_LINE | GLS_CULL_TWOSIDED );
 
-	for( const viewEntity_t* vModel = vModels; vModel; vModel = vModel->next )
-	{
-		idBounds	b;
+	for( const viewEntity_t* vModel = vModels; vModel; vModel = vModel->next ) {
+		idBounds				   b;
 
-		//glLoadMatrixf( vModel->modelViewMatrix );
+		// glLoadMatrixf( vModel->modelViewMatrix );
 
 		const idRenderEntityLocal* edef = vModel->entityDef;
-		if( !edef )
-		{
+		if( !edef ) {
 			continue;
 		}
 
 		// draw the model bounds in white if directly visible,
 		// or, blue if it is only-for-sahdow
-		idVec4	color;
-		if( edef->IsDirectlyVisible() )
-		{
+		idVec4 color;
+		if( edef->IsDirectlyVisible() ) {
 			color.Set( 1, 1, 1, 1 );
-		}
-		else
-		{
+		} else {
 			color.Set( 0, 0, 1, 1 );
 		}
 		GL_Color( color[0], color[1], color[2] );
 		RB_DrawBounds( edef->localReferenceBounds );
 
 		// transform the upper bounds corner into global space
-		if( r_showViewEntitys.GetInteger() >= 2 )
-		{
+		if( r_showViewEntitys.GetInteger() >= 2 ) {
 			idVec3 corner;
 			R_LocalPointToGlobal( vModel->modelMatrix, edef->localReferenceBounds[1], corner );
 
-			tr.primaryWorld->DrawText(
-				va( "%i:%s", edef->index, edef->parms.hModel->Name() ),
-				corner,
-				0.25f, color,
-				tr.primaryView->renderView.viewaxis );
+			tr.primaryWorld->DrawText( va( "%i:%s", edef->index, edef->parms.hModel->Name() ), corner, 0.25f, color, tr.primaryView->renderView.viewaxis );
 		}
 
 		// draw the actual bounds in yellow if different
-		if( r_showViewEntitys.GetInteger() >= 3 )
-		{
+		if( r_showViewEntitys.GetInteger() >= 3 ) {
 			GL_Color( 1, 1, 0 );
 			// FIXME: cannot instantiate a dynamic model from the renderer back-end
 			idRenderModel* model = R_EntityDefDynamicModel( vModel->entityDef );
-			if( !model )
-			{
-				continue;	// particles won't instantiate without a current view
+			if( !model ) {
+				continue; // particles won't instantiate without a current view
 			}
 			b = model->Bounds( &vModel->entityDef->parms );
-			if( b != vModel->entityDef->localReferenceBounds )
-			{
+			if( b != vModel->entityDef->localReferenceBounds ) {
 				RB_DrawBounds( b );
 			}
 		}
@@ -895,8 +818,7 @@ r_showLights 3	: also draw edges of each volume
 */
 void idRenderBackend::DBG_ShowLights()
 {
-	if( !r_showLights.GetInteger() )
-	{
+	if( !r_showLights.GetInteger() ) {
 		return;
 	}
 
@@ -905,31 +827,23 @@ void idRenderBackend::DBG_ShowLights()
 	renderProgManager.BindShader_Color();
 
 	int count = 0;
-	for( viewLight_t* vLight = viewDef->viewLights; vLight != NULL; vLight = vLight->next )
-	{
+	for( viewLight_t* vLight = viewDef->viewLights; vLight != NULL; vLight = vLight->next ) {
 		count++;
 
-		if( r_singleLight.GetInteger() >= 0 && r_singleLight.GetInteger() != vLight->lightDef->index )
-		{
+		if( r_singleLight.GetInteger() >= 0 && r_singleLight.GetInteger() != vLight->lightDef->index ) {
 			continue;
 		}
 
 		// depth buffered planes
-		if( r_showLights.GetInteger() >= 2 && r_singleLight.GetInteger() < 0 )
-		{
+		if( r_showLights.GetInteger() >= 2 && r_singleLight.GetInteger() < 0 ) {
 			GL_State( GLS_DEPTHFUNC_ALWAYS | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHMASK | GLS_CULL_TWOSIDED );
 
 			// RB: show different light types
-			if( vLight->parallel )
-			{
+			if( vLight->parallel ) {
 				GL_Color( 1.0f, 0.0f, 0.0f, 0.25f );
-			}
-			else if( vLight->pointLight )
-			{
+			} else if( vLight->pointLight ) {
 				GL_Color( 0.0f, 0.0f, 1.0f, 0.25f );
-			}
-			else
-			{
+			} else {
 				GL_Color( 0.0f, 1.0f, 0.0f, 0.25f );
 			}
 			// RB end
@@ -941,8 +855,7 @@ void idRenderBackend::DBG_ShowLights()
 		}
 
 		// non-hidden lines
-		if( r_showLights.GetInteger() >= 3 )
-		{
+		if( r_showLights.GetInteger() >= 3 ) {
 			GL_State( GLS_DEPTHFUNC_ALWAYS | GLS_POLYMODE_LINE | GLS_DEPTHMASK | GLS_CULL_TWOSIDED );
 			GL_Color( 1.0f, 1.0f, 1.0f );
 			idRenderMatrix invProjectMVPMatrix;
@@ -961,9 +874,9 @@ RB_ShowViewEnvprobes
 Visualize all environment probes used in the current scene
 ==============
 */
-class idSort_DebugCompareViewEnvprobe : public idSort_Quick< RenderEnvprobeLocal*, idSort_DebugCompareViewEnvprobe >
+class idSort_DebugCompareViewEnvprobe : public idSort_Quick<RenderEnvprobeLocal*, idSort_DebugCompareViewEnvprobe>
 {
-	idVec3	viewOrigin;
+	idVec3 viewOrigin;
 
 public:
 	idSort_DebugCompareViewEnvprobe( const idVec3& origin )
@@ -976,13 +889,11 @@ public:
 		float adist = ( viewOrigin - a->parms.origin ).LengthSqr();
 		float bdist = ( viewOrigin - b->parms.origin ).LengthSqr();
 
-		if( adist < bdist )
-		{
+		if( adist < bdist ) {
 			return -1;
 		}
 
-		if( adist > bdist )
-		{
+		if( adist > bdist ) {
 			return 1;
 		}
 
@@ -992,16 +903,14 @@ public:
 
 void idRenderBackend::DBG_ShowViewEnvprobes()
 {
-	if( !r_showViewEnvprobes.GetInteger() )
-	{
+	if( !r_showViewEnvprobes.GetInteger() ) {
 		return;
 	}
 
 	GL_State( GLS_DEFAULT | GLS_CULL_TWOSIDED );
 
 	int count = 0;
-	for( viewEnvprobe_t* vProbe = viewDef->viewEnvprobes; vProbe != NULL; vProbe = vProbe->next )
-	{
+	for( viewEnvprobe_t* vProbe = viewDef->viewEnvprobes; vProbe != NULL; vProbe = vProbe->next ) {
 		count++;
 
 		renderProgManager.BindShader_DebugOctahedron();
@@ -1019,8 +928,8 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 		idRenderMatrix::CreateFromOriginAxis( vProbe->globalOrigin, axis, modelRenderMatrix );
 
 		// calculate the matrix that transforms the unit cube to exactly cover the model in world space
-		const float size = 16.0f;
-		idBounds debugBounds( idVec3( -size ), idVec3( size ) );
+		const float	   size = 16.0f;
+		idBounds	   debugBounds( idVec3( -size ), idVec3( size ) );
 
 		idRenderMatrix inverseBaseModelProject;
 		idRenderMatrix::OffsetScaleForBounds( modelRenderMatrix, debugBounds, inverseBaseModelProject );
@@ -1036,7 +945,7 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 		globalViewOrigin.z = viewDef->renderView.vieworg[STEREOPOS_MONO].z;
 		globalViewOrigin.w = 1.0f;
 
-		//inverseBaseModelProject.TransformPoint( globalViewOrigin, localViewOrigin );
+		// inverseBaseModelProject.TransformPoint( globalViewOrigin, localViewOrigin );
 		R_GlobalPointToLocal( modelMatrix, viewDef->renderView.vieworg[STEREOPOS_MONO], localViewOrigin.ToVec3() );
 
 		renderProgManager.SetUniformValue( RENDERPARM_LOCALVIEWORIGIN, localViewOrigin.ToFloatPtr() ); // rpLocalViewOrigin
@@ -1044,15 +953,12 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 		idVec4 textureSize;
 
 		GL_SelectTexture( 0 );
-		if( r_showViewEnvprobes.GetInteger() >= 2 )
-		{
+		if( r_showViewEnvprobes.GetInteger() >= 2 ) {
 			vProbe->irradianceImage->Bind();
 
 			idVec2i res = vProbe->irradianceImage->GetUploadResolution();
 			textureSize.Set( res.x, res.y, 1.0f / res.x, 1.0f / res.y );
-		}
-		else
-		{
+		} else {
 			vProbe->radianceImage->Bind();
 
 			idVec2i res = vProbe->radianceImage->GetUploadResolution();
@@ -1080,8 +986,7 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 #endif
 	}
 
-	if( tr.primaryWorld && r_showViewEnvprobes.GetInteger() == 3 )
-	{
+	if( tr.primaryWorld && r_showViewEnvprobes.GetInteger() == 3 ) {
 		/*
 		idList<viewEnvprobe_t*, TAG_RENDER_ENVPROBE> viewEnvprobes;
 		for( viewEnvprobe_t* vProbe = viewDef->viewEnvprobes; vProbe != NULL; vProbe = vProbe->next )
@@ -1091,15 +996,11 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 		*/
 
 		idList<RenderEnvprobeLocal*, TAG_RENDER_ENVPROBE> viewEnvprobes;
-		for( int i = 0; i < tr.primaryWorld->envprobeDefs.Num(); i++ )
-		{
+		for( int i = 0; i < tr.primaryWorld->envprobeDefs.Num(); i++ ) {
 			RenderEnvprobeLocal* vProbe = tr.primaryWorld->envprobeDefs[i];
-			if( vProbe )
-			{
+			if( vProbe ) {
 				// check for being closed off behind a door
-				if( r_useLightAreaCulling.GetBool()
-						&& vProbe->areaNum != -1 && !viewDef->connectedAreas[ vProbe->areaNum ] )
-				{
+				if( r_useLightAreaCulling.GetBool() && vProbe->areaNum != -1 && !viewDef->connectedAreas[vProbe->areaNum] ) {
 					continue;
 				}
 
@@ -1107,14 +1008,13 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 			}
 		}
 
-		if( viewEnvprobes.Num() == 0 )
-		{
+		if( viewEnvprobes.Num() == 0 ) {
 			return;
 		}
 
 		idVec3 testOrigin = viewDef->renderView.vieworg[STEREOPOS_MONO];
-		//testOrigin += viewDef->renderView.viewaxis[0] * 150.0f;
-		//testOrigin -= viewDef->renderView.viewaxis[2] * 16.0f;
+		// testOrigin += viewDef->renderView.viewaxis[0] * 150.0f;
+		// testOrigin -= viewDef->renderView.viewaxis[2] * 16.0f;
 
 		// sort by distance
 		viewEnvprobes.SortWithTemplate( idSort_DebugCompareViewEnvprobe( testOrigin ) );
@@ -1122,18 +1022,16 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 		// draw 3 nearest probes
 		renderProgManager.BindShader_Color();
 
-		const int numColors = 3;
+		const int	  numColors			= 3;
 		static idVec4 colors[numColors] = { colorRed, colorGreen, colorBlue };
 
 		// form a triangle of the 3 closest probes
-		idVec3 verts[3];
-		for( int i = 0; i < 3; i++ )
-		{
+		idVec3		  verts[3];
+		for( int i = 0; i < 3; i++ ) {
 			verts[i] = viewEnvprobes[0]->parms.origin;
 		}
 
-		for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ )
-		{
+		for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ ) {
 			RenderEnvprobeLocal* vProbe = viewEnvprobes[i];
 
 			verts[i] = vProbe->parms.origin;
@@ -1143,19 +1041,16 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 		idVec3 barycentricWeights;
 
 		// find the barycentric coordinates
-		float denom = idWinding::TriangleArea( verts[0], verts[1], verts[2] );
-		if( denom == 0 )
-		{
+		float  denom = idWinding::TriangleArea( verts[0], verts[1], verts[2] );
+		if( denom == 0 ) {
 			// triangle is line
 			float t;
 
 			R_ClosestPointOnLineSegment( testOrigin, verts[0], verts[1], t );
 
 			barycentricWeights.Set( 1.0f - t, t, 0 );
-		}
-		else
-		{
-			float	a, b, c;
+		} else {
+			float a, b, c;
 
 			a = idWinding::TriangleArea( closest, verts[1], verts[2] ) / denom;
 			b = idWinding::TriangleArea( closest, verts[2], verts[0] ) / denom;
@@ -1169,13 +1064,12 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 		idMat3 axis;
 		axis.Identity();
 
-		for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ )
-		{
+		for( int i = 0; i < viewEnvprobes.Num() && i < 3; i++ ) {
 			RenderEnvprobeLocal* vProbe = viewEnvprobes[i];
 
 			verts[i] = vProbe->parms.origin;
 
-			//GL_Color( colors[i] );
+			// GL_Color( colors[i] );
 
 			idVec4 color = Lerp( colorBlack, colors[i], barycentricWeights[i] );
 			GL_Color( color );
@@ -1184,8 +1078,8 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 			idRenderMatrix::CreateFromOriginAxis( vProbe->parms.origin, axis, modelRenderMatrix );
 
 			// calculate the matrix that transforms the unit cube to exactly cover the model in world space
-			const float size = 16.0f;
-			idBounds debugBounds( idVec3( -size ), idVec3( size ) );
+			const float	   size = 16.0f;
+			idBounds	   debugBounds( idVec3( -size ), idVec3( size ) );
 
 			idRenderMatrix inverseBaseModelProject;
 			idRenderMatrix::OffsetScaleForBounds( modelRenderMatrix, debugBounds, inverseBaseModelProject );
@@ -1205,8 +1099,8 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 			idRenderMatrix::CreateFromOriginAxis( closest, axis, modelRenderMatrix );
 
 			// calculate the matrix that transforms the unit cube to exactly cover the model in world space
-			const float size = 4.0f;
-			idBounds debugBounds( idVec3( -size ), idVec3( size ) );
+			const float	   size = 4.0f;
+			idBounds	   debugBounds( idVec3( -size ), idVec3( size ) );
 
 			idRenderMatrix inverseBaseModelProject;
 			idRenderMatrix::OffsetScaleForBounds( modelRenderMatrix, debugBounds, inverseBaseModelProject );
@@ -1222,8 +1116,7 @@ void idRenderBackend::DBG_ShowViewEnvprobes()
 
 void idRenderBackend::DBG_ShowLightGrid()
 {
-	if( r_showLightGrid.GetInteger() <= 0 || !tr.primaryWorld )
-	{
+	if( r_showLightGrid.GetInteger() <= 0 || !tr.primaryWorld ) {
 		return;
 	}
 
@@ -1237,27 +1130,24 @@ void idRenderBackend::DBG_ShowLightGrid()
 
 	// only show current area
 	int cameraArea = tr.primaryWorld->PointInArea( viewDef->renderView.vieworg[STEREOPOS_MONO] );
-	if( cameraArea == -1 && r_showLightGrid.GetInteger() < 3 )
-	{
+	if( cameraArea == -1 && r_showLightGrid.GetInteger() < 3 ) {
 		return;
 	}
 
-	const int numColors = 7;
+	const int	  numColors			= 7;
 	static idVec4 colors[numColors] = { colorBrown, colorBlue, colorCyan, colorGreen, colorYellow, colorRed, colorWhite };
 
-	for( int a = 0; a < tr.primaryWorld->NumAreas(); a++ )
-	{
-		if( r_showLightGrid.GetInteger() < 3 && ( cameraArea != a ) )
-		{
+	for( int a = 0; a < tr.primaryWorld->NumAreas(); a++ ) {
+		if( r_showLightGrid.GetInteger() < 3 && ( cameraArea != a ) ) {
 			continue;
 		}
 
 		portalArea_t* area = &tr.primaryWorld->portalAreas[a];
 
 		// use rpGlobalLightOrigin for lightGrid center
-		idVec4 lightGridOrigin( area->lightGrid.lightGridOrigin.x, area->lightGrid.lightGridOrigin.y, area->lightGrid.lightGridOrigin.z, 1.0f );
-		idVec4 lightGridSize( area->lightGrid.lightGridSize.x, area->lightGrid.lightGridSize.y, area->lightGrid.lightGridSize.z, 1.0f );
-		idVec4 lightGridBounds( area->lightGrid.lightGridBounds[0], area->lightGrid.lightGridBounds[1], area->lightGrid.lightGridBounds[2], 1.0f );
+		idVec4		  lightGridOrigin( area->lightGrid.lightGridOrigin.x, area->lightGrid.lightGridOrigin.y, area->lightGrid.lightGridOrigin.z, 1.0f );
+		idVec4		  lightGridSize( area->lightGrid.lightGridSize.x, area->lightGrid.lightGridSize.y, area->lightGrid.lightGridSize.z, 1.0f );
+		idVec4		  lightGridBounds( area->lightGrid.lightGridBounds[0], area->lightGrid.lightGridBounds[1], area->lightGrid.lightGridBounds[2], 1.0f );
 
 		renderProgManager.SetUniformValue( RENDERPARM_GLOBALLIGHTORIGIN, lightGridOrigin.ToFloatPtr() );
 		renderProgManager.SetUniformValue( RENDERPARM_JITTERTEXSCALE, lightGridSize.ToFloatPtr() );
@@ -1271,17 +1161,14 @@ void idRenderBackend::DBG_ShowLightGrid()
 		probeSize[3] = float( area->lightGrid.imageSingleProbeSize - area->lightGrid.imageBorderSize ) / area->lightGrid.imageSingleProbeSize;
 		renderProgManager.SetUniformValue( RENDERPARM_SCREENCORRECTIONFACTOR, probeSize.ToFloatPtr() ); // rpScreenCorrectionFactor
 
-		for( int i = 0; i < area->lightGrid.lightGridPoints.Num(); i++ )
-		{
+		for( int i = 0; i < area->lightGrid.lightGridPoints.Num(); i++ ) {
 			lightGridPoint_t* gridPoint = &area->lightGrid.lightGridPoints[i];
-			if( !gridPoint->valid && r_showLightGrid.GetInteger() < 3 )
-			{
+			if( !gridPoint->valid && r_showLightGrid.GetInteger() < 3 ) {
 				continue;
 			}
 
 			idVec3 distanceToCam = gridPoint->origin - viewDef->renderView.vieworg[STEREOPOS_MONO];
-			if( distanceToCam.LengthSqr() > ( 1024 * 1024 ) && r_showLightGrid.GetInteger() < 3 )
-			{
+			if( distanceToCam.LengthSqr() > ( 1024 * 1024 ) && r_showLightGrid.GetInteger() < 3 ) {
 				continue;
 			}
 
@@ -1318,7 +1205,6 @@ void idRenderBackend::DBG_ShowLightGrid()
 			renderProgManager.SetUniformValue( RENDERPARM_MODELMATRIX_Z, &modelMatrix2[2][0] );
 			renderProgManager.SetUniformValue( RENDERPARM_MODELMATRIX_W, &modelMatrix2[3][0] );
 
-
 #if 0
 			renderProgManager.BindShader_Color();
 
@@ -1331,31 +1217,25 @@ void idRenderBackend::DBG_ShowLightGrid()
 			GL_Color( color );
 #else
 
-			if( r_showLightGrid.GetInteger() == 4 || !area->lightGrid.GetIrradianceImage() )
-			{
+			if( r_showLightGrid.GetInteger() == 4 || !area->lightGrid.GetIrradianceImage() ) {
 				renderProgManager.BindShader_Color();
 
 				idVec4 color;
-				if( !gridPoint->valid )
-				{
+				if( !gridPoint->valid ) {
 					color = colorPurple;
-				}
-				else
-				{
-					color = colors[ a % numColors ];
+				} else {
+					color = colors[a % numColors];
 				}
 
 				GL_Color( color );
-			}
-			else
-			{
+			} else {
 				renderProgManager.BindShader_DebugLightGrid();
 
 				GL_SelectTexture( 0 );
 				area->lightGrid.GetIrradianceImage()->Bind();
 
 				idVec2i res = area->lightGrid.GetIrradianceImage()->GetUploadResolution();
-				idVec4 textureSize( res.x, res.y, 1.0f / res.x, 1.0f / res.y );
+				idVec4	textureSize( res.x, res.y, 1.0f / res.x, 1.0f / res.y );
 
 				renderProgManager.SetUniformValue( RENDERPARM_CASCADEDISTANCES, textureSize.ToFloatPtr() );
 			}
@@ -1365,8 +1245,8 @@ void idRenderBackend::DBG_ShowLightGrid()
 			idRenderMatrix::CreateFromOriginAxis( gridPoint->origin, axis, modelRenderMatrix );
 
 			// calculate the matrix that transforms the unit cube to exactly cover the model in world space
-			const float size = 3.0f;
-			idBounds debugBounds( idVec3( -size ), idVec3( size ) );
+			const float	   size = 3.0f;
+			idBounds	   debugBounds( idVec3( -size ), idVec3( size ) );
 
 			idRenderMatrix inverseBaseModelProject;
 			idRenderMatrix::OffsetScaleForBounds( modelRenderMatrix, debugBounds, inverseBaseModelProject );
@@ -1376,25 +1256,24 @@ void idRenderBackend::DBG_ShowLightGrid()
 			RB_SetMVP( invProjectMVPMatrix );
 
 			DrawElementsWithCounters( &zeroOneSphereSurface );
-			//DrawElementsWithCounters( &zeroOneCubeSurface );
+			// DrawElementsWithCounters( &zeroOneCubeSurface );
 		}
 	}
 
-	if( r_showLightGrid.GetInteger() == 2 )
-	{
+	if( r_showLightGrid.GetInteger() == 2 ) {
 		// show 8 nearest grid points around the camera and illustrate how the trilerping works
 
-		idVec3          lightOrigin;
-		int             pos[3];
-		int				gridPointIndex;
-		int				gridPointIndex2;
-		lightGridPoint_t*  gridPoint;
-		lightGridPoint_t*  gridPoint2;
-		float           frac[3];
-		int             gridStep[3];
-		float           totalFactor;
+		idVec3			  lightOrigin;
+		int				  pos[3];
+		int				  gridPointIndex;
+		int				  gridPointIndex2;
+		lightGridPoint_t* gridPoint;
+		lightGridPoint_t* gridPoint2;
+		float			  frac[3];
+		int				  gridStep[3];
+		float			  totalFactor;
 
-		portalArea_t* area = &tr.primaryWorld->portalAreas[cameraArea];
+		portalArea_t*	  area = &tr.primaryWorld->portalAreas[cameraArea];
 
 		renderProgManager.BindShader_Color();
 
@@ -1410,8 +1289,8 @@ void idRenderBackend::DBG_ShowLightGrid()
 			idRenderMatrix::CreateFromOriginAxis( lightOrigin, axis, modelRenderMatrix );
 
 			// calculate the matrix that transforms the unit cube to exactly cover the model in world space
-			const float size = 2.0f;
-			idBounds debugBounds( idVec3( -size ), idVec3( size ) );
+			const float	   size = 2.0f;
+			idBounds	   debugBounds( idVec3( -size ), idVec3( size ) );
 
 			idRenderMatrix inverseBaseModelProject;
 			idRenderMatrix::OffsetScaleForBounds( modelRenderMatrix, debugBounds, inverseBaseModelProject );
@@ -1425,20 +1304,16 @@ void idRenderBackend::DBG_ShowLightGrid()
 
 		// find base grid point
 		lightOrigin -= area->lightGrid.lightGridOrigin;
-		for( int i = 0; i < 3; i++ )
-		{
-			float           v;
+		for( int i = 0; i < 3; i++ ) {
+			float v;
 
-			v = lightOrigin[i] * ( 1.0f / area->lightGrid.lightGridSize[i] );
-			pos[i] = floor( v );
+			v		= lightOrigin[i] * ( 1.0f / area->lightGrid.lightGridSize[i] );
+			pos[i]	= floor( v );
 			frac[i] = v - pos[i];
 
-			if( pos[i] < 0 )
-			{
+			if( pos[i] < 0 ) {
 				pos[i] = 0;
-			}
-			else if( pos[i] >= area->lightGrid.lightGridBounds[i] - 1 )
-			{
+			} else if( pos[i] >= area->lightGrid.lightGridBounds[i] - 1 ) {
 				pos[i] = area->lightGrid.lightGridBounds[i] - 1;
 			}
 		}
@@ -1449,53 +1324,45 @@ void idRenderBackend::DBG_ShowLightGrid()
 		gridStep[2] = area->lightGrid.lightGridBounds[0] * area->lightGrid.lightGridBounds[1];
 
 		gridPointIndex = pos[0] * gridStep[0] + pos[1] * gridStep[1] + pos[2] * gridStep[2];
-		gridPoint = &area->lightGrid.lightGridPoints[ gridPointIndex ];
+		gridPoint	   = &area->lightGrid.lightGridPoints[gridPointIndex];
 
 		totalFactor = 0;
 		idVec3 cornerOffsets[8];
 
-		for( int i = 0; i < 8; i++ )
-		{
-			float  factor = 1.0;
+		for( int i = 0; i < 8; i++ ) {
+			float factor = 1.0;
 
-			gridPoint2 = gridPoint;
+			gridPoint2		= gridPoint;
 			gridPointIndex2 = gridPointIndex;
 
-			for( int j = 0; j < 3; j++ )
-			{
+			for( int j = 0; j < 3; j++ ) {
 				cornerOffsets[i][j] = i & ( 1 << j );
 
-				if( cornerOffsets[i][j] > 0.0f )
-				{
+				if( cornerOffsets[i][j] > 0.0f ) {
 					factor *= frac[j];
 
 #if 1
 					gridPointIndex2 += gridStep[j];
-					if( gridPointIndex2 < 0 || gridPointIndex2 >= area->lightGrid.lightGridPoints.Num() )
-					{
+					if( gridPointIndex2 < 0 || gridPointIndex2 >= area->lightGrid.lightGridPoints.Num() ) {
 						// ignore values outside lightgrid
 						continue;
 					}
 
-					gridPoint2 = &area->lightGrid.lightGridPoints[ gridPointIndex2 ];
+					gridPoint2 = &area->lightGrid.lightGridPoints[gridPointIndex2];
 #else
-					if( pos[j] + 1 > area->lightGrid.lightGridBounds[j] - 1 )
-					{
+					if( pos[j] + 1 > area->lightGrid.lightGridBounds[j] - 1 ) {
 						// ignore values outside lightgrid
 						break;
 					}
 
 					gridPoint2 += gridStep[j];
 #endif
-				}
-				else
-				{
+				} else {
 					factor *= ( 1.0f - frac[j] );
 				}
 			}
 
-			if( !gridPoint2->valid )
-			{
+			if( !gridPoint2->valid ) {
 				// ignore samples in walls
 				continue;
 			}
@@ -1509,8 +1376,8 @@ void idRenderBackend::DBG_ShowLightGrid()
 			idRenderMatrix::CreateFromOriginAxis( gridPoint2->origin, axis, modelRenderMatrix );
 
 			// calculate the matrix that transforms the unit cube to exactly cover the model in world space
-			const float size = 4.0f;
-			idBounds debugBounds( idVec3( -size ), idVec3( size ) );
+			const float	   size = 4.0f;
+			idBounds	   debugBounds( idVec3( -size ), idVec3( size ) );
 
 			idRenderMatrix inverseBaseModelProject;
 			idRenderMatrix::OffsetScaleForBounds( modelRenderMatrix, debugBounds, inverseBaseModelProject );
@@ -1529,8 +1396,8 @@ void idRenderBackend::DBG_ShowLightGrid()
 		idRenderMatrix::CreateFromOriginAxis( gridPoint->origin, axis, modelRenderMatrix );
 
 		// calculate the matrix that transforms the unit cube to exactly cover the model in world space
-		const float size = 5.0f;
-		idBounds debugBounds( idVec3( -size ), idVec3( size ) );
+		const float	   size = 5.0f;
+		idBounds	   debugBounds( idVec3( -size ), idVec3( size ) );
 
 		idRenderMatrix inverseBaseModelProject;
 		idRenderMatrix::OffsetScaleForBounds( modelRenderMatrix, debugBounds, inverseBaseModelProject );
@@ -1545,8 +1412,7 @@ void idRenderBackend::DBG_ShowLightGrid()
 
 void idRenderBackend::DBG_ShowShadowMapLODs()
 {
-	if( !r_showShadowMapLODs.GetInteger() )
-	{
+	if( !r_showShadowMapLODs.GetInteger() ) {
 		return;
 	}
 
@@ -1555,48 +1421,32 @@ void idRenderBackend::DBG_ShowShadowMapLODs()
 	renderProgManager.BindShader_Color();
 
 	int count = 0;
-	for( viewLight_t* vLight = viewDef->viewLights; vLight != NULL; vLight = vLight->next )
-	{
-		if( !vLight->lightDef->LightCastsShadows() )
-		{
+	for( viewLight_t* vLight = viewDef->viewLights; vLight != NULL; vLight = vLight->next ) {
+		if( !vLight->lightDef->LightCastsShadows() ) {
 			continue;
 		}
 
 		count++;
 
 		// depth buffered planes
-		if( r_showShadowMapLODs.GetInteger() >= 1 )
-		{
+		if( r_showShadowMapLODs.GetInteger() >= 1 ) {
 			GL_State( GLS_DEPTHFUNC_ALWAYS | GLS_POLYMODE_LINE | GLS_DEPTHMASK );
-			//GL_State( GLS_DEPTHFUNC_ALWAYS | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHMASK );
+			// GL_State( GLS_DEPTHFUNC_ALWAYS | GLS_SRCBLEND_SRC_ALPHA | GLS_DSTBLEND_ONE_MINUS_SRC_ALPHA | GLS_DEPTHMASK );
 
 			idVec4 c;
-			if( vLight->shadowLOD == 0 )
-			{
+			if( vLight->shadowLOD == 0 ) {
 				c = colorRed;
-			}
-			else if( vLight->shadowLOD == 1 )
-			{
+			} else if( vLight->shadowLOD == 1 ) {
 				c = colorGreen;
-			}
-			else if( vLight->shadowLOD == 2 )
-			{
+			} else if( vLight->shadowLOD == 2 ) {
 				c = colorBlue;
-			}
-			else if( vLight->shadowLOD == 3 )
-			{
+			} else if( vLight->shadowLOD == 3 ) {
 				c = colorYellow;
-			}
-			else if( vLight->shadowLOD == 4 )
-			{
+			} else if( vLight->shadowLOD == 4 ) {
 				c = colorMagenta;
-			}
-			else if( vLight->shadowLOD == 5 )
-			{
+			} else if( vLight->shadowLOD == 5 ) {
 				c = colorCyan;
-			}
-			else
-			{
+			} else {
 				c = colorMdGrey;
 			}
 
@@ -1610,8 +1460,7 @@ void idRenderBackend::DBG_ShowShadowMapLODs()
 		}
 
 		// non-hidden lines
-		if( r_showShadowMapLODs.GetInteger() >= 2 )
-		{
+		if( r_showShadowMapLODs.GetInteger() >= 2 ) {
 			GL_State( GLS_DEPTHFUNC_ALWAYS | GLS_POLYMODE_LINE | GLS_DEPTHMASK );
 			GL_Color( 1.0f, 1.0f, 1.0f );
 			idRenderMatrix invProjectMVPMatrix;
@@ -1632,8 +1481,7 @@ Debugging tool, won't work correctly with SMP or when mirrors are present
 */
 void idRenderBackend::DBG_ShowPortals()
 {
-	if( !r_showPortals.GetBool() )
-	{
+	if( !r_showPortals.GetBool() ) {
 		return;
 	}
 
@@ -1645,33 +1493,26 @@ void idRenderBackend::DBG_ShowPortals()
 
 	idRenderWorldLocal& world = *viewDef->renderWorld;
 
-	fhImmediateMode im( backEnd.GL_GetCommandList() );
+	fhImmediateMode		im( backEnd.GL_GetCommandList() );
 
 	// flood out through portals, setting area viewCount
-	for( int i = 0; i < world.numPortalAreas; i++ )
-	{
+	for( int i = 0; i < world.numPortalAreas; i++ ) {
 		portalArea_t* area = &world.portalAreas[i];
 
-		if( area->viewCount != tr.viewCount )
-		{
+		if( area->viewCount != tr.viewCount ) {
 			continue;
 		}
 
-		for( portal_t* p = area->portals; p; p = p->next )
-		{
+		for( portal_t* p = area->portals; p; p = p->next ) {
 			idWinding* w = p->w;
-			if( !w )
-			{
+			if( !w ) {
 				continue;
 			}
 
-			if( world.portalAreas[ p->intoArea ].viewCount != tr.viewCount )
-			{
+			if( world.portalAreas[p->intoArea].viewCount != tr.viewCount ) {
 				// red = can't see
 				GL_Color( 1, 0, 0 );
-			}
-			else
-			{
+			} else {
 				// green = see through
 				GL_Color( 0, 1, 0 );
 			}
@@ -1682,20 +1523,18 @@ void idRenderBackend::DBG_ShowPortals()
 
 			im.Begin( GFX_LINES );
 			int j = 0;
-			for( ; j < w->GetNumPoints(); j++ )
-			{
+			for( ; j < w->GetNumPoints(); j++ ) {
 				// draw a triangle for each line
-				if( j >= 1 )
-				{
-					im.Vertex3fv( ( *w )[ j - 1 ].ToFloatPtr() );
-					im.Vertex3fv( ( *w )[ j ].ToFloatPtr() );
-					im.Vertex3fv( ( *w )[ j ].ToFloatPtr() );
+				if( j >= 1 ) {
+					im.Vertex3fv( ( *w )[j - 1].ToFloatPtr() );
+					im.Vertex3fv( ( *w )[j].ToFloatPtr() );
+					im.Vertex3fv( ( *w )[j].ToFloatPtr() );
 				}
 			}
 
-			im.Vertex3fv( ( *w )[ 0 ].ToFloatPtr() );
-			im.Vertex3fv( ( *w )[ 0 ].ToFloatPtr() );
-			im.Vertex3fv( ( *w )[ j - 1 ].ToFloatPtr() );
+			im.Vertex3fv( ( *w )[0].ToFloatPtr() );
+			im.Vertex3fv( ( *w )[0].ToFloatPtr() );
+			im.Vertex3fv( ( *w )[j - 1].ToFloatPtr() );
 
 			im.End();
 		}
@@ -1709,18 +1548,16 @@ idRenderBackend::DBG_ClearDebugText
 */
 void RB_ClearDebugText( int time )
 {
-	int			i;
-	int			num;
-	debugText_t*	text;
+	int			 i;
+	int			 num;
+	debugText_t* text;
 
 	rb_debugTextTime = time;
 
-	if( !time )
-	{
+	if( !time ) {
 		// free up our strings
 		text = rb_debugText;
-		for( i = 0; i < MAX_DEBUG_TEXT; i++, text++ )
-		{
+		for( i = 0; i < MAX_DEBUG_TEXT; i++, text++ ) {
 			text->text.Clear();
 		}
 		rb_numDebugText = 0;
@@ -1728,15 +1565,12 @@ void RB_ClearDebugText( int time )
 	}
 
 	// copy any text that still needs to be drawn
-	num	= 0;
+	num	 = 0;
 	text = rb_debugText;
-	for( i = 0; i < rb_numDebugText; i++, text++ )
-	{
-		if( text->lifeTime > time )
-		{
-			if( num != i )
-			{
-				rb_debugText[ num ] = *text;
+	for( i = 0; i < rb_numDebugText; i++, text++ ) {
+		if( text->lifeTime > time ) {
+			if( num != i ) {
+				rb_debugText[num] = *text;
 			}
 			num++;
 		}
@@ -1753,17 +1587,16 @@ void RB_AddDebugText( const char* text, const idVec3& origin, float scale, const
 {
 	debugText_t* debugText;
 
-	if( rb_numDebugText < MAX_DEBUG_TEXT )
-	{
-		debugText = &rb_debugText[ rb_numDebugText++ ];
-		debugText->text			= text;
-		debugText->origin		= origin;
-		debugText->scale		= scale;
-		debugText->color		= color;
-		debugText->viewAxis		= viewAxis;
-		debugText->align		= align;
-		debugText->lifeTime		= rb_debugTextTime + lifetime;
-		debugText->depthTest	= depthTest;
+	if( rb_numDebugText < MAX_DEBUG_TEXT ) {
+		debugText			 = &rb_debugText[rb_numDebugText++];
+		debugText->text		 = text;
+		debugText->origin	 = origin;
+		debugText->scale	 = scale;
+		debugText->color	 = color;
+		debugText->viewAxis	 = viewAxis;
+		debugText->align	 = align;
+		debugText->lifeTime	 = rb_debugTextTime + lifetime;
+		debugText->depthTest = depthTest;
 	}
 }
 
@@ -1776,36 +1609,29 @@ RB_DrawTextLength
 */
 float RB_DrawTextLength( const char* text, float scale, int len )
 {
-	int i, num, index, charIndex;
+	int	  i, num, index, charIndex;
 	float spacing, textLen = 0.0f;
 
-	if( text && *text )
-	{
-		if( !len )
-		{
+	if( text && *text ) {
+		if( !len ) {
 			len = strlen( text );
 		}
-		for( i = 0; i < len; i++ )
-		{
+		for( i = 0; i < len; i++ ) {
 			charIndex = text[i] - 32;
-			if( charIndex < 0 || charIndex > NUM_SIMPLEX_CHARS )
-			{
+			if( charIndex < 0 || charIndex > NUM_SIMPLEX_CHARS ) {
 				continue;
 			}
-			num = simplex[charIndex][0] * 2;
+			num		= simplex[charIndex][0] * 2;
 			spacing = simplex[charIndex][1];
-			index = 2;
+			index	= 2;
 
-			while( index - 2 < num )
-			{
-				if( simplex[charIndex][index] < 0 )
-				{
+			while( index - 2 < num ) {
+				if( simplex[charIndex][index] < 0 ) {
 					index++;
 					continue;
 				}
 				index += 2;
-				if( simplex[charIndex][index] < 0 )
-				{
+				if( simplex[charIndex][index] < 0 ) {
 					index++;
 					continue;
 				}
@@ -1831,48 +1657,35 @@ static void RB_DrawText( const char* text, const idVec3& origin, float scale, co
 
 	fhImmediateMode im( backEnd.GL_GetCommandList() );
 
-	int i, j, len, num, index, charIndex, line;
-	float textLen = 1.0f, spacing = 1.0f;
-	idVec3 org, p1, p2;
+	int				i, j, len, num, index, charIndex, line;
+	float			textLen = 1.0f, spacing = 1.0f;
+	idVec3			org, p1, p2;
 
-	if( text && *text )
-	{
+	if( text && *text ) {
 		im.Begin( GFX_LINES );
-		//im.Color3fv( color.ToFloatPtr() );
+		// im.Color3fv( color.ToFloatPtr() );
 
-		if( text[0] == '\n' )
-		{
+		if( text[0] == '\n' ) {
 			line = 1;
-		}
-		else
-		{
+		} else {
 			line = 0;
 		}
 
 		len = strlen( text );
-		for( i = 0; i < len; i++ )
-		{
-
-			if( i == 0 || text[i] == '\n' )
-			{
+		for( i = 0; i < len; i++ ) {
+			if( i == 0 || text[i] == '\n' ) {
 				org = origin - viewAxis[2] * ( line * 36.0f * scale );
-				if( align != 0 )
-				{
-					for( j = 1; i + j <= len; j++ )
-					{
-						if( i + j == len || text[i + j] == '\n' )
-						{
+				if( align != 0 ) {
+					for( j = 1; i + j <= len; j++ ) {
+						if( i + j == len || text[i + j] == '\n' ) {
 							textLen = RB_DrawTextLength( text + i, scale, j );
 							break;
 						}
 					}
-					if( align == 2 )
-					{
+					if( align == 2 ) {
 						// right
 						org += viewAxis[1] * textLen;
-					}
-					else
-					{
+					} else {
 						// center
 						org += viewAxis[1] * ( textLen * 0.5f );
 					}
@@ -1881,25 +1694,21 @@ static void RB_DrawText( const char* text, const idVec3& origin, float scale, co
 			}
 
 			charIndex = text[i] - 32;
-			if( charIndex < 0 || charIndex > NUM_SIMPLEX_CHARS )
-			{
+			if( charIndex < 0 || charIndex > NUM_SIMPLEX_CHARS ) {
 				continue;
 			}
-			num = simplex[charIndex][0] * 2;
+			num		= simplex[charIndex][0] * 2;
 			spacing = simplex[charIndex][1];
-			index = 2;
+			index	= 2;
 
-			while( index - 2 < num )
-			{
-				if( simplex[charIndex][index] < 0 )
-				{
+			while( index - 2 < num ) {
+				if( simplex[charIndex][index] < 0 ) {
 					index++;
 					continue;
 				}
 				p1 = org + scale * simplex[charIndex][index] * -viewAxis[1] + scale * simplex[charIndex][index + 1] * viewAxis[2];
 				index += 2;
-				if( simplex[charIndex][index] < 0 )
-				{
+				if( simplex[charIndex][index] < 0 ) {
 					index++;
 					continue;
 				}
@@ -1923,11 +1732,10 @@ idRenderBackend::DBG_ShowDebugText
 */
 void idRenderBackend::DBG_ShowDebugText()
 {
-	int			i;
-	debugText_t*	text;
+	int			 i;
+	debugText_t* text;
 
-	if( !rb_numDebugText )
-	{
+	if( !rb_numDebugText ) {
 		return;
 	}
 
@@ -1949,41 +1757,33 @@ void idRenderBackend::DBG_ShowDebugText()
 	glLineWidth( width );
 	*/
 
-	if( !r_debugLineDepthTest.GetBool() )
-	{
+	if( !r_debugLineDepthTest.GetBool() ) {
 		GL_State( GLS_POLYMODE_LINE | GLS_DEPTHFUNC_ALWAYS );
-	}
-	else
-	{
+	} else {
 		GL_State( GLS_POLYMODE_LINE );
 	}
 
 	text = rb_debugText;
-	for( i = 0; i < rb_numDebugText; i++, text++ )
-	{
-		if( !text->depthTest )
-		{
+	for( i = 0; i < rb_numDebugText; i++, text++ ) {
+		if( !text->depthTest ) {
 			GL_Color( text->color.ToVec3() );
 			RB_DrawText( text->text, text->origin, text->scale, text->color, text->viewAxis, text->align );
 		}
 	}
 
-	if( !r_debugLineDepthTest.GetBool() )
-	{
+	if( !r_debugLineDepthTest.GetBool() ) {
 		GL_State( GLS_POLYMODE_LINE );
 	}
 
 	text = rb_debugText;
-	for( i = 0; i < rb_numDebugText; i++, text++ )
-	{
-		if( text->depthTest )
-		{
+	for( i = 0; i < rb_numDebugText; i++, text++ ) {
+		if( text->depthTest ) {
 			GL_Color( text->color.ToVec3() );
 			RB_DrawText( text->text, text->origin, text->scale, text->color, text->viewAxis, text->align );
 		}
 	}
 
-	//glLineWidth( 1 );
+	// glLineWidth( 1 );
 }
 
 /*
@@ -1993,28 +1793,24 @@ RB_ClearDebugLines
 */
 void RB_ClearDebugLines( int time )
 {
-	int			i;
-	int			num;
-	debugLine_t*	line;
+	int			 i;
+	int			 num;
+	debugLine_t* line;
 
 	rb_debugLineTime = time;
 
-	if( !time )
-	{
+	if( !time ) {
 		rb_numDebugLines = 0;
 		return;
 	}
 
 	// copy any lines that still need to be drawn
-	num	= 0;
+	num	 = 0;
 	line = rb_debugLines;
-	for( i = 0; i < rb_numDebugLines; i++, line++ )
-	{
-		if( line->lifeTime > time )
-		{
-			if( num != i )
-			{
-				rb_debugLines[ num ] = *line;
+	for( i = 0; i < rb_numDebugLines; i++, line++ ) {
+		if( line->lifeTime > time ) {
+			if( num != i ) {
+				rb_debugLines[num] = *line;
 			}
 			num++;
 		}
@@ -2031,9 +1827,8 @@ void RB_AddDebugLine( const idVec4& color, const idVec3& start, const idVec3& en
 {
 	debugLine_t* line;
 
-	if( rb_numDebugLines < MAX_DEBUG_LINES )
-	{
-		line = &rb_debugLines[ rb_numDebugLines++ ];
+	if( rb_numDebugLines < MAX_DEBUG_LINES ) {
+		line			= &rb_debugLines[rb_numDebugLines++];
 		line->rgb		= color;
 		line->start		= start;
 		line->end		= end;
@@ -2049,11 +1844,10 @@ idRenderBackend::DBG_ShowDebugLines
 */
 void idRenderBackend::DBG_ShowDebugLines()
 {
-	int			i;
-	debugLine_t*	line;
+	int			 i;
+	debugLine_t* line;
 
-	if( !rb_numDebugLines )
-	{
+	if( !rb_numDebugLines ) {
 		return;
 	}
 
@@ -2078,12 +1872,9 @@ void idRenderBackend::DBG_ShowDebugLines()
 	glLineWidth( width );
 	*/
 
-	if( !r_debugLineDepthTest.GetBool() )
-	{
+	if( !r_debugLineDepthTest.GetBool() ) {
 		GL_State( GLS_POLYMODE_LINE | GLS_DEPTHFUNC_ALWAYS );
-	}
-	else
-	{
+	} else {
 		GL_State( GLS_POLYMODE_LINE );
 	}
 
@@ -2091,10 +1882,8 @@ void idRenderBackend::DBG_ShowDebugLines()
 
 	im.Begin( GFX_LINES );
 	line = rb_debugLines;
-	for( i = 0; i < rb_numDebugLines; i++, line++ )
-	{
-		if( !line->depthTest )
-		{
+	for( i = 0; i < rb_numDebugLines; i++, line++ ) {
+		if( !line->depthTest ) {
 			im.Color3fv( line->rgb.ToFloatPtr() );
 
 			im.Vertex3fv( line->start.ToFloatPtr() );
@@ -2104,17 +1893,14 @@ void idRenderBackend::DBG_ShowDebugLines()
 	}
 	im.End();
 
-	if( !r_debugLineDepthTest.GetBool() )
-	{
+	if( !r_debugLineDepthTest.GetBool() ) {
 		GL_State( GLS_POLYMODE_LINE );
 	}
 
 	im.Begin( GFX_LINES );
 	line = rb_debugLines;
-	for( i = 0; i < rb_numDebugLines; i++, line++ )
-	{
-		if( line->depthTest )
-		{
+	for( i = 0; i < rb_numDebugLines; i++, line++ ) {
+		if( line->depthTest ) {
 			im.Color4fv( line->rgb.ToFloatPtr() );
 
 			im.Vertex3fv( line->start.ToFloatPtr() );
@@ -2123,13 +1909,12 @@ void idRenderBackend::DBG_ShowDebugLines()
 			// RB: could use nvrhi::PrimitiveType::LineList
 			// but we rather to keep the number of pipelines low so just make a triangle of this
 			im.Vertex3fv( line->end.ToFloatPtr() );
-
 		}
 	}
 
 	im.End();
 
-	//glLineWidth( 1 );
+	// glLineWidth( 1 );
 	GL_State( GLS_DEFAULT );
 }
 
@@ -2142,27 +1927,23 @@ void RB_ClearDebugPolygons( int time )
 {
 	int				i;
 	int				num;
-	debugPolygon_t*	poly;
+	debugPolygon_t* poly;
 
 	rb_debugPolygonTime = time;
 
-	if( !time )
-	{
+	if( !time ) {
 		rb_numDebugPolygons = 0;
 		return;
 	}
 
 	// copy any polygons that still need to be drawn
-	num	= 0;
+	num = 0;
 
 	poly = rb_debugPolygons;
-	for( i = 0; i < rb_numDebugPolygons; i++, poly++ )
-	{
-		if( poly->lifeTime > time )
-		{
-			if( num != i )
-			{
-				rb_debugPolygons[ num ] = *poly;
+	for( i = 0; i < rb_numDebugPolygons; i++, poly++ ) {
+		if( poly->lifeTime > time ) {
+			if( num != i ) {
+				rb_debugPolygons[num] = *poly;
 			}
 			num++;
 		}
@@ -2179,9 +1960,8 @@ void RB_AddDebugPolygon( const idVec4& color, const idWinding& winding, const in
 {
 	debugPolygon_t* poly;
 
-	if( rb_numDebugPolygons < MAX_DEBUG_POLYGONS )
-	{
-		poly = &rb_debugPolygons[ rb_numDebugPolygons++ ];
+	if( rb_numDebugPolygons < MAX_DEBUG_POLYGONS ) {
+		poly			= &rb_debugPolygons[rb_numDebugPolygons++];
 		poly->rgb		= color;
 		poly->winding	= winding;
 		poly->depthTest = depthTest;
@@ -2218,7 +1998,6 @@ void idRenderBackend::DBG_ShowLines()
 {
 }
 
-
 /*
 ================
 idRenderBackend::DBG_TestGamma
@@ -2227,7 +2006,6 @@ idRenderBackend::DBG_TestGamma
 void idRenderBackend::DBG_TestGamma()
 {
 }
-
 
 /*
 ==================
@@ -2247,46 +2025,38 @@ Display a single image over most of the screen
 */
 void idRenderBackend::DBG_TestImage()
 {
-	idImage* image   = NULL;
+	idImage* image	 = NULL;
 	idImage* imageCr = NULL;
 	idImage* imageCb = NULL;
-	int		max;
-	float	w, h;
+	int		 max;
+	float	 w, h;
 
 	image = tr.testImage;
-	if( !image )
-	{
+	if( !image ) {
 		return;
 	}
 
-	if( tr.testVideo )
-	{
-		cinData_t	cin;
+	if( tr.testVideo ) {
+		cinData_t cin;
 
-		// SRS - Don't need calibrated time for testing cinematics, so just call ImageForTime( ) with current system time
+		// SRS - Don't need calibrated time for testing cinematics, so just call ImageForTime() with current system time
 		// This simplification allows cinematic test playback to work over both 2D and 3D background scenes
 		cin = tr.testVideo->ImageForTime( Sys_Milliseconds() /*viewDef->renderView.time[1] - tr.testVideoStartTime*/, commandList );
-		if( cin.imageY != NULL )
-		{
-			image = cin.imageY;
+		if( cin.imageY != NULL ) {
+			image	= cin.imageY;
 			imageCr = cin.imageCr;
 			imageCb = cin.imageCb;
 		}
 		// SRS - Also handle ffmpeg and original RoQ decoders for test videos (using cin.image)
-		else if( cin.image != NULL )
-		{
+		else if( cin.image != NULL ) {
 			image = cin.image;
-		}
-		else
-		{
+		} else {
 			tr.testImage = NULL;
 			return;
 		}
 		w = 0.25;
 		h = 0.25;
-	}
-	else
-	{
+	} else {
 		max = image->GetUploadWidth() > image->GetUploadHeight() ? image->GetUploadWidth() : image->GetUploadHeight();
 
 		w = 0.25 * image->GetUploadWidth() / max;
@@ -2311,28 +2081,28 @@ void idRenderBackend::DBG_TestImage()
 
 #if 1
 	// not really necessary but just for clarity
-	const float screenWidth = 1.0f;
-	const float screenHeight = 1.0f;
-	const float halfScreenWidth = screenWidth * 0.5f;
+	const float screenWidth		 = 1.0f;
+	const float screenHeight	 = 1.0f;
+	const float halfScreenWidth	 = screenWidth * 0.5f;
 	const float halfScreenHeight = screenHeight * 0.5f;
 
-	float scale[16] = { 0 };
-	scale[0] = w; // scale
-	scale[5] = h; // scale
-	scale[10] = 1.0f;
-	scale[12] = halfScreenWidth - ( halfScreenWidth * w ); 			// translate to center x
-	scale[13] = halfScreenHeight / 2 - ( halfScreenHeight * h );	// translate to center y of console dropdown
-	scale[14] = -0.5f;												// translate to center z
-	scale[15] = 1.0f;
+	float		scale[16] = { 0 };
+	scale[0]			  = w; // scale
+	scale[5]			  = h; // scale
+	scale[10]			  = 1.0f;
+	scale[12]			  = halfScreenWidth - ( halfScreenWidth * w );		 // translate to center x
+	scale[13]			  = halfScreenHeight / 2 - ( halfScreenHeight * h ); // translate to center y of console dropdown
+	scale[14]			  = -0.5f;											 // translate to center z
+	scale[15]			  = 1.0f;
 
 	float ortho[16] = { 0 };
-	ortho[0] = 2.0f / screenWidth;
-	ortho[5] = -2.0f / screenHeight;
-	ortho[10] = -2.0f;
-	ortho[12] = -1.0f;
-	ortho[13] = 1.0f;
-	ortho[14] = -1.0f;
-	ortho[15] = 1.0f;
+	ortho[0]		= 2.0f / screenWidth;
+	ortho[5]		= -2.0f / screenHeight;
+	ortho[10]		= -2.0f;
+	ortho[12]		= -1.0f;
+	ortho[13]		= 1.0f;
+	ortho[14]		= -1.0f;
+	ortho[15]		= 1.0f;
 
 	float finalOrtho[16];
 	R_MatrixMultiply( scale, ortho, finalOrtho );
@@ -2349,8 +2119,7 @@ void idRenderBackend::DBG_TestImage()
 	GL_Color( 1, 1, 1, 1 );
 
 	// Bind the Texture
-	if( ( imageCr != NULL ) && ( imageCb != NULL ) )
-	{
+	if( ( imageCr != NULL ) && ( imageCb != NULL ) ) {
 		GL_SelectTexture( 0 );
 		image->Bind();
 
@@ -2361,27 +2130,19 @@ void idRenderBackend::DBG_TestImage()
 		imageCb->Bind();
 
 		// SRS - When rendering in 2D skip sRGB to linear conversion
-		if( viewDef->viewEntitys && viewDef->guiMode == GUIMODE_NONE )
-		{
+		if( viewDef->viewEntitys && viewDef->guiMode == GUIMODE_NONE ) {
 			renderProgManager.BindShader_Bink();
-		}
-		else
-		{
+		} else {
 			renderProgManager.BindShader_Bink_sRGB();
 		}
-	}
-	else
-	{
+	} else {
 		GL_SelectTexture( 0 );
 		image->Bind();
 
 		// SRS - When rendering in 2D skip sRGB to linear conversion
-		if( viewDef->viewEntitys && viewDef->guiMode == GUIMODE_NONE )
-		{
+		if( viewDef->viewEntitys && viewDef->guiMode == GUIMODE_NONE ) {
 			renderProgManager.BindShader_TextureVertexColor();
-		}
-		else
-		{
+		} else {
 			renderProgManager.BindShader_TextureVertexColor_sRGB();
 		}
 	}
@@ -2393,7 +2154,6 @@ void idRenderBackend::DBG_TestImage()
 // RB begin
 void idRenderBackend::DBG_ShowShadowMaps()
 {
-
 }
 // RB end
 
@@ -2426,38 +2186,32 @@ idRenderBackend::DBG_RenderDebugTools
 */
 void idRenderBackend::DBG_RenderDebugTools( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
-	if( viewDef->renderView.rdflags & RDF_IRRADIANCE )
-	{
+	if( viewDef->renderView.rdflags & RDF_IRRADIANCE ) {
 		return;
 	}
 
 	nvrhi::ObjectType commandObject = nvrhi::ObjectTypes::D3D12_GraphicsCommandList;
-	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
-	{
+	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ) {
 		commandObject = nvrhi::ObjectTypes::VK_CommandBuffer;
 	}
-	OPTICK_GPU_CONTEXT( ( void* ) commandList->getNativeObject( commandObject ) );
+	OPTICK_GPU_CONTEXT( ( void* )commandList->getNativeObject( commandObject ) );
 	OPTICK_GPU_EVENT( "Render_DebugTools" );
 
 	// don't do much if this was a 2D rendering
-	if( !viewDef->viewEntitys || viewDef->guiMode != GUIMODE_NONE )
-	{
+	if( !viewDef->viewEntitys || viewDef->guiMode != GUIMODE_NONE ) {
 		DBG_TestImage();
 		DBG_ShowLines();
 		return;
 	}
 
-	//OPTICK_EVENT( "Render_DebugTools" );
+	// OPTICK_EVENT( "Render_DebugTools" );
 
 	renderLog.OpenMainBlock( MRB_DRAW_DEBUG_TOOLS );
 	renderLog.OpenBlock( "Render_DebugTools", colorGreen );
 
 	GL_State( GLS_DEFAULT );
 
-	GL_Scissor( viewDef->viewport.x1 + viewDef->scissor.x1,
-				viewDef->viewport.y1 + viewDef->scissor.y1,
-				viewDef->scissor.x2 + 1 - viewDef->scissor.x1,
-				viewDef->scissor.y2 + 1 - viewDef->scissor.y1 );
+	GL_Scissor( viewDef->viewport.x1 + viewDef->scissor.x1, viewDef->viewport.y1 + viewDef->scissor.y1, viewDef->scissor.x2 + 1 - viewDef->scissor.x1, viewDef->scissor.y2 + 1 - viewDef->scissor.y1 );
 
 	currentScissor = viewDef->scissor;
 
@@ -2481,12 +2235,11 @@ void idRenderBackend::DBG_RenderDebugTools( drawSurf_t** drawSurfs, int numDrawS
 
 	DBG_ShowTextureVectors( drawSurfs, numDrawSurfs );
 	DBG_ShowDominantTris( drawSurfs, numDrawSurfs );
-	if( r_testGamma.GetInteger() > 0 )  	// test here so stack check isn't so damn slow on debug builds
+	if( r_testGamma.GetInteger() > 0 ) // test here so stack check isn't so damn slow on debug builds
 	{
 		DBG_TestGamma();
 	}
-	if( r_testGammaBias.GetInteger() > 0 )
-	{
+	if( r_testGammaBias.GetInteger() > 0 ) {
 		DBG_TestGammaBias();
 	}
 	DBG_TestImage();
@@ -2512,8 +2265,7 @@ RB_ShutdownDebugTools
 */
 void RB_ShutdownDebugTools()
 {
-	for( int i = 0; i < MAX_DEBUG_POLYGONS; i++ )
-	{
+	for( int i = 0; i < MAX_DEBUG_POLYGONS; i++ ) {
 		rb_debugPolygons[i].winding.Clear();
 	}
 }

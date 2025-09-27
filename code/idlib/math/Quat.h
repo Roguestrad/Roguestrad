@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -37,7 +38,7 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-#include "../containers/Array.h"	// for idTupleSize
+#include "../containers/Array.h" // for idTupleSize
 
 class idVec3;
 class idAngles;
@@ -49,62 +50,62 @@ class idCQuat;
 class idQuat
 {
 public:
-	float			x;
-	float			y;
-	float			z;
-	float			w;
+	float x;
+	float y;
+	float z;
+	float w;
 
 	idQuat();
 	idQuat( float x, float y, float z, float w );
 
-	void 			Set( float x, float y, float z, float w );
+	void		  Set( float x, float y, float z, float w );
 
-	float			operator[]( int index ) const;
-	float& 			operator[]( int index );
-	idQuat			operator-() const;
-	idQuat& 		operator=( const idQuat& a );
-	idQuat			operator+( const idQuat& a ) const;
-	idQuat& 		operator+=( const idQuat& a );
-	idQuat			operator-( const idQuat& a ) const;
-	idQuat& 		operator-=( const idQuat& a );
-	idQuat			operator*( const idQuat& a ) const;
-	idVec3			operator*( const idVec3& a ) const;
-	idQuat			operator*( float a ) const;
-	idQuat& 		operator*=( const idQuat& a );
-	idQuat& 		operator*=( float a );
+	float		  operator[]( int index ) const;
+	float&		  operator[]( int index );
+	idQuat		  operator-() const;
+	idQuat&		  operator=( const idQuat& a );
+	idQuat		  operator+( const idQuat& a ) const;
+	idQuat&		  operator+=( const idQuat& a );
+	idQuat		  operator-( const idQuat& a ) const;
+	idQuat&		  operator-=( const idQuat& a );
+	idQuat		  operator*( const idQuat& a ) const;
+	idVec3		  operator*( const idVec3& a ) const;
+	idQuat		  operator*( float a ) const;
+	idQuat&		  operator*=( const idQuat& a );
+	idQuat&		  operator*=( float a );
 
-	friend idQuat	operator*( const float a, const idQuat& b );
-	friend idVec3	operator*( const idVec3& a, const idQuat& b );
+	friend idQuat operator*( const float a, const idQuat& b );
+	friend idVec3 operator*( const idVec3& a, const idQuat& b );
 
-	bool			Compare( const idQuat& a ) const;						// exact compare, no epsilon
-	bool			Compare( const idQuat& a, const float epsilon ) const;	// compare with epsilon
-	bool			operator==(	const idQuat& a ) const;					// exact compare, no epsilon
-	bool			operator!=(	const idQuat& a ) const;					// exact compare, no epsilon
+	bool		  Compare( const idQuat& a ) const;						 // exact compare, no epsilon
+	bool		  Compare( const idQuat& a, const float epsilon ) const; // compare with epsilon
+	bool		  operator==( const idQuat& a ) const;					 // exact compare, no epsilon
+	bool		  operator!=( const idQuat& a ) const;					 // exact compare, no epsilon
 
-	idQuat			Inverse() const;
-	float			Length() const;
-	idQuat& 		Normalize();
+	idQuat		  Inverse() const;
+	float		  Length() const;
+	idQuat&		  Normalize();
 
-	float			CalcW() const;
-	int				GetDimension() const;
+	float		  CalcW() const;
+	int			  GetDimension() const;
 
-	idAngles		ToAngles() const;
-	idRotation		ToRotation() const;
-	idMat3			ToMat3() const;
-	idMat4			ToMat4() const;
-	idCQuat			ToCQuat() const;
-	idVec3			ToAngularVelocity() const;
-	const float* 	ToFloatPtr() const;
-	float* 			ToFloatPtr();
-	const char* 	ToString( int precision = 2 ) const;
+	idAngles	  ToAngles() const;
+	idRotation	  ToRotation() const;
+	idMat3		  ToMat3() const;
+	idMat4		  ToMat4() const;
+	idCQuat		  ToCQuat() const;
+	idVec3		  ToAngularVelocity() const;
+	const float*  ToFloatPtr() const;
+	float*		  ToFloatPtr();
+	const char*	  ToString( int precision = 2 ) const;
 
-	idQuat& 		Slerp( const idQuat& from, const idQuat& to, float t );
-	idQuat& 		Lerp( const idQuat& from, const idQuat& to, const float t );
+	idQuat&		  Slerp( const idQuat& from, const idQuat& to, float t );
+	idQuat&		  Lerp( const idQuat& from, const idQuat& to, const float t );
 };
 
 // A non-member slerp function allows constructing a const idQuat object with the result of a slerp,
 // but without having to explicity create a temporary idQuat object.
-idQuat Slerp( const idQuat& from, const idQuat& to, const float t );
+idQuat	  Slerp( const idQuat& from, const idQuat& to, const float t );
 
 ID_INLINE idQuat::idQuat()
 {
@@ -121,13 +122,13 @@ ID_INLINE idQuat::idQuat( float x, float y, float z, float w )
 ID_INLINE float idQuat::operator[]( int index ) const
 {
 	assert( ( index >= 0 ) && ( index < 4 ) );
-	return ( &x )[ index ];
+	return ( &x )[index];
 }
 
 ID_INLINE float& idQuat::operator[]( int index )
 {
 	assert( ( index >= 0 ) && ( index < 4 ) );
-	return ( &x )[ index ];
+	return ( &x )[index];
 }
 
 ID_INLINE idQuat idQuat::operator-() const
@@ -177,10 +178,7 @@ ID_INLINE idQuat& idQuat::operator-=( const idQuat& a )
 
 ID_INLINE idQuat idQuat::operator*( const idQuat& a ) const
 {
-	return idQuat(	w * a.x + x * a.w + y * a.z - z * a.y,
-					w * a.y + y * a.w + z * a.x - x * a.z,
-					w * a.z + z * a.w + x * a.y - y * a.x,
-					w * a.w - x * a.x - y * a.y - z * a.z );
+	return idQuat( w * a.x + x * a.w + y * a.z - z * a.y, w * a.y + y * a.w + z * a.x - x * a.z, w * a.z + z * a.w + x * a.y - y * a.x, w * a.w - x * a.x - y * a.y - z * a.z );
 }
 
 ID_INLINE idVec3 idQuat::operator*( const idVec3& a ) const
@@ -200,11 +198,9 @@ ID_INLINE idVec3 idQuat::operator*( const idVec3& a ) const
 	float yz2 = y * z * 2.0f;
 	float zw2 = z * w * 2.0f;
 
-	return idVec3(
-			   ( xxzz + wwyy ) * a.x		+ ( xy2 + zw2 ) * a.y		+ ( xz2 - yw2 ) * a.z,
-			   ( xy2 - zw2 ) * a.x			+ ( y * y + w * w - x * x - z * z ) * a.y	+ ( yz2 + xw2 ) * a.z,
-			   ( xz2 + yw2 ) * a.x			+ ( yz2 - xw2 ) * a.y		+ ( wwyy - xxzz ) * a.z
-		   );
+	return idVec3( ( xxzz + wwyy ) * a.x + ( xy2 + zw2 ) * a.y + ( xz2 - yw2 ) * a.z,
+		( xy2 - zw2 ) * a.x + ( y * y + w * w - x * x - z * z ) * a.y + ( yz2 + xw2 ) * a.z,
+		( xz2 + yw2 ) * a.x + ( yz2 - xw2 ) * a.y + ( wwyy - xxzz ) * a.z );
 #endif
 }
 
@@ -247,22 +243,10 @@ ID_INLINE bool idQuat::Compare( const idQuat& a ) const
 
 ID_INLINE bool idQuat::Compare( const idQuat& a, const float epsilon ) const
 {
-	if( idMath::Fabs( x - a.x ) > epsilon )
-	{
-		return false;
-	}
-	if( idMath::Fabs( y - a.y ) > epsilon )
-	{
-		return false;
-	}
-	if( idMath::Fabs( z - a.z ) > epsilon )
-	{
-		return false;
-	}
-	if( idMath::Fabs( w - a.w ) > epsilon )
-	{
-		return false;
-	}
+	if( idMath::Fabs( x - a.x ) > epsilon ) { return false; }
+	if( idMath::Fabs( y - a.y ) > epsilon ) { return false; }
+	if( idMath::Fabs( z - a.z ) > epsilon ) { return false; }
+	if( idMath::Fabs( w - a.w ) > epsilon ) { return false; }
 	return true;
 }
 
@@ -303,8 +287,7 @@ ID_INLINE idQuat& idQuat::Normalize()
 	float ilength;
 
 	len = this->Length();
-	if( len )
-	{
+	if( len ) {
 		ilength = 1 / len;
 		x *= ilength;
 		y *= ilength;
@@ -343,8 +326,7 @@ ID_INLINE float* idQuat::ToFloatPtr()
 ===============================================================================
 */
 template<>
-struct idTupleSize< idQuat >
-{
+struct idTupleSize<idQuat> {
 	enum { value = 4 };
 };
 
@@ -359,33 +341,33 @@ struct idTupleSize< idQuat >
 class idCQuat
 {
 public:
-	float			x;
-	float			y;
-	float			z;
+	float x;
+	float y;
+	float z;
 
 	idCQuat();
 	idCQuat( float x, float y, float z );
 
-	void 			Set( float x, float y, float z );
+	void		 Set( float x, float y, float z );
 
-	float			operator[]( int index ) const;
-	float& 			operator[]( int index );
+	float		 operator[]( int index ) const;
+	float&		 operator[]( int index );
 
-	bool			Compare( const idCQuat& a ) const;						// exact compare, no epsilon
-	bool			Compare( const idCQuat& a, const float epsilon ) const;	// compare with epsilon
-	bool			operator==(	const idCQuat& a ) const;					// exact compare, no epsilon
-	bool			operator!=(	const idCQuat& a ) const;					// exact compare, no epsilon
+	bool		 Compare( const idCQuat& a ) const;						 // exact compare, no epsilon
+	bool		 Compare( const idCQuat& a, const float epsilon ) const; // compare with epsilon
+	bool		 operator==( const idCQuat& a ) const;					 // exact compare, no epsilon
+	bool		 operator!=( const idCQuat& a ) const;					 // exact compare, no epsilon
 
-	int				GetDimension() const;
+	int			 GetDimension() const;
 
-	idAngles		ToAngles() const;
-	idRotation		ToRotation() const;
-	idMat3			ToMat3() const;
-	idMat4			ToMat4() const;
-	idQuat			ToQuat() const;
-	const float* 	ToFloatPtr() const;
-	float* 			ToFloatPtr();
-	const char* 	ToString( int precision = 2 ) const;
+	idAngles	 ToAngles() const;
+	idRotation	 ToRotation() const;
+	idMat3		 ToMat3() const;
+	idMat4		 ToMat4() const;
+	idQuat		 ToQuat() const;
+	const float* ToFloatPtr() const;
+	float*		 ToFloatPtr();
+	const char*	 ToString( int precision = 2 ) const;
 };
 
 ID_INLINE idCQuat::idCQuat()
@@ -409,13 +391,13 @@ ID_INLINE void idCQuat::Set( float x, float y, float z )
 ID_INLINE float idCQuat::operator[]( int index ) const
 {
 	assert( ( index >= 0 ) && ( index < 3 ) );
-	return ( &x )[ index ];
+	return ( &x )[index];
 }
 
 ID_INLINE float& idCQuat::operator[]( int index )
 {
 	assert( ( index >= 0 ) && ( index < 3 ) );
-	return ( &x )[ index ];
+	return ( &x )[index];
 }
 
 ID_INLINE bool idCQuat::Compare( const idCQuat& a ) const
@@ -425,18 +407,9 @@ ID_INLINE bool idCQuat::Compare( const idCQuat& a ) const
 
 ID_INLINE bool idCQuat::Compare( const idCQuat& a, const float epsilon ) const
 {
-	if( idMath::Fabs( x - a.x ) > epsilon )
-	{
-		return false;
-	}
-	if( idMath::Fabs( y - a.y ) > epsilon )
-	{
-		return false;
-	}
-	if( idMath::Fabs( z - a.z ) > epsilon )
-	{
-		return false;
-	}
+	if( idMath::Fabs( x - a.x ) > epsilon ) { return false; }
+	if( idMath::Fabs( y - a.y ) > epsilon ) { return false; }
+	if( idMath::Fabs( z - a.z ) > epsilon ) { return false; }
 	return true;
 }
 
@@ -479,8 +452,7 @@ ID_INLINE float* idCQuat::ToFloatPtr()
 ===============================================================================
 */
 template<>
-struct idTupleSize< idCQuat >
-{
+struct idTupleSize<idCQuat> {
 	enum { value = 3 };
 };
 

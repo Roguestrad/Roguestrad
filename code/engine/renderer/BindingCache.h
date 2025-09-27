@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -35,36 +36,34 @@ class BindingCache
 public:
 	BindingCache();
 
-	void                    Init( nvrhi::IDevice* _device );
-	void                    Clear();
+	void					Init( nvrhi::IDevice* _device );
+	void					Clear();
 
 	nvrhi::BindingSetHandle GetCachedBindingSet( const nvrhi::BindingSetDesc& desc, nvrhi::IBindingLayout* layout );
 	nvrhi::BindingSetHandle GetOrCreateBindingSet( const nvrhi::BindingSetDesc& desc, nvrhi::IBindingLayout* layout );
 
 private:
-	nvrhi::IDevice*                 device;
+	nvrhi::IDevice*					device;
 	idList<nvrhi::BindingSetHandle> bindingSets;
 	idHashIndex						bindingHash;
-	idSysMutex                      mutex;
+	idSysMutex						mutex;
 };
 
 class SamplerCache
 {
 public:
+	SamplerCache() { }
 
-	SamplerCache() {}
+	void				 Init( nvrhi::IDevice* _device );
+	void				 Clear();
 
-	void                    Init( nvrhi::IDevice* _device );
-	void                    Clear();
-
-	nvrhi::SamplerHandle    GetOrCreateSampler( nvrhi::SamplerDesc samplerDesc );
+	nvrhi::SamplerHandle GetOrCreateSampler( nvrhi::SamplerDesc samplerDesc );
 
 private:
-
-	nvrhi::IDevice* device;
-	idList<nvrhi::SamplerHandle>	samplers;
-	idHashIndex						samplerHash;
-	idSysMutex                      mutex;
+	nvrhi::IDevice*				 device;
+	idList<nvrhi::SamplerHandle> samplers;
+	idHashIndex					 samplerHash;
+	idSysMutex					 mutex;
 };
 
 #endif

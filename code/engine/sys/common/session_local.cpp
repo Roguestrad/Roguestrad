@@ -23,7 +23,7 @@ Contains the windows implementation of the network session
 #include "../sys_lobby_backend_direct.h"
 #include "../sys_voicechat.h"
 #include "achievements.h"
-//#include "win_local.h"
+// #include "win_local.h"
 
 /*
 ========================
@@ -49,92 +49,100 @@ public:
 	virtual ~idSessionLocalWin();
 
 	// idSessionLocal interface
-	virtual void		Initialize();
-	virtual void		Shutdown();
+	virtual void				Initialize();
+	virtual void				Shutdown();
 
-	virtual void		InitializeSoundRelatedSystems();
-	virtual void		ShutdownSoundRelatedSystems();
+	virtual void				InitializeSoundRelatedSystems();
+	virtual void				ShutdownSoundRelatedSystems();
 
-	virtual void		PlatformPump();
+	virtual void				PlatformPump();
 
-	virtual void		InviteFriends();
-	virtual void		InviteParty();
-	virtual void		ShowPartySessions();
+	virtual void				InviteFriends();
+	virtual void				InviteParty();
+	virtual void				ShowPartySessions();
 
-	virtual void		ShowSystemMarketplaceUI() const;
+	virtual void				ShowSystemMarketplaceUI() const;
 
-	virtual void					ListServers( const idCallback& callback );
-	virtual void					CancelListServers();
-	virtual int						NumServers() const;
-	virtual const serverInfo_t* 	ServerInfo( int i ) const;
-	virtual void					ConnectToServer( int i );
-	virtual void					ShowServerGamerCardUI( int i );
+	virtual void				ListServers( const idCallback& callback );
+	virtual void				CancelListServers();
+	virtual int					NumServers() const;
+	virtual const serverInfo_t* ServerInfo( int i ) const;
+	virtual void				ConnectToServer( int i );
+	virtual void				ShowServerGamerCardUI( int i );
 
-	virtual void			ShowLobbyUserGamerCardUI( lobbyUserID_t lobbyUserID );
+	virtual void				ShowLobbyUserGamerCardUI( lobbyUserID_t lobbyUserID );
 
-	virtual void			ShowOnlineSignin() {}
-	virtual void			UpdateRichPresence() {}
-	virtual void			CheckVoicePrivileges() {}
+	virtual void				ShowOnlineSignin()
+	{
+	}
+	virtual void UpdateRichPresence()
+	{
+	}
+	virtual void CheckVoicePrivileges()
+	{
+	}
 
-	virtual bool			ProcessInputEvent( const sysEvent_t* ev );
+	virtual bool  ProcessInputEvent( const sysEvent_t* ev );
 
 	// System UI
-	virtual bool			IsSystemUIShowing() const;
-	virtual void			SetSystemUIShowing( bool show );
+	virtual bool  IsSystemUIShowing() const;
+	virtual void  SetSystemUIShowing( bool show );
 
 	// Invites
-	virtual void			HandleBootableInvite( int64 lobbyId = 0 );
-	virtual void			ClearBootableInvite();
-	virtual void			ClearPendingInvite();
+	virtual void  HandleBootableInvite( int64 lobbyId = 0 );
+	virtual void  ClearBootableInvite();
+	virtual void  ClearPendingInvite();
 
-	virtual bool			HasPendingBootableInvite();
-	virtual void			SetDiscSwapMPInvite( void* parm );
-	virtual void* 			GetDiscSwapMPInviteParms();
+	virtual bool  HasPendingBootableInvite();
+	virtual void  SetDiscSwapMPInvite( void* parm );
+	virtual void* GetDiscSwapMPInviteParms();
 
-	virtual void			EnumerateDownloadableContent();
+	virtual void  EnumerateDownloadableContent();
 
-	virtual void 			HandleServerQueryRequest( lobbyAddress_t& remoteAddr, idBitMsg& msg, int msgType );
-	virtual void 			HandleServerQueryAck( lobbyAddress_t& remoteAddr, idBitMsg& msg );
+	virtual void  HandleServerQueryRequest( lobbyAddress_t& remoteAddr, idBitMsg& msg, int msgType );
+	virtual void  HandleServerQueryAck( lobbyAddress_t& remoteAddr, idBitMsg& msg );
 
 	// Leaderboards
-	virtual void			LeaderboardUpload( lobbyUserID_t lobbyUserID, const leaderboardDefinition_t* leaderboard, const column_t* stats, const idFile_Memory* attachment = NULL );
-	virtual void			LeaderboardDownload( int sessionUserIndex, const leaderboardDefinition_t* leaderboard, int startingRank, int numRows, const idLeaderboardCallback& callback );
-	virtual void			LeaderboardDownloadAttachment( int sessionUserIndex, const leaderboardDefinition_t* leaderboard, int64 attachmentID );
+	virtual void  LeaderboardUpload( lobbyUserID_t lobbyUserID, const leaderboardDefinition_t* leaderboard, const column_t* stats, const idFile_Memory* attachment = NULL );
+	virtual void  LeaderboardDownload( int sessionUserIndex, const leaderboardDefinition_t* leaderboard, int startingRank, int numRows, const idLeaderboardCallback& callback );
+	virtual void  LeaderboardDownloadAttachment( int sessionUserIndex, const leaderboardDefinition_t* leaderboard, int64 attachmentID );
 
 	// Scoring (currently just for TrueSkill)
-	virtual void			SetLobbyUserRelativeScore( lobbyUserID_t lobbyUserID, int relativeScore, int team ) {}
+	virtual void  SetLobbyUserRelativeScore( lobbyUserID_t lobbyUserID, int relativeScore, int team )
+	{
+	}
 
-	virtual void			LeaderboardFlush();
+	virtual void			  LeaderboardFlush();
 
-	virtual idNetSessionPort& 	GetPort( bool dedicated = false );
-	virtual idLobbyBackend* 	CreateLobbyBackend( const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType );
-	virtual idLobbyBackend* 	FindLobbyBackend( const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType );
-	virtual idLobbyBackend* 	JoinFromConnectInfo( const lobbyConnectInfo_t& connectInfo , idLobbyBackend::lobbyBackendType_t lobbyType );
-	virtual void				DestroyLobbyBackend( idLobbyBackend* lobbyBackend );
-	virtual void				PumpLobbies();
-	virtual void				JoinAfterSwap( void* joinID );
+	virtual idNetSessionPort& GetPort( bool dedicated = false );
+	virtual idLobbyBackend*	  CreateLobbyBackend( const idMatchParameters& p, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType );
+	virtual idLobbyBackend*	  FindLobbyBackend( const idMatchParameters& p, int numPartyUsers, float skillLevel, idLobbyBackend::lobbyBackendType_t lobbyType );
+	virtual idLobbyBackend*	  JoinFromConnectInfo( const lobbyConnectInfo_t& connectInfo, idLobbyBackend::lobbyBackendType_t lobbyType );
+	virtual void			  DestroyLobbyBackend( idLobbyBackend* lobbyBackend );
+	virtual void			  PumpLobbies();
+	virtual void			  JoinAfterSwap( void* joinID );
 
-	virtual bool				GetLobbyAddressFromNetAddress( const netadr_t& netAddr, lobbyAddress_t& outAddr ) const;
-	virtual bool				GetNetAddressFromLobbyAddress( const lobbyAddress_t& lobbyAddress, netadr_t& outNetAddr ) const;
+	virtual bool			  GetLobbyAddressFromNetAddress( const netadr_t& netAddr, lobbyAddress_t& outAddr ) const;
+	virtual bool			  GetNetAddressFromLobbyAddress( const lobbyAddress_t& lobbyAddress, netadr_t& outNetAddr ) const;
 
 public:
-	void	Connect_f( const idCmdArgs& args );
+	void Connect_f( const idCmdArgs& args );
 
 private:
-	void					EnsurePort();
+	void						EnsurePort();
 
-	idLobbyBackend* 		CreateLobbyInternal( idLobbyBackend::lobbyBackendType_t lobbyType );
+	idLobbyBackend*				CreateLobbyInternal( idLobbyBackend::lobbyBackendType_t lobbyType );
 
-	idArray< idLobbyBackend*, 3 > lobbyBackends;
+	idArray<idLobbyBackend*, 3> lobbyBackends;
 
-	idNetSessionPort		port;
-	bool					canJoinLocalHost;
+	idNetSessionPort			port;
+	bool						canJoinLocalHost;
 
-	idLobbyToSessionCBLocal*	 lobbyToSessionCB;
+	idLobbyToSessionCBLocal*	lobbyToSessionCB;
 };
 
 idSessionLocalWin sessionLocalWin;
-idSession* session = &sessionLocalWin;
+idSession*		  session = &sessionLocalWin;
 
 /*
 ========================
@@ -144,7 +152,10 @@ idLobbyToSessionCBLocal
 class idLobbyToSessionCBLocal : public idLobbyToSessionCB
 {
 public:
-	idLobbyToSessionCBLocal( idSessionLocalWin* sessionLocalWin_ ) : sessionLocalWin( sessionLocalWin_ ) { }
+	idLobbyToSessionCBLocal( idSessionLocalWin* sessionLocalWin_ ) :
+		sessionLocalWin( sessionLocalWin_ )
+	{
+	}
 
 	virtual bool CanJoinLocalHost() const
 	{
@@ -153,33 +164,37 @@ public:
 	}
 	virtual class idLobbyBackend* GetLobbyBackend( idLobbyBackend::lobbyBackendType_t type ) const
 	{
-		return sessionLocalWin->lobbyBackends[ type ];
+		return sessionLocalWin->lobbyBackends[type];
 	}
 
 private:
-	idSessionLocalWin* 			sessionLocalWin;
+	idSessionLocalWin* sessionLocalWin;
 };
 
 idLobbyToSessionCBLocal lobbyToSessionCBLocal( &sessionLocalWin );
-idLobbyToSessionCB* lobbyToSessionCB = &lobbyToSessionCBLocal;
+idLobbyToSessionCB*		lobbyToSessionCB = &lobbyToSessionCBLocal;
 
 class idVoiceChatMgrWin : public idVoiceChatMgr
 {
 public:
-	virtual bool	GetLocalChatDataInternal( int talkerIndex, byte* data, int& dataSize )
+	virtual bool GetLocalChatDataInternal( int talkerIndex, byte* data, int& dataSize )
 	{
 		return false;
 	}
-	virtual void	SubmitIncomingChatDataInternal( int talkerIndex, const byte* data, int dataSize ) { }
-	virtual bool	TalkerHasData( int talkerIndex )
+	virtual void SubmitIncomingChatDataInternal( int talkerIndex, const byte* data, int dataSize )
+	{
+	}
+	virtual bool TalkerHasData( int talkerIndex )
 	{
 		return false;
 	}
-	virtual bool	RegisterTalkerInternal( int index )
+	virtual bool RegisterTalkerInternal( int index )
 	{
 		return true;
 	}
-	virtual void	UnregisterTalkerInternal( int index ) { }
+	virtual void UnregisterTalkerInternal( int index )
+	{
+	}
 };
 
 /*
@@ -189,12 +204,12 @@ idSessionLocalWin::idSessionLocalWin
 */
 idSessionLocalWin::idSessionLocalWin()
 {
-	signInManager		= new( TAG_SYSTEM ) idSignInManagerWin;
-	saveGameManager		= new( TAG_SAVEGAMES ) idSaveGameManager();
-	voiceChat			= new( TAG_SYSTEM ) idVoiceChatMgrWin();
-	lobbyToSessionCB	= new( TAG_SYSTEM ) idLobbyToSessionCBLocal( this );
+	signInManager	 = new( TAG_SYSTEM ) idSignInManagerWin;
+	saveGameManager	 = new( TAG_SAVEGAMES ) idSaveGameManager();
+	voiceChat		 = new( TAG_SYSTEM ) idVoiceChatMgrWin();
+	lobbyToSessionCB = new( TAG_SYSTEM ) idLobbyToSessionCBLocal( this );
 
-	canJoinLocalHost	= false;
+	canJoinLocalHost = false;
 
 	lobbyBackends.Zero();
 }
@@ -248,13 +263,11 @@ void idSessionLocalWin::Shutdown()
 	MoveToMainMenu();
 
 	// Wait until we fully shutdown
-	while( localState != STATE_IDLE )
-	{
+	while( localState != STATE_IDLE ) {
 		Pump();
 	}
 
-	if( achievementSystem != NULL )
-	{
+	if( achievementSystem != NULL ) {
 		achievementSystem->Shutdown();
 		delete achievementSystem;
 		achievementSystem = NULL;
@@ -268,8 +281,7 @@ idSessionLocalWin::InitializeSoundRelatedSystems
 */
 void idSessionLocalWin::InitializeSoundRelatedSystems()
 {
-	if( voiceChat != NULL )
-	{
+	if( voiceChat != NULL ) {
 		voiceChat->Init( NULL );
 	}
 }
@@ -281,8 +293,7 @@ idSessionLocalWin::ShutdownSoundRelatedSystems
 */
 void idSessionLocalWin::ShutdownSoundRelatedSystems()
 {
-	if( voiceChat != NULL )
-	{
+	if( voiceChat != NULL ) {
 		voiceChat->Shutdown();
 	}
 }
@@ -387,16 +398,14 @@ idSessionLocalWin::Connect_f
 */
 void idSessionLocalWin::Connect_f( const idCmdArgs& args )
 {
-	if( args.Argc() < 2 )
-	{
+	if( args.Argc() < 2 ) {
 		idLib::Printf( "Usage: Connect to IP. Use IP:Port to specify port (e.g. 10.0.0.1:1234) \n" );
 		return;
 	}
 
 	Cancel();
 
-	if( signInManager->GetMasterLocalUser() == NULL )
-	{
+	if( signInManager->GetMasterLocalUser() == NULL ) {
 		signInManager->RegisterLocalUser( 0 );
 	}
 
@@ -405,8 +414,7 @@ void idSessionLocalWin::Connect_f( const idCmdArgs& args )
 	Sys_StringToNetAdr( args.Argv( 1 ), &connectInfo.netAddr, true );
 	// DG: don't use net_port to select port to connect to
 	//     the port can be specified in the command, else the default port is used
-	if( connectInfo.netAddr.port == 0 )
-	{
+	if( connectInfo.netAddr.port == 0 ) {
 		connectInfo.netAddr.port = 27015;
 	}
 	// DG end
@@ -449,8 +457,7 @@ idSessionLocalWin::ProcessInputEvent
 */
 bool idSessionLocalWin::ProcessInputEvent( const sysEvent_t* ev )
 {
-	if( GetSignInManager().ProcessInputEvent( ev ) )
-	{
+	if( GetSignInManager().ProcessInputEvent( ev ) ) {
 		return true;
 	}
 	return false;
@@ -496,7 +503,6 @@ idSessionLocalWin::HandleServerQueryAck
 void idSessionLocalWin::HandleServerQueryAck( lobbyAddress_t& remoteAddr, idBitMsg& msg )
 {
 	NET_VERBOSE_PRINT( "HandleServerQueryAck from %s\n", remoteAddr.ToString() );
-
 }
 
 /*
@@ -608,18 +614,14 @@ idSessionLocalWin::EnsurePort
 void idSessionLocalWin::EnsurePort()
 {
 	// Init the port using reqular sockets
-	if( port.IsOpen() )
-	{
-		return;		// Already initialized
+	if( port.IsOpen() ) {
+		return; // Already initialized
 	}
 
-	if( port.InitPort( net_port.GetInteger(), false ) )
-	{
+	if( port.InitPort( net_port.GetInteger(), false ) ) {
 		// TODO: what about canJoinLocalHost when running two instances with different net_port values?
 		canJoinLocalHost = false;
-	}
-	else
-	{
+	} else {
 		// Assume this is another instantiation on the same machine, and just init using any available port
 		port.InitPort( PORT_ANY, false );
 		canJoinLocalHost = true;
@@ -701,10 +703,8 @@ void idSessionLocalWin::PumpLobbies()
 	assert( lobbyBackends[idLobbyBackend::TYPE_GAME_STATE] == NULL || lobbyBackends[idLobbyBackend::TYPE_GAME_STATE]->GetLobbyType() == idLobbyBackend::TYPE_GAME_STATE );
 
 	// Pump lobbyBackends
-	for( int i = 0; i < lobbyBackends.Num(); i++ )
-	{
-		if( lobbyBackends[i] != NULL )
-		{
+	for( int i = 0; i < lobbyBackends.Num(); i++ ) {
+		if( lobbyBackends[i] != NULL ) {
 			lobbyBackends[i]->Pump();
 		}
 	}

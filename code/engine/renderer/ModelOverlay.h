@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -47,35 +48,32 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-static const int MAX_DEFERRED_OVERLAYS		= 4;
-static const int DEFFERED_OVERLAY_TIMEOUT	= 200;	// don't create a overlay if it wasn't visible within the first 200 milliseconds
-static const int MAX_OVERLAYS				= 8;
+static const int MAX_DEFERRED_OVERLAYS	  = 4;
+static const int DEFFERED_OVERLAY_TIMEOUT = 200; // don't create a overlay if it wasn't visible within the first 200 milliseconds
+static const int MAX_OVERLAYS			  = 8;
 
 compile_time_assert( CONST_ISPOWEROFTWO( MAX_OVERLAYS ) );
 
-struct overlayProjectionParms_t
-{
-	idPlane				localTextureAxis[2];
-	const idMaterial* 	material;
-	int					startTime;
+struct overlayProjectionParms_t {
+	idPlane			  localTextureAxis[2];
+	const idMaterial* material;
+	int				  startTime;
 };
 
-struct overlayVertex_t
-{
-	int					vertexNum;
-	halfFloat_t			st[2];
+struct overlayVertex_t {
+	int			vertexNum;
+	halfFloat_t st[2];
 };
 
-struct overlay_t
-{
-	int					surfaceNum;
-	int					surfaceId;
-	int					maxReferencedVertex;
-	int					numIndexes;
-	triIndex_t* 		indexes;
-	int					numVerts;
-	overlayVertex_t* 	verts;
-	const idMaterial* 	material;
+struct overlay_t {
+	int				  surfaceNum;
+	int				  surfaceId;
+	int				  maxReferencedVertex;
+	int				  numIndexes;
+	triIndex_t*		  indexes;
+	int				  numVerts;
+	overlayVertex_t*  verts;
+	const idMaterial* material;
 };
 
 class idRenderModelOverlay
@@ -84,28 +82,28 @@ public:
 	idRenderModelOverlay();
 	~idRenderModelOverlay();
 
-	void						ReUse();
+	void			   ReUse();
 
-	void						AddDeferredOverlay( const overlayProjectionParms_t& localParms );
-	void						CreateDeferredOverlays( const idRenderModel* model );
+	void			   AddDeferredOverlay( const overlayProjectionParms_t& localParms );
+	void			   CreateDeferredOverlays( const idRenderModel* model );
 
-	unsigned int				GetNumOverlayDrawSurfs();
-	struct drawSurf_t* 			CreateOverlayDrawSurf( const struct viewEntity_t* space, const idRenderModel* baseModel, unsigned int index );
+	unsigned int	   GetNumOverlayDrawSurfs();
+	struct drawSurf_t* CreateOverlayDrawSurf( const struct viewEntity_t* space, const idRenderModel* baseModel, unsigned int index );
 
 private:
-	overlay_t					overlays[MAX_OVERLAYS];
-	unsigned int				firstOverlay;
-	unsigned int				nextOverlay;
+	overlay_t				 overlays[MAX_OVERLAYS];
+	unsigned int			 firstOverlay;
+	unsigned int			 nextOverlay;
 
-	overlayProjectionParms_t	deferredOverlays[MAX_DEFERRED_OVERLAYS];
-	unsigned int				firstDeferredOverlay;
-	unsigned int				nextDeferredOverlay;
+	overlayProjectionParms_t deferredOverlays[MAX_DEFERRED_OVERLAYS];
+	unsigned int			 firstDeferredOverlay;
+	unsigned int			 nextDeferredOverlay;
 
-	const idMaterial* 			overlayMaterials[MAX_OVERLAYS];
-	unsigned int				numOverlayMaterials;
+	const idMaterial*		 overlayMaterials[MAX_OVERLAYS];
+	unsigned int			 numOverlayMaterials;
 
-	void						CreateOverlay( const idRenderModel* model, const idPlane localTextureAxis[2], const idMaterial* material );
-	void						FreeOverlay( overlay_t& overlay );
+	void					 CreateOverlay( const idRenderModel* model, const idPlane localTextureAxis[2], const idMaterial* material );
+	void					 FreeOverlay( overlay_t& overlay );
 };
 
 #endif /* !__MODELOVERLAY_H__ */

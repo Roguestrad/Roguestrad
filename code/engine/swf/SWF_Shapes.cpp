@@ -19,7 +19,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -35,10 +36,9 @@ idSWF::DefineShape
 */
 void idSWF::DefineShape( idSWFBitStream& bitstream )
 {
-	uint16 characterID = bitstream.ReadU16();
-	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_SHAPE );
-	if( entry == NULL )
-	{
+	uint16				  characterID = bitstream.ReadU16();
+	idSWFDictionaryEntry* entry		  = AddDictionaryEntry( characterID, SWF_DICT_SHAPE );
+	if( entry == NULL ) {
 		return;
 	}
 
@@ -53,10 +53,9 @@ idSWF::DefineShape2
 */
 void idSWF::DefineShape2( idSWFBitStream& bitstream )
 {
-	uint16 characterID = bitstream.ReadU16();
-	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_SHAPE );
-	if( entry == NULL )
-	{
+	uint16				  characterID = bitstream.ReadU16();
+	idSWFDictionaryEntry* entry		  = AddDictionaryEntry( characterID, SWF_DICT_SHAPE );
+	if( entry == NULL ) {
 		return;
 	}
 
@@ -71,10 +70,9 @@ idSWF::DefineShape3
 */
 void idSWF::DefineShape3( idSWFBitStream& bitstream )
 {
-	uint16 characterID = bitstream.ReadU16();
-	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_SHAPE );
-	if( entry == NULL )
-	{
+	uint16				  characterID = bitstream.ReadU16();
+	idSWFDictionaryEntry* entry		  = AddDictionaryEntry( characterID, SWF_DICT_SHAPE );
+	if( entry == NULL ) {
 		return;
 	}
 
@@ -89,17 +87,15 @@ idSWF::DefineShape4
 */
 void idSWF::DefineShape4( idSWFBitStream& bitstream )
 {
-	uint16 characterID = bitstream.ReadU16();
-	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_SHAPE );
-	if( entry == NULL )
-	{
+	uint16				  characterID = bitstream.ReadU16();
+	idSWFDictionaryEntry* entry		  = AddDictionaryEntry( characterID, SWF_DICT_SHAPE );
+	if( entry == NULL ) {
 		return;
 	}
 
 	idSWFShapeParser swfShapeParser;
 	swfShapeParser.Parse( bitstream, *entry->shape, 4 );
 }
-
 
 /*
 ========================
@@ -108,10 +104,9 @@ idSWF::DefineMorphShape
 */
 void idSWF::DefineMorphShape( idSWFBitStream& bitstream )
 {
-	uint16 characterID = bitstream.ReadU16();
-	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_MORPH );
-	if( entry == NULL )
-	{
+	uint16				  characterID = bitstream.ReadU16();
+	idSWFDictionaryEntry* entry		  = AddDictionaryEntry( characterID, SWF_DICT_MORPH );
+	if( entry == NULL ) {
 		return;
 	}
 

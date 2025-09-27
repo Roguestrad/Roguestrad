@@ -22,7 +22,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -34,7 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "imgui.h"
 
-#if defined(USE_INTRINSICS_SSE)
+#if defined( USE_INTRINSICS_SSE )
 	#if MOC_MULTITHREADED
 		#include "CullingThreadPool.h"
 	#else
@@ -47,7 +48,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "engine/sys/DeviceManager.h"
 
 // RB begin
-#if defined(_WIN32)
+#if defined( _WIN32 )
 
 	// Vista OpenGL wrapper check
 	#include "../sys/win32/win_local.h"
@@ -60,36 +61,39 @@ If you have questions concerning this license or the applicable additional terms
 	#include "../framework/Common_local.h"
 #endif
 
-
 // DeviceContext bypasses RenderSystem to work directly with this
 idGuiModel* tr_guiModel;
 
 // functions that are not called every frame
 glconfig_t	glConfig;
 
-idCVar r_requestStereoPixelFormat( "r_requestStereoPixelFormat", "1", CVAR_RENDERER, "Ask for a stereo GL pixel format on startup" );
-idCVar r_debugContext( "r_debugContext", "0", CVAR_RENDERER, "Enable various levels of context debug." );
+idCVar		r_requestStereoPixelFormat( "r_requestStereoPixelFormat", "1", CVAR_RENDERER, "Ask for a stereo GL pixel format on startup" );
+idCVar		r_debugContext( "r_debugContext", "0", CVAR_RENDERER, "Enable various levels of context debug." );
 
 #if defined( _WIN32 )
-	idCVar r_graphicsAPI( "r_graphicsAPI", "dx12", CVAR_RENDERER | CVAR_INIT | CVAR_ARCHIVE | CVAR_NEW, "Specifies the graphics api to use (dx12, vulkan)" );
+idCVar r_graphicsAPI( "r_graphicsAPI", "dx12", CVAR_RENDERER | CVAR_INIT | CVAR_ARCHIVE | CVAR_NEW, "Specifies the graphics api to use (dx12, vulkan)" );
 #else
-	idCVar r_graphicsAPI( "r_graphicsAPI", "vulkan", CVAR_RENDERER | CVAR_ROM | CVAR_STATIC | CVAR_NEW, "Specifies the graphics api to use (vulkan)" );
+idCVar r_graphicsAPI( "r_graphicsAPI", "vulkan", CVAR_RENDERER | CVAR_ROM | CVAR_STATIC | CVAR_NEW, "Specifies the graphics api to use (vulkan)" );
 #endif
 
 idCVar r_useValidationLayers( "r_useValidationLayers", "1", CVAR_INTEGER | CVAR_INIT | CVAR_NEW, "1 is just the NVRHI and 2 will turn on additional DX12, VK validation layers" );
 
 // RB: disabled 16x MSAA
 #if ID_MSAA
-	idCVar r_antiAliasing( "r_antiAliasing", "1", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW, " 0 = None\n 1 = TAA 1x\n 2 = TAA + SMAA 1x\n 3 = MSAA 2x\n 4 = MSAA 4x\n", 0, ANTI_ALIASING_MSAA_4X );
+idCVar r_antiAliasing(
+	"r_antiAliasing", "1", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW, " 0 = None\n 1 = TAA 1x\n 2 = TAA + SMAA 1x\n 3 = MSAA 2x\n 4 = MSAA 4x\n", 0, ANTI_ALIASING_MSAA_4X );
 #else
-	idCVar r_antiAliasing( "r_antiAliasing", "2", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW, " 0 = None\n 1 = SMAA 1x\n 2 = TAA", 0, ANTI_ALIASING_TAA );
+idCVar r_antiAliasing( "r_antiAliasing", "2", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW, " 0 = None\n 1 = SMAA 1x\n 2 = TAA", 0, ANTI_ALIASING_TAA );
 #endif
 // RB end
 idCVar r_vidMode( "r_vidMode", "0", CVAR_ARCHIVE | CVAR_RENDERER | CVAR_INTEGER, "fullscreen video mode number" );
 idCVar r_displayRefresh( "r_displayRefresh", "0", CVAR_RENDERER | CVAR_INTEGER | CVAR_NOCHEAT, "optional display refresh rate option for vid mode", 0.0f, 240.0f );
 // SRS - redefined mode -2 to be borderless fullscreen, implemented borderless modes -2 and -1 for Windows and linux/macOS (SDL)
 // DG: add mode -2 for SDL, also defaulting to windowed mode, as that causes less trouble on linux
-idCVar r_fullscreen( "r_fullscreen", "0", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER, "-2 = borderless fullscreen, -1 = borderless window, 0 = windowed, 1 = full screen on monitor 1, 2 = full screen on monitor 2, etc" );
+idCVar r_fullscreen( "r_fullscreen",
+	"0",
+	CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER,
+	"-2 = borderless fullscreen, -1 = borderless window, 0 = windowed, 1 = full screen on monitor 1, 2 = full screen on monitor 2, etc" );
 // DG end
 idCVar r_customWidth( "r_customWidth", "1280", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER, "custom screen width. set r_vidMode to -1 to activate" );
 idCVar r_customHeight( "r_customHeight", "720", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER, "custom screen height. set r_vidMode to -1 to activate" );
@@ -146,22 +150,36 @@ idCVar r_skipSpecular( "r_skipSpecular", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_C
 idCVar r_skipBump( "r_skipBump", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_ARCHIVE, "uses a flat surface instead of the bump map" );
 idCVar r_skipDiffuse( "r_skipDiffuse", "0", CVAR_RENDERER | CVAR_INTEGER, "use black for diffuse" );
 idCVar r_skipSubviews( "r_skipSubviews", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = don't render any gui elements on surfaces" );
-idCVar r_skipGuiShaders( "r_skipGuiShaders", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = skip all gui elements on surfaces, 2 = skip drawing but still handle events, 3 = draw but skip events", 0, 3, idCmdSystem::ArgCompletion_Integer<0, 3> );
+idCVar r_skipGuiShaders( "r_skipGuiShaders",
+	"0",
+	CVAR_RENDERER | CVAR_INTEGER,
+	"1 = skip all gui elements on surfaces, 2 = skip drawing but still handle events, 3 = draw but skip events",
+	0,
+	3,
+	idCmdSystem::ArgCompletion_Integer<0, 3> );
 idCVar r_skipParticles( "r_skipParticles", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = skip all particle systems", 0, 1, idCmdSystem::ArgCompletion_Integer<0, 1> );
-idCVar r_skipShadows( "r_skipShadows", "0", CVAR_RENDERER | CVAR_BOOL  | CVAR_ARCHIVE, "disable shadows" );
+idCVar r_skipShadows( "r_skipShadows", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_ARCHIVE, "disable shadows" );
 
-idCVar r_useLightPortalCulling( "r_useLightPortalCulling", "1", CVAR_RENDERER | CVAR_INTEGER, "0 = none, 1 = cull frustum corners to plane, 2 = exact clip the frustum faces", 0, 2, idCmdSystem::ArgCompletion_Integer<0, 2> );
+idCVar r_useLightPortalCulling(
+	"r_useLightPortalCulling", "1", CVAR_RENDERER | CVAR_INTEGER, "0 = none, 1 = cull frustum corners to plane, 2 = exact clip the frustum faces", 0, 2, idCmdSystem::ArgCompletion_Integer<0, 2> );
 idCVar r_useLightAreaCulling( "r_useLightAreaCulling", "1", CVAR_RENDERER | CVAR_BOOL, "0 = off, 1 = on" );
-idCVar r_useLightScissors( "r_useLightScissors", "3", CVAR_RENDERER | CVAR_INTEGER, "0 = no scissor, 1 = non-clipped scissor, 2 = near-clipped scissor, 3 = fully-clipped scissor", 0, 3, idCmdSystem::ArgCompletion_Integer<0, 3> );
-idCVar r_useEntityPortalCulling( "r_useEntityPortalCulling", "1", CVAR_RENDERER | CVAR_INTEGER, "0 = none, 1 = cull frustum corners to plane, 2 = exact clip the frustum faces", 0, 2, idCmdSystem::ArgCompletion_Integer<0, 2> );
+idCVar r_useLightScissors( "r_useLightScissors",
+	"3",
+	CVAR_RENDERER | CVAR_INTEGER,
+	"0 = no scissor, 1 = non-clipped scissor, 2 = near-clipped scissor, 3 = fully-clipped scissor",
+	0,
+	3,
+	idCmdSystem::ArgCompletion_Integer<0, 3> );
+idCVar r_useEntityPortalCulling(
+	"r_useEntityPortalCulling", "1", CVAR_RENDERER | CVAR_INTEGER, "0 = none, 1 = cull frustum corners to plane, 2 = exact clip the frustum faces", 0, 2, idCmdSystem::ArgCompletion_Integer<0, 2> );
 idCVar r_clear( "r_clear", "2", CVAR_RENDERER | CVAR_NOCHEAT, "force screen clear every frame, 1 = purple, 2 = black, 'r g b' = custom" );
 
 idCVar r_offsetFactor( "r_offsetfactor", "0", CVAR_RENDERER | CVAR_FLOAT, "polygon offset parameter" );
 // RB: offset factor was 0, and units were -600 which caused some very ugly polygon offsets on Android so I reverted the values to the same as in Q3A
-#if defined(__ANDROID__)
-	idCVar r_offsetUnits( "r_offsetunits", "-2", CVAR_RENDERER | CVAR_FLOAT, "polygon offset parameter" );
+#if defined( __ANDROID__ )
+idCVar r_offsetUnits( "r_offsetunits", "-2", CVAR_RENDERER | CVAR_FLOAT, "polygon offset parameter" );
 #else
-	idCVar r_offsetUnits( "r_offsetunits", "-600", CVAR_RENDERER | CVAR_FLOAT, "polygon offset parameter" );
+idCVar r_offsetUnits( "r_offsetunits", "-600", CVAR_RENDERER | CVAR_FLOAT, "polygon offset parameter" );
 #endif
 // RB end
 
@@ -172,9 +190,9 @@ idCVar r_lightScale( "r_lightScale", "3", CVAR_ARCHIVE | CVAR_RENDERER | CVAR_FL
 idCVar r_flareSize( "r_flareSize", "1", CVAR_RENDERER | CVAR_FLOAT, "scale the flare deforms from the material def" );
 
 #if VR_EMITSTEREO
-	idCVar r_useScissor( "r_useScissor", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT, "scissor clip as portals and lights are processed" );
+idCVar r_useScissor( "r_useScissor", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT, "scissor clip as portals and lights are processed" );
 #else
-	idCVar r_useScissor( "r_useScissor", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT, "scissor clip as portals and lights are processed" );
+idCVar r_useScissor( "r_useScissor", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT, "scissor clip as portals and lights are processed" );
 #endif
 
 idCVar r_useLightDepthBounds( "r_useLightDepthBounds", "1", CVAR_RENDERER | CVAR_BOOL, "use depth bounds test on lights to reduce both shadow and interaction fill" );
@@ -199,12 +217,30 @@ idCVar r_showUpdates( "r_showUpdates", "0", CVAR_RENDERER | CVAR_BOOL, "report e
 idCVar r_showDynamic( "r_showDynamic", "0", CVAR_RENDERER | CVAR_BOOL, "report stats on dynamic surface generation" );
 idCVar r_showTrace( "r_showTrace", "0", CVAR_RENDERER | CVAR_INTEGER, "show the intersection of an eye trace with the world", idCmdSystem::ArgCompletion_Integer<0, 2> );
 idCVar r_showIntensity( "r_showIntensity", "0", CVAR_RENDERER | CVAR_BOOL, "draw the screen colors based on intensity, red = 0, green = 128, blue = 255" );
-idCVar r_showLights( "r_showLights", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = just print volumes numbers, highlighting ones covering the view, 2 = also draw planes of each volume, 3 = also draw edges of each volume", 0, 3, idCmdSystem::ArgCompletion_Integer<0, 3> );
+idCVar r_showLights( "r_showLights",
+	"0",
+	CVAR_RENDERER | CVAR_INTEGER,
+	"1 = just print volumes numbers, highlighting ones covering the view, 2 = also draw planes of each volume, 3 = also draw edges of each volume",
+	0,
+	3,
+	idCmdSystem::ArgCompletion_Integer<0, 3> );
 idCVar r_showShadows( "r_showShadows", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = visualize the stencil shadow volumes, 2 = draw filled in", 0, 3, idCmdSystem::ArgCompletion_Integer<0, 3> );
 idCVar r_showLightScissors( "r_showLightScissors", "0", CVAR_RENDERER | CVAR_BOOL, "show light scissor rectangles" );
-idCVar r_showLightCount( "r_showLightCount", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = colors surfaces based on light count, 2 = also count everything through walls, 3 = also print overdraw", 0, 3, idCmdSystem::ArgCompletion_Integer<0, 3> );
+idCVar r_showLightCount( "r_showLightCount",
+	"0",
+	CVAR_RENDERER | CVAR_INTEGER,
+	"1 = colors surfaces based on light count, 2 = also count everything through walls, 3 = also print overdraw",
+	0,
+	3,
+	idCmdSystem::ArgCompletion_Integer<0, 3> );
 idCVar r_showViewEntitys( "r_showViewEntitys", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = displays the bounding boxes of all view models, 2 = print index numbers" );
-idCVar r_showTris( "r_showTris", "0", CVAR_RENDERER | CVAR_INTEGER, "enables wireframe rendering of the world, 1 = only draw visible ones, 2 = draw all front facing, 3 = draw all, 4 = draw with alpha", 0, 4, idCmdSystem::ArgCompletion_Integer<0, 4> );
+idCVar r_showTris( "r_showTris",
+	"0",
+	CVAR_RENDERER | CVAR_INTEGER,
+	"enables wireframe rendering of the world, 1 = only draw visible ones, 2 = draw all front facing, 3 = draw all, 4 = draw with alpha",
+	0,
+	4,
+	idCmdSystem::ArgCompletion_Integer<0, 4> );
 idCVar r_showSurfaceInfo( "r_showSurfaceInfo", "0", CVAR_RENDERER | CVAR_BOOL, "show surface material name under crosshair" );
 idCVar r_showNormals( "r_showNormals", "0", CVAR_RENDERER | CVAR_FLOAT, "draws wireframe normals" );
 idCVar r_showMemory( "r_showMemory", "0", CVAR_RENDERER | CVAR_BOOL, "print frame memory utilization" );
@@ -215,10 +251,22 @@ idCVar r_showSurfaces( "r_showSurfaces", "0", CVAR_RENDERER | CVAR_BOOL, "report
 idCVar r_showPrimitives( "r_showPrimitives", "0", CVAR_RENDERER | CVAR_INTEGER, "report drawsurf/index/vertex counts" );
 idCVar r_showEdges( "r_showEdges", "0", CVAR_RENDERER | CVAR_BOOL, "draw the sil edges" );
 idCVar r_showTexturePolarity( "r_showTexturePolarity", "0", CVAR_RENDERER | CVAR_BOOL, "shade triangles by texture area polarity" );
-idCVar r_showTangentSpace( "r_showTangentSpace", "0", CVAR_RENDERER | CVAR_INTEGER, "shade triangles by tangent space, 1 = use 1st tangent vector, 2 = use 2nd tangent vector, 3 = use normal vector", 0, 3, idCmdSystem::ArgCompletion_Integer<0, 3> );
+idCVar r_showTangentSpace( "r_showTangentSpace",
+	"0",
+	CVAR_RENDERER | CVAR_INTEGER,
+	"shade triangles by tangent space, 1 = use 1st tangent vector, 2 = use 2nd tangent vector, 3 = use normal vector",
+	0,
+	3,
+	idCmdSystem::ArgCompletion_Integer<0, 3> );
 idCVar r_showDominantTri( "r_showDominantTri", "0", CVAR_RENDERER | CVAR_BOOL, "draw lines from vertexes to center of dominant triangles" );
 idCVar r_showTextureVectors( "r_showTextureVectors", "0", CVAR_RENDERER | CVAR_FLOAT, " if > 0 draw each triangles texture (tangent) vectors" );
-idCVar r_showOverDraw( "r_showOverDraw", "0", CVAR_RENDERER | CVAR_INTEGER, "1 = geometry overdraw, 2 = light interaction overdraw, 3 = geometry and light interaction overdraw", 0, 3, idCmdSystem::ArgCompletion_Integer<0, 3> );
+idCVar r_showOverDraw( "r_showOverDraw",
+	"0",
+	CVAR_RENDERER | CVAR_INTEGER,
+	"1 = geometry overdraw, 2 = light interaction overdraw, 3 = geometry and light interaction overdraw",
+	0,
+	3,
+	idCmdSystem::ArgCompletion_Integer<0, 3> );
 // RB begin
 idCVar r_showShadowMaps( "r_showShadowMaps", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_NEW, "" );
 idCVar r_showShadowMapLODs( "r_showShadowMapLODs", "0", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "" );
@@ -226,7 +274,8 @@ idCVar r_showShadowMapLODs( "r_showShadowMapLODs", "0", CVAR_RENDERER | CVAR_INT
 
 idCVar r_useEntityCallbacks( "r_useEntityCallbacks", "1", CVAR_RENDERER | CVAR_BOOL, "if 0, issue the callback immediately at update time, rather than defering" );
 
-idCVar r_showSkel( "r_showSkel", "0", CVAR_RENDERER | CVAR_INTEGER, "draw the skeleton when model animates, 1 = draw model with skeleton, 2 = draw skeleton only", 0, 2, idCmdSystem::ArgCompletion_Integer<0, 2> );
+idCVar r_showSkel(
+	"r_showSkel", "0", CVAR_RENDERER | CVAR_INTEGER, "draw the skeleton when model animates, 1 = draw model with skeleton, 2 = draw skeleton only", 0, 2, idCmdSystem::ArgCompletion_Integer<0, 2> );
 idCVar r_jointNameScale( "r_jointNameScale", "0.02", CVAR_RENDERER | CVAR_FLOAT, "size of joint names when r_showskel is set to 1" );
 idCVar r_jointNameOffset( "r_jointNameOffset", "0.5", CVAR_RENDERER | CVAR_FLOAT, "offset of joint names when r_showskel is set to 1" );
 
@@ -250,7 +299,7 @@ idCVar r_shadowMapFrustumFOV( "r_shadowMapFrustumFOV", "92", CVAR_RENDERER | CVA
 idCVar r_shadowMapSingleSide( "r_shadowMapSingleSide", "-1", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "only draw a single side (0-5) of point lights" );
 idCVar r_shadowMapImageSize( "r_shadowMapImageSize", "1024", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "", 128, 2048 );
 idCVar r_shadowMapJitterScale( "r_shadowMapJitterScale", "2.5", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "scale factor for jitter offset" );
-//idCVar r_shadowMapBiasScale( "r_shadowMapBiasScale", "0.0001", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "scale factor for jitter bias" );
+// idCVar r_shadowMapBiasScale( "r_shadowMapBiasScale", "0.0001", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "scale factor for jitter bias" );
 idCVar r_shadowMapRandomizeJitter( "r_shadowMapRandomizeJitter", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NEW, "randomly offset jitter texture each draw" );
 idCVar r_shadowMapSamples( "r_shadowMapSamples", "4", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "1, 4, 12 or 16", 1, 64 );
 idCVar r_shadowMapSplits( "r_shadowMapSplits", "3", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "number of splits for cascaded shadow mapping with parallel lights", 0, 4 );
@@ -262,7 +311,8 @@ idCVar r_dxShadowMapPolygonOffset( "r_dxShadowMapPolygonOffset", "0.1", CVAR_REN
 idCVar r_vkShadowMapPolygonOffset( "r_vkShadowMapPolygonOffset", "1", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "polygonOffset units for drawing shadow buffer" );
 idCVar r_shadowMapOccluderFacing( "r_shadowMapOccluderFacing", "2", CVAR_RENDERER | CVAR_INTEGER | CVAR_NEW, "0 = front faces, 1 = back faces, 2 = twosided" );
 idCVar r_shadowMapRegularDepthBiasScale( "r_shadowMapRegularDepthBiasScale", "0.999", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "shadowmap bias to fight shadow acne for point and spot lights" );
-idCVar r_shadowMapSunDepthBiasScale( "r_shadowMapSunDepthBiasScale", "0.999", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "shadowmap bias to fight shadow acne for cascaded shadow mapping with parallel lights" );
+idCVar r_shadowMapSunDepthBiasScale(
+	"r_shadowMapSunDepthBiasScale", "0.999", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "shadowmap bias to fight shadow acne for cascaded shadow mapping with parallel lights" );
 
 // RB: HDR parameters
 idCVar r_hdrAutoExposure( "r_hdrAutoExposure", "0", CVAR_RENDERER | CVAR_BOOL | CVAR_NEW, "EXPENSIVE: enables adapative HDR tone mapping otherwise the exposure is derived by r_exposure" );
@@ -317,7 +367,12 @@ idCVar r_crtVignette( "r_crtVignette", "0.8", CVAR_RENDERER | CVAR_FLOAT | CVAR_
 
 idCVar r_retroDitherScale( "r_retroDitherScale", "0.3", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "" );
 
-idCVar r_renderMode( "r_renderMode", "0", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW, "0 = Doom, 1 = CGA, 2 = CGA Highres, 3 = Commodore 64, 4 = Commodore 64 Highres, 5 = Amstrad CPC 6128, 6 = Amstrad CPC 6128 Highres, 7 = Sega Genesis, 8 = Sega Genesis Highres, 9 = Sony PSX", 0, 9 );
+idCVar r_renderMode( "r_renderMode",
+	"0",
+	CVAR_RENDERER | CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW,
+	"0 = Doom, 1 = CGA, 2 = CGA Highres, 3 = Commodore 64, 4 = Commodore 64 Highres, 5 = Amstrad CPC 6128, 6 = Amstrad CPC 6128 Highres, 7 = Sega Genesis, 8 = Sega Genesis Highres, 9 = Sony PSX",
+	0,
+	9 );
 
 idCVar r_psxVertexJitter( "r_psxVertexJitter", "0.5", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "", 0.0f, 0.75f );
 idCVar r_psxAffineTextures( "r_psxAffineTextures", "1", CVAR_RENDERER | CVAR_FLOAT | CVAR_NEW, "" );
@@ -325,32 +380,28 @@ idCVar r_psxAffineTextures( "r_psxAffineTextures", "1", CVAR_RENDERER | CVAR_FLO
 idCVar r_useMaskedOcclusionCulling( "r_useMaskedOcclusionCulling", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT | CVAR_NEW, "SIMD optimized software culling by Intel" );
 // RB end
 
-const char* fileExten[4] = { "tga", "png", "jpg", "exr" };
-const char* envDirection[6] = { "_px", "_nx", "_py", "_ny", "_pz", "_nz" };
-const char* skyDirection[6] = { "_forward", "_back", "_left", "_right", "_up", "_down" };
+const char*	   fileExten[4]	   = { "tga", "png", "jpg", "exr" };
+const char*	   envDirection[6] = { "_px", "_nx", "_py", "_ny", "_pz", "_nz" };
+const char*	   skyDirection[6] = { "_forward", "_back", "_left", "_right", "_up", "_down" };
 
 DeviceManager* deviceManager = NULL;
 
-
-bool R_UsePixelatedLook()
+bool		   R_UsePixelatedLook()
 {
 	return ( r_renderMode.GetInteger() == RENDERMODE_PSX ) || image_pixelLook.GetBool();
 }
 
 bool R_UseTemporalAA()
 {
-	if( !r_useTemporalAA.GetBool() )
-	{
+	if( !r_useTemporalAA.GetBool() ) {
 		return false;
 	}
 
-	if( r_renderMode.GetInteger() != RENDERMODE_DOOM )
-	{
+	if( r_renderMode.GetInteger() != RENDERMODE_DOOM ) {
 		return false;
 	}
 
-	switch( r_antiAliasing.GetInteger() )
-	{
+	switch( r_antiAliasing.GetInteger() ) {
 		case ANTI_ALIASING_TAA:
 			return true;
 
@@ -367,9 +418,8 @@ bool R_UseTemporalAA()
 bool R_UseHiZ()
 {
 	// TODO check for driver problems here
-#if defined(__linux__) || defined(__APPLE__)
-	if( glConfig.vendor == VENDOR_INTEL && glConfig.gpuType == GPU_TYPE_OTHER )
-	{
+#if defined( __linux__ ) || defined( __APPLE__ )
+	if( glConfig.vendor == VENDOR_INTEL && glConfig.gpuType == GPU_TYPE_OTHER ) {
 		// SRS - Disable HiZ to work-around Linux/macOS driver issues on Intel iGPUs
 		return false;
 	}
@@ -380,8 +430,7 @@ bool R_UseHiZ()
 uint R_GetMSAASamples()
 {
 #if ID_MSAA
-	switch( r_antiAliasing.GetInteger() )
-	{
+	switch( r_antiAliasing.GetInteger() ) {
 		case ANTI_ALIASING_MSAA_2X:
 			return 2;
 
@@ -420,19 +469,16 @@ void R_SetNewMode( const bool fullInit )
 {
 	// try up to three different configurations
 
-	for( int i = 0 ; i < 3; i++ )
-	{
-		if( i == 0 /*&& vr_enable.GetInteger() != STEREO3D_QUAD_BUFFER*/ )
-		{
-			continue;		// don't even try for a stereo mode
+	for( int i = 0; i < 3; i++ ) {
+		if( i == 0 /*&& vr_enable.GetInteger() != STEREO3D_QUAD_BUFFER*/ ) {
+			continue; // don't even try for a stereo mode
 		}
 
-		glimpParms_t	parms;
+		glimpParms_t parms;
 
 		// Koz
 		// Create a window for the SteamVR desktop texture
-		if( vrSystem->IsActive() )
-		{
+		if( vrSystem->IsActive() ) {
 			// force a windowed mode
 			r_fullscreen.SetInteger( 0 );
 
@@ -449,69 +495,59 @@ void R_SetNewMode( const bool fullInit )
 			// force Vsync off for hmd
 			r_swapInterval.SetInteger( 0 );
 
-			parms.x = r_windowX.GetInteger();
-			parms.y = r_windowY.GetInteger();
-			parms.width = r_windowWidth.GetInteger();
-			parms.height = r_windowHeight.GetInteger();
+			parms.x			 = r_windowX.GetInteger();
+			parms.y			 = r_windowY.GetInteger();
+			parms.width		 = r_windowWidth.GetInteger();
+			parms.height	 = r_windowHeight.GetInteger();
 			parms.fullScreen = r_fullscreen.GetInteger();
-			parms.displayHz = 0;		// ignored
+			parms.displayHz	 = 0; // ignored
 		}
 		// Koz end
-		else if( r_fullscreen.GetInteger() <= 0 )
-		{
+		else if( r_fullscreen.GetInteger() <= 0 ) {
 			// use explicit position / size for window
-			parms.x = r_windowX.GetInteger();
-			parms.y = r_windowY.GetInteger();
-			parms.width = r_windowWidth.GetInteger();
+			parms.x		 = r_windowX.GetInteger();
+			parms.y		 = r_windowY.GetInteger();
+			parms.width	 = r_windowWidth.GetInteger();
 			parms.height = r_windowHeight.GetInteger();
 			// may still be -1 or -2 to force a borderless window
 			parms.fullScreen = r_fullscreen.GetInteger();
-			parms.displayHz = 0;		// ignored
-		}
-		else
-		{
+			parms.displayHz	 = 0; // ignored
+		} else {
 			// get the mode list for this monitor
 			idList<vidMode_t> modeList;
-			if( !R_GetModeListForDisplay( r_fullscreen.GetInteger() - 1, modeList ) )
-			{
+			if( !R_GetModeListForDisplay( r_fullscreen.GetInteger() - 1, modeList ) ) {
 				idLib::Printf( "Going to safe mode because display not found.\n" );
 				goto safeMode;
 			}
 
-			if( modeList.Num() < 1 )
-			{
+			if( modeList.Num() < 1 ) {
 				idLib::Printf( "Going to safe mode because mode list failed.\n" );
 				goto safeMode;
 			}
 
-			parms.x = 0;		// ignored
-			parms.y = 0;		// ignored
+			parms.x			 = 0; // ignored
+			parms.y			 = 0; // ignored
 			parms.fullScreen = r_fullscreen.GetInteger();
 
 			// set the parameters we are trying
-			if( r_vidMode.GetInteger() < 0 )
-			{
+			if( r_vidMode.GetInteger() < 0 ) {
 				// try forcing a specific mode, even if it isn't on the list
-				parms.width = r_customWidth.GetInteger();
-				parms.height = r_customHeight.GetInteger();
+				parms.width		= r_customWidth.GetInteger();
+				parms.height	= r_customHeight.GetInteger();
 				parms.displayHz = r_displayRefresh.GetInteger();
-			}
-			else
-			{
-				if( r_vidMode.GetInteger() >= modeList.Num() )
-				{
+			} else {
+				if( r_vidMode.GetInteger() >= modeList.Num() ) {
 					idLib::Printf( "r_vidMode reset from %i to 0.\n", r_vidMode.GetInteger() );
 					r_vidMode.SetInteger( 0 );
 				}
 
-				parms.width = modeList[ r_vidMode.GetInteger() ].width;
-				parms.height = modeList[ r_vidMode.GetInteger() ].height;
-				parms.displayHz = modeList[ r_vidMode.GetInteger() ].displayHz;
+				parms.width		= modeList[r_vidMode.GetInteger()].width;
+				parms.height	= modeList[r_vidMode.GetInteger()].height;
+				parms.displayHz = modeList[r_vidMode.GetInteger()].displayHz;
 			}
 		}
 
-		switch( r_antiAliasing.GetInteger() )
-		{
+		switch( r_antiAliasing.GetInteger() ) {
 #if ID_MSAA
 			case ANTI_ALIASING_MSAA_2X:
 				parms.multiSamples = 2;
@@ -519,9 +555,9 @@ void R_SetNewMode( const bool fullInit )
 			case ANTI_ALIASING_MSAA_4X:
 				parms.multiSamples = 4;
 				break;
-#elif defined( _MSC_VER )			// SRS: #pragma warning is MSVC specific
-#pragma warning( push )
-#pragma warning( disable : 4065 )	// C4065: switch statement contains 'default' but no 'case'
+#elif defined( _MSC_VER ) // SRS: #pragma warning is MSVC specific
+	#pragma warning( push )
+	#pragma warning( disable : 4065 ) // C4065: switch statement contains 'default' but no 'case'
 #endif
 
 			default:
@@ -529,11 +565,10 @@ void R_SetNewMode( const bool fullInit )
 				break;
 		}
 #if !ID_MSAA && defined( _MSC_VER )
-#pragma warning( pop )
+	#pragma warning( pop )
 #endif
 
-		if( fullInit )
-		{
+		if( fullInit ) {
 			// create the context as well as setting up the window
 
 #if defined( VULKAN_USE_PLATFORM_SDL )
@@ -545,9 +580,7 @@ void R_SetNewMode( const bool fullInit )
 				ImGuiHook::Init( renderSystem->GetWidth(), renderSystem->GetHeight() );
 				break;
 			}
-		}
-		else
-		{
+		} else {
 			// just rebuild the window
 
 #if defined( VULKAN_USE_PLATFORM_SDL )
@@ -562,32 +595,26 @@ void R_SetNewMode( const bool fullInit )
 			}
 		}
 
-		if( i == 2 )
-		{
+		if( i == 2 ) {
 			common->FatalError( "Unable to initialize renderer" );
 		}
 
-		if( i == 0 )
-		{
+		if( i == 0 ) {
 			// same settings, no stereo
 			continue;
 		}
 
-safeMode:
+	safeMode:
 		// if we failed, set everything back to "safe mode"
 		// and try again
 
 		// SRS - get the first display with a non-zero mode list, or fail if not found
-		int safeDisplay = 0;
+		int				  safeDisplay = 0;
 		idList<vidMode_t> safeList;
-		for( ; ; safeDisplay++ )
-		{
-			if( !R_GetModeListForDisplay( safeDisplay, safeList ) )
-			{
+		for( ;; safeDisplay++ ) {
+			if( !R_GetModeListForDisplay( safeDisplay, safeList ) ) {
 				common->FatalError( "Unable to find a valid display for renderer" );
-			}
-			else if( safeList.Num() > 0 )
-			{
+			} else if( safeList.Num() > 0 ) {
 				break;
 			}
 		}
@@ -600,7 +627,6 @@ safeMode:
 	}
 }
 
-
 /*
 =====================
 R_ReloadSurface_f
@@ -611,18 +637,16 @@ Reload the material displayed by r_showSurfaceInfo
 static void R_ReloadSurface_f( const idCmdArgs& args )
 {
 	modelTrace_t mt;
-	idVec3 start, end;
+	idVec3		 start, end;
 
-	if( !tr.primaryView )
-	{
+	if( !tr.primaryView ) {
 		return;
 	}
 
 	// start far enough away that we don't hit the player model
 	start = tr.primaryView->renderView.vieworg[STEREOPOS_MONO] + tr.primaryView->renderView.viewaxis[0] * 16;
-	end = start + tr.primaryView->renderView.viewaxis[0] * 1000.0f;
-	if( !tr.primaryWorld->Trace( mt, start, end, 0.0f, false ) )
-	{
+	end	  = start + tr.primaryView->renderView.viewaxis[0] * 1000.0f;
+	if( !tr.primaryWorld->Trace( mt, start, end, 0.0f, false ) ) {
 		return;
 	}
 
@@ -648,15 +672,12 @@ R_ListModes_f
 */
 static void R_ListModes_f( const idCmdArgs& args )
 {
-	for( int displayNum = 0 ; ; displayNum++ )
-	{
+	for( int displayNum = 0;; displayNum++ ) {
 		idList<vidMode_t> modeList;
-		if( !R_GetModeListForDisplay( displayNum, modeList ) )
-		{
+		if( !R_GetModeListForDisplay( displayNum, modeList ) ) {
 			break;
 		}
-		for( int i = 0; i < modeList.Num() ; i++ )
-		{
+		for( int i = 0; i < modeList.Num(); i++ ) {
 			common->Printf( "Monitor %i, mode %3i: %4i x %4i @ %ihz\n", displayNum + 1, i, modeList[i].width, modeList[i].height, modeList[i].displayHz );
 		}
 	}
@@ -675,28 +696,22 @@ void R_TestImage_f( const idCmdArgs& args )
 {
 	int imageNum;
 
-	if( tr.testVideo )
-	{
+	if( tr.testVideo ) {
 		delete tr.testVideo;
 		tr.testVideo = NULL;
 	}
 	tr.testImage = NULL;
 
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		return;
 	}
 
-	if( idStr::IsNumeric( args.Argv( 1 ) ) )
-	{
+	if( idStr::IsNumeric( args.Argv( 1 ) ) ) {
 		imageNum = atoi( args.Argv( 1 ) );
-		if( imageNum >= 0 && imageNum < globalImages->images.Num() )
-		{
+		if( imageNum >= 0 && imageNum < globalImages->images.Num() ) {
 			tr.testImage = globalImages->images[imageNum];
 		}
-	}
-	else
-	{
+	} else {
 		tr.testImage = globalImages->ImageFromFile( args.Argv( 1 ), TF_DEFAULT, TR_REPEAT, TD_DEFAULT );
 	}
 }
@@ -710,15 +725,13 @@ Plays the cinematic file in a testImage
 */
 void R_TestVideo_f( const idCmdArgs& args )
 {
-	if( tr.testVideo )
-	{
+	if( tr.testVideo ) {
 		delete tr.testVideo;
 		tr.testVideo = NULL;
 	}
 	tr.testImage = NULL;
 
-	if( args.Argc() < 2 )
-	{
+	if( args.Argc() < 2 ) {
 		return;
 	}
 
@@ -726,8 +739,7 @@ void R_TestVideo_f( const idCmdArgs& args )
 	tr.testVideo = idCinematic::Alloc();
 	// SRS - make sure we have a valid bink, ffmpeg, or RoQ video file, otherwise delete testVideo and return
 	// SRS - no need to call ImageForTime() here, playback is handled within idRenderBackend::DBG_TestImage()
-	if( !tr.testVideo->InitFromFile( args.Argv( 1 ), true, NULL ) )
-	{
+	if( !tr.testVideo->InitFromFile( args.Argv( 1 ), true, NULL ) ) {
 		delete tr.testVideo;
 		tr.testVideo = NULL;
 		tr.testImage = NULL;
@@ -735,7 +747,7 @@ void R_TestVideo_f( const idCmdArgs& args )
 	}
 
 	// try to play the matching wav file
-	idStr	wavString = args.Argv( ( args.Argc() == 2 ) ? 1 : 2 );
+	idStr wavString = args.Argv( ( args.Argc() == 2 ) ? 1 : 2 );
 	wavString.StripFileExtension();
 	wavString = wavString + ".wav";
 	common->SW()->PlayShaderDirectly( wavString.c_str() );
@@ -743,40 +755,31 @@ void R_TestVideo_f( const idCmdArgs& args )
 
 static int R_QsortSurfaceAreas( const void* a, const void* b )
 {
-	const idMaterial*	ea, *eb;
-	int	ac, bc;
+	const idMaterial *ea, *eb;
+	int				  ac, bc;
 
 	ea = *( idMaterial** )a;
-	if( !ea->EverReferenced() )
-	{
+	if( !ea->EverReferenced() ) {
 		ac = 0;
-	}
-	else
-	{
+	} else {
 		ac = ea->GetSurfaceArea();
 	}
 	eb = *( idMaterial** )b;
-	if( !eb->EverReferenced() )
-	{
+	if( !eb->EverReferenced() ) {
 		bc = 0;
-	}
-	else
-	{
+	} else {
 		bc = eb->GetSurfaceArea();
 	}
 
-	if( ac < bc )
-	{
+	if( ac < bc ) {
 		return -1;
 	}
-	if( ac > bc )
-	{
+	if( ac > bc ) {
 		return 1;
 	}
 
 	return idStr::Icmp( ea->GetName(), eb->GetName() );
 }
-
 
 /*
 ===================
@@ -785,45 +788,39 @@ R_ReportSurfaceAreas_f
 Prints a list of the materials sorted by surface area
 ===================
 */
-#pragma warning( disable: 6385 ) // This is simply to get pass a false defect for /analyze -- if you can figure out a better way, please let Shawn know...
+#pragma warning( disable : 6385 ) // This is simply to get pass a false defect for /analyze -- if you can figure out a better way, please let Shawn know...
 void R_ReportSurfaceAreas_f( const idCmdArgs& args )
 {
-	unsigned int		i;
-	idMaterial**	list;
+	unsigned int	   i;
+	idMaterial**	   list;
 
 	const unsigned int count = declManager->GetNumDecls( DECL_MATERIAL );
-	if( count == 0 )
-	{
+	if( count == 0 ) {
 		return;
 	}
 
 	list = ( idMaterial** )_alloca( count * sizeof( *list ) );
 
-	for( i = 0 ; i < count ; i++ )
-	{
+	for( i = 0; i < count; i++ ) {
 		list[i] = ( idMaterial* )declManager->DeclByIndex( DECL_MATERIAL, i, false );
 	}
 
 	qsort( list, count, sizeof( list[0] ), R_QsortSurfaceAreas );
 
 	// skip over ones with 0 area
-	for( i = 0 ; i < count ; i++ )
-	{
-		if( list[i]->GetSurfaceArea() > 0 )
-		{
+	for( i = 0; i < count; i++ ) {
+		if( list[i]->GetSurfaceArea() > 0 ) {
 			break;
 		}
 	}
 
-	for( ; i < count ; i++ )
-	{
+	for( ; i < count; i++ ) {
 		// report size in "editor blocks"
-		int	blocks = list[i]->GetSurfaceArea() / 4096.0;
+		int blocks = list[i]->GetSurfaceArea() / 4096.0;
 		common->Printf( "%7i %s\n", blocks, list[i]->GetName() );
 	}
 }
-#pragma warning( default: 6385 )
-
+#pragma warning( default : 6385 )
 
 /*
 ==============================================================================
@@ -835,31 +832,29 @@ void R_ReportSurfaceAreas_f( const idCmdArgs& args )
 
 bool R_ReadPixelsRGB8( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nvrhi::ITexture* texture, nvrhi::ResourceStates textureState, const char* fullname )
 {
-	nvrhi::TextureDesc desc = texture->getDesc();
-	nvrhi::TextureHandle tempTexture;
+	nvrhi::TextureDesc		 desc = texture->getDesc();
+	nvrhi::TextureHandle	 tempTexture;
 	nvrhi::FramebufferHandle tempFramebuffer;
 
 	nvrhi::CommandListHandle commandList = device->createCommandList();
 	commandList->open();
 
-	if( textureState != nvrhi::ResourceStates::Unknown )
-	{
+	if( textureState != nvrhi::ResourceStates::Unknown ) {
 		commandList->beginTrackingTextureState( texture, nvrhi::TextureSubresourceSet( 0, 1, 0, 1 ), textureState );
 	}
 
-	switch( desc.format )
-	{
+	switch( desc.format ) {
 		case nvrhi::Format::RGBA8_UNORM:
 		case nvrhi::Format::SRGBA8_UNORM:
 			tempTexture = texture;
 			break;
 		default:
-			desc.format = nvrhi::Format::SRGBA8_UNORM;
-			desc.isRenderTarget = true;
-			desc.initialState = nvrhi::ResourceStates::RenderTarget;
+			desc.format			  = nvrhi::Format::SRGBA8_UNORM;
+			desc.isRenderTarget	  = true;
+			desc.initialState	  = nvrhi::ResourceStates::RenderTarget;
 			desc.keepInitialState = true;
 
-			tempTexture = device->createTexture( desc );
+			tempTexture		= device->createTexture( desc );
 			tempFramebuffer = device->createFramebuffer( nvrhi::FramebufferDesc().addColorAttachment( tempTexture ) );
 
 			pPasses->BlitTexture( commandList, tempFramebuffer, texture );
@@ -868,8 +863,7 @@ bool R_ReadPixelsRGB8( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nvrh
 	nvrhi::StagingTextureHandle stagingTexture = device->createStagingTexture( desc, nvrhi::CpuAccessMode::Read );
 	commandList->copyTexture( stagingTexture, nvrhi::TextureSlice(), tempTexture, nvrhi::TextureSlice() );
 
-	if( textureState != nvrhi::ResourceStates::Unknown )
-	{
+	if( textureState != nvrhi::ResourceStates::Unknown ) {
 		commandList->setTextureState( texture, nvrhi::TextureSubresourceSet( 0, 1, 0, 1 ), textureState );
 		commandList->commitBarriers();
 	}
@@ -878,21 +872,18 @@ bool R_ReadPixelsRGB8( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nvrh
 	device->executeCommandList( commandList );
 
 	size_t rowPitch = 0;
-	void* pData = device->mapStagingTexture( stagingTexture, nvrhi::TextureSlice(), nvrhi::CpuAccessMode::Read, &rowPitch );
+	void*  pData	= device->mapStagingTexture( stagingTexture, nvrhi::TextureSlice(), nvrhi::CpuAccessMode::Read, &rowPitch );
 
-	if( !pData )
-	{
+	if( !pData ) {
 		return false;
 	}
 
 	uint32_t* newData = nullptr;
 
-	if( rowPitch != desc.width * 4 )
-	{
+	if( rowPitch != desc.width * 4 ) {
 		newData = new uint32_t[desc.width * desc.height];
 
-		for( uint32_t row = 0; row < desc.height; row++ )
-		{
+		for( uint32_t row = 0; row < desc.height; row++ ) {
 			memcpy( newData + row * desc.width, static_cast<char*>( pData ) + row * rowPitch, desc.width * sizeof( uint32_t ) );
 		}
 
@@ -912,20 +903,18 @@ bool R_ReadPixelsRGB8( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nvrh
 #endif
 
 	// fix alpha
-	for( uint32_t i = 0; i < ( desc.width * desc.height ); i++ )
-	{
-		data[ i * 4 + 3 ] = 0xff;
+	for( uint32_t i = 0; i < ( desc.width * desc.height ); i++ ) {
+		data[i * 4 + 3] = 0xff;
 	}
 
 	// SRS - Save screen shots to fs_savepath on macOS (i.e. don't save into an app bundle's basepath)
-#if defined(__APPLE__)
+#if defined( __APPLE__ )
 	R_WritePNG( fullname, static_cast<byte*>( pData ), 4, desc.width, desc.height, "fs_savepath" );
 #else
 	R_WritePNG( fullname, static_cast<byte*>( pData ), 4, desc.width, desc.height, "fs_basepath" );
 #endif
 
-	if( newData )
-	{
+	if( newData ) {
 		delete[] newData;
 		newData = nullptr;
 	}
@@ -937,8 +926,8 @@ bool R_ReadPixelsRGB8( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nvrh
 
 bool R_ReadPixelsRGB16F( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nvrhi::ITexture* texture, nvrhi::ResourceStates textureState, byte** pic, int picWidth, int picHeight )
 {
-	nvrhi::TextureDesc desc = texture->getDesc();
-	nvrhi::TextureHandle tempTexture;
+	nvrhi::TextureDesc		 desc = texture->getDesc();
+	nvrhi::TextureHandle	 tempTexture;
 	nvrhi::FramebufferHandle tempFramebuffer;
 
 #if 0
@@ -951,23 +940,21 @@ bool R_ReadPixelsRGB16F( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nv
 	nvrhi::CommandListHandle commandList = device->createCommandList();
 	commandList->open();
 
-	if( textureState != nvrhi::ResourceStates::Unknown )
-	{
+	if( textureState != nvrhi::ResourceStates::Unknown ) {
 		commandList->beginTrackingTextureState( texture, nvrhi::TextureSubresourceSet( 0, 1, 0, 1 ), textureState );
 	}
 
-	switch( desc.format )
-	{
+	switch( desc.format ) {
 		case nvrhi::Format::RGBA16_FLOAT:
 			tempTexture = texture;
 			break;
 		default:
-			desc.format = nvrhi::Format::RGBA16_FLOAT;
-			desc.isRenderTarget = true;
-			desc.initialState = nvrhi::ResourceStates::RenderTarget;
+			desc.format			  = nvrhi::Format::RGBA16_FLOAT;
+			desc.isRenderTarget	  = true;
+			desc.initialState	  = nvrhi::ResourceStates::RenderTarget;
 			desc.keepInitialState = true;
 
-			tempTexture = device->createTexture( desc );
+			tempTexture		= device->createTexture( desc );
 			tempFramebuffer = device->createFramebuffer( nvrhi::FramebufferDesc().addColorAttachment( tempTexture ) );
 
 			pPasses->BlitTexture( commandList, tempFramebuffer, texture );
@@ -976,8 +963,7 @@ bool R_ReadPixelsRGB16F( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nv
 	nvrhi::StagingTextureHandle stagingTexture = device->createStagingTexture( desc, nvrhi::CpuAccessMode::Read );
 	commandList->copyTexture( stagingTexture, nvrhi::TextureSlice(), tempTexture, nvrhi::TextureSlice() );
 
-	if( textureState != nvrhi::ResourceStates::Unknown )
-	{
+	if( textureState != nvrhi::ResourceStates::Unknown ) {
 		commandList->setTextureState( texture, nvrhi::TextureSubresourceSet( 0, 1, 0, 1 ), textureState );
 		commandList->commitBarriers();
 	}
@@ -986,35 +972,32 @@ bool R_ReadPixelsRGB16F( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nv
 	device->executeCommandList( commandList );
 
 	size_t rowPitch = 0;
-	void* pData = device->mapStagingTexture( stagingTexture, nvrhi::TextureSlice(), nvrhi::CpuAccessMode::Read, &rowPitch );
+	void*  pData	= device->mapStagingTexture( stagingTexture, nvrhi::TextureSlice(), nvrhi::CpuAccessMode::Read, &rowPitch );
 
-	if( !pData )
-	{
+	if( !pData ) {
 		return false;
 	}
 
 	uint16_t* newData = nullptr;
 
-	if( rowPitch != desc.width * 8 )
-	{
+	if( rowPitch != desc.width * 8 ) {
 		newData = new uint16_t[desc.width * desc.height * 2];
 
-		for( uint32_t row = 0; row < desc.height; row++ )
-		{
+		for( uint32_t row = 0; row < desc.height; row++ ) {
 			memcpy( newData + row * desc.width, static_cast<char*>( pData ) + row * rowPitch, desc.width * sizeof( uint16_t ) * 4 );
 		}
 
 		pData = newData;
 	}
 
-	int pix = picWidth * picHeight;
+	int		  pix		 = picWidth * picHeight;
 	const int bufferSize = pix * 3 * 2;
 
-	void* floatRGB16F = R_StaticAlloc( bufferSize );
-	*pic = ( byte* ) floatRGB16F;
+	void*	  floatRGB16F = R_StaticAlloc( bufferSize );
+	*pic				  = ( byte* )floatRGB16F;
 
 	// copy from RGBA16F to RGB16F
-	uint16_t* data = static_cast<uint16_t*>( pData );
+	uint16_t* data	  = static_cast<uint16_t*>( pData );
 	uint16_t* outData = static_cast<uint16_t*>( floatRGB16F );
 
 #if 0
@@ -1026,28 +1009,25 @@ bool R_ReadPixelsRGB16F( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nv
 	}
 #endif
 
-	for( uint32_t i = 0; i < ( desc.width * desc.height ); i++ )
-	{
-		outData[ i * 3 + 0 ] = data[ i * 4 + 0 ];
-		outData[ i * 3 + 1 ] = data[ i * 4 + 1 ];
-		outData[ i * 3 + 2 ] = data[ i * 4 + 2 ];
+	for( uint32_t i = 0; i < ( desc.width * desc.height ); i++ ) {
+		outData[i * 3 + 0] = data[i * 4 + 0];
+		outData[i * 3 + 1] = data[i * 4 + 1];
+		outData[i * 3 + 2] = data[i * 4 + 2];
 	}
 
 	// RB: filter out garbage and reset it to black
 	// this is a rare case but with a high visual impact
-	bool isCorrupted = false;
+	bool		 isCorrupted = false;
 
 	const idVec3 LUMINANCE_LINEAR( 0.299f, 0.587f, 0.144f );
-	idVec3 rgb;
+	idVec3		 rgb;
 
-	for( uint32_t i = 0; i < ( desc.width * desc.height ); i++ )
-	{
-		rgb.x = F16toF32( outData[ i * 3 + 0 ] );
-		rgb.y = F16toF32( outData[ i * 3 + 1 ] );
-		rgb.z = F16toF32( outData[ i * 3 + 2 ] );
+	for( uint32_t i = 0; i < ( desc.width * desc.height ); i++ ) {
+		rgb.x = F16toF32( outData[i * 3 + 0] );
+		rgb.y = F16toF32( outData[i * 3 + 1] );
+		rgb.z = F16toF32( outData[i * 3 + 2] );
 
-		if( IsNAN( rgb.x ) || IsNAN( rgb.y ) || IsNAN( rgb.z ) )
-		{
+		if( IsNAN( rgb.x ) || IsNAN( rgb.y ) || IsNAN( rgb.z ) ) {
 			isCorrupted = true;
 			break;
 		}
@@ -1055,25 +1035,21 @@ bool R_ReadPixelsRGB16F( nvrhi::IDevice* device, CommonRenderPasses* pPasses, nv
 		// captures within the Doom 3 main campaign usually have a luminance of ~ 0.5 - 4.0
 		// the threshold is a bit higher and might need to be adapted for total conversion content
 		float luminance = rgb * LUMINANCE_LINEAR;
-		if( luminance > 30.0f )
-		{
+		if( luminance > 30.0f ) {
 			isCorrupted = true;
 			break;
 		}
 	}
 
-	if( isCorrupted )
-	{
-		for( uint32_t i = 0; i < ( desc.width * desc.height ); i++ )
-		{
-			outData[ i * 3 + 0 ] = F32toF16( 0 );
-			outData[ i * 3 + 1 ] = F32toF16( 0 );
-			outData[ i * 3 + 2 ] = F32toF16( 0 );
+	if( isCorrupted ) {
+		for( uint32_t i = 0; i < ( desc.width * desc.height ); i++ ) {
+			outData[i * 3 + 0] = F32toF16( 0 );
+			outData[i * 3 + 1] = F32toF16( 0 );
+			outData[i * 3 + 2] = F32toF16( 0 );
 		}
 	}
 
-	if( newData )
-	{
+	if( newData ) {
 		delete[] newData;
 		newData = nullptr;
 	}
@@ -1105,14 +1081,11 @@ void idRenderSystemLocal::TakeScreenshot( int widthIgnored, int heightIgnored, c
 	// SRS - Update finishSyncTime so frame-over-frame timers display correctly for screenshots
 	commonLocal.frameTiming.finishSyncTime = Sys_Microseconds();
 
-	if( ref )
-	{
+	if( ref ) {
 		// ref is only used by envShot, Event_camShot, etc to grab screenshots of things in the world,
 		// so this omits the hud and other effects
 		tr.primaryWorld->RenderScene( ref );
-	}
-	else
-	{
+	} else {
 		// build all the draw commands without running a new game tic
 		commonLocal.Draw();
 	}
@@ -1125,7 +1098,7 @@ void idRenderSystemLocal::TakeScreenshot( int widthIgnored, int heightIgnored, c
 	// discard anything currently on the list (this triggers SwapBuffers)
 	tr.SwapCommandBuffers( NULL, NULL, NULL, NULL, NULL, NULL );
 
-	R_ReadPixelsRGB8( deviceManager->GetDevice(), &backEnd.GetCommonPasses(), globalImages->ldrImage->GetTextureHandle() , nvrhi::ResourceStates::RenderTarget, fileName );
+	R_ReadPixelsRGB8( deviceManager->GetDevice(), &backEnd.GetCommonPasses(), globalImages->ldrImage->GetTextureHandle(), nvrhi::ResourceStates::RenderTarget, fileName );
 
 	// discard anything currently on the list
 	tr.SwapCommandBuffers( NULL, NULL, NULL, NULL, NULL, NULL );
@@ -1136,24 +1109,24 @@ void idRenderSystemLocal::TakeScreenshot( int widthIgnored, int heightIgnored, c
 // RB: TODO FINISH or REMOVE
 byte* idRenderSystemLocal::CaptureRenderToBuffer( int width, int height, renderView_t* ref )
 {
-	byte*		buffer;
+	byte* buffer;
 
 	takingScreenshot = true;
 
 	int pix = width * height;
-	//const int bufferSize = pix * 3 * 2;
+	// const int bufferSize = pix * 3 * 2;
 
 	// HDR only for now
-	//if( exten == EXR )
+	// if( exten == EXR )
 	{
 		buffer = ( byte* )R_StaticAlloc( pix * 3 * 2 );
 	}
-	//else if( exten == PNG )
+	// else if( exten == PNG )
 	//{
 	//	buffer = ( byte* )R_StaticAlloc( pix * 3 );
-	//}
+	// }
 
-	//R_ReadTiledPixels( width, height, buffer, ref );
+	// R_ReadTiledPixels( width, height, buffer, ref );
 
 	takingScreenshot = false;
 
@@ -1176,13 +1149,10 @@ void R_ScreenshotFilename( int& lastNumber, const char* base, idStr& fileName )
 	cvarSystem->SetCVarBool( "fs_restrict", false );
 
 	lastNumber++;
-	if( lastNumber > 99999 )
-	{
+	if( lastNumber > 99999 ) {
 		lastNumber = 99999;
 	}
-	for( ; lastNumber < 99999 ; lastNumber++ )
-	{
-
+	for( ; lastNumber < 99999; lastNumber++ ) {
 		// RB: added date to screenshot name
 #if 0
 		int	frac = lastNumber;
@@ -1204,17 +1174,14 @@ void R_ScreenshotFilename( int& lastNumber, const char* base, idStr& fileName )
 		time( &aclock );
 		struct tm* t = localtime( &aclock );
 
-		sprintf( fileName, "%s%s-%04d%02d%02d-%02d%02d%02d-%03d.png", base, "rbdoom-3-bfg",
-				 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, lastNumber );
+		sprintf( fileName, "%s%s-%04d%02d%02d-%02d%02d%02d-%03d.png", base, "rbdoom-3-bfg", 1900 + t->tm_year, 1 + t->tm_mon, t->tm_mday, t->tm_hour, t->tm_min, t->tm_sec, lastNumber );
 #endif
 		// RB end
-		if( lastNumber == 99999 )
-		{
+		if( lastNumber == 99999 ) {
 			break;
 		}
 		int len = fileSystem->ReadFile( fileName, NULL, NULL );
-		if( len <= 0 )
-		{
+		if( len <= 0 ) {
 			break;
 		}
 		// check again...
@@ -1234,30 +1201,29 @@ screenshot [width] [height]
 void R_ScreenShot_f( const idCmdArgs& args )
 {
 	static int lastNumber = 0;
-	idStr checkname;
+	idStr	   checkname;
 
-	int width = renderSystem->GetWidth();
-	int height = renderSystem->GetHeight();
-	int	blends = 0;
+	int		   width  = renderSystem->GetWidth();
+	int		   height = renderSystem->GetHeight();
+	int		   blends = 0;
 
-	switch( args.Argc() )
-	{
+	switch( args.Argc() ) {
 		case 1:
-			width = renderSystem->GetWidth();
+			width  = renderSystem->GetWidth();
 			height = renderSystem->GetHeight();
 			blends = 1;
 			R_ScreenshotFilename( lastNumber, "screenshots/", checkname );
 			break;
 
 		case 2:
-			width = renderSystem->GetWidth();
-			height = renderSystem->GetHeight();
-			blends = 1;
+			width	  = renderSystem->GetWidth();
+			height	  = renderSystem->GetHeight();
+			blends	  = 1;
 			checkname = args.Argv( 1 );
 			break;
 
 		case 3:
-			width = atoi( args.Argv( 1 ) );
+			width  = atoi( args.Argv( 1 ) );
 			height = atoi( args.Argv( 2 ) );
 			blends = 1;
 			R_ScreenshotFilename( lastNumber, "screenshots/", checkname );
@@ -1275,8 +1241,6 @@ void R_ScreenShot_f( const idCmdArgs& args )
 
 	common->Printf( "Wrote %s\n", checkname.c_str() );
 }
-
-
 
 /*
 ==================
@@ -1418,13 +1382,12 @@ void R_EnvShot_f( const idCmdArgs& args )
 void R_TransformCubemap( const char* orgDirection[6], const char* orgDir, const char* destDirection[6], const char* destDir, const char* baseName )
 {
 	idStr fullname;
-	int			i;
-	bool        errorInOriginalImages = false;
-	byte*		buffers[6];
-	int			width = 0, height = 0;
+	int	  i;
+	bool  errorInOriginalImages = false;
+	byte* buffers[6];
+	int	  width = 0, height = 0;
 
-	for( i = 0 ; i < 6 ; i++ )
-	{
+	for( i = 0; i < 6; i++ ) {
 		// read every image images
 		fullname.Format( "%s/%s%s.tga", orgDir, baseName, orgDirection[i] );
 		common->Printf( "loading %s\n", fullname.c_str() );
@@ -1432,27 +1395,20 @@ void R_TransformCubemap( const char* orgDirection[6], const char* orgDir, const 
 		common->UpdateScreen( captureToImage );
 		R_LoadImage( fullname, &buffers[i], &width, &height, NULL, true, NULL );
 
-		//check if the buffer is troublesome
-		if( !buffers[i] )
-		{
+		// check if the buffer is troublesome
+		if( !buffers[i] ) {
 			common->Printf( "failed.\n" );
 			errorInOriginalImages = true;
-		}
-		else if( width != height )
-		{
+		} else if( width != height ) {
 			common->Printf( "wrong size pal!\n\n\nget your shit together and set the size according to your images!\n\n\ninept programmers are inept!\n" );
 			errorInOriginalImages = true; // yeah, but don't just choke on a joke!
-		}
-		else
-		{
+		} else {
 			errorInOriginalImages = false;
 		}
 
-		if( errorInOriginalImages )
-		{
+		if( errorInOriginalImages ) {
 			errorInOriginalImages = false;
-			for( i-- ; i >= 0 ; i-- )
-			{
+			for( i--; i >= 0; i-- ) {
 				Mem_Free( buffers[i] ); // clean up every buffer from this stage down
 			}
 
@@ -1462,17 +1418,15 @@ void R_TransformCubemap( const char* orgDirection[6], const char* orgDir, const 
 		// apply rotations and flips
 		R_ApplyCubeMapTransforms( i, buffers[i], width );
 
-		//save the images with the appropiate skybox naming convention
+		// save the images with the appropiate skybox naming convention
 		fullname.Format( "%s/%s/%s%s.tga", destDir, baseName, baseName, destDirection[i] );
 		common->Printf( "writing %s\n", fullname.c_str() );
 		common->UpdateScreen( false );
 		R_WriteTGA( fullname, buffers[i], width, width, false, "fs_basepath" );
 	}
 
-	for( i = 0 ; i < 6 ; i++ )
-	{
-		if( buffers[i] )
-		{
+	for( i = 0; i < 6; i++ ) {
+		if( buffers[i] ) {
 			Mem_Free( buffers[i] );
 		}
 	}
@@ -1490,8 +1444,7 @@ to skybox textures ( forward, back, left, right, up, down)
 */
 void R_TransformEnvToSkybox_f( const idCmdArgs& args )
 {
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		common->Printf( "USAGE: envToSky <basename>\n" );
 		return;
 	}
@@ -1512,9 +1465,7 @@ to env textures (of the type px, py, pz, nx, ny, nz)
 
 void R_TransformSkyboxToEnv_f( const idCmdArgs& args )
 {
-
-	if( args.Argc() != 2 )
-	{
+	if( args.Argc() != 2 ) {
 		common->Printf( "USAGE: skyToEnv <basename>\n" );
 		return;
 	}
@@ -1524,7 +1475,6 @@ void R_TransformSkyboxToEnv_f( const idCmdArgs& args )
 
 //============================================================================
 
-
 /*
 ===============
 R_SetColorMappings
@@ -1532,13 +1482,12 @@ R_SetColorMappings
 */
 void R_SetColorMappings()
 {
-	float b = r_brightness.GetFloat();
+	float b	   = r_brightness.GetFloat();
 	float invg = 1.0f / r_gamma.GetFloat();
 
 	float j = 0.0f;
-	for( int i = 0; i < 256; i++, j += b )
-	{
-		int inf = idMath::Ftoi( 0xffff * pow( j / 255.0f, invg ) + 0.5f );
+	for( int i = 0; i < 256; i++, j += b ) {
+		int inf			 = idMath::Ftoi( 0xffff * pow( j / 255.0f, invg ) + 0.5f );
 		tr.gammaTable[i] = idMath::ClampInt( 0, 0xFFFF, inf );
 	}
 // SRS - Generalized Vulkan SDL platform
@@ -1558,52 +1507,40 @@ void GfxInfo_f( const idCmdArgs& args )
 {
 	common->Printf( "CPU: %s\n", Sys_GetProcessorString() );
 
-	const char* fsstrings[] =
-	{
-		"windowed",
-		"fullscreen"
-	};
+	const char* fsstrings[] = { "windowed", "fullscreen" };
 
 	common->Printf( "Graphics API: %s\n", deviceManager->GetDevice()->getGraphicsAPI() == nvrhi::GraphicsAPI::D3D12 ? "DirectX 12 " : "Vulkan" );
 	common->Printf( "Render Device: %s\n", deviceManager->GetRendererString() );
 
 	// print all the display adapters, monitors, and video modes
-	//void DumpAllDisplayDevices();
-	//DumpAllDisplayDevices();
+	// void DumpAllDisplayDevices();
+	// DumpAllDisplayDevices();
 
-	//common->Printf( "\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits );
+	// common->Printf( "\nPIXELFORMAT: color(%d-bits) Z(%d-bit) stencil(%d-bits)\n", glConfig.colorBits, glConfig.depthBits, glConfig.stencilBits );
 	common->Printf( "MODE: %d, %d x %d %s hz:", r_vidMode.GetInteger(), renderSystem->GetWidth(), renderSystem->GetHeight(), fsstrings[r_fullscreen.GetBool()] );
-	if( glConfig.displayFrequency )
-	{
+	if( glConfig.displayFrequency ) {
 		common->Printf( "%d\n", glConfig.displayFrequency );
-	}
-	else
-	{
+	} else {
 		common->Printf( "N/A\n" );
 	}
 
 	common->Printf( "-------\n" );
 
-	if( r_swapInterval.GetInteger() )
-	{
+	if( r_swapInterval.GetInteger() ) {
 		common->Printf( "Forcing swapInterval %i\n", r_swapInterval.GetInteger() );
-	}
-	else
-	{
+	} else {
 		common->Printf( "swapInterval not forced\n" );
 	}
 
-	//idLib::Printf( "%i multisamples\n", glConfig.multisamples );
+	// idLib::Printf( "%i multisamples\n", glConfig.multisamples );
 
-	common->Printf( "%5.1f cm screen width (%4.1f\" diagonal)\n",
-					glConfig.physicalScreenWidthInCentimeters, glConfig.physicalScreenWidthInCentimeters / 2.54f
-					* sqrt( ( float )( 16 * 16 + 9 * 9 ) ) / 16.0f );
+	common->Printf(
+		"%5.1f cm screen width (%4.1f\" diagonal)\n", glConfig.physicalScreenWidthInCentimeters, glConfig.physicalScreenWidthInCentimeters / 2.54f * sqrt( ( float )( 16 * 16 + 9 * 9 ) ) / 16.0f );
 	extern idCVar r_forceScreenWidthCentimeters;
-	if( r_forceScreenWidthCentimeters.GetFloat() )
-	{
+	if( r_forceScreenWidthCentimeters.GetFloat() ) {
 		common->Printf( "screen size manually forced to %5.1f cm width (%4.1f\" diagonal)\n",
-						renderSystem->GetPhysicalScreenWidthInCentimeters(), renderSystem->GetPhysicalScreenWidthInCentimeters() / 2.54f
-						* sqrt( ( float )( 16 * 16 + 9 * 9 ) ) / 16.0f );
+			renderSystem->GetPhysicalScreenWidthInCentimeters(),
+			renderSystem->GetPhysicalScreenWidthInCentimeters() / 2.54f * sqrt( ( float )( 16 * 16 + 9 * 9 ) ) / 16.0f );
 	}
 }
 
@@ -1615,8 +1552,7 @@ R_VidRestart_f
 void R_VidRestart_f( const idCmdArgs& args )
 {
 	// if OpenGL isn't started, do nothing
-	if( !tr.IsInitialized() )
-	{
+	if( !tr.IsInitialized() ) {
 		return;
 	}
 
@@ -1632,26 +1568,23 @@ R_InitMaterials
 void R_InitMaterials()
 {
 	tr.defaultMaterial = declManager->FindMaterial( "_default", false );
-	if( !tr.defaultMaterial )
-	{
+	if( !tr.defaultMaterial ) {
 		common->FatalError( "_default material not found" );
 	}
-	tr.defaultPointLight = declManager->FindMaterial( "lights/defaultPointLight" );
+	tr.defaultPointLight	 = declManager->FindMaterial( "lights/defaultPointLight" );
 	tr.defaultProjectedLight = declManager->FindMaterial( "lights/defaultProjectedLight" );
-	tr.whiteMaterial = declManager->FindMaterial( "_white", false );
-	tr.charSetMaterial = declManager->FindMaterial( "textures/bigchars" );
-	if( !tr.vrSkin )
-	{
+	tr.whiteMaterial		 = declManager->FindMaterial( "_white", false );
+	tr.charSetMaterial		 = declManager->FindMaterial( "textures/bigchars" );
+	if( !tr.vrSkin ) {
 		tr.vrSkin = new idDeclSkinVR();
 	}
 
 	// RB: create implicit material
 	tr.imgGuiMaterial = declManager->FindMaterial( "_imguiFont", true );
 
-	ImGuiIO& io = ImGui::GetIO();
+	ImGuiIO& io		= ImGui::GetIO();
 	io.Fonts->TexID = ( void* )( intptr_t )tr.imgGuiMaterial;
 }
-
 
 /*
 =================
@@ -1662,16 +1595,12 @@ Keybinding command
 */
 static void R_SizeUp_f( const idCmdArgs& args )
 {
-	if( r_screenFraction.GetInteger() + 10 > 100 )
-	{
+	if( r_screenFraction.GetInteger() + 10 > 100 ) {
 		r_screenFraction.SetInteger( 100 );
-	}
-	else
-	{
+	} else {
 		r_screenFraction.SetInteger( r_screenFraction.GetInteger() + 10 );
 	}
 }
-
 
 /*
 =================
@@ -1682,16 +1611,12 @@ Keybinding command
 */
 static void R_SizeDown_f( const idCmdArgs& args )
 {
-	if( r_screenFraction.GetInteger() - 10 < 10 )
-	{
+	if( r_screenFraction.GetInteger() - 10 < 10 ) {
 		r_screenFraction.SetInteger( 10 );
-	}
-	else
-	{
+	} else {
 		r_screenFraction.SetInteger( r_screenFraction.GetInteger() - 10 );
 	}
 }
-
 
 /*
 ===============
@@ -1702,10 +1627,9 @@ TouchGui_f
 */
 void R_TouchGui_f( const idCmdArgs& args )
 {
-	const char*	gui = args.Argv( 1 );
+	const char* gui = args.Argv( 1 );
 
-	if( !gui[0] )
-	{
+	if( !gui[0] ) {
 		common->Printf( "USAGE: touchGui <guiName>\n" );
 		return;
 	}
@@ -1723,8 +1647,7 @@ VR_ResetPose_f
 */
 void VR_ResetPose_f( const idCmdArgs& args )
 {
-	if( vrSystem->IsActive() )
-	{
+	if( vrSystem->IsActive() ) {
 		vrSystem->ResetPose();
 	}
 }
@@ -1737,12 +1660,10 @@ VR_LogDevices_f
 
 void VR_LogDevices_f( const idCmdArgs& args )
 {
-	if( vrSystem->IsActive() )
-	{
+	if( vrSystem->IsActive() ) {
 		vrSystem->LogDevices();
 	}
 }
-
 
 /*
 =================
@@ -1760,7 +1681,7 @@ void R_InitCommands()
 	cmdSystem->AddCommand( "listGuis", R_ListGuis_f, CMD_FL_RENDERER, "lists guis" );
 	cmdSystem->AddCommand( "touchGui", R_TouchGui_f, CMD_FL_RENDERER, "touches a gui" );
 	cmdSystem->AddCommand( "screenshot", R_ScreenShot_f, CMD_FL_RENDERER, "takes a screenshot" );
-	//cmdSystem->AddCommand( "envshot", R_EnvShot_f, CMD_FL_RENDERER, "takes an environment shot" );
+	// cmdSystem->AddCommand( "envshot", R_EnvShot_f, CMD_FL_RENDERER, "takes an environment shot" );
 	cmdSystem->AddCommand( "envToSky", R_TransformEnvToSkybox_f, CMD_FL_RENDERER | CMD_FL_CHEAT, "transforms environment textures to sky box textures" );
 	cmdSystem->AddCommand( "skyToEnv", R_TransformSkyboxToEnv_f, CMD_FL_RENDERER | CMD_FL_CHEAT, "transforms sky box textures to environment textures" );
 	cmdSystem->AddCommand( "gfxInfo", GfxInfo_f, CMD_FL_RENDERER, "show graphics info" );
@@ -1785,59 +1706,55 @@ idRenderSystemLocal::Clear
 */
 void idRenderSystemLocal::Clear()
 {
-	registered = false;
-	frameCount = 0;
-	viewCount = 0;
+	registered		= false;
+	frameCount		= 0;
+	viewCount		= 0;
 	frameShaderTime = 0.0f;
 	ambientLightVector.Zero();
 	worlds.Clear();
 	primaryWorld = NULL;
 	memset( &primaryRenderView, 0, sizeof( primaryRenderView ) );
-	primaryView = NULL;
-	defaultMaterial = NULL;
-	testImage = NULL;
+	primaryView		 = NULL;
+	defaultMaterial	 = NULL;
+	testImage		 = NULL;
 	ambientCubeImage = NULL;
-	viewDef = NULL;
+	viewDef			 = NULL;
 	memset( &pc, 0, sizeof( pc ) );
 	memset( &identitySpace, 0, sizeof( identitySpace ) );
 	memset( renderCrops, 0, sizeof( renderCrops ) );
-	currentRenderCrop = 0;
+	currentRenderCrop			 = 0;
 	currentColorNativeBytesOrder = 0xFFFFFFFF;
-	currentGLState = 0;
-	currentStereoDepth = STEREO_DEPTH_TYPE_NONE;
-	guiRecursionLevel = 0;
-	guiModel = NULL;
+	currentGLState				 = 0;
+	currentStereoDepth			 = STEREO_DEPTH_TYPE_NONE;
+	guiRecursionLevel			 = 0;
+	guiModel					 = NULL;
 	memset( gammaTable, 0, sizeof( gammaTable ) );
 	memset( &cubeAxis, 0, sizeof( cubeAxis ) ); // RB
 	takingScreenshot = false;
-	takingEnvprobe = false;
+	takingEnvprobe	 = false;
 
-	if( unitSquareTriangles != NULL )
-	{
+	if( unitSquareTriangles != NULL ) {
 		Mem_Free( unitSquareTriangles->verts );
 		Mem_Free( unitSquareTriangles->indexes );
 		Mem_Free( unitSquareTriangles );
 		unitSquareTriangles = NULL;
 	}
 
-	if( zeroOneCubeTriangles != NULL )
-	{
+	if( zeroOneCubeTriangles != NULL ) {
 		Mem_Free( zeroOneCubeTriangles->verts );
 		Mem_Free( zeroOneCubeTriangles->indexes );
 		Mem_Free( zeroOneCubeTriangles );
 		zeroOneCubeTriangles = NULL;
 	}
 
-	if( zeroOneSphereTriangles != NULL )
-	{
+	if( zeroOneSphereTriangles != NULL ) {
 		Mem_Free( zeroOneSphereTriangles->verts );
 		Mem_Free( zeroOneSphereTriangles->indexes );
 		Mem_Free( zeroOneSphereTriangles );
 		zeroOneSphereTriangles = NULL;
 	}
 
-	if( testImageTriangles != NULL )
-	{
+	if( testImageTriangles != NULL ) {
 		Mem_Free( testImageTriangles->verts );
 		Mem_Free( testImageTriangles->indexes );
 		Mem_Free( testImageTriangles );
@@ -1851,14 +1768,13 @@ void idRenderSystemLocal::Clear()
 	envprobeJobs.Clear();
 	lightGridJobs.Clear();
 
-#if defined(USE_INTRINSICS_SSE)
+#if defined( USE_INTRINSICS_SSE )
 	// destroy occlusion culling object and free hierarchical z-buffer
-	if( maskedOcclusionCulling != NULL )
-	{
-#if MOC_MULTITHREADED
+	if( maskedOcclusionCulling != NULL ) {
+	#if MOC_MULTITHREADED
 		delete maskedOcclusionThreaded;
 		maskedOcclusionThreaded = NULL;
-#endif
+	#endif
 		MaskedOcclusionCulling::Destroy( maskedOcclusionCulling );
 
 		maskedOcclusionCulling = NULL;
@@ -1877,19 +1793,19 @@ static srfTriangles_t* R_MakeFullScreenTris()
 	srfTriangles_t* tri = ( srfTriangles_t* )Mem_ClearedAlloc( sizeof( *tri ), TAG_RENDER_TOOLS );
 
 	tri->numIndexes = 6;
-	tri->numVerts = 4;
+	tri->numVerts	= 4;
 
-	int indexSize = tri->numIndexes * sizeof( tri->indexes[0] );
+	int indexSize			= tri->numIndexes * sizeof( tri->indexes[0] );
 	int allocatedIndexBytes = ALIGN( indexSize, 16 );
-	tri->indexes = ( triIndex_t* )Mem_Alloc( allocatedIndexBytes, TAG_RENDER_TOOLS );
+	tri->indexes			= ( triIndex_t* )Mem_Alloc( allocatedIndexBytes, TAG_RENDER_TOOLS );
 
-	int vertexSize = tri->numVerts * sizeof( tri->verts[0] );
-	int allocatedVertexBytes =  ALIGN( vertexSize, 16 );
-	tri->verts = ( idDrawVert* )Mem_ClearedAlloc( allocatedVertexBytes, TAG_RENDER_TOOLS );
+	int vertexSize			 = tri->numVerts * sizeof( tri->verts[0] );
+	int allocatedVertexBytes = ALIGN( vertexSize, 16 );
+	tri->verts				 = ( idDrawVert* )Mem_ClearedAlloc( allocatedVertexBytes, TAG_RENDER_TOOLS );
 
 	idDrawVert* verts = tri->verts;
 
-	triIndex_t tempIndexes[6] = { 3, 0, 2, 2, 0, 1 };
+	triIndex_t	tempIndexes[6] = { 3, 0, 2, 2, 0, 1 };
 	memcpy( tri->indexes, tempIndexes, indexSize );
 
 	verts[0].xyz[0] = -1.0f;
@@ -1908,11 +1824,9 @@ static srfTriangles_t* R_MakeFullScreenTris()
 	verts[3].xyz[1] = -1.0f;
 	verts[3].SetTexCoord( 0.0f, 0.0f );
 
-	for( int i = 0 ; i < 4 ; i++ )
-	{
+	for( int i = 0; i < 4; i++ ) {
 		verts[i].SetColor( 0xffffffff );
 	}
-
 
 	return tri;
 }
@@ -1926,29 +1840,29 @@ static srfTriangles_t* R_MakeZeroOneCubeTris()
 {
 	srfTriangles_t* tri = ( srfTriangles_t* )Mem_ClearedAlloc( sizeof( *tri ), TAG_RENDER_TOOLS );
 
-	tri->numVerts = 8;
+	tri->numVerts	= 8;
 	tri->numIndexes = 36;
 
-	const int indexSize = tri->numIndexes * sizeof( tri->indexes[0] );
+	const int indexSize			  = tri->numIndexes * sizeof( tri->indexes[0] );
 	const int allocatedIndexBytes = ALIGN( indexSize, 16 );
-	tri->indexes = ( triIndex_t* )Mem_Alloc( allocatedIndexBytes, TAG_RENDER_TOOLS );
+	tri->indexes				  = ( triIndex_t* )Mem_Alloc( allocatedIndexBytes, TAG_RENDER_TOOLS );
 
-	const int vertexSize = tri->numVerts * sizeof( tri->verts[0] );
-	const int allocatedVertexBytes =  ALIGN( vertexSize, 16 );
-	tri->verts = ( idDrawVert* )Mem_ClearedAlloc( allocatedVertexBytes, TAG_RENDER_TOOLS );
+	const int vertexSize		   = tri->numVerts * sizeof( tri->verts[0] );
+	const int allocatedVertexBytes = ALIGN( vertexSize, 16 );
+	tri->verts					   = ( idDrawVert* )Mem_ClearedAlloc( allocatedVertexBytes, TAG_RENDER_TOOLS );
 
 	idDrawVert* verts = tri->verts;
 
-	const float low = 0.0f;
+	const float low	 = 0.0f;
 	const float high = 1.0f;
 
-	idVec3 center( 0.0f );
-	idVec3 mx( low, 0.0f, 0.0f );
-	idVec3 px( high, 0.0f, 0.0f );
-	idVec3 my( 0.0f,  low, 0.0f );
-	idVec3 py( 0.0f, high, 0.0f );
-	idVec3 mz( 0.0f, 0.0f,  low );
-	idVec3 pz( 0.0f, 0.0f, high );
+	idVec3		center( 0.0f );
+	idVec3		mx( low, 0.0f, 0.0f );
+	idVec3		px( high, 0.0f, 0.0f );
+	idVec3		my( 0.0f, low, 0.0f );
+	idVec3		py( 0.0f, high, 0.0f );
+	idVec3		mz( 0.0f, 0.0f, low );
+	idVec3		pz( 0.0f, 0.0f, high );
 
 	verts[0].xyz = center + mx + my + mz;
 	verts[1].xyz = center + px + my + mz;
@@ -1960,40 +1874,40 @@ static srfTriangles_t* R_MakeZeroOneCubeTris()
 	verts[7].xyz = center + mx + py + pz;
 
 	// bottom
-	tri->indexes[ 0 * 3 + 0] = 2;
-	tri->indexes[ 0 * 3 + 1] = 3;
-	tri->indexes[ 0 * 3 + 2] = 0;
-	tri->indexes[ 1 * 3 + 0] = 1;
-	tri->indexes[ 1 * 3 + 1] = 2;
-	tri->indexes[ 1 * 3 + 2] = 0;
+	tri->indexes[0 * 3 + 0] = 2;
+	tri->indexes[0 * 3 + 1] = 3;
+	tri->indexes[0 * 3 + 2] = 0;
+	tri->indexes[1 * 3 + 0] = 1;
+	tri->indexes[1 * 3 + 1] = 2;
+	tri->indexes[1 * 3 + 2] = 0;
 	// back
-	tri->indexes[ 2 * 3 + 0] = 5;
-	tri->indexes[ 2 * 3 + 1] = 1;
-	tri->indexes[ 2 * 3 + 2] = 0;
-	tri->indexes[ 3 * 3 + 0] = 4;
-	tri->indexes[ 3 * 3 + 1] = 5;
-	tri->indexes[ 3 * 3 + 2] = 0;
+	tri->indexes[2 * 3 + 0] = 5;
+	tri->indexes[2 * 3 + 1] = 1;
+	tri->indexes[2 * 3 + 2] = 0;
+	tri->indexes[3 * 3 + 0] = 4;
+	tri->indexes[3 * 3 + 1] = 5;
+	tri->indexes[3 * 3 + 2] = 0;
 	// left
-	tri->indexes[ 4 * 3 + 0] = 7;
-	tri->indexes[ 4 * 3 + 1] = 4;
-	tri->indexes[ 4 * 3 + 2] = 0;
-	tri->indexes[ 5 * 3 + 0] = 3;
-	tri->indexes[ 5 * 3 + 1] = 7;
-	tri->indexes[ 5 * 3 + 2] = 0;
+	tri->indexes[4 * 3 + 0] = 7;
+	tri->indexes[4 * 3 + 1] = 4;
+	tri->indexes[4 * 3 + 2] = 0;
+	tri->indexes[5 * 3 + 0] = 3;
+	tri->indexes[5 * 3 + 1] = 7;
+	tri->indexes[5 * 3 + 2] = 0;
 	// right
-	tri->indexes[ 6 * 3 + 0] = 1;
-	tri->indexes[ 6 * 3 + 1] = 5;
-	tri->indexes[ 6 * 3 + 2] = 6;
-	tri->indexes[ 7 * 3 + 0] = 2;
-	tri->indexes[ 7 * 3 + 1] = 1;
-	tri->indexes[ 7 * 3 + 2] = 6;
+	tri->indexes[6 * 3 + 0] = 1;
+	tri->indexes[6 * 3 + 1] = 5;
+	tri->indexes[6 * 3 + 2] = 6;
+	tri->indexes[7 * 3 + 0] = 2;
+	tri->indexes[7 * 3 + 1] = 1;
+	tri->indexes[7 * 3 + 2] = 6;
 	// front
-	tri->indexes[ 8 * 3 + 0] = 3;
-	tri->indexes[ 8 * 3 + 1] = 2;
-	tri->indexes[ 8 * 3 + 2] = 6;
-	tri->indexes[ 9 * 3 + 0] = 7;
-	tri->indexes[ 9 * 3 + 1] = 3;
-	tri->indexes[ 9 * 3 + 2] = 6;
+	tri->indexes[8 * 3 + 0] = 3;
+	tri->indexes[8 * 3 + 1] = 2;
+	tri->indexes[8 * 3 + 2] = 6;
+	tri->indexes[9 * 3 + 0] = 7;
+	tri->indexes[9 * 3 + 1] = 3;
+	tri->indexes[9 * 3 + 2] = 6;
 	// top
 	tri->indexes[10 * 3 + 0] = 4;
 	tri->indexes[10 * 3 + 1] = 7;
@@ -2002,8 +1916,7 @@ static srfTriangles_t* R_MakeZeroOneCubeTris()
 	tri->indexes[11 * 3 + 1] = 4;
 	tri->indexes[11 * 3 + 2] = 6;
 
-	for( int i = 0 ; i < 4 ; i++ )
-	{
+	for( int i = 0; i < 4; i++ ) {
 		verts[i].SetColor( 0xffffffff );
 	}
 
@@ -2011,21 +1924,21 @@ static srfTriangles_t* R_MakeZeroOneCubeTris()
 }
 
 // RB begin
-#if defined(USE_INTRINSICS_SSE)
+#if defined( USE_INTRINSICS_SSE )
 static void R_MakeZeroOneCubeTrisForMaskedOcclusionCulling()
 {
-	const float low = 0.0f;
+	const float low	 = 0.0f;
 	const float high = 1.0f;
 
-	idVec3 center( 0.0f );
-	idVec3 mx( low, 0.0f, 0.0f );
-	idVec3 px( high, 0.0f, 0.0f );
-	idVec3 my( 0.0f,  low, 0.0f );
-	idVec3 py( 0.0f, high, 0.0f );
-	idVec3 mz( 0.0f, 0.0f,  low );
-	idVec3 pz( 0.0f, 0.0f, high );
+	idVec3		center( 0.0f );
+	idVec3		mx( low, 0.0f, 0.0f );
+	idVec3		px( high, 0.0f, 0.0f );
+	idVec3		my( 0.0f, low, 0.0f );
+	idVec3		py( 0.0f, high, 0.0f );
+	idVec3		mz( 0.0f, 0.0f, low );
+	idVec3		pz( 0.0f, 0.0f, high );
 
-	idVec4* verts = tr.maskedZeroOneCubeVerts;
+	idVec4*		verts = tr.maskedZeroOneCubeVerts;
 
 	verts[0].ToVec3() = center + mx + my + mz;
 	verts[1].ToVec3() = center + px + my + mz;
@@ -2048,40 +1961,40 @@ static void R_MakeZeroOneCubeTrisForMaskedOcclusionCulling()
 	unsigned int* indexes = tr.maskedZeroOneCubeIndexes;
 
 	// bottom
-	indexes[ 0 * 3 + 0] = 2;
-	indexes[ 0 * 3 + 1] = 3;
-	indexes[ 0 * 3 + 2] = 0;
-	indexes[ 1 * 3 + 0] = 1;
-	indexes[ 1 * 3 + 1] = 2;
-	indexes[ 1 * 3 + 2] = 0;
+	indexes[0 * 3 + 0] = 2;
+	indexes[0 * 3 + 1] = 3;
+	indexes[0 * 3 + 2] = 0;
+	indexes[1 * 3 + 0] = 1;
+	indexes[1 * 3 + 1] = 2;
+	indexes[1 * 3 + 2] = 0;
 	// back
-	indexes[ 2 * 3 + 0] = 5;
-	indexes[ 2 * 3 + 1] = 1;
-	indexes[ 2 * 3 + 2] = 0;
-	indexes[ 3 * 3 + 0] = 4;
-	indexes[ 3 * 3 + 1] = 5;
-	indexes[ 3 * 3 + 2] = 0;
+	indexes[2 * 3 + 0] = 5;
+	indexes[2 * 3 + 1] = 1;
+	indexes[2 * 3 + 2] = 0;
+	indexes[3 * 3 + 0] = 4;
+	indexes[3 * 3 + 1] = 5;
+	indexes[3 * 3 + 2] = 0;
 	// left
-	indexes[ 4 * 3 + 0] = 7;
-	indexes[ 4 * 3 + 1] = 4;
-	indexes[ 4 * 3 + 2] = 0;
-	indexes[ 5 * 3 + 0] = 3;
-	indexes[ 5 * 3 + 1] = 7;
-	indexes[ 5 * 3 + 2] = 0;
+	indexes[4 * 3 + 0] = 7;
+	indexes[4 * 3 + 1] = 4;
+	indexes[4 * 3 + 2] = 0;
+	indexes[5 * 3 + 0] = 3;
+	indexes[5 * 3 + 1] = 7;
+	indexes[5 * 3 + 2] = 0;
 	// right
-	indexes[ 6 * 3 + 0] = 1;
-	indexes[ 6 * 3 + 1] = 5;
-	indexes[ 6 * 3 + 2] = 6;
-	indexes[ 7 * 3 + 0] = 2;
-	indexes[ 7 * 3 + 1] = 1;
-	indexes[ 7 * 3 + 2] = 6;
+	indexes[6 * 3 + 0] = 1;
+	indexes[6 * 3 + 1] = 5;
+	indexes[6 * 3 + 2] = 6;
+	indexes[7 * 3 + 0] = 2;
+	indexes[7 * 3 + 1] = 1;
+	indexes[7 * 3 + 2] = 6;
 	// front
-	indexes[ 8 * 3 + 0] = 3;
-	indexes[ 8 * 3 + 1] = 2;
-	indexes[ 8 * 3 + 2] = 6;
-	indexes[ 9 * 3 + 0] = 7;
-	indexes[ 9 * 3 + 1] = 3;
-	indexes[ 9 * 3 + 2] = 6;
+	indexes[8 * 3 + 0] = 3;
+	indexes[8 * 3 + 1] = 2;
+	indexes[8 * 3 + 2] = 6;
+	indexes[9 * 3 + 0] = 7;
+	indexes[9 * 3 + 1] = 3;
+	indexes[9 * 3 + 2] = 6;
 	// top
 	indexes[10 * 3 + 0] = 4;
 	indexes[10 * 3 + 1] = 7;
@@ -2093,18 +2006,18 @@ static void R_MakeZeroOneCubeTrisForMaskedOcclusionCulling()
 
 static void R_MakeUnitCubeTrisForMaskedOcclusionCulling()
 {
-	const float low = -1.0f;
+	const float low	 = -1.0f;
 	const float high = 1.0f;
 
-	idVec3 center( 0.0f );
-	idVec3 mx( low, 0.0f, 0.0f );
-	idVec3 px( high, 0.0f, 0.0f );
-	idVec3 my( 0.0f,  low, 0.0f );
-	idVec3 py( 0.0f, high, 0.0f );
-	idVec3 mz( 0.0f, 0.0f,  low );
-	idVec3 pz( 0.0f, 0.0f, high );
+	idVec3		center( 0.0f );
+	idVec3		mx( low, 0.0f, 0.0f );
+	idVec3		px( high, 0.0f, 0.0f );
+	idVec3		my( 0.0f, low, 0.0f );
+	idVec3		py( 0.0f, high, 0.0f );
+	idVec3		mz( 0.0f, 0.0f, low );
+	idVec3		pz( 0.0f, 0.0f, high );
 
-	idVec4* verts = tr.maskedUnitCubeVerts;
+	idVec4*		verts = tr.maskedUnitCubeVerts;
 
 	verts[0].ToVec3() = center + mx + my + mz;
 	verts[1].ToVec3() = center + px + my + mz;
@@ -2130,47 +2043,44 @@ static srfTriangles_t* R_MakeZeroOneSphereTris()
 {
 	srfTriangles_t* tri = ( srfTriangles_t* )Mem_ClearedAlloc( sizeof( *tri ), TAG_RENDER_TOOLS );
 
-	const float radius = 1.0f;
-	const int rings = 20.0f;
-	const int sectors = 20.0f;
+	const float		radius	= 1.0f;
+	const int		rings	= 20.0f;
+	const int		sectors = 20.0f;
 
-	tri->numVerts = ( rings * sectors );
+	tri->numVerts	= ( rings * sectors );
 	tri->numIndexes = ( ( rings - 1 ) * sectors ) * 6;
 
-	const int indexSize = tri->numIndexes * sizeof( tri->indexes[0] );
+	const int indexSize			  = tri->numIndexes * sizeof( tri->indexes[0] );
 	const int allocatedIndexBytes = ALIGN( indexSize, 16 );
-	tri->indexes = ( triIndex_t* )Mem_Alloc( allocatedIndexBytes, TAG_RENDER_TOOLS );
+	tri->indexes				  = ( triIndex_t* )Mem_Alloc( allocatedIndexBytes, TAG_RENDER_TOOLS );
 
-	const int vertexSize = tri->numVerts * sizeof( tri->verts[0] );
-	const int allocatedVertexBytes =  ALIGN( vertexSize, 16 );
-	tri->verts = ( idDrawVert* )Mem_ClearedAlloc( allocatedVertexBytes, TAG_RENDER_TOOLS );
+	const int vertexSize		   = tri->numVerts * sizeof( tri->verts[0] );
+	const int allocatedVertexBytes = ALIGN( vertexSize, 16 );
+	tri->verts					   = ( idDrawVert* )Mem_ClearedAlloc( allocatedVertexBytes, TAG_RENDER_TOOLS );
 
 	idDrawVert* verts = tri->verts;
 
 	float const R = 1.0f / ( float )( rings - 1 );
 	float const S = 1.0f / ( float )( sectors - 1 );
 
-	int numTris = 0;
-	int numVerts = 0;
-	for( int r = 0; r < rings; ++r )
-	{
-		for( int s = 0; s < sectors; ++s )
-		{
-			const float y = sin( -idMath::HALF_PI +  idMath::PI * r * R );
+	int			numTris	 = 0;
+	int			numVerts = 0;
+	for( int r = 0; r < rings; ++r ) {
+		for( int s = 0; s < sectors; ++s ) {
+			const float y = sin( -idMath::HALF_PI + idMath::PI * r * R );
 			const float x = cos( 2 * idMath::PI * s * S ) * sin( idMath::PI * r * R );
 			const float z = sin( 2 * idMath::PI * s * S ) * sin( idMath::PI * r * R );
 
-			verts[ numVerts ].SetTexCoord( s * S, r * R );
-			verts[ numVerts ].xyz = idVec3( x, y, z ) * radius;
-			verts[ numVerts ].SetNormal( x, y, z );
-			verts[ numVerts ].SetColor( 0xffffffff );
+			verts[numVerts].SetTexCoord( s * S, r * R );
+			verts[numVerts].xyz = idVec3( x, y, z ) * radius;
+			verts[numVerts].SetNormal( x, y, z );
+			verts[numVerts].SetColor( 0xffffffff );
 			numVerts++;
 
-			if( r < ( rings - 1 ) )
-			{
-				int curRow = r * sectors;
+			if( r < ( rings - 1 ) ) {
+				int curRow	= r * sectors;
 				int nextRow = ( r + 1 ) * sectors;
-				int nextS = ( s + 1 ) % sectors;
+				int nextS	= ( s + 1 ) % sectors;
 
 				tri->indexes[( numTris * 3 ) + 2] = ( curRow + s );
 				tri->indexes[( numTris * 3 ) + 1] = ( nextRow + s );
@@ -2203,23 +2113,23 @@ srfTriangles_t* R_MakeTestImageTriangles()
 	srfTriangles_t* tri = ( srfTriangles_t* )Mem_ClearedAlloc( sizeof( *tri ), TAG_RENDER_TOOLS );
 
 	tri->numIndexes = 6;
-	tri->numVerts = 4;
+	tri->numVerts	= 4;
 
-	int indexSize = tri->numIndexes * sizeof( tri->indexes[0] );
+	int indexSize			= tri->numIndexes * sizeof( tri->indexes[0] );
 	int allocatedIndexBytes = ALIGN( indexSize, 16 );
-	tri->indexes = ( triIndex_t* )Mem_Alloc( allocatedIndexBytes, TAG_RENDER_TOOLS );
+	tri->indexes			= ( triIndex_t* )Mem_Alloc( allocatedIndexBytes, TAG_RENDER_TOOLS );
 
-	int vertexSize = tri->numVerts * sizeof( tri->verts[0] );
-	int allocatedVertexBytes =  ALIGN( vertexSize, 16 );
-	tri->verts = ( idDrawVert* )Mem_ClearedAlloc( allocatedVertexBytes, TAG_RENDER_TOOLS );
+	int vertexSize			 = tri->numVerts * sizeof( tri->verts[0] );
+	int allocatedVertexBytes = ALIGN( vertexSize, 16 );
+	tri->verts				 = ( idDrawVert* )Mem_ClearedAlloc( allocatedVertexBytes, TAG_RENDER_TOOLS );
 
 	ALIGNTYPE16 triIndex_t tempIndexes[6] = { 3, 0, 2, 2, 0, 1 };
 	memcpy( tri->indexes, tempIndexes, indexSize );
 
 	idDrawVert* tempVerts = tri->verts;
-	tempVerts[0].xyz[0] = 0.0f;
-	tempVerts[0].xyz[1] = 0.0f;
-	tempVerts[0].xyz[2] = 0;
+	tempVerts[0].xyz[0]	  = 0.0f;
+	tempVerts[0].xyz[1]	  = 0.0f;
+	tempVerts[0].xyz[2]	  = 0;
 	tempVerts[0].SetTexCoord( 0.0, 0.0f );
 
 	tempVerts[1].xyz[0] = 1.0f;
@@ -2237,8 +2147,7 @@ srfTriangles_t* R_MakeTestImageTriangles()
 	tempVerts[3].xyz[2] = 0;
 	tempVerts[3].SetTexCoord( 0.0f, 1.0f );
 
-	for( int i = 0; i < 4; i++ )
-	{
+	for( int i = 0; i < 4; i++ ) {
 		tempVerts[i].SetColor( 0xFFFFFFFF );
 	}
 	return tri;
@@ -2254,7 +2163,7 @@ void idRenderSystemLocal::Init()
 	common->Printf( "------- Initializing renderSystem --------\n" );
 
 	// clear all our internal state
-	viewCount = 1;		// so cleared structures never match viewCount
+	viewCount = 1; // so cleared structures never match viewCount
 	// we used to memset tr, but now that it is a class, we can't, so
 	// there may be other state we need to reset
 
@@ -2270,7 +2179,7 @@ void idRenderSystemLocal::Init()
 
 	guiModel = new( TAG_RENDER ) idGuiModel;
 	guiModel->Clear();
-	tr_guiModel = guiModel;	// for DeviceContext fast path
+	tr_guiModel = guiModel; // for DeviceContext fast path
 
 	globalImages->Init();
 
@@ -2325,51 +2234,46 @@ void idRenderSystemLocal::Init()
 	cubeAxis[5][2][1] = 1;
 
 	// make sure the tr.unitSquareTriangles data is current in the vertex / index cache
-	if( unitSquareTriangles == NULL )
-	{
+	if( unitSquareTriangles == NULL ) {
 		unitSquareTriangles = R_MakeFullScreenTris();
 	}
 
 	// make sure the tr.zeroOneCubeTriangles data is current in the vertex / index cache
-	if( zeroOneCubeTriangles == NULL )
-	{
+	if( zeroOneCubeTriangles == NULL ) {
 		zeroOneCubeTriangles = R_MakeZeroOneCubeTris();
 		R_DeriveTangents( zeroOneCubeTriangles ); // RB: we need normals for debugging reflections
 	}
 
 	// RB make sure the tr.zeroOneSphereTriangles data is current in the vertex / index cache
-	if( zeroOneSphereTriangles == NULL )
-	{
+	if( zeroOneSphereTriangles == NULL ) {
 		zeroOneSphereTriangles = R_MakeZeroOneSphereTris();
-		//R_DeriveTangents( zeroOneSphereTriangles );
+		// R_DeriveTangents( zeroOneSphereTriangles );
 	}
 
 	// make sure the tr.testImageTriangles data is current in the vertex / index cache
-	if( testImageTriangles == NULL )
-	{
+	if( testImageTriangles == NULL ) {
 		testImageTriangles = R_MakeTestImageTriangles();
 	}
 
 	frontEndJobList = parallelJobManager->AllocJobList( JOBLIST_RENDERER_FRONTEND, JOBLIST_PRIORITY_MEDIUM, 2048, 0, NULL );
 	envprobeJobList = parallelJobManager->AllocJobList( JOBLIST_UTILITY, JOBLIST_PRIORITY_MEDIUM, 2048, 0, NULL ); // RB
 
-	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN )
-	{
+	if( deviceManager->GetGraphicsAPI() == nvrhi::GraphicsAPI::VULKAN ) {
 		// avoid GL_BlockingSwapBuffers
 		omitSwapBuffers = true;
 	}
 
-#if defined(USE_INTRINSICS_SSE)
+#if defined( USE_INTRINSICS_SSE )
 	// Flush denorms to zero to avoid performance issues with small values
 	_mm_setcsr( _mm_getcsr() | 0x8040 );
 
 	maskedOcclusionCulling = MaskedOcclusionCulling::Create();
 
-#if MOC_MULTITHREADED
+	#if MOC_MULTITHREADED
 	maskedOcclusionThreaded = new CullingThreadpool( 2, 10, 6, 128 );
 	maskedOcclusionThreaded->SetBuffer( maskedOcclusionCulling );
 	maskedOcclusionThreaded->WakeThreads();
-#endif
+	#endif
 
 	R_MakeZeroOneCubeTrisForMaskedOcclusionCulling();
 	R_MakeUnitCubeTrisForMaskedOcclusionCulling();
@@ -2393,16 +2297,14 @@ void idRenderSystemLocal::Shutdown()
 
 	fonts.DeleteContents();
 
-	if( IsInitialized() )
-	{
+	if( IsInitialized() ) {
 		globalImages->PurgeAllImages();
 	}
 
 	renderModelManager->Shutdown();
 
 	// SRS - if testVideo is currently playing, make sure cinematic is deleted before ShutdownCinematic()
-	if( tr.testVideo )
-	{
+	if( tr.testVideo ) {
 		delete tr.testVideo;
 		tr.testVideo = NULL;
 	}
@@ -2453,7 +2355,7 @@ void idRenderSystemLocal::ResetGuiModels()
 	guiModel = new( TAG_RENDER ) idGuiModel;
 	guiModel->Clear();
 	guiModel->BeginFrame();
-	tr_guiModel = guiModel;	// for DeviceContext fast path
+	tr_guiModel = guiModel; // for DeviceContext fast path
 }
 
 /*
@@ -2544,13 +2446,10 @@ idRenderSystemLocal::RegisterFont
 */
 idFont* idRenderSystemLocal::RegisterFont( const char* fontName )
 {
-
-	idStrStatic< MAX_OSPATH > baseFontName = fontName;
+	idStrStatic<MAX_OSPATH> baseFontName = fontName;
 	baseFontName.Replace( "fonts/", "" );
-	for( int i = 0; i < fonts.Num(); i++ )
-	{
-		if( idStr::Icmp( fonts[i]->GetName(), baseFontName ) == 0 )
-		{
+	for( int i = 0; i < fonts.Num(); i++ ) {
+		if( idStr::Icmp( fonts[i]->GetName(), baseFontName ) == 0 ) {
 			fonts[i]->Touch();
 			return fonts[i];
 		}
@@ -2577,12 +2476,10 @@ idRenderSystemLocal::InitOpenGL
 void idRenderSystemLocal::InitBackend()
 {
 	// if OpenGL isn't started, start it now
-	if( !IsInitialized() )
-	{
+	if( !IsInitialized() ) {
 		backEnd.Init();
 
-		if( !commandList )
-		{
+		if( !commandList ) {
 			commandList = deviceManager->GetDevice()->createCommandList();
 		}
 
@@ -2636,8 +2533,7 @@ idRenderSystemLocal::GetWidth
 */
 int idRenderSystemLocal::GetWidth() const
 {
-	if( vrSystem->IsActive() )
-	{
+	if( vrSystem->IsActive() ) {
 		return vrSystem->GetRenderResolution().x;
 	}
 
@@ -2659,8 +2555,7 @@ idRenderSystemLocal::GetHeight
 */
 int idRenderSystemLocal::GetHeight() const
 {
-	if( vrSystem->IsActive() )
-	{
+	if( vrSystem->IsActive() ) {
 		return vrSystem->GetRenderResolution().y;
 	}
 
@@ -2680,7 +2575,6 @@ int idRenderSystemLocal::GetHeight() const
 
 	return glConfig.nativeScreenHeight;
 }
-
 
 // RB: return swap chain width
 int idRenderSystemLocal::GetNativeWidth() const
@@ -2703,11 +2597,10 @@ idRenderSystemLocal::GetVirtualWidth
 int idRenderSystemLocal::GetVirtualWidth() const
 {
 	// RB: use lower res for VR guis
-	if( r_useVirtualScreenResolution.GetBool() || vrSystem->IsActive() )
-	{
+	if( r_useVirtualScreenResolution.GetBool() || vrSystem->IsActive() ) {
 		return SCREEN_WIDTH;
 	}
-// jmarshall end
+	// jmarshall end
 	return glConfig.nativeScreenWidth / 2;
 }
 
@@ -2719,11 +2612,10 @@ idRenderSystemLocal::GetVirtualHeight
 int idRenderSystemLocal::GetVirtualHeight() const
 {
 	// RB: use lower res for VR guis
-	if( r_useVirtualScreenResolution.GetBool() || vrSystem->IsActive() )
-	{
+	if( r_useVirtualScreenResolution.GetBool() || vrSystem->IsActive() ) {
 		return SCREEN_HEIGHT;
 	}
-// jmarshall end
+	// jmarshall end
 	return glConfig.nativeScreenHeight / 2;
 }
 
@@ -2757,11 +2649,10 @@ idRenderSystemLocal::GetPhysicalScreenWidthInCentimeters
 This is used to calculate stereoscopic screen offset for a given interocular distance.
 ========================
 */
-idCVar	r_forceScreenWidthCentimeters( "r_forceScreenWidthCentimeters", "0", CVAR_RENDERER | CVAR_ARCHIVE, "Override screen width returned by hardware" );
-float idRenderSystemLocal::GetPhysicalScreenWidthInCentimeters() const
+idCVar r_forceScreenWidthCentimeters( "r_forceScreenWidthCentimeters", "0", CVAR_RENDERER | CVAR_ARCHIVE, "Override screen width returned by hardware" );
+float  idRenderSystemLocal::GetPhysicalScreenWidthInCentimeters() const
 {
-	if( r_forceScreenWidthCentimeters.GetFloat() > 0 )
-	{
+	if( r_forceScreenWidthCentimeters.GetFloat() > 0 ) {
 		return r_forceScreenWidthCentimeters.GetFloat();
 	}
 	return glConfig.physicalScreenWidthInCentimeters;

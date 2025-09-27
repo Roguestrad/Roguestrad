@@ -21,7 +21,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with Doom 3 BFG Edition Source Code.  If not, see <http://www.gnu.org/licenses/>.
 
-In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
+In addition, the Doom 3 BFG Edition Source Code is also subject to certain additional terms. You should have received a copy of these additional terms immediately following the terms and conditions of
+the GNU General Public License which accompanied the Doom 3 BFG Edition Source Code.  If not, please request a copy in writing from id Software at the address below.
 
 If you have questions concerning this license or the applicable additional terms, you may contact in writing id Software LLC, c/o ZeniMax Media Inc., Suite 120, Rockville, Maryland 20850 USA.
 
@@ -30,18 +31,17 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "precompiled.h"
 #pragma hdrstop
-#if defined(_MSC_VER) && !defined(USE_OPENAL)
+#if defined( _MSC_VER ) && !defined( USE_OPENAL )
 	#include <engine/sound/XAudio2/XA2_CinematicAudio.h>
 #else
 	#include <engine/sound/OpenAL/AL_CinematicAudio.h>
 #endif
 
-
 // SRS - Add cvar to control whether cinematic audio is played: default is ON
 idCVar s_playCinematicAudio( "s_playCinematicAudio", "1", CVAR_BOOL | CVAR_NEW, "Play audio if available in cinematic video files" );
 
 // DG: get rid of libjpeg; as far as I can tell no roqs that actually use it exist
-//#define ID_USE_LIBJPEG 1
+// #define ID_USE_LIBJPEG 1
 #ifdef ID_USE_LIBJPEG
 	#include <jpeglib.h>
 	#include <jerror.h>
@@ -49,33 +49,32 @@ idCVar s_playCinematicAudio( "s_playCinematicAudio", "1", CVAR_BOOL | CVAR_NEW, 
 
 #include "RenderCommon.h"
 
-#define CIN_system	1
-#define CIN_loop	2
-#define	CIN_hold	4
-#define CIN_silent	8
-#define CIN_shader	16
+#define CIN_system 1
+#define CIN_loop   2
+#define CIN_hold   4
+#define CIN_silent 8
+#define CIN_shader 16
 
-#if defined(USE_FFMPEG)
+#if defined( USE_FFMPEG )
 // Carl: ffmpg for bink video files
-extern "C"
-{
+extern "C" {
 
-//#ifdef WIN32
-#ifndef INT64_C
-#define INT64_C(c) (c ## LL)
-#define UINT64_C(c) (c ## ULL)
-#endif
-//#include <inttypes.h>
-//#endif
+	// #ifdef WIN32
+	#ifndef INT64_C
+		#define INT64_C( c )  ( c##LL )
+		#define UINT64_C( c ) ( c##ULL )
+	#endif
+// #include <inttypes.h>
+// #endif
 
-#include <libavcodec/avcodec.h>
-#include <libavformat/avformat.h>
-#include <libswscale/swscale.h>
-#include <libswresample/swresample.h>
-#include <libavutil/imgutils.h>
+	#include <libavcodec/avcodec.h>
+	#include <libavformat/avformat.h>
+	#include <libswscale/swscale.h>
+	#include <libswresample/swresample.h>
+	#include <libavutil/imgutils.h>
 }
-#include <queue>
-#define NUM_LAG_FRAMES 15	// SRS - Lag audio by 15 frames (~1/2 sec at 30 fps) for ffmpeg bik decoder AV sync
+	#include <queue>
+	#define NUM_LAG_FRAMES 15 // SRS - Lag audio by 15 frames (~1/2 sec at 30 fps) for ffmpeg bik decoder AV sync
 #endif
 
 #ifdef USE_BINKDEC
@@ -93,172 +92,170 @@ class idCinematicLocal : public idCinematic
 {
 public:
 	idCinematicLocal();
-	virtual					~idCinematicLocal();
+	virtual ~idCinematicLocal();
 
-	virtual bool			InitFromFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
-	virtual cinData_t		ImageForTime( int milliseconds, nvrhi::ICommandList* commandList );
-	virtual int				AnimationLength();
+	virtual bool	  InitFromFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
+	virtual cinData_t ImageForTime( int milliseconds, nvrhi::ICommandList* commandList );
+	virtual int		  AnimationLength();
 	// RB begin
-	bool                    IsPlaying() const;
+	bool			  IsPlaying() const;
 	// RB end
-	virtual void			Close();
+	virtual void	  Close();
 	// SRS begin
-	virtual int             GetStartTime();
+	virtual int		  GetStartTime();
 	// SRS end
-	virtual void			ResetTime( int time );
+	virtual void	  ResetTime( int time );
 
 private:
-
-#if defined(USE_FFMPEG)
-	int						video_stream_index;
-	int						audio_stream_index; //GK: Make extra indexer for audio
-	AVFormatContext*		fmt_ctx;
-	AVFrame*				frame;
-	AVFrame*				frame2;
-	AVFrame*				frame3; //GK: make extra frame for audio
-#if LIBAVCODEC_VERSION_MAJOR > 58
-	const AVCodec*			dec;
-	const AVCodec*			dec2;	// SRS - Separate decoder for audio
-#else
-	AVCodec*				dec;
-	AVCodec*				dec2;	// SRS - Separate decoder for audio
-#endif
-	AVCodecContext*			dec_ctx;
-	AVCodecContext*			dec_ctx2;
-	SwsContext*				img_convert_ctx;
-	bool					hasFrame;
-	long					framePos;
-	AVSampleFormat			dst_smp;
-	bool					hasplanar;
-	SwrContext*				swr_ctx;
-	cinData_t				ImageForTimeFFMPEG( int milliseconds, nvrhi::ICommandList* commandList );
-	bool					InitFromFFMPEGFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
-	void					FFMPEGReset();
-	std::queue<uint8_t*>	lagBuffer;
-	std::queue<int>			lagBufSize;
-	bool					skipLag;
+#if defined( USE_FFMPEG )
+	int				 video_stream_index;
+	int				 audio_stream_index; // GK: Make extra indexer for audio
+	AVFormatContext* fmt_ctx;
+	AVFrame*		 frame;
+	AVFrame*		 frame2;
+	AVFrame*		 frame3; // GK: make extra frame for audio
+	#if LIBAVCODEC_VERSION_MAJOR > 58
+	const AVCodec* dec;
+	const AVCodec* dec2; // SRS - Separate decoder for audio
+	#else
+	AVCodec* dec;
+	AVCodec* dec2; // SRS - Separate decoder for audio
+	#endif
+	AVCodecContext*		 dec_ctx;
+	AVCodecContext*		 dec_ctx2;
+	SwsContext*			 img_convert_ctx;
+	bool				 hasFrame;
+	long				 framePos;
+	AVSampleFormat		 dst_smp;
+	bool				 hasplanar;
+	SwrContext*			 swr_ctx;
+	cinData_t			 ImageForTimeFFMPEG( int milliseconds, nvrhi::ICommandList* commandList );
+	bool				 InitFromFFMPEGFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
+	void				 FFMPEGReset();
+	std::queue<uint8_t*> lagBuffer;
+	std::queue<int>		 lagBufSize;
+	bool				 skipLag;
 #endif
 #ifdef USE_BINKDEC
-	BinkHandle				binkHandle;
-	cinData_t				ImageForTimeBinkDec( int milliseconds, nvrhi::ICommandList* commandList );
-	bool					InitFromBinkDecFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
-	void					BinkDecReset();
+	BinkHandle binkHandle;
+	cinData_t  ImageForTimeBinkDec( int milliseconds, nvrhi::ICommandList* commandList );
+	bool	   InitFromBinkDecFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
+	void	   BinkDecReset();
 
-	YUVbuffer				yuvBuffer;
-	bool                    hasFrame;
-	int						framePos;
-	int						numFrames;
-	idImage*				imgY;
-	idImage*				imgCr;
-	idImage*				imgCb;
-	uint32_t				audioTracks;
-	uint32_t				trackIndex;
-	AudioInfo				binkInfo;
+	YUVbuffer  yuvBuffer;
+	bool	   hasFrame;
+	int		   framePos;
+	int		   numFrames;
+	idImage*   imgY;
+	idImage*   imgCr;
+	idImage*   imgCb;
+	uint32_t   audioTracks;
+	uint32_t   trackIndex;
+	AudioInfo  binkInfo;
 #endif
-	idImage*				img;
-	bool					isRoQ;
+	idImage*		img;
+	bool			isRoQ;
 
 	// RB: 64 bit fixes, changed long to int
-	size_t					mcomp[256];
+	size_t			mcomp[256];
 	// RB end
-	byte** 					qStatus[2];
-	idStr					fileName;
-	int						CIN_WIDTH, CIN_HEIGHT;
-	idFile* 				iFile;
-	cinStatus_t				status;
+	byte**			qStatus[2];
+	idStr			fileName;
+	int				CIN_WIDTH, CIN_HEIGHT;
+	idFile*			iFile;
+	cinStatus_t		status;
 	// RB: 64 bit fixes, changed long to int
-	int						tfps;
-	int						RoQPlayed;
-	int						ROQSize;
-	unsigned int			RoQFrameSize;
-	int						onQuad;
-	int						numQuads;
-	int						samplesPerLine;
-	unsigned int			roq_id;
-	int						screenDelta;
-	byte* 					buf;
-	int						samplesPerPixel;				// defaults to 2
-	unsigned int			xsize, ysize, maxsize, minsize;
-	int						normalBuffer0;
-	int						roq_flags;
-	int						roqF0;
-	int						roqF1;
-	int						t[2];
-	int						roqFPS;
-	int						drawX, drawY;
+	int				tfps;
+	int				RoQPlayed;
+	int				ROQSize;
+	unsigned int	RoQFrameSize;
+	int				onQuad;
+	int				numQuads;
+	int				samplesPerLine;
+	unsigned int	roq_id;
+	int				screenDelta;
+	byte*			buf;
+	int				samplesPerPixel; // defaults to 2
+	unsigned int	xsize, ysize, maxsize, minsize;
+	int				normalBuffer0;
+	int				roq_flags;
+	int				roqF0;
+	int				roqF1;
+	int				t[2];
+	int				roqFPS;
+	int				drawX, drawY;
 	// RB end
 
-	int						animationLength;
-	int						startTime;
-	float					frameRate;
+	int				animationLength;
+	int				startTime;
+	float			frameRate;
 
-	byte* 					image;
+	byte*			image;
 
-	bool					looping;
-	bool					dirty;
-	bool					half;
-	bool					smootheddouble;
-	bool					inMemory;
+	bool			looping;
+	bool			dirty;
+	bool			half;
+	bool			smootheddouble;
+	bool			inMemory;
 
-	void					RoQ_init();
-	void					blitVQQuad32fs( byte** status, unsigned char* data );
-	void					RoQShutdown();
-	void					RoQInterrupt();
+	void			RoQ_init();
+	void			blitVQQuad32fs( byte** status, unsigned char* data );
+	void			RoQShutdown();
+	void			RoQInterrupt();
 
-	void					move8_32( byte* src, byte* dst, int spl );
-	void					move4_32( byte* src, byte* dst, int spl );
-	void					blit8_32( byte* src, byte* dst, int spl );
-	void					blit4_32( byte* src, byte* dst, int spl );
-	void					blit2_32( byte* src, byte* dst, int spl );
+	void			move8_32( byte* src, byte* dst, int spl );
+	void			move4_32( byte* src, byte* dst, int spl );
+	void			blit8_32( byte* src, byte* dst, int spl );
+	void			blit4_32( byte* src, byte* dst, int spl );
+	void			blit2_32( byte* src, byte* dst, int spl );
 
 	// RB: 64 bit fixes, changed long to int
-	unsigned short			yuv_to_rgb( int y, int u, int v );
-	unsigned int			yuv_to_rgb24( int y, int u, int v );
+	unsigned short	yuv_to_rgb( int y, int u, int v );
+	unsigned int	yuv_to_rgb24( int y, int u, int v );
 
-	void					decodeCodeBook( byte* input, unsigned short roq_flags );
-	void					recurseQuad( int startX, int startY, int quadSize, int xOff, int yOff );
-	void					setupQuad( int xOff, int yOff );
-	void					readQuadInfo( byte* qData );
-	void					RoQPrepMcomp( int xoff, int yoff );
-	void					RoQReset();
+	void			decodeCodeBook( byte* input, unsigned short roq_flags );
+	void			recurseQuad( int startX, int startY, int quadSize, int xOff, int yOff );
+	void			setupQuad( int xOff, int yOff );
+	void			readQuadInfo( byte* qData );
+	void			RoQPrepMcomp( int xoff, int yoff );
+	void			RoQReset();
 	// RB end
 
-	//GK:Also init variables for XAudio2 or OpenAL (SRS - this must be an instance variable)
-	CinematicAudio*			cinematicAudio = NULL;
+	// GK:Also init variables for XAudio2 or OpenAL (SRS - this must be an instance variable)
+	CinematicAudio* cinematicAudio = NULL;
 };
 
 // Carl: ROQ files from original Doom 3
-const int DEFAULT_CIN_WIDTH		= 512;
-const int DEFAULT_CIN_HEIGHT	= 512;
-const int MAXSIZE				=	8;
-const int MINSIZE				=	4;
+const int			   DEFAULT_CIN_WIDTH  = 512;
+const int			   DEFAULT_CIN_HEIGHT = 512;
+const int			   MAXSIZE			  = 8;
+const int			   MINSIZE			  = 4;
 
-const int ROQ_FILE				= 0x1084;
-const int ROQ_QUAD				= 0x1000;
-const int ROQ_QUAD_INFO			= 0x1001;
-const int ROQ_CODEBOOK			= 0x1002;
-const int ROQ_QUAD_VQ			= 0x1011;
-const int ROQ_QUAD_JPEG			= 0x1012;
-const int ROQ_QUAD_HANG			= 0x1013;
-const int ROQ_PACKET			= 0x1030;
-const int ZA_SOUND_MONO			= 0x1020;
-const int ZA_SOUND_STEREO		= 0x1021;
+const int			   ROQ_FILE		   = 0x1084;
+const int			   ROQ_QUAD		   = 0x1000;
+const int			   ROQ_QUAD_INFO   = 0x1001;
+const int			   ROQ_CODEBOOK	   = 0x1002;
+const int			   ROQ_QUAD_VQ	   = 0x1011;
+const int			   ROQ_QUAD_JPEG   = 0x1012;
+const int			   ROQ_QUAD_HANG   = 0x1013;
+const int			   ROQ_PACKET	   = 0x1030;
+const int			   ZA_SOUND_MONO   = 0x1020;
+const int			   ZA_SOUND_STEREO = 0x1021;
 
 // temporary buffers used by all cinematics
 // RB: 64 bit fixes, changed long to int
-static int				ROQ_YY_tab[256];
-static int				ROQ_UB_tab[256];
-static int				ROQ_UG_tab[256];
-static int				ROQ_VG_tab[256];
-static int				ROQ_VR_tab[256];
+static int			   ROQ_YY_tab[256];
+static int			   ROQ_UB_tab[256];
+static int			   ROQ_UG_tab[256];
+static int			   ROQ_VG_tab[256];
+static int			   ROQ_VR_tab[256];
 // RB end
-static byte* 			file = NULL;
-static unsigned short* 	vq2 = NULL;
-static unsigned short* 	vq4 = NULL;
-static unsigned short* 	vq8 = NULL;
+static byte*		   file = NULL;
+static unsigned short* vq2	= NULL;
+static unsigned short* vq4	= NULL;
+static unsigned short* vq8	= NULL;
 
-extern idCVar s_noSound;
-
+extern idCVar		   s_noSound;
 
 //===========================================
 
@@ -268,19 +265,18 @@ idCinematic::InitCinematic
 ==============
 */
 // RB: 64 bit fixes, changed long to int
-void idCinematic::InitCinematic()
+void				   idCinematic::InitCinematic()
 {
 	// Carl: Doom 3 ROQ:
 	float t_ub, t_vr, t_ug, t_vg;
-	int i;
+	int	  i;
 
 	// generate YUV tables
 	t_ub = ( 1.77200f / 2.0f ) * ( float )( 1 << 6 ) + 0.5f;
 	t_vr = ( 1.40200f / 2.0f ) * ( float )( 1 << 6 ) + 0.5f;
 	t_ug = ( 0.34414f / 2.0f ) * ( float )( 1 << 6 ) + 0.5f;
 	t_vg = ( 0.71414f / 2.0f ) * ( float )( 1 << 6 ) + 0.5f;
-	for( i = 0; i < 256; i++ )
-	{
+	for( i = 0; i < 256; i++ ) {
 		float x = ( float )( 2 * i - 255 );
 
 		ROQ_UB_tab[i] = ( int )( ( t_ub * x ) + ( 1 << 5 ) );
@@ -291,10 +287,9 @@ void idCinematic::InitCinematic()
 	}
 
 	file = ( byte* )Mem_Alloc( 65536, TAG_CINEMATIC );
-	vq2 = ( word* )Mem_Alloc( 256 * 16 * 4 * sizeof( word ), TAG_CINEMATIC );
-	vq4 = ( word* )Mem_Alloc( 256 * 64 * 4 * sizeof( word ), TAG_CINEMATIC );
-	vq8 = ( word* )Mem_Alloc( 256 * 256 * 4 * sizeof( word ), TAG_CINEMATIC );
-
+	vq2	 = ( word* )Mem_Alloc( 256 * 16 * 4 * sizeof( word ), TAG_CINEMATIC );
+	vq4	 = ( word* )Mem_Alloc( 256 * 64 * 4 * sizeof( word ), TAG_CINEMATIC );
+	vq8	 = ( word* )Mem_Alloc( 256 * 256 * 4 * sizeof( word ), TAG_CINEMATIC );
 }
 
 /*
@@ -322,7 +317,7 @@ idCinematic::Alloc
 */
 idCinematic* idCinematic::Alloc()
 {
-	return new idCinematicLocal; //Carl: Use the proper class like in Doom 3, not just the unimplemented abstract one.
+	return new idCinematicLocal; // Carl: Use the proper class like in Doom 3, not just the unimplemented abstract one.
 }
 
 /*
@@ -342,7 +337,7 @@ idCinematic::InitFromFile
 */
 bool idCinematic::InitFromFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList )
 {
-	return false; //Carl: this is just the abstract virtual method
+	return false; // Carl: this is just the abstract virtual method
 }
 
 /*
@@ -362,7 +357,7 @@ idCinematic::GetStartTime
 */
 int idCinematic::GetStartTime()
 {
-	return -1;  // SRS - this is just the abstract virtual method
+	return -1; // SRS - this is just the abstract virtual method
 }
 
 /*
@@ -451,61 +446,58 @@ idCinematicLocal::idCinematicLocal()
 	qStatus[0] = ( byte** )Mem_Alloc( 32768 * sizeof( byte* ), TAG_CINEMATIC );
 	qStatus[1] = ( byte** )Mem_Alloc( 32768 * sizeof( byte* ), TAG_CINEMATIC );
 
-	isRoQ = false;      // SRS - Initialize isRoQ for all cases, not just FFMPEG
-#if defined(USE_FFMPEG)
+	isRoQ = false; // SRS - Initialize isRoQ for all cases, not just FFMPEG
+#if defined( USE_FFMPEG )
 	// Carl: ffmpeg stuff, for bink and normal video files:
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(55,28,1)
-	frame = av_frame_alloc();
+	#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT( 55, 28, 1 )
+	frame  = av_frame_alloc();
 	frame2 = av_frame_alloc();
 	frame3 = av_frame_alloc();
-#else
-	frame = avcodec_alloc_frame();
+	#else
+	frame  = avcodec_alloc_frame();
 	frame2 = avcodec_alloc_frame();
 	frame3 = avcodec_alloc_frame();
-#endif // LIBAVCODEC_VERSION_INT
-	dec_ctx = NULL;
-	dec_ctx2 = NULL;
-	fmt_ctx = NULL;
+	#endif // LIBAVCODEC_VERSION_INT
+	dec_ctx			   = NULL;
+	dec_ctx2		   = NULL;
+	fmt_ctx			   = NULL;
 	video_stream_index = -1;
 	audio_stream_index = -1;
-	hasplanar = false;
-	swr_ctx = NULL;
-	img_convert_ctx = NULL;
-	hasFrame = false;
-	framePos = -1;
-	skipLag = false;
+	hasplanar		   = false;
+	swr_ctx			   = NULL;
+	img_convert_ctx	   = NULL;
+	hasFrame		   = false;
+	framePos		   = -1;
+	skipLag			   = false;
 #endif
 
 #ifdef USE_BINKDEC
-	binkHandle.isValid = false;
+	binkHandle.isValid		 = false;
 	binkHandle.instanceIndex = -1; // whatever this is, it now has a deterministic value
-	hasFrame = false;
-	framePos = -1;
-	numFrames = 0;
-	audioTracks = 0;
-	trackIndex = -1;
-	binkInfo = {};
+	hasFrame				 = false;
+	framePos				 = -1;
+	numFrames				 = 0;
+	audioTracks				 = 0;
+	trackIndex				 = -1;
+	binkInfo				 = {};
 
-	imgY = globalImages->AllocStandaloneImage( "_cinematicY" );
+	imgY  = globalImages->AllocStandaloneImage( "_cinematicY" );
 	imgCr = globalImages->AllocStandaloneImage( "_cinematicCr" );
 	imgCb = globalImages->AllocStandaloneImage( "_cinematicCb" );
 	{
 		idImageOpts opts;
-		opts.format = FMT_LUM8;
+		opts.format		 = FMT_LUM8;
 		opts.colorFormat = CFM_DEFAULT;
-		opts.width = 32;
-		opts.height = 32;
-		opts.numLevels = 1;
-		if( imgY != NULL )
-		{
+		opts.width		 = 32;
+		opts.height		 = 32;
+		opts.numLevels	 = 1;
+		if( imgY != NULL ) {
 			imgY->AllocImage( opts, TF_LINEAR, TR_REPEAT );
 		}
-		if( imgCr != NULL )
-		{
+		if( imgCr != NULL ) {
 			imgCr->AllocImage( opts, TF_LINEAR, TR_REPEAT );
 		}
-		if( imgCb != NULL )
-		{
+		if( imgCb != NULL ) {
 			imgCb->AllocImage( opts, TF_LINEAR, TR_REPEAT );
 		}
 	}
@@ -513,19 +505,18 @@ idCinematicLocal::idCinematicLocal()
 #endif
 
 	// Carl: Original Doom 3 RoQ files:
-	image = NULL;
+	image  = NULL;
 	status = FMV_EOF;
-	buf = NULL;
-	iFile = NULL;
-	img = globalImages->AllocStandaloneImage( "_cinematic" );
-	if( img != NULL )
-	{
+	buf	   = NULL;
+	iFile  = NULL;
+	img	   = globalImages->AllocStandaloneImage( "_cinematic" );
+	if( img != NULL ) {
 		idImageOpts opts;
-		opts.format = FMT_RGBA8;
+		opts.format		 = FMT_RGBA8;
 		opts.colorFormat = CFM_DEFAULT;
-		opts.width = 32;
-		opts.height = 32;
-		opts.numLevels = 1;
+		opts.width		 = 32;
+		opts.height		 = 32;
+		opts.numLevels	 = 1;
 		img->AllocImage( opts, TF_LINEAR, TR_REPEAT );
 	}
 }
@@ -545,21 +536,21 @@ idCinematicLocal::~idCinematicLocal()
 	Mem_Free( qStatus[1] );
 	qStatus[1] = NULL;
 
-#if defined(USE_FFMPEG)
+#if defined( USE_FFMPEG )
 	// Carl: ffmpeg for bink and other video files:
 
 	// RB: TODO double check this. It seems we have different versions of ffmpeg on Kubuntu 13.10 and the win32 development files
-//#if defined(_WIN32) || defined(_WIN64)
-	// SRS - Should use the same version criteria as when the frames are allocated in idCinematicLocal() above
-#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(55,28,1)
+	// #if defined(_WIN32) || defined(_WIN64)
+	//  SRS - Should use the same version criteria as when the frames are allocated in idCinematicLocal() above
+	#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT( 55, 28, 1 )
 	av_frame_free( &frame );
 	av_frame_free( &frame2 );
 	av_frame_free( &frame3 );
-#else
+	#else
 	av_freep( &frame );
 	av_freep( &frame2 );
 	av_freep( &frame3 );
-#endif
+	#endif
 #endif
 
 #ifdef USE_BINKDEC
@@ -575,15 +566,14 @@ idCinematicLocal::~idCinematicLocal()
 	img = NULL;
 
 	// GK/SRS - Properly close and delete XAudio2 or OpenAL voice if instantiated
-	if( cinematicAudio )
-	{
+	if( cinematicAudio ) {
 		cinematicAudio->ShutdownAudio();
 		delete cinematicAudio;
 		cinematicAudio = NULL;
 	}
 }
 
-#if defined(USE_FFMPEG)
+#if defined( USE_FFMPEG )
 /*
 ==============
 GetSampleFormat
@@ -591,35 +581,28 @@ GetSampleFormat
 */
 const char* GetSampleFormat( AVSampleFormat sample_fmt )
 {
-	switch( sample_fmt )
-	{
+	switch( sample_fmt ) {
 		case AV_SAMPLE_FMT_U8:
-		case AV_SAMPLE_FMT_U8P:
-		{
+		case AV_SAMPLE_FMT_U8P: {
 			return "8-bit";
 		}
 		case AV_SAMPLE_FMT_S16:
-		case AV_SAMPLE_FMT_S16P:
-		{
+		case AV_SAMPLE_FMT_S16P: {
 			return "16-bit";
 		}
 		case AV_SAMPLE_FMT_S32:
-		case AV_SAMPLE_FMT_S32P:
-		{
+		case AV_SAMPLE_FMT_S32P: {
 			return "32-bit";
 		}
 		case AV_SAMPLE_FMT_FLT:
-		case AV_SAMPLE_FMT_FLTP:
-		{
+		case AV_SAMPLE_FMT_FLTP: {
 			return "Float";
 		}
 		case AV_SAMPLE_FMT_DBL:
-		case AV_SAMPLE_FMT_DBLP:
-		{
+		case AV_SAMPLE_FMT_DBLP: {
 			return "Double";
 		}
-		default:
-		{
+		default: {
 			return "Unknown";
 		}
 	}
@@ -632,192 +615,173 @@ idCinematicLocal::InitFromFFMPEGFile
 */
 bool idCinematicLocal::InitFromFFMPEGFile( const char* qpath, bool amilooping, nvrhi::ICommandList* commandList )
 {
-	int ret;
-	int ret2;
-	int file_size;
+	int	 ret;
+	int	 ret2;
+	int	 file_size;
 	char error[64];
-	looping = amilooping;
-	startTime = 0;
-	isRoQ = false;
+	looping	   = amilooping;
+	startTime  = 0;
+	isRoQ	   = false;
 	CIN_HEIGHT = DEFAULT_CIN_HEIGHT;
-	CIN_WIDTH  =  DEFAULT_CIN_WIDTH;
+	CIN_WIDTH  = DEFAULT_CIN_WIDTH;
 
-	idStr fullpath;
+	idStr	fullpath;
 	idFile* testFile = fileSystem->OpenFileRead( qpath );
-	if( testFile )
-	{
-		fullpath = testFile->GetFullPath();
+	if( testFile ) {
+		fullpath  = testFile->GetFullPath();
 		file_size = testFile->Length();
 		fileSystem->CloseFile( testFile );
 	}
 	// RB: case sensitivity HACK for Linux
-	else if( idStr::Cmpn( qpath, "sound/vo", 8 ) == 0 )
-	{
+	else if( idStr::Cmpn( qpath, "sound/vo", 8 ) == 0 ) {
 		idStr newPath( qpath );
 		newPath.Replace( "sound/vo", "sound/VO" );
 
 		testFile = fileSystem->OpenFileRead( newPath );
-		if( testFile )
-		{
-			fullpath = testFile->GetFullPath();
+		if( testFile ) {
+			fullpath  = testFile->GetFullPath();
 			file_size = testFile->Length();
 			fileSystem->CloseFile( testFile );
-		}
-		else
-		{
+		} else {
 			common->Warning( "idCinematic: Cannot open FFMPEG video file: '%s', %d\n", qpath, looping );
 			return false;
 		}
 	}
 
-	//idStr fullpath = fileSystem->RelativePathToOSPath( qpath, "fs_basepath" );
+	// idStr fullpath = fileSystem->RelativePathToOSPath( qpath, "fs_basepath" );
 
-	if( ( ret = avformat_open_input( &fmt_ctx, fullpath, NULL, NULL ) ) < 0 )
-	{
+	if( ( ret = avformat_open_input( &fmt_ctx, fullpath, NULL, NULL ) ) < 0 ) {
 		// SRS - another case sensitivity HACK for Linux, this time for ffmpeg and RoQ files
 		idStr ext;
 		fullpath.ExtractFileExtension( ext );
-		if( idStr::Cmp( ext.c_str(), "roq" ) == 0 )
-		{
+		if( idStr::Cmp( ext.c_str(), "roq" ) == 0 ) {
 			// SRS - If ffmpeg can't open .roq file, then try again with .RoQ extension instead
 			fullpath.Replace( ".roq", ".RoQ" );
 			ret = avformat_open_input( &fmt_ctx, fullpath, NULL, NULL );
 		}
-		if( ret < 0 )
-		{
+		if( ret < 0 ) {
 			common->Warning( "idCinematic: Cannot open FFMPEG video file: '%s', %d\n", qpath, looping );
 			return false;
 		}
 	}
-	if( ( ret = avformat_find_stream_info( fmt_ctx, NULL ) ) < 0 )
-	{
+	if( ( ret = avformat_find_stream_info( fmt_ctx, NULL ) ) < 0 ) {
 		common->Warning( "idCinematic: Cannot find stream info: '%s', %d\n", qpath, looping );
 		return false;
 	}
 	/* select the video stream */
 	ret = av_find_best_stream( fmt_ctx, AVMEDIA_TYPE_VIDEO, -1, -1, &dec, 0 );
-	if( ret < 0 )
-	{
+	if( ret < 0 ) {
 		common->Warning( "idCinematic: Cannot find a video stream in: '%s', %d\n", qpath, looping );
 		return false;
 	}
 	video_stream_index = ret;
-	dec_ctx = avcodec_alloc_context3( dec );
-	if( ( ret = avcodec_parameters_to_context( dec_ctx, fmt_ctx->streams[video_stream_index]->codecpar ) ) < 0 )
-	{
+	dec_ctx			   = avcodec_alloc_context3( dec );
+	if( ( ret = avcodec_parameters_to_context( dec_ctx, fmt_ctx->streams[video_stream_index]->codecpar ) ) < 0 ) {
 		av_strerror( ret, error, sizeof( error ) );
 		common->Warning( "idCinematic: Failed to create video codec context from codec parameters with error: %s\n", error );
 	}
-	//dec_ctx->time_base = fmt_ctx->streams[video_stream_index]->time_base;			// SRS - decoder timebase is set by avcodec_open2()
-	dec_ctx->framerate = fmt_ctx->streams[video_stream_index]->avg_frame_rate;
-	dec_ctx->pkt_timebase = fmt_ctx->streams[video_stream_index]->time_base;		// SRS - packet timebase for frame->pts timestamps
+	// dec_ctx->time_base = fmt_ctx->streams[video_stream_index]->time_base;			// SRS - decoder timebase is set by avcodec_open2()
+	dec_ctx->framerate	  = fmt_ctx->streams[video_stream_index]->avg_frame_rate;
+	dec_ctx->pkt_timebase = fmt_ctx->streams[video_stream_index]->time_base; // SRS - packet timebase for frame->pts timestamps
 	/* init the video decoder */
-	if( ( ret = avcodec_open2( dec_ctx, dec, NULL ) ) < 0 )
-	{
+	if( ( ret = avcodec_open2( dec_ctx, dec, NULL ) ) < 0 ) {
 		av_strerror( ret, error, sizeof( error ) );
 		common->Warning( "idCinematic: Cannot open video decoder for: '%s', %d, with error: %s\n", qpath, looping, error );
 		return false;
 	}
-	//GK:Begin
-	//After the video decoder is open then try to open audio decoder
+	// GK:Begin
+	// After the video decoder is open then try to open audio decoder
 	ret2 = av_find_best_stream( fmt_ctx, AVMEDIA_TYPE_AUDIO, -1, -1, &dec2, 0 );
-	if( ret2 >= 0 && s_playCinematicAudio.GetBool() )  //Make audio optional (only intro video has audio no other)
+	if( ret2 >= 0 && s_playCinematicAudio.GetBool() ) // Make audio optional (only intro video has audio no other)
 	{
 		audio_stream_index = ret2;
-		dec_ctx2 = avcodec_alloc_context3( dec2 );
-		if( ( ret2 = avcodec_parameters_to_context( dec_ctx2, fmt_ctx->streams[audio_stream_index]->codecpar ) ) < 0 )
-		{
+		dec_ctx2		   = avcodec_alloc_context3( dec2 );
+		if( ( ret2 = avcodec_parameters_to_context( dec_ctx2, fmt_ctx->streams[audio_stream_index]->codecpar ) ) < 0 ) {
 			av_strerror( ret2, error, sizeof( error ) );
 			common->Warning( "idCinematic: Failed to create audio codec context from codec parameters with error: %s\n", error );
 		}
-		//dec_ctx2->time_base = fmt_ctx->streams[audio_stream_index]->time_base;	// SRS - decoder timebase is set by avcodec_open2()
-		dec_ctx2->framerate = fmt_ctx->streams[audio_stream_index]->avg_frame_rate;
-		dec_ctx2->pkt_timebase = fmt_ctx->streams[audio_stream_index]->time_base;	// SRS - packet timebase for frame3->pts timestamps
-		if( ( ret2 = avcodec_open2( dec_ctx2, dec2, NULL ) ) < 0 )
-		{
+		// dec_ctx2->time_base = fmt_ctx->streams[audio_stream_index]->time_base;	// SRS - decoder timebase is set by avcodec_open2()
+		dec_ctx2->framerate	   = fmt_ctx->streams[audio_stream_index]->avg_frame_rate;
+		dec_ctx2->pkt_timebase = fmt_ctx->streams[audio_stream_index]->time_base; // SRS - packet timebase for frame3->pts timestamps
+		if( ( ret2 = avcodec_open2( dec_ctx2, dec2, NULL ) ) < 0 ) {
 			common->Warning( "idCinematic: Cannot open audio decoder for: '%s', %d\n", qpath, looping );
-			//return false;
+			// return false;
 		}
-		if( dec_ctx2->sample_fmt >= AV_SAMPLE_FMT_U8P )											// SRS - Planar formats start at AV_SAMPLE_FMT_U8P
+		if( dec_ctx2->sample_fmt >= AV_SAMPLE_FMT_U8P ) // SRS - Planar formats start at AV_SAMPLE_FMT_U8P
 		{
-			dst_smp = static_cast<AVSampleFormat>( dec_ctx2->sample_fmt - AV_SAMPLE_FMT_U8P );	// SRS - Setup context to convert from planar to packed
-#if	LIBSWRESAMPLE_VERSION_INT >= AV_VERSION_INT(4,7,100)
-			if( ( ret2 = swr_alloc_set_opts2( &swr_ctx, &dec_ctx2->ch_layout, dst_smp, dec_ctx2->sample_rate, &dec_ctx2->ch_layout, dec_ctx2->sample_fmt, dec_ctx2->sample_rate, 0, NULL ) ) < 0 )
-			{
+			dst_smp = static_cast<AVSampleFormat>( dec_ctx2->sample_fmt - AV_SAMPLE_FMT_U8P ); // SRS - Setup context to convert from planar to packed
+	#if LIBSWRESAMPLE_VERSION_INT >= AV_VERSION_INT( 4, 7, 100 )
+			if( ( ret2 = swr_alloc_set_opts2( &swr_ctx, &dec_ctx2->ch_layout, dst_smp, dec_ctx2->sample_rate, &dec_ctx2->ch_layout, dec_ctx2->sample_fmt, dec_ctx2->sample_rate, 0, NULL ) ) < 0 ) {
 				av_strerror( ret2, error, sizeof( error ) );
 				common->Warning( "idCinematic: Failed to create audio resample context with error: %s\n", error );
 			}
-#else
+	#else
 			swr_ctx = swr_alloc_set_opts( NULL, dec_ctx2->channel_layout, dst_smp, dec_ctx2->sample_rate, dec_ctx2->channel_layout, dec_ctx2->sample_fmt, dec_ctx2->sample_rate, 0, NULL );
-#endif
-			ret2 = swr_init( swr_ctx );
+	#endif
+			ret2	  = swr_init( swr_ctx );
 			hasplanar = true;
-		}
-		else
-		{
-			dst_smp = dec_ctx2->sample_fmt;														// SRS - Must always define the destination format
+		} else {
+			dst_smp	  = dec_ctx2->sample_fmt; // SRS - Must always define the destination format
 			hasplanar = false;
 		}
-		common->Printf( "Cinematic audio stream found: Sample Rate=%d Hz, Channels=%d, Format=%s, Planar=%d\n", dec_ctx2->sample_rate,
-#if	LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59,37,100)
-						dec_ctx2->ch_layout.nb_channels,
-#else
-						dec_ctx2->channels,
-#endif
-						GetSampleFormat( dec_ctx2->sample_fmt ), hasplanar );
+		common->Printf( "Cinematic audio stream found: Sample Rate=%d Hz, Channels=%d, Format=%s, Planar=%d\n",
+			dec_ctx2->sample_rate,
+	#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT( 59, 37, 100 )
+			dec_ctx2->ch_layout.nb_channels,
+	#else
+			dec_ctx2->channels,
+	#endif
+			GetSampleFormat( dec_ctx2->sample_fmt ),
+			hasplanar );
 
-#if defined(_MSC_VER) && !defined(USE_OPENAL)
+	#if defined( _MSC_VER ) && !defined( USE_OPENAL )
 		cinematicAudio = new( TAG_AUDIO ) CinematicAudio_XAudio2;
-#else
+	#else
 		cinematicAudio = new( TAG_AUDIO ) CinematicAudio_OpenAL;
-#endif
+	#endif
 		cinematicAudio->InitAudio( dec_ctx2 );
 	}
-	//GK:End
-	CIN_WIDTH = dec_ctx->width;
+	// GK:End
+	CIN_WIDTH  = dec_ctx->width;
 	CIN_HEIGHT = dec_ctx->height;
 	/** Calculate Duration in seconds
-	  * This is the fundamental unit of time (in seconds) in terms
-	  * of which frame timestamps are represented. For fixed-fps content,
-	  * timebase should be 1/framerate and timestamp increments should be
-	  * identically 1.
-	  * - encoding: MUST be set by user.
-	  * - decoding: Set by libavcodec.
-	  */
+	 * This is the fundamental unit of time (in seconds) in terms
+	 * of which frame timestamps are represented. For fixed-fps content,
+	 * timebase should be 1/framerate and timestamp increments should be
+	 * identically 1.
+	 * - encoding: MUST be set by user.
+	 * - decoding: Set by libavcodec.
+	 */
 	// SRS - Must use consistent duration and timebase parameters in the durationSec calculation (don't mix fmt_ctx duration with dec_ctx timebase)
 	float durationSec = static_cast<double>( fmt_ctx->streams[video_stream_index]->duration ) * av_q2d( fmt_ctx->streams[video_stream_index]->time_base );
-	//GK: No duration is given. Check if we get at least bitrate to calculate the length, otherwise set it to a fixed 100 seconds (should it be lower ?)
-	if( durationSec < 0 )
-	{
+	// GK: No duration is given. Check if we get at least bitrate to calculate the length, otherwise set it to a fixed 100 seconds (should it be lower ?)
+	if( durationSec < 0 ) {
 		// SRS - First check the file context bit rate and estimate duration using file size and overall bit rate
-		if( fmt_ctx->bit_rate > 0 )
-		{
+		if( fmt_ctx->bit_rate > 0 ) {
 			durationSec = file_size * 8.0 / fmt_ctx->bit_rate;
 		}
 		// SRS - Likely an RoQ file, so use the video bit rate tolerance plus audio bit rate to estimate duration, then add 10% to correct for variable bit rate
-		else if( dec_ctx->bit_rate_tolerance > 0 )
-		{
+		else if( dec_ctx->bit_rate_tolerance > 0 ) {
 			durationSec = file_size * 8.0 / ( dec_ctx->bit_rate_tolerance + ( dec_ctx2 ? dec_ctx2->bit_rate : 0 ) ) * 1.1;
 		}
 		// SRS - Otherwise just set a large max duration
-		else
-		{
+		else {
 			durationSec = 100.0;
 		}
 	}
 	animationLength = durationSec * 1000;
-	frameRate = av_q2d( fmt_ctx->streams[video_stream_index]->avg_frame_rate );
+	frameRate		= av_q2d( fmt_ctx->streams[video_stream_index]->avg_frame_rate );
 	common->Printf( "Loaded FFMPEG file: '%s', looping=%d, %dx%d, %3.2f FPS, %4.1f sec\n", qpath, looping, CIN_WIDTH, CIN_HEIGHT, frameRate, durationSec );
 
 	// SRS - Get image buffer size (dimensions mod 32 for bik & webm codecs, subsumes mod 16 for mp4 codec), then allocate image and fill with correct parameters
-	int bufWidth = ( CIN_WIDTH + 31 ) & ~31;
+	int bufWidth  = ( CIN_WIDTH + 31 ) & ~31;
 	int bufHeight = ( CIN_HEIGHT + 31 ) & ~31;
 	int img_bytes = av_image_get_buffer_size( AV_PIX_FMT_BGR32, bufWidth, bufHeight, 1 );
-	image = ( byte* )Mem_Alloc( img_bytes, TAG_CINEMATIC );
-	av_image_fill_arrays( frame2->data, frame2->linesize, image, AV_PIX_FMT_BGR32, CIN_WIDTH, CIN_HEIGHT, 1 ); //GK: Straight out of the FFMPEG source code
+	image		  = ( byte* )Mem_Alloc( img_bytes, TAG_CINEMATIC );
+	av_image_fill_arrays( frame2->data, frame2->linesize, image, AV_PIX_FMT_BGR32, CIN_WIDTH, CIN_HEIGHT, 1 ); // GK: Straight out of the FFMPEG source code
 	img_convert_ctx = sws_getContext( dec_ctx->width, dec_ctx->height, dec_ctx->pix_fmt, CIN_WIDTH, CIN_HEIGHT, AV_PIX_FMT_BGR32, SWS_BICUBIC, NULL, NULL, NULL );
 
-	status = FMV_PLAY;
+	status	 = FMV_PLAY;
 	hasFrame = false;
 	framePos = -1;
 	ImageForTime( 0, commandList );
@@ -832,21 +796,19 @@ bool idCinematicLocal::InitFromFFMPEGFile( const char* qpath, bool amilooping, n
 idCinematicLocal::FFMPEGReset
 ==============
 */
-#if defined(USE_FFMPEG)
+#if defined( USE_FFMPEG )
 void idCinematicLocal::FFMPEGReset()
 {
 	// RB: don't reset startTime here because that breaks video replays in the PDAs
-	//startTime = 0;
+	// startTime = 0;
 
 	framePos = -1;
 
 	// SRS - If we have cinematic audio, reset audio to release any stale buffers and avoid AV drift if looping
-	if( cinematicAudio )
-	{
+	if( cinematicAudio ) {
 		cinematicAudio->ResetAudio();
 
-		while( !lagBuffer.empty() )
-		{
+		while( !lagBuffer.empty() ) {
 			av_freep( &lagBuffer.front() );
 			lagBuffer.pop();
 			lagBufSize.pop();
@@ -854,13 +816,11 @@ void idCinematicLocal::FFMPEGReset()
 	}
 
 	// SRS - For non-RoQ (i.e. bik, mp4, webm, etc) files, use standard frame seek to rewind the stream
-	if( dec_ctx->codec_id != AV_CODEC_ID_ROQ && av_seek_frame( fmt_ctx, video_stream_index, 0, 0 ) >= 0 )
-	{
+	if( dec_ctx->codec_id != AV_CODEC_ID_ROQ && av_seek_frame( fmt_ctx, video_stream_index, 0, 0 ) >= 0 ) {
 		status = FMV_LOOPED;
 	}
 	// SRS - Special handling for RoQ files: only byte seek works and ffmpeg RoQ decoder needs reset
-	else if( dec_ctx->codec_id == AV_CODEC_ID_ROQ && av_seek_frame( fmt_ctx, video_stream_index, 0, AVSEEK_FLAG_BYTE ) >= 0 )
-	{
+	else if( dec_ctx->codec_id == AV_CODEC_ID_ROQ && av_seek_frame( fmt_ctx, video_stream_index, 0, AVSEEK_FLAG_BYTE ) >= 0 ) {
 		// Close and reopen the ffmpeg RoQ codec without clearing the context - this seems to reset the decoder properly
 		avcodec_close( dec_ctx );
 		avcodec_open2( dec_ctx, dec, NULL );
@@ -868,8 +828,7 @@ void idCinematicLocal::FFMPEGReset()
 		status = FMV_LOOPED;
 	}
 	// SRS - Can't rewind the stream so we really are at EOF
-	else
-	{
+	else {
 		status = FMV_EOF;
 	}
 }
@@ -883,41 +842,35 @@ idCinematicLocal::InitFromBinkDecFile
 #ifdef USE_BINKDEC
 bool idCinematicLocal::InitFromBinkDecFile( const char* qpath, bool amilooping, nvrhi::ICommandList* commandList )
 {
-	looping = amilooping;
-	startTime = 0;
-	isRoQ = false;
+	looping	   = amilooping;
+	startTime  = 0;
+	isRoQ	   = false;
 	CIN_HEIGHT = DEFAULT_CIN_HEIGHT;
-	CIN_WIDTH  =  DEFAULT_CIN_WIDTH;
+	CIN_WIDTH  = DEFAULT_CIN_WIDTH;
 
-	idStr fullpath;
+	idStr	fullpath;
 	idFile* testFile = fileSystem->OpenFileRead( qpath );
-	if( testFile )
-	{
+	if( testFile ) {
 		fullpath = testFile->GetFullPath();
 		fileSystem->CloseFile( testFile );
 	}
 	// RB: case sensitivity HACK for Linux
-	else if( idStr::Cmpn( qpath, "sound/vo", 8 ) == 0 )
-	{
+	else if( idStr::Cmpn( qpath, "sound/vo", 8 ) == 0 ) {
 		idStr newPath( qpath );
 		newPath.Replace( "sound/vo", "sound/VO" );
 
 		testFile = fileSystem->OpenFileRead( newPath );
-		if( testFile )
-		{
+		if( testFile ) {
 			fullpath = testFile->GetFullPath();
 			fileSystem->CloseFile( testFile );
-		}
-		else
-		{
+		} else {
 			common->Warning( "idCinematic: Cannot open Bink video file: '%s', %d\n", qpath, looping );
 			return false;
 		}
 	}
 
 	binkHandle = Bink_Open( fullpath );
-	if( !binkHandle.isValid )
-	{
+	if( !binkHandle.isValid ) {
 		common->Warning( "idCinematic: Cannot open Bink video file: '%s', %d\n", qpath, looping );
 		return false;
 	}
@@ -925,38 +878,37 @@ bool idCinematicLocal::InitFromBinkDecFile( const char* qpath, bool amilooping, 
 	{
 		uint32_t w = 0, h = 0;
 		Bink_GetFrameSize( binkHandle, w, h );
-		CIN_WIDTH = w;
+		CIN_WIDTH  = w;
 		CIN_HEIGHT = h;
 	}
 
 	// SRS - Support Bink Audio for cinematic playback
 	audioTracks = Bink_GetNumAudioTracks( binkHandle );
-	if( audioTracks > 0 && s_playCinematicAudio.GetBool() )
-	{
-		trackIndex = 0;														// SRS - Use the first audio track - is this reasonable?
-		binkInfo = Bink_GetAudioTrackDetails( binkHandle, trackIndex );
+	if( audioTracks > 0 && s_playCinematicAudio.GetBool() ) {
+		trackIndex = 0; // SRS - Use the first audio track - is this reasonable?
+		binkInfo   = Bink_GetAudioTrackDetails( binkHandle, trackIndex );
 		common->Printf( "Cinematic audio stream found: Sample Rate=%d Hz, Channels=%d, Format=16-bit\n", binkInfo.sampleRate, binkInfo.nChannels );
-#if defined(_MSC_VER) && !defined(USE_OPENAL)
+	#if defined( _MSC_VER ) && !defined( USE_OPENAL )
 		cinematicAudio = new( TAG_AUDIO ) CinematicAudio_XAudio2;
-#else
+	#else
 		cinematicAudio = new( TAG_AUDIO ) CinematicAudio_OpenAL;
-#endif
+	#endif
 		cinematicAudio->InitAudio( &binkInfo );
 	}
 
-	frameRate = Bink_GetFrameRate( binkHandle );
-	numFrames = Bink_GetNumFrames( binkHandle );
-	float durationSec = numFrames / frameRate;      // SRS - fixed Bink durationSec calculation
-	animationLength = durationSec * 1000;           // SRS - animationLength is in milliseconds
+	frameRate		  = Bink_GetFrameRate( binkHandle );
+	numFrames		  = Bink_GetNumFrames( binkHandle );
+	float durationSec = numFrames / frameRate; // SRS - fixed Bink durationSec calculation
+	animationLength	  = durationSec * 1000;	   // SRS - animationLength is in milliseconds
 	common->Printf( "Loaded Bink file: '%s', looping=%d, %dx%d, %3.2f FPS, %4.1f sec\n", qpath, looping, CIN_WIDTH, CIN_HEIGHT, frameRate, durationSec );
 
 	memset( yuvBuffer, 0, sizeof( yuvBuffer ) );
 
-	status = FMV_PLAY;
-	hasFrame = false;                               // SRS - Implemented hasFrame for BinkDec behaviour consistency with FFMPEG
+	status	 = FMV_PLAY;
+	hasFrame = false; // SRS - Implemented hasFrame for BinkDec behaviour consistency with FFMPEG
 	framePos = -1;
-	ImageForTime( 0, commandList );                 // SRS - Was missing initial call to ImageForTime() - fixes validation errors when using Vulkan renderer
-	status = ( looping ) ? FMV_PLAY : FMV_IDLE;     // SRS - Update status based on looping flag
+	ImageForTime( 0, commandList );				// SRS - Was missing initial call to ImageForTime() - fixes validation errors when using Vulkan renderer
+	status = ( looping ) ? FMV_PLAY : FMV_IDLE; // SRS - Update status based on looping flag
 
 	return true;
 }
@@ -971,8 +923,7 @@ void idCinematicLocal::BinkDecReset()
 	framePos = -1;
 
 	// SRS - If we have cinematic audio, reset audio to release any stale buffers (even if looping)
-	if( cinematicAudio )
-	{
+	if( cinematicAudio ) {
 		cinematicAudio->ResetAudio();
 	}
 
@@ -991,104 +942,85 @@ bool idCinematicLocal::InitFromFile( const char* qpath, bool amilooping, nvrhi::
 	unsigned short RoQID;
 
 	// SRS - Don't need to call Close() here, all initialization is handled by constructor
-	//Close();
+	// Close();
 
-	inMemory = 0;
+	inMemory		= 0;
 	animationLength = 100000;
 
 	// Carl: if no folder is specified, look in the video folder
-	if( strstr( qpath, "/" ) == NULL && strstr( qpath, "\\" ) == NULL )
-	{
+	if( strstr( qpath, "/" ) == NULL && strstr( qpath, "\\" ) == NULL ) {
 		sprintf( fileName, "video/%s", qpath );
-	}
-	else
-	{
+	} else {
 		sprintf( fileName, "%s", qpath );
 	}
 	// Carl: Look for original Doom 3 RoQ files first:
 	idStr temp, ext;
 	// SRS - Since loadvideo.bik is hardcoded, first check for legacy idlogo then later for mp4/webm mods
 	// If neither idlogo.roq nor loadvideo.mp4/.webm are found, then fall back to stock loadvideo.bik
-	if( fileName == "video\\loadvideo.bik" )
-	{
-		temp = "video\\idlogo.roq";							// Check for legacy idlogo.roq video
-	}
-	else
-	{
+	if( fileName == "video\\loadvideo.bik" ) {
+		temp = "video\\idlogo.roq"; // Check for legacy idlogo.roq video
+	} else {
 		temp = fileName;
 	}
 
 	temp.ExtractFileExtension( ext );
 	ext.ToLower();
-	if( ext == "roq" )
-	{
-		temp = temp.StripFileExtension() + ".roq";			// Force lower case .roq extension
+	if( ext == "roq" ) {
+		temp  = temp.StripFileExtension() + ".roq"; // Force lower case .roq extension
 		iFile = fileSystem->OpenFileRead( temp );
-	}
-	else
-	{
+	} else {
 		iFile = NULL;
 	}
 
 	// Carl: If the RoQ file doesn't exist, try using bik file extension instead:
-	if( !iFile )
-	{
-		//idLib::Warning( "Original Doom 3 RoQ Cinematic not found: '%s'\n", temp.c_str() );
-#if defined(USE_FFMPEG)
-		if( fileName == "video\\loadvideo.bik" )
-		{
-			temp = "video\\loadvideo";						// Check for loadvideo.xxx mod videos
-			if( ( iFile = fileSystem->OpenFileRead( temp + ".mp4" ) ) )
-			{
-				fileSystem->CloseFile( iFile );				// Close the mp4 file and reopen in ffmpeg
+	if( !iFile ) {
+		// idLib::Warning( "Original Doom 3 RoQ Cinematic not found: '%s'\n", temp.c_str() );
+#if defined( USE_FFMPEG )
+		if( fileName == "video\\loadvideo.bik" ) {
+			temp = "video\\loadvideo"; // Check for loadvideo.xxx mod videos
+			if( ( iFile = fileSystem->OpenFileRead( temp + ".mp4" ) ) ) {
+				fileSystem->CloseFile( iFile ); // Close the mp4 file and reopen in ffmpeg
 				iFile = NULL;
-				temp = temp + ".mp4";
-				ext = "mp4";
-			}
-			else if( ( iFile = fileSystem->OpenFileRead( temp + ".webm" ) ) )
-			{
-				fileSystem->CloseFile( iFile );				// Close the webm file and reopen in ffmpeg
+				temp  = temp + ".mp4";
+				ext	  = "mp4";
+			} else if( ( iFile = fileSystem->OpenFileRead( temp + ".webm" ) ) ) {
+				fileSystem->CloseFile( iFile ); // Close the webm file and reopen in ffmpeg
 				iFile = NULL;
-				temp = temp + ".webm";
-				ext = "webm";
-			}
-			else
-			{
-				temp = temp + ".bik";						// Fall back to bik if no mod videos found
-				ext = "bik";
+				temp  = temp + ".webm";
+				ext	  = "webm";
+			} else {
+				temp = temp + ".bik"; // Fall back to bik if no mod videos found
+				ext	 = "bik";
 			}
 		}
 
-		if( ext == "roq" || ext == "bik" )					// Check for stock/legacy cinematic types
+		if( ext == "roq" || ext == "bik" ) // Check for stock/legacy cinematic types
 		{
-			temp = fileName.StripFileExtension() + ".bik";
-			skipLag = false;			// SRS - Enable lag buffer for ffmpeg bik decoder AV sync
-		}
-		else												// Enable mp4/webm cinematic types for mods
+			temp	= fileName.StripFileExtension() + ".bik";
+			skipLag = false; // SRS - Enable lag buffer for ffmpeg bik decoder AV sync
+		} else				 // Enable mp4/webm cinematic types for mods
 		{
-			skipLag = true;				// SRS - Disable lag buffer for ffmpeg mp4/webm decoder AV sync
+			skipLag = true; // SRS - Disable lag buffer for ffmpeg mp4/webm decoder AV sync
 		}
 
 		// SRS - Support RoQ cinematic playback via ffmpeg decoder - better quality plus audio support
-	}
-	else
-	{
-		fileSystem->CloseFile( iFile );	// SRS - Close the RoQ file and let ffmpeg reopen it
-		iFile = NULL;
-		skipLag = true;					// SRS - Disable lag buffer for ffmpeg RoQ decoder AV sync
+	} else {
+		fileSystem->CloseFile( iFile ); // SRS - Close the RoQ file and let ffmpeg reopen it
+		iFile	= NULL;
+		skipLag = true; // SRS - Disable lag buffer for ffmpeg RoQ decoder AV sync
 	}
 	{
 		// SRS End
 
 		animationLength = 0;
-		fileName = temp;
-		//idLib::Warning( "New filename: '%s'\n", fileName.c_str() );
+		fileName		= temp;
+		// idLib::Warning( "New filename: '%s'\n", fileName.c_str() );
 		return InitFromFFMPEGFile( fileName.c_str(), amilooping, commandList );
-#elif defined(USE_BINKDEC)
-		temp = fileName.StripFileExtension() + ".bik";
+#elif defined( USE_BINKDEC )
+		temp			= fileName.StripFileExtension() + ".bik";
 		animationLength = 0;
-		fileName = temp;
-		//idLib::Warning( "New filename: '%s'\n", fileName.c_str() );
+		fileName		= temp;
+		// idLib::Warning( "New filename: '%s'\n", fileName.c_str() );
 		return InitFromBinkDecFile( fileName.c_str(), amilooping, commandList );
 #else
 		animationLength = 0;
@@ -1096,30 +1028,28 @@ bool idCinematicLocal::InitFromFile( const char* qpath, bool amilooping, nvrhi::
 #endif
 	}
 	// Carl: The rest of this function is for original Doom 3 RoQ files:
-	isRoQ = true;
+	isRoQ	 = true;
 	fileName = temp;
-	ROQSize = iFile->Length();
+	ROQSize	 = iFile->Length();
 
 	looping = amilooping;
 
-	CIN_HEIGHT = DEFAULT_CIN_HEIGHT;
-	CIN_WIDTH  =  DEFAULT_CIN_WIDTH;
+	CIN_HEIGHT		= DEFAULT_CIN_HEIGHT;
+	CIN_WIDTH		= DEFAULT_CIN_WIDTH;
 	samplesPerPixel = 4;
-	startTime = 0;	//Sys_Milliseconds();
-	buf = NULL;
+	startTime		= 0; // Sys_Milliseconds();
+	buf				= NULL;
 
 	iFile->Read( file, 16 );
 
 	RoQID = ( unsigned short )( file[0] ) + ( unsigned short )( file[1] ) * 256;
 
 	frameRate = file[6];
-	if( frameRate == 32.0f )
-	{
+	if( frameRate == 32.0f ) {
 		frameRate = 1000.0f / 32.0f;
 	}
 
-	if( RoQID == ROQ_FILE )
-	{
+	if( RoQID == ROQ_FILE ) {
 		RoQ_init();
 		status = FMV_PLAY;
 		ImageForTime( 0, commandList );
@@ -1139,66 +1069,56 @@ idCinematicLocal::Close
 */
 void idCinematicLocal::Close()
 {
-	if( image )
-	{
+	if( image ) {
 		Mem_Free( ( void* )image );
-		image = NULL;
-		buf = NULL;
+		image  = NULL;
+		buf	   = NULL;
 		status = FMV_EOF;
 	}
 
-	if( isRoQ )
-	{
+	if( isRoQ ) {
 		RoQShutdown();
 	}
-#if defined(USE_FFMPEG)
-	else //if( !isRoQ )
+#if defined( USE_FFMPEG )
+	else // if( !isRoQ )
 	{
-		if( img_convert_ctx )
-		{
+		if( img_convert_ctx ) {
 			sws_freeContext( img_convert_ctx );
 			img_convert_ctx = NULL;
 		}
 
 		// SRS - If we have cinematic audio, free audio codec context, resample context, and any lagged audio buffers
-		if( cinematicAudio )
-		{
-			if( dec_ctx2 )
-			{
+		if( cinematicAudio ) {
+			if( dec_ctx2 ) {
 				avcodec_free_context( &dec_ctx2 );
 			}
 
 			// SRS - Free resample context if we were decoding planar audio
-			if( swr_ctx )
-			{
+			if( swr_ctx ) {
 				swr_free( &swr_ctx );
 			}
 
-			while( !lagBuffer.empty() )
-			{
+			while( !lagBuffer.empty() ) {
 				av_freep( &lagBuffer.front() );
 				lagBuffer.pop();
 				lagBufSize.pop();
 			}
 		}
 
-		if( dec_ctx )
-		{
+		if( dec_ctx ) {
 			avcodec_free_context( &dec_ctx );
 		}
 
-		if( fmt_ctx )
-		{
+		if( fmt_ctx ) {
 			avformat_close_input( &fmt_ctx );
 		}
 		status = FMV_EOF;
 	}
-#elif defined(USE_BINKDEC)
-	else //if( !isRoQ )
+#elif defined( USE_BINKDEC )
+	else // if( !isRoQ )
 	{
-		if( binkHandle.isValid )
-		{
-			memset( yuvBuffer, 0 , sizeof( yuvBuffer ) );
+		if( binkHandle.isValid ) {
+			memset( yuvBuffer, 0, sizeof( yuvBuffer ) );
 			Bink_Close( binkHandle );
 		}
 		status = FMV_EOF;
@@ -1247,8 +1167,8 @@ idCinematicLocal::ResetTime
 */
 void idCinematicLocal::ResetTime( int time )
 {
-	startTime = time; //originally this was: ( backEnd.viewDef ) ? 1000 * backEnd.viewDef->floatTime : -1;
-	status = FMV_PLAY;
+	startTime = time; // originally this was: ( backEnd.viewDef ) ? 1000 * backEnd.viewDef->floatTime : -1;
+	status	  = FMV_PLAY;
 }
 
 /*
@@ -1258,43 +1178,36 @@ idCinematicLocal::ImageForTime
 */
 cinData_t idCinematicLocal::ImageForTime( int thisTime, nvrhi::ICommandList* commandList )
 {
-	cinData_t	cinData;
+	cinData_t cinData;
 
-	if( thisTime <= 0 )
-	{
+	if( thisTime <= 0 ) {
 		thisTime = Sys_Milliseconds();
 	}
 
 	memset( &cinData, 0, sizeof( cinData ) );
 	// SRS - also return if commandList is null, typically when called from within InitFromFile()
-	if( r_skipDynamicTextures.GetBool() || status == FMV_EOF || status == FMV_IDLE || !commandList )
-	{
+	if( r_skipDynamicTextures.GetBool() || status == FMV_EOF || status == FMV_IDLE || !commandList ) {
 		return cinData;
 	}
 
-#if defined(USE_FFMPEG)
+#if defined( USE_FFMPEG )
 	// Carl: Handle BFG format BINK videos separately
-	if( !isRoQ )
-	{
+	if( !isRoQ ) {
 		return ImageForTimeFFMPEG( thisTime, commandList );
 	}
-#elif defined(USE_BINKDEC) // DG: libbinkdec support
-	if( !isRoQ )
-	{
+#elif defined( USE_BINKDEC ) // DG: libbinkdec support
+	if( !isRoQ ) {
 		return ImageForTimeBinkDec( thisTime, commandList );
 	}
 #endif
 
-	if( !iFile )
-	{
+	if( !iFile ) {
 		// RB: neither .bik or .roq found
 		return cinData;
 	}
 
-	if( buf == NULL || startTime == -1 )
-	{
-		if( startTime == -1 )
-		{
+	if( buf == NULL || startTime == -1 ) {
+		if( startTime == -1 ) {
 			RoQReset();
 		}
 		startTime = thisTime;
@@ -1302,61 +1215,49 @@ cinData_t idCinematicLocal::ImageForTime( int thisTime, nvrhi::ICommandList* com
 
 	tfps = ( ( thisTime - startTime ) * frameRate ) / 1000;
 
-	if( tfps < 0 )
-	{
+	if( tfps < 0 ) {
 		tfps = 0;
 	}
 
 	// SRS - Need to use numQuads - 1 for frame position (otherwise get into reset loop at start)
-	if( tfps < numQuads - 1 )
-	{
+	if( tfps < numQuads - 1 ) {
 		RoQReset();
-		buf = NULL;
+		buf	   = NULL;
 		status = FMV_PLAY;
 	}
 
-	if( buf == NULL )
-	{
+	if( buf == NULL ) {
 		// SRS - This frame init loop is not really necessary, but leaving in to avoid breakage
-		while( buf == NULL )
-		{
+		while( buf == NULL ) {
 			RoQInterrupt();
 		}
-	}
-	else
-	{
+	} else {
 		// SRS - This frame loop is really all we need and could handle the above case as well
-		while( ( numQuads - 1 < tfps && status == FMV_PLAY ) )
-		{
+		while( ( numQuads - 1 < tfps && status == FMV_PLAY ) ) {
 			RoQInterrupt();
 		}
 	}
 
-	if( status == FMV_LOOPED || status == FMV_EOF )
-	{
-		if( looping )
-		{
-			//RoQReset();		// SRS - RoQReset() already called by RoQInterrupt() when looping
-			buf = NULL;
+	if( status == FMV_LOOPED || status == FMV_EOF ) {
+		if( looping ) {
+			// RoQReset();		// SRS - RoQReset() already called by RoQInterrupt() when looping
+			buf	   = NULL;
 			status = FMV_PLAY;
-			while( buf == NULL && status == FMV_PLAY )
-			{
+			while( buf == NULL && status == FMV_PLAY ) {
 				RoQInterrupt();
 			}
 			startTime = thisTime;
-		}
-		else
-		{
-			buf = NULL;
+		} else {
+			buf	   = NULL;
 			status = FMV_IDLE;
-			//RoQShutdown();	//SRS - RoQShutdown() not needed on EOF, return null data instead
+			// RoQShutdown();	//SRS - RoQShutdown() not needed on EOF, return null data instead
 			return cinData;
 		}
 	}
 
-	cinData.imageWidth = CIN_WIDTH;
+	cinData.imageWidth	= CIN_WIDTH;
 	cinData.imageHeight = CIN_HEIGHT;
-	cinData.status = status;
+	cinData.status		= status;
 	img->UploadScratch( image, CIN_WIDTH, CIN_HEIGHT, commandList );
 	cinData.image = img;
 
@@ -1368,164 +1269,133 @@ cinData_t idCinematicLocal::ImageForTime( int thisTime, nvrhi::ICommandList* com
 idCinematicLocal::ImageForTimeFFMPEG
 ==============
 */
-#if defined(USE_FFMPEG)
+#if defined( USE_FFMPEG )
 cinData_t idCinematicLocal::ImageForTimeFFMPEG( int thisTime, nvrhi::ICommandList* commandList )
 {
-	cinData_t	cinData;
-	char		error[64];
-	uint8_t*	audioBuffer = NULL;
-	int			num_bytes = 0;
-	bool		syncLost = false;
+	cinData_t cinData;
+	char	  error[64];
+	uint8_t*  audioBuffer = NULL;
+	int		  num_bytes	  = 0;
+	bool	  syncLost	  = false;
 
 	memset( &cinData, 0, sizeof( cinData ) );
-	if( !fmt_ctx )
-	{
+	if( !fmt_ctx ) {
 		// RB: .bik requested but not found
 		return cinData;
 	}
 
-	if( ( !hasFrame ) || startTime == -1 )
-	{
-		if( startTime == -1 )
-		{
+	if( ( !hasFrame ) || startTime == -1 ) {
+		if( startTime == -1 ) {
 			FFMPEGReset();
 		}
 		startTime = thisTime;
 	}
 
 	long desiredFrame = ( ( thisTime - startTime ) * frameRate ) / 1000;
-	if( desiredFrame < 0 )
-	{
+	if( desiredFrame < 0 ) {
 		desiredFrame = 0;
 	}
 
-	if( desiredFrame < framePos )
-	{
+	if( desiredFrame < framePos ) {
 		FFMPEGReset();
 		hasFrame = false;
-		status = FMV_PLAY;
+		status	 = FMV_PLAY;
 	}
 
-	if( hasFrame && desiredFrame == framePos )
-	{
-		cinData.imageWidth = CIN_WIDTH;
+	if( hasFrame && desiredFrame == framePos ) {
+		cinData.imageWidth	= CIN_WIDTH;
 		cinData.imageHeight = CIN_HEIGHT;
-		cinData.status = status;
-		cinData.image = img;
+		cinData.status		= status;
+		cinData.image		= img;
 		return cinData;
 	}
 
 	AVPacket packet;
-	while( framePos < desiredFrame )
-	{
+	while( framePos < desiredFrame ) {
 		int frameFinished = -1;
-		int res = 0;
+		int res			  = 0;
 
 		// Do a single frame by getting packets until we have a full frame
-		while( frameFinished != 0 )
-		{
+		while( frameFinished != 0 ) {
 			// if we got to the end or failed
-			if( av_read_frame( fmt_ctx, &packet ) < 0 )
-			{
+			if( av_read_frame( fmt_ctx, &packet ) < 0 ) {
 				// can't read any more, set to EOF
 				status = FMV_EOF;
-				if( looping )
-				{
+				if( looping ) {
 					desiredFrame = 0;
 					FFMPEGReset();
-					hasFrame = false;
+					hasFrame  = false;
 					startTime = thisTime;
-					if( av_read_frame( fmt_ctx, &packet ) < 0 )
-					{
+					if( av_read_frame( fmt_ctx, &packet ) < 0 ) {
 						status = FMV_IDLE;
 						return cinData;
 					}
 					status = FMV_PLAY;
-				}
-				else
-				{
+				} else {
 					hasFrame = false;
-					status = FMV_IDLE;
+					status	 = FMV_IDLE;
 					return cinData;
 				}
 			}
 			// Is this a packet from the video stream?
-			if( packet.stream_index == video_stream_index )
-			{
+			if( packet.stream_index == video_stream_index ) {
 				// Decode video frame
-				if( ( res = avcodec_send_packet( dec_ctx, &packet ) ) != 0 )
-				{
+				if( ( res = avcodec_send_packet( dec_ctx, &packet ) ) != 0 ) {
 					av_strerror( res, error, sizeof( error ) );
 					common->Warning( "idCinematic: Failed to send video packet for decoding with error: %s\n", error );
-				}
-				else
-				{
+				} else {
 					frameFinished = avcodec_receive_frame( dec_ctx, frame );
-					if( frameFinished != 0 && frameFinished != AVERROR( EAGAIN ) )
-					{
+					if( frameFinished != 0 && frameFinished != AVERROR( EAGAIN ) ) {
 						av_strerror( frameFinished, error, sizeof( error ) );
 						common->Warning( "idCinematic: Failed to receive video frame from decoding with error: %s\n", error );
 					}
 				}
 			}
-			//GK:Begin
-			else if( cinematicAudio && packet.stream_index == audio_stream_index ) //Check if it found any audio data
+			// GK:Begin
+			else if( cinematicAudio && packet.stream_index == audio_stream_index ) // Check if it found any audio data
 			{
 				res = avcodec_send_packet( dec_ctx2, &packet );
-				if( res != 0 && res != AVERROR( EAGAIN ) )
-				{
+				if( res != 0 && res != AVERROR( EAGAIN ) ) {
 					av_strerror( res, error, sizeof( error ) );
 					common->Warning( "idCinematic: Failed to send audio packet for decoding with error: %s\n", error );
 				}
-				//SRS - Separate frame finisher for audio since there can be multiple audio frames per video frame (e.g. at bik startup)
+				// SRS - Separate frame finisher for audio since there can be multiple audio frames per video frame (e.g. at bik startup)
 				int frameFinished1 = 0;
-				while( frameFinished1 == 0 )
-				{
-					if( ( frameFinished1 = avcodec_receive_frame( dec_ctx2, frame3 ) ) != 0 )
-					{
-						if( frameFinished1 != AVERROR( EAGAIN ) )
-						{
+				while( frameFinished1 == 0 ) {
+					if( ( frameFinished1 = avcodec_receive_frame( dec_ctx2, frame3 ) ) != 0 ) {
+						if( frameFinished1 != AVERROR( EAGAIN ) ) {
 							av_strerror( frameFinished1, error, sizeof( error ) );
 							common->Warning( "idCinematic: Failed to receive audio frame from decoding with error: %s\n", error );
 						}
 					}
 					// SRS - Allocate audio buffer, convert to packed format, save in queue, and play synced audio for desired frame
-					else
-					{
+					else {
 						// SRS - Since destination sample format is packed (non-planar), returned bufflinesize equals num_bytes
-#if	LIBAVCODEC_VERSION_INT >= AV_VERSION_INT(59,37,100)
+	#if LIBAVCODEC_VERSION_INT >= AV_VERSION_INT( 59, 37, 100 )
 						res = av_samples_alloc( &audioBuffer, &num_bytes, frame3->ch_layout.nb_channels, frame3->nb_samples, dst_smp, 0 );
-#else
+	#else
 						res = av_samples_alloc( &audioBuffer, &num_bytes, frame3->channels, frame3->nb_samples, dst_smp, 0 );
-#endif
-						if( res < 0 || res != num_bytes )
-						{
+	#endif
+						if( res < 0 || res != num_bytes ) {
 							common->Warning( "idCinematic: Failed to allocate audio buffer with result: %d\n", res );
 						}
-						if( hasplanar )
-						{
+						if( hasplanar ) {
 							// SRS - Convert from planar to packed format keeping sample count the same
 							res = swr_convert( swr_ctx, &audioBuffer, frame3->nb_samples, ( const uint8_t** )frame3->extended_data, frame3->nb_samples );
-							if( res < 0 || res != frame3->nb_samples )
-							{
+							if( res < 0 || res != frame3->nb_samples ) {
 								common->Warning( "idCinematic: Failed to convert planar audio data to packed format with result: %d\n", res );
 							}
-						}
-						else
-						{
+						} else {
 							// SRS - Since audio is already in packed format, just copy into audio buffer
-							if( num_bytes > 0 )
-							{
+							if( num_bytes > 0 ) {
 								memcpy( audioBuffer, frame3->extended_data[0], num_bytes );
 							}
 						}
 
 						// SRS - If we have cinematic audio data, save the current frame onto the back of the queue
-						if( num_bytes > 0 )
-						{
+						if( num_bytes > 0 ) {
 							// SRS - If queue is at max size we have lost a/v sync: drop frame and set syncLost flag
-							if( lagBuffer.size() == ( skipLag ? 1 : NUM_LAG_FRAMES ) )
-							{
+							if( lagBuffer.size() == ( skipLag ? 1 : NUM_LAG_FRAMES ) ) {
 								av_freep( &lagBuffer.front() );
 								lagBuffer.pop();
 								lagBufSize.pop();
@@ -1538,30 +1408,23 @@ cinData_t idCinematicLocal::ImageForTimeFFMPEG( int thisTime, nvrhi::ICommandLis
 							lagBufSize.push( num_bytes );
 						}
 						// SRS - Not sure if an audioBuffer can ever be allocated on failure, but check and free just in case
-						else if( audioBuffer )
-						{
+						else if( audioBuffer ) {
 							av_freep( &audioBuffer );
 						}
 
 						// SRS - If we have any synced audio frames available for the desired frame, play now and drain queue
-						if( framePos + 1 == desiredFrame )
-						{
-							if( syncLost )
-							{
+						if( framePos + 1 == desiredFrame ) {
+							if( syncLost ) {
 								// SRS - If we have lost sync, reset / resync audio stream before starting to play again
 								cinematicAudio->ResetAudio();
 								syncLost = false;
 							}
 
-							while( !lagBuffer.empty() )
-							{
+							while( !lagBuffer.empty() ) {
 								// SRS - Note that PlayAudio() is responsible for releasing any audio buffers sent to it
-								if( !s_noSound.GetBool() )
-								{
+								if( !s_noSound.GetBool() ) {
 									cinematicAudio->PlayAudio( lagBuffer.front(), lagBufSize.front() );
-								}
-								else
-								{
+								} else {
 									av_freep( &lagBuffer.front() );
 								}
 
@@ -1569,12 +1432,13 @@ cinData_t idCinematicLocal::ImageForTimeFFMPEG( int thisTime, nvrhi::ICommandLis
 								lagBufSize.pop();
 							}
 						}
-						//common->Printf( "idCinematic: video pts = %7.3f, audio pts = %7.3f, samples = %4d, num_bytes = %5d\n", static_cast<double>( frame->pts ) * av_q2d( dec_ctx->pkt_timebase ), static_cast<double>( frame3->pts ) * av_q2d( dec_ctx2->pkt_timebase ), frame3->nb_samples, num_bytes );
+						// common->Printf( "idCinematic: video pts = %7.3f, audio pts = %7.3f, samples = %4d, num_bytes = %5d\n", static_cast<double>( frame->pts ) * av_q2d( dec_ctx->pkt_timebase ),
+						// static_cast<double>( frame3->pts ) * av_q2d( dec_ctx2->pkt_timebase ), frame3->nb_samples, num_bytes );
 					}
 				}
 			}
-			//GK:End
-			// Free the packet that was allocated by av_read_frame
+			// GK:End
+			//  Free the packet that was allocated by av_read_frame
 			av_packet_unref( &packet );
 		}
 
@@ -1584,17 +1448,16 @@ cinData_t idCinematicLocal::ImageForTimeFFMPEG( int thisTime, nvrhi::ICommandLis
 	// We have reached the desired frame
 	// Convert the image from its native format to RGB
 	sws_scale( img_convert_ctx, frame->data, frame->linesize, 0, dec_ctx->height, frame2->data, frame2->linesize );
-	cinData.imageWidth = CIN_WIDTH;
+	cinData.imageWidth	= CIN_WIDTH;
 	cinData.imageHeight = CIN_HEIGHT;
-	cinData.status = status;
+	cinData.status		= status;
 	img->UploadScratch( image, CIN_WIDTH, CIN_HEIGHT, commandList );
-	hasFrame = true;
+	hasFrame	  = true;
 	cinData.image = img;
 
 	return cinData;
 }
 #endif
-
 
 /*
 ==============
@@ -1604,69 +1467,59 @@ idCinematicLocal::ImageForTimeBinkDec
 #ifdef USE_BINKDEC
 cinData_t idCinematicLocal::ImageForTimeBinkDec( int thisTime, nvrhi::ICommandList* commandList )
 {
-	cinData_t	cinData;
-	int16_t*	audioBuffer = NULL;
-	uint32_t	num_bytes = 0;
+	cinData_t cinData;
+	int16_t*  audioBuffer = NULL;
+	uint32_t  num_bytes	  = 0;
 
 	memset( &cinData, 0, sizeof( cinData ) );
-	if( !binkHandle.isValid )
-	{
+	if( !binkHandle.isValid ) {
 		// RB: .bik requested but not found
 		return cinData;
 	}
 
 	// SRS - Implement hasFrame so BinkDec startTime is handled the same as with FFMPEG
-	if( ( !hasFrame ) || startTime == -1 )
-	{
-		if( startTime == -1 )
-		{
+	if( ( !hasFrame ) || startTime == -1 ) {
+		if( startTime == -1 ) {
 			BinkDecReset();
 		}
 		startTime = thisTime;
 	}
 
 	int desiredFrame = ( ( thisTime - startTime ) * frameRate ) / 1000.0f;
-	if( desiredFrame < 0 )
-	{
+	if( desiredFrame < 0 ) {
 		desiredFrame = 0;
 	}
 
 	// SRS - Enable video replay within PDAs
-	if( desiredFrame < framePos )
-	{
+	if( desiredFrame < framePos ) {
 		BinkDecReset();
 		hasFrame = false;
-		status = FMV_PLAY;
+		status	 = FMV_PLAY;
 	}
 	// SRS end
 
-	if( hasFrame && desiredFrame == framePos )
-	{
-		cinData.imageWidth = CIN_WIDTH;
+	if( hasFrame && desiredFrame == framePos ) {
+		cinData.imageWidth	= CIN_WIDTH;
 		cinData.imageHeight = CIN_HEIGHT;
-		cinData.status = status;
+		cinData.status		= status;
 
-		cinData.imageY = imgY;
+		cinData.imageY	= imgY;
 		cinData.imageCr = imgCr;
 		cinData.imageCb = imgCb;
 		return cinData;
 	}
 
-	if( desiredFrame >= numFrames )
-	{
+	if( desiredFrame >= numFrames ) {
 		status = FMV_EOF;
-		if( looping )
-		{
+		if( looping ) {
 			desiredFrame = 0;
 			BinkDecReset();
-			hasFrame = false;
+			hasFrame  = false;
 			startTime = thisTime;
-			status = FMV_PLAY;
-		}
-		else
-		{
+			status	  = FMV_PLAY;
+		} else {
 			hasFrame = false;
-			status = FMV_IDLE;
+			status	 = FMV_IDLE;
 			return cinData;
 		}
 	}
@@ -1674,77 +1527,66 @@ cinData_t idCinematicLocal::ImageForTimeBinkDec( int thisTime, nvrhi::ICommandLi
 	// Bink_GotoFrame(binkHandle, desiredFrame);
 	// apparently Bink_GotoFrame() doesn't work super well, so skip frames
 	// (if necessary) by calling Bink_GetNextFrame()
-	while( framePos < desiredFrame )
-	{
+	while( framePos < desiredFrame ) {
 		framePos = Bink_GetNextFrame( binkHandle, yuvBuffer );
 	}
 
-	cinData.imageWidth = CIN_WIDTH;
+	cinData.imageWidth	= CIN_WIDTH;
 	cinData.imageHeight = CIN_HEIGHT;
-	cinData.status = status;
+	cinData.status		= status;
 
-	double invAspRat = double( CIN_HEIGHT ) / double( CIN_WIDTH );
+	double	 invAspRat = double( CIN_HEIGHT ) / double( CIN_WIDTH );
 
-	idImage* imgs[ 3 ] = { imgY, imgCb, imgCr }; // that's the order of the channels in yuvBuffer[]
-	for( int i = 0; i < 3; ++i )
-	{
+	idImage* imgs[3] = { imgY, imgCb, imgCr }; // that's the order of the channels in yuvBuffer[]
+	for( int i = 0; i < 3; ++i ) {
 		// Note: img->UploadScratch() seems to assume 32bit per pixel data, but this is 8bit/pixel
 		//       so uploading is a bit more manual here (compared to ffmpeg or RoQ)
 		idImage* img = imgs[i];
-		int w = yuvBuffer[i].width;
-		int h = yuvBuffer[i].height;
+		int		 w	 = yuvBuffer[i].width;
+		int		 h	 = yuvBuffer[i].height;
 		// some videos, including the logo video and the main menu background,
 		// seem to have superfluous rows in at least some of the channels,
 		// leading to a black or glitchy bar at the bottom of the video.
 		// cut that off by reducing the height to the expected height
-		if( h > CIN_HEIGHT )
-		{
+		if( h > CIN_HEIGHT ) {
 			h = CIN_HEIGHT;
-		}
-		else if( h < CIN_HEIGHT )
-		{
+		} else if( h < CIN_HEIGHT ) {
 			// the U and V channels have a lower resolution than the Y channel
 			// (or the logical video resolution), so use the aspect ratio to
 			// calculate the real height
 			int hExp = invAspRat * w + 0.5;
-			if( h > hExp )
-			{
+			if( h > hExp ) {
 				h = hExp;
 			}
 		}
 
-#if defined( USE_NVRHI )
+	#if defined( USE_NVRHI )
 		img->UploadScratch( yuvBuffer[i].data, w, h, commandList );
-#else
-		if( img->GetUploadWidth() != w || img->GetUploadHeight() != h )
-		{
+	#else
+		if( img->GetUploadWidth() != w || img->GetUploadHeight() != h ) {
 			idImageOpts opts = img->GetOpts();
-			opts.width = w;
-			opts.height = h;
+			opts.width		 = w;
+			opts.height		 = h;
 			img->AllocImage( opts, TF_LINEAR, TR_REPEAT );
 		}
 		img->SubImageUpload( 0, 0, 0, 0, w, h, yuvBuffer[i].data, commandList );
-#endif
+	#endif
 	}
 
-	hasFrame = true;
-	cinData.imageY = imgY;
+	hasFrame		= true;
+	cinData.imageY	= imgY;
 	cinData.imageCr = imgCr;
 	cinData.imageCb = imgCb;
 
-	if( cinematicAudio )
-	{
+	if( cinematicAudio ) {
 		audioBuffer = ( int16_t* )Mem_Alloc( binkInfo.idealBufferSize, TAG_AUDIO );
-		num_bytes = Bink_GetAudioData( binkHandle, trackIndex, audioBuffer );
+		num_bytes	= Bink_GetAudioData( binkHandle, trackIndex, audioBuffer );
 
 		// SRS - If we have cinematic audio data, start playing it now
-		if( num_bytes > 0 && !s_noSound.GetBool() )
-		{
+		if( num_bytes > 0 && !s_noSound.GetBool() ) {
 			// SRS - Note that PlayAudio() is responsible for releasing any audio buffers sent to it
 			cinematicAudio->PlayAudio( ( uint8_t* )audioBuffer, num_bytes );
-		}
-		else
-		{
+		} else {
 			// SRS - Even though we have no audio data to play, still need to free the audio buffer
 			Mem_Free( audioBuffer );
 			audioBuffer = NULL;
@@ -1763,8 +1605,8 @@ idCinematicLocal::move8_32
 void idCinematicLocal::move8_32( byte* src, byte* dst, int spl )
 {
 #if 1
-	int* dsrc, *ddst;
-	int dspl;
+	int *dsrc, *ddst;
+	int	 dspl;
 
 	dsrc = ( int* )src;
 	ddst = ( int* )dst;
@@ -1842,8 +1684,8 @@ void idCinematicLocal::move8_32( byte* src, byte* dst, int spl )
 	ddst[7 * dspl + 6] = dsrc[7 * dspl + 6];
 	ddst[7 * dspl + 7] = dsrc[7 * dspl + 7];
 #else
-	double* dsrc, *ddst;
-	int dspl;
+	double *dsrc, *ddst;
+	int		dspl;
 
 	dsrc = ( double* )src;
 	ddst = ( double* )dst;
@@ -1906,8 +1748,8 @@ idCinematicLocal::move4_32
 void idCinematicLocal::move4_32( byte* src, byte* dst, int spl )
 {
 #if 1
-	int* dsrc, *ddst;
-	int dspl;
+	int *dsrc, *ddst;
+	int	 dspl;
 
 	dsrc = ( int* )src;
 	ddst = ( int* )dst;
@@ -1933,8 +1775,8 @@ void idCinematicLocal::move4_32( byte* src, byte* dst, int spl )
 	ddst[3 * dspl + 2] = dsrc[3 * dspl + 2];
 	ddst[3 * dspl + 3] = dsrc[3 * dspl + 3];
 #else
-	double* dsrc, *ddst;
-	int dspl;
+	double *dsrc, *ddst;
+	int		dspl;
 
 	dsrc = ( double* )src;
 	ddst = ( double* )dst;
@@ -1965,24 +1807,24 @@ idCinematicLocal::blit8_32
 void idCinematicLocal::blit8_32( byte* src, byte* dst, int spl )
 {
 #if 1
-	int* dsrc, *ddst;
-	int dspl;
+	int *dsrc, *ddst;
+	int	 dspl;
 
 	dsrc = ( int* )src;
 	ddst = ( int* )dst;
 	dspl = spl >> 2;
 
-	ddst[0 * dspl + 0] = dsrc[ 0];
-	ddst[0 * dspl + 1] = dsrc[ 1];
-	ddst[0 * dspl + 2] = dsrc[ 2];
-	ddst[0 * dspl + 3] = dsrc[ 3];
-	ddst[0 * dspl + 4] = dsrc[ 4];
-	ddst[0 * dspl + 5] = dsrc[ 5];
-	ddst[0 * dspl + 6] = dsrc[ 6];
-	ddst[0 * dspl + 7] = dsrc[ 7];
+	ddst[0 * dspl + 0] = dsrc[0];
+	ddst[0 * dspl + 1] = dsrc[1];
+	ddst[0 * dspl + 2] = dsrc[2];
+	ddst[0 * dspl + 3] = dsrc[3];
+	ddst[0 * dspl + 4] = dsrc[4];
+	ddst[0 * dspl + 5] = dsrc[5];
+	ddst[0 * dspl + 6] = dsrc[6];
+	ddst[0 * dspl + 7] = dsrc[7];
 
-	ddst[1 * dspl + 0] = dsrc[ 8];
-	ddst[1 * dspl + 1] = dsrc[ 9];
+	ddst[1 * dspl + 0] = dsrc[8];
+	ddst[1 * dspl + 1] = dsrc[9];
 	ddst[1 * dspl + 2] = dsrc[10];
 	ddst[1 * dspl + 3] = dsrc[11];
 	ddst[1 * dspl + 4] = dsrc[12];
@@ -2044,8 +1886,8 @@ void idCinematicLocal::blit8_32( byte* src, byte* dst, int spl )
 	ddst[7 * dspl + 6] = dsrc[62];
 	ddst[7 * dspl + 7] = dsrc[63];
 #else
-	double* dsrc, *ddst;
-	int dspl;
+	double *dsrc, *ddst;
+	int		dspl;
 
 	dsrc = ( double* )src;
 	ddst = ( double* )dst;
@@ -2108,23 +1950,23 @@ idCinematicLocal::blit4_32
 void idCinematicLocal::blit4_32( byte* src, byte* dst, int spl )
 {
 #if 1
-	int* dsrc, *ddst;
-	int dspl;
+	int *dsrc, *ddst;
+	int	 dspl;
 
 	dsrc = ( int* )src;
 	ddst = ( int* )dst;
 	dspl = spl >> 2;
 
-	ddst[0 * dspl + 0] = dsrc[ 0];
-	ddst[0 * dspl + 1] = dsrc[ 1];
-	ddst[0 * dspl + 2] = dsrc[ 2];
-	ddst[0 * dspl + 3] = dsrc[ 3];
-	ddst[1 * dspl + 0] = dsrc[ 4];
-	ddst[1 * dspl + 1] = dsrc[ 5];
-	ddst[1 * dspl + 2] = dsrc[ 6];
-	ddst[1 * dspl + 3] = dsrc[ 7];
-	ddst[2 * dspl + 0] = dsrc[ 8];
-	ddst[2 * dspl + 1] = dsrc[ 9];
+	ddst[0 * dspl + 0] = dsrc[0];
+	ddst[0 * dspl + 1] = dsrc[1];
+	ddst[0 * dspl + 2] = dsrc[2];
+	ddst[0 * dspl + 3] = dsrc[3];
+	ddst[1 * dspl + 0] = dsrc[4];
+	ddst[1 * dspl + 1] = dsrc[5];
+	ddst[1 * dspl + 2] = dsrc[6];
+	ddst[1 * dspl + 3] = dsrc[7];
+	ddst[2 * dspl + 0] = dsrc[8];
+	ddst[2 * dspl + 1] = dsrc[9];
 	ddst[2 * dspl + 2] = dsrc[10];
 	ddst[2 * dspl + 3] = dsrc[11];
 	ddst[3 * dspl + 0] = dsrc[12];
@@ -2132,8 +1974,8 @@ void idCinematicLocal::blit4_32( byte* src, byte* dst, int spl )
 	ddst[3 * dspl + 2] = dsrc[14];
 	ddst[3 * dspl + 3] = dsrc[15];
 #else
-	double* dsrc, *ddst;
-	int dspl;
+	double *dsrc, *ddst;
+	int		dspl;
 
 	dsrc = ( double* )src;
 	ddst = ( double* )dst;
@@ -2164,8 +2006,8 @@ idCinematicLocal::blit2_32
 void idCinematicLocal::blit2_32( byte* src, byte* dst, int spl )
 {
 #if 1
-	int* dsrc, *ddst;
-	int dspl;
+	int *dsrc, *ddst;
+	int	 dspl;
 
 	dsrc = ( int* )src;
 	ddst = ( int* )dst;
@@ -2176,14 +2018,14 @@ void idCinematicLocal::blit2_32( byte* src, byte* dst, int spl )
 	ddst[1 * dspl + 0] = dsrc[2];
 	ddst[1 * dspl + 1] = dsrc[3];
 #else
-	double* dsrc, *ddst;
-	int dspl;
+	double *dsrc, *ddst;
+	int		dspl;
 
 	dsrc = ( double* )src;
 	ddst = ( double* )dst;
 	dspl = spl >> 3;
 
-	ddst[0] = dsrc[0];
+	ddst[0]	   = dsrc[0];
 	ddst[dspl] = dsrc[1];
 #endif
 }
@@ -2195,61 +2037,52 @@ idCinematicLocal::blitVQQuad32fs
 */
 void idCinematicLocal::blitVQQuad32fs( byte** status, unsigned char* data )
 {
-	unsigned short	newd, celdata, code;
-	unsigned int	index, i;
+	unsigned short newd, celdata, code;
+	unsigned int   index, i;
 
 	newd	= 0;
 	celdata = 0;
 	index	= 0;
 
-	do
-	{
-		if( !newd )
-		{
-			newd = 7;
+	do {
+		if( !newd ) {
+			newd	= 7;
 			celdata = data[0] + data[1] * 256;
 			data += 2;
-		}
-		else
-		{
+		} else {
 			newd--;
 		}
 
 		code = ( unsigned short )( celdata & 0xc000 );
 		celdata <<= 2;
 
-		switch( code )
-		{
-			case	0x8000:													// vq code
+		switch( code ) {
+			case 0x8000: // vq code
 				blit8_32( ( byte* )&vq8[( *data ) * 128], status[index], samplesPerLine );
 				data++;
 				index += 5;
 				break;
-			case	0xc000:													// drop
-				index++;													// skip 8x8
-				for( i = 0; i < 4; i++ )
-				{
-					if( !newd )
-					{
-						newd = 7;
+			case 0xc000: // drop
+				index++; // skip 8x8
+				for( i = 0; i < 4; i++ ) {
+					if( !newd ) {
+						newd	= 7;
 						celdata = data[0] + data[1] * 256;
 						data += 2;
-					}
-					else
-					{
+					} else {
 						newd--;
 					}
 
 					code = ( unsigned short )( celdata & 0xc000 );
 					celdata <<= 2;
 
-					switch( code )  											// code in top two bits of code
+					switch( code ) // code in top two bits of code
 					{
-						case	0x8000:										// 4x4 vq code
+						case 0x8000: // 4x4 vq code
 							blit4_32( ( byte* )&vq4[( *data ) * 32], status[index], samplesPerLine );
 							data++;
 							break;
-						case	0xc000:										// 2x2 vq code
+						case 0xc000: // 2x2 vq code
 							blit2_32( ( byte* )&vq2[( *data ) * 8], status[index], samplesPerLine );
 							data++;
 							blit2_32( ( byte* )&vq2[( *data ) * 8], status[index] + 8, samplesPerLine );
@@ -2259,7 +2092,7 @@ void idCinematicLocal::blitVQQuad32fs( byte** status, unsigned char* data )
 							blit2_32( ( byte* )&vq2[( *data ) * 8], status[index] + samplesPerLine * 2 + 8, samplesPerLine );
 							data++;
 							break;
-						case	0x4000:										// motion compensation
+						case 0x4000: // motion compensation
 							move4_32( status[index] + mcomp[( *data )], status[index], samplesPerLine );
 							data++;
 							break;
@@ -2267,54 +2100,59 @@ void idCinematicLocal::blitVQQuad32fs( byte** status, unsigned char* data )
 					index++;
 				}
 				break;
-			case	0x4000:													// motion compensation
+			case 0x4000: // motion compensation
 				move8_32( status[index] + mcomp[( *data )], status[index], samplesPerLine );
 				data++;
 				index += 5;
 				break;
-			case	0x0000:
+			case 0x0000:
 				index += 5;
 				break;
 		}
-	}
-	while( status[index] != NULL );
+	} while( status[index] != NULL );
 }
 
-#define VQ2TO4(a,b,c,d) { \
-    	*c++ = a[0];	\
-	*d++ = a[0];	\
-	*d++ = a[0];	\
-	*c++ = a[1];	\
-	*d++ = a[1];	\
-	*d++ = a[1];	\
-	*c++ = b[0];	\
-	*d++ = b[0];	\
-	*d++ = b[0];	\
-	*c++ = b[1];	\
-	*d++ = b[1];	\
-	*d++ = b[1];	\
-	*d++ = a[0];	\
-	*d++ = a[0];	\
-	*d++ = a[1];	\
-	*d++ = a[1];	\
-	*d++ = b[0];	\
-	*d++ = b[0];	\
-	*d++ = b[1];	\
-	*d++ = b[1];	\
-	a += 2; b += 2; }
+#define VQ2TO4( a, b, c, d ) \
+	{                        \
+		*c++ = a[0];         \
+		*d++ = a[0];         \
+		*d++ = a[0];         \
+		*c++ = a[1];         \
+		*d++ = a[1];         \
+		*d++ = a[1];         \
+		*c++ = b[0];         \
+		*d++ = b[0];         \
+		*d++ = b[0];         \
+		*c++ = b[1];         \
+		*d++ = b[1];         \
+		*d++ = b[1];         \
+		*d++ = a[0];         \
+		*d++ = a[0];         \
+		*d++ = a[1];         \
+		*d++ = a[1];         \
+		*d++ = b[0];         \
+		*d++ = b[0];         \
+		*d++ = b[1];         \
+		*d++ = b[1];         \
+		a += 2;              \
+		b += 2;              \
+	}
 
-#define VQ2TO2(a,b,c,d) { \
-	*c++ = *a;	\
-	*d++ = *a;	\
-	*d++ = *a;	\
-	*c++ = *b;	\
-	*d++ = *b;	\
-	*d++ = *b;	\
-	*d++ = *a;	\
-	*d++ = *a;	\
-	*d++ = *b;	\
-	*d++ = *b;	\
-	a++; b++; }
+#define VQ2TO2( a, b, c, d ) \
+	{                        \
+		*c++ = *a;           \
+		*d++ = *a;           \
+		*d++ = *a;           \
+		*c++ = *b;           \
+		*d++ = *b;           \
+		*d++ = *b;           \
+		*d++ = *a;           \
+		*d++ = *a;           \
+		*d++ = *b;           \
+		*d++ = *b;           \
+		a++;                 \
+		b++;                 \
+	}
 
 /*
 ==============
@@ -2330,35 +2168,28 @@ unsigned short idCinematicLocal::yuv_to_rgb( int y, int u, int v )
 	g = ( YY + ROQ_UG_tab[u] + ROQ_VG_tab[v] ) >> 8;
 	b = ( YY + ROQ_UB_tab[u] ) >> 9;
 
-	if( r < 0 )
-	{
+	if( r < 0 ) {
 		r = 0;
 	}
-	if( g < 0 )
-	{
+	if( g < 0 ) {
 		g = 0;
 	}
-	if( b < 0 )
-	{
+	if( b < 0 ) {
 		b = 0;
 	}
-	if( r > 31 )
-	{
+	if( r > 31 ) {
 		r = 31;
 	}
-	if( g > 63 )
-	{
+	if( g > 63 ) {
 		g = 63;
 	}
-	if( b > 31 )
-	{
+	if( b > 31 ) {
 		b = 31;
 	}
 
 	return ( unsigned short )( ( r << 11 ) + ( g << 5 ) + ( b ) );
 }
 // RB end
-
 
 /*
 ==============
@@ -2374,28 +2205,22 @@ unsigned int idCinematicLocal::yuv_to_rgb24( int y, int u, int v )
 	g = ( YY + ROQ_UG_tab[u] + ROQ_VG_tab[v] ) >> 6;
 	b = ( YY + ROQ_UB_tab[u] ) >> 6;
 
-	if( r < 0 )
-	{
+	if( r < 0 ) {
 		r = 0;
 	}
-	if( g < 0 )
-	{
+	if( g < 0 ) {
 		g = 0;
 	}
-	if( b < 0 )
-	{
+	if( b < 0 ) {
 		b = 0;
 	}
-	if( r > 255 )
-	{
+	if( r > 255 ) {
 		r = 255;
 	}
-	if( g > 255 )
-	{
+	if( g > 255 ) {
 		g = 255;
 	}
-	if( b > 255 )
-	{
+	if( b > 255 ) {
 		b = 255;
 	}
 
@@ -2411,20 +2236,16 @@ idCinematicLocal::decodeCodeBook
 // RB: 64 bit fixes, changed long to int
 void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 {
-	int	i, j, two, four;
-	unsigned short*	aptr, *bptr, *cptr, *dptr;
-	int	y0, y1, y2, y3, cr, cb;
-	unsigned int* iaptr, *ibptr, *icptr, *idptr;
+	int				i, j, two, four;
+	unsigned short *aptr, *bptr, *cptr, *dptr;
+	int				y0, y1, y2, y3, cr, cb;
+	unsigned int *	iaptr, *ibptr, *icptr, *idptr;
 
-	if( !roq_flags )
-	{
+	if( !roq_flags ) {
 		two = four = 256;
-	}
-	else
-	{
-		two  = roq_flags >> 8;
-		if( !two )
-		{
+	} else {
+		two = roq_flags >> 8;
+		if( !two ) {
 			two = 256;
 		}
 		four = roq_flags & 0xff;
@@ -2434,23 +2255,19 @@ void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 
 	bptr = ( unsigned short* )vq2;
 
-	if( !half )
-	{
-		if( !smootheddouble )
-		{
-//
-// normal height
-//
-			if( samplesPerPixel == 2 )
-			{
-				for( i = 0; i < two; i++ )
-				{
-					y0 = ( int ) * input++;
-					y1 = ( int ) * input++;
-					y2 = ( int ) * input++;
-					y3 = ( int ) * input++;
-					cr = ( int ) * input++;
-					cb = ( int ) * input++;
+	if( !half ) {
+		if( !smootheddouble ) {
+			//
+			// normal height
+			//
+			if( samplesPerPixel == 2 ) {
+				for( i = 0; i < two; i++ ) {
+					y0		= ( int )*input++;
+					y1		= ( int )*input++;
+					y2		= ( int )*input++;
+					y3		= ( int )*input++;
+					cr		= ( int )*input++;
+					cb		= ( int )*input++;
 					*bptr++ = yuv_to_rgb( y0, cr, cb );
 					*bptr++ = yuv_to_rgb( y1, cr, cb );
 					*bptr++ = yuv_to_rgb( y2, cr, cb );
@@ -2460,27 +2277,22 @@ void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 				cptr = ( unsigned short* )vq4;
 				dptr = ( unsigned short* )vq8;
 
-				for( i = 0; i < four; i++ )
-				{
+				for( i = 0; i < four; i++ ) {
 					aptr = ( unsigned short* )vq2 + ( *input++ ) * 4;
 					bptr = ( unsigned short* )vq2 + ( *input++ ) * 4;
-					for( j = 0; j < 2; j++ )
-					{
+					for( j = 0; j < 2; j++ ) {
 						VQ2TO4( aptr, bptr, cptr, dptr );
 					}
 				}
-			}
-			else if( samplesPerPixel == 4 )
-			{
+			} else if( samplesPerPixel == 4 ) {
 				ibptr = ( unsigned int* )bptr;
-				for( i = 0; i < two; i++ )
-				{
-					y0 = ( int ) * input++;
-					y1 = ( int ) * input++;
-					y2 = ( int ) * input++;
-					y3 = ( int ) * input++;
-					cr = ( int ) * input++;
-					cb = ( int ) * input++;
+				for( i = 0; i < two; i++ ) {
+					y0		 = ( int )*input++;
+					y1		 = ( int )*input++;
+					y2		 = ( int )*input++;
+					y3		 = ( int )*input++;
+					cr		 = ( int )*input++;
+					cb		 = ( int )*input++;
 					*ibptr++ = yuv_to_rgb24( y0, cr, cb );
 					*ibptr++ = yuv_to_rgb24( y1, cr, cb );
 					*ibptr++ = yuv_to_rgb24( y2, cr, cb );
@@ -2490,32 +2302,26 @@ void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 				icptr = ( unsigned int* )vq4;
 				idptr = ( unsigned int* )vq8;
 
-				for( i = 0; i < four; i++ )
-				{
+				for( i = 0; i < four; i++ ) {
 					iaptr = ( unsigned int* )vq2 + ( *input++ ) * 4;
 					ibptr = ( unsigned int* )vq2 + ( *input++ ) * 4;
-					for( j = 0; j < 2; j++ )
-					{
+					for( j = 0; j < 2; j++ ) {
 						VQ2TO4( iaptr, ibptr, icptr, idptr );
 					}
 				}
 			}
-		}
-		else
-		{
-//
-// double height, smoothed
-//
-			if( samplesPerPixel == 2 )
-			{
-				for( i = 0; i < two; i++ )
-				{
-					y0 = ( int ) * input++;
-					y1 = ( int ) * input++;
-					y2 = ( int ) * input++;
-					y3 = ( int ) * input++;
-					cr = ( int ) * input++;
-					cb = ( int ) * input++;
+		} else {
+			//
+			// double height, smoothed
+			//
+			if( samplesPerPixel == 2 ) {
+				for( i = 0; i < two; i++ ) {
+					y0		= ( int )*input++;
+					y1		= ( int )*input++;
+					y2		= ( int )*input++;
+					y3		= ( int )*input++;
+					cr		= ( int )*input++;
+					cb		= ( int )*input++;
 					*bptr++ = yuv_to_rgb( y0, cr, cb );
 					*bptr++ = yuv_to_rgb( y1, cr, cb );
 					*bptr++ = yuv_to_rgb( ( ( y0 * 3 ) + y2 ) / 4, cr, cb );
@@ -2529,28 +2335,23 @@ void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 				cptr = ( unsigned short* )vq4;
 				dptr = ( unsigned short* )vq8;
 
-				for( i = 0; i < four; i++ )
-				{
+				for( i = 0; i < four; i++ ) {
 					aptr = ( unsigned short* )vq2 + ( *input++ ) * 8;
 					bptr = ( unsigned short* )vq2 + ( *input++ ) * 8;
-					for( j = 0; j < 2; j++ )
-					{
+					for( j = 0; j < 2; j++ ) {
 						VQ2TO4( aptr, bptr, cptr, dptr );
 						VQ2TO4( aptr, bptr, cptr, dptr );
 					}
 				}
-			}
-			else if( samplesPerPixel == 4 )
-			{
+			} else if( samplesPerPixel == 4 ) {
 				ibptr = ( unsigned int* )bptr;
-				for( i = 0; i < two; i++ )
-				{
-					y0 = ( int ) * input++;
-					y1 = ( int ) * input++;
-					y2 = ( int ) * input++;
-					y3 = ( int ) * input++;
-					cr = ( int ) * input++;
-					cb = ( int ) * input++;
+				for( i = 0; i < two; i++ ) {
+					y0		 = ( int )*input++;
+					y1		 = ( int )*input++;
+					y2		 = ( int )*input++;
+					y3		 = ( int )*input++;
+					cr		 = ( int )*input++;
+					cb		 = ( int )*input++;
 					*ibptr++ = yuv_to_rgb24( y0, cr, cb );
 					*ibptr++ = yuv_to_rgb24( y1, cr, cb );
 					*ibptr++ = yuv_to_rgb24( ( ( y0 * 3 ) + y2 ) / 4, cr, cb );
@@ -2564,34 +2365,28 @@ void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 				icptr = ( unsigned int* )vq4;
 				idptr = ( unsigned int* )vq8;
 
-				for( i = 0; i < four; i++ )
-				{
+				for( i = 0; i < four; i++ ) {
 					iaptr = ( unsigned int* )vq2 + ( *input++ ) * 8;
 					ibptr = ( unsigned int* )vq2 + ( *input++ ) * 8;
-					for( j = 0; j < 2; j++ )
-					{
+					for( j = 0; j < 2; j++ ) {
 						VQ2TO4( iaptr, ibptr, icptr, idptr );
 						VQ2TO4( iaptr, ibptr, icptr, idptr );
 					}
 				}
 			}
 		}
-	}
-	else
-	{
-//
-// 1/4 screen
-//
-		if( samplesPerPixel == 2 )
-		{
-			for( i = 0; i < two; i++ )
-			{
-				y0 = ( int ) * input;
+	} else {
+		//
+		// 1/4 screen
+		//
+		if( samplesPerPixel == 2 ) {
+			for( i = 0; i < two; i++ ) {
+				y0 = ( int )*input;
 				input += 2;
-				y2 = ( int ) * input;
+				y2 = ( int )*input;
 				input += 2;
-				cr = ( int ) * input++;
-				cb = ( int ) * input++;
+				cr		= ( int )*input++;
+				cb		= ( int )*input++;
 				*bptr++ = yuv_to_rgb( y0, cr, cb );
 				*bptr++ = yuv_to_rgb( y2, cr, cb );
 			}
@@ -2599,27 +2394,22 @@ void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 			cptr = ( unsigned short* )vq4;
 			dptr = ( unsigned short* )vq8;
 
-			for( i = 0; i < four; i++ )
-			{
+			for( i = 0; i < four; i++ ) {
 				aptr = ( unsigned short* )vq2 + ( *input++ ) * 2;
 				bptr = ( unsigned short* )vq2 + ( *input++ ) * 2;
-				for( j = 0; j < 2; j++ )
-				{
+				for( j = 0; j < 2; j++ ) {
 					VQ2TO2( aptr, bptr, cptr, dptr );
 				}
 			}
-		}
-		else if( samplesPerPixel == 4 )
-		{
-			ibptr = ( unsigned int* ) bptr;
-			for( i = 0; i < two; i++ )
-			{
-				y0 = ( int ) * input;
+		} else if( samplesPerPixel == 4 ) {
+			ibptr = ( unsigned int* )bptr;
+			for( i = 0; i < two; i++ ) {
+				y0 = ( int )*input;
 				input += 2;
-				y2 = ( int ) * input;
+				y2 = ( int )*input;
 				input += 2;
-				cr = ( int ) * input++;
-				cb = ( int ) * input++;
+				cr		 = ( int )*input++;
+				cb		 = ( int )*input++;
 				*ibptr++ = yuv_to_rgb24( y0, cr, cb );
 				*ibptr++ = yuv_to_rgb24( y2, cr, cb );
 			}
@@ -2627,12 +2417,10 @@ void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 			icptr = ( unsigned int* )vq4;
 			idptr = ( unsigned int* )vq8;
 
-			for( i = 0; i < four; i++ )
-			{
+			for( i = 0; i < four; i++ ) {
 				iaptr = ( unsigned int* )vq2 + ( *input++ ) * 2;
 				ibptr = ( unsigned int* )vq2 + ( *input++ ) * 2;
-				for( j = 0; j < 2; j++ )
-				{
+				for( j = 0; j < 2; j++ ) {
 					VQ2TO2( iaptr, ibptr, icptr, idptr );
 				}
 			}
@@ -2650,40 +2438,36 @@ idCinematicLocal::recurseQuad
 void idCinematicLocal::recurseQuad( int startX, int startY, int quadSize, int xOff, int yOff )
 {
 	byte* scroff;
-	int bigx, bigy, lowx, lowy, useY;
-	int offset;
+	int	  bigx, bigy, lowx, lowy, useY;
+	int	  offset;
 
 	offset = screenDelta;
 
 	lowx = lowy = 0;
-	bigx = xsize;
-	bigy = ysize;
+	bigx		= xsize;
+	bigy		= ysize;
 
-	if( bigx > CIN_WIDTH )
-	{
+	if( bigx > CIN_WIDTH ) {
 		bigx = CIN_WIDTH;
 	}
-	if( bigy > CIN_HEIGHT )
-	{
+	if( bigy > CIN_HEIGHT ) {
 		bigy = CIN_HEIGHT;
 	}
 
-	if( ( startX >= lowx ) && ( startX + quadSize ) <= ( bigx ) && ( startY + quadSize ) <= ( bigy ) && ( startY >= lowy ) && quadSize <= MAXSIZE )
-	{
-		useY = startY;
+	if( ( startX >= lowx ) && ( startX + quadSize ) <= ( bigx ) && ( startY + quadSize ) <= ( bigy ) && ( startY >= lowy ) && quadSize <= MAXSIZE ) {
+		useY   = startY;
 		scroff = image + ( useY + ( ( CIN_HEIGHT - bigy ) >> 1 ) + yOff ) * ( samplesPerLine ) + ( ( ( startX + xOff ) ) * samplesPerPixel );
 
-		qStatus[0][onQuad  ] = scroff;
+		qStatus[0][onQuad]	 = scroff;
 		qStatus[1][onQuad++] = scroff + offset;
 	}
 
-	if( quadSize != MINSIZE )
-	{
+	if( quadSize != MINSIZE ) {
 		quadSize >>= 1;
-		recurseQuad( startX,		  startY		  , quadSize, xOff, yOff );
-		recurseQuad( startX + quadSize, startY		  , quadSize, xOff, yOff );
-		recurseQuad( startX,		  startY + quadSize , quadSize, xOff, yOff );
-		recurseQuad( startX + quadSize, startY + quadSize , quadSize, xOff, yOff );
+		recurseQuad( startX, startY, quadSize, xOff, yOff );
+		recurseQuad( startX + quadSize, startY, quadSize, xOff, yOff );
+		recurseQuad( startX, startY + quadSize, quadSize, xOff, yOff );
+		recurseQuad( startX + quadSize, startY + quadSize, quadSize, xOff, yOff );
 	}
 }
 // RB end
@@ -2696,31 +2480,29 @@ idCinematicLocal::setupQuad
 // RB: 64 bit fixes, changed long to int
 void idCinematicLocal::setupQuad( int xOff, int yOff )
 {
-	int numQuadCels, i, x, y;
+	int	  numQuadCels, i, x, y;
 	byte* temp;
 
-	numQuadCels  = ( CIN_WIDTH * CIN_HEIGHT ) / ( 16 );
+	numQuadCels = ( CIN_WIDTH * CIN_HEIGHT ) / ( 16 );
 	numQuadCels += numQuadCels / 4 + numQuadCels / 16;
-	numQuadCels += 64;							  // for overflow
+	numQuadCels += 64; // for overflow
 
-	numQuadCels  = ( xsize * ysize ) / ( 16 );
+	numQuadCels = ( xsize * ysize ) / ( 16 );
 	numQuadCels += numQuadCels / 4;
-	numQuadCels += 64;							  // for overflow
+	numQuadCels += 64; // for overflow
 
 	onQuad = 0;
 
 	for( y = 0; y < ( int )ysize; y += 16 )
-		for( x = 0; x < ( int )xsize; x += 16 )
-		{
+		for( x = 0; x < ( int )xsize; x += 16 ) {
 			recurseQuad( x, y, 16, xOff, yOff );
 		}
 
 	temp = NULL;
 
-	for( i = ( numQuadCels - 64 ); i < numQuadCels; i++ )
-	{
-		qStatus[0][i] = temp;			  // eoq
-		qStatus[1][i] = temp;			  // eoq
+	for( i = ( numQuadCels - 64 ); i < numQuadCels; i++ ) {
+		qStatus[0][i] = temp; // eoq
+		qStatus[1][i] = temp; // eoq
 	}
 }
 // RB end
@@ -2732,23 +2514,22 @@ idCinematicLocal::readQuadInfo
 */
 void idCinematicLocal::readQuadInfo( byte* qData )
 {
-	xsize    = qData[0] + qData[1] * 256;
-	ysize    = qData[2] + qData[3] * 256;
-	maxsize  = qData[4] + qData[5] * 256;
-	minsize  = qData[6] + qData[7] * 256;
+	xsize	= qData[0] + qData[1] * 256;
+	ysize	= qData[2] + qData[3] * 256;
+	maxsize = qData[4] + qData[5] * 256;
+	minsize = qData[6] + qData[7] * 256;
 
 	CIN_HEIGHT = ysize;
 	CIN_WIDTH  = xsize;
 
 	samplesPerLine = CIN_WIDTH * samplesPerPixel;
-	screenDelta = CIN_HEIGHT * samplesPerLine;
+	screenDelta	   = CIN_HEIGHT * samplesPerLine;
 
-	if( !image )
-	{
+	if( !image ) {
 		image = ( byte* )Mem_Alloc( CIN_WIDTH * CIN_HEIGHT * samplesPerPixel * 2, TAG_CINEMATIC );
 	}
 
-	half = false;
+	half		   = false;
 	smootheddouble = false;
 
 	// RB: 64 bit fixes, changed unsigned int to ptrdiff_t
@@ -2772,18 +2553,15 @@ void idCinematicLocal::RoQPrepMcomp( int xoff, int yoff )
 
 	i = samplesPerLine;
 	j = samplesPerPixel;
-	if( xsize == ( ysize * 4 ) && !half )
-	{
+	if( xsize == ( ysize * 4 ) && !half ) {
 		j = j + j;
 		i = i + i;
 	}
 
-	for( y = 0; y < 16; y++ )
-	{
+	for( y = 0; y < 16; y++ ) {
 		temp2 = ( y + yoff - 8 ) * i;
-		for( x = 0; x < 16; x++ )
-		{
-			temp = ( x + xoff - 8 ) * j;
+		for( x = 0; x < 16; x++ ) {
+			temp				  = ( x + xoff - 8 ) * j;
 			mcomp[( x * 16 ) + y] = normalBuffer0 - ( temp2 + temp );
 		}
 	}
@@ -2797,7 +2575,6 @@ idCinematicLocal::RoQReset
 */
 void idCinematicLocal::RoQReset()
 {
-
 	iFile->Seek( 0, FS_SEEK_SET );
 	iFile->Read( file, 16 );
 	RoQ_init();
@@ -2805,8 +2582,8 @@ void idCinematicLocal::RoQReset()
 }
 
 #ifdef ID_USE_LIBJPEG
-	/* jpeg error handling */
-	struct jpeg_error_mgr jerr;
+/* jpeg error handling */
+struct jpeg_error_mgr jerr;
 #endif
 
 int JPEGBlit( byte* wStatus, byte* data, int datasize )
@@ -2827,8 +2604,8 @@ int JPEGBlit( byte* wStatus, byte* data, int datasize )
 	 * struct, to avoid dangling-pointer problems.
 	 */
 	/* More stuff */
-	JSAMPARRAY buffer;		/* Output row buffer */
-	int row_stride;		/* physical row width in output buffer */
+	JSAMPARRAY					  buffer;	  /* Output row buffer */
+	int							  row_stride; /* physical row width in output buffer */
 
 	/* Step 1: allocate and initialize JPEG decompression object */
 
@@ -2844,7 +2621,7 @@ int JPEGBlit( byte* wStatus, byte* data, int datasize )
 
 	/* Step 3: read file parameters with jpeg_read_header() */
 
-	( void ) jpeg_read_header( &cinfo, TRUE );
+	() jpeg_read_header( &cinfo, TRUE );
 	/* We can ignore the return value from jpeg_read_header since
 	 *   (a) suspension is not possible with the stdio data source, and
 	 *   (b) we passed TRUE to reject a tables-only JPEG file as an error.
@@ -2859,13 +2636,13 @@ int JPEGBlit( byte* wStatus, byte* data, int datasize )
 
 	/* Step 5: Start decompressor */
 
-	cinfo.dct_method = JDCT_IFAST;
-	cinfo.dct_method = JDCT_FASTEST;
-	cinfo.dither_mode = JDITHER_NONE;
+	cinfo.dct_method		  = JDCT_IFAST;
+	cinfo.dct_method		  = JDCT_FASTEST;
+	cinfo.dither_mode		  = JDITHER_NONE;
 	cinfo.do_fancy_upsampling = FALSE;
-//	cinfo.out_color_space = JCS_GRAYSCALE;
+	//	cinfo.out_color_space = JCS_GRAYSCALE;
 
-	( void ) jpeg_start_decompress( &cinfo );
+	() jpeg_start_decompress( &cinfo );
 	/* We can ignore the return value since suspension is not possible
 	 * with the stdio data source.
 	 */
@@ -2880,8 +2657,7 @@ int JPEGBlit( byte* wStatus, byte* data, int datasize )
 	row_stride = cinfo.output_width * cinfo.output_components;
 
 	/* Make a one-row-high sample array that will go away when done with image */
-	buffer = ( *cinfo.mem->alloc_sarray )
-			 ( ( j_common_ptr ) &cinfo, JPOOL_IMAGE, row_stride, 1 );
+	buffer = ( *cinfo.mem->alloc_sarray )( ( j_common_ptr )&cinfo, JPOOL_IMAGE, row_stride, 1 );
 
 	/* Step 6: while (scan lines remain to be read) */
 	/*           jpeg_read_scanlines(...); */
@@ -2891,8 +2667,7 @@ int JPEGBlit( byte* wStatus, byte* data, int datasize )
 	 */
 
 	wStatus += ( cinfo.output_height - 1 ) * row_stride;
-	while( cinfo.output_scanline < cinfo.output_height )
-	{
+	while( cinfo.output_scanline < cinfo.output_height ) {
 		/* jpeg_read_scanlines expects an array of pointers to scanlines.
 		 * Here the array is only one element long, but you could ask for
 		 * more than one scanline at a time if that's more convenient.
@@ -2944,17 +2719,13 @@ idCinematicLocal::RoQInterrupt
 */
 void idCinematicLocal::RoQInterrupt()
 {
-	byte*				framedata;
+	byte* framedata;
 
 	iFile->Read( file, RoQFrameSize + 8 );
-	if( RoQPlayed >= ROQSize )
-	{
-		if( looping )
-		{
+	if( RoQPlayed >= ROQSize ) {
+		if( looping ) {
 			RoQReset();
-		}
-		else
-		{
+		} else {
 			status = FMV_EOF;
 		}
 		return;
@@ -2965,58 +2736,51 @@ void idCinematicLocal::RoQInterrupt()
 // new frame is ready
 //
 redump:
-	switch( roq_id )
-	{
-		case	ROQ_QUAD_VQ:
-			if( ( numQuads & 1 ) )
-			{
+	switch( roq_id ) {
+		case ROQ_QUAD_VQ:
+			if( ( numQuads & 1 ) ) {
 				normalBuffer0 = t[1];
 				RoQPrepMcomp( roqF0, roqF1 );
 				blitVQQuad32fs( qStatus[1], framedata );
-				buf = 	image + screenDelta;
-			}
-			else
-			{
+				buf = image + screenDelta;
+			} else {
 				normalBuffer0 = t[0];
 				RoQPrepMcomp( roqF0, roqF1 );
 				blitVQQuad32fs( qStatus[0], framedata );
-				buf = 	image;
+				buf = image;
 			}
-			if( numQuads == 0 )  		// first frame
+			if( numQuads == 0 ) // first frame
 			{
 				memcpy( image + screenDelta, image, samplesPerLine * ysize );
 			}
 			numQuads++;
 			dirty = true;
 			break;
-		case	ROQ_CODEBOOK:
+		case ROQ_CODEBOOK:
 			decodeCodeBook( framedata, ( unsigned short )roq_flags );
 			break;
-		case	ZA_SOUND_MONO:
+		case ZA_SOUND_MONO:
 			break;
-		case	ZA_SOUND_STEREO:
+		case ZA_SOUND_STEREO:
 			break;
-		case	ROQ_QUAD_INFO:
-			if( numQuads == -1 )
-			{
+		case ROQ_QUAD_INFO:
+			if( numQuads == -1 ) {
 				readQuadInfo( framedata );
 				setupQuad( 0, 0 );
 			}
-			if( numQuads != 1 )
-			{
+			if( numQuads != 1 ) {
 				numQuads = 0;
 			}
 			break;
-		case	ROQ_PACKET:
-			inMemory = ( roq_flags != 0 );
-			RoQFrameSize = 0;           // for header
+		case ROQ_PACKET:
+			inMemory	 = ( roq_flags != 0 );
+			RoQFrameSize = 0; // for header
 			break;
-		case	ROQ_QUAD_HANG:
+		case ROQ_QUAD_HANG:
 			RoQFrameSize = 0;
 			break;
-		case	ROQ_QUAD_JPEG:
-			if( !numQuads )
-			{
+		case ROQ_QUAD_JPEG:
+			if( !numQuads ) {
 				normalBuffer0 = t[0];
 				JPEGBlit( image, framedata, RoQFrameSize );
 				memcpy( image + screenDelta, image, samplesPerLine * ysize );
@@ -3027,51 +2791,45 @@ redump:
 			status = FMV_EOF;
 			break;
 	}
-//
-// read in next frame data
-//
-	if( RoQPlayed >= ROQSize || status == FMV_EOF )		// SRS - handle FMV_EOF case
+	//
+	// read in next frame data
+	//
+	if( RoQPlayed >= ROQSize || status == FMV_EOF ) // SRS - handle FMV_EOF case
 	{
-		if( looping )
-		{
+		if( looping ) {
 			RoQReset();
-		}
-		else
-		{
+		} else {
 			status = FMV_EOF;
 		}
 		return;
 	}
 
-	framedata		 += RoQFrameSize;
+	framedata += RoQFrameSize;
 	roq_id		 = framedata[0] + framedata[1] * 256;
 	RoQFrameSize = framedata[2] + framedata[3] * 256 + framedata[4] * 65536;
 	roq_flags	 = framedata[6] + framedata[7] * 256;
 	roqF0		 = ( char )framedata[7];
 	roqF1		 = ( char )framedata[6];
 
-	if( RoQFrameSize > 65536 || roq_id == 0x1084 )
-	{
+	if( RoQFrameSize > 65536 || roq_id == 0x1084 ) {
 		common->DPrintf( "roq_size>65536||roq_id==0x1084\n" );
 		status = FMV_EOF;
-		if( looping )
-		{
+		if( looping ) {
 			RoQReset();
 		}
 		return;
 	}
-	if( inMemory && ( status != FMV_EOF ) )
-	{
+	if( inMemory && ( status != FMV_EOF ) ) {
 		inMemory = false;
 		framedata += 8;
 		goto redump;
 	}
-//
-// one more frame hits the dust
-//
-//	assert(RoQFrameSize <= 65536);
-//	r = Sys_StreamedRead( file, RoQFrameSize+8, 1, iFile );
-	RoQPlayed	+= RoQFrameSize + 8;
+	//
+	// one more frame hits the dust
+	//
+	//	assert(RoQFrameSize <= 65536);
+	//	r = Sys_StreamedRead( file, RoQFrameSize+8, 1, iFile );
+	RoQPlayed += RoQFrameSize + 8;
 }
 
 /*
@@ -3081,22 +2839,20 @@ idCinematicLocal::RoQ_init
 */
 void idCinematicLocal::RoQ_init()
 {
-
 	RoQPlayed = 24;
 
 	/*	get frame rate */
-	roqFPS	 = file[ 6] + file[ 7] * 256;
+	roqFPS = file[6] + file[7] * 256;
 
-	if( !roqFPS )
-	{
+	if( !roqFPS ) {
 		roqFPS = 30;
 	}
 
 	numQuads = -1;
 
-	roq_id		= file[ 8] + file[ 9] * 256;
+	roq_id		 = file[8] + file[9] * 256;
 	RoQFrameSize = file[10] + file[11] * 256 + file[12] * 65536;
-	roq_flags	= file[14] + file[15] * 256;
+	roq_flags	 = file[14] + file[15] * 256;
 }
 
 /*
@@ -3113,10 +2869,9 @@ void idCinematicLocal::RoQShutdown()
 		return;
 	}
 	*/
-	status = FMV_EOF;	// SRS - Changed from FMV_IDLE to FMV_EOF for shutdown consistency
+	status = FMV_EOF; // SRS - Changed from FMV_IDLE to FMV_EOF for shutdown consistency
 
-	if( iFile )
-	{
+	if( iFile ) {
 		fileSystem->CloseFile( iFile );
 		iFile = NULL;
 	}
@@ -3136,12 +2891,9 @@ bool idSndWindow::InitFromFile( const char* qpath, bool looping )
 	idStr fname = qpath;
 
 	fname.ToLower();
-	if( !fname.Icmp( "waveform" ) )
-	{
+	if( !fname.Icmp( "waveform" ) ) {
 		showWaveform = true;
-	}
-	else
-	{
+	} else {
 		showWaveform = false;
 	}
 	return true;
