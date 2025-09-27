@@ -2968,6 +2968,7 @@ void idRenderBackend::SetupShadowMapMatrices( viewLight_t* vLight, int side, idR
 		// from world space to OpenGL view space, looking down the negative Z axis
 		float	lightViewMatrix[16];
 
+		// clang-format off
 		static float	s_flipMatrix[16] =
 		{
 			// convert from our coordinate system (looking down X)
@@ -2977,6 +2978,7 @@ void idRenderBackend::SetupShadowMapMatrices( viewLight_t* vLight, int side, idR
 			0, 1, 0, 0,
 			0, 0, 0, 1
 		};
+		// clang-format on
 
 		memcpy( unflippedLightViewMatrix, viewMatrix, sizeof( unflippedLightViewMatrix ) );
 		R_MatrixMultiply( viewMatrix, s_flipMatrix, lightViewMatrix );
@@ -6486,6 +6488,7 @@ void idRenderBackend::DrawView( const void* data, const int stereoEye )
 				float unflippedMatrix[16];
 				R_AxisToModelMatrix( mvpAxis, mvpOrigin, unflippedMatrix );
 
+				// clang-format off
 				static float s_flipMatrix[16] =
 				{
 					// convert from our coordinate system (looking down X)
@@ -6495,6 +6498,7 @@ void idRenderBackend::DrawView( const void* data, const int stereoEye )
 					0, 1,  0, 0,
 					0, 0,  0, 1
 				};
+				// clang-format on
 				R_MatrixMultiply( unflippedMatrix, s_flipMatrix, viewEntity->modelViewMatrix );
 
 				idRenderMatrix viewMat;
@@ -6525,6 +6529,7 @@ void idRenderBackend::DrawView( const void* data, const int stereoEye )
 				float unflippedMatrix[16];
 				R_AxisToModelMatrix( guiAxis, guiOrigin, unflippedMatrix );
 
+				// clang-format off
 				static float s_flipMatrix[16] =
 				{
 					// convert from our coordinate system (looking down X)
@@ -6534,6 +6539,7 @@ void idRenderBackend::DrawView( const void* data, const int stereoEye )
 					0, 1,  0, 0,
 					0, 0,  0, 1
 				};
+				// clang-format on
 				R_MatrixMultiply( unflippedMatrix, s_flipMatrix, viewEntity->modelViewMatrix );
 
 				idRenderMatrix viewMat;

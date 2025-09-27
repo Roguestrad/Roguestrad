@@ -78,7 +78,7 @@ idCVar gltfParser_PrefixNodeWithID( "gltfParser_PrefixNodeWithID", "0", CVAR_SYS
 //	return flags;
 //}
 
-
+// clang-format off
 gltf_mesh_attribute_map s_meshAttributeMap[] =
 {
 	"POSITION",		gltfMesh_Primitive_Attribute::Type::Position,	3,
@@ -100,6 +100,7 @@ gltf_mesh_attribute_map s_meshAttributeMap[] =
 	"JOINTS_0",		gltfMesh_Primitive_Attribute::Type::Joints,		4,
 	"",				gltfMesh_Primitive_Attribute::Type::Count
 };
+// clang-format on
 
 gltfMesh_Primitive_Attribute::Type GetAttributeEnum( const char* str , uint* elementSize = nullptr )
 {
@@ -129,6 +130,8 @@ gltfMesh_Primitive_Attribute::Type GetAttributeEnum( const char* str , uint* ele
 //	"",					0,		bgfx::AttribType::Count, 0
 //};
 //
+
+// clang-format off
 gltf_accessor_component_type_map<gltf_accessor_component::Type> s_nativeComponentTypeMap[] =
 {
 	"signed byte",		5120,	gltf_accessor_component::Type::_byte, 1 ,
@@ -140,7 +143,8 @@ gltf_accessor_component_type_map<gltf_accessor_component::Type> s_nativeComponen
 	"double",			5130,	gltf_accessor_component::Type::_double, 8 ,
 	"",					0,		gltf_accessor_component::Type::Count, 0
 };
-//
+// clang-format on
+
 gltf_accessor_component::Type GetComponentTypeEnum( int id  , uint* sizeInBytes = nullptr )
 {
 	int i = -1;

@@ -1268,6 +1268,7 @@ extern void Sys_CPUCount( int& logicalNum, int& coreNum, int& packageNum );
 // DOOM3: We don't have that many jobs, so just set this fairly low so we don't spin up a ton of idle threads
 #define MAX_JOB_THREADS		32
 #define NUM_JOB_THREADS		"2"
+// clang-format off
 #define JOB_THREAD_CORES	{	CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY,	\
 								CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY,	\
 								CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY,	\
@@ -1276,7 +1277,7 @@ extern void Sys_CPUCount( int& logicalNum, int& coreNum, int& packageNum );
 								CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY,	\
 								CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY,	\
 								CORE_ANY, CORE_ANY, CORE_ANY, CORE_ANY }
-
+// clang-format on
 
 idCVar jobs_numThreads( "jobs_numThreads", NUM_JOB_THREADS, CVAR_INTEGER | CVAR_NOCHEAT, "number of threads used to crunch through jobs", 0, MAX_JOB_THREADS );
 

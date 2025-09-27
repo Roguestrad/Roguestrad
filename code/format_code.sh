@@ -71,12 +71,15 @@ find . -regex ".*\.\(h\|hpp\)" \
 	! -path "./engine/renderer/Image_env_UAC_lobby_spec.h" \
 	! -path "./engine/renderer/SMAA/AreaTex.h" \
 	! -path "./engine/renderer/SMAA/SearchTex.h" \
+    ! -path "./engine/renderer/simplex.h" \
+    ! -path "./game/gamesys/GameTypeInfo.h" \
 	-print0 | xargs -0 -P 16 "$CLANGFMT_BIN" -i --verbose
 
 cp .clang-format-cpp .clang-format
 find . -regex ".*\.\(c\|cpp\)" \
 	! -path "./libs/*" \
 	! -path "./extern/*" \
+    ! -path "./game/gamesys/GameTypeInfo.cpp" \
 	! -path "./game/gamesys/SysCvar.cpp" \
 	! -path "./game/gamesys/Callbacks.cpp" \
 	! -path "./engine/sys/win32/win_cpu.cpp" \

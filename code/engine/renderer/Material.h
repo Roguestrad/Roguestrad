@@ -44,6 +44,8 @@ class idImage;
 class idCinematic;
 class idUserInterface;
 
+// clang-format off
+
 // moved from image.h for default parm
 typedef enum
 {
@@ -225,6 +227,8 @@ typedef enum
 	STENCIL_OP_INCRWRAP,
 	STENCIL_OP_DECRWRAP
 } stencilOperation_t;
+
+// clang-format on
 
 struct stencilStage_t
 {
@@ -443,6 +447,7 @@ typedef enum
 
 
 class idSoundEmitter;
+// clang-format off
 
 // RB: predefined Quake 1 light styles
 static const char* predef_lightstyles[] =
@@ -476,6 +481,8 @@ static const char* predef_lightstylesinfo[] =
 	"Fluorescent Flicker",
 	"Slow Pulse (no black)"
 };
+
+// clang-format on
 // RB end
 
 class idMaterial : public idDecl

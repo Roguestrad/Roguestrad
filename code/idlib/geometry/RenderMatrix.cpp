@@ -66,6 +66,8 @@ Constant render matrices
 ================================================================================================
 */
 
+// clang-format off
+
 // identity matrix
 ALIGNTYPE16 const idRenderMatrix renderMatrix_identity(
 	1.0f, 0.0f, 0.0f, 0.0f,
@@ -104,6 +106,7 @@ ALIGNTYPE16 const idRenderMatrix renderMatrix_fullscreen(
 	0.0f, 0.0f, 1.0f, 0.0f,
 	0.0f, 0.0f, 0.0f, 1.0f
 );
+// clang-format on
 // RB end
 
 /*

@@ -2105,11 +2105,13 @@ int idStr::UTF8Length( const byte* s )
 			int trailing = 0;
 			if( cindex >= 0xc0 )
 			{
+				// clang-format off
 				static const byte trailingBytes[ 64 ] =
 				{
 					1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 					2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5
 				};
+				// clang-format on
 				trailing = trailingBytes[ cindex - 0xc0 ];
 			}
 			mbLen += trailing + 1;
@@ -2177,11 +2179,13 @@ uint32 idStr::UTF8Char( const byte* s, int& idx )
 			int trailing = 0;
 			if( cindex >= 0xc0 )
 			{
+				// clang-format off
 				static const byte trailingBytes[ 64 ] =
 				{
 					1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1,
 					2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5
 				};
+				// clang-format on
 				trailing = trailingBytes[ cindex - 0xc0 ];
 			}
 			static const uint32 trailingMask[ 6 ] = { 0x0000007f, 0x0000001f, 0x0000000f, 0x00000007, 0x00000003, 0x00000001 };

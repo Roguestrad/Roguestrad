@@ -553,6 +553,7 @@ void idRenderBackend::DrawElementsWithCounters( const drawSurf_t* surf, bool sha
 	}
 }
 
+// clang-format off
 void idRenderBackend::GetCurrentBindingLayout( int type )
 {
 	constexpr auto numBoneMatrices = 480;
@@ -1971,6 +1972,7 @@ void idRenderBackend::GetCurrentBindingLayout( int type )
 		common->FatalError( "Invalid binding set %d\n", renderProgManager.BindingLayoutType() );
 	}
 }
+// clang-format on
 
 /*
 =========================================================================================================

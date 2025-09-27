@@ -513,6 +513,7 @@ static drawSurf_t* R_FlareDeform( drawSurf_t* surf )
 		newVerts[i].color[3] = 255;
 	}
 
+	// clang-format off
 	ALIGNTYPE16 static triIndex_t triIndexes[18 * 3 + 10] =
 	{
 		0, 4, 5,  0, 5, 6,  0, 6, 7,  0, 7, 1,  1, 7, 8,  1, 8, 9,
@@ -520,6 +521,7 @@ static drawSurf_t* R_FlareDeform( drawSurf_t* surf )
 		14, 15, 3, 14, 3, 13, 13, 3, 2, 13, 2, 12, 12, 2, 11, 11, 2, 10,
 		0, 0, 0, 0, 0, 0, 0, 0, 0, 0	// to make this a multiple of 16 bytes
 	};
+	// clang-format on
 
 	return R_FinishDeform( surf, newTri, newVerts, triIndexes, nullptr );
 }

@@ -352,6 +352,7 @@ Sets up the world to view matrix for a given viewParm
 */
 void R_SetupViewMatrix( viewDef_t* viewDef, stereoOrigin_t stereoOrigin )
 {
+	// clang-format off
 	static float s_flipMatrix[16] =
 	{
 		// convert from our coordinate system (looking down X)
@@ -361,6 +362,7 @@ void R_SetupViewMatrix( viewDef_t* viewDef, stereoOrigin_t stereoOrigin )
 		0, 1,  0, 0,
 		0, 0,  0, 1
 	};
+	// clang-format on
 
 	viewEntity_t* world = &viewDef->worldSpace;
 	memset( world, 0, sizeof( *world ) );
@@ -712,6 +714,7 @@ inline float sgn( float a )
 // clipPlane is a plane in camera space.
 void ModifyProjectionMatrix( viewDef_t* viewDef, const idPlane& clipPlane )
 {
+	// clang-format off
 	static float s_flipMatrix[16] =
 	{
 		// convert from our coordinate system (looking down X)
@@ -721,6 +724,7 @@ void ModifyProjectionMatrix( viewDef_t* viewDef, const idPlane& clipPlane )
 		0, 1,  0, 0,
 		0, 0,  0, 1
 	};
+	// clang-format on
 
 	idMat4 flipMatrix;
 	memcpy( &flipMatrix, &( s_flipMatrix[0] ), sizeof( float ) * 16 );

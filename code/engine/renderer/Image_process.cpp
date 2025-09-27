@@ -312,6 +312,7 @@ byte* R_MipMapWithAlphaSpecularity( const byte* in, int width, int height )
 	return out;
 }
 
+// clang-format off
 float mip_gammaTable[256] =
 {
 	0.000000f, 0.000005f, 0.000023f, 0.000057f, 0.000107f, 0.000175f, 0.000262f, 0.000367f, 0.000493f, 0.000638f, 0.000805f, 0.000992f, 0.001202f, 0.001433f, 0.001687f, 0.001963f,
@@ -331,6 +332,7 @@ float mip_gammaTable[256] =
 	0.751895f, 0.759300f, 0.766744f, 0.774227f, 0.781751f, 0.789314f, 0.796917f, 0.804559f, 0.812241f, 0.819964f, 0.827726f, 0.835528f, 0.843370f, 0.851252f, 0.859174f, 0.867136f,
 	0.875138f, 0.883180f, 0.891262f, 0.899384f, 0.907547f, 0.915750f, 0.923993f, 0.932277f, 0.940601f, 0.948965f, 0.957370f, 0.965815f, 0.974300f, 0.982826f, 0.991393f, 1.000000f
 };
+// clang-format on
 
 /*
 ================
@@ -875,6 +877,7 @@ byte* R_GenerateCubeMapSideFromSingleImage( const byte* in, int srcWidth, int sr
 ///              |-z      3 |
 ///              +----------+
 ///
+// clang-format off
 static const float s_faceUvVectors[6][3][3] =
 {
 	{
@@ -996,6 +999,7 @@ static const struct CubeFaceNeighbour
 		{ CMFT_FACE_NEG_Y, CMFT_EDGE_BOTTOM },
 	}
 };
+// clang-format on
 
 /// _u and _v should be center adressing and in [-1.0+invSize..1.0-invSize] range.
 static inline void TexelCoordToVec( float* _out3f, float _u, float _v, uint8_t _faceId )
