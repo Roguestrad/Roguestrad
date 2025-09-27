@@ -70,6 +70,7 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 Language: Cpp
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: Inner
+PackConstructorInitializers: Never
 PPIndentWidth: 4
 PointerAlignment: Left
 ReferenceAlignment: Left
