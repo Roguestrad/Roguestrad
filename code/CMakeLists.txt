@@ -457,7 +457,7 @@ if(OPTICK)
 endif()
 
 add_subdirectory(idlib)
-add_subdirectory(typeinfo)
+add_subdirectory(tools/typeinfo)
 
 if(USE_INTRINSICS_SSE)
 	add_subdirectory(libs/moc)
