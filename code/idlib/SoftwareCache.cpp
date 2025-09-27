@@ -63,11 +63,11 @@ bool   SpursEmulationAssertFailed( const char* filename, int line, const char* e
 		// DG: mingw support
 		DebugBreak();
 	#endif
-#else // not _WIN32
-	  // DG: POSIX support
+#else
+		// DG: POSIX support
 		raise( SIGTRAP );
 		// DG: end
-#endif // _WIN32
+#endif
 	}
 	return true;
 }

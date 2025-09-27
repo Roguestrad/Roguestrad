@@ -97,11 +97,11 @@ bool										AssertFailed( const char* file, int line, const char* expression )
 		// DG: mingw support
 		DebugBreak();
 	#endif
-#else // not _WIN32
-	  // DG: POSIX support
+#else
+		// DG: POSIX support
 		raise( SIGTRAP );
 		// DG: end
-#endif // _WIN32
+#endif
 	}
 
 	if( skipThisAssertion ) {

@@ -155,7 +155,7 @@ double ticksPerNanosecond;
 
 	#define StopRecordTime( end )	 end = mach_absolute_time();
 
-#else // not _MSC_VER and _M_IX86 or __APPLE__
+#else
 					// FIXME: meaningful values/functions here for Linux?
 	#define TIME_TYPE				 int
 

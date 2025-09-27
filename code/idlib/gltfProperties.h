@@ -783,12 +783,6 @@ public:
 	bool	  resolved;
 };
 
-/////////////////////////////////////////////////////////////////////////////
-//// For these to function you need to add an private idList<gltf{name}*> {target}
-// #define GLTFCACHEITEM(name,target) \
-//gltf##name * name () { target.AssureSizeAlloc( target.Num()+1,idListNewElement<gltf##name>); return target[target.Num()-1];} \
-//const inline idList<gltf##name*> & ##name##List() { return target; }
-
 // URI's are resolved during parsing so that
 // all data should be layed out like an GLB with multiple bin chunks
 // EACH URI will have an unique chunk
