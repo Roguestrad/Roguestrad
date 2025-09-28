@@ -71,9 +71,11 @@ public:
 	// splits the winding into a front and back winding, the winding itself stays unchanged
 	// returns a SIDE_?
 	int			  Split( const idPlane& plane, const float epsilon, idWinding** front, idWinding** back ) const;
+
 	// returns the winding fragment at the front of the clipping plane,
 	// if there is nothing at the front the winding itself is destroyed and NULL is returned
 	idWinding*	  Clip( const idPlane& plane, const float epsilon = ON_EPSILON, const bool keepOn = false );
+
 	// cuts off the part at the back side of the plane, returns true if some part was at the front
 	// if there is nothing at the front the number of points is set to zero
 	bool		  ClipInPlace( const idPlane& plane, const float epsilon = ON_EPSILON, const bool keepOn = false );
@@ -88,13 +90,17 @@ public:
 	void		  InsertPoint( const idVec5& point, int spot );
 	bool		  InsertPointIfOnEdge( const idVec5& point, const idPlane& plane, const float epsilon = ON_EPSILON );
 	bool		  InsertPointIfOnEdge( const idVec3& point, const idPlane& plane, const float epsilon = ON_EPSILON );
+
 	// add a winding to the convex hull
 	void		  AddToConvexHull( const idWinding* winding, const idVec3& normal, const float epsilon = ON_EPSILON );
+
 	// add a point to the convex hull
 	void		  AddToConvexHull( const idVec3& point, const idVec3& normal, const float epsilon = ON_EPSILON );
+
 	// tries to merge 'this' with the given winding, returns NULL if merge fails, both 'this' and 'w' stay intact
 	// 'keep' tells if the contacting points should stay even if they create colinear edges
 	idWinding*	  TryMerge( const idWinding& w, const idVec3& normal, int keep = false ) const;
+
 	// check whether the winding is valid or not
 	bool		  Check( bool print = true ) const;
 
@@ -115,8 +121,10 @@ public:
 	bool		  PlanesConcave( const idWinding& w2, const idVec3& normal1, const idVec3& normal2, float dist1, float dist2 ) const;
 
 	bool		  PointInside( const idVec3& normal, const idVec3& point, const float epsilon ) const;
+
 	// returns true if the line or ray intersects the winding
 	bool		  LineIntersection( const idPlane& windingPlane, const idVec3& start, const idVec3& end, bool backFaceCull = false ) const;
+
 	// intersection point is start + dir * scale
 	bool		  RayIntersection( const idPlane& windingPlane, const idVec3& start, const idVec3& dir, float& scale, bool backFaceCull = false ) const;
 

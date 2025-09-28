@@ -89,16 +89,20 @@ public:
 	bool		  ContainsPoint( const idVec3& p ) const;	   // includes touching
 	bool		  IntersectsBounds( const idBounds& a ) const; // includes touching
 	bool		  LineIntersection( const idVec3& start, const idVec3& end ) const;
+
 	// intersection point is start + dir * scale
 	bool		  RayIntersection( const idVec3& start, const idVec3& dir, float& scale ) const;
 
 	// most tight bounds for the given transformed bounds
 	void		  FromTransformedBounds( const idBounds& bounds, const idVec3& origin, const idMat3& axis );
+
 	// most tight bounds for a point set
 	void		  FromPoints( const idVec3* points, const int numPoints );
+
 	// most tight bounds for a translation
 	void		  FromPointTranslation( const idVec3& point, const idVec3& translation );
 	void		  FromBoundsTranslation( const idBounds& bounds, const idVec3& origin, const idMat3& axis, const idVec3& translation );
+
 	// most tight bounds for a rotation
 	void		  FromPointRotation( const idVec3& point, const idRotation& rotation );
 	void		  FromBoundsRotation( const idBounds& bounds, const idVec3& origin, const idMat3& axis, const idRotation& rotation );

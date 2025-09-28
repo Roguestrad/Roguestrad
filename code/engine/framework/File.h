@@ -47,32 +47,46 @@ class idFile
 {
 public:
 	virtual ~idFile() {};
+
 	// Get the name of the file.
 	virtual const char* GetName() const;
+
 	// Get the full file path.
 	virtual const char* GetFullPath() const;
+
 	// Read data from the file to the buffer.
 	virtual int			Read( void* buffer, int len );
+
 	// Write data from the buffer to the file.
 	virtual int			Write( const void* buffer, int len );
+
 	// Returns the length of the file.
 	virtual int			Length() const;
+
 	// Return a time value for reload operations.
 	virtual ID_TIME_T	Timestamp() const;
+
 	// Returns offset in file.
 	virtual int			Tell() const;
+
 	// Forces flush on files being writting to.
 	virtual void		ForceFlush();
+
 	// Causes any buffered data to be written to the file.
 	virtual void		Flush();
+
 	// Seek on a file.
 	virtual int			Seek( long offset, fsOrigin_t origin );
+
 	// Go back to the beginning of the file.
 	virtual void		Rewind();
+
 	// Like fprintf.
 	virtual int			Printf( VERIFY_FORMAT_STRING const char* fmt, ... );
+
 	// Like fprintf but with argument pointer
 	virtual int			VPrintf( const char* fmt, va_list arg );
+
 	// Write a string with high precision floating point numbers to the file.
 	virtual int			WriteFloatString( VERIFY_FORMAT_STRING const char* fmt, ... );
 
@@ -173,18 +187,25 @@ public:
 
 	// Set the given length and don't allow the file to grow.
 	void				SetMaxLength( size_t len );
+
 	// changes memory file to read only
 	void				MakeReadOnly();
+
 	// Change the file to be writable
 	void				MakeWritable();
+
 	// clear the file
 	virtual void		Clear( bool freeMemory = true );
+
 	// set data for reading
 	void				SetData( const char* data, int length );
+
 	// returns const pointer to the memory buffer
 	const char*			GetDataPtr() const { return filePtr; }
+
 	// returns pointer to the memory buffer
 	char*				GetDataPtr() { return filePtr; }
+
 	// set the file granularity
 	void				SetGranularity( int g )
 	{

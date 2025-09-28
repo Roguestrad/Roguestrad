@@ -727,10 +727,6 @@ CONSOLE_COMMAND_SHIP( convertMapQuakeToDoom, "Convert Quake .map in Valve 220 ma
 		idStrStatic<MAX_OSPATH> extension;
 		canonical.StripFileExtension();
 
-		// idStrStatic< MAX_OSPATH > convertedFileName;
-		// convertedFileName = canonical;
-		// convertedFileName += "_valve220";
-
 		map.Write( canonical, ".map" );
 	}
 

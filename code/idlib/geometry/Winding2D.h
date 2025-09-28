@@ -59,6 +59,7 @@ public:
 	// splits the winding into a front and back winding, the winding itself stays unchanged
 	// returns a SIDE_?
 	int			  Split( const idVec3& plane, const float epsilon, idWinding2D** front, idWinding2D** back ) const;
+
 	// cuts off the part at the back side of the plane, returns true if some part was at the front
 	// if there is nothing at the front the number of points is set to zero
 	bool		  ClipInPlace( const idVec3& plane, const float epsilon = ON_EPSILON, const bool keepOn = false );

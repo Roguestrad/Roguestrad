@@ -137,7 +137,6 @@ void SamplerCache::Clear()
 
 nvrhi::SamplerHandle SamplerCache::GetOrCreateSampler( nvrhi::SamplerDesc desc )
 {
-#if 1
 	size_t hash = std::hash<nvrhi::SamplerDesc> {}( desc );
 
 	mutex.Lock();
@@ -169,7 +168,4 @@ nvrhi::SamplerHandle SamplerCache::GetOrCreateSampler( nvrhi::SamplerDesc desc )
 	}
 
 	return result;
-#else
-	return device->createSampler( desc );
-#endif
 }

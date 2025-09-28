@@ -97,50 +97,67 @@ public:
 
 public:
 	idTraceModel();
+
 	// axial bounding box
 	idTraceModel( const idBounds& boxBounds );
+
 	// cylinder approximation
 	idTraceModel( const idBounds& cylBounds, const int numSides );
+
 	// bone
 	idTraceModel( const float length, const float width );
 
 	// axial box
 	void  SetupBox( const idBounds& boxBounds );
 	void  SetupBox( const float size );
+
 	// octahedron
 	void  SetupOctahedron( const idBounds& octBounds );
 	void  SetupOctahedron( const float size );
+
 	// dodecahedron
 	void  SetupDodecahedron( const idBounds& dodBounds );
 	void  SetupDodecahedron( const float size );
+
 	// cylinder approximation
 	void  SetupCylinder( const idBounds& cylBounds, const int numSides );
 	void  SetupCylinder( const float height, const float width, const int numSides );
+
 	// cone approximation
 	void  SetupCone( const idBounds& coneBounds, const int numSides );
 	void  SetupCone( const float height, const float width, const int numSides );
+
 	// two tetrahedrons attached to each other
 	void  SetupBone( const float length, const float width );
+
 	// arbitrary convex polygon
 	void  SetupPolygon( const idVec3* v, const int count );
 	void  SetupPolygon( const idWinding& w );
+
 	// generate edge normals
 	int	  GenerateEdgeNormals();
+
 	// translate the trm
 	void  Translate( const idVec3& translation );
+
 	// rotate the trm
 	void  Rotate( const idMat3& rotation );
+
 	// shrink the model m units on all sides
 	void  Shrink( const float m );
+
 	// compare
 	bool  Compare( const idTraceModel& trm ) const;
 	bool  operator==( const idTraceModel& trm ) const;
 	bool  operator!=( const idTraceModel& trm ) const;
+
 	// get the area of one of the polygons
 	float GetPolygonArea( int polyNum ) const;
+
 	// get the silhouette edges
 	int	  GetProjectionSilhouetteEdges( const idVec3& projectionOrigin, int silEdges[MAX_TRACEMODEL_EDGES] ) const;
 	int	  GetParallelProjectionSilhouetteEdges( const idVec3& projectionDir, int silEdges[MAX_TRACEMODEL_EDGES] ) const;
+
 	// calculate mass properties assuming an uniform density
 	void  GetMassProperties( const float density, float& mass, idVec3& centerOfMass, idMat3& inertiaTensor ) const;
 

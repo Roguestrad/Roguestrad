@@ -51,7 +51,7 @@ Key differences will include:
 
 Roguestrad follows a lean and focused design that values clarity and simplicity over feature bloat. Its core mission is to empower developers who want to create classic run & gun gameplay with a modernized blend of id Tech 3, 4 & 5.
 
-- Orthodox C++ for simplicity: Clean, straightforward code without unnecessary abstractions. Easy to understand, extend, profile, and maintain. Game dev is hard enough - Roguestrad skips the fancy-pants tech flexing of overengineered language abuse, making C++ as easy as C# coding.
+- Orthodox C++ for simplicity: Clean, straightforward code without unnecessary abstractions. Easy to understand, extend, debug, profile, and maintain. Game dev is hard enough - Roguestrad skips the fancy-pants tech flexing of overengineered language abuse, making C++ as easy as C# coding.
 
 - KISS (Keep It Simple, Stupid): Avoid overengineering and keep systems understandable. No questionable trends like ECS, Data-Oriented Design or Realtime Raytracing that add a lot of complexity but zero gibs to your boomer shooter.
 

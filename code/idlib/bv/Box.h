@@ -85,14 +85,17 @@ public:
 	bool		  ContainsPoint( const idVec3& p ) const; // includes touching
 	bool		  IntersectsBox( const idBox& a ) const;  // includes touching
 	bool		  LineIntersection( const idVec3& start, const idVec3& end ) const;
+
 	// intersection points are (start + dir * scale1) and (start + dir * scale2)
 	bool		  RayIntersection( const idVec3& start, const idVec3& dir, float& scale1, float& scale2 ) const;
 
 	// tight box for a collection of points
 	void		  FromPoints( const idVec3* points, const int numPoints );
+
 	// most tight box for a translation
 	void		  FromPointTranslation( const idVec3& point, const idVec3& translation );
 	void		  FromBoxTranslation( const idBox& box, const idVec3& translation );
+
 	// most tight box for a rotation
 	void		  FromPointRotation( const idVec3& point, const idRotation& rotation );
 	void		  FromBoxRotation( const idBox& box, const idRotation& rotation );

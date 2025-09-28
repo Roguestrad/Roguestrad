@@ -44,6 +44,7 @@ code/.idea/
 code/.vscode/
 code/cmake-build-*/
 code/bin/
+code/doxy*
 /tools/
 code/game/gamesys/GameTypeInfo.h
 code/game/gamesys/GameTypeInfo.cpp

@@ -73,14 +73,17 @@ public:
 	// frontOnPlaneEdges and backOnPlaneEdges optionally store the indexes to the edges that lay on the split plane
 	// returns a SIDE_?
 	int					 Split( const idPlane& plane, const float epsilon, idSurface** front, idSurface** back, int* frontOnPlaneEdges = NULL, int* backOnPlaneEdges = NULL ) const;
+
 	// cuts off the part at the back side of the plane, returns true if some part was at the front
 	// if there is nothing at the front the number of points is set to zero
 	bool				 ClipInPlace( const idPlane& plane, const float epsilon = ON_EPSILON, const bool keepOn = false );
 
 	// returns true if each triangle can be reached from any other triangle by a traversal
 	bool				 IsConnected() const;
+
 	// returns true if the surface is closed
 	bool				 IsClosed() const;
+
 	// returns true if the surface is a convex hull
 	bool				 IsPolytope( const float epsilon = 0.1f ) const;
 
@@ -89,6 +92,7 @@ public:
 
 	// returns true if the line intersects one of the surface triangles
 	bool				 LineIntersection( const idVec3& start, const idVec3& end, bool backFaceCull = false ) const;
+
 	// intersection point is start + dir * scale
 	bool				 RayIntersection( const idVec3& start, const idVec3& dir, float& scale, bool backFaceCull = false ) const;
 
