@@ -42,14 +42,6 @@ Only the main sprite is allowed to add things to the dictionary
 */
 class idSWFSprite
 {
-	// RB: for SVG export
-	struct SVGDisplayEntry {
-		int				characterID;
-		swfMatrix_t		matrix;
-		swfColorXform_t color;
-		idStr			name;
-	};
-
 public:
 	idSWFSprite( class idSWF* swf );
 	~idSWFSprite();
@@ -72,7 +64,15 @@ public:
 	void		 WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
 	void		 WriteSVG_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
 
-	void		 WriteSVGUnfolded_r( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict, const swfMatrix_t& parentMatrix, const swfColorXform_t& parentColor, int indent );
+	void		 WriteSVGUnfolded_r( idFile*				 f,
+				int											 characterID,
+				const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
+				const swfMatrix_t&							 parentMatrix,
+				const swfColorXform_t&						 parentColor,
+				idHashTableT<int, swfDisplayEntry_t>&		 depthMap,
+				float										 frameDur,
+				int											 indent );
+
 	void		 WriteSVGUnfolded_PlaceObject2( idFile*		 f,
 				idSWFBitStream&								 bitstream,
 				int											 characterID,
@@ -80,7 +80,9 @@ public:
 				const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
 				const swfMatrix_t&							 parentMatrix,
 				const swfColorXform_t&						 parentColor,
-				idHashTableT<int, SVGDisplayEntry>&			 depthMap,
+				idHashTableT<int, swfDisplayEntry_t>&		 depthMap,
+				int											 currentFrame,
+				float										 frameDur,
 				int											 indent );
 
 	void		 WriteSWF( idFile_SWF& f, int characterID );

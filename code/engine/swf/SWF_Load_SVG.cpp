@@ -260,11 +260,12 @@ void idSWF::WriteSVG( const char* filename )
 	file->WriteFloatString( "\t</defs>\n" );
 
 	if( exportUnfolded ) {
-		int				characterID = dictionary.Num();
-		swfMatrix_t		identityMatrix;
-		swfColorXform_t identityColor;
-
-		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, identityMatrix, identityColor, 2 );
+		int									 characterID = dictionary.Num();
+		swfMatrix_t							 identityMatrix;
+		swfColorXform_t						 identityColor;
+		idHashTableT<int, swfDisplayEntry_t> depthMap;
+		float								 frameDur = ( ( float )frameRate / 256.0f );
+		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, identityMatrix, identityColor, depthMap, frameDur, 2 );
 	} else {
 		mainsprite->WriteSVG( file, dictionary.Num(), dictionary );
 	}

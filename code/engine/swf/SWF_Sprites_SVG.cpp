@@ -55,6 +55,43 @@ swfColorXform_t CombineColorXform( const swfColorXform_t& a, const swfColorXform
 	return out;
 }
 
+static void WriteAnimateTransform( idFile* file, const idStr& tabs, const swfMatrix_t& from, const swfMatrix_t& to, int frame, float frameDur )
+{
+	float begin = frame * frameDur;
+	file->WriteFloatString( "%s<animateTransform attributeName=\"transform\" type=\"matrix\" "
+							"begin=\"%fs\" dur=\"%fs\" "
+							"from=\"matrix(%f %f %f %f %f %f)\" "
+							"to=\"matrix(%f %f %f %f %f %f)\" fill=\"freeze\" />\n",
+		tabs.c_str(),
+		begin,
+		frameDur,
+		from.xx,
+		from.yx,
+		from.xy,
+		from.yy,
+		from.tx,
+		from.ty,
+		to.xx,
+		to.yx,
+		to.xy,
+		to.yy,
+		to.tx,
+		to.ty );
+}
+
+static void WriteAnimateOpacity( idFile* file, const idStr& tabs, const swfColorXform_t& from, const swfColorXform_t& to, int frame, float frameDur )
+{
+	float begin = frame * frameDur;
+	file->WriteFloatString( "%s<animate attributeName=\"opacity\" "
+							"begin=\"%fs\" dur=\"%fs\" "
+							"from=\"%f\" to=\"%f\" fill=\"freeze\" />\n",
+		tabs.c_str(),
+		begin,
+		frameDur,
+		from.mul.w,
+		to.mul.w );
+}
+
 void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict )
 {
 	f->WriteFloatString( "\t\t<g id=\"%i\" >\n", characterID );
@@ -89,44 +126,66 @@ void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList<idSWFDictio
 	f->WriteFloatString( "\t\t</g>\n" );
 }
 
-void idSWFSprite::WriteSVGUnfolded_r( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict, const swfMatrix_t& parentMatrix, const swfColorXform_t& parentColor, int indent )
+void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
+	int											 characterID,
+	const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
+	const swfMatrix_t&							 parentMatrix,
+	const swfColorXform_t&						 parentColor,
+	idHashTableT<int, swfDisplayEntry_t>&		 depthMap,
+	float										 frameDur,
+	int											 indent )
 {
-	idHashTableT<int, SVGDisplayEntry> depthMap;
-	depthMap.Clear();
-
 	idStr tabs;
 	tabs.Fill( '\t', indent );
 
-	f->WriteFloatString( "%s<g id=\"%i\" >\n", tabs.c_str(), characterID );
+	file->WriteFloatString( "%s<g id=\"%i\">\n", tabs.c_str(), characterID );
 
-	// Select frame 0 for static export; could be extended to use frameLabels (e.g., "rollOn")
-	// int frameStart = frameOffsets[0];
-	// int frameEnd = ( frameCount > 1 ) ? frameOffsets[1] : commands.Num();
+	// Iterate frame by frame
+	for( int frame = 0; frame < frameCount; frame++ ) {
+		int frameStart = frameOffsets[frame];
+		int frameEnd   = ( frame < frameCount - 1 ) ? frameOffsets[frame + 1] : commands.Num();
 
-	// for (int i = frameStart; i < frameEnd; i++)
-	for( int i = 0; i < commands.Num(); i++ ) {
-		idSWFSprite::swfSpriteCommand_t& command = commands[i];
+		for( int c = frameStart; c < frameEnd; c++ ) {
+			idSWFSprite::swfSpriteCommand_t& command = commands[c];
+			command.stream.Rewind();
 
-		command.stream.Rewind();
-		switch( command.tag ) {
-#define HANDLE_SWF_TAG( x )                                                                                               \
-	case Tag_##x:                                                                                                         \
-		WriteSVGUnfolded_##x( f, command.stream, characterID, i, dict, parentMatrix, parentColor, depthMap, indent + 1 ); \
-		break;
-			HANDLE_SWF_TAG( PlaceObject2 );
-			// HANDLE_SWF_TAG( PlaceObject3 );
-			// HANDLE_SWF_TAG( RemoveObject2 );
-			// HANDLE_SWF_TAG( StartSound );
-			// HANDLE_SWF_TAG( DoAction );
-			// HANDLE_SWF_TAG( DoLua );
-#undef HANDLE_SWF_TAG
-			default:
-				break;
-				// idLib::Printf( "Export Sprite: Unhandled tag %s\n", idSWF::GetTagName( command.tag ) );
+			switch( command.tag ) {
+				case Tag_PlaceObject2:
+					WriteSVGUnfolded_PlaceObject2( file,
+						command.stream,
+						characterID,
+						c, // commandID
+						dict,
+						parentMatrix,
+						parentColor,
+						depthMap,
+						frame, // currentFrame
+						frameDur,
+						indent + 1 );
+					break;
+
+				case Tag_PlaceObject3:
+					// optional, maybe later
+					break;
+
+				case Tag_RemoveObject2:
+					// TODO: possibly export <animate ... visibility="hidden">
+					break;
+
+				case Tag_StartSound:
+				case Tag_DoAction:
+				case Tag_DoLua:
+					// ignore for now
+					break;
+
+				default:
+					idLib::Printf( "Export Sprite: Unhandled tag %s\n", idSWF::GetTagName( command.tag ) );
+					break;
+			}
 		}
 	}
 
-	f->WriteFloatString( "%s</g>\n", tabs.c_str() );
+	file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 }
 
 void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream, int sourceCharacterID, int commandID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict )
@@ -255,7 +314,9 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	const idList<idSWFDictionaryEntry, TAG_SWF>&		 dict,
 	const swfMatrix_t&									 parentMatrix,
 	const swfColorXform_t&								 parentColor,
-	idHashTableT<int, SVGDisplayEntry>&					 depthMap,
+	idHashTableT<int, swfDisplayEntry_t>&				 depthMap,
+	int													 currentFrame,
+	float												 frameDur,
 	int													 indent )
 {
 	uint8 flags1 = bitstream.ReadU8();
@@ -265,10 +326,6 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	if( ( flags1 & PlaceFlagHasCharacter ) != 0 ) {
 		characterID = bitstream.ReadU16();
 	}
-
-	// if( characterID == -1 ) {
-	//	return;
-	// }
 
 	idStr tabs;
 	tabs.Fill( '\t', indent );
@@ -308,7 +365,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 
 		// RB: this adds a lot bloat
 		if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
-			filterID.Format( "cf_%i_%i", characterID, commandID );
+			filterID.Format( "cf_%i_%i", ( characterID != -1 ) ? characterID : depth, commandID );
 
 			idVec4 colorMul = colorWhite;
 			if( cxf.mul != vec4_one ) {
@@ -352,20 +409,26 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		name = bitstream.ReadString();
 	}
 
-	// ---- Here comes the depthMap logic ----
+	// ===========================================================
+	// DisplayList Handling with Animation
+	// ===========================================================
 	if( flags1 & PlaceFlagMove ) {
 		// Update existing object
-		SVGDisplayEntry* entry;
+		swfDisplayEntry_t* entry;
 		depthMap.Get( depth, &entry );
 		if( entry != NULL ) {
 			if( characterID != -1 ) {
 				entry->characterID = characterID;
 			}
+			// Matrix changed?
 			if( flags1 & PlaceFlagHasMatrix ) {
+				WriteAnimateTransform( file, tabs, entry->matrix, localMatrix, currentFrame, frameDur );
 				entry->matrix = localMatrix;
 			}
+			// Color changed?
 			if( flags1 & PlaceFlagHasColorTransform ) {
-				entry->color = localColor;
+				WriteAnimateOpacity( file, tabs, entry->cxf, localColor, currentFrame, frameDur );
+				entry->cxf = localColor;
 			}
 			if( !name.IsEmpty() ) {
 				entry->name = name;
@@ -379,10 +442,10 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			return;
 		}
 
-		SVGDisplayEntry entry;
+		swfDisplayEntry_t entry;
 		entry.characterID = characterID;
 		entry.matrix	  = localMatrix;
-		entry.color		  = localColor;
+		entry.cxf		  = localColor;
 		entry.name		  = name;
 
 		depthMap.Set( depth, entry );
@@ -390,13 +453,20 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		// TODO: log initial keyframe into animTracks
 	}
 
-	// ---- Actual writing of the instance ----
+	// ===========================================================
+	// Write into SVG (only for Create!)
+	// ===========================================================
 	if( characterID == -1 ) {
 		return;
 	}
 
-	const idSWFDictionaryEntry& entry = dict[characterID];
-	switch( entry.type ) {
+	/*swfDisplayEntry_t* entry;
+	if( !depthMap.Get( depth, &entry ) || entry == NULL ) {
+		return;
+	}*/
+
+	const idSWFDictionaryEntry& dictEntry = dict[characterID];
+	switch( dictEntry.type ) {
 		case SWF_DICT_MORPH:
 		case SWF_DICT_SHAPE:
 		case SWF_DICT_TEXT:
@@ -422,7 +492,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		}
 
 		case SWF_DICT_SPRITE: {
-			idSWFSprite* sprite = entry.sprite;
+			idSWFSprite* sprite = dictEntry.sprite;
 
 			if( !name.IsEmpty() ) {
 				file->WriteFloatString( "%s<g id=\"%s\" ", tabs.c_str(), name.c_str() );
@@ -440,7 +510,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 
 			file->WriteFloatString( ">\n" );
 
-			sprite->WriteSVGUnfolded_r( file, characterID, dict, combinedMatrix, combinedColor, indent + 1 );
+			sprite->WriteSVGUnfolded_r( file, characterID, dict, combinedMatrix, combinedColor, depthMap, frameDur, indent + 1 );
 
 			file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 			break;

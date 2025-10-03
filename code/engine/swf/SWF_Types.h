@@ -294,6 +294,7 @@ struct swfDisplayEntry_t {
 	swfMatrix_t				   matrix;
 	swfColorXform_t			   cxf;
 	float					   ratio;
+	idStr					   name; // RB: instance name
 	// if this entry is a sprite, then this will point to the specific instance of that sprite
 	class idSWFSpriteInstance* spriteInstance;
 	// if this entry is text, then this will point to the specific instance of the text
