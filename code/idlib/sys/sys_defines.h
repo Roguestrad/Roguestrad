@@ -288,11 +288,6 @@ bulk of the codebase, so it is the best place for analyze pragmas.
 // False	2	4214	V519	The 'ignoredReturnValue' object is assigned values twice successively. Perhaps this is a mistake. Check lines: 545, 547.	Rage	collisionmodelmanager_debug.cpp	547	False
 extern volatile int ignoredReturnValue;
 
-#define MAX_TYPE( x )			( ( ( ( 1 << ( ( sizeof( x ) - 1 ) * 8 - 1 ) ) - 1 ) << 8 ) | 255 )
-#define MIN_TYPE( x )			( - MAX_TYPE( x ) - 1 )
-#define MAX_UNSIGNED_TYPE( x )	( ( ( ( 1U << ( ( sizeof( x ) - 1 ) * 8 ) ) - 1 ) << 8 ) | 255U )
-#define MIN_UNSIGNED_TYPE( x )	0
-
 #endif
 
 

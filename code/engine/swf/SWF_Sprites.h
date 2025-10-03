@@ -42,6 +42,14 @@ Only the main sprite is allowed to add things to the dictionary
 */
 class idSWFSprite
 {
+	// RB: for SVG export
+	struct SVGDisplayEntry {
+		int				characterID;
+		swfMatrix_t		matrix;
+		swfColorXform_t color;
+		idStr			name;
+	};
+
 public:
 	idSWFSprite( class idSWF* swf );
 	~idSWFSprite();
@@ -72,6 +80,7 @@ public:
 				const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
 				const swfMatrix_t&							 parentMatrix,
 				const swfColorXform_t&						 parentColor,
+				idHashTableT<int, SVGDisplayEntry>&			 depthMap,
 				int											 indent );
 
 	void		 WriteSWF( idFile_SWF& f, int characterID );

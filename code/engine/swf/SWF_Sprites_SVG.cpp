@@ -91,6 +91,9 @@ void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList<idSWFDictio
 
 void idSWFSprite::WriteSVGUnfolded_r( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict, const swfMatrix_t& parentMatrix, const swfColorXform_t& parentColor, int indent )
 {
+	idHashTableT<int, SVGDisplayEntry> depthMap;
+	depthMap.Clear();
+
 	idStr tabs;
 	tabs.Fill( '\t', indent );
 
@@ -106,9 +109,9 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile* f, int characterID, const idList<i
 
 		command.stream.Rewind();
 		switch( command.tag ) {
-#define HANDLE_SWF_TAG( x )                                                                                     \
-	case Tag_##x:                                                                                               \
-		WriteSVGUnfolded_##x( f, command.stream, characterID, i, dict, parentMatrix, parentColor, indent + 1 ); \
+#define HANDLE_SWF_TAG( x )                                                                                               \
+	case Tag_##x:                                                                                                         \
+		WriteSVGUnfolded_##x( f, command.stream, characterID, i, dict, parentMatrix, parentColor, depthMap, indent + 1 ); \
 		break;
 			HANDLE_SWF_TAG( PlaceObject2 );
 			// HANDLE_SWF_TAG( PlaceObject3 );
@@ -226,7 +229,6 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 
 	if( ( flags1 & PlaceFlagHasRatio ) != 0 ) {
 		uint16 ratio = bitstream.ReadU16();
-		// file->WriteFloatString( ",\n\t\t\t\t\t\"ratio\": %i", ratio );
 	}
 
 	if( ( flags1 & PlaceFlagHasName ) != 0 ) {
@@ -237,7 +239,6 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 
 	if( ( flags1 & PlaceFlagHasClipDepth ) != 0 ) {
 		uint16 clipDepth = bitstream.ReadU16();
-		// file->WriteFloatString( ",\n\t\t\t\t\t\"clipDepth\": %i", clipDepth );
 	}
 
 	if( ( flags1 & PlaceFlagHasClipActions ) != 0 ) {
@@ -254,6 +255,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	const idList<idSWFDictionaryEntry, TAG_SWF>&		 dict,
 	const swfMatrix_t&									 parentMatrix,
 	const swfColorXform_t&								 parentColor,
+	idHashTableT<int, SVGDisplayEntry>&					 depthMap,
 	int													 indent )
 {
 	uint8 flags1 = bitstream.ReadU8();
@@ -264,9 +266,9 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		characterID = bitstream.ReadU16();
 	}
 
-	if( characterID == -1 ) {
-		return;
-	}
+	// if( characterID == -1 ) {
+	//	return;
+	// }
 
 	idStr tabs;
 	tabs.Fill( '\t', indent );
@@ -350,6 +352,49 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		name = bitstream.ReadString();
 	}
 
+	// ---- Here comes the depthMap logic ----
+	if( flags1 & PlaceFlagMove ) {
+		// Update existing object
+		SVGDisplayEntry* entry;
+		depthMap.Get( depth, &entry );
+		if( entry != NULL ) {
+			if( characterID != -1 ) {
+				entry->characterID = characterID;
+			}
+			if( flags1 & PlaceFlagHasMatrix ) {
+				entry->matrix = localMatrix;
+			}
+			if( flags1 & PlaceFlagHasColorTransform ) {
+				entry->color = localColor;
+			}
+			if( !name.IsEmpty() ) {
+				entry->name = name;
+			}
+			// TODO: log keyframe into animTracks here
+		}
+	} else {
+		// New entry (as in runtime, mandatory: characterID != -1)
+		if( characterID == -1 ) {
+			idLib::Warning( "SVG Export: PlaceObject2 without characterID at depth %i", depth );
+			return;
+		}
+
+		SVGDisplayEntry entry;
+		entry.characterID = characterID;
+		entry.matrix	  = localMatrix;
+		entry.color		  = localColor;
+		entry.name		  = name;
+
+		depthMap.Set( depth, entry );
+
+		// TODO: log initial keyframe into animTracks
+	}
+
+	// ---- Actual writing of the instance ----
+	if( characterID == -1 ) {
+		return;
+	}
+
 	const idSWFDictionaryEntry& entry = dict[characterID];
 	switch( entry.type ) {
 		case SWF_DICT_MORPH:
@@ -366,6 +411,10 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 				if( !filterID.IsEmpty() ) {
 					file->WriteFloatString( "filter=\"url(#%s)\" />\n", filterID.c_str() );
 				}
+			}
+
+			if( !name.IsEmpty() ) {
+				file->WriteFloatString( "id=\"%s\" ", name.c_str() );
 			}
 
 			file->WriteFloatString( " />\n" );
