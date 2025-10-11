@@ -131,16 +131,18 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 	const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
 	const swfMatrix_t&							 parentMatrix,
 	const swfColorXform_t&						 parentColor,
-	idHashTableT<int, svgDisplayEntry_t>&		 depthMap,
+	idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
 	float										 frameDur,
 	int											 indent )
 {
-	idStr tabs;
+	idHashTableT<int, svgDisplayEntry_t*> localDepthMap;
+
+	idStr								  tabs;
 	tabs.Fill( '\t', indent );
 
-	file->WriteFloatString( "%s<g id=\"%i\">\n", tabs.c_str(), characterID );
+	file->WriteFloatString( "%s<g id=\"%i\" >\n", tabs.c_str(), characterID );
 
-	// Iterate frame by frame
+	// iterate frame by frame
 	for( int frame = 0; frame < frameCount; frame++ ) {
 		int frameStart = frameOffsets[frame];
 		int frameEnd   = ( frame < frameCount - 1 ) ? frameOffsets[frame + 1] : commands.Num();
@@ -158,7 +160,8 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 						dict,
 						parentMatrix,
 						parentColor,
-						depthMap,
+						characterMap,
+						localDepthMap,
 						frame, // currentFrame
 						frameDur,
 						indent + 1 );
@@ -185,6 +188,44 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 		}
 	}
 
+	// ----------------------------------------------------------
+	// After all frames -> export collected animations
+	// ----------------------------------------------------------
+	for( int i = 0; i < localDepthMap.Num(); i++ ) {
+		svgDisplayEntry_t* e = *localDepthMap.GetIndex( i );
+		if( e == NULL ) {
+			continue;
+		}
+
+		// animate opacity track
+		if( e->opacityFrames.Num() > 1 ) {
+			file->WriteFloatString( "\t%s<animate xlink:href=\"#%s\" attributeName=\"opacity\" values=\"", tabs.c_str(), e->name.IsEmpty() ? va( "%i", e->characterID ) : e->name.c_str() );
+
+			for( int f = 0; f < e->opacityFrames.Num(); f++ ) {
+				file->WriteFloatString( "%f", e->opacityFrames[f] );
+				if( f < e->opacityFrames.Num() - 1 )
+					file->WriteFloatString( ";" );
+			}
+			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
+		}
+
+#if 0
+		// animate transform track
+		if (e->matrixFrames.Num() > 1) {
+			file->WriteFloatString("%s\t<animateTransform attributeName=\"transform\" type=\"matrix\" values=\"", tabs.c_str());
+			for (int f = 0; f < e->matrixFrames.Num(); f++) {
+				const swfMatrix_t& m = e->matrixFrames[f];
+				file->WriteFloatString("matrix(%f %f %f %f %f %f)",
+					m.xx, m.yx, m.xy, m.yy, m.tx, m.ty);
+				if (f < e->matrixFrames.Num() - 1)
+					file->WriteFloatString(";");
+			}
+			file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"indefinite\" />\n",
+				e->matrixFrames.Num() * frameDur);
+		}
+#endif
+	}
+
 	file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 }
 
@@ -192,8 +233,6 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 {
 	uint8 flags1 = bitstream.ReadU8();
 	int	  depth	 = bitstream.ReadU16();
-
-	//<use xlink:href="#candle" transform="translate(100,0)" />
 
 	int	  characterID = -1;
 	if( ( flags1 & PlaceFlagHasCharacter ) != 0 ) {
@@ -314,7 +353,8 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	const idList<idSWFDictionaryEntry, TAG_SWF>&		 dict,
 	const swfMatrix_t&									 parentMatrix,
 	const swfColorXform_t&								 parentColor,
-	idHashTableT<int, svgDisplayEntry_t>&				 depthMap,
+	idHashTableT<int, svgDisplayEntry_t>&				 characterMap,
+	idHashTableT<int, svgDisplayEntry_t*>&				 localDepthMap,
 	int													 currentFrame,
 	float												 frameDur,
 	int													 indent )
@@ -342,17 +382,19 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		bitstream.ReadMatrix( m );
 		localMatrix = m;
 
-		if( m.xx != 1.0f || m.yy != 1.0f || m.xy != 0.0f || m.yx != 0.0f ) {
-			transform.Format( "transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ",
-				m.xx, // a
-				m.yx, // b (instead of m.yy)
-				m.xy, // c
-				m.yy, // d (instead of m.yx)
-				m.tx, // e
-				m.ty  // f
-			);
-		} else if( m.tx != 0.0f || m.ty != 0.0f ) {
-			transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
+		if( characterID != -1 ) {
+			if( m.xx != 1.0f || m.yy != 1.0f || m.xy != 0.0f || m.yx != 0.0f ) {
+				transform.Format( "transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ",
+					m.xx, // a
+					m.yx, // b (instead of m.yy)
+					m.xy, // c
+					m.yy, // d (instead of m.yx)
+					m.tx, // e
+					m.ty  // f
+				);
+			} else if( m.tx != 0.0f || m.ty != 0.0f ) {
+				transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
+			}
 		}
 	}
 	swfMatrix_t combinedMatrix = CombineMatrix( parentMatrix, localMatrix );
@@ -363,40 +405,42 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		bitstream.ReadColorXFormRGBA( cxf );
 		localColor = cxf;
 
-		// RB: this adds a lot bloat
-		if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
-			filterID.Format( "cf_%i_%i", ( characterID != -1 ) ? characterID : depth, commandID );
+		// this adds a lot bloat, only do it for new objects
+		if( characterID != -1 ) {
+			if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
+				filterID.Format( "cf_%i_%i", ( characterID != -1 ) ? characterID : depth, commandID );
 
-			idVec4 colorMul = colorWhite;
-			if( cxf.mul != vec4_one ) {
-				colorMul = cxf.mul;
+				idVec4 colorMul = colorWhite;
+				if( cxf.mul != vec4_one ) {
+					colorMul = cxf.mul;
+				}
+				colorMul.w = 1.0f; // for debugging only, without most elements are invisible
+
+				idVec4 colorAdd = vec4_zero; // colorBlack
+				if( cxf.add != vec4_zero ) {
+					colorAdd = cxf.add;
+				}
+
+				file->WriteFloatString( "%s<filter id=\"%s\">\n"
+										"%s\t<feColorMatrix type=\"matrix\" values=\""
+										"%f 0 0 0 %f "
+										"0 %f 0 0 %f "
+										"0 0 %f 0 %f "
+										"0 0 0 %f %f\" />\n"
+										"%s</filter>\n",
+					tabs.c_str(),
+					filterID.c_str(),
+					tabs.c_str(),
+					colorMul.x,
+					colorAdd.x,
+					colorMul.y,
+					colorAdd.y,
+					colorMul.z,
+					colorAdd.z,
+					colorMul.w,
+					colorAdd.w,
+					tabs.c_str() );
 			}
-			colorMul.w = 1.0f; // for debugging only, without most elements are invisible
-
-			idVec4 colorAdd = vec4_zero; // colorBlack
-			if( cxf.add != vec4_zero ) {
-				colorAdd = cxf.add;
-			}
-
-			file->WriteFloatString( "%s<filter id=\"%s\">\n"
-									"%s\t<feColorMatrix type=\"matrix\" values=\""
-									"%f 0 0 0 %f "
-									"0 %f 0 0 %f "
-									"0 0 %f 0 %f "
-									"0 0 0 %f %f\" />\n"
-									"%s</filter>\n",
-				tabs.c_str(),
-				filterID.c_str(),
-				tabs.c_str(),
-				colorMul.x,
-				colorAdd.x,
-				colorMul.y,
-				colorAdd.y,
-				colorMul.z,
-				colorAdd.z,
-				colorMul.w,
-				colorAdd.w,
-				tabs.c_str() );
 		}
 	}
 	swfColorXform_t combinedColor = CombineColorXform( parentColor, localColor );
@@ -413,30 +457,23 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	// DisplayList Handling with Animation
 	// ===========================================================
 	if( flags1 & PlaceFlagMove ) {
-		// Update existing object
-		svgDisplayEntry_t* entry;
-		depthMap.Get( depth, &entry );
-		if( entry != NULL ) {
-			if( characterID != -1 ) {
-				entry->characterID = characterID;
-			}
-			// Matrix changed?
+		// update existing object
+		svgDisplayEntry_t** entryPtr;
+		if( localDepthMap.Get( depth, &entryPtr ) ) {
+			svgDisplayEntry_t* entry = *entryPtr;
+
 			if( flags1 & PlaceFlagHasMatrix ) {
-				WriteAnimateTransform( file, tabs, entry->matrix, localMatrix, currentFrame, frameDur );
+				entry->matrixFrames.Append( localMatrix );
 				entry->matrix = localMatrix;
 			}
-			// Color changed?
+
 			if( flags1 & PlaceFlagHasColorTransform ) {
-				WriteAnimateOpacity( file, tabs, entry->cxf, localColor, currentFrame, frameDur );
+				entry->opacityFrames.Append( localColor.mul.w ); // TODO should be full color animation
 				entry->cxf = localColor;
 			}
-			if( !name.IsEmpty() ) {
-				entry->name = name;
-			}
-			// TODO: log keyframe into animTracks here
 		}
 	} else {
-		// New entry (as in runtime, mandatory: characterID != -1)
+		// new entry (as in runtime, mandatory: characterID != -1)
 		if( characterID == -1 ) {
 			idLib::Warning( "SVG Export: PlaceObject2 without characterID at depth %i", depth );
 			return;
@@ -448,9 +485,15 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		entry.cxf		  = localColor;
 		entry.name		  = name;
 
-		depthMap.Set( depth, entry );
+		entry.matrixFrames.Append( localMatrix );
+		entry.opacityFrames.Append( localColor.mul.w );
 
-		// TODO: log initial keyframe into animTracks
+		characterMap.Set( characterID, entry );
+
+		svgDisplayEntry_t* entryPtr;
+		characterMap.Get( characterID, &entryPtr );
+
+		localDepthMap.Set( depth, entryPtr );
 	}
 
 	// ===========================================================
@@ -459,11 +502,6 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	if( characterID == -1 ) {
 		return;
 	}
-
-	/*swfDisplayEntry_t* entry;
-	if( !depthMap.Get( depth, &entry ) || entry == NULL ) {
-		return;
-	}*/
 
 	const idSWFDictionaryEntry& dictEntry = dict[characterID];
 	switch( dictEntry.type ) {
@@ -510,7 +548,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 
 			file->WriteFloatString( ">\n" );
 
-			sprite->WriteSVGUnfolded_r( file, characterID, dict, combinedMatrix, combinedColor, depthMap, frameDur, indent + 1 );
+			sprite->WriteSVGUnfolded_r( file, characterID, dict, combinedMatrix, combinedColor, characterMap, frameDur, indent + 1 );
 
 			file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 			break;

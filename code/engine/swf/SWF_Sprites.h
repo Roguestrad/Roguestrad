@@ -69,7 +69,7 @@ public:
 				const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
 				const swfMatrix_t&							 parentMatrix,
 				const swfColorXform_t&						 parentColor,
-				idHashTableT<int, svgDisplayEntry_t>&		 depthMap,
+				idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
 				float										 frameDur,
 				int											 indent );
 
@@ -80,7 +80,8 @@ public:
 				const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
 				const swfMatrix_t&							 parentMatrix,
 				const swfColorXform_t&						 parentColor,
-				idHashTableT<int, svgDisplayEntry_t>&		 depthMap,
+				idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
+				idHashTableT<int, svgDisplayEntry_t*>&		 localDepthMap,
 				int											 currentFrame,
 				float										 frameDur,
 				int											 indent );
