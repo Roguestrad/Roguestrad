@@ -131,7 +131,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 	const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
 	const swfMatrix_t&							 parentMatrix,
 	const swfColorXform_t&						 parentColor,
-	idHashTableT<int, swfDisplayEntry_t>&		 depthMap,
+	idHashTableT<int, svgDisplayEntry_t>&		 depthMap,
 	float										 frameDur,
 	int											 indent )
 {
@@ -314,7 +314,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	const idList<idSWFDictionaryEntry, TAG_SWF>&		 dict,
 	const swfMatrix_t&									 parentMatrix,
 	const swfColorXform_t&								 parentColor,
-	idHashTableT<int, swfDisplayEntry_t>&				 depthMap,
+	idHashTableT<int, svgDisplayEntry_t>&				 depthMap,
 	int													 currentFrame,
 	float												 frameDur,
 	int													 indent )
@@ -414,7 +414,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	// ===========================================================
 	if( flags1 & PlaceFlagMove ) {
 		// Update existing object
-		swfDisplayEntry_t* entry;
+		svgDisplayEntry_t* entry;
 		depthMap.Get( depth, &entry );
 		if( entry != NULL ) {
 			if( characterID != -1 ) {
@@ -442,7 +442,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			return;
 		}
 
-		swfDisplayEntry_t entry;
+		svgDisplayEntry_t entry;
 		entry.characterID = characterID;
 		entry.matrix	  = localMatrix;
 		entry.cxf		  = localColor;

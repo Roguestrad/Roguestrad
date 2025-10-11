@@ -294,12 +294,26 @@ struct swfDisplayEntry_t {
 	swfMatrix_t				   matrix;
 	swfColorXform_t			   cxf;
 	float					   ratio;
-	idStr					   name; // RB: instance name
 	// if this entry is a sprite, then this will point to the specific instance of that sprite
 	class idSWFSpriteInstance* spriteInstance;
 	// if this entry is text, then this will point to the specific instance of the text
 	class idSWFTextInstance*   textInstance;
 };
+
+struct svgDisplayEntry_t {
+	svgDisplayEntry_t();
+	uint16				characterID;
+	uint16				depth;
+	uint16				clipDepth;
+	uint16				blendMode;
+	swfMatrix_t			matrix;
+	swfColorXform_t		cxf;
+	float				ratio;
+	idStr				name; // RB: instance name
+	idList<float>		opacityFrames;
+	idList<swfMatrix_t> matrixFrames;
+};
+
 struct swfRenderState_t {
 	swfRenderState_t();
 	swfMatrix_t		  matrix;
@@ -435,6 +449,15 @@ ID_INLINE swfDisplayEntry_t::swfDisplayEntry_t() :
 	ratio( 0.0f ),
 	spriteInstance( NULL ),
 	textInstance( NULL )
+{
+}
+
+ID_INLINE svgDisplayEntry_t::svgDisplayEntry_t() :
+	characterID( 0 ),
+	depth( 0 ),
+	clipDepth( 0 ),
+	blendMode( 0 ),
+	ratio( 0.0f )
 {
 }
 

@@ -263,7 +263,7 @@ void idSWF::WriteSVG( const char* filename )
 		int									 characterID = dictionary.Num();
 		swfMatrix_t							 identityMatrix;
 		swfColorXform_t						 identityColor;
-		idHashTableT<int, swfDisplayEntry_t> depthMap;
+		idHashTableT<int, svgDisplayEntry_t> depthMap;
 		float								 frameDur = ( ( float )frameRate / 256.0f );
 		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, identityMatrix, identityColor, depthMap, frameDur, 2 );
 	} else {
