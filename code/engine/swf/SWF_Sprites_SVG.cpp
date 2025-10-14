@@ -197,22 +197,28 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 			continue;
 		}
 
+		idStr targetID = e->name.IsEmpty() ? va( "%i", e->characterID ) : e->name;
+
+#if 0
 		// animate opacity track
 		if( e->opacityFrames.Num() > 1 ) {
-			file->WriteFloatString( "\t%s<animate xlink:href=\"#%s\" attributeName=\"opacity\" values=\"", tabs.c_str(), e->name.IsEmpty() ? va( "%i", e->characterID ) : e->name.c_str() );
+			file->WriteFloatString( "\t%s<animate xlink:href=\"#%s\" attributeName=\"opacity\" values=\"", tabs.c_str(), targetID.c_str() );
 
 			for( int f = 0; f < e->opacityFrames.Num(); f++ ) {
 				file->WriteFloatString( "%f", e->opacityFrames[f] );
 				if( f < e->opacityFrames.Num() - 1 )
 					file->WriteFloatString( ";" );
 			}
-			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
+			//file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
+			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->opacityFrames.Num() * frameDur, targetID.c_str() );
 		}
+#endif
 
 #if 0
 		// animate transform track
 		if (e->matrixFrames.Num() > 1) {
-			file->WriteFloatString("%s\t<animateTransform attributeName=\"transform\" type=\"matrix\" values=\"", tabs.c_str());
+			file->WriteFloatString("%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"matrix\" values=\"", tabs.c_str(), targetID.c_str() );
+
 			for (int f = 0; f < e->matrixFrames.Num(); f++) {
 				const swfMatrix_t& m = e->matrixFrames[f];
 				file->WriteFloatString("matrix(%f %f %f %f %f %f)",
@@ -220,8 +226,8 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 				if (f < e->matrixFrames.Num() - 1)
 					file->WriteFloatString(";");
 			}
-			file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"indefinite\" />\n",
-				e->matrixFrames.Num() * frameDur);
+			//file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
+			file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->matrixFrames.Num() * frameDur, targetID.c_str() );
 		}
 #endif
 	}
