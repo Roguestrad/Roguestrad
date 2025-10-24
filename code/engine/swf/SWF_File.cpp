@@ -2,7 +2,7 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 2013-2015 Robert Beckebans
+Copyright (C) 2013-2025 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -332,6 +332,19 @@ void idFile_SWF::WriteTagHeader( swfTag_t tag, int32 tagLength )
 		WriteU16( tagIDLength );
 		WriteU32( tagLength );
 	}
+}
+
+void idFile_SWF::WriteString( const char* str )
+{
+	if( !str ) {
+		WriteU8( 0 ); // Null-Terminator for empty string
+		return;
+	}
+	idStr string( str );
+	string.Append( '\0' );
+	int len = string.Length();
+	ByteAlign();
+	Write( str, len );
 }
 
 int32 idFile_SWF::GetTagHeaderSize( swfTag_t tag, int32 tagLength )

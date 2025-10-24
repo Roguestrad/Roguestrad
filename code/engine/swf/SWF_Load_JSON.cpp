@@ -30,7 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../renderer/Font.h"
 #include "../renderer/Image.h"
-// #include "../../libs/rapidjson/include/rapidjson/document.h"
 
 using namespace rapidjson;
 

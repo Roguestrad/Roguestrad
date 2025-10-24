@@ -30,8 +30,14 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SWF_SPRITES_H__
 #define __SWF_SPRITES_H__
 
+// TODO: move rapidjson include to cpp so this does not pollute into precompiled.h
 #undef Bool
 #include "rapidjson/document.h"
+
+namespace pugi
+{
+class xml_node;
+}
 
 /*
 ================================================
@@ -60,6 +66,8 @@ public:
 	void		 WriteJSON_RemoveObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
 	void		 WriteJSON_DoAction( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
 	void		 WriteJSON_DoLua( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+
+	void		 LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded );
 
 	void		 WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
 	void		 WriteSVG_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );

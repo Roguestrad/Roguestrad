@@ -136,10 +136,18 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	jsonFileName.SetFileExtension( ".json" );
 	ID_TIME_T jsonSourceTime = fileSystem->GetTimestamp( jsonFileName );
 
+	idStr	  svgFileName = filename;
+	svgFileName.SetFileExtension( ".svg" );
+	ID_TIME_T svgSourceTime = fileSystem->GetTimestamp( svgFileName );
+
 	bool	  loadedFromJSON = false;
 	if( swf_loadBinary.GetBool() ) {
 		if( jsonSourceTime != FILE_NOT_FOUND_TIMESTAMP ) {
 			timestamp = jsonSourceTime;
+		}
+
+		if( svgSourceTime != FILE_NOT_FOUND_TIMESTAMP ) {
+			timestamp = svgSourceTime;
 		}
 
 		// don't binarize stuff on export
@@ -151,6 +159,8 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 			if( LoadJSON( jsonFileName ) ) {
 				loadedFromJSON = true;
 
+				WriteBinary( binaryFileName );
+			} else if( LoadSVG( svgFileName ) ) {
 				WriteBinary( binaryFileName );
 			} else if( LoadSWF( filename ) ) {
 				WriteBinary( binaryFileName );

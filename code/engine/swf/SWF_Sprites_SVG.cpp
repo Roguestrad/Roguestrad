@@ -29,7 +29,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-swfMatrix_t CombineMatrix( const swfMatrix_t& a, const swfMatrix_t& b )
+#include "libs/pugixml/pugixml.hpp"
+
+static swfMatrix_t CombineMatrix( const swfMatrix_t& a, const swfMatrix_t& b )
 {
 	swfMatrix_t out;
 	out.xx = a.xx * b.xx + a.xy * b.yx;
@@ -41,7 +43,7 @@ swfMatrix_t CombineMatrix( const swfMatrix_t& a, const swfMatrix_t& b )
 	return out;
 }
 
-swfColorXform_t CombineColorXform( const swfColorXform_t& a, const swfColorXform_t& b )
+static swfColorXform_t CombineColorXform( const swfColorXform_t& a, const swfColorXform_t& b )
 {
 	swfColorXform_t out;
 	out.mul.x = a.mul.x * b.mul.x;
@@ -90,6 +92,168 @@ static void WriteAnimateOpacity( idFile* file, const idStr& tabs, const swfColor
 		frameDur,
 		from.mul.w,
 		to.mul.w );
+}
+
+static swfMatrix_t ParseMatrixFromString( const char* str )
+{
+	swfMatrix_t m;
+	m.xx = 1.0f;
+	m.yy = 1.0f;
+	m.xy = 0.0f;
+	m.yx = 0.0f;
+	m.tx = 0.0f;
+	m.ty = 0.0f;
+	if( !str || !str[0] ) {
+		return m;
+	}
+
+	idStr	transform( str );
+	idLexer lexer;
+	lexer.LoadMemory( str, idStr::Length( str ), "matrix" );
+
+	if( transform.Find( "matrix", false ) != -1 ) {
+		lexer.ExpectTokenString( "matrix" );
+		lexer.ExpectTokenString( "(" );
+		m.xx = lexer.ParseFloat();
+		lexer.ExpectTokenString( "," );
+		m.yx = lexer.ParseFloat();
+		lexer.ExpectTokenString( "," );
+		m.xy = lexer.ParseFloat();
+		lexer.ExpectTokenString( "," );
+		m.yy = lexer.ParseFloat();
+		lexer.ExpectTokenString( "," );
+		m.tx = lexer.ParseFloat();
+		lexer.ExpectTokenString( "," );
+		m.ty = lexer.ParseFloat();
+		lexer.ExpectTokenString( ")" );
+	} else if( transform.Find( "translate", false ) != -1 ) {
+		lexer.ExpectTokenString( "translate" );
+		lexer.ExpectTokenString( "(" );
+		m.tx = lexer.ParseFloat();
+		lexer.ExpectTokenString( "," );
+		m.ty = lexer.ParseFloat();
+		lexer.ExpectTokenString( ")" );
+	}
+	// TODO: handle other Transform-Types (scale, rotate etc.)
+
+	lexer.FreeSource();
+	return m;
+}
+
+static swfColorXform_t ParseColorXformFromFilter( const char* filterStr )
+{
+	swfColorXform_t cxf;
+	cxf.mul = vec4_one;
+	cxf.add = vec4_zero;
+	if( filterStr ) {
+		// TODO: Parse <feColorMatrix> values
+	}
+	return cxf;
+}
+
+void swfColorRGBA_t::ParseSVGColorFromString( const char* str )
+{
+	if( !str || !str[0] ) {
+		return;
+	}
+
+	idStr colorStr( str );
+	if( colorStr.Find( "rgba", false ) == -1 ) {
+		return;
+	}
+
+	idLexer lexer;
+	lexer.LoadMemory( str, idStr::Length( str ), "color" );
+	lexer.ExpectTokenString( "rgba" );
+	lexer.ExpectTokenString( "(" );
+	int r = lexer.ParseInt();
+	lexer.ExpectTokenString( "," );
+	int g = lexer.ParseInt();
+	lexer.ExpectTokenString( "," );
+	int b = lexer.ParseInt();
+	lexer.ExpectTokenString( "," );
+	float a = lexer.ParseFloat();
+	lexer.ExpectTokenString( ")" );
+
+	this->r = ( uint8 )( r );
+	this->g = ( uint8 )( g );
+	this->b = ( uint8 )( b );
+	this->a = ( uint8 )( a * 255.0f );
+
+	lexer.FreeSource();
+}
+
+void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded )
+{
+	frameCount = 1;
+
+	int depthCounter = 1;
+
+	for( pugi::xml_node child = node.first_child(); child; child = child.next_sibling() ) {
+		std::string childName = child.name();
+
+		if( childName == "use" ) {
+			swfSpriteCommand_t& cmd = commands.Alloc();
+			cmd.tag					= Tag_PlaceObject2;
+
+			idFile_SWF memFile( new idFile_Memory() );
+
+			uint8	   flags = PlaceFlagHasCharacter | PlaceFlagMove;
+			if( child.attribute( "transform" ) )
+				flags |= PlaceFlagHasMatrix;
+			if( child.attribute( "filter" ) )
+				flags |= PlaceFlagHasColorTransform;
+
+			memFile.WriteU8( flags );
+			memFile.WriteU16( depthCounter++ );
+
+			std::string href   = child.attribute( "xlink:href" ).value();
+			int			charID = atoi( href.c_str() + 1 );
+			memFile.WriteU16( charID );
+
+			if( flags & PlaceFlagHasMatrix ) {
+				swfMatrix_t m = ParseMatrixFromString( child.attribute( "transform" ).value() );
+				memFile.WriteMatrix( m );
+			}
+
+			if( flags & PlaceFlagHasColorTransform ) {
+				swfColorXform_t cxf = ParseColorXformFromFilter( child.attribute( "filter" ).value() );
+				memFile.WriteColorXFormRGBA( cxf );
+			}
+
+			if( child.attribute( "id" ) ) {
+				flags |= PlaceFlagHasName;
+				idStr name = child.attribute( "id" ).value();
+				memFile.WriteString( name );
+			}
+
+			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+
+		} else if( childName == "g" ) {
+			int					  newCharID = dict.Num();
+			idSWFDictionaryEntry& newEntry	= dict.Alloc();
+			newEntry.type					= SWF_DICT_SPRITE;
+			newEntry.sprite					= new idSWFSprite( NULL );
+
+			newEntry.sprite->LoadSVGNode( child, dict, isUnfolded );
+
+			swfSpriteCommand_t& cmd = commands.Alloc();
+			cmd.tag					= Tag_PlaceObject2;
+			idFile_SWF memFile( new idFile_Memory() );
+			uint8	   flags = PlaceFlagHasCharacter;
+			memFile.WriteU8( flags );
+			memFile.WriteU16( depthCounter++ );
+			memFile.WriteU16( newCharID );
+
+			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+
+		} else if( childName == "animate" || childName == "animateTransform" ) {
+			idLib::Warning( "SVG Import: Animations not fully supported yet." );
+		}
+	}
+
+	frameOffsets.Append( 0 );
+	frameOffsets.Append( commands.Num() );
 }
 
 void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict )

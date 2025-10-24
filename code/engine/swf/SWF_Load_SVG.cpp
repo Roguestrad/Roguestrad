@@ -29,11 +29,179 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-===================
-idSWF::WriteSVG
-===================
-*/
+#include "libs/pugixml/pugixml.hpp"
+
+static void ParsePointsFromString( const char* pointsStr, idList<idVec2>& verts )
+{
+	verts.Clear();
+	if( !pointsStr || !pointsStr[0] ) {
+		return;
+	}
+
+	idLexer lexer;
+	lexer.LoadMemory( pointsStr, idStr::Length( pointsStr ), "points" );
+	lexer.SetFlags( LEXFL_NOERRORS | LEXFL_NOFATALERRORS );
+
+	while( !lexer.EndOfFile() ) {
+		idVec2 v;
+		v.x = lexer.ParseFloat();
+		if( !lexer.ExpectTokenString( "," ) ) {
+			break;
+		}
+		v.y = lexer.ParseFloat();
+		verts.Append( v );
+
+		if( lexer.CheckTokenString( " " ) ) {
+			continue;
+		}
+		if( lexer.EndOfFile() ) {
+			break;
+		}
+	}
+
+	lexer.FreeSource();
+}
+
+// Parse Shape from <g> Node
+static void ParseShape( const pugi::xml_node& node, idSWFShape* shape )
+{
+	if( !shape )
+		return;
+
+	for( pugi::xml_node poly = node.child( "polygon" ); poly; poly = poly.next_sibling( "polygon" ) ) {
+		idSWFShapeDrawFill fill;
+		fill.style.type = 0;
+		fill.style.startColor.ParseSVGColorFromString( poly.attribute( "fill" ).value() );
+		fill.style.endColor = fill.style.startColor;
+
+		ParsePointsFromString( poly.attribute( "points" ).value(), fill.startVerts );
+		fill.endVerts = fill.startVerts;
+
+		for( int idx = 0; idx < fill.startVerts.Num(); idx++ ) {
+			fill.indices.Append( idx );
+		}
+
+		shape->fillDraws.Append( fill );
+	}
+
+	for( pugi::xml_node line = node.child( "polyline" ); line; line = line.next_sibling( "polyline" ) ) {
+		idSWFShapeDrawLine ldraw;
+		ldraw.style.startColor.ParseSVGColorFromString( line.attribute( "stroke" ).value() );
+		ldraw.style.endColor   = ldraw.style.startColor;
+		ldraw.style.startWidth = line.attribute( "stroke-width" ).as_float();
+		ldraw.style.endWidth   = ldraw.style.startWidth;
+
+		ParsePointsFromString( line.attribute( "points" ).value(), ldraw.startVerts );
+		ldraw.endVerts = ldraw.startVerts;
+
+		for( int idx = 0; idx < ldraw.startVerts.Num(); idx++ ) {
+			ldraw.indices.Append( idx );
+		}
+
+		shape->lineDraws.Append( ldraw );
+	}
+
+	shape->startBounds.tl = vec2_zero;
+	shape->startBounds.br = idVec2( 100, 100 );
+	shape->endBounds	  = shape->startBounds;
+}
+
+static void ParseText( const pugi::xml_node& node, idSWFEditText* et )
+{
+	if( !et )
+		return;
+
+	pugi::xml_node textNode = node.child( "text" );
+	if( textNode ) {
+		et->bounds.tl.x = textNode.attribute( "x" ).as_float();
+		et->bounds.br.y = textNode.attribute( "y" ).as_float();
+		et->fontHeight	= FLOAT2SWFTWIP( textNode.attribute( "font-size" ).as_float() );
+		et->color.ParseSVGColorFromString( textNode.attribute( "fill" ).value() );
+		et->align		= ( textNode.attribute( "text-anchor" ).value() == "start" ) ? SWF_ET_ALIGN_LEFT : SWF_ET_ALIGN_CENTER;
+		et->initialText = textNode.text().as_string();
+		et->fontID		= 0;
+	}
+}
+
+bool idSWF::LoadSVG( const char* filename )
+{
+	idFile* f = fileSystem->OpenFileReadMemory( filename );
+	if( f == NULL || f->Length() <= 0 ) {
+		idLib::Warning( "SVG Load failed: Could not open file %s", filename );
+		delete f;
+		return false;
+	}
+
+	int			fileLength = f->Length();
+	const char* fileData   = ( const char* )Mem_Alloc( fileLength, TAG_SWF );
+	size_t		fileSize   = f->Read( ( byte* )fileData, fileLength );
+	delete f;
+	f = NULL;
+
+	pugi::xml_document	   doc;
+	pugi::xml_parse_result result = doc.load_buffer( fileData, fileSize );
+	if( !result ) {
+		idLib::Warning( "SVG Load failed: %s", result.description() );
+		return false;
+	}
+
+	pugi::xml_node svgNode = doc.child( "svg" );
+	if( !svgNode ) {
+		return false;
+	}
+
+	frameWidth	= svgNode.attribute( "width" ).as_float();
+	frameHeight = svgNode.attribute( "height" ).as_float();
+	frameRate	= 60 * 256;
+
+	bool		   isUnfolded = true;
+
+	pugi::xml_node defs = svgNode.child( "defs" );
+	if( defs ) {
+		int maxID = 0;
+		for( pugi::xml_node g = defs.child( "g" ); g; g = g.next_sibling( "g" ) ) {
+			int id = g.attribute( "id" ).as_int();
+			maxID  = idMath::Imax( maxID, id );
+		}
+		dictionary.SetNum( maxID + 1 );
+
+		for( pugi::xml_node g = defs.child( "g" ); g; g = g.next_sibling( "g" ) ) {
+			int					  id	= g.attribute( "id" ).as_int();
+			idSWFDictionaryEntry& entry = dictionary[id];
+
+			if( g.child( "polygon" ) || g.child( "polyline" ) ) {
+				entry.type	= SWF_DICT_SHAPE;
+				entry.shape = new( TAG_SWF ) idSWFShape;
+				ParseShape( g, entry.shape );
+			} else if( g.child( "text" ) ) {
+				entry.type	   = SWF_DICT_EDITTEXT;
+				entry.edittext = new( TAG_SWF ) idSWFEditText;
+				ParseText( g, entry.edittext );
+			} else if( g.child( "image" ) ) {
+				entry.type = SWF_DICT_IMAGE;
+				// TODO: Load image from xlink:href and set imageSize etc.
+				idStr imagePath = g.child( "image" ).attribute( "xlink:href" ).value();
+				// call LoadImage(id, ...) auf, similar as in LoadJSON
+			} else {
+				entry.type	 = SWF_DICT_SPRITE;
+				entry.sprite = new idSWFSprite( this );
+				entry.sprite->LoadSVGNode( g, dictionary, isUnfolded );
+			}
+		}
+	}
+
+	// Mainsprite (after defs, or the last <g>)
+	pugi::xml_node mainNode = defs.next_sibling( "g" );
+	if( !mainNode ) {
+		mainNode = svgNode.last_child(); // Fallback for unfolded
+	}
+
+	mainsprite = new idSWFSprite( this );
+	mainsprite->LoadSVGNode( mainNode, dictionary, isUnfolded );
+
+	return true;
+}
+
 void idSWF::WriteSVG( const char* filename )
 {
 	const bool	exportBitmapShapesOnly = false;

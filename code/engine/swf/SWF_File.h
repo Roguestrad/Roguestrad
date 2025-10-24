@@ -3,7 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2013-2015 Robert Beckebans
+Copyright (C) 2013-2025 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -81,6 +81,7 @@ public:
 	void		 WriteColorRGB( const swfColorRGB_t& color );
 	void		 WriteColorRGBA( const swfColorRGBA_t& color );
 	void		 WriteColorXFormRGBA( const swfColorXform_t& xcf );
+	void		 WriteString( const char* str );
 
 	static int32 GetTagHeaderSize( swfTag_t tag, int32 tagLength );
 	void		 WriteTagHeader( swfTag_t tag, int32 tagLength );

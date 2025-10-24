@@ -130,6 +130,8 @@ struct swfColorRGBA_t : public swfColorRGB_t {
 	swfColorRGBA_t();
 	idVec4 ToVec4() const;
 	uint8  a;
+
+	void   ParseSVGColorFromString( const char* str );
 };
 struct swfLineStyle_t {
 	swfLineStyle_t();

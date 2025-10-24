@@ -350,7 +350,7 @@ private:
 	void	  Metadata( idSWFBitStream& bitstream );
 	void	  SetBackgroundColor( idSWFBitStream& bitstream );
 
-	void	  LoadSVG( const char* filename );
+	bool	  LoadSVG( const char* filename );
 	void	  WriteSVG( const char* filename );
 
 	bool	  LoadJSON( const char* filename );
