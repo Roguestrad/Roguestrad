@@ -113,10 +113,8 @@ float Voronoi( in float2 p, float iTime )
 
 	float r = 0.;
 
-	for( int y = -1; y <= 1; y++ )
-	{
-		for( int x = -1; x <= 1; x++ )
-		{
+	for( int y = -1; y <= 1; y++ ) {
+		for( int x = -1; x <= 1; x++ ) {
 
 			o = float2( x, y );
 			o += hash22( g + o, iTime ) - p;

@@ -69,8 +69,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float2 uv = fragment.texcoord0.xy;
 	uv = saturate( uv );
 
-	if( rpWindowCoord.x > 0.0 )
-	{
+	if( rpWindowCoord.x > 0.0 ) {
 		uv = curve( uv, 2.0 );
 	}
 
@@ -106,12 +105,10 @@ void main( PS_IN fragment, out PS_OUT result )
 	col = col * _float3( 0.4 + 0.7 * s ) ;
 
 	col *= 1.0 + 0.01 * sin( 110.0 * iTime );
-	if( uv.x < 0.0 || uv.x > 1.0 )
-	{
+	if( uv.x < 0.0 || uv.x > 1.0 ) {
 		col *= 0.0;
 	}
-	if( uv.y < 0.0 || uv.y > 1.0 )
-	{
+	if( uv.y < 0.0 || uv.y > 1.0 ) {
 		col *= 0.0;
 	}
 

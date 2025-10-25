@@ -108,8 +108,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #endif
 
 #if BRIGHTPASS
-	if( Y < 0.1 )
-	{
+	if( Y < 0.1 ) {
 		//discard;
 		result.color = float4( 0.0, 0.0, 0.0, 1.0 );
 		return;
@@ -234,8 +233,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #if HDR_DEBUG
 	// https://google.github.io/filament/Filament.md.html#figure_luminanceviz
 
-	const float3 debugColors[16] =
-	{
+	const float3 debugColors[16] = {
 		float3( 0.0, 0.0, 0.0 ), // black
 		float3( 0.0, 0.0, 0.1647 ),    // darkest blue
 		float3( 0.0, 0.0, 0.3647 ),    // darker blue

@@ -22,8 +22,7 @@
 
 #pragma pack_matrix(row_major)
 
-struct ToneMappingConstants
-{
+struct ToneMappingConstants {
 	uint2 viewOrigin;
 	uint2 viewSize;
 
@@ -67,8 +66,7 @@ void main()
 	uint i;
 
 	[loop]
-	for( i = 0; i < HISTOGRAM_BINS; ++i )
-	{
+	for( i = 0; i < HISTOGRAM_BINS; ++i ) {
 		cdf += float( t_Histogram[i] ) / FIXED_POINT_FRAC_MULTIPLIER;
 	}
 
@@ -80,12 +78,10 @@ void main()
 	cdf = 0;
 
 	[loop]
-	for( i = 0; i < HISTOGRAM_BINS; ++i )
-	{
+	for( i = 0; i < HISTOGRAM_BINS; ++i ) {
 		float binValue = float( t_Histogram[i] ) / FIXED_POINT_FRAC_MULTIPLIER;
 
-		if( lowCdf <= cdf + binValue && cdf <= highCdf )
-		{
+		if( lowCdf <= cdf + binValue && cdf <= highCdf ) {
 			float histogramBinLuminance = exp2( ( i / ( float )HISTOGRAM_BINS ) * g_ToneMapping.logLuminanceScale
 												+ g_ToneMapping.logLuminanceBias );
 
@@ -110,8 +106,7 @@ void main()
 							? g_ToneMapping.eyeAdaptationSpeedUp
 							: g_ToneMapping.eyeAdaptationSpeedDown;
 
-	if( adaptationSpeed > 0 )
-	{
+	if( adaptationSpeed > 0 ) {
 		targetExposure += diff * exp2( -g_ToneMapping.frameTime * adaptationSpeed );
 	}
 

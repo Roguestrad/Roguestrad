@@ -49,8 +49,7 @@ void main( in PS_IN fragment, out PS_OUT result )
 	float2 uv = fragment.texcoord0.xy;
 
 	// PSX affine texture mapping
-	if( rpPSXDistortions.z > 0.0 )
-	{
+	if( rpPSXDistortions.z > 0.0 ) {
 		uv /= fragment.texcoord0.z;
 	}
 

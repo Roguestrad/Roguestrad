@@ -97,8 +97,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float2 specUV = fragment.texcoord2.xy;
 
 	// PSX affine texture mapping
-	if( rpPSXDistortions.z > 0.0 )
-	{
+	if( rpPSXDistortions.z > 0.0 ) {
 		baseUV /= fragment.texcoord0.z;
 		bumpUV /= fragment.texcoord0.z;
 		specUV /= fragment.texcoord0.z;
@@ -152,8 +151,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	rayStart += reflectionVector * 10000.0;
 
 	// only do a box <-> ray intersection test if we use a local cubemap
-	if( ( rpWobbleSkyX.w > 0.0 ) && AABBRayIntersection( bounds, rayStart, -reflectionVector, hitScale ) )
-	{
+	if( ( rpWobbleSkyX.w > 0.0 ) && AABBRayIntersection( bounds, rayStart, -reflectionVector, hitScale ) ) {
 		float3 hitPoint = rayStart - reflectionVector * hitScale;
 
 		// rpWobbleSkyZ is cubemap center

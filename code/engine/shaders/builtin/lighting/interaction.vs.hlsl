@@ -173,8 +173,7 @@ void main( VS_IN vertex, out VS_OUT result )
 	result.texcoord5.y = dot4( vertex.texcoord.xy, rpSpecularMatrixT );
 
 	// PSX affine texture mapping
-	if( rpPSXDistortions.z > 0.0 )
-	{
+	if( rpPSXDistortions.z > 0.0 ) {
 		float distance = length( rpLocalViewOrigin - modelPosition );
 		float warp =  psxAffineWarp( distance );
 

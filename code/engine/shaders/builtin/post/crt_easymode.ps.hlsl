@@ -521,8 +521,7 @@ void main( PS_IN fragment, out PS_OUT result )
 {
 	// revised version from RetroArch
 
-	struct Params
-	{
+	struct Params {
 		float BRIGHT_BOOST;
 		//float DILATION;
 		float GAMMA_INPUT;
@@ -570,8 +569,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float2 vTexCoord = fragment.texcoord0.xy;
 
 #if 0
-	if( rpWindowCoord.x > 0.0 )
-	{
+	if( rpWindowCoord.x > 0.0 ) {
 		vTexCoord = curve( vTexCoord, 2.0 );
 	}
 #endif
@@ -620,22 +618,16 @@ void main( PS_IN fragment, out PS_OUT result )
 	int dot_no   = int( mod( ( mod_fac.x + mod( mod_fac.y, 2.0 ) * params.MASK_STAGGER ) / params.MASK_DOT_WIDTH, 3.0 ) );
 	float3 mask_weight;
 
-	if( dot_no == 0 )
-	{
+	if( dot_no == 0 ) {
 		mask_weight = float3( 1.0,  mask, mask );
-	}
-	else if( dot_no == 1 )
-	{
+	} else if( dot_no == 1 ) {
 		mask_weight = float3( mask, 1.0,  mask );
-	}
-	else
-	{
+	} else {
 		mask_weight = float3( mask, mask, 1.0 );
 	}
 
 #if 0
-	if( sourceSize.y >= params.SCANLINE_CUTOFF )
-	{
+	if( sourceSize.y >= params.SCANLINE_CUTOFF ) {
 		scan_weight = 1.0;
 	}
 #endif

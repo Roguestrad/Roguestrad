@@ -202,8 +202,7 @@ bool TraceScreenSpaceRay(
 	// Permute so that the primary iteration is in x to collapse
 	// all quadrant-specific DDA cases later
 	bool permute = false;
-	if( abs( delta.x ) < abs( delta.y ) )
-	{
+	if( abs( delta.x ) < abs( delta.y ) ) {
 		// This is a more-vertical line
 		permute = true;
 		delta = delta.yx;
@@ -262,8 +261,7 @@ bool TraceScreenSpaceRay(
 			//!IntersectsDepthBuffer( sceneZMax, rayZMin, rayZMax, zThickness ) &&
 			( ( rayZMax < sceneZMax - zThickness ) || ( rayZMin > sceneZMax ) ) &&
 			( sceneZMax != 0.0f );
-			P += dP, Q.z += dQ.z, k += dk, stepCount += 1.0 )
-	{
+			P += dP, Q.z += dQ.z, k += dk, stepCount += 1.0 ) {
 		hitPixel = permute ? P.yx : P;
 
 		// The depth range that the ray covers within this loop
@@ -277,8 +275,7 @@ bool TraceScreenSpaceRay(
 		rayZMax = ( dQ.z * 0.5 + Q.z ) / ( dk * 0.5 + k );
 		prevZMaxEstimate = rayZMax;
 
-		if( rayZMin > rayZMax )
-		{
+		if( rayZMin > rayZMax ) {
 			Swap( rayZMin, rayZMax );
 		}
 
@@ -368,8 +365,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	rayStart += reflectionVector * 10000.0;
 
 	// only do a box <-> ray intersection test if we use a local cubemap
-	if( ( rpWobbleSkyX.w > 0.0 ) && AABBRayIntersection( bounds, rayStart, -reflectionVector, hitScale ) )
-	{
+	if( ( rpWobbleSkyX.w > 0.0 ) && AABBRayIntersection( bounds, rayStart, -reflectionVector, hitScale ) ) {
 		float3 hitPoint = rayStart - reflectionVector * hitScale;
 
 		// rpWobbleSkyZ is cubemap center
@@ -430,8 +426,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	// looks kinda bad because on close ups you don't want to see the noise
 	//radiance *= jitter;
 
-	if( vDotR <= 0 )
-	{
+	if( vDotR <= 0 ) {
 		intersection = TraceScreenSpaceRay(
 						   rayStart,
 						   rayDir,
@@ -448,13 +443,11 @@ void main( PS_IN fragment, out PS_OUT result )
 	float2 delta = ( hitPixel * rpWindowCoord.xy ) - ( fragment.position.xy * rpWindowCoord.xy );
 	float deltaLen = length( delta );
 
-	if( ( hitPixel.x > rpWindowCoord.z || hitPixel.x < 0.0 || hitPixel.y > rpWindowCoord.w || hitPixel.y < 0.0 ) )
-	{
+	if( ( hitPixel.x > rpWindowCoord.z || hitPixel.x < 0.0 || hitPixel.y > rpWindowCoord.w || hitPixel.y < 0.0 ) ) {
 		intersection = false;
 	}
 
-	if( intersection )
-	{
+	if( intersection ) {
 		radiance = float3( 0, 1, 0 );
 		radiance = t_ScreenColor.Sample( s_LinearClamp, hitPixel * rpWindowCoord.xy ).rgb;
 
@@ -463,9 +456,7 @@ void main( PS_IN fragment, out PS_OUT result )
 		//radiance = rayDebug / maxSteps;
 
 		//radiance = float3( hitPixel * rpWindowCoord.xy, 0 );
-	}
-	else
-	{
+	} else {
 		/*
 		if( vDotR > 0.0 )
 		{

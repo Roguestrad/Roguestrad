@@ -650,12 +650,10 @@ float2 SMAACalculatePredicatedThreshold( float2 texcoord,
  */
 void SMAAMovc( bool2 cond, inout float2 variable, float2 value )
 {
-	SMAA_FLATTEN if( cond.x )
-	{
+	SMAA_FLATTEN if( cond.x ) {
 		variable.x = value.x;
 	}
-	SMAA_FLATTEN if( cond.y )
-	{
+	SMAA_FLATTEN if( cond.y ) {
 		variable.y = value.y;
 	}
 }
@@ -749,8 +747,7 @@ float2 SMAALumaEdgeDetectionPS( float2 texcoord,
 	float2 edges = step( threshold, delta.xy );
 
 	// Then discard if there is no edge:
-	if( dot( edges, float2( 1.0, 1.0 ) ) == 0.0 )
-	{
+	if( dot( edges, float2( 1.0, 1.0 ) ) == 0.0 ) {
 		discard;
 	}
 
@@ -814,8 +811,7 @@ float2 SMAAColorEdgeDetectionPS( float2 texcoord,
 	float2 edges = step( threshold, delta.xy );
 
 	// Then discard if there is no edge:
-	if( dot( edges, float2( 1.0, 1.0 ) ) == 0.0 )
-	{
+	if( dot( edges, float2( 1.0, 1.0 ) ) == 0.0 ) {
 		discard;
 	}
 
@@ -861,8 +857,7 @@ float2 SMAADepthEdgeDetectionPS( float2 texcoord,
 	float2 delta = abs( neighbours.xx - float2( neighbours.y, neighbours.z ) );
 	float2 edges = step( SMAA_DEPTH_THRESHOLD, delta );
 
-	if( dot( edges, float2( 1.0, 1.0 ) ) == 0.0 )
-	{
+	if( dot( edges, float2( 1.0, 1.0 ) ) == 0.0 ) {
 		discard;
 	}
 
@@ -911,8 +906,7 @@ float2 SMAASearchDiag1( SMAATexture2D( edgesTex ), float2 texcoord, float2 dir, 
 	float4 coord = float4( texcoord, -1.0, 1.0 );
 	float3 t = float3( SMAA_RT_METRICS.xy, 1.0 );
 	while( coord.z < float( SMAA_MAX_SEARCH_STEPS_DIAG - 1 ) &&
-			coord.w > 0.9 )
-	{
+			coord.w > 0.9 ) {
 		coord.xyz = mad( t, float3( dir, 1.0 ), coord.xyz );
 		e = SMAASampleLevelZero( edgesTex, coord.xy ).rg;
 		coord.w = dot( e, float2( 0.5, 0.5 ) );
@@ -927,8 +921,7 @@ float2 SMAASearchDiag2( SMAATexture2D( edgesTex ), float2 texcoord, float2 dir, 
 	coord.x += 0.25 * SMAA_RT_METRICS.x; // See @SearchDiag2Optimization
 	float3 t = float3( SMAA_RT_METRICS.xy, 1.0 );
 	while( coord.z < float( SMAA_MAX_SEARCH_STEPS_DIAG - 1 ) &&
-			coord.w > 0.9 )
-	{
+			coord.w > 0.9 ) {
 		coord.xyz = mad( t, float3( dir, 1.0 ), coord.xyz );
 
 		// @SearchDiag2Optimization
@@ -978,20 +971,16 @@ float2 SMAACalculateDiagWeights( SMAATexture2D( edgesTex ), SMAATexture2D( areaT
 	// Search for the line ends:
 	float4 d;
 	float2 end;
-	if( e.r > 0.0 )
-	{
+	if( e.r > 0.0 ) {
 		d.xz = SMAASearchDiag1( SMAATexturePass2D( edgesTex ), texcoord, float2( -1.0,  1.0 ), end );
 		d.x += float( end.y > 0.9 );
-	}
-	else
-	{
+	} else {
 		d.xz = float2( 0.0, 0.0 );
 	}
 	d.yw = SMAASearchDiag1( SMAATexturePass2D( edgesTex ), texcoord, float2( 1.0, -1.0 ), end );
 
 	SMAA_BRANCH
-	if( d.x + d.y > 2.0 )  // d.x + d.y + 1 > 3
-	{
+	if( d.x + d.y > 2.0 ) { // d.x + d.y + 1 > 3
 		// Fetch the crossing edges:
 		float4 coords = mad( float4( -d.x + 0.25, API_V_DIR( d.x ), d.y, API_V_DIR( -d.y - 0.25 ) ), SMAA_RT_METRICS.xyxy, texcoord.xyxy );
 		float4 c;
@@ -1019,19 +1008,15 @@ float2 SMAACalculateDiagWeights( SMAATexture2D( edgesTex ), SMAATexture2D( areaT
 
 	// Search for the line ends:
 	d.xz = SMAASearchDiag2( SMAATexturePass2D( edgesTex ), texcoord, float2( -1.0, -1.0 ), end );
-	if( SMAASampleLevelZeroOffset( edgesTex, texcoord, int2( 1, 0 ) ).r > 0.0 )
-	{
+	if( SMAASampleLevelZeroOffset( edgesTex, texcoord, int2( 1, 0 ) ).r > 0.0 ) {
 		d.yw = SMAASearchDiag2( SMAATexturePass2D( edgesTex ), texcoord, float2( 1.0, 1.0 ), end );
 		d.y += float( end.y > 0.9 );
-	}
-	else
-	{
+	} else {
 		d.yw = float2( 0.0, 0.0 );
 	}
 
 	SMAA_BRANCH
-	if( d.x + d.y > 2.0 )  // d.x + d.y + 1 > 3
-	{
+	if( d.x + d.y > 2.0 ) { // d.x + d.y + 1 > 3
 		// Fetch the crossing edges:
 		float4 coords = mad( float4( -d.x, API_V_DIR( -d.x ), d.y, API_V_DIR( d.y ) ), SMAA_RT_METRICS.xyxy, texcoord.xyxy );
 		float4 c;
@@ -1098,8 +1083,7 @@ float SMAASearchXLeft( SMAATexture2D( edgesTex ), SMAATexture2D( searchTex ), fl
 	float2 e = float2( 0.0, 1.0 );
 	while( texcoord.x > end &&
 			e.g > 0.8281 && // Is there some edge not activated?
-			e.r == 0.0 )  // Or is there a crossing edge that breaks the line?
-	{
+			e.r == 0.0 ) { // Or is there a crossing edge that breaks the line?
 		e = SMAASampleLevelZero( edgesTex, texcoord ).rg;
 		texcoord = mad( -float2( 2.0, 0.0 ), SMAA_RT_METRICS.xy, texcoord );
 	}
@@ -1125,8 +1109,7 @@ float SMAASearchXRight( SMAATexture2D( edgesTex ), SMAATexture2D( searchTex ), f
 	float2 e = float2( 0.0, 1.0 );
 	while( texcoord.x < end &&
 			e.g > 0.8281 && // Is there some edge not activated?
-			e.r == 0.0 )  // Or is there a crossing edge that breaks the line?
-	{
+			e.r == 0.0 ) { // Or is there a crossing edge that breaks the line?
 		e = SMAASampleLevelZero( edgesTex, texcoord ).rg;
 		texcoord = mad( float2( 2.0, 0.0 ), SMAA_RT_METRICS.xy, texcoord );
 	}
@@ -1139,8 +1122,7 @@ float SMAASearchYUp( SMAATexture2D( edgesTex ), SMAATexture2D( searchTex ), floa
 	float2 e = float2( 1.0, 0.0 );
 	while( API_V_BELOW( texcoord.y, end ) &&
 			e.r > 0.8281 && // Is there some edge not activated?
-			e.g == 0.0 )  // Or is there a crossing edge that breaks the line?
-	{
+			e.g == 0.0 ) { // Or is there a crossing edge that breaks the line?
 		e = SMAASampleLevelZero( edgesTex, texcoord ).rg;
 		texcoord = mad( -float2( 0.0, API_V_DIR( 2.0 ) ), SMAA_RT_METRICS.xy, texcoord );
 	}
@@ -1153,8 +1135,7 @@ float SMAASearchYDown( SMAATexture2D( edgesTex ), SMAATexture2D( searchTex ), fl
 	float2 e = float2( 1.0, 0.0 );
 	while( API_V_ABOVE( texcoord.y, end ) &&
 			e.r > 0.8281 && // Is there some edge not activated?
-			e.g == 0.0 )  // Or is there a crossing edge that breaks the line?
-	{
+			e.g == 0.0 ) { // Or is there a crossing edge that breaks the line?
 		e = SMAASampleLevelZero( edgesTex, texcoord ).rg;
 		texcoord = mad( float2( 0.0, API_V_DIR( 2.0 ) ), SMAA_RT_METRICS.xy, texcoord );
 	}
@@ -1238,8 +1219,7 @@ float4 SMAABlendingWeightCalculationPS( float2 texcoord,
 	float2 e = SMAASample( edgesTex, texcoord ).rg;
 
 	SMAA_BRANCH
-	if( e.g > 0.0 )  // Edge at north
-	{
+	if( e.g > 0.0 ) { // Edge at north
 #if !defined(SMAA_DISABLE_DIAG_DETECTION)
 		// Diagonals have both north and west edges, so searching for them in
 		// one of the boundaries is enough.
@@ -1248,8 +1228,7 @@ float4 SMAABlendingWeightCalculationPS( float2 texcoord,
 		// We give priority to diagonals, so if we find a diagonal we skip
 		// horizontal/vertical processing.
 		SMAA_BRANCH
-		if( weights.r == -weights.g )  // weights.r + weights.g == 0.0
-		{
+		if( weights.r == -weights.g ) { // weights.r + weights.g == 0.0
 #endif
 
 			float2 d;
@@ -1289,17 +1268,14 @@ float4 SMAABlendingWeightCalculationPS( float2 texcoord,
 			SMAADetectHorizontalCornerPattern( SMAATexturePass2D( edgesTex ), weights.rg, coords.xyzy, d );
 
 #if !defined(SMAA_DISABLE_DIAG_DETECTION)
-		}
-		else
-		{
+		} else {
 			e.r = 0.0;    // Skip vertical processing.
 		}
 #endif
 	}
 
 	SMAA_BRANCH
-	if( e.r > 0.0 )  // Edge at west
-	{
+	if( e.r > 0.0 ) { // Edge at west
 		float2 d;
 
 		// Find the distance to the top:
@@ -1356,8 +1332,7 @@ float4 SMAANeighborhoodBlendingPS( float2 texcoord,
 
 	// Is there any blending weight with a value greater than 0.0?
 	SMAA_BRANCH
-	if( dot( a, float4( 1.0, 1.0, 1.0, 1.0 ) ) < 1e-5 )
-	{
+	if( dot( a, float4( 1.0, 1.0, 1.0, 1.0 ) ) < 1e-5 ) {
 		float4 color = SMAASampleLevelZero( colorTex, texcoord );
 
 #if SMAA_REPROJECTION
@@ -1368,9 +1343,7 @@ float4 SMAANeighborhoodBlendingPS( float2 texcoord,
 #endif
 
 		return color;
-	}
-	else
-	{
+	} else {
 		bool h = max( a.x, a.z ) > max( a.y, a.w ); // max(horizontal) > max(vertical)
 
 		// Calculate the blending offsets:

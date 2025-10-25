@@ -25,8 +25,7 @@
 #include <global_inc.hlsl>
 #include "vulkan.hlsli"
 
-struct SsaoConstants
-{
+struct SsaoConstants {
 	float2		viewportOrigin;
 	float2		viewportSize;
 	float2		pixelOffset;
@@ -72,8 +71,7 @@ cbuffer c_Ssao : register(b1)
 // and angle also increasing linearly with a step of 4.5678 radians.
 // Plotted on x-y dimensions, it looks pretty much random, but is intended
 // to make more samples closer to the center because they have greater weight.
-static const float2 g_SamplePositions[] =
-{
+static const float2 g_SamplePositions[] = {
 	float2( -0.016009523, -0.10995169 ),
 	float2( -0.159746436, 0.047527402 ),
 	float2( 0.09339819, 0.201641995 ),
@@ -93,8 +91,7 @@ static const float2 g_SamplePositions[] =
 };
 
 // Blue noise
-static const float g_RandomValues[16] =
-{
+static const float g_RandomValues[16] = {
 	0.059, 0.529, 0.176, 0.647,
 	0.765, 0.294, 0.882, 0.412,
 	0.235, 0.706, 0.118, 0.588,
@@ -238,8 +235,7 @@ void main( uint3 globalId : SV_DispatchThreadID )
 	float result = 0;
 #endif
 
-	if( radiusPixels > 1 )
-	{
+	if( radiusPixels > 1 ) {
 		float invRadiusWorld2 = rcp( radiusWorld * radiusWorld );
 
 		float angle = g_RandomValues[( pixelPos.x & 3 ) + ( ( pixelPos.y & 3 ) << 2 )] * PI;
@@ -249,8 +245,7 @@ void main( uint3 globalId : SV_DispatchThreadID )
 		float numValidSamples = 0;
 
 		[unroll]
-		for( int nSample = 0; nSample < numSamples; nSample++ )
-		{
+		for( int nSample = 0; nSample < numSamples; nSample++ ) {
 			float2 sampleOffset = g_SamplePositions[nSample];
 			sampleOffset = float2(
 							   sampleOffset.x * sincos.y - sampleOffset.y * sincos.x,
@@ -262,8 +257,7 @@ void main( uint3 globalId : SV_DispatchThreadID )
 			float sampleViewDepth = t_DeinterleavedDepth[int3( sampleWindowPosInt, sliceIndex )];
 			float2 actualClipPos = WindowToClip( float2( sampleWindowPosInt ) * 4.0 + sliceOffset + 0.5 );
 
-			if( sampleViewDepth > 0 && any( quarterResPixelPos != sampleWindowPosInt ) && all( abs( actualClipPos.xy ) < 1.0 ) )
-			{
+			if( sampleViewDepth > 0 && any( quarterResPixelPos != sampleWindowPosInt ) && all( abs( actualClipPos.xy ) < 1.0 ) ) {
 				float3 sampleViewPos = ViewDepthToViewPos( actualClipPos, sampleViewDepth );
 				float3 pixelToSample = sampleViewPos - pixelViewPos;
 				float AO = ComputeAO( pixelToSample, pixelNormal, invRadiusWorld2 );
@@ -276,8 +270,7 @@ void main( uint3 globalId : SV_DispatchThreadID )
 			}
 		}
 
-		if( numValidSamples > 0 )
-		{
+		if( numValidSamples > 0 ) {
 			result /= numValidSamples;
 		}
 	}
@@ -285,8 +278,7 @@ void main( uint3 globalId : SV_DispatchThreadID )
 #if DIRECTIONAL_OCCLUSION
 	// Rotate the directional part of the SH into world space
 	float directionalLength = length( result.xyz );
-	if( directionalLength > 0 )
-	{
+	if( directionalLength > 0 ) {
 		result.xyz = mul( float4( normalize( result.xyz ), 0 ), g_Ssao.matViewToWorld ).xyz * directionalLength;
 	}
 #endif

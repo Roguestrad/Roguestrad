@@ -26,8 +26,7 @@
 
 //#include <donut/shaders/taa_cb.h>
 
-struct TemporalAntiAliasingConstants
-{
+struct TemporalAntiAliasingConstants {
 	float4x4 reprojectionMatrix;
 
 	float2 inputViewOrigin;
@@ -162,16 +161,14 @@ void Preload( int2 sharedID, int2 globalID )
 	// Resolve MSAA color using average filter, motion vectors using max filter
 
 	[unroll]
-	for( int nSample = 0; nSample < SAMPLE_COUNT; nSample++ )
-	{
+	for( int nSample = 0; nSample < SAMPLE_COUNT; nSample++ ) {
 		float3 sampleColor = PQEncode( t_UnfilteredRT.Load( globalID, nSample ).rgb );
 		float2 sampleMotion = t_MotionVectors.Load( globalID, nSample ).rg;
 		float sampleMotionLength = dot( sampleMotion, sampleMotion );
 
 		color += sampleColor;
 
-		if( sampleMotionLength > motionLength )
-		{
+		if( sampleMotionLength > motionLength ) {
 			motion = sampleMotion;
 			motionLength = sampleMotionLength;
 		}
@@ -209,15 +206,13 @@ void main(
 
 	// Preload the colors and motion vectors into shared memory
 
-	if( newID.y < RENAMED_GROUP_Y )
-	{
+	if( newID.y < RENAMED_GROUP_Y ) {
 		Preload( newID, groupBase + newID );
 	}
 
 	newID.y += RENAMED_GROUP_Y;
 
-	if( newID.y < BUFFER_Y )
-	{
+	if( newID.y < BUFFER_Y ) {
 		Preload( newID, groupBase + newID );
 	}
 
@@ -237,27 +232,23 @@ void main(
 	float3 thisPixelColor = 0;
 
 	[unroll]
-	for( int dy = 0; dy <= 2; dy++ )
-	{
+	for( int dy = 0; dy <= 2; dy++ ) {
 		[unroll]
-		for( int dx = 0; dx <= 2; dx++ )
-		{
+		for( int dx = 0; dx <= 2; dx++ ) {
 			int2 pos = inputPosShared + int2( dx, dy );
 
 			float4 colorAndLength = s_ColorsAndLengths[pos.y][pos.x];
 			float3 color = colorAndLength.rgb;
 			float motionLength = colorAndLength.a;
 
-			if( dx == 1 && dy == 1 )
-			{
+			if( dx == 1 && dy == 1 ) {
 				thisPixelColor = color;
 			}
 
 			colorMoment1 += color;
 			colorMoment2 += color * color;
 
-			if( motionLength > longestMVLength )
-			{
+			if( motionLength > longestMVLength ) {
 				longestMVPos = pos;
 				longestMVLength = motionLength;
 			}
@@ -280,8 +271,7 @@ void main(
 
 	float3 resultPQ;
 	if( g_TemporalAA.newFrameWeight < 1.0 && all( sourcePos.xy > g_TemporalAA.outputViewOrigin )
-			&& all( sourcePos.xy < g_TemporalAA.outputViewOrigin + g_TemporalAA.outputViewSize ) )
-	{
+			&& all( sourcePos.xy < g_TemporalAA.outputViewOrigin + g_TemporalAA.outputViewSize ) ) {
 #if USE_CATMULL_ROM_FILTER
 		float3 history = BicubicSampleCatmullRom( t_FeedbackInput, s_Sampler, sourcePos, g_TemporalAA.outputTextureSizeInv );
 #else
@@ -291,8 +281,7 @@ void main(
 		// Clamp the old color to the new color distribution
 
 		float3 historyClamped = history;
-		if( g_TemporalAA.clampingFactor >= 0 )
-		{
+		if( g_TemporalAA.clampingFactor >= 0 ) {
 			historyClamped = min( colorMax, max( colorMin, history ) );
 		}
 
@@ -305,9 +294,7 @@ void main(
 		float blendWeight = saturate( max( motionWeight, sampleWeight ) * g_TemporalAA.newFrameWeight );
 
 		resultPQ = lerp( historyClamped, thisPixelColor, blendWeight );
-	}
-	else
-	{
+	} else {
 		resultPQ = thisPixelColor;
 	}
 

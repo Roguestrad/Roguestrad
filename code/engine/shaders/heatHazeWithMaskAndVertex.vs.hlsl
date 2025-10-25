@@ -60,7 +60,7 @@ void main( VS_IN vertex, out VS_OUT result )
 #include "skinning.inc.hlsl"
 
 	// texture 0 takes the texture coordinates unmodified
-	result.texcoord0 = float4( vertex.texcoord, 0 , 0 );
+	result.texcoord0 = float4( vertex.texcoord, 0, 0 );
 
 	// texture 1 takes the texture coordinates and adds a scroll
 	const float4 textureScroll = rpUser0;

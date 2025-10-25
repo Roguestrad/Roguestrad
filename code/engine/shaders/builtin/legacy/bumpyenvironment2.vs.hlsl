@@ -137,8 +137,7 @@ void main( VS_IN vertex, out VS_OUT result )
 
 	// PSX affine texture mapping
 #if 0
-	if( rpPSXDistortions.z > 0.0 )
-	{
+	if( rpPSXDistortions.z > 0.0 ) {
 		float distance = length( rpLocalViewOrigin - modelPosition );
 		float warp =  psxAffineWarp( distance );
 

@@ -25,8 +25,7 @@
 #include <global_inc.hlsl>
 #include "vulkan.hlsli"
 
-struct SsaoConstants
-{
+struct SsaoConstants {
 	float2		viewportOrigin;
 	float2		viewportSize;
 	float2		pixelOffset;
@@ -87,8 +86,7 @@ void main( uint2 groupId : SV_GroupID, uint2 threadId : SV_GroupThreadID, uint2 
 {
 	int linearIdx = int( ( threadId.y << 4 ) + threadId.x );
 
-	if( linearIdx < 144 )
-	{
+	if( linearIdx < 144 ) {
 		// Rename the threads to a 3x3x16 grid where X and Y are "offsetUV" and Z is "slice"
 
 		float2 offsetUVf;
@@ -156,8 +154,7 @@ void main( uint2 groupId : SV_GroupID, uint2 threadId : SV_GroupThreadID, uint2 
 	const int filterRight = enableFilter ? 6 : 4;
 	int2 filterOffset;
 	for( filterOffset.y = filterLeft; filterOffset.y <= filterRight; filterOffset.y++ )
-		for( filterOffset.x = filterLeft; filterOffset.x <= filterRight; filterOffset.x++ )
-		{
+		for( filterOffset.x = filterLeft; filterOffset.x <= filterRight; filterOffset.x++ ) {
 #if DIRECTIONAL_OCCLUSION
 			float sampleDepth = s_Depth[threadId.y + filterOffset.y][threadId.x + filterOffset.x];
 			float4 sampleOcclusion = s_Occlusion[threadId.y + filterOffset.y][threadId.x + filterOffset.x];
@@ -180,8 +177,7 @@ void main( uint2 groupId : SV_GroupID, uint2 threadId : SV_GroupThreadID, uint2 
 	int2 storePos = int2( globalId.xy ) + g_Ssao.quantizedViewportOrigin;
 	float2 storePosF = float2( storePos );
 
-	if( all( storePosF >= g_Ssao.viewportOrigin.xy ) && all( storePosF < g_Ssao.viewportOrigin.xy + g_Ssao.viewportSize.xy ) )
-	{
+	if( all( storePosF >= g_Ssao.viewportOrigin.xy ) && all( storePosF < g_Ssao.viewportOrigin.xy + g_Ssao.viewportSize.xy ) ) {
 		u_RenderTarget[storePos] = totalOcclusion;
 	}
 }

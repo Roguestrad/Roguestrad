@@ -34,8 +34,7 @@
 #define MODE_MAX    2
 #define MODE_MINMAX 3
 
-struct MipmmapGenConstants
-{
+struct MipmmapGenConstants {
 	uint dispatch;
 	uint numLODs;
 	uint padding[2];
@@ -97,32 +96,27 @@ groupshared VALUE_TYPE s_ReductionData[GROUP_SIZE][GROUP_SIZE];
 	VALUE_TYPE value = t_input.mips[0][globalIdx.xy];
 
 #if MODE == MODE_MINMAX
-	if( g_MipMapGen.dispatch == 0 )
-	{
+	if( g_MipMapGen.dispatch == 0 ) {
 		value.y = value.x;
 	}
 #endif
 
 	[unroll]
-	for( uint level = 1; level <= NUM_LODS; level++ )
-	{
-		if( level == g_MipMapGen.numLODs + 1 )
-		{
+	for( uint level = 1; level <= NUM_LODS; level++ ) {
+		if( level == g_MipMapGen.numLODs + 1 ) {
 			break;
 		}
 
 		uint outGroupSize = uint( GROUP_SIZE ) >> level;
 		uint inGroupSize = outGroupSize << 1;
 
-		if( all( threadIdx.xy < inGroupSize ) )
-		{
+		if( all( threadIdx.xy < inGroupSize ) ) {
 			s_ReductionData[threadIdx.y][threadIdx.x] = value;
 		}
 
 		GroupMemoryBarrierWithGroupSync();
 
-		if( all( threadIdx.xy < outGroupSize ) )
-		{
+		if( all( threadIdx.xy < outGroupSize ) ) {
 			VALUE_TYPE a = s_ReductionData[threadIdx.y * 2 + 0][threadIdx.x * 2 + 0];
 			VALUE_TYPE b = s_ReductionData[threadIdx.y * 2 + 0][threadIdx.x * 2 + 1];
 			VALUE_TYPE c = s_ReductionData[threadIdx.y * 2 + 1][threadIdx.x * 2 + 0];

@@ -59,8 +59,7 @@ struct PS_OUT
 
 #define RESOLUTION_DIVISOR 4.0
 
-struct Params
-{
+struct Params {
 	float4 sourceSize;
 	float4 outputSize;
 	uint FrameCount;
@@ -194,16 +193,11 @@ float3 get_mask_weight( float x, Params params )
 {
 	float i = mod( floor( x * params.outputSize.x * params.sourceSize.x / ( params.sourceSize.x * params.MASK_SIZE ) ), params.MASK_COLORS );
 
-	if( i == 0.0 )
-	{
+	if( i == 0.0 ) {
 		return lerp( float3( 1.0, 0.0, 1.0 ), float3( 1.0, 0.0, 0.0 ), params.MASK_COLORS - 2.0 );
-	}
-	else if( i == 1.0 )
-	{
+	} else if( i == 1.0 ) {
 		return float3( 0.0, 1.0, 0.0 );
-	}
-	else
-	{
+	} else {
 		return float3( 0.0, 0.0, 1.0 );
 	}
 }
@@ -247,8 +241,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float scale = floor( outputSize.y * sourceSize.w );
 	float offset = 1.0 / scale * 0.5;
 
-	if( bool( mod( scale, 2.0 ) ) )
-	{
+	if( bool( mod( scale, 2.0 ) ) ) {
 		offset = 0.0;
 	}
 

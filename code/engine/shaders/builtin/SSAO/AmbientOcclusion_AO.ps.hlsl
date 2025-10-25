@@ -372,8 +372,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 	n_C = normalize( n_C );
 
-	if( length( n_C ) < 0.01 )
-	{
+	if( length( n_C ) < 0.01 ) {
 		visibility = 1.0;
 		return;
 	}
@@ -385,17 +384,14 @@ void main( PS_IN fragment, out PS_OUT result )
 	// Reconstruct normals from positions.
 	float3 n_C = reconstructNonUnitCSFaceNormal( C );
 	// Since n_C is computed from the cross product of camera-space edge vectors from points at adjacent pixels, its magnitude will be proportional to the square of distance from the camera
-	if( dot( n_C, n_C ) > ( square( C.z * C.z * 0.00006 ) ) ) // if the threshold # is too big you will see black dots where we used a bad normal at edges, too small -> white
-	{
+	if( dot( n_C, n_C ) > ( square( C.z * C.z * 0.00006 ) ) ) { // if the threshold # is too big you will see black dots where we used a bad normal at edges, too small -> white
 		// The normals from depth should be very small values before normalization,
 		// except at depth discontinuities, where they will be large and lead
 		// to 1-pixel false occlusions because they are not reliable
 		visibility = 1.0;
 		//result.color = float4( visibility, visibility, visibility, 1.0 );
 		return;
-	}
-	else
-	{
+	} else {
 		n_C = normalize( -n_C );
 	}
 #endif
@@ -420,8 +416,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 #if 1
 	[branch]
-	if( ssDiskRadius <= MIN_RADIUS )
-	{
+	if( ssDiskRadius <= MIN_RADIUS ) {
 		// There is no way to compute AO at this radius
 		visibility = 1.0;
 		return;
@@ -435,8 +430,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #endif
 
 	float sum = 0.0;
-	for( int i = 0; i < NUM_SAMPLES; ++i )
-	{
+	for( int i = 0; i < NUM_SAMPLES; ++i ) {
 		sum += sampleAO( ssP, C, n_C, ssDiskRadius, i, randomPatternRotationAngle, CS_Z_buffer, 1.0 );
 	}
 

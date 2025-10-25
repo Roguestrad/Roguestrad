@@ -386,12 +386,9 @@ void iiValueFromPositionsAndNormalsAndLambertian( int2 ssP, float3 X, float3 n_X
 	// E = radiosity_Y * dot(w_i, n_X) * weight_Y * float(dot(YminusX, YminusX) < radius2);
 
 	if( ( dot( YminusX, YminusX ) < radius2 ) && // Radius check
-			( weight_Y > 0.0 ) )
-	{
+			( weight_Y > 0.0 ) ) {
 		E = radiosity_Y * dot( w_i, n_X );
-	}
-	else
-	{
+	} else {
 #if USE_TAP_NORMAL == 0
 		weight_Y = 0;
 #endif
@@ -487,8 +484,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	result.color = float4( 0.0, 0.0, 0.0, 1.0 );
 
 #if 0
-	if( fragment.texcoord0.x < 0.5 )
-	{
+	if( fragment.texcoord0.x < 0.5 ) {
 		discard;
 	}
 #endif
@@ -531,9 +527,9 @@ void main( PS_IN fragment, out PS_OUT result )
 	float3 irradianceSum = _float3( 0 );
 	float3 ii_peeled = _float3( 0 );
 	float peeledSum = 0.0;
-	for( int i = 0; i < NUM_SAMPLES; ++i )
-	{
-		sampleIndirectLight( ssC, C, n_C, C_peeled, n_C_peeled, ssDiskRadius, i, randomPatternRotationAngle, radialJitter, CS_Z_buffer, normal_buffer, colorBuffer, irradianceSum, numSamplesUsed, ii_peeled, peeledSum );
+	for( int i = 0; i < NUM_SAMPLES; ++i ) {
+		sampleIndirectLight( ssC, C, n_C, C_peeled, n_C_peeled, ssDiskRadius, i, randomPatternRotationAngle, radialJitter, CS_Z_buffer, normal_buffer, colorBuffer, irradianceSum, numSamplesUsed, ii_peeled,
+							 peeledSum );
 	}
 
 	const float solidAngleHemisphere = 2.0 * PI;

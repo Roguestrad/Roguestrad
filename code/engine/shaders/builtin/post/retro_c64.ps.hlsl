@@ -58,8 +58,7 @@ float3 Average( float3 pal[NUM_COLORS] )
 {
 	float3 sum = _float3( 0 );
 
-	for( int i = 0; i < NUM_COLORS; i++ )
-	{
+	for( int i = 0; i < NUM_COLORS; i++ ) {
 		sum += pal[i];
 	}
 
@@ -71,8 +70,7 @@ float3 Deviation( float3 pal[NUM_COLORS] )
 	float3 sum = _float3( 0 );
 	float3 avg = Average( pal );
 
-	for( int i = 0; i < NUM_COLORS; i++ )
-	{
+	for( int i = 0; i < NUM_COLORS; i++ ) {
 		sum += abs( pal[i] - avg );
 	}
 
@@ -92,12 +90,10 @@ float3 LinearSearch( float3 c, float3 pal[NUM_COLORS] )
 	int index = 0;
 	float minDist = ColorCompare( c, pal[0] );
 
-	for( int i = 1; i <	NUM_COLORS; i++ )
-	{
+	for( int i = 1; i <	NUM_COLORS; i++ ) {
 		float dist = ColorCompare( c, pal[i] );
 
-		if( dist < minDist )
-		{
+		if( dist < minDist ) {
 			minDist = dist;
 			index = i;
 		}
@@ -113,8 +109,7 @@ void main( PS_IN fragment, out PS_OUT result )
 {
 	// C64 colors http://unusedino.de/ec64/technical/misc/vic656x/colors/
 #if 0
-	const float3 palette[NUM_COLORS] =
-	{
+	const float3 palette[NUM_COLORS] = {
 		RGB( 0, 0, 0 ),
 		RGB( 255, 255, 255 ),
 		RGB( 116, 67, 53 ),
@@ -134,8 +129,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	};
 #else
 	// gamma corrected version
-	const float3 palette[NUM_COLORS] =
-	{
+	const float3 palette[NUM_COLORS] = {
 		RGB( 0, 0, 0 ),			// black
 		RGB( 255, 255, 255 ),	// white
 		RGB( 104, 55,  43 ),	// red
@@ -172,24 +166,19 @@ void main( PS_IN fragment, out PS_OUT result )
 	float dither = DitherArray8x8( uvDither ) - 0.5;
 
 #if 0
-	if( uv.y < 0.0625 )
-	{
+	if( uv.y < 0.0625 ) {
 		color = HSVToRGB( float3( uv.x, 1.0, uv.y * 16.0 ) );
 
 		result.color = float4( color, 1.0 );
 		return;
-	}
-	else if( uv.y < 0.125 )
-	{
+	} else if( uv.y < 0.125 ) {
 		// quantized
 		color = HSVToRGB( float3( uv.x, 1.0, ( uv.y - 0.0625 ) * 16.0 ) );
 		color = LinearSearch( color, palette );
 
 		result.color = float4( color, 1.0 );
 		return;
-	}
-	else if( uv.y < 0.1875 )
-	{
+	} else if( uv.y < 0.1875 ) {
 		// dithered quantized
 		color = HSVToRGB( float3( uv.x, 1.0, ( uv.y - 0.125 ) * 16.0 ) );
 
@@ -198,9 +187,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 		result.color = float4( color, 1.0 );
 		return;
-	}
-	else if( uv.y < 0.25 )
-	{
+	} else if( uv.y < 0.25 ) {
 		color = _float3( uv.x );
 		color = floor( color * NUM_COLORS ) * ( 1.0 / ( NUM_COLORS - 1.0 ) );
 		color += float3( dither, dither, dither ) * quantDeviation * rpJitterTexScale.y;

@@ -53,8 +53,7 @@ struct PS_OUT
 void main( PS_IN fragment, out PS_OUT result )
 {
 #if 0
-	if( fragment.texcoord0.x < 0.5 )
-	{
+	if( fragment.texcoord0.x < 0.5 ) {
 		// only draw on half the screen for comparison
 		discard;
 		return;
@@ -62,8 +61,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #endif
 
 	// don't motion blur the hands, which were drawn with alpha = 0
-	if( t_ViewColor.Sample( LinearSampler, fragment.texcoord0 ).a == 0.0 )
-	{
+	if( t_ViewColor.Sample( LinearSampler, fragment.texcoord0 ).a == 0.0 ) {
 		discard;
 		return;
 	}
@@ -86,8 +84,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	prevClipPos.z = dot( rpMVPmatrixZ, clip );
 	prevClipPos.w = dot( rpMVPmatrixW, clip );
 
-	if( prevClipPos.w <= 0 )
-	{
+	if( prevClipPos.w <= 0 ) {
 		return;
 	}
 
@@ -112,8 +109,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float goodSamples = 0.0;
 	float samples = rpOverbright.x;
 
-	for( float i = 0.0 ; i < samples ; i = i + 1.0 )
-	{
+	for( float i = 0.0 ; i < samples ; i = i + 1.0 ) {
 		float2 pos = fragment.texcoord0 + delta * ( ( i / ( samples - 1.0 ) ) - 0.5 );
 		float4 color = t_ViewColor.Sample( LinearSampler, pos );
 		// only take the values that are not part of the weapon

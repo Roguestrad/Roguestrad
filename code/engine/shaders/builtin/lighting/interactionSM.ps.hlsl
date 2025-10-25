@@ -107,8 +107,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float2 specUV = fragment.texcoord5.xy;
 
 	// PSX affine texture mapping
-	if( rpPSXDistortions.z > 0.0 )
-	{
+	if( rpPSXDistortions.z > 0.0 ) {
 		baseUV /= fragment.texcoord1.z;
 		bumpUV /= fragment.texcoord1.z;
 		specUV /= fragment.texcoord1.z;
@@ -167,10 +166,8 @@ void main( PS_IN fragment, out PS_OUT result )
 	axis[4] = -toLightGlobal.z;
 	axis[5] =  toLightGlobal.z;
 
-	for( int i = 0; i < 6; i++ )
-	{
-		if( axis[i] > axis[shadowIndex] )
-		{
+	for( int i = 0; i < 6; i++ ) {
+		if( axis[i] > axis[shadowIndex] ) {
 			shadowIndex = i;
 		}
 	}
@@ -182,10 +179,8 @@ void main( PS_IN fragment, out PS_OUT result )
 	float viewZ = -fragment.texcoord9.z;
 
 	shadowIndex = 4;
-	for( int ci = 0; ci < 4; ci++ )
-	{
-		if( viewZ < rpCascadeDistances[ci] )
-		{
+	for( int ci = 0; ci < 4; ci++ ) {
+		if( viewZ < rpCascadeDistances[ci] ) {
 			shadowIndex = ci;
 			break;
 		}
@@ -193,28 +188,17 @@ void main( PS_IN fragment, out PS_OUT result )
 #endif
 
 #if 0
-	if( shadowIndex == 0 )
-	{
+	if( shadowIndex == 0 ) {
 		result.color = float4( 1.0, 0.0, 0.0, 1.0 );
-	}
-	else if( shadowIndex == 1 )
-	{
+	} else if( shadowIndex == 1 ) {
 		result.color = float4( 0.0, 1.0, 0.0, 1.0 );
-	}
-	else if( shadowIndex == 2 )
-	{
+	} else if( shadowIndex == 2 ) {
 		result.color = float4( 0.0, 0.0, 1.0, 1.0 );
-	}
-	else if( shadowIndex == 3 )
-	{
+	} else if( shadowIndex == 3 ) {
 		result.color = float4( 1.0, 1.0, 0.0, 1.0 );
-	}
-	else if( shadowIndex == 4 )
-	{
+	} else if( shadowIndex == 4 ) {
 		result.color = float4( 1.0, 0.0, 1.0, 1.0 );
-	}
-	else if( shadowIndex == 5 )
-	{
+	} else if( shadowIndex == 5 ) {
 		result.color = float4( 0.0, 1.0, 1.0, 1.0 );
 	}
 
@@ -262,8 +246,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float stepSize = 1.0 / numSamples;
 
 	float2 jitterTC = ( fragment.position.xy * rpScreenCorrectionFactor.xy ) + rpJitterTexOffset.ww;
-	for( float n = 0.0; n < numSamples; n += 1.0 )
-	{
+	for( float n = 0.0; n < numSamples; n += 1.0 ) {
 		float4 jitter = base + t_Jitter.Sample( samp1, jitterTC.xy ) * rpJitterTexScale;
 		jitter.zw = shadowTexcoord.zw;
 
@@ -278,8 +261,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 	// Poisson Disk with White Noise used for years int RBDOOM-3-BFG
 
-	const float2 poissonDisk[12] =
-	{
+	const float2 poissonDisk[12] = {
 		float2( 0.6111618, 0.1050905 ),
 		float2( 0.1088336, 0.1127091 ),
 		float2( 0.3030421, -0.6292974 ),
@@ -309,8 +291,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	rot.y = sin( random.x );
 
 	float shadowTexelSize = rpScreenCorrectionFactor.z * rpJitterTexScale.x;
-	for( int i = 0; i < 12; i++ )
-	{
+	for( int i = 0; i < 12; i++ ) {
 		float2 jitter = poissonDisk[i];
 		float2 jitterRotated;
 		jitterRotated.x = jitter.x * rot.x - jitter.y * rot.y;
@@ -329,8 +310,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 	// Poisson Disk with animated Blue Noise or Interleaved Gradient Noise
 
-	const float2 poissonDisk[12] =
-	{
+	const float2 poissonDisk[12] = {
 		float2( 0.6111618, 0.1050905 ),
 		float2( 0.1088336, 0.1127091 ),
 		float2( 0.3030421, -0.6292974 ),
@@ -361,8 +341,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	rot.y = sin( random );
 
 	float shadowTexelSize = rpScreenCorrectionFactor.z * rpJitterTexScale.x;
-	for( int si = 0; si < 12; si++ )
-	{
+	for( int si = 0; si < 12; si++ ) {
 		float2 jitter = poissonDisk[si];
 		float2 jitterRotated;
 		jitterRotated.x = jitter.x * rot.x - jitter.y * rot.y;
@@ -395,8 +374,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	//float vogelPhi = InterleavedGradientNoiseAnim( fragment.position.xy, rpJitterTexOffset.w );
 
 	float shadowTexelSize = rpScreenCorrectionFactor.z * rpJitterTexScale.x;
-	for( float si = 0.0; si < numSamples; si += 1.0 )
-	{
+	for( float si = 0.0; si < numSamples; si += 1.0 ) {
 		float2 jitter = VogelDiskSample( si, numSamples, vogelPhi );
 
 #if USE_SHADOW_ATLAS
@@ -436,28 +414,17 @@ void main( PS_IN fragment, out PS_OUT result )
 #endif
 
 #if 0
-	if( shadowIndex == 0 )
-	{
+	if( shadowIndex == 0 ) {
 		result.color = float4( 1.0, 0.0, 0.0, 1.0 );
-	}
-	else if( shadowIndex == 1 )
-	{
+	} else if( shadowIndex == 1 ) {
 		result.color = float4( 0.0, 1.0, 0.0, 1.0 );
-	}
-	else if( shadowIndex == 2 )
-	{
+	} else if( shadowIndex == 2 ) {
 		result.color = float4( 0.0, 0.0, 1.0, 1.0 );
-	}
-	else if( shadowIndex == 3 )
-	{
+	} else if( shadowIndex == 3 ) {
 		result.color = float4( 1.0, 1.0, 0.0, 1.0 );
-	}
-	else if( shadowIndex == 4 )
-	{
+	} else if( shadowIndex == 4 ) {
 		result.color = float4( 1.0, 0.0, 1.0, 1.0 );
-	}
-	else if( shadowIndex == 5 )
-	{
+	} else if( shadowIndex == 5 ) {
 		result.color = float4( 0.0, 1.0, 1.0, 1.0 );
 	}
 

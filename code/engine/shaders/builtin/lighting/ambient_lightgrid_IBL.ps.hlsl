@@ -78,8 +78,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float2 specUV = fragment.texcoord2.xy;
 
 	// PSX affine texture mapping
-	if( rpPSXDistortions.z > 0.0 )
-	{
+	if( rpPSXDistortions.z > 0.0 ) {
 		baseUV /= fragment.texcoord0.z;
 		bumpUV /= fragment.texcoord0.z;
 		specUV /= fragment.texcoord0.z;
@@ -133,8 +132,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	rayStart += reflectionVector * 10000.0;
 
 	// only do a box <-> ray intersection test if we use a local cubemap
-	if( ( rpWobbleSkyX.w > 0.0 ) && AABBRayIntersection( bounds, rayStart, -reflectionVector, hitScale ) )
-	{
+	if( ( rpWobbleSkyX.w > 0.0 ) && AABBRayIntersection( bounds, rayStart, -reflectionVector, hitScale ) ) {
 		float3 hitPoint = rayStart - reflectionVector * hitScale;
 
 		// rpWobbleSkyZ is cubemap center
@@ -213,7 +211,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float2 normalizedOctCoord = octEncode( globalNormal );
 	float2 normalizedOctCoordZeroOne = ( normalizedOctCoord + float2( 1.0, 1.0 ) ) * 0.5;
 
-// lightgrid atlas
+	// lightgrid atlas
 
 	//float3 lightGridOrigin = float3( -192.0, -128.0, 0 );
 	//float3 lightGridSize = float3( 64.0, 64.0, 128.0 );
@@ -233,8 +231,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float3 frac;
 	float3 lightOrigin = globalPosition - lightGridOrigin;
 
-	for( int j = 0; j < 3; j++ )
-	{
+	for( int j = 0; j < 3; j++ ) {
 		float           v;
 
 		// walls can be sampled behind the grid sometimes so avoid negative weights
@@ -242,12 +239,9 @@ void main( PS_IN fragment, out PS_OUT result )
 		gridCoord[j] = int( floor( v ) );
 		frac[ j ] = v - gridCoord[ j ];
 
-		if( gridCoord[j] < 0 )
-		{
+		if( gridCoord[j] < 0 ) {
 			gridCoord[j] = 0;
-		}
-		else if( gridCoord[j] >= lightGridBounds[j] - 1 )
-		{
+		} else if( gridCoord[j] >= lightGridBounds[j] - 1 ) {
 			gridCoord[j] = lightGridBounds[j] - 1;
 		}
 	}
@@ -271,8 +265,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 		results in these offsets
 	*/
-	const float3 cornerOffsets[8] =
-	{
+	const float3 cornerOffsets[8] = {
 		float3( 0.0, 0.0, 0.0 ),
 		float3( 1.0, 0.0, 0.0 ),
 		float3( 0.0, 2.0, 0.0 ),
@@ -283,22 +276,17 @@ void main( PS_IN fragment, out PS_OUT result )
 		float3( 1.0, 2.0, 4.0 )
 	};
 
-	for( int i = 0; i < 8; i++ )
-	{
+	for( int i = 0; i < 8; i++ ) {
 		float factor = 1.0;
 
 		int3 gridCoord2 = gridCoord;
 
-		for( int j = 0; j < 3; j++ )
-		{
-			if( cornerOffsets[ i ][ j ] > 0.0 )
-			{
+		for( int j = 0; j < 3; j++ ) {
+			if( cornerOffsets[ i ][ j ] > 0.0 ) {
 				factor *= frac[ j ];
 
 				gridCoord2[ j ] += 1;
-			}
-			else
-			{
+			} else {
 				factor *= ( 1.0 - frac[ j ] );
 			}
 		}
@@ -331,8 +319,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 		float3 color = t_IrradianceCubeMap.Sample( s_LinearClamp, atlasCoord, 0 ).rgb;
 
-		if( ( color.r + color.g + color.b ) < 0.0001 )
-		{
+		if( ( color.r + color.g + color.b ) < 0.0001 ) {
 			// ignore samples in walls
 			continue;
 		}
@@ -341,14 +328,13 @@ void main( PS_IN fragment, out PS_OUT result )
 		totalFactor += factor;
 	}
 
-	if( totalFactor > 0.0 && totalFactor < 0.9999 )
-	{
+	if( totalFactor > 0.0 && totalFactor < 0.9999 ) {
 		totalFactor = 1.0 / totalFactor;
 
 		irradiance *= totalFactor;
 	}
 
-// lightgrid atlas
+	// lightgrid atlas
 
 
 	float3 diffuseLight = ( kD * irradiance * diffuseColor ) * ao * ( rpDiffuseModifier.xyz * 1.0 );

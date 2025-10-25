@@ -62,11 +62,11 @@ void main( VS_IN vertex, out VS_OUT result )
 	float4 vTangent = vertex.tangent * 2.0 - 1.0;
 	float3 vBinormal = cross( vNormal.xyz, vTangent.xyz ) * vTangent.w;
 
-//--------------------------------------------------------------
-// GPU transformation of the normal / binormal / bitangent
-//
-// multiplying with 255.1 give us the same result and is faster than floor( w * 255 + 0.5 )
-//--------------------------------------------------------------
+	//--------------------------------------------------------------
+	// GPU transformation of the normal / binormal / bitangent
+	//
+	// multiplying with 255.1 give us the same result and is faster than floor( w * 255 + 0.5 )
+	//--------------------------------------------------------------
 	const float w0 = vertex.color2.x;
 	const float w1 = vertex.color2.y;
 	const float w2 = vertex.color2.z;

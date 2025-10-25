@@ -24,8 +24,7 @@
 
 #include "vulkan.hlsli"
 
-struct ToneMappingConstants
-{
+struct ToneMappingConstants {
 	uint2 viewOrigin;
 	uint2 viewSize;
 
@@ -84,14 +83,12 @@ float3 ConvertToLDR( float3 color )
 {
 	float srcLuminance = Luminance( color );
 
-	if( srcLuminance <= 0 )
-	{
+	if( srcLuminance <= 0 ) {
 		return 0;
 	}
 
 	float adaptedLuminance = asfloat( t_Exposure[0] );
-	if( adaptedLuminance <= 0 )
-	{
+	if( adaptedLuminance <= 0 ) {
 		adaptedLuminance = g_ToneMapping.minAdaptedLuminance;
 	}
 
@@ -135,12 +132,9 @@ void main(
 	o_rgba.rgb = ConvertToLDR( HdrColor.rgb );
 	o_rgba.a = HdrColor.a;
 
-	if( g_ToneMapping.colorLUTTextureSize.x > 0 )
-	{
+	if( g_ToneMapping.colorLUTTextureSize.x > 0 ) {
 		o_rgba.rgb = ApplyColorLUT( o_rgba.rgb );
-	}
-	else
-	{
+	} else {
 		// Tonemapping curve is applied after exposure.
 		o_rgba.rgb = ACESFilm( o_rgba.rgb );
 	}

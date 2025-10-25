@@ -60,8 +60,7 @@ float3 Average( float3 pal[NUM_COLORS] )
 {
 	float3 sum = _float3( 0 );
 
-	for( int i = 0; i < NUM_COLORS; i++ )
-	{
+	for( int i = 0; i < NUM_COLORS; i++ ) {
 		sum += pal[i];
 	}
 
@@ -73,8 +72,7 @@ float3 Deviation( float3 pal[NUM_COLORS] )
 	float3 sum = _float3( 0 );
 	float3 avg = Average( pal );
 
-	for( int i = 0; i < NUM_COLORS; i++ )
-	{
+	for( int i = 0; i < NUM_COLORS; i++ ) {
 		sum += abs( pal[i] - avg );
 	}
 
@@ -94,12 +92,10 @@ float3 LinearSearch( float3 c, float3 pal[NUM_COLORS] )
 	int index = 0;
 	float minDist = ColorCompare( c, pal[0] );
 
-	for( int i = 1; i <	NUM_COLORS; i++ )
-	{
+	for( int i = 1; i <	NUM_COLORS; i++ ) {
 		float dist = ColorCompare( c, pal[i] );
 
-		if( dist < minDist )
-		{
+		if( dist < minDist ) {
 			minDist = dist;
 			index = i;
 		}
@@ -188,8 +184,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #if 0
 	// Amstrad CPC colors https://www.cpcwiki.eu/index.php/CPC_Palette
 	// those are the original colors but they are too saturated and kinda suck
-	const float3 palette[NUM_COLORS] =
-	{
+	const float3 palette[NUM_COLORS] = {
 		RGB( 0, 0, 0 ),			// black
 		RGB( 0, 0, 128 ),		// blue
 		RGB( 0, 0, 255 ),		// bright blue
@@ -237,8 +232,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	// Tweaked LOSPEC CPC BOY PALETTE which is less saturated by Arne Niklas Jansson
 	// https://lospec.com/palette-list/cpc-boy
 
-	const float3 palette[NUM_COLORS] = // 32
-	{
+	const float3 palette[NUM_COLORS] = { // 32
 		RGB( 0, 0, 0 ),
 		RGB( 36, 49, 55 ),
 		RGB( 27, 27, 101 ),
@@ -279,8 +273,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #elif 1
 
 	// https://lospec.com/palette-list/ruzzi-cpc
-	const float3 palette[NUM_COLORS] = // 31
-	{
+	const float3 palette[NUM_COLORS] = { // 31
 		RGB( 0, 0, 28 ), // dark blue
 		RGB( 28, 0, 28 ), // dark magenta
 		RGB( 33, 30, 32 ),
@@ -321,8 +314,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #elif 0
 
 	// https://lospec.com/palette-list/ancientheritage30
-	const float3 palette[NUM_COLORS] = // 30
-	{
+	const float3 palette[NUM_COLORS] = { // 30
 		RGB( 2, 4, 5 ),
 		RGB( 21, 33, 43 ),
 		RGB( 51, 38, 20 ),
@@ -362,8 +354,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 	// Atari STE
 	// https://lospec.com/palette-list/astron-ste32
-	const float3 palette[NUM_COLORS] = // 32
-	{
+	const float3 palette[NUM_COLORS] = { // 32
 		RGB( 0, 0, 0 ),
 		RGB( 192, 64, 80 ),
 		RGB( 240, 240, 240 ),
@@ -403,8 +394,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	// Sega Genesis Evangelion
 	// https://lospec.com/palette-list/sega-genesis-evangelion
 
-	const float3 palette[NUM_COLORS] = // 17
-	{
+	const float3 palette[NUM_COLORS] = { // 17
 		RGB( 207, 201, 179 ),
 		RGB( 163, 180, 158 ),
 		RGB( 100, 166, 174 ),
@@ -427,8 +417,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #elif 0
 
 	// https://lospec.com/palette-list/existential-demo
-	const float3 palette[NUM_COLORS] = // 8
-	{
+	const float3 palette[NUM_COLORS] = { // 8
 		RGB( 248, 243, 253 ),
 		RGB( 250, 198, 180 ),
 		RGB( 154, 218, 231 ),
@@ -459,24 +448,19 @@ void main( PS_IN fragment, out PS_OUT result )
 	float dither = DitherArray8x8( uvDither ) - 0.5;
 
 #if 0
-	if( uv.y < 0.0625 )
-	{
+	if( uv.y < 0.0625 ) {
 		color.rgb = HSVToRGB( float3( uv.x, 1.0, uv.y * 16.0 ) );
 
 		result.color = float4( color.rgb, 1.0 );
 		return;
-	}
-	else if( uv.y < 0.125 )
-	{
+	} else if( uv.y < 0.125 ) {
 		// quantized
 		color.rgb = HSVToRGB( float3( uv.x, 1.0, ( uv.y - 0.0625 ) * 16.0 ) );
 		color.rgb = LinearSearch( color.rgb, palette );
 
 		result.color = float4( color.rgb, 1.0 );
 		return;
-	}
-	else if( uv.y < 0.1875 )
-	{
+	} else if( uv.y < 0.1875 ) {
 		// dithered quantized
 		color.rgb = HSVToRGB( float3( uv.x, 1.0, ( uv.y - 0.125 ) * 16.0 ) );
 
@@ -485,9 +469,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 		result.color = float4( color.rgb, 1.0 );
 		return;
-	}
-	else if( uv.y < 0.25 )
-	{
+	} else if( uv.y < 0.25 ) {
 		color.rgb = _float3( uv.x );
 		color.rgb = floor( color.rgb * NUM_COLORS ) * ( 1.0 / ( NUM_COLORS - 1.0 ) );
 
@@ -512,8 +494,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	//
 
 	// don't post process the hands, which were drawn with alpha = 0
-	if( color.a == 0.0 )
-	{
+	if( color.a == 0.0 ) {
 		result.color = float4( color.rgb, 1.0 );
 		return;
 	}
@@ -567,17 +548,12 @@ void main( PS_IN fragment, out PS_OUT result )
 #if 1
 	// change from simple triplanar blending to cubic projection
 	// which handles diagonal geometry way better
-	if( ( abs( worldNormal.x ) > abs( worldNormal.y ) ) && ( abs( worldNormal.x ) > abs( worldNormal.z ) ) )
-	{
+	if( ( abs( worldNormal.x ) > abs( worldNormal.y ) ) && ( abs( worldNormal.x ) > abs( worldNormal.z ) ) ) {
 		triblend = float3( 1, 0, 0 ); // X axis
-	}
-	else if( ( abs( worldNormal.z ) > abs( worldNormal.x ) ) && ( abs( worldNormal.z ) > abs( worldNormal.y ) ) )
-	{
+	} else if( ( abs( worldNormal.z ) > abs( worldNormal.x ) ) && ( abs( worldNormal.z ) > abs( worldNormal.y ) ) ) {
 		triblend = float3( 0, 0, 1 ); // Z axis
 
-	}
-	else
-	{
+	} else {
 		triblend = float3( 0, 1, 0 ); // Y axis
 	}
 #endif

@@ -165,8 +165,7 @@ void ChromaticAberrationPass( inout float4 color, PS_IN fragment )
 	//float samples = rpOverbright.x;
 	float samples = 12.0; // * 2;
 
-	for( float i = 0.0; i < samples; i = i + 1.0 )
-	{
+	for( float i = 0.0; i < samples; i = i + 1.0 ) {
 		//float t = ( ( i / ( samples - 1.0 ) ) - 0.5 );
 		float t = ( i / ( samples - 1.0 ) );
 		//float t = log( i / ( samples - 1.0 ) );
@@ -323,39 +322,29 @@ void DitheringPass( inout float4 fragColor, PS_IN fragment )
 	float3 color = fragColor.rgb;
 
 #if 0
-	if( uv2.y >= 0.975 )
-	{
+	if( uv2.y >= 0.975 ) {
 		// BOTTOM: Show bands.
 		color = _float3( uv2.x );
 
-	}
-	else if( uv2.y >= 0.95 )
-	{
+	} else if( uv2.y >= 0.95 ) {
 		// quantized signal
 		color = _float3( uv2.x );
 		color = floor( color * Dithering_QuantizationSteps ) * ( 1.0 / ( Dithering_QuantizationSteps - 1.0 ) );
-	}
-	else if( uv2.y >= 0.925 )
-	{
+	} else if( uv2.y >= 0.925 ) {
 		// quantized signal dithered temporally
 		color = _float3( uv2.x );
 		color = floor( color * Dithering_QuantizationSteps + Step3( uv ) * Dithering_NoiseBoost ) * ( 1.0 / ( Dithering_QuantizationSteps - 1.0 ) );
-	}
-	else if( uv2.y >= 0.9 )
-	{
+	} else if( uv2.y >= 0.9 ) {
 		// TOP: Show dither texture.
 		color = Step3( uv ) * ( 0.25 * Dithering_NoiseBoost ) + 0.5;
-	}
-	else
+	} else
 #endif
 	{
 #if 0
-		if( uv2.x <= 0.5 )
-		{
+		if( uv2.x <= 0.5 ) {
 			// quantized but not dithered
 			color = floor( 0.5 + color * ( Dithering_QuantizationSteps + Dithering_Wide - 1.0 ) + ( -Dithering_Wide * 0.5 ) ) * ( 1.0 / ( Dithering_QuantizationSteps - 1.0 ) );
-		}
-		else
+		} else
 #endif
 		{
 			color = floor( 0.5 + color * ( Dithering_QuantizationSteps + Dithering_Wide - 1.0 ) + ( -Dithering_Wide * 0.5 ) + Step3T( uv ) * ( Dithering_Wide ) ) * ( 1.0 / ( Dithering_QuantizationSteps - 1.0 ) );

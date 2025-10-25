@@ -100,8 +100,7 @@ void main( PS_IN fragment, out PS_OUT result )
 {
 	// revised version from RetroArch
 
-	struct Params
-	{
+	struct Params {
 		float curvature;
 		float ghosting;
 		float scanroll;
@@ -133,8 +132,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	// RB: old curvature
 	float2 curved_uv = uv;
 
-	if( params.curvature > 0.0 )
-	{
+	if( params.curvature > 0.0 ) {
 		curved_uv = curve( uv, 2.0 );
 	}
 	float2 scuv = curved_uv;
@@ -222,12 +220,10 @@ void main( PS_IN fragment, out PS_OUT result )
 	/* Clamp */
 #if 1
 	curved_uv = scuv;
-	if( curved_uv.x < 0.0 || curved_uv.x > 1.0 )
-	{
+	if( curved_uv.x < 0.0 || curved_uv.x > 1.0 ) {
 		col *= 0.0;
 	}
-	if( curved_uv.y < 0.0 || curved_uv.y > 1.0 )
-	{
+	if( curved_uv.y < 0.0 || curved_uv.y > 1.0 ) {
 		col *= 0.0;
 	}
 #endif

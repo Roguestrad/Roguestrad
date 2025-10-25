@@ -224,9 +224,9 @@ float calculateBilateralWeight( float key, float tapKey, int2 tapLoc, float3 n_C
 
 void main( PS_IN fragment, out PS_OUT result )
 {
-//#   if __VERSION__ < 330
+	//#   if __VERSION__ < 330
 	float kernel[R + 1];
-//      if R == 0, we never call this shader
+	//      if R == 0, we never call this shader
 #if R == 1
 	kernel[0] = 0.5;
 	kernel[1] = 0.25;
@@ -261,7 +261,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	kernel[5] = 0.050920;
 	kernel[6] = 0.036108;
 #endif
-//#endif
+	//#endif
 
 	int2 ssC = int2( fragment.position.xy );
 
@@ -271,8 +271,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float4 temp = texelFetch( source, ssC, 0 );
 
 #if 0
-	if( fragment.texcoord0.x < 0.75 )
-	{
+	if( fragment.texcoord0.x < 0.75 ) {
 		result.color = temp.r;
 		return;
 	}
@@ -288,8 +287,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 	VALUE_TYPE sum = temp.VALUE_COMPONENTS;
 
-	if( key == 1.0 )
-	{
+	if( key == 1.0 ) {
 		// Sky pixel (if you aren't using depth keying, disable this test)
 		aoResult = sum;
 #if defined(BRIGHTPASS)
@@ -310,12 +308,10 @@ void main( PS_IN fragment, out PS_OUT result )
 #endif
 
 #if MDB_WEIGHTS == 0
-	for( int r = -R; r <= R; ++r )
-	{
+	for( int r = -R; r <= R; ++r ) {
 		// We already handled the zero case above.  This loop should be unrolled and the static branch optimized out,
 		// so the IF statement has no runtime cost
-		if( r != 0 )
-		{
+		if( r != 0 ) {
 			int2 tapLoc = ssC + int2( rpJitterTexScale.xy ) * ( r * SCALE );
 			temp = texelFetch( source, tapLoc, 0 );
 
@@ -336,8 +332,7 @@ void main( PS_IN fragment, out PS_OUT result )
 #else
 
 	float lastBilateralWeight = 9999.0;
-	for( int r = -1; r >= -R; --r )
-	{
+	for( int r = -1; r >= -R; --r ) {
 		int2 tapLoc = ssC + int2( rpJitterTexScale.xy ) * ( r * SCALE );
 		temp = texelFetch( source, tapLoc, 0 );
 		float      tapKey = getKey( tapLoc );
@@ -357,8 +352,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	}
 
 	lastBilateralWeight = 9999.0;
-	for( int r = 1; r <= R; ++r )
-	{
+	for( int r = 1; r <= R; ++r ) {
 		int2 tapLoc = ssC + int2( rpJitterTexScale.xy ) * ( r * SCALE );
 		temp = texelFetch( source, tapLoc, 0 );
 		float      tapKey = getKey( tapLoc );

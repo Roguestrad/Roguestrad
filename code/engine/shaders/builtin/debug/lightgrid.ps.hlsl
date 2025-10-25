@@ -58,19 +58,15 @@ int3 GetBaseGridCoord( float3 origin )
 	int3 pos;
 
 	float3 lightOrigin = origin - lightGridOrigin;
-	for( int i = 0; i < 3; i++ )
-	{
+	for( int i = 0; i < 3; i++ ) {
 		float           v;
 
 		v = lightOrigin[i] * ( 1.0f / lightGridSize[i] );
 		pos[i] = int( floor( v ) );
 
-		if( pos[i] < 0 )
-		{
+		if( pos[i] < 0 ) {
 			pos[i] = 0;
-		}
-		else if( pos[i] >= lightGridBounds[i] - 1 )
-		{
+		} else if( pos[i] >= lightGridBounds[i] - 1 ) {
 			pos[i] = lightGridBounds[i] - 1;
 		}
 	}

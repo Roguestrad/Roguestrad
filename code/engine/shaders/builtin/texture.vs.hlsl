@@ -56,13 +56,10 @@ void main( VS_IN vertex, out VS_OUT result )
 	result.position.xyz = psxVertexJitter( result.position );
 
 	// compute oldschool texgen or multiply by texture matrix
-	BRANCH if( rpTexGen0Enabled.x > 0.0 )
-	{
+	BRANCH if( rpTexGen0Enabled.x > 0.0 ) {
 		result.texcoord0.x = dot4( vertex.position, rpTexGen0S );
 		result.texcoord0.y = dot4( vertex.position, rpTexGen0T );
-	}
-	else
-	{
+	} else {
 		result.texcoord0.x = dot4( vertex.texcoord.xy, rpTextureMatrixS );
 		result.texcoord0.y = dot4( vertex.texcoord.xy, rpTextureMatrixT );
 	}

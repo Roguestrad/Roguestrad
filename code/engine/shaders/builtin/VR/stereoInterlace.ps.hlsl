@@ -50,12 +50,9 @@ struct PS_OUT
 void main( PS_IN fragment, out PS_OUT result )
 {
 	// texcoords will run from 0 to 1 across the entire screen
-	if( frac( fragment.position.y * 0.5 ) < 0.5 )
-	{
+	if( frac( fragment.position.y * 0.5 ) < 0.5 ) {
 		result.color = t_t1.Sample( LinearSampler, vec2( fragment.texcoord0 ) );
-	}
-	else
-	{
+	} else {
 		result.color = t_t2.Sample( LinearSampler, vec2( fragment.texcoord0 ) );
 	}
 }

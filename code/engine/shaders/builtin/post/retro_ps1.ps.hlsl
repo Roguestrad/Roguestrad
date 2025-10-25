@@ -82,24 +82,19 @@ void main( PS_IN fragment, out PS_OUT result )
 	float dither = DitherArray8x8( uvDither ) - 0.5;
 
 #if 0
-	if( uv.y < 0.0625 )
-	{
+	if( uv.y < 0.0625 ) {
 		color = HSVToRGB( float3( uv.x, 1.0, uv.y * 16.0 ) );
 
 		result.color = float4( color, 1.0 );
 		return;
-	}
-	else if( uv.y < 0.125 )
-	{
+	} else if( uv.y < 0.125 ) {
 		// quantized
 		color = HSVToRGB( float3( uv.x, 1.0, ( uv.y - 0.0625 ) * 16.0 ) );
 		color = Quantize( color, quantizationPeriod );
 
 		result.color = float4( color, 1.0 );
 		return;
-	}
-	else if( uv.y < 0.1875 )
-	{
+	} else if( uv.y < 0.1875 ) {
 		// dithered quantized
 		color = HSVToRGB( float3( uv.x, 1.0, ( uv.y - 0.125 ) * 16.0 ) );
 
@@ -108,9 +103,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 		result.color = float4( color, 1.0 );
 		return;
-	}
-	else if( uv.y < 0.25 )
-	{
+	} else if( uv.y < 0.25 ) {
 		color = _float3( uv.x );
 		color = Quantize( color, quantizationPeriod );
 	}

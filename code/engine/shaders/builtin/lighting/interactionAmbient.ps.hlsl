@@ -67,8 +67,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float2 specUV = fragment.texcoord5.xy;
 
 	// PSX affine texture mapping
-	if( rpPSXDistortions.z > 0.0 )
-	{
+	if( rpPSXDistortions.z > 0.0 ) {
 		baseUV /= fragment.texcoord1.z;
 		bumpUV /= fragment.texcoord1.z;
 		specUV /= fragment.texcoord1.z;

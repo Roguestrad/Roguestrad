@@ -22,8 +22,7 @@
 
 #pragma pack_matrix(row_major)
 
-struct ToneMappingConstants
-{
+struct ToneMappingConstants {
 	uint2 viewOrigin;
 	uint2 viewSize;
 
@@ -78,15 +77,13 @@ void main( uint linearIdx : SV_GroupIndex, uint2 globalIdx : SV_DispatchThreadID
 	uint2 pixelPos = globalIdx.xy + g_ToneMapping.viewOrigin.xy;
 	bool valid = all( globalIdx.xy < g_ToneMapping.viewSize.xy );
 
-	if( linearIdx < HISTOGRAM_BINS )
-	{
+	if( linearIdx < HISTOGRAM_BINS ) {
 		s_Histogram[linearIdx] = 0;
 	}
 
 	GroupMemoryBarrierWithGroupSync();
 
-	if( valid )
-	{
+	if( valid ) {
 #if SOURCE_ARRAY
 		float3 color = t_Source[uint3( pixelPos, g_ToneMapping.sourceSlice )].rgb;
 #else
@@ -103,23 +100,19 @@ void main( uint linearIdx : SV_GroupIndex, uint2 globalIdx : SV_DispatchThreadID
 		uint rightWeight = uint( frac( histogramBin ) * FIXED_POINT_FRAC_MULTIPLIER );
 		uint leftWeight = FIXED_POINT_FRAC_MULTIPLIER - rightWeight;
 
-		if( leftWeight != 0 && leftBin < HISTOGRAM_BINS )
-		{
+		if( leftWeight != 0 && leftBin < HISTOGRAM_BINS ) {
 			InterlockedAdd( s_Histogram[leftBin], leftWeight );
 		}
-		if( rightWeight != 0 && rightBin < HISTOGRAM_BINS )
-		{
+		if( rightWeight != 0 && rightBin < HISTOGRAM_BINS ) {
 			InterlockedAdd( s_Histogram[rightBin], rightWeight );
 		}
 	}
 
 	GroupMemoryBarrierWithGroupSync();
 
-	if( linearIdx < HISTOGRAM_BINS )
-	{
+	if( linearIdx < HISTOGRAM_BINS ) {
 		uint localBinValue = s_Histogram[linearIdx];
-		if( localBinValue != 0 )
-		{
+		if( localBinValue != 0 ) {
 			InterlockedAdd( u_Histogram[linearIdx], localBinValue );
 		}
 	}

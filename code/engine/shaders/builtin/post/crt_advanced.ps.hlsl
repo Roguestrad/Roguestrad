@@ -180,8 +180,7 @@ float3 tpscany( float3 bef, float3 ucj, float3 dcj, float temp )
 void pinc( float2 uv, inout float2 uv2, inout float mxbf, inout float vign, float ar )
 {
 	float cus = 0.0;
-	if( rpWindowCoord.x > 0.0 )
-	{
+	if( rpWindowCoord.x > 0.0 ) {
 		cus = 0.1;
 	}
 
@@ -247,14 +246,13 @@ void main( PS_IN fragment, out PS_OUT result )
 
 	// RB: workaround for stupid compiler bug
 
-//#if 0
-//	for( float i = -capaiter / 2.0; i <= ( capaiter / 2.0 ); i++ )
-//#else
+	//#if 0
+	//	for( float i = -capaiter / 2.0; i <= ( capaiter / 2.0 ); i++ )
+	//#else
 	const float capaVal[5] = { -2.5, -1.5, 0.5, 1.5, 2.5 };
-	for( int s = 0; s < 5; s++ )
-	{
+	for( int s = 0; s < 5; s++ ) {
 		float i = capaVal[s];
-//#endif
+		//#endif
 		// RB: avoid entering 0
 		capatemp = scimpresp( ( i + capaiter / 2.0 ) / capaiter * 1.0001 );
 		capainteg += capatemp;
@@ -271,8 +269,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float temp;
 	float snippet;
 	float integral = 0.0;
-	for( float a = -AAz / 2.0; a <= AAz / 2.0 ; a++ )
-	{
+	for( float a = -AAz / 2.0; a <= AAz / 2.0 ; a++ ) {
 		snippet = ( AAz / 2.0 - abs( a ) ) / AAz / 2.0;
 		integral += snippet;
 		temp = crt_sawtooth( uv2.y * scanline );
@@ -296,12 +293,12 @@ void main( PS_IN fragment, out PS_OUT result )
 	float3 grided = scan * grid * 3.0;
 	float3 final = min( float3( lerp( grided, scan, scan ) ), _float3( 1.0 ) ) * mask;
 
-//final = t_CurrentRender.Sample( s_LinearClamp, nuv ).xyz;
-//final = _float3( 1.0 ) * mask;
-//final = float3( nuv.x, nuv.y, 0.0 );
-//final = float3( nuvyud.x, nuvyud.y, 0.0 );
-//final = grid;
-//final = bef;
+	//final = t_CurrentRender.Sample( s_LinearClamp, nuv ).xyz;
+	//final = _float3( 1.0 ) * mask;
+	//final = float3( nuv.x, nuv.y, 0.0 );
+	//final = float3( nuvyud.x, nuvyud.y, 0.0 );
+	//final = grid;
+	//final = bef;
 
 	result.color = float4( final, 1.0 );
 }

@@ -62,11 +62,10 @@ register( t0 );
 SamplerState s_Sampler :
 register( s0 );
 
-float4 main_ps( PS_INPUT input ) : SV_Target
-{
-	float4 color = t_Texture.Sample( s_Sampler, input.uv ) * input.color;
+float4 main_ps( PS_INPUT input ) : SV_Target {
+		float4 color = t_Texture.Sample( s_Sampler, input.uv ) * input.color;
 
-	clip( color.a - rpAlphaTest.x );
+		clip( color.a - rpAlphaTest.x );
 
-	return sRGBAToLinearRGBA( color );
-}
+		return sRGBAToLinearRGBA( color );
+	}

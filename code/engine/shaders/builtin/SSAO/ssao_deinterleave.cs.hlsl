@@ -25,8 +25,7 @@
 #include <global_inc.hlsl>
 #include "vulkan.hlsli"
 
-struct SsaoConstants
-{
+struct SsaoConstants {
 	float2		viewportOrigin;
 	float2		viewportSize;
 	float2		pixelOffset;
@@ -66,11 +65,9 @@ void main( uint3 globalId : SV_DispatchThreadID )
 	uint2 groupBase = globalId.xy * 4 + g_Ssao.quantizedViewportOrigin;
 
 	[unroll]
-	for( uint y = 0; y < 4; y++ )
-	{
+	for( uint y = 0; y < 4; y++ ) {
 		[unroll]
-		for( uint x = 0; x < 4; x++ )
-		{
+		for( uint x = 0; x < 4; x++ ) {
 			uint2 gbufferSamplePos = groupBase + uint2( x, y );
 			float depth = t_InputDepth[gbufferSamplePos];
 
@@ -92,8 +89,7 @@ void main( uint3 globalId : SV_DispatchThreadID )
 	uint2 quarterResPos = groupBase >> 2;
 
 	[unroll]
-	for( uint index = 0; index < 16; index++ )
-	{
+	for( uint index = 0; index < 16; index++ ) {
 		float depth = depths[index];
 		u_DeinterleavedDepth[uint3( quarterResPos.xy, index )] = depth;
 	}

@@ -75,8 +75,7 @@ void main( PS_IN fragment, out PS_OUT result )
 
 	const float gaussFact[9] = { 0.13298076, 0.12579441, 0.10648267, 0.08065691, 0.05467002, 0.03315905, 0.01799699, 0.00874063, 0.00379866 };
 
-	const float3 chromaticOffsets[9] =
-	{
+	const float3 chromaticOffsets[9] = {
 		float3( 0.5, 0.5, 0.5 ), // w
 		float3( 0.8, 0.3, 0.3 ),
 		//	float3(1.0, 0.2, 0.2), // r
@@ -99,8 +98,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	float scale = 13.0; // bloom width
 	const float weightScale = 2.3; // bloom strength
 
-	for( int i = 0; i < samples; i++ )
-	{
+	for( int i = 0; i < samples; i++ ) {
 		//float t = ( ( float( 4 + ( i ) ) ) / ( float( samples ) - 1.0 ) );
 		//float t = log2( float( i ) / ( float( samples ) - 1.0 ) );
 		//float t = ( float( i ) / ( float( samples ) - 1.0 ) );
@@ -114,8 +112,7 @@ void main( PS_IN fragment, out PS_OUT result )
 	}
 
 #if 1
-	for( int sI = 1; sI < samples; sI++ )
-	{
+	for( int sI = 1; sI < samples; sI++ ) {
 		//float t = ( ( float( 4 + ( i ) ) ) / ( float( samples ) - 1.0 ) );
 
 		//float3 so = spectrumoffset( t );

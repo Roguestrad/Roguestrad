@@ -254,28 +254,17 @@ float3 HSVToRGB( float3 HSV )
 	float var_1 = HSV.z * ( 1.0 - HSV.y );
 	float var_2 = HSV.z * ( 1.0 - HSV.y * ( var_h - var_i ) );
 	float var_3 = HSV.z * ( 1.0 - HSV.y * ( 1 - ( var_h - var_i ) ) );
-	if( var_i == 0 )
-	{
+	if( var_i == 0 ) {
 		RGB = float3( HSV.z, var_3, var_1 );
-	}
-	else if( var_i == 1 )
-	{
+	} else if( var_i == 1 ) {
 		RGB = float3( var_2, HSV.z, var_1 );
-	}
-	else if( var_i == 2 )
-	{
+	} else if( var_i == 2 ) {
 		RGB = float3( var_1, HSV.z, var_3 );
-	}
-	else if( var_i == 3 )
-	{
+	} else if( var_i == 3 ) {
 		RGB = float3( var_1, var_2, HSV.z );
-	}
-	else if( var_i == 4 )
-	{
+	} else if( var_i == 4 ) {
 		RGB = float3( var_3, var_1, HSV.z );
-	}
-	else
-	{
+	} else {
 		RGB = float3( HSV.z, var_1, var_2 );
 	}
 
@@ -306,8 +295,7 @@ float2 octEncode( float3 v )
 {
 	float l1norm = abs( v.x ) + abs( v.y ) + abs( v.z );
 	float2 oct = v.xy * ( 1.0 / l1norm );
-	if( v.z < 0.0 )
-	{
+	if( v.z < 0.0 ) {
 		oct = ( 1.0 - abs( oct.yx ) ) * signNotZero( oct.xy );
 	}
 	return oct;
@@ -319,8 +307,7 @@ float2 octEncode( float3 v )
 float3 octDecode( float2 o )
 {
 	float3 v = float3( o.x, o.y, 1.0 - abs( o.x ) - abs( o.y ) );
-	if( v.z < 0.0 )
-	{
+	if( v.z < 0.0 ) {
 		v.xy = ( 1.0 - abs( v.yx ) ) * signNotZero( v.xy );
 	}
 	return normalize( v );
@@ -503,8 +490,7 @@ static float2 vposToScreenPosTexCoord( float2 vpos )
 static float3 psxVertexJitter( float4 clipPos )
 {
 	float jitterScale = rpPSXDistortions.x;
-	if( jitterScale > 0.0 )
-	{
+	if( jitterScale > 0.0 ) {
 		// snap to vertex to a pixel position on a lower grid
 		float3 vertex = clipPos.xyz / clipPos.w;
 
@@ -583,8 +569,7 @@ float R2Noise( float2 uv )
 }
 
 // array/table version from http://www.anisopteragames.com/how-to-fix-color-banding-with-dithering/
-static const uint ArrayDitherArray8x8[] =
-{
+static const uint ArrayDitherArray8x8[] = {
 	0, 32,  8, 40,  2, 34, 10, 42,   /* 8x8 Bayer ordered dithering  */
 	48, 16, 56, 24, 50, 18, 58, 26,  /* pattern.  Each input pixel   */
 	12, 44,  4, 36, 14, 46,  6, 38,  /* is scaled to the 0..63 range */
@@ -628,37 +613,28 @@ bool AABBRayIntersection( float3 b[2], float3 start, float3 dir, out float scale
 
 	ax0 = -1;
 	inside = 0;
-	for( i = 0; i < 3; i++ )
-	{
-		if( start[i] < b[0][i] )
-		{
+	for( i = 0; i < 3; i++ ) {
+		if( start[i] < b[0][i] ) {
 			side = 0;
-		}
-		else if( start[i] > b[1][i] )
-		{
+		} else if( start[i] > b[1][i] ) {
 			side = 1;
-		}
-		else
-		{
+		} else {
 			inside++;
 			continue;
 		}
-		if( dir[i] == 0.0f )
-		{
+		if( dir[i] == 0.0f ) {
 			continue;
 		}
 
 		f = ( start[i] - b[side][i] );
 
-		if( ax0 < 0 || abs( f ) > abs( scale * dir[i] ) )
-		{
+		if( ax0 < 0 || abs( f ) > abs( scale * dir[i] ) ) {
 			scale = - ( f / dir[i] );
 			ax0 = i;
 		}
 	}
 
-	if( ax0 < 0 )
-	{
+	if( ax0 < 0 ) {
 		scale = 0.0f;
 
 		// return true if the start point is inside the bounds
