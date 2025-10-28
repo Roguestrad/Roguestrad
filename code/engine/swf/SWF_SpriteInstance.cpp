@@ -142,6 +142,11 @@ swfDisplayEntry_t* idSWFSpriteInstance::FindDisplayEntry( int depth )
 	int len	   = displayList.Num();
 	int mid	   = len;
 	int offset = 0;
+
+	if( displayList.Num() == 0 ) {
+		return NULL;
+	}
+
 	while( mid > 0 ) {
 		mid = len >> 1;
 		if( displayList[offset + mid].depth <= depth ) {
@@ -149,9 +154,11 @@ swfDisplayEntry_t* idSWFSpriteInstance::FindDisplayEntry( int depth )
 		}
 		len -= mid;
 	}
+
 	if( displayList[offset].depth == depth ) {
 		return &displayList[offset];
 	}
+
 	return NULL;
 }
 

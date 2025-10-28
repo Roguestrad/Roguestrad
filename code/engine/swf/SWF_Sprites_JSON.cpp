@@ -253,12 +253,19 @@ void idSWFSprite::WriteJSON_PlaceObject2( idFile* file, idFile* luaFile, idSWFBi
 	uint8 flags1 = bitstream.ReadU8();
 	int	  depth	 = bitstream.ReadU16();
 
+	int	  characterID = -1;
+	if( ( flags1 & PlaceFlagHasCharacter ) != 0 ) {
+		characterID = bitstream.ReadU16();
+	}
+
+	if( characterID == -1 ) {
+		return;
+	}
+
 	file->WriteFloatString( "%s\t\t\t\t{\n", ( commandID != 0 ) ? ",\n" : "" );
 	file->WriteFloatString( "\t\t\t\t\t\"type\": \"Tag_PlaceObject2\",\n" );
 	file->WriteFloatString( "\t\t\t\t\t\"flags\": %i, \"depth\": %i", flags1, depth );
-
 	if( ( flags1 & PlaceFlagHasCharacter ) != 0 ) {
-		int characterID = bitstream.ReadU16();
 		file->WriteFloatString( ",\n\t\t\t\t\t\"characterID\": %i", characterID );
 	}
 
@@ -322,12 +329,19 @@ void idSWFSprite::WriteJSON_PlaceObject3( idFile* file, idFile* luaFile, idSWFBi
 	uint8  flags2 = bitstream.ReadU8();
 	uint16 depth  = bitstream.ReadU16();
 
+	int	   characterID = -1;
+	if( ( flags1 & PlaceFlagHasCharacter ) != 0 ) {
+		characterID = bitstream.ReadU16();
+	}
+
+	if( characterID == -1 ) {
+		return;
+	}
+
 	file->WriteFloatString( "%s\t\t\t\t{\n", ( commandID != 0 ) ? ",\n" : "" );
 	file->WriteFloatString( "\t\t\t\t\t\"type\": \"Tag_PlaceObject3\",\n" );
-	file->WriteFloatString( "\t\t\t\t\t\"flags1\": %i, \"flags2\": %i, \"depth\": %i", flags1, flags2, depth );
-
+	file->WriteFloatString( "\t\t\t\t\t\"flags\": %i, \"depth\": %i", flags1, depth );
 	if( ( flags1 & PlaceFlagHasCharacter ) != 0 ) {
-		int characterID = bitstream.ReadU16();
 		file->WriteFloatString( ",\n\t\t\t\t\t\"characterID\": %i", characterID );
 	}
 

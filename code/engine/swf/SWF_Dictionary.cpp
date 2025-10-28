@@ -126,26 +126,27 @@ idSWFDictionaryEntry* idSWF::AddDictionaryEntry( int characterID, swfDictType_t 
 		dictionary.SetNum( characterID + 1 );
 	}
 
-	if( dictionary[characterID].type != SWF_DICT_NULL ) {
+	idSWFDictionaryEntry& entry = dictionary[characterID];
+	if( entry.type != SWF_DICT_NULL ) {
 		idLib::Warning( "%s: Duplicate character %d", filename.c_str(), characterID );
 		return NULL;
 	}
 
-	dictionary[characterID].type = type;
+	entry.type = type;
 
 	if( ( type == SWF_DICT_SHAPE ) || ( type == SWF_DICT_MORPH ) ) {
-		dictionary[characterID].shape = new( TAG_SWF ) idSWFShape;
+		entry.shape = new( TAG_SWF ) idSWFShape;
 	} else if( type == SWF_DICT_SPRITE ) {
-		dictionary[characterID].sprite = new( TAG_SWF ) idSWFSprite( this );
+		entry.sprite = new( TAG_SWF ) idSWFSprite( this );
 	} else if( type == SWF_DICT_FONT ) {
-		dictionary[characterID].font = new( TAG_SWF ) idSWFFont;
+		entry.font = new( TAG_SWF ) idSWFFont;
 	} else if( type == SWF_DICT_TEXT ) {
-		dictionary[characterID].text = new( TAG_SWF ) idSWFText;
+		entry.text = new( TAG_SWF ) idSWFText;
 	} else if( type == SWF_DICT_EDITTEXT ) {
-		dictionary[characterID].edittext = new( TAG_SWF ) idSWFEditText;
+		entry.edittext = new( TAG_SWF ) idSWFEditText;
 	}
 
-	return &dictionary[characterID];
+	return &entry;
 }
 
 /*

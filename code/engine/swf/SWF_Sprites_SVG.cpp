@@ -94,17 +94,16 @@ static void WriteAnimateOpacity( idFile* file, const idStr& tabs, const swfColor
 		to.mul.w );
 }
 
-static swfMatrix_t ParseMatrixFromString( const char* str )
+void swfMatrix_t::ParseSVGTransformFromString( const char* str )
 {
-	swfMatrix_t m;
-	m.xx = 1.0f;
-	m.yy = 1.0f;
-	m.xy = 0.0f;
-	m.yx = 0.0f;
-	m.tx = 0.0f;
-	m.ty = 0.0f;
+	xx = 1.0f;
+	yy = 1.0f;
+	xy = 0.0f;
+	yx = 0.0f;
+	tx = 0.0f;
+	ty = 0.0f;
 	if( !str || !str[0] ) {
-		return m;
+		return;
 	}
 
 	idStr	transform( str );
@@ -114,30 +113,29 @@ static swfMatrix_t ParseMatrixFromString( const char* str )
 	if( transform.Find( "matrix", false ) != -1 ) {
 		lexer.ExpectTokenString( "matrix" );
 		lexer.ExpectTokenString( "(" );
-		m.xx = lexer.ParseFloat();
+		xx = lexer.ParseFloat();
 		lexer.ExpectTokenString( "," );
-		m.yx = lexer.ParseFloat();
+		yx = lexer.ParseFloat();
 		lexer.ExpectTokenString( "," );
-		m.xy = lexer.ParseFloat();
+		xy = lexer.ParseFloat();
 		lexer.ExpectTokenString( "," );
-		m.yy = lexer.ParseFloat();
+		yy = lexer.ParseFloat();
 		lexer.ExpectTokenString( "," );
-		m.tx = lexer.ParseFloat();
+		tx = lexer.ParseFloat();
 		lexer.ExpectTokenString( "," );
-		m.ty = lexer.ParseFloat();
+		ty = lexer.ParseFloat();
 		lexer.ExpectTokenString( ")" );
 	} else if( transform.Find( "translate", false ) != -1 ) {
 		lexer.ExpectTokenString( "translate" );
 		lexer.ExpectTokenString( "(" );
-		m.tx = lexer.ParseFloat();
+		tx = lexer.ParseFloat();
 		lexer.ExpectTokenString( "," );
-		m.ty = lexer.ParseFloat();
+		ty = lexer.ParseFloat();
 		lexer.ExpectTokenString( ")" );
 	}
 	// TODO: handle other Transform-Types (scale, rotate etc.)
 
 	lexer.FreeSource();
-	return m;
 }
 
 static swfColorXform_t ParseColorXformFromFilter( const char* filterStr )
@@ -199,10 +197,15 @@ void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionar
 			idFile_SWF memFile( new idFile_Memory() );
 
 			uint8	   flags = PlaceFlagHasCharacter | PlaceFlagMove;
-			if( child.attribute( "transform" ) )
+			if( child.attribute( "transform" ) ) {
 				flags |= PlaceFlagHasMatrix;
-			if( child.attribute( "filter" ) )
+			}
+			if( child.attribute( "filter" ) ) {
 				flags |= PlaceFlagHasColorTransform;
+			}
+			if( child.attribute( "id" ) ) {
+				flags |= PlaceFlagHasName;
+			}
 
 			memFile.WriteU8( flags );
 			memFile.WriteU16( depthCounter++ );
@@ -212,7 +215,8 @@ void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionar
 			memFile.WriteU16( charID );
 
 			if( flags & PlaceFlagHasMatrix ) {
-				swfMatrix_t m = ParseMatrixFromString( child.attribute( "transform" ).value() );
+				swfMatrix_t m;
+				m.ParseSVGTransformFromString( child.attribute( "transform" ).value() );
 				memFile.WriteMatrix( m );
 			}
 
@@ -222,7 +226,6 @@ void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionar
 			}
 
 			if( child.attribute( "id" ) ) {
-				flags |= PlaceFlagHasName;
 				idStr name = child.attribute( "id" ).value();
 				memFile.WriteString( name );
 			}
@@ -258,7 +261,7 @@ void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionar
 
 void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict )
 {
-	f->WriteFloatString( "\t\t<g id=\"%i\" >\n", characterID );
+	f->WriteFloatString( "\t\t<g id=\"%i\" data-type=\"SPRITE\" >\n", characterID );
 
 	// Select frame 0 for static export; could be extended to use frameLabels (e.g., "rollOn")
 	int frameStart = frameOffsets[0];
@@ -480,7 +483,7 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 		case SWF_DICT_TEXT:
 		case SWF_DICT_EDITTEXT:
 		case SWF_DICT_SPRITE: {
-			file->WriteFloatString( "\t\t\t<use xlink:href=\"#%i\" ", characterID );
+			file->WriteFloatString( "\t\t\t<use xlink:href=\"#%i\" link-type=\"%s\" ", characterID, idSWF::GetDictTypeName( entry.type ) );
 			break;
 		}
 	}

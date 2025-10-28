@@ -371,7 +371,7 @@ idSWF::LoadImage
 Loads RGBA data into an image at the specificied character id in the dictionary
 ========================
 */
-void idSWF::LoadImage( int characterID, const byte* imageData, int width, int height )
+void idSWF::PackImage( int characterID, const byte* imageData, int width, int height )
 {
 	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_IMAGE );
 	if( entry == NULL ) {
@@ -440,7 +440,7 @@ void idSWF::DefineBits( idSWFBitStream& bitstream )
 		return;
 	}
 
-	LoadImage( characterID, imageData, width, height );
+	PackImage( characterID, imageData, width, height );
 
 	Mem_Free( imageData );
 }
@@ -465,7 +465,7 @@ void idSWF::DefineBitsJPEG2( idSWFBitStream& bitstream )
 		return;
 	}
 
-	LoadImage( characterID, imageData, width, height );
+	PackImage( characterID, imageData, width, height );
 
 	Mem_Free( imageData );
 }
@@ -503,7 +503,7 @@ void idSWF::DefineBitsJPEG3( idSWFBitStream& bitstream )
 		}
 	}
 
-	LoadImage( characterID, imageData, width, height );
+	PackImage( characterID, imageData, width, height );
 
 	Mem_Free( imageData );
 }
@@ -585,7 +585,7 @@ void idSWF::DefineBitsLossless( idSWFBitStream& bitstream )
 		memset( imageData, 0xFF, width * height * 4 );
 	}
 
-	LoadImage( characterID, imageData, width, height );
+	PackImage( characterID, imageData, width, height );
 }
 
 /*
@@ -646,5 +646,5 @@ void idSWF::DefineBitsLossless2( idSWFBitStream& bitstream )
 		memset( imageData, 0xFF, width * height * 4 );
 	}
 
-	LoadImage( characterID, imageData, width, height );
+	PackImage( characterID, imageData, width, height );
 }

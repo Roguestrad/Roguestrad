@@ -159,33 +159,104 @@ bool idSWF::LoadSVG( const char* filename )
 	pugi::xml_node defs = svgNode.child( "defs" );
 	if( defs ) {
 		int maxID = 0;
-		for( pugi::xml_node g = defs.child( "g" ); g; g = g.next_sibling( "g" ) ) {
-			int id = g.attribute( "id" ).as_int();
+		for( pugi::xml_node child = defs.first_child(); child; child = child.next_sibling() ) {
+			int id = child.attribute( "id" ).as_int();
 			maxID  = idMath::Imax( maxID, id );
 		}
 		dictionary.SetNum( maxID + 1 );
 
-		for( pugi::xml_node g = defs.child( "g" ); g; g = g.next_sibling( "g" ) ) {
-			int					  id	= g.attribute( "id" ).as_int();
+		for( pugi::xml_node n = defs.first_child(); n; n = n.next_sibling() ) {
+			pugi::xml_attribute idAttr = n.attribute( "id" );
+			if( !idAttr ) {
+				continue;
+			}
+
+			const char*			  tagName = n.name();
+
+			int					  id	= idAttr.as_int();
 			idSWFDictionaryEntry& entry = dictionary[id];
 
-			if( g.child( "polygon" ) || g.child( "polyline" ) ) {
-				entry.type	= SWF_DICT_SHAPE;
-				entry.shape = new( TAG_SWF ) idSWFShape;
-				ParseShape( g, entry.shape );
-			} else if( g.child( "text" ) ) {
+			if( entry.type != SWF_DICT_NULL ) {
+				idLib::Warning( "%s: Duplicate character %d", filename, id );
+				continue;
+			}
+
+			if( idStr::Icmp( tagName, "image" ) == 0 ) {
+				// entry.type = SWF_DICT_IMAGE;
+
+				idStr imagePath = n.attribute( "xlink:href" ).value();
+				if( imagePath[0] == '.' ) {
+					// internal image in the atlas
+					entry.material = NULL;
+				} else {
+					imagePath	   = "swf/" + imagePath;
+					entry.material = declManager->FindMaterial( imagePath );
+				}
+
+				byte*	  imageData = NULL;
+				int		  width, height;
+				ID_TIME_T timestamp;
+				R_LoadImage( imagePath.c_str(), &imageData, &width, &height, &timestamp, false, NULL );
+				if( imageData != NULL ) {
+					PackImage( id, imageData, width, height );
+
+					Mem_Free( imageData );
+				}
+
+			} else if( idStr::Icmp( tagName, "text" ) == 0 ) {
 				entry.type	   = SWF_DICT_EDITTEXT;
 				entry.edittext = new( TAG_SWF ) idSWFEditText;
-				ParseText( g, entry.edittext );
-			} else if( g.child( "image" ) ) {
-				entry.type = SWF_DICT_IMAGE;
-				// TODO: Load image from xlink:href and set imageSize etc.
-				idStr imagePath = g.child( "image" ).attribute( "xlink:href" ).value();
-				// call LoadImage(id, ...) auf, similar as in LoadJSON
-			} else {
-				entry.type	 = SWF_DICT_SPRITE;
-				entry.sprite = new idSWFSprite( this );
-				entry.sprite->LoadSVGNode( g, dictionary, isUnfolded );
+				ParseText( n, entry.edittext );
+
+			} else if( idStr::Icmp( tagName, "g" ) == 0 ) {
+				pugi::xml_node& g		 = n;
+				const char*		dataType = g.attribute( "data-type" ).value();
+				if( dataType && idStr::Icmp( dataType, "SHAPE" ) == 0 ) {
+					pugi::xml_node useNode = n.child( "use" );
+					if( useNode ) {
+						const char* linkType = useNode.attribute( "link-type" ).value();
+						if( idStr::Icmp( linkType, "BITMAP" ) == 0 ) {
+							// this is a bitmap helper fill shape, not necessary for SVG but needed for SWF
+							// this is generated for each image
+							entry.type	= SWF_DICT_SHAPE;
+							entry.shape = new( TAG_SWF ) idSWFShape;
+
+							idSWFShapeDrawFill& fill = entry.shape->fillDraws.Alloc();
+							fill.style.type			 = 4;
+							fill.style.bitmapID		 = atoi( useNode.attribute( "xlink:href" ).value() + 1 );
+							fill.style.startMatrix.ParseSVGTransformFromString( useNode.attribute( "transform" ).value() );
+							fill.style.endMatrix = fill.style.startMatrix;
+							// Optional: Bounds
+							int refID = fill.style.bitmapID;
+							if( refID > 0 && refID < dictionary.Num() && dictionary[refID].type == SWF_DICT_IMAGE ) {
+								// find width and height from packImages
+								imageToPack_t* packImage = NULL;
+								for( auto& img : packImages ) {
+									if( img.characterID == refID ) {
+										packImage = &img;
+										break;
+									}
+								}
+								if( packImage ) {
+									entry.shape->startBounds = swfRect_t( 0, 0, packImage->trueSize.x, packImage->trueSize.y );
+									entry.shape->endBounds	 = entry.shape->startBounds;
+								} else {
+									idLib::Warning( "SVG Load: Could not find packed image for characterID %d", refID );
+								}
+							}
+
+							// TODO do another fill that actually draws a rectangle with the image
+						}
+					} else {
+						entry.type	= SWF_DICT_SHAPE;
+						entry.shape = new( TAG_SWF ) idSWFShape;
+						ParseShape( g, entry.shape );
+					}
+				} else {
+					entry.type	 = SWF_DICT_SPRITE;
+					entry.sprite = new idSWFSprite( this );
+					entry.sprite->LoadSVGNode( g, dictionary, isUnfolded );
+				}
 			}
 		}
 	}
@@ -225,29 +296,26 @@ void idSWF::WriteSVG( const char* filename )
 		( int )frameWidth,
 		( int )frameHeight );
 
-	const bool exportUnfolded = true;
+	const bool exportUnfolded = false;
 
 	file->WriteFloatString( "\t<defs>\n" );
 	for( int i = 0; i < dictionary.Num(); i++ ) {
 		const idSWFDictionaryEntry& entry = dictionary[i];
 
 		switch( dictionary[i].type ) {
-				/*
-				case SWF_DICT_IMAGE:
-				{
-					file->WriteFloatString( "\t\t<image id=\"%i\" ", i );
-					file->WriteFloatString( "xlink:href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), i );
-					file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", entry.imageSize[0], entry.imageSize[1] );
-					break;
-				}
-				*/
+			case SWF_DICT_IMAGE: {
+				file->WriteFloatString( "\t\t<image id=\"%i\" ", i );
+				file->WriteFloatString( "xlink:href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), i );
+				file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", entry.imageSize[0], entry.imageSize[1] );
+				break;
+			}
 
 			case SWF_DICT_MORPH:
 			case SWF_DICT_SHAPE: {
 				idSWFShape* shape = dictionary[i].shape;
 
 				// file->WriteFloatString( "\t\t<g id=\"%i\" visibility=\"hidden\">\n", i );
-				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
+				file->WriteFloatString( "\t\t<g id=\"%i\" data-type=\"%s\">\n", i, idSWF::GetDictTypeName( dictionary[i].type ) );
 
 				// export fill draws
 				for( int d = 0; d < shape->fillDraws.Num(); d++ ) {
@@ -261,9 +329,10 @@ void idSWF::WriteSVG( const char* filename )
 
 						const idSWFDictionaryEntry& bitmapEntry = dictionary[bitmapID];
 
-						file->WriteFloatString( "\t\t\t<image id=\"%i\" ", bitmapID );
-						file->WriteFloatString( "xlink:href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), bitmapID );
-						file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", bitmapEntry.imageSize[0], bitmapEntry.imageSize[1] );
+						// file->WriteFloatString( "\t\t\t<image id=\"%i\" ", bitmapID );
+						// file->WriteFloatString( "xlink:href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), bitmapID );
+						// file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", bitmapEntry.imageSize[0], bitmapEntry.imageSize[1] );
+						file->WriteFloatString( "\t\t\t<use xlink:href=\"#%i\" link-type=\"BITMAP\" />\n", bitmapID );
 
 						continue;
 					} else if( exportBitmapShapesOnly ) {
@@ -407,8 +476,9 @@ void idSWF::WriteSVG( const char* filename )
 				const swfColorRGBA_t& color	   = et->color;
 				float				  fontSize = SWFTWIP( et->fontHeight ); // SWF font height is in twips
 
-				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
-				file->WriteFloatString( "\t\t\t<text x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\">%s</text>\n",
+				// file->WriteFloatString( "\t\t<g id=\"%i\" data-type=\"EDITTEXT\" >\n", i );
+				file->WriteFloatString( "\t\t<text id=\"%i\" x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\">%s</text>\n",
+					i,
 					et->bounds.tl.x,
 					et->bounds.br.y,
 					GetFontName( et->fontID ),
@@ -419,7 +489,7 @@ void idSWF::WriteSVG( const char* filename )
 					color.a * ( 1.0f / 255.0f ),
 					alignStr.c_str(),
 					et->initialText.c_str() );
-				file->WriteFloatString( "\t\t</g>\n" );
+				// file->WriteFloatString( "\t\t</g>\n" );
 				break;
 			}
 		}

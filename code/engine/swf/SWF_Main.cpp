@@ -159,9 +159,10 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 			if( LoadJSON( jsonFileName ) ) {
 				loadedFromJSON = true;
 
-				WriteBinary( binaryFileName );
+				// WriteBinary( binaryFileName );
 			} else if( LoadSVG( svgFileName ) ) {
-				WriteBinary( binaryFileName );
+				exportJSON = true;
+				// WriteBinary( binaryFileName );
 			} else if( LoadSWF( filename ) ) {
 				WriteBinary( binaryFileName );
 			}
@@ -177,6 +178,10 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	if( exportJSON ) {
 		idStr jsonFileName = "exported/";
 		jsonFileName += filename;
+		if( svgSourceTime != FILE_NOT_FOUND_TIMESTAMP ) {
+			jsonFileName.StripFileExtension();
+			jsonFileName += "_from_svg";
+		}
 		jsonFileName.SetFileExtension( ".json" );
 
 		WriteJSON( jsonFileName );
@@ -1070,7 +1075,7 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 	for( int f = 0; f < files->GetList().Num(); f++ ) {
 		idStr bswfName = files->GetList()[f];
 
-#if 0
+#if 1
 		// only export hud for testing
 		if( idStr::Icmp( bswfName, "generated/swf/hud.bswf" ) != 0 ) {
 			continue;

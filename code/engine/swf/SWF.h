@@ -426,7 +426,7 @@ private:
 
 	idDecompressJPEG jpeg;
 
-	void			 LoadImage( int characterID, const byte* imageData, int width, int height );
+	void			 PackImage( int characterID, const byte* imageData, int width, int height );
 
 	void			 JPEGTables( idSWFBitStream& bitstream );
 	void			 DefineBits( idSWFBitStream& bitstream );
