@@ -1,4 +1,4 @@
-/*
+﻿/*
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
@@ -106,12 +106,11 @@ static void ParseShape( const pugi::xml_node& node, idSWFShape* shape )
 	shape->endBounds	  = shape->startBounds;
 }
 
-static void ParseText( const pugi::xml_node& node, idSWFEditText* et )
+static void ParseText( const pugi::xml_node& textNode, idSWFEditText* et )
 {
 	if( !et )
 		return;
 
-	pugi::xml_node textNode = node.child( "text" );
 	if( textNode ) {
 		et->bounds.tl.x = textNode.attribute( "x" ).as_float();
 		et->bounds.br.y = textNode.attribute( "y" ).as_float();
@@ -222,30 +221,61 @@ bool idSWF::LoadSVG( const char* filename )
 							entry.shape = new( TAG_SWF ) idSWFShape;
 
 							idSWFShapeDrawFill& fill = entry.shape->fillDraws.Alloc();
-							fill.style.type			 = 4;
-							fill.style.bitmapID		 = atoi( useNode.attribute( "xlink:href" ).value() + 1 );
+							fill.style.type			 = 4; // Bitmap fill
+							fill.style.subType		 = 0; // near clamp (optional)
+
+							// --- 1. Parse href → bitmapID ---
+							const char* href	= useNode.attribute( "xlink:href" ).value();
+							fill.style.bitmapID = atoi( href + 1 ); // #14 → 14
+
+							// --- 2. Parse transform → startMatrix ---
 							fill.style.startMatrix.ParseSVGTransformFromString( useNode.attribute( "transform" ).value() );
 							fill.style.endMatrix = fill.style.startMatrix;
-							// Optional: Bounds
-							int refID = fill.style.bitmapID;
-							if( refID > 0 && refID < dictionary.Num() && dictionary[refID].type == SWF_DICT_IMAGE ) {
-								// find width and height from packImages
-								imageToPack_t* packImage = NULL;
-								for( auto& img : packImages ) {
-									if( img.characterID == refID ) {
-										packImage = &img;
-										break;
-									}
-								}
-								if( packImage ) {
-									entry.shape->startBounds = swfRect_t( 0, 0, packImage->trueSize.x, packImage->trueSize.y );
-									entry.shape->endBounds	 = entry.shape->startBounds;
-								} else {
-									idLib::Warning( "SVG Load: Could not find packed image for characterID %d", refID );
+
+							// --- 3. Fetch image size from packImages ---
+							int			   refID	 = fill.style.bitmapID;
+							imageToPack_t* packImage = NULL;
+							for( imageToPack_t& img : packImages ) {
+								if( img.characterID == refID ) {
+									packImage = &img;
+									break;
 								}
 							}
 
-							// TODO do another fill that actually draws a rectangle with the image
+							if( !packImage ) {
+								idLib::Warning( "SVG Load: Could not find packed image for characterID %d", refID );
+								// Fallback: 128x64
+								entry.shape->startBounds = swfRect_t( 0, 0, 128, 64 );
+								entry.shape->endBounds	 = entry.shape->startBounds;
+							} else {
+								entry.shape->startBounds = swfRect_t( 0, 0, packImage->trueSize.x, packImage->trueSize.y );
+								entry.shape->endBounds	 = entry.shape->startBounds;
+							}
+
+							// --- 4. Create 4 vertices (rectangle) ---
+							float w = entry.shape->startBounds.br.x - entry.shape->startBounds.tl.x;
+							float h = entry.shape->startBounds.br.y - entry.shape->startBounds.tl.y;
+
+							fill.startVerts.SetNum( 4 );
+							fill.startVerts[0].x = w;
+							fill.startVerts[0].y = h; // bottom-right
+							fill.startVerts[1].x = 0;
+							fill.startVerts[1].y = h; // bottom-left
+							fill.startVerts[2].x = 0;
+							fill.startVerts[2].y = 0; // top-left
+							fill.startVerts[3].x = w;
+							fill.startVerts[3].y = 0; // top-right
+
+							// fill.endVerts = fill.startVerts;
+
+							// --- 5. Create quad (2 triangles) ---
+							fill.indices.SetNum( 6 );
+							fill.indices[0] = 0;
+							fill.indices[1] = 1;
+							fill.indices[2] = 2;
+							fill.indices[3] = 0;
+							fill.indices[4] = 2;
+							fill.indices[5] = 3;
 						}
 					} else {
 						entry.type	= SWF_DICT_SHAPE;
@@ -269,6 +299,13 @@ bool idSWF::LoadSVG( const char* filename )
 
 	mainsprite = new idSWFSprite( this );
 	mainsprite->LoadSVGNode( mainNode, dictionary, isUnfolded );
+
+	// now that all images have been loaded, write out the combined image
+	idStr atlasFileName = "generated/";
+	atlasFileName += filename;
+	atlasFileName.SetFileExtension( ".png" );
+
+	WriteSwfImageAtlas( atlasFileName );
 
 	return true;
 }
@@ -328,13 +365,27 @@ void idSWF::WriteSVG( const char* filename )
 						}
 
 						const idSWFDictionaryEntry& bitmapEntry = dictionary[bitmapID];
+						file->WriteFloatString( "\t\t\t<use xlink:href=\"#%i\" link-type=\"BITMAP\" ", bitmapID );
 
-						// file->WriteFloatString( "\t\t\t<image id=\"%i\" ", bitmapID );
-						// file->WriteFloatString( "xlink:href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), bitmapID );
-						// file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", bitmapEntry.imageSize[0], bitmapEntry.imageSize[1] );
-						file->WriteFloatString( "\t\t\t<use xlink:href=\"#%i\" link-type=\"BITMAP\" />\n", bitmapID );
-
+						idStr transform = "";
+#if 0
+						swfMatrix_t& m		   = fillDraw.style.startMatrix;
+						if( m.xx != 1.0f || m.yy != 1.0f || m.xy != 0.0f || m.yx != 0.0f ) {
+							transform.Format( "transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ",
+								m.xx, // a
+								m.yx, // b (instead of m.yy)
+								m.xy, // c
+								m.yy, // d (instead of m.yx)
+								m.tx, // e
+								m.ty  // f
+							);
+						} else if( m.tx != 0.0f || m.ty != 0.0f ) {
+							transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
+						}
+#endif
+						file->WriteFloatString( "%s/>\n", transform.c_str() );
 						continue;
+
 					} else if( exportBitmapShapesOnly ) {
 						continue;
 					}
@@ -343,32 +394,22 @@ void idSWF::WriteSVG( const char* filename )
 					// 0 = linear, 2 = radial, 3 = focal; 0 = repeat, 1 = clamp, 2 = near repeat, 3 = near clamp
 					/*
 					file->WriteFloatString( " subType=" );
-					if( fillDraw.style.subType == 0 )
-					{
+					if( fillDraw.style.subType == 0 ) {
 						file->WriteFloatString( "\"linear\"" );
-					}
-					else if( fillDraw.style.subType == 1 )
-					{
+					} else if( fillDraw.style.subType == 1 ) {
 						file->WriteFloatString( "\"radial\"" );
-					}
-					else if( fillDraw.style.subType == 2 )
-					{
+					} else if( fillDraw.style.subType == 2 ) {
 						file->WriteFloatString( "\"focal\"" );
-					}
-					else if( fillDraw.style.subType == 3 )
-					{
+					} else if( fillDraw.style.subType == 3 ) {
 						file->WriteFloatString( "\"near clamp\"" );
-					}
-					else
-					{
+					} else {
 						file->WriteFloatString( "\"%i\"", fillDraw.style.subType );
 					}
 					*/
 
 					/*
 					unused in BFG
-					if( fillDraw.style.type == 1 && fillDraw.style.subType == 3 )
-					{
+					if( fillDraw.style.type == 1 && fillDraw.style.subType == 3 ) {
 						file->WriteFloatString( " focalPoint=\"%f\"", fillDraw.style.focalPoint );
 					}
 					*/
