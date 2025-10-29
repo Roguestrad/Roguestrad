@@ -229,7 +229,9 @@ bool idSWF::LoadSVG( const char* filename )
 							fill.style.bitmapID = atoi( href + 1 ); // #14 → 14
 
 							// --- 2. Parse transform → startMatrix ---
-							fill.style.startMatrix.ParseSVGTransformFromString( useNode.attribute( "transform" ).value() );
+							fill.style.startMatrix.xx = 20.0f; // SVG units to SWF twips
+							fill.style.startMatrix.yy = 20.0f;
+							// fill.style.startMatrix.ParseSVGTransformFromString( useNode.attribute( "transform" ).value() );
 							fill.style.endMatrix = fill.style.startMatrix;
 
 							// --- 3. Fetch image size from packImages ---
@@ -422,14 +424,12 @@ void idSWF::WriteSVG( const char* filename )
 					}
 
 					/*
-					if( fillDraw.style.type > 0 )
-					{
+					if( fillDraw.style.type > 0 ) {
 						swfMatrix_t m = fillDraw.style.startMatrix;
 						file->WriteFloatString( "\t\t\t\t\t<StartMatrix>%f %f %f %f %f %f</StartMatrix>\n",
 												m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );
 
-						if( fillDraw.style.startMatrix != fillDraw.style.endMatrix )
-						{
+						if( fillDraw.style.startMatrix != fillDraw.style.endMatrix ) {
 							m = fillDraw.style.endMatrix;
 							file->WriteFloatString( "\t\t\t\t\t<EndMatrix>%f %f %f %f %f %f</EndMatrix>\n",
 													m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );

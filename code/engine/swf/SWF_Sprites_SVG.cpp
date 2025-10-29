@@ -196,7 +196,7 @@ void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionar
 
 			idFile_SWF memFile( new idFile_Memory() );
 
-			uint8	   flags = PlaceFlagHasCharacter | PlaceFlagMove;
+			uint8	   flags = PlaceFlagHasCharacter;
 			if( child.attribute( "transform" ) ) {
 				flags |= PlaceFlagHasMatrix;
 			}
@@ -494,7 +494,7 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 
 	if( ( flags1 & PlaceFlagHasColorTransform ) != 0 ) {
 		if( !filterID.IsEmpty() ) {
-			file->WriteFloatString( "filter=\"url(#%s)\" />\n", filterID.c_str() );
+			file->WriteFloatString( "filter=\"url(#%s)\" ", filterID.c_str() );
 		}
 	}
 
@@ -690,7 +690,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 
 			if( ( flags1 & PlaceFlagHasColorTransform ) != 0 ) {
 				if( !filterID.IsEmpty() ) {
-					file->WriteFloatString( "filter=\"url(#%s)\" />\n", filterID.c_str() );
+					file->WriteFloatString( "filter=\"url(#%s)\" ", filterID.c_str() );
 				}
 			}
 
@@ -716,7 +716,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			}
 
 			if( !filterID.IsEmpty() ) {
-				file->WriteFloatString( "filter=\"url(#%s)\"", filterID.c_str() );
+				file->WriteFloatString( "filter=\"url(#%s)\" ", filterID.c_str() );
 			}
 
 			file->WriteFloatString( ">\n" );
