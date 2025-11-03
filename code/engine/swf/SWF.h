@@ -350,6 +350,9 @@ private:
 	void	  Metadata( idSWFBitStream& bitstream );
 	void	  SetBackgroundColor( idSWFBitStream& bitstream );
 
+	//! \brief Loads an SVG file and parses its contents into the SWF structure.
+	//! \param filename The path to the SVG file to load.
+	//! \return true if the file was successfully loaded and parsed, false otherwise.
 	bool	  LoadSVG( const char* filename );
 	void	  WriteSVG( const char* filename );
 

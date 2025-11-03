@@ -38,10 +38,10 @@ If you have questions concerning this license or the applicable additional terms
 #include "../framework/Common_dialog.h"
 
 // decls
-#include "../framework/DeclManager.h"
-#include "../framework/DeclEntityDef.h"
-#include "../framework/DeclParticle.h"
-#include "../framework/DeclPDA.h"
+#include "../decls/DeclManager.h"
+#include "../decls/DeclEntityDef.h"
+#include "../decls/DeclParticle.h"
+#include "../decls/DeclPDA.h"
 
 // renderer
 #include "../renderer/Cinematic.h"
@@ -56,10 +56,10 @@ If you have questions concerning this license or the applicable additional terms
 #include "../swf/SWF.h"
 
 // collision detection system
-#include "../cm/CollisionModel.h"
+#include "../collision/CollisionModel.h"
 
 // game
-#include "../d3xp/Game.h"
+#include "Game.h"
 
 // sys
 #include "../sys/sys_stats_misc.h"

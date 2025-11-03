@@ -1343,7 +1343,7 @@ if(MSVC)
 			PRE_BUILD
 			DEPENDS typeinfogen
 			COMMAND typeinfogen
-			WORKING_DIRECTORY ..
+			WORKING_DIRECTORY ../..
 			COMMENT "Generating code/game/gamesys/GameTypeInfo.h"
 			)
 	
@@ -1566,7 +1566,7 @@ else()
 			PRE_BUILD
 			DEPENDS typeinfogen
 			COMMAND typeinfogen
-			WORKING_DIRECTORY ..
+			WORKING_DIRECTORY ../..
 			COMMENT "Generating code/game/gamesys/GameTypeInfo.h"
 			)
 
