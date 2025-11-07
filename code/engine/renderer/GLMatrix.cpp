@@ -424,8 +424,6 @@ void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stere
 	const int	viewWidth  = viewDef->viewport.x2 - viewDef->viewport.x1 + 1;
 	const int	viewHeight = viewDef->viewport.y2 - viewDef->viewport.y1 + 1;
 
-	// TODO integrate jitterx += viewDef->renderView.stereoScreenSeparation;
-
 	float*		projectionMatrix = doJitter ? viewDef->projectionMatrix : viewDef->unjitteredProjectionMatrix;
 
 	#if 1

@@ -51,7 +51,6 @@ void SetReleaseToolMouse( bool doRelease )
 
 bool AreEditorsActive()
 {
-	// FIXME: this is not exactly clean and must be changed if we ever support game dlls
 	return g_editEntityMode.GetInteger() > 0 || com_editors != 0;
 }
 

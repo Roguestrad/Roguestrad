@@ -538,12 +538,6 @@ qhandle_t idRenderWorldLocal::AddEnvprobeDef( const renderEnvironmentProbe_t* ep
 
 	if( envprobeHandle == -1 ) {
 		envprobeHandle = envprobeDefs.Append( NULL );
-
-		// TODO
-		// if( interactionTable && envprobeDefs.Num() > interactionTableHeight )
-		//{
-		//	ResizeEnvprobeInteractionTable();
-		//}
 	}
 
 	UpdateEnvprobeDef( envprobeHandle, ep );

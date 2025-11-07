@@ -182,9 +182,6 @@ struct glconfig_t {
 	graphicsVendor_t  vendor;
 	graphicsGpuType_t gpuType;
 
-	//	int					maxTextureSize;			// TODO
-	//	int					maxTextureCoords;		// TODO
-	//	int					maxTextureImageUnits;	// TODO
 	int				  uniformBufferOffsetAlignment;
 
 	bool			  timerQueryAvailable;

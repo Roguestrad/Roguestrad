@@ -302,7 +302,7 @@ idRenderModel* idRenderModelMD3::InstantiateDynamicModel( const struct renderEnt
 
 	surface = ( md3Surface_t* )( ( byte* )md3 + md3->ofsSurfaces );
 
-	// TODO: these need set by an entity
+	// NOTE: these need set by an entity
 	frame	 = ent->shaderParms[SHADERPARM_MD3_FRAME]; // probably want to keep frames < 1000 or so
 	oldframe = ent->shaderParms[SHADERPARM_MD3_LASTFRAME];
 	backlerp = ent->shaderParms[SHADERPARM_MD3_BACKLERP];

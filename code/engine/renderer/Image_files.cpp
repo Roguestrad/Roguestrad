@@ -1087,7 +1087,6 @@ bool R_LoadCubeImages( const char* imgName, cubeFiles_t extensions, byte* pics[6
 		sides = axisSides;
 	}
 
-	// FIXME: precompressed cube map files
 	if( pics ) {
 		memset( pics, 0, 6 * sizeof( pics[0] ) );
 	}
