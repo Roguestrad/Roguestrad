@@ -106,22 +106,6 @@ static void ParseShape( const pugi::xml_node& node, idSWFShape* shape )
 	shape->endBounds	  = shape->startBounds;
 }
 
-static void ParseText( const pugi::xml_node& textNode, idSWFEditText* et )
-{
-	if( !et )
-		return;
-
-	if( textNode ) {
-		et->bounds.tl.x = textNode.attribute( "x" ).as_float();
-		et->bounds.br.y = textNode.attribute( "y" ).as_float();
-		et->fontHeight	= FLOAT2SWFTWIP( textNode.attribute( "font-size" ).as_float() );
-		et->color.ParseSVGColorFromString( textNode.attribute( "fill" ).value() );
-		et->align		= ( textNode.attribute( "text-anchor" ).value() == "start" ) ? SWF_ET_ALIGN_LEFT : SWF_ET_ALIGN_CENTER;
-		et->initialText = textNode.text().as_string();
-		et->fontID		= 0;
-	}
-}
-
 bool idSWF::LoadSVG( const char* filename )
 {
 	idFile* f = fileSystem->OpenFileReadMemory( filename );
@@ -205,11 +189,68 @@ bool idSWF::LoadSVG( const char* filename )
 			} else if( idStr::Icmp( tagName, "text" ) == 0 ) {
 				entry.type	   = SWF_DICT_EDITTEXT;
 				entry.edittext = new( TAG_SWF ) idSWFEditText;
-				ParseText( n, entry.edittext );
+
+				idSWFEditText*	et		 = entry.edittext;
+				pugi::xml_node& textNode = n;
+				if( textNode ) {
+					et->bounds.tl.x = textNode.attribute( "x" ).as_float();
+					et->bounds.br.y = textNode.attribute( "y" ).as_float();
+					et->fontHeight	= FLOAT2SWFTWIP( textNode.attribute( "font-size" ).as_float() );
+					et->color.ParseSVGColorFromString( textNode.attribute( "fill" ).value() );
+
+					idStr alignStr = textNode.attribute( "text-anchor" ).value();
+					if( alignStr.Icmp( "middle" ) == 0 ) {
+						et->align = SWF_ET_ALIGN_CENTER;
+					} else if( alignStr.Icmp( "end" ) == 0 ) {
+						et->align = SWF_ET_ALIGN_RIGHT;
+					} else {
+						et->align = SWF_ET_ALIGN_LEFT;
+					}
+					et->initialText = textNode.text().as_string();
+
+					idStr fontName = textNode.attribute( "font-family" ).value();
+					if( fontName.IsEmpty() ) {
+						fontName = "Arial";
+					}
+
+					// find font in dictionary
+					for( int i = 0; i < dictionary.Num(); i++ ) {
+						idSWFDictionaryEntry& dictEntry = dictionary[i];
+						if( dictEntry.type == SWF_DICT_FONT ) {
+							if( fontName.Icmp( dictEntry.font->fontID->GetName(), fontName ) == 0 ) {
+								et->fontID = i;
+								break;
+							}
+						}
+					}
+
+#if 1
+					// Flash attributes that are not required by SVG but by this SWF implementation
+					idStr boundsStr = textNode.attribute( "data-bounds" ).value();
+					if( !boundsStr.IsEmpty() ) {
+						idLexer lexer( boundsStr, boundsStr.Length(), "bounds" );
+						lexer.ExpectTokenString( "[" );
+						et->bounds.tl.x = lexer.ParseFloat();
+						lexer.ExpectTokenString( "," );
+						et->bounds.tl.y = lexer.ParseFloat();
+						lexer.ExpectTokenString( "," );
+						et->bounds.br.x = lexer.ParseFloat();
+						lexer.ExpectTokenString( "," );
+						et->bounds.br.y = lexer.ParseFloat();
+						lexer.ExpectTokenString( "]" );
+					}
+
+					et->flags	  = textNode.attribute( "data-flags" ).as_int( 0 );
+					et->leading	  = textNode.attribute( "data-leading" ).as_int( 0 );
+					et->maxLength = textNode.attribute( "data-maxlength" ).as_int( 65535 );
+					et->variable  = textNode.attribute( "data-variable" ).value();
+#endif
+				}
 
 			} else if( idStr::Icmp( tagName, "g" ) == 0 ) {
 				pugi::xml_node& g		 = n;
 				const char*		dataType = g.attribute( "data-type" ).value();
+
 				if( dataType && idStr::Icmp( dataType, "SHAPE" ) == 0 ) {
 					pugi::xml_node useNode = n.child( "use" );
 					if( useNode ) {
@@ -284,6 +325,22 @@ bool idSWF::LoadSVG( const char* filename )
 						entry.shape = new( TAG_SWF ) idSWFShape;
 						ParseShape( g, entry.shape );
 					}
+				} else if( dataType && idStr::Icmp( dataType, "FONT" ) == 0 ) {
+					entry.type = SWF_DICT_FONT;
+					entry.font = new( TAG_SWF ) idSWFFont;
+
+					idStr fontName = n.attribute( "data-name" ).value();
+					if( fontName.IsEmpty() ) {
+						fontName = "Arial";
+					}
+
+					idFont* font = renderSystem->RegisterFont( fontName );
+					if( !font ) {
+						idLib::Warning( "Font '%s' not found, using default", fontName.c_str() );
+						font = renderSystem->RegisterFont( "Arial" ); // fallback
+					}
+
+					entry.font->fontID = font;
 				} else {
 					entry.type	 = SWF_DICT_SPRITE;
 					entry.sprite = new idSWFSprite( this );
@@ -481,15 +538,14 @@ void idSWF::WriteSVG( const char* filename )
 			}
 
 			case SWF_DICT_FONT: {
-#if 0
-				file->WriteFloatString( "\t\t<g id=\"%i\" >\n", i );
 				const idSWFFont* font = dictionary[i].font;
-				file->WriteFloatString(
-					"\t\t\t<style>@font-face { font-family: '%s'; src: local('%s'), url('fonts/%s.ttf') format('truetype'); }</style>\n",
-					font->fontID->GetName(), font->fontID->GetName(), font->fontID->GetName()
-				);
+				file->WriteFloatString( "\t\t<g id=\"%i\" data-type=\"FONT\" data-name=\"%s\">\n", i, font->fontID->GetName() );
+
+				file->WriteFloatString( "\t\t\t<style>@font-face { font-family: '%s'; src: local('%s'), url('fonts/%s.ttf') format('truetype'); }</style>\n",
+					font->fontID->GetName(),
+					font->fontID->GetName(),
+					font->fontID->GetName() );
 				file->WriteFloatString( "\t\t</g>\n" );
-#endif
 				break;
 			}
 
@@ -517,8 +573,17 @@ void idSWF::WriteSVG( const char* filename )
 				const swfColorRGBA_t& color	   = et->color;
 				float				  fontSize = SWFTWIP( et->fontHeight ); // SWF font height is in twips
 
-				// file->WriteFloatString( "\t\t<g id=\"%i\" data-type=\"EDITTEXT\" >\n", i );
-				file->WriteFloatString( "\t\t<text id=\"%i\" x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\">%s</text>\n",
+				// data-attribs for full Flash data
+				idStr				  dataBounds;
+				dataBounds.Format( "data-bounds=\"[%f,%f,%f,%f]\"", et->bounds.tl.x, et->bounds.tl.y, et->bounds.br.x, et->bounds.br.y );
+
+				idStr dataFlags		= va( "data-flags=\"%i\"", et->flags );
+				idStr dataLeading	= va( "data-leading=\"%i\"", et->leading );
+				idStr dataMaxLength = va( "data-maxlength=\"%i\"", et->maxLength );
+				idStr dataVariable	= va( "data-variable=\"%s\"", et->variable.c_str() );
+				idStr dataMargins	= va( "data-margins=\"[%i,%i,%i]\"", et->leftMargin, et->rightMargin, et->indent );
+
+				file->WriteFloatString( "\t\t<text id=\"%i\" x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\" %s %s %s %s %s>%s</text>\n",
 					i,
 					et->bounds.tl.x,
 					et->bounds.br.y,
@@ -529,8 +594,12 @@ void idSWF::WriteSVG( const char* filename )
 					( int )( color.b ),
 					color.a * ( 1.0f / 255.0f ),
 					alignStr.c_str(),
+					dataBounds.c_str(),
+					dataFlags.c_str(),
+					dataLeading.c_str(),
+					dataMaxLength.c_str(),
+					dataMargins.c_str(),
 					et->initialText.c_str() );
-				// file->WriteFloatString( "\t\t</g>\n" );
 				break;
 			}
 		}

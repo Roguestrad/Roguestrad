@@ -4,7 +4,7 @@
 *.h linguist-language=C++
 
 # Don't count 3rd-party libraries
-neo/libs/* linguist-vendored
+code/libs/* linguist-vendored
 
 # Make sure script files always have CRLF line endings for save file checksum portability
 *.script text eol=crlf

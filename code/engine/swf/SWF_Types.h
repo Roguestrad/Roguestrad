@@ -210,10 +210,10 @@ class idSWFFont
 public:
 	idSWFFont();
 	class idFont*					fontID;
-	int16							ascent;
-	int16							descent;
-	int16							leading;
-	idList<idSWFFontGlyph, TAG_SWF> glyphs;
+	int16							ascent;	 // unused except for read/write
+	int16							descent; // unused except for read/write
+	int16							leading; // unused except for read/write
+	idList<idSWFFontGlyph, TAG_SWF> glyphs;	 // not really used in BFG assets
 };
 class idSWFTextRecord
 {
