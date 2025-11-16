@@ -193,18 +193,31 @@ bool idSWF::LoadSVG( const char* filename )
 				idSWFEditText*	et		 = entry.edittext;
 				pugi::xml_node& textNode = n;
 				if( textNode ) {
-					et->bounds.tl.x = textNode.attribute( "x" ).as_float();
-					et->bounds.br.y = textNode.attribute( "y" ).as_float();
-					et->fontHeight	= FLOAT2SWFTWIP( textNode.attribute( "font-size" ).as_float() );
+					idVec2 anchorPos;
+					anchorPos.x	   = textNode.attribute( "x" ).as_float();
+					anchorPos.y	   = textNode.attribute( "y" ).as_float();
+					et->fontHeight = FLOAT2SWFTWIP( textNode.attribute( "font-size" ).as_float() );
 					et->color.ParseSVGColorFromString( textNode.attribute( "fill" ).value() );
 
 					idStr alignStr = textNode.attribute( "text-anchor" ).value();
 					if( alignStr.Icmp( "middle" ) == 0 ) {
-						et->align = SWF_ET_ALIGN_CENTER;
+						et->align		= SWF_ET_ALIGN_CENTER;
+						et->bounds.tl.x = anchorPos.x - 200;
+						et->bounds.tl.y = anchorPos.y - SWFTWIP( et->fontHeight );
+						et->bounds.br.x = anchorPos.x + 200;
+						et->bounds.br.y = anchorPos.y;
 					} else if( alignStr.Icmp( "end" ) == 0 ) {
-						et->align = SWF_ET_ALIGN_RIGHT;
+						et->align		= SWF_ET_ALIGN_RIGHT;
+						et->bounds.tl.x = anchorPos.x - 400;
+						et->bounds.tl.y = anchorPos.y - SWFTWIP( et->fontHeight );
+						et->bounds.br.x = anchorPos.x;
+						et->bounds.br.y = anchorPos.y;
 					} else {
-						et->align = SWF_ET_ALIGN_LEFT;
+						et->align		= SWF_ET_ALIGN_LEFT;
+						et->bounds.tl.x = anchorPos.x;
+						et->bounds.tl.y = anchorPos.y - SWFTWIP( et->fontHeight );
+						et->bounds.br.x = anchorPos.x + 400; // default width
+						et->bounds.br.y = anchorPos.y;
 					}
 					et->initialText = textNode.text().as_string();
 
@@ -224,7 +237,7 @@ bool idSWF::LoadSVG( const char* filename )
 						}
 					}
 
-#if 1
+#if 0
 					// Flash attributes that are not required by SVG but by this SWF implementation
 					idStr boundsStr = textNode.attribute( "data-bounds" ).value();
 					if( !boundsStr.IsEmpty() ) {
@@ -568,7 +581,22 @@ void idSWF::WriteSVG( const char* filename )
 				}
 
 				// notice ALIGN_JUSTIFY is not supported in SVG
-				idStr				  alignStr = ( et->align == SWF_ET_ALIGN_LEFT ) ? "start" : ( et->align == SWF_ET_ALIGN_CENTER ) ? "middle" : ( et->align == SWF_ET_ALIGN_RIGHT ) ? "end" : "start";
+				idStr  alignStr;
+				idVec2 anchorPos;
+
+				if( et->align == SWF_ET_ALIGN_CENTER ) {
+					alignStr	= "middle";
+					anchorPos.x = et->bounds.tl.x + et->bounds.br.x * 0.5f;
+					anchorPos.y = et->bounds.tl.y + SWFTWIP( et->fontHeight );
+				} else if( et->align == SWF_ET_ALIGN_RIGHT ) {
+					alignStr	= "end";
+					anchorPos.x = et->bounds.br.x;
+					anchorPos.y = et->bounds.tl.y + SWFTWIP( et->fontHeight );
+				} else {
+					alignStr	= "start";
+					anchorPos.x = et->bounds.tl.x;
+					anchorPos.y = et->bounds.tl.y + SWFTWIP( et->fontHeight );
+				}
 
 				const swfColorRGBA_t& color	   = et->color;
 				float				  fontSize = SWFTWIP( et->fontHeight ); // SWF font height is in twips
@@ -585,8 +613,8 @@ void idSWF::WriteSVG( const char* filename )
 
 				file->WriteFloatString( "\t\t<text id=\"%i\" x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\" %s %s %s %s %s>%s</text>\n",
 					i,
-					et->bounds.tl.x,
-					et->bounds.br.y,
+					anchorPos.x,
+					anchorPos.y,
 					GetFontName( et->fontID ),
 					fontSize,
 					( int )( color.r ),

@@ -682,7 +682,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		case SWF_DICT_SHAPE:
 		case SWF_DICT_TEXT:
 		case SWF_DICT_EDITTEXT: {
-			file->WriteFloatString( "%s<use xlink:href=\"#%i\" ", tabs.c_str(), characterID );
+			file->WriteFloatString( "%s<use xlink:href=\"#%i\" link-type=\"%s\" ", tabs.c_str(), characterID, idSWF::GetDictTypeName( dictEntry.type ) );
 
 			if( ( flags1 & PlaceFlagHasMatrix ) != 0 ) {
 				file->WriteFloatString( "%s", transform.c_str() );
