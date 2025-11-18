@@ -279,7 +279,7 @@ public:
 
 	// RAVEN BEGIN
 	// abahr
-	void					Split( idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\'' );
+	void					Split( idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\'' ) const;
 	// RAVEN END
 
 	// char * methods to replace library functions

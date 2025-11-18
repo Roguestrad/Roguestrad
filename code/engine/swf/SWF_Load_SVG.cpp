@@ -405,7 +405,7 @@ void idSWF::WriteSVG( const char* filename )
 		( int )frameWidth,
 		( int )frameHeight );
 
-	const bool exportUnfolded = false;
+	const bool exportUnfolded = true;
 
 	file->WriteFloatString( "\t<defs>\n" );
 	for( int i = 0; i < dictionary.Num(); i++ ) {
@@ -570,7 +570,7 @@ void idSWF::WriteSVG( const char* filename )
 			case SWF_DICT_EDITTEXT: {
 				const idSWFEditText* et = dictionary[i].edittext;
 
-				idStr				 initialText = idStr::CStyleQuote( et->initialText.c_str() );
+				idStr				 initialText = et->initialText;
 
 				// RB: ugly hack but necessary for exporting pda.json
 				// if( initialText.Cmp( "\"It\\'s DONE bay-bee!\"") == 0 )
@@ -611,6 +611,28 @@ void idSWF::WriteSVG( const char* filename )
 				idStr dataVariable	= va( "data-variable=\"%s\"", et->variable.c_str() );
 				idStr dataMargins	= va( "data-margins=\"[%i,%i,%i]\"", et->leftMargin, et->rightMargin, et->indent );
 
+				if( et->flags & SWF_ET_MULTILINE ) {
+					// split initialText into multiple lines
+					idStrList lines;
+					initialText.Split( lines, '\n', '\'' );
+
+					if( lines.Num() > 1 ) {
+						idStr multiLineText = "\n";
+						for( int l = 0; l < lines.Num(); l++ ) {
+							multiLineText += "\t\t\t<tspan x=\"";
+							multiLineText += anchorPos.x;
+							multiLineText += "\" dy=\"";
+							multiLineText += fontSize * 1.2f; // line height
+							multiLineText += "\">";
+
+							idStr line = lines[l];
+							multiLineText += line;
+							multiLineText += "</tspan>\n";
+						}
+						initialText = multiLineText;
+					}
+				}
+
 				file->WriteFloatString( "\t\t<text id=\"%i\" x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\" %s %s %s %s %s>%s</text>\n",
 					i,
 					anchorPos.x,
@@ -627,7 +649,7 @@ void idSWF::WriteSVG( const char* filename )
 					dataLeading.c_str(),
 					dataMaxLength.c_str(),
 					dataMargins.c_str(),
-					et->initialText.c_str() );
+					initialText.c_str() );
 				break;
 			}
 		}

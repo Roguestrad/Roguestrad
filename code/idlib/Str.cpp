@@ -2305,7 +2305,7 @@ void idStr::Split( const char* source, idList<idStr>& list, const char delimiter
 			startIndex = endIndex + 1;
 			continue;
 		} else if( currentChar == delimiter ) {
-			element += '\0';
+			// RB: removed element += '\0';
 			list.Append( element );
 			element.Clear();
 			endIndex = ++startIndex;
@@ -2317,7 +2317,7 @@ void idStr::Split( const char* source, idList<idStr>& list, const char delimiter
 	}
 
 	if( element.Length() ) {
-		element += '\0';
+		// RB: removed element += '\0';
 		list.Append( element );
 	}
 }
@@ -2327,7 +2327,7 @@ void idStr::Split( const char* source, idList<idStr>& list, const char delimiter
 idStr::Split
 ================
 */
-void idStr::Split( idList<idStr>& list, const char delimiter, const char groupDelimiter )
+void idStr::Split( idList<idStr>& list, const char delimiter, const char groupDelimiter ) const
 {
 	Split( c_str(), list, delimiter, groupDelimiter );
 }

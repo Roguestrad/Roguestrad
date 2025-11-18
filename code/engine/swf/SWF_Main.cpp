@@ -328,7 +328,6 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 		Mem_Free( atlasExportImageRGBA );
 		atlasExportImageRGBA = NULL;
 	}
-	// RB end
 
 	// RB: Lua
 	const bool initLua = !exportJSON && !exportSWF;
@@ -1076,8 +1075,8 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 		idStr bswfName = files->GetList()[f];
 
 #if 1
-		// only export hud for testing
-		if( idStr::Icmp( bswfName, "generated/swf/hud.bswf" ) != 0 ) {
+		if( idStr::Icmp( bswfName, "generated/swf/dialog.bswf" ) != 0 ) {
+			// if( idStr::Icmp( bswfName, "generated/swf/hud.bswf" ) != 0 ) {
 			continue;
 		}
 #endif
