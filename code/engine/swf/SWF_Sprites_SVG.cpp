@@ -307,7 +307,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 	idStr								  tabs;
 	tabs.Fill( '\t', indent );
 
-	file->WriteFloatString( "%s<g id=\"%i\" >\n", tabs.c_str(), characterID );
+	file->WriteFloatString( "%s<g id=\"%i\" data-type=\"SPRITE\" >\n", tabs.c_str(), characterID );
 
 	// iterate frame by frame
 	for( int frame = 0; frame < frameCount; frame++ ) {
@@ -366,7 +366,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 
 		idStr targetID = e->name.IsEmpty() ? va( "%i", e->characterID ) : e->name;
 
-#if 0
+#if 1
 		// animate opacity track
 		if( e->opacityFrames.Num() > 1 ) {
 			file->WriteFloatString( "\t%s<animate xlink:href=\"#%s\" attributeName=\"opacity\" values=\"", tabs.c_str(), targetID.c_str() );
@@ -376,7 +376,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 				if( f < e->opacityFrames.Num() - 1 )
 					file->WriteFloatString( ";" );
 			}
-			//file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
+			// file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
 			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->opacityFrames.Num() * frameDur, targetID.c_str() );
 		}
 #endif
@@ -706,9 +706,9 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			idSWFSprite* sprite = dictEntry.sprite;
 
 			if( !name.IsEmpty() ) {
-				file->WriteFloatString( "%s<g id=\"%s\" ", tabs.c_str(), name.c_str() );
+				file->WriteFloatString( "%s<g id=\"%s\" data-type=\"Tag_PlaceObject2\" ", tabs.c_str(), name.c_str() );
 			} else {
-				file->WriteFloatString( "%s<g id=\"%i\" ", tabs.c_str(), characterID );
+				file->WriteFloatString( "%s<g data-type=\"Tag_PlaceObject2\" ", tabs.c_str() );
 			}
 
 			if( flags1 & PlaceFlagHasMatrix ) {

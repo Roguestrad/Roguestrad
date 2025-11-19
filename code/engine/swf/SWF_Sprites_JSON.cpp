@@ -258,9 +258,10 @@ void idSWFSprite::WriteJSON_PlaceObject2( idFile* file, idFile* luaFile, idSWFBi
 		characterID = bitstream.ReadU16();
 	}
 
-	if( characterID == -1 ) {
-		return;
-	}
+	// skip animations
+	// if( characterID == -1 ) {
+	//	return;
+	//}
 
 	file->WriteFloatString( "%s\t\t\t\t{\n", ( commandID != 0 ) ? ",\n" : "" );
 	file->WriteFloatString( "\t\t\t\t\t\"type\": \"Tag_PlaceObject2\",\n" );
@@ -334,9 +335,10 @@ void idSWFSprite::WriteJSON_PlaceObject3( idFile* file, idFile* luaFile, idSWFBi
 		characterID = bitstream.ReadU16();
 	}
 
-	if( characterID == -1 ) {
-		return;
-	}
+	// skip animations
+	// if( characterID == -1 ) {
+	//	return;
+	//}
 
 	file->WriteFloatString( "%s\t\t\t\t{\n", ( commandID != 0 ) ? ",\n" : "" );
 	file->WriteFloatString( "\t\t\t\t\t\"type\": \"Tag_PlaceObject3\",\n" );
