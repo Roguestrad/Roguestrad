@@ -405,7 +405,7 @@ void idSWF::WriteSVG( const char* filename )
 		( int )frameWidth,
 		( int )frameHeight );
 
-	const bool exportUnfolded = true;
+	const bool exportUnfolded = false;
 
 	file->WriteFloatString( "\t<defs>\n" );
 	for( int i = 0; i < dictionary.Num(); i++ ) {
@@ -490,7 +490,8 @@ void idSWF::WriteSVG( const char* filename )
 					if( fillDraw.style.type == 0 ) {
 						// solid fill draw
 						const swfColorRGBA_t& color = fillDraw.style.startColor;
-						fillColor.Format( "fill=\"rgba(%d, %d, %d, %f)\"", ( int )( color.r ), ( int )( color.g ), ( int )( color.b ), color.a * ( 1.0f / 255.0f ) );
+						const char*			  fill	= cssNameFromRGBA( color );
+						fillColor.Format( "fill=\"%s\"", fill );
 					}
 
 					/*
@@ -525,12 +526,8 @@ void idSWF::WriteSVG( const char* filename )
 					const idSWFShapeDrawLine& lineDraw = shape->lineDraws[d];
 
 					const swfColorRGBA_t&	  color = lineDraw.style.startColor;
-					file->WriteFloatString( "\t\t\t<polyline fill=\"none\" stroke=\"rgba(%d, %d, %d, %f)\" stroke-width=\"%f\" points=\"",
-						( int )( color.r ),
-						( int )( color.g ),
-						( int )( color.b ),
-						color.a * ( 1.0f / 255.0f ),
-						lineDraw.style.startWidth );
+					const char*				  fill	= cssNameFromRGBA( color );
+					file->WriteFloatString( "\t\t\t<polyline fill=\"none\" stroke=\"%s\" stroke-width=\"%f\" points=\"", fill, lineDraw.style.startWidth );
 
 					for( int v = 0; v < lineDraw.startVerts.Num(); v++ ) {
 						const idVec2& vert = lineDraw.startVerts[v];

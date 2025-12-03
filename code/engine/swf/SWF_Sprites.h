@@ -39,6 +39,8 @@ namespace pugi
 class xml_node;
 }
 
+const char* cssNameFromRGBA( const swfColorRGBA_t& col );
+
 /*
 ================================================
 What the swf file format calls a "sprite" is known as a "movie clip" in Flash
