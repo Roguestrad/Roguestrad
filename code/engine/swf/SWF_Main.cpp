@@ -429,7 +429,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 				if( lua_isfunction( L, -1 ) ) {
 					int status = lua_pcall( L, 0, 0, NULL );
 					if( status != 0 ) {
-						idLib::Warning( "idSWF( %s ): error running function: swf_load\n", luaFileName.c_str(), lua_tostring( L, -1 ) );
+						idLib::Warning( "idSWF( %s ): error running function: start_remote_debugger\n", luaFileName.c_str() );
 
 						// remove warning from stack
 						lua_pop( L, 1 ); // ...

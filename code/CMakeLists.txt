@@ -1396,9 +1396,9 @@ else()
 		set(SDLx_LIBRARY ${SDL2_LIBRARIES})
 
         if(APPLE)
-			list(REMOVE_ITEM POSIX_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/sys/posix/platform_linux.cpp)
+			list(REMOVE_ITEM POSIX_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/sys/posix/platform_linux.cpp)
 		else()
-			list(REMOVE_ITEM POSIX_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/sys/posix/platform_osx.cpp)
+			list(REMOVE_ITEM POSIX_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/sys/posix/platform_osx.cpp)
 		endif()
 
 		list(APPEND RBDOOM3_SOURCES
@@ -1489,20 +1489,26 @@ else()
 
 	# SRS - disable certain gcc/clang warnings for select third-party source libraries, consider updating versions in the future?
 	set_source_files_properties(
-			${ZLIB_SOURCES}
-			${MINIZIP_SOURCES}
-			PROPERTIES
-			COMPILE_FLAGS "-Wno-stringop-overread -Wno-deprecated-non-prototype"
-			)
+		${ZLIB_SOURCES}
+		${MINIZIP_SOURCES}
+		PROPERTIES
+		COMPILE_FLAGS "-Wno-stringop-overread -Wno-deprecated-non-prototype"
+		)
 		
 	# SRS - if using gcc compiler enable gnu extensions for ##__VA_ARGS__ support within optick profiler (i.e. __STRICT_ANSI__ not set)
 	if(CMAKE_COMPILER_IS_GNUCC)
 		set_source_files_properties(
-				${OPTICK_SOURCES}
-				PROPERTIES
-				COMPILE_FLAGS "-std=gnu++${CMAKE_CXX_STANDARD}"
-				)
+			${OPTICK_SOURCES}
+			PROPERTIES
+			COMPILE_FLAGS "-std=gnu++${CMAKE_CXX_STANDARD}"
+			)
 	endif()
+
+	# RB: disable Lua tmpnam warning
+	set_source_files_properties(
+    	libs/lua/src/loslib.c
+    	PROPERTIES COMPILE_FLAGS "-Wno-deprecated-declarations"
+	)
 	
 	if(MACOSX_BUNDLE)
 		# define contents of macOS app bundle Resources folder

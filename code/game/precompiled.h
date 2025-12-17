@@ -34,35 +34,34 @@ If you have questions concerning this license or the applicable additional terms
 #include "../idlib/precompiled.h"
 
 // framework
-#include "../framework/UsercmdGen.h"
-#include "../framework/Common_dialog.h"
+#include "../engine/framework/UsercmdGen.h"
+#include "../engine/framework/Common_dialog.h"
 
 // decls
-#include "../decls/DeclManager.h"
-#include "../decls/DeclEntityDef.h"
-#include "../decls/DeclParticle.h"
-#include "../decls/DeclPDA.h"
+#include "../engine/decls/DeclManager.h"
+#include "../engine/decls/DeclEntityDef.h"
+#include "../engine/decls/DeclParticle.h"
+#include "../engine/decls/DeclPDA.h"
 
 // renderer
-#include "../renderer/Cinematic.h"
-#include "../renderer/Material.h"
-#include "../renderer/RenderCommon.h"
-#include "../renderer/Model.h"
-#include "../renderer/ModelManager.h"
-
+#include "../engine/renderer/Cinematic.h"
+#include "../engine/renderer/Material.h"
+#include "../engine/renderer/RenderCommon.h"
+#include "../engine/renderer/Model.h"
+#include "../engine/renderer/ModelManager.h"
 // sound engine
-#include "../sound/sound.h"
+#include "../engine/sound/sound.h"
 
-#include "../swf/SWF.h"
+#include "../engine/swf/SWF.h"
 
 // collision detection system
-#include "../collision/CollisionModel.h"
+#include "../engine/collision/CollisionModel.h"
 
 // game
 #include "Game.h"
 
 // sys
-#include "../sys/sys_stats_misc.h"
-#include "../sys/sys_stats.h"
+#include "../engine/sys/sys_stats_misc.h"
+#include "../engine/sys/sys_stats.h"
 
 #endif /* !__D3XP_PRECOMPILED_H__ */

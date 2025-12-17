@@ -33,7 +33,7 @@ extern "C"
 // RB: don't run debugger in build//Debug but where the .exe should be
 void setprogdir( lua_State* L )
 {
-	char buff[MAX_PATH + 1];
+	char buff[MAX_OSPATH + 1];
 
 	idStr basepath = Sys_DefaultBasePath();
 	basepath += "\\tools\\zerobrane\\lualibs";

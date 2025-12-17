@@ -320,14 +320,14 @@ void VRSystem_Valve::LogDevices()
 
 	idStr		modelNumberString = GetTrackedDeviceString( vr::k_unTrackedDeviceIndex_Hmd, vr::Prop_ModelNumber_String );
 
-	common->Printf( "\nhead  model \"%s\"\n", modelNumberString );
+	common->Printf( "\nhead  model \"%s\"\n", modelNumberString.c_str() );
 
 	if( m_leftController != vr::k_unTrackedDeviceIndexInvalid ) {
 		modelNumberString = GetTrackedDeviceString( m_leftController, vr::Prop_ModelNumber_String );
 
 		axisType	   = hmd->GetInt32TrackedDeviceProperty( m_leftController, vr::Prop_Axis0Type_Int32 );
 		axisTypeString = hmd->GetControllerAxisTypeNameFromEnum( ( vr::EVRControllerAxisType )axisType );
-		common->Printf( "left  model \"%s\" axis %s\n", modelNumberString, axisTypeString );
+		common->Printf( "left  model \"%s\" axis %s\n", modelNumberString.c_str(), axisTypeString );
 	} else {
 		common->Printf( "left  not detected\n" );
 	}
@@ -337,7 +337,7 @@ void VRSystem_Valve::LogDevices()
 
 		axisType	   = hmd->GetInt32TrackedDeviceProperty( m_rightController, vr::Prop_Axis0Type_Int32 );
 		axisTypeString = hmd->GetControllerAxisTypeNameFromEnum( ( vr::EVRControllerAxisType )axisType );
-		common->Printf( "right model \"%s\" axis %s\n", modelNumberString, axisTypeString );
+		common->Printf( "right model \"%s\" axis %s\n", modelNumberString.c_str(), axisTypeString );
 	} else {
 		common->Printf( "right not detected\n" );
 	}

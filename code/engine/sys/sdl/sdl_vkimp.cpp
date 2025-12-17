@@ -45,10 +45,10 @@ If you have questions concerning this license or the applicable additional terms
 #include <vulkan/vulkan.h>
 #include <vector>
 
-#include "renderer/RenderCommon.h"
+#include "engine/renderer/RenderCommon.h"
 #include "sdl_local.h"
 
-#include <sys/DeviceManager.h>
+#include <engine/sys/DeviceManager.h>
 extern DeviceManager*	 deviceManager;
 
 idCVar					 in_nograb( "in_nograb", "0", CVAR_SYSTEM | CVAR_NOCHEAT, "prevents input grabbing" );

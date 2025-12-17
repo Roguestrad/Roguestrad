@@ -23,7 +23,7 @@
  */
 #include "precompiled.h"
 #include "AL_CinematicAudio.h"
-#include <sound/snd_local.h>
+#include <engine/sound/snd_local.h>
 
 #if defined( USE_FFMPEG )
 extern "C" {

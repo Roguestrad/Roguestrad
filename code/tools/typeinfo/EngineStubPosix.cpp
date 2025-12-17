@@ -30,9 +30,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "../sys/sys_local.h"
-#include "../framework/EventLoop.h"
-#include "../framework/DeclManager.h"
+#include "../engine/sys/sys_local.h"
+#include "../engine/framework/EventLoop.h"
+#include "../engine/decls/DeclManager.h"
 
 #include <sys/stat.h>
 #include <sys/types.h>
