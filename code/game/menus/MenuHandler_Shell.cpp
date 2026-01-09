@@ -1182,6 +1182,9 @@ idMenuHandler_Shell::StartGame
 */
 void idMenuHandler_Shell::StartGame( int index )
 {
+	cmdSystem->AppendCommandText( va( "devmap %s %d\n", "testmaps/test_curvedbrushes", 0 ) );
+
+	/*
 	if( index == 0 ) {
 		cmdSystem->AppendCommandText( va( "map %s %d\n", "game/mars_city1", 0 ) );
 	} else if( index == 1 ) {
@@ -1189,6 +1192,7 @@ void idMenuHandler_Shell::StartGame( int index )
 	} else if( index == 2 ) {
 		cmdSystem->AppendCommandText( va( "map %s %d\n", "game/le_enpro1", 2 ) );
 	}
+	*/
 }
 
 static const int NUM_DOOM_INTRO_LINES = 7;

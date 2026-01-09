@@ -354,6 +354,12 @@ private:
 	//! \param filename The path to the SVG file to load.
 	//! \return true if the file was successfully loaded and parsed, false otherwise.
 	bool	  LoadSVG( const char* filename );
+
+	void	  ParseSVG_Image( const pugi::xml_node& node, int characterID, idSWFDictionaryEntry& entry );
+	void	  ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape );
+	void	  ParseSVG_Text( const pugi::xml_node& node, idSWFEditText* et );
+	void	  ParseSVG_Font( const pugi::xml_node& node, idSWFFont* font );
+
 	void	  WriteSVG( const char* filename );
 
 	bool	  LoadJSON( const char* filename );

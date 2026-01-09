@@ -2,7 +2,7 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 2025 Robert Beckebans
+Copyright (C) 2025-2026 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -62,48 +62,231 @@ static void ParsePointsFromString( const char* pointsStr, idList<idVec2>& verts 
 	lexer.FreeSource();
 }
 
+void idSWF::ParseSVG_Image( const pugi::xml_node& node, int characterID, idSWFDictionaryEntry& entry )
+{
+	// entry.type = SWF_DICT_IMAGE;
+
+	idStr imagePath = node.attribute( "xlink:href" ).value();
+	if( imagePath[0] == '.' ) {
+		// internal image in the atlas
+		entry.material = NULL;
+	} else {
+		imagePath	   = "swf/" + imagePath;
+		entry.material = declManager->FindMaterial( imagePath );
+	}
+
+	byte*	  imageData = NULL;
+	int		  width, height;
+	ID_TIME_T timestamp;
+	R_LoadImage( imagePath.c_str(), &imageData, &width, &height, &timestamp, false, NULL );
+	if( imageData != NULL ) {
+		PackImage( characterID, imageData, width, height );
+
+		Mem_Free( imageData );
+	}
+}
+
 // Parse Shape from <g> Node
-static void ParseShape( const pugi::xml_node& node, idSWFShape* shape )
+void idSWF::ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape )
 {
 	if( !shape )
 		return;
 
-	for( pugi::xml_node poly = node.child( "polygon" ); poly; poly = poly.next_sibling( "polygon" ) ) {
-		idSWFShapeDrawFill fill;
-		fill.style.type = 0;
-		fill.style.startColor.ParseSVGColorFromString( poly.attribute( "fill" ).value() );
-		fill.style.endColor = fill.style.startColor;
+	pugi::xml_node useNode = node.child( "use" );
+	if( useNode ) {
+		const char* linkType = useNode.attribute( "link-type" ).value();
 
-		ParsePointsFromString( poly.attribute( "points" ).value(), fill.startVerts );
-		fill.endVerts = fill.startVerts;
+		if( idStr::Icmp( linkType, "BITMAP" ) == 0 ) {
+			// this is a bitmap helper fill shape, not necessary for SVG but needed for SWF
+			// this is generated for each image
 
-		for( int idx = 0; idx < fill.startVerts.Num(); idx++ ) {
-			fill.indices.Append( idx );
+			idSWFShapeDrawFill& fill = shape->fillDraws.Alloc();
+			fill.style.type			 = 4; // Bitmap fill
+			fill.style.subType		 = 0; // near clamp (optional)
+
+			// --- 1. Parse href → bitmapID ---
+			const char* href	= useNode.attribute( "xlink:href" ).value();
+			fill.style.bitmapID = atoi( href + 1 ); // #14 → 14
+
+			// --- 2. Parse transform → startMatrix ---
+			fill.style.startMatrix.xx = 20.0f; // SVG units to SWF twips
+			fill.style.startMatrix.yy = 20.0f;
+			// fill.style.startMatrix.ParseSVGTransformFromString( useNode.attribute( "transform" ).value() );
+			fill.style.endMatrix = fill.style.startMatrix;
+
+			// --- 3. Fetch image size from packImages ---
+			int			   refID	 = fill.style.bitmapID;
+			imageToPack_t* packImage = NULL;
+			for( imageToPack_t& img : packImages ) {
+				if( img.characterID == refID ) {
+					packImage = &img;
+					break;
+				}
+			}
+
+			if( !packImage ) {
+				idLib::Warning( "SVG Load: Could not find packed image for characterID %d", refID );
+				// Fallback: 128x64
+				shape->startBounds = swfRect_t( 0, 0, 128, 64 );
+				shape->endBounds   = shape->startBounds;
+			} else {
+				shape->startBounds = swfRect_t( 0, 0, packImage->trueSize.x, packImage->trueSize.y );
+				shape->endBounds   = shape->startBounds;
+			}
+
+			// --- 4. Create 4 vertices (rectangle) ---
+			float w = shape->startBounds.br.x - shape->startBounds.tl.x;
+			float h = shape->startBounds.br.y - shape->startBounds.tl.y;
+
+			fill.startVerts.SetNum( 4 );
+			fill.startVerts[0].x = w;
+			fill.startVerts[0].y = h; // bottom-right
+			fill.startVerts[1].x = 0;
+			fill.startVerts[1].y = h; // bottom-left
+			fill.startVerts[2].x = 0;
+			fill.startVerts[2].y = 0; // top-left
+			fill.startVerts[3].x = w;
+			fill.startVerts[3].y = 0; // top-right
+
+			// fill.endVerts = fill.startVerts;
+
+			// --- 5. Create quad (2 triangles) ---
+			fill.indices.SetNum( 6 );
+			fill.indices[0] = 0;
+			fill.indices[1] = 1;
+			fill.indices[2] = 2;
+			fill.indices[3] = 0;
+			fill.indices[4] = 2;
+			fill.indices[5] = 3;
+		}
+	} else {
+		// this is a regular shape
+
+		for( pugi::xml_node poly = node.child( "polygon" ); poly; poly = poly.next_sibling( "polygon" ) ) {
+			idSWFShapeDrawFill fill;
+			fill.style.type = 0;
+			fill.style.startColor.ParseSVGColorFromString( poly.attribute( "fill" ).value() );
+			fill.style.endColor = fill.style.startColor;
+
+			ParsePointsFromString( poly.attribute( "points" ).value(), fill.startVerts );
+			fill.endVerts = fill.startVerts;
+
+			for( int idx = 0; idx < fill.startVerts.Num(); idx++ ) {
+				fill.indices.Append( idx );
+			}
+
+			shape->fillDraws.Append( fill );
 		}
 
-		shape->fillDraws.Append( fill );
-	}
+		for( pugi::xml_node line = node.child( "polyline" ); line; line = line.next_sibling( "polyline" ) ) {
+			idSWFShapeDrawLine ldraw;
+			ldraw.style.startColor.ParseSVGColorFromString( line.attribute( "stroke" ).value() );
+			ldraw.style.endColor   = ldraw.style.startColor;
+			ldraw.style.startWidth = line.attribute( "stroke-width" ).as_float();
+			ldraw.style.endWidth   = ldraw.style.startWidth;
 
-	for( pugi::xml_node line = node.child( "polyline" ); line; line = line.next_sibling( "polyline" ) ) {
-		idSWFShapeDrawLine ldraw;
-		ldraw.style.startColor.ParseSVGColorFromString( line.attribute( "stroke" ).value() );
-		ldraw.style.endColor   = ldraw.style.startColor;
-		ldraw.style.startWidth = line.attribute( "stroke-width" ).as_float();
-		ldraw.style.endWidth   = ldraw.style.startWidth;
+			ParsePointsFromString( line.attribute( "points" ).value(), ldraw.startVerts );
+			ldraw.endVerts = ldraw.startVerts;
 
-		ParsePointsFromString( line.attribute( "points" ).value(), ldraw.startVerts );
-		ldraw.endVerts = ldraw.startVerts;
+			for( int idx = 0; idx < ldraw.startVerts.Num(); idx++ ) {
+				ldraw.indices.Append( idx );
+			}
 
-		for( int idx = 0; idx < ldraw.startVerts.Num(); idx++ ) {
-			ldraw.indices.Append( idx );
+			shape->lineDraws.Append( ldraw );
 		}
 
-		shape->lineDraws.Append( ldraw );
+		shape->startBounds.tl = vec2_zero;
+		shape->startBounds.br = idVec2( 100, 100 );
+		shape->endBounds	  = shape->startBounds;
+	}
+}
+
+void idSWF::ParseSVG_Text( const pugi::xml_node& node, idSWFEditText* et )
+{
+	const pugi::xml_node& textNode = node;
+	if( textNode ) {
+		idVec2 anchorPos;
+		anchorPos.x	   = textNode.attribute( "x" ).as_float();
+		anchorPos.y	   = textNode.attribute( "y" ).as_float();
+		et->fontHeight = FLOAT2SWFTWIP( textNode.attribute( "font-size" ).as_float() );
+		et->color.ParseSVGColorFromString( textNode.attribute( "fill" ).value() );
+
+		idStr alignStr = textNode.attribute( "text-anchor" ).value();
+		if( alignStr.Icmp( "middle" ) == 0 ) {
+			et->align		= SWF_ET_ALIGN_CENTER;
+			et->bounds.tl.x = anchorPos.x - 200;
+			et->bounds.tl.y = anchorPos.y - SWFTWIP( et->fontHeight );
+			et->bounds.br.x = anchorPos.x + 200;
+			et->bounds.br.y = anchorPos.y;
+		} else if( alignStr.Icmp( "end" ) == 0 ) {
+			et->align		= SWF_ET_ALIGN_RIGHT;
+			et->bounds.tl.x = anchorPos.x - 400;
+			et->bounds.tl.y = anchorPos.y - SWFTWIP( et->fontHeight );
+			et->bounds.br.x = anchorPos.x;
+			et->bounds.br.y = anchorPos.y;
+		} else {
+			et->align		= SWF_ET_ALIGN_LEFT;
+			et->bounds.tl.x = anchorPos.x;
+			et->bounds.tl.y = anchorPos.y - SWFTWIP( et->fontHeight );
+			et->bounds.br.x = anchorPos.x + 400; // default width
+			et->bounds.br.y = anchorPos.y;
+		}
+		et->initialText = textNode.text().as_string();
+
+		idStr fontName = textNode.attribute( "font-family" ).value();
+		if( fontName.IsEmpty() ) {
+			fontName = "Arial";
+		}
+
+		// find font in dictionary
+		for( int i = 0; i < dictionary.Num(); i++ ) {
+			idSWFDictionaryEntry& dictEntry = dictionary[i];
+			if( dictEntry.type == SWF_DICT_FONT ) {
+				if( fontName.Icmp( dictEntry.font->fontID->GetName(), fontName ) == 0 ) {
+					et->fontID = i;
+					break;
+				}
+			}
+		}
+
+#if 0
+		// Flash attributes that are not required by SVG but by this SWF implementation
+		idStr boundsStr = textNode.attribute( "data-bounds" ).value();
+		if( !boundsStr.IsEmpty() ) {
+			idLexer lexer( boundsStr, boundsStr.Length(), "bounds" );
+			lexer.ExpectTokenString( "[" );
+			et->bounds.tl.x = lexer.ParseFloat();
+			lexer.ExpectTokenString( "," );
+			et->bounds.tl.y = lexer.ParseFloat();
+			lexer.ExpectTokenString( "," );
+			et->bounds.br.x = lexer.ParseFloat();
+			lexer.ExpectTokenString( "," );
+			et->bounds.br.y = lexer.ParseFloat();
+			lexer.ExpectTokenString( "]" );
+		}
+
+		et->flags	  = textNode.attribute( "data-flags" ).as_int( 0 );
+		et->leading	  = textNode.attribute( "data-leading" ).as_int( 0 );
+		et->maxLength = textNode.attribute( "data-maxlength" ).as_int( 65535 );
+		et->variable  = textNode.attribute( "data-variable" ).value();
+#endif
+	}
+}
+
+void idSWF::ParseSVG_Font( const pugi::xml_node& node, idSWFFont* font )
+{
+	idStr fontName = node.attribute( "data-name" ).value();
+	if( fontName.IsEmpty() ) {
+		fontName = "Arial";
 	}
 
-	shape->startBounds.tl = vec2_zero;
-	shape->startBounds.br = idVec2( 100, 100 );
-	shape->endBounds	  = shape->startBounds;
+	idFont* renderFont = renderSystem->RegisterFont( fontName );
+	if( !renderFont ) {
+		idLib::Warning( "Font '%s' not found, using default", fontName.c_str() );
+		renderFont = renderSystem->RegisterFont( "Arial" ); // fallback
+	}
+
+	font->fontID = renderFont;
 }
 
 bool idSWF::LoadSVG( const char* filename )
@@ -165,195 +348,23 @@ bool idSWF::LoadSVG( const char* filename )
 			}
 
 			if( idStr::Icmp( tagName, "image" ) == 0 ) {
-				// entry.type = SWF_DICT_IMAGE;
-
-				idStr imagePath = n.attribute( "xlink:href" ).value();
-				if( imagePath[0] == '.' ) {
-					// internal image in the atlas
-					entry.material = NULL;
-				} else {
-					imagePath	   = "swf/" + imagePath;
-					entry.material = declManager->FindMaterial( imagePath );
-				}
-
-				byte*	  imageData = NULL;
-				int		  width, height;
-				ID_TIME_T timestamp;
-				R_LoadImage( imagePath.c_str(), &imageData, &width, &height, &timestamp, false, NULL );
-				if( imageData != NULL ) {
-					PackImage( id, imageData, width, height );
-
-					Mem_Free( imageData );
-				}
-
+				ParseSVG_Image( n, id, entry );
 			} else if( idStr::Icmp( tagName, "text" ) == 0 ) {
 				entry.type	   = SWF_DICT_EDITTEXT;
 				entry.edittext = new( TAG_SWF ) idSWFEditText;
-
-				idSWFEditText*	et		 = entry.edittext;
-				pugi::xml_node& textNode = n;
-				if( textNode ) {
-					idVec2 anchorPos;
-					anchorPos.x	   = textNode.attribute( "x" ).as_float();
-					anchorPos.y	   = textNode.attribute( "y" ).as_float();
-					et->fontHeight = FLOAT2SWFTWIP( textNode.attribute( "font-size" ).as_float() );
-					et->color.ParseSVGColorFromString( textNode.attribute( "fill" ).value() );
-
-					idStr alignStr = textNode.attribute( "text-anchor" ).value();
-					if( alignStr.Icmp( "middle" ) == 0 ) {
-						et->align		= SWF_ET_ALIGN_CENTER;
-						et->bounds.tl.x = anchorPos.x - 200;
-						et->bounds.tl.y = anchorPos.y - SWFTWIP( et->fontHeight );
-						et->bounds.br.x = anchorPos.x + 200;
-						et->bounds.br.y = anchorPos.y;
-					} else if( alignStr.Icmp( "end" ) == 0 ) {
-						et->align		= SWF_ET_ALIGN_RIGHT;
-						et->bounds.tl.x = anchorPos.x - 400;
-						et->bounds.tl.y = anchorPos.y - SWFTWIP( et->fontHeight );
-						et->bounds.br.x = anchorPos.x;
-						et->bounds.br.y = anchorPos.y;
-					} else {
-						et->align		= SWF_ET_ALIGN_LEFT;
-						et->bounds.tl.x = anchorPos.x;
-						et->bounds.tl.y = anchorPos.y - SWFTWIP( et->fontHeight );
-						et->bounds.br.x = anchorPos.x + 400; // default width
-						et->bounds.br.y = anchorPos.y;
-					}
-					et->initialText = textNode.text().as_string();
-
-					idStr fontName = textNode.attribute( "font-family" ).value();
-					if( fontName.IsEmpty() ) {
-						fontName = "Arial";
-					}
-
-					// find font in dictionary
-					for( int i = 0; i < dictionary.Num(); i++ ) {
-						idSWFDictionaryEntry& dictEntry = dictionary[i];
-						if( dictEntry.type == SWF_DICT_FONT ) {
-							if( fontName.Icmp( dictEntry.font->fontID->GetName(), fontName ) == 0 ) {
-								et->fontID = i;
-								break;
-							}
-						}
-					}
-
-#if 0
-					// Flash attributes that are not required by SVG but by this SWF implementation
-					idStr boundsStr = textNode.attribute( "data-bounds" ).value();
-					if( !boundsStr.IsEmpty() ) {
-						idLexer lexer( boundsStr, boundsStr.Length(), "bounds" );
-						lexer.ExpectTokenString( "[" );
-						et->bounds.tl.x = lexer.ParseFloat();
-						lexer.ExpectTokenString( "," );
-						et->bounds.tl.y = lexer.ParseFloat();
-						lexer.ExpectTokenString( "," );
-						et->bounds.br.x = lexer.ParseFloat();
-						lexer.ExpectTokenString( "," );
-						et->bounds.br.y = lexer.ParseFloat();
-						lexer.ExpectTokenString( "]" );
-					}
-
-					et->flags	  = textNode.attribute( "data-flags" ).as_int( 0 );
-					et->leading	  = textNode.attribute( "data-leading" ).as_int( 0 );
-					et->maxLength = textNode.attribute( "data-maxlength" ).as_int( 65535 );
-					et->variable  = textNode.attribute( "data-variable" ).value();
-#endif
-				}
-
+				ParseSVG_Text( n, entry.edittext );
 			} else if( idStr::Icmp( tagName, "g" ) == 0 ) {
 				pugi::xml_node& g		 = n;
 				const char*		dataType = g.attribute( "data-type" ).value();
 
 				if( dataType && idStr::Icmp( dataType, "SHAPE" ) == 0 ) {
-					pugi::xml_node useNode = n.child( "use" );
-					if( useNode ) {
-						const char* linkType = useNode.attribute( "link-type" ).value();
-						if( idStr::Icmp( linkType, "BITMAP" ) == 0 ) {
-							// this is a bitmap helper fill shape, not necessary for SVG but needed for SWF
-							// this is generated for each image
-							entry.type	= SWF_DICT_SHAPE;
-							entry.shape = new( TAG_SWF ) idSWFShape;
-
-							idSWFShapeDrawFill& fill = entry.shape->fillDraws.Alloc();
-							fill.style.type			 = 4; // Bitmap fill
-							fill.style.subType		 = 0; // near clamp (optional)
-
-							// --- 1. Parse href → bitmapID ---
-							const char* href	= useNode.attribute( "xlink:href" ).value();
-							fill.style.bitmapID = atoi( href + 1 ); // #14 → 14
-
-							// --- 2. Parse transform → startMatrix ---
-							fill.style.startMatrix.xx = 20.0f; // SVG units to SWF twips
-							fill.style.startMatrix.yy = 20.0f;
-							// fill.style.startMatrix.ParseSVGTransformFromString( useNode.attribute( "transform" ).value() );
-							fill.style.endMatrix = fill.style.startMatrix;
-
-							// --- 3. Fetch image size from packImages ---
-							int			   refID	 = fill.style.bitmapID;
-							imageToPack_t* packImage = NULL;
-							for( imageToPack_t& img : packImages ) {
-								if( img.characterID == refID ) {
-									packImage = &img;
-									break;
-								}
-							}
-
-							if( !packImage ) {
-								idLib::Warning( "SVG Load: Could not find packed image for characterID %d", refID );
-								// Fallback: 128x64
-								entry.shape->startBounds = swfRect_t( 0, 0, 128, 64 );
-								entry.shape->endBounds	 = entry.shape->startBounds;
-							} else {
-								entry.shape->startBounds = swfRect_t( 0, 0, packImage->trueSize.x, packImage->trueSize.y );
-								entry.shape->endBounds	 = entry.shape->startBounds;
-							}
-
-							// --- 4. Create 4 vertices (rectangle) ---
-							float w = entry.shape->startBounds.br.x - entry.shape->startBounds.tl.x;
-							float h = entry.shape->startBounds.br.y - entry.shape->startBounds.tl.y;
-
-							fill.startVerts.SetNum( 4 );
-							fill.startVerts[0].x = w;
-							fill.startVerts[0].y = h; // bottom-right
-							fill.startVerts[1].x = 0;
-							fill.startVerts[1].y = h; // bottom-left
-							fill.startVerts[2].x = 0;
-							fill.startVerts[2].y = 0; // top-left
-							fill.startVerts[3].x = w;
-							fill.startVerts[3].y = 0; // top-right
-
-							// fill.endVerts = fill.startVerts;
-
-							// --- 5. Create quad (2 triangles) ---
-							fill.indices.SetNum( 6 );
-							fill.indices[0] = 0;
-							fill.indices[1] = 1;
-							fill.indices[2] = 2;
-							fill.indices[3] = 0;
-							fill.indices[4] = 2;
-							fill.indices[5] = 3;
-						}
-					} else {
-						entry.type	= SWF_DICT_SHAPE;
-						entry.shape = new( TAG_SWF ) idSWFShape;
-						ParseShape( g, entry.shape );
-					}
+					entry.type	= SWF_DICT_SHAPE;
+					entry.shape = new( TAG_SWF ) idSWFShape;
+					ParseSVG_Shape( g, entry.shape );
 				} else if( dataType && idStr::Icmp( dataType, "FONT" ) == 0 ) {
 					entry.type = SWF_DICT_FONT;
 					entry.font = new( TAG_SWF ) idSWFFont;
-
-					idStr fontName = n.attribute( "data-name" ).value();
-					if( fontName.IsEmpty() ) {
-						fontName = "Arial";
-					}
-
-					idFont* font = renderSystem->RegisterFont( fontName );
-					if( !font ) {
-						idLib::Warning( "Font '%s' not found, using default", fontName.c_str() );
-						font = renderSystem->RegisterFont( "Arial" ); // fallback
-					}
-
-					entry.font->fontID = font;
+					ParseSVG_Font( g, entry.font );
 				} else {
 					entry.type	 = SWF_DICT_SPRITE;
 					entry.sprite = new idSWFSprite( this );
@@ -405,7 +416,7 @@ void idSWF::WriteSVG( const char* filename )
 		( int )frameWidth,
 		( int )frameHeight );
 
-	const bool exportUnfolded = false;
+	const bool exportUnfolded = true;
 
 	file->WriteFloatString( "\t<defs>\n" );
 	for( int i = 0; i < dictionary.Num(); i++ ) {

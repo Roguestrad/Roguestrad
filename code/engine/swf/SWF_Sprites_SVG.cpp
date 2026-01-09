@@ -2,7 +2,7 @@
 ===========================================================================
 
 Doom 3 BFG Edition GPL Source Code
-Copyright (C) 2025 Robert Beckebans
+Copyright (C) 2025-2026 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -333,7 +333,7 @@ const char* cssNameFromRGBA( const swfColorRGBA_t& col )
 			return c->name;
 		}
 	}
-	
+
 	// fallback: rgba(...)
 	static char tmp[32];
 	snprintf( tmp, sizeof( tmp ), "rgba(%d, %d, %d, %f)", col.r, col.g, col.b, col.a / 255.0f );
@@ -425,14 +425,29 @@ void swfColorRGBA_t::ParseSVGColorFromString( const char* str )
 	// 5) unknown color – do not change
 }
 
+static bool HasDirectShapeChildren( const pugi::xml_node& g )
+{
+	return g.child( "polygon" ) || g.child( "polyline" );
+}
+
+static bool HasDirectTextChild( const pugi::xml_node& g )
+{
+	return g.child( "text" );
+}
+
+static bool HasDirectImageChild( const pugi::xml_node& g )
+{
+	return g.child( "image" );
+}
+
 void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded )
 {
 	frameCount = 1;
 
 	int depthCounter = 1;
 
-	for( pugi::xml_node child = node.first_child(); child; child = child.next_sibling() ) {
-		std::string childName = child.name();
+	for( pugi::xml_node s = node.first_child(); s; s = s.next_sibling() ) {
+		std::string childName = s.name();
 
 		if( childName == "use" ) {
 			swfSpriteCommand_t& cmd = commands.Alloc();
@@ -441,48 +456,50 @@ void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionar
 			idFile_SWF memFile( new idFile_Memory() );
 
 			uint8	   flags = PlaceFlagHasCharacter;
-			if( child.attribute( "transform" ) ) {
+			if( s.attribute( "transform" ) ) {
 				flags |= PlaceFlagHasMatrix;
 			}
-			if( child.attribute( "filter" ) ) {
+			if( s.attribute( "filter" ) ) {
 				flags |= PlaceFlagHasColorTransform;
 			}
-			if( child.attribute( "id" ) ) {
+			if( s.attribute( "id" ) ) {
 				flags |= PlaceFlagHasName;
 			}
 
 			memFile.WriteU8( flags );
 			memFile.WriteU16( depthCounter++ );
 
-			std::string href   = child.attribute( "xlink:href" ).value();
+			std::string href   = s.attribute( "xlink:href" ).value();
 			int			charID = atoi( href.c_str() + 1 );
 			memFile.WriteU16( charID );
 
 			if( flags & PlaceFlagHasMatrix ) {
 				swfMatrix_t m;
-				m.ParseSVGTransformFromString( child.attribute( "transform" ).value() );
+				m.ParseSVGTransformFromString( s.attribute( "transform" ).value() );
 				memFile.WriteMatrix( m );
 			}
 
 			if( flags & PlaceFlagHasColorTransform ) {
-				swfColorXform_t cxf = ParseColorXformFromFilter( child.attribute( "filter" ).value() );
+				swfColorXform_t cxf = ParseColorXformFromFilter( s.attribute( "filter" ).value() );
 				memFile.WriteColorXFormRGBA( cxf );
 			}
 
-			if( child.attribute( "id" ) ) {
-				idStr name = child.attribute( "id" ).value();
+			if( s.attribute( "id" ) ) {
+				idStr name = s.attribute( "id" ).value();
 				memFile.WriteString( name );
 			}
 
 			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 
 		} else if( childName == "g" ) {
+			const char*			  dataType = s.attribute( "data-type" ).value();
+
 			int					  newCharID = dict.Num();
 			idSWFDictionaryEntry& newEntry	= dict.Alloc();
-			newEntry.type					= SWF_DICT_SPRITE;
-			newEntry.sprite					= new idSWFSprite( NULL );
 
-			newEntry.sprite->LoadSVGNode( child, dict, isUnfolded );
+			newEntry.type	= SWF_DICT_SPRITE;
+			newEntry.sprite = new idSWFSprite( NULL );
+			newEntry.sprite->LoadSVGNode( s, dict, isUnfolded );
 
 			swfSpriteCommand_t& cmd = commands.Alloc();
 			cmd.tag					= Tag_PlaceObject2;
