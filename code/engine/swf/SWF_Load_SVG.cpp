@@ -368,7 +368,7 @@ bool idSWF::LoadSVG( const char* filename )
 				} else {
 					entry.type	 = SWF_DICT_SPRITE;
 					entry.sprite = new idSWFSprite( this );
-					entry.sprite->LoadSVGNode( g, dictionary, isUnfolded );
+					entry.sprite->LoadSVGNode_r( g, dictionary, isUnfolded );
 				}
 			}
 		}
@@ -381,7 +381,7 @@ bool idSWF::LoadSVG( const char* filename )
 	}
 
 	mainsprite = new idSWFSprite( this );
-	mainsprite->LoadSVGNode( mainNode, dictionary, isUnfolded );
+	mainsprite->LoadSVGNode_r( mainNode, dictionary, isUnfolded );
 
 	// now that all images have been loaded, write out the combined image
 	idStr atlasFileName = "generated/";

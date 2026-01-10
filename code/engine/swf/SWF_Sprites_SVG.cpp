@@ -427,7 +427,8 @@ void swfColorRGBA_t::ParseSVGColorFromString( const char* str )
 
 static bool HasDirectShapeChildren( const pugi::xml_node& g )
 {
-	return g.child( "polygon" ) || g.child( "polyline" );
+	const char* linkType = g.attribute( "link-type" ).value();
+	return ( idStr::Icmp( linkType, "BITMAP" ) == 0 ) || g.child( "polygon" ) || g.child( "polyline" );
 }
 
 static bool HasDirectTextChild( const pugi::xml_node& g )
@@ -440,14 +441,16 @@ static bool HasDirectImageChild( const pugi::xml_node& g )
 	return g.child( "image" );
 }
 
-void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded )
+void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded )
 {
 	frameCount = 1;
 
 	int depthCounter = 1;
 
 	for( pugi::xml_node s = node.first_child(); s; s = s.next_sibling() ) {
-		std::string childName = s.name();
+		std::string childName	   = s.name();
+		const char* dataType	   = s.attribute( "data-type" ).value();
+		const bool	isWrapperPlace = ( dataType != nullptr && idStr::Icmp( dataType, "Tag_PlaceObject2" ) == 0 );
 
 		if( childName == "use" ) {
 			swfSpriteCommand_t& cmd = commands.Alloc();
@@ -484,7 +487,7 @@ void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionar
 				memFile.WriteColorXFormRGBA( cxf );
 			}
 
-			if( s.attribute( "id" ) ) {
+			if( flags & PlaceFlagHasName ) {
 				idStr name = s.attribute( "id" ).value();
 				memFile.WriteString( name );
 			}
@@ -492,24 +495,75 @@ void idSWFSprite::LoadSVGNode( const pugi::xml_node& node, idList<idSWFDictionar
 			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 
 		} else if( childName == "g" ) {
-			const char*			  dataType = s.attribute( "data-type" ).value();
-
 			int					  newCharID = dict.Num();
 			idSWFDictionaryEntry& newEntry	= dict.Alloc();
 
-			newEntry.type	= SWF_DICT_SPRITE;
-			newEntry.sprite = new idSWFSprite( NULL );
-			newEntry.sprite->LoadSVGNode( s, dict, isUnfolded );
+			if( HasDirectShapeChildren( s ) ) {
+				newEntry.type  = SWF_DICT_SHAPE;
+				newEntry.shape = new( TAG_SWF ) idSWFShape;
+				swf->ParseSVG_Shape( s, newEntry.shape );
+			} else if( HasDirectTextChild( s ) ) {
+				newEntry.type	  = SWF_DICT_EDITTEXT;
+				newEntry.edittext = new( TAG_SWF ) idSWFEditText;
+				swf->ParseSVG_Text( s, newEntry.edittext );
+			} else if( HasDirectImageChild( s ) ) {
+				swf->ParseSVG_Image( s, newCharID, newEntry );
+			} else {
+				newEntry.type	= SWF_DICT_SPRITE;
+				newEntry.sprite = new idSWFSprite( swf );
+				newEntry.sprite->LoadSVGNode_r( s, dict, isUnfolded );
+			}
 
-			swfSpriteCommand_t& cmd = commands.Alloc();
-			cmd.tag					= Tag_PlaceObject2;
-			idFile_SWF memFile( new idFile_Memory() );
-			uint8	   flags = PlaceFlagHasCharacter;
-			memFile.WriteU8( flags );
-			memFile.WriteU16( depthCounter++ );
-			memFile.WriteU16( newCharID );
+			if( isWrapperPlace ) {
+				swfSpriteCommand_t& cmd = commands.Alloc();
+				cmd.tag					= Tag_PlaceObject2;
 
-			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+				idFile_SWF memFile( new idFile_Memory() );
+
+				uint8	   flags = PlaceFlagHasCharacter;
+				if( s.attribute( "transform" ) ) {
+					flags |= PlaceFlagHasMatrix;
+				}
+				if( s.attribute( "filter" ) ) {
+					flags |= PlaceFlagHasColorTransform;
+				}
+				if( s.attribute( "id" ) && !idStr::IsNumeric( s.attribute( "id" ).value() ) ) {
+					flags |= PlaceFlagHasName;
+				}
+
+				memFile.WriteU8( flags );
+				memFile.WriteU16( depthCounter++ );
+				memFile.WriteU16( newCharID );
+
+				if( flags & PlaceFlagHasMatrix ) {
+					swfMatrix_t m;
+					m.ParseSVGTransformFromString( s.attribute( "transform" ).value() );
+					memFile.WriteMatrix( m );
+				}
+
+				if( flags & PlaceFlagHasColorTransform ) {
+					swfColorXform_t cxf = ParseColorXformFromFilter( s.attribute( "filter" ).value() );
+					memFile.WriteColorXFormRGBA( cxf );
+				}
+
+				if( flags & PlaceFlagHasName ) {
+					idStr name = s.attribute( "id" ).value();
+					memFile.WriteString( name );
+				}
+
+				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+			} else {
+				// place the newly created character into this sprite
+				swfSpriteCommand_t& cmd = commands.Alloc();
+				cmd.tag					= Tag_PlaceObject2;
+				idFile_SWF memFile( new idFile_Memory() );
+				uint8	   flags = PlaceFlagHasCharacter;
+				memFile.WriteU8( flags );
+				memFile.WriteU16( depthCounter++ );
+				memFile.WriteU16( newCharID );
+
+				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+			}
 
 		} else if( childName == "animate" || childName == "animateTransform" ) {
 			idLib::Warning( "SVG Import: Animations not fully supported yet." );
