@@ -231,7 +231,39 @@ void idSWF::ParseSVG_Text( const pugi::xml_node& node, idSWFEditText* et )
 			et->bounds.br.x = anchorPos.x + 400; // default width
 			et->bounds.br.y = anchorPos.y;
 		}
-		et->initialText = textNode.text().as_string();
+
+		// Some SVG exporters emit multiline text as a series of <tspan> children.
+		// Example:
+		//   <text ...>
+		//     <tspan ...>LINE1</tspan>
+		//     <tspan ...>LINE2</tspan>
+		//   </text>
+		// In that case, concatenate tspans with '\n'. If there are no tspans, fall back to
+		// the text node's direct content.
+		idStr composedText;
+		int	  numLines = 0;
+		float totalDy  = 0.0f;
+		for( pugi::xml_node tspan = textNode.child( "tspan" ); tspan; tspan = tspan.next_sibling( "tspan" ) ) {
+			const char* line = tspan.text().as_string();
+			if( numLines > 0 ) {
+				composedText += "\n";
+				// SVG dy is relative; add it to extend bounds for multiline blocks.
+				// If dy is not present, assume roughly one font-size line advance.
+				totalDy += tspan.attribute( "dy" ).as_float( textNode.attribute( "font-size" ).as_float() );
+			}
+			composedText += line;
+			numLines++;
+		}
+		if( numLines > 0 ) {
+			et->initialText = composedText;
+			et->flags |= SWF_ET_MULTILINE;
+
+			// Expand bounds vertically for additional lines.
+			// NOTE: bounds are in the same coordinate space as the SVG x/y.
+			et->bounds.br.y = anchorPos.y + totalDy;
+		} else {
+			et->initialText = textNode.text().as_string();
+		}
 
 		idStr fontName = textNode.attribute( "font-family" ).value();
 		if( fontName.IsEmpty() ) {

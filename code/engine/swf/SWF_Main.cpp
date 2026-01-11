@@ -1074,9 +1074,9 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 	for( int f = 0; f < files->GetList().Num(); f++ ) {
 		idStr bswfName = files->GetList()[f];
 
-#if 1
-		if( idStr::Icmp( bswfName, "generated/swf/doomintro.bswf" ) != 0 ) {
-			// if( idStr::Icmp( bswfName, "generated/swf/hud.bswf" ) != 0 ) {
+#if 0
+		//if( idStr::Icmp( bswfName, "generated/swf/doomintro.bswf" ) != 0 ) {
+		if( idStr::Icmp( bswfName, "generated/swf/hud.bswf" ) != 0 ) {
 			continue;
 		}
 #endif
