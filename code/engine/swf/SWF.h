@@ -340,81 +340,83 @@ private:
 	friend class idSWFSpriteInstance;
 
 	// RB begin
-	bool	  LoadSWF( const char* fullpath );
-	void	  WriteSWF( const char* filename, const byte* atlasImageRGBA, int atlasImageWidth, int atlasImageHeight );
+	idHashTableT<idStr, swfColorXform_t> svgFilterColorXforms;
 
-	bool	  LoadBinary( const char* bfilename, ID_TIME_T sourceTime );
-	void	  WriteBinary( const char* bfilename );
+	bool								 LoadSWF( const char* fullpath );
+	void								 WriteSWF( const char* filename, const byte* atlasImageRGBA, int atlasImageWidth, int atlasImageHeight );
 
-	void	  FileAttributes( idSWFBitStream& bitstream );
-	void	  Metadata( idSWFBitStream& bitstream );
-	void	  SetBackgroundColor( idSWFBitStream& bitstream );
+	bool								 LoadBinary( const char* bfilename, ID_TIME_T sourceTime );
+	void								 WriteBinary( const char* bfilename );
+
+	void								 FileAttributes( idSWFBitStream& bitstream );
+	void								 Metadata( idSWFBitStream& bitstream );
+	void								 SetBackgroundColor( idSWFBitStream& bitstream );
 
 	//! \brief Loads an SVG file and parses its contents into the SWF structure.
 	//! \param filename The path to the SVG file to load.
 	//! \return true if the file was successfully loaded and parsed, false otherwise.
-	bool	  LoadSVG( const char* filename );
+	bool								 LoadSVG( const char* filename );
 
-	void	  ParseSVG_Image( const pugi::xml_node& node, int characterID, idSWFDictionaryEntry& entry );
-	void	  ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape );
-	void	  ParseSVG_Text( const pugi::xml_node& node, idSWFEditText* et );
-	void	  ParseSVG_Font( const pugi::xml_node& node, idSWFFont* font );
+	void								 ParseSVG_Image( const pugi::xml_node& node, int characterID, idSWFDictionaryEntry& entry );
+	void								 ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape );
+	void								 ParseSVG_Text( const pugi::xml_node& node, idSWFEditText* et );
+	void								 ParseSVG_Font( const pugi::xml_node& node, idSWFFont* font );
 
-	void	  WriteSVG( const char* filename );
+	void								 WriteSVG( const char* filename );
 
-	bool	  LoadJSON( const char* filename );
-	void	  WriteJSON( const char* filename );
+	bool								 LoadJSON( const char* filename );
+	void								 WriteJSON( const char* filename );
 	// RB end
 
 	//----------------------------------
 	// SWF_Shapes.cpp
 	//----------------------------------
-	void	  DefineShape( idSWFBitStream& bitstream );
-	void	  DefineShape2( idSWFBitStream& bitstream );
-	void	  DefineShape3( idSWFBitStream& bitstream );
-	void	  DefineShape4( idSWFBitStream& bitstream );
-	void	  DefineMorphShape( idSWFBitStream& bitstream );
+	void								 DefineShape( idSWFBitStream& bitstream );
+	void								 DefineShape2( idSWFBitStream& bitstream );
+	void								 DefineShape3( idSWFBitStream& bitstream );
+	void								 DefineShape4( idSWFBitStream& bitstream );
+	void								 DefineMorphShape( idSWFBitStream& bitstream );
 
 	//----------------------------------
 	// SWF_Sprites.cpp
 	//----------------------------------
-	void	  DefineSprite( idSWFBitStream& bitstream );
+	void								 DefineSprite( idSWFBitStream& bitstream );
 
 	//----------------------------------
 	// SWF_Sounds.cpp
 	//----------------------------------
-	void	  DefineSound( idSWFBitStream& bitstream );
+	void								 DefineSound( idSWFBitStream& bitstream );
 
 	//----------------------------------
 	// SWF_Render.cpp
 	//----------------------------------
-	void	  DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial* material );
-	void	  DrawStretchPic( const idVec4& topLeft, const idVec4& topRight, const idVec4& bottomRight, const idVec4& bottomLeft, const idMaterial* material );
-	void	  RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* sprite, const swfRenderState_t& renderState, int time, bool isSplitscreen = false );
-	void	  RenderMask( idRenderSystem* gui, const swfDisplayEntry_t* mask, const swfRenderState_t& renderState, const int stencilMode );
-	void	  RenderShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState );
-	void	  RenderMorphShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState );
-	void	  DrawEditCursor( idRenderSystem* gui, float x, float y, float w, float h, const swfMatrix_t& matrix );
-	void	  DrawLine( idRenderSystem* gui, const idVec2& p1, const idVec2& p2, float width, const swfMatrix_t& matrix );
-	void	  RenderEditText( idRenderSystem* gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time, bool isSplitscreen = false );
-	uint64	  GLStateForRenderState( const swfRenderState_t& renderState );
-	void	  FindTooltipIcons( idStr* text );
+	void								 DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial* material );
+	void								 DrawStretchPic( const idVec4& topLeft, const idVec4& topRight, const idVec4& bottomRight, const idVec4& bottomLeft, const idMaterial* material );
+	void								 RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* sprite, const swfRenderState_t& renderState, int time, bool isSplitscreen = false );
+	void								 RenderMask( idRenderSystem* gui, const swfDisplayEntry_t* mask, const swfRenderState_t& renderState, const int stencilMode );
+	void								 RenderShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState );
+	void								 RenderMorphShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState );
+	void								 DrawEditCursor( idRenderSystem* gui, float x, float y, float w, float h, const swfMatrix_t& matrix );
+	void								 DrawLine( idRenderSystem* gui, const idVec2& p1, const idVec2& p2, float width, const swfMatrix_t& matrix );
+	void								 RenderEditText( idRenderSystem* gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time, bool isSplitscreen = false );
+	uint64								 GLStateForRenderState( const swfRenderState_t& renderState );
+	void								 FindTooltipIcons( idStr* text );
 
 	// RB: debugging tools
-	swfRect_t CalcRect( const idSWFSpriteInstance* sprite, const swfRenderState_t& renderState );
-	void	  DrawRect( idRenderSystem* gui, const swfRect_t& rect, const idVec4& color );
-	int		  DrawText( idRenderSystem* gui, float x, float y, float scale, idVec4 color, const char* text, float adjust, int limit, int style );
-	int		  DrawText( idRenderSystem* gui,
-			  const char*				text,
-			  float						textScale,
-			  int						textAlign,
-			  idVec4					color,
-			  const swfRect_t&			rectDraw,
-			  bool						wrap,
-			  int						cursor	 = -1,
-			  bool						calcOnly = false,
-			  idList<int>*				breaks	 = NULL,
-			  int						limit	 = 0 );
+	swfRect_t							 CalcRect( const idSWFSpriteInstance* sprite, const swfRenderState_t& renderState );
+	void								 DrawRect( idRenderSystem* gui, const swfRect_t& rect, const idVec4& color );
+	int									 DrawText( idRenderSystem* gui, float x, float y, float scale, idVec4 color, const char* text, float adjust, int limit, int style );
+	int									 DrawText( idRenderSystem* gui,
+										 const char*			   text,
+										 float					   textScale,
+										 int					   textAlign,
+										 idVec4					   color,
+										 const swfRect_t&		   rectDraw,
+										 bool					   wrap,
+										 int					   cursor	= -1,
+										 bool					   calcOnly = false,
+										 idList<int>*			   breaks	= NULL,
+										 int					   limit	= 0 );
 	// RB end
 
 	//----------------------------------

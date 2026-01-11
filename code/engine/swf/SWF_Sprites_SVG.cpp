@@ -138,15 +138,103 @@ void swfMatrix_t::ParseSVGTransformFromString( const char* str )
 	lexer.FreeSource();
 }
 
-static swfColorXform_t ParseColorXformFromFilter( const char* filterStr )
+static swfColorXform_t ParseColorXformFromFilter( const idHashTableT<idStr, swfColorXform_t>& svgFilterColorXforms, const char* filterStr )
 {
 	swfColorXform_t cxf;
 	cxf.mul = vec4_one;
 	cxf.add = vec4_zero;
-	if( filterStr ) {
-		// TODO: Parse <feColorMatrix> values
+
+	if( filterStr == NULL || filterStr[0] == '\0' ) {
+		return cxf;
 	}
+
+	// expected: url(#ID)
+	idStr s		  = filterStr;
+	int	  hashPos = s.Find( "#", false );
+	if( hashPos == -1 ) {
+		return cxf;
+	}
+	int endPos = s.Find( ")", false );
+	if( endPos == -1 || endPos <= hashPos + 1 ) {
+		endPos = s.Length();
+	}
+
+	idStr				   filterId = s.Mid( hashPos + 1, endPos - ( hashPos + 1 ) );
+	// filterId.StripWhitespace();
+
+	const swfColorXform_t* found = NULL;
+	if( svgFilterColorXforms.Get( filterId, &found ) && found != NULL ) {
+		cxf = *found;
+	}
+
 	return cxf;
+}
+
+static bool ParseSVG_ColorMatrixValues( const char* valuesStr, float out[20] )
+{
+	if( valuesStr == NULL || valuesStr[0] == '\0' ) {
+		return false;
+	}
+
+	return true;
+}
+
+static bool ParseColorXformFromFilterNode( const pugi::xml_node& filterNode, swfColorXform_t& outCxf )
+{
+	outCxf.mul = vec4_one;
+	outCxf.add = vec4_zero;
+
+	pugi::xml_node fe = filterNode.child( "feColorMatrix" );
+	if( !fe ) {
+		return false;
+	}
+
+	const char* typeStr = fe.attribute( "type" ).value();
+	if( typeStr == NULL || idStr::Icmp( typeStr, "matrix" ) != 0 ) {
+		return false;
+	}
+
+	const char* valuesStr = fe.attribute( "values" ).value();
+	if( valuesStr == NULL || valuesStr[0] == '\0' ) {
+		return false;
+	}
+
+	float	m[20];
+	idLexer lexer;
+	lexer.LoadMemory( valuesStr, idStr::Length( valuesStr ), "feColorMatrix values" );
+	lexer.SetFlags( LEXFL_NOFATALERRORS | LEXFL_NOSTRINGCONCAT );
+
+	for( int i = 0; i < 20; i++ ) {
+		m[i] = lexer.ParseFloat();
+
+		if( lexer.PeekTokenString( "," ) ) {
+			lexer.ExpectTokenString( "," );
+		}
+	}
+
+	lexer.FreeSource();
+
+	// only diagonal + translate allowed (no channel-mixing)
+	const float eps	   = 0.00001f;
+	auto		isZero = [&]( float v ) { return idMath::Fabs( v ) <= eps; };
+
+	if( !isZero( m[1] ) || !isZero( m[2] ) || !isZero( m[3] ) || !isZero( m[5] ) || !isZero( m[7] ) || !isZero( m[8] ) || !isZero( m[10] ) || !isZero( m[11] ) || !isZero( m[13] ) ||
+		!isZero( m[15] ) || !isZero( m[16] ) || !isZero( m[17] ) ) {
+		idLib::Warning( "SVG Import: feColorMatrix has cross-channel terms (unsupported). Ignoring filter '%s'.", filterNode.attribute( "id" ).value() );
+		return false;
+	}
+
+	outCxf.mul.x = m[0];
+	outCxf.mul.y = m[6];
+	outCxf.mul.z = m[12];
+	outCxf.mul.w = m[18];
+
+	outCxf.add.x = m[4];
+	outCxf.add.y = m[9];
+	outCxf.add.z = m[14];
+	outCxf.add.w = m[19];
+
+	return true;
 }
 
 // -----------------------------------------------------------------
@@ -483,7 +571,7 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 			}
 
 			if( flags & PlaceFlagHasColorTransform ) {
-				swfColorXform_t cxf = ParseColorXformFromFilter( s.attribute( "filter" ).value() );
+				swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
 				memFile.WriteColorXFormRGBA( cxf );
 			}
 
@@ -493,6 +581,21 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 			}
 
 			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+
+		} else if( childName == "filter" ) {
+			const char* filterIdStr = s.attribute( "id" ).value();
+			if( filterIdStr != NULL && filterIdStr[0] != '\0' ) {
+				swfColorXform_t cxf;
+				if( ParseColorXformFromFilterNode( s, cxf ) ) {
+					swf->svgFilterColorXforms.Set( filterIdStr, cxf );
+				} else {
+					// Unknown/unsupported filter -> store identity so lookups are stable
+					swfColorXform_t ident;
+					ident.mul = vec4_one;
+					ident.add = vec4_zero;
+					swf->svgFilterColorXforms.Set( filterIdStr, ident );
+				}
+			}
 
 		} else if( childName == "g" ) {
 			int					  newCharID = dict.Num();
@@ -542,7 +645,7 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 				}
 
 				if( flags & PlaceFlagHasColorTransform ) {
-					swfColorXform_t cxf = ParseColorXformFromFilter( s.attribute( "filter" ).value() );
+					swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
 					memFile.WriteColorXFormRGBA( cxf );
 				}
 
