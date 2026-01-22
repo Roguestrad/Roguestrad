@@ -279,7 +279,7 @@ public:
 
 	// RAVEN BEGIN
 	// abahr
-	void					Split( idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\'' ) const;
+	bool					Split( idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\'' ) const;
 	// RAVEN END
 
 	// char * methods to replace library functions
@@ -350,7 +350,7 @@ public:
 	int						DynamicMemoryUsed() const;
 	static idStr			FormatNumber( int number );
 
-	static void				Split( const char* source, idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\'' );
+	static bool				Split( const char* source, idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\'' );
 
 protected:
 	int			   len;

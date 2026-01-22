@@ -2281,7 +2281,7 @@ CONSOLE_COMMAND( testStrId, "prints a localized string", 0 )
 idStr::Split
 ================
 */
-void idStr::Split( const char* source, idList<idStr>& list, const char delimiter, const char groupDelimiter )
+bool idStr::Split( const char* source, idList<idStr>& list, const char delimiter, const char groupDelimiter )
 {
 	const idStr localSource( source );
 	int			sourceLength = localSource.Length();
@@ -2296,7 +2296,9 @@ void idStr::Split( const char* source, idList<idStr>& list, const char delimiter
 		if( currentChar == groupDelimiter ) {
 			endIndex = localSource.Find( groupDelimiter, ++startIndex );
 			if( endIndex == -1 ) {
-				common->Error( "Couldn't find expected char %c in idStr::Split\n", groupDelimiter );
+				// RB: don't error out, just return false
+				// common->Error( "Couldn't find expected char %c in idStr::Split\n", groupDelimiter );
+				return false;
 			}
 			element = localSource.Mid( startIndex, endIndex );
 			element.Strip( groupDelimiter );
@@ -2320,6 +2322,8 @@ void idStr::Split( const char* source, idList<idStr>& list, const char delimiter
 		// RB: removed element += '\0';
 		list.Append( element );
 	}
+
+	return true;
 }
 
 /*
@@ -2327,9 +2331,9 @@ void idStr::Split( const char* source, idList<idStr>& list, const char delimiter
 idStr::Split
 ================
 */
-void idStr::Split( idList<idStr>& list, const char delimiter, const char groupDelimiter ) const
+bool idStr::Split( idList<idStr>& list, const char delimiter, const char groupDelimiter ) const
 {
-	Split( c_str(), list, delimiter, groupDelimiter );
+	return Split( c_str(), list, delimiter, groupDelimiter );
 }
 // RAVEN END
 

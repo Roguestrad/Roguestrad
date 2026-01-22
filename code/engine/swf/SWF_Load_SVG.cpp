@@ -654,7 +654,9 @@ void idSWF::WriteSVG( const char* filename )
 				if( et->flags & SWF_ET_MULTILINE ) {
 					// split initialText into multiple lines
 					idStrList lines;
-					initialText.Split( lines, '\n', '\'' );
+					if( !initialText.Split( lines, '\n', '\'' ) ) {
+						initialText.Split( lines, '\n', '\0' );
+					}
 
 					if( lines.Num() > 1 ) {
 						idStr multiLineText = "\n";

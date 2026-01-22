@@ -1875,8 +1875,12 @@ idStr idSWFScriptFunction_Script::ExportToScript( idSWFScriptObject* thisObject,
 				stack.Alloc().SetInteger( Sys_Milliseconds() );
 				break;
 			case Action_RandomNumber:
-				assert( thisSprite && thisSprite->sprite && thisSprite->sprite->GetSWF() );
-				stack.A().SetInteger( thisSprite->sprite->GetSWF()->GetRandom().RandomInt( stack.A().ToInteger() ) );
+				// assert( thisSprite && thisSprite->sprite && thisSprite->sprite->GetSWF() );
+				if( verify( thisSprite != NULL && thisSprite->sprite && thisSprite->sprite->GetSWF() ) ) {
+					stack.A().SetInteger( thisSprite->sprite->GetSWF()->GetRandom().RandomInt( stack.A().ToInteger() ) );
+				} else if( swf_debug.GetInteger() > 0 ) {
+					idLib::Printf( "SWF: no target movie clip for randomNumber\n" );
+				}
 				break;
 			case Action_CallFunction: {
 				idStr			   functionName = stack.A().ToString();
@@ -2241,9 +2245,11 @@ idStr idSWFScriptFunction_Script::ExportToScript( idSWFScriptObject* thisObject,
 						stack.Pop( 1 );
 					}
 
-					idSWFScriptVar		 baseObjConstructor = scope[0]->Get( "Object" );
-					idSWFScriptFunction* baseObj			= baseObjConstructor.GetFunction();
-					object->Set( "__proto__", baseObj->GetPrototype() );
+					idSWFScriptVar baseObjConstructor = scope[0]->Get( "Object" );
+					if( baseObjConstructor.IsValid() ) {
+						idSWFScriptFunction* baseObj = baseObjConstructor.GetFunction();
+						object->Set( "__proto__", baseObj->GetPrototype() );
+					}
 					// object prototype is not set here because it will be auto created from Object later
 				} else {
 					idSWFParmList parms;

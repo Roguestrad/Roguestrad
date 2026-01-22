@@ -54,48 +54,49 @@ public:
 	idSWFSprite( class idSWF* swf );
 	~idSWFSprite();
 
-	void		 Load( idSWFBitStream& bitstream, bool parseDictionary );
+	void Load( idSWFBitStream& bitstream, bool parseDictionary );
 
-	void		 Read( idFile* f );
-	void		 Write( idFile* f );
+	void Read( idFile* f );
+	void Write( idFile* f );
 
 	// RB begin
-	void		 ReadJSON( rapidjson::Value& entry );
+	void ReadJSON( rapidjson::Value& entry );
+	void WriteJSON( idFile* f, idFile* luaFile, int characterID );
 
-	void		 WriteJSON( idFile* f, idFile* luaFile, int characterID );
-	void		 WriteJSON_PlaceObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
-	void		 WriteJSON_PlaceObject3( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
-	void		 WriteJSON_RemoveObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
-	void		 WriteJSON_DoAction( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
-	void		 WriteJSON_DoLua( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded );
+	void WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
+	void WriteSVGUnfolded_r( idFile*				 f,
+		int											 characterID,
+		const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
+		const swfMatrix_t&							 parentMatrix,
+		const swfColorXform_t&						 parentColor,
+		idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
+		float										 frameDur,
+		int											 indent );
 
-	void		 LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded );
+private:
+	void WriteJSON_PlaceObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void WriteJSON_PlaceObject3( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void WriteJSON_RemoveObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void WriteJSON_DoAction( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
+	void WriteJSON_DoLua( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
 
-	void		 WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
-	void		 WriteSVG_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
+	void WriteSVG_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
 
-	void		 WriteSVGUnfolded_r( idFile*				 f,
-				int											 characterID,
-				const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
-				const swfMatrix_t&							 parentMatrix,
-				const swfColorXform_t&						 parentColor,
-				idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
-				float										 frameDur,
-				int											 indent );
+	void WriteSVGUnfolded_PlaceObject2( idFile*		 f,
+		idSWFBitStream&								 bitstream,
+		int											 characterID,
+		int											 commandID,
+		const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
+		const swfMatrix_t&							 parentMatrix,
+		const swfColorXform_t&						 parentColor,
+		idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
+		idHashTableT<int, svgDisplayEntry_t*>&		 localDepthMap,
+		int											 currentFrame,
+		float										 frameDur,
+		int											 indent );
 
-	void		 WriteSVGUnfolded_PlaceObject2( idFile*		 f,
-				idSWFBitStream&								 bitstream,
-				int											 characterID,
-				int											 commandID,
-				const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
-				const swfMatrix_t&							 parentMatrix,
-				const swfColorXform_t&						 parentColor,
-				idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
-				idHashTableT<int, svgDisplayEntry_t*>&		 localDepthMap,
-				int											 currentFrame,
-				float										 frameDur,
-				int											 indent );
-
+public:
 	void		 WriteSWF( idFile_SWF& f, int characterID );
 
 	uint16		 GetFrameCount() { return frameCount; }
