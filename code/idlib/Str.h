@@ -178,14 +178,18 @@ public:
 	friend bool				operator!=( const char* a, const idStr& b );
 
 	// case sensitive compare
+	bool					Equals( const char* text ) const;
 	int						Cmp( const char* text ) const;
 	int						Cmpn( const char* text, int n ) const;
 	int						CmpPrefix( const char* text ) const;
 
 	// case insensitive compare
+	bool					EqualsIgnoreCase( const char* text ) const;
 	int						Icmp( const char* text ) const;
 	int						Icmpn( const char* text, int n ) const;
 	int						IcmpPrefix( const char* text ) const;
+	bool					StartsWithIgnoreCase( const char* prefix ) const;
+	bool					EndsWithIgnoreCase( const char* suffix ) const;
 
 	// case insensitive compare ignoring color
 	int						IcmpNoColor( const char* text ) const;
@@ -818,6 +822,18 @@ ID_INLINE bool operator!=( const char* a, const idStr& b )
 	return !( a == b );
 }
 
+ID_INLINE bool idStr::Equals( const char* text ) const
+{
+	assert( text );
+	return idStr::Cmp( data, text ) == 0;
+}
+
+ID_INLINE bool idStr::EqualsIgnoreCase( const char* text ) const
+{
+	assert( text );
+	return idStr::Icmp( data, text ) == 0;
+}
+
 ID_INLINE int idStr::Cmp( const char* text ) const
 {
 	assert( text );
@@ -853,9 +869,20 @@ ID_INLINE int idStr::Icmpn( const char* text, int n ) const
 ID_INLINE int idStr::IcmpPrefix( const char* text ) const
 {
 	assert( text );
-	// RB: 64 bit fixes,  conversion from 'size_t' to 'int', possible loss of data
 	return idStr::Icmpn( data, text, ( int )strlen( text ) );
-	// RB end
+}
+
+ID_INLINE bool idStr::StartsWithIgnoreCase( const char* prefix ) const
+{
+	assert( prefix );
+	return idStr::Icmpn( data, prefix, ( int )strlen( prefix ) ) == 0;
+}
+
+ID_INLINE bool idStr::EndsWithIgnoreCase( const char* suffix ) const
+{
+	int len = idStr::Length( suffix );
+	if( len > Length() ) { return false; }
+	return idStr::Icmp( data + Length() - len, suffix ) == 0;
 }
 
 ID_INLINE int idStr::IcmpNoColor( const char* text ) const
