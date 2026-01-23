@@ -1,0 +1,23 @@
+[
+  {
+    "label": "Roguestrad: CMake Configure (Clean, MSBUILD, VS2022 x64)",
+    "command": "cmd.exe",
+    "args": ["/c", "call .\\cmake-msbuild-win64.bat"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+  },
+  {
+    "label": "Roguestrad: Build (MSBUILD, VS2022 x64)",
+    "command": "cmd.exe",
+    "args": ["/c", "call cmake --build build -j"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+  },
+  {
+    "label": "Roguestrad: Clean",
+    "command": "cmd.exe",
+    "args": ["/c", "call cmake --build build --target clean"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+  },
+]
