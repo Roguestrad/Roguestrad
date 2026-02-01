@@ -1,10 +1,11 @@
-rmdir /s /q build
+rmdir /s /q build-clang
 
-rem CMake-Configuration with Ninja + Clang
-cmake -B build ^
+rem CMake-Configuration with Ninja + clang-cl
+cmake -B build-clang ^
   -G "Ninja Multi-Config" ^
-  -DCMAKE_C_COMPILER="clang.exe" ^
-  -DCMAKE_CXX_COMPILER="clang++.exe" ^
+  -DCMAKE_C_COMPILER="clang-cl.exe" ^
+  -DCMAKE_CXX_COMPILER="clang-cl.exe" ^
+  -DCOMPILE_COMMANDS=ON ^
   -DFFMPEG=OFF ^
   -DBINKDEC=ON ^
   -DSTANDALONE=OFF ^
@@ -12,6 +13,6 @@ cmake -B build ^
   .
 
 rem Build im Release-Mode
-::cmake --build build --config Release
+cmake --build build-clang --config Release
 
 pause

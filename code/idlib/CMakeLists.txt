@@ -33,7 +33,7 @@ set(ID_INCLUDES_ALL
 		${ID_MATH_INCLUDES}
 		${ID_SYS_INCLUDES}
 		)
-			
+
 set(ID_SOURCES_ALL
 		${ID__SOURCES}
 		${ID_BV_SOURCES}
@@ -43,7 +43,7 @@ set(ID_SOURCES_ALL
 		${ID_MATH_SOURCES}
 		${ID_SYS_SOURCES}
 		)
-			
+
 if(MSVC)
 	list(APPEND ID_INCLUDES_ALL ${ID_SYS_WIN32_INCLUDES})
 	list(APPEND ID_SOURCES_ALL ${ID_SYS_WIN32_SOURCES})
@@ -90,20 +90,22 @@ include_directories(
 )
 
 if(MSVC)
-    list(REMOVE_ITEM ID_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precompiled.cpp)
+	if(USE_PRECOMPILED_HEADERS)
+		list(REMOVE_ITEM ID_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/precompiled.cpp)
 
-    #set_target_properties(idlib PROPERTIES COMPILE_FLAGS "/Yuprecompiled.h")
-    set_source_files_properties(precompiled.cpp
-        PROPERTIES
-        COMPILE_FLAGS "/Ycprecompiled.h"
-        OBJECT_OUTPUTS "precompiled.pch"
-        )
-        set_source_files_properties(
-            ${ID_PRECOMPILED_SOURCES}
-            PROPERTIES
-            COMPILE_FLAGS "/Yuprecompiled.h"
-            OBJECT_DEPENDS "precompiled.pch"
-           )			
+		#set_target_properties(idlib PROPERTIES COMPILE_FLAGS "/Yuprecompiled.h")
+		set_source_files_properties(precompiled.cpp
+			PROPERTIES
+			COMPILE_FLAGS "/Ycprecompiled.h"
+			OBJECT_OUTPUTS "precompiled.pch"
+			)
+			set_source_files_properties(
+				${ID_PRECOMPILED_SOURCES}
+				PROPERTIES
+				COMPILE_FLAGS "/Yuprecompiled.h"
+				OBJECT_DEPENDS "precompiled.pch"
+			   )
+	endif()
 
     add_library(idlib ${ID_SOURCES_ALL} ${ID_INCLUDES_ALL})
 else()
@@ -129,7 +131,7 @@ else()
 		GET_DIRECTORY_PROPERTY(_directory_flags COMPILE_OPTIONS)
 		LIST(APPEND _compiler_FLAGS ${_directory_flags})
 		SEPARATE_ARGUMENTS(_compiler_FLAGS)
-	
+
 		GET_DIRECTORY_PROPERTY(_directory_flags COMPILE_DEFINITIONS)
 		FOREACH(item ${_directory_flags})
 			LIST(APPEND _compiler_FLAGS "-D${item}")
@@ -147,15 +149,15 @@ else()
 						COMMENT "Creating idlib/precompiled.h.gch for idlib"
 						)
 	endif()
-	
+
 	add_library(idlib ${ID_SOURCES_ALL} ${ID_INCLUDES_ALL})
 
 	if (USE_PRECOMPILED_HEADERS)
 		add_dependencies(idlib precomp_header_idlib)
 	endif()
-	
+
 endif()
-	
+
 if(OPTICK)
 	target_compile_definitions(idlib PUBLIC USE_OPTICK=1)
 else()
@@ -167,6 +169,6 @@ endif()
         # # PROPERTIES
         # # COMPILE_FLAGS "/Ycprecompiled.h"
         # # )
-		
+
 	# #set_target_properties(idlib PROPERTIES COMPILE_FLAGS "/Yuprecompiled.h")
 # endif()

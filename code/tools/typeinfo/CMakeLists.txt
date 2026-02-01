@@ -16,7 +16,7 @@ else()
 list(APPEND TP_SOURCES EngineStubPosix.cpp)
 endif()
 
-set(TP_FRAMEWORK_INCLUDES 
+set(TP_FRAMEWORK_INCLUDES
 	../../engine/framework/CmdSystem.h
 	../../engine/framework/CVarSystem.h
 	../../engine/framework/File.h
@@ -36,7 +36,7 @@ set(TP_FRAMEWORK_SOURCES
 	../../engine/framework/File_Zip.cpp
 	../../engine/framework/FileSystem.cpp
 	)
-	
+
 
 file(GLOB TP_ZLIB_INCLUDES ../../libs/zlib/*.h)
 file(GLOB TP_ZLIB_SOURCES ../../libs/zlib/*.c)
@@ -48,7 +48,7 @@ set(TP_INCLUDES_ALL
 			${TP_FRAMEWORK_INCLUDES}
 			${TP_ZLIB_INCLUDES}
 			)
-			
+
 set(TP_SOURCES_ALL
 			${TP_SOURCES}
 			${TP_FRAMEWORK_SOURCES}
@@ -72,30 +72,32 @@ include_directories(
 	)
 
 if(MSVC)
-	list(REMOVE_ITEM TP_PRECOMPILED_SOURCES precompiled.cpp) 
+	if(USE_PRECOMPILED_HEADERS)
+		list(REMOVE_ITEM TP_PRECOMPILED_SOURCES precompiled.cpp)
 
-	#foreach( src_file ${TP_PRECOMPILED_SOURCES} )
-	#	message(STATUS "-include precompiled.h for ${src_file}")
-	#endforeach()
+		#foreach( src_file ${TP_PRECOMPILED_SOURCES} )
+		#	message(STATUS "-include precompiled.h for ${src_file}")
+		#endforeach()
 
-    #set_target_properties(idlib PROPERTIES COMPILE_FLAGS "/Yuprecompiled.h")
-    set_source_files_properties(precompiled.cpp
-        PROPERTIES
-        COMPILE_FLAGS "/Ycprecompiled.h"
-        OBJECT_OUTPUTS "precompiled.pch"
-        )
-		
-	set_source_files_properties(
-		${TP_PRECOMPILED_SOURCES}
-		PROPERTIES
-		COMPILE_FLAGS "/Yuprecompiled.h"
-		OBJECT_DEPENDS "precompiled.pch"
-		)
+		#set_target_properties(idlib PROPERTIES COMPILE_FLAGS "/Yuprecompiled.h")
+		set_source_files_properties(precompiled.cpp
+			PROPERTIES
+			COMPILE_FLAGS "/Ycprecompiled.h"
+			OBJECT_OUTPUTS "precompiled.pch"
+			)
+
+		set_source_files_properties(
+			${TP_PRECOMPILED_SOURCES}
+			PROPERTIES
+			COMPILE_FLAGS "/Yuprecompiled.h"
+			OBJECT_DEPENDS "precompiled.pch"
+			)
+	endif()
 
     add_executable(typeinfogen ${TP_SOURCES_ALL} ${TP_INCLUDES_ALL})
 	add_dependencies(typeinfogen idlib)
 	target_link_libraries(typeinfogen idlib winmm Shlwapi)
-	
+
 else()
 	include_directories(.)
 
@@ -108,7 +110,7 @@ else()
 				COMPILE_FLAGS "-include ${CMAKE_CURRENT_SOURCE_DIR}/precompiled.h"
 				)
 		endforeach()
-	
+
 		# precompiled magic for GCC/clang, adapted from https://gist.github.com/573926
 		STRING(TOUPPER "CMAKE_CXX_FLAGS_${CMAKE_BUILD_TYPE}" _flags_var_name)
 		SET(_compiler_FLAGS "${${_flags_var_name}} -std=c++${CMAKE_CXX_STANDARD}")
@@ -125,21 +127,19 @@ else()
 		FOREACH(item ${_directory_flags})
 			LIST(APPEND _compiler_FLAGS "-D${item}")
 		ENDFOREACH(item)
-	
+
 		add_custom_target(precomp_header_typeinfo ALL
 	                  COMMAND ${CMAKE_CXX_COMPILER} ${_compiler_FLAGS} -x c++-header precompiled.h -o precompiled.h.gch
 	                  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
 	                  COMMENT "Creating idlib/precompiled.h.gch for typeinfogen"
 	                  )
 	endif()
-	
+
 	add_executable(typeinfogen ${TP_SOURCES_ALL} ${TP_INCLUDES_ALL})
 	add_dependencies(typeinfogen idlib)
 	if (USE_PRECOMPILED_HEADERS)
 	add_dependencies(typeinfogen precomp_header_typeinfo)
 	endif()
 	target_link_libraries(typeinfogen idlib)
-	
-endif()
-	
 
+endif()

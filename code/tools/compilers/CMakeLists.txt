@@ -248,25 +248,27 @@ include_directories(
 
 if(MSVC)
 
-	list(REMOVE_ITEM MC_PRECOMPILED_SOURCES precompiled.cpp)
+	if(USE_PRECOMPILED_HEADERS)
+		list(REMOVE_ITEM MC_PRECOMPILED_SOURCES precompiled.cpp)
 
-	#foreach( src_file ${MC_PRECOMPILED_SOURCES} )
-	#	message(STATUS "-include precompiled.h for ${src_file}")
-	#endforeach()
+		#foreach( src_file ${MC_PRECOMPILED_SOURCES} )
+		#	message(STATUS "-include precompiled.h for ${src_file}")
+		#endforeach()
 
-    #set_target_properties(idlib PROPERTIES COMPILE_FLAGS "/Yuprecompiled.h")
-    set_source_files_properties(precompiled.cpp
-        PROPERTIES
-        COMPILE_FLAGS "/Ycprecompiled.h"
-        OBJECT_OUTPUTS "precompiled.pch"
-        )
+		#set_target_properties(idlib PROPERTIES COMPILE_FLAGS "/Yuprecompiled.h")
+		set_source_files_properties(precompiled.cpp
+			PROPERTIES
+			COMPILE_FLAGS "/Ycprecompiled.h"
+			OBJECT_OUTPUTS "precompiled.pch"
+			)
 
-	set_source_files_properties(
-		${MC_PRECOMPILED_SOURCES}
-		PROPERTIES
-		COMPILE_FLAGS "/Yuprecompiled.h"
-		OBJECT_DEPENDS "precompiled.pch"
-		)
+		set_source_files_properties(
+			${MC_PRECOMPILED_SOURCES}
+			PROPERTIES
+			COMPILE_FLAGS "/Yuprecompiled.h"
+			OBJECT_DEPENDS "precompiled.pch"
+			)
+	endif()
 
 	# SRS - disable certain MSVC warnings for select third-party source libraries, consider updating versions in the future?
 	# C4005: macro redefinition, C4244: type conversion with possible loss of data, C4305: trucation from double to float
