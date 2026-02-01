@@ -13,6 +13,6 @@ cmake -B build-clang ^
   .
 
 rem Build im Release-Mode
-cmake --build build-clang --config Release
+cmake --build build-clang --config Release > build.log 2>&1
 
 pause

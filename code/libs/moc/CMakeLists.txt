@@ -14,7 +14,7 @@ set( MOC_INCLUDE_FILES MaskedOcclusionCulling.h CullingThreadpool.h CompilerSpec
 set( MOC_FILES ${MOC_AVX512_FILES} ${MOC_AVX2_FILES} ${MOC_SSE_FILES} ${MOC_INCLUDE_FILES} )
 
 #
-# Common compiler flags 
+# Common compiler flags
 #
 if(MSVC)
 	if(MSVC_VERSION LESS 1900)
@@ -43,7 +43,9 @@ SET_SOURCE_FILES_PROPERTIES( ${MOC_AVX2_FILES} PROPERTIES COMPILE_FLAGS "/arch:A
 #
 # Setup compiler flags for SSE4.1 / SSE2 files (MSVC)
 #
-if(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+	SET_SOURCE_FILES_PROPERTIES( ${MOC_SSE_FILES} PROPERTIES COMPILE_FLAGS "/clang:-msse4.1" )
+elseif(NOT "${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
 	# SSE2 is always enabled on 64-bit architectures, specifying redundant flag produces a compiler warning
 	if(MSVC_VERSION LESS 1900)
 		SET_SOURCE_FILES_PROPERTIES( ${MOC_SSE_FILES} PROPERTIES COMPILE_FLAGS "/arch:SSE2" )
