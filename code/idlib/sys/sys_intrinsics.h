@@ -212,9 +212,9 @@ ID_INLINE_EXTERN int CACHE_LINE_CLEAR_OVERFLOW_COUNT( int size )
 	#endif
 	// DG: make sure __declspec(intrin_type) is only used on MSVC (it's not available on GCC etc
 	#if defined( _MSC_VER ) && !defined( __clang__ )
-			#define DECLSPEC_INTRINTYPE __declspec( intrin_type )
+		#define DECLSPEC_INTRINTYPE __declspec( intrin_type )
 	#else
-			#define DECLSPEC_INTRINTYPE
+		#define DECLSPEC_INTRINTYPE
 	#endif
 // DG end
 

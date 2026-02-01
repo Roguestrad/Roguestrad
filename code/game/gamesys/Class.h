@@ -44,7 +44,48 @@ class idTypeInfo;
 extern const idEventDef EV_Remove;
 extern const idEventDef EV_SafeRemove;
 
-typedef void ( idClass::*eventCallback_t )();
+// typedef void ( idClass::*eventCallback_t )();
+#include <cstdint>
+#include <cstring>
+#include <type_traits>
+
+// RB: Store event callbacks opaquely because MSVC/clang-cl member function pointer sizes can differ
+// (multiple inheritance/adjustor). Casting to `void (idClass::*)()` is not ABI-safe and fails.
+// This affects all idClass-derived types that register EVENT callbacks (the eventCallbacks tables),
+// including the base idClass entries and any subclasses that add events.
+struct eventCallback_t {
+	// 16 bytes are usually enough for MSVC x64 member function pointers including adjustor.
+	// If a static_assert fires for you: increase to 24/32.
+	std::uintptr_t raw[2];
+
+	eventCallback_t() :
+		raw { 0, 0 }
+	{
+	}
+
+	template<typename T>
+	static eventCallback_t From( T fn )
+	{
+		static_assert( std::is_member_function_pointer<T>::value, "T must be a member function pointer" );
+		eventCallback_t out;
+		static_assert( sizeof( T ) <= sizeof( out.raw ), "eventCallback_t storage too small" );
+		std::memcpy( out.raw, &fn, sizeof( T ) );
+		return out;
+	}
+
+	template<typename T>
+	T As() const
+	{
+		static_assert( std::is_member_function_pointer<T>::value, "T must be a member function pointer" );
+		T fn;
+		static_assert( sizeof( T ) <= sizeof( raw ), "eventCallback_t storage too small" );
+		std::memcpy( &fn, raw, sizeof( T ) );
+		return fn;
+	}
+
+	// allows a truthiness test for "if (!c->eventMap[num])"
+	explicit operator bool() const { return raw[0] != 0 || raw[1] != 0; }
+};
 
 template<class Type>
 struct idEventFunc {
@@ -53,12 +94,13 @@ struct idEventFunc {
 };
 
 // added & so gcc could compile this
-#define EVENT( event, function ) { &( event ), ( void( idClass::* )() )( &function ) },
-#define END_CLASS  \
-	{              \
-		NULL, NULL \
-	}              \
-	}              \
+// #define EVENT( event, function ) { &( event ), ( void( idClass::* )() )( &function ) },
+#define EVENT( event, function ) { &( event ), eventCallback_t::From( &function ) },
+#define END_CLASS               \
+	{                           \
+		NULL, eventCallback_t() \
+	}                           \
+	}                           \
 	;
 
 class idEventArg

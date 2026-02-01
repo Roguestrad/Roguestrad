@@ -9,7 +9,7 @@
 
 	964 constants
 	93 enums
-	472 classes/structs/unions
+	473 classes/structs/unions
 	3 templates
 	8 max inheritance level for 'iceMonsterZombieSawyer'
 
@@ -2422,6 +2422,11 @@ static classVariableInfo_t rvStateThread_typeInfo[] = {
 	{ NULL, 0 }
 };
 
+static classVariableInfo_t eventCallback_t_typeInfo[] = {
+	{ "std :: uintptr_t[2]", "raw", (intptr_t)(&((eventCallback_t *)0)->raw), sizeof( ((eventCallback_t *)0)->raw ) },
+	{ NULL, 0 }
+};
+
 static classVariableInfo_t idEventArg_typeInfo[] = {
 	{ ": int", "type", (intptr_t)(&((idEventArg *)0)->type), sizeof( ((idEventArg *)0)->type ) },
 	{ "intptr_t", "value", (intptr_t)(&((idEventArg *)0)->value), sizeof( ((idEventArg *)0)->value ) },
@@ -2634,11 +2639,11 @@ static classVariableInfo_t frameLookup_t_typeInfo[] = {
 	{ NULL, 0 }
 };
 
-static classVariableInfo_t class_29_class_29_typeInfo[] = {
-//	{ "const idSoundShader *", "soundShader", (intptr_t)(&((class_29::class_29 *)0)->soundShader), sizeof( ((class_29::class_29 *)0)->soundShader ) },
-//	{ "const function_t *", "function", (intptr_t)(&((class_29::class_29 *)0)->function), sizeof( ((class_29::class_29 *)0)->function ) },
-//	{ "const idDeclSkin *", "skin", (intptr_t)(&((class_29::class_29 *)0)->skin), sizeof( ((class_29::class_29 *)0)->skin ) },
-//	{ "int", "index", (intptr_t)(&((class_29::class_29 *)0)->index), sizeof( ((class_29::class_29 *)0)->index ) },
+static classVariableInfo_t class_30_class_30_typeInfo[] = {
+//	{ "const idSoundShader *", "soundShader", (intptr_t)(&((class_30::class_30 *)0)->soundShader), sizeof( ((class_30::class_30 *)0)->soundShader ) },
+//	{ "const function_t *", "function", (intptr_t)(&((class_30::class_30 *)0)->function), sizeof( ((class_30::class_30 *)0)->function ) },
+//	{ "const idDeclSkin *", "skin", (intptr_t)(&((class_30::class_30 *)0)->skin), sizeof( ((class_30::class_30 *)0)->skin ) },
+//	{ "int", "index", (intptr_t)(&((class_30::class_30 *)0)->index), sizeof( ((class_30::class_30 *)0)->index ) },
 	{ NULL, 0 }
 };
 
@@ -7436,6 +7441,7 @@ static classTypeInfo_t classTypeInfo[] = {
 	{ "stateCall_t", "", sizeof(stateCall_t), stateCall_t_typeInfo },
 	{ "rvStateThread::flags", "", sizeof(rvStateThread::flags), rvStateThread_flags_typeInfo },
 	{ "rvStateThread", "", sizeof(rvStateThread), rvStateThread_typeInfo },
+	{ "eventCallback_t", "", sizeof(eventCallback_t), eventCallback_t_typeInfo },
 	{ "idEventArg", "", sizeof(idEventArg), idEventArg_typeInfo },
 	{ "idAllocError", "idException", sizeof(idAllocError), idAllocError_typeInfo },
 	{ "idClass", "", sizeof(idClass), idClass_typeInfo },
@@ -7459,7 +7465,7 @@ static classTypeInfo_t classTypeInfo[] = {
 	{ "jointInfo_t", "", sizeof(jointInfo_t), jointInfo_t_typeInfo },
 	{ "jointMod_t", "", sizeof(jointMod_t), jointMod_t_typeInfo },
 	{ "frameLookup_t", "", sizeof(frameLookup_t), frameLookup_t_typeInfo },
-//	{ "class_29::class_29", "", sizeof(class_29::class_29), class_29_class_29_typeInfo },
+//	{ "class_30::class_30", "", sizeof(class_30::class_30), class_30_class_30_typeInfo },
 	{ "frameCommand_t", "", sizeof(frameCommand_t), frameCommand_t_typeInfo },
 	{ "animFlags_t", "", sizeof(animFlags_t), animFlags_t_typeInfo },
 	{ "idMD5Anim", "", sizeof(idMD5Anim), idMD5Anim_typeInfo },

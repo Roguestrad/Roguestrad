@@ -1141,7 +1141,7 @@ void CreateEventCallbackHandler()
 			}
 
 			file->Printf( "\tcase %d :\n\t\ttypedef void ( idClass::*eventCallback_%s_t )( %s );\n", ( 1 << ( i + D_EVENT_MAXARGS ) ) + j, argString, string1.c_str() );
-			file->Printf( "\t\t( this->*( eventCallback_%s_t )callback )( %s );\n\t\tbreak;\n\n", argString, string2.c_str() );
+			file->Printf( "\t\t( this->*( callback.As< eventCallback_%s_t >() ) )( %s );\n\t\tbreak;\n\n", argString, string2.c_str() );
 		}
 	}
 
