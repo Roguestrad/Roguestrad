@@ -45,7 +45,7 @@ set(MC_DECLS_SOURCES
 	../../game/anim/Anim_Blend.cpp
 	)
 
-set(MC_FRAMEWORK_INCLUDES 
+set(MC_FRAMEWORK_INCLUDES
 	../../engine/framework/CmdSystem.h
 	../../engine/framework/CVarSystem.h
 	../../engine/framework/File.h
@@ -66,7 +66,7 @@ set(MC_FRAMEWORK_SOURCES
 	../../engine/framework/FileSystem.cpp
 	)
 
-set(MC_RENDERER_INCLUDES 
+set(MC_RENDERER_INCLUDES
 	../../engine/renderer/BinaryImage.h
 	../../engine/renderer/Color/ColorSpace.h
 	../../engine/renderer/Image.h
@@ -104,7 +104,7 @@ set(MC_RENDERER_SOURCES
 	../../engine/renderer/Model_ma.cpp
 	../../engine/renderer/Model_obj.cpp
 	)
-	
+
 file(GLOB MC_MIKKTSPACE_INCLUDES ../../libs/mikktspace/*.h)
 file(GLOB MC_MIKKTSPACE_SOURCES ../../libs/mikktspace/*.c)
 
@@ -127,7 +127,7 @@ if(ZLIB_FOUND)
 else()
 	include_directories("libs/zlib")
 	set(ZLIB_LIBRARY "" )
-	
+
 	file(GLOB MC_ZLIB_INCLUDES ../../libs/zlib/*.h)
 	file(GLOB MC_ZLIB_SOURCES ../../libs/zlib/*.c)
 endif()
@@ -136,7 +136,7 @@ endif()
 file(GLOB MC_MINIZIP_INCLUDES ../../libs/zlib/minizip/*.h)
 file(GLOB MC_MINIZIP_SOURCES ../../libs/zlib/minizip/*.c ../../libs/zlib/minizip/*.cpp)
 
-if(MSVC)
+if(WIN32)
 	file(GLOB CURSES_INCLUDES ../../libs/imtui/pdcurses/*.h)
 
 	file(GLOB PDCURSES_INCLUDES ../../libs/imtui/pdcurses/pdcurses/*.h)
@@ -190,7 +190,7 @@ set(MC_INCLUDES_ALL
 			${MC_ZLIB_INCLUDES}
 			${MC_MINIZIP_INCLUDES}
 			)
-			
+
 set(MC_SOURCES_ALL
 			${MC_SOURCES}
 			${MC_FRAMEWORK_SOURCES}
@@ -248,7 +248,7 @@ include_directories(
 
 if(MSVC)
 
-	list(REMOVE_ITEM MC_PRECOMPILED_SOURCES precompiled.cpp) 
+	list(REMOVE_ITEM MC_PRECOMPILED_SOURCES precompiled.cpp)
 
 	#foreach( src_file ${MC_PRECOMPILED_SOURCES} )
 	#	message(STATUS "-include precompiled.h for ${src_file}")
@@ -260,7 +260,7 @@ if(MSVC)
         COMPILE_FLAGS "/Ycprecompiled.h"
         OBJECT_OUTPUTS "precompiled.pch"
         )
-		
+
 	set_source_files_properties(
 		${MC_PRECOMPILED_SOURCES}
 		PROPERTIES
@@ -287,11 +287,11 @@ if(MSVC)
 	add_dependencies(rogmap idlib  ${ISPC_TEXCOMP_LIBRARY})
 	target_link_libraries(rogmap idlib winmm imtui-pdcurses Shlwapi ${ZLIB_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
 
-	# set MSVC default debug directory on executable	
+	# set MSVC default debug directory on executable
 	if(CMAKE_MAJOR_VERSION EQUAL 3 AND CMAKE_MINOR_VERSION GREATER_EQUAL 8)
 		set_target_properties(rogmap PROPERTIES VS_DEBUGGER_WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}/..")
 	endif()
-	
+
 else()
 	include_directories(.)
 
@@ -381,5 +381,3 @@ else()
 
 	target_link_libraries(rogmap idlib ${CURSES_NCURSES_LIBRARY} ${ZLIB_LIBRARY} ${ISPC_TEXCOMP_LIBRARY})
 endif()
-	
-

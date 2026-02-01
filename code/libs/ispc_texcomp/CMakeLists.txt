@@ -7,7 +7,7 @@ set(LIB_NAME ispc_texcomp)
 
 # Find the ISPC compiler
 if (MSVC)
-    find_program(ISPC_EXECUTABLE 
+    find_program(ISPC_EXECUTABLE
     NAMES ispc ispc.exe
     PATHS ${CMAKE_SOURCE_DIR}/../tools/ispc/bin
     NO_DEFAULT_PATH)
@@ -15,10 +15,19 @@ if (MSVC)
     if (NOT ISPC_EXECUTABLE)
         find_program(ISPC_EXECUTABLE ispc)
     endif()
-    
+
     message(STATUS "Setting 'ISPC_EXECUTABLE' to '${ISPC_EXECUTABLE}'")
 else()
-    find_program(ISPC_EXECUTABLE ispc)
+    find_program(ISPC_EXECUTABLE
+    NAMES ispc ispc.exe
+    PATHS ${CMAKE_SOURCE_DIR}/../tools/ispc/bin
+    NO_DEFAULT_PATH)
+
+    if (NOT ISPC_EXECUTABLE)
+        find_program(ISPC_EXECUTABLE ispc)
+    endif()
+
+    message(STATUS "Setting 'ISPC_EXECUTABLE' to '${ISPC_EXECUTABLE}'")
 endif()
 
 if(NOT ISPC_EXECUTABLE)
@@ -96,4 +105,3 @@ if(MSVC)
 else()
     target_compile_options(${LIB_NAME} PRIVATE -Wall -Wextra)
 endif()
-
