@@ -192,6 +192,7 @@ static const short boxEdgeVertices[12][2] = {
 	/* L = */ { 3, 7 } // sides
 };
 
+#if 0
 static int boxEdgePolygons[12][2] = {
 	/* A = */ { 1, 2 },
 	/* B = */ { 3, 2 },
@@ -206,6 +207,7 @@ static int boxEdgePolygons[12][2] = {
 	/* K = */ { 3, 4 },
 	/* L = */ { 0, 4 } // sides
 };
+#endif
 
 /*
 #include <Windows.h>
@@ -492,6 +494,7 @@ public:
 */
 
 // make sure this is a power of two for fast addressing an array of these without integer multiplication
+/*
 static const struct silhouetteVertices_t {
 	byte indices[7];
 	byte count;
@@ -561,6 +564,7 @@ static const struct silhouetteVertices_t {
 	{ { 0, 4, 7, 3, 0, 0, 0 }, 4 }, // 111110 = 62 invalid
 	{ { 0, 0, 0, 0, 0, 0, 0 }, 0 }, // 111111 = 63 invalid
 };
+*/
 
 /*
 ========================

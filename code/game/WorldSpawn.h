@@ -47,7 +47,7 @@ public:
 
 	void Spawn();
 
-	void Save( idSaveGame* savefile );
+	void Save( idSaveGame* savefile ) const;
 	void Restore( idRestoreGame* savefile );
 
 	void Event_PlayBackgroundMusic();
