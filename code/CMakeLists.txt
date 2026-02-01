@@ -135,6 +135,7 @@ elseif(CMAKE_C_COMPILER_ID MATCHES "Clang")
 	add_compile_options(-fcolor-diagnostics)
 endif ()
 
+
 if(NOT MSVC)
 	message(STATUS CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE})
 endif()
@@ -256,7 +257,22 @@ elseif(MSVC)
 	# "/Oy",
 
 
-	if(NOT CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+	# Suppress clang-cl warnings
+    if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
+    	add_compile_options(-Wno-inline-new-delete)
+    	add_compile_options(-Wno-nontrivial-memcall)
+    	add_compile_options(-Wno-unused-variable)
+	    add_compile_options(-Wno-overloaded-virtual)
+	    add_compile_options(-Wno-local-type-template-args)
+	    add_compile_options(-Wno-unknown-warning-option)
+	    add_compile_options(-Wno-switch-enum)
+	    add_compile_options(-Wno-switch)
+	    add_compile_options(-Wno-unused-but-set-variable)
+	    add_compile_options(-Wno-expansion-to-defined)
+    	add_compile_options(-Wno-nullability-completeness)
+    	add_compile_options(-Wno-shorten-64-to-32)
+    	add_compile_options(-fms-extensions)
+    else()
 		set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /D _DEBUG /MP /MDd")
 		set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} /MP /Oi /Oy /MD")
 		set(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /MP /Oi /MDd")
