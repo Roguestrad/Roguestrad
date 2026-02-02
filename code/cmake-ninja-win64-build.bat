@@ -11,3 +11,8 @@ cmake -B build ^
   -DSTANDALONE=OFF ^
   -DUSE_PRECOMPILED_HEADERS=OFF ^
   .
+
+rem Build in Release-Mode
+cmake --build build --config Release
+
+pause
