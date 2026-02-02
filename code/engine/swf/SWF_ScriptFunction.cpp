@@ -1564,11 +1564,11 @@ idStr idSWFScriptFunction_Script::ExportToScript( idSWFScriptObject* thisObject,
 	currentBlock	   = &actionBlocks.Alloc();
 	currentBlock->line = functionName;
 
-	if( idStr::Cmp( filename, "exported/swf/pda.json" ) == 0 && idStr::Cmp( functionName, "function sprite222_action2( this )" ) == 0 ||
+	if( ( idStr::Cmp( filename, "exported/swf/pda.json" ) && idStr::Cmp( functionName, "function sprite222_action2( this )" ) == 0 ) ||
 
-		idStr::Cmp( filename, "exported/swf/hud.json" ) == 0 && idStr::Cmp( functionName, "function sprite248_action0( this )" ) == 0 ||
+		( idStr::Cmp( filename, "exported/swf/hud.json" ) == 0 && idStr::Cmp( functionName, "function sprite248_action0( this )" ) == 0 ) ||
 
-		idStr::Cmp( filename, "exported/swf/dialog.json" ) == 0 && idStr::Cmp( functionName, "function sprite56_action0( this )" ) == 0 ) {
+		( idStr::Cmp( filename, "exported/swf/dialog.json" ) == 0 && idStr::Cmp( functionName, "function sprite56_action0( this )" ) == 0 ) ) {
 		common->Warning( "Problem function hit" );
 	}
 

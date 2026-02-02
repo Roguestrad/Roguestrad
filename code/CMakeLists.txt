@@ -1389,7 +1389,18 @@ if(MSVC)
 	endif()
 
 	# call typeinfogen to generate code/game/gamesys/GameTypeInfo.h
-	add_custom_command(
+	if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_SIMULATE_ID STREQUAL "MSVC")
+		if (NOT TARGET run_typeinfogen)
+			add_custom_target(run_typeinfogen ALL
+					COMMAND $<TARGET_FILE:typeinfogen>
+					WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+					COMMENT "Generating code/game/gamesys/GameTypeInfo.h"
+					)
+			add_dependencies(run_typeinfogen typeinfogen)
+		endif()
+		add_dependencies(${APP_NAME} run_typeinfogen)
+	else()
+		add_custom_command(
 			TARGET ${APP_NAME}
 			PRE_BUILD
 			DEPENDS typeinfogen
@@ -1397,6 +1408,7 @@ if(MSVC)
 			WORKING_DIRECTORY ../..
 			COMMENT "Generating code/game/gamesys/GameTypeInfo.h"
 			)
+	endif()
 
 	target_link_libraries(${APP_NAME}
 		idlib
@@ -1618,14 +1630,15 @@ else()
 	endif()
 
 	# call typeinfogen to generate code/game/gamesys/GameTypeInfo.h
-	add_custom_command(
-			TARGET ${APP_NAME}
-			PRE_BUILD
-			DEPENDS typeinfogen
-			COMMAND typeinfogen
-			WORKING_DIRECTORY ../..
-			COMMENT "Generating code/game/gamesys/GameTypeInfo.h"
-			)
+	if (NOT TARGET run_typeinfogen)
+		add_custom_target(run_typeinfogen ALL
+				COMMAND $<TARGET_FILE:typeinfogen>
+				WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+				COMMENT "Generating code/game/gamesys/GameTypeInfo.h"
+				)
+		add_dependencies(run_typeinfogen typeinfogen)
+	endif()
+	add_dependencies(${APP_NAME} run_typeinfogen)
 
 	if(NOT WIN32)
         if(NOT APPLE)

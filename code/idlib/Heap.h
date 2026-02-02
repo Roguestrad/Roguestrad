@@ -79,6 +79,32 @@ ID_INLINE void operator delete( void* p ) noexcept
 {
 	Mem_Free( p );
 }
+
+// NOTE:
+// Since C++14, compilers are allowed (and often prefer) to call the
+// sized deallocation functions `operator delete(void*, size_t)` and
+// `operator delete[](void*, size_t)` for plain `delete` / `delete[]`.
+//
+// When using custom global new/delete implementations (especially with
+// clang-cl or modern MSVC), failing to provide these sized delete
+// overloads can cause the compiler to fall back to the CRT delete,
+// resulting in allocator mismatches, heap corruption, or debug
+// breakpoints (STATUS_BREAKPOINT / 0x80000003).
+//
+// These overloads ensure that all deallocations route back into the
+// idLib memory system, regardless of whether the compiler selects
+// sized or unsized delete under the C++14 ABI.
+
+ID_INLINE void operator delete( void* p, size_t ) noexcept
+{
+	Mem_Free( p );
+}
+
+ID_INLINE void operator delete[]( void* p, size_t ) noexcept
+{
+	Mem_Free( p );
+}
+
 ID_INLINE void* operator new[]( size_t s )
 {
 	return Mem_Alloc( s, TAG_NEW );

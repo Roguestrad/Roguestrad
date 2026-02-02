@@ -5,11 +5,9 @@
     "request": "launch",
     "program": "$ZED_WORKTREE_ROOT\\build\\Debug\\Roguestrad.exe",
     "cwd": "$ZED_WORKTREE_ROOT\\..",
-    "args": [],
-    "build": {
-      "command": "cmd.exe",
-      "args": ["/c", "cmake --build build -j"],
-      "cwd": "$ZED_WORKTREE_ROOT",
+    "args": ["+set logfile 2"],
+    "env": {
+      "_NO_DEBUG_HEAP": "1",
     },
   },
 ]

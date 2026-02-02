@@ -7,9 +7,16 @@
     "use_new_terminal": true,
   },
   {
-    "label": "Roguestrad: Build (MSBUILD, VS2022 x64)",
+    "label": "Roguestrad: CMake Configure (Clean, Ninja, clang-cl x64)",
     "command": "cmd.exe",
-    "args": ["/c", "call cmake --build build -j"],
+    "args": ["/c", "call .\\cmake-ninja-win64.bat"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+  },
+  {
+    "label": "Roguestrad: Build Debug",
+    "command": "cmd.exe",
+    "args": ["/c", "call cmake --build build --config Debug -j"],
     "cwd": "$ZED_WORKTREE_ROOT",
     "use_new_terminal": true,
   },
