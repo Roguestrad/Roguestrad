@@ -13,6 +13,6 @@ cmake -B build ^
   .
 
 rem Build in Release-Mode
-cmake --build build --config Release
+cmake --build build --config RelWithDebInfo
 
 pause

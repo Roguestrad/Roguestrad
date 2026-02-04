@@ -219,6 +219,16 @@ public:
 	int						LengthWithoutColors() const;
 	idStr&					RemoveColors();
 	void					CapLength( int );
+
+	/*!
+		\brief Fills the string buffer with a repeated character up to a given length, resizing the buffer if necessary.
+
+		The function first ensures that the internal storage can hold the required number of characters plus a terminating null.
+		It then sets the string length, copies the repeated character into the buffer using memset, and finally writes a null terminator to mark the end of the string.
+
+		\param ch The character used to fill the string.
+		\param newlen The desired length of the string before the null terminator.
+	*/
 	void					Fill( const char ch, int newlen );
 
 	ID_INLINE int			UTF8Length();

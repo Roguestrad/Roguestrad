@@ -21,6 +21,20 @@
     "use_new_terminal": true,
   },
   {
+    "label": "Roguestrad: Build RelWithDebInfo",
+    "command": "cmd.exe",
+    "args": ["/c", "call cmake --build build --config RelWithDebInfo -j"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+  },
+  {
+    "label": "Roguestrad: Build Release",
+    "command": "cmd.exe",
+    "args": ["/c", "call cmake --build build --config Release -j"],
+    "cwd": "$ZED_WORKTREE_ROOT",
+    "use_new_terminal": true,
+  },
+  {
     "label": "Roguestrad: Clean",
     "command": "cmd.exe",
     "args": ["/c", "call cmake --build build --target clean"],

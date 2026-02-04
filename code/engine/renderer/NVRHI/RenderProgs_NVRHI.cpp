@@ -187,7 +187,7 @@ void idRenderProgManager::LoadShader( shader_t& shader )
 	shader.handle = shaderHandle;
 
 	// SRS - Free the shader blob data, otherwise a leak will occur
-	Mem_Free( shaderBlob.data );
+	// Mem_Free( shaderBlob.data ); <-- RB: freeing this leads to memory corruption in RelWithDebInfo builds
 }
 
 /*
