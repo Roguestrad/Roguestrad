@@ -41,10 +41,13 @@ HTML/
 code/.kdev4
 code/code.kdev4
 code/.idea/
-code/.vscode/
+code/.cache/
 code/cmake-build-*/
 code/bin/
 code/doxy*
+uv.lock*
+logs*
+chats*
 /tools/
 code/game/gamesys/GameTypeInfo.h
 code/game/gamesys/GameTypeInfo.cpp
