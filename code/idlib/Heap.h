@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2026 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -47,7 +48,6 @@ enum memTag_t {
 
 static const int MAX_TAGS = 256;
 
-// RB: 64 bit fixes, changed int to size_t
 void*			 Mem_Alloc16( const size_t size, const memTag_t tag );
 void			 Mem_Free16( void* ptr );
 
@@ -63,138 +63,53 @@ ID_INLINE void Mem_Free( void* ptr )
 
 void* Mem_ClearedAlloc( const size_t size, const memTag_t tag );
 char* Mem_CopyString( const char* in );
-// RB end
 
-#ifdef _MSC_VER // SRS: #pragma warning is MSVC specific
-	#pragma warning( push )
-	#pragma warning( disable : 4595 ) // C4595: non-member operator new or delete functions may not be declared inline
-#endif
-
-// ------------------------------------------------------------
-// Global new/delete overrides for idLib memory system.
+// NOTE:
+// Global operator new/delete are intentionally implemented out-of-line in Heap.cpp.
 //
-// IMPORTANT C++ ABI NOTE:
-// Since C++14, compilers may call sized delete
-//   operator delete(void*, size_t)
-// for plain `delete`.
+// With modern toolchains (clang-cl/MSVC) and the C++14/17 ABI, the compiler may emit
+// calls to sized and/or aligned deallocation functions (e.g. operator delete(void*, size_t)
+// and operator delete(void*, size_t, align_val_t)).
 //
-// Since C++17, compilers may call aligned new/delete
-//   operator new(size_t, align_val_t)
-//   operator delete(void*, align_val_t)
-// and their sized variants.
+// Keeping these operators inline in a header is fragile in large multi-target builds:
+// it increases the risk of ODR issues / duplicate symbols across tools, and it also
+// makes debugging allocator mismatches significantly harder due to aggressive inlining.
 //
-// All of these must be provided to prevent the compiler from
-// falling back to the CRT allocator, which would break allocator
-// pairing rules and can cause heap corruption (0xC0000374).
-// ------------------------------------------------------------
+// Defining the global operators exactly once in Heap.cpp keeps the ABI complete,
+// avoids link-time and ODR pitfalls, and guarantees reliable breakpoints when tracking
+// heap corruption (0xC0000374) and allocator pairing bugs.
 
 // ---- helpers for C++17 over-aligned allocations ----
-void*			Mem_AllocAligned( const size_t size, const size_t alignment, const memTag_t tag );
-void			Mem_FreeAligned( void* ptr, const size_t alignment ) noexcept;
+void* Mem_AllocAligned( const size_t size, const size_t alignment, const memTag_t tag );
+void  Mem_FreeAligned( void* ptr, const size_t alignment ) noexcept;
 
 // ---- unsized new/delete ----
-ID_INLINE void* operator new( size_t s )
-{
-	void* p = Mem_Alloc( s, TAG_NEW );
-	if( !p ) throw std::bad_alloc();
-	return p;
-}
-
-ID_INLINE void* operator new[]( size_t s )
-{
-	void* p = Mem_Alloc( s, TAG_NEW );
-	if( !p ) throw std::bad_alloc();
-	return p;
-}
-
-ID_INLINE void operator delete( void* p ) noexcept
-{
-	Mem_Free( p );
-}
-
-ID_INLINE void operator delete[]( void* p ) noexcept
-{
-	Mem_Free( p );
-}
+void* operator new( size_t s );
+void* operator new[]( size_t s );
+void  operator delete( void* p ) noexcept;
+void  operator delete[]( void* p ) noexcept;
 
 // ---- sized delete (C++14) ----
-ID_INLINE void operator delete( void* p, size_t ) noexcept
-{
-	Mem_Free( p );
-}
-
-ID_INLINE void operator delete[]( void* p, size_t ) noexcept
-{
-	Mem_Free( p );
-}
+void  operator delete( void* p, size_t ) noexcept;
+void  operator delete[]( void* p, size_t ) noexcept;
 
 // ---- aligned new/delete (C++17) ----
-ID_INLINE void* operator new( size_t s, std::align_val_t al )
-{
-	const size_t alignment = ( size_t )al;
-	void*		 p		   = Mem_AllocAligned( s, alignment, TAG_NEW );
-	if( !p ) throw std::bad_alloc();
-	return p;
-}
-
-ID_INLINE void* operator new[]( size_t s, std::align_val_t al )
-{
-	const size_t alignment = ( size_t )al;
-	void*		 p		   = Mem_AllocAligned( s, alignment, TAG_NEW );
-	if( !p ) throw std::bad_alloc();
-	return p;
-}
-
-ID_INLINE void operator delete( void* p, std::align_val_t al ) noexcept
-{
-	Mem_FreeAligned( p, ( size_t )al );
-}
-
-ID_INLINE void operator delete[]( void* p, std::align_val_t al ) noexcept
-{
-	Mem_FreeAligned( p, ( size_t )al );
-}
+void* operator new( size_t s, std::align_val_t al );
+void* operator new[]( size_t s, std::align_val_t al );
+void  operator delete( void* p, std::align_val_t al ) noexcept;
+void  operator delete[]( void* p, std::align_val_t al ) noexcept;
 
 // ---- sized + aligned delete (C++17) ----
-ID_INLINE void operator delete( void* p, size_t, std::align_val_t al ) noexcept
-{
-	Mem_FreeAligned( p, ( size_t )al );
-}
-
-ID_INLINE void operator delete[]( void* p, size_t, std::align_val_t al ) noexcept
-{
-	Mem_FreeAligned( p, ( size_t )al );
-}
+void  operator delete( void* p, size_t, std::align_val_t al ) noexcept;
+void  operator delete[]( void* p, size_t, std::align_val_t al ) noexcept;
 
 // ---- tagged new/delete ----
-ID_INLINE void* operator new( size_t s, memTag_t tag )
-{
-	void* p = Mem_Alloc( s, tag );
-	if( !p ) throw std::bad_alloc();
-	return p;
-}
-
-ID_INLINE void* operator new[]( size_t s, memTag_t tag )
-{
-	void* p = Mem_Alloc( s, tag );
-	if( !p ) throw std::bad_alloc();
-	return p;
-}
+void* operator new( size_t s, memTag_t tag );
+void* operator new[]( size_t s, memTag_t tag );
 
 // This overload is only used if a constructor throws after `new(tag)`.
-ID_INLINE void operator delete( void* p, memTag_t ) noexcept
-{
-	Mem_Free( p );
-}
-
-ID_INLINE void operator delete[]( void* p, memTag_t ) noexcept
-{
-	Mem_Free( p );
-}
-
-#ifdef _MSC_VER
-	#pragma warning( pop )
-#endif
+void  operator delete( void* p, memTag_t ) noexcept;
+void  operator delete[]( void* p, memTag_t ) noexcept;
 
 /*
 ================================================
