@@ -45,9 +45,7 @@ If you have questions concerning this license or the applicable additional terms
 Mem_Alloc16
 ==================
 */
-// RB: 64 bit fixes, changed int to size_t
 void* Mem_Alloc16( const size_t size, const memTag_t tag )
-// RB end
 {
 	if( !size ) {
 		return NULL;
@@ -56,13 +54,12 @@ void* Mem_Alloc16( const size_t size, const memTag_t tag )
 #ifdef _WIN32
 	// this should work with MSVC and mingw, as long as __MSVCRT_VERSION__ >= 0x0700
 	return _aligned_malloc( paddedSize, 16 );
-#else  // not _WIN32
+#else // not _WIN32
 	// DG: the POSIX solution for linux etc
 	void* ret;
 	posix_memalign( &ret, 16, paddedSize );
 	return ret;
-	// DG end
-#endif // _WIN32
+#endif
 }
 
 /*
@@ -77,12 +74,45 @@ void Mem_Free16( void* ptr )
 	}
 #ifdef _WIN32
 	_aligned_free( ptr );
-#else  // not _WIN32
+#else // not _WIN32
 	// DG: Linux/POSIX compatibility
 	// can use normal free() for aligned memory
 	free( ptr );
-	// DG end
-#endif // _WIN32
+#endif
+}
+
+void* Mem_AllocAligned( const size_t size, const size_t alignment, const memTag_t tag )
+{
+	// For <= 16 byte alignment we can use the existing allocator.
+	if( alignment <= 16 )
+		return Mem_Alloc( size, tag );
+
+#ifdef _WIN32
+	// _aligned_malloc requires power-of-two alignment.
+	return _aligned_malloc( size, alignment );
+#else
+	void* p = nullptr;
+	if( posix_memalign( &p, alignment, size ) != 0 )
+		p = nullptr;
+	return p;
+#endif
+}
+
+void Mem_FreeAligned( void* ptr, const size_t alignment ) noexcept
+{
+	if( !ptr )
+		return;
+
+	if( alignment <= 16 ) {
+		Mem_Free( ptr );
+		return;
+	}
+
+#ifdef _WIN32
+	_aligned_free( ptr );
+#else
+	free( ptr );
+#endif
 }
 
 /*
