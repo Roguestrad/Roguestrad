@@ -7,8 +7,8 @@
     "cwd": "$ZED_WORKTREE_ROOT\\..",
     "args": ["+set logfile 2"],
     "env": {
-      "_NO_DEBUG_HEAP": "1",
-    },
+      "_NO_DEBUG_HEAP": "1"
+    }
   },
   {
     "label": "Roguestrad: Debug Optimized EXE (CodeLLDB)",
@@ -18,8 +18,8 @@
     "cwd": "$ZED_WORKTREE_ROOT\\..",
     "args": ["+set logfile 2"],
     "env": {
-      "_NO_DEBUG_HEAP": "1",
-    },
+      "_NO_DEBUG_HEAP": "1"
+    }
   },
   {
     "label": "Roguestrad: Debug Release EXE (CodeLLDB)",
@@ -29,7 +29,7 @@
     "cwd": "$ZED_WORKTREE_ROOT\\..",
     "args": ["+set logfile 2"],
     "env": {
-      "_NO_DEBUG_HEAP": "1",
-    },
-  },
+      "_NO_DEBUG_HEAP": "1"
+    }
+  }
 ]

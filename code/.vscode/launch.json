@@ -25,5 +25,26 @@
       "cwd": "${workspaceFolder}\\..",
       "args": ["+set", "logfile", "2"],
     },
+    {
+      "name": "Roguestrad: Debug Optimized EXE (CodeLLDB)",
+      "type": "lldb",
+      "request": "launch",
+      "program": "${workspaceFolder}\\build\\RelWithDebInfo\\Roguestrad.exe",
+      "cwd": "${workspaceFolder}\\..",
+      "args": ["+set", "logfile", "2"],
+      "stopOnEntry": false,
+      "console": "integratedTerminal",
+      "env": {
+        "_NO_DEBUG_HEAP": "1",
+      },
+    },
+    {
+      "name": "Roguestrad: Debug Optimized EXE (VS Debugger)",
+      "type": "cppvsdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}\\build\\RelWithDebInfo\\Roguestrad.exe",
+      "cwd": "${workspaceFolder}\\..",
+      "args": ["+set", "logfile", "2"],
+    },
   ],
 }
