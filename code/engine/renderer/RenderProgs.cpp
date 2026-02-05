@@ -371,12 +371,12 @@ void idRenderProgManager::Init( nvrhi::IDevice* device )
 		rpStage_t			  stages;
 		vertexLayoutType_t	  layout;
 		bindingLayoutType_t	  bindingLayout;
-		// bindingLayoutType_t		bindingLayout2;
 	} builtins[] = {
 		{ BUILTIN_GUI, "builtin/gui", "", {}, false, SHADER_STAGE_DEFAULT, LAYOUT_DRAW_VERT, BINDING_LAYOUT_DEFAULT },
-		{ BUILTIN_COLOR, "builtin/color", "", { { "USE_GPU_SKINNING", "0" } }, false, SHADER_STAGE_DEFAULT, LAYOUT_DRAW_VERT, BINDING_LAYOUT_CONSTANT_BUFFER_ONLY },
 
+		{ BUILTIN_COLOR, "builtin/color", "", { { "USE_GPU_SKINNING", "0" } }, false, SHADER_STAGE_DEFAULT, LAYOUT_DRAW_VERT, BINDING_LAYOUT_CONSTANT_BUFFER_ONLY },
 		{ BUILTIN_COLOR_SKINNED, "builtin/color", "_skinned", { { "USE_GPU_SKINNING", "1" } }, true, SHADER_STAGE_DEFAULT, LAYOUT_DRAW_VERT, BINDING_LAYOUT_CONSTANT_BUFFER_ONLY_SKINNED },
+
 		{ BUILTIN_VERTEX_COLOR, "builtin/vertex_color", "", {}, false, SHADER_STAGE_DEFAULT, LAYOUT_DRAW_VERT, BINDING_LAYOUT_CONSTANT_BUFFER_ONLY },
 
 		{ BUILTIN_AMBIENT_LIGHTING_IBL,

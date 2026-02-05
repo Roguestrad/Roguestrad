@@ -30,10 +30,10 @@ If you have questions concerning this license or the applicable additional terms
 */
 
 #include "precompiled.h"
+#include <ShaderMake/ShaderBlob.h>
 #pragma hdrstop
 
 #include "../RenderCommon.h"
-#include <ShaderMake/ShaderBlob.h>
 #include <engine/sys/DeviceManager.h>
 
 /*
@@ -111,18 +111,32 @@ extern DeviceManager* deviceManager;
  *
 ================================================================================================
 */
-nvrhi::ShaderHandle	  createShaderPermutation(
-	  nvrhi::IDevice* device, const nvrhi::ShaderDesc& d, const void* blob, size_t blobSize, const ShaderMake::ShaderConstant* constants, uint32_t numConstants, bool errorIfNotFound = true )
+nvrhi::ShaderHandle	  createShaderPermutation( nvrhi::IDevice* device,
+	  const nvrhi::ShaderDesc&								   d,
+	  const void*											   blob,
+	  size_t												   blobSize,
+	  const ShaderMake::ShaderConstant*						   constants,
+	  uint32_t												   numConstants,
+	  std::vector<uint8>&									   ownedByteCode,
+	  bool													   errorIfNotFound = true )
 {
+	// ShaderMake::ShaderBinaryView view = {};
+
 	const void* binary	   = nullptr;
 	size_t		binarySize = 0;
 
+	// if( ShaderMake::FindPermutationInBlob( blob, blobSize, constants, numConstants, view ) ) {
 	if( ShaderMake::FindPermutationInBlob( blob, blobSize, constants, numConstants, &binary, &binarySize ) ) {
+		// Take ownership explicitly by copying
+		// std::vector<uint8_t> ownedBinary(
+		// ownedByteCode.assign( static_cast<const uint8_t*>( view.data ), static_cast<const uint8_t*>( view.data ) + view.size );
+		// return device->createShader( d, ownedByteCode.data(), ownedByteCode.size() );
 		return device->createShader( d, binary, binarySize );
 	}
 
 	if( errorIfNotFound ) {
 		std::string message = ShaderMake::FormatShaderNotFoundMessage( blob, blobSize, constants, numConstants );
+
 		device->getMessageCallback()->message( nvrhi::MessageSeverity::Error, message.c_str() );
 	}
 
@@ -179,15 +193,16 @@ void idRenderProgManager::LoadShader( shader_t& shader )
 	// TODO(Stephen): Might not want to hard-code this.
 	descCopy.entryName = "main";
 
-	ShaderMake::ShaderConstant* shaderConstant( nullptr );
-
-	nvrhi::ShaderHandle			shaderHandle =
-		createShaderPermutation( device, descCopy, shaderBlob.data, shaderBlob.size, ( constants.Num() > 0 ) ? &constants[0] : shaderConstant, uint32_t( constants.Num() ) );
+	ShaderMake::ShaderConstant* shaderConstants = nullptr;
+	if( constants.Num() > 0 ) {
+		shaderConstants = &constants[0];
+	}
+	nvrhi::ShaderHandle shaderHandle = createShaderPermutation( device, descCopy, shaderBlob.data, shaderBlob.size, shaderConstants, uint32_t( constants.Num() ), shader.ownedBytecode );
 
 	shader.handle = shaderHandle;
 
 	// SRS - Free the shader blob data, otherwise a leak will occur
-	// Mem_Free( shaderBlob.data ); <-- RB: freeing this leads to memory corruption in RelWithDebInfo builds
+	// Mem_Free( shaderBlob.data ); //<-- RB: freeing this leads to memory corruption in RelWithDebInfo builds
 }
 
 /*

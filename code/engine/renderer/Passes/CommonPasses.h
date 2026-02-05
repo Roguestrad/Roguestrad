@@ -99,13 +99,6 @@ public:
 	nvrhi::ShaderHandle		   m_SharpenPS;
 	nvrhi::ShaderHandle		   m_SharpenArrayPS;
 
-	nvrhi::TextureHandle	   m_BlackTexture;
-	nvrhi::TextureHandle	   m_GrayTexture;
-	nvrhi::TextureHandle	   m_WhiteTexture;
-	nvrhi::TextureHandle	   m_BlackTexture2DArray;
-	nvrhi::TextureHandle	   m_WhiteTexture2DArray;
-	nvrhi::TextureHandle	   m_BlackCubeMapArray;
-
 	nvrhi::SamplerHandle	   m_PointClampSampler;
 	nvrhi::SamplerHandle	   m_PointWrapSampler;
 	nvrhi::SamplerHandle	   m_LinearClampSampler;

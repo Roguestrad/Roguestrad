@@ -753,6 +753,7 @@ private:
 		bool				  builtin;
 		idList<shaderMacro_t> macros;
 		nvrhi::ShaderHandle	  handle;
+		std::vector<uint8_t>  ownedBytecode;
 		rpStage_t			  stage;
 	};
 
