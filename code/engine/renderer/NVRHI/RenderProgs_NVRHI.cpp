@@ -83,7 +83,7 @@ void idRenderProgManager::LoadShader( int index, rpStage_t stage )
 	LoadShader( shaders[index] );
 }
 
-extern DeviceManager* deviceManager;
+extern DeviceManager*	   deviceManager;
 
 /*
 ================================================================================================
@@ -111,14 +111,14 @@ extern DeviceManager* deviceManager;
  *
 ================================================================================================
 */
-nvrhi::ShaderHandle	  createShaderPermutation( nvrhi::IDevice* device,
-	  const nvrhi::ShaderDesc&								   d,
-	  const void*											   blob,
-	  size_t												   blobSize,
-	  const ShaderMake::ShaderConstant*						   constants,
-	  uint32_t												   numConstants,
-	  std::vector<uint8>&									   ownedByteCode,
-	  bool													   errorIfNotFound = true )
+static nvrhi::ShaderHandle CreateShaderPermutation( nvrhi::IDevice* device,
+	const nvrhi::ShaderDesc&										d,
+	const void*														blob,
+	size_t															blobSize,
+	const ShaderMake::ShaderConstant*								constants,
+	uint32_t														numConstants,
+	std::vector<uint8>&												ownedByteCode,
+	bool															errorIfNotFound = true )
 {
 	// ShaderMake::ShaderBinaryView view = {};
 
@@ -197,12 +197,12 @@ void idRenderProgManager::LoadShader( shader_t& shader )
 	if( constants.Num() > 0 ) {
 		shaderConstants = &constants[0];
 	}
-	nvrhi::ShaderHandle shaderHandle = createShaderPermutation( device, descCopy, shaderBlob.data, shaderBlob.size, shaderConstants, uint32_t( constants.Num() ), shader.ownedBytecode );
+	nvrhi::ShaderHandle shaderHandle = CreateShaderPermutation( device, descCopy, shaderBlob.data, shaderBlob.size, shaderConstants, uint32_t( constants.Num() ), shader.ownedBytecode );
 
 	shader.handle = shaderHandle;
 
 	// SRS - Free the shader blob data, otherwise a leak will occur
-	// Mem_Free( shaderBlob.data ); //<-- RB: freeing this leads to memory corruption in RelWithDebInfo builds
+	Mem_Free( shaderBlob.data );
 }
 
 /*
