@@ -343,7 +343,7 @@ else()
 			${MC_ZLIB_SOURCES}
 			${MC_MINIZIP_SOURCES}
 			PROPERTIES
-			COMPILE_FLAGS "-Wno-stringop-overread -Wno-deprecated-non-prototype"
+			COMPILE_FLAGS "-Wno-stringop-overread -Wno-deprecated-non-prototype -Wno-old-style-definition"
 			)
 
 	add_executable(rogmap ${MC_SOURCES_ALL} ${MC_INCLUDES_ALL})

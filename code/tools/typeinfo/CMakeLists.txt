@@ -135,6 +135,13 @@ else()
 	                  )
 	endif()
 
+	# SRS - disable certain gcc/clang warnings for select third-party source libraries, consider updating versions in the future?
+	set_source_files_properties(
+			${TP_ZLIB_SOURCES}
+			PROPERTIES
+			COMPILE_FLAGS "-Wno-stringop-overread -Wno-deprecated-non-prototype -Wno-old-style-definition"
+			)
+
 	add_executable(typeinfogen ${TP_SOURCES_ALL} ${TP_INCLUDES_ALL})
 	add_dependencies(typeinfogen idlib)
 	if (USE_PRECOMPILED_HEADERS)

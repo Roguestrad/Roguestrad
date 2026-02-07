@@ -1555,7 +1555,7 @@ else()
 		${ZLIB_SOURCES}
 		${MINIZIP_SOURCES}
 		PROPERTIES
-		COMPILE_FLAGS "-Wno-stringop-overread -Wno-deprecated-non-prototype"
+		COMPILE_FLAGS "-Wno-stringop-overread -Wno-deprecated-non-prototype -Wno-old-style-definition"
 		)
 
 	# SRS - if using gcc compiler enable gnu extensions for ##__VA_ARGS__ support within optick profiler (i.e. __STRICT_ANSI__ not set)
