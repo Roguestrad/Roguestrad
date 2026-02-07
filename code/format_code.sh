@@ -11,7 +11,15 @@ print_usage () {
 
 # Determine platform and set clang-format binary path
 case "$(uname -s)" in
-    Linux*)   CLANGFMT_DEFAULT="./clang-format" ;;
+    Linux*)
+        if command -v clang-format-18 >/dev/null 2>&1; then
+            CLANGFMT_DEFAULT="clang-format-18"
+        elif command -v clang-format >/dev/null 2>&1; then
+            CLANGFMT_DEFAULT="clang-format"
+        else
+            CLANGFMT_DEFAULT="./clang-format"
+        fi
+        ;;
     MINGW*|MSYS*|CYGWIN*) CLANGFMT_DEFAULT="./clang-format.exe" ;;
     *)        echo "ERROR: Unsupported platform: $(uname -s)"; print_usage; exit 1 ;;
 esac
@@ -20,7 +28,7 @@ esac
 CLANGFMT_BIN=${CLANGFMT_BIN:-$CLANGFMT_DEFAULT}
 
 # Check if the binary exists and is executable
-if [ ! -x "$CLANGFMT_BIN" ]; then
+if ! command -v "$CLANGFMT_BIN" >/dev/null 2>&1 && [ ! -x "$CLANGFMT_BIN" ]; then
     echo "ERROR: $CLANGFMT_BIN not found or not executable"
     print_usage
     exit 1
