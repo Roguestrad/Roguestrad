@@ -320,13 +320,13 @@ public:
 	template<typename T>
 	T* Cast()
 	{
-		return this ? ( IsType( T::Type ) ? static_cast<T*>( this ) : NULL ) : NULL;
+		return IsType( T::Type ) ? static_cast<T*>( this ) : NULL;
 	}
 
 	template<typename T>
 	const T* Cast() const
 	{
-		return this ? ( IsType( T::Type ) ? static_cast<const T*>( this ) : NULL ) : NULL;
+		return IsType( T::Type ) ? static_cast<const T*>( this ) : NULL;
 	}
 
 	virtual void	 StateThreadChanged() {};
