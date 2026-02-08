@@ -904,6 +904,7 @@ const int	 CINEMATIC_SKIP_DELAY = SEC2MS( 2.0f );
 #include "player/PlayerIcon.h"
 #include "Achievements.h"
 #include "AimAssist.h"
+#include "player/Inventory.h"
 #include "player/Player.h"
 #include "Mover.h"
 #include "Camera.h"

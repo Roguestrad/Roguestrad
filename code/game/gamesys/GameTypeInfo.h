@@ -472,13 +472,26 @@ static constantInfo_t constantInfo[] = {
 	{ "int", "STAT_DOOM_COMPLETED_EPISODE_2_HARD", "72" },
 	{ "int", "STAT_DOOM_COMPLETED_EPISODE_3_HARD", "73" },
 	{ "int", "STAT_DOOM_COMPLETED_EPISODE_4_HARD", "74" },
+	{ "const int", "MAX_WEAPONS", "32" },
+	{ "int", "BERSERK", "0" },
+	{ "int", "INVISIBILITY", "1" },
+	{ "int", "MEGAHEALTH", "2" },
+	{ "int", "ADRENALINE", "3" },
+	{ "int", "INVULNERABILITY", "4" },
+	{ "int", "HELLTIME", "5" },
+	{ "int", "ENVIROSUIT", "6" },
+	{ "int", "ENVIROTIME", "7" },
+	{ "int", "MAX_POWERUPS", "8" },
+	{ "int", "SPEED", "0" },
+	{ "int", "PROJECTILE_DAMAGE", "1" },
+	{ "int", "MELEE_DAMAGE", "2" },
+	{ "int", "MELEE_DISTANCE", "3" },
 	{ "const float", "THIRD_PERSON_FOCUS_DISTANCE", "512.0" },
 	{ "const int", "LAND_DEFLECT_TIME", "150" },
 	{ "const int", "LAND_RETURN_TIME", "300" },
 	{ "const int", "FOCUS_TIME", "300" },
 	{ "const int", "FOCUS_GUI_TIME", "500" },
 	{ "const int", "NUM_QUICK_SLOTS", "4" },
-	{ "const int", "MAX_WEAPONS", "32" },
 	{ "const int", "DEAD_HEARTRATE", "0" },
 	{ "const int", "LOWHEALTH_HEARTRATE_ADJ", "20" },
 	{ "const int", "DYING_HEARTRATE", "30" },
@@ -495,19 +508,6 @@ static constantInfo_t constantInfo[] = {
 	{ "int", "GAME_D3XP", "1" },
 	{ "int", "GAME_D3LE", "2" },
 	{ "int", "GAME_UNKNOWN", "3" },
-	{ "int", "BERSERK", "0" },
-	{ "int", "INVISIBILITY", "1" },
-	{ "int", "MEGAHEALTH", "2" },
-	{ "int", "ADRENALINE", "3" },
-	{ "int", "INVULNERABILITY", "4" },
-	{ "int", "HELLTIME", "5" },
-	{ "int", "ENVIROSUIT", "6" },
-	{ "int", "ENVIROTIME", "7" },
-	{ "int", "MAX_POWERUPS", "8" },
-	{ "int", "SPEED", "0" },
-	{ "int", "PROJECTILE_DAMAGE", "1" },
-	{ "int", "MELEE_DAMAGE", "2" },
-	{ "int", "MELEE_DISTANCE", "3" },
 	{ "int", "INFLUENCE_NONE", "0" },
 	{ "int", "INFLUENCE_LEVEL1", "1" },
 	{ "int", "INFLUENCE_LEVEL2", "2" },
@@ -1565,15 +1565,7 @@ static enumValueInfo_t achievement_t_typeInfo[] = {
 	{ NULL, 0 }
 };
 
-static enumValueInfo_t gameExpansionType_t_typeInfo[] = {
-	{ "GAME_BASE", 0 },
-	{ "GAME_D3XP", 1 },
-	{ "GAME_D3LE", 2 },
-	{ "GAME_UNKNOWN", 3 },
-	{ NULL, 0 }
-};
-
-static enumValueInfo_t enum_44_typeInfo[] = {
+static enumValueInfo_t enum_43_typeInfo[] = {
 	{ "BERSERK", 0 },
 	{ "INVISIBILITY", 1 },
 	{ "MEGAHEALTH", 2 },
@@ -1586,11 +1578,19 @@ static enumValueInfo_t enum_44_typeInfo[] = {
 	{ NULL, 0 }
 };
 
-static enumValueInfo_t enum_45_typeInfo[] = {
+static enumValueInfo_t enum_44_typeInfo[] = {
 	{ "SPEED", 0 },
 	{ "PROJECTILE_DAMAGE", 1 },
 	{ "MELEE_DAMAGE", 2 },
 	{ "MELEE_DISTANCE", 3 },
+	{ NULL, 0 }
+};
+
+static enumValueInfo_t gameExpansionType_t_typeInfo[] = {
+	{ "GAME_BASE", 0 },
+	{ "GAME_D3XP", 1 },
+	{ "GAME_D3LE", 2 },
+	{ "GAME_UNKNOWN", 3 },
 	{ NULL, 0 }
 };
 
@@ -2307,9 +2307,9 @@ static enumTypeInfo_t enumTypeInfo[] = {
 	{ "FxFader::enum_40", FxFader_enum_40_typeInfo },
 	{ "playerIconType_t", playerIconType_t_typeInfo },
 	{ "achievement_t", achievement_t_typeInfo },
-	{ "gameExpansionType_t", gameExpansionType_t_typeInfo },
+	{ "enum_43", enum_43_typeInfo },
 	{ "enum_44", enum_44_typeInfo },
-	{ "enum_45", enum_45_typeInfo },
+	{ "gameExpansionType_t", gameExpansionType_t_typeInfo },
 	{ "enum_46", enum_46_typeInfo },
 	{ "slotIndex_t", slotIndex_t_typeInfo },
 	{ "idPlayer::enum_48", idPlayer_enum_48_typeInfo },
@@ -4944,6 +4944,13 @@ static classVariableInfo_t idAimAssist_typeInfo[] = {
 	{ NULL, 0 }
 };
 
+static classVariableInfo_t RechargeAmmo_t_typeInfo[] = {
+	{ "int", "ammo", (intptr_t)(&((RechargeAmmo_t *)0)->ammo), sizeof( ((RechargeAmmo_t *)0)->ammo ) },
+	{ "int", "rechargeTime", (intptr_t)(&((RechargeAmmo_t *)0)->rechargeTime), sizeof( ((RechargeAmmo_t *)0)->rechargeTime ) },
+	{ "char[128]", "ammoName", (intptr_t)(&((RechargeAmmo_t *)0)->ammoName), sizeof( ((RechargeAmmo_t *)0)->ammoName ) },
+	{ NULL, 0 }
+};
+
 static classVariableInfo_t idObjectiveInfo_typeInfo[] = {
 	{ "idStr", "title", (intptr_t)(&((idObjectiveInfo *)0)->title), sizeof( ((idObjectiveInfo *)0)->title ) },
 	{ "idStr", "text", (intptr_t)(&((idObjectiveInfo *)0)->text), sizeof( ((idObjectiveInfo *)0)->text ) },
@@ -4954,20 +4961,6 @@ static classVariableInfo_t idObjectiveInfo_typeInfo[] = {
 static classVariableInfo_t idLevelTriggerInfo_typeInfo[] = {
 	{ "idStr", "levelName", (intptr_t)(&((idLevelTriggerInfo *)0)->levelName), sizeof( ((idLevelTriggerInfo *)0)->levelName ) },
 	{ "idStr", "triggerName", (intptr_t)(&((idLevelTriggerInfo *)0)->triggerName), sizeof( ((idLevelTriggerInfo *)0)->triggerName ) },
-	{ NULL, 0 }
-};
-
-static classVariableInfo_t RechargeAmmo_t_typeInfo[] = {
-	{ "int", "ammo", (intptr_t)(&((RechargeAmmo_t *)0)->ammo), sizeof( ((RechargeAmmo_t *)0)->ammo ) },
-	{ "int", "rechargeTime", (intptr_t)(&((RechargeAmmo_t *)0)->rechargeTime), sizeof( ((RechargeAmmo_t *)0)->rechargeTime ) },
-	{ "char[128]", "ammoName", (intptr_t)(&((RechargeAmmo_t *)0)->ammoName), sizeof( ((RechargeAmmo_t *)0)->ammoName ) },
-	{ NULL, 0 }
-};
-
-static classVariableInfo_t WeaponToggle_t_typeInfo[] = {
-	{ "char[64]", "name", (intptr_t)(&((WeaponToggle_t *)0)->name), sizeof( ((WeaponToggle_t *)0)->name ) },
-	{ "idList < int , TAG_IDLIB_LIST_PLAYER >", "toggleList", (intptr_t)(&((WeaponToggle_t *)0)->toggleList), sizeof( ((WeaponToggle_t *)0)->toggleList ) },
-	{ "int", "lastUsed", (intptr_t)(&((WeaponToggle_t *)0)->lastUsed), sizeof( ((WeaponToggle_t *)0)->lastUsed ) },
 	{ NULL, 0 }
 };
 
@@ -5007,6 +5000,13 @@ static classVariableInfo_t idInventory_typeInfo[] = {
 	{ "idList < idObjectiveInfo >", "objectiveNames", (intptr_t)(&((idInventory *)0)->objectiveNames), sizeof( ((idInventory *)0)->objectiveNames ) },
 	{ ": idArray < idPredictedValue < int > , AMMO_NUMTYPES >", "ammo", (intptr_t)(&((idInventory *)0)->ammo), sizeof( ((idInventory *)0)->ammo ) },
 	{ "idArray < idPredictedValue < int > , MAX_WEAPONS >", "clip", (intptr_t)(&((idInventory *)0)->clip), sizeof( ((idInventory *)0)->clip ) },
+	{ NULL, 0 }
+};
+
+static classVariableInfo_t WeaponToggle_t_typeInfo[] = {
+	{ "char[64]", "name", (intptr_t)(&((WeaponToggle_t *)0)->name), sizeof( ((WeaponToggle_t *)0)->name ) },
+	{ "idList < int , TAG_IDLIB_LIST_PLAYER >", "toggleList", (intptr_t)(&((WeaponToggle_t *)0)->toggleList), sizeof( ((WeaponToggle_t *)0)->toggleList ) },
+	{ "int", "lastUsed", (intptr_t)(&((WeaponToggle_t *)0)->lastUsed), sizeof( ((WeaponToggle_t *)0)->lastUsed ) },
 	{ NULL, 0 }
 };
 
@@ -7671,11 +7671,11 @@ static classTypeInfo_t classTypeInfo[] = {
 	{ "idPlayerIcon", "", sizeof(idPlayerIcon), idPlayerIcon_typeInfo },
 	{ "idAchievementManager", "", sizeof(idAchievementManager), idAchievementManager_typeInfo },
 	{ "idAimAssist", "", sizeof(idAimAssist), idAimAssist_typeInfo },
+	{ "RechargeAmmo_t", "", sizeof(RechargeAmmo_t), RechargeAmmo_t_typeInfo },
 	{ "idObjectiveInfo", "", sizeof(idObjectiveInfo), idObjectiveInfo_typeInfo },
 	{ "idLevelTriggerInfo", "", sizeof(idLevelTriggerInfo), idLevelTriggerInfo_typeInfo },
-	{ "RechargeAmmo_t", "", sizeof(RechargeAmmo_t), RechargeAmmo_t_typeInfo },
-	{ "WeaponToggle_t", "", sizeof(WeaponToggle_t), WeaponToggle_t_typeInfo },
 	{ "idInventory", "", sizeof(idInventory), idInventory_typeInfo },
+	{ "WeaponToggle_t", "", sizeof(WeaponToggle_t), WeaponToggle_t_typeInfo },
 	{ "loggedAccel_t", "", sizeof(loggedAccel_t), loggedAccel_t_typeInfo },
 	{ "aasLocation_t", "", sizeof(aasLocation_t), aasLocation_t_typeInfo },
 	{ "slot_t", "", sizeof(slot_t), slot_t_typeInfo },
