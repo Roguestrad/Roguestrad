@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "Game_local.h"
+#include "../Game_local.h"
 #include "PlayerIcon.h"
 
 static const char* iconKeys[ICON_NONE] = { "mtr_icon_lag", "mtr_icon_chat", "mtr_icon_redteam", "mtr_icon_blueteam" };

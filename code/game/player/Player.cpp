@@ -31,9 +31,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "Game_local.h"
+#include "../Game_local.h"
 #include "../engine/framework/Common_local.h"
-#include "PredictedValue_impl.h"
+#include "../PredictedValue_impl.h"
 
 idCVar		  flashlight_batteryDrainTimeMS( "flashlight_batteryDrainTimeMS", "30000", CVAR_INTEGER, "amount of time (in MS) it takes for full battery to drain (-1 == no battery drain)" );
 idCVar		  flashlight_batteryChargeTimeMS( "flashlight_batteryChargeTimeMS", "3000", CVAR_INTEGER, "amount of time (in MS) it takes to fully recharge battery" );

@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #define PREDICTED_VALUE_IMPL_H_
 
 #include "PredictedValue.h"
-#include "Player.h"
+#include "player/Player.h"
 
 /*
 ===============

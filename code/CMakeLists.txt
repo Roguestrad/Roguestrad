@@ -822,9 +822,6 @@ set(GAMED3XP_INCLUDES
 	game/Moveable.h
 	game/Mover.h
 	game/MultiplayerGame.h
-	game/Player.h
-	game/PlayerIcon.h
-	game/PlayerView.h
 	game/PredictedValue.h
 	game/Projectile.h
 	game/Pvs.h
@@ -859,9 +856,6 @@ set(GAMED3XP_SOURCES
 	game/Moveable.cpp
 	game/Mover.cpp
 	game/MultiplayerGame.cpp
-	game/Player.cpp
-	game/PlayerIcon.cpp
-	game/PlayerView.cpp
 	game/precompiled.cpp
 	game/Projectile.cpp
 	game/Pvs.cpp
@@ -876,6 +870,9 @@ set(GAMED3XP_SOURCES
 file(GLOB GAMED3XP_AI_INCLUDES game/ai/*.h)
 file(GLOB GAMED3XP_AI_SOURCES game/ai/*.cpp)
 
+file(GLOB GAMED3XP_ANIM_INCLUDES game/anim/*.h)
+file(GLOB GAMED3XP_ANIM_SOURCES game/anim/*.cpp)
+
 file(GLOB GAMED3XP_MONSTER_INCLUDES game/monsters/*.h)
 file(GLOB GAMED3XP_MONSTER_SOURCES game/monsters/*.cpp)
 
@@ -885,8 +882,6 @@ file(GLOB GAMED3XP_BOTS_SOURCES game/bots/*.cpp)
 file(GLOB GAMED3XP_WEAPON_INCLUDES game/weapons/*.h)
 file(GLOB GAMED3XP_WEAPON_SOURCES game/weapons/*.cpp)
 
-file(GLOB GAMED3XP_ANIM_INCLUDES game/anim/*.h)
-file(GLOB GAMED3XP_ANIM_SOURCES game/anim/*.cpp)
 
 file(GLOB GAMED3XP_GAMESYS_INCLUDES game/gamesys/*.h)
 set(GAMED3XP_GAMESYS_SOURCES
@@ -907,6 +902,9 @@ file(GLOB GAMED3XP_MENUS_SOURCES game/menus/*.cpp)
 
 file(GLOB GAMED3XP_PHYSICS_INCLUDES game/physics/*.h)
 file(GLOB GAMED3XP_PHYSICS_SOURCES game/physics/*.cpp)
+
+file(GLOB GAMED3XP_PLAYER_INCLUDES game/player/*.h)
+file(GLOB GAMED3XP_PLAYER_SOURCES game/player/*.cpp)
 
 file(GLOB GAMED3XP_SCRIPT_INCLUDES game/script/*.h)
 file(GLOB GAMED3XP_SCRIPT_SOURCES game/script/*.cpp)
@@ -1095,6 +1093,9 @@ source_group("game\\menus" FILES ${GAMED3XP_MENUS_SOURCES})
 source_group("game\\physics" FILES ${GAMED3XP_PHYSICS_INCLUDES})
 source_group("game\\physics" FILES ${GAMED3XP_PHYSICS_SOURCES})
 
+source_group("game\\player" FILES ${GAMED3XP_PLAYER_INCLUDES})
+source_group("game\\player" FILES ${GAMED3XP_PLAYER_SOURCES})
+
 source_group("game\\script" FILES ${GAMED3XP_SCRIPT_INCLUDES})
 source_group("game\\script" FILES ${GAMED3XP_SCRIPT_SOURCES})
 
@@ -1170,6 +1171,7 @@ set(RBDOOM3_INCLUDES
 			${GAMED3XP_MONSTER_INCLUDES}
 			${GAMED3XP_WEAPON_INCLUDES}
 			${GAMED3XP_PHYSICS_INCLUDES}
+			${GAMED3XP_PLAYER_INCLUDES}
 			${GAMED3XP_SCRIPT_INCLUDES}
 			)
 
@@ -1217,6 +1219,7 @@ set(RBDOOM3_SOURCES
 			${GAMED3XP_GAMESYS_SOURCES}
 			${GAMED3XP_MENUS_SOURCES}
 			${GAMED3XP_PHYSICS_SOURCES}
+			${GAMED3XP_PLAYER_SOURCES}
 			${GAMED3XP_SCRIPT_SOURCES}
 			)
 
