@@ -267,7 +267,8 @@ bool VKimp_Init( glimpParms_t parms )
 			common->Warning( "Couldn't switch to fullscreen mode, reason: %s", SDL_GetError() );
 		}
 	} else if( parms.fullScreen == -2 ) {
-		// SRS - Switch into borderless fullscreen mode after window creation
+		// SRS - Maximize window and switch into borderless fullscreen mode after window creation
+		SDL_MaximizeWindow( window );
 		if( SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP ) < 0 ) {
 			common->Warning( "Couldn't switch to borderless fullscreen mode, reason: %s", SDL_GetError() );
 		}
@@ -322,11 +323,7 @@ static int ScreenParmsHandleDisplayIndex( glimpParms_t parms )
 	}
 
 	// SRS - For reliable operation on all SDL2 platforms, restore window before monitor or mode switching
-	if( SDL_GetWindowFlags( window ) & SDL_WINDOW_MAXIMIZED ) {
-		// if window is maximized but want to switch to another monitor
-		// we have to restore first to move the window.. SDL-oddity.
-		SDL_RestoreWindow( window );
-	}
+	SDL_RestoreWindow( window );
 
 	int displayIdx = GetDisplayIndex( parms );
 
@@ -336,7 +333,8 @@ static int ScreenParmsHandleDisplayIndex( glimpParms_t parms )
 			return displayIdx;
 		}
 
-		if( parms.fullScreen != glConfig.isFullscreen ) {
+		// SRS - if selected display is different than current display, move window prior to fullscreen
+		if( displayIdx != SDL_GetWindowDisplayIndex( window ) ) {
 			// select display ; SDL_WINDOWPOS_UNDEFINED_DISPLAY() doesn't work.
 			int windowPos = SDL_WINDOWPOS_CENTERED_DISPLAY( displayIdx );
 			// move window to the center of selected display
@@ -383,14 +381,15 @@ static bool SetScreenParmsFullscreen( glimpParms_t parms )
 			return false;
 		}
 
-		// SRS - Move to fullscreen mode
+		// SRS - Switch into fullscreen mode
 		if( SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN ) < 0 ) {
 			common->Warning( "Couldn't switch to fullscreen mode, reason: %s", SDL_GetError() );
 			return false;
 		}
 	} else // -2 == use current display for borderless fullscreen
 	{
-		// SRS - Move to borderless fullscreen mode
+		// SRS - Maximize window and switch into borderless fullscreen mode
+		SDL_MaximizeWindow( window );
 		if( SDL_SetWindowFullscreen( window, SDL_WINDOW_FULLSCREEN_DESKTOP ) < 0 ) {
 			common->Warning( "Couldn't switch to borderless fullscreen mode, reason: %s", SDL_GetError() );
 			return false;
@@ -422,10 +421,8 @@ static bool SetScreenParmsWindowed( glimpParms_t parms )
 		}
 	}
 
-	// if window is maximized, restore it to normal before setting size
-	if( SDL_GetWindowFlags( window ) & SDL_WINDOW_MAXIMIZED ) {
-		SDL_RestoreWindow( window );
-	}
+	// restore window before setting new size and position
+	SDL_RestoreWindow( window );
 
 	// set window to bordered or borderless based on parms
 	SDL_SetWindowBordered( window, parms.fullScreen == 0 ? SDL_TRUE : SDL_FALSE );

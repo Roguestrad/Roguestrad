@@ -172,7 +172,7 @@ static void PushConsoleEvent( const char* s )
 	b	= ( char* )Mem_Alloc( len, TAG_EVENTS );
 	strcpy( b, s );
 
-	SDL_Event event;
+	SDL_Event event {};
 
 	event.type		 = SDL_USEREVENT;
 	event.user.code	 = SE_CONSOLE;
@@ -456,12 +456,11 @@ sysEvent_t Sys_GetEvent()
 						// SRS - Only save window moved events when in windowed mode and not maximized by window manager
 						SDL_Window* window = SDL_GetWindowFromID( ev.window.windowID );
 						if( !renderSystem->IsFullScreen() && !( SDL_GetWindowFlags( window ) & SDL_WINDOW_MAXIMIZED ) ) {
-							// SRS - take window border into account when when saving window position cvars
-							int			topBorder, leftBorder, bottomBorder, rightBorder;
-							SDL_Window* window = SDL_GetWindowFromID( ev.window.windowID );
-							SDL_GetWindowBordersSize( window, &topBorder, &leftBorder, &bottomBorder, &rightBorder );
-							r_windowX.SetInteger( x - leftBorder );
-							r_windowY.SetInteger( y - topBorder );
+							// SRS - don't take window border into account when when saving window position cvars
+							//     - border policies are different across window managers and sdl2 vs. sdl2-compat
+							//     - window position may creep on restore, but too many differences so just *KISS*
+							r_windowX.SetInteger( x );
+							r_windowY.SetInteger( y );
 						}
 						break;
 					}
@@ -731,13 +730,18 @@ sysEvent_t Sys_GetEvent()
 				continue; // just handle next event
 
 			// Avoid 'unknown event' spam
+			case SDL_DISPLAYEVENT:
 			case SDL_TEXTEDITING:
 			case SDL_KEYMAPCHANGED:
 			case SDL_CLIPBOARDUPDATE:
 				continue; // just handle next event
 
 			default:
-				common->Warning( "unknown event %u = %#x", ev.type, ev.type );
+				// SRS - Suppress warnings for redundant SDL3 display / window events leaking in from sdl2-compat
+				//     - This is likely a defect in sdl2-compat but suppress since unknown event spam is annoying
+				if( !( ev.type > SDL_DISPLAYEVENT && ev.type < SDL_WINDOWEVENT ) && !( ev.type > SDL_SYSWMEVENT && ev.type < SDL_KEYDOWN ) ) {
+					common->Warning( "unknown event %u = %#x", ev.type, ev.type );
+				}
 				continue; // just handle next event
 		}
 	}
