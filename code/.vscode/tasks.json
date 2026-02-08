@@ -1,0 +1,88 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Roguestrad: CMake Configure (Clean, MSBUILD, VS2022 x64)",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": ["/c", "call .\\cmake-msbuild-win64.bat"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+      },
+      "presentation": {
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Roguestrad: CMake Configure (Clean, Ninja, clang-cl x64)",
+      "type": "shell",
+      "command": "cmd.exe",
+      "args": ["/c", "call .\\cmake-ninja-win64.bat"],
+      "options": {
+        "cwd": "${workspaceFolder}",
+      },
+      "presentation": {
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Roguestrad: CMake Configure (Clean, Ninja, Linux clang)",
+      "type": "shell",
+      "command": "./cmake-ninja-linux-clang.sh",
+      "options": {
+        "cwd": "${workspaceFolder}",
+      },
+      "presentation": {
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Roguestrad: Build Debug",
+      "type": "shell",
+      "command": "cmake --build build --config Debug -j",
+      "options": {
+        "cwd": "${workspaceFolder}",
+      },
+      "group": {
+        "kind": "build",
+        "isDefault": true,
+      },
+      "presentation": {
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Roguestrad: Build RelWithDebInfo",
+      "type": "shell",
+      "command": "cmake --build build --config RelWithDebInfo -j",
+      "options": {
+        "cwd": "${workspaceFolder}",
+      },
+      "presentation": {
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Roguestrad: Build Release",
+      "type": "shell",
+      "command": "cmake --build build --config Release -j",
+      "options": {
+        "cwd": "${workspaceFolder}",
+      },
+      "presentation": {
+        "panel": "new",
+      },
+    },
+    {
+      "label": "Roguestrad: Win64 Clean",
+      "type": "shell",
+      "command": "cmake --build build --target clean",
+      "options": {
+        "cwd": "${workspaceFolder}",
+      },
+      "presentation": {
+        "panel": "new",
+      },
+    },
+  ],
+}

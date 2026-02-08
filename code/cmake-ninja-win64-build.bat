@@ -9,7 +9,7 @@ cmake -B build ^
   -DFFMPEG=OFF ^
   -DBINKDEC=ON ^
   -DSTANDALONE=OFF ^
-  -DUSE_PRECOMPILED_HEADERS=OFF ^
+  -DUSE_PRECOMPILED_HEADERS=ON ^
   .
 
 rem Build in Release-Mode

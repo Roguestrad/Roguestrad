@@ -1,0 +1,21 @@
+{
+  "lsp": {
+    "clangd": {
+      "binary": {
+        "path": "clangd",
+        "arguments": [
+          "--fallback-style=llvm",
+          "--background-index",
+          "--clang-tidy",
+          "--header-insertion=iwyu",
+          "--pch-storage=memory",
+        ],
+      },
+    },
+  },
+  "languages": {
+    "C++": {
+      "language_servers": ["clangd"],
+    },
+  },
+}
