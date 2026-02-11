@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "Game_local.h"
+#include "../Game_local.h"
 
 CLASS_DECLARATION( idEntity, idBrittleFracture )
 EVENT( EV_Activate, idBrittleFracture::Event_Activate )

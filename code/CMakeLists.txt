@@ -801,77 +801,40 @@ endif()
 
 set(GAMED3XP_INCLUDES
 	game/Achievements.h
-	game/Actor.h
-	game/AF.h
-	game/AFEntity.h
 	game/AimAssist.h
-	game/BrittleFracture.h
-	game/Camera.h
-	game/Entity.h
-	game/EnvironmentProbe.h
-	game/Fx.h
 	game/Game.h
 	game/GameEdit.h
 	game/Game_local.h
-	game/Grabber.h
 	game/IK.h
-	game/Item.h
 	game/Leaderboards.h
-	game/Light.h
-	game/Misc.h
-	game/Moveable.h
-	game/Mover.h
 	game/MultiplayerGame.h
 	game/PredictedValue.h
-	game/Projectile.h
 	game/Pvs.h
-	game/SecurityCamera.h
 	game/SmokeParticles.h
-	game/Sound.h
-	game/Target.h
-	game/Trigger.h
-	game/Weapon.h
-	game/WorldSpawn.h)
+	game/Weapon.h)
 
 set(GAMED3XP_SOURCES
 	game/Achievements.cpp
-	game/Actor.cpp
-	game/AF.cpp
-	game/AFEntity.cpp
 	game/AimAssist.cpp
-	game/BrittleFracture.cpp
-	game/Camera.cpp
-	game/Entity.cpp
-	game/EnvironmentProbe.cpp
-	game/Fx.cpp
 	game/GameEdit.cpp
 	game/Game_local.cpp
 	game/Game_network.cpp
-	game/Grabber.cpp
 	game/IK.cpp
-	game/Item.cpp
 	game/Leaderboards.cpp
-	game/Light.cpp
-	game/Misc.cpp
-	game/Moveable.cpp
-	game/Mover.cpp
 	game/MultiplayerGame.cpp
 	game/precompiled.cpp
-	game/Projectile.cpp
 	game/Pvs.cpp
-	game/SecurityCamera.cpp
 	game/SmokeParticles.cpp
-	game/Sound.cpp
-	game/Target.cpp
-	game/Trigger.cpp
-	game/Weapon.cpp
-	game/WorldSpawn.cpp)
+	game/Weapon.cpp)
 
 file(GLOB GAMED3XP_AI_INCLUDES game/ai/*.h)
 file(GLOB GAMED3XP_AI_SOURCES game/ai/*.cpp)
 
 file(GLOB GAMED3XP_ANIM_INCLUDES game/anim/*.h)
 file(GLOB GAMED3XP_ANIM_SOURCES game/anim/*.cpp)
+
+file(GLOB GAMED3XP_ENTITY_INCLUDES game/entities/*.h)
+file(GLOB GAMED3XP_ENTITY_SOURCES game/entities/*.cpp)
 
 file(GLOB GAMED3XP_MONSTER_INCLUDES game/monsters/*.h)
 file(GLOB GAMED3XP_MONSTER_SOURCES game/monsters/*.cpp)
@@ -1072,6 +1035,9 @@ source_group("game" FILES ${GAMED3XP_SOURCES})
 source_group("game\\ai" FILES ${GAMED3XP_AI_INCLUDES})
 source_group("game\\ai" FILES ${GAMED3XP_AI_SOURCES})
 
+source_group("game\\entities" FILES ${GAMED3XP_ENTITY_INCLUDES})
+source_group("game\\entities" FILES ${GAMED3XP_ENTITY_SOURCES})
+
 source_group("game\\monsters" FILES ${GAMED3XP_MONSTER_INCLUDES})
 source_group("game\\monsters" FILES ${GAMED3XP_MONSTER_SOURCES})
 
@@ -1165,6 +1131,7 @@ set(RBDOOM3_INCLUDES
 			${GAMED3XP_INCLUDES}
 			${GAMED3XP_AI_INCLUDES}
 			${GAMED3XP_ANIM_INCLUDES}
+			${GAMED3XP_ENTITY_INCLUDES}
 			${GAMED3XP_GAMESYS_INCLUDES}
 			${GAMED3XP_BOTS_INCLUDES}
 			${GAMED3XP_MENUS_INCLUDES}
@@ -1212,6 +1179,7 @@ set(RBDOOM3_SOURCES
 
 			${GAMED3XP_SOURCES}
 			${GAMED3XP_AI_SOURCES}
+			${GAMED3XP_ENTITY_SOURCES}
 			${GAMED3XP_MONSTER_SOURCES}
 			${GAMED3XP_BOTS_SOURCES}
 			${GAMED3XP_WEAPON_SOURCES}
