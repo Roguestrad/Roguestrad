@@ -1051,6 +1051,10 @@ void idSWFSprite::WriteSVGUnfolded_r(
 			targetID.Format( "%i", e->characterID );
 		}
 
+		// if( targetID.Find( "healthBorder.20" ) != -1 ) {
+		//	int breakpoint = 0;
+		// }
+
 #if 1
 		// animate opacity track
 		if( e->opacityFrames.Num() > 1 ) {
@@ -1066,25 +1070,8 @@ void idSWFSprite::WriteSVGUnfolded_r(
 		}
 #endif
 
-#if 0
 		// animate transform track
-		if (e->matrixFrames.Num() > 1) {
-			//file->WriteFloatString("%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"matrix\" values=\"", tabs.c_str(), targetID.c_str() );
-			file->WriteFloatString("%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"translate\" values=\"", tabs.c_str(), targetID.c_str() );
-
-			for (int f = 0; f < e->matrixFrames.Num(); f++) {
-				const swfMatrix_t& m = e->matrixFrames[f];
-				//file->WriteFloatString("%f %f %f %f %f %f", m.xx, m.yx, m.xy, m.yy, m.tx, m.ty);
-				file->WriteFloatString("%f %f", m.tx, m.ty);
-				if (f < e->matrixFrames.Num() - 1)
-					file->WriteFloatString(";");
-			}
-			file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
-			//file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->matrixFrames.Num() * frameDur, targetID.c_str() );
-		}
-#elif 1
-		// animate transform track
-		if( e->matrixFrames.Num() > 1 ) {
+		if( IsMatrixAnimated( e->matrixFrames ) ) {
 			file->WriteFloatString( "%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"translate\" values=\"", tabs.c_str(), targetID.c_str() );
 			for( int f = 0; f < e->matrixFrames.Num(); f++ ) {
 				const swfMatrix_t& m = e->matrixFrames[f];
@@ -1103,7 +1090,6 @@ void idSWFSprite::WriteSVGUnfolded_r(
 			}
 			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
 		}
-#endif
 	}
 
 	file->WriteFloatString( "%s</g>\n", tabs.c_str() );
@@ -1244,7 +1230,6 @@ void idSWFSprite::PreRun_PlaceObject2( idSWFBitStream& bitstream,
 	}
 
 	idStr			filterID;
-	idStr			transform;
 	idStr			name;
 
 	swfMatrix_t		localMatrix;
@@ -1265,8 +1250,6 @@ void idSWFSprite::PreRun_PlaceObject2( idSWFBitStream& bitstream,
 		// this adds a lot bloat, only do it for new objects
 		if( characterID != -1 ) {
 			if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
-				filterID.Format( "cf_%i_%i", ( characterID != -1 ) ? characterID : depth, commandID );
-
 				idVec4 colorMul = colorWhite;
 				if( cxf.mul != vec4_one ) {
 					colorMul = cxf.mul;
@@ -1408,7 +1391,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		// this adds a lot bloat, only do it for new objects
 		if( characterID != -1 ) {
 			if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
-				filterID.Format( "cf_%i_%i", ( characterID != -1 ) ? characterID : depth, commandID );
+				filterID.Format( "cf.%s.%i.%i", sourcePrefix.c_str(), ( characterID != -1 ) ? characterID : depth, commandID );
 
 				idVec4 colorMul = colorWhite;
 				if( cxf.mul != vec4_one ) {
@@ -1484,7 +1467,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		case SWF_DICT_EDITTEXT: {
 			file->WriteFloatString( "%s<use xlink:href=\"#%i\" link-type=\"%s\" ", tabs.c_str(), characterID, idSWF::GetDictTypeName( dictEntry.type ) );
 
-			if( ( flags1 & PlaceFlagHasMatrix ) != 0 ) {
+			if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) {
 				file->WriteFloatString( "%s", transform.c_str() );
 			}
 
