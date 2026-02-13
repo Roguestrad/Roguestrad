@@ -96,26 +96,61 @@ void swfMatrix_t::ParseSVGTransformFromString( const char* str )
 		lexer.ExpectTokenString( "matrix" );
 		lexer.ExpectTokenString( "(" );
 		xx = lexer.ParseFloat();
-		lexer.ExpectTokenString( "," );
+		if( lexer.CheckTokenString( "," ) ) {
+		}
 		yx = lexer.ParseFloat();
-		lexer.ExpectTokenString( "," );
+		if( lexer.CheckTokenString( "," ) ) {
+		}
 		xy = lexer.ParseFloat();
-		lexer.ExpectTokenString( "," );
+		if( lexer.CheckTokenString( "," ) ) {
+		}
 		yy = lexer.ParseFloat();
-		lexer.ExpectTokenString( "," );
+		if( lexer.CheckTokenString( "," ) ) {
+		}
 		tx = lexer.ParseFloat();
-		lexer.ExpectTokenString( "," );
+		if( lexer.CheckTokenString( "," ) ) {
+		}
 		ty = lexer.ParseFloat();
 		lexer.ExpectTokenString( ")" );
 	} else if( transform.Find( "translate", false ) != -1 ) {
 		lexer.ExpectTokenString( "translate" );
 		lexer.ExpectTokenString( "(" );
 		tx = lexer.ParseFloat();
-		lexer.ExpectTokenString( "," );
+		if( lexer.CheckTokenString( "," ) ) {
+		}
 		ty = lexer.ParseFloat();
 		lexer.ExpectTokenString( ")" );
+	} else if( transform.Find( "scale", false ) != -1 ) {
+		lexer.ExpectTokenString( "scale" );
+		lexer.ExpectTokenString( "(" );
+		xx = lexer.ParseFloat();
+		if( lexer.CheckTokenString( "," ) ) {
+			yy = lexer.ParseFloat();
+		} else {
+			yy = xx;
+		}
+		lexer.ExpectTokenString( ")" );
+	} else if( transform.Find( "rotate", false ) != -1 ) {
+		lexer.ExpectTokenString( "rotate" );
+		lexer.ExpectTokenString( "(" );
+		float angle = lexer.ParseFloat();
+		float s, c;
+		idMath::SinCos( angle * idMath::PI / 180.0f, s, c );
+		xx = c;
+		yx = s;
+		xy = -s;
+		yy = c;
+		if( lexer.CheckTokenString( "," ) ) {
+			// rotation around a point (cx, cy)
+			float cx = lexer.ParseFloat();
+			if( lexer.CheckTokenString( "," ) ) {
+			}
+			float cy = lexer.ParseFloat();
+			tx		 = cx - c * cx + s * cy;
+			ty		 = cy - s * cx - c * cy;
+		}
+		lexer.ExpectTokenString( ")" );
 	}
-	// TODO: handle other Transform-Types (scale, rotate etc.)
 
 	lexer.FreeSource();
 }
@@ -681,7 +716,17 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 		}
 	}
 
-	// Process animations
+	// Process SVG SMIL animations
+	struct parsedAnim_t {
+		int			  depth;
+		idList<idStr> valueList;
+		idStr		  attributeName;
+		bool		  isTransform;
+		idStr		  transformType;
+		bool		  isAdditive;
+	};
+	idList<parsedAnim_t> parsedAnimations;
+
 	for( int a = 0; a < animations.Num(); a++ ) {
 		const pugi::xml_node& animNode = animations[a];
 		idStr				  href	   = animNode.attribute( "xlink:href" ).value();
@@ -694,74 +739,140 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 		if( !idToDepth.Get( targetID, &depthPtr ) ) {
 			continue;
 		}
-		int	  depth = *depthPtr;
 
 		idStr values = animNode.attribute( "values" ).value();
 		if( values.IsEmpty() ) {
 			continue;
 		}
 
-		idList<idStr> valueList;
-		idStr::Split( values.c_str(), valueList, ';' );
+		parsedAnim_t& pa = parsedAnimations.Alloc();
+		pa.depth		 = *depthPtr;
+		idStr::Split( values.c_str(), pa.valueList, ';' );
+		pa.attributeName = animNode.attribute( "attributeName" ).value();
+		pa.isTransform	 = ( idStr::Icmp( animNode.name(), "animateTransform" ) == 0 );
+		if( pa.isTransform ) {
+			pa.transformType = animNode.attribute( "type" ).value();
+			pa.isAdditive	 = ( idStr( animNode.attribute( "additive" ).value() ) == "sum" );
+		}
 
-		idStr attributeName = animNode.attribute( "attributeName" ).value();
-		bool  isTransform	= ( idStr::Icmp( animNode.name(), "animateTransform" ) == 0 );
-
-		if( valueList.Num() > frameCount ) {
-			frameCount = valueList.Num();
+		if( pa.valueList.Num() > frameCount ) {
+			frameCount = pa.valueList.Num();
 		}
 	}
 
 	// Group commands frame by frame
 	for( int i = 1; i < frameCount; i++ ) {
-		for( int a = 0; a < animations.Num(); a++ ) {
-			const pugi::xml_node& animNode = animations[a];
-			idStr				  href	   = animNode.attribute( "xlink:href" ).value();
-			idStr				  targetID = href.c_str() + 1;
-			int*				  depthPtr;
-			if( !idToDepth.Get( targetID, &depthPtr ) ) {
-				continue;
-			}
-			int			  depth = *depthPtr;
+		idList<int>						   depthsInFrame;
+		idHashTableT<int, swfMatrix_t>	   depthMatrix;
+		idHashTableT<int, swfColorXform_t> depthColor;
 
-			idStr		  values = animNode.attribute( "values" ).value();
-			idList<idStr> valueList;
-			idStr::Split( values.c_str(), valueList, ';' );
+		for( int a = 0; a < parsedAnimations.Num(); a++ ) {
+			const parsedAnim_t& pa = parsedAnimations[a];
 
-			if( i >= valueList.Num() ) {
+			if( i >= pa.valueList.Num() ) {
 				continue;
 			}
 
-			idStr				attributeName = animNode.attribute( "attributeName" ).value();
-			bool				isTransform	  = ( idStr::Icmp( animNode.name(), "animateTransform" ) == 0 );
+			if( pa.isTransform ) {
+				swfMatrix_t m;
+				idLexer		lexer;
+				lexer.LoadMemory( pa.valueList[i].c_str(), pa.valueList[i].Length(), "value" );
+				if( pa.transformType == "translate" ) {
+					m.tx = lexer.ParseFloat();
+					if( !lexer.EndOfFile() ) {
+						m.ty = lexer.ParseFloat();
+					}
+				} else if( pa.transformType == "scale" ) {
+					m.xx = lexer.ParseFloat();
+					if( !lexer.EndOfFile() ) {
+						m.yy = lexer.ParseFloat();
+					} else {
+						m.yy = m.xx;
+					}
+				} else if( pa.transformType == "rotate" ) {
+					float angle = lexer.ParseFloat();
+					float s, c;
+					idMath::SinCos( angle * idMath::PI / 180.0f, s, c );
+					m.xx = c;
+					m.yx = s;
+					m.xy = -s;
+					m.yy = c;
+					if( !lexer.EndOfFile() ) {
+						float cx = lexer.ParseFloat();
+						float cy = 0.0f;
+						if( !lexer.EndOfFile() ) {
+							cy = lexer.ParseFloat();
+						}
+						m.tx = cx - c * cx + s * cy;
+						m.ty = cy - s * cx - c * cy;
+					}
+				}
+				lexer.FreeSource();
+
+				swfMatrix_t* existingM;
+				if( depthMatrix.Get( pa.depth, &existingM ) ) {
+					if( pa.isAdditive ) {
+						*existingM = existingM->Multiply( m );
+					} else {
+						*existingM = m;
+					}
+				} else {
+					depthMatrix.Set( pa.depth, m );
+					depthsInFrame.Append( pa.depth );
+				}
+			} else if( pa.attributeName == "opacity" ) {
+				swfColorXform_t cxf;
+				cxf.mul	  = vec4_one;
+				cxf.mul.w = ( float )atof( pa.valueList[i].c_str() );
+				cxf.add	  = vec4_zero;
+
+				swfColorXform_t* existingCxf;
+				if( depthColor.Get( pa.depth, &existingCxf ) ) {
+					existingCxf->mul.w *= cxf.mul.w;
+				} else {
+					depthColor.Set( pa.depth, cxf );
+					bool alreadyAdded = false;
+					for( int d = 0; d < depthsInFrame.Num(); d++ ) {
+						if( depthsInFrame[d] == pa.depth ) {
+							alreadyAdded = true;
+							break;
+						}
+					}
+					if( !alreadyAdded ) {
+						depthsInFrame.Append( pa.depth );
+					}
+				}
+			}
+		}
+
+		for( int d = 0; d < depthsInFrame.Num(); d++ ) {
+			int					depth = depthsInFrame[d];
+			swfMatrix_t*		m;
+			bool				hasMatrix = depthMatrix.Get( depth, &m );
+			swfColorXform_t*	cxf;
+			bool				hasColor = depthColor.Get( depth, &cxf );
 
 			swfSpriteCommand_t& cmd = commands.Alloc();
 			cmd.tag					= Tag_PlaceObject2;
 
 			idFile_SWF memFile( new idFile_Memory() );
 			uint8	   flags = PlaceFlagMove;
-
-			if( isTransform ) {
+			if( hasMatrix ) {
 				flags |= PlaceFlagHasMatrix;
-			} else if( attributeName == "opacity" ) {
+			}
+			if( hasColor ) {
 				flags |= PlaceFlagHasColorTransform;
 			}
 
 			memFile.WriteU8( flags );
 			memFile.WriteU16( depth );
 
-			if( flags & PlaceFlagHasMatrix ) {
-				swfMatrix_t m;
-				m.ParseSVGTransformFromString( valueList[i].c_str() );
-				memFile.WriteMatrix( m );
+			if( hasMatrix ) {
+				memFile.WriteMatrix( *m );
 			}
 
-			if( flags & PlaceFlagHasColorTransform ) {
-				swfColorXform_t cxf;
-				cxf.mul	  = vec4_one;
-				cxf.mul.w = atof( valueList[i].c_str() );
-				cxf.add	  = vec4_zero;
-				memFile.WriteColorXFormRGBA( cxf );
+			if( hasColor ) {
+				memFile.WriteColorXFormRGBA( *cxf );
 			}
 
 			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
