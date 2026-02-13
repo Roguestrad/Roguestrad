@@ -65,14 +65,8 @@ public:
 
 	void LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded );
 	void WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
-	void WriteSVGUnfolded_r( idFile*				 f,
-		int											 characterID,
-		const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
-		const swfMatrix_t&							 parentMatrix,
-		const swfColorXform_t&						 parentColor,
-		idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
-		float										 frameDur,
-		int											 indent );
+	void WriteSVGUnfolded_r(
+		idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict, idHashTableT<int, svgDisplayEntry_t>& characterMap, float frameDur, const idStr& prefix, int indent );
 
 private:
 	void WriteJSON_PlaceObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
@@ -83,13 +77,21 @@ private:
 
 	void WriteSVG_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
 
-	void WriteSVGUnfolded_PlaceObject2( idFile*		 f,
-		idSWFBitStream&								 bitstream,
-		int											 characterID,
+	void PreRun_PlaceObject2( idSWFBitStream&		 bitstream,
+		int											 sourceCharacterID,
+		const idStr&								 sourcePrefix,
 		int											 commandID,
 		const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
-		const swfMatrix_t&							 parentMatrix,
-		const swfColorXform_t&						 parentColor,
+		idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
+		idHashTableT<int, svgDisplayEntry_t*>&		 localDepthMap,
+		int											 currentFrame );
+
+	void WriteSVGUnfolded_PlaceObject2( idFile*		 f,
+		idSWFBitStream&								 bitstream,
+		int											 sourceCharacterID,
+		const idStr&								 sourcePrefix,
+		int											 commandID,
+		const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
 		idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
 		idHashTableT<int, svgDisplayEntry_t*>&		 localDepthMap,
 		int											 currentFrame,

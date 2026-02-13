@@ -57,41 +57,23 @@ static swfColorXform_t CombineColorXform( const swfColorXform_t& a, const swfCol
 	return out;
 }
 
-static void WriteAnimateTransform( idFile* file, const idStr& tabs, const swfMatrix_t& from, const swfMatrix_t& to, int frame, float frameDur )
+static bool IsMatrixAnimated( const idList<swfMatrix_t>& frames )
 {
-	float begin = frame * frameDur;
-	file->WriteFloatString( "%s<animateTransform attributeName=\"transform\" type=\"matrix\" "
-							"begin=\"%fs\" dur=\"%fs\" "
-							"from=\"matrix(%f %f %f %f %f %f)\" "
-							"to=\"matrix(%f %f %f %f %f %f)\" fill=\"freeze\" />\n",
-		tabs.c_str(),
-		begin,
-		frameDur,
-		from.xx,
-		from.yx,
-		from.xy,
-		from.yy,
-		from.tx,
-		from.ty,
-		to.xx,
-		to.yx,
-		to.xy,
-		to.yy,
-		to.tx,
-		to.ty );
-}
+	if( frames.Num() <= 1 ) {
+		return false;
+	}
 
-static void WriteAnimateOpacity( idFile* file, const idStr& tabs, const swfColorXform_t& from, const swfColorXform_t& to, int frame, float frameDur )
-{
-	float begin = frame * frameDur;
-	file->WriteFloatString( "%s<animate attributeName=\"opacity\" "
-							"begin=\"%fs\" dur=\"%fs\" "
-							"from=\"%f\" to=\"%f\" fill=\"freeze\" />\n",
-		tabs.c_str(),
-		begin,
-		frameDur,
-		from.mul.w,
-		to.mul.w );
+	const swfMatrix_t& first = frames[0];
+	const float		   eps	 = 0.0001f; // tolerance for rounding errors
+
+	for( int i = 1; i < frames.Num(); i++ ) {
+		const swfMatrix_t& current = frames[i];
+		if( idMath::Fabs( current.xx - first.xx ) > eps || idMath::Fabs( current.yy - first.yy ) > eps || idMath::Fabs( current.xy - first.xy ) > eps || idMath::Fabs( current.yx - first.yx ) > eps ||
+			idMath::Fabs( current.tx - first.tx ) > eps || idMath::Fabs( current.ty - first.ty ) > eps ) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void swfMatrix_t::ParseSVGTransformFromString( const char* str )
@@ -532,8 +514,12 @@ static bool HasDirectImageChild( const pugi::xml_node& g )
 void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded )
 {
 	frameCount = 1;
+	frameOffsets.Clear();
+	frameOffsets.Append( 0 );
 
-	int depthCounter = 1;
+	int						 depthCounter = 1;
+	idHashTableT<idStr, int> idToDepth;
+	idList<pugi::xml_node>	 animations;
 
 	for( pugi::xml_node s = node.first_child(); s; s = s.next_sibling() ) {
 		std::string childName	   = s.name();
@@ -578,6 +564,10 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 			if( flags & PlaceFlagHasName ) {
 				idStr name = s.attribute( "id" ).value();
 				memFile.WriteString( name );
+				idToDepth.Set( name, depthCounter - 1 );
+			} else {
+				// Fallback: track depth by character ID if no name is present
+				idToDepth.Set( va( "%i", charID ), depthCounter - 1 );
 			}
 
 			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
@@ -651,7 +641,12 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 
 				if( flags & PlaceFlagHasName ) {
 					idStr name = s.attribute( "id" ).value();
-					memFile.WriteString( name );
+					if( !name.IsEmpty() ) {
+						memFile.WriteString( name );
+						idToDepth.Set( name, depthCounter - 1 );
+					}
+				} else {
+					idToDepth.Set( va( "%i", newCharID ), depthCounter - 1 );
 				}
 
 				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
@@ -661,20 +656,122 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 				cmd.tag					= Tag_PlaceObject2;
 				idFile_SWF memFile( new idFile_Memory() );
 				uint8	   flags = PlaceFlagHasCharacter;
+
+				idStr	   idAttr = s.attribute( "id" ).value();
+				if( !idAttr.IsEmpty() ) {
+					flags |= PlaceFlagHasName;
+				}
+
 				memFile.WriteU8( flags );
 				memFile.WriteU16( depthCounter++ );
 				memFile.WriteU16( newCharID );
+
+				if( flags & PlaceFlagHasName ) {
+					memFile.WriteString( idAttr );
+					idToDepth.Set( idAttr, depthCounter - 1 );
+				} else {
+					idToDepth.Set( va( "%i", newCharID ), depthCounter - 1 );
+				}
 
 				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 			}
 
 		} else if( childName == "animate" || childName == "animateTransform" ) {
-			idLib::Warning( "SVG Import: Animations not fully supported yet." );
+			animations.Append( s );
 		}
 	}
 
-	frameOffsets.Append( 0 );
-	frameOffsets.Append( commands.Num() );
+	// Process animations
+	for( int a = 0; a < animations.Num(); a++ ) {
+		const pugi::xml_node& animNode = animations[a];
+		idStr				  href	   = animNode.attribute( "xlink:href" ).value();
+		if( href.IsEmpty() || href[0] != '#' ) {
+			continue;
+		}
+
+		idStr targetID = href.c_str() + 1;
+		int*  depthPtr;
+		if( !idToDepth.Get( targetID, &depthPtr ) ) {
+			continue;
+		}
+		int	  depth = *depthPtr;
+
+		idStr values = animNode.attribute( "values" ).value();
+		if( values.IsEmpty() ) {
+			continue;
+		}
+
+		idList<idStr> valueList;
+		idStr::Split( values.c_str(), valueList, ';' );
+
+		idStr attributeName = animNode.attribute( "attributeName" ).value();
+		bool  isTransform	= ( idStr::Icmp( animNode.name(), "animateTransform" ) == 0 );
+
+		if( valueList.Num() > frameCount ) {
+			frameCount = valueList.Num();
+		}
+	}
+
+	// Group commands frame by frame
+	for( int i = 1; i < frameCount; i++ ) {
+		for( int a = 0; a < animations.Num(); a++ ) {
+			const pugi::xml_node& animNode = animations[a];
+			idStr				  href	   = animNode.attribute( "xlink:href" ).value();
+			idStr				  targetID = href.c_str() + 1;
+			int*				  depthPtr;
+			if( !idToDepth.Get( targetID, &depthPtr ) ) {
+				continue;
+			}
+			int			  depth = *depthPtr;
+
+			idStr		  values = animNode.attribute( "values" ).value();
+			idList<idStr> valueList;
+			idStr::Split( values.c_str(), valueList, ';' );
+
+			if( i >= valueList.Num() ) {
+				continue;
+			}
+
+			idStr				attributeName = animNode.attribute( "attributeName" ).value();
+			bool				isTransform	  = ( idStr::Icmp( animNode.name(), "animateTransform" ) == 0 );
+
+			swfSpriteCommand_t& cmd = commands.Alloc();
+			cmd.tag					= Tag_PlaceObject2;
+
+			idFile_SWF memFile( new idFile_Memory() );
+			uint8	   flags = PlaceFlagMove;
+
+			if( isTransform ) {
+				flags |= PlaceFlagHasMatrix;
+			} else if( attributeName == "opacity" ) {
+				flags |= PlaceFlagHasColorTransform;
+			}
+
+			memFile.WriteU8( flags );
+			memFile.WriteU16( depth );
+
+			if( flags & PlaceFlagHasMatrix ) {
+				swfMatrix_t m;
+				m.ParseSVGTransformFromString( valueList[i].c_str() );
+				memFile.WriteMatrix( m );
+			}
+
+			if( flags & PlaceFlagHasColorTransform ) {
+				swfColorXform_t cxf;
+				cxf.mul	  = vec4_one;
+				cxf.mul.w = atof( valueList[i].c_str() );
+				cxf.add	  = vec4_zero;
+				memFile.WriteColorXFormRGBA( cxf );
+			}
+
+			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+		}
+		frameOffsets.Append( commands.Num() );
+	}
+
+	while( frameOffsets.Num() <= frameCount ) {
+		frameOffsets.Append( commands.Num() );
+	}
 }
 
 void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict )
@@ -711,23 +808,75 @@ void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList<idSWFDictio
 	f->WriteFloatString( "\t\t</g>\n" );
 }
 
-void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
-	int											 characterID,
-	const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
-	const swfMatrix_t&							 parentMatrix,
-	const swfColorXform_t&						 parentColor,
-	idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
-	float										 frameDur,
-	int											 indent )
+void idSWFSprite::WriteSVGUnfolded_r(
+	idFile* file, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict, idHashTableT<int, svgDisplayEntry_t>& characterMap, float frameDur, const idStr& prefix, int indent )
 {
 	idHashTableT<int, svgDisplayEntry_t*> localDepthMap;
 
 	idStr								  tabs;
 	tabs.Fill( '\t', indent );
 
-	file->WriteFloatString( "%s<g id=\"%i\" data-type=\"SPRITE\" >\n", tabs.c_str(), characterID );
+	// PHASE 1: Timeline Simulation & Snapshot Collection
 
-	// iterate frame by frame
+	for( int frame = 0; frame < frameCount; frame++ ) {
+		int frameStart = frameOffsets[frame];
+		int frameEnd   = ( frame < frameCount - 1 ) ? frameOffsets[frame + 1] : commands.Num();
+
+		// A) apply all changes to this frame
+		for( int c = frameStart; c < frameEnd; c++ ) {
+			idSWFSprite::swfSpriteCommand_t& command = commands[c];
+			command.stream.Rewind();
+
+			switch( command.tag ) {
+				case Tag_PlaceObject2:
+					PreRun_PlaceObject2( command.stream,
+						characterID,
+						prefix,
+						c, // commandID
+						dict,
+						characterMap,
+						localDepthMap,
+						frame // currentFrame
+					);
+					break;
+
+				case Tag_PlaceObject3:
+					// optional, maybe later
+					break;
+
+				case Tag_RemoveObject2:
+					// TODO: possibly export <animate ... visibility="hidden">
+					break;
+
+				case Tag_StartSound:
+				case Tag_DoAction:
+				case Tag_DoLua:
+					// ignore for now
+					break;
+
+				default:
+					idLib::Printf( "Export Sprite: Unhandled tag %s\n", idSWF::GetTagName( command.tag ) );
+					break;
+			}
+		}
+
+		// B) SNAPSHOT: Now store a value for each active object for this frame
+		// for( int i = 0; i < localDepthMap.Num(); i++ ) {
+		// 	svgDisplayEntry_t* e = *localDepthMap.GetIndex( i );
+		// 	if( e != NULL ) {
+		// 		e->matrixFrames.Append( e->matrix );
+		// 		e->opacityFrames.Append( e->cxf.mul.w );
+		// 	}
+		// }
+	}
+
+	// PHASE 2: SVG Export
+
+	// idStr uniqueID;
+	// uniqueID.Format( "%s.%i", prefix.c_str(),characterID );
+
+	file->WriteFloatString( "%s<g id=\"%s\" data-type=\"SPRITE\" >\n", tabs.c_str(), prefix.c_str() );
+
 	for( int frame = 0; frame < frameCount; frame++ ) {
 		int frameStart = frameOffsets[frame];
 		int frameEnd   = ( frame < frameCount - 1 ) ? frameOffsets[frame + 1] : commands.Num();
@@ -741,10 +890,9 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 					WriteSVGUnfolded_PlaceObject2( file,
 						command.stream,
 						characterID,
+						prefix,
 						c, // commandID
 						dict,
-						parentMatrix,
-						parentColor,
 						characterMap,
 						localDepthMap,
 						frame, // currentFrame
@@ -782,7 +930,15 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 			continue;
 		}
 
-		idStr targetID = e->name.IsEmpty() ? va( "%i", e->characterID ) : e->name;
+		int	  depth = i;
+
+		idStr targetID;
+		if( !e->name.IsEmpty() ) {
+			targetID = e->name;
+		} else {
+			// targetID.Format( "inst_%i_d%i", e->characterID, depth );
+			targetID.Format( "%i", e->characterID );
+		}
 
 #if 1
 		// animate opacity track
@@ -794,25 +950,47 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 				if( f < e->opacityFrames.Num() - 1 )
 					file->WriteFloatString( ";" );
 			}
-			// file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
-			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->opacityFrames.Num() * frameDur, targetID.c_str() );
+			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
+			// file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->opacityFrames.Num() * frameDur, targetID.c_str() );
 		}
 #endif
 
 #if 0
 		// animate transform track
 		if (e->matrixFrames.Num() > 1) {
-			file->WriteFloatString("%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"matrix\" values=\"", tabs.c_str(), targetID.c_str() );
+			//file->WriteFloatString("%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"matrix\" values=\"", tabs.c_str(), targetID.c_str() );
+			file->WriteFloatString("%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"translate\" values=\"", tabs.c_str(), targetID.c_str() );
 
 			for (int f = 0; f < e->matrixFrames.Num(); f++) {
 				const swfMatrix_t& m = e->matrixFrames[f];
-				file->WriteFloatString("matrix(%f %f %f %f %f %f)",
-					m.xx, m.yx, m.xy, m.yy, m.tx, m.ty);
+				//file->WriteFloatString("%f %f %f %f %f %f", m.xx, m.yx, m.xy, m.yy, m.tx, m.ty);
+				file->WriteFloatString("%f %f", m.tx, m.ty);
 				if (f < e->matrixFrames.Num() - 1)
 					file->WriteFloatString(";");
 			}
-			//file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
-			file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->matrixFrames.Num() * frameDur, targetID.c_str() );
+			file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
+			//file->WriteFloatString("\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->matrixFrames.Num() * frameDur, targetID.c_str() );
+		}
+#elif 1
+		// animate transform track
+		if( e->matrixFrames.Num() > 1 ) {
+			file->WriteFloatString( "%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"translate\" values=\"", tabs.c_str(), targetID.c_str() );
+			for( int f = 0; f < e->matrixFrames.Num(); f++ ) {
+				const swfMatrix_t& m = e->matrixFrames[f];
+				file->WriteFloatString( "%f %f", m.tx, m.ty );
+				if( f < e->matrixFrames.Num() - 1 )
+					file->WriteFloatString( ";" );
+			}
+			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
+
+			file->WriteFloatString( "%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"scale\" additive=\"sum\" values=\"", tabs.c_str(), targetID.c_str() );
+			for( int f = 0; f < e->matrixFrames.Num(); f++ ) {
+				const swfMatrix_t& m = e->matrixFrames[f];
+				file->WriteFloatString( "%f %f", m.xx, m.yy );
+				if( f < e->matrixFrames.Num() - 1 )
+					file->WriteFloatString( ";" );
+			}
+			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
 		}
 #endif
 	}
@@ -937,13 +1115,134 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 	file->WriteFloatString( " />\n" );
 }
 
+void idSWFSprite::PreRun_PlaceObject2( idSWFBitStream& bitstream,
+	int												   sourceCharacterID,
+	const idStr&									   sourcePrefix,
+	int												   commandID,
+	const idList<idSWFDictionaryEntry, TAG_SWF>&	   dict,
+	idHashTableT<int, svgDisplayEntry_t>&			   characterMap,
+	idHashTableT<int, svgDisplayEntry_t*>&			   localDepthMap,
+	int												   currentFrame )
+{
+	uint8 flags1 = bitstream.ReadU8();
+	int	  depth	 = bitstream.ReadU16();
+
+	int	  characterID = -1;
+	if( ( flags1 & PlaceFlagHasCharacter ) != 0 ) {
+		characterID = bitstream.ReadU16();
+	}
+
+	idStr			filterID;
+	idStr			transform;
+	idStr			name;
+
+	swfMatrix_t		localMatrix;
+	swfColorXform_t localColor;
+
+	if( ( flags1 & PlaceFlagHasMatrix ) != 0 ) {
+		swfMatrix_t m;
+		bitstream.ReadMatrix( m );
+		localMatrix = m;
+	}
+
+	// color transformations are emulated by SVG filters and need be defined before use
+	if( ( flags1 & PlaceFlagHasColorTransform ) != 0 ) {
+		swfColorXform_t cxf;
+		bitstream.ReadColorXFormRGBA( cxf );
+		localColor = cxf;
+
+		// this adds a lot bloat, only do it for new objects
+		if( characterID != -1 ) {
+			if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
+				filterID.Format( "cf_%i_%i", ( characterID != -1 ) ? characterID : depth, commandID );
+
+				idVec4 colorMul = colorWhite;
+				if( cxf.mul != vec4_one ) {
+					colorMul = cxf.mul;
+				}
+				colorMul.w = 1.0f; // for debugging only, without most elements are invisible
+
+				idVec4 colorAdd = vec4_zero; // colorBlack
+				if( cxf.add != vec4_zero ) {
+					colorAdd = cxf.add;
+				}
+			}
+		}
+	}
+
+	if( ( flags1 & PlaceFlagHasRatio ) != 0 ) {
+		uint16 unused = bitstream.ReadU16();
+	}
+
+	if( ( flags1 & PlaceFlagHasName ) != 0 ) {
+		name = bitstream.ReadString();
+	}
+
+	idStr uniqueID;
+	if( !name.IsEmpty() ) {
+		uniqueID.Format( "%s.%s", sourcePrefix.c_str(), name.c_str() );
+	} else {
+		uniqueID.Format( "%s.%i", sourcePrefix.c_str(), characterID );
+	}
+
+	if( flags1 & PlaceFlagMove ) {
+		// update existing object
+		svgDisplayEntry_t** entryPtr;
+		if( localDepthMap.Get( depth, &entryPtr ) ) {
+			svgDisplayEntry_t* entry = *entryPtr;
+
+			// CORRECTION: Fill in the gaps!
+			// If we are at the current frame but the list is shorter,
+			// copy the last known matrix for the missing frames.
+			while( entry->matrixFrames.Num() < currentFrame ) {
+				entry->matrixFrames.Append( entry->matrix );
+			}
+
+			while( entry->opacityFrames.Num() < currentFrame ) {
+				entry->opacityFrames.Append( entry->cxf.mul.w );
+			}
+
+			if( flags1 & PlaceFlagHasMatrix ) {
+				entry->matrixFrames.Append( localMatrix );
+				entry->matrix = localMatrix;
+			}
+
+			if( flags1 & PlaceFlagHasColorTransform ) {
+				entry->opacityFrames.Append( localColor.mul.w ); // TODO should be full color animation
+				entry->cxf = localColor;
+			}
+		}
+	} else {
+		// new entry (as in runtime, mandatory: characterID != -1)
+		if( characterID == -1 ) {
+			idLib::Warning( "SVG Export: PlaceObject2 without characterID at depth %i", depth );
+			return;
+		}
+
+		svgDisplayEntry_t entry;
+		entry.characterID = characterID;
+		entry.matrix	  = localMatrix;
+		entry.cxf		  = localColor;
+		entry.name		  = uniqueID;
+
+		entry.matrixFrames.Append( localMatrix );
+		entry.opacityFrames.Append( localColor.mul.w );
+
+		characterMap.Set( characterID, entry );
+
+		svgDisplayEntry_t* entryPtr;
+		characterMap.Get( characterID, &entryPtr );
+
+		localDepthMap.Set( depth, entryPtr );
+	}
+}
+
 void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	idSWFBitStream&										 bitstream,
 	int													 sourceCharacterID,
+	const idStr&										 sourcePrefix,
 	int													 commandID,
 	const idList<idSWFDictionaryEntry, TAG_SWF>&		 dict,
-	const swfMatrix_t&									 parentMatrix,
-	const swfColorXform_t&								 parentColor,
 	idHashTableT<int, svgDisplayEntry_t>&				 characterMap,
 	idHashTableT<int, svgDisplayEntry_t*>&				 localDepthMap,
 	int													 currentFrame,
@@ -988,7 +1287,6 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			}
 		}
 	}
-	swfMatrix_t combinedMatrix = CombineMatrix( parentMatrix, localMatrix );
 
 	// color transformations are emulated by SVG filters and need be defined before use
 	if( ( flags1 & PlaceFlagHasColorTransform ) != 0 ) {
@@ -1034,7 +1332,6 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			}
 		}
 	}
-	swfColorXform_t combinedColor = CombineColorXform( parentColor, localColor );
 
 	if( ( flags1 & PlaceFlagHasRatio ) != 0 ) {
 		uint16 unused = bitstream.ReadU16();
@@ -1045,53 +1342,27 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 	}
 
 	// ===========================================================
-	// DisplayList Handling with Animation
-	// ===========================================================
-	if( flags1 & PlaceFlagMove ) {
-		// update existing object
-		svgDisplayEntry_t** entryPtr;
-		if( localDepthMap.Get( depth, &entryPtr ) ) {
-			svgDisplayEntry_t* entry = *entryPtr;
-
-			if( flags1 & PlaceFlagHasMatrix ) {
-				entry->matrixFrames.Append( localMatrix );
-				entry->matrix = localMatrix;
-			}
-
-			if( flags1 & PlaceFlagHasColorTransform ) {
-				entry->opacityFrames.Append( localColor.mul.w ); // TODO should be full color animation
-				entry->cxf = localColor;
-			}
-		}
-	} else {
-		// new entry (as in runtime, mandatory: characterID != -1)
-		if( characterID == -1 ) {
-			idLib::Warning( "SVG Export: PlaceObject2 without characterID at depth %i", depth );
-			return;
-		}
-
-		svgDisplayEntry_t entry;
-		entry.characterID = characterID;
-		entry.matrix	  = localMatrix;
-		entry.cxf		  = localColor;
-		entry.name		  = name;
-
-		entry.matrixFrames.Append( localMatrix );
-		entry.opacityFrames.Append( localColor.mul.w );
-
-		characterMap.Set( characterID, entry );
-
-		svgDisplayEntry_t* entryPtr;
-		characterMap.Get( characterID, &entryPtr );
-
-		localDepthMap.Set( depth, entryPtr );
-	}
-
-	// ===========================================================
 	// Write into SVG (only for Create!)
 	// ===========================================================
 	if( characterID == -1 ) {
 		return;
+	}
+
+	idStr uniqueID;
+	if( !name.IsEmpty() ) {
+		uniqueID.Format( "%s.%s", sourcePrefix.c_str(), name.c_str() );
+	} else {
+		uniqueID.Format( "%s.%i", sourcePrefix.c_str(), characterID );
+	}
+
+	bool				isAnimated = false;
+	svgDisplayEntry_t** entryPtr;
+	if( localDepthMap.Get( depth, &entryPtr ) ) {
+		svgDisplayEntry_t* entry = *entryPtr;
+
+		if( IsMatrixAnimated( entry->matrixFrames ) ) {
+			isAnimated = true;
+		}
 	}
 
 	const idSWFDictionaryEntry& dictEntry = dict[characterID];
@@ -1113,7 +1384,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			}
 
 			if( !name.IsEmpty() ) {
-				file->WriteFloatString( "id=\"%s\" ", name.c_str() );
+				file->WriteFloatString( "id=\"%s\" ", uniqueID.c_str() );
 			}
 
 			file->WriteFloatString( " />\n" );
@@ -1124,12 +1395,12 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			idSWFSprite* sprite = dictEntry.sprite;
 
 			if( !name.IsEmpty() ) {
-				file->WriteFloatString( "%s<g id=\"%s\" data-type=\"Tag_PlaceObject2\" ", tabs.c_str(), name.c_str() );
+				file->WriteFloatString( "%s<g id=\"%s\" data-type=\"Tag_PlaceObject2\" ", tabs.c_str(), uniqueID.c_str() );
 			} else {
 				file->WriteFloatString( "%s<g data-type=\"Tag_PlaceObject2\" ", tabs.c_str() );
 			}
 
-			if( flags1 & PlaceFlagHasMatrix ) {
+			if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) {
 				file->WriteFloatString( "%s", transform.c_str() );
 			}
 
@@ -1139,7 +1410,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 
 			file->WriteFloatString( ">\n" );
 
-			sprite->WriteSVGUnfolded_r( file, characterID, dict, combinedMatrix, combinedColor, characterMap, frameDur, indent + 1 );
+			sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent + 1 );
 
 			file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 			break;
