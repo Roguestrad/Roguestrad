@@ -98,6 +98,9 @@ private:
 		float										 frameDur,
 		int											 indent );
 
+	void WriteSVGUnfolded_DoLua( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, float frameDur, int currentFrame, const idStr& prefix, int indent );
+	void WriteSVGUnfolded_DoAction( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, float frameDur, int currentFrame, const idStr& prefix, int indent );
+
 public:
 	void		 WriteSWF( idFile_SWF& f, int characterID );
 
