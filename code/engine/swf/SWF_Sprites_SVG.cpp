@@ -556,8 +556,14 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 	idHashTableT<idStr, int> idToDepth;
 	idList<pugi::xml_node>	 animations;
 
+	struct luaMarker_t {
+		int	  frame;
+		idStr fn;
+	};
+	idList<luaMarker_t> luaMarkers;
+
 	for( pugi::xml_node s = node.first_child(); s; s = s.next_sibling() ) {
-		std::string childName	   = s.name();
+		idStr		childName	   = s.name();
 		const char* dataType	   = s.attribute( "data-type" ).value();
 		const bool	isWrapperPlace = ( dataType != nullptr && idStr::Icmp( dataType, "Tag_PlaceObject2" ) == 0 );
 
@@ -581,8 +587,8 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 			memFile.WriteU8( flags );
 			memFile.WriteU16( depthCounter++ );
 
-			std::string href   = s.attribute( "xlink:href" ).value();
-			int			charID = atoi( href.c_str() + 1 );
+			idStr href	 = s.attribute( "xlink:href" ).value();
+			int	  charID = atoi( href.c_str() + 1 );
 			memFile.WriteU16( charID );
 
 			if( flags & PlaceFlagHasMatrix ) {
@@ -642,7 +648,30 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 				newEntry.sprite->LoadSVGNode_r( s, dict, isUnfolded );
 			}
 
-			if( isWrapperPlace ) {
+			if( dataType != nullptr && idStr::Icmp( dataType, "Tag_DoLua" ) == 0 ) {
+				idStr fn	= s.attribute( "data-lua-fn" ).value();
+				int	  frame = 0;
+				if( s.attribute( "data-lua-at" ) ) {
+					float at = s.attribute( "data-lua-at" ).as_float();
+					frame	 = idMath::Rint( at * ( swf->frameRate / 256.0f ) );
+				}
+
+				if( frame == 0 ) {
+					swfSpriteCommand_t& cmd = commands.Alloc();
+					cmd.tag					= Tag_DoLua;
+
+					idFile_SWF memFile( new idFile_Memory() );
+					fn.Append( '\0' );
+					memFile.Write( fn.c_str(), fn.Length() );
+
+					cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+				} else {
+					luaMarker_t& m = luaMarkers.Alloc();
+					m.frame		   = frame;
+					m.fn		   = fn;
+				}
+			} else {
+				// place the newly created character into this sprite
 				swfSpriteCommand_t& cmd = commands.Alloc();
 				cmd.tag					= Tag_PlaceObject2;
 
@@ -655,7 +684,22 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 				if( s.attribute( "filter" ) ) {
 					flags |= PlaceFlagHasColorTransform;
 				}
-				if( s.attribute( "id" ) && !idStr::IsNumeric( s.attribute( "id" ).value() ) ) {
+				idStr name = s.attribute( "id" ).value();
+				idStr childName;
+				if( name.IsEmpty() || idStr::IsNumeric( name ) ) {
+					// if the wrapper node has no ID, check if the child has one (common in unfolded exports)
+					if( isWrapperPlace ) {
+						for( pugi::xml_node child = s.first_child(); child; child = child.next_sibling() ) {
+							const char* childId = child.attribute( "id" ).value();
+							if( childId[0] != '\0' && !idStr::IsNumeric( childId ) ) {
+								childName = childId;
+								break;
+							}
+						}
+					}
+				}
+
+				if( !name.IsEmpty() && !idStr::IsNumeric( name ) ) {
 					flags |= PlaceFlagHasName;
 				}
 
@@ -675,36 +719,16 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 				}
 
 				if( flags & PlaceFlagHasName ) {
-					idStr name = s.attribute( "id" ).value();
-					if( !name.IsEmpty() ) {
-						memFile.WriteString( name );
-						idToDepth.Set( name, depthCounter - 1 );
+					memFile.WriteString( name );
+					idToDepth.Set( name, depthCounter - 1 );
+				} else {
+					if( !childName.IsEmpty() ) {
+						memFile.WriteString( childName );
+						idToDepth.Set( childName, depthCounter - 1 );
+					} else {
+						// Fallback: track depth by character ID if no name is present
+						memFile.WriteString( va( "%i", newCharID ) );
 					}
-				} else {
-					idToDepth.Set( va( "%i", newCharID ), depthCounter - 1 );
-				}
-
-				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
-			} else {
-				// place the newly created character into this sprite
-				swfSpriteCommand_t& cmd = commands.Alloc();
-				cmd.tag					= Tag_PlaceObject2;
-				idFile_SWF memFile( new idFile_Memory() );
-				uint8	   flags = PlaceFlagHasCharacter;
-
-				idStr	   idAttr = s.attribute( "id" ).value();
-				if( !idAttr.IsEmpty() ) {
-					flags |= PlaceFlagHasName;
-				}
-
-				memFile.WriteU8( flags );
-				memFile.WriteU16( depthCounter++ );
-				memFile.WriteU16( newCharID );
-
-				if( flags & PlaceFlagHasName ) {
-					memFile.WriteString( idAttr );
-					idToDepth.Set( idAttr, depthCounter - 1 );
-				} else {
 					idToDepth.Set( va( "%i", newCharID ), depthCounter - 1 );
 				}
 
@@ -757,6 +781,12 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 
 		if( pa.valueList.Num() > frameCount ) {
 			frameCount = pa.valueList.Num();
+		}
+	}
+
+	for( int m = 0; m < luaMarkers.Num(); m++ ) {
+		if( luaMarkers[m].frame >= frameCount ) {
+			frameCount = luaMarkers[m].frame + 1;
 		}
 	}
 
@@ -877,6 +907,21 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 
 			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 		}
+
+		for( int m = 0; m < luaMarkers.Num(); m++ ) {
+			if( luaMarkers[m].frame == i ) {
+				swfSpriteCommand_t& cmd = commands.Alloc();
+				cmd.tag					= Tag_DoLua;
+
+				idFile_SWF memFile( new idFile_Memory() );
+				idStr	   fn = luaMarkers[m].fn;
+				fn.Append( '\0' );
+				memFile.Write( fn.c_str(), fn.Length() );
+
+				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+			}
+		}
+
 		frameOffsets.Append( commands.Num() );
 	}
 
