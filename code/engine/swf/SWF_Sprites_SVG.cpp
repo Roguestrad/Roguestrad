@@ -723,13 +723,11 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 					idToDepth.Set( name, depthCounter - 1 );
 				} else {
 					if( !childName.IsEmpty() ) {
-						memFile.WriteString( childName );
 						idToDepth.Set( childName, depthCounter - 1 );
 					} else {
 						// Fallback: track depth by character ID if no name is present
-						memFile.WriteString( va( "%i", newCharID ) );
+						idToDepth.Set( va( "%i", newCharID ), depthCounter - 1 );
 					}
-					idToDepth.Set( va( "%i", newCharID ), depthCounter - 1 );
 				}
 
 				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
@@ -842,35 +840,29 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 				swfMatrix_t* existingM;
 				if( depthMatrix.Get( pa.depth, &existingM ) ) {
 					if( pa.isAdditive ) {
-						*existingM = existingM->Multiply( m );
+						//*existingM = existingM->Multiply( m );
+						// HACK: this is only because we can't just export matrix() because the browsers don't support them
+						existingM->xx = m.xx;
+						existingM->yy = m.yy;
 					} else {
 						*existingM = m;
 					}
 				} else {
 					depthMatrix.Set( pa.depth, m );
-					depthsInFrame.Append( pa.depth );
+					depthsInFrame.AddUnique( pa.depth );
 				}
 			} else if( pa.attributeName == "opacity" ) {
 				swfColorXform_t cxf;
 				cxf.mul	  = vec4_one;
 				cxf.mul.w = ( float )atof( pa.valueList[i].c_str() );
-				cxf.add	  = vec4_zero;
+				cxf.add	  = vec4_zero; // FIXME: grab initial color from the character if available
 
 				swfColorXform_t* existingCxf;
 				if( depthColor.Get( pa.depth, &existingCxf ) ) {
 					existingCxf->mul.w *= cxf.mul.w;
 				} else {
 					depthColor.Set( pa.depth, cxf );
-					bool alreadyAdded = false;
-					for( int d = 0; d < depthsInFrame.Num(); d++ ) {
-						if( depthsInFrame[d] == pa.depth ) {
-							alreadyAdded = true;
-							break;
-						}
-					}
-					if( !alreadyAdded ) {
-						depthsInFrame.Append( pa.depth );
-					}
+					depthsInFrame.AddUnique( pa.depth );
 				}
 			}
 		}
