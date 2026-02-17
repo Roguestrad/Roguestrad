@@ -562,6 +562,11 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 	};
 	idList<luaMarker_t> luaMarkers;
 
+	idStr				scope;
+	if( node.attribute( "id" ) ) {
+		scope = node.attribute( "id" ).value();
+	}
+
 	for( pugi::xml_node s = node.first_child(); s; s = s.next_sibling() ) {
 		idStr		childName	   = s.name();
 		const char* dataType	   = s.attribute( "data-type" ).value();
@@ -759,6 +764,20 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDiction
 		idStr targetID = href.c_str() + 1;
 		int*  depthPtr;
 		if( !idToDepth.Get( targetID, &depthPtr ) ) {
+			if( targetID.Equals( "root._bottomLeft.playerInfo.info.healthBorder.pulse.34" ) ) {
+				int breakpoint = 0;
+				common->Printf( "Scope: %s\n", scope.c_str() );
+				// Print all idToDepth entries for debugging
+				for( int idx = 0; idx < idToDepth.Num(); idx++ ) {
+					idStr key;
+					if( idToDepth.GetIndexKey( idx, key ) ) {
+						int* depthPtr = idToDepth.GetIndex( idx );
+						common->Printf( "idToDepth[%d] = '%s' -> %d\n", idx, key.c_str(), depthPtr ? *depthPtr : -1 );
+					} else {
+						common->Printf( "idToDepth[%d] = <invalid>\n", idx );
+					}
+				}
+			}
 			continue;
 		}
 
@@ -1528,25 +1547,34 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 		case SWF_DICT_SPRITE: {
 			idSWFSprite* sprite = dictEntry.sprite;
 
-			if( !name.IsEmpty() ) {
-				file->WriteFloatString( "%s<g id=\"%s\" data-type=\"Tag_PlaceObject2\" ", tabs.c_str(), uniqueID.c_str() );
+			if( ( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) || !filterID.IsEmpty() ) {
+				if( name.Equals( "root._bottomLeft.playerInfo.info.healthBorder" ) ) {
+					int breakpoint = 0;
+				}
+
+				if( !name.IsEmpty() ) {
+					file->WriteFloatString( "%s<g id=\"%s\" data-type=\"Tag_PlaceObject2\" ", tabs.c_str(), uniqueID.c_str() );
+				} else {
+					file->WriteFloatString( "%s<g data-type=\"Tag_PlaceObject2\" ", tabs.c_str() );
+				}
+
+				if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) {
+					file->WriteFloatString( "%s", transform.c_str() );
+				}
+
+				if( !filterID.IsEmpty() ) {
+					file->WriteFloatString( "filter=\"url(#%s)\" ", filterID.c_str() );
+				}
+
+				file->WriteFloatString( ">\n" );
+
+				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent + 1 );
+
+				file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 			} else {
-				file->WriteFloatString( "%s<g data-type=\"Tag_PlaceObject2\" ", tabs.c_str() );
+				// no group around for this sprite, write directly (the sprite will write its own group)
+				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent + 1 );
 			}
-
-			if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) {
-				file->WriteFloatString( "%s", transform.c_str() );
-			}
-
-			if( !filterID.IsEmpty() ) {
-				file->WriteFloatString( "filter=\"url(#%s)\" ", filterID.c_str() );
-			}
-
-			file->WriteFloatString( ">\n" );
-
-			sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent + 1 );
-
-			file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 			break;
 		}
 	}
