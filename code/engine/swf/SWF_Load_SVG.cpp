@@ -352,9 +352,11 @@ bool idSWF::LoadSVG( const char* filename )
 	frameHeight = svgNode.attribute( "height" ).as_float();
 	frameRate	= 60 * 256;
 
-	bool		   isUnfolded = true;
+	bool											  isUnfolded = true;
+	idHashTableT<idStr, idSWFSprite::svgAnimTarget_t> svgTargetMap;
+	idList<pugi::xml_node>							  svgAnimations;
 
-	pugi::xml_node defs = svgNode.child( "defs" );
+	pugi::xml_node									  defs = svgNode.child( "defs" );
 	if( defs ) {
 		int maxID = 0;
 		for( pugi::xml_node child = defs.first_child(); child; child = child.next_sibling() ) {
@@ -400,7 +402,7 @@ bool idSWF::LoadSVG( const char* filename )
 				} else {
 					entry.type	 = SWF_DICT_SPRITE;
 					entry.sprite = new idSWFSprite( this );
-					entry.sprite->LoadSVGNode_r( g, dictionary, isUnfolded );
+					entry.sprite->LoadSVGNode_r( g, dictionary, isUnfolded, &svgTargetMap, &svgAnimations );
 				}
 			}
 		}
@@ -413,7 +415,17 @@ bool idSWF::LoadSVG( const char* filename )
 	}
 
 	mainsprite = new idSWFSprite( this );
-	mainsprite->LoadSVGNode_r( mainNode, dictionary, isUnfolded );
+	mainsprite->LoadSVGNode_r( mainNode, dictionary, isUnfolded, &svgTargetMap, &svgAnimations );
+	// if( svgAnimations.Num() > 0 ) {
+	// 	for( int i = 0; i < dictionary.Num(); i++ ) {
+	// 		if( dictionary[i].type == SWF_DICT_SPRITE && dictionary[i].sprite != NULL ) {
+	// 			dictionary[i].sprite->ApplySVGAnimationTargets( svgTargetMap, svgAnimations );
+	// 		}
+	// 	}
+	// 	if( mainsprite != NULL ) {
+	// 		mainsprite->ApplySVGAnimationTargets( svgTargetMap, svgAnimations );
+	// 	}
+	// }
 
 	// now that all images have been loaded, write out the combined image
 	idStr atlasFileName = "generated/";

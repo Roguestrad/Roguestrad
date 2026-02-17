@@ -63,7 +63,17 @@ public:
 	void ReadJSON( rapidjson::Value& entry );
 	void WriteJSON( idFile* f, idFile* luaFile, int characterID );
 
-	void LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded );
+	struct svgAnimTarget_t {
+		idSWFSprite* owner;
+		int			 depth;
+	};
+
+	void LoadSVGNode_r(
+		const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, svgAnimTarget_t>* targetMap = NULL, idList<pugi::xml_node>* animations = NULL );
+
+	void ApplySVGAnimationTargets(
+		const idHashTableT<idStr, svgAnimTarget_t>& targetMap, idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>* globalTargetMap, const idList<pugi::xml_node>& animations );
+
 	void WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
 	void WriteSVGUnfolded_r(
 		idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict, idHashTableT<int, svgDisplayEntry_t>& characterMap, float frameDur, const idStr& prefix, int indent );
@@ -133,10 +143,16 @@ private:
 	};
 	idList<swfSpriteCommand_t, TAG_SWF> commands;
 
-	//// [ES-BrianBugh 1/16/10] - There can be multiple DoInitAction tags, and all need to be executed.
-	idList<idSWFBitStream, TAG_SWF>		doInitActions;
+	struct svgLuaMarker_t {
+		int	  frame;
+		idStr fn;
+	};
+	idList<svgLuaMarker_t, TAG_SWF> svgLuaMarkers;
 
-	byte*								commandBuffer;
+	//// [ES-BrianBugh 1/16/10] - There can be multiple DoInitAction tags, and all need to be executed.
+	idList<idSWFBitStream, TAG_SWF> doInitActions;
+
+	byte*							commandBuffer;
 };
 
 #endif // !__SWF_SPRITES_H__
