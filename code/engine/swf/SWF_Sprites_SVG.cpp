@@ -849,6 +849,43 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 		}
 	}
 
+	// Build a map of depth -> initial color transform from frame 0 placement commands.
+	// This lets opacity animations preserve the original feColorMatrix mul/add values.
+	idHashTableT<int, swfColorXform_t> depthBaseColor;
+	{
+		int frameZeroCommandCount = commands.Num();
+		for( int c = 0; c < frameZeroCommandCount; c++ ) {
+			swfSpriteCommand_t& cmd = commands[c];
+			if( cmd.tag == Tag_PlaceObject2 || cmd.tag == Tag_PlaceObject3 ) {
+				cmd.stream.Rewind();
+				uint8 flags1 = cmd.stream.ReadU8();
+				uint8 flags2 = ( cmd.tag == Tag_PlaceObject3 ) ? cmd.stream.ReadU8() : 0;
+				int	  depth	 = cmd.stream.ReadU16();
+
+				// Only capture the base color from initial placements (new character).
+				// PlaceFlagMove-only commands are position updates, not new placements,
+				// so they don't carry a meaningful base color to preserve.
+				if( !( flags1 & PlaceFlagHasCharacter ) ) {
+					cmd.stream.Rewind();
+					continue;
+				}
+
+				cmd.stream.ReadU16(); // characterID - skip
+				if( flags1 & PlaceFlagHasMatrix ) {
+					swfMatrix_t m;
+					cmd.stream.ReadMatrix( m ); // skip
+				}
+				if( flags1 & PlaceFlagHasColorTransform ) {
+					swfColorXform_t cxf;
+					cmd.stream.ReadColorXFormRGBA( cxf );
+					depthBaseColor.Set( depth, cxf );
+				}
+
+				cmd.stream.Rewind(); // restore for normal playback
+			}
+		}
+	}
+
 	// Group commands frame by frame
 	for( int i = 1; i < frameCount; i++ ) {
 		idList<int>						   depthsInFrame;
@@ -913,15 +950,25 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 					depthsInFrame.AddUnique( pa.depth );
 				}
 			} else if( pa.attributeName == "opacity" ) {
-				swfColorXform_t cxf;
-				cxf.mul	  = vec4_one;
-				cxf.mul.w = ( float )atof( pa.valueList[i].c_str() );
-				cxf.add	  = vec4_zero; // FIXME: grab initial color from the character if available
+				float			 opacity = ( float )atof( pa.valueList[i].c_str() );
 
 				swfColorXform_t* existingCxf;
 				if( depthColor.Get( pa.depth, &existingCxf ) ) {
-					existingCxf->mul.w *= cxf.mul.w;
+					// A previous animation already set the base; only scale alpha further.
+					existingCxf->mul.w *= opacity;
 				} else {
+					// Start from the original placement color transform so that
+					// feColorMatrix mul/add values (r,g,b channels) are preserved.
+					swfColorXform_t	 cxf;
+					swfColorXform_t* baseCxf = NULL;
+					if( depthBaseColor.Get( pa.depth, &baseCxf ) ) {
+						cxf = *baseCxf;
+					} else {
+						cxf.mul = vec4_one;
+						cxf.add = vec4_zero;
+					}
+					cxf.mul.w = opacity;
+
 					depthColor.Set( pa.depth, cxf );
 					depthsInFrame.AddUnique( pa.depth );
 				}
