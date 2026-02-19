@@ -416,16 +416,35 @@ bool idSWF::LoadSVG( const char* filename )
 
 	mainsprite = new idSWFSprite( this );
 	mainsprite->LoadSVGNode_r( mainNode, dictionary, isUnfolded, &svgTargetMap, &svgAnimations );
-	// if( svgAnimations.Num() > 0 ) {
-	// 	for( int i = 0; i < dictionary.Num(); i++ ) {
-	// 		if( dictionary[i].type == SWF_DICT_SPRITE && dictionary[i].sprite != NULL ) {
-	// 			dictionary[i].sprite->ApplySVGAnimationTargets( svgTargetMap, svgAnimations );
-	// 		}
-	// 	}
-	// 	if( mainsprite != NULL ) {
-	// 		mainsprite->ApplySVGAnimationTargets( svgTargetMap, svgAnimations );
-	// 	}
-	// }
+
+	if( svgAnimations.Num() > 0 ) {
+		// Parse all collected animation nodes into parsedAnim_t entries stored on each target.
+		idSWFSprite::ParseSVGAnimations( svgTargetMap, svgAnimations );
+
+		// Group parsed animations by owner sprite, then apply each group once.
+		// Using parallel lists to avoid pointer-keyed hash tables.
+		idList<idSWFSprite*>						 uniqueOwners;
+		idList<idList<idSWFSprite::parsedAnim_t>>	 ownerAnims;
+
+		for( int i = 0; i < svgTargetMap.Num(); i++ ) {
+			idSWFSprite::svgAnimTarget_t* target = svgTargetMap.GetIndex( i );
+			if( target == NULL || target->owner == NULL || target->parsedAnims.Num() == 0 ) {
+				continue;
+			}
+
+			int ownerIdx = uniqueOwners.FindIndex( target->owner );
+			if( ownerIdx < 0 ) {
+				ownerIdx = uniqueOwners.Num();
+				uniqueOwners.Append( target->owner );
+				ownerAnims.Alloc();
+			}
+			ownerAnims[ownerIdx].Append( target->parsedAnims );
+		}
+
+		for( int i = 0; i < uniqueOwners.Num(); i++ ) {
+			uniqueOwners[i]->ApplySVGAnimationTargets( ownerAnims[i] );
+		}
+	}
 
 	// now that all images have been loaded, write out the combined image
 	idStr atlasFileName = "generated/";

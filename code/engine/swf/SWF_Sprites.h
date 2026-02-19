@@ -63,16 +63,31 @@ public:
 	void ReadJSON( rapidjson::Value& entry );
 	void WriteJSON( idFile* f, idFile* luaFile, int characterID );
 
+	struct parsedAnim_t {
+		int			  depth;
+		idList<idStr> valueList;
+		idStr		  attributeName;
+		bool		  isTransform;
+		idStr		  transformType;
+		bool		  isAdditive;
+	};
+
 	struct svgAnimTarget_t {
-		idSWFSprite* owner;
-		int			 depth;
+		idSWFSprite*		  owner;
+		int					  depth;
+		idList<parsedAnim_t>  parsedAnims;
 	};
 
 	void LoadSVGNode_r(
 		const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, svgAnimTarget_t>* targetMap = NULL, idList<pugi::xml_node>* animations = NULL );
 
-	void ApplySVGAnimationTargets(
-		const idHashTableT<idStr, svgAnimTarget_t>& targetMap, idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>* globalTargetMap, const idList<pugi::xml_node>& animations );
+	// Parses all collected animation nodes into parsedAnim_t entries stored on each svgAnimTarget_t.
+	// Call this once after all LoadSVGNode_r calls have finished, before ApplySVGAnimationTargets.
+	static void ParseSVGAnimations(
+		idHashTableT<idStr, svgAnimTarget_t>& targetMap, const idList<pugi::xml_node>& animations );
+
+	// Builds SWF frame commands from pre-parsed animation data belonging to this sprite.
+	void ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAnims );
 
 	void WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
 	void WriteSVGUnfolded_r(
