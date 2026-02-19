@@ -423,8 +423,8 @@ bool idSWF::LoadSVG( const char* filename )
 
 		// Group parsed animations by owner sprite, then apply each group once.
 		// Using parallel lists to avoid pointer-keyed hash tables.
-		idList<idSWFSprite*>						 uniqueOwners;
-		idList<idList<idSWFSprite::parsedAnim_t>>	 ownerAnims;
+		idList<idSWFSprite*>					  uniqueOwners;
+		idList<idList<idSWFSprite::parsedAnim_t>> ownerAnims;
 
 		for( int i = 0; i < svgTargetMap.Num(); i++ ) {
 			idSWFSprite::svgAnimTarget_t* target = svgTargetMap.GetIndex( i );
@@ -433,7 +433,7 @@ bool idSWF::LoadSVG( const char* filename )
 			}
 
 			int ownerIdx = uniqueOwners.FindIndex( target->owner );
-			if( ownerIdx < 0 ) {
+			if( ownerIdx == -1 ) {
 				ownerIdx = uniqueOwners.Num();
 				uniqueOwners.Append( target->owner );
 				ownerAnims.Alloc();

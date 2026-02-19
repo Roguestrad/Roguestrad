@@ -581,9 +581,9 @@ void idSWFSprite::LoadSVGNode_r(
 	frameOffsets.Append( 0 );
 	svgLuaMarkers.Clear();
 
-	int depthCounter = 1;
+	int	  depthCounter = 1;
 
-	idStr											  scope;
+	idStr scope;
 	if( node.attribute( "id" ) ) {
 		scope = node.attribute( "id" ).value();
 	}
@@ -769,6 +769,12 @@ void idSWFSprite::LoadSVGNode_r(
 			}
 		}
 	}
+
+	// Terminate frameOffsets so that frame 0 is properly bounded ([0, N]).
+	// ApplySVGAnimationTargets will reset and rebuild this if animations exist for this sprite.
+	while( frameOffsets.Num() <= frameCount ) {
+		frameOffsets.Append( commands.Num() );
+	}
 }
 
 // ---------------------------------------------------------------------------
@@ -777,13 +783,12 @@ void idSWFSprite::LoadSVGNode_r(
 // matching svgAnimTarget_t in the global target map.  Call this once after
 // all LoadSVGNode_r calls have completed.
 // ---------------------------------------------------------------------------
-void idSWFSprite::ParseSVGAnimations(
-	idHashTableT<idStr, svgAnimTarget_t>& targetMap, const idList<pugi::xml_node>& animations )
+void idSWFSprite::ParseSVGAnimations( idHashTableT<idStr, svgAnimTarget_t>& targetMap, const idList<pugi::xml_node>& animations )
 {
 	for( int a = 0; a < animations.Num(); a++ ) {
 		const pugi::xml_node& animNode = animations[a];
 
-		idStr targetID;
+		idStr				  targetID;
 		if( !GetSVGAnimationTargetID( animNode, targetID ) ) {
 			continue;
 		}
@@ -824,6 +829,10 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	frameOffsets.Append( 0 );
 
 	if( parsedAnims.Num() == 0 && svgLuaMarkers.Num() == 0 ) {
+		// Still need to re-terminate frameOffsets after the reset above.
+		while( frameOffsets.Num() <= frameCount ) {
+			frameOffsets.Append( commands.Num() );
+		}
 		return;
 	}
 
