@@ -1694,11 +1694,11 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			idSWFSprite* sprite = dictEntry.sprite;
 
 			if( ( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) || !filterID.IsEmpty() ) {
-				if( name.Equals( "_bottomLeft" ) ) {
+				if( uniqueID.Equals( "root.info0.13" ) ) {
 					int breakpoint = 0;
 				}
 
-				if( !name.IsEmpty() ) {
+				if( !name.IsEmpty() || isAnimated ) {
 					file->WriteFloatString( "%s<g id=\"%s\" data-type=\"Tag_PlaceObject2\" ", tabs.c_str(), uniqueID.c_str() );
 				} else {
 					file->WriteFloatString( "%s<g data-type=\"Tag_PlaceObject2\" ", tabs.c_str() );
@@ -1714,7 +1714,11 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 
 				file->WriteFloatString( ">\n" );
 
-				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, false );
+				bool writeGroupTag = false; // isAnimated || ( flags1 & PlaceFlagHasColorTransform ) != 0;
+				if( writeGroupTag ) {
+					indent++;
+				}
+				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, writeGroupTag );
 
 				file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 			} else {
