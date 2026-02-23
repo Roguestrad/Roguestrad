@@ -402,7 +402,7 @@ bool idSWF::LoadSVG( const char* filename )
 				} else {
 					entry.type	 = SWF_DICT_SPRITE;
 					entry.sprite = new idSWFSprite( this );
-					entry.sprite->LoadSVGNode_r( g, dictionary, isUnfolded, &svgTargetMap, &svgAnimations );
+					entry.sprite->LoadSVGNode_r( g, dictionary, isUnfolded, svgTargetMap, svgAnimations );
 				}
 			}
 		}
@@ -415,7 +415,7 @@ bool idSWF::LoadSVG( const char* filename )
 	}
 
 	mainsprite = new idSWFSprite( this );
-	mainsprite->LoadSVGNode_r( mainNode, dictionary, isUnfolded, &svgTargetMap, &svgAnimations );
+	mainsprite->LoadSVGNode_r( mainNode, dictionary, isUnfolded, svgTargetMap, svgAnimations );
 
 	if( svgAnimations.Num() > 0 ) {
 		// Parse all collected animation nodes into parsedAnim_t entries stored on each target.

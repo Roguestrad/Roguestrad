@@ -560,9 +560,9 @@ static bool GetSVGAnimationTargetID( const pugi::xml_node& animNode, idStr& outT
 	return true;
 }
 
-static void RegisterSVGAnimationTarget( idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>* targetMap, const idStr& targetID, idSWFSprite* owner, int depth )
+static void RegisterSVGAnimationTarget( idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>& targetMap, const idStr& targetID, idSWFSprite* owner, int depth )
 {
-	if( targetMap == NULL || owner == NULL || targetID.IsEmpty() ) {
+	if( owner == NULL || targetID.IsEmpty() ) {
 		return;
 	}
 
@@ -570,11 +570,11 @@ static void RegisterSVGAnimationTarget( idHashTableT<idStr, idSWFSprite::svgAnim
 	entry.owner = owner;
 	entry.depth = depth;
 
-	targetMap->Set( targetID, entry );
+	targetMap.Set( targetID, entry );
 }
 
 void idSWFSprite::LoadSVGNode_r(
-	const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>* targetMap, idList<pugi::xml_node>* animations )
+	const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>& targetMap, idList<pugi::xml_node>& animations )
 {
 	frameCount = 1;
 	frameOffsets.Clear();
@@ -607,7 +607,24 @@ void idSWFSprite::LoadSVGNode_r(
 			if( s.attribute( "filter" ) ) {
 				flags |= PlaceFlagHasColorTransform;
 			}
+			idStr fullID;
+			idStr localName;
 			if( s.attribute( "id" ) ) {
+				fullID = s.attribute( "id" ).value();
+				if( !fullID.IsEmpty() ) {
+					RegisterSVGAnimationTarget( targetMap, fullID, this, depthCounter );
+
+					localName	= fullID;
+					int lastDot = fullID.Last( '.' );
+					if( lastDot != -1 ) {
+						localName = fullID.Right( fullID.Length() - lastDot - 1 );
+					}
+					if( idStr::IsNumeric( localName ) ) {
+						localName.Clear();
+					}
+				}
+			}
+			if( !localName.IsEmpty() ) {
 				flags |= PlaceFlagHasName;
 			}
 
@@ -630,14 +647,8 @@ void idSWFSprite::LoadSVGNode_r(
 			}
 
 			if( flags & PlaceFlagHasName ) {
-				idStr name = s.attribute( "id" ).value();
-				memFile.WriteString( name );
-				RegisterSVGAnimationTarget( targetMap, name, this, depthCounter - 1 );
-			} else {
-				// Fallback: track depth by character ID if no name is present
-				idStr fallback;
-				fallback.Format( "%i", charID );
-				RegisterSVGAnimationTarget( targetMap, fallback, this, depthCounter - 1 );
+				memFile.WriteString( localName );
+				// memFile.WriteString( fullID );
 			}
 
 			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
@@ -741,22 +752,25 @@ void idSWFSprite::LoadSVGNode_r(
 				if( s.attribute( "filter" ) ) {
 					flags |= PlaceFlagHasColorTransform;
 				}
-				idStr name = s.attribute( "id" ).value();
-				idStr childName;
-				if( name.IsEmpty() || idStr::IsNumeric( name ) ) {
-					// if the wrapper node has no ID, check if the child has one (common in unfolded exports)
-					if( isWrapperPlace ) {
-						for( pugi::xml_node child = s.first_child(); child; child = child.next_sibling() ) {
-							const char* childId = child.attribute( "id" ).value();
-							if( childId[0] != '\0' && !idStr::IsNumeric( childId ) ) {
-								childName = childId;
-								break;
-							}
+				idStr fullID;
+				idStr localName;
+				if( s.attribute( "id" ) ) {
+					fullID = s.attribute( "id" ).value();
+					if( !fullID.IsEmpty() ) {
+						RegisterSVGAnimationTarget( targetMap, fullID, this, depthCounter );
+
+						localName	= fullID;
+						int lastDot = fullID.Last( '.' );
+						if( lastDot != -1 ) {
+							localName = fullID.Right( fullID.Length() - lastDot - 1 );
+						}
+						if( idStr::IsNumeric( localName ) ) {
+							localName.Clear();
 						}
 					}
 				}
 
-				if( !name.IsEmpty() && !idStr::IsNumeric( name ) ) {
+				if( !localName.IsEmpty() ) {
 					flags |= PlaceFlagHasName;
 				}
 
@@ -776,26 +790,16 @@ void idSWFSprite::LoadSVGNode_r(
 				}
 
 				if( flags & PlaceFlagHasName ) {
-					memFile.WriteString( name );
-					RegisterSVGAnimationTarget( targetMap, name, this, depthCounter - 1 );
-				} else {
-					if( !childName.IsEmpty() ) {
-						RegisterSVGAnimationTarget( targetMap, childName, this, depthCounter - 1 );
-					} else {
-						// Fallback: track depth by character ID if no name is present
-						idStr fallback;
-						fallback.Format( "%i", newCharID );
-						RegisterSVGAnimationTarget( targetMap, fallback, this, depthCounter - 1 );
-					}
+					// FIXME this causes _bottomLeft, _bottomRight to be rendered on top
+					// memFile.WriteString( localName );
+					memFile.WriteString( fullID );
 				}
 
 				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 			}
 
 		} else if( childName == "animateTransform" || childName == "animate" ) {
-			if( animations != NULL ) {
-				animations->Append( s );
-			}
+			animations.Append( s );
 		}
 	}
 
