@@ -330,7 +330,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	}
 
 	// RB: Lua
-	const bool initLua = !exportJSON && !exportSWF;
+	const bool initLua = !exportSWF;
 
 	lua_State* L = luaState = NULL;
 	if( initLua ) {
