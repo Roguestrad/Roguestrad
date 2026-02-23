@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2026 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -110,6 +111,26 @@ void idSWFSpriteInstance::PlaceObject2( idSWFBitStream& bitstream )
 	if( ( flags & PlaceFlagHasClipActions ) != 0 ) {
 		// FIXME: clip actions
 	}
+
+#ifdef _DEBUG
+	// RB: added debug info
+	if( display->spriteInstance == NULL ) {
+		return;
+	}
+	if( globalName.IsEmpty() ) {
+		if( ( flags & PlaceFlagHasName ) != 0 ) {
+			display->spriteInstance->globalName = display->spriteInstance->name;
+		} else {
+			display->spriteInstance->globalName.Format( "depth%d_%d", depth, characterID );
+		}
+	} else {
+		if( ( flags & PlaceFlagHasName ) != 0 ) {
+			display->spriteInstance->globalName = globalName + "." + display->spriteInstance->name;
+		} else {
+			display->spriteInstance->globalName.Format( "depth%d_%d", depth, characterID );
+		}
+	}
+#endif
 }
 
 /*
@@ -204,6 +225,26 @@ void idSWFSpriteInstance::PlaceObject3( idSWFBitStream& bitstream )
 	if( ( flags1 & PlaceFlagHasClipActions ) != 0 ) {
 		// FIXME:
 	}
+
+#ifdef _DEBUG
+	// RB: added debug info
+	if( display->spriteInstance == NULL ) {
+		return;
+	}
+	if( globalName.IsEmpty() ) {
+		if( ( flags1 & PlaceFlagHasName ) != 0 ) {
+			display->spriteInstance->globalName = display->spriteInstance->name;
+		} else {
+			display->spriteInstance->globalName.Format( "depth%d_%d", depth, characterID );
+		}
+	} else {
+		if( ( flags1 & PlaceFlagHasName ) != 0 ) {
+			display->spriteInstance->globalName = globalName + "." + display->spriteInstance->name;
+		} else {
+			display->spriteInstance->globalName.Format( "depth%d_%d", depth, characterID );
+		}
+	}
+#endif
 }
 
 /*

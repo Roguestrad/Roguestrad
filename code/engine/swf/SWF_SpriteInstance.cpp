@@ -479,11 +479,9 @@ idSWFSpriteInstance::DoAction
 */
 void idSWFSpriteInstance::DoAction( idSWFBitStream& bitstream )
 {
-#if 1
 	swfAction_t& action = actions.Alloc();
 	action.data			= bitstream.ReadData( bitstream.Length() );
 	action.dataLength	= bitstream.Length();
-#endif
 }
 
 // RB begin
@@ -1109,6 +1107,9 @@ SWF_SPRITE_FUNCTION_DEFINE( duplicateMovieClip )
 	idStr name = parms[0].ToString();
 	pThis->parent->scriptObject->Set( name, display->spriteInstance->scriptObject );
 	display->spriteInstance->name = name;
+#ifdef _DEBUG
+	display->spriteInstance->globalName = pThis->globalName.IsEmpty() ? name : pThis->globalName + "." + name;
+#endif
 	display->spriteInstance->RunTo( 1 );
 
 	return display->spriteInstance->scriptObject;

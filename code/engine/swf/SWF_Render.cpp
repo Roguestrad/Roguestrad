@@ -428,7 +428,7 @@ void idSWF::RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* spriteInstan
 	}
 
 	// RB begin
-	if( swf_show.GetInteger() > 0 && !spriteInstance->name.IsEmpty() ) // Icmp( "buttonBar" ) == 0 )
+	if( swf_show.GetInteger() > 0 ) // && !spriteInstance->name.IsEmpty() ) // Icmp( "buttonBar" ) == 0 )
 	{
 		swfRect_t rect = CalcRect( spriteInstance, renderState );
 
@@ -441,11 +441,12 @@ void idSWF::RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* spriteInstan
 				color = colorCyan;
 			}
 
-			idStr str;
-			// str = display.spriteInstance->name.c_str();
-			sprintf( str, "%s\n%s", spriteInstance->name.c_str(), GetName() );
-
-			DrawText( gui, str, 0.35f, 0, color, swfRect_t( rect.tl.x, rect.tl.y, 300, 40 ), false );
+			idStr globalName;
+			globalName.Format( "%s", spriteInstance->globalName.c_str() );
+			idStr nameFrame;
+			nameFrame.Format( "%s - f%i", spriteInstance->name.c_str(), spriteInstance->currentFrame );
+			// DrawText( gui, globalName.c_str(), 0.35f, 0, color, swfRect_t( rect.tl.x, rect.tl.y - 20, 300, 40 ), false );
+			DrawText( gui, nameFrame.c_str(), 0.35f, 0, color, swfRect_t( rect.tl.x, rect.tl.y, 300, 40 ), false );
 			// DrawText( gui, str, 0.25 * 2, 0, colorWhite, swfRect_t( rect.tl.x, rect.tl.y, 300, 40 ), false );
 		}
 	}

@@ -170,6 +170,9 @@ public:
 
 	// name of this sprite instance
 	idStr							   name;
+#ifdef _DEBUG
+	idStr globalName;
+#endif
 
 	struct swfAction_t {
 		const byte* data;

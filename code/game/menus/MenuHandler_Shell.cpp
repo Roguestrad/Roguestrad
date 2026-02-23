@@ -1267,7 +1267,9 @@ void			 idMenuHandler_Shell::ShowDoomIntro()
 							return idSWFScriptVar();
 						}
 
-						if( thisObject->GetSprite()->currentFrame == 1 ) {
+						idSWFSpriteInstance* sprite = thisObject->GetSprite();
+
+						if( sprite->currentFrame == 1 ) {
 							return idSWFScriptVar();
 						}
 
@@ -1280,10 +1282,10 @@ void			 idMenuHandler_Shell::ShowDoomIntro()
 							txtVal->triggerGenerate = true;
 						} else if( generating ) {
 							if( !txtVal->generatingText ) {
-								float newYPos = thisObject->GetSprite()->GetYPos() - 1.5f;
+								float newYPos = sprite->GetYPos() - 1.5f;
 								if( newYPos <= 350.0f - ( numLines * 36.0f ) ) {
-									if( thisObject->GetSprite()->IsVisible() ) {
-										thisObject->GetSprite()->SetVisible( false );
+									if( sprite->IsVisible() ) {
+										sprite->SetVisible( false );
 										if( nextIndex >= NUM_DOOM_INTRO_LINES ) {
 											shell->StartGame( 0 );
 										}
@@ -1300,11 +1302,11 @@ void			 idMenuHandler_Shell::ShowDoomIntro()
 									if( newYPos <= 450 ) {
 										alpha = ( newYPos - 350.0f ) / 100.0f;
 									}
-									thisObject->GetSprite()->SetAlpha( alpha );
-									thisObject->GetSprite()->SetYPos( newYPos );
+									sprite->SetAlpha( alpha );
+									sprite->SetYPos( newYPos );
 								} else {
-									thisObject->GetSprite()->SetYPos( newYPos );
-									thisObject->GetSprite()->SetAlpha( 1.0f );
+									sprite->SetYPos( newYPos );
+									sprite->SetAlpha( 1.0f );
 								}
 							}
 						}

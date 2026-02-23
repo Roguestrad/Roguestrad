@@ -580,6 +580,7 @@ void idSWFSprite::LoadSVGNode_r(
 	frameOffsets.Clear();
 	frameOffsets.Append( 0 );
 	svgLuaMarkers.Clear();
+	frameLabels.Clear();
 
 	int	  depthCounter = 1;
 
@@ -657,6 +658,34 @@ void idSWFSprite::LoadSVGNode_r(
 			}
 
 		} else if( childName == "g" ) {
+			if( dataType != nullptr && idStr::Icmp( dataType, "FrameLabel" ) == 0 ) {
+				if( s.attribute( "data-frame-label" ) ) {
+					idStr label = s.attribute( "data-frame-label" ).value();
+
+					int	  frame = 0;
+					if( s.attribute( "data-frame-label-at" ) ) {
+						float at = s.attribute( "data-frame-label-at" ).as_float();
+						frame	 = idMath::Rint( at * ( swf->frameRate / 256.0f ) );
+					}
+
+					int	 frameNum = frame + 1;
+
+					bool exists = false;
+					for( int i = 0; i < frameLabels.Num(); i++ ) {
+						if( frameLabels[i].frameNum == frameNum && frameLabels[i].frameLabel == label ) {
+							exists = true;
+							break;
+						}
+					}
+					if( !exists ) {
+						swfFrameLabel_t& fl = frameLabels.Alloc();
+						fl.frameNum			= frameNum;
+						fl.frameLabel		= label;
+					}
+				}
+				continue;
+			}
+
 			int					  newCharID = dict.Num();
 			idSWFDictionaryEntry& newEntry	= dict.Alloc();
 
@@ -828,7 +857,7 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	frameOffsets.Clear();
 	frameOffsets.Append( 0 );
 
-	if( parsedAnims.Num() == 0 && svgLuaMarkers.Num() == 0 ) {
+	if( parsedAnims.Num() == 0 && svgLuaMarkers.Num() == 0 && frameLabels.Num() == 0 ) {
 		// Still need to re-terminate frameOffsets after the reset above.
 		while( frameOffsets.Num() <= frameCount ) {
 			frameOffsets.Append( commands.Num() );
@@ -846,6 +875,12 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	for( int m = 0; m < svgLuaMarkers.Num(); m++ ) {
 		if( svgLuaMarkers[m].frame >= frameCount ) {
 			frameCount = svgLuaMarkers[m].frame + 1;
+		}
+	}
+
+	for( int i = 0; i < frameLabels.Num(); i++ ) {
+		if( frameLabels[i].frameNum > 0 && frameLabels[i].frameNum > frameCount ) {
+			frameCount = frameLabels[i].frameNum;
 		}
 	}
 
@@ -1132,6 +1167,13 @@ void idSWFSprite::WriteSVGUnfolded_r(
 	// uniqueID.Format( "%s.%i", prefix.c_str(),characterID );
 
 	file->WriteFloatString( "%s<g id=\"%s\" data-type=\"SPRITE\" >\n", tabs.c_str(), prefix.c_str() );
+
+	if( frameLabels.Num() > 0 ) {
+		for( int i = 0; i < frameLabels.Num(); i++ ) {
+			float at = ( frameLabels[i].frameNum > 0 ) ? ( ( frameLabels[i].frameNum - 1 ) * frameDur ) : 0.0f;
+			file->WriteFloatString( "%s\t<g data-type=\"FrameLabel\" data-frame-label=\"%s\" data-frame-label-at=\"%fs\" />\n", tabs.c_str(), frameLabels[i].frameLabel.c_str(), at );
+		}
+	}
 
 	for( int frame = 0; frame < frameCount; frame++ ) {
 		int frameStart = frameOffsets[frame];

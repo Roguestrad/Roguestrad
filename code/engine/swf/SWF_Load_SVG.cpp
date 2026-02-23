@@ -475,9 +475,11 @@ void idSWF::WriteSVG( const char* filename )
 							"\txmlns=\"http://www.w3.org/2000/svg\"\n"
 							"\txmlns:xlink=\"http://www.w3.org/1999/xlink\"\n"
 							"\twidth=\"%i\"\n"
-							"\theight=\"%i\"\n >\n",
+							"\theight=\"%i\"\n"
+							"\tdata-exported-from=\"%s\"\n>\n",
 		( int )frameWidth,
-		( int )frameHeight );
+		( int )frameHeight,
+		ENGINE_VERSION );
 
 	const bool exportUnfolded = true;
 
