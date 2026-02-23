@@ -141,6 +141,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	ID_TIME_T svgSourceTime = fileSystem->GetTimestamp( svgFileName );
 
 	bool	  loadedFromJSON = false;
+	bool	  loadedFromSVG	 = false;
 	if( swf_loadBinary.GetBool() ) {
 		if( jsonSourceTime != FILE_NOT_FOUND_TIMESTAMP ) {
 			timestamp = jsonSourceTime;
@@ -161,7 +162,8 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 
 				// WriteBinary( binaryFileName );
 			} else if( LoadSVG( svgFileName ) ) {
-				exportJSON = true;
+				loadedFromSVG = true;
+				exportJSON	  = true;
 				// WriteBinary( binaryFileName );
 			} else if( LoadSWF( filename ) ) {
 				WriteBinary( binaryFileName );
@@ -330,7 +332,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	}
 
 	// RB: Lua
-	const bool initLua = !exportSWF;
+	const bool initLua = loadedFromSVG && !exportSWF;
 
 	lua_State* L = luaState = NULL;
 	if( initLua ) {
@@ -1075,7 +1077,8 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 		idStr bswfName = files->GetList()[f];
 
 #if 1
-		if( !bswfName.Equals( "generated/swf/doomintro.bswf" ) && !bswfName.Equals( "generated/swf/hud.bswf" ) ) { //&& !bswfName.Equals( "generated/swf/dialog.bswf" )  ) {
+		if( !bswfName.Equals( "generated/swf/doomintro.bswf" ) && !bswfName.Equals( "generated/swf/hud.bswf" ) &&
+			!bswfName.Equals( "generated/swf/shell.bswf" ) ) { //&& !bswfName.Equals( "generated/swf/dialog.bswf" )  ) {
 			continue;
 		}
 #endif
