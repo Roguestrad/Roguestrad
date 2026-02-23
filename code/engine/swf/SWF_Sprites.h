@@ -88,8 +88,14 @@ public:
 	void		ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAnims );
 
 	void		WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
-	void		WriteSVGUnfolded_r(
-			   idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict, idHashTableT<int, svgDisplayEntry_t>& characterMap, float frameDur, const idStr& prefix, int indent );
+	void		WriteSVGUnfolded_r( idFile*					f,
+			   int											characterID,
+			   const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
+			   idHashTableT<int, svgDisplayEntry_t>&		characterMap,
+			   float										frameDur,
+			   const idStr&									prefix,
+			   int											indent,
+			   bool											writeGroupTag );
 
 private:
 	void WriteJSON_PlaceObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );

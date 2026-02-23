@@ -790,9 +790,7 @@ void idSWFSprite::LoadSVGNode_r(
 				}
 
 				if( flags & PlaceFlagHasName ) {
-					// FIXME this causes _bottomLeft, _bottomRight to be rendered on top
-					// memFile.WriteString( localName );
-					memFile.WriteString( fullID );
+					memFile.WriteString( localName );
 				}
 
 				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
@@ -861,6 +859,10 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	frameOffsets.Clear();
 	frameOffsets.Append( 0 );
 
+	// Mark end of frame 0 (static setup from LoadSVGNode_r) before animation frames.
+	int frameZeroCommandCount = commands.Num();
+	frameOffsets.Append( frameZeroCommandCount );
+
 	if( parsedAnims.Num() == 0 && svgLuaMarkers.Num() == 0 && frameLabels.Num() == 0 ) {
 		// Still need to re-terminate frameOffsets after the reset above.
 		while( frameOffsets.Num() <= frameCount ) {
@@ -892,7 +894,6 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	// This lets opacity animations preserve the original feColorMatrix mul/add values.
 	idHashTableT<int, swfColorXform_t> depthBaseColor;
 	{
-		int frameZeroCommandCount = commands.Num();
 		for( int c = 0; c < frameZeroCommandCount; c++ ) {
 			swfSpriteCommand_t& cmd = commands[c];
 			if( cmd.tag == Tag_PlaceObject2 || cmd.tag == Tag_PlaceObject3 ) {
@@ -1103,8 +1104,14 @@ void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList<idSWFDictio
 	f->WriteFloatString( "\t\t</g>\n" );
 }
 
-void idSWFSprite::WriteSVGUnfolded_r(
-	idFile* file, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict, idHashTableT<int, svgDisplayEntry_t>& characterMap, float frameDur, const idStr& prefix, int indent )
+void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
+	int											 characterID,
+	const idList<idSWFDictionaryEntry, TAG_SWF>& dict,
+	idHashTableT<int, svgDisplayEntry_t>&		 characterMap,
+	float										 frameDur,
+	const idStr&								 prefix,
+	int											 indent,
+	bool										 writeGroupTag )
 {
 	idHashTableT<int, svgDisplayEntry_t*> localDepthMap;
 
@@ -1170,7 +1177,9 @@ void idSWFSprite::WriteSVGUnfolded_r(
 	// idStr uniqueID;
 	// uniqueID.Format( "%s.%i", prefix.c_str(),characterID );
 
-	file->WriteFloatString( "%s<g id=\"%s\" data-type=\"SPRITE\" >\n", tabs.c_str(), prefix.c_str() );
+	if( writeGroupTag ) {
+		file->WriteFloatString( "%s<g id=\"%s\" data-type=\"SPRITE\" >\n", tabs.c_str(), prefix.c_str() );
+	}
 
 	if( frameLabels.Num() > 0 ) {
 		for( int i = 0; i < frameLabels.Num(); i++ ) {
@@ -1286,7 +1295,9 @@ void idSWFSprite::WriteSVGUnfolded_r(
 		}
 	}
 
-	file->WriteFloatString( "%s</g>\n", tabs.c_str() );
+	if( writeGroupTag ) {
+		file->WriteFloatString( "%s</g>\n", tabs.c_str() );
+	}
 }
 
 void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream, int sourceCharacterID, int commandID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict )
@@ -1683,7 +1694,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 			idSWFSprite* sprite = dictEntry.sprite;
 
 			if( ( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) || !filterID.IsEmpty() ) {
-				if( name.Equals( "root._bottomLeft.playerInfo.info.healthBorder" ) ) {
+				if( name.Equals( "_bottomLeft" ) ) {
 					int breakpoint = 0;
 				}
 
@@ -1703,12 +1714,12 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
 
 				file->WriteFloatString( ">\n" );
 
-				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent + 1 );
+				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, false );
 
 				file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 			} else {
 				// no group around for this sprite, write directly (the sprite will write its own group)
-				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent + 1 );
+				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent + 1, true );
 			}
 			break;
 		}
