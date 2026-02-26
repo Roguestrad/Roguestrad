@@ -106,7 +106,8 @@ private:
 
 	void WriteSVG_PlaceObject2( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict );
 
-	void PreRun_PlaceObject2( idSWFBitStream&		 bitstream,
+	void PreRun_PlaceObject2_3( swfTag_t			 tag,
+		idSWFBitStream&								 bitstream,
 		int											 sourceCharacterID,
 		const idStr&								 sourcePrefix,
 		int											 commandID,
@@ -115,7 +116,8 @@ private:
 		idHashTableT<int, svgDisplayEntry_t*>&		 localDepthMap,
 		int											 currentFrame );
 
-	void WriteSVGUnfolded_PlaceObject2( idFile*		 f,
+	void WriteSVGUnfolded_PlaceObject2_3( swfTag_t	 tag,
+		idFile*										 f,
 		idSWFBitStream&								 bitstream,
 		int											 sourceCharacterID,
 		const idStr&								 sourcePrefix,

@@ -1216,7 +1216,9 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 
 			switch( command.tag ) {
 				case Tag_PlaceObject2:
-					PreRun_PlaceObject2( command.stream,
+				case Tag_PlaceObject3:
+					PreRun_PlaceObject2_3( command.tag,
+						command.stream,
 						characterID,
 						prefix,
 						c, // commandID
@@ -1225,10 +1227,6 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 						localDepthMap,
 						frame // currentFrame
 					);
-					break;
-
-				case Tag_PlaceObject3:
-					// optional, maybe later
 					break;
 
 				case Tag_RemoveObject2: {
@@ -1295,7 +1293,9 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 
 			switch( command.tag ) {
 				case Tag_PlaceObject2:
-					WriteSVGUnfolded_PlaceObject2( file,
+				case Tag_PlaceObject3:
+					WriteSVGUnfolded_PlaceObject2_3( command.tag,
+						file,
 						command.stream,
 						characterID,
 						prefix,
@@ -1306,10 +1306,6 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 						frame, // currentFrame
 						frameDur,
 						indent + 1 );
-					break;
-
-				case Tag_PlaceObject3:
-					// optional, maybe later
 					break;
 
 				case Tag_RemoveObject2: {
@@ -1529,16 +1525,18 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 	file->WriteFloatString( " />\n" );
 }
 
-void idSWFSprite::PreRun_PlaceObject2( idSWFBitStream& bitstream,
-	int												   sourceCharacterID,
-	const idStr&									   sourcePrefix,
-	int												   commandID,
-	const idList<idSWFDictionaryEntry, TAG_SWF>&	   dict,
-	idHashTableT<int, svgDisplayEntry_t>&			   characterMap,
-	idHashTableT<int, svgDisplayEntry_t*>&			   localDepthMap,
-	int												   currentFrame )
+void idSWFSprite::PreRun_PlaceObject2_3( swfTag_t tag,
+	idSWFBitStream&								  bitstream,
+	int											  sourceCharacterID,
+	const idStr&								  sourcePrefix,
+	int											  commandID,
+	const idList<idSWFDictionaryEntry, TAG_SWF>&  dict,
+	idHashTableT<int, svgDisplayEntry_t>&		  characterMap,
+	idHashTableT<int, svgDisplayEntry_t*>&		  localDepthMap,
+	int											  currentFrame )
 {
 	uint8 flags1 = bitstream.ReadU8();
+	uint8 flags2 = ( tag == Tag_PlaceObject3 ) ? bitstream.ReadU8() : 0;
 	int	  depth	 = bitstream.ReadU16();
 
 	int	  characterID = -1;
@@ -1648,19 +1646,21 @@ void idSWFSprite::PreRun_PlaceObject2( idSWFBitStream& bitstream,
 	}
 }
 
-void idSWFSprite::WriteSVGUnfolded_PlaceObject2( idFile* file,
-	idSWFBitStream&										 bitstream,
-	int													 sourceCharacterID,
-	const idStr&										 sourcePrefix,
-	int													 commandID,
-	const idList<idSWFDictionaryEntry, TAG_SWF>&		 dict,
-	idHashTableT<int, svgDisplayEntry_t>&				 characterMap,
-	idHashTableT<int, svgDisplayEntry_t*>&				 localDepthMap,
-	int													 currentFrame,
-	float												 frameDur,
-	int													 indent )
+void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
+	idFile*													file,
+	idSWFBitStream&											bitstream,
+	int														sourceCharacterID,
+	const idStr&											sourcePrefix,
+	int														commandID,
+	const idList<idSWFDictionaryEntry, TAG_SWF>&			dict,
+	idHashTableT<int, svgDisplayEntry_t>&					characterMap,
+	idHashTableT<int, svgDisplayEntry_t*>&					localDepthMap,
+	int														currentFrame,
+	float													frameDur,
+	int														indent )
 {
 	uint8 flags1 = bitstream.ReadU8();
+	uint8 flags2 = ( tag == Tag_PlaceObject3 ) ? bitstream.ReadU8() : 0;
 	int	  depth	 = bitstream.ReadU16();
 
 	int	  characterID = -1;
