@@ -580,6 +580,7 @@ void idSWFSprite::LoadSVGNode_r(
 	frameOffsets.Clear();
 	frameOffsets.Append( 0 );
 	svgLuaMarkers.Clear();
+	svgRemoveMarkers.Clear();
 	frameLabels.Clear();
 
 	int	  depthCounter = 1;
@@ -797,7 +798,72 @@ void idSWFSprite::LoadSVGNode_r(
 			}
 
 		} else if( childName == "animateTransform" || childName == "animate" ) {
-			animations.Append( s );
+			// Check for visibility animations -> these map to Tag_RemoveObject2
+			idStr attrName = s.attribute( "attributeName" ).value();
+			if( attrName.Icmp( "visibility" ) == 0 ) {
+				// Resolve the target name to the depth assigned during import
+				idStr href;
+				if( !GetSVGAnimationTargetID( s, href ) ) {
+					continue;
+				}
+
+				// Find the depth by walking existing commands backwards
+				int	 removeDepth = 0;
+				bool found		 = false;
+				for( int ci = commands.Num() - 1; ci >= 0; ci-- ) {
+					if( commands[ci].tag != Tag_PlaceObject2 ) {
+						continue;
+					}
+					idSWFBitStream peek( commands[ci].stream.Ptr(), commands[ci].stream.Length(), false );
+					uint8		   peekFlags = peek.ReadU8();
+					int			   peekDepth = peek.ReadU16();
+
+					if( !( peekFlags & PlaceFlagHasCharacter ) ) {
+						continue;
+					}
+					peek.ReadU16(); // skip characterID
+					if( peekFlags & PlaceFlagHasMatrix ) {
+						swfMatrix_t tmp;
+						peek.ReadMatrix( tmp );
+					}
+					if( peekFlags & PlaceFlagHasColorTransform ) {
+						swfColorXform_t tmp;
+						peek.ReadColorXFormRGBA( tmp );
+					}
+					if( peekFlags & PlaceFlagHasRatio ) {
+						peek.ReadU16();
+					}
+					if( peekFlags & PlaceFlagHasName ) {
+						idStr peekName = peek.ReadString();
+						// Compare the local name against the last segment of the href
+						idStr hrefLocal = href;
+						int	  lastDot	= href.Last( '.' );
+						if( lastDot != -1 ) {
+							hrefLocal = href.Right( href.Length() - lastDot - 1 );
+						}
+						if( peekName.Icmp( hrefLocal ) == 0 ) {
+							removeDepth = peekDepth;
+							found		= true;
+							break;
+						}
+					}
+				}
+
+				if( found ) {
+					// Determine which frame this belongs to based on begin="Xs"
+					float			   beginTime   = s.attribute( "begin" ).as_float();
+					float			   frameRate   = ( ( float )swf->frameRate / 256.0f );
+					int				   removeFrame = idMath::Rint( beginTime * frameRate );
+
+					svgRemoveMarker_t& marker = svgRemoveMarkers.Alloc();
+					marker.frame			  = removeFrame;
+					marker.depth			  = removeDepth;
+				} else {
+					idLib::Warning( "SVG Import: visibility animate could not resolve target '%s'", href.c_str() );
+				}
+			} else {
+				animations.Append( s );
+			}
 		}
 	}
 
@@ -863,7 +929,7 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	int frameZeroCommandCount = commands.Num();
 	frameOffsets.Append( frameZeroCommandCount );
 
-	if( parsedAnims.Num() == 0 && svgLuaMarkers.Num() == 0 && frameLabels.Num() == 0 ) {
+	if( parsedAnims.Num() == 0 && svgLuaMarkers.Num() == 0 && svgRemoveMarkers.Num() == 0 && frameLabels.Num() == 0 ) {
 		// Still need to re-terminate frameOffsets after the reset above.
 		while( frameOffsets.Num() <= frameCount ) {
 			frameOffsets.Append( commands.Num() );
@@ -881,6 +947,12 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	for( int m = 0; m < svgLuaMarkers.Num(); m++ ) {
 		if( svgLuaMarkers[m].frame >= frameCount ) {
 			frameCount = svgLuaMarkers[m].frame + 1;
+		}
+	}
+
+	for( int m = 0; m < svgRemoveMarkers.Num(); m++ ) {
+		if( svgRemoveMarkers[m].frame >= frameCount ) {
+			frameCount = svgRemoveMarkers[m].frame + 1;
 		}
 	}
 
@@ -1062,6 +1134,18 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 			}
 		}
 
+		for( int m = 0; m < svgRemoveMarkers.Num(); m++ ) {
+			if( svgRemoveMarkers[m].frame == i ) {
+				swfSpriteCommand_t& cmd = commands.Alloc();
+				cmd.tag					= Tag_RemoveObject2;
+
+				idFile_SWF memFile( new idFile_Memory() );
+				memFile.WriteU16( svgRemoveMarkers[m].depth );
+
+				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+			}
+		}
+
 		frameOffsets.Append( commands.Num() );
 	}
 
@@ -1114,6 +1198,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 	bool										 writeGroupTag )
 {
 	idHashTableT<int, svgDisplayEntry_t*> localDepthMap;
+	idHashTableT<int, idStr>			  removedNames; // commandIndex -> name of removed object
 
 	idStr								  tabs;
 	tabs.Fill( '\t', indent );
@@ -1146,9 +1231,21 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 					// optional, maybe later
 					break;
 
-				case Tag_RemoveObject2:
-					// TODO: possibly export <animate ... visibility="hidden">
+				case Tag_RemoveObject2: {
+					int					removeDepth = command.stream.ReadU16();
+
+					// remember the name of the object on this depth before removing it
+					svgDisplayEntry_t** entryPtr;
+					if( localDepthMap.Get( removeDepth, &entryPtr ) ) {
+						svgDisplayEntry_t* entry = *entryPtr;
+						if( entry != NULL && !entry->name.IsEmpty() ) {
+							removedNames.Set( c, entry->name );
+						}
+					}
+
+					localDepthMap.Remove( removeDepth );
 					break;
+				}
 
 				case Tag_StartSound:
 				case Tag_DoAction:
@@ -1215,9 +1312,24 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 					// optional, maybe later
 					break;
 
-				case Tag_RemoveObject2:
-					// TODO: possibly export <animate ... visibility="hidden">
+				case Tag_RemoveObject2: {
+					int	  removeDepth = command.stream.ReadU16();
+
+					idStr removeTabs;
+					removeTabs.Fill( '\t', indent + 1 );
+
+					idStr* removedName = NULL;
+					removedNames.Get( c, &removedName );
+
+					if( removedName != NULL ) {
+						float beginTime = frame * frameDur;
+						file->WriteFloatString( "%s<animate xlink:href=\"#%s\" attributeName=\"visibility\" to=\"hidden\" begin=\"%fs\" dur=\"0.001s\" fill=\"freeze\" />\n",
+							removeTabs.c_str(),
+							removedName->c_str(),
+							beginTime );
+					}
 					break;
+				}
 
 				case Tag_StartSound:
 					break;
