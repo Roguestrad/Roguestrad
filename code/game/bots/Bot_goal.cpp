@@ -466,6 +466,10 @@ void idBotGoalManager::InitLevelItems()
 
 	// for (ent = AAS_NextBSPEntity(0); ent; ent = AAS_NextBSPEntity(ent))
 	for( int idx = 0; idx < gameLocal.num_entities; idx++ ) {
+		if( gameLocal.entities[idx] == NULL ) {
+			continue;
+		}
+
 		idItem* ent = gameLocal.entities[idx]->Cast<idItem>();
 
 		if( ent == nullptr ) {
