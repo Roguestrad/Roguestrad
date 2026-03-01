@@ -649,7 +649,6 @@ void idSWFSprite::LoadSVGNode_r(
 
 			if( flags & PlaceFlagHasName ) {
 				memFile.WriteString( localName );
-				// memFile.WriteString( fullID );
 			}
 
 			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
@@ -696,28 +695,8 @@ void idSWFSprite::LoadSVGNode_r(
 					}
 				}
 				continue;
-			}
 
-			int					  newCharID = dict.Num();
-			idSWFDictionaryEntry& newEntry	= dict.Alloc();
-
-			if( HasDirectShapeChildren( s ) ) {
-				newEntry.type  = SWF_DICT_SHAPE;
-				newEntry.shape = new( TAG_SWF ) idSWFShape;
-				swf->ParseSVG_Shape( s, newEntry.shape );
-			} else if( HasDirectTextChild( s ) ) {
-				newEntry.type	  = SWF_DICT_EDITTEXT;
-				newEntry.edittext = new( TAG_SWF ) idSWFEditText;
-				swf->ParseSVG_Text( s, newEntry.edittext );
-			} else if( HasDirectImageChild( s ) ) {
-				swf->ParseSVG_Image( s, newCharID, newEntry );
-			} else {
-				newEntry.type	= SWF_DICT_SPRITE;
-				newEntry.sprite = new idSWFSprite( swf );
-				newEntry.sprite->LoadSVGNode_r( s, dict, isUnfolded, targetMap, animations );
-			}
-
-			if( dataType != nullptr && idStr::Icmp( dataType, "Tag_DoLua" ) == 0 ) {
+			} else if( dataType != nullptr && idStr::Icmp( dataType, "Tag_DoLua" ) == 0 ) {
 				idStr fn	= s.attribute( "data-lua-fn" ).value();
 				int	  frame = 0;
 				if( s.attribute( "data-lua-at" ) ) {
@@ -739,7 +718,29 @@ void idSWFSprite::LoadSVGNode_r(
 					m.frame			  = frame;
 					m.fn			  = fn;
 				}
+				continue;
+			}
+
+			int					  newCharID = dict.Num();
+			idSWFDictionaryEntry& newEntry	= dict.Alloc();
+
+			if( HasDirectShapeChildren( s ) ) {
+				newEntry.type  = SWF_DICT_SHAPE;
+				newEntry.shape = new( TAG_SWF ) idSWFShape;
+				swf->ParseSVG_Shape( s, newEntry.shape );
+			} else if( HasDirectTextChild( s ) ) {
+				newEntry.type	  = SWF_DICT_EDITTEXT;
+				newEntry.edittext = new( TAG_SWF ) idSWFEditText;
+				swf->ParseSVG_Text( s, newEntry.edittext );
+			} else if( HasDirectImageChild( s ) ) {
+				swf->ParseSVG_Image( s, newCharID, newEntry );
 			} else {
+				newEntry.type	= SWF_DICT_SPRITE;
+				newEntry.sprite = new idSWFSprite( swf );
+				newEntry.sprite->LoadSVGNode_r( s, dict, isUnfolded, targetMap, animations );
+			}
+
+			{
 				// place the newly created character into this sprite
 				swfSpriteCommand_t& cmd = commands.Alloc();
 				cmd.tag					= Tag_PlaceObject2;
