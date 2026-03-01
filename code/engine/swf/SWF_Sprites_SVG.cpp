@@ -1001,7 +1001,10 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	}
 
 	// Group commands frame by frame
-	for( int i = 1; i < frameCount; i++ ) {
+	idHashTableT<int, swfMatrix_t>	   prevDepthMatrix;
+	idHashTableT<int, swfColorXform_t> prevDepthColor;
+
+	for( int i = 0; i < frameCount; i++ ) {
 		idList<int>						   depthsInFrame;
 		idHashTableT<int, swfMatrix_t>	   depthMatrix;
 		idHashTableT<int, swfColorXform_t> depthColor;
@@ -1089,12 +1092,50 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 			}
 		}
 
+		// Frame 0 is already covered by the initial placement commands,
+		// so we only seed the prev-tables and skip command emission.
+		if( i == 0 ) {
+			for( int d = 0; d < depthsInFrame.Num(); d++ ) {
+				int			 depth = depthsInFrame[d];
+				swfMatrix_t* m	   = NULL;
+				if( depthMatrix.Get( depth, &m ) ) {
+					prevDepthMatrix.Set( depth, *m );
+				}
+				swfColorXform_t* cxf = NULL;
+				if( depthColor.Get( depth, &cxf ) ) {
+					prevDepthColor.Set( depth, *cxf );
+				}
+			}
+			continue;
+		}
+
 		for( int d = 0; d < depthsInFrame.Num(); d++ ) {
-			int					depth	  = depthsInFrame[d];
-			swfMatrix_t*		m		  = NULL;
-			bool				hasMatrix = depthMatrix.Get( depth, &m );
-			swfColorXform_t*	cxf		  = NULL;
-			bool				hasColor  = depthColor.Get( depth, &cxf );
+			int				 depth	   = depthsInFrame[d];
+			swfMatrix_t*	 m		   = NULL;
+			bool			 hasMatrix = depthMatrix.Get( depth, &m );
+			swfColorXform_t* cxf	   = NULL;
+			bool			 hasColor  = depthColor.Get( depth, &cxf );
+
+			// Skip matrix if unchanged from previous frame
+			if( hasMatrix ) {
+				swfMatrix_t* prevM = NULL;
+				if( prevDepthMatrix.Get( depth, &prevM ) && *prevM == *m ) {
+					hasMatrix = false;
+				}
+			}
+
+			// Skip color if unchanged from previous frame
+			if( hasColor ) {
+				swfColorXform_t* prevCxf = NULL;
+				if( prevDepthColor.Get( depth, &prevCxf ) && prevCxf->mul == cxf->mul && prevCxf->add == cxf->add ) {
+					hasColor = false;
+				}
+			}
+
+			// Nothing changed for this depth, skip the command entirely
+			if( !hasMatrix && !hasColor ) {
+				continue;
+			}
 
 			swfSpriteCommand_t& cmd = commands.Alloc();
 			cmd.tag					= Tag_PlaceObject2;
@@ -1120,6 +1161,19 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 			}
 
 			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+		}
+
+		// Update previous frame tracking tables after command emission
+		for( int d = 0; d < depthsInFrame.Num(); d++ ) {
+			int			 depth = depthsInFrame[d];
+			swfMatrix_t* m	   = NULL;
+			if( depthMatrix.Get( depth, &m ) ) {
+				prevDepthMatrix.Set( depth, *m );
+			}
+			swfColorXform_t* cxf = NULL;
+			if( depthColor.Get( depth, &cxf ) ) {
+				prevDepthColor.Set( depth, *cxf );
+			}
 		}
 
 		for( int m = 0; m < svgLuaMarkers.Num(); m++ ) {
