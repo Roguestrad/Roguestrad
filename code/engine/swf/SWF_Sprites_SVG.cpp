@@ -583,7 +583,7 @@ void idSWFSprite::LoadSVGNode_r(
 	svgRemoveMarkers.Clear();
 	frameLabels.Clear();
 
-	int	  depthCounter = 1;
+	int	  depthCounter = 2;
 
 	idStr scope;
 	if( node.attribute( "id" ) ) {
@@ -630,7 +630,9 @@ void idSWFSprite::LoadSVGNode_r(
 			}
 
 			memFile.WriteU8( flags );
-			memFile.WriteU16( depthCounter++ );
+			memFile.WriteU16( depthCounter );
+			// depthCounter++;
+			depthCounter = idMath::NextPrime( depthCounter );
 
 			idStr href	 = s.attribute( "xlink:href" ).value();
 			int	  charID = atoi( href.c_str() + 1 );
@@ -777,7 +779,9 @@ void idSWFSprite::LoadSVGNode_r(
 				}
 
 				memFile.WriteU8( flags );
-				memFile.WriteU16( depthCounter++ );
+				memFile.WriteU16( depthCounter );
+				// depthCounter++;
+				depthCounter = idMath::NextPrime( depthCounter );
 				memFile.WriteU16( newCharID );
 
 				if( flags & PlaceFlagHasMatrix ) {

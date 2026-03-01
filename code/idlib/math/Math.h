@@ -458,6 +458,9 @@ public:
 
 	static float		  LerpToWithScale( const float cur, const float dest, const float scale );
 
+	static bool			  IsPrime( int n );
+	static int			  NextPrime( int current );
+
 	static const float	  PI;						 // pi
 	static const float	  TWO_PI;					 // pi * 2
 	static const float	  HALF_PI;					 // pi / 2
@@ -1494,15 +1497,16 @@ Lerps from "cur" to "dest", scaling the delta to change by "scale"
 If the delta between "cur" and "dest" is very small, dest is returned to prevent denormals.
 ========================
 */
-inline float idMath::LerpToWithScale( const float cur, const float dest, const float scale )
+ID_INLINE float idMath::LerpToWithScale( const float cur, const float dest, const float scale )
 {
 	float delta = dest - cur;
 	if( delta > -1.0e-6f && delta < 1.0e-6f ) { return dest; }
 	return cur + ( dest - cur ) * scale;
 }
+
 /*
 ========================
-idMath::Ftob
+idMath::AngleMod
 ========================
 */
 ID_INLINE float idMath::AngleMod( float a )
