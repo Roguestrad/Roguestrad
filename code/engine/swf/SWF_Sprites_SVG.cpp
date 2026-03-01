@@ -1790,12 +1790,17 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		uniqueID.Format( "%s.%i", sourcePrefix.c_str(), characterID );
 	}
 
-	bool				isAnimated = false;
+	bool				isAnimated			= false;
+	bool				isTransformAnimated = false;
 	svgDisplayEntry_t** entryPtr;
 	if( localDepthMap.Get( depth, &entryPtr ) ) {
 		svgDisplayEntry_t* entry = *entryPtr;
 
 		if( IsMatrixAnimated( entry->matrixFrames ) ) {
+			isAnimated			= true;
+			isTransformAnimated = true;
+		}
+		if( entry->opacityFrames.Num() > 1 ) {
 			isAnimated = true;
 		}
 	}
@@ -1808,7 +1813,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		case SWF_DICT_EDITTEXT: {
 			file->WriteFloatString( "%s<use xlink:href=\"#%i\" link-type=\"%s\" ", tabs.c_str(), characterID, idSWF::GetDictTypeName( dictEntry.type ) );
 
-			if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) {
+			if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isTransformAnimated ) {
 				file->WriteFloatString( "%s", transform.c_str() );
 			}
 
@@ -1818,7 +1823,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 				}
 			}
 
-			if( !name.IsEmpty() ) {
+			if( !name.IsEmpty() || isAnimated ) {
 				file->WriteFloatString( "id=\"%s\" ", uniqueID.c_str() );
 			}
 
@@ -1829,7 +1834,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		case SWF_DICT_SPRITE: {
 			idSWFSprite* sprite = dictEntry.sprite;
 
-			if( ( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) || !filterID.IsEmpty() ) {
+			if( ( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isTransformAnimated ) || !filterID.IsEmpty() ) {
 				if( uniqueID.Equals( "root.info0.13" ) ) {
 					int breakpoint = 0;
 				}
@@ -1840,7 +1845,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 					file->WriteFloatString( "%s<g data-type=\"Tag_PlaceObject2\" ", tabs.c_str() );
 				}
 
-				if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isAnimated ) {
+				if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isTransformAnimated ) {
 					file->WriteFloatString( "%s", transform.c_str() );
 				}
 
