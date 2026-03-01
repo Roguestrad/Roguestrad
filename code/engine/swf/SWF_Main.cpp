@@ -3,7 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2013-2015 Robert Beckebans
+Copyright (C) 2013-2026 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -30,6 +30,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 #include "../renderer/DXT/DXTCodec.h"
+
+#include <luawrapper.hpp>
 
 #pragma warning( disable : 4355 ) // 'this' : used in base member initializer list
 
@@ -397,13 +399,17 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	globals->SetNative( "cropToFit", swfScriptVar_crop.Bind( this ) );
 	globals->SetNative( "crop", swfScriptVar_crop.Bind( this ) );
 
-	if( initLua ) {
-		// ID_TIME_T luaTimestamp;
+	if( L ) {
+		// RB: register _root as Lua global pointing to mainspriteInstance
+		if( mainspriteInstance ) {
+			luaW_push<idSWFSpriteInstance>( L, mainspriteInstance );
+			lua_setglobal( L, "_root" );
+		}
+
 		idStr luaFileName = filename;
 		luaFileName.SetFileExtension( ".lua" );
 
 		char* luaSrc;
-
 		int	  luaLen = fileSystem->ReadFile( luaFileName, ( void** )&luaSrc );
 		if( luaSrc != NULL ) {
 			int result = luaL_loadbuffer( L, luaSrc, luaLen, luaFileName );
