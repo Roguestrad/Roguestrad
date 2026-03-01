@@ -1076,7 +1076,7 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 	for( int f = 0; f < files->GetList().Num(); f++ ) {
 		idStr bswfName = files->GetList()[f];
 
-#if 1
+#if 0
 		if( !bswfName.Equals( "generated/swf/doomintro.bswf" ) && !bswfName.Equals( "generated/swf/hud.bswf" ) &&
 			!bswfName.Equals( "generated/swf/shell.bswf" ) ) { //&& !bswfName.Equals( "generated/swf/dialog.bswf" )  ) {
 			continue;

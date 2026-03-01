@@ -811,6 +811,7 @@ void idSWFSprite::LoadSVGNode_r(
 				int	 removeDepth = 0;
 				bool found		 = false;
 				for( int ci = commands.Num() - 1; ci >= 0; ci-- ) {
+					// TODO Tag_PlaceObject3
 					if( commands[ci].tag != Tag_PlaceObject2 ) {
 						continue;
 					}
@@ -1067,7 +1068,7 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 				swfColorXform_t* existingCxf;
 				if( depthColor.Get( pa.depth, &existingCxf ) ) {
 					// A previous animation already set the base; only scale alpha further.
-					existingCxf->mul.w *= opacity;
+					existingCxf->mul.w = opacity;
 				} else {
 					// Start from the original placement color transform so that
 					// feColorMatrix mul/add values (r,g,b channels) are preserved.
@@ -1451,17 +1452,7 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 		// RB: this adds a lot bloat
 		if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
 			filterID.Format( "cf_%i_%i", characterID, commandID );
-
-			idVec4 colorMul = colorWhite;
-			if( cxf.mul != vec4_one ) {
-				colorMul = cxf.mul;
-			}
-			colorMul.w = 1.0f; // for debugging only, without most elements are invisible
-
-			idVec4 colorAdd = vec4_zero; // colorBlack
-			if( cxf.add != vec4_zero ) {
-				colorAdd = cxf.add;
-			}
+			// cxf.mul.w = 1.0f; // for debugging only, without most elements are invisible
 
 			file->WriteFloatString( "\t\t\t<filter id=\"%s\">\n"
 									"\t\t\t\t<feColorMatrix type=\"matrix\" values=\""
@@ -1471,14 +1462,14 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 									"0 0 0 %f %f\" />\n"
 									"\t\t\t</filter>\n",
 				filterID.c_str(),
-				colorMul.x,
-				colorAdd.x,
-				colorMul.y,
-				colorAdd.y,
-				colorMul.z,
-				colorAdd.z,
-				colorMul.w,
-				colorAdd.w );
+				cxf.mul.x,
+				cxf.add.x,
+				cxf.mul.y,
+				cxf.add.y,
+				cxf.mul.z,
+				cxf.add.z,
+				cxf.mul.w,
+				cxf.add.w );
 		}
 	}
 
@@ -1561,22 +1552,6 @@ void idSWFSprite::PreRun_PlaceObject2_3( swfTag_t tag,
 		swfColorXform_t cxf;
 		bitstream.ReadColorXFormRGBA( cxf );
 		localColor = cxf;
-
-		// this adds a lot bloat, only do it for new objects
-		if( characterID != -1 ) {
-			if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
-				idVec4 colorMul = colorWhite;
-				if( cxf.mul != vec4_one ) {
-					colorMul = cxf.mul;
-				}
-				colorMul.w = 1.0f; // for debugging only, without most elements are invisible
-
-				idVec4 colorAdd = vec4_zero; // colorBlack
-				if( cxf.add != vec4_zero ) {
-					colorAdd = cxf.add;
-				}
-			}
-		}
 	}
 
 	if( ( flags1 & PlaceFlagHasRatio ) != 0 ) {
@@ -1709,17 +1684,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		if( characterID != -1 ) {
 			if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
 				filterID.Format( "cf.%s.%i.%i", sourcePrefix.c_str(), ( characterID != -1 ) ? characterID : depth, commandID );
-
-				idVec4 colorMul = colorWhite;
-				if( cxf.mul != vec4_one ) {
-					colorMul = cxf.mul;
-				}
-				colorMul.w = 1.0f; // for debugging only, without most elements are invisible
-
-				idVec4 colorAdd = vec4_zero; // colorBlack
-				if( cxf.add != vec4_zero ) {
-					colorAdd = cxf.add;
-				}
+				// cxf.mul.w = 1.0f; // for debugging only, without most elements are invisible
 
 				file->WriteFloatString( "%s<filter id=\"%s\">\n"
 										"%s\t<feColorMatrix type=\"matrix\" values=\""
@@ -1731,14 +1696,14 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 					tabs.c_str(),
 					filterID.c_str(),
 					tabs.c_str(),
-					colorMul.x,
-					colorAdd.x,
-					colorMul.y,
-					colorAdd.y,
-					colorMul.z,
-					colorAdd.z,
-					colorMul.w,
-					colorAdd.w,
+					cxf.mul.x,
+					cxf.add.x,
+					cxf.mul.y,
+					cxf.add.y,
+					cxf.mul.z,
+					cxf.add.z,
+					cxf.mul.w,
+					cxf.add.w,
 					tabs.c_str() );
 			}
 		}
