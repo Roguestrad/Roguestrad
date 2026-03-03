@@ -608,6 +608,9 @@ void idSWFSprite::LoadSVGNode_r(
 			if( s.attribute( "filter" ) ) {
 				flags |= PlaceFlagHasColorTransform;
 			}
+			if( s.attribute( "data-ratio" ) ) {
+				flags |= PlaceFlagHasRatio;
+			}
 			idStr fullID;
 			idStr localName;
 			if( s.attribute( "id" ) ) {
@@ -647,6 +650,11 @@ void idSWFSprite::LoadSVGNode_r(
 			if( flags & PlaceFlagHasColorTransform ) {
 				swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
 				memFile.WriteColorXFormRGBA( cxf );
+			}
+
+			if( flags & PlaceFlagHasRatio ) {
+				uint16 ratio = ( uint16 )s.attribute( "data-ratio" ).as_uint();
+				memFile.WriteU16( ratio );
 			}
 
 			if( flags & PlaceFlagHasName ) {
@@ -756,6 +764,9 @@ void idSWFSprite::LoadSVGNode_r(
 				if( s.attribute( "filter" ) ) {
 					flags |= PlaceFlagHasColorTransform;
 				}
+				if( s.attribute( "data-ratio" ) ) {
+					flags |= PlaceFlagHasRatio;
+				}
 				idStr fullID;
 				idStr localName;
 				if( s.attribute( "id" ) ) {
@@ -793,6 +804,11 @@ void idSWFSprite::LoadSVGNode_r(
 				if( flags & PlaceFlagHasColorTransform ) {
 					swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
 					memFile.WriteColorXFormRGBA( cxf );
+				}
+
+				if( flags & PlaceFlagHasRatio ) {
+					uint16 ratio = ( uint16 )s.attribute( "data-ratio" ).as_uint();
+					memFile.WriteU16( ratio );
 				}
 
 				if( flags & PlaceFlagHasName ) {
@@ -1255,7 +1271,8 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 	float										 frameDur,
 	const idStr&								 prefix,
 	int											 indent,
-	bool										 writeGroupTag )
+	bool										 writeGroupTag,
+	bool										 noAnims )
 {
 	idHashTableT<int, svgDisplayEntry_t*> localDepthMap;
 	idHashTableT<int, idStr>			  removedNames; // commandIndex -> name of removed object
@@ -1365,7 +1382,8 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 						localDepthMap,
 						frame, // currentFrame
 						frameDur,
-						indent + 1 );
+						indent + 1,
+						noAnims );
 					break;
 
 				case Tag_RemoveObject2: {
@@ -1408,58 +1426,60 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 	// ----------------------------------------------------------
 	// After all frames -> export collected animations
 	// ----------------------------------------------------------
-	for( int i = 0; i < localDepthMap.Num(); i++ ) {
-		svgDisplayEntry_t* e = *localDepthMap.GetIndex( i );
-		if( e == NULL ) {
-			continue;
-		}
-
-		int	  depth = i;
-
-		idStr targetID;
-		if( !e->name.IsEmpty() ) {
-			targetID = e->name;
-		} else {
-			// targetID.Format( "inst_%i_d%i", e->characterID, depth );
-			targetID.Format( "%i", e->characterID );
-		}
-
-		// if( targetID.Find( "healthBorder.20" ) != -1 ) {
-		//	int breakpoint = 0;
-		// }
-
-		// animate opacity track
-		if( e->opacityFrames.Num() > 1 ) {
-			file->WriteFloatString( "\t%s<animate xlink:href=\"#%s\" attributeName=\"opacity\" values=\"", tabs.c_str(), targetID.c_str() );
-
-			for( int f = 0; f < e->opacityFrames.Num(); f++ ) {
-				file->WriteFloatString( "%f", e->opacityFrames[f] );
-				if( f < e->opacityFrames.Num() - 1 )
-					file->WriteFloatString( ";" );
+	if( !noAnims ) {
+		for( int i = 0; i < localDepthMap.Num(); i++ ) {
+			svgDisplayEntry_t* e = *localDepthMap.GetIndex( i );
+			if( e == NULL ) {
+				continue;
 			}
-			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
-			// file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->opacityFrames.Num() * frameDur, targetID.c_str() );
-		}
 
-		// animate transform track
-		if( IsMatrixAnimated( e->matrixFrames ) ) {
-			file->WriteFloatString( "%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"translate\" values=\"", tabs.c_str(), targetID.c_str() );
-			for( int f = 0; f < e->matrixFrames.Num(); f++ ) {
-				const swfMatrix_t& m = e->matrixFrames[f];
-				file->WriteFloatString( "%f %f", m.tx, m.ty );
-				if( f < e->matrixFrames.Num() - 1 )
-					file->WriteFloatString( ";" );
-			}
-			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
+			int	  depth = i;
 
-			file->WriteFloatString( "%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"scale\" additive=\"sum\" values=\"", tabs.c_str(), targetID.c_str() );
-			for( int f = 0; f < e->matrixFrames.Num(); f++ ) {
-				const swfMatrix_t& m = e->matrixFrames[f];
-				file->WriteFloatString( "%f %f", m.xx, m.yy );
-				if( f < e->matrixFrames.Num() - 1 )
-					file->WriteFloatString( ";" );
+			idStr targetID;
+			if( !e->name.IsEmpty() ) {
+				targetID = e->name;
+			} else {
+				// targetID.Format( "inst_%i_d%i", e->characterID, depth );
+				targetID.Format( "%i", e->characterID );
 			}
-			file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
+
+			// if( targetID.Find( "healthBorder.20" ) != -1 ) {
+			//	int breakpoint = 0;
+			// }
+
+			// animate opacity track
+			if( e->opacityFrames.Num() > 1 ) {
+				file->WriteFloatString( "\t%s<animate xlink:href=\"#%s\" attributeName=\"opacity\" values=\"", tabs.c_str(), targetID.c_str() );
+
+				for( int f = 0; f < e->opacityFrames.Num(); f++ ) {
+					file->WriteFloatString( "%f", e->opacityFrames[f] );
+					if( f < e->opacityFrames.Num() - 1 )
+						file->WriteFloatString( ";" );
+				}
+				file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
+				// file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->opacityFrames.Num() * frameDur, targetID.c_str() );
+			}
+
+			// animate transform track
+			if( IsMatrixAnimated( e->matrixFrames ) ) {
+				file->WriteFloatString( "%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"translate\" values=\"", tabs.c_str(), targetID.c_str() );
+				for( int f = 0; f < e->matrixFrames.Num(); f++ ) {
+					const swfMatrix_t& m = e->matrixFrames[f];
+					file->WriteFloatString( "%f %f", m.tx, m.ty );
+					if( f < e->matrixFrames.Num() - 1 )
+						file->WriteFloatString( ";" );
+				}
+				file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
+
+				file->WriteFloatString( "%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"scale\" additive=\"sum\" values=\"", tabs.c_str(), targetID.c_str() );
+				for( int f = 0; f < e->matrixFrames.Num(); f++ ) {
+					const swfMatrix_t& m = e->matrixFrames[f];
+					file->WriteFloatString( "%f %f", m.xx, m.yy );
+					if( f < e->matrixFrames.Num() - 1 )
+						file->WriteFloatString( ";" );
+				}
+				file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
+			}
 		}
 	}
 
@@ -1556,6 +1576,7 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 
 	if( ( flags1 & PlaceFlagHasRatio ) != 0 ) {
 		uint16 ratio = bitstream.ReadU16();
+		file->WriteFloatString( "data-ratio=\"%i\" ", ratio );
 	}
 
 	if( ( flags1 & PlaceFlagHasName ) != 0 ) {
@@ -1691,7 +1712,8 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 	idHashTableT<int, svgDisplayEntry_t*>&					localDepthMap,
 	int														currentFrame,
 	float													frameDur,
-	int														indent )
+	int														indent,
+	bool													noAnims )
 {
 	uint8 flags1 = bitstream.ReadU8();
 	uint8 flags2 = ( tag == Tag_PlaceObject3 ) ? bitstream.ReadU8() : 0;
@@ -1768,8 +1790,11 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		}
 	}
 
+	uint16 ratio	= 0;
+	bool   hasRatio = false;
 	if( ( flags1 & PlaceFlagHasRatio ) != 0 ) {
-		uint16 unused = bitstream.ReadU16();
+		ratio	 = bitstream.ReadU16();
+		hasRatio = true;
 	}
 
 	if( ( flags1 & PlaceFlagHasName ) != 0 ) {
@@ -1793,7 +1818,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 	bool				isAnimated			= false;
 	bool				isTransformAnimated = false;
 	svgDisplayEntry_t** entryPtr;
-	if( localDepthMap.Get( depth, &entryPtr ) ) {
+	if( !noAnims && localDepthMap.Get( depth, &entryPtr ) ) {
 		svgDisplayEntry_t* entry = *entryPtr;
 
 		if( IsMatrixAnimated( entry->matrixFrames ) ) {
@@ -1821,6 +1846,10 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 				if( !filterID.IsEmpty() ) {
 					file->WriteFloatString( "filter=\"url(#%s)\" ", filterID.c_str() );
 				}
+			}
+
+			if( hasRatio ) {
+				file->WriteFloatString( "data-ratio=\"%i\" ", ratio );
 			}
 
 			if( !name.IsEmpty() || isAnimated ) {
@@ -1853,18 +1882,22 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 					file->WriteFloatString( "filter=\"url(#%s)\" ", filterID.c_str() );
 				}
 
+				if( hasRatio ) {
+					file->WriteFloatString( "data-ratio=\"%i\" ", ratio );
+				}
+
 				file->WriteFloatString( ">\n" );
 
 				bool writeGroupTag = false; // isAnimated || ( flags1 & PlaceFlagHasColorTransform ) != 0;
 				if( writeGroupTag ) {
 					indent++;
 				}
-				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, writeGroupTag );
+				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, writeGroupTag, noAnims );
 
 				file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 			} else {
 				// no group around for this sprite, write directly (the sprite will write its own group)
-				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent + 1, true );
+				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, true, noAnims );
 			}
 			break;
 		}

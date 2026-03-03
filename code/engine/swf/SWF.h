@@ -97,7 +97,7 @@ This class handles loading and rendering SWF files
 class idSWF
 {
 public:
-	idSWF( const char* filename, idSoundWorld* soundWorld, bool exportJSON = false, bool exportSWF = false, bool exportSVG = false );
+	idSWF( const char* filename, idSoundWorld* soundWorld, bool exportJSON = false, bool exportSWF = false, bool exportSVG = false, bool noAnims = false );
 	~idSWF();
 
 	bool		IsLoaded() { return ( frameRate > 0 ); }
@@ -362,7 +362,7 @@ private:
 	void								 ParseSVG_Text( const pugi::xml_node& node, idSWFEditText* et );
 	void								 ParseSVG_Font( const pugi::xml_node& node, idSWFFont* font );
 
-	void								 WriteSVG( const char* filename );
+	void								 WriteSVG( const char* filename, bool noAnims = false );
 
 	bool								 LoadJSON( const char* filename );
 	void								 WriteJSON( const char* filename );

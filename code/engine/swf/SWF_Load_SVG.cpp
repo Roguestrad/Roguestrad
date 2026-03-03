@@ -456,7 +456,7 @@ bool idSWF::LoadSVG( const char* filename )
 	return true;
 }
 
-void idSWF::WriteSVG( const char* filename )
+void idSWF::WriteSVG( const char* filename, bool noAnims )
 {
 	const bool	exportBitmapShapesOnly = false;
 
@@ -737,7 +737,7 @@ void idSWF::WriteSVG( const char* filename )
 		idHashTableT<int, svgDisplayEntry_t> characterMap;
 		float								 frameRate = ( ( float )this->frameRate / 256.0f ); // most likely 60 fps
 		float								 frameDur  = 1.0f / frameRate;
-		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, characterMap, frameDur, "root", 2, true );
+		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, characterMap, frameDur, "root", 2, true, noAnims );
 	} else {
 		mainsprite->WriteSVG( file, dictionary.Num(), dictionary );
 	}

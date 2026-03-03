@@ -51,7 +51,7 @@ extern idCVar		 in_useJoystick;
 idSWF::idSWF
 ===================
 */
-idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON, bool exportSWF, bool exportSVG )
+idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON, bool exportSWF, bool exportSVG, bool noAnims )
 {
 	atlasMaterial = NULL;
 
@@ -196,7 +196,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 		svgFileName += filename;
 		svgFileName.SetFileExtension( ".svg" );
 
-		WriteSVG( svgFileName );
+		WriteSVG( svgFileName, noAnims );
 	}
 
 	idStr atlasFileName = binaryFileName;
@@ -1067,6 +1067,7 @@ void idSWF::idSWFScriptNativeVar_crop::Set( idSWFScriptObject* object, const idS
 CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ folder", NULL )
 {
 	bool exportSWF = false;
+	bool noAnims   = false;
 
 	for( int i = 1; i < args.Argc(); i++ ) {
 		idStr option = args.Argv( i );
@@ -1074,6 +1075,8 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 
 		if( option.Icmp( "swf" ) == 0 ) {
 			exportSWF = true;
+		} else if( option.Icmp( "noanims" ) == 0 ) {
+			noAnims = true;
 		}
 	}
 
@@ -1091,7 +1094,7 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 
 		bswfName.StripLeadingOnce( "generated/" );
 
-		idSWF* swf = new idSWF( bswfName, NULL, true, true, true ); // exportSWF );
+		idSWF* swf = new idSWF( bswfName, NULL, true, true, true, noAnims );
 		delete swf;
 	}
 

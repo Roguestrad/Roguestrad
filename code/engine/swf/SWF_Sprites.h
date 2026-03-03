@@ -95,7 +95,8 @@ public:
 			   float										frameDur,
 			   const idStr&									prefix,
 			   int											indent,
-			   bool											writeGroupTag );
+			   bool											writeGroupTag,
+			   bool											noAnims = false );
 
 private:
 	void WriteJSON_PlaceObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
@@ -127,7 +128,8 @@ private:
 		idHashTableT<int, svgDisplayEntry_t*>&		 localDepthMap,
 		int											 currentFrame,
 		float										 frameDur,
-		int											 indent );
+		int											 indent,
+		bool										 noAnims = false );
 
 	void WriteSVGUnfolded_DoLua( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, float frameDur, int currentFrame, const idStr& prefix, int indent );
 	void WriteSVGUnfolded_DoAction( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, float frameDur, int currentFrame, const idStr& prefix, int indent );
