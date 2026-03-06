@@ -23,7 +23,7 @@
       "request": "launch",
       "program": "${workspaceFolder}\\build\\Debug\\Roguestrad.exe",
       "cwd": "${workspaceFolder}\\..",
-      "args": ["+set", "logfile", "2", "+set", "fs_game", "mod_swfss2"],
+      "args": ["+set", "logfile", "2", "+set", "fs_game", "mod_swftests"],
     },
     {
       "name": "Roguestrad: Debug Optimized EXE (CodeLLDB)",

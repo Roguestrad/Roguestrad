@@ -336,6 +336,8 @@ bool idSWF::LoadSVG( const char* filename )
 	delete f;
 	f = NULL;
 
+	int					   timeStart = Sys_Milliseconds();
+
 	pugi::xml_document	   doc;
 	pugi::xml_parse_result result = doc.load_buffer( fileData, fileSize );
 	if( !result ) {
@@ -469,6 +471,10 @@ bool idSWF::LoadSVG( const char* filename )
 			allSprites[i]->ApplySVGAnimationTargets( emptyAnims );
 		}
 	}
+
+	int timeEnd = Sys_Milliseconds();
+
+	common->Printf( "Loading '%s' took %5.1f seconds\n\n", filename, ( timeEnd - timeStart ) * 0.001f );
 
 	// now that all images have been loaded, write out the combined image
 	idStr atlasFileName = "generated/";

@@ -441,8 +441,8 @@ void idSWF::RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* spriteInstan
 				color = colorCyan;
 			}
 
-			idStr globalName;
-			globalName.Format( "%s", spriteInstance->globalName.c_str() );
+			// idStr globalName;
+			// globalName.Format( "%s", spriteInstance->globalName.c_str() );
 			idStr nameFrame;
 			nameFrame.Format( "%s - f%i", spriteInstance->name.c_str(), spriteInstance->currentFrame );
 			// DrawText( gui, globalName.c_str(), 0.35f, 0, color, swfRect_t( rect.tl.x, rect.tl.y - 20, 300, 40 ), false );
