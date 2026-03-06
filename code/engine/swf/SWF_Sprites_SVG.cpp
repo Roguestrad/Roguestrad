@@ -591,9 +591,8 @@ void idSWFSprite::LoadSVGNode_r(
 	}
 
 	for( pugi::xml_node s = node.first_child(); s; s = s.next_sibling() ) {
-		idStr		childName	   = s.name();
-		const char* dataType	   = s.attribute( "data-type" ).value();
-		const bool	isWrapperPlace = ( dataType != nullptr && idStr::Icmp( dataType, "Tag_PlaceObject2" ) == 0 );
+		idStr		childName = s.name();
+		const char* dataType  = s.attribute( "data-type" ).value();
 
 		if( childName == "use" ) {
 			swfSpriteCommand_t& cmd = commands.Alloc();
@@ -1232,7 +1231,7 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 
 void idSWFSprite::WriteSVG( idFile* f, int characterID, const idList<idSWFDictionaryEntry, TAG_SWF>& dict )
 {
-	f->WriteFloatString( "\t\t<g id=\"%i\" data-type=\"SPRITE\" >\n", characterID );
+	f->WriteFloatString( "\t\t<g id=\"%i\" >\n", characterID );
 
 	// Select frame 0 for static export; could be extended to use frameLabels (e.g., "rollOn")
 	int frameStart = frameOffsets[0];
@@ -1350,7 +1349,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 	// uniqueID.Format( "%s.%i", prefix.c_str(),characterID );
 
 	if( writeGroupTag ) {
-		file->WriteFloatString( "%s<g id=\"%s\" data-type=\"SPRITE\" >\n", tabs.c_str(), prefix.c_str() );
+		file->WriteFloatString( "%s<g id=\"%s\" >\n", tabs.c_str(), prefix.c_str() );
 	}
 
 	if( frameLabels.Num() > 0 ) {
@@ -1442,10 +1441,6 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 				// targetID.Format( "inst_%i_d%i", e->characterID, depth );
 				targetID.Format( "%i", e->characterID );
 			}
-
-			// if( targetID.Find( "healthBorder.20" ) != -1 ) {
-			//	int breakpoint = 0;
-			// }
 
 			// animate opacity track
 			if( e->opacityFrames.Num() > 1 ) {
@@ -1869,9 +1864,9 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 				}
 
 				if( !name.IsEmpty() || isAnimated ) {
-					file->WriteFloatString( "%s<g id=\"%s\" data-type=\"Tag_PlaceObject2\" ", tabs.c_str(), uniqueID.c_str() );
+					file->WriteFloatString( "%s<g id=\"%s\" ", tabs.c_str(), uniqueID.c_str() );
 				} else {
-					file->WriteFloatString( "%s<g data-type=\"Tag_PlaceObject2\" ", tabs.c_str() );
+					file->WriteFloatString( "%s<g ", tabs.c_str() );
 				}
 
 				if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isTransformAnimated ) {
