@@ -404,7 +404,7 @@ bool idSWF::LoadSVG( const char* filename )
 				} else {
 					entry.type	 = SWF_DICT_SPRITE;
 					entry.sprite = new idSWFSprite( this );
-					entry.sprite->LoadSVG( g, dictionary, isUnfolded, svgTargetMap, svgAnimations );
+					entry.sprite->LoadSVGNode_r( g, dictionary, isUnfolded, svgTargetMap, svgAnimations );
 				}
 			}
 		}
@@ -417,7 +417,7 @@ bool idSWF::LoadSVG( const char* filename )
 	}
 
 	mainsprite = new idSWFSprite( this );
-	mainsprite->LoadSVG( mainNode, dictionary, isUnfolded, svgTargetMap, svgAnimations );
+	mainsprite->LoadSVGNode_r( mainNode, dictionary, isUnfolded, svgTargetMap, svgAnimations );
 
 	idList<idSWFSprite*> animatedSprites;
 	if( svgAnimations.Num() > 0 ) {

@@ -573,7 +573,7 @@ static void RegisterSVGAnimationTarget( idHashTableT<idStr, idSWFSprite::svgAnim
 	targetMap.Set( targetID, entry );
 }
 
-void idSWFSprite::LoadSVG(
+void idSWFSprite::LoadSVGNode_r(
 	const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>& targetMap, idList<pugi::xml_node>& animations )
 {
 	frameCount = 1;
@@ -586,19 +586,9 @@ void idSWFSprite::LoadSVG(
 	svgOrderIndexCounter = 0;
 	frameLabels.Clear();
 
-	int depthCounter = 2;
-	int currentFrame = 0;
-	LoadSVGNode_r( node, dict, isUnfolded, targetMap, animations, depthCounter, currentFrame );
-}
+	int	  depthCounter = 2;
+	int	  currentFrame = 0;
 
-void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node,
-	idList<idSWFDictionaryEntry>&					   dict,
-	bool											   isUnfolded,
-	idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>& targetMap,
-	idList<pugi::xml_node>&							   animations,
-	int&											   depthCounter,
-	int&											   currentFrame )
-{
 	idStr scope;
 	if( node.attribute( "id" ) ) {
 		scope = node.attribute( "id" ).value();
@@ -757,7 +747,7 @@ void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node,
 			} else {
 				newEntry.type	= SWF_DICT_SPRITE;
 				newEntry.sprite = new idSWFSprite( swf );
-				newEntry.sprite->LoadSVG( s, dict, isUnfolded, targetMap, animations );
+				newEntry.sprite->LoadSVGNode_r( s, dict, isUnfolded, targetMap, animations );
 			}
 
 			{
