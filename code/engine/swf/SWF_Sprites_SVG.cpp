@@ -57,6 +57,42 @@ static swfColorXform_t CombineColorXform( const swfColorXform_t& a, const swfCol
 	return out;
 }
 
+static const char* GetCSSBlendMode( int swfBlendMode )
+{
+	switch( swfBlendMode ) {
+		case 1:
+			return "normal"; // Normal
+		case 2:
+			return "normal"; // Layer
+		case 3:
+			return "multiply"; // Multiply
+		case 4:
+			return "screen"; // Screen
+		case 5:
+			return "lighten"; // Lighten
+		case 6:
+			return "darken"; // Darken
+		case 7:
+			return "difference"; // Difference
+		case 8:
+			return "plus-lighter"; // Add
+		case 9:
+			return "difference"; // Subtract (no native CSS equivalent, approximate)
+		case 10:
+			return "exclusion"; // Invert (approximate)
+		case 11:
+			return "normal"; // Alpha
+		case 12:
+			return "normal"; // Erase
+		case 13:
+			return "overlay"; // Overlay
+		case 14:
+			return "hard-light"; // HardLight
+		default:
+			return "normal";
+	}
+}
+
 static bool IsMatrixAnimated( const idList<swfMatrix_t>& frames )
 {
 	if( frames.Num() <= 1 ) {
@@ -599,7 +635,12 @@ void idSWFSprite::LoadSVGNode_r(
 		const char* dataType  = s.attribute( "data-type" ).value();
 
 		if( childName == "use" ) {
-			swfTag_t			  cmdTag = Tag_PlaceObject2;
+			int blendMode = -1;
+			if( s.attribute( "data-blend-mode" ) ) {
+				blendMode = s.attribute( "data-blend-mode" ).as_int();
+			}
+
+			swfTag_t			  cmdTag = ( blendMode > 0 ) ? Tag_PlaceObject3 : Tag_PlaceObject2;
 
 			svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
 			deferred.frame				   = currentFrame;
@@ -610,15 +651,15 @@ void idSWFSprite::LoadSVGNode_r(
 
 			idFile_SWF		memFile( new idFile_Memory() );
 
-			uint8			flags = PlaceFlagHasCharacter;
+			uint8			flags1 = PlaceFlagHasCharacter;
 			if( s.attribute( "transform" ) ) {
-				flags |= PlaceFlagHasMatrix;
+				flags1 |= PlaceFlagHasMatrix;
 			}
 			if( s.attribute( "filter" ) ) {
-				flags |= PlaceFlagHasColorTransform;
+				flags1 |= PlaceFlagHasColorTransform;
 			}
 			if( s.attribute( "data-ratio" ) ) {
-				flags |= PlaceFlagHasRatio;
+				flags1 |= PlaceFlagHasRatio;
 			}
 			idStr fullID;
 			idStr localName;
@@ -638,10 +679,18 @@ void idSWFSprite::LoadSVGNode_r(
 				}
 			}
 			if( !localName.IsEmpty() ) {
-				flags |= PlaceFlagHasName;
+				flags1 |= PlaceFlagHasName;
 			}
 
-			memFile.WriteU8( flags );
+			uint8 flags2 = 0;
+			if( blendMode > 0 ) {
+				flags2 |= PlaceFlagHasBlendMode;
+			}
+
+			memFile.WriteU8( flags1 );
+			if( cmdTag == Tag_PlaceObject3 ) {
+				memFile.WriteU8( flags2 );
+			}
 			memFile.WriteU16( depthCounter );
 			// depthCounter++;
 			depthCounter = idMath::NextPrime( depthCounter );
@@ -650,24 +699,28 @@ void idSWFSprite::LoadSVGNode_r(
 			int	  charID = atoi( href.c_str() + 1 );
 			memFile.WriteU16( charID );
 
-			if( flags & PlaceFlagHasMatrix ) {
+			if( flags1 & PlaceFlagHasMatrix ) {
 				swfMatrix_t m;
 				m.ParseSVGTransformFromString( s.attribute( "transform" ).value() );
 				memFile.WriteMatrix( m );
 			}
 
-			if( flags & PlaceFlagHasColorTransform ) {
+			if( flags1 & PlaceFlagHasColorTransform ) {
 				swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
 				memFile.WriteColorXFormRGBA( cxf );
 			}
 
-			if( flags & PlaceFlagHasRatio ) {
+			if( flags1 & PlaceFlagHasRatio ) {
 				uint16 ratio = ( uint16 )s.attribute( "data-ratio" ).as_uint();
 				memFile.WriteU16( ratio );
 			}
 
-			if( flags & PlaceFlagHasName ) {
+			if( flags1 & PlaceFlagHasName ) {
 				memFile.WriteString( localName );
+			}
+
+			if( flags2 & PlaceFlagHasBlendMode ) {
+				memFile.WriteU8( ( uint8 )blendMode );
 			}
 
 			targetStream->Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
@@ -752,7 +805,12 @@ void idSWFSprite::LoadSVGNode_r(
 
 			{
 				// place the newly created character into this sprite
-				swfTag_t			  cmdTag = Tag_PlaceObject2;
+				int blendMode = -1;
+				if( s.attribute( "data-blend-mode" ) ) {
+					blendMode = s.attribute( "data-blend-mode" ).as_int();
+				}
+
+				swfTag_t			  cmdTag = ( blendMode > 0 ) ? Tag_PlaceObject3 : Tag_PlaceObject2;
 
 				svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
 				deferred.frame				   = currentFrame;
@@ -763,15 +821,15 @@ void idSWFSprite::LoadSVGNode_r(
 
 				idFile_SWF		memFile( new idFile_Memory() );
 
-				uint8			flags = PlaceFlagHasCharacter;
+				uint8			flags1 = PlaceFlagHasCharacter;
 				if( s.attribute( "transform" ) ) {
-					flags |= PlaceFlagHasMatrix;
+					flags1 |= PlaceFlagHasMatrix;
 				}
 				if( s.attribute( "filter" ) ) {
-					flags |= PlaceFlagHasColorTransform;
+					flags1 |= PlaceFlagHasColorTransform;
 				}
 				if( s.attribute( "data-ratio" ) ) {
-					flags |= PlaceFlagHasRatio;
+					flags1 |= PlaceFlagHasRatio;
 				}
 				idStr fullID;
 				idStr localName;
@@ -792,33 +850,45 @@ void idSWFSprite::LoadSVGNode_r(
 				}
 
 				if( !localName.IsEmpty() ) {
-					flags |= PlaceFlagHasName;
+					flags1 |= PlaceFlagHasName;
 				}
 
-				memFile.WriteU8( flags );
+				uint8 flags2 = 0;
+				if( blendMode > 0 ) {
+					flags2 |= PlaceFlagHasBlendMode;
+				}
+
+				memFile.WriteU8( flags1 );
+				if( cmdTag == Tag_PlaceObject3 ) {
+					memFile.WriteU8( flags2 );
+				}
 				memFile.WriteU16( depthCounter );
 				// depthCounter++;
 				depthCounter = idMath::NextPrime( depthCounter );
 				memFile.WriteU16( newCharID );
 
-				if( flags & PlaceFlagHasMatrix ) {
+				if( flags1 & PlaceFlagHasMatrix ) {
 					swfMatrix_t m;
 					m.ParseSVGTransformFromString( s.attribute( "transform" ).value() );
 					memFile.WriteMatrix( m );
 				}
 
-				if( flags & PlaceFlagHasColorTransform ) {
+				if( flags1 & PlaceFlagHasColorTransform ) {
 					swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
 					memFile.WriteColorXFormRGBA( cxf );
 				}
 
-				if( flags & PlaceFlagHasRatio ) {
+				if( flags1 & PlaceFlagHasRatio ) {
 					uint16 ratio = ( uint16 )s.attribute( "data-ratio" ).as_uint();
 					memFile.WriteU16( ratio );
 				}
 
-				if( flags & PlaceFlagHasName ) {
+				if( flags1 & PlaceFlagHasName ) {
 					memFile.WriteString( localName );
+				}
+
+				if( flags2 & PlaceFlagHasBlendMode ) {
+					memFile.WriteU8( ( uint8 )blendMode );
 				}
 
 				targetStream->Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
@@ -1260,6 +1330,19 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 						clipDepth = peek.ReadU16();
 					}
 
+					// PO3 extra fields after clipDepth
+					uint8 blendMode	   = 0;
+					bool  hadBlendMode = false;
+					if( existingCmd.tag == Tag_PlaceObject3 ) {
+						if( ( flags2 & PlaceFlagHasFilterList ) != 0 ) {
+							// can't reliably skip variable-length filter list
+						}
+						if( ( flags2 & PlaceFlagHasBlendMode ) != 0 && !( flags2 & PlaceFlagHasFilterList ) ) {
+							blendMode	 = peek.ReadU8();
+							hadBlendMode = true;
+						}
+					}
+
 					// Use animation's first frame as the matrix; leave color alone
 					swfMatrix_t finalMatrix = *animM;
 
@@ -1289,6 +1372,9 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 					}
 					if( hadClipDepth ) {
 						memFile.WriteU16( clipDepth );
+					}
+					if( hadBlendMode ) {
+						memFile.WriteU8( blendMode );
 					}
 
 					// Replace the stream in the existing command
@@ -1942,6 +2028,30 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		name = bitstream.ReadString();
 	}
 
+	uint16 clipDepth	= 0;
+	bool   hasClipDepth = false;
+	if( ( flags1 & PlaceFlagHasClipDepth ) != 0 ) {
+		clipDepth	 = bitstream.ReadU16();
+		hasClipDepth = true;
+	}
+
+	if( ( flags2 & PlaceFlagHasFilterList ) != 0 ) {
+		// filter list is variable length; we can't reliably skip it,
+		// so we stop parsing here (same limitation as JSON export)
+	}
+
+	int	 blendMode	  = 0;
+	bool hasBlendMode = false;
+	if( ( flags2 & PlaceFlagHasBlendMode ) != 0 && !( flags2 & PlaceFlagHasFilterList ) ) {
+		blendMode	 = bitstream.ReadU8();
+		hasBlendMode = true;
+	}
+
+	idStr blendAttr;
+	if( hasBlendMode && blendMode > 1 ) {
+		blendAttr.Format( "data-blend-mode=\"%i\" style=\"mix-blend-mode: %s\" ", blendMode, GetCSSBlendMode( blendMode ) );
+	}
+
 	// ===========================================================
 	// Write into SVG (only for Create!)
 	// ===========================================================
@@ -1997,6 +2107,10 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 				file->WriteFloatString( "id=\"%s\" ", uniqueID.c_str() );
 			}
 
+			if( !blendAttr.IsEmpty() ) {
+				file->WriteFloatString( "%s", blendAttr.c_str() );
+			}
+
 			file->WriteFloatString( " />\n" );
 			break;
 		}
@@ -2004,7 +2118,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		case SWF_DICT_SPRITE: {
 			idSWFSprite* sprite = dictEntry.sprite;
 
-			if( ( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isTransformAnimated ) || !filterID.IsEmpty() ) {
+			if( ( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isTransformAnimated ) || !filterID.IsEmpty() || !blendAttr.IsEmpty() ) {
 				if( uniqueID.Equals( "root.info0.13" ) ) {
 					int breakpoint = 0;
 				}
@@ -2025,6 +2139,10 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 
 				if( hasRatio ) {
 					file->WriteFloatString( "data-ratio=\"%i\" ", ratio );
+				}
+
+				if( !blendAttr.IsEmpty() ) {
+					file->WriteFloatString( "%s", blendAttr.c_str() );
 				}
 
 				file->WriteFloatString( ">\n" );
