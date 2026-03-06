@@ -586,7 +586,7 @@ void idSWFSprite::LoadSVGNode_r(
 	svgOrderIndexCounter = 0;
 	frameLabels.Clear();
 
-	int	  depthCounter = 2;
+	int	  depthCounter = 1;
 	int	  currentFrame = 0;
 
 	idStr scope;
@@ -1019,8 +1019,11 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 		}
 	}
 
-	// Build a map of depth -> initial color transform from frame 0 placement commands.
-	// This lets opacity animations preserve the original feColorMatrix mul/add values.
+	// Build maps of depth -> initial transform / color from frame 0 placement commands.
+	// depthBaseTransform: lets the back-patch inject the animation's start matrix into
+	//   deferred PlaceObject commands that lack a transform attribute in the SVG.
+	// depthBaseColor: lets opacity animations preserve the original feColorMatrix mul/add values.
+	idHashTableT<int, swfMatrix_t>	   depthBaseTransform;
 	idHashTableT<int, swfColorXform_t> depthBaseColor;
 	{
 		for( int c = 0; c < svgDeferredCommands.Num(); c++ ) {
@@ -1034,9 +1037,9 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 				uint8		   flags2 = ( deferred.tag == Tag_PlaceObject3 ) ? peek.ReadU8() : 0;
 				int			   depth  = peek.ReadU16();
 
-				// Only capture the base color from initial placements (new character).
+				// Only capture from initial placements (new character).
 				// PlaceFlagMove-only commands are position updates, not new placements,
-				// so they don't carry a meaningful base color to preserve.
+				// so they don't carry a meaningful base transform/color to preserve.
 				if( !( flags1 & PlaceFlagHasCharacter ) ) {
 					continue;
 				}
@@ -1044,7 +1047,8 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 				peek.ReadU16(); // characterID - skip
 				if( flags1 & PlaceFlagHasMatrix ) {
 					swfMatrix_t m;
-					peek.ReadMatrix( m ); // skip
+					peek.ReadMatrix( m );
+					depthBaseTransform.Set( depth, m );
 				}
 				if( flags1 & PlaceFlagHasColorTransform ) {
 					swfColorXform_t cxf;
@@ -1193,6 +1197,102 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 				swfColorXform_t* cxf = NULL;
 				if( depthColor.Get( depth, &cxf ) ) {
 					prevDepthColor.Set( depth, *cxf );
+				}
+			}
+
+			// Back-patch Frame 0 deferred PlaceObject2/3 commands:
+			// Inject the animation's initial matrix into the placement stream so
+			// the object starts at the correct position (e.g. off-screen at -450)
+			// instead of defaulting to identity (0,0).
+			// Color transforms are left untouched – only the matrix is patched.
+			if( depthsInFrame.Num() > 0 ) {
+				for( int ci = 0; ci < commands.Num(); ci++ ) {
+					swfSpriteCommand_t& existingCmd = commands[ci];
+					if( existingCmd.tag != Tag_PlaceObject2 && existingCmd.tag != Tag_PlaceObject3 ) {
+						continue;
+					}
+
+					// Parse the existing stream to extract its fields
+					idSWFBitStream peek( existingCmd.stream.Ptr(), existingCmd.stream.Length(), false );
+					uint8		   flags1	= peek.ReadU8();
+					uint8		   flags2	= ( existingCmd.tag == Tag_PlaceObject3 ) ? peek.ReadU8() : 0;
+					int			   cmdDepth = peek.ReadU16();
+
+					// Only patch if this depth has a transform animation
+					swfMatrix_t*   animM = NULL;
+					if( !depthMatrix.Get( cmdDepth, &animM ) ) {
+						continue;
+					}
+
+					// Read existing fields from the original stream
+					int characterID = -1;
+					if( flags1 & PlaceFlagHasCharacter ) {
+						characterID = peek.ReadU16();
+					}
+
+					swfMatrix_t origMatrix;
+					bool		hadMatrix = ( flags1 & PlaceFlagHasMatrix ) != 0;
+					if( hadMatrix ) {
+						peek.ReadMatrix( origMatrix );
+					}
+
+					swfColorXform_t origColor;
+					bool			hadColor = ( flags1 & PlaceFlagHasColorTransform ) != 0;
+					if( hadColor ) {
+						peek.ReadColorXFormRGBA( origColor );
+					}
+
+					uint16 ratio	= 0;
+					bool   hadRatio = ( flags1 & PlaceFlagHasRatio ) != 0;
+					if( hadRatio ) {
+						ratio = peek.ReadU16();
+					}
+
+					idStr name;
+					bool  hadName = ( flags1 & PlaceFlagHasName ) != 0;
+					if( hadName ) {
+						name = peek.ReadString();
+					}
+
+					uint16 clipDepth	= 0;
+					bool   hadClipDepth = ( flags1 & PlaceFlagHasClipDepth ) != 0;
+					if( hadClipDepth ) {
+						clipDepth = peek.ReadU16();
+					}
+
+					// Use animation's first frame as the matrix; leave color alone
+					swfMatrix_t finalMatrix = *animM;
+
+					// Force PlaceFlagHasMatrix on
+					uint8		newFlags1 = flags1 | PlaceFlagHasMatrix;
+
+					// Write the patched stream
+					idFile_SWF	memFile( new idFile_Memory() );
+					memFile.WriteU8( newFlags1 );
+					if( existingCmd.tag == Tag_PlaceObject3 ) {
+						memFile.WriteU8( flags2 );
+					}
+					memFile.WriteU16( cmdDepth );
+
+					if( newFlags1 & PlaceFlagHasCharacter ) {
+						memFile.WriteU16( characterID );
+					}
+					memFile.WriteMatrix( finalMatrix );
+					if( hadColor ) {
+						memFile.WriteColorXFormRGBA( origColor );
+					}
+					if( hadRatio ) {
+						memFile.WriteU16( ratio );
+					}
+					if( hadName ) {
+						memFile.WriteString( name.c_str() );
+					}
+					if( hadClipDepth ) {
+						memFile.WriteU16( clipDepth );
+					}
+
+					// Replace the stream in the existing command
+					existingCmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 				}
 			}
 
