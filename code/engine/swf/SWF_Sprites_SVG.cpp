@@ -582,6 +582,7 @@ void idSWFSprite::LoadSVGNode_r(
 	svgLuaMarkers.Clear();
 	svgRemoveMarkers.Clear();
 	svgDeferredCommands.Clear();
+	svgOrderIndexCounter = 0;
 	frameLabels.Clear();
 
 	int	  depthCounter = 2;
@@ -606,6 +607,7 @@ void idSWFSprite::LoadSVGNode_r(
 			} else {
 				svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
 				deferred.frame				   = currentFrame;
+				deferred.orderIndex			   = svgOrderIndexCounter++;
 				deferred.tag				   = cmdTag;
 				targetStream				   = &deferred.stream;
 			}
@@ -725,9 +727,7 @@ void idSWFSprite::LoadSVGNode_r(
 					frame	 = idMath::Rint( at * ( swf->frameRate / 256.0f ) );
 				}
 
-				if( frame > currentFrame ) {
-					currentFrame = frame;
-				}
+				currentFrame = frame;
 
 				if( frame == 0 ) {
 					swfSpriteCommand_t& cmd = commands.Alloc();
@@ -776,6 +776,7 @@ void idSWFSprite::LoadSVGNode_r(
 				} else {
 					svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
 					deferred.frame				   = currentFrame;
+					deferred.orderIndex			   = svgOrderIndexCounter++;
 					deferred.tag				   = cmdTag;
 					targetStream				   = &deferred.stream;
 				}
@@ -1015,6 +1016,29 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 		}
 	}
 
+	idList<int> svgDeferredOrder;
+	if( svgDeferredCommands.Num() > 0 ) {
+		svgDeferredOrder.SetNum( svgDeferredCommands.Num() );
+		for( int i = 0; i < svgDeferredCommands.Num(); i++ ) {
+			svgDeferredOrder[i] = i;
+		}
+
+		for( int i = 1; i < svgDeferredOrder.Num(); i++ ) {
+			int key = svgDeferredOrder[i];
+			int j	= i - 1;
+			while( j >= 0 ) {
+				const svgDeferredCommand_t& a = svgDeferredCommands[svgDeferredOrder[j]];
+				const svgDeferredCommand_t& b = svgDeferredCommands[key];
+				if( a.frame < b.frame || ( a.frame == b.frame && a.orderIndex <= b.orderIndex ) ) {
+					break;
+				}
+				svgDeferredOrder[j + 1] = svgDeferredOrder[j];
+				j--;
+			}
+			svgDeferredOrder[j + 1] = key;
+		}
+	}
+
 	// Build a map of depth -> initial color transform from frame 0 placement commands.
 	// This lets opacity animations preserve the original feColorMatrix mul/add values.
 	idHashTableT<int, swfColorXform_t> depthBaseColor;
@@ -1215,11 +1239,12 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 			}
 		}
 
-		for( int m = 0; m < svgDeferredCommands.Num(); m++ ) {
-			if( svgDeferredCommands[m].frame == i ) {
+		for( int oi = 0; oi < svgDeferredOrder.Num(); oi++ ) {
+			const svgDeferredCommand_t& deferred = svgDeferredCommands[svgDeferredOrder[oi]];
+			if( deferred.frame == i ) {
 				swfSpriteCommand_t& cmd = commands.Alloc();
-				cmd.tag					= svgDeferredCommands[m].tag;
-				cmd.stream.Load( svgDeferredCommands[m].stream.Ptr(), svgDeferredCommands[m].stream.Length(), true );
+				cmd.tag					= deferred.tag;
+				cmd.stream.Load( deferred.stream.Ptr(), deferred.stream.Length(), true );
 			}
 		}
 

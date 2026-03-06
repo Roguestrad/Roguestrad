@@ -46,6 +46,7 @@ public:
 	void			Load( const byte* data, uint32 len, bool copy );
 	void			Free();
 	const byte*		Ptr() { return startp; }
+	const byte*		Ptr() const { return startp; }
 
 	uint32			Length() const { return ( uint32 )( endp - startp ); }
 	uint32			Tell() const { return ( uint32 )( readp - startp ); }

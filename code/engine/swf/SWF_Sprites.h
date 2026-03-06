@@ -180,10 +180,12 @@ private:
 
 	struct svgDeferredCommand_t {
 		int			   frame;
+		int			   orderIndex;
 		swfTag_t	   tag;
 		idSWFBitStream stream;
 	};
 	idList<svgDeferredCommand_t, TAG_SWF> svgDeferredCommands;
+	int									  svgOrderIndexCounter;
 
 	//// [ES-BrianBugh 1/16/10] - There can be multiple DoInitAction tags, and all need to be executed.
 	idList<idSWFBitStream, TAG_SWF>		  doInitActions;
