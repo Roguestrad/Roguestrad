@@ -1974,8 +1974,15 @@ void idSWFSprite::PreRun_PlaceObject2_3( swfTag_t tag,
 		entry.opacityFrames.Append( localColor.mul.w );
 		entry.colorFrames.Append( localColor );
 
-		// Use a composite key (sourceCharacterID * 65536 + depth) so that
-		// multiple depths placing the same characterID get separate entries.
+		// CharacterMap key collision: When the same characterID was placed at multiple
+		// depths (e.g. depth 1 and depth 3 both referencing characterID 11),
+		// characterMap.Set(characterID, entry) overwrote the first entry. Both
+		// localDepthMap pointers ended up sharing one svgDisplayEntry_t, interleaving
+		// opacity/matrix frames into a single list. This doubled the frame count
+		// (177 instead of 89) and corrupted frameOffsets.
+
+		// Use composite key (sourceCharacterID << 16 | depth) for characterMap,
+		// and include depth in the SVG id so each depth gets a unique animate target.
 		int mapKey = ( sourceCharacterID << 16 ) | ( depth & 0xFFFF );
 		characterMap.Set( mapKey, entry );
 
