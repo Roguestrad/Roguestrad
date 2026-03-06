@@ -78,7 +78,14 @@ public:
 		idList<parsedAnim_t> parsedAnims;
 	};
 
-	void		LoadSVGNode_r( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, svgAnimTarget_t>& targetMap, idList<pugi::xml_node>& animations );
+	void		LoadSVG( const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, svgAnimTarget_t>& targetMap, idList<pugi::xml_node>& animations );
+	void		LoadSVGNode_r( const pugi::xml_node& node,
+			   idList<idSWFDictionaryEntry>&		 dict,
+			   bool									 isUnfolded,
+			   idHashTableT<idStr, svgAnimTarget_t>& targetMap,
+			   idList<pugi::xml_node>&				 animations,
+			   int&									 depthCounter,
+			   int&									 currentFrame );
 
 	// Parses all collected animation nodes into parsedAnim_t entries stored on each svgAnimTarget_t.
 	// Call this once after all LoadSVGNode_r calls have finished, before ApplySVGAnimationTargets.

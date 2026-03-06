@@ -573,10 +573,11 @@ static void RegisterSVGAnimationTarget( idHashTableT<idStr, idSWFSprite::svgAnim
 	targetMap.Set( targetID, entry );
 }
 
-void idSWFSprite::LoadSVGNode_r(
+void idSWFSprite::LoadSVG(
 	const pugi::xml_node& node, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>& targetMap, idList<pugi::xml_node>& animations )
 {
 	frameCount = 1;
+	commands.Clear();
 	frameOffsets.Clear();
 	frameOffsets.Append( 0 );
 	svgLuaMarkers.Clear();
@@ -585,9 +586,19 @@ void idSWFSprite::LoadSVGNode_r(
 	svgOrderIndexCounter = 0;
 	frameLabels.Clear();
 
-	int	  depthCounter = 2;
-	int	  currentFrame = 0;
+	int depthCounter = 2;
+	int currentFrame = 0;
+	LoadSVGNode_r( node, dict, isUnfolded, targetMap, animations, depthCounter, currentFrame );
+}
 
+void idSWFSprite::LoadSVGNode_r( const pugi::xml_node& node,
+	idList<idSWFDictionaryEntry>&					   dict,
+	bool											   isUnfolded,
+	idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>& targetMap,
+	idList<pugi::xml_node>&							   animations,
+	int&											   depthCounter,
+	int&											   currentFrame )
+{
 	idStr scope;
 	if( node.attribute( "id" ) ) {
 		scope = node.attribute( "id" ).value();
@@ -598,23 +609,18 @@ void idSWFSprite::LoadSVGNode_r(
 		const char* dataType  = s.attribute( "data-type" ).value();
 
 		if( childName == "use" ) {
-			swfTag_t		cmdTag		 = Tag_PlaceObject2;
-			idSWFBitStream* targetStream = NULL;
-			if( currentFrame == 0 ) {
-				swfSpriteCommand_t& cmd = commands.Alloc();
-				cmd.tag					= cmdTag;
-				targetStream			= &cmd.stream;
-			} else {
-				svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
-				deferred.frame				   = currentFrame;
-				deferred.orderIndex			   = svgOrderIndexCounter++;
-				deferred.tag				   = cmdTag;
-				targetStream				   = &deferred.stream;
-			}
+			swfTag_t			  cmdTag = Tag_PlaceObject2;
 
-			idFile_SWF memFile( new idFile_Memory() );
+			svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
+			deferred.frame				   = currentFrame;
+			deferred.orderIndex			   = svgOrderIndexCounter++;
+			deferred.tag				   = cmdTag;
 
-			uint8	   flags = PlaceFlagHasCharacter;
+			idSWFBitStream* targetStream = &deferred.stream;
+
+			idFile_SWF		memFile( new idFile_Memory() );
+
+			uint8			flags = PlaceFlagHasCharacter;
 			if( s.attribute( "transform" ) ) {
 				flags |= PlaceFlagHasMatrix;
 			}
@@ -729,20 +735,9 @@ void idSWFSprite::LoadSVGNode_r(
 
 				currentFrame = frame;
 
-				if( frame == 0 ) {
-					swfSpriteCommand_t& cmd = commands.Alloc();
-					cmd.tag					= Tag_DoLua;
-
-					idFile_SWF memFile( new idFile_Memory() );
-					fn.Append( '\0' );
-					memFile.Write( fn.c_str(), fn.Length() );
-
-					cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
-				} else {
-					svgLuaMarker_t& m = svgLuaMarkers.Alloc();
-					m.frame			  = frame;
-					m.fn			  = fn;
-				}
+				svgLuaMarker_t& m = svgLuaMarkers.Alloc();
+				m.frame			  = frame;
+				m.fn			  = fn;
 				continue;
 			}
 
@@ -762,28 +757,23 @@ void idSWFSprite::LoadSVGNode_r(
 			} else {
 				newEntry.type	= SWF_DICT_SPRITE;
 				newEntry.sprite = new idSWFSprite( swf );
-				newEntry.sprite->LoadSVGNode_r( s, dict, isUnfolded, targetMap, animations );
+				newEntry.sprite->LoadSVG( s, dict, isUnfolded, targetMap, animations );
 			}
 
 			{
 				// place the newly created character into this sprite
-				swfTag_t		cmdTag		 = Tag_PlaceObject2;
-				idSWFBitStream* targetStream = NULL;
-				if( currentFrame == 0 ) {
-					swfSpriteCommand_t& cmd = commands.Alloc();
-					cmd.tag					= cmdTag;
-					targetStream			= &cmd.stream;
-				} else {
-					svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
-					deferred.frame				   = currentFrame;
-					deferred.orderIndex			   = svgOrderIndexCounter++;
-					deferred.tag				   = cmdTag;
-					targetStream				   = &deferred.stream;
-				}
+				swfTag_t			  cmdTag = Tag_PlaceObject2;
 
-				idFile_SWF memFile( new idFile_Memory() );
+				svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
+				deferred.frame				   = currentFrame;
+				deferred.orderIndex			   = svgOrderIndexCounter++;
+				deferred.tag				   = cmdTag;
 
-				uint8	   flags = PlaceFlagHasCharacter;
+				idSWFBitStream* targetStream = &deferred.stream;
+
+				idFile_SWF		memFile( new idFile_Memory() );
+
+				uint8			flags = PlaceFlagHasCharacter;
 				if( s.attribute( "transform" ) ) {
 					flags |= PlaceFlagHasMatrix;
 				}
@@ -854,17 +844,20 @@ void idSWFSprite::LoadSVGNode_r(
 					continue;
 				}
 
-				// Find the depth by walking existing commands backwards
+				// Find the depth by walking existing deferred commands backwards
 				int	 removeDepth = 0;
 				bool found		 = false;
-				for( int ci = commands.Num() - 1; ci >= 0; ci-- ) {
-					// TODO Tag_PlaceObject3
-					if( commands[ci].tag != Tag_PlaceObject2 ) {
+				for( int ci = svgDeferredCommands.Num() - 1; ci >= 0; ci-- ) {
+					const svgDeferredCommand_t& cmd = svgDeferredCommands[ci];
+					if( cmd.tag != Tag_PlaceObject2 && cmd.tag != Tag_PlaceObject3 ) {
 						continue;
 					}
-					idSWFBitStream peek( commands[ci].stream.Ptr(), commands[ci].stream.Length(), false );
+					idSWFBitStream peek( cmd.stream.Ptr(), cmd.stream.Length(), false );
 					uint8		   peekFlags = peek.ReadU8();
-					int			   peekDepth = peek.ReadU16();
+					if( cmd.tag == Tag_PlaceObject3 ) {
+						peek.ReadU8(); // flags2
+					}
+					int peekDepth = peek.ReadU16();
 
 					if( !( peekFlags & PlaceFlagHasCharacter ) ) {
 						continue;
@@ -970,12 +963,9 @@ void idSWFSprite::ParseSVGAnimations( idHashTableT<idStr, svgAnimTarget_t>& targ
 void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAnims )
 {
 	frameCount = 1;
+	commands.Clear();
 	frameOffsets.Clear();
 	frameOffsets.Append( 0 );
-
-	// Mark end of frame 0 (static setup from LoadSVGNode_r) before animation frames.
-	int frameZeroCommandCount = commands.Num();
-	frameOffsets.Append( frameZeroCommandCount );
 
 	if( parsedAnims.Num() == 0 && svgLuaMarkers.Num() == 0 && svgRemoveMarkers.Num() == 0 && svgDeferredCommands.Num() == 0 && frameLabels.Num() == 0 ) {
 		// Still need to re-terminate frameOffsets after the reset above.
@@ -1043,34 +1033,34 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	// This lets opacity animations preserve the original feColorMatrix mul/add values.
 	idHashTableT<int, swfColorXform_t> depthBaseColor;
 	{
-		for( int c = 0; c < frameZeroCommandCount; c++ ) {
-			swfSpriteCommand_t& cmd = commands[c];
-			if( cmd.tag == Tag_PlaceObject2 || cmd.tag == Tag_PlaceObject3 ) {
-				cmd.stream.Rewind();
-				uint8 flags1 = cmd.stream.ReadU8();
-				uint8 flags2 = ( cmd.tag == Tag_PlaceObject3 ) ? cmd.stream.ReadU8() : 0;
-				int	  depth	 = cmd.stream.ReadU16();
+		for( int c = 0; c < svgDeferredCommands.Num(); c++ ) {
+			const svgDeferredCommand_t& deferred = svgDeferredCommands[c];
+			if( deferred.frame != 0 ) {
+				continue;
+			}
+			if( deferred.tag == Tag_PlaceObject2 || deferred.tag == Tag_PlaceObject3 ) {
+				idSWFBitStream peek( deferred.stream.Ptr(), deferred.stream.Length(), false );
+				uint8		   flags1 = peek.ReadU8();
+				uint8		   flags2 = ( deferred.tag == Tag_PlaceObject3 ) ? peek.ReadU8() : 0;
+				int			   depth  = peek.ReadU16();
 
 				// Only capture the base color from initial placements (new character).
 				// PlaceFlagMove-only commands are position updates, not new placements,
 				// so they don't carry a meaningful base color to preserve.
 				if( !( flags1 & PlaceFlagHasCharacter ) ) {
-					cmd.stream.Rewind();
 					continue;
 				}
 
-				cmd.stream.ReadU16(); // characterID - skip
+				peek.ReadU16(); // characterID - skip
 				if( flags1 & PlaceFlagHasMatrix ) {
 					swfMatrix_t m;
-					cmd.stream.ReadMatrix( m ); // skip
+					peek.ReadMatrix( m ); // skip
 				}
 				if( flags1 & PlaceFlagHasColorTransform ) {
 					swfColorXform_t cxf;
-					cmd.stream.ReadColorXFormRGBA( cxf );
+					peek.ReadColorXFormRGBA( cxf );
 					depthBaseColor.Set( depth, cxf );
 				}
-
-				cmd.stream.Rewind(); // restore for normal playback
 			}
 		}
 	}
@@ -1167,52 +1157,6 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 			}
 		}
 
-		// Frame 0 is already covered by the initial placement commands,
-		// so we only seed the prev-tables and skip command emission.
-		if( i == 0 ) {
-			for( int d = 0; d < depthsInFrame.Num(); d++ ) {
-				int			 depth = depthsInFrame[d];
-				swfMatrix_t* m	   = NULL;
-				if( depthMatrix.Get( depth, &m ) ) {
-					prevDepthMatrix.Set( depth, *m );
-				}
-				swfColorXform_t* cxf = NULL;
-				if( depthColor.Get( depth, &cxf ) ) {
-					prevDepthColor.Set( depth, *cxf );
-				}
-			}
-
-			// Emit frame-0 markers so they stay in the first frame.
-			for( int m = 0; m < svgLuaMarkers.Num(); m++ ) {
-				if( svgLuaMarkers[m].frame == i ) {
-					swfSpriteCommand_t& cmd = commands.Alloc();
-					cmd.tag					= Tag_DoLua;
-
-					idFile_SWF memFile( new idFile_Memory() );
-					idStr	   fn = svgLuaMarkers[m].fn;
-					fn.Append( '\0' );
-					memFile.Write( fn.c_str(), fn.Length() );
-
-					cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
-				}
-			}
-
-			for( int m = 0; m < svgRemoveMarkers.Num(); m++ ) {
-				if( svgRemoveMarkers[m].frame == i ) {
-					swfSpriteCommand_t& cmd = commands.Alloc();
-					cmd.tag					= Tag_RemoveObject2;
-
-					idFile_SWF memFile( new idFile_Memory() );
-					memFile.WriteU16( svgRemoveMarkers[m].depth );
-
-					cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
-				}
-			}
-
-			frameOffsets[1] = commands.Num();
-			continue;
-		}
-
 		for( int m = 0; m < svgLuaMarkers.Num(); m++ ) {
 			if( svgLuaMarkers[m].frame == i ) {
 				swfSpriteCommand_t& cmd = commands.Alloc();
@@ -1246,6 +1190,24 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 				cmd.tag					= deferred.tag;
 				cmd.stream.Load( deferred.stream.Ptr(), deferred.stream.Length(), true );
 			}
+		}
+
+		// Frame 0 only seeds the prev-tables; no move commands.
+		if( i == 0 ) {
+			for( int d = 0; d < depthsInFrame.Num(); d++ ) {
+				int			 depth = depthsInFrame[d];
+				swfMatrix_t* m	   = NULL;
+				if( depthMatrix.Get( depth, &m ) ) {
+					prevDepthMatrix.Set( depth, *m );
+				}
+				swfColorXform_t* cxf = NULL;
+				if( depthColor.Get( depth, &cxf ) ) {
+					prevDepthColor.Set( depth, *cxf );
+				}
+			}
+
+			frameOffsets.Append( commands.Num() );
+			continue;
 		}
 
 		for( int d = 0; d < depthsInFrame.Num(); d++ ) {

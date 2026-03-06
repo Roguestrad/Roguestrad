@@ -402,7 +402,7 @@ bool idSWF::LoadSVG( const char* filename )
 				} else {
 					entry.type	 = SWF_DICT_SPRITE;
 					entry.sprite = new idSWFSprite( this );
-					entry.sprite->LoadSVGNode_r( g, dictionary, isUnfolded, svgTargetMap, svgAnimations );
+					entry.sprite->LoadSVG( g, dictionary, isUnfolded, svgTargetMap, svgAnimations );
 				}
 			}
 		}
@@ -415,8 +415,9 @@ bool idSWF::LoadSVG( const char* filename )
 	}
 
 	mainsprite = new idSWFSprite( this );
-	mainsprite->LoadSVGNode_r( mainNode, dictionary, isUnfolded, svgTargetMap, svgAnimations );
+	mainsprite->LoadSVG( mainNode, dictionary, isUnfolded, svgTargetMap, svgAnimations );
 
+	idList<idSWFSprite*> animatedSprites;
 	if( svgAnimations.Num() > 0 ) {
 		// Parse all collected animation nodes into parsedAnim_t entries stored on each target.
 		idSWFSprite::ParseSVGAnimations( svgTargetMap, svgAnimations );
@@ -443,6 +444,29 @@ bool idSWF::LoadSVG( const char* filename )
 
 		for( int i = 0; i < uniqueOwners.Num(); i++ ) {
 			uniqueOwners[i]->ApplySVGAnimationTargets( ownerAnims[i] );
+			animatedSprites.AddUnique( uniqueOwners[i] );
+		}
+	}
+
+	// Ensure deferred commands are materialized even when there are no animations.
+	{
+		idList<idSWFSprite*> allSprites;
+		if( mainsprite != NULL ) {
+			allSprites.Append( mainsprite );
+		}
+		for( int i = 0; i < dictionary.Num(); i++ ) {
+			if( dictionary[i].type == SWF_DICT_SPRITE && dictionary[i].sprite != NULL ) {
+				if( allSprites.FindIndex( dictionary[i].sprite ) == -1 ) {
+					allSprites.Append( dictionary[i].sprite );
+				}
+			}
+		}
+		idList<idSWFSprite::parsedAnim_t> emptyAnims;
+		for( int i = 0; i < allSprites.Num(); i++ ) {
+			if( animatedSprites.FindIndex( allSprites[i] ) != -1 ) {
+				continue;
+			}
+			allSprites[i]->ApplySVGAnimationTargets( emptyAnims );
 		}
 	}
 
