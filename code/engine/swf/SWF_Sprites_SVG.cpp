@@ -1011,6 +1011,12 @@ void idSWFSprite::ParseSVGAnimations( idHashTableT<idStr, svgAnimTarget_t>& targ
 			pa.transformType = animNode.attribute( "type" ).value();
 			pa.isAdditive	 = ( idStr( animNode.attribute( "additive" ).value() ) == "sum" );
 		}
+
+		// Parse the full mul-color data for roundtrip fidelity (R,G,B,A per frame).
+		idStr mulColorStr = animNode.attribute( "data-mul-color" ).value();
+		if( !mulColorStr.IsEmpty() ) {
+			idStr::Split( mulColorStr.c_str(), pa.mulColorList, ';' );
+		}
 	}
 }
 
@@ -1196,15 +1202,8 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 					depthsInFrame.AddUnique( pa.depth );
 				}
 			} else if( pa.attributeName == "opacity" ) {
-				float			 opacity = ( float )atof( pa.valueList[i].c_str() );
-
-				swfColorXform_t* existingCxf;
-				if( depthColor.Get( pa.depth, &existingCxf ) ) {
-					// A previous animation already set the base; only scale alpha further.
-					existingCxf->mul.w = opacity;
-				} else {
-					// Start from the original placement color transform so that
-					// feColorMatrix mul/add values (r,g,b channels) are preserved.
+				// If we have full mul-color data, use it instead of just opacity.
+				if( i < pa.mulColorList.Num() ) {
 					swfColorXform_t	 cxf;
 					swfColorXform_t* baseCxf = NULL;
 					if( depthBaseColor.Get( pa.depth, &baseCxf ) ) {
@@ -1213,10 +1212,46 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 						cxf.mul = vec4_one;
 						cxf.add = vec4_zero;
 					}
-					cxf.mul.w = opacity;
 
-					depthColor.Set( pa.depth, cxf );
-					depthsInFrame.AddUnique( pa.depth );
+					// Parse "R G B A" quadruplet
+					idLexer lexer;
+					lexer.LoadMemory( pa.mulColorList[i].c_str(), pa.mulColorList[i].Length(), "mulColor" );
+					cxf.mul.x = lexer.ParseFloat();
+					cxf.mul.y = lexer.ParseFloat();
+					cxf.mul.z = lexer.ParseFloat();
+					cxf.mul.w = lexer.ParseFloat();
+					lexer.FreeSource();
+
+					swfColorXform_t* existingCxf;
+					if( depthColor.Get( pa.depth, &existingCxf ) ) {
+						*existingCxf = cxf;
+					} else {
+						depthColor.Set( pa.depth, cxf );
+						depthsInFrame.AddUnique( pa.depth );
+					}
+				} else {
+					float			 opacity = ( float )atof( pa.valueList[i].c_str() );
+
+					swfColorXform_t* existingCxf;
+					if( depthColor.Get( pa.depth, &existingCxf ) ) {
+						// A previous animation already set the base; only scale alpha further.
+						existingCxf->mul.w = opacity;
+					} else {
+						// Start from the original placement color transform so that
+						// feColorMatrix mul/add values (r,g,b channels) are preserved.
+						swfColorXform_t	 cxf;
+						swfColorXform_t* baseCxf = NULL;
+						if( depthBaseColor.Get( pa.depth, &baseCxf ) ) {
+							cxf = *baseCxf;
+						} else {
+							cxf.mul = vec4_one;
+							cxf.add = vec4_zero;
+						}
+						cxf.mul.w = opacity;
+
+						depthColor.Set( pa.depth, cxf );
+						depthsInFrame.AddUnique( pa.depth );
+					}
 				}
 			}
 		}
@@ -1664,17 +1699,17 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 				continue;
 			}
 
-			int	  depth = i;
+			int depth = 0;
+			localDepthMap.GetIndexKey( i, depth );
 
 			idStr targetID;
 			if( !e->name.IsEmpty() ) {
 				targetID = e->name;
 			} else {
-				// targetID.Format( "inst_%i_d%i", e->characterID, depth );
-				targetID.Format( "%i", e->characterID );
+				targetID.Format( "%i.%i", e->characterID, depth );
 			}
 
-			// animate opacity track
+			// animate opacity track (with full mul-color for roundtrip fidelity)
 			if( e->opacityFrames.Num() > 1 ) {
 				file->WriteFloatString( "\t%s<animate xlink:href=\"#%s\" attributeName=\"opacity\" values=\"", tabs.c_str(), targetID.c_str() );
 
@@ -1683,8 +1718,19 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 					if( f < e->opacityFrames.Num() - 1 )
 						file->WriteFloatString( ";" );
 				}
+
+				// Embed the full mulColor per frame so the roundtrip preserves R,G,B changes.
+				if( e->colorFrames.Num() > 1 ) {
+					file->WriteFloatString( "\" data-mul-color=\"" );
+					for( int f = 0; f < e->colorFrames.Num(); f++ ) {
+						const swfColorXform_t& cf = e->colorFrames[f];
+						file->WriteFloatString( "%f %f %f %f", cf.mul.x, cf.mul.y, cf.mul.z, cf.mul.w );
+						if( f < e->colorFrames.Num() - 1 )
+							file->WriteFloatString( ";" );
+					}
+				}
+
 				file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->opacityFrames.Num() * frameDur );
-				// file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"1\" restart=\"whenNotActive\" begin=\"%s.mouseover\" />\n", e->opacityFrames.Num() * frameDur, targetID.c_str() );
 			}
 
 			// animate transform track
@@ -1873,7 +1919,9 @@ void idSWFSprite::PreRun_PlaceObject2_3( swfTag_t tag,
 	if( !name.IsEmpty() ) {
 		uniqueID.Format( "%s.%s", sourcePrefix.c_str(), name.c_str() );
 	} else {
-		uniqueID.Format( "%s.%i", sourcePrefix.c_str(), characterID );
+		// Include depth so that multiple placements of the same characterID
+		// at different depths get distinct SVG ids and separate animation tracks.
+		uniqueID.Format( "%s.%i.%i", sourcePrefix.c_str(), characterID, depth );
 	}
 
 	if( flags1 & PlaceFlagMove ) {
@@ -1893,13 +1941,18 @@ void idSWFSprite::PreRun_PlaceObject2_3( swfTag_t tag,
 				entry->opacityFrames.Append( entry->cxf.mul.w );
 			}
 
+			while( entry->colorFrames.Num() < currentFrame ) {
+				entry->colorFrames.Append( entry->cxf );
+			}
+
 			if( flags1 & PlaceFlagHasMatrix ) {
 				entry->matrixFrames.Append( localMatrix );
 				entry->matrix = localMatrix;
 			}
 
 			if( flags1 & PlaceFlagHasColorTransform ) {
-				entry->opacityFrames.Append( localColor.mul.w ); // TODO should be full color animation
+				entry->opacityFrames.Append( localColor.mul.w );
+				entry->colorFrames.Append( localColor );
 				entry->cxf = localColor;
 			}
 		}
@@ -1912,17 +1965,22 @@ void idSWFSprite::PreRun_PlaceObject2_3( swfTag_t tag,
 
 		svgDisplayEntry_t entry;
 		entry.characterID = characterID;
+		entry.depth		  = depth;
 		entry.matrix	  = localMatrix;
 		entry.cxf		  = localColor;
 		entry.name		  = uniqueID;
 
 		entry.matrixFrames.Append( localMatrix );
 		entry.opacityFrames.Append( localColor.mul.w );
+		entry.colorFrames.Append( localColor );
 
-		characterMap.Set( characterID, entry );
+		// Use a composite key (sourceCharacterID * 65536 + depth) so that
+		// multiple depths placing the same characterID get separate entries.
+		int mapKey = ( sourceCharacterID << 16 ) | ( depth & 0xFFFF );
+		characterMap.Set( mapKey, entry );
 
 		svgDisplayEntry_t* entryPtr;
-		characterMap.Get( characterID, &entryPtr );
+		characterMap.Get( mapKey, &entryPtr );
 
 		localDepthMap.Set( depth, entryPtr );
 	}
@@ -2063,7 +2121,9 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 	if( !name.IsEmpty() ) {
 		uniqueID.Format( "%s.%s", sourcePrefix.c_str(), name.c_str() );
 	} else {
-		uniqueID.Format( "%s.%i", sourcePrefix.c_str(), characterID );
+		// Include depth so that multiple placements of the same characterID
+		// at different depths get distinct SVG ids (must match PreRun_PlaceObject2_3).
+		uniqueID.Format( "%s.%i.%i", sourcePrefix.c_str(), characterID, depth );
 	}
 
 	bool				isAnimated			= false;

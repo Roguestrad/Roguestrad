@@ -66,6 +66,7 @@ public:
 	struct parsedAnim_t {
 		int			  depth;
 		idList<idStr> valueList;
+		idList<idStr> mulColorList; // full R,G,B,A mul-color per frame for roundtrip fidelity
 		idStr		  attributeName;
 		bool		  isTransform;
 		idStr		  transformType;

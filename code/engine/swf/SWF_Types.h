@@ -306,16 +306,17 @@ struct swfDisplayEntry_t {
 
 struct svgDisplayEntry_t {
 	svgDisplayEntry_t();
-	uint16				characterID;
-	uint16				depth;
-	uint16				clipDepth;
-	uint16				blendMode;
-	swfMatrix_t			matrix;
-	swfColorXform_t		cxf;
-	float				ratio;
-	idStr				name; // RB: instance name
-	idList<float>		opacityFrames;
-	idList<swfMatrix_t> matrixFrames;
+	uint16					characterID;
+	uint16					depth;
+	uint16					clipDepth;
+	uint16					blendMode;
+	swfMatrix_t				matrix;
+	swfColorXform_t			cxf;
+	float					ratio;
+	idStr					name; // RB: instance name
+	idList<float>			opacityFrames;
+	idList<swfMatrix_t>		matrixFrames;
+	idList<swfColorXform_t> colorFrames;
 };
 
 struct swfRenderState_t {
