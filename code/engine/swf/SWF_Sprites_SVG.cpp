@@ -1125,7 +1125,62 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 					prevDepthColor.Set( depth, *cxf );
 				}
 			}
+
+			// Emit frame-0 markers so they stay in the first frame.
+			for( int m = 0; m < svgLuaMarkers.Num(); m++ ) {
+				if( svgLuaMarkers[m].frame == i ) {
+					swfSpriteCommand_t& cmd = commands.Alloc();
+					cmd.tag					= Tag_DoLua;
+
+					idFile_SWF memFile( new idFile_Memory() );
+					idStr	   fn = svgLuaMarkers[m].fn;
+					fn.Append( '\0' );
+					memFile.Write( fn.c_str(), fn.Length() );
+
+					cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+				}
+			}
+
+			for( int m = 0; m < svgRemoveMarkers.Num(); m++ ) {
+				if( svgRemoveMarkers[m].frame == i ) {
+					swfSpriteCommand_t& cmd = commands.Alloc();
+					cmd.tag					= Tag_RemoveObject2;
+
+					idFile_SWF memFile( new idFile_Memory() );
+					memFile.WriteU16( svgRemoveMarkers[m].depth );
+
+					cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+				}
+			}
+
+			frameOffsets[1] = commands.Num();
 			continue;
+		}
+
+		for( int m = 0; m < svgLuaMarkers.Num(); m++ ) {
+			if( svgLuaMarkers[m].frame == i ) {
+				swfSpriteCommand_t& cmd = commands.Alloc();
+				cmd.tag					= Tag_DoLua;
+
+				idFile_SWF memFile( new idFile_Memory() );
+				idStr	   fn = svgLuaMarkers[m].fn;
+				fn.Append( '\0' );
+				memFile.Write( fn.c_str(), fn.Length() );
+
+				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+			}
+		}
+
+		for( int m = 0; m < svgRemoveMarkers.Num(); m++ ) {
+			if( svgRemoveMarkers[m].frame == i ) {
+				swfSpriteCommand_t& cmd = commands.Alloc();
+				cmd.tag					= Tag_RemoveObject2;
+
+				idFile_SWF memFile( new idFile_Memory() );
+				memFile.WriteU16( svgRemoveMarkers[m].depth );
+
+				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+			}
 		}
 
 		for( int d = 0; d < depthsInFrame.Num(); d++ ) {
@@ -1192,32 +1247,6 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 			swfColorXform_t* cxf = NULL;
 			if( depthColor.Get( depth, &cxf ) ) {
 				prevDepthColor.Set( depth, *cxf );
-			}
-		}
-
-		for( int m = 0; m < svgLuaMarkers.Num(); m++ ) {
-			if( svgLuaMarkers[m].frame == i ) {
-				swfSpriteCommand_t& cmd = commands.Alloc();
-				cmd.tag					= Tag_DoLua;
-
-				idFile_SWF memFile( new idFile_Memory() );
-				idStr	   fn = svgLuaMarkers[m].fn;
-				fn.Append( '\0' );
-				memFile.Write( fn.c_str(), fn.Length() );
-
-				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
-			}
-		}
-
-		for( int m = 0; m < svgRemoveMarkers.Num(); m++ ) {
-			if( svgRemoveMarkers[m].frame == i ) {
-				swfSpriteCommand_t& cmd = commands.Alloc();
-				cmd.tag					= Tag_RemoveObject2;
-
-				idFile_SWF memFile( new idFile_Memory() );
-				memFile.WriteU16( svgRemoveMarkers[m].depth );
-
-				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 			}
 		}
 
