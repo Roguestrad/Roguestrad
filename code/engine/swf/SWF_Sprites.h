@@ -178,10 +178,17 @@ private:
 	};
 	idList<svgRemoveMarker_t, TAG_SWF> svgRemoveMarkers;
 
-	//// [ES-BrianBugh 1/16/10] - There can be multiple DoInitAction tags, and all need to be executed.
-	idList<idSWFBitStream, TAG_SWF>	   doInitActions;
+	struct svgDeferredCommand_t {
+		int			   frame;
+		swfTag_t	   tag;
+		idSWFBitStream stream;
+	};
+	idList<svgDeferredCommand_t, TAG_SWF> svgDeferredCommands;
 
-	byte*							   commandBuffer;
+	//// [ES-BrianBugh 1/16/10] - There can be multiple DoInitAction tags, and all need to be executed.
+	idList<idSWFBitStream, TAG_SWF>		  doInitActions;
+
+	byte*								  commandBuffer;
 };
 
 #endif // !__SWF_SPRITES_H__

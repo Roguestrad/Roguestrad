@@ -581,9 +581,11 @@ void idSWFSprite::LoadSVGNode_r(
 	frameOffsets.Append( 0 );
 	svgLuaMarkers.Clear();
 	svgRemoveMarkers.Clear();
+	svgDeferredCommands.Clear();
 	frameLabels.Clear();
 
 	int	  depthCounter = 2;
+	int	  currentFrame = 0;
 
 	idStr scope;
 	if( node.attribute( "id" ) ) {
@@ -595,8 +597,18 @@ void idSWFSprite::LoadSVGNode_r(
 		const char* dataType  = s.attribute( "data-type" ).value();
 
 		if( childName == "use" ) {
-			swfSpriteCommand_t& cmd = commands.Alloc();
-			cmd.tag					= Tag_PlaceObject2;
+			swfTag_t		cmdTag		 = Tag_PlaceObject2;
+			idSWFBitStream* targetStream = NULL;
+			if( currentFrame == 0 ) {
+				swfSpriteCommand_t& cmd = commands.Alloc();
+				cmd.tag					= cmdTag;
+				targetStream			= &cmd.stream;
+			} else {
+				svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
+				deferred.frame				   = currentFrame;
+				deferred.tag				   = cmdTag;
+				targetStream				   = &deferred.stream;
+			}
 
 			idFile_SWF memFile( new idFile_Memory() );
 
@@ -660,7 +672,7 @@ void idSWFSprite::LoadSVGNode_r(
 				memFile.WriteString( localName );
 			}
 
-			cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+			targetStream->Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 
 		} else if( childName == "filter" ) {
 			const char* filterIdStr = s.attribute( "id" ).value();
@@ -713,6 +725,10 @@ void idSWFSprite::LoadSVGNode_r(
 					frame	 = idMath::Rint( at * ( swf->frameRate / 256.0f ) );
 				}
 
+				if( frame > currentFrame ) {
+					currentFrame = frame;
+				}
+
 				if( frame == 0 ) {
 					swfSpriteCommand_t& cmd = commands.Alloc();
 					cmd.tag					= Tag_DoLua;
@@ -751,8 +767,18 @@ void idSWFSprite::LoadSVGNode_r(
 
 			{
 				// place the newly created character into this sprite
-				swfSpriteCommand_t& cmd = commands.Alloc();
-				cmd.tag					= Tag_PlaceObject2;
+				swfTag_t		cmdTag		 = Tag_PlaceObject2;
+				idSWFBitStream* targetStream = NULL;
+				if( currentFrame == 0 ) {
+					swfSpriteCommand_t& cmd = commands.Alloc();
+					cmd.tag					= cmdTag;
+					targetStream			= &cmd.stream;
+				} else {
+					svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
+					deferred.frame				   = currentFrame;
+					deferred.tag				   = cmdTag;
+					targetStream				   = &deferred.stream;
+				}
 
 				idFile_SWF memFile( new idFile_Memory() );
 
@@ -814,7 +840,7 @@ void idSWFSprite::LoadSVGNode_r(
 					memFile.WriteString( localName );
 				}
 
-				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+				targetStream->Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 			}
 
 		} else if( childName == "animateTransform" || childName == "animate" ) {
@@ -950,7 +976,7 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	int frameZeroCommandCount = commands.Num();
 	frameOffsets.Append( frameZeroCommandCount );
 
-	if( parsedAnims.Num() == 0 && svgLuaMarkers.Num() == 0 && svgRemoveMarkers.Num() == 0 && frameLabels.Num() == 0 ) {
+	if( parsedAnims.Num() == 0 && svgLuaMarkers.Num() == 0 && svgRemoveMarkers.Num() == 0 && svgDeferredCommands.Num() == 0 && frameLabels.Num() == 0 ) {
 		// Still need to re-terminate frameOffsets after the reset above.
 		while( frameOffsets.Num() <= frameCount ) {
 			frameOffsets.Append( commands.Num() );
@@ -974,6 +1000,12 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 	for( int m = 0; m < svgRemoveMarkers.Num(); m++ ) {
 		if( svgRemoveMarkers[m].frame >= frameCount ) {
 			frameCount = svgRemoveMarkers[m].frame + 1;
+		}
+	}
+
+	for( int m = 0; m < svgDeferredCommands.Num(); m++ ) {
+		if( svgDeferredCommands[m].frame >= frameCount ) {
+			frameCount = svgDeferredCommands[m].frame + 1;
 		}
 	}
 
@@ -1180,6 +1212,14 @@ void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAn
 				memFile.WriteU16( svgRemoveMarkers[m].depth );
 
 				cmd.stream.Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
+			}
+		}
+
+		for( int m = 0; m < svgDeferredCommands.Num(); m++ ) {
+			if( svgDeferredCommands[m].frame == i ) {
+				swfSpriteCommand_t& cmd = commands.Alloc();
+				cmd.tag					= svgDeferredCommands[m].tag;
+				cmd.stream.Load( svgDeferredCommands[m].stream.Ptr(), svgDeferredCommands[m].stream.Length(), true );
 			}
 		}
 
