@@ -42,6 +42,7 @@ idSWFDictionaryEntry::idSWFDictionaryEntry() :
 	font( NULL ),
 	text( NULL ),
 	edittext( NULL ),
+	svgDisplaySize( 0.0f, 0.0f ),
 	imageSize( 0, 0 ),
 	imageAtlasOffset( 0, 0 ),
 	channelScale( 1.0f, 1.0f, 1.0f, 1.0f )
@@ -77,6 +78,7 @@ idSWFDictionaryEntry& idSWFDictionaryEntry::operator=( idSWFDictionaryEntry& oth
 	font			 = other.font;
 	text			 = other.text;
 	edittext		 = other.edittext;
+	svgDisplaySize	 = other.svgDisplaySize;
 	imageSize		 = other.imageSize;
 	imageAtlasOffset = other.imageAtlasOffset;
 	other.type		 = SWF_DICT_NULL;
@@ -103,6 +105,7 @@ idSWFDictionaryEntry& idSWFDictionaryEntry::operator=( idSWFDictionaryEntry&& ot
 	font			 = other.font;
 	text			 = other.text;
 	edittext		 = other.edittext;
+	svgDisplaySize	 = other.svgDisplaySize;
 	imageSize		 = other.imageSize;
 	imageAtlasOffset = other.imageAtlasOffset;
 	other.type		 = SWF_DICT_NULL;

@@ -3,7 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2013-2015 Robert Beckebans
+Copyright (C) 2013-2026 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -63,6 +63,7 @@ public:
 	idSWFText*			  text;
 	idSWFEditText*		  edittext;
 
+	idVec2				  svgDisplaySize; // SVG display width/height from <image> attributes (may differ from pixel size)
 	idVec2i				  imageSize;
 	idVec2i				  imageAtlasOffset;
 	// the compressed images are normalize to reduce compression artifacts,
@@ -341,6 +342,14 @@ private:
 
 	// RB begin
 	idHashTableT<idStr, swfColorXform_t> svgFilterColorXforms;
+
+	// Maps string-based SVG IDs (e.g. "background", "intro_placeholder") to internal
+	// numeric dictionary indices.  For engine-exported SVGs the IDs are already numeric
+	// and this table is not needed.  For externally authored SVGs this allows <use
+	// xlink:href="#intro_placeholder"> to resolve to the correct character ID.
+	// When an image has an auto-generated bitmap shape, the name maps to the *shape* ID
+	// (not the image ID) so that <use> references work transparently.
+	idHashTableT<idStr, int>			 svgNameToCharID;
 
 	bool								 LoadSWF( const char* fullpath );
 	void								 WriteSWF( const char* filename, const byte* atlasImageRGBA, int atlasImageWidth, int atlasImageHeight );

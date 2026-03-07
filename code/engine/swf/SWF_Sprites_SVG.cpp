@@ -695,8 +695,11 @@ void idSWFSprite::LoadSVGNode_r(
 			// depthCounter++;
 			depthCounter = idMath::NextPrime( depthCounter );
 
-			idStr href	 = s.attribute( "xlink:href" ).value();
-			int	  charID = atoi( href.c_str() + 1 );
+			idStr		href	 = s.attribute( "xlink:href" ).value();
+			const char* hrefName = ( href.Length() > 0 && href[0] == '#' ) ? href.c_str() + 1 : href.c_str();
+			int*		mappedID = NULL;
+			swf->svgNameToCharID.Get( idStr( hrefName ), &mappedID );
+			int charID = mappedID ? *mappedID : atoi( hrefName );
 			memFile.WriteU16( charID );
 
 			if( flags1 & PlaceFlagHasMatrix ) {

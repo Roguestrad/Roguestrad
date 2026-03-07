@@ -75,6 +75,12 @@ void idSWF::ParseSVG_Image( const pugi::xml_node& node, int characterID, idSWFDi
 		entry.material = declManager->FindMaterial( imagePath );
 	}
 
+	// Store the SVG display size from the <image> attributes.
+	// These may differ from the actual pixel dimensions of the image file
+	// (e.g. a 640x480 PNG displayed at 1280x960 in SVG).
+	entry.svgDisplaySize.x = node.attribute( "width" ).as_float();
+	entry.svgDisplaySize.y = node.attribute( "height" ).as_float();
+
 	byte*	  imageData = NULL;
 	int		  width, height;
 	ID_TIME_T timestamp;
@@ -105,8 +111,13 @@ void idSWF::ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape )
 			fill.style.subType		 = 0; // near clamp (optional)
 
 			// --- 1. Parse href → bitmapID ---
-			const char* href	= useNode.attribute( "xlink:href" ).value();
-			fill.style.bitmapID = atoi( href + 1 ); // #14 → 14
+			// The href is e.g. "#14" (numeric) or "#some_image_name" (string).
+			// Try the svgNameToCharID map first, fall back to atoi for numeric IDs.
+			const char* href	 = useNode.attribute( "xlink:href" ).value();
+			const char* hrefName = ( href[0] == '#' ) ? href + 1 : href;
+			int*		mappedID = NULL;
+			svgNameToCharID.Get( idStr( hrefName ), &mappedID );
+			fill.style.bitmapID = mappedID ? *mappedID : atoi( hrefName );
 
 			// --- 2. Parse transform → startMatrix ---
 			fill.style.startMatrix.xx = 20.0f; // SVG units to SWF twips
@@ -350,6 +361,19 @@ bool idSWF::LoadSVG( const char* filename )
 		return false;
 	}
 
+	// Detect whether this SVG was exported by our engine.
+	// Engine-exported SVGs contain a "data-exported-from" attribute on the root <svg> node
+	// and already have proper SHAPE entries wrapping each IMAGE via <use link-type="BITMAP">.
+	// External SVGs (e.g. hand-authored or from other tools) only have bare <image> nodes
+	// and need auto-generated bitmap shapes so the SWF render pipeline can display them.
+	bool exportedFromEngine = false;
+	{
+		const char* exportedFrom = svgNode.attribute( "data-exported-from" ).value();
+		if( exportedFrom && exportedFrom[0] != '\0' ) {
+			exportedFromEngine = true;
+		}
+	}
+
 	frameWidth	= svgNode.attribute( "width" ).as_float();
 	frameHeight = svgNode.attribute( "height" ).as_float();
 	frameRate	= 60 * 256;
@@ -358,28 +382,82 @@ bool idSWF::LoadSVG( const char* filename )
 	idHashTableT<idStr, idSWFSprite::svgAnimTarget_t> svgTargetMap;
 	idList<pugi::xml_node>							  svgAnimations;
 
-	pugi::xml_node									  defs = svgNode.child( "defs" );
-	if( defs ) {
-		int maxID = 0;
-		for( pugi::xml_node child = defs.first_child(); child; child = child.next_sibling() ) {
-			int id = child.attribute( "id" ).as_int();
-			maxID  = idMath::Imax( maxID, id );
-		}
-		dictionary.SetNum( maxID + 1 );
+	// Clear the name-to-ID map; it will be populated below for non-engine SVGs.
+	svgNameToCharID.Clear();
 
-		for( pugi::xml_node n = defs.first_child(); n; n = n.next_sibling() ) {
-			pugi::xml_attribute idAttr = n.attribute( "id" );
+	pugi::xml_node defs = svgNode.child( "defs" );
+	if( defs ) {
+		// ---------- Pass 1: Determine numeric IDs for every <defs> child ----------
+		// Engine-exported SVGs use purely numeric IDs (e.g. id="3", id="4").
+		// Externally authored SVGs may use string IDs (e.g. id="background").
+		// We assign numeric dictionary indices to every entry in this first pass
+		// and build a name→index mapping so that <use xlink:href="#name"> can be
+		// resolved later.
+
+		// Collect all nodes that have an id attribute and figure out the max
+		// pre-existing numeric ID so we can append string-named entries after it.
+		struct defsNodeInfo_t {
+			pugi::xml_node node;
+			idStr		   name;	  // the raw id string
+			int			   numericID; // -1 if the id is not purely numeric
+		};
+		idList<defsNodeInfo_t> defsNodes;
+		int					   maxNumericID = -1;
+
+		for( pugi::xml_node child = defs.first_child(); child; child = child.next_sibling() ) {
+			pugi::xml_attribute idAttr = child.attribute( "id" );
 			if( !idAttr ) {
 				continue;
 			}
 
+			defsNodeInfo_t info;
+			info.node = child;
+			info.name = idAttr.value();
+
+			// Check if the id string is a pure integer (e.g. "3", "25").
+			if( idStr::IsNumeric( info.name ) ) {
+				info.numericID = atoi( info.name.c_str() );
+				maxNumericID   = idMath::Imax( maxNumericID, info.numericID );
+			} else {
+				info.numericID = -1;
+			}
+
+			defsNodes.Append( info );
+		}
+
+		// Assign numeric indices to string-named entries starting after the highest
+		// numeric ID we found.  This guarantees no collisions.
+		int nextFreeID = maxNumericID + 1;
+		for( int i = 0; i < defsNodes.Num(); i++ ) {
+			if( defsNodes[i].numericID == -1 ) {
+				defsNodes[i].numericID = nextFreeID++;
+			}
+		}
+
+		// Ensure the dictionary is large enough for all entries.
+		int requiredSize = nextFreeID;
+		if( requiredSize < maxNumericID + 1 ) {
+			requiredSize = maxNumericID + 1;
+		}
+		dictionary.SetNum( requiredSize );
+
+		// Populate the name→charID map for every entry (numeric and string alike).
+		// For engine-exported SVGs with purely numeric IDs this is harmless but
+		// still useful for consistency.
+		for( int i = 0; i < defsNodes.Num(); i++ ) {
+			svgNameToCharID.Set( defsNodes[i].name, defsNodes[i].numericID );
+		}
+
+		// ---------- Pass 2: Parse each <defs> child into the dictionary ----------
+		for( int i = 0; i < defsNodes.Num(); i++ ) {
+			pugi::xml_node		  n		  = defsNodes[i].node;
+			int					  id	  = defsNodes[i].numericID;
 			const char*			  tagName = n.name();
 
-			int					  id	= idAttr.as_int();
 			idSWFDictionaryEntry& entry = dictionary[id];
 
 			if( entry.type != SWF_DICT_NULL ) {
-				idLib::Warning( "%s: Duplicate character %d", filename, id );
+				idLib::Warning( "%s: Duplicate character %d (name '%s')", filename, id, defsNodes[i].name.c_str() );
 				continue;
 			}
 
@@ -406,6 +484,132 @@ bool idSWF::LoadSVG( const char* filename )
 					entry.sprite = new idSWFSprite( this );
 					entry.sprite->LoadSVGNode_r( g, dictionary, isUnfolded, svgTargetMap, svgAnimations );
 				}
+			}
+		}
+	}
+
+	// ---------- Auto-generate bitmap shapes for orphan images ----------
+	// For non-engine SVGs: images that have no corresponding SHAPE with a bitmap
+	// fill referencing them need a synthesized shape so the SWF render pipeline
+	// can display them.  The svgNameToCharID map is updated so that the original
+	// image name (e.g. "intro_placeholder") resolves to the *shape* ID, which is
+	// what <use xlink:href="#intro_placeholder"> needs at runtime.
+	if( !exportedFromEngine ) {
+		// 1. Collect image IDs that are already referenced by a bitmap shape.
+		idList<int> referencedImageIDs;
+		for( int i = 0; i < dictionary.Num(); i++ ) {
+			if( dictionary[i].type != SWF_DICT_SHAPE || dictionary[i].shape == NULL ) {
+				continue;
+			}
+			for( int d = 0; d < dictionary[i].shape->fillDraws.Num(); d++ ) {
+				if( dictionary[i].shape->fillDraws[d].style.type == 4 ) {
+					referencedImageIDs.AddUnique( dictionary[i].shape->fillDraws[d].style.bitmapID );
+				}
+			}
+		}
+
+		// 2. Find orphan images and remember their string names so we can remap them.
+		struct orphanImage_t {
+			int	  imageID;
+			idStr name; // original SVG id string of the <image>
+		};
+		idList<orphanImage_t> orphans;
+		for( int i = 0; i < svgNameToCharID.Num(); i++ ) {
+			idStr key;
+			if( !svgNameToCharID.GetIndexKey( i, key ) ) {
+				continue;
+			}
+			int* val = svgNameToCharID.GetIndex( i );
+			if( val == NULL ) {
+				continue;
+			}
+			int charID = *val;
+			if( charID < 0 || charID >= dictionary.Num() ) {
+				continue;
+			}
+			if( dictionary[charID].type == SWF_DICT_IMAGE && referencedImageIDs.FindIndex( charID ) == -1 ) {
+				orphanImage_t& o = orphans.Alloc();
+				o.imageID		 = charID;
+				o.name			 = key;
+			}
+		}
+
+		// 3. Synthesize a bitmap shape for each orphan and update the name map.
+		if( orphans.Num() > 0 ) {
+			int nextID = dictionary.Num();
+			dictionary.SetNum( nextID + orphans.Num() );
+
+			for( int j = 0; j < orphans.Num(); j++ ) {
+				int					  imageID = orphans[j].imageID;
+				int					  shapeID = nextID + j;
+
+				idSWFDictionaryEntry& shapeEntry = dictionary[shapeID];
+				shapeEntry.type					 = SWF_DICT_SHAPE;
+				shapeEntry.shape				 = new( TAG_SWF ) idSWFShape;
+
+				idSWFShapeDrawFill& fill = shapeEntry.shape->fillDraws.Alloc();
+				fill.style.type			 = 4; // Bitmap fill
+				fill.style.subType		 = 0;
+				fill.style.bitmapID		 = imageID;
+
+				// Fetch image pixel size from packImages
+				imageToPack_t* packImage = NULL;
+				for( imageToPack_t& img : packImages ) {
+					if( img.characterID == imageID ) {
+						packImage = &img;
+						break;
+					}
+				}
+
+				float pixelW, pixelH;
+				if( !packImage ) {
+					idLib::Warning( "SVG Load: Auto-shape for image %d ('%s') - could not find packed image, using fallback size", imageID, orphans[j].name.c_str() );
+					pixelW = 128;
+					pixelH = 64;
+				} else {
+					pixelW = packImage->trueSize.x;
+					pixelH = packImage->trueSize.y;
+				}
+
+				// Use the SVG display size (width/height attributes on the <image> node)
+				// for the shape bounds.  If none were specified, fall back to pixel size.
+				const idSWFDictionaryEntry& imageEntry = dictionary[imageID];
+				float						displayW   = ( imageEntry.svgDisplaySize.x > 0 ) ? imageEntry.svgDisplaySize.x : pixelW;
+				float						displayH   = ( imageEntry.svgDisplaySize.y > 0 ) ? imageEntry.svgDisplaySize.y : pixelH;
+
+				// The bitmap fill matrix must account for the scale from pixel size
+				// to display size.  The base factor 20 converts SVG units to SWF twips.
+				// When display size != pixel size we need to additionally scale the UVs
+				// so the full texture maps onto the larger/smaller quad.
+				fill.style.startMatrix.xx = 20.0f * ( displayW / pixelW );
+				fill.style.startMatrix.yy = 20.0f * ( displayH / pixelH );
+				fill.style.endMatrix	  = fill.style.startMatrix;
+
+				shapeEntry.shape->startBounds = swfRect_t( 0, 0, displayW, displayH );
+				shapeEntry.shape->endBounds	  = shapeEntry.shape->startBounds;
+
+				float w = displayW;
+				float h = displayH;
+
+				fill.startVerts.SetNum( 4 );
+				fill.startVerts[0].Set( w, h ); // bottom-right
+				fill.startVerts[1].Set( 0, h ); // bottom-left
+				fill.startVerts[2].Set( 0, 0 ); // top-left
+				fill.startVerts[3].Set( w, 0 ); // top-right
+
+				fill.indices.SetNum( 6 );
+				fill.indices[0] = 0;
+				fill.indices[1] = 1;
+				fill.indices[2] = 2;
+				fill.indices[3] = 0;
+				fill.indices[4] = 2;
+				fill.indices[5] = 3;
+
+				// Remap: the original image name now resolves to the shape ID,
+				// so <use xlink:href="#intro_placeholder"> finds the shape, not the image.
+				svgNameToCharID.Set( orphans[j].name, shapeID );
+
+				common->Printf( "SVG Load: Auto-generated bitmap shape %d for orphan image %d ('%s', %gx%g)\n", shapeID, imageID, orphans[j].name.c_str(), w, h );
 			}
 		}
 	}
