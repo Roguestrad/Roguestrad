@@ -695,11 +695,7 @@ void idSWFSprite::LoadSVGNode_r(
 			// depthCounter++;
 			depthCounter = idMath::NextPrime( depthCounter );
 
-			idStr		href	 = s.attribute( "xlink:href" ).value();
-			const char* hrefName = ( href.Length() > 0 && href[0] == '#' ) ? href.c_str() + 1 : href.c_str();
-			int*		mappedID = NULL;
-			swf->svgNameToCharID.Get( idStr( hrefName ), &mappedID );
-			int charID = mappedID ? *mappedID : atoi( hrefName );
+			int charID = swf->ResolveSVGHref( s );
 			memFile.WriteU16( charID );
 
 			if( flags1 & PlaceFlagHasMatrix ) {
@@ -1666,7 +1662,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 
 					if( removedName != NULL ) {
 						float beginTime = frame * frameDur;
-						file->WriteFloatString( "%s<animate xlink:href=\"#%s\" attributeName=\"visibility\" to=\"hidden\" begin=\"%fs\" dur=\"0.001s\" fill=\"freeze\" />\n",
+						file->WriteFloatString( "%s<animate href=\"#%s\" attributeName=\"visibility\" to=\"hidden\" begin=\"%fs\" dur=\"0.001s\" fill=\"freeze\" />\n",
 							removeTabs.c_str(),
 							removedName->c_str(),
 							beginTime );
@@ -1714,7 +1710,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 
 			// animate opacity track (with full mul-color for roundtrip fidelity)
 			if( e->opacityFrames.Num() > 1 ) {
-				file->WriteFloatString( "\t%s<animate xlink:href=\"#%s\" attributeName=\"opacity\" values=\"", tabs.c_str(), targetID.c_str() );
+				file->WriteFloatString( "\t%s<animate href=\"#%s\" attributeName=\"opacity\" values=\"", tabs.c_str(), targetID.c_str() );
 
 				for( int f = 0; f < e->opacityFrames.Num(); f++ ) {
 					file->WriteFloatString( "%f", e->opacityFrames[f] );
@@ -1738,7 +1734,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 
 			// animate transform track
 			if( IsMatrixAnimated( e->matrixFrames ) ) {
-				file->WriteFloatString( "%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"translate\" values=\"", tabs.c_str(), targetID.c_str() );
+				file->WriteFloatString( "%s\t<animateTransform href=\"#%s\" attributeName=\"transform\" type=\"translate\" values=\"", tabs.c_str(), targetID.c_str() );
 				for( int f = 0; f < e->matrixFrames.Num(); f++ ) {
 					const swfMatrix_t& m = e->matrixFrames[f];
 					file->WriteFloatString( "%f %f", m.tx, m.ty );
@@ -1747,7 +1743,7 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 				}
 				file->WriteFloatString( "\" dur=\"%fs\" repeatCount=\"indefinite\" />\n", e->matrixFrames.Num() * frameDur );
 
-				file->WriteFloatString( "%s\t<animateTransform xlink:href=\"#%s\" attributeName=\"transform\" type=\"scale\" additive=\"sum\" values=\"", tabs.c_str(), targetID.c_str() );
+				file->WriteFloatString( "%s\t<animateTransform href=\"#%s\" attributeName=\"transform\" type=\"scale\" additive=\"sum\" values=\"", tabs.c_str(), targetID.c_str() );
 				for( int f = 0; f < e->matrixFrames.Num(); f++ ) {
 					const swfMatrix_t& m = e->matrixFrames[f];
 					file->WriteFloatString( "%f %f", m.xx, m.yy );
@@ -1835,7 +1831,7 @@ void idSWFSprite::WriteSVG_PlaceObject2( idFile* file, idSWFBitStream& bitstream
 		case SWF_DICT_TEXT:
 		case SWF_DICT_EDITTEXT:
 		case SWF_DICT_SPRITE: {
-			file->WriteFloatString( "\t\t\t<use xlink:href=\"#%i\" link-type=\"%s\" ", characterID, idSWF::GetDictTypeName( entry.type ) );
+			file->WriteFloatString( "\t\t\t<use href=\"#%i\" link-type=\"%s\" ", characterID, idSWF::GetDictTypeName( entry.type ) );
 			break;
 		}
 	}
@@ -2157,7 +2153,7 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		case SWF_DICT_SHAPE:
 		case SWF_DICT_TEXT:
 		case SWF_DICT_EDITTEXT: {
-			file->WriteFloatString( "%s<use xlink:href=\"#%i\" link-type=\"%s\" ", tabs.c_str(), characterID, idSWF::GetDictTypeName( dictEntry.type ) );
+			file->WriteFloatString( "%s<use href=\"#%i\" link-type=\"%s\" ", tabs.c_str(), characterID, idSWF::GetDictTypeName( dictEntry.type ) );
 
 			if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isTransformAnimated ) {
 				file->WriteFloatString( "%s", transform.c_str() );

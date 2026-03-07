@@ -62,11 +62,30 @@ static void ParsePointsFromString( const char* pointsStr, idList<idVec2>& verts 
 	lexer.FreeSource();
 }
 
+int idSWF::ResolveSVGHref( const pugi::xml_node& node ) const
+{
+	idStr href = node.attribute( "xlink:href" ).value();
+	if( href.IsEmpty() ) {
+		href = node.attribute( "href" ).value();
+	}
+	if( href.IsEmpty() ) {
+		return -1;
+	}
+
+	const char* name	 = ( href[0] == '#' ) ? href.c_str() + 1 : href.c_str();
+	const int*	mappedID = NULL;
+	svgNameToCharID.Get( idStr( name ), &mappedID );
+	return mappedID ? *mappedID : atoi( name );
+}
+
 void idSWF::ParseSVG_Image( const pugi::xml_node& node, int characterID, idSWFDictionaryEntry& entry )
 {
 	// entry.type = SWF_DICT_IMAGE;
 
 	idStr imagePath = node.attribute( "xlink:href" ).value();
+	if( imagePath.IsEmpty() ) {
+		imagePath = node.attribute( "href" ).value();
+	}
 	if( imagePath[0] == '.' ) {
 		// internal image in the atlas
 		entry.material = NULL;
@@ -111,13 +130,7 @@ void idSWF::ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape )
 			fill.style.subType		 = 0; // near clamp (optional)
 
 			// --- 1. Parse href → bitmapID ---
-			// The href is e.g. "#14" (numeric) or "#some_image_name" (string).
-			// Try the svgNameToCharID map first, fall back to atoi for numeric IDs.
-			const char* href	 = useNode.attribute( "xlink:href" ).value();
-			const char* hrefName = ( href[0] == '#' ) ? href + 1 : href;
-			int*		mappedID = NULL;
-			svgNameToCharID.Get( idStr( hrefName ), &mappedID );
-			fill.style.bitmapID = mappedID ? *mappedID : atoi( hrefName );
+			fill.style.bitmapID = ResolveSVGHref( useNode );
 
 			// --- 2. Parse transform → startMatrix ---
 			fill.style.startMatrix.xx = 20.0f; // SVG units to SWF twips
@@ -707,7 +720,6 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 	// \tviewBox=\"0 0 600 300\"\n
 	file->WriteFloatString( "<svg\n"
 							"\txmlns=\"http://www.w3.org/2000/svg\"\n"
-							"\txmlns:xlink=\"http://www.w3.org/1999/xlink\"\n"
 							"\twidth=\"%i\"\n"
 							"\theight=\"%i\"\n"
 							"\tdata-exported-from=\"%s\"\n>\n",
@@ -717,14 +729,14 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 
 	const bool exportUnfolded = true;
 
-	file->WriteFloatString( "\t<defs>\n" );
+	file->WriteFloatString( "<defs>\n" );
 	for( int i = 0; i < dictionary.Num(); i++ ) {
 		const idSWFDictionaryEntry& entry = dictionary[i];
 
 		switch( dictionary[i].type ) {
 			case SWF_DICT_IMAGE: {
-				file->WriteFloatString( "\t\t<image id=\"%i\" ", i );
-				file->WriteFloatString( "xlink:href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), i );
+				file->WriteFloatString( "\t<image id=\"%i\" ", i );
+				file->WriteFloatString( "href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), i );
 				file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", entry.imageSize[0], entry.imageSize[1] );
 				break;
 			}
@@ -734,7 +746,7 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 				idSWFShape* shape = dictionary[i].shape;
 
 				// file->WriteFloatString( "\t\t<g id=\"%i\" visibility=\"hidden\">\n", i );
-				file->WriteFloatString( "\t\t<g id=\"%i\" data-type=\"%s\">\n", i, idSWF::GetDictTypeName( dictionary[i].type ) );
+				file->WriteFloatString( "\t<g id=\"%i\" data-type=\"%s\">\n", i, idSWF::GetDictTypeName( dictionary[i].type ) );
 
 				// export fill draws
 				for( int d = 0; d < shape->fillDraws.Num(); d++ ) {
@@ -747,7 +759,7 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 						}
 
 						const idSWFDictionaryEntry& bitmapEntry = dictionary[bitmapID];
-						file->WriteFloatString( "\t\t\t<use xlink:href=\"#%i\" link-type=\"BITMAP\" ", bitmapID );
+						file->WriteFloatString( "\t\t<use href=\"#%i\" link-type=\"BITMAP\" ", bitmapID );
 
 						idStr transform = "";
 #if 0
@@ -827,7 +839,7 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 						const idVec2& v2 = fillDraw.startVerts[i2];
 						const idVec2& v3 = fillDraw.startVerts[i3];
 
-						file->WriteFloatString( "\t\t\t<polygon %s points=\"%f,%f %f,%f %f,%f\" />\n", fillColor.c_str(), v1.x, v1.y, v2.x, v2.y, v3.x, v3.y );
+						file->WriteFloatString( "\t\t<polygon %s points=\"%f,%f %f,%f %f,%f\" />\n", fillColor.c_str(), v1.x, v1.y, v2.x, v2.y, v3.x, v3.y );
 					}
 				}
 
@@ -837,7 +849,7 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 
 					const swfColorRGBA_t&	  color = lineDraw.style.startColor;
 					const char*				  fill	= cssNameFromRGBA( color );
-					file->WriteFloatString( "\t\t\t<polyline fill=\"none\" stroke=\"%s\" stroke-width=\"%f\" points=\"", fill, lineDraw.style.startWidth );
+					file->WriteFloatString( "\t\t<polyline fill=\"none\" stroke=\"%s\" stroke-width=\"%f\" points=\"", fill, lineDraw.style.startWidth );
 
 					for( int v = 0; v < lineDraw.startVerts.Num(); v++ ) {
 						const idVec2& vert = lineDraw.startVerts[v];
@@ -846,7 +858,7 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 					file->WriteFloatString( "\"/>\n" );
 				}
 
-				file->WriteFloatString( "\t\t</g>\n" );
+				file->WriteFloatString( "\t</g>\n" );
 				break;
 			}
 
@@ -859,13 +871,13 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 
 			case SWF_DICT_FONT: {
 				const idSWFFont* font = dictionary[i].font;
-				file->WriteFloatString( "\t\t<g id=\"%i\" data-type=\"FONT\" data-name=\"%s\">\n", i, font->fontID->GetName() );
+				file->WriteFloatString( "\t<g id=\"%i\" data-type=\"FONT\" data-name=\"%s\">\n", i, font->fontID->GetName() );
 
-				file->WriteFloatString( "\t\t\t<style>@font-face { font-family: '%s'; src: local('%s'), url('fonts/%s.ttf') format('truetype'); }</style>\n",
+				file->WriteFloatString( "\t\t<style>@font-face { font-family: '%s'; src: local('%s'), url('fonts/%s.ttf') format('truetype'); }</style>\n",
 					font->fontID->GetName(),
 					font->fontID->GetName(),
 					font->fontID->GetName() );
-				file->WriteFloatString( "\t\t</g>\n" );
+				file->WriteFloatString( "\t</g>\n" );
 				break;
 			}
 
@@ -928,7 +940,7 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 					if( lines.Num() > 1 ) {
 						idStr multiLineText = "\n";
 						for( int l = 0; l < lines.Num(); l++ ) {
-							multiLineText += "\t\t\t<tspan x=\"";
+							multiLineText += "\t\t<tspan x=\"";
 							multiLineText += anchorPos.x;
 							multiLineText += "\" dy=\"";
 							multiLineText += fontSize * 1.2f; // line height
@@ -942,7 +954,7 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 					}
 				}
 
-				file->WriteFloatString( "\t\t<text id=\"%i\" x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\" %s %s %s %s %s>%s</text>\n",
+				file->WriteFloatString( "\t<text id=\"%i\" x=\"%f\" y=\"%f\" font-family=\"%s\" font-size=\"%f\" fill=\"rgba(%d, %d, %d, %f)\" text-anchor=\"%s\" %s %s %s %s %s>%s</text>\n",
 					i,
 					anchorPos.x,
 					anchorPos.y,
@@ -964,14 +976,14 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 		}
 	}
 
-	file->WriteFloatString( "\t</defs>\n" );
+	file->WriteFloatString( "</defs>\n" );
 
 	if( exportUnfolded ) {
 		int									 characterID = dictionary.Num();
 		idHashTableT<int, svgDisplayEntry_t> characterMap;
 		float								 frameRate = ( ( float )this->frameRate / 256.0f ); // most likely 60 fps
 		float								 frameDur  = 1.0f / frameRate;
-		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, characterMap, frameDur, "root", 2, true, noAnims );
+		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, characterMap, frameDur, "root", 0, true, noAnims );
 	} else {
 		mainsprite->WriteSVG( file, dictionary.Num(), dictionary );
 	}

@@ -366,6 +366,12 @@ private:
 	//! \return true if the file was successfully loaded and parsed, false otherwise.
 	bool								 LoadSVG( const char* filename );
 
+	//! \brief Resolves an xlink:href (or href) attribute on an SVG node to a numeric character ID.
+	//! Tries xlink:href first, falls back to href.  Strips the leading '#'.
+	//! Looks up the name in svgNameToCharID; if not found, falls back to atoi.
+	//! \return The resolved numeric character ID, or -1 if the node has no href attribute.
+	int									 ResolveSVGHref( const pugi::xml_node& node ) const;
+
 	void								 ParseSVG_Image( const pugi::xml_node& node, int characterID, idSWFDictionaryEntry& entry );
 	void								 ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape );
 	void								 ParseSVG_Text( const pugi::xml_node& node, idSWFEditText* et );
