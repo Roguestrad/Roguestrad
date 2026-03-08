@@ -387,7 +387,6 @@ endif()
 
 include_directories("libs/imgui")
 include_directories("libs/mikktspace")
-include_directories("libs/freetype/include")
 
 if(WIN32)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/openvr/lib/win64)
@@ -599,41 +598,6 @@ endif()
 file(GLOB MINIZIP_INCLUDES libs/zlib/minizip/*.h)
 file(GLOB MINIZIP_SOURCES libs/zlib/minizip/*.c libs/zlib/minizip/*.cpp)
 
-set(FREETYPE_SOURCES
-	libs/freetype/src/autofit/autofit.c
-	libs/freetype/src/bdf/bdf.c
-	libs/freetype/src/cff/cff.c
-	libs/freetype/src/base/ftbase.c
-	libs/freetype/src/base/ftbitmap.c
-	libs/freetype/src/cache/ftcache.c
-	libs/freetype/src/base/ftdebug.c
-	libs/freetype/src/base/ftgasp.c
-	libs/freetype/src/base/ftglyph.c
-	libs/freetype/src/gzip/ftgzip.c
-	libs/freetype/src/base/ftinit.c
-	libs/freetype/src/lzw/ftlzw.c
-	libs/freetype/src/base/ftstroke.c
-	libs/freetype/src/base/ftsystem.c
-	libs/freetype/src/smooth/smooth.c
-	libs/freetype/src/base/ftbbox.c
-	libs/freetype/src/base/ftmm.c
-	libs/freetype/src/base/ftpfr.c
-	libs/freetype/src/base/ftsynth.c
-	libs/freetype/src/base/fttype1.c
-	libs/freetype/src/base/ftwinfnt.c
-	libs/freetype/src/pcf/pcf.c
-	libs/freetype/src/pfr/pfr.c
-	libs/freetype/src/psaux/psaux.c
-	libs/freetype/src/pshinter/pshinter.c
-	libs/freetype/src/psnames/psmodule.c
-	libs/freetype/src/raster/raster.c
-	libs/freetype/src/sfnt/sfnt.c
-	libs/freetype/src/truetype/truetype.c
-	libs/freetype/src/type1/type1.c
-	libs/freetype/src/cid/type1cid.c
-	libs/freetype/src/type42/type42.c
-	libs/freetype/src/winfonts/winfnt.c)
-	
 set(SOUND_INCLUDES
 	engine/sound/snd_local.h
 	engine/sound/sound.h
@@ -1035,7 +999,6 @@ source_group("extern\\imgui-node-editor" FILES ${IMGUI_NODE_EDITOR_INCLUDES})
 source_group("extern\\imgui-node-editor" FILES ${IMGUI_NODE_EDITOR_SOURCES})
 
 source_group("libs\\stb" FILES ${STB_INCLUDES})
-source_group("libs\\freetype" FILES ${FREETYPE_SOURCES})
 
 source_group("libs\\mesa" FILES ${MESA_INCLUDES})
 
@@ -1195,7 +1158,6 @@ set(RBDOOM3_SOURCES
 			${IMGUI_NODE_EDITOR_SOURCES}
 			${MIKKTSPACE_SOURCES}
 			${ZLIB_SOURCES}
-			${FREETYPE_SOURCES}
 			${MINIZIP_SOURCES}
 			${BINKDEC_SOURCES}
 			${SOUND_SOURCES}
@@ -1242,9 +1204,7 @@ endmacro()
 
 AddSubdirectory( tools/imgui/afeditor )
 
-add_definitions(-D__DOOM__
-				-DBUILD_FREETYPE
-				-DFT2_BUILD_LIBRARY)
+add_definitions(-D__DOOM__)
 
 
 include_directories(
@@ -1348,7 +1308,7 @@ if(MSVC)
 
 	if(USE_PRECOMPILED_HEADERS)
 		set(RBDOOM3_PRECOMPILED_SOURCES ${RBDOOM3_SOURCES})
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${ZLIB_SOURCES} ${BINKDEC_SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES} ${MIKKTSPACE_SOURCES} ${OGGVORBIS_SOURCES} ${OPTICK_SOURCES} ${LUA_SOURCES} ${LUASOCKET_SOURCES} ${PUGIXML_SOURCES} ${FREETYPE_SOURCES})
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${ZLIB_SOURCES} ${BINKDEC_SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES} ${MIKKTSPACE_SOURCES} ${OGGVORBIS_SOURCES} ${OPTICK_SOURCES} ${LUA_SOURCES} ${LUASOCKET_SOURCES} ${PUGIXML_SOURCES})
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/minizip/ioapi.c)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTDecoder.cpp)
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTEncoder.cpp)
