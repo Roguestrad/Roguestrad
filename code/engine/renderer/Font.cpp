@@ -755,16 +755,12 @@ bool idFont::LoadFromTrueTypeFont()
 
 	// Temporary struct for pre-computed per-glyph metrics
 	struct glyphMetrics_t {
-		int	 ftWidth;  // FreeType-style pixel width (before pitch alignment)
-		int	 ftHeight; // FreeType-style pixel height
-		int	 ftTop;	   // R_RenderGlyph top = (horiBearingY >> 6) + 1
-		int	 ftLeft;   // FLOOR(horiBearingX) in pixels = left edge
-		int	 ftPitch;  // 4-byte aligned width
-		byte ftXSkip;  // (horiAdvance >> 6) + 1
-		int	 bmpW;	   // actual bitmap width for rendering (from STB bitmap box)
-		int	 bmpH;	   // actual bitmap height for rendering
-		int	 bmpIx0;   // STB bitmap box ix0 (for rendering offset)
-		int	 bmpIy0;   // STB bitmap box iy0 (for rendering offset)
+		int	 ftTop;	  // vertical position: best FreeType-compatible approximation
+		byte ftXSkip; // horizontal advance: (horiAdvance >> 6) + 1
+		int	 bmpW;	  // actual bitmap width for rendering (from STB bitmap box)
+		int	 bmpH;	  // actual bitmap height for rendering
+		int	 bmpIx0;  // STB bitmap box ix0 (left bearing for atlas & gi.left)
+		int	 bmpIy0;  // STB bitmap box iy0 (for rendering offset)
 	};
 
 	glyphMetrics_t* gm = ( glyphMetrics_t* )Mem_Alloc( sizeof( glyphMetrics_t ) * numGlyphs, TAG_FONT );
@@ -843,19 +839,15 @@ bool idFont::LoadFromTrueTypeFont()
 		int bmpW = bix1 - bix0;
 		int bmpH = biy1 - biy0;
 
-		gm[i].ftWidth  = ftWidth;
-		gm[i].ftHeight = ftHeight;
-		gm[i].ftTop	   = ftTop;
-		gm[i].ftLeft   = ftLeftPx;
-		gm[i].ftPitch  = ftPitch;
-		gm[i].ftXSkip  = ftXSkip;
-		gm[i].bmpW	   = bmpW;
-		gm[i].bmpH	   = bmpH;
-		gm[i].bmpIx0   = bix0;
-		gm[i].bmpIy0   = biy0;
+		gm[i].ftTop	  = ftTop;
+		gm[i].ftXSkip = ftXSkip;
+		gm[i].bmpW	  = bmpW;
+		gm[i].bmpH	  = bmpH;
+		gm[i].bmpIx0  = bix0;
+		gm[i].bmpIy0  = biy0;
 
-		if( ftHeight > maxHeight ) {
-			maxHeight = ftHeight;
+		if( bmpH > maxHeight ) {
+			maxHeight = bmpH;
 		}
 	}
 
@@ -868,13 +860,12 @@ bool idFont::LoadFromTrueTypeFont()
 	for( int i = 0; i < numGlyphs; i++ ) {
 		uint32 charCode = presentChars[i];
 
-		int	   pitch = gm[i].ftPitch;
-		int	   bmpW	 = gm[i].bmpW;
-		int	   bmpH	 = gm[i].bmpH;
+		int	   bmpW = gm[i].bmpW;
+		int	   bmpH = gm[i].bmpH;
 
 		// Check if the glyph fits in the atlas; advance row if needed
 		if( bmpW > 0 && bmpH > 0 ) {
-			if( xOut + pitch + 1 >= ( FONT_SIZE - 1 ) ) {
+			if( xOut + bmpW + 1 >= ( FONT_SIZE - 1 ) ) {
 				if( yOut + ( maxHeight + 1 ) * 2 >= ( FONT_SIZE - 1 ) ) {
 					// Atlas overflow
 					common->Warning( "LoadFromTrueTypeFont: Font atlas overflow for '%s' at glyph %d (char %u)", GetName(), i, charCode );
@@ -901,11 +892,10 @@ bool idFont::LoadFromTrueTypeFont()
 			}
 
 			// Render the glyph bitmap into the atlas using STB.
-			// We render at the STB bitmap dimensions (bmpW x bmpH) which
-			// may be slightly larger than ftWidth x ftHeight. The stored
-			// metrics use the FreeType-compatible values; the atlas stores
-			// the actual rendered bitmap. Since pitch >= bmpW (due to
-			// alignment), there is room in the atlas column.
+			// We render at the exact STB bitmap dimensions (bmpW x bmpH)
+			// and store those same dimensions in gi.width / gi.height so
+			// that the renderer's texture quad matches the actual pixel
+			// data — no oversized quads that would cause smearing.
 			stbtt_MakeCodepointBitmap( &stbFont,
 				out + ( yOut * FONT_SIZE ) + xOut,
 				bmpW,
@@ -916,12 +906,16 @@ bool idFont::LoadFromTrueTypeFont()
 				( int )charCode );
 		}
 
-		// Fill in glyph metrics using FreeType-compatible values
+		// Fill in glyph metrics.
+		// width/height/left come directly from the STB bitmap box so
+		// the renderer's texture quad exactly covers the rendered pixels.
+		// top and xSkip use the FreeType-compatible 26.6 values for
+		// correct baseline positioning and horizontal advance.
 		glyphInfo_t& gi = fontInfo->glyphData[i];
-		gi.width		= ( byte )gm[i].ftPitch;
-		gi.height		= ( byte )gm[i].ftHeight;
+		gi.width		= ( byte )bmpW;
+		gi.height		= ( byte )bmpH;
 		gi.top			= ( signed char )gm[i].ftTop;
-		gi.left			= ( signed char )gm[i].ftLeft;
+		gi.left			= ( signed char )gm[i].bmpIx0;
 		gi.xSkip		= gm[i].ftXSkip;
 		gi.s			= ( uint16 )xOut;
 		gi.t			= ( uint16 )yOut;
@@ -934,7 +928,7 @@ bool idFont::LoadFromTrueTypeFont()
 		}
 
 		if( bmpW > 0 && bmpH > 0 ) {
-			xOut += pitch + 1;
+			xOut += bmpW + 1;
 		}
 	}
 
