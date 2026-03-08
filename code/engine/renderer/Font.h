@@ -46,6 +46,7 @@ public:
 	void		Touch();
 
 	const char* GetName() const { return name; }
+	const bool	IsValid() const { return ( alias != nullptr || fontInfo != nullptr ); }
 
 	float		GetLineHeight( float scale ) const;
 	float		GetAscender( float scale ) const;

@@ -572,11 +572,6 @@ static bool HasDirectShapeChildren( const pugi::xml_node& g )
 	return ( idStr::Icmp( linkType, "BITMAP" ) == 0 ) || g.child( "polygon" ) || g.child( "polyline" );
 }
 
-static bool HasDirectTextChild( const pugi::xml_node& g )
-{
-	return g.child( "text" );
-}
-
 static bool HasDirectImageChild( const pugi::xml_node& g )
 {
 	return g.child( "image" );
@@ -607,6 +602,96 @@ static void RegisterSVGAnimationTarget( idHashTableT<idStr, idSWFSprite::svgAnim
 	entry.depth = depth;
 
 	targetMap.Set( targetID, entry );
+}
+
+void idSWFSprite::EmitPlaceCharacter( const pugi::xml_node& s, int newCharID, int currentFrame, int& depthCounter, idHashTableT<idStr, svgAnimTarget_t>& targetMap )
+{
+	int blendMode = -1;
+	if( s.attribute( "data-blend-mode" ) ) {
+		blendMode = s.attribute( "data-blend-mode" ).as_int();
+	}
+
+	swfTag_t			  cmdTag = ( blendMode > 0 ) ? Tag_PlaceObject3 : Tag_PlaceObject2;
+
+	svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
+	deferred.frame				   = currentFrame;
+	deferred.orderIndex			   = svgOrderIndexCounter++;
+	deferred.tag				   = cmdTag;
+
+	idSWFBitStream* targetStream = &deferred.stream;
+
+	idFile_SWF		memFile( new idFile_Memory() );
+
+	uint8			flags1 = PlaceFlagHasCharacter;
+	if( s.attribute( "transform" ) ) {
+		flags1 |= PlaceFlagHasMatrix;
+	}
+	if( s.attribute( "filter" ) ) {
+		flags1 |= PlaceFlagHasColorTransform;
+	}
+	if( s.attribute( "data-ratio" ) ) {
+		flags1 |= PlaceFlagHasRatio;
+	}
+	idStr fullID;
+	idStr localName;
+	if( s.attribute( "id" ) ) {
+		fullID = s.attribute( "id" ).value();
+		if( !fullID.IsEmpty() ) {
+			RegisterSVGAnimationTarget( targetMap, fullID, this, depthCounter );
+
+			localName	= fullID;
+			int lastDot = fullID.Last( '.' );
+			if( lastDot != -1 ) {
+				localName = fullID.Right( fullID.Length() - lastDot - 1 );
+			}
+			if( idStr::IsNumeric( localName ) ) {
+				localName.Clear();
+			}
+		}
+	}
+
+	if( !localName.IsEmpty() ) {
+		flags1 |= PlaceFlagHasName;
+	}
+
+	uint8 flags2 = 0;
+	if( blendMode > 0 ) {
+		flags2 |= PlaceFlagHasBlendMode;
+	}
+
+	memFile.WriteU8( flags1 );
+	if( cmdTag == Tag_PlaceObject3 ) {
+		memFile.WriteU8( flags2 );
+	}
+	memFile.WriteU16( depthCounter );
+	depthCounter = idMath::NextPrime( depthCounter );
+	memFile.WriteU16( newCharID );
+
+	if( flags1 & PlaceFlagHasMatrix ) {
+		swfMatrix_t m;
+		m.ParseSVGTransformFromString( s.attribute( "transform" ).value() );
+		memFile.WriteMatrix( m );
+	}
+
+	if( flags1 & PlaceFlagHasColorTransform ) {
+		swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
+		memFile.WriteColorXFormRGBA( cxf );
+	}
+
+	if( flags1 & PlaceFlagHasRatio ) {
+		uint16 ratio = ( uint16 )s.attribute( "data-ratio" ).as_uint();
+		memFile.WriteU16( ratio );
+	}
+
+	if( flags1 & PlaceFlagHasName ) {
+		memFile.WriteString( localName );
+	}
+
+	if( flags2 & PlaceFlagHasBlendMode ) {
+		memFile.WriteU8( ( uint8 )blendMode );
+	}
+
+	targetStream->Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
 }
 
 void idSWFSprite::LoadSVGNode_r(
@@ -790,10 +875,6 @@ void idSWFSprite::LoadSVGNode_r(
 				newEntry.type  = SWF_DICT_SHAPE;
 				newEntry.shape = new( TAG_SWF ) idSWFShape;
 				swf->ParseSVG_Shape( s, newEntry.shape );
-			} else if( HasDirectTextChild( s ) ) {
-				newEntry.type	  = SWF_DICT_EDITTEXT;
-				newEntry.edittext = new( TAG_SWF ) idSWFEditText;
-				swf->ParseSVG_Text( s, newEntry.edittext );
 			} else if( HasDirectImageChild( s ) ) {
 				swf->ParseSVG_Image( s, newCharID, newEntry );
 			} else {
@@ -802,96 +883,17 @@ void idSWFSprite::LoadSVGNode_r(
 				newEntry.sprite->LoadSVGNode_r( s, dict, isUnfolded, targetMap, animations );
 			}
 
-			{
-				// place the newly created character into this sprite
-				int blendMode = -1;
-				if( s.attribute( "data-blend-mode" ) ) {
-					blendMode = s.attribute( "data-blend-mode" ).as_int();
-				}
+			EmitPlaceCharacter( s, newCharID, currentFrame, depthCounter, targetMap );
 
-				swfTag_t			  cmdTag = ( blendMode > 0 ) ? Tag_PlaceObject3 : Tag_PlaceObject2;
+		} else if( childName == "text" ) {
+			int					  newCharID = dict.Num();
+			idSWFDictionaryEntry& newEntry	= dict.Alloc();
 
-				svgDeferredCommand_t& deferred = svgDeferredCommands.Alloc();
-				deferred.frame				   = currentFrame;
-				deferred.orderIndex			   = svgOrderIndexCounter++;
-				deferred.tag				   = cmdTag;
+			newEntry.type	  = SWF_DICT_EDITTEXT;
+			newEntry.edittext = new( TAG_SWF ) idSWFEditText;
+			swf->ParseSVG_Text( s, newEntry.edittext );
 
-				idSWFBitStream* targetStream = &deferred.stream;
-
-				idFile_SWF		memFile( new idFile_Memory() );
-
-				uint8			flags1 = PlaceFlagHasCharacter;
-				if( s.attribute( "transform" ) ) {
-					flags1 |= PlaceFlagHasMatrix;
-				}
-				if( s.attribute( "filter" ) ) {
-					flags1 |= PlaceFlagHasColorTransform;
-				}
-				if( s.attribute( "data-ratio" ) ) {
-					flags1 |= PlaceFlagHasRatio;
-				}
-				idStr fullID;
-				idStr localName;
-				if( s.attribute( "id" ) ) {
-					fullID = s.attribute( "id" ).value();
-					if( !fullID.IsEmpty() ) {
-						RegisterSVGAnimationTarget( targetMap, fullID, this, depthCounter );
-
-						localName	= fullID;
-						int lastDot = fullID.Last( '.' );
-						if( lastDot != -1 ) {
-							localName = fullID.Right( fullID.Length() - lastDot - 1 );
-						}
-						if( idStr::IsNumeric( localName ) ) {
-							localName.Clear();
-						}
-					}
-				}
-
-				if( !localName.IsEmpty() ) {
-					flags1 |= PlaceFlagHasName;
-				}
-
-				uint8 flags2 = 0;
-				if( blendMode > 0 ) {
-					flags2 |= PlaceFlagHasBlendMode;
-				}
-
-				memFile.WriteU8( flags1 );
-				if( cmdTag == Tag_PlaceObject3 ) {
-					memFile.WriteU8( flags2 );
-				}
-				memFile.WriteU16( depthCounter );
-				// depthCounter++;
-				depthCounter = idMath::NextPrime( depthCounter );
-				memFile.WriteU16( newCharID );
-
-				if( flags1 & PlaceFlagHasMatrix ) {
-					swfMatrix_t m;
-					m.ParseSVGTransformFromString( s.attribute( "transform" ).value() );
-					memFile.WriteMatrix( m );
-				}
-
-				if( flags1 & PlaceFlagHasColorTransform ) {
-					swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
-					memFile.WriteColorXFormRGBA( cxf );
-				}
-
-				if( flags1 & PlaceFlagHasRatio ) {
-					uint16 ratio = ( uint16 )s.attribute( "data-ratio" ).as_uint();
-					memFile.WriteU16( ratio );
-				}
-
-				if( flags1 & PlaceFlagHasName ) {
-					memFile.WriteString( localName );
-				}
-
-				if( flags2 & PlaceFlagHasBlendMode ) {
-					memFile.WriteU8( ( uint8 )blendMode );
-				}
-
-				targetStream->Load( ( byte* )static_cast<idFile_Memory*>( ( idFile* )memFile )->GetDataPtr(), memFile->Length(), true );
-			}
+			EmitPlaceCharacter( s, newCharID, currentFrame, depthCounter, targetMap );
 
 		} else if( childName == "animateTransform" || childName == "animate" ) {
 			// Check for visibility animations -> these map to Tag_RemoveObject2

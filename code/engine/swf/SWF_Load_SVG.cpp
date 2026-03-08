@@ -337,7 +337,7 @@ void idSWF::ParseSVG_Font( const pugi::xml_node& node, idSWFFont* font )
 	}
 
 	idFont* renderFont = renderSystem->RegisterFont( fontName );
-	if( !renderFont ) {
+	if( !renderFont->IsValid() ) {
 		idLib::Warning( "Font '%s' not found, using default", fontName.c_str() );
 		renderFont = renderSystem->RegisterFont( "Arial" ); // fallback
 	}

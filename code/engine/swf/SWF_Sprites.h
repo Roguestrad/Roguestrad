@@ -100,6 +100,8 @@ public:
 			   bool											noAnims = false );
 
 private:
+	void EmitPlaceCharacter( const pugi::xml_node& s, int newCharID, int currentFrame, int& depthCounter, idHashTableT<idStr, svgAnimTarget_t>& targetMap );
+
 	void WriteJSON_PlaceObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
 	void WriteJSON_PlaceObject3( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
 	void WriteJSON_RemoveObject2( idFile* f, idFile* luaFile, idSWFBitStream& bitstream, int characterID, int commandID, const char* indentPrefix = "" );
