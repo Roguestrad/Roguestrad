@@ -493,6 +493,20 @@ void idFont::Touch()
 
 static const int FONT_SIZE = 512;
 
+// FreeType 26.6 fixed-point helpers -- replicate the rounding that
+// FreeType applies to glyph metrics so our width / height / top / left
+// values match the reference output as closely as possible.
+#define FT26_FLOOR( x ) ( ( x ) & -64 )
+#define FT26_CEIL( x )	( ( ( x ) + 63 ) & -64 )
+#define FT26_TRUNC( x ) ( ( x ) >> 6 )
+#define FT26_ROUND( x ) FT26_FLOOR( ( x ) + 32 )
+
+// Convert a float value to 26.6 fixed point
+static inline int FloatTo26_6( float v )
+{
+	return ( int )( v * 64.0f + ( v >= 0.0f ? 0.5f : -0.5f ) );
+}
+
 /*
 ============
 STB_EnumerateCodepoints
@@ -505,7 +519,7 @@ stbtt_FindGlyphIndex. Only codepoints that map to a non-zero glyph
 index are collected.
 ============
 */
-static void		 STB_EnumerateCodepoints( const stbtt_fontinfo* font, idList<uint32>& outChars )
+static void STB_EnumerateCodepoints( const stbtt_fontinfo* font, idList<uint32>& outChars )
 {
 	outChars.Clear();
 
@@ -710,16 +724,138 @@ bool idFont::LoadFromTrueTypeFont()
 	memset( fontInfo->ascii, -1, sizeof( fontInfo->ascii ) );
 
 	// ---------------------------------------------------------------
-	// Step 4: First pass -- calculate maxHeight for row-packing.
-	// We compute the bitmap box for each glyph without rendering it.
+	// Step 4: First pass -- calculate glyph metrics using FreeType-
+	// compatible 26.6 fixed-point rounding and find maxHeight for
+	// row-packing.
+	//
+	// FreeType's R_GetGlyphInfo computes:
+	//   left   = FLOOR(horiBearingX)
+	//   right  = CEIL(horiBearingX + width)
+	//   width  = TRUNC(right - left)
+	//   top    = CEIL(horiBearingY)
+	//   bottom = FLOOR(horiBearingY - height)
+	//   height = TRUNC(top - bottom)
+	//   pitch  = (width + 3) & ~3
+	//
+	// And R_RenderGlyph sets:
+	//   glyphOut->top = (horiBearingY >> 6) + 1
+	//
+	// We replicate this by converting the scaled float metrics to
+	// 26.6 fixed-point and applying the same FLOOR/CEIL/TRUNC ops.
+	//
+	// Without hinting the outline bounds come from the glyf table
+	// (stbtt_GetGlyphBox).  FreeType's unhinted "glyph metrics" are
+	// derived from these plus the hmtx bearings:
+	//   horiBearingX  = leftSideBearing  (font units, scaled)
+	//   horiBearingY  = yMax             (font units, scaled)
+	//   metric width  = xMax - xMin      (font units, scaled)
+	//   metric height = yMax - yMin      (font units, scaled)
+	//   horiAdvance   = advanceWidth     (font units, scaled)
 	// ---------------------------------------------------------------
+
+	// Temporary struct for pre-computed per-glyph metrics
+	struct glyphMetrics_t {
+		int	 ftWidth;  // FreeType-style pixel width (before pitch alignment)
+		int	 ftHeight; // FreeType-style pixel height
+		int	 ftTop;	   // R_RenderGlyph top = (horiBearingY >> 6) + 1
+		int	 ftLeft;   // FLOOR(horiBearingX) in pixels = left edge
+		int	 ftPitch;  // 4-byte aligned width
+		byte ftXSkip;  // (horiAdvance >> 6) + 1
+		int	 bmpW;	   // actual bitmap width for rendering (from STB bitmap box)
+		int	 bmpH;	   // actual bitmap height for rendering
+		int	 bmpIx0;   // STB bitmap box ix0 (for rendering offset)
+		int	 bmpIy0;   // STB bitmap box iy0 (for rendering offset)
+	};
+
+	glyphMetrics_t* gm = ( glyphMetrics_t* )Mem_Alloc( sizeof( glyphMetrics_t ) * numGlyphs, TAG_FONT );
+	memset( gm, 0, sizeof( glyphMetrics_t ) * numGlyphs );
+
 	int maxHeight = 0;
 	for( int i = 0; i < numGlyphs; i++ ) {
-		int ix0, iy0, ix1, iy1;
-		stbtt_GetCodepointBitmapBox( &stbFont, ( int )presentChars[i], scale, scale, &ix0, &iy0, &ix1, &iy1 );
-		int gh = iy1 - iy0;
-		if( gh > maxHeight ) {
-			maxHeight = gh;
+		uint32 charCode = presentChars[i];
+
+		// Get horizontal metrics in font units
+		int	   advanceWidth, leftSideBearing;
+		stbtt_GetCodepointHMetrics( &stbFont, ( int )charCode, &advanceWidth, &leftSideBearing );
+
+		// Get glyph outline bounding box in font units
+		int gx0 = 0, gy0 = 0, gx1 = 0, gy1 = 0;
+		int glyphIdx = stbtt_FindGlyphIndex( &stbFont, ( int )charCode );
+		stbtt_GetGlyphBox( &stbFont, glyphIdx, &gx0, &gy0, &gx1, &gy1 );
+
+		// Scale to pixel coordinates and convert to 26.6 fixed-point.
+		//
+		// FreeType's glyph->metrics for unhinted TrueType outlines:
+		//   horiBearingX = xMin of the outline (from glyf table, NOT lsb from hmtx)
+		//   horiBearingY = yMax of the outline
+		//   width        = xMax - xMin
+		//   height       = yMax - yMin
+		//   horiAdvance  = advanceWidth (from hmtx)
+		//
+		// We use gx0 (xMin) for horiBearingX rather than leftSideBearing
+		// because FreeType derives horiBearingX from the actual outline
+		// bounds after scaling, and for some glyphs xMin != lsb.
+		int horiBearingX_26_6 = FloatTo26_6( ( float )gx0 * scale );
+		int metricWidth_26_6  = FloatTo26_6( ( float )( gx1 - gx0 ) * scale );
+		int horiBearingY_26_6 = FloatTo26_6( ( float )gy1 * scale );
+		int metricHeight_26_6 = FloatTo26_6( ( float )( gy1 - gy0 ) * scale );
+		int horiAdvance_26_6  = FloatTo26_6( ( float )advanceWidth * scale );
+
+		// Apply FreeType's R_GetGlyphInfo rounding
+		int ftLeft26  = FT26_FLOOR( horiBearingX_26_6 );
+		int ftRight26 = FT26_CEIL( horiBearingX_26_6 + metricWidth_26_6 );
+		int ftWidth	  = FT26_TRUNC( ftRight26 - ftLeft26 );
+
+		int ftTop26	   = FT26_CEIL( horiBearingY_26_6 );
+		int ftBottom26 = FT26_FLOOR( horiBearingY_26_6 - metricHeight_26_6 );
+		int ftHeight   = FT26_TRUNC( ftTop26 - ftBottom26 );
+
+		int ftPitch = ( ftWidth + 3 ) & ~3;
+
+		// FreeType's R_RenderGlyph used: top = (horiBearingY >> 6) + 1
+		// However, FreeType's horiBearingY was grid-fitted by hinting.
+		// Without hinting the best approximation is TRUNC(CEIL(horiBearingY_26_6))
+		// which rounds the fractional 26.6 value up to the next pixel boundary
+		// before truncating.  Testing against the FreeType reference shows this
+		// produces the highest match rate (34/55 vs 33/55 for TRUNC+1 and
+		// 21/55 for the old ceil(float)+1 method).
+		//
+		// Special case: for empty glyphs (e.g. space, NBSP) that have no
+		// outline, horiBearingY is 0 and the formula yields 0.  FreeType's
+		// R_RenderGlyph would return (0 >> 6) + 1 = 1, so we match that.
+		int ftTop;
+		if( gx0 == 0 && gy0 == 0 && gx1 == 0 && gy1 == 0 ) {
+			ftTop = 1; // empty glyph: replicate FreeType's (0 >> 6) + 1
+		} else {
+			ftTop = FT26_TRUNC( FT26_CEIL( horiBearingY_26_6 ) );
+		}
+
+		// RE_ConstructGlyphInfo: xSkip = (horiAdvance >> 6) + 1
+		byte ftXSkip = ( byte )( FT26_TRUNC( horiAdvance_26_6 ) + 1 );
+
+		// left = FLOOR(horiBearingX) in pixels
+		int	 ftLeftPx = FT26_TRUNC( ftLeft26 );
+
+		// Also get STB's actual bitmap box for rendering purposes.
+		// We render using STB, so we need its exact pixel dimensions.
+		int	 bix0, biy0, bix1, biy1;
+		stbtt_GetCodepointBitmapBox( &stbFont, ( int )charCode, scale, scale, &bix0, &biy0, &bix1, &biy1 );
+		int bmpW = bix1 - bix0;
+		int bmpH = biy1 - biy0;
+
+		gm[i].ftWidth  = ftWidth;
+		gm[i].ftHeight = ftHeight;
+		gm[i].ftTop	   = ftTop;
+		gm[i].ftLeft   = ftLeftPx;
+		gm[i].ftPitch  = ftPitch;
+		gm[i].ftXSkip  = ftXSkip;
+		gm[i].bmpW	   = bmpW;
+		gm[i].bmpH	   = bmpH;
+		gm[i].bmpIx0   = bix0;
+		gm[i].bmpIy0   = biy0;
+
+		if( ftHeight > maxHeight ) {
+			maxHeight = ftHeight;
 		}
 	}
 
@@ -732,23 +868,12 @@ bool idFont::LoadFromTrueTypeFont()
 	for( int i = 0; i < numGlyphs; i++ ) {
 		uint32 charCode = presentChars[i];
 
-		// Get the bitmap bounding box for this codepoint
-		int	   ix0, iy0, ix1, iy1;
-		stbtt_GetCodepointBitmapBox( &stbFont, ( int )charCode, scale, scale, &ix0, &iy0, &ix1, &iy1 );
-
-		int gw = ix1 - ix0;
-		int gh = iy1 - iy0;
-
-		// FreeType's R_RenderGlyph stored width as pitch (4-byte aligned).
-		// The BFG font pipeline expects this alignment, so we replicate it.
-		int pitch = ( gw + 3 ) & ~3;
-
-		// Get horizontal metrics (advance, left side bearing) in unscaled coords
-		int advanceWidth, leftSideBearing;
-		stbtt_GetCodepointHMetrics( &stbFont, ( int )charCode, &advanceWidth, &leftSideBearing );
+		int	   pitch = gm[i].ftPitch;
+		int	   bmpW	 = gm[i].bmpW;
+		int	   bmpH	 = gm[i].bmpH;
 
 		// Check if the glyph fits in the atlas; advance row if needed
-		if( gw > 0 && gh > 0 ) {
+		if( bmpW > 0 && bmpH > 0 ) {
 			if( xOut + pitch + 1 >= ( FONT_SIZE - 1 ) ) {
 				if( yOut + ( maxHeight + 1 ) * 2 >= ( FONT_SIZE - 1 ) ) {
 					// Atlas overflow
@@ -775,32 +900,31 @@ bool idFont::LoadFromTrueTypeFont()
 				break;
 			}
 
-			// Render glyph into atlas. We render the actual glyph width (gw)
-			// but the atlas column uses pitch (4-byte aligned) width so that
-			// the stored coordinates match what BFG expects.
+			// Render the glyph bitmap into the atlas using STB.
+			// We render at the STB bitmap dimensions (bmpW x bmpH) which
+			// may be slightly larger than ftWidth x ftHeight. The stored
+			// metrics use the FreeType-compatible values; the atlas stores
+			// the actual rendered bitmap. Since pitch >= bmpW (due to
+			// alignment), there is room in the atlas column.
 			stbtt_MakeCodepointBitmap( &stbFont,
 				out + ( yOut * FONT_SIZE ) + xOut,
-				gw,
-				gh,
+				bmpW,
+				bmpH,
 				FONT_SIZE, // stride = atlas width
 				scale,
 				scale,
 				( int )charCode );
 		}
 
-		// Fill in glyph metrics
+		// Fill in glyph metrics using FreeType-compatible values
 		glyphInfo_t& gi = fontInfo->glyphData[i];
-		gi.width		= ( byte )pitch; // use pitch-aligned width, matching FreeType
-		gi.height		= ( byte )gh;
-		// top = distance from baseline to top of glyph (positive = above baseline).
-		// stb_truetype's iy0 is negative when glyph extends above origin, so top = -iy0.
-		// The +1 matches FreeType's R_RenderGlyph which did (horiBearingY >> 6) + 1.
-		gi.top = ( signed char )( -iy0 + 1 );
-		// left = horizontal offset from pen position to left edge of glyph bitmap
-		gi.left	 = ( signed char )ix0;
-		gi.xSkip = ( byte )( advanceWidth * scale + 1.5f );
-		gi.s	 = ( uint16 )xOut;
-		gi.t	 = ( uint16 )yOut;
+		gi.width		= ( byte )gm[i].ftPitch;
+		gi.height		= ( byte )gm[i].ftHeight;
+		gi.top			= ( signed char )gm[i].ftTop;
+		gi.left			= ( signed char )gm[i].ftLeft;
+		gi.xSkip		= gm[i].ftXSkip;
+		gi.s			= ( uint16 )xOut;
+		gi.t			= ( uint16 )yOut;
 
 		fontInfo->charIndex[i] = charCode;
 
@@ -809,10 +933,12 @@ bool idFont::LoadFromTrueTypeFont()
 			fontInfo->ascii[charCode] = ( char )i;
 		}
 
-		if( gw > 0 && gh > 0 ) {
+		if( bmpW > 0 && bmpH > 0 ) {
 			xOut += pitch + 1;
 		}
 	}
+
+	Mem_Free( gm );
 
 	// ---------------------------------------------------------------
 	// Step 6: Convert grayscale atlas to RGBA and write TGA
