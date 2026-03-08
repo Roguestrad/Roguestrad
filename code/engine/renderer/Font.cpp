@@ -30,7 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "Font.h"
 
-#ifdef BUILD_FREETYPE
+#if 1 // BUILD_FREETYPE
 	// RB: changed to local includes
 	// #include <freetype/fterrors.h>
 	#include <freetype/ftsystem.h>
@@ -486,7 +486,7 @@ void idFont::Touch()
 	}
 }
 
-#ifdef BUILD_FREETYPE
+#if 1 // def BUILD_FREETYPE
 
 static FT_Library ftLibrary = NULL;
 
@@ -742,6 +742,89 @@ static void FinalizeFontInfoEx( const char* fontName, fontInfoEx_t& font, idFont
 
 #endif // #ifdef BUILD_FREETYPE
 
+/*
+==============================
+idFont::DumpFontToJSON
+
+Debug helper: serializes the in-memory fontInfo to a human-readable
+JSON file so we can inspect glyph metrics, atlas coordinates, etc.
+==============================
+*/
+void idFont::DumpFontToJSON()
+{
+	if( fontInfo == NULL ) {
+		return;
+	}
+
+	idStr	jsonPath = va( "newfonts/%s/48_debug.json", GetName() );
+	idFile* f		 = fileSystem->OpenFileWrite( jsonPath, "fs_basepath" );
+	if( f == NULL ) {
+		common->Warning( "DumpFontToJSON: Unable to open '%s' for writing", jsonPath.c_str() );
+		return;
+	}
+
+	f->Printf( "{\n" );
+	f->Printf( "  \"fontName\": \"%s\",\n", GetName() );
+	f->Printf( "  \"ascender\": %d,\n", fontInfo->ascender );
+	f->Printf( "  \"descender\": %d,\n", fontInfo->descender );
+	f->Printf( "  \"numGlyphs\": %d,\n", fontInfo->numGlyphs );
+
+	// oldInfo metrics
+	f->Printf( "  \"oldInfo\": [\n" );
+	for( int i = 0; i < 3; i++ ) {
+		f->Printf( "    { \"maxWidth\": %f, \"maxHeight\": %f }%s\n", fontInfo->oldInfo[i].maxWidth, fontInfo->oldInfo[i].maxHeight, ( i < 2 ) ? "," : "" );
+	}
+	f->Printf( "  ],\n" );
+
+	// ascii table
+	f->Printf( "  \"ascii\": [" );
+	for( int i = 0; i < 128; i++ ) {
+		if( i % 16 == 0 ) {
+			f->Printf( "\n    " );
+		}
+		f->Printf( "%4d%s", ( int )fontInfo->ascii[i], ( i < 127 ) ? "," : "" );
+	}
+	f->Printf( "\n  ],\n" );
+
+	// charIndex
+	f->Printf( "  \"charIndex\": [" );
+	for( int i = 0; i < fontInfo->numGlyphs; i++ ) {
+		if( i % 16 == 0 ) {
+			f->Printf( "\n    " );
+		}
+		f->Printf( "%d%s", fontInfo->charIndex[i], ( i < fontInfo->numGlyphs - 1 ) ? ", " : "" );
+	}
+	f->Printf( "\n  ],\n" );
+
+	// glyphs
+	f->Printf( "  \"glyphs\": [\n" );
+	for( int i = 0; i < fontInfo->numGlyphs; i++ ) {
+		const glyphInfo_t& g = fontInfo->glyphData[i];
+		f->Printf( "    {\n" );
+		f->Printf( "      \"index\": %d,\n", i );
+		f->Printf( "      \"charIndex\": %u,\n", fontInfo->charIndex[i] );
+		if( fontInfo->charIndex[i] >= 32 && fontInfo->charIndex[i] < 127 ) {
+			f->Printf( "      \"char\": \"%c\",\n", ( char )fontInfo->charIndex[i] );
+		} else {
+			f->Printf( "      \"char\": null,\n" );
+		}
+		f->Printf( "      \"width\": %d,\n", ( int )g.width );
+		f->Printf( "      \"height\": %d,\n", ( int )g.height );
+		f->Printf( "      \"top\": %d,\n", ( int )g.top );
+		f->Printf( "      \"left\": %d,\n", ( int )g.left );
+		f->Printf( "      \"xSkip\": %d,\n", ( int )g.xSkip );
+		f->Printf( "      \"s\": %d,\n", ( int )g.s );
+		f->Printf( "      \"t\": %d\n", ( int )g.t );
+		f->Printf( "    }%s\n", ( i < fontInfo->numGlyphs - 1 ) ? "," : "" );
+	}
+	f->Printf( "  ]\n" );
+	f->Printf( "}\n" );
+
+	delete f;
+
+	common->Printf( "DumpFontToJSON: Wrote '%s'\n", jsonPath.c_str() );
+}
+
 bool idFont::LoadFromTrueTypeFont()
 {
 #ifndef BUILD_FREETYPE
@@ -876,82 +959,36 @@ bool idFont::LoadFromTrueTypeFont()
 	Mem_Free( imageBuff );
 	Mem_Free( out );
 
-	// Also save old-format glyph data so the oldInfo metrics can be loaded on subsequent runs
-	for( int fc = 0; fc < 3; fc++ ) {
-		int ps;
-		if( fc == 0 ) {
-			ps = 12;
-		} else if( fc == 1 ) {
-			ps = 24;
-		} else {
-			ps = 48;
-		}
-
-		oldGlyphInfo_t oldGlyphInfo[GLYPHS_PER_FONT];
-		memset( oldGlyphInfo, 0, sizeof( oldGlyphInfo ) );
-		for( int g = 0; g < GLYPHS_PER_FONT; g++ ) {
-			oldGlyphInfo[g].height		= fontInfo->glyphData[g].height;
-			oldGlyphInfo[g].top			= fontInfo->glyphData[g].top;
-			oldGlyphInfo[g].bottom		= 0;
-			oldGlyphInfo[g].pitch		= fontInfo->glyphData[g].width;
-			oldGlyphInfo[g].xSkip		= fontInfo->glyphData[g].xSkip;
-			oldGlyphInfo[g].imageWidth	= fontInfo->glyphData[g].width;
-			oldGlyphInfo[g].imageHeight = fontInfo->glyphData[g].height;
-			oldGlyphInfo[g].s			= ( float )fontInfo->glyphData[g].s / FONT_SIZE;
-			oldGlyphInfo[g].t			= ( float )fontInfo->glyphData[g].t / FONT_SIZE;
-			oldGlyphInfo[g].s2			= oldGlyphInfo[g].s + ( float )fontInfo->glyphData[g].width / FONT_SIZE;
-			oldGlyphInfo[g].t2			= oldGlyphInfo[g].t + ( float )fontInfo->glyphData[g].height / FONT_SIZE;
-			oldGlyphInfo[g].junk		= 0;
-			memset( oldGlyphInfo[g].materialName, 0, 32 );
-		}
-
-		const char* oldFileName = va( "newfonts/%s/old_%d.dat", GetName(), ps );
-		SaveOldGlyphData( oldFileName, oldGlyphInfo );
-	}
-
 	// Register the material for the atlas texture
 	fontInfo->material = declManager->FindMaterial( fontTextureName );
 	fontInfo->material->SetSort( SS_GUI );
 
-	// Compute oldInfo metrics for the three scale levels
-	int	  pointSizes[3] = { 12, 24, 48 };
-	float scales[3]		= { 4.0f, 2.0f, 1.0f };
-	for( int i = 0; i < 3; i++ ) {
-		oldGlyphInfo_t oldGlyphInfo[GLYPHS_PER_FONT];
-		const char*	   oldFileName = va( "newfonts/%s/old_%d.dat", GetName(), pointSizes[i] );
-		if( LoadOldGlyphData( oldFileName, oldGlyphInfo ) ) {
-			int mh = 0;
-			int mw = 0;
-			for( int g = 0; g < GLYPHS_PER_FONT; g++ ) {
-				if( mh < oldGlyphInfo[g].height ) {
-					mh = oldGlyphInfo[g].height;
-				}
-				if( mw < oldGlyphInfo[g].xSkip ) {
-					mw = oldGlyphInfo[g].xSkip;
-				}
-			}
-			fontInfo->oldInfo[i].maxWidth  = scales[i] * mw;
-			fontInfo->oldInfo[i].maxHeight = scales[i] * mh;
-		} else {
-			int mh = 0;
-			int mw = 0;
-			for( int g = 0; g < fontInfo->numGlyphs; g++ ) {
-				if( mh < fontInfo->glyphData[g].height ) {
-					mh = fontInfo->glyphData[g].height;
-				}
-				if( mw < fontInfo->glyphData[g].xSkip ) {
-					mw = fontInfo->glyphData[g].xSkip;
-				}
-			}
-			fontInfo->oldInfo[i].maxWidth  = mw;
-			fontInfo->oldInfo[i].maxHeight = mh;
+	// Compute oldInfo metrics directly from glyphData
+	// BFG uses idFont exclusively, so we don't need old_*.dat files
+	int mh = 0;
+	int mw = 0;
+	for( int g = 0; g < fontInfo->numGlyphs; g++ ) {
+		if( mh < fontInfo->glyphData[g].height ) {
+			mh = fontInfo->glyphData[g].height;
+		}
+		if( mw < fontInfo->glyphData[g].xSkip ) {
+			mw = fontInfo->glyphData[g].xSkip;
 		}
 	}
+	fontInfo->oldInfo[0].maxWidth  = mw;
+	fontInfo->oldInfo[0].maxHeight = mh;
+	fontInfo->oldInfo[1].maxWidth  = mw;
+	fontInfo->oldInfo[1].maxHeight = mh;
+	fontInfo->oldInfo[2].maxWidth  = mw;
+	fontInfo->oldInfo[2].maxHeight = mh;
 
 	FT_Done_Face( face );
 	fileSystem->FreeFile( faceData );
 
 	common->Printf( "LoadFromTrueTypeFont: Successfully generated font '%s' from TTF\n", GetName() );
+
+	DumpFontToJSON();
+
 	return true;
 #endif
 }

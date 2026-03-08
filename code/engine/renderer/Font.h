@@ -64,6 +64,7 @@ private:
 
 	bool		   LoadFromTrueTypeFont();
 	bool		   WriteFont();
+	void		   DumpFontToJSON();
 
 public:
 	struct glyphInfo_t {
