@@ -652,10 +652,13 @@ bool idFont::LoadFromTrueTypeFont()
 		return false;
 	}
 
-	// We want a 48-point font. stb_truetype works in pixel heights, and at
-	// 72 DPI a point equals a pixel, so 48pt = 48px.
+	// We want a 48-point font. FreeType's FT_Set_Char_Size with 72 DPI maps
+	// points directly to the EM square (48pt at 72dpi = 48 pixels per EM).
+	// stbtt_ScaleForMappingEmToPixels matches this behavior, whereas
+	// stbtt_ScaleForPixelHeight would scale based on ascent-descent which
+	// produces smaller glyphs.
 	const float	   pixelHeight = 48.0f;
-	float		   scale	   = stbtt_ScaleForPixelHeight( &stbFont, pixelHeight );
+	float		   scale	   = stbtt_ScaleForMappingEmToPixels( &stbFont, pixelHeight );
 
 	// ---------------------------------------------------------------
 	// Step 1: Enumerate which Unicode codepoints actually exist in the
@@ -693,8 +696,11 @@ bool idFont::LoadFromTrueTypeFont()
 	fontInfo = new( TAG_FONT ) fontInfo_t;
 	memset( fontInfo, 0, sizeof( fontInfo_t ) );
 
-	fontInfo->ascender	= ( short )( stbAscent * scale + 0.5f );
-	fontInfo->descender = ( short )( stbDescent * scale - 0.5f );
+	// FreeType computes ascender/descender from face->size->metrics which are
+	// rounded to whole pixels via ceil/floor respectively in 26.6 fixed point.
+	// We replicate that by rounding ascender up and descender down.
+	fontInfo->ascender	= ( short )( ceilf( stbAscent * scale ) );
+	fontInfo->descender = ( short )( floorf( stbDescent * scale ) );
 
 	fontInfo->numGlyphs = ( short )numGlyphs;
 	fontInfo->glyphData = ( glyphInfo_t* )Mem_Alloc( sizeof( glyphInfo_t ) * numGlyphs, TAG_FONT );
@@ -733,13 +739,17 @@ bool idFont::LoadFromTrueTypeFont()
 		int gw = ix1 - ix0;
 		int gh = iy1 - iy0;
 
+		// FreeType's R_RenderGlyph stored width as pitch (4-byte aligned).
+		// The BFG font pipeline expects this alignment, so we replicate it.
+		int pitch = ( gw + 3 ) & ~3;
+
 		// Get horizontal metrics (advance, left side bearing) in unscaled coords
 		int advanceWidth, leftSideBearing;
 		stbtt_GetCodepointHMetrics( &stbFont, ( int )charCode, &advanceWidth, &leftSideBearing );
 
 		// Check if the glyph fits in the atlas; advance row if needed
 		if( gw > 0 && gh > 0 ) {
-			if( xOut + gw + 1 >= ( FONT_SIZE - 1 ) ) {
+			if( xOut + pitch + 1 >= ( FONT_SIZE - 1 ) ) {
 				if( yOut + ( maxHeight + 1 ) * 2 >= ( FONT_SIZE - 1 ) ) {
 					// Atlas overflow
 					common->Warning( "LoadFromTrueTypeFont: Font atlas overflow for '%s' at glyph %d (char %u)", GetName(), i, charCode );
@@ -765,7 +775,9 @@ bool idFont::LoadFromTrueTypeFont()
 				break;
 			}
 
-			// Render glyph directly into the atlas at (xOut, yOut)
+			// Render glyph into atlas. We render the actual glyph width (gw)
+			// but the atlas column uses pitch (4-byte aligned) width so that
+			// the stored coordinates match what BFG expects.
 			stbtt_MakeCodepointBitmap( &stbFont,
 				out + ( yOut * FONT_SIZE ) + xOut,
 				gw,
@@ -778,11 +790,12 @@ bool idFont::LoadFromTrueTypeFont()
 
 		// Fill in glyph metrics
 		glyphInfo_t& gi = fontInfo->glyphData[i];
-		gi.width		= ( byte )gw;
+		gi.width		= ( byte )pitch; // use pitch-aligned width, matching FreeType
 		gi.height		= ( byte )gh;
 		// top = distance from baseline to top of glyph (positive = above baseline).
 		// stb_truetype's iy0 is negative when glyph extends above origin, so top = -iy0.
-		gi.top = ( signed char )( -iy0 );
+		// The +1 matches FreeType's R_RenderGlyph which did (horiBearingY >> 6) + 1.
+		gi.top = ( signed char )( -iy0 + 1 );
 		// left = horizontal offset from pen position to left edge of glyph bitmap
 		gi.left	 = ( signed char )ix0;
 		gi.xSkip = ( byte )( advanceWidth * scale + 1.5f );
@@ -797,7 +810,7 @@ bool idFont::LoadFromTrueTypeFont()
 		}
 
 		if( gw > 0 && gh > 0 ) {
-			xOut += gw + 1;
+			xOut += pitch + 1;
 		}
 	}
 
