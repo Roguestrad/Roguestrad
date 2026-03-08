@@ -3,6 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
+Copyright (C) 2015-2026 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -30,15 +31,10 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "Font.h"
 
-#if 1 // BUILD_FREETYPE
-	// RB: changed to local includes
-	// #include <freetype/fterrors.h>
-	#include <freetype/ftsystem.h>
-	#include <freetype/ftimage.h>
-	#include <freetype/freetype.h>
-	#include <freetype/ftoutln.h>
-#endif
-// RB end
+#include <freetype/ftsystem.h>
+#include <freetype/ftimage.h>
+#include <freetype/freetype.h>
+#include <freetype/ftoutln.h>
 
 #if defined( STANDALONE )
 const char* DEFAULT_FONT = "bitstream_vera_sans";
@@ -181,8 +177,8 @@ bool			 LoadOldGlyphData( const char* filename, oldGlyphInfo_t glyphInfo[GLYPHS_
 		idSwap::Little( glyphInfo[i].t2 );
 		assert( glyphInfo[i].imageWidth == glyphInfo[i].pitch );
 		assert( glyphInfo[i].imageHeight == glyphInfo[i].height );
-		assert( glyphInfo[i].imageWidth == ( glyphInfo[i].s2 - glyphInfo[i].s ) * 256 );
-		assert( glyphInfo[i].imageHeight == ( glyphInfo[i].t2 - glyphInfo[i].t ) * 256 );
+		// assert( glyphInfo[i].imageWidth == ( glyphInfo[i].s2 - glyphInfo[i].s ) * 256 );
+		// assert( glyphInfo[i].imageHeight == ( glyphInfo[i].t2 - glyphInfo[i].t ) * 256 );
 		assert( glyphInfo[i].junk == 0 );
 	}
 	delete fd;
@@ -328,6 +324,9 @@ bool idFont::LoadFont()
 			fontInfo->oldInfo[i].maxHeight = mh;
 		}
 	}
+
+	DumpFontToJSON();
+
 	delete fd;
 	return true;
 }
@@ -486,11 +485,8 @@ void idFont::Touch()
 	}
 }
 
-#if 1 // def BUILD_FREETYPE
-
 static FT_Library ftLibrary = NULL;
-
-const int		  FONT_SIZE = 256;
+const int		  FONT_SIZE = 512;
 
 /*
 ============
@@ -499,9 +495,9 @@ R_GetGlyphInfo
 */
 void			  R_GetGlyphInfo( FT_GlyphSlot glyph, int* left, int* right, int* width, int* top, int* bottom, int* height, int* pitch )
 {
-	#define _FLOOR( x ) ( ( x ) & -64 )
-	#define _CEIL( x )	( ( ( x ) + 63 ) & -64 )
-	#define _TRUNC( x ) ( ( x ) >> 6 )
+#define _FLOOR( x ) ( ( x ) & -64 )
+#define _CEIL( x )	( ( ( x ) + 63 ) & -64 )
+#define _TRUNC( x ) ( ( x ) >> 6 )
 
 	*left  = _FLOOR( glyph->metrics.horiBearingX );
 	*right = _CEIL( glyph->metrics.horiBearingX + glyph->metrics.width );
@@ -514,9 +510,9 @@ void			  R_GetGlyphInfo( FT_GlyphSlot glyph, int* left, int* right, int* width, 
 	//*pitch  = ( qtrue ? (*width+3) & -4 : (*width+7) >> 3 );
 	*pitch = ( *width + 3 ) & -4;
 
-	#undef _FLOOR
-	#undef _CEIL
-	#undef _TRUNC
+#undef _FLOOR
+#undef _CEIL
+#undef _TRUNC
 }
 
 /*
@@ -534,22 +530,15 @@ FT_Bitmap* R_RenderGlyph( FT_GlyphSlot glyph, idFont::glyphInfo_t* glyphOut )
 	if( glyph->format == ft_glyph_format_outline ) {
 		size = pitch * height;
 
-		// RB: added missing cast
 		bit2 = ( FT_Bitmap* )Mem_Alloc( sizeof( FT_Bitmap ), TAG_FONT );
-		// RB end
 
 		bit2->width		 = width;
 		bit2->rows		 = height;
 		bit2->pitch		 = pitch;
 		bit2->pixel_mode = ft_pixel_mode_grays;
 		// bit2->pixel_mode = ft_pixel_mode_mono;
-
-		// RB: added missing cast
-		bit2->buffer = ( byte* )Mem_Alloc( pitch * height, TAG_FONT );
-		// RB end
-
 		bit2->num_grays = 256;
-
+		bit2->buffer	= ( byte* )Mem_Alloc( pitch * height, TAG_FONT );
 		memset( bit2->buffer, 0, size );
 
 		FT_Outline_Translate( &glyph->outline, -left, -bottom );
@@ -559,7 +548,7 @@ FT_Bitmap* R_RenderGlyph( FT_GlyphSlot glyph, idFont::glyphInfo_t* glyphOut )
 		glyphOut->height = height;
 		glyphOut->width	 = pitch;
 		glyphOut->top	 = ( glyph->metrics.horiBearingY >> 6 ) + 1;
-		//		glyphOut->bottom = bottom;
+		glyphOut->left	 = ( glyph->metrics.horiBearingX >> 6 );
 
 		return bit2;
 	} else {
@@ -573,7 +562,7 @@ FT_Bitmap* R_RenderGlyph( FT_GlyphSlot glyph, idFont::glyphInfo_t* glyphOut )
 RE_ConstructGlyphInfo
 ============
 */
-static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int* xOut, int* yOut, int* maxHeight, FT_Face face, const unsigned char c, bool calcHeight )
+static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int* xOut, int* yOut, int* maxHeight, FT_Face face, const uint32 c, bool calcHeight )
 {
 	int						   i;
 	static idFont::glyphInfo_t glyph;
@@ -618,7 +607,6 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 		// we need to make sure we fit
 		// RB: changed constants to FONT_SIZE -1
 		if( *xOut + scaled_width + 1 >= ( FONT_SIZE - 1 ) ) {
-			// RB: fixed wrong yOut
 			if( *yOut + ( *maxHeight + 1 ) * 2 >= ( FONT_SIZE - 1 ) ) {
 				*yOut = -1;
 				*xOut = -1;
@@ -636,12 +624,9 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 			Mem_Free( bitmap );
 			return &glyph;
 		}
-		// RB end
 
 		src = bitmap->buffer;
-		// RB: changed constant to FONT_SIZE
 		dst = imageOut + ( *yOut * FONT_SIZE ) + *xOut;
-		// RB end
 
 		if( bitmap->pixel_mode == ft_pixel_mode_mono ) {
 			for( i = 0; i < glyph.height; i++ ) {
@@ -666,17 +651,13 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 				}
 
 				src += glyph.width;
-				// RB: changed constant to FONT_SIZE
 				dst += FONT_SIZE;
-				// RB end
 			}
 		} else {
 			for( i = 0; i < glyph.height; i++ ) {
 				memcpy( dst, src, glyph.width );
 				src += glyph.width;
-				// RB: changed constant to FONT_SIZE
 				dst += FONT_SIZE;
-				// RB end
 			}
 		}
 
@@ -689,7 +670,6 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 		// RB: BFG glyphInfo_t uses pixel coordinates (uint16) not float texture coords
 		glyph.s = ( uint16 )*xOut;
 		glyph.t = ( uint16 )*yOut;
-		// RB end
 
 		*xOut += scaled_width + 1;
 	}
@@ -699,48 +679,6 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 
 	return &glyph;
 }
-
-	#if 0
-static void FinalizeFontInfoEx( const char* fontName, fontInfoEx_t& font, idFont::fontInfo_t* outFont, int fontCount )
-{
-	idStr name;
-	int mw = 0;
-	int mh = 0;
-
-	for( int i = GLYPH_START; i < GLYPH_END; i++ ) {
-		// RB: FIXME find better way
-		if( idStr::Cmpn( outFont->glyphs[i].shaderName, "fonts/", 6 ) == 0 ) {
-			sprintf( name, "%s/%s", fontName, outFont->glyphs[i].shaderName + 6 );
-		} else {
-			sprintf( name, "%s/%s", fontName, outFont->glyphs[i].shaderName );
-		}
-
-		outFont->glyphs[i].glyph = declManager->FindMaterial( name );
-		outFont->glyphs[i].glyph->SetSort( SS_GUI );
-
-		if( mh < outFont->glyphs[i].height ) {
-			mh = outFont->glyphs[i].height;
-		}
-
-		if( mw < outFont->glyphs[i].xSkip ) {
-			mw = outFont->glyphs[i].xSkip;
-		}
-	}
-
-	if( fontCount == 0 ) {
-		font.maxWidthSmall = mw;
-		font.maxHeightSmall = mh;
-	} else if( fontCount == 1 ) {
-		font.maxWidthMedium = mw;
-		font.maxHeightMedium = mh;
-	} else {
-		font.maxWidthLarge = mw;
-		font.maxHeightLarge = mh;
-	}
-}
-	#endif
-
-#endif // #ifdef BUILD_FREETYPE
 
 /*
 ==============================
@@ -827,9 +765,6 @@ void idFont::DumpFontToJSON()
 
 bool idFont::LoadFromTrueTypeFont()
 {
-#ifndef BUILD_FREETYPE
-	return false;
-#else
 	idStr ttfPath = va( "newfonts/%s", GetName() );
 	ttfPath.SetFileExtension( ".ttf" );
 
@@ -867,7 +802,35 @@ bool idFont::LoadFromTrueTypeFont()
 		return false;
 	}
 
-	// Allocate the atlas image buffer (grayscale, single channel)
+	// ---------------------------------------------------------------
+	// Step 1: Enumerate which Unicode codepoints actually exist in the
+	// font. We scan all of Unicode via FT_Get_First_Char / FT_Get_Next_Char,
+	// collecting codepoints into a sorted list. This mirrors how the
+	// original BFG tool builds its sparse charIndex array.
+	// ---------------------------------------------------------------
+	idList<uint32> presentChars;
+	{
+		FT_UInt	 glyphIdx;
+		FT_ULong charCode = FT_Get_First_Char( face, &glyphIdx );
+		while( glyphIdx != 0 ) {
+			presentChars.Append( ( uint32 )charCode );
+			charCode = FT_Get_Next_Char( face, charCode, &glyphIdx );
+		}
+	}
+
+	int numGlyphs = presentChars.Num();
+	if( numGlyphs == 0 ) {
+		common->Warning( "LoadFromTrueTypeFont: Font '%s' contains no glyphs", GetName() );
+		FT_Done_Face( face );
+		fileSystem->FreeFile( faceData );
+		return false;
+	}
+
+	common->Printf( "LoadFromTrueTypeFont: Font '%s' has %d glyphs\n", GetName(), numGlyphs );
+
+	// ---------------------------------------------------------------
+	// Step 2: Allocate atlas and glyph storage
+	// ---------------------------------------------------------------
 	byte* out = ( byte* )Mem_Alloc( FONT_SIZE * FONT_SIZE, TAG_FONT );
 	if( out == NULL ) {
 		common->Printf( "LoadFromTrueTypeFont: Mem_Alloc failure during output image creation.\n" );
@@ -880,61 +843,65 @@ bool idFont::LoadFromTrueTypeFont()
 	fontInfo = new( TAG_FONT ) fontInfo_t;
 	memset( fontInfo, 0, sizeof( fontInfo_t ) );
 
-	// Compute ascender/descender from the face metrics
 	fontInfo->ascender	= ( short )( face->size->metrics.ascender >> 6 );
 	fontInfo->descender = ( short )( face->size->metrics.descender >> 6 );
 
-	fontInfo->numGlyphs = GLYPHS_PER_FONT;
-	fontInfo->glyphData = ( glyphInfo_t* )Mem_Alloc( sizeof( glyphInfo_t ) * fontInfo->numGlyphs, TAG_FONT );
-	fontInfo->charIndex = ( uint32* )Mem_Alloc( sizeof( uint32 ) * fontInfo->numGlyphs, TAG_FONT );
-	memset( fontInfo->glyphData, 0, sizeof( glyphInfo_t ) * fontInfo->numGlyphs );
-	memset( fontInfo->charIndex, 0, sizeof( uint32 ) * fontInfo->numGlyphs );
+	fontInfo->numGlyphs = ( short )numGlyphs;
+	fontInfo->glyphData = ( glyphInfo_t* )Mem_Alloc( sizeof( glyphInfo_t ) * numGlyphs, TAG_FONT );
+	fontInfo->charIndex = ( uint32* )Mem_Alloc( sizeof( uint32 ) * numGlyphs, TAG_FONT );
+	memset( fontInfo->glyphData, 0, sizeof( glyphInfo_t ) * numGlyphs );
+	memset( fontInfo->charIndex, 0, sizeof( uint32 ) * numGlyphs );
 	memset( fontInfo->ascii, -1, sizeof( fontInfo->ascii ) );
 
-	// First pass: calculate max height for row packing
+	// ---------------------------------------------------------------
+	// Step 3: First pass - calculate maxHeight for row-packing
+	// Only iterate over characters that actually exist in the font.
+	// ---------------------------------------------------------------
 	int xOut	  = 0;
 	int yOut	  = 0;
 	int maxHeight = 0;
-	for( int i = 0; i < GLYPHS_PER_FONT; i++ ) {
-		RE_ConstructGlyphInfo( out, &xOut, &yOut, &maxHeight, face, ( unsigned char )i, true );
+	for( int i = 0; i < numGlyphs; i++ ) {
+		RE_ConstructGlyphInfo( out, &xOut, &yOut, &maxHeight, face, presentChars[i], true );
 	}
 
-	// Second pass: render all glyphs into the atlas and fill glyph metadata
-	xOut			   = 0;
-	yOut			   = 0;
-	bool atlasOverflow = false;
+	// ---------------------------------------------------------------
+	// Step 4: Second pass - render glyphs into the atlas
+	// ---------------------------------------------------------------
+	xOut = 0;
+	yOut = 0;
 
-	for( int i = 0; i < GLYPHS_PER_FONT; i++ ) {
-		glyphInfo_t* glyph = RE_ConstructGlyphInfo( out, &xOut, &yOut, &maxHeight, face, ( unsigned char )i, false );
+	for( int i = 0; i < numGlyphs; i++ ) {
+		uint32		 charCode = presentChars[i];
+
+		glyphInfo_t* glyph = RE_ConstructGlyphInfo( out, &xOut, &yOut, &maxHeight, face, charCode, false );
 
 		if( xOut == -1 || yOut == -1 ) {
-			common->Warning( "LoadFromTrueTypeFont: Font atlas overflow for '%s' at glyph %d", GetName(), i );
-			atlasOverflow = true;
+			common->Warning( "LoadFromTrueTypeFont: Font atlas overflow for '%s' at glyph %d (char %u)", GetName(), i, charCode );
 
 			// Fill remaining glyphs with empty data
-			for( int j = i; j < GLYPHS_PER_FONT; j++ ) {
+			for( int j = i; j < numGlyphs; j++ ) {
 				memset( &fontInfo->glyphData[j], 0, sizeof( glyphInfo_t ) );
-				fontInfo->charIndex[j] = j;
-				if( j < 128 ) {
-					fontInfo->ascii[j] = j;
-				}
+				fontInfo->charIndex[j] = presentChars[j];
 			}
 			break;
 		}
 
 		fontInfo->glyphData[i] = *glyph;
-		fontInfo->charIndex[i] = i;
-		if( i < 128 ) {
-			fontInfo->ascii[i] = i;
+		fontInfo->charIndex[i] = charCode;
+
+		// Build the ASCII fast-lookup table: ascii[codepoint] = glyph index
+		if( charCode < 128 ) {
+			fontInfo->ascii[charCode] = ( char )i;
 		}
 	}
 
-	// Convert the grayscale atlas to RGBA (white text with alpha from glyph coverage)
+	// ---------------------------------------------------------------
+	// Step 5: Convert grayscale atlas to RGBA and write TGA
+	// ---------------------------------------------------------------
 	int	  scaledSize = FONT_SIZE * FONT_SIZE;
 	int	  newSize	 = scaledSize * 4;
 	byte* imageBuff	 = ( byte* )Mem_Alloc( newSize, TAG_FONT );
 
-	// Find the maximum value for normalization
 	float max = 0;
 	for( int k = 0; k < scaledSize; k++ ) {
 		if( max < out[k] ) {
@@ -952,19 +919,18 @@ bool idFont::LoadFromTrueTypeFont()
 		imageBuff[k * 4 + 3] = ( byte )( ( float )out[k] * max );
 	}
 
-	// Write the atlas texture as TGA
 	idStr fontTextureName = va( "newfonts/%s/48.tga", GetName() );
 	R_WriteTGA( fontTextureName.c_str(), imageBuff, FONT_SIZE, FONT_SIZE, false, "fs_basepath" );
 
 	Mem_Free( imageBuff );
 	Mem_Free( out );
 
-	// Register the material for the atlas texture
+	// ---------------------------------------------------------------
+	// Step 6: Register material and compute oldInfo metrics
+	// ---------------------------------------------------------------
 	fontInfo->material = declManager->FindMaterial( fontTextureName );
 	fontInfo->material->SetSort( SS_GUI );
 
-	// Compute oldInfo metrics directly from glyphData
-	// BFG uses idFont exclusively, so we don't need old_*.dat files
 	int mh = 0;
 	int mw = 0;
 	for( int g = 0; g < fontInfo->numGlyphs; g++ ) {
@@ -985,19 +951,15 @@ bool idFont::LoadFromTrueTypeFont()
 	FT_Done_Face( face );
 	fileSystem->FreeFile( faceData );
 
-	common->Printf( "LoadFromTrueTypeFont: Successfully generated font '%s' from TTF\n", GetName() );
+	common->Printf( "LoadFromTrueTypeFont: Successfully generated font '%s' from TTF (%d glyphs)\n", GetName(), numGlyphs );
 
 	DumpFontToJSON();
 
 	return true;
-#endif
 }
 
 bool idFont::WriteFont()
 {
-#ifndef BUILD_FREETYPE
-	return false;
-#else
 	if( fontInfo == NULL ) {
 		return false;
 	}
@@ -1044,5 +1006,4 @@ bool idFont::WriteFont()
 
 	common->Printf( "WriteFont: Saved font data to '%s'\n", fileName.c_str() );
 	return true;
-#endif
 }
