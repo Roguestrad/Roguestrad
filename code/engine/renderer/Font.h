@@ -62,6 +62,10 @@ private:
 
 	bool		   LoadFont();
 
+	bool		   LoadFromTrueTypeFont();
+	bool		   WriteFont();
+
+public:
 	struct glyphInfo_t {
 		byte		width;	// width of glyph in pixels
 		byte		height; // height of glyph in pixels
