@@ -40,19 +40,38 @@ CompileFlags:
 
 
 # ──────────────────────────────────────────────────────────────
-# Apply precompiled headers to all project source directories
-# that rely on them: idlib, game, engine, tools
+# engine, tools, idlib: only the two precompiled headers
 #
 # compile_commands.json uses clang-cl (--driver-mode=cl) so we
 # must use /FI (MSVC forced include) instead of -include.
 # ──────────────────────────────────────────────────────────────
 ---
 If:
-  PathMatch: [engine/.*, tools/.*, idlib/.*, game/.*]
+  PathMatch: [engine/.*, tools/.*, idlib/.*]
 CompileFlags:
   Add:
     - /FIidlib/precompiled.h
     - /FIgame/precompiled.h
+
+
+# ──────────────────────────────────────────────────────────────
+# game/: precompiled headers + Game_local.h
+#
+# Every game .cpp does:
+#   #include "precompiled.h"
+#   #include "Game_local.h"          (or "../Game_local.h")
+#
+# Game_local.h pulls in Entity.h, AFEntity.h, Player.h, etc.
+# Without it clangd cannot resolve idAnimatedEntity and friends.
+# ──────────────────────────────────────────────────────────────
+---
+If:
+  PathMatch: [game/.*]
+CompileFlags:
+  Add:
+    - /FIidlib/precompiled.h
+    - /FIgame/precompiled.h
+    - /FIgame/Game_local.h
 
 
 # ──────────────────────────────────────────────────────────────
