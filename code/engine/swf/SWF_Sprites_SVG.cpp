@@ -1587,6 +1587,10 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 					break;
 
 				case Tag_RemoveObject2: {
+					if( noAnims ) {
+						break;
+					}
+
 					int					removeDepth = command.stream.ReadU16();
 
 					// remember the name of the object on this depth before removing it
@@ -1668,6 +1672,10 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 					break;
 
 				case Tag_RemoveObject2: {
+					if( noAnims ) {
+						break;
+					}
+
 					int	  removeDepth = command.stream.ReadU16();
 
 					idStr removeTabs;

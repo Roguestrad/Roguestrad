@@ -388,6 +388,7 @@ void idMenuScreen_HUD::UpdateWeaponInfo( idPlayer* player )
 			idSWFTextInstance*	 txtClip = ammoInfo->GetScriptObject()->GetNestedText( "info", "clip", "clipCount", "txtVal" );
 			idSWFTextInstance*	 txtAmmo = ammoInfo->GetScriptObject()->GetNestedText( "info", "ammoCount", "txtVal" );
 
+#if 0
 			if( txtClipSprite && clipLowSprite && clipEmptySprite ) {
 				if( clipEmpty ) {
 					clipLowSprite->SetVisible( false );
@@ -408,6 +409,12 @@ void idMenuScreen_HUD::UpdateWeaponInfo( idPlayer* player )
 					txtClip->SetStrokeInfo( true, 0.75f, 1.5f );
 				}
 			}
+#else
+			if( txtClip != NULL ) {
+				txtClip->SetText( playerAmmo );
+				txtClip->SetStrokeInfo( true, 0.75f, 1.5f );
+			}
+#endif
 
 			if( txtAmmo != NULL ) {
 				if( ammoEmptySprite && txtAmmoSprite ) {
