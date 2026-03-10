@@ -825,6 +825,18 @@ void idSWFSprite::LoadSVGNode_r(
 			}
 
 		} else if( childName == "g" ) {
+			// ---- BEGIN DATA-IMPORT CHECK ----
+			const char* importPath = s.attribute( "data-import" ).value();
+			if( importPath != NULL && importPath[0] != '\0' ) {
+				// Load the sub-SVG and merge its content into this sprite
+				int newCharID = swf->LoadSVGSub( importPath, dict, isUnfolded, targetMap, animations );
+				if( newCharID >= 0 ) {
+					EmitPlaceCharacter( s, newCharID, currentFrame, depthCounter, targetMap );
+				}
+				continue;
+			}
+			// ---- END DATA-IMPORT CHECK ----
+
 			if( dataType != nullptr && idStr::Icmp( dataType, "FrameLabel" ) == 0 ) {
 				if( s.attribute( "data-frame-label" ) ) {
 					idStr label = s.attribute( "data-frame-label" ).value();
@@ -1539,7 +1551,8 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 	const idStr&								 prefix,
 	int											 indent,
 	bool										 writeGroupTag,
-	bool										 noAnims )
+	bool										 noAnims,
+	const svgSplitContext_t*					 splitCtx )
 {
 	idHashTableT<int, svgDisplayEntry_t*> localDepthMap;
 	idHashTableT<int, idStr>			  removedNames; // commandIndex -> name of removed object
@@ -1650,7 +1663,8 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 						frame, // currentFrame
 						frameDur,
 						indent + 1,
-						noAnims );
+						noAnims,
+						splitCtx );
 					break;
 
 				case Tag_RemoveObject2: {
@@ -2006,7 +2020,8 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 	int														currentFrame,
 	float													frameDur,
 	int														indent,
-	bool													noAnims )
+	bool													noAnims,
+	const svgSplitContext_t*								splitCtx )
 {
 	uint8 flags1 = bitstream.ReadU8();
 	uint8 flags2 = ( tag == Tag_PlaceObject3 ) ? bitstream.ReadU8() : 0;
@@ -2186,6 +2201,69 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		case SWF_DICT_SPRITE: {
 			idSWFSprite* sprite = dictEntry.sprite;
 
+			// ---- BEGIN SPLIT CHECK ----
+			if( splitCtx != NULL && splitCtx->enabled && indent == splitCtx->splitDepth && !name.IsEmpty() ) {
+				// Build sub-SVG filename: e.g. "exported/swf/shell/menuSettings.svg"
+				idStr subFilename;
+				subFilename.Format( "%s/%s.svg", splitCtx->basePath.c_str(), name.c_str() );
+
+				// Build relative href for the data-import attribute: e.g. "shell/menuSettings.svg"
+				idStr subRelative;
+				subRelative.Format( "%s/%s.svg", splitCtx->filenameWithoutExt.c_str(), name.c_str() );
+
+				// Write sub-SVG file
+				idFile* subFile = fileSystem->OpenFileWrite( subFilename, "fs_basepath" );
+				if( subFile != NULL ) {
+					// SVG header
+					subFile->WriteFloatString( "<svg\n"
+											   "\txmlns=\"http://www.w3.org/2000/svg\"\n"
+											   "\twidth=\"%i\"\n"
+											   "\theight=\"%i\"\n"
+											   "\tdata-exported-from=\"%s\"\n"
+											   "\tdata-sub-sprite=\"true\"\n>\n",
+						( int )splitCtx->swf->GetFrameWidth(),
+						( int )splitCtx->swf->GetFrameHeight(),
+						ENGINE_VERSION );
+
+					// Write full <defs> (duplicate so the sub-SVG is standalone).
+					// Pass empty imageHrefPrefix because the sub-SVG already lives inside
+					// the "shell/" directory, so image hrefs should be just "image_characterid_N.png"
+					// instead of "shell/image_characterid_N.png".
+					splitCtx->swf->WriteSVGDefs( subFile, splitCtx->filenameWithoutExt.c_str(), true, "" );
+
+					// Write the sprite content – recurse WITHOUT split (splitCtx = NULL)
+					// so children are always inlined within the sub-file.
+					// Use a fresh characterMap so animation state doesn't leak between files.
+					idHashTableT<int, svgDisplayEntry_t> subCharacterMap;
+					sprite->WriteSVGUnfolded_r( subFile, characterID, dict, subCharacterMap, frameDur, uniqueID, 0 /*indent*/, true, splitCtx->noAnims, NULL /*no further splitting*/ );
+
+					subFile->WriteFloatString( "</svg>\n" );
+					fileSystem->CloseFile( subFile );
+
+					common->Printf( "SVG Split: wrote '%s'\n", subFilename.c_str() );
+				}
+
+				// Write placeholder in the main SVG
+				file->WriteFloatString( "%s<g data-import=\"%s\" id=\"%s\" ", tabs.c_str(), subRelative.c_str(), uniqueID.c_str() );
+
+				if( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isTransformAnimated ) {
+					file->WriteFloatString( "%s", transform.c_str() );
+				}
+				if( !filterID.IsEmpty() ) {
+					file->WriteFloatString( "filter=\"url(#%s)\" ", filterID.c_str() );
+				}
+				if( hasRatio ) {
+					file->WriteFloatString( "data-ratio=\"%i\" ", ratio );
+				}
+				if( !blendAttr.IsEmpty() ) {
+					file->WriteFloatString( "%s", blendAttr.c_str() );
+				}
+				file->WriteFloatString( "/>\n" );
+
+				break; // done – skip the normal inline export below
+			}
+			// ---- END SPLIT CHECK ----
+
 			if( ( ( flags1 & PlaceFlagHasMatrix ) != 0 && !isTransformAnimated ) || !filterID.IsEmpty() || !blendAttr.IsEmpty() ) {
 				if( uniqueID.Equals( "root.info0.13" ) ) {
 					int breakpoint = 0;
@@ -2215,16 +2293,16 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 
 				file->WriteFloatString( ">\n" );
 
-				bool writeGroupTag = false; // isAnimated || ( flags1 & PlaceFlagHasColorTransform ) != 0;
+				bool writeGroupTag = false;
 				if( writeGroupTag ) {
 					indent++;
 				}
-				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, writeGroupTag, noAnims );
+				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, writeGroupTag, noAnims, splitCtx );
 
 				file->WriteFloatString( "%s</g>\n", tabs.c_str() );
 			} else {
 				// no group around for this sprite, write directly (the sprite will write its own group)
-				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, true, noAnims );
+				sprite->WriteSVGUnfolded_r( file, characterID, dict, characterMap, frameDur, uniqueID, indent, true, noAnims, splitCtx );
 			}
 			break;
 		}

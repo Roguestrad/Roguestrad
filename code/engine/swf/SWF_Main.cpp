@@ -51,7 +51,7 @@ extern idCVar		 in_useJoystick;
 idSWF::idSWF
 ===================
 */
-idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON, bool exportSWF, bool exportSVG, bool noAnims )
+idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON, bool exportSWF, bool exportSVG, bool noAnims, bool splitSVG )
 {
 	atlasMaterial = NULL;
 
@@ -196,7 +196,7 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 		svgFileName += filename;
 		svgFileName.SetFileExtension( ".svg" );
 
-		WriteSVG( svgFileName, noAnims );
+		WriteSVG( svgFileName, noAnims, splitSVG );
 	}
 
 	idStr atlasFileName = binaryFileName;
@@ -1068,6 +1068,7 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 {
 	bool exportSWF = false;
 	bool noAnims   = false;
+	bool splitSVG  = false;
 
 	for( int i = 1; i < args.Argc(); i++ ) {
 		idStr option = args.Argv( i );
@@ -1077,6 +1078,8 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 			exportSWF = true;
 		} else if( option.Icmp( "noanims" ) == 0 ) {
 			noAnims = true;
+		} else if( option.Icmp( "split" ) == 0 ) {
+			splitSVG = true;
 		}
 	}
 
@@ -1094,7 +1097,10 @@ CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ 
 
 		bswfName.StripLeadingOnce( "generated/" );
 
-		idSWF* swf = new idSWF( bswfName, NULL, true, true, true, noAnims );
+		// Only split shell.bswf – other SWFs are too small to benefit
+		bool   splitThis = splitSVG && bswfName.Find( "shell.bswf", false ) >= 0;
+
+		idSWF* swf = new idSWF( bswfName, NULL, true, true, true, noAnims, splitThis );
 		delete swf;
 	}
 
