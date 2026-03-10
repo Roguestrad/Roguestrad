@@ -1,0 +1,71 @@
+# ──────────────────────────────────────────────────────────────
+# Global base flags (apply everywhere unless overridden)
+# ──────────────────────────────────────────────────────────────
+CompileFlags:
+  Add:
+    - -std=c++17
+    - -x
+    - c++
+    - -I.
+    - -Iidlib
+    - -Igame
+    - -Iengine
+    - -Iengine/framework
+    - -Iengine/renderer
+    - -Iengine/sys
+    - -Iextern/imgui
+    - -Iextern/nvrhi/include
+    - -D_DEBUG
+    - -DUNICODE
+    - -D_UNICODE
+    - -D_WIN32
+    - -DWIN32
+    - -D_WINDOWS
+    - -D__DOOM_DLL__
+  Remove:
+    # Strip MSVC-specific flags that clang doesn't understand
+    - /EH*
+    - /W*
+    - /wd*
+    - /Zi
+    - /ZI
+    - /GR
+    - /Gm*
+    - /MP
+    - /fp:*
+    - /Yu*
+    - /Yc*
+    - /Fp*
+    - /permissive*
+
+
+# ──────────────────────────────────────────────────────────────
+# Apply precompiled headers to all project source directories
+# that rely on them: idlib, game, engine, tools
+#
+# compile_commands.json uses clang-cl (--driver-mode=cl) so we
+# must use /FI (MSVC forced include) instead of -include.
+# ──────────────────────────────────────────────────────────────
+---
+If:
+  PathMatch: [engine/.*, tools/.*, idlib/.*, game/.*]
+CompileFlags:
+  Add:
+    - /FIidlib/precompiled.h
+    - /FIgame/precompiled.h
+
+
+# ──────────────────────────────────────────────────────────────
+# External / third-party code should NOT get forced PCH
+# ──────────────────────────────────────────────────────────────
+---
+If:
+  PathMatch: [libs/.*, extern/.*]
+CompileFlags:
+  Remove:
+    - /FI*
+
+Diagnostics:
+  ClangTidy:
+    Add: []
+  UnusedIncludes: None

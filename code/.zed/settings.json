@@ -7,7 +7,7 @@
           "--fallback-style=llvm",
           "--background-index",
           "--clang-tidy",
-          "--header-insertion=iwyu",
+          "--header-insertion=never",
           "--pch-storage=memory",
         ],
       },
