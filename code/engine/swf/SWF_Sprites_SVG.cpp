@@ -650,7 +650,7 @@ void idSWFSprite::EmitPlaceCharacter( const pugi::xml_node& s, int newCharID, in
 	if( s.attribute( "transform" ) ) {
 		flags1 |= PlaceFlagHasMatrix;
 	}
-	if( s.attribute( "filter" ) ) {
+	if( s.attribute( "filter" ) || idStr::Icmp( s.attribute( "visibility" ).value(), "hidden" ) == 0 ) {
 		flags1 |= PlaceFlagHasColorTransform;
 	}
 	if( s.attribute( "data-ratio" ) ) {
@@ -699,6 +699,9 @@ void idSWFSprite::EmitPlaceCharacter( const pugi::xml_node& s, int newCharID, in
 
 	if( flags1 & PlaceFlagHasColorTransform ) {
 		swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
+		if( idStr::Icmp( s.attribute( "visibility" ).value(), "hidden" ) == 0 ) {
+			cxf.mul.w = 0.0f;
+		}
 		memFile.WriteColorXFormRGBA( cxf );
 	}
 
@@ -764,7 +767,7 @@ void idSWFSprite::LoadSVGNode_r(
 			if( s.attribute( "transform" ) ) {
 				flags1 |= PlaceFlagHasMatrix;
 			}
-			if( s.attribute( "filter" ) ) {
+			if( s.attribute( "filter" ) || idStr::Icmp( s.attribute( "visibility" ).value(), "hidden" ) == 0 ) {
 				flags1 |= PlaceFlagHasColorTransform;
 			}
 			if( s.attribute( "data-ratio" ) ) {
@@ -815,6 +818,9 @@ void idSWFSprite::LoadSVGNode_r(
 
 			if( flags1 & PlaceFlagHasColorTransform ) {
 				swfColorXform_t cxf = ParseColorXformFromFilter( swf->svgFilterColorXforms, s.attribute( "filter" ).value() );
+				if( idStr::Icmp( s.attribute( "visibility" ).value(), "hidden" ) == 0 ) {
+					cxf.mul.w = 0.0f;
+				}
 				memFile.WriteColorXFormRGBA( cxf );
 			}
 
