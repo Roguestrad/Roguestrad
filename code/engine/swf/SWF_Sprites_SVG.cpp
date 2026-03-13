@@ -490,11 +490,16 @@ void swfColorRGBA_t::ParseSVGColorFromString( const char* str )
 	idStr colorStr( str );
 	// colorStr.Trim();                  // remove whitespace
 
-	// 1) Hex notation #RRGGBB or #RGB
+	// 1) Hex notation #RRGGBBAA, #RRGGBB, or #RGB
 	if( colorStr[0] == '#' ) {
-		uint32_t hex = 0;
-		if( sscanf( colorStr.c_str() + 1, "%x", &hex ) == 1 ) {
-			if( colorStr.Length() == 7 ) { // #RRGGBB
+		uint64_t hex = 0;
+		if( sscanf( colorStr.c_str() + 1, "%llx", &hex ) == 1 ) {
+			if( colorStr.Length() == 9 ) { // #RRGGBBAA
+				r = ( hex >> 24 ) & 0xFF;
+				g = ( hex >> 16 ) & 0xFF;
+				b = ( hex >> 8 ) & 0xFF;
+				a = ( hex ) & 0xFF;
+			} else if( colorStr.Length() == 7 ) { // #RRGGBB
 				r = ( hex >> 16 ) & 0xFF;
 				g = ( hex >> 8 ) & 0xFF;
 				b = ( hex ) & 0xFF;

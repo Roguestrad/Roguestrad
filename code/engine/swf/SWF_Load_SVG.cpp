@@ -212,11 +212,154 @@ void idSWF::ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape )
 			ParsePointsFromString( line.attribute( "points" ).value(), ldraw.startVerts );
 			ldraw.endVerts = ldraw.startVerts;
 
-			for( int idx = 0; idx < ldraw.startVerts.Num(); idx++ ) {
+			// degenerate triangle format: v0,v0,v1 per segment (matches Flash ShapeParser / AllocTris GL_TRIANGLES convention)
+			for( int idx = 0; idx < ldraw.startVerts.Num() - 1; idx++ ) {
 				ldraw.indices.Append( idx );
+				ldraw.indices.Append( idx );
+				ldraw.indices.Append( idx + 1 );
 			}
 
 			shape->lineDraws.Append( ldraw );
+		}
+
+		// <line x1 y1 x2 y2> – two-point line segment
+		for( pugi::xml_node lineNode = node.child( "line" ); lineNode; lineNode = lineNode.next_sibling( "line" ) ) {
+			idSWFShapeDrawLine ldraw;
+			ldraw.style.startColor.ParseSVGColorFromString( lineNode.attribute( "stroke" ).value() );
+			ldraw.style.endColor   = ldraw.style.startColor;
+			ldraw.style.startWidth = lineNode.attribute( "stroke-width" ).as_float();
+			ldraw.style.endWidth   = ldraw.style.startWidth;
+
+			ldraw.startVerts.Append( idVec2( lineNode.attribute( "x1" ).as_float(), lineNode.attribute( "y1" ).as_float() ) );
+			ldraw.startVerts.Append( idVec2( lineNode.attribute( "x2" ).as_float(), lineNode.attribute( "y2" ).as_float() ) );
+			ldraw.endVerts = ldraw.startVerts;
+
+			// degenerate triangle format: v0,v0,v1 per segment (matches Flash ShapeParser / AllocTris GL_TRIANGLES convention)
+			ldraw.indices.Append( 0 );
+			ldraw.indices.Append( 0 );
+			ldraw.indices.Append( 1 );
+
+			shape->lineDraws.Append( ldraw );
+		}
+
+		// <rect x y width height [rx]> – solid filled rectangle (rx ignored for simplicity)
+		for( pugi::xml_node rectNode = node.child( "rect" ); rectNode; rectNode = rectNode.next_sibling( "rect" ) ) {
+			const char* fillStr = rectNode.attribute( "fill" ).value();
+			if( fillStr && fillStr[0] && idStr::Icmp( fillStr, "none" ) != 0 ) {
+				float			   x = rectNode.attribute( "x" ).as_float();
+				float			   y = rectNode.attribute( "y" ).as_float();
+				float			   w = rectNode.attribute( "width" ).as_float();
+				float			   h = rectNode.attribute( "height" ).as_float();
+
+				idSWFShapeDrawFill fill;
+				fill.style.type = 0;
+				fill.style.startColor.ParseSVGColorFromString( fillStr );
+				fill.style.endColor = fill.style.startColor;
+
+				fill.startVerts.Append( idVec2( x, y ) );		  // 0: top-left
+				fill.startVerts.Append( idVec2( x + w, y ) );	  // 1: top-right
+				fill.startVerts.Append( idVec2( x + w, y + h ) ); // 2: bottom-right
+				fill.startVerts.Append( idVec2( x, y + h ) );	  // 3: bottom-left
+				fill.endVerts = fill.startVerts;
+
+				fill.indices.Append( 0 );
+				fill.indices.Append( 1 );
+				fill.indices.Append( 2 );
+				fill.indices.Append( 0 );
+				fill.indices.Append( 2 );
+				fill.indices.Append( 3 );
+
+				shape->fillDraws.Append( fill );
+			}
+
+			const char* strokeStr = rectNode.attribute( "stroke" ).value();
+			if( strokeStr && strokeStr[0] && idStr::Icmp( strokeStr, "none" ) != 0 ) {
+				float			   x = rectNode.attribute( "x" ).as_float();
+				float			   y = rectNode.attribute( "y" ).as_float();
+				float			   w = rectNode.attribute( "width" ).as_float();
+				float			   h = rectNode.attribute( "height" ).as_float();
+
+				idSWFShapeDrawLine ldraw;
+				ldraw.style.startColor.ParseSVGColorFromString( strokeStr );
+				ldraw.style.endColor   = ldraw.style.startColor;
+				ldraw.style.startWidth = rectNode.attribute( "stroke-width" ).as_float();
+				ldraw.style.endWidth   = ldraw.style.startWidth;
+
+				// closed loop: TL -> TR -> BR -> BL -> TL
+				ldraw.startVerts.Append( idVec2( x, y ) );
+				ldraw.startVerts.Append( idVec2( x + w, y ) );
+				ldraw.startVerts.Append( idVec2( x + w, y + h ) );
+				ldraw.startVerts.Append( idVec2( x, y + h ) );
+				ldraw.startVerts.Append( idVec2( x, y ) );
+				ldraw.endVerts = ldraw.startVerts;
+
+				// degenerate triangle format: v0,v0,v1 per segment (matches Flash ShapeParser / AllocTris GL_TRIANGLES convention)
+				for( int idx = 0; idx < ldraw.startVerts.Num() - 1; idx++ ) {
+					ldraw.indices.Append( idx );
+					ldraw.indices.Append( idx );
+					ldraw.indices.Append( idx + 1 );
+				}
+
+				shape->lineDraws.Append( ldraw );
+			}
+		}
+
+		// <circle cx cy r> – approximated as N-gon polygon
+		for( pugi::xml_node circleNode = node.child( "circle" ); circleNode; circleNode = circleNode.next_sibling( "circle" ) ) {
+			float		cx = circleNode.attribute( "cx" ).as_float();
+			float		cy = circleNode.attribute( "cy" ).as_float();
+			float		r  = circleNode.attribute( "r" ).as_float();
+
+			// choose segment count based on radius: small circles need fewer segments
+			const int	numSegments = ( r <= 3.0f ) ? 12 : ( r <= 10.0f ) ? 16 : 24;
+
+			const char* fillStr = circleNode.attribute( "fill" ).value();
+			if( fillStr && fillStr[0] && idStr::Icmp( fillStr, "none" ) != 0 ) {
+				idSWFShapeDrawFill fill;
+				fill.style.type = 0;
+				fill.style.startColor.ParseSVGColorFromString( fillStr );
+				fill.style.endColor = fill.style.startColor;
+
+				for( int i = 0; i < numSegments; i++ ) {
+					float ang = idMath::TWO_PI * i / numSegments;
+					fill.startVerts.Append( idVec2( cx + r * idMath::Cos( ang ), cy + r * idMath::Sin( ang ) ) );
+				}
+				fill.endVerts = fill.startVerts;
+
+				// triangle fan from vertex 0
+				for( int i = 1; i < numSegments - 1; i++ ) {
+					fill.indices.Append( 0 );
+					fill.indices.Append( i );
+					fill.indices.Append( i + 1 );
+				}
+
+				shape->fillDraws.Append( fill );
+			}
+
+			const char* strokeStr = circleNode.attribute( "stroke" ).value();
+			if( strokeStr && strokeStr[0] && idStr::Icmp( strokeStr, "none" ) != 0 ) {
+				idSWFShapeDrawLine ldraw;
+				ldraw.style.startColor.ParseSVGColorFromString( strokeStr );
+				ldraw.style.endColor   = ldraw.style.startColor;
+				ldraw.style.startWidth = circleNode.attribute( "stroke-width" ).as_float();
+				ldraw.style.endWidth   = ldraw.style.startWidth;
+
+				// numSegments+1 verts so the last vert closes back to the first position
+				for( int i = 0; i <= numSegments; i++ ) {
+					float ang = idMath::TWO_PI * i / numSegments;
+					ldraw.startVerts.Append( idVec2( cx + r * idMath::Cos( ang ), cy + r * idMath::Sin( ang ) ) );
+				}
+				ldraw.endVerts = ldraw.startVerts;
+
+				// degenerate triangle format: v0,v0,v1 per segment (matches Flash ShapeParser / AllocTris GL_TRIANGLES convention)
+				for( int idx = 0; idx < ldraw.startVerts.Num() - 1; idx++ ) {
+					ldraw.indices.Append( idx );
+					ldraw.indices.Append( idx );
+					ldraw.indices.Append( idx + 1 );
+				}
+
+				shape->lineDraws.Append( ldraw );
+			}
 		}
 
 		shape->startBounds.tl = vec2_zero;
