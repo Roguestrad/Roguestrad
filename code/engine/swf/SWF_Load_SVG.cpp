@@ -982,7 +982,7 @@ void idSWF::WriteSVG( const char* filename, bool noAnims, bool splitSVG )
 		splitCtx.swf				= this;
 		splitCtx.noAnims			= noAnims;
 
-		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, characterMap, frameDur, "root", 0, true, noAnims, &splitCtx );
+		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, characterMap, frameDur, "", 0, true, noAnims, &splitCtx );
 	} else {
 		mainsprite->WriteSVG( file, dictionary.Num(), dictionary );
 	}

@@ -1634,7 +1634,11 @@ void idSWFSprite::WriteSVGUnfolded_r( idFile*	 file,
 	// uniqueID.Format( "%s.%i", prefix.c_str(),characterID );
 
 	if( writeGroupTag ) {
-		file->WriteFloatString( "%s<g id=\"%s\" >\n", tabs.c_str(), prefix.c_str() );
+		if( prefix.IsEmpty() ) {
+			file->WriteFloatString( "%s<g >\n", tabs.c_str() );
+		} else {
+			file->WriteFloatString( "%s<g id=\"%s\" >\n", tabs.c_str(), prefix.c_str() );
+		}
 	}
 
 	if( frameLabels.Num() > 0 ) {
@@ -1940,11 +1944,19 @@ void idSWFSprite::PreRun_PlaceObject2_3( swfTag_t tag,
 
 	idStr uniqueID;
 	if( !name.IsEmpty() ) {
-		uniqueID.Format( "%s.%s", sourcePrefix.c_str(), name.c_str() );
+		if( sourcePrefix.IsEmpty() ) {
+			uniqueID = name;
+		} else {
+			uniqueID.Format( "%s.%s", sourcePrefix.c_str(), name.c_str() );
+		}
 	} else {
 		// Include depth so that multiple placements of the same characterID
 		// at different depths get distinct SVG ids and separate animation tracks.
-		uniqueID.Format( "%s.%i.%i", sourcePrefix.c_str(), characterID, depth );
+		if( sourcePrefix.IsEmpty() ) {
+			uniqueID.Format( "%i.%i", characterID, depth );
+		} else {
+			uniqueID.Format( "%s.%i.%i", sourcePrefix.c_str(), characterID, depth );
+		}
 	}
 
 	if( flags1 & PlaceFlagMove ) {
@@ -2080,7 +2092,11 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 		// this adds a lot bloat, only do it for new objects
 		if( characterID != -1 ) {
 			if( cxf.mul != vec4_one || cxf.add != vec4_zero ) {
-				filterID.Format( "cf.%s.%i.%i", sourcePrefix.c_str(), ( characterID != -1 ) ? characterID : depth, commandID );
+				if( sourcePrefix.IsEmpty() ) {
+					filterID.Format( "cf.%i.%i", ( characterID != -1 ) ? characterID : depth, commandID );
+				} else {
+					filterID.Format( "cf.%s.%i.%i", sourcePrefix.c_str(), ( characterID != -1 ) ? characterID : depth, commandID );
+				}
 				// cxf.mul.w = 1.0f; // for debugging only, without most elements are invisible
 
 				file->WriteFloatString( "%s<filter id=\"%s\">\n"
@@ -2150,11 +2166,19 @@ void idSWFSprite::WriteSVGUnfolded_PlaceObject2_3( swfTag_t tag,
 
 	idStr uniqueID;
 	if( !name.IsEmpty() ) {
-		uniqueID.Format( "%s.%s", sourcePrefix.c_str(), name.c_str() );
+		if( sourcePrefix.IsEmpty() ) {
+			uniqueID = name;
+		} else {
+			uniqueID.Format( "%s.%s", sourcePrefix.c_str(), name.c_str() );
+		}
 	} else {
 		// Include depth so that multiple placements of the same characterID
 		// at different depths get distinct SVG ids (must match PreRun_PlaceObject2_3).
-		uniqueID.Format( "%s.%i.%i", sourcePrefix.c_str(), characterID, depth );
+		if( sourcePrefix.IsEmpty() ) {
+			uniqueID.Format( "%i.%i", characterID, depth );
+		} else {
+			uniqueID.Format( "%s.%i.%i", sourcePrefix.c_str(), characterID, depth );
+		}
 	}
 
 	bool				isAnimated			= false;
