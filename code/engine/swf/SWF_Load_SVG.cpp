@@ -636,6 +636,22 @@ bool idSWF::LoadSVG( const char* filename )
 				entry.type	   = SWF_DICT_EDITTEXT;
 				entry.edittext = new( TAG_SWF ) idSWFEditText;
 				ParseSVG_Text( n, entry.edittext );
+			} else if( idStr::Icmp( tagName, "rect" ) == 0 || idStr::Icmp( tagName, "line" ) == 0 || idStr::Icmp( tagName, "circle" ) == 0 || idStr::Icmp( tagName, "polygon" ) == 0 ||
+					   idStr::Icmp( tagName, "polyline" ) == 0 ) {
+				// Bare primitive element used directly as a shape (no wrapping <g>).
+				// Wrap it in a synthetic parent so ParseSVG_Shape can iterate children normally.
+				entry.type	= SWF_DICT_SHAPE;
+				entry.shape = new( TAG_SWF ) idSWFShape;
+				// ParseSVG_Shape iterates children of the node it receives, so we pass
+				// a temporary wrapper node that has the primitive as its only child.
+				// The easiest way: pass the node's *parent* — but that would drag in
+				// siblings.  Instead we synthesise a one-child context by wrapping.
+				// Since pugi doesn't allow creating nodes directly we create a tiny
+				// in-memory document fragment.
+				pugi::xml_document wrapper;
+				pugi::xml_node	   wrapG = wrapper.append_child( "g" );
+				wrapG.append_copy( n );
+				ParseSVG_Shape( wrapG, entry.shape );
 			} else if( idStr::Icmp( tagName, "g" ) == 0 ) {
 				pugi::xml_node& g		 = n;
 				const char*		dataType = g.attribute( "data-type" ).value();

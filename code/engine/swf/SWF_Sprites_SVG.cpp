@@ -574,7 +574,26 @@ void swfColorRGBA_t::ParseSVGColorFromString( const char* str )
 static bool HasDirectShapeChildren( const pugi::xml_node& g )
 {
 	const char* linkType = g.attribute( "link-type" ).value();
-	return ( idStr::Icmp( linkType, "BITMAP" ) == 0 ) || g.child( "polygon" ) || g.child( "polyline" );
+	if( idStr::Icmp( linkType, "BITMAP" ) == 0 ) {
+		return true;
+	}
+
+	// Only treat as a pure shape if it has primitive children but NO sprite-like
+	// children (<g> or <text>). A <g> that mixes a background <rect> with nested
+	// <g> sub-sprites must be handled as a Sprite so its children are recursed.
+	bool hasPrimitive = g.child( "polygon" ) || g.child( "polyline" ) || g.child( "line" ) || g.child( "rect" ) || g.child( "circle" );
+
+	if( !hasPrimitive ) {
+		return false;
+	}
+
+	// If there are any <g> or <text> siblings alongside the primitives, this is
+	// a mixed container → treat as Sprite so children are recursed properly.
+	if( g.child( "g" ) || g.child( "text" ) ) {
+		return false;
+	}
+
+	return true;
 }
 
 static bool HasDirectImageChild( const pugi::xml_node& g )
@@ -899,6 +918,22 @@ void idSWFSprite::LoadSVGNode_r(
 				newEntry.sprite = new idSWFSprite( swf );
 				newEntry.sprite->LoadSVGNode_r( s, dict, isUnfolded, targetMap, animations );
 			}
+
+			EmitPlaceCharacter( s, newCharID, currentFrame, depthCounter, targetMap );
+
+		} else if( childName == "rect" || childName == "line" || childName == "circle" || childName == "polygon" || childName == "polyline" ) {
+			// Bare primitive element at body level — treat as a one-primitive shape.
+			// Wrap in a synthetic <g> so ParseSVG_Shape can iterate children normally.
+			int					  newCharID = dict.Num();
+			idSWFDictionaryEntry& newEntry	= dict.Alloc();
+
+			newEntry.type  = SWF_DICT_SHAPE;
+			newEntry.shape = new( TAG_SWF ) idSWFShape;
+
+			pugi::xml_document wrapper;
+			pugi::xml_node	   wrapG = wrapper.append_child( "g" );
+			wrapG.append_copy( s );
+			swf->ParseSVG_Shape( wrapG, newEntry.shape );
 
 			EmitPlaceCharacter( s, newCharID, currentFrame, depthCounter, targetMap );
 
