@@ -46,7 +46,8 @@ If you have questions concerning this license or the applicable additional terms
 // stb_truetype-based TrueType font generation
 // =========================================================================
 
-static const int FONT_SIZE = 512;
+static const int FONT_SIZE	   = 512;
+static const int GLYPH_PADDING = 2;
 
 	// FreeType 26.6 fixed-point helpers -- replicate the rounding that
 	// FreeType applies to glyph metrics so our width / height / top / left
@@ -185,8 +186,13 @@ bool idFont::LoadFromTrueTypeFont()
 	// FreeType computes ascender/descender from face->size->metrics which are
 	// rounded to whole pixels via ceil/floor respectively in 26.6 fixed point.
 	// We replicate that by rounding ascender up and descender down.
-	fontInfo->ascender	= ( short )( ceilf( stbAscent * scale ) );
-	fontInfo->descender = ( short )( floorf( stbDescent * scale ) );
+	const int asc26		  = FloatTo26_6( ( float )stbAscent * scale );
+	const int desc26	  = FloatTo26_6( ( float )stbDescent * scale );
+	const int asc26Ceil	  = FT26_CEIL( asc26 );
+	const int desc26Floor = FT26_FLOOR( desc26 );
+
+	fontInfo->ascender	= ( short )FT26_TRUNC( asc26Ceil );
+	fontInfo->descender = ( short )FT26_TRUNC( desc26Floor );
 
 	fontInfo->numGlyphs = ( short )numGlyphs;
 	fontInfo->glyphData = ( glyphInfo_t* )Mem_Alloc( sizeof( glyphInfo_t ) * numGlyphs, TAG_FONT );
@@ -228,7 +234,7 @@ bool idFont::LoadFromTrueTypeFont()
 	// Temporary struct for pre-computed per-glyph metrics
 	struct glyphMetrics_t {
 		int	 ftTop;	  // vertical position: best FreeType-compatible approximation
-		byte ftXSkip; // horizontal advance: (horiAdvance >> 6) + 1
+		byte ftXSkip; // horizontal advance: (horiAdvance >> 6)
 		int	 bmpW;	  // actual bitmap width for rendering (from STB bitmap box)
 		int	 bmpH;	  // actual bitmap height for rendering
 		int	 bmpIx0;  // STB bitmap box ix0 (left bearing for atlas & gi.left)
@@ -299,7 +305,7 @@ bool idFont::LoadFromTrueTypeFont()
 		}
 
 		// RE_ConstructGlyphInfo: xSkip = (horiAdvance >> 6) + 1
-		byte ftXSkip = ( byte )( FT26_TRUNC( horiAdvance_26_6 ) + 1 );
+		byte ftXSkip = ( byte )( FT26_TRUNC( horiAdvance_26_6 ) );
 
 		// left = FLOOR(horiBearingX) in pixels
 		int	 ftLeftPx = FT26_TRUNC( ftLeft26 );
@@ -318,8 +324,9 @@ bool idFont::LoadFromTrueTypeFont()
 		gm[i].bmpIx0  = bix0;
 		gm[i].bmpIy0  = biy0;
 
-		if( bmpH > maxHeight ) {
-			maxHeight = bmpH;
+		int paddedHeight = ( bmpH > 0 ) ? ( bmpH + ( GLYPH_PADDING * 2 ) ) : 0;
+		if( paddedHeight > maxHeight ) {
+			maxHeight = paddedHeight;
 		}
 	}
 
@@ -335,9 +342,12 @@ bool idFont::LoadFromTrueTypeFont()
 		int	   bmpW = gm[i].bmpW;
 		int	   bmpH = gm[i].bmpH;
 
+		int	   paddedW = ( bmpW > 0 ) ? ( bmpW + ( GLYPH_PADDING * 2 ) ) : 0;
+		int	   paddedH = ( bmpH > 0 ) ? ( bmpH + ( GLYPH_PADDING * 2 ) ) : 0;
+
 		// Check if the glyph fits in the atlas; advance row if needed
 		if( bmpW > 0 && bmpH > 0 ) {
-			if( xOut + bmpW + 1 >= ( FONT_SIZE - 1 ) ) {
+			if( xOut + paddedW + 1 >= ( FONT_SIZE - 1 ) ) {
 				if( yOut + ( maxHeight + 1 ) * 2 >= ( FONT_SIZE - 1 ) ) {
 					// Atlas overflow
 					common->Warning( "LoadFromTrueTypeFont: Font atlas overflow for '%s' at glyph %d (char %u)", GetName(), i, charCode );
@@ -363,19 +373,46 @@ bool idFont::LoadFromTrueTypeFont()
 				break;
 			}
 
+			const int renderX = xOut + GLYPH_PADDING;
+			const int renderY = yOut + GLYPH_PADDING;
+
 			// Render the glyph bitmap into the atlas using STB.
 			// We render at the exact STB bitmap dimensions (bmpW x bmpH)
 			// and store those same dimensions in gi.width / gi.height so
 			// that the renderer's texture quad matches the actual pixel
 			// data — no oversized quads that would cause smearing.
 			stbtt_MakeCodepointBitmap( &stbFont,
-				out + ( yOut * FONT_SIZE ) + xOut,
+				out + ( renderY * FONT_SIZE ) + renderX,
 				bmpW,
 				bmpH,
 				FONT_SIZE, // stride = atlas width
 				scale,
 				scale,
 				( int )charCode );
+
+			// Edge extrusion into the padding to prevent bilinear bleed
+			if( GLYPH_PADDING > 0 ) {
+				const int baseX = renderX;
+				const int baseY = renderY;
+
+				for( int p = 1; p <= GLYPH_PADDING; p++ ) {
+					// top and bottom rows
+					byte* srcTop = out + ( baseY * FONT_SIZE ) + baseX;
+					byte* dstTop = out + ( ( baseY - p ) * FONT_SIZE ) + baseX;
+					memcpy( dstTop, srcTop, bmpW );
+
+					byte* srcBottom = out + ( ( baseY + bmpH - 1 ) * FONT_SIZE ) + baseX;
+					byte* dstBottom = out + ( ( baseY + bmpH - 1 + p ) * FONT_SIZE ) + baseX;
+					memcpy( dstBottom, srcBottom, bmpW );
+
+					// left and right columns
+					for( int y = 0; y < bmpH; y++ ) {
+						byte* row		  = out + ( ( baseY + y ) * FONT_SIZE ) + baseX;
+						row[-p]			  = row[0];
+						row[bmpW - 1 + p] = row[bmpW - 1];
+					}
+				}
+			}
 		}
 
 		// Fill in glyph metrics.
@@ -389,8 +426,13 @@ bool idFont::LoadFromTrueTypeFont()
 		gi.top			= ( signed char )gm[i].ftTop;
 		gi.left			= ( signed char )gm[i].bmpIx0;
 		gi.xSkip		= gm[i].ftXSkip;
-		gi.s			= ( uint16 )xOut;
-		gi.t			= ( uint16 )yOut;
+		if( bmpW > 0 && bmpH > 0 ) {
+			gi.s = ( uint16 )( xOut + GLYPH_PADDING );
+			gi.t = ( uint16 )( yOut + GLYPH_PADDING );
+		} else {
+			gi.s = ( uint16 )xOut;
+			gi.t = ( uint16 )yOut;
+		}
 
 		fontInfo->charIndex[i] = charCode;
 
@@ -400,7 +442,7 @@ bool idFont::LoadFromTrueTypeFont()
 		}
 
 		if( bmpW > 0 && bmpH > 0 ) {
-			xOut += bmpW + 1;
+			xOut += paddedW + 1;
 		}
 	}
 
