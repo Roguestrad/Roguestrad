@@ -52,6 +52,9 @@ option(USE_SYSTEM_ZLIB
 option(USE_SYSTEM_RAPIDJSON
          "Use the system rapidjson instead of the bundled one" OFF)
 
+option(BUILD_FREETYPE
+		"Use FreeType for TrueType font generation" OFF)
+
 option(USE_DX12
 		"Use DirectX 12" ON)
 
@@ -388,6 +391,10 @@ endif()
 include_directories("libs/imgui")
 include_directories("libs/mikktspace")
 
+if(BUILD_FREETYPE)
+	include_directories("libs/freetype/include")
+endif()
+
 if(WIN32)
 	link_directories(${CMAKE_CURRENT_SOURCE_DIR}/extern/openvr/lib/win64)
 else()
@@ -518,10 +525,11 @@ endif()
 if(USE_INTRINSICS_SSE OR USE_INTRINSICS_NEON)
 	add_subdirectory(libs/ispc_texcomp)
 	set(ISPC_TEXCOMP_LIBRARY ispc_texcomp)
-
 	#set(ISPC_TEXCOMP_LIBRARY Compressonator_MD)
 	#link_directories(${CMAKE_CURRENT_SOURCE_DIR}/libs/compressonator/lib)
 endif()
+
+
 
 # RB: there haven't been requests for a separate map compiler executable by macOS users
 # and it is ok to not support it until someone also supports TrenchBroomBFG on macOS
@@ -597,6 +605,45 @@ endif()
 
 file(GLOB MINIZIP_INCLUDES libs/zlib/minizip/*.h)
 file(GLOB MINIZIP_SOURCES libs/zlib/minizip/*.c libs/zlib/minizip/*.cpp)
+
+if(BUILD_FREETYPE)
+	set(FREETYPE_SOURCES
+		libs/freetype/src/autofit/autofit.c
+		libs/freetype/src/bdf/bdf.c
+		libs/freetype/src/cff/cff.c
+		libs/freetype/src/base/ftbase.c
+		libs/freetype/src/base/ftbitmap.c
+		libs/freetype/src/cache/ftcache.c
+		libs/freetype/src/base/ftdebug.c
+		libs/freetype/src/base/ftgasp.c
+		libs/freetype/src/base/ftglyph.c
+		libs/freetype/src/gzip/ftgzip.c
+		libs/freetype/src/base/ftinit.c
+		libs/freetype/src/lzw/ftlzw.c
+		libs/freetype/src/base/ftstroke.c
+		libs/freetype/src/base/ftsystem.c
+		libs/freetype/src/smooth/smooth.c
+		libs/freetype/src/base/ftbbox.c
+		libs/freetype/src/base/ftmm.c
+		libs/freetype/src/base/ftpfr.c
+		libs/freetype/src/base/ftsynth.c
+		libs/freetype/src/base/fttype1.c
+		libs/freetype/src/base/ftwinfnt.c
+		libs/freetype/src/pcf/pcf.c
+		libs/freetype/src/pfr/pfr.c
+		libs/freetype/src/psaux/psaux.c
+		libs/freetype/src/pshinter/pshinter.c
+		libs/freetype/src/psnames/psmodule.c
+		libs/freetype/src/raster/raster.c
+		libs/freetype/src/sfnt/sfnt.c
+		libs/freetype/src/truetype/truetype.c
+		libs/freetype/src/type1/type1.c
+		libs/freetype/src/cid/type1cid.c
+		libs/freetype/src/type42/type42.c
+		libs/freetype/src/winfonts/winfnt.c)
+else()
+	set(FREETYPE_SOURCES "")
+endif()
 
 set(SOUND_INCLUDES
 	engine/sound/snd_local.h
@@ -1007,6 +1054,10 @@ source_group("libs\\tinyexr" FILES ${TINYEXR_INCLUDES})
 source_group("libs\\mikktspace" FILES ${MIKKTSPACE_INCLUDES})
 source_group("libs\\mikktspace" FILES ${MIKKTSPACE_SOURCES})
 
+if(BUILD_FREETYPE)
+	source_group("libs\\freetype" FILES ${FREETYPE_SOURCES})
+endif()
+
 source_group("libs\\libbinkdec" FILES ${BINKDEC_INCLUDES})
 source_group("libs\\libbinkdec" FILES ${BINKDEC_SOURCES})
 
@@ -1157,6 +1208,7 @@ set(RBDOOM3_SOURCES
 			${IMGUI_SOURCES}
 			${IMGUI_NODE_EDITOR_SOURCES}
 			${MIKKTSPACE_SOURCES}
+			${FREETYPE_SOURCES}
 			${ZLIB_SOURCES}
 			${MINIZIP_SOURCES}
 			${BINKDEC_SOURCES}
@@ -1645,6 +1697,10 @@ if(USE_VULKAN)
 	target_link_libraries(${APP_NAME} nvrhi_vk)
 endif()
 
+if(BUILD_FREETYPE)
+	target_compile_definitions(${APP_NAME} PUBLIC BUILD_FREETYPE=1)
+endif()
+
 if(OPTICK)
 	target_compile_definitions(${APP_NAME} PUBLIC USE_OPTICK=1)
 else()
@@ -1670,6 +1726,8 @@ if(CMAKE_GENERATOR MATCHES "^Visual Studio .*" AND MSVC)
 	endforeach()
 	set_property(TARGET ${APP_NAME} PROPERTY VS_DEBUGGER_COMMAND_ARGUMENTS ${finalArgs})
 endif()
+
+
 
 # needs to come after nvrhi_d3d11 etc. for link order
 target_link_libraries(${APP_NAME} nvrhi)

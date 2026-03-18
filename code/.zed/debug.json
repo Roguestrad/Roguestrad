@@ -13,7 +13,7 @@
     "request": "launch",
     "program": "$ZED_WORKTREE_ROOT\\build\\Debug\\Roguestrad.exe",
     "cwd": "$ZED_WORKTREE_ROOT\\..",
-    "args": ["+set", "logfile", "2", "+set", "fs_game", "mod_swfss2"],
+    "args": ["+set", "logfile", "2", "+set", "fs_game", "content"],
     "env": {
       "_NO_DEBUG_HEAP": "1",
     },
