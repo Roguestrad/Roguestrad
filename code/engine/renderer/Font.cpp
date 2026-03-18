@@ -31,8 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "Font.h"
 
-
-
 #if defined( STANDALONE )
 const char* DEFAULT_FONT = "bitstream_vera_sans";
 #else
@@ -480,8 +478,6 @@ void idFont::Touch()
 	}
 }
 
-
-
 /*
 ==============================
 idFont::DumpFontToJSON
@@ -564,8 +560,6 @@ void idFont::DumpFontToJSON()
 
 	common->Printf( "DumpFontToJSON: Wrote '%s'\n", jsonPath.c_str() );
 }
-
-
 
 /*
 ==============================

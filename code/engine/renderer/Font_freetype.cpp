@@ -33,10 +33,11 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifdef BUILD_FREETYPE
 
-#include <freetype/ftsystem.h>
-#include <freetype/ftimage.h>
-#include <freetype/freetype.h>
-#include <freetype/ftoutln.h>
+	#include <ft2build.h>
+	#include FT_FREETYPE_H
+	#include FT_OUTLINE_H
+	#include FT_IMAGE_H
+	#include FT_SYSTEM_H
 
 static FT_Library ftLibrary = NULL;
 const int		  FONT_SIZE = 512;
@@ -48,9 +49,9 @@ R_GetGlyphInfo
 */
 void			  R_GetGlyphInfo( FT_GlyphSlot glyph, int* left, int* right, int* width, int* top, int* bottom, int* height, int* pitch )
 {
-#define _FLOOR( x ) ( ( x ) & -64 )
-#define _CEIL( x )	( ( ( x ) + 63 ) & -64 )
-#define _TRUNC( x ) ( ( x ) >> 6 )
+	#define _FLOOR( x ) ( ( x ) & -64 )
+	#define _CEIL( x )	( ( ( x ) + 63 ) & -64 )
+	#define _TRUNC( x ) ( ( x ) >> 6 )
 
 	*left  = _FLOOR( glyph->metrics.horiBearingX );
 	*right = _CEIL( glyph->metrics.horiBearingX + glyph->metrics.width );
@@ -63,9 +64,9 @@ void			  R_GetGlyphInfo( FT_GlyphSlot glyph, int* left, int* right, int* width, 
 	//*pitch  = ( qtrue ? (*width+3) & -4 : (*width+7) >> 3 );
 	*pitch = ( *width + 3 ) & -4;
 
-#undef _FLOOR
-#undef _CEIL
-#undef _TRUNC
+	#undef _FLOOR
+	#undef _CEIL
+	#undef _TRUNC
 }
 
 /*

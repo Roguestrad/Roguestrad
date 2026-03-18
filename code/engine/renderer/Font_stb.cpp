@@ -33,14 +33,14 @@ If you have questions concerning this license or the applicable additional terms
 
 #ifndef BUILD_FREETYPE
 
-// stb_truetype — single-header TrueType rasterizer (replaces FreeType)
-// We define STBTT_STATIC so that all stb symbols are file-local and won't
-// conflict with any other translation units that also include stb_truetype
-// (e.g. Dear ImGui).
-#define STBTT_STATIC
-#define STB_TRUETYPE_IMPLEMENTATION
-#define STBTT_assert( x ) assert( x )
-#include "libs/stb/stb_truetype.h"
+	// stb_truetype — single-header TrueType rasterizer (replaces FreeType)
+	// We define STBTT_STATIC so that all stb symbols are file-local and won't
+	// conflict with any other translation units that also include stb_truetype
+	// (e.g. Dear ImGui).
+	#define STBTT_STATIC
+	#define STB_TRUETYPE_IMPLEMENTATION
+	#define STBTT_assert( x ) assert( x )
+	#include "libs/stb/stb_truetype.h"
 
 // =========================================================================
 // stb_truetype-based TrueType font generation
@@ -48,13 +48,13 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int FONT_SIZE = 512;
 
-// FreeType 26.6 fixed-point helpers -- replicate the rounding that
-// FreeType applies to glyph metrics so our width / height / top / left
-// values match the reference output as closely as possible.
-#define FT26_FLOOR( x ) ( ( x ) & -64 )
-#define FT26_CEIL( x )	( ( ( x ) + 63 ) & -64 )
-#define FT26_TRUNC( x ) ( ( x ) >> 6 )
-#define FT26_ROUND( x ) FT26_FLOOR( ( x ) + 32 )
+	// FreeType 26.6 fixed-point helpers -- replicate the rounding that
+	// FreeType applies to glyph metrics so our width / height / top / left
+	// values match the reference output as closely as possible.
+	#define FT26_FLOOR( x ) ( ( x ) & -64 )
+	#define FT26_CEIL( x )	( ( ( x ) + 63 ) & -64 )
+	#define FT26_TRUNC( x ) ( ( x ) >> 6 )
+	#define FT26_ROUND( x ) FT26_FLOOR( ( x ) + 32 )
 
 // Convert a float value to 26.6 fixed point
 static inline int FloatTo26_6( float v )
