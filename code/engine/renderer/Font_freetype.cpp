@@ -39,8 +39,9 @@ If you have questions concerning this license or the applicable additional terms
 	#include FT_IMAGE_H
 	#include FT_SYSTEM_H
 
-static FT_Library ftLibrary = NULL;
-const int		  FONT_SIZE = 512;
+static FT_Library ftLibrary		= NULL;
+const int		  FONT_SIZE		= 512;
+const int		  GLYPH_PADDING = 2;
 
 /*
 ============
@@ -100,9 +101,9 @@ FT_Bitmap* R_RenderGlyph( FT_GlyphSlot glyph, idFont::glyphInfo_t* glyphOut )
 		FT_Outline_Get_Bitmap( ftLibrary, &glyph->outline, bit2 );
 
 		glyphOut->height = height;
-		glyphOut->width	 = pitch;
-		glyphOut->top	 = ( glyph->metrics.horiBearingY >> 6 ) + 1;
-		glyphOut->left	 = ( glyph->metrics.horiBearingX >> 6 );
+		glyphOut->width	 = width;
+		glyphOut->top	 = ( glyph->metrics.horiBearingY >> 6 );
+		glyphOut->left	 = ( left >> 6 );
 
 		return bit2;
 	} else {
@@ -131,13 +132,14 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 		FT_Load_Glyph( face, FT_Get_Char_Index( face, c ), FT_LOAD_DEFAULT );
 		bitmap = R_RenderGlyph( face->glyph, &glyph );
 		if( bitmap ) {
-			glyph.xSkip = ( face->glyph->metrics.horiAdvance >> 6 ) + 1;
+			glyph.xSkip = ( face->glyph->metrics.horiAdvance >> 6 );
 		} else {
 			return &glyph;
 		}
 
-		if( glyph.height > *maxHeight ) {
-			*maxHeight = glyph.height;
+		int paddedHeight = ( glyph.height > 0 ) ? ( glyph.height + ( GLYPH_PADDING * 2 ) ) : 0;
+		if( paddedHeight > *maxHeight ) {
+			*maxHeight = paddedHeight;
 		}
 
 		if( calcHeight ) {
@@ -155,8 +157,8 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 					;
 		*/
 
-		scaled_width  = glyph.width;
-		scaled_height = glyph.height;
+		scaled_width  = ( glyph.width > 0 ) ? ( glyph.width + ( GLYPH_PADDING * 2 ) ) : 0;
+		scaled_height = ( glyph.height > 0 ) ? ( glyph.height + ( GLYPH_PADDING * 2 ) ) : 0;
 
 		// we need to make sure we fit
 		// RB: changed constants to FONT_SIZE -1
@@ -180,7 +182,11 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 		}
 
 		src = bitmap->buffer;
-		dst = imageOut + ( *yOut * FONT_SIZE ) + *xOut;
+		if( glyph.width > 0 && glyph.height > 0 ) {
+			dst = imageOut + ( ( *yOut + GLYPH_PADDING ) * FONT_SIZE ) + ( *xOut + GLYPH_PADDING );
+		} else {
+			dst = imageOut + ( *yOut * FONT_SIZE ) + *xOut;
+		}
 
 		if( bitmap->pixel_mode == ft_pixel_mode_mono ) {
 			for( i = 0; i < glyph.height; i++ ) {
@@ -204,14 +210,38 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 					_dst++;
 				}
 
-				src += glyph.width;
+				src += bitmap->pitch;
 				dst += FONT_SIZE;
 			}
 		} else {
 			for( i = 0; i < glyph.height; i++ ) {
-				memcpy( dst, src, glyph.width );
-				src += glyph.width;
+				memcpy( dst, src, bitmap->width );
+				src += bitmap->pitch;
 				dst += FONT_SIZE;
+			}
+		}
+
+		// Edge extrusion into the padding to prevent bilinear bleed
+		if( glyph.width > 0 && glyph.height > 0 && GLYPH_PADDING > 0 ) {
+			const int baseX = *xOut + GLYPH_PADDING;
+			const int baseY = *yOut + GLYPH_PADDING;
+
+			for( int p = 1; p <= GLYPH_PADDING; p++ ) {
+				// top and bottom rows
+				unsigned char* srcTop = imageOut + ( baseY * FONT_SIZE ) + baseX;
+				unsigned char* dstTop = imageOut + ( ( baseY - p ) * FONT_SIZE ) + baseX;
+				memcpy( dstTop, srcTop, glyph.width );
+
+				unsigned char* srcBottom = imageOut + ( ( baseY + glyph.height - 1 ) * FONT_SIZE ) + baseX;
+				unsigned char* dstBottom = imageOut + ( ( baseY + glyph.height - 1 + p ) * FONT_SIZE ) + baseX;
+				memcpy( dstBottom, srcBottom, glyph.width );
+
+				// left and right columns
+				for( int y = 0; y < glyph.height; y++ ) {
+					unsigned char* row		 = imageOut + ( ( baseY + y ) * FONT_SIZE ) + baseX;
+					row[-p]					 = row[0];
+					row[glyph.width - 1 + p] = row[glyph.width - 1];
+				}
 			}
 		}
 
@@ -222,8 +252,13 @@ static idFont::glyphInfo_t* RE_ConstructGlyphInfo( unsigned char* imageOut, int*
 		//		glyph.imageWidth = scaled_width;
 
 		// RB: BFG glyphInfo_t uses pixel coordinates (uint16) not float texture coords
-		glyph.s = ( uint16 )*xOut;
-		glyph.t = ( uint16 )*yOut;
+		if( glyph.width > 0 && glyph.height > 0 ) {
+			glyph.s = ( uint16 )( *xOut + GLYPH_PADDING );
+			glyph.t = ( uint16 )( *yOut + GLYPH_PADDING );
+		} else {
+			glyph.s = ( uint16 )*xOut;
+			glyph.t = ( uint16 )*yOut;
+		}
 
 		*xOut += scaled_width + 1;
 	}
@@ -314,8 +349,15 @@ bool idFont::LoadFromTrueTypeFont()
 	fontInfo = new( TAG_FONT ) fontInfo_t;
 	memset( fontInfo, 0, sizeof( fontInfo_t ) );
 
-	fontInfo->ascender	= ( short )( face->size->metrics.ascender >> 6 );
-	fontInfo->descender = ( short )( face->size->metrics.descender >> 6 );
+	const FT_Fixed yScale = face->size->metrics.y_scale;
+	const int	   asc26  = FT_MulFix( face->ascender, yScale );
+	const int	   desc26 = FT_MulFix( face->descender, yScale );
+
+	const int	   asc26Ceil   = ( asc26 + 63 ) & -64;
+	const int	   desc26Floor = desc26 & -64;
+
+	fontInfo->ascender	= ( short )( asc26Ceil >> 6 );
+	fontInfo->descender = ( short )( desc26Floor >> 6 );
 
 	fontInfo->numGlyphs = ( short )numGlyphs;
 	fontInfo->glyphData = ( glyphInfo_t* )Mem_Alloc( sizeof( glyphInfo_t ) * numGlyphs, TAG_FONT );
