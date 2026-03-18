@@ -39,6 +39,8 @@ namespace pugi
 class xml_node;
 }
 
+struct svgSplitContext_t;
+
 const char* cssNameFromRGBA( const swfColorRGBA_t& col );
 
 /*
@@ -97,7 +99,8 @@ public:
 			   const idStr&									prefix,
 			   int											indent,
 			   bool											writeGroupTag,
-			   bool											noAnims = false );
+			   bool											noAnims	 = false,
+			   const svgSplitContext_t*						splitCtx = NULL );
 
 private:
 	void EmitPlaceCharacter( const pugi::xml_node& s, int newCharID, int currentFrame, int& depthCounter, idHashTableT<idStr, svgAnimTarget_t>& targetMap );
@@ -132,7 +135,8 @@ private:
 		int											 currentFrame,
 		float										 frameDur,
 		int											 indent,
-		bool										 noAnims = false );
+		bool										 noAnims  = false,
+		const svgSplitContext_t*					 splitCtx = NULL );
 
 	void WriteSVGUnfolded_DoLua( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, float frameDur, int currentFrame, const idStr& prefix, int indent );
 	void WriteSVGUnfolded_DoAction( idFile* f, idSWFBitStream& bitstream, int characterID, int commandID, float frameDur, int currentFrame, const idStr& prefix, int indent );

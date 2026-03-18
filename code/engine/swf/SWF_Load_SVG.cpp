@@ -212,11 +212,154 @@ void idSWF::ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape )
 			ParsePointsFromString( line.attribute( "points" ).value(), ldraw.startVerts );
 			ldraw.endVerts = ldraw.startVerts;
 
-			for( int idx = 0; idx < ldraw.startVerts.Num(); idx++ ) {
+			// degenerate triangle format: v0,v0,v1 per segment (matches Flash ShapeParser / AllocTris GL_TRIANGLES convention)
+			for( int idx = 0; idx < ldraw.startVerts.Num() - 1; idx++ ) {
 				ldraw.indices.Append( idx );
+				ldraw.indices.Append( idx );
+				ldraw.indices.Append( idx + 1 );
 			}
 
 			shape->lineDraws.Append( ldraw );
+		}
+
+		// <line x1 y1 x2 y2> – two-point line segment
+		for( pugi::xml_node lineNode = node.child( "line" ); lineNode; lineNode = lineNode.next_sibling( "line" ) ) {
+			idSWFShapeDrawLine ldraw;
+			ldraw.style.startColor.ParseSVGColorFromString( lineNode.attribute( "stroke" ).value() );
+			ldraw.style.endColor   = ldraw.style.startColor;
+			ldraw.style.startWidth = lineNode.attribute( "stroke-width" ).as_float();
+			ldraw.style.endWidth   = ldraw.style.startWidth;
+
+			ldraw.startVerts.Append( idVec2( lineNode.attribute( "x1" ).as_float(), lineNode.attribute( "y1" ).as_float() ) );
+			ldraw.startVerts.Append( idVec2( lineNode.attribute( "x2" ).as_float(), lineNode.attribute( "y2" ).as_float() ) );
+			ldraw.endVerts = ldraw.startVerts;
+
+			// degenerate triangle format: v0,v0,v1 per segment (matches Flash ShapeParser / AllocTris GL_TRIANGLES convention)
+			ldraw.indices.Append( 0 );
+			ldraw.indices.Append( 0 );
+			ldraw.indices.Append( 1 );
+
+			shape->lineDraws.Append( ldraw );
+		}
+
+		// <rect x y width height [rx]> – solid filled rectangle (rx ignored for simplicity)
+		for( pugi::xml_node rectNode = node.child( "rect" ); rectNode; rectNode = rectNode.next_sibling( "rect" ) ) {
+			const char* fillStr = rectNode.attribute( "fill" ).value();
+			if( fillStr && fillStr[0] && idStr::Icmp( fillStr, "none" ) != 0 ) {
+				float			   x = rectNode.attribute( "x" ).as_float();
+				float			   y = rectNode.attribute( "y" ).as_float();
+				float			   w = rectNode.attribute( "width" ).as_float();
+				float			   h = rectNode.attribute( "height" ).as_float();
+
+				idSWFShapeDrawFill fill;
+				fill.style.type = 0;
+				fill.style.startColor.ParseSVGColorFromString( fillStr );
+				fill.style.endColor = fill.style.startColor;
+
+				fill.startVerts.Append( idVec2( x, y ) );		  // 0: top-left
+				fill.startVerts.Append( idVec2( x + w, y ) );	  // 1: top-right
+				fill.startVerts.Append( idVec2( x + w, y + h ) ); // 2: bottom-right
+				fill.startVerts.Append( idVec2( x, y + h ) );	  // 3: bottom-left
+				fill.endVerts = fill.startVerts;
+
+				fill.indices.Append( 0 );
+				fill.indices.Append( 1 );
+				fill.indices.Append( 2 );
+				fill.indices.Append( 0 );
+				fill.indices.Append( 2 );
+				fill.indices.Append( 3 );
+
+				shape->fillDraws.Append( fill );
+			}
+
+			const char* strokeStr = rectNode.attribute( "stroke" ).value();
+			if( strokeStr && strokeStr[0] && idStr::Icmp( strokeStr, "none" ) != 0 ) {
+				float			   x = rectNode.attribute( "x" ).as_float();
+				float			   y = rectNode.attribute( "y" ).as_float();
+				float			   w = rectNode.attribute( "width" ).as_float();
+				float			   h = rectNode.attribute( "height" ).as_float();
+
+				idSWFShapeDrawLine ldraw;
+				ldraw.style.startColor.ParseSVGColorFromString( strokeStr );
+				ldraw.style.endColor   = ldraw.style.startColor;
+				ldraw.style.startWidth = rectNode.attribute( "stroke-width" ).as_float();
+				ldraw.style.endWidth   = ldraw.style.startWidth;
+
+				// closed loop: TL -> TR -> BR -> BL -> TL
+				ldraw.startVerts.Append( idVec2( x, y ) );
+				ldraw.startVerts.Append( idVec2( x + w, y ) );
+				ldraw.startVerts.Append( idVec2( x + w, y + h ) );
+				ldraw.startVerts.Append( idVec2( x, y + h ) );
+				ldraw.startVerts.Append( idVec2( x, y ) );
+				ldraw.endVerts = ldraw.startVerts;
+
+				// degenerate triangle format: v0,v0,v1 per segment (matches Flash ShapeParser / AllocTris GL_TRIANGLES convention)
+				for( int idx = 0; idx < ldraw.startVerts.Num() - 1; idx++ ) {
+					ldraw.indices.Append( idx );
+					ldraw.indices.Append( idx );
+					ldraw.indices.Append( idx + 1 );
+				}
+
+				shape->lineDraws.Append( ldraw );
+			}
+		}
+
+		// <circle cx cy r> – approximated as N-gon polygon
+		for( pugi::xml_node circleNode = node.child( "circle" ); circleNode; circleNode = circleNode.next_sibling( "circle" ) ) {
+			float		cx = circleNode.attribute( "cx" ).as_float();
+			float		cy = circleNode.attribute( "cy" ).as_float();
+			float		r  = circleNode.attribute( "r" ).as_float();
+
+			// choose segment count based on radius: small circles need fewer segments
+			const int	numSegments = ( r <= 3.0f ) ? 12 : ( r <= 10.0f ) ? 16 : 24;
+
+			const char* fillStr = circleNode.attribute( "fill" ).value();
+			if( fillStr && fillStr[0] && idStr::Icmp( fillStr, "none" ) != 0 ) {
+				idSWFShapeDrawFill fill;
+				fill.style.type = 0;
+				fill.style.startColor.ParseSVGColorFromString( fillStr );
+				fill.style.endColor = fill.style.startColor;
+
+				for( int i = 0; i < numSegments; i++ ) {
+					float ang = idMath::TWO_PI * i / numSegments;
+					fill.startVerts.Append( idVec2( cx + r * idMath::Cos( ang ), cy + r * idMath::Sin( ang ) ) );
+				}
+				fill.endVerts = fill.startVerts;
+
+				// triangle fan from vertex 0
+				for( int i = 1; i < numSegments - 1; i++ ) {
+					fill.indices.Append( 0 );
+					fill.indices.Append( i );
+					fill.indices.Append( i + 1 );
+				}
+
+				shape->fillDraws.Append( fill );
+			}
+
+			const char* strokeStr = circleNode.attribute( "stroke" ).value();
+			if( strokeStr && strokeStr[0] && idStr::Icmp( strokeStr, "none" ) != 0 ) {
+				idSWFShapeDrawLine ldraw;
+				ldraw.style.startColor.ParseSVGColorFromString( strokeStr );
+				ldraw.style.endColor   = ldraw.style.startColor;
+				ldraw.style.startWidth = circleNode.attribute( "stroke-width" ).as_float();
+				ldraw.style.endWidth   = ldraw.style.startWidth;
+
+				// numSegments+1 verts so the last vert closes back to the first position
+				for( int i = 0; i <= numSegments; i++ ) {
+					float ang = idMath::TWO_PI * i / numSegments;
+					ldraw.startVerts.Append( idVec2( cx + r * idMath::Cos( ang ), cy + r * idMath::Sin( ang ) ) );
+				}
+				ldraw.endVerts = ldraw.startVerts;
+
+				// degenerate triangle format: v0,v0,v1 per segment (matches Flash ShapeParser / AllocTris GL_TRIANGLES convention)
+				for( int idx = 0; idx < ldraw.startVerts.Num() - 1; idx++ ) {
+					ldraw.indices.Append( idx );
+					ldraw.indices.Append( idx );
+					ldraw.indices.Append( idx + 1 );
+				}
+
+				shape->lineDraws.Append( ldraw );
+			}
 		}
 
 		shape->startBounds.tl = vec2_zero;
@@ -347,6 +490,19 @@ void idSWF::ParseSVG_Font( const pugi::xml_node& node, idSWFFont* font )
 
 bool idSWF::LoadSVG( const char* filename )
 {
+	// Store base directory for sub-file resolution (e.g. "swf/" from "swf/shell.svg")
+	svgBaseDir = filename;
+	svgBaseDir.StripFilename();
+	if( svgBaseDir.Length() > 0 && svgBaseDir[svgBaseDir.Length() - 1] != '/' ) {
+		svgBaseDir += "/";
+	}
+
+	// Clean up any previous sub-documents
+	for( int i = 0; i < svgSubDocuments.Num(); i++ ) {
+		delete svgSubDocuments[i];
+	}
+	svgSubDocuments.Clear();
+
 	idFile* f = fileSystem->OpenFileReadMemory( filename );
 	if( f == NULL || f->Length() <= 0 ) {
 		idLib::Warning( "SVG Load failed: Could not open file %s", filename );
@@ -480,6 +636,22 @@ bool idSWF::LoadSVG( const char* filename )
 				entry.type	   = SWF_DICT_EDITTEXT;
 				entry.edittext = new( TAG_SWF ) idSWFEditText;
 				ParseSVG_Text( n, entry.edittext );
+			} else if( idStr::Icmp( tagName, "rect" ) == 0 || idStr::Icmp( tagName, "line" ) == 0 || idStr::Icmp( tagName, "circle" ) == 0 || idStr::Icmp( tagName, "polygon" ) == 0 ||
+					   idStr::Icmp( tagName, "polyline" ) == 0 ) {
+				// Bare primitive element used directly as a shape (no wrapping <g>).
+				// Wrap it in a synthetic parent so ParseSVG_Shape can iterate children normally.
+				entry.type	= SWF_DICT_SHAPE;
+				entry.shape = new( TAG_SWF ) idSWFShape;
+				// ParseSVG_Shape iterates children of the node it receives, so we pass
+				// a temporary wrapper node that has the primitive as its only child.
+				// The easiest way: pass the node's *parent* — but that would drag in
+				// siblings.  Instead we synthesise a one-child context by wrapping.
+				// Since pugi doesn't allow creating nodes directly we create a tiny
+				// in-memory document fragment.
+				pugi::xml_document wrapper;
+				pugi::xml_node	   wrapG = wrapper.append_child( "g" );
+				wrapG.append_copy( n );
+				ParseSVG_Shape( wrapG, entry.shape );
 			} else if( idStr::Icmp( tagName, "g" ) == 0 ) {
 				pugi::xml_node& g		 = n;
 				const char*		dataType = g.attribute( "data-type" ).value();
@@ -693,6 +865,12 @@ bool idSWF::LoadSVG( const char* filename )
 
 	common->Printf( "Loading '%s' took %5.1f seconds\n\n", filename, ( timeEnd - timeStart ) * 0.001f );
 
+	// Clean up sub-documents now that all animations have been processed
+	for( int i = 0; i < svgSubDocuments.Num(); i++ ) {
+		delete svgSubDocuments[i];
+	}
+	svgSubDocuments.Clear();
+
 	// now that all images have been loaded, write out the combined image
 	idStr atlasFileName = "generated/";
 	atlasFileName += filename;
@@ -703,31 +881,24 @@ bool idSWF::LoadSVG( const char* filename )
 	return true;
 }
 
-void idSWF::WriteSVG( const char* filename, bool noAnims )
+/*
+========================
+idSWF::WriteSVGDefs
+
+Writes the <defs>...</defs> section containing all dictionary entries
+(IMAGE, SHAPE, MORPH, FONT, EDITTEXT) to the given file.
+Sprites are skipped in unfolded mode.
+========================
+*/
+void idSWF::WriteSVGDefs( idFile* file, const char* filenameWithoutExt, bool exportUnfolded, const char* imageHrefPrefix )
 {
 	const bool	exportBitmapShapesOnly = false;
 
-	idFileLocal file( fileSystem->OpenFileWrite( filename, "fs_basepath" ) );
-	if( file == NULL ) {
-		return;
-	}
-
-	idStr filenameWithoutExt = filename;
-	filenameWithoutExt.StripFileExtension();
-	filenameWithoutExt.StripLeadingOnce( "exported/swf/" );
-
-	// missing timestamp, frameRate
-	// \tviewBox=\"0 0 600 300\"\n
-	file->WriteFloatString( "<svg\n"
-							"\txmlns=\"http://www.w3.org/2000/svg\"\n"
-							"\twidth=\"%i\"\n"
-							"\theight=\"%i\"\n"
-							"\tdata-exported-from=\"%s\"\n>\n",
-		( int )frameWidth,
-		( int )frameHeight,
-		ENGINE_VERSION );
-
-	const bool exportUnfolded = true;
+	// For the main SVG the image href prefix is the same as filenameWithoutExt
+	// (e.g. "shell" -> "shell/image_characterid_2.png").
+	// For sub-SVGs that already live inside the "shell/" directory the prefix
+	// should be empty so hrefs become just "image_characterid_2.png".
+	const char* imgPrefix = ( imageHrefPrefix != NULL ) ? imageHrefPrefix : filenameWithoutExt;
 
 	file->WriteFloatString( "<defs>\n" );
 	for( int i = 0; i < dictionary.Num(); i++ ) {
@@ -736,7 +907,11 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 		switch( dictionary[i].type ) {
 			case SWF_DICT_IMAGE: {
 				file->WriteFloatString( "\t<image id=\"%i\" ", i );
-				file->WriteFloatString( "href=\"%s/image_characterid_%i.png\"", filenameWithoutExt.c_str(), i );
+				if( imgPrefix[0] != '\0' ) {
+					file->WriteFloatString( "href=\"%s/image_characterid_%i.png\"", imgPrefix, i );
+				} else {
+					file->WriteFloatString( "href=\"image_characterid_%i.png\"", i );
+				}
 				file->WriteFloatString( " width=\"%i\" height=\"%i\" />\n", entry.imageSize[0], entry.imageSize[1] );
 				break;
 			}
@@ -745,7 +920,6 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 			case SWF_DICT_SHAPE: {
 				idSWFShape* shape = dictionary[i].shape;
 
-				// file->WriteFloatString( "\t\t<g id=\"%i\" visibility=\"hidden\">\n", i );
 				file->WriteFloatString( "\t<g id=\"%i\" data-type=\"%s\">\n", i, idSWF::GetDictTypeName( dictionary[i].type ) );
 
 				// export fill draws
@@ -762,51 +936,13 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 						file->WriteFloatString( "\t\t<use href=\"#%i\" link-type=\"BITMAP\" ", bitmapID );
 
 						idStr transform = "";
-#if 0
-						swfMatrix_t& m		   = fillDraw.style.startMatrix;
-						if( m.xx != 1.0f || m.yy != 1.0f || m.xy != 0.0f || m.yx != 0.0f ) {
-							transform.Format( "transform=\"matrix(%f, %f, %f, %f, %f, %f)\" ",
-								m.xx, // a
-								m.yx, // b (instead of m.yy)
-								m.xy, // c
-								m.yy, // d (instead of m.yx)
-								m.tx, // e
-								m.ty  // f
-							);
-						} else if( m.tx != 0.0f || m.ty != 0.0f ) {
-							transform.Format( "transform=\"translate(%f, %f)\" ", m.tx, m.ty );
-						}
-#endif
+
 						file->WriteFloatString( "%s/>\n", transform.c_str() );
 						continue;
 
 					} else if( exportBitmapShapesOnly ) {
 						continue;
 					}
-
-					// TODO sub types
-					// 0 = linear, 2 = radial, 3 = focal; 0 = repeat, 1 = clamp, 2 = near repeat, 3 = near clamp
-					/*
-					file->WriteFloatString( " subType=" );
-					if( fillDraw.style.subType == 0 ) {
-						file->WriteFloatString( "\"linear\"" );
-					} else if( fillDraw.style.subType == 1 ) {
-						file->WriteFloatString( "\"radial\"" );
-					} else if( fillDraw.style.subType == 2 ) {
-						file->WriteFloatString( "\"focal\"" );
-					} else if( fillDraw.style.subType == 3 ) {
-						file->WriteFloatString( "\"near clamp\"" );
-					} else {
-						file->WriteFloatString( "\"%i\"", fillDraw.style.subType );
-					}
-					*/
-
-					/*
-					unused in BFG
-					if( fillDraw.style.type == 1 && fillDraw.style.subType == 3 ) {
-						file->WriteFloatString( " focalPoint=\"%f\"", fillDraw.style.focalPoint );
-					}
-					*/
 
 					idStr fillColor = "";
 					if( fillDraw.style.type == 0 ) {
@@ -815,20 +951,6 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 						const char*			  fill	= cssNameFromRGBA( color );
 						fillColor.Format( "fill=\"%s\"", fill );
 					}
-
-					/*
-					if( fillDraw.style.type > 0 ) {
-						swfMatrix_t m = fillDraw.style.startMatrix;
-						file->WriteFloatString( "\t\t\t\t\t<StartMatrix>%f %f %f %f %f %f</StartMatrix>\n",
-												m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );
-
-						if( fillDraw.style.startMatrix != fillDraw.style.endMatrix ) {
-							m = fillDraw.style.endMatrix;
-							file->WriteFloatString( "\t\t\t\t\t<EndMatrix>%f %f %f %f %f %f</EndMatrix>\n",
-													m.xx, m.yy, m.xy, m.yx, m.tx, m.ty );
-						}
-					}
-					*/
 
 					for( int k = 0; k < fillDraw.indices.Num(); k += 3 ) {
 						const uint16& i1 = fillDraw.indices[k + 0];
@@ -892,7 +1014,6 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 				idStr				 initialText = et->initialText;
 
 				// RB: ugly hack but necessary for exporting pda.json
-				// if( initialText.Cmp( "\"It\\'s DONE bay-bee!\"") == 0 )
 				if( idStr::FindText( initialText, "bay-bee" ) > -1 ) {
 					initialText = "\"It is DONE bay-bee!\"";
 				} else if( idStr::FindText( initialText, "Email text goes in" ) > -1 ) {
@@ -977,16 +1098,184 @@ void idSWF::WriteSVG( const char* filename, bool noAnims )
 	}
 
 	file->WriteFloatString( "</defs>\n" );
+}
+
+void idSWF::WriteSVG( const char* filename, bool noAnims, bool splitSVG )
+{
+	idFileLocal file( fileSystem->OpenFileWrite( filename, "fs_basepath" ) );
+	if( file == NULL ) {
+		return;
+	}
+
+	idStr filenameWithoutExt = filename;
+	filenameWithoutExt.StripFileExtension();
+	filenameWithoutExt.StripLeadingOnce( "exported/swf/" );
+
+	// missing timestamp, frameRate
+	file->WriteFloatString( "<svg\n"
+							"\txmlns=\"http://www.w3.org/2000/svg\"\n"
+							"\twidth=\"%i\"\n"
+							"\theight=\"%i\"\n"
+							"\tdata-exported-from=\"%s\"\n>\n",
+		( int )frameWidth,
+		( int )frameHeight,
+		ENGINE_VERSION );
+
+	const bool exportUnfolded = true;
+
+	WriteSVGDefs( file, filenameWithoutExt.c_str(), exportUnfolded );
 
 	if( exportUnfolded ) {
 		int									 characterID = dictionary.Num();
 		idHashTableT<int, svgDisplayEntry_t> characterMap;
 		float								 frameRate = ( ( float )this->frameRate / 256.0f ); // most likely 60 fps
 		float								 frameDur  = 1.0f / frameRate;
-		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, characterMap, frameDur, "root", 0, true, noAnims );
+
+		// Build split context
+		svgSplitContext_t					 splitCtx;
+		splitCtx.enabled  = splitSVG;
+		splitCtx.basePath = filename;					  // e.g. "exported/swf/shell.svg"
+		splitCtx.basePath.StripFileExtension();			  // -> "exported/swf/shell"
+		splitCtx.filenameWithoutExt = filenameWithoutExt; // e.g. "shell"
+		splitCtx.splitDepth			= 1;
+		splitCtx.swf				= this;
+		splitCtx.noAnims			= noAnims;
+
+		mainsprite->WriteSVGUnfolded_r( file, characterID, dictionary, characterMap, frameDur, "", 0, true, noAnims, &splitCtx );
 	} else {
 		mainsprite->WriteSVG( file, dictionary.Num(), dictionary );
 	}
 
 	file->WriteFloatString( "</svg>\n" );
+}
+
+/*
+========================
+idSWF::LoadSVGSub
+
+Loads a sub-SVG file exported by the split exporter.
+Parses its <defs>, skipping entries that already exist in the dictionary.
+Parses its body <g> as a new sprite and adds it to the dictionary.
+Returns the character ID of the new sprite, or -1 on failure.
+========================
+*/
+int idSWF::LoadSVGSub(
+	const char* subFilename, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>& svgTargetMap, idList<pugi::xml_node>& svgAnimations )
+{
+	// Resolve the path relative to the main SVG's location
+	idStr	fullPath = svgBaseDir + subFilename;
+
+	idFile* f = fileSystem->OpenFileReadMemory( fullPath );
+	if( f == NULL || f->Length() <= 0 ) {
+		idLib::Warning( "SVG Split Import: Could not open sub-file '%s'", fullPath.c_str() );
+		delete f;
+		return -1;
+	}
+
+	int	   fileLength = f->Length();
+	char*  fileData	  = ( char* )Mem_Alloc( fileLength, TAG_SWF );
+	size_t fileSize	  = f->Read( ( byte* )fileData, fileLength );
+	delete f;
+	f = NULL;
+
+	// Allocate a new pugi::xml_document on the heap and keep it alive
+	// until the main LoadSVG finishes (animation nodes reference it).
+	pugi::xml_document*	   subDoc = new pugi::xml_document();
+	pugi::xml_parse_result result = subDoc->load_buffer( fileData, fileSize );
+
+	// load_buffer copies the data internally, so we can free our buffer now.
+	Mem_Free( fileData );
+	fileData = NULL;
+
+	if( !result ) {
+		idLib::Warning( "SVG Split Import: Parse error in '%s': %s", fullPath.c_str(), result.description() );
+		delete subDoc;
+		return -1;
+	}
+
+	// Store the document so it stays alive until the main LoadSVG finishes;
+	// animation nodes collected during LoadSVGNode_r reference this XML tree.
+	svgSubDocuments.Append( subDoc );
+
+	pugi::xml_node svgNode = subDoc->child( "svg" );
+	if( !svgNode ) {
+		idLib::Warning( "SVG Split Import: No <svg> root in '%s'", fullPath.c_str() );
+		return -1;
+	}
+
+	// Parse <defs>, skipping entries whose numeric ID already exists in the dictionary
+	pugi::xml_node defs = svgNode.child( "defs" );
+	if( defs ) {
+		for( pugi::xml_node child = defs.first_child(); child; child = child.next_sibling() ) {
+			pugi::xml_attribute idAttr = child.attribute( "id" );
+			if( !idAttr ) {
+				continue;
+			}
+
+			idStr idStr_val = idAttr.value();
+			if( !idStr::IsNumeric( idStr_val ) ) {
+				continue; // sub-SVGs from engine export always have numeric IDs
+			}
+
+			int id = atoi( idStr_val.c_str() );
+
+			// Grow dictionary if needed (defensive)
+			if( id >= dict.Num() ) {
+				dict.SetNum( id + 1 );
+			}
+
+			// Skip if already loaded from the main SVG
+			if( dict[id].type != SWF_DICT_NULL ) {
+				continue;
+			}
+
+			// Parse this defs entry (same logic as LoadSVG Pass 2)
+			const char* tagName = child.name();
+
+			if( idStr::Icmp( tagName, "image" ) == 0 ) {
+				ParseSVG_Image( child, id, dict[id] );
+			} else if( idStr::Icmp( tagName, "text" ) == 0 ) {
+				dict[id].type	  = SWF_DICT_EDITTEXT;
+				dict[id].edittext = new( TAG_SWF ) idSWFEditText;
+				ParseSVG_Text( child, dict[id].edittext );
+			} else if( idStr::Icmp( tagName, "g" ) == 0 ) {
+				const char* dataType = child.attribute( "data-type" ).value();
+
+				if( dataType && idStr::Icmp( dataType, "SHAPE" ) == 0 ) {
+					dict[id].type  = SWF_DICT_SHAPE;
+					dict[id].shape = new( TAG_SWF ) idSWFShape;
+					ParseSVG_Shape( child, dict[id].shape );
+				} else if( dataType && idStr::Icmp( dataType, "FONT" ) == 0 ) {
+					dict[id].type = SWF_DICT_FONT;
+					dict[id].font = new( TAG_SWF ) idSWFFont;
+					ParseSVG_Font( child, dict[id].font );
+				}
+				// Sprites in defs are skipped in unfolded mode (they're inlined)
+			}
+		}
+	}
+
+	// Find the body <g> (the sprite content) – it's the first <g> after <defs>
+	pugi::xml_node bodyNode;
+	if( defs ) {
+		bodyNode = defs.next_sibling( "g" );
+	}
+	if( !bodyNode ) {
+		bodyNode = svgNode.last_child();
+	}
+	if( !bodyNode ) {
+		idLib::Warning( "SVG Split Import: No body <g> found in '%s'", fullPath.c_str() );
+		return -1;
+	}
+
+	// Create a new sprite in the dictionary
+	int					  newCharID = dict.Num();
+	idSWFDictionaryEntry& newEntry	= dict.Alloc();
+	newEntry.type					= SWF_DICT_SPRITE;
+	newEntry.sprite					= new idSWFSprite( this );
+	newEntry.sprite->LoadSVGNode_r( bodyNode, dict, isUnfolded, svgTargetMap, svgAnimations );
+
+	common->Printf( "SVG Split Import: loaded sub-sprite '%s' as character %d\n", subFilename, newCharID );
+
+	return newCharID;
 }

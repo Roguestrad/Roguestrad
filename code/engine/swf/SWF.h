@@ -47,6 +47,27 @@ class idSWFFont;
 class idSWFText;
 class idSWFEditText;
 
+namespace pugi
+{
+class xml_node;
+class xml_document;
+}
+
+/*
+================================================
+svgSplitContext_t – passed through the recursive SVG export
+to control splitting large SVGs into per-sprite sub-files.
+================================================
+*/
+struct svgSplitContext_t {
+	bool		 enabled;			 // false = no splitting (backwards compatible)
+	idStr		 basePath;			 // e.g. "exported/swf/shell" (without .svg)
+	idStr		 filenameWithoutExt; // e.g. "shell" (for image hrefs in defs)
+	int			 splitDepth;		 // indent level at which to split (typically 1)
+	class idSWF* swf;				 // pointer to idSWF for calling WriteSVGDefs
+	bool		 noAnims;			 // propagate noAnims flag
+};
+
 class idSWFDictionaryEntry
 {
 public:
@@ -98,7 +119,7 @@ This class handles loading and rendering SWF files
 class idSWF
 {
 public:
-	idSWF( const char* filename, idSoundWorld* soundWorld, bool exportJSON = false, bool exportSWF = false, bool exportSVG = false, bool noAnims = false );
+	idSWF( const char* filename, idSoundWorld* soundWorld, bool exportJSON = false, bool exportSWF = false, bool exportSVG = false, bool noAnims = false, bool splitSVG = false );
 	~idSWF();
 
 	bool		IsLoaded() { return ( frameRate > 0 ); }
@@ -343,6 +364,14 @@ private:
 	// RB begin
 	idHashTableT<idStr, swfColorXform_t> svgFilterColorXforms;
 
+	//! Base directory of the main SVG file, used to resolve sub-file paths.
+	//! e.g. "exported/swf/" from "exported/swf/shell.svg"
+	idStr								 svgBaseDir;
+
+	//! Sub-documents loaded by LoadSVGSub – kept alive until LoadSVG finishes
+	//! so that pugi::xml_node references (e.g. in svgAnimations) remain valid.
+	idList<pugi::xml_document*>			 svgSubDocuments;
+
 	// Maps string-based SVG IDs (e.g. "background", "intro_placeholder") to internal
 	// numeric dictionary indices.  For engine-exported SVGs the IDs are already numeric
 	// and this table is not needed.  For externally authored SVGs this allows <use
@@ -377,61 +406,69 @@ private:
 	void								 ParseSVG_Text( const pugi::xml_node& node, idSWFEditText* et );
 	void								 ParseSVG_Font( const pugi::xml_node& node, idSWFFont* font );
 
-	void								 WriteSVG( const char* filename, bool noAnims = false );
+	void								 WriteSVG( const char* filename, bool noAnims = false, bool splitSVG = false );
+	void								 WriteSVGDefs( idFile* file, const char* filenameWithoutExt, bool exportUnfolded, const char* imageHrefPrefix = NULL );
 
-	bool								 LoadJSON( const char* filename );
-	void								 WriteJSON( const char* filename );
+	//! \brief Loads a sub-SVG file exported by the split exporter.
+	//! Parses its <defs>, skipping entries that already exist in the dictionary.
+	//! Parses its body <g> as a new sprite and adds it to the dictionary.
+	//! \return The character ID of the new sprite, or -1 on failure.
+	int									 LoadSVGSub(
+										 const char* subFilename, idList<idSWFDictionaryEntry>& dict, bool isUnfolded, idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>& svgTargetMap, idList<pugi::xml_node>& svgAnimations );
+
+	bool	  LoadJSON( const char* filename );
+	void	  WriteJSON( const char* filename );
 	// RB end
 
 	//----------------------------------
 	// SWF_Shapes.cpp
 	//----------------------------------
-	void								 DefineShape( idSWFBitStream& bitstream );
-	void								 DefineShape2( idSWFBitStream& bitstream );
-	void								 DefineShape3( idSWFBitStream& bitstream );
-	void								 DefineShape4( idSWFBitStream& bitstream );
-	void								 DefineMorphShape( idSWFBitStream& bitstream );
+	void	  DefineShape( idSWFBitStream& bitstream );
+	void	  DefineShape2( idSWFBitStream& bitstream );
+	void	  DefineShape3( idSWFBitStream& bitstream );
+	void	  DefineShape4( idSWFBitStream& bitstream );
+	void	  DefineMorphShape( idSWFBitStream& bitstream );
 
 	//----------------------------------
 	// SWF_Sprites.cpp
 	//----------------------------------
-	void								 DefineSprite( idSWFBitStream& bitstream );
+	void	  DefineSprite( idSWFBitStream& bitstream );
 
 	//----------------------------------
 	// SWF_Sounds.cpp
 	//----------------------------------
-	void								 DefineSound( idSWFBitStream& bitstream );
+	void	  DefineSound( idSWFBitStream& bitstream );
 
 	//----------------------------------
 	// SWF_Render.cpp
 	//----------------------------------
-	void								 DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial* material );
-	void								 DrawStretchPic( const idVec4& topLeft, const idVec4& topRight, const idVec4& bottomRight, const idVec4& bottomLeft, const idMaterial* material );
-	void								 RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* sprite, const swfRenderState_t& renderState, int time, bool isSplitscreen = false );
-	void								 RenderMask( idRenderSystem* gui, const swfDisplayEntry_t* mask, const swfRenderState_t& renderState, const int stencilMode );
-	void								 RenderShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState );
-	void								 RenderMorphShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState );
-	void								 DrawEditCursor( idRenderSystem* gui, float x, float y, float w, float h, const swfMatrix_t& matrix );
-	void								 DrawLine( idRenderSystem* gui, const idVec2& p1, const idVec2& p2, float width, const swfMatrix_t& matrix );
-	void								 RenderEditText( idRenderSystem* gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time, bool isSplitscreen = false );
-	uint64								 GLStateForRenderState( const swfRenderState_t& renderState );
-	void								 FindTooltipIcons( idStr* text );
+	void	  DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial* material );
+	void	  DrawStretchPic( const idVec4& topLeft, const idVec4& topRight, const idVec4& bottomRight, const idVec4& bottomLeft, const idMaterial* material );
+	void	  RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* sprite, const swfRenderState_t& renderState, int time, bool isSplitscreen = false );
+	void	  RenderMask( idRenderSystem* gui, const swfDisplayEntry_t* mask, const swfRenderState_t& renderState, const int stencilMode );
+	void	  RenderShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState );
+	void	  RenderMorphShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState );
+	void	  DrawEditCursor( idRenderSystem* gui, float x, float y, float w, float h, const swfMatrix_t& matrix );
+	void	  DrawLine( idRenderSystem* gui, const idVec2& p1, const idVec2& p2, float width, const swfMatrix_t& matrix );
+	void	  RenderEditText( idRenderSystem* gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time, bool isSplitscreen = false );
+	uint64	  GLStateForRenderState( const swfRenderState_t& renderState );
+	void	  FindTooltipIcons( idStr* text );
 
 	// RB: debugging tools
-	swfRect_t							 CalcRect( const idSWFSpriteInstance* sprite, const swfRenderState_t& renderState );
-	void								 DrawRect( idRenderSystem* gui, const swfRect_t& rect, const idVec4& color );
-	int									 DrawText( idRenderSystem* gui, float x, float y, float scale, idVec4 color, const char* text, float adjust, int limit, int style );
-	int									 DrawText( idRenderSystem* gui,
-										 const char*			   text,
-										 float					   textScale,
-										 int					   textAlign,
-										 idVec4					   color,
-										 const swfRect_t&		   rectDraw,
-										 bool					   wrap,
-										 int					   cursor	= -1,
-										 bool					   calcOnly = false,
-										 idList<int>*			   breaks	= NULL,
-										 int					   limit	= 0 );
+	swfRect_t CalcRect( const idSWFSpriteInstance* sprite, const swfRenderState_t& renderState );
+	void	  DrawRect( idRenderSystem* gui, const swfRect_t& rect, const idVec4& color );
+	int		  DrawText( idRenderSystem* gui, float x, float y, float scale, idVec4 color, const char* text, float adjust, int limit, int style );
+	int		  DrawText( idRenderSystem* gui,
+			  const char*				text,
+			  float						textScale,
+			  int						textAlign,
+			  idVec4					color,
+			  const swfRect_t&			rectDraw,
+			  bool						wrap,
+			  int						cursor	 = -1,
+			  bool						calcOnly = false,
+			  idList<int>*				breaks	 = NULL,
+			  int						limit	 = 0 );
 	// RB end
 
 	//----------------------------------
