@@ -1015,16 +1015,16 @@ void idMenuScreen_HUD::UpdateWeaponStates( idPlayer* player, bool weaponChanged 
 					botImg->SetMaterial( hudIcon );
 				}
 
-				/*if ( weaponName && weaponName->GetSprite() ) {
+				if( weaponName && weaponName->GetSprite() ) {
 					weaponName->GetSprite()->SetVisible( true );
 					weaponName->GetSprite()->PlayFrame( 2 );
 
-					idSWFTextInstance * txtVal = weaponName->GetNestedText( "info", "txtVal" );
-					if ( txtVal != NULL ) {
+					idSWFTextInstance* txtVal = weaponName->GetNestedText( "info", "txtVal" );
+					if( txtVal != NULL ) {
 						txtVal->SetText( displayName );
 						txtVal->SetStrokeInfo( true, 0.6f, 2.0f );
 					}
-				}*/
+				}
 			}
 		}
 	}
