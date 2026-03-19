@@ -53,7 +53,7 @@ option(USE_SYSTEM_RAPIDJSON
          "Use the system rapidjson instead of the bundled one" OFF)
 
 option(BUILD_FREETYPE
-		"Use FreeType for TrueType font generation" OFF)
+		"Use FreeType for TrueType font generation" ON)
 
 option(USE_DX12
 		"Use DirectX 12" ON)

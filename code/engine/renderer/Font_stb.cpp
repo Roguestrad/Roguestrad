@@ -46,7 +46,7 @@ If you have questions concerning this license or the applicable additional terms
 // stb_truetype-based TrueType font generation
 // =========================================================================
 
-static const int FONT_SIZE	   = 512;
+static const int FONT_SIZE	   = 1024;
 static const int GLYPH_PADDING = 2;
 
 	// FreeType 26.6 fixed-point helpers -- replicate the rounding that
@@ -63,34 +63,13 @@ static inline int FloatTo26_6( float v )
 	return ( int )( v * 64.0f + ( v >= 0.0f ? 0.5f : -0.5f ) );
 }
 
-/*
-============
-STB_EnumerateCodepoints
-
-stb_truetype does not provide an equivalent to FreeType's
-FT_Get_First_Char / FT_Get_Next_Char, so we enumerate codepoints
-by probing the Basic Multilingual Plane (U+0000..U+FFFF) and the
-Supplementary Multilingual Plane (U+10000..U+1FFFF) via
-stbtt_FindGlyphIndex. Only codepoints that map to a non-zero glyph
-index are collected.
-============
-*/
 static void STB_EnumerateCodepoints( const stbtt_fontinfo* font, idList<uint32>& outChars )
 {
 	outChars.Clear();
 
-	// BMP: U+0001 .. U+FFFF (skip surrogates D800..DFFF)
-	for( uint32 cp = 1; cp <= 0xFFFF; cp++ ) {
-		if( cp >= 0xD800 && cp <= 0xDFFF ) {
-			continue; // surrogate range, not valid codepoints
-		}
-		if( stbtt_FindGlyphIndex( font, ( int )cp ) != 0 ) {
-			outChars.Append( cp );
-		}
-	}
-
-	// SMP: U+10000 .. U+1FFFF (uncommon for most western fonts, but covers emoji etc.)
-	for( uint32 cp = 0x10000; cp <= 0x1FFFF; cp++ ) {
+	const int count = ( int )( sizeof( BFG_CHARSET ) / sizeof( BFG_CHARSET[0] ) );
+	for( int i = 0; i < count; i++ ) {
+		uint32 cp = BFG_CHARSET[i];
 		if( stbtt_FindGlyphIndex( font, ( int )cp ) != 0 ) {
 			outChars.Append( cp );
 		}

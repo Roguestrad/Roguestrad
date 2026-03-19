@@ -217,7 +217,11 @@ bool idFont::LoadFont()
 {
 	idStr	fontName = va( "newfonts/%s/48.dat", GetName() );
 	idFile* fd		 = fileSystem->OpenFileRead( fontName );
-	if( fd == NULL ) {
+	if( fd == NULL || idStr::Icmp( GetName(), "Arial_Narrow" ) == 0 ) {
+		if( fd != NULL ) {
+			fileSystem->CloseFile( fd );
+			fd = NULL;
+		}
 		if( !LoadFromTrueTypeFont() ) {
 			return false;
 		} else {

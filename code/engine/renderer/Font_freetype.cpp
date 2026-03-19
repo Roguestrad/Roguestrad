@@ -40,7 +40,7 @@ If you have questions concerning this license or the applicable additional terms
 	#include FT_SYSTEM_H
 
 static FT_Library ftLibrary		= NULL;
-const int		  FONT_SIZE		= 512;
+const int		  FONT_SIZE		= 1024;
 const int		  GLYPH_PADDING = 2;
 
 /*
@@ -316,11 +316,13 @@ bool idFont::LoadFromTrueTypeFont()
 	// ---------------------------------------------------------------
 	idList<uint32> presentChars;
 	{
-		FT_UInt	 glyphIdx;
-		FT_ULong charCode = FT_Get_First_Char( face, &glyphIdx );
-		while( glyphIdx != 0 ) {
-			presentChars.Append( ( uint32 )charCode );
-			charCode = FT_Get_Next_Char( face, charCode, &glyphIdx );
+		const int count = ( int )( sizeof( BFG_CHARSET ) / sizeof( BFG_CHARSET[0] ) );
+		for( int i = 0; i < count; i++ ) {
+			uint32	charCode = BFG_CHARSET[i];
+			FT_UInt glyphIdx = FT_Get_Char_Index( face, charCode );
+			if( glyphIdx != 0 ) {
+				presentChars.Append( charCode );
+			}
 		}
 	}
 
