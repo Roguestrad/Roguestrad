@@ -3,7 +3,7 @@
 
 Doom 3 BFG Edition GPL Source Code
 Copyright (C) 1993-2012 id Software LLC, a ZeniMax Media company.
-Copyright (C) 2015-2026 Robert Beckebans
+Copyright (C) 2026 Robert Beckebans
 
 This file is part of the Doom 3 BFG Edition GPL Source Code ("Doom 3 BFG Edition Source Code").
 
@@ -369,6 +369,7 @@ bool idFont::LoadFromTrueTypeFont()
 				scale,
 				( int )charCode );
 
+	#if 0
 			// Edge extrusion into the padding to prevent bilinear bleed
 			if( GLYPH_PADDING > 0 ) {
 				const int baseX = renderX;
@@ -392,6 +393,7 @@ bool idFont::LoadFromTrueTypeFont()
 					}
 				}
 			}
+	#endif
 		}
 
 		// Fill in glyph metrics.

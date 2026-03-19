@@ -526,7 +526,7 @@ if(USE_INTRINSICS_SSE OR USE_INTRINSICS_NEON)
 endif()
 
 if(BUILD_FREETYPE)
-	add_subdirectory(libs/freetype-2.14.2)
+	add_subdirectory(libs/freetype)
 endif()
 
 # RB: there haven't been requests for a separate map compiler executable by macOS users
