@@ -492,7 +492,7 @@ void swfColorRGBA_t::ParseSVGColorFromString( const char* str )
 
 	// 1) Hex notation #RRGGBBAA, #RRGGBB, or #RGB
 	if( colorStr[0] == '#' ) {
-		uint64_t hex = 0;
+		unsigned long long hex = 0;
 		if( sscanf( colorStr.c_str() + 1, "%llx", &hex ) == 1 ) {
 			if( colorStr.Length() == 9 ) { // #RRGGBBAA
 				r = ( hex >> 24 ) & 0xFF;
