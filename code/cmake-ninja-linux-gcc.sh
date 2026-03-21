@@ -8,8 +8,8 @@ mkdir build
 cmake -B build \
   -G "Ninja Multi-Config" \
   -DCMAKE_BUILD_TYPE=Debug \
-  -DCMAKE_C_COMPILER=clang \
-  -DCMAKE_CXX_COMPILER=clang++ \
+  -DCMAKE_C_COMPILER=gcc \
+  -DCMAKE_CXX_COMPILER=g++ \
   -DCOMPILE_COMMANDS=ON \
   -DFFMPEG=OFF \
   -DBINKDEC=ON \
