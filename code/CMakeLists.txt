@@ -55,6 +55,16 @@ option(USE_SYSTEM_RAPIDJSON
 option(BUILD_FREETYPE
 		"Use FreeType for TrueType font generation" ON)
 
+# When FreeType is disabled, still consume the FreeType-specific cache vars
+# to avoid unused-variable warnings from the command line.
+if(NOT BUILD_FREETYPE)
+	option(FT_DISABLE_ZLIB "Disable use of system zlib and use internal zlib library instead." ON)
+	option(FT_DISABLE_BZIP2 "Disable support of bzip2 compressed fonts." ON)
+	option(FT_DISABLE_PNG "Disable support of PNG compressed OpenType embedded bitmaps." ON)
+	option(FT_DISABLE_HARFBUZZ "Disable HarfBuzz (used for improving auto-hinting of OpenType fonts)." ON)
+	option(FT_DISABLE_BROTLI "Disable support of compressed WOFF2 fonts." ON)
+endif()
+
 option(USE_DX12
 		"Use DirectX 12" ON)
 
