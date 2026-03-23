@@ -540,7 +540,18 @@ void idFont::DumpFontToJSON()
 		f->Printf( "      \"index\": %d,\n", i );
 		f->Printf( "      \"charIndex\": %u,\n", fontInfo->charIndex[i] );
 		if( fontInfo->charIndex[i] >= 32 && fontInfo->charIndex[i] < 127 ) {
-			f->Printf( "      \"char\": \"%c\",\n", ( char )fontInfo->charIndex[i] );
+			const char c = ( char )fontInfo->charIndex[i];
+			switch( c ) {
+				case '\\':
+					f->Printf( "      \"char\": \"\\\\\",\n" );
+					break;
+				case '"':
+					f->Printf( "      \"char\": \"\\\"\",\n" );
+					break;
+				default:
+					f->Printf( "      \"char\": \"%c\",\n", c );
+					break;
+			}
 		} else {
 			f->Printf( "      \"char\": null,\n" );
 		}
