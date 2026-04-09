@@ -510,9 +510,9 @@ void idBotGoalManager::InitLevelItems()
 		//			Log_Write("item %s reachable from jumppad area %d\r\n", ic->iteminfo[i].classname, goalareanum);
 		//			//G_Printf( "item %s reachable from jumppad area %d\r\n", ic->iteminfo[i].classname, goalareanum);
 		//			if (!goalareanum) continue;
-		//		} //end if
-		//	} //end if
-		//} //end if
+		//		}
+		//	}
+		//}
 		// jmarshall end
 
 		li = AllocLevelItem();
@@ -552,8 +552,8 @@ void idBotGoalManager::InitLevelItems()
 		//	{
 		//		G_Printf( "%s in solid at (%1.1f %1.1f %1.1f)\n",
 		//			classname, origin[0], origin[1], origin[2]);
-		//	} //end if
-		// } //end if
+		//	}
+		// }
 
 		// item info of the level item
 		li->iteminfo = i;
@@ -989,7 +989,7 @@ void idBotGoalManager::UpdateEntityItems()
 					//	li->goalareanum = AAS_BestReachableArea(li->origin,
 					//		ic->iteminfo[li->iteminfo].mins, ic->iteminfo[li->iteminfo].maxs,
 					//		li->goalorigin);
-					// } //end if
+					// }
 					li->origin = ent->GetPhysics()->GetOrigin();
 					break;
 				}
@@ -1038,7 +1038,7 @@ void idBotGoalManager::UpdateEntityItems()
 					//	li->goalareanum = AAS_BestReachableArea(li->origin,
 					//		ic->iteminfo[li->iteminfo].mins, ic->iteminfo[li->iteminfo].maxs,
 					//		li->goalorigin);
-					// } //end if
+					// }
 
 					// update the level item origin
 					// VectorCopy(ent->r.currentOrigin, li->origin);
@@ -1092,7 +1092,7 @@ void idBotGoalManager::UpdateEntityItems()
 		//{
 		//	FreeLevelItem(li);
 		//	continue;
-		// } //end if
+		// }
 		//  jmarshall end
 		// time this item out after 30 seconds
 		// dropped items disappear after 30 seconds
@@ -1250,7 +1250,7 @@ int idBotGoalManager::BotChooseLTGItem( int goalstate, idVec3 origin, int* inven
 	//{
 	//	//use the last valid area the bot was in
 	//	areanum = gs->lastreachabilityarea;
-	// } //end if
+	// }
 	// remember the last area with reachabilities the bot was in
 	// gs->lastreachabilityarea = areanum;
 	// if still in solid
@@ -1359,8 +1359,8 @@ int idBotGoalManager::BotChooseLTGItem( int goalstate, idVec3 origin, int* inven
 				G_Printf( "chosen roam goal area %d\n", goal.areanum);
 		#endif //DEBUG
 				return qtrue;
-			} //end if
-		} //end if
+			}
+		}
 		*/
 		return false;
 	}
@@ -1434,7 +1434,7 @@ int idBotGoalManager::BotChooseNBGItem( int goalstate, idVec3 origin, int* inven
 	//{
 	//	//use the last valid area the bot was in
 	//	areanum = gs->lastreachabilityarea;
-	//} //end if
+	//}
 	// remember the last area with reachabilities the bot was in
 	gs->lastreachabilityarea = areanum;
 	// if still in solid
@@ -1529,16 +1529,16 @@ int idBotGoalManager::BotChooseNBGItem( int goalstate, idVec3 origin, int* inven
 						// t = AAS_AreaTravelTimeToGoalArea(li->goalareanum, li->goalorigin, ltg->areanum, travelflags);
 						t = gameLocal.TravelTimeToGoal( li->goalorigin, ltg->origin );
 						// jmarshall end
-					} // end if
+					}
 					// if the travel back is possible and doesn't take too long
 					if( t <= ltg_time ) {
 						bestweight = weight;
 						bestitem   = li;
-					} // end if
-				} // end if
-			} // end if
-		} // end if
-	} // end for
+					}
+				}
+			}
+		}
+	}
 	// if no goal item found
 	if( !bestitem ) {
 		return false;
@@ -1562,8 +1562,7 @@ int idBotGoalManager::BotChooseNBGItem( int goalstate, idVec3 origin, int* inven
 	// if it's a dropped item
 	if( bestitem->timeout ) {
 		avoidtime = AVOID_DROPPED_TIME;
-	} // end if
-	else {
+	} else {
 		avoidtime = iteminfo->respawntime;
 		if( !avoidtime ) {
 			avoidtime = AVOID_DEFAULT_TIME;
@@ -1571,14 +1570,14 @@ int idBotGoalManager::BotChooseNBGItem( int goalstate, idVec3 origin, int* inven
 		if( avoidtime < AVOID_MINIMUM_TIME ) {
 			avoidtime = AVOID_MINIMUM_TIME;
 		}
-	} // end else
+	}
 	// add the chosen goal to the goals to avoid for a while
 	BotAddToAvoidGoals( gs, bestitem->number, avoidtime );
 	// push the goal on the stack
 	BotPushGoal( goalstate, &goal );
 	//
 	return true;
-} // end of the function BotChooseNBGItem
+}
 
 /*
 ====================

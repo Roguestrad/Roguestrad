@@ -2028,7 +2028,7 @@ int idParser::Evaluate( signed int* intvalue, double* floatvalue, int integer )
 #endif // DEBUG_EVAL
 		nexttoken = t->next;
 		delete t;
-	} // end for
+	}
 #ifdef DEBUG_EVAL
 	if( integer ) {
 		Log_Write( "eval result: %d", *intvalue );
@@ -2142,7 +2142,7 @@ int idParser::DollarEvaluate( signed int* intvalue, double* floatvalue, int inte
 #endif // DEBUG_EVAL
 		nexttoken = t->next;
 		delete t;
-	} // end for
+	}
 #ifdef DEBUG_EVAL
 	if( integer ) {
 		Log_Write( "$eval result: %d", *intvalue );

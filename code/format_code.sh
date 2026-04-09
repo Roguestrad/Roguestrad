@@ -69,8 +69,8 @@ fi
 # Copy different configs because -style=file: did not work
 cp .clang-format-header .clang-format
 find . -regex ".*\.\(h\|hpp\)" \
+	! -path "./.venv/*" \
 	! -path "./build/*" \
-	! -path "./build-clang/*" \
 	! -path "./libs/*" \
 	! -path "./extern/*" \
 	! -path "./idlib/sys/sys_defines.h" \
@@ -87,8 +87,8 @@ find . -regex ".*\.\(h\|hpp\)" \
 
 cp .clang-format-cpp .clang-format
 find . -regex ".*\.\(c\|cpp\)" \
+	! -path "./.venv/*" \
     ! -path "./build/*" \
-    ! -path "./build-clang/*" \
 	! -path "./libs/*" \
 	! -path "./extern/*" \
     ! -path "./game/gamesys/GameTypeInfo.cpp" \
