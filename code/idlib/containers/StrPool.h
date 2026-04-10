@@ -138,29 +138,8 @@ ID_INLINE void idStrPool::FreeString( const idPoolStr* poolStr )
 {
 	int i, hash;
 
-	/*
-	 * DG: numUsers can actually be 0 when shutting down the game, because then
-	 * first idCommonLocal::Quit() -> idCommonLocal::Shutdown() -> idLib::Shutdown()
-	 * -> idDict::Shutdown() -> idDict::globalKeys.Clear() and idDict::globalVars.Clear()
-	 * is called and then, from destructors,
-	 * ~idSessionLocal() => destroy idDict titleStorageVars -> ~idDict() -> idDict::Clear()
-	 * -> idDict::globalVars.FreeString() and idDict::globalKeys.FreeString() (this function)
-	 * is called, leading here.
-	 * So just return if poolStr->numUsers < 1, instead of segfaulting/asserting below
-	 * when i == -1 because nothing was found here. As there is no nice way to find out if
-	 * we're shutting down (at this point) just get rid of the following assertion:
-	 * assert( poolStr->numUsers >= 1 );
-	 */
-	// if( poolStr->numUsers < 1 )           // SRS - This test does not work if idStrPool is empty and poolStr->numUsers is undefined
-	//{
-	//	return;
-	// }
-	//  DG end
-
-	if( pool.Num() <= 0 ) // SRS - Instead, check for empty idStrPool and return to prevent segfaulting on shutdown
-	{
-		return;
-	}
+	// SRS - check for empty idStrPool and return to prevent segfaulting on shutdown
+	if( pool.Num() <= 0 ) { return; }
 
 	assert( poolStr->pool == this );
 	assert( poolStr->numUsers >= 1 ); // SRS - Reestablish assertion
