@@ -42,6 +42,7 @@ code/.kdev4
 code/code.kdev4
 code/.idea/
 code/.cache/
+code/.tasks/
 code/cmake-build-*/
 code/bin/
 code/doxy*

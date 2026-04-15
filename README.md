@@ -61,7 +61,7 @@ Roguestrad follows a lean and focused design that values clarity and simplicity 
 
 # ".plan" <a name="plan"></a>
 
-Roguestrad uses an iterative development style, with ongoing updates and changes. You can follow the current ".plan" and see what's planned or in progress on our Kanban board: [Roguestrad Projects](https://github.com/orgs/Roguestrad/projects/2)
+Roguestrad uses an iterative development style, with ongoing updates and changes. You can follow the current ".plan" and see what's planned or in progress on our Kanban board: [Roguestrad Projects](https://github.com/orgs/Roguestrad/projects/2/views/3)
 
 # License <a name="license"></a>
 
