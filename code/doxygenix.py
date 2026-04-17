@@ -35,6 +35,7 @@ Process:
 """
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -993,6 +994,165 @@ class CommentModel(BaseModel):
     params: Dict[str, str] = Field(default_factory=dict)
     returns: Optional[str] = None
     throws: Optional[str] = None
+
+
+class FileSummaryModel(BaseModel):
+    file_purpose: List[str] = Field(
+        description="What this file declares/defines, as bullet points"
+    )
+    core_responsibilities: List[str] = Field(
+        description="Bulleted list of responsibilities"
+    )
+    key_types_and_functions: List[str] = Field(
+        description="Most important classes, structs, enums, or functions with em-dash descriptions"
+    )
+    control_flow: List[str] = Field(
+        description="How data or logic flows through this component"
+    )
+    dependencies: List[str] = Field(
+        description="External files or systems this header depends on"
+    )
+    how_it_fits: List[str] = Field(
+        description="How this component relates to the rest of the engine architecture, as bullet points"
+    )
+
+
+class HeaderSummaryModel(FileSummaryModel):
+    pass
+
+
+def _find_file_doxygen_block(
+    lines: List[str], scan_limit: int = 200
+) -> Optional[Tuple[int, int, Optional[str]]]:
+    limit = min(len(lines), scan_limit)
+    hash_re = re.compile(r"archgen:\s*sha256=([0-9a-f]{64})", re.IGNORECASE)
+
+    i = 0
+    while i < limit:
+        raw = lines[i]
+        line = raw.lstrip()
+        if line.startswith("///") or line.startswith("//!"):
+            if "\\file" in line or "@file" in line:
+                m = hash_re.search(line)
+                found_hash = m.group(1) if m else None
+                return (i, i, found_hash)
+        if line.startswith("/*!") or line.startswith("/**"):
+            start = i
+            end = i
+            found_file = False
+            found_hash: Optional[str] = None
+            found_end = False
+            while end < limit:
+                if "\\file" in lines[end] or "@file" in lines[end]:
+                    found_file = True
+                m = hash_re.search(lines[end])
+                if m:
+                    found_hash = m.group(1)
+                if "*/" in lines[end]:
+                    found_end = True
+                    break
+                end += 1
+            if found_file and found_end:
+                return (start, end, found_hash)
+            if not found_end:
+                return None
+            i = end + 1
+            continue
+        i += 1
+    return None
+
+
+def _has_file_doxygen(lines: List[str], scan_limit: int = 140) -> bool:
+    return _find_file_doxygen_block(lines, scan_limit) is not None
+
+
+def _find_gpl_header_end(lines: List[str]) -> int:
+    if not lines:
+        return 0
+    if lines[0].lstrip().startswith("/*"):
+        for i in range(len(lines)):
+            if "*/" in lines[i]:
+                j = i + 1
+                while j < len(lines) and lines[j].strip() == "":
+                    j += 1
+                return j
+    return 0
+
+
+def _render_file_doxygen_block(
+    rel_path: Path, summary: FileSummaryModel, file_sha: str
+) -> List[str]:
+    def _section(title: str, items: List[str]) -> List[str]:
+        section_lines = [f"\t\\par {title}"]
+        if items:
+            section_lines.extend(f"\t- {item}" for item in items)
+        else:
+            section_lines.append("\t- TODO: clarify details.")
+        return section_lines
+
+    brief = (
+        summary.file_purpose[0]
+        if summary.file_purpose
+        else "TODO: clarify file purpose."
+    )
+    lines = [
+        "/*!",
+        f"\t\\file {rel_path.as_posix()}",
+        f"\t\\brief {brief}",
+        f"\t\\note archgen: sha256={file_sha}",
+        "",
+    ]
+    lines.extend(_section("File Purpose", summary.file_purpose))
+    lines.append("")
+    lines.extend(_section("Core Responsibilities", summary.core_responsibilities))
+    lines.append("")
+    lines.extend(_section("Key Types and Functions", summary.key_types_and_functions))
+    lines.append("")
+    lines.extend(_section("Control Flow", summary.control_flow))
+    lines.append("")
+    lines.extend(_section("Dependencies", summary.dependencies))
+    lines.append("")
+    lines.extend(_section("How It Fits", summary.how_it_fits))
+    lines.append("*/")
+    return lines
+
+
+def _insert_file_doxygen_comment(
+    src_file: Path,
+    rel_path: Path,
+    summary: FileSummaryModel,
+    file_sha: str,
+) -> bool:
+    lines = read_file(src_file)
+    existing = _find_file_doxygen_block(lines)
+    block_lines = _render_file_doxygen_block(rel_path, summary, file_sha)
+
+    if existing:
+        start, end, existing_hash = existing
+        if existing_hash == file_sha:
+            return False
+        lines[start : end + 1] = block_lines
+        next_idx = start + len(block_lines)
+        if next_idx < len(lines) and lines[next_idx].strip() != "":
+            lines.insert(next_idx, "")
+        write_file(src_file, lines)
+        return True
+
+    insert_at = _find_gpl_header_end(lines)
+    new_lines = lines[:insert_at]
+    while new_lines and new_lines[-1].strip() == "":
+        new_lines.pop()
+    if new_lines and new_lines[-1].strip() != "":
+        new_lines.append("")
+    new_lines.extend(block_lines)
+    while insert_at < len(lines) and lines[insert_at].strip() == "":
+        insert_at += 1
+    if insert_at < len(lines):
+        new_lines.append("")
+    new_lines.extend(lines[insert_at:])
+
+    write_file(src_file, new_lines)
+    return True
 
 
 def render_ai_block(model: CommentModel, trivial: bool) -> str:
@@ -2040,6 +2200,223 @@ def generate_doxygen_comments(
 
 
 # -----------------------------------------------------------------------------
+# Header Summary Generation
+# -----------------------------------------------------------------------------
+def generate_header_summaries(
+    scope_dir: Path,
+    project_root: Path,
+    arch_root: Path,
+    llm: str,
+    thinking: Optional[object] = None,
+    verbose: bool = False,
+) -> int:
+    """
+    Generates architecture-level Markdown summaries for all C++ header and
+    source files under *scope_dir*.  Each summary is written into a mirror
+    tree under *arch_root* as ``<filename>.md``.
+
+    A SHA-256 fingerprint of the source file is embedded in the first line so
+    stale docs can be detected.  Files whose hash has not changed are skipped.
+    """
+    if not scope_dir or not scope_dir.exists():
+        print(f"[summary] scope-dir does not exist: {scope_dir}")
+        return 0
+
+    cpp_files = sorted(p for p in scope_dir.rglob("*") if is_header(p) or is_source(p))
+
+    if not cpp_files:
+        print(f"[summary] No C++ files found under {scope_dir}")
+        return 0
+
+    summary_agent = Agent(
+        _build_ollama_model_from_llm(llm),
+        output_type=HeaderSummaryModel,
+        system_prompt=(
+            "You are a senior C++ software architect. "
+            "You are analyzing source code from RBDOOM-3-BFG, a Doom 3 BFG engine fork.\n"
+            "Summarize the provided C++ file into the requested structured sections.\n"
+            "Be precise, technical, and concise. Focus on architectural significance.\n"
+            "Use em-dash notation for key_types_and_functions entries, e.g.:\n"
+            "  `idFoo` — short description of the class.\n"
+            "  `idFoo::Bar(int x)` — what this method does.\n"
+            "Each bullet should be a complete, informative sentence or phrase.\n"
+            "For control_flow, describe how data or logic flows at runtime.\n"
+            "For dependencies, reference concrete header paths where possible.\n"
+            "For how_it_fits, explain this component’s role in the larger engine.\n"
+        ),
+    )
+
+    if thinking is not None:
+        summary_agent = Agent(
+            _build_ollama_model_from_llm(llm),
+            output_type=HeaderSummaryModel,
+            system_prompt=summary_agent._system_prompts[0]
+            if summary_agent._system_prompts
+            else "",
+            model_settings={"thinking": thinking},
+        )
+
+    generated = 0
+    print(
+        f"[summary] Generating summaries for {len(cpp_files)} files in {scope_dir} ..."
+    )
+
+    for src_file in tqdm(cpp_files, desc="Summarizing C++ files"):
+        content = src_file.read_text(encoding="utf-8", errors="ignore")
+        if not content.strip():
+            continue
+
+        rel_path = src_file.relative_to(project_root)
+        file_sha = hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+        # Determine output path: mirror into arch_root
+        out_path = arch_root / rel_path.with_suffix(rel_path.suffix + ".md")
+
+        # Skip if the existing .md already has the same SHA
+        if out_path.exists():
+            first_line = out_path.read_text(encoding="utf-8", errors="ignore").split(
+                "\n", 1
+            )[0]
+            if file_sha in first_line:
+                if verbose:
+                    print(f"  [skip] {rel_path} (unchanged)")
+                continue
+
+        prompt = f"Analyze this C++ file: {rel_path.as_posix()}\n\nContent:\n{content}"
+
+        try:
+            result = summary_agent.run_sync(prompt)
+            data = result.output
+
+            md_lines = [
+                f"<!-- archgen: sha256={file_sha} -->",
+                "",
+                f"# {rel_path.as_posix()}",
+                "",
+                "## File Purpose",
+            ]
+            md_lines.extend(f"- {p}" for p in data.file_purpose)
+
+            md_lines.append("")
+            md_lines.append("## Core Responsibilities")
+            md_lines.extend(f"- {r}" for r in data.core_responsibilities)
+
+            md_lines.append("")
+            md_lines.append("## Key Types and Functions")
+            md_lines.extend(f"- {f}" for f in data.key_types_and_functions)
+
+            md_lines.append("")
+            md_lines.append("## Important Control Flow")
+            md_lines.extend(f"- {c}" for c in data.control_flow)
+
+            md_lines.append("")
+            md_lines.append("## External Dependencies")
+            md_lines.extend(f"- {d}" for d in data.dependencies)
+
+            md_lines.append("")
+            md_lines.append("## How It Fits")
+            md_lines.extend(f"- {h}" for h in data.how_it_fits)
+            md_lines.append("")  # trailing newline
+
+            out_path.parent.mkdir(parents=True, exist_ok=True)
+            out_path.write_text("\n".join(md_lines), encoding="utf-8")
+            generated += 1
+
+        except Exception as e:
+            print(f"  [error] {rel_path}: {e}")
+
+    print(f"[summary] Generated {generated} summaries.")
+    return generated
+
+
+def generate_file_doxygen_summaries(
+    scope_dir: Path,
+    project_root: Path,
+    llm: str,
+    thinking: Optional[object] = None,
+    verbose: bool = False,
+) -> int:
+    """
+    Generates file-level Doxygen /*! \file */ summaries for all C++ files under
+    *scope_dir*, inserting them directly after the GPL header.
+    """
+    if not scope_dir or not scope_dir.exists():
+        print(f"[file-summary] scope-dir does not exist: {scope_dir}")
+        return 0
+
+    cpp_files = sorted(p for p in scope_dir.rglob("*") if is_header(p) or is_source(p))
+    if not cpp_files:
+        print(f"[file-summary] No C++ files found under {scope_dir}")
+        return 0
+
+    summary_agent = Agent(
+        _build_ollama_model_from_llm(llm),
+        output_type=FileSummaryModel,
+        system_prompt=(
+            "You are a senior C++ software architect. "
+            "You are analyzing source code from RBDOOM-3-BFG, a Doom 3 BFG engine fork.\n"
+            "Summarize the provided C++ file into the requested structured sections:\n"
+            "- File Purpose\n"
+            "- Core Responsibilities\n"
+            "- Key Types and Functions\n"
+            "- Control Flow\n"
+            "- Dependencies\n"
+            "- How It Fits\n"
+            "Be precise, technical, and concise. Focus on architectural significance.\n"
+            "Use em-dash notation for key_types_and_functions entries.\n"
+            "For control_flow, describe how data or logic flows at runtime.\n"
+            "For dependencies, reference concrete header paths where possible.\n"
+            "For how_it_fits, explain this component’s role in the larger engine.\n"
+            "If details are unclear, write 'TODO: clarify ...' rather than guessing.\n"
+        ),
+    )
+
+    if thinking is not None:
+        summary_agent = Agent(
+            _build_ollama_model_from_llm(llm),
+            output_type=FileSummaryModel,
+            system_prompt=summary_agent._system_prompts[0]
+            if summary_agent._system_prompts
+            else "",
+            model_settings={"thinking": thinking},
+        )
+
+    generated = 0
+    print(
+        f"[file-summary] Generating file Doxygen summaries for {len(cpp_files)} files in {scope_dir} ..."
+    )
+
+    for src_file in tqdm(cpp_files, desc="Summarizing C++ files (Doxygen)"):
+        content = src_file.read_text(encoding="utf-8", errors="ignore")
+        if not content.strip():
+            continue
+
+        rel_path = src_file.relative_to(project_root)
+        file_sha = hashlib.sha256(content.encode("utf-8")).hexdigest()
+
+        existing = _find_file_doxygen_block(read_file(src_file))
+        if existing and existing[2] == file_sha:
+            if verbose:
+                print(f"  [skip] {rel_path} (unchanged)")
+            continue
+
+        prompt = f"Analyze this C++ file: {rel_path.as_posix()}\n\nContent:\n{content}"
+
+        try:
+            result = summary_agent.run_sync(prompt)
+            data: FileSummaryModel = result.output
+            if _insert_file_doxygen_comment(src_file, rel_path, data, file_sha):
+                generated += 1
+                if verbose:
+                    print(f"  [doxygen] {rel_path}")
+        except Exception as e:
+            print(f"  [error] {rel_path}: {e}")
+
+    print(f"[file-summary] Generated {generated} file Doxygen summaries.")
+    return generated
+
+
+# -----------------------------------------------------------------------------
 # CLI
 # -----------------------------------------------------------------------------
 def run_doxygen(
@@ -2128,12 +2505,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--xml-dir", default="doxygen-xml/xml")
     ap.add_argument("--project-root", default=".")
-    ap.add_argument("--scope-dir", default="code/idlib/containers")
+    ap.add_argument("--scope-dir", default="idlib/bv")
     ap.add_argument("--llm", default="ollama/qwen3-coder")
     # ap.add_argument("--llm", default="ollama/gemma4")
     ap.add_argument("--max-impl", type=int, default=6000)
     ap.add_argument("--apply", action="store_true")
-    ap.add_argument("--dry-run", action="store_true")
+
     ap.add_argument("--cache-file", default="doxy_ai_cache.json")
     ap.add_argument("--callsite-max", type=int, default=3)
     ap.add_argument("--callsite-context", type=int, default=30)
@@ -2144,6 +2521,21 @@ def main():
     )
     ap.add_argument("-v", "--verbose", action="store_true")
     ap.add_argument("--force-trivial", action="store_true")
+    ap.add_argument(
+        "--summarize-headers",
+        action="store_true",
+        help="Generate architecture .md summaries for all C++ files in --scope-dir",
+    )
+    ap.add_argument(
+        "--summarize-files",
+        action="store_true",
+        help="Generate file-level Doxygen \\file summaries for all C++ files in --scope-dir",
+    )
+    ap.add_argument(
+        "--arch-root",
+        default="architecture",
+        help="Root directory for architecture .md output (default: architecture)",
+    )
     args = ap.parse_args()
 
     xml_dir = Path(args.xml_dir)
@@ -2182,6 +2574,27 @@ def main():
     )
 
     print(f"Comments inserted: {total}")
+
+    # -- Header summary generation -------------------------------------------
+    if args.summarize_headers:
+        arch_root = Path(args.arch_root)
+        generate_header_summaries(
+            scope_dir=scope_dir,
+            project_root=project_root,
+            arch_root=arch_root,
+            llm=args.llm,
+            thinking=thinking_setting,
+            verbose=args.verbose,
+        )
+
+    if args.summarize_files:
+        generate_file_doxygen_summaries(
+            scope_dir=scope_dir,
+            project_root=project_root,
+            llm=args.llm,
+            thinking=thinking_setting,
+            verbose=args.verbose,
+        )
 
 
 if __name__ == "__main__":
