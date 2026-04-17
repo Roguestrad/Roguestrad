@@ -46,5 +46,14 @@
       "cwd": "${workspaceFolder}\\..",
       "args": ["+set", "logfile", "2"],
     },
+    {
+      "name": "Python: Launch doxygenix.py",
+      "type": "debugpy",
+      "request": "launch",
+      "program": "${workspaceFolder}/doxygenix.py",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "args": ["--scope-dir=idlib/bv", "--llm=ollama/gemma4:26b", "--summarize-headers"]
+    },
   ],
 }
