@@ -226,6 +226,7 @@ class FuncInfo:
     returns: Optional[str]
     return_desc: Optional[str]
     brief: str
+    details: Optional[str]
     is_pure_virtual: bool = False
 
 
@@ -330,6 +331,11 @@ def parse_doxygen_xml(
             bd = md.find("briefdescription")
             brief = extract_text(bd) if bd is not None else ""
 
+            dd = md.find("detaileddescription")
+            details = extract_text(dd) if dd is not None else ""
+            if details == brief:
+                details = ""
+
             # return type
             tnode = md.find("type")
             returns = extract_text(tnode) if tnode is not None else None
@@ -408,6 +414,7 @@ def parse_doxygen_xml(
                     returns=returns,
                     return_desc=return_desc,
                     brief=brief,
+                    details=details,
                     is_pure_virtual=is_pure_virtual,
                 )
             )
@@ -1826,6 +1833,12 @@ def _render_xml_func_comment(func: FuncInfo) -> List[str]:
     brief = func.brief.strip() if func.brief else "TODO: clarify function purpose."
     lines = ["/*!"]
     lines.append(f"\t\\brief {brief}")
+    if func.details:
+        lines.append("")
+        for ln in func.details.split("\n"):
+            if ln.strip():
+                lines.append(f"\t{ln}")
+        lines.append("")
     for pname, _ptype in func.params:
         if not pname:
             continue
@@ -2578,6 +2591,11 @@ def main():
         action="store_true",
         help="Generate architecture .md summaries and file-level \\file blocks for all C++ files in --scope-dir",
     )
+    ap.add_argument(
+        "--summarize-only",
+        action="store_true",
+        help="Skip function comment generation and only build summaries",
+    )
 
     ap.add_argument(
         "--arch-root",
@@ -2606,24 +2624,26 @@ def main():
     )
 
     funcs = parse_doxygen_xml(xml_dir, project_root, prefer_decl=True)
-    total = generate_doxygen_comments(
-        funcs,
-        project_root,
-        llm=args.llm,
-        thinking=thinking_setting,
-        verbose=args.verbose,
-        dry_run=False,  # not args.apply,
-        maximpl=args.max_impl,
-        cache_path=cache_path,
-        scope_dir=scope_dir,
-        callsite_max=args.callsite_max,
-        callsite_context_lines=args.callsite_context,
-        force_trivial=args.force_trivial,
-    )
+    total = 0
+    if not args.summarize_only:
+        total = generate_doxygen_comments(
+            funcs,
+            project_root,
+            llm=args.llm,
+            thinking=thinking_setting,
+            verbose=args.verbose,
+            dry_run=False,  # not args.apply,
+            maximpl=args.max_impl,
+            cache_path=cache_path,
+            scope_dir=scope_dir,
+            callsite_max=args.callsite_max,
+            callsite_context_lines=args.callsite_context,
+            force_trivial=args.force_trivial,
+        )
 
     print(f"Comments inserted: {total}")
 
-    if args.summarize_files and total > 0:
+    if args.summarize_files and total > 0 and not args.summarize_only:
         print("Recreate Doxygen XML …")
         run_doxygen(
             "Doxyfile-xmlgen.cfg", doxygen_exe="doxygen.exe", repo_root=project_root
