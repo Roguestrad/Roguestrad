@@ -2212,11 +2212,12 @@ def generate_header_summaries(
 ) -> int:
     """
     Generates architecture-level Markdown summaries for all C++ header and
-    source files under *scope_dir*.  Each summary is written into a mirror
-    tree under *arch_root* as ``<filename>.md``.
+    source files under *scope_dir*. Each summary is written into a mirror
+    tree under *arch_root* as ``<filename>.md`` and is also inserted as a
+    file-level Doxygen block directly under the GPL header.
 
     A SHA-256 fingerprint of the source file is embedded in the first line so
-    stale docs can be detected.  Files whose hash has not changed are skipped.
+    stale docs can be detected. Files whose hash has not changed are skipped.
     """
     if not scope_dir or not scope_dir.exists():
         print(f"[summary] scope-dir does not exist: {scope_dir}")
@@ -2243,6 +2244,7 @@ def generate_header_summaries(
             "For control_flow, describe how data or logic flows at runtime.\n"
             "For dependencies, reference concrete header paths where possible.\n"
             "For how_it_fits, explain this component’s role in the larger engine.\n"
+            "If details are unclear, write 'TODO: clarify ...' rather than guessing.\n"
         ),
     )
 
@@ -2272,21 +2274,27 @@ def generate_header_summaries(
         # Determine output path: mirror into arch_root
         out_path = arch_root / rel_path.with_suffix(rel_path.suffix + ".md")
 
-        # Skip if the existing .md already has the same SHA
+        existing = _find_file_doxygen_block(read_file(src_file))
+        md_hash_matches = False
         if out_path.exists():
             first_line = out_path.read_text(encoding="utf-8", errors="ignore").split(
                 "\n", 1
             )[0]
             if file_sha in first_line:
-                if verbose:
-                    print(f"  [skip] {rel_path} (unchanged)")
-                continue
+                md_hash_matches = True
+
+        if md_hash_matches and existing and existing[2] == file_sha:
+            if verbose:
+                print(f"  [skip] {rel_path} (unchanged)")
+            continue
 
         prompt = f"Analyze this C++ file: {rel_path.as_posix()}\n\nContent:\n{content}"
 
         try:
             result = summary_agent.run_sync(prompt)
             data = result.output
+
+            _insert_file_doxygen_comment(src_file, rel_path, data, file_sha)
 
             md_lines = [
                 f"<!-- archgen: sha256={file_sha} -->",
@@ -2326,93 +2334,6 @@ def generate_header_summaries(
             print(f"  [error] {rel_path}: {e}")
 
     print(f"[summary] Generated {generated} summaries.")
-    return generated
-
-
-def generate_file_doxygen_summaries(
-    scope_dir: Path,
-    project_root: Path,
-    llm: str,
-    thinking: Optional[object] = None,
-    verbose: bool = False,
-) -> int:
-    """
-    Generates file-level Doxygen /*! \file */ summaries for all C++ files under
-    *scope_dir*, inserting them directly after the GPL header.
-    """
-    if not scope_dir or not scope_dir.exists():
-        print(f"[file-summary] scope-dir does not exist: {scope_dir}")
-        return 0
-
-    cpp_files = sorted(p for p in scope_dir.rglob("*") if is_header(p) or is_source(p))
-    if not cpp_files:
-        print(f"[file-summary] No C++ files found under {scope_dir}")
-        return 0
-
-    summary_agent = Agent(
-        _build_ollama_model_from_llm(llm),
-        output_type=FileSummaryModel,
-        system_prompt=(
-            "You are a senior C++ software architect. "
-            "You are analyzing source code from RBDOOM-3-BFG, a Doom 3 BFG engine fork.\n"
-            "Summarize the provided C++ file into the requested structured sections:\n"
-            "- File Purpose\n"
-            "- Core Responsibilities\n"
-            "- Key Types and Functions\n"
-            "- Control Flow\n"
-            "- Dependencies\n"
-            "- How It Fits\n"
-            "Be precise, technical, and concise. Focus on architectural significance.\n"
-            "Use em-dash notation for key_types_and_functions entries.\n"
-            "For control_flow, describe how data or logic flows at runtime.\n"
-            "For dependencies, reference concrete header paths where possible.\n"
-            "For how_it_fits, explain this component’s role in the larger engine.\n"
-            "If details are unclear, write 'TODO: clarify ...' rather than guessing.\n"
-        ),
-    )
-
-    if thinking is not None:
-        summary_agent = Agent(
-            _build_ollama_model_from_llm(llm),
-            output_type=FileSummaryModel,
-            system_prompt=summary_agent._system_prompts[0]
-            if summary_agent._system_prompts
-            else "",
-            model_settings={"thinking": thinking},
-        )
-
-    generated = 0
-    print(
-        f"[file-summary] Generating file Doxygen summaries for {len(cpp_files)} files in {scope_dir} ..."
-    )
-
-    for src_file in tqdm(cpp_files, desc="Summarizing C++ files (Doxygen)"):
-        content = src_file.read_text(encoding="utf-8", errors="ignore")
-        if not content.strip():
-            continue
-
-        rel_path = src_file.relative_to(project_root)
-        file_sha = hashlib.sha256(content.encode("utf-8")).hexdigest()
-
-        existing = _find_file_doxygen_block(read_file(src_file))
-        if existing and existing[2] == file_sha:
-            if verbose:
-                print(f"  [skip] {rel_path} (unchanged)")
-            continue
-
-        prompt = f"Analyze this C++ file: {rel_path.as_posix()}\n\nContent:\n{content}"
-
-        try:
-            result = summary_agent.run_sync(prompt)
-            data: FileSummaryModel = result.output
-            if _insert_file_doxygen_comment(src_file, rel_path, data, file_sha):
-                generated += 1
-                if verbose:
-                    print(f"  [doxygen] {rel_path}")
-        except Exception as e:
-            print(f"  [error] {rel_path}: {e}")
-
-    print(f"[file-summary] Generated {generated} file Doxygen summaries.")
     return generated
 
 
@@ -2526,11 +2447,7 @@ def main():
         action="store_true",
         help="Generate architecture .md summaries for all C++ files in --scope-dir",
     )
-    ap.add_argument(
-        "--summarize-files",
-        action="store_true",
-        help="Generate file-level Doxygen \\file summaries for all C++ files in --scope-dir",
-    )
+
     ap.add_argument(
         "--arch-root",
         default="architecture",
@@ -2582,15 +2499,6 @@ def main():
             scope_dir=scope_dir,
             project_root=project_root,
             arch_root=arch_root,
-            llm=args.llm,
-            thinking=thinking_setting,
-            verbose=args.verbose,
-        )
-
-    if args.summarize_files:
-        generate_file_doxygen_summaries(
-            scope_dir=scope_dir,
-            project_root=project_root,
             llm=args.llm,
             thinking=thinking_setting,
             verbose=args.verbose,
