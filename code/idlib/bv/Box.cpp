@@ -27,6 +27,58 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+/*!
+	\file idlib/bv/Box.cpp
+	\brief Implements the logic for the `idBox` class, representing an Oriented Bounding Box (OBB).
+	\note archgen: sha256=b38fd030b0eccae2488612621de9a621afcdc7329928461f073f5ad3a1940082
+
+	\par File Purpose
+	- Implements the logic for the `idBox` class, representing an Oriented Bounding Box (OBB).
+	- Provides optimized algorithms for OBB construction, intersection testing, and silhouette extraction.
+
+	\par Core Responsibilities
+	- Calculating minimal volume OBBs from point clouds using Eigen decomposition.
+	- Performing geometric intersection tests (Box-Box via SAT, Box-Line, Box-Ray).
+	- Computing spatial relationships between boxes and planes.
+	- Extracting silhouette vertices for shadow/projection calculations using precomputed lookup tables.
+	- Managing box expansion and union operations while minimizing volume.
+
+	\par Key Types and Functions
+	- idBox::AddPoint(const idVec3& v) — Updates the box to include a point, potentially reorienting the box axes to minimize volume.
+	- idBox::AddBox(const idBox& a) — Computes the minimal volume OBB that encloses both the current box and another box by testing multiple optimal orientations.
+	- idBox::PlaneDistance(const idPlane& plane) — Calculates the signed distance from the box to a plane.
+	- idBox::PlaneSide(const idPlane& plane, const float epsilon) — Determines if the box is in front of, behind, or intersecting a plane.
+	- idBox::IntersectsBox(const idBox& a) — Implements the Separating Axis Theorem (SAT) to detect intersection between two OBBs.
+	- idBox::LineIntersection(const idVec3& start, const idVec3& end) — Determines if a line segment intersects the OBB using SAT.
+	- idBox::RayIntersection(const idVec3& start, const idVec3& dir, float& scale1, float& scale2) — Calculates the entry and exit distances of a ray through the box.
+	- idBox::FromPoints(const idVec3* points, const int numPoints) — Generates an OBB from a point cloud by computing a covariance matrix and extracting eigenvectors/eigenvalues.
+	- idBox::ToPoints(idVec3 points[8]) — Computes the world-space coordinates of the eight corner vertices of the box.
+	- idBox::GetProjectionSilhouetteVerts(const idVec3& projectionOrigin, idVec3 silVerts[6]) — Identifies vertices forming the silhouette from a perspective viewpoint using a bitmask-based lookup
+   table.
+	- idBox::GetParallelProjectionSilhouetteVerts(const idVec3& projectionDir, idVec3 silVerts[6]) — Identifies vertices forming the silhouette under parallel projection using a bitmask-based lookup
+   table.
+
+	\par Control Flow
+	- Construction (FromPoints): Point Cloud -> Mean Calculation -> Covariance Matrix -> Eigenvalue/Eigenvector Solver -> Axis/Extent Assignment.
+	- Intersection (SAT): Project centers onto separating axes (box axes and cross-product axes) -> Compare projected extents -> Return false if any axis proves separation.
+	- Raycasting: Transform ray to local OBB space -> Perform slab-based clipping against the six planes of the AABB in local space.
+	- Silhouette Extraction: Project vertices -> Generate a bitmask based on the sign of the projection direction relative to box axes -> Retrieve vertex indices from the `boxPlaneBitsSilVerts` lookup
+   table.
+
+	\par Dependencies
+	- idlib/math/idMath.h (for absolute values and infinity)
+	- idlib/math/idVec3.h (for vector operations)
+	- idlib/math/idMat3.h (for rotation/basis transformation)
+	- idlib/math/idMatX.h (for Eigen decomposition)
+	- idlib/bv/idBounds.h (used during box expansion/union)
+	- idlib/bv/idPlane.h (used for distance/side queries)
+
+	\par How It Fits
+	- Acts as a fundamental primitive within the Bounding Volume (BV) hierarchy for collision detection and culling.
+	- Provides the geometric foundation for shadow volume generation (via silhouette extraction) and visibility tests.
+	- Serves as a high-performance utility for spatial partitioning and object bounds management in the engine.
+*/
+
 #include "precompiled.h"
 #pragma hdrstop
 
@@ -186,11 +238,6 @@ static int boxPlaneBitsSilVerts[64][7] = {
 	{ 0, 0, 0, 0, 0, 0, 0 }, // 111111 = 63
 };
 
-/*
-============
-idBox::AddPoint
-============
-*/
 bool idBox::AddPoint( const idVec3& v )
 {
 	idMat3	 axis2;
@@ -237,11 +284,6 @@ bool idBox::AddPoint( const idVec3& v )
 	return true;
 }
 
-/*
-============
-idBox::AddBox
-============
-*/
 bool idBox::AddBox( const idBox& a )
 {
 	int		 i, besti;
@@ -325,11 +367,6 @@ bool idBox::AddBox( const idBox& a )
 	return false;
 }
 
-/*
-================
-idBox::PlaneDistance
-================
-*/
 float idBox::PlaneDistance( const idPlane& plane ) const
 {
 	float d1, d2;
@@ -346,11 +383,6 @@ float idBox::PlaneDistance( const idPlane& plane ) const
 	return 0.0f;
 }
 
-/*
-================
-idBox::PlaneSide
-================
-*/
 int idBox::PlaneSide( const idPlane& plane, const float epsilon ) const
 {
 	float d1, d2;
@@ -367,11 +399,6 @@ int idBox::PlaneSide( const idPlane& plane, const float epsilon ) const
 	return PLANESIDE_CROSS;
 }
 
-/*
-============
-idBox::IntersectsBox
-============
-*/
 bool idBox::IntersectsBox( const idBox& a ) const
 {
 	idVec3 dir;		   // vector between centers
@@ -528,13 +555,6 @@ bool idBox::IntersectsBox( const idBox& a ) const
 	return true;
 }
 
-/*
-============
-idBox::LineIntersection
-
-  Returns true if the line intersects the box between the start and end point.
-============
-*/
 bool idBox::LineIntersection( const idVec3& start, const idVec3& end ) const
 {
 	float  ld[3];
@@ -574,10 +594,19 @@ bool idBox::LineIntersection( const idVec3& start, const idVec3& end ) const
 	return true;
 }
 
-/*
-============
-BoxPlaneClip
-============
+/*!
+	\brief Determines if a box is clipped by a plane, updating intersection scale values.
+
+	This function performs clipping calculations for a box against a plane in 3D space. It evaluates the relationship between the box and the plane based on the plane's normal component (denom) and
+   the box's position relative to the plane (numer). The function modifies the scale0 and scale1 values to represent the intersection range along the plane's normal. It returns false if the box is
+   completely on the back side of the plane, and true otherwise. The function handles three cases: when the plane normal is positive (box facing away from normal), when negative (box facing toward
+   normal), and when zero (plane is perpendicular to the normal axis).
+
+	\param denom The component of the plane normal along the axis being tested
+	\param numer The dot product of the plane normal with the box's position
+	\param scale0 Reference to the lower intersection scale value, updated if needed
+	\param scale1 Reference to the upper intersection scale value, updated if needed
+	\return true if the box intersects with the plane, false otherwise
 */
 static bool BoxPlaneClip( const float denom, const float numer, float& scale0, float& scale1 )
 {
@@ -602,15 +631,6 @@ static bool BoxPlaneClip( const float denom, const float numer, float& scale0, f
 	}
 }
 
-/*
-============
-idBox::RayIntersection
-
-  Returns true if the ray intersects the box.
-  The ray can intersect the box in both directions from the start point.
-  If start is inside the box then scale1 < 0 and scale2 > 0.
-============
-*/
 bool idBox::RayIntersection( const idVec3& start, const idVec3& dir, float& scale1, float& scale2 ) const
 {
 	idVec3 localStart, localDir;
@@ -625,13 +645,6 @@ bool idBox::RayIntersection( const idVec3& start, const idVec3& dir, float& scal
 		   BoxPlaneClip( localDir.z, -localStart.z - extents[2], scale1, scale2 ) && BoxPlaneClip( -localDir.z, localStart.z - extents[2], scale1, scale2 );
 }
 
-/*
-============
-idBox::FromPoints
-
-  Tight box for a collection of points.
-============
-*/
 void idBox::FromPoints( const idVec3* points, const int numPoints )
 {
 	int		 i;
@@ -712,59 +725,26 @@ void idBox::FromPoints( const idVec3* points, const int numPoints )
 	center *= axis;
 }
 
-/*
-============
-idBox::FromPointTranslation
-
-  Most tight box for the translational movement of the given point.
-============
-*/
 void idBox::FromPointTranslation( const idVec3& point, const idVec3& translation )
 {
 	// FIXME: implement
 }
 
-/*
-============
-idBox::FromBoxTranslation
-
-  Most tight box for the translational movement of the given box.
-============
-*/
 void idBox::FromBoxTranslation( const idBox& box, const idVec3& translation )
 {
 	// FIXME: implement
 }
 
-/*
-============
-idBox::FromPointRotation
-
-  Most tight bounds for the rotational movement of the given point.
-============
-*/
 void idBox::FromPointRotation( const idVec3& point, const idRotation& rotation )
 {
 	// FIXME: implement
 }
 
-/*
-============
-idBox::FromBoxRotation
-
-  Most tight box for the rotational movement of the given box.
-============
-*/
 void idBox::FromBoxRotation( const idBox& box, const idRotation& rotation )
 {
 	// FIXME: implement
 }
 
-/*
-============
-idBox::ToPoints
-============
-*/
 void idBox::ToPoints( idVec3 points[8] ) const
 {
 	idMat3 ax;
@@ -787,11 +767,6 @@ void idBox::ToPoints( idVec3 points[8] ) const
 	points[7] = temp[0] + temp[3];
 }
 
-/*
-============
-idBox::GetProjectionSilhouetteVerts
-============
-*/
 int idBox::GetProjectionSilhouetteVerts( const idVec3& projectionOrigin, idVec3 silVerts[6] ) const
 {
 	float  f;
@@ -823,11 +798,6 @@ int idBox::GetProjectionSilhouetteVerts( const idVec3& projectionOrigin, idVec3 
 	return index[0];
 }
 
-/*
-============
-idBox::GetParallelProjectionSilhouetteVerts
-============
-*/
 int idBox::GetParallelProjectionSilhouetteVerts( const idVec3& projectionDir, idVec3 silVerts[6] ) const
 {
 	float  f;

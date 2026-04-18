@@ -27,6 +27,55 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+/*!
+	\file idlib/bv/Bounds.cpp
+	\brief Implements the `idBounds` class, representing Axis-Aligned Bounding Boxes (AABB).
+	\note archgen: sha256=d584aa88578173c4716764a5dfa20d9cfe8844abd75dfa064bbfdccb0ac4ae31
+
+	\par File Purpose
+	- Implements the `idBounds` class, representing Axis-Aligned Bounding Boxes (AABB).
+	- Provides geometric primitives and algorithms for intersection testing, spatial queries, and bounding volume transformations.
+
+	\par Core Responsibilities
+	- Calculating bounding volumes for points, segments, and rotational paths.
+	- Performing intersection tests between AABBs and rays, line segments, and planes.
+	- Computing new AABBs after applying transformations (rotation, translation, and scaling).
+	- Classifying spatial relationships between AABBs and planes (front, back, or intersecting).
+	- Providing optimized SIMD-based construction of AABBs from vertex arrays.
+
+	\par Key Types and Functions
+	- idBounds — The core class representing an Axis-Aligned Bounding Box (AABB) defined by its minimum and maximum extents.
+	- bounds_zero — A global constant representing a zero-volume bounding box at the origin.
+	- bounds_unitCube — A global constant representing an AABB with extents from -1 to 1 on all axes.
+	- idBounds::GetRadius() — Calculates the radius of the AABB relative to its own center.
+	- idBounds::GetRadius(const idVec3& center) — Calculates the maximum distance from an arbitrary point to the AABB's boundaries.
+	- idBounds::PlaneDistance(const idPlane& plane) — Computes the signed minimum distance from the AABB to a specified plane.
+	- idBounds::PlaneSide(const idPlane& plane, const float epsilon) — Determines if the AABB is in front of, behind, or spanning a plane.
+	- idBounds::LineIntersection(const idVec3& start, const idVec3& end) — Performs a Separating Axis Theorem (SAT) based intersection test with a line segment.
+	- idBounds::RayIntersection(const idVec3& start, const idVec3& dir, float& scale) — Executes a ray-AABB intersection test, returning the distance to the entry point.
+	- idBounds::FromPoints(const idVec3* points, const int numPoints) — Constructs an AABB enclosing a point cloud using SIMD-optimized min/max operations.
+	- idBounds::FromTransformedBounds(const idBounds& bounds, const idVec3& origin, const idMat3& axis) — Recomputes an AABB that encapsulates a transformed AABB.
+	- BoundsForPointRotation(const idVec3& start, const idRotation& rotation) — Computes the AABB that encloses the arc swept by a point during rotation.
+	- idBounds::ToPoints(idVec3 points[8]) — Extracts the eight vertices of the AABB into a provided array.
+
+	\par Control Flow
+	- Intersection tests (Ray/Line) utilize conditional logic to evaluate axis-aligned extents and separation planes.
+	- Transformation logic branches based on whether a rotation matrix is identity or contains rotation (e.g., `IsRotated()`) to choose between direct translation or complex projection.
+	- Point-set construction (`FromPoints`) delegates heavy computation to a `SIMDProcessor` to process multiple axes in parallel.
+	- Rotational bounding logic (`FromPointRotation`) branches based on the rotation angle (threshold of 180 degrees) to switch between exact arc calculation and a conservative spherical
+   approximation.
+
+	\par Dependencies
+	- "precompiled.h" — Provides foundational engine types including `idVec3`, `idMat3`, `idPlane`, `idRotation`, and `idMath`.
+	- SIMDProcessor — Used for high-performance extremum searches in point arrays.
+	- idMath — Essential for absolute values, square roots, and floating-point comparisons.
+
+	\par How It Fits
+	- Functions as a fundamental primitive within the `idlib/bv` (Bounding Volume) system.
+	- Serves as the primary spatial primitive for visibility culling, collision detection, and physics queries.
+	- Provides the mathematical building blocks for more complex hierarchical bounding volumes (e.g., BVH or Octrees) throughout the engine.
+*/
+
 #include "precompiled.h"
 #pragma hdrstop
 
@@ -34,11 +83,6 @@ idBounds bounds_zero( vec3_zero, vec3_zero );
 idBounds bounds_zeroOneCube( idVec3( 0.0f ), idVec3( 1.0f ) );
 idBounds bounds_unitCube( idVec3( -1.0f ), idVec3( 1.0f ) );
 
-/*
-============
-idBounds::GetRadius
-============
-*/
 float	 idBounds::GetRadius() const
 {
 	int	  i;
@@ -57,11 +101,6 @@ float	 idBounds::GetRadius() const
 	return idMath::Sqrt( total );
 }
 
-/*
-============
-idBounds::GetRadius
-============
-*/
 float idBounds::GetRadius( const idVec3& center ) const
 {
 	int	  i;
@@ -80,11 +119,6 @@ float idBounds::GetRadius( const idVec3& center ) const
 	return idMath::Sqrt( total );
 }
 
-/*
-================
-idBounds::PlaneDistance
-================
-*/
 float idBounds::PlaneDistance( const idPlane& plane ) const
 {
 	idVec3 center;
@@ -104,11 +138,6 @@ float idBounds::PlaneDistance( const idPlane& plane ) const
 	return 0.0f;
 }
 
-/*
-================
-idBounds::PlaneSide
-================
-*/
 int idBounds::PlaneSide( const idPlane& plane, const float epsilon ) const
 {
 	idVec3 center;
@@ -128,13 +157,6 @@ int idBounds::PlaneSide( const idPlane& plane, const float epsilon ) const
 	return PLANESIDE_CROSS;
 }
 
-/*
-============
-idBounds::LineIntersection
-
-  Returns true if the line intersects the bounds between the start and end point.
-============
-*/
 bool idBounds::LineIntersection( const idVec3& start, const idVec3& end ) const
 {
 	const idVec3 center		= ( b[0] + b[1] ) * 0.5f;
@@ -175,15 +197,6 @@ bool idBounds::LineIntersection( const idVec3& start, const idVec3& end ) const
 	return true;
 }
 
-/*
-============
-idBounds::RayIntersection
-
-  Returns true if the ray intersects the bounds.
-  The ray can intersect the bounds in both directions from the start point.
-  If start is inside the bounds it is considered an intersection with scale = 0
-============
-*/
 bool idBounds::RayIntersection( const idVec3& start, const idVec3& dir, float& scale ) const
 {
 	int	   i, ax0, ax1, ax2, side, inside;
@@ -225,11 +238,6 @@ bool idBounds::RayIntersection( const idVec3& start, const idVec3& dir, float& s
 	return ( hit[ax1] >= b[0][ax1] && hit[ax1] <= b[1][ax1] && hit[ax2] >= b[0][ax2] && hit[ax2] <= b[1][ax2] );
 }
 
-/*
-============
-idBounds::FromTransformedBounds
-============
-*/
 void idBounds::FromTransformedBounds( const idBounds& bounds, const idVec3& origin, const idMat3& axis )
 {
 	int	   i;
@@ -247,25 +255,11 @@ void idBounds::FromTransformedBounds( const idBounds& bounds, const idVec3& orig
 	b[1]   = center + rotatedExtents;
 }
 
-/*
-============
-idBounds::FromPoints
-
-  Most tight bounds for a point set.
-============
-*/
 void idBounds::FromPoints( const idVec3* points, const int numPoints )
 {
 	SIMDProcessor->MinMax( b[0], b[1], points, numPoints );
 }
 
-/*
-============
-idBounds::FromPointTranslation
-
-  Most tight bounds for the translational movement of the given point.
-============
-*/
 void idBounds::FromPointTranslation( const idVec3& point, const idVec3& translation )
 {
 	int i;
@@ -281,13 +275,6 @@ void idBounds::FromPointTranslation( const idVec3& point, const idVec3& translat
 	}
 }
 
-/*
-============
-idBounds::FromBoundsTranslation
-
-  Most tight bounds for the translational movement of the given bounds.
-============
-*/
 void idBounds::FromBoundsTranslation( const idBounds& bounds, const idVec3& origin, const idMat3& axis, const idVec3& translation )
 {
 	int i;
@@ -307,12 +294,16 @@ void idBounds::FromBoundsTranslation( const idBounds& bounds, const idVec3& orig
 	}
 }
 
-/*
-================
-BoundsForPointRotation
+/*!
+	\brief Computes the bounding box that encloses the path of a point rotating around an axis
 
-  only for rotations < 180 degrees
-================
+	This function calculates the minimal axis-aligned bounding box that contains all positions of a point as it rotates according to the provided rotation. It is designed to work correctly for
+   rotations less than 180 degrees. The algorithm computes the start and end positions of the point, determines the axis of rotation and the origin, and then calculates the radius of the rotation
+   path. It then evaluates how the derivative of the rotation path changes along each axis to determine the appropriate bounding box coordinates.
+
+	\param start The initial position of the point before rotation
+	\param rotation The rotation to be applied to the point
+	\return The axis-aligned bounding box that encloses the path of the point as it rotates
 */
 idBounds BoundsForPointRotation( const idVec3& start, const idRotation& rotation )
 {
@@ -351,13 +342,6 @@ idBounds BoundsForPointRotation( const idVec3& start, const idRotation& rotation
 	return bounds;
 }
 
-/*
-============
-idBounds::FromPointRotation
-
-  Most tight bounds for the rotational movement of the given point.
-============
-*/
 void idBounds::FromPointRotation( const idVec3& point, const idRotation& rotation )
 {
 	float radius;
@@ -373,13 +357,6 @@ void idBounds::FromPointRotation( const idVec3& point, const idRotation& rotatio
 	}
 }
 
-/*
-============
-idBounds::FromBoundsRotation
-
-  Most tight bounds for the rotational movement of the given bounds.
-============
-*/
 void idBounds::FromBoundsRotation( const idBounds& bounds, const idVec3& origin, const idMat3& axis, const idRotation& rotation )
 {
 	int		 i;
@@ -405,11 +382,6 @@ void idBounds::FromBoundsRotation( const idBounds& bounds, const idVec3& origin,
 	}
 }
 
-/*
-============
-idBounds::ToPoints
-============
-*/
 void idBounds::ToPoints( idVec3 points[8] ) const
 {
 	for( int i = 0; i < 8; i++ ) {
