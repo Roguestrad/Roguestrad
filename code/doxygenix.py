@@ -222,7 +222,9 @@ class FuncInfo:
     definition: str
     argsstring: str
     params: List[Tuple[str, Optional[str]]]
+    param_docs: Dict[str, str]
     returns: Optional[str]
+    return_desc: Optional[str]
     brief: str
     is_pure_virtual: bool = False
 
@@ -335,12 +337,29 @@ def parse_doxygen_xml(
                 returns = None
 
             # params
+            param_desc_map: Dict[str, str] = {}
+            for pitem in md.findall(".//parameterlist[@kind='param']/parameteritem"):
+                pname = pitem.findtext("parameternamelist/parametername") or ""
+                pdesc_node = pitem.find("parameterdescription")
+                pdesc = extract_text(pdesc_node) if pdesc_node is not None else ""
+                if pname and pdesc:
+                    param_desc_map[pname] = pdesc
+
             params = []
             for p in md.findall("param"):
                 pname = p.findtext("declname") or ""
                 ptype_node = p.find("type")
                 ptype = extract_text(ptype_node) if ptype_node is not None else None
                 params.append((pname, ptype))
+
+            return_desc = None
+            return_node = md.find(".//simplesect[@kind='return']")
+            if return_node is None:
+                return_node = md.find(".//simplesect[@kind='returns']")
+            if return_node is not None:
+                return_text = extract_text(return_node)
+                if return_text:
+                    return_desc = return_text
 
             # location
             loc = md.find("location")
@@ -385,7 +404,9 @@ def parse_doxygen_xml(
                     definition=definition,
                     argsstring=argsstring,
                     params=params,
+                    param_docs=param_desc_map,
                     returns=returns,
+                    return_desc=return_desc,
                     brief=brief,
                     is_pure_virtual=is_pure_virtual,
                 )
@@ -1060,6 +1081,14 @@ def _find_file_doxygen_block(
             continue
         i += 1
     return None
+
+
+def _strip_file_doxygen_block(lines: List[str]) -> List[str]:
+    block = _find_file_doxygen_block(lines)
+    if not block:
+        return list(lines)
+    start, end, _hash = block
+    return lines[:start] + lines[end + 1 :]
 
 
 def _has_file_doxygen(lines: List[str], scan_limit: int = 140) -> bool:
@@ -1767,6 +1796,97 @@ def compute_normalized_body_hash(impl: str) -> str:
     return h.hexdigest()
 
 
+def compute_normalized_file_hash(content: str) -> str:
+    code = content
+    # Normalize whitespace only; keep comments for semantic context
+    code = re.sub(r"\s+", " ", code).strip()
+    return hashlib.sha256(code.encode("utf-8")).hexdigest()
+
+
+def _build_bodyfile_func_map(
+    funcs: Optional[List[FuncInfo]], repo_root: Path
+) -> Dict[Path, List[FuncInfo]]:
+    func_map: Dict[Path, List[FuncInfo]] = {}
+    if not funcs:
+        return func_map
+    for func in funcs:
+        bodyfile = func.bodyfile
+        if not bodyfile:
+            continue
+        path = bodyfile
+        if not path.is_absolute():
+            path = (repo_root / path).resolve()
+        else:
+            path = path.resolve()
+        func_map.setdefault(path, []).append(func)
+    return func_map
+
+
+def _render_xml_func_comment(func: FuncInfo) -> List[str]:
+    brief = func.brief.strip() if func.brief else "TODO: clarify function purpose."
+    lines = ["/*!"]
+    lines.append(f"\t\\brief {brief}")
+    for pname, _ptype in func.params:
+        if not pname:
+            continue
+        pdesc = func.param_docs.get(pname)
+        if pdesc:
+            lines.append(f"\t\\param {pname} {pdesc}")
+        else:
+            lines.append(f"\t\\param {pname} TODO: clarify {pname} parameter.")
+    if func.returns:
+        if func.return_desc:
+            lines.append(f"\t\\return {func.return_desc}")
+        else:
+            lines.append("\t\\return TODO: clarify return value.")
+    lines.append("*/")
+    return lines
+
+
+def _augment_source_with_xml_doxygen(
+    raw_lines: List[str],
+    src_path: Path,
+    func_map: Dict[Path, List[FuncInfo]],
+) -> List[str]:
+    lines = list(raw_lines)
+    funcs = func_map.get(src_path.resolve())
+    if not funcs:
+        return lines
+
+    insert_items: List[Tuple[int, List[str]]] = []
+    for func in funcs:
+        if not func.bodystart:
+            continue
+        func_id = get_func_identifier(func)
+        body_idx = func.bodystart - 1
+        decl_idx = find_declaration_line_for_body(lines, body_idx, func_id)
+        if decl_idx == -1:
+            continue
+        decl_idx = find_decl_anchor(lines, decl_idx)
+        if has_existing_doxygen(lines, decl_idx):
+            continue
+
+        existing_comment = extract_comment_block_above(lines, decl_idx)
+        if existing_comment.strip():
+            continue
+        inline_comment = extract_inline_comment(lines[decl_idx])
+        if inline_comment.strip():
+            continue
+        trailing_comment = extract_trailing_comment_lines(lines, decl_idx)
+        if trailing_comment.strip():
+            continue
+
+        block_lines = _render_xml_func_comment(func)
+        if decl_idx > 0 and lines[decl_idx - 1].strip() != "":
+            block_lines = [""] + block_lines
+        insert_items.append((decl_idx, block_lines))
+
+    for decl_idx, block_lines in sorted(insert_items, key=lambda x: x[0], reverse=True):
+        lines[decl_idx:decl_idx] = block_lines
+
+    return lines
+
+
 def make_func_key(func: FuncInfo, func_id: str) -> str:
     # As stable and unique as possible
     # return f"{func.file}:{func_id}:{func.definition}{func.argsstring}"
@@ -2209,6 +2329,7 @@ def generate_header_summaries(
     llm: str,
     thinking: Optional[object] = None,
     verbose: bool = False,
+    funcs: Optional[List[FuncInfo]] = None,
 ) -> int:
     """
     Generates architecture-level Markdown summaries for all C++ header and
@@ -2228,6 +2349,8 @@ def generate_header_summaries(
     if not cpp_files:
         print(f"[summary] No C++ files found under {scope_dir}")
         return 0
+
+    func_map = _build_bodyfile_func_map(funcs, project_root)
 
     summary_agent = Agent(
         _build_ollama_model_from_llm(llm),
@@ -2264,17 +2387,25 @@ def generate_header_summaries(
     )
 
     for src_file in tqdm(cpp_files, desc="Summarizing C++ files"):
-        content = src_file.read_text(encoding="utf-8", errors="ignore")
+        raw_lines = read_file(src_file)
+        if is_source(src_file):
+            augmented_lines = _augment_source_with_xml_doxygen(
+                raw_lines, src_file, func_map
+            )
+        else:
+            augmented_lines = raw_lines
+        content_lines = _strip_file_doxygen_block(augmented_lines)
+        content = "\n".join(content_lines)
         if not content.strip():
             continue
 
         rel_path = src_file.relative_to(project_root)
-        file_sha = hashlib.sha256(content.encode("utf-8")).hexdigest()
+        file_sha = compute_normalized_file_hash(content)
 
         # Determine output path: mirror into arch_root
         out_path = arch_root / rel_path.with_suffix(rel_path.suffix + ".md")
 
-        existing = _find_file_doxygen_block(read_file(src_file))
+        existing = _find_file_doxygen_block(raw_lines)
         md_hash_matches = False
         if out_path.exists():
             first_line = out_path.read_text(encoding="utf-8", errors="ignore").split(
@@ -2443,9 +2574,9 @@ def main():
     ap.add_argument("-v", "--verbose", action="store_true")
     ap.add_argument("--force-trivial", action="store_true")
     ap.add_argument(
-        "--summarize-headers",
+        "--summarize-files",
         action="store_true",
-        help="Generate architecture .md summaries for all C++ files in --scope-dir",
+        help="Generate architecture .md summaries and file-level \\file blocks for all C++ files in --scope-dir",
     )
 
     ap.add_argument(
@@ -2492,8 +2623,15 @@ def main():
 
     print(f"Comments inserted: {total}")
 
+    if args.summarize_files and total > 0:
+        print("Recreate Doxygen XML …")
+        run_doxygen(
+            "Doxyfile-xmlgen.cfg", doxygen_exe="doxygen.exe", repo_root=project_root
+        )
+        funcs = parse_doxygen_xml(xml_dir, project_root, prefer_decl=True)
+
     # -- Header summary generation -------------------------------------------
-    if args.summarize_headers:
+    if args.summarize_files:
         arch_root = Path(args.arch_root)
         generate_header_summaries(
             scope_dir=scope_dir,
@@ -2502,6 +2640,7 @@ def main():
             llm=args.llm,
             thinking=thinking_setting,
             verbose=args.verbose,
+            funcs=funcs,
         )
 
 
