@@ -2424,7 +2424,7 @@ def run_doxygen(
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--xml-dir", default="doxygen-xml/xml")
+    ap.add_argument("--xml-dir", default="docs/doxygen/xml")
     ap.add_argument("--project-root", default=".")
     ap.add_argument("--scope-dir", default="idlib/bv")
     ap.add_argument("--llm", default="ollama/qwen3-coder")
