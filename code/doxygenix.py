@@ -2378,6 +2378,7 @@ def generate_header_summaries(
             "Use em-dash notation for key_types_and_functions entries, e.g.:\n"
             "  `idFoo` — short description of the class.\n"
             "  `idFoo::Bar(int x)` — what this method does.\n"
+            "Every entry must start with a backticked identifier (type or function), then an em dash and description.\n"
             "Each bullet should be a complete, informative sentence or phrase.\n"
             "For control_flow, describe how data or logic flows at runtime.\n"
             "For dependencies, reference concrete header paths where possible.\n"
@@ -2609,7 +2610,7 @@ def main():
 
     ap.add_argument(
         "--arch-root",
-        default="architecture",
+        default="docs/architecture",
         help="Root directory for architecture .md output (default: architecture)",
     )
     args = ap.parse_args()
