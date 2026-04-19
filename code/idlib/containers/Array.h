@@ -53,16 +53,23 @@ template<class T_, int numElements>
 class idArray
 {
 public:
-	// returns number of elements in list
+	//! Returns the number of elements in the array
 	int		  Num() const { return numElements; }
 
-	// returns the number of bytes the array takes up
+	//! Returns the size in bytes of the memory allocated for the array storage.
 	int		  ByteSize() const { return sizeof( ptr ); }
 
-	// memset the entire array to zero
+	//! Clears the entire array memory to zero.
 	void	  Zero() { memset( ptr, 0, sizeof( ptr ) ); }
 
-	// memset the entire array to a specific value
+	/*!
+		\brief Clear the entire array memory to a specific byte value
+
+		This function sets all elements of the array to the specified byte value using memset. It operates on the entire memory block of the array, treating it as a contiguous sequence of bytes. The
+	   fill value is applied to each byte of the array elements, not just the first byte of each element.
+
+		\param fill The byte value to set each byte of the array to
+	*/
 	void	  Memset( const char fill ) { memset( ptr, fill, numElements * sizeof( *ptr ) ); }
 
 	// array operators
@@ -77,8 +84,24 @@ public:
 		return ptr[index];
 	}
 
-	// returns a pointer to the list
+	/*!
+		\brief Returns a pointer to the internal array data
+
+		This function provides access to the underlying memory buffer of the array. It returns a constant pointer to the first element of the array, allowing read-only access to the stored elements.
+	   The returned pointer is valid as long as the array object exists and is not modified.
+
+		\return A constant pointer to the first element of the internal array
+	*/
 	const T_* Ptr() const { return ptr; }
+
+	/*!
+		\brief Returns a pointer to the internal data array managed by the idArray object.
+
+		This method provides direct access to the underlying data buffer of the idArray. It is typically used when interfacing with functions that expect a raw pointer to an array of elements. The
+	   returned pointer is valid as long as the idArray object itself remains alive and unmodified.
+
+		\return A pointer to the first element of the internal data array.
+	*/
 	T_*		  Ptr() { return ptr; }
 
 private:

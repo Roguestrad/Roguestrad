@@ -669,22 +669,10 @@ bool Swap_IsBigEndian()
 	return *( short* )swaptest != 1;
 }
 
-/*
-========================
-BreakOnListGrowth
-
-debug tool to find uses of idlist that are dynamically growing
-========================
-*/
 void BreakOnListGrowth()
 {
 }
 
-/*
-========================
-BreakOnListDefault
-========================
-*/
 void BreakOnListDefault()
 {
 }

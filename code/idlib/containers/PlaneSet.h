@@ -41,12 +41,26 @@ If you have questions concerning this license or the applicable additional terms
 class idPlaneSet : public idList<idPlane>
 {
 public:
+	//! Clears all elements from the plane list and frees the hash table.
 	void Clear()
 	{
 		idList<idPlane>::Clear();
 		hash.Free();
 	}
 
+	/*!
+		\brief Finds an existing plane in the set or adds a new one, returning its index.
+
+		This function searches for a plane in the set that matches the given plane within the specified normal and distance tolerances. If no match is found, it adds the plane and its opposite to the
+	   set. The function uses a hash table for efficient lookup and handles plane types specially by adding both the plane and its negation to maintain consistency. The normalEps and distEps
+	   parameters control the tolerance for plane comparison, with distEps having an assertion that it must be less than or equal to 0.125f.
+
+		\param plane The plane to find or add to the set
+		\param normalEps Epsilon value for normal vector comparison
+		\param distEps Epsilon value for distance comparison
+		\return The index of the found or newly added plane in the set
+		\throws assertion failure if distEps is greater than 0.125f
+	*/
 	int FindPlane( const idPlane& plane, const float normalEps, const float distEps );
 
 private:

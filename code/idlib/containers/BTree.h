@@ -58,38 +58,236 @@ template<class objType, class keyType, int maxChildrenPerNode>
 class idBTree
 {
 public:
+	/*!
+		\brief Constructs an empty B-tree with the specified template parameters.
+
+		Initializes the B-tree by setting the root node to NULL and ensuring that the maximum number of children per node is at least four.
+
+		\throws Assertion failure if maxChildrenPerNode is less than four.
+	*/
 	idBTree();
+
+	/*!
+		\brief Destroys the binary tree and releases its resources.
+
+		The destructor for the idBTree class cleans up all dynamically allocated memory and releases any resources held by the tree. It calls the Shutdown method to ensure proper cleanup of the tree's
+	   internal structure before the object is destroyed.
+
+	*/
 	~idBTree();
 
+	/*!
+		\brief Initializes the B-tree by allocating and setting the root node
+
+		This function initializes the B-tree data structure by allocating a new node and setting it as the root node. It is typically called during the construction or reset of the B-tree to establish
+	   its initial state. The function assumes that the B-tree is being constructed from scratch and does not perform any cleanup or deallocation of existing nodes.
+
+	*/
 	void						   Init();
+
+	/*!
+		\brief Clears all nodes and resets the root pointer of the B-Tree data structure
+
+		This function deallocates all memory used by the nodes in the B-Tree by calling the allocator's Shutdown method. It also sets the root pointer to NULL, effectively resetting the tree to an
+	   empty state. This is typically called during the shutdown phase of the application to properly clean up the B-Tree data structure.
+
+	*/
 	void						   Shutdown();
 
-	idBTreeNode<objType, keyType>* Add( objType* object, keyType key );			  // add an object to the tree
-	void						   Remove( idBTreeNode<objType, keyType>* node ); // remove an object node from the tree
+	/*!
+		\brief Adds an object to the B-tree with the specified key and returns a pointer to the new node.
 
-	idBTreeNode<objType, keyType>* NodeFind( keyType key ) const;					 // find an object using the given key
-	idBTreeNode<objType, keyType>* NodeFindSmallestLargerEqual( keyType key ) const; // find an object with the smallest key larger equal the given key
-	idBTreeNode<objType, keyType>* NodeFindLargestSmallerEqual( keyType key ) const; // find an object with the largest key smaller equal the given key
+		This function inserts a new object into the B-tree data structure. The object is associated with a key, and the tree is maintained in a balanced manner. If the root node is empty, it allocates
+	   a new node and sets it as the root. The function handles splitting nodes when they exceed the maximum number of children allowed per node. It traverses the tree to find the appropriate location
+	   for the new object based on the key value, ensuring the tree structure remains valid.
 
-	objType*					   Find( keyType key ) const;					 // find an object using the given key
-	objType*					   FindSmallestLargerEqual( keyType key ) const; // find an object with the smallest key larger equal the given key
-	objType*					   FindLargestSmallerEqual( keyType key ) const; // find an object with the largest key smaller equal the given key
+		\param object Pointer to the object to be added to the tree
+		\param key Key value used to determine the position of the object in the tree
+		\return Pointer to the newly created node in the B-tree that contains the added object
+	*/
+	idBTreeNode<objType, keyType>* Add( objType* object, keyType key );
 
-	idBTreeNode<objType, keyType>* GetRoot() const;											 // returns the root node of the tree
-	int							   GetNodeCount() const;									 // returns the total number of nodes in the tree
-	idBTreeNode<objType, keyType>* GetNext( idBTreeNode<objType, keyType>* node ) const;	 // goes through all nodes of the tree
-	idBTreeNode<objType, keyType>* GetNextLeaf( idBTreeNode<objType, keyType>* node ) const; // goes through all leaf nodes of the tree
+	/*!
+		\brief Removes a node from the B-tree structure and maintains tree properties.
+
+		This function removes a specified node from the B-tree by unlinking it from its parent and adjusting the parent's child links. It then handles the reorganization of parent nodes to ensure that
+	   no parent has fewer than two children, merging nodes when necessary. The function also updates the key values of parent nodes to ensure they remain consistent with their children. After
+	   removing the node, it frees the memory allocated for the node. If the root node ends up with only one internal child, the function promotes that child to become the new root.
+
+		\param node Pointer to the node to be removed from the tree
+		\throws assertion failure if the node's object pointer is null
+	*/
+	void						   Remove( idBTreeNode<objType, keyType>* node );
+
+	/*!
+		\brief Finds a node in the B-tree with a key greater than or equal to the specified key
+
+		This function searches the B-tree structure to locate a node with the smallest key that is greater than or equal to the given key value. It traverses the tree starting from the root node and
+	   follows the child pointers until it finds a suitable node. If the tree is empty, it returns NULL. The function ensures that the found node either has a key exactly equal to the given key or a
+	   key that is greater than the given key. If no such node can be found, it returns NULL
+
+		\param key The key value to search for in the B-tree
+		\return A pointer to the B-tree node with the smallest key greater than or equal to the given key, or NULL if no such node exists
+	*/
+	idBTreeNode<objType, keyType>* NodeFind( keyType key ) const;
+
+	/*!
+		\brief Finds the node with the smallest key that is greater than or equal to the given key.
+
+		This function searches through the B-tree structure to locate the node with the smallest key that is greater than or equal to the specified key value. It starts from the root node and
+	   traverses down the tree until it finds a suitable node. If the tree is empty, it returns NULL. The function ensures that the found node either has a key exactly equal to the given key or a key
+	   that is greater than the given key. If no such node can be found, it returns NULL.
+
+		\param key The key value to search for in the B-tree
+		\return A pointer to the B-tree node with the smallest key greater than or equal to the given key, or NULL if no such node exists
+	*/
+	idBTreeNode<objType, keyType>* NodeFindSmallestLargerEqual( keyType key ) const;
+
+	/*!
+		\brief Finds the node with the largest key less than or equal to the given key in the B-tree.
+
+		This function traverses the B-tree to locate the node with the largest key that is less than or equal to the specified key value. It starts from the root node and navigates through the tree
+	   structure, examining each node's key values. If no such node exists, it returns NULL. The function handles edge cases such as an empty tree or when no suitable node is found.
+
+		\param key The key value to search for in the B-tree
+		\return A pointer to the B-tree node with the largest key less than or equal to the given key, or NULL if no such node exists
+	*/
+	idBTreeNode<objType, keyType>* NodeFindLargestSmallerEqual( keyType key ) const;
+
+	/*!
+		\brief Finds and returns an object in the B-tree using the specified key
+
+		This function searches for an object in the B-tree data structure using the provided key. It first locates the appropriate node using the NodeFind method, and then returns the object stored in
+	   that node. If no node is found for the given key, the function returns NULL
+
+		\param key The key value used to search for the object in the B-tree
+		\return A pointer to the found object, or NULL if no object with the specified key exists in the B-tree
+	*/
+	objType*					   Find( keyType key ) const;
+
+	/*!
+		\brief Finds the object with the smallest key that is greater than or equal to the given key.
+
+		This function searches through the b-tree structure to locate the object whose key is the smallest among all keys that are greater than or equal to the specified key. If no such object exists,
+	   it returns NULL.
+
+		\param key The key to compare against for finding the smallest larger or equal key.
+		\return A pointer to the object with the smallest key greater than or equal to the specified key, or NULL if no such object exists.
+	*/
+	objType*					   FindSmallestLargerEqual( keyType key ) const;
+
+	/*!
+		\brief Finds an object with the largest key smaller than or equal to the given key
+
+		This function searches the B-tree structure to locate an object whose key is the largest value that is less than or equal to the specified key. It returns a pointer to the object if found, or
+	   NULL if no such object exists in the tree
+
+		\param key The key value to search for in the B-tree
+		\return A pointer to the object with the largest key smaller than or equal to the given key, or NULL if no such object exists
+	*/
+	objType*					   FindLargestSmallerEqual( keyType key ) const;
+
+	//! Returns the root node of the tree.
+	idBTreeNode<objType, keyType>* GetRoot() const;
+
+	//! Returns the total number of nodes in the tree.
+	int							   GetNodeCount() const;
+
+	/*!
+		\brief Returns the next node in the tree traversal order starting from the given node
+
+		This function performs a tree traversal by returning the next node in the natural order of the tree structure. If the given node has a first child, it returns that child. Otherwise, it
+	   traverses up the tree to find the next sibling or parent node that has a next sibling, returning that node. This approach allows for visiting all nodes in the tree in a depth-first manner.
+
+		\param node The current node in the tree traversal
+		\return The next node in the tree traversal sequence, or NULL if there are no more nodes
+	*/
+	idBTreeNode<objType, keyType>* GetNext( idBTreeNode<objType, keyType>* node ) const;
+
+	/*!
+		\brief Returns the next leaf node in the tree traversal order following the given leaf node.
+
+		This function traverses the tree structure to find the next leaf node in a specific order. It first checks if the given node has any children. If it does, it moves down to the leftmost child.
+	   If the node has no children, it backtracks up the tree until it finds a node with a next sibling, then moves to that sibling and continues down to the leftmost child of the sibling. If no such
+	   node exists, it returns NULL.
+
+		\param node The starting leaf node from which the next leaf node is to be found
+		\return A pointer to the next leaf node in the tree, or NULL if there are no more leaf nodes.
+	*/
+	idBTreeNode<objType, keyType>* GetNextLeaf( idBTreeNode<objType, keyType>* node ) const;
 
 private:
 	idBTreeNode<objType, keyType>*					 root;
 	idBlockAlloc<idBTreeNode<objType, keyType>, 128> nodeAllocator;
 
+	/*!
+		\brief Allocates and initializes a new B-tree node from the node allocator.
+
+		This function allocates a new B-tree node using the internal node allocator and initializes all its member variables to their default values. The allocated node is initialized with null
+	   parent, no children, no associated object, and zero child count. This function is typically used when constructing the collision model data structure during file loading or parsing operations.
+
+		\return A pointer to the newly allocated and initialized B-tree node.
+	*/
 	idBTreeNode<objType, keyType>*					 AllocNode();
+
+	/*!
+		\brief Frees the memory allocated for a B-tree node using the node allocator
+
+		This function releases the memory occupied by a B-tree node back to the allocator pool. It is used internally by the B-tree implementation to manage memory for nodes that are no longer needed.
+	   The function takes a pointer to the node to be freed and uses the nodeAllocator to return the memory to the system
+
+		\param node Pointer to the B-tree node to be freed
+	*/
 	void											 FreeNode( idBTreeNode<objType, keyType>* node );
+
+	/*!
+		\brief Splits a B-tree node into two nodes when the node exceeds the maximum number of children
+
+		This function splits a B-tree node when it exceeds the maximum number of children allowed per node. It creates a new node and redistributes the children between the original node and the new
+	   node. The split occurs at the middle of the children, with the new node containing the second half of the children. The function properly updates parent pointers and sibling links to maintain
+	   the B-tree structure. The parent node's child count is incremented to account for the new child node.
+
+		\param node The node to be split, which must be full and exceed the maximum number of children allowed
+		\throws assertion failure if the parent node exceeds the maximum number of children allowed
+	*/
 	void											 SplitNode( idBTreeNode<objType, keyType>* node );
+
+	/*!
+		\brief Merges two b-tree nodes by combining their children and updating parent references
+
+		This function merges two consecutive sibling nodes in a b-tree structure. It takes two nodes that are adjacent siblings with no objects and at least one child each. The function transfers all
+	   children from the first node to the second node, updates all parent pointers of the children, and maintains the correct tree structure by removing the first node from the parent's child list.
+	   The merged node is returned, while the first node is freed.
+
+		\param node1 First b-tree node to be merged, must be adjacent to node2
+		\param node2 Second b-tree node to be merged, will contain the merged children
+		\return The merged b-tree node that contains all children from both input nodes
+		\throws assertion failure if node1 and node2 do not have the same parent, are not adjacent siblings, or have objects
+	*/
 	idBTreeNode<objType, keyType>*					 MergeNodes( idBTreeNode<objType, keyType>* node1, idBTreeNode<objType, keyType>* node2 );
 
+	/*!
+		\brief Validates the structure and properties of a B-tree node and its descendants
+
+		This function recursively checks the integrity of a B-tree structure starting from a given node. It ensures that each node adheres to the B-tree properties, including the correct number of
+	   children, proper linking between nodes, and key ordering. The function increments a node counter for each node processed and performs multiple assertions to validate the tree's structure. The
+	   root node or leaf nodes may have zero children, while internal nodes must have between 2 and maxChildrenPerNode children. Keys within nodes must be properly ordered relative to their children.
+
+		\param node Pointer to the B-tree node to validate
+		\param numNodes Reference to an integer that gets incremented for each node processed
+		\throws Assertion failures if the B-tree structure violates any of the expected properties
+	*/
 	void											 CheckTree_r( idBTreeNode<objType, keyType>* node, int& numNodes ) const;
+
+	/*!
+		\brief Validates the integrity of the B-tree structure by checking node counts and leaf ordering
+
+		This function performs a comprehensive check of the B-tree data structure to ensure its integrity. It first counts all nodes in the tree and compares this count with the number of allocated
+	   nodes to verify no memory leaks or double-free errors occurred. Then it traverses all leaf nodes in order and verifies that their keys are properly sorted in ascending order. The function is
+	   designed to be called in debug builds to catch structural inconsistencies in the tree.
+
+		\throws assertion failure if the tree structure is invalid or if node counts don't match expected values
+	*/
 	void											 CheckTree() const;
 };
 

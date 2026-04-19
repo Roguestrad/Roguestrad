@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 int	 idHashIndex::INVALID_INDEX[1] = { -1 };
 
-/*
-================
-idHashIndex::Init
-================
-*/
 void idHashIndex::Init( const int initialHashSize, const int initialIndexSize )
 {
 	assert( idMath::IsPowerOfTwo( initialHashSize ) );
@@ -50,11 +45,6 @@ void idHashIndex::Init( const int initialHashSize, const int initialIndexSize )
 	lookupMask	= 0;
 }
 
-/*
-================
-idHashIndex::Allocate
-================
-*/
 void idHashIndex::Allocate( const int newHashSize, const int newIndexSize )
 {
 	assert( idMath::IsPowerOfTwo( newHashSize ) );
@@ -70,11 +60,6 @@ void idHashIndex::Allocate( const int newHashSize, const int newIndexSize )
 	lookupMask = -1;
 }
 
-/*
-================
-idHashIndex::Free
-================
-*/
 void idHashIndex::Free()
 {
 	if( hash != INVALID_INDEX ) {
@@ -88,11 +73,6 @@ void idHashIndex::Free()
 	lookupMask = 0;
 }
 
-/*
-================
-idHashIndex::ResizeIndex
-================
-*/
 void idHashIndex::ResizeIndex( const int newIndexSize )
 {
 	int *oldIndexChain, mod, newSize;
@@ -121,11 +101,6 @@ void idHashIndex::ResizeIndex( const int newIndexSize )
 	indexSize = newSize;
 }
 
-/*
-================
-idHashIndex::GetSpread
-================
-*/
 int idHashIndex::GetSpread() const
 {
 	int i, index, totalItems, *numHashItems, average, error, e;

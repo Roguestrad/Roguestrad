@@ -40,12 +40,16 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
-/*
-====================
-idBinSearch_GreaterEqual
+/*!
+	\brief Finds the index of the last element in the array that is smaller than the specified value using binary search.
 
-	Finds the last array element which is smaller than the given value.
-====================
+	This function performs a binary search on a sorted array to locate the position of the largest element that is strictly less than the given value. It returns the index of that element. If all
+   elements in the array are greater than or equal to the value, it returns -1. The function assumes the input array is sorted in ascending order.
+
+	\param array Pointer to the sorted array of elements to search through
+	\param arraySize Number of elements in the array
+	\param value The value to compare against the array elements
+	\return The index of the last element in the array that is smaller than the specified value, or -1 if no such element exists
 */
 template<class type>
 ID_INLINE int idBinSearch_Less( const type* array, const int arraySize, const type& value )
@@ -61,12 +65,16 @@ ID_INLINE int idBinSearch_Less( const type* array, const int arraySize, const ty
 	return offset;
 }
 
-/*
-====================
-idBinSearch_GreaterEqual
+/*!
+	\brief Finds the index of the last array element that is less than or equal to the specified value using binary search.
 
-	Finds the last array element which is smaller than or equal to the given value.
-====================
+	This function performs a binary search on a sorted array to locate the last element that is less than or equal to the given value. It returns the index of that element. If all elements in the
+   array are greater than the value, it returns -1. The function assumes the input array is sorted in ascending order.
+
+	\param array Pointer to the sorted array to search
+	\param arraySize Number of elements in the array
+	\param value The value to compare against elements in the array
+	\return The index of the last element in the array that is less than or equal to the specified value, or -1 if no such element exists
 */
 template<class type>
 ID_INLINE int idBinSearch_LessEqual( const type* array, const int arraySize, const type& value )
@@ -82,12 +90,17 @@ ID_INLINE int idBinSearch_LessEqual( const type* array, const int arraySize, con
 	return offset;
 }
 
-/*
-====================
-idBinSearch_Greater
+/*!
+	\brief Finds the first array element which is greater than the given value using binary search.
 
-	Finds the first array element which is greater than the given value.
-====================
+	This function performs a binary search on a sorted array to locate the first element that is greater than the specified value. It returns the index of that element. The function assumes the input
+   array is sorted in ascending order. If all elements in the array are less than or equal to the value, it returns the size of the array. The implementation uses a while loop to iteratively narrow
+   down the search space by halving the remaining elements until the correct position is found.
+
+	\param array Pointer to the sorted array of elements to search through
+	\param arraySize Number of elements in the array
+	\param value The value to compare against elements in the array
+	\return The index of the first array element that is greater than the given value, or the array size if no such element exists
 */
 template<class type>
 ID_INLINE int idBinSearch_Greater( const type* array, const int arraySize, const type& value )
@@ -109,12 +122,16 @@ ID_INLINE int idBinSearch_Greater( const type* array, const int arraySize, const
 	return offset + res;
 }
 
-/*
-====================
-idBinSearch_GreaterEqual
+/*!
+	\brief Finds the first array element which is greater than or equal to the given value using binary search.
 
-	Finds the first array element which is greater than or equal to the given value.
-====================
+	This function performs a binary search on a sorted array to locate the first element that is greater than or equal to the specified value. It returns the index of that element. The function
+   assumes the input array is sorted in ascending order. If all elements in the array are less than the specified value, the function returns the size of the array.
+
+	\param array Pointer to the sorted array of elements to search through
+	\param arraySize The number of elements in the array
+	\param value The value to find the first greater than or equal element for
+	\return The index of the first array element that is greater than or equal to the given value
 */
 template<class type>
 ID_INLINE int idBinSearch_GreaterEqual( const type* array, const int arraySize, const type& value )

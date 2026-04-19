@@ -42,23 +42,102 @@ template<class type>
 class idHierarchy
 {
 public:
+	/*!
+		\brief Initializes a new instance of the idHierarchy class with all pointers set to null.
+
+		The constructor initializes all member pointers of the idHierarchy class to NULL. This sets up the hierarchy node with no owner, parent, sibling, or child relationships. The node is
+	   effectively initialized as a standalone element in a hierarchical structure.
+
+	*/
 	idHierarchy();
+
+	/*!
+		\brief Destroys the hierarchy node and removes it from the hierarchy.
+
+		The destructor for the idHierarchy template class cleans up the hierarchy node by removing it from the hierarchy structure. This ensures proper cleanup of resources and prevents dangling
+	   references within the hierarchy.
+
+	*/
 	~idHierarchy();
 
+	/*!
+		\brief Sets the owner object for this hierarchy node.
+
+		This function assigns the provided object as the owner of the hierarchy node. The owner is typically used to reference the parent or container object that manages this node.
+
+		\param object The object to be set as the owner of this hierarchy node
+	*/
 	void  SetOwner( type* object );
+
+	//! Returns the owner of the hierarchy.
 	type* Owner() const;
+
+	/*!
+		\brief Moves this node to become a child of the specified node.
+
+		This function reparents the current node to become a child of the given node. It first removes the current node from its existing parent, then updates the parent and sibling pointers to
+	   reflect the new hierarchical relationship. The node becomes the first child of the target node, pushing any existing children down the sibling chain.
+
+		\param node The target node to become the parent of this node
+	*/
 	void  ParentTo( idHierarchy& node );
+
+	/*!
+		\brief Moves this node to be a sibling after the specified node in the hierarchy.
+
+		This function reorganizes the hierarchy by removing this node from its current parent and placing it as a sibling immediately after the given node. The node's parent is set to match the given
+	   node's parent, and the sibling links are updated to maintain the correct order within the hierarchy.
+
+		\param node The node after which this node should be placed as a sibling
+	*/
 	void  MakeSiblingAfter( idHierarchy& node );
+
+	/*!
+		\brief Checks if the current node is a child of the specified node in the hierarchy
+
+		This function recursively traverses the hierarchy up from the current node to determine if the given node is its parent. It returns true if the specified node is directly or indirectly the
+	   parent of the current node, and false otherwise. The function handles the case where the current node has no parent by returning false.
+
+		\param node The node to check as a parent
+		\return True if the specified node is a parent of the current node, false otherwise
+	*/
 	bool  ParentedBy( const idHierarchy& node ) const;
+
+	/*!
+		\brief Removes this node from its parent hierarchy and adjusts child links accordingly.
+
+		This function detaches the current node from its parent by updating the sibling links of the previous sibling or the parent's child pointer. It then sets the parent and sibling pointers of the
+	   current node to NULL, effectively removing it from the hierarchy. The function does not reattach children to the parent, as indicated by the implementation.
+
+	*/
 	void  RemoveFromParent();
+
+	/*!
+		\brief Removes this node from the hierarchy and reattaches its children to the parent node if one exists.
+
+		This function first removes the current node from its parent by calling RemoveFromParent. If the node has a parent, it then iterates through all child nodes, removes each one from its parent,
+	   and reattaches them to the original parent node. If the node does not have a parent, it simply removes all child nodes from the hierarchy without reattaching them.
+
+	*/
 	void  RemoveFromHierarchy();
 
-	type* GetParent() const;	   // parent of this node
-	type* GetChild() const;		   // first child of this node
-	type* GetSibling() const;	   // next node with the same parent
-	type* GetPriorSibling() const; // previous node with the same parent
-	type* GetNext() const;		   // goes through all nodes of the hierarchy
-	type* GetNextLeaf() const;	   // goes through all leaf nodes of the hierarchy
+	//! Returns the parent node of this hierarchy node.
+	type* GetParent() const;
+
+	//! Returns the first child node of this hierarchy node.
+	type* GetChild() const;
+
+	//! Returns the sibling node in the hierarchy with the same parent
+	type* GetSibling() const;
+
+	//! Returns the prior sibling node in the hierarchy.
+	type* GetPriorSibling() const;
+
+	//! Returns the next node in the hierarchy traversal order
+	type* GetNext() const;
+
+	//! Returns the next leaf node in the hierarchy traversal.
+	type* GetNextLeaf() const;
 
 private:
 	idHierarchy*	   parent;
@@ -66,14 +145,10 @@ private:
 	idHierarchy*	   child;
 	type*			   owner;
 
-	idHierarchy<type>* GetPriorSiblingNode() const; // previous node with the same parent
+	//! Returns the previous sibling node with the same parent, or NULL if this node is the first child.
+	idHierarchy<type>* GetPriorSiblingNode() const;
 };
 
-/*
-================
-idHierarchy<type>::idHierarchy
-================
-*/
 template<class type>
 idHierarchy<type>::idHierarchy()
 {
@@ -83,48 +158,24 @@ idHierarchy<type>::idHierarchy()
 	child	= NULL;
 }
 
-/*
-================
-idHierarchy<type>::~idHierarchy
-================
-*/
 template<class type>
 idHierarchy<type>::~idHierarchy()
 {
 	RemoveFromHierarchy();
 }
 
-/*
-================
-idHierarchy<type>::Owner
-
-Gets the object that is associated with this node.
-================
-*/
 template<class type>
 type* idHierarchy<type>::Owner() const
 {
 	return owner;
 }
 
-/*
-================
-idHierarchy<type>::SetOwner
-
-Sets the object that this node is associated with.
-================
-*/
 template<class type>
 void idHierarchy<type>::SetOwner( type* object )
 {
 	owner = object;
 }
 
-/*
-================
-idHierarchy<type>::ParentedBy
-================
-*/
 template<class type>
 bool idHierarchy<type>::ParentedBy( const idHierarchy& node ) const
 {
@@ -136,13 +187,6 @@ bool idHierarchy<type>::ParentedBy( const idHierarchy& node ) const
 	return false;
 }
 
-/*
-================
-idHierarchy<type>::ParentTo
-
-Makes the given node the parent.
-================
-*/
 template<class type>
 void idHierarchy<type>::ParentTo( idHierarchy& node )
 {
@@ -153,13 +197,6 @@ void idHierarchy<type>::ParentTo( idHierarchy& node )
 	node.child = this;
 }
 
-/*
-================
-idHierarchy<type>::MakeSiblingAfter
-
-Makes the given node a sibling after the passed in node.
-================
-*/
 template<class type>
 void idHierarchy<type>::MakeSiblingAfter( idHierarchy& node )
 {
@@ -169,11 +206,6 @@ void idHierarchy<type>::MakeSiblingAfter( idHierarchy& node )
 	node.sibling = this;
 }
 
-/*
-================
-idHierarchy<type>::RemoveFromParent
-================
-*/
 template<class type>
 void idHierarchy<type>::RemoveFromParent()
 {
@@ -192,13 +224,6 @@ void idHierarchy<type>::RemoveFromParent()
 	sibling = NULL;
 }
 
-/*
-================
-idHierarchy<type>::RemoveFromHierarchy
-
-Removes the node from the hierarchy and adds it's children to the parent.
-================
-*/
 template<class type>
 void idHierarchy<type>::RemoveFromHierarchy()
 {
@@ -221,11 +246,6 @@ void idHierarchy<type>::RemoveFromHierarchy()
 	}
 }
 
-/*
-================
-idHierarchy<type>::GetParent
-================
-*/
 template<class type>
 type* idHierarchy<type>::GetParent() const
 {
@@ -233,11 +253,6 @@ type* idHierarchy<type>::GetParent() const
 	return NULL;
 }
 
-/*
-================
-idHierarchy<type>::GetChild
-================
-*/
 template<class type>
 type* idHierarchy<type>::GetChild() const
 {
@@ -245,11 +260,6 @@ type* idHierarchy<type>::GetChild() const
 	return NULL;
 }
 
-/*
-================
-idHierarchy<type>::GetSibling
-================
-*/
 template<class type>
 type* idHierarchy<type>::GetSibling() const
 {
@@ -257,13 +267,6 @@ type* idHierarchy<type>::GetSibling() const
 	return NULL;
 }
 
-/*
-================
-idHierarchy<type>::GetPriorSiblingNode
-
-Returns NULL if no parent, or if it is the first child.
-================
-*/
 template<class type>
 idHierarchy<type>* idHierarchy<type>::GetPriorSiblingNode() const
 {
@@ -302,13 +305,6 @@ type* idHierarchy<type>::GetPriorSibling() const
 	return NULL;
 }
 
-/*
-================
-idHierarchy<type>::GetNext
-
-Goes through all nodes of the hierarchy.
-================
-*/
 template<class type>
 type* idHierarchy<type>::GetNext() const
 {
@@ -329,13 +325,6 @@ type* idHierarchy<type>::GetNext() const
 	}
 }
 
-/*
-================
-idHierarchy<type>::GetNextLeaf
-
-Goes through all leaf nodes of the hierarchy.
-================
-*/
 template<class type>
 type* idHierarchy<type>::GetNextLeaf() const
 {

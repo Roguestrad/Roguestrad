@@ -40,9 +40,32 @@ template<class type, int nextOffset>
 class idQueueTemplate
 {
 public:
+	/*!
+		\brief Initializes an empty queue template instance.
+
+		This constructor initializes the queue by setting both the first and last pointers to NULL, effectively creating an empty queue structure.
+
+	*/
 	idQueueTemplate();
 
+	/*!
+		\brief Adds an element to the end of the queue.
+
+		This function appends a new element to the end of the queue structure. It sets the next pointer of the new element to NULL, and updates the links in the queue so that the new element becomes
+	   the new last element. If the queue was empty, the new element becomes both the first and last element. The function uses a macro QUEUE_NEXT_PTR to access the next pointer field of the element.
+
+		\param element Pointer to the element to be added to the queue
+	*/
 	void  Add( type* element );
+
+	/*!
+		\brief Retrieves and removes the first element from the queue template
+
+		This function retrieves the first element from a queue template data structure and removes it from the queue. It returns a pointer to the retrieved element or NULL if the queue is empty. The
+	   function updates the internal pointers to maintain the queue structure after removal
+
+		\return A pointer to the first element in the queue, or NULL if the queue is empty
+	*/
 	type* Get();
 
 private:
@@ -93,9 +116,26 @@ template<typename type>
 class idQueueNode
 {
 public:
+	/*!
+		\brief Initializes a new instance of idQueueNode by setting the next pointer to NULL.
+
+		This constructor initializes a new node in a queue data structure. It sets the next pointer to NULL, indicating that this node does not point to any subsequent node in the queue. This is a
+	   fundamental part of queue node initialization, ensuring that newly created nodes start in a consistent state.
+
+	*/
 	idQueueNode() { next = NULL; }
 
+	//! Returns the next node in the queue.
 	type* GetNext() const { return next; }
+
+	/*!
+		\brief Sets the next node in the queue to the specified node.
+
+		This function updates the next pointer of the current queue node to point to the provided node. It is typically used to link nodes together in a queue data structure. The function performs a
+	   simple assignment operation and does not perform any validation on the input pointer.
+
+		\param next Pointer to the node that should follow this node in the queue
+	*/
 	void  SetNext( type* next ) { this->next = next; }
 
 private:
@@ -112,13 +152,54 @@ template<typename type, idQueueNode<type> type::*nodePtr>
 class idQueue
 {
 public:
+	/*!
+		\brief Initializes an empty queue with null first and last pointers.
+
+		This constructor initializes the queue by setting both the first and last pointers to NULL, indicating that the queue is empty and contains no elements.
+
+	*/
 	idQueue();
 
+	/*!
+		\brief Adds an element to the end of the queue
+
+		This function appends a new element to the end of the queue data structure. It sets the next pointer of the new element to NULL, and updates the queue's last pointer to reference the new
+	   element. If the queue was empty, it also updates the first pointer to point to the new element
+
+		\param element Pointer to the element to be added to the queue
+	*/
 	void		Add( type* element );
+
+	/*!
+		\brief Removes and returns the first element from the queue
+
+		This function removes the first element from the queue and returns a pointer to it. If the queue is empty, it returns NULL. The function updates the internal pointers to maintain the queue
+	   structure after removal
+
+		\return Pointer to the removed element, or NULL if the queue was empty
+	*/
 	type*		RemoveFirst();
+
+	//! Returns a pointer to the first element in the queue without removing it.
 	type*		Peek() const;
+
+	/*!
+		\brief Checks whether the queue is empty by verifying if the first element pointer is null
+
+		This function determines if the queue contains no elements by checking if the first node pointer is null. It is commonly used in rendering systems to verify if interaction queues are empty
+	   before processing
+
+		\return True if the queue is empty, false otherwise
+	*/
 	bool		IsEmpty();
 
+	/*!
+		\brief Tests the functionality of the idQueue class with a sample type and operation
+
+		This function demonstrates the basic usage of the idQueue template class by creating a simple test case. It defines a test class idMyType that contains a queue node, creates a queue of this
+	   type, adds an element to the queue, removes it, and deletes it. This test ensures that the queue operations work correctly with the specified node pointer template parameter
+
+	*/
 	static void Test();
 
 private:
@@ -126,22 +207,12 @@ private:
 	type* last;
 };
 
-/*
-========================
-idQueue<type,nodePtr>::idQueue
-========================
-*/
 template<typename type, idQueueNode<type> type::*nodePtr>
 idQueue<type, nodePtr>::idQueue()
 {
 	first = last = NULL;
 }
 
-/*
-========================
-idQueue<type,nodePtr>::Add
-========================
-*/
 template<typename type, idQueueNode<type> type::*nodePtr>
 void idQueue<type, nodePtr>::Add( type* element )
 {
@@ -154,11 +225,6 @@ void idQueue<type, nodePtr>::Add( type* element )
 	last = element;
 }
 
-/*
-========================
-idQueue<type,nodePtr>::RemoveFirst
-========================
-*/
 template<typename type, idQueueNode<type> type::*nodePtr>
 type* idQueue<type, nodePtr>::RemoveFirst()
 {
@@ -173,33 +239,18 @@ type* idQueue<type, nodePtr>::RemoveFirst()
 	return element;
 }
 
-/*
-========================
-idQueue<type,nodePtr>::Peek
-========================
-*/
 template<typename type, idQueueNode<type> type::*nodePtr>
 type* idQueue<type, nodePtr>::Peek() const
 {
 	return first;
 }
 
-/*
-========================
-idQueue<type,nodePtr>::IsEmpty
-========================
-*/
 template<typename type, idQueueNode<type> type::*nodePtr>
 bool idQueue<type, nodePtr>::IsEmpty()
 {
 	return ( first == NULL );
 }
 
-/*
-========================
-idQueue<type,nodePtr>::Test
-========================
-*/
 template<typename type, idQueueNode<type> type::*nodePtr>
 void idQueue<type, nodePtr>::Test()
 {

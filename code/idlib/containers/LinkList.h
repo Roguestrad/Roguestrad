@@ -44,29 +44,148 @@ template<class type>
 class idLinkList
 {
 public:
+	/*!
+		\brief Initializes a new instance of the idLinkList class with default values.
+
+		The constructor sets the owner pointer to NULL and initializes the head, next, and prev pointers to point to the object itself, effectively creating an empty circular doubly-linked list.
+
+	*/
 	idLinkList();
+
+	/*!
+		\brief Destructor for the idLinkList class that clears all elements from the list.
+
+		The destructor for idLinkList calls the Clear method to ensure all elements in the list are properly removed and cleaned up. This ensures that any resources associated with the elements are
+	   released when the list goes out of scope.
+
+	*/
 	~idLinkList();
 
+	//! Checks whether the linked list is empty.
 	bool		IsListEmpty() const;
+
+	/*!
+		\brief Checks if the list is in a valid state by verifying that the head pointer does not point to itself.
+
+		This function is used to determine whether the linked list is properly initialized and not in a corrupted state. It returns true if the list is valid, indicated by the head pointer not
+	   pointing to the list object itself. This is a common idiom for detecting invalid or empty lists in doubly-linked list implementations.
+
+		\return True if the list is valid and the head pointer points to a different object, false otherwise.
+	*/
 	bool		InList() const;
+
+	//! Returns the total number of elements contained in the linked list.
 	int			Num() const;
+
+	//! Clears all elements from the linked list
 	void		Clear();
 
+	/*!
+		\brief Inserts this node before the specified node in the linked list.
+
+		This function removes the current node from its existing position in the linked list and inserts it before the given node. It updates all necessary pointers to maintain the integrity of the
+	   linked list structure. The operation involves setting the next pointer of the current node to point to the specified node, updating the previous pointer of the specified node to point to the
+	   current node, and adjusting the previous pointer of the node that was previously before the specified node to point to the current node.
+
+		\param node The node before which this node will be inserted
+	*/
 	void		InsertBefore( idLinkList& node );
+
+	/*!
+		\brief Inserts this node into the linked list after the specified node.
+
+		This function removes the current node from its existing position in the linked list and inserts it immediately after the provided node. The operation maintains the integrity of the linked
+	   list structure by properly updating the previous and next pointers of the surrounding nodes. The head pointer of the current node is set to match the head pointer of the specified node,
+	   ensuring proper list traversal.
+
+		\param node The node after which this node will be inserted
+	*/
 	void		InsertAfter( idLinkList& node );
+
+	/*!
+		\brief Adds all elements from another linked list to the end of this list.
+
+		This function transfers all elements from the specified linked list to the end of the current list. The elements are inserted in the same order as they appear in the source list. The source
+	   list becomes empty after this operation.
+
+		\param node The linked list whose elements will be added to the end of this list
+	*/
 	void		AddToEnd( idLinkList& node );
+
+	/*!
+		\brief Adds the specified node to the front of the list.
+
+		This function inserts the given node at the beginning of the linked list by calling InsertAfter with the head node. The node being added becomes the new first element in the list.
+
+		\param node The node to add to the front of the list
+	*/
 	void		AddToFront( idLinkList& node );
 
+	/*!
+		\brief Removes the current node from the linked list by updating the links of adjacent nodes
+
+		This function removes the current node from a doubly-linked list structure by adjusting the next and previous pointers of the neighboring nodes. It also resets the current node's own next and
+	   previous pointers to point to itself, and updates the list head pointer to reference the current node. This operation effectively detaches the node from the list while maintaining the integrity
+	   of the remaining structure. The function is typically used during iteration or when cleaning up nodes in a list.
+
+	*/
 	void		Remove();
 
+	/*!
+		\brief Returns the next element in the linked list or NULL if at the end
+
+		This method is used to iterate through a linked list structure. It checks if the next pointer is valid and not pointing back to the head of the list, which would indicate the end of the list.
+	   If the conditions are met, it returns the owner of the next node, otherwise it returns NULL. This is commonly used in hash table implementations where linked lists are used to handle
+	   collisions.
+
+		\return A pointer to the next element in the list, or NULL if there are no more elements
+	*/
 	type*		Next() const;
+
+	/*!
+		\brief Returns the previous element in the linked list or NULL if there is no previous element.
+
+		This function retrieves the previous element in the linked list structure. It checks if the current previous pointer is valid and not equal to the head of the list. If these conditions are not
+	   met, it returns NULL. Otherwise, it returns the owner of the previous node.
+
+		\return A pointer to the previous element in the list, or NULL if there is no previous element.
+	*/
 	type*		Prev() const;
 
+	//! Returns the owner object of the link list.
 	type*		Owner() const;
+
+	/*!
+		\brief Sets the owner object for this link list.
+
+		This function assigns the provided object as the owner of the link list. The owner is typically used to track which entity or object owns this list, and is often used for memory management or
+	   tracking purposes.
+
+		\param object The object to set as the owner of the link list.
+	*/
 	void		SetOwner( type* object );
 
+	//! Returns a pointer to the head of the link list.
 	idLinkList* ListHead() const;
+
+	/*!
+		\brief Returns the next node in the linked list or NULL if the end has been reached.
+
+		This function traverses the linked list by returning the next node in the sequence. It checks if the current node's next pointer points to the head of the list, which indicates the end of the
+	   list. In such case, it returns NULL. Otherwise, it returns the next node in the list.
+
+		\return A pointer to the next node in the linked list, or NULL if the end of the list has been reached
+	*/
 	idLinkList* NextNode() const;
+
+	/*!
+		\brief Returns the previous node in the linked list or NULL if at the head.
+
+		This method retrieves the previous node in the linked list structure. It checks if the current node is at the head of the list and returns NULL in that case, otherwise it returns the previous
+	   node. The method is const and does not modify the list structure.
+
+		\return The previous node in the linked list or NULL if the current node is at the head
+	*/
 	idLinkList* PrevNode() const;
 
 private:
@@ -76,13 +195,6 @@ private:
 	type*		owner;
 };
 
-/*
-================
-idLinkList<type>::idLinkList
-
-Node is initialized to be the head of an empty list
-================
-*/
 template<class type>
 idLinkList<type>::idLinkList()
 {
@@ -92,53 +204,24 @@ idLinkList<type>::idLinkList()
 	prev  = this;
 }
 
-/*
-================
-idLinkList<type>::~idLinkList
-
-Removes the node from the list, or if it's the head of a list, removes
-all the nodes from the list.
-================
-*/
 template<class type>
 idLinkList<type>::~idLinkList()
 {
 	Clear();
 }
 
-/*
-================
-idLinkList<type>::IsListEmpty
-
-Returns true if the list is empty.
-================
-*/
 template<class type>
 bool idLinkList<type>::IsListEmpty() const
 {
 	return head->next == head;
 }
 
-/*
-================
-idLinkList<type>::InList
-
-Returns true if the node is in a list.  If called on the head of a list, will always return false.
-================
-*/
 template<class type>
 bool idLinkList<type>::InList() const
 {
 	return head != this;
 }
 
-/*
-================
-idLinkList<type>::Num
-
-Returns the number of nodes in the list.
-================
-*/
 template<class type>
 int idLinkList<type>::Num() const
 {
@@ -153,13 +236,6 @@ int idLinkList<type>::Num() const
 	return num;
 }
 
-/*
-================
-idLinkList<type>::Clear
-
-If node is the head of the list, clears the list.  Otherwise it just removes the node from the list.
-================
-*/
 template<class type>
 void idLinkList<type>::Clear()
 {
@@ -172,13 +248,6 @@ void idLinkList<type>::Clear()
 	}
 }
 
-/*
-================
-idLinkList<type>::Remove
-
-Removes node from list
-================
-*/
 template<class type>
 void idLinkList<type>::Remove()
 {
@@ -190,14 +259,6 @@ void idLinkList<type>::Remove()
 	head = this;
 }
 
-/*
-================
-idLinkList<type>::InsertBefore
-
-Places the node before the existing node in the list.  If the existing node is the head,
-then the new node is placed at the end of the list.
-================
-*/
 template<class type>
 void idLinkList<type>::InsertBefore( idLinkList& node )
 {
@@ -210,14 +271,6 @@ void idLinkList<type>::InsertBefore( idLinkList& node )
 	head	   = node.head;
 }
 
-/*
-================
-idLinkList<type>::InsertAfter
-
-Places the node after the existing node in the list.  If the existing node is the head,
-then the new node is placed at the beginning of the list.
-================
-*/
 template<class type>
 void idLinkList<type>::InsertAfter( idLinkList& node )
 {
@@ -230,53 +283,24 @@ void idLinkList<type>::InsertAfter( idLinkList& node )
 	head	   = node.head;
 }
 
-/*
-================
-idLinkList<type>::AddToEnd
-
-Adds node at the end of the list
-================
-*/
 template<class type>
 void idLinkList<type>::AddToEnd( idLinkList& node )
 {
 	InsertBefore( *node.head );
 }
 
-/*
-================
-idLinkList<type>::AddToFront
-
-Adds node at the beginning of the list
-================
-*/
 template<class type>
 void idLinkList<type>::AddToFront( idLinkList& node )
 {
 	InsertAfter( *node.head );
 }
 
-/*
-================
-idLinkList<type>::ListHead
-
-Returns the head of the list.  If the node isn't in a list, it returns
-a pointer to itself.
-================
-*/
 template<class type>
 idLinkList<type>* idLinkList<type>::ListHead() const
 {
 	return head;
 }
 
-/*
-================
-idLinkList<type>::Next
-
-Returns the next object in the list, or NULL if at the end.
-================
-*/
 template<class type>
 type* idLinkList<type>::Next() const
 {
@@ -284,13 +308,6 @@ type* idLinkList<type>::Next() const
 	return next->owner;
 }
 
-/*
-================
-idLinkList<type>::Prev
-
-Returns the previous object in the list, or NULL if at the beginning.
-================
-*/
 template<class type>
 type* idLinkList<type>::Prev() const
 {
@@ -298,13 +315,6 @@ type* idLinkList<type>::Prev() const
 	return prev->owner;
 }
 
-/*
-================
-idLinkList<type>::NextNode
-
-Returns the next node in the list, or NULL if at the end.
-================
-*/
 template<class type>
 idLinkList<type>* idLinkList<type>::NextNode() const
 {
@@ -312,13 +322,6 @@ idLinkList<type>* idLinkList<type>::NextNode() const
 	return next;
 }
 
-/*
-================
-idLinkList<type>::PrevNode
-
-Returns the previous node in the list, or NULL if at the beginning.
-================
-*/
 template<class type>
 idLinkList<type>* idLinkList<type>::PrevNode() const
 {
@@ -326,26 +329,12 @@ idLinkList<type>* idLinkList<type>::PrevNode() const
 	return prev;
 }
 
-/*
-================
-idLinkList<type>::Owner
-
-Gets the object that is associated with this node.
-================
-*/
 template<class type>
 type* idLinkList<type>::Owner() const
 {
 	return owner;
 }
 
-/*
-================
-idLinkList<type>::SetOwner
-
-Sets the object that this node is associated with.
-================
-*/
 template<class type>
 void idLinkList<type>::SetOwner( type* object )
 {

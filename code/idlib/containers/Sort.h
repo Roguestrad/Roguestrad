@@ -88,10 +88,14 @@ this string class to avoid excessive re-allocation and copying of strings.
 ================================================================================================
 */
 
-/*
-========================
-SwapValues
-========================
+/*!
+	\brief Swaps the values of two variables of the same type.
+
+	This function takes two references to variables of the same type and exchanges their values. It uses a temporary variable to perform the swap operation, ensuring that the original values are
+   correctly exchanged between the two parameters.
+
+	\param a Reference to the first variable whose value will be swapped with the second variable.
+	\param b Reference to the second variable whose value will be swapped with the first variable.
 */
 template<typename _type_>
 ID_INLINE void SwapValues( _type_& a, _type_& b )
@@ -125,6 +129,15 @@ template<typename _type_, typename _derived_>
 class idSort_Quick : public idSort<_type_>
 {
 public:
+	/*!
+		\brief Sorts an array of elements using a hybrid quicksort and insertion sort algorithm.
+
+		This function implements a hybrid sorting algorithm that combines quicksort with insertion sort for improved performance. It uses quicksort for larger subarrays and falls back to insertion
+	   sort for smaller ones. The algorithm maintains a stack of subarray indices to avoid recursion, and includes optimizations for handling duplicate elements to prevent worst-case performance.
+
+		\param base Pointer to the first element of the array to be sorted
+		\param num Number of elements in the array to be sorted
+	*/
 	virtual void Sort( _type_* base, unsigned int num ) const
 	{
 		if( num <= 0 ) { return; }
@@ -211,6 +224,17 @@ template<typename _type_>
 class idSort_QuickDefault : public idSort_Quick<_type_, idSort_QuickDefault<_type_>>
 {
 public:
+	/*!
+		\brief Compares two values and returns their difference
+
+		This function performs a simple subtraction operation between two values of the same type. It is typically used as a comparison function for sorting algorithms, where the result indicates the
+	   relative order of the two values. A negative result indicates that the first value is less than the second, zero indicates equality, and a positive result indicates that the first value is
+	   greater than the second.
+
+		\param a First value to compare
+		\param b Second value to compare
+		\return The difference between the two values (a - b)
+	*/
 	int Compare( const _type_& a, const _type_& b ) const { return a - b; }
 };
 
@@ -224,6 +248,17 @@ template<>
 class idSort_QuickDefault<float> : public idSort_Quick<float, idSort_QuickDefault<float>>
 {
 public:
+	/*!
+		\brief Compares two float values and returns an integer indicating their relative order.
+
+		This function performs a standard comparison of two floating-point numbers. It returns -1 if the first number is less than the second, 1 if the first number is greater than the second, and 0
+	   if they are equal. This implementation is used as a comparison function for sorting operations, specifically within the context of the idSort_QuickDefault class template which is typically
+	   employed for quick sorting algorithms.
+
+		\param a First float value to compare
+		\param b Second float value to compare
+		\return -1 if a is less than b, 1 if a is greater than b, 0 if a equals b
+	*/
 	int Compare( const float& a, const float& b ) const
 	{
 		if( a < b ) { return -1; }
@@ -242,6 +277,16 @@ template<typename _type_, typename _derived_>
 class idSort_Heap : public idSort<_type_>
 {
 public:
+	/*!
+		\brief Sorts an array of elements using the heap sort algorithm.
+
+		This function performs an in-place heap sort on the provided array. It first builds a max heap from the input array, then repeatedly extracts the maximum element and re-heapifies the remaining
+	   elements. The sorting is done in ascending order based on the comparison function defined by the derived class. The algorithm has O(n log n) time complexity and sorts the array in-place without
+	   requiring additional memory proportional to the input size.
+
+		\param base Pointer to the array of elements to be sorted
+		\param num Number of elements in the array to be sorted
+	*/
 	virtual void Sort( _type_* base, unsigned int num ) const
 	{
 		// get all elements in heap order
@@ -294,6 +339,17 @@ template<typename _type_>
 class idSort_HeapDefault : public idSort_Heap<_type_, idSort_HeapDefault<_type_>>
 {
 public:
+	/*!
+		\brief Compares two values of type _type_ and returns their difference
+
+		This function performs a simple subtraction operation between two values of the template type _type_. It is typically used as a comparison function in sorting algorithms or heap data
+	   structures where a numeric ordering is required. The function assumes that the type _type_ supports the subtraction operator and returns an integer result indicating the relative ordering of
+	   the two operands.
+
+		\param a First value to compare
+		\param b Second value to compare
+		\return The difference between the two input values a and b
+	*/
 	int Compare( const _type_& a, const _type_& b ) const { return a - b; }
 };
 
@@ -307,6 +363,15 @@ template<typename _type_, typename _derived_>
 class idSort_Insertion : public idSort<_type_>
 {
 public:
+	/*!
+		\brief Sorts an array of elements in descending order using the insertion sort algorithm.
+
+		This function implements the insertion sort algorithm to sort an array of elements in descending order. It iterates through the array, finding the maximum element in the unsorted portion and
+	   swapping it with the last element of the unsorted portion. The process continues until the entire array is sorted. The comparison is performed using a derived class's Compare method.
+
+		\param base Pointer to the beginning of the array to be sorted.
+		\param num The number of elements in the array.
+	*/
 	virtual void Sort( _type_* base, unsigned int num ) const
 	{
 		_type_* lo = base;
@@ -332,6 +397,16 @@ template<typename _type_>
 class idSort_InsertionDefault : public idSort_Insertion<_type_, idSort_InsertionDefault<_type_>>
 {
 public:
+	/*!
+		\brief Compares two values of type _type_ and returns their difference
+
+		This function performs a comparison between two values of the template type _type_ by subtracting the second value from the first. The implementation assumes that the type supports subtraction
+	   and comparison operations. It is typically used as a comparison function for sorting algorithms, particularly in the context of insertion sort.
+
+		\param a First value to compare
+		\param b Second value to compare
+		\return The difference between the two values, which is typically negative if a < b, zero if a == b, and positive if a > b
+	*/
 	int Compare( const _type_& a, const _type_& b ) const { return a - b; }
 };
 

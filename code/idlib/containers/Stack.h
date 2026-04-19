@@ -44,9 +44,33 @@ template<class type, int nextOffset>
 class idStackTemplate
 {
 public:
+	/*!
+		\brief Initializes an empty stack template with both top and bottom pointers set to NULL.
+
+		This constructor initializes the stack by setting both the top and bottom pointers to NULL, indicating that the stack is empty. The template parameters type and nextOffset are used to define
+	   the type of elements stored in the stack and the offset for the next element in the stack structure respectively.
+
+	*/
 	idStackTemplate();
 
+	/*!
+		\brief Adds an element to the top of the stack template
+
+		This function inserts a new element at the top of the stack template structure. It updates the next pointer of the new element to point to the current top of the stack, then updates the top
+	   pointer to reference the new element. If the stack was previously empty, it also sets the bottom pointer to the new element.
+
+		\param element pointer to the element to be added to the stack
+	*/
 	void  Add( type* element );
+
+	/*!
+		\brief Retrieves and removes the top element from the stack template
+
+		This function pops the top element from a stack template data structure and returns a pointer to it. If the stack is empty, it returns NULL. The function updates the stack pointers
+	   appropriately and ensures proper memory management by setting the next pointer of the popped element to NULL
+
+		\return A pointer to the top element of the stack, or NULL if the stack is empty
+	*/
 	type* Get();
 
 private:

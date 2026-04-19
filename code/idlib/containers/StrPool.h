@@ -45,14 +45,30 @@ class idPoolStr : public idStr
 	friend class idStrPool;
 
 public:
+	/*!
+		\brief Initializes an idPoolStr object with zero users.
+
+		This constructor initializes the idPoolStr object by setting the numUsers member variable to zero. It is designed to create a new instance of the idPoolStr class in a consistent initial state.
+
+	*/
 	idPoolStr() { numUsers = 0; }
+
+	/*!
+		\brief Destructor for idPoolStr that asserts no users remain.
+
+		The destructor for idPoolStr performs a sanity check using an assertion to ensure that the number of users is zero. This indicates that all references to the resource managed by this pool have
+	   been properly released before the object is destroyed.
+
+	*/
 	~idPoolStr() { assert( numUsers == 0 ); }
 
-	// returns total size of allocated memory
+	//! Returns the total size in bytes of memory that has been allocated for the string
 	size_t			 Allocated() const { return idStr::Allocated(); }
-	// returns total size of allocated memory including size of string pool type
+
+	//! Returns the total size in bytes of the allocated memory for this string pool.
 	size_t			 Size() const { return sizeof( *this ) + Allocated(); }
-	// returns a pointer to the pool this string was allocated from
+
+	//! Returns a pointer to the pool this string was allocated from.
 	const idStrPool* GetPool() const { return pool; }
 
 private:
@@ -63,19 +79,73 @@ private:
 class idStrPool
 {
 public:
+	/*!
+		\brief Initializes a new instance of the idStrPool class with case sensitivity enabled.
+
+		The constructor initializes the idStrPool object and sets the caseSensitive flag to true, indicating that string comparisons will be case-sensitive by default.
+
+	*/
 	idStrPool() { caseSensitive = true; }
 
+	/*!
+		\brief Sets whether the string pool performs case-sensitive comparisons.
+
+		This function configures the string pool to either perform case-sensitive or case-insensitive string comparisons. When set to true, string comparisons will consider the case of characters.
+	   When set to false, comparisons will treat uppercase and lowercase characters as equivalent.
+
+		\param caseSensitive True to enable case-sensitive comparisons, false otherwise
+	*/
 	void			 SetCaseSensitive( bool caseSensitive );
 
+	//! Returns the total number of strings contained in the string pool.
 	int				 Num() const { return pool.Num(); }
+
+	//! Returns the total number of bytes allocated by the string pool, including internal structures and all stored strings.
 	size_t			 Allocated() const;
+
+	//! Returns the total number of bytes occupied by all strings and internal structures within the string pool
 	size_t			 Size() const;
 
 	const idPoolStr* operator[]( int index ) const { return pool[index]; }
 
+	/*!
+		\brief Allocates and returns a pooled string with the specified value, reusing existing strings when possible.
+
+		This function attempts to find an existing string in the pool that matches the provided string. If a match is found, the reference count of the existing string is incremented and it is
+	   returned. If no match is found, a new string is created, initialized with the provided string value, added to the pool, and returned. The function checks for case sensitivity when comparing
+	   strings.
+
+		\param string The string value to allocate in the pool
+		\return A pointer to the pooled string, either existing or newly created
+	*/
 	const idPoolStr* AllocString( const char* string );
+
+	/*!
+		\brief Frees a string from the string pool if its reference count drops to zero.
+
+		This function decrements the reference count of a string in the pool. If the reference count reaches zero, the string is removed from the pool and its memory is deallocated. The function first
+	   checks if the pool is valid and then verifies that the string belongs to this pool. It performs a hash lookup to find the string in the pool and removes it if the reference count has reached
+	   zero.
+
+		\param poolStr Pointer to the idPoolStr object to be freed from the pool
+		\throws assertion failure if the string does not belong to this pool or if the reference count is invalid
+	*/
 	void			 FreeString( const idPoolStr* poolStr );
+
+	/*!
+		\brief Returns a reference to a string from this pool, increasing the user count if it's already in this pool, or allocating a new copy if it's from another pool.
+
+		This function is used to manage string references within a string pool. If the input string is already part of this pool, it simply increments the user count and returns the same reference. If
+	   the string belongs to a different pool, it allocates a new copy of the string within this pool and returns the reference to the new copy. This ensures that references to strings are managed
+	   efficiently across different pools.
+
+		\param poolStr Pointer to the string to be copied or referenced from this pool
+		\return Pointer to the string in this pool, either the original if it was already here, or a newly allocated copy if it came from another pool
+		\throws assertion failure if the input string has less than one user
+	*/
 	const idPoolStr* CopyString( const idPoolStr* poolStr );
+
+	//! Clears all strings from the string pool and resets the hash table.
 	void			 Clear();
 
 private:
@@ -84,21 +154,11 @@ private:
 	idHashIndex		   poolHash;
 };
 
-/*
-================
-idStrPool::SetCaseSensitive
-================
-*/
 ID_INLINE void idStrPool::SetCaseSensitive( bool caseSensitive )
 {
 	this->caseSensitive = caseSensitive;
 }
 
-/*
-================
-idStrPool::AllocString
-================
-*/
 ID_INLINE const idPoolStr* idStrPool::AllocString( const char* string )
 {
 	int		   i, hash;
@@ -129,11 +189,6 @@ ID_INLINE const idPoolStr* idStrPool::AllocString( const char* string )
 	return poolStr;
 }
 
-/*
-================
-idStrPool::FreeString
-================
-*/
 ID_INLINE void idStrPool::FreeString( const idPoolStr* poolStr )
 {
 	int i, hash;
@@ -164,11 +219,6 @@ ID_INLINE void idStrPool::FreeString( const idPoolStr* poolStr )
 	}
 }
 
-/*
-================
-idStrPool::CopyString
-================
-*/
 ID_INLINE const idPoolStr* idStrPool::CopyString( const idPoolStr* poolStr )
 {
 	assert( poolStr->numUsers >= 1 );
@@ -183,11 +233,6 @@ ID_INLINE const idPoolStr* idStrPool::CopyString( const idPoolStr* poolStr )
 	}
 }
 
-/*
-================
-idStrPool::Clear
-================
-*/
 ID_INLINE void idStrPool::Clear()
 {
 	int i;
@@ -199,11 +244,6 @@ ID_INLINE void idStrPool::Clear()
 	poolHash.Free();
 }
 
-/*
-================
-idStrPool::Allocated
-================
-*/
 ID_INLINE size_t idStrPool::Allocated() const
 {
 	int	   i;
@@ -216,11 +256,6 @@ ID_INLINE size_t idStrPool::Allocated() const
 	return size;
 }
 
-/*
-================
-idStrPool::Size
-================
-*/
 ID_INLINE size_t idStrPool::Size() const
 {
 	int	   i;
