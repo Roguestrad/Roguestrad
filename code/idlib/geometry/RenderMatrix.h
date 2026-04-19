@@ -437,12 +437,13 @@ public:
 		This function calculates the inverse of a 4x4 matrix using SIMD instructions for performance optimization. It employs cofactor calculation and determinant computation via SSE2 intrinsics. The
 	   function checks for numerical stability by examining the absolute value of the determinant against a predefined epsilon threshold. If the determinant is too close to zero, the function returns
 	   false indicating that the matrix is singular and cannot be inverted. The result is stored in the output parameter.
-	   
-	   This code is based on the code written by Cédric Lallain, published on "Cell Performance"
+
+	   This code is based on the code written by CÃ©dric Lallain, published on "Cell Performance"
 	   (by Mike Acton) and released under the BSD 3-Clause ("BSD New" or "BSD Simplified") license.
 	   https://code.google.com/p/cellperformance-snippets/
-	   
-	   	\note that large parallel lights can have very small values in the projection matrix, scaling tens of thousands of world units down to a 0-1 range, so the determinants can get really, really small.
+
+		\note that large parallel lights can have very small values in the projection matrix, scaling tens of thousands of world units down to a 0-1 range, so the determinants can get really, really
+	   small.
 
 		\param src The input 4x4 transformation matrix to be inverted
 		\param out The resulting inverted matrix if successful, undefined if failed
@@ -622,8 +623,8 @@ public:
 		This function performs culling operations on a bounding box that has been extruded in a specified direction. It uses the model-view-projection matrix to transform the bounding box and then
 	   determines whether the extruded bounds are outside the clip space defined by the clip plane. The results are stored as bit flags indicating which sides of the bounding box are culled. The
 	   function uses SSE intrinsics for optimized performance on compatible hardware.
-	   
-	   Normally the clip space extends from -1.0 to 1.0 on each axis, but by setting 'zeroToOne' to true, 
+
+	   Normally the clip space extends from -1.0 to 1.0 on each axis, but by setting 'zeroToOne' to true,
 	   the clip space will extend from 0.0 to 1.0 on each axis for a light projection matrix.
 
 		\param mvp The model-view-projection matrix used for transforming the bounding box
@@ -672,8 +673,10 @@ public:
 		This function calculates the projected bounding box of a given 3D bounds after transforming it by the provided model-view-projection matrix. It uses SSE intrinsics for optimized performance.
 	   The function applies clipping against the unit cube to ensure that only points within the visible range are considered. The result is stored in the provided projected bounds object. The
 	   windowSpace parameter determines whether the projection is done in window space or normalized device coordinates.
-	   
-	    \note This code assumes the MVP matrix has an infinite far clipping plane. When the far plane is at infinity the bounds are never far clipped and it is sufficient to test whether or not the center of the near clip plane is inside the bounds to calculate the correct minimum Z. If the far plane is not at infinity then this code would also have to test for the view frustum being completely contained inside the given bounds in which case the projected bounds should be set to fully cover the view frustum.
+
+		\note This code assumes the MVP matrix has an infinite far clipping plane. When the far plane is at infinity the bounds are never far clipped and it is sufficient to test whether or not the
+	   center of the near clip plane is inside the bounds to calculate the correct minimum Z. If the far plane is not at infinity then this code would also have to test for the view frustum being
+	   completely contained inside the given bounds in which case the projected bounds should be set to fully cover the view frustum.
 
 		\param projected Output parameter that will contain the resulting projected bounds
 		\param mvp The model-view-projection matrix used for the transformation

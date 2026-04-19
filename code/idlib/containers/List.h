@@ -1222,7 +1222,6 @@ ID_INLINE bool idList<_type_, _tag_>::Remove( _type_ const& obj )
 	return false;
 }
 
-
 template<typename _type_, memTag_t _tag_>
 ID_INLINE void idList<_type_, _tag_>::SortWithTemplate( const idSort<_type_>& sort )
 {

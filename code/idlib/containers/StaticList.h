@@ -73,7 +73,7 @@ public:
 		\param initializerList The initializer list containing the elements to populate the static list with
 	*/
 	idStaticList( std::initializer_list<type> initializerList );
-	
+
 	/*!
 		\brief Destructor for the idStaticList template class that cleans up any dynamically allocated memory.
 
