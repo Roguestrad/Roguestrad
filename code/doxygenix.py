@@ -35,13 +35,11 @@ Process:
 """
 
 import argparse
-import hashlib
 import json
 import os
 import re
 import shutil
 import subprocess
-import sys
 import xml.etree.ElementTree as ET
 from dataclasses import dataclass
 from pathlib import Path
@@ -1054,7 +1052,8 @@ def _find_file_doxygen_block(
 ) -> Optional[Tuple[int, int, Optional[str]]]:
     limit = min(len(lines), scan_limit)
     hash_re = re.compile(
-        r"(?:doxygenix|archgen):\s*sha256=([0-9a-f]{64})", re.IGNORECASE
+        r"(?:doxygenix|archgen):\s*(?:sha256=([0-9a-f]{64})|xxh128=([0-9a-f]{32}))",
+        re.IGNORECASE,
     )
 
     i = 0
@@ -1064,7 +1063,7 @@ def _find_file_doxygen_block(
         if line.startswith("///") or line.startswith("//!"):
             if "\\file" in line or "@file" in line:
                 m = hash_re.search(line)
-                found_hash = m.group(1) if m else None
+                found_hash = (m.group(1) or m.group(2)) if m else None
                 return (i, i, found_hash)
         if line.startswith("/*!") or line.startswith("/**"):
             start = i
@@ -1077,7 +1076,7 @@ def _find_file_doxygen_block(
                     found_file = True
                 m = hash_re.search(lines[end])
                 if m:
-                    found_hash = m.group(1)
+                    found_hash = m.group(1) or m.group(2)
                 if "*/" in lines[end]:
                     found_end = True
                     break
@@ -1137,7 +1136,7 @@ def _render_file_doxygen_block(
         "/*!",
         f"\t\\file {rel_path.as_posix()}",
         f"\t\\brief {brief}",
-        f"\t\\note doxygenix: sha256={file_sha}",
+        f"\t\\note doxygenix: xxh128={file_sha}",
         "",
     ]
     lines.extend(_section("File Purpose", summary.file_purpose))
@@ -1441,6 +1440,17 @@ def ai_generate_comment(
                 model_out.params = ordered
             else:
                 model_out.params = {}
+
+        if model_out.brief:
+            model_out.brief = cleanup_text(model_out.brief)
+        if model_out.details:
+            model_out.details = cleanup_text(model_out.details)
+        if model_out.returns:
+            model_out.returns = cleanup_text(model_out.returns)
+        if model_out.throws:
+            model_out.throws = cleanup_text(model_out.throws)
+        if model_out.params:
+            model_out.params = {k: cleanup_text(v) for k, v in model_out.params.items()}
 
         return model_out, True
     except Exception as e:
@@ -1788,6 +1798,87 @@ def _camel_to_words(name: str) -> str:
     return s.lower()
 
 
+def _replace_ligatures(text: str) -> str:
+    ligatures = {
+        "ﬀ": "ff",
+        "ﬁ": "fi",
+        "ﬂ": "fl",
+        "ﬃ": "ffi",
+        "ﬄ": "ffl",
+        "ﬅ": "ft",
+        "ﬆ": "st",
+        "ꜳ": "aa",
+    }
+    for search, replace in ligatures.items():
+        text = text.replace(search, replace)
+    return text
+
+
+def _replace_special_spaces(text: str) -> str:
+    special_spaces = {
+        "\u00a0": " ",
+        "\u202f": " ",
+        "\u2009": " ",
+        "\u2002": " ",
+        "\u2003": " ",
+    }
+    for search, replace in special_spaces.items():
+        text = text.replace(search, replace)
+    return text
+
+
+def _replace_quotes(text: str) -> str:
+    quotes = {
+        "„": '"',
+        "“": '"',
+        "”": '"',
+        "‟": '"',
+        "«": '"',
+        "»": '"',
+        "‚": "'",
+        "‘": "'",
+        "’": "'",
+        "‛": "'",
+    }
+    for search, replace in quotes.items():
+        text = text.replace(search, replace)
+    return text
+
+
+def _replace_dashes(text: str) -> str:
+    dashes = {
+        "—": "-",
+        "–": "-",
+        "−": "-",
+        "‑": "-",
+        "‐": "-",
+    }
+    for search, replace in dashes.items():
+        text = text.replace(search, replace)
+    return text
+
+
+def cleanup_text(text: str) -> str:
+    text = _replace_ligatures(text)
+    text = _replace_special_spaces(text)
+    text = _replace_quotes(text)
+    text = _replace_dashes(text)
+    return text
+
+
+def _cleanup_summary_model(summary: FileSummaryModel) -> None:
+    summary.file_purpose = [cleanup_text(t) for t in summary.file_purpose]
+    summary.core_responsibilities = [
+        cleanup_text(t) for t in summary.core_responsibilities
+    ]
+    summary.key_types_and_functions = [
+        cleanup_text(t) for t in summary.key_types_and_functions
+    ]
+    summary.control_flow = [cleanup_text(t) for t in summary.control_flow]
+    summary.dependencies = [cleanup_text(t) for t in summary.dependencies]
+    summary.how_it_fits = [cleanup_text(t) for t in summary.how_it_fits]
+
+
 # -----------------------------------------------------------------------------
 # Cache / DB
 # -----------------------------------------------------------------------------
@@ -1809,7 +1900,9 @@ def compute_normalized_file_hash(content: str) -> str:
     code = content
     # Normalize whitespace only; keep comments for semantic context
     code = re.sub(r"\s+", " ", code).strip()
-    return hashlib.sha256(code.encode("utf-8")).hexdigest()
+    h = xxhash.xxh3_128()
+    h.update(code)
+    return h.hexdigest()
 
 
 def _build_bodyfile_func_map(
@@ -2345,6 +2438,7 @@ def generate_header_summaries(
     thinking: Optional[object] = None,
     verbose: bool = False,
     funcs: Optional[List[FuncInfo]] = None,
+    summarize_mode: Optional[str] = None,
 ) -> int:
     """
     Generates architecture-level Markdown summaries for all C++ header and
@@ -2366,6 +2460,7 @@ def generate_header_summaries(
         return 0
 
     func_map = _build_bodyfile_func_map(funcs, project_root)
+    summarize_mode = summarize_mode or "all"
 
     summary_agent = Agent(
         _build_ollama_model_from_llm(llm),
@@ -2422,15 +2517,26 @@ def generate_header_summaries(
         out_path = arch_root / rel_path.with_suffix(rel_path.suffix + ".md")
 
         existing = _find_file_doxygen_block(raw_lines)
+
+        if summarize_mode == "missing" and existing:
+            if verbose:
+                print(f"  [skip] {rel_path} (has \\file)")
+            continue
+
         md_hash_matches = False
-        if out_path.exists():
+        if summarize_mode != "missing" and out_path.exists():
             first_line = out_path.read_text(encoding="utf-8", errors="ignore").split(
                 "\n", 1
             )[0]
             if file_sha in first_line:
                 md_hash_matches = True
 
-        if md_hash_matches and existing and existing[2] == file_sha:
+        if (
+            summarize_mode != "missing"
+            and md_hash_matches
+            and existing
+            and existing[2] == file_sha
+        ):
             if verbose:
                 print(f"  [skip] {rel_path} (unchanged)")
             continue
@@ -2440,11 +2546,13 @@ def generate_header_summaries(
         try:
             result = summary_agent.run_sync(prompt)
             data = result.output
+            _cleanup_summary_model(data)
 
-            _insert_file_doxygen_comment(src_file, rel_path, data, file_sha)
+            if summarize_mode != "markdown-only":
+                _insert_file_doxygen_comment(src_file, rel_path, data, file_sha)
 
             md_lines = [
-                f"<!-- doxygenix: sha256={file_sha} -->",
+                f"<!-- doxygenix: xxh3={file_sha} -->",
                 "",
                 f"# {rel_path.as_posix()}",
                 "",
@@ -2599,8 +2707,10 @@ def main():
     ap.add_argument("--force-trivial", action="store_true")
     ap.add_argument(
         "--summarize-files",
-        action="store_true",
-        help="Generate architecture .md summaries and file-level \\file blocks for all C++ files in --scope-dir",
+        nargs="?",
+        const="all",
+        choices=["all", "missing", "markdown-only"],
+        help="Generate summaries: 'all' (default), 'missing' (only files without \\file, skip hash), or 'markdown-only' (no \\file insertion)",
     )
     ap.add_argument(
         "--summarize-only",
@@ -2672,6 +2782,7 @@ def main():
             thinking=thinking_setting,
             verbose=args.verbose,
             funcs=funcs,
+            summarize_mode=args.summarize_files,
         )
 
 
