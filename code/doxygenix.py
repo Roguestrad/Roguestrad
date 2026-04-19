@@ -715,6 +715,33 @@ def _strip_comments(code: str) -> str:
     return code
 
 
+def is_trivial_destructor(func: FuncInfo, impl: str) -> bool:
+    if not func.name or not func.name.startswith("~"):
+        return False
+    if not impl.strip():
+        return False
+
+    code = _strip_comments(impl)
+    if "= default" in code or "= delete" in code:
+        return True
+    raw_lines = code.splitlines()
+
+    lines = []
+    for ln in raw_lines:
+        s = ln.strip()
+        if not s:
+            continue
+        if s in ("{", "}", ";"):
+            continue
+        if func.name in s and "(" in s and ")" in s:
+            continue
+        if re.match(r"^[A-Z_][A-Z0-9_]*$", s):
+            continue
+        lines.append(s)
+
+    return len(lines) == 0
+
+
 def _looks_like_simple_return_body(func: FuncInfo, impl: str) -> bool:
     """
     Trivial getter, robust even for inline definitions like:
@@ -805,6 +832,10 @@ def _looks_like_simple_return_body(func: FuncInfo, impl: str) -> bool:
 
 def is_trivial_getter_from_signature(func: FuncInfo) -> bool:
     if func.returns is None:
+        if func.name == "Clear":
+            return True
+        if func.name == "Zero":
+            return True
         return False
     if any(name for name, _ in func.params) and not func.name == "ToString":
         return False
@@ -817,6 +848,16 @@ def is_trivial_getter_from_signature(func: FuncInfo) -> bool:
         return False
 
     name = func.name
+    if name == "Num":
+        return True
+    if name == "Size":
+        return True
+    if name == "Allocated":
+        return True
+    if name == "MemoryUsed":
+        return True
+    if name == "ByteSize":
+        return True
     if name.startswith("Get") and len(name) > 3:
         return True
     if name.startswith("Is") and len(name) > 2:
@@ -2180,6 +2221,9 @@ def generate_doxygen_comments(
         if not impl.strip():
             continue
 
+        if is_trivial_destructor(func, impl):
+            continue
+
         if impl.endswith(";"):
             print(
                 colored(
@@ -2552,7 +2596,7 @@ def generate_header_summaries(
                 _insert_file_doxygen_comment(src_file, rel_path, data, file_sha)
 
             md_lines = [
-                f"<!-- doxygenix: xxh3={file_sha} -->",
+                f"<!-- doxygenix: xxh128={file_sha} -->",
                 "",
                 f"# {rel_path.as_posix()}",
                 "",
