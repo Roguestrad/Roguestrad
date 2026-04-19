@@ -1053,7 +1053,9 @@ def _find_file_doxygen_block(
     lines: List[str], scan_limit: int = 200
 ) -> Optional[Tuple[int, int, Optional[str]]]:
     limit = min(len(lines), scan_limit)
-    hash_re = re.compile(r"archgen:\s*sha256=([0-9a-f]{64})", re.IGNORECASE)
+    hash_re = re.compile(
+        r"(?:doxygenix|archgen):\s*sha256=([0-9a-f]{64})", re.IGNORECASE
+    )
 
     i = 0
     while i < limit:
@@ -1135,7 +1137,7 @@ def _render_file_doxygen_block(
         "/*!",
         f"\t\\file {rel_path.as_posix()}",
         f"\t\\brief {brief}",
-        f"\t\\note archgen: sha256={file_sha}",
+        f"\t\\note doxygenix: sha256={file_sha}",
         "",
     ]
     lines.extend(_section("File Purpose", summary.file_purpose))
@@ -2441,7 +2443,7 @@ def generate_header_summaries(
             _insert_file_doxygen_comment(src_file, rel_path, data, file_sha)
 
             md_lines = [
-                f"<!-- archgen: sha256={file_sha} -->",
+                f"<!-- doxygenix: sha256={file_sha} -->",
                 "",
                 f"# {rel_path.as_posix()}",
                 "",
@@ -2517,6 +2519,14 @@ def run_doxygen(
     xml_subdir = xml_subdir or "xml"
 
     xml_full_path = (xml_output_dir / xml_subdir).resolve()
+
+    # Ensure OUTPUT_DIRECTORY exists before running Doxygen
+    try:
+        xml_output_dir.mkdir(parents=True, exist_ok=True)
+    except Exception as exc:
+        raise RuntimeError(
+            f"Failed to create Doxygen output directory: {xml_output_dir}"
+        ) from exc
 
     # Delete old XML folder to avoid stale files
     if clean_xml and xml_full_path.exists():
