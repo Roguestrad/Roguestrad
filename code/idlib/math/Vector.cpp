@@ -42,29 +42,11 @@ idVec5		vec5_origin( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
 idVec6		vec6_origin( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
 idVec6		vec6_infinity( idMath::INFINITUM, idMath::INFINITUM, idMath::INFINITUM, idMath::INFINITUM, idMath::INFINITUM, idMath::INFINITUM );
 
-//===============================================================
-//
-//	idVec2
-//
-//===============================================================
-
-/*
-=============
-idVec2::ToString
-=============
-*/
 const char* idVec2::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
 }
 
-/*
-=============
-Lerp
-
-Linearly inperpolates one vector to another.
-=============
-*/
 void idVec2::Lerp( const idVec2& v1, const idVec2& v2, const float l )
 {
 	if( l <= 0.0f ) {
@@ -76,12 +58,6 @@ void idVec2::Lerp( const idVec2& v1, const idVec2& v2, const float l )
 	}
 }
 
-/*
-=============
-MulCW
-Multiply on vector component-wise
-=============
-*/
 void idVec2::MulCW( const idVec2& a )
 {
 	x *= a.x;
@@ -93,12 +69,6 @@ void idVec2::MulCW( const idVec2& a )
 //	idVec3
 //
 //===============================================================
-
-/*
-=============
-idVec3::ToYaw
-=============
-*/
 float idVec3::ToYaw() const
 {
 	float yaw;
@@ -115,11 +85,6 @@ float idVec3::ToYaw() const
 	return yaw;
 }
 
-/*
-=============
-idVec3::ToPitch
-=============
-*/
 float idVec3::ToPitch() const
 {
 	float forward;
@@ -142,11 +107,6 @@ float idVec3::ToPitch() const
 	return pitch;
 }
 
-/*
-=============
-idVec3::ToAngles
-=============
-*/
 idAngles idVec3::ToAngles() const
 {
 	float forward;
@@ -176,11 +136,6 @@ idAngles idVec3::ToAngles() const
 	return idAngles( -pitch, yaw, 0.0f );
 }
 
-/*
-=============
-idVec3::ToPolar
-=============
-*/
 idPolar3 idVec3::ToPolar() const
 {
 	float forward;
@@ -209,11 +164,6 @@ idPolar3 idVec3::ToPolar() const
 	return idPolar3( idMath::Sqrt( x * x + y * y + z * z ), yaw, -pitch );
 }
 
-/*
-=============
-idVec3::ToMat3
-=============
-*/
 idMat3 idVec3::ToMat3() const
 {
 	idMat3 mat;
@@ -236,23 +186,11 @@ idMat3 idVec3::ToMat3() const
 	return mat;
 }
 
-/*
-=============
-idVec3::ToString
-=============
-*/
 const char* idVec3::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
 }
 
-/*
-=============
-Lerp
-
-Linearly inperpolates one vector to another.
-=============
-*/
 void idVec3::Lerp( const idVec3& v1, const idVec3& v2, const float l )
 {
 	if( l <= 0.0f ) {
@@ -300,13 +238,6 @@ void idVec3::SLerp( const idVec3& v1, const idVec3& v2, const float t )
 	( *this ) = ( v1 * scale0 + v2 * scale1 );
 }
 
-/*
-=============
-ProjectSelfOntoSphere
-
-Projects the z component onto a sphere.
-=============
-*/
 void idVec3::ProjectSelfOntoSphere( const float radius )
 {
 	float rsqr = radius * radius;
@@ -318,11 +249,7 @@ void idVec3::ProjectSelfOntoSphere( const float radius )
 	}
 }
 
-// RB: more about this
-// Cigolle, Donow, Evangelakos, Mara, McGuire, Meyer,
-// A Survey of Efficient Representations for Independent Unit Vectors, Journal of Computer Graphics Techniques (JCGT), vol. 3, no. 2, 1-30, 2014
-// Available online http://jcgt.org/published/0003/02/01/
-
+//! Returns 1.0 if the input is greater than or equal to zero, otherwise returns -1.0.
 inline float signNotZero( float k )
 {
 	return ( k >= 0.0f ) ? 1.0f : -1.0f;
@@ -358,31 +285,17 @@ void idVec3::FromOctahedral( const idVec2& o )
 
 	Normalize();
 }
-// RB end
-
 //===============================================================
 //
 //	idVec4
 //
 //===============================================================
 
-/*
-=============
-idVec4::ToString
-=============
-*/
 const char* idVec4::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
 }
 
-/*
-=============
-Lerp
-
-Linearly inperpolates one vector to another.
-=============
-*/
 void idVec4::Lerp( const idVec4& v1, const idVec4& v2, const float l )
 {
 	if( l <= 0.0f ) {
@@ -399,22 +312,11 @@ void idVec4::Lerp( const idVec4& v1, const idVec4& v2, const float l )
 //	idVec5
 //
 //===============================================================
-
-/*
-=============
-idVec5::ToString
-=============
-*/
 const char* idVec5::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
 }
 
-/*
-=============
-idVec5::Lerp
-=============
-*/
 void idVec5::Lerp( const idVec5& v1, const idVec5& v2, const float l )
 {
 	if( l <= 0.0f ) {

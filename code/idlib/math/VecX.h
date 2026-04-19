@@ -60,12 +60,22 @@ class idVecX
 	friend class idMatX;
 
 public:
+	//! Initializes an empty idVecX object with no allocated memory.
 	ID_INLINE idVecX();
+
+	//! Constructs an idVecX object with the specified length.
 	ID_INLINE explicit idVecX( int length );
+
+	//! Constructs an idVecX object with the specified length and data pointer.
 	ID_INLINE explicit idVecX( int length, float* data );
+
+	//! Destructor for idVecX that frees allocated memory if it's not temporary memory.
 	ID_INLINE ~idVecX();
 
+	//! Returns the element at the specified index in the vector.
 	ID_INLINE float			Get( int index ) const;
+
+	//! Returns a reference to the element at the specified index in the vector
 	ID_INLINE float&		Get( int index );
 
 	ID_INLINE float			operator[]( const int index ) const;
@@ -84,38 +94,84 @@ public:
 
 	friend ID_INLINE idVecX operator*( const float a, const idVecX& b );
 
-	ID_INLINE bool			Compare( const idVecX& a ) const;					   // exact compare, no epsilon
-	ID_INLINE bool			Compare( const idVecX& a, const float epsilon ) const; // compare with epsilon
-	ID_INLINE bool			operator==( const idVecX& a ) const;				   // exact compare, no epsilon
-	ID_INLINE bool			operator!=( const idVecX& a ) const;				   // exact compare, no epsilon
+	//! Compares this vector with another vector for exact equality.
+	ID_INLINE bool			Compare( const idVecX& a ) const;
 
+	//! Compares this vector with another vector using the specified epsilon tolerance
+	ID_INLINE bool			Compare( const idVecX& a, const float epsilon ) const;
+	ID_INLINE bool			operator==( const idVecX& a ) const; // exact compare, no epsilon
+	ID_INLINE bool			operator!=( const idVecX& a ) const; // exact compare, no epsilon
+
+	//! Sets the size of the vector, reallocating memory if necessary.
 	ID_INLINE void			SetSize( int size );
+
+	//! Changes the size of the vector, optionally zeroing new elements.
 	ID_INLINE void			ChangeSize( int size, bool makeZero = false );
+
+	//! Returns the size of the vector.
 	ID_INLINE int			GetSize() const { return size; }
+
+	//! Sets the data pointer and length for the vector, taking ownership of the provided data buffer.
 	ID_INLINE void			SetData( int length, float* data );
+
+	//! Sets all elements of the vector to zero.
 	ID_INLINE void			Zero();
+
+	//! Sets all elements of the vector to zero.
 	ID_INLINE void			Zero( int length );
+
+	//! Fills the vector with random values between l and u using the provided seed for the random number generator.
 	ID_INLINE void			Random( int seed, float l = 0.0f, float u = 1.0f );
+
+	//! Fills the vector with random values in the specified range.
 	ID_INLINE void			Random( int length, int seed, float l = 0.0f, float u = 1.0f );
+
+	//! Negates all elements of the vector in place.
 	ID_INLINE void			Negate();
+
+	//! Clamps all elements of the vector to the specified range.
 	ID_INLINE void			Clamp( float min, float max );
+
+	//! Swaps the elements at the specified indices in the vector.
 	ID_INLINE idVecX&		SwapElements( int e1, int e2 );
 
+	//! Returns the Euclidean length of this vector.
 	ID_INLINE float			Length() const;
+
+	//! Returns the squared length of this vector.
 	ID_INLINE float			LengthSqr() const;
+
+	//! Returns a normalized copy of this vector.
 	ID_INLINE idVecX		Normalize() const;
+
+	//! Normalizes the vector in place and returns the inverse square root of its length.
 	ID_INLINE float			NormalizeSelf();
 
+	//! Returns the dimension of the vector.
 	ID_INLINE int			GetDimension() const;
 
+	//! Adds the scaled sum of two vectors to this vector.
 	ID_INLINE void			AddScaleAdd( const float scale, const idVecX& v0, const idVecX& v1 );
 
+	//! Returns a constant reference to a 3D vector component of this vector.
 	ID_INLINE const idVec3& SubVec3( int index ) const;
+
+	//! Returns a reference to a 3D vector component of this vector object at the specified index.
 	ID_INLINE idVec3&		SubVec3( int index );
+
+	//! Returns a constant reference to a sub-vector of type idVec6 starting at the specified index.
 	ID_INLINE const idVec6& SubVec6( int index = 0 ) const;
+
+	//! Returns a reference to a 6-dimensional vector at the specified index in the vector array.
 	ID_INLINE idVec6&		SubVec6( int index = 0 );
+
+	//! Returns a pointer to the internal float array representing the vector data.
 	ID_INLINE const float*	ToFloatPtr() const;
+
+	//! Returns a pointer to the float array data of the vector
 	ID_INLINE float*		ToFloatPtr();
+
+	//! Returns a string representation of the vector with the specified decimal precision
 	const char*				ToString( int precision = 2 ) const;
 
 private:
@@ -127,25 +183,16 @@ private:
 	static float*  tempPtr;					// pointer to 16 byte aligned temporary memory
 	static int	   tempIndex;				// index into memory pool, wraps around
 
+	//! Sets the temporary size for the vector, allocating memory from the temporary buffer.
 	ID_INLINE void SetTempSize( int size );
 };
 
-/*
-========================
-idVecX::idVecX
-========================
-*/
 ID_INLINE idVecX::idVecX()
 {
 	size = alloced = 0;
 	p			   = NULL;
 }
 
-/*
-========================
-idVecX::idVecX
-========================
-*/
 ID_INLINE idVecX::idVecX( int length )
 {
 	size = alloced = 0;
@@ -153,11 +200,6 @@ ID_INLINE idVecX::idVecX( int length )
 	SetSize( length );
 }
 
-/*
-========================
-idVecX::idVecX
-========================
-*/
 ID_INLINE idVecX::idVecX( int length, float* data )
 {
 	size = alloced = 0;
@@ -165,33 +207,18 @@ ID_INLINE idVecX::idVecX( int length, float* data )
 	SetData( length, data );
 }
 
-/*
-========================
-idVecX::~idVecX
-========================
-*/
 ID_INLINE idVecX::~idVecX()
 {
 	// if not temp memory
 	if( p && ( p < idVecX::tempPtr || p >= idVecX::tempPtr + VECX_MAX_TEMP ) && alloced != -1 ) { Mem_Free16( p ); }
 }
 
-/*
-========================
-idVecX::Get
-========================
-*/
 ID_INLINE float idVecX::Get( int index ) const
 {
 	assert( index >= 0 && index < size );
 	return p[index];
 }
 
-/*
-========================
-idVecX::Get
-========================
-*/
 ID_INLINE float& idVecX::Get( int index )
 {
 	assert( index >= 0 && index < size );
@@ -439,11 +466,6 @@ ID_INLINE float idVecX::operator*( const idVecX& a ) const
 	return sum;
 }
 
-/*
-========================
-idVecX::Compare
-========================
-*/
 ID_INLINE bool idVecX::Compare( const idVecX& a ) const
 {
 	assert( size == a.size );
@@ -453,11 +475,6 @@ ID_INLINE bool idVecX::Compare( const idVecX& a ) const
 	return true;
 }
 
-/*
-========================
-idVecX::Compare
-========================
-*/
 ID_INLINE bool idVecX::Compare( const idVecX& a, const float epsilon ) const
 {
 	assert( size == a.size );
@@ -487,11 +504,6 @@ ID_INLINE bool idVecX::operator!=( const idVecX& a ) const
 	return !Compare( a );
 }
 
-/*
-========================
-idVecX::SetSize
-========================
-*/
 ID_INLINE void idVecX::SetSize( int newSize )
 {
 	// assert( p < idVecX::tempPtr || p > idVecX::tempPtr + VECX_MAX_TEMP );
@@ -507,11 +519,6 @@ ID_INLINE void idVecX::SetSize( int newSize )
 	}
 }
 
-/*
-========================
-idVecX::ChangeSize
-========================
-*/
 ID_INLINE void idVecX::ChangeSize( int newSize, bool makeZero )
 {
 	if( newSize != size ) {
@@ -538,11 +545,6 @@ ID_INLINE void idVecX::ChangeSize( int newSize, bool makeZero )
 	}
 }
 
-/*
-========================
-idVecX::SetTempSize
-========================
-*/
 ID_INLINE void idVecX::SetTempSize( int newSize )
 {
 	size	= newSize;
@@ -554,11 +556,6 @@ ID_INLINE void idVecX::SetTempSize( int newSize )
 	VECX_CLEAREND();
 }
 
-/*
-========================
-idVecX::SetData
-========================
-*/
 ID_INLINE void idVecX::SetData( int length, float* data )
 {
 	if( p != NULL && ( p < idVecX::tempPtr || p >= idVecX::tempPtr + VECX_MAX_TEMP ) && alloced != -1 ) { Mem_Free16( p ); }
@@ -569,11 +566,6 @@ ID_INLINE void idVecX::SetData( int length, float* data )
 	VECX_CLEAREND();
 }
 
-/*
-========================
-idVecX::Zero
-========================
-*/
 ID_INLINE void idVecX::Zero()
 {
 #ifdef VECX_SIMD
@@ -585,11 +577,6 @@ ID_INLINE void idVecX::Zero()
 #endif
 }
 
-/*
-========================
-idVecX::Zero
-========================
-*/
 ID_INLINE void idVecX::Zero( int length )
 {
 	SetSize( length );
@@ -602,11 +589,6 @@ ID_INLINE void idVecX::Zero( int length )
 #endif
 }
 
-/*
-========================
-idVecX::Random
-========================
-*/
 ID_INLINE void idVecX::Random( int seed, float l, float u )
 {
 	idRandom rnd( seed );
@@ -617,11 +599,6 @@ ID_INLINE void idVecX::Random( int seed, float l, float u )
 	}
 }
 
-/*
-========================
-idVecX::Random
-========================
-*/
 ID_INLINE void idVecX::Random( int length, int seed, float l, float u )
 {
 	idRandom rnd( seed );
@@ -633,11 +610,6 @@ ID_INLINE void idVecX::Random( int length, int seed, float l, float u )
 	}
 }
 
-/*
-========================
-idVecX::Negate
-========================
-*/
 ID_INLINE void idVecX::Negate()
 {
 #ifdef VECX_SIMD
@@ -652,11 +624,6 @@ ID_INLINE void idVecX::Negate()
 #endif
 }
 
-/*
-========================
-idVecX::Clamp
-========================
-*/
 ID_INLINE void idVecX::Clamp( float min, float max )
 {
 	for( int i = 0; i < size; i++ ) {
@@ -668,11 +635,6 @@ ID_INLINE void idVecX::Clamp( float min, float max )
 	}
 }
 
-/*
-========================
-idVecX::SwapElements
-========================
-*/
 ID_INLINE idVecX& idVecX::SwapElements( int e1, int e2 )
 {
 	float tmp;
@@ -682,11 +644,6 @@ ID_INLINE idVecX& idVecX::SwapElements( int e1, int e2 )
 	return *this;
 }
 
-/*
-========================
-idVecX::Length
-========================
-*/
 ID_INLINE float idVecX::Length() const
 {
 	float sum = 0.0f;
@@ -696,11 +653,6 @@ ID_INLINE float idVecX::Length() const
 	return idMath::Sqrt( sum );
 }
 
-/*
-========================
-idVecX::LengthSqr
-========================
-*/
 ID_INLINE float idVecX::LengthSqr() const
 {
 	float sum = 0.0f;
@@ -710,11 +662,6 @@ ID_INLINE float idVecX::LengthSqr() const
 	return sum;
 }
 
-/*
-========================
-idVecX::Normalize
-========================
-*/
 ID_INLINE idVecX idVecX::Normalize() const
 {
 	idVecX m;
@@ -731,11 +678,6 @@ ID_INLINE idVecX idVecX::Normalize() const
 	return m;
 }
 
-/*
-========================
-idVecX::NormalizeSelf
-========================
-*/
 ID_INLINE float idVecX::NormalizeSelf()
 {
 	float sum = 0.0f;
@@ -749,85 +691,45 @@ ID_INLINE float idVecX::NormalizeSelf()
 	return invSqrt * sum;
 }
 
-/*
-========================
-idVecX::GetDimension
-========================
-*/
 ID_INLINE int idVecX::GetDimension() const
 {
 	return size;
 }
 
-/*
-========================
-idVecX::SubVec3
-========================
-*/
 ID_INLINE idVec3& idVecX::SubVec3( int index )
 {
 	assert( index >= 0 && index * 3 + 3 <= size );
 	return *reinterpret_cast<idVec3*>( p + index * 3 );
 }
 
-/*
-========================
-idVecX::SubVec3
-========================
-*/
 ID_INLINE const idVec3& idVecX::SubVec3( int index ) const
 {
 	assert( index >= 0 && index * 3 + 3 <= size );
 	return *reinterpret_cast<const idVec3*>( p + index * 3 );
 }
 
-/*
-========================
-idVecX::SubVec6
-========================
-*/
 ID_INLINE idVec6& idVecX::SubVec6( int index )
 {
 	assert( index >= 0 && index * 6 + 6 <= size );
 	return *reinterpret_cast<idVec6*>( p + index * 6 );
 }
 
-/*
-========================
-idVecX::SubVec6
-========================
-*/
 ID_INLINE const idVec6& idVecX::SubVec6( int index ) const
 {
 	assert( index >= 0 && index * 6 + 6 <= size );
 	return *reinterpret_cast<const idVec6*>( p + index * 6 );
 }
 
-/*
-========================
-idVecX::ToFloatPtr
-========================
-*/
 ID_INLINE const float* idVecX::ToFloatPtr() const
 {
 	return p;
 }
 
-/*
-========================
-idVecX::ToFloatPtr
-========================
-*/
 ID_INLINE float* idVecX::ToFloatPtr()
 {
 	return p;
 }
 
-/*
-========================
-idVecX::AddScaleAdd
-========================
-*/
 ID_INLINE void idVecX::AddScaleAdd( const float scale, const idVecX& v0, const idVecX& v1 )
 {
 	assert( GetSize() == v0.GetSize() );

@@ -102,21 +102,11 @@ If you have questions concerning this license or the applicable additional terms
 			__assume( 0 )
 #endif
 
-/*
-============
-idSIMD_Generic::GetName
-============
-*/
 const char* idSIMD_Generic::GetName() const
 {
 	return "generic code";
 }
 
-/*
-============
-idSIMD_Generic::MinMax
-============
-*/
 void VPCALL idSIMD_Generic::MinMax( float& min, float& max, const float* src, const int count )
 {
 	min = idMath::INFINITUM;
@@ -132,11 +122,6 @@ void VPCALL idSIMD_Generic::MinMax( float& min, float& max, const float* src, co
 #undef OPER
 }
 
-/*
-============
-idSIMD_Generic::MinMax
-============
-*/
 void VPCALL idSIMD_Generic::MinMax( idVec2& min, idVec2& max, const idVec2* src, const int count )
 {
 	min[0] = min[1] = idMath::INFINITUM;
@@ -159,11 +144,6 @@ void VPCALL idSIMD_Generic::MinMax( idVec2& min, idVec2& max, const idVec2* src,
 #undef OPER
 }
 
-/*
-============
-idSIMD_Generic::MinMax
-============
-*/
 void VPCALL idSIMD_Generic::MinMax( idVec3& min, idVec3& max, const idVec3* src, const int count )
 {
 	min[0] = min[1] = min[2] = idMath::INFINITUM;
@@ -192,11 +172,6 @@ void VPCALL idSIMD_Generic::MinMax( idVec3& min, idVec3& max, const idVec3* src,
 #undef OPER
 }
 
-/*
-============
-idSIMD_Generic::MinMax
-============
-*/
 void VPCALL idSIMD_Generic::MinMax( idVec3& min, idVec3& max, const idDrawVert* src, const int count )
 {
 	min[0] = min[1] = min[2] = idMath::INFINITUM;
@@ -225,11 +200,6 @@ void VPCALL idSIMD_Generic::MinMax( idVec3& min, idVec3& max, const idDrawVert* 
 #undef OPER
 }
 
-/*
-============
-idSIMD_Generic::MinMax
-============
-*/
 void VPCALL idSIMD_Generic::MinMax( idVec3& min, idVec3& max, const idDrawVert* src, const triIndex_t* indexes, const int count )
 {
 	min[0] = min[1] = min[2] = idMath::INFINITUM;
@@ -258,31 +228,16 @@ void VPCALL idSIMD_Generic::MinMax( idVec3& min, idVec3& max, const idDrawVert* 
 #undef OPER
 }
 
-/*
-================
-idSIMD_Generic::Memcpy
-================
-*/
 void VPCALL idSIMD_Generic::Memcpy( void* dst, const void* src, const int count )
 {
 	memcpy( dst, src, count );
 }
 
-/*
-================
-idSIMD_Generic::Memset
-================
-*/
 void VPCALL idSIMD_Generic::Memset( void* dst, const int val, const int count )
 {
 	memset( dst, val, count );
 }
 
-/*
-============
-idSIMD_Generic::BlendJoints
-============
-*/
 void VPCALL idSIMD_Generic::BlendJoints( idJointQuat* joints, const idJointQuat* blendJoints, const float lerp, const int* index, const int numJoints )
 {
 	for( int i = 0; i < numJoints; i++ ) {
@@ -293,11 +248,6 @@ void VPCALL idSIMD_Generic::BlendJoints( idJointQuat* joints, const idJointQuat*
 	}
 }
 
-/*
-============
-idSIMD_Generic::BlendJointsFast
-============
-*/
 void VPCALL idSIMD_Generic::BlendJointsFast( idJointQuat* joints, const idJointQuat* blendJoints, const float lerp, const int* index, const int numJoints )
 {
 	for( int i = 0; i < numJoints; i++ ) {
@@ -308,11 +258,6 @@ void VPCALL idSIMD_Generic::BlendJointsFast( idJointQuat* joints, const idJointQ
 	}
 }
 
-/*
-============
-idSIMD_Generic::ConvertJointQuatsToJointMats
-============
-*/
 void VPCALL idSIMD_Generic::ConvertJointQuatsToJointMats( idJointMat* jointMats, const idJointQuat* jointQuats, const int numJoints )
 {
 	for( int i = 0; i < numJoints; i++ ) {
@@ -321,11 +266,6 @@ void VPCALL idSIMD_Generic::ConvertJointQuatsToJointMats( idJointMat* jointMats,
 	}
 }
 
-/*
-============
-idSIMD_Generic::ConvertJointMatsToJointQuats
-============
-*/
 void VPCALL idSIMD_Generic::ConvertJointMatsToJointQuats( idJointQuat* jointQuats, const idJointMat* jointMats, const int numJoints )
 {
 	for( int i = 0; i < numJoints; i++ ) {
@@ -333,11 +273,6 @@ void VPCALL idSIMD_Generic::ConvertJointMatsToJointQuats( idJointQuat* jointQuat
 	}
 }
 
-/*
-============
-idSIMD_Generic::TransformJoints
-============
-*/
 void VPCALL idSIMD_Generic::TransformJoints( idJointMat* jointMats, const int* parents, const int firstJoint, const int lastJoint )
 {
 	for( int i = firstJoint; i <= lastJoint; i++ ) {
@@ -346,11 +281,6 @@ void VPCALL idSIMD_Generic::TransformJoints( idJointMat* jointMats, const int* p
 	}
 }
 
-/*
-============
-idSIMD_Generic::UntransformJoints
-============
-*/
 void VPCALL idSIMD_Generic::UntransformJoints( idJointMat* jointMats, const int* parents, const int firstJoint, const int lastJoint )
 {
 	for( int i = lastJoint; i >= firstJoint; i-- ) {

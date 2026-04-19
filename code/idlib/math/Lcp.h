@@ -61,16 +61,23 @@ unbounded x[i] and all x[i] with boxIndex[i] == -1.
 class idLCP
 {
 public:
-	static idLCP* AllocSquare();	// 'A' must be a square matrix
-	static idLCP* AllocSymmetric(); // 'A' must be a symmetric matrix
+	//! Allocates and returns a new square LCP solver instance.
+	static idLCP* AllocSquare();
+
+	//! Allocates and returns a new symmetric LCP solver instance.
+	static idLCP* AllocSymmetric();
 
 	virtual ~idLCP();
 
 	virtual bool Solve( const idMatX& A, idVecX& x, const idVecX& b, const idVecX& lo, const idVecX& hi, const int* boxIndex = NULL ) = 0;
 
+	//! Sets the maximum number of iterations for the LCP solver.
 	virtual void SetMaxIterations( int max );
+
+	//! Returns the maximum number of iterations allowed for the LCP solver.
 	virtual int	 GetMaxIterations();
 
+	//! Executes various linear compression tests if test code is enabled.
 	static void	 Test_f( const idCmdArgs& args );
 
 protected:

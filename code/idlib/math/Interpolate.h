@@ -42,21 +42,43 @@ template<class type>
 class idInterpolate
 {
 public:
+	//! Initializes an interpolation object with default values.
 	idInterpolate();
 
+	//! Initializes the interpolation with start time, duration, and start and end values.
 	void		Init( const int startTime, const int duration, const type& startValue, const type& endValue );
+
+	//! Sets the start time for the interpolation.
 	void		SetStartTime( int time ) { this->startTime = time; }
+
+	//! Sets the duration of the interpolation to the specified value.
 	void		SetDuration( int duration ) { this->duration = duration; }
+
+	//! Sets the starting value for the interpolation.
 	void		SetStartValue( const type& startValue ) { this->startValue = startValue; }
+
+	//! Sets the end value for the interpolation.
 	void		SetEndValue( const type& endValue ) { this->endValue = endValue; }
 
+	//! Returns the current interpolated value at the given time
 	type		GetCurrentValue( int time ) const;
+
+	//! Determines whether an interpolation has completed by comparing the given time with the start time and duration.
 	bool		IsDone( int time ) const { return ( time >= startTime + duration ); }
 
+	//! Returns the start time of the cinematic animation.
 	int			GetStartTime() const { return startTime; }
+
+	//! Returns the end time of the interpolation interval.
 	int			GetEndTime() const { return startTime + duration; }
+
+	//! Returns the duration of the interpolation.
 	int			GetDuration() const { return duration; }
+
+	//! Returns a const reference to the starting value of the interpolation.
 	const type& GetStartValue() const { return startValue; }
+
+	//! Returns the end value of the interpolation.
 	const type& GetEndValue() const { return endValue; }
 
 private:
@@ -66,11 +88,6 @@ private:
 	type endValue;
 };
 
-/*
-====================
-idInterpolate::idInterpolate
-====================
-*/
 template<class type>
 ID_INLINE idInterpolate<type>::idInterpolate()
 {
@@ -79,11 +96,6 @@ ID_INLINE idInterpolate<type>::idInterpolate()
 	memset( &endValue, 0, sizeof( endValue ) );
 }
 
-/*
-====================
-idInterpolate::Init
-====================
-*/
 template<class type>
 ID_INLINE void idInterpolate<type>::Init( const int startTime, const int duration, const type& startValue, const type& endValue )
 {
@@ -93,11 +105,6 @@ ID_INLINE void idInterpolate<type>::Init( const int startTime, const int duratio
 	this->endValue	 = endValue;
 }
 
-/*
-====================
-idInterpolate::GetCurrentValue
-====================
-*/
 template<class type>
 ID_INLINE type idInterpolate<type>::GetCurrentValue( int time ) const
 {
@@ -126,35 +133,61 @@ template<class type>
 class idInterpolateAccelDecelLinear
 {
 public:
+	//! Initializes the interpolation parameters to their default values.
 	idInterpolateAccelDecelLinear();
 
+	//! Initializes the acceleration, deceleration, and linear interpolation parameters for a value over time.
 	void Init( const int startTime, const int accelTime, const int decelTime, const int duration, const type& startValue, const type& endValue );
+
+	//! Sets the start time for the interpolation and invalidates the current state.
 	void SetStartTime( int time )
 	{
 		startTime = time;
 		Invalidate();
 	}
+
+	//! Sets the starting value for the interpolation and invalidates the current interpolation state.
 	void SetStartValue( const type& startValue )
 	{
 		this->startValue = startValue;
 		Invalidate();
 	}
+
+	//! Sets the end value for the interpolation and invalidates the current interpolation state.
 	void SetEndValue( const type& endValue )
 	{
 		this->endValue = endValue;
 		Invalidate();
 	}
 
+	//! Returns the current interpolated value at the specified time
 	type		GetCurrentValue( int time ) const;
+
+	//! Returns the current speed at the specified time.
 	type		GetCurrentSpeed( int time ) const;
+
+	//! Returns true if the interpolation is complete at the given time.
 	bool		IsDone( int time ) const { return ( time >= startTime + accelTime + linearTime + decelTime ); }
 
+	//! Returns the start time of the cinematic animation.
 	int			GetStartTime() const { return startTime; }
+
+	//! Returns the end time of the interpolation process.
 	int			GetEndTime() const { return startTime + accelTime + linearTime + decelTime; }
+
+	//! Returns the total duration of the acceleration, linear, and deceleration phases.
 	int			GetDuration() const { return accelTime + linearTime + decelTime; }
+
+	//! Returns the acceleration time value.
 	int			GetAcceleration() const { return accelTime; }
+
+	//! Returns the deceleration time value.
 	int			GetDeceleration() const { return decelTime; }
+
+	//! Returns the starting value of the interpolation.
 	const type& GetStartValue() const { return startValue; }
+
+	//! Returns the end value of the interpolation.
 	const type& GetEndValue() const { return endValue; }
 
 private:
@@ -166,15 +199,13 @@ private:
 	type						endValue;
 	mutable idExtrapolate<type> extrapolate;
 
+	//! Initializes the extrapolation state to an invalid configuration.
 	void						Invalidate();
+
+	//! Sets the phase of the acceleration/deceleration linear interpolation based on the given time.
 	void						SetPhase( int time ) const;
 };
 
-/*
-====================
-idInterpolateAccelDecelLinear::idInterpolateAccelDecelLinear
-====================
-*/
 template<class type>
 ID_INLINE idInterpolateAccelDecelLinear<type>::idInterpolateAccelDecelLinear()
 {
@@ -215,22 +246,12 @@ ID_INLINE void idInterpolateAccelDecelLinear<type>::Init( const int startTime, c
 	}
 }
 
-/*
-====================
-idInterpolateAccelDecelLinear::Invalidate
-====================
-*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelLinear<type>::Invalidate()
 {
 	extrapolate.Init( 0, 0, extrapolate.GetStartValue(), extrapolate.GetBaseSpeed(), extrapolate.GetSpeed(), EXTRAPOLATION_NONE );
 }
 
-/*
-====================
-idInterpolateAccelDecelLinear::SetPhase
-====================
-*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelLinear<type>::SetPhase( int time ) const
 {
@@ -268,11 +289,6 @@ ID_INLINE type idInterpolateAccelDecelLinear<type>::GetCurrentValue( int time ) 
 	return extrapolate.GetCurrentValue( time );
 }
 
-/*
-====================
-idInterpolateAccelDecelLinear::GetCurrentSpeed
-====================
-*/
 template<class type>
 ID_INLINE type idInterpolateAccelDecelLinear<type>::GetCurrentSpeed( int time ) const
 {
@@ -293,35 +309,61 @@ template<class type>
 class idInterpolateAccelDecelSine
 {
 public:
+	//! Initializes all time and value members to their default states.
 	idInterpolateAccelDecelSine();
 
+	//! Initializes the acceleration and deceleration sine interpolation with the given timing and value parameters.
 	void Init( const int startTime, const int accelTime, const int decelTime, const int duration, const type& startValue, const type& endValue );
+
+	//! Sets the start time for the interpolation and invalidates the current state.
 	void SetStartTime( int time )
 	{
 		startTime = time;
 		Invalidate();
 	}
+
+	//! Sets the starting value for the interpolation and invalidates the current interpolation state.
 	void SetStartValue( const type& startValue )
 	{
 		this->startValue = startValue;
 		Invalidate();
 	}
+
+	//! Sets the end value for the interpolation and invalidates the current interpolation state.
 	void SetEndValue( const type& endValue )
 	{
 		this->endValue = endValue;
 		Invalidate();
 	}
 
+	//! Returns the current interpolated value based on the provided time.
 	type		GetCurrentValue( int time ) const;
+
+	//! Returns the current speed based on the interpolation phase and time.
 	type		GetCurrentSpeed( int time ) const;
+
+	//! Checks if the interpolation animation is complete at the given time.
 	bool		IsDone( int time ) const { return ( time >= startTime + accelTime + linearTime + decelTime ); }
 
+	//! Returns the start time of the cinematic animation.
 	int			GetStartTime() const { return startTime; }
+
+	//! Returns the end time of the interpolation cycle.
 	int			GetEndTime() const { return startTime + accelTime + linearTime + decelTime; }
+
+	//! Returns the total duration of the interpolation by summing the acceleration, linear, and deceleration time components.
 	int			GetDuration() const { return accelTime + linearTime + decelTime; }
+
+	//! Returns the acceleration time value.
 	int			GetAcceleration() const { return accelTime; }
+
+	//! Returns the deceleration time value.
 	int			GetDeceleration() const { return decelTime; }
+
+	//! Returns the starting value of the interpolation.
 	const type& GetStartValue() const { return startValue; }
+
+	//! Returns the end value of the interpolation curve
 	const type& GetEndValue() const { return endValue; }
 
 private:
@@ -333,15 +375,13 @@ private:
 	type						endValue;
 	mutable idExtrapolate<type> extrapolate;
 
+	//! Initializes the extrapolation state to an invalid or neutral condition.
 	void						Invalidate();
+
+	//! Sets the phase of the interpolation animation based on the provided time.
 	void						SetPhase( int time ) const;
 };
 
-/*
-====================
-idInterpolateAccelDecelSine::idInterpolateAccelDecelSine
-====================
-*/
 template<class type>
 ID_INLINE idInterpolateAccelDecelSine<type>::idInterpolateAccelDecelSine()
 {
@@ -350,11 +390,6 @@ ID_INLINE idInterpolateAccelDecelSine<type>::idInterpolateAccelDecelSine()
 	memset( &endValue, 0, sizeof( endValue ) );
 }
 
-/*
-====================
-idInterpolateAccelDecelSine::Init
-====================
-*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelSine<type>::Init( const int startTime, const int accelTime, const int decelTime, const int duration, const type& startValue, const type& endValue )
 {
@@ -382,22 +417,12 @@ ID_INLINE void idInterpolateAccelDecelSine<type>::Init( const int startTime, con
 	}
 }
 
-/*
-====================
-idInterpolateAccelDecelSine::Invalidate
-====================
-*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelSine<type>::Invalidate()
 {
 	extrapolate.Init( 0, 0, extrapolate.GetStartValue(), extrapolate.GetBaseSpeed(), extrapolate.GetSpeed(), EXTRAPOLATION_NONE );
 }
 
-/*
-====================
-idInterpolateAccelDecelSine::SetPhase
-====================
-*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelSine<type>::SetPhase( int time ) const
 {
@@ -427,11 +452,6 @@ ID_INLINE void idInterpolateAccelDecelSine<type>::SetPhase( int time ) const
 	}
 }
 
-/*
-====================
-idInterpolateAccelDecelSine::GetCurrentValue
-====================
-*/
 template<class type>
 ID_INLINE type idInterpolateAccelDecelSine<type>::GetCurrentValue( int time ) const
 {
@@ -439,11 +459,6 @@ ID_INLINE type idInterpolateAccelDecelSine<type>::GetCurrentValue( int time ) co
 	return extrapolate.GetCurrentValue( time );
 }
 
-/*
-====================
-idInterpolateAccelDecelSine::GetCurrentSpeed
-====================
-*/
 template<class type>
 ID_INLINE type idInterpolateAccelDecelSine<type>::GetCurrentSpeed( int time ) const
 {

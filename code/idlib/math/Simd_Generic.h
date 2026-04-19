@@ -41,22 +41,46 @@ If you have questions concerning this license or the applicable additional terms
 class idSIMD_Generic : public idSIMDProcessor
 {
 public:
+	//! Returns the name of the SIMD generic code implementation.
 	virtual const char* VPCALL GetName() const;
 
+	//! Computes the minimum and maximum values from an array of floats.
 	virtual void VPCALL		   MinMax( float& min, float& max, const float* src, const int count );
+
+	//! Computes the minimum and maximum values of a set of 2D vectors.
 	virtual void VPCALL		   MinMax( idVec2& min, idVec2& max, const idVec2* src, const int count );
+
+	//! Computes the minimum and maximum values of a set of 3D vectors.
 	virtual void VPCALL		   MinMax( idVec3& min, idVec3& max, const idVec3* src, const int count );
+
+	//! Computes the minimum and maximum coordinates from a list of draw vertices.
 	virtual void VPCALL		   MinMax( idVec3& min, idVec3& max, const idDrawVert* src, const int count );
+
+	//! Computes the bounding box for a set of triangle vertices.
 	virtual void VPCALL		   MinMax( idVec3& min, idVec3& max, const idDrawVert* src, const triIndex_t* indexes, const int count );
 
+	//! Copies a specified number of bytes from the source memory location to the destination memory location.
 	virtual void VPCALL		   Memcpy( void* dst, const void* src, const int count );
+
+	//! Sets count bytes of memory at dst to the value val.
 	virtual void VPCALL		   Memset( void* dst, const int val, const int count );
 
+	//! Blends joints using spherical linear interpolation for quaternions and linear interpolation for translations.
 	virtual void VPCALL		   BlendJoints( idJointQuat* joints, const idJointQuat* blendJoints, const float lerp, const int* index, const int numJoints );
+
+	//! Performs a fast joint blending operation on a set of joints using linear interpolation.
 	virtual void VPCALL		   BlendJointsFast( idJointQuat* joints, const idJointQuat* blendJoints, const float lerp, const int* index, const int numJoints );
+
+	//! Converts joint quaternions to joint matrices by setting rotation and translation components for each joint.
 	virtual void VPCALL		   ConvertJointQuatsToJointMats( idJointMat* jointMats, const idJointQuat* jointQuats, const int numJoints );
+
+	//! Converts an array of joint matrices to joint quaternions.
 	virtual void VPCALL		   ConvertJointMatsToJointQuats( idJointQuat* jointQuats, const idJointMat* jointMats, const int numJoints );
+
+	//! Transforms joints by applying parent transformations to child joints.
 	virtual void VPCALL		   TransformJoints( idJointMat* jointMats, const int* parents, const int firstJoint, const int lastJoint );
+
+	//! This function untransforms joints by dividing each joint matrix by its parent joint matrix in reverse order.
 	virtual void VPCALL		   UntransformJoints( idJointMat* jointMats, const int* parents, const int firstJoint, const int lastJoint );
 };
 

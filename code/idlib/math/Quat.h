@@ -55,9 +55,13 @@ public:
 	float z;
 	float w;
 
+	//! Constructs an identity quaternion.
 	idQuat();
+
+	//! Constructs a quaternion with the specified x, y, z, and w components.
 	idQuat( float x, float y, float z, float w );
 
+	//! Sets the components of the quaternion to the specified values.
 	void		  Set( float x, float y, float z, float w );
 
 	float		  operator[]( int index ) const;
@@ -77,34 +81,64 @@ public:
 	friend idQuat operator*( const float a, const idQuat& b );
 	friend idVec3 operator*( const idVec3& a, const idQuat& b );
 
-	bool		  Compare( const idQuat& a ) const;						 // exact compare, no epsilon
-	bool		  Compare( const idQuat& a, const float epsilon ) const; // compare with epsilon
-	bool		  operator==( const idQuat& a ) const;					 // exact compare, no epsilon
-	bool		  operator!=( const idQuat& a ) const;					 // exact compare, no epsilon
+	//! Compares this quaternion with another quaternion for exact equality.
+	bool		  Compare( const idQuat& a ) const;
 
+	//! Compares this quaternion with another quaternion using the specified epsilon value for floating-point comparison.
+	bool		  Compare( const idQuat& a, const float epsilon ) const;
+	bool		  operator==( const idQuat& a ) const; // exact compare, no epsilon
+	bool		  operator!=( const idQuat& a ) const; // exact compare, no epsilon
+
+	//! Returns the inverse of this quaternion.
 	idQuat		  Inverse() const;
+
+	//! Calculates and returns the Euclidean length of the quaternion.
 	float		  Length() const;
+
+	//! Normalizes the quaternion in place and returns a reference to itself.
 	idQuat&		  Normalize();
 
+	//! Calculates the W component of a quaternion using the XYZ components.
 	float		  CalcW() const;
+
+	//! Returns the dimension of the quaternion, which is always 4.
 	int			  GetDimension() const;
 
+	//! Converts a quaternion to Euler angles
 	idAngles	  ToAngles() const;
+
+	//! Converts a quaternion to a rotation object.
 	idRotation	  ToRotation() const;
+
+	//! Converts a quaternion to a 3x3 matrix representation.
 	idMat3		  ToMat3() const;
+
+	//! Converts the quaternion to a 4x4 transformation matrix.
 	idMat4		  ToMat4() const;
+
+	//! Converts this quaternion to a C-style quaternion with negative components if the w component is negative.
 	idCQuat		  ToCQuat() const;
+
+	//! Converts a quaternion to its corresponding angular velocity vector.
 	idVec3		  ToAngularVelocity() const;
+
+	//! Returns a pointer to the float representation of the quaternion data.
 	const float*  ToFloatPtr() const;
+
+	//! Returns a pointer to the float representation of the quaternion components.
 	float*		  ToFloatPtr();
+
+	//! Returns a string representation of the quaternion with the specified precision.
 	const char*	  ToString( int precision = 2 ) const;
 
+	//! Performs spherical linear interpolation between two quaternions and stores the result in this quaternion.
 	idQuat&		  Slerp( const idQuat& from, const idQuat& to, float t );
+
+	//! Performs spherical linear interpolation between two quaternions.
 	idQuat&		  Lerp( const idQuat& from, const idQuat& to, const float t );
 };
 
-// A non-member slerp function allows constructing a const idQuat object with the result of a slerp,
-// but without having to explicity create a temporary idQuat object.
+//! Performs spherical linear interpolation between two quaternions.
 idQuat	  Slerp( const idQuat& from, const idQuat& to, const float t );
 
 ID_INLINE idQuat::idQuat()
@@ -345,28 +379,51 @@ public:
 	float y;
 	float z;
 
+	//! Constructs a new identity quaternion.
 	idCQuat();
+
+	//! Initializes a new quaternion with the specified x, y, and z components.
 	idCQuat( float x, float y, float z );
 
+	//! Sets the x, y, and z components of the quaternion.
 	void		 Set( float x, float y, float z );
 
 	float		 operator[]( int index ) const;
 	float&		 operator[]( int index );
 
-	bool		 Compare( const idCQuat& a ) const;						 // exact compare, no epsilon
-	bool		 Compare( const idCQuat& a, const float epsilon ) const; // compare with epsilon
-	bool		 operator==( const idCQuat& a ) const;					 // exact compare, no epsilon
-	bool		 operator!=( const idCQuat& a ) const;					 // exact compare, no epsilon
+	//! Compares this quaternion with another quaternion for exact equality.
+	bool		 Compare( const idCQuat& a ) const;
 
+	//! Compares this quaternion with another quaternion using the specified epsilon tolerance.
+	bool		 Compare( const idCQuat& a, const float epsilon ) const;
+	bool		 operator==( const idCQuat& a ) const; // exact compare, no epsilon
+	bool		 operator!=( const idCQuat& a ) const; // exact compare, no epsilon
+
+	//! Returns the dimension of the quaternion, which is always 3.
 	int			 GetDimension() const;
 
+	//! Converts a quaternion to Euler angles.
 	idAngles	 ToAngles() const;
+
+	//! Converts the quaternion to a rotation object.
 	idRotation	 ToRotation() const;
+
+	//! Converts the quaternion to a 3x3 rotation matrix.
 	idMat3		 ToMat3() const;
+
+	//! Converts the quaternion to a 4x4 transformation matrix.
 	idMat4		 ToMat4() const;
+
+	//! Converts a normalized quaternion to a full quaternion by computing the scalar component.
 	idQuat		 ToQuat() const;
+
+	//! Returns a pointer to the float representation of the quaternion components.
 	const float* ToFloatPtr() const;
+
+	//! Returns a pointer to the internal float array representing the quaternion components.
 	float*		 ToFloatPtr();
+
+	//! Converts the quaternion to a string representation with the specified precision.
 	const char*	 ToString( int precision = 2 ) const;
 };
 

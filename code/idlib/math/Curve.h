@@ -42,16 +42,22 @@ template<class type>
 class idCurve
 {
 public:
+	//! Initializes a new instance of the idCurve template class.
 	idCurve();
 	virtual ~idCurve();
 
+	//! Adds a new value to the curve at the specified time and returns its index.
 	virtual int	 AddValue( const float time, const type& value );
+
+	//! Removes the curve point at the specified index from the curve.
 	virtual void RemoveIndex( const int index )
 	{
 		values.RemoveIndex( index );
 		times.RemoveIndex( index );
 		changed = true;
 	}
+
+	//! Clears all values and times from the curve and resets the current index and changed flag.
 	virtual void Clear()
 	{
 		values.Clear();
@@ -60,29 +66,56 @@ public:
 		changed		 = true;
 	}
 
+	//! Returns the current value from the curve at the specified time
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the curve at the specified time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the curve at the specified time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
+	//! Checks if the curve is complete at the given time.
 	virtual bool IsDone( const float time ) const;
 
+	//! Returns the number of values in the curve.
 	int			 GetNumValues() const { return values.Num(); }
+
+	//! Sets the value at the specified index in the curve.
 	void		 SetValue( const int index, const type& value )
 	{
 		values[index] = value;
 		changed		  = true;
 	}
+
+	//! Retrieves the value at the specified index from the curve data
 	type  GetValue( const int index ) const { return values[index]; }
+
+	//! Returns a pointer to the value at the specified index in the curve.
 	type* GetValueAddress( const int index ) { return &values[index]; }
+
+	//! Retrieves the time value at the specified index from the curve.
 	float GetTime( const int index ) const { return times[index]; }
 
+	//! Calculates the arc length of the curve up to a given time value.
 	float GetLengthForTime( const float time ) const;
+
+	//! Returns the time value corresponding to a given arc length along the curve.
 	float GetTimeForLength( const float length, const float epsilon = 0.1f ) const;
+
+	//! Calculates the arc length between two knots in a curve using Romberg integration.
 	float GetLengthBetweenKnots( const int i0, const int i1 ) const;
 
+	//! Sets the curve times to be evenly spaced over the given total time.
 	void  MakeUniform( const float totalTime );
+
+	//! Sets the curve to have constant speed over the specified total time by adjusting the time knots.
 	void  SetConstantSpeed( const float totalTime );
+
+	//! Shifts all time values in the curve by the specified delta time.
 	void  ShiftTime( const float deltaTime );
+
+	//! Translates all curve values by the specified translation amount.
 	void  Translate( const type& translation );
 
 protected:
@@ -92,19 +125,22 @@ protected:
 	mutable int	  currentIndex; // cached index for fast lookup
 	mutable bool  changed;		// set whenever the curve changes
 
+	//! Returns the curve index for the given time value, using a cached index when possible and falling back to binary search.
 	int			  IndexForTime( const float time ) const;
+
+	//! Returns the time value for a given index in the curve, interpolating if necessary.
 	float		  TimeForIndex( const int index ) const;
+
+	//! Returns the curve value at the specified index, with linear extrapolation for out-of-bounds indices.
 	type		  ValueForIndex( const int index ) const;
 
+	//! Returns the speed of the curve at the given time by calculating the magnitude of the first derivative.
 	float		  GetSpeed( const float time ) const;
+
+	//! Computes the Romberg integral of the curve speed function over the specified time interval using Richardson extrapolation.
 	float		  RombergIntegral( const float t0, const float t1, const int order ) const;
 };
 
-/*
-====================
-idCurve::idCurve
-====================
-*/
 template<class type>
 ID_INLINE idCurve<type>::idCurve()
 {
@@ -122,14 +158,6 @@ ID_INLINE idCurve<type>::~idCurve()
 {
 }
 
-/*
-====================
-idCurve::AddValue
-
-  add a timed/value pair to the spline
-  returns the index to the inserted pair
-====================
-*/
 template<class type>
 ID_INLINE int idCurve<type>::AddValue( const float time, const type& value )
 {
@@ -142,13 +170,6 @@ ID_INLINE int idCurve<type>::AddValue( const float time, const type& value )
 	return i;
 }
 
-/*
-====================
-idCurve::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve<type>::GetCurrentValue( const float time ) const
 {
@@ -162,48 +183,24 @@ ID_INLINE type idCurve<type>::GetCurrentValue( const float time ) const
 	}
 }
 
-/*
-====================
-idCurve::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve<type>::GetCurrentFirstDerivative( const float time ) const
 {
 	return ( values[0] - values[0] ); //-V501
 }
 
-/*
-====================
-idCurve::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve<type>::GetCurrentSecondDerivative( const float time ) const
 {
 	return ( values[0] - values[0] ); //-V501
 }
 
-/*
-====================
-idCurve::IsDone
-====================
-*/
 template<class type>
 ID_INLINE bool idCurve<type>::IsDone( const float time ) const
 {
 	return ( time >= times[times.Num() - 1] );
 }
 
-/*
-====================
-idCurve::GetSpeed
-====================
-*/
 template<class type>
 ID_INLINE float idCurve<type>::GetSpeed( const float time ) const
 {
@@ -218,11 +215,6 @@ ID_INLINE float idCurve<type>::GetSpeed( const float time ) const
 	return idMath::Sqrt( speed );
 }
 
-/*
-====================
-idCurve::RombergIntegral
-====================
-*/
 template<class type>
 ID_INLINE float idCurve<type>::RombergIntegral( const float t0, const float t1, const int order ) const
 {
@@ -256,11 +248,6 @@ ID_INLINE float idCurve<type>::RombergIntegral( const float t0, const float t1, 
 	return temp[0][order - 1];
 }
 
-/*
-====================
-idCurve::GetLengthBetweenKnots
-====================
-*/
 template<class type>
 ID_INLINE float idCurve<type>::GetLengthBetweenKnots( const int i0, const int i1 ) const
 {
@@ -271,11 +258,6 @@ ID_INLINE float idCurve<type>::GetLengthBetweenKnots( const int i0, const int i1
 	return length;
 }
 
-/*
-====================
-idCurve::GetLengthForTime
-====================
-*/
 template<class type>
 ID_INLINE float idCurve<type>::GetLengthForTime( const float time ) const
 {
@@ -288,11 +270,6 @@ ID_INLINE float idCurve<type>::GetLengthForTime( const float time ) const
 	return length;
 }
 
-/*
-====================
-idCurve::GetTimeForLength
-====================
-*/
 template<class type>
 ID_INLINE float idCurve<type>::GetTimeForLength( const float length, const float epsilon ) const
 {
@@ -329,11 +306,6 @@ ID_INLINE float idCurve<type>::GetTimeForLength( const float length, const float
 	return times[index] + t;
 }
 
-/*
-====================
-idCurve::MakeUniform
-====================
-*/
 template<class type>
 ID_INLINE void idCurve<type>::MakeUniform( const float totalTime )
 {
@@ -346,11 +318,6 @@ ID_INLINE void idCurve<type>::MakeUniform( const float totalTime )
 	changed = true;
 }
 
-/*
-====================
-idCurve::SetConstantSpeed
-====================
-*/
 template<class type>
 ID_INLINE void idCurve<type>::SetConstantSpeed( const float totalTime )
 {
@@ -372,11 +339,6 @@ ID_INLINE void idCurve<type>::SetConstantSpeed( const float totalTime )
 	changed				   = true;
 }
 
-/*
-====================
-idCurve::ShiftTime
-====================
-*/
 template<class type>
 ID_INLINE void idCurve<type>::ShiftTime( const float deltaTime )
 {
@@ -386,11 +348,6 @@ ID_INLINE void idCurve<type>::ShiftTime( const float deltaTime )
 	changed = true;
 }
 
-/*
-====================
-idCurve::Translate
-====================
-*/
 template<class type>
 ID_INLINE void idCurve<type>::Translate( const type& translation )
 {
@@ -400,13 +357,6 @@ ID_INLINE void idCurve<type>::Translate( const type& translation )
 	changed = true;
 }
 
-/*
-====================
-idCurve::IndexForTime
-
-  find the index for the first time greater than or equal to the given time
-====================
-*/
 template<class type>
 ID_INLINE int idCurve<type>::IndexForTime( const float time ) const
 {
@@ -449,13 +399,6 @@ ID_INLINE int idCurve<type>::IndexForTime( const float time ) const
 	return currentIndex;
 }
 
-/*
-====================
-idCurve::ValueForIndex
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve<type>::ValueForIndex( const int index ) const
 {
@@ -469,13 +412,6 @@ ID_INLINE type idCurve<type>::ValueForIndex( const int index ) const
 	return values[index];
 }
 
-/*
-====================
-idCurve::TimeForIndex
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE float idCurve<type>::TimeForIndex( const int index ) const
 {
@@ -502,35 +438,34 @@ template<class type>
 class idCurve_Bezier : public idCurve<type>
 {
 public:
+	//! Constructs a new Bezier curve with default control points.
 	idCurve_Bezier();
 
+	//! Returns the current interpolated value from the Bezier curve at the specified time.
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the Bezier curve at the specified time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the Bezier curve at the given time
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
+	//! Computes the basis values for a Bezier curve of the specified order at the given parameter value.
 	void Basis( const int order, const float t, float* bvals ) const;
+
+	//! Computes the first derivative of the basis functions for a Bézier curve of the specified order at parameter t.
 	void BasisFirstDerivative( const int order, const float t, float* bvals ) const;
+
+	//! Computes the second derivative of the basis functions for a Bézier curve of the specified order at parameter t.
 	void BasisSecondDerivative( const int order, const float t, float* bvals ) const;
 };
 
-/*
-====================
-idCurve_Bezier::idCurve_Bezier
-====================
-*/
 template<class type>
 ID_INLINE idCurve_Bezier<type>::idCurve_Bezier()
 {
 }
 
-/*
-====================
-idCurve_Bezier::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_Bezier<type>::GetCurrentValue( const float time ) const
 {
@@ -548,13 +483,6 @@ ID_INLINE type idCurve_Bezier<type>::GetCurrentValue( const float time ) const
 	return v;
 }
 
-/*
-====================
-idCurve_Bezier::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_Bezier<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -573,13 +501,6 @@ ID_INLINE type idCurve_Bezier<type>::GetCurrentFirstDerivative( const float time
 	return ( ( float )( this->values.Num() - 1 ) / d ) * v;
 }
 
-/*
-====================
-idCurve_Bezier::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_Bezier<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -598,13 +519,6 @@ ID_INLINE type idCurve_Bezier<type>::GetCurrentSecondDerivative( const float tim
 	return ( ( float )( this->values.Num() - 2 ) * ( this->values.Num() - 1 ) / ( d * d ) ) * v;
 }
 
-/*
-====================
-idCurve_Bezier::Basis
-
-  bezier basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_Bezier<type>::Basis( const int order, const float t, float* bvals ) const
 {
@@ -643,13 +557,6 @@ ID_INLINE void idCurve_Bezier<type>::Basis( const int order, const float t, floa
 	bvals[d] = ps;
 }
 
-/*
-====================
-idCurve_Bezier::BasisFirstDerivative
-
-  first derivative of bezier basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_Bezier<type>::BasisFirstDerivative( const int order, const float t, float* bvals ) const
 {
@@ -662,13 +569,6 @@ ID_INLINE void idCurve_Bezier<type>::BasisFirstDerivative( const int order, cons
 	}
 }
 
-/*
-====================
-idCurve_Bezier::BasisSecondDerivative
-
-  second derivative of bezier basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_Bezier<type>::BasisSecondDerivative( const int order, const float t, float* bvals ) const
 {
@@ -694,35 +594,34 @@ template<class type>
 class idCurve_QuadraticBezier : public idCurve<type>
 {
 public:
+	//! Constructs a new quadratic Bézier curve with default control points.
 	idCurve_QuadraticBezier();
 
+	//! Returns the current value of the quadratic Bézier curve at the specified time.
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the quadratic Bézier curve at the given time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the quadratic Bézier curve at the specified time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
+	//! Computes the quadratic Bézier basis values for the given parameter t and stores them in the provided array.
 	void Basis( const float t, float* bvals ) const;
+
+	//! Computes the first derivative of the quadratic Bézier curve basis functions at the given parameter value.
 	void BasisFirstDerivative( const float t, float* bvals ) const;
+
+	//! Computes the second derivative of the quadratic Bézier basis functions at the given parameter value.
 	void BasisSecondDerivative( const float t, float* bvals ) const;
 };
 
-/*
-====================
-idCurve_QuadraticBezier::idCurve_QuadraticBezier
-====================
-*/
 template<class type>
 ID_INLINE idCurve_QuadraticBezier<type>::idCurve_QuadraticBezier()
 {
 }
 
-/*
-====================
-idCurve_QuadraticBezier::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_QuadraticBezier<type>::GetCurrentValue( const float time ) const
 {
@@ -732,13 +631,6 @@ ID_INLINE type idCurve_QuadraticBezier<type>::GetCurrentValue( const float time 
 	return ( bvals[0] * this->values[0] + bvals[1] * this->values[1] + bvals[2] * this->values[2] );
 }
 
-/*
-====================
-idCurve_QuadraticBezier::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_QuadraticBezier<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -749,13 +641,6 @@ ID_INLINE type idCurve_QuadraticBezier<type>::GetCurrentFirstDerivative( const f
 	return ( bvals[0] * this->values[0] + bvals[1] * this->values[1] + bvals[2] * this->values[2] ) / d;
 }
 
-/*
-====================
-idCurve_QuadraticBezier::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_QuadraticBezier<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -766,13 +651,6 @@ ID_INLINE type idCurve_QuadraticBezier<type>::GetCurrentSecondDerivative( const 
 	return ( bvals[0] * this->values[0] + bvals[1] * this->values[1] + bvals[2] * this->values[2] ) / ( d * d );
 }
 
-/*
-====================
-idCurve_QuadraticBezier::Basis
-
-  quadratic bezier basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_QuadraticBezier<type>::Basis( const float t, float* bvals ) const
 {
@@ -783,13 +661,6 @@ ID_INLINE void idCurve_QuadraticBezier<type>::Basis( const float t, float* bvals
 	bvals[2] = s2;
 }
 
-/*
-====================
-idCurve_QuadraticBezier::BasisFirstDerivative
-
-  first derivative of quadratic bezier basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_QuadraticBezier<type>::BasisFirstDerivative( const float t, float* bvals ) const
 {
@@ -799,13 +670,6 @@ ID_INLINE void idCurve_QuadraticBezier<type>::BasisFirstDerivative( const float 
 	bvals[2] = 2.0f * s1;
 }
 
-/*
-====================
-idCurve_QuadraticBezier::BasisSecondDerivative
-
-  second derivative of quadratic bezier basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_QuadraticBezier<type>::BasisSecondDerivative( const float t, float* bvals ) const
 {
@@ -828,35 +692,34 @@ template<class type>
 class idCurve_CubicBezier : public idCurve<type>
 {
 public:
+	//! Initializes a new instance of the cubic Bézier curve class.
 	idCurve_CubicBezier();
 
+	//! Returns the interpolated value at the given time for a cubic Bézier curve
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the cubic Bézier curve at the specified time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the cubic Bezier curve at the specified time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
+	//! Computes the cubic Bézier basis functions for a given parameter value and stores the results in the provided array.
 	void Basis( const float t, float* bvals ) const;
+
+	//! Computes the first derivatives of the cubic Bézier basis functions at the given parameter t
 	void BasisFirstDerivative( const float t, float* bvals ) const;
+
+	//! Computes the second derivative of the cubic Bézier basis functions at the given parameter value.
 	void BasisSecondDerivative( const float t, float* bvals ) const;
 };
 
-/*
-====================
-idCurve_CubicBezier::idCurve_CubicBezier
-====================
-*/
 template<class type>
 ID_INLINE idCurve_CubicBezier<type>::idCurve_CubicBezier()
 {
 }
 
-/*
-====================
-idCurve_CubicBezier::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_CubicBezier<type>::GetCurrentValue( const float time ) const
 {
@@ -866,13 +729,6 @@ ID_INLINE type idCurve_CubicBezier<type>::GetCurrentValue( const float time ) co
 	return ( bvals[0] * this->values[0] + bvals[1] * this->values[1] + bvals[2] * this->values[2] + bvals[3] * this->values[3] );
 }
 
-/*
-====================
-idCurve_CubicBezier::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_CubicBezier<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -883,13 +739,6 @@ ID_INLINE type idCurve_CubicBezier<type>::GetCurrentFirstDerivative( const float
 	return ( bvals[0] * this->values[0] + bvals[1] * this->values[1] + bvals[2] * this->values[2] + bvals[3] * this->values[3] ) / d;
 }
 
-/*
-====================
-idCurve_CubicBezier::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_CubicBezier<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -900,13 +749,6 @@ ID_INLINE type idCurve_CubicBezier<type>::GetCurrentSecondDerivative( const floa
 	return ( bvals[0] * this->values[0] + bvals[1] * this->values[1] + bvals[2] * this->values[2] + bvals[3] * this->values[3] ) / ( d * d );
 }
 
-/*
-====================
-idCurve_CubicBezier::Basis
-
-  cubic bezier basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_CubicBezier<type>::Basis( const float t, float* bvals ) const
 {
@@ -919,13 +761,6 @@ ID_INLINE void idCurve_CubicBezier<type>::Basis( const float t, float* bvals ) c
 	bvals[3] = s3;
 }
 
-/*
-====================
-idCurve_CubicBezier::BasisFirstDerivative
-
-  first derivative of cubic bezier basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_CubicBezier<type>::BasisFirstDerivative( const float t, float* bvals ) const
 {
@@ -937,13 +772,6 @@ ID_INLINE void idCurve_CubicBezier<type>::BasisFirstDerivative( const float t, f
 	bvals[3] = 3.0f * s2;
 }
 
-/*
-====================
-idCurve_CubicBezier::BasisSecondDerivative
-
-  second derivative of cubic bezier basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_CubicBezier<type>::BasisSecondDerivative( const float t, float* bvals ) const
 {
@@ -968,38 +796,46 @@ class idCurve_Spline : public idCurve<type>
 public:
 	enum boundary_t { BT_FREE, BT_CLAMPED, BT_CLOSED };
 
+	//! Initializes a new instance of the idCurve_Spline class with default boundary type and close time.
 	idCurve_Spline();
 
+	//! Returns true if the spline interpolation is complete at the given time.
 	virtual bool IsDone( const float time ) const;
 
+	//! Sets the boundary type for the spline curve and marks it as changed.
 	virtual void SetBoundaryType( const boundary_t bt )
 	{
 		boundaryType  = bt;
 		this->changed = true;
 	}
+
+	//! Returns the boundary type of the spline curve.
 	virtual boundary_t GetBoundaryType() const { return boundaryType; }
 
+	//! Sets the close time value for the spline curve and marks it as changed.
 	virtual void	   SetCloseTime( const float t )
 	{
 		closeTime	  = t;
 		this->changed = true;
 	}
+
+	//! Returns the closing time for the spline curve when it is in closed boundary type, otherwise returns zero.
 	virtual float GetCloseTime() { return boundaryType == BT_CLOSED ? closeTime : 0.0f; }
 
 protected:
 	boundary_t boundaryType;
 	float	   closeTime;
 
+	//! Returns the value at the specified index, handling boundary conditions for closed curves.
 	type	   ValueForIndex( const int index ) const;
+
+	//! Returns the time value for a given index, handling boundary conditions for closed and open curves.
 	float	   TimeForIndex( const int index ) const;
+
+	//! Returns the clamped time value based on the boundary type and input time.
 	float	   ClampedTime( const float t ) const;
 };
 
-/*
-====================
-idCurve_Spline::idCurve_Spline
-====================
-*/
 template<class type>
 ID_INLINE idCurve_Spline<type>::idCurve_Spline()
 {
@@ -1007,13 +843,6 @@ ID_INLINE idCurve_Spline<type>::idCurve_Spline()
 	closeTime	 = 0.0f;
 }
 
-/*
-====================
-idCurve_Spline::ValueForIndex
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_Spline<type>::ValueForIndex( const int index ) const
 {
@@ -1035,13 +864,6 @@ ID_INLINE type idCurve_Spline<type>::ValueForIndex( const int index ) const
 	return this->values[index];
 }
 
-/*
-====================
-idCurve_Spline::TimeForIndex
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE float idCurve_Spline<type>::TimeForIndex( const int index ) const
 {
@@ -1063,13 +885,6 @@ ID_INLINE float idCurve_Spline<type>::TimeForIndex( const int index ) const
 	return this->times[index];
 }
 
-/*
-====================
-idCurve_Spline::ClampedTime
-
-  return the clamped time based on the boundary type
-====================
-*/
 template<class type>
 ID_INLINE float idCurve_Spline<type>::ClampedTime( const float t ) const
 {
@@ -1083,11 +898,6 @@ ID_INLINE float idCurve_Spline<type>::ClampedTime( const float t ) const
 	return t;
 }
 
-/*
-====================
-idCurve_Spline::IsDone
-====================
-*/
 template<class type>
 ID_INLINE bool idCurve_Spline<type>::IsDone( const float time ) const
 {
@@ -1107,8 +917,10 @@ template<class type>
 class idCurve_NaturalCubicSpline : public idCurve_Spline<type>
 {
 public:
+	//! Constructs a new instance of the natural cubic spline curve.
 	idCurve_NaturalCubicSpline();
 
+	//! Clears all data stored in the natural cubic spline curve.
 	virtual void Clear()
 	{
 		idCurve_Spline<type>::Clear();
@@ -1118,8 +930,13 @@ public:
 		d.Clear();
 	}
 
+	//! Returns the interpolated value at the given time from a natural cubic spline curve.
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the spline at the given time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the natural cubic spline at the given time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
@@ -1127,29 +944,24 @@ protected:
 	mutable idList<type> c;
 	mutable idList<type> d;
 
+	//! Sets up the spline curve boundary conditions based on the current boundary type.
 	void				 Setup() const;
+
+	//! Sets up the free boundary conditions for the natural cubic spline curve.
 	void				 SetupFree() const;
+
+	//! Sets up the clamped spline curve coefficients for natural cubic spline interpolation.
 	void				 SetupClamped() const;
+
+	//! Sets up the coefficients for a closed natural cubic spline interpolation.
 	void				 SetupClosed() const;
 };
 
-/*
-====================
-idCurve_NaturalCubicSpline::idCurve_NaturalCubicSpline
-====================
-*/
 template<class type>
 ID_INLINE idCurve_NaturalCubicSpline<type>::idCurve_NaturalCubicSpline()
 {
 }
 
-/*
-====================
-idCurve_NaturalCubicSpline::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_NaturalCubicSpline<type>::GetCurrentValue( const float time ) const
 {
@@ -1160,13 +972,6 @@ ID_INLINE type idCurve_NaturalCubicSpline<type>::GetCurrentValue( const float ti
 	return ( this->values[i] + s * ( b[i] + s * ( c[i] + s * d[i] ) ) );
 }
 
-/*
-====================
-idCurve_NaturalCubicSpline::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_NaturalCubicSpline<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -1177,13 +982,6 @@ ID_INLINE type idCurve_NaturalCubicSpline<type>::GetCurrentFirstDerivative( cons
 	return ( b[i] + s * ( 2.0f * c[i] + 3.0f * s * d[i] ) );
 }
 
-/*
-====================
-idCurve_NaturalCubicSpline::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_NaturalCubicSpline<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -1194,11 +992,6 @@ ID_INLINE type idCurve_NaturalCubicSpline<type>::GetCurrentSecondDerivative( con
 	return ( 2.0f * c[i] + 6.0f * s * d[i] );
 }
 
-/*
-====================
-idCurve_NaturalCubicSpline::Setup
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_NaturalCubicSpline<type>::Setup() const
 {
@@ -1218,11 +1011,6 @@ ID_INLINE void idCurve_NaturalCubicSpline<type>::Setup() const
 	}
 }
 
-/*
-====================
-idCurve_NaturalCubicSpline::SetupFree
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_NaturalCubicSpline<type>::SetupFree() const
 {
@@ -1279,11 +1067,6 @@ ID_INLINE void idCurve_NaturalCubicSpline<type>::SetupFree() const
 	}
 }
 
-/*
-====================
-idCurve_NaturalCubicSpline::SetupClamped
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_NaturalCubicSpline<type>::SetupClamped() const
 {
@@ -1348,11 +1131,6 @@ ID_INLINE void idCurve_NaturalCubicSpline<type>::SetupClamped() const
 	}
 }
 
-/*
-====================
-idCurve_NaturalCubicSpline::SetupClosed
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_NaturalCubicSpline<type>::SetupClosed() const
 {
@@ -1429,35 +1207,34 @@ template<class type>
 class idCurve_CatmullRomSpline : public idCurve_Spline<type>
 {
 public:
+	//! Constructs an empty Catmull-Rom spline curve.
 	idCurve_CatmullRomSpline();
 
+	//! Returns the current value of the Catmull-Rom spline at the specified time.
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the curve at the given time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the curve at the given time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
+	//! Computes the Catmull-Rom spline basis functions for the given index and time parameter.
 	void Basis( const int index, const float t, float* bvals ) const;
+
+	//! Calculates the first derivative of the Catmull-Rom spline basis functions for a given index and parameter.
 	void BasisFirstDerivative( const int index, const float t, float* bvals ) const;
+
+	//! Computes the second derivative of the Catmull-Rom spline basis functions for a given index and time parameter.
 	void BasisSecondDerivative( const int index, const float t, float* bvals ) const;
 };
 
-/*
-====================
-idCurve_CatmullRomSpline::idCurve_CatmullRomSpline
-====================
-*/
 template<class type>
 ID_INLINE idCurve_CatmullRomSpline<type>::idCurve_CatmullRomSpline()
 {
 }
 
-/*
-====================
-idCurve_CatmullRomSpline::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_CatmullRomSpline<type>::GetCurrentValue( const float time ) const
 {
@@ -1478,13 +1255,6 @@ ID_INLINE type idCurve_CatmullRomSpline<type>::GetCurrentValue( const float time
 	return v;
 }
 
-/*
-====================
-idCurve_CatmullRomSpline::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_CatmullRomSpline<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -1508,13 +1278,6 @@ ID_INLINE type idCurve_CatmullRomSpline<type>::GetCurrentFirstDerivative( const 
 	return v / d;
 }
 
-/*
-====================
-idCurve_CatmullRomSpline::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_CatmullRomSpline<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -1538,13 +1301,6 @@ ID_INLINE type idCurve_CatmullRomSpline<type>::GetCurrentSecondDerivative( const
 	return v / ( d * d );
 }
 
-/*
-====================
-idCurve_CatmullRomSpline::Basis
-
-  spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_CatmullRomSpline<type>::Basis( const int index, const float t, float* bvals ) const
 {
@@ -1555,13 +1311,6 @@ ID_INLINE void idCurve_CatmullRomSpline<type>::Basis( const int index, const flo
 	bvals[3] = ( ( s - 1.0f ) * s * s ) * 0.5f;					  // 0.5f * s * s * s - 0.5f * s * s
 }
 
-/*
-====================
-idCurve_CatmullRomSpline::BasisFirstDerivative
-
-  first derivative of spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_CatmullRomSpline<type>::BasisFirstDerivative( const int index, const float t, float* bvals ) const
 {
@@ -1572,13 +1321,6 @@ ID_INLINE void idCurve_CatmullRomSpline<type>::BasisFirstDerivative( const int i
 	bvals[3] = 1.5f * s * s - s;				// 1.5f * s * s - s
 }
 
-/*
-====================
-idCurve_CatmullRomSpline::BasisSecondDerivative
-
-  second derivative of spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_CatmullRomSpline<type>::BasisSecondDerivative( const int index, const float t, float* bvals ) const
 {
@@ -1604,10 +1346,16 @@ template<class type>
 class idCurve_KochanekBartelsSpline : public idCurve_Spline<type>
 {
 public:
+	//! Constructs a new Kochanek-Bartels spline curve.
 	idCurve_KochanekBartelsSpline();
 
+	//! Adds a new value to the spline at the specified time and returns its index.
 	virtual int	 AddValue( const float time, const type& value );
+
+	//! Adds a new value to the Kochanek-Bartels spline curve at the specified time with the given tension, continuity, and bias parameters.
 	virtual int	 AddValue( const float time, const type& value, const float tension, const float continuity, const float bias );
+
+	//! Removes the element at the specified index from all internal arrays of the spline curve.
 	virtual void RemoveIndex( const int index )
 	{
 		this->values.RemoveIndex( index );
@@ -1616,6 +1364,8 @@ public:
 		continuity.RemoveIndex( index );
 		bias.RemoveIndex( index );
 	}
+
+	//! Clears all stored values, times, and control points for the Kochanek-Bartels spline.
 	virtual void Clear()
 	{
 		this->values.Clear();
@@ -1626,8 +1376,13 @@ public:
 		this->currentIndex = -1;
 	}
 
+	//! Returns the interpolated value at the specified time using Kochanek-Bartels spline interpolation.
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the spline at the given time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the spline at the given time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
@@ -1635,31 +1390,24 @@ protected:
 	idList<float> continuity;
 	idList<float> bias;
 
+	//! Computes the outgoing and incoming tangent vectors for a specified index in a Kochanek-Bartels spline.
 	void		  TangentsForIndex( const int index, type& t0, type& t1 ) const;
 
+	//! Computes the basis values for Kochanek-Bartels spline interpolation at a given index and time.
 	void		  Basis( const int index, const float t, float* bvals ) const;
+
+	//! Computes the first derivative of the basis functions for a Kochanek-Bartels spline at the specified index and time.
 	void		  BasisFirstDerivative( const int index, const float t, float* bvals ) const;
+
+	//! Computes the second derivative of the basis functions for a Kochanek-Bartels spline at the specified index and time.
 	void		  BasisSecondDerivative( const int index, const float t, float* bvals ) const;
 };
 
-/*
-====================
-idCurve_KochanekBartelsSpline::idCurve_KochanekBartelsSpline
-====================
-*/
 template<class type>
 ID_INLINE idCurve_KochanekBartelsSpline<type>::idCurve_KochanekBartelsSpline()
 {
 }
 
-/*
-====================
-idCurve_KochanekBartelsSpline::AddValue
-
-  add a timed/value pair to the spline
-  returns the index to the inserted pair
-====================
-*/
 template<class type>
 ID_INLINE int idCurve_KochanekBartelsSpline<type>::AddValue( const float time, const type& value )
 {
@@ -1674,14 +1422,6 @@ ID_INLINE int idCurve_KochanekBartelsSpline<type>::AddValue( const float time, c
 	return i;
 }
 
-/*
-====================
-idCurve_KochanekBartelsSpline::AddValue
-
-  add a timed/value pair to the spline
-  returns the index to the inserted pair
-====================
-*/
 template<class type>
 ID_INLINE int idCurve_KochanekBartelsSpline<type>::AddValue( const float time, const type& value, const float tension, const float continuity, const float bias )
 {
@@ -1696,13 +1436,6 @@ ID_INLINE int idCurve_KochanekBartelsSpline<type>::AddValue( const float time, c
 	return i;
 }
 
-/*
-====================
-idCurve_KochanekBartelsSpline::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_KochanekBartelsSpline<type>::GetCurrentValue( const float time ) const
 {
@@ -1723,13 +1456,6 @@ ID_INLINE type idCurve_KochanekBartelsSpline<type>::GetCurrentValue( const float
 	return v;
 }
 
-/*
-====================
-idCurve_KochanekBartelsSpline::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_KochanekBartelsSpline<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -1753,13 +1479,6 @@ ID_INLINE type idCurve_KochanekBartelsSpline<type>::GetCurrentFirstDerivative( c
 	return v / d;
 }
 
-/*
-====================
-idCurve_KochanekBartelsSpline::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_KochanekBartelsSpline<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -1783,11 +1502,6 @@ ID_INLINE type idCurve_KochanekBartelsSpline<type>::GetCurrentSecondDerivative( 
 	return v / ( d * d );
 }
 
-/*
-====================
-idCurve_KochanekBartelsSpline::TangentsForIndex
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_KochanekBartelsSpline<type>::TangentsForIndex( const int index, type& t0, type& t1 ) const
 {
@@ -1822,13 +1536,6 @@ ID_INLINE void idCurve_KochanekBartelsSpline<type>::TangentsForIndex( const int 
 	t1 = s1 * ( this->ValueForIndex( index + 2 ) - this->ValueForIndex( index + 1 ) ) + s0 * delta;
 }
 
-/*
-====================
-idCurve_KochanekBartelsSpline::Basis
-
-  spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_KochanekBartelsSpline<type>::Basis( const int index, const float t, float* bvals ) const
 {
@@ -1839,13 +1546,6 @@ ID_INLINE void idCurve_KochanekBartelsSpline<type>::Basis( const int index, cons
 	bvals[3] = ( ( s - 1.0f ) * s ) * s;			   // s * s * s - s * s
 }
 
-/*
-====================
-idCurve_KochanekBartelsSpline::BasisFirstDerivative
-
-  first derivative of spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_KochanekBartelsSpline<type>::BasisFirstDerivative( const int index, const float t, float* bvals ) const
 {
@@ -1856,13 +1556,6 @@ ID_INLINE void idCurve_KochanekBartelsSpline<type>::BasisFirstDerivative( const 
 	bvals[3] = ( 3.0f * s - 2.0f ) * s;		   // 3.0f * s * s - 2.0f * s
 }
 
-/*
-====================
-idCurve_KochanekBartelsSpline::BasisSecondDerivative
-
-  second derivative of spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_KochanekBartelsSpline<type>::BasisSecondDerivative( const int index, const float t, float* bvals ) const
 {
@@ -1886,45 +1579,47 @@ template<class type>
 class idCurve_BSpline : public idCurve_Spline<type>
 {
 public:
+	//! Initializes a new instance of the idCurve_BSpline class with a default cubic order.
 	idCurve_BSpline();
 
+	//! Returns the order of the B-spline curve.
 	virtual int	 GetOrder() const { return order; }
+
+	//! Sets the order of the B-spline curve to the specified value.
 	virtual void SetOrder( const int i )
 	{
 		assert( i > 0 && i < 10 );
 		order = i;
 	}
 
+	//! Returns the current value of the B-spline curve at the specified time.
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the B-spline curve at the specified time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the B-spline curve at the specified time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
 	int	  order;
 
+	//! Evaluates the basis function for a B-spline curve at a given index, order, and parameter value.
 	float Basis( const int index, const int order, const float t ) const;
+
+	//! Computes the first derivative of a basis function for a B-spline curve.
 	float BasisFirstDerivative( const int index, const int order, const float t ) const;
+
+	//! Calculates the second derivative of a basis function for a B-spline curve.
 	float BasisSecondDerivative( const int index, const int order, const float t ) const;
 };
 
-/*
-====================
-idCurve_BSpline::idCurve_NaturalCubicSpline
-====================
-*/
 template<class type>
 ID_INLINE idCurve_BSpline<type>::idCurve_BSpline()
 {
 	order = 4; // default to cubic
 }
 
-/*
-====================
-idCurve_BSpline::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_BSpline<type>::GetCurrentValue( const float time ) const
 {
@@ -1944,13 +1639,6 @@ ID_INLINE type idCurve_BSpline<type>::GetCurrentValue( const float time ) const
 	return v;
 }
 
-/*
-====================
-idCurve_BSpline::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_BSpline<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -1970,13 +1658,6 @@ ID_INLINE type idCurve_BSpline<type>::GetCurrentFirstDerivative( const float tim
 	return v;
 }
 
-/*
-====================
-idCurve_BSpline::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_BSpline<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -1996,13 +1677,6 @@ ID_INLINE type idCurve_BSpline<type>::GetCurrentSecondDerivative( const float ti
 	return v;
 }
 
-/*
-====================
-idCurve_BSpline::Basis
-
-  spline basis function
-====================
-*/
 template<class type>
 ID_INLINE float idCurve_BSpline<type>::Basis( const int index, const int order, const float t ) const
 {
@@ -2023,26 +1697,12 @@ ID_INLINE float idCurve_BSpline<type>::Basis( const int index, const int order, 
 	}
 }
 
-/*
-====================
-idCurve_BSpline::BasisFirstDerivative
-
-  first derivative of spline basis function
-====================
-*/
 template<class type>
 ID_INLINE float idCurve_BSpline<type>::BasisFirstDerivative( const int index, const int order, const float t ) const
 {
 	return ( Basis( index, order - 1, t ) - Basis( index + 1, order - 1, t ) ) * ( float )( order - 1 ) / ( this->TimeForIndex( index + ( order - 1 ) - 2 ) - this->TimeForIndex( index - 2 ) );
 }
 
-/*
-====================
-idCurve_BSpline::BasisSecondDerivative
-
-  second derivative of spline basis function
-====================
-*/
 template<class type>
 ID_INLINE float idCurve_BSpline<type>::BasisSecondDerivative( const int index, const int order, const float t ) const
 {
@@ -2062,36 +1722,35 @@ template<class type>
 class idCurve_UniformCubicBSpline : public idCurve_BSpline<type>
 {
 public:
+	//! Constructs a new uniform cubic B-spline curve with a fixed order of four.
 	idCurve_UniformCubicBSpline();
 
+	//! Returns the interpolated value at the specified time from a uniform cubic B-spline curve.
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the curve at the given time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the spline at the given time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
+	//! Evaluates the cubic B-spline basis functions for a given index and parameter
 	void Basis( const int index, const float t, float* bvals ) const;
+
+	//! Computes the first derivative of the basis functions for a uniform cubic B-spline at the given index and parameter.
 	void BasisFirstDerivative( const int index, const float t, float* bvals ) const;
+
+	//! Computes the second derivative of the basis functions for a uniform cubic B-spline at the specified index and parameter value.
 	void BasisSecondDerivative( const int index, const float t, float* bvals ) const;
 };
 
-/*
-====================
-idCurve_UniformCubicBSpline::idCurve_UniformCubicBSpline
-====================
-*/
 template<class type>
 ID_INLINE idCurve_UniformCubicBSpline<type>::idCurve_UniformCubicBSpline()
 {
 	this->order = 4; // always cubic
 }
 
-/*
-====================
-idCurve_UniformCubicBSpline::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_UniformCubicBSpline<type>::GetCurrentValue( const float time ) const
 {
@@ -2112,13 +1771,6 @@ ID_INLINE type idCurve_UniformCubicBSpline<type>::GetCurrentValue( const float t
 	return v;
 }
 
-/*
-====================
-idCurve_UniformCubicBSpline::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_UniformCubicBSpline<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -2142,13 +1794,6 @@ ID_INLINE type idCurve_UniformCubicBSpline<type>::GetCurrentFirstDerivative( con
 	return v / d;
 }
 
-/*
-====================
-idCurve_UniformCubicBSpline::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_UniformCubicBSpline<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -2172,13 +1817,6 @@ ID_INLINE type idCurve_UniformCubicBSpline<type>::GetCurrentSecondDerivative( co
 	return v / ( d * d );
 }
 
-/*
-====================
-idCurve_UniformCubicBSpline::Basis
-
-  spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_UniformCubicBSpline<type>::Basis( const int index, const float t, float* bvals ) const
 {
@@ -2189,13 +1827,6 @@ ID_INLINE void idCurve_UniformCubicBSpline<type>::Basis( const int index, const 
 	bvals[3] = ( s * s * s ) * ( 1.0f / 6.0f );
 }
 
-/*
-====================
-idCurve_UniformCubicBSpline::BasisFirstDerivative
-
-  first derivative of spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_UniformCubicBSpline<type>::BasisFirstDerivative( const int index, const float t, float* bvals ) const
 {
@@ -2206,13 +1837,6 @@ ID_INLINE void idCurve_UniformCubicBSpline<type>::BasisFirstDerivative( const in
 	bvals[3] = 0.5f * s * s;
 }
 
-/*
-====================
-idCurve_UniformCubicBSpline::BasisSecondDerivative
-
-  second derivative of spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_UniformCubicBSpline<type>::BasisSecondDerivative( const int index, const float t, float* bvals ) const
 {
@@ -2235,35 +1859,34 @@ template<class type>
 class idCurve_NonUniformBSpline : public idCurve_BSpline<type>
 {
 public:
+	//! Constructs an empty non-uniform B-spline curve.
 	idCurve_NonUniformBSpline();
 
+	//! Returns the current value of the non-uniform B-spline curve at the specified time.
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the non-uniform B-spline curve at the given time.
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the spline at the given time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
+	//! Calculates the basis values for a non-uniform B-spline at a given index and time.
 	void Basis( const int index, const int order, const float t, float* bvals ) const;
+
+	//! Computes the first derivative of the basis functions for a non-uniform B-spline.
 	void BasisFirstDerivative( const int index, const int order, const float t, float* bvals ) const;
+
+	//! Calculates the second derivative of the basis functions for a non-uniform B-spline curve.
 	void BasisSecondDerivative( const int index, const int order, const float t, float* bvals ) const;
 };
 
-/*
-====================
-idCurve_NonUniformBSpline::idCurve_NonUniformBSpline
-====================
-*/
 template<class type>
 ID_INLINE idCurve_NonUniformBSpline<type>::idCurve_NonUniformBSpline()
 {
 }
 
-/*
-====================
-idCurve_NonUniformBSpline::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_NonUniformBSpline<type>::GetCurrentValue( const float time ) const
 {
@@ -2285,13 +1908,6 @@ ID_INLINE type idCurve_NonUniformBSpline<type>::GetCurrentValue( const float tim
 	return v;
 }
 
-/*
-====================
-idCurve_NonUniformBSpline::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_NonUniformBSpline<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -2315,13 +1931,6 @@ ID_INLINE type idCurve_NonUniformBSpline<type>::GetCurrentFirstDerivative( const
 	return v;
 }
 
-/*
-====================
-idCurve_NonUniformBSpline::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_NonUniformBSpline<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -2345,13 +1954,6 @@ ID_INLINE type idCurve_NonUniformBSpline<type>::GetCurrentSecondDerivative( cons
 	return v;
 }
 
-/*
-====================
-idCurve_NonUniformBSpline::Basis
-
-  spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_NonUniformBSpline<type>::Basis( const int index, const int order, const float t, float* bvals ) const
 {
@@ -2371,13 +1973,6 @@ ID_INLINE void idCurve_NonUniformBSpline<type>::Basis( const int index, const in
 	}
 }
 
-/*
-====================
-idCurve_NonUniformBSpline::BasisFirstDerivative
-
-  first derivative of spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_NonUniformBSpline<type>::BasisFirstDerivative( const int index, const int order, const float t, float* bvals ) const
 {
@@ -2392,13 +1987,6 @@ ID_INLINE void idCurve_NonUniformBSpline<type>::BasisFirstDerivative( const int 
 	bvals[i] *= ( float )( order - 1 ) / ( this->TimeForIndex( index + i + ( order - 1 ) - 2 ) - this->TimeForIndex( index + i - 2 ) );
 }
 
-/*
-====================
-idCurve_NonUniformBSpline::BasisSecondDerivative
-
-  second derivative of spline basis functions
-====================
-*/
 template<class type>
 ID_INLINE void idCurve_NonUniformBSpline<type>::BasisSecondDerivative( const int index, const int order, const float t, float* bvals ) const
 {
@@ -2425,16 +2013,24 @@ template<class type>
 class idCurve_NURBS : public idCurve_NonUniformBSpline<type>
 {
 public:
+	//! Constructs a new NURBS curve object.
 	idCurve_NURBS();
 
+	//! Adds a new control point with the given time and value to the NURBS curve and returns its index.
 	virtual int	 AddValue( const float time, const type& value );
+
+	//! Adds a new control point with the specified time, value, and weight to the NURBS curve and returns its index.
 	virtual int	 AddValue( const float time, const type& value, const float weight );
+
+	//! Removes the element at the specified index from the NURBS curve data structures
 	virtual void RemoveIndex( const int index )
 	{
 		this->values.RemoveIndex( index );
 		this->times.RemoveIndex( index );
 		weights.RemoveIndex( index );
 	}
+
+	//! Clears all curve data including values, times, weights, and resets the current index.
 	virtual void Clear()
 	{
 		this->values.Clear();
@@ -2443,34 +2039,27 @@ public:
 		this->currentIndex = -1;
 	}
 
+	//! Returns the current value of the NURBS curve at the specified time
 	virtual type GetCurrentValue( const float time ) const;
+
+	//! Returns the first derivative of the NURBS curve at the given time
 	virtual type GetCurrentFirstDerivative( const float time ) const;
+
+	//! Returns the second derivative of the NURBS curve at the given time.
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
 	idList<float> weights;
 
+	//! Returns the weight for the given index, handling boundary conditions for closed and open splines.
 	float		  WeightForIndex( const int index ) const;
 };
 
-/*
-====================
-idCurve_NURBS::idCurve_NURBS
-====================
-*/
 template<class type>
 ID_INLINE idCurve_NURBS<type>::idCurve_NURBS()
 {
 }
 
-/*
-====================
-idCurve_NURBS::AddValue
-
-  add a timed/value pair to the spline
-  returns the index to the inserted pair
-====================
-*/
 template<class type>
 ID_INLINE int idCurve_NURBS<type>::AddValue( const float time, const type& value )
 {
@@ -2483,14 +2072,6 @@ ID_INLINE int idCurve_NURBS<type>::AddValue( const float time, const type& value
 	return i;
 }
 
-/*
-====================
-idCurve_NURBS::AddValue
-
-  add a timed/value pair to the spline
-  returns the index to the inserted pair
-====================
-*/
 template<class type>
 ID_INLINE int idCurve_NURBS<type>::AddValue( const float time, const type& value, const float weight )
 {
@@ -2503,13 +2084,6 @@ ID_INLINE int idCurve_NURBS<type>::AddValue( const float time, const type& value
 	return i;
 }
 
-/*
-====================
-idCurve_NURBS::GetCurrentValue
-
-  get the value for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_NURBS<type>::GetCurrentValue( const float time ) const
 {
@@ -2535,13 +2109,6 @@ ID_INLINE type idCurve_NURBS<type>::GetCurrentValue( const float time ) const
 	return v / w;
 }
 
-/*
-====================
-idCurve_NURBS::GetCurrentFirstDerivative
-
-  get the first derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_NURBS<type>::GetCurrentFirstDerivative( const float time ) const
 {
@@ -2574,13 +2141,6 @@ ID_INLINE type idCurve_NURBS<type>::GetCurrentFirstDerivative( const float time 
 	return ( wb * vd1 - vb * wd1 ) / ( wb * wb );
 }
 
-/*
-====================
-idCurve_NURBS::GetCurrentSecondDerivative
-
-  get the second derivative for the given time
-====================
-*/
 template<class type>
 ID_INLINE type idCurve_NURBS<type>::GetCurrentSecondDerivative( const float time ) const
 {
@@ -2618,13 +2178,6 @@ ID_INLINE type idCurve_NURBS<type>::GetCurrentSecondDerivative( const float time
 	return ( ( wb * wb ) * ( wb * vd2 - vb * wd2 ) - ( wb * vd1 - vb * wd1 ) * 2.0f * wb * wd1 ) / ( wb * wb * wb * wb );
 }
 
-/*
-====================
-idCurve_NURBS::WeightForIndex
-
-  get the weight for the given index
-====================
-*/
 template<class type>
 ID_INLINE float idCurve_NURBS<type>::WeightForIndex( const int index ) const
 {

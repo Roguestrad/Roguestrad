@@ -44,9 +44,16 @@ If you have questions concerning this license or the applicable additional terms
 class idSIMD
 {
 public:
+	//! Initializes the SIMD processor based on CPU capabilities and module context
 	static void Init();
+
+	//! Initializes the SIMD processor based on CPU capabilities and module context.
 	static void InitProcessor( const char* module, bool forceGeneric );
+
+	//! Shuts down the SIMD processing system by deallocating processor and generic objects.
 	static void Shutdown();
+
+	//! Executes SIMD performance tests and selects the appropriate SIMD implementation based on CPU capabilities.
 	static void Test_f( const class idCmdArgs& args );
 };
 
@@ -87,6 +94,7 @@ struct dominantTri_t;
 class idSIMDProcessor
 {
 public:
+	//! Initializes the idSIMDProcessor object with default CPUID_NONE value.
 	idSIMDProcessor() { cpuid = CPUID_NONE; }
 
 	cpuid_t cpuid;

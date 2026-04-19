@@ -68,9 +68,13 @@ protected:
 class idODE_Euler : public idODE
 {
 public:
+	//! Constructs an idODE_Euler object with the specified dimension, derivative function, and user data.
 	idODE_Euler( const int dim, const deriveFunction_t dr, const void* ud );
+
+	//! Destructor for the idODE_Euler class that cleans up the derivatives memory.
 	virtual ~idODE_Euler();
 
+	//! Evaluates the Euler integration step for the given state and time interval.
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 protected:
@@ -86,9 +90,13 @@ protected:
 class idODE_Midpoint : public idODE
 {
 public:
+	//! Constructs an idODE_Midpoint object with the specified dimension, derivative function, and user data.
 	idODE_Midpoint( const int dim, const deriveFunction_t dr, const void* ud );
+
+	//! Destructor for the idODE_Midpoint class that cleans up allocated memory.
 	virtual ~idODE_Midpoint();
 
+	//! Evaluates the midpoint ODE integration step and returns the time step size.
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 protected:
@@ -105,9 +113,13 @@ protected:
 class idODE_RK4 : public idODE
 {
 public:
+	//! Initializes a new instance of the idODE_RK4 class with the specified dimension, derivative function, and user data.
 	idODE_RK4( const int dim, const deriveFunction_t dr, const void* ud );
+
+	//! Destructor for the idODE_RK4 class that releases all allocated memory.
 	virtual ~idODE_RK4();
 
+	//! Evaluates the RK4 ODE integration step from t0 to t1
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 protected:
@@ -127,10 +139,16 @@ protected:
 class idODE_RK4Adaptive : public idODE
 {
 public:
+	//! Initializes a new instance of the idODE_RK4Adaptive class with the specified dimension, derivative function, and user data.
 	idODE_RK4Adaptive( const int dim, const deriveFunction_t dr, const void* ud );
+
+	//! Destructor for the idODE_RK4Adaptive class that cleans up dynamically allocated memory.
 	virtual ~idODE_RK4Adaptive();
 
+	//! Evaluates the adaptive Runge-Kutta 4th order solution for the given state and time interval
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
+
+	//! Sets the maximum error tolerance for the adaptive Runge-Kutta 4th order ODE solver to the specified positive value.
 	void		  SetMaxError( const float err );
 
 protected:

@@ -41,15 +41,26 @@ If you have questions concerning this license or the applicable additional terms
 class idRandom
 {
 public:
+	//! Initializes a random number generator with the specified seed value.
 	idRandom( int seed = 0 );
 
+	//! Sets the random number generator seed to the specified value.
 	void			 SetSeed( int seed );
+
+	//! Returns the current seed value used by the random number generator.
 	int				 GetSeed() const;
 
-	int				 RandomInt();		   // random integer in the range [0, MAX_RAND]
-	int				 RandomInt( int max ); // random integer in the range [0, max[
-	float			 RandomFloat();		   // random number in the range [0.0f, 1.0f]
-	float			 CRandomFloat();	   // random number in the range [-1.0f, 1.0f]
+	//! Returns a random integer in the range [0, MAX_RAND]
+	int				 RandomInt();
+
+	//! Returns a random integer in the range [0, max)
+	int				 RandomInt( int max );
+
+	//! Returns a random floating-point number in the range [0.0f, 1.0f]
+	float			 RandomFloat();
+
+	//! Returns a random float value in the range [-1.0, 1.0]
+	float			 CRandomFloat();
 
 	static const int MAX_RAND = 0x7fff;
 
@@ -107,16 +118,26 @@ ID_INLINE float idRandom::CRandomFloat()
 class idRandom2
 {
 public:
-	// DG: use int instead of long for 64bit compatibility in this whole class
+	//! Initializes a new instance of the idRandom2 class with the specified seed value.
 	idRandom2( unsigned int seed = 0 );
 
+	//! Sets the random number generator seed to the specified value.
 	void			 SetSeed( unsigned int seed );
+
+	//! Returns the current seed value used by the random number generator.
 	unsigned int	 GetSeed() const;
 
-	int				 RandomInt();		   // random integer in the range [0, MAX_RAND]
-	int				 RandomInt( int max ); // random integer in the range [0, max]
-	float			 RandomFloat();		   // random number in the range [0.0f, 1.0f]
-	float			 CRandomFloat();	   // random number in the range [-1.0f, 1.0f]
+	//! Returns a random integer in the range [0, MAX_RAND]
+	int				 RandomInt();
+
+	//! Returns a random integer in the range [0, max)
+	int				 RandomInt( int max );
+
+	//! Returns a random floating-point number in the range [0.0f, 1.0f]
+	float			 RandomFloat();
+
+	//! Returns a random floating-point number in the range [-1.0f, 1.0f]
+	float			 CRandomFloat();
 
 	static const int MAX_RAND = 0x7fff;
 
@@ -171,6 +192,5 @@ ID_INLINE float idRandom2::CRandomFloat()
 	i	 = idRandom2::IEEE_ONE | ( seed & idRandom2::IEEE_MASK );
 	return ( 2.0f * ( *( float* )&i ) - 3.0f );
 }
-// DG end
 
 #endif /* !__MATH_RANDOM_H__ */

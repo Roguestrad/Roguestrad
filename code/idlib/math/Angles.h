@@ -56,11 +56,19 @@ public:
 	float yaw;
 	float roll;
 
+	//! Constructs an empty idAngles object with default values.
 	idAngles();
+
+	//! Constructs an idAngles object with the specified pitch, yaw, and roll values.
 	idAngles( float pitch, float yaw, float roll );
+
+	//! Creates an idAngles object from a given idVec3 object by assigning its components to pitch, yaw, and roll.
 	explicit idAngles( const idVec3& v );
 
+	//! Sets the pitch, yaw, and roll angles to the specified values.
 	void			Set( float pitch, float yaw, float roll );
+
+	//! Sets all angles to zero and returns a reference to this object.
 	idAngles&		Zero();
 
 	float			operator[]( int index ) const;
@@ -78,27 +86,54 @@ public:
 
 	friend idAngles operator*( const float a, const idAngles& b );
 
-	bool			Compare( const idAngles& a ) const;						 // exact compare, no epsilon
-	bool			Compare( const idAngles& a, const float epsilon ) const; // compare with epsilon
-	bool			operator==( const idAngles& a ) const;					 // exact compare, no epsilon
-	bool			operator!=( const idAngles& a ) const;					 // exact compare, no epsilon
+	//! Compares this angle set with another for exact equality.
+	bool			Compare( const idAngles& a ) const;
 
-	idAngles&		Normalize360(); // normalizes 'this'
-	idAngles&		Normalize180(); // normalizes 'this'
+	//! Compares this angle set with another angle set using the specified epsilon tolerance.
+	bool			Compare( const idAngles& a, const float epsilon ) const;
+	bool			operator==( const idAngles& a ) const; // exact compare, no epsilon
+	bool			operator!=( const idAngles& a ) const; // exact compare, no epsilon
 
+	//! Normalizes the angles in this object to the range [0, 360) degrees.
+	idAngles&		Normalize360();
+
+	//! Normalizes the angle values to the range -180 to 180 degrees.
+	idAngles&		Normalize180();
+
+	//! Clamps the angles to the specified minimum and maximum values.
 	void			Clamp( const idAngles& min, const idAngles& max );
 
+	//! Returns the dimension of the angles, which is always 3.
 	int				GetDimension() const;
 
+	//! Converts the angle representation to forward, right, and up vectors.
 	void			ToVectors( idVec3* forward, idVec3* right = NULL, idVec3* up = NULL ) const;
+
+	//! Returns the forward vector corresponding to the angles.
 	idVec3			ToForward() const;
+
+	//! Converts the angle values to a quaternion representation
 	idQuat			ToQuat() const;
+
+	//! Converts the angles to a rotation.
 	idRotation		ToRotation() const;
+
+	//! Converts the angle object to a 3x3 rotation matrix.
 	idMat3			ToMat3() const;
+
+	//! Converts the angles to a 4x4 transformation matrix.
 	idMat4			ToMat4() const;
+
+	//! Converts the angle representation to an angular velocity vector.
 	idVec3			ToAngularVelocity() const;
+
+	//! Returns a pointer to the internal float array representing the angle values.
 	const float*	ToFloatPtr() const;
+
+	//! Returns a pointer to the internal float array representing the angle values.
 	float*			ToFloatPtr();
+
+	//! Converts the angles to a string representation with the specified precision
 	const char*		ToString( int precision = 2 ) const;
 };
 

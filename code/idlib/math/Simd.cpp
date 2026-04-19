@@ -42,11 +42,6 @@ idSIMDProcessor* processor	   = NULL; // pointer to SIMD processor
 idSIMDProcessor* generic	   = NULL; // pointer to generic SIMD implementation
 idSIMDProcessor* SIMDProcessor = NULL;
 
-/*
-================
-idSIMD::Init
-================
-*/
 void			 idSIMD::Init()
 {
 	generic		   = new( TAG_MATH ) idSIMD_Generic;
@@ -55,11 +50,6 @@ void			 idSIMD::Init()
 	SIMDProcessor  = generic;
 }
 
-/*
-============
-idSIMD::InitProcessor
-============
-*/
 void idSIMD::InitProcessor( const char* module, bool forceGeneric )
 {
 	cpuid_t			 cpuid;
@@ -102,11 +92,6 @@ void idSIMD::InitProcessor( const char* module, bool forceGeneric )
 	}
 }
 
-/*
-================
-idSIMD::Shutdown
-================
-*/
 void idSIMD::Shutdown()
 {
 	if( processor != generic ) {
@@ -170,11 +155,7 @@ double ticksPerNanosecond;
 		best = end - start;             \
 	}
 
-/*
-============
-PrintClocks
-============
-*/
+//! Prints timing information for a given operation, including clock counts and optional ratio.
 void PrintClocks( const char* string, int dataCount, int clocks, int otherClocks = 0 )
 {
 	int i;
@@ -193,11 +174,7 @@ void PrintClocks( const char* string, int dataCount, int clocks, int otherClocks
 	}
 }
 
-/*
-============
-GetBaseClocks
-============
-*/
+//! Determines and sets the base clock rate by running multiple time recording tests.
 void GetBaseClocks()
 {
 	int i, start, end, bestClocks;
@@ -211,11 +188,7 @@ void GetBaseClocks()
 	baseClocks = bestClocks;
 }
 
-/*
-============
-TestMinMax
-============
-*/
+//! Tests the MinMax function implementations for generic and SIMD versions with various data types.
 void TestMinMax()
 {
 	int		  i;
@@ -348,11 +321,7 @@ void TestMinMax()
 	PrintClocks( va( "   simd->MinMax( idDrawVert[], indexes[] ) %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*
-============
-TestMemcpy
-============
-*/
+//! Tests the performance of generic and SIMD memcpy implementations.
 void TestMemcpy()
 {
 	TIME_TYPE	start, end, bestClocksGeneric, bestClocksSIMD;
@@ -397,11 +366,7 @@ void TestMemcpy()
 	PrintClocks( va( "   simd->Memcpy() %s", result ), BIG_COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*
-============
-TestMemset
-============
-*/
+//! Tests the performance of generic and SIMD implementations of the Memset function.
 void TestMemset()
 {
 	TIME_TYPE	start, end, bestClocksGeneric, bestClocksSIMD;
@@ -467,11 +432,7 @@ void TestMemset()
 	PrintClocks( va( "   simd->Memset( 0 ) %s", result ), BIG_COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*
-============
-TestBlendJoints
-============
-*/
+//! Tests the joint blending functionality using generic and SIMD implementations
 void TestBlendJoints()
 {
 	int						 i, j;
@@ -542,11 +503,7 @@ void TestBlendJoints()
 	PrintClocks( va( "   simd->BlendJoints() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*
-============
-TestBlendJoints
-============
-*/
+//! Tests the fast joint blending functionality between generic and SIMD implementations.
 void TestBlendJointsFast()
 {
 	int						 i, j;
@@ -617,11 +574,7 @@ void TestBlendJointsFast()
 	PrintClocks( va( "   simd->BlendJointsFast() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*
-============
-TestConvertJointQuatsToJointMats
-============
-*/
+//! Tests the conversion of joint quaternions to joint matrices using both generic and SIMD implementations.
 void TestConvertJointQuatsToJointMats()
 {
 	int						 i;
@@ -670,11 +623,7 @@ void TestConvertJointQuatsToJointMats()
 	PrintClocks( va( "   simd->ConvertJointQuatsToJointMats() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*
-============
-TestConvertJointMatsToJointQuats
-============
-*/
+//! Tests the conversion of joint matrices to joint quaternions.
 void TestConvertJointMatsToJointQuats()
 {
 	int						 i;
@@ -728,11 +677,7 @@ void TestConvertJointMatsToJointQuats()
 	PrintClocks( va( "   simd->ConvertJointMatsToJointQuats() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*
-============
-TestTransformJoints
-============
-*/
+//! Tests the joint transformation functionality between generic and SIMD implementations.
 void TestTransformJoints()
 {
 	int						i, j;
@@ -791,11 +736,7 @@ void TestTransformJoints()
 	PrintClocks( va( "   simd->TransformJoints() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*
-============
-TestUntransformJoints
-============
-*/
+//! Tests the UntransformJoints function for generic and SIMD implementations.
 void TestUntransformJoints()
 {
 	int						i, j;
@@ -854,11 +795,7 @@ void TestUntransformJoints()
 	PrintClocks( va( "   simd->UntransformJoints() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*
-============
-TestMath
-============
-*/
+//! Tests various math functions and their performance.
 void TestMath()
 {
 	int		  i;
@@ -1233,11 +1170,6 @@ void TestMath()
 	PrintClocks( "     idAngles::ToMat3()", 1, bestClocks );
 }
 
-/*
-============
-idSIMD::Test_f
-============
-*/
 void idSIMD::Test_f( const idCmdArgs& args )
 {
 	// RB begin

@@ -39,7 +39,10 @@ struct SphericalHarmonicsT {
 	const T& operator[]( size_t i ) const { return data[i]; }
 	T&		 operator[]( size_t i ) { return data[i]; }
 
+	//! Returns a reference to the element at the specified degree and order in the spherical harmonics data structure
 	T&		 at( int l, int m ) { return data[l * l + l + m]; }
+
+	//! Returns a const reference to the element at the specified spherical harmonics indices l and m
 	const T& at( int l, int m ) const { return data[l * l + l + m]; }
 };
 
@@ -52,11 +55,13 @@ template<typename T, size_t L>
 SphericalHarmonicsL1 shEvaluateL1( idVec3 p );
 SphericalHarmonicsL2 shEvaluateL2( idVec3 p );
 
+//! Returns the size of a spherical harmonics array for a given degree L.
 inline size_t		 shSize( size_t L )
 {
 	return ( L + 1 ) * ( L + 1 );
 }
 
+//! Adds a weighted spherical harmonics component to an accumulator.
 template<typename Ta, typename Tb, typename Tw, size_t L>
 inline void shAddWeighted( SphericalHarmonicsT<Ta, L>& accumulatorSh, const SphericalHarmonicsT<Tb, L>& sh, const Tw& weight )
 {
@@ -65,6 +70,7 @@ inline void shAddWeighted( SphericalHarmonicsT<Ta, L>& accumulatorSh, const Sphe
 	}
 }
 
+//! Computes the dot product of two spherical harmonics vectors.
 template<typename Ta, typename Tb, size_t L>
 inline Ta shDot( const SphericalHarmonicsT<Ta, L>& shA, const SphericalHarmonicsT<Tb, L>& shB )
 {
@@ -75,6 +81,7 @@ inline Ta shDot( const SphericalHarmonicsT<Ta, L>& shA, const SphericalHarmonics
 	return result;
 }
 
+//! Computes spherical harmonics coefficients for a given direction vector
 template<size_t L>
 inline SphericalHarmonicsT<float, L> shEvaluate( idVec3 dir )
 {
@@ -145,16 +152,19 @@ inline SphericalHarmonicsT<float, L> shEvaluate( idVec3 dir )
 	return result;
 }
 
+//! Evaluates the first-order spherical harmonics at the given point.
 inline SphericalHarmonicsL1 shEvaluateL1( idVec3 p )
 {
 	return shEvaluate<1>( p );
 }
 
+//! Evaluates the spherical harmonics of degree 2 at the given point.
 inline SphericalHarmonicsL2 shEvaluateL2( idVec3 p )
 {
 	return shEvaluate<2>( p );
 }
 
+//! Evaluates the diffuse lighting contribution from a spherical harmonics L1 representation for a given surface normal.
 inline float shEvaluateDiffuseL1Geomerics( const SphericalHarmonicsL1& sh, const idVec3& n )
 {
 	// http://www.geomerics.com/wp-content/uploads/2015/08/CEDEC_Geomerics_ReconstructingDiffuseLighting1.pdf
@@ -173,6 +183,7 @@ inline float shEvaluateDiffuseL1Geomerics( const SphericalHarmonicsL1& sh, const
 	return R0 * ( a + ( 1.0f - a ) * ( p + 1.0f ) * pow( q, p ) );
 }
 
+//! Computes a diffuse convolution of the input spherical harmonics coefficients.
 template<typename T, size_t L>
 inline SphericalHarmonicsT<T, L> shConvolveDiffuse( SphericalHarmonicsT<T, L>& sh )
 {
@@ -193,6 +204,7 @@ inline SphericalHarmonicsT<T, L> shConvolveDiffuse( SphericalHarmonicsT<T, L>& s
 	return result;
 }
 
+//! Evaluates the diffuse irradiance contribution of spherical harmonics in a given direction.
 template<typename T, size_t L>
 inline T shEvaluateDiffuse( const SphericalHarmonicsT<T, L>& sh, const idVec3& direction )
 {
@@ -259,18 +271,21 @@ inline T shEvaluateDiffuse( const SphericalHarmonicsT<T, L>& sh, const idVec3& d
 	return result;
 }
 
+//! Evaluates the diffuse lighting contribution from a spherical harmonics representation at a given direction.
 template<typename T>
 inline T shEvaluateDiffuseL1( const SphericalHarmonicsT<T, 1>& sh, const idVec3& direction )
 {
 	return shEvaluateDiffuse<T, 1>( sh, direction );
 }
 
+//! Evaluates the diffuse lighting contribution from a spherical harmonics representation at a given direction.
 template<typename T>
 inline T shEvaluateDiffuseL2( const SphericalHarmonicsT<T, 2>& sh, const idVec3& direction )
 {
 	return shEvaluateDiffuse<T, 2>( sh, direction );
 }
 
+//! Computes the windowing lambda value to reduce the squared Laplacian of spherical harmonics below a specified threshold.
 template<size_t L>
 float shFindWindowingLambda( const SphericalHarmonicsT<float, L>& sh, float maxLaplacian )
 {
@@ -325,6 +340,7 @@ float shFindWindowingLambda( const SphericalHarmonicsT<float, L>& sh, float maxL
 	return lambda;
 }
 
+//! Applies windowing to spherical harmonics coefficients to reduce high-frequency artifacts.
 template<typename T, size_t L>
 void shApplyWindowing( SphericalHarmonicsT<T, L>& sh, float lambda )
 {
@@ -365,6 +381,7 @@ inline float shMeanSquareErrorScalar( const SphericalHarmonicsT<T, L>& sh, const
 }
 #endif
 
+//! Computes the luminance of a spherical harmonics representation.
 template<size_t L>
 inline SphericalHarmonicsT<float, L> shLuminance( const SphericalHarmonicsT<idVec3, L>& sh )
 {
