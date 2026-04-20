@@ -46,7 +46,7 @@ code/.cache/
 code/.tasks/
 code/cmake-build-*/
 code/bin/
-code/doxy*
+code/Doxyfile*
 uv.lock*
 logs*
 chats*
