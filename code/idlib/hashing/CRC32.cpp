@@ -190,4 +190,3 @@ unsigned int CRC32_BlockChecksum( const void* data, int length )
 	CRC32_FinishChecksum( crc );
 	return crc;
 }
-// RB end

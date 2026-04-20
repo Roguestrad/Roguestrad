@@ -13,6 +13,5 @@
 	\return A 32-bit unsigned integer representing the computed checksum
 */
 unsigned int MD4_BlockChecksum( const void* data, int length );
-// RB end
 
 #endif /* !__MD4_H__ */

@@ -952,30 +952,12 @@ ID_INLINE _type_* idList<_type_, _tag_>::Ptr()
 	return list;
 }
 
-/*
-================
-idList<_type_,_tag_>::Ptr
-
-Returns a pointer to the begining of the array.  Useful for iterating through the list in loops.
-
-Note: may return NULL if the list is empty.
-
-FIXME: Create an iterator template for this kind of thing.
-================
-*/
 template<typename _type_, memTag_t _tag_>
 const ID_INLINE _type_* idList<_type_, _tag_>::Ptr() const
 {
 	return list;
 }
 
-/*
-================
-idList<_type_,_tag_>::Alloc
-
-Returns a reference to a new data element at the end of the list.
-================
-*/
 template<typename _type_, memTag_t _tag_>
 ID_INLINE _type_& idList<_type_, _tag_>::Alloc()
 {
@@ -1085,15 +1067,6 @@ ID_INLINE int idList<_type_, _tag_>::Insert( _type_ const& obj, int index )
 	return index;
 }
 
-/*
-================
-idList<_type_,_tag_>::Append
-
-adds the other list to this one
-
-Returns the size of the new combined list
-================
-*/
 template<typename _type_, memTag_t _tag_>
 ID_INLINE int idList<_type_, _tag_>::Append( const idList<_type_, _tag_>& other )
 {
@@ -1137,13 +1110,6 @@ ID_INLINE int idList<_type_, _tag_>::FindIndex( _type_ const& obj ) const
 	return -1;
 }
 
-/*
-================
-idList<_type_,_tag_>::Find
-
-Searches for the specified data in the list and returns it's address. Returns NULL if the data is not found.
-================
-*/
 template<typename _type_, memTag_t _tag_>
 ID_INLINE _type_* idList<_type_, _tag_>::Find( _type_ const& obj ) const
 {

@@ -325,4 +325,3 @@ unsigned int MD4_BlockChecksum( const void* data, int length )
 
 	return val;
 }
-// RB end

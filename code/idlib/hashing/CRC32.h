@@ -45,6 +45,5 @@ void		 CRC32_FinishChecksum( unsigned int& crcvalue );
 	\return the computed CRC32 checksum value for the provided data
 */
 unsigned int CRC32_BlockChecksum( const void* data, int length );
-// RB end
 
 #endif /* !__CRC32_H__ */
