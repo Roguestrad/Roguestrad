@@ -2083,6 +2083,7 @@ def generate_doxygen_comments(
     mcp_max_examples: int = 3,
     mcp_timeout: int = 20,
     force_trivial: bool = False,
+    update_trivial: bool = False,
     scope_dir: Optional[Path] = None,
     callsite_max: int = 3,
     callsite_context_lines: int = 30,
@@ -2255,9 +2256,11 @@ def generate_doxygen_comments(
         )
         current_trivial = True if force_trivial else computed_trivial
         cached_trivial = entry.is_trivial if entry else None
-        trivial_changed = (
-            cached_trivial is not None and cached_trivial != current_trivial
-        )
+        trivial_changed = False
+        if update_trivial:
+            trivial_changed = (
+                cached_trivial is not None and cached_trivial != current_trivial
+            )
 
         # --- Skip Criteria ---
         # 1) Body not changed and Doxygen already present -> skip completely
@@ -2742,7 +2745,7 @@ def main():
     ap.add_argument("--max-impl", type=int, default=6000)
     ap.add_argument("--apply", action="store_true")
 
-    ap.add_argument("--cache-file", default="doxy_ai_cache.json")
+    ap.add_argument("--cache-file", default="doxygenix_func_cache.json")
     ap.add_argument("--callsite-max", type=int, default=3)
     ap.add_argument("--callsite-context", type=int, default=30)
     ap.add_argument(
@@ -2752,6 +2755,11 @@ def main():
     )
     ap.add_argument("-v", "--verbose", action="store_true")
     ap.add_argument("--force-trivial", action="store_true")
+    ap.add_argument(
+        "--update-trivial",
+        action="store_true",
+        help="Update comments when trivial/non-trivial status changes",
+    )
     ap.add_argument(
         "--summarize-files",
         nargs="?",
@@ -2803,6 +2811,7 @@ def main():
             dry_run=False,  # not args.apply,
             maximpl=args.max_impl,
             cache_path=cache_path,
+            update_trivial=args.update_trivial,
             scope_dir=scope_dir,
             callsite_max=args.callsite_max,
             callsite_context_lines=args.callsite_context,
