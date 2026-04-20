@@ -173,22 +173,10 @@ public:
 	bool		  operator==( const idBox& a ) const; // exact compare, no epsilon
 	bool		  operator!=( const idBox& a ) const; // exact compare, no epsilon
 
-	/*!
-		\brief Initializes the box to an inside-out state with zero center, infinite extents, and identity axis.
-
-		This function resets the box to an inside-out state where the center is set to zero, all extents are set to negative infinity, and the axis is initialized to an identity matrix. This
-	   configuration represents a box that contains no valid space and is typically used as an initial state before building up the actual box dimensions.
-
-	*/
+	//! Initializes the box components to zero values, creating a single point at the origin.
 	void		  Clear();
 
-	/*!
-		\brief Sets all components of the box to zero, effectively creating a single point at the origin.
-
-		This function initializes the box by setting its center, extents, and axis to zero values. The center represents the box's position, extents define its size in each dimension, and axis holds
-	   the orientation. When all these are zero, the box represents a single point located at the origin of the coordinate system.
-
-	*/
+	//! Sets all components of the box to zero.
 	void		  Zero();
 
 	//! Returns the center point of the box.

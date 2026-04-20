@@ -42,14 +42,35 @@ template<class type>
 class idCurve
 {
 public:
-	//! Initializes a new instance of the idCurve template class.
+	/*!
+		\brief Initializes a new instance of the idCurve template class.
+
+		This constructor initializes the internal state of the idCurve template class. It sets the current index to -1 and the changed flag to false, indicating that no curve data has been processed
+	   or modified yet.
+
+	*/
 	idCurve();
 	virtual ~idCurve();
 
-	//! Adds a new value to the curve at the specified time and returns its index.
+	/*!
+		\brief Adds a new value to the curve at the specified time and returns its index.
+
+		This function inserts a new time-value pair into the curve at the correct position based on the time value. It determines the appropriate index for insertion using the IndexForTime method,
+	   then inserts both the time and value at that index in their respective arrays. The function marks the curve as changed to indicate that modifications have been made.
+
+		\param time The time at which to add the value
+		\param value The value to add to the curve
+		\return The index where the new value was inserted in the curve
+	*/
 	virtual int	 AddValue( const float time, const type& value );
 
-	//! Removes the curve point at the specified index from the curve.
+	/*!
+		\brief Removes the curve point at the specified index from the curve.
+
+		This function removes a curve point from the curve by removing the value and time at the specified index. It also marks the curve as changed to indicate that the curve has been modified.
+
+		\param index The index of the curve point to remove
+	*/
 	virtual void RemoveIndex( const int index )
 	{
 		values.RemoveIndex( index );
@@ -66,56 +87,175 @@ public:
 		changed		 = true;
 	}
 
-	//! Returns the current value from the curve at the specified time
+	/*!
+		\brief Returns the current value from the curve at the specified time
+
+		This function retrieves the value from the curve at a given time by first determining the appropriate index using the IndexForTime method. If the calculated index exceeds the number of values
+	   in the curve, it returns the last value in the curve. Otherwise, it returns the value at the calculated index.
+
+		\param time The time value for which to retrieve the curve value
+		\return The value from the curve at the specified time
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the curve at the specified time.
+	/*!
+		\brief Returns the first derivative of the curve at the specified time
+
+		This function computes and returns the first derivative of the curve at the given time parameter. Based on the implementation, it appears to be returning the difference between the first two
+	   values in the curve's value array. The current implementation seems to have a potential bug as it subtracts a value from itself, which would always return zero. This needs to be reviewed and
+	   corrected to properly calculate the derivative.
+
+		\param time The time at which to calculate the first derivative
+		\return The first derivative of the curve at the specified time
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the curve at the specified time.
+	/*!
+		\brief Returns the second derivative of the curve at the specified time.
+
+		The function calculates and returns the second derivative of the curve at the given time. It performs a check to ensure the curve is complete at the specified time before computing the
+	   derivative. The implementation currently appears to return zero due to a potential bug in the calculation.
+
+		\param time The time at which to calculate the second derivative
+		\return The second derivative of the curve at the specified time
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
-	//! Checks if the curve is complete at the given time.
+	/*!
+		\brief Checks if the curve has completed by the specified time.
+
+		This function determines whether the curve has finished its animation or interpolation by comparing the given time against the end time of the curve. It returns true if the specified time is
+	   greater than or equal to the final time in the curve's time array, indicating the curve is done. Otherwise, it returns false, meaning the curve is still in progress.
+
+		\param time The time value to check against the curve's end time
+		\return True if the curve is complete at the specified time, false otherwise
+	*/
 	virtual bool IsDone( const float time ) const;
 
 	//! Returns the number of values in the curve.
 	int			 GetNumValues() const { return values.Num(); }
 
-	//! Sets the value at the specified index in the curve.
+	/*!
+		\brief Sets the value at the specified index in the curve.
+
+		This function updates the value at the given index in the curve's data structure. It marks the curve as changed to indicate that modifications have been made.
+
+		\param index The index in the curve where the value should be set
+		\param value The new value to assign at the specified index
+	*/
 	void		 SetValue( const int index, const type& value )
 	{
 		values[index] = value;
 		changed		  = true;
 	}
 
-	//! Retrieves the value at the specified index from the curve data
+	/*!
+		\brief Retrieves the value at the specified index from the curve data
+
+		This method accesses the internal array of curve values and returns the element at the given index. The function is marked as const, indicating it does not modify the object state. It directly
+	   returns the value stored at the specified index without any bounds checking, so the index must be valid to avoid undefined behavior. The curve data is expected to be populated prior to calling
+	   this method.
+
+		\param index The zero-based index of the value to retrieve from the curve data
+		\return The value at the specified index in the curve data
+	*/
 	type  GetValue( const int index ) const { return values[index]; }
 
-	//! Returns a pointer to the value at the specified index in the curve.
+	/*!
+		\brief Returns a pointer to the value at the specified index in the curve
+
+		The function retrieves a pointer to the value stored at the given index within the curve data structure. It directly accesses the internal array of values using the provided index and returns
+	   a pointer to that specific element
+
+		\param index The index of the value to retrieve a pointer to
+		\return A pointer to the value at the specified index in the curve
+	*/
 	type* GetValueAddress( const int index ) { return &values[index]; }
 
-	//! Retrieves the time value at the specified index from the curve.
+	/*!
+		\brief Retrieves the time value at the specified index from the curve.
+
+		This function accesses the time array of the curve at the given index and returns the corresponding time value. It is a simple accessor method that provides read-only access to the time data
+	   stored within the curve.
+
+		\param index The index of the time value to retrieve from the curve.
+		\return The time value at the specified index in the curve's time array.
+	*/
 	float GetTime( const int index ) const { return times[index]; }
 
-	//! Calculates the arc length of the curve up to a given time value.
+	/*!
+		\brief Calculates the arc length of the curve up to a given time value.
+
+		This function computes the total arc length of the curve from the start up to the specified time value. It uses the Romberg integration method to calculate the length between time intervals.
+	   The calculation is performed by summing the lengths of segments from the beginning of the curve up to the given time, where the final segment is partially calculated up to the specified time.
+
+		\param time The time value up to which the arc length is calculated.
+		\return The arc length of the curve from the start up to the specified time value.
+	*/
 	float GetLengthForTime( const float time ) const;
 
-	//! Returns the time value corresponding to a given arc length along the curve.
+	/*!
+		\brief Returns the time value corresponding to a given arc length along the curve by using Newton's method to invert the arc length integral.
+
+		This function calculates the time along a curve that corresponds to a specific arc length. It first determines which segment of the curve contains the desired length by accumulating segment
+	   lengths. Then it uses Newton's method to solve for the time by inverting the arc length integral. The process involves Romberg integration for numerical accuracy and includes a convergence
+	   check based on the provided epsilon value. If the length is less than or equal to zero, the function returns the time at the start of the curve. If the length exceeds the total curve length, it
+	   returns the time at the end of the curve.
+
+		\param length The arc length along the curve for which to find the corresponding time value
+		\param epsilon The tolerance for convergence of Newton's method when inverting the arc length integral
+		\return The time value along the curve corresponding to the specified arc length
+	*/
 	float GetTimeForLength( const float length, const float epsilon = 0.1f ) const;
 
-	//! Calculates the arc length between two knots in a curve using Romberg integration.
+	/*!
+		\brief Calculates the arc length between two knots in a curve using Romberg integration.
+
+		This function computes the total arc length between two specified knots in a curve by numerically integrating the curve's derivative using Romberg integration. The integration is performed
+	   over each sub-interval between consecutive knots from i0 to i1. The curve times are assumed to be evenly spaced over the given total time.
+
+		\param i0 Start knot index for arc length calculation
+		\param i1 End knot index for arc length calculation
+		\return The total arc length between the specified knots
+	*/
 	float GetLengthBetweenKnots( const int i0, const int i1 ) const;
 
-	//! Sets the curve times to be evenly spaced over the given total time.
+	/*!
+		\brief Sets the curve times to be evenly spaced over the given total time.
+
+		Adjusts the time knots of the curve so that the curve has constant speed over the specified total time. The curve times are distributed evenly across the provided total time interval.
+
+		\param totalTime The total time over which the curve times should be evenly distributed
+	*/
 	void  MakeUniform( const float totalTime );
 
-	//! Sets the curve to have constant speed over the specified total time by adjusting the time knots.
+	/*!
+		\brief Adjusts the time knots of the curve to ensure constant speed over the specified total time
+
+		This function modifies the time values associated with the curve knots to make the curve travel at a constant speed over the given total time. It calculates the length between consecutive
+	   knots and scales the time intervals accordingly. The function updates the internal time array and marks the curve as changed to reflect the modifications.
+
+		\param totalTime The total time over which the curve should be traversed at constant speed
+	*/
 	void  SetConstantSpeed( const float totalTime );
 
-	//! Shifts all time values in the curve by the specified delta time.
+	/*!
+		\brief Shifts all time values in the curve by the specified delta time.
+
+		This function adjusts all time values stored in the curve by adding the specified delta time value. It is typically used to translate the entire curve along the time axis. The function updates
+	   the internal time array and marks the curve as changed to indicate that its state has been modified.
+
+		\param deltaTime The amount of time to shift all time values in the curve
+	*/
 	void  ShiftTime( const float deltaTime );
 
-	//! Translates all curve values by the specified translation amount.
+	/*!
+		\brief Translates all curve values by the specified translation amount.
+
+		This function modifies all values in the curve by adding the provided translation amount to each value. It marks the curve as changed to indicate that the values have been modified.
+
+		\param translation The value to be added to each curve value
+	*/
 	void  Translate( const type& translation );
 
 protected:
@@ -125,19 +265,63 @@ protected:
 	mutable int	  currentIndex; // cached index for fast lookup
 	mutable bool  changed;		// set whenever the curve changes
 
-	//! Returns the curve index for the given time value, using a cached index when possible and falling back to binary search.
+	/*!
+		\brief Returns the curve index for the given time value, using a cached index when possible and falling back to binary search.
+
+		This function efficiently determines the appropriate curve index for a specified time value by first checking if a previously computed index can be reused. It uses a cached index when valid,
+	   otherwise performs a binary search to locate the correct index in the time array. The function updates the cached index for subsequent calls to improve performance.
+
+		\param time The time value for which to find the corresponding curve index
+		\return The curve index that corresponds to the given time value
+	*/
 	int			  IndexForTime( const float time ) const;
 
-	//! Returns the time value for a given index in the curve, interpolating if necessary.
+	/*!
+		\brief Returns the time value for a given index in the curve, with linear extrapolation for out-of-bounds indices.
+
+		This function retrieves the time value associated with a specified index in the curve. If the index is within the valid range of the curve's time array, it returns the exact time value at that
+	   index. For indices before the start of the curve, it performs linear extrapolation using the first two time values. For indices beyond the end of the curve, it performs linear extrapolation
+	   using the last two time values.
+
+		\param index The index for which to retrieve the time value
+		\return The time value corresponding to the specified index, with extrapolation applied for out-of-bounds indices
+	*/
 	float		  TimeForIndex( const int index ) const;
 
-	//! Returns the curve value at the specified index, with linear extrapolation for out-of-bounds indices.
+	/*!
+		\brief Returns the curve value at the specified index with linear extrapolation for out-of-bounds indices
+
+		This function retrieves the curve value at the given index. If the index is less than zero, it performs linear extrapolation using the first two values. If the index exceeds the valid range,
+	   it performs linear extrapolation using the last two values. Otherwise, it directly returns the value at the specified index
+
+		\param index The index of the curve value to retrieve
+		\return The curve value at the specified index, with linear extrapolation for out-of-bounds indices
+	*/
 	type		  ValueForIndex( const int index ) const;
 
-	//! Returns the speed of the curve at the given time by calculating the magnitude of the first derivative.
+	/*!
+		\brief Returns the speed of the curve at the given time by calculating the magnitude of the first derivative.
+
+		The function computes the speed by first calculating the first derivative of the curve at the specified time. It then calculates the magnitude of this derivative by summing the squares of each
+	   component and taking the square root of the result. This approach effectively determines the instantaneous speed of the curve at the provided time value.
+
+		\param time The time value at which to calculate the speed of the curve
+		\return The speed of the curve at the specified time, calculated as the magnitude of the first derivative
+	*/
 	float		  GetSpeed( const float time ) const;
 
-	//! Computes the Romberg integral of the curve speed function over the specified time interval using Richardson extrapolation.
+	/*!
+		\brief Computes the Romberg integral of the curve speed function over the specified time interval using Richardson extrapolation
+
+		This function calculates the integral of the curve's speed function between two time points using the Romberg integration method. It employs Richardson extrapolation to improve the accuracy of
+	   the numerical integration. The algorithm starts with the trapezoid rule and then applies successive extrapolations to refine the estimate. The integration is performed over the interval [t0,
+	   t1] using the specified order of extrapolation.
+
+		\param t0 Start time of the integration interval
+		\param t1 End time of the integration interval
+		\param order Order of the Romberg integration, determines the number of extrapolation steps
+		\return The computed integral value representing the arc length or accumulated speed over the time interval
+	*/
 	float		  RombergIntegral( const float t0, const float t1, const int order ) const;
 };
 
@@ -438,26 +622,83 @@ template<class type>
 class idCurve_Bezier : public idCurve<type>
 {
 public:
-	//! Constructs a new Bezier curve with default control points.
+	/*!
+		\brief Constructs a new Bezier curve with default control points.
+
+		This constructor initializes a new Bezier curve object with default control points. It is intended to create a curve that can be used for interpolation or animation purposes.
+
+	*/
 	idCurve_Bezier();
 
-	//! Returns the current interpolated value from the Bezier curve at the specified time.
+	/*!
+		\brief Returns the interpolated value from the Bezier curve at the specified time
+
+		This function computes the interpolated value along a Bezier curve at a given time parameter. It uses the Bernstein basis polynomials to calculate the contribution of each control point to the
+	   final curve value. The calculation involves precomputing the basis values and then performing a weighted sum of the control points.
+
+		\param time The time parameter for which to compute the curve value, typically normalized between 0 and 1
+		\return The interpolated value on the Bezier curve at the specified time
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the Bezier curve at the specified time.
+	/*!
+		\brief Returns the first derivative of the Bezier curve at the specified time
+
+		This function calculates the first derivative of a Bezier curve at a specified time value. It uses the basis functions for the first derivative to compute the result. The calculation takes
+	   into account the number of control points and the time range of the curve. The result is scaled by a factor that depends on the number of control points and the time span of the curve.
+
+		\param time The time value at which to calculate the first derivative
+		\return The first derivative of the Bezier curve at the specified time
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the Bezier curve at the given time
+	/*!
+		\brief Returns the second derivative of the Bezier curve at the given time
+
+		This function calculates the second derivative of a Bezier curve at a specified time value. It uses the basis functions for the second derivative to compute the result. The calculation takes
+	   into account the number of control points and the time range of the curve. The result is scaled by a factor that depends on the number of control points and the time span of the curve.
+
+		\param time The time value at which to calculate the second derivative
+		\return The second derivative of the Bezier curve at the specified time
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
-	//! Computes the basis values for a Bezier curve of the specified order at the given parameter value.
+	/*!
+		\brief Computes the basis values for a Bezier curve of the specified order at the given parameter value
+
+		This function calculates the basis functions for a Bezier curve of a given order at a specific parameter value t. It uses a recursive approach to compute the binomial coefficients and
+	   evaluates the basis polynomials. The computation involves normalizing the parameter t based on the curve's time range and then applying the recursive formula for binomial coefficients to
+	   determine the basis values
+
+		\param order The order of the Bezier curve
+		\param t The parameter value at which to compute the basis functions
+		\param bvals Output array to store the computed basis values
+	*/
 	void Basis( const int order, const float t, float* bvals ) const;
 
-	//! Computes the first derivative of the basis functions for a Bézier curve of the specified order at parameter t.
+	/*!
+		\brief Computes the first derivative of the basis functions for a Bézier curve of the specified order at parameter t
+
+		This function calculates the first derivative of the basis functions used in Bézier curve evaluation. It takes the order of the Bézier curve, a parameter t, and computes the derivatives of the
+	   basis functions at that point. The implementation uses a recursive approach by leveraging the Basis function for one order lower, then adjusts the values to compute the derivative.
+
+		\param order The order of the Bézier curve
+		\param t The parameter at which to evaluate the derivative
+		\param bvals Output array to store the derivative values of the basis functions
+	*/
 	void BasisFirstDerivative( const int order, const float t, float* bvals ) const;
 
-	//! Computes the second derivative of the basis functions for a Bézier curve of the specified order at parameter t.
+	/*!
+		\brief Computes the second derivative of the basis functions for a Bézier curve of the specified order at parameter t
+
+		This function calculates the second derivative values for the basis functions of a Bézier curve. It first computes the first derivative values for a curve of one lower order, then adjusts
+	   these values to obtain the second derivative results. The computation is performed in-place on the provided array of basis values, with the first element set to zero
+
+		\param order The order of the Bézier curve
+		\param t The parameter value at which to compute the second derivative
+		\param bvals Pointer to an array where the second derivative basis function values will be stored
+	*/
 	void BasisSecondDerivative( const int order, const float t, float* bvals ) const;
 };
 
@@ -594,26 +835,84 @@ template<class type>
 class idCurve_QuadraticBezier : public idCurve<type>
 {
 public:
-	//! Constructs a new quadratic Bézier curve with default control points.
+	/*!
+		\brief Constructs a new quadratic Bézier curve with default control points.
+
+		This constructor initializes a quadratic Bézier curve with default control point values. It sets up the internal state of the curve object without requiring any explicit parameters. The curve
+	   is defined by three control points: the start point, a control point, and an end point, all initialized to default values.
+
+	*/
 	idCurve_QuadraticBezier();
 
-	//! Returns the current value of the quadratic Bézier curve at the specified time.
+	/*!
+		\brief Returns the current value of the quadratic Bézier curve at the specified time
+
+		This function calculates and returns the value of a quadratic Bézier curve at a given time parameter. It uses the basis functions to compute the weighted sum of three control points. The
+	   function assumes that exactly three control points have been set in the curve
+
+		\param time The time parameter at which to evaluate the curve, typically between 0 and 1
+		\return The interpolated value of the quadratic Bézier curve at the specified time
+		\throws assertion failure if the number of control points is not exactly 3
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the quadratic Bézier curve at the given time.
+	/*!
+		\brief Returns the first derivative of the quadratic Bézier curve at the given time
+
+		This function computes the first derivative of a quadratic Bézier curve at a specified time value. It uses the basis first derivative coefficients and the control point values to calculate the
+	   result. The computation accounts for the time interval between control points by normalizing the result with the time difference
+
+		\param time The time value at which to compute the first derivative, typically in the range [0, 1]
+		\return The first derivative value of the quadratic Bézier curve at the specified time
+		\throws assertion failure if the number of values is not equal to 3
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the quadratic Bézier curve at the specified time.
+	/*!
+		\brief Returns the second derivative of the quadratic Bézier curve at the specified time.
+
+		This function computes the second derivative of a quadratic Bézier curve at a given time value. It uses the basis second derivative coefficients and the control point values to calculate the
+	   result. The computation accounts for the time interval between control points by normalizing the result with the square of the time difference.
+
+		\param time The time value at which to compute the second derivative, typically in the range [0, 1]
+		\return The second derivative value of the quadratic Bézier curve at the specified time
+		\throws assertion failure if the number of values is not equal to 3
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
-	//! Computes the quadratic Bézier basis values for the given parameter t and stores them in the provided array.
+	/*!
+		\brief Computes the quadratic Bézier basis values for the given parameter t and stores them in the provided array.
+
+		This function calculates the basis values for a quadratic Bézier curve at a specific parameter value t. The basis values are computed using the standard quadratic Bézier basis functions. The
+	   parameter t is normalized using the curve's time range, and the resulting values are stored in the bvals array. The function assumes that the bvals array has at least three elements to store
+	   the computed basis values.
+
+		\param t The parameter value for which to compute the basis values, typically in the range [0, 1]
+		\param bvals Pointer to an array where the computed basis values will be stored
+	*/
 	void Basis( const float t, float* bvals ) const;
 
-	//! Computes the first derivative of the quadratic Bézier curve basis functions at the given parameter value.
+	/*!
+		\brief Computes the first derivative of the quadratic Bézier curve basis functions at the given parameter value
+
+		This function calculates the first derivative of the basis functions for a quadratic Bézier curve at a specified parameter value t. The computation uses the parameter t normalized to the
+	   interval [0, 1] based on the curve's time range. The derivative values are stored in the bvals array.
+
+		\param t The parameter value at which to compute the first derivative, typically in the range [0, 1]
+		\param bvals Pointer to an array where the computed derivative values will be stored
+	*/
 	void BasisFirstDerivative( const float t, float* bvals ) const;
 
-	//! Computes the second derivative of the quadratic Bézier basis functions at the given parameter value.
+	/*!
+		\brief Computes the second derivative of the quadratic Bézier basis functions at the given parameter value.
+
+		This function calculates the second derivatives of the basis functions for a quadratic Bézier curve at a specified parameter value t. The second derivatives are constant values for quadratic
+	   Bézier curves and do not depend on the parameter t. The results are stored in the provided array bvals, which must have at least three elements.
+
+		\param t The parameter value at which to compute the second derivatives, typically in the range [0, 1]
+		\param bvals Pointer to an array where the second derivative values will be stored
+	*/
 	void BasisSecondDerivative( const float t, float* bvals ) const;
 };
 
@@ -692,26 +991,86 @@ template<class type>
 class idCurve_CubicBezier : public idCurve<type>
 {
 public:
-	//! Initializes a new instance of the cubic Bézier curve class.
+	/*!
+		\brief Initializes a new instance of the cubic Bézier curve class.
+
+		This constructor initializes a new instance of the cubic Bézier curve class. It performs no additional operations beyond default initialization.
+
+	*/
 	idCurve_CubicBezier();
 
-	//! Returns the interpolated value at the given time for a cubic Bézier curve
+	/*!
+		\brief Returns the interpolated value at the given time for a cubic Bézier curve
+
+		This function calculates and returns the interpolated value along a cubic Bézier curve at the specified time parameter. It uses the basis functions to compute the contribution of each control
+	   point and sums their weighted contributions to produce the final interpolated value. The curve is defined by four control points stored in the class instance.
+
+		\param time The time parameter at which to evaluate the Bézier curve, typically in the range [0, 1]
+		\return The interpolated value at the given time along the cubic Bézier curve
+		\throws assertion failure if the number of control points is not exactly 4
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the cubic Bézier curve at the specified time.
+	/*!
+		\brief Returns the first derivative of the cubic Bézier curve at the specified time
+
+		This function calculates and returns the first derivative of a cubic Bézier curve at a given time value. The calculation uses the basis functions for the first derivative and divides the
+	   result by the time difference between the last and first control points to normalize the derivative. The curve is defined by four control points stored in the values array, and the time values
+	   are stored in the times array. The function asserts that there are exactly four values in the curve.
+
+		\param time The time value at which to calculate the first derivative
+		\return The first derivative of the cubic Bézier curve at the specified time
+		\throws assertion failure if the number of values in the curve is not exactly 4
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the cubic Bezier curve at the specified time.
+	/*!
+		\brief Returns the second derivative of the cubic Bezier curve at the specified time.
+
+		This function calculates the second derivative of a cubic Bezier curve at a given time parameter. It uses the basis functions for the second derivative and applies them to the control points
+	   of the curve. The result is scaled by the square of the time range to account for the curve's parameterization.
+
+		\param time The time parameter at which to evaluate the second derivative, typically in the range [0, 1]
+		\return The second derivative value of the cubic Bezier curve at the specified time
+		\throws assertion failure if the number of control points is not exactly 4
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
-	//! Computes the cubic Bézier basis functions for a given parameter value and stores the results in the provided array.
+	/*!
+		\brief Computes the cubic Bézier basis functions for a given parameter value and stores the results in the provided array
+
+		This function evaluates the four cubic Bézier basis functions at the specified parameter value t. The basis functions are computed using the standard cubic Bézier polynomial expressions. The
+	   results are stored in the bvals array, where each element corresponds to one of the four basis functions. The parameter t is normalized based on the time range defined by the curve's control
+	   points, and the computation uses the standard cubic Bézier blending functions to calculate the weights for the interpolation
+
+		\param t The parameter value at which to evaluate the basis functions, typically normalized to the curve's time range
+		\param bvals Pointer to an array where the four basis function values will be stored
+	*/
 	void Basis( const float t, float* bvals ) const;
 
-	//! Computes the first derivatives of the cubic Bézier basis functions at the given parameter t
+	/*!
+		\brief Computes the first derivatives of the cubic Bézier basis functions at the given parameter value
+
+		This function calculates the first derivatives of the four cubic Bézier basis functions for a given parameter t. The computation is based on the normalized parameter s1 which represents the
+	   position along the curve relative to the time interval defined by the curve's control points. The results are stored in the bvals array where each element corresponds to the derivative of a
+	   specific basis function
+
+		\param t The parameter value at which to compute the derivatives
+		\param bvals Output array to store the computed first derivative values
+	*/
 	void BasisFirstDerivative( const float t, float* bvals ) const;
 
-	//! Computes the second derivative of the cubic Bézier basis functions at the given parameter value.
+	/*!
+		\brief Computes the second derivative of the cubic Bézier basis functions at the given parameter value
+
+		This function calculates the second derivative values for the four basis functions of a cubic Bézier curve at the specified parameter value t. The computation uses a normalized parameter s1
+	   derived from the time values of the curve. The results are stored in the provided array bvals, which should have at least four elements. Each element corresponds to the second derivative of one
+	   of the four Bézier basis functions
+
+		\param t The parameter value at which to compute the second derivatives
+		\param bvals Pointer to an array where the results will be stored
+	*/
 	void BasisSecondDerivative( const float t, float* bvals ) const;
 };
 
@@ -796,13 +1155,33 @@ class idCurve_Spline : public idCurve<type>
 public:
 	enum boundary_t { BT_FREE, BT_CLAMPED, BT_CLOSED };
 
-	//! Initializes a new instance of the idCurve_Spline class with default boundary type and close time.
+	/*!
+		\brief Initializes a new instance of the idCurve_Spline class with default boundary type and close time.
+
+		The constructor sets the boundary type to BT_FREE and the close time to 0.0f. This initializes the spline with default values suitable for general use.
+
+	*/
 	idCurve_Spline();
 
-	//! Returns true if the spline interpolation is complete at the given time.
+	/*!
+		\brief Determines if the spline interpolation is complete at the specified time.
+
+		This function checks whether the spline interpolation has reached its end based on the boundary type and the given time. If the boundary type is not BT_CLOSED and the specified time is greater
+	   than or equal to the last time value in the spline, the function returns true, indicating the interpolation is complete. Otherwise, it returns false.
+
+		\param time The time value to check against the spline's time range
+		\return True if the spline interpolation is complete at the given time, false otherwise
+	*/
 	virtual bool IsDone( const float time ) const;
 
-	//! Sets the boundary type for the spline curve and marks it as changed.
+	/*!
+		\brief Sets the boundary type for the spline curve and marks it as changed.
+
+		This function updates the boundary type of the spline curve to the specified value and flags the curve as having changed. This is typically used to configure how the spline handles its
+	   endpoints or boundaries.
+
+		\param bt The boundary type to set for the spline curve
+	*/
 	virtual void SetBoundaryType( const boundary_t bt )
 	{
 		boundaryType  = bt;
@@ -812,27 +1191,67 @@ public:
 	//! Returns the boundary type of the spline curve.
 	virtual boundary_t GetBoundaryType() const { return boundaryType; }
 
-	//! Sets the close time value for the spline curve and marks it as changed.
+	/*!
+		\brief Sets the close time value for the spline curve and marks it as changed.
+
+		This function updates the close time parameter of the spline curve to the specified value and signals that the curve has been modified. The close time is typically used to control how the
+	   spline handles closing or connecting points in a curve.
+
+		\param t The new close time value to set for the spline curve
+	*/
 	virtual void	   SetCloseTime( const float t )
 	{
 		closeTime	  = t;
 		this->changed = true;
 	}
 
-	//! Returns the closing time for the spline curve when it is in closed boundary type, otherwise returns zero.
+	/*!
+		\brief Returns the closing time for a spline curve when it is in closed boundary type, otherwise returns zero.
+
+		This function checks the boundary type of the spline curve and returns the closeTime value if the boundary type is BT_CLOSED, otherwise it returns zero. This is used to determine the time at
+	   which the spline curve closes when it is in a closed state.
+
+		\return The closing time of the spline curve if the boundary type is BT_CLOSED, otherwise zero
+	*/
 	virtual float GetCloseTime() { return boundaryType == BT_CLOSED ? closeTime : 0.0f; }
 
 protected:
 	boundary_t boundaryType;
 	float	   closeTime;
 
-	//! Returns the value at the specified index, handling boundary conditions for closed curves.
+	/*!
+		\brief Returns the value at the specified index, handling boundary conditions for closed and open curves.
+
+		This function retrieves the value at a given index from the spline curve, taking into account the boundary type of the curve. For indices outside the valid range [0, n], where n is the number
+	   of values, the function applies special handling based on the boundary type. In closed curves, it uses modular arithmetic to wrap around the indices, while in open curves, it extends the curve
+	   linearly based on the first or last segments.
+
+		\param index The index for which the value is to be computed
+		\return The value at the specified index, adjusted for boundary conditions
+	*/
 	type	   ValueForIndex( const int index ) const;
 
-	//! Returns the time value for a given index, handling boundary conditions for closed and open curves.
+	/*!
+		\brief Returns the time value for a given index, handling boundary conditions for closed and open curves.
+
+		This function computes the time value corresponding to a given index in the spline curve. It takes into account the boundary type of the curve, which can be either closed or open. For indices
+	   outside the valid range [0, n], where n is the number of time points, the function applies special handling based on the boundary type. In closed curves, it uses modular arithmetic to wrap
+	   around the indices, while in open curves, it extends the curve linearly based on the first or last time segments.
+
+		\param index The index for which the time value is to be computed
+		\return The time value corresponding to the given index, adjusted for boundary conditions
+	*/
 	float	   TimeForIndex( const int index ) const;
 
-	//! Returns the clamped time value based on the boundary type and input time.
+	/*!
+		\brief Returns the clamped time value based on the boundary type and input time.
+
+		This function checks if the boundary type is set to clamped and if the input time is outside the valid range defined by the spline's time array. If the input time is less than the first time
+	   value, it returns the first time value. If the input time is greater than or equal to the last time value, it returns the last time value. Otherwise, it returns the input time unchanged.
+
+		\param t The input time value to be clamped
+		\return The clamped time value if the boundary type is BT_CLAMPED and the input time is outside the valid range, otherwise returns the input time unchanged
+	*/
 	float	   ClampedTime( const float t ) const;
 };
 
@@ -917,7 +1336,13 @@ template<class type>
 class idCurve_NaturalCubicSpline : public idCurve_Spline<type>
 {
 public:
-	//! Constructs a new instance of the natural cubic spline curve.
+	/*!
+		\brief Constructs a new instance of the natural cubic spline curve and clears all stored data.
+
+		This constructor initializes a new instance of the natural cubic spline curve class. It performs no additional operations beyond the default initialization and clears any existing data that
+	   might be present in the curve.
+
+	*/
 	idCurve_NaturalCubicSpline();
 
 	//! Clears all data stored in the natural cubic spline curve.
@@ -930,13 +1355,40 @@ public:
 		d.Clear();
 	}
 
-	//! Returns the interpolated value at the given time from a natural cubic spline curve.
+	/*!
+		\brief Returns the interpolated value at the given time from a natural cubic spline curve.
+
+		This function evaluates a natural cubic spline curve at the specified time parameter. It first clamps the input time to the valid range, determines the appropriate segment index, and then
+	   computes the interpolated value using precomputed spline coefficients. The spline is defined by the curve's control points and their associated tangent vectors, which are computed during the
+	   setup phase.
+
+		\param time The time value at which to evaluate the spline curve
+		\return The interpolated value at the given time from the natural cubic spline curve
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the spline at the given time.
+	/*!
+		\brief Returns the first derivative of the natural cubic spline at the given time
+
+		This function computes the first derivative of a natural cubic spline at a specified time value. It first clamps the input time to the valid range of the spline, determines the appropriate
+	   segment index, and calculates the relative time within that segment. The function then uses precomputed coefficients to evaluate the derivative using the formula b[i] + s * (2.0f * c[i] + 3.0f
+	   * s * d[i]), where s is the relative time within the segment
+
+		\param time the time value at which to compute the first derivative
+		\return the first derivative of the spline at the specified time
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the natural cubic spline at the given time.
+	/*!
+		\brief Returns the second derivative of the natural cubic spline at the given time.
+
+		This function calculates and returns the second derivative of the natural cubic spline curve at a specified time value. The calculation uses the precomputed coefficients stored in the curve
+	   object and performs interpolation based on the time parameter. The input time is first clamped to the valid range of the curve before processing. The result represents the acceleration or
+	   curvature of the spline at the given point in time.
+
+		\param time The time value at which to calculate the second derivative, will be clamped to valid range
+		\return The second derivative value of the spline at the specified time
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
@@ -944,16 +1396,45 @@ protected:
 	mutable idList<type> c;
 	mutable idList<type> d;
 
-	//! Sets up the spline curve boundary conditions based on the current boundary type.
+	/*!
+		\brief Sets up the spline curve boundary conditions based on the current boundary type.
+
+		This function initializes the spline curve by configuring the boundary conditions according to the specified boundary type. It checks if the curve has been modified and, if so, calls the
+	   appropriate setup function for the current boundary type. The boundary types supported are free, clamped, and closed, each requiring different boundary condition calculations. After setting up
+	   the boundary conditions, it marks the curve as unchanged.
+
+	*/
 	void				 Setup() const;
 
-	//! Sets up the free boundary conditions for the natural cubic spline curve.
+	/*!
+		\brief Sets up the free boundary conditions for the natural cubic spline curve interpolation.
+
+		This function initializes the coefficients required for natural cubic spline interpolation with free boundary conditions. It computes the necessary intermediate values and stores them in
+	   internal arrays for later use in spline evaluation. The function uses a tridiagonal system solver to determine the spline coefficients based on the control points and their time values. The
+	   boundary conditions are set to natural (second derivative is zero at the endpoints).
+
+	*/
 	void				 SetupFree() const;
 
-	//! Sets up the clamped spline curve coefficients for natural cubic spline interpolation.
+	/*!
+		\brief Configures the spline coefficients for clamped natural cubic spline interpolation
+
+		This function sets up the necessary coefficients for performing clamped natural cubic spline interpolation on a curve. It calculates the beta, gamma, and delta values using a tridiagonal
+	   system solver, then computes the b and d coefficients needed for spline evaluation. The function allocates temporary memory for intermediate calculations and ensures that the resulting
+	   coefficient arrays are properly sized for the number of curve values.
+
+	*/
 	void				 SetupClamped() const;
 
-	//! Sets up the coefficients for a closed natural cubic spline interpolation.
+	/*!
+		\brief Sets up the coefficients for a closed natural cubic spline interpolation.
+
+		This function prepares the necessary coefficients for performing closed natural cubic spline interpolation on a set of values. It constructs a tridiagonal matrix system based on the time
+	   values and solves for the spline coefficients. The function handles the boundary conditions for a closed spline, where the first and last points are connected seamlessly. Memory is allocated
+	   using alloca16 for temporary storage during matrix computation. The solution involves solving a linear system of equations for each dimension of the value vectors. The resulting coefficients
+	   are stored in member variables b, c, and d for later use in spline evaluation.
+
+	*/
 	void				 SetupClosed() const;
 };
 
@@ -1207,26 +1688,88 @@ template<class type>
 class idCurve_CatmullRomSpline : public idCurve_Spline<type>
 {
 public:
-	//! Constructs an empty Catmull-Rom spline curve.
+	/*!
+		\brief Constructs an empty Catmull-Rom spline curve.
+
+		This constructor initializes an empty Catmull-Rom spline curve. The curve is typically used for interpolation between control points with smooth transitions. The spline is defined by a series
+	   of control points and uses the Catmull-Rom algorithm to calculate intermediate values.
+
+	*/
 	idCurve_CatmullRomSpline();
 
-	//! Returns the current value of the Catmull-Rom spline at the specified time.
+	/*!
+		\brief Returns the current value of the Catmull-Rom spline at the specified time.
+
+		This function evaluates the Catmull-Rom spline at the given time parameter and returns the interpolated value. It handles edge cases where there is only one control point by returning that
+	   point's value directly. The function uses a basis function to compute the influence of neighboring control points on the current position, making it suitable for smooth curve interpolation in
+	   animation and other applications.
+
+		\param time The time value at which to evaluate the spline
+		\return The interpolated value of the spline at the specified time
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the curve at the given time.
+	/*!
+		\brief Returns the first derivative of the curve at the given time
+
+		This function calculates the first derivative of a Catmull-Rom spline at the specified time parameter. It uses basis functions to compute the derivative by evaluating the spline's control
+	   points and their influence at the given time. The derivative represents the rate of change of the spline at that point, which is useful for calculating velocity or tangent vectors along the
+	   curve.
+
+		\param time The time parameter at which to evaluate the first derivative
+		\return The first derivative of the curve at the specified time, representing the rate of change of the spline
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the curve at the given time.
+	/*!
+		\brief Returns the second derivative of the Catmull-Rom spline at the given time.
+
+		This function calculates the second derivative of the Catmull-Rom spline at the specified time. It first clamps the time to the valid range of the curve, then determines the appropriate
+	   segment index. It uses basis functions to compute the second derivative contribution from the relevant control points. The result is normalized by the square of the time difference between
+	   adjacent control points to account for non-uniform spacing.
+
+		\param time The time at which to evaluate the second derivative
+		\return The second derivative value of the spline at the specified time
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
-	//! Computes the Catmull-Rom spline basis functions for the given index and time parameter.
+	/*!
+		\brief Computes the Catmull-Rom spline basis functions for the given index and time parameter
+
+		This function calculates the four Catmull-Rom spline basis functions used for interpolation. The basis functions are computed based on the normalized time parameter s, which represents the
+	   position along the curve segment between two control points. The function uses the standard Catmull-Rom basis function equations to determine the weights for the four control points that
+	   influence the curve at the specified time.
+
+		\param index The index of the current segment in the spline
+		\param t The time parameter for which to compute the basis functions
+		\param bvals Output array to store the four computed basis function values
+	*/
 	void Basis( const int index, const float t, float* bvals ) const;
 
-	//! Calculates the first derivative of the Catmull-Rom spline basis functions for a given index and parameter.
+	/*!
+		\brief Computes the first derivative of Catmull-Rom spline basis functions for a given index and time parameter
+
+		This function calculates the first derivative of the Catmull-Rom spline basis functions at a specified index and time value. The computation uses the standard Catmull-Rom spline derivative
+	   formulas, where the time parameter is normalized within the interval defined by the current and next time indices. The results are stored in the provided array of four floating-point values
+	   representing the derivatives of the four basis functions.
+
+		\param index The index of the current knot in the spline
+		\param t The time parameter for which to compute the derivative
+		\param bvals Pointer to an array of four floats that will store the computed derivative values
+	*/
 	void BasisFirstDerivative( const int index, const float t, float* bvals ) const;
 
-	//! Computes the second derivative of the Catmull-Rom spline basis functions for a given index and time parameter.
+	/*!
+		\brief Computes the second derivative of the Catmull-Rom spline basis functions for a given index and time parameter
+
+		This function calculates the second derivative values for the Catmull-Rom spline basis functions at a specific index and time. The calculation uses a normalized time parameter derived from the
+	   index and the time interval. The result is stored in the provided array of basis values.
+
+		\param index The index of the spline segment to calculate the second derivative for
+		\param t The time parameter for which to calculate the second derivative
+		\param bvals Pointer to an array where the calculated second derivative values will be stored
+	*/
 	void BasisSecondDerivative( const int index, const float t, float* bvals ) const;
 };
 
@@ -1346,16 +1889,50 @@ template<class type>
 class idCurve_KochanekBartelsSpline : public idCurve_Spline<type>
 {
 public:
-	//! Constructs a new Kochanek-Bartels spline curve.
+	/*!
+		\brief Constructs a new Kochanek-Bartels spline curve.
+
+		This inline constructor initializes a new instance of the Kochanek-Bartels spline curve class. The spline is used for interpolation between keyframes and supports tension, continuity, and bias
+	   parameters to control the shape of the curve segments.
+
+	*/
 	idCurve_KochanekBartelsSpline();
 
-	//! Adds a new value to the spline at the specified time and returns its index.
+	/*!
+		\brief Adds a new value to the Kochanek-Bartels spline curve at the specified time and returns its index.
+
+		This function inserts a new value into the spline curve at the given time position. The function determines the correct insertion index based on the time value, then inserts the time, value,
+	   and default tension, continuity, and bias parameters into their respective arrays. The returned index can be used to reference the newly added value in the spline.
+
+		\param time The time value at which to add the new spline point
+		\param value The value to add at the specified time
+		\return The index of the newly added value in the spline curve
+	*/
 	virtual int	 AddValue( const float time, const type& value );
 
-	//! Adds a new value to the Kochanek-Bartels spline curve at the specified time with the given tension, continuity, and bias parameters.
+	/*!
+		\brief Adds a new value to the Kochanek-Bartels spline curve at the specified time with the given tension, continuity, and bias parameters
+
+		This function inserts a new keyframe into the spline curve at the specified time. The function calculates the appropriate index for insertion based on the time value and then inserts the time,
+	   value, tension, continuity, and bias into their respective arrays. The function returns the index where the value was inserted
+
+		\param time The time at which to add the new value
+		\param value The value to add at the specified time
+		\param tension The tension parameter for the Kochanek-Bartels spline
+		\param continuity The continuity parameter for the Kochanek-Bartels spline
+		\param bias The bias parameter for the Kochanek-Bartels spline
+		\return The index in the arrays where the new value was inserted
+	*/
 	virtual int	 AddValue( const float time, const type& value, const float tension, const float continuity, const float bias );
 
-	//! Removes the element at the specified index from all internal arrays of the spline curve.
+	/*!
+		\brief Removes the element at the specified index from all internal arrays of the spline curve.
+
+		This function removes elements at the given index from all internal arrays of the spline curve, including values, times, tension, continuity, and bias arrays. It is designed to maintain
+	   consistency across all arrays that represent the spline curve data.
+
+		\param index The index of the element to be removed from all internal arrays
+	*/
 	virtual void RemoveIndex( const int index )
 	{
 		this->values.RemoveIndex( index );
@@ -1376,13 +1953,40 @@ public:
 		this->currentIndex = -1;
 	}
 
-	//! Returns the interpolated value at the specified time using Kochanek-Bartels spline interpolation.
+	/*!
+		\brief Returns the interpolated value at the specified time using Kochanek-Bartels spline interpolation.
+
+		This function calculates and returns the value of the spline at the given time using Kochanek-Bartels interpolation method. It first clamps the time to the valid range, determines the
+	   appropriate segment, and then computes the interpolated value using the basis functions and control points. The function handles edge cases such as when there is only one data point by
+	   returning that point directly.
+
+		\param time The time value at which to evaluate the spline
+		\return The interpolated value at the specified time
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the spline at the given time.
+	/*!
+		\brief Returns the first derivative of the Kochanek-Bartels spline at the given time
+
+		This function calculates the first derivative of a Kochanek-Bartels spline at a specified time value. It clamps the input time to the valid range of the spline, determines the appropriate
+	   segment index, retrieves the tangent values for the segment, and computes the basis functions for the first derivative. The result is then combined with the spline values and tangents, and
+	   normalized by the time interval to produce the final derivative value
+
+		\param time The time value at which to compute the first derivative
+		\return The first derivative of the spline at the specified time
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the spline at the given time.
+	/*!
+		\brief Returns the second derivative of the spline at the given time
+
+		This function calculates the second derivative of a Kochanek-Bartels spline at a specified time value. It first clamps the input time to the valid range of the spline, then determines the
+	   appropriate segment index. It retrieves the tangent values for the segment and computes the basis functions for the second derivative. The result is then combined with the spline values and
+	   tangents, and normalized by the square of the time interval to produce the final second derivative value.
+
+		\param time The time value at which to compute the second derivative
+		\return The second derivative of the spline at the specified time
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
@@ -1390,16 +1994,56 @@ protected:
 	idList<float> continuity;
 	idList<float> bias;
 
-	//! Computes the outgoing and incoming tangent vectors for a specified index in a Kochanek-Bartels spline.
+	/*!
+		\brief Computes the outgoing and incoming tangent vectors for a specified index in a Kochanek-Bartels spline interpolation.
+
+		This function calculates tangent vectors at a given index in a Kochanek-Bartels spline by using tension, continuity, and bias parameters. It computes the tangent for the current point based on
+	   neighboring points and the spline parameters. The function handles the outgoing tangent at the current index and the incoming tangent at the next index, adjusting for the time differences
+	   between control points.
+
+		\param index The index in the spline for which to compute the tangents
+		\param t0 The outgoing tangent vector at the specified index
+		\param t1 The incoming tangent vector at the next index
+	*/
 	void		  TangentsForIndex( const int index, type& t0, type& t1 ) const;
 
-	//! Computes the basis values for Kochanek-Bartels spline interpolation at a given index and time.
+	/*!
+		\brief Computes the basis values for Kochanek-Bartels spline interpolation at a given index and time
+
+		This function evaluates the four basis functions that define a Kochanek-Bartels spline segment for a specific segment index and normalized time parameter. The computation is performed within a
+	   given spline segment, where the normalized time parameter s is calculated from the absolute time t and the time range of the segment. The results are stored in the provided array of four float
+	   values, corresponding to the four basis functions.
+
+		\param index The index of the spline segment to evaluate
+		\param t The absolute time parameter for the evaluation
+		\param bvals Output array to store the four basis function values
+	*/
 	void		  Basis( const int index, const float t, float* bvals ) const;
 
-	//! Computes the first derivative of the basis functions for a Kochanek-Bartels spline at the specified index and time.
+	/*!
+		\brief Computes the first derivative of the basis functions for a Kochanek-Bartels spline at the specified index and time
+
+		This function evaluates the first derivative of the four basis functions that define a Kochanek-Bartels spline segment. The computation is performed for a specific segment index and normalized
+	   time parameter within that segment. The results are stored in the provided array of four float values, corresponding to the derivatives of the four basis functions. The function uses a
+	   normalized time parameter s, calculated from the absolute time t and the time range of the segment
+
+		\param index The index of the spline segment to evaluate
+		\param t The absolute time parameter for the evaluation
+		\param bvals Output array to store the four first derivative values of the basis functions
+	*/
 	void		  BasisFirstDerivative( const int index, const float t, float* bvals ) const;
 
-	//! Computes the second derivative of the basis functions for a Kochanek-Bartels spline at the specified index and time.
+	/*!
+		\brief Computes the second derivative of the basis functions for a Kochanek-Bartels spline at the specified index and time.
+
+		This function calculates the second derivatives of the basis functions for a Kochanek-Bartels spline. It takes an index and a time parameter to compute the second derivative values for the
+	   basis functions. The computation uses a normalized time value 's' derived from the input time and the time range for the given index. The results are stored in the provided array 'bvals' which
+	   must be large enough to hold four float values.
+
+		\param index The index of the segment in the spline
+		\param t The time value for which to compute the second derivative
+		\param bvals Pointer to an array to store the computed second derivative values
+	*/
 	void		  BasisSecondDerivative( const int index, const float t, float* bvals ) const;
 };
 
@@ -1579,38 +2223,104 @@ template<class type>
 class idCurve_BSpline : public idCurve_Spline<type>
 {
 public:
-	//! Initializes a new instance of the idCurve_BSpline class with a default cubic order.
+	/*!
+		\brief Initializes a new instance of the idCurve_BSpline class with a default cubic order.
+
+		This constructor initializes the B-spline curve with a default order of 4, which corresponds to a cubic spline. The order determines the degree of the polynomial used in the curve definition.
+
+	*/
 	idCurve_BSpline();
 
 	//! Returns the order of the B-spline curve.
 	virtual int	 GetOrder() const { return order; }
 
-	//! Sets the order of the B-spline curve to the specified value.
+	/*!
+		\brief Sets the order of the B-spline curve to the specified value
+
+		The function asserts that the provided order is greater than 0 and less than 10 before setting the order of the B-spline curve
+
+		\param i The order to set for the B-spline curve
+	*/
 	virtual void SetOrder( const int i )
 	{
 		assert( i > 0 && i < 10 );
 		order = i;
 	}
 
-	//! Returns the current value of the B-spline curve at the specified time.
+	/*!
+		\brief Returns the current value of the B-spline curve at the specified time.
+
+		This function evaluates the B-spline curve at the given time parameter and returns the interpolated value. It handles edge cases where there is only one control point, and uses a clamping
+	   mechanism to ensure valid time values. The function uses a basis function to compute the weighted sum of control points surrounding the given time.
+
+		\param time The time value at which to evaluate the B-spline curve
+		\return The interpolated value of the B-spline curve at the specified time
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the B-spline curve at the specified time.
+	/*!
+		\brief Returns the first derivative of the B-spline curve at the specified time
+
+		This function calculates the first derivative of a B-spline curve at a given time value. It handles edge cases where there is only one control point by returning that control point directly.
+	   The calculation uses a basis function derivative to compute the derivative at the specified time, taking into account the order of the spline and the clamped time value.
+
+		\param time The time value at which to calculate the first derivative
+		\return The first derivative of the B-spline curve at the specified time
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the B-spline curve at the specified time.
+	/*!
+		\brief Returns the second derivative of the B-spline curve at the specified time
+
+		This function calculates the second derivative of a B-spline curve at a given time value. It first clamps the time to the valid range and determines the appropriate index for the time value.
+	   The second derivative is computed using a weighted sum of the basis functions and the control point values. The calculation accounts for the spline's order and handles edge cases where there is
+	   only one control point.
+
+		\param time The time value at which to calculate the second derivative
+		\return The second derivative of the B-spline curve at the specified time
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
 	int	  order;
 
-	//! Evaluates the basis function for a B-spline curve at a given index, order, and parameter value.
+	/*!
+		\brief Evaluates the basis function for a B-spline curve at a given index, order, and parameter value.
+
+		This function computes the value of a B-spline basis function using recursive evaluation. For order 1, it returns 1.0 if the parameter t lies within the support interval of the basis function,
+	   otherwise 0.0. For higher orders, it recursively computes the basis function value using the Cox-de Boor recursion formula, with special handling for division by zero.
+
+		\param index The index of the basis function to evaluate
+		\param order The order of the basis function to evaluate
+		\param t The parameter value at which to evaluate the basis function
+		\return The computed value of the B-spline basis function at the specified parameter
+	*/
 	float Basis( const int index, const int order, const float t ) const;
 
-	//! Computes the first derivative of a basis function for a B-spline curve.
+	/*!
+		\brief Computes the first derivative of a basis function for a B-spline curve
+
+		This function calculates the first derivative of a basis function used in B-spline curve evaluation. It uses the recursive relationship between basis functions of different orders to compute
+	   the derivative. The calculation involves the difference between two basis functions of a lower order, scaled by a factor based on the order and time differences between control points.
+
+		\param index The index of the basis function to evaluate
+		\param order The order of the basis function
+		\param t The parameter value at which to evaluate the derivative
+		\return The first derivative of the basis function at the specified parameter value
+	*/
 	float BasisFirstDerivative( const int index, const int order, const float t ) const;
 
-	//! Calculates the second derivative of a basis function for a B-spline curve.
+	/*!
+		\brief Calculates the second derivative of a basis function for a B-spline curve.
+
+		This function computes the second derivative of a basis function used in B-spline curve interpolation. It utilizes the first derivative calculations to determine the second derivative by
+	   applying a finite difference approach. The calculation depends on the index of the basis function, the order of the spline, and the parameter t which represents the position along the curve.
+
+		\param index The index of the basis function to calculate the second derivative for
+		\param order The order of the B-spline curve
+		\param t The parameter value along the curve for which to calculate the second derivative
+		\return The second derivative of the basis function at the specified parameter value
+	*/
 	float BasisSecondDerivative( const int index, const int order, const float t ) const;
 };
 
@@ -1722,26 +2432,87 @@ template<class type>
 class idCurve_UniformCubicBSpline : public idCurve_BSpline<type>
 {
 public:
-	//! Constructs a new uniform cubic B-spline curve with a fixed order of four.
+	/*!
+		\brief Constructs a new uniform cubic B-spline curve with a fixed order of four
+
+		This constructor initializes a uniform cubic B-spline curve and sets its order to four, which is characteristic of cubic B-splines. The curve is designed to provide smooth interpolation
+	   between control points with uniform spacing.
+
+	*/
 	idCurve_UniformCubicBSpline();
 
-	//! Returns the interpolated value at the specified time from a uniform cubic B-spline curve.
+	/*!
+		\brief Returns the interpolated value at the specified time from a uniform cubic B-spline curve.
+
+		This function calculates and returns the interpolated value at a given time using a uniform cubic B-spline curve. It first clamps the input time to the valid range, then determines the
+	   appropriate index for the time value. The function uses basis functions to compute the contribution of control points to the final interpolated value. Special handling is included for cases
+	   where there is only one control point.
+
+		\param time The time value for which to calculate the interpolated value
+		\return The interpolated value at the specified time
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the curve at the given time.
+	/*!
+		\brief Returns the first derivative of the curve at the given time
+
+		This function computes the first derivative of a uniform cubic B-spline curve at a specified time value. It calculates the derivative by evaluating the basis functions for the first derivative
+	   and combining them with the control point values. The result is then scaled by the time interval between control points to provide the correct derivative magnitude. The function handles edge
+	   cases where there is only one control point by returning a zero vector.
+
+		\param time The time value at which to compute the first derivative
+		\return The first derivative of the curve at the specified time
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the spline at the given time.
+	/*!
+		\brief Returns the second derivative of the spline at the given time.
+
+		This function calculates the second derivative of a uniform cubic B-spline at a specified time value. It first clamps the time to the valid range of the spline, determines the appropriate
+	   segment, and then computes the second derivative using basis functions. The result is normalized by the square of the time interval between control points to provide the correct second
+	   derivative value.
+
+		\param time The time value at which to calculate the second derivative
+		\return The second derivative of the spline at the specified time
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
-	//! Evaluates the cubic B-spline basis functions for a given index and parameter
+	/*!
+		\brief Evaluates the cubic B-spline basis functions for a given index and parameter
+
+		This function computes the four basis functions for a uniform cubic B-spline at a specified index and parameter value. The basis functions are used to interpolate control points in B-spline
+	   curve evaluation. The parameter t is normalized relative to the time interval defined by the current index and the next index. The results are stored in the bvals array, which must be able to
+	   hold at least four float values.
+
+		\param index The index of the basis function to evaluate
+		\param t The parameter value for which to evaluate the basis functions
+		\param bvals Output array to store the computed basis function values
+	*/
 	void Basis( const int index, const float t, float* bvals ) const;
 
-	//! Computes the first derivative of the basis functions for a uniform cubic B-spline at the given index and parameter.
+	/*!
+		\brief Computes the first derivative of the basis functions for a uniform cubic B-spline at the given index and parameter.
+
+		This function calculates the first derivatives of the four basis functions for a uniform cubic B-spline curve. It takes an index representing the knot interval and a parameter t within that
+	   interval, then computes the derivatives of the four cubic B-spline basis functions at that point.
+
+		\param index The index of the knot interval
+		\param t The parameter value within the interval
+		\param bvals Output array to store the computed derivatives of the basis functions
+	*/
 	void BasisFirstDerivative( const int index, const float t, float* bvals ) const;
 
-	//! Computes the second derivative of the basis functions for a uniform cubic B-spline at the specified index and parameter value.
+	/*!
+		\brief Computes the second derivative of the basis functions for a uniform cubic B-spline at the specified index and parameter value
+
+		This function calculates the second derivative values for the basis functions of a uniform cubic B-spline curve. It takes an index and a parameter value t, and computes the corresponding
+	   second derivative values into the provided array bvals. The computation is performed in the local parameter space defined by the time interval between consecutive keyframes
+
+		\param index The index of the knot interval to evaluate
+		\param t The parameter value within the specified interval
+		\param bvals Output array to store the second derivative values
+	*/
 	void BasisSecondDerivative( const int index, const float t, float* bvals ) const;
 };
 
@@ -1859,26 +2630,90 @@ template<class type>
 class idCurve_NonUniformBSpline : public idCurve_BSpline<type>
 {
 public:
-	//! Constructs an empty non-uniform B-spline curve.
+	/*!
+		\brief Constructs an empty non-uniform B-spline curve.
+
+		This constructor initializes an empty non-uniform B-spline curve object. The curve is initially empty and can be populated with control points and knot values to define the spline geometry.
+	   The curve is designed to represent a smooth interpolating curve through a set of control points using B-spline basis functions with non-uniform knot vectors.
+
+	*/
 	idCurve_NonUniformBSpline();
 
-	//! Returns the current value of the non-uniform B-spline curve at the specified time.
+	/*!
+		\brief Returns the current value of the non-uniform B-spline curve at the specified time.
+
+		This function evaluates the non-uniform B-spline curve at the given time parameter and returns the interpolated value. It handles edge cases where there is only one control point by returning
+	   that point's value directly. The function uses basis functions to compute the weighted sum of control points based on the current time.
+
+		\param time The time parameter at which to evaluate the curve
+		\return The interpolated value of the curve at the specified time
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the non-uniform B-spline curve at the given time.
+	/*!
+		\brief Returns the first derivative of the non-uniform B-spline curve at the given time
+
+		This function calculates the first derivative of a non-uniform B-spline curve at a specified time value. It uses the curve's control points and time knots to compute the derivative. The
+	   function handles edge cases where there is only one control point by returning a zero vector. The calculation uses basis functions to determine the contribution of each control point to the
+	   derivative at the given time.
+
+		\param time The time value at which to compute the first derivative of the curve
+		\return The first derivative of the B-spline curve at the specified time
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the spline at the given time.
+	/*!
+		\brief Returns the second derivative of the spline at the given time.
+
+		This function calculates the second derivative of a non-uniform B-spline at a specified time value. It first clamps the input time to the valid range of the spline, determines the appropriate
+	   index for the time value, and then evaluates the second derivative using the basis functions. The result is computed as a weighted sum of the control point values based on the basis function
+	   evaluations.
+
+		\param time The time value at which to calculate the second derivative
+		\return The second derivative of the spline at the specified time
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
-	//! Calculates the basis values for a non-uniform B-spline at a given index and time.
+	/*!
+		\brief Computes the basis values for a non-uniform B-spline at a given index and time
+
+		This function calculates the basis values for a non-uniform B-spline using the Cox-de Boor recursion algorithm. It takes an index, order, and time parameter to compute the corresponding basis
+	   function values. The computation uses the time values associated with the spline to determine the weights for each basis function. The function modifies the bvals array in-place, storing the
+	   computed basis values for the specified order.
+
+		\param index The index of the basis function to evaluate
+		\param order The order of the B-spline
+		\param t The time value at which to evaluate the basis functions
+		\param bvals Pointer to the array where basis values will be stored
+	*/
 	void Basis( const int index, const int order, const float t, float* bvals ) const;
 
-	//! Computes the first derivative of the basis functions for a non-uniform B-spline.
+	/*!
+		\brief Computes the first derivative of the basis functions for a non-uniform B-spline.
+
+		This function calculates the first derivative of the basis functions used in non-uniform B-spline interpolation. It takes an index, order, and parameter t to compute the derivative values and
+	   stores them in the provided array bvals. The calculation involves using the basis function values from a previous order and applying a specific weighting based on time values from the spline.
+
+		\param index Starting index for the basis function calculation
+		\param order Order of the B-spline basis functions
+		\param t Parameter value for which to compute the derivative
+		\param bvals Output array to store the computed derivative values
+	*/
 	void BasisFirstDerivative( const int index, const int order, const float t, float* bvals ) const;
 
-	//! Calculates the second derivative of the basis functions for a non-uniform B-spline curve.
+	/*!
+		\brief Calculates the second derivative of the basis functions for a non-uniform B-spline curve.
+
+		This function computes the second derivative values for the basis functions used in non-uniform B-spline curve evaluation. It builds upon the first derivative calculations and applies
+	   additional mathematical operations to derive the second derivative. The computation takes into account the order of the spline, the index of the basis function, and the parameter t. The results
+	   are stored in the bvals array, which must be pre-allocated to accommodate the necessary number of values.
+
+		\param index Index of the basis function to evaluate
+		\param order Order of the B-spline
+		\param t Parameter value for which to calculate the derivative
+		\param bvals Pointer to array where the second derivative values will be stored
+	*/
 	void BasisSecondDerivative( const int index, const int order, const float t, float* bvals ) const;
 };
 
@@ -2013,16 +2848,48 @@ template<class type>
 class idCurve_NURBS : public idCurve_NonUniformBSpline<type>
 {
 public:
-	//! Constructs a new NURBS curve object.
+	/*!
+		\brief Constructs a new NURBS curve object.
+
+		This constructor initializes a new NURBS curve object. It sets up the internal data structures required for managing control points and curve evaluation. The curve is initially empty and
+	   control points can be added using the appropriate methods.
+
+	*/
 	idCurve_NURBS();
 
-	//! Adds a new control point with the given time and value to the NURBS curve and returns its index.
+	/*!
+		\brief Adds a new control point with the given time and value to the NURBS curve and returns its index.
+
+		This function inserts a new control point into the NURBS curve data structures. It determines the appropriate index for the new point based on the provided time value, then inserts the time,
+	   value, and a default weight of 1.0f at that index in their respective arrays. The function returns the index where the new control point was inserted.
+
+		\param time The time value for the new control point
+		\param value The value for the new control point
+		\return The index where the new control point was inserted in the curve data structures
+	*/
 	virtual int	 AddValue( const float time, const type& value );
 
-	//! Adds a new control point with the specified time, value, and weight to the NURBS curve and returns its index.
+	/*!
+		\brief Adds a new control point with the specified time, value, and weight to the NURBS curve and returns its index.
+
+		This function inserts a new control point into the NURBS curve data structures. It determines the appropriate index for the new point based on the provided time value, then inserts the time,
+	   value, and weight at that index in their respective arrays. The function returns the index where the new control point was inserted.
+
+		\param time The time value for the new control point
+		\param value The value for the new control point
+		\param weight The weight for the new control point
+		\return The index where the new control point was inserted in the curve data structures
+	*/
 	virtual int	 AddValue( const float time, const type& value, const float weight );
 
-	//! Removes the element at the specified index from the NURBS curve data structures
+	/*!
+		\brief Removes the element at the specified index from the NURBS curve data structures
+
+		This function removes elements at the given index from three internal data structures: values, times, and weights. It is designed to maintain the integrity of the NURBS curve by ensuring all
+	   corresponding elements are removed together. The function assumes the index is valid and within the bounds of the data structures.
+
+		\param index The index of the element to be removed from all NURBS curve data structures
+	*/
 	virtual void RemoveIndex( const int index )
 	{
 		this->values.RemoveIndex( index );
@@ -2039,19 +2906,56 @@ public:
 		this->currentIndex = -1;
 	}
 
-	//! Returns the current value of the NURBS curve at the specified time
+	/*!
+		\brief Returns the current value of the NURBS curve at the specified time
+
+		This function calculates and returns the interpolated value of a NURBS curve at a given time. It uses the curve's control points, knot vector, and basis functions to compute the result. The
+	   function clamps the input time to the valid range and performs basis function evaluation to determine the contribution of each control point. It handles edge cases where there is only one
+	   control point and returns that point's value directly. The computation involves weighted averaging of control points based on the basis function values and weights.
+
+		\param time The time value at which to evaluate the NURBS curve
+		\return The interpolated value of the NURBS curve at the specified time
+	*/
 	virtual type GetCurrentValue( const float time ) const;
 
-	//! Returns the first derivative of the NURBS curve at the given time
+	/*!
+		\brief Returns the first derivative of the NURBS curve at the given time
+
+		This function calculates the first derivative of a Non-Uniform Rational B-Spline (NURBS) curve at a specified time value. It uses the basis functions and their first derivatives to compute the
+	   result. The calculation takes into account the order of the curve, clamped time values, and weights for each control point. The function handles special cases like when there is only one time
+	   value by returning the corresponding value directly.
+
+		\param time The time value at which to calculate the first derivative of the curve
+		\return The first derivative of the NURBS curve at the specified time
+	*/
 	virtual type GetCurrentFirstDerivative( const float time ) const;
 
-	//! Returns the second derivative of the NURBS curve at the given time.
+	/*!
+		\brief Returns the second derivative of the NURBS curve at the given time.
+
+		This function computes the second derivative of a Non-Uniform Rational B-Spline (NURBS) curve at a specified time value. It uses basis functions and their derivatives to calculate the result.
+	   The function first clamps the input time to valid range and determines the appropriate index for the curve segment. It then evaluates the basis functions and their first and second derivatives
+	   at the given time. The computation involves weighted sums of these values and the control points to determine the final second derivative. Special handling is included for cases where there is
+	   only one control point.
+
+		\param time The time value at which to compute the second derivative of the curve
+		\return The second derivative of the NURBS curve at the specified time
+	*/
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
 	idList<float> weights;
 
-	//! Returns the weight for the given index, handling boundary conditions for closed and open splines.
+	/*!
+		\brief Returns the weight for the given index, handling boundary conditions for closed and open splines
+
+		This function retrieves the weight value at the specified index from the weights array. It handles boundary conditions for both closed and open spline types. For indices less than zero, it
+	   either wraps around for closed splines or extrapolates linearly for open splines. For indices greater than the maximum valid index, it either wraps around for closed splines or extrapolates
+	   linearly for open splines. The function assumes that the weights array has been properly initialized and populated.
+
+		\param index The index of the weight to retrieve
+		\return The weight value at the specified index, potentially adjusted for boundary conditions
+	*/
 	float		  WeightForIndex( const int index ) const;
 };
 

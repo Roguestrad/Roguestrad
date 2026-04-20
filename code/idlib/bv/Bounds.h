@@ -198,23 +198,10 @@ public:
 	bool		  operator==( const idBounds& a ) const; // exact compare, no epsilon
 	bool		  operator!=( const idBounds& a ) const; // exact compare, no epsilon
 
-	/*!
-		\brief Resets the bounds to an inside-out state where minimum values are set to positive infinity and maximum values to negative infinity
-
-		This function initializes the bounds structure to an inside-out state, which is commonly used as a starting point for accumulating bounding boxes. The minimum coordinates are set to positive
-	   infinity and maximum coordinates to negative infinity, ensuring any subsequent union operations will properly expand the bounds. This is useful for building up bounds incrementally from a set
-	   of points or other bounding volumes.
-
-	*/
+	//! Initializes the bounding box to represent a degenerate box at the origin.
 	void		  Clear();
 
-	/*!
-		\brief Sets all components of the bounding box to zero, creating a single point at the origin.
-
-		This function initializes the bounding box by setting all six boundary values to zero. The result is a degenerate bounding box that represents a single point located at the origin of the
-	   coordinate system. This is commonly used to initialize bounds before performing calculations or to reset bounds to a neutral state.
-
-	*/
+	//! Sets all components of the bounding box to zero.
 	void		  Zero();
 
 	//! Returns the center point of the bounding box.

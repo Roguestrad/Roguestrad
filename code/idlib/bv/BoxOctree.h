@@ -168,13 +168,7 @@ public:
 	*/
 	void Condense();
 
-	/*!
-		\brief Removes all elements from the octree and frees associated memory.
-
-		This function clears all nodes in the octree structure, iterating through each node and freeing the memory allocated for chunks and their contained elements. It ensures that all handles are
-	   properly cleared before freeing the memory.
-
-	*/
+	//! Clears all nodes and their associated data from the octree structure.
 	void Clear();
 
 	/*!

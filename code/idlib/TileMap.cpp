@@ -33,6 +33,15 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "TileMap.h"
 
+/*!
+	\brief Computes the ceiling of the base-2 logarithm of the given floating-point value.
+
+	This function calculates the base-2 logarithm of the input value x, applies the ceiling function to round up to the nearest integer, and returns the result as an unsigned integer. It is commonly
+   used in computer science for determining the number of bits required to represent an integer value or for calculating levels in binary trees and similar data structures.
+
+	\param x The floating-point value to compute the base-2 logarithm for
+	\return The ceiling of the base-2 logarithm of x, cast to an unsigned integer
+*/
 static unsigned int GetLog2( float x )
 {
 	return ( unsigned int )( ceil( log( x ) / log( 2.0f ) ) );

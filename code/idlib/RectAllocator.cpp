@@ -33,25 +33,22 @@ If you have questions concerning this license or the applicable additional terms
 #include "TileMap.h"
 #include "../libs/binpack2d/binpack2d.h"
 
-/*
+/*!
 
-This routine performs a tight packing of a list of rectangles, attempting to minimize the area
-of the rectangle that encloses all of them.  Algorithm order is N^2, so it is not apropriate
-for lists with many thousands of elements.
+	\brief This routine performs a tight packing of a list of rectangles, attempting to minimize the area of the rectangle that encloses all of them.
 
-Contrast with idBitBlockAllocator, which is used incrementally with either fixed size or
-size-doubling target areas.
+	 Algorithm order is N^2, so it is not apropriate for lists with many thousands of elements.
+	 Contrast with idBitBlockAllocator, which is used incrementally with either fixed size or
+	 size-doubling target areas.
 
-Typical uses:
-packing glyphs into a font image
-packing model surfaces into a skin atlas
-packing images into swf atlases
+	 Typical uses:
+	 packing glyphs into a font image
+	 packing model surfaces into a skin atlas
+	 packing images into swf atlases
 
-If you want a minimum alignment, ensure that all the sizes are multiples of that alignment,
-or scale the input sizes down by that alignment and scale the outputPositions back up.
-
+	If you want a minimum alignment, ensure that all the sizes are multiples of that alignment,
+	or scale the input sizes down by that alignment and scale the outputPositions back up.
 */
-
 float RectPackingFraction( const idList<idVec2i>& inputSizes, const idVec2i totalSize )
 {
 	int totalArea = totalSize.Area();
@@ -81,7 +78,21 @@ public:
 	const idList<idVec2i>* inputSizes;
 };
 
-// RB: added START_MAX and imageMax
+/*!
+	\brief Allocates rectangular regions within a larger rectangle by fitting input rectangles while minimizing total area and respecting size constraints.
+
+	This function performs a greedy best-fit algorithm to pack rectangles into a larger rectangle, optimizing for minimal total area. Rectangles are sorted by size in descending order to improve
+   packing efficiency. The algorithm attempts to place each rectangle at corners of already placed rectangles, avoiding overlaps and ensuring total dimensions meet alignment constraints for GPU
+   texture requirements. The allocation process checks for overlaps and calculates the minimal bounding rectangle that can accommodate all rectangles. The START_MAX parameter defines the initial
+   maximum size for the total area, and imageMax sets an upper limit on individual dimension sizes to prevent excessively large allocations.
+
+	\param inputSizes List of rectangles to be packed, specified by their width and height
+	\param outputPositions List of positions where each rectangle is placed in the packed area
+	\param totalSize Total size of the final packed area
+	\param START_MAX Initial maximum size for the total area during packing process
+	\param imageMax Maximum allowed dimension for any rectangle, used to prevent oversized allocations
+	\throws FatalError if a rectangle cannot be placed within the given constraints
+*/
 void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX, const int imageMax )
 {
 	outputPositions.SetNum( inputSizes.Num() );
@@ -179,17 +190,20 @@ void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPo
 	}
 }
 
-// Maximum resolution of one tile within tiled shadow map. Resolution must be power of two and
-// square, since quad-tree for managing tiles will not work correctly otherwise. Furthermore
-// resolution must be at least 16.
-// #define MAX_TILE_RES 512
+/*!
+	\brief Allocates rectangular regions within a quad-tree structure for tiled shadow mapping, sorting input rectangles by size and outputting their positions and total area.
 
-// Specifies how many levels the quad-tree for managing tiles within tiled shadow map should
-// have. The higher the value, the smaller the resolution of the smallest used tile will be.
-// In the current configuration of 8192 resolution and 8 levels, the smallest tile will have
-// a resolution of 64. 16 is the smallest allowed value for the min tile resolution.
-// #define NUM_QUAD_TREE_LEVELS 8
+	This function organizes a list of rectangular regions by size, largest first, then places them into a quad-tree tile map to compute their positions within a tiled shadow map. The quad-tree is
+   initialized with specified parameters for tile resolution and tree levels. Each rectangle's position is converted from tile coordinates to UV coordinates and then scaled to the total shadow map
+   resolution. The total area required for the shadow map is tracked and returned.
 
+	\param inputSizes List of input rectangle sizes to be allocated
+	\param outputPositions Output list of allocated positions for each rectangle
+	\param totalSize Total size of the allocated area in tiles
+	\param TILED_SM_RES Resolution of the tiled shadow map
+	\param MAX_TILE_RES Maximum resolution for a single tile
+	\param NUM_QUAD_TREE_LEVELS Number of levels in the quad-tree structure
+*/
 void RectAllocatorQuadTree(
 	const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int TILED_SM_RES, const int MAX_TILE_RES = 512, const int NUM_QUAD_TREE_LEVELS = 8 )
 {
@@ -257,10 +271,19 @@ class MyContent
 public:
 	int	  itemIndex;
 	idStr str;
+
+	/*!
+		\brief Initializes a MyContent object with a default string value.
+
+		The constructor initializes the str member variable with the default string "default string". This sets up the object with a predefined value for its string member.
+
+	*/
 	MyContent() :
 		str( "default string" )
 	{
 	}
+
+	//! Initializes a MyContent object with the provided string value.
 	MyContent( const idStr& str ) :
 		str( str )
 	{

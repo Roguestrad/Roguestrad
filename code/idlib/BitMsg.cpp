@@ -29,19 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-================================================================================================
-
-	idBitMsg
-
-================================================================================================
-*/
-
-/*
-========================
-idBitMsg::CheckOverflow
-========================
-*/
 bool idBitMsg::CheckOverflow( int numBits )
 {
 	if( numBits > GetRemainingWriteBits() ) {
@@ -59,11 +46,6 @@ bool idBitMsg::CheckOverflow( int numBits )
 	return false;
 }
 
-/*
-========================
-idBitMsg::GetByteSpace
-========================
-*/
 byte* idBitMsg::GetByteSpace( int length )
 {
 	byte* ptr;
@@ -94,15 +76,7 @@ static uint64 maskForNumBits64[33] = {	NBM( 0x00 ), NBM( 0x01 ), NBM( 0x02 ), NB
 										NBM( 0x18 ), NBM( 0x19 ), NBM( 0x1A ), NBM( 0x1B ),
 										NBM( 0x1C ), NBM( 0x1D ), NBM( 0x1E ), NBM( 0x1F ), 0xFFFFFFFF
 									 };
-// clang-format on
 
-/*
-========================
-idBitMsg::WriteBits
-
-If the number of bits is negative a sign is included.
-========================
-*/
 void idBitMsg::WriteBits( int value, int numBits )
 {
 	if( !writeData ) {
@@ -162,11 +136,6 @@ void idBitMsg::WriteBits( int value, int numBits )
 	}
 }
 
-/*
-========================
-idBitMsg::WriteString
-========================
-*/
 void idBitMsg::WriteString( const char* s, int maxLength, bool make7Bit )
 {
 	if( !s ) {
@@ -199,21 +168,11 @@ void idBitMsg::WriteString( const char* s, int maxLength, bool make7Bit )
 	}
 }
 
-/*
-========================
-idBitMsg::WriteData
-========================
-*/
 void idBitMsg::WriteData( const void* data, int length )
 {
 	memcpy( GetByteSpace( length ), data, length );
 }
 
-/*
-========================
-idBitMsg::WriteNetadr
-========================
-*/
 void idBitMsg::WriteNetadr( const netadr_t adr )
 {
 	WriteData( adr.ip, 4 );
@@ -221,11 +180,6 @@ void idBitMsg::WriteNetadr( const netadr_t adr )
 	WriteByte( adr.type );
 }
 
-/*
-========================
-idBitMsg::WriteDeltaDict
-========================
-*/
 bool idBitMsg::WriteDeltaDict( const idDict& dict, const idDict* base )
 {
 	int				  i;
@@ -271,13 +225,6 @@ bool idBitMsg::WriteDeltaDict( const idDict& dict, const idDict* base )
 	return changed;
 }
 
-/*
-========================
-idBitMsg::ReadBits
-
-If the number of bits is negative a sign is included.
-========================
-*/
 int idBitMsg::ReadBits( int numBits ) const
 {
 	int	 value;
@@ -337,11 +284,6 @@ int idBitMsg::ReadBits( int numBits ) const
 	return value;
 }
 
-/*
-========================
-idBitMsg::ReadString
-========================
-*/
 int idBitMsg::ReadString( char* buffer, int bufferSize ) const
 {
 	int l, c;
@@ -371,11 +313,6 @@ int idBitMsg::ReadString( char* buffer, int bufferSize ) const
 	return l;
 }
 
-/*
-========================
-idBitMsg::ReadString
-========================
-*/
 int idBitMsg::ReadString( idStr& str ) const
 {
 	ReadByteAlign();
@@ -395,11 +332,6 @@ int idBitMsg::ReadString( idStr& str ) const
 	return str.Length();
 }
 
-/*
-========================
-idBitMsg::ReadData
-========================
-*/
 int idBitMsg::ReadData( void* data, int length ) const
 {
 	int cnt;
@@ -422,11 +354,6 @@ int idBitMsg::ReadData( void* data, int length ) const
 	return ( readCount - cnt );
 }
 
-/*
-========================
-idBitMsg::ReadNetadr
-========================
-*/
 void idBitMsg::ReadNetadr( netadr_t* adr ) const
 {
 	ReadData( adr->ip, 4 );
@@ -434,11 +361,6 @@ void idBitMsg::ReadNetadr( netadr_t* adr ) const
 	adr->type = ( netadrtype_t )ReadByte();
 }
 
-/*
-========================
-idBitMsg::ReadDeltaDict
-========================
-*/
 bool idBitMsg::ReadDeltaDict( idDict& dict, const idDict* base ) const
 {
 	char key[MAX_STRING_CHARS];
@@ -465,11 +387,6 @@ bool idBitMsg::ReadDeltaDict( idDict& dict, const idDict* base ) const
 	return changed;
 }
 
-/*
-========================
-idBitMsg::DirToBits
-========================
-*/
 int idBitMsg::DirToBits( const idVec3& dir, int numBits )
 {
 	int	  max, bits;
@@ -491,11 +408,6 @@ int idBitMsg::DirToBits( const idVec3& dir, int numBits )
 	return bits;
 }
 
-/*
-========================
-idBitMsg::BitsToDir
-========================
-*/
 idVec3 idBitMsg::BitsToDir( int bits, int numBits )
 {
 	static float sign[2] = { 1.0f, -1.0f };

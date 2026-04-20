@@ -11,6 +11,7 @@ code/ipch
 *.pk4
 *.resources
 *.crc
+*.env
 .DS_Store
 imgui.ini
 Simple.json

@@ -61,23 +61,51 @@ unbounded x[i] and all x[i] with boxIndex[i] == -1.
 class idLCP
 {
 public:
-	//! Allocates and returns a new square LCP solver instance.
+	/*!
+		\brief Allocates and returns a new square LCP solver instance.
+
+		This function creates a new instance of a square LCP (Linear Complementarity Problem) solver. It initializes the solver with a maximum iteration count of 32 and returns a pointer to the newly
+	   created solver instance.
+
+		\return A pointer to the newly allocated idLCP_Square solver instance
+	*/
 	static idLCP* AllocSquare();
 
-	//! Allocates and returns a new symmetric LCP solver instance.
+	/*!
+		\brief Allocates and returns a new symmetric LCP solver instance.
+
+		This function creates a new instance of a symmetric LCP (Linear Complementarity Problem) solver. It allocates memory for the solver, initializes it with a maximum iteration count of 32, and
+	   returns a pointer to the newly created solver object.
+
+		\return A pointer to a newly allocated idLCP object that implements a symmetric LCP solver
+	*/
 	static idLCP* AllocSymmetric();
 
 	virtual ~idLCP();
 
 	virtual bool Solve( const idMatX& A, idVecX& x, const idVecX& b, const idVecX& lo, const idVecX& hi, const int* boxIndex = NULL ) = 0;
 
-	//! Sets the maximum number of iterations for the LCP solver.
+	/*!
+		\brief Sets the maximum number of iterations for the LCP solver.
+
+		This function configures the maximum number of iterations that the LCP (Linear Complementarity Problem) solver will perform. It directly assigns the provided value to the internal
+	   maxIterations member variable.
+
+		\param max The maximum number of iterations allowed for the LCP solver
+	*/
 	virtual void SetMaxIterations( int max );
 
 	//! Returns the maximum number of iterations allowed for the LCP solver.
 	virtual int	 GetMaxIterations();
 
-	//! Executes various linear compression tests if test code is enabled.
+	/*!
+		\brief Executes various linear compression tests if test code is enabled.
+
+		This function runs a series of tests for linear compression algorithms including dot product calculations, lower triangular solving, and LDLT factorization. The tests are only executed when
+	   the ENABLE_TEST_CODE macro is defined.
+
+		\param args Command line arguments containing test configuration
+	*/
 	static void	 Test_f( const idCmdArgs& args );
 
 protected:

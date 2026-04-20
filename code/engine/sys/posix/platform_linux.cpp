@@ -55,11 +55,6 @@ static int			cmdargc = 0;
 	#include <mcheck.h>
 #endif
 
-/*
-==============
-Sys_EXEPath
-==============
-*/
 const char* Sys_EXEPath()
 {
 	static char buf[1024];
@@ -118,16 +113,6 @@ double Sys_ClockTicksPerSecond()
 	return ret;
 }
 
-/*
-========================
-Sys_CPUCount
-
-numLogicalCPUCores	- the total number of logical CPU cores (equal to the total number of threads from all CPU)
-numPhysicalCPUCores	- the total number of physical CPU cores
-numCPUPackages		- the total number of packages (physical processors)
-========================
-*/
-// RB begin
 void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCPUPackages )
 {
 	static bool	  init			  = false;

@@ -44,16 +44,48 @@ If you have questions concerning this license or the applicable additional terms
 class idSIMD
 {
 public:
-	//! Initializes the SIMD processor based on CPU capabilities and module context
+	/*!
+		\brief Initializes the SIMD processor based on CPU capabilities and module context
+
+		This function sets up the SIMD processor implementation by creating a generic SIMD handler and initializing the processor pointer. It does not perform any CPU capability detection or selection
+	   of optimized implementations, as that is handled elsewhere in the system.
+
+	*/
 	static void Init();
 
-	//! Initializes the SIMD processor based on CPU capabilities and module context.
+	/*!
+		\brief Initializes the SIMD processor based on CPU capabilities and module context
+
+		This function determines the appropriate SIMD processor implementation to use based on the CPU's capabilities and the specified module. It first retrieves the CPUID information to check for
+	   available processor extensions such as MMX and SSE. If forced to use generic implementation or if no specific processor is available, it defaults to the generic implementation. The function
+	   also handles enabling Flush-To-Zero and Denormals-Are-Zero FPU modes when supported by the CPU. It prints diagnostic information about the chosen processor and enabled FPU modes.
+
+		\param module Name of the module calling this initialization
+		\param forceGeneric Flag to force usage of generic implementation regardless of CPU capabilities
+	*/
 	static void InitProcessor( const char* module, bool forceGeneric );
 
-	//! Shuts down the SIMD processing system by deallocating processor and generic objects.
+	/*!
+		\brief Shuts down the SIMD processing system by deallocating processor and generic objects.
+
+		This function cleans up the SIMD (Single Instruction, Multiple Data) processing system by deallocating the processor and generic objects that were previously allocated. It checks if the
+	   current processor is not the generic one and deletes it if necessary. Then it deletes the generic object and sets all related pointers to NULL to prevent dangling references. This function is
+	   typically called during system shutdown to ensure proper cleanup of SIMD resources.
+
+	*/
 	static void Shutdown();
 
-	//! Executes SIMD performance tests and selects the appropriate SIMD implementation based on CPU capabilities.
+	/*!
+		\brief Executes SIMD performance tests and selects the appropriate SIMD implementation based on CPU capabilities.
+
+		This function performs a series of performance tests to evaluate different SIMD implementations available on the system. It first sets the thread priority to time-critical on Windows platforms
+	   to ensure accurate timing measurements. The function then determines which SIMD implementation to use based on command-line arguments, checking CPU capabilities such as MMX and SSE support.
+	   After selecting the appropriate implementation, it runs various tests including math operations, min/max comparisons, memory copy and memset operations, and joint transformation operations. The
+	   results of these tests are printed to the console. Finally, it cleans up by deleting the SIMD implementation if it's different from the default processor implementation and resets the thread
+	   priority on Windows platforms.
+
+		\param args Command line arguments that may specify which SIMD implementation to test
+	*/
 	static void Test_f( const class idCmdArgs& args );
 };
 
@@ -94,7 +126,12 @@ struct dominantTri_t;
 class idSIMDProcessor
 {
 public:
-	//! Initializes the idSIMDProcessor object with default CPUID_NONE value.
+	/*!
+		\brief Initializes the idSIMDProcessor object with default CPUID_NONE value.
+
+		The constructor sets the cpuid member variable to CPUID_NONE, indicating that no specific CPU instruction set has been detected or enabled.
+
+	*/
 	idSIMDProcessor() { cpuid = CPUID_NONE; }
 
 	cpuid_t cpuid;

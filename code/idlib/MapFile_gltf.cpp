@@ -318,6 +318,19 @@ MapPolygonMesh*		MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* 
 	return mesh;
 }
 
+/*!
+	\brief Recursively processes a GLTF scene node and its children to convert mesh data into entity primitives
+
+	This function recursively traverses the GLTF node hierarchy starting from the given node. For each node, it calculates the transformation matrix relative to the world and applies the appropriate
+   transformations to bring mesh data into entity space. When a node contains mesh data, the function converts each primitive in the mesh and adds it to the provided entity. The function handles
+   nested node structures by recursively calling itself on each child node.
+
+	\param newEntity The map entity to which mesh primitives will be added
+	\param node The current GLTF node being processed
+	\param parentTransform The transformation matrix from the parent node to world space
+	\param worldToEntityTransform The transformation from world space to entity space
+	\param data Pointer to the GLTF data structure containing node and mesh information
+*/
 static void ProcessSceneNode_r( idMapEntity* newEntity, gltfNode* node, const idMat4& parentTransform, const idMat4& worldToEntityTransform, gltfData* data )
 {
 	auto& nodeList = data->NodeList();
@@ -355,6 +368,18 @@ static void AddMeshesToWorldspawn_r( idMapEntity* entity, gltfNode* node, const 
 	}
 };
 
+/*!
+	\brief Resolves and sets up light properties for a glTF node in the Doom 3 BFG engine
+
+	This function processes a glTF node that contains light information and converts it into entity properties for the Doom 3 BFG engine. It handles different light types including point and spot
+   lights, setting appropriate color, radius, and texture properties. Directional lights are currently not implemented and will generate a warning. The function resolves the light data from the glTF
+   extensions and applies the light properties to the entity's key-value pairs.
+
+	\param data Pointer to the glTF data structure containing extensions
+	\param newEntity Pointer to the entity where light properties will be set
+	\param node Pointer to the glTF node containing light extension data
+	\throws assertion failure if node or light extension is null, or if light ID is out of bounds
+*/
 static void ResolveLight( gltfData* data, idMapEntity* newEntity, gltfNode* node )
 {
 	assert( node && node->extensions.KHR_lights_punctual );
@@ -429,6 +454,18 @@ static void ResolveLight( gltfData* data, idMapEntity* newEntity, gltfNode* node
 	}
 }
 
+/*!
+	\brief Resolves a GLTF node into a map entity by extracting its properties, transform, and setting up its origin and rotation in the Doom 3 engine coordinate system
+
+	This function processes a GLTF node to convert it into a map entity that can be used within the Doom 3 engine. It extracts the entity's classname from the node's extras, sets up the entity's name
+   hierarchy based on the node's parent chain, copies custom properties from the node's extras, and calculates the entity's position and rotation. The function handles special cases like lights and
+   cameras, and applies coordinate transformations to convert from GLTF/Blender coordinate space to the Doom 3 engine coordinate space. The rotation calculation involves complex matrix operations to
+   properly orient entities within the engine
+
+	\param data Pointer to the GLTF data structure containing the scene information
+	\param newEntity Pointer to the map entity that will be populated with the resolved node data
+	\param node Pointer to the GLTF node that represents the entity to be resolved
+*/
 static void ResolveEntity( gltfData* data, idMapEntity* newEntity, gltfNode* node )
 {
 	const char* classname = node->extras.strPairs.GetString( "classname" );
@@ -521,6 +558,20 @@ static void ResolveEntity( gltfData* data, idMapEntity* newEntity, gltfNode* nod
 #endif
 }
 
+/*!
+	\brief Recursively processes a glTF node tree to identify and create map entities, counting the total number of entities found.
+
+	This function traverses the glTF node hierarchy to find entities based on node properties and metadata. It skips nodes that are marked as BSP or worldspawn, and processes nodes that contain entity
+   classnames or light extensions. For each identified entity, it creates a new idMapEntity object and adds it to the provided entity list. The function also handles the inheritance of epairs (entity
+   key-value pairs) from parent nodes to child entities. It returns the total count of entities found during the traversal.
+
+	\param data Pointer to the glTF data structure containing the node hierarchy and asset information
+	\param entities Reference to a list where newly created entities will be appended
+	\param node Pointer to the current glTF node being processed
+	\param epairs Entity key-value pairs that are inherited from parent nodes
+	\param worldspawn Pointer to the worldspawn entity where BSP and worldspawn type nodes are added
+	\return The total number of entities found and created during the recursive traversal of the node tree
+*/
 static int FindEntities_r( gltfData* data, idMapEntity::EntityListRef entities, gltfNode* node, idDict epairs, idMapEntity* worldspawn )
 {
 	int			entityCount = 0;

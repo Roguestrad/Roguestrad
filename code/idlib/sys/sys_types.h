@@ -74,17 +74,48 @@ assert_sizeof( uint64, 8 );
 #define MAX_UNSIGNED_TYPE( x ) ( ( ( ( 1U << ( ( sizeof( x ) - 1 ) * 8 ) ) - 1 ) << 8 ) | 255U )
 #define MIN_UNSIGNED_TYPE( x ) 0
 
+/*!
+	\brief Checks if the given type is a signed type by testing whether a negative one is less than zero.
+
+	This function determines if a type is signed by casting -1 to the type and checking if the result is less than zero. This works because in two's complement representation, signed types will have
+   -1 as all bits set to 1, which when interpreted as a signed type will be less than zero, while unsigned types will interpret -1 as the maximum value for that type, which will not be less than zero.
+
+	\param t the type to check for signedness
+	\return true if the type is signed, false otherwise
+*/
 template<typename _type_>
 bool IsSignedType( const _type_ t )
 {
 	return _type_( -1 ) < 0;
 }
 
+/*!
+	\brief Returns the greater of two values of type T
+
+	This function template compares two values of the same type T and returns the larger of the two. It uses a ternary operator to perform the comparison and return the appropriate value. The function
+   is commonly used in collision detection and mathematical operations where the maximum value needs to be determined. It is typically used with numeric types such as integers, floats, or doubles. The
+   comparison is performed using the greater-than operator, which must be defined for the type T.
+
+	\param x First value to compare
+	\param y Second value to compare
+	\return The greater of the two input values x and y
+*/
 template<class T>
 T Max( T x, T y )
 {
 	return ( x > y ) ? x : y;
 }
+
+/*!
+	\brief Returns the smaller of two values of type T.
+
+	This function takes two parameters of the same type T and returns the smaller of the two. It uses a simple conditional expression to compare the values and return the lesser one. The function is
+   generic and can work with any type that supports the less-than operator.
+
+	\param x First value to compare
+	\param y Second value to compare
+	\return The smaller of the two input values x and y
+*/
 template<class T>
 T Min( T x, T y )
 {
@@ -96,6 +127,14 @@ class idFile;
 struct idNullPtr {
 	// one pointer member initialized to zero so you can pass NULL as a vararg
 	void* value;
+
+	/*!
+		\brief Constructs a null pointer object with a value of zero.
+
+		This is a constexpr constructor for the idNullPtr class that initializes the value member to zero. It is intended to represent a null pointer constant.
+
+		\return A constexpr idNullPtr object with value set to zero
+	*/
 	constexpr idNullPtr() :
 		value( 0 )
 	{
@@ -158,7 +197,19 @@ typedef unsigned int triIndex_t;
 
 #endif
 
-// if writing to write-combined memory, always write indexes as pairs for 32 bit writes
+/*!
+	\brief Writes a pair of triangle indices to a destination pointer as a single 32-bit value.
+
+	This function combines two 16-bit triangle indices into a single 32-bit value and stores it at the specified destination address. The first index is stored in the lower 16 bits, and the second
+   index is stored in the upper 16 bits. This approach is optimized for writing to write-combined memory by packing two indices into a single 32-bit write operation, which can improve performance when
+   dealing with memory that benefits from aligned 32-bit writes.
+
+	\param dest Pointer to the destination memory location where the combined 32-bit value will be stored
+	\param a First triangle index to be stored in the lower 16 bits of the result
+	\param b Second triangle index to be stored in the upper 16 bits of the result
+	\return This function does not return a value
+	\throws This function does not explicitly throw any exceptions
+*/
 ID_INLINE void WriteIndexPair( triIndex_t* dest, const triIndex_t a, const triIndex_t b )
 {
 	*( unsigned* )dest = ( unsigned )a | ( ( unsigned )b << 16 );

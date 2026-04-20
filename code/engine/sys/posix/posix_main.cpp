@@ -466,31 +466,16 @@ const char* Sys_DefaultBasePath()
 	return DEFAULT_BASEPATH;
 }
 
-/*
-================
-Sys_Mkdir
-================
-*/
 void Sys_Mkdir( const char* path )
 {
 	mkdir( path, 0777 );
 }
 
-/*
-================
-Sys_Rmdir
-================
-*/
 bool Sys_Rmdir( const char* path )
 {
 	return ( rmdir( path ) == 0 );
 }
 
-/*
-========================
-Sys_IsFileWritable
-========================
-*/
 bool Sys_IsFileWritable( const char* path )
 {
 	struct stat st;
@@ -501,11 +486,6 @@ bool Sys_IsFileWritable( const char* path )
 	return ( st.st_mode & S_IWRITE ) != 0;
 }
 
-/*
-========================
-Sys_IsFolder
-========================
-*/
 sysFolder_t Sys_IsFolder( const char* path )
 {
 	struct stat buffer;
@@ -517,13 +497,6 @@ sysFolder_t Sys_IsFolder( const char* path )
 	return ( buffer.st_mode & S_IFDIR ) != 0 ? FOLDER_YES : FOLDER_NO;
 }
 
-// RB end
-
-/*
-================
-Sys_ListFiles
-================
-*/
 int Sys_ListFiles( const char* directory, const char* extension, idStrList& list )
 {
 	struct dirent* d;

@@ -39,10 +39,28 @@ struct SphericalHarmonicsT {
 	const T& operator[]( size_t i ) const { return data[i]; }
 	T&		 operator[]( size_t i ) { return data[i]; }
 
-	//! Returns a reference to the element at the specified degree and order in the spherical harmonics data structure
+	/*!
+		\brief Returns a reference to the spherical harmonics coefficient at the specified degree and order
+
+		This function provides access to a specific coefficient in the spherical harmonics data structure using the degree l and order m indices. The data is stored in a flattened array where the
+	   index is calculated as l * l + l + m. This allows for efficient access to the coefficients during spherical harmonics computations.
+
+		\param l The degree of the spherical harmonics coefficient
+		\param m The order of the spherical harmonics coefficient
+		\return A reference to the spherical harmonics coefficient at the specified degree and order
+	*/
 	T&		 at( int l, int m ) { return data[l * l + l + m]; }
 
-	//! Returns a const reference to the element at the specified spherical harmonics indices l and m
+	/*!
+		\brief Returns a const reference to the element at the specified spherical harmonics indices l and m
+
+		This function provides access to elements stored in a flattened array representation of spherical harmonics data. The indexing formula computes the position in the array using the formula l *
+	   l + l + m, which is typical for storing spherical harmonics coefficients in a compact linear structure. The function is marked as const, indicating it does not modify the object's state.
+
+		\param l the degree index for the spherical harmonics coefficient
+		\param m the order index for the spherical harmonics coefficient
+		\return A const reference to the spherical harmonics coefficient at the specified indices l and m
+	*/
 	const T& at( int l, int m ) const { return data[l * l + l + m]; }
 };
 
@@ -55,13 +73,30 @@ template<typename T, size_t L>
 SphericalHarmonicsL1 shEvaluateL1( idVec3 p );
 SphericalHarmonicsL2 shEvaluateL2( idVec3 p );
 
-//! Returns the size of a spherical harmonics array for a given degree L.
+/*!
+	\brief Returns the size of a spherical harmonics array for a given degree L
+
+	This function calculates the required array size for storing spherical harmonics coefficients up to a given degree L. The formula (L + 1) * (L + 1) represents the number of coefficients needed for
+   a spherical harmonics expansion of degree L, which is commonly used in lighting and rendering applications for representing irradiance or radiance data.
+
+	\param L The degree of the spherical harmonics expansion
+	\return The total number of coefficients required for a spherical harmonics array of degree L
+*/
 inline size_t		 shSize( size_t L )
 {
 	return ( L + 1 ) * ( L + 1 );
 }
 
-//! Adds a weighted spherical harmonics component to an accumulator.
+/*!
+	\brief Adds a weighted spherical harmonics component to an accumulator.
+
+	This function performs an in-place addition of a weighted spherical harmonics vector to an existing accumulator. Each coefficient of the input spherical harmonics vector is multiplied by the
+   provided weight and added to the corresponding coefficient in the accumulator.
+
+	\param accumulatorSh The spherical harmonics accumulator to which the weighted component will be added
+	\param sh The spherical harmonics component to be added
+	\param weight The weight to be applied to the spherical harmonics component before adding
+*/
 template<typename Ta, typename Tb, typename Tw, size_t L>
 inline void shAddWeighted( SphericalHarmonicsT<Ta, L>& accumulatorSh, const SphericalHarmonicsT<Tb, L>& sh, const Tw& weight )
 {
@@ -70,7 +105,16 @@ inline void shAddWeighted( SphericalHarmonicsT<Ta, L>& accumulatorSh, const Sphe
 	}
 }
 
-//! Computes the dot product of two spherical harmonics vectors.
+/*!
+	\brief Computes the dot product of two spherical harmonics vectors.
+
+	This function calculates the dot product of two spherical harmonics vectors by multiplying corresponding coefficients and summing the results. It iterates through all coefficients of the spherical
+   harmonics up to the specified order L and computes their weighted sum.
+
+	\param shA First spherical harmonics vector
+	\param shB Second spherical harmonics vector
+	\return The dot product result of the two spherical harmonics vectors
+*/
 template<typename Ta, typename Tb, size_t L>
 inline Ta shDot( const SphericalHarmonicsT<Ta, L>& shA, const SphericalHarmonicsT<Tb, L>& shB )
 {
@@ -81,7 +125,15 @@ inline Ta shDot( const SphericalHarmonicsT<Ta, L>& shA, const SphericalHarmonics
 	return result;
 }
 
-//! Computes spherical harmonics coefficients for a given direction vector
+/*!
+	\brief Computes spherical harmonics coefficients for a given direction vector
+
+	This function evaluates spherical harmonics up to degree L for a given 3D direction vector. It implements the mathematical computation of spherical harmonic basis functions using the standard
+   formulas derived from Peter-Pike Sloan's work. The function supports degrees up to 4 and returns a SphericalHarmonicsT object containing the computed coefficients for the specified degree.
+
+	\param dir The direction vector for which to evaluate the spherical harmonics coefficients
+	\return A SphericalHarmonicsT object containing the computed spherical harmonics coefficients for the given direction vector
+*/
 template<size_t L>
 inline SphericalHarmonicsT<float, L> shEvaluate( idVec3 dir )
 {
@@ -152,19 +204,45 @@ inline SphericalHarmonicsT<float, L> shEvaluate( idVec3 dir )
 	return result;
 }
 
-//! Evaluates the first-order spherical harmonics at the given point.
+/*!
+	\brief Evaluates the first-order spherical harmonics at the given point
+
+	This function computes the first-order spherical harmonics coefficients for a given 3D point. It serves as a specialized evaluation function for spherical harmonics of degree 1, which are commonly
+   used in lighting and shading calculations for their ability to represent low-frequency lighting environments.
+
+	\param p The 3D point at which to evaluate the spherical harmonics
+	\return The computed first-order spherical harmonics coefficients at the specified point
+*/
 inline SphericalHarmonicsL1 shEvaluateL1( idVec3 p )
 {
 	return shEvaluate<1>( p );
 }
 
-//! Evaluates the spherical harmonics of degree 2 at the given point.
+/*!
+	\brief Evaluates the spherical harmonics of degree 2 at the given point
+
+	This function computes the spherical harmonics coefficients up to degree 2 for a given 3D point. It is a specialized inline implementation that leverages a generic template function shEvaluate to
+   perform the actual computation. The result represents a second-degree spherical harmonic approximation suitable for lighting and shading calculations in 3D graphics applications.
+
+	\param p The 3D point at which to evaluate the spherical harmonics
+	\return The computed spherical harmonics coefficients up to degree 2
+*/
 inline SphericalHarmonicsL2 shEvaluateL2( idVec3 p )
 {
 	return shEvaluate<2>( p );
 }
 
-//! Evaluates the diffuse lighting contribution from a spherical harmonics L1 representation for a given surface normal.
+/*!
+	\brief Evaluates the diffuse lighting contribution from a spherical harmonics L1 representation for a given surface normal.
+
+	This function computes the diffuse lighting value using a spherical harmonics L1 representation and a surface normal. It implements a mathematical model for reconstructing diffuse lighting from
+   spherical harmonic coefficients, based on the Geomerics paper reference. The calculation involves computing coefficients from the spherical harmonics data and applying a power function to determine
+   the final lighting contribution for the given normal direction.
+
+	\param sh The spherical harmonics L1 representation containing the lighting coefficients
+	\param n The surface normal vector for which to evaluate the diffuse lighting
+	\return The computed diffuse lighting contribution as a floating point value
+*/
 inline float shEvaluateDiffuseL1Geomerics( const SphericalHarmonicsL1& sh, const idVec3& n )
 {
 	// http://www.geomerics.com/wp-content/uploads/2015/08/CEDEC_Geomerics_ReconstructingDiffuseLighting1.pdf
@@ -183,7 +261,16 @@ inline float shEvaluateDiffuseL1Geomerics( const SphericalHarmonicsL1& sh, const
 	return R0 * ( a + ( 1.0f - a ) * ( p + 1.0f ) * pow( q, p ) );
 }
 
-//! Computes a diffuse convolution of the input spherical harmonics coefficients.
+/*!
+	\brief Computes a diffuse convolution of the input spherical harmonics coefficients.
+
+	This function applies a diffuse convolution to the provided spherical harmonics coefficients, which is commonly used in lighting calculations to simulate diffuse irradiance. The convolution is
+   performed using precomputed coefficients based on the spherical harmonic degree. The implementation follows the mathematical formulation described in the referenced paper for computing diffuse
+   lighting from environment maps.
+
+	\param sh The input spherical harmonics coefficients to be convolved
+	\return A new set of spherical harmonics coefficients representing the diffuse convolution of the input
+*/
 template<typename T, size_t L>
 inline SphericalHarmonicsT<T, L> shConvolveDiffuse( SphericalHarmonicsT<T, L>& sh )
 {
@@ -204,7 +291,18 @@ inline SphericalHarmonicsT<T, L> shConvolveDiffuse( SphericalHarmonicsT<T, L>& s
 	return result;
 }
 
-//! Evaluates the diffuse irradiance contribution of spherical harmonics in a given direction.
+/*!
+	\brief Evaluates the diffuse irradiance contribution of spherical harmonics in a given direction
+
+	This function computes the diffuse irradiance contribution from spherical harmonics coefficients for a specific direction. It uses precomputed constants for different spherical harmonic bands and
+   applies them to the input coefficients and direction. The function supports up to degree 4 spherical harmonics and uses a specific weighting scheme based on the harmonic degree. The implementation
+   follows the mathematical formulation described in the referenced paper for evaluating diffuse irradiance from spherical harmonics.
+
+	\param sh Spherical harmonics coefficients to evaluate
+	\param direction The direction in which to evaluate the spherical harmonics
+	\return The computed diffuse irradiance contribution as a scalar value of type T
+	\throws Assertion error if the spherical harmonic degree L exceeds 4
+*/
 template<typename T, size_t L>
 inline T shEvaluateDiffuse( const SphericalHarmonicsT<T, L>& sh, const idVec3& direction )
 {
@@ -271,21 +369,46 @@ inline T shEvaluateDiffuse( const SphericalHarmonicsT<T, L>& sh, const idVec3& d
 	return result;
 }
 
-//! Evaluates the diffuse lighting contribution from a spherical harmonics representation at a given direction.
+/*!
+	\brief Evaluates the diffuse lighting contribution from a spherical harmonics representation at a given direction
+
+	This function computes the diffuse lighting value by evaluating the spherical harmonics coefficients at the specified direction. It is a specialized version for the first order spherical harmonics
+   (L=1) which is commonly used for lighting calculations in computer graphics. The function takes the spherical harmonics representation and a direction vector, then returns the resulting luminance
+   value.
+
+	\param sh The spherical harmonics representation containing the lighting coefficients
+	\param direction The direction vector to evaluate the lighting contribution at
+	\return The computed diffuse lighting contribution as a scalar value of type T
+*/
 template<typename T>
 inline T shEvaluateDiffuseL1( const SphericalHarmonicsT<T, 1>& sh, const idVec3& direction )
 {
 	return shEvaluateDiffuse<T, 1>( sh, direction );
 }
 
-//! Evaluates the diffuse lighting contribution from a spherical harmonics representation at a given direction.
+/*!
+	\brief Evaluates the diffuse lighting contribution from a spherical harmonics representation at a given direction
+	\param sh The spherical harmonics representation of the lighting
+	\param direction The direction to evaluate the lighting contribution
+	\return The diffuse lighting contribution evaluated at the specified direction
+*/
 template<typename T>
 inline T shEvaluateDiffuseL2( const SphericalHarmonicsT<T, 2>& sh, const idVec3& direction )
 {
 	return shEvaluateDiffuse<T, 2>( sh, direction );
 }
 
-//! Computes the windowing lambda value to reduce the squared Laplacian of spherical harmonics below a specified threshold.
+/*!
+	\brief Computes the windowing lambda value to reduce the squared Laplacian of spherical harmonics below a specified threshold
+
+	This function calculates a lambda value used for windowing spherical harmonics to reduce their squared Laplacian below a given maximum threshold. It uses an iterative numerical method based on the
+   appendix A7 of the referenced paper to solve for the optimal lambda value. The computation involves pre-calculating lookup tables for the squared Laplacian values and the sum of squared
+   coefficients for each degree, then performing a Newton-Raphson style iteration to find the appropriate windowing factor.
+
+	\param sh Input spherical harmonics coefficients
+	\param maxLaplacian Maximum allowed squared Laplacian value
+	\return The computed windowing lambda value that reduces the squared Laplacian below the specified threshold, or 0.0 if the current squared Laplacian is already below the threshold
+*/
 template<size_t L>
 float shFindWindowingLambda( const SphericalHarmonicsT<float, L>& sh, float maxLaplacian )
 {
@@ -340,7 +463,16 @@ float shFindWindowingLambda( const SphericalHarmonicsT<float, L>& sh, float maxL
 	return lambda;
 }
 
-//! Applies windowing to spherical harmonics coefficients to reduce high-frequency artifacts.
+/*!
+	\brief Applies windowing to spherical harmonics coefficients to reduce high-frequency artifacts
+
+	This function applies a windowing operation to the spherical harmonics coefficients to reduce high-frequency artifacts in the representation. The windowing is based on Peter-Pike Sloan's technique
+   described in "Stupid SH Tricks". The lambda parameter controls the amount of windowing applied, with higher values leading to more aggressive filtering of high-frequency components. The function
+   processes coefficients in order of increasing degree l, applying a scaling factor that depends on the degree and the lambda parameter.
+
+	\param sh The spherical harmonics coefficients to be windowed
+	\param lambda The windowing parameter that controls the amount of high-frequency artifact reduction
+*/
 template<typename T, size_t L>
 void shApplyWindowing( SphericalHarmonicsT<T, L>& sh, float lambda )
 {
@@ -381,7 +513,16 @@ inline float shMeanSquareErrorScalar( const SphericalHarmonicsT<T, L>& sh, const
 }
 #endif
 
-//! Computes the luminance of a spherical harmonics representation.
+/*!
+	\brief Computes the luminance of a spherical harmonics representation by converting each coefficient from RGB to grayscale.
+
+	This function takes a spherical harmonics representation containing RGB color values and converts each coefficient to its corresponding luminance value using the rgbLuminance function. The result
+   is a new spherical harmonics representation where each coefficient is a grayscale value instead of a color. The function processes all coefficients in the spherical harmonics up to the specified
+   degree L.
+
+	\param sh Input spherical harmonics representation containing RGB color coefficients
+	\return Spherical harmonics representation with luminance values instead of color values
+*/
 template<size_t L>
 inline SphericalHarmonicsT<float, L> shLuminance( const SphericalHarmonicsT<idVec3, L>& sh )
 {

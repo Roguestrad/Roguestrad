@@ -82,21 +82,100 @@ public:
 	int flags;		  // token flags, used for recursive defines
 
 public:
+	/*!
+		\brief Initializes a new instance of the idToken class with default values for all its member fields.
+
+		This constructor initializes all member variables of the idToken class to their default values. It uses an initializer list to set type, subtype, line, linesCrossed, and flags to their default
+	   states. The constructor is marked as ID_INLINE, indicating it should be inlined for performance reasons.
+
+	*/
 	idToken();
+
+	/*!
+		\brief Initializes a new idToken by copying the contents of an existing idToken.
+
+		This constructor creates a new idToken instance by performing a direct copy of the provided token.
+		The implementation simply assigns the value of the input token to this token using the assignment operator.
+		This is a inline constructor, typically used for efficient copying of token objects within the Doom 3 BFG engine's tokenization system.
+
+		\param token Pointer to the idToken object to be copied
+	*/
 	idToken( const idToken* token );
 	~idToken();
 
 	void		  operator=( const idStr& text );
 	void		  operator=( const char* text );
 
-	double		  GetDoubleValue();				 // double value of TT_NUMBER
-	float		  GetFloatValue();				 // float value of TT_NUMBER
-	unsigned long GetUnsignedLongValue();		 // unsigned long value of TT_NUMBER
-	int			  GetIntValue();				 // int value of TT_NUMBER
-	int			  WhiteSpaceBeforeToken() const; // returns length of whitespace before token
-	void		  ClearTokenWhiteSpace();		 // forget whitespace before token
+	/*!
+		\brief Returns the double precision floating point value of a token that must be of type TT_NUMBER.
 
-	void		  NumberValue(); // calculate values for a TT_NUMBER
+		This function retrieves the double precision floating point value from a token that is expected to be of type TT_NUMBER. If the token is not of type TT_NUMBER, the function returns 0.0. If the
+	   token's subtype does not indicate that the values are valid, the function calls NumberValue() to compute the value. The function then returns the computed floatvalue member of the token.
+
+		\return The double precision floating point value of the token if it is of type TT_NUMBER, otherwise 0.0.
+	*/
+	double		  GetDoubleValue();
+
+	/*!
+		\brief Returns the float value of a token that contains a numeric value
+
+		This function retrieves the floating point value from a token that was previously parsed from input text. It is designed to convert the internal double precision value stored in the token to a
+	   single precision float. The function assumes that the token has already been validated as containing a numeric value and is typically used in parsing contexts where numeric literals are
+	   expected. The implementation simply casts the result of GetDoubleValue to a float.
+
+		\return The floating point representation of the numeric value stored in the token
+	*/
+	float		  GetFloatValue();
+
+	/*!
+		\brief Returns the unsigned long value of a token that must be of type TT_NUMBER
+
+		This function retrieves the unsigned long value from a token that has been identified as a number token. It first checks if the token type is TT_NUMBER, and if not, it returns 0. If the
+	   token's subtype does not have valid values, it calls NumberValue() to compute them. The function then returns the intvalue member of the token, which holds the unsigned long value
+
+		\return The unsigned long value stored in the token if it is of type TT_NUMBER, otherwise 0
+	*/
+	unsigned long GetUnsignedLongValue();
+
+	/*!
+		\brief Returns the integer value of a token that represents a number
+
+		This function retrieves the integer value from a token that was parsed as a numeric type. It is used primarily when parsing numerical values from source files, such as when reading polygon and
+	   brush data during collision model loading. The function internally calls GetUnsignedLongValue() to obtain the numeric value and then casts it to an integer.
+
+		\return The integer value represented by the token
+	*/
+	int			  GetIntValue();
+
+	/*!
+		\brief Returns the length of whitespace before the token.
+
+		The function calculates the difference between the end and start of the whitespace region stored in the token. If there is whitespace before the token, this difference will be positive,
+	   otherwise it will be zero.
+
+		\return The length of whitespace before the token
+	*/
+	int			  WhiteSpaceBeforeToken() const;
+
+	/*!
+		\brief Clears the whitespace information stored in the token.
+
+		This function resets the whitespace tracking variables of the token, effectively forgetting any whitespace that was previously associated with it. It sets the start and end pointers for
+	   whitespace to NULL and resets the line crossing count to zero.
+
+	*/
+	void		  ClearTokenWhiteSpace();
+
+	/*!
+		\brief Calculates the numeric values for a token of type TT_NUMBER
+
+		This function processes a token that has been identified as a number and computes both its integer and floating-point representations. It handles various number formats including
+	   floating-point, decimal, IP addresses, octal, hexadecimal, and binary numbers. The function first validates that the token type is TT_NUMBER, then parses the token's string representation
+	   according to its subtype to determine the appropriate numeric value. The computed values are stored in the floatvalue and intvalue member variables of the token.
+
+		\throws assertion failure if the token type is not TT_NUMBER
+	*/
+	void		  NumberValue();
 
 private:
 	// DG: use int instead of long for 64bit compatibility
@@ -107,7 +186,15 @@ private:
 	const char*	 whiteSpaceEnd_p;	// end of white space before token, only used by idLexer
 	idToken*	 next;				// next token in chain, only used by idParser
 
-	void		 AppendDirty( const char a ); // append character without adding trailing zero
+	/*!
+		\brief Appends a character to the token data without adding a trailing zero.
+
+		This function appends the specified character to the token's internal data buffer. It ensures that the buffer has enough space for the new character and the existing length, then adds the
+	   character to the buffer and increments the length counter. The function does not add a trailing zero byte after appending the character.
+
+		\param a The character to append to the token data
+	*/
+	void		 AppendDirty( const char a );
 };
 
 ID_INLINE idToken::idToken() :

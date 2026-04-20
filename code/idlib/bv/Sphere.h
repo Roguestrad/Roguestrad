@@ -136,22 +136,10 @@ public:
 	bool		  operator==( const idSphere& a ) const; // exact compare, no epsilon
 	bool		  operator!=( const idSphere& a ) const; // exact compare, no epsilon
 
-	/*!
-		\brief Clears the sphere by setting its origin to zero and radius to -1.0f
-
-		This function resets the sphere to an "inside out" state by setting the origin to zero and the radius to -1.0f. This is commonly used to indicate that the sphere has no valid bounds or has
-	   been explicitly cleared. The comment indicates this creates an "inside out sphere" which is a common idiom for representing an invalid or empty sphere state.
-
-	*/
+	//! Initializes the sphere to represent a point at the origin with zero radius.
 	void		  Clear();
 
-	/*!
-		\brief Sets the sphere to a single point at the origin with zero radius.
-
-		This function initializes the sphere to represent a single point located at the origin of the coordinate system. The origin member is set to zero using its Zero() method, and the radius is set
-	   to zero, effectively creating a degenerate sphere that represents a point rather than a volume.
-
-	*/
+	//! Sets the sphere origin to zero and radius to zero.
 	void		  Zero();
 
 	/*!

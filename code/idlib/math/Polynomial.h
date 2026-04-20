@@ -41,22 +41,76 @@ If you have questions concerning this license or the applicable additional terms
 class idPolynomial
 {
 public:
-	//! Initializes a new instance of the idPolynomial class with default values.
+	/*!
+		\brief Initializes a new instance of the idPolynomial class with default values.
+
+		Constructs an idPolynomial object with default values, setting the degree to -1, allocated to 0, and coefficient pointer to NULL.
+
+	*/
 	idPolynomial();
 
-	//! Constructs an idPolynomial object with the specified degree.
+	/*!
+		\brief Constructs an idPolynomial object with the specified degree
+
+		Initializes a polynomial object with the given degree by setting the degree and allocated members to default values and allocating memory for coefficients. The Resize function is called to
+	   properly set up the coefficient array with the specified degree and without initialization.
+
+		\param d The degree of the polynomial to construct
+	*/
 	explicit idPolynomial( int d );
 
-	//! Constructs a polynomial with linear terms using the provided coefficients.
+	/*!
+		\brief Constructs a linear polynomial with the specified coefficients for degrees 0 and 1
+
+		This constructor initializes a polynomial object with linear terms using the provided coefficients. The polynomial is represented as a + bx where 'a' is the constant term (degree 0) and 'b' is
+	   the coefficient for the linear term (degree 1). The polynomial is initialized with degree -1, indicating an empty state, then resized to accommodate the coefficients, and finally the
+	   coefficients are set according to the input parameters
+
+		\param a coefficient for the constant term (degree 0)
+		\param b coefficient for the linear term (degree 1)
+	*/
 	explicit idPolynomial( float a, float b );
 
-	//! Initializes a polynomial with the given coefficients for degrees 0, 1, and 2.
+	/*!
+		\brief Initializes a polynomial with coefficients for terms of degree 0 through 2.
+
+		The constructor initializes a polynomial object with the given coefficients for terms of degree 0, 1, and 2. The coefficients are stored in the order of degree 0, 1, and 2 respectively, where
+	   degree 0 corresponds to the constant term, degree 1 to the linear term, and degree 2 to the quadratic term. The polynomial is initialized with a degree of 2 and the coefficient array is
+	   allocated accordingly.
+
+		\param a coefficient for the quadratic term (degree 2)
+		\param b coefficient for the linear term (degree 1)
+		\param c coefficient for the constant term (degree 0)
+	*/
 	explicit idPolynomial( float a, float b, float c );
 
-	//! Initializes a polynomial with coefficients for terms of degree 0 through 3.
+	/*!
+		\brief Initializes a polynomial with coefficients for terms of degree 0 through 3
+
+		This constructor initializes a polynomial object with the given coefficients for terms of degree 0 through 3. The coefficients are stored in the order of increasing degree, where
+	   coefficient[0] corresponds to the constant term (degree 0), coefficient[1] to the linear term (degree 1), coefficient[2] to the quadratic term (degree 2), and coefficient[3] to the cubic term
+	   (degree 3). The polynomial is initialized with a degree of 3, and the coefficient array is properly allocated to accommodate these terms.
+
+		\param a coefficient for the cubic term (degree 3)
+		\param b coefficient for the quadratic term (degree 2)
+		\param c coefficient for the linear term (degree 1)
+		\param d coefficient for the constant term (degree 0)
+	*/
 	explicit idPolynomial( float a, float b, float c, float d );
 
-	//! Initializes a polynomial with the given coefficients for terms of degree 0 through 4.
+	/*!
+		\brief Initializes a polynomial with coefficients for terms of degree 0 through 4
+
+		The constructor initializes a polynomial object with the given coefficients, where the coefficients are ordered from degree 0 (constant term) to degree 4. The polynomial is internally stored
+	   with a maximum degree of 4, and the coefficients are assigned in reverse order to match the standard polynomial representation. The method allocates memory for the coefficients and sets the
+	   degree to 4.
+
+		\param a coefficient for the x^4 term
+		\param b coefficient for the x^3 term
+		\param c coefficient for the x^2 term
+		\param d coefficient for the x^1 term
+		\param e coefficient for the x^0 term (constant term)
+	*/
 	explicit idPolynomial( float a, float b, float c, float d, float e );
 
 	// SRS - Added destructor, otherwise idPolynomial() will leak memory
@@ -78,10 +132,28 @@ public:
 	idPolynomial& operator*=( const float s );
 	idPolynomial& operator/=( const float s );
 
-	//! Compares this polynomial with another polynomial for exact equality.
+	/*!
+		\brief Compares this polynomial with another polynomial for exact equality.
+
+		This function checks if the current polynomial is exactly equal to another polynomial by comparing their degrees and all corresponding coefficients. The comparison is strict and does not use
+	   any tolerance.
+
+		\param p The polynomial to compare with this polynomial
+		\return true if the polynomials are exactly equal, false otherwise
+	*/
 	bool		  Compare( const idPolynomial& p ) const;
 
-	//! Compares this polynomial with another polynomial using the specified epsilon tolerance.
+	/*!
+		\brief Compares this polynomial with another polynomial using the specified epsilon tolerance
+
+		This function performs an element-wise comparison of the coefficients of two polynomials up to their respective degrees. It first checks if the degrees of the two polynomials match, and if
+	   they do, it iterates through each coefficient and compares them using the provided epsilon tolerance. If any coefficient differs by more than epsilon, the function returns false. Otherwise, it
+	   returns true, indicating the polynomials are considered equal within the given tolerance
+
+		\param p Another polynomial to compare against
+		\param epsilon Tolerance value for coefficient comparison
+		\return True if the polynomials are equal within the specified epsilon tolerance, false otherwise
+	*/
 	bool		  Compare( const idPolynomial& p, const float epsilon ) const;
 	bool		  operator==( const idPolynomial& p ) const; // exact compare, no epsilon
 	bool		  operator!=( const idPolynomial& p ) const; // exact compare, no epsilon
@@ -98,10 +170,26 @@ public:
 	//! Returns the degree of the polynomial.
 	int			  GetDegree() const;
 
-	//! Evaluates the polynomial at the given real value x and returns the result.
+	/*!
+		\brief Evaluates the polynomial at the given real value x and returns the result
+
+		This function computes the value of a polynomial at a specified real number using Horner's method. It iteratively multiplies the input value by itself to build up powers and combines them with
+	   the polynomial coefficients. The polynomial is represented by its coefficients and degree, and the function evaluates it at the given point x.
+
+		\param x The real number at which to evaluate the polynomial
+		\return The result of evaluating the polynomial at the given real value x
+	*/
 	float		  GetValue( const float x ) const;
 
-	//! Evaluates the polynomial using the provided complex value
+	/*!
+		\brief Evaluates the polynomial at the given complex value and returns the result
+
+		This function computes the value of a polynomial at a specified complex number using Horner's method. It iteratively multiplies the complex number by itself to build up powers and combines
+	   them with the polynomial coefficients. The function takes a complex number as input and returns the computed complex result of the polynomial evaluation.
+
+		\param x The complex number at which to evaluate the polynomial
+		\return The complex result of evaluating the polynomial at the given complex value
+	*/
 	idComplex	  GetValue( const idComplex& x ) const;
 
 	//! Returns the first derivative of the polynomial.
@@ -110,22 +198,93 @@ public:
 	//! Returns the anti-derivative of the polynomial.
 	idPolynomial  GetAntiDerivative() const;
 
-	//! Returns all roots of the polynomial
+	/*!
+		\brief Computes all roots of the polynomial and returns the number of roots found.
+
+		This function calculates all complex roots of the polynomial using the Laguerre method. It stores the computed roots in the provided array and sorts them in ascending order by their real
+	   parts. The function returns the degree of the polynomial, which corresponds to the number of roots calculated.
+
+		\param roots Array to store the computed complex roots of the polynomial
+		\return The degree of the polynomial, indicating the number of roots calculated
+	*/
 	int			  GetRoots( idComplex* roots ) const;
 
-	//! Returns the number of real roots of the polynomial, storing them in the provided array
+	/*!
+		\brief Returns the number of real roots of the polynomial, storing them in the provided array
+
+		This function calculates the roots of a polynomial equation and returns the count of real roots. For polynomials of degree 1 through 4, it uses specialized methods to find the roots. For
+	   polynomials of degree 5 or higher, it uses the Abel-Ruffini theorem to determine that there is no general solution in radicals, and instead computes all complex roots and extracts the real
+	   ones. The function allocates memory on the stack for complex root calculations and filters out only those with zero imaginary component.
+
+		\param roots Pointer to an array where the real roots will be stored
+		\return The number of real roots found for the polynomial
+	*/
 	int			  GetRoots( float* roots ) const;
 
-	//! Calculates the root of a linear polynomial equation ax + b = 0 and returns the number of roots found.
+	/*!
+		\brief Calculates the root of a linear polynomial equation ax + b = 0 and returns the number of roots found.
+
+		This function solves a linear polynomial equation of the form ax + b = 0. It requires that the coefficient 'a' is non-zero, as asserted by the implementation. The function computes the single
+	   root as -b / a and returns 1 to indicate that one root was found.
+
+		\param a coefficient of x term
+		\param b constant term
+		\param roots output array to store the calculated real root
+		\return The number of real roots found, which is 1 for a linear equation
+		\throws assertion failure if coefficient 'a' is zero
+	*/
 	static int	  GetRoots1( float a, float b, float* roots );
 
-	//! Calculates the real roots of a quadratic polynomial equation.
+	/*!
+		\brief Calculates the real roots of a quadratic polynomial equation.
+
+		Solves a quadratic polynomial equation of the form ax^2 + bx + c = 0 and returns the number of real roots found. The function handles the case where the coefficient 'a' is not equal to 1 by
+	   normalizing the equation. If the discriminant is negative, no real roots exist. If the discriminant is positive, two distinct real roots are calculated. If the discriminant is zero, one
+	   repeated real root is returned.
+
+		\param a coefficient of x^2 term
+		\param b coefficient of x term
+		\param c constant term
+		\param roots output array to store the calculated real roots
+		\return number of real roots found (0, 1, or 2)
+		\throws assertion failure if coefficient 'a' is zero
+	*/
 	static int	  GetRoots2( float a, float b, float c, float* roots );
 
-	//! Solves a cubic polynomial equation and returns the number of real roots found.
+	/*!
+		\brief Solves a cubic polynomial equation and returns the number of real roots found
+
+		This function finds the real roots of a cubic polynomial equation of the form ax³ + bx² + cx + d = 0. It handles three cases based on the discriminant: three distinct real roots when the
+	   discriminant is negative, one real root when the discriminant is positive, and three real roots with possible repeated roots when the discriminant is zero. The function normalizes the
+	   polynomial if the leading coefficient a is not 1, and uses mathematical formulas to compute the roots. The roots are stored in the provided array and the function returns the count of real
+	   roots found.
+
+		\param a leading coefficient of the cubic polynomial
+		\param b coefficient of the x² term
+		\param c coefficient of the x term
+		\param d constant term
+		\param roots array to store the computed real roots
+		\return the number of real roots found for the cubic polynomial equation
+		\throws assertion error if a is zero when a is not equal to 1
+	*/
 	static int	  GetRoots3( float a, float b, float c, float d, float* roots );
 
-	//! Finds the real roots of a quartic polynomial equation.
+	/*!
+		\brief Finds the real roots of a quartic polynomial equation of the form ax^4 + bx^3 + cx^2 + dx + e = 0.
+
+		This function computes the real roots of a quartic polynomial equation. It first normalizes the polynomial coefficients by dividing by the leading coefficient 'a' if it's not equal to 1. It
+	   then uses the cubic root solver GetRoots3 to find intermediate values. Based on the discriminant analysis, it calculates up to four real roots using algebraic formulas involving square roots
+	   and arithmetic operations. The function handles special cases where the discriminant is zero or negative, returning zero roots in the latter case.
+
+		\param a Leading coefficient of the quartic term
+		\param b Coefficient of the cubic term
+		\param c Coefficient of the quadratic term
+		\param d Coefficient of the linear term
+		\param e Constant term
+		\param roots Output array to store up to four real roots
+		\return The number of real roots found, which can be 0, 2, or 4
+		\throws assertion failure if 'a' is zero
+	*/
 	static int	  GetRoots4( float a, float b, float c, float d, float e, float* roots );
 
 	//! Returns a pointer to the float coefficients of the polynomial.
@@ -137,7 +296,13 @@ public:
 	//! Returns a string representation of the polynomial with the specified precision
 	const char*	  ToString( int precision = 2 ) const;
 
-	//! Tests the polynomial root finding functionality with various polynomial coefficients.
+	/*!
+		\brief Tests the polynomial root finding functionality with various polynomial coefficients
+
+		This function performs comprehensive testing of the polynomial root finding capabilities by creating polynomials with different coefficients and verifying that the computed roots indeed result
+	   in zero when substituted back into the polynomial. It tests both real and complex root scenarios for polynomials of different degrees.
+
+	*/
 	static void	  Test();
 
 private:
@@ -145,10 +310,29 @@ private:
 	int	   allocated;
 	float* coefficient;
 
-	//! Resizes the polynomial to the specified degree, optionally preserving existing coefficients.
+	/*!
+		\brief Resizes the polynomial to the specified degree, optionally preserving existing coefficients.
+
+		This function resizes the polynomial to the specified degree. If the new degree requires more memory, it allocates a new coefficient array. If the keep parameter is true, it copies the
+	   existing coefficients to the new array. The function ensures proper memory alignment by allocating 16-byte aligned memory.
+
+		\param d The new degree of the polynomial
+		\param keep True if existing coefficients should be preserved during resize, false otherwise
+	*/
 	void   Resize( int d, bool keep );
 
-	//! Solves for a root of a polynomial using Laguerre's method and returns the number of iterations taken.
+	/*!
+		\brief Solves for a root of a polynomial using Laguerre's method and returns the number of iterations taken
+
+		This function implements Laguerre's method for finding a root of a polynomial with complex coefficients. It iteratively refines an initial guess for the root until convergence is achieved or
+	   the maximum number of iterations is reached. The method uses a combination of polynomial evaluation and derivative computation to determine the next approximation of the root. The function
+	   returns the number of iterations required for convergence, which can be used to assess the quality of the approximation.
+
+		\param coef Array of polynomial coefficients
+		\param degree Degree of the polynomial
+		\param r Reference to the complex variable that will hold the root result
+		\return The number of iterations taken to find the root
+	*/
 	int	   Laguer( const idComplex* coef, const int degree, idComplex& r ) const;
 };
 

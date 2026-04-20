@@ -33,54 +33,168 @@ If you have questions concerning this license or the applicable additional terms
 #if defined( USE_INTRINSICS_SSE )
 	#include <emmintrin.h>
 #endif
-/*
-================================================================================================
 
-	Scalar single precision floating-point intrinsics
+/*!
+	\brief Performs single-precision floating-point multiplication of two input values.
 
-================================================================================================
+	This function takes two single-precision floating-point numbers and returns their product. It is marked as ID_INLINE_EXTERN, indicating that it may be inlined for performance reasons. The function
+   provides a simple wrapper around the standard multiplication operator for two float values.
+
+	\param a First floating-point operand
+	\param b Second floating-point operand
+	\return The product of the two input floating-point values
 */
-
 ID_INLINE_EXTERN float __fmuls( float a, float b )
 {
 	return ( a * b );
 }
+
+/*!
+	\brief Computes the fused multiply-add operation of a times b plus c.
+
+	This function performs a fused multiply-add operation, which computes the result of multiplying two floating-point values and then adding a third value. The operation is typically more precise
+   than performing the multiplication and addition separately due to reduced rounding errors. It is commonly used in numerical computations where precision is important.
+
+	\param a The first floating-point value to be multiplied.
+	\param b The second floating-point value to be multiplied.
+	\param c The floating-point value to be added to the product of a and b.
+	\return The result of the fused multiply-add operation a times b plus c.
+*/
 ID_INLINE_EXTERN float __fmadds( float a, float b, float c )
 {
 	return ( a * b + c );
 }
+
+/*!
+	\brief Computes the negated fused multiply-subtract operation of three floating-point values.
+
+	This function performs the operation (c - a * b) where a, b, and c are floating-point numbers. It is typically used in mathematical computations where fused multiply-subtract operations are needed
+   for performance or precision reasons.
+
+	\param a The first floating-point operand used in the multiplication.
+	\param b The second floating-point operand used in the multiplication.
+	\param c The floating-point operand used in the subtraction.
+	\return The result of the computation (c - a * b) as a floating-point value.
+*/
 ID_INLINE_EXTERN float __fnmsubs( float a, float b, float c )
 {
 	return ( c - a * b );
 }
+
+/*!
+	\brief Returns the second argument if the first argument is greater than or equal to zero, otherwise returns the third argument
+
+	This function implements a conditional selection operation similar to the traditional ternary operator. It is commonly used in performance-critical code paths where inline conditional logic is
+   needed. The function evaluates the first parameter and returns the second parameter if it is greater than or equal to zero, otherwise it returns the third parameter. This is equivalent to the
+   expression (a >= 0.0f) ? b : c. Based on the call-site examples, this function is used primarily for computing bounding box coordinates during shadow calculations, where it helps determine whether
+   to use a model bound or a light bound based on the relative position of the model with respect to the light origin
+
+	\param a the condition value to compare against zero
+	\param b the value to return if condition is greater than or equal to zero
+	\param c the value to return if condition is less than zero
+	\return The second parameter if the first parameter is greater than or equal to zero, otherwise the third parameter
+*/
 ID_INLINE_EXTERN float __fsels( float a, float b, float c )
 {
 	return ( a >= 0.0f ) ? b : c;
 }
+
+/*!
+	\brief Computes the reciprocal of the given floating-point number.
+
+	This function calculates the reciprocal of the input value x, which is equivalent to 1 divided by x. It is implemented as an inline function for performance optimization.
+
+	\param x The floating-point value to compute the reciprocal of
+	\return The reciprocal of the input value x
+*/
 ID_INLINE_EXTERN float __frcps( float x )
 {
 	return ( 1.0f / x );
 }
+
+/*!
+	\brief Computes the division of two floating-point numbers.
+
+	This function performs floating-point division of the first parameter by the second parameter. It is marked as inline and external, suggesting it may be inlined for performance reasons and is
+   available across translation units. The function is a simple wrapper around the standard division operator for floats.
+
+	\param x The dividend value
+	\param y The divisor value
+	\return The result of dividing x by y.
+*/
 ID_INLINE_EXTERN float __fdivs( float x, float y )
 {
 	return ( x / y );
 }
+
+/*!
+	\brief Computes the reciprocal square root of a floating-point value.
+
+	This function calculates the reciprocal square root of the input value x, which is equivalent to 1 divided by the square root of x. It is commonly used in graphics and game development for
+   performance optimization, particularly in calculations involving normalization of vectors. The function is marked as inline and extern, suggesting it may be implemented in a separate translation
+   unit or optimized for speed.
+
+	\param x The input floating-point value for which to compute the reciprocal square root
+	\return The reciprocal square root of the input value x, calculated as 1.0f divided by the square root of x
+*/
 ID_INLINE_EXTERN float __frsqrts( float x )
 {
 	return ( 1.0f / sqrtf( x ) );
 }
+
+/*!
+	\brief Computes the reciprocal of a 16-bit floating-point value.
+
+	This function calculates the reciprocal of the input floating-point value by performing the operation 1.0f divided by x. It is typically used in performance-critical code paths where reciprocal
+   calculations are needed, such as in graphics or physics computations. The function is marked as inline and external, suggesting it may be optimized for speed and potentially implemented using
+   specialized CPU instructions.
+
+	\param x The input floating-point value for which to compute the reciprocal
+	\return The reciprocal of the input value x, calculated as 1.0f divided by x
+*/
 ID_INLINE_EXTERN float __frcps16( float x )
 {
 	return ( 1.0f / x );
 }
+
+/*!
+	\brief Performs single-precision floating-point division of x by y.
+
+	This function takes two floating-point values and returns their quotient. It is marked as ID_INLINE_EXTERN, suggesting it may be inlined for performance reasons. The function is a simple wrapper
+   around the standard division operator.
+
+	\param x The dividend value
+	\param y The divisor value
+	\return The result of dividing x by y as a single-precision floating-point number
+*/
 ID_INLINE_EXTERN float __fdivs16( float x, float y )
 {
 	return ( x / y );
 }
+
+/*!
+	\brief Computes the inverse square root of a given floating-point number.
+
+	This function calculates the reciprocal of the square root of the input value x. It is commonly used in performance-critical applications where direct computation of 1/sqrt(x) is needed. The
+   implementation uses the standard math library function sqrtf for computing the square root.
+
+	\param x The input floating-point value for which to compute the inverse square root
+	\return The inverse square root of the input value x, computed as 1.0f divided by the square root of x
+*/
 ID_INLINE_EXTERN float __frsqrts16( float x )
 {
 	return ( 1.0f / sqrtf( x ) );
 }
+
+/*!
+	\brief Rounds a floating-point value down to the nearest integer and returns it as a float.
+
+	This function performs truncation of the floating-point input value by casting it to an integer type and then back to float. It effectively removes the fractional part of the number, similar to
+   the floor function for positive numbers, but does not handle negative numbers in the same way as floor. The result is a float value representing the truncated integer part of the input.
+
+	\param x The floating-point value to be truncated
+	\return The truncated integer part of the input value as a float
+*/
 ID_INLINE_EXTERN float __frndz( float x )
 {
 	return ( float )( ( int )( x ) );
@@ -136,27 +250,58 @@ ID_FORCE_INLINE void FlushCacheLine( const void* ptr, int offset )
 
 	#define CACHE_LINE_SIZE 128
 
+/*!
+	\brief Performs a prefetch operation on the given pointer with the specified offset.
+
+	This function is intended to hint the CPU to prefetch data from the memory location pointed to by ptr plus offset. The actual implementation is empty, suggesting that prefetching is either not
+   supported on this platform or is handled by the compiler.
+
+	\param ptr Pointer to the memory location to prefetch.
+	\param offset Offset added to the pointer to determine the prefetch target.
+*/
 ID_INLINE void Prefetch( const void* ptr, int offset )
 {
 }
+
+/*!
+	\brief Clears a cache line starting at the specified pointer with an offset.
+
+	This function aligns the given pointer to a cache line boundary by masking off the lower bits and then clears the entire cache line by setting all bytes to zero.
+
+	\param ptr Pointer to the memory location to align and clear
+	\param offset Offset added to the pointer before aligning to cache line boundary
+*/
 ID_INLINE void ZeroCacheLine( void* ptr, int offset )
 {
 	byte* bytePtr = ( byte* )( ( ( ( uintptr_t )( ptr ) ) + ( offset ) ) & ~( CACHE_LINE_SIZE - 1 ) );
 	memset( bytePtr, 0, CACHE_LINE_SIZE );
 }
+
+/*!
+	\brief Flushes a cache line at the specified pointer address plus offset.
+
+	This function performs a cache line flush operation for a given memory location. It is typically used to ensure that cached data is written back to main memory, which is important when dealing
+   with memory that may be shared between different processors or when cache coherency is required.
+
+	\param ptr Pointer to the memory location where the cache line flush should occur
+	\param offset Offset from the pointer address to determine the exact cache line to flush
+*/
 ID_INLINE void FlushCacheLine( const void* ptr, int offset )
 {
 }
 
 #endif
 
-/*
-================================================
-	Block Clear Macros
-================================================
-*/
+/*!
+	\brief Calculates the number of additional elements that may be cleared when clearing cache lines
 
-// number of additional elements that are potentially cleared when clearing whole cache lines at a time
+	This function determines how many extra elements beyond the requested size will be cleared when operating on cache line boundaries. It handles three cases: when the size is aligned to cache line
+   boundaries, when the size exceeds the cache line size, and when the size is a fraction of the cache line size. The calculation ensures proper cache line alignment handling during memory clearing
+   operations.
+
+	\param size The size of elements to be cleared
+	\return The number of additional elements that may be cleared due to cache line alignment requirements
+*/
 ID_INLINE_EXTERN int CACHE_LINE_CLEAR_OVERFLOW_COUNT( int size )
 {
 	if( ( size & ( CACHE_LINE_SIZE - 1 ) ) == 0 ) { return 0; }

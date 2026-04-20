@@ -140,114 +140,558 @@ class idLexer
 	friend class idParser;
 
 public:
-	// constructor
+	/*!
+		\brief Initializes a new instance of the idLexer class with default values.
+
+		This constructor initializes all internal state variables of the idLexer class to their default values. It sets the loaded flag to false, initializes the filename to an empty string, resets
+	   the flags, and initializes various internal tracking variables such as line numbers, token availability, and file time. The punctuations are set to null, and memory allocation tracking is
+	   initialized to false. This constructor is typically used when creating a lexer instance that will later be loaded with a file or data source.
+
+	*/
 	idLexer();
+
+	/*!
+		\brief Initializes a new instance of the idLexer class with the specified flags.
+
+		The idLexer constructor initializes all internal state variables to their default values. It sets the loaded flag to false, clears the filename, assigns the provided flags, and initializes
+	   various other internal tracking variables such as line numbers, token availability, and error states. The punctuations are set to NULL and the lexer is marked as not allocated.
+
+		\param flags The flags to configure the lexer behavior
+	*/
 	idLexer( int flags );
+
+	/*!
+		\brief Initializes a new lexer instance to parse the specified file with given flags.
+
+		Constructs a lexer object that will load and tokenize the contents of the provided file. The lexer is configured based on the specified flags and can handle different file path conventions
+	   depending on the OSPath parameter. It sets up default values for internal state variables and attempts to load the specified file.
+
+		\param filename The path to the file to be lexed and parsed
+		\param flags Flags that control lexer behavior such as string concatenation and precompilation options
+		\param OSPath Indicates whether the filename uses OS-specific path conventions
+	*/
 	idLexer( const char* filename, int flags = 0, bool OSPath = false );
+
+	/*!
+		\brief Initializes a new lexer instance to parse tokenized data from a memory buffer.
+
+		This constructor sets up a lexer to read from a provided memory buffer specified by ptr and length. It initializes internal state including flags, punctuation settings, and error tracking. The
+	   lexer is configured to load the provided memory segment as a source for tokenization, using the name parameter for identification. It is commonly used to parse configuration or data files
+	   loaded into memory.
+
+		\param ptr Pointer to the memory buffer containing the data to be lexed.
+		\param length Number of bytes in the memory buffer to be lexed.
+		\param name Name of the source file or buffer used for identification and error reporting.
+		\param flags Optional flags to configure lexer behavior, such as string concatenation or precompilation handling.
+	*/
 	idLexer( const char* ptr, int length, const char* name, int flags = 0 );
-	// destructor
+
+	/*!
+		\brief Destructor for the idLexer class that frees the allocated source memory.
+
+		This destructor is responsible for cleaning up the resources associated with the idLexer object. It calls the FreeSource() method to release any memory that was allocated for the lexical
+	   source.
+
+	*/
 	~idLexer();
-	// load a script from the given file at the given offset with the given length
+
+	/*!
+		\brief Loads a script file into memory for token parsing.
+
+		This function opens and reads the specified file into a memory buffer, setting up the lexer to parse the script. It handles path resolution based on the OSPath flag and tracks the file's
+	   timestamp and full path. The function ensures only one script is loaded at a time, reporting an error if another script is already loaded. It allocates memory for the buffer and initializes all
+	   lexer state variables including line numbers and pointers to the script buffer.
+
+		\param filename The name of the file to load as a script
+		\param OSPath If true, treats the filename as an absolute OS path; if false, uses the baseFolder for path resolution
+		\return Returns 1 if the file is successfully loaded, 0 otherwise
+		\throws An error is thrown if another script is already loaded
+	*/
 	int				LoadFile( const char* filename, bool OSPath = false );
-	// load a script from the given memory with the given length and a specified line offset,
-	// so source strings extracted from a file can still refer to proper line numbers in the file
-	// NOTE: the ptr is expected to point at a valid C string: ptr[length] == '\0'
+
+	/*!
+		\brief Loads a script from memory with the specified length and line offset for parsing
+
+		This function initializes the lexer to parse a script that is already loaded in memory. It sets up the internal state of the lexer including buffer pointers, line tracking, and file
+	   information. The function expects the provided memory to contain a valid null-terminated C string. It returns true if the memory was successfully loaded, false if another script is already
+	   loaded.
+
+		\param ptr Pointer to the memory buffer containing the script to load
+		\param length Number of bytes to read from the memory buffer
+		\param name Name of the script being loaded, used for error reporting
+		\param startLine Starting line number for the script, used for proper line number tracking in errors
+		\return True if the script was successfully loaded, false if another script is already loaded
+		\throws Error is thrown if another script is already loaded
+	*/
 	int				LoadMemory( const char* ptr, int length, const char* name, int startLine = 1 );
-	// free the script
+
+	/*!
+		\brief Frees the memory allocated for the lexer's source buffer and punctuation tables
+
+		This function releases all memory that was previously allocated for holding the lexer's source buffer and punctuation tables. It checks if the punctuation tables have been dynamically
+	   allocated and frees them if they are not pointing to the default tables. It also frees the main buffer if it was allocated and resets all internal state variables to their default values.
+
+	*/
 	void			FreeSource();
 	// returns true if a script is loaded
 	int				IsLoaded() { return idLexer::loaded; };
-	// read a token
+
+	/*!
+		\brief Reads the next token from the input stream and stores it in the provided token object.
+
+		This function reads the next token from the lexer's input stream. It handles various token types including strings, numbers, names, and punctuation. The function manages whitespace, line
+	   counting, and token flags. If a token is already available from a previous unread operation, it returns that token. The function returns 1 on success and 0 if no token could be read or an error
+	   occurred.
+
+		\param token Pointer to the token object where the parsed token will be stored
+		\return Integer value indicating success (1) or failure (0) of token reading operation
+		\throws Error thrown when no file is loaded or when encountering unknown punctuation
+	*/
 	int				ReadToken( idToken* token );
-	// expect a certain token, reads the token when available
+
+	/*!
+		\brief Expects a specific token string from the lexer input and returns 1 if found, 0 otherwise
+
+		This function attempts to read the next token from the lexer input and checks if it matches the expected string. If the token cannot be read or does not match the expected string, an error
+	   message is generated and the function returns 0. If the token matches, the function returns 1. The function is commonly used in parsing operations where specific tokens are required to proceed
+	   with parsing.
+
+		\param string The expected token string to match against the next token in the input
+		\return 1 if the next token matches the expected string, 0 otherwise
+	*/
 	int				ExpectTokenString( const char* string );
-	// expect a certain token type
+
+	/*!
+		\brief Expects and validates a token of a specific type and subtype from the lexer input.
+
+		This function reads a token from the lexer and verifies that its type matches the expected type. If the token type matches, it further checks the subtype for number and punctuation tokens to
+	   ensure they meet the specified requirements. If the token does not match the expected type or subtype, an error message is generated and the function returns zero. Otherwise, it returns one to
+	   indicate success. The function is commonly used when parsing structured input where specific token types and subtypes are expected at certain points.
+
+		\param type The expected token type, such as TT_STRING, TT_NUMBER, etc.
+		\param subtype The expected subtype for tokens, particularly used for numbers and punctuation to specify formats like decimal, hex, etc.
+		\param token Pointer to the token structure where the read token will be stored.
+		\return Returns 1 if the token matches the expected type and subtype, otherwise returns 0.
+		\throws Throws an error via idLexer::Error if the token type or subtype does not match the expected values.
+	*/
 	int				ExpectTokenType( int type, int subtype, idToken* token );
-	// expect a token
+
+	/*!
+		\brief Reads and expects a token from the lexer, returning a success status.
+
+		This function attempts to read a token from the lexer and stores it in the provided token pointer. If the token cannot be read, an error message is issued and the function returns zero.
+	   Otherwise, it returns one to indicate successful reading of the token.
+
+		\param token Pointer to the token structure where the parsed token will be stored
+		\return Integer value indicating success (1) or failure (0) of reading the token.
+	*/
 	int				ExpectAnyToken( idToken* token );
-	// returns true when the token is available
+
+	/*!
+		\brief Checks if the next token in the lexer matches the specified string and returns 1 if it does, otherwise returns 0.
+
+		This function attempts to read the next token from the lexer and compares it to the provided string.
+		If the token matches the string, it returns 1.
+		If the token does not match or no token is available, it unreads the token and returns 0.
+		This function is commonly used for parsing structured input where specific tokens are expected, such as in collision model file parsing.
+
+		\param string The string to compare against the next token in the lexer.
+		\return 1 if the next token matches the specified string, 0 otherwise.
+	*/
 	int				CheckTokenString( const char* string );
-	// returns true an reads the token when a token with the given type is available
+
+	/*!
+		\brief Checks if the next token in the lexer matches the specified type and subtype, and reads it into the provided token if it matches.
+
+		This function attempts to read the next token from the lexer and checks if its type matches the specified type parameter and if its subtype matches the specified subtype parameter. If the
+	   token matches, it is copied into the provided token pointer and the function returns true. If the token does not match, the lexer's position is reset and the function returns false. The subtype
+	   parameter is used with a bitwise AND operation to check for specific subtype flags.
+
+		\param type The expected token type to match against.
+		\param subtype The expected token subtype to match against, used with bitwise AND operation.
+		\param token Pointer to an idToken where the matched token will be stored if found.
+		\return Returns 1 if a matching token was found and read, 0 otherwise.
+	*/
 	int				CheckTokenType( int type, int subtype, idToken* token );
-	// returns true if the next token equals the given string but does not remove the token from the source
+
+	/*!
+		\brief Checks if the next token in the lexer matches the given string without consuming it
+
+		This function attempts to read the next token from the lexer and compares it to the provided string.
+		If they match, it returns 1, otherwise 0. The token is not consumed from the input stream regardless of the match result.
+		This allows for peeking at the next token to make parsing decisions without advancing the lexer position.
+
+		\param string The string to compare against the next token in the lexer
+		\return 1 if the next token matches the given string, 0 otherwise
+	*/
 	int				PeekTokenString( const char* string );
-	// returns true if the next token equals the given type but does not remove the token from the source
+
+	/*!
+		\brief Checks if the next token matches the specified type and subtype without removing it from the input stream
+
+		This function examines the next token in the input stream to determine if it matches the provided type and subtype criteria. If a match is found, the token is copied to the output parameter
+	   and the function returns true. Otherwise, the token is not consumed and the function returns false. The function is useful for lookahead operations in parsing.
+
+		\param type The expected token type to match against
+		\param subtype The expected token subtype to match against
+		\param token Pointer to the token structure to store the matched token if found
+		\return 1 if the next token matches the specified type and subtype, 0 otherwise
+	*/
 	int				PeekTokenType( int type, int subtype, idToken* token );
-	// skip tokens until the given token string is read
+
+	/*!
+		\brief Skips tokens in the lexer until the specified string is found and returns whether the string was found.
+
+		This function iterates through tokens read from the lexer and skips them until the specified string is encountered. It returns 1 if the string is found and 0 if the end of the token stream is
+	   reached without finding the string. The function is commonly used to skip over irrelevant tokens in a parser to find a specific marker or delimiter.
+
+		\param string The string token to search for in the token stream.
+		\return 1 if the specified string is found in the token stream, 0 if the end of the stream is reached without finding the string.
+	*/
 	int				SkipUntilString( const char* string );
-	// skip the rest of the current line
+
+	/*!
+		\brief Skips the rest of the current line in the lexer's input stream.
+
+		The function reads tokens from the input stream until it encounters a token that crosses a line boundary. When such a token is found, the lexer's position is reset to the start of the current
+	   line, and the function returns 1. If the end of the input stream is reached without finding a line-crossing token, the function returns 0.
+
+		\return 1 if a line-crossing token was found and the position was reset, 0 if the end of input was reached
+	*/
 	int				SkipRestOfLine();
-	// skip the braced section
+
+	/*!
+		\brief Skips a braced section in the lexer input, handling nested braces and returning the number of skipped sections.
+
+		This function processes the input stream to skip over a section enclosed in braces or brackets as determined by the skipMode parameter. It maintains a depth counter to track nested structures
+	   and returns true when the matching closing brace or bracket is found. The function can optionally track the number of sections skipped.
+
+		\param parseFirstBrace If true, the first opening brace is parsed and counted towards the depth
+		\param skipMode Determines whether to skip braces {} or brackets []
+		\param skipped Optional pointer to store the count of skipped sections
+		\return Returns 1 if the braced section is successfully skipped, 0 if the end of input is reached before finding the closing brace.
+	*/
 	int				SkipBracedSection( bool parseFirstBrace = true, braceSkipMode_t skipMode = BRSKIP_BRACES, int* skipped = nullptr );
-	// skips spaces, tabs, C-like comments etc. Returns false if there is no token left to read.
+
+	/*!
+		\brief Skips whitespace and comments in the input stream, optionally stopping at the end of the current line
+
+		This function advances the lexer's position through the input stream by skipping over whitespace characters and comments. It handles both single-line comments starting with // and multi-line
+	comments enclosed in block comments. When the currentLine parameter		   is true, the function will stop skipping at the end of the current line and return true,
+		allowing the caller to process the end - of -
+			line condition.The function properly maintains the line number count when encountering newline characters.If the end of the input stream is reached before finding a valid token,
+		the function returns false.
+
+	\param currentLine If true, stops skipping at the end of the current line and returns true
+	\return True if the function successfully skipped the white space and comments, false if there is no token left to read */
 	bool			SkipWhiteSpace( bool currentLine );
-	// unread the given token
+
+	/*!
+		\brief Unreads the provided token, making it available for subsequent reads.
+
+		This function places the given token back into the lexer's buffer, making it available for the next token read operation. It asserts that no other token is currently waiting to be read,
+	   ensuring that the unread operation is performed correctly. The token is copied into the lexer's internal token storage and marked as available for reading.
+
+		\param token The token to be unread from the lexer
+		\throws FatalError if a token is already available for reading
+	*/
 	void			UnreadToken( const idToken* token );
-	// read a token only if on the same line
+
+	/*!
+		\brief Reads a token from the lexer only if it appears on the same line as the current position.
+
+		This function attempts to read a token from the lexer. If the token is found on the same line as the current position, it copies the token to the provided memory location and returns true. If
+	   the token appears on a different line, the lexer position is restored and the function returns false. This is useful for parsing parameters or values that must remain on a single line.
+
+		\param token Output parameter that will receive the parsed token if it is found on the same line
+		\return True if a token was successfully read and is on the same line, false otherwise.
+	*/
 	int				ReadTokenOnLine( idToken* token );
 
-	// Returns the rest of the current line
+	/*!
+		\brief Reads the remaining content of the current line into the provided string buffer.
+
+		This function processes the remaining characters on the current line from the lexer's script position until it encounters a newline character or reaches the end of the script. It appends
+	   characters to the provided string buffer, replacing control characters with spaces. The function strips trailing whitespace from the final result before returning a pointer to the string's
+	   content.
+
+		\param out Buffer to store the remaining line content
+		\return Pointer to the string buffer containing the remaining line content after processing
+	*/
 	const char*		ReadRestOfLine( idStr& out );
 
-	// read a signed integer
+	/*!
+		\brief Parses and returns a signed integer value from the lexer input
+
+		This function reads a token from the lexer and attempts to parse it as a signed integer value. If the token is a negative sign followed by a number, it will parse the negative value. The
+	   function will generate an error and return 0 if the token is not a valid integer. The function is commonly used when parsing structured data files, such as collision model files, where integer
+	   values are expected in specific positions.
+
+		\return The parsed signed integer value from the lexer input
+		\throws An error is thrown if the expected integer value is not found
+	*/
 	int				ParseInt();
-	// read a boolean
+
+	/*!
+		\brief Parses a boolean value from the token stream
+
+		This function reads a token from the lexer and attempts to parse it as a boolean value. It expects a numeric token and returns true if the value is non-zero, false otherwise. If the expected
+	   token is not found, it reports an error and returns false.
+
+		\return true if a valid boolean value (non-zero number) was parsed, false otherwise
+	*/
 	bool			ParseBool();
-	// read a floating point number.  If errorFlag is NULL, a non-numeric token will
-	// issue an Error().  If it isn't NULL, it will issue a Warning() and set *errorFlag = true
+
+	/*!
+		\brief Parses a floating point number from the lexer input, with optional error flag handling
+
+		This function reads a token from the lexer and attempts to convert it to a floating point number. If the token cannot be parsed as a number, it will either issue an error or warning based on
+	   the errorFlag parameter. The function handles negative numbers by checking for a minus punctuation token followed by a number. It returns 0 if parsing fails and the errorFlag is provided,
+	   otherwise it throws an error directly. This function is commonly used when parsing numeric values from configuration files or other text-based data sources, such as in collision model parsing
+	   or UI element definitions.
+
+		\param errorFlag Optional pointer to a boolean that will be set to true if parsing fails, otherwise will issue an error directly
+		\return The parsed floating point number, or 0 if parsing fails and an errorFlag is provided
+	*/
 	float			ParseFloat( bool* errorFlag = NULL );
-	// parse matrices with floats
+
+	/*!
+		\brief Parses a 1D matrix of floats from the lexer input.
+
+		This function reads a sequence of floating-point values from the lexer input, expecting an opening parenthesis, followed by x float values, and a closing parenthesis. The parsed values are
+	   stored in the provided float array m. It returns true if parsing is successful, false otherwise.
+
+		\param x The number of float values to parse
+		\param m Pointer to the array where the parsed float values will be stored
+		\return True if parsing is successful, false otherwise
+	*/
 	int				Parse1DMatrix( int x, float* m );
-	// RB begin
+
+	/*!
+		\brief Parses a 1D matrix from JSON format into a float array
+
+		This function reads a 1D matrix from JSON input, expecting an array format with square brackets. It parses x floating-point values from the input stream and stores them in the provided array
+	   m. The function expects comma-separated values within the brackets and validates the closing bracket. It returns true upon successful parsing, false if the input is malformed or does not match
+	   the expected format.
+
+		\param x Number of elements to parse
+		\param m Pointer to the destination array where parsed values will be stored
+		\return True if the matrix was successfully parsed, false otherwise
+	*/
 	int				Parse1DMatrixJSON( int x, float* m );
-	// RB end
+
+	/*!
+		\brief Parses a 2D matrix from the lexer input
+
+		This function parses a 2D matrix of dimensions y by x from the lexer input. It first expects an opening parenthesis token, then parses each row of the matrix using Parse1DMatrix, and finally
+	   expects a closing parenthesis token. The matrix data is stored in the provided float array m.
+
+		\param y number of rows in the matrix
+		\param x number of columns in the matrix
+		\param m pointer to the float array where the matrix data will be stored
+		\return true if the matrix was successfully parsed, false otherwise
+	*/
 	int				Parse2DMatrix( int y, int x, float* m );
+
+	/*!
+		\brief Parses a 3D matrix of dimensions z by y by x from the lexer input into the provided float array.
+
+		This function reads a 3D matrix from the lexer input, where the matrix is structured as a series of 2D matrices. It first expects an opening parenthesis, then parses each 2D matrix using
+	   Parse2DMatrix, and finally expects a closing parenthesis. The parsed values are stored in the provided float array m, with each 2D matrix stored sequentially in memory.
+
+		\param z The depth dimension of the 3D matrix
+		\param y The height dimension of the 3D matrix
+		\param x The width dimension of the 3D matrix
+		\param m Pointer to the float array where the matrix data will be stored
+		\return Returns true if the 3D matrix was successfully parsed, false otherwise.
+	*/
 	int				Parse3DMatrix( int z, int y, int x, float* m );
-	// parse a braced section into a string
+
+	/*!
+		\brief Parses a braced section from the lexer input and returns it as a string
+
+		This function reads tokens from the lexer until a matching closing brace is found, handling nested braces by tracking the depth. The parsed content is stored in the provided output string,
+	   including proper spacing and string literals. If the opening brace is missing, it returns the empty string. If a closing brace is missing, it reports an error and returns the partially parsed
+	   string
+
+		\param out output string to store the parsed braced section
+		\return const char * pointer to the parsed braced section stored in the output string
+	*/
 	const char*		ParseBracedSection( idStr& out );
-	// parse a braced section into a string, maintaining indents and newlines
+
+	/*!
+		\brief Parses a braced section from the lexer input into the provided string, maintaining indentation and newlines.
+
+		This function extracts a braced section from the lexer's input stream and stores it in the provided string. It handles nested braces by tracking the depth of nesting. The function preserves
+	   tabs and newlines in the output, adjusting indentation based on the nesting level. If a tab count is specified, it will maintain that level of indentation for the parsed content. The function
+	   returns a pointer to the internal string buffer containing the parsed content.
+
+		\param out The string to store the parsed braced section
+		\param tabs The initial tab depth to maintain, or -1 to use automatic tab handling
+		\return A pointer to the internal string buffer containing the parsed braced section
+	*/
 	const char*		ParseBracedSectionExact( idStr& out, int tabs = -1 );
+
+	/*!
+		\brief Parses a bracket section from the lexer input and stores it in the provided string, handling nested brackets and optional tab indentation.
+
+		This function reads a bracketed section from the lexer's input stream, starting with an opening bracket '[', and continues until it finds the matching closing bracket ']'. It correctly handles
+	   nested brackets by tracking the depth of nesting. The function also processes tab indentation based on the tabs parameter. If tabs is set to a negative value, tab processing is disabled. The
+	   result is stored in the provided out string parameter.
+
+		\param out The string to store the parsed bracket section
+		\param tabs The number of tabs to use for indentation, or -1 to disable tab processing
+		\return A pointer to the parsed string stored in the out parameter
+	*/
 	const char*		ParseBracketSectionExact( idStr& out, int tabs = -1 );
-	// parse the rest of the line
+
+	/*!
+		\brief Parses the remainder of the current line into the provided string, returning a pointer to the string's contents.
+
+		This function reads tokens from the current line until it encounters a newline or end of file. It accumulates the tokens into the provided string, separating them with spaces. If a token
+	   crosses a line, the function stops parsing and restores the lexer state to the beginning of the line. The function returns a pointer to the internal string buffer.
+
+		\param out The string to be filled with the parsed tokens from the remainder of the line
+		\return A pointer to the character array containing the parsed tokens from the remainder of the line
+	*/
 	const char*		ParseRestOfLine( idStr& out );
-	// pulls the entire line, including the \n at the end
+
+	/*!
+		\brief Parses a complete line from the script including the newline character and returns a pointer to the result.
+
+		This function reads from the current script position until it encounters a newline character or reaches the end of the buffer. It captures the entire line including the newline character and
+	   stores it in the provided output string. The function advances the script pointer to the position after the newline character. The returned pointer points to the internal buffer of the output
+	   string.
+
+		\param out The string to store the parsed line including the newline character
+		\return A pointer to the internal buffer of the output string containing the complete line
+	*/
 	const char*		ParseCompleteLine( idStr& out );
-	// retrieves the white space characters before the last read token
+
+	/*!
+		\brief Retrieves the whitespace characters that appear before the last read token and stores them in the provided string.
+
+		This function copies the whitespace characters found between the start and end positions of whitespace into the provided string parameter. It clears the string first, then appends each
+	   character from the internal whitespace storage. The function returns the length of the whitespace string after copying.
+
+		\param whiteSpace Output string that will contain the whitespace characters preceding the last read token
+		\return The length of the whitespace string that was copied into the provided parameter
+	*/
 	int				GetLastWhiteSpace( idStr& whiteSpace ) const;
-	// returns start index into text buffer of last white space
+
+	//! Returns the start index into the text buffer of the last white space.
 	int				GetLastWhiteSpaceStart() const;
-	// returns end index into text buffer of last white space
+
+	//! Returns the end index into the text buffer of the last white space.
 	int				GetLastWhiteSpaceEnd() const;
-	// set an array with punctuations, NULL restores default C/C++ set, see default_punctuations for an example
+
+	/*!
+		\brief Sets the punctuation table used by the lexer, restoring the default if NULL is provided
+
+		This function configures the punctuation table that the lexer uses to identify and tokenize punctuation characters. If a custom punctuation array is provided, it will be used; otherwise, the
+	   default punctuation set is restored. The function ensures that both the internal punctuation table and the reference pointer are updated accordingly.
+
+		\param p Pointer to an array of punctuation definitions, or NULL to restore the default C/C++ punctuation set
+	*/
 	void			SetPunctuations( const punctuation_t* p );
-	// returns a pointer to the punctuation with the given id
+
+	/*!
+		\brief Returns a pointer to the punctuation string with the given id
+
+		This function searches through the global punctuations array to find the punctuation entry that matches the specified id. It iterates through the array until it finds a match or reaches the
+	   end of the array. If a match is found, it returns the punctuation string associated with that id. If no match is found, it returns a default string "unknown punctuation".
+
+		\param id the id of the punctuation to search for
+		\return a pointer to the punctuation string if found, otherwise a default string 'unknown punctuation'
+	*/
 	const char*		GetPunctuationFromId( int id );
-	// get the id for the given punctuation
+
+	/*!
+		\brief Returns the ID for the given punctuation string
+
+		This function searches through the predefined punctuation table to find a match for the provided punctuation string. It iterates through the table until it finds a matching punctuation or
+	   reaches the end of the table. If a match is found, it returns the associated ID; otherwise, it returns zero to indicate no match was found.
+
+		\param p The punctuation string to look up
+		\return The ID associated with the punctuation string, or zero if not found
+	*/
 	int				GetPunctuationId( const char* p );
-	// set lexer flags
+
+	/*!
+		\brief Sets the lexer flags to the specified value.
+
+		This function configures the behavior of the lexer by setting its internal flags. The flags control various parsing options and modes that affect how the lexer processes input.
+
+		\param flags The new value for the lexer flags
+	*/
 	void			SetFlags( int flags );
-	// get lexer flags
+
+	//! Returns the lexer flags
 	int				GetFlags();
-	// reset the lexer
+
+	/*!
+		\brief Resets the lexer state to its initial conditions
+
+		This function resets the lexer's internal state by reinitializing pointers to the script buffer, clearing the current token, and resetting line number tracking. It prepares the lexer for
+	   processing a new script or resuming processing from the beginning of the current script buffer.
+
+	*/
 	void			Reset();
-	// returns true if at the end of the file
+
+	/*!
+		\brief Checks if the lexer has reached the end of the input data
+
+		This function determines whether the lexer has processed all available input data by comparing the current position pointer with the end pointer of the input buffer
+
+		\return true if the lexer has reached the end of the input data, false otherwise
+	*/
 	bool			EndOfFile();
-	// returns the current filename
+
+	//! Returns the current filename associated with the lexer.
 	const char*		GetFileName();
-	// get offset in script
+
+	//! Returns the current offset within the script buffer.
 	const int		GetFileOffset();
-	// get file time
+
+	//! Returns the file time associated with the lexer's source file.
 	const ID_TIME_T GetFileTime();
-	// returns the current line number
+
+	//! Returns the current line number of the lexer.
 	const int		GetLineNum();
-	// print an error message
+
+	/*!
+		\brief Reports an error message with the specified format string and arguments, including file and line number information.
+
+		This function is used to report errors during lexical analysis. It formats the error message using a printf-style format string and variable arguments, then outputs the message along with the
+	   current file name and line number. If the LEXFL_NOERRORS flag is set, the function returns without reporting anything. If the LEXFL_NOFATALERRORS flag is set, it reports a warning instead of an
+	   error. Otherwise, it reports a fatal error and terminates execution.
+
+		\param str Format string for the error message
+	*/
 	void			Error( VERIFY_FORMAT_STRING const char* str, ... );
-	// print a warning message
+
+	/*!
+		\brief Prints a warning message including the file name and line number where the warning occurred.
+
+		This function formats a warning message using a printf-style format string and variable arguments, then outputs it to the common warning system. The warning includes the current filename and
+	   line number from the lexer context. The function checks if warnings are disabled via a global flag before proceeding. It is typically used to report non-fatal issues during lexical analysis or
+	   parsing.
+
+		\param str A printf-style format string for the warning message
+	*/
 	void			Warning( VERIFY_FORMAT_STRING const char* str, ... );
-	// returns true if Error() was called with LEXFL_NOFATALERRORS or LEXFL_NOERRORS set
+
+	//! Returns true if a lexer error occurred during parsing.
 	bool			HadError() const;
 
-	// set the base folder to load files from
+	/*!
+		\brief Sets the base folder path used for loading files.
+
+		This function configures the base folder path that the lexer will use when loading files. The path is copied into an internal buffer, ensuring it does not exceed the allocated size. This is
+	   typically used to specify the directory from which asset files should be loaded.
+
+		\param path The path to the base folder to set for file loading
+	*/
 	static void		SetBaseFolder( const char* path );
 
 private:
@@ -277,15 +721,110 @@ private:
 	static char			 baseFolder[256]; // base folder to load files from
 
 private:
+	/*!
+		\brief Initializes or updates the punctuation table used by the lexer for tokenizing input based on the provided punctuation list.
+
+		This function sets up the punctuation table that the lexer uses to identify and categorize punctuation characters during tokenization. It handles both default and custom punctuation lists.
+	   When the default punctuation list is provided, it reuses existing tables and marks the default setup as complete. For custom lists, it allocates memory for new tables and populates them with
+	   the provided punctuation entries, ensuring that longer punctuation strings are prioritized. The function sorts the punctuations in the table by length, placing longer strings before shorter
+	   ones to ensure correct parsing.
+
+		\param punctuations Pointer to an array of punctuation_t structures defining the punctuation to be handled by the lexer.
+	*/
 	void CreatePunctuationTable( const punctuation_t* punctuations );
+
+	/*!
+		\brief Reads and skips whitespace characters and comments from the input stream
+
+		This function processes the input stream by skipping over whitespace characters and comments. It handles both single-line comments starting with // and multi-line comments enclosed in block
+	comments .The function updates the line counter whenever a newline character is encountered.It returns zero when the end of the input stream is reached, and one when whitespace and comments are
+	successfully skipped.The function advances the input pointer through the stream and manages various edge cases such as nested comments and end - of - stream conditions.
+
+	\return 1 if whitespace and comments were successfully skipped, 0 if end of input stream was reached
+	*/
 	int	 ReadWhiteSpace();
+
+	/*!
+		\brief Reads and processes an escape character sequence from the lexer's input stream
+
+		This function handles the parsing of escape character sequences that begin with a backslash. It supports various standard escape sequences like newline, tab, and backspace, as well as
+	   hexadecimal and decimal numeric escape sequences. The function advances the input pointer through the sequence and stores the resulting character in the provided output parameter. It handles
+	   error conditions such as invalid escape sequences and overly large numeric values by issuing warnings and truncating values to 8-bit range.
+
+		\param ch pointer to store the parsed escape character
+		\return 1 if an escape character was successfully read, 0 otherwise
+	*/
 	int	 ReadEscapeCharacter( char* ch );
+
+	/*!
+		\brief Reads a string or literal token from the lexer input, handling escape sequences and concatenation according to the lexer flags.
+
+		This function processes a string or literal token from the lexer's input stream. It handles both quoted strings and single-character literals, with support for escape sequences and optional
+	   concatenation of consecutive strings. The function manages the lexer's internal state, including line numbers and script position, and updates the token's type and subtype based on the parsed
+	   content. It also handles error conditions such as missing quotes or newlines within strings.
+
+		\param token Pointer to the token structure where the parsed string or literal will be stored
+		\param quote The character used as the quote delimiter, either '"' for strings or '\' for literals
+		\return Returns 1 if the string or literal was successfully parsed, or 0 if an error occurred during parsing.
+	*/
 	int	 ReadString( idToken* token, int quote );
+
+	/*!
+		\brief Reads a name token from the lexer's input stream and stores it in the provided token object.
+
+		This function reads a sequence of characters that form a name token, which can include letters, digits, underscores, and in certain modes, dashes, forward slashes, backslashes, colons, and
+	   periods. The function continues reading until it encounters a character that is not part of a name token. The length of the parsed name is stored as the token's subtype. The function returns 1
+	   upon successful parsing.
+
+		\param token Pointer to the token object where the parsed name will be stored.
+		\return Returns 1 to indicate successful parsing of the name token.
+	*/
 	int	 ReadName( idToken* token );
+
+	/*!
+		\brief Reads a number from the lexer input and stores it in the provided token, determining its type and subtype.
+
+		This function parses a number from the input stream starting at the current position of the lexer. It handles various number formats including hexadecimal, binary, octal, decimal integers,
+	   floating-point numbers, and IP addresses. The function sets the appropriate type and subtype flags on the token based on the parsed number format. For floating-point numbers, it also checks for
+	   special cases like infinity, indefinite, and NaN values. For integers, it determines the precision and signedness based on suffixes like 'u', 'l', 'L', etc.
+
+		\param token Pointer to the token structure where the parsed number will be stored
+		\return Returns 1 if a number was successfully parsed, 0 otherwise
+		\throws May throw an error if the number format is invalid or if floating-point exceptions are not allowed and special values like INF, IND, or NAN are encountered.
+	*/
 	int	 ReadNumber( idToken* token );
+
+	/*!
+		\brief Reads punctuation from the current script position and stores it in the provided token.
+
+		This function attempts to match punctuation characters from the current position in the script against a predefined list of punctuation tokens. If a match is found, the punctuation is stored
+	   in the provided token structure and the script pointer is advanced. The function returns 1 if punctuation is successfully read, 0 otherwise.
+
+		\param token Pointer to the token structure where the read punctuation will be stored
+		\return 1 if punctuation was successfully read and stored in the token, 0 if no matching punctuation was found
+	*/
 	int	 ReadPunctuation( idToken* token );
 	int	 ReadPrimitive( idToken* token );
+
+	/*!
+		\brief Checks if the current script position matches the given string.
+
+		This function compares the characters at the current script position with the provided string. It returns true if all characters match, and false otherwise. The comparison is case-sensitive
+	   and stops at the first mismatch or end of the string.
+
+		\param str The string to compare against the current script position
+		\return True if the string matches the current script position, false otherwise
+	*/
 	int	 CheckString( const char* str ) const;
+
+	/*!
+		\brief Returns the number of lines crossed since the last line count reset.
+
+		This function calculates the difference between the current line number and the previously recorded line number. It is typically used to determine how many lines have been processed or skipped
+	   since a certain point in the lexical analysis.
+
+		\return The difference between the current line number and the last recorded line number, representing the number of lines crossed.
+	*/
 	int	 NumLinesCrossed();
 };
 
@@ -323,6 +862,14 @@ ID_INLINE int idLexer::GetFlags()
 class iceScopedLexerBaseFolder
 {
 public:
+	/*!
+		\brief Sets the base folder for the lexer.
+
+		This constructor initializes the lexer base folder by calling idLexer::SetBaseFolder with the provided base folder path. It's used to configure the directory from which lexer will search for
+	   files.
+
+		\param baseFolder The path to the base folder to be set for the lexer
+	*/
 	iceScopedLexerBaseFolder( const char* baseFolder ) { idLexer::SetBaseFolder( baseFolder ); }
 
 	~iceScopedLexerBaseFolder() { idLexer::SetBaseFolder( "" ); }

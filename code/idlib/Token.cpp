@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-================
-idToken::NumberValue
-================
-*/
 void idToken::NumberValue()
 {
 	int			i, pow, div, c;
@@ -160,11 +155,6 @@ void idToken::NumberValue()
 	subtype |= TT_VALUESVALID;
 }
 
-/*
-================
-idToken::ClearTokenWhiteSpace
-================
-*/
 void idToken::ClearTokenWhiteSpace()
 {
 	whiteSpaceStart_p = NULL;

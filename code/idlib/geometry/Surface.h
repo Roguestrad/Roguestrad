@@ -66,6 +66,19 @@ public:
 		\param surf The idSurface object to be copied.
 	*/
 	explicit idSurface( const idSurface& surf );
+
+	/*!
+		\brief Constructs a surface from vertex and index data
+
+		Initializes a surface object by copying vertex and index data from the provided arrays. The function validates that the input arrays are not null and have positive lengths before copying. It
+	   then sets up the vertex and index buffers for the surface and generates edge indexes for further processing.
+
+		\param verts Pointer to the array of vertices
+		\param numVerts Number of vertices in the verts array
+		\param indexes Pointer to the array of index values
+		\param numIndexes Number of indices in the indexes array
+		\throws assertion failure if verts or indexes is null, or if numVerts or numIndexes is not greater than zero
+	*/
 	explicit idSurface( const idDrawVert* verts, const int numVerts, const int* indexes, const int numIndexes );
 	~idSurface();
 
