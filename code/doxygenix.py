@@ -2187,6 +2187,9 @@ def generate_doxygen_comments(
         if func.name == "va":
             continue
 
+        if func.name in ("compile_time_assert", "assert_sizeof"):
+            continue
+
         if func.is_pure_virtual:
             continue
 
