@@ -3022,7 +3022,7 @@
       "is_trivial": true
     },
     "const char * idComplex::ToString(int precision=2) const": {
-      "body_hash": "fe48b56a90845f71ed064f535fe5d1a5",
+      "body_hash": "2eba5ca8514cf476db63c75589c7759c",
       "is_trivial": true
     },
     "ID_INLINE idCurve< type >::idCurve()": {
