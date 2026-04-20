@@ -2783,7 +2783,8 @@ def main():
     xml_dir = Path(args.xml_dir)
     project_root = Path(args.project_root)
     scope_dir = Path(args.scope_dir) if args.scope_dir else None
-    cache_base = project_root
+    cache_base = project_root / ".cache" / "doxygenix"
+    cache_base.mkdir(parents=True, exist_ok=True)
     cache_path = cache_base / args.cache_file
 
     thinking_setting: Optional[object] = None
