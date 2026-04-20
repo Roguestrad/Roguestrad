@@ -2044,10 +2044,7 @@ def make_func_key(func: FuncInfo, func_id: str) -> str:
 
 class FunctionCacheEntry(BaseModel):
     body_hash: str
-    has_doxygen: bool
     is_trivial: Optional[bool] = None
-    generated_by_ai: bool = False
-    comment_hash: Optional[str] = None
 
 
 class CacheFile(BaseModel):
@@ -2274,9 +2271,6 @@ def generate_doxygen_comments(
         if has_doxy and not entry:
             cache.functions[func_key] = FunctionCacheEntry(
                 body_hash=body_hash,
-                has_doxygen=True,
-                generated_by_ai=False,
-                comment_hash=None,
                 is_trivial=current_trivial,
             )
             continue
@@ -2358,12 +2352,8 @@ def generate_doxygen_comments(
         num_comments += 1
 
         # Update Cache (although it gets not saved to disc yet)
-        comment_hash = compute_normalized_body_hash(block)
         cache.functions[func_key] = FunctionCacheEntry(
             body_hash=body_hash,
-            has_doxygen=True,
-            generated_by_ai=True,
-            comment_hash=comment_hash,
             is_trivial=trivial,
         )
 
@@ -2783,8 +2773,9 @@ def main():
     xml_dir = Path(args.xml_dir)
     project_root = Path(args.project_root)
     scope_dir = Path(args.scope_dir) if args.scope_dir else None
-    cache_base = project_root / ".cache" / "doxygenix"
-    cache_base.mkdir(parents=True, exist_ok=True)
+    cache_base = project_root
+    # cache_base = project_root / ".cache" / "doxygenix"
+    # cache_base.mkdir(parents=True, exist_ok=True)
     cache_path = cache_base / args.cache_file
 
     thinking_setting: Optional[object] = None
