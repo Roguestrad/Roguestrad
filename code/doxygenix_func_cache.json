@@ -535,7 +535,7 @@
     },
     "void idArray< T_, numElements >::Memset(const char fill)": {
       "body_hash": "4ae88b301fcfa9d7e9602fd2a5c6bb1b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "const T_ * idArray< T_, numElements >::Ptr() const": {
       "body_hash": "a4091cfc22e53ed49ca90cf19aeedd42",
@@ -579,7 +579,7 @@
     },
     "ID_INLINE objType * idBTree< objType, keyType, maxChildrenPerNode >::FindSmallestLargerEqual(keyType key) const": {
       "body_hash": "921ff723c3fdd3e0bfed41063098ca3e",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE objType * idBTree< objType, keyType, maxChildrenPerNode >::FindLargestSmallerEqual(keyType key) const": {
       "body_hash": "ee8735355b93d68b9bd98da0f4744214",

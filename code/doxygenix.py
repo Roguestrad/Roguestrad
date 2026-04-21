@@ -391,6 +391,10 @@ def get_func_identifier(func: FuncInfo) -> str:
     # Take everything before the first parenthesis
     head = sig.split("(", 1)[0]
     head = head.strip()
+    head = re.sub(r"\s*::\s*", "::", head)
+    head = re.sub(r"\s*<\s*", "<", head)
+    head = re.sub(r"\s*>\s*", ">", head)
+    head = re.sub(r"\s*,\s*", ",", head)
     if not head:
         return func.name
 
@@ -1688,7 +1692,10 @@ def ai_generate_comment(
 
         if verbose:
             func_id = get_func_identifier(func)
-            chat_name = func_id.replace("::", ".")
+            chat_name = func_id
+            chat_name = re.sub(r"<[^>]*>", "_template_args_", chat_name)
+            chat_name = chat_name.replace("::", ".")
+            chat_name = re.sub(r'[\\/:*?"<>|]', "_", chat_name).strip()
             save_history(
                 chat_name, r.all_messages(), f"ai_generate_comment for {func_id}"
             )

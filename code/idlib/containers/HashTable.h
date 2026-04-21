@@ -467,6 +467,8 @@ public:
 
 	//! Creates a new hash table as a copy of an existing hash table.
 	idHashTable( const idHashTable<Type>& map );
+
+	//! Destroys the hash table and frees all allocated memory.
 	~idHashTable();
 
 	//! Returns the total size of allocated memory for the hash table.
