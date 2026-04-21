@@ -945,13 +945,12 @@ def extract_comments_for_declaration(lines: list[str], idx: int) -> str:
     Combines:
     - Comment block directly above the function line
     - Inline comment in the function line itself
-    - Doxygen/comment lines directly below
+    Only comments on the same line or above are considered.
     """
     above = extract_comment_block_above(lines, idx)
     inline = extract_inline_comment(lines[idx])
-    trailing = extract_trailing_comment_lines(lines, idx)
 
-    parts = [p for p in (above, inline, trailing) if p and p.strip()]
+    parts = [p for p in (above, inline) if p and p.strip()]
     return "\n".join(parts)
 
 
@@ -2266,8 +2265,8 @@ def _build_original_class_comment_from_xml(class_info: ClassInfo) -> str:
         parts.append(f"Brief: {class_info.brief}")
     if class_info.details:
         parts.append(f"Details: {class_info.details}")
-    if class_info.member_summaries:
-        parts.append("Members: " + "; ".join(class_info.member_summaries))
+    # if class_info.member_summaries:
+    #     parts.append("Members: " + "; ".join(class_info.member_summaries))
     return "\n".join(parts)
 
 
@@ -2592,7 +2591,7 @@ def generate_doxygen_comments(
             orig_comment = None
 
         if orig_comment:
-           print(f"func {func.name} - original comment: {orig_comment}\n")
+            print(f"func {func.name} - original comment: {orig_comment}\n")
 
         mcp_context = None
         if mcp_cpp_server:
@@ -2804,8 +2803,8 @@ def generate_class_comments(
         if not orig_comment.strip():
             orig_comment = None
 
-        if orig_comment:
-           print(f"class {cls.name} - original comment: {orig_comment}\n")
+        # if orig_comment:
+        #     print(f"func {cls.name} - original comment: {orig_comment}\n")
 
         raw_decl = extract_class_declaration_block(lines, class_idx)
         if not raw_decl.strip():

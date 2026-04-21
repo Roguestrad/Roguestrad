@@ -65,12 +65,9 @@ enum jobListParallelism_t {
 
 /*!
 	\class idParallelJobList
-	\brief Manages parallel execution of jobs with synchronization support
+	\brief A parallel job list that manages execution of multiple jobs across multiple threads with synchronization support.
 
-	Provides a mechanism for organizing and executing jobs in parallel while supporting synchronization points and performance tracking. The class maintains a list of jobs that can be submitted for
-   parallel execution with optional dependencies on other job lists. It supports different synchronization types and provides detailed timing information for performance analysis. Jobs are executed
-   using a thread pool managed by the underlying job list threads system. The class tracks execution statistics including job counts, timing data, and resource utilization across multiple processing
-   units. Memory management is handled through the destructor which properly releases thread resources.
+	This class provides a mechanism for organizing and executing parallel jobs across multiple threads while supporting synchronization points. It allows adding jobs with associated data, inserting synchronization points, and submitting the job list for execution with optional waiting for other job lists. The class tracks execution timing and provides methods for waiting for job completion or checking if jobs have finished. Jobs are executed in parallel with configurable parallelism levels, and the system maintains statistics about processing time and thread utilization. The class supports profiling through color association and provides unique identification for each job list instance. The implementation handles thread management internally through a job list threads handler.
 
 */
 class idParallelJobList
@@ -78,16 +75,16 @@ class idParallelJobList
 	friend class idParallelJobManagerLocal;
 
 public:
-	/*!
-		\brief Adds a job to the parallel job list for execution
 
-		This function registers a job with the parallel job list by adding it to the underlying job list threads structure. It first validates that the job function is properly registered before
-	   adding it. The job will be executed in a parallel thread when the job list is processed.
+/*!
+	\brief Adds a job to the parallel job list for execution
 
-		\param function The job function to be added to the job list
-		\param data The data to be passed to the job function when executed
-		\throws assertion failure if the job function is not registered
-	*/
+	The function adds a job to the parallel job list by calling the internal job list thread handler. It first verifies that the job function is properly registered before adding it to the execution queue
+
+	\param function The function pointer to the job to be executed
+	\param data Pointer to the data to be passed to the job function
+	\throws assertion failure if the job function is not registered
+*/
 	void			 AddJob( jobRun_t function, void* data );
 
 	//! Adds a SPURS job to the parallel job list and returns a pointer to the newly added job.
@@ -204,12 +201,9 @@ private:
 
 /*!
 	\class idParallelJobManager
-	\brief Manages parallel job execution and job list allocation for multi-threaded processing.
+	\brief Manages parallel execution of job lists with allocation, scheduling, and synchronization capabilities.
 
-	The idParallelJobManager class serves as the central coordinator for parallel task execution within the engine, providing an interface for managing job lists and their associated processing units.
-   It abstracts the underlying threading implementation, allowing different backends to handle the actual parallelization. The class supports job list allocation with specific priorities and resource
-   limits, and provides mechanisms for synchronizing completion of all pending jobs. The manager maintains a registry of active job lists and exposes information about available processing units to
-   optimize workload distribution. This design enables efficient utilization of multi-core systems while maintaining separation between task definition and execution scheduling.
+	This interface provides the core functionality for managing parallel job execution within a multi-threaded environment. It serves as the central coordinator for job list allocation, deallocation, and execution scheduling. The manager maintains a collection of job lists that can be processed concurrently across multiple processing units. It offers methods to initialize and shut down the parallel execution environment, allocate job lists with specific priorities and resource limits, and free previously allocated job lists. The system tracks the number of active and available job lists, provides access to individual job lists by index, and supports waiting for all job lists to complete execution. The manager is responsible for coordinating the distribution of work across available processing units and ensuring proper synchronization between parallel operations.
 
 */
 class idParallelJobManager
