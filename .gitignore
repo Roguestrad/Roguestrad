@@ -47,6 +47,7 @@ code/.tasks/
 code/cmake-build-*/
 code/bin/
 code/Doxyfile*
+code/docs/doxygen/
 uv.lock*
 logs*
 chats*
