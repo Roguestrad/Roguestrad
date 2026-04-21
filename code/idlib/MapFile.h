@@ -57,6 +57,16 @@ const float DEFAULT_CURVE_MAX_ERROR_CD	= 24.0f;
 const float DEFAULT_CURVE_MAX_LENGTH	= -1.0f;
 const float DEFAULT_CURVE_MAX_LENGTH_CD = -1.0f;
 
+/*!
+	\class idMapPrimitive
+	\brief Base class for map primitives used in the Roguestrad engine.
+
+	The idMapPrimitive class serves as the abstract base class for all map primitive types within the Roguestrad engine's map system. It provides the fundamental interface and common functionality for
+   geometric elements that can be stored and manipulated within map data structures. The class maintains a type identifier that determines the specific geometric nature of each primitive instance,
+   with the constructor initializing this to an invalid state to ensure proper initialization before use. Virtual destructor allows for proper cleanup of derived primitive types. The GetType method
+   provides a consistent interface for querying the primitive's geometric type, enabling type-specific processing throughout the engine's map handling systems.
+
+*/
 class idMapPrimitive
 {
 public:
@@ -83,6 +93,16 @@ protected:
 	int type;
 };
 
+/*!
+	\class idMapBrushSide
+	\brief Represents a single side of a brush in a map file with material, plane, and texture coordinate information.
+
+	The idMapBrushSide class encapsulates the geometric and rendering properties of a single side of a brush within a map file. It maintains the plane equation that defines the bounding surface, the
+   material name for rendering, and texture coordinate transformation information. The class supports different texture projection types and provides methods for converting between various texture
+   coordinate formats, including Valve 220 format. This class is designed to be used internally by map parsing and preprocessing systems within the engine, serving as a fundamental building block for
+   brush-based geometry representation in map files.
+
+*/
 class idMapBrushSide
 {
 	friend class idMapBrush;
@@ -215,6 +235,16 @@ ID_INLINE idMapBrushSide::idMapBrushSide()
 	texSize[1]	= 32;
 }
 
+/*!
+	\class idMapBrush
+	\brief A map brush primitive that represents a solid volume with textured sides in a level map.
+
+	The idMapBrush class represents a solid brush primitive used in level mapping, inheriting from idMapPrimitive and specialized for handling brush geometry with multiple textured sides. It supports
+   parsing from various map formats including Doom 3, Quake 3, and Valve 220, and provides functionality for serializing brush data to file formats. The class maintains a collection of brush sides and
+   handles geometric operations such as setting plane points from windings, calculating geometry checksums, and identifying special brush types like origin brushes. Brush parsing methods handle
+   different map versions and format variations, while write methods support outputting brush definitions in multiple formats for tool compatibility.
+
+*/
 class idMapBrush : public idMapPrimitive
 {
 public:
@@ -363,6 +393,17 @@ protected:
 	idList<idMapBrushSide*, TAG_IDLIB_LIST_MAP> sides;
 };
 
+/*!
+	\class idMapPatch
+	\brief A map patch primitive that represents a subdivided surface patch with material properties and geometric data.
+
+	The idMapPatch class represents a patch primitive used in map data structures, inheriting from both idMapPrimitive and idSurface_Patch. It encapsulates patch geometry with subdivision parameters,
+   material information, and vertex data for rendering. The class supports both explicit subdivision control and automatic subdivision based on geometric complexity. It provides functionality for
+   parsing patch data from map files, writing patch data to files in different formats, and managing material assignments. The patch can be configured with maximum dimensions and subdivision counts to
+   control the level of detail in the rendered surface. The class maintains CRC hashes for geometry and material data to support caching and change detection. Memory management is handled through
+   standard C++ object lifetime management with no explicit ownership transfer semantics.
+
+*/
 class idMapPatch : public idMapPrimitive, public idSurface_Patch
 {
 public:
@@ -495,7 +536,16 @@ ID_INLINE idMapPatch::idMapPatch( int maxPatchWidth, int maxPatchHeight )
 	expanded = false;
 }
 
-// RB begin
+/*!
+	\class MapPolygon
+	\brief A polygon class for managing vertex indexes and material properties in map geometry.
+
+	The MapPolygon class represents a polygon in the map geometry, storing vertex indexes that define its shape and a material name that defines its appearance. It provides methods for constructing
+   polygons with a specific number of indexes, adding individual vertex indexes, setting all indexes at once, and retrieving the list of indexes. The class also allows setting and getting the material
+   name associated with the polygon, which is used to reference material definitions in the game's asset system. The implementation uses an internal array to store vertex indexes and ensures that
+   polygons are initialized with at least 3 elements to form a valid polygon structure.
+
+*/
 class MapPolygon
 {
 	friend class MapPolygonMesh;
@@ -571,6 +621,17 @@ ID_INLINE MapPolygon::MapPolygon( int numIndexes )
 	// indexes.AssureSize( 3 );
 }
 
+/*!
+	\class MapPolygonMesh
+	\brief A class representing polygon mesh data for map primitives in the Roguestrad engine.
+
+	The MapPolygonMesh class serves as a container for polygon mesh data used in map primitives, supporting conversion from various source formats including brushes, patches, glTF meshes, and
+   text-based representations. It maintains vertex and polygon information with support for texture coordinates, normals, and material assignments. The class provides functionality for parsing mesh
+   data from lexer streams, writing mesh data to files in both binary and JSON formats, and converting between different mesh representations. It supports operations for adding vertices, retrieving
+   polygon data, calculating bounding volumes, and determining mesh properties such as opacity and content flags. The mesh data is organized as a collection of polygons with shared vertex data,
+   enabling efficient rendering and spatial operations within the engine's map system.
+
+*/
 class MapPolygonMesh : public idMapPrimitive
 {
 public:
@@ -766,8 +827,18 @@ protected:
 	int				   contents;
 	bool			   opaque;
 };
-// RB end
 
+/*!
+	\class idMapEntity
+	\brief Manages map entity data including primitives, key-value pairs, and geometric information for the engine.
+
+	This class represents a map entity used within the engine's map processing and rendering systems. It maintains a collection of primitives such as brushes, patches, and meshes that define the
+   entity's geometry, along with key-value pairs that store entity properties. The class supports parsing map data from lexer streams, writing entity data to files in both traditional and JSON
+   formats, and managing primitive collections through addition and removal operations. It also provides functionality for calculating geometric data like CRC checksums and average brush origins. The
+   class is designed to work with the engine's map loading system, particularly during level initialization and collision model generation, and supports conversion from glTF data structures for modern
+   asset import workflows.
+
+*/
 class idMapEntity
 {
 	friend class idMapFile;
@@ -907,6 +978,18 @@ protected:
 	idList<idMapPrimitive*, TAG_IDLIB_LIST_MAP> primitives;
 };
 
+/*!
+	\class idMapFile
+	\brief A class for loading, parsing, and manipulating map files in various formats including .map, .json, .gltf, and .glb.
+
+	The idMapFile class provides comprehensive functionality for handling map data within the engine, supporting multiple file formats and conversion operations. It manages a collection of map
+   entities and provides methods for parsing, writing, and modifying map content. The class supports loading maps from different sources including JSON, GLTF/GLB, and traditional .map formats, with
+   automatic format detection and conversion capabilities. Key features include entity management through addition, removal, and search operations, as well as specialized conversion functions for
+   different map formats such as Valve 220 and TrenchBroom compatibility. The class also handles material conversions from WAD textures to Doom 3 materials, name uniquification, and geometry CRC
+   calculation for map integrity checking. Memory management is handled through standard C++ object ownership patterns, with explicit deletion of entities when removed from the collection. The design
+   supports both read and write operations with flexible path handling and file system integration.
+
+*/
 class idMapFile
 {
 public:

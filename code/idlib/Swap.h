@@ -43,11 +43,17 @@ bool IsPointer( type* )
 	return true;
 }
 
-/*
-================================================
-The *Swap* static template class, idSwap, is used by the SwapClass template class for
-performing EndianSwapping.
-================================================
+/*!
+	\class idSwap
+	\brief Utility class for handling byte order conversion and data serialization across different endianness formats.
+
+	The idSwap class provides a collection of static methods for converting byte order of various data types to ensure proper endianness when reading or writing data across different platforms. It
+   includes functions for converting individual values, arrays of values, and specialized geometric types such as vectors, matrices, and vertex data. The class distinguishes between little-endian and
+   big-endian conversions, with specific implementations for different data sizes and structures. The primary use case is to handle cross-platform compatibility when loading or saving data files,
+   network transmission, or any scenario where data must be serialized or deserialized with correct byte ordering. Some methods also provide functionality for encoding integers into six-bit values,
+   likely for specialized data representation or compression purposes. The class is designed to be used in engine code that needs to ensure consistent data interpretation regardless of the host
+   system's native endianness.
+
 */
 class idSwap
 {
@@ -249,10 +255,16 @@ public:				 // specializations
 #endif
 };
 
-/*
-================================================
-idSwapClass is a template class for performing EndianSwapping.
-================================================
+/*!
+	\class idSwapClass
+	\brief A template class for handling byte order swapping operations with optional debug size tracking.
+
+	The idSwapClass template provides a mechanism for converting data between different byte orders, supporting both individual values and arrays of elements. It offers methods to convert data to
+   little-endian and big-endian formats, with internal calls to idSwap::Little, idSwap::Big, idSwap::LittleArray, and idSwap::BigArray for the actual swapping operations. The class is designed to be
+   used in contexts where data needs to be correctly byte-ordered for cross-platform compatibility or specific engine requirements. In debug builds, the class maintains a size counter that tracks the
+   total amount of data processed, which can be useful for profiling or ensuring that swapping operations are not inadvertently omitted in certain code paths. The class is intended for use with types
+   that are standard layout and can be safely manipulated through byte-level operations.
+
 */
 template<class classType>
 class idSwapClass

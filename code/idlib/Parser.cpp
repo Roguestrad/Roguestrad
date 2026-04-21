@@ -1172,11 +1172,6 @@ int idParser::Directive_endif()
 	return true;
 }
 
-/*
-================
-idParser::EvaluateTokens
-================
-*/
 typedef struct operator_s {
 	int				   op;
 	int				   priority;

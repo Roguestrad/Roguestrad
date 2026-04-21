@@ -70,6 +70,16 @@ Project: The Dark Mod (http://www.thedarkmod.com/)
 #include "BoxOctree.h"
 #include "../math/Vector.h"
 
+/*!
+	\struct idBoxOctree::QueryContext
+	\brief Context structure for box octree query operations.
+
+	The QueryContext structure serves as a container for state and parameters used during box octree query operations. It provides a standardized way to pass query-related data through the octree
+   traversal logic. The structure is designed to be lightweight and efficient, avoiding unnecessary memory allocation or complex ownership semantics. This context is typically initialized before a
+   query operation and may be reused across multiple queries to avoid repeated construction overhead. The design supports batching of queries and maintains consistent state throughout the traversal
+   process. The structure does not manage any heap-allocated memory directly, relying instead on the caller to provide appropriate storage for query results.
+
+*/
 struct idBoxOctree::QueryContext {
 	QueryResult* res;
 	// total bounding box
@@ -81,12 +91,31 @@ struct idBoxOctree::QueryContext {
 	idVec3		 extent;
 };
 
+/*!
+	\struct idBoxOctree::AddContext
+	\brief Context structure for managing box octree node additions.
+
+	The AddContext structure serves as a container for tracking state and parameters during the process of adding nodes to a box octree. It encapsulates the necessary information to maintain
+   consistency and proper node placement within the octree hierarchy. This context is used internally by the octree implementation to ensure that node additions follow the correct spatial partitioning
+   rules and maintain the tree's structural integrity. The structure does not expose any public methods or data members, implying its usage is restricted to internal octree operations. The design
+   suggests this is a utility structure for managing the addition process rather than a general-purpose container.
+
+*/
 struct idBoxOctree::AddContext {
 	Pointer	 ptr;
 	idBounds box;
 	int		 level;
 };
 
+/*!
+	\struct idBoxOctree::CellRanges
+	\brief Storage for octree cell range data used in spatial partitioning operations.
+
+	This structure serves as a data container for storing range information of cells within an octree structure. It is designed to hold the necessary bounds and indices that define the spatial extent
+   of each cell in the octree hierarchy. The data is typically used for efficient spatial queries and culling operations within the engine's rendering and collision detection systems. The structure is
+   intended to be lightweight and efficient, supporting fast access patterns for spatial partitioning algorithms.
+
+*/
 struct idBoxOctree::CellRanges {
 	int bmin[3];
 	int bmax[3];

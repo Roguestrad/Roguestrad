@@ -119,18 +119,15 @@ extern uint32 globalDmaTag;
 
 enum streamBufferType_t { SBT_DOUBLE = 2, SBT_QUAD = 4 };
 
-/*
-================================================================================================
+/*!
+	\class idSoftwareCache
+	\brief Cache implementation for optimizing memory access patterns in the engine.
 
-	non-SPU code
+	The idSoftwareCache class provides a templated cache mechanism designed to optimize memory access patterns by prefetching objects into cache. This implementation is specifically tailored for use
+   within the RogueStrad engine, where efficient memory management and reduced cache misses are crucial for performance. The cache is configured with template parameters for type, number of entries,
+   associativity, and alignment, allowing for fine-tuned optimization based on the specific needs of different engine components. The Prefetch method enables proactive loading of objects into cache,
+   potentially improving performance by reducing cache miss latency during subsequent access operations. The cache is implemented with 128-byte alignment to ensure optimal memory access patterns.
 
-================================================================================================
-*/
-
-/*
-================================================
-idSoftwareCache
-================================================
 */
 template<typename _type_, int _entries_ = 8, int _associativity_ = 4, bool aligned = false>
 class ALIGNTYPE128 idSoftwareCache
@@ -287,10 +284,16 @@ private:
 	const _type_* objectPtr;
 };
 
-/*
-================================================
-idODSArray
-================================================
+/*!
+	\class idODSArray
+	\brief A fixed-size array container with compile-time maximum capacity that supports initialization from external arrays and provides raw pointer access.
+
+	The idODSArray class is a template-based container designed to hold a fixed number of elements with a maximum capacity defined at compile time. It is initialized with an external array and its
+   size, and includes assertions to ensure the provided size does not exceed the maximum allowed capacity. The container provides constant-time access to elements via the subscript operator and offers
+   a method to retrieve a const pointer to its internal array for use with APIs expecting raw array pointers. It is intended for use cases where a fixed-size array with known maximum capacity is
+   needed, and where direct memory access is required for performance-critical operations. The class is not designed for dynamic resizing as the maximum capacity is fixed at compile time, making it
+   suitable for scenarios where memory layout and access patterns are critical.
+
 */
 template<typename _type_, int max>
 class idODSArray
@@ -338,10 +341,16 @@ private:
 	int			  arrayNum;
 };
 
-/*
-================================================
-idODSIndexedArray
-================================================
+/*!
+	\class idODSIndexedArray
+	\brief An indexed array implementation for efficiently accessing elements through index mappings.
+
+	The idODSIndexedArray class provides a memory-efficient way to manage and access elements through index mappings, commonly used for optimized data access patterns in graphics and game engine
+   systems. It is designed to work with a fixed maximum capacity defined at compile time, ensuring that memory usage is predictable and optimized for performance. The class supports initialization
+   from a source array and an index array, allowing for complex data access patterns where elements are retrieved based on index mappings rather than direct array indexing. The
+   ReplicateUpToMultipleOfFour function ensures that internal array sizes conform to specific alignment requirements, likely for SIMD or cache optimization purposes, by replicating the first element
+   until the array size is a multiple of four. The operator[] provides const access to indexed elements, enabling read-only access to the mapped data.
+
 */
 template<typename _elemType_, typename _indexType_, int max>
 class idODSIndexedArray
@@ -394,10 +403,16 @@ private:
 	int				  arrayNum;
 };
 
-/*
-================================================
-idODSStreamedOutputArray
-================================================
+/*!
+	\class idODSStreamedOutputArray
+	\brief A streaming output array implementation for handling sequential element allocation with compile-time buffer size constraints.
+
+	The idODSStreamedOutputArray class provides a mechanism for managing a stream of output elements with a fixed buffer size determined at compile time. It is designed to support scenarios where
+   elements are appended sequentially to a pre-allocated buffer, with automatic handling of buffer growth up to a specified maximum. The template parameters define the element type and the buffer
+   size, ensuring that the buffer size is a power of two and meets memory alignment requirements. The class manages an internal counter to track the number of elements and provides methods for
+   appending elements and allocating the next available slot. The constructor performs compile-time assertions to validate buffer size, alignment, and memory constraints against system limits such as
+   MAX_DMA_SIZE. The class assumes that the provided array is properly aligned and that the number of elements is managed through the provided pointer.
+
 */
 template<typename _type_, int _bufferSize_>
 class ALIGNTYPE16 idODSStreamedOutputArray
@@ -469,10 +484,16 @@ private:
 	int		outMax;
 };
 
-/*
-================================================
-idODSStreamedArray
-================================================
+/*!
+	\class idODSStreamedArray
+	\brief A template class for efficiently streaming and accessing array elements with buffered retrieval and cache management.
+
+	The idODSStreamedArray class provides a mechanism for efficiently accessing array elements through buffered retrieval, optimized for memory access patterns and cache performance. It supports
+   streaming access to large arrays by maintaining internal state for cached ranges and managing buffer boundaries. The class is templated to support different data types, buffer sizes, stream buffer
+   types, and alignment requirements. It includes functionality for fetching batches of elements, managing cache line flushing, and ensuring proper alignment and bounds checking. The implementation
+   uses compile-time assertions to validate buffer configurations and runtime assertions to verify input parameters. The class is designed for scenarios where sequential access to large arrays needs
+   to be optimized for memory bandwidth and cache efficiency, and it maintains awareness of the streaming position and accessible elements through its internal buffering mechanism.
+
 */
 template<typename _type_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1>
 class ALIGNTYPE16 idODSStreamedArray
@@ -605,18 +626,16 @@ private:
 	}
 };
 
-/*
-================================================
-idODSStreamedIndexedArray
+/*!
+	\class idODSStreamedIndexedArray
+	\brief A streaming indexed array implementation for efficient GPU memory access with buffered element and index management.
 
-For gathering elements from an array using a sequentially read index.
-This uses overlapped streaming for both the index and the array elements
-where one batch of indices and/or array elements can be accessed while
-the next batch is being streamed in.
+	This class provides a mechanism for streaming indexed array data to GPU memory with efficient buffering and caching. It is designed to manage large datasets by fetching elements in batches while
+   maintaining index integrity. The implementation uses template parameters to configure buffer sizes, stream buffer types, and alignment requirements. The class supports quad-buffering to ensure data
+   availability during streaming operations and handles memory alignment constraints through compile-time assertions. The streaming behavior is managed through internal state tracking of cached data
+   ranges and provides methods to fetch the next batch of elements and access elements by index. The destructor ensures proper cleanup by flushing any cached data back to its destination. Cache line
+   flushing functionality is present but currently disabled in the implementation.
 
-NOTE: currently the size of array elements must be a multiple of 16 bytes.
-An index with offsets and more complex logic is needed to support other sizes.
-================================================
 */
 template<typename _elemType_, typename _indexType_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1>
 class ALIGNTYPE16 idODSStreamedIndexedArray

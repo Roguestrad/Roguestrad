@@ -42,6 +42,17 @@ If you have questions concerning this license or the applicable additional terms
 #define DEFAULT_HASH_SIZE		 1024
 #define DEFAULT_HASH_GRANULARITY 1024
 
+/*!
+	\class idHashIndex
+	\brief A hash index implementation for efficient storage and retrieval of indexed data using hash tables.
+
+	The idHashIndex class provides a hash table implementation designed for efficient storage and retrieval of indexed data, commonly used in collision detection and AAS (Area Awareness System)
+   building within the engine. It supports dynamic resizing, memory management, and various hash key generation methods for different data types including strings, 3D vectors, and integers. The class
+   maintains internal data structures including hash tables and index chains to manage indexed entries, with support for adding, removing, and iterating through hash chain entries. The implementation
+   uses bitwise operations for efficient hash computations and includes mechanisms for controlling memory allocation granularity. The hash table size must be a power of two, and the class provides
+   methods for initializing, allocating, clearing, and freeing hash index resources.
+
+*/
 class idHashIndex
 {
 public:

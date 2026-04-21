@@ -53,7 +53,6 @@ If you have questions concerning this license or the applicable additional terms
 #define INDENT_IFDEF  0x0008
 #define INDENT_IFNDEF 0x0010
 
-// macro definitions
 typedef struct define_s {
 	char*			 name;	   // define name
 	int				 flags;	   // define flags
@@ -65,8 +64,6 @@ typedef struct define_s {
 	struct define_s* hashnext; // next define in the hash chain
 } define_t;
 
-// indents used for conditional compilation directives:
-// #if, #else, #elif, #ifdef, #ifndef
 typedef struct indent_s {
 	int				 type;	 // indent type
 	int				 skip;	 // true if skipping current indent
@@ -74,6 +71,17 @@ typedef struct indent_s {
 	struct indent_s* next;	 // next indent on the indent stack
 } indent_t;
 
+/*!
+	\class idParser
+	\brief A robust script parser and preprocessor for handling source code files and token-based parsing operations.
+
+	The idParser class provides comprehensive parsing capabilities for source files and memory buffers, supporting preprocessor directives, macro expansion, and structured token reading. It manages
+   multiple script sources, defines, and indentation levels while handling conditional compilation and error reporting. The parser supports loading files from disk or memory, parsing matrices, reading
+   tokens with various validation options, and processing preprocessor directives like #define, #include, #ifdef, and #ifndef. It includes facilities for managing global defines, handling include
+   paths, setting punctuation rules, and tracking parsing state through markers and indentation stacks. The class handles both basic token parsing and complex preprocessor evaluation including
+   arithmetic expressions and conditional compilation.
+
+*/
 class idParser
 {
 public:

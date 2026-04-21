@@ -123,6 +123,17 @@ ID_INLINE type* idListNewElement()
 	return new type;
 }
 
+/*!
+	\class idList
+	\brief A dynamic array template class for managing collections of objects with efficient memory management and various manipulation methods.
+
+	The idList template class provides a dynamic array implementation designed for efficient memory usage and flexible object management within the Roguestrad engine. It supports various operations
+   for adding, removing, and accessing elements while maintaining optimal memory allocation through granularity-based sizing. The class is templated to work with any data type and includes memory
+   tagging for debugging and allocation tracking. Key features include automatic memory reallocation during growth, move semantics for efficient resource transfer, and multiple insertion and deletion
+   methods that preserve or alter element ordering. The implementation supports both indexed and range-based operations, provides sorting capabilities with customizable comparison templates, and
+   includes utilities for memory analysis and debugging. The class is designed for high-performance use cases where dynamic array behavior is needed with minimal overhead.
+
+*/
 template<typename _type_, memTag_t _tag_ = TAG_IDLIB_LIST>
 class idList
 {
@@ -511,6 +522,14 @@ public:
 	memTag_t GetMemTag() const { return ( memTag_t )memTag; };
 	void	 SetMemTag( memTag_t tag_ ) { memTag = ( byte )tag_; };
 
+	/*!
+		\struct idList::Iterator
+		\brief Iterator for traversing elements in an idList.
+
+		The Iterator class provides a means to traverse the elements of an idList container. It supports dereferencing to access the current element, incrementing to move to the next element, and
+	   comparison to determine if the iterator has reached the end of the list. This implementation follows standard iterator conventions for use with the idList template class.
+
+	*/
 	template<typename T>
 	struct Iterator {
 		T*	 p;

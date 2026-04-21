@@ -121,6 +121,20 @@ const int STR_ALLOC_GRAN = 32;
 
 typedef enum { MEASURE_SIZE = 0, MEASURE_BANDWIDTH } Measure_t;
 
+/*!
+	\class idStr
+	\brief A robust, flexible string class for the Roguestrad engine with comprehensive memory management and text processing capabilities.
+
+	The idStr class provides a comprehensive string implementation for the Roguestrad engine, offering efficient memory management through dynamic allocation with optional static buffer fallback,
+   extensive text processing capabilities including case conversion, substring operations, and formatting functions, along with robust error handling and memory safety features. The class supports
+   both standard C-string operations and advanced string manipulations required by game engine functionality. Memory management is handled through the internal buffer system that can utilize either
+   static base buffers or dynamic allocations, with the class providing explicit control over allocation behavior through functions like EnsureAlloced and ReAllocate. The implementation includes
+   thread-safe formatting operations, UTF-8 support for international character handling, and comprehensive string comparison functions with various case sensitivity options. The class is designed for
+   performance-critical applications within the game engine, providing optimized implementations for common string operations while maintaining compatibility with standard C-string interfaces. Key
+   features include move semantics for efficient resource transfer, various constructors for different initialization scenarios, operator overloads for intuitive usage, and extensive helper functions
+   for file path manipulation, text formatting, and memory statistics.
+
+*/
 class idStr
 {
 public:
@@ -1928,14 +1942,16 @@ public:
 
 char* va( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_STATIC_ATTRIBUTE_PRINTF( 1, 2 );
 
-/*
-================================================================================================
+/*!
+	\class idSort_Str
+	\brief A case-insensitive string sorting comparator for use with quick sort algorithms.
 
-	Sort routines for sorting idList<idStr>
+	The idSort_Str class provides a case-insensitive string comparison implementation designed for use with the idSort_Quick sorting template. It inherits from idSort_Quick<idStr, idSort_Str> to
+   leverage existing quick sort functionality while providing specific string comparison behavior. The Compare method performs case-insensitive lexicographic comparison between two idStr objects,
+   making it suitable for sorting strings where case differences should not affect ordering. This class is intended to be used as a sorting comparator within the engine's sorting infrastructure,
+   specifically for scenarios requiring case-insensitive string sorting operations.
 
-================================================================================================
 */
-
 class idSort_Str : public idSort_Quick<idStr, idSort_Str>
 {
 public:
@@ -1952,6 +1968,16 @@ public:
 	int Compare( const idStr& a, const idStr& b ) const { return a.Icmp( b ); }
 };
 
+/*!
+	\class idSort_PathStr
+	\brief A case-insensitive path string sorting comparator for use with quick sort.
+
+	This class implements a specialized comparison function for sorting path strings in a case-insensitive manner. It is designed to work with the idSort_Quick template class and provides
+   path-specific sorting behavior that respects file system conventions. The comparator is primarily used for organizing path strings in a consistent order, which is useful for directory listings,
+   resource management, and other operations where predictable path ordering is required. The implementation handles path-specific formatting and is optimized for use within the engine's sorting
+   infrastructure.
+
+*/
 class idSort_PathStr : public idSort_Quick<idStr, idSort_PathStr>
 {
 public:

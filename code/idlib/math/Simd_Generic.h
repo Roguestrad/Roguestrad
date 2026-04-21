@@ -30,14 +30,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_SIMD_GENERIC_H__
 #define __MATH_SIMD_GENERIC_H__
 
-/*
-===============================================================================
+/*!
+	\class idSIMD_Generic
+	\brief Provides generic SIMD implementations for various mathematical operations and joint transformations used in the engine.
 
-	Generic implementation of idSIMDProcessor
+	This class serves as a fallback implementation for SIMD operations when specialized hardware-specific implementations are not available. It provides generic CPU-based implementations for
+   mathematical computations including min/max calculations for various vector types, memory operations like memcpy and memset, and joint transformation operations. The class is designed to be a base
+   implementation that can be overridden by platform-specific SIMD optimized versions. It handles operations such as joint blending, conversion between joint quaternion and matrix representations, and
+   hierarchical joint transformations. The generic implementations ensure consistent behavior across different platforms while maintaining the expected interface for SIMD processing.
 
-===============================================================================
 */
-
 class idSIMD_Generic : public idSIMDProcessor
 {
 public:

@@ -30,14 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_PLUECKER_H__
 #define __MATH_PLUECKER_H__
 
-/*
-===============================================================================
+/*!
+	\class idPluecker
+	\brief Represents and manipulates Pluecker coordinates for line geometry in 3D space.
 
-	Pluecker coordinate
+	The idPluecker class provides a mathematical framework for representing lines in three-dimensional space using Pluecker coordinates, which consist of six floating-point values. It supports
+   construction from various geometric primitives such as line segments, rays, and plane intersections, as well as standard arithmetic operations and geometric computations. The class is designed for
+   use in computational geometry applications within the engine, particularly for collision detection, rendering, and spatial relationship calculations. It includes methods for converting between
+   Pluecker coordinates and other line representations, computing distances, and normalizing coordinates. The implementation emphasizes performance with inlined operations and provides both exact and
+   epsilon-based comparison functions to accommodate numerical precision requirements in geometric computations.
 
-===============================================================================
 */
-
 class idPluecker
 {
 public:

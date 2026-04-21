@@ -32,20 +32,16 @@ If you have questions concerning this license or the applicable additional terms
 
 #include <stddef.h>
 
-/*
-===============================================================================
+/*!
+	\class idLib
+	\brief A central utility class for engine initialization, shutdown, and logging operations.
 
-	idLib contains stateless support classes and concrete types. Some classes
-	do have static variables, but such variables are initialized once and
-	read-only after initialization (they do not maintain a modifiable state).
+	The idLib class serves as a core utility framework for the engine, providing essential initialization and shutdown procedures for various subsystems including thread management, SIMD engines, and
+   memory allocators. It also offers standardized logging capabilities through printf, error, warning, and fatal error functions that support formatted output and conditional printing. The class
+   manages string pools and memory allocation for efficient string handling, and includes functionality to identify the main thread for proper synchronization. This class acts as a central hub for
+   engine-wide logging and initialization tasks, ensuring consistent behavior across different components of the engine.
 
-	The interface pointers idSys, idCommon, idCVarSystem and idFileSystem
-	should be set before using idLib. The pointers stored here should not
-	be used by any part of the engine except for idLib.
-
-===============================================================================
 */
-
 class idLib
 {
 private:
@@ -360,10 +356,16 @@ void				SixtetsForInt( byte* out, int src );
 //! Converts a byte array into an integer value.
 int					IntForSixtets( byte* in );
 
-/*
-================================================
-idException
-================================================
+/*!
+	\class idException
+	\brief Exception handling class for storing and retrieving error messages in the Roguestrad engine.
+
+	The idException class provides a mechanism for handling error conditions within the Roguestrad engine by storing error messages and providing access to them. It is designed to be used as a base
+   class for other exception types within the engine's error handling system. The class maintains an internal buffer for error messages with a fixed maximum length defined by MAX_ERROR_LEN. The
+   GetErrorBuffer function provides direct access to this internal buffer, allowing for efficient error message management. The class is intended to be instantiated and used primarily in error
+   handling paths where descriptive error messages need to be preserved and retrieved. The constructor allows for initialization with a specific error message, defaulting to an empty string if none is
+   provided. This design supports both simple error reporting and more detailed debugging scenarios where the error text needs to be inspected or modified.
+
 */
 class idException
 {
@@ -412,10 +414,15 @@ private:
 	static char error[MAX_ERROR_LEN];
 };
 
-/*
-================================================
-idFatalException
-================================================
+/*!
+	\class idFatalException
+	\brief Exception class for handling fatal errors in the engine.
+
+	The idFatalException class provides a mechanism for representing fatal error conditions within the Rogue Strad engine. It stores error messages in an internal buffer with a fixed maximum size
+   defined by MAX_ERROR_LEN. The class is designed to be used in error handling scenarios where an exceptional condition has occurred that cannot be recovered from, allowing the engine to terminate
+   execution gracefully. The exception object can be constructed with an error message, and provides accessors to retrieve both the error string and the internal error buffer. This class forms part of
+   the engine's error reporting and handling infrastructure, enabling consistent logging and reporting of critical failures.
+
 */
 class idFatalException
 {
@@ -460,10 +467,15 @@ protected:
 	int	  GetErrorBufferSize() { return MAX_ERROR_LEN; }
 };
 
-/*
-================================================
-idNetworkLoadException
-================================================
+/*!
+	\class idNetworkLoadException
+	\brief Exception class for network loading errors in the Roguestrad engine.
+
+	The idNetworkLoadException class is designed to handle exceptional conditions that occur during network loading operations within the Roguestrad engine. It inherits from idException, providing a
+   standardized way to report and manage errors specific to network loading functionality. This exception type is intended to be thrown when network-related loading operations fail, allowing the
+   engine to gracefully handle such failures and provide meaningful error information. The class supports construction with an optional descriptive text message that can contain details about the
+   specific network loading error that occurred. This design allows for consistent error reporting and handling throughout the engine's network loading subsystem.
+
 */
 class idNetworkLoadException : public idException
 {

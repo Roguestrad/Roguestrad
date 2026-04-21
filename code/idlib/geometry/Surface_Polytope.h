@@ -30,16 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SURFACE_POLYTOPE_H__
 #define __SURFACE_POLYTOPE_H__
 
-/*
-===============================================================================
+/*!
+	\class idSurface_Polytope
+	\brief idSurface_Polytope represents polygonal surfaces derived from geometric constructions and plane intersections.
 
-	Polytope surface.
+	This class provides functionality for creating and manipulating polytope surfaces, which are geometric shapes defined by vertices, triangles, and edges. It inherits from idSurface and extends its
+   capabilities by offering constructors and setup methods for various polyhedral shapes such as tetrahedrons, hexahedrons, octahedrons, dodecahedrons, icosahedrons, cylinders, and cones. The class
+   supports initialization from existing surfaces, construction from arrays of planes, and predefined geometric configurations. It also includes methods for splitting polytopes using clipping planes,
+   which is useful for spatial partitioning and rendering optimization. The implementation emphasizes generating surface data structures suitable for graphics rendering and collision detection within
+   the engine's geometric processing pipeline.
 
-	NOTE: vertexes are not duplicated for texture coordinates.
-
-===============================================================================
 */
-
 class idSurface_Polytope : public idSurface
 {
 public:

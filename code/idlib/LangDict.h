@@ -29,6 +29,10 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __LANGDICT_H__
 #define __LANGDICT_H__
 
+/*!
+	\class idLangKeyValue
+	\brief A simple key-value pair container for language data.
+*/
 class idLangKeyValue
 {
 public:
@@ -66,11 +70,17 @@ public:
 
 class idStrId;
 
-/*
-================================================
-idLangDict is a simple Dictionary used specifically for the
-LocalizedStringTables.
-================================================
+/*!
+	\class idLangDict
+	\brief A dictionary class for managing language string lookups and localization within the Doom 3 BFG engine.
+
+	The idLangDict class provides a comprehensive system for storing and retrieving localized strings used in the engine's internationalization framework. It supports loading dictionary data from
+   buffers, saving to files, and performing key-based lookups with various methods for finding, adding, and updating string entries. The class uses a hash table implementation for efficient string
+   lookup operations and handles UTF-8 encoding for international characters. It supports both direct string lookup and recursive resolution of string identifiers to handle complex localization
+   scenarios. The class maintains an internal key-value storage system where each string is associated with a unique key for fast retrieval and management. Memory management is handled through
+   internal allocators, and the class provides methods for clearing all entries, deleting specific entries, and updating existing entries. The implementation includes safeguards against infinite
+   recursion during string resolution and proper handling of string identifiers that begin with a specific prefix used by the engine.
+
 */
 class idLangDict
 {
@@ -280,10 +290,15 @@ private:
 	friend class idStrId;
 };
 
-/*
-================================================
-idLocalization
-================================================
+/*!
+	\class idLocalization
+	\brief Manages localization dictionaries and string translation for the engine.
+
+	The idLocalization class provides functionality for loading, managing, and retrieving localized strings within the engine. It maintains a global language dictionary that stores key-value pairs of
+   original and localized strings. The class supports loading dictionary data from buffers, clearing the dictionary, and verifying UTF-8 encoding of localization files. Game code should typically use
+   GetString() to retrieve localized strings, while tools and development environments can access the global dictionary through GetDictionary(). The class is designed to support multiple languages
+   through its dictionary-based approach and includes validation mechanisms to ensure proper UTF-8 encoding of localization files.
+
 */
 class idLocalization
 {
@@ -335,10 +350,16 @@ private:
 	friend class idStrId;
 };
 
-/*
-================================================
-idStrId represents a localized String as a String ID.
-================================================
+/*!
+	\class idStrId
+	\brief A string identifier wrapper that manages localized string lookups using integer indices.
+
+	The idStrId class serves as a wrapper for string identifiers used in localized text systems within the engine. It maintains an internal index that maps to a string in a language dictionary,
+   allowing efficient retrieval of localized strings without repeatedly parsing or hashing string keys. The class supports construction from various identifier types including raw integers, string
+   keys, and other idStrId objects. It provides mechanisms to set and retrieve string keys, localized strings, and internal indices, with special handling for invalid states where the index is set to
+   -1. The class is designed for use in dialog systems and other localized content areas where consistent string lookup is required. The implementation includes validation to prevent unauthorized
+   additions to the string table, ensuring only predefined strings can be referenced.
+
 */
 class idStrId
 {

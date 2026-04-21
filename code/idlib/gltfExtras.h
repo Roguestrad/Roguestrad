@@ -67,6 +67,10 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef GLTF_EXTRAS_H
 	#define GLTF_EXTRAS_H
 
+/*!
+	\class gltfExtraStub
+	\brief A stub class for handling extra GLTF data.
+*/
 class gltfExtraStub
 {
 public:

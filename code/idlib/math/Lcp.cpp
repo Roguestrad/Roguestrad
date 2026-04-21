@@ -1829,18 +1829,15 @@ static void LDLT_Factor_Test()
 #define LDLT_Factor					  LDLT_Factor_SIMD
 #define GetMaxStep					  GetMaxStep_SIMD
 
-/*
-================================================================================================
+/*!
+	\class idLCP_Square
+	\brief A solver for linear complementarity problems using square matrix factorization techniques.
 
-	idLCP_Square
+	This class implements a specialized solver for linear complementarity problems (LCP) that operates on square matrices. It provides functionality for solving LCP systems with both bounded and
+   unbounded variables, including handling clamped variables through LU factorization and triangular solves. The class manages variable permutations to separate unbounded from bounded variables and
+   supports dynamic addition and removal of clamped variables during the solving process. It also includes methods for calculating force and acceleration deltas, which are essential for physics
+   simulations and constraint solving in game engines. The solver is designed to work with the broader idLCP framework while providing specific optimizations for square matrix operations.
 
-================================================================================================
-*/
-
-/*
-================================================
-idLCP_Square
-================================================
 */
 class idLCP_Square : public idLCP
 {
@@ -2483,18 +2480,16 @@ bool idLCP_Square::Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, con
 	return true;
 }
 
-/*
-================================================================================================
+/*!
+	\class idLCP_Symmetric
+	\brief A symmetric linear complementarity problem solver with support for box constraints and clamped variables.
 
-	idLCP_Symmetric
+	This class provides methods for solving symmetric linear complementarity problems (LCPs) that arise in physics simulation, particularly in rigid body dynamics. It supports both unbounded and
+   bounded variables through box constraints, and handles clamped variables that are frozen in certain directions during the solution process. The implementation uses LDLT factorization for numerical
+   stability and includes specialized methods for adding and removing clamped variables, which is essential for dynamic constraint handling. The class also provides functionality for computing force
+   and acceleration deltas, which are important for iterative solvers that update constraint forces based on velocity changes. The design supports both direct solution methods and incremental updates
+   to the factorization, enabling efficient handling of time-varying constraints.
 
-================================================================================================
-*/
-
-/*
-================================================
-idLCP_Symmetric
-================================================
 */
 class idLCP_Symmetric : public idLCP
 {

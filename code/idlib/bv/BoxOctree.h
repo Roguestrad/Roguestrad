@@ -66,9 +66,16 @@ Project: The Dark Mod (http://www.thedarkmod.com/)
 #include "../math/Line.h"
 #include "../containers/FlexList.h"
 
-// in order to put objects into idBoxOctree,
-// user has to associate this "handle" with every object
-// and provide HandleGetter function to obtain handle from object pointer
+/*!
+	\class idBoxOctreeHandle
+	\brief Handle for managing objects within a box octree structure.
+
+	The idBoxOctreeHandle class provides a mechanism for tracking and managing objects within a box octree data structure. It serves as a lightweight reference that can indicate whether an object is
+   currently linked to the octree. The IsLinked method allows for quick verification of an object's inclusion status, which is essential for maintaining consistency during dynamic updates to the
+   octree. This handle is designed to integrate seamlessly with the octree's management systems, enabling efficient spatial queries and object tracking. The class is intended to be used primarily by
+   the octree implementation itself rather than by external systems, as it focuses on internal object linkage management rather than providing access to the actual octree data.
+
+*/
 class idBoxOctreeHandle
 {
 private:
@@ -84,18 +91,17 @@ public:
 	ID_FORCE_INLINE bool IsLinked() const { return ids.Num() > 0; }
 };
 
-// Octree contains a set of objects, which geometrically are axis-aligned boxes.
-// Used mainly in idClip to store clipmodels of all entities in the world.
-//
-// Every octree node is assigned a list of objects, whose bounds at least partly cover the node space.
-// This list is represented as a linked list of fixed-size arrays (see Chunk).
-//
-// The octree starts as a single root node and grows on demand.
-// When number of objects in a leaf node becomes larger than SPLIT_SMALL_NUM,
-// 8 sons are added to the node, and the majority of attached objects are sifted down into sons.
-// However, the ratio object_size / cell_size never exceeds 50% for any object.
-// So large objects never go too deep into the octree, remaining assigned to non-leaf nodes.
-//
+/*!
+	\class idBoxOctree
+	\brief idBoxOctree is a spatial data structure for efficient object management and query operations in 3D space.
+
+	The idBoxOctree class implements a hierarchical spatial partitioning system that organizes objects within a 3D world bounding volume. It supports dynamic insertion, removal, and updating of
+   objects with associated bounding boxes, making it suitable for collision detection, visibility determination, and other spatial queries. The octree structure maintains a tree of nodes where each
+   node represents a cubic region of space, and objects are stored in the leaf nodes that best contain them. Objects can be queried by static bounding boxes or moving boxes with specified
+   trajectories, enabling efficient intersection testing with minimal overhead. The implementation handles memory management through chunk-based storage for efficient object allocation and automatic
+   tree restructuring during insertions that cause node overflow. The design optimizes for frequent queries with minimal updates, trading some insertion complexity for fast retrieval operations.
+
+*/
 class idBoxOctree
 {
 public:
@@ -115,12 +121,11 @@ public:
 	// when this number of "small" objects is gathered, octree node is split into 8 subnodes
 	static const int SPLIT_SMALL_NUM = 90;
 
-	// link to single object
 	struct Link {
 		Pointer	 object;
 		idBounds bounds;
 	};
-	// a bunch of links to objects
+
 	struct Chunk {
 		int	   num;
 		Chunk* next;
@@ -304,6 +309,16 @@ private:
 	*/
 	void	   AddToNode( AddContext& ctx, int nodeIdx, const idBounds& cellBox );
 
+	/*!
+		\struct idBoxOctree::OctreeNode
+		\brief Octree node structure for spatial partitioning in the Roguestrad engine.
+
+		The OctreeNode structure serves as a fundamental component for building octree data structures used for efficient spatial partitioning and collision detection within the Roguestrad engine. It
+	   provides the hierarchical organization necessary for managing spatial queries and optimizing rendering operations in 3D environments. This implementation is designed to support the engine's
+	   need for fast spatial lookups and culling operations. The node structure is intended to be used internally by the octree system and does not expose ownership or memory management details
+	   directly.
+
+	*/
 	struct OctreeNode {
 		Chunk* links	   = nullptr; // linked list of chunks attached to node
 		int	   firstSonIdx = -1;	  // sons have indices [firstSonIdx .. firstSonIdx + 8)

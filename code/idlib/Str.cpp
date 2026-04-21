@@ -1794,11 +1794,6 @@ void idStr::ShowMemoryUsage_f( const idCmdArgs& args )
 #endif
 }
 
-/*
-================
-idStr::FormatNumber
-================
-*/
 struct formatList_t {
 	int gran;
 	int count;

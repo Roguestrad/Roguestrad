@@ -72,19 +72,23 @@ struct TileNode {
 	unsigned int minLevel;
 };
 
-// TileMap
-//
-// Quad-tree that manages tiles in a power of two/ squared texture atlas. At initialization the quad-tree is build so that
-// all nodes already have the information of the position for the corresponding tile. All nodes are kept in a cache-friendly
-// manner in one linear list, which makes clearing the quad-tree very fast. Therefore instead of pointer indirections, indices
-// into the underlying list are used.
-// At runtime each relevant light will request per frame a tile with a size that corresponds to the screen-space light-area of
-// the light. Thereby the size is clamped between a min/ max resolution. To determine the level of the requested tile first the
-// next power of two size is determined which is larger than the requested size. However, instead of using the power of two size
-// of the determined tile, the actual incoming dynamically changing size is used. In this way unpleasant popping of shadows can
-// be avoided, which would occur otherwise when discrete power of two steps would be used.
-// Since this operation is working with a O(n) complexity, the quad-tree is held on software-side, which is faster than keeping
-// the quad-tree on the GPU.
+/*!
+	\class TileMap
+	\brief A hierarchical tile map system for resource management in the engine.
+
+	Quad-tree that manages tiles in a power of two/ squared texture atlas. At initialization the quad-tree is build so that
+	all nodes already have the information of the position for the corresponding tile. All nodes are kept in a cache-friendly
+	manner in one linear list, which makes clearing the quad-tree very fast. Therefore instead of pointer indirections, indices
+	into the underlying list are used.
+	At runtime each relevant light will request per frame a tile with a size that corresponds to the screen-space light-area of
+	the light. Thereby the size is clamped between a min/ max resolution. To determine the level of the requested tile first the
+	next power of two size is determined which is larger than the requested size. However, instead of using the power of two size
+	of the determined tile, the actual incoming dynamically changing size is used. In this way unpleasant popping of shadows can
+	be avoided, which would occur otherwise when discrete power of two steps would be used.
+	Since this operation is working with a O(n) complexity, the quad-tree is held on software-side, which is faster than keeping
+	the quad-tree on the GPU.
+
+*/
 class TileMap
 {
 public:

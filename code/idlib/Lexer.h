@@ -129,12 +129,23 @@ typedef enum { BRSKIP_BRACES, BRSKIP_BRACKET } braceSkipMode_t;
 #define P_PRECOMP		   51
 #define P_DOLLAR		   52
 
-// punctuation
 typedef struct punctuation_s {
 	const char* p; // punctuation character(s)
 	int			n; // punctuation id
 } punctuation_t;
 
+/*!
+	\class idLexer
+	\brief A lexical analyzer class for parsing text files and memory buffers into tokens.
+
+	The idLexer class provides a comprehensive lexical analysis capability for parsing text-based content in the engine. It supports loading content from both file sources and memory buffers, with
+   flexible configuration through various flags that control parsing behavior such as string concatenation and precompilation options. The class maintains internal state for tracking position within
+   input streams, line numbers, and token availability. It handles multiple token types including strings, numbers, names, and punctuation, with specialized methods for parsing structured data such as
+   matrices and braced sections. The lexer supports error handling with detailed reporting including file names and line numbers, and provides utility functions for peeking, skipping, and unreading
+   tokens. It includes support for different punctuation configurations and can process both standard C/C++ style comments and whitespace, making it suitable for parsing configuration files, asset
+   definitions, and other structured text data within the engine's content pipeline.
+
+*/
 class idLexer
 {
 	friend class idParser;
@@ -858,7 +869,16 @@ ID_INLINE int idLexer::GetFlags()
 	return idLexer::flags;
 }
 
-// jmarshall
+/*!
+	\class iceScopedLexerBaseFolder
+	\brief Manages the base folder configuration for a lexer instance.
+
+	The iceScopedLexerBaseFolder class is designed to configure and manage the base folder path for a lexer object. It provides a constructor that initializes the lexer's base folder using the
+   idLexer::SetBaseFolder method, allowing the lexer to search for files within a specified directory. This class serves as a scoped configuration helper, ensuring that the lexer is properly
+   initialized with the correct base folder path. The destructor is implemented but its specific purpose requires clarification. The class is intended for use in engine components that require file
+   parsing capabilities with a defined search path.
+
+*/
 class iceScopedLexerBaseFolder
 {
 public:
@@ -874,6 +894,5 @@ public:
 
 	~iceScopedLexerBaseFolder() { idLexer::SetBaseFolder( "" ); }
 };
-// jmarshall end
 
 #endif /* !__LEXER_H__ */

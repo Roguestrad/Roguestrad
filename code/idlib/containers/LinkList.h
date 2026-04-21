@@ -30,16 +30,18 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __LINKLIST_H__
 #define __LINKLIST_H__
 
-/*
-==============================================================================
+/*!
+	\class idLinkList
+	\brief A circular doubly-linked list implementation used for managing ordered collections of objects within the engine.
 
-idLinkList
+	The idLinkList class provides a template-based circular doubly-linked list structure that is commonly used throughout the engine for managing collections of objects with ordered relationships. It
+   supports efficient insertion, removal, and traversal operations while maintaining list integrity through careful pointer management. The list is designed to be embedded within other objects, with
+   each node maintaining a link to its owner object. The circular nature of the list allows for simple iteration from any node and provides a consistent interface for list manipulation. The class is
+   intended to be used as a base class for other components that need to maintain ordered collections, such as entity lists, event queues, or resource managers. Memory management for nodes is not
+   specified, but the list provides mechanisms for properly cleaning up elements during destruction. The implementation treats the list as a circular structure where the head pointer points to a
+   special sentinel node that is used to mark the beginning and end of the list traversal.
 
-Circular linked list template
-
-==============================================================================
 */
-
 template<class type>
 class idLinkList
 {

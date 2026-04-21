@@ -30,14 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_CURVE_H__
 #define __MATH_CURVE_H__
 
-/*
-===============================================================================
+/*!
+	\class idCurve
+	\brief Template class for managing curves with time-value pairs and mathematical operations.
 
-	Curve base template.
+	The idCurve class is a generic template class designed to handle curves defined by time-value pairs, commonly used for interpolation and animation in the engine. It supports adding, removing, and
+   modifying curve points, as well as computing various mathematical properties such as derivatives, arc length, speed, and time-value mapping. The class maintains internal arrays for time and value
+   data, with mechanisms for caching indices to improve performance during time-based lookups. It provides methods for manipulating curve data including shifting time, translating values, and
+   adjusting curve timing for constant speed traversal. Virtual methods allow for curve-specific behavior customization, while inline methods provide efficient access to curve properties and
+   mathematical computations.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve
 {
@@ -609,15 +612,16 @@ ID_INLINE float idCurve<type>::TimeForIndex( const int index ) const
 	return times[index];
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_Bezier
+	\brief A templated Bezier curve implementation for interpolation and animation.
 
-	Bezier Curve template.
-	The degree of the polynomial equals the number of knots minus one.
+	The idCurve_Bezier class provides a templated implementation of Bezier curves suitable for interpolation and animation within the engine. It extends the generic idCurve base class and offers
+   methods to compute curve values, first derivatives, and second derivatives at specified time parameters. The class uses Bernstein basis polynomials for curve evaluation and supports arbitrary order
+   curves through recursive basis function computation. The implementation is designed for efficient evaluation during runtime animation and interpolation scenarios. The template parameter allows for
+   different value types to be used with the curve, making it flexible for various engine applications such as motion paths, timing curves, or other interpolation needs.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_Bezier : public idCurve<type>
 {
@@ -822,15 +826,17 @@ ID_INLINE void idCurve_Bezier<type>::BasisSecondDerivative( const int order, con
 	}
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_QuadraticBezier
+	\brief A quadratic Bézier curve implementation for smooth interpolation with derivative support.
 
-	Quadratic Bezier Curve template.
-	Should always have exactly three knots.
+	This class provides a template-based implementation of quadratic Bézier curves, inheriting from idCurve to leverage curve interpolation functionality. It is designed for smooth parameterized
+   interpolation between three control points, supporting evaluation of curve values, first derivatives, and second derivatives at specified time parameters. The implementation assumes exactly three
+   control points and uses standard Bézier basis functions and their derivatives for computation. The class is intended for use in animation, motion paths, and other applications requiring smooth
+   interpolations where the curve needs to be evaluated with derivative information for physics simulations or trajectory calculations. The template design allows for different data types while
+   maintaining a consistent interface for curve evaluation.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_QuadraticBezier : public idCurve<type>
 {
@@ -978,15 +984,17 @@ ID_INLINE void idCurve_QuadraticBezier<type>::BasisSecondDerivative( const float
 	bvals[2] = 2.0f;
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_CubicBezier
+	\brief A templated cubic Bézier curve implementation for interpolation and derivative calculations.
 
-	Cubic Bezier Curve template.
-	Should always have exactly four knots.
+	This class implements a cubic Bézier curve interpolation mechanism that is templated to work with any type. It inherits from idCurve and provides specific implementations for cubic Bézier curves
+   with exactly four control points. The class supports evaluation of curve values, first derivatives, and second derivatives at specified time parameters. All methods are marked as inline for
+   performance optimization. The implementation uses standard cubic Bézier basis functions and their derivatives for accurate curve calculations. The class assumes a fixed number of control points
+   (four) and performs assertions to validate this requirement. The curve is defined by four control points stored in the base class, and all calculations are performed relative to the time range
+   defined by these control points.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_CubicBezier : public idCurve<type>
 {
@@ -1141,14 +1149,17 @@ ID_INLINE void idCurve_CubicBezier<type>::BasisSecondDerivative( const float t, 
 	bvals[3] = 6.0f * s1;
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_Spline
+	\brief A spline curve implementation that supports different boundary conditions and time handling.
 
-	Spline base template.
+	The idCurve_Spline class provides a templated spline curve interpolation mechanism designed for use within the Roguestrad engine. It inherits from idCurve and extends its functionality to support
+   various boundary types including free, closed, and clamped behaviors. The class manages spline interpolation with configurable boundary conditions and close time parameters, allowing for flexible
+   curve representation in animation and physics systems. The implementation handles both open and closed spline configurations with appropriate boundary condition logic for index access and time
+   computation. Memory management and object ownership are not explicitly specified in the provided declarations, so no assumptions about these aspects are made. The class is intended for use in
+   scenarios requiring smooth interpolation of values over time, such as animation curves, motion paths, or any continuous data representation that benefits from spline interpolation.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_Spline : public idCurve<type>
 {
@@ -1323,15 +1334,17 @@ ID_INLINE bool idCurve_Spline<type>::IsDone( const float time ) const
 	return ( boundaryType != BT_CLOSED && time >= this->times[this->times.Num() - 1] );
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_NaturalCubicSpline
+	\brief A template class for natural cubic spline curve interpolation with support for various boundary conditions.
 
-	Cubic Interpolating Spline template.
-	The curve goes through all the knots.
+	This class implements natural cubic spline interpolation for smooth curve evaluation, supporting free, clamped, and closed boundary conditions. It inherits from idCurve_Spline and provides
+   specialized methods for setting up spline coefficients and evaluating curve values, first derivatives, and second derivatives at given time parameters. The implementation uses precomputed
+   coefficients for efficient evaluation and handles time clamping to ensure valid range processing. Memory management for temporary calculations is handled internally through alloca16 for closed
+   spline setups, while other boundary conditions use stack allocation or existing member storage. The curve setup process is lazy-evaluated and marked as complete once initialized with appropriate
+   boundary conditions.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_NaturalCubicSpline : public idCurve_Spline<type>
 {
@@ -1675,15 +1688,16 @@ ID_INLINE void idCurve_NaturalCubicSpline<type>::SetupClosed() const
 	}
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_CatmullRomSpline
+	\brief A template class implementing Catmull-Rom spline interpolation for smooth curve evaluation.
 
-	Uniform Cubic Interpolating Spline template.
-	The curve goes through all the knots.
+	This class provides a concrete implementation of spline interpolation using the Catmull-Rom algorithm, which is commonly used for creating smooth curves through control points in animation and
+   graphics applications. The class inherits from idCurve_Spline and specializes in Catmull-Rom behavior, offering methods to evaluate the spline's value, first derivative, and second derivative at
+   arbitrary time parameters. The implementation handles edge cases such as single control points and provides specialized functions for computing basis functions and their derivatives. The template
+   design allows for use with various data types, making it flexible for different interpolation needs while maintaining the smoothness properties characteristic of Catmull-Rom splines.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_CatmullRomSpline : public idCurve_Spline<type>
 {
@@ -1874,17 +1888,17 @@ ID_INLINE void idCurve_CatmullRomSpline<type>::BasisSecondDerivative( const int 
 	bvals[3] = 3.0f * s - 1.0f;
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_KochanekBartelsSpline
+	\brief A templated spline curve implementation using Kochanek-Bartels interpolation for smooth animation and data processing.
 
-	Cubic Interpolating Spline template.
-	The curve goes through all the knots.
-	The curve becomes the Catmull-Rom spline if the tension,
-	continuity and bias are all set to zero.
+	This class provides a spline curve implementation based on the Kochanek-Bartels interpolation method, designed for smooth transitions between keyframes in animation and data processing scenarios.
+   The implementation supports tension, continuity, and bias parameters that allow fine-tuning of the curve's shape and behavior. It inherits from idCurve_Spline and provides the core functionality
+   for adding, removing, and evaluating spline points. The class is templated to support various data types, making it flexible for different animation or interpolation needs. Key features include
+   evaluation of curve values, first and second derivatives, tangent computation, and basis function calculations for different orders of derivatives. The spline maintains internal arrays for time,
+   values, tension, continuity, and bias parameters, ensuring consistency across all aspects of the curve representation.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_KochanekBartelsSpline : public idCurve_Spline<type>
 {
@@ -2210,15 +2224,17 @@ ID_INLINE void idCurve_KochanekBartelsSpline<type>::BasisSecondDerivative( const
 	bvals[3] = 6.0f * s - 2.0f;
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_BSpline
+	\brief A B-spline curve implementation that provides smooth interpolation with customizable order and derivative calculations.
 
-	B-Spline base template. Uses recursive definition and is slow.
-	Use idCurve_UniformCubicBSpline or idCurve_NonUniformBSpline instead.
+	The idCurve_BSpline class represents a B-spline curve template that inherits from idCurve_Spline, providing smooth interpolation capabilities for various data types. The class supports
+   customizable spline order, with a default cubic order of 4, and provides methods to evaluate the curve's value and its first and second derivatives at specified time parameters. The implementation
+   uses recursive basis function evaluation through Cox-de Boor recursion formula for accurate curve computation. The class handles edge cases such as single control points and clamps time values to
+   ensure valid evaluation ranges. The basis function calculations include support for computing first and second derivatives of the spline basis functions, which enables accurate derivative
+   computation for the overall curve. This design enables smooth animation and interpolation in engine applications where continuous curves with well-defined derivatives are required.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_BSpline : public idCurve_Spline<type>
 {
@@ -2420,14 +2436,17 @@ ID_INLINE float idCurve_BSpline<type>::BasisSecondDerivative( const int index, c
 		   ( this->TimeForIndex( index + ( order - 1 ) - 2 ) - this->TimeForIndex( index - 2 ) );
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_UniformCubicBSpline
+	\brief A uniform cubic B-spline curve implementation for smooth interpolation between control points.
 
-	Uniform Non-Rational Cubic B-Spline template.
+	This class provides a concrete implementation of a uniform cubic B-spline curve that inherits from the generic BSpline base class. It is designed to offer smooth interpolation between control
+   points with uniform spacing, making it suitable for animation and trajectory generation within the engine. The class implements methods for evaluating curve values, first derivatives, and second
+   derivatives at specified time points, enabling accurate motion path calculations. The implementation includes specialized basis function evaluations for the cubic case, with proper handling of edge
+   cases such as single control point scenarios. The uniform spacing characteristic ensures consistent behavior across the curve, while the cubic order provides sufficient smoothness for most
+   animation applications.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_UniformCubicBSpline : public idCurve_BSpline<type>
 {
@@ -2618,14 +2637,17 @@ ID_INLINE void idCurve_UniformCubicBSpline<type>::BasisSecondDerivative( const i
 	bvals[3] = s;
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_NonUniformBSpline
+	\brief A non-uniform B-spline curve implementation for smooth interpolation of control points.
 
-	Non-Uniform Non-Rational B-Spline (NUBS) template.
+	This class provides a template-based implementation of non-uniform B-spline curves, extending the base BSpline functionality. It enables smooth interpolation through control points using B-spline
+   basis functions with non-uniform knot vectors. The curve supports evaluation of the function value, first derivative, and second derivative at specified time parameters. The implementation handles
+   edge cases such as single control points and utilizes Cox-de Boor recursion for basis function computations. It is designed for use in applications requiring smooth curve interpolation where
+   control point positions and tangent properties are important. The class is templated to support different data types for the curve values, making it flexible for various curve representation needs.
+   Memory management and ownership are not explicitly defined in the provided interface, suggesting standard C++ ownership semantics.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_NonUniformBSpline : public idCurve_BSpline<type>
 {
@@ -2836,14 +2858,16 @@ ID_INLINE void idCurve_NonUniformBSpline<type>::BasisSecondDerivative( const int
 	bvals[i] *= ( float )( order - 1 ) / ( this->TimeForIndex( index + i + ( order - 1 ) - 2 ) - this->TimeForIndex( index + i - 2 ) );
 }
 
-/*
-===============================================================================
+/*!
+	\class idCurve_NURBS
+	\brief NURBS curve implementation for smooth interpolation and differentiation.
 
-	Non-Uniform Rational B-Spline (NURBS) template.
+	The idCurve_NURBS class provides a Non-Uniform Rational B-Spline curve implementation that supports smooth interpolation and differentiation. It inherits from idCurve_NonUniformBSpline and extends
+   it with rational spline capabilities, allowing for weighted control points. The class maintains arrays of control point times, values, and weights, enabling the creation of complex smooth curves
+   through the addition, removal, and modification of control points. It supports evaluation of the curve at specific times, as well as computation of first and second derivatives for applications
+   requiring smooth motion or physics calculations.
 
-===============================================================================
 */
-
 template<class type>
 class idCurve_NURBS : public idCurve_NonUniformBSpline<type>
 {

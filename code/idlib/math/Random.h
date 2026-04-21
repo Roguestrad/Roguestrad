@@ -30,14 +30,15 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_RANDOM_H__
 #define __MATH_RANDOM_H__
 
-/*
-===============================================================================
+/*!
+	\class idRandom
+	\brief A random number generator class for producing pseudo-random numbers within the engine.
 
-	Random number generator
+	The idRandom class provides a pseudo-random number generator implementation that can be seeded for reproducible sequences. It supports generating random integers within specified ranges and
+   floating-point numbers in both [0.0f, 1.0f] and [-1.0f, 1.0f] ranges. The class is designed to be lightweight and efficient for use throughout the engine's systems that require randomization. The
+   seed can be queried and modified, allowing for controlled random behavior in deterministic scenarios.
 
-===============================================================================
 */
-
 class idRandom
 {
 public:
@@ -107,14 +108,16 @@ ID_INLINE float idRandom::CRandomFloat()
 	return ( 2.0f * ( RandomFloat() - 0.5f ) );
 }
 
-/*
-===============================================================================
+/*!
+	\class idRandom2
+	\brief A random number generator class for producing pseudo-random integers and floats.
 
-	Random number generator
+	The idRandom2 class provides a pseudo-random number generation implementation that can be seeded for reproducible sequences. It offers methods to generate random integers within specified ranges
+   and random floating-point numbers in both positive and symmetric ranges. The class is designed for use in game engine systems that require randomization, such as procedural content generation, AI
+   behavior, or particle effects. The implementation uses a linear congruential generator algorithm with carefully chosen constants to provide good distribution properties for game-related
+   randomization needs. The class supports explicit seeding to allow for deterministic behavior during development and testing.
 
-===============================================================================
 */
-
 class idRandom2
 {
 public:

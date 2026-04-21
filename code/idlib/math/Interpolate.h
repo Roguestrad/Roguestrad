@@ -30,14 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_INTERPOLATE_H__
 #define __MATH_INTERPOLATE_H__
 
-/*
-==============================================================================================
+/*!
+	\class idInterpolate
+	\brief Template class for interpolating values over time with configurable start time, duration, and start/end values.
 
-	Linear interpolation.
+	The idInterpolate class provides a reusable mechanism for calculating interpolated values between a start and end state over a specified time duration. It is designed to support various data types
+   through its template parameter, making it flexible for different interpolation needs within the engine. The class manages the interpolation state through initialization, time-based value
+   calculation, and completion checking. It supports setting and retrieving start time, duration, and both start and end values. The interpolation behavior follows a linear progression between start
+   and end values, with clamping at the boundaries. This class is intended for use in animation systems, cinematic effects, and any scenario where smooth transitions between states are required. The
+   implementation is optimized for performance with inline methods for common operations and provides clear separation between configuration and evaluation phases.
 
-==============================================================================================
 */
-
 template<class type>
 class idInterpolate
 {
@@ -178,15 +181,18 @@ ID_INLINE type idInterpolate<type>::GetCurrentValue( int time ) const
 	}
 }
 
-/*
-==============================================================================================
+/*!
+	\class idInterpolateAccelDecelLinear
+	\brief Template class for smooth acceleration-deceleration-linear interpolation of typed values.
 
-	Continuous interpolation with linear acceleration and deceleration phase.
-	The velocity is continuous but the acceleration is not.
+	idInterpolateAccelDecelLinear provides a template-based interpolation mechanism that supports smooth transitions between start and end values with configurable acceleration and deceleration
+   phases. The class manages the time distribution across these phases and handles the underlying extrapolation calculations to produce continuous interpolated values. It is designed to be used in
+   scenarios requiring smooth animation or transition effects where the interpolation needs to start with acceleration, maintain a linear segment, and end with deceleration. The interpolation state
+   can be invalidated and reset using the Invalidate method, and the class maintains internal state to track the current phase. This implementation is intended for use in timed animation sequences,
+   cinematic effects, or any application requiring precise control over motion interpolation with acceleration and deceleration. The template parameter allows it to work with any type that supports
+   assignment and arithmetic operations.
 
-==============================================================================================
 */
-
 template<class type>
 class idInterpolateAccelDecelLinear
 {
@@ -421,15 +427,16 @@ ID_INLINE type idInterpolateAccelDecelLinear<type>::GetCurrentSpeed( int time ) 
 	return extrapolate.GetCurrentSpeed( time );
 }
 
-/*
-==============================================================================================
+/*!
+	\class idInterpolateAccelDecelSine
+	\brief Template class for smooth acceleration and deceleration sine-based interpolation with configurable timing and values.
 
-	Continuous interpolation with sinusoidal acceleration and deceleration phase.
-	Both the velocity and acceleration are continuous.
+	The idInterpolateAccelDecelSine class provides a template-based interpolation mechanism that implements smooth acceleration and deceleration using sine curves. It is designed to handle animations
+   or transitions where gradual speed changes are required, with distinct phases for acceleration, linear motion, and deceleration. The class supports configuration through timing parameters and
+   start/end values, and provides functions to query the current interpolated value, speed, and completion state. It also offers methods to update interpolation parameters dynamically, with
+   invalidation of current state when changes occur. The interpolation is typically used in engine animation systems for user interface transitions or other scenarios requiring smooth motion.
 
-==============================================================================================
 */
-
 template<class type>
 class idInterpolateAccelDecelSine
 {

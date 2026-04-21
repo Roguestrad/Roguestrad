@@ -73,6 +73,15 @@ typedef struct {
 	idVec3 normal;
 } traceModelEdge_t;
 
+/*!
+	\struct traceModelPoly_t
+	\brief Trace model polygon structure for collision detection.
+
+	This structure represents a polygon used in trace modeling for collision detection within the engine. It serves as a building block for more complex trace models that are used to determine object
+   intersections and collisions. The polygon data is typically used by the physics and collision system to accurately represent the shape of objects during trace operations. The structure is designed
+   to be lightweight and efficient for real-time collision detection scenarios.
+
+*/
 typedef struct {
 	idVec3	 normal;
 	float	 dist;
@@ -81,6 +90,17 @@ typedef struct {
 	int		 edges[MAX_TRACEMODEL_POLYEDGES];
 } traceModelPoly_t;
 
+/*!
+	\class idTraceModel
+	\brief A trace model class that represents geometric shapes for collision detection and physics simulation.
+
+	The idTraceModel class provides a flexible framework for representing various geometric shapes used in collision detection and physics simulation within the engine. It supports multiple primitive
+   types including boxes, octahedra, dodecahedra, cylinders, cones, and bone structures, each designed for specific collision scenarios. The class enables geometric transformations such as
+   translation, rotation, and shrinking, and provides methods for calculating mass properties and silhouette edges for rendering and physics calculations. Its design focuses on efficient
+   representation and manipulation of collision volumes that can be used in both static and dynamic environments. The class handles both polygonal and non-polygonal representations, with specialized
+   initialization methods for each primitive type and utilities for generating normals and computing physical properties.
+
+*/
 class idTraceModel
 {
 public:

@@ -30,16 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __VECTORSET_H__
 #define __VECTORSET_H__
 
-/*
-===============================================================================
+/*!
+	\class idVectorSet
+	\brief A spatial hash set for efficiently storing and retrieving vectors within a bounded volume.
 
-	Vector Set
+	The idVectorSet class provides a specialized data structure for managing sets of vectors within a defined bounding box using a spatial hash table for efficient lookups. It is designed to store
+   vectors of fixed dimensionality and supports finding existing vectors or adding new ones based on approximate equality within a specified epsilon tolerance. The class maintains internal state for
+   hash table indexing and bounding box parameters to enable fast spatial queries. The hash table is sized according to the boxHashSize parameter and the bounding box defined by mins and maxs
+   coordinates, allowing for efficient spatial partitioning of vectors. The class supports dynamic resizing of the underlying storage and provides memory allocation size reporting for performance
+   monitoring. The implementation uses a base idList for storage and extends it with hash table functionality to provide fast vector lookup and insertion operations.
 
-	Creates a set of vectors without duplicates.
-
-===============================================================================
 */
-
 template<class type, int dimension>
 class idVectorSet : public idList<type>
 {
@@ -213,16 +214,17 @@ ID_INLINE int idVectorSet<type, dimension>::FindVector( const type& v, const flo
 	return idList<type>::Num() - 1;
 }
 
-/*
-===============================================================================
+/*!
+	\class idVectorSubset
+	\brief A spatially-partitioned vector subset container for efficient duplicate vector detection and storage.
 
-	Vector Subset
+	The idVectorSubset class provides a specialized data structure for managing subsets of vectors within a defined bounding box, using spatial partitioning for efficient lookup and storage. It is
+   designed to deduplicate vectors in large datasets, commonly used in 3D rendering for vertex and texture coordinate remapping. The class maintains an internal hash table for spatial indexing,
+   allowing fast approximate matching of vectors within a specified epsilon tolerance. The template parameters type and dimension allow it to work with different vector types and dimensionalities.
+   Memory management is handled internally, with methods to query allocated and used sizes. The class supports initialization with bounding box parameters and hash table size, and provides operations
+   to clear the container and find existing vectors or add new ones. The implementation is optimized for performance through inline methods and careful spatial partitioning strategies.
 
-	Creates a subset without duplicates from an existing list with vectors.
-
-===============================================================================
 */
-
 template<class type, int dimension>
 class idVectorSubset
 {

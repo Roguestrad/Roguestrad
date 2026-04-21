@@ -47,6 +47,16 @@ class idMat3;
 class idMat4;
 class idCQuat;
 
+/*!
+	\class idQuat
+	\brief A quaternion class for representing and manipulating 3D rotations.
+
+	The idQuat class provides a comprehensive interface for working with quaternions, which are mathematical constructs commonly used in 3D graphics and game development to represent rotations. It
+   supports standard arithmetic operations such as addition, subtraction, and multiplication, as well as conversion to and from other rotation representations like Euler angles, rotation matrices, and
+   axis-angle formats. The class includes utility methods for normalizing quaternions, calculating inverses, and performing interpolation techniques like spherical linear interpolation (Slerp) and
+   linear interpolation (Lerp). It also provides access to quaternion components through array-style indexing and supports conversion to string representations for debugging purposes.
+
+*/
 class idQuat
 {
 public:
@@ -352,26 +362,20 @@ ID_INLINE float* idQuat::ToFloatPtr()
 	return &x;
 }
 
-/*
-===============================================================================
-
-	Specialization to get size of an idQuat generically.
-
-===============================================================================
-*/
 template<>
 struct idTupleSize<idQuat> {
 	enum { value = 4 };
 };
 
-/*
-===============================================================================
+/*!
+	\class idCQuat
+	\brief A class representing a quaternion for 3D rotation calculations.
 
-	Compressed quaternion
+	The idCQuat class provides functionality for working with quaternions, which are commonly used in 3D graphics and game engines for efficient and stable rotation calculations. The class supports
+   construction with identity or specific x, y, z components, component access through array-like indexing, comparison operations with exact or epsilon-based tolerance, conversion to various rotation
+   representations including Euler angles, rotation objects, 3x3 and 4x4 matrices, and a conversion to a full quaternion. It also supports string conversion for debugging and logging purposes.
 
-===============================================================================
 */
-
 class idCQuat
 {
 public:
@@ -501,13 +505,6 @@ ID_INLINE float* idCQuat::ToFloatPtr()
 	return &x;
 }
 
-/*
-===============================================================================
-
-	Specialization to get size of an idCQuat generically.
-
-===============================================================================
-*/
 template<>
 struct idTupleSize<idCQuat> {
 	enum { value = 3 };

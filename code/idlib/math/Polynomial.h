@@ -30,14 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_POLYNOMIAL_H__
 #define __MATH_POLYNOMIAL_H__
 
-/*
-===============================================================================
+/*!
+	\class idPolynomial
+	\brief A class representing polynomials of arbitrary degree with methods for evaluation, root finding, and algebraic operations.
 
-	Polynomial of arbitrary degree with real coefficients.
+	The idPolynomial class provides a comprehensive implementation for handling polynomials, supporting various operations including evaluation at real and complex points, differentiation,
+   integration, and finding roots using both specialized methods for low-degree polynomials and general numerical techniques for higher-degree cases. The class is designed to work with polynomials of
+   any degree, efficiently managing memory through dynamic allocation and providing convenient constructors for common polynomial types. It supports standard algebraic operations through operator
+   overloading and includes utility methods for comparing polynomials, zeroing coefficients, and retrieving polynomial data in various formats. The implementation uses Horner's method for efficient
+   polynomial evaluation and employs Laguerre's method for finding complex roots, along with specialized solvers for polynomials of degree 1 through 4.
 
-===============================================================================
 */
-
 class idPolynomial
 {
 public:

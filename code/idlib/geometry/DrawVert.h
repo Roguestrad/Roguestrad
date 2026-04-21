@@ -106,14 +106,16 @@ ID_INLINE halfFloat_t F32toF16( float a )
 	return ( halfFloat_t )( signbit | ( exponent << 10 ) | ( mantissa >> 13 ) );
 }
 
-/*
-===============================================================================
+/*!
+	\class idDrawVert
+	\brief Represents a vertex with position, normal, tangent, bitangent, texture coordinates, and color data used for rendering in the Roguestrad engine.
 
-	Draw Vertex.
+	The idDrawVert class encapsulates the data required for a vertex in the rendering pipeline, including position, normal, tangent, bitangent, texture coordinates, and color information. It provides
+   methods for setting and retrieving these components, with support for both normalized and raw vector data. The class facilitates vertex interpolation for animation and skinning operations, and
+   supports both standard and native half-precision floating-point texture coordinates. This structure is designed to be used with the engine's drawing and rendering systems, particularly for mesh
+   rendering and skinning effects in 3D graphics.
 
-===============================================================================
 */
-
 class idDrawVert
 {
 	friend class idSwap;

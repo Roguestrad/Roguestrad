@@ -30,22 +30,23 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SURFACE_H__
 #define __SURFACE_H__
 
-/*
-===============================================================================
-
-	Surface base class.
-
-	A surface is tesselated to a triangle mesh with each edge shared by
-	at most two triangles.
-
-===============================================================================
-*/
-
 typedef struct surfaceEdge_s {
 	int verts[2]; // edge vertices always with ( verts[0] < verts[1] )
 	int tris[2];  // edge triangles
 } surfaceEdge_t;
 
+/*!
+	\class idSurface
+	\brief A surface class that represents polygonal geometry with vertices, triangles, and edge connectivity for use in rendering and geometric operations.
+
+	The idSurface class encapsulates polygonal surface geometry used throughout the engine for rendering and geometric operations. It manages vertex data, triangle indices, and edge connectivity
+   information to support efficient rendering and geometric processing. The class provides constructors for creating surfaces from raw vertex and index data, as well as copy constructors for creating
+   deep copies of existing surfaces. Surface geometry can be transformed in place through translation and rotation operations. The class supports geometric operations such as splitting surfaces by
+   clipping planes, clipping surfaces in place, and performing ray and line intersection tests. It also provides functions to determine surface properties like connectivity, closure, and convexity.
+   Edge connectivity information is maintained and can be generated from triangle indices. The class is designed to work with the idDrawVert structure for vertex data and supports various geometric
+   queries and operations needed by the rendering and collision detection systems within the engine.
+
+*/
 class idSurface
 {
 public:

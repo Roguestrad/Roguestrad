@@ -199,18 +199,15 @@ int idSysThread::Run()
 	return 0;
 }
 
-/*
-================================================================================================
+/*!
+	\class idMyThread
+	\brief idMyThread is a base class for implementing custom thread logic in the Roguestrad engine.
 
-	test
+	idMyThread serves as an abstract base class for creating custom thread implementations within the Roguestrad engine. It inherits from idSysThread and provides a virtual Run() method that acts as
+   the primary execution entry point for thread operations. The class is designed to be extended by derived classes that implement specific thread behaviors through overriding the Run() method. The
+   stub implementation of Run() in idMyThread itself returns zero, indicating that derived classes must provide meaningful thread logic. This design supports the engine's threading model by allowing
+   developers to create specialized thread implementations for various concurrent operations while maintaining a consistent interface through the idSysThread base class.
 
-================================================================================================
-*/
-
-/*
-================================================
-idMyThread test class.
-================================================
 */
 class idMyThread : public idSysThread
 {

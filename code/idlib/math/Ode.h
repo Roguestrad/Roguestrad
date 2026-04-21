@@ -46,6 +46,16 @@ If you have questions concerning this license or the applicable additional terms
 
 typedef void ( *deriveFunction_t )( const float t, const void* userData, const float* state, float* derivatives );
 
+/*!
+	\class idODE
+	\brief A base class for defining ordinary differential equations used in physics simulation.
+
+	The idODE class serves as an abstract interface for implementing ordinary differential equation solvers within the engine's physics system. It defines the core contract for evaluating differential
+   equations at specific time steps, enabling various numerical integration methods to be applied to physical simulations. The virtual destructor ensures proper cleanup of derived implementations,
+   while the evaluate method provides the fundamental mechanism for advancing simulation states. This interface is designed to support flexible physics modeling where different types of differential
+   equations can be plugged into the same numerical solver framework.
+
+*/
 class idODE
 {
 public:
@@ -59,12 +69,16 @@ protected:
 	const void*		 userData;	// client data
 };
 
-//===============================================================
-//
-//	idODE_Euler
-//
-//===============================================================
+/*!
+	\class idODE_Euler
+	\brief Euler integration ODE solver for numerical simulation.
 
+	The idODE_Euler class provides a concrete implementation of the idODE interface using the Euler numerical integration method. It is designed to solve systems of ordinary differential equations by
+   advancing the system state through discrete time steps. The class is initialized with the dimension of the ODE system, a derivative function pointer, and optional user data for custom calculations.
+   During each evaluation step, it computes the derivatives at the current state and updates the system state using the simple forward Euler method. This approach is suitable for cases where
+   computational simplicity outweighs accuracy requirements, and it provides a basic foundation for more complex integration schemes that may build upon this solver.
+
+*/
 class idODE_Euler : public idODE
 {
 public:
@@ -108,12 +122,17 @@ protected:
 	float* derivatives; // space to store derivatives
 };
 
-//===============================================================
-//
-//	idODE_Midpoint
-//
-//===============================================================
+/*!
+	\class idODE_Midpoint
+	\brief A midpoint ordinary differential equation solver implementation.
 
+	The idODE_Midpoint class provides a numerical integration implementation for solving ordinary differential equations using the midpoint method. This class inherits from idODE and is designed to
+   handle systems of differential equations with a specified dimensionality. The solver requires a derivative function and optional user data to compute the integration steps. The implementation
+   manages temporary memory for state and derivative calculations during the integration process. The Evaluate method performs the actual midpoint integration step, taking the current state and
+   computing the new state based on the midpoint method for numerical stability. The class is intended for use in physics simulations and other computational modeling scenarios where accurate ODE
+   integration is required. Memory management is handled internally by the class, with cleanup performed in the destructor.
+
+*/
 class idODE_Midpoint : public idODE
 {
 public:
@@ -156,12 +175,17 @@ protected:
 	float* derivatives; // space to store derivatives
 };
 
-//===============================================================
-//
-//	idODE_RK4
-//
-//===============================================================
+/*!
+	\class idODE_RK4
+	\brief Runge-Kutta 4th order ordinary differential equation solver implementation.
 
+	The idODE_RK4 class provides a concrete implementation of an ordinary differential equation solver using the fourth-order Runge-Kutta numerical integration method. This solver is designed to
+   advance the state of a system from one time point to another by computing intermediate derivative evaluations at four different points within the integration interval. The class requires the
+   dimensionality of the ODE system, a derivative function pointer, and user data to be provided during construction. During evaluation, it takes the current state vector and computes a new state
+   vector at the target time, returning the time step delta used in the integration process. The solver manages temporary memory for state and derivative vectors required during the integration
+   computations. This implementation is suitable for simulating physical systems or other dynamic behaviors where fourth-order accuracy is desired.
+
+*/
 class idODE_RK4 : public idODE
 {
 public:
@@ -207,12 +231,17 @@ protected:
 	float* d4;
 };
 
-//===============================================================
-//
-//	idODE_RK4Adaptive
-//
-//===============================================================
+/*!
+	\class idODE_RK4Adaptive
+	\brief Adaptive Runge-Kutta 4th order ordinary differential equation solver with dynamic step size adjustment.
 
+	The idODE_RK4Adaptive class implements a numerical integration method for solving systems of ordinary differential equations using the adaptive fourth-order Runge-Kutta technique. It is designed
+   to automatically adjust the step size during integration to maintain a specified error tolerance, making it suitable for solving ODE systems where high accuracy is required. The solver operates on
+   systems of a fixed dimension and requires a user-provided derivative function to compute state transitions. The class manages temporary memory for intermediate calculations during the integration
+   process, with proper cleanup in its destructor. The adaptive nature of the solver allows it to dynamically increase or decrease step size based on local error estimates, improving both efficiency
+   and accuracy of the numerical solution.
+
+*/
 class idODE_RK4Adaptive : public idODE
 {
 public:

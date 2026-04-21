@@ -46,6 +46,7 @@ const char* jobNames[] = {
 };
 
 static const int MAX_REGISTERED_JOBS = 128;
+
 struct registeredJob {
 	jobRun_t	function;
 	const char* name;
@@ -142,6 +143,16 @@ static idCVar	 jobs_longJobMicroSec( "jobs_longJobMicroSec", "10000", CVAR_INTEG
 
 const static int MAX_THREADS = 32;
 
+/*!
+	\struct threadJobListState_t
+	\brief Thread job list state management structure for concurrent task execution.
+
+	The threadJobListState_t structure manages the state of thread job lists used in concurrent task execution within the engine. It maintains synchronization information including version numbers,
+   job list pointers, and indexing information for tracking job execution progress. The structure supports initialization with default values or specific version numbers, allowing for proper state
+   management during multi-threaded operations. The version field helps in detecting state changes, while the indexing variables track job execution positions to ensure proper coordination between
+   threads. The job list pointer references the actual collection of jobs to be processed, making this structure essential for the engine's thread management system.
+
+*/
 struct threadJobListState_t {
 	/*!
 		\brief Initializes a threadJobListState_t object with default values.
@@ -181,6 +192,15 @@ struct threadJobListState_t {
 	int						   nextJobIndex;
 };
 
+/*!
+	\struct threadStats_t
+	\brief Data structure for collecting thread statistics.
+
+	The threadStats_t struct is designed to aggregate and store performance metrics related to thread execution within the engine. It serves as a container for various statistical data that can be
+   used to monitor and analyze the behavior of threaded components. This structure is typically used by the engine's threading subsystem to gather information about CPU utilization, execution times,
+   and other relevant metrics for debugging and optimization purposes.
+
+*/
 struct threadStats_t {
 	unsigned int numExecutedJobs;
 	unsigned int numExecutedSyncs;
@@ -192,6 +212,16 @@ struct threadStats_t {
 	uint64		 threadTotalTime[MAX_THREADS];
 };
 
+/*!
+	\class idParallelJobList_Threads
+	\brief Manages parallel job execution with thread synchronization.
+
+	The idParallelJobList_Threads class provides a mechanism for organizing and executing parallel jobs across multiple threads while maintaining proper synchronization. It supports job insertion,
+   synchronization points, and resource management for threaded execution. The class handles job submission, waiting for completion, and tracking execution statistics including timing information for
+   each thread unit. It ensures proper cleanup of resources during destruction by waiting for all pending jobs to complete. The parallel job list can be submitted for execution with optional
+   dependencies on other job lists and supports different priority levels for job scheduling.
+
+*/
 class idParallelJobList_Threads
 {
 public:
@@ -406,6 +436,7 @@ private:
 	idSysInterlockedInteger	 doneGuards[NUM_DONE_GUARDS];
 	int						 currentDoneGuard;
 	idSysInterlockedInteger	 version;
+
 	struct job_t {
 		jobRun_t function;
 		void*	 data;
@@ -963,6 +994,15 @@ idJobThread
 
 const int JOB_THREAD_STACK_SIZE = 256 * 1024; // same size as the SPU local store
 
+/*!
+	\struct threadJobList_t
+	\brief Thread job list structure for managing concurrent tasks.
+
+	This structure serves as a container for organizing and managing thread jobs within the engine's multithreading system. It is designed to facilitate the distribution of work across multiple
+   threads, enabling efficient parallel execution of tasks such as asset loading, physics calculations, or rendering operations. The structure is intended to be used in conjunction with the engine's
+   thread management infrastructure to optimize performance through concurrent processing. TODO: clarify the specific memory management or ownership semantics of this structure.
+
+*/
 struct threadJobList_t {
 	idParallelJobList_Threads* jobList;
 	int						   version;
@@ -970,6 +1010,16 @@ struct threadJobList_t {
 
 static idCVar jobs_prioritize( "jobs_prioritize", "1", CVAR_BOOL | CVAR_NOCHEAT, "prioritize job lists" );
 
+/*!
+	\class idJobThread
+	\brief Manages job execution for parallel processing across multiple threads.
+
+	The idJobThread class serves as a worker thread implementation designed to process job lists in a parallel execution environment. It is responsible for executing job lists according to
+   priority-based scheduling and maintaining thread safety through mutex protection when managing job list queues. Each thread is bound to a specific CPU core for optimal performance and follows a
+   naming convention that ensures compatibility with system thread limits. The class integrates with the broader job scheduling system by adding job lists to queues and processing them in a controlled
+   loop that handles completion, stalling, and yielding scenarios. The Run method implements the core processing logic where job lists are fetched, scheduled, and executed until termination.
+
+*/
 class idJobThread : public idSysThread
 {
 public:
@@ -1183,6 +1233,16 @@ extern void Sys_CPUCount( int& logicalNum, int& coreNum, int& packageNum );
 
 idCVar jobs_numThreads( "jobs_numThreads", NUM_JOB_THREADS, CVAR_INTEGER | CVAR_NOCHEAT, "number of threads used to crunch through jobs", 0, MAX_JOB_THREADS );
 
+/*!
+	\class idParallelJobManagerLocal
+	\brief Manages parallel job execution using worker threads with configurable CPU core assignments.
+
+	The idParallelJobManagerLocal class implements a parallel job management system that coordinates worker threads for executing jobs across multiple CPU cores. It initializes worker threads with
+   specific core assignments based on platform (console vs PC) and provides methods for allocating, submitting, and cleaning up job lists. The system supports priority-based scheduling and
+   synchronization points within job lists. The class maintains an internal collection of job lists and ensures proper thread synchronization during job execution and cleanup operations. Job lists can
+   be submitted for processing using a specified number of threads, with support for sequential execution when no parallel threads are available.
+
+*/
 class idParallelJobManagerLocal : public idParallelJobManager
 {
 public:

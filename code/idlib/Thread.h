@@ -30,12 +30,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __THREAD_H__
 #define __THREAD_H__
 
-/*
-================================================
-idSysMutex provides a C++ wrapper to the low level system mutex functions.  A mutex is an
-object that can only be locked by one thread at a time.  It's used to prevent two threads
-from accessing the same piece of data simultaneously.
-================================================
+/*!
+	\class idSysMutex
+	\brief A cross-platform mutex synchronization primitive for thread safety.
+
+	The idSysMutex class provides a thread synchronization mechanism that allows exclusive access to shared resources across multiple threads. It abstracts the underlying operating system mutex
+   implementation and is designed for use in multi-threaded environments where resource contention needs to be managed. The class supports both blocking and non-blocking lock acquisition modes, making
+   it suitable for different synchronization requirements. The mutex can be locked to prevent other threads from accessing a critical section, and unlocked to allow other threads to proceed. The copy
+   constructor and assignment operator are present but appear to be implemented as no-ops, suggesting that mutex objects should not be copied in a traditional sense, with the underlying system
+   primitives handling synchronization state appropriately.
+
 */
 class idSysMutex
 {
@@ -86,11 +90,15 @@ private:
 	void operator=( const idSysMutex& s ) { }
 };
 
-/*
-================================================
-idScopedCriticalSection is a helper class that automagically locks a mutex when it's created
-and unlocks it when it goes out of scope.
-================================================
+/*!
+	\class idScopedCriticalSection
+	\brief A scoped critical section that automatically manages mutex locking and unlocking.
+
+	The idScopedCriticalSection class provides a RAII-based solution for managing mutex locking and unlocking in a thread-safe manner. It automatically acquires a lock on a provided mutex during
+   construction and releases the lock upon destruction, ensuring proper cleanup even if exceptions occur. This design intent promotes safe concurrent access to shared resources by encapsulating the
+   locking mechanism within the object's lifetime. The class is intended to be used in scenarios where critical sections need to be managed without manual lock/unlock calls, reducing the risk of
+   deadlocks and improving code maintainability. The mutex reference passed to the constructor is used exclusively for lock management, with no ownership transfer implied.
+
 */
 class idScopedCriticalSection
 {
@@ -110,12 +118,16 @@ private:
 	idSysMutex* mutex; // NOTE: making this a reference causes a TypeInfo crash
 };
 
-/*
-================================================
-idSysSignal is a C++ wrapper for the low level system signal functions.  A signal is an object
-that a thread can wait on for it to be raised.  It's used to indicate data is available or that
-a thread has reached a specific point.
-================================================
+/*!
+	\class idSysSignal
+	\brief A cross-platform synchronization primitive for thread coordination.
+
+	The idSysSignal class provides a wrapper around system-level signal primitives to enable thread synchronization and coordination across different execution contexts. It supports both automatic and
+   manual reset modes, allowing for flexible signaling behavior in multithreaded applications. The class is designed to work with platform-specific system calls through the Sys_SignalCreate,
+   Sys_SignalWait, and associated functions, making it a low-level synchronization mechanism for engine components that require thread-safe communication. The class handles the creation and management
+   of underlying system signal resources, providing methods to raise signals, clear them, and wait for them with optional timeouts. The copy constructor and assignment operator are implemented
+   trivially, indicating that copying of signal objects should be avoided as it may lead to undefined behavior.
+
 */
 class idSysSignal
 {
@@ -171,11 +183,15 @@ private:
 	void operator=( const idSysSignal& s ) { }
 };
 
-/*
-================================================
-idSysInterlockedInteger is a C++ wrapper for the low level system interlocked integer
-routines to atomically increment or decrement an integer.
-================================================
+/*!
+	\class idSysInterlockedInteger
+	\brief Thread-safe interlocked integer implementation for atomic operations.
+
+	This class provides a thread-safe implementation of an integer value with atomic operations for concurrent access. It is designed to support safe increment, decrement, addition, and subtraction
+   operations across multiple threads without external synchronization. The class is intended for use in scenarios where atomic counters or coordination variables are needed in multi-threaded
+   environments. The GetValue and SetValue methods provide access to the underlying integer value, though SetValue is not atomic and should be used carefully in concurrent contexts. The implementation
+   leverages interlocked operations to ensure that all modification operations are completed atomically, preventing race conditions and ensuring data consistency in multi-threaded applications.
+
 */
 class idSysInterlockedInteger
 {
@@ -251,11 +267,17 @@ private:
 	interlockedInt_t value;
 };
 
-/*
-================================================
-idSysInterlockedPointer is a C++ wrapper around the low level system interlocked pointer
-routine to atomically set a pointer while retrieving the previous value of the pointer.
-================================================
+/*!
+	\class idSysInterlockedPointer
+	\brief Thread-safe interlocked pointer class for atomic pointer operations in multi-threaded environments.
+
+	This class provides a thread-safe mechanism for managing pointer values through atomic operations. It is designed to support concurrent access to pointer data structures where atomic updates,
+   compares, and reads are required. The implementation leverages system-level interlocked operations to ensure that pointer modifications occur atomically, preventing data races in multi-threaded
+   scenarios. The class is templated to work with any pointer type, making it flexible for various use cases throughout the engine. It supports three primary operations: setting a new pointer value
+   atomically, comparing and exchanging pointer values only when a condition is met, and retrieving the current pointer value in a thread-safe manner. The interlocked pointer is intended to be used in
+   performance-critical sections where thread safety is paramount but explicit locking mechanisms are undesirable. This design allows for efficient concurrent access patterns while maintaining the
+   integrity of pointer data across multiple threads.
+
 */
 template<typename T>
 class idSysInterlockedPointer
@@ -312,10 +334,9 @@ private:
 	T* ptr;
 };
 
-/*
-================================================
-idSysThread is an abstract base class, to be extended by classes implementing the
-idSysThread::Run() method.
+/*!
+	\class idSysThread
+	\brief idSysThread is a cross-platform thread management class that provides functionality for creating, controlling, and synchronizing system threads within the Roguestrad engine.
 
 	class idMyThread : public idSysThread {
 	public:
@@ -329,10 +350,10 @@ idSysThread::Run() method.
 	idMyThread thread;
 	thread.Start( "myThread" );
 
-A worker thread is a thread that waits in place (without consuming CPU)
-until work is available. A worker thread is implemented as normal, except that, instead of
-calling the Start() method, the StartWorker() method is called to start the thread.
-Note that the Sys_CreateThread function does not support the concept of worker threads.
+	A worker thread is a thread that waits in place (without consuming CPU)
+	until work is available. A worker thread is implemented as normal, except that, instead of
+	calling the Start() method, the StartWorker() method is called to start the thread.
+	Note that the Sys_CreateThread function does not support the concept of worker threads.
 
 	class idMyWorkerThread : public idSysThread {
 	public:
@@ -355,15 +376,13 @@ Note that the Sys_CreateThread function does not support the concept of worker t
 		// use results from worker thread here
 	}
 
-In the above example, the thread does not continuously run in parallel with the main Thread,
-but only for a certain period of time in a very controlled manner. Work is set up for the
-Thread and then the thread is signalled to process that work while the main thread continues.
-After doing other work, the main thread can wait for the worker thread to finish, if it has not
-finished already. When the worker thread is done, the main thread can safely use the results
-from the worker thread.
+	In the above example, the thread does not continuously run in parallel with the main Thread,
+	but only for a certain period of time in a very controlled manner. Work is set up for the
+	Thread and then the thread is signalled to process that work while the main thread continues.
+	After doing other work, the main thread can wait for the worker thread to finish, if it has not
+	finished already. When the worker thread is done, the main thread can safely use the results
+	from the worker thread.
 
-Note that worker threads are useful on all platforms but they do not map to the SPUs on the PS3.
-================================================
 */
 class idSysThread
 {
@@ -515,10 +534,9 @@ private:
 	void operator=( const idSysThread& s ) { }
 };
 
-/*
-================================================
-idSysWorkerThreadGroup implements a group of worker threads that
-typically crunch through a collection of similar tasks.
+/*!
+	\class idSysWorkerThreadGroup
+	\brief Manages a group of worker threads for parallel execution.
 
 	class idMyWorkerThread : public idSysThread {
 	public:
@@ -537,12 +555,6 @@ typically crunch through a collection of similar tasks.
 		workers.SignalWorkAndWait();
 		// use results from the worker threads here
 	}
-
-The concept of worker thread Groups is probably most useful for tools and compilers.
-For instance, the AAS Compiler is using a worker thread group. Although worker threads
-will work well on the PC, Mac and the 360, they do not directly map to the PS3,
-in that the worker threads won't automatically run on the SPUs.
-================================================
 */
 template<class threadType>
 class idSysWorkerThreadGroup
@@ -640,10 +652,9 @@ ID_INLINE void idSysWorkerThreadGroup<threadType>::SignalWorkAndWait()
 	}
 }
 
-/*
-================================================
-idSysThreadSynchronizer, allows a group of threads to
-synchronize with each other half-way through execution.
+/*!
+	\class idSysThreadSynchronizer
+	\brief A thread synchronization utility that manages multiple signals for coordinating thread execution.
 
 	idSysThreadSynchronizer sync;
 
@@ -672,7 +683,6 @@ synchronize with each other half-way through execution.
 		// use results from the worker threads here
 	}
 
-================================================
 */
 class idSysThreadSynchronizer
 {

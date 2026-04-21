@@ -30,14 +30,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_COMPLEX_H__
 #define __MATH_COMPLEX_H__
 
-/*
-===============================================================================
+/*!
+	\class idComplex
+	\brief A class representing complex numbers with basic arithmetic operations and utilities.
 
-  Complex number
+	The idComplex class provides a complete implementation for handling complex numbers in the engine, supporting standard arithmetic operations, comparisons, and utility functions. It is designed to
+   be lightweight and efficient, with inline methods for performance-critical operations. The class supports both scalar and complex number operations, making it suitable for mathematical computations
+   involving complex values, such as signal processing or physics simulations within the engine. The interface is intended to be intuitive for developers working with complex number mathematics while
+   maintaining compatibility with the engine's existing codebase patterns.
 
-===============================================================================
 */
-
 class idComplex
 {
 public:

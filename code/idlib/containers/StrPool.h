@@ -40,6 +40,16 @@ If you have questions concerning this license or the applicable additional terms
 
 class idStrPool;
 
+/*!
+	\class idPoolStr
+	\brief A string pool implementation that tracks user references and manages string memory allocation.
+
+	The idPoolStr class extends idStr to provide string pooling functionality with user reference counting. It is designed to manage memory for strings that are frequently allocated and deallocated,
+   reducing memory fragmentation and improving performance. The class maintains a count of users to ensure proper resource cleanup, with the destructor asserting that no users remain when the object
+   is destroyed. The string pool stores strings in allocated memory that can be tracked through the Allocated() and Size() methods. The GetPool() method provides access to the underlying string pool
+   from which the string was allocated, allowing for proper management of shared string resources.
+
+*/
 class idPoolStr : public idStr
 {
 	friend class idStrPool;
@@ -76,6 +86,16 @@ private:
 	mutable int numUsers;
 };
 
+/*!
+	\class idStrPool
+	\brief A string pool implementation for efficient storage and management of shared strings.
+
+	The idStrPool class provides a mechanism for storing and managing strings in a memory-efficient manner by reusing identical strings. It maintains a hash table for fast lookups and supports both
+   case-sensitive and case-insensitive string comparisons. The pool tracks reference counts for strings to determine when they can be safely freed. This design enables efficient string handling in
+   engines where many identical strings may exist, reducing memory footprint and improving performance through string reuse. The class supports allocation of new strings, freeing of strings when no
+   longer referenced, and copying of strings between different pools.
+
+*/
 class idStrPool
 {
 public:

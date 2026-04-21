@@ -40,6 +40,15 @@ If you have questions concerning this license or the applicable additional terms
 
 #define idStack( type, next ) idStackTemplate<type, ( int )&( ( ( type* )NULL )->next )>
 
+/*!
+	\class idStackTemplate
+	\brief A template-based stack implementation for managing elements in a last-in-first-out structure.
+
+	This class provides a generic stack template that supports dynamic element insertion and removal. The template parameters define the element type and the offset to the next element within the
+   structure. The implementation manages a linked list of elements where each element points to the next one in the stack. The Add method inserts elements at the top of the stack, while the Get method
+   retrieves and removes the top element. The stack maintains both top and bottom pointers to efficiently handle operations on both ends of the structure.
+
+*/
 template<class type, int nextOffset>
 class idStackTemplate
 {

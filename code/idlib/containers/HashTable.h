@@ -30,11 +30,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __HASHTABLE_H__
 #define __HASHTABLE_H__
 
-/*
-================================================================================================
-idHashNodeT is a generic node for a HashTable. It is specialized by the
-StringHashNode and CStringHashNode template classes.
-================================================================================================
+/*!
+	\class idHashNodeT
+	\brief Template class for hash table nodes used in hash table implementations.
+
+	The idHashNodeT class serves as a generic hash table node template that can store key-value pairs and maintain linked list chains for collision resolution. It is designed to be used as a building
+   block for hash table data structures, providing functionality for node creation, hash computation, and key comparison. The class is templated on key and value types, allowing it to work with any
+   data types that support the required operations. Each node maintains a pointer to the next node in its bucket's collision chain, enabling efficient storage and retrieval of key-value pairs in hash
+   tables. The static methods provide essential hash table operations including hash index calculation based on a mask and key comparison functions, making this class suitable for integration into
+   various hash table implementations within the engine's data structures.
+
 */
 template<typename _key_, class _value_>
 class idHashNodeT
@@ -107,12 +112,16 @@ public:
 	idHashNodeT<_key_, _value_>* next;
 };
 
-/*
-================================================
-idHashNodeT is a HashNode that provides for partial
-specialization for the HashTable, allowing the String class's Cmp function to be used
-for inserting values in sorted order.
-================================================
+/*!
+	\class idHashNodeT< idStr, _value_ >
+	\brief Hash node implementation for a hash table with string keys and arbitrary value types.
+
+	This template class implements a hash node used in hash table data structures, where keys are of type idStr and values are of type _value_. The class provides the fundamental building block for
+   hash table operations, including node construction, hash computation, and key comparison. It supports linking nodes in chains within hash buckets and is designed to work with hash table
+   implementations that manage the overall table structure and resizing. The hash computation uses a bitwise AND operation with a table mask to ensure proper indexing within the hash table bounds. The
+   key comparison is case-insensitive, following the conventions of idStr::Icmp for consistent string ordering. This node type is intended to be used internally by hash table implementations and does
+   not manage memory allocation or deallocation of the node objects themselves.
+
 */
 template<class _value_>
 class idHashNodeT<idStr, _value_>
@@ -166,13 +175,15 @@ public:
 	idHashNodeT<idStr, _value_>* next;
 };
 
-/*
-================================================
-idHashNodeT is a HashNode that provides for a partial specialization
-for the HashTable, allowing the String class's Cmp function to
-be used for inserting values in sorted order. It also ensures that a copy of the the key is
-stored in a String (to more closely model the original implementation of the HashTable).
-================================================
+/*!
+	\class idHashNodeT< const char *, _value_ >
+	\brief A hash node template class for storing key-value pairs with string keys in a hash table implementation.
+
+	This template class provides a hash node implementation specifically designed for use with string keys stored as const char pointers. It serves as a fundamental building block for hash table data
+   structures within the engine, supporting efficient key-value storage and retrieval. The class includes static methods for hash computation and key comparison that are optimized for string handling.
+   The node maintains links to other nodes in the same hash bucket through the next pointer, enabling chaining for collision resolution. The template parameter allows for flexible value types while
+   maintaining the string key constraint. This design supports the engine's need for fast associative storage with case-insensitive key lookups.
+
 */
 template<class _value_>
 class idHashNodeT<const char*, _value_>
@@ -225,15 +236,16 @@ public:
 	idHashNodeT<const char*, _value_>* next;
 };
 
-/*
-================================================
-idHashTableT is a general implementation of a hash table data type. It is
-slower than the HashIndex, but it can also be used for LinkedLists and other data structures,
-rather than just indexes and arrays.
+/*!
+	\class idHashTableT
+	\brief A hash table implementation template for storing key-value pairs with efficient lookup and insertion operations.
 
-It uses an arbitrary key type. For String keys, use the StringHashTable template
-specialization.
-================================================
+	The idHashTableT class provides a template-based hash table implementation designed for efficient storage and retrieval of key-value pairs. It uses a linked list approach within each hash bucket
+   to handle collisions, ensuring good performance for typical use cases. The table is initialized with a power-of-two size to enable fast bitwise operations during hashing. The class supports various
+   operations including setting values, retrieving values, removing entries, and clearing the entire table. It also provides utility functions for memory tracking, entry enumeration, and checking
+   distribution quality. The hash table maintains sorted order within buckets to optimize lookups, and handles memory management through standard allocation and deallocation patterns. The
+   implementation is intended for use in engine systems that require fast associative storage with minimal overhead, such as resource management, caching, or configuration systems.
+
 */
 template<typename _key_, class _value_>
 class idHashTableT
@@ -759,6 +771,15 @@ public:
 	int	   GetSpread() const;
 
 private:
+	/*!
+		\struct idHashTable::hashnode_s
+		\brief Hash table node structure for storing key-value pairs in the hash table implementation.
+
+		This structure represents a node within the hash table data structure used for efficient key-value pair storage and retrieval. The node contains a key-value pair along with a pointer to the
+	   next node in the chain, supporting collision resolution through chaining. It is designed to work with the idHashTable template class and is not intended for direct instantiation outside of the
+	   hash table's internal mechanisms.
+
+	*/
 	struct hashnode_s {
 		idStr		key;
 		Type		value;

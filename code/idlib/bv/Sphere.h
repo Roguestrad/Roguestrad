@@ -76,14 +76,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __BV_SPHERE_H__
 #define __BV_SPHERE_H__
 
-/*
-===============================================================================
+/*!
+	\class idSphere
+	\brief A mathematical sphere class used for geometric calculations and spatial queries in the engine.
 
-	Sphere
+	The idSphere class represents a 3D geometric sphere with origin point and radius, designed for efficient spatial operations and collision detection. It provides methods for sphere construction,
+   transformation, intersection testing, and geometric queries. The class supports both point and sphere inclusion tests, line and ray intersection calculations, and various projection operations. It
+   is optimized for performance with inline methods and avoids expensive operations like square root calculations where possible. The sphere can be used for bounding volumes, collision detection, and
+   spatial partitioning within the engine's geometric algorithms.
 
-===============================================================================
 */
-
 class idSphere
 {
 public:

@@ -63,16 +63,15 @@ enum jobListParallelism_t {
 	#undef AddJob
 #endif
 
-/*
-================================================
-idParallelJobList
+/*!
+	\class idParallelJobList
+	\brief Manages parallel execution of jobs with synchronization support
 
-A job should be at least a couple of 1000 clock cycles in
-order to outweigh any job switching overhead. On the other
-hand a job should consume no more than a couple of
-100,000 clock cycles to maintain a good load balance over
-multiple processing units.
-================================================
+	Provides a mechanism for organizing and executing jobs in parallel while supporting synchronization points and performance tracking. The class maintains a list of jobs that can be submitted for
+   parallel execution with optional dependencies on other job lists. It supports different synchronization types and provides detailed timing information for performance analysis. Jobs are executed
+   using a thread pool managed by the underlying job list threads system. The class tracks execution statistics including job counts, timing data, and resource utilization across multiple processing
+   units. Memory management is handled through the destructor which properly releases thread resources.
+
 */
 class idParallelJobList
 {
@@ -203,13 +202,15 @@ private:
 	~idParallelJobList();
 };
 
-/*
-================================================
-idParallelJobManager
+/*!
+	\class idParallelJobManager
+	\brief Manages parallel job execution and job list allocation for multi-threaded processing.
 
-This is the only interface through which job lists
-should be allocated or freed.
-================================================
+	The idParallelJobManager class serves as the central coordinator for parallel task execution within the engine, providing an interface for managing job lists and their associated processing units.
+   It abstracts the underlying threading implementation, allowing different backends to handle the actual parallelization. The class supports job list allocation with specific priorities and resource
+   limits, and provides mechanisms for synchronizing completion of all pending jobs. The manager maintains a registry of active job lists and exposes information about available processing units to
+   optimize workload distribution. This design enables efficient utilization of multi-core systems while maintaining separation between task definition and execution scheduling.
+
 */
 class idParallelJobManager
 {
@@ -246,10 +247,15 @@ extern idParallelJobManager* parallelJobManager;
 */
 void						 RegisterJob( jobRun_t function, const char* name );
 
-/*
-================================================
-idParallelJobRegistration
-================================================
+/*!
+	\class idParallelJobRegistration
+	\brief Manages registration of parallel jobs for execution within the engine's parallel processing system.
+
+	This class serves as a registration mechanism for parallel jobs that can be executed concurrently within the engine's parallel processing framework. The class stores a function pointer and
+   associated name to enable the parallel job system to identify and execute the job appropriately. It is designed to integrate with the engine's existing parallel processing infrastructure, allowing
+   for efficient distribution of work across multiple threads. The registration process ensures that jobs are properly set up for concurrent execution while maintaining debugging and tracking
+   capabilities through the provided name identifier.
+
 */
 class idParallelJobRegistration
 {

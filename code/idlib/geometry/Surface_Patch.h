@@ -30,14 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SURFACE_PATCH_H__
 #define __SURFACE_PATCH_H__
 
-/*
-===============================================================================
+/*!
+	\class idSurface_Patch
+	\brief A patch surface implementation for representing and manipulating subdivision surfaces in the engine.
 
-	Bezier patch surface.
+	The idSurface_Patch class provides functionality for creating, subdividing, and rendering patch surfaces which are used to represent smooth curved surfaces in the engine. It inherits from
+   idSurface and extends its capabilities to handle patch-specific operations like subdivision, normal generation, and vertex manipulation. The class supports both implicit subdivision based on error
+   thresholds and explicit subdivision with fixed numbers of divisions. It manages vertex data through an expanded buffer system that allows for efficient memory allocation and processing. The patch
+   can be manipulated through various operations like putting points on the curve, removing linear columns and rows, and generating triangle indexes for rendering. The implementation supports both
+   uniform and non-uniform subdivision approaches while maintaining proper vertex interpolation and normal calculation for smooth surface representation.
 
-===============================================================================
 */
-
 class idSurface_Patch : public idSurface
 {
 public:

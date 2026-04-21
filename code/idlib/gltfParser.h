@@ -44,6 +44,10 @@ public:
 	virtual idStr& Name() = 0;
 };
 
+/*!
+	\class parseType
+	\brief A template class for managing type parsing operations.
+*/
 template<class T>
 class parseType
 {
@@ -60,6 +64,10 @@ public:
 	T*	 item;
 };
 
+/*!
+	\class gltfItem
+	\brief A GLTF item handler that manages named GLTF data with parsing capabilities.
+*/
 class gltfItem : public parsable, public parseType<idStr>
 {
 public:
@@ -92,6 +100,10 @@ private:
 	idStr name;
 };
 
+/*!
+	\class gltfObject
+	\brief A class for managing GLTF objects with parsing capabilities.
+*/
 class gltfObject : public parsable, public parseType<idStr>
 {
 public:
@@ -148,6 +160,10 @@ private:
 	idStr object;
 };
 
+/*!
+	\class gltfItem_Extra
+	\brief A class for handling GLTF item extra data parsing and storage.
+*/
 class gltfItem_Extra : public parsable, public parseType<gltfExtra>
 {
 public:
@@ -210,6 +226,10 @@ private:
 	idLexer*  parser;
 };
 
+/*!
+	\class gltfItem_uri
+	\brief A class for handling glTF item URI references and data loading.
+*/
 class gltfItem_uri : public parsable, public parseType<idStr>
 {
 public:
@@ -668,6 +688,16 @@ gltfItemClass(
 	} );
 #undef gltfItemClass
 
+/*!
+	\class gltfItemArray
+	\brief Container class for managing an array of glTF item definitions.
+
+	This class provides functionality for storing and managing a collection of glTF item definitions, with methods for adding items, parsing JSON data into the collection, and retrieving specific
+   items by name. The class handles memory management through its destructor which properly cleans up allocated items. The parsing functions support JSON-like structures with key-value pairs and
+   nested objects, making it suitable for processing glTF file formats. The array maintains an internal collection of items that can be accessed by their string names for efficient retrieval during
+   processing workflows.
+
+*/
 class gltfItemArray
 {
 public:
@@ -749,6 +779,11 @@ private:
 
 #pragma region GLTF Object parsing
 class gltfPropertyArray;
+
+/*!
+	\class gltfPropertyItem
+	\brief A class representing a property item with a null array pointer.
+*/
 class gltfPropertyItem
 {
 public:
@@ -766,6 +801,10 @@ public:
 	idToken			   item;
 };
 
+/*!
+	\class gltfPropertyArray
+	\brief A container for managing GLTF property arrays with iterator support for parsing and traversal.
+*/
 class gltfPropertyArray
 {
 public:
@@ -828,6 +867,17 @@ private:
 };
 #pragma endregion
 
+/*!
+	\class GLTF_Parser
+	\brief A parser for GLTF and GLB file formats that processes and structures 3D asset data.
+
+	This class provides functionality to load and parse GLTF and GLB files, extracting 3D asset information including scenes, nodes, meshes, materials, textures, animations, and skeleton data. It
+   handles both JSON-based GLTF files and binary GLB files, managing memory and internal state during the parsing process. The parser supports hierarchical node structures, proper parent-child
+   relationships, and various GLTF extensions. It includes specific methods for parsing different sections of the GLTF format such as buffers, buffer views, cameras, materials, and animations. The
+   class maintains internal tracking flags to manage parsing state and ensures proper cleanup of resources through its shutdown method. It provides detailed parsing capabilities with verbose output
+   support for debugging purposes.
+
+*/
 class GLTF_Parser
 {
 public:
@@ -1130,6 +1180,10 @@ private:
 	bool		 bufferViewsDone;
 };
 
+/*!
+	\class gltfManager
+	\brief Manages glTF file identifier extraction from filenames.
+*/
 class gltfManager
 {
 public:

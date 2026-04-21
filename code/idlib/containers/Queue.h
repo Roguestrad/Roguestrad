@@ -29,12 +29,15 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __QUEUE_H__
 #define __QUEUE_H__
 
-/*
-===============================================================================
+/*!
+	\class idQueueTemplate
+	\brief A generic queue template implementation for managing ordered collections of elements.
 
-	Queue template
+	The idQueueTemplate class provides a generic queue implementation that manages ordered collections of elements using a linked list structure. The template parameters allow for type flexibility and
+   specify the offset to the next pointer field within the element type. The queue supports efficient insertion at the end and retrieval/removal from the front, making it suitable for scenarios
+   requiring first-in-first-out ordering. The implementation handles empty queue states correctly and maintains proper linkage between elements. This queue template is designed for use within the
+   engine's data structures where ordered element management is required, with the next pointer offset being explicitly defined to support different element types and memory layouts.
 
-===============================================================================
 */
 template<class type, int nextOffset>
 class idQueueTemplate
@@ -107,10 +110,16 @@ type* idQueueTemplate<type, nextOffset>::Get()
 	return element;
 }
 
-/*
-================================================
-A node of a Queue
-================================================
+/*!
+	\class idQueueNode
+	\brief A template class representing a node in a queue data structure.
+
+	The idQueueNode class serves as a building block for queue implementations within the engine, providing a simple mechanism to link nodes together. It is a template class to allow for generic use
+   with different data types. Each node maintains a pointer to the next node in the queue, enabling the construction of linked queue structures. The class supports basic queue node operations such as
+   getting and setting the next node pointer. The design intent is to provide a minimal, efficient node structure that can be used to implement various queue-based data structures throughout the
+   engine's codebase. The node does not manage memory ownership of the data it contains, nor does it perform any validation on the pointers it manages. It is intended to be used as part of larger
+   queue implementations, where the queue management logic handles allocation and deallocation of nodes.
+
 */
 template<typename type>
 class idQueueNode
@@ -142,11 +151,15 @@ private:
 	type* next;
 };
 
-/*
-================================================
-A Queue, idQueue, is a template Container class implementing the Queue abstract data
-type.
-================================================
+/*!
+	\class idQueue
+	\brief A generic queue implementation for managing objects with node-based linking.
+
+	The idQueue class provides a templated queue data structure that manages objects linked through a specific node member pointer. It supports standard queue operations including adding elements to
+   the end, removing elements from the front, and peeking at the first element without removal. The queue maintains internal pointers to track the first and last elements, ensuring efficient O(1)
+   insertion and removal operations. This implementation is designed for use within the engine's systems that require ordered processing of objects, such as rendering or game logic queues. The
+   template parameters allow for type safety and integration with specific node structures defined in the engine's object model.
+
 */
 template<typename type, idQueueNode<type> type::*nodePtr>
 class idQueue

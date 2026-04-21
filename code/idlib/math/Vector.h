@@ -47,12 +47,16 @@ class idAngles;
 class idPolar3;
 class idMat3;
 
-//===============================================================
-//
-//	idVec2 - 2D vector
-//
-//===============================================================
+/*!
+	\class idVec2
+	\brief A 2D vector class for representing and manipulating two-dimensional mathematical vectors within the engine.
 
+	The idVec2 class provides a comprehensive set of operations for 2D vector mathematics, including initialization, component access, arithmetic operations, normalization, and utility functions. It
+   is designed to support efficient vector calculations commonly used in graphics, physics, and game logic within the engine. The class provides both precise and fast approximation methods for length
+   calculations, as well as functions for scaling, clamping, and interpolation. The implementation follows standard vector mathematics conventions and integrates well with other mathematical types in
+   the engine's math library.
+
+*/
 class idVec2
 {
 public:
@@ -393,12 +397,17 @@ ID_INLINE idVec2& operator/( float lhs, idVec2& rhs )
 	return rhs;
 }
 
-//===============================================================
-//
-//	idVec3 - 3D vector
-//
-//===============================================================
+/*!
+	\class idVec3
+	\brief A 3-dimensional vector class used for representing positions, directions, and other geometric data in the engine.
 
+	The idVec3 class provides a comprehensive set of operations for 3D vector mathematics including basic arithmetic, normalization, geometric projections, and conversions between different coordinate
+   systems. It is designed to be a core building block for engine geometry calculations, physics simulations, and rendering operations. The class supports both precise and fast mathematical
+   operations, with methods for handling degenerate cases and normalization. It provides conversions to and from other vector and matrix types, including polar coordinates, Euler angles, and rotation
+   matrices. The implementation includes convenience methods for clamping, truncating, and snapping vector values, as well as linear and spherical interpolation between vectors. The class is optimized
+   for performance with inline implementations of common operations and provides both exact and epsilon-based comparison methods.
+
+*/
 class idVec3
 {
 public:
@@ -1041,24 +1050,26 @@ ID_INLINE idVec3& operator/( float lhs, idVec3& rhs )
 	return rhs;
 }
 
-//===============================================================
-//
-//	idTupleSize< idVec3 > - Specialization to get the size
-//	of an idVec3 generically.
-//
-//===============================================================
+/*!
+	\struct idTupleSize< idVec3 >
+	\brief Template specialization for computing tuple size of idVec3 type.
 
+*/
 template<>
 struct idTupleSize<idVec3> {
 	enum { value = 3 };
 };
 
-//===============================================================
-//
-//	idVec4 - 4D vector
-//
-//===============================================================
+/*!
+	\class idVec4
+	\brief A 4-dimensional vector class for handling geometric computations in the engine.
 
+	The idVec4 class represents a 4-dimensional vector commonly used for homogeneous coordinates in graphics and geometric calculations within the engine. It provides standard vector arithmetic
+   operations, component access through array-style indexing, and conversion methods to lower-dimensional vector types. The class supports both exact and epsilon-based comparisons, normalization
+   operations, and linear interpolation between vectors. Memory layout is designed for efficient access and conversion to other vector types. The implementation includes both precise and fast
+   normalization methods to balance accuracy and performance requirements of the engine's graphics and physics systems.
+
+*/
 class idVec4
 {
 public:
@@ -1367,12 +1378,16 @@ ID_INLINE float* idVec4::ToFloatPtr()
 	return &x;
 }
 
-//===============================================================
-//
-//	idVec5 - 5D vector
-//
-//===============================================================
+/*!
+	\class idVec5
+	\brief A 5-dimensional vector class used for representing positions with texture coordinates in the engine.
 
+	The idVec5 class provides a data structure for handling 5-dimensional vectors, which are commonly used in the engine for representing positions with texture coordinates. It supports construction
+   from various component types, including idVec3 and idVec2, as well as direct component initialization. The class provides access to its components through array-style indexing and conversion
+   methods to and from idVec3 and float array representations. The class supports linear interpolation between vectors and can convert to string representation for debugging and logging purposes. The
+   implementation uses inline methods for performance-critical operations and provides both const and non-const access to its underlying data.
+
+*/
 class idVec5
 {
 public:
@@ -1486,12 +1501,16 @@ ID_INLINE float* idVec5::ToFloatPtr()
 	return &x;
 }
 
-//===============================================================
-//
-//	idVec6 - 6D vector
-//
-//===============================================================
+/*!
+	\class idVec6
+	\brief A 6-dimensional vector class used for representing spatial coordinates and other vector-based data in the engine.
 
+	The idVec6 class represents a 6-dimensional vector commonly used in the RogueStrad engine for handling spatial data and mathematical operations in 6D space. It provides constructors for
+   initializing vectors from arrays or individual components, as well as comprehensive operator overloads for arithmetic operations and comparisons. The class supports normalization, length
+   calculations, and provides access to sub-vectors of 3D components, making it suitable for representing transformations, physics data, or other multi-dimensional vector quantities within the
+   engine's architecture. The implementation follows standard vector mathematics conventions with efficient inline operations for performance-critical code paths.
+
+*/
 class idVec6
 {
 public:
@@ -1799,12 +1818,16 @@ ID_INLINE float* idVec6::ToFloatPtr()
 	return p;
 }
 
-//===============================================================
-//
-//	idPolar3
-//
-//===============================================================
+/*!
+	\class idPolar3
+	\brief Represents a 3D polar coordinate system with radius, theta, and phi components.
 
+	The idPolar3 class provides a mathematical representation of 3D polar coordinates, which are commonly used in engine calculations involving angular and radial positioning. It supports construction
+   with specific radius, theta, and phi values, as well as conversion to Cartesian vector representation. The class is designed for use in engine systems that require polar coordinate transformations,
+   particularly for positioning and orientation calculations in 3D space. The class provides direct access to its components through array-style indexing and supports basic arithmetic operations for
+   coordinate manipulation.
+
+*/
 class idPolar3
 {
 public:

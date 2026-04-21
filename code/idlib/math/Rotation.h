@@ -43,6 +43,15 @@ class idAngles;
 class idQuat;
 class idMat3;
 
+/*!
+	\class idRotation
+	\brief Represents a 3D rotation with origin, axis, and angle components.
+
+	The idRotation class encapsulates a 3D rotation defined by an origin point, rotation axis vector, and rotation angle. It provides methods for constructing rotations, setting and retrieving
+   rotation parameters, and converting between different rotation representations including Euler angles, quaternions, and matrix forms. The class supports basic arithmetic operations on rotations and
+   can normalize rotation angles to specific ranges. It is designed for efficient rotation transformations and conversions within the engine's 3D graphics and physics systems.
+
+*/
 class idRotation
 {
 	friend class idAngles;

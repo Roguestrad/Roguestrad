@@ -30,14 +30,19 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __WINDING_H__
 #define __WINDING_H__
 
-/*
-===============================================================================
+/*!
+	\class idWinding
+	\brief A class representing a polygon winding structure used for geometric operations in the engine.
 
-	A winding is an arbitrary convex polygon defined by an array of points.
+	The idWinding class encapsulates polygonal winding data structures used throughout the engine for representing planar surfaces and performing geometric operations. It provides
+   functionality for creating, manipulating, and analyzing polygon windings, including operations like clipping, splitting, merging, and convex hull computation. The class supports various
+   constructors for initializing windings from different data sources including vertex arrays, plane definitions, and existing winding objects. Key capabilities include point insertion, removal, and
+   modification operations, as well as geometric queries such as area calculation, bounding box computation, and intersection testing with planes and rays. The winding maintains an internal array of
+   points and manages memory allocation dynamically, supporting both in-place modifications and creation of new winding objects through copy and transform operations. The class is designed to work
+   with 3D geometry and provides methods for validation, collision detection, and rendering-related operations, making it a fundamental component for spatial partitioning and geometric processing
+   within the engine's rendering and physics systems.
 
-===============================================================================
 */
-
 class idWinding
 {
 public:
@@ -740,6 +745,17 @@ ID_INLINE bool idWinding::EnsureAlloced( int n, bool keep )
 
 #define MAX_POINTS_ON_WINDING 64
 
+/*!
+	\class idFixedWinding
+	\brief Fixed-size winding implementation for geometric operations in the engine.
+
+	The idFixedWinding class provides a fixed-size winding implementation derived from idWinding, designed for efficient geometric operations within the engine's rendering and collision detection
+   systems. It maintains a pre-allocated buffer that cannot be resized dynamically, making it suitable for performance-critical scenarios where memory allocation overhead must be minimized. The class
+   supports various construction methods including from vertices, plane definitions, and copying from existing windings, while ensuring proper initialization and cleanup of its internal data
+   structure. The implementation is optimized for operations like splitting windings relative to planes, which are essential for BSP construction and view frustum culling. The fixed buffer design
+   prevents dynamic allocation during regular use, with the destructor explicitly setting the internal pointer to NULL to avoid incorrect deallocation of the fixed buffer.
+
+*/
 class idFixedWinding : public idWinding
 {
 public:

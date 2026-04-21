@@ -122,14 +122,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __BV_BOUNDS_H__
 #define __BV_BOUNDS_H__
 
-/*
-===============================================================================
+/*!
+	\class idBounds
+	\brief Represents an axis-aligned bounding box in 3D space for collision detection and spatial queries.
 
-	Axis Aligned Bounding Box
+	The idBounds class provides a comprehensive implementation for axis-aligned bounding boxes used throughout the engine for spatial partitioning, collision detection, and rendering optimizations. It
+   supports various operations including bounds construction from points, transformations, intersection testing, and spatial queries. The class is designed to be efficient with inline methods for
+   performance-critical operations and provides both immutable and mutable variants of geometric operations. The implementation handles degenerate cases and provides utilities for determining spatial
+   relationships with planes, rays, and other bounds objects. Memory management is handled through standard C++ semantics with no special ownership requirements. The class is extensively used in the
+   engine's collision detection system, rendering culling, and spatial data structures.
 
-===============================================================================
 */
-
 class idBounds
 {
 public:

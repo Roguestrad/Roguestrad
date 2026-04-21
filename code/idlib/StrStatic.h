@@ -29,10 +29,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __STRSTATIC_H__
 #define __STRSTATIC_H__
 
-/*
-================================================
-idStrStatic
-================================================
+/*!
+	\class idStrStatic
+	\brief A fixed-size string class template that provides static memory allocation for string data.
+
+	The idStrStatic class template is designed to provide a string implementation with statically allocated memory of a fixed size determined by the template parameter. It inherits from idStr and is
+   intended to offer performance benefits by avoiding dynamic memory allocation for string operations. The class supports multiple constructors for initialization from various data types including
+   other strings, character arrays, and primitive types such as integers, floats, and booleans. The static buffer size is specified at compile time through the template parameter, ensuring that string
+   objects have a guaranteed memory footprint. This class is particularly useful in engine contexts where predictable memory usage and performance are critical. The implementation ensures proper
+   initialization of the static buffer with null terminators and handles copying operations between static string objects correctly.
+
 */
 template<int _size_>
 class idStrStatic : public idStr

@@ -71,6 +71,10 @@ struct gltf_accessor_component_type_map {
 	uint  sizeInBytes; // single element
 };
 
+/*!
+	\class gltfExtra
+	\brief The gltfExtra class provides a container for additional data associated with glTF assets.
+*/
 class gltfExtra
 {
 public:
@@ -83,6 +87,11 @@ public:
 };
 
 class gltfExt_KHR_lights_punctual;
+
+/*!
+	\class gltfExtensions
+	\brief A class for handling glTF extensions.
+*/
 class gltfExtensions
 {
 public:
@@ -91,12 +100,20 @@ public:
 	idList<gltfExt_KHR_lights_punctual*> KHR_lights_punctual;
 };
 
+/*!
+	\class gltfNode_KHR_lights_punctual
+	\brief Represents a node with punctual light information in a glTF asset.
+*/
 class gltfNode_KHR_lights_punctual
 {
 public:
 	int light;
 };
 
+/*!
+	\class gltfNode_Extensions
+	\brief A class representing extensions for glTF nodes.
+*/
 class gltfNode_Extensions
 {
 public:
@@ -109,6 +126,11 @@ public:
 };
 
 class gltfExt_KHR_materials_pbrSpecularGlossiness;
+
+/*!
+	\class gltfMaterial_Extensions
+	\brief A class for handling GLTF material extensions.
+*/
 class gltfMaterial_Extensions
 {
 public:
@@ -125,6 +147,10 @@ public:
 	gltfExt_KHR_materials_pbrSpecularGlossiness* KHR_materials_pbrSpecularGlossiness;
 };
 
+/*!
+	\class gltfNode
+	\brief A node structure for GLTF asset hierarchy management.
+*/
 class gltfNode
 {
 public:
@@ -172,6 +198,10 @@ struct gltfCameraNodePtrs {
 	gltfNode* orientationNode = nullptr;
 };
 
+/*!
+	\class gltfScene
+	\brief A class for managing and organizing 3D scene data loaded from GLTF files.
+*/
 class gltfScene
 {
 public:
@@ -183,6 +213,10 @@ public:
 	gltfExtra	extras;
 };
 
+/*!
+	\class gltfMesh_Primitive_Attribute
+	\brief A class representing a mesh primitive attribute within a glTF structure.
+*/
 class gltfMesh_Primitive_Attribute
 {
 public:
@@ -232,6 +266,10 @@ struct gltf_mesh_attribute_map {
 	uint							   elementSize;
 };
 
+/*!
+	\class gltfMesh_Primitive
+	\brief Represents a primitive element within a GLTF mesh structure.
+*/
 class gltfMesh_Primitive
 {
 public:
@@ -251,6 +289,10 @@ public:
 	gltfExtra							  extras;
 };
 
+/*!
+	\class gltfMesh
+	\brief A class representing a mesh loaded from a GLTF file.
+*/
 class gltfMesh
 {
 public:
@@ -263,6 +305,10 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfCamera_Orthographic
+	\brief Orthographic camera configuration class for GLTF-based rendering.
+*/
 class gltfCamera_Orthographic
 {
 public:
@@ -279,6 +325,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfCamera_Perspective
+	\brief A class representing a perspective camera configuration for GLTF model loading.
+*/
 class gltfCamera_Perspective
 {
 public:
@@ -295,6 +345,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfCamera
+	\brief A class representing a camera in a GLTF structure.
+*/
 class gltfCamera
 {
 public:
@@ -307,6 +361,10 @@ public:
 	gltfExtra				extras;
 };
 
+/*!
+	\class gltfAnimation_Channel_Target
+	\brief Represents a target for animation channels in glTF files.
+*/
 class gltfAnimation_Channel_Target
 {
 public:
@@ -346,6 +404,10 @@ public:
 	}
 };
 
+/*!
+	\class gltfAnimation_Channel
+	\brief Represents a channel in an animation within a glTF file.
+*/
 class gltfAnimation_Channel
 {
 public:
@@ -357,6 +419,10 @@ public:
 	gltfExtra					 extras;
 };
 
+/*!
+	\class gltfAnimation_Sampler
+	\brief A utility class for handling GLTF animation sampler interpolation types.
+*/
 class gltfAnimation_Sampler
 {
 public:
@@ -397,6 +463,15 @@ public:
 	}
 };
 
+/*!
+	\class gltfAnimation
+	\brief Provides animation data and querying capabilities for GLTF animations.
+
+	This class represents animation data for GLTF animations and offers methods to query animation properties such as bounds, origin offset, and origin rotation at specific times and cycle counts. It
+   also tracks reference counts to manage animation lifecycle. The class is designed to be a const interface for retrieving animation state information, with some methods currently returning false to
+   indicate incomplete implementation. The NumFrames method provides the total frame count for the animation.
+
+*/
 class gltfAnimation
 {
 public:
@@ -464,6 +539,10 @@ public:
 	int							   NumFrames() const { return numFrames; }
 };
 
+/*!
+	\class gltfAccessor_Sparse_Values
+	\brief A class representing sparse values in a glTF accessor.
+*/
 class gltfAccessor_Sparse_Values
 {
 public:
@@ -476,6 +555,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfAccessor_Sparse_Indices
+	\brief A class representing sparse index data for GPU mesh rendering.
+*/
 class gltfAccessor_Sparse_Indices
 {
 public:
@@ -490,6 +573,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfAccessor_Sparse
+	\brief A class representing a sparse accessor for glTF data.
+*/
 class gltfAccessor_Sparse
 {
 public:
@@ -502,6 +589,10 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfAccessor
+	\brief A class representing a glTF accessor for handling buffer data in a 3D graphics context.
+*/
 class gltfAccessor
 {
 public:
@@ -545,6 +636,10 @@ public:
 	idList<idMat4>*		matView;
 };
 
+/*!
+	\class gltfBufferView
+	\brief A class representing a buffer view in a GLTF asset.
+*/
 class gltfBufferView
 {
 public:
@@ -566,6 +661,10 @@ public:
 	gltfData* parent;
 };
 
+/*!
+	\class gltfBuffer
+	\brief A class for managing glTF buffer data.
+*/
 class gltfBuffer
 {
 public:
@@ -581,6 +680,10 @@ public:
 	gltfData* parent;
 };
 
+/*!
+	\class gltfSampler
+	\brief A class for managing GLTF sampler data.
+*/
 class gltfSampler
 {
 public:
@@ -600,6 +703,10 @@ public:
 	uint	  bgfxSamplerFlags;
 };
 
+/*!
+	\class gltfImage
+	\brief A class representing an image resource within a GLTF asset.
+*/
 class gltfImage
 {
 public:
@@ -621,6 +728,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfSkin
+	\brief Manages skinning data for GLTF models.
+*/
 class gltfSkin
 {
 public:
@@ -637,6 +748,11 @@ public:
 };
 
 class gltfExt_KHR_texture_transform;
+
+/*!
+	\class gltfTexture_Info_Extensions
+	\brief A class representing texture extension information for GLTF texture data.
+*/
 class gltfTexture_Info_Extensions
 {
 public:
@@ -654,6 +770,10 @@ public:
 	gltfExt_KHR_texture_transform* KHR_texture_transform;
 };
 
+/*!
+	\class gltfOcclusionTexture_Info
+	\brief This class encapsulates information about occlusion textures used in GLTF file processing.
+*/
 class gltfOcclusionTexture_Info
 {
 public:
@@ -676,6 +796,10 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfNormalTexture_Info
+	\brief A structure for storing normal texture information in GLTF format.
+*/
 class gltfNormalTexture_Info
 {
 public:
@@ -698,6 +822,10 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfTexture_Info
+	\brief Manages texture information for GLTF file processing.
+*/
 class gltfTexture_Info
 {
 public:
@@ -719,6 +847,10 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfTexture
+	\brief A class representing a texture component within a glTF asset.
+*/
 class gltfTexture
 {
 public:
@@ -741,6 +873,10 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfMaterial_pbrMetallicRoughness
+	\brief A struct representing physically based rendering material properties for metallic-roughness workflow.
+*/
 class gltfMaterial_pbrMetallicRoughness
 {
 public:
@@ -766,6 +902,10 @@ public:
 	gltfExtra		 extras;
 };
 
+/*!
+	\class gltfMaterial
+	\brief A material class for handling GLTF material properties and alpha mode resolution.
+*/
 class gltfMaterial
 {
 public:
@@ -815,6 +955,10 @@ public:
 	}
 };
 
+/*!
+	\class gltfAsset
+	\brief A class for managing glTF asset data.
+*/
 class gltfAsset
 {
 public:
@@ -828,8 +972,10 @@ public:
 	gltfExtra extras;
 };
 
-// this is not used.
-// if an extension is found, it _will_ be used. (if implemented)
+/*!
+	\class gltfExtensionsUsed
+	\brief Container for tracking used GLTF extensions.
+*/
 class gltfExtensionsUsed
 {
 public:
@@ -838,8 +984,10 @@ public:
 	idStr extension;
 };
 
-// ARCHIVED?
-// https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness
+/*!
+	\class gltfExt_KHR_materials_pbrSpecularGlossiness
+	\brief Manages GLTF material properties for specular glossiness workflow.
+*/
 class gltfExt_KHR_materials_pbrSpecularGlossiness
 {
 public:
@@ -860,8 +1008,10 @@ public:
 	gltfExtra		 extras;
 };
 
-// KHR_lights_punctual_spot
-// https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_lights_punctual/schema/light.spot.schema.json
+/*!
+	\class gltfExt_KHR_lights_punctual_spot
+	\brief A class representing GLTF punctual light spot light configuration with default cone angles.
+*/
 class gltfExt_KHR_lights_punctual_spot
 {
 public:
@@ -883,8 +1033,10 @@ public:
 	gltfExtra extras;
 };
 
-// KHR_lights_punctual
-// https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_lights_punctual/schema/light.schema.json
+/*!
+	\class gltfExt_KHR_lights_punctual
+	\brief A struct for handling punctual light data in GLTF extensions.
+*/
 class gltfExt_KHR_lights_punctual
 {
 public:
@@ -937,8 +1089,10 @@ public:
 	}
 };
 
-// KHR_texture_transform
-// https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_texture_transform/schema/KHR_texture_transform.textureInfo.schema.json
+/*!
+	\class gltfExt_KHR_texture_transform
+	\brief Provides texture transformation parameters for GLTF materials.
+*/
 class gltfExt_KHR_texture_transform
 {
 public:
@@ -970,11 +1124,17 @@ public:
 	bool	  resolved;
 };
 
-// URI's are resolved during parsing so that
-// all data should be layed out like an GLB with multiple bin chunks
-// EACH URI will have an unique chunk
-// JSON chunk MUST be the first one to be allocated/added
+/*!
+	\class gltfData
+	\brief A container class for managing glTF asset data including nodes, meshes, materials, and animations.
 
+	This class serves as a comprehensive data structure for storing and managing glTF asset information. It maintains collections of various glTF elements such as nodes, meshes, materials, animations,
+   and scenes while providing methods for accessing, modifying, and organizing this data. The class supports both reading and building glTF data structures, with functionality for managing memory
+   allocation, data views, and hierarchical node relationships. It provides accessors for all major glTF components and includes utility methods for finding specific elements by name or ID, traversing
+   node hierarchies, and managing data views for efficient access to binary buffer contents. The class is designed to support the parsing and construction of glTF assets, with methods for handling
+   transformations, animations, and skinning data.
+
+*/
 class gltfData
 {
 public:

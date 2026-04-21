@@ -30,14 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __HIERARCHY_H__
 #define __HIERARCHY_H__
 
-/*
-==============================================================================
+/*!
+	\class idHierarchy
+	\brief A templated hierarchy node class for managing parent-child relationships in a tree structure.
 
-	idHierarchy
+	The idHierarchy class provides a generic mechanism for constructing and manipulating hierarchical data structures. It supports standard tree operations such as parenting, sibling ordering, and
+   traversal. The class is designed to work with any type that is compatible with the template parameter, making it flexible for various use cases within the engine. Each node maintains links to its
+   parent, first child, and sibling nodes, enabling efficient navigation through the hierarchy. The implementation handles edge cases such as removing nodes from the hierarchy and reattaching children
+   appropriately. The class provides methods for checking parent-child relationships and utility functions for traversing the hierarchy. Memory management is handled through the destructors which
+   properly clean up node references and maintain hierarchy integrity during destruction.
 
-==============================================================================
 */
-
 template<class type>
 class idHierarchy
 {

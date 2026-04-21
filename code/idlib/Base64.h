@@ -30,14 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __BASE64_H__
 #define __BASE64_H__
 
-/*
-===============================================================================
+/*!
+	\class idBase64
+	\brief A class for base64 encoding and decoding of binary data.
 
-	base64
+	The idBase64 class provides functionality for encoding binary data into base64 format and decoding base64 strings back into binary data. It manages an internal buffer to store encoded or decoded
+   results and offers methods for both string and file-based operations. The class supports initialization, encoding from byte arrays or idStr objects, and decoding into byte buffers, idStr objects,
+   or idFile objects. It includes utility methods to calculate required buffer sizes for decoding and handles memory management internally through EnsureAlloced, Init, and Release methods. The class
+   is designed for use within the engine where base64 encoding is needed for data serialization or transmission, particularly when dealing with binary data that needs to be represented as
+   text.
 
-===============================================================================
 */
-
 class idBase64
 {
 public:

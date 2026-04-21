@@ -1165,12 +1165,15 @@ int idTraceModel::GetParallelProjectionSilhouetteEdges( const idVec3& projection
 	return GetOrderedSilhouetteEdges( edgeIsSilEdge, silEdges );
 }
 
-/*
+/*!
+	\struct projectionIntegrals_s
+	\brief A structure for storing projection integrals used in rendering calculations.
 
-  credits to Brian Mirtich for his paper "Fast and Accurate Computation of Polyhedral Mass Properties"
+	This structure serves as a container for projection integrals that are utilized in the rendering pipeline of the engine. It is designed to hold precomputed values that contribute to efficient
+   rendering calculations, particularly in lighting and shadow computations. The structure is typically used internally by rendering systems and is not intended for direct manipulation by other engine
+   components.
 
 */
-
 typedef struct projectionIntegrals_s {
 	float P1;
 	float Pa, Pb;
@@ -1251,6 +1254,16 @@ void idTraceModel::ProjectionIntegrals( int polyNum, int a, int b, struct projec
 	integrals.Pabb *= ( 1.0f / -60.0f );
 }
 
+/*!
+	\struct polygonIntegrals_s
+	\brief Container for polygon integration calculations.
+
+	This structure serves as a data container for storing precomputed integration values that are used in polygon-based calculations within the engine. It is designed to hold numerical data that
+   represents geometric properties of polygons, likely for use in lighting, physics, or rendering computations. The structure is intended to be used as part of a larger system that performs
+   mathematical operations on polygonal geometry. The purpose of this structure is to provide a consistent interface for accessing polygon integration data, which may be computed once and reused
+   across multiple operations.
+
+*/
 typedef struct polygonIntegrals_s {
 	float Fa, Fb, Fc;
 	float Faa, Fbb, Fcc;
@@ -1292,6 +1305,16 @@ void idTraceModel::PolygonIntegrals( int polyNum, int a, int b, int c, struct po
 	integrals.Fcca = k3 * ( Square( n[a] ) * pi.Paaa + 2 * n[a] * n[b] * pi.Paab + Square( n[b] ) * pi.Pabb + w * ( 2 * ( n[a] * pi.Paa + n[b] * pi.Pab ) + w * pi.Pa ) );
 }
 
+/*!
+	\struct volumeIntegrals_s
+	\brief Structure for storing volume integration data used in physics or rendering calculations.
+
+	This structure serves as a container for pre-computed volume integration values that are utilized in physics simulations, collision detection, or rendering systems. The integrals stored within
+   likely represent metrics such as mass distribution, moment of inertia, or other physical properties that require volumetric calculations. The structure is designed to optimize performance by
+   caching these computationally expensive calculations. This type of data structure is commonly found in engine architectures where efficient handling of physical properties and geometric
+   calculations is essential for realistic simulation and rendering.
+
+*/
 typedef struct volumeIntegrals_s {
 	float  T0;
 	idVec3 T1;

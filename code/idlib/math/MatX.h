@@ -56,6 +56,17 @@ NOTE: due to the temporary memory pool idMatX cannot be used by multiple threads
 	#define MATX_SIMD
 #endif
 
+/*!
+	\class idMatX
+	\brief A dynamically-sized matrix class for linear algebra operations within the Roguestrad engine.
+
+	The idMatX class provides a comprehensive matrix implementation designed for use in the Roguestrad engine's graphics, physics, and mathematics computations. It supports dynamic allocation of
+   matrices with arbitrary dimensions and includes a full suite of linear algebra operations including basic arithmetic, matrix decompositions, and solving systems of linear equations. The class is
+   optimized for performance through inline operations, SIMD support, and efficient memory management using temporary memory pools. It handles various matrix types including general, symmetric,
+   triangular, and special structured matrices with specialized algorithms for each type. The implementation includes robust error checking through assertions and supports both precise and approximate
+   comparisons with customizable epsilon values for floating-point operations.
+
+*/
 class idMatX
 {
 public:

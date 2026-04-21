@@ -27,6 +27,10 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
+/*!
+	\struct quakeToDoom_t
+	\brief A structure for mapping Quake 1 texture names to valid Doom 3 material names.
+*/
 typedef struct {
 	const char* quakeName;
 	const char* doomName;

@@ -29,6 +29,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef DATAQUEUE_H
 #define DATAQUEUE_H
 
+/*!
+	\class idDataQueue
+	\brief A fixed-size template queue for managing ordered data items with sequence numbers.
+
+	The idDataQueue class provides a fixed-size templated data structure for managing ordered collections of binary data items, each associated with a sequence number. It is designed to support
+   network communication scenarios where data sequencing and ordering are critical, such as in snapshot delta management. The queue maintains two internal buffers: one for metadata items and another
+   for the actual data, allowing efficient storage and retrieval of data blocks. The class supports appending items with two data blocks, removing older items based on sequence numbers, and retrieving
+   item metadata such as sequence numbers, data lengths, and data pointers. It enforces bounds checking during append operations and maintains data consistency during removals. The template parameters
+   maxItems and maxBuffer define compile-time limits for the number of items and total data buffer size respectively, making the queue suitable for scenarios with predictable memory constraints.
+
+*/
 template<int maxItems, int maxBuffer>
 class idDataQueue
 {

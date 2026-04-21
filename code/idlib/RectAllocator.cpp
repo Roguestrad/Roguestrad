@@ -265,7 +265,10 @@ void RectAllocatorQuadTree(
 	}
 }
 
-// RB
+/*!
+	\class MyContent
+	\brief Just a helper for RectAllocatorBinPack2D
+*/
 class MyContent
 {
 public:

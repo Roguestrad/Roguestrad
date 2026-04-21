@@ -29,12 +29,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __BITMSG_H__
 #define __BITMSG_H__
 
-/*
-================================================
-idBitMsg operates on a sequence of individual bits. It handles byte ordering and
-avoids alignment errors. It allows concurrent writing and reading. The data set with Init
-is never free-d.
-================================================
+/*!
+	\class idBitMsg
+	\brief A bit-level message buffer for serialization and deserialization of data
+
+	The idBitMsg class provides a flexible buffer for writing and reading binary data at the bit level. It supports both reading and writing operations with explicit initialization for either mode.
+   The class is designed for efficient serialization of game data including primitive types, vectors, strings, and complex structures like network addresses and dictionaries. It includes support for
+   delta compression, quantized values, and bit-aligned operations to optimize network transmission and file storage. The implementation handles buffer management, overflow detection, and maintains
+   internal read/write positions for seamless data flow. The class supports various data types with specialized methods for different precision requirements such as normalized floats and angle
+   representations. The design allows for checkpointing of read/write states for complex serialization scenarios and provides utilities for encoding direction vectors efficiently.
+
 */
 class idBitMsg
 {

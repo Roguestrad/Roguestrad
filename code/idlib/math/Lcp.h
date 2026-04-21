@@ -58,6 +58,18 @@ Before calculating any of the bounded x[i] with boxIndex[i] != -1, the solver ca
 unbounded x[i] and all x[i] with boxIndex[i] == -1.
 ================================================
 */
+
+/*!
+	\class idLCP
+	\brief Linear Complementarity Problem solver interface for various LCP formulations.
+
+	The idLCP class serves as an abstract base interface for solving Linear Complementarity Problems within the engine. It provides a unified method for configuring solver parameters such as maximum
+   iterations and defines a virtual Solve method that must be implemented by derived classes. The class supports different LCP formulations through factory methods AllocSquare and AllocSymmetric,
+   which return specialized solver instances for square and symmetric LCP problems respectively. The interface is designed to be used by physics and simulation systems that require solving LCP
+   constraints, with the solver configurations and behavior controlled through the provided configuration methods. The Test_f method allows for debugging and validation of the underlying linear
+   algebra operations.
+
+*/
 class idLCP
 {
 public:

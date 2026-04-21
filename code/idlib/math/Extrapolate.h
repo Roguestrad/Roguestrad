@@ -48,6 +48,16 @@ typedef enum {
 	EXTRAPOLATION_NOSTOP	  = 0x40  // do not stop at startTime + duration
 } extrapolation_t;
 
+/*!
+	\class idExtrapolate
+	\brief A template class for managing extrapolation of animated values with various interpolation types.
+
+	The idExtrapolate class provides a flexible mechanism for animating values over time using different extrapolation methods. It supports linear and sine-based interpolation with acceleration and
+   deceleration curves, making it suitable for smooth UI animations and cinematic effects. The class maintains internal state for start time, duration, initial value, and speed parameters to control
+   the extrapolation behavior. It offers methods to query current values and speeds at specific time points, check if the extrapolation has completed, and modify key parameters such as start time and
+   initial value. The template design allows it to work with various numeric types, enabling its use in different animation contexts throughout the engine.
+
+*/
 template<class type>
 class idExtrapolate
 {

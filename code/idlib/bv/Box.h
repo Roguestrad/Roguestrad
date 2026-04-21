@@ -80,14 +80,18 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __BV_BOX_H__
 #define __BV_BOX_H__
 
-/*
-===============================================================================
+/*!
+	\class idBox
+	\brief A class representing an oriented bounding box with methods for geometric operations and transformations.
 
-	Oriented Bounding Box
+	The idBox class provides a comprehensive interface for representing and manipulating oriented bounding boxes in 3D space. It supports various construction methods including initialization from
+   center point, extents, and axis; bounds; or single points. The class offers fundamental geometric operations such as adding points or boxes, translating, rotating, and expanding the box. It
+   provides methods for intersection testing with other boxes, planes, lines, and rays, making it suitable for collision detection and spatial queries. The class also includes utilities for converting
+   between different geometric representations, such as computing bounding spheres, projecting boxes onto axes, and calculating silhouette vertices for rendering purposes. The implementation handles
+   both axis-aligned and oriented boxes, with methods supporting in-place transformations and mathematical operations that maintain the integrity of the bounding volume representation throughout
+   various geometric computations within the engine.
 
-===============================================================================
 */
-
 class idBox
 {
 public:

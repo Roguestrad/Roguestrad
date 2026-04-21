@@ -30,14 +30,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __PLANESET_H__
 #define __PLANESET_H__
 
-/*
-===============================================================================
+/*!
+	\class idPlaneSet
+	\brief A set implementation for managing planes with efficient lookup and insertion operations.
 
-	Plane Set
+	This class provides a specialized container for managing a collection of planes, extending idList to include hash table based lookup for efficient plane finding and insertion. The design enables
+   duplicate detection and automatic insertion of plane opposites to maintain consistency in plane representations. The hash table implementation allows for fast lookups when searching for existing
+   planes within specified tolerance values for both normal vectors and distances. The class is designed for use in geometric computations where plane sets need to be efficiently managed and queried.
+   The FindPlane method handles both searching for existing planes and adding new ones, ensuring that for each plane added, its opposite is also maintained in the set.
 
-===============================================================================
 */
-
 class idPlaneSet : public idList<idPlane>
 {
 public:

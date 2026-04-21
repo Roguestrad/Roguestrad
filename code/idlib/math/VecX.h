@@ -55,6 +55,19 @@ NOTE: due to the temporary memory pool idVecX cannot be used by multiple threads
 	#define VECX_SIMD
 #endif
 
+/*!
+	\class idVecX
+	\brief A dynamic vector class that supports flexible memory management and mathematical operations on float vectors of arbitrary dimension.
+
+	The idVecX class provides a flexible container for vectors of arbitrary dimension, supporting dynamic resizing, memory management, and a comprehensive set of mathematical operations. It is
+   designed to handle both regular and temporary memory allocations, with special handling for temporary buffers to optimize performance in graphics and physics calculations. The class offers direct
+   element access through indexing operators, element-wise operations, and vector arithmetic including normalization, clamping, and component extraction. Memory management is handled through custom
+   allocation functions that support both standard and temporary memory pools. The class supports various vector operations such as addition, subtraction, scalar multiplication, dot product, and
+   length calculations. It also provides utility methods for random number generation, zero initialization, and element-wise comparisons with epsilon tolerance. The implementation utilizes SIMD
+   optimizations where available for performance-critical operations like vector normalization and zeroing. The class is intended for use throughout the engine for representing geometric data, physics
+   vectors, and other mathematical constructs that require dynamic dimensionality and efficient memory usage.
+
+*/
 class idVecX
 {
 	friend class idMatX;

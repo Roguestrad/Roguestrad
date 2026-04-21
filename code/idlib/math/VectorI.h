@@ -41,6 +41,16 @@ static ID_INLINE int MaxInt( int a, int b )
 	return ( a ) < ( b ) ? ( b ) : ( a );
 }
 
+/*!
+	\class idVec2i
+	\brief Integer 2D vector class for handling discrete coordinate operations in the engine.
+
+	The idVec2i class represents a 2D vector using integer coordinates, designed for discrete mathematics operations commonly needed in engine geometry and coordinate transformations. It provides
+   standard vector arithmetic operations along with component-wise minimum and maximum functions, and supports bit manipulation and logical operations. The class is intended for use in scenarios
+   requiring precise integer coordinate calculations, such as grid-based positioning, texture coordinate manipulation, or discrete spatial queries. The implementation follows standard C++ class
+   conventions with explicit constructors and operator overloads, facilitating seamless integration with existing engine systems that work with integer-based coordinates.
+
+*/
 class idVec2i
 {
 public:

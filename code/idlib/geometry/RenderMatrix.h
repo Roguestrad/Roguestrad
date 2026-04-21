@@ -32,6 +32,15 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int NUM_FRUSTUM_CORNERS = 8;
 
+/*!
+	\struct frustumCorners_t
+	\brief A structure for representing the corner points of a viewing frustum.
+
+	The frustumCorners_t structure is designed to encapsulate the eight corner points that define the boundaries of a viewing frustum in 3D space. This structure is typically used in graphics
+   rendering and visibility culling operations within the engine. The corners are usually defined in a specific order that allows for efficient traversal and use in frustum-related calculations. This
+   structure does not contain any methods or explicit memory management directives, suggesting it is a simple data container for frustum corner coordinates.
+
+*/
 struct frustumCorners_t {
 	float x[NUM_FRUSTUM_CORNERS];
 	float y[NUM_FRUSTUM_CORNERS];
@@ -40,14 +49,16 @@ struct frustumCorners_t {
 
 enum frustumCull_t { FRUSTUM_CULL_FRONT = 1, FRUSTUM_CULL_BACK = 2, FRUSTUM_CULL_CROSS = 3 };
 
-/*
-================================================================================================
+/*!
+	\class idRenderMatrix
+	\brief A 4x4 transformation matrix class for 3D graphics operations in the engine.
 
-idRenderMatrix
+	The idRenderMatrix class provides a comprehensive implementation of 4x4 transformation matrices used throughout the engine for 3D graphics operations. It supports standard matrix operations
+   including construction from various transformation components, basic arithmetic operations, and specialized functions for graphics-specific transformations. The class is designed to handle both
+   homogeneous and affine transformations, with optimized implementations using SIMD instructions where available. It includes methods for point, vector, and plane transformations, matrix inversion,
+   and frustum culling operations. The class is integral to the rendering pipeline, supporting model-view-projection transformations, projection matrix creation, and various geometric computations
+   required for efficient 3D rendering and visibility determination.
 
-This is a row-major matrix and transforms are applied with left-multiplication.
-
-================================================================================================
 */
 class idRenderMatrix
 {

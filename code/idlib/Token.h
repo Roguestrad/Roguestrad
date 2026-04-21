@@ -64,11 +64,18 @@ If you have questions concerning this license or the applicable additional terms
 #define TT_IPPORT			  0x08000 // ip port
 #define TT_VALUESVALID		  0x10000 // set if intvalue and floatvalue are valid
 
-// string sub type is the length of the string
-// literal sub type is the ASCII code
-// punctuation sub type is the punctuation id
-// name sub type is the length of the name
+/*!
+	\class idToken
+	\brief idToken represents a parsed token with numeric value conversion capabilities within the Doom 3 BFG engine's lexer.
 
+	The idToken class extends idStr to provide specialized functionality for handling parsed tokens from the engine's lexical analyzer. It maintains token type information, whitespace data, and
+   numeric representations of number tokens. The class is designed for efficient inline operations during parsing, with constructors for copying and assignment operators for string-based
+   initialization. Key features include methods for converting tokens to various numeric types (integer, float, double, unsigned long) with appropriate validation. The class supports whitespace
+   tracking and manipulation, allowing it to accurately represent tokens as they appear in source files, including any leading whitespace. The NumberValue method handles complex numeric conversions
+   for different number formats, while ClearTokenWhiteSpace resets whitespace tracking information for tokens that may be reused. This design enables robust parsing of source data, particularly useful
+   in the engine's collision model loading and other text-based data processing systems.
+
+*/
 class idToken : public idStr
 {
 	friend class idParser;

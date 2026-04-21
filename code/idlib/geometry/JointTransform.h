@@ -30,14 +30,15 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __JOINTTRANSFORM_H__
 #define __JOINTTRANSFORM_H__
 
-/*
-===============================================================================
+/*!
+	\class idJointQuat
+	\brief A class representing joint quaternion data for animation processing in the engine.
 
-  Joint Quaternion
+	The idJointQuat class stores quaternion data for joints in the engine's animation system. It provides access to the underlying float representation of the quaternion through ToFloatPtr methods,
+   enabling efficient data transfer and manipulation. The class serves as a fundamental building block for skeletal animation, allowing direct access to quaternion components for interpolation and
+   transformation operations. This design facilitates integration with the engine's existing animation pipeline and hardware acceleration capabilities.
 
-===============================================================================
 */
-
 class idJointQuat
 {
 public:
@@ -63,26 +64,16 @@ assert_sizeof( idJointQuat, ( 1 << JOINTQUAT_SIZE_SHIFT ) );
 assert_offsetof( idJointQuat, q, JOINTQUAT_Q_OFFSET );
 assert_offsetof( idJointQuat, t, JOINTQUAT_T_OFFSET );
 
-/*
-===============================================================================
+/*!
+	\class idJointMat
+	\brief A 3x4 transformation matrix class used for skeletal animation and joint transformations in the engine.
 
-	Joint Matrix
+	The idJointMat class represents a 3x4 transformation matrix commonly used in skeletal animation systems to store joint transformations. It provides methods for setting and getting rotation and
+   translation components, matrix operations like multiplication and inversion, and conversion to other matrix formats. The class supports both 3D vector transformations and direct matrix manipulation
+   operations. It's designed to work with the engine's animation system where joint matrices are used to transform vertices and other geometric data. The implementation handles the specific layout and
+   operations required for skeletal animation, including proper handling of rotation and translation components in a single 3x4 matrix structure. The class supports both exact and epsilon-based
+   comparisons for matrix equality checks.
 
-===============================================================================
-*/
-
-/*
-================================================
-idJointMat has the following structure:
-
-	idMat3 m;
-	idVec3 t;
-
-	m[0][0], m[1][0], m[2][0], t[0]
-	m[0][1], m[1][1], m[2][1], t[1]
-	m[0][2], m[1][2], m[2][2], t[2]
-
-================================================
 */
 class idJointMat
 {

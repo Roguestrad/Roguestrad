@@ -475,6 +475,17 @@ ID_INLINE T Cube( T x )
 	return x * x * x;
 }
 
+/*!
+	\class idMath
+	\brief A comprehensive mathematics utility class providing fast mathematical operations and vector calculations for the engine.
+
+	This class serves as a centralized mathematics utility providing both standard mathematical functions and high-performance optimized operations commonly used in game engine applications. The
+   implementation focuses on performance optimizations including bit manipulation techniques, lookup tables, and fast approximation algorithms for operations like square roots, trigonometric
+   functions, and floating-point conversions. The class provides both precise and fast variants of mathematical operations, with specialized implementations for 16-bit and 32-bit precision where
+   appropriate. It also includes utility functions for vector mathematics, angle normalization, random number generation, and prime number calculations. The design emphasizes inline implementations
+   for performance-critical operations while maintaining compatibility with standard mathematical libraries for accuracy where needed.
+
+*/
 class idMath
 {
 public:
@@ -2024,18 +2035,17 @@ ID_INLINE float idMath::AngleMod( float a )
 	return a;
 }
 
-// TODO replace with GPL code
+/*!
+	\class rvRandom
+	\brief Random number generator class for deterministic pseudo-random sequences.
 
-// RAVEN BEGIN
-// jscott: fast and reliable random routines
+	The rvRandom class provides a deterministic random number generator implementation based on a linear congruential algorithm. It is designed to produce reproducible sequences of random numbers for
+   testing and debugging purposes. The class supports initialization with fixed seeds for deterministic behavior, as well as system-based seeding for less predictable sequences. It offers methods for
+   generating both integer and floating-point random numbers within specified ranges. The implementation uses bit shifting and multiplication techniques to ensure uniform distribution of generated
+   values across the requested ranges. The class is intended for use throughout the engine where pseudo-random behavior is needed but reproducibility is important, particularly in scenarios involving
+   level generation, AI behavior, or any system requiring consistent random sequences across runs.
 
-// This is the VC libc version of rand() without multiple seeds per thread or 12 levels
-// of subroutine calls.
-// Both calls have been designed to minimise the inherent number of float <--> int
-// conversions and the additional math required to get the desired value.
-// eg the typical tint = (rand() * 255) / 32768
-// becomes tint = rvRandom::irand( 0, 255 )
-
+*/
 class rvRandom
 {
 private:

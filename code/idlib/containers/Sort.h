@@ -105,11 +105,15 @@ ID_INLINE void SwapValues( _type_& a, _type_& b )
 	b		 = c;
 }
 
-/*
-================================================
-idSort is an abstract template class for sorting an array of objects of the specified data type.
-The array of objects is sorted such that: Compare( array[i], array[i+1] ) <= 0 for all i
-================================================
+/*!
+	\class idSort
+	\brief A generic sorting interface for organizing collections of elements.
+
+	The idSort class serves as a polymorphic sorting interface that defines a contract for sorting algorithms to be implemented by derived classes. It is designed to provide a standardized way to sort
+   arrays of elements of any type through a virtual interface. The Sort method takes a base pointer to an array and the number of elements to sort, allowing for flexible sorting implementations. The
+   class is intended to be used within the engine's data processing pipeline where various sorting strategies may be needed, with derived implementations providing specific sorting algorithms such as
+   quicksort, mergesort, or others. The pure virtual nature of the Sort method enforces that all concrete implementations must provide their own sorting logic without default behavior.
+
 */
 template<typename _type_>
 class idSort
@@ -119,11 +123,15 @@ public:
 	virtual void Sort( _type_* base, unsigned int num ) const = 0;
 };
 
-/*
-================================================
-idSort_Quick is a sort template that implements the
-quick-sort algorithm on an array of objects of the specified data type.
-================================================
+/*!
+	\class idSort_Quick
+	\brief A hybrid quicksort and insertion sort implementation for efficient array sorting.
+
+	This class provides a hybrid sorting algorithm that combines the efficiency of quicksort for larger datasets with the simplicity and speed of insertion sort for small datasets. The implementation
+   avoids traditional recursion by maintaining a stack of subarray indices, making it suitable for environments where stack overflow might be a concern. The algorithm includes optimizations for
+   handling duplicate elements to prevent worst-case performance scenarios. It is designed to be used as a sorting mechanism within the engine's data processing pipelines where reliable and efficient
+   sorting is required.
+
 */
 template<typename _type_, typename _derived_>
 class idSort_Quick : public idSort<_type_>
@@ -214,11 +222,15 @@ public:
 	}
 };
 
-/*
-================================================
-Default quick-sort comparison function that can
-be used to sort scalars from small to large.
-================================================
+/*!
+	\class idSort_QuickDefault
+	\brief Quick sorting implementation for default type comparison
+
+	This class provides a quick sorting implementation that uses default comparison semantics for sorting elements of a specified type. It inherits from idSort_Quick and is designed to be used as a
+   template specialization for sorting operations within the engine's sorting framework. The Compare method performs simple arithmetic subtraction between two values to determine their relative
+   ordering, making it suitable for numeric types that support subtraction operations. This implementation is intended to be a lightweight, efficient sorting solution for basic data types where the
+   natural ordering defined by subtraction is appropriate.
+
 */
 template<typename _type_>
 class idSort_QuickDefault : public idSort_Quick<_type_, idSort_QuickDefault<_type_>>
@@ -238,11 +250,14 @@ public:
 	int Compare( const _type_& a, const _type_& b ) const { return a - b; }
 };
 
-/*
-================================================
-Specialization for floating point values to avoid an float-to-int
-conversion for every comparison.
-================================================
+/*!
+	\class idSort_QuickDefault< float >
+	\brief Provides a quick sorting implementation for floating-point values.
+
+	This class implements a specialized quick sort algorithm tailored for sorting floating-point numbers. It inherits from idSort_Quick and provides a specific comparison function for floats. The
+   implementation is designed to efficiently sort float values using the quick sort methodology, making it suitable for performance-critical sorting operations within the engine's data management
+   systems. The class template specialization ensures optimal performance characteristics when sorting floating-point data types.
+
 */
 template<>
 class idSort_QuickDefault<float> : public idSort_Quick<float, idSort_QuickDefault<float>>
@@ -267,11 +282,16 @@ public:
 	}
 };
 
-/*
-================================================
-idSort_Heap is a sort template class that implements the
-heap-sort algorithm on an array of objects of the specified data type.
-================================================
+/*!
+	\class idSort_Heap
+	\brief Heap sort implementation for sorting arrays of elements.
+
+	The idSort_Heap class provides an implementation of the heap sort algorithm for sorting arrays of elements. It is designed as a template class that can work with any type of elements, making it
+   flexible for different data types within the engine. The sorting is performed in-place, which means it does not require additional memory proportional to the input size, making it memory efficient.
+   This implementation follows the standard heap sort algorithm where the array is first transformed into a max heap, and then elements are repeatedly extracted and re-heapified to produce a sorted
+   sequence. The class inherits from idSort, indicating it is part of a sorting hierarchy within the engine's codebase, and the sorting behavior is determined by the comparison function defined in the
+   derived class. The time complexity of this sorting algorithm is O(n log n), providing consistent performance regardless of the input data distribution.
+
 */
 template<typename _type_, typename _derived_>
 class idSort_Heap : public idSort<_type_>
@@ -329,11 +349,15 @@ public:
 	}
 };
 
-/*
-================================================
-Default heap-sort comparison function that can
-be used to sort scalars from small to large.
-================================================
+/*!
+	\class idSort_HeapDefault
+	\brief A heap-based sorting implementation that uses default numeric comparison for sorting elements.
+
+	This class provides a heap-based sorting mechanism that inherits from idSort_Heap and uses a default numeric comparison function. It is designed to efficiently sort elements in a heap structure
+   using the subtraction operator for ordering. The implementation is templated to work with any type that supports the subtraction operation and can be used for heap operations such as priority
+   queues or sorting algorithms. The class leverages the heap data structure's properties to provide efficient sorting and retrieval of elements based on their numeric values. The comparison function
+   performs simple numeric subtraction to determine element ordering, making it suitable for sorting numeric data types or objects that can be compared using numeric operations.
+
 */
 template<typename _type_>
 class idSort_HeapDefault : public idSort_Heap<_type_, idSort_HeapDefault<_type_>>
@@ -353,11 +377,15 @@ public:
 	int Compare( const _type_& a, const _type_& b ) const { return a - b; }
 };
 
-/*
-================================================
-idSort_Insertion is a sort template class that implements the
-insertion-sort algorithm on an array of objects of the specified data type.
-================================================
+/*!
+	\class idSort_Insertion
+	\brief Insertion sort implementation for sorting arrays of elements in descending order.
+
+	This class provides a concrete implementation of the sorting algorithm using insertion sort to arrange elements in descending order. It inherits from the generic idSort template class and
+   overrides the Sort method to perform the specific sorting operation. The implementation iterates through the array and applies the insertion sort technique to sort elements in descending order. The
+   comparison functionality is delegated to a derived class through the Compare method, allowing for flexible sorting criteria. This class is designed to be used as a sorting mechanism within the
+   engine's data processing pipelines where a stable, efficient sorting solution for small to medium-sized datasets is required.
+
 */
 template<typename _type_, typename _derived_>
 class idSort_Insertion : public idSort<_type_>
@@ -387,11 +415,15 @@ public:
 	}
 };
 
-/*
-================================================
-Default insertion-sort comparison function that can
-be used to sort scalars from small to large.
-================================================
+/*!
+	\class idSort_InsertionDefault
+	\brief Insertion sort implementation using default comparison for sorting values.
+
+	This class provides a specialized insertion sort implementation that uses default comparison operations for sorting values of a given type. It inherits from idSort_Insertion and implements the
+   Compare method to perform direct subtraction-based comparisons between values. The class is designed to work with numeric types or other types that support subtraction and comparison operations. It
+   serves as a sorting utility within the engine's sorting framework, specifically optimized for small datasets or nearly sorted data where insertion sort's simplicity and efficiency make it
+   preferable over more complex algorithms.
+
 */
 template<typename _type_>
 class idSort_InsertionDefault : public idSort_Insertion<_type_, idSort_InsertionDefault<_type_>>

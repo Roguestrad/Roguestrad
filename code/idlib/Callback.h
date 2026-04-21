@@ -29,17 +29,15 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __CALLBACK_H__
 #define __CALLBACK_H__
 
-/*
-================================================================================================
-This file defines a set of template functors for generating callbacks, specifically
-the OnChange handlers in the CVar system.
-================================================================================================
-*/
+/*!
+	\class idCallback
+	\brief The idCallback class provides a virtual interface for callback mechanisms within the engine.
 
-/*
-================================================
-idCallback
-================================================
+	The idCallback class serves as an abstract base class for implementing callback functionality throughout the engine. It defines a virtual destructor, a pure virtual call method, and a pure virtual
+   clone method, indicating that it is designed to be inherited by concrete callback implementations. The Clone method suggests that callback objects may be copied or duplicated, while the Call method
+   represents the primary interface for executing the callback behavior. This design supports flexible callback patterns, likely used for event handling, signal-slot mechanisms, or other notification
+   systems within the engine's architecture.
+
 */
 class idCallback
 {
@@ -49,12 +47,15 @@ public:
 	virtual idCallback* Clone() const = 0;
 };
 
-/*
-================================================
-idCallbackStatic
+/*!
+	\class idCallbackStatic
+	\brief A callback object that stores and invokes a static function pointer.
 
-Callback class that forwards the call to a c-style function
-================================================
+	The idCallbackStatic class provides a mechanism for storing and invoking a static function pointer as a callback. It inherits from idCallback and implements the callback interface for use in the
+   engine's scripting and event systems. The class is designed to hold a function pointer that can be invoked later through the Call method. The Clone method enables creating copies of the callback
+   object, which is useful when callbacks need to be duplicated for different contexts while preserving the original function pointer. This implementation supports the callback pattern where functions
+   can be registered and later executed without requiring object instances, making it suitable for engine-level event handling and script integration.
+
 */
 class idCallbackStatic : public idCallback
 {

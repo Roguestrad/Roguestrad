@@ -49,6 +49,16 @@ class idRotation;
 class idMat3;
 class idMat4;
 
+/*!
+	\class idAngles
+	\brief Represents and manipulates 3D Euler angles for rotation in the engine.
+
+	The idAngles class provides a comprehensive interface for working with Euler angles, which are commonly used in 3D graphics and game engines to represent orientations. It supports standard
+   arithmetic operations, normalization to specific ranges, conversion to other rotation representations such as quaternions, rotation matrices, and angular velocity vectors, and provides utility
+   functions for clamping and comparison. The class is designed to be efficient and integrate well with other geometric types in the engine, allowing for seamless conversion between different rotation
+   formats. It includes constructors for various initialization methods and operators for common mathematical operations on angle sets.
+
+*/
 class idAngles
 {
 public:

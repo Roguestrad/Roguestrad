@@ -40,6 +40,16 @@ If you have questions concerning this license or the applicable additional terms
 
 #define MAX_POINTS_ON_WINDING_2D 16
 
+/*!
+	\class idWinding2D
+	\brief A 2D winding class for representing polygonal shapes in engine geometry operations.
+
+	The idWinding2D class provides a container for storing and manipulating 2D polygonal windings, which are fundamental geometric primitives used throughout the engine for collision detection,
+   rendering, and spatial partitioning. The class supports basic operations like point addition, clearing, and retrieval, as well as advanced geometric computations including area calculation,
+   bounding box determination, and various clipping operations. It offers methods for expanding windings, testing point inclusion, and performing intersection checks with lines and rays, making it
+   essential for engine components that require precise 2D geometric calculations.
+
+*/
 class idWinding2D
 {
 public:

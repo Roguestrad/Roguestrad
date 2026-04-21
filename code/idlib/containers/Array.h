@@ -29,25 +29,15 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __ARRAY_H__
 #define __ARRAY_H__
 
-/*
-================================================
-idArray is a replacement for a normal C array.
+/*!
+	\class idArray
+	\brief A fixed-size template array class for managing contiguous memory blocks of typed elements.
 
-int		myArray[ARRAY_SIZE];
+	The idArray class provides a fixed-size template container for managing arrays of typed elements with compile-time size determination. It is designed to offer direct memory access for efficient
+   processing while maintaining type safety through templates. The class supports standard array-like operations including element access via bracket operators, memory clearing operations (Zero,
+   Memset), and size information retrieval. The implementation is optimized for performance through direct memory manipulation and provides low-level access to the underlying data buffer through Ptr()
+   methods. This design allows for seamless integration with C-style APIs and direct memory operations while maintaining the safety and convenience of C++ templates.
 
-becomes:
-
-idArray<int,ARRAY_SIZE>	myArray;
-
-Has no performance overhead in release builds, but
-does index range checking in debug builds.
-
-Unlike idTempArray, the memory is allocated inline with the
-object, rather than on the heap.
-
-Unlike idStaticList, there are no fields other than the
-actual raw data, and the size is fixed.
-================================================
 */
 template<class T_, int numElements>
 class idArray
@@ -111,17 +101,6 @@ private:
 #define ARRAY_COUNT( arrayName ) ( sizeof( arrayName ) / sizeof( arrayName[0] ) )
 #define ARRAY_DEF( arrayName )	 arrayName, ARRAY_COUNT( arrayName )
 
-/*
-================================================
-id2DArray is essentially a typedef (as close as we can
-get for templates before C++11 anyway) to make
-declaring two-dimensional idArrays easier.
-
-Usage:
-	id2DArray< int, 5, 10 >::type someArray;
-
-================================================
-*/
 template<class _type_, int _dim1_, int _dim2_>
 struct id2DArray {
 	typedef idArray<idArray<_type_, _dim2_>, _dim1_> type;
@@ -139,6 +118,15 @@ which works for std::arrays also.
 template<class _type_>
 struct idTupleSize;
 
+/*!
+	\struct idTupleSize< idArray< _type_, _num_ > >
+	\brief Helper struct for determining tuple size of idArray specializations.
+
+	This struct provides compile-time size information for idArray specializations, serving as a utility for template metaprogramming within the engine's type system. It is designed to be used in
+   conjunction with template specializations and compile-time type traits to enable generic programming patterns. The struct does not contain any data members or methods, serving purely as a type
+   trait helper for compile-time computations. It is part of the engine's template-based architectural components and facilitates type-safe operations across different array configurations.
+
+*/
 template<class _type_, int _num_>
 struct idTupleSize<idArray<_type_, _num_>> {
 	enum { value = _num_ };

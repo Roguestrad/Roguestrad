@@ -124,6 +124,16 @@ T Min( T x, T y )
 
 class idFile;
 
+/*!
+	\struct idNullPtr
+	\brief idNullPtr represents a null pointer constant for use in template metaprogramming.
+
+	The idNullPtr class is designed as a null pointer constant that can be used in template metaprogramming contexts where a compile-time constant null pointer is needed. It provides constexpr
+   construction and conversion operators that allow it to work with different pointer types and pointer-to-member types. This enables generic code that needs to handle null pointer values in a
+   type-safe manner. The class is specifically intended for use in template parameters where a null pointer constant is required, rather than for general pointer management. The conversion operators
+   are templated to allow the null pointer to be converted to various pointer types, making it a versatile utility for template programming.
+
+*/
 struct idNullPtr {
 	// one pointer member initialized to zero so you can pass NULL as a vararg
 	void* value;

@@ -33,22 +33,16 @@ If you have questions concerning this license or the applicable additional terms
 
 class idSerializer;
 
-/*
-===============================================================================
+/*!
+	\class idKeyValue
+	\brief Store and manage key-value pairs for engine data.
 
-Key/value dictionary
+	This is a dictionary class that tracks an arbitrary number of key / value pair combinations. It is used for map entity spawning, GUI state management, and other things.
 
-This is a dictionary class that tracks an arbitrary number of key / value
-pair combinations. It is used for map entity spawning, GUI state management,
-and other things.
+	Keys are compared case-insensitive.
 
-Keys are compared case-insensitive.
-
-Does not allocate memory until the first key/value pair is added.
-
-===============================================================================
+	Does not allocate memory until the first key/value pair is added.
 */
-
 class idKeyValue
 {
 	friend class idDict;
@@ -73,10 +67,14 @@ private:
 	const idPoolStr* value;
 };
 
-/*
-================================================
-idSort_KeyValue
-================================================
+/*!
+	\class idSort_KeyValue
+	\brief Sorts idKeyValue objects by their key strings using lexicographic comparison.
+
+	This class implements a comparison function for sorting idKeyValue objects based on their key strings in lexicographic order. It inherits from idSort_Quick, making it suitable for use with quick
+   sort algorithms. The Compare method provides the core logic for determining the relative ordering of two idKeyValue objects, which is essential for maintaining sorted collections of key-value
+   pairs. This sorting capability is typically used when organizing key-value data for efficient lookup or display purposes.
+
 */
 class idSort_KeyValue : public idSort_Quick<idKeyValue, idSort_KeyValue>
 {
@@ -94,6 +92,17 @@ public:
 	int Compare( const idKeyValue& a, const idKeyValue& b ) const { return a.GetKey().Icmp( b.GetKey() ); }
 };
 
+/*!
+	\class idDict
+	\brief A dictionary class for storing and managing key-value pairs with support for various data types and file I/O operations.
+
+	The idDict class provides a flexible storage mechanism for key-value pairs, commonly used for configuration data, entity properties, and game state management within the engine. It supports
+   multiple data types including strings, floats, integers, booleans, vectors, angles, and matrices, with efficient retrieval and storage methods. The class maintains internal hash tables for fast key
+   lookups and provides serialization capabilities for saving and loading dictionary contents from files. Key features include copy semantics, memory management through global string pools, and
+   utility functions for parsing from text formats like INI and JSON. The implementation handles various edge cases such as duplicate keys, empty values, and cross-DLL boundary operations, making it
+   suitable for the diverse data management needs of a game engine framework.
+
+*/
 class idDict
 {
 public:

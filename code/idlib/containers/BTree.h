@@ -30,16 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __BTREE_H__
 #define __BTREE_H__
 
-/*
-===============================================================================
+/*!
+	\class idBTreeNode
+	\brief idBTreeNode is a templated class representing a node in a B-tree data structure used for efficient data storage and retrieval.
 
-	Balanced Search Tree
+	The idBTreeNode class serves as a fundamental building block for B-tree implementations within the engine, providing a mechanism for organizing and accessing data efficiently. It is designed to
+   store multiple key-value pairs and maintain the B-tree properties, ensuring balanced tree structures for optimal performance. The templated nature allows it to work with different data types for
+   both objects and keys, enabling flexible usage across various engine components that require ordered data access. This class is intended to be used internally by higher-level data structures and
+   systems that require efficient lookup, insertion, and deletion operations. The implementation manages internal node organization and maintains relationships between child nodes to uphold the B-tree
+   invariant properties. TODO: clarify the exact memory management and ownership semantics of the stored data.
 
-===============================================================================
 */
-
-// #define BTREE_CHECK
-
 template<class objType, class keyType>
 class idBTreeNode
 {
@@ -54,6 +55,18 @@ public:
 	idBTreeNode* lastChild;	  // last child
 };
 
+/*!
+	\class idBTree
+	\brief A B-tree data structure implementation for efficient object storage and retrieval with key-based ordering.
+
+	The idBTree class provides a template-based B-tree implementation that stores objects with associated keys, maintaining a balanced tree structure for efficient insertion, deletion, and search
+   operations. It is designed for use in engine systems requiring fast key-based lookups and ordered traversal. The template parameters define the object type, key type, and maximum children per node,
+   with the implementation enforcing a minimum of four children per node for structural validity. The tree supports various search operations including finding nodes with keys greater/less than or
+   equal to a given value, and provides traversal methods for visiting nodes in order. Memory management is handled through dedicated node allocation and deallocation functions, with internal methods
+   for splitting and merging nodes to maintain tree balance. The class includes comprehensive validation functions for debugging purposes, ensuring structural integrity through assertions during tree
+   operations. The implementation is optimized for use in performance-critical engine components where ordered data access and efficient key-based retrieval are required.
+
+*/
 template<class objType, class keyType, int maxChildrenPerNode>
 class idBTree
 {

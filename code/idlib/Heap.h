@@ -167,17 +167,18 @@ void* operator new[]( size_t s, memTag_t tag );
 void  operator delete( void* p, memTag_t ) noexcept;
 void  operator delete[]( void* p, memTag_t ) noexcept;
 
-/*
-================================================
-idTempArray is an array that is automatically free'd when it goes out of scope.
-There is no "cast" operator because these are very unsafe.
+/*!
+	\class idTempArray
+	\brief A temporary array class that is automatically free'd when it goes out of scope.
 
-The template parameter MUST BE POD!
+	There is no "cast" operator because these are very unsafe.
 
-Compile time asserting POD-ness of the template parameter is complicated due
-to our vector classes that need a default constructor but are otherwise
-considered POD.
-================================================
+	The template parameter MUST BE POD!
+
+	Compile time asserting POD-ness of the template parameter is complicated due
+	to our vector classes that need a default constructor but are otherwise
+	considered POD.
+
 */
 template<class T>
 class idTempArray
@@ -292,12 +293,16 @@ ID_INLINE idTempArray<T>::~idTempArray()
 // for tool checking.
 // #define	FORCE_DISCRETE_BLOCK_ALLOCS
 
-/*
-================================================
-idBlockAlloc is a block-based allocator for fixed-size objects.
+/*!
+	\class idBlockAlloc
+	\brief A template-based block allocator for efficient memory management of fixed-size objects.
 
-All objects are properly constructed and destructed.
-================================================
+	The idBlockAlloc class provides a memory allocation strategy optimized for objects of fixed size, using pre-allocated blocks to reduce memory fragmentation and improve allocation performance. It
+   manages memory blocks internally and supports both dynamic allocation of new blocks when needed and the ability to fix the number of blocks for controlled memory usage. The allocator tracks
+   allocated and free elements, maintains statistics on usage, and provides methods for clearing memory upon allocation. It is designed to be used with types that have a fixed size and are frequently
+   allocated and freed. Allocation and deallocation operations are optimized for speed with inline functions. The class is templated to work with any type, has a configurable block size, and supports
+   memory tagging for debugging and tracking purposes.
+
 */
 template<class _type_, int _blockSize_, memTag_t memTag = TAG_BLOCKALLOC>
 class idBlockAlloc
@@ -395,6 +400,16 @@ private:
 		byte	   buffer[( CONST_MAX( sizeof( _type_ ), sizeof( element_t* ) ) + ( BLOCK_ALLOC_ALIGNMENT - 1 ) ) & ~( BLOCK_ALLOC_ALIGNMENT - 1 )];
 	};
 
+	/*!
+		\class idBlockAlloc::idBlock
+		\brief Block allocation utility for managing memory blocks.
+
+		The idBlock class provides functionality for allocating and managing memory blocks within the engine's memory management system. It is designed to handle block-level memory operations
+	   efficiently, supporting allocations that are typically larger than typical object allocations. The class is intended to be used internally by the engine's memory management subsystems. The
+	   implementation handles the low-level details of block allocation and deallocation, providing a foundation for higher-level memory management utilities. This class is part of the idBlockAlloc
+	   system which manages memory blocks in a way that optimizes for allocation patterns common in engine operations.
+
+	*/
 	class idBlock
 	{
 	public:
@@ -580,18 +595,17 @@ ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::FreeEmptyBlocks()
 	}
 }
 
-/*
-==============================================================================
+/*!
+	\class idDynamicAlloc
+	\brief A dynamic memory allocator template class for managing fixed-size memory blocks with efficient allocation and deallocation.
 
-	Dynamic allocator, simple wrapper for normal allocations which can
-	be interchanged with idDynamicBlockAlloc.
+	The idDynamicAlloc class provides a template-based dynamic memory allocation system designed for efficient management of fixed-size memory blocks. It is intended for use within the engine's memory
+   management subsystem where performance and predictability are critical. The allocator uses a base block system with configurable block sizes and supports both fixed and dynamic allocation
+   strategies. Key design elements include tracking of allocated, free, and empty blocks, memory locking capabilities for performance-critical scenarios, and comprehensive debugging features such as
+   memory corruption checking. The class is designed for high-frequency allocation and deallocation operations while minimizing fragmentation and memory overhead. It supports various query methods to
+   monitor allocation statistics and health of the memory pool.
 
-	No constructor is called for the 'type'.
-	Allocated blocks are always 16 byte aligned.
-
-==============================================================================
 */
-
 template<class type, int baseBlockSize, int minBlockSize>
 class idDynamicAlloc
 {
@@ -875,6 +889,16 @@ public:
 	idBTreeNode<idDynamicBlock<type>, int>* node; // node in the B-Tree with free blocks
 };
 
+/*!
+	\class idDynamicBlockAlloc
+	\brief A dynamic memory allocator that manages memory blocks with configurable base and minimum block sizes.
+
+	This class implements a dynamic block memory allocator designed for efficient memory management within the engine. It uses a template-based approach to allow different data types and allocation
+   parameters while maintaining a consistent interface. The allocator manages memory in base blocks and can dynamically resize and reallocate memory as needed. It maintains internal statistics and
+   provides methods to monitor memory usage and integrity. The allocator supports both fixed and dynamic block allocation modes and includes memory checking capabilities for debugging purposes. Memory
+   blocks are tracked through a free tree structure for efficient allocation and deallocation operations.
+
+*/
 template<class type, int baseBlockSize, int minBlockSize, memTag_t _tag_ = TAG_BLOCKALLOC>
 class idDynamicBlockAlloc
 {

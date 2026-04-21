@@ -30,17 +30,18 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_SIMD_H__
 #define __MATH_SIMD_H__
 
-/*
-===============================================================================
+/*!
+	\class idSIMD
+	\brief Provides SIMD (Single Instruction, Multiple Data) processing capabilities with dynamic implementation selection based on CPU capabilities.
 
-	Single Instruction Multiple Data (SIMD)
+	The idSIMD class serves as the core interface for managing SIMD processing within the engine, automatically selecting the most appropriate implementation based on available CPU extensions. It
+   handles initialization, shutdown, and performance testing of different SIMD implementations, including generic fallback options. The class initializes the SIMD processor by detecting CPU
+   capabilities such as MMX and SSE support, and can be forced to use generic implementations when needed. During initialization, it also manages FPU modes like Flush-To-Zero and Denormals-Are-Zero
+   for optimal performance on supporting hardware. The class supports performance testing through the Test_f method, which evaluates different SIMD implementations and selects the most efficient one
+   based on benchmark results. Proper cleanup is handled during shutdown by deallocating all allocated resources and resetting pointers to prevent dangling references. The system maintains a singleton
+   pattern where initialization is performed once based on module context and CPU capabilities.
 
-	For optimal use data should be aligned on a 16 byte boundary.
-	All idSIMDProcessor routines are thread safe.
-
-===============================================================================
 */
-
 class idSIMD
 {
 public:
@@ -123,6 +124,17 @@ class idJointQuat;
 class idJointMat;
 struct dominantTri_t;
 
+/*!
+	\class idSIMDProcessor
+	\brief Abstract base class for SIMD processor implementations providing optimized mathematical operations.
+
+	The idSIMDProcessor class serves as an abstract base class for implementing SIMD-optimized mathematical operations used throughout the engine. It defines a common interface for various
+   processor-specific optimizations, including min/max calculations, memory operations, and joint transformation functions. The class is designed to be inherited by concrete implementations that
+   provide optimized versions of these operations based on detected CPU capabilities. The virtual destructor ensures proper cleanup of derived implementations, while the pure virtual methods enforce
+   that each implementation provides concrete functionality for all required operations. This design enables the engine to select the most appropriate optimized implementation at runtime based on
+   available CPU instruction sets.
+
+*/
 class idSIMDProcessor
 {
 public:

@@ -49,6 +49,16 @@ typedef LONG			 interlockedInt_t;
 
 		#include <pthread.h>
 
+/*!
+	\struct signalHandle_t
+	\brief Handle type for managing signal connections in the engine's event system.
+
+	The signalHandle_t struct serves as a opaque handle type for managing signal connections within the engine's event system. It is used to uniquely identify and manage connections between signals
+   and their respective callbacks. This handle type is typically returned when connecting a signal to a callback and can be used later to disconnect the signal. The structure itself contains no data
+   members, making it essentially a type-safe identifier for signal management operations. This design allows the engine to maintain a clean abstraction for event handling while providing a simple
+   interface for connecting and disconnecting signal observers.
+
+*/
 struct signalHandle_t {
 	// DG: all this stuff is needed to emulate Window's Event API
 	//     (CreateEvent(), SetEvent(), WaitForSingleObject(), ...)
@@ -115,6 +125,17 @@ public:
 	DWORD tlsIndex;
 };
 	#else
+
+/*!
+	\class idSysThreadLocalStorage
+	\brief Provides thread-local storage functionality using POSIX pthread library.
+
+	This class encapsulates thread-local storage management through POSIX pthread APIs. It allows creation of thread-local storage keys that can hold data specific to each executing thread. The class
+   supports both default initialization with no destructor and initialization with a specific value. Thread-local storage is commonly used in engine components that require per-thread state or data
+   without requiring synchronization mechanisms. The implementation leverages pthread_key_create for key creation and pthread_setspecific for value assignment, making it suitable for scenarios where
+   lightweight per-thread data access is needed. Memory management for stored data is not automatically handled by this class, requiring explicit management by the caller.
+
+*/
 class idSysThreadLocalStorage
 {
 public:

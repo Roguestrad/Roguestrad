@@ -47,12 +47,16 @@ class idCQuat;
 class idRotation;
 class idMat4;
 
-//===============================================================
-//
-//	idMat2 - 2x2 matrix
-//
-//===============================================================
+/*!
+	\class idMat2
+	\brief A 2x2 matrix class for linear algebra operations in the engine.
 
+	The idMat2 class represents a 2x2 matrix commonly used for 2D linear algebra operations within the engine. It provides multiple constructors for flexible initialization including from vectors,
+   individual float values, and array data. The class supports standard matrix operations such as addition, subtraction, multiplication, transpose, and inversion. It includes utility methods for
+   checking matrix properties like identity, symmetry, and diagonal nature. The implementation is designed for performance with inline methods for common operations and provides both safe and fast
+   inversion methods. The class integrates with the engine's vector types and follows standard conventions for matrix representation and operations.
+
+*/
 class idMat2
 {
 public:
@@ -507,14 +511,20 @@ ID_INLINE float* idMat2::ToFloatPtr()
 	return mat[0].ToFloatPtr();
 }
 
-//===============================================================
-//
-//	idMat3 - 3x3 matrix
-//
-//	NOTE:	matrix is column-major
-//
-//===============================================================
+/*!
+	\class idMat3
+	\brief A 3x3 matrix class for representing and manipulating 3D transformations in the engine.
 
+	\note matrix is column-major
+
+	The idMat3 class provides a comprehensive set of tools for working with 3x3 matrices, primarily used for 3D transformations including rotations, scaling, and projections. It supports multiple
+   construction methods including from vectors, arrays, and individual elements, allowing flexibility in matrix initialization. The class offers standard arithmetic operations, comparison functions,
+   and geometric utility methods such as trace, determinant, and various normalization techniques. It includes specialized methods for working with inertia tensors, which are essential for physics
+   simulations, supporting translation and rotation operations. The class also provides conversion functions to represent the matrix in other geometric formats like Euler angles, quaternions, and
+   rotation objects. Memory management is handled through standard C++ mechanisms with no explicit ownership semantics, and the class is designed for both performance and usability in the engine's
+   graphics and physics systems.
+
+*/
 class idMat3
 {
 public:
@@ -1277,12 +1287,17 @@ ID_INLINE float* idMat3::ToFloatPtr()
 	return mat[0].ToFloatPtr();
 }
 
-//===============================================================
-//
-//	idMat4 - 4x4 matrix
-//
-//===============================================================
+/*!
+	\class idMat4
+	\brief A 4x4 matrix class used for 3D transformations and graphics operations in the engine.
 
+	The idMat4 class represents a 4x4 transformation matrix commonly used in computer graphics for 3D operations such as rotations, translations, and scaling. It supports construction from various
+   sources including identity, vectors, rotation matrices, and raw data arrays. The class provides comprehensive matrix arithmetic operations including multiplication, addition, and subtraction, as
+   well as utility functions for common matrix operations like transpose, determinant calculation, and inversion. The matrix is stored internally in row-major order but can be constructed from
+   column-major component parameters. It includes specialized methods for extracting transformation components such as translation vectors and converting between 4x4 and 3x3 matrix representations.
+   The class is designed to support both mathematical operations and graphics transformations within the engine's rendering and physics systems.
+
+*/
 class idMat4
 {
 public:
@@ -2029,12 +2044,18 @@ ID_INLINE float* idMat4::ToFloatPtr()
 	return mat[0].ToFloatPtr();
 }
 
-//===============================================================
-//
-//	idMat5 - 5x5 matrix
-//
-//===============================================================
+/*!
+	\class idMat5
+	\brief A 5x5 matrix class for linear algebra operations in the Roguestrad engine.
 
+	The idMat5 class provides a comprehensive implementation of 5x5 matrix operations, including construction from various data sources, arithmetic operations, and mathematical functions. It supports
+   standard matrix operations such as multiplication, addition, subtraction, transposition, and inversion, making it suitable for use in 3D graphics, physics simulations, and other engine components
+   requiring matrix mathematics. The class is designed to integrate seamlessly with the engine's existing math library, providing both inline optimized operations and full-featured methods for complex
+   matrix computations. The implementation includes methods for checking matrix properties such as identity, symmetry, and diagonality, as well as functions for computing determinants and traces.
+   Memory management is handled through the standard C++ object model with no explicit allocation or deallocation required, as the class manages its internal 25-element float array automatically. The
+   class is intended for use in performance-critical engine code where both speed and mathematical correctness are required.
+
+*/
 class idMat5
 {
 public:
@@ -2563,12 +2584,17 @@ ID_INLINE float* idMat5::ToFloatPtr()
 	return mat[0].ToFloatPtr();
 }
 
-//===============================================================
-//
-//	idMat6 - 6x6 matrix
-//
-//===============================================================
+/*!
+	\class idMat6
+	\brief A 6x6 matrix class designed for efficient linear algebra operations in 3D graphics and physics simulations.
 
+	The idMat6 class provides a comprehensive implementation of 6x6 matrix operations commonly used in computer graphics and physics engines. It supports standard matrix constructors, arithmetic
+   operations, and advanced functionalities such as determinant calculation, transposition, and inversion. The class is optimized for performance through inline implementations and provides both
+   in-place and temporary operation variants. The matrix is primarily used for transformations and linear algebra computations in the engine's 3D rendering and physics systems, with support for
+   various data initialization methods and comparison utilities. The class maintains a fixed 6x6 structure to accommodate specialized operations required by the engine's graphics pipeline,
+   particularly for handling complex transformations and matrix-based calculations in 3D space.
+
+*/
 class idMat6
 {
 public:

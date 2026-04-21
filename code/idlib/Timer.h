@@ -30,14 +30,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __TIMER_H__
 #define __TIMER_H__
 
-/*
-===============================================================================
+/*!
+	\class idTimer
+	\brief A timer class for measuring elapsed time with high precision.
 
-	Clock tick counter. Should only be used for profiling.
+	The idTimer class provides functionality for tracking elapsed time with high precision using system clock ticks. It supports starting, stopping, and accumulating time intervals while maintaining
+   internal state to ensure correct timing operations. The class is designed to be used for performance measurement and profiling within the engine, with methods for initializing base clock ticks to
+   calibrate timing accuracy. The timer maintains a stopped state by default and can only transition between stopped and started states through explicit start and stop operations. The class supports
+   arithmetic operations between timer objects to facilitate time calculations and comparisons for engine performance monitoring.
 
-===============================================================================
 */
-
 class idTimer
 {
 public:
@@ -228,14 +230,16 @@ ID_INLINE double idTimer::Milliseconds() const
 	return clockTicks / ( idLib::sys->ClockTicksPerSecond() * 0.001 );
 }
 
-/*
-===============================================================================
+/*!
+	\class idTimerReport
+	\brief Manages and reports timing data for multiple timers within the engine.
 
-	Report of multiple named timers.
+	The idTimerReport class provides functionality to track and report timing information for various engine components. It maintains a collection of named timers and allows adding new timer reports,
+   resetting all timers, and printing formatted timing reports. The class supports adding timing data from existing timers to the report, either by updating existing entries or creating new ones. It
+   ensures proper synchronization between timer entries and their corresponding names, and provides methods to clear all timer data or reset individual timers. This class is typically used for
+   performance monitoring and profiling within the engine's timing subsystem.
 
-===============================================================================
 */
-
 class idTimerReport
 {
 public:

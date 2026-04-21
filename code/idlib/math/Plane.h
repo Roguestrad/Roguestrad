@@ -68,6 +68,17 @@ class idMat3;
 #define PLANETYPE_ZEROZ			8
 #define PLANETYPE_NONAXIAL		9
 
+/*!
+	\class idPlane
+	\brief Represents a mathematical plane in 3D space with methods for construction, transformation, and geometric operations.
+
+	The idPlane class encapsulates a plane in 3D space defined by the equation ax + by + cz + d = 0, where (a,b,c) is the normal vector and d is the distance from the origin. It provides various
+   constructors for different plane definitions, including from coefficients, normal and distance, or three points. The class supports standard arithmetic operations, normalization, degeneracy fixing,
+   and geometric queries such as distance computation and intersection testing with points, lines, and rays. It also offers transformation methods for translation and rotation, making it suitable for
+   use in engine geometry calculations and spatial queries. The class maintains a consistent interface with other vector and matrix types in the engine through its use of idVec3, idVec4, and idMat3
+   types.
+
+*/
 class idPlane
 {
 public:

@@ -41,6 +41,16 @@ If you have questions concerning this license or the applicable additional terms
 	#define STACK_SIZE_PARAM_IS_A_RESERVATION 0x00010000
 #endif
 
+/*!
+	\struct tagTHREADNAME_INFO
+	\brief Structure for holding thread naming information.
+
+	This structure is used to encapsulate information related to thread naming within the engine. It serves as a standardized format for passing thread name metadata, which is typically utilized by
+   debugging and profiling tools to identify and monitor specific threads. The structure is designed to be used in conjunction with Windows API calls that set thread names, providing a consistent
+   interface for thread identification across the engine's multithreaded components. Thread naming is essential for debugging purposes, allowing developers to quickly identify which thread is
+   executing specific code sections or experiencing issues.
+
+*/
 typedef struct tagTHREADNAME_INFO {
 	DWORD  dwType;	   // Must be 0x1000.
 	LPCSTR szName;	   // Pointer to name (in user addr space).

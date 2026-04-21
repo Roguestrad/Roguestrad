@@ -32,6 +32,15 @@ SOFTWARE.
 
 // https://graphics.stanford.edu/papers/envmap/envmap.pdf
 
+/*!
+	\struct SphericalHarmonicsT
+	\brief A template struct for storing and accessing spherical harmonics coefficients with degree and order indices.
+
+	This class provides a structured way to store spherical harmonics coefficients in a flattened array format. The template parameters allow it to work with different data types T and a maximum
+   degree L. The class supports both const and non-const access to coefficients via degree l and order m indices. The indexing scheme l * l + l + m efficiently maps the 2D degree-order indices to a 1D
+   array position. This design is intended for use in lighting and shading calculations where spherical harmonics are employed to represent irradiance or other environmental lighting data.
+
+*/
 template<typename T, size_t L>
 struct SphericalHarmonicsT {
 	T		 data[( L + 1 ) * ( L + 1 )];

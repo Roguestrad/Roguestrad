@@ -30,14 +30,18 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __CMDARGS_H__
 #define __CMDARGS_H__
 
-/*
-===============================================================================
+/*!
+	\class idCmdArgs
+	\brief Command arguments parsing and management class for handling command line arguments and tokenized strings.
 
-	Command arguments.
+	The idCmdArgs class provides a robust interface for parsing, storing, and managing command line arguments and tokenized strings. It supports both initialization from raw text and dynamic appending
+   of arguments, making it suitable for processing command input from various sources such as console commands, configuration files, or command line parameters. The class handles argument tokenization
+   with support for preserving string literals and managing argument counts, while providing safe access methods through Argc() and Argv() functions. It also offers functionality to concatenate
+   argument ranges into single strings with optional escaping for re-tokenization, which is useful for command reconstruction or forwarding. The Clear() method allows resetting the argument list, and
+   GetArgs() provides direct access to the internal argument vector for integration with other systems that require array-based argument access. The implementation maintains internal buffers with
+   limits and ensures safe bounds checking during argument access operations.
 
-===============================================================================
 */
-
 class idCmdArgs
 {
 public:

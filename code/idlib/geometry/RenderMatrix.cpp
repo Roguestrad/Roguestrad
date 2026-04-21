@@ -240,44 +240,6 @@ static int boxEdgePolygons[12][2] = {
 };
 #endif
 
-/*
-#include <Windows.h>
-
-class idCreateBoxFrontPolygonsForFrontBits {
-public:
-	idCreateBoxFrontPolygonsForFrontBits() {
-		for ( int i = 0; i < 64; i++ ) {
-			int frontPolygons[7] = { 0 };
-			int numFrontPolygons = 0;
-			char bits[7] = { 0 };
-			for ( int j = 0; j < 6; j++ ) {
-				if ( ( i & ( 1 << j ) ) != 0 ) {
-					frontPolygons[numFrontPolygons++] = j;
-					bits[5 - j] = '1';
-				} else {
-					bits[5 - j] = '0';
-				}
-			}
-			const char * comment = ( ( i & ( i >> 3 ) & 7 ) != 0 ) ? " invalid" : "";
-			if ( i == 0 ) {
-				comment = " inside the box, every polygon is considered front facing";
-				numFrontPolygons = 6;
-				for ( int j = 0; j < 6; j++ ) {
-					frontPolygons[j] = j;
-				}
-			}
-			char buffer[1024];
-			sprintf( buffer, "{ { %d, %d, %d, %d, %d, %d, %d }, %d }, // %s = %d%s\n",
-								frontPolygons[0], frontPolygons[1], frontPolygons[2], frontPolygons[3],
-								frontPolygons[4], frontPolygons[5], frontPolygons[6],
-								numFrontPolygons, bits, i, comment );
-			OutputDebugString( buffer );
-		}
-	}
-} createBoxFrontPolygonsForFrontBits;
-*/
-
-// make sure this is a power of two for fast addressing an array of these without integer multiplication
 static const struct frontPolygons_t {
 	byte indices[7];
 	byte count;
@@ -348,47 +310,6 @@ static const struct frontPolygons_t {
 	{ { 0, 1, 2, 3, 4, 5, 0 }, 6 }, // 111111 = 63 invalid
 };
 
-/*
-#include <Windows.h>
-
-class idCreateBoxSilhouetteEdgesForFrontBits {
-public:
-	idCreateBoxSilhouetteEdgesForFrontBits() {
-		for ( int i = 0; i < 64; i++ ) {
-			int silhouetteEdges[12] = { 0 };
-			int numSilhouetteEdges = 0;
-
-			for ( int j = 0; j < 12; j++ ) {
-				if ( i == 0 || ( ( i >> boxEdgePolygons[j][0] ) & 1 ) != ( ( i >> boxEdgePolygons[j][1] ) & 1 ) ) {
-					silhouetteEdges[numSilhouetteEdges++] = j;
-				}
-			}
-
-			char bits[7] = { 0 };
-			for ( int j = 0; j < 6; j++ ) {
-				if ( ( i & ( 1 << j ) ) != 0 ) {
-					bits[5 - j] = '1';
-				} else {
-					bits[5 - j] = '0';
-				}
-			}
-			const char * comment = ( ( i & ( i >> 3 ) & 7 ) != 0 ) ? " invalid" : "";
-			if ( i == 0 ) {
-				comment = " inside the box, every edge is considered part of the silhouette";
-			}
-			char buffer[1024];
-			sprintf( buffer, "{ { %2d, %2d, %2d, %2d, %2d, %2d, %2d, %2d, %2d, %2d, %2d, %2d }, %2d }, // %s = %d%s\n",
-								silhouetteEdges[0], silhouetteEdges[1], silhouetteEdges[2], silhouetteEdges[3],
-								silhouetteEdges[4], silhouetteEdges[5], silhouetteEdges[6], silhouetteEdges[7],
-								silhouetteEdges[8], silhouetteEdges[9], silhouetteEdges[10], silhouetteEdges[11],
-								numSilhouetteEdges, bits, i, comment );
-			OutputDebugString( buffer );
-		}
-	}
-} createBoxSilhouetteEdgesForFrontBits;
-*/
-
-// make sure this is a power of two for fast addressing an array of these without integer multiplication
 static const struct silhouetteEdges_t {
 	byte  indices[12];
 	int32 count;

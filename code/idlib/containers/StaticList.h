@@ -32,15 +32,17 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "List.h"
 
-/*
-===============================================================================
+/*!
+	\class idStaticList
+	\brief A fixed-size templated list class for managing collections of elements with efficient access and modification operations.
 
-	Static list template
-	A non-growing, memset-able list using no memory allocation.
+	The idStaticList class provides a fixed-capacity container for managing collections of elements of any type, with compile-time size limits. It is designed for performance-critical applications
+   within the engine, offering direct memory access through Ptr() methods and efficient in-place operations. The class supports standard list operations including insertion, removal, searching, and
+   sorting, with specialized methods for handling dynamic allocation and memory management. It is intended for use in scenarios where the maximum number of elements is known at compile time or when
+   fixed-size containers are preferred for performance reasons. The class includes safety checks through assertions to prevent out-of-bounds access and maintains internal state tracking for element
+   count and capacity. Memory management is handled internally, with explicit cleanup mechanisms provided through Clear and DeleteContents methods when dealing with dynamically allocated objects.
 
-===============================================================================
 */
-
 template<class type, int size>
 class idStaticList
 {
