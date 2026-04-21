@@ -37,29 +37,20 @@ If you have questions concerning this license or the applicable additional terms
 
 idCVar				   gltf_MapSceneName( "gltf_MapSceneName", "Scene", CVAR_SYSTEM, "Scene to use when d-mapping a gltf/glb" );
 
-/*!
-	\brief Returns the unsigned integer representation of a floating-point value.
-
-	This function performs a bit-level reinterpretation of the float value, treating its binary representation as an unsigned integer. It directly accesses the memory representation of the float
-   parameter and returns it as an unsigned integer.
-
-	\param f The floating-point value to convert to an unsigned integer representation
-	\return The unsigned integer value that represents the bit pattern of the input floating-point number
+/*
+===============
+FloatCRC
+===============
 */
 ID_INLINE unsigned int FloatCRC( float f )
 {
 	return *( unsigned int* )&f;
 }
 
-/*!
-	\brief Computes a CRC32-like checksum for the input string.
-
-	This function calculates a simple checksum for the provided string by iterating through each character and applying a bitwise XOR operation with the character value shifted by the position within
-   the string. The shift is determined by the bitwise AND of the character index and 3, which effectively cycles through 0 to 3 as the index increases. The result is a 32-bit unsigned integer that
-   serves as a basic hash or checksum for the string.
-
-	\param str Input string to compute the checksum for.
-	\return The computed checksum as a 32-bit unsigned integer.
+/*
+===============
+StringCRC
+===============
 */
 ID_INLINE unsigned int StringCRC( const char* str )
 {
@@ -74,16 +65,13 @@ ID_INLINE unsigned int StringCRC( const char* str )
 	return crc;
 }
 
-/*!
-	\brief Computes tangent and binormal vectors for a given normal vector to form a coordinate system
+/*
+=================
+ComputeAxisBase
 
-	This function calculates two orthogonal vectors (texS and texT) that are perpendicular to the provided normal vector, forming a local coordinate system. The computation uses trigonometric
-   functions to determine the appropriate rotation angles and then applies these rotations to standard basis vectors to generate the tangent and binormal vectors. The function handles degenerate cases
-   where components of the normal vector are very close to zero by setting them to zero. The resulting vectors are useful for texture coordinate generation and normal mapping calculations.
-
-	\param normal The input normal vector for which the coordinate system is to be computed
-	\param texS Output vector representing the tangent (S-axis) of the coordinate system
-	\param texT Output vector representing the binormal (T-axis) of the coordinate system
+WARNING : special case behaviour of atan2(y,x) <-> atan(y/x) might not be the same everywhere when x == 0
+rotation by (0,RotY,RotZ) assigns X to normal
+=================
 */
 static void ComputeAxisBase( const idVec3& normal, idVec3& texS, idVec3& texT )
 {
@@ -107,6 +95,11 @@ static void ComputeAxisBase( const idVec3& normal, idVec3& texS, idVec3& texT )
 	texT[2] = -cos( RotY );
 }
 
+/*
+=================
+idMapBrushSide::GetTextureVectors
+=================
+*/
 void idMapBrushSide::GetTextureVectors( idVec4 v[2] ) const
 {
 	if( projection == PROJECTION_VALVE220 ) {
@@ -132,22 +125,14 @@ void idMapBrushSide::GetTextureVectors( idVec4 v[2] ) const
 	}
 }
 
-/*!
-	\brief Checks if two 2D vectors are degenerate (collinear) by testing if their cross product equals zero.
-
-	This function determines if two 2D vectors represented by idVec3 objects are degenerate, meaning they are collinear or parallel. It performs a 2D cross product calculation using the formula (x1 *
-   y2 - x2 * y1) and returns true if the result is zero, indicating the vectors are degenerate.
-
-	\param bpTexMatX First 2D vector represented as an idVec3, where only the x and y components are considered
-	\param bpTexMatY Second 2D vector represented as an idVec3, where only the x and y components are considered
-	\return True if the two vectors are degenerate (collinear), false otherwise
-*/
+// RB begin
 inline bool BrushPrimitive_Degenerate( const idVec3& bpTexMatX, const idVec3& bpTexMatY )
 {
 	// 2D cross product
 	return ( bpTexMatX[0] * bpTexMatY[1] - bpTexMatX[1] * bpTexMatY[0] ) == 0;
 }
 
+// heavily inspired by Valve220_from_BP from Netradiant-custom
 void idMapBrushSide::ConvertToValve220Format( const idMat4& entityTransform, idStrList& textureCollections )
 {
 	if( projection == idMapBrushSide::PROJECTION_VALVE220 ) {
@@ -246,6 +231,11 @@ void idMapBrushSide::ConvertToValve220Format( const idMat4& entityTransform, idS
 	projection = idMapBrushSide::PROJECTION_VALVE220;
 }
 
+/*
+=================
+idMapPatch::Parse
+=================
+*/
 idMapPatch* idMapPatch::Parse( idLexer& src, const idVec3& origin, bool patchDef3, int version )
 {
 	float		info[7];
@@ -358,6 +348,11 @@ idMapPatch* idMapPatch::Parse( idLexer& src, const idVec3& origin, bool patchDef
 	return patch;
 }
 
+/*
+============
+idMapPatch::Write
+============
+*/
 bool idMapPatch::Write( idFile* fp, int primitiveNum, const idVec3& origin ) const
 {
 	int				  i, j;
@@ -387,6 +382,11 @@ bool idMapPatch::Write( idFile* fp, int primitiveNum, const idVec3& origin ) con
 	return true;
 }
 
+/*
+===============
+idMapPatch::GetGeometryCRC
+===============
+*/
 unsigned int idMapPatch::GetGeometryCRC() const
 {
 	int			 i, j;
@@ -406,6 +406,11 @@ unsigned int idMapPatch::GetGeometryCRC() const
 	return crc;
 }
 
+/*
+=================
+idMapBrush::Parse
+=================
+*/
 idMapBrush* idMapBrush::Parse( idLexer& src, const idVec3& origin, bool newFormat, int version )
 {
 	int						i;
@@ -533,6 +538,11 @@ idMapBrush* idMapBrush::Parse( idLexer& src, const idVec3& origin, bool newForma
 	return brush;
 }
 
+/*
+=================
+idMapBrush::ParseQ3
+=================
+*/
 idMapBrush* idMapBrush::ParseQ3( idLexer& src, const idVec3& origin )
 {
 	int						i, shift[2], rotate;
@@ -603,6 +613,11 @@ idMapBrush* idMapBrush::ParseQ3( idLexer& src, const idVec3& origin )
 	return brush;
 }
 
+/*
+=================
+idMapBrush::ParseValve220
+=================
+*/
 idMapBrush* idMapBrush::ParseValve220( idLexer& src, const idVec3& origin )
 {
 	float					scale[2], rotate;
@@ -735,6 +750,11 @@ idMapBrush* idMapBrush::ParseValve220( idLexer& src, const idVec3& origin )
 	return brush;
 }
 
+/*
+============
+idMapBrush::Write
+============
+*/
 bool idMapBrush::Write( idFile* fp, int primitiveNum, const idVec3& origin ) const
 {
 	int				i;
@@ -766,6 +786,11 @@ bool idMapBrush::Write( idFile* fp, int primitiveNum, const idVec3& origin ) con
 	return true;
 }
 
+/*
+============
+RB idMapBrush::WriteValve220
+============
+*/
 bool idMapBrush::WriteValve220( idFile* fp, int primitiveNum, const idVec3& origin ) const
 {
 	int				i;
@@ -817,6 +842,11 @@ bool idMapBrush::WriteValve220( idFile* fp, int primitiveNum, const idVec3& orig
 	return true;
 }
 
+/*
+============
+RB idMapBrush::SetPlanePointsFromWindings
+============
+*/
 void idMapBrush::SetPlanePointsFromWindings( const idVec3& origin, int entityNum, int primitiveNum )
 {
 	// fix degenerate planes
@@ -868,6 +898,11 @@ void idMapBrush::SetPlanePointsFromWindings( const idVec3& origin, int entityNum
 	}
 }
 
+/*
+===============
+idMapBrush::GetGeometryCRC
+===============
+*/
 unsigned int idMapBrush::GetGeometryCRC() const
 {
 	int				i, j;
@@ -886,6 +921,11 @@ unsigned int idMapBrush::GetGeometryCRC() const
 	return crc;
 }
 
+/*
+===============
+idMapBrush::IsOriginBrush
+===============
+*/
 bool idMapBrush::IsOriginBrush() const
 {
 	for( int i = 0; i < GetNumSides(); i++ ) {
@@ -898,6 +938,11 @@ bool idMapBrush::IsOriginBrush() const
 	return false;
 }
 
+/*
+================
+idMapEntity::Parse
+================
+*/
 idMapEntity* idMapEntity::Parse( idLexer& src, bool worldSpawn, int version )
 {
 	idToken			token;
@@ -1017,6 +1062,11 @@ idMapEntity* idMapEntity::Parse( idLexer& src, bool worldSpawn, int version )
 	return mapEnt;
 }
 
+/*
+============
+idMapEntity::Write
+============
+*/
 bool idMapEntity::Write( idFile* fp, int entityNum, bool valve220 ) const
 {
 	int				i;
@@ -1063,6 +1113,7 @@ bool idMapEntity::Write( idFile* fp, int entityNum, bool valve220 ) const
 	return true;
 }
 
+// RB begin
 bool idMapEntity::WriteJSON( idFile* fp, int entityNum, int numEntities ) const
 {
 	idVec3 origin;
@@ -1272,12 +1323,23 @@ idMapEntity* idMapEntity::ParseJSON( idLexer& src )
 
 	return mapEnt;
 }
+// RB end
 
+/*
+===============
+idMapEntity::RemovePrimitiveData
+===============
+*/
 void idMapEntity::RemovePrimitiveData()
 {
 	primitives.DeleteContents( true );
 }
 
+/*
+===============
+idMapEntity::GetGeometryCRC
+===============
+*/
 unsigned int idMapEntity::GetGeometryCRC() const
 {
 	unsigned int	crc;
@@ -1306,6 +1368,13 @@ unsigned int idMapEntity::GetGeometryCRC() const
 	return crc;
 }
 
+/*
+===============
+Admer
+
+idMapEntity::CalculateBrushOrigin
+===============
+*/
 void idMapEntity::CalculateBrushOrigin()
 {
 	// Collect the origin brushes
@@ -1337,6 +1406,11 @@ void idMapEntity::CalculateBrushOrigin()
 	originOffset /= static_cast<float>( originBrushes.Num() );
 }
 
+/*
+===============
+idMapFile::Parse
+===============
+*/
 bool idMapFile::Parse( const char* filename, bool ignoreRegion, bool osPath, bool ignoreExtraEnts )
 {
 	// no string concatenation for epairs and allow path names for materials
@@ -1583,6 +1657,11 @@ bool idMapFile::Parse( const char* filename, bool ignoreRegion, bool osPath, boo
 	return true;
 }
 
+/*
+============
+idMapFile::Write
+============
+*/
 bool idMapFile::Write( const char* fileName, const char* ext, bool fromBasePath )
 {
 	int		i;
@@ -1620,6 +1699,7 @@ bool idMapFile::Write( const char* fileName, const char* ext, bool fromBasePath 
 	return true;
 }
 
+// RB begin
 bool idMapFile::WriteJSON( const char* fileName, const char* ext, bool fromBasePath )
 {
 	int		i;
@@ -1787,7 +1867,13 @@ bool idMapFile::WriteDiff( const idMapFile* otherMap, const char* fileName, cons
 
 	return true;
 }
+// RB end
 
+/*
+===============
+idMapFile::SetGeometryCRC
+===============
+*/
 void idMapFile::SetGeometryCRC()
 {
 	int i;
@@ -1798,12 +1884,22 @@ void idMapFile::SetGeometryCRC()
 	}
 }
 
+/*
+===============
+idMapFile::AddEntity
+===============
+*/
 int idMapFile::AddEntity( idMapEntity* mapEnt )
 {
 	int ret = entities.Append( mapEnt );
 	return ret;
 }
 
+/*
+===============
+idMapFile::FindEntity
+===============
+*/
 idMapEntity* idMapFile::FindEntity( const char* name ) const
 {
 	for( int i = 0; i < entities.Num(); i++ ) {
@@ -1815,6 +1911,11 @@ idMapEntity* idMapFile::FindEntity( const char* name ) const
 	return NULL;
 }
 
+/*
+===============
+RB idMapFile::FindEntityAtOrigin
+===============
+*/
 idMapEntity* idMapFile::FindEntityAtOrigin( const idVec3& org ) const
 {
 	idBounds bo( org );
@@ -1833,6 +1934,13 @@ idMapEntity* idMapFile::FindEntityAtOrigin( const idVec3& org ) const
 	return NULL;
 }
 
+/*
+=============
+RB from idGameEdit::GetUniqueEntityName
+
+generates a unique name for a given classname
+=============
+*/
 const char* idMapFile::GetUniqueEntityName( const char* classname ) const
 {
 	int			id;
@@ -1851,12 +1959,22 @@ const char* idMapFile::GetUniqueEntityName( const char* classname ) const
 	return name;
 }
 
+/*
+===============
+idMapFile::RemoveEntity
+===============
+*/
 void idMapFile::RemoveEntity( idMapEntity* mapEnt )
 {
 	entities.Remove( mapEnt );
 	delete mapEnt;
 }
 
+/*
+===============
+idMapFile::RemoveEntity
+===============
+*/
 void idMapFile::RemoveEntities( const char* classname )
 {
 	for( int i = 0; i < entities.Num(); i++ ) {
@@ -1869,12 +1987,22 @@ void idMapFile::RemoveEntities( const char* classname )
 	}
 }
 
+/*
+===============
+idMapFile::RemoveAllEntities
+===============
+*/
 void idMapFile::RemoveAllEntities()
 {
 	entities.DeleteContents( true );
 	hasPrimitiveData = false;
 }
 
+/*
+===============
+idMapFile::RemovePrimitiveData
+===============
+*/
 void idMapFile::RemovePrimitiveData()
 {
 	for( int i = 0; i < entities.Num(); i++ ) {
@@ -1884,6 +2012,11 @@ void idMapFile::RemovePrimitiveData()
 	hasPrimitiveData = false;
 }
 
+/*
+===============
+idMapFile::NeedsReload
+===============
+*/
 bool idMapFile::NeedsReload()
 {
 	if( name.Length() ) {
@@ -1895,6 +2028,7 @@ bool idMapFile::NeedsReload()
 	return true;
 }
 
+// RB begin
 MapPolygonMesh::MapPolygonMesh()
 {
 	type		 = TYPE_MESH;
@@ -3176,6 +3310,13 @@ void idMapFile::WadTextureToMaterial( const char* material, idStr& matName )
 	matName = material;
 }
 
+/*
+============
+RB idMapBrush::MakeOriginBrush
+
+moved it here so Astyle won't mess up this file
+============
+*/
 idMapBrush* idMapBrush::MakeOriginBrush( const idVec3& origin, const idVec3& scale )
 {
 	/*

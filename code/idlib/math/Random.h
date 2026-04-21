@@ -30,38 +30,26 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_RANDOM_H__
 #define __MATH_RANDOM_H__
 
-/*!
-	\class idRandom
-	\brief A random number generator class for producing pseudo-random numbers within the engine.
+/*
+===============================================================================
 
-	The idRandom class provides a pseudo-random number generator implementation that can be seeded for reproducible sequences. It supports generating random integers within specified ranges and
-   floating-point numbers in both [0.0f, 1.0f] and [-1.0f, 1.0f] ranges. The class is designed to be lightweight and efficient for use throughout the engine's systems that require randomization. The
-   seed can be queried and modified, allowing for controlled random behavior in deterministic scenarios.
+	Random number generator
 
+===============================================================================
 */
+
 class idRandom
 {
 public:
-	//! Initializes a random number generator with the specified seed value.
 	idRandom( int seed = 0 );
 
-	//! Sets the random number generator seed to the specified value.
 	void			 SetSeed( int seed );
-
-	//! Returns the current seed value used by the random number generator.
 	int				 GetSeed() const;
 
-	//! Returns a random integer in the range [0, MAX_RAND]
-	int				 RandomInt();
-
-	//! Returns a random integer in the range [0, max)
-	int				 RandomInt( int max );
-
-	//! Returns a random floating-point number in the range [0.0f, 1.0f]
-	float			 RandomFloat();
-
-	//! Returns a random float value in the range [-1.0, 1.0]
-	float			 CRandomFloat();
+	int				 RandomInt();		   // random integer in the range [0, MAX_RAND]
+	int				 RandomInt( int max ); // random integer in the range [0, max[
+	float			 RandomFloat();		   // random number in the range [0.0f, 1.0f]
+	float			 CRandomFloat();	   // random number in the range [-1.0f, 1.0f]
 
 	static const int MAX_RAND = 0x7fff;
 
@@ -108,39 +96,27 @@ ID_INLINE float idRandom::CRandomFloat()
 	return ( 2.0f * ( RandomFloat() - 0.5f ) );
 }
 
-/*!
-	\class idRandom2
-	\brief A random number generator class for producing pseudo-random integers and floats.
+/*
+===============================================================================
 
-	The idRandom2 class provides a pseudo-random number generation implementation that can be seeded for reproducible sequences. It offers methods to generate random integers within specified ranges
-   and random floating-point numbers in both positive and symmetric ranges. The class is designed for use in game engine systems that require randomization, such as procedural content generation, AI
-   behavior, or particle effects. The implementation uses a linear congruential generator algorithm with carefully chosen constants to provide good distribution properties for game-related
-   randomization needs. The class supports explicit seeding to allow for deterministic behavior during development and testing.
+	Random number generator
 
+===============================================================================
 */
+
 class idRandom2
 {
 public:
-	//! Initializes a new instance of the idRandom2 class with the specified seed value.
+	// DG: use int instead of long for 64bit compatibility in this whole class
 	idRandom2( unsigned int seed = 0 );
 
-	//! Sets the random number generator seed to the specified value.
 	void			 SetSeed( unsigned int seed );
-
-	//! Returns the current seed value used by the random number generator.
 	unsigned int	 GetSeed() const;
 
-	//! Returns a random integer in the range [0, MAX_RAND]
-	int				 RandomInt();
-
-	//! Returns a random integer in the range [0, max)
-	int				 RandomInt( int max );
-
-	//! Returns a random floating-point number in the range [0.0f, 1.0f]
-	float			 RandomFloat();
-
-	//! Returns a random floating-point number in the range [-1.0f, 1.0f]
-	float			 CRandomFloat();
+	int				 RandomInt();		   // random integer in the range [0, MAX_RAND]
+	int				 RandomInt( int max ); // random integer in the range [0, max]
+	float			 RandomFloat();		   // random number in the range [0.0f, 1.0f]
+	float			 CRandomFloat();	   // random number in the range [-1.0f, 1.0f]
 
 	static const int MAX_RAND = 0x7fff;
 
@@ -195,5 +171,6 @@ ID_INLINE float idRandom2::CRandomFloat()
 	i	 = idRandom2::IEEE_ONE | ( seed & idRandom2::IEEE_MASK );
 	return ( 2.0f * ( *( float* )&i ) - 3.0f );
 }
+// DG end
 
 #endif /* !__MATH_RANDOM_H__ */

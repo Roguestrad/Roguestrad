@@ -52,19 +52,6 @@ If you have questions concerning this license or the applicable additional terms
 
 uint32 globalDmaTag;
 
-/*!
-	\brief Handles assertion failure during Spurs emulation by breaking into the debugger and returning true.
-
-	This function is called when an assertion fails during Spurs emulation. It first checks a static boolean flag to determine whether to halt execution. If the flag is set to true, the function will
-   break into the debugger based on the platform: Windows with MSVC uses __debugbreak(), Windows with MinGW uses DebugBreak(), and POSIX systems use raise(SIGTRAP). The function always returns true to
-   indicate that the assertion failure has been handled.
-
-	\param filename The name of the file where the assertion failed.
-	\param line The line number in the file where the assertion failed.
-	\param expression The expression that failed the assertion.
-	\return True, indicating that the assertion failure has been processed.
-	\throws This function may throw a SIGTRAP signal on POSIX systems when calling raise().
-*/
 bool   SpursEmulationAssertFailed( const char* filename, int line, const char* expression )
 {
 	static bool halt = true;

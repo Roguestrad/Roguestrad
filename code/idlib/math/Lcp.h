@@ -58,66 +58,19 @@ Before calculating any of the bounded x[i] with boxIndex[i] != -1, the solver ca
 unbounded x[i] and all x[i] with boxIndex[i] == -1.
 ================================================
 */
-
-/*!
-	\class idLCP
-	\brief Linear Complementarity Problem solver interface for various LCP formulations.
-
-	The idLCP class serves as an abstract base interface for solving Linear Complementarity Problems within the engine. It provides a unified method for configuring solver parameters such as maximum
-   iterations and defines a virtual Solve method that must be implemented by derived classes. The class supports different LCP formulations through factory methods AllocSquare and AllocSymmetric,
-   which return specialized solver instances for square and symmetric LCP problems respectively. The interface is designed to be used by physics and simulation systems that require solving LCP
-   constraints, with the solver configurations and behavior controlled through the provided configuration methods. The Test_f method allows for debugging and validation of the underlying linear
-   algebra operations.
-
-*/
 class idLCP
 {
 public:
-	/*!
-		\brief Allocates and returns a new square LCP solver instance.
-
-		This function creates a new instance of a square LCP (Linear Complementarity Problem) solver. It initializes the solver with a maximum iteration count of 32 and returns a pointer to the newly
-	   created solver instance.
-
-		\return A pointer to the newly allocated idLCP_Square solver instance
-	*/
-	static idLCP* AllocSquare();
-
-	/*!
-		\brief Allocates and returns a new symmetric LCP solver instance.
-
-		This function creates a new instance of a symmetric LCP (Linear Complementarity Problem) solver. It allocates memory for the solver, initializes it with a maximum iteration count of 32, and
-	   returns a pointer to the newly created solver object.
-
-		\return A pointer to a newly allocated idLCP object that implements a symmetric LCP solver
-	*/
-	static idLCP* AllocSymmetric();
+	static idLCP* AllocSquare();	// 'A' must be a square matrix
+	static idLCP* AllocSymmetric(); // 'A' must be a symmetric matrix
 
 	virtual ~idLCP();
 
 	virtual bool Solve( const idMatX& A, idVecX& x, const idVecX& b, const idVecX& lo, const idVecX& hi, const int* boxIndex = NULL ) = 0;
 
-	/*!
-		\brief Sets the maximum number of iterations for the LCP solver.
-
-		This function configures the maximum number of iterations that the LCP (Linear Complementarity Problem) solver will perform. It directly assigns the provided value to the internal
-	   maxIterations member variable.
-
-		\param max The maximum number of iterations allowed for the LCP solver
-	*/
 	virtual void SetMaxIterations( int max );
-
-	//! Returns the maximum number of iterations allowed for the LCP solver.
 	virtual int	 GetMaxIterations();
 
-	/*!
-		\brief Executes various linear compression tests if test code is enabled.
-
-		This function runs a series of tests for linear compression algorithms including dot product calculations, lower triangular solving, and LDLT factorization. The tests are only executed when
-	   the ENABLE_TEST_CODE macro is defined.
-
-		\param args Command line arguments containing test configuration
-	*/
 	static void	 Test_f( const idCmdArgs& args );
 
 protected:

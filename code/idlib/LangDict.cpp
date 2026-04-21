@@ -37,26 +37,51 @@ idCVar	   lang_maskLocalizedStrings( "lang_maskLocalizedStrings",
 	CVAR_BOOL,
 	"Masks all localized strings to help debugging.  When set will replace strings with an equal length of W's and ending in an X.  Note: The masking occurs at string table load time." );
 
+/*
+========================
+idLocalization::ClearDictionary
+========================
+*/
 void	   idLocalization::ClearDictionary()
 {
 	languageDict.Clear();
 }
 
+/*
+========================
+idLocalization::LoadDictionary
+========================
+*/
 bool idLocalization::LoadDictionary( const byte* data, int dataLen, const char* fileName )
 {
 	return languageDict.Load( data, dataLen, fileName );
 }
 
+/*
+========================
+idLocalization::GetString
+========================
+*/
 const char* idLocalization::GetString( const char* inString )
 {
 	return languageDict.GetString( inString );
 }
 
+/*
+========================
+idLocalization::FindString
+========================
+*/
 const char* idLocalization::FindString( const char* inString )
 {
 	return languageDict.FindString( inString );
 }
 
+/*
+========================
+idLocalization::VerifyUTF8
+========================
+*/
 utf8Encoding_t idLocalization::VerifyUTF8( const uint8* buffer, const int bufferLen, const char* name )
 {
 	utf8Encoding_t encoding;
@@ -78,16 +103,31 @@ utf8Encoding_t idLocalization::VerifyUTF8( const uint8* buffer, const int buffer
 const char* idLangDict::KEY_PREFIX	   = "#str_"; // all keys should be prefixed with this for redirection to work
 const int	idLangDict::KEY_PREFIX_LEN = idStr::Length( KEY_PREFIX );
 
+/*
+========================
+idLangDict::idLangDict
+========================
+*/
 idLangDict::idLangDict() :
 	keyIndex( 4096, 4096 )
 {
 }
 
+/*
+========================
+idLangDict::~idLangDict
+========================
+*/
 idLangDict::~idLangDict()
 {
 	Clear();
 }
 
+/*
+========================
+idLangDict::Clear
+========================
+*/
 void idLangDict::Clear()
 {
 	// mem.PushHeap();
@@ -101,6 +141,11 @@ void idLangDict::Clear()
 	// mem.PopHeap();
 }
 
+/*
+========================
+idLangDict::Load
+========================
+*/
 bool idLangDict::Load( const byte* buffer, const int bufferLen, const char* name )
 {
 	if( buffer == NULL || bufferLen <= 0 ) {
@@ -247,6 +292,11 @@ bool idLangDict::Load( const byte* buffer, const int bufferLen, const char* name
 	return true;
 }
 
+/*
+========================
+idLangDict::Save
+========================
+*/
 bool idLangDict::Save( const char* fileName )
 {
 	idFile* outFile = fileSystem->OpenFileWrite( fileName );
@@ -284,6 +334,11 @@ bool idLangDict::Save( const char* fileName )
 	return true;
 }
 
+/*
+========================
+idLangDict::GetString
+========================
+*/
 const char* idLangDict::GetString( const char* str ) const
 {
 	const char* localized = FindString( str );
@@ -293,6 +348,11 @@ const char* idLangDict::GetString( const char* str ) const
 	return localized;
 }
 
+/*
+========================
+idLangDict::FindStringIndex
+========================
+*/
 int idLangDict::FindStringIndex( const char* str ) const
 {
 	if( str == NULL ) {
@@ -307,6 +367,11 @@ int idLangDict::FindStringIndex( const char* str ) const
 	return -1;
 }
 
+/*
+========================
+idLangDict::FindString_r
+========================
+*/
 const char* idLangDict::FindString_r( const char* str, int& depth ) const
 {
 	depth++;
@@ -336,17 +401,32 @@ const char* idLangDict::FindString_r( const char* str, int& depth ) const
 	return value;
 }
 
+/*
+========================
+idLangDict::FindString
+========================
+*/
 const char* idLangDict::FindString( const char* str ) const
 {
 	int depth = 0;
 	return FindString_r( str, depth );
 }
 
+/*
+========================
+idLangDict::DeleteString
+========================
+*/
 bool idLangDict::DeleteString( const char* key )
 {
 	return DeleteString( FindStringIndex( key ) );
 }
 
+/*
+========================
+idLangDict::DeleteString
+========================
+*/
 bool idLangDict::DeleteString( const int idx )
 {
 	if( idx < 0 || idx >= keyVals.Num() ) {
@@ -361,6 +441,11 @@ bool idLangDict::DeleteString( const int idx )
 	return true;
 }
 
+/*
+========================
+idLangDict::RenameStringKey
+========================
+*/
 bool idLangDict::RenameStringKey( const char* oldKey, const char* newKey )
 {
 	int index = FindStringIndex( oldKey );
@@ -383,6 +468,11 @@ bool idLangDict::RenameStringKey( const char* oldKey, const char* newKey )
 	return true;
 }
 
+/*
+========================
+idLangDict::SetString
+========================
+*/
 bool idLangDict::SetString( const char* key, const char* val )
 {
 	int index = FindStringIndex( key );
@@ -400,6 +490,11 @@ bool idLangDict::SetString( const char* key, const char* val )
 	return true;
 }
 
+/*
+========================
+idLangDict::AddKeyVal
+========================
+*/
 void idLangDict::AddKeyVal( const char* key, const char* val )
 {
 	if( SetString( key, val ) ) {
@@ -421,6 +516,11 @@ void idLangDict::AddKeyVal( const char* key, const char* val )
 	// mem.PopHeap();
 }
 
+/*
+========================
+idLangDict::AddString
+========================
+*/
 const char* idLangDict::AddString( const char* val )
 {
 	int	  i = Sys_Milliseconds();
@@ -434,21 +534,41 @@ const char* idLangDict::AddString( const char* val )
 	return keyVals[index].key;
 }
 
+/*
+========================
+idLangDict::GetNumKeyVals
+========================
+*/
 int idLangDict::GetNumKeyVals() const
 {
 	return keyVals.Num();
 }
 
+/*
+========================
+idLangDict::GetKeyVal
+========================
+*/
 const idLangKeyValue* idLangDict::GetKeyVal( int i ) const
 {
 	return &keyVals[i];
 }
 
+/*
+========================
+idLangDict::IsStringId
+========================
+*/
 bool idLangDict::IsStringId( const char* str )
 {
 	return idStr::Icmpn( str, KEY_PREFIX, KEY_PREFIX_LEN ) == 0;
 }
 
+/*
+========================
+idLangDict::GetLocalizedString
+========================
+*/
 const char* idLangDict::GetLocalizedString( const idStrId& strId ) const
 {
 	if( strId.GetIndex() >= 0 && strId.GetIndex() < keyVals.Num() ) {
@@ -461,6 +581,17 @@ const char* idLangDict::GetLocalizedString( const idStrId& strId ) const
 	return "";
 }
 
+/*
+================================================================================================
+idStrId
+================================================================================================
+*/
+
+/*
+========================
+idStrId::Set
+========================
+*/
 void idStrId::Set( const char* key )
 {
 	if( key == NULL || key[0] == 0 ) {
@@ -476,6 +607,11 @@ void idStrId::Set( const char* key )
 	}
 }
 
+/*
+========================
+idStrId::GetKey
+========================
+*/
 const char* idStrId::GetKey() const
 {
 	if( index >= 0 && index < idLocalization::languageDict.keyVals.Num() ) {
@@ -484,6 +620,11 @@ const char* idStrId::GetKey() const
 	return "";
 }
 
+/*
+========================
+idStrId::GetLocalizedString
+========================
+*/
 const char* idStrId::GetLocalizedString() const
 {
 	return idLocalization::languageDict.GetLocalizedString( *this );

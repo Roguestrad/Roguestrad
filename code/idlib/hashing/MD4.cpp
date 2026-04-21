@@ -95,17 +95,7 @@ static unsigned char PADDING[64] = {
 		( a ) = ROTATE_LEFT( ( a ), ( s ) );                             \
 	}
 
-/*!
-	\brief Encodes input UINT4 values into output unsigned char bytes
-
-	This function takes an array of UINT4 values and encodes them into an array of unsigned char bytes. Each UINT4 value is split into four bytes and stored in the output array. The length parameter
-   specifies how many UINT4 values to process, and the output array must be large enough to hold 4 times this length. The function assumes that the input length is a multiple of 4, as each UINT4 value
-   contributes exactly 4 bytes to the output
-
-	\param output Pointer to the output array where encoded bytes will be stored
-	\param input Pointer to the input array of UINT4 values to be encoded
-	\param len Number of UINT4 values to process
-*/
+/* Encodes input (UINT4) into output (unsigned char). Assumes len is a multiple of 4. */
 static void Encode( unsigned char* output, UINT4* input, unsigned int len )
 {
 	unsigned int i, j;
@@ -118,16 +108,7 @@ static void Encode( unsigned char* output, UINT4* input, unsigned int len )
 	}
 }
 
-/*!
-	\brief Decodes input bytes into UINT4 values
-
-	This function converts a sequence of bytes into UINT4 values by packing four bytes into each UINT4 element. The input length must be a multiple of 4 to ensure proper decoding. Each UINT4 value is
-   constructed by combining four consecutive bytes, with the first byte becoming the least significant byte of the result.
-
-	\param output Pointer to the output array of UINT4 values
-	\param input Pointer to the input array of bytes
-	\param len Length of the input array in bytes
-*/
+/* Decodes input (unsigned char) into output (UINT4). Assumes len is a multiple of 4. */
 static void Decode( UINT4* output, const unsigned char* input, unsigned int len )
 {
 	unsigned int i, j;
@@ -137,16 +118,7 @@ static void Decode( UINT4* output, const unsigned char* input, unsigned int len 
 	}
 }
 
-/*!
-	\brief Performs the MD4 transformation on the given state using the provided block of data
-
-	This function implements the core MD4 cryptographic hash algorithm transformation. It takes an initial hash state and processes a 64-byte block through three rounds of cryptographic operations.
-   The function modifies the state in place by applying a series of bitwise operations, shifts, and additions. The transformation uses three different functions FF, GG, and HH for the three rounds,
-   each with their own specific operation sequences and shift values. The function also clears the temporary workspace to prevent information leakage after use.
-
-	\param state The current hash state that gets modified in place
-	\param block The 64-byte data block to be processed
-*/
+/* MD4 basic transformation. Transforms state based on block. */
 static void MD4_Transform( UINT4 state[4], const unsigned char block[64] )
 {
 	UINT4 a = state[0], b = state[1], c = state[2], d = state[3], x[16];
@@ -216,14 +188,7 @@ static void MD4_Transform( UINT4 state[4], const unsigned char block[64] )
 	memset( ( POINTER )x, 0, sizeof( x ) );
 }
 
-/*!
-	\brief Initializes an MD4 context for hashing operations.
-
-	This function sets up the initial state of an MD4 hashing context. It resets the block count and initializes the four 32-bit state variables with predefined magic constants. The function prepares
-   the context for subsequent data processing through MD4_Update calls. The context must be a valid pointer to an MD4_CTX structure that has been allocated by the caller.
-
-	\param context Pointer to the MD4 context structure to be initialized
-*/
+/* MD4 initialization. Begins an MD4 operation, writing a new context. */
 void MD4_Init( MD4_CTX* context )
 {
 	context->count[0] = context->count[1] = 0;
@@ -235,16 +200,7 @@ void MD4_Init( MD4_CTX* context )
 	context->state[3] = 0x10325476;
 }
 
-/*!
-	\brief Updates the MD4 context with a new message block.
-
-	This function continues an MD4 message-digest operation by processing a new message block and updating the context accordingly. It handles the buffering of input data and performs the MD4
-   transformation when a complete block is available. The function manages the internal state and bit counting for the MD4 hash computation.
-
-	\param context Pointer to the MD4 context structure to be updated
-	\param input Pointer to the input message block to process
-	\param inputLen Length of the input message block in bytes
-*/
+/* MD4 block update operation. Continues an MD4 message-digest operation, processing another message block, and updating the context. */
 void MD4_Update( MD4_CTX* context, const unsigned char* input, unsigned int inputLen )
 {
 	unsigned int i, index, partLen;
@@ -279,15 +235,7 @@ void MD4_Update( MD4_CTX* context, const unsigned char* input, unsigned int inpu
 	memcpy( ( POINTER )&context->buffer[index], ( POINTER )&input[i], inputLen - i );
 }
 
-/*!
-	\brief Completes the MD4 hash computation and stores the resulting digest
-
-	This function finalizes the MD4 hash computation by processing the final padding and message length, then stores the resulting 16-byte digest. It zeroizes the context state afterward to prevent
-   residual data exposure. The function assumes the context has been properly initialized and updated with all input data before calling.
-
-	\param context Pointer to the MD4 context structure containing the hash state
-	\param digest Output buffer that will contain the 16-byte MD4 hash digest
-*/
+/* MD4 finalization. Ends an MD4 message-digest operation, writing the message digest and zeroizing the context. */
 void MD4_Final( MD4_CTX* context, unsigned char digest[16] )
 {
 	unsigned char bits[8];
@@ -311,6 +259,12 @@ void MD4_Final( MD4_CTX* context, unsigned char digest[16] )
 	memset( ( POINTER )context, 0, sizeof( *context ) );
 }
 
+/*
+===============
+MD4_BlockChecksum
+===============
+*/
+// RB: 64 bit fixes, changed long to int
 unsigned int MD4_BlockChecksum( const void* data, int length )
 {
 	unsigned int digest[4];
@@ -325,3 +279,4 @@ unsigned int MD4_BlockChecksum( const void* data, int length )
 
 	return val;
 }
+// RB end

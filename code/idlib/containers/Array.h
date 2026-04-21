@@ -31,12 +31,12 @@ If you have questions concerning this license or the applicable additional terms
 
 /*!
 	\class idArray
-	\brief A fixed-size template array class for managing contiguous memory blocks of typed elements.
+	\brief Fixed-size array template class for storing elements of a specified type.
 
-	The idArray class provides a fixed-size template container for managing arrays of typed elements with compile-time size determination. It is designed to offer direct memory access for efficient
-   processing while maintaining type safety through templates. The class supports standard array-like operations including element access via bracket operators, memory clearing operations (Zero,
-   Memset), and size information retrieval. The implementation is optimized for performance through direct memory manipulation and provides low-level access to the underlying data buffer through Ptr()
-   methods. This design allows for seamless integration with C-style APIs and direct memory operations while maintaining the safety and convenience of C++ templates.
+	This class provides a fixed-size array implementation with compile-time known size. It stores elements in a contiguous block of memory and provides direct access to elements via indexing
+   operators. The array size is determined at compile time through the template parameter numElements. Unlike dynamic containers, this implementation has no additional fields beyond the raw data,
+   making it memory efficient for fixed-size collections. The class offers methods for retrieving array size, memory usage, and direct memory access, as well as initialization and manipulation
+   functions. Memory management is handled through direct memory operations, with zeroing and filling capabilities.
 
 */
 template<class T_, int numElements>
@@ -46,52 +46,33 @@ public:
 	//! Returns the number of elements in the array
 	int		  Num() const { return numElements; }
 
-	//! Returns the size in bytes of the memory allocated for the array storage.
+	//! Returns the number of bytes the array takes up.
 	int		  ByteSize() const { return sizeof( ptr ); }
 
-	//! Clears the entire array memory to zero.
+	//! Sets all elements of the array to zero using memset.
 	void	  Zero() { memset( ptr, 0, sizeof( ptr ) ); }
 
-	/*!
-		\brief Clear the entire array memory to a specific byte value
-
-		This function sets all elements of the array to the specified byte value using memset. It operates on the entire memory block of the array, treating it as a contiguous sequence of bytes. The
-	   fill value is applied to each byte of the array elements, not just the first byte of each element.
-
-		\param fill The byte value to set each byte of the array to
-	*/
+	// memset the entire array to a specific value
 	void	  Memset( const char fill ) { memset( ptr, fill, numElements * sizeof( *ptr ) ); }
 
-	// array operators
+	//! Provides read-only access to an element at the specified index in the array
 	const T_& operator[]( int index ) const
 	{
 		assert( ( unsigned )index < ( unsigned )numElements );
 		return ptr[index];
 	}
+
+	//! Returns a reference to the element at the specified index in the array
 	T_& operator[]( int index )
 	{
 		assert( ( unsigned )index < ( unsigned )numElements );
 		return ptr[index];
 	}
 
-	/*!
-		\brief Returns a pointer to the internal array data
-
-		This function provides access to the underlying memory buffer of the array. It returns a constant pointer to the first element of the array, allowing read-only access to the stored elements.
-	   The returned pointer is valid as long as the array object exists and is not modified.
-
-		\return A constant pointer to the first element of the internal array
-	*/
+	//! Returns a pointer to the internal data array.
 	const T_* Ptr() const { return ptr; }
 
-	/*!
-		\brief Returns a pointer to the internal data array managed by the idArray object.
-
-		This method provides direct access to the underlying data buffer of the idArray. It is typically used when interfacing with functions that expect a raw pointer to an array of elements. The
-	   returned pointer is valid as long as the idArray object itself remains alive and unmodified.
-
-		\return A pointer to the first element of the internal data array.
-	*/
+	//! Returns a pointer to the internal data array
 	T_*		  Ptr() { return ptr; }
 
 private:
@@ -101,6 +82,17 @@ private:
 #define ARRAY_COUNT( arrayName ) ( sizeof( arrayName ) / sizeof( arrayName[0] ) )
 #define ARRAY_DEF( arrayName )	 arrayName, ARRAY_COUNT( arrayName )
 
+/*
+================================================
+id2DArray is essentially a typedef (as close as we can
+get for templates before C++11 anyway) to make
+declaring two-dimensional idArrays easier.
+
+Usage:
+	id2DArray< int, 5, 10 >::type someArray;
+
+================================================
+*/
 template<class _type_, int _dim1_, int _dim2_>
 struct id2DArray {
 	typedef idArray<idArray<_type_, _dim2_>, _dim1_> type;
@@ -118,15 +110,6 @@ which works for std::arrays also.
 template<class _type_>
 struct idTupleSize;
 
-/*!
-	\struct idTupleSize< idArray< _type_, _num_ > >
-	\brief Helper struct for determining tuple size of idArray specializations.
-
-	This struct provides compile-time size information for idArray specializations, serving as a utility for template metaprogramming within the engine's type system. It is designed to be used in
-   conjunction with template specializations and compile-time type traits to enable generic programming patterns. The struct does not contain any data members or methods, serving purely as a type
-   trait helper for compile-time computations. It is part of the engine's template-based architectural components and facilitates type-safe operations across different array configurations.
-
-*/
 template<class _type_, int _num_>
 struct idTupleSize<idArray<_type_, _num_>> {
 	enum { value = _num_ };

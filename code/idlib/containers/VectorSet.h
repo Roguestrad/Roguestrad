@@ -32,85 +32,42 @@ If you have questions concerning this license or the applicable additional terms
 
 /*!
 	\class idVectorSet
-	\brief A spatial hash set for efficiently storing and retrieving vectors within a bounded volume.
+	\brief A hash-based set implementation for vectors that efficiently manages collections of vectors within a bounded space.
 
-	The idVectorSet class provides a specialized data structure for managing sets of vectors within a defined bounding box using a spatial hash table for efficient lookups. It is designed to store
-   vectors of fixed dimensionality and supports finding existing vectors or adding new ones based on approximate equality within a specified epsilon tolerance. The class maintains internal state for
-   hash table indexing and bounding box parameters to enable fast spatial queries. The hash table is sized according to the boxHashSize parameter and the bounding box defined by mins and maxs
-   coordinates, allowing for efficient spatial partitioning of vectors. The class supports dynamic resizing of the underlying storage and provides memory allocation size reporting for performance
-   monitoring. The implementation uses a base idList for storage and extends it with hash table functionality to provide fast vector lookup and insertion operations.
+	This class provides a specialized container for storing vectors in a bounded space using a hash table for efficient lookup and insertion operations. It is designed to handle vector data with a
+   specified dimensionality and maintains an internal hash structure to organize vectors within a defined bounding volume. The implementation supports initialization with custom minimum and maximum
+   bounds, hash table size, and initial capacity. The class inherits from idList, indicating it maintains a list-based structure for vector storage, while extending it with hash-based lookup
+   capabilities. Memory management is handled through the inherited list structure, and the container supports operations to find existing vectors or add new ones based on a tolerance epsilon value.
+   The hash table size and bounding volume parameters influence the performance characteristics of the container, particularly for large vector sets. The class is templated to support different vector
+   types and dimensions, making it flexible for various spatial data management scenarios.
 
 */
 template<class type, int dimension>
 class idVectorSet : public idList<type>
 {
 public:
-	/*!
-		\brief Initializes an empty idVectorSet with default hash parameters and zeroed box size values.
-
-		The constructor initializes the hash table with a default size based on the box hash size and a starting capacity of 128. It also sets the box hash size to 16 and clears the box inverse size
-	   and half size arrays, initializing them to zero for all dimensions.
-
-	*/
+	//! Constructs an empty idVectorSet with default parameters.
 	idVectorSet();
 
-	/*!
-		\brief Initializes a vector set with the specified minimums, maximums, hash size, and initial size.
-
-		This constructor sets up the internal data structures of the vector set using the provided bounding box coordinates, hash table size, and initial capacity. It delegates the actual
-	   initialization logic to the Init method.
-
-		\param mins The minimum coordinates of the bounding box
-		\param maxs The maximum coordinates of the bounding box
-		\param boxHashSize The size of the hash table used for spatial partitioning
-		\param initialSize The initial number of elements the vector set can hold
-	*/
+	//! Constructs an idVectorSet object with the specified minimums, maximums, hash size, and initial size.
 	idVectorSet( const type& mins, const type& maxs, const int boxHashSize, const int initialSize );
 
-	//! Returns the total size in bytes of all memory allocated by this vector set.
+	//! Returns the total size of allocated memory for the vector set.
 	size_t Allocated() const { return idList<type>::Allocated() + hash.Allocated(); }
 
-	//! Returns the total size in bytes of the allocated memory for this vector instance.
+	//! Returns the total size of allocated memory for this vector including the size of the type
 	size_t Size() const { return sizeof( *this ) + Allocated(); }
 
-	/*!
-		\brief Initializes the vector set with minimum and maximum bounds, hash table size, and initial capacity
-
-		This function sets up the internal state of the vector set by initializing the list size, clearing the hash table, and computing inverse and half box sizes for spatial partitioning. It
-	   prepares the data structure for storing and hashing vectors within the specified bounds.
-
-		\param mins The minimum bounds of the vector set
-		\param maxs The maximum bounds of the vector set
-		\param boxHashSize The size of the hash grid in each dimension
-		\param initialSize The initial number of elements the list can hold
-	*/
+	//! Initializes the vector set with specified bounding box parameters and hash table size
 	void   Init( const type& mins, const type& maxs, const int boxHashSize, const int initialSize );
 
-	/*!
-		\brief Resizes the vector set and its associated hash table to the specified new size
-
-		This function adjusts the internal storage of the vector set to accommodate the specified number of elements. It updates both the base list storage and the hash table to match the new size,
-	   ensuring consistent state between the two data structures. The resize operation affects both the capacity and the index mapping used for hash table lookups.
-
-		\param newSize The new size to set for the vector set and its hash table
-	*/
+	//! Resizes the vector set to the specified new size.
 	void   ResizeIndex( const int newSize );
 
-	//! Clears the vector set and its hash table.
+	//! Clears all elements from the vector set.
 	void   Clear();
 
-	/*!
-		\brief Finds an existing vector in the set or adds a new one if not found, using a hash-based lookup with epsilon tolerance for floating-point comparison
-
-		This function implements a hash-based lookup to find a vector that is approximately equal to the input vector within the specified epsilon tolerance. It uses a multi-dimensional hash table to
-	   efficiently search for existing vectors. If no matching vector is found, it adds the new vector to the set and returns its index. The function handles n-dimensional vectors and uses a bounding
-	   box to determine hash keys. The epsilon parameter controls the tolerance for floating-point comparisons, and the function asserts that epsilon does not exceed the box half size for each
-	   dimension.
-
-		\param v The vector to find or add to the set
-		\param epsilon The epsilon tolerance for floating-point comparisons between vectors
-		\return The index of the found or newly added vector in the set
-	*/
+	//! Finds a vector in the set or adds it if not found
 	int	   FindVector( const type& v, const float epsilon );
 
 private:
@@ -216,77 +173,36 @@ ID_INLINE int idVectorSet<type, dimension>::FindVector( const type& v, const flo
 
 /*!
 	\class idVectorSubset
-	\brief A spatially-partitioned vector subset container for efficient duplicate vector detection and storage.
+	\brief A template class for managing subsets of vectors with bounding box hashing and epsilon-based vector matching.
 
-	The idVectorSubset class provides a specialized data structure for managing subsets of vectors within a defined bounding box, using spatial partitioning for efficient lookup and storage. It is
-   designed to deduplicate vectors in large datasets, commonly used in 3D rendering for vertex and texture coordinate remapping. The class maintains an internal hash table for spatial indexing,
-   allowing fast approximate matching of vectors within a specified epsilon tolerance. The template parameters type and dimension allow it to work with different vector types and dimensionalities.
-   Memory management is handled internally, with methods to query allocated and used sizes. The class supports initialization with bounding box parameters and hash table size, and provides operations
-   to clear the container and find existing vectors or add new ones. The implementation is optimized for performance through inline methods and careful spatial partitioning strategies.
+	This class provides functionality for storing and managing vector subsets within a defined bounding box using a hash table for efficient lookup. It supports initialization with specific bounds and
+   hash table size, memory tracking through allocated and size methods, and finding vectors within a given epsilon tolerance. The template parameters allow for flexibility in vector types and
+   dimensions. The class is designed for scenarios where vector data needs to be organized and retrieved efficiently based on spatial proximity and exact matches.
 
 */
 template<class type, int dimension>
 class idVectorSubset
 {
 public:
-	/*!
-		\brief Initializes a new instance of the idVectorSubset class with default values.
-
-		The constructor initializes the internal hash table, sets the box hash size to 16, and clears the box inverse size and half size arrays. This ensures the object is in a valid state for
-	   subsequent operations.
-
-	*/
+	//! Constructs a new idVectorSubset object with default values.
 	idVectorSubset();
 
-	/*!
-		\brief Initializes a new instance of the idVectorSubset class with specified bounding box parameters and hash table size.
-
-		This constructor initializes the idVectorSubset object with minimum and maximum coordinates that define the bounding box, a hash table size for spatial partitioning, and an initial capacity
-	   for the internal data structure. The initialization is delegated to the Init method which sets up the internal state for efficient spatial queries and storage of vector data within the defined
-	   bounds.
-
-		\param mins The minimum coordinates of the bounding box
-		\param maxs The maximum coordinates of the bounding box
-		\param boxHashSize The size of the hash table used for spatial partitioning
-		\param initialSize The initial number of elements the internal storage can hold
-	*/
+	//! Initializes a vector subset with specified bounding box and hash table size.
 	idVectorSubset( const type& mins, const type& maxs, const int boxHashSize, const int initialSize );
 
-	//! Returns the total amount of memory allocated by this vector subset instance in bytes.
+	//! Returns the total amount of memory allocated by the vector subset.
 	size_t Allocated() const { return idList<type>::Allocated() + hash.Allocated(); }
 
-	//! Returns the total size in bytes of memory allocated for this vector subset
+	//! Returns the total size of allocated memory for the vector subset including the size of the type itself.
 	size_t Size() const { return sizeof( *this ) + Allocated(); }
 
-	/*!
-		\brief Initializes the vector subset with minimum and maximum bounds, hash size, and initial capacity
-
-		This function sets up the internal data structures for a vector subset by clearing the hash table and initializing the bounding box parameters. It calculates inverse and half sizes for each
-	   dimension based on the provided minimum and maximum values and the hash size. The function is intended to be inlined for performance reasons.
-
-		\param mins The minimum bounds of the vector subset
-		\param maxs The maximum bounds of the vector subset
-		\param boxHashSize The size of the hash grid for spatial partitioning
-		\param initialSize The initial capacity of the hash table
-	*/
+	//! Initializes the vector subset with minimum and maximum bounds, hash size, and initial capacity.
 	void   Init( const type& mins, const type& maxs, const int boxHashSize, const int initialSize );
 
-	//! Clears the vector subset list and its hash table
+	//! Clears all elements from the vector subset and its hash table.
 	void   Clear();
 
-	/*!
-		\brief Finds a vector in a list that matches the given vector within the specified epsilon tolerance, returning either the index of the matching vector or the index of the new vector if no
-	   match is found.
-
-		This function performs a hash-based lookup to find a vector in a list that is within a specified epsilon tolerance of the given vector. It uses a subset of the vector space to optimize the
-	   search. If a matching vector is found, it returns the index of that vector. Otherwise, it adds the new vector to the hash table and returns its index. The function is designed to efficiently
-	   deduplicate vectors in large datasets, commonly used for vertex and texture coordinate remapping in 3D rendering.
-
-		\param vectorList Pointer to the list of vectors to search through
-		\param vectorNum Index of the vector in the list to find
-		\param epsilon Tolerance value for comparing vector components
-		\return Index of the matching vector in the list, or the index of the new vector if no match is found
-	*/
+	//! Returns the index of a previously found vector that matches the given vector within the specified epsilon tolerance, or the input vector number if no match is found.
 	int	   FindVector( const type* vectorList, const int vectorNum, const float epsilon );
 
 private:

@@ -40,6 +40,11 @@ If you have questions concerning this license or the applicable additional terms
 #include <stdlib.h>
 #undef new
 
+/*
+==================
+Mem_Alloc16
+==================
+*/
 void* Mem_Alloc16( const size_t size, const memTag_t tag )
 {
 	if( !size ) {
@@ -58,6 +63,11 @@ void* Mem_Alloc16( const size_t size, const memTag_t tag )
 #endif
 }
 
+/*
+==================
+Mem_Free16
+==================
+*/
 void Mem_Free16( void* ptr )
 {
 	if( ptr == NULL ) {
@@ -213,6 +223,11 @@ void operator delete[]( void* p, memTag_t ) noexcept
 	Mem_Free( p );
 }
 
+/*
+==================
+Mem_ClearedAlloc
+==================
+*/
 void* Mem_ClearedAlloc( const size_t size, const memTag_t tag )
 {
 	void* mem = Mem_Alloc( size, tag );
@@ -220,6 +235,11 @@ void* Mem_ClearedAlloc( const size_t size, const memTag_t tag )
 	return mem;
 }
 
+/*
+==================
+Mem_CopyString
+==================
+*/
 char* Mem_CopyString( const char* in )
 {
 	char* out = ( char* )Mem_Alloc( strlen( in ) + 1, TAG_STRING );

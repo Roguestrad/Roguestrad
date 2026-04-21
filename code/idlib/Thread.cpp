@@ -29,6 +29,25 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
+/*
+================================================================================================
+Contains the vartious ThreadingClass implementations.
+================================================================================================
+*/
+
+/*
+================================================================================================
+
+	idSysThread
+
+================================================================================================
+*/
+
+/*
+========================
+idSysThread::idSysThread
+========================
+*/
 idSysThread::idSysThread() :
 	threadHandle( 0 ),
 	isWorker( false ),
@@ -39,6 +58,11 @@ idSysThread::idSysThread() :
 {
 }
 
+/*
+========================
+idSysThread::~idSysThread
+========================
+*/
 idSysThread::~idSysThread()
 {
 	StopThread( true );
@@ -47,6 +71,11 @@ idSysThread::~idSysThread()
 	}
 }
 
+/*
+========================
+idSysThread::StartThread
+========================
+*/
 bool idSysThread::StartThread( const char* name_, core_t core, xthreadPriority priority, int stackSize )
 {
 	if( isRunning ) {
@@ -67,6 +96,11 @@ bool idSysThread::StartThread( const char* name_, core_t core, xthreadPriority p
 	return true;
 }
 
+/*
+========================
+idSysThread::StartWorkerThread
+========================
+*/
 bool idSysThread::StartWorkerThread( const char* name_, core_t core, xthreadPriority priority, int stackSize )
 {
 	if( isRunning ) {
@@ -82,6 +116,11 @@ bool idSysThread::StartWorkerThread( const char* name_, core_t core, xthreadPrio
 	return result;
 }
 
+/*
+========================
+idSysThread::StopThread
+========================
+*/
 void idSysThread::StopThread( bool wait )
 {
 	if( !isRunning ) {
@@ -102,6 +141,11 @@ void idSysThread::StopThread( bool wait )
 	}
 }
 
+/*
+========================
+idSysThread::WaitForThread
+========================
+*/
 void idSysThread::WaitForThread()
 {
 	if( isWorker ) {
@@ -112,6 +156,11 @@ void idSysThread::WaitForThread()
 	}
 }
 
+/*
+========================
+idSysThread::SignalWork
+========================
+*/
 void idSysThread::SignalWork()
 {
 	if( isWorker ) {
@@ -123,6 +172,11 @@ void idSysThread::SignalWork()
 	}
 }
 
+/*
+========================
+idSysThread::IsWorkDone
+========================
+*/
 bool idSysThread::IsWorkDone()
 {
 	if( isWorker ) {
@@ -134,6 +188,11 @@ bool idSysThread::IsWorkDone()
 	return false;
 }
 
+/*
+========================
+idSysThread::ThreadProc
+========================
+*/
 int idSysThread::ThreadProc( idSysThread* thread )
 {
 	int retVal = 0;
@@ -191,6 +250,11 @@ int idSysThread::ThreadProc( idSysThread* thread )
 	return retVal;
 }
 
+/*
+========================
+idSysThread::Run
+========================
+*/
 int idSysThread::Run()
 {
 	// The Run() is not pure virtual because on destruction of a derived class
@@ -199,28 +263,22 @@ int idSysThread::Run()
 	return 0;
 }
 
-/*!
-	\class idMyThread
-	\brief idMyThread is a base class for implementing custom thread logic in the Roguestrad engine.
+/*
+================================================================================================
 
-	idMyThread serves as an abstract base class for creating custom thread implementations within the Roguestrad engine. It inherits from idSysThread and provides a virtual Run() method that acts as
-   the primary execution entry point for thread operations. The class is designed to be extended by derived classes that implement specific thread behaviors through overriding the Run() method. The
-   stub implementation of Run() in idMyThread itself returns zero, indicating that derived classes must provide meaningful thread logic. This design supports the engine's threading model by allowing
-   developers to create specialized thread implementations for various concurrent operations while maintaining a consistent interface through the idSysThread base class.
+	test
 
+================================================================================================
+*/
+
+/*
+================================================
+idMyThread test class.
+================================================
 */
 class idMyThread : public idSysThread
 {
 public:
-	/*!
-		\brief Executes the thread's main routine and returns an integer result.
-
-		This virtual function serves as the entry point for the thread's execution. It is intended to contain the core logic that the thread should perform. The function returns an integer value,
-	   typically used to indicate the thread's exit status or result of its operation. The implementation in this case is a stub that simply returns zero, but derived classes are expected to override
-	   this method with meaningful thread logic.
-
-		\return An integer value representing the result or exit status of the thread's execution.
-	*/
 	virtual int Run()
 	{
 		// run threaded code here
@@ -229,12 +287,10 @@ public:
 	// specify thread data here
 };
 
-/*!
-	\brief Tests thread creation and starting functionality.
-
-	This function demonstrates the basic usage of creating and starting a thread using the idMyThread class. It creates an instance of idMyThread and calls StartThread to begin execution with the
-   specified thread name and core affinity setting.
-
+/*
+========================
+TestThread
+========================
 */
 void TestThread()
 {
@@ -242,13 +298,10 @@ void TestThread()
 	thread.StartThread( "myThread", CORE_ANY );
 }
 
-/*!
-	\brief Tests worker threads by creating a group and iteratively signaling work for each thread.
-
-	This function demonstrates the usage of a worker thread group by creating an idSysWorkerThreadGroup with a specified name and number of threads. It enters an infinite loop where it iterates
-   through each thread in the group to set up work, then signals all threads to start working and waits for completion. This is a basic example of how to utilize the worker thread system for parallel
-   processing.
-
+/*
+========================
+TestWorkers
+========================
 */
 void TestWorkers()
 {

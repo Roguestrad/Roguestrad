@@ -119,196 +119,81 @@ extern uint32 globalDmaTag;
 
 enum streamBufferType_t { SBT_DOUBLE = 2, SBT_QUAD = 4 };
 
-/*!
-	\class idSoftwareCache
-	\brief Cache implementation for optimizing memory access patterns in the engine.
+/*
+================================================================================================
 
-	The idSoftwareCache class provides a templated cache mechanism designed to optimize memory access patterns by prefetching objects into cache. This implementation is specifically tailored for use
-   within the RogueStrad engine, where efficient memory management and reduced cache misses are crucial for performance. The cache is configured with template parameters for type, number of entries,
-   associativity, and alignment, allowing for fine-tuned optimization based on the specific needs of different engine components. The Prefetch method enables proactive loading of objects into cache,
-   potentially improving performance by reducing cache miss latency during subsequent access operations. The cache is implemented with 128-byte alignment to ensure optimal memory access patterns.
+	non-SPU code
 
+================================================================================================
+*/
+
+/*
+================================================
+idSoftwareCache
+================================================
 */
 template<typename _type_, int _entries_ = 8, int _associativity_ = 4, bool aligned = false>
 class ALIGNTYPE128 idSoftwareCache
 {
 public:
-	/*!
-		\brief Prefetches the specified object into cache
-
-		This function performs a prefetch operation on the given object to load it into cache, potentially improving performance by reducing cache misses. The prefetch is done with a hint of 0, which
-	   typically indicates a read operation without specific cache level preference.
-
-		\param obj Pointer to the object to prefetch into cache
-	*/
 	void Prefetch( const _type_* obj ) { ::Prefetch( obj, 0 ); }
 };
 
-/*!
-	\brief Returns a const reference to the internal object pointed to by objectPtr.
-
-	This function provides access to the object that the idODSObject wrapper is managing. It simply dereferences the internal pointer and returns a const reference to the object. The function is
-   marked as const, indicating it does not modify the wrapper object's state.
-
-	\return A const reference to the object that objectPtr points to.
+/*
+================================================
+idODSObject
+================================================
 */
 template<typename _type_>
 class idODSObject
-
-/*!
-	\brief Constructs an idODSObject instance by storing a pointer to the given object.
-
-	The constructor initializes the idODSObject by taking a pointer to an object of type _type_ and storing it internally. This allows the idODSObject to reference the original object without owning
-   it, meaning the object pointed to by obj must remain valid for the lifetime of this idODSObject instance.
-
-	\param obj Pointer to the object to be referenced by this idODSObject instance.
-*/
 {
 public:
-	/*!
-		\brief Initializes an idODSObject with a pointer to a _type_ object.
-
-		Constructs an idODSObject instance by storing the provided pointer to a _type_ object. The pointer is initialized to the value passed in the constructor parameter.
-
-		\param obj Pointer to the _type_ object to be stored
-	*/
 	idODSObject( const _type_* obj ) :
 		objectPtr( obj )
 	{
 	}
 	operator const _type_&() const { return *objectPtr; }
 	const _type_* operator->() const { return objectPtr; }
-
-	/*!
-		\brief Returns a constant reference to the internal object managed by this idODSObject instance
-
-		This function provides access to the underlying object that is being managed by the idODSObject template class. It returns a const reference, ensuring that the object cannot be modified
-	   through this interface. The function is marked as const, indicating it does not modify the state of the idODSObject instance itself. This is a common pattern in smart pointer or wrapper classes
-	   where you need to access the wrapped object while maintaining const-correctness.
-
-		\return A constant reference to the internal object of type _type_ that this idODSObject instance manages
-	*/
 	const _type_& Get() const { return *objectPtr; }
-
-	/*!
-		\brief Returns a constant pointer to the internal object managed by this idODSObject instance
-
-		This function provides access to the underlying object that is being managed by the idODSObject template class. It returns a const pointer, ensuring that the object cannot be modified through
-	   this interface. The function is marked as const, indicating it does not modify the state of the idODSObject instance itself. This is a common pattern in smart pointer or wrapper classes where
-	   you need to access the wrapped object while maintaining const-correctness.
-
-		\return A constant pointer to the internal object of type _type_ that this idODSObject instance manages
-	*/
 	const _type_* Ptr() const { return objectPtr; }
-
-	/*!
-		\brief Returns a pointer to the original object stored in the idODSObject.
-
-		This method provides access to the underlying object pointer that was stored within the idODSObject instance. It is a const method, meaning it does not modify the object's state and returns a
-	   const pointer to the original object type.
-
-		\return A const pointer to the original object of type _type_ that is managed by this idODSObject instance
-	*/
 	const _type_* OriginalPtr() const { return objectPtr; }
 
 private:
 	const _type_* objectPtr;
 };
 
-/*!
-	\brief Returns a constant reference to the cached object managed by this instance.
-
-	This function provides access to the actual object being cached. It returns a constant reference to avoid modification of the cached object through this interface. The object is stored internally
-   in a pointer and dereferenced here.
-
-	\return A constant reference to the cached object of type _type_
+/*
+================================================
+idODSCachedObject
+================================================
 */
 template<typename _type_, typename _cache_>
 class idODSCachedObject
-
-/*!
-	\brief Constructs an idODSCachedObject with the specified object pointer and cache reference.
-
-	The constructor initializes the object pointer member with the provided object and stores the cache reference for later use. This is a simple constructor that sets up the internal state of the
-   cached object wrapper.
-
-	\param obj Pointer to the object to be cached
-	\param cache Reference to the cache that will manage this object
-*/
 {
 public:
-	/*!
-		\brief Constructs an idODSCachedObject instance with the given object pointer and cache reference.
-
-		The constructor initializes the objectPtr member with the provided object pointer and stores a reference to the cache.
-
-		\param obj Pointer to the object to be cached
-		\param cache Reference to the cache that will manage the object
-	*/
 	idODSCachedObject( const _type_* obj, _cache_& cache ) :
 		objectPtr( obj )
 	{
 	}
 	operator const _type_&() const { return *objectPtr; }
 	const _type_* operator->() const { return objectPtr; }
-
-	/*!
-		\brief Returns a const reference to the cached object managed by this instance
-
-		This method provides read-only access to the underlying object stored in the cache. It is a simple getter that returns the internal object reference without modifying the cache state. The
-	   returned reference is guaranteed to be valid as long as this cached object instance exists
-
-		\return A const reference to the cached object of type _type_
-	*/
 	const _type_& Get() const { return *objectPtr; }
-
-	/*!
-		\brief Returns a const pointer to the cached object managed by this instance.
-
-		This method provides read-only access to the underlying object stored in the cache. It is a simple getter that returns the internal object pointer without modifying the cache state.
-
-		\return A const pointer to the cached object of type _type_.
-	*/
 	const _type_* Ptr() const { return objectPtr; }
-
-	/*!
-		\brief Returns a pointer to the original object stored in the cache.
-
-		This function provides access to the underlying original object that is being cached. It is typically used to retrieve the actual object data when working with cached objects.
-
-		\return A constant pointer to the original object of type _type_ stored in the cache
-	*/
 	const _type_* OriginalPtr() const { return objectPtr; }
 
 private:
 	const _type_* objectPtr;
 };
 
-/*!
-	\class idODSArray
-	\brief A fixed-size array container with compile-time maximum capacity that supports initialization from external arrays and provides raw pointer access.
-
-	The idODSArray class is a template-based container designed to hold a fixed number of elements with a maximum capacity defined at compile time. It is initialized with an external array and its
-   size, and includes assertions to ensure the provided size does not exceed the maximum allowed capacity. The container provides constant-time access to elements via the subscript operator and offers
-   a method to retrieve a const pointer to its internal array for use with APIs expecting raw array pointers. It is intended for use cases where a fixed-size array with known maximum capacity is
-   needed, and where direct memory access is required for performance-critical operations. The class is not designed for dynamic resizing as the maximum capacity is fixed at compile time, making it
-   suitable for scenarios where memory layout and access patterns are critical.
-
+/*
+================================================
+idODSArray
+================================================
 */
 template<typename _type_, int max>
 class idODSArray
 {
 public:
-	/*!
-		\brief Constructs an idODSArray object by initializing it with a pointer to an array and its size.
-
-		The constructor initializes the idODSArray object with the provided array pointer and number of elements. It asserts that the number of elements does not exceed the maximum allowed size and
-	   prefetches the array data for better performance.
-
-		\param array Pointer to the array of elements to initialize with
-		\param num Number of elements in the array
-		\throws Throws an assertion error if the number of elements exceeds the maximum allowed size.
-	*/
 	idODSArray( const _type_* array, int num ) :
 		arrayPtr( array ),
 		arrayNum( num )
@@ -321,19 +206,7 @@ public:
 		assert( index >= 0 && index < arrayNum );
 		return arrayPtr[index];
 	}
-
-	/*!
-		\brief Returns a pointer to the internal array managed by the idODSArray container
-
-		This method provides access to the underlying array storage of the idODSArray container. It returns a const pointer to the array data, allowing read-only access to the elements stored in the
-	   container. The returned pointer is valid as long as the idODSArray instance exists and is not modified. This is a utility method for interfacing with APIs that expect a raw array pointer, such
-	   as graphics functions or memory operations.
-
-		\return A constant pointer to the first element of the internal array
-	*/
 	const _type_* Ptr() const { return arrayPtr; }
-
-	//! Returns the number of elements in the array
 	const int	  Num() const { return arrayNum; }
 
 private:
@@ -341,32 +214,15 @@ private:
 	int			  arrayNum;
 };
 
-/*!
-	\class idODSIndexedArray
-	\brief An indexed array implementation for efficiently accessing elements through index mappings.
-
-	The idODSIndexedArray class provides a memory-efficient way to manage and access elements through index mappings, commonly used for optimized data access patterns in graphics and game engine
-   systems. It is designed to work with a fixed maximum capacity defined at compile time, ensuring that memory usage is predictable and optimized for performance. The class supports initialization
-   from a source array and an index array, allowing for complex data access patterns where elements are retrieved based on index mappings rather than direct array indexing. The
-   ReplicateUpToMultipleOfFour function ensures that internal array sizes conform to specific alignment requirements, likely for SIMD or cache optimization purposes, by replicating the first element
-   until the array size is a multiple of four. The operator[] provides const access to indexed elements, enabling read-only access to the mapped data.
-
+/*
+================================================
+idODSIndexedArray
+================================================
 */
 template<typename _elemType_, typename _indexType_, int max>
 class idODSIndexedArray
 {
 public:
-	/*!
-		\brief Initializes an indexed array with the given array and index data
-
-		Constructs an idODSIndexedArray object by copying elements from the provided array based on the index mappings. The function pre-fetches data to improve performance and stores pointers to the
-	   indexed elements. The number of elements must not exceed the maximum capacity of the array.
-
-		\param array Pointer to the source array of elements
-		\param index Pointer to the index array that maps to elements in the source array
-		\param num Number of elements to initialize
-		\throws assertion failure if num exceeds the maximum capacity 'max'
-	*/
 	idODSIndexedArray( const _elemType_* array, const _indexType_* index, int num ) :
 		arrayNum( num )
 	{
@@ -381,15 +237,6 @@ public:
 		assert( index >= 0 && index < arrayNum );
 		return *arrayPtr[index];
 	}
-
-	/*!
-		\brief Ensures the array size is a multiple of four by replicating the first element.
-
-		This function adjusts the size of the array to be a multiple of four by repeatedly copying the first element to the end of the array. It is designed to work only with arrays whose maximum size
-	   is a multiple of four, as enforced by an assertion. The function continues until the current array size is a multiple of four.
-
-		\throws Assertion failure if max is not a multiple of four.
-	*/
 	void ReplicateUpToMultipleOfFour()
 	{
 		assert( ( max & 3 ) == 0 );
@@ -403,33 +250,15 @@ private:
 	int				  arrayNum;
 };
 
-/*!
-	\class idODSStreamedOutputArray
-	\brief A streaming output array implementation for handling sequential element allocation with compile-time buffer size constraints.
-
-	The idODSStreamedOutputArray class provides a mechanism for managing a stream of output elements with a fixed buffer size determined at compile time. It is designed to support scenarios where
-   elements are appended sequentially to a pre-allocated buffer, with automatic handling of buffer growth up to a specified maximum. The template parameters define the element type and the buffer
-   size, ensuring that the buffer size is a power of two and meets memory alignment requirements. The class manages an internal counter to track the number of elements and provides methods for
-   appending elements and allocating the next available slot. The constructor performs compile-time assertions to validate buffer size, alignment, and memory constraints against system limits such as
-   MAX_DMA_SIZE. The class assumes that the provided array is properly aligned and that the number of elements is managed through the provided pointer.
-
+/*
+================================================
+idODSStreamedOutputArray
+================================================
 */
 template<typename _type_, int _bufferSize_>
 class ALIGNTYPE16 idODSStreamedOutputArray
 {
 public:
-	/*!
-		\brief Constructor for idODSStreamedOutputArray that initializes the output array and its parameters
-
-		Initializes the idODSStreamedOutputArray with the provided array, number of elements pointer, and maximum elements.
-		The constructor sets up internal variables for tracking the local number of elements, output array, number of elements, and maximum elements.
-		It also performs compile-time assertions to ensure that the buffer size is a power of two, that the buffer size multiplied by the size of the type is divisible by 16, and that the buffer size
-	   multiplied by the size of the type is less than MAX_DMA_SIZE. Additionally, it asserts that the array is 16-byte aligned.
-
-		\param array Pointer to the array to be used for output
-		\param numElements Pointer to the number of elements in the output array
-		\param maxElements Maximum number of elements allowed in the output array
-	*/
 	idODSStreamedOutputArray( _type_* array, int* numElements, int maxElements ) :
 		localNum( 0 ),
 		outArray( array ),
@@ -443,34 +272,12 @@ public:
 	}
 	~idODSStreamedOutputArray() { *outNum = localNum; }
 
-	//! Returns the number of elements in the array.
 	int	 Num() const { return localNum; }
-
-	/*!
-		\brief Appends an element to the internal array, growing it if necessary
-
-		This function adds a new element to the internal array of the streamed output array. It checks that there is available space in the array before appending the element. The function uses assert
-	   to ensure that the current number of elements is less than the maximum allowed. The array will grow as needed to accommodate new elements up to the specified buffer size.
-
-		\param element The element to be added to the array
-		\throws assertion failure if the array is already at maximum capacity
-	*/
 	void Append( _type_ element )
 	{
 		assert( localNum < outMax );
 		outArray[localNum++] = element;
 	}
-
-	/*!
-		\brief Returns a reference to the next available element in the output array, incrementing the internal counter
-
-		This function provides access to the next available slot in a pre-allocated output array. It is designed to be used in scenarios where a fixed-size buffer is maintained and elements are added
-	   sequentially. The function assumes that the internal counter localNum is properly managed and that the buffer size outMax is sufficient to prevent overflow. Each call to Alloc() returns a
-	   reference to the next element in the array and increments the internal counter, allowing for sequential allocation of elements.
-
-		\return A reference to the next available element in the output array
-		\throws assertion failure if localNum reaches outMax
-	*/
 	_type_& Alloc()
 	{
 		assert( localNum < outMax );
@@ -484,31 +291,15 @@ private:
 	int		outMax;
 };
 
-/*!
-	\class idODSStreamedArray
-	\brief A template class for efficiently streaming and accessing array elements with buffered retrieval and cache management.
-
-	The idODSStreamedArray class provides a mechanism for efficiently accessing array elements through buffered retrieval, optimized for memory access patterns and cache performance. It supports
-   streaming access to large arrays by maintaining internal state for cached ranges and managing buffer boundaries. The class is templated to support different data types, buffer sizes, stream buffer
-   types, and alignment requirements. It includes functionality for fetching batches of elements, managing cache line flushing, and ensuring proper alignment and bounds checking. The implementation
-   uses compile-time assertions to validate buffer configurations and runtime assertions to verify input parameters. The class is designed for scenarios where sequential access to large arrays needs
-   to be optimized for memory bandwidth and cache efficiency, and it maintains awareness of the streaming position and accessible elements through its internal buffering mechanism.
-
+/*
+================================================
+idODSStreamedArray
+================================================
 */
 template<typename _type_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1>
 class ALIGNTYPE16 idODSStreamedArray
 {
 public:
-	/*!
-		\brief Initializes a streamed array wrapper for efficient memory access with buffered retrieval
-
-		Constructs an idODSStreamedArray object that provides buffered access to an input array. The constructor sets up internal state tracking for the cached array range and stream position, and
-	   fetches the first batch of elements. It performs compile-time assertions to verify buffer size constraints and alignment requirements, and runtime assertions to validate input array alignment
-	   and address validity. The number of elements is rounded up to ensure proper alignment with the specified multiple for efficient memory access patterns.
-
-		\param array Input array to wrap for streaming access
-		\param numElements Number of elements in the input array
-	*/
 	idODSStreamedArray( const _type_* array, const int numElements ) :
 		cachedArrayStart( 0 ),
 		cachedArrayEnd( 0 ),
@@ -530,30 +321,19 @@ public:
 		inArrayNumRoundedUp += _roundUpToMultiple_ - 1;
 		inArrayNumRoundedUp -= inArrayNumRoundedUp % ( ( _roundUpToMultiple_ > 1 ) ? _roundUpToMultiple_ : 1 );
 	}
-
-	/*!
-		\brief Destructor for the idODSStreamedArray class that flushes the accessible portion of the array.
-
-		This destructor is responsible for cleaning up the idODSStreamedArray object by ensuring that any data in the accessible portion of the array is properly flushed. It calculates the range of
-	   the array to be flushed based on the cached array start and end positions, converting these positions to byte offsets using the size of the data type stored in the array.
-
-	*/
 	~idODSStreamedArray()
 	{
 		// Flush the accessible part of the array.
 		FlushArray( inArray, cachedArrayStart * sizeof( _type_ ), cachedArrayEnd * sizeof( _type_ ) );
 	}
 
-	/*!
-		\brief Fetches the next batch of array elements for streaming access and returns the index after the new batch.
-
-		This function manages a streaming buffer for accessing array elements in a controlled manner. It updates the cached array bounds to reflect the current batch of elements that can be accessed.
-	   When not all elements have been streamed, it calculates the new cached array range based on the buffer size and streaming behavior. It also handles flushing old elements that are no longer
-	   accessible and prefetching the next batch for performance. The function supports quad-buffering semantics, allowing access to elements from two previous batches. The return value indicates the
-	   position after the current batch, which can be used to determine the range of accessible elements through the indexing operator.
-
-		\return The index immediately following the newly fetched batch of array elements, or the rounded-up array size if all elements have been streamed
-	*/
+	// Fetches a new batch of array elements and returns the first index after this new batch.
+	// After calling this, the elements starting at the index returned by the previous call to
+	// FetchNextBach() (or zero if not yet called) up to (excluding) the index returned by
+	// this call to FetchNextBatch() can be accessed through the [] operator. When quad-buffering,
+	// the elements starting at the index returned by the second-from-last call to FetchNextBatch()
+	// can still be accessed. This is useful when the algorithm needs to successively access
+	// an odd number of elements at the same time that may cross a single buffer boundary.
 	int FetchNextBatch()
 	{
 		// If not everything has been streamed already.
@@ -596,17 +376,6 @@ private:
 	int			  inArrayNum;
 	int			  inArrayNumRoundedUp;
 
-	/*!
-		\brief Flushes cache lines for a specified range within a given array
-
-		This function flushes cache lines for a specified range within a given array. It calculates the appropriate cache line boundaries based on the input parameters and ensures that only complete
-	   cache lines within the specified range are flushed. The function uses alignment constants to ensure proper cache line granularity and avoids flushing data that may still be partially accessible
-	   or extends beyond the array boundaries.
-
-		\param flushArray Pointer to the base address of the array to flush
-		\param flushStart Starting offset within the array from which to begin flushing
-		\param flushEnd Ending offset within the array at which to stop flushing
-	*/
 	static void	  FlushArray( const void* flushArray, int flushStart, int flushEnd )
 	{
 #if 0
@@ -626,33 +395,23 @@ private:
 	}
 };
 
-/*!
-	\class idODSStreamedIndexedArray
-	\brief A streaming indexed array implementation for efficient GPU memory access with buffered element and index management.
+/*
+================================================
+idODSStreamedIndexedArray
 
-	This class provides a mechanism for streaming indexed array data to GPU memory with efficient buffering and caching. It is designed to manage large datasets by fetching elements in batches while
-   maintaining index integrity. The implementation uses template parameters to configure buffer sizes, stream buffer types, and alignment requirements. The class supports quad-buffering to ensure data
-   availability during streaming operations and handles memory alignment constraints through compile-time assertions. The streaming behavior is managed through internal state tracking of cached data
-   ranges and provides methods to fetch the next batch of elements and access elements by index. The destructor ensures proper cleanup by flushing any cached data back to its destination. Cache line
-   flushing functionality is present but currently disabled in the implementation.
+For gathering elements from an array using a sequentially read index.
+This uses overlapped streaming for both the index and the array elements
+where one batch of indices and/or array elements can be accessed while
+the next batch is being streamed in.
 
+NOTE: currently the size of array elements must be a multiple of 16 bytes.
+An index with offsets and more complex logic is needed to support other sizes.
+================================================
 */
 template<typename _elemType_, typename _indexType_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1>
 class ALIGNTYPE16 idODSStreamedIndexedArray
 {
 public:
-	/*!
-		\brief Constructor for idODSStreamedIndexedArray that initializes the streaming array and index data
-
-		Initializes the streaming array and index data for efficient GPU memory access. Sets up internal state variables for tracking cached and streamed data ranges, and performs compile-time
-	   assertions to ensure buffer sizes and alignment requirements are met. The constructor fetches the initial batches of indices and elements to prepare for streaming operations.
-
-		\param array Pointer to the input array of elements
-		\param numElements Number of elements in the input array
-		\param index Pointer to the input index array
-		\param numIndices Number of indices in the input index array
-		\throws Compile-time assertions and runtime asserts for buffer size, alignment, and memory address requirements
-	*/
 	idODSStreamedIndexedArray( const _elemType_* array, const int numElements, const _indexType_* index, const int numIndices ) :
 		cachedArrayStart( 0 ),
 		cachedArrayEnd( 0 ),
@@ -685,15 +444,6 @@ public:
 		inIndexNumRoundedUp += _roundUpToMultiple_ - 1;
 		inIndexNumRoundedUp -= inIndexNumRoundedUp % ( ( _roundUpToMultiple_ > 1 ) ? _roundUpToMultiple_ : 1 );
 	}
-
-	/*!
-		\brief Destructor for the idODSStreamedIndexedArray class that flushes the accessible parts of the index and array.
-
-		This destructor ensures that any cached data in the index and array portions of the stream are properly flushed to their respective destinations. It handles the cleanup of the streamed indexed
-	   array by writing out the portions of the index and array that are currently cached, based on the start and end offsets stored in cachedIndexStart, cachedIndexEnd, cachedArrayStart, and
-	   cachedArrayEnd.
-
-	*/
 	~idODSStreamedIndexedArray()
 	{
 		// Flush the accessible part of the index.
@@ -702,17 +452,13 @@ public:
 		FlushArray( inArray, cachedArrayStart * sizeof( _elemType_ ), cachedArrayEnd * sizeof( _elemType_ ) );
 	}
 
-	/*!
-		\brief Fetches the next batch of array elements for streaming access and returns the index after the batch.
-
-		This function manages the streaming of array elements in a buffer-based system. It determines whether a new batch of elements needs to be fetched from the input array based on the current
-	   streaming state. The function updates internal indices to track which elements are cached and accessible. It also handles prefetching of both indices and array elements to improve performance.
-	   When quad-buffering is used, it ensures that elements from the second-to-last batch remain accessible. The function returns the index that marks the end of the current batch, allowing the
-	   caller to know which elements are available for access.
-
-		\return The index of the first element after the newly fetched batch, or inIndexNumRoundedUp if all elements have been streamed.
-		\throws This function may throw an assertion failure if indices are out of bounds.
-	*/
+	// Fetches a new batch of array elements and returns the first index after this new batch.
+	// After calling this, the elements starting at the index returned by the previous call to
+	// FetchNextBach() (or zero if not yet called) up to (excluding) the index returned by
+	// this call to FetchNextBatch() can be accessed through the [] operator. When quad-buffering,
+	// the elements starting at the index returned by the second-from-last call to FetchNextBatch()
+	// can still be accessed. This is useful when the algorithm needs to successively access
+	// an odd number of elements at the same time that may cross a single buffer boundary.
 	int FetchNextBatch()
 	{
 		// If not everything has been streamed already.
@@ -777,17 +523,6 @@ private:
 	int				   inIndexNum;
 	int				   inIndexNumRoundedUp;
 
-	/*!
-		\brief Flushes cache lines for a specified range of an array
-
-		This function flushes cache lines for a given range of an array, ensuring that any modified data is written back to memory. The function calculates the appropriate cache line boundaries based
-	   on the input parameters and flushes the relevant cache lines. The implementation uses cache line alignment to ensure proper cache behavior. The function is currently disabled by a #if 0
-	   preprocessor directive but contains the logic for cache line flushing.
-
-		\param flushArray Pointer to the array whose cache lines need to be flushed
-		\param flushStart Starting index for the flush operation
-		\param flushEnd Ending index for the flush operation
-	*/
 	static void		   FlushArray( const void* flushArray, int flushStart, int flushEnd )
 	{
 #if 0

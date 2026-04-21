@@ -39,11 +39,21 @@ If you have questions concerning this license or the applicable additional terms
 
 define_t* idParser::globaldefines;
 
+/*
+================
+idParser::SetBaseFolder
+================
+*/
 void	  idParser::SetBaseFolder( const char* path )
 {
 	idLexer::SetBaseFolder( path );
 }
 
+/*
+================
+idParser::AddGlobalDefine
+================
+*/
 int idParser::AddGlobalDefine( const char* string )
 {
 	define_t* define;
@@ -57,6 +67,11 @@ int idParser::AddGlobalDefine( const char* string )
 	return true;
 }
 
+/*
+================
+idParser::RemoveGlobalDefine
+================
+*/
 int idParser::RemoveGlobalDefine( const char* name )
 {
 	define_t *d, *prev;
@@ -78,6 +93,11 @@ int idParser::RemoveGlobalDefine( const char* name )
 	return false;
 }
 
+/*
+================
+idParser::RemoveAllGlobalDefines
+================
+*/
 void idParser::RemoveAllGlobalDefines()
 {
 	define_t* define;
@@ -88,6 +108,19 @@ void idParser::RemoveAllGlobalDefines()
 	}
 }
 
+/*
+===============================================================================
+
+idParser
+
+===============================================================================
+*/
+
+/*
+================
+idParser::PrintDefine
+================
+*/
 void idParser::PrintDefine( define_t* define )
 {
 	idLib::common->Printf( "define->name = %s\n", define->name );
@@ -96,15 +129,29 @@ void idParser::PrintDefine( define_t* define )
 	idLib::common->Printf( "define->numparms = %d\n", define->numparms );
 }
 
-/*!
-	\brief Computes a hash value for a given string name using a custom hashing algorithm.
+/*
+================
+PC_PrintDefineHashTable
+================
+* /
+static void PC_PrintDefineHashTable(define_t **definehash) {
+	int i;
+	define_t *d;
 
-	This function calculates a hash value for the input string name by iterating through each character and applying a weighted sum formula. The result is then processed through a bitwise operation to
-   ensure the hash value falls within the defined hash table size range. The hashing algorithm is designed to provide a good distribution of hash values for use in hash tables or similar data
-   structures.
+	for (i = 0; i < DEFINEHASHSIZE; i++) {
+		Log_Write("%4d:", i);
+		for (d = definehash[i]; d; d = d->hashnext) {
+			Log_Write(" %s", d->name);
+		}
+		Log_Write("\n");
+	}
+}
+*/
 
-	\param name Pointer to the null-terminated string for which the hash is to be computed
-	\return An integer hash value that represents the input string, constrained to the range [0, DEFINEHASHSIZE - 1]
+/*
+================
+PC_NameHash
+================
 */
 ID_INLINE int PC_NameHash( const char* name )
 {
@@ -118,6 +165,11 @@ ID_INLINE int PC_NameHash( const char* name )
 	return hash;
 }
 
+/*
+================
+idParser::AddDefineToHash
+================
+*/
 void idParser::AddDefineToHash( define_t* define, define_t** definehash )
 {
 	int hash;
@@ -127,6 +179,11 @@ void idParser::AddDefineToHash( define_t* define, define_t** definehash )
 	definehash[hash] = define;
 }
 
+/*
+================
+FindHashedDefine
+================
+*/
 define_t* idParser::FindHashedDefine( define_t** definehash, const char* name )
 {
 	define_t* d;
@@ -158,6 +215,11 @@ define_t* idParser::FindDefine( define_t* defines, const char* name )
 	return NULL;
 }
 
+/*
+================
+idParser::FindDefineParm
+================
+*/
 int idParser::FindDefineParm( define_t* define, const char* name )
 {
 	idToken* p;
@@ -173,6 +235,11 @@ int idParser::FindDefineParm( define_t* define, const char* name )
 	return -1;
 }
 
+/*
+================
+idParser::CopyDefine
+================
+*/
 define_t* idParser::CopyDefine( define_t* define )
 {
 	define_t* newdefine;
@@ -215,6 +282,11 @@ define_t* idParser::CopyDefine( define_t* define )
 	return newdefine;
 }
 
+/*
+================
+idParser::FreeDefine
+================
+*/
 void idParser::FreeDefine( define_t* define )
 {
 	idToken *t, *next;
@@ -233,6 +305,11 @@ void idParser::FreeDefine( define_t* define )
 	Mem_Free( define );
 }
 
+/*
+================
+idParser::DefineFromString
+================
+*/
 define_t* idParser::DefineFromString( const char* string )
 {
 	idParser  src;
@@ -252,6 +329,11 @@ define_t* idParser::DefineFromString( const char* string )
 	return def;
 }
 
+/*
+================
+idParser::Error
+================
+*/
 void idParser::Error( const char* str, ... ) const
 {
 	char	text[MAX_STRING_CHARS];
@@ -265,6 +347,11 @@ void idParser::Error( const char* str, ... ) const
 	}
 }
 
+/*
+================
+idParser::Warning
+================
+*/
 void idParser::Warning( const char* str, ... ) const
 {
 	char	text[MAX_STRING_CHARS];
@@ -278,6 +365,11 @@ void idParser::Warning( const char* str, ... ) const
 	}
 }
 
+/*
+================
+idParser::PushIndent
+================
+*/
 void idParser::PushIndent( int type, int skip )
 {
 	indent_t* indent;
@@ -291,6 +383,11 @@ void idParser::PushIndent( int type, int skip )
 	idParser::indentstack = indent;
 }
 
+/*
+================
+idParser::PopIndent
+================
+*/
 void idParser::PopIndent( int* type, int* skip )
 {
 	indent_t* indent;
@@ -315,6 +412,11 @@ void idParser::PopIndent( int* type, int* skip )
 	Mem_Free( indent );
 }
 
+/*
+================
+idParser::PushScript
+================
+*/
 void idParser::PushScript( idLexer* script )
 {
 	idLexer* s;
@@ -330,6 +432,11 @@ void idParser::PushScript( idLexer* script )
 	idParser::scriptstack = script;
 }
 
+/*
+================
+idParser::ReadSourceToken
+================
+*/
 int idParser::ReadSourceToken( idToken* token )
 {
 	idToken* t;
@@ -381,6 +488,11 @@ int idParser::ReadSourceToken( idToken* token )
 	return true;
 }
 
+/*
+================
+idParser::UnreadSourceToken
+================
+*/
 int idParser::UnreadSourceToken( idToken* token )
 {
 	idToken* t;
@@ -391,6 +503,11 @@ int idParser::UnreadSourceToken( idToken* token )
 	return true;
 }
 
+/*
+================
+idParser::ReadDefineParms
+================
+*/
 int idParser::ReadDefineParms( define_t* define, idToken** parms, int maxparms )
 {
 	define_t* newdefine;
@@ -481,6 +598,11 @@ int idParser::ReadDefineParms( define_t* define, idToken** parms, int maxparms )
 	return true;
 }
 
+/*
+================
+idParser::StringizeTokens
+================
+*/
 int idParser::StringizeTokens( idToken* tokens, idToken* token )
 {
 	idToken* t;
@@ -495,6 +617,11 @@ int idParser::StringizeTokens( idToken* tokens, idToken* token )
 	return true;
 }
 
+/*
+================
+idParser::MergeTokens
+================
+*/
 int idParser::MergeTokens( idToken* t1, idToken* t2 )
 {
 	// merging of a name with a name or number
@@ -517,6 +644,11 @@ int idParser::MergeTokens( idToken* t1, idToken* t2 )
 	return false;
 }
 
+/*
+================
+idParser::AddBuiltinDefines
+================
+*/
 void idParser::AddBuiltinDefines()
 {
 	int		  i;
@@ -540,6 +672,11 @@ void idParser::AddBuiltinDefines()
 	}
 }
 
+/*
+================
+idParser::CopyFirstDefine
+================
+*/
 define_t* idParser::CopyFirstDefine()
 {
 	int i;
@@ -552,15 +689,6 @@ define_t* idParser::CopyFirstDefine()
 	return NULL;
 }
 
-/*!
-	\brief Returns a formatted date string for preprocessor use
-
-	The function retrieves the current system time and formats it into a string containing the month, day, and year. It extracts the date information from the ctime output, skipping the day of the
-   week and time components. The resulting string is enclosed in double quotes to make it suitable for preprocessor directives. The function performs a basic validation to ensure the retrieved time
-   string has sufficient length before processing.
-
-	\return A formatted date string in the format "MMM DD YYYY" enclosed in double quotes
-*/
 static idStr PreProcessorDate()
 {
 	time_t t	   = time( NULL );
@@ -581,14 +709,6 @@ static idStr PreProcessorDate()
 	return str;
 }
 
-/*!
-	\brief Returns a string representation of the current time in HH:MM:SS format.
-
-	This function retrieves the current time from the system and formats it as a string in HH:MM:SS format. It extracts the time portion from the full timestamp returned by ctime and wraps it in
-   double quotes. If the time string is malformed or shorter than 24 characters, it returns an error indicator string.
-
-	\return A string containing the current time in HH:MM:SS format, wrapped in double quotes, or an error indicator if the time string is malformed
-*/
 static idStr PreProcessorTime()
 {
 	time_t t	   = time( NULL );
@@ -605,20 +725,17 @@ static idStr PreProcessorTime()
 	return str;
 }
 
-/*!
-	\brief Prints the date and time macros from the preprocessor.
-
-	This function outputs the date and time information as provided by the preprocessor macros ID__DATE__ and ID__TIME__. It uses the idLib::Printf function to display these values along with their
-   corresponding preprocessor macro names.
-
-	\param args Command line arguments, though not used in this function.
-*/
 CONSOLE_COMMAND( TestPreprocessorMacros, "check analyze warning", 0 )
 {
 	idLib::Printf( "%s : %s\n", ID__DATE__, PreProcessorDate().c_str() );
 	idLib::Printf( "%s : %s\n", ID__TIME__, PreProcessorTime().c_str() );
 }
 
+/*
+================
+idParser::ExpandBuiltinDefine
+================
+*/
 int idParser::ExpandBuiltinDefine( idToken* deftoken, define_t* define, idToken** firsttoken, idToken** lasttoken )
 {
 	idToken* token;
@@ -688,6 +805,11 @@ int idParser::ExpandBuiltinDefine( idToken* deftoken, define_t* define, idToken*
 	return true;
 }
 
+/*
+================
+idParser::ExpandDefine
+================
+*/
 int idParser::ExpandDefine( idToken* deftoken, define_t* define, idToken** firsttoken, idToken** lasttoken )
 {
 	idToken *parms[MAX_DEFINEPARMS], *dt, *pt, *t;
@@ -815,6 +937,11 @@ int idParser::ExpandDefine( idToken* deftoken, define_t* define, idToken** first
 	return true;
 }
 
+/*
+================
+idParser::ExpandDefineIntoSource
+================
+*/
 int idParser::ExpandDefineIntoSource( idToken* deftoken, define_t* define )
 {
 	idToken *firsttoken, *lasttoken;
@@ -831,6 +958,14 @@ int idParser::ExpandDefineIntoSource( idToken* deftoken, define_t* define )
 	return true;
 }
 
+/*
+================
+idParser::ReadLine
+
+reads a token from the current line, continues reading on the next
+line only if a backslash '\' is found
+================
+*/
 int idParser::ReadLine( idToken* token )
 {
 	int crossline;
@@ -850,6 +985,12 @@ int idParser::ReadLine( idToken* token )
 	return true;
 }
 
+/*
+================
+idParser::Directive_include
+================
+*/
+// RB: added token as parameter
 int idParser::Directive_include( idToken* token, bool supressWarning )
 {
 	idLexer* script;
@@ -933,7 +1074,13 @@ int idParser::Directive_include( idToken* token, bool supressWarning )
 	idParser::PushScript( script );
 	return true;
 }
+// RB end
 
+/*
+================
+idParser::Directive_undef
+================
+*/
 int idParser::Directive_undef()
 {
 	idToken	  token;
@@ -971,6 +1118,11 @@ int idParser::Directive_undef()
 	return true;
 }
 
+/*
+================
+idParser::Directive_define
+================
+*/
 int idParser::Directive_define()
 {
 	idToken	  token, *t, *last;
@@ -1090,6 +1242,11 @@ int idParser::Directive_define()
 	return true;
 }
 
+/*
+================
+idParser::AddDefine
+================
+*/
 int idParser::AddDefine( const char* string )
 {
 	define_t* define;
@@ -1102,6 +1259,11 @@ int idParser::AddDefine( const char* string )
 	return true;
 }
 
+/*
+================
+idParser::AddGlobalDefinesToSource
+================
+*/
 void idParser::AddGlobalDefinesToSource()
 {
 	define_t *define, *newdefine;
@@ -1112,6 +1274,11 @@ void idParser::AddGlobalDefinesToSource()
 	}
 }
 
+/*
+================
+idParser::Directive_if_def
+================
+*/
 int idParser::Directive_if_def( int type )
 {
 	idToken	  token;
@@ -1133,16 +1300,31 @@ int idParser::Directive_if_def( int type )
 	return true;
 }
 
+/*
+================
+idParser::Directive_ifdef
+================
+*/
 int idParser::Directive_ifdef()
 {
 	return idParser::Directive_if_def( INDENT_IFDEF );
 }
 
+/*
+================
+idParser::Directive_ifndef
+================
+*/
 int idParser::Directive_ifndef()
 {
 	return idParser::Directive_if_def( INDENT_IFNDEF );
 }
 
+/*
+================
+idParser::Directive_else
+================
+*/
 int idParser::Directive_else()
 {
 	int type, skip;
@@ -1160,6 +1342,11 @@ int idParser::Directive_else()
 	return true;
 }
 
+/*
+================
+idParser::Directive_endif
+================
+*/
 int idParser::Directive_endif()
 {
 	int type, skip;
@@ -1172,6 +1359,11 @@ int idParser::Directive_endif()
 	return true;
 }
 
+/*
+================
+idParser::EvaluateTokens
+================
+*/
 typedef struct operator_s {
 	int				   op;
 	int				   priority;
@@ -1186,15 +1378,6 @@ typedef struct value_s {
 	struct value_s *prev, *next;
 } value_t;
 
-/*!
-	\brief Returns the priority level of a given operator for parsing expressions.
-
-	This function determines the precedence of operators used in expression parsing. Operators with higher numerical values are processed first during evaluation. The function handles various
-   arithmetic, logical, and bitwise operators, assigning them appropriate priority levels according to standard operator precedence rules.
-
-	\param op The operator token to get the priority for
-	\return The priority level of the specified operator, with higher values indicating higher precedence
-*/
 int PC_OperatorPriority( int op )
 {
 	switch( op ) {
@@ -1857,6 +2040,11 @@ int idParser::Evaluate( signed int* intvalue, double* floatvalue, int integer )
 	return true;
 }
 
+/*
+================
+idParser::DollarEvaluate
+================
+*/
 int idParser::DollarEvaluate( signed int* intvalue, double* floatvalue, int integer )
 {
 	int		  indent, defined = false;
@@ -1966,6 +2154,11 @@ int idParser::DollarEvaluate( signed int* intvalue, double* floatvalue, int inte
 	return true;
 }
 
+/*
+================
+idParser::Directive_elif
+================
+*/
 int idParser::Directive_elif()
 {
 	signed int value; // DG: use int instead of long for 64bit compatibility
@@ -2002,6 +2195,11 @@ int idParser::Directive_if()
 	return true;
 }
 
+/*
+================
+idParser::Directive_line
+================
+*/
 int idParser::Directive_line()
 {
 	idToken token;
@@ -2012,6 +2210,11 @@ int idParser::Directive_line()
 	return true;
 }
 
+/*
+================
+idParser::Directive_error
+================
+*/
 int idParser::Directive_error()
 {
 	idToken token;
@@ -2024,6 +2227,11 @@ int idParser::Directive_error()
 	return true;
 }
 
+/*
+================
+idParser::Directive_warning
+================
+*/
 int idParser::Directive_warning()
 {
 	idToken token;
@@ -2036,6 +2244,11 @@ int idParser::Directive_warning()
 	return true;
 }
 
+/*
+================
+idParser::Directive_pragma
+================
+*/
 int idParser::Directive_pragma()
 {
 	idToken token;
@@ -2046,6 +2259,11 @@ int idParser::Directive_pragma()
 	return true;
 }
 
+/*
+================
+idParser::UnreadSignToken
+================
+*/
 void idParser::UnreadSignToken()
 {
 	idToken token;
@@ -2061,6 +2279,11 @@ void idParser::UnreadSignToken()
 	idParser::UnreadSourceToken( &token );
 }
 
+/*
+================
+idParser::Directive_eval
+================
+*/
 int idParser::Directive_eval()
 {
 	signed int value; // DG: use int instead of long for 64bit compatibility
@@ -2087,6 +2310,11 @@ int idParser::Directive_eval()
 	return true;
 }
 
+/*
+================
+idParser::Directive_evalfloat
+================
+*/
 int idParser::Directive_evalfloat()
 {
 	double	value;
@@ -2113,6 +2341,11 @@ int idParser::Directive_evalfloat()
 	return true;
 }
 
+/*
+================
+idParser::ReadDirective
+================
+*/
 int idParser::ReadDirective()
 {
 	idToken token;
@@ -2176,6 +2409,11 @@ int idParser::ReadDirective()
 	return false;
 }
 
+/*
+================
+idParser::DollarDirective_evalint
+================
+*/
 int idParser::DollarDirective_evalint()
 {
 	signed int value; // DG: use int instead of long for 64bit compatibility
@@ -2204,6 +2442,11 @@ int idParser::DollarDirective_evalint()
 	return true;
 }
 
+/*
+================
+idParser::DollarDirective_evalfloat
+================
+*/
 int idParser::DollarDirective_evalfloat()
 {
 	double	value;
@@ -2232,6 +2475,11 @@ int idParser::DollarDirective_evalfloat()
 	return true;
 }
 
+/*
+================
+idParser::ReadDollarDirective
+================
+*/
 int idParser::ReadDollarDirective()
 {
 	idToken token;
@@ -2259,6 +2507,11 @@ int idParser::ReadDollarDirective()
 	return false;
 }
 
+/*
+================
+idParser::ReadToken
+================
+*/
 int idParser::ReadToken( idToken* token )
 {
 	define_t* define;
@@ -2318,6 +2571,11 @@ int idParser::ReadToken( idToken* token )
 	}
 }
 
+/*
+================
+idParser::ExpectTokenString
+================
+*/
 int idParser::ExpectTokenString( const char* string )
 {
 	idToken token;
@@ -2334,6 +2592,11 @@ int idParser::ExpectTokenString( const char* string )
 	return true;
 }
 
+/*
+================
+idParser::ExpectTokenType
+================
+*/
 int idParser::ExpectTokenType( int type, int subtype, idToken* token )
 {
 	idStr str;
@@ -2411,6 +2674,11 @@ int idParser::ExpectTokenType( int type, int subtype, idToken* token )
 	return 1;
 }
 
+/*
+================
+idParser::ExpectAnyToken
+================
+*/
 int idParser::ExpectAnyToken( idToken* token )
 {
 	if( !idParser::ReadToken( token ) ) {
@@ -2442,6 +2710,11 @@ int idParser::CheckTokenString( const char* string )
 	return false;
 }
 
+/*
+================
+idParser::CheckTokenType
+================
+*/
 int idParser::CheckTokenType( int type, int subtype, idToken* token )
 {
 	idToken tok;
@@ -2459,6 +2732,11 @@ int idParser::CheckTokenType( int type, int subtype, idToken* token )
 	return false;
 }
 
+/*
+================
+idParser::PeekTokenString
+================
+*/
 int idParser::PeekTokenString( const char* string )
 {
 	idToken tok;
@@ -2476,6 +2754,11 @@ int idParser::PeekTokenString( const char* string )
 	return false;
 }
 
+/*
+================
+idParser::PeekTokenType
+================
+*/
 int idParser::PeekTokenType( int type, int subtype, idToken* token )
 {
 	idToken tok;
@@ -2494,6 +2777,11 @@ int idParser::PeekTokenType( int type, int subtype, idToken* token )
 	return false;
 }
 
+/*
+================
+idParser::SkipUntilString
+================
+*/
 int idParser::SkipUntilString( const char* string )
 {
 	idToken token;
@@ -2506,6 +2794,11 @@ int idParser::SkipUntilString( const char* string )
 	return false;
 }
 
+/*
+================
+idParser::SkipRestOfLine
+================
+*/
 int idParser::SkipRestOfLine()
 {
 	idToken token;
@@ -2519,6 +2812,14 @@ int idParser::SkipRestOfLine()
 	return false;
 }
 
+/*
+=================
+idParser::SkipBracedSection
+
+Skips until a matching close brace is found.
+Internal brace depths are properly skipped.
+=================
+*/
 int idParser::SkipBracedSection( bool parseFirstBrace )
 {
 	idToken token;
@@ -2540,6 +2841,17 @@ int idParser::SkipBracedSection( bool parseFirstBrace )
 	return true;
 }
 
+/*
+=================
+idParser::ParseBracedSectionExact
+
+The next token should be an open brace.
+Parses until a matching close brace is found.
+Maintains the exact formating of the braced section
+
+  FIXME: what about precompilation ?
+=================
+*/
 const char* idParser::ParseBracedSectionExact( idStr& out, int tabs )
 {
 	return scriptstack->ParseBracedSectionExact( out, tabs );
@@ -2615,6 +2927,13 @@ const char* idParser::ParseBracedSection( idStr& out, int tabs, bool parseFirstB
 	return out.c_str();
 }
 
+/*
+=================
+idParser::ParseRestOfLine
+
+  parse the rest of the line
+=================
+*/
 const char* idParser::ParseRestOfLine( idStr& out )
 {
 	idToken token;
@@ -2633,11 +2952,21 @@ const char* idParser::ParseRestOfLine( idStr& out )
 	return out.c_str();
 }
 
+/*
+================
+idParser::UnreadToken
+================
+*/
 void idParser::UnreadToken( idToken* token )
 {
 	idParser::UnreadSourceToken( token );
 }
 
+/*
+================
+idParser::ReadTokenOnLine
+================
+*/
 int idParser::ReadTokenOnLine( idToken* token )
 {
 	idToken tok;
@@ -2655,6 +2984,11 @@ int idParser::ReadTokenOnLine( idToken* token )
 	return false;
 }
 
+/*
+================
+idParser::ParseInt
+================
+*/
 int idParser::ParseInt()
 {
 	idToken token;
@@ -2672,6 +3006,11 @@ int idParser::ParseInt()
 	return token.GetIntValue();
 }
 
+/*
+================
+idParser::ParseBool
+================
+*/
 bool idParser::ParseBool()
 {
 	idToken token;
@@ -2683,6 +3022,11 @@ bool idParser::ParseBool()
 	return ( token.GetIntValue() != 0 );
 }
 
+/*
+================
+idParser::ParseFloat
+================
+*/
 float idParser::ParseFloat()
 {
 	idToken token;
@@ -2700,6 +3044,11 @@ float idParser::ParseFloat()
 	return token.GetFloatValue();
 }
 
+/*
+================
+idParser::Parse1DMatrix
+================
+*/
 int idParser::Parse1DMatrix( int x, float* m )
 {
 	int i;
@@ -2718,6 +3067,11 @@ int idParser::Parse1DMatrix( int x, float* m )
 	return true;
 }
 
+/*
+================
+idParser::Parse2DMatrix
+================
+*/
 int idParser::Parse2DMatrix( int y, int x, float* m )
 {
 	int i;
@@ -2738,6 +3092,11 @@ int idParser::Parse2DMatrix( int y, int x, float* m )
 	return true;
 }
 
+/*
+================
+idParser::Parse3DMatrix
+================
+*/
 int idParser::Parse3DMatrix( int z, int y, int x, float* m )
 {
 	int i;
@@ -2758,6 +3117,11 @@ int idParser::Parse3DMatrix( int z, int y, int x, float* m )
 	return true;
 }
 
+/*
+================
+idParser::GetLastWhiteSpace
+================
+*/
 int idParser::GetLastWhiteSpace( idStr& whiteSpace ) const
 {
 	if( scriptstack ) {
@@ -2768,11 +3132,23 @@ int idParser::GetLastWhiteSpace( idStr& whiteSpace ) const
 	return whiteSpace.Length();
 }
 
+/*
+================
+idParser::SetMarker
+================
+*/
 void idParser::SetMarker()
 {
 	marker_p = NULL;
 }
 
+/*
+================
+idParser::GetStringFromMarker
+
+  FIXME: this is very bad code, the script isn't even garrenteed to still be around
+================
+*/
 void idParser::GetStringFromMarker( idStr& out, bool clean )
 {
 	char* p;
@@ -2807,6 +3183,11 @@ void idParser::GetStringFromMarker( idStr& out, bool clean )
 	*p = save;
 }
 
+/*
+================
+idParser::SetIncludePath
+================
+*/
 void idParser::SetIncludePath( const char* path )
 {
 	idParser::includepath = path;
@@ -2816,11 +3197,21 @@ void idParser::SetIncludePath( const char* path )
 	}
 }
 
+/*
+================
+idParser::SetPunctuations
+================
+*/
 void idParser::SetPunctuations( const punctuation_t* p )
 {
 	idParser::punctuations = p;
 }
 
+/*
+================
+idParser::SetFlags
+================
+*/
 void idParser::SetFlags( int flags )
 {
 	idLexer* s;
@@ -2831,11 +3222,21 @@ void idParser::SetFlags( int flags )
 	}
 }
 
+/*
+================
+idParser::GetFlags
+================
+*/
 int idParser::GetFlags() const
 {
 	return idParser::flags;
 }
 
+/*
+================
+idParser::LoadFile
+================
+*/
 int idParser::LoadFile( const char* filename, bool OSPath )
 {
 	idLexer* script;
@@ -2868,6 +3269,11 @@ int idParser::LoadFile( const char* filename, bool OSPath )
 	return true;
 }
 
+/*
+================
+idParser::LoadMemory
+================
+*/
 int idParser::LoadMemory( const char* ptr, int length, const char* name )
 {
 	idLexer* script;
@@ -2899,6 +3305,11 @@ int idParser::LoadMemory( const char* ptr, int length, const char* name )
 	return true;
 }
 
+/*
+================
+idParser::FreeSource
+================
+*/
 void idParser::FreeSource( bool keepDefines )
 {
 	idLexer*  script;
@@ -2944,6 +3355,11 @@ void idParser::FreeSource( bool keepDefines )
 	loaded = false;
 }
 
+/*
+================
+idParser::GetPunctuationFromId
+================
+*/
 const char* idParser::GetPunctuationFromId( int id )
 {
 	int i;
@@ -2961,6 +3377,11 @@ const char* idParser::GetPunctuationFromId( int id )
 	return "unknown punctuation";
 }
 
+/*
+================
+idParser::GetPunctuationId
+================
+*/
 int idParser::GetPunctuationId( const char* p )
 {
 	int i;
@@ -2978,6 +3399,11 @@ int idParser::GetPunctuationId( const char* p )
 	return 0;
 }
 
+/*
+================
+idParser::idParser
+================
+*/
 idParser::idParser()
 {
 	this->loaded	   = false;
@@ -2992,6 +3418,11 @@ idParser::idParser()
 	this->marker_p	   = NULL;
 }
 
+/*
+================
+idParser::idParser
+================
+*/
 idParser::idParser( int flags )
 {
 	this->loaded	   = false;
@@ -3006,6 +3437,11 @@ idParser::idParser( int flags )
 	this->marker_p	   = NULL;
 }
 
+/*
+================
+idParser::idParser
+================
+*/
 idParser::idParser( const char* filename, int flags, bool OSPath )
 {
 	this->loaded	   = false;
@@ -3041,11 +3477,21 @@ idParser::idParser( const char* ptr, int length, const char* name, int flags )
 	LoadMemory( ptr, length, name );
 }
 
+/*
+================
+idParser::~idParser
+================
+*/
 idParser::~idParser()
 {
 	idParser::FreeSource( false );
 }
 
+/*
+========================
+idParser::EndOfFile
+========================
+*/
 bool idParser::EndOfFile()
 {
 	if( scriptstack != NULL ) {
@@ -3054,6 +3500,12 @@ bool idParser::EndOfFile()
 	return true;
 }
 
+/*
+================
+idParser::Parse1DMatrixLegacy
+================
+*/
+// jmarshall
 int idParser::Parse1DMatrixLegacy( int x, float* m )
 {
 	int i;
@@ -3077,3 +3529,4 @@ int idParser::Parse1DMatrixLegacy( int x, float* m )
 	}
 	return true;
 }
+// jmarshall end

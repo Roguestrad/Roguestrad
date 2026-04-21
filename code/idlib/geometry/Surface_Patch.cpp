@@ -30,6 +30,11 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
+/*
+=================
+idSurface_Patch::SetSize
+=================
+*/
 void idSurface_Patch::SetSize( int patchWidth, int patchHeight )
 {
 	if( patchWidth < 1 || patchWidth > maxWidth ) {
@@ -43,6 +48,13 @@ void idSurface_Patch::SetSize( int patchWidth, int patchHeight )
 	verts.SetNum( width * height );
 }
 
+/*
+=================
+idSurface_Patch::PutOnCurve
+
+Expects an expanded patch.
+=================
+*/
 void idSurface_Patch::PutOnCurve()
 {
 	int		   i, j;
@@ -67,6 +79,11 @@ void idSurface_Patch::PutOnCurve()
 	}
 }
 
+/*
+================
+idSurface_Patch::ProjectPointOntoVector
+================
+*/
 void idSurface_Patch::ProjectPointOntoVector( const idVec3& point, const idVec3& vStart, const idVec3& vEnd, idVec3& vProj )
 {
 	idVec3 pVec, vec;
@@ -78,6 +95,13 @@ void idSurface_Patch::ProjectPointOntoVector( const idVec3& point, const idVec3&
 	vProj = vStart + ( pVec * vec ) * vec;
 }
 
+/*
+================
+idSurface_Patch::RemoveLinearColumnsRows
+
+Expects an expanded patch.
+================
+*/
 void idSurface_Patch::RemoveLinearColumnsRows()
 {
 	int	   i, j, k;
@@ -127,6 +151,11 @@ void idSurface_Patch::RemoveLinearColumnsRows()
 	}
 }
 
+/*
+================
+idSurface_Patch::ResizeExpanded
+================
+*/
 void idSurface_Patch::ResizeExpanded( int newHeight, int newWidth )
 {
 	int i, j;
@@ -148,6 +177,11 @@ void idSurface_Patch::ResizeExpanded( int newHeight, int newWidth )
 	maxWidth  = newWidth;
 }
 
+/*
+================
+idSurface_Patch::Collapse
+================
+*/
 void idSurface_Patch::Collapse()
 {
 	int i, j;
@@ -166,6 +200,11 @@ void idSurface_Patch::Collapse()
 	verts.SetNum( width * height );
 }
 
+/*
+================
+idSurface_Patch::Expand
+================
+*/
 void idSurface_Patch::Expand()
 {
 	int i, j;
@@ -184,6 +223,11 @@ void idSurface_Patch::Expand()
 	}
 }
 
+/*
+============
+idSurface_Patch::LerpVert
+============
+*/
 void idSurface_Patch::LerpVert( const idDrawVert& a, const idDrawVert& b, idDrawVert& out ) const
 {
 	out.xyz[0] = 0.5f * ( a.xyz[0] + b.xyz[0] );
@@ -341,6 +385,11 @@ void idSurface_Patch::GenerateNormals()
 	}
 }
 
+/*
+=================
+idSurface_Patch::GenerateIndexes
+=================
+*/
 void idSurface_Patch::GenerateIndexes()
 {
 	int i, j, v1, v2, v3, v4, index;
@@ -365,6 +414,11 @@ void idSurface_Patch::GenerateIndexes()
 	GenerateEdgeIndexes();
 }
 
+/*
+===============
+idSurface_Patch::SampleSinglePatchPoint
+===============
+*/
 void idSurface_Patch::SampleSinglePatchPoint( const idDrawVert ctrl[3][3], float u, float v, idDrawVert* out ) const
 {
 	float vCtrl[3][8];
@@ -423,6 +477,11 @@ void idSurface_Patch::SampleSinglePatchPoint( const idDrawVert ctrl[3][3], float
 	}
 }
 
+/*
+===================
+idSurface_Patch::SampleSinglePatch
+===================
+*/
 void idSurface_Patch::SampleSinglePatch( const idDrawVert ctrl[3][3], int baseCol, int baseRow, int width, int horzSub, int vertSub, idDrawVert* outVerts ) const
 {
 	int	  i, j;
@@ -439,6 +498,11 @@ void idSurface_Patch::SampleSinglePatch( const idDrawVert ctrl[3][3], int baseCo
 	}
 }
 
+/*
+=================
+idSurface_Patch::SubdivideExplicit
+=================
+*/
 void idSurface_Patch::SubdivideExplicit( int horzSubdivisions, int vertSubdivisions, bool genNormals, bool removeLinear )
 {
 	int			i, j, k, l;
@@ -496,6 +560,11 @@ void idSurface_Patch::SubdivideExplicit( int horzSubdivisions, int vertSubdivisi
 	GenerateIndexes();
 }
 
+/*
+=================
+idSurface_Patch::Subdivide
+=================
+*/
 void idSurface_Patch::Subdivide( float maxHorizontalError, float maxVerticalError, float maxLength, bool genNormals )
 {
 	int		   i, j, k, l;

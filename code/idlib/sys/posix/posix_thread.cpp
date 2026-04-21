@@ -110,22 +110,10 @@ static int Sys_GetThreadName( pthread_t handle, char* namebuf, size_t buflen )
 
 #endif // DEBUG_THREADS
 
-/*!
-	\brief Creates a new thread with the specified parameters and returns its handle
-
-	This function creates a new thread using pthread_create and initializes its attributes. The thread is created in a joinable state and can be given a specific name for debugging purposes. The
-   function sets the thread priority according to the specified priority level, though this functionality is currently disabled in the code. Thread affinity is not set on Linux systems and is left to
-   the operating system to handle. The function will cause a fatal error if any of the pthread operations fail.
-
-	\param function The entry point function for the new thread
-	\param parms Pointer to parameters to pass to the thread function
-	\param priority The scheduling priority for the thread
-	\param name Name to assign to the thread for debugging purposes
-	\param core The core affinity for the thread
-	\param stackSize The stack size for the thread
-	\param suspended Whether the thread should be created in a suspended state
-	\return The handle of the created thread, cast to uintptr_t
-	\throws FatalError if any pthread operation fails
+/*
+========================
+Sys_Createthread
+========================
 */
 uintptr_t Sys_CreateThread( xthread_t function, void* parms, xthreadPriority priority, const char* name, core_t core, int stackSize, bool suspended )
 {
@@ -225,6 +213,11 @@ uintptr_t Sys_CreateThread( xthread_t function, void* parms, xthreadPriority pri
 	return ( uintptr_t )handle;
 }
 
+/*
+========================
+Sys_GetCurrentThreadID
+========================
+*/
 uintptr_t Sys_GetCurrentThreadID()
 {
 	/*
@@ -237,6 +230,11 @@ uintptr_t Sys_GetCurrentThreadID()
 	return ( uintptr_t )pthread_self();
 }
 
+/*
+========================
+Sys_DestroyThread
+========================
+*/
 void Sys_DestroyThread( uintptr_t threadHandle )
 {
 	if( threadHandle == 0 ) {
@@ -262,6 +260,11 @@ void Sys_DestroyThread( uintptr_t threadHandle )
 	}
 }
 
+/*
+========================
+Sys_Yield
+========================
+*/
 void Sys_Yield()
 {
 	// SRS - pthread_yield() is deprecated on linux
@@ -278,6 +281,12 @@ void Sys_Yield()
 	Signal
 
 ================================================================================================
+*/
+
+/*
+========================
+Sys_SignalCreate
+========================
 */
 void Sys_SignalCreate( signalHandle_t& handle, bool manualReset )
 {
@@ -306,6 +315,11 @@ void Sys_SignalCreate( signalHandle_t& handle, bool manualReset )
 	pthread_cond_init( &handle.cond, NULL );
 }
 
+/*
+========================
+Sys_SignalDestroy
+========================
+*/
 void Sys_SignalDestroy( signalHandle_t& handle )
 {
 	// CloseHandle( handle );
@@ -315,6 +329,11 @@ void Sys_SignalDestroy( signalHandle_t& handle )
 	pthread_cond_destroy( &handle.cond );
 }
 
+/*
+========================
+Sys_SignalRaise
+========================
+*/
 void Sys_SignalRaise( signalHandle_t& handle )
 {
 	// SetEvent( handle );
@@ -344,6 +363,11 @@ void Sys_SignalRaise( signalHandle_t& handle )
 	pthread_mutex_unlock( &handle.mutex );
 }
 
+/*
+========================
+Sys_SignalClear
+========================
+*/
 void Sys_SignalClear( signalHandle_t& handle )
 {
 	// ResetEvent( handle );
@@ -355,6 +379,11 @@ void Sys_SignalClear( signalHandle_t& handle )
 	pthread_mutex_unlock( &handle.mutex );
 }
 
+/*
+========================
+Sys_SignalWait
+========================
+*/
 bool Sys_SignalWait( signalHandle_t& handle, int timeout )
 {
 	// DWORD result = WaitForSingleObject( handle, timeout == idSysSignal::WAIT_INFINITE ? INFINITE : timeout );
@@ -410,6 +439,12 @@ bool Sys_SignalWait( signalHandle_t& handle, int timeout )
 
 ================================================================================================
 */
+
+/*
+========================
+Sys_MutexCreate
+========================
+*/
 void Sys_MutexCreate( mutexHandle_t& handle )
 {
 	pthread_mutexattr_t attr;
@@ -421,11 +456,21 @@ void Sys_MutexCreate( mutexHandle_t& handle )
 	pthread_mutexattr_destroy( &attr );
 }
 
+/*
+========================
+Sys_MutexDestroy
+========================
+*/
 void Sys_MutexDestroy( mutexHandle_t& handle )
 {
 	pthread_mutex_destroy( &handle );
 }
 
+/*
+========================
+Sys_MutexLock
+========================
+*/
 bool Sys_MutexLock( mutexHandle_t& handle, bool blocking )
 {
 	if( pthread_mutex_trylock( &handle ) != 0 ) {
@@ -437,6 +482,11 @@ bool Sys_MutexLock( mutexHandle_t& handle, bool blocking )
 	return true;
 }
 
+/*
+========================
+Sys_MutexUnlock
+========================
+*/
 void Sys_MutexUnlock( mutexHandle_t& handle )
 {
 	pthread_mutex_unlock( &handle );
@@ -449,30 +499,56 @@ void Sys_MutexUnlock( mutexHandle_t& handle )
 
 ================================================================================================
 */
+
+/*
+========================
+Sys_InterlockedIncrement
+========================
+*/
 interlockedInt_t Sys_InterlockedIncrement( interlockedInt_t& value )
 {
 	// return InterlockedIncrementAcquire( & value );
 	return __sync_add_and_fetch( &value, 1 );
 }
 
+/*
+========================
+Sys_InterlockedDecrement
+========================
+*/
 interlockedInt_t Sys_InterlockedDecrement( interlockedInt_t& value )
 {
 	// return InterlockedDecrementRelease( & value );
 	return __sync_sub_and_fetch( &value, 1 );
 }
 
+/*
+========================
+Sys_InterlockedAdd
+========================
+*/
 interlockedInt_t Sys_InterlockedAdd( interlockedInt_t& value, interlockedInt_t i )
 {
 	// return InterlockedExchangeAdd( & value, i ) + i;
 	return __sync_add_and_fetch( &value, i );
 }
 
+/*
+========================
+Sys_InterlockedSub
+========================
+*/
 interlockedInt_t Sys_InterlockedSub( interlockedInt_t& value, interlockedInt_t i )
 {
 	// return InterlockedExchangeAdd( & value, - i ) - i;
 	return __sync_sub_and_fetch( &value, i );
 }
 
+/*
+========================
+Sys_InterlockedExchange
+========================
+*/
 interlockedInt_t Sys_InterlockedExchange( interlockedInt_t& value, interlockedInt_t exchange )
 {
 	// return InterlockedExchange( & value, exchange );
@@ -482,6 +558,11 @@ interlockedInt_t Sys_InterlockedExchange( interlockedInt_t& value, interlockedIn
 	return __sync_val_compare_and_swap( &value, value, exchange );
 }
 
+/*
+========================
+Sys_InterlockedCompareExchange
+========================
+*/
 interlockedInt_t Sys_InterlockedCompareExchange( interlockedInt_t& value, interlockedInt_t comparand, interlockedInt_t exchange )
 {
 	// return InterlockedCompareExchange( & value, exchange, comparand );
@@ -495,12 +576,23 @@ interlockedInt_t Sys_InterlockedCompareExchange( interlockedInt_t& value, interl
 
 ================================================================================================
 */
+
+/*
+========================
+Sys_InterlockedExchangePointer
+========================
+*/
 void* Sys_InterlockedExchangePointer( void*& ptr, void* exchange )
 {
 	// return InterlockedExchangePointer( & ptr, exchange );
 	return __sync_val_compare_and_swap( &ptr, ptr, exchange );
 }
 
+/*
+========================
+Sys_InterlockedCompareExchangePointer
+========================
+*/
 void* Sys_InterlockedCompareExchangePointer( void*& ptr, void* comparand, void* exchange )
 {
 	// return InterlockedCompareExchangePointer( & ptr, exchange, comparand );

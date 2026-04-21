@@ -29,98 +29,21 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef DATAQUEUE_H
 #define DATAQUEUE_H
 
-/*!
-	\class idDataQueue
-	\brief A fixed-size template queue for managing ordered data items with sequence numbers.
-
-	The idDataQueue class provides a fixed-size templated data structure for managing ordered collections of binary data items, each associated with a sequence number. It is designed to support
-   network communication scenarios where data sequencing and ordering are critical, such as in snapshot delta management. The queue maintains two internal buffers: one for metadata items and another
-   for the actual data, allowing efficient storage and retrieval of data blocks. The class supports appending items with two data blocks, removing older items based on sequence numbers, and retrieving
-   item metadata such as sequence numbers, data lengths, and data pointers. It enforces bounds checking during append operations and maintains data consistency during removals. The template parameters
-   maxItems and maxBuffer define compile-time limits for the number of items and total data buffer size respectively, making the queue suitable for scenarios with predictable memory constraints.
-
-*/
 template<int maxItems, int maxBuffer>
 class idDataQueue
 {
 public:
-	/*!
-		\brief Initializes an empty data queue with zero data length.
-
-		The constructor initializes the data queue object and sets its data length to zero. This ensures that the queue starts in a valid empty state.
-
-	*/
 	idDataQueue() { dataLength = 0; }
-
-	/*!
-		\brief Appends data to the queue with the specified sequence number, returning true if successful.
-
-		This function adds a new item to the data queue, consisting of two data blocks. It checks if there is enough space in both the items array and the data buffer before proceeding. The data
-	   is copied into the buffer, and the item's metadata is updated with the sequence number, data length, and offset. Returns false if the queue is full or if the data would exceed the maximum
-	   buffer size.
-
-		\param sequence The sequence number associated with the data to be appended
-		\param b1 Pointer to the first block of data to append, or NULL if not used
-		\param b1Len Length of the first data block in bytes
-		\param b2 Pointer to the second block of data to append, or NULL if not used
-		\param b2Len Length of the second data block in bytes
-		\return True if the data was successfully appended to the queue, false otherwise
-	*/
 	bool		Append( int sequence, const byte* b1, int b1Len, const byte* b2 = NULL, int b2Len = 0 );
-
-	/*!
-		\brief Removes items from the queue that have a sequence number smaller than the specified value
-
-		This function removes all items from the data queue that have a sequence number less than the provided sequence parameter. It adjusts the internal data buffer and updates the offsets of
-	   remaining items accordingly. The function ensures that the data structure remains consistent after items are removed.
-
-		\param sequence The sequence number threshold, items with smaller sequence numbers will be removed
-		\throws assertion failure if the data structure becomes inconsistent during removal
-	*/
 	void		RemoveOlderThan( int sequence );
 
-	//! Returns the length of the data in the queue.
 	int			GetDataLength() const { return dataLength; }
 
-	//! Returns the number of items in the data queue
 	int			Num() const { return items.Num(); }
-
-	/*!
-		\brief Returns the sequence number of the item at the specified index in the data queue
-
-		This function retrieves the sequence number associated with an item stored in the data queue at the given index. The sequence number is typically used to track the order and identification
-	   of snapshot deltas in network communication. It is commonly used for validation and ordering checks within the snapshot processing system.
-
-		\param i The index of the item in the data queue for which to retrieve the sequence number
-		\return The sequence number of the item at the specified index
-	*/
 	int			ItemSequence( int i ) const { return items[i].sequence; }
-
-	/*!
-		\brief Returns the length of the item at the specified index in the data queue
-
-		This function retrieves the length of a specific item stored in the data queue. It is used to access the size information of queued data items for processing or compression purposes. The
-	   function performs a simple array access to return the length field of the item at the given index.
-
-		\param i The index of the item in the queue for which to retrieve the length
-		\return The length of the item at the specified index
-	*/
 	int			ItemLength( int i ) const { return items[i].length; }
-
-	/*!
-		\brief Returns a pointer to the data of the item at the specified index in the data queue
-
-		This function provides access to the raw data buffer of a specific item stored in the data queue. The returned pointer points to the actual data offset within the internal data buffer as
-	   determined by the item's dataOffset member. The function is const, meaning it does not modify the queue state. It is typically used to retrieve message data for processing or transmission,
-	   such as in network packet handling where messages need to be examined or copied. The function assumes the index is valid and within the bounds of the queue items, as no bounds checking is
-	   performed internally.
-
-		\param i The index of the item in the queue for which to retrieve the data pointer
-		\return A pointer to the beginning of the data buffer for the specified item
-	*/
 	const byte* ItemData( int i ) const { return &data[items[i].dataOffset]; }
 
-	//! Clears all data from the queue
 	void		Clear()
 	{
 		dataLength = 0;
@@ -139,6 +62,11 @@ private:
 	byte							  data[maxBuffer];
 };
 
+/*
+========================
+idDataQueue::RemoveOlderThan
+========================
+*/
 template<int maxItems, int maxBuffer>
 void idDataQueue<maxItems, maxBuffer>::RemoveOlderThan( int sequence )
 {
@@ -163,6 +91,11 @@ void idDataQueue<maxItems, maxBuffer>::RemoveOlderThan( int sequence )
 	assert( length == dataLength );
 }
 
+/*
+========================
+idDataQueue::Append
+========================
+*/
 template<int maxItems, int maxBuffer>
 bool idDataQueue<maxItems, maxBuffer>::Append( int sequence, const byte* b1, int b1Len, const byte* b2, int b2Len )
 {

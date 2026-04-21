@@ -29,18 +29,14 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SYS_ASSERT_H__
 #define __SYS_ASSERT_H__
 
-/*!
-	\brief Handles assertion failures by logging the error and optionally triggering a debugger break.
+/*
+================================================================================================
 
-	This function is called when an assertion condition fails. It logs a warning message with the file name, line number, and the failed expression. If a debugger is present or debugging is enabled,
-   it triggers a break to pause execution. The function also manages a list of skipped assertions to allow temporary disabling of specific assertions. It returns true if the assertion should continue
-   to be processed, false otherwise.
+Getting assert() to work as we want on all platforms and code analysis tools can be tricky.
 
-	\param file The name of the source file where the assertion failed
-	\param line The line number in the source file where the assertion failed
-	\param expression The assertion expression that failed
-	\return True if the assertion should continue to be processed, false otherwise
+================================================================================================
 */
+
 bool AssertFailed( const char* file, int line, const char* expression );
 
 // tell PC-Lint that assert failed won't return, which means it can assume the conditions

@@ -42,6 +42,11 @@ idSIMDProcessor* processor	   = NULL; // pointer to SIMD processor
 idSIMDProcessor* generic	   = NULL; // pointer to generic SIMD implementation
 idSIMDProcessor* SIMDProcessor = NULL;
 
+/*
+================
+idSIMD::Init
+================
+*/
 void			 idSIMD::Init()
 {
 	generic		   = new( TAG_MATH ) idSIMD_Generic;
@@ -50,6 +55,11 @@ void			 idSIMD::Init()
 	SIMDProcessor  = generic;
 }
 
+/*
+============
+idSIMD::InitProcessor
+============
+*/
 void idSIMD::InitProcessor( const char* module, bool forceGeneric )
 {
 	cpuid_t			 cpuid;
@@ -92,6 +102,11 @@ void idSIMD::InitProcessor( const char* module, bool forceGeneric )
 	}
 }
 
+/*
+================
+idSIMD::Shutdown
+================
+*/
 void idSIMD::Shutdown()
 {
 	if( processor != generic ) {
@@ -155,17 +170,10 @@ double ticksPerNanosecond;
 		best = end - start;             \
 	}
 
-/*!
-	\brief Prints timing information for a given operation, including clock counts and optional ratio
-
-	This function outputs timing information to the common log stream. It takes a string description, a data count, and clock counts for the operation and an optional comparison. The function formats
-   and prints the data count and clock values, with an optional ratio calculation if both clock values are provided. The output includes padding to align the text to a fixed width for better
-   readability.
-
-	\param string Description of the operation being timed
-	\param dataCount The count of data items processed
-	\param clocks The clock count for the operation
-	\param otherClocks Optional clock count for comparison, defaults to 0
+/*
+============
+PrintClocks
+============
 */
 void PrintClocks( const char* string, int dataCount, int clocks, int otherClocks = 0 )
 {
@@ -185,12 +193,10 @@ void PrintClocks( const char* string, int dataCount, int clocks, int otherClocks
 	}
 }
 
-/*!
-	\brief Determines and sets the base clock rate by running multiple time recording tests
-
-	This function performs a series of time recording tests to measure the base clock rate of the system. It runs a predefined number of tests, records the time taken for each test, and determines the
-   best clock rate based on these measurements. The result is stored in the baseClocks variable for use in subsequent timing operations.
-
+/*
+============
+GetBaseClocks
+============
 */
 void GetBaseClocks()
 {
@@ -205,13 +211,10 @@ void GetBaseClocks()
 	baseClocks = bestClocks;
 }
 
-/*!
-	\brief Tests the MinMax function implementations for generic and SIMD versions with various data types.
-
-	This function performs benchmarking and validation of MinMax function implementations for different data types including floats, idVec2, idVec3, and idDrawVert. It tests both generic and SIMD
-   versions and compares their results to ensure correctness while measuring performance. The function generates random test data and runs multiple iterations to determine the best clock times for
-   each implementation.
-
+/*
+============
+TestMinMax
+============
 */
 void TestMinMax()
 {
@@ -345,13 +348,10 @@ void TestMinMax()
 	PrintClocks( va( "   simd->MinMax( idDrawVert[], indexes[] ) %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*!
-	\brief Tests the performance of generic and SIMD memcpy implementations.
-
-	This function performs a performance comparison between the generic and SIMD implementations of the memcpy function. It initializes a test buffer with random data, then measures the time taken by
-   each implementation to copy the data. The function runs multiple iterations to determine the best performance timing for each implementation and prints the results. It also validates that both
-   implementations produce identical results.
-
+/*
+============
+TestMemcpy
+============
 */
 void TestMemcpy()
 {
@@ -397,12 +397,10 @@ void TestMemcpy()
 	PrintClocks( va( "   simd->Memcpy() %s", result ), BIG_COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*!
-	\brief Tests the performance of generic and SIMD implementations of the Memset function.
-
-	This function benchmarks the performance of memory setting operations using both generic and SIMD implementations. It runs multiple test iterations to determine the fastest execution time for each
-   implementation and compares their performance. The function tests with random byte values and with zero values to ensure correctness and measure performance under different conditions.
-
+/*
+============
+TestMemset
+============
 */
 void TestMemset()
 {
@@ -469,12 +467,10 @@ void TestMemset()
 	PrintClocks( va( "   simd->Memset( 0 ) %s", result ), BIG_COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*!
-	\brief Tests joint blending functionality using generic and SIMD implementations
-
-	This function performs a benchmark comparison between generic and SIMD implementations of joint blending. It initializes random joint data for testing, runs multiple iterations of both
-   implementations, and compares the results to ensure correctness. The function outputs timing information for both implementations and verifies that the results match within acceptable tolerance.
-
+/*
+============
+TestBlendJoints
+============
 */
 void TestBlendJoints()
 {
@@ -546,13 +542,10 @@ void TestBlendJoints()
 	PrintClocks( va( "   simd->BlendJoints() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*!
-	\brief Tests the fast joint blending functionality between generic and SIMD implementations
-
-	This function performs a benchmark test comparing the performance of generic and SIMD implementations of the BlendJointsFast function. It initializes random joint data, runs multiple test
-   iterations measuring execution time for both implementations, and validates that both produce equivalent results. The test uses a fixed number of joints and lerp factor, and compares the timing
-   results to determine performance differences between the two implementations.
-
+/*
+============
+TestBlendJoints
+============
 */
 void TestBlendJointsFast()
 {
@@ -624,13 +617,10 @@ void TestBlendJointsFast()
 	PrintClocks( va( "   simd->BlendJointsFast() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*!
-	\brief Tests the conversion of joint quaternions to joint matrices using both generic and SIMD implementations
-
-	This function performs a benchmark test comparing the performance of generic and SIMD implementations for converting joint quaternions to joint matrices. It generates random joint data with
-   rotation quaternions and translation vectors, then measures the execution time of both implementations. The results are printed to the console showing the performance comparison. The function
-   ensures both implementations produce identical results by comparing the output matrices.
-
+/*
+============
+TestConvertJointQuatsToJointMats
+============
 */
 void TestConvertJointQuatsToJointMats()
 {
@@ -680,13 +670,10 @@ void TestConvertJointQuatsToJointMats()
 	PrintClocks( va( "   simd->ConvertJointQuatsToJointMats() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*!
-	\brief Tests the conversion of joint matrices to joint quaternions
-
-	This function performs a comprehensive test of the conversion from joint matrices to joint quaternions. It generates random joint matrices with rotation and translation components, then compares
-   the results of the generic and SIMD implementations of the conversion function. The test measures performance of both implementations and verifies that they produce equivalent results within a
-   small tolerance.
-
+/*
+============
+TestConvertJointMatsToJointQuats
+============
 */
 void TestConvertJointMatsToJointQuats()
 {
@@ -741,12 +728,10 @@ void TestConvertJointMatsToJointQuats()
 	PrintClocks( va( "   simd->ConvertJointMatsToJointQuats() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*!
-	\brief Tests the joint transformation functionality between generic and SIMD implementations.
-
-	This function performs a benchmark comparison between the generic and SIMD implementations of joint transformation. It generates random joint matrices and parent indices, then measures the
-   execution time of both implementations. The function validates that both implementations produce equivalent results within a small tolerance.
-
+/*
+============
+TestTransformJoints
+============
 */
 void TestTransformJoints()
 {
@@ -806,13 +791,10 @@ void TestTransformJoints()
 	PrintClocks( va( "   simd->TransformJoints() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*!
-	\brief Tests the UntransformJoints function for generic and SIMD implementations
-
-	This function performs a benchmark comparison between the generic and SIMD implementations of the UntransformJoints function. It generates random joint transformations and parent relationships,
-   then measures the performance of both implementations over multiple test iterations. The function validates that both implementations produce equivalent results and displays timing information for
-   each approach.
-
+/*
+============
+TestUntransformJoints
+============
 */
 void TestUntransformJoints()
 {
@@ -872,13 +854,10 @@ void TestUntransformJoints()
 	PrintClocks( va( "   simd->UntransformJoints() %s", result ), COUNT, bestClocksSIMD, bestClocksGeneric );
 }
 
-/*!
-	\brief Tests various math functions and their performance
-
-	This function performs benchmarking tests on different mathematical operations to compare their performance. It measures the execution time of various math functions including absolute value,
-   square root, sine, cosine, tangent, and their inverse functions, both with standard library and idMath implementations. The tests use random floating-point values and record the fastest execution
-   times across multiple iterations.
-
+/*
+============
+TestMath
+============
 */
 void TestMath()
 {
@@ -1254,6 +1233,11 @@ void TestMath()
 	PrintClocks( "     idAngles::ToMat3()", 1, bestClocks );
 }
 
+/*
+============
+idSIMD::Test_f
+============
+*/
 void idSIMD::Test_f( const idCmdArgs& args )
 {
 	// RB begin

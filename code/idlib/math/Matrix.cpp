@@ -39,6 +39,11 @@ If you have questions concerning this license or the applicable additional terms
 idMat2 mat2_zero( idVec2( 0, 0 ), idVec2( 0, 0 ) );
 idMat2 mat2_identity( idVec2( 1, 0 ), idVec2( 0, 1 ) );
 
+/*
+============
+idMat2::InverseSelf
+============
+*/
 bool   idMat2::InverseSelf()
 {
 	// 2+4 = 6 multiplications
@@ -62,6 +67,11 @@ bool   idMat2::InverseSelf()
 	return true;
 }
 
+/*
+============
+idMat2::InverseFastSelf
+============
+*/
 bool idMat2::InverseFastSelf()
 {
 #if 1
@@ -112,6 +122,11 @@ bool idMat2::InverseFastSelf()
 #endif
 }
 
+/*
+=============
+idMat2::ToString
+=============
+*/
 const char* idMat2::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
@@ -126,6 +141,13 @@ const char* idMat2::ToString( int precision ) const
 idMat3	 mat3_zero( idVec3( 0, 0, 0 ), idVec3( 0, 0, 0 ), idVec3( 0, 0, 0 ) );
 idMat3	 mat3_identity( idVec3( 1, 0, 0 ), idVec3( 0, 1, 0 ), idVec3( 0, 0, 1 ) );
 
+/*
+========================
+idMat3::ToAngles
+
+returns the pitch/yaw/roll each in the range [-180, 180] degrees
+========================
+*/
 idAngles idMat3::ToAngles() const
 {
 	idAngles angles;
@@ -142,6 +164,11 @@ idAngles idMat3::ToAngles() const
 	return angles;
 }
 
+/*
+============
+idMat3::ToQuat
+============
+*/
 idQuat idMat3::ToQuat() const
 {
 	idQuat	   q;
@@ -187,6 +214,11 @@ idQuat idMat3::ToQuat() const
 	return q;
 }
 
+/*
+============
+idMat3::ToCQuat
+============
+*/
 idCQuat idMat3::ToCQuat() const
 {
 	idQuat q = ToQuat();
@@ -196,6 +228,11 @@ idCQuat idMat3::ToCQuat() const
 	return idCQuat( q.x, q.y, q.z );
 }
 
+/*
+============
+idMat3::ToRotation
+============
+*/
 idRotation idMat3::ToRotation() const
 {
 	idRotation r;
@@ -253,12 +290,22 @@ idRotation idMat3::ToRotation() const
 	return r;
 }
 
+/*
+=================
+idMat3::ToAngularVelocity
+=================
+*/
 idVec3 idMat3::ToAngularVelocity() const
 {
 	idRotation rotation = ToRotation();
 	return rotation.GetVec() * DEG2RAD( rotation.GetAngle() );
 }
 
+/*
+============
+idMat3::Determinant
+============
+*/
 float idMat3::Determinant() const
 {
 	float det2_12_01 = mat[1][0] * mat[2][1] - mat[1][1] * mat[2][0];
@@ -268,6 +315,11 @@ float idMat3::Determinant() const
 	return mat[0][0] * det2_12_12 - mat[0][1] * det2_12_02 + mat[0][2] * det2_12_01;
 }
 
+/*
+============
+idMat3::InverseSelf
+============
+*/
 bool idMat3::InverseSelf()
 {
 	// 18+3+9 = 30 multiplications
@@ -309,6 +361,11 @@ bool idMat3::InverseSelf()
 	return true;
 }
 
+/*
+============
+idMat3::InverseFastSelf
+============
+*/
 bool idMat3::InverseFastSelf()
 {
 #if 1
@@ -464,6 +521,11 @@ bool idMat3::InverseFastSelf()
 #endif
 }
 
+/*
+============
+idMat3::InertiaTranslate
+============
+*/
 idMat3 idMat3::InertiaTranslate( const float mass, const idVec3& centerOfMass, const idVec3& translation ) const
 {
 	idMat3 m;
@@ -482,6 +544,11 @@ idMat3 idMat3::InertiaTranslate( const float mass, const idVec3& centerOfMass, c
 	return ( *this ) + m;
 }
 
+/*
+============
+idMat3::InertiaTranslateSelf
+============
+*/
 idMat3& idMat3::InertiaTranslateSelf( const float mass, const idVec3& centerOfMass, const idVec3& translation )
 {
 	idMat3 m;
@@ -502,12 +569,22 @@ idMat3& idMat3::InertiaTranslateSelf( const float mass, const idVec3& centerOfMa
 	return ( *this );
 }
 
+/*
+============
+idMat3::InertiaRotate
+============
+*/
 idMat3 idMat3::InertiaRotate( const idMat3& rotation ) const
 {
 	// NOTE: the rotation matrix is stored column-major
 	return rotation.Transpose() * ( *this ) * rotation;
 }
 
+/*
+============
+idMat3::InertiaRotateSelf
+============
+*/
 idMat3& idMat3::InertiaRotateSelf( const idMat3& rotation )
 {
 	// NOTE: the rotation matrix is stored column-major
@@ -515,6 +592,11 @@ idMat3& idMat3::InertiaRotateSelf( const idMat3& rotation )
 	return *this;
 }
 
+/*
+=============
+idMat3::ToString
+=============
+*/
 const char* idMat3::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
@@ -529,6 +611,11 @@ const char* idMat3::ToString( int precision ) const
 idMat4 mat4_zero( idVec4( 0, 0, 0, 0 ), idVec4( 0, 0, 0, 0 ), idVec4( 0, 0, 0, 0 ), idVec4( 0, 0, 0, 0 ) );
 idMat4 mat4_identity( idVec4( 1, 0, 0, 0 ), idVec4( 0, 1, 0, 0 ), idVec4( 0, 0, 1, 0 ), idVec4( 0, 0, 0, 1 ) );
 
+/*
+============
+idMat4::Transpose
+============
+*/
 idMat4 idMat4::Transpose() const
 {
 	idMat4 transpose;
@@ -542,6 +629,11 @@ idMat4 idMat4::Transpose() const
 	return transpose;
 }
 
+/*
+============
+idMat4::TransposeSelf
+============
+*/
 idMat4& idMat4::TransposeSelf()
 {
 	float temp;
@@ -557,6 +649,11 @@ idMat4& idMat4::TransposeSelf()
 	return *this;
 }
 
+/*
+============
+idMat4::Determinant
+============
+*/
 float idMat4::Determinant() const
 {
 	// 2x2 sub-determinants
@@ -576,6 +673,11 @@ float idMat4::Determinant() const
 	return ( -det3_201_123 * mat[3][0] + det3_201_023 * mat[3][1] - det3_201_013 * mat[3][2] + det3_201_012 * mat[3][3] );
 }
 
+/*
+============
+idMat4::InverseSelf
+============
+*/
 bool idMat4::InverseSelf()
 {
 	// 84+4+16 = 104 multiplications
@@ -658,6 +760,11 @@ bool idMat4::InverseSelf()
 	return true;
 }
 
+/*
+============
+idMat4::InverseFastSelf
+============
+*/
 bool idMat4::InverseFastSelf()
 {
 #if 0
@@ -925,6 +1032,11 @@ bool idMat4::InverseFastSelf()
 #endif
 }
 
+/*
+=============
+idMat4::ToString
+=============
+*/
 const char* idMat4::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
@@ -939,6 +1051,11 @@ const char* idMat4::ToString( int precision ) const
 idMat5 mat5_zero( idVec5( 0, 0, 0, 0, 0 ), idVec5( 0, 0, 0, 0, 0 ), idVec5( 0, 0, 0, 0, 0 ), idVec5( 0, 0, 0, 0, 0 ), idVec5( 0, 0, 0, 0, 0 ) );
 idMat5 mat5_identity( idVec5( 1, 0, 0, 0, 0 ), idVec5( 0, 1, 0, 0, 0 ), idVec5( 0, 0, 1, 0, 0 ), idVec5( 0, 0, 0, 1, 0 ), idVec5( 0, 0, 0, 0, 1 ) );
 
+/*
+============
+idMat5::Transpose
+============
+*/
 idMat5 idMat5::Transpose() const
 {
 	idMat5 transpose;
@@ -952,6 +1069,11 @@ idMat5 idMat5::Transpose() const
 	return transpose;
 }
 
+/*
+============
+idMat5::TransposeSelf
+============
+*/
 idMat5& idMat5::TransposeSelf()
 {
 	float temp;
@@ -967,6 +1089,11 @@ idMat5& idMat5::TransposeSelf()
 	return *this;
 }
 
+/*
+============
+idMat5::Determinant
+============
+*/
 float idMat5::Determinant() const
 {
 	// 2x2 sub-determinants required to calculate 5x5 determinant
@@ -1004,6 +1131,11 @@ float idMat5::Determinant() const
 	return mat[0][0] * det4_1234_1234 - mat[0][1] * det4_1234_0234 + mat[0][2] * det4_1234_0134 - mat[0][3] * det4_1234_0124 + mat[0][4] * det4_1234_0123;
 }
 
+/*
+============
+idMat5::InverseSelf
+============
+*/
 bool idMat5::InverseSelf()
 {
 	// 280+5+25 = 310 multiplications
@@ -1159,6 +1291,11 @@ bool idMat5::InverseSelf()
 	return true;
 }
 
+/*
+============
+idMat5::InverseFastSelf
+============
+*/
 bool idMat5::InverseFastSelf()
 {
 #if 0
@@ -1593,6 +1730,11 @@ bool idMat5::InverseFastSelf()
 #endif
 }
 
+/*
+=============
+idMat5::ToString
+=============
+*/
 const char* idMat5::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
@@ -1607,6 +1749,11 @@ const char* idMat5::ToString( int precision ) const
 idMat6 mat6_zero( idVec6( 0, 0, 0, 0, 0, 0 ), idVec6( 0, 0, 0, 0, 0, 0 ), idVec6( 0, 0, 0, 0, 0, 0 ), idVec6( 0, 0, 0, 0, 0, 0 ), idVec6( 0, 0, 0, 0, 0, 0 ), idVec6( 0, 0, 0, 0, 0, 0 ) );
 idMat6 mat6_identity( idVec6( 1, 0, 0, 0, 0, 0 ), idVec6( 0, 1, 0, 0, 0, 0 ), idVec6( 0, 0, 1, 0, 0, 0 ), idVec6( 0, 0, 0, 1, 0, 0 ), idVec6( 0, 0, 0, 0, 1, 0 ), idVec6( 0, 0, 0, 0, 0, 1 ) );
 
+/*
+============
+idMat6::Transpose
+============
+*/
 idMat6 idMat6::Transpose() const
 {
 	idMat6 transpose;
@@ -1620,6 +1767,11 @@ idMat6 idMat6::Transpose() const
 	return transpose;
 }
 
+/*
+============
+idMat6::TransposeSelf
+============
+*/
 idMat6& idMat6::TransposeSelf()
 {
 	float temp;
@@ -1635,6 +1787,11 @@ idMat6& idMat6::TransposeSelf()
 	return *this;
 }
 
+/*
+============
+idMat6::Determinant
+============
+*/
 float idMat6::Determinant() const
 {
 	// 2x2 sub-determinants required to calculate 6x6 determinant
@@ -1705,6 +1862,11 @@ float idMat6::Determinant() const
 	return mat[0][0] * det5_12345_12345 - mat[0][1] * det5_12345_02345 + mat[0][2] * det5_12345_01345 - mat[0][3] * det5_12345_01245 + mat[0][4] * det5_12345_01235 - mat[0][5] * det5_12345_01234;
 }
 
+/*
+============
+idMat6::InverseSelf
+============
+*/
 bool idMat6::InverseSelf()
 {
 	// 810+6+36 = 852 multiplications
@@ -2017,6 +2179,11 @@ bool idMat6::InverseSelf()
 	return true;
 }
 
+/*
+============
+idMat6::InverseFastSelf
+============
+*/
 bool idMat6::InverseFastSelf()
 {
 #if 0
@@ -2755,6 +2922,11 @@ bool idMat6::InverseFastSelf()
 #endif
 }
 
+/*
+=============
+idMat6::ToString
+=============
+*/
 const char* idMat6::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );

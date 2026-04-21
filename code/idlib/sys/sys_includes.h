@@ -150,11 +150,11 @@ If you have questions concerning this license or the applicable additional terms
 // RB end
 // Yamagi: <stddef.h> for ptrdiff_t on FreeBSD
 #include <stddef.h>
+// Yamagi end
 
-/*!
-	\class idScopedGlobalHeap
-	\brief Manages scoped access to the global heap within the engine.
-*/
+//-----------------------------------------------------
+
+// Hacked stuff we may want to consider implementing later
 class idScopedGlobalHeap
 {
 };

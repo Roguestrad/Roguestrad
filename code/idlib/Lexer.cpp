@@ -113,6 +113,11 @@ int	 default_setup;
 
 char idLexer::baseFolder[256];
 
+/*
+================
+idLexer::CreatePunctuationTable
+================
+*/
 void idLexer::CreatePunctuationTable( const punctuation_t* punctuations )
 {
 	int					 i, n, lastp;
@@ -169,6 +174,11 @@ void idLexer::CreatePunctuationTable( const punctuation_t* punctuations )
 	}
 }
 
+/*
+================
+idLexer::GetPunctuationFromId
+================
+*/
 const char* idLexer::GetPunctuationFromId( int id )
 {
 	int i;
@@ -181,6 +191,11 @@ const char* idLexer::GetPunctuationFromId( int id )
 	return "unknown punctuation";
 }
 
+/*
+================
+idLexer::GetPunctuationId
+================
+*/
 int idLexer::GetPunctuationId( const char* p )
 {
 	int i;
@@ -193,6 +208,11 @@ int idLexer::GetPunctuationId( const char* p )
 	return 0;
 }
 
+/*
+================
+idLexer::Error
+================
+*/
 void idLexer::Error( const char* str, ... )
 {
 	char	text[MAX_STRING_CHARS];
@@ -215,6 +235,11 @@ void idLexer::Error( const char* str, ... )
 	}
 }
 
+/*
+================
+idLexer::Warning
+================
+*/
 void idLexer::Warning( const char* str, ... )
 {
 	char	text[MAX_STRING_CHARS];
@@ -230,6 +255,11 @@ void idLexer::Warning( const char* str, ... )
 	idLib::common->Warning( "file %s, line %d: %s", idLexer::filename.c_str(), idLexer::line, text );
 }
 
+/*
+================
+idLexer::SetPunctuations
+================
+*/
 void idLexer::SetPunctuations( const punctuation_t* p )
 {
 #ifdef PUNCTABLE
@@ -246,6 +276,14 @@ void idLexer::SetPunctuations( const punctuation_t* p )
 	}
 }
 
+/*
+================
+idLexer::ReadWhiteSpace
+
+Reads spaces, tabs, C-like comments etc.
+When a newline character is found the scripts line counter is increased.
+================
+*/
 int idLexer::ReadWhiteSpace()
 {
 	while( 1 ) {
@@ -312,6 +350,14 @@ int idLexer::ReadWhiteSpace()
 	return 1;
 }
 
+/*
+========================
+idLexer::SkipWhiteSpace
+
+Reads spaces, tabs, C-like comments etc. When a newline character is found, the scripts line
+counter is increased. Returns false if there is no token left to be read.
+========================
+*/
 bool idLexer::SkipWhiteSpace( bool currentLine )
 {
 	while( 1 ) {
@@ -388,6 +434,11 @@ bool idLexer::SkipWhiteSpace( bool currentLine )
 	return true;
 }
 
+/*
+================
+idLexer::ReadEscapeCharacter
+================
+*/
 int idLexer::ReadEscapeCharacter( char* ch )
 {
 	int c, val, i;
@@ -483,6 +534,14 @@ int idLexer::ReadEscapeCharacter( char* ch )
 	return 1;
 }
 
+/*
+================
+idLexer::ReadString
+
+Escape characters are interpretted.
+Reads two strings with only a white space between them as one string.
+================
+*/
 int idLexer::ReadString( idToken* token, int quote )
 {
 	int			tmpline;
@@ -574,6 +633,11 @@ int idLexer::ReadString( idToken* token, int quote )
 	return 1;
 }
 
+/*
+================
+idLexer::ReadName
+================
+*/
 int idLexer::ReadName( idToken* token )
 {
 	char c;
@@ -593,6 +657,11 @@ int idLexer::ReadName( idToken* token )
 	return 1;
 }
 
+/*
+================
+idLexer::CheckString
+================
+*/
 ID_INLINE int idLexer::CheckString( const char* str ) const
 {
 	int i;
@@ -605,6 +674,11 @@ ID_INLINE int idLexer::CheckString( const char* str ) const
 	return true;
 }
 
+/*
+================
+idLexer::ReadNumber
+================
+*/
 int idLexer::ReadNumber( idToken* token )
 {
 	int	 i;
@@ -784,6 +858,11 @@ int idLexer::ReadNumber( idToken* token )
 	return 1;
 }
 
+/*
+================
+idLexer::ReadPunctuation
+================
+*/
 int idLexer::ReadPunctuation( idToken* token )
 {
 	int					 l, n, i;
@@ -824,6 +903,11 @@ int idLexer::ReadPunctuation( idToken* token )
 	return 0;
 }
 
+/*
+================
+idLexer::ReadToken
+================
+*/
 int idLexer::ReadToken( idToken* token )
 {
 	int c;
@@ -922,6 +1006,11 @@ int idLexer::ReadToken( idToken* token )
 	return 1;
 }
 
+/*
+================
+idLexer::ExpectTokenString
+================
+*/
 int idLexer::ExpectTokenString( const char* string )
 {
 	idToken token;
@@ -937,6 +1026,11 @@ int idLexer::ExpectTokenString( const char* string )
 	return 1;
 }
 
+/*
+================
+idLexer::ExpectTokenType
+================
+*/
 int idLexer::ExpectTokenType( int type, int subtype, idToken* token )
 {
 	idStr str;
@@ -1014,6 +1108,11 @@ int idLexer::ExpectTokenType( int type, int subtype, idToken* token )
 	return 1;
 }
 
+/*
+================
+idLexer::ExpectAnyToken
+================
+*/
 int idLexer::ExpectAnyToken( idToken* token )
 {
 	if( !idLexer::ReadToken( token ) ) {
@@ -1024,6 +1123,11 @@ int idLexer::ExpectAnyToken( idToken* token )
 	}
 }
 
+/*
+================
+idLexer::CheckTokenString
+================
+*/
 int idLexer::CheckTokenString( const char* string )
 {
 	idToken tok;
@@ -1041,6 +1145,11 @@ int idLexer::CheckTokenString( const char* string )
 	return 0;
 }
 
+/*
+================
+idLexer::CheckTokenType
+================
+*/
 int idLexer::CheckTokenType( int type, int subtype, idToken* token )
 {
 	idToken tok;
@@ -1059,6 +1168,11 @@ int idLexer::CheckTokenType( int type, int subtype, idToken* token )
 	return 0;
 }
 
+/*
+================
+idLexer::PeekTokenString
+================
+*/
 int idLexer::PeekTokenString( const char* string )
 {
 	idToken tok;
@@ -1078,6 +1192,11 @@ int idLexer::PeekTokenString( const char* string )
 	return 0;
 }
 
+/*
+================
+idLexer::PeekTokenType
+================
+*/
 int idLexer::PeekTokenType( int type, int subtype, idToken* token )
 {
 	idToken tok;
@@ -1098,6 +1217,11 @@ int idLexer::PeekTokenType( int type, int subtype, idToken* token )
 	return 0;
 }
 
+/*
+================
+idLexer::SkipUntilString
+================
+*/
 int idLexer::SkipUntilString( const char* string )
 {
 	idToken token;
@@ -1110,6 +1234,11 @@ int idLexer::SkipUntilString( const char* string )
 	return 0;
 }
 
+/*
+================
+idLexer::SkipRestOfLine
+================
+*/
 int idLexer::SkipRestOfLine()
 {
 	idToken token;
@@ -1124,6 +1253,14 @@ int idLexer::SkipRestOfLine()
 	return 0;
 }
 
+/*
+=================
+idLexer::SkipBracedSection
+
+Skips until a matching close brace is found.
+Internal brace depths are properly skipped.
+=================
+*/
 int idLexer::SkipBracedSection( bool parseFirstBrace, braceSkipMode_t skipMode /* = BRSKIP_BRACE */, int* skipped /*= nullptr*/ )
 {
 	idToken token;
@@ -1155,6 +1292,11 @@ int idLexer::SkipBracedSection( bool parseFirstBrace, braceSkipMode_t skipMode /
 	return true;
 }
 
+/*
+================
+idLexer::UnreadToken
+================
+*/
 void idLexer::UnreadToken( const idToken* token )
 {
 	if( idLexer::tokenavailable ) {
@@ -1164,6 +1306,11 @@ void idLexer::UnreadToken( const idToken* token )
 	idLexer::tokenavailable = 1;
 }
 
+/*
+================
+idLexer::ReadTokenOnLine
+================
+*/
 int idLexer::ReadTokenOnLine( idToken* token )
 {
 	idToken tok;
@@ -1185,6 +1332,11 @@ int idLexer::ReadTokenOnLine( idToken* token )
 	return false;
 }
 
+/*
+================
+idLexer::ReadRestOfLine
+================
+*/
 const char* idLexer::ReadRestOfLine( idStr& out )
 {
 	while( 1 ) {
@@ -1209,6 +1361,11 @@ const char* idLexer::ReadRestOfLine( idStr& out )
 	return out.c_str();
 }
 
+/*
+================
+idLexer::ParseInt
+================
+*/
 int idLexer::ParseInt()
 {
 	idToken token;
@@ -1226,6 +1383,11 @@ int idLexer::ParseInt()
 	return token.GetIntValue();
 }
 
+/*
+================
+idLexer::ParseBool
+================
+*/
 bool idLexer::ParseBool()
 {
 	idToken token;
@@ -1237,6 +1399,11 @@ bool idLexer::ParseBool()
 	return ( token.GetIntValue() != 0 );
 }
 
+/*
+================
+idLexer::ParseFloat
+================
+*/
 float idLexer::ParseFloat( bool* errorFlag )
 {
 	idToken token;
@@ -1268,6 +1435,11 @@ float idLexer::ParseFloat( bool* errorFlag )
 	return token.GetFloatValue();
 }
 
+/*
+================
+idLexer::Parse1DMatrix
+================
+*/
 int idLexer::Parse1DMatrix( int x, float* m )
 {
 	int i;
@@ -1286,6 +1458,7 @@ int idLexer::Parse1DMatrix( int x, float* m )
 	return true;
 }
 
+// RB begin
 int idLexer::Parse1DMatrixJSON( int x, float* m )
 {
 	int i;
@@ -1307,7 +1480,13 @@ int idLexer::Parse1DMatrixJSON( int x, float* m )
 	}
 	return true;
 }
+// RB end
 
+/*
+================
+idLexer::Parse2DMatrix
+================
+*/
 int idLexer::Parse2DMatrix( int y, int x, float* m )
 {
 	int i;
@@ -1328,6 +1507,11 @@ int idLexer::Parse2DMatrix( int y, int x, float* m )
 	return true;
 }
 
+/*
+================
+idLexer::Parse3DMatrix
+================
+*/
 int idLexer::Parse3DMatrix( int z, int y, int x, float* m )
 {
 	int i;
@@ -1348,6 +1532,17 @@ int idLexer::Parse3DMatrix( int z, int y, int x, float* m )
 	return true;
 }
 
+/*
+=================
+idParser::ParseBracedSection
+
+The next token should be an open brace.
+Parses until a matching close brace is found.
+Maintains exact characters between braces.
+
+  FIXME: this should use ReadToken and replace the token white space with correct indents and newlines
+=================
+*/
 const char* idLexer::ParseBracedSectionExact( idStr& out, int tabs )
 {
 	int	 depth;
@@ -1411,6 +1606,17 @@ const char* idLexer::ParseBracedSectionExact( idStr& out, int tabs )
 	return out.c_str();
 }
 
+/*
+=================
+idParser::ParseBracedSection
+
+The next token should be an open brace.
+Parses until a matching close brace is found.
+Maintains exact characters between braces.
+
+  FIXME: this should use ReadToken and replace the token white space with correct indents and newlines
+=================
+*/
 const char* idLexer::ParseBracketSectionExact( idStr& out, int tabs )
 {
 	int	 depth;
@@ -1474,6 +1680,15 @@ const char* idLexer::ParseBracketSectionExact( idStr& out, int tabs )
 	return out.c_str();
 }
 
+/*
+=================
+idLexer::ParseBracedSection
+
+The next token should be an open brace.
+Parses until a matching close brace is found.
+Internal brace depths are properly skipped.
+=================
+*/
 const char* idLexer::ParseBracedSection( idStr& out )
 {
 	idToken token;
@@ -1515,6 +1730,13 @@ const char* idLexer::ParseBracedSection( idStr& out )
 	return out.c_str();
 }
 
+/*
+=================
+idLexer::ParseRestOfLine
+
+  parse the rest of the line
+=================
+*/
 const char* idLexer::ParseRestOfLine( idStr& out )
 {
 	idToken token;
@@ -1534,6 +1756,13 @@ const char* idLexer::ParseRestOfLine( idStr& out )
 	return out.c_str();
 }
 
+/*
+========================
+idLexer::ParseCompleteLine
+
+Returns a string up to the \n, but doesn't eat any whitespace at the beginning of the next line.
+========================
+*/
 const char* idLexer::ParseCompleteLine( idStr& out )
 {
 	idToken		token;
@@ -1560,6 +1789,11 @@ const char* idLexer::ParseCompleteLine( idStr& out )
 	return out.c_str();
 }
 
+/*
+================
+idLexer::GetLastWhiteSpace
+================
+*/
 int idLexer::GetLastWhiteSpace( idStr& whiteSpace ) const
 {
 	whiteSpace.Clear();
@@ -1569,16 +1803,31 @@ int idLexer::GetLastWhiteSpace( idStr& whiteSpace ) const
 	return whiteSpace.Length();
 }
 
+/*
+================
+idLexer::GetLastWhiteSpaceStart
+================
+*/
 int idLexer::GetLastWhiteSpaceStart() const
 {
 	return whiteSpaceStart_p - buffer;
 }
 
+/*
+================
+idLexer::GetLastWhiteSpaceEnd
+================
+*/
 int idLexer::GetLastWhiteSpaceEnd() const
 {
 	return whiteSpaceEnd_p - buffer;
 }
 
+/*
+================
+idLexer::Reset
+================
+*/
 void idLexer::Reset()
 {
 	// pointer in script buffer
@@ -1599,16 +1848,31 @@ void idLexer::Reset()
 	idLexer::token = "";
 }
 
+/*
+================
+idLexer::EndOfFile
+================
+*/
 bool idLexer::EndOfFile()
 {
 	return idLexer::script_p >= idLexer::end_p;
 }
 
+/*
+================
+idLexer::NumLinesCrossed
+================
+*/
 int idLexer::NumLinesCrossed()
 {
 	return idLexer::line - idLexer::lastline;
 }
 
+/*
+================
+idLexer::LoadFile
+================
+*/
 int idLexer::LoadFile( const char* filename, bool OSPath )
 {
 	idFile* fp;
@@ -1661,6 +1925,11 @@ int idLexer::LoadFile( const char* filename, bool OSPath )
 	return true;
 }
 
+/*
+================
+idLexer::LoadMemory
+================
+*/
 int idLexer::LoadMemory( const char* ptr, int length, const char* name, int startLine )
 {
 	if( idLexer::loaded ) {
@@ -1688,6 +1957,11 @@ int idLexer::LoadMemory( const char* ptr, int length, const char* name, int star
 	return true;
 }
 
+/*
+================
+idLexer::FreeSource
+================
+*/
 void idLexer::FreeSource()
 {
 #ifdef PUNCTABLE
@@ -1710,6 +1984,11 @@ void idLexer::FreeSource()
 	idLexer::loaded			= false;
 }
 
+/*
+================
+idLexer::idLexer
+================
+*/
 idLexer::idLexer()
 {
 	idLexer::loaded	  = false;
@@ -1727,6 +2006,11 @@ idLexer::idLexer()
 	idLexer::hadError		= false;
 }
 
+/*
+================
+idLexer::idLexer
+================
+*/
 idLexer::idLexer( int flags )
 {
 	idLexer::loaded	  = false;
@@ -1744,6 +2028,11 @@ idLexer::idLexer( int flags )
 	idLexer::hadError		= false;
 }
 
+/*
+================
+idLexer::idLexer
+================
+*/
 idLexer::idLexer( const char* filename, int flags, bool OSPath )
 {
 	idLexer::loaded = false;
@@ -1756,6 +2045,11 @@ idLexer::idLexer( const char* filename, int flags, bool OSPath )
 	idLexer::LoadFile( filename, OSPath );
 }
 
+/*
+================
+idLexer::idLexer
+================
+*/
 idLexer::idLexer( const char* ptr, int length, const char* name, int flags )
 {
 	idLexer::loaded = false;
@@ -1768,16 +2062,31 @@ idLexer::idLexer( const char* ptr, int length, const char* name, int flags )
 	idLexer::LoadMemory( ptr, length, name );
 }
 
+/*
+================
+idLexer::~idLexer
+================
+*/
 idLexer::~idLexer()
 {
 	idLexer::FreeSource();
 }
 
+/*
+================
+idLexer::SetBaseFolder
+================
+*/
 void idLexer::SetBaseFolder( const char* path )
 {
 	idStr::Copynz( baseFolder, path, sizeof( baseFolder ) );
 }
 
+/*
+================
+idLexer::HadError
+================
+*/
 bool idLexer::HadError() const
 {
 	return hadError;

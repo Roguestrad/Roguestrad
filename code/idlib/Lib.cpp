@@ -48,6 +48,11 @@ ID_TLS		  idLib::isMainThread		   = 0;
 
 char		  idException::error[2048];
 
+/*
+================
+idLib::Init
+================
+*/
 void		  idLib::Init()
 {
 	assert( sizeof( bool ) == 1 );
@@ -79,6 +84,11 @@ void		  idLib::Init()
 	idDict::Init();
 }
 
+/*
+================
+idLib::ShutDown
+================
+*/
 void idLib::ShutDown()
 {
 	// shut down the dictionary string pools
@@ -138,6 +148,11 @@ const idVec4 colorTeal			 = idVec4( 0.00f, 0.50f, 0.50f, 1.00f ); // #008080
 const idVec4 colorWhite			 = idVec4( 1.00f, 1.00f, 1.00f, 1.00f );
 const idVec4 colorYellow		 = idVec4( 1.00f, 1.00f, 0.00f, 1.00f );
 
+/*
+================
+PackColor
+================
+*/
 dword		 PackColor( const idVec4& color )
 {
 	byte dx = idMath::Ftob( color.x * 255.0f );
@@ -147,12 +162,22 @@ dword		 PackColor( const idVec4& color )
 	return ( dx << 0 ) | ( dy << 8 ) | ( dz << 16 ) | ( dw << 24 );
 }
 
+/*
+================
+UnpackColor
+================
+*/
 void UnpackColor( const dword color, idVec4& unpackedColor )
 {
 	unpackedColor.Set(
 		( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 24 ) & 255 ) * ( 1.0f / 255.0f ) );
 }
 
+/*
+================
+PackColor
+================
+*/
 dword PackColor( const idVec3& color )
 {
 	byte dx = idMath::Ftob( color.x * 255.0f );
@@ -161,11 +186,21 @@ dword PackColor( const idVec3& color )
 	return ( dx << 0 ) | ( dy << 8 ) | ( dz << 16 );
 }
 
+/*
+================
+UnpackColor
+================
+*/
 void UnpackColor( const dword color, idVec3& unpackedColor )
 {
 	unpackedColor.Set( ( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ) );
 }
 
+/*
+===============
+idLib::FatalError
+===============
+*/
 void idLib::FatalError( const char* fmt, ... )
 {
 	va_list argptr;
@@ -183,6 +218,11 @@ void idLib::FatalError( const char* fmt, ... )
 #endif
 }
 
+/*
+===============
+idLib::Error
+===============
+*/
 void idLib::Error( const char* fmt, ... )
 {
 	va_list argptr;
@@ -200,6 +240,11 @@ void idLib::Error( const char* fmt, ... )
 #endif
 }
 
+/*
+===============
+idLib::Warning
+===============
+*/
 void idLib::Warning( const char* fmt, ... )
 {
 	va_list argptr;
@@ -212,6 +257,11 @@ void idLib::Warning( const char* fmt, ... )
 	common->Warning( "%s", text );
 }
 
+/*
+===============
+idLib::WarningIf
+===============
+*/
 void idLib::WarningIf( const bool test, const char* fmt, ... )
 {
 	if( !test ) {
@@ -228,6 +278,11 @@ void idLib::WarningIf( const bool test, const char* fmt, ... )
 	common->Warning( "%s", text );
 }
 
+/*
+===============
+idLib::Printf
+===============
+*/
 void idLib::Printf( const char* fmt, ... )
 {
 	va_list argptr;
@@ -238,6 +293,11 @@ void idLib::Printf( const char* fmt, ... )
 	va_end( argptr );
 }
 
+/*
+===============
+idLib::PrintfIf
+===============
+*/
 void idLib::PrintfIf( const bool test, const char* fmt, ... )
 {
 	if( !test ) {
@@ -317,14 +377,10 @@ int IntForSixtets( byte* in )
 	return _IntForSixtets( in );
 }
 
-/*!
-	\brief Swaps the byte order of a 16-bit short integer.
-
-	This function takes a 16-bit short integer and reverses the order of its two bytes. It is commonly used to convert between different byte order formats, such as when reading data from files or
-   network streams that may have a different endianness than the system. The function extracts the least significant byte and the most significant byte, then recombines them in reverse order.
-
-	\param l The 16-bit short integer to swap
-	\return The 16-bit short integer with its bytes swapped
+/*
+================
+ShortSwap
+================
 */
 short ShortSwap( short l )
 {
@@ -336,28 +392,20 @@ short ShortSwap( short l )
 	return ( b1 << 8 ) + b2;
 }
 
-/*!
-	\brief Returns the input short value without performing any byte swapping operation.
-
-	This function takes a short integer as input and directly returns it without any modification or byte order conversion. It is typically used as a placeholder or identity function in scenarios
-   where byte swapping might otherwise be applied.
-
-	\param l Input short integer value to be returned as-is
-	\return The input short integer value unchanged
+/*
+================
+ShortNoSwap
+================
 */
 short ShortNoSwap( short l )
 {
 	return l;
 }
 
-/*!
-	\brief Swaps the byte order of a 32-bit integer.
-
-	This function takes a 32-bit integer and reverses the order of its bytes. It is commonly used for converting between different endianness formats, such as when reading data from a file or network
-   stream that has a different byte order than the local system. The implementation extracts each byte of the input integer, then reassembles them in reverse order to produce the swapped result.
-
-	\param l The 32-bit integer value to be byte-swapped
-	\return The byte-swapped 32-bit integer value
+/*
+================
+LongSwap
+================
 */
 int LongSwap( int l )
 {
@@ -371,28 +419,20 @@ int LongSwap( int l )
 	return ( ( int )b1 << 24 ) + ( ( int )b2 << 16 ) + ( ( int )b3 << 8 ) + b4;
 }
 
-/*!
-	\brief Returns the input integer value without performing any byte swapping operation.
-
-	This function serves as a no-operation implementation for swapping bytes in an integer value. It is typically used in code that handles data serialization or network byte order conversions, where
-   some paths may require byte swapping while others do not. This particular implementation simply returns the input value unchanged, effectively acting as an identity function for integer values.
-
-	\param l The integer value to be returned without modification
-	\return The input integer value passed to the function, unchanged
+/*
+================
+LongNoSwap
+================
 */
 int LongNoSwap( int l )
 {
 	return l;
 }
 
-/*!
-	\brief Swaps the byte order of a floating-point number.
-
-	This function performs a byte-order swap on a floating-point number by reinterpreting its bits as a sequence of bytes and then reversing their order. It is commonly used for handling endianness
-   conversions when transferring binary data between systems with different byte order conventions.
-
-	\param f The floating-point value whose byte order will be swapped
-	\return The floating-point value with its byte order reversed
+/*
+================
+FloatSwap
+================
 */
 float FloatSwap( float f )
 {
@@ -409,30 +449,30 @@ float FloatSwap( float f )
 	return dat2.f;
 }
 
-/*!
-	\brief Returns the input float value without performing any swapping operation.
-
-	This function serves as a placeholder or helper that simply returns the input float value unchanged. It is typically used in contexts where a function pointer or method signature requires a swap
-   function, but no actual swapping is needed. The function is a no-op implementation that preserves the original value.
-
-	\param f Input floating point value to be returned unchanged
-	\return The same float value that was passed as input
+/*
+================
+FloatNoSwap
+================
 */
 float FloatNoSwap( float f )
 {
 	return f;
 }
 
-/*!
-	\brief Swaps the byte order in each element of an array of elements.
+/*
+=====================================================================
+RevBytesSwap
 
-	This function reverses the byte order for each element in the provided array. For elements of size 2, it uses a specialized XOR-based swapping algorithm. For other sizes, it swaps bytes from both
-   ends of each element towards the center. The function modifies the input buffer in place.
+Reverses byte order in place.
 
-	\param bp pointer to the buffer containing the elements to swap
-	\param elsize size of each element in bytes
-	\param elcount number of elements in the buffer
-*/
+INPUTS
+   bp       bytes to reverse
+   elsize   size of the underlying data type
+   elcount  number of elements to swap
+
+RESULTS
+   Reverses the byte order in each of elcount elements.
+===================================================================== */
 void RevBytesSwap( void* bp, int elsize, int elcount )
 {
 	unsigned char *p, *q;
@@ -464,15 +504,19 @@ void RevBytesSwap( void* bp, int elsize, int elcount )
 	}
 }
 
-/*!
-	\brief Reverses the bitfield of the specified size in the provided buffer.
+/*
+ =====================================================================
+ RevBytesSwap
 
-	This function performs two main operations on the provided buffer. First, it reverses the byte order of the data using LittleRevBytes. Then, it reverses the individual bits within each byte of the
-   buffer. The elsize parameter specifies the number of bytes to process. The function modifies the buffer in-place.
+ Reverses byte order in place, then reverses bits in those bytes
 
-	\param bp Pointer to the buffer containing the data to be bitfield reversed
-	\param elsize Number of bytes in the buffer to process
-*/
+ INPUTS
+ bp       bitfield structure to reverse
+ elsize   size of the underlying data type
+
+ RESULTS
+ Reverses the bitfield of size elsize.
+ ===================================================================== */
 void RevBitFieldSwap( void* bp, int elsize )
 {
 	int			   i;
@@ -493,43 +537,30 @@ void RevBitFieldSwap( void* bp, int elsize )
 	}
 }
 
-/*!
-	\brief Does nothing, placeholder function.
-
-	This function is a placeholder that performs no operations. It takes a pointer to memory, an element size, and a count of elements, but does not modify or process the data. The function is likely
-   intended as a stub or placeholder for a more complex implementation that may be added later.
-
-	\param bp Pointer to the memory block to process
-	\param elsize Size of each element in bytes
-	\param elcount Number of elements to process
+/*
+================
+RevBytesNoSwap
+================
 */
 void RevBytesNoSwap( void* bp, int elsize, int elcount )
 {
 	return;
 }
 
-/*!
-	\brief Reverses the bit field in place without swapping bytes
-
-	This function is intended to reverse the bit field of data in place but currently does nothing. The implementation is empty and serves as a placeholder or stub. The function takes a pointer to
-   data and the size of each element to be reversed.
-
-	\param bp Pointer to the data to be reversed
-	\param elsize Size of each element in bytes
-*/
+/*
+ ================
+ RevBytesNoSwap
+ ================
+ */
 void RevBitFieldNoSwap( void* bp, int elsize )
 {
 	return;
 }
 
-/*!
-	\brief Encodes an integer into four six-bit values stored in little-endian byte order
-
-	This function takes a 32-bit integer and splits it into four 6-bit values, which are then stored in the output buffer in little-endian byte order. Each 6-bit value represents a portion of the
-   original integer's bits, with bit manipulation used to extract and reorganize the bits accordingly. This encoding is commonly used for base64-like compression or transmission of integer values.
-
-	\param out Buffer to store the four 6-bit encoded values
-	\param src The 32-bit integer to encode
+/*
+================
+SixtetsForIntLittle
+================
 */
 void SixtetsForIntLittle( byte* out, int src )
 {
@@ -540,14 +571,11 @@ void SixtetsForIntLittle( byte* out, int src )
 	out[3]	= b[2] & 0x3f;
 }
 
-/*!
-	\brief Converts a 32-bit integer into four 6-bit values stored in a byte array
-
-	This function takes a 32-bit integer and decomposes it into four 6-bit components, storing each component in the output byte array. The decomposition is performed by extracting the least
-   significant 6 bits in each iteration and right-shifting the source integer by 6 bits. This is typically used in base64 encoding operations where data needs to be split into 6-bit chunks.
-
-	\param out Output array of 4 bytes to store the 6-bit components
-	\param src Source 32-bit integer to decompose into 6-bit values
+/*
+================
+SixtetsForIntBig
+TTimo: untested - that's the version from initial base64 encode
+================
 */
 void SixtetsForIntBig( byte* out, int src )
 {
@@ -557,15 +585,10 @@ void SixtetsForIntBig( byte* out, int src )
 	}
 }
 
-/*!
-	\brief Converts a sequence of four bytes representing six-bit values into a 32-bit integer.
-
-	This function takes an input byte buffer containing four bytes that represent six-bit values and combines them into a single 32-bit integer. The bit manipulation is performed to reconstruct the
-   integer by properly shifting and combining the bits from each input byte. The input is interpreted as a sequence of six-bit values packed together, with the first byte contributing the lower 6 bits
-   of the result, and so on.
-
-	\param in Pointer to a byte buffer containing four bytes that represent packed six-bit values.
-	\return A 32-bit integer constructed from the six-bit values in the input buffer.
+/*
+================
+IntForSixtetsLittle
+================
 */
 int IntForSixtetsLittle( byte* in )
 {
@@ -580,14 +603,11 @@ int IntForSixtetsLittle( byte* in )
 	return ret;
 }
 
-/*!
-	\brief Converts four bytes into a 24-bit integer using big-endian six-bit packing.
-
-	This function takes a pointer to four bytes and combines them into a single 24-bit integer. Each byte contributes 6 bits to the result, with the first byte providing the least significant 6 bits
-   and the fourth byte providing the most significant 6 bits. The function performs bit manipulation to properly align and combine the six-bit values into the final integer.
-
-	\param in Pointer to an array of four bytes to be converted into a 24-bit integer
-	\return A 24-bit integer value formed by combining the four input bytes, with each byte contributing 6 bits in big-endian order.
+/*
+================
+IntForSixtetsBig
+TTimo: untested - that's the version from initial base64 decode
+================
 */
 int IntForSixtetsBig( byte* in )
 {
@@ -599,6 +619,11 @@ int IntForSixtetsBig( byte* in )
 	return ret;
 }
 
+/*
+================
+Swap_Init
+================
+*/
 void Swap_Init()
 {
 	byte swaptest[2] = { 1, 0 };
@@ -633,6 +658,11 @@ void Swap_Init()
 	}
 }
 
+/*
+==========
+Swap_IsBigEndian
+==========
+*/
 bool Swap_IsBigEndian()
 {
 	byte swaptest[2] = { 1, 0 };

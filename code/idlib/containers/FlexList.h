@@ -36,24 +36,13 @@ template<class type, int N>
 class idFlexList
 {
 public:
-	/*!
-		\brief Destroys the idFlexList object and frees any dynamically allocated memory.
-
-		The destructor checks if the list pointer refers to dynamically allocated memory by comparing it to the autoStore pointer. If they are different, it means the list was allocated with new[] and
-	   must be freed using delete[]. If they are the same, the list was stored inline and no deallocation is necessary.
-
-	*/
+	//! Destroys the flex list and frees the allocated memory if it was dynamically allocated.
 	~idFlexList()
 	{
 		if( list != autoStore ) { delete[] list; }
 	}
 
-	/*!
-		\brief Initializes a new instance of the idFlexList class with default values.
-
-		The constructor initializes the list with the autoStore allocator, sets the current number of elements to zero, and assigns the maximum size of the list based on the template parameter N.
-
-	*/
+	//! Initializes a new instance of the idFlexList class with default values.
 	idFlexList()
 	{
 		list = autoStore;
@@ -61,16 +50,10 @@ public:
 		size = N;
 	}
 
-	//! Clears the flex list and resets it to its initial state.
+	//! Clears the contents of the flex list, resetting its size to zero.
 	void Clear() { num = 0; }
 
-	/*!
-		\brief Clears the flex list and frees dynamically allocated memory if it was not using the automatic storage.
-
-		This function resets the flex list to its initial state. If the list was using dynamically allocated memory (i.e., the list pointer is not equal to autoStore), it frees that memory. It then
-	   resets the list to use the automatic storage, and initializes the number of elements and size counters to zero and N respectively.
-
-	*/
+	//! Clears the flex list and frees dynamically allocated memory if it's not using the auto storage.
 	void ClearFree()
 	{
 		if( list != autoStore ) { delete[] list; }
@@ -79,15 +62,7 @@ public:
 		size = N;
 	}
 
-	/*!
-		\brief Sets the number of elements in the flexible list to the specified value
-
-		This function adjusts the number of elements in the list to the given value. If the requested number exceeds the current capacity, it grows the list exponentially to accommodate the new size.
-	   The function ensures that the list can hold at least the specified number of elements while maintaining efficient memory usage. When the number is reduced, it simply updates the count without
-	   deallocating memory.
-
-		\param newNum The desired number of elements in the list
-	*/
+	//! Sets the number of elements in the list to the specified value.
 	void SetNum( int newNum )
 	{
 		if( newNum > size ) {
@@ -100,90 +75,47 @@ public:
 		num = newNum;
 	}
 
-	//! Returns the number of elements currently contained in the list.
+	//! Returns the number of elements in the flex list.
 	ID_FORCE_INLINE int			Num() const { return num; }
 
-	/*!
-		\brief Returns the number of elements that have been allocated in the flexible list.
-
-		This function provides the count of elements that have been allocated within the flexible list, regardless of whether they are currently in use or not. It gives insight into the memory
-	   allocation status of the list.
-
-		\return The total number of elements that have been allocated in the list
-	*/
+	//! Returns the number of allocated elements in the flex list.
 	int							NumAllocated() const { return size; }
 
-	/*!
-		\brief Returns a pointer to the internal array of elements in the flex list
-
-		This function provides direct access to the underlying array used to store elements in the flex list. It is marked as inline for performance reasons and returns a pointer to the internal data.
-	   The returned pointer is valid only as long as the flex list exists and is not modified.
-
-		\return A pointer to the first element in the internal array of the flex list
-	*/
+	//! Returns a pointer to the internal array of the flex list
 	ID_FORCE_INLINE type*		Ptr() { return list; }
 
-	/*!
-		\brief Returns a pointer to the internal array of elements in the flex list
-
-		This function provides direct access to the underlying array used to store elements in the flex list. It is marked as inline for performance reasons and returns a constant pointer to prevent
-	   modification of the internal data through this interface. The returned pointer is valid only as long as the flex list exists and is not modified.
-
-		\return A constant pointer to the first element in the internal array of the flex list
-	*/
+	//! Returns a pointer to the internal array of the flex list
 	ID_FORCE_INLINE const type* Ptr() const { return list; }
 
+	//! Provides read-only access to an element at the specified index in the flex list.
 	ID_FORCE_INLINE const type& operator[]( int index ) const
 	{
 		assert( unsigned( index ) < unsigned( num ) );
 		return list[index];
 	}
+
+	//! Returns a reference to the element at the specified index in the flexible list.
 	ID_FORCE_INLINE type& operator[]( int index )
 	{
 		assert( unsigned( index ) < unsigned( num ) );
 		return list[index];
 	}
 
-	/*!
-		\brief Returns a reference to the last element in the list.
-
-		This function provides access to the last element of the flex list. It asserts that the list is not empty before returning the element. The returned reference allows for both reading and
-	   modifying the last element.
-
-		\return A constant reference to the last element in the list
-		\throws assertion failure if the list is empty
-	*/
+	//! Returns a reference to the last element in the list.
 	ID_FORCE_INLINE const type& Last() const
 	{
 		assert( num > 0 );
 		return list[num - 1];
 	}
 
-	/*!
-		\brief Returns a reference to the last element in the list.
-
-		This function provides access to the last element of the flex list. It asserts that the list is not empty before returning a reference to the final element. The returned reference allows both
-	   reading and modification of the last element.
-
-		\return A reference to the last element in the list
-		\throws assertion failure if the list is empty
-	*/
+	//! Returns a reference to the last element in the list.
 	ID_FORCE_INLINE type& Last()
 	{
 		assert( num > 0 );
 		return list[num - 1];
 	}
 
-	/*!
-		\brief Adds a new element to the list, growing the list if necessary, and returns the index of the new element
-
-		This function appends a new element to the flexible list. If the current capacity of the list is insufficient to accommodate the new element, the list is resized by calling the Grow function
-	   with a size parameter of twice the current size. The function then assigns the provided object to the next available slot in the list and increments the element count. The index of the newly
-	   added element is returned for use in subsequent operations.
-
-		\param obj The element to be added to the list
-		\return The index position where the new element was added
-	*/
+	//! Adds a new element to the list and returns its index.
 	int AddGrow( type obj )
 	{
 		if( num == size ) { Grow( 2 * size ); }
@@ -192,25 +124,10 @@ public:
 		return idx;
 	}
 
-	/*!
-		\brief Removes and returns the last element from the list.
-
-		This function retrieves the last element in the list and decrements the internal counter.
-		It is expected that the list is not empty when this function is called, as it will access the element at index num - 1.
-
-		\return The last element of the list before removal.
-	*/
+	//! Removes and returns the last element from the list.
 	ID_FORCE_INLINE type Pop() { return list[--num]; }
 
-	/*!
-		\brief Appends k elements from array arr to the list
-
-		This function adds k elements from the provided array arr to the end of the list. It first calculates the base index where the new elements will be inserted, then resizes the list to
-	   accommodate the new elements, and finally copies the elements from arr to the appropriate positions in the list
-
-		\param k Number of elements to append from the array
-		\param arr Pointer to the array of elements to append
-	*/
+	//! Appends k elements from array arr to the flex list
 	void				 Append( int k, const type* arr )
 	{
 		int base = num;
@@ -221,15 +138,7 @@ public:
 	}
 
 private:
-	/*!
-		\brief Grows the internal storage of the flex list to accommodate the specified new size
-
-		This function expands the internal array storage of the flex list to the specified size. It allocates a new array of the requested size, copies all existing elements from the current array to
-	   the new array, and then replaces the old array with the new one. If the current list was not using the auto storage, the old array is properly deallocated. The function updates the size
-	   tracking variable to reflect the new capacity.
-
-		\param newSize the new size to grow the internal storage to
-	*/
+	//! Resizes the internal array to accommodate the specified new size.
 	void Grow( int newSize )
 	{
 		type* newList = new type[newSize];

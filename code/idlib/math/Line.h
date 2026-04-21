@@ -16,33 +16,9 @@ Project: The Dark Mod (http://www.thedarkmod.com/)
 #ifndef __MATH_LINE_H__
 #define __MATH_LINE_H__
 
-/*!
-	\brief Returns the inverse movement velocity vector from start to end positions.
-
-	This function calculates the inverse of the velocity vector derived from the difference between the end and start positions. It ensures that axis-aligned directions with magnitudes below a minimum
-   threshold are adjusted to prevent division by zero. The function asserts that the squared length of the velocity vector is greater than a small epsilon value to avoid invalid operations.
-
-	\param start The starting position vector
-	\param end The ending position vector
-	\return The inverse velocity vector calculated from the difference between end and start positions
-	\throws Assertion failure if the squared length of the velocity vector is not greater than 1e-10f
-*/
+// returns (1/dx, 1/dy, 1/dz) vector for movement
 idVec3 GetInverseMovementVelocity( const idVec3& start, const idVec3& end );
 
-/*!
-	\brief Determines if a moving bounding box intersects with a static bounding box and calculates the time range of intersection.
-
-	This function performs an intersection test between a moving bounding box defined by its start position, extent, and inverse velocity, and a static bounding box. It computes the range of time
-   parameters where the intersection occurs. The function modifies the paramsRange array to store the minimum and maximum time values of intersection.
-
-	\param startPosition The starting position of the moving bounding box
-	\param invVelocity The inverse velocity of the moving bounding box
-	\param extent The extent of the moving bounding box
-	\param objBounds The static bounding box to test against
-	\param paramsRange An array containing the minimum and maximum time parameters of intersection
-	\return True if the moving bounding box intersects with the static bounding box, false otherwise.
-	\throws Assertion failure if the objBounds is backwards.
-*/
 bool   MovingBoundsIntersectBounds(
 	  // moving bounds: center for t = 0, velocity for t = [0..1], extent
 	  const idVec3&	  startPosition,

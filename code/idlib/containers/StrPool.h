@@ -42,40 +42,21 @@ class idStrPool;
 
 /*!
 	\class idPoolStr
-	\brief A string pool implementation that tracks user references and manages string memory allocation.
-
-	The idPoolStr class extends idStr to provide string pooling functionality with user reference counting. It is designed to manage memory for strings that are frequently allocated and deallocated,
-   reducing memory fragmentation and improving performance. The class maintains a count of users to ensure proper resource cleanup, with the destructor asserting that no users remain when the object
-   is destroyed. The string pool stores strings in allocated memory that can be tracked through the Allocated() and Size() methods. The GetPool() method provides access to the underlying string pool
-   from which the string was allocated, allowing for proper management of shared string resources.
-
+	\brief A string class that manages memory allocation within a shared string pool.
 */
 class idPoolStr : public idStr
 {
 	friend class idStrPool;
 
 public:
-	/*!
-		\brief Initializes an idPoolStr object with zero users.
-
-		This constructor initializes the idPoolStr object by setting the numUsers member variable to zero. It is designed to create a new instance of the idPoolStr class in a consistent initial state.
-
-	*/
+	//! Initializes an idPoolStr object with zero users.
 	idPoolStr() { numUsers = 0; }
-
-	/*!
-		\brief Destructor for idPoolStr that asserts no users remain.
-
-		The destructor for idPoolStr performs a sanity check using an assertion to ensure that the number of users is zero. This indicates that all references to the resource managed by this pool have
-	   been properly released before the object is destroyed.
-
-	*/
 	~idPoolStr() { assert( numUsers == 0 ); }
 
-	//! Returns the total size in bytes of memory that has been allocated for the string
+	//! Returns the total size of allocated memory for the string.
 	size_t			 Allocated() const { return idStr::Allocated(); }
 
-	//! Returns the total size in bytes of the allocated memory for this string pool.
+	//! Returns the total size of allocated memory for the string pool including the size of the pool type itself
 	size_t			 Size() const { return sizeof( *this ) + Allocated(); }
 
 	//! Returns a pointer to the pool this string was allocated from.
@@ -88,84 +69,46 @@ private:
 
 /*!
 	\class idStrPool
-	\brief A string pool implementation for efficient storage and management of shared strings.
+	\brief A string pool implementation that manages and reuses string instances to optimize memory usage and comparison operations.
 
-	The idStrPool class provides a mechanism for storing and managing strings in a memory-efficient manner by reusing identical strings. It maintains a hash table for fast lookups and supports both
-   case-sensitive and case-insensitive string comparisons. The pool tracks reference counts for strings to determine when they can be safely freed. This design enables efficient string handling in
-   engines where many identical strings may exist, reducing memory footprint and improving performance through string reuse. The class supports allocation of new strings, freeing of strings when no
-   longer referenced, and copying of strings between different pools.
+	The idStrPool class provides a mechanism for efficiently managing string objects by storing them in a pool and reusing existing instances when possible. This approach reduces memory fragmentation
+   and improves performance by avoiding duplicate string allocations. The pool supports case-sensitive and case-insensitive comparisons based on configuration. Strings in the pool are
+   reference-counted, allowing for safe sharing and automatic cleanup when no longer referenced. The class provides methods to allocate, copy, and free pooled strings, as well as to query pool
+   statistics such as the number of strings and memory usage. The internal hash table structure enables fast lookups of existing strings, and the pool can be cleared to reset all stored strings and
+   their associated data structures.
 
 */
 class idStrPool
 {
 public:
-	/*!
-		\brief Initializes a new instance of the idStrPool class with case sensitivity enabled.
-
-		The constructor initializes the idStrPool object and sets the caseSensitive flag to true, indicating that string comparisons will be case-sensitive by default.
-
-	*/
+	//! Initializes a new instance of the idStrPool class with case sensitivity enabled.
 	idStrPool() { caseSensitive = true; }
 
-	/*!
-		\brief Sets whether the string pool performs case-sensitive comparisons.
-
-		This function configures the string pool to either perform case-sensitive or case-insensitive string comparisons. When set to true, string comparisons will consider the case of characters.
-	   When set to false, comparisons will treat uppercase and lowercase characters as equivalent.
-
-		\param caseSensitive True to enable case-sensitive comparisons, false otherwise
-	*/
+	//! Sets whether the string pool performs case-sensitive comparisons.
 	void			 SetCaseSensitive( bool caseSensitive );
 
-	//! Returns the total number of strings contained in the string pool.
+	//! Returns the number of strings in the string pool
 	int				 Num() const { return pool.Num(); }
 
-	//! Returns the total number of bytes allocated by the string pool, including internal structures and all stored strings.
+	//! Returns the total amount of memory allocated by the string pool and its internal data structures.
 	size_t			 Allocated() const;
 
-	//! Returns the total number of bytes occupied by all strings and internal structures within the string pool
+	//! Returns the total memory size occupied by all strings in the string pool
 	size_t			 Size() const;
 
+	//! Returns a pointer to the idPoolStr object at the specified index in the pool.
 	const idPoolStr* operator[]( int index ) const { return pool[index]; }
 
-	/*!
-		\brief Allocates and returns a pooled string with the specified value, reusing existing strings when possible.
-
-		This function attempts to find an existing string in the pool that matches the provided string. If a match is found, the reference count of the existing string is incremented and it is
-	   returned. If no match is found, a new string is created, initialized with the provided string value, added to the pool, and returned. The function checks for case sensitivity when comparing
-	   strings.
-
-		\param string The string value to allocate in the pool
-		\return A pointer to the pooled string, either existing or newly created
-	*/
+	//! Returns a pointer to a pooled string, reusing existing strings when possible.
 	const idPoolStr* AllocString( const char* string );
 
-	/*!
-		\brief Frees a string from the string pool if its reference count drops to zero.
-
-		This function decrements the reference count of a string in the pool. If the reference count reaches zero, the string is removed from the pool and its memory is deallocated. The function first
-	   checks if the pool is valid and then verifies that the string belongs to this pool. It performs a hash lookup to find the string in the pool and removes it if the reference count has reached
-	   zero.
-
-		\param poolStr Pointer to the idPoolStr object to be freed from the pool
-		\throws assertion failure if the string does not belong to this pool or if the reference count is invalid
-	*/
+	//! Frees a string from the pool if its reference count reaches zero.
 	void			 FreeString( const idPoolStr* poolStr );
 
-	/*!
-		\brief Returns a reference to a string from this pool, increasing the user count if it's already in this pool, or allocating a new copy if it's from another pool.
-
-		This function is used to manage string references within a string pool. If the input string is already part of this pool, it simply increments the user count and returns the same reference. If
-	   the string belongs to a different pool, it allocates a new copy of the string within this pool and returns the reference to the new copy. This ensures that references to strings are managed
-	   efficiently across different pools.
-
-		\param poolStr Pointer to the string to be copied or referenced from this pool
-		\return Pointer to the string in this pool, either the original if it was already here, or a newly allocated copy if it came from another pool
-		\throws assertion failure if the input string has less than one user
-	*/
+	//! Returns a reference to the given pool string, increasing its user count if it belongs to this pool, otherwise allocates a new copy from this pool.
 	const idPoolStr* CopyString( const idPoolStr* poolStr );
 
-	//! Clears all strings from the string pool and resets the hash table.
+	//! Clears all entries from the string pool and resets the hash table.
 	void			 Clear();
 
 private:

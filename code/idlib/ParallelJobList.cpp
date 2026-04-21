@@ -46,34 +46,21 @@ const char* jobNames[] = {
 };
 
 static const int MAX_REGISTERED_JOBS = 128;
-
 struct registeredJob {
 	jobRun_t	function;
 	const char* name;
 } registeredJobs[MAX_REGISTERED_JOBS];
 static int	numRegisteredJobs;
 
-/*!
-	\brief Returns the name of a job list identified by the given ID
-
-	This function retrieves the name associated with a specific job list ID from an internal array of job names
-
-	\param id The ID of the job list to retrieve the name for
-	\return The name of the job list as a null-terminated string
-*/
 const char* GetJobListName( jobListId_t id )
 {
 	return jobNames[id];
 }
 
-/*!
-	\brief Checks if a job function is registered in the job system
-
-	This function iterates through the list of registered jobs to determine if a specific job function has been registered. It compares the provided function pointer against all registered job
-   functions and returns true if a match is found, otherwise false.
-
-	\param function The job function pointer to check for registration
-	\return True if the job function is registered, false otherwise
+/*
+========================
+IsRegisteredJob
+========================
 */
 static bool IsRegisteredJob( jobRun_t function )
 {
@@ -85,6 +72,11 @@ static bool IsRegisteredJob( jobRun_t function )
 	return false;
 }
 
+/*
+========================
+RegisterJob
+========================
+*/
 void RegisterJob( jobRun_t function, const char* name )
 {
 	if( IsRegisteredJob( function ) ) {
@@ -95,13 +87,10 @@ void RegisterJob( jobRun_t function, const char* name )
 	numRegisteredJobs++;
 }
 
-/*!
-	\brief Returns the name of the job function
-
-	The function searches through the registered jobs array to find a job that matches the provided function pointer and returns its name
-
-	\param function pointer to the job function to look up
-	\return The name of the job function if found, otherwise returns 'unknown'
+/*
+========================
+GetJobName
+========================
 */
 const char* GetJobName( jobRun_t function )
 {
@@ -113,6 +102,11 @@ const char* GetJobName( jobRun_t function )
 	return "unknown";
 }
 
+/*
+========================
+idParallelJobRegistration::idParallelJobRegistration
+========================
+*/
 idParallelJobRegistration::idParallelJobRegistration( jobRun_t function, const char* name )
 {
 	RegisterJob( function, name );
@@ -143,24 +137,7 @@ static idCVar	 jobs_longJobMicroSec( "jobs_longJobMicroSec", "10000", CVAR_INTEG
 
 const static int MAX_THREADS = 32;
 
-/*!
-	\struct threadJobListState_t
-	\brief Thread job list state management structure for concurrent task execution.
-
-	The threadJobListState_t structure manages the state of thread job lists used in concurrent task execution within the engine. It maintains synchronization information including version numbers,
-   job list pointers, and indexing information for tracking job execution progress. The structure supports initialization with default values or specific version numbers, allowing for proper state
-   management during multi-threaded operations. The version field helps in detecting state changes, while the indexing variables track job execution positions to ensure proper coordination between
-   threads. The job list pointer references the actual collection of jobs to be processed, making this structure essential for the engine's thread management system.
-
-*/
 struct threadJobListState_t {
-	/*!
-		\brief Initializes a threadJobListState_t object with default values.
-
-		Constructs a threadJobListState_t object and initializes all member variables to their default states. The jobList is set to NULL, version is initialized to 0xFFFFFFFF, signalIndex and
-	   lastJobIndex are set to 0, and nextJobIndex is initialized to -1.
-
-	*/
 	threadJobListState_t() :
 		jobList( NULL ),
 		version( 0xFFFFFFFF ),
@@ -169,14 +146,6 @@ struct threadJobListState_t {
 		nextJobIndex( -1 )
 	{
 	}
-
-	/*!
-		\brief Constructs a threadJobListState_t object with the specified version.
-
-		Initializes the thread job list state with the given version and sets default values for other member variables.
-
-		\param _version The version number for the thread job list state.
-	*/
 	threadJobListState_t( int _version ) :
 		jobList( NULL ),
 		version( _version ),
@@ -192,15 +161,6 @@ struct threadJobListState_t {
 	int						   nextJobIndex;
 };
 
-/*!
-	\struct threadStats_t
-	\brief Data structure for collecting thread statistics.
-
-	The threadStats_t struct is designed to aggregate and store performance metrics related to thread execution within the engine. It serves as a container for various statistical data that can be
-   used to monitor and analyze the behavior of threaded components. This structure is typically used by the engine's threading subsystem to gather information about CPU utilization, execution times,
-   and other relevant metrics for debugging and optimization purposes.
-
-*/
 struct threadStats_t {
 	unsigned int numExecutedJobs;
 	unsigned int numExecutedSyncs;
@@ -212,193 +172,64 @@ struct threadStats_t {
 	uint64		 threadTotalTime[MAX_THREADS];
 };
 
-/*!
-	\class idParallelJobList_Threads
-	\brief Manages parallel job execution with thread synchronization.
-
-	The idParallelJobList_Threads class provides a mechanism for organizing and executing parallel jobs across multiple threads while maintaining proper synchronization. It supports job insertion,
-   synchronization points, and resource management for threaded execution. The class handles job submission, waiting for completion, and tracking execution statistics including timing information for
-   each thread unit. It ensures proper cleanup of resources during destruction by waiting for all pending jobs to complete. The parallel job list can be submitted for execution with optional
-   dependencies on other job lists and supports different priority levels for job scheduling.
-
-*/
 class idParallelJobList_Threads
 {
 public:
-	/*!
-		\brief Constructor for idParallelJobList_Threads that initializes the job list with specified parameters and allocates memory for jobs and syncs.
-
-		This constructor initializes a parallel job list for threaded execution. It sets up the job list with the specified ID, priority, maximum number of jobs, and maximum number of syncs. The
-	   constructor ensures proper allocation of memory for the job list and signal job counts, and initializes various internal state variables. The job list is initialized with a size that
-	   accommodates the maximum number of jobs plus twice the maximum number of syncs plus one extra slot for updating the done count.
-
-		\param id Unique identifier for the job list
-		\param priority Priority level for the job list execution
-		\param maxJobs Maximum number of jobs that can be stored in the list
-		\param maxSyncs Maximum number of synchronization points that can be handled
-		\throws Assertion error if the job list priority is set to NONE
-	*/
 	idParallelJobList_Threads( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs );
-
-	/*!
-		\brief Destroys the idParallelJobList_Threads object and ensures all pending jobs are completed.
-
-		The destructor waits for all currently queued and executing jobs to finish before the object is destroyed. This ensures proper cleanup of resources and prevents any potential race conditions
-	   or undefined behavior due to unfinished jobs during destruction.
-
-	*/
 	~idParallelJobList_Threads();
 
-	/*!
-		\brief Adds a job to the parallel job list for execution.
-
-		This function adds a job to the job list for parallel execution. It first asserts that the job list is done adding jobs, then performs a debug check to ensure no duplicate job entries exist.
-	   The function allocates space for the new job and initializes its function pointer and data pointer. If the job list is full, it prints debug information about the job types and throws an error.
-
-		\param function Function pointer to the job to be executed
-		\param data Pointer to the data to be passed to the job function
-		\throws Error when the job list is full and cannot accommodate the new job
-	*/
+	//------------------------
+	// These are called from the one thread that manages this list.
+	//------------------------
 	ID_INLINE void AddJob( jobRun_t function, void* data );
-
-	/*!
-		\brief Inserts a synchronization point into the job list based on the specified sync type.
-
-		This function adds a synchronization point to the job list, which can be either a signal or a synchronization barrier. When a SYNC_SIGNAL is specified, it allocates a new job with a signal
-	   function and updates the signal job count. When a SYNC_SYNCHRONIZE is specified and there is an active signal, it adds a synchronization job and resets the signal state. The function asserts
-	   that the job list is in a valid state before proceeding.
-
-		\param syncType The type of synchronization point to insert, either SYNC_SIGNAL or SYNC_SYNCHRONIZE.
-		\throws assertion failure if done is false or if hasSignal is true when inserting a SYNC_SIGNAL
-	*/
 	ID_INLINE void InsertSyncPoint( jobSyncType_t syncType );
-
-	/*!
-		\brief Submits a parallel job list for execution, optionally waiting for another job list to complete first.
-
-		This function prepares and submits a list of parallel jobs for execution. It initializes the job list state, sets up synchronization mechanisms, and either delegates execution to a job manager
-	   in threaded mode or runs jobs directly in the calling thread. The function handles waiting for a specified job list to complete before proceeding, if provided. It also collects timing
-	   statistics for the job execution.
-
-		\param waitForJobList_ Pointer to another job list that this job list should wait for completion before starting execution, or NULL if no waiting is required
-		\param parallelism Specifies the level of parallelism to use for job execution
-		\throws assertion failure if done is false, or if numSyncs exceeds maxSyncs, or if jobList.Num() exceeds maxJobs + numSyncs * 2, or if fetchLock.GetValue() is not zero
-	*/
 	void		   Submit( idParallelJobList_Threads* waitForJobList_, int parallelism );
-
-	/*!
-		\brief Waits for all parallel jobs in the job list to complete execution
-
-		This function waits for all parallel jobs that have been submitted to the job list to finish executing. It first checks if there are any jobs in the list, and if so, verifies that the job list
-	   was properly submitted. It then waits for all jobs to complete by monitoring the signalJobCount and numThreadsExecuting counters. The function also updates timing statistics and resets internal
-	   state variables after waiting for job completion
-
-	*/
 	void		   Wait();
-
-	/*!
-		\brief Attempts to wait for all jobs in the job list to complete without blocking
-
-		Returns true if all jobs have completed or if the job list is empty, otherwise returns false indicating that not all jobs have finished yet. This function is non-blocking and will return
-	   immediately if jobs are still pending.
-
-		\return true if all jobs in the list have completed or the list is empty, false if jobs are still pending
-	*/
 	bool		   TryWait();
-
-	//! Returns true if the job list has been submitted for execution.
 	bool		   IsSubmitted() const;
 
-	//! Returns the number of jobs that have been executed by the thread pool.
 	unsigned int   GetNumExecutedJobs() const
 	{
 		return threadStats.numExecutedJobs;
 	}
-
-	//! Returns the number of synchronization operations that have been executed.
 	unsigned int GetNumSyncs() const
 	{
 		return threadStats.numExecutedSyncs;
 	}
-
-	//! Returns the submission time of the job list in microseconds.
 	uint64 GetSubmitTimeMicroSec() const
 	{
 		return threadStats.submitTime;
 	}
-
-	//! Returns the start time of the thread in microseconds.
 	uint64 GetStartTimeMicroSec() const
 	{
 		return threadStats.startTime;
 	}
-
-	//! Returns the finish time of the thread job list in microseconds.
 	uint64 GetFinishTimeMicroSec() const
 	{
 		return threadStats.endTime;
 	}
-
-	//! Returns the wait time in microseconds for the thread statistics.
 	uint64 GetWaitTimeMicroSec() const
 	{
 		return threadStats.waitTime;
 	}
-
-	//! Returns the total processing time across all threads in microseconds.
 	uint64		GetTotalProcessingTimeMicroSec() const;
-
-	//! Returns the total wasted time in microseconds across all threads in the parallel job list.
 	uint64		GetTotalWastedTimeMicroSec() const;
-
-	/*!
-		\brief Returns the processing time in microseconds for a specific unit
-
-		The function retrieves the execution time for a given unit identified by its index. It performs a bounds check to ensure the unit index is valid before accessing the corresponding entry in the
-	   thread statistics array. If the unit index is out of bounds, the function returns zero
-
-		\param unit The index of the unit for which to retrieve the processing time
-		\return The processing time in microseconds for the specified unit, or zero if the unit index is invalid
-	*/
 	uint64		GetUnitProcessingTimeMicroSec( int unit ) const;
-
-	/*!
-		\brief Returns the amount of wasted time for a specific thread unit in microseconds.
-
-		This function calculates the difference between the total time a thread unit was active and the actual execution time spent on tasks. The wasted time represents idle or overhead time for the
-	   specified thread unit. The function performs bounds checking to ensure the unit index is valid, returning zero if the index is out of range.
-
-		\param unit Index of the thread unit to query for wasted time
-		\return The amount of time in microseconds that the specified thread unit was not actively executing tasks
-	*/
 	uint64		GetUnitWastedTimeMicroSec( int unit ) const;
 
-	//! Returns the unique identifier of the job list.
 	jobListId_t GetId() const
 	{
 		return listId;
 	}
-
-	//! Returns the priority of the job list.
 	jobListPriority_t GetPriority() const
 	{
 		return listPriority;
 	}
-
-	//! Returns the version value stored in the version member variable.
 	int GetVersion()
 	{
 		return version.GetValue();
 	}
 
-	/*!
-		\brief Waits for another job list to complete and returns true if the wait was successful.
-
-		This function checks if there is a guard object that tracks the completion status of another job list. If the guard exists and its value is greater than zero, it indicates that the other job
-	   list has completed, and the function returns true. Otherwise, it returns false, indicating that the wait was not successful or the guard is not set.
-
-		\return true if the wait was successful and the other job list has completed, false otherwise
-	*/
 	bool WaitForOtherJobList();
 
 	//------------------------
@@ -406,18 +237,6 @@ public:
 	//------------------------
 	enum runResult_t { RUN_OK = 0, RUN_PROGRESS = BIT( 0 ), RUN_DONE = BIT( 1 ), RUN_STALLED = BIT( 2 ) };
 
-	/*!
-		\brief Executes a list of jobs in parallel on a specified thread
-
-		This function runs a set of jobs on a worker thread, tracking execution time and updating thread statistics. It increments the thread counter before execution and decrements it after
-	   completion, ensuring proper synchronization. The function measures execution time using system microsecond precision timing and accumulates the total time for each thread in deferred
-	   statistics.
-
-		\param threadNum The index of the thread executing the jobs
-		\param state Reference to the state object controlling job execution
-		\param singleJob Flag indicating whether to process a single job or multiple jobs
-		\return The result of the internal job execution process
-	*/
 	int RunJobs( unsigned int threadNum, threadJobListState_t& state, bool singleJob );
 
 private:
@@ -436,7 +255,6 @@ private:
 	idSysInterlockedInteger	 doneGuards[NUM_DONE_GUARDS];
 	int						 currentDoneGuard;
 	idSysInterlockedInteger	 version;
-
 	struct job_t {
 		jobRun_t function;
 		void*	 data;
@@ -451,24 +269,8 @@ private:
 	threadStats_t								 deferredThreadStats;
 	threadStats_t								 threadStats;
 
-	/*!
-		\brief Executes jobs from a parallel job list on a specific thread, handling synchronization and tracking job execution state.
-
-		This function runs jobs from a job list on the specified thread, managing synchronization points and tracking execution progress. It processes jobs in order, handling signals and
-	   synchronization barriers. The function supports single job execution or continuous execution until completion. It tracks execution time for each thread and handles job completion by
-	   decrementing signal job counts. Returns a status indicating the result of the job execution, such as progress, stall, or completion.
-
-		\param threadNum The index of the thread executing this function
-		\param state Reference to the job list state tracking execution progress
-		\param singleJob If true, executes only one job; if false, continues until all jobs are processed
-		\return Integer status indicating the result of job execution, which can include RUN_OK, RUN_STALLED, RUN_DONE, or RUN_PROGRESS flags combined using bitwise OR
-	*/
 	int											 RunJobsInternal( unsigned int threadNum, threadJobListState_t& state, bool singleJob );
 
-	/*!
-		\brief This function serves as a no-operation placeholder that does nothing when called.
-		\param data Unused parameter that would typically hold data for processing
-	*/
 	static void									 Nop( void* data )
 	{
 	}
@@ -482,6 +284,11 @@ int idParallelJobList_Threads::JOB_SIGNAL;
 int idParallelJobList_Threads::JOB_SYNCHRONIZE;
 int idParallelJobList_Threads::JOB_LIST_DONE;
 
+/*
+========================
+idParallelJobList_Threads::idParallelJobList_Threads
+========================
+*/
 idParallelJobList_Threads::idParallelJobList_Threads( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs ) :
 	threaded( true ),
 	done( true ),
@@ -507,11 +314,21 @@ idParallelJobList_Threads::idParallelJobList_Threads( jobListId_t id, jobListPri
 	memset( &threadStats, 0, sizeof( threadStats_t ) );
 }
 
+/*
+========================
+idParallelJobList_Threads::~idParallelJobList_Threads
+========================
+*/
 idParallelJobList_Threads::~idParallelJobList_Threads()
 {
 	Wait();
 }
 
+/*
+========================
+idParallelJobList_Threads::AddJob
+========================
+*/
 ID_INLINE void idParallelJobList_Threads::AddJob( jobRun_t function, void* data )
 {
 	assert( done );
@@ -554,6 +371,11 @@ ID_INLINE void idParallelJobList_Threads::AddJob( jobRun_t function, void* data 
 	}
 }
 
+/*
+========================
+idParallelJobList_Threads::InsertSyncPoint
+========================
+*/
 ID_INLINE void idParallelJobList_Threads::InsertSyncPoint( jobSyncType_t syncType )
 {
 	assert( done );
@@ -585,6 +407,11 @@ ID_INLINE void idParallelJobList_Threads::InsertSyncPoint( jobSyncType_t syncTyp
 	}
 }
 
+/*
+========================
+idParallelJobList_Threads::Submit
+========================
+*/
 void idParallelJobList_Threads::Submit( idParallelJobList_Threads* waitForJobList, int parallelism )
 {
 	assert( done );
@@ -634,6 +461,11 @@ void idParallelJobList_Threads::Submit( idParallelJobList_Threads* waitForJobLis
 	}
 }
 
+/*
+========================
+idParallelJobList_Threads::Wait
+========================
+*/
 void idParallelJobList_Threads::Wait()
 {
 	if( jobList.Num() > 0 ) {
@@ -667,6 +499,11 @@ void idParallelJobList_Threads::Wait()
 	done = true;
 }
 
+/*
+========================
+idParallelJobList_Threads::TryWait
+========================
+*/
 bool idParallelJobList_Threads::TryWait()
 {
 	if( jobList.Num() == 0 || signalJobCount[signalJobCount.Num() - 1].GetValue() <= 0 ) {
@@ -676,11 +513,21 @@ bool idParallelJobList_Threads::TryWait()
 	return false;
 }
 
+/*
+========================
+idParallelJobList_Threads::IsSubmitted
+========================
+*/
 bool idParallelJobList_Threads::IsSubmitted() const
 {
 	return !done;
 }
 
+/*
+========================
+idParallelJobList_Threads::GetTotalProcessingTimeMicroSec
+========================
+*/
 uint64 idParallelJobList_Threads::GetTotalProcessingTimeMicroSec() const
 {
 	uint64 total = 0;
@@ -690,6 +537,11 @@ uint64 idParallelJobList_Threads::GetTotalProcessingTimeMicroSec() const
 	return total;
 }
 
+/*
+========================
+idParallelJobList_Threads::GetTotalWastedTimeMicroSec
+========================
+*/
 uint64 idParallelJobList_Threads::GetTotalWastedTimeMicroSec() const
 {
 	uint64 total = 0;
@@ -699,6 +551,11 @@ uint64 idParallelJobList_Threads::GetTotalWastedTimeMicroSec() const
 	return total;
 }
 
+/*
+========================
+idParallelJobList_Threads::GetUnitProcessingTimeMicroSec
+========================
+*/
 uint64 idParallelJobList_Threads::GetUnitProcessingTimeMicroSec( int unit ) const
 {
 	if( unit < 0 || unit >= MAX_THREADS ) {
@@ -707,6 +564,11 @@ uint64 idParallelJobList_Threads::GetUnitProcessingTimeMicroSec( int unit ) cons
 	return threadStats.threadExecTime[unit];
 }
 
+/*
+========================
+idParallelJobList_Threads::GetUnitWastedTimeMicroSec
+========================
+*/
 uint64 idParallelJobList_Threads::GetUnitWastedTimeMicroSec( int unit ) const
 {
 	if( unit < 0 || unit >= MAX_THREADS ) {
@@ -721,6 +583,11 @@ volatile jobRun_t longJobFunc;
 volatile void*	  longJobData;
 #endif
 
+/*
+========================
+idParallelJobList_Threads::RunJobsInternal
+========================
+*/
 int idParallelJobList_Threads::RunJobsInternal( unsigned int threadNum, threadJobListState_t& state, bool singleJob )
 {
 	if( state.version != version.GetValue() ) {
@@ -864,6 +731,11 @@ int idParallelJobList_Threads::RunJobs( unsigned int threadNum, threadJobListSta
 	return result;
 }
 
+/*
+========================
+idParallelJobList_Threads::WaitForOtherJobList
+========================
+*/
 bool idParallelJobList_Threads::WaitForOtherJobList()
 {
 	if( waitForGuard != NULL ) {
@@ -874,6 +746,19 @@ bool idParallelJobList_Threads::WaitForOtherJobList()
 	return false;
 }
 
+/*
+================================================================================================
+
+idParallelJobList
+
+================================================================================================
+*/
+
+/*
+========================
+idParallelJobList::idParallelJobList
+========================
+*/
 idParallelJobList::idParallelJobList( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs, const idColor* color )
 {
 	assert( priority > JOBLIST_PRIORITY_NONE );
@@ -881,27 +766,52 @@ idParallelJobList::idParallelJobList( jobListId_t id, jobListPriority_t priority
 	this->color			 = color;
 }
 
+/*
+========================
+idParallelJobList::~idParallelJobList
+========================
+*/
 idParallelJobList::~idParallelJobList()
 {
 	delete jobListThreads;
 }
 
+/*
+========================
+idParallelJobList::AddJob
+========================
+*/
 void idParallelJobList::AddJob( jobRun_t function, void* data )
 {
 	assert( IsRegisteredJob( function ) );
 	jobListThreads->AddJob( function, data );
 }
 
+/*
+========================
+idParallelJobList::AddJobSPURS
+========================
+*/
 CellSpursJob128* idParallelJobList::AddJobSPURS()
 {
 	return NULL;
 }
 
+/*
+========================
+idParallelJobList::InsertSyncPoint
+========================
+*/
 void idParallelJobList::InsertSyncPoint( jobSyncType_t syncType )
 {
 	jobListThreads->InsertSyncPoint( syncType );
 }
 
+/*
+========================
+idParallelJobList::Wait
+========================
+*/
 void idParallelJobList::Wait()
 {
 	if( jobListThreads != NULL ) {
@@ -909,6 +819,11 @@ void idParallelJobList::Wait()
 	}
 }
 
+/*
+========================
+idParallelJobList::TryWait
+========================
+*/
 bool idParallelJobList::TryWait()
 {
 	bool done = true;
@@ -918,67 +833,132 @@ bool idParallelJobList::TryWait()
 	return done;
 }
 
+/*
+========================
+idParallelJobList::Submit
+========================
+*/
 void idParallelJobList::Submit( idParallelJobList* waitForJobList, int parallelism )
 {
 	assert( waitForJobList != this );
 	jobListThreads->Submit( ( waitForJobList != NULL ) ? waitForJobList->jobListThreads : NULL, parallelism );
 }
 
+/*
+========================
+idParallelJobList::IsSubmitted
+========================
+*/
 bool idParallelJobList::IsSubmitted() const
 {
 	return jobListThreads->IsSubmitted();
 }
 
+/*
+========================
+idParallelJobList::GetNumExecutedJobs
+========================
+*/
 unsigned int idParallelJobList::GetNumExecutedJobs() const
 {
 	return jobListThreads->GetNumExecutedJobs();
 }
 
+/*
+========================
+idParallelJobList::GetNumSyncs
+========================
+*/
 unsigned int idParallelJobList::GetNumSyncs() const
 {
 	return jobListThreads->GetNumSyncs();
 }
 
+/*
+========================
+idParallelJobList::GetSubmitTimeMicroSec
+========================
+*/
 uint64 idParallelJobList::GetSubmitTimeMicroSec() const
 {
 	return jobListThreads->GetSubmitTimeMicroSec();
 }
 
+/*
+========================
+idParallelJobList::GetStartTimeMicroSec
+========================
+*/
 uint64 idParallelJobList::GetStartTimeMicroSec() const
 {
 	return jobListThreads->GetStartTimeMicroSec();
 }
 
+/*
+========================
+idParallelJobList::GetFinishTimeMicroSec
+========================
+*/
 uint64 idParallelJobList::GetFinishTimeMicroSec() const
 {
 	return jobListThreads->GetFinishTimeMicroSec();
 }
 
+/*
+========================
+idParallelJobList::GetWaitTimeMicroSec
+========================
+*/
 uint64 idParallelJobList::GetWaitTimeMicroSec() const
 {
 	return jobListThreads->GetWaitTimeMicroSec();
 }
 
+/*
+========================
+idParallelJobList::GetTotalProcessingTimeMicroSec
+========================
+*/
 uint64 idParallelJobList::GetTotalProcessingTimeMicroSec() const
 {
 	return jobListThreads->GetTotalProcessingTimeMicroSec();
 }
 
+/*
+========================
+idParallelJobList::GetTotalWastedTimeMicroSec
+========================
+*/
 uint64 idParallelJobList::GetTotalWastedTimeMicroSec() const
 {
 	return jobListThreads->GetTotalWastedTimeMicroSec();
 }
 
+/*
+========================
+idParallelJobList::GetUnitProcessingTimeMicroSec
+========================
+*/
 uint64 idParallelJobList::GetUnitProcessingTimeMicroSec( int unit ) const
 {
 	return jobListThreads->GetUnitProcessingTimeMicroSec( unit );
 }
 
+/*
+========================
+idParallelJobList::GetUnitWastedTimeMicroSec
+========================
+*/
 uint64 idParallelJobList::GetUnitWastedTimeMicroSec( int unit ) const
 {
 	return jobListThreads->GetUnitWastedTimeMicroSec( unit );
 }
 
+/*
+========================
+idParallelJobList::GetId
+========================
+*/
 jobListId_t idParallelJobList::GetId() const
 {
 	return jobListThreads->GetId();
@@ -994,15 +974,6 @@ idJobThread
 
 const int JOB_THREAD_STACK_SIZE = 256 * 1024; // same size as the SPU local store
 
-/*!
-	\struct threadJobList_t
-	\brief Thread job list structure for managing concurrent tasks.
-
-	This structure serves as a container for organizing and managing thread jobs within the engine's multithreading system. It is designed to facilitate the distribution of work across multiple
-   threads, enabling efficient parallel execution of tasks such as asset loading, physics calculations, or rendering operations. The structure is intended to be used in conjunction with the engine's
-   thread management infrastructure to optimize performance through concurrent processing. TODO: clarify the specific memory management or ownership semantics of this structure.
-
-*/
 struct threadJobList_t {
 	idParallelJobList_Threads* jobList;
 	int						   version;
@@ -1010,48 +981,14 @@ struct threadJobList_t {
 
 static idCVar jobs_prioritize( "jobs_prioritize", "1", CVAR_BOOL | CVAR_NOCHEAT, "prioritize job lists" );
 
-/*!
-	\class idJobThread
-	\brief Manages job execution for parallel processing across multiple threads.
-
-	The idJobThread class serves as a worker thread implementation designed to process job lists in a parallel execution environment. It is responsible for executing job lists according to
-   priority-based scheduling and maintaining thread safety through mutex protection when managing job list queues. Each thread is bound to a specific CPU core for optimal performance and follows a
-   naming convention that ensures compatibility with system thread limits. The class integrates with the broader job scheduling system by adding job lists to queues and processing them in a controlled
-   loop that handles completion, stalling, and yielding scenarios. The Run method implements the core processing logic where job lists are fetched, scheduled, and executed until termination.
-
-*/
 class idJobThread : public idSysThread
 {
 public:
-	/*!
-		\brief Constructs a new job thread object.
-
-		Initializes the job thread with default values for the job list pointers and thread number.
-
-	*/
 	idJobThread();
 	~idJobThread();
 
-	/*!
-		\brief Initializes and starts a job thread on the specified core with the given thread number
-
-		This function sets up a worker thread for processing job lists. It configures the thread name to follow the JLProc_%d pattern, ensuring compatibility with Linux thread name length limits. The
-	   thread is started with normal priority and a specific stack size defined by JOB_THREAD_STACK_SIZE. The core parameter specifies which CPU core the thread should be bound to for optimal
-	   performance.
-
-		\param core CPU core number to bind the thread to
-		\param threadNum Thread identifier used in the naming convention
-	*/
 	void Start( core_t core, unsigned int threadNum );
 
-	/*!
-		\brief Adds a job list to the queue for processing by the thread.
-
-		This function adds a job list to the internal queue that is processed by the thread. It ensures thread safety by locking the mutex before adding the job list. The function waits if the queue
-	   is full to prevent overflow. The job list is stored with its version information, and the internal counter is updated to reflect the new job list.
-
-		\param jobList The job list to be added to the queue.
-	*/
 	void AddJobList( idParallelJobList_Threads* jobList );
 
 private:
@@ -1062,18 +999,14 @@ private:
 
 	unsigned int	threadNum;
 
-	/*!
-		\brief Executes the job processing loop for the thread, handling job lists and their execution with priority-based scheduling.
-
-		The function implements the main execution loop for a job thread, where it processes job lists according to their priority. It fetches new job lists from a global queue, schedules jobs based
-	   on priority, and executes them. The function handles job list completion, stalling, and yielding to avoid blocking other threads. It maintains a local list of job lists assigned to this thread
-	   and manages their execution until all are completed or the thread is terminated.
-
-		\return The return value is always 0, indicating successful completion of the thread execution loop.
-	*/
 	virtual int		Run();
 };
 
+/*
+========================
+idJobThread::idJobThread
+========================
+*/
 idJobThread::idJobThread() :
 	firstJobList( 0 ),
 	lastJobList( 0 ),
@@ -1081,10 +1014,20 @@ idJobThread::idJobThread() :
 {
 }
 
+/*
+========================
+idJobThread::~idJobThread
+========================
+*/
 idJobThread::~idJobThread()
 {
 }
 
+/*
+========================
+idJobThread::Start
+========================
+*/
 void idJobThread::Start( core_t core, unsigned int threadNum )
 {
 	this->threadNum = threadNum;
@@ -1097,6 +1040,11 @@ void idJobThread::Start( core_t core, unsigned int threadNum )
 	// DG end
 }
 
+/*
+========================
+idJobThread::AddJobList
+========================
+*/
 void idJobThread::AddJobList( idParallelJobList_Threads* jobList )
 {
 	// must lock because multiple threads may try to add new job lists at the same time
@@ -1112,6 +1060,11 @@ void idJobThread::AddJobList( idParallelJobList_Threads* jobList )
 	addJobMutex.Unlock();
 }
 
+/*
+========================
+idJobThread::Run
+========================
+*/
 int idJobThread::Run()
 {
 	threadJobListState_t threadJobListState[MAX_JOBLISTS];
@@ -1184,17 +1137,14 @@ int idJobThread::Run()
 	return 0;
 }
 
-/*!
-	\brief Retrieves CPU core and package count information by parsing /proc/cpuinfo and using system calls
+/*
+================================================================================================
 
-	This function determines the number of logical CPU cores, physical CPU cores, and CPU packages available on the system. It first attempts to parse the /proc/cpuinfo file to extract core and
-   sibling information, which provides details about hyper-threading and CPU topology. If parsing fails, it falls back to using sysconf() to determine the number of processors. The results are stored
-   in the provided reference parameters after being computed once and cached for subsequent calls.
+idParallelJobManagerLocal
 
-	\param logicalNum Output parameter for the number of logical CPU cores
-	\param coreNum Output parameter for the number of physical CPU cores
-	\param packageNum Output parameter for the number of CPU packages
+================================================================================================
 */
+
 extern void Sys_CPUCount( int& logicalNum, int& coreNum, int& packageNum );
 
 // WINDOWS LOGICAL PROCESSOR LIMITS:
@@ -1233,16 +1183,6 @@ extern void Sys_CPUCount( int& logicalNum, int& coreNum, int& packageNum );
 
 idCVar jobs_numThreads( "jobs_numThreads", NUM_JOB_THREADS, CVAR_INTEGER | CVAR_NOCHEAT, "number of threads used to crunch through jobs", 0, MAX_JOB_THREADS );
 
-/*!
-	\class idParallelJobManagerLocal
-	\brief Manages parallel job execution using worker threads with configurable CPU core assignments.
-
-	The idParallelJobManagerLocal class implements a parallel job management system that coordinates worker threads for executing jobs across multiple CPU cores. It initializes worker threads with
-   specific core assignments based on platform (console vs PC) and provides methods for allocating, submitting, and cleaning up job lists. The system supports priority-based scheduling and
-   synchronization points within job lists. The class maintains an internal collection of job lists and ensures proper thread synchronization during job execution and cleanup operations. Job lists can
-   be submitted for processing using a specified number of threads, with support for sequential execution when no parallel threads are available.
-
-*/
 class idParallelJobManagerLocal : public idParallelJobManager
 {
 public:
@@ -1250,96 +1190,24 @@ public:
 	{
 	}
 
-	/*!
-		\brief Initializes the parallel job manager by setting up worker threads and CPU core configurations
-
-		This function initializes the parallel job manager by configuring worker threads for processing jobs. It determines the appropriate CPU cores for each thread based on the JOB_THREAD_CORES
-	   constant, ensuring that at least MAX_JOB_THREADS cores are available. On consoles, threads are assigned to specific cores, while on PC systems, threads will utilize CORE_ANY. The function also
-	   retrieves CPU information including logical cores, physical cores, and CPU packages.
-
-	*/
 	virtual void			   Init();
-
-	/*!
-		\brief Stops all worker threads managed by the parallel job manager.
-
-		This function iterates through all worker threads managed by the idParallelJobManagerLocal instance and stops each thread by calling StopThread() on them. It is typically called during system
-	   shutdown to ensure all parallel processing threads are properly terminated before the application exits.
-
-	*/
 	virtual void			   Shutdown();
 
-	/*!
-		\brief Allocates and initializes a new job list with the specified parameters.
-
-		This function creates a new job list identified by the given ID and configures it with the specified priority, maximum number of jobs, and maximum number of synchronizations. It also
-	   associates a color with the job list for visualization purposes. The function checks if a job list with the same ID already exists and skips allocation if it does. The newly created job list is
-	   added to the manager's internal list of job lists.
-
-		\param id Unique identifier for the job list
-		\param priority Priority level for the job list scheduling
-		\param maxJobs Maximum number of jobs that can be added to this job list
-		\param maxSyncs Maximum number of synchronization points for this job list
-		\param color Color associated with the job list for debugging or visualization
-		\return A pointer to the newly allocated and initialized job list
-	*/
 	virtual idParallelJobList* AllocJobList( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs, const idColor* color );
-
-	/*!
-		\brief Frees a parallel job list by waiting for all threads to finish and then deleting the list.
-
-		This function cleans up a job list by first ensuring all worker threads have finished executing their tasks. It then finds the specified job list in the internal collection, validates its
-	   presence, waits for the list to complete, and finally deletes it. The function is not thread-safe and requires all threads to finish before proceeding with deletion.
-
-		\param jobList Pointer to the job list to be freed, can be null
-	*/
 	virtual void			   FreeJobList( idParallelJobList* jobList );
 
-	//! Returns the number of job lists managed by the parallel job manager.
 	virtual int				   GetNumJobLists() const;
-
-	//! Returns the number of free job lists available in the parallel job manager.
 	virtual int				   GetNumFreeJobLists() const;
-
-	/*!
-		\brief Returns a pointer to the job list at the specified index.
-
-		This function retrieves a job list from an internal array of job lists using the provided index. The index must be within valid bounds, otherwise the behavior is undefined.
-
-		\param index The index of the job list to retrieve
-		\return A pointer to the idParallelJobList at the specified index
-	*/
 	virtual idParallelJobList* GetJobList( int index );
 
-	//! Returns the number of processing units available for parallel job management.
 	virtual int				   GetNumProcessingUnits();
-
-	//! Returns the number of logical CPU cores available to the system.
-	virtual int				   GetLogicalCpuCores() const
+	virtual int				   GetLogicalCpuCores() const // RB
 	{
 		return numLogicalCpuCores;
 	}
 
-	/*!
-		\brief Waits for all job lists managed by this parallel job manager to complete their execution.
-
-		This function iterates through all job lists stored in the manager and waits for each one to finish its execution. It ensures that no job list is left running before proceeding, making it
-	   useful for synchronization purposes when all parallel tasks need to be completed before continuing with the next phase of execution.
-
-	*/
 	virtual void WaitForAllJobLists();
 
-	/*!
-		\brief Submits a job list to be processed by a specified number of threads.
-
-		This function handles the submission of parallel jobs to a thread pool. It first checks if the maximum number of threads has been modified and updates the limit accordingly. Then it determines
-	   the actual number of threads to use based on the provided parallelism parameter, which can be set to default, maximum cores, or maximum threads, or a specific number. The function ensures that
-	   the number of threads does not exceed the maximum allowed. If the number of threads is zero or less, it runs the jobs sequentially on the calling thread. Otherwise, it distributes the job list
-	   among the specified number of worker threads and signals them to start processing.
-
-		\param jobList Pointer to the job list to be submitted for processing
-		\param parallelism Specifies the number of threads to use for processing, or a special constant indicating how to determine the number
-	*/
 	void		 Submit( idParallelJobList_Threads* jobList, int parallelism );
 
 private:
@@ -1354,20 +1222,21 @@ private:
 idParallelJobManagerLocal parallelJobManagerLocal;
 idParallelJobManager*	  parallelJobManager = &parallelJobManagerLocal;
 
-/*!
-	\brief Submits a job list for parallel execution with the specified degree of parallelism
-
-	This function dispatches a job list to the parallel job manager for execution across multiple threads. The job list contains tasks that will be processed in parallel according to the specified
-   parallelism level. The function delegates the actual submission to the parallel job manager local instance.
-
-	\param jobList Pointer to the job list containing tasks to be executed in parallel
-	\param parallelism The degree of parallelism to use for executing the jobs
+/*
+========================
+SubmitJobList
+========================
 */
 void					  SubmitJobList( idParallelJobList_Threads* jobList, int parallelism )
 {
 	parallelJobManagerLocal.Submit( jobList, parallelism );
 }
 
+/*
+========================
+idParallelJobManagerLocal::Init
+========================
+*/
 void idParallelJobManagerLocal::Init()
 {
 	// on consoles this will have specific cores for the threads, but on PC they will all be CORE_ANY
@@ -1382,6 +1251,11 @@ void idParallelJobManagerLocal::Init()
 	Sys_CPUCount( numLogicalCpuCores, numPhysicalCpuCores, numCpuPackages );
 }
 
+/*
+========================
+idParallelJobManagerLocal::Shutdown
+========================
+*/
 void idParallelJobManagerLocal::Shutdown()
 {
 	for( int i = 0; i < MAX_JOB_THREADS; i++ ) {
@@ -1389,6 +1263,11 @@ void idParallelJobManagerLocal::Shutdown()
 	}
 }
 
+/*
+========================
+idParallelJobManagerLocal::AllocJobList
+========================
+*/
 idParallelJobList* idParallelJobManagerLocal::AllocJobList( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs, const idColor* color )
 {
 	for( int i = 0; i < jobLists.Num(); i++ ) {
@@ -1401,6 +1280,11 @@ idParallelJobList* idParallelJobManagerLocal::AllocJobList( jobListId_t id, jobL
 	return jobList;
 }
 
+/*
+========================
+idParallelJobManagerLocal::FreeJobList
+========================
+*/
 void idParallelJobManagerLocal::FreeJobList( idParallelJobList* jobList )
 {
 	if( jobList == NULL ) {
@@ -1417,26 +1301,51 @@ void idParallelJobManagerLocal::FreeJobList( idParallelJobList* jobList )
 	jobLists.RemoveIndexFast( index );
 }
 
+/*
+========================
+idParallelJobManagerLocal::GetNumJobLists
+========================
+*/
 int idParallelJobManagerLocal::GetNumJobLists() const
 {
 	return jobLists.Num();
 }
 
+/*
+========================
+idParallelJobManagerLocal::GetNumFreeJobLists
+========================
+*/
 int idParallelJobManagerLocal::GetNumFreeJobLists() const
 {
 	return MAX_JOBLISTS - jobLists.Num();
 }
 
+/*
+========================
+idParallelJobManagerLocal::GetJobList
+========================
+*/
 idParallelJobList* idParallelJobManagerLocal::GetJobList( int index )
 {
 	return jobLists[index];
 }
 
+/*
+========================
+idParallelJobManagerLocal::GetNumProcessingUnits
+========================
+*/
 int idParallelJobManagerLocal::GetNumProcessingUnits()
 {
 	return maxThreads;
 }
 
+/*
+========================
+idParallelJobManagerLocal::WaitForAllJobLists
+========================
+*/
 void idParallelJobManagerLocal::WaitForAllJobLists()
 {
 	// wait for all job lists to complete
@@ -1445,6 +1354,11 @@ void idParallelJobManagerLocal::WaitForAllJobLists()
 	}
 }
 
+/*
+========================
+idParallelJobManagerLocal::Submit
+========================
+*/
 void idParallelJobManagerLocal::Submit( idParallelJobList_Threads* jobList, int parallelism )
 {
 	if( jobs_numThreads.IsModified() ) {

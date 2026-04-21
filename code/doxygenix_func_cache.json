@@ -3,23 +3,23 @@
   "functions": {
     "ID_INLINE idBounds::idBounds()": {
       "body_hash": "196c4cbbe1854c094b08ebf0a7070a42",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBounds::idBounds(const idVec3 &mins, const idVec3 &maxs)": {
       "body_hash": "9722ee715c12bafae6cc0d0f02985f35",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBounds::idBounds(const idVec3 &point)": {
       "body_hash": "e04525e611af4807897bab2c1fcee74b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idBounds::Compare(const idBounds &a) const": {
       "body_hash": "fb762a9ddb767f3ab13f77587ab09a47",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idBounds::Compare(const idBounds &a, const float epsilon) const": {
       "body_hash": "fc3d2ba3bafee688894705d9e929b47c",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBounds::Clear()": {
       "body_hash": "9edb2029f6ba4d17507a3eebaa6dcc62",
@@ -39,7 +39,7 @@
     },
     "float idBounds::GetRadius(const idVec3 &center) const": {
       "body_hash": "72949a4701f580ca26d66767e5d0c1bc",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE float idBounds::GetVolume() const": {
       "body_hash": "6523e94050ee7638d67cf7706f6037a7",
@@ -51,19 +51,19 @@
     },
     "ID_INLINE bool idBounds::AddPoint(const idVec3 &v)": {
       "body_hash": "29120f1c58608688f0a137f1708ff22b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idBounds::AddBounds(const idBounds &a)": {
       "body_hash": "06631be4e6450f0ce2bb2985fa77ccab",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBounds idBounds::Intersect(const idBounds &a) const": {
       "body_hash": "f9670e9c0416f77316558ec3197db895",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBounds & idBounds::IntersectSelf(const idBounds &a)": {
       "body_hash": "421e7651a338826d43fa1c706adee7f1",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBounds idBounds::Expand(const float d) const": {
       "body_hash": "f57bbbb5ec687fa7c4328c51f8d23f19",
@@ -75,23 +75,23 @@
     },
     "ID_INLINE idBounds & idBounds::TranslateSelf(const idVec3 &translation)": {
       "body_hash": "191ea0aa011cfefc270aa7f1cf05fb8b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBounds idBounds::Rotate(const idMat3 &rotation) const": {
       "body_hash": "0691f4ea2c325fcffd6df1f452e08a45",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBounds & idBounds::RotateSelf(const idMat3 &rotation)": {
       "body_hash": "9292cb6584e132d22433e300ec12dff6",
-      "is_trivial": false
+      "is_trivial": true
     },
     "float idBounds::PlaneDistance(const idPlane &plane) const": {
       "body_hash": "991284574ab13545216539fe6a335f35",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idBounds::PlaneSide(const idPlane &plane, const float epsilon=ON_EPSILON) const": {
       "body_hash": "6fe983a3e1b798008b4d9638636fa9f2",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idVec3 idBounds::GetSize() const": {
       "body_hash": "2a239db33709b956353889353400d4a4",
@@ -103,39 +103,39 @@
     },
     "ID_INLINE bool idBounds::ContainsPoint(const idVec3 &p) const": {
       "body_hash": "8e258dd6a964f24f619995c5de7083f4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idBounds::IntersectsBounds(const idBounds &a) const": {
       "body_hash": "ca0a0a03849ad3c35ca540a8c382f83e",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idBounds::LineIntersection(const idVec3 &start, const idVec3 &end) const": {
       "body_hash": "d8c04a8a008c0f67bd96af5f4432577e",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idBounds::RayIntersection(const idVec3 &start, const idVec3 &dir, float &scale) const": {
       "body_hash": "0bba45514d55c1928ffbd1ac2be19971",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBounds::FromPoints(const idVec3 *points, const int numPoints)": {
       "body_hash": "6e0b3ba8dbb7aee0539fb2c2e93df21a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBounds::FromPointTranslation(const idVec3 &point, const idVec3 &translation)": {
       "body_hash": "cc585e847c5e3bb11701f9b4778cb29a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBounds::FromBoundsTranslation(const idBounds &bounds, const idVec3 &origin, const idMat3 &axis, const idVec3 &translation)": {
       "body_hash": "7750ebe242f2dead0c6d632cf76a0530",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBounds::FromPointRotation(const idVec3 &point, const idRotation &rotation)": {
       "body_hash": "e699d6ba17aab61d4048423dfbd64d24",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBounds::FromBoundsRotation(const idBounds &bounds, const idVec3 &origin, const idMat3 &axis, const idRotation &rotation)": {
       "body_hash": "06fda3aece885a0408c1fa3c214a589e",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idSphere idBounds::ToSphere() const": {
       "body_hash": "4708de0cdeb172c3c2f3e3768427e790",
@@ -143,7 +143,7 @@
     },
     "ID_INLINE void idBounds::AxisProjection(const idVec3 &origin, const idMat3 &axis, const idVec3 &dir, float &min, float &max) const": {
       "body_hash": "d80da2db6f85fc409c74c1e2aa19e5cd",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idBounds::GetDimension() const": {
       "body_hash": "b35a8de4de36d5406257e660a66980e3",
@@ -159,31 +159,31 @@
     },
     "ID_INLINE idBox::idBox()": {
       "body_hash": "d3b9ea3daca042528d5689e525aa39ed",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBox::idBox(const idVec3 &center, const idVec3 &extents, const idMat3 &axis)": {
       "body_hash": "4b247805d94c707d86c1007764440f7b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBox::idBox(const idVec3 &point)": {
       "body_hash": "a1c754a4f5a0d3e804cc4fa256b9e98f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBox::idBox(const idBounds &bounds)": {
       "body_hash": "799afaf2a0323f4265a1d4d223f846ae",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBox::idBox(const idBounds &bounds, const idVec3 &origin, const idMat3 &axis)": {
       "body_hash": "a64e5465d994beaf6de0f1ea2d0b5045",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idBox::Compare(const idBox &a) const": {
       "body_hash": "e9cecb920653965f70cdb0b3c03fcc5c",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idBox::Compare(const idBox &a, const float epsilon) const": {
       "body_hash": "6fee7c297876fb0c21844d8a60ac8bbc",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBox::Clear()": {
       "body_hash": "109b9d5c9dbd025146d5795103cfccdc",
@@ -215,11 +215,11 @@
     },
     "bool idBox::AddPoint(const idVec3 &v)": {
       "body_hash": "8dee6f2c78971a46c8994774fcf84c4f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idBox::AddBox(const idBox &a)": {
       "body_hash": "699073c405e8db9cce96b8e27d235cd3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBox idBox::Expand(const float d) const": {
       "body_hash": "94f37e1cf4d75d77b44c3a89c8d67be7",
@@ -227,7 +227,7 @@
     },
     "ID_INLINE idBox & idBox::ExpandSelf(const float d)": {
       "body_hash": "ddbfd2fb8166b1ee01fa248eeb358817",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBox idBox::Translate(const idVec3 &translation) const": {
       "body_hash": "63b834f2ced8acbb1b0a7bf0116662d9",
@@ -239,43 +239,43 @@
     },
     "float idBox::PlaneDistance(const idPlane &plane) const": {
       "body_hash": "28ee44abeb8e1d276d6a0886dcd4fb69",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idBox::PlaneSide(const idPlane &plane, const float epsilon=ON_EPSILON) const": {
       "body_hash": "f4bb2a853c574071713a9053aa32ea89",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idBox::ContainsPoint(const idVec3 &p) const": {
       "body_hash": "36f52f10d606e4a88e8c2241e17888d0",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idBox::IntersectsBox(const idBox &a) const": {
       "body_hash": "1d4851fa264b14bd6496431203504289",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idBox::LineIntersection(const idVec3 &start, const idVec3 &end) const": {
       "body_hash": "e5447fa1a8282103156ba6c11910dd5c",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idBox::RayIntersection(const idVec3 &start, const idVec3 &dir, float &scale1, float &scale2) const": {
       "body_hash": "79a7de55debebdc269b7f82a17bf0334",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBox::FromPoints(const idVec3 *points, const int numPoints)": {
       "body_hash": "034c7367102877638c2524426049fab3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBox::FromPointRotation(const idVec3 &point, const idRotation &rotation)": {
       "body_hash": "9c4c5ecb4c1f4d3fa796b0c6f2cee767",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBox::FromBoxRotation(const idBox &box, const idRotation &rotation)": {
       "body_hash": "d6b253b433f9e798488b3f3d9bddf5d9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBox::ToPoints(idVec3 points[8]) const": {
       "body_hash": "fe0121ec8ab39c473eff7e7e7e3daac4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idSphere idBox::ToSphere() const": {
       "body_hash": "cff269c0bd630f6ab5da976ddb53f0a5",
@@ -283,31 +283,31 @@
     },
     "ID_INLINE void idBox::AxisProjection(const idVec3 &dir, float &min, float &max) const": {
       "body_hash": "6c444639bed75980c34b30b9b4588728",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBox::AxisProjection(const idMat3 &ax, idBounds &bounds) const": {
       "body_hash": "63500bd6d19a31db0d4396805a68104f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idBox::GetProjectionSilhouetteVerts(const idVec3 &projectionOrigin, idVec3 silVerts[6]) const": {
       "body_hash": "463bb482b097593aecbcfda8e093143a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idBox::GetParallelProjectionSilhouetteVerts(const idVec3 &projectionDir, idVec3 silVerts[6]) const": {
       "body_hash": "46ff2a97f6e167d9c3fedabb672d393a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idBoxOctree::idBoxOctree()": {
       "body_hash": "5bd1b4e9a377996eaafddeae0a4cc534",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idBoxOctree::~idBoxOctree()": {
       "body_hash": "40895754edf0a2ab37f3dc429070fdc9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::Init(const idBounds &worldBounds, HandleGetter getHandle)": {
       "body_hash": "a5d5decaeb7b86147322b65de3816696",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::Clear()": {
       "body_hash": "41556f049c410dd661293eb9dbe4b730",
@@ -315,39 +315,39 @@
     },
     "void idBoxOctree::Add(Pointer ptr, const idBounds &box)": {
       "body_hash": "942bb870181fb759e317911562fef5c7",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::Remove(Pointer ptr)": {
       "body_hash": "5ad745987e0050c0ad403dbd2a385b11",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::Update(Pointer ptr, const idBounds &box)": {
       "body_hash": "9e8f9b5465a809976bbf370e51e103f6",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::QueryInBox(const idBounds &box, QueryResult &res) const": {
       "body_hash": "138377124937d5bd58a689c5b45d0f05",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::QueryInMovingBox(const idBounds &box, const idVec3 &start, const idVec3 &invDir, const idVec3 &radius, QueryResult &res) const": {
       "body_hash": "0a15ef1bb7c842c96fa791071bb64582",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idBoxOctree::GetLevel(const idBounds &box) const": {
       "body_hash": "13a7aeebfb7ef4d752314f6572038e1f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idBoxOctree::CellRanges idBoxOctree::GetCellRanges(const idBounds &box, int maxDepth) const": {
       "body_hash": "39a9d3f70461d1feefc7133b88fa9dee",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::Query_r(QueryContext &ctx, int nodeIdx, const idBounds &cellBox, const idBounds &spaceBox) const": {
       "body_hash": "f5f0a568ea658d1dffccc566d2652332",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::AddToNode(AddContext &ctx, int nodeIdx, const idBounds &cellBox)": {
       "body_hash": "669b3056358152e14d4c06c717248bfc",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_FORCE_INLINE bool idBoxOctreeHandle::IsLinked() const": {
       "body_hash": "e38f0be87ff3ed97b416d349554ef536",
@@ -355,19 +355,19 @@
     },
     "ID_INLINE idSphere::idSphere()": {
       "body_hash": "14f9680c550e92dcd0f5066b2e4c685b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idSphere::idSphere(const idVec3 &point, const float r)": {
       "body_hash": "2d60aa6204bbfb22e1248b519ba10510",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idSphere::Compare(const idSphere &a) const": {
       "body_hash": "0d580dd98bd044eb83fb8de1b1d91534",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idSphere::Compare(const idSphere &a, const float epsilon) const": {
       "body_hash": "1dacb7f0668616c514e62c5f1fa25cf2",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idSphere::Clear()": {
       "body_hash": "39dc44eccdc372b4000cc2464fc015ff",
@@ -379,11 +379,11 @@
     },
     "ID_INLINE void idSphere::SetOrigin(const idVec3 &o)": {
       "body_hash": "4e900a64e2d4982c2c593bead610b188",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idSphere::SetRadius(const float r)": {
       "body_hash": "a437668a248b0977a4086a4e6d74ce57",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE const idVec3 & idSphere::GetOrigin() const": {
       "body_hash": "a13b120ad9c86a1ab2f72c92ae954044",
@@ -399,11 +399,11 @@
     },
     "ID_INLINE bool idSphere::AddPoint(const idVec3 &p)": {
       "body_hash": "e492963a6003fd30e34a6bebf52cf881",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idSphere::AddSphere(const idSphere &s)": {
       "body_hash": "8fbde0e6f0af2f58ef61fc0b6ea49ea4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idSphere idSphere::Expand(const float d) const": {
       "body_hash": "7700c88ab4d9da8386a71e24dc3f97cf",
@@ -415,111 +415,111 @@
     },
     "ID_INLINE idSphere & idSphere::TranslateSelf(const idVec3 &translation)": {
       "body_hash": "0cdf876f956933a170e75e9b86f774c9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "float idSphere::PlaneDistance(const idPlane &plane) const": {
       "body_hash": "e0e2fddcc267a077cf0003e58e4cd4d1",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idSphere::PlaneSide(const idPlane &plane, const float epsilon=ON_EPSILON) const": {
       "body_hash": "a898db320bb311e23683e87685240c76",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idSphere::ContainsPoint(const idVec3 &p) const": {
       "body_hash": "f5971f0ece5008df6f8ce65562d37c68",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idSphere::IntersectsSphere(const idSphere &s) const": {
       "body_hash": "812fb28463c10663c35cd610573aab07",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idSphere::LineIntersection(const idVec3 &start, const idVec3 &end) const": {
       "body_hash": "b25a50ba9a2c4e0ee86a57fb8898bded",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idSphere::FromPoints(const idVec3 *points, const int numPoints)": {
       "body_hash": "55e20656b09805c9b21546f443b1b88c",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idSphere::FromPointTranslation(const idVec3 &point, const idVec3 &translation)": {
       "body_hash": "08636e7e5a8af39ea090319ed1d29adc",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idSphere::FromSphereTranslation(const idSphere &sphere, const idVec3 &start, const idVec3 &translation)": {
       "body_hash": "84a631ed7b81510bec6731d1211c91bb",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idSphere::FromPointRotation(const idVec3 &point, const idRotation &rotation)": {
       "body_hash": "c8259ab2fbe5f2a7927c19c0502b1fac",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idSphere::AxisProjection(const idVec3 &dir, float &min, float &max) const": {
       "body_hash": "da19c4c62111e09974b547e81835f8bb",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idBounds BoundsForPointRotation(const idVec3 &start, const idRotation &rotation)": {
       "body_hash": "9bb265275e8ad5de4c6fb5e26f634bb8",
-      "is_trivial": false
+      "is_trivial": true
     },
     "static bool BoxPlaneClip(const float denom, const float numer, float &scale0, float &scale1)": {
       "body_hash": "4213878b4214ab9259d812462bbef130",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBounds & idBounds::ExpandSelf(const float d)": {
       "body_hash": "a93f4302285b81e4df5f44bfbb745358",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBounds::ToPoints(idVec3 points[8]) const": {
       "body_hash": "24c117ca867f18ff9d3cc61e3df7f419",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBounds::AxisProjection(const idVec3 &dir, float &min, float &max) const": {
       "body_hash": "1638bea9370d76e0b1e136be7ba81093",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBox & idBox::RotateSelf(const idMat3 &rotation)": {
       "body_hash": "ca3b4fe77843268a29c856e7e422a41a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBox::FromPointTranslation(const idVec3 &point, const idVec3 &translation)": {
       "body_hash": "02a0116f863446a53c745791c8c1ac3c",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBox::FromBoxTranslation(const idBox &box, const idVec3 &translation)": {
       "body_hash": "dcd45089e2f17363fccc6aadf3397f93",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::Condense()": {
       "body_hash": "8773d0cabcd9da62ddf05b9613787bf9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBoxOctree::Add_r(AddContext &ctx, int nodeIdx, const idBounds &cellBox)": {
       "body_hash": "2bcfaa1812065d3a580913bc90077d02",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idSphere::idSphere(const idVec3 &point)": {
       "body_hash": "3e9956c39a19f05e678704281fbfd580",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idSphere & idSphere::ExpandSelf(const float d)": {
       "body_hash": "90e960c8fd37595066ed048e156f30fd",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idSphere::RayIntersection(const idVec3 &start, const idVec3 &dir, float &scale1, float &scale2) const": {
       "body_hash": "b29302a04a6dd6046bde5333b2412da2",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idSphere::FromSphereRotation(const idSphere &sphere, const idVec3 &start, const idRotation &rotation)": {
       "body_hash": "9c353776b69d0e165cb6ed77b90f7e7e",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idBounds::FromTransformedBounds(const idBounds &bounds, const idVec3 &origin, const idMat3 &axis)": {
       "body_hash": "1fa96b74bb9a16e0b94c48a831ccb26d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBox & idBox::TranslateSelf(const idVec3 &translation)": {
       "body_hash": "3072eaa144090a55a440dd2877e07ecb",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idArray< T_, numElements >::Num() const": {
       "body_hash": "2760a6edc5fe6b9bbe0af35f4d4360ee",
@@ -539,43 +539,43 @@
     },
     "const T_ * idArray< T_, numElements >::Ptr() const": {
       "body_hash": "a4091cfc22e53ed49ca90cf19aeedd42",
-      "is_trivial": false
+      "is_trivial": true
     },
     "T_ * idArray< T_, numElements >::Ptr()": {
       "body_hash": "d4f9e78f5989f7cb5e6a4e6edcc60f14",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTree< objType, keyType, maxChildrenPerNode >::idBTree()": {
       "body_hash": "a54188e2d92b7f901bd9d43607fb36b5",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTree< objType, keyType, maxChildrenPerNode >::~idBTree()": {
       "body_hash": "a4e33e5380d2af770e76cc31cc9c5546",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBTree< objType, keyType, maxChildrenPerNode >::Init()": {
       "body_hash": "63e808e740838c1c47d8997e47f9562e",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBTree< objType, keyType, maxChildrenPerNode >::Shutdown()": {
       "body_hash": "233843fbe63d3a72ca465ad7e2d0a3ff",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTreeNode< objType, keyType > * idBTree< objType, keyType, maxChildrenPerNode >::Add(objType *object, keyType key)": {
       "body_hash": "5b6b1d1fbbbb90e224f6cabb5855a326",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTreeNode< objType, keyType > * idBTree< objType, keyType, maxChildrenPerNode >::NodeFindSmallestLargerEqual(keyType key) const": {
       "body_hash": "3d15c76844c1106f79ce95f3a76205da",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTreeNode< objType, keyType > * idBTree< objType, keyType, maxChildrenPerNode >::NodeFindLargestSmallerEqual(keyType key) const": {
       "body_hash": "45440d87122528a07a3f784289ad3b20",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE objType * idBTree< objType, keyType, maxChildrenPerNode >::Find(keyType key) const": {
       "body_hash": "77ea62fc19b544b5fdd89a808a521feb",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE objType * idBTree< objType, keyType, maxChildrenPerNode >::FindSmallestLargerEqual(keyType key) const": {
       "body_hash": "921ff723c3fdd3e0bfed41063098ca3e",
@@ -583,7 +583,7 @@
     },
     "ID_INLINE objType * idBTree< objType, keyType, maxChildrenPerNode >::FindLargestSmallerEqual(keyType key) const": {
       "body_hash": "ee8735355b93d68b9bd98da0f4744214",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTreeNode< objType, keyType > * idBTree< objType, keyType, maxChildrenPerNode >::GetRoot() const": {
       "body_hash": "a03b4ea90507e3b8e6f326f31f62f454",
@@ -595,35 +595,35 @@
     },
     "ID_INLINE idBTreeNode< objType, keyType > * idBTree< objType, keyType, maxChildrenPerNode >::GetNext(idBTreeNode< objType, keyType > *node) const": {
       "body_hash": "d56252b8d11cf5a96bd79dc72f43d328",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTreeNode< objType, keyType > * idBTree< objType, keyType, maxChildrenPerNode >::GetNextLeaf(idBTreeNode< objType, keyType > *node) const": {
       "body_hash": "abc385dd592f80d410d67125081d63b2",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTreeNode< objType, keyType > * idBTree< objType, keyType, maxChildrenPerNode >::AllocNode()": {
       "body_hash": "25a98c5f9daa9923b65530a6ceeba32b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBTree< objType, keyType, maxChildrenPerNode >::FreeNode(idBTreeNode< objType, keyType > *node)": {
       "body_hash": "7154e8574dc53c4fbc39563372c90fbb",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBTree< objType, keyType, maxChildrenPerNode >::SplitNode(idBTreeNode< objType, keyType > *node)": {
       "body_hash": "5b05ad141975993bbc6048f4f5822ac0",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTreeNode< objType, keyType > * idBTree< objType, keyType, maxChildrenPerNode >::MergeNodes(idBTreeNode< objType, keyType > *node1, idBTreeNode< objType, keyType > *node2)": {
       "body_hash": "5327b29985dae7d79f8128115a6919b3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idFlexList< type, N >::~idFlexList()": {
       "body_hash": "001c1bc7c42c8e1da2a07c7b4b116ce8",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idFlexList< type, N >::idFlexList()": {
       "body_hash": "0b9bb3f499fa6cee88d8f99b4108b748",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idFlexList< type, N >::Clear()": {
       "body_hash": "c0ee2bb2b7fcc06258acecaa2e2f43fc",
@@ -631,11 +631,11 @@
     },
     "void idFlexList< type, N >::ClearFree()": {
       "body_hash": "d7c7fbaf3076345e9e68a821d2279387",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idFlexList< type, N >::SetNum(int newNum)": {
       "body_hash": "0abe55b6db65742f09c0b3912ee1a3ba",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_FORCE_INLINE int idFlexList< type, N >::Num() const": {
       "body_hash": "4023602bd5795a7b02b78e23c6843858",
@@ -643,43 +643,43 @@
     },
     "int idFlexList< type, N >::NumAllocated() const": {
       "body_hash": "d47650910933f5452bb8e1a9dffbde7d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_FORCE_INLINE const type * idFlexList< type, N >::Ptr() const": {
       "body_hash": "8c9a5170a0bdd5e8f07e207882e10019",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_FORCE_INLINE const type & idFlexList< type, N >::Last() const": {
       "body_hash": "10ea255f2ccbddf94f8e0d47eeb39d5a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idFlexList< type, N >::AddGrow(type obj)": {
       "body_hash": "04b64501e2e508a83d05c74fe11beb4d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_FORCE_INLINE type idFlexList< type, N >::Pop()": {
       "body_hash": "8f08f266fc323adffd038428994b8d08",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idFlexList< type, N >::Append(int k, const type *arr)": {
       "body_hash": "0cce8949f605f50e68e00ff9c09948c6",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idFlexList< type, N >::Grow(int newSize)": {
       "body_hash": "32b37cf13a792d004716a8dc48895fb9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idHashIndex::idHashIndex()": {
       "body_hash": "fe688c525b32d2bd89d189f2f719afbf",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idHashIndex::idHashIndex(const int initialHashSize, const int initialIndexSize)": {
       "body_hash": "90023b18de1c4c6a91ada6045c879377",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idHashIndex::~idHashIndex()": {
       "body_hash": "bea82b9bdbe917b34238d20118057165",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE size_t idHashIndex::Allocated() const": {
       "body_hash": "577b024eef7ac0f0ec5cd5693b744fd6",
@@ -691,27 +691,27 @@
     },
     "ID_INLINE void idHashIndex::Add(const int key, const int index)": {
       "body_hash": "fe27ce523b17d8aecc6a2a2ad943228a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idHashIndex::First(const int key) const": {
       "body_hash": "3182312390a9b5e14a01838738decc33",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idHashIndex::Next(const int index) const": {
       "body_hash": "4b2b28ea0e241e9d5f1352dc7fccaa13",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idHashIndex::GetFirst(const int key) const": {
       "body_hash": "776ffbf8622d4d0387ae63ec450fb507",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idHashIndex::GetNext(const int index) const": {
       "body_hash": "7302e45faf218fca81866182a98655f3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idHashIndex::RemoveIndex(const int key, const int index)": {
       "body_hash": "74658cd54acb91691eae69cb636ffe5d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idHashIndex::Clear()": {
       "body_hash": "55e8e14457835f8843312edd59247001",
@@ -723,7 +723,7 @@
     },
     "void idHashIndex::Free()": {
       "body_hash": "b361aa1552042a61f17b5a9efc645e14",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idHashIndex::GetHashSize() const": {
       "body_hash": "10ead5999d3f58dc273406a9078c7aae",
@@ -735,11 +735,11 @@
     },
     "ID_INLINE void idHashIndex::SetGranularity(const int newGranularity)": {
       "body_hash": "2434bbbb726bcd8912a523d99b3263a2",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idHashIndex::ResizeIndex(const int newIndexSize)": {
       "body_hash": "cd4a0d0c26ceafcaee8949ffab7f7f65",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idHashIndex::GetSpread() const": {
       "body_hash": "3589a065ab58d9165203db629c1c8214",
@@ -747,75 +747,75 @@
     },
     "ID_INLINE int idHashIndex::GenerateKey(const char *string, bool caseSensitive=true) const": {
       "body_hash": "415635a1709ce547b94e26f63f252788",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idHashIndex::GenerateKey(const idVec3 &v) const": {
       "body_hash": "0cab25a5a35e58c77073d1224b3eef89",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idHashIndex::GenerateKey(const int n1, const int n2) const": {
       "body_hash": "6d9d48fde44d8ae829484ccf6ea6dc22",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idHashIndex::GenerateKey(const int n) const": {
       "body_hash": "c58cbbb3f395057b3dc951917141ebc6",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idHashIndex::Init(const int initialHashSize, const int initialIndexSize)": {
       "body_hash": "78cf0c5d1619d018e471727d383ef00b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idHashIndex::Allocate(const int newHashSize, const int newIndexSize)": {
       "body_hash": "a9b9c2231916b46f82bb76b2c836c58a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idHashNodeT< _key_, _value_ >::idHashNodeT()": {
       "body_hash": "319718978a6692e83a0aefbe8f9c0107",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idHashNodeT< _key_, _value_ >::idHashNodeT(const _key_ &key, const _value_ &value, idHashNodeT *next)": {
       "body_hash": "14e8fbc03f923bb58f4812e8b0655995",
-      "is_trivial": false
+      "is_trivial": true
     },
     "static int idHashNodeT< _key_, _value_ >::GetHash(const _key_ &key, const int tableMask)": {
       "body_hash": "eb99416c58c9d10827fed4b1f8f1adb1",
-      "is_trivial": false
+      "is_trivial": true
     },
     "static int idHashNodeT< _key_, _value_ >::Compare(const _key_ &key1, const _key_ &key2)": {
       "body_hash": "fe751bdb240f78f00932e5d937d8f842",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idHashNodeT< const char *, _value_ >::idHashNodeT(const char *const &key, const _value_ &value, idHashNodeT *next)": {
       "body_hash": "bac4eb1e210f51721d54e9732ac6bc45",
-      "is_trivial": false
+      "is_trivial": true
     },
     "static int idHashNodeT< const char *, _value_ >::GetHash(const char *const &key, const int tableMask)": {
       "body_hash": "a5527cf819cc706c27be9573b38c0ea8",
-      "is_trivial": false
+      "is_trivial": true
     },
     "static int idHashNodeT< const char *, _value_ >::Compare(const char *const &key1, const char *const &key2)": {
       "body_hash": "4a254e11f4509dff25f9fbb2205f1f94",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idHashNodeT< idStr, _value_ >::idHashNodeT(const idStr &key, const _value_ &value, idHashNodeT *next)": {
       "body_hash": "95886a23447ee0321f31fb7120880dc4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "static int idHashNodeT< idStr, _value_ >::GetHash(const idStr &key, const int tableMask)": {
       "body_hash": "114bde699c91870ee59d1885520ca361",
-      "is_trivial": false
+      "is_trivial": true
     },
     "static int idHashNodeT< idStr, _value_ >::Compare(const idStr &key1, const idStr &key2)": {
       "body_hash": "aeaa7992882780deb95443dd9fb373da",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idHashTable< Type >::idHashTable(const idHashTable< Type > &map)": {
       "body_hash": "ced67587d62f747ee96fffddc0336d24",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idHashTable< Type >::~idHashTable()": {
       "body_hash": "7da954367a8d84a71717d874d135c356",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE size_t idHashTable< Type >::Size() const": {
       "body_hash": "94cab75edda4a5b8c5b5af6474bdcbac",
@@ -823,15 +823,15 @@
     },
     "ID_INLINE void idHashTable< Type >::Set(const char *key, Type &value)": {
       "body_hash": "b89fa40e47ac064ed5a3282b0f8b7edb",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idHashTable< Type >::Get(const char *key, Type **value=NULL) const": {
       "body_hash": "b7413976c9dd81281162a7176d9dcac0",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idHashTable< Type >::Remove(const char *key)": {
       "body_hash": "c42517d20413401cf755bb789c63b2b3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idHashTable< Type >::Clear()": {
       "body_hash": "e88366f855afc8524346499acad6d49f",
@@ -843,7 +843,7 @@
     },
     "ID_INLINE Type * idHashTable< Type >::GetIndex(int index) const": {
       "body_hash": "08025509d5c503a38d80cfbed495d8dc",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idHashTable< Type >::GetSpread() const": {
       "body_hash": "3d8cc96118489407984bbfb460712ad3",
@@ -851,19 +851,19 @@
     },
     "ID_INLINE int idHashTable< Type >::GetHash(const char *key) const": {
       "body_hash": "092a007f8a8e712ed3d9058ab3e3083e",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idHashTableT< _key_, _value_ >::idHashTableT(const int tableSize=256)": {
       "body_hash": "8a291b93b64efbdc5277c7ee888629e9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idHashTableT< _key_, _value_ >::idHashTableT(const idHashTableT &other)": {
       "body_hash": "65173de6c92c4ab543ef4066233052ca",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idHashTableT< _key_, _value_ >::~idHashTableT()": {
       "body_hash": "9f2fc7fdf870469200165bb9911e46df",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE size_t idHashTableT< _key_, _value_ >::Allocated() const": {
       "body_hash": "662df81dae10e5b21fd9aebfaccaba9e",
@@ -875,19 +875,19 @@
     },
     "ID_INLINE _value_ & idHashTableT< _key_, _value_ >::Set(const _key_ &key, const _value_ &value)": {
       "body_hash": "bf973b989989f0eef5a8df2aa5912796",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idHashTableT< _key_, _value_ >::Get(const _key_ &key, _value_ **value=NULL)": {
       "body_hash": "6c29d7390d83aab8b88fd6c1695cc975",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idHashTableT< _key_, _value_ >::Get(const _key_ &key, const _value_ **value=NULL) const": {
       "body_hash": "d5a604255bbec2ce711a18717317971d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idHashTableT< _key_, _value_ >::Remove(const _key_ &key)": {
       "body_hash": "7ce05defbd6ac6cdd78e91b632cb0842",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idHashTableT< _key_, _value_ >::Clear()": {
       "body_hash": "1307e36c22355431ae3e7ec4bda31d66",
@@ -895,7 +895,7 @@
     },
     "ID_INLINE void idHashTableT< _key_, _value_ >::DeleteContents()": {
       "body_hash": "0f17d66881f7f300ec3abff0935060f3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idHashTableT< _key_, _value_ >::Num() const": {
       "body_hash": "27fd815656db4d46922908421ed4b021",
@@ -903,7 +903,7 @@
     },
     "ID_INLINE _value_ * idHashTableT< _key_, _value_ >::GetIndex(const int index) const": {
       "body_hash": "f5a9581fdb7fc1275fe8880fe0f8b0d6",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idHashTableT< _key_, _value_ >::GetSpread() const": {
       "body_hash": "46bb1d756967786b852ef3bd46806b3f",
@@ -911,19 +911,19 @@
     },
     "ID_INLINE void idHashTableT< _key_, _value_ >::Copy(const idHashTableT &other)": {
       "body_hash": "398150d0c8ddb4568d7606b37497f032",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idHierarchy< type >::idHierarchy()": {
       "body_hash": "3ddbfcf6269eaadb9202c52230edb651",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idHierarchy< type >::~idHierarchy()": {
       "body_hash": "1497444213021133e287c78e1cd5e956",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idHierarchy< type >::SetOwner(type *object)": {
       "body_hash": "6960cef3b89a483c9f94d0d49c62f701",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idHierarchy< type >::Owner() const": {
       "body_hash": "651f699cd5cb995047075055ffe4a4c2",
@@ -931,19 +931,19 @@
     },
     "void idHierarchy< type >::ParentTo(idHierarchy &node)": {
       "body_hash": "e6c9b2f51dda9ff2eca3f5a27491f7f7",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idHierarchy< type >::MakeSiblingAfter(idHierarchy &node)": {
       "body_hash": "04d758d6c41696d72b1241f3f9964e39",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idHierarchy< type >::ParentedBy(const idHierarchy &node) const": {
       "body_hash": "42cec450ce034dd386cb7dfdf2ae3748",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idHierarchy< type >::RemoveFromHierarchy()": {
       "body_hash": "8238e48b50cc27e09dd6be0df3a741f7",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idHierarchy< type >::GetParent() const": {
       "body_hash": "269a3075c0a796a907aeb4c251a73434",
@@ -975,11 +975,11 @@
     },
     "idLinkList< type >::idLinkList()": {
       "body_hash": "2e31f70779f14365cd0ff6278f529605",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idLinkList< type >::~idLinkList()": {
       "body_hash": "c258483b5804f982cf48fb80cb7f3bba",
-      "is_trivial": false
+      "is_trivial": true
     },
     "bool idLinkList< type >::IsListEmpty() const": {
       "body_hash": "6fe233467275ec48407523bcdaeb33e4",
@@ -987,7 +987,7 @@
     },
     "bool idLinkList< type >::InList() const": {
       "body_hash": "60502f945bf6bc9ec6a9f8660803df7f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idLinkList< type >::Num() const": {
       "body_hash": "85ae6b99f88369ed7303c625791f66bd",
@@ -999,27 +999,27 @@
     },
     "void idLinkList< type >::InsertBefore(idLinkList &node)": {
       "body_hash": "2bc82c8463821d54f49acf9da2470f60",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idLinkList< type >::InsertAfter(idLinkList &node)": {
       "body_hash": "2dfc4815208e5bce3087846b5a85d332",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idLinkList< type >::AddToEnd(idLinkList &node)": {
       "body_hash": "66b88d570d234e6f2dbf6368348e20a6",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idLinkList< type >::AddToFront(idLinkList &node)": {
       "body_hash": "7868a74be781d854673d8c3a95011ae7",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idLinkList< type >::Next() const": {
       "body_hash": "207ae427c391b138f621cea5bddd318a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idLinkList< type >::SetOwner(type *object)": {
       "body_hash": "1df63e3c3a26ad1fc03b99205c0883fb",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idLinkList< type > * idLinkList< type >::ListHead() const": {
       "body_hash": "3349ebd48763af6298b8cf0b77ee4e95",
@@ -1027,27 +1027,27 @@
     },
     "idLinkList< type > * idLinkList< type >::NextNode() const": {
       "body_hash": "69a7db6516351bdc89093b48fdb2d2ef",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idList< _type_, _tag_ >::idList(int newgranularity=16)": {
       "body_hash": "2c19fe7bb2b95f073f96d7864cdb0086",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idList< _type_, _tag_ >::idList(idList &&other)": {
       "body_hash": "08434074096ea60a2f263c4579469ca1",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idList< _type_, _tag_ >::idList(const idList &other)": {
       "body_hash": "8e47e304aaca11a722061c75d4a4de17",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idList< _type_, _tag_ >::idList(std::initializer_list< _type_ > initializerList)": {
       "body_hash": "8fcc15ac64b65d0bb8bb23044e682357",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idList< _type_, _tag_ >::~idList()": {
       "body_hash": "b0a13bf269d1f95bfa2276d3b178506e",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::Clear()": {
       "body_hash": "a1a964cf7745c8fc70252ef4ded5a8ae",
@@ -1063,7 +1063,7 @@
     },
     "ID_INLINE void idList< _type_, _tag_ >::SetGranularity(int newgranularity)": {
       "body_hash": "2f9c5d2c4a4d61a0da063d6804caff6d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idList< _type_, _tag_ >::GetGranularity() const": {
       "body_hash": "8f0dec25e02f1350b7df1357ce0b8e97",
@@ -1083,31 +1083,31 @@
     },
     "ID_INLINE void idList< _type_, _tag_ >::Condense()": {
       "body_hash": "ecef6e369f8b7d0f2731ab3350e5659a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::Resize(int newsize)": {
       "body_hash": "cc0afb129e08cc7562e8eab9fb0a871f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::Resize(int newsize, int newgranularity)": {
       "body_hash": "2b24d54d9f30551afc1c13e9eb183a27",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::SetNum(int newnum)": {
       "body_hash": "54d926de16226ff1393f1ff2feb78dac",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::AssureSize(int newSize)": {
       "body_hash": "06dbed1e1fe901737b8861a8fb3bd2e3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::AssureSize(int newSize, const _type_ &initValue)": {
       "body_hash": "fe1c5449ca3eacb13e55286b5b69d7a4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::AssureSizeAlloc(int newSize, new_t *allocator)": {
       "body_hash": "fdf3e5c120ec7795fb74d798b3df0e96",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE _type_ * idList< _type_, _tag_ >::Ptr()": {
       "body_hash": "5e958dc3b5da3eeb6ec3f74be0f31db9",
@@ -1119,63 +1119,63 @@
     },
     "ID_INLINE _type_ & idList< _type_, _tag_ >::Alloc()": {
       "body_hash": "60a760cecdaf2bde3c7fcdf79bfa6219",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idList< _type_, _tag_ >::Append(const _type_ &obj)": {
       "body_hash": "1372c6439ef18fe0f1a8dbb1ac07e684",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idList< _type_, _tag_ >::Append(const idList &other)": {
       "body_hash": "50b30402022c0c5c0acad94563769d15",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idList< _type_, _tag_ >::AddGrow(const _type_ &obj)": {
       "body_hash": "e78f2b1dbbea6f9ecbacff5403097ed8",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::Reverse()": {
       "body_hash": "ec0c396d3d864e0705f95e09e5792e10",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idList< _type_, _tag_ >::AddUnique(const _type_ &obj)": {
       "body_hash": "eb28526cdd4df65b240b11843c1c31d5",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idList< _type_, _tag_ >::Insert(const _type_ &obj, int index=0)": {
       "body_hash": "4d4c713316d0e3cf09ad4cd747dfdef3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idList< _type_, _tag_ >::FindIndex(const _type_ &obj) const": {
       "body_hash": "7d666f70d5a0502dab4d311aca31ce7a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idList< _type_, _tag_ >::FindNull() const": {
       "body_hash": "6499528f174dab8ba5779f271ae4ab4d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idList< _type_, _tag_ >::IndexOf(const _type_ *obj) const": {
       "body_hash": "f5f54e5f11263b6647ef4a9238540485",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idList< _type_, _tag_ >::RemoveIndex(int index)": {
       "body_hash": "ddb8edb608a5dd29bdb7859ab7eeae59",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idList< _type_, _tag_ >::Remove(const _type_ &obj)": {
       "body_hash": "b7aed0decff8be02dcb5f271e57b8f75",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::SortWithTemplate(const idSort< _type_ > &sort=idSort_QuickDefault< _type_ >())": {
       "body_hash": "2db29d4cd581c0cea33ad2a9f09707e5",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idList< _type_, _tag_ >::Swap(idList &other)": {
       "body_hash": "bf51014775fd65175ffd7e7625e3639f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idList< _type_, _tag_ >::DeleteContents(bool clear=true)": {
       "body_hash": "57e14575af43a84640683c14eb8095ae",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idPlaneSet::Clear()": {
       "body_hash": "f4315cea96f06e0996f5c85da3c56c5f",
@@ -1183,11 +1183,11 @@
     },
     "ID_INLINE int idPlaneSet::FindPlane(const idPlane &plane, const float normalEps, const float distEps)": {
       "body_hash": "d871aa779c190c240b527b999c8e3608",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idPoolStr::idPoolStr()": {
       "body_hash": "65dc8f29609568bb9ecefa107cf7c1da",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idPoolStr::~idPoolStr()": {
       "body_hash": "a4e40e745aafc560b388bb0d54e05186",
@@ -1207,15 +1207,15 @@
     },
     "idQueue< type, nodePtr >::idQueue()": {
       "body_hash": "f45a6aff80aca068f60ae69474b7298b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idQueue< type, nodePtr >::Add(type *element)": {
       "body_hash": "4280c5c79c82860923c490ecffc414cf",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idQueue< type, nodePtr >::RemoveFirst()": {
       "body_hash": "6a50c3a52698f5ca6750b98fe08b6760",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idQueue< type, nodePtr >::Peek() const": {
       "body_hash": "b76d72e0dda4efe76533205993802980",
@@ -1223,15 +1223,15 @@
     },
     "bool idQueue< type, nodePtr >::IsEmpty()": {
       "body_hash": "8944ba97a80db40adfd294d3d01a8d0b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idQueue< type, nodePtr >::Test()": {
       "body_hash": "4610bab932027e82513e60e7eaa8740c",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idQueueNode< type >::idQueueNode()": {
       "body_hash": "914c0cf2d1f8b5450d4753f7c8c9c4ea",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idQueueNode< type >::GetNext() const": {
       "body_hash": "1cb272749ed9e0c0b1d660e2286fb341",
@@ -1239,19 +1239,19 @@
     },
     "void idQueueNode< type >::SetNext(type *next)": {
       "body_hash": "0a3f2378ea7fd37589aefa99d6808a38",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idQueueTemplate< type, nextOffset >::idQueueTemplate()": {
       "body_hash": "8d45b6afc8c909acc1cc1d68b3f34865",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idQueueTemplate< type, nextOffset >::Add(type *element)": {
       "body_hash": "6fff7a248383c49082eeff535e88b569",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idQueueTemplate< type, nextOffset >::Get()": {
       "body_hash": "358f747177a8dc7dac9be216f25f5dcd",
-      "is_trivial": false
+      "is_trivial": true
     },
     "virtual idSort< _type_ >::~idSort()": {
       "body_hash": "a6505484e75e614704d383b4fa7702db",
@@ -1259,55 +1259,55 @@
     },
     "virtual void idSort_Heap< _type_, _derived_ >::Sort(_type_ *base, unsigned int num) const": {
       "body_hash": "6f4ba7251b689f48393935571fbd97e5",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idSort_HeapDefault< _type_ >::Compare(const _type_ &a, const _type_ &b) const": {
       "body_hash": "05976d1e4d9f123bd44860f6fefc64ad",
-      "is_trivial": false
+      "is_trivial": true
     },
     "virtual void idSort_Insertion< _type_, _derived_ >::Sort(_type_ *base, unsigned int num) const": {
       "body_hash": "cc596a275ecbf21662c3fc6bdeeb8dda",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idSort_InsertionDefault< _type_ >::Compare(const _type_ &a, const _type_ &b) const": {
       "body_hash": "05976d1e4d9f123bd44860f6fefc64ad",
-      "is_trivial": false
+      "is_trivial": true
     },
     "virtual void idSort_Quick< _type_, _derived_ >::Sort(_type_ *base, unsigned int num) const": {
       "body_hash": "8df02cb5541ba4e12485dea67e5865a4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idSort_QuickDefault< _type_ >::Compare(const _type_ &a, const _type_ &b) const": {
       "body_hash": "05976d1e4d9f123bd44860f6fefc64ad",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idSort_QuickDefault< float >::Compare(const float &a, const float &b) const": {
       "body_hash": "4691543441da61f3d10de334e74d5008",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idStackTemplate< type, nextOffset >::idStackTemplate()": {
       "body_hash": "3a6d4675dfbf490b4b256cea87736218",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idStackTemplate< type, nextOffset >::Add(type *element)": {
       "body_hash": "a55ed82c320db64c826eb8f7c649c5c3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idStackTemplate< type, nextOffset >::Get()": {
       "body_hash": "76e1af85c83126131b7d8c5bf1d38cb9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idStaticList< type, size >::idStaticList()": {
       "body_hash": "4deaf97d6ed8146b5d811b3817f0e40a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idStaticList< type, size >::idStaticList(const idStaticList< type, size > &other)": {
       "body_hash": "656c05cc7998d04c2d56ec513fa4ee1c",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idStaticList< type, size >::idStaticList(std::initializer_list< type > initializerList)": {
       "body_hash": "ace708134babe817ed110a641bea0523",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idStaticList< type, size >::~idStaticList()": {
       "body_hash": "4bb00c6b6e6f151a36969b9492c703ff",
@@ -1327,11 +1327,11 @@
     },
     "ID_INLINE void idStaticList< type, size >::SetNum(int newnum)": {
       "body_hash": "063bbfa2ab49cd95e694e4b5b2886510",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idStaticList< type, size >::SetNum(int newNum, const type &initValue)": {
       "body_hash": "bc74281014ce3a4ea953688b016cd97d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE size_t idStaticList< type, size >::Size() const": {
       "body_hash": "0e9a7985a6e9c21a575b6c925a9e60da",
@@ -1343,79 +1343,79 @@
     },
     "ID_INLINE type * idStaticList< type, size >::Ptr()": {
       "body_hash": "3eafd4be39c554445603da7e1c00159d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE const type * idStaticList< type, size >::Ptr() const": {
       "body_hash": "febb737c4dcb414f80d04f1dea11b833",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE type * idStaticList< type, size >::Alloc()": {
       "body_hash": "31e66117c41f4028311ac47878397577",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idStaticList< type, size >::Append(const type &obj)": {
       "body_hash": "1ab4752ccf99616577f927286ad00afc",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idStaticList< type, size >::Append(const idStaticList< type, size > &other)": {
       "body_hash": "aaf37384887aebc369ba3dcd219bc3c4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idStaticList< type, size >::AddUnique(const type &obj)": {
       "body_hash": "a1e6ed4b465219f9ab684f11dbd53229",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idStaticList< type, size >::Insert(const type &obj, int index=0)": {
       "body_hash": "46aeb379ba6b917858eb84addefdd061",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idStaticList< type, size >::FindIndex(const type &obj) const": {
       "body_hash": "910dc22342287ec96bd37f16b996bcd6",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE type * idStaticList< type, size >::Find(type const &obj) const": {
       "body_hash": "d421b8c57bcb22f026eeb78eba5f23d2",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idStaticList< type, size >::FindNull() const": {
       "body_hash": "39f75237378a138fa7fb0415bfd13aca",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idStaticList< type, size >::IndexOf(const type *obj) const": {
       "body_hash": "af4cdf8598f3195010b47874405ab5a2",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idStaticList< type, size >::RemoveIndex(int index)": {
       "body_hash": "9585672f490ac49da3bb6af63a5860f4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idStaticList< _type_, size >::RemoveIndexFast(int index)": {
       "body_hash": "0565d8eb3c340911bdba0c8c87aa1576",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idStaticList< type, size >::Remove(const type &obj)": {
       "body_hash": "c2819c3e147b3f814f22ac20609a75ac",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idStaticList< type, size >::Swap(idStaticList< type, size > &other)": {
       "body_hash": "ae94e2108d14b4f4b0b3f7535a6241cd",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idStaticList< type, size >::Sort(const idSort< type > &sort=idSort_QuickDefault< type >())": {
       "body_hash": "8598ac96d90a4f46525853d7e4ba2d09",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idStaticList< type, size >::Resize(int newsize)": {
       "body_hash": "cefcac0d5248c48fb05a60428ce44d31",
-      "is_trivial": false
+      "is_trivial": true
     },
     "idStrPool::idStrPool()": {
       "body_hash": "5d2cd7b112da69100046cfd917621918",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idStrPool::SetCaseSensitive(bool caseSensitive)": {
       "body_hash": "65176d9ecc05214f4d5d17b6308e4b10",
-      "is_trivial": false
+      "is_trivial": true
     },
     "int idStrPool::Num() const": {
       "body_hash": "215cd4a1a036e53835f0468af28bbfae",
@@ -1431,15 +1431,15 @@
     },
     "ID_INLINE const idPoolStr * idStrPool::AllocString(const char *string)": {
       "body_hash": "297ca5cb022ca4e25a3b59853c2c12db",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idStrPool::FreeString(const idPoolStr *poolStr)": {
       "body_hash": "5b40f0d98bd43b174384787899c0d132",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE const idPoolStr * idStrPool::CopyString(const idPoolStr *poolStr)": {
       "body_hash": "e3e7e2d4341a907703fab6cccb189129",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idStrPool::Clear()": {
       "body_hash": "b6dfdcec07ebf1e6079ba4b671503269",
@@ -1447,11 +1447,11 @@
     },
     "ID_INLINE idVectorSet< type, dimension >::idVectorSet()": {
       "body_hash": "ef432a3d520cae2988165390eada2df1",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idVectorSet< type, dimension >::idVectorSet(const type &mins, const type &maxs, const int boxHashSize, const int initialSize)": {
       "body_hash": "f0c174928d13ba90e191e04a1791a1ec",
-      "is_trivial": false
+      "is_trivial": true
     },
     "size_t idVectorSet< type, dimension >::Allocated() const": {
       "body_hash": "0730f08452a5cb7046417f75219a8ef0",
@@ -1463,7 +1463,7 @@
     },
     "ID_INLINE void idVectorSet< type, dimension >::Init(const type &mins, const type &maxs, const int boxHashSize, const int initialSize)": {
       "body_hash": "983682e6986c70087009b55669371bef",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idVectorSet< type, dimension >::Clear()": {
       "body_hash": "96ba11fadb966999c72cec1df3a87ebe",
@@ -1471,15 +1471,15 @@
     },
     "ID_INLINE int idVectorSet< type, dimension >::FindVector(const type &v, const float epsilon)": {
       "body_hash": "221af763847ce5a1cdfabe9aaf9e29ab",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idVectorSubset< type, dimension >::idVectorSubset()": {
       "body_hash": "465708b9697f8e92f6573a84d447aa06",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idVectorSubset< type, dimension >::idVectorSubset(const type &mins, const type &maxs, const int boxHashSize, const int initialSize)": {
       "body_hash": "63c0f8cefbf9625f0c3458f49c475335",
-      "is_trivial": false
+      "is_trivial": true
     },
     "size_t idVectorSubset< type, dimension >::Allocated() const": {
       "body_hash": "0730f08452a5cb7046417f75219a8ef0",
@@ -1491,7 +1491,7 @@
     },
     "ID_INLINE void idVectorSubset< type, dimension >::Init(const type &mins, const type &maxs, const int boxHashSize, const int initialSize)": {
       "body_hash": "aec5186581fc5ce3584298daef73b098",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idVectorSubset< type, dimension >::Clear()": {
       "body_hash": "7e5b156eebb8d90ef1eec23d935657dd",
@@ -1499,55 +1499,55 @@
     },
     "ID_INLINE int idVectorSubset< type, dimension >::FindVector(const type *vectorList, const int vectorNum, const float epsilon)": {
       "body_hash": "e15b0eaff5bc3634a4ab8e42098cc9a3",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idBinSearch_Less(const type *array, const int arraySize, const type &value)": {
       "body_hash": "5ebc057ec8d183bb2a86c6fc01be96f9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idBinSearch_LessEqual(const type *array, const int arraySize, const type &value)": {
       "body_hash": "96e4633c27262a70c95781dd1dbe36ae",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idBinSearch_Greater(const type *array, const int arraySize, const type &value)": {
       "body_hash": "99149c6f81d06ca8f1efd4caeab75f6f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void * idListArrayNew(int num, bool zeroBuffer)": {
       "body_hash": "4207dedc8281a6fce44efe271baed3a6",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idListArrayDelete(void *ptr, int num)": {
       "body_hash": "34153d7718fcc03ac93be6f2bd7405fc",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void * idListArrayResize(void *voldptr, int oldNum, int newNum, bool zeroBuffer)": {
       "body_hash": "4b6fc574dd105a353b5b3d031fb9946d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE type * idListNewElement()": {
       "body_hash": "6c245f80b53d0a6ea6f75df239129129",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idSwap(_type_ &a, _type_ &b)": {
       "body_hash": "1bd8f1774cded34aaa0908286565bf53",
-      "is_trivial": false
+      "is_trivial": true
     },
     "_type_ * FindFromGeneric(idList< _type_, _tag_ > &list, const _compare_type_ &other)": {
       "body_hash": "c6b5c15622edd00f00d674187802dbe0",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void SwapValues(_type_ &a, _type_ &b)": {
       "body_hash": "1e454518f0bded57952d6a1c95080cbc",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void BreakOnListGrowth()": {
       "body_hash": "35b1b1618ee391ecfc4cf768d7480c3d",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void BreakOnListDefault()": {
       "body_hash": "224bcd5bcda6d935c1e098a3393189e6",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE size_t idHashTable< Type >::Allocated() const": {
       "body_hash": "3864f7f7fdd0171778c23d07d2b6dad4",
@@ -1555,51 +1555,51 @@
     },
     "ID_INLINE void idBTree< objType, keyType, maxChildrenPerNode >::Remove(idBTreeNode< objType, keyType > *node)": {
       "body_hash": "0e50a9af66c5adc59c2559ba4b0e86dd",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idBTreeNode< objType, keyType > * idBTree< objType, keyType, maxChildrenPerNode >::NodeFind(keyType key) const": {
       "body_hash": "16e022971300b960d7ba3edcacfbba5b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_FORCE_INLINE type * idFlexList< type, N >::Ptr()": {
       "body_hash": "c5a0fd20113c6602d98a0cb8c37be574",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_FORCE_INLINE type & idFlexList< type, N >::Last()": {
       "body_hash": "b7fc82e77d93ba681bc7da25ec29d4b4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idHashIndex::Remove(const int key, const int index)": {
       "body_hash": "fb2e8c95ddc75db106dcabdb9f87ab74",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idHashIndex::InsertIndex(const int key, const int index)": {
       "body_hash": "44c3f04bf8f2ff9f1730d76cfcf2d283",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE idHashTable< Type >::idHashTable(int newtablesize=256)": {
       "body_hash": "47ab1891b89d8f59d413150f12d9a8e9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idHashTable< Type >::DeleteContents()": {
       "body_hash": "29ac29ba1b6f591b5eca2238afe4b3ce",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idHashTableT< _key_, _value_ >::GetIndexKey(const int index, _key_ &key) const": {
       "body_hash": "361db0ae02edefcd743bc3c0ade72384",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idHierarchy< type >::RemoveFromParent()": {
       "body_hash": "a53730796d967fddbf88e35a6f3fe608",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idLinkList< type >::Remove()": {
       "body_hash": "ce305c60c6080a2e59990c19cf6dc65c",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idLinkList< type >::Prev() const": {
       "body_hash": "1dc1b460e0a4e96765cc1c995b7970e0",
-      "is_trivial": false
+      "is_trivial": true
     },
     "type * idLinkList< type >::Owner() const": {
       "body_hash": "a39d0ab8e8e6f7b2fca5279cd2fa8106",
@@ -1607,15 +1607,15 @@
     },
     "idLinkList< type > * idLinkList< type >::PrevNode() const": {
       "body_hash": "7ca2e585d2e8951f45a54561eb5d5d56",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE _type_ * idList< _type_, _tag_ >::Find(_type_ const &obj) const": {
       "body_hash": "f4157b641d89f09cf2bed359921f861f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE bool idList< _type_, _tag_ >::RemoveIndexFast(int index)": {
       "body_hash": "9f9aed8d8f4ac16d28d6c7bd3815f4d1",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE size_t idStaticList< type, size >::Allocated() const": {
       "body_hash": "851773ee051c224064496e0264226afb",
@@ -1623,27 +1623,27 @@
     },
     "ID_INLINE void idStaticList< type, size >::DeleteContents(bool clear)": {
       "body_hash": "f44dc969486e0b4c2e92d57132bc3f5a",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idVectorSet< type, dimension >::ResizeIndex(const int newSize)": {
       "body_hash": "58ba039cecc8eafe32f34f494615c557",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE int idBinSearch_GreaterEqual(const type *array, const int arraySize, const type &value)": {
       "body_hash": "a533ddff30a880554baec482bab0261f",
-      "is_trivial": false
+      "is_trivial": true
     },
     "_type_ * FindFromGenericPtr(idList< _type_, _tag_ > &list, const _compare_type_ &other)": {
       "body_hash": "f0e1c09153db04e8f78816bdf871360b",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBTree< objType, keyType, maxChildrenPerNode >::CheckTree_r(idBTreeNode< objType, keyType > *node, int &numNodes) const": {
       "body_hash": "8f2918980b0289e48b052ea2a5bd82dd",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idBTree< objType, keyType, maxChildrenPerNode >::CheckTree() const": {
       "body_hash": "19ea60aea6212a3d3ceaeeaab232aa65",
-      "is_trivial": false
+      "is_trivial": true
     },
     "ID_INLINE void idDrawVert::Clear()": {
       "body_hash": "72882c31f0257425bdd8eb98a5acecac",
@@ -12324,6 +12324,186 @@
     "static void idSwap::Big(type &c)": {
       "body_hash": "996408769a5c133e00e70859ec871efa",
       "is_trivial": false
+    },
+    "const T_ & idArray< T_, numElements >::operator[](int index) const": {
+      "body_hash": "f647392b953945ff44e8825681e32cd1",
+      "is_trivial": true
+    },
+    "T_ & idArray< T_, numElements >::operator[](int index)": {
+      "body_hash": "76725875b88ccff69c12764f49f00b5f",
+      "is_trivial": true
+    },
+    "ID_FORCE_INLINE const type & idFlexList< type, N >::operator[](int index) const": {
+      "body_hash": "c3e5cd55bdc0da1c15d818ef3f0b5bb8",
+      "is_trivial": true
+    },
+    "ID_FORCE_INLINE type & idFlexList< type, N >::operator[](int index)": {
+      "body_hash": "fb11f2e769741defb3ce49b365ff959f",
+      "is_trivial": true
+    },
+    "ID_INLINE idHashIndex & idHashIndex::operator=(const idHashIndex &other)": {
+      "body_hash": "6cbc406bbb610dddef520e9e9af2f292",
+      "is_trivial": true
+    },
+    "ID_INLINE idHashTableT< _key_, _value_ > & idHashTableT< _key_, _value_ >::operator=(const idHashTableT &other)": {
+      "body_hash": "f258314fd84ee3393b78b248996ebd04",
+      "is_trivial": true
+    },
+    "ID_INLINE idList< _type_, _tag_ > & idList< _type_, _tag_ >::operator=(idList< _type_, _tag_ > &&other)": {
+      "body_hash": "4e6d0319f901dee4b4feca8a2a3bfa49",
+      "is_trivial": true
+    },
+    "ID_INLINE idList< _type_, _tag_ > & idList< _type_, _tag_ >::operator=(const idList< _type_, _tag_ > &other)": {
+      "body_hash": "0ea759b9fae1918c574609d3cc495cb6",
+      "is_trivial": true
+    },
+    "ID_INLINE const _type_ & idList< _type_, _tag_ >::operator[](int index) const": {
+      "body_hash": "be94f484e620625b4e54ca00e70fe544",
+      "is_trivial": true
+    },
+    "ID_INLINE _type_ & idList< _type_, _tag_ >::operator[](int index)": {
+      "body_hash": "66bc1d84a3bffe950f3ebd44ec034eb3",
+      "is_trivial": true
+    },
+    "idList< _type_, _tag_ >::operator idList< _type_, _t_ > &()": {
+      "body_hash": "2930eb207ffd8fd248a82d9fd27ea62a",
+      "is_trivial": true
+    },
+    "idList< _type_, _tag_ >::operator const idList< _type_, _t_ > &() const": {
+      "body_hash": "47f70ffbe503dd632d83306be4ee7d1e",
+      "is_trivial": true
+    },
+    "ID_INLINE const type & idStaticList< type, size >::operator[](int index) const": {
+      "body_hash": "946c1503880ddd1000f09153b628f9f1",
+      "is_trivial": true
+    },
+    "ID_INLINE type & idStaticList< type, size >::operator[](int index)": {
+      "body_hash": "08f747d34c4af622ab4027ce259007b4",
+      "is_trivial": true
+    },
+    "const idPoolStr * idStrPool::operator[](int index) const": {
+      "body_hash": "60f787e395a8bbaccaaae40c44b99354",
+      "is_trivial": true
+    },
+    "T & idList< _type_, _tag_ >::Iterator< T >::operator*()": {
+      "body_hash": "1bb14e3bfdcfde7a529caa9e0348ed93",
+      "is_trivial": true
+    },
+    "bool idList< _type_, _tag_ >::Iterator< T >::operator!=(const Iterator &rhs)": {
+      "body_hash": "fd1de8b981559592cc308aa186402802",
+      "is_trivial": true
+    },
+    "void idList< _type_, _tag_ >::Iterator< T >::operator++()": {
+      "body_hash": "6c83e67469800beee782e5d19b350d3b",
+      "is_trivial": true
+    },
+    "ID_INLINE const idVec3 & idBounds::operator[](const int index) const": {
+      "body_hash": "888e1d8ea0abc9b24ac75d16b4c4d662",
+      "is_trivial": true
+    },
+    "ID_INLINE idVec3 & idBounds::operator[](const int index)": {
+      "body_hash": "11309c4c4bd50e5c7099938f114c5ea4",
+      "is_trivial": true
+    },
+    "ID_INLINE idBounds idBounds::operator+(const idVec3 &t) const": {
+      "body_hash": "af69c834de79631fd5f806941eef6587",
+      "is_trivial": true
+    },
+    "ID_INLINE idBounds & idBounds::operator+=(const idVec3 &t)": {
+      "body_hash": "369f3a4c37857064d1503a7ec55e4db2",
+      "is_trivial": true
+    },
+    "ID_INLINE idBounds idBounds::operator*(const idMat3 &r) const": {
+      "body_hash": "8b8863ad29d4267417e0c9c60133926f",
+      "is_trivial": true
+    },
+    "ID_INLINE idBounds & idBounds::operator*=(const idMat3 &r)": {
+      "body_hash": "af3ae9bffceb5c911626885c80605939",
+      "is_trivial": true
+    },
+    "ID_INLINE idBounds idBounds::operator+(const idBounds &a) const": {
+      "body_hash": "b1aaf12df421e8024597bbc93453e046",
+      "is_trivial": true
+    },
+    "ID_INLINE idBounds & idBounds::operator+=(const idBounds &a)": {
+      "body_hash": "f052522abdf38b660cbf10396a13ecab",
+      "is_trivial": true
+    },
+    "ID_INLINE idBounds idBounds::operator-(const idBounds &a) const": {
+      "body_hash": "13b0450535d778a99a227e548b1137d8",
+      "is_trivial": true
+    },
+    "ID_INLINE idBounds & idBounds::operator-=(const idBounds &a)": {
+      "body_hash": "de52dc6974d8f161a9db0d2e878c8eea",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idBounds::operator==(const idBounds &a) const": {
+      "body_hash": "cf8f7bc8398d26fee739de6156cc6b5c",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idBounds::operator!=(const idBounds &a) const": {
+      "body_hash": "b6f032345df320125ad7a0b2243b1aa4",
+      "is_trivial": true
+    },
+    "ID_INLINE idBox idBox::operator+(const idVec3 &t) const": {
+      "body_hash": "2bba45fa3f0e9a1caeeccd17511efea9",
+      "is_trivial": true
+    },
+    "ID_INLINE idBox & idBox::operator+=(const idVec3 &t)": {
+      "body_hash": "e085982e8f363ce0f6f783e0b66adf2f",
+      "is_trivial": true
+    },
+    "ID_INLINE idBox idBox::operator*(const idMat3 &r) const": {
+      "body_hash": "836108baf9639e5c56dad54a4fbd7cdf",
+      "is_trivial": true
+    },
+    "ID_INLINE idBox & idBox::operator*=(const idMat3 &r)": {
+      "body_hash": "a9ffd5f153ac8e62b2fe39e4d9013526",
+      "is_trivial": true
+    },
+    "ID_INLINE idBox idBox::operator+(const idBox &a) const": {
+      "body_hash": "16db1357a6faf24fc89f6ff6254ceb07",
+      "is_trivial": true
+    },
+    "ID_INLINE idBox & idBox::operator+=(const idBox &a)": {
+      "body_hash": "be8ad04244b8f8bdbb82e12b7c4950dd",
+      "is_trivial": true
+    },
+    "ID_INLINE idBox idBox::operator-(const idBox &a) const": {
+      "body_hash": "92ef988dcb504dd8bb765759ab3de900",
+      "is_trivial": true
+    },
+    "ID_INLINE idBox & idBox::operator-=(const idBox &a)": {
+      "body_hash": "95c4b6e01d404f443072ab0a03f1185a",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idBox::operator==(const idBox &a) const": {
+      "body_hash": "52e6dd5095c9c11295a765a1edd0ca33",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idBox::operator!=(const idBox &a) const": {
+      "body_hash": "f81ca3795ed57cfc1d347cfb6cf1d949",
+      "is_trivial": true
+    },
+    "ID_INLINE float idSphere::operator[](const int index) const": {
+      "body_hash": "6ce02ce2d12d3e86799087990999f4f0",
+      "is_trivial": true
+    },
+    "ID_INLINE float & idSphere::operator[](const int index)": {
+      "body_hash": "99a916f3e6f6c78f817063b76b74b877",
+      "is_trivial": true
+    },
+    "ID_INLINE idSphere idSphere::operator+(const idVec3 &t) const": {
+      "body_hash": "3c9da2792c964dc349ea17047725fccf",
+      "is_trivial": true
+    },
+    "ID_INLINE idSphere & idSphere::operator+=(const idVec3 &t)": {
+      "body_hash": "73efe7360cecb8e4605e5a2a9ce01700",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idSphere::operator!=(const idSphere &a) const": {
+      "body_hash": "5be65af0dcd51ee3b2cc41e988df760e",
+      "is_trivial": true
     }
   }
 }

@@ -29,15 +29,13 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "precompiled.h"
 
-/*!
-	\brief Manages and retrieves the linked list of console commands for the command system.
+/*
+========================
+CommandLinks
 
-	This function serves as a singleton accessor for the global list of console commands. It maintains a static pointer to the head of the command link list and allows setting a new head when a
-   command link is provided. The function is used during command system initialization to iterate through all registered commands and add them to the system. It supports both retrieving the current
-   command list and setting a new command list head, making it a key part of the command registration and enumeration process.
-
-	\param cl The command link to set as the head of the command list, or NULL to retrieve the current list
-	\return A pointer to the head of the command link list
+The command system is not required for idLib, but we want to be able
+to use the CONSOLE_COMMAND() macro inside idlib, so these must be here.
+========================
 */
 idCommandLink* CommandLinks( idCommandLink* cl )
 {

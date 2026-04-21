@@ -34,6 +34,13 @@ If you have questions concerning this license or the applicable additional terms
 
 idAngles  ang_zero( 0.0f, 0.0f, 0.0f );
 
+/*
+=================
+idAngles::Normalize360
+
+returns angles normalized to the range [0 <= angle < 360]
+=================
+*/
 idAngles& idAngles::Normalize360()
 {
 	int i;
@@ -54,6 +61,13 @@ idAngles& idAngles::Normalize360()
 	return *this;
 }
 
+/*
+=================
+idAngles::Normalize180
+
+returns angles normalized to the range [-180 < angle <= 180]
+=================
+*/
 idAngles& idAngles::Normalize180()
 {
 	Normalize360();
@@ -72,6 +86,11 @@ idAngles& idAngles::Normalize180()
 	return *this;
 }
 
+/*
+=================
+idAngles::ToVectors
+=================
+*/
 void idAngles::ToVectors( idVec3* forward, idVec3* right, idVec3* up ) const
 {
 	float sr, sp, sy, cr, cp, cy;
@@ -93,6 +112,11 @@ void idAngles::ToVectors( idVec3* forward, idVec3* right, idVec3* up ) const
 	}
 }
 
+/*
+=================
+idAngles::ToForward
+=================
+*/
 idVec3 idAngles::ToForward() const
 {
 	float sp, sy, cp, cy;
@@ -103,6 +127,11 @@ idVec3 idAngles::ToForward() const
 	return idVec3( cp * cy, cp * sy, -sp );
 }
 
+/*
+=================
+idAngles::ToQuat
+=================
+*/
 idQuat idAngles::ToQuat() const
 {
 	float sx, cx, sy, cy, sz, cz;
@@ -120,6 +149,11 @@ idQuat idAngles::ToQuat() const
 	return idQuat( cxsy * sz - sxcy * cz, -cxsy * cz - sxcy * sz, sxsy * cz - cxcy * sz, cxcy * cz + sxsy * sz );
 }
 
+/*
+=================
+idAngles::ToRotation
+=================
+*/
 idRotation idAngles::ToRotation() const
 {
 	idVec3 vec;
@@ -163,6 +197,11 @@ idRotation idAngles::ToRotation() const
 	return idRotation( vec3_origin, vec, angle );
 }
 
+/*
+=================
+idAngles::ToMat3
+=================
+*/
 idMat3 idAngles::ToMat3() const
 {
 	idMat3 mat;
@@ -179,17 +218,32 @@ idMat3 idAngles::ToMat3() const
 	return mat;
 }
 
+/*
+=================
+idAngles::ToMat4
+=================
+*/
 idMat4 idAngles::ToMat4() const
 {
 	return ToMat3().ToMat4();
 }
 
+/*
+=================
+idAngles::ToAngularVelocity
+=================
+*/
 idVec3 idAngles::ToAngularVelocity() const
 {
 	idRotation rotation = idAngles::ToRotation();
 	return rotation.GetVec() * DEG2RAD( rotation.GetAngle() );
 }
 
+/*
+=============
+idAngles::ToString
+=============
+*/
 const char* idAngles::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );

@@ -29,15 +29,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __CALLBACK_H__
 #define __CALLBACK_H__
 
-/*!
-	\class idCallback
-	\brief The idCallback class provides a virtual interface for callback mechanisms within the engine.
+/*
+================================================================================================
+This file defines a set of template functors for generating callbacks, specifically
+the OnChange handlers in the CVar system.
+================================================================================================
+*/
 
-	The idCallback class serves as an abstract base class for implementing callback functionality throughout the engine. It defines a virtual destructor, a pure virtual call method, and a pure virtual
-   clone method, indicating that it is designed to be inherited by concrete callback implementations. The Clone method suggests that callback objects may be copied or duplicated, while the Call method
-   represents the primary interface for executing the callback behavior. This design supports flexible callback patterns, likely used for event handling, signal-slot mechanisms, or other notification
-   systems within the engine's architecture.
-
+/*
+================================================
+idCallback
+================================================
 */
 class idCallback
 {
@@ -47,46 +49,18 @@ public:
 	virtual idCallback* Clone() const = 0;
 };
 
-/*!
-	\class idCallbackStatic
-	\brief A callback object that stores and invokes a static function pointer.
+/*
+================================================
+idCallbackStatic
 
-	The idCallbackStatic class provides a mechanism for storing and invoking a static function pointer as a callback. It inherits from idCallback and implements the callback interface for use in the
-   engine's scripting and event systems. The class is designed to hold a function pointer that can be invoked later through the Call method. The Clone method enables creating copies of the callback
-   object, which is useful when callbacks need to be duplicated for different contexts while preserving the original function pointer. This implementation supports the callback pattern where functions
-   can be registered and later executed without requiring object instances, making it suitable for engine-level event handling and script integration.
-
+Callback class that forwards the call to a c-style function
+================================================
 */
 class idCallbackStatic : public idCallback
 {
 public:
-	/*!
-		\brief Initializes the callback object with the provided function pointer.
-
-		This constructor initializes the callback object by storing the provided function pointer for later execution. The stored function pointer can be invoked through other methods of the class to
-	   execute the callback.
-
-		\param f The function pointer to be stored and invoked later.
-	*/
 	idCallbackStatic( void ( *f )() ) { this->f = f; }
-
-	/*!
-		\brief Calls the stored function callback.
-
-		This function invokes the function pointer that was previously stored in the callback object. It is typically used in scripting systems to execute registered callbacks.
-
-	*/
 	void		Call() { f(); }
-
-	/*!
-		\brief Creates and returns a copy of this callback object
-
-		This method implements a virtual clone pattern for callback objects. It allocates memory for a new instance of the same type and initializes it with the function pointer from the current
-	   object. The clone is allocated on the global heap using a specific memory tag for callbacks. This method is typically used when a callback object needs to be duplicated for use in different
-	   contexts or when the original object needs to be preserved while making modifications.
-
-		\return A pointer to a new callback object of the same type as this object, initialized with the same function pointer
-	*/
 	idCallback* Clone() const
 	{
 		// idScopedGlobalHeap	everythingHereGoesInTheGlobalHeap;
@@ -97,51 +71,23 @@ private:
 	void ( *f )();
 };
 
-/*!
-	\brief Creates a copy of this callback object
+/*
+================================================
+idCallbackBindMem
 
-	This function is used to create a deep copy of a callback object. It allocates memory for a new callback object of the same type and initializes it with the same parameters as the original object.
-   This is useful for scenarios where a callback needs to be stored or passed around while maintaining its functionality
-
-	\return A pointer to the newly created callback object
+Callback class that forwards the call to a member function
+================================================
 */
 template<class T>
 class idCallbackBindMem : public idCallback
 {
 public:
-	/*!
-		\brief Constructs an idCallbackBindMem object that binds a member function to an object instance
-
-		This constructor initializes a callback binding by storing a pointer to an object instance and a pointer to a member function. The stored member function will be invoked on the stored object
-	   instance when the callback is executed. The template type T represents the class type that contains the member function.
-
-		\param t Pointer to the object instance on which the member function will be called
-		\param f Pointer to the member function to be bound
-	*/
 	idCallbackBindMem( T* t, void ( T::*f )() )
 	{
 		this->t = t;
 		this->f = f;
 	}
-
-	/*!
-		\brief Executes the bound callback function
-
-		This function invokes the callback method that was previously bound to a specific object and function pointer. It is designed to be called as part of a callback mechanism where the function to
-	   be executed is stored within the object and executed later.
-
-	*/
 	void		Call() { ( t->*f )(); }
-
-	/*!
-		\brief Creates and returns a new copy of this callback object
-
-		This function implements the cloning mechanism for callback objects. It allocates memory for a new instance of the same callback type and initializes it with the stored object instance and
-	   member function pointer. The newly created callback is meant to be used as a independent copy that maintains the same behavior as the original. The clone operation is typically used when
-	   callbacks need to be stored or passed around while preserving their functionality.
-
-		\return A pointer to a newly allocated callback object that is a copy of this instance
-	*/
 	idCallback* Clone() const { return new( TAG_FUNC_CALLBACK ) idCallbackBindMem( t, f ); }
 
 private:
@@ -149,54 +95,24 @@ private:
 	void ( T::*f )();
 };
 
-/*!
-	\brief Creates a copy of this callback object
+/*
+================================================
+idCallbackBindMemArg1
 
-	This method implements the cloning functionality for callback objects. It allocates memory for a new callback instance using the specified memory tag and constructs a new idCallbackBindMemArg1
-   object with the same parameters as the current instance. The clone method is typically used when callbacks need to be copied or stored for later execution, allowing the callback to be invoked
-   multiple times with the same parameters.
-
-	\return A pointer to the newly created callback object that is a copy of this instance
+Callback class that forwards the call to a member function with an additional constant parameter
+================================================
 */
 template<class T, typename A1>
 class idCallbackBindMemArg1 : public idCallback
 {
 public:
-	/*!
-		\brief Constructs a callback binding a member function with one argument to an object instance
-
-		This constructor initializes a callback object that binds a member function of a class to a specific object instance and its first argument. The member function is stored along with the object
-	   instance and the argument value, allowing the callback to be invoked later with the stored values. The template parameters T and A1 represent the class type and the argument type respectively.
-
-		\param t_ Pointer to the object instance on which the member function will be called
-		\param f_ Pointer to the member function to be bound
-		\param a1_ The first argument value to be bound to the member function
-	*/
 	idCallbackBindMemArg1( T* t_, void ( T::*f_ )( A1 ), A1 a1_ ) :
 		t( t_ ),
 		f( f_ ),
 		a1( a1_ )
 	{
 	}
-
-	/*!
-		\brief Executes a stored member function call with a pre-bound argument
-
-		This function performs a member function call using a stored object pointer and function pointer that were previously bound with the template arguments. The function is called with a single
-	   pre-bound argument of type A1 that was provided during the binding process. The function uses a pointer-to-member function syntax to invoke the bound method on the stored object.
-
-	*/
 	void		Call() { ( t->*f )( a1 ); }
-
-	/*!
-		\brief Creates a copy of this callback object
-
-		This function implements a clone pattern for callback objects, allowing for deep copying of callback instances. It allocates memory for a new callback object using the TAG_FUNC_CALLBACK memory
-	   tag and constructs a new idCallbackBindMemArg1 object with the same parameters as the current object. This enables the callback to be safely copied and used in different contexts, such as when
-	   storing callbacks in containers or passing them around in the system.
-
-		\return A pointer to a newly allocated copy of this callback object
-	*/
 	idCallback* Clone() const { return new( TAG_FUNC_CALLBACK ) idCallbackBindMemArg1( t, f, a1 ); }
 
 private:
@@ -223,22 +139,20 @@ private:
 ================================================================================================
 */
 
-//! Creates and returns an idCallbackStatic object initialized with the provided function pointer.
+/*
+========================
+MakeCallback
+========================
+*/
 ID_INLINE_EXTERN idCallbackStatic MakeCallback( void ( *f )() )
 {
 	return idCallbackStatic( f );
 }
 
-/*!
-	\brief Creates a callback object bound to a member function of the given object
-
-	The MakeCallback function is a utility that constructs an idCallbackBindMem object, which binds a member function of a given object to that object instance. This allows for easy creation of
-   callback objects that can be used to invoke member functions on objects without requiring explicit knowledge of the object's type at the call site. The returned callback object encapsulates both
-   the object instance and the member function pointer, providing a clean way to defer execution of member functions.
-
-	\param t Pointer to the object instance that the member function will be bound to
-	\param f Pointer to the member function that will be invoked on the object
-	\return A callback object of type idCallbackBindMem<T> that encapsulates the object instance and member function pointer
+/*
+========================
+MakeCallback
+========================
 */
 template<class T>
 ID_INLINE_EXTERN idCallbackBindMem<T> MakeCallback( T* t, void ( T::*f )() )
@@ -246,17 +160,10 @@ ID_INLINE_EXTERN idCallbackBindMem<T> MakeCallback( T* t, void ( T::*f )() )
 	return idCallbackBindMem<T>( t, f );
 }
 
-/*!
-	\brief Creates and returns a callback object that binds a member function and its first argument to an object instance
-
-	This function is a utility for creating callback objects that encapsulate a member function pointer along with an object instance and a single argument. The returned callback object can be used to
-   invoke the bound member function with the specified argument at a later time. It is typically used in event handling or asynchronous operation scenarios where a function needs to be called with
-   specific parameters.
-
-	\param t Pointer to the object instance on which the member function will be called
-	\param f Pointer to the member function to be invoked
-	\param a1 First argument to be bound to the member function
-	\return A callback object of type idCallbackBindMemArg1 that holds the object instance, member function pointer, and bound argument
+/*
+========================
+MakeCallback
+========================
 */
 template<class T, typename A1>
 ID_INLINE_EXTERN idCallbackBindMemArg1<T, A1> MakeCallback( T* t, void ( T::*f )( A1 ), A1 a1 )

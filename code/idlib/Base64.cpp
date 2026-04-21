@@ -76,11 +76,23 @@ void			  idBase64::Encode( const byte* from, int size )
 	len	  = to - data;
 }
 
+/*
+============
+idBase64::DecodeLength
+returns the minimum size in bytes of the target buffer for decoding
+4 base64 digits <-> 3 bytes
+============
+*/
 int idBase64::DecodeLength() const
 {
 	return 3 * len / 4;
 }
 
+/*
+============
+idBase64::Decode
+============
+*/
 int idBase64::Decode( byte* to ) const
 {
 	unsigned int w; // DG: use int instead of long for 64bit compatibility
@@ -124,11 +136,21 @@ int idBase64::Decode( byte* to ) const
 	return n;
 }
 
+/*
+============
+idBase64::Encode
+============
+*/
 void idBase64::Encode( const idStr& src )
 {
 	Encode( ( const byte* )src.c_str(), src.Length() );
 }
 
+/*
+============
+idBase64::Decode
+============
+*/
 void idBase64::Decode( idStr& dest ) const
 {
 	byte* buf = new( TAG_IDLIB ) byte[DecodeLength() + 1]; // +1 for trailing \0
@@ -138,6 +160,11 @@ void idBase64::Decode( idStr& dest ) const
 	delete[] buf;
 }
 
+/*
+============
+idBase64::Decode
+============
+*/
 void idBase64::Decode( idFile* dest ) const
 {
 	byte* buf = new( TAG_IDLIB ) byte[DecodeLength() + 1]; // +1 for trailing \0

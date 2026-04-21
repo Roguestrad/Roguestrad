@@ -145,20 +145,12 @@ static unsigned int id_crctable[256] =
 
 #endif
 
+// RB: 64 bit fixes, changed long to int
 void CRC32_InitChecksum( unsigned int& crcvalue )
 {
 	crcvalue = CRC32_INIT_VALUE;
 }
 
-/*!
-	\brief Updates the CRC32 value with a new byte of data
-
-	This function performs a single step of the CRC32 calculation by updating the current CRC value with a new byte. It uses a lookup table to efficiently compute the next CRC value based on the
-   current value and the new data byte. The function modifies the crcvalue parameter in place.
-
-	\param crcvalue Reference to the current CRC32 value to be updated
-	\param data The new byte data to incorporate into the CRC calculation
-*/
 void CRC32_Update( unsigned int& crcvalue, const byte data )
 {
 	crcvalue = id_crctable[( crcvalue ^ data ) & 0xff] ^ ( crcvalue >> 8 );
@@ -190,3 +182,4 @@ unsigned int CRC32_BlockChecksum( const void* data, int length )
 	CRC32_FinishChecksum( crc );
 	return crc;
 }
+// RB end

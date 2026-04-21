@@ -32,13 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 
 /*!
 	\class idPlaneSet
-	\brief A set implementation for managing planes with efficient lookup and insertion operations.
-
-	This class provides a specialized container for managing a collection of planes, extending idList to include hash table based lookup for efficient plane finding and insertion. The design enables
-   duplicate detection and automatic insertion of plane opposites to maintain consistency in plane representations. The hash table implementation allows for fast lookups when searching for existing
-   planes within specified tolerance values for both normal vectors and distances. The class is designed for use in geometric computations where plane sets need to be efficiently managed and queried.
-   The FindPlane method handles both searching for existing planes and adding new ones, ensuring that for each plane added, its opposite is also maintained in the set.
-
+	\brief A set implementation for managing planes with efficient lookup capabilities.
 */
 class idPlaneSet : public idList<idPlane>
 {
@@ -50,19 +44,7 @@ public:
 		hash.Free();
 	}
 
-	/*!
-		\brief Finds an existing plane in the set or adds a new one, returning its index.
-
-		This function searches for a plane in the set that matches the given plane within the specified normal and distance tolerances. If no match is found, it adds the plane and its opposite to the
-	   set. The function uses a hash table for efficient lookup and handles plane types specially by adding both the plane and its negation to maintain consistency. The normalEps and distEps
-	   parameters control the tolerance for plane comparison, with distEps having an assertion that it must be less than or equal to 0.125f.
-
-		\param plane The plane to find or add to the set
-		\param normalEps Epsilon value for normal vector comparison
-		\param distEps Epsilon value for distance comparison
-		\return The index of the found or newly added plane in the set
-		\throws assertion failure if distEps is greater than 0.125f
-	*/
+	//! Finds an existing plane in the set that matches the given plane within the specified epsilon thresholds.
 	int FindPlane( const idPlane& plane, const float normalEps, const float distEps );
 
 private:

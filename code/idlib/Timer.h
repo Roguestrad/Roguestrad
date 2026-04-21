@@ -30,31 +30,18 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __TIMER_H__
 #define __TIMER_H__
 
-/*!
-	\class idTimer
-	\brief A timer class for measuring elapsed time with high precision.
+/*
+===============================================================================
 
-	The idTimer class provides functionality for tracking elapsed time with high precision using system clock ticks. It supports starting, stopping, and accumulating time intervals while maintaining
-   internal state to ensure correct timing operations. The class is designed to be used for performance measurement and profiling within the engine, with methods for initializing base clock ticks to
-   calibrate timing accuracy. The timer maintains a stopped state by default and can only transition between stopped and started states through explicit start and stop operations. The class supports
-   arithmetic operations between timer objects to facilitate time calculations and comparisons for engine performance monitoring.
+	Clock tick counter. Should only be used for profiling.
 
+===============================================================================
 */
+
 class idTimer
 {
 public:
-	/*!
-		\brief Initializes a new instance of the idTimer class.
-
-		This constructor initializes the timer state to TS_STOPPED and sets the clock ticks to zero.
-
-	*/
 	idTimer();
-
-	/*!
-		\brief Constructs an idTimer object with the specified clock ticks value.
-		\param clockTicks The initial clock ticks value to store in the timer
-	*/
 	idTimer( double clockTicks );
 	~idTimer();
 
@@ -63,49 +50,10 @@ public:
 	idTimer& operator+=( const idTimer& t );
 	idTimer& operator-=( const idTimer& t );
 
-	/*!
-		\brief Initializes the timer and sets its state to started
-
-		This function is used to start a timer that was previously stopped. It validates that the timer is in a stopped state before starting it, and records the starting timestamp using the system
-	   clock. The timer state is updated to indicate that it has started.
-
-		\throws assertion failure if the timer is not in TS_STOPPED state
-	*/
 	void	 Start();
-
-	/*!
-		\brief Stops the timer and records the elapsed time
-
-		This function stops a running timer and accumulates the elapsed time since the last start. It asserts that the timer is currently in the started state before performing the stop operation. The
-	   function also handles base clock tick initialization and adjustment when stopping the timer.
-
-		\throws assertion failure if the timer is not in TS_STARTED state
-	*/
 	void	 Stop();
-
-	//! Clears the timer by resetting its accumulated clock ticks to zero.
 	void	 Clear();
-
-	/*!
-		\brief Returns the elapsed time in milliseconds since the timer was started
-
-		This function calculates and returns the elapsed time in milliseconds based on the timer's internal clock ticks. It asserts that the timer is in a stopped state before performing the
-	   calculation. The calculation divides the accumulated clock ticks by the system's clock ticks per second multiplied by 0.001 to convert to milliseconds.
-
-		\return The elapsed time in milliseconds as a double precision floating point number
-		\throws assertion failure if the timer is not in a stopped state
-	*/
 	double	 ClockTicks() const;
-
-	/*!
-		\brief Returns the elapsed time in milliseconds since the timer was started
-
-		This function calculates and returns the elapsed time in milliseconds based on the timer's internal clock ticks. It asserts that the timer is in a stopped state before performing the
-	   calculation. The calculation divides the accumulated clock ticks by the system's clock ticks per second multiplied by 0.001 to convert to milliseconds.
-
-		\return The elapsed time in milliseconds as a double precision floating point number
-		\throws assertion failure if the timer is not in a stopped state
-	*/
 	double	 Milliseconds() const;
 
 private:
@@ -114,17 +62,14 @@ private:
 	double start;
 	double clockTicks;
 
-	/*!
-		\brief Initializes the base clock ticks value by measuring and finding the minimum clock ticks over 1000 iterations.
-
-		This function is used to calibrate the timer by measuring the minimum clock ticks value over 1000 iterations. It creates a temporary timer object, starts and stops it repeatedly to measure the
-	   clock ticks, and records the minimum value found. This minimum value is then assigned to the base member variable of the timer object. The function is marked as const because it only modifies
-	   the base member of the object it's called on.
-
-	*/
 	void   InitBaseClockTicks() const;
 };
 
+/*
+=================
+idTimer::idTimer
+=================
+*/
 ID_INLINE idTimer::idTimer()
 {
 	state	   = TS_STOPPED;
@@ -197,6 +142,11 @@ ID_INLINE idTimer& idTimer::operator-=( const idTimer& t )
 	return *this;
 }
 
+/*
+=================
+idTimer::Start
+=================
+*/
 ID_INLINE void idTimer::Start()
 {
 	assert( state == TS_STOPPED );
@@ -204,6 +154,11 @@ ID_INLINE void idTimer::Start()
 	start = idLib::sys->GetClockTicks();
 }
 
+/*
+=================
+idTimer::Stop
+=================
+*/
 ID_INLINE void idTimer::Stop()
 {
 	assert( state == TS_STARTED );
@@ -213,97 +168,57 @@ ID_INLINE void idTimer::Stop()
 	state = TS_STOPPED;
 }
 
+/*
+=================
+idTimer::Clear
+=================
+*/
 ID_INLINE void idTimer::Clear()
 {
 	clockTicks = 0.0;
 }
 
+/*
+=================
+idTimer::ClockTicks
+=================
+*/
 ID_INLINE double idTimer::ClockTicks() const
 {
 	assert( state == TS_STOPPED );
 	return clockTicks;
 }
 
+/*
+=================
+idTimer::Milliseconds
+=================
+*/
 ID_INLINE double idTimer::Milliseconds() const
 {
 	assert( state == TS_STOPPED );
 	return clockTicks / ( idLib::sys->ClockTicksPerSecond() * 0.001 );
 }
 
-/*!
-	\class idTimerReport
-	\brief Manages and reports timing data for multiple timers within the engine.
+/*
+===============================================================================
 
-	The idTimerReport class provides functionality to track and report timing information for various engine components. It maintains a collection of named timers and allows adding new timer reports,
-   resetting all timers, and printing formatted timing reports. The class supports adding timing data from existing timers to the report, either by updating existing entries or creating new ones. It
-   ensures proper synchronization between timer entries and their corresponding names, and provides methods to clear all timer data or reset individual timers. This class is typically used for
-   performance monitoring and profiling within the engine's timing subsystem.
+	Report of multiple named timers.
 
+===============================================================================
 */
+
 class idTimerReport
 {
 public:
-	//! Initializes a new instance of the idTimerReport class.
 	idTimerReport();
-
-	/*!
-		\brief Destroys the idTimerReport object and clears its internal data.
-
-		The destructor for the idTimerReport class cleans up any allocated resources by calling the Clear method. This ensures that all timer data is properly released when the object goes out of
-	   scope.
-
-	*/
 	~idTimerReport();
 
-	/*!
-		\brief Sets the name of the timer report to the specified string or defaults to "Timer Report" if null.
-		\param name The name to assign to the timer report, or null to use the default name
-	*/
 	void SetReportName( const char* name );
-
-	/*!
-		\brief Adds a new timer report with the specified name and returns its index.
-
-		This function appends a new timer report to the list of reports. It takes a name for the report and creates a new timer instance associated with it. If the name is valid and non-empty, the
-	   function adds the name to the names list and initializes a new timer, returning its index in the timers array. If the name is invalid or empty, the function returns -1.
-
-		\param name Name of the timer report to be added.
-		\return Index of the newly added timer report, or -1 if the name is invalid or empty.
-	*/
 	int	 AddReport( const char* name );
-
-	//! Clears all timer data and resets the timer report state.
 	void Clear();
-
-	/*!
-		\brief Clears all timers in the timer report
-
-		Resets all timers stored in the timer report by clearing their accumulated data. This function ensures that the timers are properly initialized and ready for new measurements.
-
-		\throws assertion failure if the number of timers does not match the number of names
-	*/
 	void Reset();
-
-	/*!
-		\brief Prints a timing report for all registered timers.
-
-		This function outputs a formatted timing report to the common log stream. It iterates through all registered timers, prints the name and execution time of each timer, and calculates the total
-	   time for the entire report. The time is displayed in seconds with two decimal places for better readability. The function assumes that the number of timers matches the number of names, as
-	   verified by an assertion.
-
-		\throws assertion failure if the number of timers does not match the number of names
-	*/
 	void PrintReport();
-
-	/*!
-		\brief Adds timing data from a timer to the report, either updating an existing entry or creating a new one.
-
-		This function adds the timing data from the provided timer to an existing timer entry in the report if a timer with the specified name already exists. If no such timer exists, it creates a new
-	   entry for the timer name and initializes it with the provided timing data. Both the timers and names arrays are maintained in sync to ensure proper tracking.
-
-		\param name Name of the timer to add time to or create.
-		\param time Pointer to the timer containing the timing data to be added.
-	*/
 	void AddTime( const char* name, idTimer* time );
 
 private:

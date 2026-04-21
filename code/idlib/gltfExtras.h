@@ -67,37 +67,14 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef GLTF_EXTRAS_H
 	#define GLTF_EXTRAS_H
 
-/*!
-	\class gltfExtraStub
-	\brief A stub class for handling extra GLTF data.
-*/
 class gltfExtraStub
 {
 public:
-	//! Constructs a new gltfExtraStub object.
 	gltfExtraStub() { }
 };
 
-/*!
-	\brief Parses scatter information from a GLTF file using the provided token and parser.
-
-	This function prepares for parsing by unread the provided token and then creates a scatter information array to hold the parsed data. It utilizes the GLTF array item parsing mechanism to parse the
-   emitter object within the scatter information.
-
-	\param token The token to be unread and used as a starting point for parsing.
-	\param parser The lexer used to parse the GLTF file content.
-*/
 gltfExtraParser( Scatter, gltfExtraStub );
 
-/*!
-	\brief Parses camera lens frame data from a GLTF file using the provided token and parser
-
-	This function initializes a new list to store double precision numbers and a number array item parser. It then uses the number array parser to populate the list with data from the parser based on
-   the provided token
-
-	\param token The token containing the data to parse
-	\param parser The lexer parser used to extract the camera lens frame data
-*/
 gltfExtraParser( CameraLensFrames, idList<double> );
 
 #endif // GLTF_EXTRAS_H

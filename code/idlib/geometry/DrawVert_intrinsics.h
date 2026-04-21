@@ -81,16 +81,6 @@ ID_INLINE_EXTERN __m128i FastF32toF16( __m128i f32_bits )
 }
 #endif
 
-/*!
-	\brief Converts a 32-bit floating-point value to a 16-bit half-precision floating-point value using a fast conversion method.
-
-	This function performs a fast conversion from 32-bit IEEE 754 floating-point format to 16-bit half-precision floating-point format. It extracts the sign, exponent, and mantissa bits from the input
-   float, adjusts the exponent bias, and then recombines them into the half-precision format. The function handles underflow and overflow conditions by clamping the exponent to the valid range for
-   half-precision floating-point numbers. The conversion is optimized for speed rather than maximum precision.
-
-	\param f32 The 32-bit floating-point value to convert to half-precision format
-	\return The input 32-bit float value converted to a 16-bit half-precision floating-point value
-*/
 ID_INLINE_EXTERN halfFloat_t Scalar_FastF32toF16( float f32 )
 {
 	const int f32_sign_mask				= 1U << IEEE_FLT_SIGN_BIT;
@@ -192,16 +182,6 @@ ID_INLINE_EXTERN __m128 LoadSkinnedDrawVertPosition( const idDrawVert& base, con
 }
 #endif
 
-/*!
-	\brief Computes the transformed position of a skinned vertex using weighted joint matrices and the vertex's position.
-
-	This function calculates the final position of a vertex in world space by blending the transformations from up to four joints. Each joint contributes according to the weights stored in the
-   vertex's color2 component, which are normalized to the range [0, 1]. The transformation is applied to the vertex's position, which is treated as a homogeneous coordinate with w=1.
-
-	\param vert The input vertex containing position and joint weight information
-	\param joints An array of joint transformation matrices used for skinning
-	\return The transformed position of the vertex after applying the weighted joint transformations.
-*/
 ID_INLINE_EXTERN idVec3 Scalar_LoadSkinnedDrawVertPosition( const idDrawVert& vert, const idJointMat* joints )
 {
 	const idJointMat& j0 = joints[vert.color[0]];

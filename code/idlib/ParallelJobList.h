@@ -63,148 +63,88 @@ enum jobListParallelism_t {
 	#undef AddJob
 #endif
 
-/*!
-	\class idParallelJobList
-	\brief A parallel job list that manages execution of multiple jobs across multiple threads with synchronization support.
+/*
+================================================
+idParallelJobList
 
-	This class provides a mechanism for organizing and executing parallel jobs across multiple threads while supporting synchronization points. It allows adding jobs with associated data, inserting synchronization points, and submitting the job list for execution with optional waiting for other job lists. The class tracks execution timing and provides methods for waiting for job completion or checking if jobs have finished. Jobs are executed in parallel with configurable parallelism levels, and the system maintains statistics about processing time and thread utilization. The class supports profiling through color association and provides unique identification for each job list instance. The implementation handles thread management internally through a job list threads handler.
-
+A job should be at least a couple of 1000 clock cycles in
+order to outweigh any job switching overhead. On the other
+hand a job should consume no more than a couple of
+100,000 clock cycles to maintain a good load balance over
+multiple processing units.
+================================================
 */
 class idParallelJobList
 {
 	friend class idParallelJobManagerLocal;
 
 public:
-
-/*!
-	\brief Adds a job to the parallel job list for execution
-
-	The function adds a job to the parallel job list by calling the internal job list thread handler. It first verifies that the job function is properly registered before adding it to the execution queue
-
-	\param function The function pointer to the job to be executed
-	\param data Pointer to the data to be passed to the job function
-	\throws assertion failure if the job function is not registered
-*/
 	void			 AddJob( jobRun_t function, void* data );
-
-	//! Adds a SPURS job to the parallel job list and returns a pointer to the newly added job.
 	CellSpursJob128* AddJobSPURS();
-
-	/*!
-		\brief Inserts a synchronization point into the job list using the specified sync type
-
-		This function adds a synchronization point to the job list, which will be processed by the job list threads. The synchronization point is defined by the provided sync type parameter. The
-	   function delegates the actual insertion to the internal job list threads object.
-
-		\param syncType The synchronization type to use for the sync point
-	*/
 	void			 InsertSyncPoint( jobSyncType_t syncType );
 
-	/*!
-		\brief Submits the jobs in this list for execution
-
-		This function submits all jobs contained within this job list to the parallel execution system. It can optionally wait for another job list to complete before starting execution. The
-	   parallelism parameter controls how many threads can execute jobs concurrently. The function ensures that the wait list is not the same as this job list to prevent circular dependencies.
-
-		\param waitForJobList Optional job list that must complete before this job list starts execution, can be NULL
-		\param parallelism Controls the number of concurrent threads that will execute jobs, defaults to JOBLIST_PARALLELISM_DEFAULT
-		\throws assertion failure if waitForJobList is the same object as this
-	*/
+	// Submit the jobs in this list.
 	void			 Submit( idParallelJobList* waitForJobList = NULL, int parallelism = JOBLIST_PARALLELISM_DEFAULT );
 
-	/*!
-		\brief Waits for all jobs in the parallel job list to complete execution.
-
-		This function waits for all jobs in the parallel job list to complete execution. It checks if the job list threads are initialized and then calls the Wait method on them. If the job list
-	   threads are not initialized, the function does nothing. The function will block until all jobs are finished, potentially spinning in place if any jobs are not yet completed.
-
-	*/
+	// Wait for the jobs in this list to finish. Will spin in place if any jobs are not done.
 	void			 Wait();
 
-	/*!
-		\brief Attempts to wait for all jobs in the list to complete and returns immediately, indicating whether all jobs finished.
-
-		This function checks if all jobs in the parallel job list have completed execution. It returns true if all jobs are done, or false if any job is still running. The function does not block and
-	   will return immediately, making it suitable for non-blocking synchronization checks. If there are no threads associated with the job list, it will return true immediately.
-
-		\return true if all jobs in the list have completed, false if any job is still running
-	*/
+	// Try to wait for the jobs in this list to finish but either way return immediately. Returns true if all jobs are done.
 	bool			 TryWait();
 
-	//! Returns true if the job list has been submitted.
+	// returns true if the job list has been submitted.
 	bool			 IsSubmitted() const;
 
-	//! Returns the number of jobs that have been executed in this job list.
+	// Get the number of jobs executed in this job list.
 	unsigned int	 GetNumExecutedJobs() const;
 
-	//! Returns the number of sync points in the job list.
+	// Get the number of sync points.
 	unsigned int	 GetNumSyncs() const;
 
-	//! Returns the time at which the job list was submitted in microseconds.
+	// Time at which the job list was submitted.
 	uint64			 GetSubmitTimeMicroSec() const;
 
-	//! Returns the time at which execution of this job list started in microseconds.
+	// Time at which execution of this job list started.
 	uint64			 GetStartTimeMicroSec() const;
 
-	//! Returns the time at which all jobs in the list were executed.
+	// Time at which all jobs in the list were executed.
 	uint64			 GetFinishTimeMicroSec() const;
 
-	//! Returns the time the host thread waited for the job list to finish in microseconds.
+	// Time the host thread waited for this job list to finish.
 	uint64			 GetWaitTimeMicroSec() const;
 
-	//! Returns the total processing time in microseconds for all units in the job list.
+	// Get the total time all units spent processing this job list.
 	uint64			 GetTotalProcessingTimeMicroSec() const;
 
-	//! Returns the total wasted time in microseconds across all threads in the job list.
+	// Get the total time all units wasted while processing this job list.
 	uint64			 GetTotalWastedTimeMicroSec() const;
 
-	//! Returns the processing time in microseconds for the specified unit.
+	// Time the given unit spent processing this job list.
 	uint64			 GetUnitProcessingTimeMicroSec( int unit ) const;
 
-	//! Returns the amount of time a specific unit wasted while processing the job list.
+	// Time the given unit wasted while processing this job list.
 	uint64			 GetUnitWastedTimeMicroSec( int unit ) const;
 
-	//! Returns the ID of the job list.
+	// Get the job list ID
 	jobListId_t		 GetId() const;
-
-	//! Returns the color used for profiling.
+	// Get the color for profiling.
 	const idColor*	 GetColor() const { return this->color; }
 
 private:
 	class idParallelJobList_Threads* jobListThreads;
 	const idColor*					 color;
 
-	/*!
-		\brief Initializes a new parallel job list with the specified parameters.
-
-		Constructs a new parallel job list object with the given job list ID, priority, maximum number of jobs, and maximum number of synchronizations. The color parameter is used to associate a color
-	   with the job list for visualization purposes. The function asserts that the priority is not set to NONE.
-
-		\param id Unique identifier for the job list
-		\param priority Priority level for the job list
-		\param maxJobs Maximum number of jobs that can be handled
-		\param maxSyncs Maximum number of synchronizations allowed
-		\param color Color associated with the job list for visualization
-		\throws Assertion failure if the priority is set to JOBLIST_PRIORITY_NONE
-	*/
 	idParallelJobList( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs, const idColor* color );
-
-	/*!
-		\brief Destructor for idParallelJobList that cleans up the job list threads.
-
-		This destructor is responsible for properly cleaning up the resources associated with the idParallelJobList instance. It specifically deletes the jobListThreads member, which manages the
-	   threads used for parallel job execution. The destructor ensures that all allocated thread resources are released when the object goes out of scope.
-
-	*/
 	~idParallelJobList();
 };
 
-/*!
-	\class idParallelJobManager
-	\brief Manages parallel execution of job lists with allocation, scheduling, and synchronization capabilities.
+/*
+================================================
+idParallelJobManager
 
-	This interface provides the core functionality for managing parallel job execution within a multi-threaded environment. It serves as the central coordinator for job list allocation, deallocation, and execution scheduling. The manager maintains a collection of job lists that can be processed concurrently across multiple processing units. It offers methods to initialize and shut down the parallel execution environment, allocate job lists with specific priorities and resource limits, and free previously allocated job lists. The system tracks the number of active and available job lists, provides access to individual job lists by index, and supports waiting for all job lists to complete execution. The manager is responsible for coordinating the distribution of work across available processing units and ensuring proper synchronization between parallel operations.
-
+This is the only interface through which job lists
+should be allocated or freed.
+================================================
 */
 class idParallelJobManager
 {
@@ -229,40 +169,19 @@ public:
 
 extern idParallelJobManager* parallelJobManager;
 
-/*!
-	\brief Registers a job function with an associated debug name for parallel job tracking.
-
-	This function allows registering job functions that can be tracked and debugged by associating them with a descriptive name. The registration is only performed if the job function is not already
-   registered. The function stores the job function and its name in an internal array, incrementing a counter to track the number of registered jobs. This is typically used for debugging and
-   monitoring parallel execution.
-
-	\param function The job function to register
-	\param name The debug name associated with the job function
-*/
+// jobRun_t functions can have the debug name associated with them
+// by explicitly calling this, or using the REGISTER_PARALLEL_JOB()
+// static variable macro.
 void						 RegisterJob( jobRun_t function, const char* name );
 
-/*!
-	\class idParallelJobRegistration
-	\brief Manages registration of parallel jobs for execution within the engine's parallel processing system.
-
-	This class serves as a registration mechanism for parallel jobs that can be executed concurrently within the engine's parallel processing framework. The class stores a function pointer and
-   associated name to enable the parallel job system to identify and execute the job appropriately. It is designed to integrate with the engine's existing parallel processing infrastructure, allowing
-   for efficient distribution of work across multiple threads. The registration process ensures that jobs are properly set up for concurrent execution while maintaining debugging and tracking
-   capabilities through the provided name identifier.
-
+/*
+================================================
+idParallelJobRegistration
+================================================
 */
 class idParallelJobRegistration
 {
 public:
-	/*!
-		\brief Constructs a parallel job registration object and registers the specified job function with the given name.
-
-		This constructor initializes a parallel job registration by storing the provided job function and name. It internally calls the RegisterJob method to register the job with the parallel job
-	   system. The job function will be executed in a parallel context, and the name is used for identification and debugging purposes.
-
-		\param function The function pointer to the job that will be executed in parallel.
-		\param name A string identifier for the job, used for debugging and tracking.
-	*/
 	idParallelJobRegistration( jobRun_t function, const char* name );
 };
 

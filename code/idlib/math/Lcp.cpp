@@ -77,18 +77,14 @@ ALIGN16( const unsigned int SIMD_DW_four[4] )			   = { 4, 4, 4, 4 };
 ALIGN16( const unsigned int SIMD_DW_index[4] )			   = { 0, 1, 2, 3 };
 ALIGN16( const int SIMD_DW_not3[4] )					   = { ~3, ~3, ~3, ~3 };
 #endif // #if defined(LCP_SIMD)
+/*
+========================
+Multiply_SIMD
 
-/*!
-	\brief Multiplies two arrays of floats element-wise using SIMD optimization
+dst[i] = src0[i] * src1[i];
 
-	This function performs element-wise multiplication of two float arrays, optimizing performance by using SIMD instructions when available. It handles alignment requirements for SIMD operations and
-   falls back to scalar multiplication for cases where SIMD cannot be used or when alignment is not met. The function processes elements in chunks of four when SIMD is enabled, and processes remaining
-   elements individually after the SIMD loop.
-
-	\param dst destination array where the results are stored
-	\param src0 first source array of floats
-	\param src1 second source array of floats
-	\param count number of elements to process in the arrays
+Assumes the source and destination have the same memory alignment.
+========================
 */
 static void Multiply_SIMD( float* dst, const float* src0, const float* src1, const int count )
 {
@@ -134,18 +130,14 @@ static void Multiply_SIMD( float* dst, const float* src0, const float* src1, con
 	}
 }
 
-/*!
-	\brief Performs SIMD-optimized multiply-add operations on arrays of floating-point numbers
+/*
+========================
+MultiplyAdd_SIMD
 
-	This function applies a multiply-add operation to two arrays of floating-point numbers, where each element of the destination array is updated by adding the product of the corresponding source
-   element and a constant value. The function is optimized using SIMD instructions when available, with special handling for memory alignment. It processes elements in chunks of four when possible,
-   using either SSE instructions or standard scalar operations depending on SIMD support.
+dst[i] += constant * src[i];
 
-	\param dst Destination array where results are stored
-	\param constant Scalar value multiplied with source elements
-	\param src Source array of floating-point values
-	\param count Number of elements to process in both arrays
-	\throws assertion failure if memory alignment requirements are not met
+Assumes the source and destination have the same memory alignment.
+========================
 */
 static void MultiplyAdd_SIMD( float* dst, const float constant, const float* src, const int count )
 {
@@ -190,17 +182,12 @@ static void MultiplyAdd_SIMD( float* dst, const float constant, const float* src
 	}
 }
 
-/*!
-	\brief Computes the dot product of two float arrays using SIMD optimization when available
+/*
+========================
+DotProduct_SIMD
 
-	This function calculates the dot product of two float arrays of a specified count using SIMD instructions for optimized performance. When SIMD is not available, it falls back to a standard loop
-   implementation. The function assumes that both input arrays are 16-byte aligned for optimal SIMD performance.
-
-	\param src0 Pointer to the first float array
-	\param src1 Pointer to the second float array
-	\param count Number of elements to process in both arrays
-	\return The computed dot product of the two input arrays
-	\throws Assertion failure if the input arrays are not 16-byte aligned
+dot = src0[0] * src1[0] + src0[1] * src1[1] + src0[2] * src1[2] + ...
+========================
 */
 static float DotProduct_SIMD( const float* src0, const float* src1, const int count )
 {
@@ -272,20 +259,15 @@ static float DotProduct_SIMD( const float* src0, const float* src1, const int co
 #endif
 }
 
-/*!
-	\brief Solves a lower triangular system of equations using SIMD optimization
+/*
+========================
+LowerTriangularSolve_SIMD
 
-	This function performs forward substitution to solve a lower triangular matrix equation of the form L * x = b, where L is a lower triangular matrix, x is the unknown vector, and b is the known
-   right-hand side vector. The implementation uses SIMD instructions for performance optimization. The function handles special cases for small matrix sizes by using switch statements to avoid loop
-   overhead, and for larger matrices, it processes rows in batches of four using SSE instructions. The skip parameter allows for partial solving of the system starting from a specified row index. The
-   matrix L is assumed to be stored in row-major order with a column count that is a multiple of 4.
-
-	\param L Lower triangular matrix stored in row-major order
-	\param x Solution vector to be filled
-	\param b Right-hand side vector
-	\param n Number of rows to solve
-	\param skip Row index to start solving from
-	\throws assertion failure if the number of columns in L is not a multiple of 4
+Solves x in Lx = b for the n * n sub-matrix of L.
+	* if skip > 0 the first skip elements of x are assumed to be valid already
+	* L has to be a lower triangular matrix with (implicit) ones on the diagonal
+	* x == b is allowed
+========================
 */
 static void LowerTriangularSolve_SIMD( const idMatX& L, float* x, const float* b, const int n, int skip )
 {
@@ -603,18 +585,14 @@ static void LowerTriangularSolve_SIMD( const idMatX& L, float* x, const float* b
 #endif
 }
 
-/*!
-	\brief Solves the linear system L'x = b for a lower triangular matrix L using SIMD optimization
+/*
+========================
+LowerTriangularSolveTranspose_SIMD
 
-	This function performs backward substitution to solve a linear system where L is a lower triangular matrix and the operation is performed on the transpose of L. The implementation uses SIMD
-   instructions for optimized performance when processing four rows at a time. It handles both aligned and unaligned memory access patterns and includes special handling for cases where the number of
-   rows is not a multiple of four.
-
-	\param L Lower triangular matrix used in the linear system
-	\param x Solution vector to be computed
-	\param b Right-hand side vector of the linear system
-	\param n Number of rows/columns in the matrix
-	\throws assertion failure if the number of columns in matrix L is not a multiple of 4
+Solves x in L'x = b for the n * n sub-matrix of L.
+	* L has to be a lower triangular matrix with (implicit) ones on the diagonal
+	* x == b is allowed
+========================
 */
 static void LowerTriangularSolveTranspose_SIMD( const idMatX& L, float* x, const float* b, const int n )
 {
@@ -768,17 +746,15 @@ static void LowerTriangularSolveTranspose_SIMD( const idMatX& L, float* x, const
 #endif
 }
 
-/*!
-	\brief Solves an upper triangular system of linear equations using SIMD optimization
+/*
+========================
+UpperTriangularSolve_SIMD
 
-	This function performs backward substitution to solve an upper triangular system of linear equations represented by the matrix U. It uses the inverse diagonal elements for optimization and
-   processes the system in reverse order from the last row to the first. The function implements SIMD optimization for improved performance.
-
-	\param U The upper triangular matrix containing the system coefficients
-	\param invDiag Array of inverse diagonal elements of matrix U
-	\param x Output array to store the solution vector
-	\param b Input array containing the right-hand side values
-	\param n The dimension of the square matrix U and vectors x, b
+Solves x in Ux = b for the n * n sub-matrix of U.
+	* U has to be a upper triangular matrix
+	* invDiag is the reciprical of the diagonal of the upper triangular matrix.
+	* x == b is allowed
+========================
 */
 static void UpperTriangularSolve_SIMD( const idMatX& U, const float* invDiag, float* x, const float* b, const int n )
 {
@@ -792,17 +768,13 @@ static void UpperTriangularSolve_SIMD( const idMatX& U, const float* invDiag, fl
 	}
 }
 
-/*!
-	\brief Performs in-place LU factorization on a sub-matrix using SIMD optimization and returns true if successful.
+/*
+========================
+LU_Factor_SIMD
 
-	This function implements LU factorization for a matrix sub-matrix of size n by n. It modifies the input matrix in-place to store the LU decomposition. The diagonal elements are inverted and stored
-   in the invDiag vector. The implementation uses SIMD optimizations to improve performance during the factorization process. The function checks for numerical stability by verifying that diagonal
-   elements are not too close to zero.
-
-	\param mat The matrix to be factorized, modified in-place to contain the LU decomposition
-	\param invDiag Vector to store the inverse of diagonal elements from the factorized matrix
-	\param n The size of the square sub-matrix to factorize
-	\return True if the factorization was successful, false if a diagonal element was too close to zero to be invertible.
+In-place factorization LU of the n * n sub-matrix of mat. The reciprocal of the diagonal
+elements of U are stored in invDiag. No pivoting is used.
+========================
 */
 static bool LU_Factor_SIMD( idMatX& mat, idVecX& invDiag, const int n )
 {
@@ -882,17 +854,15 @@ static bool LU_Factor_SIMD( idMatX& mat, idVecX& invDiag, const int n )
 	return true;
 }
 
-/*!
-	\brief Performs LDLT factorization on a matrix using SIMD optimization
+/*
+========================
+LDLT_Factor_SIMD
 
-	This function computes the LDLT factorization of a symmetric matrix, where L is a lower triangular matrix with ones on the diagonal, D is a diagonal matrix, and the factorization is represented as
-   A = L * D * L^T. The operation is optimized using SIMD instructions for performance. The matrix is modified in-place during the computation. The function also computes the inverse of the diagonal
-   elements and stores them in the invDiag vector.
+In-place factorization LDL' of the n * n sub-matrix of mat. The reciprocal of the diagonal
+elements are stored in invDiag.
 
-	\param mat The matrix to be factorized, modified in-place during computation
-	\param invDiag Output vector containing the inverse of the diagonal elements of the D matrix
-	\param n The size of the matrix to factorize
-	\return true if the factorization was successful, false if a diagonal element was too small to be used as a divisor
+NOTE:	The number of columns of mat must be a multiple of 4.
+========================
 */
 static bool LDLT_Factor_SIMD( idMatX& mat, idVecX& invDiag, const int n )
 {
@@ -1356,26 +1326,10 @@ static bool LDLT_Factor_SIMD( idMatX& mat, idVecX& invDiag, const int n )
 #endif
 }
 
-/*!
-	\brief Computes the maximum step size for LCP solving using SIMD instructions
-
-	This function calculates the maximum step size for solving Linear Complementarity Problems using SIMD instructions. It evaluates constraints based on force and acceleration deltas, considering
-   both bounded and unbounded variables. The function determines the limiting constraint and side for the step calculation, handling various cases including clamped variables and bounded constraints.
-
-	\param f Current force values
-	\param a Current acceleration values
-	\param delta_f Force deltas
-	\param delta_a Acceleration deltas
-	\param lo Lower bounds
-	\param hi Upper bounds
-	\param side Constraint sides
-	\param numUnbounded Number of unbounded variables
-	\param numClamped Number of clamped variables
-	\param d Dimension count
-	\param dir Direction of movement
-	\param maxStep Output maximum step size
-	\param limit Output limiting variable index
-	\param limitSide Output limiting side
+/*
+========================
+GetMaxStep_SIMD
+========================
 */
 static void GetMaxStep_SIMD( const float* f,
 	const float*						  a,
@@ -1829,34 +1783,22 @@ static void LDLT_Factor_Test()
 #define LDLT_Factor					  LDLT_Factor_SIMD
 #define GetMaxStep					  GetMaxStep_SIMD
 
-/*!
-	\class idLCP_Square
-	\brief A solver for linear complementarity problems using square matrix factorization techniques.
+/*
+================================================================================================
 
-	This class implements a specialized solver for linear complementarity problems (LCP) that operates on square matrices. It provides functionality for solving LCP systems with both bounded and
-   unbounded variables, including handling clamped variables through LU factorization and triangular solves. The class manages variable permutations to separate unbounded from bounded variables and
-   supports dynamic addition and removal of clamped variables during the solving process. It also includes methods for calculating force and acceleration deltas, which are essential for physics
-   simulations and constraint solving in game engines. The solver is designed to work with the broader idLCP framework while providing specific optimizations for square matrix operations.
+	idLCP_Square
 
+================================================================================================
+*/
+
+/*
+================================================
+idLCP_Square
+================================================
 */
 class idLCP_Square : public idLCP
 {
 public:
-	/*!
-		\brief Solves a linear complementarity problem with bounds using a square matrix.
-
-		This function solves a linear complementarity problem (LCP) where the system is defined by a square matrix and vectors representing bounds. It handles both unbounded and bounded variables,
-	   using a combination of factorization and iterative methods to find a solution that satisfies the complementarity conditions. The solver permutes variables to separate unbounded from bounded
-	   ones and processes them accordingly, with special handling for boundary conditions.
-
-		\param o_m The square matrix defining the LCP system
-		\param o_x On input, the initial guess for the solution; on output, the computed solution
-		\param o_b The right-hand side vector of the system
-		\param o_lo Lower bounds for each variable
-		\param o_hi Upper bounds for each variable
-		\param o_boxIndex Optional array mapping variables to box constraints, or NULL if not used
-		\return True if the LCP was solved successfully, false if factorization failed or an invalid step was encountered
-	*/
 	virtual bool Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, const idVecX& o_lo, const idVecX& o_hi, const int* o_boxIndex );
 
 private:
@@ -1875,109 +1817,22 @@ private:
 	int*	permuted;		  // index to keep track of the permutation
 	bool	padded;			  // set to true if the rows of the initial matrix are 16 byte padded
 
-	/*!
-		\brief Factors a clamped linear complementarity problem matrix and solves the linear complementarity problem with clamped variables using lower and upper triangular solves.
-
-		This function performs the factorization of a clamped linear complementarity problem matrix. It copies the clamped rows into a temporary matrix and then applies LU factorization to solve the
-	   linear complementarity problem with clamped variables. The function is designed to handle the specific case where some variables are clamped, meaning they are constrained to lie within certain
-	   bounds.
-
-		\return true if the LU factorization succeeds, false otherwise
-	*/
 	bool	FactorClamped();
-
-	/*!
-		\brief Solves the linear complementarity problem with clamped variables using lower and upper triangular solves.
-
-		This function solves the linear complementarity problem by performing two triangular solves. First, it solves the lower triangular system using the clamped matrix and the input vector b. Then,
-	   it solves the upper triangular system using the clamped matrix, diagonal vector, and the intermediate result from the first solve to compute the final solution vector x.
-
-		\param x the solution vector to be computed
-		\param b the input vector for the linear system
-	*/
 	void	SolveClamped( idVecX& x, const float* b );
-
-	/*!
-		\brief Swaps the elements at indices i and j in the LCP square data structure.
-
-		This function performs a swap operation between two elements at specified indices within the LCP square data structure. It handles multiple internal arrays and matrices including row pointers,
-	   matrix m, vectors b, lo, hi, a, and f, as well as auxiliary arrays boxIndex, side, and permuted. The function ensures that swapping is only performed when the indices are different to avoid
-	   unnecessary operations. Special handling is included for the boxIndex array which may be null.
-
-		\param i first index to swap
-		\param j second index to swap
-	*/
 	void	Swap( int i, int j );
-
-	/*!
-		\brief Adds a clamped variable to the LCP Square matrix by updating the factorization
-
-		This function updates the LCP Square matrix factorization by adding a new clamped variable. It handles the mathematical operations required to maintain the factorization when a new variable is
-	   clamped. The function swaps the clamped variable index with the current number of clamped variables, then updates the L matrix by computing new row values and the U matrix by computing new
-	   column values. Finally, it updates the diagonal element and increments the count of clamped variables.
-
-		\param r The index of the clamped variable to add
-		\throws assertion failure if r is less than numClamped
-	*/
 	void	AddClamped( int r );
-
-	/*!
-		\brief Removes a clamped row and column from the LCP square factorization and updates the factorization accordingly.
-
-		This function removes the specified row and column from the clamped system and adjusts the factorization to maintain numerical stability. It handles the swapping of the removed row/column with
-	   the last row/column and performs necessary updates to the factorization matrix. The function includes error checking and handles exceptional cases where floating point values might cause
-	   failures during the factorization update process.
-
-		\param r The index of the row and column to be removed from the clamped system
-	*/
 	void	RemoveClamped( int r );
-
-	/*!
-		\brief Calculates the force delta for a specified direction and dimension, adjusting the acceleration change for the given variable index.
-
-		This function updates the delta force for a specific dimension and solves for the clamped force delta. If the direction is positive, the resulting delta force values are negated. The function
-	   uses temporary memory allocation for matrix column extraction and performs a clamped force solving operation.
-
-		\param d The dimension index for which to calculate the force delta
-		\param dir The direction of the force, used to determine sign adjustment for the delta force
-	*/
 	void	CalcForceDelta( int d, float dir );
-
-	/*!
-		\brief Calculates the change in acceleration for a specified variable index by updating the force value with a step change.
-
-		This function computes the acceleration delta for variables starting from the first clamped variable up to and including the specified index. It uses the dot product of row pointers with the
-	   force delta and adds the contribution from the diagonal element multiplied by the current variable's force delta. The calculation affects variables that are not clamped and includes the current
-	   variable itself.
-
-		\param d the index of the variable for which to calculate the acceleration change
-	*/
 	void	CalcAccelDelta( int d );
-
-	/*!
-		\brief Updates the force value for a specific variable by applying a step change and modifies the acceleration for a degree of freedom in the LCP solver.
-
-		This function modifies the force vector by applying a step change to the specified degree of freedom. It updates the force value for the given variable index by adding the product of the step
-	   size and the delta force for that variable. The function also updates the acceleration for the specified degree of freedom in the LCP solver.
-
-		\param d The degree of freedom index to modify
-		\param step The step size to apply to the force change
-	*/
 	void	ChangeForce( int d, float step );
-
-	/*!
-		\brief Updates the acceleration for a specific degree of freedom in the LCP solver.
-
-		This function modifies the acceleration value for a given degree of freedom by applying a step size to the delta acceleration vector. It operates only on variables that are not clamped,
-	   including the current variable, allowing their acceleration to be adjusted. The function uses a multiply-add operation to update the acceleration values starting from the first unclamped
-	   variable up to the specified degree of freedom.
-
-		\param d the degree of freedom index to update acceleration for
-		\param step the step size to apply to the acceleration update
-	*/
 	void	ChangeAccel( int d, float step );
 };
 
+/*
+========================
+idLCP_Square::FactorClamped
+========================
+*/
 bool idLCP_Square::FactorClamped()
 {
 	for( int i = 0; i < numClamped; i++ ) {
@@ -1986,6 +1841,11 @@ bool idLCP_Square::FactorClamped()
 	return LU_Factor( clamped, diagonal, numClamped );
 }
 
+/*
+========================
+idLCP_Square::SolveClamped
+========================
+*/
 void idLCP_Square::SolveClamped( idVecX& x, const float* b )
 {
 	// solve L
@@ -1995,6 +1855,11 @@ void idLCP_Square::SolveClamped( idVecX& x, const float* b )
 	UpperTriangularSolve( clamped, diagonal.ToFloatPtr(), x.ToFloatPtr(), x.ToFloatPtr(), numClamped );
 }
 
+/*
+========================
+idLCP_Square::Swap
+========================
+*/
 void idLCP_Square::Swap( int i, int j )
 {
 	if( i == j ) {
@@ -2015,6 +1880,11 @@ void idLCP_Square::Swap( int i, int j )
 	SwapValues( permuted[i], permuted[j] );
 }
 
+/*
+========================
+idLCP_Square::AddClamped
+========================
+*/
 void idLCP_Square::AddClamped( int r )
 {
 	assert( r >= numClamped );
@@ -2047,6 +1917,11 @@ void idLCP_Square::AddClamped( int r )
 	numClamped++;
 }
 
+/*
+========================
+idLCP_Square::RemoveClamped
+========================
+*/
 void idLCP_Square::RemoveClamped( int r )
 {
 	if( !verify( r < numClamped ) ) {
@@ -2166,6 +2041,13 @@ void idLCP_Square::RemoveClamped( int r )
 	return;
 }
 
+/*
+========================
+idLCP_Square::CalcForceDelta
+
+Modifies this->delta_f.
+========================
+*/
 void idLCP_Square::CalcForceDelta( int d, float dir )
 {
 	delta_f[d] = dir;
@@ -2192,6 +2074,13 @@ void idLCP_Square::CalcForceDelta( int d, float dir )
 	}
 }
 
+/*
+========================
+idLCP_Square::CalcAccelDelta
+
+Modifies this->delta_a and uses this->delta_f.
+========================
+*/
 ID_INLINE void idLCP_Square::CalcAccelDelta( int d )
 {
 	// only the not clamped variables, including the current variable, can have a change in acceleration
@@ -2202,6 +2091,13 @@ ID_INLINE void idLCP_Square::CalcAccelDelta( int d )
 	}
 }
 
+/*
+========================
+idLCP_Square::ChangeForce
+
+Modifies this->f and uses this->delta_f.
+========================
+*/
 ID_INLINE void idLCP_Square::ChangeForce( int d, float step )
 {
 	// only the clamped variables and current variable have a force delta unequal zero
@@ -2209,12 +2105,24 @@ ID_INLINE void idLCP_Square::ChangeForce( int d, float step )
 	f[d] += step * delta_f[d];
 }
 
+/*
+========================
+idLCP_Square::ChangeAccel
+
+Modifies this->a and uses this->delta_a.
+========================
+*/
 ID_INLINE void idLCP_Square::ChangeAccel( int d, float step )
 {
 	// only the not clamped variables, including the current variable, can have an acceleration unequal zero
 	MultiplyAdd( a.ToFloatPtr() + numClamped, step, delta_a.ToFloatPtr() + numClamped, d - numClamped + 1 );
 }
 
+/*
+========================
+idLCP_Square::Solve
+========================
+*/
 bool idLCP_Square::Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, const idVecX& o_lo, const idVecX& o_hi, const int* o_boxIndex )
 {
 	// true when the matrix rows are 16 byte padded
@@ -2480,36 +2388,22 @@ bool idLCP_Square::Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, con
 	return true;
 }
 
-/*!
-	\class idLCP_Symmetric
-	\brief A symmetric linear complementarity problem solver with support for box constraints and clamped variables.
+/*
+================================================================================================
 
-	This class provides methods for solving symmetric linear complementarity problems (LCPs) that arise in physics simulation, particularly in rigid body dynamics. It supports both unbounded and
-   bounded variables through box constraints, and handles clamped variables that are frozen in certain directions during the solution process. The implementation uses LDLT factorization for numerical
-   stability and includes specialized methods for adding and removing clamped variables, which is essential for dynamic constraint handling. The class also provides functionality for computing force
-   and acceleration deltas, which are important for iterative solvers that update constraint forces based on velocity changes. The design supports both direct solution methods and incremental updates
-   to the factorization, enabling efficient handling of time-varying constraints.
+	idLCP_Symmetric
 
+================================================================================================
+*/
+
+/*
+================================================
+idLCP_Symmetric
+================================================
 */
 class idLCP_Symmetric : public idLCP
 {
 public:
-	/*!
-		\brief Solves a symmetric linear complementarity problem with optional box constraints.
-
-		This function solves a symmetric linear complementarity problem of the form M*x = b + f, where f is the force vector and x is the solution vector. The problem is subject to box constraints
-	   defined by lower and upper bounds. The function handles both unbounded and bounded variables, and uses a factorization-based approach to find a solution. It supports permutation of variables to
-	   optimize the solution process, with special handling for unbounded variables and box constraints. The matrix M is assumed to be symmetric and positive semi-definite. The solution vector x is
-	   updated in place.
-
-		\param o_m The symmetric matrix M of the linear complementarity problem
-		\param o_x The solution vector x, updated in place with the result
-		\param o_b The vector b in the linear complementarity problem
-		\param o_lo The lower bounds for variables, with -INFINITUM indicating no lower bound
-		\param o_hi The upper bounds for variables, with INFINITUM indicating no upper bound
-		\param o_boxIndex Optional array of indices for box constraints, or NULL if not used
-		\return True if the solution converged successfully, false if the factorization failed or an unsatisfiable constraint was encountered
-	*/
 	virtual bool Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, const idVecX& o_lo, const idVecX& o_hi, const int* o_boxIndex );
 
 private:
@@ -2531,109 +2425,22 @@ private:
 	int*	permuted;			// index to keep track of the permutation
 	bool	padded;				// set to true if the rows of the initial matrix are 16 byte padded
 
-	/*!
-		\brief Performs LDLT factorization on a clamped system to solve a linear complementarity problem.
-
-		This function prepares the clamped system by copying the row pointers into the clamped matrix and then applies LDLT factorization to solve the linear complementarity problem. The factorization
-	   is performed in-place on the clamped matrix and diagonal vector.
-
-		\return True if the factorization was successful, false otherwise.
-	*/
 	bool	FactorClamped();
-
-	/*!
-		\brief Solves a clamped linear complementarity problem using LU decomposition and triangular solves.
-
-		This function performs the solution of a clamped linear complementarity problem by first solving the lower triangular system, then scaling with the diagonal, and finally solving the upper
-	   triangular system. It uses precomputed LU decomposition data stored in clamped. The function modifies the x vector in place with the solution and updates the clampedChangeStart to reflect the
-	   current clamped region size.
-
-		\param x The vector to store the solution, modified in place
-		\param b The right-hand side vector for the linear system
-	*/
 	void	SolveClamped( idVecX& x, const float* b );
-
-	/*!
-		\brief Swaps elements at indices i and j in the symmetric LCP data structures.
-
-		This function performs a swap operation between two elements identified by indices i and j within various data structures of the symmetric LCP class. The swap affects row pointers, matrix
-	   columns, vector elements, and other associated arrays. The function includes a check to avoid unnecessary operations when i equals j. Additionally, if boxIndex is not NULL, it swaps the
-	   corresponding elements in that array as well.
-
-		\param i index of the first element to swap
-		\param j index of the second element to swap
-	*/
 	void	Swap( int i, int j );
-
-	/*!
-		\brief Adds a clamped row to the symmetric LCP matrix by updating the factorization.
-
-		This function inserts a new clamped variable into the symmetric LCP system by updating the matrix factorization. It handles the necessary computations for adding a new row and column to the
-	   factored matrix, performing either a cached or uncached lower triangular solve depending on the useSolveCache flag. The function ensures numerical stability by checking for near-zero diagonal
-	   values and clamping them to a minimum non-denormal value.
-
-		\param r The row index to be added as a clamped variable
-		\param useSolveCache Flag indicating whether to use cached solve results for performance
-	*/
 	void	AddClamped( int r, bool useSolveCache );
-
-	/*!
-		\brief Removes a clamped row and column from the LCP symmetric matrix
-
-		This function removes a specified clamped row and column from the LCP symmetric matrix and updates the factorization accordingly. It handles the case where the removed row/column is the last
-	   one, in which case no swapping is needed. For other cases, it swaps the row/column to be removed with the last row/column and then performs updates to the factorized matrix. The function also
-	   handles special cases for the first row and the last row/column updates. The factorization is updated using a simultaneous update/downdate algorithm that maintains the numerical stability of
-	   the matrix decomposition.
-
-		\param r the index of the clamped row/column to be removed
-	*/
 	void	RemoveClamped( int r );
-
-	/*!
-		\brief Sets the force delta for a specified direction and solves the clamped constraints.
-
-		Computes the change in acceleration for variables up to and including the specified index. The function first sets the delta force for the given direction, then solves the clamped constraints
-	   if any are present. If the direction is positive, the resulting force delta is flipped in sign for the clamped variables.
-
-		\param d the index of the variable to set the force delta for
-		\param dir the direction of the force delta
-	*/
 	void	CalcForceDelta( int d, float dir );
-
-	/*!
-		\brief Computes the change in acceleration for variables up to and including the specified index.
-
-		This function calculates the acceleration delta for variables in the LCP (Linear Complementarity Problem) system. It processes variables starting from the first clamped variable up to and
-	   including the specified index. The calculation involves a dot product between the row pointer and the force delta vector, plus a contribution from the diagonal element and the force delta of
-	   the current variable. The function modifies the acceleration delta array for the affected variables.
-
-		\param d The index up to which the acceleration change is calculated, inclusive
-	*/
 	void	CalcAccelDelta( int d );
-
-	/*!
-		\brief Updates the force value for a specific variable by applying a step change.
-
-		This function modifies the force value for a specified variable in the LCP solver by applying a step change. It updates the force vector by adding a scaled delta force for the specified
-	   variable, while also updating the force vector for the clamped variables.
-
-		\param d the index of the variable to update
-		\param step the step size to apply to the force change
-	*/
 	void	ChangeForce( int d, float step );
-
-	/*!
-		\brief Updates the acceleration for a specific variable in the LCP solver by modifying the delta_a array.
-
-		This function modifies the acceleration values for variables in the LCP solver. It operates on a subset of the delta_a array starting from the index numClamped, updating elements from
-	   numClamped to d-1. The modification is performed using the MultiplyAdd operation which adds the product of step and the delta_a values to the corresponding a values.
-
-		\param d The index of the variable to update, inclusive
-		\param step The step size to apply to the acceleration update
-	*/
 	void	ChangeAccel( int d, float step );
 };
 
+/*
+========================
+idLCP_Symmetric::FactorClamped
+========================
+*/
 bool idLCP_Symmetric::FactorClamped()
 {
 	clampedChangeStart = 0;
@@ -2644,6 +2451,11 @@ bool idLCP_Symmetric::FactorClamped()
 	return LDLT_Factor( clamped, diagonal, numClamped );
 }
 
+/*
+========================
+idLCP_Symmetric::SolveClamped
+========================
+*/
 void idLCP_Symmetric::SolveClamped( idVecX& x, const float* b )
 {
 	// solve L
@@ -2658,6 +2470,11 @@ void idLCP_Symmetric::SolveClamped( idVecX& x, const float* b )
 	clampedChangeStart = numClamped;
 }
 
+/*
+========================
+idLCP_Symmetric::Swap
+========================
+*/
 void idLCP_Symmetric::Swap( int i, int j )
 {
 	if( i == j ) {
@@ -2678,6 +2495,11 @@ void idLCP_Symmetric::Swap( int i, int j )
 	SwapValues( permuted[i], permuted[j] );
 }
 
+/*
+========================
+idLCP_Symmetric::AddClamped
+========================
+*/
 void idLCP_Symmetric::AddClamped( int r, bool useSolveCache )
 {
 	assert( r >= numClamped );
@@ -2723,6 +2545,11 @@ void idLCP_Symmetric::AddClamped( int r, bool useSolveCache )
 	numClamped++;
 }
 
+/*
+========================
+idLCP_Symmetric::RemoveClamped
+========================
+*/
 void idLCP_Symmetric::RemoveClamped( int r )
 {
 	if( !verify( r < numClamped ) ) {
@@ -2895,6 +2722,13 @@ void idLCP_Symmetric::RemoveClamped( int r )
 	}
 }
 
+/*
+========================
+idLCP_Symmetric::CalcForceDelta
+
+Modifies this->delta_f.
+========================
+*/
 ID_INLINE void idLCP_Symmetric::CalcForceDelta( int d, float dir )
 {
 	delta_f[d] = dir;
@@ -2915,6 +2749,13 @@ ID_INLINE void idLCP_Symmetric::CalcForceDelta( int d, float dir )
 	}
 }
 
+/*
+========================
+idLCP_Symmetric::CalcAccelDelta
+
+Modifies this->delta_a and uses this->delta_f.
+========================
+*/
 ID_INLINE void idLCP_Symmetric::CalcAccelDelta( int d )
 {
 	// only the not clamped variables, including the current variable, can have a change in acceleration
@@ -2925,6 +2766,13 @@ ID_INLINE void idLCP_Symmetric::CalcAccelDelta( int d )
 	}
 }
 
+/*
+========================
+idLCP_Symmetric::ChangeForce
+
+Modifies this->f and uses this->delta_f.
+========================
+*/
 ID_INLINE void idLCP_Symmetric::ChangeForce( int d, float step )
 {
 	// only the clamped variables and current variable have a force delta unequal zero
@@ -2932,12 +2780,24 @@ ID_INLINE void idLCP_Symmetric::ChangeForce( int d, float step )
 	f[d] += step * delta_f[d];
 }
 
+/*
+========================
+idLCP_Symmetric::ChangeAccel
+
+Modifies this->a and uses this->delta_a.
+========================
+*/
 ID_INLINE void idLCP_Symmetric::ChangeAccel( int d, float step )
 {
 	// only the not clamped variables, including the current variable, can have an acceleration unequal zero
 	MultiplyAdd( a.ToFloatPtr() + numClamped, step, delta_a.ToFloatPtr() + numClamped, d - numClamped + 1 );
 }
 
+/*
+========================
+idLCP_Symmetric::Solve
+========================
+*/
 bool idLCP_Symmetric::Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, const idVecX& o_lo, const idVecX& o_hi, const int* o_boxIndex )
 {
 	// true when the matrix rows are 16 byte padded
@@ -3207,6 +3067,19 @@ bool idLCP_Symmetric::Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, 
 	return true;
 }
 
+/*
+================================================================================================
+
+	idLCP
+
+================================================================================================
+*/
+
+/*
+========================
+idLCP::AllocSquare
+========================
+*/
 idLCP* idLCP::AllocSquare()
 {
 	idLCP* lcp = new idLCP_Square;
@@ -3214,6 +3087,11 @@ idLCP* idLCP::AllocSquare()
 	return lcp;
 }
 
+/*
+========================
+idLCP::AllocSymmetric
+========================
+*/
 idLCP* idLCP::AllocSymmetric()
 {
 	idLCP* lcp = new idLCP_Symmetric;
@@ -3221,20 +3099,40 @@ idLCP* idLCP::AllocSymmetric()
 	return lcp;
 }
 
+/*
+========================
+idLCP::~idLCP
+========================
+*/
 idLCP::~idLCP()
 {
 }
 
+/*
+========================
+idLCP::SetMaxIterations
+========================
+*/
 void idLCP::SetMaxIterations( int max )
 {
 	maxIterations = max;
 }
 
+/*
+========================
+idLCP::GetMaxIterations
+========================
+*/
 int idLCP::GetMaxIterations()
 {
 	return maxIterations;
 }
 
+/*
+========================
+idLCP::Test_f
+========================
+*/
 void idLCP::Test_f( const idCmdArgs& args )
 {
 #ifdef ENABLE_TEST_CODE

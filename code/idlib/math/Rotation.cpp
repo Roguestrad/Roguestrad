@@ -30,11 +30,21 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
+/*
+============
+idRotation::ToAngles
+============
+*/
 idAngles idRotation::ToAngles() const
 {
 	return ToMat3().ToAngles();
 }
 
+/*
+============
+idRotation::ToQuat
+============
+*/
 idQuat idRotation::ToQuat() const
 {
 	float a, s, c;
@@ -44,6 +54,11 @@ idQuat idRotation::ToQuat() const
 	return idQuat( vec.x * s, vec.y * s, vec.z * s, c );
 }
 
+/*
+============
+idRotation::toMat3
+============
+*/
 const idMat3& idRotation::ToMat3() const
 {
 	float wx, wy, wz;
@@ -96,16 +111,31 @@ const idMat3& idRotation::ToMat3() const
 	return axis;
 }
 
+/*
+============
+idRotation::ToMat4
+============
+*/
 idMat4 idRotation::ToMat4() const
 {
 	return ToMat3().ToMat4();
 }
 
+/*
+============
+idRotation::ToAngularVelocity
+============
+*/
 idVec3 idRotation::ToAngularVelocity() const
 {
 	return vec * DEG2RAD( angle );
 }
 
+/*
+============
+idRotation::Normalize180
+============
+*/
 void idRotation::Normalize180()
 {
 	angle -= floor( angle / 360.0f ) * 360.0f;
@@ -116,6 +146,11 @@ void idRotation::Normalize180()
 	}
 }
 
+/*
+============
+idRotation::Normalize360
+============
+*/
 void idRotation::Normalize360()
 {
 	angle -= floor( angle / 360.0f ) * 360.0f;

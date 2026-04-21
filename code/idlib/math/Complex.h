@@ -30,32 +30,24 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_COMPLEX_H__
 #define __MATH_COMPLEX_H__
 
-/*!
-	\class idComplex
-	\brief A class representing complex numbers with basic arithmetic operations and utilities.
+/*
+===============================================================================
 
-	The idComplex class provides a complete implementation for handling complex numbers in the engine, supporting standard arithmetic operations, comparisons, and utility functions. It is designed to
-   be lightweight and efficient, with inline methods for performance-critical operations. The class supports both scalar and complex number operations, making it suitable for mathematical computations
-   involving complex values, such as signal processing or physics simulations within the engine. The interface is intended to be intuitive for developers working with complex number mathematics while
-   maintaining compatibility with the engine's existing codebase patterns.
+  Complex number
 
+===============================================================================
 */
+
 class idComplex
 {
 public:
 	float r; // real part
 	float i; // imaginary part
 
-	//! Constructs a new complex number with default values.
 	idComplex();
-
-	//! Constructs a complex number with the specified real and imaginary parts.
 	idComplex( const float r, const float i );
 
-	//! Sets the real and imaginary parts of the complex number.
 	void			 Set( const float r, const float i );
-
-	//! Sets both the real and imaginary components of the complex number to zero.
 	void			 Zero();
 
 	float			 operator[]( int index ) const;
@@ -89,33 +81,19 @@ public:
 	friend idComplex operator+( const float a, const idComplex& b );
 	friend idComplex operator-( const float a, const idComplex& b );
 
-	//! Compares two complex numbers for exact equality.
-	bool			 Compare( const idComplex& a ) const;
+	bool			 Compare( const idComplex& a ) const;					   // exact compare, no epsilon
+	bool			 Compare( const idComplex& a, const float epsilon ) const; // compare with epsilon
+	bool			 operator==( const idComplex& a ) const;				   // exact compare, no epsilon
+	bool			 operator!=( const idComplex& a ) const;				   // exact compare, no epsilon
 
-	//! Compares this complex number with another complex number using an epsilon value for floating-point comparison.
-	bool			 Compare( const idComplex& a, const float epsilon ) const;
-	bool			 operator==( const idComplex& a ) const; // exact compare, no epsilon
-	bool			 operator!=( const idComplex& a ) const; // exact compare, no epsilon
-
-	//! Returns the reciprocal of this complex number.
 	idComplex		 Reciprocal() const;
-
-	//! Computes the square root of this complex number.
 	idComplex		 Sqrt() const;
-
-	//! Computes the absolute value (magnitude) of the complex number.
 	float			 Abs() const;
 
-	//! Returns the dimension of the complex number, which is always 2.
 	int				 GetDimension() const;
 
-	//! Returns a pointer to the real component of this complex number.
 	const float*	 ToFloatPtr() const;
-
-	//! Returns a pointer to the real component of this complex number.
 	float*			 ToFloatPtr();
-
-	//! Converts the complex number to a string representation with the specified precision.
 	const char*		 ToString( int precision = 2 ) const;
 };
 

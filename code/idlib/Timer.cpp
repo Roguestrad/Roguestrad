@@ -32,6 +32,11 @@ If you have questions concerning this license or the applicable additional terms
 
 double idTimer::base = -1.0;
 
+/*
+=================
+idTimer::InitBaseClockTicks
+=================
+*/
 void   idTimer::InitBaseClockTicks() const
 {
 	idTimer timer;
@@ -52,20 +57,40 @@ void   idTimer::InitBaseClockTicks() const
 	base = b;
 }
 
+/*
+=================
+idTimerReport::idTimerReport
+=================
+*/
 idTimerReport::idTimerReport()
 {
 }
 
+/*
+=================
+idTimerReport::SetReportName
+=================
+*/
 void idTimerReport::SetReportName( const char* name )
 {
 	reportName = ( name ) ? name : "Timer Report";
 }
 
+/*
+=================
+idTimerReport::~idTimerReport
+=================
+*/
 idTimerReport::~idTimerReport()
 {
 	Clear();
 }
 
+/*
+=================
+idTimerReport::AddReport
+=================
+*/
 int idTimerReport::AddReport( const char* name )
 {
 	if( name && *name ) {
@@ -75,6 +100,11 @@ int idTimerReport::AddReport( const char* name )
 	return -1;
 }
 
+/*
+=================
+idTimerReport::Clear
+=================
+*/
 void idTimerReport::Clear()
 {
 	timers.DeleteContents( true );
@@ -82,6 +112,11 @@ void idTimerReport::Clear()
 	reportName.Clear();
 }
 
+/*
+=================
+idTimerReport::Reset
+=================
+*/
 void idTimerReport::Reset()
 {
 	assert( timers.Num() == names.Num() );
@@ -90,6 +125,11 @@ void idTimerReport::Reset()
 	}
 }
 
+/*
+=================
+idTimerReport::AddTime
+=================
+*/
 void idTimerReport::AddTime( const char* name, idTimer* time )
 {
 	assert( timers.Num() == names.Num() );
@@ -109,6 +149,11 @@ void idTimerReport::AddTime( const char* name, idTimer* time )
 	}
 }
 
+/*
+=================
+idTimerReport::PrintReport
+=================
+*/
 void idTimerReport::PrintReport()
 {
 	assert( timers.Num() == names.Num() );

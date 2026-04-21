@@ -32,162 +32,70 @@ If you have questions concerning this license or the applicable additional terms
 
 /*!
 	\class idLinkList
-	\brief A circular doubly-linked list implementation used for managing ordered collections of objects within the engine.
+	\brief A doubly linked list implementation designed for efficient insertion and removal operations within a container of typed objects.
 
-	The idLinkList class provides a template-based circular doubly-linked list structure that is commonly used throughout the engine for managing collections of objects with ordered relationships. It
-   supports efficient insertion, removal, and traversal operations while maintaining list integrity through careful pointer management. The list is designed to be embedded within other objects, with
-   each node maintaining a link to its owner object. The circular nature of the list allows for simple iteration from any node and provides a consistent interface for list manipulation. The class is
-   intended to be used as a base class for other components that need to maintain ordered collections, such as entity lists, event queues, or resource managers. Memory management for nodes is not
-   specified, but the list provides mechanisms for properly cleaning up elements during destruction. The implementation treats the list as a circular structure where the head pointer points to a
-   special sentinel node that is used to mark the beginning and end of the list traversal.
+	This class provides a doubly linked list structure that allows for efficient insertion and removal of elements at any position within the list. It uses sentinel nodes to simplify list operations
+   and avoid special cases for empty lists. The list maintains pointers to both the previous and next nodes, enabling traversal in both directions. Each node can be associated with an owner object to
+   track which container it belongs to. The implementation supports common list operations such as adding elements to the front or back, inserting before or after a given node, and removing the
+   current node from the list. The list is designed to be embedded within other objects, where each object can be part of multiple lists simultaneously.
 
 */
 template<class type>
 class idLinkList
 {
 public:
-	/*!
-		\brief Initializes a new instance of the idLinkList class with default values.
-
-		The constructor sets the owner pointer to NULL and initializes the head, next, and prev pointers to point to the object itself, effectively creating an empty circular doubly-linked list.
-
-	*/
+	//! Initializes an empty linked list with self-referencing sentinel nodes.
 	idLinkList();
 
-	/*!
-		\brief Destructor for the idLinkList class that clears all elements from the list.
-
-		The destructor for idLinkList calls the Clear method to ensure all elements in the list are properly removed and cleaned up. This ensures that any resources associated with the elements are
-	   released when the list goes out of scope.
-
-	*/
+	//! Destroys the link list and clears all elements.
 	~idLinkList();
 
 	//! Checks whether the linked list is empty.
 	bool		IsListEmpty() const;
 
-	/*!
-		\brief Checks if the list is in a valid state by verifying that the head pointer does not point to itself.
-
-		This function is used to determine whether the linked list is properly initialized and not in a corrupted state. It returns true if the list is valid, indicated by the head pointer not
-	   pointing to the list object itself. This is a common idiom for detecting invalid or empty lists in doubly-linked list implementations.
-
-		\return True if the list is valid and the head pointer points to a different object, false otherwise.
-	*/
+	//! Checks if the list is in a linked state.
 	bool		InList() const;
 
-	//! Returns the total number of elements contained in the linked list.
+	//! Returns the number of elements in the linked list.
 	int			Num() const;
 
 	//! Clears all elements from the linked list
 	void		Clear();
 
-	/*!
-		\brief Inserts this node before the specified node in the linked list.
-
-		This function removes the current node from its existing position in the linked list and inserts it before the given node. It updates all necessary pointers to maintain the integrity of the
-	   linked list structure. The operation involves setting the next pointer of the current node to point to the specified node, updating the previous pointer of the specified node to point to the
-	   current node, and adjusting the previous pointer of the node that was previously before the specified node to point to the current node.
-
-		\param node The node before which this node will be inserted
-	*/
+	//! Inserts this node before the specified node in the linked list.
 	void		InsertBefore( idLinkList& node );
 
-	/*!
-		\brief Inserts this node into the linked list after the specified node.
-
-		This function removes the current node from its existing position in the linked list and inserts it immediately after the provided node. The operation maintains the integrity of the linked
-	   list structure by properly updating the previous and next pointers of the surrounding nodes. The head pointer of the current node is set to match the head pointer of the specified node,
-	   ensuring proper list traversal.
-
-		\param node The node after which this node will be inserted
-	*/
+	//! Inserts this node after the specified node in a linked list.
 	void		InsertAfter( idLinkList& node );
 
-	/*!
-		\brief Adds all elements from another linked list to the end of this list.
-
-		This function transfers all elements from the specified linked list to the end of the current list. The elements are inserted in the same order as they appear in the source list. The source
-	   list becomes empty after this operation.
-
-		\param node The linked list whose elements will be added to the end of this list
-	*/
+	//! Adds the specified linked list node to the end of this linked list.
 	void		AddToEnd( idLinkList& node );
 
-	/*!
-		\brief Adds the specified node to the front of the list.
-
-		This function inserts the given node at the beginning of the linked list by calling InsertAfter with the head node. The node being added becomes the new first element in the list.
-
-		\param node The node to add to the front of the list
-	*/
+	//! Adds the specified node to the front of the list.
 	void		AddToFront( idLinkList& node );
 
-	/*!
-		\brief Removes the current node from the linked list by updating the links of adjacent nodes
-
-		This function removes the current node from a doubly-linked list structure by adjusting the next and previous pointers of the neighboring nodes. It also resets the current node's own next and
-	   previous pointers to point to itself, and updates the list head pointer to reference the current node. This operation effectively detaches the node from the list while maintaining the integrity
-	   of the remaining structure. The function is typically used during iteration or when cleaning up nodes in a list.
-
-	*/
+	//! Removes the current node from the linked list by updating adjacent node pointers.
 	void		Remove();
 
-	/*!
-		\brief Returns the next element in the linked list or NULL if at the end
-
-		This method is used to iterate through a linked list structure. It checks if the next pointer is valid and not pointing back to the head of the list, which would indicate the end of the list.
-	   If the conditions are met, it returns the owner of the next node, otherwise it returns NULL. This is commonly used in hash table implementations where linked lists are used to handle
-	   collisions.
-
-		\return A pointer to the next element in the list, or NULL if there are no more elements
-	*/
+	//! Returns the next element in the linked list or NULL if at the end.
 	type*		Next() const;
 
-	/*!
-		\brief Returns the previous element in the linked list or NULL if there is no previous element.
-
-		This function retrieves the previous element in the linked list structure. It checks if the current previous pointer is valid and not equal to the head of the list. If these conditions are not
-	   met, it returns NULL. Otherwise, it returns the owner of the previous node.
-
-		\return A pointer to the previous element in the list, or NULL if there is no previous element.
-	*/
+	//! Returns the previous element in the linked list or NULL if there is no previous element.
 	type*		Prev() const;
 
-	//! Returns the owner object of the link list.
+	//! Returns a pointer to the owner of the link list.
 	type*		Owner() const;
 
-	/*!
-		\brief Sets the owner object for this link list.
-
-		This function assigns the provided object as the owner of the link list. The owner is typically used to track which entity or object owns this list, and is often used for memory management or
-	   tracking purposes.
-
-		\param object The object to set as the owner of the link list.
-	*/
+	//! Sets the owner object for the link list.
 	void		SetOwner( type* object );
 
-	//! Returns a pointer to the head of the link list.
+	//! Returns a pointer to the head of the list.
 	idLinkList* ListHead() const;
 
-	/*!
-		\brief Returns the next node in the linked list or NULL if the end has been reached.
-
-		This function traverses the linked list by returning the next node in the sequence. It checks if the current node's next pointer points to the head of the list, which indicates the end of the
-	   list. In such case, it returns NULL. Otherwise, it returns the next node in the list.
-
-		\return A pointer to the next node in the linked list, or NULL if the end of the list has been reached
-	*/
+	//! Returns the next node in the list or null if at the end.
 	idLinkList* NextNode() const;
 
-	/*!
-		\brief Returns the previous node in the linked list or NULL if at the head.
-
-		This method retrieves the previous node in the linked list structure. It checks if the current node is at the head of the list and returns NULL in that case, otherwise it returns the previous
-	   node. The method is const and does not modify the list structure.
-
-		\return The previous node in the linked list or NULL if the current node is at the head
-	*/
+	//! Returns the previous node in the linked list or NULL if at the head.
 	idLinkList* PrevNode() const;
 
 private:

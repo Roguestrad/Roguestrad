@@ -30,18 +30,10 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*!
-	\brief Updates vertex index information by remapping and copying vertex data
-
-	This function performs vertex index updates by handling remapping logic and maintaining copy index tracking. It takes a vertex index number array, a remap array, a copy index array, and a vertex
-   number. The function uses the sign bit of the vertex remap value to determine which element of the vertex index array to use, updates the vertex index numbers, remaps the vertex, and maintains the
-   copy index mapping. The return value is the updated vertex remap index.
-
-	\param vertexIndexNum array of two integers to store vertex index information
-	\param vertexRemap array mapping original vertex indices to new indices
-	\param vertexCopyIndex array tracking copy index mappings
-	\param vertNum the vertex number to process
-	\return the updated vertex remap index after processing the vertex
+/*
+=================
+UpdateVertexIndex
+=================
 */
 ID_INLINE int UpdateVertexIndex( int vertexIndexNum[2], int* vertexRemap, int* vertexCopyIndex, int vertNum )
 {
@@ -53,6 +45,11 @@ ID_INLINE int UpdateVertexIndex( int vertexIndexNum[2], int* vertexRemap, int* v
 	return vertexRemap[vertNum];
 }
 
+/*
+=================
+idSurface::Split
+=================
+*/
 int idSurface::Split( const idPlane& plane, const float epsilon, idSurface** front, idSurface** back, int* frontOnPlaneEdges, int* backOnPlaneEdges ) const
 {
 	float*	   dists;
@@ -373,6 +370,11 @@ int idSurface::Split( const idPlane& plane, const float epsilon, idSurface** fro
 	return SIDE_CROSS;
 }
 
+/*
+=================
+idSurface::ClipInPlace
+=================
+*/
 bool idSurface::ClipInPlace( const idPlane& plane, const float epsilon, const bool keepOn )
 {
 	float*									   dists;
@@ -607,6 +609,11 @@ bool idSurface::ClipInPlace( const idPlane& plane, const float epsilon, const bo
 	return true;
 }
 
+/*
+=============
+idSurface::IsConnected
+=============
+*/
 bool idSurface::IsConnected() const
 {
 	int		   i, j, numIslands, numTris;
@@ -658,6 +665,11 @@ bool idSurface::IsConnected() const
 	return ( numIslands == 1 );
 }
 
+/*
+=================
+idSurface::IsClosed
+=================
+*/
 bool idSurface::IsClosed() const
 {
 	for( int i = 0; i < edges.Num(); i++ ) {
@@ -668,6 +680,11 @@ bool idSurface::IsClosed() const
 	return true;
 }
 
+/*
+=============
+idSurface::IsPolytope
+=============
+*/
 bool idSurface::IsPolytope( const float epsilon ) const
 {
 	int		i, j;
@@ -689,6 +706,11 @@ bool idSurface::IsPolytope( const float epsilon ) const
 	return true;
 }
 
+/*
+=============
+idSurface::PlaneDistance
+=============
+*/
 float idSurface::PlaneDistance( const idPlane& plane ) const
 {
 	int	  i;
@@ -720,6 +742,11 @@ float idSurface::PlaneDistance( const idPlane& plane ) const
 	return 0.0f;
 }
 
+/*
+=============
+idSurface::PlaneSide
+=============
+*/
 int idSurface::PlaneSide( const idPlane& plane, const float epsilon ) const
 {
 	bool  front, back;
@@ -754,6 +781,11 @@ int idSurface::PlaneSide( const idPlane& plane, const float epsilon ) const
 	return SIDE_ON;
 }
 
+/*
+=================
+idSurface::LineIntersection
+=================
+*/
 bool idSurface::LineIntersection( const idVec3& start, const idVec3& end, bool backFaceCull ) const
 {
 	float scale;
@@ -762,6 +794,11 @@ bool idSurface::LineIntersection( const idVec3& start, const idVec3& end, bool b
 	return ( scale >= 0.0f && scale <= 1.0f );
 }
 
+/*
+=================
+idSurface::RayIntersection
+=================
+*/
 bool idSurface::RayIntersection( const idVec3& start, const idVec3& dir, float& scale, bool backFaceCull ) const
 {
 	int		   i, i0, i1, i2, s0, s1, s2;
@@ -812,6 +849,13 @@ bool idSurface::RayIntersection( const idVec3& start, const idVec3& dir, float& 
 	return false;
 }
 
+/*
+=================
+idSurface::GenerateEdgeIndexes
+
+  Assumes each edge is shared by at most two triangles.
+=================
+*/
 void idSurface::GenerateEdgeIndexes()
 {
 	int			  i, j, i0, i1, i2, s, v0, v1, edgeNum;
@@ -876,6 +920,11 @@ void idSurface::GenerateEdgeIndexes()
 	}
 }
 
+/*
+=================
+idSurface::FindEdge
+=================
+*/
 int idSurface::FindEdge( int v1, int v2 ) const
 {
 	int i, firstVert, secondVert;

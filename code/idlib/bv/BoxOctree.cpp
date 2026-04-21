@@ -12,74 +12,12 @@ or (at your option) any later version. For details, see LICENSE.TXT.
 Project: The Dark Mod (http://www.thedarkmod.com/)
 
 ******************************************************************************/
-
-/*!
-	\file idlib/bv/BoxOctree.cpp
-	\brief Implements a spatial partitioning octree specifically optimized for axis-aligned bounding boxes (AABB).
-	\note archgen: sha256=c2d29ff30541f6355cc3957bdee1e65a62ef3a9d913fc8d015d75c5db14ddca5
-
-	\par File Purpose
-	- Implements a spatial partitioning octree specifically optimized for axis-aligned bounding boxes (AABB).
-	- Provides mechanisms for high-performance spatial queries, including static box intersections and swept-volume (moving box) intersections.
-	- Handles dynamic object management, including efficient insertion, removal, and localized updates of moving entities.
-
-	\par Core Responsibilities
-	- Maintaining a hierarchical 3D grid of nodes (octree) to accelerate spatial lookups.
-	- Managing object lifecycle within the tree, ensuring that movement or deletion is reflected across all inhabited nodes.
-	- Automating tree subdivision (splitting) when the density of small objects in a specific node exceeds a predefined threshold.
-	- Optimizing memory layout through chunk-based storage and periodic condensation of fragmented chunks.
-	- Providing optimized 'fast-path' updates for objects whose movement does not cause them to exit their current spatial cells.
-
-	\par Key Types and Functions
-	- idBoxOctree — The primary class managing the spatial octree structure and its associated nodes.
-	- idBoxOctree::Add(Pointer ptr, const idBounds& box) — Inserts an object into the hierarchy at the appropriate depth based on its size.
-	- idBoxOctree::Remove(Pointer ptr) — Removes an object from the tree by leveraging its handle to locate all occupied nodes.
-	- idBoxOctree::Update(Pointer ptr, const idBounds& box) — Updates an object's spatial presence, using a fast-path if the object remains within the same cell ranges.
-	- idBoxOctree::QueryInBox(const idBounds& box, QueryResult& res) — Performs a recursive search to find all object chunks intersecting a static volume.
-	- idBoxOctree::QueryInMovingBox(...) — Executes a swept-volume query to detect intersections between a moving AABB and the tree contents.
-	- id1BoxOctree::Condense() — Reorganizes the internal linked list of chunks into a more contiguous and compact format to improve cache locality.
-	- idBoxOctree::GetLevel(const idBounds& box) — Calculates the hierarchical depth an object should reside in based on its dimensions relative to the world bounds.
-	- idBoxOctree::Chunk — A memory-managed structure holding a fixed-size array of object links to reduce allocation overhead.
-	- idBoxOctree::OctreeNode — Represents a specific volume in the octree, potentially containing child nodes and links to object chunks.
-
-	\par Control Flow
-	- Insertion Flow: `Add` initiates a recursive traversal (`Add_r`). If an object is too large or the node is a leaf, it is added to a `Chunk` via `AddToNode`. If a node's small-object count exceeds
-   `SPLIT_SMALL_NUM`, the node is subdivided into eight children, and existing objects are redistributed.
-	- Query Flow: `QueryInBox` or `QueryInMovingBox` triggers a recursive traversal (`Query_r`). The algorithm uses bitmasks to determine which of the eight potential child sub-volumes intersect the
-   query volume, traversing only intersecting branches.
-	- Update Flow: `Update` first checks if the object's new bounds are identical to its old bounds. If changed, it compares the `CellRanges` (the integer grid coordinates). If the ranges are
-   identical, it performs an in-place update; otherwise, it performs a full `Remove` and `Add` sequence.
-	- Removal Flow: `Remove` uses the object's `idBoxOctreeHandle` to iterate directly through the list of `nodeIdx` values the object inhabits, searching the chunks in those nodes to extract the
-   pointer.
-
-	\par Dependencies
-	- "BoxOctree.h" — The header containing the class definition and internal structures.
-	- "../math/Vector.h" — For `idVec3` operations and geometric math.
-	- "precompiled.h" — For standard engine-wide definitions and includes.
-	- Implication of usage of `idBounds`, `idList`, and `idMath` from the broader `idlib` framework.
-
-	\par How It Fits
-	- Acts as the primary acceleration structure for collision detection, visibility culling, and proximity-based gameplay logic.
-	- Integrates with the engine's `handle` system to allow $O(1)$ access to an object's spatial metadata during removal and updates.
-	- Serves as a low-level primitive used by higher-level systems (like physics or AI) to prune the search space for potential interactions.
-*/
-
 #include "precompiled.h"
 #pragma hdrstop
 
 #include "BoxOctree.h"
 #include "../math/Vector.h"
 
-/*!
-	\struct idBoxOctree::QueryContext
-	\brief Context structure for box octree query operations.
-
-	The QueryContext structure serves as a container for state and parameters used during box octree query operations. It provides a standardized way to pass query-related data through the octree
-   traversal logic. The structure is designed to be lightweight and efficient, avoiding unnecessary memory allocation or complex ownership semantics. This context is typically initialized before a
-   query operation and may be reused across multiple queries to avoid repeated construction overhead. The design supports batching of queries and maintains consistent state throughout the traversal
-   process. The structure does not manage any heap-allocated memory directly, relying instead on the caller to provide appropriate storage for query results.
-
-*/
 struct idBoxOctree::QueryContext {
 	QueryResult* res;
 	// total bounding box
@@ -91,31 +29,12 @@ struct idBoxOctree::QueryContext {
 	idVec3		 extent;
 };
 
-/*!
-	\struct idBoxOctree::AddContext
-	\brief Context structure for managing box octree node additions.
-
-	The AddContext structure serves as a container for tracking state and parameters during the process of adding nodes to a box octree. It encapsulates the necessary information to maintain
-   consistency and proper node placement within the octree hierarchy. This context is used internally by the octree implementation to ensure that node additions follow the correct spatial partitioning
-   rules and maintain the tree's structural integrity. The structure does not expose any public methods or data members, implying its usage is restricted to internal octree operations. The design
-   suggests this is a utility structure for managing the addition process rather than a general-purpose container.
-
-*/
 struct idBoxOctree::AddContext {
 	Pointer	 ptr;
 	idBounds box;
 	int		 level;
 };
 
-/*!
-	\struct idBoxOctree::CellRanges
-	\brief Storage for octree cell range data used in spatial partitioning operations.
-
-	This structure serves as a data container for storing range information of cells within an octree structure. It is designed to hold the necessary bounds and indices that define the spatial extent
-   of each cell in the octree hierarchy. The data is typically used for efficient spatial queries and culling operations within the engine's rendering and collision detection systems. The structure is
-   intended to be lightweight and efficient, supporting fast access patterns for spatial partitioning algorithms.
-
-*/
 struct idBoxOctree::CellRanges {
 	int bmin[3];
 	int bmax[3];

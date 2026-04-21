@@ -29,16 +29,10 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __STRSTATIC_H__
 #define __STRSTATIC_H__
 
-/*!
-	\class idStrStatic
-	\brief A fixed-size string class template that provides static memory allocation for string data.
-
-	The idStrStatic class template is designed to provide a string implementation with statically allocated memory of a fixed size determined by the template parameter. It inherits from idStr and is
-   intended to offer performance benefits by avoiding dynamic memory allocation for string operations. The class supports multiple constructors for initialization from various data types including
-   other strings, character arrays, and primitive types such as integers, floats, and booleans. The static buffer size is specified at compile time through the template parameter, ensuring that string
-   objects have a guaranteed memory footprint. This class is particularly useful in engine contexts where predictable memory usage and performance are critical. The implementation ensures proper
-   initialization of the static buffer with null terminators and handles copying operations between static string objects correctly.
-
+/*
+================================================
+idStrStatic
+================================================
 */
 template<int _size_>
 class idStrStatic : public idStr
@@ -51,28 +45,14 @@ public:
 		memcpy( data, text.data, len + 1 );
 	}
 
-	/*!
-		\brief Initializes an idStrStatic object with a static buffer of specified size.
-
-		This constructor initializes the static buffer of the idStrStatic object with a null terminator and sets the static buffer using the provided size. The constructor ensures that the static
-	   buffer is properly initialized before any data is copied into it. This is done to avoid issues with uninitialized memory and to provide a consistent starting state for the string object.
-
-	*/
+	// all idStr operators are overloaded and the idStr default constructor is called so that the
+	// static buffer can be initialized in the body of the constructor before the data is ever
+	// copied.
 	ID_INLINE idStrStatic()
 	{
 		buffer[0] = '\0';
 		SetStaticBuffer( buffer, _size_ );
 	}
-
-	/*!
-		\brief Constructs a new static string by copying the contents of another static string.
-
-		This constructor initializes a new static string object by copying the contents of an existing static string. It sets up the internal buffer to use the static storage and performs the copy
-	   operation using the base class assignment operator.
-
-		\param text The existing static string to copy from
-		\return A new static string object initialized with the contents of the input string
-	*/
 	ID_INLINE idStrStatic( const idStrStatic& text ) :
 		idStr()
 	{
@@ -81,15 +61,6 @@ public:
 		idStr::operator=( text );
 	}
 
-	/*!
-		\brief Constructs a static string object by copying the content from another idStr object.
-
-		This constructor initializes a static string object with a fixed-size buffer of size _size_. It sets the initial buffer to an empty string, configures the static buffer for the object, and
-	   then copies the content from the provided idStr object.
-
-		\param text The idStr object whose content will be copied to this static string.
-		\return A newly constructed idStrStatic object with the content copied from the input idStr object.
-	*/
 	ID_INLINE idStrStatic( const idStr& text ) :
 		idStr()
 	{
@@ -98,17 +69,6 @@ public:
 		idStr::operator=( text );
 	}
 
-	/*!
-		\brief Constructs a new static string by copying a range of characters from another static string.
-
-		This constructor initializes a new static string object by copying a substring from the provided source string. The substring is defined by the start and end indices. The constructor uses a
-	   static buffer of size _size_ for storage and initializes the buffer with a null terminator before copying the specified range of characters.
-
-		\param text The source static string from which to copy characters
-		\param start The starting index of the substring to copy
-		\param end The ending index of the substring to copy
-		\return ID_INLINE
-	*/
 	ID_INLINE idStrStatic( const idStrStatic& text, int start, int end ) :
 		idStr()
 	{
@@ -117,15 +77,6 @@ public:
 		CopyRange( text.c_str(), start, end );
 	}
 
-	/*!
-		\brief Constructs an idStrStatic object with the specified text, using a static buffer of fixed size.
-
-		The constructor initializes the idStrStatic object by setting up a static buffer of size _size_ and then assigns the provided text to the string. The buffer is initialized to an empty string,
-	   and the static buffer is configured before the text assignment occurs.
-
-		\param text The null-terminated character string to initialize the idStrStatic object with
-		\return ID_INLINE
-	*/
 	ID_INLINE idStrStatic( const char* text ) :
 		idStr()
 	{
@@ -134,17 +85,6 @@ public:
 		idStr::operator=( text );
 	}
 
-	/*!
-		\brief Initializes a static string with a substring of the provided text.
-
-		Constructs a static string by copying a range of characters from the input text. The range is defined by the start and end indices. The buffer used for the string is statically allocated with
-	   a fixed size determined by the template parameter _size_.
-
-		\param text The input character array from which to copy the substring.
-		\param start The starting index of the substring in the input text.
-		\param end The ending index of the substring in the input text.
-		\return This constructor does not return a value.
-	*/
 	ID_INLINE idStrStatic( const char* text, int start, int end ) :
 		idStr()
 	{
@@ -153,14 +93,6 @@ public:
 		CopyRange( text, start, end );
 	}
 
-	/*!
-		\brief Constructs a static string from a boolean value.
-
-		Initializes a static string buffer with the specified size and assigns the string representation of the given boolean value to it. The boolean value is converted to a string representation
-	   using the base class operator= method.
-
-		\param b The boolean value to convert to a string
-	*/
 	ID_INLINE explicit idStrStatic( const bool b ) :
 		idStr()
 	{
@@ -169,15 +101,6 @@ public:
 		idStr::operator=( idStr( b ) );
 	}
 
-	/*!
-		\brief Constructs a static string from a single character.
-
-		This constructor initializes a static string object with a single character. It sets up the internal buffer for static strings and assigns the character to the string, ensuring proper memory
-	   management for static string buffers.
-
-		\param c The character to initialize the static string with
-		\return TODO: clarify return value description
-	*/
 	ID_INLINE explicit idStrStatic( const char c ) :
 		idStr()
 	{
@@ -186,15 +109,6 @@ public:
 		idStr::operator=( idStr( c ) );
 	}
 
-	/*!
-		\brief Constructs a static string from an integer value.
-
-		This constructor initializes a static string by converting the provided integer value to a string representation. It uses a fixed-size buffer to store the string data. The buffer is explicitly
-	   set using the SetStaticBuffer method, and the string content is assigned using the base class assignment operator.
-
-		\param i The integer value to convert to a string
-		\return ID_INLINE
-	*/
 	ID_INLINE explicit idStrStatic( const int i ) :
 		idStr()
 	{
@@ -203,15 +117,6 @@ public:
 		idStr::operator=( idStr( i ) );
 	}
 
-	/*!
-		\brief Constructs an idStrStatic object initialized with the string representation of the given unsigned integer.
-
-		The constructor initializes the object by first setting up a static buffer of size _size_ and then assigning the string representation of the provided unsigned integer to the object. The idStr
-	   base class is initialized first, followed by setting the static buffer, and finally the assignment of the string representation of the unsigned integer.
-
-		\param u The unsigned integer to convert to a string and initialize the object with
-		\return ID_INLINE
-	*/
 	ID_INLINE explicit idStrStatic( const unsigned u ) :
 		idStr()
 	{
@@ -220,15 +125,6 @@ public:
 		idStr::operator=( idStr( u ) );
 	}
 
-	/*!
-		\brief Constructs a static string representation of a floating-point number.
-
-		This constructor initializes a static string buffer with the provided floating-point value. It sets up the internal buffer and assigns the string representation of the float to this buffer.
-	   The buffer size is determined by the template parameter _size_.
-
-		\param f The floating-point number to convert to a string
-		\return ID_INLINE
-	*/
 	ID_INLINE explicit idStrStatic( const float f ) :
 		idStr()
 	{

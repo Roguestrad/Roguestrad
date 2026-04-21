@@ -59,15 +59,10 @@ typedef unsigned short halfFloat_t;
 #define HF_EXP( x )		 ( ( x & 32767 ) >> 10 )
 #define HF_SIGN( x )	 ( ( x & 32768 ) ? -1 : 1 )
 
-/*!
-	\brief Converts a 16-bit half-precision floating-point value to a 32-bit single-precision floating-point value.
-
-	This function performs the conversion from IEEE 754 half-precision (16-bit) floating-point format to single-precision (32-bit) floating-point format. It handles special cases including normal
-   numbers, zero, and subnormal numbers. The conversion uses the standard IEEE 754 bit manipulation techniques to extract the sign, exponent, and mantissa components from the half-precision input and
-   reconstruct them into a single-precision floating-point number.
-
-	\param x The 16-bit half-precision floating-point value to convert
-	\return The 32-bit single-precision floating-point representation of the input value
+/*
+========================
+F16toF32
+========================
 */
 ID_INLINE float F16toF32( halfFloat_t x )
 {
@@ -83,15 +78,10 @@ ID_INLINE float F16toF32( halfFloat_t x )
 	return s * powf( 2.0f, -14.0f ) * ( m / 1024.0f );
 }
 
-/*!
-	\brief Converts a 32-bit floating point value to a 16-bit half-precision floating point value.
-
-	This function performs the conversion from single precision floating point (32-bit) to half precision floating point (16-bit) format. It extracts the sign bit, exponent, and mantissa from the
-   input float value and reconstructs a half-precision value. The conversion handles special cases such as zero, infinity, and NaN values appropriately. The function is inlined for performance reasons
-   and is used in texture compression operations where reducing the precision of color values is beneficial.
-
-	\param a The 32-bit floating point value to be converted to half-precision format
-	\return The converted 16-bit half-precision floating point value
+/*
+========================
+F32toF16
+========================
 */
 ID_INLINE halfFloat_t F32toF16( float a )
 {
@@ -106,16 +96,14 @@ ID_INLINE halfFloat_t F32toF16( float a )
 	return ( halfFloat_t )( signbit | ( exponent << 10 ) | ( mantissa >> 13 ) );
 }
 
-/*!
-	\class idDrawVert
-	\brief Represents a vertex with position, normal, tangent, bitangent, texture coordinates, and color data used for rendering in the Roguestrad engine.
+/*
+===============================================================================
 
-	The idDrawVert class encapsulates the data required for a vertex in the rendering pipeline, including position, normal, tangent, bitangent, texture coordinates, and color information. It provides
-   methods for setting and retrieving these components, with support for both normalized and raw vector data. The class facilitates vertex interpolation for animation and skinning operations, and
-   supports both standard and native half-precision floating-point texture coordinates. This structure is designed to be used with the engine's drawing and rendering systems, particularly for mesh
-   rendering and skinning effects in 3D graphics.
+	Draw Vertex.
 
+===============================================================================
 */
+
 class idDrawVert
 {
 	friend class idSwap;
@@ -141,285 +129,63 @@ public:
 	float			  operator[]( const int index ) const;
 	float&			  operator[]( const int index );
 
-	//! Clears the draw vertex data by setting all components to zero or default values.
 	void			  Clear();
 
-	//! Returns the normalized normal vector of the draw vertex.
 	const idVec3	  GetNormal() const;
+	const idVec3	  GetNormalRaw() const; // not re-normalized for renderbump
 
-	//! Returns the raw normal vector of the draw vertex without re-normalization.
-	const idVec3	  GetNormalRaw() const;
-
-	/*!
-		\brief Sets the normal vector components for the draw vertex
-
-		This function sets the normal vector components for a draw vertex by converting the provided floating-point values to byte values. The input normal vector components must already be
-	   normalized. The function uses the VertexFloatToByte helper to perform the conversion.
-
-		\param x The x-component of the normal vector
-		\param y The y-component of the normal vector
-		\param z The z-component of the normal vector
-	*/
+	// must be normalized already!
 	void			  SetNormal( float x, float y, float z );
-
-	/*!
-		\brief Sets the normal vector for the draw vertex using the provided idVec3
-
-		This function takes a normalized idVec3 and converts its components to byte values for storage in the normal member of the idDrawVert struct. The conversion is performed by the
-	   VertexFloatToByte helper function which handles the proper scaling and clamping of the float values to the byte range
-
-		\param n The normal vector to be set for the draw vertex
-	*/
 	void			  SetNormal( const idVec3& n );
 
-	//! Returns the normalized tangent vector of the draw vertex.
 	const idVec3	  GetTangent() const;
+	const idVec3	  GetTangentRaw() const; // not re-normalized for renderbump
 
-	//! Returns the raw tangent vector of the draw vertex without normalization.
-	const idVec3	  GetTangentRaw() const;
-
-	/*!
-		\brief Sets the tangent vector components for the vertex
-
-		This function assigns the x, y, and z components of the tangent vector for the vertex. The tangent vector is typically used in normal mapping and other graphical rendering techniques to define
-	   the orientation of texture coordinates in tangent space. The input values are expected to be normalized before being passed to this function.
-
-		\param x The x-component of the tangent vector
-		\param y The y-component of the tangent vector
-		\param z The z-component of the tangent vector
-	*/
+	// must be normalized already!
 	void			  SetTangent( float x, float y, float z );
-
-	/*!
-		\brief Sets the tangent vector for the vertex using the provided idVec3
-
-		The function converts the floating-point components of the input idVec3 into byte values and stores them in the tangent member of the vertex. This is typically used to store precomputed
-	   tangent vectors for normal mapping or other lighting calculations. The conversion ensures that the tangent data is properly formatted for use in the rendering pipeline.
-
-		\param t The tangent vector to be set for the vertex, represented as an idVec3
-	*/
 	void			  SetTangent( const idVec3& t );
 
-	//! Returns the bi-tangent vector derived from the normal and tangent vectors.
+	// derived from normal, tangent, and tangent flag
 	const idVec3	  GetBiTangent() const;
+	const idVec3	  GetBiTangentRaw() const; // not re-normalized for renderbump
 
-	//! Returns the raw bitangent vector derived from the normal and tangent vectors without re-normalization.
-	const idVec3	  GetBiTangentRaw() const;
-
-	/*!
-		\brief Sets the bi-tangent vector components for the draw vertex.
-
-		This function initializes the bi-tangent vector of the draw vertex using the provided x, y, and z coordinates. It serves as a convenience method that internally calls the idVec3 constructor to
-	   create a vector from the given components.
-
-		\param x The x-component of the bi-tangent vector
-		\param y The y-component of the bi-tangent vector
-		\param z The z-component of the bi-tangent vector
-	*/
 	void			  SetBiTangent( float x, float y, float z );
-
-	/*!
-		\brief Sets the bitangent of the vertex based on the provided tangent vector
-
-		This function calculates the bitangent by taking the cross product of the current normal and tangent vectors. It then uses the resulting bitangent to set the bitangent sign based on the dot
-	   product with the input tangent vector t
-
-		\param t The tangent vector used to determine the bitangent sign
-	*/
 	ID_INLINE void	  SetBiTangent( const idVec3& t );
 
-	//! Returns the bitangent sign as a float value, either -1.0 or 1.0, based on the tangent's fourth component.
 	float			  GetBiTangentSign() const;
-
-	//! Returns the bit sign bit of the bi-tangent component from the tangent vector.
 	byte			  GetBiTangentSignBit() const;
 
-	/*!
-		\brief Sets the texture coordinates for the draw vertex using native half-precision floating-point values.
-
-		This function assigns the provided texture coordinate values to the internal ST components of the draw vertex. The coordinates are stored directly without any conversion, using the native
-	   half-precision floating-point format. The function is marked as inline for performance reasons.
-
-		\param s The S texture coordinate value to set
-		\param t The T texture coordinate value to set
-	*/
 	void			  SetTexCoordNative( const halfFloat_t s, const halfFloat_t t );
-
-	/*!
-		\brief Sets the texture coordinates for the vertex using the provided 2D vector.
-
-		This function assigns the x component of the input vector to the s-coordinate and the y component to the t-coordinate of the texture mapping for this vertex.
-
-		\param st The 2D vector containing the s and t texture coordinates
-	*/
 	void			  SetTexCoord( const idVec2& st );
-
-	/*!
-		\brief Sets the texture coordinates for the vertex using the provided S and T values.
-
-		This function configures the texture coordinates of a draw vertex by setting the S and T components separately. It internally calls SetTexCoordS and SetTexCoordT to perform the actual
-	   coordinate assignments.
-
-		\param s The S texture coordinate value to set
-		\param t The T texture coordinate value to set
-	*/
 	void			  SetTexCoord( float s, float t );
-
-	/*!
-		\brief Sets the S texture coordinate of the vertex.
-		\param s The S texture coordinate value to set
-	*/
 	void			  SetTexCoordS( float s );
-
-	/*!
-		\brief Sets the t component of the texture coordinate for the draw vertex.
-		\param t The t texture coordinate value to set
-	*/
 	void			  SetTexCoordT( float t );
-
-	//! Returns the texture coordinates of the draw vertex as a 2D vector.
 	const idVec2	  GetTexCoord() const;
-
-	//! Returns the S texture coordinate of the draw vertex as a float.
 	const float		  GetTexCoordS() const;
-
-	//! Returns the T texture coordinate of the draw vertex as a float.
 	const float		  GetTexCoordT() const;
-
-	//! Returns the native S texture coordinate of the draw vertex.
 	const halfFloat_t GetTexCoordNativeS() const;
-
-	//! Returns the T component of the texture coordinate stored in the vertex.
 	const halfFloat_t GetTexCoordNativeT() const;
 
-	/*!
-		\brief Sets the bitangent sign component of the vertex tangent vector
-
-		This function configures the bitangent sign value stored in the tangent vector of the vertex. The sign parameter is clamped to either 0 or 255, representing negative or positive bitangent sign
-	   respectively. The implementation treats any negative value as 0, and non-negative values as 255. This is typically used in normal mapping and tangent space calculations for 3D graphics
-	   rendering.
-
-		\param sign The bitangent sign value, either treated as negative (0) or positive (255) based on sign < 0.0f
-	*/
+	// either 1.0f or -1.0f
 	ID_INLINE void	  SetBiTangentSign( float sign );
-
-	/*!
-		\brief Sets the bi-tangent sign bit for the draw vertex.
-
-		This function configures the bi-tangent sign bit by setting the fourth component of the tangent vector. If the input bit is true, the fourth component is set to 0; otherwise, it is set to 255.
-	   This is typically used to encode orientation information for normal mapping or other graphics rendering techniques.
-
-		\param bit The sign bit value to set for the bi-tangent, where true sets the value to 0 and false sets it to 255
-	*/
 	ID_INLINE void	  SetBiTangentSignBit( byte bit );
 
-	/*!
-		\brief Linearly interpolates between two draw vertices based on a interpolation factor
-
-		This function performs linear interpolation between two idDrawVert objects using a float factor. It interpolates the vector position and texture coordinates between the two input vertices. The
-	   interpolation is performed using the standard linear interpolation formula where the result is calculated as a + f * (b - a) for each component.
-
-		\param a The starting draw vertex
-		\param b The ending draw vertex
-		\param f The interpolation factor between 0 and 1
-	*/
 	void			  Lerp( const idDrawVert& a, const idDrawVert& b, const float f );
-
-	/*!
-		\brief Interpolates all vertex components between two draw vertices using the given interpolation factor
-
-		This function performs linear interpolation on all components of a draw vertex including position, texture coordinates, normal, tangent, bitangent, and color values. The position and texture
-	   coordinates are interpolated directly using the Lerp function. The normal, tangent, and bitangent vectors are interpolated and then normalized to maintain unit length. Color values are
-	   interpolated component-wise using byte arithmetic. The interpolation factor f should typically be between 0 and 1, where 0 represents vertex a and 1 represents vertex b
-
-		\param a The first draw vertex for interpolation
-		\param b The second draw vertex for interpolation
-		\param f The interpolation factor between 0 and 1
-	*/
 	void			  LerpAll( const idDrawVert& a, const idDrawVert& b, const float f );
 
-	/*!
-		\brief Sets the color value for the draw vertex
-
-		This function directly assigns the provided color value to the color member of the idDrawVert structure. The color is stored as a 32-bit value representing RGBA components. The assignment is
-	   performed through a reinterpret cast to ensure proper memory alignment and assignment to the color field.
-
-		\param color The 32-bit color value to set for the vertex
-	*/
 	void			  SetColor( dword color );
-
-	/*!
-		\brief Sets the color value of the draw vertex using native byte order
-
-		This function directly assigns a color value to the color member of the draw vertex structure using native byte order. It treats the color member as a dword pointer and assigns the provided
-	   color value to it, effectively bypassing any potential byte order conversion that might normally occur.
-
-		\param color The color value to be assigned to the vertex color member
-	*/
 	void			  SetNativeOrderColor( dword color );
-
-	//! Returns the color value stored in the draw vertex as a dword
 	dword			  GetColor() const;
 
-	/*!
-		\brief Sets the color2 field of the draw vertex to the specified color value
-
-		This function directly assigns the provided color value to the color2 field of the draw vertex structure. It uses a reinterpret_cast to treat the color2 member as a dword-sized memory location
-	   and writes the color value directly to it. The function is marked as ID_INLINE, indicating it should be inlined for performance reasons.
-
-		\param color The color value to assign to the vertex's color2 field
-	*/
 	void			  SetColor2( dword color );
-
-	/*!
-		\brief Sets the color2 field of the draw vertex to the specified color value in native order.
-
-		This function directly assigns the provided color value to the color2 field of the draw vertex structure. It interprets the color2 member as a dword pointer and assigns the input color value
-	   to it, effectively setting the vertex color in native byte order.
-
-		\param color The color value to be set in native order
-	*/
 	void			  SetNativeOrderColor2( dword color );
-
-	/*!
-		\brief Sets the color2 value of the draw vertex to a default opaque gray color.
-
-		This function initializes the color2 member of the draw vertex to a default value of 0x80808080, which represents an opaque gray color with equal red, green, and blue components. The function
-	   uses reinterpret_cast to treat the color2 array as a 32-bit dword and assigns the value directly.
-
-	*/
 	void			  ClearColor2();
-
-	//! Returns the color2 value of the draw vertex as a dword.
 	dword			  GetColor2() const;
 
-	/*!
-		\brief Computes a skinned vertex by applying joint transformations to a source vertex.
-
-		This function takes a vertex and a set of joint matrices to compute a skinned vertex. It performs weighted blending of the joint transformations using the vertex's color and color2 components
-	   as weights. The resulting vertex has transformed position, normal, and tangent vectors, while preserving the original texture coordinates and color data.
-
-		\param vert The source vertex to be skinned
-		\param joints Array of joint transformation matrices to be applied
-		\return A new vertex with skinning applied using the provided joint transformations
-	*/
 	static idDrawVert GetSkinnedDrawVert( const idDrawVert& vert, const idJointMat* joints );
-
-	/*!
-		\brief Computes the skinned vertex position by combining joint transformations with vertex weights
-
-		This function calculates the final position of a vertex after applying skinning transformations from multiple joints. It uses the vertex's color indices to determine which joints affect it and
-	   the color2 values as weights for blending the joint transformations. When no joints are provided, it returns the original vertex position. The function performs weighted blending of joint
-	   matrices and then applies the resulting transformation to the vertex position.
-
-		\param vert The input vertex containing position, joint indices in color[], and weights in color2[]
-		\param joints Array of joint transformation matrices, or NULL to return the original vertex position
-		\return The transformed vertex position after applying skinning transformations
-	*/
 	static idVec3	  GetSkinnedDrawVertPosition( const idDrawVert& vert, const idJointMat* joints );
 };
 
-// RB: keep the idDrawVert size to 32 for optimal GPU caching speed
 #define DRAWVERT_SIZE			32
 #define DRAWVERT_XYZ_OFFSET		( 0 * 4 )
 #define DRAWVERT_ST_OFFSET		( 3 * 4 )
@@ -435,18 +201,14 @@ assert_sizeof( idDrawVert, DRAWVERT_SIZE );
 	assert_offsetof( idDrawVert, normal,	DRAWVERT_NORMAL_OFFSET );
 	assert_offsetof( idDrawVert, tangent,	DRAWVERT_TANGENT_OFFSET );
 #endif
+// RB end
 
-/*!
-	\brief Converts floating-point coordinates in the range [-1, 1] to byte values.
+/*
+========================
+VertexFloatToByte
 
-	This function converts three floating-point coordinates, each assumed to be in the range [-1, 1], into corresponding byte values. The conversion involves scaling and clamping the floating-point
-   values to fit within the byte range [0, 255]. The implementation uses SSE intrinsics for optimized performance when available, otherwise falling back to a standard implementation.
-
-	\param x The x-coordinate as a float in the range [-1, 1]
-	\param y The y-coordinate as a float in the range [-1, 1]
-	\param z The z-coordinate as a float in the range [-1, 1]
-	\param bval Pointer to the byte array where the converted values will be stored
-	\throws assert_4_byte_aligned is called to ensure bval is 4-byte aligned
+Assumes input is in the range [-1, 1]
+========================
 */
 ID_INLINE void VertexFloatToByte( const float& x, const float& y, const float& z, byte* bval )
 {
@@ -500,6 +262,11 @@ ID_INLINE float& idDrawVert::operator[]( const int index )
 	return ( ( float* )( &xyz ) )[index];
 }
 
+/*
+========================
+idDrawVert::Clear
+========================
+*/
 ID_INLINE void idDrawVert::Clear()
 {
 	*reinterpret_cast<dword*>( &this->xyz.x )  = 0;
@@ -512,6 +279,11 @@ ID_INLINE void idDrawVert::Clear()
 	*reinterpret_cast<dword*>( this->color2 )  = 0;
 }
 
+/*
+========================
+idDrawVert::GetNormal
+========================
+*/
 ID_INLINE const idVec3 idDrawVert::GetNormal() const
 {
 	idVec3 n( VERTEX_BYTE_TO_FLOAT( normal[0] ), VERTEX_BYTE_TO_FLOAT( normal[1] ), VERTEX_BYTE_TO_FLOAT( normal[2] ) );
@@ -519,6 +291,11 @@ ID_INLINE const idVec3 idDrawVert::GetNormal() const
 	return n;
 }
 
+/*
+========================
+idDrawVert::GetNormalRaw
+========================
+*/
 ID_INLINE const idVec3 idDrawVert::GetNormalRaw() const
 {
 	idVec3 n( VERTEX_BYTE_TO_FLOAT( normal[0] ), VERTEX_BYTE_TO_FLOAT( normal[1] ), VERTEX_BYTE_TO_FLOAT( normal[2] ) );
@@ -526,6 +303,12 @@ ID_INLINE const idVec3 idDrawVert::GetNormalRaw() const
 	return n;
 }
 
+/*
+========================
+idDrawVert::SetNormal
+must be normalized already!
+========================
+*/
 ID_INLINE void idDrawVert::SetNormal( const idVec3& n )
 {
 	VertexFloatToByte( n.x, n.y, n.z, normal );
@@ -541,6 +324,11 @@ ID_INLINE void idDrawVert::SetNormal( float x, float y, float z )
 	VertexFloatToByte( x, y, z, normal );
 }
 
+/*
+========================
+&idDrawVert::GetTangent
+========================
+*/
 ID_INLINE const idVec3 idDrawVert::GetTangent() const
 {
 	idVec3 t( VERTEX_BYTE_TO_FLOAT( tangent[0] ), VERTEX_BYTE_TO_FLOAT( tangent[1] ), VERTEX_BYTE_TO_FLOAT( tangent[2] ) );
@@ -548,6 +336,11 @@ ID_INLINE const idVec3 idDrawVert::GetTangent() const
 	return t;
 }
 
+/*
+========================
+&idDrawVert::GetTangentRaw
+========================
+*/
 ID_INLINE const idVec3 idDrawVert::GetTangentRaw() const
 {
 	idVec3 t( VERTEX_BYTE_TO_FLOAT( tangent[0] ), VERTEX_BYTE_TO_FLOAT( tangent[1] ), VERTEX_BYTE_TO_FLOAT( tangent[2] ) );
@@ -555,6 +348,11 @@ ID_INLINE const idVec3 idDrawVert::GetTangentRaw() const
 	return t;
 }
 
+/*
+========================
+idDrawVert::SetTangent
+========================
+*/
 ID_INLINE void idDrawVert::SetTangent( float x, float y, float z )
 {
 	VertexFloatToByte( x, y, z, tangent );
@@ -570,6 +368,11 @@ ID_INLINE void idDrawVert::SetTangent( const idVec3& t )
 	VertexFloatToByte( t.x, t.y, t.z, tangent );
 }
 
+/*
+========================
+idDrawVert::GetBiTangent
+========================
+*/
 ID_INLINE const idVec3 idDrawVert::GetBiTangent() const
 {
 	// derive from the normal, tangent, and bitangent direction flag
@@ -579,6 +382,11 @@ ID_INLINE const idVec3 idDrawVert::GetBiTangent() const
 	return bitangent;
 }
 
+/*
+========================
+idDrawVert::GetBiTangentRaw
+========================
+*/
 ID_INLINE const idVec3 idDrawVert::GetBiTangentRaw() const
 {
 	// derive from the normal, tangent, and bitangent direction flag
@@ -589,6 +397,11 @@ ID_INLINE const idVec3 idDrawVert::GetBiTangentRaw() const
 	return bitangent;
 }
 
+/*
+========================
+idDrawVert::SetBiTangent
+========================
+*/
 ID_INLINE void idDrawVert::SetBiTangent( float x, float y, float z )
 {
 	SetBiTangent( idVec3( x, y, z ) );
@@ -606,32 +419,62 @@ ID_INLINE void idDrawVert::SetBiTangent( const idVec3& t )
 	SetBiTangentSign( bitangent * t );
 }
 
+/*
+========================
+idDrawVert::GetBiTangentSign
+========================
+*/
 ID_INLINE float idDrawVert::GetBiTangentSign() const
 {
 	return ( tangent[3] < 128 ) ? -1.0f : 1.0f;
 }
 
+/*
+========================
+idDrawVert::GetBiTangentSignBit
+========================
+*/
 ID_INLINE byte idDrawVert::GetBiTangentSignBit() const
 {
 	return ( tangent[3] < 128 ) ? 1 : 0;
 }
 
+/*
+========================
+idDrawVert::SetBiTangentSign
+========================
+*/
 ID_INLINE void idDrawVert::SetBiTangentSign( float sign )
 {
 	tangent[3] = ( sign < 0.0f ) ? 0 : 255;
 }
 
+/*
+========================
+idDrawVert::SetBiTangentSignBit
+========================
+*/
 ID_INLINE void idDrawVert::SetBiTangentSignBit( byte sign )
 {
 	tangent[3] = sign ? 0 : 255;
 }
 
+/*
+========================
+idDrawVert::Lerp
+========================
+*/
 ID_INLINE void idDrawVert::Lerp( const idDrawVert& a, const idDrawVert& b, const float f )
 {
 	xyz = a.xyz + f * ( b.xyz - a.xyz );
 	SetTexCoord( ::Lerp( a.GetTexCoord(), b.GetTexCoord(), f ) );
 }
 
+/*
+========================
+idDrawVert::LerpAll
+========================
+*/
 ID_INLINE void idDrawVert::LerpAll( const idDrawVert& a, const idDrawVert& b, const float f )
 {
 	xyz = ::Lerp( a.xyz, b.xyz, f );
@@ -658,21 +501,41 @@ ID_INLINE void idDrawVert::LerpAll( const idDrawVert& a, const idDrawVert& b, co
 	color2[3] = ( byte )( a.color2[3] + f * ( b.color2[3] - a.color2[3] ) );
 }
 
+/*
+========================
+idDrawVert::SetNativeOrderColor
+========================
+*/
 ID_INLINE void idDrawVert::SetNativeOrderColor( dword color )
 {
 	*reinterpret_cast<dword*>( this->color ) = color;
 }
 
+/*
+========================
+idDrawVert::SetColor
+========================
+*/
 ID_INLINE void idDrawVert::SetColor( dword color )
 {
 	*reinterpret_cast<dword*>( this->color ) = color;
 }
 
+/*
+========================
+idDrawVert::SetColor
+========================
+*/
 ID_INLINE dword idDrawVert::GetColor() const
 {
 	return *reinterpret_cast<const dword*>( this->color );
 }
 
+/*
+========================
+idDrawVert::SetTexCoordNative
+========================
+*/
 ID_INLINE void idDrawVert::SetTexCoordNative( const halfFloat_t s, const halfFloat_t t )
 {
 	st[0] = s;
@@ -701,73 +564,122 @@ ID_INLINE void idDrawVert::SetTexCoord( float s, float t )
 	SetTexCoordT( t );
 }
 
+/*
+========================
+idDrawVert::SetTexCoordS
+========================
+*/
 ID_INLINE void idDrawVert::SetTexCoordS( float s )
 {
 	st[0] = F32toF16( s );
 }
 
+/*
+========================
+idDrawVert::SetTexCoordT
+========================
+*/
 ID_INLINE void idDrawVert::SetTexCoordT( float t )
 {
 	st[1] = F32toF16( t );
 }
 
+/*
+========================
+idDrawVert::GetTexCoord
+========================
+*/
 ID_INLINE const idVec2 idDrawVert::GetTexCoord() const
 {
 	return idVec2( F16toF32( st[0] ), F16toF32( st[1] ) );
 }
 
+/*
+========================
+idDrawVert::GetTexCoordT
+========================
+*/
 ID_INLINE const float idDrawVert::GetTexCoordS() const
 {
 	return F16toF32( st[0] );
 }
 
+/*
+========================
+idDrawVert::GetTexCoordS
+========================
+*/
 ID_INLINE const float idDrawVert::GetTexCoordT() const
 {
 	return F16toF32( st[1] );
 }
 
+/*
+========================
+idDrawVert::GetTexCoordNativeS
+========================
+*/
 ID_INLINE const halfFloat_t idDrawVert::GetTexCoordNativeS() const
 {
 	return st[0];
 }
 
+/*
+========================
+idDrawVert::GetTexCoordNativeT
+========================
+*/
 ID_INLINE const halfFloat_t idDrawVert::GetTexCoordNativeT() const
 {
 	return st[1];
 }
 
+/*
+========================
+idDrawVert::SetNativeOrderColor2
+========================
+*/
 ID_INLINE void idDrawVert::SetNativeOrderColor2( dword color2 )
 {
 	*reinterpret_cast<dword*>( this->color2 ) = color2;
 }
 
+/*
+========================
+idDrawVert::SetColor
+========================
+*/
 ID_INLINE void idDrawVert::SetColor2( dword color2 )
 {
 	*reinterpret_cast<dword*>( this->color2 ) = color2;
 }
 
+/*
+========================
+idDrawVert::ClearColor2
+========================
+*/
 ID_INLINE void idDrawVert::ClearColor2()
 {
 	*reinterpret_cast<dword*>( this->color2 ) = 0x80808080;
 }
 
+/*
+========================
+idDrawVert::GetColor2
+========================
+*/
 ID_INLINE dword idDrawVert::GetColor2() const
 {
 	return *reinterpret_cast<const dword*>( this->color2 );
 }
 
-/*!
-	\brief Writes draw vertices using 16-byte aligned SIMD instructions or memcpy based on available intrinsics
+/*
+========================
+WriteDrawVerts16
 
-	This function performs a fast copy of draw vertex data from a source array to a destination array. It utilizes SSE intrinsics for optimized memory writes when available, specifically designed for
-   write-combined memory targets. The function ensures 16-byte alignment for both source and destination arrays. When SSE intrinsics are not available, it falls back to a standard memcpy operation.
-   The function is marked as inline for performance optimization
-
-	\param destVerts Pointer to the destination array where draw vertices will be written
-	\param localVerts Pointer to the source array containing draw vertices to be copied
-	\param numVerts Number of draw vertices to copy from source to destination
-	\return void
-	\throws assertion failure if idDrawVert size or alignment requirements are not met
+Use 16-byte in-order SIMD writes because the destVerts may live in write-combined memory
+========================
 */
 ID_INLINE void WriteDrawVerts16( idDrawVert* destVerts, const idDrawVert* localVerts, int numVerts )
 {
@@ -791,6 +703,11 @@ ID_INLINE void WriteDrawVerts16( idDrawVert* destVerts, const idDrawVert* localV
 #endif
 }
 
+/*
+=====================
+idDrawVert::GetSkinnedDrawVert
+=====================
+*/
 ID_INLINE idDrawVert idDrawVert::GetSkinnedDrawVert( const idDrawVert& vert, const idJointMat* joints )
 {
 	if( joints == NULL ) { return vert; }
@@ -824,6 +741,11 @@ ID_INLINE idDrawVert idDrawVert::GetSkinnedDrawVert( const idDrawVert& vert, con
 	return outVert;
 }
 
+/*
+=====================
+idDrawVert::GetSkinnedDrawVertPosition
+=====================
+*/
 ID_INLINE idVec3 idDrawVert::GetSkinnedDrawVertPosition( const idDrawVert& vert, const idJointMat* joints )
 {
 	if( joints == NULL ) { return vert.xyz; }

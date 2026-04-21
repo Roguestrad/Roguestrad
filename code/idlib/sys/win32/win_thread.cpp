@@ -41,16 +41,6 @@ If you have questions concerning this license or the applicable additional terms
 	#define STACK_SIZE_PARAM_IS_A_RESERVATION 0x00010000
 #endif
 
-/*!
-	\struct tagTHREADNAME_INFO
-	\brief Structure for holding thread naming information.
-
-	This structure is used to encapsulate information related to thread naming within the engine. It serves as a standardized format for passing thread name metadata, which is typically utilized by
-   debugging and profiling tools to identify and monitor specific threads. The structure is designed to be used in conjunction with Windows API calls that set thread names, providing a consistent
-   interface for thread identification across the engine's multithreaded components. Thread naming is essential for debugging purposes, allowing developers to quickly identify which thread is
-   executing specific code sections or experiencing issues.
-
-*/
 typedef struct tagTHREADNAME_INFO {
 	DWORD  dwType;	   // Must be 0x1000.
 	LPCSTR szName;	   // Pointer to name (in user addr space).
@@ -58,15 +48,16 @@ typedef struct tagTHREADNAME_INFO {
 	DWORD  dwFlags;	   // Reserved for future use, must be zero.
 } THREADNAME_INFO;
 
-/*!
-	\brief Sets the name of a thread specified by its ID on Windows platforms.
+/*
+========================
+Sys_SetThreadName
 
-	This function is used to assign a descriptive name to a specific thread on Windows systems. It utilizes the Windows debugging API to set the thread name, which can be useful for debugging and
-   monitoring thread activity. The function is only active when compiling under Microsoft Visual C++ due to its reliance on MSVC-specific exception handling mechanisms. The thread name is stored in a
-   structure that is passed to the RaiseException function along with a specific exception code.
+caedes: This should be seen as a helper-function for Sys_CreateThread() only.
+		(re)setting the name of a running thread seems like a bad idea and
+		currently (fresh d3 bfg source) isn't done anyway.
+		Furthermore SDL doesn't support it
 
-	\param threadID The identifier of the thread to name
-	\param name The name to assign to the thread
+========================
 */
 static void Sys_SetThreadName( DWORD threadID, const char* name )
 {

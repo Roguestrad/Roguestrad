@@ -32,6 +32,13 @@ If you have questions concerning this license or the applicable additional terms
 
 idPluecker pluecker_origin( 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f );
 
+/*
+================
+idPluecker::FromPlanes
+
+  pluecker coordinate for the intersection of two planes
+================
+*/
 bool	   idPluecker::FromPlanes( const idPlane& p1, const idPlane& p2 )
 {
 	p[0] = -( p1[2] * -p2[3] - p2[2] * -p1[3] );
@@ -45,6 +52,14 @@ bool	   idPluecker::FromPlanes( const idPlane& p1, const idPlane& p2 )
 	return ( p[2] != 0.0f || p[5] != 0.0f || p[4] != 0.0f );
 }
 
+/*
+================
+idPluecker::Distance3DSqr
+
+  calculates square of shortest distance between the two
+  3D lines represented by their pluecker coordinates
+================
+*/
 float idPluecker::Distance3DSqr( const idPluecker& a ) const
 {
 	float  d, s;
@@ -61,6 +76,11 @@ float idPluecker::Distance3DSqr( const idPluecker& a ) const
 	return ( dir * dir ) * ( s * s );
 }
 
+/*
+=============
+idPluecker::ToString
+=============
+*/
 const char* idPluecker::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );

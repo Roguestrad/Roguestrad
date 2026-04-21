@@ -32,6 +32,11 @@ If you have questions concerning this license or the applicable additional terms
 
 #define POLYTOPE_VERTEX_EPSILON 0.1f
 
+/*
+====================
+idSurface_Polytope::FromPlanes
+====================
+*/
 void idSurface_Polytope::FromPlanes( const idPlane* planes, const int numPlanes )
 {
 	int			   i, j, k, *windingVerts;
@@ -79,6 +84,11 @@ void idSurface_Polytope::FromPlanes( const idPlane* planes, const int numPlanes 
 	GenerateEdgeIndexes();
 }
 
+/*
+====================
+idSurface_Polytope::SetupTetrahedron
+====================
+*/
 void idSurface_Polytope::SetupTetrahedron( const idBounds& bounds )
 {
 	idVec3 center, scale;
@@ -114,6 +124,11 @@ void idSurface_Polytope::SetupTetrahedron( const idBounds& bounds )
 	GenerateEdgeIndexes();
 }
 
+/*
+====================
+idSurface_Polytope::SetupHexahedron
+====================
+*/
 void idSurface_Polytope::SetupHexahedron( const idBounds& bounds )
 {
 	idVec3 center, scale;
@@ -172,6 +187,11 @@ void idSurface_Polytope::SetupHexahedron( const idBounds& bounds )
 	GenerateEdgeIndexes();
 }
 
+/*
+====================
+idSurface_Polytope::SetupOctahedron
+====================
+*/
 void idSurface_Polytope::SetupOctahedron( const idBounds& bounds )
 {
 	idVec3 center, scale;
@@ -216,22 +236,47 @@ void idSurface_Polytope::SetupOctahedron( const idBounds& bounds )
 	GenerateEdgeIndexes();
 }
 
+/*
+====================
+idSurface_Polytope::SetupDodecahedron
+====================
+*/
 void idSurface_Polytope::SetupDodecahedron( const idBounds& bounds )
 {
 }
 
+/*
+====================
+idSurface_Polytope::SetupIcosahedron
+====================
+*/
 void idSurface_Polytope::SetupIcosahedron( const idBounds& bounds )
 {
 }
 
+/*
+====================
+idSurface_Polytope::SetupCylinder
+====================
+*/
 void idSurface_Polytope::SetupCylinder( const idBounds& bounds, const int numSides )
 {
 }
 
+/*
+====================
+idSurface_Polytope::SetupCone
+====================
+*/
 void idSurface_Polytope::SetupCone( const idBounds& bounds, const int numSides )
 {
 }
 
+/*
+====================
+idSurface_Polytope::SplitPolytope
+====================
+*/
 int idSurface_Polytope::SplitPolytope( const idPlane& plane, const float epsilon, idSurface_Polytope** front, idSurface_Polytope** back ) const
 {
 	int					side, i, j, s, v0, v1, v2, edgeNum;

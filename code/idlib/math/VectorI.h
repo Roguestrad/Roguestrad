@@ -29,44 +29,27 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_VECTORI_H__
 #define __MATH_VECTORI_H__
 
-//! Returns the smaller of two integer values.
 static ID_INLINE int MinInt( int a, int b )
 {
 	return ( a ) < ( b ) ? ( a ) : ( b );
 }
-
-//! Returns the larger of two integer values.
 static ID_INLINE int MaxInt( int a, int b )
 {
 	return ( a ) < ( b ) ? ( b ) : ( a );
 }
 
-/*!
-	\class idVec2i
-	\brief Integer 2D vector class for handling discrete coordinate operations in the engine.
-
-	The idVec2i class represents a 2D vector using integer coordinates, designed for discrete mathematics operations commonly needed in engine geometry and coordinate transformations. It provides
-   standard vector arithmetic operations along with component-wise minimum and maximum functions, and supports bit manipulation and logical operations. The class is intended for use in scenarios
-   requiring precise integer coordinate calculations, such as grid-based positioning, texture coordinate manipulation, or discrete spatial queries. The implementation follows standard C++ class
-   conventions with explicit constructors and operator overloads, facilitating seamless integration with existing engine systems that work with integer-based coordinates.
-
-*/
 class idVec2i
 {
 public:
 	int x, y;
 
-	//! Initializes an empty idVec2i object with default values.
 	idVec2i() { }
-
-	//! Constructs an idVec2i object with the specified x and y coordinates.
 	idVec2i( int _x, int _y ) :
 		x( _x ),
 		y( _y )
 	{
 	}
 
-	//! Sets the x and y components of the vector to the specified integer values.
 	void Set( int _x, int _y )
 	{
 		x = _x;
@@ -74,14 +57,11 @@ public:
 	}
 	int	 Area() const { return x * y; };
 
-	//! Sets the x and y components to the minimum values between this vector and the given vector.
 	void Min( idVec2i& v )
 	{
 		x = MinInt( x, v.x );
 		y = MinInt( y, v.y );
 	}
-
-	//! Sets the x and y components of this vector to the maximum of the current values and the components of the provided vector.
 	void Max( idVec2i& v )
 	{
 		x = MaxInt( x, v.x );

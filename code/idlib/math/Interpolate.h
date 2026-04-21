@@ -30,116 +30,33 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_INTERPOLATE_H__
 #define __MATH_INTERPOLATE_H__
 
-/*!
-	\class idInterpolate
-	\brief Template class for interpolating values over time with configurable start time, duration, and start/end values.
+/*
+==============================================================================================
 
-	The idInterpolate class provides a reusable mechanism for calculating interpolated values between a start and end state over a specified time duration. It is designed to support various data types
-   through its template parameter, making it flexible for different interpolation needs within the engine. The class manages the interpolation state through initialization, time-based value
-   calculation, and completion checking. It supports setting and retrieving start time, duration, and both start and end values. The interpolation behavior follows a linear progression between start
-   and end values, with clamping at the boundaries. This class is intended for use in animation systems, cinematic effects, and any scenario where smooth transitions between states are required. The
-   implementation is optimized for performance with inline methods for common operations and provides clear separation between configuration and evaluation phases.
+	Linear interpolation.
 
+==============================================================================================
 */
+
 template<class type>
 class idInterpolate
 {
 public:
-	/*!
-		\brief Initializes an interpolation object with default values.
-
-		This constructor initializes an interpolation object by setting the start time and duration to zero, and clearing the memory for both start and end values to ensure they contain default
-	   initialized data.
-
-	*/
 	idInterpolate();
 
-	/*!
-		\brief Initializes an interpolation with start time, duration, and start and end values.
-
-		This function sets up the interpolation parameters including the start time, duration, and the values at the start and end of the interpolation period. It is used to configure the
-	   interpolation state before computing intermediate values.
-
-		\param startTime The start time for the interpolation period
-		\param duration The total duration of the interpolation
-		\param startValue The value at the beginning of the interpolation
-		\param endValue The value at the end of the interpolation
-	*/
 	void		Init( const int startTime, const int duration, const type& startValue, const type& endValue );
-
-	/*!
-		\brief Sets the start time for the interpolation.
-
-		This function assigns the provided time value to the internal start time member of the interpolation object. It is used to define when the interpolation process should begin.
-
-		\param time The time value to set as the start time for the interpolation
-	*/
 	void		SetStartTime( int time ) { this->startTime = time; }
-
-	/*!
-		\brief Sets the duration of the interpolation to the specified value.
-
-		This function configures the duration parameter for the interpolation operation. The duration controls how long the interpolation effect lasts, typically measured in game time units or frames.
-	   The function also initializes the starting value for the interpolation process.
-
-		\param duration The duration value to set for the interpolation
-	*/
 	void		SetDuration( int duration ) { this->duration = duration; }
-
-	/*!
-		\brief Sets the starting value for the interpolation.
-
-		This function assigns the provided starting value to the internal startValue member of the interpolation object. It is typically used to define the initial state of an interpolation process.
-
-		\param startValue The value to set as the starting point for the interpolation.
-	*/
 	void		SetStartValue( const type& startValue ) { this->startValue = startValue; }
-
-	/*!
-		\brief Sets the end value for the interpolation.
-
-		This function updates the end value used in the interpolation process. The interpolation will transition from the current start value to this new end value over the specified time period.
-
-		\param endValue The new end value to be used for interpolation
-	*/
 	void		SetEndValue( const type& endValue ) { this->endValue = endValue; }
 
-	/*!
-		\brief Returns the interpolated value at the specified time between the start and end values
-
-		This function calculates and returns an interpolated value between the start and end values based on the provided time. If the time is less than or equal to the start time, it returns the
-	   start value. If the time is greater than or equal to the end time (start time plus duration), it returns the end value. Otherwise, it performs linear interpolation between the start and end
-	   values using the time ratio
-
-		\param time The absolute time value to calculate the interpolation for
-		\return The interpolated value at the specified time, which will be of the same type as the start and end values
-	*/
 	type		GetCurrentValue( int time ) const;
-
-	/*!
-		\brief Determines whether an interpolation has completed by comparing the given time with the start time and duration.
-
-		This function checks if the specified time has exceeded the total duration of the interpolation, which starts at startTime. It is used to manage animation transitions and determine when an
-	   interpolation should no longer be applied.
-
-		\param time The current time to check against the interpolation's start time and duration
-		\return True if the interpolation has completed (time is greater than or equal to start time plus duration), false otherwise
-	*/
 	bool		IsDone( int time ) const { return ( time >= startTime + duration ); }
 
-	//! Returns the start time of the cinematic animation.
 	int			GetStartTime() const { return startTime; }
-
-	//! Returns the end time of the interpolation interval.
 	int			GetEndTime() const { return startTime + duration; }
-
-	//! Returns the duration of the interpolation.
 	int			GetDuration() const { return duration; }
-
-	//! Returns a const reference to the starting value of the interpolation.
 	const type& GetStartValue() const { return startValue; }
-
-	//! Returns the end value of the interpolation.
 	const type& GetEndValue() const { return endValue; }
 
 private:
@@ -149,6 +66,11 @@ private:
 	type endValue;
 };
 
+/*
+====================
+idInterpolate::idInterpolate
+====================
+*/
 template<class type>
 ID_INLINE idInterpolate<type>::idInterpolate()
 {
@@ -157,6 +79,11 @@ ID_INLINE idInterpolate<type>::idInterpolate()
 	memset( &endValue, 0, sizeof( endValue ) );
 }
 
+/*
+====================
+idInterpolate::Init
+====================
+*/
 template<class type>
 ID_INLINE void idInterpolate<type>::Init( const int startTime, const int duration, const type& startValue, const type& endValue )
 {
@@ -166,6 +93,11 @@ ID_INLINE void idInterpolate<type>::Init( const int startTime, const int duratio
 	this->endValue	 = endValue;
 }
 
+/*
+====================
+idInterpolate::GetCurrentValue
+====================
+*/
 template<class type>
 ID_INLINE type idInterpolate<type>::GetCurrentValue( int time ) const
 {
@@ -181,141 +113,48 @@ ID_INLINE type idInterpolate<type>::GetCurrentValue( int time ) const
 	}
 }
 
-/*!
-	\class idInterpolateAccelDecelLinear
-	\brief Template class for smooth acceleration-deceleration-linear interpolation of typed values.
+/*
+==============================================================================================
 
-	idInterpolateAccelDecelLinear provides a template-based interpolation mechanism that supports smooth transitions between start and end values with configurable acceleration and deceleration
-   phases. The class manages the time distribution across these phases and handles the underlying extrapolation calculations to produce continuous interpolated values. It is designed to be used in
-   scenarios requiring smooth animation or transition effects where the interpolation needs to start with acceleration, maintain a linear segment, and end with deceleration. The interpolation state
-   can be invalidated and reset using the Invalidate method, and the class maintains internal state to track the current phase. This implementation is intended for use in timed animation sequences,
-   cinematic effects, or any application requiring precise control over motion interpolation with acceleration and deceleration. The template parameter allows it to work with any type that supports
-   assignment and arithmetic operations.
+	Continuous interpolation with linear acceleration and deceleration phase.
+	The velocity is continuous but the acceleration is not.
 
+==============================================================================================
 */
+
 template<class type>
 class idInterpolateAccelDecelLinear
 {
 public:
-	/*!
-		\brief Initializes the interpolation parameters to their default values.
-
-		Initializes the acceleration, deceleration, and linear interpolation parameters for a value over time. Sets all time parameters to zero and clears the start value structure.
-
-	*/
 	idInterpolateAccelDecelLinear();
 
-	/*!
-		\brief Initializes acceleration, deceleration, and linear interpolation parameters for time-based value transitions.
-
-		This function sets up the interpolation parameters for a value that transitions from a start value to an end value over a specified duration. It handles the distribution of acceleration and
-	   deceleration times, and initializes the underlying extrapolation mechanism. The function ensures that the total time allocated for acceleration and deceleration does not exceed the overall
-	   duration, adjusting them proportionally if necessary. It also calculates the speed needed for the linear portion of the interpolation and configures the extrapolation based on whether there is
-	   acceleration, linear, or deceleration phase.
-
-		\param startTime The start time of the interpolation
-		\param accelTime The duration of the acceleration phase
-		\param decelTime The duration of the deceleration phase
-		\param duration The total duration of the interpolation
-		\param startValue The initial value of the interpolation
-		\param endValue The final value of the interpolation
-	*/
 	void Init( const int startTime, const int accelTime, const int decelTime, const int duration, const type& startValue, const type& endValue );
-
-	/*!
-		\brief Sets the start time for the interpolation and invalidates the current state.
-
-		This function updates the start time used for interpolation calculations and marks the current interpolation state as invalid. This ensures that any subsequent interpolation operations will
-	   recalculate their values based on the new start time.
-
-		\param time The new start time value to be set for the interpolation
-	*/
 	void SetStartTime( int time )
 	{
 		startTime = time;
 		Invalidate();
 	}
-
-	/*!
-		\brief Sets the starting value for the interpolation and invalidates the current interpolation state
-
-		This function updates the starting value used for interpolation calculations and ensures that any existing interpolation state is invalidated. This is typically called when beginning a new
-	   interpolation sequence or when the initial value needs to be changed mid-interpolation
-
-		\param startValue the new starting value to be used for interpolation
-	*/
 	void SetStartValue( const type& startValue )
 	{
 		this->startValue = startValue;
 		Invalidate();
 	}
-
-	/*!
-		\brief Sets the end value for the interpolation and invalidates the current interpolation state.
-
-		This function updates the end value used for interpolation and marks the current interpolation state as invalid. This invalidation typically triggers a recalculation of the interpolation
-	   parameters when the interpolation is next evaluated.
-
-		\param endValue The new end value to be used for the interpolation
-	*/
 	void SetEndValue( const type& endValue )
 	{
 		this->endValue = endValue;
 		Invalidate();
 	}
 
-	/*!
-		\brief Returns the current interpolated value at the specified time using acceleration and deceleration timing
-
-		This function calculates and returns the interpolated value for a given time point. It first updates the internal phase state based on the provided time, then uses the extrapolation mechanism
-	   to compute and return the current value. The interpolation follows an acceleration and deceleration curve for smooth transitions.
-
-		\param time The time value for which the interpolated result is calculated
-		\return The interpolated value at the specified time based on acceleration and deceleration timing
-	*/
 	type		GetCurrentValue( int time ) const;
-
-	/*!
-		\brief Returns the current speed at the specified time during interpolation.
-
-		This function calculates and returns the speed at a given time during an interpolation process. It first updates the internal phase state based on the provided time, then retrieves the current
-	   speed from the extrapolation component.
-
-		\param time The time value at which to calculate the current speed
-		\return The speed value at the specified time
-	*/
 	type		GetCurrentSpeed( int time ) const;
-
-	/*!
-		\brief Determines whether the interpolation animation has completed by the specified time.
-
-		This function evaluates if the interpolation process, which includes acceleration, linear, and deceleration phases, has finished by the given time. It compares the input time against the total
-	   duration of the interpolation, which is the sum of the start time, acceleration time, linear time, and deceleration time.
-
-		\param time The time value to check against the interpolation completion threshold
-		\return True if the interpolation is complete at the specified time, false otherwise
-	*/
 	bool		IsDone( int time ) const { return ( time >= startTime + accelTime + linearTime + decelTime ); }
 
-	//! Returns the start time of the cinematic animation.
 	int			GetStartTime() const { return startTime; }
-
-	//! Returns the end time of the interpolation process.
 	int			GetEndTime() const { return startTime + accelTime + linearTime + decelTime; }
-
-	//! Returns the total duration of the acceleration, linear, and deceleration phases.
 	int			GetDuration() const { return accelTime + linearTime + decelTime; }
-
-	//! Returns the acceleration time value.
 	int			GetAcceleration() const { return accelTime; }
-
-	//! Returns the deceleration time value.
 	int			GetDeceleration() const { return decelTime; }
-
-	//! Returns the starting value of the interpolation.
 	const type& GetStartValue() const { return startValue; }
-
-	//! Returns the end value of the interpolation.
 	const type& GetEndValue() const { return endValue; }
 
 private:
@@ -327,26 +166,15 @@ private:
 	type						endValue;
 	mutable idExtrapolate<type> extrapolate;
 
-	/*!
-		\brief Initializes the extrapolation state to an invalid configuration.
-
-		This function resets the extrapolation parameters to an invalid state by initializing the extrapolate object with zero values for time and distance, and setting the extrapolation type to
-	   EXTRAPOLATION_NONE. The function is typically used to reset the interpolation state when the interpolation data becomes invalid or needs to be restarted.
-
-	*/
 	void						Invalidate();
-
-	/*!
-		\brief Sets the phase of the acceleration/deceleration linear interpolation based on the given time
-
-		This function determines which phase of the interpolation the given time falls into and initializes the appropriate extrapolation type. It handles three phases: acceleration, linear motion,
-	   and deceleration. The function checks the current time against the start time and the defined acceleration and deceleration time periods to decide which phase to initialize.
-
-		\param time The time value to determine the interpolation phase
-	*/
 	void						SetPhase( int time ) const;
 };
 
+/*
+====================
+idInterpolateAccelDecelLinear::idInterpolateAccelDecelLinear
+====================
+*/
 template<class type>
 ID_INLINE idInterpolateAccelDecelLinear<type>::idInterpolateAccelDecelLinear()
 {
@@ -355,6 +183,11 @@ ID_INLINE idInterpolateAccelDecelLinear<type>::idInterpolateAccelDecelLinear()
 	endValue = startValue;
 }
 
+/*
+====================
+idInterpolateAccelDecelLinear::Init
+====================
+*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelLinear<type>::Init( const int startTime, const int accelTime, const int decelTime, const int duration, const type& startValue, const type& endValue )
 {
@@ -382,12 +215,22 @@ ID_INLINE void idInterpolateAccelDecelLinear<type>::Init( const int startTime, c
 	}
 }
 
+/*
+====================
+idInterpolateAccelDecelLinear::Invalidate
+====================
+*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelLinear<type>::Invalidate()
 {
 	extrapolate.Init( 0, 0, extrapolate.GetStartValue(), extrapolate.GetBaseSpeed(), extrapolate.GetSpeed(), EXTRAPOLATION_NONE );
 }
 
+/*
+====================
+idInterpolateAccelDecelLinear::SetPhase
+====================
+*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelLinear<type>::SetPhase( int time ) const
 {
@@ -413,6 +256,11 @@ ID_INLINE void idInterpolateAccelDecelLinear<type>::SetPhase( int time ) const
 	}
 }
 
+/*
+====================
+idInterpolateAccelDecelLinear::GetCurrentValue
+====================
+*/
 template<class type>
 ID_INLINE type idInterpolateAccelDecelLinear<type>::GetCurrentValue( int time ) const
 {
@@ -420,6 +268,11 @@ ID_INLINE type idInterpolateAccelDecelLinear<type>::GetCurrentValue( int time ) 
 	return extrapolate.GetCurrentValue( time );
 }
 
+/*
+====================
+idInterpolateAccelDecelLinear::GetCurrentSpeed
+====================
+*/
 template<class type>
 ID_INLINE type idInterpolateAccelDecelLinear<type>::GetCurrentSpeed( int time ) const
 {
@@ -427,138 +280,48 @@ ID_INLINE type idInterpolateAccelDecelLinear<type>::GetCurrentSpeed( int time ) 
 	return extrapolate.GetCurrentSpeed( time );
 }
 
-/*!
-	\class idInterpolateAccelDecelSine
-	\brief Template class for smooth acceleration and deceleration sine-based interpolation with configurable timing and values.
+/*
+==============================================================================================
 
-	The idInterpolateAccelDecelSine class provides a template-based interpolation mechanism that implements smooth acceleration and deceleration using sine curves. It is designed to handle animations
-   or transitions where gradual speed changes are required, with distinct phases for acceleration, linear motion, and deceleration. The class supports configuration through timing parameters and
-   start/end values, and provides functions to query the current interpolated value, speed, and completion state. It also offers methods to update interpolation parameters dynamically, with
-   invalidation of current state when changes occur. The interpolation is typically used in engine animation systems for user interface transitions or other scenarios requiring smooth motion.
+	Continuous interpolation with sinusoidal acceleration and deceleration phase.
+	Both the velocity and acceleration are continuous.
 
+==============================================================================================
 */
+
 template<class type>
 class idInterpolateAccelDecelSine
 {
 public:
-	/*!
-		\brief Initializes all time and value members to their default states for acceleration and deceleration sine interpolation.
-
-		The constructor initializes the timing parameters startTime, accelTime, linearTime, and decelTime to zero. It also clears the startValue and endValue members to their default states using
-	   memset. This setup prepares the interpolation object for subsequent configuration with specific timing and value parameters.
-
-	*/
 	idInterpolateAccelDecelSine();
 
-	/*!
-		\brief Initializes acceleration and deceleration sine interpolation with specified timing and value parameters.
-
-		Configures the interpolation parameters including start time, acceleration time, deceleration time, and duration. The function adjusts the acceleration and deceleration times if they exceed
-	   the total duration, and calculates the linear time segment. It then sets up an extrapolation object with appropriate interpolation type based on the timing parameters. The function handles
-	   three interpolation types: acceleration sine, linear, and deceleration sine depending on the provided timing values. The start and end values are stored for use in the interpolation process.
-
-		\param startTime The start time for the interpolation
-		\param accelTime The duration of the acceleration phase
-		\param decelTime The duration of the deceleration phase
-		\param duration The total duration of the interpolation
-		\param startValue The starting value of the interpolation
-		\param endValue The ending value of the interpolation
-	*/
 	void Init( const int startTime, const int accelTime, const int decelTime, const int duration, const type& startValue, const type& endValue );
-
-	/*!
-		\brief Sets the start time for the interpolation and invalidates the current state.
-
-		This function updates the start time of the interpolation to the specified time value and invalidates the current interpolation state to ensure a fresh calculation on the next update.
-
-		\param time The new start time for the interpolation
-	*/
 	void SetStartTime( int time )
 	{
 		startTime = time;
 		Invalidate();
 	}
-
-	/*!
-		\brief Sets the starting value for the interpolation and invalidates the current interpolation state
-
-		This function updates the starting value used for interpolation calculations and ensures that any previously computed interpolation data is invalidated
-
-		\param startValue the new starting value to be set for interpolation
-	*/
 	void SetStartValue( const type& startValue )
 	{
 		this->startValue = startValue;
 		Invalidate();
 	}
-
-	/*!
-		\brief Sets the end value for the interpolation and invalidates the current interpolation state
-
-		This function updates the end value used in the interpolation process and invalidates the current interpolation state to ensure that any subsequent interpolation operations start fresh with
-	   the new end value
-
-		\param endValue the new end value to be set for the interpolation
-	*/
 	void SetEndValue( const type& endValue )
 	{
 		this->endValue = endValue;
 		Invalidate();
 	}
 
-	/*!
-		\brief Returns the current interpolated value based on the provided time using acceleration and deceleration with a sine curve
-
-		This function calculates and returns the current value of an interpolation that follows an acceleration and deceleration pattern based on a sine curve. It first sets the interpolation phase
-	   based on the provided time, then uses an extrapolation object to compute and return the final interpolated value. The function is typically used in user interface animations or transitions
-	   where smooth movement is desired.
-
-		\param time The current time value used to calculate the interpolation phase and determine the current interpolated value
-		\return The current interpolated value at the specified time, following an acceleration and deceleration pattern with a sine curve
-	*/
 	type		GetCurrentValue( int time ) const;
-
-	/*!
-		\brief Returns the current speed based on the interpolation phase and time
-
-		This function calculates and returns the current speed for interpolation at a given time. It first updates the interpolation phase using the provided time value, then uses the extrapolation
-	   object to determine the actual speed. The function is designed to work within animation or interpolation systems where smooth transitions are required.
-
-		\param time The absolute time value used to calculate the current interpolation phase and speed
-		\return The current speed value at the specified time based on the interpolation and extrapolation calculations
-	*/
 	type		GetCurrentSpeed( int time ) const;
-
-	/*!
-		\brief Checks if the interpolation animation is complete at the given time
-
-		This function determines whether an interpolation animation has finished based on the provided time value. It compares the given time against the sum of the start time and all animation
-	   duration components including acceleration, linear, and deceleration phases
-
-		\param time The absolute time value to check against the animation completion
-		\return True if the animation is complete at the specified time, false otherwise
-	*/
 	bool		IsDone( int time ) const { return ( time >= startTime + accelTime + linearTime + decelTime ); }
 
-	//! Returns the start time of the cinematic animation.
 	int			GetStartTime() const { return startTime; }
-
-	//! Returns the end time of the interpolation cycle.
 	int			GetEndTime() const { return startTime + accelTime + linearTime + decelTime; }
-
-	//! Returns the total duration of the interpolation by summing the acceleration, linear, and deceleration time components.
 	int			GetDuration() const { return accelTime + linearTime + decelTime; }
-
-	//! Returns the acceleration time value.
 	int			GetAcceleration() const { return accelTime; }
-
-	//! Returns the deceleration time value.
 	int			GetDeceleration() const { return decelTime; }
-
-	//! Returns the starting value of the interpolation.
 	const type& GetStartValue() const { return startValue; }
-
-	//! Returns the end value of the interpolation curve
 	const type& GetEndValue() const { return endValue; }
 
 private:
@@ -570,26 +333,15 @@ private:
 	type						endValue;
 	mutable idExtrapolate<type> extrapolate;
 
-	/*!
-		\brief Initializes the extrapolation state to an invalid or neutral condition.
-
-		This function resets the extrapolation state by initializing it with default parameters that represent an invalid or neutral condition. It sets up the extrapolation with zero start time, zero
-	   base speed, and the current start value, effectively clearing any previous extrapolation data.
-
-	*/
 	void						Invalidate();
-
-	/*!
-		\brief Sets the phase of the interpolation animation based on the provided time.
-
-		This function determines which phase of the interpolation animation should be used based on the given time value. It checks if the current time falls within the acceleration, linear, or
-	   deceleration phases and initializes the appropriate extrapolation type. The function updates the extrapolation state to reflect the current phase of the interpolation.
-
-		\param time The time value used to determine which phase of the interpolation animation to set
-	*/
 	void						SetPhase( int time ) const;
 };
 
+/*
+====================
+idInterpolateAccelDecelSine::idInterpolateAccelDecelSine
+====================
+*/
 template<class type>
 ID_INLINE idInterpolateAccelDecelSine<type>::idInterpolateAccelDecelSine()
 {
@@ -598,6 +350,11 @@ ID_INLINE idInterpolateAccelDecelSine<type>::idInterpolateAccelDecelSine()
 	memset( &endValue, 0, sizeof( endValue ) );
 }
 
+/*
+====================
+idInterpolateAccelDecelSine::Init
+====================
+*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelSine<type>::Init( const int startTime, const int accelTime, const int decelTime, const int duration, const type& startValue, const type& endValue )
 {
@@ -625,12 +382,22 @@ ID_INLINE void idInterpolateAccelDecelSine<type>::Init( const int startTime, con
 	}
 }
 
+/*
+====================
+idInterpolateAccelDecelSine::Invalidate
+====================
+*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelSine<type>::Invalidate()
 {
 	extrapolate.Init( 0, 0, extrapolate.GetStartValue(), extrapolate.GetBaseSpeed(), extrapolate.GetSpeed(), EXTRAPOLATION_NONE );
 }
 
+/*
+====================
+idInterpolateAccelDecelSine::SetPhase
+====================
+*/
 template<class type>
 ID_INLINE void idInterpolateAccelDecelSine<type>::SetPhase( int time ) const
 {
@@ -660,6 +427,11 @@ ID_INLINE void idInterpolateAccelDecelSine<type>::SetPhase( int time ) const
 	}
 }
 
+/*
+====================
+idInterpolateAccelDecelSine::GetCurrentValue
+====================
+*/
 template<class type>
 ID_INLINE type idInterpolateAccelDecelSine<type>::GetCurrentValue( int time ) const
 {
@@ -667,6 +439,11 @@ ID_INLINE type idInterpolateAccelDecelSine<type>::GetCurrentValue( int time ) co
 	return extrapolate.GetCurrentValue( time );
 }
 
+/*
+====================
+idInterpolateAccelDecelSine::GetCurrentSpeed
+====================
+*/
 template<class type>
 ID_INLINE type idInterpolateAccelDecelSine<type>::GetCurrentSpeed( int time ) const
 {

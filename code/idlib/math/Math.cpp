@@ -68,6 +68,11 @@ const __m128 idMath::SIMD_SP_rsqrt_c1		   = { -0.5f, -0.5f, -0.5f, -0.5f };
 bool  idMath::initialized = false;
 dword idMath::iSqrt[SQRT_TABLE_SIZE]; // inverse square root lookup table
 
+/*
+===============
+idMath::Init
+===============
+*/
 void  idMath::Init()
 {
 	union _flint fi, fo;
@@ -83,6 +88,11 @@ void  idMath::Init()
 	initialized = true;
 }
 
+/*
+================
+idMath::FloatToBits
+================
+*/
 int idMath::FloatToBits( float f, int exponentBits, int mantissaBits )
 {
 	int i, sign, exponent, mantissa, value;
@@ -121,6 +131,11 @@ int idMath::FloatToBits( float f, int exponentBits, int mantissaBits )
 	return value;
 }
 
+/*
+================
+idMath::BitsToFloat
+================
+*/
 float idMath::BitsToFloat( int i, int exponentBits, int mantissaBits )
 {
 	static int exponentSign[2] = { 1, -1 };
@@ -137,39 +152,74 @@ float idMath::BitsToFloat( int i, int exponentBits, int mantissaBits )
 	return *reinterpret_cast<float*>( &value );
 }
 
+/*
+===================
+idMath::Distance
+===================
+*/
 float idMath::Distance( idVec3 p1, idVec3 p2 )
 {
 	idVec3 v = p2 - p1;
 	return v.Length();
 }
 
+/*
+===================
+idMath::DistanceSquared
+===================
+*/
 float idMath::DistanceSquared( idVec3 p1, idVec3 p2 )
 {
 	idVec3 v = p2 - p1;
 	return v.LengthSqr();
 }
 
+/*
+========================
+idMath::CrossProduct
+========================
+*/
 idVec3 idMath::CrossProduct( const idVec3& a, const idVec3& b )
 {
 	return a.Cross( b );
 }
 
+/*
+========================
+idMath::CreateVector
+========================
+*/
 idVec3 idMath::CreateVector( float x, float y, float z )
 {
 	return idVec3( x, y, z );
 }
 
+/*
+========================
+idMath::CreateVector
+========================
+*/
 idVec4 idMath::CreateVector( float x, float y, float z, float w )
 {
 	return idVec4( x, y, z, w );
 }
 
+/*
+========================
+idMath::ReflectVector
+========================
+*/
 idVec3 idMath::ReflectVector( idVec3 vector, idVec3 normal )
 {
 	float n = 2 * DotProduct( vector, normal );
 	return vector - normal * n;
 }
 
+/*
+========================
+idMath::IsPrime
+========================
+*/
 bool idMath::IsPrime( int n )
 {
 	if( n < 2 ) {
@@ -188,6 +238,11 @@ bool idMath::IsPrime( int n )
 	}
 	return true;
 }
+/*
+========================
+idMath::NextPrime
+========================
+*/
 int idMath::NextPrime( int current )
 {
 	int candidate = current + 1;
@@ -234,6 +289,8 @@ int rvRandom::irand( int min, int max )
 	result = ( ( result * ( max - min ) ) >> 15 ) + min;
 	return ( result );
 }
+
+// Try to get a seed independent of the random number system
 
 int rvRandom::Init()
 {
