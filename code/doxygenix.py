@@ -206,6 +206,17 @@ def find_decl_anchor(lines: List[str], decl_idx: int) -> int:
     return decl_idx
 
 
+def find_class_anchor(lines: List[str], class_line_idx: int) -> int:
+    """
+    Finds the insertion anchor for a class/struct declaration, including templates
+    and leading ID_* macros directly above the class keyword.
+    """
+    idx = find_decl_anchor(lines, class_line_idx)
+    while idx > 0 and lines[idx - 1].strip().startswith("ID_"):
+        idx -= 1
+    return idx
+
+
 # -----------------------------------------------------------------------------
 # Data Model
 # -----------------------------------------------------------------------------
@@ -226,6 +237,114 @@ class FuncInfo:
     brief: str
     details: Optional[str]
     is_pure_virtual: bool = False
+
+
+@dataclass
+class ClassInfo:
+    file: Path
+    line: int
+    name: str
+    kind: str  # 'class' oder 'struct'
+    brief: str
+    details: Optional[str]
+    # Liste der bereits dokumentierten Member: "ReadBits: Reads bits from the buffer."
+    member_summaries: List[str]
+    # Der rohe Code-Block der Klassendeklaration
+    raw_declaration: Optional[str] = None
+
+
+class ClassCommentModel(BaseModel):
+    brief: str = Field(
+        description="One concise sentence describing the class's main purpose"
+    )
+    details: Optional[str] = Field(
+        description="Architectural details and intended usage"
+    )
+
+
+def _build_class_context(class_info: ClassInfo) -> str:
+    decl = class_info.raw_declaration or "<missing>"
+    members = class_info.member_summaries or []
+    member_text = "\n".join(f"- {m}" for m in members) if members else "<none>"
+    return (
+        f"kind: {class_info.kind}\n"
+        f"name: {class_info.name}\n"
+        f"brief: {class_info.brief or '<none>'}\n"
+        f"details: {class_info.details or '<none>'}\n"
+        f"declaration:\n{decl}\n"
+        f"member_summaries:\n{member_text}\n"
+    )
+
+
+def ai_generate_class_comment(
+    class_info: ClassInfo,
+    llm: str,
+    thinking: Optional[object] = None,
+    verbose: bool = False,
+) -> tuple[ClassCommentModel | None, bool]:
+    system_prompt = (
+        "You are a senior C++ architect. "
+        "You are analyzing source code from Roguestrad, a RBDOOM-3-BFG engine fork which is a derivate of Doom 3 BFG by id Software.\n"
+        "I will give you a class declaration and a list of its methods with short descriptions. "
+        "Your task is to write an overarching Doxygen documentation for the class. "
+        "Focus on design intent and intended usage. "
+        "Only mention memory management or ownership if it is explicitly stated in the declaration "
+        "or member descriptions.\n"
+        "OUTPUT RULES:\n"
+        "1) Only fill fields of ClassCommentModel: 'brief' and 'details'.\n"
+        "2) Do NOT include comment markers like /*, */, /**, /*! or //.\n"
+        "3) Do NOT include Doxygen tags like \\brief, \\class, @brief.\n"
+        "4) 'brief' must be a single concise sentence.\n"
+        "5) 'details' may be multiple sentences, plain text only.\n"
+        "6) If unclear, write 'TODO: clarify ...' instead of guessing.\n"
+        "7) Do NOT use Markdown or code fences.\n"
+        "8) Do NOT mention thread safety.\n"
+        "9) Do NOT infer memory management or ownership without explicit evidence.\n"
+        "10) Do NOT mention the engine name or product name.\n"
+    )
+
+    user_prompt = _build_class_context(class_info)
+
+    model = _build_ollama_model_from_llm(llm)
+    if thinking is not None:
+        agent = Agent(
+            model,
+            output_type=ClassCommentModel,
+            system_prompt=system_prompt,
+            model_settings={"thinking": thinking},
+        )
+    else:
+        agent = Agent(model, output_type=ClassCommentModel, system_prompt=system_prompt)
+
+    try:
+        result = agent.run_sync(user_prompt=user_prompt)
+        out = result.output
+        if out.brief:
+            out.brief = cleanup_text(out.brief)
+        if out.details:
+            out.details = cleanup_text(out.details)
+        return out, True
+    except Exception as e:
+        print(f"AI class comment generation error: {e}")
+        return None, False
+
+
+def render_class_comment_block(
+    class_info: ClassInfo, model: ClassCommentModel
+) -> List[str]:
+    brief = model.brief.strip() if model.brief else "TODO: clarify class purpose."
+    lines = ["/*!"]
+    tag = "\\struct" if class_info.kind == "struct" else "\\class"
+    lines.append(f"\t{tag} {class_info.name}")
+    lines.append(f"\t\\brief {brief}")
+    if model.details:
+        lines.append("")
+        for ln in model.details.split("\n"):
+            if ln.strip():
+                lines.append(f"\t{ln}")
+        lines.append("")
+    lines.append("*/")
+    return lines
 
 
 def get_func_identifier(func: FuncInfo) -> str:
@@ -308,15 +427,86 @@ def get_func_display_name(func: FuncInfo) -> str:
 # XML Parser
 # -----------------------------------------------------------------------------
 def parse_doxygen_xml(
-    xml_dir: Path, repo_root: Path, prefer_decl: bool = True
-) -> List[FuncInfo]:
+    xml_dir: Path,
+    repo_root: Path,
+    prefer_decl: bool = True,
+    collect_classes: bool = False,
+) -> List[FuncInfo] | Tuple[List[FuncInfo], List[ClassInfo]]:
     funcs: List[FuncInfo] = []
+    classes: List[ClassInfo] = []
 
     for xf in xml_dir.glob("*.xml"):
         try:
             root = ET.parse(xf).getroot()
         except:
             continue
+
+        if collect_classes and xf.name.lower().startswith(("class", "struct")):
+            for cd in root.findall(".//compounddef"):
+                kind = (cd.get("kind") or "").strip().lower()
+                if kind not in {"class", "struct"}:
+                    continue
+
+                cname = cd.findtext("compoundname") or ""
+                if not cname:
+                    continue
+
+                cbd = cd.find("briefdescription")
+                cbrief = extract_text(cbd) if cbd is not None else ""
+
+                cdd = cd.find("detaileddescription")
+                cdetails = extract_text(cdd) if cdd is not None else ""
+                if cdetails == cbrief:
+                    cdetails = ""
+
+                member_summaries: List[str] = []
+                for md in cd.findall(".//memberdef[@kind='function']"):
+                    mname = md.findtext("name") or ""
+                    if not mname:
+                        continue
+                    mdef = md.findtext("definition") or ""
+                    margs = md.findtext("argsstring") or ""
+                    sig = (mdef + margs).strip() or mname
+                    mbd = md.find("briefdescription")
+                    mbrief = extract_text(mbd) if mbd is not None else ""
+                    mdd = md.find("detaileddescription")
+                    mdetails = extract_text(mdd) if mdd is not None else ""
+                    if mdetails == mbrief:
+                        mdetails = ""
+                    if mbrief:
+                        summary = f"{sig}: {mbrief}"
+                    else:
+                        summary = f"{sig}: TODO: clarify function purpose."
+                    if mdetails:
+                        summary = f"{summary} Details: {mdetails}"
+                    member_summaries.append(summary)
+
+                loc = cd.find("location")
+                if loc is None:
+                    continue
+                cfile = loc.get("file")
+                cline = loc.get("line")
+                if not cfile or not cline:
+                    continue
+
+                class_file = Path(cfile)
+                try:
+                    class_file = class_file.resolve().relative_to(repo_root.resolve())
+                except ValueError:
+                    continue
+
+                classes.append(
+                    ClassInfo(
+                        file=class_file,
+                        line=int(cline),
+                        name=cname,
+                        kind=kind,
+                        brief=cbrief,
+                        details=cdetails or None,
+                        member_summaries=member_summaries,
+                        raw_declaration=None,
+                    )
+                )
 
         for md in root.findall(".//memberdef[@kind='function']"):
             name = md.findtext("name") or ""
@@ -416,6 +606,8 @@ def parse_doxygen_xml(
                     is_pure_virtual=is_pure_virtual,
                 )
             )
+    if collect_classes:
+        return funcs, classes
     return funcs
 
 
@@ -442,6 +634,34 @@ def extract_implementation(func: FuncInfo, repo_root: Path, max_chars=6000) -> s
         excerpt = excerpt[:max_chars] + "\n/* ... truncated ... */"
 
     return excerpt
+
+
+def extract_class_declaration_block(
+    lines: List[str], class_line_idx: int, max_lines: int = 200
+) -> str:
+    """
+    Extracts only the class/struct declaration header (up to the opening brace).
+    Returns an empty string if no declaration header is found within max_lines.
+    """
+    if not lines or class_line_idx < 0 or class_line_idx >= len(lines):
+        return ""
+
+    start_idx = find_class_anchor(lines, class_line_idx)
+    end_limit = min(len(lines), start_idx + max_lines)
+
+    collected: List[str] = []
+
+    for i in range(start_idx, end_limit):
+        line = lines[i]
+        collected.append(line)
+
+        if "{" in line:
+            return "\n".join(collected)
+
+        if line.strip().endswith(";"):
+            return ""
+
+    return ""
 
 
 def find_callsite_examples(
@@ -1346,7 +1566,7 @@ def ai_generate_comment(
     system_prompt = (
         "You are an experienced senior C++ software engineer. "
         "Your job is to fill the fields of CommentModel for a single C++ function.\n"
-        "You're dealing with a derivate of the Doom 3 BFG code base by id Software called RBDOOM-3-BFG.\n"
+        "You are analyzing source code from Roguestrad, a RBDOOM-3-BFG engine fork which is a derivate of Doom 3 BFG by id Software.\n"
         "\n"
         "INPUT YOU RECEIVE:\n"
         "- mode: 'full' or 'trivial'\n"
@@ -2185,7 +2405,7 @@ def generate_doxygen_comments(
         if func.name == "va":
             continue
 
-        if func.name in ("compile_time_assert", "assert_sizeof"):
+        if func.name in ("compile_time_assert", "assert_sizeof", "assert_offsetof"):
             continue
 
         if func.is_pure_virtual:
@@ -2289,7 +2509,7 @@ def generate_doxygen_comments(
     # ----------------------------------
     # 3. Generate AI comments (slow)
     # ----------------------------------
-    progressbar = tqdm(ai_candidates, desc="AI generating comments")
+    progressbar = tqdm(ai_candidates, desc="AI generating function comments")
     for (
         func,
         func_id,
@@ -2467,6 +2687,141 @@ def generate_doxygen_comments(
     return total
 
 
+def generate_class_comments(
+    classes: List[ClassInfo],
+    project_root: Path,
+    llm: str,
+    thinking: Optional[object] = None,
+    verbose: bool = False,
+    dry_run: bool = False,
+    scope_dir: Optional[Path] = None,
+) -> int:
+    if not classes:
+        return 0
+
+    scope_path = scope_dir.resolve() if scope_dir else None
+    insert_map: Dict[Path, List[Tuple[int, List[str], str]]] = {}
+
+    ai_candidates: List[ClassInfo] = []
+    scanned = 0
+    skipped_missing_file = 0
+    # skipped_non_header = 0
+    skipped_out_of_scope = 0
+    skipped_existing_doxygen = 0
+    skipped_no_decl = 0
+
+    for cls in tqdm(classes, desc="Scanning class comments"):
+        scanned += 1
+        cpath = cls.file
+        if not cpath.is_absolute():
+            cpath = (project_root / cpath).resolve()
+        if not cpath.exists():
+            skipped_missing_file += 1
+            continue
+        if scope_path and not is_under_dir(cpath, scope_path):
+            skipped_out_of_scope += 1
+            continue
+        # if not is_header(cpath):
+        #     skipped_non_header += 1
+        #     continue
+
+        lines = read_file(cpath)
+        class_idx = max(0, min(cls.line - 1, len(lines) - 1))
+        decl_idx = find_class_anchor(lines, class_idx)
+        if has_existing_doxygen(lines, decl_idx):
+            skipped_existing_doxygen += 1
+            continue
+
+        raw_decl = extract_class_declaration_block(lines, class_idx)
+        if not raw_decl.strip():
+            skipped_no_decl += 1
+            continue
+
+        class_info = ClassInfo(
+            file=cls.file,
+            line=cls.line,
+            name=cls.name,
+            kind=cls.kind,
+            brief=cls.brief,
+            details=cls.details,
+            member_summaries=cls.member_summaries,
+            raw_declaration=raw_decl,
+        )
+        ai_candidates.append(class_info)
+
+    skipped = scanned - len(ai_candidates)
+    print(
+        f"[class] scanned: {scanned}, candidates: {len(ai_candidates)}, skipped: {skipped}"
+    )
+    if skipped:
+        print(
+            "[class] skipped: "
+            f"missing_file={skipped_missing_file}, "
+            # f"non_header={skipped_non_header}, "
+            f"out_of_scope={skipped_out_of_scope}, "
+            f"existing_doxygen={skipped_existing_doxygen}, "
+            f"no_decl={skipped_no_decl}"
+        )
+
+    ai_attempted = 0
+    ai_generated = 0
+    ai_failed = 0
+
+    progressbar = tqdm(ai_candidates, desc="AI generating class comments")
+    for class_info in progressbar:
+        progressbar.set_postfix(cls=class_info.name)
+        ai_attempted += 1
+        model, ok = ai_generate_class_comment(
+            class_info, llm, thinking=thinking, verbose=verbose
+        )
+        if not ok or model is None or not model.brief:
+            ai_failed += 1
+            continue
+        ai_generated += 1
+
+        block_lines = render_class_comment_block(class_info, model)
+        cpath = class_info.file
+        if not cpath.is_absolute():
+            cpath = (project_root / cpath).resolve()
+        insert_map.setdefault(cpath, []).append(
+            (class_info.line, block_lines, class_info.name)
+        )
+
+    print(
+        f"[class] AI attempted: {ai_attempted}, generated: {ai_generated}, failed: {ai_failed}"
+    )
+
+    total = 0
+    for path, items in tqdm(insert_map.items(), desc="Inserting class comments"):
+        lines = read_file(path)
+        items.sort(key=lambda x: x[0], reverse=True)
+
+        changed = False
+        for line_1b, block_lines, class_name in items:
+            class_idx = line_1b - 1
+            if class_idx < 0 or class_idx >= len(lines):
+                continue
+
+            decl_idx = find_class_anchor(lines, class_idx)
+            if has_existing_doxygen(lines, decl_idx):
+                continue
+
+            decl_idx = cleanup_comments_above(lines, decl_idx, class_name)
+
+            if decl_idx > 0 and lines[decl_idx - 1].strip() != "":
+                lines.insert(decl_idx, "")
+                decl_idx += 1
+
+            lines[decl_idx:decl_idx] = block_lines
+            changed = True
+            total += 1
+
+        if changed and not dry_run:
+            write_file(path, lines)
+
+    return total
+
+
 # -----------------------------------------------------------------------------
 # Header Summary Generation
 # -----------------------------------------------------------------------------
@@ -2507,7 +2862,7 @@ def generate_header_summaries(
         output_type=HeaderSummaryModel,
         system_prompt=(
             "You are a senior C++ software architect. "
-            "You are analyzing source code from RBDOOM-3-BFG, a Doom 3 BFG engine fork.\n"
+            "You are analyzing source code from Roguestrad, a RBDOOM-3-BFG engine fork which is a derivate of Doom 3 BFG by id Software.\n"
             "Summarize the provided C++ file into the requested structured sections.\n"
             "Be precise, technical, and concise. Focus on architectural significance.\n"
             "Use em-dash notation for key_types_and_functions entries, e.g.:\n"
@@ -2791,7 +3146,9 @@ def main():
         "Doxyfile-xmlgen.cfg", doxygen_exe="doxygen.exe", repo_root=project_root
     )
 
-    funcs = parse_doxygen_xml(xml_dir, project_root, prefer_decl=True)
+    funcs, classes = parse_doxygen_xml(
+        xml_dir, project_root, prefer_decl=True, collect_classes=True
+    )
     total = 0
     if not args.summarize_only:
         total = generate_doxygen_comments(
@@ -2812,12 +3169,25 @@ def main():
 
     print(f"Comments inserted: {total}")
 
-    if args.summarize_files and total > 0 and not args.summarize_only:
-        print("Recreate Doxygen XML …")
-        run_doxygen(
-            "Doxyfile-xmlgen.cfg", doxygen_exe="doxygen.exe", repo_root=project_root
+    if not args.summarize_only:
+        if total > 0:
+            print("Recreate Doxygen XML …")
+            run_doxygen(
+                "Doxyfile-xmlgen.cfg", doxygen_exe="doxygen.exe", repo_root=project_root
+            )
+        funcs, classes = parse_doxygen_xml(
+            xml_dir, project_root, prefer_decl=True, collect_classes=True
         )
-        funcs = parse_doxygen_xml(xml_dir, project_root, prefer_decl=True)
+        class_total = generate_class_comments(
+            classes,
+            project_root=project_root,
+            llm=args.llm,
+            thinking=thinking_setting,
+            verbose=args.verbose,
+            dry_run=False,
+            scope_dir=scope_dir,
+        )
+        print(f"Class comments inserted: {class_total}")
 
     # -- Header summary generation -------------------------------------------
     if args.summarize_files:
