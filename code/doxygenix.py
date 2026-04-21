@@ -322,6 +322,15 @@ def ai_generate_class_comment(
 
     try:
         result = agent.run_sync(user_prompt=user_prompt)
+
+        if verbose:
+            chat_name = class_info.name
+            save_history(
+                chat_name,
+                result.all_messages(),
+                f"ai_generate_class_comment for {class_info.name}",
+            )
+
         out = result.output
         if out.brief:
             out.brief = cleanup_text(out.brief)
@@ -2457,8 +2466,8 @@ def generate_doxygen_comments(
             continue
 
         # Ignore operators because they are usually too trivial
-        if func.name.startswith("operator"):
-            continue
+        # if func.name.startswith("operator"):
+        #     continue
 
         if func.name == "va":
             continue
@@ -2529,6 +2538,7 @@ def generate_doxygen_comments(
             is_trivial_getter(func, impl)
             or is_trivial_setter(func, impl)
             or is_trivial_forwarder(func, impl)
+            or func.name.startswith("operator")
         )
         current_trivial = True if force_trivial else computed_trivial
         cached_trivial = entry.is_trivial if entry else None
