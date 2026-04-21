@@ -285,7 +285,7 @@ def ai_generate_class_comment(
     system_prompt = (
         "You are a senior C++ architect. "
         "You are analyzing source code from Roguestrad, a RBDOOM-3-BFG engine fork which is a derivate of Doom 3 BFG by id Software.\n"
-        "I will give you a class declaration and a list of its methods with short descriptions. "
+        "I will give you a class/struct declaration and a list of its methods with short descriptions. "
         "Your task is to write an overarching Doxygen documentation for the class. "
         "Focus on design intent and intended usage. "
         "Only mention memory management or ownership if it is explicitly stated in the declaration "
@@ -296,11 +296,12 @@ def ai_generate_class_comment(
         "3) Do NOT include Doxygen tags like \\brief, \\class, @brief.\n"
         "4) 'brief' must be a single concise sentence.\n"
         "5) 'details' may be multiple sentences, plain text only.\n"
-        "6) If unclear, write 'TODO: clarify ...' instead of guessing.\n"
-        "7) Do NOT use Markdown or code fences.\n"
-        "8) Do NOT mention thread safety.\n"
-        "9) Do NOT infer memory management or ownership without explicit evidence.\n"
-        "10) Do NOT mention the engine name or product name.\n"
+        "6) If member_summaries is empty, keep 'details' empty unless the declaration explicitly states the purpose.\n"
+        "7) If unclear, write 'TODO: clarify ...' instead of guessing.\n"
+        "8) Do NOT use Markdown or code fences.\n"
+        "9) Do NOT mention thread safety.\n"
+        "10) Do NOT infer memory management or ownership without explicit evidence.\n"
+        "11) Do NOT mention engine or product names.\n"
     )
 
     user_prompt = _build_class_context(class_info)
@@ -323,6 +324,9 @@ def ai_generate_class_comment(
             out.brief = cleanup_text(out.brief)
         if out.details:
             out.details = cleanup_text(out.details)
+        if not class_info.member_summaries:
+            if out.details and "TODO: clarify" not in out.details:
+                out.details = None
         return out, True
     except Exception as e:
         print(f"AI class comment generation error: {e}")
@@ -337,7 +341,9 @@ def render_class_comment_block(
     tag = "\\struct" if class_info.kind == "struct" else "\\class"
     lines.append(f"\t{tag} {class_info.name}")
     lines.append(f"\t\\brief {brief}")
-    if model.details:
+    has_todo = bool(model.details and "TODO" in model.details)
+    has_enough_methods = len(class_info.member_summaries) >= 7
+    if model.details and not has_todo and has_enough_methods:
         lines.append("")
         for ln in model.details.split("\n"):
             if ln.strip():
@@ -421,6 +427,24 @@ def get_func_display_name(func: FuncInfo) -> str:
 
     parts = head.split()
     return parts[-1] if parts else func.name
+
+
+def _suppress_body_fetch_warning(func_id: str) -> bool:
+    prefixes = (
+        "gltfItem",
+        "gltfAccessor",
+        "gltfAnimation",
+        "gltfBuffer",
+        "gltfBufferView",
+        "gltfCamera",
+        "gltfData",
+        "gltfExtra_",
+        "gltfMesh",
+        "gltfSampler",
+        "gltfSkin",
+        "idSwap",
+    )
+    return func_id.startswith(prefixes)
 
 
 # -----------------------------------------------------------------------------
@@ -2446,14 +2470,15 @@ def generate_doxygen_comments(
             continue
 
         if impl.endswith(";"):
-            print(
-                colored(
-                    f" Could not fetch body for {func_id}\n",
-                    "red",
-                    "on_black",
-                    ["bold", "blink"],
+            if not _suppress_body_fetch_warning(func_id):
+                print(
+                    colored(
+                        f" Could not fetch body for {func_id}\n",
+                        "red",
+                        "on_black",
+                        ["bold", "blink"],
+                    )
                 )
-            )
             # impl = extract_implementation(func, repo_root, max_chars=maximpl)
             continue
 
@@ -2705,6 +2730,7 @@ def generate_class_comments(
     ai_candidates: List[ClassInfo] = []
     scanned = 0
     skipped_missing_file = 0
+    skipped_struct = 0
     # skipped_non_header = 0
     skipped_out_of_scope = 0
     skipped_existing_doxygen = 0
@@ -2712,6 +2738,9 @@ def generate_class_comments(
 
     for cls in tqdm(classes, desc="Scanning class comments"):
         scanned += 1
+        if cls.kind == "struct":
+            skipped_struct += 1
+            continue
         cpath = cls.file
         if not cpath.is_absolute():
             cpath = (project_root / cpath).resolve()
@@ -2757,6 +2786,7 @@ def generate_class_comments(
         print(
             "[class] skipped: "
             f"missing_file={skipped_missing_file}, "
+            f"structs={skipped_struct}, "
             # f"non_header={skipped_non_header}, "
             f"out_of_scope={skipped_out_of_scope}, "
             f"existing_doxygen={skipped_existing_doxygen}, "
