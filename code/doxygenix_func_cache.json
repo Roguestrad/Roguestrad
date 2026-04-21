@@ -1175,7 +1175,7 @@
     },
     "ID_INLINE void idList< _type_, _tag_ >::DeleteContents(bool clear=true)": {
       "body_hash": "57e14575af43a84640683c14eb8095ae",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idPlaneSet::Clear()": {
       "body_hash": "f4315cea96f06e0996f5c85da3c56c5f",

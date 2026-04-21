@@ -240,7 +240,15 @@ public:
 	//! Swaps the contents of this list with another list.
 	void				   Swap( idList& other );
 
-	//! Deletes all dynamically allocated objects in the list and optionally clears the list.
+	/*!
+		\brief Deletes all objects pointed to by the elements in the list and optionally clears the list.
+
+		This function iterates through all elements in the list and deletes the objects they point to. It is designed to work only with lists containing pointers to objects, and will cause a compiler
+	   error if used with non-pointer types. The function sets all pointers in the list to NULL after deletion. If the clear parameter is true, the list is cleared completely; otherwise, the memory is
+	   reset to zero but the list size remains the same.
+
+		\param clear If true, clears the list completely after deleting the objects; if false, resets the memory to zero but keeps the list size
+	*/
 	void				   DeleteContents( bool clear = true );
 
 	//! Provides an automatic cast to another idList type with a different memory tag.

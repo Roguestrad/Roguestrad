@@ -53,7 +53,7 @@
       "program": "${workspaceFolder}/doxygenix.py",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
-      "args": ["--scope-dir=idlib", "--llm=ollama/qwen3-coder"]
+      "args": ["--scope-dir=idlib/containers", "--llm=ollama/qwen3-coder", "--force-trivial", "-v"]
     },
   ],
 }

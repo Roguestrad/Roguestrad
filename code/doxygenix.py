@@ -1808,6 +1808,24 @@ def find_declaration_line_for_body(
 
     # Remove parameter list if provided (sometimes func_id = "idClass::Func(int)")
     base_func_id = func_id.split("(")[0].strip()
+    base_func_id = re.sub(r"\s*::\s*", "::", base_func_id)
+    base_func_id = re.sub(r"\s*<\s*", "<", base_func_id)
+    base_func_id = re.sub(r"\s*>\s*", ">", base_func_id)
+    base_func_id = re.sub(r"\s*,\s*", ",", base_func_id)
+
+    def _build_qualified_name_pattern(name: str) -> re.Pattern:
+        tokens = re.split(r"(::|<|>|,)", name)
+        parts = []
+        for token in tokens:
+            if not token:
+                continue
+            if token in ("::", "<", ">", ","):
+                parts.append(rf"\s*{re.escape(token)}\s*")
+            else:
+                parts.append(re.escape(token))
+        return re.compile("".join(parts))
+
+    base_func_pattern = _build_qualified_name_pattern(base_func_id)
 
     # 1. Local upward search (almost always sufficient)
     limit = max(start_idx - max_search_up, -1)
@@ -1815,7 +1833,11 @@ def find_declaration_line_for_body(
         line = lines[i]
 
         # Must contain the exact name and an opening parenthesis
-        if base_func_id in line and "(" in line:
+        if base_func_pattern.search(line) and (
+            "(" in line
+            or (i + 1 < len(lines) and "(" in lines[i + 1])
+            or (i + 2 < len(lines) and "(" in lines[i + 2])
+        ):
             stripped = line.strip()
 
             # Ignore comments
@@ -1839,17 +1861,21 @@ def find_declaration_line_for_body(
                 return i
 
     # 2. Fallback: scan entire file for EXACT fully qualified name + implementation
-    pattern = re.compile(rf"{re.escape(base_func_id)}\s*\([^)]*\)\s*{{")
+    pattern = re.compile(rf"{base_func_pattern.pattern}\s*\([^)]*\)\s*{{")
 
     for idx, line in enumerate(lines):
-        if base_func_id in line and "(" in line:
+        if base_func_pattern.search(line) and (
+            "(" in line
+            or (idx + 1 < len(lines) and "(" in lines[idx + 1])
+            or (idx + 2 < len(lines) and "(" in lines[idx + 2])
+        ):
             stripped = line.strip()
             if stripped.startswith(("//", "/*", "*")) or stripped.endswith(";"):
                 continue
 
             # Exact match: name + ( + params + ) + directly {
-            # if pattern.search(line):
-            return idx
+            if pattern.search(line):
+                return idx
 
             # Or: { is on the next line (often due to const/noexcept/override)
             if idx + 1 < len(lines) and "{" in lines[idx + 1]:
@@ -1858,13 +1884,17 @@ def find_declaration_line_for_body(
                     return idx
 
             # Or: { is two lines later (e.g. with = default; or attributes)
-            if idx + idx + 2 < len(lines) and "{" in lines[idx + 2]:
+            if idx + 2 < len(lines) and "{" in lines[idx + 2]:
                 return idx
 
     # 3. Last resort: find the first (and only!) line with the fully qualified name
     #     that is NOT a forward declaration
     for idx, line in enumerate(lines):
-        if base_func_id in line and "(" in line:
+        if base_func_pattern.search(line) and (
+            "(" in line
+            or (idx + 1 < len(lines) and "(" in lines[idx + 1])
+            or (idx + 2 < len(lines) and "(" in lines[idx + 2])
+        ):
             stripped = line.strip()
             if not stripped.startswith(("//", "/*", "*")) and not stripped.endswith(
                 ";"
@@ -2275,6 +2305,24 @@ def _build_original_comment_from_xml(func: FuncInfo) -> str:
     return "\n".join(parts)
 
 
+def _extract_comment_from_body(func: FuncInfo, repo_root: Path) -> str:
+    bodyfile = func.bodyfile or func.file
+    if not bodyfile.is_absolute():
+        bodyfile = (repo_root / bodyfile).resolve()
+    if not bodyfile.exists():
+        return ""
+    lines = read_file(bodyfile)
+    start_idx = (func.bodystart or func.line) - 1
+    if start_idx < 0 or start_idx >= len(lines):
+        return ""
+    func_id = get_func_identifier(func)
+    decl_idx = find_declaration_line_for_body(lines, start_idx, func_id)
+    if decl_idx == -1:
+        return ""
+    decl_idx = find_decl_anchor(lines, decl_idx)
+    return extract_comments_for_declaration(lines, decl_idx)
+
+
 def _build_original_class_comment_from_xml(class_info: ClassInfo) -> str:
     parts: List[str] = []
     if class_info.brief:
@@ -2604,6 +2652,8 @@ def generate_doxygen_comments(
         orig_comment = _build_original_comment_from_xml(func)
         if not orig_comment.strip():
             orig_comment = extract_comments_for_declaration(lines, decl_idx)
+        if not orig_comment.strip():
+            orig_comment = _extract_comment_from_body(func, repo_root)
         if not orig_comment.strip():
             orig_comment = None
 
