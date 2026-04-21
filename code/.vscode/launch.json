@@ -53,7 +53,7 @@
       "program": "${workspaceFolder}/doxygenix.py",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
-      "args": ["--scope-dir=idlib/bv", "--llm=ollama/gemma4:26b", "--summarize-files"]
+      "args": ["--scope-dir=idlib", "--llm=ollama/qwen3-coder"]
     },
   ],
 }

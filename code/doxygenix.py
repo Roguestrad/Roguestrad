@@ -251,6 +251,7 @@ class ClassInfo:
     member_summaries: List[str]
     # Der rohe Code-Block der Klassendeklaration
     raw_declaration: Optional[str] = None
+    original_comment: Optional[str] = None
 
 
 class ClassCommentModel(BaseModel):
@@ -266,6 +267,7 @@ def _build_class_context(class_info: ClassInfo) -> str:
     decl = class_info.raw_declaration or "<missing>"
     members = class_info.member_summaries or []
     member_text = "\n".join(f"- {m}" for m in members) if members else "<none>"
+    original = class_info.original_comment or "<none>"
     return (
         f"kind: {class_info.kind}\n"
         f"name: {class_info.name}\n"
@@ -273,6 +275,7 @@ def _build_class_context(class_info: ClassInfo) -> str:
         f"details: {class_info.details or '<none>'}\n"
         f"declaration:\n{decl}\n"
         f"member_summaries:\n{member_text}\n"
+        f"original_comment:\n{original}\n"
     )
 
 
@@ -2236,6 +2239,38 @@ def _render_xml_func_comment(func: FuncInfo) -> List[str]:
     return lines
 
 
+def _build_original_comment_from_xml(func: FuncInfo) -> str:
+    parts: List[str] = []
+    if func.brief:
+        parts.append(f"Brief: {func.brief}")
+    if func.details:
+        parts.append(f"Details: {func.details}")
+    if func.params:
+        param_lines: List[str] = []
+        for pname, _ptype in func.params:
+            if not pname:
+                continue
+            pdesc = func.param_docs.get(pname)
+            if pdesc:
+                param_lines.append(f"{pname}: {pdesc}")
+        if param_lines:
+            parts.append("Params: " + "; ".join(param_lines))
+    if func.return_desc:
+        parts.append(f"Returns: {func.return_desc}")
+    return "\n".join(parts)
+
+
+def _build_original_class_comment_from_xml(class_info: ClassInfo) -> str:
+    parts: List[str] = []
+    if class_info.brief:
+        parts.append(f"Brief: {class_info.brief}")
+    if class_info.details:
+        parts.append(f"Details: {class_info.details}")
+    if class_info.member_summaries:
+        parts.append("Members: " + "; ".join(class_info.member_summaries))
+    return "\n".join(parts)
+
+
 def _augment_source_with_xml_doxygen(
     raw_lines: List[str],
     src_path: Path,
@@ -2550,12 +2585,14 @@ def generate_doxygen_comments(
         lines = read_file(fpath)
         idx = max(0, min(func.line - 1, len(lines) - 1))
         decl_idx = find_decl_anchor(lines, idx)
-        orig_comment = extract_comments_for_declaration(lines, decl_idx)
+        orig_comment = _build_original_comment_from_xml(func)
+        if not orig_comment.strip():
+            orig_comment = extract_comments_for_declaration(lines, decl_idx)
         if not orig_comment.strip():
             orig_comment = None
 
-        # if orig_comment:
-        #    print(f"func {func.name} - original comment: {orig_comment}\n")
+        if orig_comment:
+           print(f"func {func.name} - original comment: {orig_comment}\n")
 
         mcp_context = None
         if mcp_cpp_server:
@@ -2761,6 +2798,15 @@ def generate_class_comments(
             skipped_existing_doxygen += 1
             continue
 
+        orig_comment = _build_original_class_comment_from_xml(cls)
+        if not orig_comment.strip():
+            orig_comment = extract_comments_for_declaration(lines, decl_idx)
+        if not orig_comment.strip():
+            orig_comment = None
+
+        if orig_comment:
+           print(f"class {cls.name} - original comment: {orig_comment}\n")
+
         raw_decl = extract_class_declaration_block(lines, class_idx)
         if not raw_decl.strip():
             skipped_no_decl += 1
@@ -2775,6 +2821,7 @@ def generate_class_comments(
             details=cls.details,
             member_summaries=cls.member_summaries,
             raw_declaration=raw_decl,
+            original_comment=orig_comment,
         )
         ai_candidates.append(class_info)
 
