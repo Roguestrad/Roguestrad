@@ -101,7 +101,9 @@ public:
 
 	//! Finds and returns an object in the B-Tree using the specified key
 	objType*					   Find( keyType key ) const;
-	objType*					   FindSmallestLargerEqual( keyType key ) const; // find an object with the smallest key larger equal the given key
+
+	//! Finds the object with the smallest key that is greater than or equal to the given key.
+	objType*					   FindSmallestLargerEqual( keyType key ) const;
 
 	//! Finds an object with the largest key smaller than or equal to the given key
 	objType*					   FindLargestSmallerEqual( keyType key ) const;

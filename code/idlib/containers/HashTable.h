@@ -457,30 +457,23 @@ ID_INLINE void idHashTableT<_key_, _value_>::Copy( const idHashTableT& other )
 	}
 }
 
-/*
-===============================================================================
-
-	General hash table. Slower than idHashIndex but it can also be used for
-	linked lists and other data structures than just indexes or arrays.
-
-===============================================================================
-*/
-
+//! Destroys the hash table and releases all associated memory.
 template<class Type>
 class idHashTable
 {
 public:
+	//! Initializes a new hash table with the specified table size.
 	idHashTable( int newtablesize = 256 );
+
+	//! Creates a new hash table as a copy of an existing hash table.
 	idHashTable( const idHashTable<Type>& map );
 	~idHashTable();
 
 	//! Returns the total size of allocated memory for the hash table.
 	size_t Allocated() const;
 
-	//! Initializes a hash table with the specified table size.
+	//! Initializes a hash table with the specified size, which must be a power of two.
 	size_t Size() const;
-
-	//! Creates a new hash table as a copy of an existing hash table.
 
 	//! Sets the value for a given key in the hash table
 	void   Set( const char* key, Type& value );

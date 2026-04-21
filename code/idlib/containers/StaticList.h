@@ -37,13 +37,21 @@ template<class type, int size>
 class idStaticList
 {
 public:
+	//! Constructs an empty static list.
 	idStaticList();
+
+	//! Creates a new list as a copy of an existing list.
 	idStaticList( const idStaticList<type, size>& other );
+
+	//! Initializes the list with elements from the provided initializer list.
 	idStaticList( std::initializer_list<type> initializerList );
 	~idStaticList<type, size>();
 
+	//! Clears all elements from the static list, resetting its size to zero.
 	void		Clear();
-	int			Num() const; // returns number of elements in list
+
+	//! Returns the number of elements in the list.
+	int			Num() const;
 
 	//! Constructs an empty idStaticList instance.
 
@@ -132,22 +140,12 @@ private:
 	void Resize( int newsize );
 };
 
-/*
-================
-idStaticList<type,size>::idStaticList()
-================
-*/
 template<class type, int size>
 ID_INLINE idStaticList<type, size>::idStaticList()
 {
 	num = 0;
 }
 
-/*
-================
-idStaticList<type,size>::idStaticList( const idStaticList<type,size> &other )
-================
-*/
 template<class type, int size>
 ID_INLINE idStaticList<type, size>::idStaticList( const idStaticList<type, size>& other )
 {

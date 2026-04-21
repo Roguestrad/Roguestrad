@@ -240,7 +240,7 @@ public:
 	//! Swaps the contents of this list with another list.
 	void				   Swap( idList& other );
 
-	//! Deletes all elements in the list and optionally clears the list
+	//! Deletes all dynamically allocated objects in the list and optionally clears the list.
 	void				   DeleteContents( bool clear = true );
 
 	//! Provides an automatic cast to another idList type with a different memory tag.

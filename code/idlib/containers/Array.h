@@ -52,7 +52,7 @@ public:
 	//! Sets all elements of the array to zero using memset.
 	void	  Zero() { memset( ptr, 0, sizeof( ptr ) ); }
 
-	// memset the entire array to a specific value
+	//! Sets all elements in the array to the specified byte value.
 	void	  Memset( const char fill ) { memset( ptr, fill, numElements * sizeof( *ptr ) ); }
 
 	//! Provides read-only access to an element at the specified index in the array
