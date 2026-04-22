@@ -1235,6 +1235,23 @@ def is_trivial_getter(func: FuncInfo, impl: str) -> bool:
     return is_trivial_getter_from_signature(func)
 
 
+def count_non_template_params(func: FuncInfo) -> int:
+    """
+    Returns the number of function parameters, excluding template parameters.
+    """
+    if not func.params:
+        return 0
+
+    count = 0
+    for name, ptype in func.params:
+        name_clean = (name or "").strip()
+        ptype_clean = (ptype or "").strip()
+        if not name_clean and ptype_clean in ("", "void"):
+            continue
+        count += 1
+    return count
+
+
 def is_trivial_setter(func: FuncInfo, impl: str) -> bool:
     """
     Heuristics for trivial setters:
@@ -2421,7 +2438,7 @@ def generate_doxygen_comments(
     mcp_enabled: bool = False,
     mcp_max_examples: int = 3,
     mcp_timeout: int = 20,
-    force_trivial: bool = False,
+    details_mode: str = "mixed",
     update_trivial: bool = False,
     scope_dir: Optional[Path] = None,
     callsite_max: int = 3,
@@ -2595,7 +2612,13 @@ def generate_doxygen_comments(
             or is_trivial_forwarder(func, impl)
             or func.name.startswith("operator")
         )
-        current_trivial = True if force_trivial else computed_trivial
+        param_count = count_non_template_params(func)
+        if details_mode in ("trivial", "min"):
+            current_trivial = True
+        elif details_mode == "mixed":
+            current_trivial = param_count <= 3
+        else:
+            current_trivial = computed_trivial
         cached_trivial = entry.is_trivial if entry else None
         trivial_changed = False
         if update_trivial:
@@ -3242,7 +3265,17 @@ def main():
         choices=["auto", "true", "false", "low", "medium", "high"],
     )
     ap.add_argument("-v", "--verbose", action="store_true")
-    ap.add_argument("--force-trivial", action="store_true")
+    ap.add_argument(
+        "--details",
+        default="mixed",
+        choices=["trivial", "min", "mixed", "max"],
+        help="Detail mode: trivial/min (force trivial), mixed (default, trivial except >3 params), max (full heuristics).",
+    )
+    ap.add_argument(
+        "--skip-class-comments",
+        action="store_true",
+        help="Skip class comment generation.",
+    )
     ap.add_argument(
         "--update-trivial",
         action="store_true",
@@ -3284,6 +3317,11 @@ def main():
         else:
             thinking_setting = lowered
 
+    details_mode = args.details
+    if details_mode == "trivial":
+        details_mode = "min"
+
+    print(f"[AI] comment mode: {details_mode}")
     print("Create Doxygen XML …")
     run_doxygen(
         "Doxyfile-xmlgen.cfg", doxygen_exe="doxygen.exe", repo_root=project_root
@@ -3307,12 +3345,12 @@ def main():
             scope_dir=scope_dir,
             callsite_max=args.callsite_max,
             callsite_context_lines=args.callsite_context,
-            force_trivial=args.force_trivial,
+            details_mode=details_mode,
         )
 
     print(f"Comments inserted: {total}")
 
-    if not args.summarize_only:
+    if not args.summarize_only and not args.skip_class_comments:
         if total > 0:
             print("Recreate Doxygen XML …")
             run_doxygen(
