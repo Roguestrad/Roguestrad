@@ -92,11 +92,6 @@ idCVar		  cm_debugCollision( "cm_debugCollision", "0", CVAR_GAME | CVAR_BOOL, "d
 
 static idVec4 cm_color;
 
-/*
-================
-idCollisionModelManagerLocal::ContentsFromString
-================
-*/
 int			  idCollisionModelManagerLocal::ContentsFromString( const char* string ) const
 {
 	int		i, contents = 0;
@@ -118,11 +113,6 @@ int			  idCollisionModelManagerLocal::ContentsFromString( const char* string ) c
 	return contents;
 }
 
-/*
-================
-idCollisionModelManagerLocal::StringFromContents
-================
-*/
 const char* idCollisionModelManagerLocal::StringFromContents( const int contents ) const
 {
 	int			i, length = 0;
@@ -142,11 +132,6 @@ const char* idCollisionModelManagerLocal::StringFromContents( const int contents
 	return contentsString;
 }
 
-/*
-================
-idCollisionModelManagerLocal::DrawEdge
-================
-*/
 void idCollisionModelManagerLocal::DrawEdge( cm_model_t* model, int edgeNum, const idVec3& origin, const idMat3& axis )
 {
 	int		   side;
@@ -191,11 +176,6 @@ void idCollisionModelManagerLocal::DrawEdge( cm_model_t* model, int edgeNum, con
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::DrawPolygon
-================
-*/
 void idCollisionModelManagerLocal::DrawPolygon( cm_model_t* model, cm_polygon_t* p, const idVec3& origin, const idMat3& axis, const idVec3& viewOrigin )
 {
 	int		   i, edgeNum;
@@ -250,11 +230,6 @@ void idCollisionModelManagerLocal::DrawPolygon( cm_model_t* model, cm_polygon_t*
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::DrawNodePolygons
-================
-*/
 void idCollisionModelManagerLocal::DrawNodePolygons( cm_model_t* model, cm_node_t* node, const idVec3& origin, const idMat3& axis, const idVec3& viewOrigin, const float radius )
 {
 	int				 i;
@@ -302,11 +277,6 @@ void idCollisionModelManagerLocal::DrawNodePolygons( cm_model_t* model, cm_node_
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::DrawModel
-================
-*/
 void idCollisionModelManagerLocal::DrawModel( cmHandle_t handle, const idVec3& modelOrigin, const idMat3& modelAxis, const idVec3& viewOrigin, const float radius )
 {
 	cm_model_t* model;

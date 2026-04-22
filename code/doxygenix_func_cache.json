@@ -14656,6 +14656,614 @@
     "bool Reachability_Special_Read(idLexer &src, idReachability_Special *reach)": {
       "body_hash": "dd286f0cb74e7cbfba26b7a067959320",
       "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::LoadMap(const idMapFile *mapFile, bool ignoreOldCollisionFile)": {
+      "body_hash": "7b24ef92c22608cea3b2464313ad5308",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FreeMap()": {
+      "body_hash": "2cc4f7b6865bdcc4ebe9193331ba5d5d",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::Preload(const char *mapName)": {
+      "body_hash": "efe88563dc64080b844bce995e17f6b7",
+      "is_trivial": true
+    },
+    "cmHandle_t idCollisionModelManagerLocal::LoadModel(const char *modelName, const bool precache)": {
+      "body_hash": "264e46d2b20bb40e962a744fd59a2ace",
+      "is_trivial": true
+    },
+    "cmHandle_t idCollisionModelManagerLocal::SetupTrmModel(const idTraceModel &trm, const idMaterial *material)": {
+      "body_hash": "4db02602b306446bd940e212436f7182",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::TrmFromModel(const char *modelName, idTraceModel &trm)": {
+      "body_hash": "eadbe8095dbced83953e8c159624446f",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::PointContents(const idVec3 p, cmHandle_t model)": {
+      "body_hash": "4b3907077b46eeab44907523790c3f09",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::GetModelBounds(cmHandle_t model, idBounds &bounds) const": {
+      "body_hash": "29c5d85be6cd49d67eef086d74d6dbc5",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::GetModelContents(cmHandle_t model, int &contents) const": {
+      "body_hash": "454c8c7779935f88abbfcfdf6a8bc4bc",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::GetModelVertex(cmHandle_t model, int vertexNum, idVec3 &vertex) const": {
+      "body_hash": "a088a7073aec02f4b194bab4c12b15af",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::GetModelEdge(cmHandle_t model, int edgeNum, idVec3 &start, idVec3 &end) const": {
+      "body_hash": "1546280532abb45045d11899f3b2ca4b",
+      "is_trivial": false
+    },
+    "bool idCollisionModelManagerLocal::GetModelPolygon(cmHandle_t model, int polygonNum, idFixedWinding &winding) const": {
+      "body_hash": "fbc9b62caa5b052deb349b1d23790a68",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::Translation(trace_t *results, const idVec3 &start, const idVec3 &end, const idTraceModel *trm, const idMat3 &trmAxis, int contentMask, cmHandle_t model, const idVec3 &modelOrigin, const idMat3 &modelAxis)": {
+      "body_hash": "dc8826c00dad485af95d1fe7e1b71bab",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::Rotation(trace_t *results, const idVec3 &start, const idRotation &rotation, const idTraceModel *trm, const idMat3 &trmAxis, int contentMask, cmHandle_t model, const idVec3 &modelOrigin, const idMat3 &modelAxis)": {
+      "body_hash": "51cdcb6c78a2d73d58bc67b19b82582f",
+      "is_trivial": false
+    },
+    "int idCollisionModelManagerLocal::Contents(const idVec3 &start, const idTraceModel *trm, const idMat3 &trmAxis, int contentMask, cmHandle_t model, const idVec3 &modelOrigin, const idMat3 &modelAxis)": {
+      "body_hash": "de640205bfd0943565ff61188a3267da",
+      "is_trivial": false
+    },
+    "int idCollisionModelManagerLocal::Contacts(contactInfo_t *contacts, const int maxContacts, const idVec3 &start, const idVec6 &dir, const float depth, const idTraceModel *trm, const idMat3 &trmAxis, int contentMask, cmHandle_t model, const idVec3 &modelOrigin, const idMat3 &modelAxis)": {
+      "body_hash": "e240fc0d90318d5a758740fdbfb6771f",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::DebugOutput(const idVec3 &origin)": {
+      "body_hash": "af197d6e9791cdeedcc840823fad346e",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::DrawModel(cmHandle_t model, const idVec3 &origin, const idMat3 &axis, const idVec3 &viewOrigin, const float radius)": {
+      "body_hash": "7fd1f037b445bfbc25c9c34b345232bb",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::ModelInfo(cmHandle_t model)": {
+      "body_hash": "979a37e3f4d7c1e76739b4e53f17ee82",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ListModels()": {
+      "body_hash": "79c63beb0fe6da4c3db5506a3470389a",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::WriteCollisionModelForMapEntity(const idMapEntity *mapEnt, const char *filename, const bool testTraceModel=true)": {
+      "body_hash": "404fd83a74712a593e1284ed390ac274",
+      "is_trivial": true
+    },
+    "ID_INLINE int idCollisionModelManagerLocal::TranslateEdgeThroughEdge(idVec3 &cross, idPluecker &l1, idPluecker &l2, float *fraction)": {
+      "body_hash": "4170c6c2c79ff7f937c5965bd8c8fee5",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::TranslateTrmEdgeThroughPolygon(cm_traceWork_t *tw, cm_polygon_t *poly, cm_trmEdge_t *trmEdge)": {
+      "body_hash": "94c91340c26949b85f9227324fd06030",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::TranslateTrmVertexThroughPolygon(cm_traceWork_t *tw, cm_polygon_t *poly, cm_trmVertex_t *v, int bitNum)": {
+      "body_hash": "2171e9c2b94a9ee40748d9f9fdd2fe10",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::TranslatePointThroughPolygon(cm_traceWork_t *tw, cm_polygon_t *poly, cm_trmVertex_t *v)": {
+      "body_hash": "d2ec7500ab5805dd110f2625e3fb43e3",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::TranslateVertexThroughTrmPolygon(cm_traceWork_t *tw, cm_trmPolygon_t *trmpoly, cm_polygon_t *poly, cm_vertex_t *v, idVec3 &endp, idPluecker &pl)": {
+      "body_hash": "c75e3a1279dacc063abef8e78199ba3e",
+      "is_trivial": false
+    },
+    "bool idCollisionModelManagerLocal::TranslateTrmThroughPolygon(cm_traceWork_t *tw, cm_polygon_t *p)": {
+      "body_hash": "7659d3b87ea858a8768511577a6a2e6b",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::SetupTranslationHeartPlanes(cm_traceWork_t *tw)": {
+      "body_hash": "3ba21ddc5b361cb593b733729dae09cd",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::SetupTrm(cm_traceWork_t *tw, const idTraceModel *trm)": {
+      "body_hash": "eed6a5d5d95ef50a63e2cbb0cbf4b09b",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::CollisionBetweenEdgeBounds(cm_traceWork_t *tw, const idVec3 &va, const idVec3 &vb, const idVec3 &vc, const idVec3 &vd, float tanHalfAngle, idVec3 &collisionPoint, idVec3 &collisionNormal)": {
+      "body_hash": "fea58541068af1a45b559c312693772c",
+      "is_trivial": false
+    },
+    "int idCollisionModelManagerLocal::RotateEdgeThroughEdge(cm_traceWork_t *tw, const idPluecker &pl1, const idVec3 &vc, const idVec3 &vd, const float minTan, float &tanHalfAngle)": {
+      "body_hash": "0317ec3ea685ae963f8a902793a1ecce",
+      "is_trivial": false
+    },
+    "int idCollisionModelManagerLocal::EdgeFurthestFromEdge(cm_traceWork_t *tw, const idPluecker &pl1, const idVec3 &vc, const idVec3 &vd, float &tanHalfAngle, float &dir)": {
+      "body_hash": "f312de9105cefea9c079df6f383257ab",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::RotateTrmEdgeThroughPolygon(cm_traceWork_t *tw, cm_polygon_t *poly, cm_trmEdge_t *trmEdge)": {
+      "body_hash": "996751d559db3be513a54b6188e2ff56",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::RotatePointThroughPlane(const cm_traceWork_t *tw, const idVec3 &point, const idPlane &plane, const float angle, const float minTan, float &tanHalfAngle)": {
+      "body_hash": "43a4666591cce86027a81eb51ebd4f9b",
+      "is_trivial": false
+    },
+    "int idCollisionModelManagerLocal::PointFurthestFromPlane(const cm_traceWork_t *tw, const idVec3 &point, const idPlane &plane, const float angle, float &tanHalfAngle, float &dir)": {
+      "body_hash": "f63deff82e26410d45e57d9e3d7a5d27",
+      "is_trivial": false
+    },
+    "int idCollisionModelManagerLocal::RotatePointThroughEpsilonPlane(const cm_traceWork_t *tw, const idVec3 &point, const idVec3 &endPoint, const idPlane &plane, const float angle, const idVec3 &origin, float &tanHalfAngle, idVec3 &collisionPoint, idVec3 &endDir)": {
+      "body_hash": "464d04e841777d16f505a99d6df34d75",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::RotateTrmVertexThroughPolygon(cm_traceWork_t *tw, cm_polygon_t *poly, cm_trmVertex_t *v, int vertexNum)": {
+      "body_hash": "1d041e53a2edafeee3e6db589132c1bd",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::RotateVertexThroughTrmPolygon(cm_traceWork_t *tw, cm_trmPolygon_t *trmpoly, cm_polygon_t *poly, cm_vertex_t *v, idVec3 &rotationOrigin)": {
+      "body_hash": "2b92e46061d20b684e566ef860b22ce1",
+      "is_trivial": false
+    },
+    "bool idCollisionModelManagerLocal::RotateTrmThroughPolygon(cm_traceWork_t *tw, cm_polygon_t *p)": {
+      "body_hash": "84849fc5b0daa98b0f89029838ac71fd",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::Rotation180(trace_t *results, const idVec3 &rorg, const idVec3 &axis, const float startAngle, const float endAngle, const idVec3 &start, const idTraceModel *trm, const idMat3 &trmAxis, int contentMask, cmHandle_t model, const idVec3 &origin, const idMat3 &modelAxis)": {
+      "body_hash": "69939cf015efe39345c166a0aa72e49c",
+      "is_trivial": false
+    },
+    "bool idCollisionModelManagerLocal::TestTrmVertsInBrush(cm_traceWork_t *tw, cm_brush_t *b)": {
+      "body_hash": "a77e04ffc76e4a00e792c8e93492884f",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::TestTrmInPolygon(cm_traceWork_t *tw, cm_polygon_t *p)": {
+      "body_hash": "395f18d174fcad778627e23cd5390b59",
+      "is_trivial": true
+    },
+    "cm_node_t * idCollisionModelManagerLocal::PointNode(const idVec3 &p, cm_model_t *model)": {
+      "body_hash": "0c6b374674602af5e5b8dd49482a1ab3",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::TransformedPointContents(const idVec3 &p, cmHandle_t model, const idVec3 &origin, const idMat3 &modelAxis)": {
+      "body_hash": "398deca0c88660c413554e7d859a7d3c",
+      "is_trivial": false
+    },
+    "int idCollisionModelManagerLocal::ContentsTrm(trace_t *results, const idVec3 &start, const idTraceModel *trm, const idMat3 &trmAxis, int contentMask, cmHandle_t model, const idVec3 &modelOrigin, const idMat3 &modelAxis)": {
+      "body_hash": "461b2deb57db4ab3c606787f3cba9f2e",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::TraceTrmThroughNode(cm_traceWork_t *tw, cm_node_t *node)": {
+      "body_hash": "634724e64615b67f0a20b08249e6e8ca",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r(cm_traceWork_t *tw, cm_node_t *node, float p1f, float p2f, idVec3 &p1, idVec3 &p2)": {
+      "body_hash": "22252b576072b7a99db703ac0f144bb1",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::TraceThroughModel(cm_traceWork_t *tw)": {
+      "body_hash": "6c0e2193345151b298dc2ac5708d4b7c",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::Clear()": {
+      "body_hash": "7f705f53aec645808033a3844b9bf120",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FreeTrmModelStructure()": {
+      "body_hash": "9aa26265600dd0aa5268c1634016d318",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::RemovePolygonReferences_r(cm_node_t *node, cm_polygon_t *p)": {
+      "body_hash": "8856927685c023a5d844e356f9c85366",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::RemoveBrushReferences_r(cm_node_t *node, cm_brush_t *b)": {
+      "body_hash": "6ddef4a0e5539a051eb9e286d5e55db3",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FreeNode(cm_node_t *node)": {
+      "body_hash": "7fd182c7ffc3d7480105e33f61a1a297",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FreePolygonReference(cm_polygonRef_t *pref)": {
+      "body_hash": "c1fe0a153a4b2107b42aeb69be228e85",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FreeBrushReference(cm_brushRef_t *bref)": {
+      "body_hash": "aafd1c36037e3447fd3d5759a3bdfa28",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FreePolygon(cm_model_t *model, cm_polygon_t *poly)": {
+      "body_hash": "109cb7c1d5c8c580d0d321a1d6134106",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FreeBrush(cm_model_t *model, cm_brush_t *brush)": {
+      "body_hash": "34ff9c3dfc370e788ed95cbbdab09143",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FreeTree_r(cm_model_t *model, cm_node_t *headNode, cm_node_t *node)": {
+      "body_hash": "40b65fdcf77ded991af775777dd3a826",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FreeModel(cm_model_t *model)": {
+      "body_hash": "1593f1481d08e38cfff2bdf2f6d9d8c8",
+      "is_trivial": true
+    },
+    "cm_polygon_t * idCollisionModelManagerLocal::TryMergePolygons(cm_model_t *model, cm_polygon_t *p1, cm_polygon_t *p2)": {
+      "body_hash": "37f7b73dd669a75a213f29e61a7633cd",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::MergePolygonWithTreePolygons(cm_model_t *model, cm_node_t *node, cm_polygon_t *polygon)": {
+      "body_hash": "bfecba152941ffc56390210d2c0f29d6",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::MergeTreePolygons(cm_model_t *model, cm_node_t *node)": {
+      "body_hash": "8dce67aaa32a8a0abc2ee7a69f5744bd",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::PointInsidePolygon(cm_model_t *model, cm_polygon_t *p, idVec3 &v)": {
+      "body_hash": "5fdcd11371d34304cf05d407eb98fbb7",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FindInternalEdgesOnPolygon(cm_model_t *model, cm_polygon_t *p1, cm_polygon_t *p2)": {
+      "body_hash": "78719c01ea498fc4587d663f1947980d",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FindInternalPolygonEdges(cm_model_t *model, cm_node_t *node, cm_polygon_t *polygon)": {
+      "body_hash": "8c5201ef6d691385d00ee683ca8c82e6",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FindInternalEdges(cm_model_t *model, cm_node_t *node)": {
+      "body_hash": "67ab3a8ea6df823ee412e45075d6b21d",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FindContainedEdges(cm_model_t *model, cm_polygon_t *p)": {
+      "body_hash": "851a782ac03fc781c6e79d6c053a7d75",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ParseProcNodes(idLexer *src)": {
+      "body_hash": "d367efccb1c5eb1c83a695edf7551e03",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::LoadProcBSP(const char *name)": {
+      "body_hash": "3f019420e1adf2bb11e164e802402821",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::R_ChoppedAwayByProcBSP(int nodeNum, idFixedWinding *w, const idVec3 &normal, const idVec3 &origin, const float radius)": {
+      "body_hash": "aa248e40b3c163aa37002cd8eb0871d8",
+      "is_trivial": false
+    },
+    "int idCollisionModelManagerLocal::ChoppedAwayByProcBSP(const idFixedWinding &w, const idPlane &plane, int contents)": {
+      "body_hash": "44a7142d26f1d1f01b3178b473306431",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ChopWindingListWithBrush(cm_windingList_t *list, cm_brush_t *b)": {
+      "body_hash": "a715688f30d8b6f016a0f0a85a53842b",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::R_ChopWindingListWithTreeBrushes(cm_windingList_t *list, cm_node_t *node)": {
+      "body_hash": "89cded2b03c1cec21cca48adeca102c8",
+      "is_trivial": true
+    },
+    "idFixedWinding * idCollisionModelManagerLocal::WindingOutsideBrushes(idFixedWinding *w, const idPlane &plane, int contents, int patch, cm_node_t *headNode)": {
+      "body_hash": "0330e30b539b239b3b270cd434ea882c",
+      "is_trivial": false
+    },
+    "cm_model_t * idCollisionModelManagerLocal::AllocModel()": {
+      "body_hash": "30bd23ce0515f57273372774a2ad3fc0",
+      "is_trivial": true
+    },
+    "cm_node_t * idCollisionModelManagerLocal::AllocNode(cm_model_t *model, int blockSize)": {
+      "body_hash": "181223df932083143cbb8c6565de54d1",
+      "is_trivial": true
+    },
+    "cm_polygonRef_t * idCollisionModelManagerLocal::AllocPolygonReference(cm_model_t *model, int blockSize)": {
+      "body_hash": "3ef20baa340e6ac8e600372ec00e7c8b",
+      "is_trivial": true
+    },
+    "cm_brushRef_t * idCollisionModelManagerLocal::AllocBrushReference(cm_model_t *model, int blockSize)": {
+      "body_hash": "52a5117908ee29effb14c81b64992a87",
+      "is_trivial": true
+    },
+    "cm_polygon_t * idCollisionModelManagerLocal::AllocPolygon(cm_model_t *model, int numEdges)": {
+      "body_hash": "c09e88db4d8bfe3ccb547a40623a783d",
+      "is_trivial": true
+    },
+    "cm_brush_t * idCollisionModelManagerLocal::AllocBrush(cm_model_t *model, int numPlanes)": {
+      "body_hash": "899e3203dc0548c975a394c6fe91259f",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::AddPolygonToNode(cm_model_t *model, cm_node_t *node, cm_polygon_t *p)": {
+      "body_hash": "24da69f18ee472025337aa66580793b8",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::AddBrushToNode(cm_model_t *model, cm_node_t *node, cm_brush_t *b)": {
+      "body_hash": "275b6de2e74c0bcbcdcf72c3c5028537",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::SetupTrmModelStructure()": {
+      "body_hash": "7a9dd05fca3c05ed9a73fcc56a763de9",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::R_FilterPolygonIntoTree(cm_model_t *model, cm_node_t *node, cm_polygonRef_t *pref, cm_polygon_t *p)": {
+      "body_hash": "fbe043c866de3e3f09da590116dab047",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::R_FilterBrushIntoTree(cm_model_t *model, cm_node_t *node, cm_brushRef_t *pref, cm_brush_t *b)": {
+      "body_hash": "7e91e7c1a46b18ad05e08700591b32f1",
+      "is_trivial": false
+    },
+    "cm_node_t * idCollisionModelManagerLocal::R_CreateAxialBSPTree(cm_model_t *model, cm_node_t *node, const idBounds &bounds)": {
+      "body_hash": "728ef3909e7751049120c388b7cf61e2",
+      "is_trivial": true
+    },
+    "cm_node_t * idCollisionModelManagerLocal::CreateAxialBSPTree(cm_model_t *model, cm_node_t *node)": {
+      "body_hash": "82bf73918c8474ca02cd03ce6458476e",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::SetupHash()": {
+      "body_hash": "1dc6fcfabb969c89dbbd5834c81e2ac9",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ShutdownHash()": {
+      "body_hash": "ddda85de54f822e07056a34e268b60c8",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ClearHash(idBounds &bounds)": {
+      "body_hash": "6e0671db1de14d1a1879916c7d26d1d2",
+      "is_trivial": true
+    },
+    "ID_INLINE int idCollisionModelManagerLocal::HashVec(const idVec3 &vec)": {
+      "body_hash": "3ec8b9013d004421f051680c44a8b481",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::GetVertex(cm_model_t *model, const idVec3 &v, int *vertexNum)": {
+      "body_hash": "fc57b9ebee005685e653c730bd65d678",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::GetEdge(cm_model_t *model, const idVec3 &v1, const idVec3 &v2, int *edgeNum, int v1num)": {
+      "body_hash": "8a85824ff94614c97c68e178786807a2",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::CreatePolygon(cm_model_t *model, idFixedWinding *w, const idPlane &plane, const idMaterial *material, int primitiveNum)": {
+      "body_hash": "fa13f3d256952e78730a17781fe0337e",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::PolygonFromWinding(cm_model_t *model, idFixedWinding *w, const idPlane &plane, const idMaterial *material, int primitiveNum)": {
+      "body_hash": "9c4e9e43e952d0185f8e12444e9712f6",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::CalculateEdgeNormals(cm_model_t *model, cm_node_t *node)": {
+      "body_hash": "31312b945927bc5e76f83e0e75747349",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::CreatePatchPolygons(cm_model_t *model, idSurface_Patch &mesh, const idMaterial *material, int primitiveNum)": {
+      "body_hash": "e3a661aaa9e166cfb525a1408601cb65",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::ConvertPatch(cm_model_t *model, const idMapPatch *patch, int primitiveNum)": {
+      "body_hash": "c71dfbe74cf0a2b598fbc2a128e9cd48",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ConvertBrushSides(cm_model_t *model, const idMapBrush *mapBrush, int primitiveNum, const idVec3 &originOffset)": {
+      "body_hash": "00ffc39a15d0a493ba888f56b75ab3b1",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::ConvertBrush(cm_model_t *model, const idMapBrush *mapBrush, int primitiveNum, const idVec3 &originOffset)": {
+      "body_hash": "dc4dd7b6f5e2054f4957ceb157d5bae5",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::ConvertMesh(cm_model_t *model, const MapPolygonMesh *mesh, int primitiveNum)": {
+      "body_hash": "36187bbf17037d5fa5eedc5249a5f6af",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::PrintModelInfo(const cm_model_t *model)": {
+      "body_hash": "dea757ed38b05f2572d9234e75acc24d",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::AccumulateModelInfo(cm_model_t *model)": {
+      "body_hash": "6d96725c9234867303e3d280a784c5e9",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::RemapEdges(cm_node_t *node, int *edgeRemap)": {
+      "body_hash": "16db8642b749f05faa72728005eb9553",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::OptimizeArrays(cm_model_t *model)": {
+      "body_hash": "eae62b6bd23cab915c91226e731b925a",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::FinishModel(cm_model_t *model)": {
+      "body_hash": "c41c46f32aa68fe0879ceb40bb749781",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::BuildModels(const idMapFile *mapFile, bool ignoreOldCollisionFile)": {
+      "body_hash": "3a6db3bdadf4ddf4a7c8a6e3e839d558",
+      "is_trivial": true
+    },
+    "cmHandle_t idCollisionModelManagerLocal::FindModel(const char *name)": {
+      "body_hash": "238c25f1adc3dc6871a9c1df4ce9054b",
+      "is_trivial": true
+    },
+    "cm_model_t * idCollisionModelManagerLocal::CollisionModelForMapEntity(const idMapEntity *mapEnt)": {
+      "body_hash": "e51c29e94bf754a31cc42b488212c3af",
+      "is_trivial": true
+    },
+    "cm_model_t * idCollisionModelManagerLocal::LoadRenderModel(const char *fileName)": {
+      "body_hash": "227eb84a8382105e3edce5da341180e0",
+      "is_trivial": true
+    },
+    "cm_model_t * idCollisionModelManagerLocal::LoadBinaryModel(const char *fileName, ID_TIME_T sourceTimeStamp)": {
+      "body_hash": "028202d87b6ff9477a64554a0167a25f",
+      "is_trivial": true
+    },
+    "cm_model_t * idCollisionModelManagerLocal::LoadBinaryModelFromFile(idFile *fileIn, ID_TIME_T sourceTimeStamp)": {
+      "body_hash": "e0a31b416afaff9036ac26d2274ea100",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::WriteBinaryModel(cm_model_t *model, const char *fileName, ID_TIME_T sourceTimeStamp)": {
+      "body_hash": "54840733d53b85fcb810c79bce44c23a",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::WriteBinaryModelToFile(cm_model_t *model, idFile *fileOut, ID_TIME_T sourceTimeStamp)": {
+      "body_hash": "5cdc24aa2a87a9b8fa874a625ddfa8ed",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::TrmFromModel_r(idTraceModel &trm, cm_node_t *node)": {
+      "body_hash": "7508edf1244fa49df1647bdac2d3f249",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::TrmFromModel(const cm_model_t *model, idTraceModel &trm)": {
+      "body_hash": "1daef9a870e023a806e5d03158671347",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::WriteNodes(idFile *fp, cm_node_t *node)": {
+      "body_hash": "a7e1062dd858117f57368ba643a653d8",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::CountPolygonMemory(cm_node_t *node) const": {
+      "body_hash": "832d642a76736c60f90764d8d8db63ce",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::WritePolygons(idFile *fp, cm_node_t *node)": {
+      "body_hash": "f3a7a41c15cbd2dc01837efaf6a19898",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::CountBrushMemory(cm_node_t *node) const": {
+      "body_hash": "921d7354c4c31e5447c4936dd96e3e1b",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::WriteBrushes(idFile *fp, cm_node_t *node)": {
+      "body_hash": "84616502ba8e31aec3ddfae4c7cba68d",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::WriteCollisionModel(idFile *fp, cm_model_t *model)": {
+      "body_hash": "22dfc535276381b4b121b8edde83e735",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::WriteCollisionModelsToFile(const char *filename, int firstModel, int lastModel, unsigned int mapFileCRC)": {
+      "body_hash": "a1c6dd7cddedfef455489da4154cc1a8",
+      "is_trivial": false
+    },
+    "cm_node_t * idCollisionModelManagerLocal::ParseNodes(idLexer *src, cm_model_t *model, cm_node_t *parent)": {
+      "body_hash": "6c33c9b0d064997b17a5ae63bc6ed29d",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ParseVertices(idLexer *src, cm_model_t *model)": {
+      "body_hash": "3428cf70b374a90b85631e73a14c82e5",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ParseEdges(idLexer *src, cm_model_t *model)": {
+      "body_hash": "4387ee2c8bf185fb5eb66564418c3744",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ParsePolygons(idLexer *src, cm_model_t *model)": {
+      "body_hash": "86afac59379c5c70caac1e358fd7aad6",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::ParseBrushes(idLexer *src, cm_model_t *model)": {
+      "body_hash": "cfd1ef6cf37c6c504be13bc0725f3a9a",
+      "is_trivial": true
+    },
+    "cm_model_t * idCollisionModelManagerLocal::ParseCollisionModel(idLexer *src)": {
+      "body_hash": "5a82199a315b3848e50d6bb97854d9ff",
+      "is_trivial": true
+    },
+    "bool idCollisionModelManagerLocal::LoadCollisionModelFile(const char *name, unsigned int mapFileCRC)": {
+      "body_hash": "f7977055140a9d2748b7e55256344eef",
+      "is_trivial": true
+    },
+    "int idCollisionModelManagerLocal::ContentsFromString(const char *string) const": {
+      "body_hash": "46ba62310cbd709efe81cd3ba3474c7e",
+      "is_trivial": true
+    },
+    "const char * idCollisionModelManagerLocal::StringFromContents(const int contents) const": {
+      "body_hash": "9af05a218d0a480278f78057714610da",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::DrawEdge(cm_model_t *model, int edgeNum, const idVec3 &origin, const idMat3 &axis)": {
+      "body_hash": "c1a67315f77e01e2bf0ae55b3cb0a311",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::DrawPolygon(cm_model_t *model, cm_polygon_t *p, const idVec3 &origin, const idMat3 &axis, const idVec3 &viewOrigin)": {
+      "body_hash": "584a25a3055f9e72de8b1b34822e7073",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::DrawNodePolygons(cm_model_t *model, cm_node_t *node, const idVec3 &origin, const idMat3 &axis, const idVec3 &viewOrigin, const float radius)": {
+      "body_hash": "ce96c901145f64b41e52cce40836f008",
+      "is_trivial": false
+    },
+    "cm_brush_s::cm_brush_s()": {
+      "body_hash": "36138fb2e75e777f4ec80e0be7834867",
+      "is_trivial": true
+    },
+    "void CM_GetNodeBounds(idBounds *bounds, cm_node_t *node)": {
+      "body_hash": "7618a496affb2180b3dd0187d2067053",
+      "is_trivial": true
+    },
+    "int CM_GetNodeContents(cm_node_t *node)": {
+      "body_hash": "c1610c53c4c16d2ecdd8a58cc70bb04d",
+      "is_trivial": true
+    },
+    "static int CM_FindSplitter(const cm_node_t *node, const idBounds &bounds, int *planeType, float *planeDist)": {
+      "body_hash": "957ee7318f83fdda52f3cbff84ec7121",
+      "is_trivial": false
+    },
+    "static int CM_R_InsideAllChildren(cm_node_t *node, const idBounds &bounds)": {
+      "body_hash": "371d7be04ed2603f3bf7ff22e005762d",
+      "is_trivial": true
+    },
+    "static void CM_EstimateVertsAndEdges(const idMapEntity *mapEnt, int *numVerts, int *numEdges)": {
+      "body_hash": "ac977d81d4c3150105eddd66be688e79",
+      "is_trivial": true
+    },
+    "static int CM_CountNodeBrushes(const cm_node_t *node)": {
+      "body_hash": "fc02e669ebc8703d12c65bec62e301a3",
+      "is_trivial": true
+    },
+    "static void CM_R_GetNodeBounds(idBounds *bounds, cm_node_t *node)": {
+      "body_hash": "b56f3246d3204d11aa3ffd80a26d1d09",
+      "is_trivial": true
+    },
+    "void CM_RotatePoint(idVec3 &point, const idVec3 &origin, const idVec3 &axis, const float tanHalfAngle)": {
+      "body_hash": "a5c0ac99e2d1b2ef054fe5480c6563b0",
+      "is_trivial": false
+    },
+    "void CM_RotateEdge(idVec3 &start, idVec3 &end, const idVec3 &origin, const idVec3 &axis, const float tanHalfAngle)": {
+      "body_hash": "22ed2baec4ba3edb7fc9eaefb075ca9b",
+      "is_trivial": false
+    },
+    "ID_INLINE void CM_AddContact(cm_traceWork_t *tw)": {
+      "body_hash": "4f628c4cdd84be1e3107fee9aa92960f",
+      "is_trivial": true
+    },
+    "ID_INLINE void CM_SetVertexSidedness(cm_vertex_t *v, const idPluecker &vpl, const idPluecker &epl, const int bitNum)": {
+      "body_hash": "cae597ad0c362b8701db9ea7b8e6b979",
+      "is_trivial": false
+    },
+    "ID_INLINE void CM_SetEdgeSidedness(cm_edge_t *edge, const idPluecker &vpl, const idPluecker &epl, const int bitNum)": {
+      "body_hash": "2e78b121e331dee0714e39110df01134",
+      "is_trivial": false
+    },
+    "float CM_TranslationPlaneFraction(const idPlane &plane, const idVec3 &start, const idVec3 &end)": {
+      "body_hash": "fb3b42ff1f14ec57c4194d968e224c36",
+      "is_trivial": true
+    },
+    "const char * idCollisionModelManagerLocal::GetModelName(cmHandle_t model) const": {
+      "body_hash": "019c714215ea35a80c567475b3520aa5",
+      "is_trivial": true
+    },
+    "void idCollisionModelManagerLocal::BoundsForRotation(const idVec3 &origin, const idVec3 &axis, const idVec3 &start, const idVec3 &end, idBounds &bounds)": {
+      "body_hash": "f78d5f95206be805184659c753c858af",
+      "is_trivial": false
+    },
+    "void idCollisionModelManagerLocal::ReplacePolygons(cm_model_t *model, cm_node_t *node, cm_polygon_t *p1, cm_polygon_t *p2, cm_polygon_t *newp)": {
+      "body_hash": "816575a120f8b08bbc799305b2ce7494",
+      "is_trivial": false
     }
   }
 }

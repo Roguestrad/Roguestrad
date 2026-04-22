@@ -46,22 +46,12 @@ If you have questions concerning this license or the applicable additional terms
 #define CM_FILEID		  "CM"
 #define CM_FILEVERSION	  "1.00"
 
-/*
-===============================================================================
-
-Writing of collision model file
-
-===============================================================================
-*/
-
+//! Sets the bounds of a collision node.
 void CM_GetNodeBounds( idBounds* bounds, cm_node_t* node );
+
+//! Returns the combined contents flags from all polygons and brushes in the collision model node and its children
 int	 CM_GetNodeContents( cm_node_t* node );
 
-/*
-================
-idCollisionModelManagerLocal::WriteNodes
-================
-*/
 void idCollisionModelManagerLocal::WriteNodes( idFile* fp, cm_node_t* node )
 {
 	fp->WriteFloatString( "\t( %d %f )\n", node->planeType, node->planeDist );
@@ -71,11 +61,6 @@ void idCollisionModelManagerLocal::WriteNodes( idFile* fp, cm_node_t* node )
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::CountPolygonMemory
-================
-*/
 int idCollisionModelManagerLocal::CountPolygonMemory( cm_node_t* node ) const
 {
 	cm_polygonRef_t* pref;
@@ -99,11 +84,6 @@ int idCollisionModelManagerLocal::CountPolygonMemory( cm_node_t* node ) const
 	return memory;
 }
 
-/*
-================
-idCollisionModelManagerLocal::WritePolygons
-================
-*/
 void idCollisionModelManagerLocal::WritePolygons( idFile* fp, cm_node_t* node )
 {
 	cm_polygonRef_t* pref;
@@ -131,11 +111,6 @@ void idCollisionModelManagerLocal::WritePolygons( idFile* fp, cm_node_t* node )
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::CountBrushMemory
-================
-*/
 int idCollisionModelManagerLocal::CountBrushMemory( cm_node_t* node ) const
 {
 	cm_brushRef_t* bref;
@@ -159,11 +134,6 @@ int idCollisionModelManagerLocal::CountBrushMemory( cm_node_t* node ) const
 	return memory;
 }
 
-/*
-================
-idCollisionModelManagerLocal::WriteBrushes
-================
-*/
 void idCollisionModelManagerLocal::WriteBrushes( idFile* fp, cm_node_t* node )
 {
 	cm_brushRef_t* bref;
@@ -189,11 +159,6 @@ void idCollisionModelManagerLocal::WriteBrushes( idFile* fp, cm_node_t* node )
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::WriteCollisionModel
-================
-*/
 void idCollisionModelManagerLocal::WriteCollisionModel( idFile* fp, cm_model_t* model )
 {
 	int i, polygonMemory, brushMemory;
@@ -233,11 +198,6 @@ void idCollisionModelManagerLocal::WriteCollisionModel( idFile* fp, cm_model_t* 
 	fp->WriteFloatString( "}\n" );
 }
 
-/*
-================
-idCollisionModelManagerLocal::WriteCollisionModelsToFile
-================
-*/
 void idCollisionModelManagerLocal::WriteCollisionModelsToFile( const char* filename, int firstModel, int lastModel, unsigned int mapFileCRC )
 {
 	int		i;
@@ -267,11 +227,6 @@ void idCollisionModelManagerLocal::WriteCollisionModelsToFile( const char* filen
 	fileSystem->CloseFile( fp );
 }
 
-/*
-================
-idCollisionModelManagerLocal::WriteCollisionModelForMapEntity
-================
-*/
 bool idCollisionModelManagerLocal::WriteCollisionModelForMapEntity( const idMapEntity* mapEnt, const char* filename, const bool testTraceModel )
 {
 	idFile*		fp;
@@ -313,19 +268,6 @@ bool idCollisionModelManagerLocal::WriteCollisionModelForMapEntity( const idMapE
 	return true;
 }
 
-/*
-===============================================================================
-
-Loading of collision model file
-
-===============================================================================
-*/
-
-/*
-================
-idCollisionModelManagerLocal::ParseVertices
-================
-*/
 void idCollisionModelManagerLocal::ParseVertices( idLexer* src, cm_model_t* model )
 {
 	int i;
@@ -343,11 +285,6 @@ void idCollisionModelManagerLocal::ParseVertices( idLexer* src, cm_model_t* mode
 	src->ExpectTokenString( "}" );
 }
 
-/*
-================
-idCollisionModelManagerLocal::ParseEdges
-================
-*/
 void idCollisionModelManagerLocal::ParseEdges( idLexer* src, cm_model_t* model )
 {
 	int i;
@@ -372,11 +309,6 @@ void idCollisionModelManagerLocal::ParseEdges( idLexer* src, cm_model_t* model )
 	src->ExpectTokenString( "}" );
 }
 
-/*
-================
-idCollisionModelManagerLocal::ParseNodes
-================
-*/
 cm_node_t* idCollisionModelManagerLocal::ParseNodes( idLexer* src, cm_model_t* model, cm_node_t* parent )
 {
 	cm_node_t* node;
@@ -397,11 +329,6 @@ cm_node_t* idCollisionModelManagerLocal::ParseNodes( idLexer* src, cm_model_t* m
 	return node;
 }
 
-/*
-================
-idCollisionModelManagerLocal::ParsePolygons
-================
-*/
 void idCollisionModelManagerLocal::ParsePolygons( idLexer* src, cm_model_t* model )
 {
 	cm_polygon_t* p;
@@ -441,11 +368,6 @@ void idCollisionModelManagerLocal::ParsePolygons( idLexer* src, cm_model_t* mode
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::ParseBrushes
-================
-*/
 void idCollisionModelManagerLocal::ParseBrushes( idLexer* src, cm_model_t* model )
 {
 	cm_brush_t* b;
@@ -488,11 +410,6 @@ void idCollisionModelManagerLocal::ParseBrushes( idLexer* src, cm_model_t* model
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::ParseCollisionModel
-================
-*/
 cm_model_t* idCollisionModelManagerLocal::ParseCollisionModel( idLexer* src )
 {
 	cm_model_t* model;
@@ -555,11 +472,6 @@ cm_model_t* idCollisionModelManagerLocal::ParseCollisionModel( idLexer* src )
 	return model;
 }
 
-/*
-================
-idCollisionModelManagerLocal::LoadCollisionModelFile
-================
-*/
 bool idCollisionModelManagerLocal::LoadCollisionModelFile( const char* name, unsigned int mapFileCRC )
 {
 	idToken					token;

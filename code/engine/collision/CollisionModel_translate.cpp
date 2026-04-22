@@ -47,14 +47,6 @@ Collision detection for translational motion
 
 ===============================================================================
 */
-
-/*
-================
-idCollisionModelManagerLocal::TranslateEdgeThroughEdge
-
-  calculates fraction of the translation completed at which the edges collide
-================
-*/
 ID_INLINE int idCollisionModelManagerLocal::TranslateEdgeThroughEdge( idVec3& cross, idPluecker& l1, idPluecker& l2, float* fraction )
 {
 	float d, t;
@@ -177,11 +169,7 @@ ID_INLINE int idCollisionModelManagerLocal::TranslateEdgeThroughEdge( idVec3& cr
 	return true;
 }
 
-/*
-================
-CM_AddContact
-================
-*/
+//! Adds a contact point to the trace work structure.
 ID_INLINE void CM_AddContact( cm_traceWork_t* tw )
 {
 	if( tw->numContacts >= tw->maxContacts ) {
@@ -194,12 +182,16 @@ ID_INLINE void CM_AddContact( cm_traceWork_t* tw )
 	tw->trace.fraction = 1.0f;
 }
 
-/*
-================
-CM_SetVertexSidedness
+/*!
+	\brief Sets the sidedness of a vertex relative to a trm edge based on Pluecker coordinates
 
-  stores for the given model vertex at which side of one of the trm edges it passes
-================
+	This function determines which side of a triangular mesh edge a vertex lies on by computing the inner product of two Pluecker coordinates. The result is stored in the vertex's side field using a
+   bit mask to track multiple edge relationships. The function only updates the vertex sidedness if it hasn't been set previously for the given bit number.
+
+	\param v pointer to the vertex structure to update
+	\param vpl Pluecker coordinate representing the vertex
+	\param epl Pluecker coordinate representing the edge
+	\param bitNum bit position to use for tracking sidedness in the sideSet mask
 */
 ID_INLINE void CM_SetVertexSidedness( cm_vertex_t* v, const idPluecker& vpl, const idPluecker& epl, const int bitNum )
 {
@@ -211,12 +203,16 @@ ID_INLINE void CM_SetVertexSidedness( cm_vertex_t* v, const idPluecker& vpl, con
 	}
 }
 
-/*
-================
-CM_SetEdgeSidedness
+/*!
+	\brief Sets the sidedness of a collision model edge based on pluecker coordinate calculations
 
-  stores for the given model edge at which side one of the trm vertices
-================
+	This function determines which side of a collision edge a vertex lies on by computing the inner product of pluecker coordinates. It only updates the edge sidedness if it has not already been set
+   for the specified bit position. The function uses bitwise operations to track which sides have been computed and stores the result in the edge structure.
+
+	\param edge Pointer to the collision model edge structure to update
+	\param vpl Pluecker coordinate representing the vertex
+	\param epl Pluecker coordinate representing the edge
+	\param bitNum Bit position to use for tracking sidedness
 */
 ID_INLINE void CM_SetEdgeSidedness( cm_edge_t* edge, const idPluecker& vpl, const idPluecker& epl, const int bitNum )
 {
@@ -228,11 +224,6 @@ ID_INLINE void CM_SetEdgeSidedness( cm_edge_t* edge, const idPluecker& vpl, cons
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::TranslateTrmEdgeThroughPolygon
-================
-*/
 void idCollisionModelManagerLocal::TranslateTrmEdgeThroughPolygon( cm_traceWork_t* tw, cm_polygon_t* poly, cm_trmEdge_t* trmEdge )
 {
 	int			 i, edgeNum;
@@ -332,11 +323,7 @@ void idCollisionModelManagerLocal::TranslateTrmEdgeThroughPolygon( cm_traceWork_
 	}
 }
 
-/*
-================
-CM_TranslationPlaneFraction
-================
-*/
+//! Calculates the fraction along a translation where a point intersects with a plane.
 float CM_TranslationPlaneFraction( const idPlane& plane, const idVec3& start, const idVec3& end )
 {
 	const float d2 = plane.Distance( end );
@@ -357,11 +344,6 @@ float CM_TranslationPlaneFraction( const idPlane& plane, const idVec3& start, co
 	return ( d1 - CM_CLIP_EPSILON ) / ( d1 - d2 );
 }
 
-/*
-================
-idCollisionModelManagerLocal::TranslateTrmVertexThroughPolygon
-================
-*/
 void idCollisionModelManagerLocal::TranslateTrmVertexThroughPolygon( cm_traceWork_t* tw, cm_polygon_t* poly, cm_trmVertex_t* v, int bitNum )
 {
 	int		   i, edgeNum;
@@ -400,11 +382,6 @@ void idCollisionModelManagerLocal::TranslateTrmVertexThroughPolygon( cm_traceWor
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::TranslatePointThroughPolygon
-================
-*/
 void idCollisionModelManagerLocal::TranslatePointThroughPolygon( cm_traceWork_t* tw, cm_polygon_t* poly, cm_trmVertex_t* v )
 {
 	int		   i, edgeNum;
@@ -453,11 +430,6 @@ void idCollisionModelManagerLocal::TranslatePointThroughPolygon( cm_traceWork_t*
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::TranslateVertexThroughTrmPolygon
-================
-*/
 void idCollisionModelManagerLocal::TranslateVertexThroughTrmPolygon( cm_traceWork_t* tw, cm_trmPolygon_t* trmpoly, cm_polygon_t* poly, cm_vertex_t* v, idVec3& endp, idPluecker& pl )
 {
 	int			  i, edgeNum;
@@ -495,13 +467,6 @@ void idCollisionModelManagerLocal::TranslateVertexThroughTrmPolygon( cm_traceWor
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::TranslateTrmThroughPolygon
-
-  returns true if the polygon blocks the complete translation
-================
-*/
 bool idCollisionModelManagerLocal::TranslateTrmThroughPolygon( cm_traceWork_t* tw, cm_polygon_t* p )
 {
 	int				 i, j, k, edgeNum;
@@ -666,11 +631,6 @@ bool idCollisionModelManagerLocal::TranslateTrmThroughPolygon( cm_traceWork_t* t
 	return ( tw->trace.fraction == 0.0f );
 }
 
-/*
-================
-idCollisionModelManagerLocal::SetupTrm
-================
-*/
 void idCollisionModelManagerLocal::SetupTrm( cm_traceWork_t* tw, const idTraceModel* trm )
 {
 	int i, j;
@@ -702,11 +662,6 @@ void idCollisionModelManagerLocal::SetupTrm( cm_traceWork_t* tw, const idTraceMo
 	tw->isConvex = trm->isConvex;
 }
 
-/*
-================
-idCollisionModelManagerLocal::SetupTranslationHeartPlanes
-================
-*/
 void idCollisionModelManagerLocal::SetupTranslationHeartPlanes( cm_traceWork_t* tw )
 {
 	idVec3 dir, normal1, normal2;

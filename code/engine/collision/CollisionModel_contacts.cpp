@@ -40,19 +40,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "CollisionModel_local.h"
 
-/*
-===============================================================================
-
-Retrieving contacts
-
-===============================================================================
-*/
-
-/*
-==================
-idCollisionModelManagerLocal::Contacts
-==================
-*/
 int idCollisionModelManagerLocal::Contacts( contactInfo_t* contacts,
 	const int											   maxContacts,
 	const idVec3&										   start,

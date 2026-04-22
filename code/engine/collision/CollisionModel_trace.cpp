@@ -47,12 +47,6 @@ Trace through the spatial subdivision
 
 ===============================================================================
 */
-
-/*
-================
-idCollisionModelManagerLocal::TraceTrmThroughNode
-================
-*/
 void idCollisionModelManagerLocal::TraceTrmThroughNode( cm_traceWork_t* tw, cm_node_t* node )
 {
 	cm_polygonRef_t* pref;
@@ -97,13 +91,7 @@ void idCollisionModelManagerLocal::TraceTrmThroughNode( cm_traceWork_t* tw, cm_n
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r
-================
-*/
 // #define NO_SPATIAL_SUBDIVISION
-
 void idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r( cm_traceWork_t* tw, cm_node_t* node, float p1f, float p2f, idVec3& p1, idVec3& p2 )
 {
 	float  t1, t2, offset;
@@ -206,11 +194,6 @@ void idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r( cm_traceWork_t* t
 	idCollisionModelManagerLocal::TraceThroughAxialBSPTree_r( tw, node->children[side ^ 1], midf, p2f, mid, p2 );
 }
 
-/*
-================
-idCollisionModelManagerLocal::TraceThroughModel
-================
-*/
 void idCollisionModelManagerLocal::TraceThroughModel( cm_traceWork_t* tw )
 {
 	float	   d;

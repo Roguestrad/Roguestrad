@@ -53,12 +53,16 @@ Collision detection for rotational motion
 // if the collision point is this close to the rotation axis it is not considered a collision
 #define ROTATION_AXIS_EPSILON ( CM_CLIP_EPSILON * 0.25f )
 
-/*
-================
-CM_RotatePoint
+/*!
+	\brief Rotates a point about an arbitrary axis using the tangent of half the rotation angle
 
-  rotates a point about an arbitrary axis using the tangent of half the rotation angle
-================
+	This function performs a rotation of a given point around a specified axis by a certain angle. The angle is provided as the tangent of half the rotation angle, which is a common approach in
+   computational geometry to avoid trigonometric function calls. The rotation is centered around a given origin point.
+
+	\param point The point to be rotated, will be modified in place
+	\param origin The origin point around which the rotation occurs
+	\param axis The axis of rotation, should be normalized
+	\param tanHalfAngle The tangent of half the rotation angle
 */
 void CM_RotatePoint( idVec3& point, const idVec3& origin, const idVec3& axis, const float tanHalfAngle )
 {
@@ -81,12 +85,17 @@ void CM_RotatePoint( idVec3& point, const idVec3& origin, const idVec3& axis, co
 	point = v1 * c - v2 * s + proj + origin;
 }
 
-/*
-================
-CM_RotateEdge
+/*!
+	\brief Rotates an edge about an arbitrary axis using the tangent of half the rotation angle.
 
-  rotates an edge about an arbitrary axis using the tangent of half the rotation angle
-================
+	This function rotates both the start and end points of an edge around a specified origin along a given axis. The rotation is computed using the tangent of half the angle, which allows for
+   efficient quaternion-like computations. The rotation is applied to the edge in-place, modifying the original start and end points.
+
+	\param start The starting point of the edge to be rotated.
+	\param end The ending point of the edge to be rotated.
+	\param origin The origin point about which the edge is rotated.
+	\param axis The axis of rotation, specified as a normalized vector.
+	\param tanHalfAngle The tangent of half the rotation angle.
 */
 void CM_RotateEdge( idVec3& start, idVec3& end, const idVec3& origin, const idVec3& axis, const float tanHalfAngle )
 {
@@ -114,14 +123,6 @@ void CM_RotateEdge( idVec3& start, idVec3& end, const idVec3& origin, const idVe
 	end	 = v1 * c - v2 * s + proj + origin;
 }
 
-/*
-================
-idCollisionModelManagerLocal::CollisionBetweenEdgeBounds
-
-  verifies if the collision of two edges occurs between the edge bounds
-  also calculates the collision point and collision plane normal if the collision occurs between the bounds
-================
-*/
 int idCollisionModelManagerLocal::CollisionBetweenEdgeBounds(
 	cm_traceWork_t* tw, const idVec3& va, const idVec3& vb, const idVec3& vc, const idVec3& vd, float tanHalfAngle, idVec3& collisionPoint, idVec3& collisionNormal )
 {
@@ -180,13 +181,6 @@ int idCollisionModelManagerLocal::CollisionBetweenEdgeBounds(
 	return true;
 }
 
-/*
-================
-idCollisionModelManagerLocal::RotateEdgeThroughEdge
-
-  calculates the tangent of half the rotation angle at which the edges collide
-================
-*/
 int idCollisionModelManagerLocal::RotateEdgeThroughEdge( cm_traceWork_t* tw, const idPluecker& pl1, const idVec3& vc, const idVec3& vd, const float minTan, float& tanHalfAngle )
 {
 	double	   v0, v1, v2, a, b, c, d, sqrtd, q, frac1, frac2;
@@ -344,15 +338,6 @@ int idCollisionModelManagerLocal::RotateEdgeThroughEdge( cm_traceWork_t* tw, con
 	return true;
 }
 
-/*
-================
-idCollisionModelManagerLocal::EdgeFurthestFromEdge
-
-  calculates the direction of motion at the initial position, where dir < 0 means the edges move towards each other
-  if the edges move away from each other the tangent of half the rotation angle at which
-  the edges are furthest apart is also calculated
-================
-*/
 int idCollisionModelManagerLocal::EdgeFurthestFromEdge( cm_traceWork_t* tw, const idPluecker& pl1, const idVec3& vc, const idVec3& vd, float& tanHalfAngle, float& dir )
 {
 	double	   v0, v1, v2, a, b, c, d, sqrtd, q, frac1, frac2;
@@ -460,11 +445,6 @@ int idCollisionModelManagerLocal::EdgeFurthestFromEdge( cm_traceWork_t* tw, cons
 	return true;
 }
 
-/*
-================
-idCollisionModelManagerLocal::RotateTrmEdgeThroughPolygon
-================
-*/
 void idCollisionModelManagerLocal::RotateTrmEdgeThroughPolygon( cm_traceWork_t* tw, cm_polygon_t* poly, cm_trmEdge_t* trmEdge )
 {
 	int			 i, j, edgeNum;
@@ -599,13 +579,6 @@ void idCollisionModelManagerLocal::RotateTrmEdgeThroughPolygon( cm_traceWork_t* 
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::RotatePointThroughPlane
-
-  calculates the tangent of half the rotation angle at which the point collides with the plane
-================
-*/
 int idCollisionModelManagerLocal::RotatePointThroughPlane( const cm_traceWork_t* tw, const idVec3& point, const idPlane& plane, const float angle, const float minTan, float& tanHalfAngle )
 {
 	double v0, v1, v2, a, b, c, d, sqrtd, q, frac1, frac2;
@@ -700,15 +673,6 @@ int idCollisionModelManagerLocal::RotatePointThroughPlane( const cm_traceWork_t*
 	return true;
 }
 
-/*
-================
-idCollisionModelManagerLocal::PointFurthestFromPlane
-
-  calculates the direction of motion at the initial position, where dir < 0 means the point moves towards the plane
-  if the point moves away from the plane the tangent of half the rotation angle at which
-  the point is furthest away from the plane is also calculated
-================
-*/
 int idCollisionModelManagerLocal::PointFurthestFromPlane( const cm_traceWork_t* tw, const idVec3& point, const idPlane& plane, const float angle, float& tanHalfAngle, float& dir )
 {
 	double v1, v2, a, b, c, d, sqrtd, q, frac1, frac2;
@@ -803,11 +767,6 @@ int idCollisionModelManagerLocal::PointFurthestFromPlane( const cm_traceWork_t* 
 	return true;
 }
 
-/*
-================
-idCollisionModelManagerLocal::RotatePointThroughEpsilonPlane
-================
-*/
 int idCollisionModelManagerLocal::RotatePointThroughEpsilonPlane(
 	const cm_traceWork_t* tw, const idVec3& point, const idVec3& endPoint, const idPlane& plane, const float angle, const idVec3& origin, float& tanHalfAngle, idVec3& collisionPoint, idVec3& endDir )
 {
@@ -889,11 +848,6 @@ int idCollisionModelManagerLocal::RotatePointThroughEpsilonPlane(
 	return true;
 }
 
-/*
-================
-idCollisionModelManagerLocal::RotateTrmVertexThroughPolygon
-================
-*/
 void idCollisionModelManagerLocal::RotateTrmVertexThroughPolygon( cm_traceWork_t* tw, cm_polygon_t* poly, cm_trmVertex_t* v, int vertexNum )
 {
 	int		   i;
@@ -948,11 +902,6 @@ void idCollisionModelManagerLocal::RotateTrmVertexThroughPolygon( cm_traceWork_t
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::RotateVertexThroughTrmPolygon
-================
-*/
 void idCollisionModelManagerLocal::RotateVertexThroughTrmPolygon( cm_traceWork_t* tw, cm_trmPolygon_t* trmpoly, cm_polygon_t* poly, cm_vertex_t* v, idVec3& rotationOrigin )
 {
 	int			  i, edgeNum;
@@ -1015,13 +964,6 @@ void idCollisionModelManagerLocal::RotateVertexThroughTrmPolygon( cm_traceWork_t
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::RotateTrmThroughPolygon
-
-  returns true if the polygon blocks the complete rotation
-================
-*/
 bool idCollisionModelManagerLocal::RotateTrmThroughPolygon( cm_traceWork_t* tw, cm_polygon_t* p )
 {
 	int				 i, j, k, edgeNum;
@@ -1170,13 +1112,6 @@ bool idCollisionModelManagerLocal::RotateTrmThroughPolygon( cm_traceWork_t* tw, 
 	return ( tw->maxTan == 0.0f );
 }
 
-/*
-================
-idCollisionModelManagerLocal::BoundsForRotation
-
-  only for rotations < 180 degrees
-================
-*/
 void idCollisionModelManagerLocal::BoundsForRotation( const idVec3& origin, const idVec3& axis, const idVec3& start, const idVec3& end, idBounds& bounds )
 {
 	int	   i;
@@ -1210,11 +1145,6 @@ void idCollisionModelManagerLocal::BoundsForRotation( const idVec3& origin, cons
 	}
 }
 
-/*
-================
-idCollisionModelManagerLocal::Rotation180
-================
-*/
 void idCollisionModelManagerLocal::Rotation180( trace_t* results,
 	const idVec3&										 rorg,
 	const idVec3&										 axis,

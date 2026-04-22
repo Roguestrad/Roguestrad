@@ -40,21 +40,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "CollisionModel_local.h"
 
-/*
-===============================================================================
-
-Contents test
-
-===============================================================================
-*/
-
-/*
-================
-idCollisionModelManagerLocal::TestTrmVertsInBrush
-
-  returns true if any of the trm vertices is inside the brush
-================
-*/
 bool idCollisionModelManagerLocal::TestTrmVertsInBrush( cm_traceWork_t* tw, cm_brush_t* b )
 {
 	int		i, j, numVerts, bestPlane;
@@ -143,13 +128,6 @@ CM_SetTrmPolygonSidedness
 		}                                                                            \
 	}
 
-/*
-================
-idCollisionModelManagerLocal::TestTrmInPolygon
-
-  returns true if the trm intersects the polygon
-================
-*/
 bool idCollisionModelManagerLocal::TestTrmInPolygon( cm_traceWork_t* tw, cm_polygon_t* p )
 {
 	int			  i, j, k, edgeNum, flip, trmEdgeNum, bitNum, bestPlane;
@@ -383,11 +361,6 @@ bool idCollisionModelManagerLocal::TestTrmInPolygon( cm_traceWork_t* tw, cm_poly
 	return false;
 }
 
-/*
-================
-idCollisionModelManagerLocal::PointNode
-================
-*/
 cm_node_t* idCollisionModelManagerLocal::PointNode( const idVec3& p, cm_model_t* model )
 {
 	cm_node_t* node;
@@ -405,11 +378,6 @@ cm_node_t* idCollisionModelManagerLocal::PointNode( const idVec3& p, cm_model_t*
 	return node;
 }
 
-/*
-================
-idCollisionModelManagerLocal::PointContents
-================
-*/
 int idCollisionModelManagerLocal::PointContents( const idVec3 p, cmHandle_t model )
 {
 	int			   i;
@@ -449,11 +417,6 @@ int idCollisionModelManagerLocal::PointContents( const idVec3 p, cmHandle_t mode
 	return 0;
 }
 
-/*
-==================
-idCollisionModelManagerLocal::TransformedPointContents
-==================
-*/
 int idCollisionModelManagerLocal::TransformedPointContents( const idVec3& p, cmHandle_t model, const idVec3& origin, const idMat3& modelAxis )
 {
 	idVec3 p_l;
@@ -466,11 +429,6 @@ int idCollisionModelManagerLocal::TransformedPointContents( const idVec3& p, cmH
 	return idCollisionModelManagerLocal::PointContents( p_l, model );
 }
 
-/*
-==================
-idCollisionModelManagerLocal::ContentsTrm
-==================
-*/
 int idCollisionModelManagerLocal::ContentsTrm(
 	trace_t* results, const idVec3& start, const idTraceModel* trm, const idMat3& trmAxis, int contentMask, cmHandle_t model, const idVec3& modelOrigin, const idMat3& modelAxis )
 {
@@ -612,11 +570,6 @@ int idCollisionModelManagerLocal::ContentsTrm(
 	return results->c.contents;
 }
 
-/*
-==================
-idCollisionModelManagerLocal::Contents
-==================
-*/
 int idCollisionModelManagerLocal::Contents( const idVec3& start, const idTraceModel* trm, const idMat3& trmAxis, int contentMask, cmHandle_t model, const idVec3& modelOrigin, const idMat3& modelAxis )
 {
 	trace_t results;
