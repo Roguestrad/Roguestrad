@@ -58,21 +58,11 @@ const ParticleParmDesc ParticleCustomDesc[] = { { "standard", 0, "Standard" },
 
 const int			   CustomParticleCount = sizeof( ParticleCustomDesc ) / sizeof( const ParticleParmDesc );
 
-/*
-=================
-idDeclParticle::Size
-=================
-*/
 size_t				   idDeclParticle::Size() const
 {
 	return sizeof( idDeclParticle );
 }
 
-/*
-=====================
-idDeclParticle::GetStageBounds
-=====================
-*/
 void idDeclParticle::GetStageBounds( idParticleStage* stage )
 {
 	stage->bounds.Clear();
@@ -139,13 +129,6 @@ void idDeclParticle::GetStageBounds( idParticleStage* stage )
 	stage->bounds.ExpandSelf( maxSize + stage->boundsExpansion );
 }
 
-/*
-================
-idDeclParticle::ParseParms
-
-Parses a variable length list of parms on one line
-================
-*/
 void idDeclParticle::ParseParms( idLexer& src, float* parms, int maxParms )
 {
 	idToken token;
@@ -166,11 +149,6 @@ void idDeclParticle::ParseParms( idLexer& src, float* parms, int maxParms )
 	}
 }
 
-/*
-================
-idDeclParticle::ParseParametric
-================
-*/
 void idDeclParticle::ParseParametric( idLexer& src, idParticleParm* parm )
 {
 	idToken token;
@@ -203,11 +181,6 @@ void idDeclParticle::ParseParametric( idLexer& src, idParticleParm* parm )
 	}
 }
 
-/*
-================
-idDeclParticle::ParseParticleStage
-================
-*/
 idParticleStage* idDeclParticle::ParseParticleStage( idLexer& src )
 {
 	idToken			 token;
@@ -411,11 +384,6 @@ idParticleStage* idDeclParticle::ParseParticleStage( idLexer& src )
 	return stage;
 }
 
-/*
-================
-idDeclParticle::Parse
-================
-*/
 bool idDeclParticle::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	if( cvarSystem->GetCVarBool( "fs_buildresources" ) ) {
@@ -512,11 +480,6 @@ bool idDeclParticle::Parse( const char* text, const int textLength, bool allowBi
 	return true;
 }
 
-/*
-========================
-idDeclParticle::LoadBinary
-========================
-*/
 bool idDeclParticle::LoadBinary( idFile* file, unsigned int checksum )
 {
 	if( file == NULL ) {
@@ -612,11 +575,6 @@ bool idDeclParticle::LoadBinary( idFile* file, unsigned int checksum )
 	return true;
 }
 
-/*
-========================
-idDeclParticle::WriteBinary
-========================
-*/
 void idDeclParticle::WriteBinary( idFile* file, unsigned int checksum )
 {
 	if( file == NULL ) {
@@ -691,21 +649,11 @@ void idDeclParticle::WriteBinary( idFile* file, unsigned int checksum )
 	file->WriteFloat( depthHack );
 }
 
-/*
-================
-idDeclParticle::FreeData
-================
-*/
 void idDeclParticle::FreeData()
 {
 	stages.DeleteContents( true );
 }
 
-/*
-================
-idDeclParticle::DefaultDefinition
-================
-*/
 const char* idDeclParticle::DefaultDefinition() const
 {
 	return "{\n"
@@ -722,11 +670,6 @@ const char* idDeclParticle::DefaultDefinition() const
 		   "}";
 }
 
-/*
-================
-idDeclParticle::WriteParticleParm
-================
-*/
 void idDeclParticle::WriteParticleParm( idFile* f, idParticleParm* parm, const char* name )
 {
 	f->WriteFloatString( "\t\t%s\t\t\t\t ", name );
@@ -742,11 +685,6 @@ void idDeclParticle::WriteParticleParm( idFile* f, idParticleParm* parm, const c
 	}
 }
 
-/*
-================
-idDeclParticle::WriteStage
-================
-*/
 void idDeclParticle::WriteStage( idFile* f, idParticleStage* stage )
 {
 	int i;
@@ -831,11 +769,6 @@ void idDeclParticle::WriteStage( idFile* f, idParticleStage* stage )
 	f->WriteFloatString( "\t}\n" );
 }
 
-/*
-================
-idDeclParticle::RebuildTextSource
-================
-*/
 bool idDeclParticle::RebuildTextSource()
 {
 	idFile_Memory f;
@@ -862,11 +795,6 @@ bool idDeclParticle::RebuildTextSource()
 	return true;
 }
 
-/*
-================
-idDeclParticle::Save
-================
-*/
 bool idDeclParticle::Save( const char* fileName )
 {
 	RebuildTextSource();
@@ -910,11 +838,6 @@ idParticleStage
 ====================================================================================
 */
 
-/*
-================
-idParticleStage::idParticleStage
-================
-*/
 idParticleStage::idParticleStage()
 {
 	material			 = NULL;
@@ -956,13 +879,6 @@ idParticleStage::idParticleStage()
 	bounds.Clear();
 }
 
-/*
-================
-idParticleStage::Default
-
-Sets the stage to a default state
-================
-*/
 void idParticleStage::Default()
 {
 	material			 = declManager->FindMaterial( "_default" );
@@ -1030,13 +946,6 @@ void idParticleStage::Default()
 	cycleMsec			= ( particleLife + deadTime ) * 1000;
 }
 
-/*
-================
-idParticleStage::NumQuadsPerParticle
-
-includes trails and cross faded animations
-================
-*/
 int idParticleStage::NumQuadsPerParticle() const
 {
 	int count = 1;
@@ -1055,11 +964,6 @@ int idParticleStage::NumQuadsPerParticle() const
 	return count;
 }
 
-/*
-===============
-idParticleStage::ParticleOrigin
-===============
-*/
 void idParticleStage::ParticleOrigin( particleGen_t* g, idVec3& origin ) const
 {
 	if( customPathType == PPATH_STANDARD ) {
@@ -1254,11 +1158,6 @@ void idParticleStage::ParticleOrigin( particleGen_t* g, idVec3& origin ) const
 	}
 }
 
-/*
-==================
-idParticleStage::ParticleVerts
-==================
-*/
 int idParticleStage::ParticleVerts( particleGen_t* g, idVec3 origin, idDrawVert* verts ) const
 {
 	float  psize   = size.Eval( g->frac, g->random );
@@ -1408,11 +1307,6 @@ int idParticleStage::ParticleVerts( particleGen_t* g, idVec3 origin, idDrawVert*
 	return 4;
 }
 
-/*
-==================
-idParticleStage::ParticleTexCoords
-==================
-*/
 void idParticleStage::ParticleTexCoords( particleGen_t* g, idDrawVert* verts ) const
 {
 	float s, width;
@@ -1445,11 +1339,6 @@ void idParticleStage::ParticleTexCoords( particleGen_t* g, idDrawVert* verts ) c
 	verts[3].SetTexCoord( s + width, t + height );
 }
 
-/*
-==================
-idParticleStage::ParticleColors
-==================
-*/
 void idParticleStage::ParticleColors( particleGen_t* g, idDrawVert* verts ) const
 {
 	float fadeFraction = 1.0f;
@@ -1483,20 +1372,6 @@ void idParticleStage::ParticleColors( particleGen_t* g, idDrawVert* verts ) cons
 	}
 }
 
-/*
-================
-idParticleStage::CreateParticle
-
-Returns 0 if no particle is created because it is completely faded out
-Returns 4 if a normal quad is created
-Returns 8 if two cross faded quads are created
-
-Vertex order is:
-
-0 1
-2 3
-================
-*/
 int idParticleStage::CreateParticle( particleGen_t* g, idDrawVert* verts ) const
 {
 	idVec3 origin;
@@ -1549,44 +1424,24 @@ int idParticleStage::CreateParticle( particleGen_t* g, idDrawVert* verts ) const
 	return numVerts * 2;
 }
 
-/*
-==================
-idParticleStage::GetCustomPathName
-==================
-*/
 const char* idParticleStage::GetCustomPathName()
 {
 	int index = ( customPathType < CustomParticleCount ) ? customPathType : 0;
 	return ParticleCustomDesc[index].name;
 }
 
-/*
-==================
-idParticleStage::GetCustomPathDesc
-==================
-*/
 const char* idParticleStage::GetCustomPathDesc()
 {
 	int index = ( customPathType < CustomParticleCount ) ? customPathType : 0;
 	return ParticleCustomDesc[index].desc;
 }
 
-/*
-==================
-idParticleStage::NumCustomPathParms
-==================
-*/
 int idParticleStage::NumCustomPathParms()
 {
 	int index = ( customPathType < CustomParticleCount ) ? customPathType : 0;
 	return ParticleCustomDesc[index].count;
 }
 
-/*
-==================
-idParticleStage::SetCustomPathType
-==================
-*/
 void idParticleStage::SetCustomPathType( const char* p )
 {
 	customPathType = PPATH_STANDARD;
@@ -1598,11 +1453,6 @@ void idParticleStage::SetCustomPathType( const char* p )
 	}
 }
 
-/*
-==================
-idParticleStage::operator=
-==================
-*/
 void idParticleStage::operator=( const idParticleStage& src )
 {
 	material			 = src.material;

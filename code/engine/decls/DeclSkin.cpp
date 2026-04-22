@@ -32,31 +32,16 @@ If you have questions concerning this license or the applicable additional terms
 
 idDeclNullSkinBase idDeclNullSkinBase::instance; // Leyland VR
 
-/*
-=================
-idDeclSkin::Size
-=================
-*/
 size_t			   idDeclSkin::Size() const
 {
 	return sizeof( idDeclSkin );
 }
 
-/*
-================
-idDeclSkin::FreeData
-================
-*/
 void idDeclSkin::FreeData()
 {
 	mappings.Clear();
 }
 
-/*
-================
-idDeclSkin::Parse
-================
-*/
 bool idDeclSkin::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
@@ -104,11 +89,6 @@ bool idDeclSkin::Parse( const char* text, const int textLength, bool allowBinary
 	return false;
 }
 
-/*
-================
-idDeclSkin::SetDefaultText
-================
-*/
 bool idDeclSkin::SetDefaultText()
 {
 	// if there exists a material with the same name
@@ -130,11 +110,6 @@ bool idDeclSkin::SetDefaultText()
 	}
 }
 
-/*
-================
-idDeclSkin::DefaultDefinition
-================
-*/
 const char* idDeclSkin::DefaultDefinition() const
 {
 	return "{\n"
@@ -143,21 +118,11 @@ const char* idDeclSkin::DefaultDefinition() const
 		   "}";
 }
 
-/*
-================
-idDeclSkin::GetNumModelAssociations
-================
-*/
 const int idDeclSkin::GetNumModelAssociations() const
 {
 	return associatedModels.Num();
 }
 
-/*
-================
-idDeclSkin::GetAssociatedModel
-================
-*/
 const char* idDeclSkin::GetAssociatedModel( int index ) const
 {
 	if( index >= 0 && index < associatedModels.Num() ) {
@@ -166,11 +131,6 @@ const char* idDeclSkin::GetAssociatedModel( int index ) const
 	return "";
 }
 
-/*
-===============
-RemapShaderBySkin
-===============
-*/
 const idMaterial* idDeclSkin::RemapShaderBySkin( const idMaterial* shader ) const
 {
 	int i;
@@ -197,12 +157,6 @@ const idMaterial* idDeclSkin::RemapShaderBySkin( const idMaterial* shader ) cons
 	return shader;
 }
 
-// Leyland VR
-/*
-===============
-idDeclSkinWrapper::idDeclSkinWrapper
-===============
-*/
 idDeclSkinWrapper::idDeclSkinWrapper()
 {
 	base	= &idDeclNullSkinBase::instance;
@@ -210,11 +164,6 @@ idDeclSkinWrapper::idDeclSkinWrapper()
 	wrapped = NULL;
 }
 
-/*
-===============
-idDeclSkinWrapper::RemapShaderBySkin
-===============
-*/
 const idMaterial* idDeclSkinWrapper::RemapShaderBySkin( const idMaterial* shader ) const
 {
 	if( wrapper ) {
@@ -232,21 +181,11 @@ const idMaterial* idDeclSkinWrapper::RemapShaderBySkin( const idMaterial* shader
 	return shader;
 }
 
-/*
-===============
-idDeclSkinWrapper::SetWrapper
-===============
-*/
 void idDeclSkinWrapper::SetWrapper( const idDeclSkin* skin )
 {
 	wrapper = skin;
 }
 
-/*
-===============
-idDeclSkinWrapper::SetWrapped
-===============
-*/
 void idDeclSkinWrapper::SetWrapped( const idDeclSkin* skin )
 {
 	wrapped = skin;

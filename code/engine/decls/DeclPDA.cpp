@@ -32,41 +32,21 @@ If you have questions concerning this license or the applicable additional terms
 
 idCVar g_useOldPDAStrings( "g_useOldPDAStrings", "0", CVAR_BOOL, "Read strings from the .pda files rather than from the .lang file" );
 
-/*
-=================
-idDeclPDA::Size
-=================
-*/
 size_t idDeclPDA::Size() const
 {
 	return sizeof( idDeclPDA );
 }
 
-/*
-===============
-idDeclPDA::Print
-===============
-*/
 void idDeclPDA::Print() const
 {
 	common->Printf( "Implement me\n" );
 }
 
-/*
-===============
-idDeclPDA::List
-===============
-*/
 void idDeclPDA::List() const
 {
 	common->Printf( "Implement me\n" );
 }
 
-/*
-================
-idDeclPDA::Parse
-================
-*/
 bool idDeclPDA::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
@@ -185,11 +165,6 @@ bool idDeclPDA::Parse( const char* text, const int textLength, bool allowBinaryV
 	return true;
 }
 
-/*
-===================
-idDeclPDA::DefaultDefinition
-===================
-*/
 const char* idDeclPDA::DefaultDefinition() const
 {
 	return "{\n"
@@ -198,11 +173,6 @@ const char* idDeclPDA::DefaultDefinition() const
 		   "}";
 }
 
-/*
-===================
-idDeclPDA::FreeData
-===================
-*/
 void idDeclPDA::FreeData()
 {
 	videos.Clear();
@@ -212,11 +182,6 @@ void idDeclPDA::FreeData()
 	originalVideos = 0;
 }
 
-/*
-=================
-idDeclPDA::RemoveAddedEmailsAndVideos
-=================
-*/
 void idDeclPDA::RemoveAddedEmailsAndVideos() const
 {
 	int num = emails.Num();
@@ -233,51 +198,26 @@ void idDeclPDA::RemoveAddedEmailsAndVideos() const
 	}
 }
 
-/*
-=================
-idDeclPDA::SetSecurity
-=================
-*/
 void idDeclPDA::SetSecurity( const char* sec ) const
 {
 	security = sec;
 }
 
-/*
-=================
-idDeclEmail::Size
-=================
-*/
 size_t idDeclEmail::Size() const
 {
 	return sizeof( idDeclEmail );
 }
 
-/*
-===============
-idDeclEmail::Print
-===============
-*/
 void idDeclEmail::Print() const
 {
 	common->Printf( "Implement me\n" );
 }
 
-/*
-===============
-idDeclEmail::List
-===============
-*/
 void idDeclEmail::List() const
 {
 	common->Printf( "Implement me\n" );
 }
 
-/*
-================
-idDeclEmail::Parse
-================
-*/
 bool idDeclEmail::Parse( const char* _text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
@@ -363,11 +303,6 @@ bool idDeclEmail::Parse( const char* _text, const int textLength, bool allowBina
 	return true;
 }
 
-/*
-===================
-idDeclEmail::DefaultDefinition
-===================
-*/
 const char* idDeclEmail::DefaultDefinition() const
 {
 	return "{\n"
@@ -384,50 +319,25 @@ const char* idDeclEmail::DefaultDefinition() const
 		   "}";
 }
 
-/*
-===================
-idDeclEmail::FreeData
-===================
-*/
 void idDeclEmail::FreeData()
 {
 }
 
-/*
-=================
-idDeclVideo::Size
-=================
-*/
 size_t idDeclVideo::Size() const
 {
 	return sizeof( idDeclVideo );
 }
 
-/*
-===============
-idDeclVideo::Print
-===============
-*/
 void idDeclVideo::Print() const
 {
 	common->Printf( "Implement me\n" );
 }
 
-/*
-===============
-idDeclVideo::List
-===============
-*/
 void idDeclVideo::List() const
 {
 	common->Printf( "Implement me\n" );
 }
 
-/*
-================
-idDeclVideo::Parse
-================
-*/
 bool idDeclVideo::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
@@ -495,11 +405,6 @@ bool idDeclVideo::Parse( const char* text, const int textLength, bool allowBinar
 	return true;
 }
 
-/*
-===================
-idDeclVideo::DefaultDefinition
-===================
-*/
 const char* idDeclVideo::DefaultDefinition() const
 {
 	return "{\n"
@@ -512,50 +417,25 @@ const char* idDeclVideo::DefaultDefinition() const
 		   "}";
 }
 
-/*
-===================
-idDeclVideo::FreeData
-===================
-*/
 void idDeclVideo::FreeData()
 {
 }
 
-/*
-=================
-idDeclAudio::Size
-=================
-*/
 size_t idDeclAudio::Size() const
 {
 	return sizeof( idDeclAudio );
 }
 
-/*
-===============
-idDeclAudio::Print
-===============
-*/
 void idDeclAudio::Print() const
 {
 	common->Printf( "Implement me\n" );
 }
 
-/*
-===============
-idDeclAudio::List
-===============
-*/
 void idDeclAudio::List() const
 {
 	common->Printf( "Implement me\n" );
 }
 
-/*
-================
-idDeclAudio::Parse
-================
-*/
 bool idDeclAudio::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
@@ -611,11 +491,6 @@ bool idDeclAudio::Parse( const char* text, const int textLength, bool allowBinar
 	return true;
 }
 
-/*
-===================
-idDeclAudio::DefaultDefinition
-===================
-*/
 const char* idDeclAudio::DefaultDefinition() const
 {
 	return "{\n"
@@ -628,11 +503,6 @@ const char* idDeclAudio::DefaultDefinition() const
 		   "}";
 }
 
-/*
-===================
-idDeclAudio::FreeData
-===================
-*/
 void idDeclAudio::FreeData()
 {
 }

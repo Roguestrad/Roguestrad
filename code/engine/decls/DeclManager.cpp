@@ -71,8 +71,11 @@ missing reload over a previously explicit definition
 */
 
 #define USE_COMPRESSED_DECLS
-// #define GET_HUFFMAN_FREQUENCIES
 
+/*!
+	\class idDeclType
+	\brief A class for managing declaration types.
+*/
 class idDeclType
 {
 public:
@@ -81,6 +84,10 @@ public:
 	idDecl* ( *allocator )();
 };
 
+/*!
+	\class idDeclFolder
+	\brief A class for managing declaration folders.
+*/
 class idDeclFolder
 {
 public:
@@ -91,55 +98,111 @@ public:
 
 class idDeclFile;
 
+/*!
+	\class idDeclLocal
+	\brief Manages local declarations with parsing, validation, and memory management capabilities.
+
+	This class provides functionality for handling local declarations within the engine, including parsing declaration text, managing declaration states, and maintaining associations with source
+   files. It inherits from idDeclBase and supports operations such as reloading, invalidating, and purging declarations. The class tracks declaration properties like type, validity, source file
+   information, and timestamps. It also handles text content management with methods for setting and getting text, as well as parsing and freeing declaration data. The class is designed to be used in
+   declaration management systems where local declarations need to be tracked, validated, and potentially reloaded or purged during runtime.
+
+*/
 class idDeclLocal : public idDeclBase
 {
 	friend class idDeclFile;
 	friend class idDeclManagerLocal;
 
 public:
+	//! Initializes a new instance of the idDeclLocal class.
 	idDeclLocal();
 	virtual ~idDeclLocal() {};
 	virtual const char* GetName() const;
+
+	//! Returns the type of the declaration.
 	virtual declType_t	GetType() const;
+
+	//! Returns the current state of the declaration.
 	virtual declState_t GetState() const;
+
+	//! Returns true if the declaration was implicitly created.
 	virtual bool		IsImplicit() const;
+
+	//! Returns true if the declaration is valid and has been successfully parsed.
 	virtual bool		IsValid() const;
+
+	//! Invalidates the declaration by marking it as no longer valid.
 	virtual void		Invalidate();
+
+	//! Reloads the local declaration and prints its name.
 	virtual void		Reload();
+
+	//! Ensures the declaration is not in a purged state by checking its current state.
 	virtual void		EnsureNotPurged();
+
+	//! Returns the index of this local declaration.
 	virtual int			Index() const;
+
+	//! Returns the line number where the declaration is defined.
 	virtual int			GetLineNum() const;
+
+	//! Returns the file name associated with this declaration.
 	virtual const char* GetFileName() const;
+
+	//! Returns the total memory size occupied by this declaration instance
 	virtual size_t		Size() const;
+
+	//! Returns the name of the source file associated with this declaration
 	virtual void		GetText( char* text ) const;
+
+	//! Returns the length of the text associated with this declaration.
 	virtual int			GetTextLength() const;
+
+	//! Sets the text content of the declaration
 	virtual void		SetText( const char* text );
 	virtual bool		ReplaceSourceFileText();
+
+	//! Checks if the source file containing this declaration has changed since it was loaded.
 	virtual bool		SourceFileChanged() const;
 	virtual void		MakeDefault();
+
+	//! Returns true if the declaration was ever referenced.
 	virtual bool		EverReferenced() const;
-	virtual ID_TIME_T	GetSourceFileTimestamp() const; // RB
+
+	//! Returns the timestamp of the source file for this declaration.
+	virtual ID_TIME_T	GetSourceFileTimestamp() const;
 
 protected:
+	//! Sets the default text for a declaration.
 	virtual bool		SetDefaultText();
+
+	//! Returns the default definition string for this declaration type.
 	virtual const char* DefaultDefinition() const;
+
+	//! Parses the declaration text and returns true if successful.
 	virtual bool		Parse( const char* text, const int textLength, bool allowBinaryVersion );
+
+	//! Frees any pointers held by the declaration data.
 	virtual void		FreeData();
+
+	//! Lists the declaration information.
 	virtual void		List() const;
+
+	//! Prints the declaration data
 	virtual void		Print() const;
 
 protected:
+	//! Allocates memory for the declaration local object.
 	void AllocateSelf();
 
 	// Parses the decl definition.
 	// After calling parse, a decl will be guaranteed usable.
 	void ParseLocal();
 
-	// Does a MakeDefualt, but flags the decl so that it
-	// will Parse() the next time the decl is found.
+	//! Reinitializes the declaration by parsing its text and freeing generated text if present.
 	void Purge();
 
-	// Set textSource possible with compression.
+	//! Sets the text source for the declaration local object with the provided text and length.
 	void SetTextLocal( const char* text, const int length );
 
 private:
@@ -166,13 +229,23 @@ private:
 	idDeclLocal* nextInFile; // next decl in the decl file
 };
 
+/*!
+	\class idDeclFile
+	\brief Manages declaration file loading, parsing, and reloading functionality.
+*/
 class idDeclFile
 {
 public:
+	//! Constructs a new idDeclFile object with default values.
 	idDeclFile();
+
+	//! Initializes a new instance of the idDeclFile class with the specified file name and default declaration type.
 	idDeclFile( const char* fileName, declType_t defaultType );
 
+	//! Reloads the declaration file data, optionally forcing a reload even if the timestamp hasn't changed.
 	void Reload( bool force );
+
+	//! Loads and parses a declaration file, returning its checksum.
 	int	 LoadAndParse();
 
 public:
@@ -187,68 +260,147 @@ public:
 	idDeclLocal* decls;
 };
 
+/*!
+	\class idDeclManagerLocal
+	\brief Manages loading, organizing, and accessing various declaration types used by the engine.
+
+	The declaration manager is responsible for maintaining collections of different declaration types such as materials, skins, sound shaders, and other engine assets. It handles initialization,
+   loading, reloading, and cleanup of these declarations while providing lookup mechanisms by name or index. The manager supports registration of new declaration types and folders containing
+   declaration files, and offers functionality to export declaration data for external tools. It also provides utilities for canonical name formatting, memory management through reference counting,
+   and precaching declarations for use during gameplay.
+
+*/
 class idDeclManagerLocal : public idDeclManager
 {
 	friend class idDeclLocal;
 
 public:
+	//! Initializes the declaration manager for the engine
 	virtual void			  Init();
+
+	//! Initializes additional declaration folders for skins and sound shaders.
 	virtual void			  Init2();
+
+	//! Initializes the declaration manager tool environment.
 	virtual void			  InitTool();
+
+	//! Shuts down the declaration manager and frees all allocated memory for declarations and related resources.
 	virtual void			  Shutdown();
+
+	//! Reloads all loaded declaration files.
 	virtual void			  Reload( bool force );
+
+	//! Initializes the declaration manager for a new level load operation.
 	virtual void			  BeginLevelLoad();
+
+	//! Marks the end of a level load operation and prepares managers to free unreferenced media.
 	virtual void			  EndLevelLoad();
+
+	//! Registers a new declaration type with the manager
 	virtual void			  RegisterDeclType( const char* typeName, declType_t type, idDecl* ( *allocator )() );
+
+	//! Registers a folder containing declaration files with a specific extension and default type.
 	virtual void			  RegisterDeclFolder( const char* folder, const char* extension, declType_t defaultType );
+
+	//! Returns a checksum value calculated from the loaded declarations.
 	virtual int				  GetChecksum() const;
+
+	//! Returns the number of declaration types registered in the manager.
 	virtual int				  GetNumDeclTypes() const;
+
+	//! Returns the number of declarations of the specified type managed by the declaration manager.
 	virtual int				  GetNumDecls( declType_t type );
+
+	//! Returns the name of a declaration type given its type identifier
 	virtual const char*		  GetDeclNameFromType( declType_t type ) const;
+
+	//! Returns the declaration type constant for the given type name string.
 	virtual declType_t		  GetDeclTypeFromName( const char* typeName ) const;
+
+	/*!
+		\brief Finds and returns a declaration of the specified type by name, parsing it if necessary.
+
+		If makeDefault is true, a default decl of appropriate type will be created
+		if an explicit one isn't found. If makeDefault is false, NULL will be returned
+		if the decl wasn't explcitly defined.
+	*/
 	virtual const idDecl*	  FindType( declType_t type, const char* name, bool makeDefault = true );
+
+	//! Finds a declaration by type and name without parsing its content, optionally creating a default declaration if not found.
+	virtual const idDecl*	  FindDeclWithoutParsing( declType_t type, const char* name, bool makeDefault = true );
+
+	/*!
+		\brief Returns a declaration by its type and index, optionally parsing it if needed.
+
+		The complete lists of decls can be walked to populate editor browsers.
+		If forceParse is set false, you can get the decl to check name / filename / etc.
+		without causing it to parse the source and load media.
+	*/
 	virtual const idDecl*	  DeclByIndex( declType_t type, int index, bool forceParse = true );
 
-	virtual const idDecl*	  FindDeclWithoutParsing( declType_t type, const char* name, bool makeDefault = true );
+	//! Reloads a decl file by name, optionally forcing a reload.
 	virtual void			  ReloadFile( const char* filename, bool force );
 
+	//! Lists declarations of a specified type based on command arguments
 	virtual void			  ListType( const idCmdArgs& args, declType_t type );
+
+	//! Prints detailed information about a specific declaration of a given type
 	virtual void			  PrintType( const idCmdArgs& args, declType_t type );
 
+	//! Creates a new declaration of the specified type with the given name and file name.
 	virtual idDecl*			  CreateNewDecl( declType_t type, const char* name, const char* fileName );
 
-	// BSM Added for the material editors rename capabilities
+	//! Renames a declaration of the specified type from an old name to a new name.
 	virtual bool			  RenameDecl( declType_t type, const char* oldName, const char* newName );
 
+	//! Prints formatted media caching information with proper indentation.
 	virtual void			  MediaPrint( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
+
+	//! Writes precache commands for referenced declarations to the provided file.
 	virtual void			  WritePrecacheCommands( idFile* f );
 
+	//! Finds and returns a material declaration by name, optionally creating a default material if it does not exist.
 	virtual const idMaterial* FindMaterial( const char* name, bool makeDefault = true );
+
+	//! Retrieves a material declaration by its index in the declaration manager.
 	virtual const idMaterial* MaterialByIndex( int index, bool forceParse = true );
 
+	//! Returns a skin declaration by its name, optionally creating a default skin if it doesn't exist.
 	virtual const idDeclSkin* FindSkin( const char* name, bool makeDefault = true );
+
+	//! Returns a skin declaration by its index in the manager
 	virtual const idDeclSkin* SkinByIndex( int index, bool forceParse = true );
 
 #if !defined( DMAP )
+
+	//! Finds and returns a sound shader declaration by name, creating a default if specified.
 	virtual const idSoundShader* FindSound( const char* name, bool makeDefault = true );
+
+	//! Returns a sound shader declaration by its index
 	virtual const idSoundShader* SoundByIndex( int index, bool forceParse = true );
 #endif
 
+	//! Touches a declaration to ensure it is parsed if it hasn't been already.
 	virtual void Touch( const idDecl* decl );
 
 public:
+	//! Converts a file name to canonical form by normalizing separators and truncating at the last dot.
 	static void	 MakeNameCanonical( const char* name, char* result, int maxLength );
 	idDeclLocal* FindTypeWithoutParsing( declType_t type, const char* name, bool makeDefault = true );
 
+	//! Returns the declaration type object for the specified type identifier.
 	idDeclType*	 GetDeclType( int type ) const
 	{
 		return declTypes[type];
 	}
+
+	//! Returns a pointer to the implicit declaration file used by the declaration manager.
 	const idDeclFile* GetImplicitDeclFile() const
 	{
 		return &implicitDecls;
 	}
 
+	//! Converts PDA data to string format and writes it to a file.
 	void ConvertPDAsToStrings( const idCmdArgs& args );
 
 private:
@@ -270,16 +422,31 @@ private:
 	static idCVar							   decl_show;
 
 private:
+	//! Prints statistics about loaded declarations and their memory usage.
 	static void ListDecls_f( const idCmdArgs& args );
+
+	//! Reloads declaration files based on the command line arguments.
 	static void ReloadDecls_f( const idCmdArgs& args );
+
+	//! TouchDecl_f is a function that attempts to load and touch a declaration of a specified type and name.
 	static void TouchDecl_f( const idCmdArgs& args );
-	// RB begin
+
+	//! Exports entity definitions to a JSON file for use in Blender.
 	static void ExportEntityDefsToBlender_f( const idCmdArgs& args );
+
+	//! Exports all materials to a JSON file for use in Blender
 	static void ExportMaterialsToBlender_f( const idCmdArgs& args );
+
+	//! Exports entity definitions to TrenchBroom FGD files with optional model inclusion.
 	static void ExportEntityDefsToTrenchBroom_f( const idCmdArgs& args );
+
+	//! Exports game models to TrenchBroom-compatible FGD and DEF files for map editing.
 	static void ExportModelsToTrenchBroom_f( const idCmdArgs& args );
+
+	//! Exports DXT compressed images from the generated directory to TrenchBroom compatible formats.
 	static void ExportImagesToTrenchBroom_f( const idCmdArgs& args );
 
+	//! Creates a zoo map for models by packing them using the BFG Rectangle Atlas packer
 	static void MakeZooMapForModels_f( const idCmdArgs& args );
 	// RB end
 };
@@ -578,11 +745,7 @@ static int			  totalUncompressedLength = 0;
 static int			  totalCompressedLength	  = 0;
 static int			  maxHuffmanBits		  = 0;
 
-/*
-================
-ClearHuffmanFrequencies
-================
-*/
+//! Clears Huffman frequency counts by resetting all symbols to a base frequency of one
 void				  ClearHuffmanFrequencies()
 {
 	int i;
@@ -592,11 +755,7 @@ void				  ClearHuffmanFrequencies()
 	}
 }
 
-/*
-================
-InsertHuffmanNode
-================
-*/
+//! Inserts a Huffman node into a sorted linked list based on frequency.
 huffmanNode_t* InsertHuffmanNode( huffmanNode_t* firstNode, huffmanNode_t* node )
 {
 	huffmanNode_t *n, *lastNode;
@@ -618,11 +777,7 @@ huffmanNode_t* InsertHuffmanNode( huffmanNode_t* firstNode, huffmanNode_t* node 
 	return firstNode;
 }
 
-/*
-================
-BuildHuffmanCode_r
-================
-*/
+//! Recursively builds Huffman codes for a Huffman tree node
 void BuildHuffmanCode_r( huffmanNode_t* node, huffmanCode_t code, huffmanCode_t codes[MAX_HUFFMAN_SYMBOLS] )
 {
 	if( node->symbol == -1 ) {
@@ -641,11 +796,7 @@ void BuildHuffmanCode_r( huffmanNode_t* node, huffmanCode_t code, huffmanCode_t 
 	}
 }
 
-/*
-================
-FreeHuffmanTree_r
-================
-*/
+//! Frees the memory allocated for a Huffman tree node and its children recursively.
 void FreeHuffmanTree_r( huffmanNode_t* node )
 {
 	if( node->symbol == -1 ) {
@@ -655,11 +806,7 @@ void FreeHuffmanTree_r( huffmanNode_t* node )
 	delete node;
 }
 
-/*
-================
-HuffmanHeight_r
-================
-*/
+//! Calculates the height of a Huffman tree node recursively.
 int HuffmanHeight_r( huffmanNode_t* node )
 {
 	if( node == NULL ) {
@@ -673,11 +820,7 @@ int HuffmanHeight_r( huffmanNode_t* node )
 	return right + 1;
 }
 
-/*
-================
-SetupHuffman
-================
-*/
+//! Initializes the Huffman tree for encoding and decoding operations.
 void SetupHuffman()
 {
 	int			   i, height;
@@ -715,11 +858,7 @@ void SetupHuffman()
 	assert( maxHuffmanBits == height );
 }
 
-/*
-================
-ShutdownHuffman
-================
-*/
+//! Shuts down the Huffman compression system by freeing the allocated Huffman tree.
 void ShutdownHuffman()
 {
 	if( huffmanTree ) {
@@ -727,10 +866,18 @@ void ShutdownHuffman()
 	}
 }
 
-/*
-================
-HuffmanCompressText
-================
+/*!
+	\brief Compresses text using Huffman coding and writes the result to a compressed buffer
+
+	This function performs Huffman compression on the input text and stores the compressed data in the provided buffer. It initializes a bit message writer, iterates through each character in the
+   input text, retrieves the corresponding Huffman code, and writes the bits to the compressed buffer. The function tracks the total uncompressed and compressed lengths for statistics purposes. The
+   output buffer must be large enough to hold the compressed data, as indicated by maxCompressedSize.
+
+	\param text Pointer to the null-terminated input text to compress
+	\param textLength Length of the input text
+	\param compressed Output buffer to store the compressed data
+	\param maxCompressedSize Maximum size of the output buffer
+	\return The actual size in bytes of the compressed data written to the output buffer
 */
 int HuffmanCompressText( const char* text, int textLength, byte* compressed, int maxCompressedSize )
 {
@@ -756,10 +903,18 @@ int HuffmanCompressText( const char* text, int textLength, byte* compressed, int
 	return msg.GetSize();
 }
 
-/*
-================
-HuffmanDecompressText
-================
+/*!
+	\brief Decompresses Huffman-encoded text into a character buffer.
+
+	This function decompresses a Huffman-encoded byte stream into a character buffer. It reads bits from the compressed data using a bit message reader and traverses a pre-defined Huffman tree to
+   reconstruct the original text. The decompression process continues until the specified text length is reached. The function ensures proper null termination of the resulting string and returns the
+   number of bits read from the compressed data.
+
+	\param text Output buffer where the decompressed text will be stored
+	\param textLength Maximum number of characters to decompress into the text buffer
+	\param compressed Input buffer containing the Huffman-encoded compressed data
+	\param compressedSize Size of the compressed data in bytes
+	\return The number of bits read from the compressed data during decompression
 */
 int HuffmanDecompressText( char* text, int textLength, const byte* compressed, int compressedSize )
 {
@@ -782,11 +937,7 @@ int HuffmanDecompressText( char* text, int textLength, const byte* compressed, i
 	return msg.GetReadCount();
 }
 
-/*
-================
-ListHuffmanFrequencies_f
-================
-*/
+//! Outputs Huffman frequency data and compression ratio to the console.
 void ListHuffmanFrequencies_f( const idCmdArgs& args )
 {
 	int	  i;
@@ -808,24 +959,12 @@ void ListHuffmanFrequencies_f( const idCmdArgs& args )
 	common->Printf( "}\n" );
 }
 
+//! Converts PDA strings using the provided command arguments.
 void ConvertPDAsToStrings_f( const idCmdArgs& args )
 {
 	declManagerLocal.ConvertPDAsToStrings( args );
 }
 
-/*
-====================================================================================
-
- idDeclFile
-
-====================================================================================
-*/
-
-/*
-================
-idDeclFile::idDeclFile
-================
-*/
 idDeclFile::idDeclFile( const char* fileName, declType_t defaultType )
 {
 	this->fileName	  = fileName;
@@ -853,13 +992,6 @@ idDeclFile::idDeclFile()
 	this->decls		  = NULL;
 }
 
-/*
-================
-idDeclFile::Reload
-
-ForceReload will cause it to reload even if the timestamp hasn't changed
-================
-*/
 void idDeclFile::Reload( bool force )
 {
 	// check for an unchanged timestamp
@@ -1065,11 +1197,6 @@ int idDeclFile::LoadAndParse()
 
 const char* listDeclStrings[] = { "current", "all", "ever", NULL };
 
-/*
-===================
-idDeclManagerLocal::Init
-===================
-*/
 void		idDeclManagerLocal::Init()
 {
 	common->Printf( "----- Initializing Decls -----\n" );
@@ -1205,11 +1332,6 @@ void idDeclManagerLocal::InitTool()
 	common->Printf( "------------------------------\n" );
 }
 
-/*
-===================
-idDeclManagerLocal::Shutdown
-===================
-*/
 void idDeclManagerLocal::Shutdown()
 {
 	int			 i, j;
@@ -1245,11 +1367,6 @@ void idDeclManagerLocal::Shutdown()
 #endif
 }
 
-/*
-===================
-idDeclManagerLocal::Reload
-===================
-*/
 void idDeclManagerLocal::Reload( bool force )
 {
 	for( int i = 0; i < loadedFiles.Num(); i++ ) {
@@ -1257,11 +1374,6 @@ void idDeclManagerLocal::Reload( bool force )
 	}
 }
 
-/*
-===================
-idDeclManagerLocal::BeginLevelLoad
-===================
-*/
 void idDeclManagerLocal::BeginLevelLoad()
 {
 	insideLevelLoad = true;
@@ -1277,11 +1389,6 @@ void idDeclManagerLocal::BeginLevelLoad()
 	}
 }
 
-/*
-===================
-idDeclManagerLocal::EndLevelLoad
-===================
-*/
 void idDeclManagerLocal::EndLevelLoad()
 {
 	insideLevelLoad = false;
@@ -1290,11 +1397,6 @@ void idDeclManagerLocal::EndLevelLoad()
 	// and sound sample manager will need to free media that was not referenced
 }
 
-/*
-===================
-idDeclManagerLocal::RegisterDeclType
-===================
-*/
 void idDeclManagerLocal::RegisterDeclType( const char* typeName, declType_t type, idDecl* ( *allocator )() )
 {
 	idDeclType* declType;
@@ -1315,11 +1417,6 @@ void idDeclManagerLocal::RegisterDeclType( const char* typeName, declType_t type
 	declTypes[type] = declType;
 }
 
-/*
-===================
-idDeclManagerLocal::RegisterDeclFolder
-===================
-*/
 void idDeclManagerLocal::RegisterDeclFolder( const char* folder, const char* extension, declType_t defaultType )
 {
 	int			  i, j;
@@ -1369,11 +1466,6 @@ void idDeclManagerLocal::RegisterDeclFolder( const char* folder, const char* ext
 	fileSystem->FreeFileList( fileList );
 }
 
-/*
-===================
-idDeclManagerLocal::GetChecksum
-===================
-*/
 int idDeclManagerLocal::GetChecksum() const
 {
 	int	 i, j, total, num;
@@ -1414,21 +1506,11 @@ int idDeclManagerLocal::GetChecksum() const
 	return MD5_BlockChecksum( checksumData, total * 2 * sizeof( int ) );
 }
 
-/*
-===================
-idDeclManagerLocal::GetNumDeclTypes
-===================
-*/
 int idDeclManagerLocal::GetNumDeclTypes() const
 {
 	return declTypes.Num();
 }
 
-/*
-===================
-idDeclManagerLocal::GetDeclNameFromType
-===================
-*/
 const char* idDeclManagerLocal::GetDeclNameFromType( declType_t type ) const
 {
 	int typeIndex = ( int )type;
@@ -1439,11 +1521,6 @@ const char* idDeclManagerLocal::GetDeclNameFromType( declType_t type ) const
 	return declTypes[typeIndex]->typeName;
 }
 
-/*
-===================
-idDeclManagerLocal::GetDeclTypeFromName
-===================
-*/
 declType_t idDeclManagerLocal::GetDeclTypeFromName( const char* typeName ) const
 {
 	int i;
@@ -1456,13 +1533,6 @@ declType_t idDeclManagerLocal::GetDeclTypeFromName( const char* typeName ) const
 	return DECL_MAX_TYPES;
 }
 
-/*
-=================
-idDeclManagerLocal::FindType
-
-External users will always cause the decl to be parsed before returning
-=================
-*/
 const idDecl* idDeclManagerLocal::FindType( declType_t type, const char* name, bool makeDefault )
 {
 	idDeclLocal*			decl;
@@ -1506,11 +1576,6 @@ const idDecl* idDeclManagerLocal::FindType( declType_t type, const char* name, b
 	return decl->self;
 }
 
-/*
-===============
-idDeclManagerLocal::FindDeclWithoutParsing
-===============
-*/
 const idDecl* idDeclManagerLocal::FindDeclWithoutParsing( declType_t type, const char* name, bool makeDefault )
 {
 	idDeclLocal* decl;
@@ -1521,11 +1586,6 @@ const idDecl* idDeclManagerLocal::FindDeclWithoutParsing( declType_t type, const
 	return NULL;
 }
 
-/*
-===============
-idDeclManagerLocal::ReloadFile
-===============
-*/
 void idDeclManagerLocal::ReloadFile( const char* filename, bool force )
 {
 	for( int i = 0; i < loadedFiles.Num(); i++ ) {
@@ -1537,11 +1597,6 @@ void idDeclManagerLocal::ReloadFile( const char* filename, bool force )
 	}
 }
 
-/*
-===================
-idDeclManagerLocal::GetNumDecls
-===================
-*/
 int idDeclManagerLocal::GetNumDecls( declType_t type )
 {
 	int typeIndex = ( int )type;
@@ -1553,11 +1608,6 @@ int idDeclManagerLocal::GetNumDecls( declType_t type )
 	return linearLists[typeIndex].Num();
 }
 
-/*
-===================
-idDeclManagerLocal::DeclByIndex
-===================
-*/
 const idDecl* idDeclManagerLocal::DeclByIndex( declType_t type, int index, bool forceParse )
 {
 	int typeIndex = ( int )type;
@@ -1580,22 +1630,6 @@ const idDecl* idDeclManagerLocal::DeclByIndex( declType_t type, int index, bool 
 	return decl->self;
 }
 
-/*
-===================
-idDeclManagerLocal::ListType
-
-list*
-Lists decls currently referenced
-
-list* ever
-Lists decls that have been referenced at least once since app launched
-
-list* all
-Lists every decl declared, even if it hasn't been referenced or parsed
-
-FIXME: alphabetized, wildcards?
-===================
-*/
 void idDeclManagerLocal::ListType( const idCmdArgs& args, declType_t type )
 {
 	bool all, ever;
@@ -1653,11 +1687,6 @@ void idDeclManagerLocal::ListType( const idCmdArgs& args, declType_t type )
 	common->Printf( "%i of %i %s\n", printed, count, declTypes[type]->typeName.c_str() );
 }
 
-/*
-===================
-idDeclManagerLocal::PrintType
-===================
-*/
 void idDeclManagerLocal::PrintType( const idCmdArgs& args, declType_t type )
 {
 	// individual decl types may use additional command parameters
@@ -1711,11 +1740,6 @@ void idDeclManagerLocal::PrintType( const idCmdArgs& args, declType_t type )
 	}
 }
 
-/*
-===================
-idDeclManagerLocal::CreateNewDecl
-===================
-*/
 idDecl* idDeclManagerLocal::CreateNewDecl( declType_t type, const char* name, const char* _fileName )
 {
 	int typeIndex = ( int )type;
@@ -1793,11 +1817,6 @@ idDecl* idDeclManagerLocal::CreateNewDecl( declType_t type, const char* name, co
 	return decl->self;
 }
 
-/*
-===============
-idDeclManagerLocal::RenameDecl
-===============
-*/
 bool idDeclManagerLocal::RenameDecl( declType_t type, const char* oldName, const char* newName )
 {
 	char canonicalOldName[MAX_STRING_CHARS];
@@ -1841,13 +1860,6 @@ bool idDeclManagerLocal::RenameDecl( declType_t type, const char* oldName, const
 	return true;
 }
 
-/*
-===================
-idDeclManagerLocal::MediaPrint
-
-This is just used to nicely indent media caching prints
-===================
-*/
 void idDeclManagerLocal::MediaPrint( const char* fmt, ... )
 {
 	if( !decl_show.GetInteger() ) {
@@ -1866,11 +1878,6 @@ void idDeclManagerLocal::MediaPrint( const char* fmt, ... )
 	common->Printf( "%s", buffer );
 }
 
-/*
-===================
-idDeclManagerLocal::WritePrecacheCommands
-===================
-*/
 void idDeclManagerLocal::WritePrecacheCommands( idFile* f )
 {
 	for( int i = 0; i < declTypes.Num(); i++ ) {
@@ -1937,11 +1944,6 @@ const idSoundShader* idDeclManagerLocal::SoundByIndex( int index, bool forcePars
 
 #endif
 
-/*
-===================
-idDeclManagerLocal::Touch
-===================
-*/
 void idDeclManagerLocal::Touch( const idDecl* decl )
 {
 	if( decl->base->GetState() == DS_UNPARSED ) {
@@ -1950,11 +1952,6 @@ void idDeclManagerLocal::Touch( const idDecl* decl )
 	}
 }
 
-/*
-===================
-idDeclManagerLocal::MakeNameCanonical
-===================
-*/
 void idDeclManagerLocal::MakeNameCanonical( const char* name, char* result, int maxLength )
 {
 	int i, lastDot;
@@ -1978,11 +1975,6 @@ void idDeclManagerLocal::MakeNameCanonical( const char* name, char* result, int 
 	}
 }
 
-/*
-================
-idDeclManagerLocal::ListDecls_f
-================
-*/
 void idDeclManagerLocal::ListDecls_f( const idCmdArgs& args )
 {
 	int i, j;
@@ -2021,16 +2013,6 @@ void idDeclManagerLocal::ListDecls_f( const idCmdArgs& args )
 	common->Printf( "%iKB in text, %iKB in structures\n", totalText >> 10, totalStructs >> 10 );
 }
 
-/*
-===================
-idDeclManagerLocal::ReloadDecls_f
-
-Reload will not find any new files created in the directories, it
-will only reload existing files.
-
-A reload will never cause anything to be purged.
-===================
-*/
 void idDeclManagerLocal::ReloadDecls_f( const idCmdArgs& args )
 {
 	bool force;
@@ -2046,11 +2028,6 @@ void idDeclManagerLocal::ReloadDecls_f( const idCmdArgs& args )
 	declManagerLocal.Reload( force );
 }
 
-/*
-===================
-idDeclManagerLocal::TouchDecl_f
-===================
-*/
 void idDeclManagerLocal::TouchDecl_f( const idCmdArgs& args )
 {
 	int i;
@@ -2182,9 +2159,14 @@ void idDeclManagerLocal::ExportMaterialsToBlender_f( const idCmdArgs& args )
 	idLib::Printf( "Wrote %d Materials.\n", totalMaterialsCount );
 }
 
+/*!
+	\class idSort_CompareEntityDefEntity
+	\brief Sorting comparator for entity definition pointers.
+*/
 class idSort_CompareEntityDefEntity : public idSort_Quick<const idDeclEntityDef*, idSort_CompareEntityDefEntity>
 {
 public:
+	//! Compares two entity definition pointers based on their names in a case-insensitive manner
 	int Compare( const idDeclEntityDef* const& a, const idDeclEntityDef* const& b ) const
 	{
 		return idStr::Icmp( a->GetName(), b->GetName() );
@@ -3182,6 +3164,7 @@ void idDeclManagerLocal::ExportModelsToTrenchBroom_f( const idCmdArgs& args )
 	common->FatalError( "Exporting successful, need to restart manually" );
 }
 
+//! Creates a unit brush for map primitives with optional border material
 static idMapBrush* MakeUnitBrush( const idVec3& origin, const idVec3& scale, bool border )
 {
 	/*
@@ -3231,6 +3214,8 @@ static idMapBrush* MakeUnitBrush( const idVec3& origin, const idVec3& scale, boo
 			side->SetMaterial( "textures/decals/achtung" );
 		}
 
+		//! Creates a brush representation of a character using specified origin and texture coordinates
+
 		side->planepts[0] *= transform;
 		side->planepts[1] *= transform;
 		side->planepts[2] *= transform;
@@ -3278,6 +3263,21 @@ static idMapBrush* MakeCharBrush( const idVec3& brushOrigin, const idVec3& uvOri
 		row = ch / 8;
 	} else if( ch >= 'a' && ch <= 'z' ) {
 		ch = ch - 'a' + 3;
+
+		/*!
+			\brief Creates a static functional entity with a name plate using the provided map file and positioning parameters
+
+			This function generates a func_static entity with a name plate displayed on it. It takes a map file, position coordinates, height, and title string as inputs. The function processes the
+		   title to handle slashes, calculating positions for each character in the title to create a series of brushes. Each brush represents a character in the title, with appropriate texture
+		   coordinates applied. The function returns a pointer to the created map entity
+
+			\param mapFile Pointer to the map file where the entity will be added
+			\param x X coordinate for the starting position of the name plate
+			\param y Y coordinate for the starting position of the name plate
+			\param topHeight Z coordinate for the top height of the name plate
+			\param origTitle Original title string to be displayed on the name plate
+			\return Pointer to the created idMapEntity representing the name plate
+		*/
 
 		col = ch & 7;
 		row = ch & 7;
@@ -3386,12 +3386,40 @@ struct Category_t {
 	// idList<Category_t*, TAG_SYSTEM>		subFolders;
 };
 
+/*!
+	\brief Allocates rectangular regions within a larger rectangle using a greedy corner-packing algorithm.
+
+	This function takes a list of input rectangle sizes and determines optimal positions for each rectangle within a larger container. It uses a greedy approach that attempts to place each rectangle
+   at a corner of previously placed rectangles, minimizing the total area required. The rectangles are sorted by size beforehand to improve packing efficiency. The algorithm ensures that the resulting
+   total size aligns with GPU texture requirements by rounding widths to multiples of 32 DXT blocks. The function will fail if a rectangle cannot be placed within the prescribed limits.
+
+	\param inputSizes List of input rectangle sizes to be allocated
+	\param outputPositions Output list of positions where each input rectangle is placed
+	\param totalSize Total size of the resulting rectangle container
+	\param START_MAX Initial maximum size used for allocation checks
+	\param imageMax Maximum allowed size for any dimension, or 0 to disable limit
+	\throws FatalError if a rectangle cannot be fitted within the limits
+*/
 void  RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX = 16384, const int imageMax = -1 );
+
+//! Computes the fraction of area occupied by a list of rectangles within a total area
 float RectPackingFraction( const idList<idVec2i>& inputSizes, const idVec2i totalSize );
 
+/*!
+	\brief Packs 2D rectangles into a bins using a bin packing algorithm while tracking their positions and total required size.
+
+	This function takes a list of rectangle sizes and names, and attempts to pack them into a set of bins using the BinPack2D algorithm. The positions of each rectangle within the packed bins are
+   returned, along with the total size required to accommodate all rectangles. The packing process sorts the rectangles by size for better results. Rectangles that cannot be packed are skipped, and
+   the function tracks the maximum dimensions needed to fit all packed rectangles. The START_MAX parameter controls the initial bin size used for packing.
+
+	\param inputSizes List of rectangle sizes (width and height) to be packed
+	\param inputNames List of names associated with each rectangle
+	\param outputPositions Output list of positions where each rectangle was placed
+	\param totalSize Total size required to fit all packed rectangles
+	\param START_MAX Initial maximum size for the bins used in packing
+*/
 void  RectAllocatorBinPack2D( const idList<idVec2i>& inputSizes, const idStrList& inputNames, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX );
 
-// uses BFG Rectangle Atlas packer to pack models in 3D
 void  idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 {
 	int			 totalModelsCount	= 0;
@@ -3852,7 +3880,7 @@ void  idDeclManagerLocal::MakeZooMapForModels_f( const idCmdArgs& args )
 		// place bottom place below
 		idVec3 origin( x, y, -32 );
 		idVec3 scale( category->totalSize.x, category->totalSize.y, 16 );
-			
+
 		idMapBrush* bottomPlate = MakeUnitBrush( origin, scale );
 		plateEnt->AddPrimitive( bottomPlate );
 	#else
@@ -3975,11 +4003,6 @@ idDeclLocal* idDeclManagerLocal::FindTypeWithoutParsing( declType_t type, const 
 	return decl;
 }
 
-/*
-=================
-idDeclManagerLocal::ConvertPDAsToStrings
-=================
-*/
 void idDeclManagerLocal::ConvertPDAsToStrings( const idCmdArgs& args )
 {
 	idStr		pdaStringsFileName = "temppdas/pdas.lang";
@@ -4150,19 +4173,6 @@ void idDeclManagerLocal::ConvertPDAsToStrings( const idCmdArgs& args )
 	idLib::Printf( "Please copy the results into the appropriate .lang file.\n" );
 }
 
-/*
-====================================================================================
-
-	idDeclLocal
-
-====================================================================================
-*/
-
-/*
-=================
-idDeclLocal::idDeclLocal
-=================
-*/
 idDeclLocal::idDeclLocal()
 {
 	name				   = "unnamed";
@@ -4194,61 +4204,31 @@ const char* idDeclLocal::GetName() const
 	return name.c_str();
 }
 
-/*
-=================
-idDeclLocal::GetType
-=================
-*/
 declType_t idDeclLocal::GetType() const
 {
 	return type;
 }
 
-/*
-=================
-idDeclLocal::GetState
-=================
-*/
 declState_t idDeclLocal::GetState() const
 {
 	return declState;
 }
 
-/*
-=================
-idDeclLocal::IsImplicit
-=================
-*/
 bool idDeclLocal::IsImplicit() const
 {
 	return ( sourceFile == declManagerLocal.GetImplicitDeclFile() );
 }
 
-/*
-=================
-idDeclLocal::IsValid
-=================
-*/
 bool idDeclLocal::IsValid() const
 {
 	return ( declState != DS_UNPARSED );
 }
 
-/*
-=================
-idDeclLocal::Invalidate
-=================
-*/
 void idDeclLocal::Invalidate()
 {
 	declState = DS_UNPARSED;
 }
 
-/*
-=================
-idDeclLocal::EnsureNotPurged
-=================
-*/
 void idDeclLocal::EnsureNotPurged()
 {
 	if( declState == DS_UNPARSED ) {
@@ -4256,51 +4236,26 @@ void idDeclLocal::EnsureNotPurged()
 	}
 }
 
-/*
-=================
-idDeclLocal::Index
-=================
-*/
 int idDeclLocal::Index() const
 {
 	return index;
 }
 
-/*
-=================
-idDeclLocal::GetLineNum
-=================
-*/
 int idDeclLocal::GetLineNum() const
 {
 	return sourceLine;
 }
 
-/*
-=================
-idDeclLocal::GetFileName
-=================
-*/
 const char* idDeclLocal::GetFileName() const
 {
 	return ( sourceFile ) ? sourceFile->fileName.c_str() : "*invalid*";
 }
 
-/*
-=================
-idDeclLocal::Size
-=================
-*/
 size_t idDeclLocal::Size() const
 {
 	return sizeof( idDecl ) + name.Allocated();
 }
 
-/*
-=================
-idDeclLocal::GetText
-=================
-*/
 void idDeclLocal::GetText( char* text ) const
 {
 #ifdef USE_COMPRESSED_DECLS
@@ -4310,31 +4265,16 @@ void idDeclLocal::GetText( char* text ) const
 #endif
 }
 
-/*
-=================
-idDeclLocal::GetTextLength
-=================
-*/
 int idDeclLocal::GetTextLength() const
 {
 	return textLength;
 }
 
-/*
-=================
-idDeclLocal::SetText
-=================
-*/
 void idDeclLocal::SetText( const char* text )
 {
 	SetTextLocal( text, idStr::Length( text ) );
 }
 
-/*
-=================
-idDeclLocal::SetTextLocal
-=================
-*/
 void idDeclLocal::SetTextLocal( const char* text, const int length )
 {
 	Mem_Free( textSource );
@@ -4362,11 +4302,6 @@ void idDeclLocal::SetTextLocal( const char* text, const int length )
 	textLength = length;
 }
 
-/*
-=================
-idDeclLocal::ReplaceSourceFileText
-=================
-*/
 bool idDeclLocal::ReplaceSourceFileText()
 {
 	int		oldFileLength, newFileLength;
@@ -4440,11 +4375,6 @@ bool idDeclLocal::ReplaceSourceFileText()
 	return true;
 }
 
-/*
-=================
-idDeclLocal::SourceFileChanged
-=================
-*/
 bool idDeclLocal::SourceFileChanged() const
 {
 	int		  newLength;
@@ -4463,7 +4393,6 @@ bool idDeclLocal::SourceFileChanged() const
 	return false;
 }
 
-// RB begin
 ID_TIME_T idDeclLocal::GetSourceFileTimestamp() const
 {
 	ID_TIME_T newTimestamp;
@@ -4477,13 +4406,7 @@ ID_TIME_T idDeclLocal::GetSourceFileTimestamp() const
 
 	return newTimestamp;
 }
-// RB end
 
-/*
-=================
-idDeclLocal::MakeDefault
-=================
-*/
 void idDeclLocal::MakeDefault()
 {
 	static int	recursionLevel;
@@ -4514,31 +4437,16 @@ void idDeclLocal::MakeDefault()
 	--recursionLevel;
 }
 
-/*
-=================
-idDeclLocal::SetDefaultText
-=================
-*/
 bool idDeclLocal::SetDefaultText()
 {
 	return false;
 }
 
-/*
-=================
-idDeclLocal::DefaultDefinition
-=================
-*/
 const char* idDeclLocal::DefaultDefinition() const
 {
 	return "{ }";
 }
 
-/*
-=================
-idDeclLocal::Parse
-=================
-*/
 bool idDeclLocal::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
@@ -4550,49 +4458,24 @@ bool idDeclLocal::Parse( const char* text, const int textLength, bool allowBinar
 	return true;
 }
 
-/*
-=================
-idDeclLocal::FreeData
-=================
-*/
 void idDeclLocal::FreeData()
 {
 }
 
-/*
-=================
-idDeclLocal::List
-=================
-*/
 void idDeclLocal::List() const
 {
 	common->Printf( "%s\n", GetName() );
 }
 
-/*
-=================
-idDeclLocal::Print
-=================
-*/
 void idDeclLocal::Print() const
 {
 }
 
-/*
-=================
-idDeclLocal::Reload
-=================
-*/
 void idDeclLocal::Reload()
 {
 	this->sourceFile->Reload( false );
 }
 
-/*
-=================
-idDeclLocal::AllocateSelf
-=================
-*/
 void idDeclLocal::AllocateSelf()
 {
 	if( self == NULL ) {
@@ -4601,11 +4484,6 @@ void idDeclLocal::AllocateSelf()
 	}
 }
 
-/*
-=================
-idDeclLocal::ParseLocal
-=================
-*/
 void idDeclLocal::ParseLocal()
 {
 	bool generatedDefaultText = false;
@@ -4649,11 +4527,6 @@ void idDeclLocal::ParseLocal()
 	declManagerLocal.indent--;
 }
 
-/*
-=================
-idDeclLocal::Purge
-=================
-*/
 void idDeclLocal::Purge()
 {
 	// never purge things that were referenced outside level load,
@@ -4669,11 +4542,6 @@ void idDeclLocal::Purge()
 	declState = DS_UNPARSED;
 }
 
-/*
-=================
-idDeclLocal::EverReferenced
-=================
-*/
 bool idDeclLocal::EverReferenced() const
 {
 	return everReferenced;

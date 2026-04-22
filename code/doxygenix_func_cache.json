@@ -15264,6 +15264,1258 @@
     "void idCollisionModelManagerLocal::ReplacePolygons(cm_model_t *model, cm_node_t *node, cm_polygon_t *p1, cm_polygon_t *p2, cm_polygon_t *newp)": {
       "body_hash": "816575a120f8b08bbc799305b2ce7494",
       "is_trivial": false
+    },
+    "idAFVector::idAFVector()": {
+      "body_hash": "de2d2ebc33ee9c915d31ab6d7d281c8a",
+      "is_trivial": true
+    },
+    "bool idAFVector::Parse(idLexer &src)": {
+      "body_hash": "6e1723319ca1b7d8535da60bf341bc3c",
+      "is_trivial": true
+    },
+    "bool idAFVector::Finish(const char *fileName, const getJointTransform_t GetJointTransform, const idJointMat *frame, void *model) const": {
+      "body_hash": "9d16a8c792465bf7aaa0297ad2457da8",
+      "is_trivial": false
+    },
+    "bool idAFVector::Write(idFile *f) const": {
+      "body_hash": "1fc6b55eab1bc9eefe69b6e1f41dd830",
+      "is_trivial": true
+    },
+    "const char * idAFVector::ToString(idStr &str, const int precision=8)": {
+      "body_hash": "d272e26969e85d77f06365c7c3c348d9",
+      "is_trivial": true
+    },
+    "const idVec3 & idAFVector::ToVec3() const": {
+      "body_hash": "9e27b65a130e6be1203a78778c02f733",
+      "is_trivial": true
+    },
+    "idVec3 & idAFVector::ToVec3()": {
+      "body_hash": "44a9509884af6b4f8b3484b61b947860",
+      "is_trivial": true
+    },
+    "idDecl::idDecl()": {
+      "body_hash": "2a0a6589fb78e19426adfed8643aa1e3",
+      "is_trivial": true
+    },
+    "const char * idDecl::GetName() const": {
+      "body_hash": "4daeb1a8d3f9a8db6919440cb46adf3f",
+      "is_trivial": true
+    },
+    "declType_t idDecl::GetType() const": {
+      "body_hash": "219e366a770e1d8f36db396ad2641445",
+      "is_trivial": true
+    },
+    "declState_t idDecl::GetState() const": {
+      "body_hash": "7e3519c21343d11510e14e116b1af686",
+      "is_trivial": true
+    },
+    "bool idDecl::IsImplicit() const": {
+      "body_hash": "767449fa09111e7006f950dc8476a566",
+      "is_trivial": true
+    },
+    "bool idDecl::IsValid() const": {
+      "body_hash": "1d2c6e5a90e5ef260b8a4a5df5e20033",
+      "is_trivial": true
+    },
+    "void idDecl::Invalidate()": {
+      "body_hash": "74ec89399141801482ea7e65aca84385",
+      "is_trivial": true
+    },
+    "void idDecl::EnsureNotPurged()": {
+      "body_hash": "6434e61dcd2af5e590c69ca119ccbee4",
+      "is_trivial": true
+    },
+    "int idDecl::Index() const": {
+      "body_hash": "b6fcc9f72999fe027e1d6686a7a6db36",
+      "is_trivial": true
+    },
+    "int idDecl::GetLineNum() const": {
+      "body_hash": "80be6536d49038537c50e93c84255e2c",
+      "is_trivial": true
+    },
+    "const char * idDecl::GetFileName() const": {
+      "body_hash": "25b2bc84f5e91adc49b6f8bbf5789361",
+      "is_trivial": true
+    },
+    "void idDecl::GetText(char *text) const": {
+      "body_hash": "b3da553fdd4d004eadacffc36a4319ac",
+      "is_trivial": true
+    },
+    "int idDecl::GetTextLength() const": {
+      "body_hash": "0aa443fefef5b04f1e672e76548626ad",
+      "is_trivial": true
+    },
+    "void idDecl::SetText(const char *text)": {
+      "body_hash": "ade0b32aa9f4a4c890730733b029aafa",
+      "is_trivial": true
+    },
+    "bool idDecl::ReplaceSourceFileText()": {
+      "body_hash": "c067312712f598e125f611add7d8edce",
+      "is_trivial": true
+    },
+    "bool idDecl::SourceFileChanged() const": {
+      "body_hash": "956a5e7872bd37cb9cff0d68f787860d",
+      "is_trivial": true
+    },
+    "void idDecl::MakeDefault()": {
+      "body_hash": "0f43bd9822f9ba1350c416b786eeaacd",
+      "is_trivial": true
+    },
+    "bool idDecl::EverReferenced() const": {
+      "body_hash": "47d43445f5f94fdba9d802b233da4f26",
+      "is_trivial": true
+    },
+    "ID_TIME_T idDecl::GetSourceFileTimestamp() const": {
+      "body_hash": "bdca22db65f3791bcee6554967152bf4",
+      "is_trivial": true
+    },
+    "virtual const char * idDecl::DefaultDefinition() const": {
+      "body_hash": "b5f300ffcc7496e5e774bbb3a5cf1fde",
+      "is_trivial": true
+    },
+    "virtual bool idDecl::Parse(const char *text, const int textLength, bool allowBinaryVersion=false)": {
+      "body_hash": "bf279b2788b04b2db60518cd965cd5df",
+      "is_trivial": true
+    },
+    "virtual void idDecl::FreeData()": {
+      "body_hash": "1864f46e762eb67b9b06eceb65e5d54c",
+      "is_trivial": true
+    },
+    "virtual size_t idDecl::Size() const": {
+      "body_hash": "2daf85980c21b11dea940cf140c652b2",
+      "is_trivial": true
+    },
+    "virtual void idDecl::List() const": {
+      "body_hash": "5ad64ed4f0d054e7cbd859c2f9a4a47c",
+      "is_trivial": true
+    },
+    "virtual void idDecl::Print() const": {
+      "body_hash": "0103cfad090c1fc8dd925ea0157362fb",
+      "is_trivial": true
+    },
+    "size_t idDeclAudio::Size() const": {
+      "body_hash": "af577e23aed119ff19dab7598abd8196",
+      "is_trivial": true
+    },
+    "const char * idDeclAudio::DefaultDefinition() const": {
+      "body_hash": "3360bc3335f31a04baa6d0978b2132ee",
+      "is_trivial": true
+    },
+    "bool idDeclAudio::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "e429cd18097360582916d867c93ea993",
+      "is_trivial": true
+    },
+    "void idDeclAudio::FreeData()": {
+      "body_hash": "fad65d8dd5d0721dbf8a036bae2a97bf",
+      "is_trivial": true
+    },
+    "void idDeclAudio::Print() const": {
+      "body_hash": "e776bcf5f0b2cbb99cbdf1b1e815a5c4",
+      "is_trivial": true
+    },
+    "void idDeclAudio::List() const": {
+      "body_hash": "79fe68e8dda80b9a826e0205f54290de",
+      "is_trivial": true
+    },
+    "const char * idDeclAudio::GetAudioName() const": {
+      "body_hash": "ee6d9009a5de237d0b2b743927ffd27f",
+      "is_trivial": true
+    },
+    "const idSoundShader * idDeclAudio::GetWave() const": {
+      "body_hash": "e1fbdef8a948ae6a17f059e6aec28329",
+      "is_trivial": true
+    },
+    "const char * idDeclAudio::GetInfo() const": {
+      "body_hash": "0adb2112a7141223a22473c7f0cd9895",
+      "is_trivial": true
+    },
+    "idDeclAF::idDeclAF()": {
+      "body_hash": "9f2b25104e3a9a39ceaad03cd3bb6e06",
+      "is_trivial": true
+    },
+    "idDeclAF::~idDeclAF()": {
+      "body_hash": "1536ea7cf9c4a7c402cb7fb6d19789bb",
+      "is_trivial": true
+    },
+    "size_t idDeclAF::Size() const": {
+      "body_hash": "52b805384480c7e45d26a286fd03a08a",
+      "is_trivial": true
+    },
+    "const char * idDeclAF::DefaultDefinition() const": {
+      "body_hash": "18fbe2854dfd0293a88b809ecf0f9047",
+      "is_trivial": true
+    },
+    "bool idDeclAF::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "a2feafbc22b2e0bd13c5661405951ed1",
+      "is_trivial": true
+    },
+    "void idDeclAF::FreeData()": {
+      "body_hash": "782d3defb59c8acc08cdf6ac5677b516",
+      "is_trivial": true
+    },
+    "void idDeclAF::Finish(const getJointTransform_t GetJointTransform, const idJointMat *frame, void *model) const": {
+      "body_hash": "f986e57e4d9e1f8042110e6f355e17e7",
+      "is_trivial": true
+    },
+    "bool idDeclAF::Save()": {
+      "body_hash": "1c660a409d3f4523b696bc3dca8722b0",
+      "is_trivial": true
+    },
+    "void idDeclAF::NewBody(const char *name)": {
+      "body_hash": "b56c1fe759d18025c70b2e0ed5aa8f4a",
+      "is_trivial": true
+    },
+    "void idDeclAF::RenameBody(const char *oldName, const char *newName)": {
+      "body_hash": "ac010502d3cfebd5182742e7bd11c851",
+      "is_trivial": true
+    },
+    "void idDeclAF::DeleteBody(const char *name)": {
+      "body_hash": "f9b5fb549bac163c52726550c630bf1b",
+      "is_trivial": true
+    },
+    "void idDeclAF::NewConstraint(const char *name)": {
+      "body_hash": "f3fba051c88b8d81ae2541a7399504d2",
+      "is_trivial": true
+    },
+    "void idDeclAF::RenameConstraint(const char *oldName, const char *newName)": {
+      "body_hash": "bf767e2c6b431bb18c9a36925335be2d",
+      "is_trivial": true
+    },
+    "void idDeclAF::DeleteConstraint(const char *name)": {
+      "body_hash": "47af8d170ec9eb50b42c71eb445a6821",
+      "is_trivial": true
+    },
+    "int idDeclAF::ContentsFromString(const char *str)": {
+      "body_hash": "b30e01d6212f02732ff478c5c33f83cd",
+      "is_trivial": true
+    },
+    "const char * idDeclAF::ContentsToString(const int contents, idStr &str)": {
+      "body_hash": "7a671b3d3624241ae14d407956902197",
+      "is_trivial": true
+    },
+    "declAFJointMod_t idDeclAF::JointModFromString(const char *str)": {
+      "body_hash": "429a44590b26088ecb5c1b92edb637ac",
+      "is_trivial": true
+    },
+    "const char * idDeclAF::JointModToString(declAFJointMod_t jointMod)": {
+      "body_hash": "2fc6d19bc2e8455c74ed8bcfaee66de4",
+      "is_trivial": true
+    },
+    "bool idDeclAF::ParseContents(idLexer &src, int &c) const": {
+      "body_hash": "64623ba5fc8e2308397a28cfc7535d3b",
+      "is_trivial": true
+    },
+    "bool idDeclAF::ParseBody(idLexer &src)": {
+      "body_hash": "e3a7890cceb2562e1cc1d71028f7d2cd",
+      "is_trivial": true
+    },
+    "bool idDeclAF::ParseFixed(idLexer &src)": {
+      "body_hash": "6f262c523acf5b4bc17176d29e8b47c3",
+      "is_trivial": true
+    },
+    "bool idDeclAF::ParseBallAndSocketJoint(idLexer &src)": {
+      "body_hash": "17239d7d70e631ea0d2f2f1390d96d6e",
+      "is_trivial": true
+    },
+    "bool idDeclAF::ParseUniversalJoint(idLexer &src)": {
+      "body_hash": "d24425c21345163cd5cb638e46f33bdb",
+      "is_trivial": true
+    },
+    "bool idDeclAF::ParseHinge(idLexer &src)": {
+      "body_hash": "5aded452ca636b8e26a05b90f9adc453",
+      "is_trivial": true
+    },
+    "bool idDeclAF::ParseSlider(idLexer &src)": {
+      "body_hash": "165d13bb1362451cd05b7b15463b343c",
+      "is_trivial": true
+    },
+    "bool idDeclAF::ParseSpring(idLexer &src)": {
+      "body_hash": "6014f522c8ecdce3882e69c757298067",
+      "is_trivial": true
+    },
+    "bool idDeclAF::ParseSettings(idLexer &src)": {
+      "body_hash": "e51457ab990c617b783665e2cb0c9d0d",
+      "is_trivial": true
+    },
+    "bool idDeclAF::WriteBody(idFile *f, const idDeclAF_Body &body) const": {
+      "body_hash": "f213ad418a5501a5172c634402d877b7",
+      "is_trivial": true
+    },
+    "bool idDeclAF::WriteFixed(idFile *f, const idDeclAF_Constraint &c) const": {
+      "body_hash": "b5b366444fbc5526ec3ffd915d343205",
+      "is_trivial": true
+    },
+    "bool idDeclAF::WriteBallAndSocketJoint(idFile *f, const idDeclAF_Constraint &c) const": {
+      "body_hash": "7e95056b2fc2ffb0c1ddc0de3bef0e59",
+      "is_trivial": true
+    },
+    "bool idDeclAF::WriteUniversalJoint(idFile *f, const idDeclAF_Constraint &c) const": {
+      "body_hash": "dac6c2b0de80787bcc989533458701ac",
+      "is_trivial": true
+    },
+    "bool idDeclAF::WriteHinge(idFile *f, const idDeclAF_Constraint &c) const": {
+      "body_hash": "d6463bcd6cb65877395f156951f687ff",
+      "is_trivial": true
+    },
+    "bool idDeclAF::WriteSlider(idFile *f, const idDeclAF_Constraint &c) const": {
+      "body_hash": "1fd6bce46cdb4f6479b5edeecc32470e",
+      "is_trivial": true
+    },
+    "bool idDeclAF::WriteSpring(idFile *f, const idDeclAF_Constraint &c) const": {
+      "body_hash": "4314344756323b84ae0584eea461ada9",
+      "is_trivial": true
+    },
+    "bool idDeclAF::WriteConstraint(idFile *f, const idDeclAF_Constraint &c) const": {
+      "body_hash": "8b2aad662d5ccee595e9a9ad2eaaf556",
+      "is_trivial": true
+    },
+    "bool idDeclAF::WriteSettings(idFile *f) const": {
+      "body_hash": "4f22f767daff2c5886160182b462b365",
+      "is_trivial": true
+    },
+    "bool idDeclAF::RebuildTextSource()": {
+      "body_hash": "186ec7584fc45bb405d2e2b1a1ee0e55",
+      "is_trivial": true
+    },
+    "void idDeclAF_Body::SetDefault(const idDeclAF *file)": {
+      "body_hash": "007f75e040fe3b7ea1f26435b046e649",
+      "is_trivial": true
+    },
+    "void idDeclAF_Constraint::SetDefault(const idDeclAF *file)": {
+      "body_hash": "db9cf978884731cc4b9858006d1ce537",
+      "is_trivial": true
+    },
+    "idDeclEmail::idDeclEmail()": {
+      "body_hash": "3895fb4b20e9f7de7dcd52143af23e09",
+      "is_trivial": true
+    },
+    "size_t idDeclEmail::Size() const": {
+      "body_hash": "7f213c983b2b9532454b1500a215be0c",
+      "is_trivial": true
+    },
+    "const char * idDeclEmail::DefaultDefinition() const": {
+      "body_hash": "ad36eb390f22aede4c268ce8252414ab",
+      "is_trivial": true
+    },
+    "bool idDeclEmail::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "1ed8c70a1b0bc49a44a9cfdbcc41f278",
+      "is_trivial": true
+    },
+    "void idDeclEmail::FreeData()": {
+      "body_hash": "6969ca80478f8c462a7dd60f38a80cb6",
+      "is_trivial": true
+    },
+    "void idDeclEmail::Print() const": {
+      "body_hash": "b3ba147d144bb253cfdf91fde49939f5",
+      "is_trivial": true
+    },
+    "void idDeclEmail::List() const": {
+      "body_hash": "0d3281cdd0c6d3ca4e926d7976c733b5",
+      "is_trivial": true
+    },
+    "const char * idDeclEmail::GetFrom() const": {
+      "body_hash": "6906cf12c71b5136b7a8d392b0385481",
+      "is_trivial": true
+    },
+    "const char * idDeclEmail::GetBody() const": {
+      "body_hash": "6fac78ccda5e08171e652200757dac11",
+      "is_trivial": true
+    },
+    "const char * idDeclEmail::GetSubject() const": {
+      "body_hash": "ac0efe81e35de175c9060a4d703d797d",
+      "is_trivial": true
+    },
+    "const char * idDeclEmail::GetDate() const": {
+      "body_hash": "b62c093fe4fa2fa6e6c7c9f5e3c0624c",
+      "is_trivial": true
+    },
+    "const char * idDeclEmail::GetTo() const": {
+      "body_hash": "05f0b006f7556c8ca95e985b500eba9d",
+      "is_trivial": true
+    },
+    "size_t idDeclEntityDef::Size() const": {
+      "body_hash": "de2a0c42d5195a85652af9a597da42c5",
+      "is_trivial": true
+    },
+    "const char * idDeclEntityDef::DefaultDefinition() const": {
+      "body_hash": "da08993a662d0e70878f7170bbc95af3",
+      "is_trivial": true
+    },
+    "bool idDeclEntityDef::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "38dbe5d4249a36ae2270e08c6602101f",
+      "is_trivial": true
+    },
+    "void idDeclEntityDef::FreeData()": {
+      "body_hash": "a65b2579deb79866819e0c39e412e9e2",
+      "is_trivial": true
+    },
+    "void idDeclEntityDef::Print()": {
+      "body_hash": "89ea9b8b9ff3ad413c560ce369d2e750",
+      "is_trivial": true
+    },
+    "idDeclFile::idDeclFile()": {
+      "body_hash": "0bd76e6de8fd48cf78d0310f51f1fc8a",
+      "is_trivial": true
+    },
+    "idDeclFile::idDeclFile(const char *fileName, declType_t defaultType)": {
+      "body_hash": "eccd335f7ac023f4ef7c7f5a34ac903e",
+      "is_trivial": true
+    },
+    "void idDeclFile::Reload(bool force)": {
+      "body_hash": "fa3d16599b631067d23ecf288687a19d",
+      "is_trivial": true
+    },
+    "int idDeclFile::LoadAndParse()": {
+      "body_hash": "ae02630b1b7b7b5bfe4236ccd28891b1",
+      "is_trivial": true
+    },
+    "size_t idDeclFX::Size() const": {
+      "body_hash": "6458a792e71bcecd01a3c48da4b9ca2e",
+      "is_trivial": true
+    },
+    "const char * idDeclFX::DefaultDefinition() const": {
+      "body_hash": "cbac0b8302e63e24decf544d0fb95594",
+      "is_trivial": true
+    },
+    "bool idDeclFX::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "8aad2feb8e00eb0bbd7cf214bf3429f6",
+      "is_trivial": true
+    },
+    "void idDeclFX::FreeData()": {
+      "body_hash": "1dcf4761edc31cbe283f54dd2b5a824e",
+      "is_trivial": true
+    },
+    "void idDeclFX::Print() const": {
+      "body_hash": "614e5f797afac8d2cfdd02e876e75ebe",
+      "is_trivial": true
+    },
+    "void idDeclFX::List() const": {
+      "body_hash": "5f5197d0f7535c995ce25b5ec2b92f6c",
+      "is_trivial": true
+    },
+    "void idDeclFX::ParseSingleFXAction(idLexer &src, idFXSingleAction &FXAction)": {
+      "body_hash": "882ff3d6e40b7c9884c651be2efc3b43",
+      "is_trivial": true
+    },
+    "idDeclLocal::idDeclLocal()": {
+      "body_hash": "31f7d54d43eaeb6705cd0ad4451b8da9",
+      "is_trivial": true
+    },
+    "declType_t idDeclLocal::GetType() const": {
+      "body_hash": "e4420a64adc4adf3502a8840382b5e58",
+      "is_trivial": true
+    },
+    "declState_t idDeclLocal::GetState() const": {
+      "body_hash": "e4420a64adc4adf3502a8840382b5e58",
+      "is_trivial": true
+    },
+    "bool idDeclLocal::IsImplicit() const": {
+      "body_hash": "0aeb81ffecca2f37038c34d64929b493",
+      "is_trivial": true
+    },
+    "bool idDeclLocal::IsValid() const": {
+      "body_hash": "1dbc9704263f558ed3132ff49db97dc0",
+      "is_trivial": true
+    },
+    "void idDeclLocal::Invalidate()": {
+      "body_hash": "20c0bc4f9d10cca570e46dc95d74884b",
+      "is_trivial": true
+    },
+    "void idDeclLocal::Reload()": {
+      "body_hash": "a75d868c149a8e0cc06b64f7c7934d2c",
+      "is_trivial": true
+    },
+    "void idDeclLocal::EnsureNotPurged()": {
+      "body_hash": "ff41372bc6cef6689796c145bad2e9a4",
+      "is_trivial": true
+    },
+    "int idDeclLocal::Index() const": {
+      "body_hash": "c4093ed7e4aebe40e1457d7381f68bc1",
+      "is_trivial": true
+    },
+    "int idDeclLocal::GetLineNum() const": {
+      "body_hash": "bd43f9a14bf537cca54f826400048534",
+      "is_trivial": true
+    },
+    "const char * idDeclLocal::GetFileName() const": {
+      "body_hash": "b5afb6c9aa6c5d4cf678f3f726b27219",
+      "is_trivial": true
+    },
+    "size_t idDeclLocal::Size() const": {
+      "body_hash": "1749156cba569facb8a05a7cd9ce9a79",
+      "is_trivial": true
+    },
+    "void idDeclLocal::GetText(char *text) const": {
+      "body_hash": "5fc40d17c71c0b5d1703cbb2d3f6a939",
+      "is_trivial": true
+    },
+    "int idDeclLocal::GetTextLength() const": {
+      "body_hash": "386ba9aa676662d47a447157db90839b",
+      "is_trivial": true
+    },
+    "void idDeclLocal::SetText(const char *text)": {
+      "body_hash": "83a6e3d1c3a34798bb23c61d8b738e60",
+      "is_trivial": true
+    },
+    "bool idDeclLocal::SourceFileChanged() const": {
+      "body_hash": "ce583e9b8a7f11f5f40da30bbfe40dd1",
+      "is_trivial": true
+    },
+    "ID_TIME_T idDeclLocal::GetSourceFileTimestamp() const": {
+      "body_hash": "a2fa2cfdc5e49cdac749a653a16e17bf",
+      "is_trivial": true
+    },
+    "bool idDeclLocal::SetDefaultText()": {
+      "body_hash": "99aa06d3014798d86001c324468d497f",
+      "is_trivial": true
+    },
+    "const char * idDeclLocal::DefaultDefinition() const": {
+      "body_hash": "5087b57664817a5d6ad895623eebcebf",
+      "is_trivial": true
+    },
+    "bool idDeclLocal::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "f98b631712a034da4f6374e2c75c70ca",
+      "is_trivial": true
+    },
+    "void idDeclLocal::FreeData()": {
+      "body_hash": "233944261611f3eb7bb7e93834395de0",
+      "is_trivial": true
+    },
+    "void idDeclLocal::List() const": {
+      "body_hash": "9b22ae2ce0e1f43edc0795bd392d20e3",
+      "is_trivial": true
+    },
+    "void idDeclLocal::Print() const": {
+      "body_hash": "56ed7306550e2559025ed4c9cb12c394",
+      "is_trivial": true
+    },
+    "void idDeclLocal::AllocateSelf()": {
+      "body_hash": "5992968938e9a705b02ac45b134665e0",
+      "is_trivial": true
+    },
+    "void idDeclLocal::Purge()": {
+      "body_hash": "1f5a36d50415a551e127c221ce91c79f",
+      "is_trivial": true
+    },
+    "void idDeclLocal::SetTextLocal(const char *text, const int length)": {
+      "body_hash": "04a4ee6a45e32b179b55c73334476d29",
+      "is_trivial": true
+    },
+    "virtual const idDeclSkin * idDeclManager::FindSkin(const char *name, bool makeDefault=true)": {
+      "body_hash": "528468e1cf48ebecc197ed289b12e67c",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::Init()": {
+      "body_hash": "fd8809f8a87a6da7beda84b63742c8fe",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::Init2()": {
+      "body_hash": "ca94517daaadd835cc5a728cfa7c66fc",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::InitTool()": {
+      "body_hash": "2f3638265a24547f89f333502773ec7f",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::Shutdown()": {
+      "body_hash": "7628ceafadebe8737c9f64aaf0991797",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::Reload(bool force)": {
+      "body_hash": "3cd645f45738cdbc573f0979d24bfd99",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::BeginLevelLoad()": {
+      "body_hash": "bba3001a9140e468b900b4be33147760",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::EndLevelLoad()": {
+      "body_hash": "bd9e06f8a8f84cee836e40124a85d3d7",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::RegisterDeclType(const char *typeName, declType_t type, idDecl *(*allocator)())": {
+      "body_hash": "e7a1b8352c292732b866fcdc313e824d",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::RegisterDeclFolder(const char *folder, const char *extension, declType_t defaultType)": {
+      "body_hash": "24fe292c98b9d2a67a992cd999468786",
+      "is_trivial": true
+    },
+    "int idDeclManagerLocal::GetChecksum() const": {
+      "body_hash": "6eabd28d60f03290d4d6ac032a0c23f2",
+      "is_trivial": true
+    },
+    "int idDeclManagerLocal::GetNumDeclTypes() const": {
+      "body_hash": "10ebadff23775f020820887b4361d9f7",
+      "is_trivial": true
+    },
+    "int idDeclManagerLocal::GetNumDecls(declType_t type)": {
+      "body_hash": "ab7094542bee19290d1366f8cada0d84",
+      "is_trivial": true
+    },
+    "const char * idDeclManagerLocal::GetDeclNameFromType(declType_t type) const": {
+      "body_hash": "701cbf755c14d3e9aee9445aff4ef867",
+      "is_trivial": true
+    },
+    "declType_t idDeclManagerLocal::GetDeclTypeFromName(const char *typeName) const": {
+      "body_hash": "dec839724355327e179317ce3be41f55",
+      "is_trivial": true
+    },
+    "const idDecl * idDeclManagerLocal::FindType(declType_t type, const char *name, bool makeDefault=true)": {
+      "body_hash": "046e4a943fc9255ae0a0ab928fc091d7",
+      "is_trivial": true
+    },
+    "const idDecl * idDeclManagerLocal::DeclByIndex(declType_t type, int index, bool forceParse=true)": {
+      "body_hash": "0bb3b5f5b9d9d05f540e81ac90002bec",
+      "is_trivial": true
+    },
+    "const idDecl * idDeclManagerLocal::FindDeclWithoutParsing(declType_t type, const char *name, bool makeDefault=true)": {
+      "body_hash": "c1e66693013cb90af3f7b4896b09f913",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ReloadFile(const char *filename, bool force)": {
+      "body_hash": "0e3c35a994aa3a67d7c7ee4a9ecd913d",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ListType(const idCmdArgs &args, declType_t type)": {
+      "body_hash": "f68914f0d5c503a57aefd87142f62595",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::PrintType(const idCmdArgs &args, declType_t type)": {
+      "body_hash": "08c27b3935035b1ffd6b8e9bb2c28fac",
+      "is_trivial": true
+    },
+    "idDecl * idDeclManagerLocal::CreateNewDecl(declType_t type, const char *name, const char *fileName)": {
+      "body_hash": "2da140676f2e2182c86da65627852b8f",
+      "is_trivial": true
+    },
+    "bool idDeclManagerLocal::RenameDecl(declType_t type, const char *oldName, const char *newName)": {
+      "body_hash": "c95fe7de4b11d037f4eb12b2e4397e34",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::MediaPrint(VERIFY_FORMAT_STRING const char *fmt,...) ID_INSTANCE_ATTRIBUTE_PRINTF(1": {
+      "body_hash": "7de0c183465c2c4c13139ddc4c1a1a15",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::WritePrecacheCommands(idFile *f)": {
+      "body_hash": "6f1da81ec5363fcee7efeaac93d2912c",
+      "is_trivial": true
+    },
+    "const idMaterial * idDeclManagerLocal::FindMaterial(const char *name, bool makeDefault=true)": {
+      "body_hash": "753a0c3a2ea794a6db6624a9b7a3be46",
+      "is_trivial": true
+    },
+    "const idMaterial * idDeclManagerLocal::MaterialByIndex(int index, bool forceParse=true)": {
+      "body_hash": "ab052bf93306243ba0514b201960f979",
+      "is_trivial": true
+    },
+    "const idDeclSkin * idDeclManagerLocal::FindSkin(const char *name, bool makeDefault=true)": {
+      "body_hash": "cd19cd3947bfe1ef342db2293181ecaf",
+      "is_trivial": true
+    },
+    "const idDeclSkin * idDeclManagerLocal::SkinByIndex(int index, bool forceParse=true)": {
+      "body_hash": "c6e4ab9b1a692907d34ce058b5bcdc4b",
+      "is_trivial": true
+    },
+    "const idSoundShader * idDeclManagerLocal::FindSound(const char *name, bool makeDefault=true)": {
+      "body_hash": "9bdf708a2e3f47108e256f182c5a459b",
+      "is_trivial": true
+    },
+    "const idSoundShader * idDeclManagerLocal::SoundByIndex(int index, bool forceParse=true)": {
+      "body_hash": "2f411d06f9497b2ad6965274599f6ca4",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::Touch(const idDecl *decl)": {
+      "body_hash": "19a51b1b2335585375ac16db8bb484cc",
+      "is_trivial": true
+    },
+    "idDeclType * idDeclManagerLocal::GetDeclType(int type) const": {
+      "body_hash": "da345415639c8392d92d7b894ade04d0",
+      "is_trivial": true
+    },
+    "const idDeclFile * idDeclManagerLocal::GetImplicitDeclFile() const": {
+      "body_hash": "124cd6df6461cce0bf705c608f969685",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ConvertPDAsToStrings(const idCmdArgs &args)": {
+      "body_hash": "49be5a1df437397fc729148013387ba8",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::MakeNameCanonical(const char *name, char *result, int maxLength)": {
+      "body_hash": "baba5fd0d639af99c054471aec858a9e",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ListDecls_f(const idCmdArgs &args)": {
+      "body_hash": "f11782b11e60c7d537d9f9df77e26000",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ReloadDecls_f(const idCmdArgs &args)": {
+      "body_hash": "c46ec6fe62ede0b81e106cc5dd2c5588",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::TouchDecl_f(const idCmdArgs &args)": {
+      "body_hash": "208eb8ed9a72a79f27a86378f670b43a",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ExportEntityDefsToBlender_f(const idCmdArgs &args)": {
+      "body_hash": "c80d4b4171305e2dc40c97fa236cfdaa",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ExportMaterialsToBlender_f(const idCmdArgs &args)": {
+      "body_hash": "89ea0c7df58904d1438dc610a4b5dbd0",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ExportEntityDefsToTrenchBroom_f(const idCmdArgs &args)": {
+      "body_hash": "6e72343bf4523fea7c2acaee5590fef9",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ExportModelsToTrenchBroom_f(const idCmdArgs &args)": {
+      "body_hash": "75c7f1e76c6f9f826d01d8cce5bd218e",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::ExportImagesToTrenchBroom_f(const idCmdArgs &args)": {
+      "body_hash": "6f3f679b22c247d68b9fd1c35265a511",
+      "is_trivial": true
+    },
+    "void idDeclManagerLocal::MakeZooMapForModels_f(const idCmdArgs &args)": {
+      "body_hash": "3b5dcc1b8bab3e6c4c9f0b22eb9bdf5a",
+      "is_trivial": true
+    },
+    "virtual const char * idDeclNullSkinBase::GetName() const": {
+      "body_hash": "399a971aa35fa88537e8df93d5aeee09",
+      "is_trivial": true
+    },
+    "virtual declType_t idDeclNullSkinBase::GetType() const": {
+      "body_hash": "843d5b33edb4ade9e84f1a6c0d967702",
+      "is_trivial": true
+    },
+    "virtual declState_t idDeclNullSkinBase::GetState() const": {
+      "body_hash": "26425b45acd42677058f2bc76f4f6880",
+      "is_trivial": true
+    },
+    "virtual bool idDeclNullSkinBase::IsImplicit() const": {
+      "body_hash": "f5b7e681c90aad0cad5d0bc41d6bf93d",
+      "is_trivial": true
+    },
+    "virtual bool idDeclNullSkinBase::IsValid() const": {
+      "body_hash": "ad63a63f6c9543a66c372c1db3a05920",
+      "is_trivial": true
+    },
+    "virtual void idDeclNullSkinBase::Invalidate()": {
+      "body_hash": "9152893a6a85b7c7f63d0af833fbe864",
+      "is_trivial": true
+    },
+    "virtual void idDeclNullSkinBase::Reload()": {
+      "body_hash": "8da67fcfc666e52fbda82d43206985fa",
+      "is_trivial": true
+    },
+    "virtual void idDeclNullSkinBase::EnsureNotPurged()": {
+      "body_hash": "4cb5526cac4d5b19ac859e3f017a7f33",
+      "is_trivial": true
+    },
+    "virtual int idDeclNullSkinBase::Index() const": {
+      "body_hash": "e780f3313f948dc08e93e6677002a140",
+      "is_trivial": true
+    },
+    "virtual int idDeclNullSkinBase::GetLineNum() const": {
+      "body_hash": "f070cae4bb82c1273ad114b8cc1bd601",
+      "is_trivial": true
+    },
+    "virtual const char * idDeclNullSkinBase::GetFileName() const": {
+      "body_hash": "c76be753d02dd3f2b3a777f85dae9bdb",
+      "is_trivial": true
+    },
+    "virtual void idDeclNullSkinBase::GetText(char *text) const": {
+      "body_hash": "56434fcd7de29047acd11ab760363b16",
+      "is_trivial": true
+    },
+    "virtual int idDeclNullSkinBase::GetTextLength() const": {
+      "body_hash": "1e1794be50401a659be4b3259c770e67",
+      "is_trivial": true
+    },
+    "virtual void idDeclNullSkinBase::SetText(const char *text)": {
+      "body_hash": "5ce92e44f20ab7a2b8db511a950b59d0",
+      "is_trivial": true
+    },
+    "virtual bool idDeclNullSkinBase::ReplaceSourceFileText()": {
+      "body_hash": "4fb74cc29ca1c430e3fb83ff964c8759",
+      "is_trivial": true
+    },
+    "virtual bool idDeclNullSkinBase::SourceFileChanged() const": {
+      "body_hash": "f8af857449e4906d9b2f109bcb9b43d7",
+      "is_trivial": true
+    },
+    "virtual void idDeclNullSkinBase::MakeDefault()": {
+      "body_hash": "b3d30e0b54013418aa02f989c84e29c4",
+      "is_trivial": true
+    },
+    "virtual bool idDeclNullSkinBase::EverReferenced() const": {
+      "body_hash": "83cf83434516785a6a309a7bacafe973",
+      "is_trivial": true
+    },
+    "virtual bool idDeclNullSkinBase::SetDefaultText()": {
+      "body_hash": "ace27d5d5889be78523fc7a2df8fe6eb",
+      "is_trivial": true
+    },
+    "virtual const char * idDeclNullSkinBase::DefaultDefinition() const": {
+      "body_hash": "45a7d0fe2c6fd300659890d86a1f3142",
+      "is_trivial": true
+    },
+    "virtual bool idDeclNullSkinBase::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "110939a4ccb21fd50eeae3d4f39ba807",
+      "is_trivial": true
+    },
+    "virtual void idDeclNullSkinBase::FreeData()": {
+      "body_hash": "c9b1133e5887b64a29cab1eff8ef0399",
+      "is_trivial": true
+    },
+    "virtual size_t idDeclNullSkinBase::Size() const": {
+      "body_hash": "812609e0be2796edfc56133e7de0242b",
+      "is_trivial": true
+    },
+    "virtual void idDeclNullSkinBase::List() const": {
+      "body_hash": "0300f706722d5877a74d782f4dfd70bd",
+      "is_trivial": true
+    },
+    "virtual void idDeclNullSkinBase::Print() const": {
+      "body_hash": "410d079543352c0da3487a3c41862583",
+      "is_trivial": true
+    },
+    "ID_TIME_T idDeclNullSkinBase::GetSourceFileTimestamp() const": {
+      "body_hash": "2b8fcb60789fb4dd51213efd5276a502",
+      "is_trivial": true
+    },
+    "size_t idDeclParticle::Size() const": {
+      "body_hash": "e2b9645970b4eaa5653ad33de1167c30",
+      "is_trivial": true
+    },
+    "const char * idDeclParticle::DefaultDefinition() const": {
+      "body_hash": "fd6041d50109b216ae569cf7a65724ed",
+      "is_trivial": true
+    },
+    "bool idDeclParticle::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "40b619de70e7c1aadde3bd9972c2b5af",
+      "is_trivial": true
+    },
+    "void idDeclParticle::FreeData()": {
+      "body_hash": "5edfea56acdea705e0322b50780628f0",
+      "is_trivial": true
+    },
+    "bool idDeclParticle::Save(const char *fileName=NULL)": {
+      "body_hash": "32bf6ba838a164ccae04d8d4db6c21d6",
+      "is_trivial": true
+    },
+    "bool idDeclParticle::LoadBinary(idFile *file, unsigned int checksum)": {
+      "body_hash": "a7c3b76a6ad81a8cf3cd23873f3247c6",
+      "is_trivial": true
+    },
+    "void idDeclParticle::WriteBinary(idFile *file, unsigned int checksum)": {
+      "body_hash": "f0c618cb9d5b29e09ffa72a315554069",
+      "is_trivial": true
+    },
+    "bool idDeclParticle::RebuildTextSource()": {
+      "body_hash": "7b923fcaa1d42c18dfcdcd09e4ed30c5",
+      "is_trivial": true
+    },
+    "void idDeclParticle::GetStageBounds(idParticleStage *stage)": {
+      "body_hash": "162e359ed7a4459286298ac5a29130d3",
+      "is_trivial": true
+    },
+    "idParticleStage * idDeclParticle::ParseParticleStage(idLexer &src)": {
+      "body_hash": "e1fd99b9fca83bbdc4641851d0d0ad0e",
+      "is_trivial": true
+    },
+    "void idDeclParticle::ParseParms(idLexer &src, float *parms, int maxParms)": {
+      "body_hash": "abf59c2368ce136a72cd8050919ec2a5",
+      "is_trivial": true
+    },
+    "void idDeclParticle::ParseParametric(idLexer &src, idParticleParm *parm)": {
+      "body_hash": "2f078288a8e52a5fcf2a03f9f0cae000",
+      "is_trivial": true
+    },
+    "void idDeclParticle::WriteStage(idFile *f, idParticleStage *stage)": {
+      "body_hash": "cf36649387de5cb5208feb820f11e8e2",
+      "is_trivial": true
+    },
+    "void idDeclParticle::WriteParticleParm(idFile *f, idParticleParm *parm, const char *name)": {
+      "body_hash": "6bb0edf998c6de61985b43b23bd7cdb1",
+      "is_trivial": true
+    },
+    "size_t idDeclPDA::Size() const": {
+      "body_hash": "2f02c439cf5a88b0aaa32800be4c92c6",
+      "is_trivial": true
+    },
+    "const char * idDeclPDA::DefaultDefinition() const": {
+      "body_hash": "df8a61f2bd6306b6255ea581c65bdd0b",
+      "is_trivial": true
+    },
+    "bool idDeclPDA::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "d299d8c93b5f3e7117013dcbee3acef9",
+      "is_trivial": true
+    },
+    "void idDeclPDA::FreeData()": {
+      "body_hash": "43914fd4110abeaa456277ace27f89ba",
+      "is_trivial": true
+    },
+    "void idDeclPDA::Print() const": {
+      "body_hash": "aaf28e677a648dc0b4515a09ed7a6c2d",
+      "is_trivial": true
+    },
+    "void idDeclPDA::List() const": {
+      "body_hash": "c7fb12d39c16c64a3637ab30ac88d5b7",
+      "is_trivial": true
+    },
+    "virtual void idDeclPDA::AddVideo(const idDeclVideo *video, bool unique=true) const": {
+      "body_hash": "50f4b68434eb087164dfb0153abd5966",
+      "is_trivial": true
+    },
+    "virtual void idDeclPDA::AddAudio(const idDeclAudio *audio, bool unique=true) const": {
+      "body_hash": "bf5b81d6c55e848e35aed658a95572f7",
+      "is_trivial": true
+    },
+    "virtual void idDeclPDA::AddEmail(const idDeclEmail *email, bool unique=true) const": {
+      "body_hash": "70114083814efd4d7b46694f595d182f",
+      "is_trivial": true
+    },
+    "void idDeclPDA::RemoveAddedEmailsAndVideos() const": {
+      "body_hash": "5be4c972e18fb0a372bbfba063f48b4e",
+      "is_trivial": true
+    },
+    "virtual const int idDeclPDA::GetNumVideos() const": {
+      "body_hash": "b40dd5c5ac340c9c9c7247650db83c85",
+      "is_trivial": true
+    },
+    "virtual const int idDeclPDA::GetNumAudios() const": {
+      "body_hash": "5ddd39e85f0141c32b51ef430b32bb4e",
+      "is_trivial": true
+    },
+    "virtual const int idDeclPDA::GetNumEmails() const": {
+      "body_hash": "65bd428a4ff7afc9e270b08b421e7462",
+      "is_trivial": true
+    },
+    "virtual const idDeclVideo * idDeclPDA::GetVideoByIndex(int index) const": {
+      "body_hash": "6a8f1e6c297ffd93deac8d5c2f886a99",
+      "is_trivial": true
+    },
+    "virtual const idDeclAudio * idDeclPDA::GetAudioByIndex(int index) const": {
+      "body_hash": "d06c8c53e730f1fa8f6e8f7c12ec5449",
+      "is_trivial": true
+    },
+    "virtual const idDeclEmail * idDeclPDA::GetEmailByIndex(int index) const": {
+      "body_hash": "3e0ba4d6ded5e0454c765f6d10a95122",
+      "is_trivial": true
+    },
+    "void idDeclPDA::SetSecurity(const char *sec) const": {
+      "body_hash": "704bf146329659ccf3871b1287a1bd88",
+      "is_trivial": true
+    },
+    "const char * idDeclPDA::GetPdaName() const": {
+      "body_hash": "9332fa80ac9ef0c5901442a4e00e7e50",
+      "is_trivial": true
+    },
+    "const char * idDeclPDA::GetSecurity() const": {
+      "body_hash": "3f8d5b8fc4a50571e44c14dd42609f89",
+      "is_trivial": true
+    },
+    "const char * idDeclPDA::GetFullName() const": {
+      "body_hash": "a850caef34717f8b887e496808137545",
+      "is_trivial": true
+    },
+    "const char * idDeclPDA::GetIcon() const": {
+      "body_hash": "0486ba6bf4f4db16c3172d21ee548672",
+      "is_trivial": true
+    },
+    "const char * idDeclPDA::GetPost() const": {
+      "body_hash": "c658e8e84918228b594a4bd0f8fec87a",
+      "is_trivial": true
+    },
+    "const char * idDeclPDA::GetID() const": {
+      "body_hash": "19f0172b5d7061ee92af5f805dfd00be",
+      "is_trivial": true
+    },
+    "const char * idDeclPDA::GetTitle() const": {
+      "body_hash": "78c62f7ed24a33f1622fca928873d654",
+      "is_trivial": true
+    },
+    "size_t idDeclSkin::Size() const": {
+      "body_hash": "55c8a2b69d1d594d8d37f4c7ad77a6f6",
+      "is_trivial": true
+    },
+    "bool idDeclSkin::SetDefaultText()": {
+      "body_hash": "6ac979da35bbae0b1ca1410f92b7cc7c",
+      "is_trivial": true
+    },
+    "const char * idDeclSkin::DefaultDefinition() const": {
+      "body_hash": "8b706ba55dfd398f7f320e2860cf74f1",
+      "is_trivial": true
+    },
+    "bool idDeclSkin::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "1dded618d506e5dff62bce1c2c5b11b5",
+      "is_trivial": true
+    },
+    "void idDeclSkin::FreeData()": {
+      "body_hash": "42fe6517d3cfcbae83c2c8712792f810",
+      "is_trivial": true
+    },
+    "const idMaterial * idDeclSkin::RemapShaderBySkin(const idMaterial *shader) const": {
+      "body_hash": "5f057d39eceb0aa892722ddfe7df9d54",
+      "is_trivial": true
+    },
+    "const int idDeclSkin::GetNumModelAssociations() const": {
+      "body_hash": "2a997dae27e385adb5b48619943322c0",
+      "is_trivial": true
+    },
+    "const char * idDeclSkin::GetAssociatedModel(int index) const": {
+      "body_hash": "3bab763d1183ed121e63802b9e7575b1",
+      "is_trivial": true
+    },
+    "idDeclSkinWrapper::idDeclSkinWrapper()": {
+      "body_hash": "bc57acc6cf5119b5f70f2a3fb308fb6c",
+      "is_trivial": true
+    },
+    "const idMaterial * idDeclSkinWrapper::RemapShaderBySkin(const idMaterial *shader) const": {
+      "body_hash": "66b8a246bb21c19f2b8c5153540b728f",
+      "is_trivial": true
+    },
+    "void idDeclSkinWrapper::SetWrapper(const idDeclSkin *skin)": {
+      "body_hash": "9f496babd59db25bd53e494bd88eaa8b",
+      "is_trivial": true
+    },
+    "void idDeclSkinWrapper::SetWrapped(const idDeclSkin *skin)": {
+      "body_hash": "64a217702bd1aff78d926e073287bb7a",
+      "is_trivial": true
+    },
+    "const idDeclSkin * idDeclSkinWrapper::GetWrapper()": {
+      "body_hash": "e366dcd3868698ef48a1fcfd3bb40adb",
+      "is_trivial": true
+    },
+    "const idDeclSkin * idDeclSkinWrapper::GetWrapped()": {
+      "body_hash": "25457d831ad958b41d06d7708695da4f",
+      "is_trivial": true
+    },
+    "size_t idDeclTable::Size() const": {
+      "body_hash": "e23396990de6ac580d052768c77660e5",
+      "is_trivial": true
+    },
+    "const char * idDeclTable::DefaultDefinition() const": {
+      "body_hash": "19e1dae5f8a8c57a1648e9c82b76167f",
+      "is_trivial": true
+    },
+    "bool idDeclTable::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "f968716350c65a7bf573707468c9d465",
+      "is_trivial": true
+    },
+    "void idDeclTable::FreeData()": {
+      "body_hash": "af3fc1e9c06ab13eff9bd69d33de45c4",
+      "is_trivial": true
+    },
+    "float idDeclTable::TableLookup(float index) const": {
+      "body_hash": "5db93ef66e5e242e82ec24b9b8c9620b",
+      "is_trivial": true
+    },
+    "size_t idDeclVideo::Size() const": {
+      "body_hash": "1a71b5fca42b4af3649fcb1b739ebb37",
+      "is_trivial": true
+    },
+    "const char * idDeclVideo::DefaultDefinition() const": {
+      "body_hash": "912025f6df4421aac22939f6aeb8c3a4",
+      "is_trivial": true
+    },
+    "bool idDeclVideo::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "662de8f4a6bfc18f1a9e8a6504ec93f0",
+      "is_trivial": true
+    },
+    "void idDeclVideo::FreeData()": {
+      "body_hash": "ab16a90433629b64a86f857bd90f75ad",
+      "is_trivial": true
+    },
+    "void idDeclVideo::Print() const": {
+      "body_hash": "ea645d6dc3970f0a193cff1b8a1db0ce",
+      "is_trivial": true
+    },
+    "void idDeclVideo::List() const": {
+      "body_hash": "0cd9a7cbbd74c280b24a8d6ff6ace4a0",
+      "is_trivial": true
+    },
+    "const idMaterial * idDeclVideo::GetRoq() const": {
+      "body_hash": "0a28c56bbba1a647ee79d1f97544ed2d",
+      "is_trivial": true
+    },
+    "const idSoundShader * idDeclVideo::GetWave() const": {
+      "body_hash": "e1fbdef8a948ae6a17f059e6aec28329",
+      "is_trivial": true
+    },
+    "const char * idDeclVideo::GetVideoName() const": {
+      "body_hash": "6810e0cb30488bc2cf8eb6d2840946fe",
+      "is_trivial": true
+    },
+    "const char * idDeclVideo::GetInfo() const": {
+      "body_hash": "0adb2112a7141223a22473c7f0cd9895",
+      "is_trivial": true
+    },
+    "const idMaterial * idDeclVideo::GetPreview() const": {
+      "body_hash": "b068c0e6524e8aa2ed304a4cbfe4a869",
+      "is_trivial": true
+    },
+    "idParticleParm::idParticleParm()": {
+      "body_hash": "ecfc9289613cf23b30c384fab93dd821",
+      "is_trivial": true
+    },
+    "float idParticleParm::Eval(float frac, idRandom &rand) const": {
+      "body_hash": "59eb7ed2059930d861f3f922135235af",
+      "is_trivial": true
+    },
+    "float idParticleParm::Integrate(float frac, idRandom &rand) const": {
+      "body_hash": "bed2ecec46bae517725d20cadec065c2",
+      "is_trivial": true
+    },
+    "idParticleStage::idParticleStage()": {
+      "body_hash": "bf859992d39453168a2c4330b1acae81",
+      "is_trivial": true
+    },
+    "void idParticleStage::Default()": {
+      "body_hash": "280540eeabff40eb5ea94a0a26a59bf5",
+      "is_trivial": true
+    },
+    "int idParticleStage::NumQuadsPerParticle() const": {
+      "body_hash": "e9e6bf85858cf9404fd9bd33587f9b40",
+      "is_trivial": true
+    },
+    "int idParticleStage::CreateParticle(particleGen_t *g, idDrawVert *verts) const": {
+      "body_hash": "23c43b55c625a383108913eac17e8855",
+      "is_trivial": true
+    },
+    "void idParticleStage::ParticleOrigin(particleGen_t *g, idVec3 &origin) const": {
+      "body_hash": "de65e9b1d1a9e8b84f351e135040fd94",
+      "is_trivial": true
+    },
+    "int idParticleStage::ParticleVerts(particleGen_t *g, const idVec3 origin, idDrawVert *verts) const": {
+      "body_hash": "4603c615cec0187fc60ed86c4cb717e3",
+      "is_trivial": true
+    },
+    "void idParticleStage::ParticleTexCoords(particleGen_t *g, idDrawVert *verts) const": {
+      "body_hash": "83d6db4bda9c274597701f3ce4427652",
+      "is_trivial": true
+    },
+    "void idParticleStage::ParticleColors(particleGen_t *g, idDrawVert *verts) const": {
+      "body_hash": "7d055b3c62f7e95afa79e88a42a22464",
+      "is_trivial": true
+    },
+    "const char * idParticleStage::GetCustomPathName()": {
+      "body_hash": "057b3c56c879fc966472c58b6b210406",
+      "is_trivial": true
+    },
+    "const char * idParticleStage::GetCustomPathDesc()": {
+      "body_hash": "45879447b497564475d537f4439474e0",
+      "is_trivial": true
+    },
+    "int idParticleStage::NumCustomPathParms()": {
+      "body_hash": "f66ddc50c5aaf82b78a8c7bddbf2e210",
+      "is_trivial": true
+    },
+    "void idParticleStage::SetCustomPathType(const char *p)": {
+      "body_hash": "1a2befaac828e9cbf1ff6908e4db451f",
+      "is_trivial": true
+    },
+    "void idParticleStage::operator=(const idParticleStage &src)": {
+      "body_hash": "9917a971c78237267c13fd248fa54693",
+      "is_trivial": true
+    },
+    "huffmanNode_t * InsertHuffmanNode(huffmanNode_t *firstNode, huffmanNode_t *node)": {
+      "body_hash": "e8f9d10c921bd1f77a70010a12b6a44c",
+      "is_trivial": true
+    },
+    "void BuildHuffmanCode_r(huffmanNode_t *node, huffmanCode_t code, huffmanCode_t codes[MAX_HUFFMAN_SYMBOLS])": {
+      "body_hash": "e5fc12350b1fb00ab65b928ea490fb46",
+      "is_trivial": true
+    },
+    "void FreeHuffmanTree_r(huffmanNode_t *node)": {
+      "body_hash": "2b441c373476b311d065a0f2fe35cd36",
+      "is_trivial": true
+    },
+    "int HuffmanHeight_r(huffmanNode_t *node)": {
+      "body_hash": "9b9b8d9b2a0f12365459c0757a5f1c6c",
+      "is_trivial": true
+    },
+    "void SetupHuffman()": {
+      "body_hash": "058565aadfa2dab6e65d1f12cda0b475",
+      "is_trivial": true
+    },
+    "void ShutdownHuffman()": {
+      "body_hash": "2b117ec3242279574506bd41325f400c",
+      "is_trivial": true
+    },
+    "int HuffmanCompressText(const char *text, int textLength, byte *compressed, int maxCompressedSize)": {
+      "body_hash": "5a145c98935f5249e18b1c8c02da5934",
+      "is_trivial": false
+    },
+    "int HuffmanDecompressText(char *text, int textLength, const byte *compressed, int compressedSize)": {
+      "body_hash": "777a7678d857ca8bdba066eab2e884b4",
+      "is_trivial": false
+    },
+    "void ListHuffmanFrequencies_f(const idCmdArgs &args)": {
+      "body_hash": "51e0d6cb02b6b6dfeeb5c74204ddd93d",
+      "is_trivial": true
+    },
+    "void ConvertPDAsToStrings_f(const idCmdArgs &args)": {
+      "body_hash": "485955ef128e9f6a653383cc6c7c3fc7",
+      "is_trivial": true
+    },
+    "static idMapBrush * MakeCharBrush(const idVec3 &brushOrigin, const idVec3 &uvOrigin, int ch)": {
+      "body_hash": "ebec3bcd287e8506750b609e40820ab0",
+      "is_trivial": true
+    },
+    "idMapEntity * MakeNamePlateFuncStatic(idMapFile *mapFile, float x, float y, float topHeight, const idStr &origTitle)": {
+      "body_hash": "4229c991b4a2f2b3bf3982b90c204592",
+      "is_trivial": false
+    },
+    "void RectAllocator(const idList< idVec2i > &inputSizes, idList< idVec2i > &outputPositions, idVec2i &totalSize, const int START_MAX=16384, const int imageMax=-1)": {
+      "body_hash": "b4042a880e739a973a89d9e77e4616ae",
+      "is_trivial": false
+    },
+    "float RectPackingFraction(const idList< idVec2i > &inputSizes, const idVec2i totalSize)": {
+      "body_hash": "39e4af2b75ce98833dcd9816e86fc95d",
+      "is_trivial": true
+    },
+    "void RectAllocatorBinPack2D(const idList< idVec2i > &inputSizes, const idStrList &inputNames, idList< idVec2i > &outputPositions, idVec2i &totalSize, const int START_MAX)": {
+      "body_hash": "38a8229f616e52740e36a747a9d28260",
+      "is_trivial": false
+    },
+    "ID_INLINE idDecl * idDeclAllocator()": {
+      "body_hash": "dceca1f88f3f3471631cd6bd438b8ecd",
+      "is_trivial": true
+    },
+    "ID_INLINE void idListDecls_f(const idCmdArgs &args)": {
+      "body_hash": "a800cc63d044d031e0a8ac65b9d21139",
+      "is_trivial": true
+    },
+    "ID_INLINE void idPrintDecls_f(const idCmdArgs &args)": {
+      "body_hash": "5cc68cbb083f2aa7dd80e79af1f199a0",
+      "is_trivial": true
+    },
+    "virtual bool idDecl::SetDefaultText()": {
+      "body_hash": "1cb3a4b5f480d362bf96b4fdc6c51324",
+      "is_trivial": true
+    },
+    "int idSort_CompareEntityDefEntity::Compare(const idDeclEntityDef *const &a, const idDeclEntityDef *const &b) const": {
+      "body_hash": "21e1f77d2844bac9a89bedb7006f0a81",
+      "is_trivial": true
+    },
+    "Category_t::Category_t(const char *name)": {
+      "body_hash": "915bbee01be466067aa427fa04bf0311",
+      "is_trivial": true
+    },
+    "static idMapBrush * MakeUnitBrush(const idVec3 &origin, const idVec3 &scale, bool border)": {
+      "body_hash": "4c4bb0c7378fe6c5ae43b8f33c593982",
+      "is_trivial": true
+    },
+    "bool idDeclLocal::EverReferenced() const": {
+      "body_hash": "e85fab34e66ef32c1d2c67e303848f5d",
+      "is_trivial": true
+    },
+    "void ClearHuffmanFrequencies()": {
+      "body_hash": "b79b9b469ed0e2731e5328a8062caa1b",
+      "is_trivial": true
     }
   }
 }

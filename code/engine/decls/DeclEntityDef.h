@@ -30,23 +30,28 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __DECLENTITYDEF_H__
 #define __DECLENTITYDEF_H__
 
-/*
-===============================================================================
-
-	idDeclEntityDef
-
-===============================================================================
+/*!
+	\class idDeclEntityDef
+	\brief Manages entity definition declarations with key-value pairs.
 */
-
 class idDeclEntityDef : public idDecl
 {
 public:
 	idDict				dict;
 
+	//! Returns the total memory size occupied by this entity definition declaration.
 	virtual size_t		Size() const;
+
+	//! Returns the default definition string for an entity declaration.
 	virtual const char* DefaultDefinition() const;
+
+	//! Parses entity definition data from a text buffer and populates the entity definition dictionary with key-value pairs.
 	virtual bool		Parse( const char* text, const int textLength, bool allowBinaryVersion );
+
+	//! Clears the dictionary data associated with the entity definition.
 	virtual void		FreeData();
+
+	//! Prints all key/value pairs stored in the declaration dictionary
 	virtual void		Print();
 };
 

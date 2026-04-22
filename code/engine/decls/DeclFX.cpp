@@ -30,21 +30,11 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-=================
-idDeclFX::Size
-=================
-*/
 size_t idDeclFX::Size() const
 {
 	return sizeof( idDeclFX );
 }
 
-/*
-===============
-idDeclFX::Print
-===============
-*/
 void idDeclFX::Print() const
 {
 	const idDeclFX* list = this;
@@ -86,21 +76,11 @@ void idDeclFX::Print() const
 	}
 }
 
-/*
-===============
-idDeclFX::List
-===============
-*/
 void idDeclFX::List() const
 {
 	common->Printf( "%s, %d stages\n", GetName(), events.Num() );
 }
 
-/*
-================
-idDeclFX::ParseSingleFXAction
-================
-*/
 void idDeclFX::ParseSingleFXAction( idLexer& src, idFXSingleAction& FXAction )
 {
 	idToken token;
@@ -408,11 +388,6 @@ void idDeclFX::ParseSingleFXAction( idLexer& src, idFXSingleAction& FXAction )
 	}
 }
 
-/*
-================
-idDeclFX::Parse
-================
-*/
 bool idDeclFX::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
@@ -453,11 +428,6 @@ bool idDeclFX::Parse( const char* text, const int textLength, bool allowBinaryVe
 	return true;
 }
 
-/*
-===================
-idDeclFX::DefaultDefinition
-===================
-*/
 const char* idDeclFX::DefaultDefinition() const
 {
 	return "{\n"
@@ -472,11 +442,6 @@ const char* idDeclFX::DefaultDefinition() const
 		   "}";
 }
 
-/*
-===================
-idDeclFX::FreeData
-===================
-*/
 void idDeclFX::FreeData()
 {
 	events.Clear();

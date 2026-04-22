@@ -30,23 +30,31 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __DECLTABLE_H__
 #define __DECLTABLE_H__
 
-/*
-===============================================================================
+/*!
+	\class idDeclTable
+	\brief A class for managing declaration tables with parsing, lookup, and memory management capabilities.
 
-	tables are used to map a floating point input value to a floating point
-	output value, with optional wrap / clamp and interpolation
+	Tables are used to map a floating point input value to a floating point
+	output value, with optional wrap / clamp and interpolation in material files.
 
-===============================================================================
+	This is the more flexible replacement for the Quake 3 fixed function tables like rgbGen wave.
 */
-
 class idDeclTable : public idDecl
 {
 public:
+	//! Returns the total memory size occupied by this declaration table instance
 	virtual size_t		Size() const;
+
+	//! Returns the default definition string for declaration table entries.
 	virtual const char* DefaultDefinition() const;
+
+	//! Parses a table declaration from text, extracting values and optional snap and clamp flags.
 	virtual bool		Parse( const char* text, const int textLength, bool allowBinaryVersion );
+
+	//! Frees the data associated with the declaration table.
 	virtual void		FreeData();
 
+	//! Performs table lookup interpolation for a given index value
 	float				TableLookup( float index ) const;
 
 private:

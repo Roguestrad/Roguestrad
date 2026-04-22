@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-=================
-idDeclTable::TableLookup
-=================
-*/
 float idDeclTable::TableLookup( float index ) const
 {
 	int	  iIndex;
@@ -76,21 +71,11 @@ float idDeclTable::TableLookup( float index ) const
 	return values[iIndex];
 }
 
-/*
-=================
-idDeclTable::Size
-=================
-*/
 size_t idDeclTable::Size() const
 {
 	return sizeof( idDeclTable ) + values.Allocated();
 }
 
-/*
-=================
-idDeclTable::FreeData
-=================
-*/
 void idDeclTable::FreeData()
 {
 	snap  = false;
@@ -98,21 +83,11 @@ void idDeclTable::FreeData()
 	values.Clear();
 }
 
-/*
-=================
-idDeclTable::DefaultDefinition
-=================
-*/
 const char* idDeclTable::DefaultDefinition() const
 {
 	return "{ { 0 } }";
 }
 
-/*
-=================
-idDeclTable::Parse
-=================
-*/
 bool idDeclTable::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;

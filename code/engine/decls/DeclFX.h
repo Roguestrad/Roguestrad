@@ -81,23 +81,41 @@ typedef struct {
 	bool   trackOrigin;
 } idFXSingleAction;
 
-//
-// grouped fx structures
-//
+/*!
+	\class idDeclFX
+	\brief Manages particle effect declarations and their parsing from text-based definitions.
+
+	The idDeclFX class handles the loading, parsing, and management of particle effect definitions. It extends the basic declaration functionality by providing methods to parse effect definitions from
+   text, manage associated events, and output information about the effects. The class supports parsing from both text and binary formats, and provides utility methods for printing and listing effect
+   details. It maintains a collection of FX actions that define the behavior of particle effects.
+
+*/
 class idDeclFX : public idDecl
 {
 public:
+	//! Returns the size in bytes of the idDeclFX class instance.
 	virtual size_t					 Size() const;
+
+	//! Returns the default definition string for an FX declaration.
 	virtual const char*				 DefaultDefinition() const;
+
+	//! Parses the FX declaration from the provided text buffer.
 	virtual bool					 Parse( const char* text, const int textLength, bool allowBinaryVersion );
+
+	//! Frees the data associated with the FX declaration by clearing its events.
 	virtual void					 FreeData();
+
+	//! Prints the FX events contained in the declaration to the console.
 	virtual void					 Print() const;
+
+	//! Prints the name and number of stages of the effect declaration.
 	virtual void					 List() const;
 
 	idList<idFXSingleAction, TAG_FX> events;
 	idStr							 joint;
 
 private:
+	//! Parses a single FX action from the lexer input and populates the FXAction structure
 	void ParseSingleFXAction( idLexer& src, idFXSingleAction& FXAction );
 };
 

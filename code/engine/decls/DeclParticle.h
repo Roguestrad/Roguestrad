@@ -40,9 +40,14 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int MAX_PARTICLE_STAGES = 32;
 
+/*!
+	\class idParticleParm
+	\brief A class representing particle parameters that can be evaluated and integrated over time.
+*/
 class idParticleParm
 {
 public:
+	//! Initializes a particle parameter with default values.
 	idParticleParm()
 	{
 		table = NULL;
@@ -53,7 +58,10 @@ public:
 	float			   from;
 	float			   to;
 
+	//! Evaluates a particle parameter value based on fraction and random number generator.
 	float			   Eval( float frac, idRandom& rand ) const;
+
+	//! Computes an integrated value for a particle parameter based on fraction and random input
 	float			   Integrate( float frac, idRandom& rand ) const;
 };
 
@@ -103,29 +111,57 @@ typedef struct {
 	float				  animationFrameFrac; // set by ParticleTexCoords, used to make the cross faded version
 } particleGen_t;
 
-//
-// single particle stage
-//
+/*!
+	\class idParticleStage
+	\brief Manages individual particle generation stages with configurable properties and rendering behavior.
+
+	Handles the configuration and execution of particle generation stages, including vertex creation, positioning, texturing, and coloring. Supports custom path types and parameter management for
+   flexible particle system control. Each stage defines how particles are generated and rendered, including properties like quads per particle, vertex count, and visual appearance. The class provides
+   methods for initializing default settings, calculating particle positions and attributes, and managing custom path configurations. It acts as a building block for complex particle effects by
+   defining individual stage behaviors within a larger particle system.
+
+*/
 class idParticleStage
 {
 public:
+	//! Initializes all member variables of the idParticleStage class to their default values.
 	idParticleStage();
 	~idParticleStage() { }
 
+	//! Initializes the particle stage with default configuration values.
 	void			  Default();
-	int				  NumQuadsPerParticle() const; // includes trails and cross faded animations
-	// returns the number of verts created, which will range from 0 to 4*NumQuadsPerParticle()
+
+	//! Returns the number of quads used per particle, including trails and cross-faded animations.
+	int				  NumQuadsPerParticle() const;
+
+	//! Creates a particle by generating vertex data for rendering based on particle generation parameters and returns the number of vertices created
 	int				  CreateParticle( particleGen_t* g, idDrawVert* verts ) const;
 
+	//! Calculates the origin position for a particle based on distribution and path type.
 	void			  ParticleOrigin( particleGen_t* g, idVec3& origin ) const;
+
+	//! Computes vertex positions for a particle based on its stage properties and origin.
 	int				  ParticleVerts( particleGen_t* g, const idVec3 origin, idDrawVert* verts ) const;
+
+	//! Calculates and sets texture coordinates for particle vertices based on animation frame and particle generation data.
 	void			  ParticleTexCoords( particleGen_t* g, idDrawVert* verts ) const;
+
+	//! Sets the color values for particle vertices based on generation parameters and fading effects.
 	void			  ParticleColors( particleGen_t* g, idDrawVert* verts ) const;
 
+	//! Returns the name of the custom particle path type.
 	const char*		  GetCustomPathName();
+
+	//! Returns the description string for the custom particle path type.
 	const char*		  GetCustomPathDesc();
+
+	//! Returns the number of custom path parameters for the particle stage.
 	int				  NumCustomPathParms();
+
+	//! Sets the custom path type for a particle stage based on the provided string identifier.
 	void			  SetCustomPathType( const char* p );
+
+	//! Assigns all member variables from another idParticleStage object to this object.
 	void			  operator=( const idParticleStage& src );
 
 	//------------------------------
@@ -192,21 +228,39 @@ public:
 	idBounds		  bounds; // derived
 };
 
-//
-// group of particle stages
-//
+/*!
+	\class idDeclParticle
+	\brief Manages particle system declarations including parsing, loading, saving, and managing particle stages.
+
+	This class represents a particle system declaration that contains multiple particle stages. It handles the parsing of particle definitions from text, loading and saving operations from binary
+   files, and manages the lifecycle of particle stages. The class inherits from idDecl and extends its functionality to specifically handle particle system data. It provides methods for parsing
+   individual particle stages, managing parameter lists, and writing particle data to files. The class supports both text and binary format operations, including checksum validation during loading.
+   Memory management is handled through the FreeData method which cleans up particle stage resources, and the class maintains a collection of particle stages that can be manipulated and queried for
+   bounding volumes.
+
+*/
 class idDeclParticle : public idDecl
 {
 public:
+	//! Returns the size in bytes of the idDeclParticle object
 	virtual size_t								  Size() const;
+
+	//! Returns the default definition string for particle declarations.
 	virtual const char*							  DefaultDefinition() const;
+
+	//! Parses particle declaration data from text, optionally handling binary version loading and generation.
 	virtual bool								  Parse( const char* text, const int textLength, bool allowBinaryVersion );
+
+	//! Frees the particle system data by deleting all stages.
 	virtual void								  FreeData();
 
+	//! Saves the particle declaration to a file.
 	bool										  Save( const char* fileName = NULL );
 
-	// Loaded instead of re-parsing, written if MD5 hash different
+	//! Loads particle data from a binary file and validates its checksum.
 	bool										  LoadBinary( idFile* file, unsigned int checksum );
+
+	//! Writes the particle declaration data to a binary file with the specified checksum
 	void										  WriteBinary( idFile* file, unsigned int checksum );
 
 	idList<idParticleStage*, TAG_IDLIB_LIST_DECL> stages;
@@ -214,12 +268,25 @@ public:
 	float										  depthHack;
 
 private:
+	//! Rebuilds the text source for a particle declaration.
 	bool			 RebuildTextSource();
+
+	//! Calculates and sets the bounding volume for a particle stage based on particle origin and size evaluations.
 	void			 GetStageBounds( idParticleStage* stage );
+
+	//! Parses a particle stage definition from a token stream and returns a new particle stage object.
 	idParticleStage* ParseParticleStage( idLexer& src );
+
+	//! Parses a variable length list of parameters from a lexer into a float array.
 	void			 ParseParms( idLexer& src, float* parms, int maxParms );
+
+	//! Parses a parametric parameter for a particle effect from the given lexer input.
 	void			 ParseParametric( idLexer& src, idParticleParm* parm );
+
+	//! Writes a particle stage definition to a file
 	void			 WriteStage( idFile* f, idParticleStage* stage );
+
+	//! Writes particle parameter data to a file with specified name and formatting
 	void			 WriteParticleParm( idFile* f, idParticleParm* parm, const char* name );
 };
 

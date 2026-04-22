@@ -33,25 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "TileMap.h"
 #include "../libs/binpack2d/binpack2d.h"
 
-/*
-
-This routine performs a tight packing of a list of rectangles, attempting to minimize the area
-of the rectangle that encloses all of them.  Algorithm order is N^2, so it is not apropriate
-for lists with many thousands of elements.
-
-Contrast with idBitBlockAllocator, which is used incrementally with either fixed size or
-size-doubling target areas.
-
-Typical uses:
-packing glyphs into a font image
-packing model surfaces into a skin atlas
-packing images into swf atlases
-
-If you want a minimum alignment, ensure that all the sizes are multiples of that alignment,
-or scale the input sizes down by that alignment and scale the outputPositions back up.
-
-*/
-
 float RectPackingFraction( const idList<idVec2i>& inputSizes, const idVec2i totalSize )
 {
 	int totalArea = totalSize.Area();
@@ -290,6 +271,19 @@ public:
 	}
 };
 
+/*!
+	\brief Packs 2D rectangles into a bins using a bin packing algorithm while tracking their positions and total required size.
+
+	This function takes a list of rectangle sizes and names, and attempts to pack them into a set of bins using the BinPack2D algorithm. The positions of each rectangle within the packed bins are
+   returned, along with the total size required to accommodate all rectangles. The packing process sorts the rectangles by size for better results. Rectangles that cannot be packed are skipped, and
+   the function tracks the maximum dimensions needed to fit all packed rectangles. The START_MAX parameter controls the initial bin size used for packing.
+
+	\param inputSizes List of rectangle sizes (width and height) to be packed
+	\param inputNames List of names associated with each rectangle
+	\param outputPositions Output list of positions where each rectangle was placed
+	\param totalSize Total size required to fit all packed rectangles
+	\param START_MAX Initial maximum size for the bins used in packing
+*/
 void RectAllocatorBinPack2D( const idList<idVec2i>& inputSizes, const idStrList& inputNames, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX )
 {
 	outputPositions.SetNum( inputSizes.Num() );

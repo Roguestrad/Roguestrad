@@ -30,31 +30,16 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-=================
-idDeclEntityDef::Size
-=================
-*/
 size_t idDeclEntityDef::Size() const
 {
 	return sizeof( idDeclEntityDef ) + dict.Allocated();
 }
 
-/*
-================
-idDeclEntityDef::FreeData
-================
-*/
 void idDeclEntityDef::FreeData()
 {
 	dict.Clear();
 }
 
-/*
-================
-idDeclEntityDef::Parse
-================
-*/
 bool idDeclEntityDef::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
@@ -137,11 +122,6 @@ bool idDeclEntityDef::Parse( const char* text, const int textLength, bool allowB
 	return true;
 }
 
-/*
-================
-idDeclEntityDef::DefaultDefinition
-================
-*/
 const char* idDeclEntityDef::DefaultDefinition() const
 {
 	return "{\n"
@@ -150,13 +130,6 @@ const char* idDeclEntityDef::DefaultDefinition() const
 		   "}";
 }
 
-/*
-================
-idDeclEntityDef::Print
-
-Dumps all key/value pairs, including inherited ones
-================
-*/
 void idDeclEntityDef::Print()
 {
 	dict.Print();
