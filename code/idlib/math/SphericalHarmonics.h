@@ -207,6 +207,7 @@ inline SphericalHarmonicsT<T, L> shConvolveDiffuse( SphericalHarmonicsT<T, L>& s
 	return result;
 }
 
+//! Evaluates the diffuse irradiance of a spherical harmonics representation at a given direction
 template<typename T, size_t L>
 inline T shEvaluateDiffuse( const SphericalHarmonicsT<T, L>& sh, const idVec3& direction )
 {

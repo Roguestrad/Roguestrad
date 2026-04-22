@@ -59,19 +59,19 @@ If you have questions concerning this license or the applicable additional terms
 // the depth bounding tests clipping tests work properly
 #define CLIP_SPACE_D3D					 1
 
-//! Returns the identity matrix used for rendering operations.
+//! Returns the identity matrix used for render operations.
 ALIGNTYPE16 const idRenderMatrix renderMatrix_identity( 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f );
 
-//! Converts from the engine's coordinate system to OpenGL's coordinate system.
+//! Returns a matrix that converts coordinates from the engine's system to OpenGL's coordinate system.
 ALIGNTYPE16 const idRenderMatrix renderMatrix_flipToOpenGL( 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f );
 
-//! Returns a constant window space to clip space transformation matrix used for OpenGL rendering.
+//! Returns a constant matrix that transforms window space coordinates to clip space coordinates for OpenGL.
 ALIGNTYPE16 const idRenderMatrix renderMatrix_windowSpaceToClipSpace( 2.0f, 0.0f, 0.0f, -1.0f, 0.0f, 2.0f, 0.0f, -1.0f, 0.0f, 0.0f, 2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f );
 
 //! Returns a constant render matrix that transforms clip space coordinates to window space coordinates.
 ALIGNTYPE16 const idRenderMatrix renderMatrix_clipSpaceToWindowSpace( 0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f );
 
-//! Returns a constant full-screen render matrix with perspective projection and view transformation.
+//! Returns a constant fullscreen render matrix with specific transformation values.
 ALIGNTYPE16 const idRenderMatrix renderMatrix_fullscreen( 1.0f,
 	0.0f,
 	0.0f,

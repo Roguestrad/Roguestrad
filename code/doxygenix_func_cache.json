@@ -6943,7 +6943,7 @@
     },
     "T shEvaluateDiffuse(const SphericalHarmonicsT< T, L > &sh, const idVec3 &direction)": {
       "body_hash": "5b04b3006b7448cb78ce0fb39a4b1de9",
-      "is_trivial": false
+      "is_trivial": true
     },
     "T shEvaluateDiffuseL1(const SphericalHarmonicsT< T, 1 > &sh, const idVec3 &direction)": {
       "body_hash": "feb0cadd6ac30425811da093864adc94",
@@ -8979,7 +8979,7 @@
     },
     "bool idLangDict::DeleteString(const int idx)": {
       "body_hash": "dc48908e9e31bf73636f1f342d37df8e",
-      "is_trivial": false
+      "is_trivial": true
     },
     "const char * idLangDict::GetLocalizedString(const idStrId &strId) const": {
       "body_hash": "5f373bb2cf6c7dca18a947f787a68ef9",

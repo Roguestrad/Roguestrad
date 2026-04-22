@@ -86,6 +86,8 @@ public:
 
 	//! Executes the bound member function call.
 	void		Call() { ( t->*f )(); }
+
+	//! Creates a copy of this callback object
 	idCallback* Clone() const { return new( TAG_FUNC_CALLBACK ) idCallbackBindMem( t, f ); }
 
 private:

@@ -347,11 +347,6 @@ bool idLangDict::DeleteString( const char* key )
 	return DeleteString( FindStringIndex( key ) );
 }
 
-/*
-========================
-idLangDict::DeleteString
-========================
-*/
 bool idLangDict::DeleteString( const int idx )
 {
 	if( idx < 0 || idx >= keyVals.Num() ) {

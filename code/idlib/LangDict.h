@@ -113,6 +113,8 @@ public:
 
 	//! Returns a pointer to the key-value pair at the specified index in the language dictionary.
 	const idLangKeyValue* GetKeyVal( int i ) const;
+
+	//! Removes a string entry from the dictionary at the specified index.
 	bool				  DeleteString( const int idx );
 
 	//! Returns the localized string for the given string ID, or the ID itself if not found
