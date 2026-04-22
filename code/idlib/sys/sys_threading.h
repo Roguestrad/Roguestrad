@@ -173,7 +173,23 @@ enum xthreadPriority { THREAD_LOWEST, THREAD_BELOW_NORMAL, THREAD_NORMAL, THREAD
 //! Returns the unique identifier of the currently executing thread.
 uintptr_t		 Sys_GetCurrentThreadID();
 
-//! Creates a new thread with the specified parameters and returns a handle to it
+/*!
+	\brief Creates a new thread with the specified parameters and returns a handle to it
+
+	This function initializes a new thread using POSIX pthreads API. It sets the thread as joinable, creates the thread with the provided function and parameters, and optionally sets the thread name
+   for debugging purposes. The function handles error conditions by issuing fatal errors through the common logging interface. The thread priority is set but commented out in the current
+   implementation, so it defaults to the system default scheduling policy. Thread affinity is not set and is left to the OS scheduler.
+
+	\param function Function to be executed by the new thread
+	\param parms Pointer to parameters to be passed to the thread function
+	\param priority Requested thread priority level
+	\param name Name of the thread for identification
+	\param core Core affinity for the thread
+	\param stackSize Size of the stack to be allocated for the thread
+	\param suspended Whether to start the thread in a suspended state
+	\return Handle to the created thread as a uintptr_t value
+	\throws Fatal error if pthread_attr_setdetachstate, pthread_create, or pthread_setname_np fails
+*/
 uintptr_t		 Sys_CreateThread( xthread_t function, void* parms, xthreadPriority priority, const char* name, core_t core, int stackSize = DEFAULT_THREAD_STACK_SIZE, bool suspended = false );
 
 //! Destroys a thread identified by its handle.

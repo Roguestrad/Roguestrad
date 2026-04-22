@@ -68,10 +68,30 @@ public:
 	//! Constructs a new identity quaternion.
 	idQuat();
 
-	//! Initializes a new quaternion with the specified x, y, z, and w components.
+	/*!
+		\brief Initializes a new quaternion with the specified x, y, z, and w components
+
+		This constructor initializes a quaternion object using the provided x, y, z, and w components. The components represent the imaginary parts (x, y, z) and the real part (w) of the quaternion.
+	   This is a trivial constructor that directly assigns the input values to the corresponding member variables.
+
+		\param x The x component of the quaternion
+		\param y The y component of the quaternion
+		\param z The z component of the quaternion
+		\param w The w component of the quaternion
+	*/
 	idQuat( float x, float y, float z, float w );
 
-	//! Sets the components of the quaternion to the specified x, y, z, and w values.
+	/*!
+		\brief Sets the x, y, z, and w components of the quaternion to the specified values.
+
+		This function assigns the provided float values to the corresponding components of the quaternion. The quaternion is represented as (x, y, z, w) where x, y, z are the imaginary parts and w is
+	   the real part. The components are directly copied to the quaternion's internal storage without any normalization or validation.
+
+		\param x The x-component value to set
+		\param y The y-component value to set
+		\param z The z-component value to set
+		\param w The w-component value to set
+	*/
 	void		  Set( float x, float y, float z, float w );
 
 	//! Returns the component of the quaternion at the specified index

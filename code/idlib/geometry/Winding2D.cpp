@@ -31,7 +31,20 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "Winding2D.h"
 
-//! Computes a bevel vector that is axial to the intersection of two planes at a given point
+/*!
+	\brief Computes a bevel vector that is axial to the intersection of two planes at a given point
+
+	This function determines if two planes intersect in such a way that an axial bevel can be computed. The axial bevel is a vector that is perpendicular to the intersection line of the two planes and
+   lies in the plane containing the given point. The function checks if the planes have opposing signs in either the x or y components, and if the absolute values of these components exceed a
+   threshold of 0.1. If these conditions are met, the bevel vector is computed with one component set to zero and the other set to either -1 or 1 depending on the sign of the corresponding plane
+   component. The z component of the bevel vector is then calculated using the point coordinates and the computed x and y components
+
+	\param plane1 First plane normal vector
+	\param plane2 Second plane normal vector
+	\param point Point in the plane where the bevel is computed
+	\param bevel Output parameter for the computed bevel vector
+	\return True if a valid axial bevel was computed, false otherwise
+*/
 bool GetAxialBevel( const idVec3& plane1, const idVec3& plane2, const idVec2& point, idVec3& bevel )
 {
 	if( IEEE_FLT_SIGNBITSET( plane1.x ) ^ IEEE_FLT_SIGNBITSET( plane2.x ) ) {

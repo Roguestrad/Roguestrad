@@ -40,6 +40,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <stdlib.h>
 #undef new
 
+//! Allocates 16-byte aligned memory for the specified size and tag.
 void* Mem_Alloc16( const size_t size, const memTag_t tag )
 {
 	if( !size ) {
@@ -58,6 +59,7 @@ void* Mem_Alloc16( const size_t size, const memTag_t tag )
 #endif
 }
 
+//! Frees memory that was allocated with Mem_Alloc16.
 void Mem_Free16( void* ptr )
 {
 	if( ptr == NULL ) {
@@ -73,6 +75,7 @@ void Mem_Free16( void* ptr )
 #endif
 }
 
+//! Allocates memory with specified size, alignment, and tag.
 void* Mem_AllocAligned( const size_t size, const size_t alignment, const memTag_t tag )
 {
 	// For <= 16 byte alignment we can use the existing allocator.
@@ -90,6 +93,7 @@ void* Mem_AllocAligned( const size_t size, const size_t alignment, const memTag_
 #endif
 }
 
+//! Frees a memory block that was allocated with Mem_AllocAligned.
 void Mem_FreeAligned( void* ptr, const size_t alignment ) noexcept
 {
 	if( !ptr )
@@ -107,8 +111,7 @@ void Mem_FreeAligned( void* ptr, const size_t alignment ) noexcept
 #endif
 }
 
-// ---- unsized new/delete ----
-
+//! Overloaded new operator that allocates memory using Mem_Alloc and throws std::bad_alloc on failure
 void* operator new( size_t s )
 {
 	void* p = Mem_Alloc( s, TAG_NEW );
@@ -117,6 +120,7 @@ void* operator new( size_t s )
 	return p;
 }
 
+//! Allocates memory for an array of objects using a custom allocator.
 void* operator new[]( size_t s )
 {
 	void* p = Mem_Alloc( s, TAG_NEW );
@@ -125,30 +129,31 @@ void* operator new[]( size_t s )
 	return p;
 }
 
+//! Deallocates memory that was previously allocated by the corresponding new operator.
 void operator delete( void* p ) noexcept
 {
 	Mem_Free( p );
 }
 
+//! Deallocates memory previously allocated by the matching new[] operator.
 void operator delete[]( void* p ) noexcept
 {
 	Mem_Free( p );
 }
 
-// ---- sized delete (C++14) ----
-
+//! Deletes memory that was allocated by the corresponding sized new operator
 void operator delete( void* p, size_t ) noexcept
 {
 	Mem_Free( p );
 }
 
+//! Custom delete operator for arrays that frees memory using the engine's memory allocator.
 void operator delete[]( void* p, size_t ) noexcept
 {
 	Mem_Free( p );
 }
 
-// ---- aligned new/delete (C++17) ----
-
+//! Provides aligned memory allocation for C++17 aligned new expressions.
 void* operator new( size_t s, std::align_val_t al )
 {
 	const size_t alignment = ( size_t )al;
@@ -158,6 +163,7 @@ void* operator new( size_t s, std::align_val_t al )
 	return p;
 }
 
+//! Custom memory allocator for aligned dynamic memory allocation
 void* operator new[]( size_t s, std::align_val_t al )
 {
 	const size_t alignment = ( size_t )al;
@@ -167,30 +173,31 @@ void* operator new[]( size_t s, std::align_val_t al )
 	return p;
 }
 
+//! Custom delete operator for aligned memory deallocation.
 void operator delete( void* p, std::align_val_t al ) noexcept
 {
 	Mem_FreeAligned( p, ( size_t )al );
 }
 
+//! Deallocates memory that was previously allocated with the corresponding aligned new operator.
 void operator delete[]( void* p, std::align_val_t al ) noexcept
 {
 	Mem_FreeAligned( p, ( size_t )al );
 }
 
-// ---- sized + aligned delete (C++17) ----
-
+//! Custom aligned delete operator for memory deallocation.
 void operator delete( void* p, size_t, std::align_val_t al ) noexcept
 {
 	Mem_FreeAligned( p, ( size_t )al );
 }
 
+//! Deallocates aligned memory previously allocated by a corresponding new[] expression.
 void operator delete[]( void* p, size_t, std::align_val_t al ) noexcept
 {
 	Mem_FreeAligned( p, ( size_t )al );
 }
 
-// ---- tagged new/delete ----
-
+//! Overloaded new operator that allocates memory with a specified tag and throws bad_alloc on failure.
 void* operator new( size_t s, memTag_t tag )
 {
 	void* p = Mem_Alloc( s, tag );
@@ -199,6 +206,7 @@ void* operator new( size_t s, memTag_t tag )
 	return p;
 }
 
+//! Allocates memory for an array with the specified size and memory tag, throwing std::bad_alloc on failure
 void* operator new[]( size_t s, memTag_t tag )
 {
 	void* p = Mem_Alloc( s, tag );
@@ -207,16 +215,19 @@ void* operator new[]( size_t s, memTag_t tag )
 	return p;
 }
 
+//! Deallocates memory previously allocated with the custom new operator.
 void operator delete( void* p, memTag_t ) noexcept
 {
 	Mem_Free( p );
 }
 
+//! Deallocates memory previously allocated with a matching new[] operator using the specified memory tag.
 void operator delete[]( void* p, memTag_t ) noexcept
 {
 	Mem_Free( p );
 }
 
+//! Allocates memory and initializes it to zero.
 void* Mem_ClearedAlloc( const size_t size, const memTag_t tag )
 {
 	void* mem = Mem_Alloc( size, tag );
@@ -224,6 +235,7 @@ void* Mem_ClearedAlloc( const size_t size, const memTag_t tag )
 	return mem;
 }
 
+//! Allocates memory and copies a string into it, returning a new null-terminated character array.
 char* Mem_CopyString( const char* in )
 {
 	char* out = ( char* )Mem_Alloc( strlen( in ) + 1, TAG_STRING );

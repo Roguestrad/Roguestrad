@@ -76,7 +76,18 @@ public:
 	//! Destructor for the idODE_Euler class that cleans up allocated memory for derivatives.
 	virtual ~idODE_Euler();
 
-	//! Evaluates the Euler integration for the given state and time step.
+	/*!
+		\brief Evaluates Euler integration for the given state and time step by computing new state values based on derivatives and time delta.
+
+		This function performs Euler integration to update the state of a system. It calculates the time step delta between t0 and t1, computes the derivatives of the system at time t0 using the
+	   provided user data, and then updates each state component by adding the product of the time delta and the corresponding derivative to the initial state value.
+
+		\param state Current state values of the system
+		\param newState Output array containing the updated state values
+		\param t0 Initial time value
+		\param t1 Final time value
+		\return The time step delta between t1 and t0.
+	*/
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 protected:
@@ -96,7 +107,19 @@ public:
 	//! Destroys the idODE_Midpoint object and cleans up allocated memory.
 	virtual ~idODE_Midpoint();
 
-	//! Evaluates the midpoint ODE integration step using the provided state and time values.
+	/*!
+		\brief Evaluates the midpoint ordinary differential equation integration step using the provided state and time values
+
+		This function performs a midpoint integration step for solving ordinary differential equations. It takes the current state and time values, computes intermediate derivatives, and updates the
+	   newState array with the integrated values. The method uses a two-stage approach where the first stage computes an intermediate state halfway through the time interval, and the second stage uses
+	   this intermediate state to compute the final result. The function returns the time interval delta which was used in the computation.
+
+		\param state Current state values for the ODE system
+		\param newState Output array containing the integrated state values
+		\param t0 Initial time value
+		\param t1 Final time value
+		\return The time interval delta (t1 - t0) used in the integration process
+	*/
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 protected:
@@ -117,7 +140,18 @@ public:
 	//! Destructor for the idODE_RK4 class that cleans up dynamically allocated memory for state and derivative arrays.
 	virtual ~idODE_RK4();
 
-	//! Evaluates the Runge-Kutta 4th order solution for the given state and time interval
+	/*!
+		\brief Evaluates the Runge-Kutta 4th order solution for the given state and time interval
+
+		This function performs a fourth-order Runge-Kutta numerical integration step to advance a system state from time t0 to t1. It uses the derivative function to compute intermediate values and
+	   combines them to produce a more accurate solution than simpler methods. The function stores the result in the newState array and returns the time step size
+
+		\param state current state of the system
+		\param newState output array containing the state at the new time
+		\param t0 initial time
+		\param t1 final time
+		\return the time step size (t1 - t0) used in the integration
+	*/
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 protected:
@@ -141,7 +175,19 @@ public:
 	//! Destructor for the idODE_RK4Adaptive class that releases all dynamically allocated memory.
 	virtual ~idODE_RK4Adaptive();
 
-	//! Evaluates the adaptive Runge-Kutta 4th order differential equation solver and returns the next time step size.
+	/*!
+		\brief Evaluates the adaptive Runge-Kutta 4th order differential equation solver and returns the next time step size.
+
+		This function implements an adaptive Runge-Kutta 4th order method for solving ordinary differential equations. It takes the current state vector and computes a new state vector using the RK4
+	   method with adaptive step sizing. The function performs multiple stages of computation to estimate the local truncation error and adjusts the time step accordingly. It returns the next time
+	   step size based on the estimated error and the maximum allowed error tolerance.
+
+		\param state The current state vector of the differential equation system
+		\param newState The computed next state vector after integration
+		\param t0 The starting time of the integration step
+		\param t1 The ending time of the integration step
+		\return The next time step size for the adaptive integration method
+	*/
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 	//! Sets the maximum error tolerance for the adaptive Runge-Kutta 4 solver.

@@ -221,7 +221,16 @@ public:
 	//! Writes the difference between two float values as a delta.
 	void		WriteDeltaFloat( float oldValue, float newValue ) { WriteFloat( newValue - oldValue ); }
 
-	//! Writes the difference between two floating-point values using a specified number of exponent and mantissa bits.
+	/*!
+		\brief Writes the difference between two floating-point values using a specified number of exponent and mantissa bits
+
+		This function calculates the difference between the new and old floating-point values and writes the result using the WriteFloat method with the specified number of exponent and mantissa bits
+
+		\param oldValue The original floating-point value
+		\param newValue The new floating-point value
+		\param exponentBits The number of bits to use for the exponent
+		\param mantissaBits The number of bits to use for the mantissa
+	*/
 	void		WriteDeltaFloat( float oldValue, float newValue, int exponentBits, int mantissaBits ) { WriteFloat( newValue - oldValue, exponentBits, mantissaBits ); }
 
 	//! Writes the differences between a dictionary and a base dictionary to the message buffer

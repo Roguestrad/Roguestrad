@@ -235,6 +235,7 @@ const char* idCQuat::ToString( int precision ) const
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
 }
 
+//! Performs spherical linear interpolation between two quaternions.
 idQuat Slerp( const idQuat& from, const idQuat& to, const float t )
 {
 	return idQuat().Slerp( from, to, t );

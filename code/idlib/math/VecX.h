@@ -163,7 +163,17 @@ public:
 	//! Fills the vector with random values between l and u using the provided seed.
 	ID_INLINE void			Random( int seed, float l = 0.0f, float u = 1.0f );
 
-	//! Initializes the vector with random values within a specified range using a given seed.
+	/*!
+		\brief Initializes the vector with random values within a specified range using a given seed.
+
+		The function sets the size of the vector to the specified length and fills it with random floating-point values. The random values are generated using the provided seed to ensure reproducible
+	   results. Each value is uniformly distributed within the range [l, u). The random number generator is initialized with the given seed before generating the values.
+
+		\param length The number of elements to initialize in the vector
+		\param seed The seed value for the random number generator
+		\param l The lower bound of the random value range
+		\param u The upper bound of the random value range
+	*/
 	ID_INLINE void			Random( int length, int seed, float l = 0.0f, float u = 1.0f );
 
 	//! Negates all elements of the vector in place.

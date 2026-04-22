@@ -97,7 +97,17 @@ public:
 	//! Constructs an idParser object and initializes its internal state, loading the specified file.
 	idParser( const char* filename, int flags = 0, bool OSPath = false );
 
-	//! Constructs an idParser object with the specified memory buffer, length, and name.
+	/*!
+		\brief Constructs an idParser object with the specified memory buffer, length, and name.
+
+		Initializes the parser object with the provided memory buffer and its properties. Sets up internal state variables and loads the memory buffer into the parser for tokenization and parsing
+	   operations.
+
+		\param ptr Pointer to the memory buffer containing the data to parse
+		\param length Length of the memory buffer in bytes
+		\param name Name of the script or data source for error reporting
+		\param flags Additional flags for parser configuration
+	*/
 	idParser( const char* ptr, int length, const char* name, int flags = 0 );
 
 	//! Destructor for the idParser class that frees the source.
@@ -151,7 +161,20 @@ public:
 	//! Skips a braced section in the parser input.
 	int				SkipBracedSection( bool parseFirstBrace = true );
 
-	//! Parses a braced section from the input stream into the provided string.
+	/*!
+		\brief Parses a braced section from the input stream into the provided string.
+
+		This function reads tokens from the input stream until a matching closing brace is found, properly handling nested braces. It constructs the output string by appending tokens, managing
+	   indentation when tabs are specified, and handles string literals and character literals appropriately. The function supports customizable opening and closing characters for the braced section.
+
+		\param out The string to store the parsed braced section content
+		\param tabs The number of tabs to use for indentation, or negative to disable
+		\param parseFirstBrace Whether to expect and parse the opening brace before starting to read tokens
+		\param intro The character that starts a braced section
+		\param outro The character that ends a braced section
+		\return A pointer to the parsed content stored in the out string
+		\throws Error is thrown if a closing brace is missing
+	*/
 	const char*		ParseBracedSection( idStr& out, int tabs, bool parseFirstBrace, char intro, char outro );
 
 	//! Parses a braced section from the script into the provided string while maintaining indents and newlines.
@@ -181,7 +204,19 @@ public:
 	//! Parses a 2D matrix of specified dimensions from the input stream.
 	int				Parse2DMatrix( int y, int x, float* m );
 
-	//! Parses a 3D matrix from the input stream, filling the provided float array with the parsed values.
+	/*!
+		\brief Parses a 3D matrix from the input stream and fills the provided float array with the parsed values.
+
+		This function parses a 3D matrix from the input stream by reading z number of 2D matrices, each of size y by x. It expects an opening parenthesis before the matrix data and a closing
+	   parenthesis after. The parsed values are stored in the provided float array m, with each 2D matrix stored sequentially in memory. The function returns false if any parsing step fails, including
+	   missing parentheses or invalid matrix data.
+
+		\param z The number of 2D matrices to parse
+		\param y The number of rows in each 2D matrix
+		\param x The number of columns in each 2D matrix
+		\param m Pointer to the float array where the parsed matrix data will be stored
+		\return Returns 1 if the parsing is successful, 0 if any error occurs during parsing
+	*/
 	int				Parse3DMatrix( int z, int y, int x, float* m );
 
 	//! Returns the length of the whitespace preceding the last read token.
@@ -296,10 +331,34 @@ protected:
 	//! Merges tokens of compatible types into the first token.
 	int					 MergeTokens( idToken* t1, idToken* t2 );
 
-	//! Expands builtin preprocessor defines such as line number, file name, date, and time into token sequences
+	/*!
+		\brief Expands builtin preprocessor defines such as line number, file name, date, and time into token sequences
+
+		This function handles the expansion of built-in preprocessor definitions like line numbers, file names, dates, and times. It creates a new token based on the provided deftoken and populates it
+	   with the appropriate value depending on the builtin type. The function supports BUILTIN_LINE, BUILTIN_FILE, BUILTIN_DATE, and BUILTIN_TIME cases. For BUILTIN_STDC, it issues a warning and
+	   returns null tokens. The function returns true upon successful processing
+
+		\param deftoken Input token that contains the definition to be expanded
+		\param define Definition structure that specifies the builtin type
+		\param firsttoken Pointer to store the first token in the expanded sequence
+		\param lasttoken Pointer to store the last token in the expanded sequence
+		\return Returns true if the builtin define was successfully expanded, false otherwise
+	*/
 	int					 ExpandBuiltinDefine( idToken* deftoken, define_t* define, idToken** firsttoken, idToken** lasttoken );
 
-	//! Expands a define token into a list of tokens, handling parameters, stringizing, and merging operators
+	/*!
+		\brief Expands a define token into a list of tokens, handling parameters, stringizing, and merging operators.
+
+		This function processes a define token and expands it into a list of tokens. It handles both parameterized and non-parameterized defines, processes stringizing operators (#) and merging
+	   operators (##), and manages token ownership and memory allocation. The expanded tokens are stored in a linked list starting at firsttoken and ending at lasttoken. The function returns true on
+	   successful expansion, false otherwise.
+
+		\param deftoken The token representing the define being expanded
+		\param define The define structure containing the tokens to expand
+		\param firsttoken Pointer to store the first token of the expanded result
+		\param lasttoken Pointer to store the last token of the expanded result
+		\return True if expansion was successful, false otherwise
+	*/
 	int					 ExpandDefine( idToken* deftoken, define_t* define, idToken** firsttoken, idToken** lasttoken );
 
 	//! Expands a define into the parser source and updates the token list
@@ -356,7 +415,20 @@ protected:
 	//! Parses and processes the #endif directive in the parser.
 	int					 Directive_endif();
 
-	//! Evaluates tokens for conditional compilation expressions and returns the result
+	/*!
+		\brief Evaluates tokens for conditional compilation expressions and returns the result.
+
+		This function processes a list of tokens representing a conditional compilation expression, such as those used in #if/#elif directives. It handles various token types including numbers, names
+	   (preprocessor definitions), and punctuation. The function supports operations like logical and bitwise operators, parentheses for grouping, and unary minus for negative values. It evaluates the
+	   expression and stores the result in either integer or floating-point format depending on the context. The function also performs error checking for syntax errors, unmatched parentheses, and
+	   invalid operations.
+
+		\param tokens List of tokens to evaluate
+		\param intvalue Pointer to store integer result, or NULL
+		\param floatvalue Pointer to store floating-point result, or NULL
+		\param integer Flag indicating if evaluation should be integer-based
+		\return Returns 0 on success, non-zero on error. The actual computed value is stored in intvalue or floatvalue depending on the token types and the integer flag.
+	*/
 	int					 EvaluateTokens( idToken* tokens, signed int* intvalue, double* floatvalue, int integer );
 
 	//! Evaluates a mathematical expression from parsed tokens and stores the result in either an integer or floating-point variable

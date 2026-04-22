@@ -135,7 +135,20 @@ private:
 	class idParallelJobList_Threads* jobListThreads;
 	const idColor*					 color;
 
-	//! Constructs a parallel job list with the specified parameters.
+	/*!
+		\brief Constructs a parallel job list with the specified parameters.
+
+		The constructor initializes a parallel job list with the provided identifier, priority, maximum number of jobs, and maximum number of synchronizations. It also assigns the provided color to
+	   the job list. The priority must be greater than JOBLIST_PRIORITY_NONE, as enforced by an assertion. The actual job list implementation is delegated to an internal idParallelJobList_Threads
+	   object.
+
+		\param id Unique identifier for the job list
+		\param priority Priority level for the job list, must be greater than JOBLIST_PRIORITY_NONE
+		\param maxJobs Maximum number of jobs that can be processed in parallel
+		\param maxSyncs Maximum number of synchronization points allowed
+		\param color Color associated with the job list for visualization or identification
+		\throws Throws an assertion error if the priority is not greater than JOBLIST_PRIORITY_NONE.
+	*/
 	idParallelJobList( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs, const idColor* color );
 
 	//! Destroys the idParallelJobList and cleans up its associated threads.

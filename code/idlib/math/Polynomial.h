@@ -56,10 +56,32 @@ public:
 	//! Initializes a polynomial with coefficients a, b, and c for terms x^2, x, and the constant term respectively.
 	explicit idPolynomial( float a, float b, float c );
 
-	//! Initializes a polynomial with the given coefficients for terms a*x^3 + b*x^2 + c*x + d.
+	/*!
+		\brief Initializes a polynomial with coefficients for terms a*x^3 + b*x^2 + c*x + d
+
+		The constructor initializes a polynomial object with the given coefficients, where a, b, c, and d correspond to the coefficients of the terms x^3, x^2, x, and the constant term respectively.
+	   The polynomial is initialized with a degree of 3, and the coefficients are stored in the order [d, c, b, a] to match the standard polynomial representation.
+
+		\param a coefficient for the x^3 term
+		\param b coefficient for the x^2 term
+		\param c coefficient for the x term
+		\param d constant term
+	*/
 	explicit idPolynomial( float a, float b, float c, float d );
 
-	//! Initializes a polynomial with coefficients for terms of degree 0 through 4.
+	/*!
+		\brief Initializes a polynomial with coefficients for terms of degree 0 through 4.
+
+		The constructor initializes a polynomial object with the specified coefficients for terms of degree 0 through 4. The coefficients are stored in the order of increasing degree, where
+	   coefficient[0] corresponds to the constant term (degree 0), coefficient[1] to the linear term (degree 1), and so on up to coefficient[4] for the quartic term (degree 4). The polynomial is
+	   initialized with a degree of -1 and no allocated memory, then resized to accommodate 5 coefficients (degrees 0-4) and the coefficients are set accordingly.
+
+		\param a coefficient for the quartic term (degree 4)
+		\param b coefficient for the cubic term (degree 3)
+		\param c coefficient for the quadratic term (degree 2)
+		\param d coefficient for the linear term (degree 1)
+		\param e coefficient for the constant term (degree 0)
+	*/
 	explicit idPolynomial( float a, float b, float c, float d, float e );
 
 	// SRS - Added destructor, otherwise idPolynomial() will leak memory
@@ -146,13 +168,56 @@ public:
 	//! Returns the root of a linear equation ax + b = 0
 	static int	  GetRoots1( float a, float b, float* roots );
 
-	//! Calculates the roots of a quadratic equation ax^2 + bx + c = 0.
+	/*!
+		\brief Calculates the real roots of a quadratic equation ax^2 + bx + c = 0
+
+		This function solves for the roots of a quadratic equation using the quadratic formula. It handles three cases: no real roots (when the discriminant is negative), one real root (when the
+	   discriminant is zero), and two real roots (when the discriminant is positive). The function automatically normalizes the equation if the leading coefficient 'a' is not 1, and it ensures that
+	   'a' is non-zero during normalization.
+
+		\param a Leading coefficient of the quadratic term
+		\param b Coefficient of the linear term
+		\param c Constant term
+		\param roots Pointer to array where computed roots will be stored
+		\return Number of real roots found (0, 1, or 2)
+		\throws Asserts if the leading coefficient 'a' is zero during normalization
+	*/
 	static int	  GetRoots2( float a, float b, float c, float* roots );
 
-	//! Solves a cubic polynomial equation and returns the number of real roots found.
+	/*!
+		\brief Solves a cubic polynomial equation and returns the number of real roots found
+
+		This function computes the real roots of a cubic polynomial equation of the form ax^3 + bx^2 + cx + d = 0. It handles three cases based on the discriminant: three distinct real roots when the
+	   discriminant is negative, one real root when positive, and three real roots with possible repeated values when zero. The function normalizes the polynomial if the leading coefficient is not
+	   unity, then applies the cubic formula using trigonometric or radical methods depending on the discriminant value. The roots are stored in the provided array with a maximum of three roots
+	   returned.
+
+		\param a Leading coefficient of the cubic term
+		\param b Coefficient of the quadratic term
+		\param c Coefficient of the linear term
+		\param d Constant term
+		\param roots Output array to store the computed real roots
+		\return The number of real roots found, which can be 1 or 3 depending on the discriminant value
+		\throws assertion failure when a is zero and the polynomial is not linear
+	*/
 	static int	  GetRoots3( float a, float b, float c, float d, float* roots );
 
-	//! Computes the real roots of a quartic polynomial equation.
+	/*!
+		\brief Computes the real roots of a quartic polynomial equation of the form ax^4 + bx^3 + cx^2 + dx + e = 0
+
+		This function solves quartic polynomial equations by reducing them to cubic equations and then solving those using the GetRoots3 method. The algorithm handles cases where the leading
+	   coefficient a is not equal to 1 by normalizing the equation. It computes up to four real roots and returns the count of valid roots found. The function uses numerical methods to find the roots
+	   and handles special cases like negative discriminants which result in no real roots.
+
+		\param a Leading coefficient of the quartic term
+		\param b Coefficient of the cubic term
+		\param c Coefficient of the quadratic term
+		\param d Coefficient of the linear term
+		\param e Constant term
+		\param roots Output array to store the computed real roots
+		\return The number of real roots found (between 0 and 4)
+		\throws Assertion error if the leading coefficient a is zero
+	*/
 	static int	  GetRoots4( float a, float b, float c, float d, float e, float* roots );
 
 	//! Returns a pointer to the coefficient array of the polynomial.

@@ -86,13 +86,34 @@ public:
 	//! Default constructor for the idPlane class.
 	idPlane();
 
-	//! Constructs an idPlane object with the specified coefficients a, b, c, and d.
+	/*!
+		\brief Constructs an idPlane object with the specified coefficients a, b, c, and d.
+
+		This constructor initializes a plane object using four float coefficients that define the plane equation ax + by + cz + d = 0. The parameters correspond to the coefficients of the plane normal
+	   vector and the distance from the origin.
+
+		\param a The coefficient for the x component of the plane normal vector
+		\param b The coefficient for the y component of the plane normal vector
+		\param c The coefficient for the z component of the plane normal vector
+		\param d The distance from the origin along the normal vector
+	*/
 	explicit idPlane( float a, float b, float c, float d );
 
 	//! Initializes a plane with a normal vector and distance from origin.
 	explicit idPlane( const idVec3& normal, const float dist );
 
-	//! Constructs a plane from three points and optionally fixes degenerate cases.
+	/*!
+		\brief Constructs a plane from three points and optionally fixes degenerate cases.
+
+		This constructor initializes a plane using three vertices that define the plane's position and orientation. The plane is constructed such that it passes through all three points. If the
+	   fixDegenerate parameter is set to true, the constructor will attempt to handle cases where the three points are collinear or nearly collinear, which would otherwise result in a degenerate
+	   plane. This can be useful in computational geometry and graphics applications where robustness against degenerate inputs is required.
+
+		\param v0 First point used to define the plane
+		\param v1 Second point used to define the plane
+		\param v2 Third point used to define the plane
+		\param fixDegenerate If true, attempts to fix degenerate cases where the three points are collinear
+	*/
 	explicit idPlane( const idVec3& v0, const idVec3& v1, const idVec3& v2, bool fixDegenerate = false );
 
 	//! Returns the plane coefficient at the specified index
@@ -164,10 +185,34 @@ public:
 	//! Returns the type of the plane based on its normal vector.
 	int			  Type() const;
 
-	//! Sets the plane from three points and returns true if the plane is valid.
+	/*!
+		\brief Sets the plane from three points and returns true if the plane is valid.
+
+		The function calculates the plane normal using the cross product of vectors formed by the three input points. It then normalizes the resulting normal vector and computes the distance from the
+	   origin. If the normalization fails due to a degenerate case (e.g., collinear points), the function may attempt to fix the degeneracy if the fixDegenerate flag is set to true. The function
+	   returns false if the plane cannot be properly defined from the given points.
+
+		\param p1 First point defining the plane
+		\param p2 Second point defining the plane
+		\param p3 Third point defining the plane
+		\param fixDegenerate If true, attempts to fix degenerate cases where the three points are collinear or nearly collinear
+		\return True if the plane is successfully defined from the three points, false otherwise
+	*/
 	bool		  FromPoints( const idVec3& p1, const idVec3& p2, const idVec3& p3, bool fixDegenerate = true );
 
-	//! Calculates a plane from two direction vectors and a point, returning false if the vectors are degenerate.
+	/*!
+		\brief Calculates a plane from two direction vectors and a point, returning false if the vectors are degenerate
+
+		The function computes the plane normal by taking the cross product of the two input direction vectors. If the resulting normal has zero length, the function returns false, indicating that the
+	   vectors are degenerate. Otherwise, it normalizes the normal vector and calculates the distance component d using the provided point. The fixDegenerate parameter controls whether degenerate
+	   cases should be handled by returning false or by attempting to normalize the vector
+
+		\param dir1 First direction vector used to compute the plane normal
+		\param dir2 Second direction vector used to compute the plane normal
+		\param p Point through which the plane passes
+		\param fixDegenerate If true, degenerate cases will return false; if false, normalization will still be attempted
+		\return True if the plane was successfully calculated, false if the direction vectors are degenerate
+	*/
 	bool		  FromVecs( const idVec3& dir1, const idVec3& dir2, const idVec3& p, bool fixDegenerate = true );
 
 	//! Adjusts the plane constant d so that the plane passes through the given point p

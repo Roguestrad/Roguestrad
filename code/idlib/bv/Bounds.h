@@ -178,13 +178,35 @@ public:
 	//! Computes the tightest bounding box that encloses both the initial point and its translated position.
 	void		  FromPointTranslation( const idVec3& point, const idVec3& translation );
 
-	//! Initializes the bounding box from a transformed bounds with translation applied.
+	/*!
+		\brief Initializes the bounding box from a transformed bounds with translation applied.
+
+		The function sets up a bounding box by first applying a transformation consisting of an origin and axis to the input bounds. If the axis represents a rotation, it uses a specialized function
+	   for transformed bounds. Otherwise, it directly applies the origin to both minimum and maximum points of the bounds. After this initial transformation, it applies the translation vector to
+	   adjust the final bounding box, ensuring that negative translation values affect the minimum point and positive values affect the maximum point.
+
+		\param bounds The input bounding box to be transformed
+		\param origin The origin point for the transformation
+		\param axis The axis matrix for the transformation, potentially representing rotation
+		\param translation The translation vector to be applied after the initial transformation
+	*/
 	void		  FromBoundsTranslation( const idBounds& bounds, const idVec3& origin, const idMat3& axis, const idVec3& translation );
 
 	//! Computes the tightest axis-aligned bounding box for a point rotated around an origin.
 	void		  FromPointRotation( const idVec3& point, const idRotation& rotation );
 
-	//! Computes the bounding box for a transformed bounds object using rotation.
+	/*!
+		\brief Computes the bounding box for a transformed bounds object using rotation.
+
+		This function calculates the bounding box of a transformed bounds object by applying a rotation to the original bounds. It handles two cases: when the rotation angle is less than 180 degrees,
+	   it computes the bounds by transforming each corner of the original bounds and taking the union of the resulting rotated bounds. When the rotation angle is 180 degrees or more, it computes a
+	   conservative bounding box based on the radius of the original bounds and the rotation origin, which may result in a larger bounding box than necessary.
+
+		\param bounds The original bounds to be transformed
+		\param origin The origin point for the transformation
+		\param axis The axis matrix for the transformation
+		\param rotation The rotation to be applied to the bounds
+	*/
 	void		  FromBoundsRotation( const idBounds& bounds, const idVec3& origin, const idMat3& axis, const idRotation& rotation );
 
 	//! Computes the 8 corner points of the bounding box and stores them in the provided array.
@@ -196,7 +218,18 @@ public:
 	//! Computes the minimum and maximum projections of the bounding box onto a given direction vector.
 	void		  AxisProjection( const idVec3& dir, float& min, float& max ) const;
 
-	//! Computes the minimum and maximum projections of the bounding box along a specified direction after applying an axis transformation.
+	/*!
+		\brief Computes the minimum and maximum scalar projections of the bounding box along a specified direction after applying an axis transformation.
+
+		This function calculates the projection interval of the bounding box onto a given direction vector. The projection is computed after transforming the box center and extents by the provided
+	   axis matrix. The min and max values represent the range of the projection along the specified direction.
+
+		\param origin The origin point to which the box center is offset before applying the axis transformation
+		\param axis The transformation matrix to apply to the box center and extents
+		\param dir The direction vector along which to compute the projection
+		\param min Output parameter for the minimum projection value
+		\param max Output parameter for the maximum projection value
+	*/
 	void		  AxisProjection( const idVec3& origin, const idMat3& axis, const idVec3& dir, float& min, float& max ) const;
 
 	//! Returns the dimension of the bounds, which is always 6.

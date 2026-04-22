@@ -46,7 +46,17 @@ public:
 	//! Constructs an idInterpolate object with default values.
 	idInterpolate();
 
-	//! Initializes the interpolation with start time, duration, and start/end values.
+	/*!
+		\brief Initializes the interpolation with start time, duration, and start/end values.
+
+		This function sets up the interpolation parameters including the start time, duration, and the initial and final values for the interpolation. It is typically used to configure an
+	   interpolation object before performing interpolation operations.
+
+		\param startTime The starting time for the interpolation
+		\param duration The total duration of the interpolation
+		\param startValue The value at the beginning of the interpolation
+		\param endValue The value at the end of the interpolation
+	*/
 	void		Init( const int startTime, const int duration, const type& startValue, const type& endValue );
 
 	//! Sets the start time for the interpolation.
@@ -139,7 +149,20 @@ public:
 	//! Constructs an idInterpolateAccelDecelLinear object with default values.
 	idInterpolateAccelDecelLinear();
 
-	//! Initializes the acceleration, deceleration, and linear motion parameters for interpolation between start and end values.
+	/*!
+		\brief Initializes interpolation parameters for smooth acceleration, deceleration, and linear motion between start and end values
+
+		Configures the interpolation state by setting up acceleration, deceleration, and linear time segments based on the provided timing parameters. The function adjusts the acceleration and
+	   deceleration times if their sum exceeds the total duration, ensuring proper interpolation behavior. It calculates the speed required for smooth transition and initializes the extrapolation
+	   state accordingly
+
+		\param startTime Start time for the interpolation
+		\param accelTime Time allocated for acceleration phase
+		\param decelTime Time allocated for deceleration phase
+		\param duration Total duration of the interpolation
+		\param startValue Initial value for the interpolation
+		\param endValue Final value for the interpolation
+	*/
 	void Init( const int startTime, const int accelTime, const int decelTime, const int duration, const type& startValue, const type& endValue );
 
 	//! Sets the start time for the interpolation and invalidates the current state.
@@ -307,7 +330,20 @@ public:
 	//! Initializes all time and value members of the interpolator to zero.
 	idInterpolateAccelDecelSine();
 
-	//! Initializes the acceleration and deceleration sine interpolation with the given parameters.
+	/*!
+		\brief Initializes acceleration and deceleration sine interpolation with the specified timing and value parameters.
+
+		This function sets up the interpolation parameters for a smooth acceleration and deceleration transition between start and end values over a specified duration. It adjusts the acceleration and
+	   deceleration times if they exceed the total duration, and calculates the linear time segment. The function configures an internal extrapolation object to handle the interpolation type based on
+	   whether acceleration, linear, or deceleration is used.
+
+		\param startTime The start time for the interpolation
+		\param accelTime The duration of the acceleration phase
+		\param decelTime The duration of the deceleration phase
+		\param duration The total duration of the interpolation
+		\param startValue The value at the start of the interpolation
+		\param endValue The value at the end of the interpolation
+	*/
 	void Init( const int startTime, const int accelTime, const int decelTime, const int duration, const type& startValue, const type& endValue );
 
 	//! Initializes the start time for the interpolation and invalidates the current state.

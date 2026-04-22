@@ -66,7 +66,19 @@ public:
 	//! Initializes an idExtrapolate object with default values.
 	idExtrapolate();
 
-	//! Initializes the extrapolation parameters for a given time range and values
+	/*!
+		\brief Initializes extrapolation parameters for a given time range and values.
+
+		This function sets up the parameters required for extrapolation calculations, including the start time, duration, initial value, base speed, and current speed. The extrapolation type
+	   determines how the extrapolation should be calculated.
+
+		\param startTime The starting time for the extrapolation
+		\param duration The total duration of the extrapolation
+		\param startValue The initial value at the start time
+		\param baseSpeed The base speed used for extrapolation calculations
+		\param speed The current speed for extrapolation
+		\param extrapolationType The type of extrapolation to perform
+	*/
 	void			Init( const int startTime, const int duration, const type& startValue, const type& baseSpeed, const type& speed, const extrapolation_t extrapolationType );
 
 	//! Returns the interpolated value at the specified time based on the extrapolation type and configuration.

@@ -110,7 +110,23 @@ static int Sys_GetThreadName( pthread_t handle, char* namebuf, size_t buflen )
 
 #endif // DEBUG_THREADS
 
-//! Creates a new thread with the specified parameters and returns its handle
+/*!
+	\brief Creates a new thread with the specified parameters and returns its handle
+
+	This function creates a new thread using pthread_create with the provided function, parameters, and thread priority. The thread is created in a joinable state and optionally named for debugging
+   purposes. The function performs error checking and will cause a fatal error if thread creation or attribute setting fails. The thread will be scheduled according to the specified priority, though
+   the actual scheduling policy implementation is currently commented out
+
+	\param function Thread function to execute
+	\param parms Parameters to pass to the thread function
+	\param priority Priority level for the new thread
+	\param name Name for debugging purposes
+	\param core Core affinity for the thread
+	\param stackSize Stack size for the new thread
+	\param suspended Whether to create the thread in a suspended state
+	\return Handle to the created thread as a uintptr_t value
+	\throws FatalError if pthread_attr_setdetachstate, pthread_create, or pthread_setname_np fails
+*/
 uintptr_t Sys_CreateThread( xthread_t function, void* parms, xthreadPriority priority, const char* name, core_t core, int stackSize, bool suspended )
 {
 	pthread_attr_t attr;

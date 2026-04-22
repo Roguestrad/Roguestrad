@@ -1155,10 +1155,29 @@ public:
 	//! Initializes a new idVec4 with all components set to the provided x value.
 	explicit idVec4( const float x ) { Set( x, x, x, x ); }
 
-	//! Constructs an idVec4 object with the specified x, y, z, and w components.
+	/*!
+		\brief Constructs an idVec4 object with the specified x, y, z, and w components.
+
+		This constructor initializes a four-dimensional vector with the provided x, y, z, and w coordinates. The constructor is marked as explicit to prevent implicit conversions from scalar values to
+	   idVec4 objects. It internally calls the Set method to assign the provided values to the vector components.
+
+		\param x The x-component of the vector
+		\param y The y-component of the vector
+		\param z The z-component of the vector
+		\param w The w-component of the vector
+	*/
 	explicit idVec4( const float x, const float y, const float z, const float w ) { Set( x, y, z, w ); }
 
-	//! Sets the x, y, z, and w components of the vector.
+	/*!
+		\brief Sets the x, y, z, and w components of the vector.
+
+		This function assigns the provided float values to the respective components of the vector. It is an inline function designed for efficient assignment of all four vector components at once.
+
+		\param x The value to assign to the x component of the vector
+		\param y The value to assign to the y component of the vector
+		\param z The value to assign to the z component of the vector
+		\param w The value to assign to the w component of the vector
+	*/
 	void		  Set( const float x, const float y, const float z, const float w );
 
 	//! Sets all components of the vector to zero.
@@ -1503,7 +1522,18 @@ public:
 	//! Constructs a 5D vector from a 3D vector and a 2D vector.
 	explicit idVec5( const idVec3& xyz, const idVec2& st );
 
-	//! Constructs an idVec5 object with the specified x, y, z, s, and t components.
+	/*!
+		\brief Constructs an idVec5 object with the specified x, y, z, s, and t components
+
+		This constructor initializes a new idVec5 object by setting its five components to the values provided as parameters. The components x, y, z represent spatial coordinates, while s and t are
+	   typically used for texture coordinates or other vector components. The constructor is marked as ID_INLINE, indicating it should be inlined for performance reasons.
+
+		\param x The x-coordinate component of the vector
+		\param y The y-coordinate component of the vector
+		\param z The z-coordinate component of the vector
+		\param s The s-component of the vector
+		\param t The t-component of the vector
+	*/
 	explicit idVec5( const float x, const float y, const float z, const float s, const float t );
 
 	//! Returns the float value at the specified index in the idVec5 vector.
@@ -1625,10 +1655,34 @@ public:
 	//! Constructs an idVec6 object by copying 6 float values from the provided array.
 	explicit idVec6( const float* a );
 
-	//! Constructs an idVec6 object with the specified six float components.
+	/*!
+		\brief Constructs an idVec6 object with the specified six float components.
+
+		This constructor initializes a 6-dimensional vector by assigning the provided float values to each component of the vector. The components are assigned in order to the internal array p[0]
+	   through p[5].
+
+		\param a1 The value for the first component of the vector
+		\param a2 The value for the second component of the vector
+		\param a3 The value for the third component of the vector
+		\param a4 The value for the fourth component of the vector
+		\param a5 The value for the fifth component of the vector
+		\param a6 The value for the sixth component of the vector
+	*/
 	explicit idVec6( const float a1, const float a2, const float a3, const float a4, const float a5, const float a6 );
 
-	//! Sets the components of the vector to the specified float values.
+	/*!
+		\brief Sets the six components of the vector to the specified float values.
+
+		This function assigns the provided float values to the six components of the vector. The components are assigned in order to the internal array p[0] through p[5]. This is an inline function
+	   typically used to initialize or update the values of a 6-dimensional vector.
+
+		\param a1 First component value to set
+		\param a2 Second component value to set
+		\param a3 Third component value to set
+		\param a4 Fourth component value to set
+		\param a5 Fifth component value to set
+		\param a6 Sixth component value to set
+	*/
 	void		  Set( const float a1, const float a2, const float a3, const float a4, const float a5, const float a6 );
 
 	//! Sets all components of the vector to zero.

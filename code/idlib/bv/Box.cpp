@@ -542,7 +542,20 @@ bool idBox::LineIntersection( const idVec3& start, const idVec3& end ) const
 	return true;
 }
 
-//! Determines if a box is clipped by a plane based on the given parameters
+/*!
+	\brief Determines if a box is clipped by a plane based on the given parameters.
+
+	This function performs clipping calculations for a box against a plane using the parametric representation of the intersection. It adjusts the scale parameters to represent the intersection points
+   of the box with the plane. The function handles three cases based on the denominator value: when the denominator is positive, negative, or zero. For positive denominators, it checks and updates the
+   lower scale limit. For negative denominators, it checks and updates the upper scale limit. When the denominator is zero, it simply checks if the numerator is non-positive to determine if the box is
+   clipped.
+
+	\param denom The denominator value derived from the plane normal and the box's directional vector
+	\param numer The numerator value derived from the plane's distance and the box's position
+	\param scale0 Reference to the lower scale limit, potentially updated during the clipping process
+	\param scale1 Reference to the upper scale limit, potentially updated during the clipping process
+	\return True if the box is not clipped by the plane, false otherwise.
+*/
 static bool BoxPlaneClip( const float denom, const float numer, float& scale0, float& scale1 )
 {
 	if( denom > 0.0f ) {

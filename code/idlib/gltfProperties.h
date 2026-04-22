@@ -1155,7 +1155,19 @@ public:
 		return nullptr;
 	}
 
-	//! Retrieves a node from a specified scene by name, with optional case sensitivity and ID retrieval
+	/*!
+		\brief Retrieves a node from a specified scene by name, with optional case sensitivity and ID retrieval.
+
+		This function searches for a node with the given name within the specified scene. It returns a pointer to the found node or nullptr if the node is not found. The search can be case-sensitive
+	   or case-insensitive based on the caseSensitive parameter. If the id parameter is provided, it will be set to the index of the found node. The scene is identified by its name, and the function
+	   first maps this name to a scene ID.
+
+		\param sceneName The name of the scene to search within
+		\param name The name of the node to find
+		\param id Optional pointer to store the index of the found node
+		\param caseSensitive Flag indicating whether the name comparison should be case-sensitive
+		\return Pointer to the found gltfNode, or nullptr if no node with the specified name is found in the scene
+	*/
 	gltfNode* GetNode( const idStr& sceneName, const idStr& name, int* id = nullptr, bool caseSensitive = false )
 	{
 		int sceneId = GetSceneId( sceneName );

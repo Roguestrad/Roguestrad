@@ -127,7 +127,7 @@
     },
     "void idBounds::FromBoundsTranslation(const idBounds &bounds, const idVec3 &origin, const idMat3 &axis, const idVec3 &translation)": {
       "body_hash": "7750ebe242f2dead0c6d632cf76a0530",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idBounds::FromPointRotation(const idVec3 &point, const idRotation &rotation)": {
       "body_hash": "e699d6ba17aab61d4048423dfbd64d24",
@@ -135,7 +135,7 @@
     },
     "void idBounds::FromBoundsRotation(const idBounds &bounds, const idVec3 &origin, const idMat3 &axis, const idRotation &rotation)": {
       "body_hash": "06fda3aece885a0408c1fa3c214a589e",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idSphere idBounds::ToSphere() const": {
       "body_hash": "4708de0cdeb172c3c2f3e3768427e790",
@@ -143,7 +143,7 @@
     },
     "ID_INLINE void idBounds::AxisProjection(const idVec3 &origin, const idMat3 &axis, const idVec3 &dir, float &min, float &max) const": {
       "body_hash": "d80da2db6f85fc409c74c1e2aa19e5cd",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE int idBounds::GetDimension() const": {
       "body_hash": "b35a8de4de36d5406257e660a66980e3",
@@ -259,7 +259,7 @@
     },
     "bool idBox::RayIntersection(const idVec3 &start, const idVec3 &dir, float &scale1, float &scale2) const": {
       "body_hash": "79a7de55debebdc269b7f82a17bf0334",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idBox::FromPoints(const idVec3 *points, const int numPoints)": {
       "body_hash": "034c7367102877638c2524426049fab3",
@@ -331,7 +331,7 @@
     },
     "void idBoxOctree::QueryInMovingBox(const idBounds &box, const idVec3 &start, const idVec3 &invDir, const idVec3 &radius, QueryResult &res) const": {
       "body_hash": "0a15ef1bb7c842c96fa791071bb64582",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int idBoxOctree::GetLevel(const idBounds &box) const": {
       "body_hash": "13a7aeebfb7ef4d752314f6572038e1f",
@@ -343,7 +343,7 @@
     },
     "void idBoxOctree::Query_r(QueryContext &ctx, int nodeIdx, const idBounds &cellBox, const idBounds &spaceBox) const": {
       "body_hash": "f5f0a568ea658d1dffccc566d2652332",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idBoxOctree::AddToNode(AddContext &ctx, int nodeIdx, const idBounds &cellBox)": {
       "body_hash": "669b3056358152e14d4c06c717248bfc",
@@ -463,7 +463,7 @@
     },
     "static bool BoxPlaneClip(const float denom, const float numer, float &scale0, float &scale1)": {
       "body_hash": "4213878b4214ab9259d812462bbef130",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idBounds & idBounds::ExpandSelf(const float d)": {
       "body_hash": "a93f4302285b81e4df5f44bfbb745358",
@@ -507,7 +507,7 @@
     },
     "bool idSphere::RayIntersection(const idVec3 &start, const idVec3 &dir, float &scale1, float &scale2) const": {
       "body_hash": "b29302a04a6dd6046bde5333b2412da2",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idSphere::FromSphereRotation(const idSphere &sphere, const idVec3 &start, const idRotation &rotation)": {
       "body_hash": "9c353776b69d0e165cb6ed77b90f7e7e",
@@ -1175,7 +1175,7 @@
     },
     "ID_INLINE void idList< _type_, _tag_ >::DeleteContents(bool clear=true)": {
       "body_hash": "57e14575af43a84640683c14eb8095ae",
-      "is_trivial": false
+      "is_trivial": true
     },
     "void idPlaneSet::Clear()": {
       "body_hash": "f4315cea96f06e0996f5c85da3c56c5f",
@@ -1451,7 +1451,7 @@
     },
     "ID_INLINE idVectorSet< type, dimension >::idVectorSet(const type &mins, const type &maxs, const int boxHashSize, const int initialSize)": {
       "body_hash": "f0c174928d13ba90e191e04a1791a1ec",
-      "is_trivial": true
+      "is_trivial": false
     },
     "size_t idVectorSet< type, dimension >::Allocated() const": {
       "body_hash": "0730f08452a5cb7046417f75219a8ef0",
@@ -1463,7 +1463,7 @@
     },
     "ID_INLINE void idVectorSet< type, dimension >::Init(const type &mins, const type &maxs, const int boxHashSize, const int initialSize)": {
       "body_hash": "983682e6986c70087009b55669371bef",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idVectorSet< type, dimension >::Clear()": {
       "body_hash": "96ba11fadb966999c72cec1df3a87ebe",
@@ -1479,7 +1479,7 @@
     },
     "ID_INLINE idVectorSubset< type, dimension >::idVectorSubset(const type &mins, const type &maxs, const int boxHashSize, const int initialSize)": {
       "body_hash": "63c0f8cefbf9625f0c3458f49c475335",
-      "is_trivial": true
+      "is_trivial": false
     },
     "size_t idVectorSubset< type, dimension >::Allocated() const": {
       "body_hash": "0730f08452a5cb7046417f75219a8ef0",
@@ -1491,7 +1491,7 @@
     },
     "ID_INLINE void idVectorSubset< type, dimension >::Init(const type &mins, const type &maxs, const int boxHashSize, const int initialSize)": {
       "body_hash": "aec5186581fc5ce3584298daef73b098",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idVectorSubset< type, dimension >::Clear()": {
       "body_hash": "7e5b156eebb8d90ef1eec23d935657dd",
@@ -1523,7 +1523,7 @@
     },
     "ID_INLINE void * idListArrayResize(void *voldptr, int oldNum, int newNum, bool zeroBuffer)": {
       "body_hash": "4b6fc574dd105a353b5b3d031fb9946d",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE type * idListNewElement()": {
       "body_hash": "6c245f80b53d0a6ea6f75df239129129",
@@ -1899,7 +1899,7 @@
     },
     "ID_INLINE idRenderMatrix::idRenderMatrix(float a0, float a1, float a2, float a3, float b0, float b1, float b2, float b3, float c0, float c1, float c2, float c3, float d0, float d1, float d2, float d3)": {
       "body_hash": "4c8b3698807b9a83dcf298296a65b02c",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::Zero()": {
       "body_hash": "2b6694c05b54f70c35cc45c1684c2b5c",
@@ -1955,11 +1955,11 @@
     },
     "ID_INLINE void idRenderMatrix::TransformModelToClip(const idVec3 &src, const idRenderMatrix &modelMatrix, const idRenderMatrix &projectionMatrix, idVec4 &eye, idVec4 &clip)": {
       "body_hash": "cbc63bc9f73b133b26bb29d118e01c24",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::CreateFromOriginAxisScale(const idVec3 &origin, const idMat3 &axis, const idVec3 &scale, idRenderMatrix &out)": {
       "body_hash": "2f82631d40f5662888c72e76b3041484",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::CreateViewMatrix(const idVec3 &origin, const idMat3 &axis, idRenderMatrix &out)": {
       "body_hash": "3206b5d3745a1b5c8e91bd7a575deee9",
@@ -1967,15 +1967,15 @@
     },
     "void idRenderMatrix::CreateProjectionMatrix(float xMin, float xMax, float yMin, float yMax, float zNear, float zFar, idRenderMatrix &out)": {
       "body_hash": "27661b3bd362a9da9a6ea11498d0b972",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::CreateProjectionMatrixFov(float xFovDegrees, float yFovDegrees, float zNear, float zFar, float xOffset, float yOffset, idRenderMatrix &out)": {
       "body_hash": "8b997b39e6da15b1e1bcd1d909c6d441",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::CreateProjD3DStyle(float verticalFov, float aspect, float zNear, float zFar, idRenderMatrix &out)": {
       "body_hash": "ff33e61f2849a357b70c391b4bd093fd",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idRenderMatrix::ApplyModelDepthHack(idRenderMatrix &src, float value)": {
       "body_hash": "f62bbfee21ef3ab1b31381abdcd73533",
@@ -2011,15 +2011,15 @@
     },
     "void idRenderMatrix::SetMVP(const idRenderMatrix &mvp, idVec4 &row0, idVec4 &row1, idVec4 &row2, idVec4 &row3, bool &negativeDeterminant)": {
       "body_hash": "e6b14648de274c4e5f429a6b465126c5",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::SetMVPForBounds(const idRenderMatrix &mvp, const idBounds &bounds, idVec4 &row0, idVec4 &row1, idVec4 &row2, idVec4 &row3, bool &negativeDeterminant)": {
       "body_hash": "e85765882b3a0945d35533e862958121",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::SetMVPForInverseProject(const idRenderMatrix &mvp, const idRenderMatrix &inverseProject, idVec4 &row0, idVec4 &row1, idVec4 &row2, idVec4 &row3, bool &negativeDeterminant)": {
       "body_hash": "c6a86498d2da68936a435d101976c086",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idRenderMatrix::CullPointToMVP(const idRenderMatrix &mvp, const idVec3 &point, bool zeroToOne=false)": {
       "body_hash": "442a02a39367fc8e79d300dd16a75c7b",
@@ -2027,7 +2027,7 @@
     },
     "bool idRenderMatrix::CullPointToMVPbits(const idRenderMatrix &mvp, const idVec3 &point, byte *outBits, bool zeroToOne=false)": {
       "body_hash": "93123f064586342c7104c1dd74c35315",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idRenderMatrix::CullBoundsToMVP(const idRenderMatrix &mvp, const idBounds &bounds, bool zeroToOne=false)": {
       "body_hash": "0b11b30ca4f8ad8a869acee4e63e3ed2",
@@ -2035,43 +2035,43 @@
     },
     "bool idRenderMatrix::CullBoundsToMVPbits(const idRenderMatrix &mvp, const idBounds &bounds, byte *outBits, bool zeroToOne=false)": {
       "body_hash": "6eba24b7a576eabb4985e697fa08d6fa",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idRenderMatrix::CullExtrudedBoundsToMVP(const idRenderMatrix &mvp, const idBounds &bounds, const idVec3 &extrudeDirection, const idPlane &clipPlane, bool zeroToOne=false)": {
       "body_hash": "43720fcbea828725e866034bd2b6f374",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idRenderMatrix::CullExtrudedBoundsToMVPbits(const idRenderMatrix &mvp, const idBounds &bounds, const idVec3 &extrudeDirection, const idPlane &clipPlane, byte *outBits, bool zeroToOne=false)": {
       "body_hash": "bec4e20e7b6f8ccdf3434a4bd6a1e8f7",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::ProjectedBounds(idBounds &projected, const idRenderMatrix &mvp, const idBounds &bounds, bool windowSpace=true)": {
       "body_hash": "a6e6586a40c86987fb11cfcf5ee6651c",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::ProjectedNearClippedBounds(idBounds &projected, const idRenderMatrix &mvp, const idBounds &bounds, bool windowSpace=true)": {
       "body_hash": "d2de135c4ccc3f5b31ea28de8462f548",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::ProjectedFullyClippedBounds(idBounds &projected, const idRenderMatrix &mvp, const idBounds &bounds, bool windowSpace=true)": {
       "body_hash": "64a37683018c793560c78a51dd65d2e7",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::DepthBoundsForBounds(float &min, float &max, const idRenderMatrix &mvp, const idBounds &bounds, bool windowSpace=true)": {
       "body_hash": "a8aa2fe0570af593d75ce97b24b7a3be",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::DepthBoundsForExtrudedBounds(float &min, float &max, const idRenderMatrix &mvp, const idBounds &bounds, const idVec3 &extrudeDirection, const idPlane &clipPlane, bool windowSpace=true)": {
       "body_hash": "873ff45eae2cb986d030333f70b1f474",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::DepthBoundsForShadowBounds(float &min, float &max, const idRenderMatrix &mvp, const idBounds &bounds, const idVec3 &localLightOrigin, bool windowSpace=true)": {
       "body_hash": "4193a78d6543492c996eaea6f22fbc28",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::GetFrustumPlanes(idPlane planes[6], const idRenderMatrix &frustum, bool zeroToOne, bool normalize)": {
       "body_hash": "b06ee0c5d621e091671e6e37418ee7a0",
-      "is_trivial": true
+      "is_trivial": false
     },
     "frustumCull_t idRenderMatrix::CullFrustumCornersToPlane(const frustumCorners_t &corners, const idPlane &plane)": {
       "body_hash": "5973c80b04c596835f72213b27f957d8",
@@ -2119,7 +2119,7 @@
     },
     "int idSurface::Split(const idPlane &plane, const float epsilon, idSurface **front, idSurface **back, int *frontOnPlaneEdges=NULL, int *backOnPlaneEdges=NULL) const": {
       "body_hash": "72b6cee642edd10e5d6acdec5c59cae1",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idSurface::ClipInPlace(const idPlane &plane, const float epsilon=ON_EPSILON, const bool keepOn=false)": {
       "body_hash": "bc9c1445070d5635a6c004514fb9caba",
@@ -2151,7 +2151,7 @@
     },
     "bool idSurface::RayIntersection(const idVec3 &start, const idVec3 &dir, float &scale, bool backFaceCull=false) const": {
       "body_hash": "ab600c85d189b176901d27ea4e9f2223",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idSurface::GenerateEdgeIndexes()": {
       "body_hash": "da3555aaed57a6f89c165ea318bb2d8c",
@@ -2187,11 +2187,11 @@
     },
     "void idSurface_Patch::Subdivide(float maxHorizontalError, float maxVerticalError, float maxLength, bool genNormals=false)": {
       "body_hash": "9a47e08f603f89eb58f857036c93f0f1",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idSurface_Patch::SubdivideExplicit(int horzSubdivisions, int vertSubdivisions, bool genNormals, bool removeLinear=false)": {
       "body_hash": "2b7df640bfb3b5df62bcf2fe9664c405",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idSurface_Patch::PutOnCurve()": {
       "body_hash": "9631f6812081f8b6eaa1831d6cd2ad10",
@@ -2219,11 +2219,11 @@
     },
     "void idSurface_Patch::SampleSinglePatchPoint(const idDrawVert ctrl[3][3], float u, float v, idDrawVert *out) const": {
       "body_hash": "9ae3d6b526ff82a93541ac6b5c014015",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idSurface_Patch::SampleSinglePatch(const idDrawVert ctrl[3][3], int baseCol, int baseRow, int width, int horzSub, int vertSub, idDrawVert *outVerts) const": {
       "body_hash": "6578eb091ad16e662326ac6504652fe4",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idSurface_Polytope::idSurface_Polytope()": {
       "body_hash": "315781fb307d13a36e73484001b5a4c8",
@@ -2263,7 +2263,7 @@
     },
     "int idSurface_Polytope::SplitPolytope(const idPlane &plane, const float epsilon, idSurface_Polytope **front, idSurface_Polytope **back) const": {
       "body_hash": "827dce750259e9d7c4495cca4cbc7304",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idSurface_SweptSpline::idSurface_SweptSpline()": {
       "body_hash": "708c30ac0813a7acfc896adbdaef45d2",
@@ -2387,7 +2387,7 @@
     },
     "void idTraceModel::GetMassProperties(const float density, float &mass, idVec3 &centerOfMass, idMat3 &inertiaTensor) const": {
       "body_hash": "129ae92be5be5ca191db762b878ab237",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idTraceModel::InitBox()": {
       "body_hash": "1f716fd50c24789d091792ed010dd164",
@@ -2407,7 +2407,7 @@
     },
     "void idTraceModel::ProjectionIntegrals(int polyNum, int a, int b, struct projectionIntegrals_s &integrals) const": {
       "body_hash": "91fe59aca55960ec7e4d159a649105a6",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idTraceModel::PolygonIntegrals(int polyNum, int a, int b, int c, struct polygonIntegrals_s &integrals) const": {
       "body_hash": "5dfdbac2720e574bcc2a28e4f1e7f506",
@@ -2463,7 +2463,7 @@
     },
     "int idWinding::Split(const idPlane &plane, const float epsilon, idWinding **front, idWinding **back) const": {
       "body_hash": "3a075ac7bc52ac3c8f9ff8b193e53c4e",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idWinding * idWinding::Clip(const idPlane &plane, const float epsilon=ON_EPSILON, const bool keepOn=false)": {
       "body_hash": "eaab70b9dcd68ee427ad39529a6d70a1",
@@ -2571,7 +2571,7 @@
     },
     "bool idWinding::PlanesConcave(const idWinding &w2, const idVec3 &normal1, const idVec3 &normal2, float dist1, float dist2) const": {
       "body_hash": "0b17598e77e07641412ec1157f973743",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idWinding::PointInside(const idVec3 &normal, const idVec3 &point, const float epsilon) const": {
       "body_hash": "f72e087f6d7bf4a494b06f34deed1784",
@@ -2579,11 +2579,11 @@
     },
     "bool idWinding::LineIntersection(const idPlane &windingPlane, const idVec3 &start, const idVec3 &end, bool backFaceCull=false) const": {
       "body_hash": "0abbc0f41f9e9594f33af622313ac46e",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idWinding::RayIntersection(const idPlane &windingPlane, const idVec3 &start, const idVec3 &dir, float &scale, bool backFaceCull=false) const": {
       "body_hash": "ad3d4d2e9288bb84472bdf471cce5364",
-      "is_trivial": true
+      "is_trivial": false
     },
     "float idWinding::TriangleArea(const idVec3 &a, const idVec3 &b, const idVec3 &c)": {
       "body_hash": "e234a4f26716e0773fd591ed2399ffac",
@@ -2615,7 +2615,7 @@
     },
     "int idWinding2D::Split(const idVec3 &plane, const float epsilon, idWinding2D **front, idWinding2D **back) const": {
       "body_hash": "3c018840cb8b965fa141e49571240b44",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idWinding2D::ClipInPlace(const idVec3 &plane, const float epsilon=ON_EPSILON, const bool keepOn=false)": {
       "body_hash": "f73614b1f939417673ee8e97c885cadc",
@@ -2671,7 +2671,7 @@
     },
     "bool idWinding2D::RayIntersection(const idVec2 &start, const idVec2 &dir, float &scale1, float &scale2, int *edgeNums=NULL) const": {
       "body_hash": "920199244f6283d423955d3752732938",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idVec3 idWinding2D::Plane2DFromPoints(const idVec2 &start, const idVec2 &end, const bool normalize=false)": {
       "body_hash": "a4da21d614d89f4f2ebe4b2c175d4dd9",
@@ -2722,8 +2722,8 @@
       "is_trivial": true
     },
     "ALIGNTYPE16 const idRenderMatrix renderMatrix_fullscreen(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f)": {
-      "body_hash": "ddd34432a8a7f9df8f1a45fda28d63f5",
-      "is_trivial": true
+      "body_hash": "c7d47ead4fc220a94c34a75f6ed31d6e",
+      "is_trivial": false
     },
     "static int GetBoxFrontBits_Generic(const idBounds &bounds, const idVec3 &viewOrigin)": {
       "body_hash": "0f14cb82f08a96b6a427ca807b088ab5",
@@ -2731,7 +2731,7 @@
     },
     "void DeterminantIsNegative(bool &negativeDeterminant, const float *row0, const float *row1, const float *row2, const float *row3)": {
       "body_hash": "51aea3a32f622b346178a8061c4a66cf",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static idVec3 LocalNearClipCenterFromMVP(const idRenderMatrix &mvp)": {
       "body_hash": "e82715ca1a9b92ed507b2ac436581d41",
@@ -2739,11 +2739,11 @@
     },
     "static idVec4 ClipHomogeneousLineToSide(const idVec4 &p0, const idVec4 &p1, int axis, float side)": {
       "body_hash": "636fb8ccf0ed1dc239436d63a8bcfcf7",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static int ClipHomogeneousPolygonToSide_Generic(idVec4 *__restrict newPoints, idVec4 *__restrict points, int numPoints, int axis, float sign, float offset)": {
       "body_hash": "0816cdf7eb259803c51c8f08fe6c5f64",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static int ClipHomogeneousPolygonToUnitCube_Generic(idVec4 *points, int numPoints)": {
       "body_hash": "e99ff2be84738ea391a9349123ea055a",
@@ -2751,15 +2751,15 @@
     },
     "static bool PointInsideInfiniteShadow(const idBounds &occluderBounds, const idVec3 &localLightOrigin, const idVec3 &localPoint, const float epsilon)": {
       "body_hash": "9a1f0c6fd36bb5a475e8d53973cbc1d3",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE int UpdateVertexIndex(int vertexIndexNum[2], int *vertexRemap, int *vertexCopyIndex, int vertNum)": {
       "body_hash": "0090b51447e6248d4f00c44ad34efffd",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool GetAxialBevel(const idVec3 &plane1, const idVec3 &plane2, const idVec2 &point, idVec3 &bevel)": {
       "body_hash": "023c2a4a6344814c5be34991ce700f45",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idDrawVert::SetTangent(const idVec3 &t)": {
       "body_hash": "96b67e6f72c1f056965e355d4734e264",
@@ -2811,7 +2811,7 @@
     },
     "void idRenderMatrix::CopyMatrix(const idRenderMatrix &matrix, idVec4 &row0, idVec4 &row1, idVec4 &row2, idVec4 &row3)": {
       "body_hash": "1fd6b450505ba5ac93aca131df9d9699",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idRenderMatrix::GetFrustumCorners(frustumCorners_t &corners, const idRenderMatrix &frustumTransform, const idBounds &frustumBounds)": {
       "body_hash": "120b12e35a43c89892557f42733e3d98",
@@ -2831,7 +2831,7 @@
     },
     "void idSurface_Patch::ProjectPointOntoVector(const idVec3 &point, const idVec3 &vStart, const idVec3 &vEnd, idVec3 &vProj)": {
       "body_hash": "c56531311a40a0bcde97bc14a62fb7c5",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idSurface_SweptSpline::SetSweptCircle(const float radius)": {
       "body_hash": "19fa1ddcc628f5ea5ec3c6be8ec03754",
@@ -2879,7 +2879,7 @@
     },
     "ID_INLINE void VertexFloatToByte(const float &x, const float &y, const float &z, byte *bval)": {
       "body_hash": "33a5d56dc27be3680b7be448e7806091",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idJointMat::SetTranslation(const idVec3 &t)": {
       "body_hash": "c6cc04517b0e7c1b639a5b117ed17ac6",
@@ -3255,7 +3255,7 @@
     },
     "ID_INLINE int idCurve_KochanekBartelsSpline< type >::AddValue(const float time, const type &value, const float tension, const float continuity, const float bias)": {
       "body_hash": "01cfb75bc94a6a80db2179d51a27a218",
-      "is_trivial": true
+      "is_trivial": false
     },
     "virtual void idCurve_KochanekBartelsSpline< type >::RemoveIndex(const int index)": {
       "body_hash": "9b173980e9925da57ee195b2b2aa2502",
@@ -3343,15 +3343,15 @@
     },
     "ID_INLINE void idCurve_NonUniformBSpline< type >::Basis(const int index, const int order, const float t, float *bvals) const": {
       "body_hash": "84f9250ce2c27b0e67cb5b792989ca21",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idCurve_NonUniformBSpline< type >::BasisFirstDerivative(const int index, const int order, const float t, float *bvals) const": {
       "body_hash": "15cd57bde29e92195b501cf0951278df",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idCurve_NonUniformBSpline< type >::BasisSecondDerivative(const int index, const int order, const float t, float *bvals) const": {
       "body_hash": "b78b532a266731e8853a3f3b6b989335",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idCurve_NURBS< type >::idCurve_NURBS()": {
       "body_hash": "b5600fab5759150d6cb9bb7e6141cd63",
@@ -3543,7 +3543,7 @@
     },
     "ID_INLINE void idExtrapolate< type >::Init(const int startTime, const int duration, const type &startValue, const type &baseSpeed, const type &speed, const extrapolation_t extrapolationType)": {
       "body_hash": "50001cf05693517a5d41fb9bff7bc28f",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE type idExtrapolate< type >::GetCurrentValue(int time) const": {
       "body_hash": "fa5927b20788d71e760b2a67d106c071",
@@ -3599,7 +3599,7 @@
     },
     "ID_INLINE void idInterpolate< type >::Init(const int startTime, const int duration, const type &startValue, const type &endValue)": {
       "body_hash": "76dd6be37e3f14f3194f014def6b1c81",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idInterpolate< type >::SetStartTime(int time)": {
       "body_hash": "981f7a3a37d8df4d73c277179822a8c4",
@@ -3651,7 +3651,7 @@
     },
     "ID_INLINE void idInterpolateAccelDecelLinear< type >::Init(const int startTime, const int accelTime, const int decelTime, const int duration, const type &startValue, const type &endValue)": {
       "body_hash": "aa1c4cde8bb88cec93f82787c4faa4fc",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idInterpolateAccelDecelLinear< type >::SetStartTime(int time)": {
       "body_hash": "f521178ef9d4b967c720aee1e987d449",
@@ -3719,7 +3719,7 @@
     },
     "ID_INLINE void idInterpolateAccelDecelSine< type >::Init(const int startTime, const int accelTime, const int decelTime, const int duration, const type &startValue, const type &endValue)": {
       "body_hash": "d36d7070443ba732fd68964c3f118140",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idInterpolateAccelDecelSine< type >::SetStartTime(int time)": {
       "body_hash": "f521178ef9d4b967c720aee1e987d449",
@@ -3803,7 +3803,7 @@
     },
     "bool idLCP_Square::Solve(const idMatX &o_m, idVecX &o_x, const idVecX &o_b, const idVecX &o_lo, const idVecX &o_hi, const int *o_boxIndex)": {
       "body_hash": "5822cecff0a3158d8199c2fac44a37ca",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idLCP_Square::FactorClamped()": {
       "body_hash": "6072c0da00936acd2df6b5d4001c332a",
@@ -3843,7 +3843,7 @@
     },
     "bool idLCP_Symmetric::Solve(const idMatX &o_m, idVecX &o_x, const idVecX &o_b, const idVecX &o_lo, const idVecX &o_hi, const int *o_boxIndex)": {
       "body_hash": "56dfb25b1609dd8742a0c700a2cc7fd6",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idLCP_Symmetric::FactorClamped()": {
       "body_hash": "5b5a8b8583d832271c3f8459e7ba1a44",
@@ -3891,7 +3891,7 @@
     },
     "ID_INLINE idMat2::idMat2(const float xx, const float xy, const float yx, const float yy)": {
       "body_hash": "ec2146c049a0d313e71daacc94acbe7a",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idMat2::idMat2(const float src[2][2])": {
       "body_hash": "9ae9fa11d555c48a2be50360955623c3",
@@ -3983,7 +3983,7 @@
     },
     "ID_INLINE idMat3::idMat3(const float xx, const float xy, const float xz, const float yx, const float yy, const float yz, const float zx, const float zy, const float zz)": {
       "body_hash": "791445bafb5bd8239321ff4673ae5902",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idMat3::idMat3(const float src[3][3])": {
       "body_hash": "ebee9e19e3c43e855f7d51cccf80675f",
@@ -4139,11 +4139,11 @@
     },
     "ID_INLINE idMat4::idMat4(const idVec4 &x, const idVec4 &y, const idVec4 &z, const idVec4 &w)": {
       "body_hash": "0128154a9d2a3233a728a6bce0243a97",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idMat4::idMat4(const float xx, const float xy, const float xz, const float xw, const float yx, const float yy, const float yz, const float yw, const float zx, const float zy, const float zz, const float zw, const float wx, const float wy, const float wz, const float ww)": {
       "body_hash": "29c3fd5059086e401f1b05c12f47b53e",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idMat4::idMat4(const idMat3 &rotation, const idVec3 &translation)": {
       "body_hash": "99a91690208e7e3d9880a31d7a76c148",
@@ -4255,7 +4255,7 @@
     },
     "ID_INLINE idMat5::idMat5(const idVec5 &v0, const idVec5 &v1, const idVec5 &v2, const idVec5 &v3, const idVec5 &v4)": {
       "body_hash": "15b5ae0a8b0b8d3889086f5b3f2e6cd3",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idMat5::idMat5(const float src[5][5])": {
       "body_hash": "93f550eadba1eca830ca207c5057bc42",
@@ -4339,11 +4339,11 @@
     },
     "ID_INLINE idMat6::idMat6(const idVec6 &v0, const idVec6 &v1, const idVec6 &v2, const idVec6 &v3, const idVec6 &v4, const idVec6 &v5)": {
       "body_hash": "aa4373e7322ead6b2696f455f4ed9b75",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idMat6::idMat6(const idMat3 &m0, const idMat3 &m1, const idMat3 &m2, const idMat3 &m3)": {
       "body_hash": "3a3e3b724a7dae098b37ea06b25cf1ec",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idMat6::idMat6(const float src[6][6])": {
       "body_hash": "888a29046702245c90231063b4f182da",
@@ -4459,7 +4459,7 @@
     },
     "idVec4 idMath::CreateVector(float x, float y, float z, float w)": {
       "body_hash": "4b16cf68e50570f06b499446bc6ecc47",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idVec3 idMath::CreateVector(float x, float y, float z)": {
       "body_hash": "1e9960d32cc91b03d4ce36c4fe3629ca",
@@ -4767,7 +4767,7 @@
     },
     "ID_INLINE void idMatX::Set(const idMat3 &m1, const idMat3 &m2, const idMat3 &m3, const idMat3 &m4)": {
       "body_hash": "213b0847f864d39f62b508505553b0f0",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idMatX::Compare(const idMatX &a) const": {
       "body_hash": "f5aed8aba1ccbd1d1d7464ce237a8b52",
@@ -4803,7 +4803,7 @@
     },
     "ID_INLINE void idMatX::SetDataCacheLines(int rows, int columns, float *data, bool clear)": {
       "body_hash": "424d7705b4f6227691065b67d88c8d7d",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idMatX::Zero()": {
       "body_hash": "9cc4249f1b457739dbb7d4190ecca426",
@@ -4831,7 +4831,7 @@
     },
     "ID_INLINE void idMatX::Random(int rows, int columns, int seed, float l=0.0f, float u=1.0f)": {
       "body_hash": "2e0490998a30e4f699a58f424eeeefe3",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idMatX::Negate()": {
       "body_hash": "22a314d34be33f25a9b542bb9e637381",
@@ -5123,11 +5123,11 @@
     },
     "bool idMatX::LU_UpdateRankOne(const idVecX &v, const idVecX &w, float alpha, int *index)": {
       "body_hash": "1350f2d23b8b84df16ea8ab689502d2e",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idMatX::LU_UpdateRowColumn(const idVecX &v, const idVecX &w, int r, int *index)": {
       "body_hash": "2f8980c73fd46ff2c5ee61742c011aac",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idMatX::LU_UpdateIncrement(const idVecX &v, const idVecX &w, int *index)": {
       "body_hash": "7677e87b7e36d6471de3f709c2297177",
@@ -5135,7 +5135,7 @@
     },
     "bool idMatX::LU_UpdateDecrement(const idVecX &v, const idVecX &w, const idVecX &u, int r, int *index)": {
       "body_hash": "6ca894e82526c6da96113841e3085bef",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idMatX::LU_Solve(idVecX &x, const idVecX &b, const int *index) const": {
       "body_hash": "f3c934b31632099a1f2ae89b3833e452",
@@ -5159,11 +5159,11 @@
     },
     "bool idMatX::QR_UpdateRankOne(idMatX &R, const idVecX &v, const idVecX &w, float alpha)": {
       "body_hash": "d91e33a99c53eb6aada423e1a97f7d17",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idMatX::QR_UpdateRowColumn(idMatX &R, const idVecX &v, const idVecX &w, int r)": {
       "body_hash": "10273e589f14c7ce1f699500d311f94e",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idMatX::QR_UpdateIncrement(idMatX &R, const idVecX &v, const idVecX &w)": {
       "body_hash": "40601ae6989be07dd95a0813f454e541",
@@ -5171,7 +5171,7 @@
     },
     "bool idMatX::QR_UpdateDecrement(idMatX &R, const idVecX &v, const idVecX &w, int r)": {
       "body_hash": "87b14758003ab086f866fa292a065c53",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idMatX::QR_Solve(idVecX &x, const idVecX &b, const idVecX &c, const idVecX &d) const": {
       "body_hash": "93fe039c0ae2a3abd675d53472cadfd1",
@@ -5187,7 +5187,7 @@
     },
     "void idMatX::QR_UnpackFactors(idMatX &Q, idMatX &R, const idVecX &c, const idVecX &d) const": {
       "body_hash": "cc7f4ec71e7b67e42bad489fa0f2f40d",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idMatX::QR_MultiplyFactors(idMatX &m, const idVecX &c, const idVecX &d) const": {
       "body_hash": "3f40a4eacf30ae94555d992d4c30f04d",
@@ -5323,7 +5323,7 @@
     },
     "void idMatX::QR_Rotate(idMatX &R, int i, float a, float b)": {
       "body_hash": "42204b8e3ba3ccf7070d0811556065eb",
-      "is_trivial": true
+      "is_trivial": false
     },
     "float idMatX::Pythag(float a, float b) const": {
       "body_hash": "0c287b148ec42cd1c362971bb0dc16bb",
@@ -5351,7 +5351,7 @@
     },
     "void idMatX::ComplexDivision(float xr, float xi, float yr, float yi, float &cdivr, float &cdivi)": {
       "body_hash": "27924a1ef3879bb1af94f435e64f87b7",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idMatX::HessenbergToRealSchur(idMatX &H, idVecX &realEigenValues, idVecX &imaginaryEigenValues)": {
       "body_hash": "508bc4b96123c4157c391488b0dd5614",
@@ -5367,7 +5367,7 @@
     },
     "float idODE_Euler::Evaluate(const float *state, float *newState, float t0, float t1)": {
       "body_hash": "8bf4a8ed7111285e686c70b75bcff2d0",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idODE_Midpoint::idODE_Midpoint(const int dim, const deriveFunction_t dr, const void *ud)": {
       "body_hash": "1ba0585527c65308c38f45982fd865d7",
@@ -5379,7 +5379,7 @@
     },
     "float idODE_Midpoint::Evaluate(const float *state, float *newState, float t0, float t1)": {
       "body_hash": "acc56525fb3a1a9ce0b20eb199d449b1",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idODE_RK4::idODE_RK4(const int dim, const deriveFunction_t dr, const void *ud)": {
       "body_hash": "1a9f54792386d1a438c8cfaf4818a0cd",
@@ -5391,7 +5391,7 @@
     },
     "float idODE_RK4::Evaluate(const float *state, float *newState, float t0, float t1)": {
       "body_hash": "96cb93e7571ac11d6e5ee2d617d0255a",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idODE_RK4Adaptive::idODE_RK4Adaptive(const int dim, const deriveFunction_t dr, const void *ud)": {
       "body_hash": "cf2a8ce4a741711cde252adf76da3b87",
@@ -5403,7 +5403,7 @@
     },
     "float idODE_RK4Adaptive::Evaluate(const float *state, float *newState, float t0, float t1)": {
       "body_hash": "0ec868dbde77f4ed103d42d7ccac9f1d",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idODE_RK4Adaptive::SetMaxError(const float err)": {
       "body_hash": "b02973c36faf85febdbfa4a4cc7285e1",
@@ -5415,7 +5415,7 @@
     },
     "ID_INLINE idPlane::idPlane(float a, float b, float c, float d)": {
       "body_hash": "2b284f1ad7e482df2172a5e12094083a",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idPlane::idPlane(const idVec3 &normal, const float dist)": {
       "body_hash": "f1dd1ca1da901779918ab4c2fed0057a",
@@ -5423,7 +5423,7 @@
     },
     "ID_INLINE idPlane::idPlane(const idVec3 &v0, const idVec3 &v1, const idVec3 &v2, bool fixDegenerate=false)": {
       "body_hash": "bfe11d871e52d0226959981ccab872ab",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idPlane::Compare(const idPlane &p) const": {
       "body_hash": "2b698b99c820b8749c6f708a2c75b774",
@@ -5479,11 +5479,11 @@
     },
     "ID_INLINE bool idPlane::FromPoints(const idVec3 &p1, const idVec3 &p2, const idVec3 &p3, bool fixDegenerate=true)": {
       "body_hash": "b57698136b2569d101dc9262880fd811",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idPlane::FromVecs(const idVec3 &dir1, const idVec3 &dir2, const idVec3 &p, bool fixDegenerate=true)": {
       "body_hash": "3846233178b6b891feea801137e2e8ca",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idPlane::FitThroughPoint(const idVec3 &p)": {
       "body_hash": "31028631f8c89bc88fbdfe5c54d71463",
@@ -5567,7 +5567,7 @@
     },
     "ID_INLINE idPluecker::idPluecker(const float a1, const float a2, const float a3, const float a4, const float a5, const float a6)": {
       "body_hash": "69b185c16553241e42aa4a380d65aae1",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idPluecker::Compare(const idPluecker &a) const": {
       "body_hash": "31e0501f5c093eeaeb700f870ace44b5",
@@ -5579,7 +5579,7 @@
     },
     "ID_INLINE void idPluecker::Set(const float a1, const float a2, const float a3, const float a4, const float a5, const float a6)": {
       "body_hash": "72e82777adff115ddd583e882262ef8b",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idPluecker::Zero()": {
       "body_hash": "50c8019212f35f78a8905caeb869e1fe",
@@ -5683,11 +5683,11 @@
     },
     "ID_INLINE idPolynomial::idPolynomial(float a, float b, float c, float d)": {
       "body_hash": "33256af3730f7e5e5a56ff4182b13d05",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idPolynomial::idPolynomial(float a, float b, float c, float d, float e)": {
       "body_hash": "64ed27e5b3362428e27e14966b1a9275",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idPolynomial::Compare(const idPolynomial &p) const": {
       "body_hash": "cee209eb0d6dbb8c886c96213c87d0c4",
@@ -5755,15 +5755,15 @@
     },
     "ID_INLINE int idPolynomial::GetRoots2(float a, float b, float c, float *roots)": {
       "body_hash": "58cbe72b51b04240c79d214d8cac5bfd",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE int idPolynomial::GetRoots3(float a, float b, float c, float d, float *roots)": {
       "body_hash": "a7bb4457656405b02299e1a0408c2c74",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE int idPolynomial::GetRoots4(float a, float b, float c, float d, float e, float *roots)": {
       "body_hash": "1a8ef874364dc352699e29f47706ab33",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idPolynomial::Test()": {
       "body_hash": "e5943f900a9f34edf042b058c05de18d",
@@ -5783,11 +5783,11 @@
     },
     "ID_INLINE idQuat::idQuat(float x, float y, float z, float w)": {
       "body_hash": "57a8cd1a43e155e8f624a2a323a98ca5",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idQuat::Set(float x, float y, float z, float w)": {
       "body_hash": "fe75cd47b44bd0ddc8dc5c8729414c1f",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idQuat::Compare(const idQuat &a) const": {
       "body_hash": "0bbfcaa5265dc45cf264102dc37bd8b5",
@@ -6015,23 +6015,23 @@
     },
     "void VPCALL idSIMD_Generic::MinMax(float &min, float &max, const float *src, const int count)": {
       "body_hash": "8d8facac4b80ee7ecaef6069ddcb3f91",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void VPCALL idSIMD_Generic::MinMax(idVec2 &min, idVec2 &max, const idVec2 *src, const int count)": {
       "body_hash": "a7db5360640f2a88019778ca4bf71c09",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void VPCALL idSIMD_Generic::MinMax(idVec3 &min, idVec3 &max, const idVec3 *src, const int count)": {
       "body_hash": "cc48f57fc67739d5b34fc684a1deed6f",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void VPCALL idSIMD_Generic::MinMax(idVec3 &min, idVec3 &max, const idDrawVert *src, const int count)": {
       "body_hash": "3c762467069dc345b8c5e298f7dbb890",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void VPCALL idSIMD_Generic::MinMax(idVec3 &min, idVec3 &max, const idDrawVert *src, const triIndex_t *indexes, const int count)": {
       "body_hash": "2acadec6b4eec804ca6ec1723772d60a",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void VPCALL idSIMD_Generic::Memcpy(void *dst, const void *src, const int count)": {
       "body_hash": "cb96f6be83c429e265d3a6ce7d6facb7",
@@ -6047,7 +6047,7 @@
     },
     "void VPCALL idSIMD_Generic::BlendJointsFast(idJointQuat *joints, const idJointQuat *blendJoints, const float lerp, const int *index, const int numJoints)": {
       "body_hash": "21f2b77c0890f2a648bc9925433853af",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void VPCALL idSIMD_Generic::ConvertJointQuatsToJointMats(idJointMat *jointMats, const idJointQuat *jointQuats, const int numJoints)": {
       "body_hash": "c8ce5c6ad937c4f15f0a881f1288f071",
@@ -6059,11 +6059,11 @@
     },
     "void VPCALL idSIMD_Generic::TransformJoints(idJointMat *jointMats, const int *parents, const int firstJoint, const int lastJoint)": {
       "body_hash": "4e67636cd3d6bd9361dc2a33af27ae3d",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void VPCALL idSIMD_Generic::UntransformJoints(idJointMat *jointMats, const int *parents, const int firstJoint, const int lastJoint)": {
       "body_hash": "b7ac685e8ec5436b81445b70a3e3d69a",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idVec2::idVec2()": {
       "body_hash": "4dc41cdfb1a5cea79a640b3f57a91036",
@@ -6359,11 +6359,11 @@
     },
     "idVec4::idVec4(const float x, const float y, const float z, const float w)": {
       "body_hash": "51777f8b27dd2d963c4606e9a972b8cb",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idVec4::Set(const float x, const float y, const float z, const float w)": {
       "body_hash": "211e4a3e5f81965cf97fe3af74f9f57c",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idVec4 idVec4::Multiply(const idVec4 &a) const": {
       "body_hash": "6c1b5475c51ed51098ec823dff51fbe8",
@@ -6439,7 +6439,7 @@
     },
     "ID_INLINE idVec5::idVec5(const float x, const float y, const float z, const float s, const float t)": {
       "body_hash": "0ea356962711a2145cced3170bcb4f4a",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE int idVec5::GetDimension() const": {
       "body_hash": "a20497c82e5bfab27a6ab6b33a6a5f4d",
@@ -6479,11 +6479,11 @@
     },
     "ID_INLINE idVec6::idVec6(const float a1, const float a2, const float a3, const float a4, const float a5, const float a6)": {
       "body_hash": "3226867197a7108e2353c78f8cdfba91",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idVec6::Set(const float a1, const float a2, const float a3, const float a4, const float a5, const float a6)": {
       "body_hash": "d55f7070d5b28594b7d25a853e1900a0",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idVec6::Zero()": {
       "body_hash": "aca73acf1325e93dfde79e9a85fc4ed6",
@@ -6599,7 +6599,7 @@
     },
     "ID_INLINE void idVecX::Random(int length, int seed, float l=0.0f, float u=1.0f)": {
       "body_hash": "ff984d33f0c47691c5ad1fbfa694b44b",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idVecX::Negate()": {
       "body_hash": "d38cb672c12638654f9c9bde7db8c6d0",
@@ -6711,11 +6711,11 @@
     },
     "static void Multiply_SIMD(float *dst, const float *src0, const float *src1, const int count)": {
       "body_hash": "0672792887b00b33d416b1bfef6df094",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static void MultiplyAdd_SIMD(float *dst, const float constant, const float *src, const int count)": {
       "body_hash": "ec003db89b570fe256c857a25a4ece02",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static float DotProduct_SIMD(const float *src0, const float *src1, const int count)": {
       "body_hash": "f39fa05e9dbd812296504c0a8cff4134",
@@ -6723,15 +6723,15 @@
     },
     "static void LowerTriangularSolve_SIMD(const idMatX &L, float *x, const float *b, const int n, int skip)": {
       "body_hash": "ac4bcf51795739df7c16a599f274ef2b",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static void LowerTriangularSolveTranspose_SIMD(const idMatX &L, float *x, const float *b, const int n)": {
       "body_hash": "fc7510290bfa6e257aedd459b48d183f",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static void UpperTriangularSolve_SIMD(const idMatX &U, const float *invDiag, float *x, const float *b, const int n)": {
       "body_hash": "9139db36bde1e1b8a0e3563a5dda7ed2",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static bool LU_Factor_SIMD(idMatX &mat, idVecX &invDiag, const int n)": {
       "body_hash": "6440f052c3c16eba27cf5a0ceacc1623",
@@ -6743,7 +6743,7 @@
     },
     "static void GetMaxStep_SIMD(const float *f, const float *a, const float *delta_f, const float *delta_a, const float *lo, const float *hi, const int *side, int numUnbounded, int numClamped, int d, float dir, float &maxStep, int &limit, int &limitSide)": {
       "body_hash": "1a6d789f4d46efadf6a37382e277876e",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idVec3 GetInverseMovementVelocity(const idVec3 &start, const idVec3 &end)": {
       "body_hash": "4d1fb2cfbc21ebef9b3a4d4ee98c4424",
@@ -6751,7 +6751,7 @@
     },
     "bool MovingBoundsIntersectBounds(const idVec3 &startPosition, const idVec3 &invVelocity, const idVec3 &extent, const idBounds &objBounds, float paramsRange[2])": {
       "body_hash": "a34184954d1ca143fb130e9e878e2f5e",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE_EXTERN int INT32_SIGNBITSET(int i)": {
       "body_hash": "fa72a5f13ab69e561d7f70e31f78af86",
@@ -6863,7 +6863,7 @@
     },
     "void PrintClocks(const char *string, int dataCount, int clocks, int otherClocks=0)": {
       "body_hash": "a59f06cee36771673218be8fd3ec3039",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void GetBaseClocks()": {
       "body_hash": "07583ea75890f43fca129a93026ae1da",
@@ -7031,7 +7031,7 @@
     },
     "uintptr_t Sys_CreateThread(xthread_t function, void *parms, xthreadPriority priority, const char *name, core_t core, int stackSize, bool suspended)": {
       "body_hash": "e824010b9d7e1288670e5127afa2e7f6",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idNullPtr::idNullPtr()": {
       "body_hash": "d652ad9d499327eab9517148fa63ea58",
@@ -7135,7 +7135,7 @@
     },
     "uintptr_t Sys_CreateThread(xthread_t function, void *parms, xthreadPriority priority, const char *name, core_t core, int stackSize=(256 *1024), bool suspended=false)": {
       "body_hash": "e824010b9d7e1288670e5127afa2e7f6",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void Sys_SignalCreate(signalHandle_t &handle, bool manualReset)": {
       "body_hash": "0365c8c05508ded9b961604a8a6e82af",
@@ -7223,7 +7223,7 @@
     },
     "ID_INLINE void idStr::Fill(const char ch, int newlen)": {
       "body_hash": "80af9b4b5aa3d6c7c28a4d15961281b4",
-      "is_trivial": false
+      "is_trivial": true
     },
     "gltfAccessor::gltfAccessor()": {
       "body_hash": "3bd6a8b81b2b33d006a34c60dadecf3c",
@@ -7307,7 +7307,7 @@
     },
     "gltfNode * gltfData::GetNode(const idStr &sceneName, const idStr &name, int *id=nullptr, bool caseSensitive=false)": {
       "body_hash": "57b88dc20312c82527635646ffaa8f91",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int gltfData::GetNodeIndex(gltfNode *node)": {
       "body_hash": "6f00b69690a0dc0fc00eea48e3a4fcdf",
@@ -8095,7 +8095,7 @@
     },
     "void idBitMsg::WriteDeltaFloat(float oldValue, float newValue, int exponentBits, int mantissaBits)": {
       "body_hash": "a706237fdc52389cd0c0cfc0ae5622a6",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idBitMsg::WriteDeltaDict(const idDict &dict, const idDict *base)": {
       "body_hash": "9ad2fc8fbd105c61b26c1e2cd337565d",
@@ -8415,7 +8415,7 @@
     },
     "bool idDataQueue< maxItems, maxBuffer >::Append(int sequence, const byte *b1, int b1Len, const byte *b2=NULL, int b2Len=0)": {
       "body_hash": "fe8a421ee244bcc26a5d69595180ae02",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idDataQueue< maxItems, maxBuffer >::RemoveOlderThan(int sequence)": {
       "body_hash": "431ea7754d84934b743419ffea92c81f",
@@ -9019,7 +9019,7 @@
     },
     "idLexer::idLexer(const char *ptr, int length, const char *name, int flags=0)": {
       "body_hash": "17114a6870111aec739207dca0e8c5e6",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idLexer::~idLexer()": {
       "body_hash": "aeda87823813fd72e74785b122926222",
@@ -9031,7 +9031,7 @@
     },
     "int idLexer::LoadMemory(const char *ptr, int length, const char *name, int startLine=1)": {
       "body_hash": "fe8d3aaca56527491c19ebc7ed02abb7",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idLexer::FreeSource()": {
       "body_hash": "85e70aee36fd3e8dbeed67133dc44d94",
@@ -9119,7 +9119,7 @@
     },
     "int idLexer::Parse3DMatrix(int z, int y, int x, float *m)": {
       "body_hash": "ab85b55fc9811a254d0a0a578ab8bd28",
-      "is_trivial": true
+      "is_trivial": false
     },
     "const char * idLexer::ParseBracedSection(idStr &out)": {
       "body_hash": "d556988a036a343e934d7b50d7517df3",
@@ -9331,7 +9331,7 @@
     },
     "idMapBrush * idMapBrush::Parse(idLexer &src, const idVec3 &origin, bool newFormat=true, int version=CURRENT_MAP_VERSION)": {
       "body_hash": "afacde19ae311bdfce07399befea4e03",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idMapBrush * idMapBrush::ParseQ3(idLexer &src, const idVec3 &origin)": {
       "body_hash": "be9067a433bcfa7a398af44a696b5c8a",
@@ -9443,7 +9443,7 @@
     },
     "bool idMapFile::Parse(const char *filename, bool ignoreRegion=false, bool osPath=false, bool ignoreExtraEnts=false)": {
       "body_hash": "2dd2ece755b8fbf0244e1653927b0bd7",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idMapFile::Write(const char *fileName, const char *ext, bool fromBasePath=true)": {
       "body_hash": "99b600f7644a1da20a52da5200d12100",
@@ -9455,7 +9455,7 @@
     },
     "bool idMapFile::WriteDiff(const idMapFile *other, const char *fileName, const char *ext, bool fromBasePath=true)": {
       "body_hash": "6b128594526d071ddbe7e3cdb66649cd",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idMapFile::ConvertToPolygonMeshFormat()": {
       "body_hash": "c73466db2fbead6315129f918f7650dd",
@@ -9591,7 +9591,7 @@
     },
     "idMapPatch * idMapPatch::Parse(idLexer &src, const idVec3 &origin, bool patchDef3, int version)": {
       "body_hash": "c2bc05c88babfb99d5b6f8a9e9e1e8f5",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idMapPrimitive::idMapPrimitive()": {
       "body_hash": "6e11657fe43c806884bcbb7727413506",
@@ -9671,7 +9671,7 @@
     },
     "idODSStreamedIndexedArray< _elemType_, _indexType_, _bufferSize_, _sbt_, _roundUpToMultiple_ >::idODSStreamedIndexedArray(const _elemType_ *array, const int numElements, const _indexType_ *index, const int numIndices)": {
       "body_hash": "ae5fd97754530cb6f4fe50db9ace2a14",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idODSStreamedIndexedArray< _elemType_, _indexType_, _bufferSize_, _sbt_, _roundUpToMultiple_ >::~idODSStreamedIndexedArray()": {
       "body_hash": "9ed773de6eedeb986d2904034b318337",
@@ -9775,11 +9775,11 @@
     },
     "idParallelJobList::idParallelJobList(jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs, const idColor *color)": {
       "body_hash": "356fbe636df1a7b3fc33c1fa4f036e2d",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idParallelJobList_Threads::idParallelJobList_Threads(jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs)": {
       "body_hash": "fa8cc3d987aa12d89d962b39415b4cdb",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idParallelJobList_Threads::~idParallelJobList_Threads()": {
       "body_hash": "c193721960e8280e39a864f16e7b8ff2",
@@ -9883,7 +9883,7 @@
     },
     "idParallelJobList * idParallelJobManagerLocal::AllocJobList(jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs, const idColor *color)": {
       "body_hash": "f19eb4294796dc3370ead1dcde7cb135",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idParallelJobManagerLocal::FreeJobList(idParallelJobList *jobList)": {
       "body_hash": "4d3037ff99227ec6936ec2dc046b9a89",
@@ -9935,7 +9935,7 @@
     },
     "idParser::idParser(const char *ptr, int length, const char *name, int flags=0)": {
       "body_hash": "514e2a92400ef173e8134fc4198c7217",
-      "is_trivial": true
+      "is_trivial": false
     },
     "idParser::~idParser()": {
       "body_hash": "82d16bf8918d4b7217f64ccb5d5912e2",
@@ -10003,7 +10003,7 @@
     },
     "const char * idParser::ParseBracedSection(idStr &out, int tabs, bool parseFirstBrace, char intro, char outro)": {
       "body_hash": "7baef36329eb89987e0096e77185e24d",
-      "is_trivial": true
+      "is_trivial": false
     },
     "const char * idParser::ParseBracedSectionExact(idStr &out, int tabs=-1)": {
       "body_hash": "650002b419ea252bfaf60b1f0b5b4271",
@@ -10043,7 +10043,7 @@
     },
     "int idParser::Parse3DMatrix(int z, int y, int x, float *m)": {
       "body_hash": "aae374e7463a9207e2ae32f1cbf75afc",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int idParser::GetLastWhiteSpace(idStr &whiteSpace) const": {
       "body_hash": "72ff5f4a216df90dacd28b1998a2c187",
@@ -10159,11 +10159,11 @@
     },
     "int idParser::ExpandBuiltinDefine(idToken *deftoken, define_t *define, idToken **firsttoken, idToken **lasttoken)": {
       "body_hash": "94860975ce9202ac3d850fcf43d66f49",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int idParser::ExpandDefine(idToken *deftoken, define_t *define, idToken **firsttoken, idToken **lasttoken)": {
       "body_hash": "ac36289a66c544b86faf78d8a9611c19",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int idParser::ExpandDefineIntoSource(idToken *deftoken, define_t *define)": {
       "body_hash": "90c16ca2656c2b66c5111fd8ccbfe1a2",
@@ -10215,7 +10215,7 @@
     },
     "int idParser::EvaluateTokens(idToken *tokens, signed int *intvalue, double *floatvalue, int integer)": {
       "body_hash": "747034b1ceb3568af7564d0c2a2f1b13",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int idParser::Evaluate(signed int *intvalue, double *floatvalue, int integer)": {
       "body_hash": "e8b1da1636cf406094626182b6a924d2",
@@ -10515,7 +10515,7 @@
     },
     "ID_INLINE int idStr::Find(const char *text, bool casesensitive=true, int start=0, int end=-1) const": {
       "body_hash": "96a525b16fb0fce567f06b9769d05984",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE bool idStr::Filter(const char *filter, bool casesensitive) const": {
       "body_hash": "8dfbb4fa0bd26bdb0905b75648ab74c7",
@@ -10791,19 +10791,19 @@
     },
     "int idStr::snPrintf(char *dest, int size, VERIFY_FORMAT_STRING const char *fmt,...)": {
       "body_hash": "aa3fca06f3a274f19af3aeb59c3167f0",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int idStr::vsnPrintf(char *dest, int size, const char *fmt, va_list argptr)": {
       "body_hash": "d16300a0ab25cb8ecf3a1fc6bdb875a8",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int idStr::FindChar(const char *str, const char c, int start=0, int end=-1)": {
       "body_hash": "d2acbf03cdd238d1c6e00066984d67b8",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int idStr::FindText(const char *str, const char *text, bool casesensitive=true, int start=0, int end=-1)": {
       "body_hash": "960845e26a18d514cfd5e0601d54e017",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idStr::Filter(const char *filter, const char *name, bool casesensitive)": {
       "body_hash": "b9842fd83299c3a8fc7599fb2dec3996",
@@ -10899,7 +10899,7 @@
     },
     "bool idStr::Split(const char *source, idList< idStr > &list, const char delimiter=',', const char groupDelimiter='\\'')": {
       "body_hash": "ab9c9c31e04fb3a451e531216946825c",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE void idStr::EnsureAlloced(int amount, bool keepold=true)": {
       "body_hash": "817c37582c3b38e3f03b9256f3003053",
@@ -11015,7 +11015,7 @@
     },
     "ID_INLINE idSurface::idSurface(const idDrawVert *verts, const int numVerts, const int *indexes, const int numIndexes)": {
       "body_hash": "5a32d989624d35be4f8e8094e94ecb21",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static void idSwap::Little(type &c)": {
       "body_hash": "4f8f3e1f2f6a335a3f31e2ad8e2e40c1",
@@ -11163,11 +11163,11 @@
     },
     "bool idSysThread::StartThread(const char *name, core_t core, xthreadPriority priority=THREAD_NORMAL, int stackSize=DEFAULT_THREAD_STACK_SIZE)": {
       "body_hash": "76f56768bd4bafce13783355cbc4e9df",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool idSysThread::StartWorkerThread(const char *name, core_t core, xthreadPriority priority=THREAD_NORMAL, int stackSize=DEFAULT_THREAD_STACK_SIZE)": {
       "body_hash": "567e7cd69a6428f457ffffe67c236c04",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void idSysThread::StopThread(bool wait=true)": {
       "body_hash": "e750928adc1fde7d17d6fc25ced690b9",
@@ -11203,7 +11203,7 @@
     },
     "ID_INLINE idSysWorkerThreadGroup< threadType >::idSysWorkerThreadGroup(const char *name, int numThreads, xthreadPriority priority=THREAD_NORMAL, int stackSize=DEFAULT_THREAD_STACK_SIZE)": {
       "body_hash": "f44af970fea97df9001af92f98c290cf",
-      "is_trivial": true
+      "is_trivial": false
     },
     "ID_INLINE idSysWorkerThreadGroup< threadType >::~idSysWorkerThreadGroup()": {
       "body_hash": "cb8622e0ff5c49bae318cfdf0a73e15f",
@@ -11839,7 +11839,7 @@
     },
     "static void ProcessSceneNode_r(idMapEntity *newEntity, gltfNode *node, const idMat4 &parentTransform, const idMat4 &worldToEntityTransform, gltfData *data)": {
       "body_hash": "b37e7af3d06b70e805edfaf90545c38c",
-      "is_trivial": true
+      "is_trivial": false
     },
     "static void ResolveLight(gltfData *data, idMapEntity *newEntity, gltfNode *node)": {
       "body_hash": "ef891761956eb0fa871f46c5164a7e79",
@@ -11935,11 +11935,11 @@
     },
     "void RectAllocator(const idList< idVec2i > &inputSizes, idList< idVec2i > &outputPositions, idVec2i &totalSize, const int START_MAX, const int imageMax)": {
       "body_hash": "b4042a880e739a973a89d9e77e4616ae",
-      "is_trivial": true
+      "is_trivial": false
     },
     "void RectAllocatorQuadTree(const idList< idVec2i > &inputSizes, idList< idVec2i > &outputPositions, idVec2i &totalSize, const int TILED_SM_RES, const int MAX_TILE_RES=512, const int NUM_QUAD_TREE_LEVELS=8)": {
       "body_hash": "6e85a49e7d5e7c206497a67458fec035",
-      "is_trivial": true
+      "is_trivial": false
     },
     "int sprintf(idStr &string, const char *fmt,...)": {
       "body_hash": "2afab003884ce3a8f2c049cae0884d50",
@@ -12315,7 +12315,7 @@
     },
     "static int FindEntities_r(gltfData *data, idMapEntity::EntityListRef entities, gltfNode *node, idDict epairs, idMapEntity *worldspawn)": {
       "body_hash": "e6e0b1f19ff7982132e5457984b12694",
-      "is_trivial": true
+      "is_trivial": false
     },
     "bool SpursEmulationAssertFailed(const char *filename, int line, const char *expression)": {
       "body_hash": "59c576129516dee7dac57d17584b2efc",

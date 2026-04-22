@@ -132,7 +132,19 @@ public:
 	//! Checks if a line segment intersects with the sphere.
 	bool		  LineIntersection( const idVec3& start, const idVec3& end ) const;
 
-	//! Computes the intersection points of a ray with the sphere, returning the scale factors for the ray parameters.
+	/*!
+		\brief Computes the intersection points of a ray with the sphere and returns the scale factors for the ray parameters.
+
+		This function calculates where a ray intersects with the sphere defined by the origin and radius of this idSphere object. The ray is defined by its start point and direction vector. The
+	   function returns true if the ray intersects the sphere, and false otherwise. If an intersection occurs, scale1 and scale2 contain the parametric distances along the ray where the intersection
+	   points occur. These scale factors can be used to compute the actual intersection points by applying them to the ray equation.
+
+		\param start The starting point of the ray
+		\param dir The direction vector of the ray
+		\param scale1 The first scale factor for the ray parameter (distance to first intersection point)
+		\param scale2 The second scale factor for the ray parameter (distance to second intersection point)
+		\return True if the ray intersects the sphere, false otherwise
+	*/
 	bool		  RayIntersection( const idVec3& start, const idVec3& dir, float& scale1, float& scale2 ) const;
 
 	//! Computes the tightest-fitting sphere that encloses all given points.

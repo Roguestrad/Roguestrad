@@ -100,7 +100,21 @@ public:
 	//! Initializes the winding based on the provided plane equation.
 	void		  BaseForPlane( const idPlane& plane );
 
-	//! Splits the winding into front and back portions based on the provided plane and epsilon value.
+	/*!
+		\brief Splits the winding into front and back portions based on the provided plane and epsilon value.
+
+		This function divides the winding into two new windings, one for the front side and one for the back side of the given plane. The epsilon parameter controls the tolerance for determining if a
+	   point is on the plane. The function returns an integer indicating the relationship between the winding and the plane: SIDE_FRONT if the winding is entirely in front of the plane, SIDE_BACK if
+	   it is entirely behind, and SIDE_CROSS if it is split by the plane. If the winding is coplanar with the plane, it is assigned to either front or back based on the orientation of the plane
+	   normals.
+
+		\param plane The plane to split the winding with
+		\param epsilon The tolerance for determining if a point is on the plane
+		\param front Output parameter for the front portion of the split
+		\param back Output parameter for the back portion of the split
+		\return An integer indicating the relationship between the winding and the plane: SIDE_FRONT, SIDE_BACK, or SIDE_CROSS.
+		\throws FatalError if the number of points in the result exceeds the estimated maximum.
+	*/
 	int			  Split( const idPlane& plane, const float epsilon, idWinding** front, idWinding** back ) const;
 
 	//! Returns the winding fragment at the front of the clipping plane, or NULL if nothing remains at the front.
@@ -181,16 +195,53 @@ public:
 	//! Determines which side of a plane the winding resides on, using the specified epsilon for floating-point comparisons.
 	int			  PlaneSide( const idPlane& plane, const float epsilon = ON_EPSILON ) const;
 
-	//! Determines whether the planes of two windings are concave relative to each other.
+	/*!
+		\brief Determines whether the planes of two windings are concave relative to each other
+
+		This function checks if the planes defined by two windings are concave with respect to each other. It examines each point of the first winding to see if any point lies at the back of the
+	   second winding's plane, and vice versa. If either condition is met, the planes are considered concave. The function uses a small epsilon value WCONVEX_EPSILON to account for floating-point
+	   precision issues when comparing distances to planes
+
+		\param w2 The second winding to compare against
+		\param normal1 Normal vector of the plane for the first winding
+		\param normal2 Normal vector of the plane for the second winding
+		\param dist1 Distance from origin to the plane of the first winding
+		\param dist2 Distance from origin to the plane of the second winding
+		\return true if the planes of the two windings are concave relative to each other, false otherwise
+	*/
 	bool		  PlanesConcave( const idWinding& w2, const idVec3& normal1, const idVec3& normal2, float dist1, float dist2 ) const;
 
 	//! Checks if a point is inside the winding, using the specified normal and epsilon tolerance.
 	bool		  PointInside( const idVec3& normal, const idVec3& point, const float epsilon ) const;
 
-	//! Checks if a line intersects with the winding, optionally culling back faces
+	/*!
+		\brief Checks if a line intersects with the winding, optionally culling back faces
+
+		This function determines whether a line segment defined by start and end points intersects with the winding plane. It first calculates the distance of both endpoints from the winding plane. If
+	   both points are on the same side of the plane, no intersection occurs. If back face culling is enabled and the front point is on the back side of the plane, the function returns false.
+	   Otherwise, it calculates the intersection point of the line with the plane and checks if this point lies within the winding using a point-in-winding test
+
+		\param windingPlane The plane of the winding to test intersection against
+		\param start The starting point of the line segment
+		\param end The ending point of the line segment
+		\param backFaceCull If true, back faces of the winding are culled from intersection tests
+		\return True if the line intersects the winding, false otherwise
+	*/
 	bool		  LineIntersection( const idPlane& windingPlane, const idVec3& start, const idVec3& end, bool backFaceCull = false ) const;
 
-	//! Checks if a ray intersects with the winding and calculates the intersection scale
+	/*!
+		\brief Checks if a ray intersects with the winding and calculates the intersection scale.
+
+		This function determines whether a ray defined by a start point and direction intersects with the winding. It uses Pluecker coordinates to test for intersection with the edges of the winding.
+	   If the ray intersects, the scale factor is calculated and stored in the scale parameter. The backFaceCull parameter determines whether back-facing intersections should be ignored.
+
+		\param windingPlane The plane of the winding used for final intersection calculation
+		\param start The starting point of the ray
+		\param dir The direction vector of the ray
+		\param scale Output parameter that receives the scale factor of the intersection
+		\param backFaceCull If true, back-facing intersections are ignored
+		\return True if the ray intersects the winding, false otherwise
+	*/
 	bool		  RayIntersection( const idPlane& windingPlane, const idVec3& start, const idVec3& dir, float& scale, bool backFaceCull = false ) const;
 
 	//! Computes the area of a triangle defined by three 3D vertices.

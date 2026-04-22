@@ -53,6 +53,7 @@ struct skippedAssertion_t {
 };
 static idStaticList<skippedAssertion_t, 20> skippedAssertions;
 
+//! Handles assertion failure by displaying a warning and optionally breaking into the debugger
 bool										AssertFailed( const char* file, int line, const char* expression )
 {
 	// Set this to true to skip ALL assertions, including ones YOU CAUSE!

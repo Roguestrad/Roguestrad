@@ -78,7 +78,19 @@ ALIGN16( const unsigned int SIMD_DW_index[4] )			   = { 0, 1, 2, 3 };
 ALIGN16( const int SIMD_DW_not3[4] )					   = { ~3, ~3, ~3, ~3 };
 #endif // #if defined(LCP_SIMD)
 
-//! Multiplies two arrays of floats element-wise using SIMD optimization when available
+/*!
+	\brief Multiplies two arrays of floats element-wise using SIMD optimization when available
+
+	This function performs element-wise multiplication of two float arrays, with optimized SIMD operations for better performance. It handles alignment requirements and falls back to scalar
+   multiplication for cases where SIMD cannot be used or when the arrays are not properly aligned. The function processes elements in chunks of four when SIMD is available, and uses a tail loop for
+   remaining elements that don't fit the SIMD chunk size.
+
+	\param dst destination array where results are stored
+	\param src0 first source array of floats
+	\param src1 second source array of floats
+	\param count number of elements to process in the arrays
+	\throws assertion failure when memory alignment requirements are not met
+*/
 static void Multiply_SIMD( float* dst, const float* src0, const float* src1, const int count )
 {
 	int i = 0;
@@ -123,7 +135,17 @@ static void Multiply_SIMD( float* dst, const float* src0, const float* src1, con
 	}
 }
 
-//! Performs SIMD-optimized in-place multiplication and addition of a constant to array elements
+/*!
+	\brief Performs SIMD-optimized in-place multiplication and addition of a constant to array elements.
+
+	This function adds the product of a constant and corresponding elements from a source array to a destination array. It uses SIMD instructions for optimization when available, with a fallback
+   implementation for cases where SIMD is not supported. The function handles memory alignment requirements and processes elements in batches for better performance.
+
+	\param dst Pointer to the destination array where results are stored
+	\param constant Scalar value to multiply with source elements
+	\param src Pointer to the source array containing elements to be multiplied
+	\param count Number of elements to process in both arrays
+*/
 static void MultiplyAdd_SIMD( float* dst, const float constant, const float* src, const int count )
 {
 	int i = 0;
@@ -238,7 +260,20 @@ static float DotProduct_SIMD( const float* src0, const float* src1, const int co
 #endif
 }
 
-//! Solves the linear system Lx = b for a lower triangular matrix L, with optional skip parameter for precomputed values.
+/*!
+	\brief Solves a linear system with a lower triangular matrix using SIMD optimization
+
+	This function performs forward substitution to solve the linear system Lx = b where L is a lower triangular matrix. It uses SIMD instructions for optimized performance and supports an optional
+   skip parameter to handle precomputed values. The function handles small systems with unrolled cases and larger systems with SIMD vector operations. The skip parameter determines how many rows to
+   skip at the beginning of the computation, which is useful when some values in x have already been computed. The implementation assumes the matrix L is stored in row-major format and that the number
+   of columns is a multiple of 4.
+
+	\param L Lower triangular matrix to solve the system with
+	\param x Solution vector to be computed
+	\param b Right-hand side vector
+	\param n Number of rows to process
+	\param skip Number of rows to skip at the beginning of computation
+*/
 static void LowerTriangularSolve_SIMD( const idMatX& L, float* x, const float* b, const int n, int skip )
 {
 	if( skip >= n ) {
@@ -555,7 +590,19 @@ static void LowerTriangularSolve_SIMD( const idMatX& L, float* x, const float* b
 #endif
 }
 
-//! Solves the linear system L'x = b for a lower triangular matrix L using SIMD optimization.
+/*!
+	\brief Solves the linear system L'x = b for a lower triangular matrix L using SIMD optimization.
+
+	This function performs backward substitution to solve a linear system where L is a lower triangular matrix and the operation is applied to the transpose of L. The implementation uses SIMD
+   instructions for performance optimization when available. The matrix L is assumed to be stored in row-major format, and the function processes the system in blocks of four rows for optimal SIMD
+   utilization. The input vector b is overwritten with the solution vector x.
+
+	\param L The lower triangular matrix to solve the system with
+	\param x The solution vector to be filled
+	\param b The right-hand side vector of the system
+	\param n The size of the system to solve
+	\throws assertion failure if the number of columns in L is not a multiple of 4
+*/
 static void LowerTriangularSolveTranspose_SIMD( const idMatX& L, float* x, const float* b, const int n )
 {
 	int nc = L.GetNumColumns();
@@ -708,7 +755,19 @@ static void LowerTriangularSolveTranspose_SIMD( const idMatX& L, float* x, const
 #endif
 }
 
-//! Solves an upper triangular system of linear equations using SIMD optimization.
+/*!
+	\brief Solves an upper triangular system of linear equations using SIMD optimization.
+
+	This function performs backward substitution to solve an upper triangular system of linear equations represented by the matrix U and the right-hand side vector b. The solution is stored in the
+   vector x. The diagonal elements of U are assumed to be stored in the invDiag array, which contains the precomputed inverses of the diagonal elements for optimization purposes. The function iterates
+   backwards from the last row to the first, computing each component of x based on the previously computed values.
+
+	\param U The upper triangular matrix
+	\param invDiag The inverse of the diagonal elements of U
+	\param x The solution vector
+	\param b The right-hand side vector
+	\param n The size of the matrix and vectors
+*/
 static void UpperTriangularSolve_SIMD( const idMatX& U, const float* invDiag, float* x, const float* b, const int n )
 {
 	for( int i = n - 1; i >= 0; i-- ) {
@@ -1263,7 +1322,28 @@ static bool LDLT_Factor_SIMD( idMatX& mat, idVecX& invDiag, const int n )
 #endif
 }
 
-//! Computes the maximum step size for LCP simulation using SIMD optimizations
+/*!
+	\brief Computes the maximum step size for LCP simulation using SIMD optimizations.
+
+	This function calculates the maximum allowable step size for a given variable in a Linear Complementarity Problem (LCP) simulation. It considers acceleration and force constraints, and uses SIMD
+   instructions to optimize performance. The function evaluates multiple constraints including bounded variables and updates the maximum step size, the limiting variable index, and the side of the
+   limit.
+
+	\param f Current force values
+	\param a Current acceleration values
+	\param delta_f Delta force values
+	\param delta_a Delta acceleration values
+	\param lo Lower bounds for variables
+	\param hi Upper bounds for variables
+	\param side Side indicators for constraints
+	\param numUnbounded Number of unbounded variables
+	\param numClamped Number of clamped variables
+	\param d Dimension of the problem
+	\param dir Direction of movement
+	\param maxStep Output maximum step size
+	\param limit Output index of the limiting variable
+	\param limitSide Output side of the limit
+*/
 static void GetMaxStep_SIMD( const float* f,
 	const float*						  a,
 	const float*						  delta_f,
@@ -1729,7 +1809,21 @@ static void LDLT_Factor_Test()
 class idLCP_Square : public idLCP
 {
 public:
-	//! Solves a linear complementarity problem with box constraints using a factorization-based approach.
+	/*!
+		\brief Solves a linear complementarity problem with box constraints using a factorization-based approach.
+
+		This function solves a linear complementarity problem (LCP) where variables are constrained to lie within box boundaries. It uses a factorization-based approach to handle both unbounded and
+	   bounded variables. The algorithm first processes unbounded variables by factorizing and solving a sub-system, then iteratively handles bounded variables by determining which constraints are
+	   active and updating the solution accordingly. The function returns true on successful completion, false if the factorization fails or if an invalid step size is encountered during iteration.
+
+		\param o_m The coefficient matrix of the LCP problem
+		\param o_x The solution vector to be computed
+		\param o_b The right-hand side vector of the LCP problem
+		\param o_lo Lower bounds for each variable
+		\param o_hi Upper bounds for each variable
+		\param o_boxIndex Optional array mapping variables to box indices, or NULL if not used
+		\return True if the LCP problem is solved successfully, false if factorization fails or an invalid step is encountered
+	*/
 	virtual bool Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, const idVecX& o_lo, const idVecX& o_hi, const int* o_boxIndex );
 
 private:
@@ -2292,7 +2386,21 @@ bool idLCP_Square::Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, con
 class idLCP_Symmetric : public idLCP
 {
 public:
-	//! Solves a symmetric linear complementarity problem with optional box constraints.
+	/*!
+		\brief Solves a symmetric linear complementarity problem with optional box constraints
+
+		This function solves a symmetric linear complementarity problem of the form Mx = b + f where x and f are the unknowns, M is a symmetric matrix, b is a vector, and f represents forces. The
+	   problem includes optional box constraints defined by lo and hi vectors, and may use a box index to determine which variables have specific boundary conditions. The solution process involves
+	   factorization of a submatrix and iterative solving for both unbounded and bounded variables.
+
+		\param o_m The symmetric matrix M in the LCP problem
+		\param o_x The solution vector x
+		\param o_b The vector b in the LCP problem
+		\param o_lo Lower bounds for the variables
+		\param o_hi Upper bounds for the variables
+		\param o_boxIndex Optional array mapping variables to box constraints, or NULL if none
+		\return True if the LCP problem was solved successfully, false otherwise
+	*/
 	virtual bool Solve( const idMatX& o_m, idVecX& o_x, const idVecX& o_b, const idVecX& o_lo, const idVecX& o_hi, const int* o_boxIndex );
 
 private:

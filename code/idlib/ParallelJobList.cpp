@@ -69,6 +69,7 @@ static bool IsRegisteredJob( jobRun_t function )
 	return false;
 }
 
+//! Registers a job function with an associated debug name.
 void RegisterJob( jobRun_t function, const char* name )
 {
 	if( IsRegisteredJob( function ) ) {
@@ -163,7 +164,18 @@ struct threadStats_t {
 class idParallelJobList_Threads
 {
 public:
-	//! Constructor for idParallelJobList_Threads that initializes job list properties and allocates memory for jobs and syncs.
+	/*!
+		\brief Constructor for idParallelJobList_Threads that initializes job list properties and allocates memory for jobs and syncs
+
+		Initializes the job list with the specified parameters and allocates memory for processing jobs and synchronization points. The constructor sets up internal data structures including job
+	   lists, signal job counts, and thread statistics. It ensures that the priority is valid and allocates sufficient memory to handle the maximum number of jobs and synchronization points specified.
+
+		\param id Unique identifier for the job list
+		\param priority Priority level for the job list execution
+		\param maxJobs Maximum number of jobs that can be handled
+		\param maxSyncs Maximum number of synchronization points that can be handled
+		\throws assertion failure if the priority is set to JOBLIST_PRIORITY_NONE
+	*/
 	idParallelJobList_Threads( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs );
 
 	//! Destructor for idParallelJobList_Threads that ensures all jobs are completed before destruction.
@@ -1032,7 +1044,20 @@ public:
 	//! Stops all worker threads managed by the parallel job manager.
 	virtual void			   Shutdown();
 
-	//! Allocates and initializes a new job list with the specified parameters.
+	/*!
+		\brief Allocates and initializes a new job list with the specified parameters, returning a pointer to the newly created job list.
+
+		This function creates a new job list with the given identifier, priority, maximum number of jobs, maximum number of synchronizations, and color. It first checks if a job list with the same
+	   identifier already exists, and if so, it handles the case possibly caused by idStudio. The function then allocates memory for the new job list, initializes it with the provided parameters,
+	   appends it to the internal list of job lists, and returns a pointer to the newly created job list.
+
+		\param id Unique identifier for the job list
+		\param priority Priority level for the job list
+		\param maxJobs Maximum number of jobs that can be added to the job list
+		\param maxSyncs Maximum number of synchronization points allowed in the job list
+		\param color Color associated with the job list, may be NULL
+		\return A pointer to the newly allocated and initialized job list
+	*/
 	virtual idParallelJobList* AllocJobList( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs, const idColor* color );
 
 	//! Frees a job list and ensures all threads have finished processing it.

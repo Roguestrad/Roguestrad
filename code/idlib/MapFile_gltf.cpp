@@ -318,7 +318,19 @@ MapPolygonMesh*		MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* 
 	return mesh;
 }
 
-//! Processes a glTF scene node and its children, adding mesh primitives to the entity.
+/*!
+	\brief Processes a glTF scene node and its children, adding mesh primitives to the entity.
+
+	This function recursively processes a glTF scene node and all its child nodes. For each node that contains mesh data, it converts the mesh primitives into a format suitable for the entity and adds
+   them. The transformation matrices are properly calculated to account for the node's position in the scene hierarchy and its relationship to the entity's coordinate system. The function handles
+   nested node structures by recursively calling itself on child nodes.
+
+	\param newEntity The entity to which mesh primitives will be added
+	\param node The current glTF node being processed
+	\param parentTransform The transformation matrix from the parent node to world space
+	\param worldToEntityTransform The transformation matrix from world space to the entity's local space
+	\param data Pointer to the glTF data structure containing node and mesh information
+*/
 static void ProcessSceneNode_r( idMapEntity* newEntity, gltfNode* node, const idMat4& parentTransform, const idMat4& worldToEntityTransform, gltfData* data )
 {
 	auto& nodeList = data->NodeList();
@@ -524,7 +536,20 @@ static void ResolveEntity( gltfData* data, idMapEntity* newEntity, gltfNode* nod
 #endif
 }
 
-//! Recursively finds and creates entities from glTF nodes, adding them to the entity list while traversing the node hierarchy.
+/*!
+	\brief Recursively processes glTF nodes to find entities, creating and adding them to the entity list while traversing the node hierarchy.
+
+	This function recursively traverses the glTF node hierarchy to identify and create entities. It skips nodes with names starting with "BSP" or "worldspawn." and processes mesh data into the
+   worldspawn entity. For other nodes, it checks for valid classnames or light extensions to create new entities. The function accumulates entity count and properly manages entity property pairs
+   during creation.
+
+	\param data Pointer to the glTF data structure containing node and mesh information
+	\param entities Reference to the entity list where new entities are appended
+	\param node Pointer to the current glTF node being processed
+	\param epairs Dictionary of entity properties inherited from parent nodes
+	\param worldspawn Pointer to the worldspawn entity to which mesh data may be added
+	\return Total count of entities found and created during the recursive traversal
+*/
 static int FindEntities_r( gltfData* data, idMapEntity::EntityListRef entities, gltfNode* node, idDict epairs, idMapEntity* worldspawn )
 {
 	int			entityCount = 0;

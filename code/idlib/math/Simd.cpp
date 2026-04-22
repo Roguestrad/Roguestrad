@@ -155,7 +155,18 @@ double ticksPerNanosecond;
 		best = end - start;             \
 	}
 
-//! Prints timing information for performance debugging.
+/*!
+	\brief Prints timing information for performance debugging including data count and clock cycles.
+
+	This function outputs timing information to the console for performance analysis. It takes a string identifier, a data count, and clock cycle measurements. The function adjusts the clock values by
+   subtracting a base clock value and formats the output to show the data count and adjusted clock values. If an additional clock measurement is provided, it calculates and displays the ratio between
+   the two measurements.
+
+	\param string Identifier string for the timing information
+	\param dataCount Number of data items processed
+	\param clocks Clock cycle count for the operation
+	\param otherClocks Optional additional clock cycle count for ratio calculation
+*/
 void PrintClocks( const char* string, int dataCount, int clocks, int otherClocks = 0 )
 {
 	int i;

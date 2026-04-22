@@ -62,10 +62,33 @@ public:
 	//! Returns the height dimension of the patch surface.
 	int	 GetHeight() const;
 
-	//! Subdivides a patch mesh based on specified error thresholds and maximum length constraints.
+	/*!
+		\brief Subdivides a patch mesh based on specified error thresholds and maximum length constraints.
+
+		This function refines a patch mesh by subdividing it in both horizontal and vertical directions. The subdivision occurs when the deviation from the control mesh exceeds the specified error
+	   thresholds, or when segments exceed the maximum allowed length. The function supports optional normal generation for the subdivided mesh. It modifies the patch mesh in place by expanding the
+	   vertex grid, inserting new vertices at subdivision points, and then cleaning up unnecessary vertices. The process ensures that the resulting mesh approximates the original patch with acceptable
+	   visual fidelity within the given constraints.
+
+		\param maxHorizontalError Maximum allowed horizontal deviation from the control mesh before subdivision occurs
+		\param maxVerticalError Maximum allowed vertical deviation from the control mesh before subdivision occurs
+		\param maxLength Maximum allowed segment length that forces subdivision if exceeded
+		\param genNormals Flag indicating whether to generate normals for the subdivided mesh
+	*/
 	void Subdivide( float maxHorizontalError, float maxVerticalError, float maxLength, bool genNormals = false );
 
-	//! Subdivides the patch using explicit horizontal and vertical subdivision counts
+	/*!
+		\brief Subdivides the patch using explicit horizontal and vertical subdivision counts, with optional normal generation and linear removal.
+
+		This function performs explicit subdivision of a patch by the specified horizontal and vertical subdivision counts. It generates vertex normals if requested, samples individual patches, and
+	   updates the vertex data with the subdivided results. The function supports removing linear columns and rows if the removeLinear flag is set. Normalization of the generated normals is performed
+	   after subdivision.
+
+		\param horzSubdivisions Number of horizontal subdivisions to apply
+		\param vertSubdivisions Number of vertical subdivisions to apply
+		\param genNormals Flag indicating whether to generate normals for the control mesh
+		\param removeLinear Flag indicating whether to remove linear columns and rows after subdivision
+	*/
 	void SubdivideExplicit( int horzSubdivisions, int vertSubdivisions, bool genNormals, bool removeLinear = false );
 
 protected:
@@ -91,7 +114,18 @@ private:
 	//! Collapses the patch by moving all points to the start of the verts buffer.
 	void Collapse();
 
-	//! Projects a point onto a vector to calculate maximum curve error.
+	/*!
+		\brief Projects a point onto a vector to calculate maximum curve error
+
+		This function calculates the projection of a given point onto a vector defined by two endpoints. It determines the closest point on the vector to the input point, which is useful for
+	   calculating curve error in surface patch computations. The function first computes the vector from vStart to vEnd, normalizes it, and then uses dot product projection to find the projected
+	   point.
+
+		\param point The point to be projected onto the vector
+		\param vStart The starting point of the vector
+		\param vEnd The ending point of the vector
+		\param vProj The output projected point on the vector
+	*/
 	void ProjectPointOntoVector( const idVec3& point, const idVec3& vStart, const idVec3& vEnd, idVec3& vProj );
 
 	//! Generates surface normals for all vertices in the patch
@@ -103,10 +137,35 @@ private:
 	//! Linearly interpolates between two draw vertices and stores the result in an output vertex.
 	void LerpVert( const idDrawVert& a, const idDrawVert& b, idDrawVert& out ) const;
 
-	//! Samples a single point on a 3x3 patch given u and v coordinates
+	/*!
+		\brief Samples a single point on a 3x3 patch given u and v coordinates.
+
+		This function evaluates a point on a cubic Bézier patch defined by a 3x3 grid of control vertices. The u and v parameters specify the position on the patch in the parametric space, where both
+	   parameters range from 0 to 1. The function computes the position, normal, and texture coordinates for the sampled point by first interpolating control points in the u direction, then
+	   interpolating the results in the v direction. The computation uses quadratic Bézier interpolation for each component of the vertex data including position, normal, and texture coordinates.
+
+		\param ctrl A 3x3 grid of control vertices defining the patch
+		\param u The u parametric coordinate, ranging from 0 to 1
+		\param v The v parametric coordinate, ranging from 0 to 1
+		\param out Pointer to the output vertex where the sampled point will be stored
+	*/
 	void SampleSinglePatchPoint( const idDrawVert ctrl[3][3], float u, float v, idDrawVert* out ) const;
 
-	//! Samples a single patch into the output vertex array
+	/*!
+		\brief Samples a single patch into the output vertex array by evaluating control points and filling the specified output vertices.
+
+		This function iterates over a grid defined by horizontal and vertical subdivision counts to sample patch points. It uses the control points of a cubic patch to calculate the position of each
+	   vertex in the output array. The grid is mapped to the parameter space of the patch and each point is evaluated using a helper function. The function supports partial sampling by specifying base
+	   column and row offsets and a width for the output array.
+
+		\param ctrl Control points of the patch in a 3x3 grid
+		\param baseCol Base column offset in the output array where sampling starts
+		\param baseRow Base row offset in the output array where sampling starts
+		\param width Width of the output vertex array for indexing
+		\param horzSub Number of subdivisions in the horizontal direction
+		\param vertSub Number of subdivisions in the vertical direction
+		\param outVerts Output array of vertices where sampled patch points are stored
+	*/
 	void SampleSinglePatch( const idDrawVert ctrl[3][3], int baseCol, int baseRow, int width, int horzSub, int vertSub, idDrawVert* outVerts ) const;
 };
 

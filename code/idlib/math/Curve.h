@@ -1344,7 +1344,20 @@ public:
 	//! Adds a timed/value pair to the Kochanek-Bartels spline and returns the index of the inserted pair.
 	virtual int	 AddValue( const float time, const type& value );
 
-	//! Adds a timed value pair to the Kochanek-Bartels spline and returns the index of the inserted pair.
+	/*!
+		\brief Adds a timed value pair to the Kochanek-Bartels spline and returns the index of the inserted pair.
+
+		This function inserts a new keyframe into the spline with the specified time, value, and spline parameters. The spline parameters control the shape of the curve segments between keyframes. The
+	   function determines the correct insertion position based on the time value and returns the index where the new keyframe was inserted. The tension parameter controls the tightness of the curve,
+	   continuity controls the bias of the curve, and bias controls the direction of the curve segments.
+
+		\param time The time value for the keyframe
+		\param value The value for the keyframe
+		\param tension The tension parameter for the spline curve
+		\param continuity The continuity parameter for the spline curve
+		\param bias The bias parameter for the spline curve
+		\return The index where the new keyframe was inserted in the spline
+	*/
 	virtual int	 AddValue( const float time, const type& value, const float tension, const float continuity, const float bias );
 
 	//! Removes the element at the specified index from all internal arrays of the spline.
@@ -1876,13 +1889,46 @@ public:
 	virtual type GetCurrentSecondDerivative( const float time ) const;
 
 protected:
-	//! Calculates the basis functions for a non-uniform B-spline at a given parameter value.
+	/*!
+		\brief Calculates the basis functions for a non-uniform B-spline at a given parameter value
+
+		This function computes the basis functions for a non-uniform B-spline curve at a specific parameter value t. It uses the Cox-de Boor recursion formula to evaluate the basis functions. The
+	   function takes an index, order, and parameter value, and stores the resulting basis values in the provided array. The index parameter determines the starting point in the knot vector, the order
+	   specifies the degree of the B-spline, and t is the parameter value at which to evaluate the basis functions
+
+		\param index starting index in the knot vector
+		\param order degree of the B-spline
+		\param t parameter value at which to evaluate the basis functions
+		\param bvals output array to store the computed basis values
+	*/
 	void Basis( const int index, const int order, const float t, float* bvals ) const;
 
-	//! Computes the first derivative of the spline basis functions for a non-uniform B-spline.
+	/*!
+		\brief Computes the first derivative of the spline basis functions for a non-uniform B-spline
+
+		This function calculates the first derivative of the basis functions used in non-uniform B-spline interpolation. It takes an index, order, and parameter t to compute the derivative values. The
+	   computation uses a recursive approach based on the basis functions of a lower order and applies appropriate scaling factors derived from the time values of the spline knots. The results are
+	   stored in the provided array bvals, where each element corresponds to the derivative of a basis function at the given parameter value.
+
+		\param index starting index for the basis function computation
+		\param order order of the B-spline basis functions
+		\param t parameter value for which to compute the derivative
+		\param bvals output array to store the computed derivative values
+	*/
 	void BasisFirstDerivative( const int index, const int order, const float t, float* bvals ) const;
 
-	//! Computes the second derivative of the spline basis functions for a given index, order, and parameter value.
+	/*!
+		\brief Computes the second derivative of the spline basis functions for a given index, order, and parameter value
+
+		This function calculates the second derivative of the basis functions used in non-uniform B-spline interpolation. It takes an index, order, and parameter value to compute the second derivative
+	   values. The calculation involves first computing the first derivative and then applying additional mathematical operations to derive the second derivative. The result is stored in the provided
+	   array bvals where each element corresponds to the second derivative of a basis function at the specified parameter value.
+
+		\param index The starting index for the basis function calculation
+		\param order The order of the B-spline basis functions
+		\param t The parameter value at which to evaluate the second derivative
+		\param bvals Output array to store the computed second derivative values
+	*/
 	void BasisSecondDerivative( const int index, const int order, const float t, float* bvals ) const;
 };
 

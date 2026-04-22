@@ -52,7 +52,19 @@ public:
 	//! Constructs a Pluecker coordinate from a line defined by start and end points.
 	explicit idPluecker( const idVec3& start, const idVec3& end );
 
-	//! Initializes a new Pluecker coordinate with the specified six float values.
+	/*!
+		\brief Initializes a new Pluecker coordinate with the specified six float values.
+
+		This constructor initializes a Pluecker coordinate object using six float values that represent the coordinates of a line in 3D space. The values are assigned directly to the internal array
+	   elements of the Pluecker coordinate.
+
+		\param a1 First float value for the Pluecker coordinate
+		\param a2 Second float value for the Pluecker coordinate
+		\param a3 Third float value for the Pluecker coordinate
+		\param a4 Fourth float value for the Pluecker coordinate
+		\param a5 Fifth float value for the Pluecker coordinate
+		\param a6 Sixth float value for the Pluecker coordinate
+	*/
 	explicit idPluecker( const float a1, const float a2, const float a3, const float a4, const float a5, const float a6 );
 
 	//! Returns the Pluecker coordinate value at the specified index
@@ -103,7 +115,19 @@ public:
 	//! Compares two idPluecker objects for inequality.
 	bool		 operator!=( const idPluecker& a ) const;
 
-	//! Sets the six components of the Pluecker coordinate vector.
+	/*!
+		\brief Sets the six components of the Pluecker coordinate vector
+
+		This function initializes all six components of a Pluecker coordinate vector with the provided float values. The Pluecker coordinate is a mathematical representation used in 3D geometry,
+	   typically for defining lines in space. Each component corresponds to a specific property of the line.
+
+		\param a1 First component value for the Pluecker coordinate
+		\param a2 Second component value for the Pluecker coordinate
+		\param a3 Third component value for the Pluecker coordinate
+		\param a4 Fourth component value for the Pluecker coordinate
+		\param a5 Fifth component value for the Pluecker coordinate
+		\param a6 Sixth component value for the Pluecker coordinate
+	*/
 	void		 Set( const float a1, const float a2, const float a3, const float a4, const float a5, const float a6 );
 
 	//! Sets all components of the Pluecker coordinate to zero.

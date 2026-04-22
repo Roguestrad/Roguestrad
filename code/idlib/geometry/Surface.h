@@ -65,7 +65,19 @@ public:
 	//! Constructs a new surface as a copy of an existing surface.
 	explicit idSurface( const idSurface& surf );
 
-	//! Initializes a surface with the specified vertices and indexes.
+	/*!
+		\brief Initializes a surface with the specified vertices and indexes.
+
+		Constructs a surface object by copying the provided vertex and index data. The function asserts that the input parameters are valid, ensuring that neither the vertex array nor the index array
+	   is null, and that both the number of vertices and indices are positive. It allocates memory for the internal vertex and index arrays, then copies the provided data into these arrays. Finally,
+	   it generates edge indexes for the surface.
+
+		\param verts Pointer to the array of vertices to copy into the surface
+		\param numVerts Number of vertices in the verts array
+		\param indexes Pointer to the array of indexes to copy into the surface
+		\param numIndexes Number of indexes in the indexes array
+		\throws Assertion failure if verts or indexes is NULL, or if numVerts or numIndexes is not greater than zero.
+	*/
 	explicit idSurface( const idDrawVert* verts, const int numVerts, const int* indexes, const int numIndexes );
 	~idSurface();
 
@@ -102,7 +114,21 @@ public:
 	//! Rotates the vertices of the surface by the given rotation matrix.
 	void				 RotateSelf( const idMat3& rotation );
 
-	//! Splits the surface into front and back parts based on a clipping plane.
+	/*!
+		\brief Splits the surface into front and back parts based on a clipping plane and returns the side occupied by the surface.
+
+		This function splits a surface into two parts based on a clipping plane. It determines which side of the plane each vertex lies on and constructs new surfaces for the front and back portions.
+	   The function returns the side of the plane that the surface occupies or the side it was split into. The front and back surfaces are allocated using the TAG_IDLIB_SURFACE memory tag.
+
+		\param plane The clipping plane used to split the surface
+		\param epsilon A small value used to determine when a vertex is considered to be on the plane
+		\param front Pointer to a pointer that will receive the front part of the split surface
+		\param back Pointer to a pointer that will receive the back part of the split surface
+		\param frontOnPlaneEdges Optional pointer to an integer that will receive the number of edges on the front part that lie on the plane
+		\param backOnPlaneEdges Optional pointer to an integer that will receive the number of edges on the back part that lie on the plane
+		\return An integer representing the side of the plane the surface occupies. Returns SIDE_FRONT if the surface is entirely in front of the plane, SIDE_BACK if it is entirely behind, and 0 if it
+	   is split into both parts.
+	*/
 	int					 Split( const idPlane& plane, const float epsilon, idSurface** front, idSurface** back, int* frontOnPlaneEdges = NULL, int* backOnPlaneEdges = NULL ) const;
 
 	//! Clips the surface by the given plane and returns true if any part remains on the front side
@@ -126,7 +152,19 @@ public:
 	//! Returns true if a line intersects any triangle in the surface
 	bool				 LineIntersection( const idVec3& start, const idVec3& end, bool backFaceCull = false ) const;
 
-	//! Determines if a ray intersects with the surface and calculates the intersection scale factor.
+	/*!
+		\brief Determines if a ray intersects with the surface and calculates the intersection scale factor.
+
+		This function performs ray-triangle intersection testing against all triangles in the surface. It uses pluecker coordinates to efficiently determine which side of each edge the ray lies on.
+	   For each triangle, it checks if all three edges are on the same side of the ray (indicating intersection) or if back face culling is disabled and all edges are on the opposite side. The
+	   function returns the shortest distance along the ray where an intersection occurs.
+
+		\param start The starting point of the ray
+		\param dir The direction vector of the ray
+		\param scale Output parameter containing the scale factor of the intersection point along the ray
+		\param backFaceCull If true, back-facing triangles are not considered for intersection
+		\return True if an intersection is found, false otherwise
+	*/
 	bool				 RayIntersection( const idVec3& start, const idVec3& dir, float& scale, bool backFaceCull = false ) const;
 
 protected:

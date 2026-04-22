@@ -194,7 +194,19 @@ public:
 	}
 	~idMapBrush() { sides.DeleteContents( true ); }
 
-	//! Parses a map brush from a lexer input stream with optional origin offset and format version.
+	/*!
+		\brief Parses a map brush from a lexer input stream with optional origin offset and format version.
+
+		This function reads brush data from a lexer stream, including brush sides, planes, texture coordinates, materials, and epairs. It supports both old and new format brush definitions, handles
+	   origin offsets, and properly constructs an idMapBrush object with the parsed data. The function manages resource cleanup and error handling, returning NULL on parse errors.
+
+		\param src Lexer input stream containing the brush data to parse
+		\param origin Origin offset to apply to brush coordinates
+		\param newFormat Flag indicating whether to parse in new or old brush format
+		\param version Map version number for compatibility handling
+		\return Pointer to newly created idMapBrush object, or NULL on parse error
+		\throws No explicit throws, but function may call src.Error() on parse failure
+	*/
 	static idMapBrush* Parse( idLexer& src, const idVec3& origin, bool newFormat = true, int version = CURRENT_MAP_VERSION );
 
 	//! Parses a Q3 map brush from the given lexer and origin.
@@ -255,7 +267,18 @@ public:
 	idMapPatch( int maxPatchWidth, int maxPatchHeight );
 	~idMapPatch() { }
 
-	//! Parses patch data from a lexer, creating and returning a new idMapPatch object.
+	/*!
+		\brief Parses patch data from a lexer, creating and returning a new idMapPatch object.
+
+		This function reads patch definition data from a lexer, including material information and control points. It handles both patchDef2 and patchDef3 formats, parses vertex data, and applies an
+	   origin offset to the control points. The function manages memory allocation for the new patch object and properly handles error conditions by returning NULL and cleaning up allocated memory.
+
+		\param src Lexer object containing the patch data to parse
+		\param origin Origin offset to apply to vertex coordinates
+		\param patchDef3 Flag indicating whether to parse patchDef3 format (true) or patchDef2 format (false)
+		\param version Version number of the map format being parsed
+		\return Pointer to the newly created idMapPatch object, or NULL if parsing fails
+	*/
 	static idMapPatch* Parse( idLexer& src, const idVec3& origin, bool patchDef3, int version );
 
 	//! Writes patch data to a file with specified primitive number and origin offset.
@@ -545,7 +568,20 @@ public:
 	idMapFile();
 	~idMapFile() { entities.DeleteContents( true ); }
 
-	//! Parses a map file from the given filename, supporting multiple formats including .map, .json, .gltf, and .glb
+	/*!
+		\brief Parses a map file from the given filename, supporting multiple formats including .map, .json, .gltf, and .glb.
+
+		This function loads and parses map files in various formats, including traditional .map files, JSON format files, and GLTF/GLB files. It handles different map versions and supports optional
+	   parameters to control parsing behavior such as ignoring regions, using OS paths, and ignoring extra entities. The function also processes worldspawn entities and applies various transformations
+	   like moving func_group primitives to worldspawn, overriding materials, and forcing entity names. It supports additional entity files with the convention of appending "_extra_ents.map" to the
+	   base filename.
+
+		\param filename The path to the map file to parse
+		\param ignoreRegion If true, skips attempting to load .json files
+		\param osPath If true, treats the filename as an OS path
+		\param ignoreExtraEnts If true, skips loading extra entity files
+		\return True if the map file was successfully parsed, false otherwise
+	*/
 	bool		 Parse( const char* filename, bool ignoreRegion = false, bool osPath = false, bool ignoreExtraEnts = false );
 
 	//! Writes the map data to a file with the specified name and extension.
@@ -554,7 +590,19 @@ public:
 	//! Writes the map data to a JSON file with the specified file name and extension.
 	bool		 WriteJSON( const char* fileName, const char* ext, bool fromBasePath = true );
 
-	//! Writes a diff file comparing this map to another map
+	/*!
+		\brief Writes a diff file comparing this map to another map.
+
+		This function generates a diff file that contains only the changes between the current map and another map. It writes the differences to a file with the specified file name and extension. The
+	   function handles both new entities and modified entities by comparing key-value pairs. If fromBasePath is true, the file is written to the base path; otherwise, it uses an explicit file path.
+	   The function returns true on success and false if the file cannot be opened for writing.
+
+		\param other The map file to compare against
+		\param fileName The base name of the output file
+		\param ext The file extension to use for the output file
+		\param fromBasePath Whether to write the file to the base path
+		\return true if the diff file was successfully written, false otherwise
+	*/
 	bool		 WriteDiff( const idMapFile* other, const char* fileName, const char* ext, bool fromBasePath = true );
 
 	//! Converts brush and patch primitives to polygon mesh format for all entities in the map.

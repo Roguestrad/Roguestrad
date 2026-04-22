@@ -38,7 +38,20 @@ public:
 	//! Appends data to the queue with optional second buffer
 	idDataQueue() { dataLength = 0; }
 
-	//! Appends data to the queue with the specified sequence number, returning true if successful.
+	/*!
+		\brief Appends data to the queue with the specified sequence number and returns true if successful
+
+		This function adds data to a data queue structure. It takes two data segments, b1 and b2, along with their respective lengths, and appends them to an internal buffer. The data is associated
+	   with a sequence number. The function checks if there is enough space in the queue and buffer before appending. If the queue is full or the buffer would overflow, the function returns false.
+	   Otherwise, it returns true after successfully appending the data.
+
+		\param sequence The sequence number to associate with the appended data
+		\param b1 Pointer to the first segment of data to append
+		\param b1Len Length of the first data segment
+		\param b2 Pointer to the second segment of data to append, can be NULL
+		\param b2Len Length of the second data segment, ignored if b2 is NULL
+		\return True if the data was successfully appended to the queue, false otherwise
+	*/
 	bool		Append( int sequence, const byte* b1, int b1Len, const byte* b2 = NULL, int b2Len = 0 );
 
 	//! Removes items from the queue that have a sequence number older than the specified value.

@@ -155,7 +155,18 @@ public:
 	//! Tests if a line segment intersects with the box.
 	bool		  LineIntersection( const idVec3& start, const idVec3& end ) const;
 
-	//! Tests if a ray intersects with the box and calculates the intersection scalars.
+	/*!
+		\brief Tests if a ray intersects with the box and calculates the intersection scalars.
+
+		This function determines whether a ray defined by a starting point and direction intersects with the box. It computes two scalar values that represent the intersection points along the ray.
+	   The function transforms the ray into the local space of the box before performing the intersection test. The scalar values are updated only if the ray intersects the box.
+
+		\param start The starting point of the ray
+		\param dir The direction vector of the ray
+		\param scale1 Output scalar representing the first intersection point along the ray
+		\param scale2 Output scalar representing the second intersection point along the ray
+		\return True if the ray intersects the box, false otherwise.
+	*/
 	bool		  RayIntersection( const idVec3& start, const idVec3& dir, float& scale1, float& scale2 ) const;
 
 	//! Computes a tight-fitting axis-aligned bounding box for a collection of points.

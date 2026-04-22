@@ -159,7 +159,17 @@ public:
 	//! Constructs an idLexer object to parse a file with the specified filename and flags.
 	idLexer( const char* filename, int flags = 0, bool OSPath = false );
 
-	//! Constructs an idLexer object to parse text from a memory buffer.
+	/*!
+		\brief Constructs an idLexer object to parse text from a memory buffer.
+
+		The constructor initializes a lexer instance to parse text from a given memory buffer. It sets up internal state including flags, punctuation settings, and loads the provided memory segment
+	   for parsing. The lexer is configured based on the specified flags and name, and prepares it for tokenization of the input text.
+
+		\param ptr Pointer to the memory buffer containing the text to parse
+		\param length Length of the memory buffer in bytes
+		\param name Name associated with the memory buffer for error reporting
+		\param flags Flags to configure lexer behavior
+	*/
 	idLexer( const char* ptr, int length, const char* name, int flags = 0 );
 
 	//! Destroys the lexer and frees its associated resources.
@@ -168,7 +178,20 @@ public:
 	//! Loads a script file into the lexer for token parsing
 	int				LoadFile( const char* filename, bool OSPath = false );
 
-	//! Loads a script from memory with the specified length and line offset for parsing.
+	/*!
+		\brief Loads a script from memory for parsing with the specified length and line offset.
+
+		This function initializes the lexer to parse a script that is already loaded in memory. It sets up internal pointers and state variables to track the current position in the buffer, the line
+	   number, and other parsing metadata. The function checks if another script is already loaded and will report an error if so. The script buffer is not copied, but rather referenced directly, so
+	   the memory pointed to by ptr must remain valid for the lifetime of the lexer.
+
+		\param ptr Pointer to the beginning of the script data in memory
+		\param length Number of bytes of script data to parse
+		\param name Name of the script, used for error messages and debugging
+		\param startLine The line number to start counting from for this script
+		\return True if the script was successfully loaded, false otherwise.
+		\throws An error is thrown if another script is already loaded.
+	*/
 	int				LoadMemory( const char* ptr, int length, const char* name, int startLine = 1 );
 
 	//! Frees the memory allocated for the lexer's source buffer and punctuation tables.
@@ -239,7 +262,19 @@ public:
 	//! Parses a 2D matrix of specified dimensions from the lexer input.
 	int				Parse2DMatrix( int y, int x, float* m );
 
-	//! Parses a 3D matrix from the lexer input into a float array.
+	/*!
+		\brief Parses a 3D matrix from the lexer input into a float array
+
+		This function parses a 3D matrix from the lexer input and stores the result in the provided float array. The matrix dimensions are specified by the z, y, and x parameters, representing the
+	   depth, rows, and columns respectively. The function expects the input to start with an opening parenthesis and end with a closing parenthesis. Each layer of the 3D matrix is parsed as a 2D
+	   matrix using the Parse2DMatrix function. The function returns true if parsing is successful, and false otherwise.
+
+		\param z depth of the 3D matrix
+		\param y number of rows in each 2D layer
+		\param x number of columns in each 2D layer
+		\param m pointer to the float array where the parsed matrix will be stored
+		\return true if parsing is successful, false otherwise
+	*/
 	int				Parse3DMatrix( int z, int y, int x, float* m );
 
 	//! Parses a braced section from the lexer into the provided string.

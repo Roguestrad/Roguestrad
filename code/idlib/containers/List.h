@@ -71,7 +71,19 @@ ID_INLINE void idListArrayDelete( void* ptr, int num )
 	Mem_Free( ptr );
 }
 
-//! Resizes an array while preserving existing elements and handling memory management.
+/*!
+	\brief Resizes an array while preserving existing elements and handling memory management
+
+	This function takes an existing array pointer and resizes it to a new size. It allocates a new array of the specified size, copies the elements from the old array to the new array, and then
+   deallocates the old array. The function handles element movement using std::move for efficient transfer of elements. If the new size is zero or negative, the old array is simply deallocated. The
+   zeroBuffer parameter controls whether the new array should be zero-initialized, which can be useful for certain data types to ensure a clean state.
+
+	\param voldptr Pointer to the existing array to be resized
+	\param oldNum Current number of elements in the array
+	\param newNum New number of elements for the resized array
+	\param zeroBuffer Flag indicating whether to zero-initialize the new array
+	\return Pointer to the newly allocated and resized array
+*/
 template<typename _type_, memTag_t _tag_>
 ID_INLINE void* idListArrayResize( void* voldptr, int oldNum, int newNum, bool zeroBuffer )
 {

@@ -342,15 +342,7 @@ public:
 	//! Limits the string length to the specified maximum length.
 	void					CapLength( int );
 
-	/*!
-		\brief Fills the string buffer with a repeated character up to a given length, resizing the buffer if necessary.
-
-		The function first ensures that the internal storage can hold the required number of characters plus a terminating null.
-		It then sets the string length, copies the repeated character into the buffer using memset, and finally writes a null terminator to mark the end of the string.
-
-		\param ch The character used to fill the string.
-		\param newlen The desired length of the string before the null terminator.
-	*/
+	//! Fills the string buffer with a repeated character up to a given length, resizing the buffer if necessary.
 	void					Fill( const char ch, int newlen );
 
 	//! Returns the length of the UTF-8 encoded string.
@@ -389,7 +381,19 @@ public:
 	//! Finds the first occurrence of a character in the string within the specified range.
 	int						Find( const char c, int start = 0, int end = -1 ) const;
 
-	//! Searches for the first occurrence of a substring within the string, returning its starting index or -1 if not found.
+	/*!
+		\brief Searches for the first occurrence of a substring within the string and returns its starting index or -1 if not found.
+
+		This function searches for the first occurrence of the specified substring within the string. It supports case-sensitive and case-insensitive search modes, and allows specifying a start and
+	   end position for the search. The function returns the index of the first character of the found substring, or -1 if the substring is not found. If the end parameter is not specified, the search
+	   extends to the end of the string.
+
+		\param text The substring to search for
+		\param casesensitive Flag indicating whether the search should be case-sensitive
+		\param start The starting index for the search
+		\param end The ending index for the search, or -1 to search until the end of the string
+		\return The index of the first occurrence of the substring, or -1 if the substring is not found
+	*/
 	int						Find( const char* text, bool casesensitive = true, int start = 0, int end = -1 ) const;
 
 	//! Checks if the string matches the given filter pattern.
@@ -575,16 +579,67 @@ public:
 	//! Copies a string with a size limit and ensures null termination.
 	static void				Copynz( char* dest, const char* src, int destsize );
 
-	//! Formats a string into a destination buffer with size limiting and returns the number of characters written
+	/*!
+		\brief Formats a string into a destination buffer with size limiting and returns the number of characters written.
+
+		This function performs formatted string output into a destination buffer, ensuring that the output does not exceed the specified size limit. It uses a variable argument list to accept format
+	   parameters and internally calls vsnPrintf for the actual formatting. The function handles overflow conditions by issuing a warning and adjusting the length value. It is designed to guarantee
+	   null termination of the output string.
+
+		\param dest Destination buffer where the formatted string will be stored
+		\param size Size of the destination buffer in bytes
+		\param fmt Format string specifying how to format the output
+		\param  Variable arguments for the format string
+		\return The number of characters written to the destination buffer, or a negative value if an overflow occurs
+		\throws Warning is issued when buffer overflow occurs
+	*/
 	static int				snPrintf( char* dest, int size, VERIFY_FORMAT_STRING const char* fmt, ... );
 
-	//! Formats a string using a va_list and writes it to a destination buffer
+	/*!
+		\brief Formats a string using a va_list and writes it to a destination buffer with platform-specific handling.
+
+		This function provides a cross-platform implementation for formatting strings using a va_list and writing them to a destination buffer. It handles Windows and Unix-like systems differently to
+	   ensure compatibility. The function ensures that the destination buffer is null-terminated and returns the number of characters written, or -1 if an error occurs. The function also checks for
+	   buffer overflow conditions and handles them appropriately.
+
+		\param dest Destination buffer to write the formatted string
+		\param size Size of the destination buffer
+		\param fmt Format string specifying how to format the output
+		\param argptr Pointer to the list of arguments to be formatted
+		\return Number of characters written to the destination buffer, or -1 if an error occurs due to buffer overflow or other issues
+	*/
 	static int				vsnPrintf( char* dest, int size, const char* fmt, va_list argptr );
 
-	//! Finds the first occurrence of a character in a string within a specified range
+	/*!
+		\brief Finds the first occurrence of a character in a string within a specified range
+
+		This function searches for the first occurrence of a specified character within a given string, starting from a specified index and ending at another specified index. If the end index is not
+	   specified, it defaults to the length of the string minus one. If the character is found, the function returns the index of its first occurrence. If the character is not found within the
+	   specified range, the function returns -1. The function handles negative end values by automatically calculating the string length
+
+		\param str The string to search in
+		\param c The character to find
+		\param start The starting index for the search
+		\param end The ending index for the search, defaults to the string length minus one if not specified
+		\return The index of the first occurrence of the character in the string, or -1 if not found
+	*/
 	static int				FindChar( const char* str, const char c, int start = 0, int end = -1 );
 
-	//! Searches for a substring within a string and returns the index of the first occurrence or -1 if not found
+	/*!
+		\brief Searches for a substring within a string and returns the index of the first occurrence or -1 if not found
+
+		This function searches for a specified text substring within a given string. It supports case-sensitive and case-insensitive search modes. The search can be limited to a specific range within
+	   the string using start and end parameters. The function returns the index of the first occurrence of the substring, or -1 if the substring is not found. The function handles edge cases such as
+	   when the end parameter is -1, in which case it uses the full length of the string. It also properly calculates the maximum valid search position to avoid buffer overruns when comparing the
+	   substring.
+
+		\param str The string to search within
+		\param text The substring to search for
+		\param casesensitive Flag to indicate if the search should be case sensitive
+		\param start The starting index for the search
+		\param end The ending index for the search, or -1 to search until the end of the string
+		\return The index of the first occurrence of the text substring within the string, or -1 if not found
+	*/
 	static int				FindText( const char* str, const char* text, bool casesensitive = true, int start = 0, int end = -1 );
 
 	//! Checks if a string matches a filter pattern that may contain wildcards.
@@ -683,7 +738,18 @@ public:
 	//! Formats an integer number into a formatted string representation
 	static idStr			FormatNumber( int number );
 
-	//! Splits a source string into a list of substrings using the specified delimiter and group delimiter
+	/*!
+		\brief Splits a source string into a list of substrings using the specified delimiter and group delimiter, returning true if successful.
+
+		This function splits a source string into multiple substrings based on a delimiter character. It also supports a group delimiter which allows for quoted sections to be treated as single
+	   elements. The function returns false if there is a mismatched group delimiter, otherwise it returns true. The resulting substrings are appended to the provided list.
+
+		\param source The string to be split
+		\param list The list to which the resulting substrings will be appended
+		\param delimiter The character used to separate substrings
+		\param groupDelimiter The character used to enclose groups of characters that should not be split
+		\return True if the split operation completed successfully, false if there was a mismatched group delimiter.
+	*/
 	static bool				Split( const char* source, idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\'' );
 
 protected:

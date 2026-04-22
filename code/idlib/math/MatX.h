@@ -91,7 +91,17 @@ public:
 	//! Sets the current matrix to a 3x6 matrix by placing two 3x3 matrices side by side.
 	ID_INLINE void			 Set( const idMat3& m1, const idMat3& m2 );
 
-	//! Sets the current matrix to a 6x6 block matrix constructed from four 3x3 matrices.
+	/*!
+		\brief Sets the current matrix to a 6x6 block matrix constructed from four 3x3 matrices.
+
+		This function initializes a 6x6 matrix by arranging four 3x3 matrices in a block format. The first matrix m1 is placed in the top-left corner, m2 in the top-right, m3 in the bottom-left, and
+	   m4 in the bottom-right. Each 3x3 matrix contributes its elements to the corresponding block of the 6x6 matrix.
+
+		\param m1 The first 3x3 matrix to place in the top-left block of the 6x6 matrix
+		\param m2 The second 3x3 matrix to place in the top-right block of the 6x6 matrix
+		\param m3 The third 3x3 matrix to place in the bottom-left block of the 6x6 matrix
+		\param m4 The fourth 3x3 matrix to place in the bottom-right block of the 6x6 matrix
+	*/
 	ID_INLINE void			 Set( const idMat3& m1, const idMat3& m2, const idMat3& m3, const idMat3& m4 );
 
 	//! Returns a pointer to the specified row of the matrix.
@@ -173,7 +183,18 @@ public:
 	//! Sets the data pointer for the matrix and initializes its dimensions.
 	ID_INLINE void			SetData( int rows, int columns, float* data );
 
-	//! Sets the data pointer for the matrix with specified dimensions and optional clearing.
+	/*!
+		\brief Sets the data pointer for the matrix with specified dimensions and optional clearing.
+
+		This function initializes the matrix data pointer with the provided data buffer, ensuring the data is 128-byte aligned. It sets the matrix dimensions and optionally clears the memory using
+	   cache line alignment. If the matrix already has allocated memory, it is freed before assigning the new data pointer.
+
+		\param rows The number of rows in the matrix
+		\param columns The number of columns in the matrix
+		\param data Pointer to the data buffer, must be 128-byte aligned
+		\param clear If true, clears the matrix data using cache line alignment
+		\throws assertion failure if the data pointer is not 128-byte aligned
+	*/
 	ID_INLINE void			SetDataCacheLines( int rows, int columns, float* data, bool clear );
 
 	//! Clears the matrix by setting all elements to zero.
@@ -194,7 +215,18 @@ public:
 	//! Fills the matrix with random values using the provided seed and range.
 	ID_INLINE void			Random( int seed, float l = 0.0f, float u = 1.0f );
 
-	//! Initializes the matrix with random values within a specified range using a given seed.
+	/*!
+		\brief Initializes the matrix with random values within a specified range using a given seed.
+
+		The function sets the matrix size to the specified number of rows and columns, then fills each element with a random float value within the range [l, u]. The random number generation is
+	   initialized with the provided seed to ensure reproducible results. The lower and upper bounds are inclusive, and the random values are uniformly distributed within this range.
+
+		\param rows Number of rows in the matrix
+		\param columns Number of columns in the matrix
+		\param seed Seed value for the random number generator
+		\param l Lower bound for the random values
+		\param u Upper bound for the random values
+	*/
 	ID_INLINE void			Random( int rows, int columns, int seed, float l = 0.0f, float u = 1.0f );
 
 	//! Negates all elements of the matrix in place.
@@ -419,16 +451,54 @@ public:
 	//! Performs in-place LU factorization of the matrix with optional determinant calculation.
 	bool					LU_Factor( int* index, float* det = NULL );
 
-	//! Updates the in-place LU factorization to obtain the factors for the matrix LU + alpha * v * w'
+	/*!
+		\brief Updates the in-place LU factorization to obtain the factors for the matrix LU + alpha * v * w
+
+		This function performs an in-place rank-one update to an existing LU factorization of a matrix. It modifies the current matrix in-place to reflect the addition of a rank-one matrix alpha * v *
+	   w to the original matrix. The update is performed using the LU decomposition technique, where the matrix is decomposed into a lower triangular matrix L and an upper triangular matrix U. The
+	   function takes into account the indexing specified by the index parameter if provided, otherwise it uses default indexing. The function returns false if a zero diagonal element is encountered
+	   during the process, which would indicate a failure in the factorization.
+
+		\param v The vector v in the rank-one update alpha * v * w
+		\param w The vector w in the rank-one update alpha * v * w
+		\param alpha The scalar alpha in the rank-one update alpha * v * w
+		\param index Optional array of indices for vector v, or NULL to use default indexing
+		\return True if the update was successful, false if a zero diagonal element was encountered
+	*/
 	bool					LU_UpdateRankOne( const idVecX& v, const idVecX& w, float alpha, int* index );
 
-	//! Updates a row and column of the matrix using rank-one update operations with the provided vectors and index array
+	/*!
+		\brief Updates a row and column of the matrix using rank-one update operations with the provided vectors and index array.
+
+		This function performs an LU decomposition update on a row and column of the matrix. It uses two input vectors v and w, along with a row index r and an optional index array to modify the
+	   matrix in place. The update is performed using rank-one operations to maintain the LU factorization structure. The function handles the case where an index array is provided for reordering
+	   operations.
+
+		\param v Input vector used for updating the matrix row
+		\param w Input vector used for updating the matrix column
+		\param r Row index for the update operation
+		\param index Optional array for reordering operations, can be NULL
+		\return True if the update operation was successful, false if a zero diagonal element was encountered during the update
+	*/
 	bool					LU_UpdateRowColumn( const idVecX& v, const idVecX& w, int r, int* index );
 
 	//! Updates the LU decomposition with an incremental row and column
 	bool					LU_UpdateIncrement( const idVecX& v, const idVecX& w, int* index );
 
-	//! Updates the in-place LU factorization to obtain the factors for the matrix with row r and column r removed
+	/*!
+		\brief Updates the in-place LU factorization to obtain the factors for the matrix with row r and column r removed
+
+		This function performs an in-place update of an LU factorization by removing a specified row and column from the matrix. It handles both cases where an index array is provided for permutation
+	   tracking and when no permutation tracking is needed. The function ensures numerical stability by checking for pivot conditions and performing necessary row interchanges. It updates the
+	   factorization data structures and physically removes the specified row and column from the matrix.
+
+		\param v Vector used for updating the row
+		\param w Vector used for updating the column
+		\param u Vector used for rank-one update
+		\param r Index of the row and column to remove
+		\param index Pointer to the permutation index array, can be NULL
+		\return True if the update was successful, false otherwise
+	*/
 	bool					LU_UpdateDecrement( const idVecX& v, const idVecX& w, const idVecX& u, int r, int* index );
 
 	//! Solves the linear system Ax = b using LU decomposition.
@@ -446,16 +516,52 @@ public:
 	//! Performs in-place QR factorization of the matrix using the provided vectors for temporary storage.
 	bool					QR_Factor( idVecX& c, idVecX& d );
 
-	//! Updates the unpacked QR factorization to obtain the factors for the matrix QR + alpha * v * w'
+	/*!
+		\brief Updates the unpacked QR factorization to obtain the factors for the matrix QR + alpha * v * w
+
+		Performs an in-place update of the QR factorization stored in matrix R to reflect the addition of a rank-one matrix alpha * v * w. The function processes the vectors v and w to compute the
+	   necessary rotations and updates the R matrix accordingly. It assumes the input vectors are properly sized and the matrix R is in the correct format for the operation.
+
+		\param R The matrix containing the QR factorization to be updated
+		\param v The vector used in the rank-one update
+		\param w The vector used in the rank-one update
+		\param alpha The scalar multiplier for the rank-one update
+		\return true if the update was successful
+		\throws Assertion failure if vector v is smaller than the number of columns in R or if vector w is smaller than the number of rows in R
+	*/
 	bool					QR_UpdateRankOne( idMatX& R, const idVecX& v, const idVecX& w, float alpha );
 
-	//! Performs a rank-one update on the QR decomposition matrix R using vectors v and w.
+	/*!
+		\brief Performs a rank-one update on the QR decomposition matrix R using vectors v and w
+
+		This function updates the QR decomposition matrix R by performing two rank-one updates. It takes vectors v and w and uses them to modify the matrix R in a way that preserves the QR
+	   decomposition properties. The function first initializes a vector s with a 1 at position r, then applies two rank-one updates using the QR_UpdateRankOne helper function. The update is only
+	   valid if the input parameters satisfy certain constraints, as enforced by assertions.
+
+		\param R Reference to the QR decomposition matrix to be updated
+		\param v Vector used in the first rank-one update operation
+		\param w Vector used in the second rank-one update operation
+		\param r Index position for the update, must be within the bounds of both rows and columns
+		\return True if both rank-one updates succeed, false otherwise
+	*/
 	bool					QR_UpdateRowColumn( idMatX& R, const idVecX& v, const idVecX& w, int r );
 
 	//! Performs an incremental QR update on the matrix R using vectors v and w
 	bool					QR_UpdateIncrement( idMatX& R, const idVecX& v, const idVecX& w );
 
-	//! Updates the unpacked QR factorization to obtain the factors for the matrix with row r and column r removed
+	/*!
+		\brief Updates the unpacked QR factorization to obtain the factors for the matrix with row r and column r removed
+
+		This function performs a rank-revealing QR decomposition update by removing a specified row and column from the matrix. It modifies the R matrix in place to reflect the removal of the
+	   specified row and column. The function first prepares the necessary vectors for the update, then calls the internal row and column update function, and finally removes the specified row and
+	   column from both the current matrix and the R matrix. The update is only performed if the row and column indices are valid and the matrix dimensions are consistent.
+
+		\param R Reference to the R matrix to be updated
+		\param v Vector representing the row to be removed
+		\param w Vector representing the column to be removed
+		\param r Index of the row and column to be removed
+		\return True if the update was successful, false otherwise
+	*/
 	bool					QR_UpdateDecrement( idMatX& R, const idVecX& v, const idVecX& w, int r );
 
 	//! Solves the linear system Ax = b using QR factorization
@@ -467,7 +573,18 @@ public:
 	//! Computes the inverse of a matrix using QR decomposition
 	void					QR_Inverse( idMatX& inv, const idVecX& c, const idVecX& d ) const;
 
-	//! Unpacks the in-place QR factorization into the provided Q and R matrices
+	/*!
+		\brief Unpacks an in-place QR factorization into the provided Q and R matrices
+
+		This function reconstructs the original matrices Q and R from an in-place QR factorization stored within the current matrix. The factorization is unpacked such that Q is an orthogonal matrix
+	   and R is an upper triangular matrix. The input vectors c and d contain the necessary scaling factors and diagonal elements for the reconstruction process. The operation modifies the provided Q
+	   and R matrices in-place, with Q being initialized as an identity matrix and R being initialized as a zero matrix before reconstruction.
+
+		\param Q Output matrix to store the orthogonal Q factor
+		\param R Output matrix to store the upper triangular R factor
+		\param c Vector containing scaling factors for the reconstruction
+		\param d Vector containing diagonal elements for the R matrix
+	*/
 	void					QR_UnpackFactors( idMatX& Q, idMatX& R, const idVecX& c, const idVecX& d ) const;
 
 	//! Multiplies the factors of the in-place QR factorization to form the original matrix.
@@ -583,7 +700,18 @@ private:
 	//! Computes the inverse of the matrix in place using generic Gaussian elimination with partial pivoting.
 	bool  InverseSelfGeneric();
 
-	//! Performs a Jacobi rotation on the rows i and i+1 of the unpacked QR factors.
+	/*!
+		\brief Performs a Jacobi rotation on the rows i and i+1 of the unpacked QR factors.
+
+		This function applies a Givens rotation to the rows i and i+1 of the matrix R and to the columns i and i+1 of the current matrix. The rotation is determined by the parameters a and b, which
+	   define the direction of the rotation in the plane formed by the two rows/columns. The function modifies the matrix R in place and also updates the current matrix with the corresponding column
+	   rotations.
+
+		\param R The matrix to be rotated, modified in place
+		\param i The index of the first row/column to rotate
+		\param a The first component of the rotation vector
+		\param b The second component of the rotation vector
+	*/
 	void  QR_Rotate( idMatX& R, int i, float a, float b );
 
 	//! Computes the square root of the sum of squares of two floating-point numbers without underflow or overflow.
@@ -604,7 +732,19 @@ private:
 	//! Performs Hessenberg reduction on the matrix H
 	void  HessenbergReduction( idMatX& H );
 
-	//! Performs complex scalar division on two complex numbers and stores the result in the provided output parameters.
+	/*!
+		\brief Performs complex scalar division on two complex numbers and stores the result in the provided output parameters
+
+		This function computes the division of two complex numbers represented as (xr + xi*i) / (yr + yi*i) and stores the real and imaginary parts of the result in the provided output parameters. The
+	   implementation uses a numerically stable approach to avoid overflow issues by choosing the larger absolute value component as the divisor during the computation.
+
+		\param xr Real part of the numerator complex number
+		\param xi Imaginary part of the numerator complex number
+		\param yr Real part of the denominator complex number
+		\param yi Imaginary part of the denominator complex number
+		\param cdivr Output parameter for the real part of the division result
+		\param cdivi Output parameter for the imaginary part of the division result
+	*/
 	void  ComplexDivision( float xr, float xi, float yr, float yi, float& cdivr, float& cdivi );
 
 	//! Reduces a Hessenberg matrix to real Schur form and computes eigenvalues

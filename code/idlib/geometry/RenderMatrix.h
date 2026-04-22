@@ -57,7 +57,28 @@ public:
 	//! Initializes an empty idRenderMatrix object.
 	idRenderMatrix() { }
 
-	//! Initializes a 4x4 transformation matrix with the specified float values for each cell.
+	/*!
+		\brief Initializes a 4x4 transformation matrix with the specified float values for each cell.
+
+		This constructor initializes a 4x4 matrix by setting each element of the matrix using the 16 float parameters. The matrix is stored in row-major order where m[row * 4 + column] = value.
+
+		\param a0 The value for the element at row 0, column 0 of the matrix
+		\param a1 The value for the element at row 0, column 1 of the matrix
+		\param a2 The value for the element at row 0, column 2 of the matrix
+		\param a3 The value for the element at row 0, column 3 of the matrix
+		\param b0 The value for the element at row 1, column 0 of the matrix
+		\param b1 The value for the element at row 1, column 1 of the matrix
+		\param b2 The value for the element at row 1, column 2 of the matrix
+		\param b3 The value for the element at row 1, column 3 of the matrix
+		\param c0 The value for the element at row 2, column 0 of the matrix
+		\param c1 The value for the element at row 2, column 1 of the matrix
+		\param c2 The value for the element at row 2, column 2 of the matrix
+		\param c3 The value for the element at row 2, column 3 of the matrix
+		\param d0 The value for the element at row 3, column 0 of the matrix
+		\param d1 The value for the element at row 3, column 1 of the matrix
+		\param d2 The value for the element at row 3, column 2 of the matrix
+		\param d3 The value for the element at row 3, column 3 of the matrix
+	*/
 	ID_INLINE	 idRenderMatrix( float a0, float a1, float a2, float a3, float b0, float b1, float b2, float b3, float c0, float c1, float c2, float c3, float d0, float d1, float d2, float d3 );
 
 	//! Returns a pointer to the specified row of the matrix
@@ -113,7 +134,18 @@ public:
 	//! Transforms a plane using the inverse of this matrix
 	ID_INLINE void		  InverseTransformPlane( const idPlane& in, idPlane& out, bool normalize ) const;
 
-	//! Projects a 3D model space point into clip space using model and projection matrices.
+	/*!
+		\brief Transforms a 3D model space point into clip space using model and projection matrices.
+
+		This function performs two matrix multiplications to transform a 3D point from model space to clip space. First, it transforms the input point from model space to eye space by multiplying the
+	   point with the model matrix. Then, it transforms the resulting eye space point to clip space by multiplying with the projection matrix.
+
+		\param src The input 3D point in model space
+		\param modelMatrix The model matrix for transforming model space to eye space
+		\param projectionMatrix The projection matrix for transforming eye space to clip space
+		\param eye Output vector for the intermediate eye space coordinates
+		\param clip Output vector for the final clip space coordinates
+	*/
 	static ID_INLINE void TransformModelToClip( const idVec3& src, const idRenderMatrix& modelMatrix, const idRenderMatrix& projectionMatrix, idVec4& eye, idVec4& clip );
 
 	//! Transforms clip space coordinates to normalized device coordinates.
@@ -122,19 +154,68 @@ public:
 	//! Creates a render matrix from an origin and axis
 	static void			  CreateFromOriginAxis( const idVec3& origin, const idMat3& axis, idRenderMatrix& out );
 
-	//! Creates a render matrix from origin, axis, and scale components.
+	/*!
+		\brief Creates a render matrix from origin, axis, and scale components.
+
+		This function constructs a 4x4 transformation matrix using the provided origin position, orientation axis, and scale factors. The matrix is populated such that the first three columns
+	   represent the scaled axis vectors, and the fourth column represents the translation origin. The last row is set to the standard homogeneous coordinate values [0, 0, 0, 1].
+
+		\param origin The translation component of the transformation matrix
+		\param axis The 3x3 orientation matrix defining the axis directions
+		\param scale The scaling factors applied to each axis direction
+		\param out The resulting render matrix that will contain the transformation
+	*/
 	static void			  CreateFromOriginAxisScale( const idVec3& origin, const idMat3& axis, const idVec3& scale, idRenderMatrix& out );
 
 	//! Creates a view matrix from an origin and axis for OpenGL coordinate transformation.
 	static void			  CreateViewMatrix( const idVec3& origin, const idMat3& axis, idRenderMatrix& out );
 
-	//! Creates a projection matrix with the specified frustum parameters and stores the result in the output matrix.
+	/*!
+		\brief Creates a projection matrix with the specified frustum parameters and stores the result in the output matrix
+
+		This function generates a projection matrix for a perspective or orthographic projection based on the provided frustum parameters. The matrix is stored in the output parameter. The function
+	   handles both infinite far plane cases and finite far plane cases, with different behavior based on the CLIP_SPACE_D3D definition. The input parameters define the boundaries of the viewing
+	   frustum in world space coordinates.
+
+		\param xMin Minimum x-coordinate of the viewing frustum
+		\param xMax Maximum x-coordinate of the viewing frustum
+		\param yMin Minimum y-coordinate of the viewing frustum
+		\param yMax Maximum y-coordinate of the viewing frustum
+		\param zNear Distance to the near clipping plane
+		\param zFar Distance to the far clipping plane
+		\param out Output matrix to store the resulting projection matrix
+	*/
 	static void			  CreateProjectionMatrix( float xMin, float xMax, float yMin, float yMax, float zNear, float zFar, idRenderMatrix& out );
 
-	//! Creates a projection matrix using field of view parameters with optional offset.
+	/*!
+		\brief Creates a projection matrix using field of view parameters with optional offset
+
+		This function generates a projection matrix based on the specified field of view angles for both X and Y axes, along with near and far clipping distances. The function also supports optional
+	   offset values for the X and Y axes to adjust the projection. It calculates the frustum boundaries based on the field of view and then delegates to CreateProjectionMatrix to construct the final
+	   matrix.
+
+		\param xFovDegrees Horizontal field of view angle in degrees
+		\param yFovDegrees Vertical field of view angle in degrees
+		\param zNear Near clipping plane distance
+		\param zFar Far clipping plane distance
+		\param xOffset Horizontal offset for the projection frustum
+		\param yOffset Vertical offset for the projection frustum
+		\param out Output matrix that will contain the resulting projection matrix
+	*/
 	static void			  CreateProjectionMatrixFov( float xFovDegrees, float yFovDegrees, float zNear, float zFar, float xOffset, float yOffset, idRenderMatrix& out );
 
-	//! Creates a D3D-style projection matrix with the specified field of view, aspect ratio, and depth range.
+	/*!
+		\brief Creates a D3D-style projection matrix with the specified field of view, aspect ratio, and depth range
+
+		This function generates a projection matrix suitable for Direct3D-style rendering. It takes a vertical field of view angle, aspect ratio, and near and far depth clipping planes to construct
+	   the matrix. The resulting matrix is stored in the output parameter and can be used for perspective projection in 3D graphics rendering
+
+		\param verticalFov Vertical field of view angle in radians
+		\param aspect Aspect ratio of the viewport (width/height)
+		\param zNear Near clipping plane distance
+		\param zFar Far clipping plane distance
+		\param out Output matrix to store the resulting projection matrix
+	*/
 	static void			  CreateProjD3DStyle( float verticalFov, float aspect, float zNear, float zFar, idRenderMatrix& out );
 
 	//! Applies a depth hack to the provided projection matrix by scaling its z-components by 25%.
@@ -164,56 +245,247 @@ public:
 	//! Computes the inverse of a 4x4 matrix using double precision arithmetic and stores the result in the output matrix
 	static bool			  InverseByDoubles( const idRenderMatrix& src, idRenderMatrix& out );
 
-	//! Copies a render matrix into four row vectors, aligned for uniform setting.
+	/*!
+		\brief Copies a render matrix into four row vectors with 16-byte alignment
+
+		This function extracts the elements of a render matrix and copies them into four separate row vectors. The function uses SSE intrinsics when available to optimize memory operations, otherwise
+	   falling back to standard element-by-element copying. All row vectors must be 16-byte aligned for optimal performance.
+
+		\param matrix The source render matrix to copy from
+		\param row0 First row vector to store the first four matrix elements
+		\param row1 Second row vector to store the next four matrix elements
+		\param row2 Third row vector to store the next four matrix elements
+		\param row3 Fourth row vector to store the last four matrix elements
+		\throws assertion failure if any of the row vector pointers are not 16-byte aligned
+	*/
 	static void			  CopyMatrix( const idRenderMatrix& matrix, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3 );
 
-	//! Sets the MVP matrix elements into the provided row vectors and determines if the determinant is negative.
+	/*!
+		\brief Sets the MVP matrix elements into the provided row vectors and determines if the determinant is negative
+
+		This function extracts the four rows of the provided MVP matrix and stores them into the corresponding row vectors. It also determines whether the determinant of the matrix is negative. The
+	   function uses SSE intrinsics for optimized performance on supported platforms, with a fallback implementation for other platforms. All row vectors must be 16-byte aligned for proper SSE
+	   operation.
+
+		\param mvp The input MVP matrix to extract rows from
+		\param row0 The first row of the matrix
+		\param row1 The second row of the matrix
+		\param row2 The third row of the matrix
+		\param row3 The fourth row of the matrix
+		\param negativeDeterminant Output parameter indicating whether the determinant of the matrix is negative
+	*/
 	static void			  SetMVP( const idRenderMatrix& mvp, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3, bool& negativeDeterminant );
 
-	//! Computes a modified model-view-projection matrix for a given bounding volume.
+	/*!
+		\brief Computes a modified model-view-projection matrix for a given bounding volume.
+
+		This function calculates a transformed MVP matrix that accounts for the specified bounding volume's offset and scale. It processes the input matrix and bounds to produce four row vectors
+	   representing the transformed matrix. The function also determines whether the determinant of the resulting matrix is negative, which can be useful for culling or other geometric operations. The
+	   implementation uses SSE intrinsics for optimization when available, otherwise falling back to standard scalar operations.
+
+		\param mvp The input model-view-projection matrix to be transformed
+		\param bounds The bounding volume that defines the offset and scale for the transformation
+		\param row0 Output vector representing the first row of the transformed matrix
+		\param row1 Output vector representing the second row of the transformed matrix
+		\param row2 Output vector representing the third row of the transformed matrix
+		\param row3 Output vector representing the fourth row of the transformed matrix
+		\param negativeDeterminant Output boolean indicating whether the determinant of the resulting matrix is negative
+		\throws assertion failure if any of the row vectors are not 16-byte aligned
+	*/
 	static void			  SetMVPForBounds( const idRenderMatrix& mvp, const idBounds& bounds, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3, bool& negativeDeterminant );
 
-	//! Sets the MVP for inverse project by computing the matrix product of mvp and inverseProject and determining if the result has a negative determinant.
+	/*!
+		\brief Computes the matrix product of mvp and inverseProject and determines if the resulting matrix has a negative determinant.
+
+		This function calculates the product of two 4x4 matrices, mvp and inverseProject, storing the result in four row vectors. It also evaluates the determinant of the resulting matrix to determine
+	   if it is negative. The function uses SIMD intrinsics for optimized performance on supported platforms, falling back to standard scalar operations when SIMD is not available. All row vectors
+	   must be 16-byte aligned for proper SIMD operation.
+
+		\param mvp The first 4x4 matrix to be multiplied
+		\param inverseProject The second 4x4 matrix to be multiplied
+		\param row0 Output vector for the first row of the result matrix
+		\param row1 Output vector for the second row of the result matrix
+		\param row2 Output vector for the third row of the result matrix
+		\param row3 Output vector for the fourth row of the result matrix
+		\param negativeDeterminant Output boolean indicating if the determinant of the result matrix is negative
+	*/
 	static void			  SetMVPForInverseProject( const idRenderMatrix& mvp, const idRenderMatrix& inverseProject, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3, bool& negativeDeterminant );
 
 	//! Tests if a point is culled by the Model-View-Projection matrix.
 	static bool			  CullPointToMVP( const idRenderMatrix& mvp, const idVec3& point, bool zeroToOne = false );
 
-	//! Determines if a point is inside or outside the clip space defined by the model-view-projection matrix and returns culling bits.
+	/*!
+		\brief Determines if a point is inside or outside the clip space defined by the model-view-projection matrix and returns culling bits
+
+		This function transforms a 3D point using the provided model-view-projection matrix and performs frustum culling checks. It evaluates the transformed point against clip space boundaries and
+	   returns a bit mask indicating which sides of the frustum the point is outside of. The function supports both traditional and D3D-style clip space conventions through the zeroToOne parameter.
+	   The output bits are inverted (XOR with 63) so that a bit set to 1 indicates the point is outside the corresponding frustum plane, and a bit set to 0 indicates the point is inside or on the
+	   plane.
+
+		\param mvp The model-view-projection matrix used to transform the point
+		\param point The 3D point to test against the clip space
+		\param outBits Pointer to storage for the resulting culling bit mask
+		\param zeroToOne Flag indicating whether clip space Z is in [0,1] range (D3D convention) or [-1,1] range (OpenGL convention)
+		\return True if the point is completely inside the frustum, false if the point is outside one or more frustum planes
+	*/
 	static bool			  CullPointToMVPbits( const idRenderMatrix& mvp, const idVec3& point, byte* outBits, bool zeroToOne = false );
 
 	//! Determines if a bounding box is culled by the projection matrix.
 	static bool			  CullBoundsToMVP( const idRenderMatrix& mvp, const idBounds& bounds, bool zeroToOne = false );
 
-	//! Determines if a bounding box is culled by the frustum using the Model-View-Projection matrix.
+	/*!
+		\brief Determines if a bounding box is culled by the frustum using the Model-View-Projection matrix.
+
+		This function performs frustum culling on a bounding box by transforming its eight corner points using the provided Model-View-Projection matrix and checking if all points are outside the clip
+	   space boundaries. It supports both SIMD (SSE) and scalar implementations for performance optimization. The function returns true if the bounding box is partially or fully inside the view
+	   frustum, and false if it's completely outside.
+
+		\param mvp The Model-View-Projection matrix used to transform the bounding box coordinates
+		\param bounds The bounding box to test against the frustum
+		\param outBits Pointer to store the culling results as a bit mask where each bit represents a frustum plane test
+		\param zeroToOne Flag indicating whether clip space values are in range [0,1] (true) or [-1,1] (false)
+		\return True if the bounding box is partially or fully inside the view frustum, false if it's completely outside
+	*/
 	static bool			  CullBoundsToMVPbits( const idRenderMatrix& mvp, const idBounds& bounds, byte* outBits, bool zeroToOne = false );
 
-	//! Determines if extruded bounds are culled against a clip plane using the Model-View-Projection matrix.
+	/*!
+		\brief Determines if extruded bounds are culled against a clip plane using the Model-View-Projection matrix
+
+		This function evaluates whether a bounding volume, when extruded in a specified direction, is culled by a given clipping plane. It uses the Model-View-Projection matrix to perform the culling
+	   calculation. The extrusion direction and the clip plane are used to define the bounds that are tested for culling
+
+		\param mvp The Model-View-Projection matrix used for the culling calculation
+		\param bounds The bounding volume to be tested for culling
+		\param extrudeDirection The direction in which the bounds are extruded for the culling test
+		\param clipPlane The clipping plane against which the extruded bounds are tested
+		\param zeroToOne If true, the depth range is treated as [0, 1] instead of [-1, 1]
+		\return True if the extruded bounds are culled by the clip plane, false otherwise
+	*/
 	static bool			  CullExtrudedBoundsToMVP( const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& extrudeDirection, const idPlane& clipPlane, bool zeroToOne = false );
 
-	//! Performs conservative culling of an extruded bounding box against the frustum using MVP matrix bits
+	/*!
+		\brief Performs conservative culling of an extruded bounding box against the frustum using MVP matrix bits
+
+		This function determines whether an extruded bounding box, defined by a base bounding box and an extrusion direction, is culled against the view frustum. It uses the Model-View-Projection
+	   matrix to transform the bounding box vertices and performs SIMD-based comparisons against the clip planes. The function calculates culling bits for the bounding box corners and incorporates
+	   additional culling based on the extrusion direction and a clipping plane. The results are stored in the provided byte array, with an optional parameter to control the coordinate system
+	   handling.
+
+		\param mvp The Model-View-Projection matrix used for transforming bounding box vertices
+		\param bounds The base bounding box to be extruded
+		\param extrudeDirection The direction along which the bounding box is extruded
+		\param clipPlane The clipping plane used for extrusion-based culling
+		\param outBits Pointer to the output array where culling bits will be stored
+		\param zeroToOne Flag indicating whether the coordinate system uses [0,1] or [-1,1] range for Z coordinates
+		\return True if the extruded bounding box is completely outside the view frustum, false otherwise
+		\throws Assertion failure if the extrusion direction and clip plane normal are parallel or nearly parallel
+	*/
 	static bool CullExtrudedBoundsToMVPbits( const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& extrudeDirection, const idPlane& clipPlane, byte* outBits, bool zeroToOne = false );
 
-	//! Calculates the projected bounds of a given bounding box using a model-view-projection matrix
+	/*!
+		\brief Calculates the projected bounding box of a given bounds using a model-view-projection matrix, with optional window space normalization.
+
+		This function computes the projected bounds of a 3D bounding box by transforming it through a model-view-projection matrix. The computation is optimized using SSE intrinsics when available.
+	   The function takes into account the four corners of the X-Y plane of the input bounds and applies the transformation to each corner to determine the minimum and maximum values of the projected
+	   coordinates. If windowSpace is true, the resulting coordinates are normalized to the [0,1] range, which is typically used for screen-space operations. The function handles cases where the
+	   projection might result in invalid values by clamping them to appropriate infinity values.
+
+		\param projected The resulting bounds after projection
+		\param mvp The model-view-projection matrix to use for transformation
+		\param bounds The input bounding box to project
+		\param windowSpace Whether to normalize the results to [0,1] window space
+	*/
 	static void ProjectedBounds( idBounds& projected, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace = true );
 
-	//! Computes the projected and near-clipped bounds of a 3D bounding box using a model-view-projection matrix
+	/*!
+		\brief Computes the projected and near-clipped bounds of a 3D bounding box using a model-view-projection matrix.
+
+		This function calculates the bounds of a 3D bounding box after it has been projected using a model-view-projection matrix. It applies near-clipping to handle depth culling and can optionally
+	   return the result in window space coordinates. The implementation uses SSE intrinsics for optimized computational performance.
+
+		\param projected The resulting projected and near-clipped bounds
+		\param mvp The model-view-projection matrix used for the projection
+		\param bounds The original 3D bounding box to be projected
+		\param windowSpace Whether to return results in window space coordinates (true) or normalized device coordinates (false)
+	*/
 	static void ProjectedNearClippedBounds( idBounds& projected, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace = true );
 
-	//! Computes the projected and clipped bounds of a 3D bounding box using a model-view-projection matrix
+	/*!
+		\brief Computes the projected and clipped bounds of a 3D bounding box using a model-view-projection matrix with SSE optimizations.
+
+		This function takes a 3D bounding box and projects it using the provided model-view-projection matrix. It then clips the projected points against the unit cube to determine the final bounds.
+	   The function uses SSE intrinsics for optimized computation. The projected bounds are stored in the provided idBounds object. The windowSpace parameter controls whether the final bounds are in
+	   window space coordinates.
+
+		\param projected The resulting projected and clipped bounds
+		\param mvp The model-view-projection matrix used for projection
+		\param bounds The 3D bounding box to be projected and clipped
+		\param windowSpace Controls whether the result is in window space coordinates
+	*/
 	static void ProjectedFullyClippedBounds( idBounds& projected, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace = true );
 
-	//! Calculates the minimum and maximum depth bounds for a given bounding box transformed by a model-view-projection matrix.
+	/*!
+		\brief Calculates the minimum and maximum depth bounds for a given bounding box transformed by a model-view-projection matrix
+
+		This function computes the depth bounds of a 3D bounding box after applying a model-view-projection transformation. It handles both SSE optimized and scalar implementations. The function
+	   supports conversion to window space coordinates if specified. The computation takes into account perspective division and clamps results to valid ranges
+
+		\param min Output parameter for the minimum depth bound
+		\param max Output parameter for the maximum depth bound
+		\param mvp The model-view-projection matrix used for transformation
+		\param bounds The 3D bounding box to compute depth bounds for
+		\param windowSpace Flag indicating whether to convert results to window space coordinates
+	*/
 	static void DepthBoundsForBounds( float& min, float& max, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace = true );
 
-	//! Computes the minimum and maximum depth values for an extruded bounding box transformed by a model-view-projection matrix
+	/*!
+		\brief Computes the minimum and maximum depth values for an extruded bounding box transformed by a model-view-projection matrix
+
+		This function calculates the depth bounds of a bounding box that has been extruded along a given direction and then transformed by a model-view-projection matrix. The calculation takes into
+	   account a clipping plane that affects the extrusion direction. The results are stored in the provided min and max float references. When windowSpace is true, the depth values are clamped to the
+	   range [0,1] and scaled to fit within the normalized device coordinate system. The implementation uses SSE intrinsics for optimized performance.
+
+		\param min Reference to store the minimum depth value
+		\param max Reference to store the maximum depth value
+		\param mvp Model-view-projection matrix used for transformation
+		\param bounds Original bounding box to be extruded
+		\param extrudeDirection Direction along which the bounding box is extruded
+		\param clipPlane Clipping plane that influences the extrusion calculation
+		\param windowSpace Whether to clamp and scale results to window space coordinates [0,1]
+		\throws Assertion failure if the dot product of extrudeDirection and clipPlane normal is less than the smallest non-denormal float value
+	*/
 	static void DepthBoundsForExtrudedBounds(
 		float& min, float& max, const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& extrudeDirection, const idPlane& clipPlane, bool windowSpace = true );
 
-	//! Computes the depth bounds for shadow mapping using SSE optimization based on the provided MVP matrix and bounding box
+	/*!
+		\brief Computes depth bounds for shadow mapping using SSE optimization based on the provided MVP matrix and bounding box
+
+		This function calculates the minimum and maximum depth values for shadow mapping by transforming the bounding box vertices using the provided model-view-projection matrix. The computation
+	   takes into account the light position and can optionally return values in window space. The function uses SSE intrinsics for optimized performance when processing the bounding box vertices and
+	   their projections.
+
+		\param min Output parameter for the minimum depth value
+		\param max Output parameter for the maximum depth value
+		\param mvp The model-view-projection matrix used for transforming bounding box vertices
+		\param bounds The bounding box defining the object's spatial extent
+		\param localLightOrigin The light position in local space coordinates
+		\param windowSpace Flag indicating whether the result should be in window space (default true)
+	*/
 	static void			 DepthBoundsForShadowBounds( float& min, float& max, const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& localLightOrigin, bool windowSpace = true );
 
-	//! Extracts the six frustum planes from a given transformation matrix
+	/*!
+		\brief Extracts the six frustum planes from a given transformation matrix
+
+		This function computes the six frustum planes (left, right, bottom, top, near, far) from a transformation matrix that represents a view-projection or model-view-projection transformation. The
+	   function handles both zero-to-one and negative-one-to-one depth coordinate systems, and can optionally normalize the plane equations. The implementation uses different methods for computing the
+	   planes based on whether the depth coordinate system is zero-to-one or negative-one-to-one. The function is designed to work with matrices that are not necessarily MVP matrices, and includes a
+	   FIXME comment indicating that more checks are needed to determine if the matrix is a D3D MVP type, especially when zeroToOne is false.
+
+		\param planes Output array of six plane equations representing the frustum boundaries
+		\param frustum Transformation matrix from which to extract the frustum planes
+		\param zeroToOne Flag indicating whether the depth coordinate system uses zero-to-one range
+		\param normalize Flag indicating whether to normalize the resulting plane equations
+	*/
 	static void			 GetFrustumPlanes( idPlane planes[6], const idRenderMatrix& frustum, bool zeroToOne, bool normalize );
 
 	//! Computes the world-space corners of a frustum defined by the given transform and bounds.

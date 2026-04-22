@@ -257,7 +257,19 @@ assert_sizeof( idDrawVert, DRAWVERT_SIZE );
 	assert_offsetof( idDrawVert, tangent,	DRAWVERT_TANGENT_OFFSET );
 #endif
 
-//! Converts normalized floating-point vertex coordinates to byte values
+/*!
+	\brief Converts normalized floating-point vertex coordinates to byte values.
+
+	This function takes three normalized floating-point coordinates and converts them to byte values, typically for use in vertex data storage. The conversion process uses SSE intrinsics when
+   available for optimized performance, falling back to a standard implementation otherwise. The function assumes the input coordinates are normalized in the range [-1, 1] and maps them to the byte
+   range [0, 255]. The output byte values are stored in the provided byte array with three elements corresponding to x, y, and z coordinates.
+
+	\param x The x-coordinate as a normalized floating-point value
+	\param y The y-coordinate as a normalized floating-point value
+	\param z The z-coordinate as a normalized floating-point value
+	\param bval Pointer to the byte array where the converted values will be stored
+	\throws assert_4_byte_aligned is called to ensure bval is properly aligned
+*/
 ID_INLINE void VertexFloatToByte( const float& x, const float& y, const float& z, byte* bval )
 {
 	assert_4_byte_aligned( bval ); // for __stvebx

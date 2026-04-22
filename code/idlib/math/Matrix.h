@@ -66,7 +66,17 @@ public:
 	//! Constructs a 2x2 matrix from two 2D vectors representing the rows.
 	explicit idMat2( const idVec2& x, const idVec2& y );
 
-	//! Constructs a 2x2 matrix with the specified components.
+	/*!
+		\brief Constructs a 2x2 matrix with the specified components.
+
+		Initializes a 2x2 matrix by setting the components of its two rows. The first row is initialized with xx and xy, while the second row is initialized with yx and yy. This constructor is marked
+	   as ID_INLINE, indicating it should be inlined for performance reasons.
+
+		\param xx The value for the first element of the first row
+		\param xy The value for the second element of the first row
+		\param yx The value for the first element of the second row
+		\param yy The value for the second element of the second row
+	*/
 	explicit idMat2( const float xx, const float xy, const float yx, const float yy );
 
 	//! Constructs a 2x2 matrix from a 2D float array.
@@ -441,7 +451,22 @@ public:
 	//! Initializes a 3x3 matrix using three vector components as rows.
 	explicit idMat3( const idVec3& x, const idVec3& y, const idVec3& z );
 
-	//! Constructs a 3x3 matrix with the specified components.
+	/*!
+		\brief Constructs a 3x3 matrix with the specified components.
+
+		This constructor initializes a 3x3 matrix using the provided nine floating-point values. The matrix is filled in row-major order, where the first three values correspond to the first row, the
+	   next three to the second row, and the last three to the third row. Each row is represented as a vector with three components.
+
+		\param xx The value for the first component of the first row
+		\param xy The value for the second component of the first row
+		\param xz The value for the third component of the first row
+		\param yx The value for the first component of the second row
+		\param yy The value for the second component of the second row
+		\param yz The value for the third component of the second row
+		\param zx The value for the first component of the third row
+		\param zy The value for the second component of the third row
+		\param zz The value for the third component of the third row
+	*/
 	explicit idMat3( const float xx, const float xy, const float xz, const float yx, const float yy, const float yz, const float zx, const float zy, const float zz );
 
 	//! Constructs an idMat3 object from a 3x3 float array.
@@ -1016,10 +1041,44 @@ public:
 	//! Constructs an identity matrix.
 	idMat4();
 
-	//! Constructs a 4x4 matrix from four 4D vectors representing the rows or columns of the matrix
+	/*!
+		\brief Constructs a 4x4 matrix from four 4D vectors representing the rows or columns of the matrix
+
+		This constructor initializes a 4x4 matrix using four 4D vectors. The vectors are assigned to the matrix rows or columns depending on the context and usage. The implementation directly assigns
+	   each vector to the corresponding row of the matrix. This constructor is commonly used when building transformation matrices from rotation and translation components, such as when converting
+	   between different coordinate systems or applying transformations to 3D objects.
+
+		\param x First 4D vector representing the first row or column of the matrix
+		\param y Second 4D vector representing the second row or column of the matrix
+		\param z Third 4D vector representing the third row or column of the matrix
+		\param w Fourth 4D vector representing the fourth row or column of the matrix
+	*/
 	explicit idMat4( const idVec4& x, const idVec4& y, const idVec4& z, const idVec4& w );
 
-	//! Constructs a 4x4 matrix from 16 individual float values
+	/*!
+		\brief Constructs a 4x4 matrix from 16 individual float values representing the matrix elements in row-major order.
+
+		This constructor initializes a 4x4 matrix using 16 float values, where each value corresponds to an element in the matrix. The parameters are organized in row-major order, meaning the first
+	   four values (xx, xy, xz, xw) represent the first row, the next four values (yx, yy, yz, yw) represent the second row, and so on. This allows for direct construction of transformation matrices
+	   from individual components.
+
+		\param xx The value for the element at row 0, column 0 of the matrix.
+		\param xy The value for the element at row 0, column 1 of the matrix.
+		\param xz The value for the element at row 0, column 2 of the matrix.
+		\param xw The value for the element at row 0, column 3 of the matrix.
+		\param yx The value for the element at row 1, column 0 of the matrix.
+		\param yy The value for the element at row 1, column 1 of the matrix.
+		\param yz The value for the element at row 1, column 2 of the matrix.
+		\param yw The value for the element at row 1, column 3 of the matrix.
+		\param zx The value for the element at row 2, column 0 of the matrix.
+		\param zy The value for the element at row 2, column 1 of the matrix.
+		\param zz The value for the element at row 2, column 2 of the matrix.
+		\param zw The value for the element at row 2, column 3 of the matrix.
+		\param wx The value for the element at row 3, column 0 of the matrix.
+		\param wy The value for the element at row 3, column 1 of the matrix.
+		\param wz The value for the element at row 3, column 2 of the matrix.
+		\param ww The value for the element at row 3, column 3 of the matrix.
+	*/
 	explicit idMat4( const float xx,
 		const float				 xy,
 		const float				 xz,
@@ -1643,7 +1702,18 @@ public:
 	//! Constructs an uninitialized idMat5 matrix.
 	idMat5();
 
-	//! Constructs a 5x5 matrix using five 5-dimensional vectors as rows.
+	/*!
+		\brief Constructs a 5x5 matrix using five 5-dimensional vectors as rows.
+
+		The constructor initializes a 5x5 matrix by setting each row of the matrix to the corresponding input vector. Each input vector must contain exactly 5 elements, representing the components of
+	   a row in the matrix. The matrix is stored internally as an array of five idVec5 objects, where each idVec5 represents one row of the matrix.
+
+		\param v0 First row of the matrix as a 5-dimensional vector
+		\param v1 Second row of the matrix as a 5-dimensional vector
+		\param v2 Third row of the matrix as a 5-dimensional vector
+		\param v3 Fourth row of the matrix as a 5-dimensional vector
+		\param v4 Fifth row of the matrix as a 5-dimensional vector
+	*/
 	explicit idMat5( const idVec5& v0, const idVec5& v1, const idVec5& v2, const idVec5& v3, const idVec5& v4 );
 
 	//! Constructs an idMat5 object by copying data from a 5x5 float array.
@@ -2084,10 +2154,31 @@ public:
 	//! Constructs an uninitialized 6x6 matrix.
 	idMat6();
 
-	//! Constructs a 6x6 matrix using six 6D vectors as rows.
+	/*!
+		\brief Constructs a 6x6 matrix using six 6D vectors as rows.
+
+		This constructor initializes a 6x6 matrix by setting each row of the matrix to the corresponding input vector. Each idVec6 parameter represents one row of the resulting matrix.
+
+		\param v0 First row of the matrix
+		\param v1 Second row of the matrix
+		\param v2 Third row of the matrix
+		\param v3 Fourth row of the matrix
+		\param v4 Fifth row of the matrix
+		\param v5 Sixth row of the matrix
+	*/
 	explicit idMat6( const idVec6& v0, const idVec6& v1, const idVec6& v2, const idVec6& v3, const idVec6& v4, const idVec6& v5 );
 
-	//! Constructs a 6x6 matrix from four 3x3 matrices by combining their rows.
+	/*!
+		\brief Constructs a 6x6 matrix by combining the rows of four 3x3 matrices
+
+		The constructor takes four 3x3 matrices as input and constructs a 6x6 matrix by interleaving their rows. The first three rows of the resulting matrix are formed by combining the first row of
+	   each input matrix, followed by the second and third rows respectively. This pattern continues for the last three rows of the 6x6 matrix
+
+		\param m0 First 3x3 matrix whose rows contribute to the first three rows of the 6x6 matrix
+		\param m1 Second 3x3 matrix whose rows contribute to the first three rows of the 6x6 matrix
+		\param m2 Third 3x3 matrix whose rows contribute to the last three rows of the 6x6 matrix
+		\param m3 Fourth 3x3 matrix whose rows contribute to the last three rows of the 6x6 matrix
+	*/
 	explicit idMat6( const idMat3& m0, const idMat3& m1, const idMat3& m2, const idMat3& m3 );
 
 	//! Constructs a 6x6 matrix from a 2D array of floats.

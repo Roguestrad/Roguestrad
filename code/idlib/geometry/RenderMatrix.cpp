@@ -71,7 +71,15 @@ ALIGNTYPE16 const idRenderMatrix renderMatrix_windowSpaceToClipSpace( 2.0f, 0.0f
 //! Returns a constant render matrix that transforms clip space coordinates to window space coordinates.
 ALIGNTYPE16 const idRenderMatrix renderMatrix_clipSpaceToWindowSpace( 0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f );
 
-//! Returns a constant fullscreen render matrix with specific transformation values.
+/*!
+	\brief Returns a constant fullscreen render matrix with specific transformation values.
+
+	This function initializes and returns a constant idRenderMatrix object configured for fullscreen rendering. The matrix is set up with specific transformation values that map coordinates to the
+   fullscreen viewport. The matrix uses a 4x4 transformation format with the following layout: [1.0f, 0.0f, 0.0f, 0.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f]. The
+   negative Y scale factor (-1.0f) indicates that the coordinate system is inverted in the Y direction, which is a common convention for graphics APIs where the origin is at the top-left corner. This
+   matrix is typically used for rendering operations that need to map normalized device coordinates to screen space.
+
+*/
 ALIGNTYPE16 const idRenderMatrix renderMatrix_fullscreen( 1.0f,
 	0.0f,
 	0.0f,
@@ -1337,7 +1345,19 @@ void DeterminantIsNegative( bool& negativeDeterminant, const __m128& r0, const _
 
 #else
 
-//! Determines whether the determinant of a 4x4 matrix is negative.
+/*!
+	\brief Determines whether the determinant of a 4x4 matrix represented by four row vectors is negative
+
+	This function calculates the determinant of a 4x4 matrix using cofactor expansion. The matrix is represented by four row vectors, each pointing to an array of four float values. The function
+   computes various 2x2 and 3x3 sub-determinants to build up the full 4x4 determinant. The result is stored in the output parameter negativeDeterminant, which is set to true if the determinant is
+   negative and false otherwise
+
+	\param negativeDeterminant output parameter that will be set to true if the determinant is negative, false otherwise
+	\param row0 pointer to the first row of the 4x4 matrix
+	\param row1 pointer to the second row of the 4x4 matrix
+	\param row2 pointer to the third row of the 4x4 matrix
+	\param row3 pointer to the fourth row of the 4x4 matrix
+*/
 void DeterminantIsNegative( bool& negativeDeterminant, const float* row0, const float* row1, const float* row2, const float* row3 )
 {
 	// 2x2 sub-determinants required to calculate 4x4 determinant
@@ -3091,7 +3111,19 @@ static int ClipHomogeneousPolygonToUnitCube_SSE2( idVec4* points, int numPoints 
 
 #else
 
-//! Clips a homogeneous line to an axis-aligned plane
+/*!
+	\brief Clips a homogeneous line to an axis-aligned plane
+
+	This function performs clipping of a line defined by two homogeneous coordinates to a plane aligned with one of the axes. The clipping is determined by the side parameter which defines the plane's
+   position. The function calculates the intersection point of the line with the plane and returns the clipped point. The axis parameter indicates which coordinate axis is used for the plane
+   alignment. The function handles cases where the line is parallel to the plane by returning the point that is further from the plane.
+
+	\param p0 The first homogeneous coordinate of the line
+	\param p1 The second homogeneous coordinate of the line
+	\param axis The axis index (0-3) that defines the plane alignment
+	\param side The position of the clipping plane along the specified axis
+	\return The clipped homogeneous coordinate as a result of the intersection of the line with the axis-aligned plane
+*/
 static idVec4 ClipHomogeneousLineToSide( const idVec4& p0, const idVec4& p1, int axis, float side )
 {
 	const float d0	  = p0.w * side - p0[axis];
@@ -3102,7 +3134,23 @@ static idVec4 ClipHomogeneousLineToSide( const idVec4& p0, const idVec4& p1, int
 	return p0 + c * ( p1 - p0 );
 }
 
-//! Clips a polygon with homogeneous coordinates to an axis-aligned plane
+/*!
+	\brief Clips a polygon with homogeneous coordinates to an axis-aligned plane
+
+	This function performs polygon clipping on a homogeneous coordinate polygon against an axis-aligned plane. It takes an input polygon defined by points in homogeneous coordinates and clips it to a
+   plane defined by an axis, sign, and offset. The function calculates which sides of the polygon points lie relative to the plane and generates new points at intersections where edges cross the
+   plane. The result is a clipped polygon with potentially fewer vertices than the original. The function handles the case where polygon edges cross the clipping plane by generating intersection
+   points and only includes vertices that are on the correct side of the plane.
+
+	\param newPoints output array to store the clipped polygon points
+	\param points input array of polygon points in homogeneous coordinates
+	\param numPoints number of input polygon points
+	\param axis the axis (0-3) defining the plane orientation
+	\param sign sign factor for the plane equation, typically 1.0 or -1.0
+	\param offset distance from origin to the clipping plane along the specified axis
+	\return the number of points in the clipped polygon
+	\throws assertion failures if newPoints equals points or if numPoints is not less than 16
+*/
 static int ClipHomogeneousPolygonToSide_Generic( idVec4* __restrict newPoints, idVec4* __restrict points, int numPoints, int axis, float sign, float offset )
 {
 	assert( newPoints != points );
@@ -3727,7 +3775,20 @@ void idRenderMatrix::DepthBoundsForExtrudedBounds(
 #endif
 }
 
-//! Returns true if the localPoint is inside the infinite shadow volume cast from the given occluder bounding box and the given light position
+/*!
+	\brief Determines if a point is inside the infinite shadow volume cast by an occluder bounds and a light origin
+
+	The function evaluates whether a given point lies within the shadow volume that would be cast by an occluder defined by its bounding box and a light source position. It expands the occluder bounds
+   by a specified epsilon value to account for edge cases. The function checks three conditions: if the point is contained within the expanded bounds, if the light origin is contained within the
+   expanded bounds, or if the line segment between the light origin and the point intersects the expanded bounds. If any of these conditions are met, the point is considered to be inside the infinite
+   shadow projection.
+
+	\param occluderBounds The bounding box defining the occluder that casts the shadow
+	\param localLightOrigin The position of the light source in local coordinates
+	\param localPoint The point to test for inclusion in the shadow volume
+	\param epsilon A small expansion value applied to the occluder bounds to handle edge cases
+	\return true if the point is inside the infinite shadow volume, false otherwise
+*/
 static bool PointInsideInfiniteShadow( const idBounds& occluderBounds, const idVec3& localLightOrigin, const idVec3& localPoint, const float epsilon )
 {
 	// Expand the bounds with an epsilon.

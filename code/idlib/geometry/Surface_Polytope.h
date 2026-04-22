@@ -76,7 +76,21 @@ public:
 	//! Initializes the polytope cone structure with specified bounds and number of sides.
 	void SetupCone( const idBounds& bounds, const int numSides );
 
-	//! Splits the polytope surface into front and back portions based on the provided plane.
+	/*!
+		\brief Splits the polytope surface into front and back portions based on the provided plane.
+
+		This function divides the current polytope surface into two separate polytopes, one on each side of the given plane. The front portion is stored in the location pointed to by the front
+	   parameter, and the back portion is stored in the location pointed to by the back parameter. The epsilon value determines the tolerance for determining if a vertex lies on the plane. If the
+	   polytope is entirely on one side of the plane, the function returns the side identifier (SIDE_FRONT or SIDE_BACK). Otherwise, it returns SIDE_CROSS to indicate that the polytope was split by
+	   the plane. The function also closes off the front and back polytopes with triangles to ensure they form complete polytopes.
+
+		\param plane The plane used to split the polytope surface
+		\param epsilon The tolerance for determining if a vertex lies on the plane
+		\param front Pointer to store the front portion of the split polytope
+		\param back Pointer to store the back portion of the split polytope
+		\return The side identifier indicating the result of the split operation: SIDE_FRONT if the polytope is entirely in front of the plane, SIDE_BACK if entirely behind, or SIDE_CROSS if the
+	   polytope was split by the plane
+	*/
 	int	 SplitPolytope( const idPlane& plane, const float epsilon, idSurface_Polytope** front, idSurface_Polytope** back ) const;
 
 protected:

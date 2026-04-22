@@ -81,7 +81,20 @@ public:
 	const idList<idVec2i>* inputSizes;
 };
 
-//! Allocates rectangular regions within a larger rectangle using a greedy corner-packing algorithm.
+/*!
+	\brief Allocates rectangular regions within a larger rectangle using a greedy corner-packing algorithm.
+
+	This function takes a list of input rectangle sizes and determines optimal positions for each rectangle within a larger container. It uses a greedy approach that attempts to place each rectangle
+   at a corner of previously placed rectangles, minimizing the total area required. The rectangles are sorted by size beforehand to improve packing efficiency. The algorithm ensures that the resulting
+   total size aligns with GPU texture requirements by rounding widths to multiples of 32 DXT blocks. The function will fail if a rectangle cannot be placed within the prescribed limits.
+
+	\param inputSizes List of input rectangle sizes to be allocated
+	\param outputPositions Output list of positions where each input rectangle is placed
+	\param totalSize Total size of the resulting rectangle container
+	\param START_MAX Initial maximum size used for allocation checks
+	\param imageMax Maximum allowed size for any dimension, or 0 to disable limit
+	\throws FatalError if a rectangle cannot be fitted within the limits
+*/
 void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX, const int imageMax )
 {
 	outputPositions.SetNum( inputSizes.Num() );
@@ -179,7 +192,20 @@ void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPo
 	}
 }
 
-//! Allocates rectangular tiles for tiled shadow mapping using a quad-tree data structure
+/*!
+	\brief Allocates rectangular tiles for tiled shadow mapping using a quad-tree data structure.
+
+	This function takes a list of input rectangle sizes and assigns them positions within a tiled shadow map layout. It uses a quad-tree data structure to efficiently manage tile allocation, sorting
+   rectangles by size from largest to smallest to improve packing efficiency. The function returns the total size required for the tile map and the position of each rectangle within that map. The
+   output positions are specified in UV coordinates normalized to the range [0,1], which are then scaled to the actual resolution of the tiled shadow map.
+
+	\param inputSizes List of rectangle sizes to be allocated
+	\param outputPositions Output list of positions for each rectangle
+	\param totalSize Total size of the allocated tile map
+	\param TILED_SM_RES Resolution of the tiled shadow map
+	\param MAX_TILE_RES Maximum tile size allowed
+	\param NUM_QUAD_TREE_LEVELS Number of levels in the quad-tree structure
+*/
 void RectAllocatorQuadTree(
 	const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int TILED_SM_RES, const int MAX_TILE_RES = 512, const int NUM_QUAD_TREE_LEVELS = 8 )
 {

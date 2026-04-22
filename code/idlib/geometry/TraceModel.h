@@ -187,7 +187,19 @@ public:
 	//! Returns the silhouette edges of the trace model for a parallel projection direction.
 	int	  GetParallelProjectionSilhouetteEdges( const idVec3& projectionDir, int silEdges[MAX_TRACEMODEL_EDGES] ) const;
 
-	//! Computes mass properties including mass, center of mass, and inertia tensor for a trace model given a density
+	/*!
+		\brief Computes mass properties including mass, center of mass, and inertia tensor for a trace model given a density
+
+		This function calculates the physical properties of a trace model based on its geometry and the specified density. It handles both polygon and non-polygon trace models by using volume
+	   integrals to compute the necessary mass properties. For polygon models, it delegates to a temporary trace model for the calculation. The function computes the mass by multiplying the density
+	   with the volume integral, determines the center of mass using the first-order volume integrals, and calculates the inertia tensor using second-order and mixed volume integrals. The inertia
+	   tensor is then translated to the center of mass to ensure correct physical behavior.
+
+		\param density The density value used to compute the mass
+		\param mass Output parameter for the calculated mass
+		\param centerOfMass Output parameter for the center of mass coordinates
+		\param inertiaTensor Output parameter for the inertia tensor matrix
+	*/
 	void  GetMassProperties( const float density, float& mass, idVec3& centerOfMass, idMat3& inertiaTensor ) const;
 
 private:
@@ -203,7 +215,18 @@ private:
 	//! Initializes the bone trace model with predefined vertices, edges, and polygons.
 	void InitBone();
 
-	//! Computes projection integrals for a polygon edge in the trace model
+	/*!
+		\brief Computes projection integrals for a polygon edge in the trace model.
+
+		This function calculates various projection integrals for a given polygon edge defined by its indices 'a' and 'b'. The computation involves iterating through all edges of the specified polygon
+	   and performing mathematical operations on the vertex coordinates to determine the integrals. These integrals are typically used in computational geometry for calculating properties like area,
+	   centroid, or other geometric characteristics of the polygon. The results are stored in the provided projectionIntegrals_s structure.
+
+		\param polyNum Index of the polygon in the trace model
+		\param a First coordinate axis index for projection calculations
+		\param b Second coordinate axis index for projection calculations
+		\param integrals Output structure to store the computed projection integrals
+	*/
 	void ProjectionIntegrals( int polyNum, int a, int b, struct projectionIntegrals_s& integrals ) const;
 
 	//! Computes polygon integrals for a given polygon and indices.

@@ -113,7 +113,19 @@ public:
 	//! Finds objects with bounding boxes intersecting the specified box and returns a list of chunks that may contain such objects.
 	void QueryInBox( const idBounds& box, QueryResult& res ) const;
 
-	//! Finds objects with bounding boxes intersecting a specified moving box and returns a list of chunks that may contain such objects
+	/*!
+		\brief Finds objects with bounding boxes intersecting a specified moving box and returns a list of chunks that may contain such objects
+
+		This function performs a spatial query to determine which objects in the octree may intersect with a moving box defined by its initial position, direction, and radius. The query uses a
+	   recursive approach to traverse the octree structure and collect potential intersections. The results are stored in the provided QueryResult object, which is first cleared to ensure no previous
+	   data remains.
+
+		\param box The initial bounding box of the moving object
+		\param start The starting position of the moving box
+		\param invDir The inverse direction of the movement, used for ray casting calculations
+		\param radius The radius of the moving box in each dimension
+		\param res The result object to store the query results
+	*/
 	void QueryInMovingBox( const idBounds& box, const idVec3& start, const idVec3& invDir, const idVec3& radius, QueryResult& res ) const;
 
 private:
@@ -127,7 +139,19 @@ private:
 	//! Calculates the cell ranges for a given bounding box within the octree structure.
 	CellRanges GetCellRanges( const idBounds& box, int maxDepth ) const;
 
-	//! Recursively queries the octree for objects within a specified bounding box.
+	/*!
+		\brief Recursively queries the octree for objects within a specified bounding box.
+
+		This function performs a recursive query operation on an octree data structure to find all objects that intersect with a given bounding box. It operates on a specific node of the octree and
+	   processes child nodes based on intersection tests. The function handles both static and moving object queries by checking intersection ranges. For each node that intersects with the query
+	   bounds, it adds the objects contained in that node to the result set. The recursion continues until leaf nodes are reached or no further intersections are possible.
+
+		\param ctx Query context containing the search bounds, movement data, and result container
+		\param nodeIdx Index of the current octree node being processed
+		\param cellBox Bounding box representing the spatial extent of the current octree node
+		\param spaceBox Bounding box defining the spatial region being queried
+		\throws assertion failure when spaceBox does not intersect with ctx.box
+	*/
 	void	   Query_r( QueryContext& ctx, int nodeIdx, const idBounds& cellBox, const idBounds& spaceBox ) const;
 
 	//! Recursively adds an object to the octree nodes based on its bounding box containment.

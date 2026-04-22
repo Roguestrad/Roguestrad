@@ -81,7 +81,19 @@ public:
 	//! Expands the winding to fit within the given axial bounding box.
 	void		  ExpandForAxialBox( const idVec2 bounds[2] );
 
-	//! Splits the winding into front and back portions based on a clipping plane and returns which side the winding falls on.
+	/*!
+		\brief Splits the winding into front and back portions based on a clipping plane and returns which side the winding falls on.
+
+		This function takes a winding and splits it into two portions based on a clipping plane defined by a normal vector and a distance. The function also uses an epsilon value to determine if a
+	   point lies on the plane. The results are stored in the front and back winding pointers. The function returns an integer value indicating whether the winding is on the front side, back side, or
+	   crosses the plane.
+
+		\param plane Normal vector and distance defining the clipping plane
+		\param epsilon Epsilon value used to determine if a point lies on the plane
+		\param front Pointer to store the front portion of the winding
+		\param back Pointer to store the back portion of the winding
+		\return Integer value indicating the side of the winding relative to the clipping plane: SIDE_FRONT, SIDE_BACK, or SIDE_CROSS.
+	*/
 	int			  Split( const idVec3& plane, const float epsilon, idWinding2D** front, idWinding2D** back ) const;
 
 	//! Clips the winding by a plane and returns true if any part remains on the front side
@@ -126,7 +138,20 @@ public:
 	//! Checks if a line segment intersects with the winding
 	bool		  LineIntersection( const idVec2& start, const idVec2& end ) const;
 
-	//! Checks if a ray intersects with the 2D winding and calculates intersection parameters
+	/*!
+		\brief Checks if a ray intersects with the 2D winding and calculates intersection parameters.
+
+		This function determines whether a ray starting at a given point and extending in a specified direction intersects with the 2D winding. It computes two scale parameters that represent the
+	   intersection points along the ray. The function also optionally returns the indices of the edges that were intersected. The ray intersection is calculated using plane equations derived from the
+	   winding points and the ray direction. The function returns false if the ray does not intersect the winding or if it intersects at a degenerate point.
+
+		\param start The starting point of the ray
+		\param dir The direction vector of the ray
+		\param scale1 The first intersection scale parameter
+		\param scale2 The second intersection scale parameter
+		\param edgeNums Optional pointer to an array to store the indices of the intersected edges
+		\return True if the ray intersects the winding, false otherwise
+	*/
 	bool		  RayIntersection( const idVec2& start, const idVec2& dir, float& scale1, float& scale2, int* edgeNums = NULL ) const;
 
 	//! Computes a 2D plane equation from two 2D points.

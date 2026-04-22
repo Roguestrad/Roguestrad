@@ -49,7 +49,17 @@ public:
 	//! Constructs an empty idVectorSet with default parameters.
 	idVectorSet();
 
-	//! Constructs an idVectorSet object with the specified minimums, maximums, hash size, and initial size.
+	/*!
+		\brief Constructs an idVectorSet object with the specified minimums, maximums, hash size, and initial size
+
+		The constructor initializes a vector set with the given bounding box dimensions specified by mins and maxs. It also sets up the hash table size for spatial partitioning and the initial number
+	   of elements the set can hold
+
+		\param mins Minimum coordinates of the bounding box
+		\param maxs Maximum coordinates of the bounding box
+		\param boxHashSize Size of the hash table used for spatial partitioning
+		\param initialSize Initial number of elements the set can hold
+	*/
 	idVectorSet( const type& mins, const type& maxs, const int boxHashSize, const int initialSize );
 
 	//! Returns the total size of allocated memory for the vector set.
@@ -58,7 +68,17 @@ public:
 	//! Returns the total size of allocated memory for this vector including the size of the type
 	size_t Size() const { return sizeof( *this ) + Allocated(); }
 
-	//! Initializes the vector set with specified bounding box parameters and hash table size
+	/*!
+		\brief Initializes the vector set with specified bounding box parameters, hash table size, and initial capacity.
+
+		This function sets up the internal data structures of the vector set by initializing the hash table with the specified hash size and allocating initial memory. It also calculates inverse and
+	   half box sizes for spatial indexing based on the provided minimum and maximum bounds.
+
+		\param mins The minimum bounds of the spatial domain
+		\param maxs The maximum bounds of the spatial domain
+		\param boxHashSize The size of the hash table for spatial partitioning, determines the granularity of the grid
+		\param initialSize The initial number of elements the vector set can hold before reallocation
+	*/
 	void   Init( const type& mins, const type& maxs, const int boxHashSize, const int initialSize );
 
 	//! Resizes the vector set to the specified new size.
@@ -187,7 +207,17 @@ public:
 	//! Constructs a new idVectorSubset object with default values.
 	idVectorSubset();
 
-	//! Initializes a vector subset with specified bounding box and hash table size.
+	/*!
+		\brief Initializes a vector subset with specified bounding box and hash table size
+
+		This constructor initializes a vector subset using the provided minimum and maximum coordinates to define the bounding box of the subset. It also sets up the hash table size for efficient
+	   spatial indexing and specifies an initial size for the subset
+
+		\param mins The minimum coordinates of the bounding box
+		\param maxs The maximum coordinates of the bounding box
+		\param boxHashSize The size of the hash table used for spatial indexing
+		\param initialSize The initial number of elements the subset can hold
+	*/
 	idVectorSubset( const type& mins, const type& maxs, const int boxHashSize, const int initialSize );
 
 	//! Returns the total amount of memory allocated by the vector subset.
@@ -196,7 +226,17 @@ public:
 	//! Returns the total size of allocated memory for the vector subset including the size of the type itself.
 	size_t Size() const { return sizeof( *this ) + Allocated(); }
 
-	//! Initializes the vector subset with minimum and maximum bounds, hash size, and initial capacity.
+	/*!
+		\brief Initializes the vector subset with minimum and maximum bounds, hash size, and initial capacity
+
+		Sets up the internal data structures for the vector subset using the provided bounding box coordinates, hash table size, and initial allocation size. Calculates inverse and half box sizes for
+	   spatial indexing operations
+
+		\param mins Minimum bounds of the vector subset
+		\param maxs Maximum bounds of the vector subset
+		\param boxHashSize Size of the hash grid for spatial partitioning
+		\param initialSize Initial capacity for the hash table
+	*/
 	void   Init( const type& mins, const type& maxs, const int boxHashSize, const int initialSize );
 
 	//! Clears all elements from the vector subset and its hash table.

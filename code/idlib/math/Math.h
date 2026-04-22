@@ -331,7 +331,10 @@ public:
 	//! Returns the reflection vector of the given vector and normal
 	static idVec3		  ReflectVector( idVec3 vector, idVec3 normal );
 
-	//! Creates and returns a new idVec4 vector with the specified x, y, z, and w components.
+	/*!
+		\brief Creates and returns a new idVec4 vector with the specified x, y, z, and w components
+		\return A new idVec4 vector initialized with the provided x, y, z, and w values
+	*/
 	static idVec4		  CreateVector( float x, float y, float z, float w );
 
 	//! Creates and returns a new idVec3 object with the specified x, y, and z coordinates.

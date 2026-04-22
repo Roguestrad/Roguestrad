@@ -138,6 +138,7 @@ const idVec4 colorTeal			 = idVec4( 0.00f, 0.50f, 0.50f, 1.00f ); // #008080
 const idVec4 colorWhite			 = idVec4( 1.00f, 1.00f, 1.00f, 1.00f );
 const idVec4 colorYellow		 = idVec4( 1.00f, 1.00f, 0.00f, 1.00f );
 
+//! Packs a vector4 color into a 32-bit dword value.
 dword		 PackColor( const idVec4& color )
 {
 	byte dx = idMath::Ftob( color.x * 255.0f );
@@ -147,12 +148,14 @@ dword		 PackColor( const idVec4& color )
 	return ( dx << 0 ) | ( dy << 8 ) | ( dz << 16 ) | ( dw << 24 );
 }
 
+//! Unpacks a 32-bit packed color value into a vector of four floating-point components.
 void UnpackColor( const dword color, idVec4& unpackedColor )
 {
 	unpackedColor.Set(
 		( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 24 ) & 255 ) * ( 1.0f / 255.0f ) );
 }
 
+//! Packs RGB color values from a vector into a 32-bit integer.
 dword PackColor( const idVec3& color )
 {
 	byte dx = idMath::Ftob( color.x * 255.0f );
@@ -161,6 +164,7 @@ dword PackColor( const idVec3& color )
 	return ( dx << 0 ) | ( dy << 8 ) | ( dz << 16 );
 }
 
+//! Unpacks a 32-bit color value into a 3-component vector.
 void UnpackColor( const dword color, idVec3& unpackedColor )
 {
 	unpackedColor.Set( ( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ) );
@@ -271,47 +275,67 @@ static void ( *_LittleBitField )( void* bp, int elsize );
 static void ( *_SixtetsForInt )( byte* out, int src );
 static int ( *_IntForSixtets )( byte* in );
 
+//! Converts a short integer from little-endian to big-endian byte order.
 short BigShort( short l )
 {
 	return _BigShort( l );
 }
+
+//! Converts a short value from big-endian to little-endian byte order.
 short LittleShort( short l )
 {
 	return _LittleShort( l );
 }
+
+//! Converts an integer value to big-endian byte order.
 int BigLong( int l )
 {
 	return _BigLong( l );
 }
+
+//! Converts a 32-bit integer from little-endian byte order to native byte order.
 int LittleLong( int l )
 {
 	return _LittleLong( l );
 }
+
+//! Returns the big float value of the given float parameter.
 float BigFloat( float l )
 {
 	return _BigFloat( l );
 }
+
+//! Converts a float value from big-endian to little-endian byte order.
 float LittleFloat( float l )
 {
 	return _LittleFloat( l );
 }
+
+//! Reverses the byte order of elements in a buffer.
 void BigRevBytes( void* bp, int elsize, int elcount )
 {
 	_BigRevBytes( bp, elsize, elcount );
 }
+
+//! Reverses the byte order of elements in a buffer.
 void LittleRevBytes( void* bp, int elsize, int elcount )
 {
 	_LittleRevBytes( bp, elsize, elcount );
 }
+
+//! Initializes a little bit field structure with the specified element size.
 void LittleBitField( void* bp, int elsize )
 {
 	_LittleBitField( bp, elsize );
 }
 
+//! Encodes an integer into sixtets for base64 encoding.
 void SixtetsForInt( byte* out, int src )
 {
 	_SixtetsForInt( out, src );
 }
+
+//! Converts a byte array into a 32-bit integer using sixtets.
 int IntForSixtets( byte* in )
 {
 	return _IntForSixtets( in );
@@ -524,10 +548,12 @@ bool Swap_IsBigEndian()
 	return *( short* )swaptest != 1;
 }
 
+//! Debug tool to identify dynamic growth of idList instances.
 void BreakOnListGrowth()
 {
 }
 
+//! Placeholder function for break-on-list default behavior.
 void BreakOnListDefault()
 {
 }

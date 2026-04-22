@@ -418,7 +418,18 @@ template<typename _elemType_, typename _indexType_, int _bufferSize_, streamBuff
 class ALIGNTYPE16 idODSStreamedIndexedArray
 {
 public:
-	//! Constructs an idODSStreamedIndexedArray object with the provided array and index data.
+	/*!
+		\brief Constructs an idODSStreamedIndexedArray object with the provided array and index data
+
+		Initializes the streamed indexed array with the given array and index data. Sets up internal state for streaming operations including caching and indexing. Performs compile-time assertions to
+	   ensure buffer size and alignment requirements are met. The constructor fetches the first batches of indices and elements to prepare for streaming operations. The index count is rounded up to a
+	   multiple of the specified rounding value for efficient memory access patterns.
+
+		\param array Pointer to the array of elements to be streamed
+		\param numElements Number of elements in the input array
+		\param index Pointer to the index array
+		\param numIndices Number of indices in the index array
+	*/
 	idODSStreamedIndexedArray( const _elemType_* array, const int numElements, const _indexType_* index, const int numIndices ) :
 		cachedArrayStart( 0 ),
 		cachedArrayEnd( 0 ),

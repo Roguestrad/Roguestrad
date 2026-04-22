@@ -30,7 +30,19 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-//! Updates a vertex index and returns the remapped vertex index.
+/*!
+	\brief Updates a vertex index by remapping it and returns the new index value.
+
+	This function performs a vertex index update operation by utilizing a remapping array. It calculates a sign bit from the remap value to determine which element of the vertexIndexNum array to use.
+   The function updates the vertexIndexNum array with the current remap value, updates the vertexRemap array with the previous value from vertexIndexNum, increments the second element of
+   vertexIndexNum by the sign bit, and finally updates the vertexCopyIndex array with the original vertex number mapped to the new remap index. The function returns the updated remap index value.
+
+	\param vertexIndexNum An array of two integers used to store and update vertex index values.
+	\param vertexRemap A pointer to an integer array that maps vertex indices to their remapped values.
+	\param vertexCopyIndex A pointer to an integer array that stores the mapping from remapped indices back to original vertex indices.
+	\param vertNum The index number of the vertex to be updated.
+	\return The remapped vertex index value after the update operation.
+*/
 ID_INLINE int UpdateVertexIndex( int vertexIndexNum[2], int* vertexRemap, int* vertexCopyIndex, int vertNum )
 {
 	int s				 = INT32_SIGNBITSET( vertexRemap[vertNum] );
