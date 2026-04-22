@@ -30,104 +30,170 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __WINDING_H__
 #define __WINDING_H__
 
-/*
-===============================================================================
+/*!
+	\class idWinding
+	\brief A class representing a polygon winding defined by a sequence of 3D vertices.
 
-	A winding is an arbitrary convex polygon defined by an array of points.
+	The idWinding class encapsulates a polygon winding structure composed of points in 3D space, typically used for representing planar polygons in geometric computations. It supports various
+   operations such as construction from different sources, manipulation of points, splitting and clipping against planes, and geometric queries like area, center, and bounds. The class provides
+   methods for validation, merging, and convex hull computations, making it suitable for use in rendering, collision detection, and BSP-related algorithms. Memory management is handled internally with
+   automatic reallocation and cleanup.
 
-===============================================================================
 */
-
 class idWinding
 {
 public:
+	//! Initializes a new empty winding with no allocated points.
 	idWinding();
-	explicit idWinding( const int n );							  // allocate for n points
-	explicit idWinding( const idVec3* verts, const int n );		  // winding from points
-	explicit idWinding( const idVec3& normal, const float dist ); // base winding for plane
-	explicit idWinding( const idPlane& plane );					  // base winding for plane
+
+	//! Constructs an idWinding object with space allocated for the specified number of points.
+	explicit idWinding( const int n );
+
+	//! Constructs a winding from an array of vertices
+	explicit idWinding( const idVec3* verts, const int n );
+
+	//! Creates a new winding from a plane normal and distance
+	explicit idWinding( const idVec3& normal, const float dist );
+
+	//! Creates a winding from a plane
+	explicit idWinding( const idPlane& plane );
+
+	//! Constructs a new winding as a copy of the provided winding.
 	explicit idWinding( const idWinding& winding );
+
+	//! Destructor for the idWinding class that releases the allocated memory.
 	virtual ~idWinding();
 
+	//! Assigns the contents of another winding to this winding
 	idWinding&	  operator=( const idWinding& winding );
+
+	//! Returns a constant reference to the idVec5 point at the specified index in the winding.
 	const idVec5& operator[]( const int index ) const;
+
+	//! Provides access to a point in the winding by index
 	idVec5&		  operator[]( const int index );
 
-	// add a point to the end of the winding point array
+	//! Appends a point to the end of the winding point array and returns a reference to the winding.
 	idWinding&	  operator+=( const idVec3& v );
+
+	//! Appends a point to the winding and returns a reference to the winding.
 	idWinding&	  operator+=( const idVec5& v );
+
+	//! Adds a point to the winding.
 	void		  AddPoint( const idVec3& v );
+
+	//! Adds a point to the winding.
 	void		  AddPoint( const idVec5& v );
 
-	// number of points on winding
+	//! Returns the number of points in the winding.
 	int			  GetNumPoints() const;
+
+	//! Sets the number of points in the winding to the specified value.
 	void		  SetNumPoints( int n );
+
+	//! Clears the winding data by resetting point count and freeing memory.
 	virtual void  Clear();
 
-	// huge winding for plane, the points go counter clockwise when facing the front of the plane
+	//! Creates a winding for a plane using the provided normal and distance.
 	void		  BaseForPlane( const idVec3& normal, const float dist );
+
+	//! Initializes the winding based on the provided plane equation.
 	void		  BaseForPlane( const idPlane& plane );
 
-	// splits the winding into a front and back winding, the winding itself stays unchanged
-	// returns a SIDE_?
+	//! Splits the winding into front and back portions based on the provided plane and epsilon value.
 	int			  Split( const idPlane& plane, const float epsilon, idWinding** front, idWinding** back ) const;
 
-	// returns the winding fragment at the front of the clipping plane,
-	// if there is nothing at the front the winding itself is destroyed and NULL is returned
+	//! Returns the winding fragment at the front of the clipping plane, or NULL if nothing remains at the front.
 	idWinding*	  Clip( const idPlane& plane, const float epsilon = ON_EPSILON, const bool keepOn = false );
 
-	// cuts off the part at the back side of the plane, returns true if some part was at the front
-	// if there is nothing at the front the number of points is set to zero
+	//! Clips the winding by the provided plane and returns true if any part remains on the front side
 	bool		  ClipInPlace( const idPlane& plane, const float epsilon = ON_EPSILON, const bool keepOn = false );
 
-	// returns a copy of the winding
+	//! Returns a copy of this winding.
 	idWinding*	  Copy() const;
+
+	//! Creates a new winding with the point order reversed from the original winding.
 	idWinding*	  Reverse() const;
+
+	//! Reverses the order of points in the winding
 	void		  ReverseSelf();
+
+	//! Removes consecutive equal points from the winding within the specified epsilon threshold.
 	void		  RemoveEqualPoints( const float epsilon = ON_EPSILON );
+
+	//! Removes colinear points from the winding that are within the specified epsilon distance.
 	void		  RemoveColinearPoints( const idVec3& normal, const float epsilon = ON_EPSILON );
+
+	//! Removes a point from the winding at the specified index.
 	void		  RemovePoint( int point );
+
+	//! Inserts a point into the winding at the specified position.
 	void		  InsertPoint( const idVec5& point, int spot );
+
+	//! Inserts a point into the winding if it lies on an edge within the specified epsilon tolerance.
 	bool		  InsertPointIfOnEdge( const idVec5& point, const idPlane& plane, const float epsilon = ON_EPSILON );
+
+	//! Inserts a point into the winding if it lies on an edge within the specified epsilon tolerance
 	bool		  InsertPointIfOnEdge( const idVec3& point, const idPlane& plane, const float epsilon = ON_EPSILON );
 
-	// add a winding to the convex hull
+	//! Adds a winding to the convex hull
 	void		  AddToConvexHull( const idWinding* winding, const idVec3& normal, const float epsilon = ON_EPSILON );
 
-	// add a point to the convex hull
+	//! Adds a point to the convex hull while maintaining the hull's integrity
 	void		  AddToConvexHull( const idVec3& point, const idVec3& normal, const float epsilon = ON_EPSILON );
 
-	// tries to merge 'this' with the given winding, returns NULL if merge fails, both 'this' and 'w' stay intact
-	// 'keep' tells if the contacting points should stay even if they create colinear edges
+	//! Attempts to merge this winding with another winding along a shared edge, returning a new winding if successful.
 	idWinding*	  TryMerge( const idWinding& w, const idVec3& normal, int keep = false ) const;
 
-	// check whether the winding is valid or not
+	//! Checks if the winding is valid and returns true if it passes all validation checks.
 	bool		  Check( bool print = true ) const;
 
+	//! Calculates and returns the area of the winding by summing the cross products of triangular segments.
 	float		  GetArea() const;
+
+	//! Returns the center point of the winding by averaging all its vertices.
 	idVec3		  GetCenter() const;
+
+	//! Calculates and returns the radius of the winding from a given center point.
 	float		  GetRadius( const idVec3& center ) const;
+
+	//! Computes and returns the plane normal and distance for the winding.
 	void		  GetPlane( idVec3& normal, float& dist ) const;
+
+	//! Calculates and sets the plane equation for the winding using its vertex points.
 	void		  GetPlane( idPlane& plane ) const;
+
+	//! Calculates and returns the bounding box of the winding in the provided bounds parameter
 	void		  GetBounds( idBounds& bounds ) const;
 
+	//! Returns true if the winding is considered tiny based on edge lengths.
 	bool		  IsTiny() const;
-	bool		  IsHuge() const; // base winding for a plane is typically huge
+
+	//! Returns true if any vertex coordinate of the winding is outside the valid world coordinate range.
+	bool		  IsHuge() const;
+
+	//! Prints the coordinates of each point in the winding to the console.
 	void		  Print() const;
 
+	//! Returns the minimum distance from the winding to the given plane.
 	float		  PlaneDistance( const idPlane& plane ) const;
+
+	//! Determines which side of a plane the winding resides on, using the specified epsilon for floating-point comparisons.
 	int			  PlaneSide( const idPlane& plane, const float epsilon = ON_EPSILON ) const;
 
+	//! Determines whether the planes of two windings are concave relative to each other.
 	bool		  PlanesConcave( const idWinding& w2, const idVec3& normal1, const idVec3& normal2, float dist1, float dist2 ) const;
 
+	//! Checks if a point is inside the winding, using the specified normal and epsilon tolerance.
 	bool		  PointInside( const idVec3& normal, const idVec3& point, const float epsilon ) const;
 
-	// returns true if the line or ray intersects the winding
+	//! Checks if a line intersects with the winding, optionally culling back faces
 	bool		  LineIntersection( const idPlane& windingPlane, const idVec3& start, const idVec3& end, bool backFaceCull = false ) const;
 
-	// intersection point is start + dir * scale
+	//! Checks if a ray intersects with the winding and calculates the intersection scale
 	bool		  RayIntersection( const idPlane& windingPlane, const idVec3& start, const idVec3& dir, float& scale, bool backFaceCull = false ) const;
 
+	//! Computes the area of a triangle defined by three 3D vertices.
 	static float  TriangleArea( const idVec3& a, const idVec3& b, const idVec3& c );
 
 protected:
@@ -135,7 +201,10 @@ protected:
 	idVec5*		 p;			// pointer to point data
 	int			 allocedSize;
 
+	//! Ensures the winding has allocated space for at least n points, resizing if necessary.
 	bool		 EnsureAlloced( int n, bool keep = false );
+
+	//! Reallocates the winding point array to accommodate a specified number of points.
 	virtual bool ReAllocate( int n, bool keep = false );
 };
 
@@ -298,29 +367,57 @@ ID_INLINE bool idWinding::EnsureAlloced( int n, bool keep )
 
 #define MAX_POINTS_ON_WINDING 64
 
+/*!
+	\class idFixedWinding
+	\brief A fixed-size winding implementation that maintains pre-allocated storage for polygonal vertices.
+
+	This class provides a specialized winding implementation that uses pre-allocated memory to store polygon vertices. It inherits from idWinding and is designed to avoid dynamic memory reallocations
+   by maintaining a fixed buffer size. The class supports construction from various sources including arrays of vertices, plane definitions, and existing windings. The fixed buffer ensures consistent
+   memory usage patterns which can be beneficial for performance-critical operations. Methods are provided for copying, clearing, and splitting windings, with the split operation allowing for
+   plane-based partitioning of the winding geometry. The destructor is designed to prevent freeing of the fixed buffer, ensuring that memory management remains consistent throughout the object's
+   lifetime.
+
+*/
 class idFixedWinding : public idWinding
 {
 public:
+	//! Constructs an empty fixed winding with pre-allocated storage.
 	idFixedWinding();
+
+	//! Initializes a fixed winding with a specified maximum number of points.
 	explicit idFixedWinding( const int n );
+
+	//! Constructs a fixed winding from an array of vertices.
 	explicit idFixedWinding( const idVec3* verts, const int n );
+
+	//! Constructs a fixed winding from a plane normal and distance.
 	explicit idFixedWinding( const idVec3& normal, const float dist );
+
+	//! Constructs a fixed winding from a plane.
 	explicit idFixedWinding( const idPlane& plane );
+
+	//! Constructs a fixed winding from a regular winding by copying its points.
 	explicit idFixedWinding( const idWinding& winding );
+
+	//! Creates a new fixed winding as a copy of an existing winding.
 	explicit idFixedWinding( const idFixedWinding& winding );
+
+	//! Destructor for the idFixedWinding class that prevents freeing of the fixed buffer.
 	virtual ~idFixedWinding();
 
+	//! Assigns the contents of another winding to this winding
 	idFixedWinding& operator=( const idWinding& winding );
 
+	//! Clears all points from the fixed winding object.
 	virtual void	Clear();
 
-	// splits the winding in a back and front part, 'this' becomes the front part
-	// returns a SIDE_?
+	//! Splits the winding by a plane into front and back parts, returning which side the winding falls on.
 	int				Split( idFixedWinding* back, const idPlane& plane, const float epsilon = ON_EPSILON );
 
 protected:
 	idVec5		 data[MAX_POINTS_ON_WINDING]; // point data
 
+	//! Resizes the winding to accommodate the specified number of points.
 	virtual bool ReAllocate( int n, bool keep = false );
 };
 

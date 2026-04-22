@@ -29,19 +29,24 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef SYS_FILESYSTEM_H
 #define SYS_FILESYSTEM_H
 
+//! Creates a directory at the specified path.
 void Sys_Mkdir( const char* path );
+
+//! Removes a directory at the specified path
 bool Sys_Rmdir( const char* path );
+
+//! Checks if a file is writable by verifying the write permission bits in its metadata.
 bool Sys_IsFileWritable( const char* path );
 
 enum sysFolder_t { FOLDER_ERROR = -1, FOLDER_NO = 0, FOLDER_YES = 1 };
 
-// returns FOLDER_YES if the specified path is a folder
+//! Returns FOLDER_YES if the specified path is a folder, FOLDER_NO if it is not, and FOLDER_ERROR if an error occurs.
 sysFolder_t Sys_IsFolder( const char* path );
 
-// use fs_debug to verbose Sys_ListFiles
-// returns -1 if directory was not found (the list is cleared)
+//! Lists files in a directory matching a given extension pattern.
 int			Sys_ListFiles( const char* directory, const char* extension, idList<class idStr>& list );
 
+//! Returns the absolute path to the executable file.
 const char* Sys_EXEPath();
 const char* Sys_CWD();
 

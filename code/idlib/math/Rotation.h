@@ -43,6 +43,15 @@ class idAngles;
 class idQuat;
 class idMat3;
 
+/*!
+	\class idRotation
+	\brief A class representing 3D rotations with support for various representations and operations.
+
+	The idRotation class encapsulates 3D rotational data defined by an origin point, rotation vector, and angle. It provides methods for constructing, modifying, and converting between different
+   rotation representations including Euler angles, quaternions, and matrix formats. The class supports arithmetic operations like scaling and point rotation, and offers normalization methods to keep
+   rotation angles within standard ranges. It maintains internal state for efficient matrix recomputation when rotation parameters change.
+
+*/
 class idRotation
 {
 	friend class idAngles;
@@ -50,40 +59,86 @@ class idRotation
 	friend class idMat3;
 
 public:
+	//! Initializes an identity rotation.
 	idRotation();
+
+	//! Constructs a rotation with the specified origin, vector, and angle.
 	idRotation( const idVec3& rotationOrigin, const idVec3& rotationVec, const float rotationAngle );
 
+	//! Sets the rotation parameters for this idRotation object
 	void			  Set( const idVec3& rotationOrigin, const idVec3& rotationVec, const float rotationAngle );
+
+	//! Sets the origin point for the rotation.
 	void			  SetOrigin( const idVec3& rotationOrigin );
-	void			  SetVec( const idVec3& rotationVec );					 // has to be normalized
-	void			  SetVec( const float x, const float y, const float z ); // has to be normalized
+
+	//! Sets the rotation vector and marks the axis as invalid.
+	void			  SetVec( const idVec3& rotationVec );
+
+	//! Sets the vector components of the rotation and invalidates the axis.
+	void			  SetVec( const float x, const float y, const float z );
+
+	//! Sets the rotation angle and invalidates the axis validation flag.
 	void			  SetAngle( const float rotationAngle );
+
+	//! Scales the rotation angle by the given factor and invalidates the axis.
 	void			  Scale( const float s );
+
+	//! Recalculates the rotation matrix from the current rotation data.
 	void			  ReCalculateMatrix();
+
+	//! Returns the origin component of the rotation.
 	const idVec3&	  GetOrigin() const;
+
+	//! Returns the vector component of the rotation.
 	const idVec3&	  GetVec() const;
+
+	//! Returns the angle component of the rotation.
 	float			  GetAngle() const;
 
-	idRotation		  operator-() const;				  // flips rotation
-	idRotation		  operator*( const float s ) const;	  // scale rotation
-	idRotation		  operator/( const float s ) const;	  // scale rotation
-	idRotation&		  operator*=( const float s );		  // scale rotation
-	idRotation&		  operator/=( const float s );		  // scale rotation
-	idVec3			  operator*( const idVec3& v ) const; // rotate vector
+	//! Returns the negated rotation with the angle flipped.
+	idRotation		  operator-() const;
+
+	//! Scales the rotation by the given scalar value
+	idRotation		  operator*( const float s ) const;
+
+	//! Scales the rotation by dividing its angle by the given scalar value.
+	idRotation		  operator/( const float s ) const;
+
+	//! Scales the rotation angle by the given factor and invalidates the axis validity flag
+	idRotation&		  operator*=( const float s );
+
+	//! Divides the rotation angle by the given scalar value
+	idRotation&		  operator/=( const float s );
+
+	//! Rotates a vector using the rotation object.
+	idVec3			  operator*( const idVec3& v ) const;
 
 	friend idRotation operator*( const float s, const idRotation& r );	 // scale rotation
 	friend idVec3	  operator*( const idVec3& v, const idRotation& r ); // rotate vector
 	friend idVec3&	  operator*=( idVec3& v, const idRotation& r );		 // rotate vector
 
+	//! Converts a rotation to Euler angles
 	idAngles		  ToAngles() const;
+
+	//! Converts a rotation to a quaternion representation.
 	idQuat			  ToQuat() const;
+
+	//! Converts the rotation to a 3x3 matrix representation.
 	const idMat3&	  ToMat3() const;
+
+	//! Converts the rotation to a 4x4 matrix.
 	idMat4			  ToMat4() const;
+
+	//! Converts the rotation to an angular velocity vector.
 	idVec3			  ToAngularVelocity() const;
 
+	//! Rotates a point around the origin using the rotation axis.
 	void			  RotatePoint( idVec3& point ) const;
 
+	//! Normalizes the rotation angle to the range [-180, 180].
 	void			  Normalize180();
+
+	//! Normalizes the rotation angle to be within the range [0, 360).
 	void			  Normalize360();
 
 private:
@@ -203,16 +258,19 @@ ID_INLINE idVec3 idRotation::operator*( const idVec3& v ) const
 	return ( ( v - origin ) * axis + origin );
 }
 
+//! Multiplies a rotation by a scalar value and returns the resulting rotation.
 ID_INLINE idRotation operator*( const float s, const idRotation& r )
 {
 	return r * s;
 }
 
+//! Returns the result of rotating a vector by a rotation.
 ID_INLINE idVec3 operator*( const idVec3& v, const idRotation& r )
 {
 	return r * v;
 }
 
+//! Multiplies a vector by a rotation and assigns the result back to the vector.
 ID_INLINE idVec3& operator*=( idVec3& v, const idRotation& r )
 {
 	v = r * v;

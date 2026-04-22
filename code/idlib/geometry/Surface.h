@@ -46,54 +46,87 @@ typedef struct surfaceEdge_s {
 	int tris[2];  // edge triangles
 } surfaceEdge_t;
 
+/*!
+	\class idSurface
+	\brief A surface class that manages vertices, indexes, and geometric operations for polygonal meshes.
+
+	The idSurface class represents a polygonal mesh with vertices and indexes that can be manipulated through various geometric operations. It supports construction from vertex and index data,
+   copying, and modification operations such as translation and rotation. The class provides methods for splitting, clipping, and intersection testing with planes and rays. It also includes
+   functionality for generating edge information and determining surface topology properties such as connectivity, closure, and convexity. The surface can be cleared and modified in place, and offers
+   access to its underlying vertex and index arrays for direct manipulation or rendering purposes.
+
+*/
 class idSurface
 {
 public:
+	//! Constructs an empty idSurface object.
 	idSurface();
+
+	//! Constructs a new surface as a copy of an existing surface.
 	explicit idSurface( const idSurface& surf );
+
+	//! Initializes a surface with the specified vertices and indexes.
 	explicit idSurface( const idDrawVert* verts, const int numVerts, const int* indexes, const int numIndexes );
 	~idSurface();
 
 	const idDrawVert&	 operator[]( const int index ) const;
 	idDrawVert&			 operator[]( const int index );
+
+	//! Appends the vertices and indexes of another surface to this surface
 	idSurface&			 operator+=( const idSurface& surf );
 
+	//! Returns the number of indexes in the surface.
 	int					 GetNumIndexes() const { return indexes.Num(); }
+
+	//! Returns a pointer to the array of vertex indexes used by the surface.
 	const int*			 GetIndexes() const { return indexes.Ptr(); }
+
+	//! Returns the number of vertices in the surface.
 	int					 GetNumVertices() const { return verts.Num(); }
+
+	//! Returns a pointer to the array of vertices for this surface.
 	const idDrawVert*	 GetVertices() const { return verts.Ptr(); }
+
+	//! Returns a pointer to the array of edge indexes for this surface.
 	const int*			 GetEdgeIndexes() const { return edgeIndexes.Ptr(); }
+
+	//! Returns a pointer to the array of surface edges.
 	const surfaceEdge_t* GetEdges() const { return edges.Ptr(); }
 
+	//! Clears all vertex, index, and edge data from the surface.
 	void				 Clear();
+
+	//! Moves all vertices of the surface by the specified translation vector.
 	void				 TranslateSelf( const idVec3& translation );
+
+	//! Rotates the vertices of the surface by the given rotation matrix.
 	void				 RotateSelf( const idMat3& rotation );
 
-	// splits the surface into a front and back surface, the surface itself stays unchanged
-	// frontOnPlaneEdges and backOnPlaneEdges optionally store the indexes to the edges that lay on the split plane
-	// returns a SIDE_?
+	//! Splits the surface into front and back parts based on a clipping plane.
 	int					 Split( const idPlane& plane, const float epsilon, idSurface** front, idSurface** back, int* frontOnPlaneEdges = NULL, int* backOnPlaneEdges = NULL ) const;
 
-	// cuts off the part at the back side of the plane, returns true if some part was at the front
-	// if there is nothing at the front the number of points is set to zero
+	//! Clips the surface by the given plane and returns true if any part remains on the front side
 	bool				 ClipInPlace( const idPlane& plane, const float epsilon = ON_EPSILON, const bool keepOn = false );
 
-	// returns true if each triangle can be reached from any other triangle by a traversal
+	//! Returns true if all triangles in the surface can be reached from any other triangle by traversal.
 	bool				 IsConnected() const;
 
-	// returns true if the surface is closed
+	//! Returns true if the surface is closed.
 	bool				 IsClosed() const;
 
-	// returns true if the surface is a convex hull
+	//! Returns true if the surface is a convex hull.
 	bool				 IsPolytope( const float epsilon = 0.1f ) const;
 
+	//! Computes the distance from the surface to a plane, considering all vertices.
 	float				 PlaneDistance( const idPlane& plane ) const;
+
+	//! Determines which side of a plane the surface is on, considering an epsilon tolerance for floating-point comparisons.
 	int					 PlaneSide( const idPlane& plane, const float epsilon = ON_EPSILON ) const;
 
-	// returns true if the line intersects one of the surface triangles
+	//! Returns true if a line intersects any triangle in the surface
 	bool				 LineIntersection( const idVec3& start, const idVec3& end, bool backFaceCull = false ) const;
 
-	// intersection point is start + dir * scale
+	//! Determines if a ray intersects with the surface and calculates the intersection scale factor.
 	bool				 RayIntersection( const idVec3& start, const idVec3& dir, float& scale, bool backFaceCull = false ) const;
 
 protected:
@@ -103,24 +136,17 @@ protected:
 	idList<int, TAG_IDLIB_LIST_SURFACE>			  edgeIndexes; // 3 references to edges for each triangle, may be negative for reversed edge
 
 protected:
+	//! Generates edge indexes for the surface triangles
 	void GenerateEdgeIndexes();
+
+	//! Finds and returns the index of an edge defined by two vertices in the surface.
 	int	 FindEdge( int v1, int v2 ) const;
 };
 
-/*
-====================
-idSurface::idSurface
-====================
-*/
 ID_INLINE idSurface::idSurface()
 {
 }
 
-/*
-=================
-idSurface::idSurface
-=================
-*/
 ID_INLINE idSurface::idSurface( const idDrawVert* verts, const int numVerts, const int* indexes, const int numIndexes )
 {
 	assert( verts != NULL && indexes != NULL && numVerts > 0 && numIndexes > 0 );
@@ -131,11 +157,6 @@ ID_INLINE idSurface::idSurface( const idDrawVert* verts, const int numVerts, con
 	GenerateEdgeIndexes();
 }
 
-/*
-====================
-idSurface::idSurface
-====================
-*/
 ID_INLINE idSurface::idSurface( const idSurface& surf )
 {
 	this->verts		  = surf.verts;
@@ -144,40 +165,20 @@ ID_INLINE idSurface::idSurface( const idSurface& surf )
 	this->edgeIndexes = surf.edgeIndexes;
 }
 
-/*
-====================
-idSurface::~idSurface
-====================
-*/
 ID_INLINE idSurface::~idSurface()
 {
 }
 
-/*
-=================
-idSurface::operator[]
-=================
-*/
 ID_INLINE const idDrawVert& idSurface::operator[]( const int index ) const
 {
 	return verts[index];
 };
 
-/*
-=================
-idSurface::operator[]
-=================
-*/
 ID_INLINE idDrawVert& idSurface::operator[]( const int index )
 {
 	return verts[index];
 };
 
-/*
-=================
-idSurface::operator+=
-=================
-*/
 ID_INLINE idSurface& idSurface::operator+=( const idSurface& surf )
 {
 	int i, m, n;
@@ -192,11 +193,6 @@ ID_INLINE idSurface& idSurface::operator+=( const idSurface& surf )
 	return *this;
 }
 
-/*
-=================
-idSurface::Clear
-=================
-*/
 ID_INLINE void idSurface::Clear()
 {
 	verts.Clear();
@@ -205,11 +201,6 @@ ID_INLINE void idSurface::Clear()
 	edgeIndexes.Clear();
 }
 
-/*
-=================
-idSurface::TranslateSelf
-=================
-*/
 ID_INLINE void idSurface::TranslateSelf( const idVec3& translation )
 {
 	for( int i = 0; i < verts.Num(); i++ ) {
@@ -217,11 +208,6 @@ ID_INLINE void idSurface::TranslateSelf( const idVec3& translation )
 	}
 }
 
-/*
-=================
-idSurface::RotateSelf
-=================
-*/
 ID_INLINE void idSurface::RotateSelf( const idMat3& rotation )
 {
 	for( int i = 0; i < verts.Num(); i++ ) {

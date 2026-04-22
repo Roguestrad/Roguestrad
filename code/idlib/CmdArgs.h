@@ -30,37 +30,47 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __CMDARGS_H__
 #define __CMDARGS_H__
 
-/*
-===============================================================================
+/*!
+	\class idCmdArgs
+	\brief A class for managing command-line arguments and parsing text into tokenized argument lists.
 
-	Command arguments.
+	The idCmdArgs class provides functionality for handling command-line style argument parsing and management. It can tokenize input strings into arguments, store and manipulate argument lists, and
+   reconstruct arguments into strings. The class supports both manual construction with tokenized input and dynamic argument appending. It is designed for use in command processing scenarios where
+   text needs to be parsed into discrete arguments while preserving the ability to reconstruct the argument list into a formatted string. The class maintains a collection of string arguments that can
+   be accessed by index or retrieved as a complete argument list.
 
-===============================================================================
 */
-
 class idCmdArgs
 {
 public:
+	//! Initializes an empty command arguments object.
 	idCmdArgs() { argc = 0; }
+
+	//! Constructs an idCmdArgs object by tokenizing the provided text string.
 	idCmdArgs( const char* text, bool keepAsStrings ) { TokenizeString( text, keepAsStrings ); }
 
+	//! Assigns the contents of another idCmdArgs object to this object
 	void			   operator=( const idCmdArgs& args );
 
-	// The functions that execute commands get their parameters with these functions.
+	//! Returns the argument count of the command line arguments.
 	int				   Argc() const { return argc; }
-	// Argv() will return an empty string, not NULL if arg >= argc.
+
+	//! Returns the argument at the specified index, or an empty string if the index is out of bounds.
 	const char*		   Argv( int arg ) const { return ( arg >= 0 && arg < argc ) ? argv[arg] : ""; }
-	// Returns a single string containing argv(start) to argv(end)
-	// escapeArgs is a fugly way to put the string back into a state ready to tokenize again
+
+	//! Returns a single string containing arguments from start to end, with optional escaping.
 	const char*		   Args( int start = 1, int end = -1, bool escapeArgs = false ) const;
 
-	// Takes a null terminated string and breaks the string up into arg tokens.
-	// Does not need to be /n terminated.
-	// Set keepAsStrings to true to only separate tokens from whitespace and comments, ignoring punctuation
+	//! Parses a null-terminated string into command-line arguments, separating tokens by whitespace and comments while optionally preserving string literals.
 	void			   TokenizeString( const char* text, bool keepAsStrings );
 
+	//! Appends a new argument to the command line arguments list.
 	void			   AppendArg( const char* text );
+
+	//! Clears all command arguments stored in the idCmdArgs object.
 	void			   Clear() { argc = 0; }
+
+	//! Returns the command line arguments as an array of string pointers.
 	const char* const* GetArgs( int* argc );
 
 private:

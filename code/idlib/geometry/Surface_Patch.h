@@ -30,30 +30,42 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SURFACE_PATCH_H__
 #define __SURFACE_PATCH_H__
 
-/*
-===============================================================================
+/*!
+	\class idSurface_Patch
+	\brief A patch surface implementation for handling subdivision and manipulation of patch meshes.
 
-	Bezier patch surface.
+	This class represents a patch surface that can be subdivided and manipulated to generate detailed mesh geometry. It inherits from idSurface and provides functionality for setting dimensions,
+   subdividing patches based on error thresholds or explicit counts, placing points on curves, and managing vertex data. The class supports operations like expanding and collapsing patch surfaces,
+   generating normals and indexes, and projecting points onto vectors for error calculation. It is designed to work with control points to define patch geometry and supports both implicit and explicit
+   subdivision methods.
 
-===============================================================================
 */
-
 class idSurface_Patch : public idSurface
 {
 public:
+	//! Initializes a new instance of the idSurface_Patch class with default values.
 	idSurface_Patch();
+
+	//! Initializes a new patch surface with specified maximum dimensions.
 	idSurface_Patch( int maxPatchWidth, int maxPatchHeight );
+
+	//! Constructs a new idSurface_Patch object as a copy of an existing patch.
 	idSurface_Patch( const idSurface_Patch& patch );
 	~idSurface_Patch();
 
+	//! Sets the width and height of the patch surface
 	void SetSize( int patchWidth, int patchHeight );
+
+	//! Returns the width of the patch surface
 	int	 GetWidth() const;
+
+	//! Returns the height dimension of the patch surface.
 	int	 GetHeight() const;
 
-	// subdivide the patch mesh based on error
+	//! Subdivides a patch mesh based on specified error thresholds and maximum length constraints.
 	void Subdivide( float maxHorizontalError, float maxVerticalError, float maxLength, bool genNormals = false );
 
-	// subdivide the patch up to an explicit number of horizontal and vertical subdivisions
+	//! Subdivides the patch using explicit horizontal and vertical subdivision counts
 	void SubdivideExplicit( int horzSubdivisions, int vertSubdivisions, bool genNormals, bool removeLinear = false );
 
 protected:
@@ -64,54 +76,46 @@ protected:
 	bool expanded;	// true if vertices are spaced out
 
 private:
-	// put the approximation points on the curve
+	//! Places approximation points on the curve for the patch surface.
 	void PutOnCurve();
 
-	// remove columns and rows with all points on one line
+	//! Removes columns and rows from the patch where all points lie on a straight line.
 	void RemoveLinearColumnsRows();
 
-	// resize verts buffer
+	//! Resizes the vertex buffer for the expanded patch surface to the specified dimensions.
 	void ResizeExpanded( int height, int width );
 
-	// space points out over maxWidth * maxHeight buffer
+	//! Expands the patch to fill the maximum width and height dimensions
 	void Expand();
 
-	// move all points to the start of the verts buffer
+	//! Collapses the patch by moving all points to the start of the verts buffer.
 	void Collapse();
 
-	// project a point onto a vector to calculate maximum curve error
+	//! Projects a point onto a vector to calculate maximum curve error.
 	void ProjectPointOntoVector( const idVec3& point, const idVec3& vStart, const idVec3& vEnd, idVec3& vProj );
 
-	// generate normals
+	//! Generates surface normals for all vertices in the patch
 	void GenerateNormals();
 
-	// generate triangle indexes
+	//! Generates triangle indexes for the patch surface.
 	void GenerateIndexes();
 
-	// lerp point from two patch point
+	//! Linearly interpolates between two draw vertices and stores the result in an output vertex.
 	void LerpVert( const idDrawVert& a, const idDrawVert& b, idDrawVert& out ) const;
 
-	// sample a single 3x3 patch
+	//! Samples a single point on a 3x3 patch given u and v coordinates
 	void SampleSinglePatchPoint( const idDrawVert ctrl[3][3], float u, float v, idDrawVert* out ) const;
+
+	//! Samples a single patch into the output vertex array
 	void SampleSinglePatch( const idDrawVert ctrl[3][3], int baseCol, int baseRow, int width, int horzSub, int vertSub, idDrawVert* outVerts ) const;
 };
 
-/*
-=================
-idSurface_Patch::idSurface_Patch
-=================
-*/
 ID_INLINE idSurface_Patch::idSurface_Patch()
 {
 	height = width = maxHeight = maxWidth = 0;
 	expanded							  = false;
 }
 
-/*
-=================
-idSurface_Patch::idSurface_Patch
-=================
-*/
 ID_INLINE idSurface_Patch::idSurface_Patch( int maxPatchWidth, int maxPatchHeight )
 {
 	width = height = 0;
@@ -140,21 +144,11 @@ ID_INLINE idSurface_Patch::~idSurface_Patch()
 {
 }
 
-/*
-=================
-idSurface_Patch::GetWidth
-=================
-*/
 ID_INLINE int idSurface_Patch::GetWidth() const
 {
 	return width;
 }
 
-/*
-=================
-idSurface_Patch::GetHeight
-=================
-*/
 ID_INLINE int idSurface_Patch::GetHeight() const
 {
 	return height;

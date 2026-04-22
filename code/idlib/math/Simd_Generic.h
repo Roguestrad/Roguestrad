@@ -30,33 +30,59 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_SIMD_GENERIC_H__
 #define __MATH_SIMD_GENERIC_H__
 
-/*
-===============================================================================
+/*!
+	\class idSIMD_Generic
+	\brief Generic SIMD implementation providing basic computational methods for various data types.
 
-	Generic implementation of idSIMDProcessor
+	This class serves as a fallback SIMD implementation that provides basic computational methods for processing various data types including floats, vectors, and joint transformations. It inherits
+   from idSIMDProcessor and implements methods for finding minimum and maximum values in arrays, memory operations like copy and set, and joint animation blending techniques. The implementation is
+   designed to work with generic data structures without relying on specific hardware optimizations. The class is intended to provide consistent behavior across different platforms while maintaining
+   simplicity and reliability in its operations.
 
-===============================================================================
 */
-
 class idSIMD_Generic : public idSIMDProcessor
 {
 public:
+	//! Returns the name of the SIMD generic implementation.
 	virtual const char* VPCALL GetName() const;
 
+	//! Computes the minimum and maximum values from an array of floats.
 	virtual void VPCALL		   MinMax( float& min, float& max, const float* src, const int count );
+
+	//! Computes the minimum and maximum values of a set of 2D vectors.
 	virtual void VPCALL		   MinMax( idVec2& min, idVec2& max, const idVec2* src, const int count );
+
+	//! Computes the minimum and maximum values of a set of 3D vectors.
 	virtual void VPCALL		   MinMax( idVec3& min, idVec3& max, const idVec3* src, const int count );
+
+	//! Computes the minimum and maximum coordinates from a set of vertices.
 	virtual void VPCALL		   MinMax( idVec3& min, idVec3& max, const idDrawVert* src, const int count );
+
+	//! Computes the minimum and maximum coordinates of a set of vertices.
 	virtual void VPCALL		   MinMax( idVec3& min, idVec3& max, const idDrawVert* src, const triIndex_t* indexes, const int count );
 
+	//! Copies count bytes from src to dst.
 	virtual void VPCALL		   Memcpy( void* dst, const void* src, const int count );
+
+	//! Sets a block of memory to a specific value.
 	virtual void VPCALL		   Memset( void* dst, const int val, const int count );
 
+	//! Performs spherical linear interpolation and vector linear interpolation on joints for blending animations.
 	virtual void VPCALL		   BlendJoints( idJointQuat* joints, const idJointQuat* blendJoints, const float lerp, const int* index, const int numJoints );
+
+	//! Blends joints using linear interpolation with the specified lerp factor
 	virtual void VPCALL		   BlendJointsFast( idJointQuat* joints, const idJointQuat* blendJoints, const float lerp, const int* index, const int numJoints );
+
+	//! Converts an array of joint quaternions to joint matrices.
 	virtual void VPCALL		   ConvertJointQuatsToJointMats( idJointMat* jointMats, const idJointQuat* jointQuats, const int numJoints );
+
+	//! Converts an array of joint matrices to joint quaternions.
 	virtual void VPCALL		   ConvertJointMatsToJointQuats( idJointQuat* jointQuats, const idJointMat* jointMats, const int numJoints );
+
+	//! Transforms joint matrices by applying parent transformations to child joints.
 	virtual void VPCALL		   TransformJoints( idJointMat* jointMats, const int* parents, const int firstJoint, const int lastJoint );
+
+	//! Computes inverse transformations for joints in a skeleton hierarchy
 	virtual void VPCALL		   UntransformJoints( idJointMat* jointMats, const int* parents, const int firstJoint, const int lastJoint );
 };
 

@@ -318,6 +318,7 @@ MapPolygonMesh*		MapPolygonMesh::ConvertFromMeshGltf( const gltfMesh_Primitive* 
 	return mesh;
 }
 
+//! Processes a glTF scene node and its children, adding mesh primitives to the entity.
 static void ProcessSceneNode_r( idMapEntity* newEntity, gltfNode* node, const idMat4& parentTransform, const idMat4& worldToEntityTransform, gltfData* data )
 {
 	auto& nodeList = data->NodeList();
@@ -355,6 +356,7 @@ static void AddMeshesToWorldspawn_r( idMapEntity* entity, gltfNode* node, const 
 	}
 };
 
+//! Resolves and sets up light properties for a glTF node into an entity
 static void ResolveLight( gltfData* data, idMapEntity* newEntity, gltfNode* node )
 {
 	assert( node && node->extensions.KHR_lights_punctual );
@@ -429,6 +431,7 @@ static void ResolveLight( gltfData* data, idMapEntity* newEntity, gltfNode* node
 	}
 }
 
+//! Resolves and sets entity properties, origin, and rotation based on GLTF node data.
 static void ResolveEntity( gltfData* data, idMapEntity* newEntity, gltfNode* node )
 {
 	const char* classname = node->extras.strPairs.GetString( "classname" );
@@ -521,6 +524,7 @@ static void ResolveEntity( gltfData* data, idMapEntity* newEntity, gltfNode* nod
 #endif
 }
 
+//! Recursively finds and creates entities from glTF nodes, adding them to the entity list while traversing the node hierarchy.
 static int FindEntities_r( gltfData* data, idMapEntity::EntityListRef entities, gltfNode* node, idDict epairs, idMapEntity* worldspawn )
 {
 	int			entityCount = 0;

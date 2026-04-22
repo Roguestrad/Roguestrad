@@ -33,10 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Unzip.h"
 
-#if !defined( TYPEINFOPROJECT ) && !defined( DMAP )
-	#include "Zip.h"
-#endif
-
 #ifdef WIN32
 	#include <io.h> // for _read
 

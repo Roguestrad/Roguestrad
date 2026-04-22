@@ -29,21 +29,37 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef DATAQUEUE_H
 #define DATAQUEUE_H
 
+//! Removes items from the queue that have a sequence number older than the specified value.
 template<int maxItems, int maxBuffer>
 class idDataQueue
 {
+	//! Initializes the data queue with zero length.
 public:
+	//! Appends data to the queue with optional second buffer
 	idDataQueue() { dataLength = 0; }
+
+	//! Appends data to the queue with the specified sequence number, returning true if successful.
 	bool		Append( int sequence, const byte* b1, int b1Len, const byte* b2 = NULL, int b2Len = 0 );
+
+	//! Removes items from the queue that have a sequence number older than the specified value.
 	void		RemoveOlderThan( int sequence );
 
+	//! Returns the length of the data in the queue.
 	int			GetDataLength() const { return dataLength; }
 
+	//! Returns the number of items in the data queue
 	int			Num() const { return items.Num(); }
+
+	//! Returns the sequence number of the i-th item in the data queue.
 	int			ItemSequence( int i ) const { return items[i].sequence; }
+
+	//! Returns the length of the item at the specified index in the data queue
 	int			ItemLength( int i ) const { return items[i].length; }
+
+	//! Returns a pointer to the data of the item at the specified index in the queue
 	const byte* ItemData( int i ) const { return &data[items[i].dataOffset]; }
 
+	//! Clears all data, items, and resets the buffer.
 	void		Clear()
 	{
 		dataLength = 0;
@@ -62,11 +78,6 @@ private:
 	byte							  data[maxBuffer];
 };
 
-/*
-========================
-idDataQueue::RemoveOlderThan
-========================
-*/
 template<int maxItems, int maxBuffer>
 void idDataQueue<maxItems, maxBuffer>::RemoveOlderThan( int sequence )
 {
@@ -91,11 +102,6 @@ void idDataQueue<maxItems, maxBuffer>::RemoveOlderThan( int sequence )
 	assert( length == dataLength );
 }
 
-/*
-========================
-idDataQueue::Append
-========================
-*/
 template<int maxItems, int maxBuffer>
 bool idDataQueue<maxItems, maxBuffer>::Append( int sequence, const byte* b1, int b1Len, const byte* b2, int b2Len )
 {

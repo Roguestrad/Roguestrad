@@ -29,15 +29,21 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __STRSTATIC_H__
 #define __STRSTATIC_H__
 
-/*
-================================================
-idStrStatic
-================================================
+/*!
+	\class idStrStatic
+	\brief A fixed-size string class template that provides compile-time memory allocation for string data.
+
+	This class extends the idStr base class to provide a string implementation with a statically allocated buffer of fixed size determined by the template parameter. The design enables efficient
+   memory usage for strings with known maximum lengths, eliminating dynamic allocation overhead. The class supports various constructors for initialization from different data types and ranges,
+   ensuring flexibility while maintaining the fixed-size constraint. Assignment operators and copy constructors are provided to support standard string operations within the fixed-size limitation. All
+   string operations are constrained by the predefined buffer size, making it suitable for performance-critical scenarios where heap allocation should be avoided.
+
 */
 template<int _size_>
 class idStrStatic : public idStr
 {
 public:
+	//! Assigns the contents of another idStrStatic object to this object.
 	ID_INLINE void operator=( const idStrStatic& text )
 	{
 		// we should only get here when the types, including the size, are identical
@@ -45,14 +51,14 @@ public:
 		memcpy( data, text.data, len + 1 );
 	}
 
-	// all idStr operators are overloaded and the idStr default constructor is called so that the
-	// static buffer can be initialized in the body of the constructor before the data is ever
-	// copied.
+	//! Constructs an empty static string with a fixed-size buffer.
 	ID_INLINE idStrStatic()
 	{
 		buffer[0] = '\0';
 		SetStaticBuffer( buffer, _size_ );
 	}
+
+	//! Creates a copy of the provided idStrStatic object.
 	ID_INLINE idStrStatic( const idStrStatic& text ) :
 		idStr()
 	{
@@ -61,6 +67,7 @@ public:
 		idStr::operator=( text );
 	}
 
+	//! Constructs a static string from another string object.
 	ID_INLINE idStrStatic( const idStr& text ) :
 		idStr()
 	{
@@ -69,6 +76,7 @@ public:
 		idStr::operator=( text );
 	}
 
+	//! Constructs a new static string by copying a range of characters from another static string.
 	ID_INLINE idStrStatic( const idStrStatic& text, int start, int end ) :
 		idStr()
 	{
@@ -77,6 +85,7 @@ public:
 		CopyRange( text.c_str(), start, end );
 	}
 
+	//! Constructs an idStrStatic object with the specified text.
 	ID_INLINE idStrStatic( const char* text ) :
 		idStr()
 	{
@@ -85,6 +94,7 @@ public:
 		idStr::operator=( text );
 	}
 
+	//! Initializes a static string with a substring from the given text.
 	ID_INLINE idStrStatic( const char* text, int start, int end ) :
 		idStr()
 	{
@@ -93,6 +103,7 @@ public:
 		CopyRange( text, start, end );
 	}
 
+	//! Constructs an idStrStatic object initialized with the string representation of a boolean value.
 	ID_INLINE explicit idStrStatic( const bool b ) :
 		idStr()
 	{
@@ -101,6 +112,7 @@ public:
 		idStr::operator=( idStr( b ) );
 	}
 
+	//! Constructs an idStrStatic object from a single character.
 	ID_INLINE explicit idStrStatic( const char c ) :
 		idStr()
 	{
@@ -109,6 +121,7 @@ public:
 		idStr::operator=( idStr( c ) );
 	}
 
+	//! Constructs a static string object initialized with the value of an integer.
 	ID_INLINE explicit idStrStatic( const int i ) :
 		idStr()
 	{
@@ -117,6 +130,7 @@ public:
 		idStr::operator=( idStr( i ) );
 	}
 
+	//! Constructs an idStrStatic object initialized with the string representation of the given unsigned integer.
 	ID_INLINE explicit idStrStatic( const unsigned u ) :
 		idStr()
 	{
@@ -125,6 +139,7 @@ public:
 		idStr::operator=( idStr( u ) );
 	}
 
+	//! Constructs a static string from a float value.
 	ID_INLINE explicit idStrStatic( const float f ) :
 		idStr()
 	{

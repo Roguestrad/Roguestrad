@@ -32,20 +32,18 @@ If you have questions concerning this license or the applicable additional terms
 
 #include <stddef.h>
 
-/*
-===============================================================================
+/*!
+	\class idLib
+	\brief Provides core library functionality for initialization, shutdown, and system logging.
 
-	idLib contains stateless support classes and concrete types. Some classes
-	do have static variables, but such variables are initialized once and
-	read-only after initialization (they do not maintain a modifiable state).
+	The idLib class serves as a central hub for initializing and shutting down core system components including string pools, memory allocators, and SIMD engines. It offers standardized methods for
+   reporting messages, warnings, and errors with formatted output capabilities. The class also includes utility functions for thread identification and program termination with error reporting. This
+   design intent supports consistent system behavior and reliable error handling throughout the application lifecycle.
 
 	The interface pointers idSys, idCommon, idCVarSystem and idFileSystem
 	should be set before using idLib. The pointers stored here should not
 	be used by any part of the engine except for idLib.
-
-===============================================================================
 */
-
 class idLib
 {
 private:
@@ -59,19 +57,31 @@ public:
 	static class idFileSystem* fileSystem;
 	static int				   frameNumber;
 
+	//! Initializes the idLib library components.
 	static void				   Init();
+
+	//! Shuts down the idLib system by cleaning up string pools, memory allocator, and SIMD engine.
 	static void				   ShutDown();
 
-	// wrapper to idCommon functions
+	//! Prints a formatted string to the console
 	static void				   Printf( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_STATIC_ATTRIBUTE_PRINTF( 1, 2 );
+
+	//! Prints a formatted message to the console if the specified test condition is true
 	static void				   PrintfIf( const bool test, VERIFY_FORMAT_STRING const char* fmt, ... ) ID_STATIC_ATTRIBUTE_PRINTF( 2, 3 );
+
+	//! Terminates the program execution and reports an error message formatted with the provided arguments.
 	NO_RETURN static void	   Error( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_STATIC_ATTRIBUTE_PRINTF( 1, 2 );
+
+	//! Terminates the program with a formatted error message.
 	NO_RETURN static void	   FatalError( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_STATIC_ATTRIBUTE_PRINTF( 1, 2 );
+
+	//! Reports a warning message to the common system with formatted output.
 	static void				   Warning( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_STATIC_ATTRIBUTE_PRINTF( 1, 2 );
+
+	//! Conditionally issues a warning message using a format string and variable arguments.
 	static void				   WarningIf( const bool test, VERIFY_FORMAT_STRING const char* fmt, ... ) ID_STATIC_ATTRIBUTE_PRINTF( 2, 3 );
 
-	// the extra check for mainThreadInitialized is necessary for this to be accurate
-	// when called by startup code that happens before idLib::Init
+	//! Checks if the current thread is the main thread
 	static bool				   IsMainThread() { return ( 0 == mainThreadInitialized ) || ( 1 == isMainThread ); }
 };
 
@@ -148,48 +158,77 @@ extern const idVec4 colorTeal;
 extern const idVec4 colorWhite;
 extern const idVec4 colorYellow;
 
-// packs color floats in the range [0,1] into an integer
+//! Packs color float values in the range [0,1] into a 32-bit integer.
 dword				PackColor( const idVec3& color );
+
+//! Unpacks a 32-bit color value into a 3-component vector.
 void				UnpackColor( const dword color, idVec3& unpackedColor );
+
+//! Packs a vector4 color into a 32-bit dword value
 dword				PackColor( const idVec4& color );
+
+//! Unpacks a packed 32-bit color value into a vector of four floating-point components.
 void				UnpackColor( const dword color, idVec4& unpackedColor );
 
-// little/big endian conversion
+//! Converts a short integer from little-endian to big-endian byte order.
 short				BigShort( short l );
+
+//! Converts a short value from big-endian to little-endian byte order.
 short				LittleShort( short l );
+
+//! Converts an integer value to big-endian byte order.
 int					BigLong( int l );
+
+//! Converts a 32-bit integer from little-endian byte order to native byte order.
 int					LittleLong( int l );
+
+//! Returns the big float value of the given float parameter.
 float				BigFloat( float l );
+
+//! Converts a float value from big-endian to little-endian byte order.
 float				LittleFloat( float l );
+
+//! Reverses the byte order of elements in a buffer.
 void				BigRevBytes( void* bp, int elsize, int elcount );
+
+//! Reverses the byte order of elements in a buffer.
 void				LittleRevBytes( void* bp, int elsize, int elcount );
+
+//! Initializes a little bit field structure with the specified element size.
 void				LittleBitField( void* bp, int elsize );
+
+//! Initializes byte swapping functions based on the platform's endianness.
 void				Swap_Init();
 
+//! Returns true if the system uses big-endian byte order.
 bool				Swap_IsBigEndian();
 
-// for base64
+//! Encodes an integer into sixtets for base64 encoding.
 void				SixtetsForInt( byte* out, int src );
+
+//! Converts a byte array into a 32-bit integer using sixtets.
 int					IntForSixtets( byte* in );
 
-/*
-================================================
-idException
-================================================
+/*!
+	\class idException
+	\brief idException provides a mechanism for handling error conditions with textual messages.
 */
 class idException
 {
 public:
 	static const int MAX_ERROR_LEN = 2048;
 
+	//! Constructs an idException object with an optional error text.
 	idException( const char* text = "" ) { strncpy( error, text, MAX_ERROR_LEN ); }
 
-	// this really, really should be a const function, but it's referenced too many places to change right now
+	//! Returns the error message stored in this exception object
 	const char* GetError() { return error; }
 
 protected:
-	// if GetError() were correctly const this would be named GetError(), too
+	//! Returns the error buffer associated with the exception.
 	char* GetErrorBuffer() { return error; }
+
+	//! Returns the maximum size of the error buffer used for exception messages.
 	int	  GetErrorBufferSize() { return MAX_ERROR_LEN; }
 
 private:
@@ -197,35 +236,37 @@ private:
 	static char error[MAX_ERROR_LEN];
 };
 
-/*
-================================================
-idFatalException
-================================================
+/*!
+	\class idFatalException
+	\brief Exception class for handling fatal errors with error text storage and retrieval.
 */
 class idFatalException
 {
 public:
 	static const int MAX_ERROR_LEN = 2048;
 
+	//! Constructs an idFatalException with the specified error text.
 	idFatalException( const char* text = "" ) { strncpy( idException::error, text, MAX_ERROR_LEN ); }
 
-	// this really, really should be a const function, but it's referenced too many places to change right now
+	//! Returns the error message stored in the exception
 	const char* GetError() { return idException::error; }
 
 protected:
-	// if GetError() were correctly const this would be named GetError(), too
+	//! Returns the error buffer associated with the fatal exception.
 	char* GetErrorBuffer() { return idException::error; }
+
+	//! Returns the maximum error buffer size for fatal exception handling.
 	int	  GetErrorBufferSize() { return MAX_ERROR_LEN; }
 };
 
-/*
-================================================
-idNetworkLoadException
-================================================
+/*!
+	\class idNetworkLoadException
+	\brief Exception class for network loading errors.
 */
 class idNetworkLoadException : public idException
 {
 public:
+	//! Constructs an idNetworkLoadException object with an optional error message.
 	idNetworkLoadException( const char* text = "" ) :
 		idException( text )
 	{

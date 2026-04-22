@@ -48,17 +48,7 @@ typedef struct tagTHREADNAME_INFO {
 	DWORD  dwFlags;	   // Reserved for future use, must be zero.
 } THREADNAME_INFO;
 
-/*
-========================
-Sys_SetThreadName
-
-caedes: This should be seen as a helper-function for Sys_CreateThread() only.
-		(re)setting the name of a running thread seems like a bad idea and
-		currently (fresh d3 bfg source) isn't done anyway.
-		Furthermore SDL doesn't support it
-
-========================
-*/
+//! Sets the name of a thread specified by its ID on Windows platforms.
 static void Sys_SetThreadName( DWORD threadID, const char* name )
 {
 #ifdef _MSC_VER

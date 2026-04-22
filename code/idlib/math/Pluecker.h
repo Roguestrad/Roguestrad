@@ -30,61 +30,131 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_PLUECKER_H__
 #define __MATH_PLUECKER_H__
 
-/*
-===============================================================================
+/*!
+	\class idPluecker
+	\brief A class representing Pluecker coordinates for line geometry in 3D space.
 
-	Pluecker coordinate
+	This class provides a complete implementation for handling Pluecker coordinates, which are used to represent lines in 3D space using a six-dimensional vector. The class supports construction from
+   various geometric primitives like line segments and rays, arithmetic operations, normalization, and conversion between different line representations. It includes methods for computing geometric
+   properties such as distance between lines, dot products, and inner products. The implementation is optimized for inline operations and provides both const and non-const access to components, making
+   it suitable for performance-critical graphics and geometric computations.
 
-===============================================================================
 */
-
 class idPluecker
 {
 public:
+	//! Constructs a new idPluecker object.
 	idPluecker();
+
+	//! Constructs a pluecker coordinate from a float array.
 	explicit idPluecker( const float* a );
+
+	//! Constructs a Pluecker coordinate from a line defined by start and end points.
 	explicit idPluecker( const idVec3& start, const idVec3& end );
+
+	//! Initializes a new Pluecker coordinate with the specified six float values.
 	explicit idPluecker( const float a1, const float a2, const float a3, const float a4, const float a5, const float a6 );
 
+	//! Returns the Pluecker coordinate value at the specified index
 	float		 operator[]( const int index ) const;
+
+	//! Returns a reference to the Pluecker coordinate component at the specified index.
 	float&		 operator[]( const int index );
-	idPluecker	 operator-() const; // flips the direction
+
+	//! Returns a new pluecker coordinate with all components negated.
+	idPluecker	 operator-() const;
+
+	//! Returns a new pluecker vector scaled by the given float value
 	idPluecker	 operator*( const float a ) const;
+
+	//! Divides the Pluecker coordinate by a scalar value and returns the resulting Pluecker coordinate.
 	idPluecker	 operator/( const float a ) const;
-	float		 operator*( const idPluecker& a ) const; // permuted inner product
+
+	//! Computes the permuted inner product of this Pluecker coordinate with another Pluecker coordinate.
+	float		 operator*( const idPluecker& a ) const;
+
+	//! Returns the component-wise difference between this pluecker coordinate and another pluecker coordinate.
 	idPluecker	 operator-( const idPluecker& a ) const;
+
+	//! Returns a new pluecker coordinate that is the component-wise sum of this pluecker coordinate and the given pluecker coordinate.
 	idPluecker	 operator+( const idPluecker& a ) const;
+
+	//! Multiplies all components of the Pluecker coordinate by the given scalar value and returns a reference to the modified object.
 	idPluecker&	 operator*=( const float a );
+
+	//! Divides each component of the Pluecker coordinate by the given scalar value
 	idPluecker&	 operator/=( const float a );
+
+	//! Adds the components of another pluecker vector to this pluecker vector and returns a reference to this pluecker vector.
 	idPluecker&	 operator+=( const idPluecker& a );
+
+	//! Subtracts the components of another pluecker vector from this pluecker vector and returns a reference to this vector.
 	idPluecker&	 operator-=( const idPluecker& a );
 
-	bool		 Compare( const idPluecker& a ) const;						// exact compare, no epsilon
-	bool		 Compare( const idPluecker& a, const float epsilon ) const; // compare with epsilon
-	bool		 operator==( const idPluecker& a ) const;					// exact compare, no epsilon
-	bool		 operator!=( const idPluecker& a ) const;					// exact compare, no epsilon
+	//! Compares this pluecker with another for exact equality.
+	bool		 Compare( const idPluecker& a ) const;
 
+	//! Compares this pluecker coordinate with another using the specified epsilon tolerance.
+	bool		 Compare( const idPluecker& a, const float epsilon ) const;
+
+	//! Compares two idPluecker objects for exact equality.
+	bool		 operator==( const idPluecker& a ) const;
+
+	//! Compares two idPluecker objects for inequality.
+	bool		 operator!=( const idPluecker& a ) const;
+
+	//! Sets the six components of the Pluecker coordinate vector.
 	void		 Set( const float a1, const float a2, const float a3, const float a4, const float a5, const float a6 );
+
+	//! Sets all components of the Pluecker coordinate to zero.
 	void		 Zero();
 
-	void		 FromLine( const idVec3& start, const idVec3& end ); // pluecker from line
-	void		 FromRay( const idVec3& start, const idVec3& dir );	 // pluecker from ray
-	bool		 FromPlanes( const idPlane& p1, const idPlane& p2 ); // pluecker from intersection of planes
-	bool		 ToLine( idVec3& start, idVec3& end ) const;		 // pluecker to line
-	bool		 ToRay( idVec3& start, idVec3& dir ) const;			 // pluecker to ray
-	void		 ToDir( idVec3& dir ) const;						 // pluecker to direction
-	float		 PermutedInnerProduct( const idPluecker& a ) const;	 // pluecker permuted inner product
-	float		 Distance3DSqr( const idPluecker& a ) const;		 // pluecker line distance
+	//! Computes the Pluecker coordinates from a line defined by two points.
+	void		 FromLine( const idVec3& start, const idVec3& end );
 
-	float		 Length() const;	// pluecker length
-	float		 LengthSqr() const; // pluecker squared length
-	idPluecker	 Normalize() const; // pluecker normalize
-	float		 NormalizeSelf();	// pluecker normalize
+	//! Constructs a Pluecker coordinate from a ray defined by a start point and direction vector.
+	void		 FromRay( const idVec3& start, const idVec3& dir );
 
+	//! Computes a Pluecker coordinate from the intersection of two planes.
+	bool		 FromPlanes( const idPlane& p1, const idPlane& p2 );
+
+	//! Converts a Pluecker coordinate to a line segment representation.
+	bool		 ToLine( idVec3& start, idVec3& end ) const;
+
+	//! Converts a Pluecker coordinate into a ray representation with start point and direction.
+	bool		 ToRay( idVec3& start, idVec3& dir ) const;
+
+	//! Converts the Pluecker coordinate to a direction vector.
+	void		 ToDir( idVec3& dir ) const;
+
+	//! Computes the permuted inner product of this Pluecker coordinate with another Pluecker coordinate.
+	float		 PermutedInnerProduct( const idPluecker& a ) const;
+
+	//! Computes the square of the 3D distance between this Pluecker line and another Pluecker line.
+	float		 Distance3DSqr( const idPluecker& a ) const;
+
+	//! Returns the length of the Pluecker coordinate vector.
+	float		 Length() const;
+
+	//! Returns the squared length of the Pluecker coordinate.
+	float		 LengthSqr() const;
+
+	//! Returns a normalized copy of this pluecker coordinate.
+	idPluecker	 Normalize() const;
+
+	//! Normalizes the Pluecker coordinate in place and returns the scaling factor used.
+	float		 NormalizeSelf();
+
+	//! Returns the dimension of the Pluecker coordinate, which is always 6.
 	int			 GetDimension() const;
 
+	//! Returns a pointer to the internal float array representation of the Pluecker coordinate.
 	const float* ToFloatPtr() const;
+
+	//! Returns a pointer to the internal float array representing the Pluecker coordinate.
 	float*		 ToFloatPtr();
+
+	//! Returns a string representation of the Pluecker coordinate with the specified precision
 	const char*	 ToString( int precision = 2 ) const;
 
 private:

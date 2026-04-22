@@ -41,46 +41,67 @@ If you have questions concerning this license or the applicable additional terms
 ================================================================================================
 */
 
+//! Returns the product of two floating point numbers.
 ID_INLINE_EXTERN float __fmuls( float a, float b )
 {
 	return ( a * b );
 }
+
+//! Computes the fused multiply-add operation a times b plus c.
 ID_INLINE_EXTERN float __fmadds( float a, float b, float c )
 {
 	return ( a * b + c );
 }
+
+//! Computes the fused negative multiply-subtract of three floating-point values.
 ID_INLINE_EXTERN float __fnmsubs( float a, float b, float c )
 {
 	return ( c - a * b );
 }
+
+//! Returns the second argument if the first argument is greater than or equal to zero, otherwise returns the third argument.
 ID_INLINE_EXTERN float __fsels( float a, float b, float c )
 {
 	return ( a >= 0.0f ) ? b : c;
 }
+
+//! Computes the reciprocal of the given floating-point value.
 ID_INLINE_EXTERN float __frcps( float x )
 {
 	return ( 1.0f / x );
 }
+
+//! Performs single-precision floating-point division of x by y.
 ID_INLINE_EXTERN float __fdivs( float x, float y )
 {
 	return ( x / y );
 }
+
+//! Computes the inverse square root of a floating-point value.
 ID_INLINE_EXTERN float __frsqrts( float x )
 {
 	return ( 1.0f / sqrtf( x ) );
 }
+
+//! Computes the reciprocal of a 16-bit floating-point value.
 ID_INLINE_EXTERN float __frcps16( float x )
 {
 	return ( 1.0f / x );
 }
+
+//! Computes the division of two floating-point numbers.
 ID_INLINE_EXTERN float __fdivs16( float x, float y )
 {
 	return ( x / y );
 }
+
+//! Computes the reciprocal square root of a float value.
 ID_INLINE_EXTERN float __frsqrts16( float x )
 {
 	return ( 1.0f / sqrtf( x ) );
 }
+
+//! Converts a floating-point value to an integer and back to floating-point, effectively truncating the fractional part.
 ID_INLINE_EXTERN float __frndz( float x )
 {
 	return ( float )( ( int )( x ) );
@@ -136,14 +157,19 @@ ID_FORCE_INLINE void FlushCacheLine( const void* ptr, int offset )
 
 	#define CACHE_LINE_SIZE 128
 
+//! Issues a prefetch hint for the specified memory address.
 ID_INLINE void Prefetch( const void* ptr, int offset )
 {
 }
+
+//! Clears a cache line at the specified offset in the given memory pointer.
 ID_INLINE void ZeroCacheLine( void* ptr, int offset )
 {
 	byte* bytePtr = ( byte* )( ( ( ( uintptr_t )( ptr ) ) + ( offset ) ) & ~( CACHE_LINE_SIZE - 1 ) );
 	memset( bytePtr, 0, CACHE_LINE_SIZE );
 }
+
+//! Flushes a cache line for the given pointer and offset.
 ID_INLINE void FlushCacheLine( const void* ptr, int offset )
 {
 }
@@ -156,7 +182,7 @@ ID_INLINE void FlushCacheLine( const void* ptr, int offset )
 ================================================
 */
 
-// number of additional elements that are potentially cleared when clearing whole cache lines at a time
+//! Calculates the number of additional elements that may be cleared when clearing cache lines
 ID_INLINE_EXTERN int CACHE_LINE_CLEAR_OVERFLOW_COUNT( int size )
 {
 	if( ( size & ( CACHE_LINE_SIZE - 1 ) ) == 0 ) { return 0; }

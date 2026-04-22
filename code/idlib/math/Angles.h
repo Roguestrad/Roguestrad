@@ -49,6 +49,17 @@ class idRotation;
 class idMat3;
 class idMat4;
 
+/*!
+	\class idAngles
+	\brief Represents and manipulates 3D Euler angles with common arithmetic and conversion operations.
+
+	The idAngles class provides a comprehensive interface for working with Euler angles in three-dimensional space, supporting standard arithmetic operations, normalization, clamping, and conversion
+   to other rotational representations such as quaternions, rotation matrices, and vectors. It is designed for use in 3D graphics and game development contexts where angular transformations are
+   required. The class supports both const and non-const access to its components through indexed operators, and provides methods for converting the angle representation into various vector and matrix
+   formats. The implementation includes normalization methods to keep angle values within standard ranges, as well as comparison functions with and without epsilon tolerance for floating-point
+   precision handling.
+
+*/
 class idAngles
 {
 public:
@@ -56,49 +67,111 @@ public:
 	float yaw;
 	float roll;
 
+	//! Default constructor for the idAngles class.
 	idAngles();
+
+	//! Initializes an idAngles object with specified pitch, yaw, and roll values.
 	idAngles( float pitch, float yaw, float roll );
+
+	//! Constructs an idAngles object from a given idVec3 vector.
 	explicit idAngles( const idVec3& v );
 
+	//! Sets the pitch, yaw, and roll angles.
 	void			Set( float pitch, float yaw, float roll );
+
+	//! Sets all angle components to zero and returns a reference to this object.
 	idAngles&		Zero();
 
+	//! Returns the angle component at the specified index.
 	float			operator[]( int index ) const;
+
+	//! Provides indexed access to the pitch, yaw, and roll components of the angles.
 	float&			operator[]( int index );
-	idAngles		operator-() const; // negate angles, in general not the inverse rotation
+
+	//! Returns the negated angles with inverted pitch, yaw, and roll values.
+	idAngles		operator-() const;
+
+	//! Assigns the values of another idAngles object to this object and returns a reference to this object.
 	idAngles&		operator=( const idAngles& a );
+
+	//! Returns a new idAngles object that is the result of adding the current object and the provided idAngles object component-wise.
 	idAngles		operator+( const idAngles& a ) const;
+
+	//! Adds the components of the given angles to this angles object and returns a reference to this object.
 	idAngles&		operator+=( const idAngles& a );
+
+	//! Returns a new idAngles object with each component subtracted from the corresponding component of the input angle object.
 	idAngles		operator-( const idAngles& a ) const;
+
+	//! Subtracts the components of the given angles from this angles and returns a reference to this object.
 	idAngles&		operator-=( const idAngles& a );
+
+	//! Returns a new idAngles object with each angle component scaled by the given float value.
 	idAngles		operator*( const float a ) const;
+
+	//! Multiplies each component of the angles by the given scalar value.
 	idAngles&		operator*=( const float a );
+
+	//! Returns a new idAngles object with each angle component divided by the given scalar value.
 	idAngles		operator/( const float a ) const;
+
+	//! Divides each component of the angle by the given scalar value.
 	idAngles&		operator/=( const float a );
 
 	friend idAngles operator*( const float a, const idAngles& b );
 
-	bool			Compare( const idAngles& a ) const;						 // exact compare, no epsilon
-	bool			Compare( const idAngles& a, const float epsilon ) const; // compare with epsilon
-	bool			operator==( const idAngles& a ) const;					 // exact compare, no epsilon
-	bool			operator!=( const idAngles& a ) const;					 // exact compare, no epsilon
+	//! Compares this angle set with another for exact equality.
+	bool			Compare( const idAngles& a ) const;
 
-	idAngles&		Normalize360(); // normalizes 'this'
-	idAngles&		Normalize180(); // normalizes 'this'
+	//! Compares this angle instance with another angle instance using the specified epsilon tolerance.
+	bool			Compare( const idAngles& a, const float epsilon ) const;
 
+	//! Compares two idAngles objects for equality without using epsilon.
+	bool			operator==( const idAngles& a ) const;
+
+	//! Returns true if this angle instance is not equal to another angle instance.
+	bool			operator!=( const idAngles& a ) const;
+
+	//! Normalizes the angles in this object to the range [0, 360) degrees.
+	idAngles&		Normalize360();
+
+	//! Normalizes the angle values to the range [-180, 180].
+	idAngles&		Normalize180();
+
+	//! Clamps the angle values to the specified minimum and maximum ranges.
 	void			Clamp( const idAngles& min, const idAngles& max );
 
+	//! Returns the dimension of the angles, which is always 3.
 	int				GetDimension() const;
 
+	//! Converts angles to forward, right, and up vectors.
 	void			ToVectors( idVec3* forward, idVec3* right = NULL, idVec3* up = NULL ) const;
+
+	//! Returns the forward vector corresponding to the yaw and pitch angles.
 	idVec3			ToForward() const;
+
+	//! Converts the angle representation to a quaternion.
 	idQuat			ToQuat() const;
+
+	//! Converts an angles object to a rotation object.
 	idRotation		ToRotation() const;
+
+	//! Converts the angle values to a 3x3 rotation matrix.
 	idMat3			ToMat3() const;
+
+	//! Converts the angles to a 4x4 transformation matrix.
 	idMat4			ToMat4() const;
+
+	//! Converts the angles to an angular velocity vector.
 	idVec3			ToAngularVelocity() const;
+
+	//! Returns a pointer to the internal float array representing the angles.
 	const float*	ToFloatPtr() const;
+
+	//! Returns a pointer to the internal float array representing the angles.
 	float*			ToFloatPtr();
+
+	//! Converts the angles to a string representation with the specified precision.
 	const char*		ToString( int precision = 2 ) const;
 };
 
@@ -216,6 +289,7 @@ ID_INLINE idAngles& idAngles::operator/=( float a )
 	return *this;
 }
 
+//! Returns a new idAngles instance with each angle component scaled by the given float value.
 ID_INLINE idAngles operator*( const float a, const idAngles& b )
 {
 	return idAngles( a * b.pitch, a * b.yaw, a * b.roll );

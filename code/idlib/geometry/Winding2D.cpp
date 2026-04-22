@@ -31,11 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "Winding2D.h"
 
-/*
-============
-GetAxialBevel
-============
-*/
+//! Computes a bevel vector that is axial to the intersection of two planes at a given point
 bool GetAxialBevel( const idVec3& plane1, const idVec3& plane2, const idVec2& point, idVec3& bevel )
 {
 	if( IEEE_FLT_SIGNBITSET( plane1.x ) ^ IEEE_FLT_SIGNBITSET( plane2.x ) ) {
@@ -65,11 +61,6 @@ bool GetAxialBevel( const idVec3& plane1, const idVec3& plane2, const idVec2& po
 	return false;
 }
 
-/*
-============
-idWinding2D::ExpandForAxialBox
-============
-*/
 void idWinding2D::ExpandForAxialBox( const idVec2 bounds[2] )
 {
 	int	   i, j, numPlanes;
@@ -111,11 +102,6 @@ void idWinding2D::ExpandForAxialBox( const idVec2 bounds[2] )
 	}
 }
 
-/*
-============
-idWinding2D::Expand
-============
-*/
 void idWinding2D::Expand( const float d )
 {
 	int	   i;
@@ -135,11 +121,6 @@ void idWinding2D::Expand( const float d )
 	}
 }
 
-/*
-=============
-idWinding2D::Split
-=============
-*/
 int idWinding2D::Split( const idVec3& plane, const float epsilon, idWinding2D** front, idWinding2D** back ) const
 {
 	float		  dists[MAX_POINTS_ON_WINDING_2D];
@@ -253,11 +234,6 @@ int idWinding2D::Split( const idVec3& plane, const float epsilon, idWinding2D** 
 	return SIDE_CROSS;
 }
 
-/*
-============
-idWinding2D::ClipInPlace
-============
-*/
 bool idWinding2D::ClipInPlace( const idVec3& plane, const float epsilon, const bool keepOn )
 {
 	int		i, j, maxpts, newNumPoints;
@@ -351,11 +327,6 @@ bool idWinding2D::ClipInPlace( const idVec3& plane, const float epsilon, const b
 	return true;
 }
 
-/*
-=============
-idWinding2D::Copy
-=============
-*/
 idWinding2D* idWinding2D::Copy() const
 {
 	idWinding2D* w;
@@ -366,11 +337,6 @@ idWinding2D* idWinding2D::Copy() const
 	return w;
 }
 
-/*
-=============
-idWinding2D::Reverse
-=============
-*/
 idWinding2D* idWinding2D::Reverse() const
 {
 	idWinding2D* w;
@@ -384,11 +350,6 @@ idWinding2D* idWinding2D::Reverse() const
 	return w;
 }
 
-/*
-============
-idWinding2D::GetArea
-============
-*/
 float idWinding2D::GetArea() const
 {
 	int	   i;
@@ -404,11 +365,6 @@ float idWinding2D::GetArea() const
 	return total * 0.5f;
 }
 
-/*
-============
-idWinding2D::GetCenter
-============
-*/
 idVec2 idWinding2D::GetCenter() const
 {
 	int	   i;
@@ -422,11 +378,6 @@ idVec2 idWinding2D::GetCenter() const
 	return center;
 }
 
-/*
-============
-idWinding2D::GetRadius
-============
-*/
 float idWinding2D::GetRadius( const idVec2& center ) const
 {
 	int	   i;
@@ -444,11 +395,6 @@ float idWinding2D::GetRadius( const idVec2& center ) const
 	return idMath::Sqrt( radius );
 }
 
-/*
-============
-idWinding2D::GetBounds
-============
-*/
 void idWinding2D::GetBounds( idVec2 bounds[2] ) const
 {
 	int i;
@@ -500,11 +446,6 @@ bool idWinding2D::IsTiny() const
 	return true;
 }
 
-/*
-=============
-idWinding2D::IsHuge
-=============
-*/
 bool idWinding2D::IsHuge() const
 {
 	int i, j;
@@ -519,11 +460,6 @@ bool idWinding2D::IsHuge() const
 	return false;
 }
 
-/*
-=============
-idWinding2D::Print
-=============
-*/
 void idWinding2D::Print() const
 {
 	int i;
@@ -533,11 +469,6 @@ void idWinding2D::Print() const
 	}
 }
 
-/*
-=============
-idWinding2D::PlaneDistance
-=============
-*/
 float idWinding2D::PlaneDistance( const idVec3& plane ) const
 {
 	int	  i;
@@ -569,11 +500,6 @@ float idWinding2D::PlaneDistance( const idVec3& plane ) const
 	return 0.0f;
 }
 
-/*
-=============
-idWinding2D::PlaneSide
-=============
-*/
 int idWinding2D::PlaneSide( const idVec3& plane, const float epsilon ) const
 {
 	bool  front, back;
@@ -608,11 +534,6 @@ int idWinding2D::PlaneSide( const idVec3& plane, const float epsilon ) const
 	return SIDE_ON;
 }
 
-/*
-============
-idWinding2D::PointInside
-============
-*/
 bool idWinding2D::PointInside( const idVec2& point, const float epsilon ) const
 {
 	int	   i;
@@ -629,11 +550,6 @@ bool idWinding2D::PointInside( const idVec2& point, const float epsilon ) const
 	return true;
 }
 
-/*
-============
-idWinding2D::LineIntersection
-============
-*/
 bool idWinding2D::LineIntersection( const idVec2& start, const idVec2& end ) const
 {
 	int	   i, numEdges;
@@ -690,11 +606,6 @@ bool idWinding2D::LineIntersection( const idVec2& start, const idVec2& end ) con
 	return true;
 }
 
-/*
-============
-idWinding2D::RayIntersection
-============
-*/
 bool idWinding2D::RayIntersection( const idVec2& start, const idVec2& dir, float& scale1, float& scale2, int* edgeNums ) const
 {
 	int	   i, numEdges, localEdgeNums[2];

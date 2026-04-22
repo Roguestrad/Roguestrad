@@ -35,11 +35,11 @@ If you have questions concerning this license or the applicable additional terms
 /// Clean up loaded gltfData;
 /// </TODO>
 
-static const unsigned int		   gltfChunk_Type_JSON = 0x4E4F534A; // 1313821514
-static const unsigned int		   gltfChunk_Type_BIN  = 0x004E4942; // 5130562
+static const unsigned int gltfChunk_Type_JSON = 0x4E4F534A; // 1313821514
+static const unsigned int gltfChunk_Type_BIN  = 0x004E4942; // 5130562
 
-idCVar							   gltf_parseVerbose( "gltf_parseVerbose", "0", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL | CVAR_NEW, "print gltf json data while parsing" );
-idCVar							   gltfParser_PrefixNodeWithID( "gltfParser_PrefixNodeWithID", "0", CVAR_SYSTEM | CVAR_BOOL, "The node's id is prefixed to the node's name during load" );
+idCVar					  gltf_parseVerbose( "gltf_parseVerbose", "0", CVAR_RENDERER | CVAR_ARCHIVE | CVAR_BOOL | CVAR_NEW, "print gltf json data while parsing" );
+idCVar					  gltfParser_PrefixNodeWithID( "gltfParser_PrefixNodeWithID", "0", CVAR_SYSTEM | CVAR_BOOL, "The node's id is prefixed to the node's name during load" );
 //
 // gltf_sampler_wrap_type_map s_samplerWrapTypeMap[] = {
 //	//33071 CLAMP_TO_EDGE
@@ -101,8 +101,8 @@ gltf_mesh_attribute_map s_meshAttributeMap[] =
 	"JOINTS_0",		gltfMesh_Primitive_Attribute::Type::Joints,		4,
 	"",				gltfMesh_Primitive_Attribute::Type::Count
 };
-// clang-format on
 
+//! Converts a string identifier to its corresponding mesh attribute enumeration value
 gltfMesh_Primitive_Attribute::Type GetAttributeEnum( const char* str, uint* elementSize = nullptr )
 {
 	int i = -1;
@@ -142,8 +142,8 @@ gltf_accessor_component_type_map<gltf_accessor_component::Type> s_nativeComponen
 	"double",			5130,	gltf_accessor_component::Type::_double, 8 ,
 	"",					0,		gltf_accessor_component::Type::Count, 0
 };
-// clang-format on
 
+//! Returns the component type enum for the given ID, and optionally fills the size in bytes.
 gltf_accessor_component::Type GetComponentTypeEnum( int id, uint* sizeInBytes = nullptr )
 {
 	int i = -1;
@@ -2015,6 +2015,7 @@ idList<idMat4>& gltfData::GetAccessorViewMat( gltfAccessor* accessor )
 	return *matView;
 }
 
+//! Returns a view of the accessor data as a list of idVec3 pointers, constructing it if necessary.
 template<>
 idList<idVec3*>& gltfData::GetAccessorView( gltfAccessor* accessor )
 {
@@ -2043,6 +2044,7 @@ idList<idVec3*>& gltfData::GetAccessorView( gltfAccessor* accessor )
 	return *vecView;
 }
 
+//! Returns a view of quaternion data from a glTF accessor
 template<>
 idList<idQuat*>& gltfData::GetAccessorView( gltfAccessor* accessor )
 {
@@ -2107,6 +2109,7 @@ void gltfData::ClearData( idStr& fileName )
 #undef GLTFARRAYITEM
 #undef GLTFARRAYITEMREF
 
+//! Loads a GLTF or GLB file specified by the command line arguments.
 CONSOLE_COMMAND( LoadGLTF, "Loads an .gltf or .glb file", idCmdSystem::ArgCompletion_MapName )
 {
 	if( args.Argc() > 1 ) {
@@ -2114,10 +2117,7 @@ CONSOLE_COMMAND( LoadGLTF, "Loads an .gltf or .glb file", idCmdSystem::ArgComple
 		gltf.Load( args.Argv( 1 ) );
 	}
 }
-//+set r_fullscreen 0 +set com_allowConsole 1 +set developer 1 +set fs_debug 0 +set win_outputDebugString 1 +set fs_basepath "E:\SteamLibrary\steamapps\common\DOOM 3 BFG Edition\"
 
-//  not dots allowed in [%s]!
-// [filename].[%i|%s].[gltf|glb]
 bool gltfManager::ExtractIdentifier( idStr& filename, int& id, idStr& name )
 {
 	idStr extension;

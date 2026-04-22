@@ -74,114 +74,180 @@ typedef struct indent_s {
 	struct indent_s* next;	 // next indent on the indent stack
 } indent_t;
 
+/*!
+	\class idParser
+	\brief A parser class for processing structured text data with support for preprocessor directives and token-based parsing.
+
+	The idParser class provides a comprehensive framework for parsing structured text inputs, such as configuration files or script languages. It supports loading data from files or memory buffers,
+   tokenizing input streams, and handling preprocessor directives like #define, #include, and conditional compilation. The parser maintains internal state for tracking source files, line numbers, and
+   indentation levels during parsing. It includes functionality for reading and validating specific token types, parsing numerical data, and managing define macros. The class also supports error and
+   warning reporting, and offers methods for navigating through source text, including skipping sections and setting markers. Memory management is handled internally, with the parser freeing its
+   source data when destroyed or when explicitly requested.
+
+*/
 class idParser
 {
 public:
-	// constructor
+	//! Initializes a new instance of the idParser class.
 	idParser();
+
+	//! Initializes an idParser instance with the specified flags.
 	idParser( int flags );
+
+	//! Constructs an idParser object and initializes its internal state, loading the specified file.
 	idParser( const char* filename, int flags = 0, bool OSPath = false );
+
+	//! Constructs an idParser object with the specified memory buffer, length, and name.
 	idParser( const char* ptr, int length, const char* name, int flags = 0 );
-	// destructor
+
+	//! Destructor for the idParser class that frees the source.
 	~idParser();
-	// load a source file
+
+	//! Loads a source file for parsing
 	int				LoadFile( const char* filename, bool OSPath = false );
-	// load a source from the given memory with the given length
-	// NOTE: the ptr is expected to point at a valid C string: ptr[length] == '\0'
+
+	//! Loads a source from memory with the specified length and name.
 	int				LoadMemory( const char* ptr, int length, const char* name );
-	// free the current source
+
+	//! Frees the current source data, optionally preserving define definitions.
 	void			FreeSource( bool keepDefines = false );
 
-	// jmarshall
+	//! Parses a 1D matrix of floats from the input stream.
 	int				Parse1DMatrixLegacy( int x, float* m );
 
-	// returns true if a source is loaded
+	//! Returns true if a source is loaded
 	int				IsLoaded() const { return idParser::loaded; }
-	// read a token from the source
+
+	//! Reads the next token from the source and returns true if successful
 	int				ReadToken( idToken* token );
-	// expect a certain token, reads the token when available
+
+	//! Expects and reads a specific token string from the parser input
 	int				ExpectTokenString( const char* string );
-	// expect a certain token type
+
+	//! Expects and validates a token of a specific type and subtype from the parser.
 	int				ExpectTokenType( int type, int subtype, idToken* token );
-	// expect a token
+
+	//! Expects and reads any token from the parser input
 	int				ExpectAnyToken( idToken* token );
-	// returns true if the next token equals the given string and removes the token from the source
+
+	//! Checks if the next token in the parser matches the given string and removes it from the source if it does.
 	int				CheckTokenString( const char* string );
-	// returns true if the next token equals the given type and removes the token from the source
+
+	//! Checks if the next token matches the specified type and subtype, and if so, removes and returns the token.
 	int				CheckTokenType( int type, int subtype, idToken* token );
-	// returns true if the next token equals the given string but does not remove the token from the source
+
+	//! Checks if the next token in the parser matches the given string without consuming it.
 	int				PeekTokenString( const char* string );
-	// returns true if the next token equals the given type but does not remove the token from the source
+
+	//! Checks if the next token matches the specified type and subtype without removing it from the source.
 	int				PeekTokenType( int type, int subtype, idToken* token );
-	// skip tokens until the given token string is read
+
+	//! Skips tokens in the parser until the specified string is found.
 	int				SkipUntilString( const char* string );
-	// skip the rest of the current line
+
+	//! Skips the rest of the current line in the parser.
 	int				SkipRestOfLine();
-	// skip the braced section
+
+	//! Skips a braced section in the parser input.
 	int				SkipBracedSection( bool parseFirstBrace = true );
-	// parse a braced section into a string
+
+	//! Parses a braced section from the input stream into the provided string.
 	const char*		ParseBracedSection( idStr& out, int tabs, bool parseFirstBrace, char intro, char outro );
-	// parse a braced section into a string, maintaining indents and newlines
+
+	//! Parses a braced section from the script into the provided string while maintaining indents and newlines.
 	const char*		ParseBracedSectionExact( idStr& out, int tabs = -1 );
-	// parse the rest of the line
+
+	//! Parses the rest of the current line into the provided string output.
 	const char*		ParseRestOfLine( idStr& out );
-	// unread the given token
+
+	//! Unreads the given token by returning it to the parser's input stream.
 	void			UnreadToken( idToken* token );
-	// read a token only if on the current line
+
+	//! Reads a token from the current line only if it does not cross line boundaries.
 	int				ReadTokenOnLine( idToken* token );
-	// read a signed integer
+
+	//! Parses and returns a signed integer value from the token stream
 	int				ParseInt();
-	// read a boolean
+
+	//! Parses and returns a boolean value from the token stream
 	bool			ParseBool();
-	// read a floating point number
+
+	//! Parses and returns a floating point number from the token stream
 	float			ParseFloat();
-	// parse matrices with floats
+
+	//! Parses a 1D matrix of floats from the input stream.
 	int				Parse1DMatrix( int x, float* m );
+
+	//! Parses a 2D matrix of specified dimensions from the input stream.
 	int				Parse2DMatrix( int y, int x, float* m );
+
+	//! Parses a 3D matrix from the input stream, filling the provided float array with the parsed values.
 	int				Parse3DMatrix( int z, int y, int x, float* m );
-	// get the white space before the last read token
+
+	//! Returns the length of the whitespace preceding the last read token.
 	int				GetLastWhiteSpace( idStr& whiteSpace ) const;
-	// Set a marker in the source file (there is only one marker)
+
+	//! Sets a marker in the source file at the current position.
 	void			SetMarker();
-	// Get the string from the marker to the current position
+
+	//! Retrieves a string from a marker to the current position in the script.
 	void			GetStringFromMarker( idStr& out, bool clean = false );
-	// add a define to the source
+
+	//! Adds a define to the parser's source.
 	int				AddDefine( const char* string );
-	// add builtin defines
+
+	//! Adds built-in preprocessor defines to the parser.
 	void			AddBuiltinDefines();
-	// set the source include path
+
+	//! Sets the source include path for the parser.
 	void			SetIncludePath( const char* path );
-	// set the punctuation set
+
+	//! Sets the punctuation set for the parser.
 	void			SetPunctuations( const punctuation_t* p );
-	// returns a pointer to the punctuation with the given id
+
+	//! Returns a pointer to the punctuation string with the given id.
 	const char*		GetPunctuationFromId( int id );
-	// get the id for the given punctuation
+
+	//! Returns the id for the given punctuation string.
 	int				GetPunctuationId( const char* p );
-	// set lexer flags
+
+	//! Sets the lexer flags for the parser and all scripts in the script stack.
 	void			SetFlags( int flags );
-	// get lexer flags
+
+	//! Returns the lexer flags of the parser instance.
 	int				GetFlags() const;
-	// returns the current filename
+
+	//! Returns the name of the current script file being parsed.
 	const char*		GetFileName() const;
-	// get current offset in current script
+
+	//! Returns the current offset in the current script.
 	const int		GetFileOffset() const;
-	// get file time for current script
+
+	//! Retrieves the file time for the currently parsed script.
 	const ID_TIME_T GetFileTime() const;
-	// returns the current line number
+
+	//! Returns the current line number from the parser's script stack or zero if no script is active
 	const int		GetLineNum() const;
-	// print an error message
+
+	//! Prints an error message using a format string and variable arguments
 	void			Error( VERIFY_FORMAT_STRING const char* str, ... ) const;
-	// print a warning message
+
+	//! Prints a warning message using a format string and variable arguments.
 	void			Warning( VERIFY_FORMAT_STRING const char* str, ... ) const;
-	// returns true if at the end of the file
+
+	//! Returns true if the parser has reached the end of the file
 	bool			EndOfFile();
-	// add a global define that will be added to all opened sources
+
+	//! Adds a global define that will be applied to all opened sources.
 	static int		AddGlobalDefine( const char* string );
-	// remove the given global define
+
+	//! Removes a global define with the specified name.
 	static int		RemoveGlobalDefine( const char* name );
-	// remove all global defines
+
+	//! Removes all global defines from the parser.
 	static void		RemoveAllGlobalDefines();
-	// set the base folder to load files from
+
+	//! Sets the base folder path from which files will be loaded.
 	static void		SetBaseFolder( const char* path );
 
 	// RB: made protected to have custom #include behaviours for embedded resources
@@ -203,55 +269,142 @@ protected:
 
 	static define_t*	 globaldefines; // list with global defines added to every source loaded
 
+	//! Pushes a new indentation level onto the parser's indentation stack.
 	void				 PushIndent( int type, int skip );
+
+	//! Pops the top indentation level from the parser's indentation stack and returns its type and skip values.
 	void				 PopIndent( int* type, int* skip );
+
+	//! Pushes a script onto the parser's script stack after checking for recursive inclusion.
 	void				 PushScript( idLexer* script );
+
+	//! Reads the next token from the source script and returns true if successful.
 	int					 ReadSourceToken( idToken* token );
+
+	//! Reads a token from the current line, continuing to the next line only if a backslash is found.
 	int					 ReadLine( idToken* token );
+
+	//! Adds a token back to the front of the parser's token stream
 	int					 UnreadSourceToken( idToken* token );
+
+	//! Reads and processes parameters for a preprocessor define directive.
 	int					 ReadDefineParms( define_t* define, idToken** parms, int maxparms );
+
+	//! Combines an array of tokens into a single string token.
 	int					 StringizeTokens( idToken* tokens, idToken* token );
+
+	//! Merges tokens of compatible types into the first token.
 	int					 MergeTokens( idToken* t1, idToken* t2 );
+
+	//! Expands builtin preprocessor defines such as line number, file name, date, and time into token sequences
 	int					 ExpandBuiltinDefine( idToken* deftoken, define_t* define, idToken** firsttoken, idToken** lasttoken );
+
+	//! Expands a define token into a list of tokens, handling parameters, stringizing, and merging operators
 	int					 ExpandDefine( idToken* deftoken, define_t* define, idToken** firsttoken, idToken** lasttoken );
+
+	//! Expands a define into the parser source and updates the token list
 	int					 ExpandDefineIntoSource( idToken* deftoken, define_t* define );
+
+	//! Adds global defines to the source parser
 	void				 AddGlobalDefinesToSource();
+
+	//! Creates a copy of the given define_t structure with all its tokens and parameters duplicated
 	define_t*			 CopyDefine( define_t* define );
+
+	//! Finds a define in the hash table by its name.
 	define_t*			 FindHashedDefine( define_t** definehash, const char* name );
+
+	//! Finds the index of a parameter with the specified name in a define structure.
 	int					 FindDefineParm( define_t* define, const char* name );
+
+	//! Adds a define to the hash table for fast lookup.
 	void				 AddDefineToHash( define_t* define, define_t** definehash );
+
+	//! Prints the details of a given define structure to the common output.
 	static void			 PrintDefine( define_t* define );
+
+	//! Frees all memory associated with a define_t structure
 	static void			 FreeDefine( define_t* define );
+
+	//! Finds and returns a define with the specified name in the given define list, or NULL if not found.
 	static define_t*	 FindDefine( define_t* defines, const char* name );
+
+	//! Creates a define_t object from a string representation.
 	static define_t*	 DefineFromString( const char* string );
+
+	//! Returns a copy of the first define in the parser's hash table.
 	define_t*			 CopyFirstDefine();
-	// RB: allow override
+
+	//! Processes a #include directive to read and parse another source file.
 	virtual int			 Directive_include( idToken* token, bool supressWarning = false );
-	// RB end
+
+	//! Removes a previously defined macro or symbol from the parser's definition table.
 	int					 Directive_undef();
+
+	//! Processes a #ifdef directive by checking if a define is present and managing conditional compilation indentation.
 	int					 Directive_if_def( int type );
+
+	//! Processes an ifdef directive and returns the result of the conditional compilation check.
 	int					 Directive_ifdef();
+
+	//! Parses an #ifndef directive and returns the result of the conditional compilation check.
 	int					 Directive_ifndef();
+
+	//! Handles the #else directive in the parser.
 	int					 Directive_else();
+
+	//! Parses and processes the #endif directive in the parser.
 	int					 Directive_endif();
-	// DG: use int instead of long for 64bit compatibility
+
+	//! Evaluates tokens for conditional compilation expressions and returns the result
 	int					 EvaluateTokens( idToken* tokens, signed int* intvalue, double* floatvalue, int integer );
+
+	//! Evaluates a mathematical expression from parsed tokens and stores the result in either an integer or floating-point variable
 	int					 Evaluate( signed int* intvalue, double* floatvalue, int integer );
+
+	//! Evaluates a mathematical expression and returns the result as either an integer or floating-point value
 	int					 DollarEvaluate( signed int* intvalue, double* floatvalue, int integer );
-	// DG end
+
+	//! Processes a #define directive to create or update a macro definition.
 	int					 Directive_define();
+
+	//! Parses and processes the #elif preprocessor directive.
 	int					 Directive_elif();
+
+	//! Evaluates a conditional expression and sets up indentation for conditional parsing.
 	int					 Directive_if();
+
+	//! Parses and handles the #line directive, which is not supported in this implementation.
 	int					 Directive_line();
+
+	//! Processes a #error directive and reports an error message.
 	int					 Directive_error();
+
+	//! Parses a #warning directive and issues a warning message.
 	int					 Directive_warning();
+
+	//! Parses a #pragma directive and issues a warning that it is not supported.
 	int					 Directive_pragma();
+
+	//! Undoes reading of a minus sign token by pushing it back onto the token stream.
 	void				 UnreadSignToken();
+
+	//! Evaluates a parser directive and returns the result as an integer.
 	int					 Directive_eval();
+
+	//! Evaluates a float value from the parser input and prepares it for further processing.
 	int					 Directive_evalfloat();
+
+	//! Reads a preprocessor directive from the source and processes it accordingly.
 	int					 ReadDirective();
+
+	//! Evaluates an integer expression and prepares it for parsing.
 	int					 DollarDirective_evalint();
+
+	//! Evaluates a float value from a dollar directive and prepares it for tokenization.
 	int					 DollarDirective_evalfloat();
+
+	//! Parses and processes a dollar directive from the source token stream.
 	int					 ReadDollarDirective();
 };
 

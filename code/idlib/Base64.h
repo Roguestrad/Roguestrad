@@ -30,30 +30,51 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __BASE64_H__
 #define __BASE64_H__
 
-/*
-===============================================================================
+/*!
+	\class idBase64
+	\brief A class for encoding and decoding base64 data with support for various output formats.
 
-	base64
+	The idBase64 class provides functionality for encoding binary data into base64 format and decoding base64 data back into binary form. It supports multiple output destinations including memory
+   buffers, strings, and file objects. The class maintains an internal buffer that can be managed through explicit allocation functions or automatically through the encoding process. Construction can
+   be done with or without initial data, and the class provides methods to initialize, release, and ensure buffer allocation. The design allows for flexible usage patterns where data can be encoded
+   from byte arrays or strings, and decoded into various target formats. The implementation handles the base64 encoding and decoding algorithm internally, managing the conversion between binary and
+   textual representations.
 
-===============================================================================
 */
-
 class idBase64
 {
 public:
+	//! Initializes a new instance of the idBase64 class.
 	idBase64();
+
+	//! Constructs an idBase64 object and initializes it with the provided idStr string.
 	idBase64( const idStr& s );
+
+	//! Destroys the idBase64 object and releases any allocated resources.
 	~idBase64();
 
+	//! Encodes a byte array into base64 format.
 	void		Encode( const byte* from, int size );
+
+	//! Encodes a string using Base64 encoding.
 	void		Encode( const idStr& src );
-	int			DecodeLength() const;		 // minimum size in bytes of destination buffer for decoding
-	int			Decode( byte* to ) const;	 // does not append a \0 - needs a DecodeLength() bytes buffer
-	void		Decode( idStr& dest ) const; // decodes the binary content to an idStr (a bit dodgy, \0 and other non-ascii are possible in the decoded content)
+
+	//! Returns the minimum size in bytes of the destination buffer needed for decoding a base64 encoded string.
+	int			DecodeLength() const;
+
+	//! Decodes Base64-encoded data into a provided buffer and returns the number of decoded bytes.
+	int			Decode( byte* to ) const;
+
+	//! Decodes base64-encoded data into the provided destination string.
+	void		Decode( idStr& dest ) const;
+
+	//! Decodes base64 data into the provided destination file.
 	void		Decode( idFile* dest ) const;
 
+	//! Returns a constant character pointer to the internal data of the base64 string.
 	const char* c_str() const;
 
+	//! Assigns the contents of a string to this base64 object.
 	void		operator=( const idStr& s );
 
 private:
@@ -61,8 +82,13 @@ private:
 	int	  len;
 	int	  alloced;
 
+	//! Initializes the base64 encoder/decoder state
 	void  Init();
+
+	//! Releases any allocated resources and initializes the object to its default state
 	void  Release();
+
+	//! Ensures the base64 encoding buffer is allocated with at least the specified size.
 	void  EnsureAlloced( int size );
 };
 

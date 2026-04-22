@@ -74,17 +74,21 @@ assert_sizeof( uint64, 8 );
 #define MAX_UNSIGNED_TYPE( x ) ( ( ( ( 1U << ( ( sizeof( x ) - 1 ) * 8 ) ) - 1 ) << 8 ) | 255U )
 #define MIN_UNSIGNED_TYPE( x ) 0
 
+//! Determines if the given type is a signed type.
 template<typename _type_>
 bool IsSignedType( const _type_ t )
 {
 	return _type_( -1 ) < 0;
 }
 
+//! Returns the larger of two values of type T
 template<class T>
 T Max( T x, T y )
 {
 	return ( x > y ) ? x : y;
 }
+
+//! Returns the smaller of two values
 template<class T>
 T Min( T x, T y )
 {
@@ -96,19 +100,21 @@ class idFile;
 struct idNullPtr {
 	// one pointer member initialized to zero so you can pass NULL as a vararg
 	void* value;
+
+	//! Constructs a null pointer object with a value of zero.
 	constexpr idNullPtr() :
 		value( 0 )
 	{
 	}
 
-	// implicit conversion to all pointer types
+	//! Provides implicit conversion to a pointer type.
 	template<typename T1>
 	constexpr operator T1*() const
 	{
 		return 0;
 	}
 
-	// implicit conversion to all pointer to member types
+	//! Provides implicit conversion to any pointer to member type.
 	template<typename T1, typename T2>
 	constexpr operator T1 T2::*() const
 	{
@@ -158,7 +164,7 @@ typedef unsigned int triIndex_t;
 
 #endif
 
-// if writing to write-combined memory, always write indexes as pairs for 32 bit writes
+//! Writes a pair of triangle indices to a destination buffer as a single 32-bit value.
 ID_INLINE void WriteIndexPair( triIndex_t* dest, const triIndex_t a, const triIndex_t b )
 {
 	*( unsigned* )dest = ( unsigned )a | ( ( unsigned )b << 16 );

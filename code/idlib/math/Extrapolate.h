@@ -48,24 +48,61 @@ typedef enum {
 	EXTRAPOLATION_NOSTOP	  = 0x40  // do not stop at startTime + duration
 } extrapolation_t;
 
+/*!
+	\class idExtrapolate
+	\brief Template class for interpolating and extrapolating values over time with different extrapolation types.
+
+	The idExtrapolate class provides a generic mechanism for computing interpolated or extrapolated values over a time interval based on initial conditions and extrapolation parameters. It supports
+   different extrapolation types and can be used to simulate motion or value changes over time. The class is templated to allow for different value types, making it flexible for various use cases such
+   as animation, physics simulation, or data interpolation. The extrapolation is initialized with a start time, duration, initial value, and speed parameters. Methods are provided to query the current
+   value or speed at any given time, determine if the extrapolation has completed, and to modify various parameters such as start time or initial value. The class maintains internal state to track the
+   configuration and progress of the extrapolation.
+
+*/
 template<class type>
 class idExtrapolate
 {
 public:
+	//! Initializes an idExtrapolate object with default values.
 	idExtrapolate();
 
+	//! Initializes the extrapolation parameters for a given time range and values
 	void			Init( const int startTime, const int duration, const type& startValue, const type& baseSpeed, const type& speed, const extrapolation_t extrapolationType );
+
+	//! Returns the interpolated value at the specified time based on the extrapolation type and configuration.
 	type			GetCurrentValue( int time ) const;
+
+	//! Calculates and returns the current speed based on the extrapolation type and given time.
 	type			GetCurrentSpeed( int time ) const;
+
+	//! Checks if the extrapolation is complete based on the provided time value
 	bool			IsDone( int time ) const { return ( !( extrapolationType & EXTRAPOLATION_NOSTOP ) && time >= startTime + duration ); }
+
+	//! Sets the start time for the extrapolation.
 	void			SetStartTime( int time ) { startTime = time; }
+
+	//! Returns the start time of the cinematic animation.
 	int				GetStartTime() const { return startTime; }
+
+	//! Returns the end time of the extrapolation interval.
 	int				GetEndTime() const { return ( !( extrapolationType & EXTRAPOLATION_NOSTOP ) && duration > 0 ) ? startTime + duration : 0; }
+
+	//! Returns the duration value stored in the idExtrapolate object.
 	int				GetDuration() const { return duration; }
+
+	//! Sets the starting value for the extrapolation.
 	void			SetStartValue( const type& value ) { startValue = value; }
+
+	//! Returns the starting value used for extrapolation.
 	const type&		GetStartValue() const { return startValue; }
+
+	//! Returns the base speed value stored in the idExtrapolate object.
 	const type&		GetBaseSpeed() const { return baseSpeed; }
+
+	//! Returns the speed value stored in the idExtrapolate object.
 	const type&		GetSpeed() const { return speed; }
+
+	//! Returns the extrapolation type of the object.
 	extrapolation_t GetExtrapolationType() const { return extrapolationType; }
 
 private:
@@ -77,11 +114,6 @@ private:
 	type			speed;
 };
 
-/*
-====================
-idExtrapolate::idExtrapolate
-====================
-*/
 template<class type>
 ID_INLINE idExtrapolate<type>::idExtrapolate()
 {
@@ -92,11 +124,6 @@ ID_INLINE idExtrapolate<type>::idExtrapolate()
 	memset( &speed, 0, sizeof( speed ) );
 }
 
-/*
-====================
-idExtrapolate::Init
-====================
-*/
 template<class type>
 ID_INLINE void idExtrapolate<type>::Init( const int startTime, const int duration, const type& startValue, const type& baseSpeed, const type& speed, const extrapolation_t extrapolationType )
 {
@@ -108,11 +135,6 @@ ID_INLINE void idExtrapolate<type>::Init( const int startTime, const int duratio
 	this->speed				= speed;
 }
 
-/*
-====================
-idExtrapolate::GetCurrentValue
-====================
-*/
 template<class type>
 ID_INLINE type idExtrapolate<type>::GetCurrentValue( int time ) const
 {
@@ -169,11 +191,6 @@ ID_INLINE type idExtrapolate<type>::GetCurrentValue( int time ) const
 	return startValue;
 }
 
-/*
-====================
-idExtrapolate::GetCurrentSpeed
-====================
-*/
 template<class type>
 ID_INLINE type idExtrapolate<type>::GetCurrentSpeed( int time ) const
 {

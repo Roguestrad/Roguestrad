@@ -56,21 +56,11 @@ idVec4 g_color_table[16] = {
 
 const char* units[2][4] = { { "B", "KB", "MB", "GB" }, { "B/s", "KB/s", "MB/s", "GB/s" } };
 
-/*
-============
-idStr::ColorForIndex
-============
-*/
 idVec4&		idStr::ColorForIndex( int i )
 {
 	return g_color_table[i & 15];
 }
 
-/*
-============
-idStr::ReAllocate
-============
-*/
 void idStr::ReAllocate( int amount, bool keepold )
 {
 	char* newbuffer;
@@ -109,11 +99,6 @@ void idStr::ReAllocate( int amount, bool keepold )
 	data = newbuffer;
 }
 
-/*
-============
-idStr::FreeData
-============
-*/
 void idStr::FreeData()
 {
 	if( IsStatic() ) {
@@ -130,11 +115,6 @@ void idStr::FreeData()
 	}
 }
 
-/*
-============
-idStr::operator=
-============
-*/
 void idStr::operator=( const char* text )
 {
 	int l;
@@ -178,13 +158,6 @@ void idStr::operator=( const char* text )
 	len = l;
 }
 
-/*
-============
-idStr::FindChar
-
-returns -1 if not found otherwise the index of the char
-============
-*/
 int idStr::FindChar( const char* str, const char c, int start, int end )
 {
 	int i;
@@ -202,13 +175,6 @@ int idStr::FindChar( const char* str, const char c, int start, int end )
 	return -1;
 }
 
-/*
-============
-idStr::FindText
-
-returns -1 if not found otherwise the index of the text
-============
-*/
 int idStr::FindText( const char* str, const char* text, bool casesensitive, int start, int end )
 {
 	int l, i, j;
@@ -241,20 +207,6 @@ int idStr::FindText( const char* str, const char* text, bool casesensitive, int 
 	return -1;
 }
 
-/*
-============
-idStr::Filter
-
-Returns true if the string conforms the given filter.
-Several metacharacter may be used in the filter.
-
-*          match any string of zero or more characters
-?          match any single character
-[abc...]   match any of the enclosed characters; a hyphen can
-		   be used to specify a range (e.g. a-z, A-Z, 0-9)
-
-============
-*/
 bool idStr::Filter( const char* filter, const char* name, bool casesensitive )
 {
 	idStr buf;
@@ -351,13 +303,6 @@ bool idStr::Filter( const char* filter, const char* name, bool casesensitive )
 	return true;
 }
 
-/*
-=============
-idStr::StripMediaName
-
-  makes the string lower case, replaces backslashes with forward slashes, and removes extension
-=============
-*/
 void idStr::StripMediaName( const char* name, idStr& mediaName )
 {
 	char c;
@@ -378,11 +323,6 @@ void idStr::StripMediaName( const char* name, idStr& mediaName )
 	}
 }
 
-/*
-=============
-idStr::CheckExtension
-=============
-*/
 bool idStr::CheckExtension( const char* name, const char* ext )
 {
 	const char* s1 = name + Length( name ) - 1;
@@ -414,11 +354,6 @@ bool idStr::CheckExtension( const char* name, const char* ext )
 	return ( s1 >= name );
 }
 
-/*
-=============
-idStr::FloatArrayToString
-=============
-*/
 const char* idStr::FloatArrayToString( const float* array, const int length, const int precision )
 {
 	static int	index = 0;
@@ -455,11 +390,6 @@ const char* idStr::FloatArrayToString( const float* array, const int length, con
 	return s;
 }
 
-/*
-========================
-idStr::CStyleQuote
-========================
-*/
 const char* idStr::CStyleQuote( const char* str )
 {
 	static int	 index = 0;
@@ -532,11 +462,6 @@ const char* idStr::CStyleQuote( const char* str )
 	return buf;
 }
 
-/*
-========================
-idStr::CStyleUnQuote
-========================
-*/
 const char* idStr::CStyleUnQuote( const char* str )
 {
 	if( str[0] != '\"' ) {
@@ -602,13 +527,6 @@ const char* idStr::CStyleUnQuote( const char* str )
 	return buf;
 }
 
-/*
-============
-idStr::Last
-
-returns -1 if not found otherwise the index of the char
-============
-*/
 int idStr::Last( const char c ) const
 {
 	int i;
@@ -622,13 +540,6 @@ int idStr::Last( const char c ) const
 	return -1;
 }
 
-/*
-========================
-idStr::Format
-
-perform a threadsafe sprintf to the string
-========================
-*/
 void idStr::Format( const char* fmt, ... )
 {
 	va_list argptr;
@@ -645,13 +556,6 @@ void idStr::Format( const char* fmt, ... )
 	*this = text;
 }
 
-/*
-========================
-idStr::FormatInt
-
-Formats integers with commas for readability.
-========================
-*/
 idStr idStr::FormatInt( const int num, bool isCash )
 {
 	idStr val = va( "%d", num );
@@ -670,11 +574,6 @@ idStr idStr::FormatInt( const int num, bool isCash )
 	return val;
 }
 
-/*
-============
-idStr::StripLeading
-============
-*/
 void idStr::StripLeading( const char c )
 {
 	while( data[0] == c ) {
@@ -683,11 +582,6 @@ void idStr::StripLeading( const char c )
 	}
 }
 
-/*
-============
-idStr::StripLeading
-============
-*/
 void idStr::StripLeading( const char* string )
 {
 	int l;
@@ -703,11 +597,6 @@ void idStr::StripLeading( const char* string )
 	}
 }
 
-/*
-============
-idStr::StripLeadingOnce
-============
-*/
 bool idStr::StripLeadingOnce( const char* string )
 {
 	int l;
@@ -723,11 +612,6 @@ bool idStr::StripLeadingOnce( const char* string )
 	return false;
 }
 
-/*
-============
-idStr::StripTrailing
-============
-*/
 void idStr::StripTrailing( const char c )
 {
 	int i;
@@ -738,11 +622,6 @@ void idStr::StripTrailing( const char c )
 	}
 }
 
-/*
-============
-idStr::StripLeading
-============
-*/
 void idStr::StripTrailing( const char* string )
 {
 	int l;
@@ -758,11 +637,6 @@ void idStr::StripTrailing( const char* string )
 	}
 }
 
-/*
-============
-idStr::StripTrailingOnce
-============
-*/
 bool idStr::StripTrailingOnce( const char* string )
 {
 	int l;
@@ -778,11 +652,6 @@ bool idStr::StripTrailingOnce( const char* string )
 	return false;
 }
 
-/*
-============
-idStr::IStripTrailingOnce
-============
-*/
 bool idStr::IStripTrailingOnce( const char* string )
 {
 	int l;
@@ -798,11 +667,6 @@ bool idStr::IStripTrailingOnce( const char* string )
 	return false;
 }
 
-/*
-============
-idStr::Replace
-============
-*/
 bool idStr::ReplaceChar( const char old, const char nw )
 {
 	bool replaced = false;
@@ -815,11 +679,6 @@ bool idStr::ReplaceChar( const char old, const char nw )
 	return replaced;
 }
 
-/*
-============
-idStr::Replace
-============
-*/
 bool idStr::Replace( const char* old, const char* nw )
 {
 	// RB: 64 bit fixes,  conversion from 'size_t' to 'int', possible loss of data
@@ -862,11 +721,6 @@ bool idStr::Replace( const char* old, const char* nw )
 	return false;
 }
 
-/*
-============
-idStr::Mid
-============
-*/
 const char* idStr::Mid( int start, int len, idStr& result ) const
 {
 	int i;
@@ -886,11 +740,6 @@ const char* idStr::Mid( int start, int len, idStr& result ) const
 	return result;
 }
 
-/*
-============
-idStr::Mid
-============
-*/
 idStr idStr::Mid( int start, int len ) const
 {
 	int	  i;
@@ -909,11 +758,6 @@ idStr idStr::Mid( int start, int len ) const
 	return result;
 }
 
-/*
-============
-idStr::StripTrailingWhitespace
-============
-*/
 void idStr::StripTrailingWhitespace()
 {
 	int i;
@@ -925,13 +769,6 @@ void idStr::StripTrailingWhitespace()
 	}
 }
 
-/*
-============
-idStr::StripQuotes
-
-Removes the quotes from the beginning and end of the string
-============
-*/
 idStr& idStr::StripQuotes()
 {
 	if( data[0] != '\"' ) {
@@ -952,19 +789,6 @@ idStr& idStr::StripQuotes()
 	return *this;
 }
 
-/*
-=====================================================================
-
-  filename methods
-
-=====================================================================
-*/
-
-/*
-============
-idStr::FileNameHash
-============
-*/
 int idStr::FileNameHash() const
 {
 	int	 i;
@@ -988,11 +812,6 @@ int idStr::FileNameHash() const
 	return hash;
 }
 
-/*
-============
-idStr::BackSlashesToSlashes
-============
-*/
 idStr& idStr::BackSlashesToSlashes()
 {
 	int i;
@@ -1005,11 +824,6 @@ idStr& idStr::BackSlashesToSlashes()
 	return *this;
 }
 
-/*
-============
-idStr::SlashesToBackSlashes
-============
-*/
 idStr& idStr::SlashesToBackSlashes()
 {
 	int i;
@@ -1022,11 +836,6 @@ idStr& idStr::SlashesToBackSlashes()
 	return *this;
 }
 
-/*
-============
-idStr::SetFileExtension
-============
-*/
 idStr& idStr::SetFileExtension( const char* extension )
 {
 	StripFileExtension();
@@ -1037,11 +846,6 @@ idStr& idStr::SetFileExtension( const char* extension )
 	return *this;
 }
 
-/*
-============
-idStr::StripFileExtension
-============
-*/
 idStr& idStr::StripFileExtension()
 {
 	int i;
@@ -1056,11 +860,6 @@ idStr& idStr::StripFileExtension()
 	return *this;
 }
 
-/*
-============
-idStr::StripAbsoluteFileExtension
-============
-*/
 idStr& idStr::StripAbsoluteFileExtension()
 {
 	int i;
@@ -1076,11 +875,6 @@ idStr& idStr::StripAbsoluteFileExtension()
 	return *this;
 }
 
-/*
-==================
-idStr::DefaultFileExtension
-==================
-*/
 idStr& idStr::DefaultFileExtension( const char* extension )
 {
 	int i;
@@ -1098,11 +892,6 @@ idStr& idStr::DefaultFileExtension( const char* extension )
 	return *this;
 }
 
-/*
-==================
-idStr::DefaultPath
-==================
-*/
 idStr& idStr::DefaultPath( const char* basepath )
 {
 	if( ( ( *this )[0] == '/' ) || ( ( *this )[0] == '\\' ) ) {
@@ -1114,11 +903,6 @@ idStr& idStr::DefaultPath( const char* basepath )
 	return *this;
 }
 
-/*
-====================
-idStr::AppendPath
-====================
-*/
 void idStr::AppendPath( const char* text )
 {
 	int pos;
@@ -1151,11 +935,6 @@ void idStr::AppendPath( const char* text )
 	}
 }
 
-/*
-==================
-idStr::StripFilename
-==================
-*/
 idStr& idStr::StripFilename()
 {
 	int pos;
@@ -1173,11 +952,6 @@ idStr& idStr::StripFilename()
 	return *this;
 }
 
-/*
-==================
-idStr::StripPath
-==================
-*/
 idStr& idStr::StripPath()
 {
 	int pos;
@@ -1191,11 +965,6 @@ idStr& idStr::StripPath()
 	return *this;
 }
 
-/*
-====================
-idStr::ExtractFilePath
-====================
-*/
 void idStr::ExtractFilePath( idStr& dest ) const
 {
 	int pos;
@@ -1211,11 +980,6 @@ void idStr::ExtractFilePath( idStr& dest ) const
 	Left( pos, dest );
 }
 
-/*
-====================
-idStr::ExtractFileName
-====================
-*/
 void idStr::ExtractFileName( idStr& dest ) const
 {
 	int pos;
@@ -1231,11 +995,6 @@ void idStr::ExtractFileName( idStr& dest ) const
 	Right( Length() - pos, dest );
 }
 
-/*
-====================
-idStr::ExtractFileBase
-====================
-*/
 void idStr::ExtractFileBase( idStr& dest ) const
 {
 	int pos;
@@ -1257,11 +1016,6 @@ void idStr::ExtractFileBase( idStr& dest ) const
 	Mid( start, pos - start, dest );
 }
 
-/*
-====================
-idStr::ExtractFileExtension
-====================
-*/
 void idStr::ExtractFileExtension( idStr& dest ) const
 {
 	int pos;
@@ -1282,21 +1036,6 @@ void idStr::ExtractFileExtension( idStr& dest ) const
 	}
 }
 
-/*
-=====================================================================
-
-  char * methods to replace library functions
-
-=====================================================================
-*/
-
-/*
-============
-idStr::IsNumeric
-
-Checks a string to see if it contains only numerical values.
-============
-*/
 bool idStr::IsNumeric( const char* s )
 {
 	int	 i;
@@ -1320,13 +1059,6 @@ bool idStr::IsNumeric( const char* s )
 	return true;
 }
 
-/*
-============
-idStr::HasLower
-
-Checks if a string has any lowercase chars
-============
-*/
 bool idStr::HasLower( const char* s )
 {
 	if( !s ) {
@@ -1343,13 +1075,6 @@ bool idStr::HasLower( const char* s )
 	return false;
 }
 
-/*
-============
-idStr::HasUpper
-
-Checks if a string has any uppercase chars
-============
-*/
 bool idStr::HasUpper( const char* s )
 {
 	if( !s ) {
@@ -1366,11 +1091,6 @@ bool idStr::HasUpper( const char* s )
 	return false;
 }
 
-/*
-================
-idStr::Cmp
-================
-*/
 int idStr::Cmp( const char* s1, const char* s2 )
 {
 	int c1, c2, d;
@@ -1388,11 +1108,6 @@ int idStr::Cmp( const char* s1, const char* s2 )
 	return 0; // strings are equal
 }
 
-/*
-================
-idStr::Cmpn
-================
-*/
 int idStr::Cmpn( const char* s1, const char* s2, int n )
 {
 	int c1, c2, d;
@@ -1416,11 +1131,6 @@ int idStr::Cmpn( const char* s1, const char* s2, int n )
 	return 0; // strings are equal
 }
 
-/*
-================
-idStr::Icmp
-================
-*/
 int idStr::Icmp( const char* s1, const char* s2 )
 {
 	int c1, c2, d;
@@ -1450,11 +1160,6 @@ int idStr::Icmp( const char* s1, const char* s2 )
 	return 0; // strings are equal
 }
 
-/*
-================
-idStr::Icmpn
-================
-*/
 int idStr::Icmpn( const char* s1, const char* s2, int n )
 {
 	int c1, c2, d;
@@ -1490,11 +1195,6 @@ int idStr::Icmpn( const char* s1, const char* s2, int n )
 	return 0; // strings are equal
 }
 
-/*
-================
-idStr::Icmp
-================
-*/
 int idStr::IcmpNoColor( const char* s1, const char* s2 )
 {
 	int c1, c2, d;
@@ -1530,11 +1230,6 @@ int idStr::IcmpNoColor( const char* s1, const char* s2 )
 	return 0; // strings are equal
 }
 
-/*
-================
-idStr::IcmpPath
-================
-*/
 int idStr::IcmpPath( const char* s1, const char* s2 )
 {
 	int c1, c2, d;
@@ -1600,11 +1295,6 @@ int idStr::IcmpPath( const char* s1, const char* s2 )
 	return 0;
 }
 
-/*
-================
-idStr::IcmpnPath
-================
-*/
 int idStr::IcmpnPath( const char* s1, const char* s2, int n )
 {
 	int c1, c2, d;
@@ -1676,13 +1366,6 @@ int idStr::IcmpnPath( const char* s1, const char* s2, int n )
 	return 0;
 }
 
-/*
-=============
-idStr::Copynz
-
-Safe strncpy that ensures a trailing zero
-=============
-*/
 void idStr::Copynz( char* dest, const char* src, int destsize )
 {
 	if( !src ) {
@@ -1699,13 +1382,6 @@ void idStr::Copynz( char* dest, const char* src, int destsize )
 	dest[destsize - 1] = 0;
 }
 
-/*
-================
-idStr::Append
-
-  never goes past bounds or leaves without a terminating 0
-================
-*/
 void idStr::Append( char* dest, int size, const char* src )
 {
 	int l1;
@@ -1719,11 +1395,6 @@ void idStr::Append( char* dest, int size, const char* src )
 	idStr::Copynz( dest + l1, src, size - l1 );
 }
 
-/*
-========================
-idStr::IsValidUTF8
-========================
-*/
 bool idStr::IsValidUTF8( const uint8* s, const int maxLen, utf8Encoding_t& encoding )
 {
 	struct local_t {
@@ -1809,11 +1480,6 @@ bool idStr::IsValidUTF8( const uint8* s, const int maxLen, utf8Encoding_t& encod
 	return true;
 }
 
-/*
-========================
-idStr::UTF8Length
-========================
-*/
 int idStr::UTF8Length( const byte* s )
 {
 	int mbLen	= 0;
@@ -1842,11 +1508,6 @@ int idStr::UTF8Length( const byte* s )
 	return charLen;
 }
 
-/*
-========================
-idStr::AppendUTF8Char
-========================
-*/
 void idStr::AppendUTF8Char( uint32 c )
 {
 	if( c < 0x80 ) {
@@ -1873,11 +1534,6 @@ void idStr::AppendUTF8Char( uint32 c )
 	}
 }
 
-/*
-========================
-idStr::UTF8Char
-========================
-*/
 uint32 idStr::UTF8Char( const byte* s, int& idx )
 {
 	if( idx >= 0 ) {
@@ -1912,11 +1568,6 @@ uint32 idStr::UTF8Char( const byte* s, int& idx )
 	return 0; // return a null terminator if out of range
 }
 
-/*
-================
-idStr::LengthWithoutColors
-================
-*/
 int idStr::LengthWithoutColors( const char* s )
 {
 	int			len;
@@ -1940,11 +1591,6 @@ int idStr::LengthWithoutColors( const char* s )
 	return len;
 }
 
-/*
-================
-idStr::RemoveColors
-================
-*/
 char* idStr::RemoveColors( char* string )
 {
 	char* d;
@@ -1966,11 +1612,6 @@ char* idStr::RemoveColors( char* string )
 	return string;
 }
 
-/*
-================
-idStr::snPrintf
-================
-*/
 int idStr::snPrintf( char* dest, int size, const char* fmt, ... )
 {
 	int		len;
@@ -1987,24 +1628,6 @@ int idStr::snPrintf( char* dest, int size, const char* fmt, ... )
 	return len;
 }
 
-/*
-============
-idStr::vsnPrintf
-
-vsnprintf portability:
-
-C99 standard: vsnprintf returns the number of characters (excluding the trailing
-'\0') which would have been written to the final string if enough space had been available
-snprintf and vsnprintf do not write more than size bytes (including the trailing '\0')
-
-win32: _vsnprintf returns the number of characters written, not including the terminating null character,
-or a negative value if an output error occurs. If the number of characters to write exceeds count, then count
-characters are written and -1 is returned and no trailing '\0' is added.
-
-idStr::vsnPrintf: always appends a trailing '\0', returns number of characters written (not including terminal \0)
-or returns -1 on failure or if the buffer would be overflowed.
-============
-*/
 int idStr::vsnPrintf( char* dest, int size, const char* fmt, va_list argptr )
 {
 	int ret;
@@ -2029,13 +1652,7 @@ int idStr::vsnPrintf( char* dest, int size, const char* fmt, va_list argptr )
 	return ret;
 }
 
-/*
-============
-sprintf
-
-Sets the value of the string using a printf interface.
-============
-*/
+//! Formats a string using printf-style formatting and stores the result in the provided idStr object
 int sprintf( idStr& string, const char* fmt, ... )
 {
 	int		l;
@@ -2054,13 +1671,7 @@ int sprintf( idStr& string, const char* fmt, ... )
 	return l;
 }
 
-/*
-============
-vsprintf
-
-Sets the value of the string using a vprintf interface.
-============
-*/
+//! Formats a string using a variable argument list and assigns it to the provided idStr object.
 int vsprintf( idStr& string, const char* fmt, va_list argptr )
 {
 	int	 l;
@@ -2103,11 +1714,6 @@ char* va( const char* fmt, ... )
 	return buf;
 }
 
-/*
-============
-idStr::BestUnit
-============
-*/
 int idStr::BestUnit( const char* format, float value, Measure_t measure )
 {
 	int unit = 1;
@@ -2122,11 +1728,6 @@ int idStr::BestUnit( const char* format, float value, Measure_t measure )
 	return unit;
 }
 
-/*
-============
-idStr::SetUnit
-============
-*/
 void idStr::SetUnit( const char* format, float value, int unit, Measure_t measure )
 {
 	value /= 1 << ( unit * 10 );
@@ -2135,11 +1736,6 @@ void idStr::SetUnit( const char* format, float value, int unit, Measure_t measur
 	*this += units[measure][unit];
 }
 
-/*
-================
-idStr::InitMemory
-================
-*/
 void idStr::InitMemory()
 {
 #ifdef USE_STRING_DATA_ALLOCATOR
@@ -2147,11 +1743,6 @@ void idStr::InitMemory()
 #endif
 }
 
-/*
-================
-idStr::ShutdownMemory
-================
-*/
 void idStr::ShutdownMemory()
 {
 #ifdef USE_STRING_DATA_ALLOCATOR
@@ -2159,11 +1750,6 @@ void idStr::ShutdownMemory()
 #endif
 }
 
-/*
-================
-idStr::PurgeMemory
-================
-*/
 void idStr::PurgeMemory()
 {
 #ifdef USE_STRING_DATA_ALLOCATOR
@@ -2171,11 +1757,6 @@ void idStr::PurgeMemory()
 #endif
 }
 
-/*
-================
-idStr::ShowMemoryUsage_f
-================
-*/
 void idStr::ShowMemoryUsage_f( const idCmdArgs& args )
 {
 #ifdef USE_STRING_DATA_ALLOCATOR
@@ -2263,6 +1844,7 @@ idStr		 idStr::FormatNumber( int number )
 	return string;
 }
 
+//! Prints a localized string for a given string ID argument.
 CONSOLE_COMMAND( testStrId, "prints a localized string", 0 )
 {
 	if( args.Argc() != 2 ) {
@@ -2274,13 +1856,6 @@ CONSOLE_COMMAND( testStrId, "prints a localized string", 0 )
 	idLib::Printf( "%s = %s\n", args.Argv( 1 ), str.GetLocalizedString() );
 }
 
-// RAVEN BEGIN
-// abahr
-/*
-================
-idStr::Split
-================
-*/
 bool idStr::Split( const char* source, idList<idStr>& list, const char delimiter, const char groupDelimiter )
 {
 	const idStr localSource( source );
@@ -2326,23 +1901,11 @@ bool idStr::Split( const char* source, idList<idStr>& list, const char delimiter
 	return true;
 }
 
-/*
-================
-idStr::Split
-================
-*/
 bool idStr::Split( idList<idStr>& list, const char delimiter, const char groupDelimiter ) const
 {
 	return Split( c_str(), list, delimiter, groupDelimiter );
 }
-// RAVEN END
 
-// jmarshall
-/*
-===================
-idStr::StripDoubleQuotes
-===================
-*/
 void idStr::StripDoubleQuotes()
 {
 	idStr temp	 = *this;

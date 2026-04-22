@@ -30,18 +30,17 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __JOINTTRANSFORM_H__
 #define __JOINTTRANSFORM_H__
 
-/*
-===============================================================================
-
-  Joint Quaternion
-
-===============================================================================
+/*!
+	\class idJointQuat
+	\brief A class representing quaternion data for joint transformations in a skeletal animation system.
 */
-
 class idJointQuat
 {
 public:
+	//! Returns a const float pointer to the internal quaternion data.
 	const float* ToFloatPtr() const { return q.ToFloatPtr(); }
+
+	//! Returns a pointer to the floating-point representation of the joint quaternion.
 	float*		 ToFloatPtr() { return q.ToFloatPtr(); }
 
 	idQuat		 q;
@@ -60,64 +59,98 @@ assert_sizeof( idJointQuat, ( 1 << JOINTQUAT_SIZE_SHIFT ) );
 assert_offsetof( idJointQuat, q, JOINTQUAT_Q_OFFSET );
 assert_offsetof( idJointQuat, t, JOINTQUAT_T_OFFSET );
 
-/*
-===============================================================================
+/*!
+	\class idJointMat
+	\brief A joint transformation matrix class that encapsulates 3D rotation and translation operations.
 
-	Joint Matrix
+	This class represents a joint transformation matrix that combines rotational and translational components for 3D transformations. It provides methods for setting and retrieving rotation and
+   translation components, applying transformations to vectors, and performing matrix operations such as multiplication, inversion, and comparison. The class supports conversion between different
+   matrix representations including 3x3, 4x4, and quaternion formats. It is designed for efficient manipulation of joint transformations in animation and 3D graphics applications, with inline methods
+   for performance-critical operations. The matrix maintains a 3x3 rotation component and a 3D translation component, supporting both direct and transformed vector operations.
 
-===============================================================================
-*/
-
-/*
-================================================
-idJointMat has the following structure:
-
-	idMat3 m;
-	idVec3 t;
-
-	m[0][0], m[1][0], m[2][0], t[0]
-	m[0][1], m[1][1], m[2][1], t[1]
-	m[0][2], m[1][2], m[2][2], t[2]
-
-================================================
 */
 class idJointMat
 {
 public:
+	//! Sets the rotational component of the joint matrix from a 3x3 matrix.
 	void		 SetRotation( const idMat3& m );
+
+	//! Returns the rotation component of the joint matrix as an idMat3.
 	idMat3		 GetRotation() const;
+
+	//! Sets the translation component of the joint matrix from the provided 3D vector.
 	void		 SetTranslation( const idVec3& t );
+
+	//! Returns the translation component from the joint matrix.
 	idVec3		 GetTranslation() const;
 
-	idVec3		 operator*( const idVec3& v ) const; // only rotate
-	idVec3		 operator*( const idVec4& v ) const; // rotate and translate
+	//! Applies the rotational component of the joint matrix to the given vector.
+	idVec3		 operator*( const idVec3& v ) const;
 
-	idJointMat&	 operator*=( const idJointMat& a ); // transform
-	idJointMat&	 operator/=( const idJointMat& a ); // untransform
+	//! Multiplies this joint matrix by a 4D vector and returns the resulting 3D vector.
+	idVec3		 operator*( const idVec4& v ) const;
 
-	bool		 Compare( const idJointMat& a ) const;						// exact compare, no epsilon
-	bool		 Compare( const idJointMat& a, const float epsilon ) const; // compare with epsilon
-	bool		 operator==( const idJointMat& a ) const;					// exact compare, no epsilon
-	bool		 operator!=( const idJointMat& a ) const;					// exact compare, no epsilon
+	//! Multiplies this joint matrix by another joint matrix in place
+	idJointMat&	 operator*=( const idJointMat& a );
 
+	//! Divides this joint matrix by another joint matrix in place.
+	idJointMat&	 operator/=( const idJointMat& a );
+
+	//! Compares this joint matrix with another for exact equality.
+	bool		 Compare( const idJointMat& a ) const;
+
+	//! Compares this joint matrix with another using the specified epsilon tolerance
+	bool		 Compare( const idJointMat& a, const float epsilon ) const;
+
+	//! Compares two idJointMat objects for equality.
+	bool		 operator==( const idJointMat& a ) const;
+
+	//! Compares two idJointMat objects for inequality.
+	bool		 operator!=( const idJointMat& a ) const;
+
+	//! Sets the joint matrix to the identity matrix.
 	void		 Identity();
+
+	//! Inverts the joint matrix by negating and rotating the translation part and transposing the rotation part.
 	void		 Invert();
 
+	//! Initializes the joint matrix from a 4x4 matrix.
 	void		 FromMat4( const idMat4& m );
 
+	//! Converts a joint matrix to a 3x3 matrix representation.
 	idMat3		 ToMat3() const;
+
+	//! Converts the joint matrix to a 4x4 matrix representation.
 	idMat4		 ToMat4() const;
+
+	//! Converts the translation component of the joint matrix to a vector.
 	idVec3		 ToVec3() const;
+
+	//! Returns a pointer to the float array representation of the joint matrix.
 	const float* ToFloatPtr() const { return mat; }
+
+	//! Returns a pointer to the float array representing the joint matrix data.
 	float*		 ToFloatPtr() { return mat; }
+
+	//! Converts a joint matrix to a joint quaternion representation.
 	idJointQuat	 ToJointQuat() const;
 
+	//! Transforms a 3D vector using the joint matrix.
 	void		 Transform( idVec3& result, const idVec3& v ) const;
+
+	//! Rotates a vector using the joint matrix.
 	void		 Rotate( idVec3& result, const idVec3& v ) const;
 
+	//! Multiplies each element of the input matrix by a scalar value and stores the result in the output matrix.
 	static void	 Mul( idJointMat& result, const idJointMat& mat, const float s );
+
+	//! Computes the matrix addition of result and the scalar multiplication of mat and s, storing the result in result.
 	static void	 Mad( idJointMat& result, const idJointMat& mat, const float s );
+
+	//! Multiplies two joint transformation matrices and stores the result in a third matrix.
 	static void	 Multiply( idJointMat& result, const idJointMat& m1, const idJointMat& m2 );
+
+	//! Performs inverse multiplication of two joint matrices and stores the result
 	static void	 InverseMultiply( idJointMat& result, const idJointMat& m1, const idJointMat& m2 );
 
 	float		 mat[3 * 4];
@@ -128,11 +161,6 @@ public:
 assert_sizeof( idJointMat, JOINTMAT_SIZE );
 
 #define JOINTMAT_TYPESIZE ( 4 * 3 )
-/*
-========================
-idJointMat::SetRotation
-========================
-*/
 ID_INLINE void idJointMat::SetRotation( const idMat3& m )
 {
 	// NOTE: idMat3 is transposed because it is column-major
@@ -147,11 +175,6 @@ ID_INLINE void idJointMat::SetRotation( const idMat3& m )
 	mat[2 * 4 + 2] = m[2][2];
 }
 
-/*
-========================
-idJointMat::GetRotation
-========================
-*/
 ID_INLINE idMat3 idJointMat::GetRotation() const
 {
 	idMat3 m;
@@ -167,11 +190,6 @@ ID_INLINE idMat3 idJointMat::GetRotation() const
 	return m;
 }
 
-/*
-========================
-idJointMat::SetTranslation
-========================
-*/
 ID_INLINE void idJointMat::SetTranslation( const idVec3& t )
 {
 	mat[0 * 4 + 3] = t[0];
@@ -179,11 +197,6 @@ ID_INLINE void idJointMat::SetTranslation( const idVec3& t )
 	mat[2 * 4 + 3] = t[2];
 }
 
-/*
-========================
-idJointMat::GetTranslation
-========================
-*/
 ID_INLINE idVec3 idJointMat::GetTranslation() const
 {
 	idVec3 t;
@@ -193,11 +206,6 @@ ID_INLINE idVec3 idJointMat::GetTranslation() const
 	return t;
 }
 
-/*
-========================
-idJointMat::operator*
-========================
-*/
 ID_INLINE idVec3 idJointMat::operator*( const idVec3& v ) const
 {
 	return idVec3( mat[0 * 4 + 0] * v[0] + mat[0 * 4 + 1] * v[1] + mat[0 * 4 + 2] * v[2],
@@ -212,11 +220,6 @@ ID_INLINE idVec3 idJointMat::operator*( const idVec4& v ) const
 		mat[2 * 4 + 0] * v[0] + mat[2 * 4 + 1] * v[1] + mat[2 * 4 + 2] * v[2] + mat[2 * 4 + 3] * v[3] );
 }
 
-/*
-========================
-idJointMat::operator*=
-========================
-*/
 ID_INLINE idJointMat& idJointMat::operator*=( const idJointMat& a )
 {
 	float tmp[3];
@@ -256,11 +259,6 @@ ID_INLINE idJointMat& idJointMat::operator*=( const idJointMat& a )
 	return *this;
 }
 
-/*
-========================
-idJointMat::operator/=
-========================
-*/
 ID_INLINE idJointMat& idJointMat::operator/=( const idJointMat& a )
 {
 	float tmp[3];
@@ -300,11 +298,6 @@ ID_INLINE idJointMat& idJointMat::operator/=( const idJointMat& a )
 	return *this;
 }
 
-/*
-========================
-idJointMat::Compare
-========================
-*/
 ID_INLINE bool idJointMat::Compare( const idJointMat& a ) const
 {
 	int i;
@@ -330,31 +323,16 @@ ID_INLINE bool idJointMat::Compare( const idJointMat& a, const float epsilon ) c
 	return true;
 }
 
-/*
-========================
-idJointMat::operator==
-========================
-*/
 ID_INLINE bool idJointMat::operator==( const idJointMat& a ) const
 {
 	return Compare( a );
 }
 
-/*
-========================
-idJointMat::operator!=
-========================
-*/
 ID_INLINE bool idJointMat::operator!=( const idJointMat& a ) const
 {
 	return !Compare( a );
 }
 
-/*
-========================
-idJointMat::Identity
-========================
-*/
 ID_INLINE void idJointMat::Identity()
 {
 	mat[0 * 4 + 0] = 1.0f;
@@ -371,11 +349,6 @@ ID_INLINE void idJointMat::Identity()
 	mat[2 * 4 + 3] = 0.0f;
 }
 
-/*
-========================
-idJointMat::Invert
-========================
-*/
 ID_INLINE void idJointMat::Invert()
 {
 	float tmp[3];
@@ -400,21 +373,11 @@ ID_INLINE void idJointMat::Invert()
 	mat[2 * 4 + 1] = tmp[2];
 }
 
-/*
-========================
-idJointMat::ToMat3
-========================
-*/
 ID_INLINE idMat3 idJointMat::ToMat3() const
 {
 	return idMat3( mat[0 * 4 + 0], mat[1 * 4 + 0], mat[2 * 4 + 0], mat[0 * 4 + 1], mat[1 * 4 + 1], mat[2 * 4 + 1], mat[0 * 4 + 2], mat[1 * 4 + 2], mat[2 * 4 + 2] );
 }
 
-/*
-========================
-idJointMat::ToMat4
-========================
-*/
 ID_INLINE idMat4 idJointMat::ToMat4() const
 {
 	return idMat4( mat[0 * 4 + 0],
@@ -435,11 +398,6 @@ ID_INLINE idMat4 idJointMat::ToMat4() const
 		1.0f );
 }
 
-/*
-========================
-idJointMat::FromMat4
-========================
-*/
 ID_INLINE void idJointMat::FromMat4( const idMat4& m )
 {
 	mat[0 * 4 + 0] = m[0][0], mat[0 * 4 + 1] = m[0][1], mat[0 * 4 + 2] = m[0][2], mat[0 * 4 + 3] = m[0][3];
@@ -451,21 +409,11 @@ ID_INLINE void idJointMat::FromMat4( const idMat4& m )
 	assert( m[3][3] == 1.0f );
 }
 
-/*
-========================
-idJointMat::ToVec3
-========================
-*/
 ID_INLINE idVec3 idJointMat::ToVec3() const
 {
 	return idVec3( mat[0 * 4 + 3], mat[1 * 4 + 3], mat[2 * 4 + 3] );
 }
 
-/*
-========================
-idJointMat::Transform
-========================
-*/
 ID_INLINE void idJointMat::Transform( idVec3& result, const idVec3& v ) const
 {
 	result.x = mat[0 * 4 + 0] * v.x + mat[0 * 4 + 1] * v.y + mat[0 * 4 + 2] * v.z + mat[0 * 4 + 3];
@@ -473,11 +421,6 @@ ID_INLINE void idJointMat::Transform( idVec3& result, const idVec3& v ) const
 	result.z = mat[2 * 4 + 0] * v.x + mat[2 * 4 + 1] * v.y + mat[2 * 4 + 2] * v.z + mat[2 * 4 + 3];
 }
 
-/*
-========================
-idJointMat::Rotate
-========================
-*/
 ID_INLINE void idJointMat::Rotate( idVec3& result, const idVec3& v ) const
 {
 	result.x = mat[0 * 4 + 0] * v.x + mat[0 * 4 + 1] * v.y + mat[0 * 4 + 2] * v.z;
@@ -485,11 +428,6 @@ ID_INLINE void idJointMat::Rotate( idVec3& result, const idVec3& v ) const
 	result.z = mat[2 * 4 + 0] * v.x + mat[2 * 4 + 1] * v.y + mat[2 * 4 + 2] * v.z;
 }
 
-/*
-========================
-idJointMat::Mul
-========================
-*/
 ID_INLINE void idJointMat::Mul( idJointMat& result, const idJointMat& mat, const float s )
 {
 	result.mat[0 * 4 + 0] = s * mat.mat[0 * 4 + 0];
@@ -506,11 +444,6 @@ ID_INLINE void idJointMat::Mul( idJointMat& result, const idJointMat& mat, const
 	result.mat[2 * 4 + 3] = s * mat.mat[2 * 4 + 3];
 }
 
-/*
-========================
-idJointMat::Mad
-========================
-*/
 ID_INLINE void idJointMat::Mad( idJointMat& result, const idJointMat& mat, const float s )
 {
 	result.mat[0 * 4 + 0] += s * mat.mat[0 * 4 + 0];
@@ -527,11 +460,6 @@ ID_INLINE void idJointMat::Mad( idJointMat& result, const idJointMat& mat, const
 	result.mat[2 * 4 + 3] += s * mat.mat[2 * 4 + 3];
 }
 
-/*
-========================
-idJointMat::Multiply
-========================
-*/
 ID_INLINE void idJointMat::Multiply( idJointMat& result, const idJointMat& m1, const idJointMat& m2 )
 {
 	result.mat[0 * 4 + 0] = m1.mat[0 * 4 + 0] * m2.mat[0 * 4 + 0] + m1.mat[0 * 4 + 1] * m2.mat[1 * 4 + 0] + m1.mat[0 * 4 + 2] * m2.mat[2 * 4 + 0];
@@ -550,11 +478,6 @@ ID_INLINE void idJointMat::Multiply( idJointMat& result, const idJointMat& m1, c
 	result.mat[2 * 4 + 3] = m1.mat[2 * 4 + 0] * m2.mat[0 * 4 + 3] + m1.mat[2 * 4 + 1] * m2.mat[1 * 4 + 3] + m1.mat[2 * 4 + 2] * m2.mat[2 * 4 + 3] + m1.mat[2 * 4 + 3];
 }
 
-/*
-========================
-idJointMat::InverseMultiply
-========================
-*/
 ID_INLINE void idJointMat::InverseMultiply( idJointMat& result, const idJointMat& m1, const idJointMat& m2 )
 {
 	float dst[3];

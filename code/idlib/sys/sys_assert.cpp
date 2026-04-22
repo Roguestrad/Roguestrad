@@ -42,6 +42,7 @@ Contains the AssertMacro implementation.
 idCVar com_assertOutOfDebugger( "com_assertOutOfDebugger", "0", CVAR_BOOL, "by default, do not assert while not running under the debugger" );
 
 struct skippedAssertion_t {
+	//! Initializes a skipped assertion object with null file pointer and -1 line number.
 	skippedAssertion_t() :
 		file( NULL ),
 		line( -1 )
@@ -52,11 +53,6 @@ struct skippedAssertion_t {
 };
 static idStaticList<skippedAssertion_t, 20> skippedAssertions;
 
-/*
-========================
-AssertFailed
-========================
-*/
 bool										AssertFailed( const char* file, int line, const char* expression )
 {
 	// Set this to true to skip ALL assertions, including ones YOU CAUSE!

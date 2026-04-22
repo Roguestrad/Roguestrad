@@ -47,66 +47,138 @@ class idAngles;
 class idPolar3;
 class idMat3;
 
-//===============================================================
-//
-//	idVec2 - 2D vector
-//
-//===============================================================
+/*!
+	\class idVec2
+	\brief A 2D vector class providing mathematical operations and utilities for vector arithmetic.
 
+	This class represents a two-dimensional vector with floating-point components and provides a comprehensive set of operations for vector mathematics. It supports basic arithmetic operations
+   including addition, subtraction, scalar multiplication and division, as well as vector-specific operations like dot product, length calculation, normalization, and linear interpolation. The class
+   offers both precise and fast approximation methods for length computation, and includes utilities for clamping, truncating, and snapping vector components. Memory management is handled through
+   standard C++ conventions with no explicit ownership semantics. The implementation emphasizes performance with inline methods and provides both exact comparison and epsilon-based comparison for
+   floating-point accuracy tolerance.
+
+*/
 class idVec2
 {
 public:
 	float x;
 	float y;
 
+	//! Constructs a new idVec2 object with default values.
 	idVec2();
+
+	//! Constructs an idVec2 object with the specified x and y coordinates.
 	explicit idVec2( const float x, const float y );
 
+	//! Sets the x and y components of the vector to the specified values.
 	void		  Set( const float x, const float y );
+
+	//! Sets both components of the vector to zero.
 	void		  Zero();
 
+	//! Returns the component of the vector at the specified index.
 	float		  operator[]( int index ) const;
+
+	//! Provides indexed access to the components of a 2D vector.
 	float&		  operator[]( int index );
+
+	//! Returns a new vector with negated x and y components.
 	idVec2		  operator-() const;
+
+	//! Computes the dot product of this vector with another vector.
 	float		  operator*( const idVec2& a ) const;
+
+	//! Returns a new vector that is the result of multiplying this vector by a scalar value.
 	idVec2		  operator*( const float a ) const;
+
+	//! Returns a new vector that is the result of dividing this vector by a scalar value.
 	idVec2		  operator/( const float a ) const;
+
+	//! Returns a new vector that is the element-wise division of this vector by the given vector.
 	idVec2		  operator/( const idVec2& a ) const;
+
+	//! Returns a new vector that is the sum of this vector and the given vector.
 	idVec2		  operator+( const idVec2& a ) const;
+
+	//! Returns a new vector that is the result of subtracting vector a from this vector.
 	idVec2		  operator-( const idVec2& a ) const;
+
+	//! Adds the components of the given vector to this vector and returns a reference to this vector.
 	idVec2&		  operator+=( const idVec2& a );
+
+	//! Subtracts the components of another vector from this vector and returns a reference to this vector.
 	idVec2&		  operator-=( const idVec2& a );
+
+	//! Divides the vector components by the corresponding components of another vector and returns a reference to this vector.
 	idVec2&		  operator/=( const idVec2& a );
+
+	//! Divides both components of the vector by the given scalar value.
 	idVec2&		  operator/=( const float a );
+
+	//! Multiplies the vector components by the given scalar value and returns a reference to the vector.
 	idVec2&		  operator*=( const float a );
 
 	friend idVec2 operator*( const float a, const idVec2 b );
 
+	//! Returns a new vector with each component multiplied by the corresponding component of the input vector.
 	idVec2		  Scale( const idVec2& a ) const;
 
-	bool		  Compare( const idVec2& a ) const;						 // exact compare, no epsilon
-	bool		  Compare( const idVec2& a, const float epsilon ) const; // compare with epsilon
-	bool		  operator==( const idVec2& a ) const;					 // exact compare, no epsilon
-	bool		  operator!=( const idVec2& a ) const;					 // exact compare, no epsilon
+	//! Compares this vector with another vector for exact equality.
+	bool		  Compare( const idVec2& a ) const;
 
+	//! Compares this vector with another vector using the specified epsilon tolerance
+	bool		  Compare( const idVec2& a, const float epsilon ) const;
+
+	//! Compares two idVec2 objects for equality without using epsilon.
+	bool		  operator==( const idVec2& a ) const;
+
+	//! Returns true if this vector is not equal to the given vector.
+	bool		  operator!=( const idVec2& a ) const;
+
+	//! Calculates and returns the Euclidean length of this 2D vector.
 	float		  Length() const;
-	float		  LengthFast() const;
-	float		  LengthSqr() const;
-	float		  Normalize();					  // returns length
-	float		  NormalizeFast();				  // returns length
-	idVec2		  Truncate( float length ) const; // cap length
-	void		  Clamp( const idVec2& min, const idVec2& max );
-	void		  Snap();	 // snap to closest integer value
-	void		  SnapInt(); // snap towards integer (floor)
 
+	//! Computes an fast approximation of the vector's length using inverse square root
+	float		  LengthFast() const;
+
+	//! Returns the squared length of this vector.
+	float		  LengthSqr() const;
+
+	//! Normalizes the vector and returns the length of the vector.
+	float		  Normalize();
+
+	//! Normalizes the vector and returns its length.
+	float		  NormalizeFast();
+
+	//! Truncates the vector to the specified length.
+	idVec2		  Truncate( float length ) const;
+
+	//! Clamps the vector components between the minimum and maximum values.
+	void		  Clamp( const idVec2& min, const idVec2& max );
+
+	//! Rounds the vector components to the nearest integer values.
+	void		  Snap();
+
+	//! Rounds the x and y components of the vector down to the nearest integer values.
+	void		  SnapInt();
+
+	//! Returns the dimension of the vector, which is 2.
 	int			  GetDimension() const;
 
+	//! Returns a pointer to the internal float array representing the vector components.
 	const float*  ToFloatPtr() const;
+
+	//! Returns a pointer to the x component of the vector.
 	float*		  ToFloatPtr();
+
+	//! Returns a string representation of the vector with the specified precision
 	const char*	  ToString( int precision = 2 ) const;
 
+	//! Linearly interpolates between two vectors based on the interpolation parameter l.
 	void		  Lerp( const idVec2& v1, const idVec2& v2, const float l );
-	void		  MulCW( const idVec2& a ); // multiply on vector component-wise
+
+	//! Multiplies the vector components with the corresponding components of another vector.
+	void		  MulCW( const idVec2& a );
 };
 
 extern idVec2 vec2_origin;
@@ -279,6 +351,7 @@ ID_INLINE idVec2 idVec2::operator/( const idVec2& a ) const
 	return idVec2( x / a.x, y / a.y );
 }
 
+//! Returns a new idVec2 with each component of the input vector scaled by the given scalar value.
 ID_INLINE idVec2 operator*( const float a, const idVec2 b )
 {
 	return idVec2( b.x * a, b.y * a );
@@ -350,6 +423,7 @@ ID_INLINE float* idVec2::ToFloatPtr()
 	return &x;
 }
 
+//! Divides a scalar by each component of a vector and returns the modified vector.
 ID_INLINE idVec2& operator/( float lhs, idVec2& rhs )
 {
 	rhs.x = lhs / rhs.x;
@@ -357,12 +431,17 @@ ID_INLINE idVec2& operator/( float lhs, idVec2& rhs )
 	return rhs;
 }
 
-//===============================================================
-//
-//	idVec3 - 3D vector
-//
-//===============================================================
+/*!
+	\class idVec3
+	\brief A 3D vector class providing mathematical operations and geometric utilities.
 
+	The idVec3 class represents a three-dimensional vector and provides a comprehensive set of operations for vector arithmetic, geometric computations, and utility functions. It supports standard
+   vector operations such as addition, subtraction, scalar multiplication, dot product, and cross product. The class also includes methods for normalization, length calculation, and component-wise
+   operations. Additionally, it offers specialized functions for converting between different coordinate systems, such as from Cartesian to polar or octahedral representations, and for projecting
+   vectors onto planes or spheres. The implementation includes optimizations for performance-critical operations and utilities for handling degenerate cases and floating-point precision issues. The
+   class is designed to be used in 3D graphics and physics calculations, providing both basic arithmetic and advanced geometric functionality.
+
+*/
 class idVec3
 {
 public:
@@ -370,82 +449,186 @@ public:
 	float y;
 	float z;
 
+	//! Default constructs an idVec3 object with uninitialized values.
 	idVec3();
+
+	//! Constructs a vector with all components set to the given scalar value
 	explicit idVec3( const float xyz ) { Set( xyz, xyz, xyz ); }
+
+	//! Constructs a new idVec3 object with the specified x, y, and z coordinates.
 	explicit idVec3( const float x, const float y, const float z );
 
+	//! Sets the x, y, and z components of the vector to the specified values.
 	void		  Set( const float x, const float y, const float z );
+
+	//! Sets all components of the vector to zero.
 	void		  Zero();
 
+	//! Provides indexed access to the vector components.
 	float		  operator[]( const int index ) const;
+
+	//! Provides indexed access to the components of the vector.
 	float&		  operator[]( const int index );
+
+	//! Returns a new vector with all components negated.
 	idVec3		  operator-() const;
-	idVec3&		  operator=( const idVec3& a ); // required because of a msvc 6 & 7 bug
+
+	//! Assigns the values of another idVec3 to this idVec3.
+	idVec3&		  operator=( const idVec3& a );
+
+	//! Computes the dot product of this vector with another vector.
 	float		  operator*( const idVec3& a ) const;
+
+	//! Returns a new vector that is the result of multiplying this vector by a scalar value.
 	idVec3		  operator*( const float a ) const;
+
+	//! Returns a new vector that is the result of dividing this vector by a scalar value.
 	idVec3		  operator/( const float a ) const;
+
+	//! Returns a new vector that is the sum of this vector and the given vector.
 	idVec3		  operator+( const idVec3& a ) const;
+
+	//! Returns a new vector that is the result of subtracting the given vector from this vector.
 	idVec3		  operator-( const idVec3& a ) const;
+
+	//! Adds the components of the given vector to this vector and returns a reference to this vector.
 	idVec3&		  operator+=( const idVec3& a );
+
+	//! Subtracts the components of the given vector from this vector and returns a reference to this vector.
 	idVec3&		  operator-=( const idVec3& a );
+
+	//! Divides this vector by the corresponding components of another vector and returns a reference to this vector
 	idVec3&		  operator/=( const idVec3& a );
+
+	//! Divides each component of the vector by the given scalar value
 	idVec3&		  operator/=( const float a );
+
+	//! Multiplies each component of the vector by the given scalar value.
 	idVec3&		  operator*=( const float a );
 
 	friend idVec3 operator*( const float a, const idVec3 b );
 
-	bool		  Compare( const idVec3& a ) const;						 // exact compare, no epsilon
-	bool		  Compare( const idVec3& a, const float epsilon ) const; // compare with epsilon
-	bool		  operator==( const idVec3& a ) const;					 // exact compare, no epsilon
-	bool		  operator!=( const idVec3& a ) const;					 // exact compare, no epsilon
+	//! Compares this vector with another vector for exact equality.
+	bool		  Compare( const idVec3& a ) const;
 
-	bool		  FixDegenerateNormal(); // fix degenerate axial cases
-	bool		  FixDenormals();		 // change tiny numbers to zero
+	//! Compares this vector with another vector using the specified epsilon tolerance
+	bool		  Compare( const idVec3& a, const float epsilon ) const;
 
-	idVec3&		  MulCW( const idVec3& a ); // multiply on vector component-wise
-	idVec3&		  DivCW( const idVec3& a ); // divide on vector component-wise
+	//! Compares two idVec3 objects for exact equality without using epsilon
+	bool		  operator==( const idVec3& a ) const;
+
+	//! Compares this vector with another vector for inequality using exact comparison.
+	bool		  operator!=( const idVec3& a ) const;
+
+	//! Fixes degenerate axial cases in the normal vector by normalizing components to -1, 0, or 1.
+	bool		  FixDegenerateNormal();
+
+	//! Fixes denormal floating-point numbers in the vector by setting tiny values to zero.
+	bool		  FixDenormals();
+
+	//! Multiplies the vector components with the corresponding components of another vector.
+	idVec3&		  MulCW( const idVec3& a );
+
+	//! Divides this vector by another vector component-wise.
+	idVec3&		  DivCW( const idVec3& a );
+
+	//! Returns the maximum value among the x, y, and z components of the vector.
 	float		  Max() const;
-	float		  Min() const;
-	idVec3		  Cross( const idVec3& a ) const;
-	idVec3&		  Cross( const idVec3& a, const idVec3& b );
-	float		  Length() const;
-	float		  LengthSqr() const;
-	float		  LengthFast() const;
-	float		  Normalize();					  // returns length
-	float		  NormalizeFast();				  // returns length
-	idVec3		  Truncate( float length ) const; // cap length
-	void		  Clamp( const idVec3& min, const idVec3& max );
-	void		  Snap();	 // snap to closest integer value
-	void		  SnapInt(); // snap towards integer (floor)
 
+	//! Returns the minimum value among the x, y, and z components of the vector.
+	float		  Min() const;
+
+	//! Computes the cross product of this vector with another vector.
+	idVec3		  Cross( const idVec3& a ) const;
+
+	//! Computes the cross product of two vectors and stores the result in this vector
+	idVec3&		  Cross( const idVec3& a, const idVec3& b );
+
+	//! Returns the Euclidean length of this vector.
+	float		  Length() const;
+
+	//! Returns the squared length of this vector.
+	float		  LengthSqr() const;
+
+	//! Computes an fast approximation of the vector length using inverse square root.
+	float		  LengthFast() const;
+
+	//! Normalizes the vector and returns the length of the vector before normalization.
+	float		  Normalize();
+
+	//! Normalizes the vector and returns its length.
+	float		  NormalizeFast();
+
+	//! Returns a truncated copy of this vector with the specified maximum length.
+	idVec3		  Truncate( float length ) const;
+
+	//! Clamps the vector components between the given minimum and maximum values.
+	void		  Clamp( const idVec3& min, const idVec3& max );
+
+	//! Rounds the vector components to the nearest integer values.
+	void		  Snap();
+
+	//! Snaps the vector components towards integer values using floor operation.
+	void		  SnapInt();
+
+	//! Returns the dimension of the vector, which is always 3 for idVec3.
 	int			  GetDimension() const;
 
+	//! Returns the yaw angle in degrees from the vector's direction.
 	float		  ToYaw() const;
+
+	//! Returns the pitch angle in degrees calculated from the vector's components.
 	float		  ToPitch() const;
+
+	//! Converts a normalized 3D vector into Euler angles representing the orientation.
 	idAngles	  ToAngles() const;
+
+	//! Converts a 3D vector to polar coordinates.
 	idPolar3	  ToPolar() const;
-	idMat3		  ToMat3() const; // vector should be normalized
+
+	//! Converts a normalized vector to a 3x3 matrix with the vector as the first row and orthogonal vectors as the other rows.
+	idMat3		  ToMat3() const;
+
+	//! Returns a const reference to the x and y components of this 3D vector as a 2D vector.
 	const idVec2& ToVec2() const;
+
+	//! Returns a reference to the x and y components of this 3D vector as a 2D vector.
 	idVec2&		  ToVec2();
+
+	//! Returns a pointer to the float array representation of this vector.
 	const float*  ToFloatPtr() const;
+
+	//! Returns a pointer to the float representation of this vector.
 	float*		  ToFloatPtr();
+
+	//! Converts the vector to a string representation with the specified precision
 	const char*	  ToString( int precision = 2 ) const;
 
-	// RB: assumes to be normalized, result is an octrahedral vector on the [-1, +1] square
+	//! Converts a normalized 3D vector to its octahedral representation on the [-1, +1] square.
 	idVec2		  ToOctahedral() const;
 
-	// builds a 3D unit vector from an an octrahedral vector on the [-1, +1] square
+	//! Constructs a 3D unit vector from an octahedral vector on the [-1, +1] square.
 	void		  FromOctahedral( const idVec2& v );
-	// RB end
 
-	void		  NormalVectors( idVec3& left, idVec3& down ) const; // vector should be normalized
+	//! Computes two orthogonal vectors perpendicular to this vector, storing them in left and down.
+	void		  NormalVectors( idVec3& left, idVec3& down ) const;
+
+	//! Computes an orthogonal basis from this vector, returning left and up vectors.
 	void		  OrthogonalBasis( idVec3& left, idVec3& up ) const;
 
+	//! Projects this vector onto a plane defined by the given normal, with an optional over-bounce factor.
 	void		  ProjectOntoPlane( const idVec3& normal, const float overBounce = 1.0f );
+
+	//! Projects the vector along a plane defined by the normal, with optional over-bounce factor.
 	bool		  ProjectAlongPlane( const idVec3& normal, const float epsilon, const float overBounce = 1.0f );
+
+	//! Projects the z component of the vector onto a sphere with the given radius.
 	void		  ProjectSelfOntoSphere( const float radius );
 
+	//! Linearly interpolates between two vectors using a blending factor.
 	void		  Lerp( const idVec3& v1, const idVec3& v2, const float l );
+
+	//! Performs spherical linear interpolation between two vectors.
 	void		  SLerp( const idVec3& v1, const idVec3& v2, const float l );
 };
 
@@ -520,11 +703,13 @@ ID_INLINE idVec3 idVec3::operator/( const float a ) const
 	return idVec3( x * inva, y * inva, z * inva );
 }
 
+//! Multiplies a vector by a scalar value and returns the resulting vector.
 ID_INLINE idVec3 operator*( const float a, const idVec3 b )
 {
 	return idVec3( b.x * a, b.y * a, b.z * a );
 }
 
+//! Returns a new vector by dividing a scalar value by each component of the input vector.
 ID_INLINE idVec3 operator/( const float a, const idVec3 b )
 {
 	return idVec3( a / b.x, a / b.y, a / b.z );
@@ -924,6 +1109,7 @@ ID_INLINE bool idVec3::ProjectAlongPlane( const idVec3& normal, const float epsi
 	return true;
 }
 
+//! Divides each component of the vector by the given scalar and returns the modified vector.
 ID_INLINE idVec3& operator/( float lhs, idVec3& rhs )
 {
 	rhs.x = rhs.x / lhs;
@@ -944,12 +1130,17 @@ struct idTupleSize<idVec3> {
 	enum { value = 3 };
 };
 
-//===============================================================
-//
-//	idVec4 - 4D vector
-//
-//===============================================================
+/*!
+	\class idVec4
+	\brief A 4D vector class for handling mathematical vector operations in a 4-dimensional space.
 
+	The idVec4 class represents a vector in 4-dimensional space with components x, y, z, and w. It provides comprehensive support for vector arithmetic operations including addition, subtraction,
+   scalar multiplication and division, dot product, and vector normalization. The class offers both explicit constructors for initialization and inline accessor methods for component manipulation. It
+   includes convenience methods for converting between different dimensional representations, such as extracting 2D or 3D vector components from a 4D vector. The class supports various comparison
+   operations with exact and epsilon-based tolerance checks, and provides utility functions for computing vector length and normalization. Memory layout is designed to be compatible with float array
+   representations for efficient data access and interoperability.
+
+*/
 class idVec4
 {
 public:
@@ -958,51 +1149,114 @@ public:
 	float z;
 	float w;
 
+	//! Constructs a new idVec4 object with default values.
 	idVec4() { }
+
+	//! Initializes a new idVec4 with all components set to the provided x value.
 	explicit idVec4( const float x ) { Set( x, x, x, x ); }
+
+	//! Constructs an idVec4 object with the specified x, y, z, and w components.
 	explicit idVec4( const float x, const float y, const float z, const float w ) { Set( x, y, z, w ); }
 
+	//! Sets the x, y, z, and w components of the vector.
 	void		  Set( const float x, const float y, const float z, const float w );
+
+	//! Sets all components of the vector to zero.
 	void		  Zero();
 
+	//! Provides access to a component of the vector using array-like indexing.
 	float		  operator[]( const int index ) const;
+
+	//! Provides indexed access to the components of this vector.
 	float&		  operator[]( const int index );
+
+	//! Returns a new vector with all components negated.
 	idVec4		  operator-() const;
+
+	//! Computes the dot product of this vector with another vector.
 	float		  operator*( const idVec4& a ) const;
+
+	//! Returns a new vector that is the result of multiplying each component of this vector by the given scalar value.
 	idVec4		  operator*( const float a ) const;
+
+	//! Returns a new vector that is the result of dividing this vector by a scalar value.
 	idVec4		  operator/( const float a ) const;
+
+	//! Returns a new vector that is the sum of this vector and another vector.
 	idVec4		  operator+( const idVec4& a ) const;
+
+	//! Returns a new vector that is the result of subtracting the given vector from this vector.
 	idVec4		  operator-( const idVec4& a ) const;
+
+	//! Adds the components of the given vector to this vector and returns a reference to this vector.
 	idVec4&		  operator+=( const idVec4& a );
+
+	//! Subtracts the components of the input vector from this vector and returns a reference to this vector.
 	idVec4&		  operator-=( const idVec4& a );
+
+	//! Performs element-wise division of this vector by the components of another vector and returns a reference to this vector.
 	idVec4&		  operator/=( const idVec4& a );
+
+	//! Divides each component of the vector by the given scalar value
 	idVec4&		  operator/=( const float a );
+
+	//! Multiplies each component of the vector by the given scalar value and returns a reference to the vector.
 	idVec4&		  operator*=( const float a );
 
 	friend idVec4 operator*( const float a, const idVec4 b );
 
+	//! Returns a new vector with each component multiplied by the corresponding component of another vector.
 	idVec4		  Multiply( const idVec4& a ) const;
 
-	bool		  Compare( const idVec4& a ) const;						 // exact compare, no epsilon
-	bool		  Compare( const idVec4& a, const float epsilon ) const; // compare with epsilon
-	bool		  operator==( const idVec4& a ) const;					 // exact compare, no epsilon
-	bool		  operator!=( const idVec4& a ) const;					 // exact compare, no epsilon
+	//! Compares this vector with another vector for exact equality.
+	bool		  Compare( const idVec4& a ) const;
 
+	//! Compares this vector with another vector using the specified epsilon tolerance
+	bool		  Compare( const idVec4& a, const float epsilon ) const;
+
+	//! Compares this vector with another vector for equality.
+	bool		  operator==( const idVec4& a ) const;
+
+	//! Compares this vector with another for inequality.
+	bool		  operator!=( const idVec4& a ) const;
+
+	//! Returns the Euclidean length of the vector.
 	float		  Length() const;
-	float		  LengthSqr() const;
-	float		  Normalize();	   // returns length
-	float		  NormalizeFast(); // returns length
 
+	//! Returns the squared length of this vector.
+	float		  LengthSqr() const;
+
+	//! Normalizes the vector and returns the length of the vector before normalization.
+	float		  Normalize();
+
+	//! Normalizes the vector using a fast approximation and returns the length.
+	float		  NormalizeFast();
+
+	//! Returns the dimension of the vector, which is always 4 for idVec4.
 	int			  GetDimension() const;
 
+	//! Returns a const reference to the Vec2 representation of this Vec4 by reinterpreting its memory.
 	const idVec2& ToVec2() const;
+
+	//! Returns a reference to the x and y components of this vector as an idVec2.
 	idVec2&		  ToVec2();
+
+	//! Returns a const reference to the x, y, z components of this idVec4 as an idVec3.
 	const idVec3& ToVec3() const;
+
+	//! Returns a reference to the 3D vector component of this 4D vector.
 	idVec3&		  ToVec3();
+
+	//! Returns a pointer to the float array representation of the vector.
 	const float*  ToFloatPtr() const;
+
+	//! Returns a pointer to the float array representation of the vector
 	float*		  ToFloatPtr();
+
+	//! Returns a string representation of the vector with the specified precision
 	const char*	  ToString( int precision = 2 ) const;
 
+	//! Linearly interpolates between two vectors using the provided interpolation factor.
 	void		  Lerp( const idVec4& v1, const idVec4& v2, const float l );
 };
 
@@ -1059,6 +1313,7 @@ ID_INLINE idVec4 idVec4::operator/( const float a ) const
 	return idVec4( x * inva, y * inva, z * inva, w * inva );
 }
 
+//! Returns a new vector that is the result of multiplying each component of the input vector by the scalar value.
 ID_INLINE idVec4 operator*( const float a, const idVec4 b )
 {
 	return idVec4( b.x * a, b.y * a, b.z * a, b.w * a );
@@ -1224,12 +1479,15 @@ ID_INLINE float* idVec4::ToFloatPtr()
 	return &x;
 }
 
-//===============================================================
-//
-//	idVec5 - 5D vector
-//
-//===============================================================
+/*!
+	\class idVec5
+	\brief A 5D vector class that extends 3D vector functionality with texture coordinate components.
 
+	This class represents a 5-dimensional vector that combines a 3D position or direction component with 2D texture coordinate components. It provides construction methods from various vector types,
+   element access through index operators, and conversion utilities to and from 3D vectors. The class supports linear interpolation between vectors and can be converted to string representation for
+   debugging purposes. The design allows for efficient memory layout and provides seamless integration with 3D vector operations while maintaining the additional texture coordinate dimensions.
+
+*/
 class idVec5
 {
 public:
@@ -1239,22 +1497,43 @@ public:
 	float s;
 	float t;
 
+	//! Constructs a new idVec5 object with default initialization.
 	idVec5();
+
+	//! Constructs a 5D vector from a 3D vector and a 2D vector.
 	explicit idVec5( const idVec3& xyz, const idVec2& st );
+
+	//! Constructs an idVec5 object with the specified x, y, z, s, and t components.
 	explicit idVec5( const float x, const float y, const float z, const float s, const float t );
 
+	//! Returns the float value at the specified index in the idVec5 vector.
 	float		  operator[]( int index ) const;
+
+	//! Returns a reference to the element at the specified index in the vector.
 	float&		  operator[]( int index );
+
+	//! Assigns the values from a 3D vector to the first three components of this 5D vector, setting the last two components to zero.
 	idVec5&		  operator=( const idVec3& a );
 
+	//! Returns the dimension of the vector, which is 5.
 	int			  GetDimension() const;
 
+	//! Returns a const reference to the Vec3 component of this Vec5.
 	const idVec3& ToVec3() const;
+
+	//! Converts this idVec5 to an idVec3 by reinterpreting its memory.
 	idVec3&		  ToVec3();
+
+	//! Returns a pointer to the float array representation of this vector.
 	const float*  ToFloatPtr() const;
+
+	//! Returns a pointer to the float representation of the vector data.
 	float*		  ToFloatPtr();
+
+	//! Returns a string representation of the vector with the specified precision.
 	const char*	  ToString( int precision = 2 ) const;
 
+	//! Performs linear interpolation between two idVec5 vectors based on the interpolation factor l
 	void		  Lerp( const idVec5& v1, const idVec5& v2, const float l );
 };
 
@@ -1327,53 +1606,112 @@ ID_INLINE float* idVec5::ToFloatPtr()
 	return &x;
 }
 
-//===============================================================
-//
-//	idVec6 - 6D vector
-//
-//===============================================================
+/*!
+	\class idVec6
+	\brief A 6D vector class providing mathematical operations and geometric utilities.
 
+	This class represents a 6-dimensional vector commonly used for storing and manipulating 6D coordinates or data. It provides constructors for initialization from arrays or explicit values,
+   component access through bracket operators, and a comprehensive set of arithmetic operations including addition, subtraction, scalar multiplication and division. The class supports comparison
+   operations with exact and epsilon-based tolerance, normalization methods for unit vectors, and utility functions to retrieve vector length, convert to string representation, and access subsets as
+   3D vectors. The implementation emphasizes inline operations for performance and consistency with mathematical vector operations.
+
+*/
 class idVec6
 {
 public:
+	//! Constructs an uninitialized idVec6 object.
 	idVec6();
+
+	//! Constructs an idVec6 object by copying 6 float values from the provided array.
 	explicit idVec6( const float* a );
+
+	//! Constructs an idVec6 object with the specified six float components.
 	explicit idVec6( const float a1, const float a2, const float a3, const float a4, const float a5, const float a6 );
 
+	//! Sets the components of the vector to the specified float values.
 	void		  Set( const float a1, const float a2, const float a3, const float a4, const float a5, const float a6 );
+
+	//! Sets all components of the vector to zero.
 	void		  Zero();
 
+	//! Returns the component of the vector at the specified index.
 	float		  operator[]( const int index ) const;
+
+	//! Provides indexed access to the elements of the idVec6 vector.
 	float&		  operator[]( const int index );
+
+	//! Returns a new idVec6 object with all components negated.
 	idVec6		  operator-() const;
+
+	//! Returns a new idVec6 instance with each component scaled by the given float value.
 	idVec6		  operator*( const float a ) const;
+
+	//! Returns a new vector that is the result of dividing each component of this vector by the given scalar value.
 	idVec6		  operator/( const float a ) const;
+
+	//! Computes the dot product of this vector with another vector.
 	float		  operator*( const idVec6& a ) const;
+
+	//! Computes the component-wise difference between this vector and another vector.
 	idVec6		  operator-( const idVec6& a ) const;
+
+	//! Returns a new idVec6 that is the component-wise sum of this vector and another vector.
 	idVec6		  operator+( const idVec6& a ) const;
+
+	//! Multiplies each component of the vector by the given scalar value and returns a reference to the vector.
 	idVec6&		  operator*=( const float a );
+
+	//! Divides each component of the vector by the given scalar value.
 	idVec6&		  operator/=( const float a );
+
+	//! Adds the components of the given vector to this vector and returns a reference to this vector.
 	idVec6&		  operator+=( const idVec6& a );
+
+	//! Subtracts the components of the given vector from this vector and returns a reference to this vector.
 	idVec6&		  operator-=( const idVec6& a );
 
 	friend idVec6 operator*( const float a, const idVec6 b );
 
-	bool		  Compare( const idVec6& a ) const;						 // exact compare, no epsilon
-	bool		  Compare( const idVec6& a, const float epsilon ) const; // compare with epsilon
-	bool		  operator==( const idVec6& a ) const;					 // exact compare, no epsilon
-	bool		  operator!=( const idVec6& a ) const;					 // exact compare, no epsilon
+	//! Compares two idVec6 vectors for exact equality without using epsilon.
+	bool		  Compare( const idVec6& a ) const;
 
+	//! Compares this vector with another vector using the specified epsilon tolerance.
+	bool		  Compare( const idVec6& a, const float epsilon ) const;
+
+	//! Checks if this vector is exactly equal to another vector.
+	bool		  operator==( const idVec6& a ) const;
+
+	//! Checks if this vector is not equal to another vector using exact comparison.
+	bool		  operator!=( const idVec6& a ) const;
+
+	//! Returns the Euclidean length of the 6D vector.
 	float		  Length() const;
-	float		  LengthSqr() const;
-	float		  Normalize();	   // returns length
-	float		  NormalizeFast(); // returns length
 
+	//! Returns the squared length of this 6D vector.
+	float		  LengthSqr() const;
+
+	//! Normalizes the vector and returns the inverse length.
+	float		  Normalize();
+
+	//! Normalizes the vector using fast inverse square root and returns the length.
+	float		  NormalizeFast();
+
+	//! Returns the dimension of the vector, which is always 6.
 	int			  GetDimension() const;
 
+	//! Returns a const reference to a const idVec3 subset of this idVec6 starting at the specified index
 	const idVec3& SubVec3( int index ) const;
+
+	//! Returns a reference to a 3D vector component of this 6D vector at the specified index
 	idVec3&		  SubVec3( int index );
+
+	//! Returns a pointer to the internal float array representation of the vector.
 	const float*  ToFloatPtr() const;
+
+	//! Returns a pointer to the internal float array representing the vector components.
 	float*		  ToFloatPtr();
+
+	//! Converts the vector to a string representation with the specified precision.
 	const char*	  ToString( int precision = 2 ) const;
 
 private:
@@ -1495,6 +1833,7 @@ ID_INLINE idVec6& idVec6::operator-=( const idVec6& a )
 	return *this;
 }
 
+//! Multiplies a vector by a scalar value.
 ID_INLINE idVec6 operator*( const float a, const idVec6 b )
 {
 	return b * a;
@@ -1612,27 +1951,43 @@ ID_INLINE float* idVec6::ToFloatPtr()
 	return p;
 }
 
-//===============================================================
-//
-//	idPolar3
-//
-//===============================================================
+/*!
+	\class idPolar3
+	\brief Represents a 3D vector using polar coordinates with radius, theta, and phi components.
 
+	The idPolar3 class encapsulates a 3D vector using spherical polar coordinates, where radius represents the distance from the origin, theta represents the azimuthal angle in the X-Y plane, and phi
+   represents the polar angle from the positive Z axis. This class provides constructors for creating polar coordinates, methods for accessing and modifying components, and a conversion method to
+   Cartesian vector representation. The implementation supports direct indexing for component access and provides assignment and negation operators for convenient manipulation. The class is designed
+   for efficient storage and conversion between polar and Cartesian coordinate systems.
+
+*/
 class idPolar3
 {
 public:
 	float radius, theta, phi;
 
+	//! Constructs a default idPolar3 object with zero values for azimuth, colatitude, and radius.
 	idPolar3();
+
+	//! Constructs a new polar coordinate with the specified radius, theta, and phi values.
 	explicit idPolar3( const float radius, const float theta, const float phi );
 
+	//! Sets the radius, theta, and phi values for the polar coordinate.
 	void	  Set( const float radius, const float theta, const float phi );
 
+	//! Provides access to the radius, theta, or phi components of the polar coordinate through indexing
 	float	  operator[]( const int index ) const;
+
+	//! Returns a reference to the radius or angle component of the polar coordinate based on the index.
 	float&	  operator[]( const int index );
+
+	//! Returns the negation of this polar coordinate vector.
 	idPolar3  operator-() const;
+
+	//! Assigns the values from another idPolar3 object to this object
 	idPolar3& operator=( const idPolar3& a );
 
+	//! Converts a polar coordinate representation to a 3D vector.
 	idVec3	  ToVec3() const;
 };
 
@@ -1689,6 +2044,8 @@ ID_INLINE idVec3 idPolar3::ToVec3() const
 
 namespace VectorUtil
 {
+
+//! Converts a vector to a color integer value.
 inline uint32_t Vec4ToColorInt( const idVec4& vec )
 {
 	idVec4 vecCopy = 255.0f * vec;

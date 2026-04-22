@@ -30,17 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-//===============================================================
-//
-//	idODE_Euler
-//
-//===============================================================
-
-/*
-=============
-idODE_Euler::idODE_Euler
-=============
-*/
 idODE_Euler::idODE_Euler( const int dim, deriveFunction_t dr, const void* ud )
 {
 	dimension	= dim;
@@ -49,21 +38,11 @@ idODE_Euler::idODE_Euler( const int dim, deriveFunction_t dr, const void* ud )
 	userData	= ud;
 }
 
-/*
-=============
-idODE_Euler::~idODE_Euler
-=============
-*/
 idODE_Euler::~idODE_Euler()
 {
 	delete[] derivatives;
 }
 
-/*
-=============
-idODE_Euler::Evaluate
-=============
-*/
 float idODE_Euler::Evaluate( const float* state, float* newState, float t0, float t1 )
 {
 	float delta;
@@ -77,17 +56,6 @@ float idODE_Euler::Evaluate( const float* state, float* newState, float t0, floa
 	return delta;
 }
 
-//===============================================================
-//
-//	idODE_Midpoint
-//
-//===============================================================
-
-/*
-=============
-idODE_Midpoint::idODE_Midpoint
-=============
-*/
 idODE_Midpoint::idODE_Midpoint( const int dim, deriveFunction_t dr, const void* ud )
 {
 	dimension	= dim;
@@ -97,22 +65,12 @@ idODE_Midpoint::idODE_Midpoint( const int dim, deriveFunction_t dr, const void* 
 	userData	= ud;
 }
 
-/*
-=============
-idODE_Midpoint::~idODE_Midpoint
-=============
-*/
 idODE_Midpoint::~idODE_Midpoint()
 {
 	delete[] tmpState;
 	delete[] derivatives;
 }
 
-/*
-=============
-idODE_Midpoint::~Evaluate
-=============
-*/
 float idODE_Midpoint::Evaluate( const float* state, float* newState, float t0, float t1 )
 {
 	double delta, halfDelta;
@@ -134,17 +92,6 @@ float idODE_Midpoint::Evaluate( const float* state, float* newState, float t0, f
 	return delta;
 }
 
-//===============================================================
-//
-//	idODE_RK4
-//
-//===============================================================
-
-/*
-=============
-idODE_RK4::idODE_RK4
-=============
-*/
 idODE_RK4::idODE_RK4( const int dim, deriveFunction_t dr, const void* ud )
 {
 	dimension = dim;
@@ -157,11 +104,6 @@ idODE_RK4::idODE_RK4( const int dim, deriveFunction_t dr, const void* ud )
 	d4		  = new( TAG_MATH ) float[dim];
 }
 
-/*
-=============
-idODE_RK4::~idODE_RK4
-=============
-*/
 idODE_RK4::~idODE_RK4()
 {
 	delete[] tmpState;
@@ -171,11 +113,6 @@ idODE_RK4::~idODE_RK4()
 	delete[] d4;
 }
 
-/*
-=============
-idODE_RK4::Evaluate
-=============
-*/
 float idODE_RK4::Evaluate( const float* state, float* newState, float t0, float t1 )
 {
 	double delta, halfDelta, sixthDelta;
@@ -208,17 +145,6 @@ float idODE_RK4::Evaluate( const float* state, float* newState, float t0, float 
 	return delta;
 }
 
-//===============================================================
-//
-//	idODE_RK4Adaptive
-//
-//===============================================================
-
-/*
-=============
-idODE_RK4Adaptive::idODE_RK4Adaptive
-=============
-*/
 idODE_RK4Adaptive::idODE_RK4Adaptive( const int dim, deriveFunction_t dr, const void* ud )
 {
 	dimension = dim;
@@ -233,11 +159,6 @@ idODE_RK4Adaptive::idODE_RK4Adaptive( const int dim, deriveFunction_t dr, const 
 	d4		  = new( TAG_MATH ) float[dim];
 }
 
-/*
-=============
-idODE_RK4Adaptive::~idODE_RK4Adaptive
-=============
-*/
 idODE_RK4Adaptive::~idODE_RK4Adaptive()
 {
 	delete[] tmpState;
@@ -248,11 +169,6 @@ idODE_RK4Adaptive::~idODE_RK4Adaptive()
 	delete[] d4;
 }
 
-/*
-=============
-idODE_RK4Adaptive::SetMaxError
-=============
-*/
 void idODE_RK4Adaptive::SetMaxError( const float err )
 {
 	if( err > 0.0f ) {
@@ -260,11 +176,6 @@ void idODE_RK4Adaptive::SetMaxError( const float err )
 	}
 }
 
-/*
-=============
-idODE_RK4Adaptive::Evaluate
-=============
-*/
 float idODE_RK4Adaptive::Evaluate( const float* state, float* newState, float t0, float t1 )
 {
 	double delta, halfDelta, fourthDelta, sixthDelta;

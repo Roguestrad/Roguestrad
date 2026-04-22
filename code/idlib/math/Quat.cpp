@@ -30,21 +30,11 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-=====================
-idQuat::ToAngles
-=====================
-*/
 idAngles idQuat::ToAngles() const
 {
 	return ToMat3().ToAngles();
 }
 
-/*
-=====================
-idQuat::ToRotation
-=====================
-*/
 idRotation idQuat::ToRotation() const
 {
 	idVec3 vec;
@@ -65,11 +55,6 @@ idRotation idQuat::ToRotation() const
 	return idRotation( vec3_origin, vec, angle );
 }
 
-/*
-=====================
-idQuat::ToMat3
-=====================
-*/
 idMat3 idQuat::ToMat3() const
 {
 	idMat3 mat;
@@ -109,21 +94,11 @@ idMat3 idQuat::ToMat3() const
 	return mat;
 }
 
-/*
-=====================
-idQuat::ToMat4
-=====================
-*/
 idMat4 idQuat::ToMat4() const
 {
 	return ToMat3().ToMat4();
 }
 
-/*
-=====================
-idQuat::ToCQuat
-=====================
-*/
 idCQuat idQuat::ToCQuat() const
 {
 	if( w < 0.0f ) {
@@ -132,11 +107,6 @@ idCQuat idQuat::ToCQuat() const
 	return idCQuat( x, y, z );
 }
 
-/*
-============
-idQuat::ToAngularVelocity
-============
-*/
 idVec3 idQuat::ToAngularVelocity() const
 {
 	idVec3 vec;
@@ -148,23 +118,11 @@ idVec3 idQuat::ToAngularVelocity() const
 	return vec * idMath::ACos( w );
 }
 
-/*
-=============
-idQuat::ToString
-=============
-*/
 const char* idQuat::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
 }
 
-/*
-=====================
-idQuat::Slerp
-
-Spherical linear interpolation between two quaternions.
-=====================
-*/
 idQuat& idQuat::Slerp( const idQuat& from, const idQuat& to, float t )
 {
 	idQuat temp;
@@ -215,14 +173,6 @@ idQuat& idQuat::Slerp( const idQuat& from, const idQuat& to, float t )
 	return *this;
 }
 
-/*
-========================
-idQuat::Lerp
-
-Approximation of spherical linear interpolation between two quaternions. The interpolation
-traces out the exact same curve as Slerp but does not maintain a constant speed across the arc.
-========================
-*/
 idQuat& idQuat::Lerp( const idQuat& from, const idQuat& to, const float t )
 {
 	if( t <= 0.0f ) {
@@ -260,63 +210,31 @@ idQuat& idQuat::Lerp( const idQuat& from, const idQuat& to, const float t )
 	return *this;
 }
 
-/*
-=============
-idCQuat::ToAngles
-=============
-*/
 idAngles idCQuat::ToAngles() const
 {
 	return ToQuat().ToAngles();
 }
 
-/*
-=============
-idCQuat::ToRotation
-=============
-*/
 idRotation idCQuat::ToRotation() const
 {
 	return ToQuat().ToRotation();
 }
 
-/*
-=============
-idCQuat::ToMat3
-=============
-*/
 idMat3 idCQuat::ToMat3() const
 {
 	return ToQuat().ToMat3();
 }
 
-/*
-=============
-idCQuat::ToMat4
-=============
-*/
 idMat4 idCQuat::ToMat4() const
 {
 	return ToQuat().ToMat4();
 }
 
-/*
-=============
-idCQuat::ToString
-=============
-*/
 const char* idCQuat::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
 }
 
-/*
-=====================
-Slerp
-
-Spherical linear interpolation between two quaternions.
-=====================
-*/
 idQuat Slerp( const idQuat& from, const idQuat& to, const float t )
 {
 	return idQuat().Slerp( from, to, t );

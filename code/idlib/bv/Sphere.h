@@ -71,7 +71,9 @@ public:
 
 	//! Compares this sphere with another sphere using the specified epsilon value for floating-point comparison
 	bool		  Compare( const idSphere& a, const float epsilon ) const;
-	bool		  operator==( const idSphere& a ) const; // exact compare, no epsilon
+
+	//! Compares two sphere objects for exact equality.
+	bool		  operator==( const idSphere& a ) const;
 
 	//! Returns true if this sphere is not equal to the given sphere.
 	bool		  operator!=( const idSphere& a ) const;

@@ -67,14 +67,21 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef GLTF_EXTRAS_H
 	#define GLTF_EXTRAS_H
 
+/*!
+	\class gltfExtraStub
+	\brief A stub class for handling extra data in glTF files.
+*/
 class gltfExtraStub
 {
 public:
+	//! Constructs a new gltfExtraStub object.
 	gltfExtraStub() { }
 };
 
+//! Parses glTF scatter information from the lexer.
 gltfExtraParser( Scatter, gltfExtraStub );
 
+//! Parses camera lens frame data from a GLTF file using the provided token and parser.
 gltfExtraParser( CameraLensFrames, idList<double> );
 
 #endif // GLTF_EXTRAS_H

@@ -33,6 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "TileMap.h"
 
+//! Computes the ceiling of the base-2 logarithm of the given floating-point value.
 static unsigned int GetLog2( float x )
 {
 	return ( unsigned int )( ceil( log( x ) / log( 2.0f ) ) );

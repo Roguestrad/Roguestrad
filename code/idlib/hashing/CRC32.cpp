@@ -145,12 +145,12 @@ static unsigned int id_crctable[256] =
 
 #endif
 
-// RB: 64 bit fixes, changed long to int
 void CRC32_InitChecksum( unsigned int& crcvalue )
 {
 	crcvalue = CRC32_INIT_VALUE;
 }
 
+//! Updates the CRC32 value with a new byte of data.
 void CRC32_Update( unsigned int& crcvalue, const byte data )
 {
 	crcvalue = id_crctable[( crcvalue ^ data ) & 0xff] ^ ( crcvalue >> 8 );

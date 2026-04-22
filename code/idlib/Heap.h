@@ -48,22 +48,31 @@ enum memTag_t {
 
 static const int MAX_TAGS = 256;
 
+//! Allocates 16-byte aligned memory for the specified size and tag
 void*			 Mem_Alloc16( const size_t size, const memTag_t tag );
+
+//! Frees memory that was allocated with Mem_Alloc16.
 void			 Mem_Free16( void* ptr );
 
+//! Allocates memory of the specified size with the given tag
 ID_INLINE void*	 Mem_Alloc( const size_t size, const memTag_t tag )
 {
 	return Mem_Alloc16( size, tag );
 }
 
+//! Frees memory allocated by the memory manager
 ID_INLINE void Mem_Free( void* ptr )
 {
 	Mem_Free16( ptr );
 }
 
+//! Allocates memory and initializes it to zero
 void* Mem_ClearedAlloc( const size_t size, const memTag_t tag );
+
+//! Allocates memory and copies a string into it, returning a new null-terminated character array.
 char* Mem_CopyString( const char* in );
 
+// ---------------------------------------------------------------------------------
 // NOTE:
 // Global operator new/delete are intentionally implemented out-of-line in Heap.cpp.
 //
@@ -78,77 +87,123 @@ char* Mem_CopyString( const char* in );
 // Defining the global operators exactly once in Heap.cpp keeps the ABI complete,
 // avoids link-time and ODR pitfalls, and guarantees reliable breakpoints when tracking
 // heap corruption (0xC0000374) and allocator pairing bugs.
+// ---------------------------------------------------------------------------------
 
 // ---- helpers for C++17 over-aligned allocations ----
+
+//! Allocates memory with specified size, alignment, and tag
 void* Mem_AllocAligned( const size_t size, const size_t alignment, const memTag_t tag );
+
+//! Frees a memory block allocated with Mem_AllocAligned.
 void  Mem_FreeAligned( void* ptr, const size_t alignment ) noexcept;
 
 // ---- unsized new/delete ----
+
+//! Overloaded new operator that allocates memory using Mem_Alloc and throws std::bad_alloc on failure
 void* operator new( size_t s );
+
+//! Allocates memory for an array of objects using a custom allocator.
 void* operator new[]( size_t s );
+
+//! Deallocates memory previously allocated by the corresponding new operator.
 void  operator delete( void* p ) noexcept;
+
+//! Deallocates memory previously allocated by the matching new[] operator.
 void  operator delete[]( void* p ) noexcept;
 
 // ---- sized delete (C++14) ----
+
+//! Deletes memory allocated by the corresponding sized new operator.
 void  operator delete( void* p, size_t ) noexcept;
+
+//! Custom delete operator for arrays that frees memory using the engine's memory allocator.
 void  operator delete[]( void* p, size_t ) noexcept;
 
 // ---- aligned new/delete (C++17) ----
+
+//! Provides aligned memory allocation for C++17 aligned new expressions
 void* operator new( size_t s, std::align_val_t al );
+
+//! Custom memory allocator for aligned dynamic memory allocation
 void* operator new[]( size_t s, std::align_val_t al );
+
+//! Custom delete operator for aligned memory deallocation
 void  operator delete( void* p, std::align_val_t al ) noexcept;
+
+//! Deallocates memory that was previously allocated with the corresponding aligned new operator.
 void  operator delete[]( void* p, std::align_val_t al ) noexcept;
 
 // ---- sized + aligned delete (C++17) ----
+
+//! Custom aligned delete operator for memory deallocation.
 void  operator delete( void* p, size_t, std::align_val_t al ) noexcept;
+
+//! Deallocates aligned memory previously allocated by a corresponding new[] expression.
 void  operator delete[]( void* p, size_t, std::align_val_t al ) noexcept;
 
 // ---- tagged new/delete ----
+
+//! Overloaded new operator that allocates memory with a specified tag and throws bad_alloc on failure
 void* operator new( size_t s, memTag_t tag );
+
+//! Allocates memory for an array with the specified size and memory tag, throwing std::bad_alloc on failure.
 void* operator new[]( size_t s, memTag_t tag );
 
-// This overload is only used if a constructor throws after `new(tag)`.
+//! Deallocates memory previously allocated with the custom new operator
 void  operator delete( void* p, memTag_t ) noexcept;
+
+//! Deallocates memory previously allocated with a matching new[] operator using the specified memory tag.
 void  operator delete[]( void* p, memTag_t ) noexcept;
 
-/*
-================================================
-idTempArray is an array that is automatically free'd when it goes out of scope.
-There is no "cast" operator because these are very unsafe.
+/*! \class idTempArray
+	\brief idTempArray is an array that is automatically free'd when it goes out of scope.
 
-The template parameter MUST BE POD!
+	There is no "cast" operator because these are very unsafe.
 
-Compile time asserting POD-ness of the template parameter is complicated due
-to our vector classes that need a default constructor but are otherwise
-considered POD.
-================================================
+	The template parameter MUST BE POD!
+
+	Compile time asserting POD-ness of the template parameter is complicated due
+	to our vector classes that need a default constructor but are otherwise	considered POD.
+
 */
 template<class T>
 class idTempArray
 {
 public:
+	//! Constructs a new idTempArray by moving elements from another idTempArray.
 	idTempArray( idTempArray<T>& other );
 	idTempArray( unsigned int num );
 
+	//! Destroys the idTempArray and frees the allocated memory.
 	~idTempArray();
 
+	//! Provides indexed access to elements in the array
 	T& operator[]( unsigned int i )
 	{
 		assert( i < num );
 		return buffer[i];
 	}
+
+	//! Provides const access to an element at the specified index in the temporary array
 	const T& operator[]( unsigned int i ) const
 	{
 		assert( i < num );
 		return buffer[i];
 	}
 
+	//! Returns a pointer to the internal buffer of the temporary array.
 	T*			 Ptr() { return buffer; }
+
+	//! Returns a pointer to the internal buffer of the temp array
 	const T*	 Ptr() const { return buffer; }
 
+	//! Returns the size in bytes of the array
 	size_t		 Size() const { return num * sizeof( T ); }
+
+	//! Returns the number of elements in the temporary array.
 	unsigned int Num() const { return num; }
 
+	//! Initializes all elements of the array to zero.
 	void		 Zero() { memset( Ptr(), 0, Size() ); }
 
 private:
@@ -156,11 +211,6 @@ private:
 	unsigned int num;
 };
 
-/*
-========================
-idTempArray::idTempArray
-========================
-*/
 template<class T>
 ID_INLINE idTempArray<T>::idTempArray( idTempArray<T>& other )
 {
@@ -170,11 +220,6 @@ ID_INLINE idTempArray<T>::idTempArray( idTempArray<T>& other )
 	other.buffer = NULL;
 }
 
-/*
-========================
-idTempArray::idTempArray
-========================
-*/
 template<class T>
 ID_INLINE idTempArray<T>::idTempArray( unsigned int num )
 {
@@ -182,11 +227,6 @@ ID_INLINE idTempArray<T>::idTempArray( unsigned int num )
 	buffer	  = ( T* )Mem_Alloc( num * sizeof( T ), TAG_TEMP );
 }
 
-/*
-========================
-idTempArray::~idTempArray
-========================
-*/
 template<class T>
 ID_INLINE idTempArray<T>::~idTempArray()
 {
@@ -205,39 +245,55 @@ ID_INLINE idTempArray<T>::~idTempArray()
 
 #define BLOCK_ALLOC_ALIGNMENT 16
 
-// Define this to force all block allocators to act like normal new/delete allocation
-// for tool checking.
-// #define	FORCE_DISCRETE_BLOCK_ALLOCS
+/*!
+	\class idBlockAlloc
+	\brief A block allocator template class for efficient memory management of fixed-size objects.
 
-/*
-================================================
-idBlockAlloc is a block-based allocator for fixed-size objects.
+	This class provides a block-based memory allocation mechanism designed for efficient handling of many small objects of the same type. It uses pre-allocated memory blocks to minimize fragmentation
+   and allocation overhead. The template parameters define the object type, block size, and memory tag for allocation tracking. Objects allocated by this class are properly constructed and destructed.
+   The allocator can be initialized with a fixed number of blocks or will dynamically allocate new blocks as needed. It maintains internal bookkeeping to track allocated and free elements, and
+   supports operations to query allocation statistics. The allocator is intended for cases where many objects of the same type are allocated and freed frequently, providing better performance than
+   individual allocations.
 
-All objects are properly constructed and destructed.
-================================================
 */
 template<class _type_, int _blockSize_, memTag_t memTag = TAG_BLOCKALLOC>
 class idBlockAlloc
 {
 public:
+	//! Constructs an idBlockAlloc object with optional clear flag.
 	ID_INLINE idBlockAlloc( bool clear = false );
+
+	//! Destructor for the idBlockAlloc class that shuts down the allocator.
 	ID_INLINE ~idBlockAlloc();
 
-	// returns total size of allocated memory
+	//! Returns the total size of allocated memory for the block allocator.
 	size_t			  Allocated() const { return total * sizeof( _type_ ); }
 
-	// returns total size of allocated memory including size of (*this)
+	//! Returns the total size of allocated memory including the size of the object instance
 	size_t			  Size() const { return sizeof( *this ) + Allocated(); }
 
+	//! Frees all memory blocks allocated by the block allocator
 	ID_INLINE void	  Shutdown();
+
+	//! Initializes the block allocator with a fixed number of blocks
 	ID_INLINE void	  SetFixedBlocks( int numBlocks );
+
+	//! Frees memory blocks that are completely empty.
 	ID_INLINE void	  FreeEmptyBlocks();
 
+	//! Allocates and returns a new element from the block allocator.
 	ID_INLINE _type_* Alloc();
+
+	//! Frees a block-allocated element
 	ID_INLINE void	  Free( _type_* element );
 
+	//! Returns the total count of allocated blocks.
 	int				  GetTotalCount() const { return total; }
+
+	//! Returns the current count of allocated blocks from the block allocator
 	int				  GetAllocCount() const { return active; }
+
+	//! Returns the number of free elements in the block allocator.
 	int				  GetFreeCount() const { return total - active; }
 
 private:
@@ -247,6 +303,10 @@ private:
 		byte	   buffer[( CONST_MAX( sizeof( _type_ ), sizeof( element_t* ) ) + ( BLOCK_ALLOC_ALIGNMENT - 1 ) ) & ~( BLOCK_ALLOC_ALIGNMENT - 1 )];
 	};
 
+	/*!
+		\class idBlockAlloc::idBlock
+		\brief Memory block management unit for a block allocator.
+	*/
 	class idBlock
 	{
 	public:
@@ -263,14 +323,10 @@ private:
 	bool		   allowAllocs;
 	bool		   clearAllocs;
 
+	//! Allocates a new memory block for the block allocator
 	ID_INLINE void AllocNewBlock();
 };
 
-/*
-========================
-idBlockAlloc<_type_,_blockSize_,align_t>::idBlockAlloc
-========================
-*/
 template<class _type_, int _blockSize_, memTag_t memTag>
 ID_INLINE idBlockAlloc<_type_, _blockSize_, memTag>::idBlockAlloc( bool clear ) :
 	blocks( NULL ),
@@ -282,22 +338,12 @@ ID_INLINE idBlockAlloc<_type_, _blockSize_, memTag>::idBlockAlloc( bool clear ) 
 {
 }
 
-/*
-========================
-idBlockAlloc<_type_,_blockSize__,align_t>::~idBlockAlloc
-========================
-*/
 template<class _type_, int _blockSize_, memTag_t memTag>
 ID_INLINE idBlockAlloc<_type_, _blockSize_, memTag>::~idBlockAlloc()
 {
 	Shutdown();
 }
 
-/*
-========================
-idBlockAlloc<_type_,_blockSize_,align_t>::Alloc
-========================
-*/
 template<class _type_, int _blockSize_, memTag_t memTag>
 ID_INLINE _type_* idBlockAlloc<_type_, _blockSize_, memTag>::Alloc()
 {
@@ -324,11 +370,6 @@ ID_INLINE _type_* idBlockAlloc<_type_, _blockSize_, memTag>::Alloc()
 #endif
 }
 
-/*
-========================
-idBlockAlloc<_type_,_blockSize_,align_t>::Free
-========================
-*/
 template<class _type_, int _blockSize_, memTag_t memTag>
 ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::Free( _type_* t )
 {
@@ -347,11 +388,6 @@ ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::Free( _type_* t )
 #endif
 }
 
-/*
-========================
-idBlockAlloc<_type_,_blockSize_,align_t>::Shutdown
-========================
-*/
 template<class _type_, int _blockSize_, memTag_t memTag>
 ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::Shutdown()
 {
@@ -365,11 +401,6 @@ ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::Shutdown()
 	total = active = 0;
 }
 
-/*
-========================
-idBlockAlloc<_type_,_blockSize_,align_t>::SetFixedBlocks
-========================
-*/
 template<class _type_, int _blockSize_, memTag_t memTag>
 ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::SetFixedBlocks( int numBlocks )
 {
@@ -383,11 +414,6 @@ ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::SetFixedBlocks( int nu
 	allowAllocs = false;
 }
 
-/*
-========================
-idBlockAlloc<_type_,_blockSize_,align_t>::AllocNewBlock
-========================
-*/
 template<class _type_, int _blockSize_, memTag_t memTag>
 ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::AllocNewBlock()
 {
@@ -405,11 +431,6 @@ ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::AllocNewBlock()
 	total += _blockSize_;
 }
 
-/*
-========================
-idBlockAlloc<_type_,_blockSize_,align_t>::FreeEmptyBlocks
-========================
-*/
 template<class _type_, int _blockSize_, memTag_t memTag>
 ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::FreeEmptyBlocks()
 {
@@ -464,42 +485,73 @@ ID_INLINE void idBlockAlloc<_type_, _blockSize_, memTag>::FreeEmptyBlocks()
 	}
 }
 
-/*
-==============================================================================
+/*!
+	\class idDynamicAlloc
+	\brief A dynamic memory allocator template class for managing memory blocks of a specified type.
 
-	Dynamic allocator, simple wrapper for normal allocations which can
-	be interchanged with idDynamicBlockAlloc.
+	This class provides a memory allocation system that manages memory blocks for a specific type, with configurable base and minimum block sizes. It supports allocation, resizing, and freeing of
+   memory blocks, and provides various querying methods to inspect the memory usage statistics. The allocator is designed to handle dynamic memory management with options to set fixed blocks and lock
+   memory. It includes methods for initializing and shutting down the allocator, as well as clearing internal tracking statistics. The implementation maintains tracking of base blocks, used blocks,
+   and free blocks to monitor memory allocation state. Memory checking functionality is included but currently returns no errors. The class is intended for use in systems requiring efficient and
+   tracked dynamic memory allocation, with the flexibility to configure block sizes and memory locking behavior.
 
-	No constructor is called for the 'type'.
-	Allocated blocks are always 16 byte aligned.
-
-==============================================================================
 */
-
 template<class type, int baseBlockSize, int minBlockSize>
 class idDynamicAlloc
 {
 public:
+	//! Initializes a new instance of the dynamic allocator and clears any existing data.
 	idDynamicAlloc();
+
+	//! Destroys the dynamic allocator and frees all allocated memory.
 	~idDynamicAlloc();
 
+	//! Initializes the dynamic allocator
 	void		Init();
+
+	//! Clears all allocated memory blocks in the dynamic allocator
 	void		Shutdown();
+
+	//! Sets the number of fixed blocks for the dynamic allocator.
 	void		SetFixedBlocks( int numBlocks ) { }
+
+	//! Sets whether memory should be locked.
 	void		SetLockMemory( bool lock ) { }
+
+	//! Does nothing as the implementation is empty.
 	void		FreeEmptyBaseBlocks() { }
 
+	//! Allocates a block of memory for a specified number of objects of type T.
 	type*		Alloc( const int num );
+
+	//! Resizes a previously allocated memory block to a new size
 	type*		Resize( type* ptr, const int num );
+
+	//! Frees a dynamically allocated memory block.
 	void		Free( type* ptr );
+
+	//! Checks the memory of the specified pointer and returns NULL indicating no memory errors were found.
 	const char* CheckMemory( const type* ptr ) const;
 
+	//! Returns the number of base blocks allocated by the dynamic allocator.
 	int			GetNumBaseBlocks() const { return 0; }
+
+	//! Returns the base block memory size, which is currently hardcoded to zero.
 	int			GetBaseBlockMemory() const { return 0; }
+
+	//! Returns the number of used blocks in the dynamic allocator.
 	int			GetNumUsedBlocks() const { return numUsedBlocks; }
+
+	//! Returns the amount of memory currently used by allocated blocks.
 	int			GetUsedBlockMemory() const { return usedBlockMemory; }
+
+	//! Returns the number of free blocks available for allocation.
 	int			GetNumFreeBlocks() const { return 0; }
+
+	//! Returns the amount of free memory available in dynamically allocated blocks.
 	int			GetFreeBlockMemory() const { return 0; }
+
+	//! Returns the number of empty base blocks in the dynamic allocator.
 	int			GetNumEmptyBaseBlocks() const { return 0; }
 
 private:
@@ -510,6 +562,7 @@ private:
 	int	 numResizes;
 	int	 numFrees;
 
+	//! Clears all tracking statistics and resets the dynamic memory allocator state
 	void Clear();
 };
 
@@ -599,15 +652,19 @@ void idDynamicAlloc<type, baseBlockSize, minBlockSize>::Clear()
 
 #include "containers/BTree.h"
 
-// #define DYNAMIC_BLOCK_ALLOC_CHECK
-
+//! Returns a pointer to the memory block following the idDynamicBlock header.
 template<class type>
 class idDynamicBlock
 {
 public:
+	//! Returns a pointer to the memory immediately following the idDynamicBlock header.
 	type* GetMemory() const { return ( type* )( ( ( byte* )this ) + sizeof( idDynamicBlock<type> ) ); }
 	int	  GetSize() const { return abs( size ); }
+
+	//! Returns the size of the dynamic block in bytes.
 	void  SetSize( int s, bool isBaseBlock ) { size = isBaseBlock ? -s : s; }
+
+	//! Returns true if this is a base block, false otherwise.
 	bool  IsBaseBlock() const { return ( size < 0 ); }
 
 #ifdef DYNAMIC_BLOCK_ALLOC_CHECK
@@ -621,30 +678,72 @@ public:
 	idBTreeNode<idDynamicBlock<type>, int>* node; // node in the B-Tree with free blocks
 };
 
+/*!
+	\class idDynamicBlockAlloc
+	\brief A dynamic memory allocator that manages memory blocks with configurable sizing and tracking.
+
+	This allocator is designed to manage memory blocks of a specified type with configurable base and minimum block sizes. It maintains a free block tree structure for efficient allocation and
+   deallocation operations. The allocator supports setting fixed blocks, locking memory, and provides detailed memory usage statistics. It is intended for use in systems requiring dynamic memory
+   management with predictable performance characteristics and memory tracking capabilities. The template parameters allow for specialization based on the type of memory being allocated and the
+   specific requirements for block sizing and memory tagging.
+
+*/
 template<class type, int baseBlockSize, int minBlockSize, memTag_t _tag_ = TAG_BLOCKALLOC>
 class idDynamicBlockAlloc
 {
 public:
+	//! Initializes a new instance of the dynamic block allocator with the specified memory tag and clears its internal state.
 	idDynamicBlockAlloc();
+
+	//! Destroys the dynamic block allocator and releases all allocated memory.
 	~idDynamicBlockAlloc();
 
+	//! Initializes the free block tree for dynamic memory allocation
 	void		Init();
+
+	//! Clears all allocated memory blocks managed by this dynamic block allocator
 	void		Shutdown();
+
+	//! Configures the allocator to use a fixed number of blocks.
 	void		SetFixedBlocks( int numBlocks );
+
+	//! Sets whether memory should be locked.
 	void		SetLockMemory( bool lock );
+
+	//! Frees empty base blocks from the dynamic block allocator.
 	void		FreeEmptyBaseBlocks();
 
+	//! Allocates a block of memory for the specified number of elements.
 	type*		Alloc( const int num );
+
+	//! Resizes a memory block allocated by this allocator to the specified number of elements
 	type*		Resize( type* ptr, const int num );
+
+	//! Frees a previously allocated block of memory
 	void		Free( type* ptr );
+
+	//! Checks the memory integrity of a given pointer and returns an error message if corruption is detected.
 	const char* CheckMemory( const type* ptr ) const;
 
+	//! Returns the number of base blocks allocated by this dynamic block allocator.
 	int			GetNumBaseBlocks() const { return numBaseBlocks; }
+
+	//! Returns the memory size of the base blocks used by the dynamic block allocator.
 	int			GetBaseBlockMemory() const { return baseBlockMemory; }
+
+	//! Returns the number of used blocks in the dynamic block allocator.
 	int			GetNumUsedBlocks() const { return numUsedBlocks; }
+
+	//! Returns the amount of memory currently used by allocated blocks.
 	int			GetUsedBlockMemory() const { return usedBlockMemory; }
+
+	//! Returns the number of free blocks available in the dynamic block allocator.
 	int			GetNumFreeBlocks() const { return numFreeBlocks; }
+
+	//! Returns the amount of free memory available for allocation in the dynamic block allocator.
 	int			GetFreeBlockMemory() const { return freeBlockMemory; }
+
+	//! Returns the number of empty base blocks in the dynamic block allocator.
 	int			GetNumEmptyBaseBlocks() const;
 
 private:
@@ -671,12 +770,25 @@ private:
 
 	memTag_t			  tag;
 
+	//! Clears all allocated blocks and resets the allocator state
 	void				  Clear();
+
+	//! Allocates a dynamic memory block of specified size from the allocator.
 	idDynamicBlock<type>* AllocInternal( const int num );
+
+	//! Resizes a dynamic memory block to accommodate the specified number of elements
 	idDynamicBlock<type>* ResizeInternal( idDynamicBlock<type>* block, const int num );
+
+	//! Frees a dynamic memory block and attempts to merge it with adjacent free blocks.
 	void				  FreeInternal( idDynamicBlock<type>* block );
+
+	//! Links a free dynamic block into the internal free block tree structure.
 	void				  LinkFreeInternal( idDynamicBlock<type>* block );
+
+	//! Removes a free block from the internal free tree and updates memory tracking.
 	void				  UnlinkFreeInternal( idDynamicBlock<type>* block );
+
+	//! Checks the memory block links for consistency.
 	void				  CheckMemory() const;
 };
 

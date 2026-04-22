@@ -29,14 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "precompiled.h"
 
-/*
-========================
-CommandLinks
-
-The command system is not required for idLib, but we want to be able
-to use the CONSOLE_COMMAND() macro inside idlib, so these must be here.
-========================
-*/
+//! Returns or sets the global list of console command links used by the command system.
 idCommandLink* CommandLinks( idCommandLink* cl )
 {
 	static idCommandLink* commandLinks = NULL;

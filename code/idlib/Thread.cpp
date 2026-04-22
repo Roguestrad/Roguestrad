@@ -29,25 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-================================================================================================
-Contains the vartious ThreadingClass implementations.
-================================================================================================
-*/
-
-/*
-================================================================================================
-
-	idSysThread
-
-================================================================================================
-*/
-
-/*
-========================
-idSysThread::idSysThread
-========================
-*/
 idSysThread::idSysThread() :
 	threadHandle( 0 ),
 	isWorker( false ),
@@ -58,11 +39,6 @@ idSysThread::idSysThread() :
 {
 }
 
-/*
-========================
-idSysThread::~idSysThread
-========================
-*/
 idSysThread::~idSysThread()
 {
 	StopThread( true );
@@ -71,11 +47,6 @@ idSysThread::~idSysThread()
 	}
 }
 
-/*
-========================
-idSysThread::StartThread
-========================
-*/
 bool idSysThread::StartThread( const char* name_, core_t core, xthreadPriority priority, int stackSize )
 {
 	if( isRunning ) {
@@ -96,11 +67,6 @@ bool idSysThread::StartThread( const char* name_, core_t core, xthreadPriority p
 	return true;
 }
 
-/*
-========================
-idSysThread::StartWorkerThread
-========================
-*/
 bool idSysThread::StartWorkerThread( const char* name_, core_t core, xthreadPriority priority, int stackSize )
 {
 	if( isRunning ) {
@@ -116,11 +82,6 @@ bool idSysThread::StartWorkerThread( const char* name_, core_t core, xthreadPrio
 	return result;
 }
 
-/*
-========================
-idSysThread::StopThread
-========================
-*/
 void idSysThread::StopThread( bool wait )
 {
 	if( !isRunning ) {
@@ -141,11 +102,6 @@ void idSysThread::StopThread( bool wait )
 	}
 }
 
-/*
-========================
-idSysThread::WaitForThread
-========================
-*/
 void idSysThread::WaitForThread()
 {
 	if( isWorker ) {
@@ -156,11 +112,6 @@ void idSysThread::WaitForThread()
 	}
 }
 
-/*
-========================
-idSysThread::SignalWork
-========================
-*/
 void idSysThread::SignalWork()
 {
 	if( isWorker ) {
@@ -172,11 +123,6 @@ void idSysThread::SignalWork()
 	}
 }
 
-/*
-========================
-idSysThread::IsWorkDone
-========================
-*/
 bool idSysThread::IsWorkDone()
 {
 	if( isWorker ) {
@@ -188,11 +134,6 @@ bool idSysThread::IsWorkDone()
 	return false;
 }
 
-/*
-========================
-idSysThread::ThreadProc
-========================
-*/
 int idSysThread::ThreadProc( idSysThread* thread )
 {
 	int retVal = 0;
@@ -250,11 +191,6 @@ int idSysThread::ThreadProc( idSysThread* thread )
 	return retVal;
 }
 
-/*
-========================
-idSysThread::Run
-========================
-*/
 int idSysThread::Run()
 {
 	// The Run() is not pure virtual because on destruction of a derived class
@@ -263,22 +199,14 @@ int idSysThread::Run()
 	return 0;
 }
 
-/*
-================================================================================================
-
-	test
-
-================================================================================================
-*/
-
-/*
-================================================
-idMyThread test class.
-================================================
+/*!
+	\class idMyThread
+	\brief idMyThread is a test class that extends idSysThread to execute threaded code.
 */
 class idMyThread : public idSysThread
 {
 public:
+	//! Executes the threaded code and returns an integer result.
 	virtual int Run()
 	{
 		// run threaded code here
@@ -287,22 +215,14 @@ public:
 	// specify thread data here
 };
 
-/*
-========================
-TestThread
-========================
-*/
+//! Creates and starts a test thread named 'myThread'.
 void TestThread()
 {
 	idMyThread thread;
 	thread.StartThread( "myThread", CORE_ANY );
 }
 
-/*
-========================
-TestWorkers
-========================
-*/
+//! TestWorkers initializes a group of worker threads and manages their execution in a loop.
 void TestWorkers()
 {
 	idSysWorkerThreadGroup<idMyThread> workers( "myWorkers", 4 );

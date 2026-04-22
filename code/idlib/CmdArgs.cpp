@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-============
-idCmdArgs::operator=
-============
-*/
 void idCmdArgs::operator=( const idCmdArgs& args )
 {
 	int i;
@@ -46,11 +41,6 @@ void idCmdArgs::operator=( const idCmdArgs& args )
 	}
 }
 
-/*
-============
-idCmdArgs::Args
-============
-*/
 const char* idCmdArgs::Args( int start, int end, bool escapeArgs ) const
 {
 	static char cmd_args[MAX_COMMAND_STRING];
@@ -97,16 +87,6 @@ const char* idCmdArgs::Args( int start, int end, bool escapeArgs ) const
 	return cmd_args;
 }
 
-/*
-============
-idCmdArgs::TokenizeString
-
-Parses the given string into command line tokens.
-The text is copied to a separate buffer and 0 characters
-are inserted in the appropriate place. The argv array
-will point into this temporary buffer.
-============
-*/
 void idCmdArgs::TokenizeString( const char* text, bool keepAsStrings )
 {
 	idLexer lex;
@@ -169,11 +149,6 @@ void idCmdArgs::TokenizeString( const char* text, bool keepAsStrings )
 	}
 }
 
-/*
-============
-idCmdArgs::AppendArg
-============
-*/
 void idCmdArgs::AppendArg( const char* text )
 {
 	if( argc >= MAX_COMMAND_ARGS ) {
@@ -190,11 +165,6 @@ void idCmdArgs::AppendArg( const char* text )
 	}
 }
 
-/*
-============
-idCmdArgs::GetArgs
-============
-*/
 const char* const* idCmdArgs::GetArgs( int* _argc )
 {
 	*_argc = argc;

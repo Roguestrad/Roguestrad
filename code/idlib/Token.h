@@ -64,11 +64,16 @@ If you have questions concerning this license or the applicable additional terms
 #define TT_IPPORT			  0x08000 // ip port
 #define TT_VALUESVALID		  0x10000 // set if intvalue and floatvalue are valid
 
-// string sub type is the length of the string
-// literal sub type is the ASCII code
-// punctuation sub type is the punctuation id
-// name sub type is the length of the name
+/*!
+	\class idToken
+	\brief The idToken class represents a tokenized element with associated metadata such as type, value, and whitespace information.
 
+	The idToken class extends idStr to provide token-specific functionality including type classification, value extraction, and whitespace tracking. It is designed to handle various token types such
+   as numbers, strings, punctuation, and names, while maintaining compatibility with string operations. The class supports direct assignment from string types and provides methods to retrieve numeric
+   values in different formats. It also maintains information about whitespace preceding the token and allows for manipulation of the underlying string data. The class is intended to be used in
+   parsing scenarios where tokens need to be examined for their type and associated values.
+
+*/
 class idToken : public idStr
 {
 	friend class idParser;
@@ -82,32 +87,49 @@ public:
 	int flags;		  // token flags, used for recursive defines
 
 public:
+	//! Initializes a new idToken instance with default values for all members.
 	idToken();
+
+	//! Creates a copy of the provided token object.
 	idToken( const idToken* token );
 	~idToken();
 
+	//! Assigns the contents of an idStr object to this token.
 	void		  operator=( const idStr& text );
+
+	//! Assigns a character string to this token
 	void		  operator=( const char* text );
 
-	double		  GetDoubleValue();				 // double value of TT_NUMBER
-	float		  GetFloatValue();				 // float value of TT_NUMBER
-	unsigned long GetUnsignedLongValue();		 // unsigned long value of TT_NUMBER
-	int			  GetIntValue();				 // int value of TT_NUMBER
-	int			  WhiteSpaceBeforeToken() const; // returns length of whitespace before token
-	void		  ClearTokenWhiteSpace();		 // forget whitespace before token
+	//! Returns the double value of a TT_NUMBER token.
+	double		  GetDoubleValue();
 
-	void		  NumberValue(); // calculate values for a TT_NUMBER
+	//! Returns the float value of a token that represents a number.
+	float		  GetFloatValue();
+
+	//! Returns the unsigned long value of a token of type TT_NUMBER
+	unsigned long GetUnsignedLongValue();
+
+	//! Returns the integer value of a token that represents a number
+	int			  GetIntValue();
+
+	//! Returns the length of whitespace before the token.
+	int			  WhiteSpaceBeforeToken() const;
+
+	//! Clears the whitespace information stored in the token.
+	void		  ClearTokenWhiteSpace();
+
+	//! Calculates and stores the floating-point and integer values for a token of type TT_NUMBER
+	void		  NumberValue();
 
 private:
-	// DG: use int instead of long for 64bit compatibility
-	unsigned int intvalue; // integer value
-	// DG end
+	unsigned int intvalue;			// DG: use int instead of long for 64bit compatibility
 	double		 floatvalue;		// floating point value
 	const char*	 whiteSpaceStart_p; // start of white space before token, only used by idLexer
 	const char*	 whiteSpaceEnd_p;	// end of white space before token, only used by idLexer
 	idToken*	 next;				// next token in chain, only used by idParser
 
-	void		 AppendDirty( const char a ); // append character without adding trailing zero
+	//! Appends a character to the token data without adding a trailing zero.
+	void		 AppendDirty( const char a );
 };
 
 ID_INLINE idToken::idToken() :

@@ -48,11 +48,6 @@ ID_TLS		  idLib::isMainThread		   = 0;
 
 char		  idException::error[2048];
 
-/*
-================
-idLib::Init
-================
-*/
 void		  idLib::Init()
 {
 	assert( sizeof( bool ) == 1 );
@@ -84,11 +79,6 @@ void		  idLib::Init()
 	idDict::Init();
 }
 
-/*
-================
-idLib::ShutDown
-================
-*/
 void idLib::ShutDown()
 {
 	// shut down the dictionary string pools
@@ -148,11 +138,6 @@ const idVec4 colorTeal			 = idVec4( 0.00f, 0.50f, 0.50f, 1.00f ); // #008080
 const idVec4 colorWhite			 = idVec4( 1.00f, 1.00f, 1.00f, 1.00f );
 const idVec4 colorYellow		 = idVec4( 1.00f, 1.00f, 0.00f, 1.00f );
 
-/*
-================
-PackColor
-================
-*/
 dword		 PackColor( const idVec4& color )
 {
 	byte dx = idMath::Ftob( color.x * 255.0f );
@@ -162,22 +147,12 @@ dword		 PackColor( const idVec4& color )
 	return ( dx << 0 ) | ( dy << 8 ) | ( dz << 16 ) | ( dw << 24 );
 }
 
-/*
-================
-UnpackColor
-================
-*/
 void UnpackColor( const dword color, idVec4& unpackedColor )
 {
 	unpackedColor.Set(
 		( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 24 ) & 255 ) * ( 1.0f / 255.0f ) );
 }
 
-/*
-================
-PackColor
-================
-*/
 dword PackColor( const idVec3& color )
 {
 	byte dx = idMath::Ftob( color.x * 255.0f );
@@ -186,21 +161,11 @@ dword PackColor( const idVec3& color )
 	return ( dx << 0 ) | ( dy << 8 ) | ( dz << 16 );
 }
 
-/*
-================
-UnpackColor
-================
-*/
 void UnpackColor( const dword color, idVec3& unpackedColor )
 {
 	unpackedColor.Set( ( ( color >> 0 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 8 ) & 255 ) * ( 1.0f / 255.0f ), ( ( color >> 16 ) & 255 ) * ( 1.0f / 255.0f ) );
 }
 
-/*
-===============
-idLib::FatalError
-===============
-*/
 void idLib::FatalError( const char* fmt, ... )
 {
 	va_list argptr;
@@ -218,11 +183,6 @@ void idLib::FatalError( const char* fmt, ... )
 #endif
 }
 
-/*
-===============
-idLib::Error
-===============
-*/
 void idLib::Error( const char* fmt, ... )
 {
 	va_list argptr;
@@ -240,11 +200,6 @@ void idLib::Error( const char* fmt, ... )
 #endif
 }
 
-/*
-===============
-idLib::Warning
-===============
-*/
 void idLib::Warning( const char* fmt, ... )
 {
 	va_list argptr;
@@ -257,11 +212,6 @@ void idLib::Warning( const char* fmt, ... )
 	common->Warning( "%s", text );
 }
 
-/*
-===============
-idLib::WarningIf
-===============
-*/
 void idLib::WarningIf( const bool test, const char* fmt, ... )
 {
 	if( !test ) {
@@ -278,11 +228,6 @@ void idLib::WarningIf( const bool test, const char* fmt, ... )
 	common->Warning( "%s", text );
 }
 
-/*
-===============
-idLib::Printf
-===============
-*/
 void idLib::Printf( const char* fmt, ... )
 {
 	va_list argptr;
@@ -293,11 +238,6 @@ void idLib::Printf( const char* fmt, ... )
 	va_end( argptr );
 }
 
-/*
-===============
-idLib::PrintfIf
-===============
-*/
 void idLib::PrintfIf( const bool test, const char* fmt, ... )
 {
 	if( !test ) {
@@ -377,11 +317,7 @@ int IntForSixtets( byte* in )
 	return _IntForSixtets( in );
 }
 
-/*
-================
-ShortSwap
-================
-*/
+//! Swaps the byte order of a short integer.
 short ShortSwap( short l )
 {
 	byte b1, b2;
@@ -392,21 +328,13 @@ short ShortSwap( short l )
 	return ( b1 << 8 ) + b2;
 }
 
-/*
-================
-ShortNoSwap
-================
-*/
+//! Returns the input short value without swapping
 short ShortNoSwap( short l )
 {
 	return l;
 }
 
-/*
-================
-LongSwap
-================
-*/
+//! Swaps the byte order of a 32-bit integer.
 int LongSwap( int l )
 {
 	byte b1, b2, b3, b4;
@@ -419,21 +347,13 @@ int LongSwap( int l )
 	return ( ( int )b1 << 24 ) + ( ( int )b2 << 16 ) + ( ( int )b3 << 8 ) + b4;
 }
 
-/*
-================
-LongNoSwap
-================
-*/
+//! Returns the input integer value unchanged.
 int LongNoSwap( int l )
 {
 	return l;
 }
 
-/*
-================
-FloatSwap
-================
-*/
+//! Swaps the byte order of a float value.
 float FloatSwap( float f )
 {
 	union {
@@ -449,30 +369,13 @@ float FloatSwap( float f )
 	return dat2.f;
 }
 
-/*
-================
-FloatNoSwap
-================
-*/
+//! Returns the input float value unchanged.
 float FloatNoSwap( float f )
 {
 	return f;
 }
 
-/*
-=====================================================================
-RevBytesSwap
-
-Reverses byte order in place.
-
-INPUTS
-   bp       bytes to reverse
-   elsize   size of the underlying data type
-   elcount  number of elements to swap
-
-RESULTS
-   Reverses the byte order in each of elcount elements.
-===================================================================== */
+//! Reverses the byte order in each of the specified elements.
 void RevBytesSwap( void* bp, int elsize, int elcount )
 {
 	unsigned char *p, *q;
@@ -504,19 +407,7 @@ void RevBytesSwap( void* bp, int elsize, int elcount )
 	}
 }
 
-/*
- =====================================================================
- RevBytesSwap
-
- Reverses byte order in place, then reverses bits in those bytes
-
- INPUTS
- bp       bitfield structure to reverse
- elsize   size of the underlying data type
-
- RESULTS
- Reverses the bitfield of size elsize.
- ===================================================================== */
+//! Reverses the bitfield of the specified size in the provided buffer.
 void RevBitFieldSwap( void* bp, int elsize )
 {
 	int			   i;
@@ -537,31 +428,19 @@ void RevBitFieldSwap( void* bp, int elsize )
 	}
 }
 
-/*
-================
-RevBytesNoSwap
-================
-*/
+//! Does nothing, serves as a placeholder or stub function.
 void RevBytesNoSwap( void* bp, int elsize, int elcount )
 {
 	return;
 }
 
-/*
- ================
- RevBytesNoSwap
- ================
- */
+//! Reverses the bit field in place without swapping bytes.
 void RevBitFieldNoSwap( void* bp, int elsize )
 {
 	return;
 }
 
-/*
-================
-SixtetsForIntLittle
-================
-*/
+//! Encodes an integer into four six-bit values in little-endian byte order
 void SixtetsForIntLittle( byte* out, int src )
 {
 	byte* b = ( byte* )&src;
@@ -571,12 +450,7 @@ void SixtetsForIntLittle( byte* out, int src )
 	out[3]	= b[2] & 0x3f;
 }
 
-/*
-================
-SixtetsForIntBig
-TTimo: untested - that's the version from initial base64 encode
-================
-*/
+//! Encodes an integer into four bytes using a six-bit encoding scheme.
 void SixtetsForIntBig( byte* out, int src )
 {
 	for( int i = 0; i < 4; i++ ) {
@@ -585,11 +459,7 @@ void SixtetsForIntBig( byte* out, int src )
 	}
 }
 
-/*
-================
-IntForSixtetsLittle
-================
-*/
+//! Converts a sequence of four bytes into a little-endian integer using a sixtet-based bit manipulation scheme.
 int IntForSixtetsLittle( byte* in )
 {
 	int	  ret = 0;
@@ -603,12 +473,7 @@ int IntForSixtetsLittle( byte* in )
 	return ret;
 }
 
-/*
-================
-IntForSixtetsBig
-TTimo: untested - that's the version from initial base64 decode
-================
-*/
+//! Converts four bytes into a 24-bit integer using big-endian six-bit encoding.
 int IntForSixtetsBig( byte* in )
 {
 	int ret = 0;
@@ -619,11 +484,6 @@ int IntForSixtetsBig( byte* in )
 	return ret;
 }
 
-/*
-================
-Swap_Init
-================
-*/
 void Swap_Init()
 {
 	byte swaptest[2] = { 1, 0 };
@@ -658,11 +518,6 @@ void Swap_Init()
 	}
 }
 
-/*
-==========
-Swap_IsBigEndian
-==========
-*/
 bool Swap_IsBigEndian()
 {
 	byte swaptest[2] = { 1, 0 };

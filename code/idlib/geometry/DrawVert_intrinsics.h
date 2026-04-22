@@ -81,6 +81,7 @@ ID_INLINE_EXTERN __m128i FastF32toF16( __m128i f32_bits )
 }
 #endif
 
+//! Converts a 32-bit floating point value to a 16-bit half-precision floating point value using fast bit manipulation.
 ID_INLINE_EXTERN halfFloat_t Scalar_FastF32toF16( float f32 )
 {
 	const int f32_sign_mask				= 1U << IEEE_FLT_SIGN_BIT;
@@ -182,6 +183,7 @@ ID_INLINE_EXTERN __m128 LoadSkinnedDrawVertPosition( const idDrawVert& base, con
 }
 #endif
 
+//! Computes the transformed position of a skinned vertex using weighted joint matrices.
 ID_INLINE_EXTERN idVec3 Scalar_LoadSkinnedDrawVertPosition( const idDrawVert& vert, const idJointMat* joints )
 {
 	const idJointMat& j0 = joints[vert.color[0]];

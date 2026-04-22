@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 idPlane plane_origin( 0.0f, 0.0f, 0.0f, 0.0f );
 
-/*
-================
-idPlane::Type
-================
-*/
 int		idPlane::Type() const
 {
 	if( Normal()[0] == 0.0f ) {
@@ -60,11 +55,6 @@ int		idPlane::Type() const
 	}
 }
 
-/*
-================
-idPlane::HeightFit
-================
-*/
 bool idPlane::HeightFit( const idVec3* points, const int numPoints )
 {
 	int	   i;
@@ -115,11 +105,6 @@ bool idPlane::HeightFit( const idVec3* points, const int numPoints )
 	return true;
 }
 
-/*
-================
-idPlane::PlaneIntersection
-================
-*/
 bool idPlane::PlaneIntersection( const idPlane& plane, idVec3& start, idVec3& dir ) const
 {
 	double n00, n01, n11, det, invDet, f0, f1;
@@ -142,11 +127,6 @@ bool idPlane::PlaneIntersection( const idPlane& plane, idVec3& start, idVec3& di
 	return true;
 }
 
-/*
-=============
-idPlane::ToString
-=============
-*/
 const char* idPlane::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );

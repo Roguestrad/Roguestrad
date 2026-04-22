@@ -30,17 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-//===============================================================
-//
-//	idWinding
-//
-//===============================================================
-
-/*
-=============
-idWinding::ReAllocate
-=============
-*/
 bool idWinding::ReAllocate( int n, bool keep )
 {
 	idVec5* oldP;
@@ -59,11 +48,6 @@ bool idWinding::ReAllocate( int n, bool keep )
 	return true;
 }
 
-/*
-=============
-idWinding::BaseForPlane
-=============
-*/
 void idWinding::BaseForPlane( const idVec3& normal, const float dist )
 {
 	idVec3 org, vright, vup;
@@ -86,11 +70,6 @@ void idWinding::BaseForPlane( const idVec3& normal, const float dist )
 	p[3].s = p[3].t = 0.0f;
 }
 
-/*
-=============
-idWinding::Split
-=============
-*/
 int idWinding::Split( const idPlane& plane, const float epsilon, idWinding** front, idWinding** back ) const
 {
 	float*		  dists;
@@ -229,11 +208,6 @@ int idWinding::Split( const idPlane& plane, const float epsilon, idWinding** fro
 	return SIDE_CROSS;
 }
 
-/*
-=============
-idWinding::Clip
-=============
-*/
 idWinding* idWinding::Clip( const idPlane& plane, const float epsilon, const bool keepOn )
 {
 	float*	dists;
@@ -345,11 +319,6 @@ idWinding* idWinding::Clip( const idPlane& plane, const float epsilon, const boo
 	return this;
 }
 
-/*
-=============
-idWinding::ClipInPlace
-=============
-*/
 bool idWinding::ClipInPlace( const idPlane& plane, const float epsilon, const bool keepOn )
 {
 	float*	dists;
@@ -461,11 +430,6 @@ bool idWinding::ClipInPlace( const idPlane& plane, const float epsilon, const bo
 	return true;
 }
 
-/*
-=============
-idWinding::Copy
-=============
-*/
 idWinding* idWinding::Copy() const
 {
 	idWinding* w;
@@ -476,11 +440,6 @@ idWinding* idWinding::Copy() const
 	return w;
 }
 
-/*
-=============
-idWinding::Reverse
-=============
-*/
 idWinding* idWinding::Reverse() const
 {
 	idWinding* w;
@@ -494,11 +453,6 @@ idWinding* idWinding::Reverse() const
 	return w;
 }
 
-/*
-=============
-idWinding::ReverseSelf
-=============
-*/
 void idWinding::ReverseSelf()
 {
 	idVec5 v;
@@ -511,11 +465,6 @@ void idWinding::ReverseSelf()
 	}
 }
 
-/*
-=============
-idWinding::Check
-=============
-*/
 bool idWinding::Check( bool print ) const
 {
 	int		i, j;
@@ -599,11 +548,6 @@ bool idWinding::Check( bool print ) const
 	return true;
 }
 
-/*
-=============
-idWinding::GetArea
-=============
-*/
 float idWinding::GetArea() const
 {
 	int	   i;
@@ -620,11 +564,6 @@ float idWinding::GetArea() const
 	return total * 0.5f;
 }
 
-/*
-=============
-idWinding::GetRadius
-=============
-*/
 float idWinding::GetRadius( const idVec3& center ) const
 {
 	int	   i;
@@ -642,11 +581,6 @@ float idWinding::GetRadius( const idVec3& center ) const
 	return idMath::Sqrt( radius );
 }
 
-/*
-=============
-idWinding::GetCenter
-=============
-*/
 idVec3 idWinding::GetCenter() const
 {
 	int	   i;
@@ -660,11 +594,6 @@ idVec3 idWinding::GetCenter() const
 	return center;
 }
 
-/*
-=============
-idWinding::GetPlane
-=============
-*/
 void idWinding::GetPlane( idVec3& normal, float& dist ) const
 {
 	idVec3 v1, v2, center;
@@ -683,11 +612,6 @@ void idWinding::GetPlane( idVec3& normal, float& dist ) const
 	dist = p[0].ToVec3() * normal;
 }
 
-/*
-=============
-idWinding::GetPlane
-=============
-*/
 void idWinding::GetPlane( idPlane& plane ) const
 {
 	idVec3 v1, v2;
@@ -706,11 +630,6 @@ void idWinding::GetPlane( idPlane& plane ) const
 	plane.FitThroughPoint( p[0].ToVec3() );
 }
 
-/*
-=============
-idWinding::GetBounds
-=============
-*/
 void idWinding::GetBounds( idBounds& bounds ) const
 {
 	int i;
@@ -740,11 +659,6 @@ void idWinding::GetBounds( idBounds& bounds ) const
 	}
 }
 
-/*
-=============
-idWinding::RemoveEqualPoints
-=============
-*/
 void idWinding::RemoveEqualPoints( const float epsilon )
 {
 	int i, j;
@@ -761,11 +675,6 @@ void idWinding::RemoveEqualPoints( const float epsilon )
 	}
 }
 
-/*
-=============
-idWinding::RemoveColinearPoints
-=============
-*/
 void idWinding::RemoveColinearPoints( const idVec3& normal, const float epsilon )
 {
 	int	   i, j;
@@ -794,14 +703,6 @@ void idWinding::RemoveColinearPoints( const idVec3& normal, const float epsilon 
 	}
 }
 
-/*
-=============
-idWinding::AddToConvexHull
-
-  Adds the given winding to the convex hull.
-  Assumes the current winding already is a convex hull with three or more points.
-=============
-*/
 void idWinding::AddToConvexHull( const idWinding* winding, const idVec3& normal, const float epsilon )
 {
 	int		i, j, k;
@@ -887,14 +788,6 @@ void idWinding::AddToConvexHull( const idWinding* winding, const idVec3& normal,
 	}
 }
 
-/*
-=============
-idWinding::AddToConvexHull
-
-  Add a point to the convex hull.
-  The current winding must be convex but may be degenerate and can have less than three points.
-=============
-*/
 void idWinding::AddToConvexHull( const idVec3& point, const idVec3& normal, const float epsilon )
 {
 	int		j, k, numHullPoints;
@@ -1116,11 +1009,6 @@ idWinding* idWinding::TryMerge( const idWinding& w, const idVec3& planenormal, i
 	return newf;
 }
 
-/*
-=============
-idWinding::RemovePoint
-=============
-*/
 void idWinding::RemovePoint( int point )
 {
 	if( point < 0 || point >= numPoints ) {
@@ -1132,11 +1020,6 @@ void idWinding::RemovePoint( int point )
 	numPoints--;
 }
 
-/*
-=============
-idWinding::InsertPoint
-=============
-*/
 void idWinding::InsertPoint( const idVec5& point, int spot )
 {
 	int i;
@@ -1157,11 +1040,6 @@ void idWinding::InsertPoint( const idVec5& point, int spot )
 	numPoints++;
 }
 
-/*
-=============
-idWinding::InsertPointIfOnEdge
-=============
-*/
 bool idWinding::InsertPointIfOnEdge( const idVec5& point, const idPlane& plane, const float epsilon )
 {
 	int	   i;
@@ -1212,11 +1090,6 @@ bool idWinding::InsertPointIfOnEdge( const idVec5& point, const idPlane& plane, 
 	return false;
 }
 
-/*
-=============
-idWinding::InsertPointIfOnEdge
-=============
-*/
 bool idWinding::InsertPointIfOnEdge( const idVec3& point, const idPlane& plane, const float epsilon )
 {
 	int	   i;
@@ -1294,11 +1167,6 @@ bool idWinding::IsTiny() const
 	return true;
 }
 
-/*
-=============
-idWinding::IsHuge
-=============
-*/
 bool idWinding::IsHuge() const
 {
 	int i, j;
@@ -1313,11 +1181,6 @@ bool idWinding::IsHuge() const
 	return false;
 }
 
-/*
-=============
-idWinding::Print
-=============
-*/
 void idWinding::Print() const
 {
 	int i;
@@ -1327,11 +1190,6 @@ void idWinding::Print() const
 	}
 }
 
-/*
-=============
-idWinding::PlaneDistance
-=============
-*/
 float idWinding::PlaneDistance( const idPlane& plane ) const
 {
 	int	  i;
@@ -1363,11 +1221,6 @@ float idWinding::PlaneDistance( const idPlane& plane ) const
 	return 0.0f;
 }
 
-/*
-=============
-idWinding::PlaneSide
-=============
-*/
 int idWinding::PlaneSide( const idPlane& plane, const float epsilon ) const
 {
 	bool  front, back;
@@ -1429,11 +1282,6 @@ bool idWinding::PlanesConcave( const idWinding& w2, const idVec3& normal1, const
 	return false;
 }
 
-/*
-=============
-idWinding::PointInside
-=============
-*/
 bool idWinding::PointInside( const idVec3& normal, const idVec3& point, const float epsilon ) const
 {
 	int	   i;
@@ -1452,11 +1300,6 @@ bool idWinding::PointInside( const idVec3& normal, const idVec3& point, const fl
 	return true;
 }
 
-/*
-=============
-idWinding::LineIntersection
-=============
-*/
 bool idWinding::LineIntersection( const idPlane& windingPlane, const idVec3& start, const idVec3& end, bool backFaceCull ) const
 {
 	float  front, back, frac;
@@ -1492,11 +1335,6 @@ bool idWinding::LineIntersection( const idPlane& windingPlane, const idVec3& sta
 	return PointInside( windingPlane.Normal(), mid, 0.0f );
 }
 
-/*
-=============
-idWinding::RayIntersection
-=============
-*/
 bool idWinding::RayIntersection( const idPlane& windingPlane, const idVec3& start, const idVec3& dir, float& scale, bool backFaceCull ) const
 {
 	int		   i;
@@ -1520,11 +1358,6 @@ bool idWinding::RayIntersection( const idPlane& windingPlane, const idVec3& star
 	return false;
 }
 
-/*
-=================
-idWinding::TriangleArea
-=================
-*/
 float idWinding::TriangleArea( const idVec3& a, const idVec3& b, const idVec3& c )
 {
 	idVec3 v1, v2;
@@ -1536,17 +1369,6 @@ float idWinding::TriangleArea( const idVec3& a, const idVec3& b, const idVec3& c
 	return 0.5f * cross.Length();
 }
 
-//===============================================================
-//
-//	idFixedWinding
-//
-//===============================================================
-
-/*
-=============
-idFixedWinding::ReAllocate
-=============
-*/
 bool idFixedWinding::ReAllocate( int n, bool keep )
 {
 	assert( n <= MAX_POINTS_ON_WINDING );
@@ -1558,11 +1380,6 @@ bool idFixedWinding::ReAllocate( int n, bool keep )
 	return true;
 }
 
-/*
-=============
-idFixedWinding::Split
-=============
-*/
 int idFixedWinding::Split( idFixedWinding* back, const idPlane& plane, const float epsilon )
 {
 	int			   counts[3];

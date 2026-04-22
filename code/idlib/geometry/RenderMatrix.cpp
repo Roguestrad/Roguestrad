@@ -59,54 +59,35 @@ If you have questions concerning this license or the applicable additional terms
 // the depth bounding tests clipping tests work properly
 #define CLIP_SPACE_D3D					 1
 
-/*
-================================================================================================
+//! Returns the identity matrix used for rendering operations.
+ALIGNTYPE16 const idRenderMatrix renderMatrix_identity( 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f );
 
-Constant render matrices
+//! Converts from the engine's coordinate system to OpenGL's coordinate system.
+ALIGNTYPE16 const idRenderMatrix renderMatrix_flipToOpenGL( 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, -1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f );
 
-================================================================================================
-*/
+//! Returns a constant window space to clip space transformation matrix used for OpenGL rendering.
+ALIGNTYPE16 const idRenderMatrix renderMatrix_windowSpaceToClipSpace( 2.0f, 0.0f, 0.0f, -1.0f, 0.0f, 2.0f, 0.0f, -1.0f, 0.0f, 0.0f, 2.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f );
 
-// clang-format off
+//! Returns a constant render matrix that transforms clip space coordinates to window space coordinates.
+ALIGNTYPE16 const idRenderMatrix renderMatrix_clipSpaceToWindowSpace( 0.5f, 0.0f, 0.0f, 0.5f, 0.0f, 0.5f, 0.0f, 0.5f, 0.0f, 0.0f, 0.5f, 0.5f, 0.0f, 0.0f, 0.0f, 1.0f );
 
-// identity matrix
-ALIGNTYPE16 const idRenderMatrix renderMatrix_identity(
-	1.0f, 0.0f, 0.0f, 0.0f,
-	0.0f, 1.0f, 0.0f, 0.0f,
-	0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 0.0f, 0.0f, 1.0f
-);
-
-// convert from our coordinate system (looking down X) to OpenGL's coordinate system (looking down -Z)
-ALIGNTYPE16 const idRenderMatrix renderMatrix_flipToOpenGL(
-	0.0f, -1.0f, 0.0f, 0.0f,
-	0.0f,  0.0f, 1.0f, 0.0f,
-	-1.0f,  0.0f, 0.0f, 0.0f,
-	0.0f,  0.0f, 0.0f, 1.0f
-);
-
-// OpenGL -1 to 1.
-ALIGNTYPE16 const idRenderMatrix renderMatrix_windowSpaceToClipSpace(
-	2.0f, 0.0f, 0.0f, -1.0f,
-	0.0f, 2.0f, 0.0f, -1.0f,
-	0.0f, 0.0f, 2.0f, -1.0f,
-	0.0f, 0.0f, 0.0f,  1.0f
-);
-
-// RB begin
-ALIGNTYPE16 const idRenderMatrix renderMatrix_clipSpaceToWindowSpace(
-	0.5f, 0.0f, 0.0f, 0.5f,
-	0.0f, 0.5f, 0.0f, 0.5f,
-	0.0f, 0.0f, 0.5f, 0.5f,
-	0.0f, 0.0f, 0.0f, 1.0f
-);
-
-ALIGNTYPE16 const idRenderMatrix renderMatrix_fullscreen(
-	1.0f, 0.0f, 0.0f, 0.0f,
-	0.0f, -1.0f, 0.0f, 0.0f,		// flip Y for DX12 / Vulkan
-	0.0f, 0.0f, 1.0f, 0.0f,
-	0.0f, 0.0f, 0.0f, 1.0f
-);
+//! Returns a constant full-screen render matrix with perspective projection and view transformation.
+ALIGNTYPE16 const idRenderMatrix renderMatrix_fullscreen( 1.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	-1.0f,
+	0.0f,
+	0.0f, // flip Y for DX12 / Vulkan
+	0.0f,
+	0.0f,
+	1.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	0.0f,
+	1.0f );
 // clang-format on
 // RB end
 
@@ -593,6 +574,7 @@ static int GetBoxFrontBits_SSE2( const __m128& b0, const __m128& b1, const __m12
 
 #else
 
+//! Calculates front bits for a bounding box relative to a view origin.
 static int GetBoxFrontBits_Generic( const idBounds& bounds, const idVec3& viewOrigin )
 {
 	idVec3 dir0		 = viewOrigin - bounds[0];
@@ -609,19 +591,6 @@ static int GetBoxFrontBits_Generic( const idBounds& bounds, const idVec3& viewOr
 
 #endif
 
-/*
-================================================================================================
-
-idRenderMatrix implementation
-
-================================================================================================
-*/
-
-/*
-========================
-idRenderMatrix::CreateFromOriginAxis
-========================
-*/
 void idRenderMatrix::CreateFromOriginAxis( const idVec3& origin, const idMat3& axis, idRenderMatrix& out )
 {
 	out[0][0] = axis[0][0];
@@ -645,11 +614,6 @@ void idRenderMatrix::CreateFromOriginAxis( const idVec3& origin, const idMat3& a
 	out[3][3] = 1.0f;
 }
 
-/*
-========================
-idRenderMatrix::CreateFromOriginAxisScale
-========================
-*/
 void idRenderMatrix::CreateFromOriginAxisScale( const idVec3& origin, const idMat3& axis, const idVec3& scale, idRenderMatrix& out )
 {
 	out[0][0] = axis[0][0] * scale[0];
@@ -673,13 +637,6 @@ void idRenderMatrix::CreateFromOriginAxisScale( const idVec3& origin, const idMa
 	out[3][3] = 1.0f;
 }
 
-/*
-========================
-idRenderMatrix::CreateViewMatrix
-
-Our axis looks down positive +X, render matrix looks down -Z.
-========================
-*/
 void idRenderMatrix::CreateViewMatrix( const idVec3& origin, const idMat3& axis, idRenderMatrix& out )
 {
 	out[0][0] = -axis[1][0];
@@ -703,13 +660,6 @@ void idRenderMatrix::CreateViewMatrix( const idVec3& origin, const idMat3& axis,
 	out[3][3] = 1.0f;
 }
 
-/*
-========================
-idRenderMatrix::CreateProjectionMatrix
-
-If zFar == 0, an infinite far plane will be used.
-========================
-*/
 void idRenderMatrix::CreateProjectionMatrix( float xMin, float xMax, float yMin, float yMax, float zNear, float zFar, idRenderMatrix& out )
 {
 	const float width  = xMax - xMin;
@@ -755,14 +705,6 @@ void idRenderMatrix::CreateProjectionMatrix( float xMin, float xMax, float yMin,
 	out[3][3] = 0.0f;
 }
 
-/*
-========================
-idRenderMatrix::CreateProjectionMatrixFov
-
-xOffset and yOffset should be in the -1 to 1 range for sub-pixel accumulation jitter.
-xOffset can also be used for eye separation when rendering stereo.
-========================
-*/
 void idRenderMatrix::CreateProjectionMatrixFov( float xFovDegrees, float yFovDegrees, float zNear, float zFar, float xOffset, float yOffset, idRenderMatrix& out )
 {
 	float xMax = zNear * idMath::Tan( DEG2RAD( xFovDegrees ) * 0.5f );
@@ -780,7 +722,6 @@ void idRenderMatrix::CreateProjectionMatrixFov( float xFovDegrees, float yFovDeg
 	CreateProjectionMatrix( xMin, xMax, yMin, yMax, zNear, zFar, out );
 }
 
-// SP
 void idRenderMatrix::CreateProjD3DStyle( float verticalFov, float aspect, float zNear, float zFar, idRenderMatrix& out )
 {
 	float yScale = 1.0f / tanf( 0.5f * verticalFov );
@@ -789,14 +730,6 @@ void idRenderMatrix::CreateProjD3DStyle( float verticalFov, float aspect, float 
 	out			 = idRenderMatrix( xScale, 0, 0, 0, 0, yScale, 0, 0, 0, 0, zFar * zScale, 1, 0, 0, -zNear * zFar * zScale, 0 );
 }
 
-/*
-========================
-idRenderMatrix::OffsetScaleForBounds
-
-Add the offset to the center of the bounds and scale for the width of the bounds.
-The result matrix will transform the unit-cube to exactly cover the bounds.
-========================
-*/
 void idRenderMatrix::OffsetScaleForBounds( const idRenderMatrix& src, const idBounds& bounds, idRenderMatrix& out )
 {
 	assert( &src != &out );
@@ -875,14 +808,6 @@ void idRenderMatrix::OffsetScaleForBounds( const idRenderMatrix& src, const idBo
 #endif
 }
 
-/*
-========================
-idRenderMatrix::InverseOffsetScaleForBounds
-
-Subtract the offset to the center of the bounds and inverse scale for the width of the bounds.
-The result matrix will transform the bounds to exactly cover the unit-cube.
-========================
-*/
 void idRenderMatrix::InverseOffsetScaleForBounds( const idRenderMatrix& src, const idBounds& bounds, idRenderMatrix& out )
 {
 	assert( &src != &out );
@@ -946,11 +871,6 @@ void idRenderMatrix::InverseOffsetScaleForBounds( const idRenderMatrix& src, con
 #endif
 }
 
-/*
-========================
-idRenderMatrix::Transpose
-========================
-*/
 void idRenderMatrix::Transpose( const idRenderMatrix& src, idRenderMatrix& out )
 {
 	assert( &src != &out );
@@ -996,11 +916,6 @@ void idRenderMatrix::Transpose( const idRenderMatrix& src, idRenderMatrix& out )
 #endif
 }
 
-/*
-========================
-idRenderMatrix::Multiply
-========================
-*/
 void idRenderMatrix::Multiply( const idRenderMatrix& a, const idRenderMatrix& b, idRenderMatrix& out )
 {
 #if defined( USE_INTRINSICS_SSE )
@@ -1076,21 +991,6 @@ void idRenderMatrix::Multiply( const idRenderMatrix& a, const idRenderMatrix& b,
 #endif
 }
 
-/*
-========================
-idRenderMatrix::Inverse
-
-inverse( M ) = ( 1 / determinant( M ) ) * transpose( cofactor( M ) )
-
-This code is based on the code written by Cédric Lallain, published on "Cell Performance"
-(by Mike Acton) and released under the BSD 3-Clause ("BSD New" or "BSD Simplified") license.
-https://code.google.com/p/cellperformance-snippets/
-
-Note that large parallel lights can have very small values in the projection matrix,
-scaling tens of thousands of world units down to a 0-1 range, so the determinants
-can get really, really small.
-========================
-*/
 bool idRenderMatrix::Inverse( const idRenderMatrix& src, idRenderMatrix& out )
 {
 #if defined( USE_INTRINSICS_SSE )
@@ -1283,11 +1183,6 @@ bool idRenderMatrix::Inverse( const idRenderMatrix& src, idRenderMatrix& out )
 	return true;
 }
 
-/*
-========================
-idRenderMatrix::InverseByTranspose
-========================
-*/
 void idRenderMatrix::InverseByTranspose( const idRenderMatrix& src, idRenderMatrix& out )
 {
 	assert( &src != &out );
@@ -1311,14 +1206,6 @@ void idRenderMatrix::InverseByTranspose( const idRenderMatrix& src, idRenderMatr
 	out[3][3] = 1.0f;
 }
 
-/*
-========================
-idRenderMatrix::InverseByDoubles
-
-This should never be used at run-time.
-This is only for tools where more precision is needed.
-========================
-*/
 bool idRenderMatrix::InverseByDoubles( const idRenderMatrix& src, idRenderMatrix& out )
 {
 	const int	 FRL = 4;
@@ -1450,6 +1337,7 @@ void DeterminantIsNegative( bool& negativeDeterminant, const __m128& r0, const _
 
 #else
 
+//! Determines whether the determinant of a 4x4 matrix is negative.
 void DeterminantIsNegative( bool& negativeDeterminant, const float* row0, const float* row1, const float* row2, const float* row3 )
 {
 	// 2x2 sub-determinants required to calculate 4x4 determinant
@@ -1473,11 +1361,6 @@ void DeterminantIsNegative( bool& negativeDeterminant, const float* row0, const 
 
 #endif
 
-/*
-========================
-idRenderMatrix::CopyMatrix
-========================
-*/
 void idRenderMatrix::CopyMatrix( const idRenderMatrix& matrix, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3 )
 {
 	assert_16_byte_aligned( row0.ToFloatPtr() );
@@ -1515,11 +1398,6 @@ void idRenderMatrix::CopyMatrix( const idRenderMatrix& matrix, idVec4& row0, idV
 #endif
 }
 
-/*
-========================
-idRenderMatrix::SetMVP
-========================
-*/
 void idRenderMatrix::SetMVP( const idRenderMatrix& mvp, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3, bool& negativeDeterminant )
 {
 	assert_16_byte_aligned( row0.ToFloatPtr() );
@@ -1562,11 +1440,6 @@ void idRenderMatrix::SetMVP( const idRenderMatrix& mvp, idVec4& row0, idVec4& ro
 #endif
 }
 
-/*
-========================
-idRenderMatrix::SetMVPForBounds
-========================
-*/
 void idRenderMatrix::SetMVPForBounds( const idRenderMatrix& mvp, const idBounds& bounds, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3, bool& negativeDeterminant )
 {
 	assert_16_byte_aligned( row0.ToFloatPtr() );
@@ -1653,11 +1526,6 @@ void idRenderMatrix::SetMVPForBounds( const idRenderMatrix& mvp, const idBounds&
 #endif
 }
 
-/*
-========================
-idRenderMatrix::SetMVPForInverseProject
-========================
-*/
 void idRenderMatrix::SetMVPForInverseProject( const idRenderMatrix& mvp, const idRenderMatrix& inverseProject, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3, bool& negativeDeterminant )
 {
 	assert_16_byte_aligned( row0.ToFloatPtr() );
@@ -1747,17 +1615,6 @@ void idRenderMatrix::SetMVPForInverseProject( const idRenderMatrix& mvp, const i
 #endif
 }
 
-/*
-========================
-idRenderMatrix::CullPointToMVPbits
-
-Returns true if the point transformed by the given Model View Projection (MVP) matrix is
-outside the clip space.
-
-Normally the clip space extends from -1.0 to 1.0 on each axis, but by setting 'zeroToOne'
-to true, the clip space will extend from 0.0 to 1.0 on each axis for a light projection matrix.
-========================
-*/
 bool idRenderMatrix::CullPointToMVPbits( const idRenderMatrix& mvp, const idVec3& p, byte* outBits, bool zeroToOne )
 {
 	idVec4 c;
@@ -1800,21 +1657,6 @@ bool idRenderMatrix::CullPointToMVPbits( const idRenderMatrix& mvp, const idVec3
 	return ( bits != 63 );
 }
 
-/*
-========================
-idRenderMatrix::CullBoundsToMVPbits
-
-Returns true if nothing contained in the bounds is transformed by the given
-Model View Projection (MVP) matrix to anything inside the clip space.
-
-Normally the clip space extends from -1.0 to 1.0 on each axis, but by setting 'zeroToOne'
-to true, the clip space will extend from 0.0 to 1.0 on each axis for a light projection matrix.
-
-When all the corners of the bounding box are behind one of the six frustum planes, the box is
-culled. This is conservative, because some boxes may "cross corners" and can be in front of a
-frustum plane, but only while also being behind another one.
-========================
-*/
 bool idRenderMatrix::CullBoundsToMVPbits( const idRenderMatrix& mvp, const idBounds& bounds, byte* outBits, bool zeroToOne )
 {
 #if defined( USE_INTRINSICS_SSE )
@@ -1972,23 +1814,6 @@ bool idRenderMatrix::CullBoundsToMVPbits( const idRenderMatrix& mvp, const idBou
 #endif
 }
 
-/*
-========================
-idRenderMatrix::CullExtrudedBoundsToMVPbits
-
-Returns true if nothing contained in the extruded bounds is transformed by the
-given Model View Projection (MVP) matrix to anything inside the clip space.
-
-The given bounds is extruded in the 'extrudeDirection' up to the 'clipPlane'.
-
-Normally the clip space extends from -1.0 to 1.0 on each axis, but by setting 'zeroToOne'
-to true, the clip space will extend from 0.0 to 1.0 on each axis for a light projection matrix.
-
-When all the corners of the bounding box are behind one of the six frustum planes, the box is
-culled. This is conservative, because some boxes may "cross corners" and can be in front of a
-frustum plane, but only while also being behind another one.
-========================
-*/
 bool idRenderMatrix::CullExtrudedBoundsToMVPbits( const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& extrudeDirection, const idPlane& clipPlane, byte* outBits, bool zeroToOne )
 {
 	assert( idMath::Fabs( extrudeDirection * clipPlane.Normal() ) >= idMath::FLT_SMALLEST_NON_DENORMAL );
@@ -2280,20 +2105,6 @@ bool idRenderMatrix::CullExtrudedBoundsToMVPbits( const idRenderMatrix& mvp, con
 #endif
 }
 
-/*
-========================
-idRenderMatrix::ProjectedBounds
-
-Calculates the bounds of the given bounding box projected with the given Model View Projection (MVP) matrix.
-If 'windowSpace' is true then the calculated bounds along each axis are moved and clamped to the [0, 1] range.
-
-The given bounding box is not clipped to the MVP so the projected bounds may not be as tight as possible.
-If the given bounding box is W=0 clipped then the projected bounds will cover the full X-Y range.
-Note that while projected[0][1] will be set to the minimum when the given bounding box is W=0 clipped,
-projected[1][1] will still be valid and will NOT be set to the maximum when the given bounding box
-is W=0 clipped.
-========================
-*/
 void idRenderMatrix::ProjectedBounds( idBounds& projected, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace )
 {
 #if defined( USE_INTRINSICS_SSE )
@@ -2503,22 +2314,6 @@ void idRenderMatrix::ProjectedBounds( idBounds& projected, const idRenderMatrix&
 #endif
 }
 
-/*
-========================
-idRenderMatrix::ProjectedNearClippedBounds
-
-Calculates the bounds of the given bounding box projected with the given Model View Projection (MVP) matrix.
-If 'windowSpace' is true then the calculated bounds along each axis are moved and clamped to the [0, 1] range.
-
-The given bounding box is first near clipped so the projected bounds do not cover the full X-Y range when
-the given bounding box crosses the W=0 plane. However, the given bounding box is not clipped against the
-other planes so the projected bounds are still not as tight as they could be if the given bounding box
-crosses a corner. Fortunately, clipping to the near clipping planes typically provides more than 50% of
-the gain between not clipping at all and fully clipping the bounding box to all planes. Only clipping to
-the near clipping plane is much cheaper than clipping to all planes and can be easily implemented with
-completely branchless SIMD.
-========================
-*/
 void idRenderMatrix::ProjectedNearClippedBounds( idBounds& projected, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace )
 {
 	/*
@@ -3123,13 +2918,7 @@ static idVec3 LocalViewOriginFromMVP( const idRenderMatrix& mvp )
 
 #endif
 
-/*
-========================
-LocalNearClipCenterFromMVP
-
-Based on whether the depth range is [0,1] or [-1,1], either transform (0,0,0) or (0,0,-1) with the inverse MVP.
-========================
-*/
+//! Computes the local space center point of the near clip plane using the inverse of the model-view-projection matrix
 static idVec3 LocalNearClipCenterFromMVP( const idRenderMatrix& mvp )
 {
 	idRenderMatrix inverseMVP;
@@ -3302,13 +3091,7 @@ static int ClipHomogeneousPolygonToUnitCube_SSE2( idVec4* points, int numPoints 
 
 #else
 
-/*
-========================
-ClipHomogeneousLineToSide
-
-Clips a line with homogeneous coordinates to the axis aligned plane[axis] = side.
-========================
-*/
+//! Clips a homogeneous line to an axis-aligned plane
 static idVec4 ClipHomogeneousLineToSide( const idVec4& p0, const idVec4& p1, int axis, float side )
 {
 	const float d0	  = p0.w * side - p0[axis];
@@ -3319,13 +3102,7 @@ static idVec4 ClipHomogeneousLineToSide( const idVec4& p0, const idVec4& p1, int
 	return p0 + c * ( p1 - p0 );
 }
 
-/*
-========================
-ClipHomogeneousPolygonToSide
-
-Clips a polygon with homogeneous coordinates to the axis aligned plane[axis] = sign * offset.
-========================
-*/
+//! Clips a polygon with homogeneous coordinates to an axis-aligned plane
 static int ClipHomogeneousPolygonToSide_Generic( idVec4* __restrict newPoints, idVec4* __restrict points, int numPoints, int axis, float sign, float offset )
 {
 	assert( newPoints != points );
@@ -3361,13 +3138,7 @@ static int ClipHomogeneousPolygonToSide_Generic( idVec4* __restrict newPoints, i
 	return numNewPoints;
 }
 
-/*
-========================
-ClipHomogeneousPolygonToUnitCube
-
-Clips a polygon with homogeneous coordinates to all six axis aligned unit cube planes.
-========================
-*/
+//! Clips a polygon with homogeneous coordinates to all six axis aligned unit cube planes
 static int ClipHomogeneousPolygonToUnitCube_Generic( idVec4* points, int numPoints )
 {
 	assert( numPoints < 16 - 6 );
@@ -3388,22 +3159,6 @@ static int ClipHomogeneousPolygonToUnitCube_Generic( idVec4* points, int numPoin
 
 #endif
 
-/*
-========================
-idRenderMatrix::ProjectedFullyClippedBounds
-
-Calculates the bounds of the given bounding box projected with the given Model View Projection (MVP) matrix.
-If 'windowSpace' is true then the calculated bounds along each axis are moved and clamped to the [0, 1] range.
-
-The given bounding box is first fully clipped to the MVP to get the smallest projected bounds.
-
-Note that this code assumes the MVP matrix has an infinite far clipping plane. When the far plane is at
-infinity the bounds are never far clipped and it is sufficient to test whether or not the center of the
-near clip plane is inside the bounds to calculate the correct minimum Z. If the far plane is not at
-infinity then this code would also have to test for the view frustum being completely contained inside
-the given bounds in which case the projected bounds should be set to fully cover the view frustum.
-========================
-*/
 void idRenderMatrix::ProjectedFullyClippedBounds( idBounds& projected, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace )
 {
 #if defined( USE_INTRINSICS_SSE )
@@ -3646,16 +3401,6 @@ void idRenderMatrix::ProjectedFullyClippedBounds( idBounds& projected, const idR
 #endif
 }
 
-/*
-========================
-idRenderMatrix::DepthBoundsForBounds
-
-Calculates the depth bounds of the given bounding box projected with the given Model View Projection (MVP) matrix.
-If 'windowSpace' is true then the calculated depth bounds are moved and clamped to the [0, 1] range.
-
-The given bounding box is not clipped to the MVP so the depth bounds may not be as tight as possible.
-========================
-*/
 void idRenderMatrix::DepthBoundsForBounds( float& min, float& max, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace )
 {
 #if defined( USE_INTRINSICS_SSE )
@@ -3767,17 +3512,6 @@ void idRenderMatrix::DepthBoundsForBounds( float& min, float& max, const idRende
 #endif
 }
 
-/*
-========================
-idRenderMatrix::DepthBoundsForExtrudedBounds
-
-Calculates the depth bounds of the given extruded bounding box projected with the given Model View Projection (MVP) matrix.
-The given bounding box is extruded in the 'extrudeDirection' up to the 'clipPlane'.
-If 'windowSpace' is true then the calculated depth bounds are moved and clamped to the [0, 1] range.
-
-The extruded bounding box is not clipped to the MVP so the depth bounds may not be as tight as possible.
-========================
-*/
 void idRenderMatrix::DepthBoundsForExtrudedBounds(
 	float& min, float& max, const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& extrudeDirection, const idPlane& clipPlane, bool windowSpace )
 {
@@ -3993,14 +3727,7 @@ void idRenderMatrix::DepthBoundsForExtrudedBounds(
 #endif
 }
 
-/*
-========================
-PointInsideInfiniteShadow
-
-Returns true if the 'localPoint' is inside the infinite shadow volume cast
-from the given occluder bounding box and the given light position.
-========================
-*/
+//! Returns true if the localPoint is inside the infinite shadow volume cast from the given occluder bounding box and the given light position
 static bool PointInsideInfiniteShadow( const idBounds& occluderBounds, const idVec3& localLightOrigin, const idVec3& localPoint, const float epsilon )
 {
 	// Expand the bounds with an epsilon.
@@ -4028,24 +3755,6 @@ static bool PointInsideInfiniteShadow( const idBounds& occluderBounds, const idV
 	return false;
 }
 
-/*
-========================
-idRenderMatrix::DepthBoundsForShadowBounds
-
-Calculates the depth bounds of the infinite shadow volume projected with the given Model View Projection (MVP) matrix.
-The infinite shadow volume is cast from the given occluder bounding box and the given light position.
-If 'windowSpace' is true then the calculated depth bounds are moved and clamped to the [0, 1] range.
-
-The infinite shadow volume is fully clipped to the MVP to get the tightest possible bounds.
-
-Note that this code assumes the MVP matrix has an infinite far clipping plane. When the far plane is at
-infinity the shadow volume is never far clipped and it is sufficient to test whether or not the center
-of the near clip plane is inside the shadow volume to calculate the correct minimum Z. If the far plane
-is not at infinity then this code would also have to test for the view frustum being completely contained
-inside the shadow volume to also calculate the correct maximum Z. This could be done, for instance, by
-testing if the center of the far clipping plane is contained inside the shadow volume.
-========================
-*/
 void idRenderMatrix::DepthBoundsForShadowBounds( float& min, float& max, const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& localLightOrigin, bool windowSpace )
 {
 #if defined( USE_INTRINSICS_SSE )
@@ -4325,14 +4034,6 @@ void idRenderMatrix::DepthBoundsForShadowBounds( float& min, float& max, const i
 #endif
 }
 
-/*
-========================
-idRenderMatrix::GetFrustumPlanes
-
-Normally the clip space extends from -1.0 to 1.0 on each axis, but by setting 'zeroToOne'
-to true, the clip space will extend from 0.0 to 1.0 on each axis for a light projection matrix.
-========================
-*/
 void idRenderMatrix::GetFrustumPlanes( idPlane planes[6], const idRenderMatrix& frustum, bool zeroToOne, bool normalize )
 {
 	// FIXME:	need to know whether or not this is a D3D MVP.
@@ -4409,11 +4110,6 @@ void idRenderMatrix::GetFrustumPlanes( idPlane planes[6], const idRenderMatrix& 
 	}
 }
 
-/*
-========================
-idRenderMatrix::GetFrustumCorners
-========================
-*/
 void idRenderMatrix::GetFrustumCorners( frustumCorners_t& corners, const idRenderMatrix& frustumTransform, const idBounds& frustumBounds )
 {
 	assert_16_byte_aligned( &corners );
@@ -4520,11 +4216,6 @@ void idRenderMatrix::GetFrustumCorners( frustumCorners_t& corners, const idRende
 #endif
 }
 
-/*
-========================
-idRenderMatrix::CullFrustumCornersToPlane
-========================
-*/
 frustumCull_t idRenderMatrix::CullFrustumCornersToPlane( const frustumCorners_t& corners, const idPlane& plane )
 {
 	assert_16_byte_aligned( &corners );

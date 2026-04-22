@@ -95,7 +95,7 @@ static unsigned char PADDING[64] = {
 		( a ) = ROTATE_LEFT( ( a ), ( s ) );                             \
 	}
 
-/* Encodes input (UINT4) into output (unsigned char). Assumes len is a multiple of 4. */
+//! Encodes input UINT4 values into output unsigned char bytes
 static void Encode( unsigned char* output, UINT4* input, unsigned int len )
 {
 	unsigned int i, j;
@@ -108,7 +108,7 @@ static void Encode( unsigned char* output, UINT4* input, unsigned int len )
 	}
 }
 
-/* Decodes input (unsigned char) into output (UINT4). Assumes len is a multiple of 4. */
+//! Decodes a sequence of bytes into unsigned 32-bit integers.
 static void Decode( UINT4* output, const unsigned char* input, unsigned int len )
 {
 	unsigned int i, j;
@@ -118,7 +118,7 @@ static void Decode( UINT4* output, const unsigned char* input, unsigned int len 
 	}
 }
 
-/* MD4 basic transformation. Transforms state based on block. */
+//! Performs the MD4 transformation on the given state using the provided block data.
 static void MD4_Transform( UINT4 state[4], const unsigned char block[64] )
 {
 	UINT4 a = state[0], b = state[1], c = state[2], d = state[3], x[16];
@@ -188,7 +188,7 @@ static void MD4_Transform( UINT4 state[4], const unsigned char block[64] )
 	memset( ( POINTER )x, 0, sizeof( x ) );
 }
 
-/* MD4 initialization. Begins an MD4 operation, writing a new context. */
+//! Initializes the MD4 context for a new hashing operation.
 void MD4_Init( MD4_CTX* context )
 {
 	context->count[0] = context->count[1] = 0;
@@ -200,7 +200,7 @@ void MD4_Init( MD4_CTX* context )
 	context->state[3] = 0x10325476;
 }
 
-/* MD4 block update operation. Continues an MD4 message-digest operation, processing another message block, and updating the context. */
+//! Updates the MD4 context with a new block of data
 void MD4_Update( MD4_CTX* context, const unsigned char* input, unsigned int inputLen )
 {
 	unsigned int i, index, partLen;
@@ -235,7 +235,7 @@ void MD4_Update( MD4_CTX* context, const unsigned char* input, unsigned int inpu
 	memcpy( ( POINTER )&context->buffer[index], ( POINTER )&input[i], inputLen - i );
 }
 
-/* MD4 finalization. Ends an MD4 message-digest operation, writing the message digest and zeroizing the context. */
+//! Computes the final MD4 hash digest from the context and zeros out the context
 void MD4_Final( MD4_CTX* context, unsigned char digest[16] )
 {
 	unsigned char bits[8];
@@ -259,12 +259,6 @@ void MD4_Final( MD4_CTX* context, unsigned char digest[16] )
 	memset( ( POINTER )context, 0, sizeof( *context ) );
 }
 
-/*
-===============
-MD4_BlockChecksum
-===============
-*/
-// RB: 64 bit fixes, changed long to int
 unsigned int MD4_BlockChecksum( const void* data, int length )
 {
 	unsigned int digest[4];
@@ -279,4 +273,3 @@ unsigned int MD4_BlockChecksum( const void* data, int length )
 
 	return val;
 }
-// RB end

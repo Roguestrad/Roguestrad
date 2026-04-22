@@ -46,6 +46,10 @@ If you have questions concerning this license or the applicable additional terms
 
 typedef void ( *deriveFunction_t )( const float t, const void* userData, const float* state, float* derivatives );
 
+/*!
+	\class idODE
+	\brief A class representing an ordinary differential equation solver for numerical integration.
+*/
 class idODE
 {
 public:
@@ -59,36 +63,40 @@ protected:
 	const void*		 userData;	// client data
 };
 
-//===============================================================
-//
-//	idODE_Euler
-//
-//===============================================================
-
+/*!
+	\class idODE_Euler
+	\brief Euler integration solver for ordinary differential equations.
+*/
 class idODE_Euler : public idODE
 {
 public:
+	//! Initializes a new instance of the idODE_Euler class with the specified dimension, derivative function, and user data.
 	idODE_Euler( const int dim, const deriveFunction_t dr, const void* ud );
+
+	//! Destructor for the idODE_Euler class that cleans up allocated memory for derivatives.
 	virtual ~idODE_Euler();
 
+	//! Evaluates the Euler integration for the given state and time step.
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 protected:
 	float* derivatives; // space to store derivatives
 };
 
-//===============================================================
-//
-//	idODE_Midpoint
-//
-//===============================================================
-
+/*!
+	\class idODE_Midpoint
+	\brief Midpoint ODE solver implementation for numerical integration.
+*/
 class idODE_Midpoint : public idODE
 {
 public:
+	//! Constructs an idODE_Midpoint object with the specified dimension, derivative function, and user data.
 	idODE_Midpoint( const int dim, const deriveFunction_t dr, const void* ud );
+
+	//! Destroys the idODE_Midpoint object and cleans up allocated memory.
 	virtual ~idODE_Midpoint();
 
+	//! Evaluates the midpoint ODE integration step using the provided state and time values.
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 protected:
@@ -96,18 +104,20 @@ protected:
 	float* derivatives; // space to store derivatives
 };
 
-//===============================================================
-//
-//	idODE_RK4
-//
-//===============================================================
-
+/*!
+	\class idODE_RK4
+	\brief A class implementing the 4th order Runge-Kutta numerical integration method for solving ordinary differential equations.
+*/
 class idODE_RK4 : public idODE
 {
 public:
+	//! Initializes a new instance of the idODE_RK4 class with the specified dimension, derivative function, and user data.
 	idODE_RK4( const int dim, const deriveFunction_t dr, const void* ud );
+
+	//! Destructor for the idODE_RK4 class that cleans up dynamically allocated memory for state and derivative arrays.
 	virtual ~idODE_RK4();
 
+	//! Evaluates the Runge-Kutta 4th order solution for the given state and time interval
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
 
 protected:
@@ -118,19 +128,23 @@ protected:
 	float* d4;
 };
 
-//===============================================================
-//
-//	idODE_RK4Adaptive
-//
-//===============================================================
-
+/*!
+	\class idODE_RK4Adaptive
+	\brief Adaptive Runge-Kutta 4th order solver for ordinary differential equations.
+*/
 class idODE_RK4Adaptive : public idODE
 {
 public:
+	//! Initializes a new instance of the idODE_RK4Adaptive class with the specified dimension, derivative function, and user data.
 	idODE_RK4Adaptive( const int dim, const deriveFunction_t dr, const void* ud );
+
+	//! Destructor for the idODE_RK4Adaptive class that releases all dynamically allocated memory.
 	virtual ~idODE_RK4Adaptive();
 
+	//! Evaluates the adaptive Runge-Kutta 4th order differential equation solver and returns the next time step size.
 	virtual float Evaluate( const float* state, float* newState, float t0, float t1 );
+
+	//! Sets the maximum error tolerance for the adaptive Runge-Kutta 4 solver.
 	void		  SetMaxError( const float err );
 
 protected:

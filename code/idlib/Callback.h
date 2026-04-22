@@ -36,10 +36,9 @@ the OnChange handlers in the CVar system.
 ================================================================================================
 */
 
-/*
-================================================
-idCallback
-================================================
+/*!
+	\class idCallback
+	\brief Abstract base class for callback objects.
 */
 class idCallback
 {
@@ -49,18 +48,20 @@ public:
 	virtual idCallback* Clone() const = 0;
 };
 
-/*
-================================================
-idCallbackStatic
-
-Callback class that forwards the call to a c-style function
-================================================
+/*!
+	\class idCallbackStatic
+	\brief A callback class that forwards calls to a C-style function pointer.
 */
 class idCallbackStatic : public idCallback
 {
 public:
+	//! Constructs an idCallbackStatic object and initializes its function pointer with the provided function.
 	idCallbackStatic( void ( *f )() ) { this->f = f; }
+
+	//! Invokes the stored function callback
 	void		Call() { f(); }
+
+	//! Creates a copy of this callback object
 	idCallback* Clone() const
 	{
 		// idScopedGlobalHeap	everythingHereGoesInTheGlobalHeap;
@@ -71,53 +72,53 @@ private:
 	void ( *f )();
 };
 
-/*
-================================================
-idCallbackBindMem
-
-Callback class that forwards the call to a member function
-================================================
-*/
+//! Constructs a callback binding object that ties a member function to an object instance.
 template<class T>
 class idCallbackBindMem : public idCallback
 {
 public:
+	//! Constructs a callback binding with a target object and a member function pointer.
 	idCallbackBindMem( T* t, void ( T::*f )() )
 	{
 		this->t = t;
 		this->f = f;
 	}
+
+	//! Executes the bound member function call.
 	void		Call() { ( t->*f )(); }
 	idCallback* Clone() const { return new( TAG_FUNC_CALLBACK ) idCallbackBindMem( t, f ); }
 
 private:
 	T* t;
 	void ( T::*f )();
+
+	//! Executes the bound function call
 };
 
-/*
-================================================
-idCallbackBindMemArg1
-
-Callback class that forwards the call to a member function with an additional constant parameter
-================================================
-*/
+//! Creates a copy of this callback object
 template<class T, typename A1>
 class idCallbackBindMemArg1 : public idCallback
 {
 public:
+	//! Constructs an idCallbackBindMemArg1 object that binds a member function and its first argument.
 	idCallbackBindMemArg1( T* t_, void ( T::*f_ )( A1 ), A1 a1_ ) :
 		t( t_ ),
 		f( f_ ),
 		a1( a1_ )
 	{
 	}
+
+	//! Constructs a callback binding for a member function with one argument.
 	void		Call() { ( t->*f )( a1 ); }
+
+	//! Creates and returns a copy of this callback object
 	idCallback* Clone() const { return new( TAG_FUNC_CALLBACK ) idCallbackBindMemArg1( t, f, a1 ); }
 
 private:
 	T* t;
 	void ( T::*f )( A1 );
+
+	//! Executes a bound method call with a pre-defined argument.
 	A1 a1;
 
 	// hack to get to compile on the 360 with reference arguments
@@ -139,32 +140,20 @@ private:
 ================================================================================================
 */
 
-/*
-========================
-MakeCallback
-========================
-*/
+//! Creates and returns an idCallbackStatic object from a provided function pointer.
 ID_INLINE_EXTERN idCallbackStatic MakeCallback( void ( *f )() )
 {
 	return idCallbackStatic( f );
 }
 
-/*
-========================
-MakeCallback
-========================
-*/
+//! Creates a callback binding for a member function of type T.
 template<class T>
 ID_INLINE_EXTERN idCallbackBindMem<T> MakeCallback( T* t, void ( T::*f )() )
 {
 	return idCallbackBindMem<T>( t, f );
 }
 
-/*
-========================
-MakeCallback
-========================
-*/
+//! Creates a callback object bound to a member function and its first argument.
 template<class T, typename A1>
 ID_INLINE_EXTERN idCallbackBindMemArg1<T, A1> MakeCallback( T* t, void ( T::*f )( A1 ), A1 a1 )
 {

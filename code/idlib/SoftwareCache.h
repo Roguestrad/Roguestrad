@@ -119,81 +119,89 @@ extern uint32 globalDmaTag;
 
 enum streamBufferType_t { SBT_DOUBLE = 2, SBT_QUAD = 4 };
 
-/*
-================================================================================================
-
-	non-SPU code
-
-================================================================================================
-*/
-
-/*
-================================================
-idSoftwareCache
-================================================
+/*!
+	\class idSoftwareCache
+	\brief Cache implementation for efficient object access with prefetching support.
 */
 template<typename _type_, int _entries_ = 8, int _associativity_ = 4, bool aligned = false>
 class ALIGNTYPE128 idSoftwareCache
 {
 public:
+	//! Prefetches the specified object into cache.
 	void Prefetch( const _type_* obj ) { ::Prefetch( obj, 0 ); }
 };
 
-/*
-================================================
-idODSObject
-================================================
-*/
+//! Returns a constant reference to the internal object managed by this idODSObject instance
 template<typename _type_>
 class idODSObject
 {
 public:
+	//! Constructs an idODSObject instance by storing a pointer to the given object.
 	idODSObject( const _type_* obj ) :
 		objectPtr( obj )
 	{
 	}
+
+	//! Constructs an idODSObject instance by storing a pointer to the provided object.
 	operator const _type_&() const { return *objectPtr; }
+
+	//! Returns a pointer to the managed object
 	const _type_* operator->() const { return objectPtr; }
+
+	//! Returns a constant reference to the internal object managed by this ODS object wrapper.
 	const _type_& Get() const { return *objectPtr; }
+
+	//! Provides implicit conversion to a const reference of the underlying type.
+
 	const _type_* Ptr() const { return objectPtr; }
+
+	//! Returns a pointer to the original object.
 	const _type_* OriginalPtr() const { return objectPtr; }
 
 private:
 	const _type_* objectPtr;
 };
 
-/*
-================================================
-idODSCachedObject
-================================================
-*/
+//! Returns a constant reference to the cached object
 template<typename _type_, typename _cache_>
 class idODSCachedObject
 {
 public:
+	//! Initializes an idODSCachedObject with a pointer to an object and a reference to a cache.
 	idODSCachedObject( const _type_* obj, _cache_& cache ) :
 		objectPtr( obj )
 	{
 	}
+
+	//! Initializes a cached object with a pointer to the object and a reference to the cache.
 	operator const _type_&() const { return *objectPtr; }
+
+	//! Returns the stored object pointer for member access.
 	const _type_* operator->() const { return objectPtr; }
+
+	//! Returns a const reference to the cached object
 	const _type_& Get() const { return *objectPtr; }
+
+	//! Converts the cached object to a const reference of the underlying type.
+
 	const _type_* Ptr() const { return objectPtr; }
+
+	//! Returns a pointer to the original object.
 	const _type_* OriginalPtr() const { return objectPtr; }
 
 private:
 	const _type_* objectPtr;
 };
 
-/*
-================================================
-idODSArray
-================================================
+/*!
+	\class idODSArray
+	\brief Container for managing fixed-size arrays of elements with read-only access.
 */
 template<typename _type_, int max>
 class idODSArray
 {
 public:
+	//! Constructs an idODSArray object by copying elements from a source array.
 	idODSArray( const _type_* array, int num ) :
 		arrayPtr( array ),
 		arrayNum( num )
@@ -201,12 +209,18 @@ public:
 		assert( num <= max );
 		Prefetch( array, 0 );
 	}
+
+	//! Provides read-only access to an element at the specified index in the array
 	const _type_& operator[]( int index ) const
 	{
 		assert( index >= 0 && index < arrayNum );
 		return arrayPtr[index];
 	}
+
+	//! Returns a pointer to the internal array data
 	const _type_* Ptr() const { return arrayPtr; }
+
+	//! Returns the number of elements in the array.
 	const int	  Num() const { return arrayNum; }
 
 private:
@@ -214,15 +228,15 @@ private:
 	int			  arrayNum;
 };
 
-/*
-================================================
-idODSIndexedArray
-================================================
+/*!
+	\class idODSIndexedArray
+	\brief A template class for managing indexed arrays with compile-time maximum size.
 */
 template<typename _elemType_, typename _indexType_, int max>
 class idODSIndexedArray
 {
 public:
+	//! Initializes an indexed array with the given array and index data.
 	idODSIndexedArray( const _elemType_* array, const _indexType_* index, int num ) :
 		arrayNum( num )
 	{
@@ -232,11 +246,15 @@ public:
 			arrayPtr[i] = array + abs( index[i] );
 		}
 	}
+
+	//! Provides const access to an element at the specified index in the array
 	const _elemType_& operator[]( int index ) const
 	{
 		assert( index >= 0 && index < arrayNum );
 		return *arrayPtr[index];
 	}
+
+	//! Ensures the array length is a multiple of four by replicating the first element.
 	void ReplicateUpToMultipleOfFour()
 	{
 		assert( ( max & 3 ) == 0 );
@@ -250,15 +268,15 @@ private:
 	int				  arrayNum;
 };
 
-/*
-================================================
-idODSStreamedOutputArray
-================================================
+/*!
+	\class idODSStreamedOutputArray
+	\brief A streamed output array that manages elements in a buffered fashion for efficient processing.
 */
 template<typename _type_, int _bufferSize_>
 class ALIGNTYPE16 idODSStreamedOutputArray
 {
 public:
+	//! Initializes a streamed output array with the provided array, element count, and maximum elements.
 	idODSStreamedOutputArray( _type_* array, int* numElements, int maxElements ) :
 		localNum( 0 ),
 		outArray( array ),
@@ -272,12 +290,17 @@ public:
 	}
 	~idODSStreamedOutputArray() { *outNum = localNum; }
 
+	//! Returns the number of elements in the array
 	int	 Num() const { return localNum; }
+
+	//! Appends an element to the output array
 	void Append( _type_ element )
 	{
 		assert( localNum < outMax );
 		outArray[localNum++] = element;
 	}
+
+	//! Allocates and returns a reference to the next element in the output array.
 	_type_& Alloc()
 	{
 		assert( localNum < outMax );
@@ -291,15 +314,15 @@ private:
 	int		outMax;
 };
 
-/*
-================================================
-idODSStreamedArray
-================================================
+/*!
+	\class idODSStreamedArray
+	\brief A memory-managed, streamed array implementation for efficient access to large datasets.
 */
 template<typename _type_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1>
 class ALIGNTYPE16 idODSStreamedArray
 {
 public:
+	//! Initializes a streamed array with the provided data and element count.
 	idODSStreamedArray( const _type_* array, const int numElements ) :
 		cachedArrayStart( 0 ),
 		cachedArrayEnd( 0 ),
@@ -321,19 +344,15 @@ public:
 		inArrayNumRoundedUp += _roundUpToMultiple_ - 1;
 		inArrayNumRoundedUp -= inArrayNumRoundedUp % ( ( _roundUpToMultiple_ > 1 ) ? _roundUpToMultiple_ : 1 );
 	}
+
+	//! Destroys the streamed array and flushes its accessible portion to storage.
 	~idODSStreamedArray()
 	{
 		// Flush the accessible part of the array.
 		FlushArray( inArray, cachedArrayStart * sizeof( _type_ ), cachedArrayEnd * sizeof( _type_ ) );
 	}
 
-	// Fetches a new batch of array elements and returns the first index after this new batch.
-	// After calling this, the elements starting at the index returned by the previous call to
-	// FetchNextBach() (or zero if not yet called) up to (excluding) the index returned by
-	// this call to FetchNextBatch() can be accessed through the [] operator. When quad-buffering,
-	// the elements starting at the index returned by the second-from-last call to FetchNextBatch()
-	// can still be accessed. This is useful when the algorithm needs to successively access
-	// an odd number of elements at the same time that may cross a single buffer boundary.
+	//! Fetches the next batch of array elements and returns the first index after the new batch.
 	int FetchNextBatch()
 	{
 		// If not everything has been streamed already.
@@ -355,12 +374,7 @@ public:
 		return ( cachedArrayEnd == inArrayNum ) ? inArrayNumRoundedUp : cachedArrayEnd;
 	}
 
-	// Provides access to the elements starting at the index returned by the next-to-last call
-	// to FetchNextBach() (or zero if only called once so far) up to (excluding) the index
-	// returned by the last call to FetchNextBatch(). When quad-buffering, the elements starting
-	// at the index returned by the second-from-last call to FetchNextBatch() can still be accessed.
-	// This is useful when the algorithm needs to successively access an odd number of elements
-	// at the same time that may cross a single buffer boundary.
+	//! Provides read-only access to an element at the specified index in the array
 	const _type_& operator[]( int index ) const
 	{
 		assert( ( index >= cachedArrayStart && index < cachedArrayEnd ) || ( cachedArrayEnd == inArrayNum && index >= inArrayNum && index < inArrayNumRoundedUp ) );
@@ -376,6 +390,7 @@ private:
 	int			  inArrayNum;
 	int			  inArrayNumRoundedUp;
 
+	//! Flushes a range of cache lines for the specified array
 	static void	  FlushArray( const void* flushArray, int flushStart, int flushEnd )
 	{
 #if 0
@@ -395,23 +410,15 @@ private:
 	}
 };
 
-/*
-================================================
-idODSStreamedIndexedArray
-
-For gathering elements from an array using a sequentially read index.
-This uses overlapped streaming for both the index and the array elements
-where one batch of indices and/or array elements can be accessed while
-the next batch is being streamed in.
-
-NOTE: currently the size of array elements must be a multiple of 16 bytes.
-An index with offsets and more complex logic is needed to support other sizes.
-================================================
+/*!
+	\class idODSStreamedIndexedArray
+	\brief A streaming array implementation that provides indexed access to elements with buffered data access.
 */
 template<typename _elemType_, typename _indexType_, int _bufferSize_, streamBufferType_t _sbt_ = SBT_DOUBLE, int _roundUpToMultiple_ = 1>
 class ALIGNTYPE16 idODSStreamedIndexedArray
 {
 public:
+	//! Constructs an idODSStreamedIndexedArray object with the provided array and index data.
 	idODSStreamedIndexedArray( const _elemType_* array, const int numElements, const _indexType_* index, const int numIndices ) :
 		cachedArrayStart( 0 ),
 		cachedArrayEnd( 0 ),
@@ -444,6 +451,8 @@ public:
 		inIndexNumRoundedUp += _roundUpToMultiple_ - 1;
 		inIndexNumRoundedUp -= inIndexNumRoundedUp % ( ( _roundUpToMultiple_ > 1 ) ? _roundUpToMultiple_ : 1 );
 	}
+
+	//! Destroys the streamed indexed array and flushes any cached data to disk.
 	~idODSStreamedIndexedArray()
 	{
 		// Flush the accessible part of the index.
@@ -452,13 +461,7 @@ public:
 		FlushArray( inArray, cachedArrayStart * sizeof( _elemType_ ), cachedArrayEnd * sizeof( _elemType_ ) );
 	}
 
-	// Fetches a new batch of array elements and returns the first index after this new batch.
-	// After calling this, the elements starting at the index returned by the previous call to
-	// FetchNextBach() (or zero if not yet called) up to (excluding) the index returned by
-	// this call to FetchNextBatch() can be accessed through the [] operator. When quad-buffering,
-	// the elements starting at the index returned by the second-from-last call to FetchNextBatch()
-	// can still be accessed. This is useful when the algorithm needs to successively access
-	// an odd number of elements at the same time that may cross a single buffer boundary.
+	//! Fetches the next batch of array elements for streaming access.
 	int FetchNextBatch()
 	{
 		// If not everything has been streamed already.
@@ -497,12 +500,7 @@ public:
 		return ( cachedArrayEnd == inIndexNum ) ? inIndexNumRoundedUp : cachedArrayEnd;
 	}
 
-	// Provides access to the elements starting at the index returned by the next-to-last call
-	// to FetchNextBach() (or zero if only called once so far) up to (excluding) the index
-	// returned by the last call to FetchNextBatch(). When quad-buffering, the elements starting
-	// at the index returned by the second-from-last call to FetchNextBatch() can still be accessed.
-	// This is useful when the algorithm needs to successively access an odd number of elements
-	// at the same time that may cross a single buffer boundary.
+	//! Provides const access to an element at the specified index in the array
 	const _elemType_& operator[]( int index ) const
 	{
 		assert( ( index >= cachedArrayStart && index < cachedArrayEnd ) || ( cachedArrayEnd == inIndexNum && index >= inIndexNum && index < inIndexNumRoundedUp ) );
@@ -523,6 +521,7 @@ private:
 	int				   inIndexNum;
 	int				   inIndexNumRoundedUp;
 
+	//! Flushes a specified range of cache lines for an indexed array.
 	static void		   FlushArray( const void* flushArray, int flushStart, int flushEnd )
 	{
 #if 0

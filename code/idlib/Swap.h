@@ -29,41 +29,29 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SWAP_H__
 #define __SWAP_H__
 
-/*
-================================================================================================
-Contains the Swap class, for CrossPlatform endian conversion.
-
-works
-================================================================================================
-*/
-
-/*
-========================
-IsPointer
-========================
-*/
+//! Checks if the given type is a pointer type.
 template<typename type>
 bool IsPointer( type )
 {
 	return false;
 }
 
-/*
-========================
-IsPointer
-========================
-*/
+//! Returns true for any pointer type.
 template<typename type>
 bool IsPointer( type* )
 {
 	return true;
 }
 
-/*
-================================================
-The *Swap* static template class, idSwap, is used by the SwapClass template class for
-performing EndianSwapping.
-================================================
+/*!
+	\class idSwap
+	\brief Provides byte order conversion utilities for data serialization and cross-platform compatibility.
+
+	The idSwap class offers static methods for converting byte order of various data types to ensure consistent data representation across different platforms. It handles both primitive types and
+   complex structures like vectors, matrices, and quaternions. The class provides methods for converting data to and from little-endian and big-endian byte order, with specific implementations for
+   arrays and individual elements. The primary use case is to facilitate data serialization and network communication where byte order consistency is required. Specialized methods exist for converting
+   vertex data and various geometric structures while maintaining their internal memory layout and data semantics.
+
 */
 class idSwap
 {
@@ -76,6 +64,7 @@ public:
 		( y )  = t;       \
 	}
 
+	//! Swaps the bytes of the given value if it is not a pointer.
 	template<class type>
 	static void Little( type& c )
 	{
@@ -83,6 +72,7 @@ public:
 		assert( !IsPointer( c ) );
 	}
 
+	//! Swaps the bytes of the given value if it is not a pointer.
 	template<class type>
 	static void Big( type& c )
 	{
@@ -108,11 +98,13 @@ public:
 		}
 	}
 
+	//! Converts an array of values from big-endian to little-endian byte order in place.
 	template<class type>
 	static void LittleArray( type* c, int count )
 	{
 	}
 
+	//! Swaps the byte order of elements in the given array.
 	template<class type>
 	static void BigArray( type* c, int count )
 	{
@@ -121,6 +113,7 @@ public:
 		}
 	}
 
+	//! Converts an integer into four six-bit values stored in a byte array.
 	static void SixtetsForInt( byte* out, int src )
 	{
 		byte* b = ( byte* )&src;
@@ -130,6 +123,7 @@ public:
 		out[3]	= b[2] & 0x3f;
 	}
 
+	//! Converts four six-bit values from input byte array into a 32-bit integer.
 	static int IntForSixtets( byte* in )
 	{
 		int	  ret = 0;
@@ -171,6 +165,7 @@ public:				 // specializations
 	SWAP_VECTOR( idAngles );
 	SWAP_VECTOR( idBounds );
 
+	//! Converts the byte order of the vertex data in the given draw vertex to little-endian format.
 	static void Little( idDrawVert& v )
 	{
 		Little( v.xyz );
@@ -179,6 +174,8 @@ public:				 // specializations
 		LittleArray( v.tangent, 4 );
 		LittleArray( v.color, 4 );
 	}
+
+	//! Converts the byte order of the idDrawVert structure members to big-endian format.
 	static void Big( idDrawVert& v )
 	{
 		Big( v.xyz );
@@ -190,21 +187,23 @@ public:				 // specializations
 #endif
 };
 
-/*
-================================================
-idSwapClass is a template class for performing EndianSwapping.
-================================================
+/*!
+	\class idSwapClass
+	\brief A template class for performing byte order conversion between little-endian and big-endian formats.
 */
 template<class classType>
 class idSwapClass
 {
 public:
+	//! Initializes a new instance of the idSwapClass template.
 	idSwapClass()
 	{
 #ifdef _DEBUG
 		size = 0;
 #endif
 	}
+
+	//! Destroys the idSwapClass instance and validates the size of the swapped class type.
 	~idSwapClass()
 	{
 #ifdef _DEBUG
@@ -212,6 +211,7 @@ public:
 #endif
 	}
 
+	//! Converts the byte order of the given value to little-endian format.
 	template<class type>
 	void Little( type& c )
 	{
@@ -221,6 +221,7 @@ public:
 #endif
 	}
 
+	//! Converts the byte order of the given value to big-endian format.
 	template<class type>
 	void Big( type& c )
 	{
@@ -230,6 +231,7 @@ public:
 #endif
 	}
 
+	//! Converts an array of values to little-endian byte order.
 	template<class type>
 	void LittleArray( type* c, int count )
 	{
@@ -239,6 +241,7 @@ public:
 #endif
 	}
 
+	//! Swaps the byte order of an array of elements in big-endian format.
 	template<class type>
 	void BigArray( type* c, int count )
 	{

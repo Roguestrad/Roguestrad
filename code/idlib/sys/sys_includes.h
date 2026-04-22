@@ -150,11 +150,11 @@ If you have questions concerning this license or the applicable additional terms
 // RB end
 // Yamagi: <stddef.h> for ptrdiff_t on FreeBSD
 #include <stddef.h>
-// Yamagi end
 
-//-----------------------------------------------------
-
-// Hacked stuff we may want to consider implementing later
+/*!
+	\class idScopedGlobalHeap
+	\brief Temporary placeholder class for global heap scoping functionality.
+*/
 class idScopedGlobalHeap
 {
 };

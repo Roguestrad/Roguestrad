@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 const float EPSILON = 1e-6f;
 
-/*
-=============
-idPolynomial::Laguer
-=============
-*/
 int			idPolynomial::Laguer( const idComplex* coef, const int degree, idComplex& x ) const
 {
 	const int		   MT = 10, MAX_ITERATIONS = MT * 8;
@@ -88,11 +83,6 @@ int			idPolynomial::Laguer( const idComplex* coef, const int degree, idComplex& 
 	return i;
 }
 
-/*
-=============
-idPolynomial::GetRoots
-=============
-*/
 int idPolynomial::GetRoots( idComplex* roots ) const
 {
 	int		  i, j;
@@ -139,11 +129,6 @@ int idPolynomial::GetRoots( idComplex* roots ) const
 	return degree;
 }
 
-/*
-=============
-idPolynomial::GetRoots
-=============
-*/
 int idPolynomial::GetRoots( float* roots ) const
 {
 	int		   i, num;
@@ -180,21 +165,11 @@ int idPolynomial::GetRoots( float* roots ) const
 	return num;
 }
 
-/*
-=============
-idPolynomial::ToString
-=============
-*/
 const char* idPolynomial::ToString( int precision ) const
 {
 	return idStr::FloatArrayToString( ToFloatPtr(), GetDimension(), precision );
 }
 
-/*
-=============
-idPolynomial::Test
-=============
-*/
 void idPolynomial::Test()
 {
 	int			 i, num;

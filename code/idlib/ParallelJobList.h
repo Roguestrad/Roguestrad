@@ -29,7 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __PARALLELJOBLIST_H__
 #define __PARALLELJOBLIST_H__
 
-struct CellSpursJob128;
 class idColor;
 
 typedef void ( *jobRun_t )( void* );
@@ -63,88 +62,95 @@ enum jobListParallelism_t {
 	#undef AddJob
 #endif
 
-/*
-================================================
-idParallelJobList
+/*!
+	\class idParallelJobList
+	\brief Manages a list of parallel jobs that can be executed with synchronization points.
 
-A job should be at least a couple of 1000 clock cycles in
-order to outweigh any job switching overhead. On the other
-hand a job should consume no more than a couple of
-100,000 clock cycles to maintain a good load balance over
-multiple processing units.
-================================================
+	Provides a mechanism for organizing and executing parallel jobs with support for synchronization points and detailed timing information. Jobs can be added individually, and the
+   list can be submitted for execution with optional waiting behavior. The class tracks execution metrics including processing time, wasted time, and synchronization points. It supports configuration
+   of job list properties such as maximum jobs, maximum synchronizations, and priority. The class is designed to balance work load across multiple processing units while minimizing overhead from job
+   switching. Memory management is handled through the constructor and destructor, with no explicit ownership semantics described for the job data.
+
 */
 class idParallelJobList
 {
 	friend class idParallelJobManagerLocal;
 
 public:
-	void			 AddJob( jobRun_t function, void* data );
-	CellSpursJob128* AddJobSPURS();
-	void			 InsertSyncPoint( jobSyncType_t syncType );
+	//! Adds a job to the parallel job list for execution.
+	void		   AddJob( jobRun_t function, void* data );
 
-	// Submit the jobs in this list.
-	void			 Submit( idParallelJobList* waitForJobList = NULL, int parallelism = JOBLIST_PARALLELISM_DEFAULT );
+	//! Inserts a synchronization point into the job list with the specified sync type.
+	void		   InsertSyncPoint( jobSyncType_t syncType );
 
-	// Wait for the jobs in this list to finish. Will spin in place if any jobs are not done.
-	void			 Wait();
+	//! Submits the jobs in this list for execution.
+	void		   Submit( idParallelJobList* waitForJobList = NULL, int parallelism = JOBLIST_PARALLELISM_DEFAULT );
 
-	// Try to wait for the jobs in this list to finish but either way return immediately. Returns true if all jobs are done.
-	bool			 TryWait();
+	//! Waits for all jobs in the parallel job list to complete.
+	void		   Wait();
 
-	// returns true if the job list has been submitted.
-	bool			 IsSubmitted() const;
+	//! Attempts to wait for all jobs in the list to finish and returns immediately with a boolean indicating if all jobs are done.
+	bool		   TryWait();
 
-	// Get the number of jobs executed in this job list.
-	unsigned int	 GetNumExecutedJobs() const;
+	//! Returns true if the job list has been submitted.
+	bool		   IsSubmitted() const;
 
-	// Get the number of sync points.
-	unsigned int	 GetNumSyncs() const;
+	//! Retrieves the number of jobs that have been executed in this job list.
+	unsigned int   GetNumExecutedJobs() const;
 
-	// Time at which the job list was submitted.
-	uint64			 GetSubmitTimeMicroSec() const;
+	//! Returns the number of synchronization points in the job list.
+	unsigned int   GetNumSyncs() const;
 
-	// Time at which execution of this job list started.
-	uint64			 GetStartTimeMicroSec() const;
+	//! Returns the time at which the job list was submitted in microseconds.
+	uint64		   GetSubmitTimeMicroSec() const;
 
-	// Time at which all jobs in the list were executed.
-	uint64			 GetFinishTimeMicroSec() const;
+	//! Returns the time at which execution of this job list started in microseconds.
+	uint64		   GetStartTimeMicroSec() const;
 
-	// Time the host thread waited for this job list to finish.
-	uint64			 GetWaitTimeMicroSec() const;
+	//! Returns the time at which all jobs in the list were executed.
+	uint64		   GetFinishTimeMicroSec() const;
 
-	// Get the total time all units spent processing this job list.
-	uint64			 GetTotalProcessingTimeMicroSec() const;
+	//! Returns the time the host thread waited for the job list to finish in microseconds.
+	uint64		   GetWaitTimeMicroSec() const;
 
-	// Get the total time all units wasted while processing this job list.
-	uint64			 GetTotalWastedTimeMicroSec() const;
+	//! Returns the total processing time in microseconds for all threads in the job list.
+	uint64		   GetTotalProcessingTimeMicroSec() const;
 
-	// Time the given unit spent processing this job list.
-	uint64			 GetUnitProcessingTimeMicroSec( int unit ) const;
+	//! Returns the total time wasted by all threads while processing the job list.
+	uint64		   GetTotalWastedTimeMicroSec() const;
 
-	// Time the given unit wasted while processing this job list.
-	uint64			 GetUnitWastedTimeMicroSec( int unit ) const;
+	//! Returns the processing time in microseconds for the specified unit.
+	uint64		   GetUnitProcessingTimeMicroSec( int unit ) const;
 
-	// Get the job list ID
-	jobListId_t		 GetId() const;
-	// Get the color for profiling.
-	const idColor*	 GetColor() const { return this->color; }
+	//! Returns the amount of time a specified unit wasted while processing this job list.
+	uint64		   GetUnitWastedTimeMicroSec( int unit ) const;
+
+	//! Retrieves the ID of the job list.
+	jobListId_t	   GetId() const;
+
+	//! Returns the color used for profiling in the parallel job list.
+	const idColor* GetColor() const { return this->color; }
 
 private:
 	class idParallelJobList_Threads* jobListThreads;
 	const idColor*					 color;
 
+	//! Constructs a parallel job list with the specified parameters.
 	idParallelJobList( jobListId_t id, jobListPriority_t priority, unsigned int maxJobs, unsigned int maxSyncs, const idColor* color );
+
+	//! Destroys the idParallelJobList and cleans up its associated threads.
 	~idParallelJobList();
 };
 
-/*
-================================================
-idParallelJobManager
+/*!
+	\class idParallelJobManager
+	\brief Manages parallel job execution through a job list interface.
 
-This is the only interface through which job lists
-should be allocated or freed.
-================================================
+	This class provides a unified interface for managing parallel job execution threads. It handles the allocation and deallocation of job lists which contain work units to be processed in parallel.
+   The manager oversees the scheduling and execution of these jobs across multiple processing units. Job lists can be configured with specific priorities and resource limits. The interface supports
+   tracking the number of active job lists and provides synchronization mechanisms to ensure proper execution order. The manager is responsible for initializing and shutting down the parallel
+   processing infrastructure, and can wait for all job lists to complete their execution.
+
 */
 class idParallelJobManager
 {
@@ -169,19 +175,17 @@ public:
 
 extern idParallelJobManager* parallelJobManager;
 
-// jobRun_t functions can have the debug name associated with them
-// by explicitly calling this, or using the REGISTER_PARALLEL_JOB()
-// static variable macro.
+//! Registers a job function with an associated debug name.
 void						 RegisterJob( jobRun_t function, const char* name );
 
-/*
-================================================
-idParallelJobRegistration
-================================================
+/*!
+	\class idParallelJobRegistration
+	\brief Manages registration of parallel jobs for concurrent execution.
 */
 class idParallelJobRegistration
 {
 public:
+	//! Constructs an idParallelJobRegistration object and registers a job with the specified function and name.
 	idParallelJobRegistration( jobRun_t function, const char* name );
 };
 

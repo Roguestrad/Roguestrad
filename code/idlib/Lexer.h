@@ -135,119 +135,180 @@ typedef struct punctuation_s {
 	int			n; // punctuation id
 } punctuation_t;
 
+/*!
+	\class idLexer
+	\brief A lexer class for parsing text scripts into tokens.
+
+	The idLexer class provides functionality for loading and parsing script files or memory buffers into structured tokens. It supports various token types including strings, numbers, punctuation, and
+   identifiers, with methods for reading, peeking, and skipping tokens. The lexer maintains state such as line numbers, file offsets, and error conditions, and supports custom punctuation tables and
+   file loading from different sources. It includes methods for parsing data types like integers, floats, and matrices, as well as handling escape sequences and complex parsing operations. The class
+   is designed to be used in environments where structured parsing of text configuration or script files is required.
+
+*/
 class idLexer
 {
 	friend class idParser;
 
 public:
-	// constructor
+	//! Constructs a new idLexer object with default settings.
 	idLexer();
+
+	//! Constructs an idLexer object with the specified flags.
 	idLexer( int flags );
+
+	//! Constructs an idLexer object to parse a file with the specified filename and flags.
 	idLexer( const char* filename, int flags = 0, bool OSPath = false );
+
+	//! Constructs an idLexer object to parse text from a memory buffer.
 	idLexer( const char* ptr, int length, const char* name, int flags = 0 );
-	// destructor
+
+	//! Destroys the lexer and frees its associated resources.
 	~idLexer();
-	// load a script from the given file at the given offset with the given length
+
+	//! Loads a script file into the lexer for token parsing
 	int				LoadFile( const char* filename, bool OSPath = false );
-	// load a script from the given memory with the given length and a specified line offset,
-	// so source strings extracted from a file can still refer to proper line numbers in the file
-	// NOTE: the ptr is expected to point at a valid C string: ptr[length] == '\0'
+
+	//! Loads a script from memory with the specified length and line offset for parsing.
 	int				LoadMemory( const char* ptr, int length, const char* name, int startLine = 1 );
-	// free the script
+
+	//! Frees the memory allocated for the lexer's source buffer and punctuation tables.
 	void			FreeSource();
 	// returns true if a script is loaded
 	int				IsLoaded() { return idLexer::loaded; };
-	// read a token
+
+	//! Reads the next token from the lexer stream into the provided token object.
 	int				ReadToken( idToken* token );
-	// expect a certain token, reads the token when available
+
+	//! Expects and reads a specific token string from the lexer
 	int				ExpectTokenString( const char* string );
-	// expect a certain token type
+
+	//! Expects and validates a token of a specific type and subtype from the lexer.
 	int				ExpectTokenType( int type, int subtype, idToken* token );
-	// expect a token
+
+	//! Expects and reads any token from the lexer, returning 1 on success and 0 on failure.
 	int				ExpectAnyToken( idToken* token );
-	// returns true when the token is available
+
+	//! Checks if the next token in the lexer matches the given string and advances the lexer if it does.
 	int				CheckTokenString( const char* string );
-	// returns true an reads the token when a token with the given type is available
+
+	//! Checks if the next token matches the specified type and subtype, and reads it if it does.
 	int				CheckTokenType( int type, int subtype, idToken* token );
-	// returns true if the next token equals the given string but does not remove the token from the source
+
+	//! Returns true if the next token equals the given string but does not remove the token from the source.
 	int				PeekTokenString( const char* string );
-	// returns true if the next token equals the given type but does not remove the token from the source
+
+	//! Checks if the next token matches the specified type and subtype without removing it from the source.
 	int				PeekTokenType( int type, int subtype, idToken* token );
-	// skip tokens until the given token string is read
+
+	//! Skips tokens in the lexer until the specified string is found and returns whether it was found.
 	int				SkipUntilString( const char* string );
-	// skip the rest of the current line
+
+	//! Skips the rest of the current line in the lexer.
 	int				SkipRestOfLine();
-	// skip the braced section
+
+	//! Skips a braced section in the lexer input.
 	int				SkipBracedSection( bool parseFirstBrace = true, braceSkipMode_t skipMode = BRSKIP_BRACES, int* skipped = nullptr );
-	// skips spaces, tabs, C-like comments etc. Returns false if there is no token left to read.
+
+	//! Skips whitespace and comments in the lexer's input stream, returning true if successful.
 	bool			SkipWhiteSpace( bool currentLine );
-	// unread the given token
+
+	//! Unreads the provided token, making it available for subsequent lexical analysis.
 	void			UnreadToken( const idToken* token );
-	// read a token only if on the same line
+
+	//! Reads a token from the lexer only if it appears on the same line
 	int				ReadTokenOnLine( idToken* token );
 
-	// Returns the rest of the current line
+	//! Returns the rest of the current line from the lexer's script.
 	const char*		ReadRestOfLine( idStr& out );
 
-	// read a signed integer
+	//! Parses and returns a signed integer value from the lexer input
 	int				ParseInt();
-	// read a boolean
+
+	//! Parses a boolean value from the token stream
 	bool			ParseBool();
-	// read a floating point number.  If errorFlag is NULL, a non-numeric token will
-	// issue an Error().  If it isn't NULL, it will issue a Warning() and set *errorFlag = true
+
+	//! Parses a floating point number from the lexer input, with optional error flag handling
 	float			ParseFloat( bool* errorFlag = NULL );
-	// parse matrices with floats
+
+	//! Parses a 1D matrix of floats from the lexer input
 	int				Parse1DMatrix( int x, float* m );
-	// RB begin
+
+	//! Parses a 1D matrix in JSON format from the lexer input.
 	int				Parse1DMatrixJSON( int x, float* m );
-	// RB end
+
+	//! Parses a 2D matrix of specified dimensions from the lexer input.
 	int				Parse2DMatrix( int y, int x, float* m );
+
+	//! Parses a 3D matrix from the lexer input into a float array.
 	int				Parse3DMatrix( int z, int y, int x, float* m );
-	// parse a braced section into a string
+
+	//! Parses a braced section from the lexer into the provided string.
 	const char*		ParseBracedSection( idStr& out );
-	// parse a braced section into a string, maintaining indents and newlines
+
+	//! Parses a braced section from the lexer input into a string while maintaining indentation and newlines.
 	const char*		ParseBracedSectionExact( idStr& out, int tabs = -1 );
+
+	//! Parses a bracketed section from the lexer script into the provided string with exact tab handling.
 	const char*		ParseBracketSectionExact( idStr& out, int tabs = -1 );
-	// parse the rest of the line
+
+	//! Parses the rest of the current line into the provided string output.
 	const char*		ParseRestOfLine( idStr& out );
-	// pulls the entire line, including the \n at the end
+
+	//! Parses and returns the complete line including the newline character from the lexer's current position.
 	const char*		ParseCompleteLine( idStr& out );
-	// retrieves the white space characters before the last read token
+
+	//! Retrieves the white space characters before the last read token.
 	int				GetLastWhiteSpace( idStr& whiteSpace ) const;
-	// returns start index into text buffer of last white space
+
+	//! Returns the start index into the text buffer of the last white space.
 	int				GetLastWhiteSpaceStart() const;
-	// returns end index into text buffer of last white space
+
+	//! Returns the end index into the text buffer of the last white space.
 	int				GetLastWhiteSpaceEnd() const;
-	// set an array with punctuations, NULL restores default C/C++ set, see default_punctuations for an example
+
+	//! Sets the punctuation table for the lexer, restoring the default C/C++ set if NULL is provided
 	void			SetPunctuations( const punctuation_t* p );
-	// returns a pointer to the punctuation with the given id
+
+	//! Returns a pointer to the punctuation string with the given id
 	const char*		GetPunctuationFromId( int id );
-	// get the id for the given punctuation
+
+	//! Returns the id for the given punctuation string.
 	int				GetPunctuationId( const char* p );
-	// set lexer flags
+
+	//! Sets the lexer flags to the specified value.
 	void			SetFlags( int flags );
-	// get lexer flags
+
+	//! Returns the lexer flags.
 	int				GetFlags();
-	// reset the lexer
+
+	//! Resets the lexer state to its initial conditions.
 	void			Reset();
-	// returns true if at the end of the file
+
+	//! Returns true if the lexer has reached the end of the input file.
 	bool			EndOfFile();
-	// returns the current filename
+
+	//! Returns the current filename being processed by the lexer.
 	const char*		GetFileName();
-	// get offset in script
+
+	//! Returns the current offset within the script buffer
 	const int		GetFileOffset();
-	// get file time
+
+	//! Returns the file time associated with the lexer's source file.
 	const ID_TIME_T GetFileTime();
-	// returns the current line number
+
+	//! Returns the current line number from the lexer.
 	const int		GetLineNum();
-	// print an error message
+
+	//! Prints an error message with file and line number context.
 	void			Error( VERIFY_FORMAT_STRING const char* str, ... );
-	// print a warning message
+
+	//! Prints a warning message with file and line number context
 	void			Warning( VERIFY_FORMAT_STRING const char* str, ... );
-	// returns true if Error() was called with LEXFL_NOFATALERRORS or LEXFL_NOERRORS set
+
+	//! Returns true if a lexical error occurred during parsing.
 	bool			HadError() const;
 
-	// set the base folder to load files from
+	//! Sets the base folder path used for loading files.
 	static void		SetBaseFolder( const char* path );
 
 private:
@@ -277,15 +338,32 @@ private:
 	static char			 baseFolder[256]; // base folder to load files from
 
 private:
+	//! Initializes or updates the punctuation table used by the lexer based on the provided punctuation list.
 	void CreatePunctuationTable( const punctuation_t* punctuations );
+
+	//! Reads whitespace and comments from the script, updating the line counter when newlines are encountered.
 	int	 ReadWhiteSpace();
+
+	//! Reads an escape character from the lexer stream and stores the resulting character in the provided pointer.
 	int	 ReadEscapeCharacter( char* ch );
+
+	//! Reads a string or literal token from the lexer, handling escape sequences and concatenation.
 	int	 ReadString( idToken* token, int quote );
+
+	//! Reads a name token from the lexer's input stream and stores it in the provided token object
 	int	 ReadName( idToken* token );
+
+	//! Reads a number token from the lexer script, handling various number formats including decimal, hexadecimal, binary, octal, floating-point, and IP addresses.
 	int	 ReadNumber( idToken* token );
+
+	//! Reads punctuation from the current script position and stores it in the provided token
 	int	 ReadPunctuation( idToken* token );
 	int	 ReadPrimitive( idToken* token );
+
+	//! Checks if the given string matches the current position in the lexer script.
 	int	 CheckString( const char* str ) const;
+
+	//! Returns the number of lines crossed since the last line count reset.
 	int	 NumLinesCrossed();
 };
 
@@ -319,14 +397,17 @@ ID_INLINE int idLexer::GetFlags()
 	return idLexer::flags;
 }
 
-// jmarshall
+/*!
+	\class iceScopedLexerBaseFolder
+	\brief A class for managing scoped lexer base folder functionality.
+*/
 class iceScopedLexerBaseFolder
 {
 public:
+	//! Initializes the scoped lexer base folder with the specified base folder path.
 	iceScopedLexerBaseFolder( const char* baseFolder ) { idLexer::SetBaseFolder( baseFolder ); }
 
 	~iceScopedLexerBaseFolder() { idLexer::SetBaseFolder( "" ); }
 };
-// jmarshall end
 
 #endif /* !__LEXER_H__ */

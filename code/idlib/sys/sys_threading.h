@@ -115,11 +115,18 @@ public:
 	DWORD tlsIndex;
 };
 	#else
+
+/*!
+	\class idSysThreadLocalStorage
+	\brief Manages thread-local storage keys for efficient thread-specific data access.
+*/
 class idSysThreadLocalStorage
 {
 public:
+	//! Initializes a new thread local storage key.
 	idSysThreadLocalStorage() { pthread_key_create( &key, NULL ); }
 
+	//! Initializes a thread local storage entry with the specified value.
 	idSysThreadLocalStorage( const ptrdiff_t& val )
 	{
 		pthread_key_create( &key, NULL );
@@ -128,8 +135,10 @@ public:
 
 	~idSysThreadLocalStorage() { pthread_key_delete( key ); }
 
+	//! Converts the thread-local storage key to a ptrdiff_t value.
 	operator ptrdiff_t() { return ( ptrdiff_t )pthread_getspecific( key ); }
 
+	//! Assigns a value to the thread-local storage and returns the assigned value
 	const ptrdiff_t& operator=( const ptrdiff_t& val )
 	{
 		pthread_setspecific( key, ( const void* )val );
@@ -161,40 +170,68 @@ enum xthreadPriority { THREAD_LOWEST, THREAD_BELOW_NORMAL, THREAD_NORMAL, THREAD
 
 #define DEFAULT_THREAD_STACK_SIZE ( 256 * 1024 )
 
-// on win32, the threadID is NOT the same as the threadHandle
+//! Returns the unique identifier of the currently executing thread.
 uintptr_t		 Sys_GetCurrentThreadID();
 
-// returns a threadHandle
+//! Creates a new thread with the specified parameters and returns a handle to it
 uintptr_t		 Sys_CreateThread( xthread_t function, void* parms, xthreadPriority priority, const char* name, core_t core, int stackSize = DEFAULT_THREAD_STACK_SIZE, bool suspended = false );
 
-// RB begin
-// removed unused Sys_WaitForThread
+//! Destroys a thread identified by its handle.
 void			 Sys_DestroyThread( uintptr_t threadHandle );
 void			 Sys_SetCurrentThreadName( const char* name );
 
+//! Initializes a signal handle with the specified manual reset behavior.
 void			 Sys_SignalCreate( signalHandle_t& handle, bool manualReset );
+
+//! Destroys a signal handle by resetting its state and cleaning up associated synchronization primitives.
 void			 Sys_SignalDestroy( signalHandle_t& handle );
+
+//! Raises a signal handle, waking up waiting threads or marking it as signaled.
 void			 Sys_SignalRaise( signalHandle_t& handle );
+
+//! Clears the signaled state of the provided signal handle.
 void			 Sys_SignalClear( signalHandle_t& handle );
+
+//! Waits for a signal handle to be signaled or for a timeout to occur
 bool			 Sys_SignalWait( signalHandle_t& handle, int timeout );
 
+//! Initializes a mutex handle for synchronization.
 void			 Sys_MutexCreate( mutexHandle_t& handle );
+
+//! Destroys a mutex handle.
 void			 Sys_MutexDestroy( mutexHandle_t& handle );
+
+//! Acquires a mutex lock, optionally blocking if the lock is unavailable.
 bool			 Sys_MutexLock( mutexHandle_t& handle, bool blocking );
+
+//! Releases a previously acquired mutex lock.
 void			 Sys_MutexUnlock( mutexHandle_t& handle );
 
+//! Increments the given interlocked integer value atomically and returns the new value.
 interlockedInt_t Sys_InterlockedIncrement( interlockedInt_t& value );
+
+//! Decrements the value of an interlocked integer variable by one and returns the new value.
 interlockedInt_t Sys_InterlockedDecrement( interlockedInt_t& value );
 
+//! Performs an atomic addition operation on a shared integer variable and returns the updated value.
 interlockedInt_t Sys_InterlockedAdd( interlockedInt_t& value, interlockedInt_t i );
+
+//! Performs an atomic subtraction operation on a shared integer value.
 interlockedInt_t Sys_InterlockedSub( interlockedInt_t& value, interlockedInt_t i );
 
+//! Performs an atomic exchange operation on an interlocked integer value.
 interlockedInt_t Sys_InterlockedExchange( interlockedInt_t& value, interlockedInt_t exchange );
+
+//! Atomically compares and exchanges a value in memory based on a comparison.
 interlockedInt_t Sys_InterlockedCompareExchange( interlockedInt_t& value, interlockedInt_t comparand, interlockedInt_t exchange );
 
+//! Atomically exchanges a pointer value with a new value.
 void*			 Sys_InterlockedExchangePointer( void*& ptr, void* exchange );
+
+//! Performs an atomic compare-and-swap operation on a pointer.
 void*			 Sys_InterlockedCompareExchangePointer( void*& ptr, void* comparand, void* exchange );
 
+//! Yields the current thread to the operating system scheduler.
 void			 Sys_Yield();
 
 const int		 MAX_CRITICAL_SECTIONS = 4;

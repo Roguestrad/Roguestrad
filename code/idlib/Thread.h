@@ -30,38 +30,41 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __THREAD_H__
 #define __THREAD_H__
 
-/*
-================================================
-idSysMutex provides a C++ wrapper to the low level system mutex functions.  A mutex is an
-object that can only be locked by one thread at a time.  It's used to prevent two threads
-from accessing the same piece of data simultaneously.
-================================================
+/*!
+	\class idSysMutex
+	\brief Provides a C++ wrapper for system-level mutex synchronization primitives.
 */
 class idSysMutex
 {
 public:
+	//! Initializes a new mutex handle.
 	idSysMutex() { Sys_MutexCreate( handle ); }
 	~idSysMutex() { Sys_MutexDestroy( handle ); }
 
+	//! Acquires the mutex, optionally blocking if it cannot be acquired immediately.
 	bool Lock( bool blocking = true ) { return Sys_MutexLock( handle, blocking ); }
+
+	//! Releases the lock on the mutex.
 	void Unlock() { Sys_MutexUnlock( handle ); }
 
 private:
 	mutexHandle_t handle;
 
+	//! Constructs a new mutex object as a copy of an existing mutex object.
 	idSysMutex( const idSysMutex& s ) { }
+
+	//! Assignment operator for idSysMutex that copies the state from another mutex
 	void operator=( const idSysMutex& s ) { }
 };
 
-/*
-================================================
-idScopedCriticalSection is a helper class that automagically locks a mutex when it's created
-and unlocks it when it goes out of scope.
-================================================
+/*!
+	\class idScopedCriticalSection
+	\brief A helper class that automatically manages mutex locking and unlocking through RAII.
 */
 class idScopedCriticalSection
 {
 public:
+	//! Acquires a lock on the provided mutex during the lifetime of the scoped critical section.
 	idScopedCriticalSection( idSysMutex& m ) :
 		mutex( &m )
 	{
@@ -73,96 +76,106 @@ private:
 	idSysMutex* mutex; // NOTE: making this a reference causes a TypeInfo crash
 };
 
-/*
-================================================
-idSysSignal is a C++ wrapper for the low level system signal functions.  A signal is an object
-that a thread can wait on for it to be raised.  It's used to indicate data is available or that
-a thread has reached a specific point.
-================================================
+/*!
+	\class idSysSignal
+	\brief Provides a C++ wrapper for low-level system signal functions to synchronize thread operations.
+
+	idSysSignal serves as a C++ wrapper for system-level signal objects that enable thread synchronization. The class enables threads to wait for specific events to occur, such as data becoming
+   available or reaching a particular processing point. It supports both automatic and manual reset behaviors through its constructor parameter. The signal can be raised to indicate an event has
+   occurred, cleared to reset its state, and waited upon with optional timeout functionality. Copy construction and assignment are supported, allowing for signal object duplication. This wrapper
+   abstracts the underlying system signal mechanisms to provide a portable interface for thread coordination.
+
 */
 class idSysSignal
 {
 public:
 	static const int WAIT_INFINITE = -1;
 
+	//! Creates a system signal object with an optional manual reset behavior.
 	idSysSignal( bool manualReset = false ) { Sys_SignalCreate( handle, manualReset ); }
 	~idSysSignal() { Sys_SignalDestroy( handle ); }
 
+	//! Raises the system signal associated with this object.
 	void Raise() { Sys_SignalRaise( handle ); }
 
+	//! Clears the system signal handle
 	void Clear() { Sys_SignalClear( handle ); }
 
-	// Wait returns true if the object is in a signalled state and
-	// returns false if the wait timed out. Wait also clears the signalled
-	// state when the signalled state is reached within the time out period.
+	//! Waits for the signal object to enter a signalled state or until the timeout period expires
 	bool Wait( int timeout = WAIT_INFINITE ) { return Sys_SignalWait( handle, timeout ); }
 
 private:
 	signalHandle_t handle;
 
+	//! Copy constructs a system signal object from another system signal object.
 	idSysSignal( const idSysSignal& s ) { }
+
+	//! Assigns the value of another idSysSignal object to this object.
 	void operator=( const idSysSignal& s ) { }
 };
 
-/*
-================================================
-idSysInterlockedInteger is a C++ wrapper for the low level system interlocked integer
-routines to atomically increment or decrement an integer.
-================================================
+/*!
+	\class idSysInterlockedInteger
+	\brief Provides atomic operations for integer values in a multithreaded environment.
+
+	This class serves as a wrapper for low-level system interlocked integer routines, enabling safe atomic operations on integer values across multiple threads. It supports increment, decrement,
+   addition, and subtraction operations that are guaranteed to be atomic. The class maintains an internal integer value that can be queried or modified using atomic operations. The implementation
+   ensures thread safety for all operations while providing a simple interface for managing shared integer state. The class is designed to be used in scenarios where multiple threads need to
+   coordinate access to a shared counter or flag.
+
 */
 class idSysInterlockedInteger
 {
 public:
+	//! Initializes the interlocked integer with a value of zero.
 	idSysInterlockedInteger() :
 		value( 0 )
 	{
 	}
 
-	// atomically increments the integer and returns the new value
+	//! Atomically increments the integer and returns the new value.
 	int	 Increment() { return Sys_InterlockedIncrement( value ); }
 
-	// atomically decrements the integer and returns the new value
+	//! Atomically decrements the integer and returns the new value.
 	int	 Decrement() { return Sys_InterlockedDecrement( value ); }
 
-	// atomically adds a value to the integer and returns the new value
+	//! Atomically adds a value to the integer and returns the new value
 	int	 Add( int v ) { return Sys_InterlockedAdd( value, ( interlockedInt_t )v ); }
 
-	// atomically subtracts a value from the integer and returns the new value
+	//! Atomically subtracts a value from the integer and returns the new value
 	int	 Sub( int v ) { return Sys_InterlockedSub( value, ( interlockedInt_t )v ); }
 
-	// returns the current value of the integer
+	//! Returns the current value of the integer
 	int	 GetValue() const { return value; }
 
-	// sets a new value, Note: this operation is not atomic
+	//! Sets the integer value to the specified value.
 	void SetValue( int v ) { value = ( interlockedInt_t )v; }
 
 private:
 	interlockedInt_t value;
 };
 
-/*
-================================================
-idSysInterlockedPointer is a C++ wrapper around the low level system interlocked pointer
-routine to atomically set a pointer while retrieving the previous value of the pointer.
-================================================
+/*!
+	\class idSysInterlockedPointer
+	\brief A thread-safe wrapper for atomic pointer operations.
 */
 template<typename T>
 class idSysInterlockedPointer
 {
 public:
+	//! Initializes the interlocked pointer with a null value.
 	idSysInterlockedPointer() :
 		ptr( NULL )
 	{
 	}
 
-	// atomically sets the pointer and returns the previous pointer value
+	//! Atomically sets the pointer to a new value and returns the previous pointer value.
 	T* Set( T* newPtr ) { return ( T* )Sys_InterlockedExchangePointer( ( void*& )ptr, newPtr ); }
 
-	// atomically sets the pointer to 'newPtr' only if the previous pointer is equal to 'comparePtr'
-	// ptr = ( ptr == comparePtr ) ? newPtr : ptr
+	//! Atomically exchanges the pointer value only if it matches the expected value.
 	T* CompareExchange( T* comparePtr, T* newPtr ) { return ( T* )Sys_InterlockedCompareExchangePointer( ( void*& )ptr, comparePtr, newPtr ); }
 
-	// returns the current value of the pointer
+	//! Returns the current value of the pointer.
 	T* Get() const { return ptr; }
 
 private:
@@ -222,48 +235,58 @@ from the worker thread.
 Note that worker threads are useful on all platforms but they do not map to the SPUs on the PS3.
 ================================================
 */
+
+/*!
+	\class idSysThread
+	\brief Manages system threads with support for worker threads and thread synchronization.
+
+	The idSysThread class provides a cross-platform interface for creating and managing system threads. It supports both regular and worker threads, with methods to start, stop, and synchronize thread
+   execution. The class includes functionality to check thread state, retrieve thread handles, and manage thread work completion. Worker threads are designed to handle background tasks and are
+   particularly useful for offloading work from the main thread. The class handles thread lifecycle management including initialization, execution, and cleanup. Thread synchronization is supported
+   through signaling and waiting mechanisms. The implementation is designed to work across different platforms while maintaining consistent behavior for thread operations.
+
+*/
 class idSysThread
 {
 public:
+	//! Initializes a new instance of the idSysThread class.
 	idSysThread();
+
+	//! Destroys the system thread and ensures it is properly stopped.
 	virtual ~idSysThread();
 
+	//! Returns the name of the thread as a C-string.
 	const char* GetName() const { return name.c_str(); }
+
+	//! Returns the handle of the thread.
 	uintptr_t	GetThreadHandle() const { return threadHandle; }
+
+	//! Checks whether the system thread is currently running.
 	bool		IsRunning() const { return isRunning; }
+
+	//! Returns true if the thread is in the process of terminating.
 	bool		IsTerminating() const { return isTerminating; }
 
-	//------------------------
-	// Thread Start/Stop/Wait
-	//------------------------
-
+	//! Starts a new thread with the specified parameters.
 	bool		StartThread( const char* name, core_t core, xthreadPriority priority = THREAD_NORMAL, int stackSize = DEFAULT_THREAD_STACK_SIZE );
 
+	//! Starts a worker thread with the specified parameters and waits for it to initialize.
 	bool		StartWorkerThread( const char* name, core_t core, xthreadPriority priority = THREAD_NORMAL, int stackSize = DEFAULT_THREAD_STACK_SIZE );
 
+	//! Stops the system thread, with an optional wait for completion.
 	void		StopThread( bool wait = true );
 
-	// This can be called from multiple other threads. However, in the case
-	// of a worker thread, the work being "done" has little meaning if other
-	// threads are continuously signalling more work.
+	//! Waits for the thread to complete execution, either by signaling completion or by destroying the thread handle.
 	void		WaitForThread();
 
-	//------------------------
-	// Worker Thread
-	//------------------------
-
-	// Signals the thread to notify work is available.
-	// This can be called from multiple other threads.
+	//! Signals the thread to notify work is available and can be called from multiple other threads.
 	void		SignalWork();
 
-	// Returns true if the work is done without waiting.
-	// This can be called from multiple other threads. However, the work
-	// being "done" has little meaning if other threads are continuously
-	// signalling more work.
+	//! Returns true if the work is done without waiting.
 	bool		IsWorkDone();
 
 protected:
-	// The routine that performs the work.
+	//! Executes the thread's main routine and returns an integer result.
 	virtual int Run();
 
 private:
@@ -277,16 +300,18 @@ private:
 	idSysSignal	  signalMoreWorkToDo;
 	idSysMutex	  signalMutex;
 
+	//! Executes the thread's main routine and handles thread termination and exceptions.
 	static int	  ThreadProc( idSysThread* thread );
 
+	//! Constructs a new idSysThread object as a copy of an existing idSysThread object.
 	idSysThread( const idSysThread& s ) { }
+
+	//! Assigns the contents of another idSysThread object to this object.
 	void operator=( const idSysThread& s ) { }
 };
 
-/*
-================================================
-idSysWorkerThreadGroup implements a group of worker threads that
-typically crunch through a collection of similar tasks.
+/*! \class idSysWorkerThreadGroup
+	\brief idSysWorkerThreadGroup implements a group of worker threads that typically crunch through a collection of similar tasks.
 
 	class idMyWorkerThread : public idSysThread {
 	public:
@@ -306,23 +331,28 @@ typically crunch through a collection of similar tasks.
 		// use results from the worker threads here
 	}
 
-The concept of worker thread Groups is probably most useful for tools and compilers.
-For instance, the AAS Compiler is using a worker thread group. Although worker threads
-will work well on the PC, Mac and the 360, they do not directly map to the PS3,
-in that the worker threads won't automatically run on the SPUs.
-================================================
+	The concept of worker thread Groups is probably most useful for tools and compilers.
+	For instance, the AAS Compiler is using a worker thread group. Although worker threads
+	will work well on the PC, Mac and the 360, they do not directly map to the PS3,
+	in that the worker threads won't automatically run on the SPUs.
+
 */
 template<class threadType>
 class idSysWorkerThreadGroup
 {
 public:
+	//! Constructs a worker thread group with the specified name, number of threads, priority, and stack size.
 	idSysWorkerThreadGroup( const char* name, int numThreads, xthreadPriority priority = THREAD_NORMAL, int stackSize = DEFAULT_THREAD_STACK_SIZE );
 
 	virtual ~idSysWorkerThreadGroup();
 
+	//! Returns the number of threads in the worker thread group.
 	int			GetNumThreads() const { return threadList.Num(); }
+
+	//! Returns a reference to the thread at the specified index in the thread list.
 	threadType& GetThread( int i ) { return *threadList[i]; }
 
+	//! Signals work to worker threads and waits for their completion.
 	void		SignalWorkAndWait();
 
 private:
@@ -331,17 +361,14 @@ private:
 	bool							singleThreaded;		// set to true for debugging
 };
 
-/*
-========================
-idSysWorkerThreadGroup<threadType>::idSysWorkerThreadGroup
-========================
-*/
 template<class threadType>
 ID_INLINE idSysWorkerThreadGroup<threadType>::idSysWorkerThreadGroup( const char* name, int numThreads, xthreadPriority priority, int stackSize )
 {
 	runOneThreadInline = ( numThreads < 0 );
-	singleThreaded	   = false;
-	numThreads		   = abs( numThreads );
+
+	//! Constructs a worker thread group with the specified name, number of threads, priority, and stack size.
+	singleThreaded = false;
+	numThreads	   = abs( numThreads );
 	for( int i = 0; i < numThreads; i++ ) {
 		threadType* thread = new( TAG_THREAD ) threadType;
 		thread->StartWorkerThread( va( "%s_worker%i", name, i ), ( core_t )i, priority, stackSize );
@@ -349,22 +376,12 @@ ID_INLINE idSysWorkerThreadGroup<threadType>::idSysWorkerThreadGroup( const char
 	}
 }
 
-/*
-========================
-idSysWorkerThreadGroup<threadType>::~idSysWorkerThreadGroup
-========================
-*/
 template<class threadType>
 ID_INLINE idSysWorkerThreadGroup<threadType>::~idSysWorkerThreadGroup()
 {
 	threadList.DeleteContents();
 }
 
-/*
-========================
-idSysWorkerThreadGroup<threadType>::SignalWorkAndWait
-========================
-*/
 template<class threadType>
 ID_INLINE void idSysWorkerThreadGroup<threadType>::SignalWorkAndWait()
 {
@@ -383,11 +400,9 @@ ID_INLINE void idSysWorkerThreadGroup<threadType>::SignalWorkAndWait()
 	}
 }
 
-/*
-================================================
-idSysThreadSynchronizer, allows a group of threads to
-synchronize with each other half-way through execution.
-
+/*!
+	\class idSysThreadSynchronizer
+	\brief idSysThreadSynchronizer, allows a group of threads to synchronize with each other half-way through execution.
 	idSysThreadSynchronizer sync;
 
 	class idMyWorkerThread : public idSysThread {
@@ -414,16 +429,19 @@ synchronize with each other half-way through execution.
 		workers.SignalWorkAndWait();
 		// use results from the worker threads here
 	}
-
-================================================
 */
 class idSysThreadSynchronizer
 {
 public:
 	static const int WAIT_INFINITE = -1;
 
+	//! Sets the number of threads for the synchronizer.
 	ID_INLINE void	 SetNumThreads( unsigned int num );
+
+	//! Signals a thread synchronization event.
 	ID_INLINE void	 Signal( unsigned int threadNum );
+
+	//! Waits for a specific thread signal with an optional timeout.
 	ID_INLINE bool	 Synchronize( unsigned int threadNum, int timeout = WAIT_INFINITE );
 
 private:
@@ -431,11 +449,6 @@ private:
 	idSysInterlockedInteger			 busyCount;
 };
 
-/*
-========================
-idSysThreadSynchronizer::SetNumThreads
-========================
-*/
 ID_INLINE void idSysThreadSynchronizer::SetNumThreads( unsigned int num )
 {
 	assert( busyCount.GetValue() == signals.Num() );
@@ -450,11 +463,6 @@ ID_INLINE void idSysThreadSynchronizer::SetNumThreads( unsigned int num )
 	}
 }
 
-/*
-========================
-idSysThreadSynchronizer::Signal
-========================
-*/
 ID_INLINE void idSysThreadSynchronizer::Signal( unsigned int threadNum )
 {
 	if( busyCount.Decrement() == 0 ) {
@@ -466,11 +474,6 @@ ID_INLINE void idSysThreadSynchronizer::Signal( unsigned int threadNum )
 	}
 }
 
-/*
-========================
-idSysThreadSynchronizer::Synchronize
-========================
-*/
 ID_INLINE bool idSysThreadSynchronizer::Synchronize( unsigned int threadNum, int timeout )
 {
 	return signals[threadNum]->Wait( timeout );

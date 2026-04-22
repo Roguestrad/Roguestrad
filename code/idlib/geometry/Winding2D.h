@@ -40,51 +40,102 @@ If you have questions concerning this license or the applicable additional terms
 
 #define MAX_POINTS_ON_WINDING_2D 16
 
+/*!
+	\class idWinding2D
+	\brief Represents a 2D winding structure for polygonal shapes with various geometric operations.
+
+	The idWinding2D class encapsulates a polygonal winding in 2D space, providing functionality for manipulation, geometric calculations, and spatial operations. It supports basic operations like
+   adding points, clearing contents, and accessing vertices by index. The class offers methods for computing geometric properties such as area, center, and bounds, as well as advanced operations like
+   clipping, splitting, and intersection detection. It can expand windings, check if they are tiny or huge, and determine spatial relationships with planes and points. The winding maintains an
+   internal array of vertices and provides both const and non-const access to these vertices. Memory management is handled through copy and reverse operations that create new instances, while
+   assignment and direct access maintain the existing object's state. The class is designed for efficient 2D polygonal operations commonly used in geometric algorithms and spatial partitioning.
+
+*/
 class idWinding2D
 {
 public:
+	//! Initializes an empty winding object.
 	idWinding2D();
 
+	//! Assigns the contents of another winding to this winding.
 	idWinding2D&  operator=( const idWinding2D& winding );
+
+	//! Returns a const reference to the idVec2 element at the specified index in the winding
 	const idVec2& operator[]( const int index ) const;
+
+	//! Provides indexed access to the vertices of the winding.
 	idVec2&		  operator[]( const int index );
 
+	//! Clears the winding by setting the number of points to zero.
 	void		  Clear();
+
+	//! Adds a point to the winding
 	void		  AddPoint( const idVec2& point );
+
+	//! Returns the number of points in the winding.
 	int			  GetNumPoints() const;
 
+	//! Expands the winding by the specified distance in all directions.
 	void		  Expand( const float d );
+
+	//! Expands the winding to fit within the given axial bounding box.
 	void		  ExpandForAxialBox( const idVec2 bounds[2] );
 
-	// splits the winding into a front and back winding, the winding itself stays unchanged
-	// returns a SIDE_?
+	//! Splits the winding into front and back portions based on a clipping plane and returns which side the winding falls on.
 	int			  Split( const idVec3& plane, const float epsilon, idWinding2D** front, idWinding2D** back ) const;
 
-	// cuts off the part at the back side of the plane, returns true if some part was at the front
-	// if there is nothing at the front the number of points is set to zero
+	//! Clips the winding by a plane and returns true if any part remains on the front side
 	bool		  ClipInPlace( const idVec3& plane, const float epsilon = ON_EPSILON, const bool keepOn = false );
 
+	//! Creates a copy of the winding object
 	idWinding2D*  Copy() const;
+
+	//! Creates and returns a new winding with the same points but in reverse order.
 	idWinding2D*  Reverse() const;
 
+	//! Returns the area of the 2D winding by calculating the signed area using the cross product method.
 	float		  GetArea() const;
+
+	//! Calculates and returns the center point of the winding by averaging all vertex coordinates.
 	idVec2		  GetCenter() const;
+
+	//! Returns the radius of the winding from the given center point
 	float		  GetRadius( const idVec2& center ) const;
+
+	//! Computes and returns the bounding box of the 2D winding in the provided array.
 	void		  GetBounds( idVec2 bounds[2] ) const;
 
+	//! Returns true if the winding has less than three edges with significant length
 	bool		  IsTiny() const;
-	bool		  IsHuge() const; // base winding for a plane is typically huge
+
+	//! Checks if any point in the winding is outside the valid world coordinate range
+	bool		  IsHuge() const;
+
+	//! Prints the 2D winding points to the console
 	void		  Print() const;
 
+	//! Returns the distance from the winding to a plane
 	float		  PlaneDistance( const idVec3& plane ) const;
+
+	//! Determines on which side of a plane the winding lies, considering an epsilon tolerance for floating-point comparisons.
 	int			  PlaneSide( const idVec3& plane, const float epsilon = ON_EPSILON ) const;
 
+	//! Determines if a given point is inside the 2D winding, considering an epsilon tolerance for floating-point comparisons.
 	bool		  PointInside( const idVec2& point, const float epsilon ) const;
+
+	//! Checks if a line segment intersects with the winding
 	bool		  LineIntersection( const idVec2& start, const idVec2& end ) const;
+
+	//! Checks if a ray intersects with the 2D winding and calculates intersection parameters
 	bool		  RayIntersection( const idVec2& start, const idVec2& dir, float& scale1, float& scale2, int* edgeNums = NULL ) const;
 
+	//! Computes a 2D plane equation from two 2D points.
 	static idVec3 Plane2DFromPoints( const idVec2& start, const idVec2& end, const bool normalize = false );
+
+	//! Returns the plane equation for a 2D line defined by a start point and direction vector.
 	static idVec3 Plane2DFromVecs( const idVec2& start, const idVec2& dir, const bool normalize = false );
+
+	//! Calculates the intersection point of two 2D planes represented by idVec3 structures.
 	static bool	  Plane2DIntersection( const idVec3& plane1, const idVec3& plane2, idVec2& point );
 
 private:

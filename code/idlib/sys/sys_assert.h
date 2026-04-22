@@ -37,6 +37,7 @@ Getting assert() to work as we want on all platforms and code analysis tools can
 ================================================================================================
 */
 
+//! Handles assertion failure by displaying a warning and optionally breaking into the debugger.
 bool AssertFailed( const char* file, int line, const char* expression );
 
 // tell PC-Lint that assert failed won't return, which means it can assume the conditions

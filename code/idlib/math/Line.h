@@ -16,9 +16,10 @@ Project: The Dark Mod (http://www.thedarkmod.com/)
 #ifndef __MATH_LINE_H__
 #define __MATH_LINE_H__
 
-// returns (1/dx, 1/dy, 1/dz) vector for movement
+//! Returns the inverse of the movement velocity vector between two points.
 idVec3 GetInverseMovementVelocity( const idVec3& start, const idVec3& end );
 
+//! Determines if a moving bounding box intersects with a static bounding box and calculates the intersection parameter range.
 bool   MovingBoundsIntersectBounds(
 	  // moving bounds: center for t = 0, velocity for t = [0..1], extent
 	  const idVec3&	  startPosition,

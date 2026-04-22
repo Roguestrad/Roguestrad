@@ -71,9 +71,14 @@ struct gltf_accessor_component_type_map {
 	uint  sizeInBytes; // single element
 };
 
+/*!
+	\class gltfExtra
+	\brief A class for handling extra data in glTF format.
+*/
 class gltfExtra
 {
 public:
+	//! Constructs a new gltfExtra object.
 	gltfExtra() { }
 	// entire extra json scope
 	idStr  json;
@@ -82,22 +87,37 @@ public:
 };
 
 class gltfExt_KHR_lights_punctual;
+
+/*!
+	\class gltfExtensions
+	\brief A class for handling glTF extensions.
+*/
 class gltfExtensions
 {
 public:
+	//! Default constructor for gltfExtensions.
 	gltfExtensions() { }
 	idList<gltfExt_KHR_lights_punctual*> KHR_lights_punctual;
 };
 
+/*!
+	\class gltfNode_KHR_lights_punctual
+	\brief This class represents a node with punctual light information in a glTF asset.
+*/
 class gltfNode_KHR_lights_punctual
 {
 public:
 	int light;
 };
 
+/*!
+	\class gltfNode_Extensions
+	\brief A class for managing extensions in GLTF node data.
+*/
 class gltfNode_Extensions
 {
 public:
+	//! Initializes a gltfNode_Extensions object with default values.
 	gltfNode_Extensions() :
 		KHR_lights_punctual( nullptr )
 	{
@@ -106,9 +126,15 @@ public:
 };
 
 class gltfExt_KHR_materials_pbrSpecularGlossiness;
+
+/*!
+	\class gltfMaterial_Extensions
+	\brief A class for handling GLTF material extensions.
+*/
 class gltfMaterial_Extensions
 {
 public:
+	//! Constructs a gltfMaterial_Extensions object with default values.
 	gltfMaterial_Extensions() :
 		KHR_materials_pbrSpecularGlossiness( nullptr )
 	{
@@ -116,9 +142,14 @@ public:
 	gltfExt_KHR_materials_pbrSpecularGlossiness* KHR_materials_pbrSpecularGlossiness;
 };
 
+/*!
+	\class gltfNode
+	\brief A class representing a node in a glTF file structure.
+*/
 class gltfNode
 {
 public:
+	//! Initializes a new gltfNode object with default values.
 	gltfNode() :
 		camera( -1 ),
 		skin( -1 ),
@@ -131,7 +162,8 @@ public:
 		dirty( true )
 	{
 	}
-	// Only checks name!
+
+	//! Compares two gltfNode objects for equality based only on their name member.
 	bool				operator==( const gltfNode& rhs ) { return name == rhs.name; }
 	int					camera;
 	idList<int>			children;
@@ -156,9 +188,14 @@ struct gltfCameraNodePtrs {
 	gltfNode* orientationNode = nullptr;
 };
 
+/*!
+	\class gltfScene
+	\brief A class for managing and organizing 3D scene data imported from glTF files.
+*/
 class gltfScene
 {
 public:
+	//! Constructs a new gltfScene object with default initialization.
 	gltfScene() { }
 	idList<int> nodes;
 	idStr		name;
@@ -166,6 +203,10 @@ public:
 	gltfExtra	extras;
 };
 
+/*!
+	\class gltfMesh_Primitive_Attribute
+	\brief A class representing a mesh primitive attribute in a glTF file.
+*/
 class gltfMesh_Primitive_Attribute
 {
 public:
@@ -190,6 +231,7 @@ public:
 		Count
 	};
 
+	//! Constructs a gltfMesh_Primitive_Attribute object with default values.
 	gltfMesh_Primitive_Attribute() :
 		accessorIndex( -1 ),
 		elementSize( 0 ),
@@ -209,9 +251,14 @@ struct gltf_mesh_attribute_map {
 	uint							   elementSize;
 };
 
+/*!
+	\class gltfMesh_Primitive
+	\brief A class representing a primitive element within a glTF mesh.
+*/
 class gltfMesh_Primitive
 {
 public:
+	//! Initializes a new instance of the gltfMesh_Primitive class with default values for indices, material, and mode.
 	gltfMesh_Primitive() :
 		indices( -1 ),
 		material( -1 ),
@@ -227,6 +274,10 @@ public:
 	gltfExtra							  extras;
 };
 
+/*!
+	\class gltfMesh
+	\brief A class representing a mesh data structure for GLTF format.
+*/
 class gltfMesh
 {
 public:
@@ -239,6 +290,10 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfCamera_Orthographic
+	\brief A structure for representing orthographic camera parameters in GLTF format.
+*/
 class gltfCamera_Orthographic
 {
 public:
@@ -255,6 +310,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfCamera_Perspective
+	\brief Represents a perspective camera configuration for GLTF model loading.
+*/
 class gltfCamera_Perspective
 {
 public:
@@ -271,6 +330,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfCamera
+	\brief A class representing a camera within a glTF scene.
+*/
 class gltfCamera
 {
 public:
@@ -283,6 +346,10 @@ public:
 	gltfExtra				extras;
 };
 
+/*!
+	\class gltfAnimation_Channel_Target
+	\brief Represents the target of an animation channel in a glTF file.
+*/
 class gltfAnimation_Channel_Target
 {
 public:
@@ -298,6 +365,7 @@ public:
 
 	gltfTRS		   TRS;
 
+	//! Resolves a string type to its corresponding gltfTRS enum value.
 	static gltfTRS resolveType( idStr type )
 	{
 		if( type == "translation" ) {
@@ -313,6 +381,10 @@ public:
 	}
 };
 
+/*!
+	\class gltfAnimation_Channel
+	\brief Represents a channel in a glTF animation, defining how a specific property of an animation target is animated.
+*/
 class gltfAnimation_Channel
 {
 public:
@@ -324,6 +396,10 @@ public:
 	gltfExtra					 extras;
 };
 
+/*!
+	\class gltfAnimation_Sampler
+	\brief Provides functionality for handling animation samplers in GLTF files.
+*/
 class gltfAnimation_Sampler
 {
 public:
@@ -342,6 +418,7 @@ public:
 
 	gltfInterpType		  intType;
 
+	//! Resolves a string type to its corresponding gltfInterpType enumeration value.
 	static gltfInterpType resolveType( idStr type )
 	{
 		if( type == "LINEAR" ) {
@@ -355,6 +432,15 @@ public:
 	}
 };
 
+/*!
+	\class gltfAnimation
+	\brief A class representing a glTF animation with limited support for animation data extraction.
+
+	This class provides a representation of glTF animations and supports basic frame counting functionality. It is designed to handle animation data from glTF files, though it does not support
+   extracting bounds, origin, or rotation information from the animation. The class maintains reference counts for memory management purposes, with methods to increase and decrease these counts. The
+   animation data is expected to be used primarily for frame-based operations, with other animation properties intentionally left unsupported.
+
+*/
 class gltfAnimation
 {
 public:
@@ -374,12 +460,24 @@ public:
 	int							   numFrames;
 	void						   DecreaseRefs() const { ref_count--; };
 	void						   IncreaseRefs() const { ref_count++; };
+
+	//! Returns false indicating that getting bounds is not supported.
 	bool						   GetBounds( idBounds& bnds, int time, int cyclecount ) const { return false; }
+
+	//! Returns false indicating that getting the origin rotation is not supported.
 	bool						   GetOriginRotation( idQuat& rotation, int time, int cyclecount ) const { return false; }
+
+	//! Returns false, indicating that getting the origin for a glTF animation is not supported or implemented.
 	bool						   GetOrigin( idVec3& offset, int time, int cyclecount ) const { return false; }
+
+	//! Returns the total number of frames in the animation.
 	int							   NumFrames() const { return numFrames; }
 };
 
+/*!
+	\class gltfAccessor_Sparse_Values
+	\brief A class representing sparse values in a glTF accessor.
+*/
 class gltfAccessor_Sparse_Values
 {
 public:
@@ -392,6 +490,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfAccessor_Sparse_Indices
+	\brief A class representing the indices component of sparse accessor data in GLTF format.
+*/
 class gltfAccessor_Sparse_Indices
 {
 public:
@@ -406,6 +508,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfAccessor_Sparse
+	\brief A class representing sparse accessors for GLTF data.
+*/
 class gltfAccessor_Sparse
 {
 public:
@@ -418,9 +524,14 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfAccessor
+	\brief A class for handling GLTF accessor data structures.
+*/
 class gltfAccessor
 {
 public:
+	//! Initializes a gltfAccessor object with default values.
 	gltfAccessor() :
 		bufferView( -1 ),
 		byteOffset( 0 ),
@@ -454,6 +565,10 @@ public:
 	idList<idMat4>*		matView;
 };
 
+/*!
+	\class gltfBufferView
+	\brief A class representing a buffer view in a glTF file.
+*/
 class gltfBufferView
 {
 public:
@@ -475,6 +590,10 @@ public:
 	gltfData* parent;
 };
 
+/*!
+	\class gltfBuffer
+	\brief A class representing a buffer for storing and managing GLTF data.
+*/
 class gltfBuffer
 {
 public:
@@ -490,6 +609,10 @@ public:
 	gltfData* parent;
 };
 
+/*!
+	\class gltfSampler
+	\brief A class representing a texture sampler configuration for glTF assets.
+*/
 class gltfSampler
 {
 public:
@@ -509,9 +632,14 @@ public:
 	uint	  bgfxSamplerFlags;
 };
 
+/*!
+	\class gltfImage
+	\brief A class for handling glTF image data.
+*/
 class gltfImage
 {
 public:
+	//! Constructs a gltfImage object with default values.
 	gltfImage() :
 		bufferView( -1 )
 	{
@@ -524,6 +652,10 @@ public:
 	gltfExtra extras;
 };
 
+/*!
+	\class gltfSkin
+	\brief A class for handling skinning data from GLTF files.
+*/
 class gltfSkin
 {
 public:
@@ -540,9 +672,15 @@ public:
 };
 
 class gltfExt_KHR_texture_transform;
+
+/*!
+	\class gltfTexture_Info_Extensions
+	\brief A class representing texture information extensions for GLTF assets.
+*/
 class gltfTexture_Info_Extensions
 {
 public:
+	//! Default constructor for gltfTexture_Info_Extensions that initializes the KHR_texture_transform member to nullptr.
 	gltfTexture_Info_Extensions() :
 		KHR_texture_transform( nullptr )
 	{
@@ -550,9 +688,14 @@ public:
 	gltfExt_KHR_texture_transform* KHR_texture_transform;
 };
 
+/*!
+	\class gltfOcclusionTexture_Info
+	\brief Manages information about occlusion textures used in GLTF models.
+*/
 class gltfOcclusionTexture_Info
 {
 public:
+	//! Initializes a gltfOcclusionTexture_Info object with default values.
 	gltfOcclusionTexture_Info() :
 		index( -1 ),
 		texCoord( 0 ),
@@ -566,9 +709,14 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfNormalTexture_Info
+	\brief A structure for storing normal texture information from GLTF assets.
+*/
 class gltfNormalTexture_Info
 {
 public:
+	//! Initializes a gltfNormalTexture_Info object with default values for index, texCoord, and scale.
 	gltfNormalTexture_Info() :
 		index( -1 ),
 		texCoord( 0 ),
@@ -582,9 +730,14 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfTexture_Info
+	\brief A structure for storing texture information within a glTF file.
+*/
 class gltfTexture_Info
 {
 public:
+	//! Initializes a gltfTexture_Info object with default values.
 	gltfTexture_Info() :
 		index( -1 ),
 		texCoord( 0 )
@@ -596,9 +749,14 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfTexture
+	\brief A class representing a texture element within a GLTF asset.
+*/
 class gltfTexture
 {
 public:
+	//! Initializes a gltfTexture object with default sampler and source values.
 	gltfTexture() :
 		sampler( -1 ),
 		source( -1 )
@@ -611,9 +769,14 @@ public:
 	gltfExtra					extras;
 };
 
+/*!
+	\class gltfMaterial_pbrMetallicRoughness
+	\brief Represents a physically based rendering material with metallic-roughness workflow.
+*/
 class gltfMaterial_pbrMetallicRoughness
 {
 public:
+	//! Constructs a new gltfMaterial_pbrMetallicRoughness object with default values.
 	gltfMaterial_pbrMetallicRoughness() :
 		baseColorFactor( vec4_one ),
 		metallicFactor( 1.0f ),
@@ -629,11 +792,16 @@ public:
 	gltfExtra		 extras;
 };
 
+/*!
+	\class gltfMaterial
+	\brief A class representing a material definition for glTF assets.
+*/
 class gltfMaterial
 {
 public:
 	enum gltfAlphaMode { gltfOPAQUE, gltfMASK, gltfBLEND, count };
 
+	//! Initializes a gltfMaterial object with default values.
 	gltfMaterial() :
 		emissiveFactor( vec3_zero ),
 		alphaMode( "OPAQUE" ),
@@ -655,6 +823,7 @@ public:
 
 	gltfAlphaMode					  intType;
 
+	//! Resolves a glTF alpha mode from a string type.
 	static gltfAlphaMode			  resolveAlphaMode( idStr type )
 	{
 		if( type == "OPAQUE" ) {
@@ -668,9 +837,14 @@ public:
 	}
 };
 
+/*!
+	\class gltfAsset
+	\brief The gltfAsset class represents and manages a GLTF asset for 3D model loading and rendering.
+*/
 class gltfAsset
 {
 public:
+	//! Constructs a new gltfAsset object.
 	gltfAsset() { }
 	idStr	  copyright;
 	idStr	  generator;
@@ -680,20 +854,26 @@ public:
 	gltfExtra extras;
 };
 
-// this is not used.
-// if an extension is found, it _will_ be used. (if implemented)
+/*!
+	\class gltfExtensionsUsed
+	\brief A class representing GLTF extensions that are used in the asset pipeline.
+*/
 class gltfExtensionsUsed
 {
 public:
+	//! Constructor for gltfExtensionsUsed class.
 	gltfExtensionsUsed() { }
 	idStr extension;
 };
 
-// ARCHIVED?
-// https://github.com/KhronosGroup/glTF/tree/main/extensions/2.0/Archived/KHR_materials_pbrSpecularGlossiness
+/*!
+	\class gltfExt_KHR_materials_pbrSpecularGlossiness
+	\brief Provides support for theKHR materials pbr specular glossiness extension in glTF assets.
+*/
 class gltfExt_KHR_materials_pbrSpecularGlossiness
 {
 public:
+	//! Constructs a new gltfExt_KHR_materials_pbrSpecularGlossiness object with default values.
 	gltfExt_KHR_materials_pbrSpecularGlossiness() { }
 	idVec4			 diffuseFactor;
 	gltfTexture_Info diffuseTexture;
@@ -704,11 +884,14 @@ public:
 	gltfExtra		 extras;
 };
 
-// KHR_lights_punctual_spot
-// https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_lights_punctual/schema/light.spot.schema.json
+/*!
+	\class gltfExt_KHR_lights_punctual_spot
+	\brief A structure representing a spot light extension for glTF lighting.
+*/
 class gltfExt_KHR_lights_punctual_spot
 {
 public:
+	//! Initializes a new instance of the gltfExt_KHR_lights_punctual_spot structure with default inner and outer cone angles.
 	gltfExt_KHR_lights_punctual_spot() :
 		innerConeAngle( 0.0f ),
 		outerConeAngle( idMath::ONEFOURTH_PI )
@@ -720,12 +903,16 @@ public:
 	gltfExtra extras;
 };
 
-// KHR_lights_punctual
-// https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_lights_punctual/schema/light.schema.json
+/*!
+	\class gltfExt_KHR_lights_punctual
+	\brief Represents a punctual light definition compatible with the KHR_lights_punctual extension.
+*/
 class gltfExt_KHR_lights_punctual
 {
 public:
 	enum Type { Directional, Point, Spot, count };
+
+	//! Initializes a gltfExt_KHR_lights_punctual object with default values for color, intensity, range, and light type.
 	gltfExt_KHR_lights_punctual() :
 		color( vec3_one ),
 		intensity( 1.0f ),
@@ -744,6 +931,7 @@ public:
 
 	int								 intType;
 
+	//! Resolves a string representation of a light type into its corresponding enumeration value.
 	static Type						 resolveType( idStr type )
 	{
 		if( type == "directional" ) {
@@ -757,11 +945,14 @@ public:
 	}
 };
 
-// KHR_texture_transform
-// https://github.com/KhronosGroup/glTF/blob/main/extensions/2.0/Khronos/KHR_texture_transform/schema/KHR_texture_transform.textureInfo.schema.json
+/*!
+	\class gltfExt_KHR_texture_transform
+	\brief Provides texture transformation functionality for glTF files.
+*/
 class gltfExt_KHR_texture_transform
 {
 public:
+	//! Initializes a new instance of the gltfExt_KHR_texture_transform class with default values.
 	gltfExt_KHR_texture_transform() :
 		offset( vec2_zero ),
 		rotation( 0.0f ),
@@ -783,11 +974,16 @@ public:
 	bool	  resolved;
 };
 
-// URI's are resolved during parsing so that
-// all data should be layed out like an GLB with multiple bin chunks
-// EACH URI will have an unique chunk
-// JSON chunk MUST be the first one to be allocated/added
+/*!
+	\class gltfData
+	\brief Manages GLTF data parsing, storage, and retrieval for 3D assets.
 
+	This class serves as a central manager for GLTF asset data, handling parsing, storage, and retrieval of various GLTF components such as scenes, nodes, meshes, cameras, materials, animations, and
+   skins. It maintains lists of different GLTF elements and provides methods to access and manipulate them. The class supports both loading and creating GLTF data from files, with mechanisms to
+   resolve URI references during parsing. It includes functionality for managing buffer data, accessors, samplers, and other GLTF structures. The design supports hierarchical node traversal, animation
+   target resolution, and efficient data access patterns for 3D rendering.
+
+*/
 class gltfData
 {
 public:
@@ -797,25 +993,40 @@ public:
 		json( nullptr ),
 		data( nullptr ),
 		totalChunks( -1 ) {};
+
+	//! Destructor for gltfData that frees allocated memory and clears data.
 	~gltfData();
+
+	//! Allocates and returns a pointer to a memory buffer of specified size for GLTF data
 	byte* AddData( int size, int* bufferID = nullptr );
+
+	//! Returns the JSON data and size of the glTF file.
 	byte* GetJsonData( int& size )
 	{
 		size = jsonDataLength;
 		return json;
 	}
+
+	//! Returns a pointer to the data at the specified index.
 	byte* GetData( int index ) { return data[index]; }
+
+	//! Sets the file name and its hash for the glTF data.
 	void  FileName( const idStr& file, int hash )
 	{
 		fileName	 = file;
 		fileNameHash = hash;
 	}
+
+	//! Returns the hash value of the file name.
 	int						 FileNameHash() { return fileNameHash; }
+
+	//! Returns a reference to the file name string.
 	idStr&					 FileName() { return fileName; }
 
 	static idHashIndex		 fileDataHash;
 	static idList<gltfData*> dataList;
-	// add data for filename
+
+	//! Retrieves or creates glTF data for the specified file name.
 	static gltfData*		 Data( idStr& fileName, bool create = false )
 	{
 		static bool intialized = false;
@@ -837,15 +1048,14 @@ public:
 
 		return dataList[index];
 	}
+
+	//! Returns a constant reference to the global list of glTF data objects.
 	static const idList<gltfData*>& DataList() { return dataList; }
 
+	//! Clears GLTF data associated with the specified file name.
 	static void						ClearData( idStr& fileName );
 
-	// return the GLTF nodes that control the given camera
-	// return TRUE if the camera uses 2 nodes (like when blender exports gltfs with +Y..)
-	// This is determined by checking for an "_Orientation" suffix to the camera name of the node that has the target camera assigned.
-	//  if so, translate node will be set to the parent node of the orientation node.
-	// Note: does not take overides into account!
+	//! Returns the GLTF node that controls the specified camera.
 	gltfNode*						GetCameraNodes( gltfCamera* camera )
 	{
 		gltfCameraNodePtrs result;
@@ -864,6 +1074,7 @@ public:
 		return nullptr;
 	}
 
+	//! Retrieves a node from a scene that is associated with a specific mesh, optionally returning the node's index.
 	gltfNode* GetNode( gltfScene* scene, gltfMesh* mesh, int* id = nullptr )
 	{
 		assert( scene );
@@ -887,6 +1098,7 @@ public:
 		return nullptr;
 	}
 
+	//! Retrieves a glTF node by scene name and ID, optionally returning the node's name
 	gltfNode* GetNode( const idStr& sceneName, int id, idStr* name = nullptr )
 	{
 		int sceneId = GetSceneId( sceneName );
@@ -909,6 +1121,7 @@ public:
 		return nullptr;
 	}
 
+	//! Retrieves a node from the glTF data by its name, with optional ID retrieval and case sensitivity control
 	gltfNode* GetNode( const idStr& name, int* id = nullptr, bool caseSensitive = false )
 	{
 		assert( name[0] );
@@ -926,6 +1139,7 @@ public:
 		return nullptr;
 	}
 
+	//! Retrieves a mesh node from the glTF data by its name, with optional ID retrieval and case sensitivity.
 	gltfNode* GetMeshNode( const idStr& meshName, int* id = nullptr, bool caseSensitive = false )
 	{
 		int nodeCnt = 0;
@@ -941,6 +1155,7 @@ public:
 		return nullptr;
 	}
 
+	//! Retrieves a node from a specified scene by name, with optional case sensitivity and ID retrieval
 	gltfNode* GetNode( const idStr& sceneName, const idStr& name, int* id = nullptr, bool caseSensitive = false )
 	{
 		int sceneId = GetSceneId( sceneName );
@@ -963,6 +1178,7 @@ public:
 		return nullptr;
 	}
 
+	//! Returns the index of the specified node in the glTF data's node list
 	int GetNodeIndex( gltfNode* node )
 	{
 		int index = -1;
@@ -973,6 +1189,7 @@ public:
 		return -1;
 	}
 
+	//! Checks if an animation exists for the specified node ID.
 	bool HasAnimation( int nodeID )
 	{
 		for( auto anim : animations ) {
@@ -983,6 +1200,7 @@ public:
 		return false;
 	}
 
+	//! Returns a pointer to the animation with the specified name from the glTF data
 	gltfAnimation* GetAnimation( const idStr& animName )
 	{
 		for( auto* anim : animations ) {
@@ -991,6 +1209,7 @@ public:
 		return nullptr;
 	}
 
+	//! Retrieves a GLTF animation by name that targets the specified node.
 	gltfAnimation* GetAnimation( const idStr& animName, int target )
 	{
 		for( auto* anim : animations ) {
@@ -1008,6 +1227,7 @@ public:
 		return nullptr;
 	}
 
+	//! Returns the index of the scene with the specified name, or -1 if not found.
 	int GetSceneId( const idStr& sceneName, gltfScene* result = nullptr ) const
 	{
 		for( int i = 0; i < scenes.Num(); i++ ) {
@@ -1020,6 +1240,7 @@ public:
 		return -1;
 	}
 
+	//! Collects all unique mesh IDs from a GLTF node and its child nodes.
 	void GetAllMeshes( gltfNode* node, idList<int>& meshIds )
 	{
 		if( node->mesh != -1 ) { meshIds.AddUnique( GetNodeIndex( node ) ); }
@@ -1029,6 +1250,7 @@ public:
 		}
 	}
 
+	//! Populates the provided list with IDs of all mesh nodes.
 	void GetAllMeshes( idList<int>& meshIds )
 	{
 		for( int i = 0; i < nodes.Num(); i++ ) {
@@ -1038,6 +1260,7 @@ public:
 		}
 	}
 
+	//! Collects all mesh IDs from skinned nodes in the GLTF hierarchy starting from the given node.
 	void GetAllSkinnedMeshes( gltfNode* node, idList<int>& meshIds )
 	{
 		if( node->mesh != -1 && node->skin != -1 ) { meshIds.AddUnique( GetNodeIndex( node ) ); }
@@ -1047,6 +1270,7 @@ public:
 		}
 	}
 
+	//! Collects all mesh IDs that are skinned by the specified skin into the provided list.
 	void GetAllSkinnedMeshes( gltfSkin* skin, idList<int>& meshIds )
 	{
 		for( int i = 0; i < nodes.Num(); i++ ) {
@@ -1060,6 +1284,7 @@ public:
 		}
 	}
 
+	//! Retrieves the indices of all skinned meshes from the glTF data.
 	void GetAllSkinnedMeshes( idList<int>& meshIds )
 	{
 		for( int i = 0; i < nodes.Num(); i++ ) {
@@ -1069,6 +1294,7 @@ public:
 		}
 	}
 
+	//! Returns a skin from the glTF data by its name
 	gltfSkin* GetSkin( const idStr& name )
 	{
 		for( auto skin : skins ) {
@@ -1078,6 +1304,7 @@ public:
 		return nullptr;
 	}
 
+	//! Returns the skin associated with the specified bone node ID, or nullptr if no such skin exists.
 	gltfSkin* GetSkin( int boneNodeId )
 	{
 		for( auto skin : skins ) {
@@ -1087,6 +1314,7 @@ public:
 		return nullptr;
 	}
 
+	//! Retrieves the skin associated with the given animation by checking its target nodes
 	gltfSkin* GetSkin( gltfAnimation* anim )
 	{
 		auto animTargets = GetAnimTargets( anim );
@@ -1101,6 +1329,7 @@ public:
 		return nullptr;
 	}
 
+	//! Returns a list of unique node indices targeted by the specified animation channels.
 	idList<int> GetAnimTargets( gltfAnimation* anim ) const
 	{
 		idList<int> result;
@@ -1112,6 +1341,7 @@ public:
 		return result;
 	}
 
+	//! Returns a list of channel IDs from the specified animation that target the given node.
 	idList<int> GetChannelIds( gltfAnimation* anim, gltfNode* node ) const
 	{
 		idList<int> result;
@@ -1128,6 +1358,7 @@ public:
 		return result;
 	}
 
+	//! Retrieves the animation IDs associated with a given GLTF node and its children
 	int GetAnimationIds( gltfNode* node, idList<int>& result )
 	{
 		int animIdx = 0;
@@ -1148,6 +1379,7 @@ public:
 		return result.Num();
 	}
 
+	//! Returns the view matrix for a specified camera ID by traversing the node hierarchy and accumulating transformations.
 	idMat4 GetViewMatrix( int camId ) const
 	{
 		// if (cameraManager->HasOverideID(camId) )
@@ -1180,7 +1412,7 @@ public:
 		return result;
 	}
 
-	// Please note : assumes all nodes are _not_ dirty!
+	//! Returns the transformation matrix for a light node in the GLTF hierarchy.
 	idMat4 GetLightMatrix( int lightId ) const
 	{
 		idMat4			  result = mat4_identity;
@@ -1207,12 +1439,7 @@ public:
 		return result;
 	}
 
-	// v * T * R * S. ->row major
-	// v' = S * R * T * v -> column major;
-	// bgfx = column-major
-	// idmath = row major, except mat3
-	// gltf matrices : column-major.
-	// if mat* is valid , it will be multplied by this node's matrix that is resolved in its full hiararchy and stops at root.
+	//! Resolves the transformation matrix for a GLTF node and its hierarchy
 	static void ResolveNodeMatrix( gltfNode* node, idMat4* mat = nullptr, gltfNode* root = nullptr )
 	{
 		if( node->dirty ) {
@@ -1242,9 +1469,7 @@ public:
 		}
 	}
 
-	// void Advance( gltfAnimation* anim = nullptr );
-
-	// this copies the data and view cached on the accessor
+	//! Returns a cached view of the float data contained in the specified GLTF accessor
 	template<class T>
 	idList<T*>&		GetAccessorView( gltfAccessor* accessor );
 	idList<float>&	GetAccessorView( gltfAccessor* accessor );
@@ -1252,113 +1477,154 @@ public:
 
 	int&			DefaultScene() { return scene; }
 
-	//#define GLTFCACHEITEM(name,target) \
-//gltf##name * name () { target.AssureSizeAlloc( target.Num()+1,idListNewElement<gltf##name>); return target[target.Num()-1];} \
-//const inline idList<gltf##name*> & ##name##List() { return target; }
-
+	//! Returns a pointer to the newly added buffer in the gltfData object.
 	gltfBuffer*		Buffer()
 	{
 		buffers.AssureSizeAlloc( buffers.Num() + 1, idListNewElement<gltfBuffer> );
 		return buffers[buffers.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of glTF buffers.
 	const inline idList<gltfBuffer*>& BufferList() { return buffers; }
 
+	//! Returns a pointer to the next available gltfSampler in the samplers list.
 	gltfSampler*					  Sampler()
 	{
 		samplers.AssureSizeAlloc( samplers.Num() + 1, idListNewElement<gltfSampler> );
 		return samplers[samplers.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of samplers in the glTF data.
 	const inline idList<gltfSampler*>& SamplerList() { return samplers; }
 
+	//! Returns a pointer to the last buffer view in the buffer views list.
 	gltfBufferView*					   BufferView()
 	{
 		bufferViews.AssureSizeAlloc( bufferViews.Num() + 1, idListNewElement<gltfBufferView> );
 		return bufferViews[bufferViews.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of buffer views in the glTF data.
 	const inline idList<gltfBufferView*>& BufferViewList() { return bufferViews; }
 
+	//! Returns a pointer to the last image in the images list, ensuring the list has enough capacity.
 	gltfImage*							  Image()
 	{
 		images.AssureSizeAlloc( images.Num() + 1, idListNewElement<gltfImage> );
 		return images[images.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of images in the glTF data.
 	const inline idList<gltfImage*>& ImageList() { return images; }
 
+	//! Returns a pointer to a newly allocated texture element from the textures list.
 	gltfTexture*					 Texture()
 	{
 		textures.AssureSizeAlloc( textures.Num() + 1, idListNewElement<gltfTexture> );
 		return textures[textures.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of textures in the glTF data.
 	const inline idList<gltfTexture*>& TextureList() { return textures; }
 
+	//! Returns a pointer to a newly created gltfAccessor object.
 	gltfAccessor*					   Accessor()
 	{
 		accessors.AssureSizeAlloc( accessors.Num() + 1, idListNewElement<gltfAccessor> );
 		return accessors[accessors.Num() - 1];
 	}
+
+	//! Returns the list of accessors from the glTF data
 	const inline idList<gltfAccessor*>& AccessorList() { return accessors; }
 
+	//! Returns a pointer to the last element in the extensionsUsed list.
 	gltfExtensionsUsed*					ExtensionsUsed()
 	{
 		extensionsUsed.AssureSizeAlloc( accessors.Num() + 1, idListNewElement<gltfExtensionsUsed> );
 		return extensionsUsed[extensionsUsed.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of GLTF extensions used.
 	const inline idList<gltfExtensionsUsed*>& ExtensionsUsedList() { return extensionsUsed; }
 
+	//! Returns a pointer to the mesh at the end of the meshes list, ensuring the list is large enough to accommodate a new mesh.
 	gltfMesh*								  Mesh()
 	{
 		meshes.AssureSizeAlloc( meshes.Num() + 1, idListNewElement<gltfMesh> );
 		return meshes[meshes.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of meshes in the glTF data.
 	const inline idList<gltfMesh*>& MeshList() { return meshes; }
 
+	//! Returns a pointer to the last scene in the glTF data.
 	gltfScene*						Scene()
 	{
 		scenes.AssureSizeAlloc( scenes.Num() + 1, idListNewElement<gltfScene> );
 		return scenes[scenes.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of scenes in the glTF data.
 	const inline idList<gltfScene*>& SceneList() { return scenes; }
 
+	//! Returns a pointer to a newly allocated node in the gltfData node list.
 	gltfNode*						 Node()
 	{
 		nodes.AssureSizeAlloc( nodes.Num() + 1, idListNewElement<gltfNode> );
 		return nodes[nodes.Num() - 1];
 	}
+
+	//! Returns a reference to the list of nodes in the glTF data
 	const inline idList<gltfNode*>& NodeList() { return nodes; }
 
+	//! Returns a pointer to the camera at the end of the cameras list.
 	gltfCamera*						Camera()
 	{
 		cameras.AssureSizeAlloc( cameras.Num() + 1, idListNewElement<gltfCamera> );
 		return cameras[cameras.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of cameras in the glTF data.
 	const inline idList<gltfCamera*>& CameraList() { return cameras; }
 
+	//! Returns a pointer to a newly allocated material from the gltfData object.
 	gltfMaterial*					  Material()
 	{
 		materials.AssureSizeAlloc( materials.Num() + 1, idListNewElement<gltfMaterial> );
 		return materials[materials.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of materials in the glTF data.
 	const inline idList<gltfMaterial*>& MaterialList() { return materials; }
 
+	//! Returns a pointer to the extensions data.
 	gltfExtensions*						Extensions()
 	{
 		extensions.AssureSizeAlloc( extensions.Num() + 1, idListNewElement<gltfExtensions> );
 		return extensions[extensions.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of extensions in the glTF data.
 	const inline idList<gltfExtensions*>& ExtensionsList() { return extensions; }
 
+	//! Returns a pointer to the newly added animation in the glTF data.
 	gltfAnimation*						  Animation()
 	{
 		animations.AssureSizeAlloc( animations.Num() + 1, idListNewElement<gltfAnimation> );
 		return animations[animations.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of animations in the glTF data.
 	const inline idList<gltfAnimation*>& AnimationList() { return animations; }
 
+	//! Returns a pointer to the skin at the end of the skins list.
 	gltfSkin*							 Skin()
 	{
 		skins.AssureSizeAlloc( skins.Num() + 1, idListNewElement<gltfSkin> );
 		return skins[skins.Num() - 1];
 	}
+
+	//! Returns a constant reference to the list of skins contained in the glTF data.
 	const inline idList<gltfSkin*>& SkinList() { return skins; }
 
 	/*

@@ -40,117 +40,186 @@ struct frustumCorners_t {
 
 enum frustumCull_t { FRUSTUM_CULL_FRONT = 1, FRUSTUM_CULL_BACK = 2, FRUSTUM_CULL_CROSS = 3 };
 
-/*
-================================================================================================
+/*!
+	\class idRenderMatrix
+	\brief A 4x4 matrix class for rendering transformations and mathematical operations.
 
-idRenderMatrix
+	This class provides a comprehensive implementation of 4x4 transformation matrices used in rendering operations. It supports initialization, mathematical operations like multiplication and
+   inversion, and various transformation functions for points, vectors, and planes. The class is designed for use in graphics rendering pipelines, offering methods to create matrices from geometric
+   components like origins, axes, and scales, as well as projection matrices for different coordinate system styles. It includes functionality for matrix transposition, determining matrix properties
+   such as being identity or affine, and performing geometric operations like culling and projection. The implementation supports both inline and standard methods for performance-critical operations
+   and provides utilities for working with bounding volumes and frustum calculations.
 
-This is a row-major matrix and transforms are applied with left-multiplication.
-
-================================================================================================
 */
 class idRenderMatrix
 {
 public:
+	//! Initializes an empty idRenderMatrix object.
 	idRenderMatrix() { }
+
+	//! Initializes a 4x4 transformation matrix with the specified float values for each cell.
 	ID_INLINE	 idRenderMatrix( float a0, float a1, float a2, float a3, float b0, float b1, float b2, float b3, float c0, float c1, float c2, float c3, float d0, float d1, float d2, float d3 );
 
+	//! Returns a pointer to the specified row of the matrix
 	const float* operator[]( int index ) const
 	{
 		assert( index >= 0 && index < 4 );
 		return &m[index * 4];
 	}
+
+	//! Returns a pointer to the specified row of the matrix
 	float* operator[]( int index )
 	{
 		assert( index >= 0 && index < 4 );
 		return &m[index * 4];
 	}
 
+	//! Sets all elements of the matrix to zero.
 	void				  Zero() { memset( m, 0, sizeof( m ) ); }
+
+	//! Sets the render matrix to the identity matrix.
 	ID_INLINE void		  Identity();
 
-	// Matrix classification (only meant to be used for asserts).
+	//! Determines if all elements of the matrix are zero within a specified epsilon tolerance.
 	ID_INLINE bool		  IsZero( float epsilon ) const;
+
+	//! Checks if the matrix is an identity matrix within the given epsilon tolerance.
 	ID_INLINE bool		  IsIdentity( float epsilon ) const;
+
+	//! Checks if the matrix represents an affine transformation within the given epsilon tolerance.
 	ID_INLINE bool		  IsAffineTransform( float epsilon ) const;
+
+	//! Checks if the matrix has a uniform scale factor within the given epsilon tolerance.
 	ID_INLINE bool		  IsUniformScale( float epsilon ) const;
 
-	// Transform a point.
-	// NOTE: the idVec3 out variant does not divide by W.
+	//! Transforms a 3D point using the render matrix and stores the result in the output vector.
 	ID_INLINE void		  TransformPoint( const idVec3& in, idVec3& out ) const;
+
+	//! Transforms a 3D point using the matrix and stores the result in a 4D vector.
 	ID_INLINE void		  TransformPoint( const idVec3& in, idVec4& out ) const;
+
+	//! Transforms a 4D point using the render matrix.
 	ID_INLINE void		  TransformPoint( const idVec4& in, idVec4& out ) const;
 
-	// These assume the matrix has no non-uniform scaling or shearing.
-	// NOTE: a direction will only stay normalized if the matrix has no skewing or scaling.
+	//! Transforms a direction vector by the render matrix, optionally normalizing the result.
 	ID_INLINE void		  TransformDir( const idVec3& in, idVec3& out, bool normalize ) const;
+
+	//! Transforms a plane using the matrix and optionally normalizes the result
 	ID_INLINE void		  TransformPlane( const idPlane& in, idPlane& out, bool normalize ) const;
 
-	// These transforms work with non-uniform scaling and shearing by multiplying
-	// with 'transpose(inverse(M))' where this matrix is assumed to be 'inverse(M)'.
+	//! Transforms a direction vector by the inverse of this matrix, optionally normalizing the result.
 	ID_INLINE void		  InverseTransformDir( const idVec3& in, idVec3& out, bool normalize ) const;
+
+	//! Transforms a plane using the inverse of this matrix
 	ID_INLINE void		  InverseTransformPlane( const idPlane& in, idPlane& out, bool normalize ) const;
 
-	// Project a point.
+	//! Projects a 3D model space point into clip space using model and projection matrices.
 	static ID_INLINE void TransformModelToClip( const idVec3& src, const idRenderMatrix& modelMatrix, const idRenderMatrix& projectionMatrix, idVec4& eye, idVec4& clip );
+
+	//! Transforms clip space coordinates to normalized device coordinates.
 	static ID_INLINE void TransformClipToDevice( const idVec4& clip, idVec3& ndc );
 
-	// Create a matrix that goes from local space to the space defined by the 'origin' and 'axis'.
+	//! Creates a render matrix from an origin and axis
 	static void			  CreateFromOriginAxis( const idVec3& origin, const idMat3& axis, idRenderMatrix& out );
+
+	//! Creates a render matrix from origin, axis, and scale components.
 	static void			  CreateFromOriginAxisScale( const idVec3& origin, const idMat3& axis, const idVec3& scale, idRenderMatrix& out );
 
-	// Create a matrix that goes from a global coordinate to a view coordinate (OpenGL looking down -Z) based on the given view origin/axis.
+	//! Creates a view matrix from an origin and axis for OpenGL coordinate transformation.
 	static void			  CreateViewMatrix( const idVec3& origin, const idMat3& axis, idRenderMatrix& out );
 
-	// Create a projection matrix.
+	//! Creates a projection matrix with the specified frustum parameters and stores the result in the output matrix.
 	static void			  CreateProjectionMatrix( float xMin, float xMax, float yMin, float yMax, float zNear, float zFar, idRenderMatrix& out );
+
+	//! Creates a projection matrix using field of view parameters with optional offset.
 	static void			  CreateProjectionMatrixFov( float xFovDegrees, float yFovDegrees, float zNear, float zFar, float xOffset, float yOffset, idRenderMatrix& out );
 
+	//! Creates a D3D-style projection matrix with the specified field of view, aspect ratio, and depth range.
 	static void			  CreateProjD3DStyle( float verticalFov, float aspect, float zNear, float zFar, idRenderMatrix& out );
 
-	// Apply depth hacks to a projection matrix.
+	//! Applies a depth hack to the provided projection matrix by scaling its z-components by 25%.
 	static ID_INLINE void ApplyDepthHack( idRenderMatrix& src );
+
+	//! Applies a depth hack to the source render matrix by adjusting its projected z-coordinate.
 	static ID_INLINE void ApplyModelDepthHack( idRenderMatrix& src, float value );
 
-	// Offset and scale the given matrix such that the result matrix transforms the unit-cube to exactly cover the given bounds (and the inverse).
+	//! Offsets and scales a matrix to transform the unit cube to exactly cover the given bounds
 	static void			  OffsetScaleForBounds( const idRenderMatrix& src, const idBounds& bounds, idRenderMatrix& out );
+
+	//! Computes a transformation matrix that offsets and inversely scales the input matrix based on the given bounds to map the bounds to a unit cube.
 	static void			  InverseOffsetScaleForBounds( const idRenderMatrix& src, const idBounds& bounds, idRenderMatrix& out );
 
-	// Basic matrix operations.
+	//! Computes the transpose of a matrix and stores the result in the output matrix.
 	static void			  Transpose( const idRenderMatrix& src, idRenderMatrix& out );
+
+	//! Performs matrix multiplication of two 4x4 matrices and stores the result in a third matrix.
 	static void			  Multiply( const idRenderMatrix& a, const idRenderMatrix& b, idRenderMatrix& out );
+
+	//! Computes the inverse of a 4x4 transformation matrix used in rendering.
 	static bool			  Inverse( const idRenderMatrix& src, idRenderMatrix& out );
+
+	//! Computes the inverse transpose of an affine transformation matrix.
 	static void			  InverseByTranspose( const idRenderMatrix& src, idRenderMatrix& out );
+
+	//! Computes the inverse of a 4x4 matrix using double precision arithmetic and stores the result in the output matrix
 	static bool			  InverseByDoubles( const idRenderMatrix& src, idRenderMatrix& out );
 
-	// Copy or create a matrix that is stored directly into four float4 vectors which is useful for directly setting vertex program uniforms.
+	//! Copies a render matrix into four row vectors, aligned for uniform setting.
 	static void			  CopyMatrix( const idRenderMatrix& matrix, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3 );
+
+	//! Sets the MVP matrix elements into the provided row vectors and determines if the determinant is negative.
 	static void			  SetMVP( const idRenderMatrix& mvp, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3, bool& negativeDeterminant );
+
+	//! Computes a modified model-view-projection matrix for a given bounding volume.
 	static void			  SetMVPForBounds( const idRenderMatrix& mvp, const idBounds& bounds, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3, bool& negativeDeterminant );
+
+	//! Sets the MVP for inverse project by computing the matrix product of mvp and inverseProject and determining if the result has a negative determinant.
 	static void			  SetMVPForInverseProject( const idRenderMatrix& mvp, const idRenderMatrix& inverseProject, idVec4& row0, idVec4& row1, idVec4& row2, idVec4& row3, bool& negativeDeterminant );
 
-	// Cull to a Model-View-Projection (MVP) matrix.
+	//! Tests if a point is culled by the Model-View-Projection matrix.
 	static bool			  CullPointToMVP( const idRenderMatrix& mvp, const idVec3& point, bool zeroToOne = false );
+
+	//! Determines if a point is inside or outside the clip space defined by the model-view-projection matrix and returns culling bits.
 	static bool			  CullPointToMVPbits( const idRenderMatrix& mvp, const idVec3& point, byte* outBits, bool zeroToOne = false );
+
+	//! Determines if a bounding box is culled by the projection matrix.
 	static bool			  CullBoundsToMVP( const idRenderMatrix& mvp, const idBounds& bounds, bool zeroToOne = false );
+
+	//! Determines if a bounding box is culled by the frustum using the Model-View-Projection matrix.
 	static bool			  CullBoundsToMVPbits( const idRenderMatrix& mvp, const idBounds& bounds, byte* outBits, bool zeroToOne = false );
+
+	//! Determines if extruded bounds are culled against a clip plane using the Model-View-Projection matrix.
 	static bool			  CullExtrudedBoundsToMVP( const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& extrudeDirection, const idPlane& clipPlane, bool zeroToOne = false );
+
+	//! Performs conservative culling of an extruded bounding box against the frustum using MVP matrix bits
 	static bool CullExtrudedBoundsToMVPbits( const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& extrudeDirection, const idPlane& clipPlane, byte* outBits, bool zeroToOne = false );
 
-	// Calculate the projected bounds.
+	//! Calculates the projected bounds of a given bounding box using a model-view-projection matrix
 	static void ProjectedBounds( idBounds& projected, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace = true );
+
+	//! Computes the projected and near-clipped bounds of a 3D bounding box using a model-view-projection matrix
 	static void ProjectedNearClippedBounds( idBounds& projected, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace = true );
+
+	//! Computes the projected and clipped bounds of a 3D bounding box using a model-view-projection matrix
 	static void ProjectedFullyClippedBounds( idBounds& projected, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace = true );
 
-	// Calculate the projected depth bounds.
+	//! Calculates the minimum and maximum depth bounds for a given bounding box transformed by a model-view-projection matrix.
 	static void DepthBoundsForBounds( float& min, float& max, const idRenderMatrix& mvp, const idBounds& bounds, bool windowSpace = true );
+
+	//! Computes the minimum and maximum depth values for an extruded bounding box transformed by a model-view-projection matrix
 	static void DepthBoundsForExtrudedBounds(
 		float& min, float& max, const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& extrudeDirection, const idPlane& clipPlane, bool windowSpace = true );
+
+	//! Computes the depth bounds for shadow mapping using SSE optimization based on the provided MVP matrix and bounding box
 	static void			 DepthBoundsForShadowBounds( float& min, float& max, const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& localLightOrigin, bool windowSpace = true );
 
-	// Create frustum planes and corners from a matrix.
+	//! Extracts the six frustum planes from a given transformation matrix
 	static void			 GetFrustumPlanes( idPlane planes[6], const idRenderMatrix& frustum, bool zeroToOne, bool normalize );
+
+	//! Computes the world-space corners of a frustum defined by the given transform and bounds.
 	static void			 GetFrustumCorners( frustumCorners_t& corners, const idRenderMatrix& frustumTransform, const idBounds& frustumBounds );
+
+	//! Determines the culling state of frustum corners relative to a given plane using SSE intrinsics or scalar computation.
 	static frustumCull_t CullFrustumCornersToPlane( const frustumCorners_t& corners, const idPlane& plane );
 
 private:
@@ -163,13 +232,7 @@ extern const idRenderMatrix renderMatrix_windowSpaceToClipSpace;
 // RB begin
 extern const idRenderMatrix renderMatrix_clipSpaceToWindowSpace;
 extern const idRenderMatrix renderMatrix_fullscreen;
-// RB end
 
-/*
-========================
-idRenderMatrix::idRenderMatrix
-========================
-*/
 ID_INLINE					idRenderMatrix::idRenderMatrix(
 	  float a0, float a1, float a2, float a3, float b0, float b1, float b2, float b3, float c0, float c1, float c2, float c3, float d0, float d1, float d2, float d3 )
 {
@@ -191,11 +254,6 @@ ID_INLINE					idRenderMatrix::idRenderMatrix(
 	m[3 * 4 + 3] = d3;
 }
 
-/*
-========================
-idRenderMatrix::Identity
-========================
-*/
 ID_INLINE void idRenderMatrix::Identity()
 {
 	m[0 * 4 + 0] = 1.0f;
@@ -219,11 +277,6 @@ ID_INLINE void idRenderMatrix::Identity()
 	m[3 * 4 + 3] = 1.0f;
 }
 
-/*
-========================
-idRenderMatrix::IsZero
-========================
-*/
 ID_INLINE bool idRenderMatrix::IsZero( float epsilon ) const
 {
 	for( int i = 0; i < 16; i++ ) {
@@ -232,11 +285,6 @@ ID_INLINE bool idRenderMatrix::IsZero( float epsilon ) const
 	return true;
 }
 
-/*
-========================
-idRenderMatrix::IsIdentity
-========================
-*/
 ID_INLINE bool idRenderMatrix::IsIdentity( float epsilon ) const
 {
 	for( int i = 0; i < 4; i++ ) {
@@ -251,22 +299,12 @@ ID_INLINE bool idRenderMatrix::IsIdentity( float epsilon ) const
 	return true;
 }
 
-/*
-========================
-idRenderMatrix::IsAffineTransform
-========================
-*/
 ID_INLINE bool idRenderMatrix::IsAffineTransform( float epsilon ) const
 {
 	if( idMath::Fabs( m[3 * 4 + 0] ) > epsilon || idMath::Fabs( m[3 * 4 + 1] ) > epsilon || idMath::Fabs( m[3 * 4 + 2] ) > epsilon || idMath::Fabs( m[3 * 4 + 3] - 1.0f ) > epsilon ) { return false; }
 	return true;
 }
 
-/*
-========================
-idRenderMatrix::IsUniformScale
-========================
-*/
 ID_INLINE bool idRenderMatrix::IsUniformScale( float epsilon ) const
 {
 	float d0 = idMath::InvSqrt( m[0 * 4 + 0] * m[0 * 4 + 0] + m[1 * 4 + 0] * m[1 * 4 + 0] + m[2 * 4 + 0] * m[2 * 4 + 0] );
@@ -278,11 +316,6 @@ ID_INLINE bool idRenderMatrix::IsUniformScale( float epsilon ) const
 	return true;
 }
 
-/*
-========================
-idRenderMatrix::TransformPoint
-========================
-*/
 ID_INLINE void idRenderMatrix::TransformPoint( const idVec3& in, idVec3& out ) const
 {
 	assert( in.ToFloatPtr() != out.ToFloatPtr() );
@@ -323,11 +356,6 @@ ID_INLINE void idRenderMatrix::TransformPoint( const idVec4& in, idVec4& out ) c
 	out[3]						 = in[0] * matrix[3][0] + in[1] * matrix[3][1] + in[2] * matrix[3][2] + in[3] * matrix[3][3];
 }
 
-/*
-========================
-idRenderMatrix::TransformDir
-========================
-*/
 ID_INLINE void idRenderMatrix::TransformDir( const idVec3& in, idVec3& out, bool normalize ) const
 {
 	const idRenderMatrix& matrix = *this;
@@ -345,11 +373,6 @@ ID_INLINE void idRenderMatrix::TransformDir( const idVec3& in, idVec3& out, bool
 	out[2] = p2;
 }
 
-/*
-========================
-idRenderMatrix::TransformPlane
-========================
-*/
 ID_INLINE void idRenderMatrix::TransformPlane( const idPlane& in, idPlane& out, bool normalize ) const
 {
 	assert( IsUniformScale( 0.01f ) );
@@ -372,11 +395,6 @@ ID_INLINE void idRenderMatrix::TransformPlane( const idPlane& in, idPlane& out, 
 	out[3] = -p0 * d0 - p1 * d1 - p2 * d2;
 }
 
-/*
-========================
-idRenderMatrix::InverseTransformDir
-========================
-*/
 ID_INLINE void idRenderMatrix::InverseTransformDir( const idVec3& in, idVec3& out, bool normalize ) const
 {
 	assert( in.ToFloatPtr() != out.ToFloatPtr() );
@@ -395,11 +413,6 @@ ID_INLINE void idRenderMatrix::InverseTransformDir( const idVec3& in, idVec3& ou
 	out[2] = p2;
 }
 
-/*
-========================
-idRenderMatrix::InverseTransformPlane
-========================
-*/
 ID_INLINE void idRenderMatrix::InverseTransformPlane( const idPlane& in, idPlane& out, bool normalize ) const
 {
 	assert( in.ToFloatPtr() != out.ToFloatPtr() );
@@ -421,11 +434,6 @@ ID_INLINE void idRenderMatrix::InverseTransformPlane( const idPlane& in, idPlane
 	out[3] = p3;
 }
 
-/*
-========================
-idRenderMatrix::TransformModelToClip
-========================
-*/
 ID_INLINE void idRenderMatrix::TransformModelToClip( const idVec3& src, const idRenderMatrix& modelMatrix, const idRenderMatrix& projectionMatrix, idVec4& eye, idVec4& clip )
 {
 	for( int i = 0; i < 4; i++ ) {
@@ -436,13 +444,6 @@ ID_INLINE void idRenderMatrix::TransformModelToClip( const idVec3& src, const id
 	}
 }
 
-/*
-========================
-idRenderMatrix::TransformClipToDevice
-
-Clip to normalized device coordinates.
-========================
-*/
 ID_INLINE void idRenderMatrix::TransformClipToDevice( const idVec4& clip, idVec3& ndc )
 {
 	assert( idMath::Fabs( clip[3] ) > idMath::FLT_SMALLEST_NON_DENORMAL );
@@ -452,11 +453,6 @@ ID_INLINE void idRenderMatrix::TransformClipToDevice( const idVec4& clip, idVec3
 	ndc[2]	= clip[2] * r;
 }
 
-/*
-========================
-idRenderMatrix::ApplyDepthHack
-========================
-*/
 ID_INLINE void idRenderMatrix::ApplyDepthHack( idRenderMatrix& src )
 {
 	// scale projected z by 25%
@@ -466,44 +462,24 @@ ID_INLINE void idRenderMatrix::ApplyDepthHack( idRenderMatrix& src )
 	src.m[2 * 4 + 3] *= 0.25f;
 }
 
-/*
-========================
-idRenderMatrix::ApplyModelDepthHack
-========================
-*/
 ID_INLINE void idRenderMatrix::ApplyModelDepthHack( idRenderMatrix& src, float value )
 {
 	// offset projected z
 	src.m[2 * 4 + 3] -= value;
 }
 
-/*
-========================
-idRenderMatrix::CullPointToMVP
-========================
-*/
 ID_INLINE bool idRenderMatrix::CullPointToMVP( const idRenderMatrix& mvp, const idVec3& point, bool zeroToOne )
 {
 	byte bits;
 	return CullPointToMVPbits( mvp, point, &bits, zeroToOne );
 }
 
-/*
-========================
-idRenderMatrix::CullBoundsToMVP
-========================
-*/
 ID_INLINE bool idRenderMatrix::CullBoundsToMVP( const idRenderMatrix& mvp, const idBounds& bounds, bool zeroToOne )
 {
 	byte bits;
 	return CullBoundsToMVPbits( mvp, bounds, &bits, zeroToOne );
 }
 
-/*
-========================
-idRenderMatrix::CullExtrudedBoundsToMVP
-========================
-*/
 ID_INLINE bool idRenderMatrix::CullExtrudedBoundsToMVP( const idRenderMatrix& mvp, const idBounds& bounds, const idVec3& extrudeDirection, const idPlane& clipPlane, bool zeroToOne )
 {
 	byte bits;

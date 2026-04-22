@@ -29,48 +29,37 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_LCP_H__
 #define __MATH_LCP_H__
 
-/*
-================================================
-The *LCP* class, idLCP, is a Box-Constrained Mixed Linear Complementarity Problem solver.
+/*!
+	\class idLCP
+	\brief A base class for Linear Complementarity Problem solvers with support for bounded and unbounded variables.
 
-'A' is a matrix of dimension n*n and 'x', 'b', 'lo', 'hi' are vectors of dimension n.
+	The idLCP class serves as an abstract base interface for solving Linear Complementarity Problems, which are mathematical optimization problems that arise in physics simulation and other domains.
+   The class supports both bounded and unbounded variables through the boxIndex parameter, where variables with boxIndex[i] != -1 are treated as bounded and variables with boxIndex[i] == -1 are
+   treated as unbounded. The solver first calculates all unbounded variables and those with boxIndex[i] == -1 before processing bounded variables. The interface provides methods for allocating
+   different types of LCP solvers, configuring maximum iterations, and executing test functions for debugging purposes. The Solve method is pure virtual, requiring implementations to define the
+   specific algorithm for solving the LCP. The class is designed to be extended by concrete implementations that provide the actual numerical solution algorithms.
 
-Solve: Ax = b + t, where t is a vector of dimension n, with complementarity condition:
-
-	(x[i] - lo[i]) * (x[i] - hi[i]) * t[i] = 0
-
-such that for each 0 <= i < n one of the following holds:
-
-	lo[i] < x[i] < hi[i], t[i] == 0
-	x[i] == lo[i], t[i] >= 0
-	x[i] == hi[i], t[i] <= 0
-
-Partly-bounded or unbounded variables can have lo[i] and/or hi[i] set to negative/positive
-idMath::INFITITY, respectively.
-
-If boxIndex != NULL and boxIndex[i] != -1, then
-
-	lo[i] = - fabs( lo[i] * x[boxIndex[i]] )
-	hi[i] = fabs( hi[i] * x[boxIndex[i]] )
-	boxIndex[boxIndex[i]] must be -1
-
-Before calculating any of the bounded x[i] with boxIndex[i] != -1, the solver calculates all
-unbounded x[i] and all x[i] with boxIndex[i] == -1.
-================================================
 */
 class idLCP
 {
 public:
-	static idLCP* AllocSquare();	// 'A' must be a square matrix
-	static idLCP* AllocSymmetric(); // 'A' must be a symmetric matrix
+	//! Allocates and returns a new square LCP solver instance.
+	static idLCP* AllocSquare();
+
+	//! Allocates and returns a new symmetric LCP solver instance.
+	static idLCP* AllocSymmetric();
 
 	virtual ~idLCP();
 
 	virtual bool Solve( const idMatX& A, idVecX& x, const idVecX& b, const idVecX& lo, const idVecX& hi, const int* boxIndex = NULL ) = 0;
 
+	//! Sets the maximum number of iterations for the LCP solver.
 	virtual void SetMaxIterations( int max );
+
+	//! Returns the maximum number of iterations allowed for the LCP solver.
 	virtual int	 GetMaxIterations();
 
+	//! Executes LCP test functions if ENABLE_TEST_CODE is defined.
 	static void	 Test_f( const idCmdArgs& args );
 
 protected:

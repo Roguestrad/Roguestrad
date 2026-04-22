@@ -121,32 +121,82 @@ const int STR_ALLOC_GRAN = 32;
 
 typedef enum { MEASURE_SIZE = 0, MEASURE_BANDWIDTH } Measure_t;
 
+/*!
+	\class idStr
+	\brief A robust string class designed for efficient memory management and comprehensive text manipulation capabilities.
+
+	This class provides a comprehensive set of methods for string construction, manipulation, and comparison. It supports various constructors for different input types including character arrays,
+   integers, floats, and booleans, making it versatile for different use cases. The class includes methods for appending, inserting, and replacing content, as well as utilities for case conversion,
+   color code handling, and path manipulation. Memory management is handled internally with features for ensuring allocation, setting static buffers, and tracking allocated sizes. The class also
+   offers advanced string operations such as UTF-8 support, formatting, filtering, and splitting. It provides comparison functions for both case-sensitive and case-insensitive operations, including
+   specialized functions for path and color-aware comparisons. The implementation includes utility methods for validating UTF-8 encoding, converting between different string formats, and handling
+   common string operations with efficient in-place modifications when possible.
+
+*/
 class idStr
 {
 public:
+	//! Constructs an empty idStr object.
 	idStr();
-	idStr( idStr&& text ) noexcept; // Admer: added move constructor
+
+	//! Move constructor for idStr that initializes the object by moving resources from another idStr instance.
+	idStr( idStr&& text ) noexcept;
+
+	//! Constructs a new idStr object as a copy of the provided idStr object.
 	idStr( const idStr& text );
+
+	//! Constructs a new string by copying a substring from the given string.
 	idStr( const idStr& text, int start, int end );
+
+	//! Constructs a new string object by copying the contents of the provided C-string.
 	idStr( const char* text );
+
+	//! Constructs a new string by extracting a substring from the given text between the specified start and end indices.
 	idStr( const char* text, int start, int end );
+
+	//! Constructs a string representation of a boolean value
 	explicit idStr( const bool b );
+
+	//! Constructs a string from a single character
 	explicit idStr( const char c );
+
+	//! Constructs a string representation of the given integer.
 	explicit idStr( const int i );
+
+	//! Constructs a string representation of the given unsigned integer
 	explicit idStr( const unsigned u );
+
+	//! Constructs a string representation of the given float value.
 	explicit idStr( const float f );
+
+	//! Destructor for the idStr class that frees allocated memory.
 	~idStr();
 
+	//! Returns the total memory size occupied by this string instance.
 	size_t		Size() const;
+
+	//! Returns a pointer to the null-terminated string data.
 	const char* c_str() const;
+
+	//! Converts the string to a const char pointer.
 	operator const char*() const;
+
+	//! Converts the string to a const char pointer.
 	operator const char*();
 
+	//! Returns the character at the specified index in the string.
 	char					operator[]( int index ) const;
+
+	//! Provides access to a character at the specified index in the string.
 	char&					operator[]( int index );
 
-	void					operator=( idStr&& text ) noexcept; // Admer: added move operator
+	//! Moves the contents of another idStr object to this object
+	void					operator=( idStr&& text ) noexcept;
+
+	//! Assigns the contents of another idStr object to this idStr object.
 	void					operator=( const idStr& text );
+
+	//! Assigns a C-string to this string object
 	void					operator=( const char* text );
 
 	friend idStr			operator+( const idStr& a, const idStr& b );
@@ -159,12 +209,25 @@ public:
 	friend idStr			operator+( const idStr& a, const bool b );
 	friend idStr			operator+( const idStr& a, const char b );
 
+	//! Appends the contents of another string to this string and returns a reference to this string.
 	idStr&					operator+=( const idStr& a );
+
+	//! Appends the given C-string to this string and returns a reference to this string.
 	idStr&					operator+=( const char* a );
+
+	//! Appends the string representation of a float value to this string
 	idStr&					operator+=( const float a );
+
+	//! Appends a character to the string and returns a reference to itself.
 	idStr&					operator+=( const char a );
+
+	//! Appends the string representation of an integer value to this string
 	idStr&					operator+=( const int a );
+
+	//! Appends the string representation of an unsigned integer to this string and returns a reference to this string.
 	idStr&					operator+=( const unsigned a );
+
+	//! Appends the string representation of a boolean value to the string.
 	idStr&					operator+=( const bool a );
 
 	// case sensitive compare
@@ -177,47 +240,106 @@ public:
 	friend bool				operator!=( const idStr& a, const char* b );
 	friend bool				operator!=( const char* a, const idStr& b );
 
-	// case sensitive compare
+	//! Compares this string with the provided text for equality.
 	bool					Equals( const char* text ) const;
+
+	//! Compares this string with the provided text and returns an integer indicating their lexicographical relationship.
 	int						Cmp( const char* text ) const;
+
+	//! Compares the first n characters of this string with the given text for equality.
 	int						Cmpn( const char* text, int n ) const;
+
+	//! Compares the beginning of the string with the given text up to the length of the text.
 	int						CmpPrefix( const char* text ) const;
 
-	// case insensitive compare
+	//! Compares the string with the given text in a case-insensitive manner.
 	bool					EqualsIgnoreCase( const char* text ) const;
+
+	//! Performs a case-sensitive comparison of this string with the provided text.
 	int						Icmp( const char* text ) const;
+
+	//! Performs a case-insensitive comparison of the first n characters of this string with the provided text.
 	int						Icmpn( const char* text, int n ) const;
+
+	//! Compares the beginning of the string with the given text, ignoring case.
 	int						IcmpPrefix( const char* text ) const;
+
+	//! Checks if the string starts with the specified prefix, ignoring case.
 	bool					StartsWithIgnoreCase( const char* prefix ) const;
+
+	//! Checks if the string ends with the specified suffix, ignoring case differences.
 	bool					EndsWithIgnoreCase( const char* suffix ) const;
 
-	// case insensitive compare ignoring color
+	//! Performs a case insensitive comparison of the string with the provided text, ignoring color codes.
 	int						IcmpNoColor( const char* text ) const;
 
-	// compares paths and makes sure folders come first
+	//! Compares this string with the provided text as paths, ensuring folders come first.
 	int						IcmpPath( const char* text ) const;
+
+	//! Performs a case-insensitive comparison of the first n characters of this string with the provided text.
 	int						IcmpnPath( const char* text, int n ) const;
+
+	//! Compares the string with the given text up to the length of the text, ignoring case differences, for path comparisons.
 	int						IcmpPrefixPath( const char* text ) const;
 
+	//! Returns the length of the string.
 	int						Length() const;
+
+	//! Returns the amount of memory allocated for the string data.
 	int						Allocated() const;
+
+	//! Clears the string content and ensures it is empty.
 	void					Empty();
+
+	//! Checks if the string is empty.
 	bool					IsEmpty() const;
+
+	//! Clears the string content
 	void					Clear();
+
+	//! Appends a single character to the string.
 	void					Append( const char a );
+
+	//! Appends the contents of another idStr to this string
 	void					Append( const idStr& text );
+
+	//! Appends the specified text to the string.
 	void					Append( const char* text );
+
+	//! Appends a specified number of characters from a text string to this string.
 	void					Append( const char* text, int len );
+
+	//! Inserts a character at the specified index in the string.
 	void					Insert( const char a, int index );
+
+	//! Inserts the specified text into the string at the given index.
 	void					Insert( const char* text, int index );
+
+	//! Converts all characters in the string to lowercase.
 	void					ToLower();
+
+	//! Converts all characters in the string to uppercase.
 	void					ToUpper();
+
+	//! Checks if the string contains only numeric characters.
 	bool					IsNumeric() const;
+
+	//! Checks if the string contains a color code.
 	bool					IsColor() const;
+
+	//! Returns true if the string contains at least one lowercase character.
 	bool					HasLower() const;
+
+	//! Returns true if the string contains at least one uppercase character.
 	bool					HasUpper() const;
+
+	//! Returns the length of the string excluding color formatting codes.
 	int						LengthWithoutColors() const;
+
+	//! Removes color codes from the string and returns a reference to itself.
 	idStr&					RemoveColors();
+
+	//! Limits the string length to the specified maximum length.
 	void					CapLength( int );
 
 	/*!
@@ -231,139 +353,337 @@ public:
 	*/
 	void					Fill( const char ch, int newlen );
 
+	//! Returns the length of the UTF-8 encoded string.
 	ID_INLINE int			UTF8Length();
+
+	//! Returns the UTF-8 character at the specified index in the string and advances the index.
 	ID_INLINE uint32		UTF8Char( int& idx );
+
+	//! Returns the number of UTF-8 characters in a null-terminated byte string.
 	static int				UTF8Length( const byte* s );
+
+	//! Extracts a UTF-8 character from a string at the specified index and advances the index.
 	static ID_INLINE uint32 UTF8Char( const char* s, int& idx );
+
+	//! Returns the UTF-8 character at the specified index in the byte array and updates the index to point to the next character.
 	static uint32			UTF8Char( const byte* s, int& idx );
+
+	//! Appends a UTF-8 encoded character to the string
 	void					AppendUTF8Char( uint32 c );
+
+	//! Converts the string to UTF-8 format.
 	ID_INLINE void			ConvertToUTF8();
+
+	//! Validates if a byte sequence represents valid UTF-8 encoding and determines the encoding type.
 	static bool				IsValidUTF8( const uint8* s, const int maxLen, utf8Encoding_t& encoding );
+
+	//! Checks if a string is valid UTF-8 encoded.
 	static ID_INLINE bool	IsValidUTF8( const char* s, const int maxLen, utf8Encoding_t& encoding ) { return IsValidUTF8( ( const uint8* )s, maxLen, encoding ); }
+
+	//! Checks if a byte sequence is valid UTF-8.
 	static ID_INLINE bool	IsValidUTF8( const uint8* s, const int maxLen );
+
+	//! Checks if a string is valid UTF-8 encoded.
 	static ID_INLINE bool	IsValidUTF8( const char* s, const int maxLen ) { return IsValidUTF8( ( const uint8* )s, maxLen ); }
 
+	//! Finds the first occurrence of a character in the string within the specified range.
 	int						Find( const char c, int start = 0, int end = -1 ) const;
+
+	//! Searches for the first occurrence of a substring within the string, returning its starting index or -1 if not found.
 	int						Find( const char* text, bool casesensitive = true, int start = 0, int end = -1 ) const;
+
+	//! Checks if the string matches the given filter pattern.
 	bool					Filter( const char* filter, bool casesensitive ) const;
-	int						Last( const char c ) const;							 // return the index to the last occurance of 'c', returns -1 if not found
-	const char*				Left( int len, idStr& result ) const;				 // store the leftmost 'len' characters in the result
-	const char*				Right( int len, idStr& result ) const;				 // store the rightmost 'len' characters in the result
-	const char*				Mid( int start, int len, idStr& result ) const;		 // store 'len' characters starting at 'start' in result
-	idStr					Left( int len ) const;								 // return the leftmost 'len' characters
-	idStr					Right( int len ) const;								 // return the rightmost 'len' characters
-	idStr					Mid( int start, int len ) const;					 // return 'len' characters starting at 'start'
-	void					Format( VERIFY_FORMAT_STRING const char* fmt, ... ); // perform a threadsafe sprintf to the string
-	static idStr			FormatInt( const int num, bool isCash = false );	 // formats an integer as a value with commas
+
+	//! Returns the index of the last occurrence of the specified character in the string, or -1 if not found.
+	int						Last( const char c ) const;
+
+	//! Returns the leftmost 'len' characters from the string and stores them in the result
+	const char*				Left( int len, idStr& result ) const;
+
+	//! Returns the rightmost 'len' characters of the string, storing the result in the provided idStr reference.
+	const char*				Right( int len, idStr& result ) const;
+
+	//! Extracts a substring of specified length starting at the given index and stores it in the result parameter
+	const char*				Mid( int start, int len, idStr& result ) const;
+
+	//! Returns the leftmost 'len' characters from the string
+	idStr					Left( int len ) const;
+
+	//! Returns the rightmost 'len' characters from the string
+	idStr					Right( int len ) const;
+
+	//! Returns a substring starting at the specified index for the specified length.
+	idStr					Mid( int start, int len ) const;
+
+	//! Formats the string using a printf-style format string and variable arguments.
+	void					Format( VERIFY_FORMAT_STRING const char* fmt, ... );
+
+	//! Formats an integer with commas as thousands separators and optionally prefixes it with a dollar sign.
+	static idStr			FormatInt( const int num, bool isCash = false );
+
+	//! Formats an integer as a cash amount string with thousands separators.
 	static idStr			FormatCash( const int num ) { return FormatInt( num, true ); }
-	void					StripLeading( const char c );			  // strip char from front as many times as the char occurs
-	void					StripLeading( const char* string );		  // strip string from front as many times as the string occurs
-	bool					StripLeadingOnce( const char* string );	  // strip string from front just once if it occurs
-	void					StripTrailing( const char c );			  // strip char from end as many times as the char occurs
-	void					StripTrailing( const char* string );	  // strip string from end as many times as the string occurs
-	bool					StripTrailingOnce( const char* string );  // strip string from end just once if it occurs
-	bool					IStripTrailingOnce( const char* string ); // RB: case insensitive, strip string from end just once if it occurs
-	void					Strip( const char c );					  // strip char from front and end as many times as the char occurs
-	void					Strip( const char* string );			  // strip string from front and end as many times as the string occurs
-	void					StripTrailingWhitespace();				  // strip trailing white space characters
-	idStr&					StripQuotes();							  // strip quotes around string
+
+	//! Removes all leading occurrences of a specified character from the string.
+	void					StripLeading( const char c );
+
+	//! Strips the leading occurrences of the specified string from the current string.
+	void					StripLeading( const char* string );
+
+	//! Strips the leading string from the current string if it occurs at the front.
+	bool					StripLeadingOnce( const char* string );
+
+	//! Removes all trailing occurrences of a specified character from the string.
+	void					StripTrailing( const char c );
+
+	//! Removes trailing occurrences of the specified string from the current string data.
+	void					StripTrailing( const char* string );
+
+	//! Removes a trailing string from the end of this string if it exists.
+	bool					StripTrailingOnce( const char* string );
+
+	//! Removes a trailing string from the end of this string in a case-insensitive manner, but only if it occurs at the end.
+	bool					IStripTrailingOnce( const char* string );
+
+	//! Removes all leading and trailing occurrences of a specified character from the string.
+	void					Strip( const char c );
+
+	//! Removes occurrences of the specified string from both the beginning and end of this string.
+	void					Strip( const char* string );
+
+	//! Removes trailing whitespace characters from the string.
+	void					StripTrailingWhitespace();
+
+	//! Removes surrounding quotes from the string.
+	idStr&					StripQuotes();
+
+	//! Replaces all occurrences of a substring with another substring and returns true if any replacements were made.
 	bool					Replace( const char* old, const char* nw );
+
+	//! Replaces all occurrences of a character with another character in the string and returns true if any replacements were made.
 	bool					ReplaceChar( const char old, const char nw );
+
+	//! Copies a range of characters from the input text into the string, starting at start and ending at end.
 	ID_INLINE void			CopyRange( const char* text, int start, int end );
 
-	// file name methods
-	int						FileNameHash() const;						   // hash key for the filename (skips extension)
-	idStr&					BackSlashesToSlashes();						   // convert slashes
-	idStr&					SlashesToBackSlashes();						   // convert slashes
-	idStr&					SetFileExtension( const char* extension );	   // set the given file extension
-	idStr&					StripFileExtension();						   // remove any file extension
-	idStr&					StripAbsoluteFileExtension();				   // remove any file extension looking from front (useful if there are multiple .'s)
-	idStr&					DefaultFileExtension( const char* extension ); // if there's no file extension use the default
-	idStr&					DefaultPath( const char* basepath );		   // if there's no path use the default
-	void					AppendPath( const char* text );				   // append a partial path
-	idStr&					StripFilename();							   // remove the filename from a path
-	idStr&					StripPath();								   // remove the path from the filename
-	void					ExtractFilePath( idStr& dest ) const;		   // copy the file path to another string
-	void					ExtractFileName( idStr& dest ) const;		   // copy the filename to another string
-	void					ExtractFileBase( idStr& dest ) const;		   // copy the filename minus the extension to another string
-	void					ExtractFileExtension( idStr& dest ) const;	   // copy the file extension to another string
+	//! Computes and returns a hash value for the filename, excluding the file extension.
+	int						FileNameHash() const;
+
+	//! Converts backslashes to forward slashes in the string.
+	idStr&					BackSlashesToSlashes();
+
+	//! Converts forward slashes to backslashes in the string.
+	idStr&					SlashesToBackSlashes();
+
+	//! Sets the file extension for the string, ensuring it starts with a period.
+	idStr&					SetFileExtension( const char* extension );
+
+	//! Removes the file extension from the string
+	idStr&					StripFileExtension();
+
+	//! Removes the file extension from the string by truncating at the first period.
+	idStr&					StripAbsoluteFileExtension();
+
+	//! Appends a default file extension to the string if no extension is present.
+	idStr&					DefaultFileExtension( const char* extension );
+
+	//! Combines a base path with the current string if the current string does not represent an absolute path.
+	idStr&					DefaultPath( const char* basepath );
+
+	//! Appends a partial path to the string, ensuring proper path separator handling.
+	void					AppendPath( const char* text );
+
+	//! Removes the filename from a path string
+	idStr&					StripFilename();
+
+	//! Removes the path from the filename, keeping only the file name part.
+	idStr&					StripPath();
+
+	//! Copies the file path portion of this string to the provided destination string.
+	void					ExtractFilePath( idStr& dest ) const;
+
+	//! Extracts the filename from this string and copies it to the destination string.
+	void					ExtractFileName( idStr& dest ) const;
+
+	//! Extracts the filename without the extension from this string and copies it to the destination string.
+	void					ExtractFileBase( idStr& dest ) const;
+
+	//! Extracts the file extension from the string and copies it to the destination string.
+	void					ExtractFileExtension( idStr& dest ) const;
+
+	//! Checks if the string ends with the specified file extension
 	bool					CheckExtension( const char* ext );
 
+	//! Removes surrounding double quotes from the string if they exist.
 	void					StripDoubleQuotes();
 
-	// RAVEN BEGIN
-	// abahr
+	//! Splits the string into a list using the specified delimiters
 	bool					Split( idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\'' ) const;
-	// RAVEN END
 
-	// char * methods to replace library functions
+	//! Returns the length of a null-terminated string.
 	static int				Length( const char* s );
+
+	//! Converts the input string to lowercase in place and returns a pointer to the modified string.
 	static char*			ToLower( char* s );
+
+	//! Converts all lowercase characters in the input string to uppercase in place and returns the modified string.
 	static char*			ToUpper( char* s );
+
+	//! Checks if a string contains only numerical values.
 	static bool				IsNumeric( const char* s );
+
+	//! Checks if a string represents a color code
 	static bool				IsColor( const char* s );
+
+	//! Checks if a string has any lowercase characters.
 	static bool				HasLower( const char* s );
+
+	//! Checks if a string has any uppercase characters.
 	static bool				HasUpper( const char* s );
+
+	//! Returns the length of a string excluding color escape sequences.
 	static int				LengthWithoutColors( const char* s );
+
+	//! Removes color codes from the input string and returns a pointer to the modified string.
 	static char*			RemoveColors( char* s );
+
+	//! Compares two null-terminated strings and returns an integer indicating their lexicographical relationship.
 	static int				Cmp( const char* s1, const char* s2 );
+
+	//! Compares up to n characters of two null-terminated strings, ignoring case differences.
 	static int				Cmpn( const char* s1, const char* s2, int n );
+
+	//! Performs case-insensitive comparison of two null-terminated strings and returns an integer indicating their lexicographical relationship.
 	static int				Icmp( const char* s1, const char* s2 );
+
+	//! Performs a case-insensitive comparison of two strings up to n characters.
 	static int				Icmpn( const char* s1, const char* s2, int n );
+
+	//! Performs a case-insensitive comparison of two strings while ignoring color codes.
 	static int				IcmpNoColor( const char* s1, const char* s2 );
-	static int				IcmpPath( const char* s1, const char* s2 );			// compares paths and makes sure folders come first
-	static int				IcmpnPath( const char* s1, const char* s2, int n ); // compares paths and makes sure folders come first
+
+	//! Compares two paths case-insensitively while ensuring folders appear before files
+	static int				IcmpPath( const char* s1, const char* s2 );
+
+	//! Compares two paths case-insensitively and ensures folders appear before files
+	static int				IcmpnPath( const char* s1, const char* s2, int n );
+
+	//! Appends a source string to a destination buffer ensuring it does not exceed the specified size limit.
 	static void				Append( char* dest, int size, const char* src );
+
+	//! Copies a string with a size limit and ensures null termination.
 	static void				Copynz( char* dest, const char* src, int destsize );
+
+	//! Formats a string into a destination buffer with size limiting and returns the number of characters written
 	static int				snPrintf( char* dest, int size, VERIFY_FORMAT_STRING const char* fmt, ... );
+
+	//! Formats a string using a va_list and writes it to a destination buffer
 	static int				vsnPrintf( char* dest, int size, const char* fmt, va_list argptr );
+
+	//! Finds the first occurrence of a character in a string within a specified range
 	static int				FindChar( const char* str, const char c, int start = 0, int end = -1 );
+
+	//! Searches for a substring within a string and returns the index of the first occurrence or -1 if not found
 	static int				FindText( const char* str, const char* text, bool casesensitive = true, int start = 0, int end = -1 );
+
+	//! Checks if a string matches a filter pattern that may contain wildcards.
 	static bool				Filter( const char* filter, const char* name, bool casesensitive );
+
+	//! Strips the media name by converting to lowercase, replacing backslashes with forward slashes, and removing the file extension.
 	static void				StripMediaName( const char* name, idStr& mediaName );
+
+	//! Checks if a file name has the specified extension, case-insensitively.
 	static bool				CheckExtension( const char* name, const char* ext );
+
+	//! Converts a float array to a formatted string with specified precision
 	static const char*		FloatArrayToString( const float* array, const int length, const int precision );
+
+	//! Returns a quoted version of the input string formatted for C-style output
 	static const char*		CStyleQuote( const char* str );
+
+	//! Removes C-style quotes and escape sequences from a string
 	static const char*		CStyleUnQuote( const char* str );
 
-	// hash keys
+	//! Computes a hash value for the given string using a simple hashing algorithm.
 	static int				Hash( const char* string );
-	static int				Hash( const char* string, int length );
-	static int				IHash( const char* string );			 // case insensitive
-	static int				IHash( const char* string, int length ); // case insensitive
 
-	// character methods
+	//! Calculates a hash value for a given string of specified length.
+	static int				Hash( const char* string, int length );
+
+	//! Calculates a case insensitive hash value for the given string.
+	static int				IHash( const char* string );
+
+	//! Computes a case-insensitive hash value for the given string of specified length.
+	static int				IHash( const char* string, int length );
+
+	//! Converts an uppercase ASCII character to lowercase.
 	static char				ToLower( char c );
+
+	//! Converts a lowercase character to uppercase.
 	static char				ToUpper( char c );
+
+	//! Returns true if the character is a printable ASCII character.
 	static bool				CharIsPrintable( int c );
+
+	//! Returns true if the given character is a lowercase letter.
 	static bool				CharIsLower( int c );
+
+	//! Checks if a character is an uppercase letter.
 	static bool				CharIsUpper( int c );
+
+	//! Checks if a character is an alphabetic character.
 	static bool				CharIsAlpha( int c );
+
+	//! Checks if the given character is a numeric digit.
 	static bool				CharIsNumeric( int c );
+
+	//! Checks if the given character is a newline character.
 	static bool				CharIsNewLine( char c );
+
+	//! Checks if the given character is a tab character.
 	static bool				CharIsTab( char c );
+
+	//! Returns the color index from a given color value by performing a bitwise AND operation with 15.
 	static int				ColorIndex( int c );
+
+	//! Returns the color vector for the given index from the global color table.
 	static idVec4&			ColorForIndex( int i );
 
 	friend int				sprintf( idStr& dest, const char* fmt, ... );
 	friend int				vsprintf( idStr& dest, const char* fmt, va_list ap );
 
-	void					ReAllocate( int amount, bool keepold ); // reallocate string data buffer
-	void					FreeData();								// free allocated string memory
+	//! Reallocates the string data buffer to a new size while optionally preserving existing data.
+	void					ReAllocate( int amount, bool keepold );
 
-	// format value in the given measurement with the best unit, returns the best unit
+	//! Frees the allocated memory for the string data
+	void					FreeData();
+
+	//! Formats a value using the best unit for the given measurement.
 	int						BestUnit( const char* format, float value, Measure_t measure );
-	// format value in the requested unit and measurement
+
+	//! Sets the string to the formatted value in the specified unit and measurement.
 	void					SetUnit( const char* format, float value, int unit, Measure_t measure );
 
+	//! Initializes the memory allocator used by the idStr class.
 	static void				InitMemory();
+
+	//! Shuts down the memory allocator used by idStr strings.
 	static void				ShutdownMemory();
+
+	//! Releases unused memory from the string data allocator.
 	static void				PurgeMemory();
+
+	//! Displays the current string memory usage statistics.
 	static void				ShowMemoryUsage_f( const idCmdArgs& args );
 
+	//! Returns the dynamically allocated memory used by the string
 	int						DynamicMemoryUsed() const;
+
+	//! Formats an integer number into a formatted string representation
 	static idStr			FormatNumber( int number );
 
+	//! Splits a source string into a list of substrings using the specified delimiter and group delimiter
 	static bool				Split( const char* source, idList<idStr>& list, const char delimiter = ',', const char groupDelimiter = '\'' );
 
 protected:
@@ -372,24 +692,30 @@ protected:
 	int			   allocedAndFlag; // top bit is used to store a flag that indicates if the string data is static or not
 	char		   baseBuffer[STR_ALLOC_BASE];
 
-	void		   EnsureAlloced( int amount, bool keepold = true ); // ensure string data buffer is large anough
+	//! Ensures the string buffer has sufficient capacity for the specified amount of data.
+	void		   EnsureAlloced( int amount, bool keepold = true );
 
-	// sets the data point to the specified buffer... note that this ignores makes the passed buffer empty and ignores
-	// anything currently in the idStr's dynamic buffer.  This method is intended to be called only from a derived class's constructor.
+	//! Sets the string buffer to a specified static buffer and marks it as static.
 	ID_INLINE void SetStaticBuffer( char* buffer, const int bufferLength );
 
 private:
-	// initialize string using base buffer... call ONLY FROM CONSTRUCTOR
+	//! Initializes the string to use the base buffer and sets up its initial state.
 	ID_INLINE void		Construct();
 
 	static const uint32 STATIC_BIT	 = 31;
 	static const uint32 STATIC_MASK	 = 1u << STATIC_BIT;
 	static const uint32 ALLOCED_MASK = STATIC_MASK - 1;
 
+	//! Returns the amount of memory allocated for the string.
 	ID_INLINE int		GetAlloced() const { return allocedAndFlag & ALLOCED_MASK; }
+
+	//! Sets the allocated size of the string while preserving static allocation flags.
 	ID_INLINE void		SetAlloced( const int a ) { allocedAndFlag = ( allocedAndFlag & STATIC_MASK ) | ( a & ALLOCED_MASK ); }
 
+	//! Checks if the string is using static memory allocation.
 	ID_INLINE bool		IsStatic() const { return ( allocedAndFlag & STATIC_MASK ) != 0; }
+
+	//! Sets the static flag for the string buffer.
 	ID_INLINE void		SetStatic( const bool isStatic ) { allocedAndFlag = ( allocedAndFlag & ALLOCED_MASK ) | ( isStatic << STATIC_BIT ); }
 
 public:
@@ -398,31 +724,28 @@ public:
 
 char* va( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_STATIC_ATTRIBUTE_PRINTF( 1, 2 );
 
-/*
-================================================================================================
-
-	Sort routines for sorting idList<idStr>
-
-================================================================================================
+/*!
+	\class idSort_Str
+	\brief A sorting implementation for idStr objects that performs lexicographical comparison.
 */
-
 class idSort_Str : public idSort_Quick<idStr, idSort_Str>
 {
 public:
+	//! Compares two idStr objects and returns an integer indicating their lexicographical relationship.
 	int Compare( const idStr& a, const idStr& b ) const { return a.Icmp( b ); }
 };
 
+/*!
+	\class idSort_PathStr
+	\brief A sorting comparator for path strings that handles file system paths appropriately.
+*/
 class idSort_PathStr : public idSort_Quick<idStr, idSort_PathStr>
 {
 public:
+	//! Compares two path strings for sorting purposes
 	int Compare( const idStr& a, const idStr& b ) const { return a.IcmpPath( b ); }
 };
 
-/*
-========================
-idStr::Construct
-========================
-*/
 ID_INLINE void idStr::Construct()
 {
 	SetStatic( false );
@@ -445,11 +768,6 @@ ID_INLINE void idStr::EnsureAlloced( int amount, bool keepold )
 	if( amount > GetAlloced() ) { ReAllocate( amount, keepold ); }
 }
 
-/*
-========================
-idStr::SetStaticBuffer
-========================
-*/
 ID_INLINE void idStr::SetStaticBuffer( char* buffer, const int bufferLength )
 {
 	// this should only be called on a freshly constructed idStr
@@ -678,6 +996,7 @@ ID_INLINE void idStr::operator=( const idStr& text )
 	len		= l;
 }
 
+//! Concatenates two idStr objects and returns the resulting string.
 ID_INLINE idStr operator+( const idStr& a, const idStr& b )
 {
 	idStr result( a );
@@ -685,6 +1004,7 @@ ID_INLINE idStr operator+( const idStr& a, const idStr& b )
 	return result;
 }
 
+//! Concatenates a string object with a C-string and returns the result as a new string object.
 ID_INLINE idStr operator+( const idStr& a, const char* b )
 {
 	idStr result( a );
@@ -692,6 +1012,7 @@ ID_INLINE idStr operator+( const idStr& a, const char* b )
 	return result;
 }
 
+//! Concatenates a C-string and an idStr object into a new idStr.
 ID_INLINE idStr operator+( const char* a, const idStr& b )
 {
 	idStr result( a );
@@ -699,6 +1020,7 @@ ID_INLINE idStr operator+( const char* a, const idStr& b )
 	return result;
 }
 
+//! Concatenates a string with the string representation of a boolean value.
 ID_INLINE idStr operator+( const idStr& a, const bool b )
 {
 	idStr result( a );
@@ -706,6 +1028,7 @@ ID_INLINE idStr operator+( const idStr& a, const bool b )
 	return result;
 }
 
+//! Creates a new string by appending a character to the end of another string.
 ID_INLINE idStr operator+( const idStr& a, const char b )
 {
 	idStr result( a );
@@ -713,6 +1036,7 @@ ID_INLINE idStr operator+( const idStr& a, const char b )
 	return result;
 }
 
+//! Concatenates a string with the string representation of a float value.
 ID_INLINE idStr operator+( const idStr& a, const float b )
 {
 	char  text[64];
@@ -724,6 +1048,7 @@ ID_INLINE idStr operator+( const idStr& a, const float b )
 	return result;
 }
 
+//! Appends an integer value to a string and returns the resulting string.
 ID_INLINE idStr operator+( const idStr& a, const int b )
 {
 	char  text[64];
@@ -735,6 +1060,7 @@ ID_INLINE idStr operator+( const idStr& a, const int b )
 	return result;
 }
 
+//! Concatenates a string with the string representation of an unsigned integer.
 ID_INLINE idStr operator+( const idStr& a, const unsigned b )
 {
 	char  text[64];
@@ -800,33 +1126,39 @@ ID_INLINE idStr& idStr::operator+=( const bool a )
 	return *this;
 }
 
+//! Compares two idStr objects for equality.
 ID_INLINE bool operator==( const idStr& a, const idStr& b )
 {
 	return ( !idStr::Cmp( a.data, b.data ) );
 }
 
+//! Compares an idStr object with a C-style string for equality.
 ID_INLINE bool operator==( const idStr& a, const char* b )
 {
 	assert( b );
 	return ( !idStr::Cmp( a.data, b ) );
 }
 
+//! Compares a C-string with an idStr object for equality.
 ID_INLINE bool operator==( const char* a, const idStr& b )
 {
 	assert( a );
 	return ( !idStr::Cmp( a, b.data ) );
 }
 
+//! Compares two idStr objects for inequality.
 ID_INLINE bool operator!=( const idStr& a, const idStr& b )
 {
 	return !( a == b );
 }
 
+//! Returns true if two string objects are not equal.
 ID_INLINE bool operator!=( const idStr& a, const char* b )
 {
 	return !( a == b );
 }
 
+//! Compares a C-string with an idStr object for inequality.
 ID_INLINE bool operator!=( const char* a, const idStr& b )
 {
 	return !( a == b );
@@ -1117,31 +1449,16 @@ ID_INLINE void idStr::Fill( const char ch, int newlen )
 	data[len] = 0;
 }
 
-/*
-========================
-idStr::UTF8Length
-========================
-*/
 ID_INLINE int idStr::UTF8Length()
 {
 	return UTF8Length( ( byte* )data );
 }
 
-/*
-========================
-idStr::UTF8Char
-========================
-*/
 ID_INLINE uint32 idStr::UTF8Char( int& idx )
 {
 	return UTF8Char( ( byte* )data, idx );
 }
 
-/*
-========================
-idStr::ConvertToUTF8
-========================
-*/
 ID_INLINE void idStr::ConvertToUTF8()
 {
 	idStr temp( *this );
@@ -1151,21 +1468,11 @@ ID_INLINE void idStr::ConvertToUTF8()
 	}
 }
 
-/*
-========================
-idStr::UTF8Char
-========================
-*/
 ID_INLINE uint32 idStr::UTF8Char( const char* s, int& idx )
 {
 	return UTF8Char( ( byte* )s, idx );
 }
 
-/*
-========================
-idStr::IsValidUTF8
-========================
-*/
 ID_INLINE bool idStr::IsValidUTF8( const uint8* s, const int maxLen )
 {
 	utf8Encoding_t encoding;
@@ -1356,11 +1663,6 @@ ID_INLINE int idStr::DynamicMemoryUsed() const
 	return ( data == baseBuffer ) ? 0 : GetAlloced();
 }
 
-/*
-========================
-idStr::CopyRange
-========================
-*/
 ID_INLINE void idStr::CopyRange( const char* text, int start, int end )
 {
 	int l = end - start;

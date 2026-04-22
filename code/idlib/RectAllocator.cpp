@@ -81,7 +81,7 @@ public:
 	const idList<idVec2i>* inputSizes;
 };
 
-// RB: added START_MAX and imageMax
+//! Allocates rectangular regions within a larger rectangle using a greedy corner-packing algorithm.
 void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX, const int imageMax )
 {
 	outputPositions.SetNum( inputSizes.Num() );
@@ -179,17 +179,7 @@ void RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPo
 	}
 }
 
-// Maximum resolution of one tile within tiled shadow map. Resolution must be power of two and
-// square, since quad-tree for managing tiles will not work correctly otherwise. Furthermore
-// resolution must be at least 16.
-// #define MAX_TILE_RES 512
-
-// Specifies how many levels the quad-tree for managing tiles within tiled shadow map should
-// have. The higher the value, the smaller the resolution of the smallest used tile will be.
-// In the current configuration of 8192 resolution and 8 levels, the smallest tile will have
-// a resolution of 64. 16 is the smallest allowed value for the min tile resolution.
-// #define NUM_QUAD_TREE_LEVELS 8
-
+//! Allocates rectangular tiles for tiled shadow mapping using a quad-tree data structure
 void RectAllocatorQuadTree(
 	const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int TILED_SM_RES, const int MAX_TILE_RES = 512, const int NUM_QUAD_TREE_LEVELS = 8 )
 {
@@ -251,16 +241,23 @@ void RectAllocatorQuadTree(
 	}
 }
 
-// RB
+/*!
+	\class MyContent
+	\brief A class for managing content with string-based data.
+*/
 class MyContent
 {
 public:
 	int	  itemIndex;
 	idStr str;
+
+	//! Initializes a MyContent object with a default string value.
 	MyContent() :
 		str( "default string" )
 	{
 	}
+
+	//! Initializes a MyContent object with the provided string.
 	MyContent( const idStr& str ) :
 		str( str )
 	{

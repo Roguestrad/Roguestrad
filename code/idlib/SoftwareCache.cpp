@@ -52,6 +52,7 @@ If you have questions concerning this license or the applicable additional terms
 
 uint32 globalDmaTag;
 
+//! Handles assertion failures in Spurs emulation by breaking into the debugger and returning true.
 bool   SpursEmulationAssertFailed( const char* filename, int line, const char* expression )
 {
 	static bool halt = true;

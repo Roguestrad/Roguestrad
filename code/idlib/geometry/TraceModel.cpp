@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "TraceModel.h"
 
-/*
-============
-idTraceModel::SetupBox
-============
-*/
 void idTraceModel::SetupBox( const idBounds& boxBounds )
 {
 	int i;
@@ -72,13 +67,6 @@ void idTraceModel::SetupBox( const idBounds& boxBounds )
 	bounds = boxBounds;
 }
 
-/*
-============
-idTraceModel::SetupBox
-
-  The origin is placed at the center of the cube.
-============
-*/
 void idTraceModel::SetupBox( const float size )
 {
 	idBounds boxBounds;
@@ -90,13 +78,6 @@ void idTraceModel::SetupBox( const float size )
 	SetupBox( boxBounds );
 }
 
-/*
-============
-idTraceModel::InitBox
-
-  Initialize size independent box.
-============
-*/
 void idTraceModel::InitBox()
 {
 	int i;
@@ -165,11 +146,6 @@ void idTraceModel::InitBox()
 	GenerateEdgeNormals();
 }
 
-/*
-============
-idTraceModel::SetupOctahedron
-============
-*/
 void idTraceModel::SetupOctahedron( const idBounds& octBounds )
 {
 	int	   i, e0, e1, v0, v1, v2;
@@ -215,13 +191,6 @@ void idTraceModel::SetupOctahedron( const idBounds& octBounds )
 	GenerateEdgeNormals();
 }
 
-/*
-============
-idTraceModel::SetupOctahedron
-
-  The origin is placed at the center of the octahedron.
-============
-*/
 void idTraceModel::SetupOctahedron( const float size )
 {
 	idBounds octBounds;
@@ -233,13 +202,6 @@ void idTraceModel::SetupOctahedron( const float size )
 	SetupOctahedron( octBounds );
 }
 
-/*
-============
-idTraceModel::InitOctahedron
-
-  Initialize size independent octahedron.
-============
-*/
 void idTraceModel::InitOctahedron()
 {
 	type	 = TRM_OCTAHEDRON;
@@ -318,11 +280,6 @@ void idTraceModel::InitOctahedron()
 	isConvex = true;
 }
 
-/*
-============
-idTraceModel::SetupDodecahedron
-============
-*/
 void idTraceModel::SetupDodecahedron( const idBounds& dodBounds )
 {
 	int	   i, e0, e1, e2, e3, v0, v1, v2, v3, v4;
@@ -403,13 +360,6 @@ void idTraceModel::SetupDodecahedron( const idBounds& dodBounds )
 	GenerateEdgeNormals();
 }
 
-/*
-============
-idTraceModel::SetupDodecahedron
-
-  The origin is placed at the center of the octahedron.
-============
-*/
 void idTraceModel::SetupDodecahedron( const float size )
 {
 	idBounds dodBounds;
@@ -421,13 +371,6 @@ void idTraceModel::SetupDodecahedron( const float size )
 	SetupDodecahedron( dodBounds );
 }
 
-/*
-============
-idTraceModel::InitDodecahedron
-
-  Initialize size independent dodecahedron.
-============
-*/
 void idTraceModel::InitDodecahedron()
 {
 	type	 = TRM_DODECAHEDRON;
@@ -586,11 +529,6 @@ void idTraceModel::InitDodecahedron()
 	isConvex = true;
 }
 
-/*
-============
-idTraceModel::SetupCylinder
-============
-*/
 void idTraceModel::SetupCylinder( const idBounds& cylBounds, const int numSides )
 {
 	int	   i, n, ii, n2;
@@ -682,13 +620,6 @@ void idTraceModel::SetupCylinder( const idBounds& cylBounds, const int numSides 
 	GenerateEdgeNormals();
 }
 
-/*
-============
-idTraceModel::SetupCylinder
-
-  The origin is placed at the center of the cylinder.
-============
-*/
 void idTraceModel::SetupCylinder( const float height, const float width, const int numSides )
 {
 	idBounds cylBounds;
@@ -701,11 +632,6 @@ void idTraceModel::SetupCylinder( const float height, const float width, const i
 	SetupCylinder( cylBounds, numSides );
 }
 
-/*
-============
-idTraceModel::SetupCone
-============
-*/
 void idTraceModel::SetupCone( const idBounds& coneBounds, const int numSides )
 {
 	int	   i, n, ii;
@@ -785,13 +711,6 @@ void idTraceModel::SetupCone( const idBounds& coneBounds, const int numSides )
 	GenerateEdgeNormals();
 }
 
-/*
-============
-idTraceModel::SetupCone
-
-  The origin is placed at the apex of the cone.
-============
-*/
 void idTraceModel::SetupCone( const float height, const float width, const int numSides )
 {
 	idBounds coneBounds;
@@ -803,13 +722,6 @@ void idTraceModel::SetupCone( const float height, const float width, const int n
 	SetupCone( coneBounds, numSides );
 }
 
-/*
-============
-idTraceModel::SetupBone
-
-  The origin is placed at the center of the bone.
-============
-*/
 void idTraceModel::SetupBone( const float length, const float width )
 {
 	int	  i, j, edgeNum;
@@ -851,13 +763,6 @@ void idTraceModel::SetupBone( const float length, const float width )
 	GenerateEdgeNormals();
 }
 
-/*
-============
-idTraceModel::InitBone
-
-  Initialize size independent bone.
-============
-*/
 void idTraceModel::InitBone()
 {
 	int i;
@@ -912,11 +817,6 @@ void idTraceModel::InitBone()
 	isConvex = true;
 }
 
-/*
-============
-idTraceModel::SetupPolygon
-============
-*/
 void idTraceModel::SetupPolygon( const idVec3* v, const int count )
 {
 	int	   i, j;
@@ -966,11 +866,6 @@ void idTraceModel::SetupPolygon( const idVec3* v, const int count )
 	isConvex = false;
 }
 
-/*
-============
-idTraceModel::SetupPolygon
-============
-*/
 void idTraceModel::SetupPolygon( const idWinding& w )
 {
 	int		i;
@@ -983,11 +878,6 @@ void idTraceModel::SetupPolygon( const idWinding& w )
 	SetupPolygon( verts, w.GetNumPoints() );
 }
 
-/*
-============
-idTraceModel::VolumeFromPolygon
-============
-*/
 void idTraceModel::VolumeFromPolygon( idTraceModel& trm, float thickness ) const
 {
 	int i;
@@ -1063,11 +953,6 @@ int idTraceModel::GenerateEdgeNormals()
 	return numSharpEdges;
 }
 
-/*
-============
-idTraceModel::Translate
-============
-*/
 void idTraceModel::Translate( const idVec3& translation )
 {
 	int i;
@@ -1085,11 +970,6 @@ void idTraceModel::Translate( const idVec3& translation )
 	bounds[1] += translation;
 }
 
-/*
-============
-idTraceModel::Rotate
-============
-*/
 void idTraceModel::Rotate( const idMat3& rotation )
 {
 	int i, j, edgeNum;
@@ -1114,11 +994,6 @@ void idTraceModel::Rotate( const idMat3& rotation )
 	GenerateEdgeNormals();
 }
 
-/*
-============
-idTraceModel::Shrink
-============
-*/
 void idTraceModel::Shrink( const float m )
 {
 	int				  i, j, edgeNum;
@@ -1151,11 +1026,6 @@ void idTraceModel::Shrink( const float m )
 	}
 }
 
-/*
-============
-idTraceModel::Compare
-============
-*/
 bool idTraceModel::Compare( const idTraceModel& trm ) const
 {
 	int i;
@@ -1189,11 +1059,6 @@ bool idTraceModel::Compare( const idTraceModel& trm ) const
 	return true;
 }
 
-/*
-============
-idTraceModel::GetPolygonArea
-============
-*/
 float idTraceModel::GetPolygonArea( int polyNum ) const
 {
 	int						i;
@@ -1216,11 +1081,6 @@ float idTraceModel::GetPolygonArea( int polyNum ) const
 	return total * 0.5f;
 }
 
-/*
-============
-idTraceModel::GetOrderedSilhouetteEdges
-============
-*/
 int idTraceModel::GetOrderedSilhouetteEdges( const int edgeIsSilEdge[MAX_TRACEMODEL_EDGES + 1], int silEdges[MAX_TRACEMODEL_EDGES] ) const
 {
 	int i, j, edgeNum, numSilEdges, nextSilVert;
@@ -1260,11 +1120,6 @@ int idTraceModel::GetOrderedSilhouetteEdges( const int edgeIsSilEdge[MAX_TRACEMO
 	return numSilEdges;
 }
 
-/*
-============
-idTraceModel::GetProjectionSilhouetteEdges
-============
-*/
 int idTraceModel::GetProjectionSilhouetteEdges( const idVec3& projectionOrigin, int silEdges[MAX_TRACEMODEL_EDGES] ) const
 {
 	int						i, j, edgeNum;
@@ -1289,11 +1144,6 @@ int idTraceModel::GetProjectionSilhouetteEdges( const idVec3& projectionOrigin, 
 	return GetOrderedSilhouetteEdges( edgeIsSilEdge, silEdges );
 }
 
-/*
-============
-idTraceModel::GetParallelProjectionSilhouetteEdges
-============
-*/
 int idTraceModel::GetParallelProjectionSilhouetteEdges( const idVec3& projectionDir, int silEdges[MAX_TRACEMODEL_EDGES] ) const
 {
 	int						i, j, edgeNum;
@@ -1328,11 +1178,6 @@ typedef struct projectionIntegrals_s {
 	float Paaa, Paab, Pabb, Pbbb;
 } projectionIntegrals_t;
 
-/*
-============
-idTraceModel::ProjectionIntegrals
-============
-*/
 void idTraceModel::ProjectionIntegrals( int polyNum, int a, int b, struct projectionIntegrals_s& integrals ) const
 {
 	const traceModelPoly_t* poly;
@@ -1413,11 +1258,6 @@ typedef struct polygonIntegrals_s {
 	float Faab, Fbbc, Fcca;
 } polygonIntegrals_t;
 
-/*
-============
-idTraceModel::PolygonIntegrals
-============
-*/
 void idTraceModel::PolygonIntegrals( int polyNum, int a, int b, int c, struct polygonIntegrals_s& integrals ) const
 {
 	projectionIntegrals_t pi;
@@ -1459,11 +1299,6 @@ typedef struct volumeIntegrals_s {
 	idVec3 TP;
 } volumeIntegrals_t;
 
-/*
-============
-idTraceModel::VolumeIntegrals
-============
-*/
 void idTraceModel::VolumeIntegrals( struct volumeIntegrals_s& integrals ) const
 {
 	const traceModelPoly_t* poly;
@@ -1506,11 +1341,6 @@ void idTraceModel::VolumeIntegrals( struct volumeIntegrals_s& integrals ) const
 	integrals.TP *= 0.5f;
 }
 
-/*
-============
-idTraceModel::GetMassProperties
-============
-*/
 void idTraceModel::GetMassProperties( const float density, float& mass, idVec3& centerOfMass, idMat3& inertiaTensor ) const
 {
 	volumeIntegrals_t integrals;

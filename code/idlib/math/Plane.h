@@ -68,63 +68,157 @@ class idMat3;
 #define PLANETYPE_ZEROZ			8
 #define PLANETYPE_NONAXIAL		9
 
+/*!
+	\class idPlane
+	\brief Represents a mathematical plane in 3D space with support for various geometric operations.
+
+	The idPlane class encapsulates a plane equation in 3D space defined by the formula ax + by + cz + d = 0, where a, b, c represent the normal vector components and d represents the distance from the
+   origin. The class provides constructors for initializing planes from various geometric inputs such as normal vectors and distances, three points, or direction vectors. It supports standard
+   arithmetic operations including addition, subtraction, and scalar multiplication, as well as transformation operations like translation and rotation. The class includes methods for normalizing
+   planes, checking for degenerate cases, calculating distances and sides of points relative to the plane, and performing intersection tests with lines and rays. Additionally, it offers utilities for
+   fitting planes through points or vectors, converting between plane and vector representations, and generating string representations of the plane equation for debugging purposes. The design
+   emphasizes both performance through inline implementations and functionality for geometric computations commonly required in 3D graphics and mathematical operations.
+
+*/
 class idPlane
 {
 public:
+	//! Default constructor for the idPlane class.
 	idPlane();
+
+	//! Constructs an idPlane object with the specified coefficients a, b, c, and d.
 	explicit idPlane( float a, float b, float c, float d );
+
+	//! Initializes a plane with a normal vector and distance from origin.
 	explicit idPlane( const idVec3& normal, const float dist );
+
+	//! Constructs a plane from three points and optionally fixes degenerate cases.
 	explicit idPlane( const idVec3& v0, const idVec3& v1, const idVec3& v2, bool fixDegenerate = false );
 
+	//! Returns the plane coefficient at the specified index
 	float		  operator[]( int index ) const;
+
+	//! Provides indexed access to the components of a plane equation
 	float&		  operator[]( int index );
-	idPlane		  operator-() const;				   // flips plane
-	idPlane&	  operator=( const idVec3& v );		   // sets normal and sets idPlane::d to zero
-	idPlane		  operator+( const idPlane& p ) const; // add plane equations
-	idPlane		  operator-( const idPlane& p ) const; // subtract plane equations
-	idPlane		  operator*( const float s ) const;	   // scale plane
-	idPlane&	  operator*=( const idMat3& m );	   // Normal() *= m
 
-	bool		  Compare( const idPlane& p ) const;											 // exact compare, no epsilon
-	bool		  Compare( const idPlane& p, const float epsilon ) const;						 // compare with epsilon
-	bool		  Compare( const idPlane& p, const float normalEps, const float distEps ) const; // compare with epsilon
-	bool		  operator==( const idPlane& p ) const;											 // exact compare, no epsilon
-	bool		  operator!=( const idPlane& p ) const;											 // exact compare, no epsilon
+	//! Returns the negated version of this plane.
+	idPlane		  operator-() const;
 
-	void		  Zero();								  // zero plane
-	void		  SetNormal( const idVec3& normal );	  // sets the normal
-	const idVec3& Normal() const;						  // reference to const normal
-	idVec3&		  Normal();								  // reference to normal
-	float		  Normalize( bool fixDegenerate = true ); // only normalizes the plane normal, does not adjust d
-	bool		  FixDegenerateNormal();				  // fix degenerate normal
-	bool		  FixDegeneracies( float distEpsilon );	  // fix degenerate normal and dist
-	float		  Dist() const;							  // returns: -d
-	void		  SetDist( const float dist );			  // sets: d = -dist
-	int			  Type() const;							  // returns plane type
+	//! Assigns the components of a vector to the normal components of the plane and sets the distance component to zero
+	idPlane&	  operator=( const idVec3& v );
 
+	//! Adds two plane equations component-wise and returns the result.
+	idPlane		  operator+( const idPlane& p ) const;
+
+	//! Subtracts another plane equation from this plane equation and returns the result.
+	idPlane		  operator-( const idPlane& p ) const;
+
+	//! Scales the plane by the given scalar value.
+	idPlane		  operator*( const float s ) const;
+
+	//! Multiplies the plane's normal vector by the given matrix and returns a reference to the plane.
+	idPlane&	  operator*=( const idMat3& m );
+
+	//! Compares this plane with another plane for exact equality.
+	bool		  Compare( const idPlane& p ) const;
+
+	//! Compares this plane with another plane using the specified epsilon tolerance.
+	bool		  Compare( const idPlane& p, const float epsilon ) const;
+
+	//! Compares this plane with another plane using the specified epsilon values for normal and distance.
+	bool		  Compare( const idPlane& p, const float normalEps, const float distEps ) const;
+
+	//! Compares two planes for exact equality without any epsilon tolerance.
+	bool		  operator==( const idPlane& p ) const;
+
+	//! Returns true if the plane is not equal to the given plane.
+	bool		  operator!=( const idPlane& p ) const;
+
+	//! Sets all components of the plane to zero.
+	void		  Zero();
+
+	//! Sets the normal vector components of the plane from the given vector
+	void		  SetNormal( const idVec3& normal );
+
+	//! Returns a reference to the normal vector of the plane.
+	const idVec3& Normal() const;
+
+	//! Returns a reference to the normal vector of the plane.
+	idVec3&		  Normal();
+
+	//! Normalizes the plane normal and returns its length
+	float		  Normalize( bool fixDegenerate = true );
+
+	//! Fixes a degenerate normal vector.
+	bool		  FixDegenerateNormal();
+
+	//! Fixes degenerate plane normal and distance values.
+	bool		  FixDegeneracies( float distEpsilon );
+
+	//! Returns the distance component of the plane equation
+	float		  Dist() const;
+
+	//! Sets the distance component of the plane to the negative of the provided distance value
+	void		  SetDist( const float dist );
+
+	//! Returns the type of the plane based on its normal vector.
+	int			  Type() const;
+
+	//! Sets the plane from three points and returns true if the plane is valid.
 	bool		  FromPoints( const idVec3& p1, const idVec3& p2, const idVec3& p3, bool fixDegenerate = true );
+
+	//! Calculates a plane from two direction vectors and a point, returning false if the vectors are degenerate.
 	bool		  FromVecs( const idVec3& dir1, const idVec3& dir2, const idVec3& p, bool fixDegenerate = true );
-	void		  FitThroughPoint( const idVec3& p ); // assumes normal is valid
+
+	//! Adjusts the plane constant d so that the plane passes through the given point p
+	void		  FitThroughPoint( const idVec3& p );
+
+	//! Fits a plane to a set of 3D points and returns true if successful.
 	bool		  HeightFit( const idVec3* points, const int numPoints );
+
+	//! Returns a new plane that is translated by the specified vector along the plane normal.
 	idPlane		  Translate( const idVec3& translation ) const;
+
+	//! Translates the plane by the specified translation vector and returns a reference to itself.
 	idPlane&	  TranslateSelf( const idVec3& translation );
+
+	//! Returns a new plane that is the result of rotating this plane by the given axis around the specified origin.
 	idPlane		  Rotate( const idVec3& origin, const idMat3& axis ) const;
+
+	//! Rotates the plane around a given origin using the provided rotation matrix and returns a reference to itself.
 	idPlane&	  RotateSelf( const idVec3& origin, const idMat3& axis );
 
+	//! Calculates the signed distance from a point to the plane.
 	float		  Distance( const idVec3& v ) const;
+
+	//! Determines which side of the plane a given point resides on, with an optional epsilon tolerance for on-plane detection.
 	int			  Side( const idVec3& v, const float epsilon = 0.0f ) const;
 
+	//! Determines if a line segment intersects with the plane.
 	bool		  LineIntersection( const idVec3& start, const idVec3& end ) const;
-	// intersection point is start + dir * scale
+
+	//! Computes the intersection of a ray with the plane and returns the scale factor for the ray equation.
 	bool		  RayIntersection( const idVec3& start, const idVec3& dir, float& scale ) const;
+
+	//! Computes the intersection line between this plane and another plane, returning true if successful.
 	bool		  PlaneIntersection( const idPlane& plane, idVec3& start, idVec3& dir ) const;
 
+	//! Returns the dimension of the plane, which is always 4.
 	int			  GetDimension() const;
 
+	//! Returns a const reference to the plane data as an idVec4.
 	const idVec4& ToVec4() const;
+
+	//! Returns a reference to the plane data reinterpreted as an idVec4.
 	idVec4&		  ToVec4();
+
+	//! Returns a pointer to the float representation of the plane data.
 	const float*  ToFloatPtr() const;
+
+	//! Returns a float pointer to the plane data.
 	float*		  ToFloatPtr();
+
+	//! Returns a string representation of the plane with the specified decimal precision
 	const char*	  ToString( int precision = 2 ) const;
 
 private:

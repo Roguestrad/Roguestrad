@@ -30,70 +30,141 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_POLYNOMIAL_H__
 #define __MATH_POLYNOMIAL_H__
 
-/*
-===============================================================================
+/*!
+	\class idPolynomial
+	\brief A class representing polynomial functions with support for evaluation, arithmetic operations, and root finding.
 
-	Polynomial of arbitrary degree with real coefficients.
+	This class provides a comprehensive interface for working with polynomial functions, including initialization with various degrees and coefficients, arithmetic operations such as addition,
+   subtraction, and scalar multiplication, and evaluation at both real and complex values. It supports finding roots for polynomials of different degrees, including specialized methods for linear,
+   quadratic, cubic, and quartic equations. The class also provides functionality for computing derivatives and antiderivatives of polynomials. Memory management is handled internally with no explicit
+   ownership semantics, and the class maintains an internal coefficient array that can be resized while optionally preserving existing values. The interface is designed to be both efficient and easy
+   to use, supporting both inline operations and more complex computations.
 
-===============================================================================
 */
-
 class idPolynomial
 {
 public:
+	//! Initializes a new polynomial with no coefficients and a degree of -1.
 	idPolynomial();
+
+	//! Initializes a polynomial with the specified maximum degree.
 	explicit idPolynomial( int d );
+
+	//! Initializes a polynomial with linear coefficients a and b.
 	explicit idPolynomial( float a, float b );
+
+	//! Initializes a polynomial with coefficients a, b, and c for terms x^2, x, and the constant term respectively.
 	explicit idPolynomial( float a, float b, float c );
+
+	//! Initializes a polynomial with the given coefficients for terms a*x^3 + b*x^2 + c*x + d.
 	explicit idPolynomial( float a, float b, float c, float d );
+
+	//! Initializes a polynomial with coefficients for terms of degree 0 through 4.
 	explicit idPolynomial( float a, float b, float c, float d, float e );
 
 	// SRS - Added destructor, otherwise idPolynomial() will leak memory
 	~idPolynomial() { Mem_Free16( coefficient ); };
 
+	//! Provides access to a specific coefficient in the polynomial by index
 	float		  operator[]( int index ) const;
+
+	//! Provides access to a coefficient of the polynomial at the specified index
 	float&		  operator[]( int index );
 
+	//! Returns a new polynomial with all coefficients negated.
 	idPolynomial  operator-() const;
+
+	//! Assigns the contents of another polynomial to this polynomial
 	idPolynomial& operator=( const idPolynomial& p );
 
+	//! Returns the sum of this polynomial and another polynomial.
 	idPolynomial  operator+( const idPolynomial& p ) const;
+
+	//! Returns a new polynomial that is the result of subtracting the given polynomial from this polynomial.
 	idPolynomial  operator-( const idPolynomial& p ) const;
+
+	//! Returns a new polynomial that is the result of multiplying this polynomial by a scalar value.
 	idPolynomial  operator*( const float s ) const;
+
+	//! Returns a new polynomial that is the result of dividing this polynomial by a scalar value
 	idPolynomial  operator/( const float s ) const;
 
+	//! Adds the coefficients of another polynomial to this polynomial and returns a reference to this polynomial.
 	idPolynomial& operator+=( const idPolynomial& p );
+
+	//! Subtracts the coefficients of another polynomial from this polynomial in place
 	idPolynomial& operator-=( const idPolynomial& p );
+
+	//! Multiplies the polynomial coefficients by a scalar value and updates the degree if the scalar is zero.
 	idPolynomial& operator*=( const float s );
+
+	//! Divides all coefficients of the polynomial by the given scalar value.
 	idPolynomial& operator/=( const float s );
 
-	bool		  Compare( const idPolynomial& p ) const;					   // exact compare, no epsilon
-	bool		  Compare( const idPolynomial& p, const float epsilon ) const; // compare with epsilon
-	bool		  operator==( const idPolynomial& p ) const;				   // exact compare, no epsilon
-	bool		  operator!=( const idPolynomial& p ) const;				   // exact compare, no epsilon
+	//! Compares this polynomial with another polynomial for exact equality.
+	bool		  Compare( const idPolynomial& p ) const;
 
+	//! Compares this polynomial with another polynomial using the specified epsilon tolerance.
+	bool		  Compare( const idPolynomial& p, const float epsilon ) const;
+
+	//! Compares two polynomial objects for equality.
+	bool		  operator==( const idPolynomial& p ) const;
+
+	//! Checks if this polynomial is not equal to another polynomial.
+	bool		  operator!=( const idPolynomial& p ) const;
+
+	//! Sets the degree of the polynomial to zero, effectively clearing it.
 	void		  Zero();
+
+	//! Sets all coefficients of the polynomial to zero up to the specified degree.
 	void		  Zero( int d );
 
-	int			  GetDimension() const;					// get the degree of the polynomial
-	int			  GetDegree() const;					// get the degree of the polynomial
-	float		  GetValue( const float x ) const;		// evaluate the polynomial with the given real value
-	idComplex	  GetValue( const idComplex& x ) const; // evaluate the polynomial with the given complex value
-	idPolynomial  GetDerivative() const;				// get the first derivative of the polynomial
-	idPolynomial  GetAntiDerivative() const;			// get the anti derivative of the polynomial
+	//! Returns the degree of the polynomial.
+	int			  GetDimension() const;
 
-	int			  GetRoots( idComplex* roots ) const; // get all roots
-	int			  GetRoots( float* roots ) const;	  // get the real roots
+	//! Returns the degree of the polynomial.
+	int			  GetDegree() const;
 
+	//! Evaluates the polynomial at the given real value x.
+	float		  GetValue( const float x ) const;
+
+	//! Evaluates the polynomial using the provided complex value.
+	idComplex	  GetValue( const idComplex& x ) const;
+
+	//! Returns the first derivative of the polynomial.
+	idPolynomial  GetDerivative() const;
+
+	//! Returns the anti-derivative of the polynomial.
+	idPolynomial  GetAntiDerivative() const;
+
+	//! Computes and returns all roots of the polynomial
+	int			  GetRoots( idComplex* roots ) const;
+
+	//! Returns the number of real roots of the polynomial, storing them in the provided array
+	int			  GetRoots( float* roots ) const;
+
+	//! Returns the root of a linear equation ax + b = 0
 	static int	  GetRoots1( float a, float b, float* roots );
+
+	//! Calculates the roots of a quadratic equation ax^2 + bx + c = 0.
 	static int	  GetRoots2( float a, float b, float c, float* roots );
+
+	//! Solves a cubic polynomial equation and returns the number of real roots found.
 	static int	  GetRoots3( float a, float b, float c, float d, float* roots );
+
+	//! Computes the real roots of a quartic polynomial equation.
 	static int	  GetRoots4( float a, float b, float c, float d, float e, float* roots );
 
+	//! Returns a pointer to the coefficient array of the polynomial.
 	const float*  ToFloatPtr() const;
+
+	//! Returns a pointer to the coefficient array of the polynomial.
 	float*		  ToFloatPtr();
+
+	//! Returns a string representation of the polynomial with the specified decimal precision
 	const char*	  ToString( int precision = 2 ) const;
 
+	//! Tests the polynomial root-finding functionality with various polynomial configurations
 	static void	  Test();
 
 private:
@@ -101,7 +172,10 @@ private:
 	int	   allocated;
 	float* coefficient;
 
+	//! Resizes the polynomial to the specified degree while optionally preserving existing coefficients.
 	void   Resize( int d, bool keep );
+
+	//! Computes a root of a polynomial using Laguerre's method
 	int	   Laguer( const idComplex* coef, const int degree, idComplex& r ) const;
 };
 

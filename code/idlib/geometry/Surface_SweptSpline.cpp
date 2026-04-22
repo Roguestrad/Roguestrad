@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-====================
-idSurface_SweptSpline::SetSpline
-====================
-*/
 void idSurface_SweptSpline::SetSpline( idCurve_Spline<idVec4>* spline )
 {
 	if( this->spline ) {
@@ -43,11 +38,6 @@ void idSurface_SweptSpline::SetSpline( idCurve_Spline<idVec4>* spline )
 	this->spline = spline;
 }
 
-/*
-====================
-idSurface_SweptSpline::SetSweptSpline
-====================
-*/
 void idSurface_SweptSpline::SetSweptSpline( idCurve_Spline<idVec4>* sweptSpline )
 {
 	if( this->sweptSpline ) {
@@ -56,13 +46,6 @@ void idSurface_SweptSpline::SetSweptSpline( idCurve_Spline<idVec4>* sweptSpline 
 	this->sweptSpline = sweptSpline;
 }
 
-/*
-====================
-idSurface_SweptSpline::SetSweptCircle
-
-  Sets the swept spline to a NURBS circle.
-====================
-*/
 void idSurface_SweptSpline::SetSweptCircle( const float radius )
 {
 	idCurve_NURBS<idVec4>* nurbs = new( TAG_IDLIB_SURFACE ) idCurve_NURBS<idVec4>();
@@ -79,11 +62,6 @@ void idSurface_SweptSpline::SetSweptCircle( const float radius )
 	sweptSpline = nurbs;
 }
 
-/*
-====================
-idSurface_SweptSpline::GetFrame
-====================
-*/
 void idSurface_SweptSpline::GetFrame( const idMat3& previousFrame, const idVec3 dir, idMat3& newFrame )
 {
 	float  wx, wy, wz;
@@ -140,13 +118,6 @@ void idSurface_SweptSpline::GetFrame( const idMat3& previousFrame, const idVec3 
 	newFrame[0].Normalize();
 }
 
-/*
-====================
-idSurface_SweptSpline::Tessellate
-
-  tesselate the surface
-====================
-*/
 void idSurface_SweptSpline::Tessellate( const int splineSubdivisions, const int sweptSplineSubdivisions )
 {
 	int	   i, j, offset, baseOffset, splineDiv, sweptSplineDiv;

@@ -98,15 +98,7 @@ static void Decode( UINT4* output, const unsigned char* input, unsigned int len 
 	}
 }
 
-/*
-========================
-MD5_Transform
-
-The core of the MD5 algorithm, this alters an existing MD5 hash to reflect the addition of 16
-longwords of new data. MD5Update blocks the data and converts bytes into longwords for this
-routine.
-========================
-*/
+//! Updates an MD5 hash state with 16 longwords of data.
 void MD5_Transform( unsigned int state[4], const unsigned char block[64] )
 {
 	unsigned int a, b, c, d, x[16];
@@ -195,13 +187,6 @@ void MD5_Transform( unsigned int state[4], const unsigned char block[64] )
 	memset( ( POINTER )x, 0, sizeof( x ) );
 }
 
-/*
-========================
-MD5_Init
-
-MD5 initialization. Begins an MD5 operation, writing a new context.
-========================
-*/
 void MD5_Init( MD5_CTX* ctx )
 {
 	ctx->state[0] = 0x67452301;
@@ -213,14 +198,6 @@ void MD5_Init( MD5_CTX* ctx )
 	ctx->bits[1] = 0;
 }
 
-/*
-========================
-MD5_Update
-
-MD5 block update operation. Continues an MD5 message-digest operation, processing another
-message block, and updating the context.
-========================
-*/
 void MD5_Update( MD5_CTX* context, unsigned char const* input, size_t inputLen )
 {
 	unsigned int i, index, partLen;
@@ -255,14 +232,6 @@ void MD5_Update( MD5_CTX* context, unsigned char const* input, size_t inputLen )
 	memcpy( ( POINTER )&context->in[index], ( POINTER )&input[i], inputLen - i );
 }
 
-/*
-========================
-MD5_Final
-
-MD5 finalization. Ends an MD5 message-digest operation, writing the message digest and
-zero-izing the context.
-========================
-*/
 void MD5_Final( MD5_CTX* context, unsigned char digest[16] )
 {
 	unsigned char bits[8];
@@ -285,12 +254,6 @@ void MD5_Final( MD5_CTX* context, unsigned char digest[16] )
 	// Zeroize sensitive information.
 	memset( ( POINTER )context, 0, sizeof( *context ) );
 }
-
-/*
-========================
-MD5_BlockChecksum
-========================
-*/
 
 unsigned int MD5_BlockChecksum( const void* data, size_t length )
 {

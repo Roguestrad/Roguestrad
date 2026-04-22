@@ -30,50 +30,92 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_COMPLEX_H__
 #define __MATH_COMPLEX_H__
 
-/*
-===============================================================================
+/*!
+	\class idComplex
+	\brief A class representing complex numbers with standard arithmetic operations and utilities.
 
-  Complex number
+	This class implements a complex number data type supporting basic arithmetic operations such as addition, subtraction, multiplication, and division. It provides both complex-to-complex and
+   complex-to-scalar operations. The class includes methods for accessing and modifying the real and imaginary components through indexed access operators. Utility functions are included to compute
+   the absolute value, square root, and reciprocal of a complex number. The implementation supports comparison operations with epsilon tolerance and string conversion for debugging and logging
+   purposes. The class is designed for efficient in-place operations and follows standard C++ conventions for operator overloading.
 
-===============================================================================
 */
-
 class idComplex
 {
 public:
 	float r; // real part
 	float i; // imaginary part
 
+	//! Constructs a new complex number with default values.
 	idComplex();
+
+	//! Constructs a complex number with the specified real and imaginary parts.
 	idComplex( const float r, const float i );
 
+	//! Sets the real and imaginary parts of the complex number.
 	void			 Set( const float r, const float i );
+
+	//! Sets both real and imaginary components of the complex number to zero.
 	void			 Zero();
 
+	//! Returns the real or imaginary component of the complex number at the specified index.
 	float			 operator[]( int index ) const;
+
+	//! Provides indexed access to the real and imaginary components of a complex number
 	float&			 operator[]( int index );
 
+	//! Returns the negation of this complex number.
 	idComplex		 operator-() const;
+
+	//! Assigns the value of another complex number to this complex number and returns a reference to this.
 	idComplex&		 operator=( const idComplex& a );
 
+	//! Returns the product of this complex number and another complex number.
 	idComplex		 operator*( const idComplex& a ) const;
+
+	//! Returns the quotient of this complex number and another complex number.
 	idComplex		 operator/( const idComplex& a ) const;
+
+	//! Returns the sum of this complex number and another complex number.
 	idComplex		 operator+( const idComplex& a ) const;
+
+	//! Subtracts the real and imaginary components of the input complex number from this complex number and returns the result.
 	idComplex		 operator-( const idComplex& a ) const;
 
+	//! Multiplies this complex number by another and assigns the result to this complex number.
 	idComplex&		 operator*=( const idComplex& a );
+
+	//! Performs in-place division of this complex number by another complex number
 	idComplex&		 operator/=( const idComplex& a );
+
+	//! Adds the components of another complex number to this complex number and returns a reference to this object.
 	idComplex&		 operator+=( const idComplex& a );
+
+	//! Subtracts the components of another complex number from this complex number and returns a reference to this object.
 	idComplex&		 operator-=( const idComplex& a );
 
+	//! Multiplies this complex number by a scalar value and returns the result.
 	idComplex		 operator*( const float a ) const;
+
+	//! Returns a new complex number that is the result of dividing this complex number by a scalar value.
 	idComplex		 operator/( const float a ) const;
+
+	//! Returns a new complex number with the real part incremented by the given scalar value.
 	idComplex		 operator+( const float a ) const;
+
+	//! Subtracts a scalar value from the real component of the complex number and returns a new complex number.
 	idComplex		 operator-( const float a ) const;
 
+	//! Multiplies both the real and imaginary components of the complex number by the given scalar value.
 	idComplex&		 operator*=( const float a );
+
+	//! Divides both the real and imaginary parts of the complex number by the given scalar value.
 	idComplex&		 operator/=( const float a );
+
+	//! Adds a scalar value to the real component of the complex number and returns a reference to itself.
 	idComplex&		 operator+=( const float a );
+
+	//! Subtracts a scalar value from the real component of this complex number and returns a reference to itself.
 	idComplex&		 operator-=( const float a );
 
 	friend idComplex operator*( const float a, const idComplex& b );
@@ -81,19 +123,37 @@ public:
 	friend idComplex operator+( const float a, const idComplex& b );
 	friend idComplex operator-( const float a, const idComplex& b );
 
-	bool			 Compare( const idComplex& a ) const;					   // exact compare, no epsilon
-	bool			 Compare( const idComplex& a, const float epsilon ) const; // compare with epsilon
-	bool			 operator==( const idComplex& a ) const;				   // exact compare, no epsilon
-	bool			 operator!=( const idComplex& a ) const;				   // exact compare, no epsilon
+	//! Compares this complex number with another for exact equality.
+	bool			 Compare( const idComplex& a ) const;
 
+	//! Compares this complex number with another complex number using an epsilon threshold.
+	bool			 Compare( const idComplex& a, const float epsilon ) const;
+
+	//! Compares two idComplex objects for exact equality.
+	bool			 operator==( const idComplex& a ) const;
+
+	//! Checks if this complex number is not equal to another complex number.
+	bool			 operator!=( const idComplex& a ) const;
+
+	//! Returns the reciprocal of this complex number.
 	idComplex		 Reciprocal() const;
+
+	//! Computes the complex square root of this complex number
 	idComplex		 Sqrt() const;
+
+	//! Computes the absolute value (magnitude) of the complex number.
 	float			 Abs() const;
 
+	//! Returns the dimension of the complex number, which is always 2.
 	int				 GetDimension() const;
 
+	//! Returns a pointer to the real component of the complex number.
 	const float*	 ToFloatPtr() const;
+
+	//! Returns a pointer to the real component of this complex number.
 	float*			 ToFloatPtr();
+
+	//! Converts the complex number to a string representation with the specified precision
 	const char*		 ToString( int precision = 2 ) const;
 };
 
@@ -257,11 +317,13 @@ ID_INLINE idComplex& idComplex::operator-=( const float a )
 	return *this;
 }
 
+//! Multiplies a complex number by a scalar value.
 ID_INLINE idComplex operator*( const float a, const idComplex& b )
 {
 	return idComplex( a * b.r, a * b.i );
 }
 
+//! Returns the complex number result of dividing a scalar by a complex number.
 ID_INLINE idComplex operator/( const float a, const idComplex& b )
 {
 	float s, t;
@@ -276,11 +338,13 @@ ID_INLINE idComplex operator/( const float a, const idComplex& b )
 	}
 }
 
+//! Returns a new complex number representing the sum of a scalar and a complex number.
 ID_INLINE idComplex operator+( const float a, const idComplex& b )
 {
 	return idComplex( a + b.r, b.i );
 }
 
+//! Subtracts a complex number from a real number and returns the result as a new complex number.
 ID_INLINE idComplex operator-( const float a, const idComplex& b )
 {
 	return idComplex( a - b.r, -b.i );

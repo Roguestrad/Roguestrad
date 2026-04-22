@@ -47,61 +47,132 @@ class idCQuat;
 class idRotation;
 class idMat4;
 
-//===============================================================
-//
-//	idMat2 - 2x2 matrix
-//
-//===============================================================
+/*!
+	\class idMat2
+	\brief A 2x2 matrix class supporting various linear algebra operations.
 
+	This class represents a 2x2 matrix and provides comprehensive support for matrix arithmetic, including construction from various data sources, element access, and mathematical operations such as
+   addition, subtraction, multiplication, transposition, and inversion. It offers both in-place and non-in-place variants of operations, along with utilities for checking matrix properties such as
+   symmetry, diagonal nature, and identity status. The class supports conversion to and from float arrays, and provides mechanisms for comparing matrices with tolerance-based equality checks. It is
+   designed for use in 2D geometric computations and linear algebra applications.
+
+*/
 class idMat2
 {
 public:
+	//! Constructs an uninitialized 2x2 matrix.
 	idMat2();
+
+	//! Constructs a 2x2 matrix from two 2D vectors representing the rows.
 	explicit idMat2( const idVec2& x, const idVec2& y );
+
+	//! Constructs a 2x2 matrix with the specified components.
 	explicit idMat2( const float xx, const float xy, const float yx, const float yy );
+
+	//! Constructs a 2x2 matrix from a 2D float array.
 	explicit idMat2( const float src[2][2] );
 
+	//! Returns a constant reference to the idVec2 at the specified index in the idMat2 matrix.
 	const idVec2&  operator[]( int index ) const;
+
+	//! Provides indexed access to the rows of the 2x2 matrix.
 	idVec2&		   operator[]( int index );
+
+	//! Returns the negation of this 2x2 matrix.
 	idMat2		   operator-() const;
+
+	//! Returns a new matrix with each element multiplied by the given scalar value.
 	idMat2		   operator*( const float a ) const;
+
+	//! Returns the product of this 2x2 matrix and the given 2D vector.
 	idVec2		   operator*( const idVec2& vec ) const;
+
+	//! Returns the matrix product of this matrix and matrix a.
 	idMat2		   operator*( const idMat2& a ) const;
+
+	//! Returns a new 2x2 matrix that is the result of adding this matrix to another matrix.
 	idMat2		   operator+( const idMat2& a ) const;
+
+	//! Returns a new matrix that is the result of subtracting the input matrix from this matrix.
 	idMat2		   operator-( const idMat2& a ) const;
+
+	//! Multiplies all elements of the matrix by the given scalar value and returns a reference to the matrix.
 	idMat2&		   operator*=( const float a );
+
+	//! Multiplies this 2x2 matrix by another 2x2 matrix and assigns the result to this matrix.
 	idMat2&		   operator*=( const idMat2& a );
+
+	//! Adds the elements of another 2x2 matrix to this matrix and returns a reference to this matrix.
 	idMat2&		   operator+=( const idMat2& a );
+
+	//! Subtracts the elements of the input matrix from this matrix in place and returns a reference to this matrix.
 	idMat2&		   operator-=( const idMat2& a );
 
 	friend idMat2  operator*( const float a, const idMat2& mat );
 	friend idVec2  operator*( const idVec2& vec, const idMat2& mat );
 	friend idVec2& operator*=( idVec2& vec, const idMat2& mat );
 
-	bool		   Compare( const idMat2& a ) const;					  // exact compare, no epsilon
-	bool		   Compare( const idMat2& a, const float epsilon ) const; // compare with epsilon
-	bool		   operator==( const idMat2& a ) const;					  // exact compare, no epsilon
-	bool		   operator!=( const idMat2& a ) const;					  // exact compare, no epsilon
+	//! Compares this matrix with another matrix for exact equality.
+	bool		   Compare( const idMat2& a ) const;
 
+	//! Compares this matrix with another matrix using the specified epsilon value.
+	bool		   Compare( const idMat2& a, const float epsilon ) const;
+
+	//! Compares two idMat2 matrices for exact equality.
+	bool		   operator==( const idMat2& a ) const;
+
+	//! Returns true if this matrix is not equal to the given matrix.
+	bool		   operator!=( const idMat2& a ) const;
+
+	//! Sets all elements of the 2x2 matrix to zero.
 	void		   Zero();
+
+	//! Sets the matrix to the 2x2 identity matrix.
 	void		   Identity();
+
+	//! Checks if the matrix is equal to the identity matrix within a given epsilon tolerance.
 	bool		   IsIdentity( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Checks if the 2x2 matrix is symmetric within a given epsilon tolerance.
 	bool		   IsSymmetric( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Checks if the 2x2 matrix is diagonal within the specified epsilon tolerance.
 	bool		   IsDiagonal( const float epsilon = MATRIX_EPSILON ) const;
 
+	//! Returns the trace of the 2x2 matrix, which is the sum of its diagonal elements.
 	float		   Trace() const;
-	float		   Determinant() const;
-	idMat2		   Transpose() const; // returns transpose
-	idMat2&		   TransposeSelf();
-	idMat2		   Inverse() const;		// returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseSelf();		// returns false if determinant is zero
-	idMat2		   InverseFast() const; // returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseFastSelf();	// returns false if determinant is zero
 
+	//! Calculates and returns the determinant of the 2x2 matrix.
+	float		   Determinant() const;
+
+	//! Returns the transpose of this 2x2 matrix
+	idMat2		   Transpose() const;
+
+	//! Transposes the matrix in-place and returns a reference to itself.
+	idMat2&		   TransposeSelf();
+
+	//! Returns the inverse of the matrix.
+	idMat2		   Inverse() const;
+
+	//! Inverts the 2x2 matrix in place and returns true if successful, false if the determinant is zero
+	bool		   InverseSelf();
+
+	//! Returns the inverse of the matrix
+	idMat2		   InverseFast() const;
+
+	//! Inverts the matrix in place and returns true if the operation was successful, false if the determinant is zero.
+	bool		   InverseFastSelf();
+
+	//! Returns the dimension of the 2x2 matrix.
 	int			   GetDimension() const;
 
+	//! Returns a pointer to the float representation of the matrix data
 	const float*   ToFloatPtr() const;
+
+	//! Returns a pointer to the float representation of the matrix data.
 	float*		   ToFloatPtr();
+
+	//! Returns a string representation of the matrix with the specified precision.
 	const char*	   ToString( int precision = 2 ) const;
 
 private:
@@ -223,16 +294,19 @@ ID_INLINE idMat2& idMat2::operator-=( const idMat2& a )
 	return *this;
 }
 
+//! Multiplies a 2D vector by a 2x2 matrix and returns the resulting vector.
 ID_INLINE idVec2 operator*( const idVec2& vec, const idMat2& mat )
 {
 	return mat * vec;
 }
 
+//! Returns the result of multiplying a scalar with a 2x2 matrix.
 ID_INLINE idMat2 operator*( const float a, idMat2 const& mat )
 {
 	return mat * a;
 }
 
+//! Multiplies a 2D vector by a 2x2 matrix and assigns the result back to the vector.
 ID_INLINE idVec2& operator*=( idVec2& vec, const idMat2& mat )
 {
 	vec = mat * vec;
@@ -347,84 +421,187 @@ ID_INLINE float* idMat2::ToFloatPtr()
 	return mat[0].ToFloatPtr();
 }
 
-//===============================================================
-//
-//	idMat3 - 3x3 matrix
-//
-//	NOTE:	matrix is column-major
-//
-//===============================================================
+/*!
+	\class idMat3
+	\brief A 3x3 matrix class for representing and manipulating 3D transformations.
 
+	This class implements a 3x3 matrix designed for 3D geometric transformations, supporting both column-major storage and common matrix operations. It provides constructors for various initialization
+   methods including from vectors, arrays, and individual components. The class supports standard arithmetic operations such as addition, subtraction, scalar multiplication, and matrix multiplication,
+   along with in-place modification operators. It includes functionality for matrix decomposition and conversion to other rotational representations including angles, quaternions, and rotation
+   objects. Additional methods handle special cases like orthonormalization, transposition, and inversion, with both exact and fast approximation variants. The class is intended for use in 3D graphics
+   and physics simulations where efficient matrix manipulation is required.
+
+*/
 class idMat3
 {
 public:
+	//! Constructs an uninitialized 3x3 matrix.
 	idMat3();
+
+	//! Initializes a 3x3 matrix using three vector components as rows.
 	explicit idMat3( const idVec3& x, const idVec3& y, const idVec3& z );
+
+	//! Constructs a 3x3 matrix with the specified components.
 	explicit idMat3( const float xx, const float xy, const float xz, const float yx, const float yy, const float yz, const float zx, const float zy, const float zz );
+
+	//! Constructs an idMat3 object from a 3x3 float array.
 	explicit idMat3( const float src[3][3] );
 
+	//! Returns a const reference to the idVec3 at the specified index in the matrix.
 	const idVec3&  operator[]( int index ) const;
+
+	//! Returns a reference to the row vector at the specified index in the matrix.
 	idVec3&		   operator[]( int index );
+
+	//! Returns the negation of this matrix.
 	idMat3		   operator-() const;
+
+	//! Returns a new matrix that is the result of multiplying each element of this matrix by the given scalar value.
 	idMat3		   operator*( const float a ) const;
+
+	//! Multiplies this 3x3 matrix with the given 3D vector and returns the resulting vector.
 	idVec3		   operator*( const idVec3& vec ) const;
+
+	//! Returns the matrix product of this matrix and matrix a.
 	idMat3		   operator*( const idMat3& a ) const;
+
+	//! Returns a new matrix that is the sum of this matrix and matrix a.
 	idMat3		   operator+( const idMat3& a ) const;
+
+	//! Returns a new matrix that is the result of subtracting the input matrix from this matrix.
 	idMat3		   operator-( const idMat3& a ) const;
+
+	//! Multiplies all elements of the matrix by the given scalar value and returns a reference to the matrix.
 	idMat3&		   operator*=( const float a );
+
+	//! Multiplies this matrix by the given matrix and assigns the result to this matrix.
 	idMat3&		   operator*=( const idMat3& a );
+
+	//! Adds the elements of the given matrix to this matrix and returns a reference to this matrix.
 	idMat3&		   operator+=( const idMat3& a );
+
+	//! Subtracts the components of the given matrix from this matrix in place and returns a reference to this matrix.
 	idMat3&		   operator-=( const idMat3& a );
 
 	friend idMat3  operator*( const float a, const idMat3& mat );
 	friend idVec3  operator*( const idVec3& vec, const idMat3& mat );
 	friend idVec3& operator*=( idVec3& vec, const idMat3& mat );
 
-	bool		   Compare( const idMat3& a ) const;					  // exact compare, no epsilon
-	bool		   Compare( const idMat3& a, const float epsilon ) const; // compare with epsilon
-	bool		   operator==( const idMat3& a ) const;					  // exact compare, no epsilon
-	bool		   operator!=( const idMat3& a ) const;					  // exact compare, no epsilon
+	//! Compares this matrix with another matrix for exact equality.
+	bool		   Compare( const idMat3& a ) const;
 
+	//! Compares this matrix with another matrix using the specified epsilon value for floating-point comparisons
+	bool		   Compare( const idMat3& a, const float epsilon ) const;
+
+	//! Compares this matrix with another matrix for equality using exact matching.
+	bool		   operator==( const idMat3& a ) const;
+
+	//! Returns true if this matrix is not equal to the given matrix.
+	bool		   operator!=( const idMat3& a ) const;
+
+	//! Sets all elements of the 3x3 matrix to zero.
 	void		   Zero();
+
+	//! Sets the matrix to the 3x3 identity matrix.
 	void		   Identity();
+
+	//! Checks if the matrix is approximately equal to the identity matrix within a given epsilon tolerance.
 	bool		   IsIdentity( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Checks if the 3x3 matrix is symmetric within a given epsilon tolerance.
 	bool		   IsSymmetric( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Returns true if the matrix is diagonal, considering the specified epsilon tolerance.
 	bool		   IsDiagonal( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Returns true if the matrix is not equal to the identity matrix, indicating a rotation has been applied.
 	bool		   IsRotated() const;
 
+	//! Projects a 3D vector using the matrix components.
 	void		   ProjectVector( const idVec3& src, idVec3& dst ) const;
+
+	//! Unprojects a 3D vector using the matrix and stores the result in the destination vector.
 	void		   UnprojectVector( const idVec3& src, idVec3& dst ) const;
 
-	bool		   FixDegeneracies(); // fix degenerate axial cases
-	bool		   FixDenormals();	  // change tiny numbers to zero
+	//! Fixes degenerate axial cases in the matrix by addressing degenerate normals in its rows.
+	bool		   FixDegeneracies();
 
+	//! Fixes denormalized floating-point numbers in the matrix by setting tiny values to zero.
+	bool		   FixDenormals();
+
+	//! Returns the trace of the 3x3 matrix, which is the sum of its diagonal elements.
 	float		   Trace() const;
+
+	//! Computes the determinant of the 3x3 matrix.
 	float		   Determinant() const;
+
+	//! Returns an orthonormalized copy of this matrix.
 	idMat3		   OrthoNormalize() const;
+
+	//! Normalizes the rows of the matrix to be orthonormal.
 	idMat3&		   OrthoNormalizeSelf();
-	idMat3		   Transpose() const; // returns transpose
+
+	//! Returns the transpose of this matrix
+	idMat3		   Transpose() const;
+
+	//! Transposes the matrix in place and returns a reference to itself.
 	idMat3&		   TransposeSelf();
-	idMat3		   Inverse() const;		// returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseSelf();		// returns false if determinant is zero
-	idMat3		   InverseFast() const; // returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseFastSelf();	// returns false if determinant is zero
+
+	//! Returns the inverse of this matrix
+	idMat3		   Inverse() const;
+
+	//! Computes the inverse of the matrix in-place and returns true if successful, false if the matrix is singular.
+	bool		   InverseSelf();
+
+	//! Returns the inverse of this matrix
+	idMat3		   InverseFast() const;
+
+	//! Inverts the matrix in place and returns true if successful, false if the determinant is zero.
+	bool		   InverseFastSelf();
+
+	//! Returns the matrix product of the transpose of this matrix and matrix b.
 	idMat3		   TransposeMultiply( const idMat3& b ) const;
 
+	//! Computes the inertia matrix translated by a given mass and center of mass offset.
 	idMat3		   InertiaTranslate( const float mass, const idVec3& centerOfMass, const idVec3& translation ) const;
+
+	//! Updates the inertia matrix by translating it according to the given mass, center of mass, and translation vector.
 	idMat3&		   InertiaTranslateSelf( const float mass, const idVec3& centerOfMass, const idVec3& translation );
+
+	//! Returns the inertia tensor rotated by the specified rotation matrix.
 	idMat3		   InertiaRotate( const idMat3& rotation ) const;
+
+	//! Rotates the inertia matrix by the provided rotation matrix and returns a reference to itself.
 	idMat3&		   InertiaRotateSelf( const idMat3& rotation );
 
+	//! Returns the dimension of the 3x3 matrix, which is always 9 elements.
 	int			   GetDimension() const;
 
+	//! Converts a 3x3 matrix to Euler angles.
 	idAngles	   ToAngles() const;
+
+	//! Converts a 3x3 matrix to a quaternion representation.
 	idQuat		   ToQuat() const;
+
+	//! Converts this rotation matrix to a unit vector quaternion.
 	idCQuat		   ToCQuat() const;
+
+	//! Converts a 3x3 matrix to a rotation object.
 	idRotation	   ToRotation() const;
+
+	//! Converts a 3x3 matrix to a 4x4 matrix.
 	idMat4		   ToMat4() const;
+
+	//! Converts a rotation matrix to an angular velocity vector.
 	idVec3		   ToAngularVelocity() const;
+
+	//! Returns a pointer to the float representation of the matrix data.
 	const float*   ToFloatPtr() const;
+
+	//! Returns a pointer to the float representation of the matrix data.
 	float*		   ToFloatPtr();
+
+	//! Converts the matrix to a string representation with the specified precision
 	const char*	   ToString( int precision = 2 ) const;
 
 	friend void	   TransposeMultiply( const idMat3& inv, const idMat3& b, idMat3& dst );
@@ -597,16 +774,19 @@ ID_INLINE idMat3& idMat3::operator-=( const idMat3& a )
 	return *this;
 }
 
+//! Returns the result of multiplying a vector by a matrix.
 ID_INLINE idVec3 operator*( const idVec3& vec, const idMat3& mat )
 {
 	return mat * vec;
 }
 
+//! Returns the result of multiplying a scalar with a 3x3 matrix.
 ID_INLINE idMat3 operator*( const float a, const idMat3& mat )
 {
 	return mat * a;
 }
 
+//! Multiplies the given vector by the given matrix and assigns the result back to the vector
 ID_INLINE idVec3& operator*=( idVec3& vec, const idMat3& mat )
 {
 	float x = mat[0].x * vec.x + mat[1].x * vec.y + mat[2].x * vec.z;
@@ -785,6 +965,7 @@ ID_INLINE idMat3 idMat3::TransposeMultiply( const idMat3& b ) const
 		mat[0].z * b[0].z + mat[1].z * b[1].z + mat[2].z * b[2].z );
 }
 
+//! Computes the matrix product of the transpose of one matrix and another matrix.
 ID_INLINE void TransposeMultiply( const idMat3& transpose, const idMat3& b, idMat3& dst )
 {
 	dst[0].x = transpose[0].x * b[0].x + transpose[1].x * b[1].x + transpose[2].x * b[2].x;
@@ -798,6 +979,7 @@ ID_INLINE void TransposeMultiply( const idMat3& transpose, const idMat3& b, idMa
 	dst[2].z = transpose[0].z * b[0].z + transpose[1].z * b[1].z + transpose[2].z * b[2].z;
 }
 
+//! Creates a skew-symmetric matrix from the given 3D vector.
 ID_INLINE idMat3 SkewSymmetric( idVec3 const& src )
 {
 	return idMat3( 0.0f, -src.z, src.y, src.z, 0.0f, -src.x, -src.y, src.x, 0.0f );
@@ -818,17 +1000,26 @@ ID_INLINE float* idMat3::ToFloatPtr()
 	return mat[0].ToFloatPtr();
 }
 
-//===============================================================
-//
-//	idMat4 - 4x4 matrix
-//
-//===============================================================
+/*!
+	\class idMat4
+	\brief A 4x4 matrix class supporting various construction methods, transformations, and mathematical operations.
 
+	This class represents a 4x4 matrix commonly used for 3D transformations, including rotations, translations, and projections. It provides multiple constructors for flexible initialization from
+   different data sources such as vectors, arrays, or existing matrices. The class supports standard matrix operations like multiplication, addition, subtraction, transposition, and inversion. It also
+   includes utility functions for extracting components like translation and rotation, as well as checking matrix properties such as identity, symmetry, and diagonality. The class is designed to work
+   seamlessly with vector types for efficient geometric computations.
+
+*/
 class idMat4
 {
 public:
+	//! Constructs an identity matrix.
 	idMat4();
+
+	//! Constructs a 4x4 matrix from four 4D vectors representing the rows or columns of the matrix
 	explicit idMat4( const idVec4& x, const idVec4& y, const idVec4& z, const idVec4& w );
+
+	//! Constructs a 4x4 matrix from 16 individual float values
 	explicit idMat4( const float xx,
 		const float				 xy,
 		const float				 xz,
@@ -845,20 +1036,47 @@ public:
 		const float				 wy,
 		const float				 wz,
 		const float				 ww );
+
+	//! Constructs a 4x4 matrix from a 3x3 rotation matrix and a 3D translation vector.
 	explicit idMat4( const idMat3& rotation, const idVec3& translation );
+
+	//! Constructs a 4x4 matrix from a 4x4 array of floats.
 	explicit idMat4( const float src[4][4] );
 
+	//! Returns a const reference to the idVec4 row at the specified index in the matrix
 	const idVec4&  operator[]( int index ) const;
+
+	//! Provides indexed access to the rows of the 4x4 matrix.
 	idVec4&		   operator[]( int index );
+
+	//! Returns a new matrix that is the result of multiplying this matrix by a scalar value.
 	idMat4		   operator*( const float a ) const;
+
+	//! Multiplies this matrix by the given vector and returns the resulting vector.
 	idVec4		   operator*( const idVec4& vec ) const;
+
+	//! Multiplies this 4x4 matrix by a 3D vector and returns the transformed vector.
 	idVec3		   operator*( const idVec3& vec ) const;
+
+	//! Returns the matrix product of this matrix and matrix a.
 	idMat4		   operator*( const idMat4& a ) const;
+
+	//! Returns a new matrix that is the element-wise sum of this matrix and matrix a.
 	idMat4		   operator+( const idMat4& a ) const;
+
+	//! Returns the element-wise difference between this matrix and another matrix.
 	idMat4		   operator-( const idMat4& a ) const;
+
+	//! Multiplies all elements of the matrix by the given scalar value and returns a reference to the matrix.
 	idMat4&		   operator*=( const float a );
+
+	//! Multiplies this matrix by the given matrix and assigns the result to this matrix.
 	idMat4&		   operator*=( const idMat4& a );
+
+	//! Adds the elements of the given matrix to this matrix and returns a reference to this matrix.
 	idMat4&		   operator+=( const idMat4& a );
+
+	//! Subtracts the elements of the given matrix from this matrix in place and returns a reference to this matrix.
 	idMat4&		   operator-=( const idMat4& a );
 
 	friend idMat4  operator*( const float a, const idMat4& mat );
@@ -867,39 +1085,83 @@ public:
 	friend idVec4& operator*=( idVec4& vec, const idMat4& mat );
 	friend idVec3& operator*=( idVec3& vec, const idMat4& mat );
 
-	bool		   Compare( const idMat4& a ) const;					  // exact compare, no epsilon
-	bool		   Compare( const idMat4& a, const float epsilon ) const; // compare with epsilon
-	bool		   operator==( const idMat4& a ) const;					  // exact compare, no epsilon
-	bool		   operator!=( const idMat4& a ) const;					  // exact compare, no epsilon
+	//! Compares this matrix with another matrix for equality.
+	bool		   Compare( const idMat4& a ) const;
 
+	//! Compares this matrix with another matrix using the specified epsilon tolerance.
+	bool		   Compare( const idMat4& a, const float epsilon ) const;
+
+	//! Compares two idMat4 matrices for exact equality.
+	bool		   operator==( const idMat4& a ) const;
+
+	//! Returns true if this matrix is not equal to the given matrix.
+	bool		   operator!=( const idMat4& a ) const;
+
+	//! Sets all elements of the matrix to zero.
 	void		   Zero();
+
+	//! Sets the matrix to the 4x4 identity matrix.
 	void		   Identity();
+
+	//! Checks if the matrix is equal to the identity matrix within a given epsilon tolerance.
 	bool		   IsIdentity( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Checks if the matrix is symmetric within a given epsilon tolerance.
 	bool		   IsSymmetric( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Returns true if the matrix is diagonal, within the specified epsilon tolerance.
 	bool		   IsDiagonal( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Returns true if the matrix has a non-zero rotation component.
 	bool		   IsRotated() const;
 
+	//! Projects a vector using the matrix.
 	void		   ProjectVector( const idVec4& src, idVec4& dst ) const;
+
+	//! Transforms a vector using the matrix.
 	void		   UnprojectVector( const idVec4& src, idVec4& dst ) const;
 
+	//! Returns the trace of the 4x4 matrix, which is the sum of its diagonal elements.
 	float		   Trace() const;
+
+	//! Computes and returns the determinant of this 4x4 matrix.
 	float		   Determinant() const;
-	idMat4		   Transpose() const; // returns transpose
+
+	//! Returns the transpose of the matrix.
+	idMat4		   Transpose() const;
+
+	//! Transposes the matrix in place and returns a reference to itself.
 	idMat4&		   TransposeSelf();
-	idMat4		   Inverse() const;		// returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseSelf();		// returns false if determinant is zero
-	idMat4		   InverseFast() const; // returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseFastSelf();	// returns false if determinant is zero
+
+	//! Returns the inverse of this matrix
+	idMat4		   Inverse() const;
+
+	//! Computes the inverse of the matrix in place and returns true if successful, false if the matrix is singular.
+	bool		   InverseSelf();
+
+	//! Returns the inverse of this matrix
+	idMat4		   InverseFast() const;
+
+	//! Computes the fast inverse of the matrix in-place and returns whether the operation was successful.
+	bool		   InverseFastSelf();
 	idMat4		   TransposeMultiply( const idMat4& b ) const;
 
+	//! Returns the dimension of the 4x4 matrix, which is always 16 elements.
 	int			   GetDimension() const;
 
+	//! Returns a pointer to the float representation of the matrix data.
 	const float*   ToFloatPtr() const;
+
+	//! Returns a pointer to the first element of the matrix data.
 	float*		   ToFloatPtr();
+
+	//! Returns a string representation of the matrix with the specified precision
 	const char*	   ToString( int precision = 2 ) const;
-	// jmarshall
+
+	//! Converts a 4x4 matrix to a 3x3 matrix by extracting the rotational components.
 	idMat3		   ToMat3() const;
-	// jmarshall end
+
+	//! Retrieves the translation component from a 4x4 transformation matrix.
 	idVec3		   GetTranslation() const;
 
 private:
@@ -910,7 +1172,6 @@ extern idMat4 mat4_zero;
 extern idMat4 mat4_identity;
 #define mat4_default mat4_identity
 
-// jmarshall
 ID_INLINE idMat3 idMat4::ToMat3() const
 {
 	idMat3 m;
@@ -928,9 +1189,7 @@ ID_INLINE idMat3 idMat4::ToMat3() const
 
 	return m;
 }
-// jmarshall end
 
-// RB begin
 ID_INLINE idVec3 idMat4::GetTranslation() const
 {
 	idVec3 pos;
@@ -941,7 +1200,6 @@ ID_INLINE idVec3 idMat4::GetTranslation() const
 
 	return pos;
 }
-// RB end
 
 ID_INLINE idMat4::idMat4()
 {
@@ -1202,27 +1460,32 @@ ID_INLINE idMat4& idMat4::operator-=( const idMat4& a )
 	return *this;
 }
 
+//! Returns the result of multiplying a scalar value with a 4x4 matrix.
 ID_INLINE idMat4 operator*( const float a, const idMat4& mat )
 {
 	return mat * a;
 }
 
+//! Multiplies a vector by a matrix, returning the transformed vector.
 ID_INLINE idVec4 operator*( const idVec4& vec, const idMat4& mat )
 {
 	return mat * vec;
 }
 
+//! Multiplies a vector by a matrix.
 ID_INLINE idVec3 operator*( const idVec3& vec, const idMat4& mat )
 {
 	return mat * vec;
 }
 
+//! Multiplies a vector by a matrix and assigns the result back to the vector.
 ID_INLINE idVec4& operator*=( idVec4& vec, const idMat4& mat )
 {
 	vec = mat * vec;
 	return vec;
 }
 
+//! Multiplies the given vector by the matrix and assigns the result back to the vector.
 ID_INLINE idVec3& operator*=( idVec3& vec, const idMat4& mat )
 {
 	vec = mat * vec;
@@ -1363,59 +1626,127 @@ ID_INLINE float* idMat4::ToFloatPtr()
 	return mat[0].ToFloatPtr();
 }
 
-//===============================================================
-//
-//	idMat5 - 5x5 matrix
-//
-//===============================================================
+/*!
+	\class idMat5
+	\brief A 5x5 matrix class with support for common matrix operations and conversions.
 
+	The idMat5 class represents a 5x5 matrix and provides a comprehensive set of operations for matrix manipulation. It supports construction from various sources including individual vectors, raw
+   float arrays, and initialization as identity or zero matrices. The class offers both element-wise and matrix-wise arithmetic operations, including multiplication, addition, and subtraction, with
+   corresponding assignment operators for in-place modifications. It includes methods for checking matrix properties such as identity, symmetry, and diagonal nature, along with computation of trace,
+   determinant, transpose, and inverse operations. The class provides indexed access to rows through operator[], and supports conversion to and from float pointers and string representations for ease
+   of integration with other systems.
+
+*/
 class idMat5
 {
 public:
+	//! Constructs an uninitialized idMat5 matrix.
 	idMat5();
+
+	//! Constructs a 5x5 matrix using five 5-dimensional vectors as rows.
 	explicit idMat5( const idVec5& v0, const idVec5& v1, const idVec5& v2, const idVec5& v3, const idVec5& v4 );
+
+	//! Constructs an idMat5 object by copying data from a 5x5 float array.
 	explicit idMat5( const float src[5][5] );
 
+	//! Returns a const reference to the idVec5 at the specified index in the idMat5 matrix
 	const idVec5&  operator[]( int index ) const;
+
+	//! Provides indexed access to the rows of the 5x5 matrix.
 	idVec5&		   operator[]( int index );
+
+	//! Returns a new idMat5 matrix with each element multiplied by the given scalar value.
 	idMat5		   operator*( const float a ) const;
+
+	//! Multiplies this 5x5 matrix by a 5D vector and returns the resulting 5D vector.
 	idVec5		   operator*( const idVec5& vec ) const;
+
+	//! Returns the matrix product of this matrix and the given matrix.
 	idMat5		   operator*( const idMat5& a ) const;
+
+	//! Returns the element-wise sum of this matrix and matrix a.
 	idMat5		   operator+( const idMat5& a ) const;
+
+	//! Returns the element-wise difference between this matrix and matrix a.
 	idMat5		   operator-( const idMat5& a ) const;
+
+	//! Multiplies all elements of the matrix by the given scalar value and returns a reference to the matrix.
 	idMat5&		   operator*=( const float a );
+
+	//! Multiplies this matrix by the given matrix and assigns the result to this matrix.
 	idMat5&		   operator*=( const idMat5& a );
+
+	//! Adds the elements of the given matrix to this matrix and returns a reference to this matrix.
 	idMat5&		   operator+=( const idMat5& a );
+
+	//! Subtracts the elements of the given matrix from this matrix in-place and returns a reference to this matrix.
 	idMat5&		   operator-=( const idMat5& a );
 
 	friend idMat5  operator*( const float a, const idMat5& mat );
 	friend idVec5  operator*( const idVec5& vec, const idMat5& mat );
 	friend idVec5& operator*=( idVec5& vec, const idMat5& mat );
 
-	bool		   Compare( const idMat5& a ) const;					  // exact compare, no epsilon
-	bool		   Compare( const idMat5& a, const float epsilon ) const; // compare with epsilon
-	bool		   operator==( const idMat5& a ) const;					  // exact compare, no epsilon
-	bool		   operator!=( const idMat5& a ) const;					  // exact compare, no epsilon
+	//! Compares this matrix with another matrix for equality.
+	bool		   Compare( const idMat5& a ) const;
 
+	//! Compares this matrix with another matrix using the specified epsilon tolerance
+	bool		   Compare( const idMat5& a, const float epsilon ) const;
+
+	//! Compares two idMat5 matrices for equality.
+	bool		   operator==( const idMat5& a ) const;
+
+	//! Compares two idMat5 matrices for inequality.
+	bool		   operator!=( const idMat5& a ) const;
+
+	//! Sets all elements of the matrix to zero.
 	void		   Zero();
+
+	//! Sets the matrix to the 5x5 identity matrix.
 	void		   Identity();
+
+	//! Checks if the matrix is equal to the identity matrix within a given epsilon threshold.
 	bool		   IsIdentity( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Checks if the matrix is symmetric within a given epsilon tolerance.
 	bool		   IsSymmetric( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Checks if the matrix is diagonal within the specified epsilon tolerance.
 	bool		   IsDiagonal( const float epsilon = MATRIX_EPSILON ) const;
 
+	//! Computes the trace of the 5x5 matrix by summing its diagonal elements.
 	float		   Trace() const;
-	float		   Determinant() const;
-	idMat5		   Transpose() const; // returns transpose
-	idMat5&		   TransposeSelf();
-	idMat5		   Inverse() const;		// returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseSelf();		// returns false if determinant is zero
-	idMat5		   InverseFast() const; // returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseFastSelf();	// returns false if determinant is zero
 
+	//! Calculates and returns the determinant of the 5x5 matrix.
+	float		   Determinant() const;
+
+	//! Returns the transpose of this 5x5 matrix.
+	idMat5		   Transpose() const;
+
+	//! Transposes the matrix in place and returns a reference to itself.
+	idMat5&		   TransposeSelf();
+
+	//! Returns the inverse of the matrix.
+	idMat5		   Inverse() const;
+
+	//! Computes the inverse of the 5x5 matrix in-place and returns true if successful, false if the matrix is singular.
+	bool		   InverseSelf();
+
+	//! Returns the inverse of this matrix.
+	idMat5		   InverseFast() const;
+
+	//! Computes the inverse of the matrix in place and returns false if the matrix is singular.
+	bool		   InverseFastSelf();
+
+	//! Returns the dimension of the matrix, which is 25 for a 5x5 matrix.
 	int			   GetDimension() const;
 
+	//! Returns a pointer to the float representation of the matrix data.
 	const float*   ToFloatPtr() const;
+
+	//! Returns a pointer to the first element of the matrix data.
 	float*		   ToFloatPtr();
+
+	//! Returns a string representation of the matrix with the specified precision.
 	const char*	   ToString( int precision = 2 ) const;
 
 private:
@@ -1609,16 +1940,19 @@ ID_INLINE idMat5& idMat5::operator-=( const idMat5& a )
 	return *this;
 }
 
+//! Multiplies a 5D vector by a 5x5 matrix and returns the resulting vector.
 ID_INLINE idVec5 operator*( const idVec5& vec, const idMat5& mat )
 {
 	return mat * vec;
 }
 
+//! Returns the result of multiplying a scalar value with a 5x5 matrix.
 ID_INLINE idMat5 operator*( const float a, idMat5 const& mat )
 {
 	return mat * a;
 }
 
+//! Multiplies the vector by the matrix and assigns the result back to the vector
 ID_INLINE idVec5& operator*=( idVec5& vec, const idMat5& mat )
 {
 	vec = mat * vec;
@@ -1734,61 +2068,132 @@ ID_INLINE float* idMat5::ToFloatPtr()
 	return mat[0].ToFloatPtr();
 }
 
-//===============================================================
-//
-//	idMat6 - 6x6 matrix
-//
-//===============================================================
+/*!
+	\class idMat6
+	\brief A 6x6 matrix class supporting various mathematical operations and conversions.
 
+	This class represents a 6x6 matrix with support for construction from various data sources including vectors, sub-matrices, and raw arrays. It provides comprehensive arithmetic operations such as
+   multiplication with scalars and other matrices, addition, subtraction, and element-wise comparisons. The class includes methods for matrix properties verification like identity, symmetry, and
+   diagonal status, as well as operations for retrieving sub-matrices, computing determinants, traces, and inverses. It supports both in-place and return-by-value operations for matrix transformations
+   and offers conversion utilities to and from floating-point pointers and string representations. The design allows for efficient matrix manipulation in mathematical computations and transformations.
+
+*/
 class idMat6
 {
 public:
+	//! Constructs an uninitialized 6x6 matrix.
 	idMat6();
+
+	//! Constructs a 6x6 matrix using six 6D vectors as rows.
 	explicit idMat6( const idVec6& v0, const idVec6& v1, const idVec6& v2, const idVec6& v3, const idVec6& v4, const idVec6& v5 );
+
+	//! Constructs a 6x6 matrix from four 3x3 matrices by combining their rows.
 	explicit idMat6( const idMat3& m0, const idMat3& m1, const idMat3& m2, const idMat3& m3 );
+
+	//! Constructs a 6x6 matrix from a 2D array of floats.
 	explicit idMat6( const float src[6][6] );
 
+	//! Returns a const reference to the idVec6 element at the specified index in the idMat6 matrix
 	const idVec6&  operator[]( int index ) const;
+
+	//! Provides indexed access to the rows of the 6x6 matrix
 	idVec6&		   operator[]( int index );
+
+	//! Multiplies this 6x6 matrix by a scalar value and returns the result.
 	idMat6		   operator*( const float a ) const;
+
+	//! Multiplies this 6x6 matrix by the given 6D vector and returns the resulting vector.
 	idVec6		   operator*( const idVec6& vec ) const;
+
+	//! Returns the matrix product of this matrix and the given matrix.
 	idMat6		   operator*( const idMat6& a ) const;
+
+	//! Returns the result of adding this matrix to another matrix.
 	idMat6		   operator+( const idMat6& a ) const;
+
+	//! Returns the element-wise difference between this matrix and another matrix.
 	idMat6		   operator-( const idMat6& a ) const;
+
+	//! Multiplies all elements of the 6x6 matrix by the given scalar value and returns a reference to the modified matrix.
 	idMat6&		   operator*=( const float a );
+
+	//! Multiplies this matrix by another matrix and assigns the result to this matrix
 	idMat6&		   operator*=( const idMat6& a );
+
+	//! Adds the elements of the given matrix to this matrix and returns a reference to this matrix.
 	idMat6&		   operator+=( const idMat6& a );
+
+	//! Subtracts each element of the input matrix from the corresponding element of this matrix and returns a reference to this matrix.
 	idMat6&		   operator-=( const idMat6& a );
 
 	friend idMat6  operator*( const float a, const idMat6& mat );
 	friend idVec6  operator*( const idVec6& vec, const idMat6& mat );
 	friend idVec6& operator*=( idVec6& vec, const idMat6& mat );
 
-	bool		   Compare( const idMat6& a ) const;					  // exact compare, no epsilon
-	bool		   Compare( const idMat6& a, const float epsilon ) const; // compare with epsilon
-	bool		   operator==( const idMat6& a ) const;					  // exact compare, no epsilon
-	bool		   operator!=( const idMat6& a ) const;					  // exact compare, no epsilon
+	//! Compares this matrix with another matrix for equality.
+	bool		   Compare( const idMat6& a ) const;
 
+	//! Compares this matrix with another matrix using the specified epsilon tolerance
+	bool		   Compare( const idMat6& a, const float epsilon ) const;
+
+	//! Compares two idMat6 matrices for equality.
+	bool		   operator==( const idMat6& a ) const;
+
+	//! Returns true if this matrix is not equal to the given matrix.
+	bool		   operator!=( const idMat6& a ) const;
+
+	//! Initializes all elements of the matrix to zero.
 	void		   Zero();
+
+	//! Sets the matrix to the 6x6 identity matrix.
 	void		   Identity();
+
+	//! Checks if the matrix is identity within a specified epsilon tolerance.
 	bool		   IsIdentity( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Checks if the 6x6 matrix is symmetric within a given epsilon tolerance.
 	bool		   IsSymmetric( const float epsilon = MATRIX_EPSILON ) const;
+
+	//! Checks if the 6x6 matrix is diagonal within the given epsilon tolerance.
 	bool		   IsDiagonal( const float epsilon = MATRIX_EPSILON ) const;
 
+	//! Returns a 3x3 sub-matrix from this 6x6 matrix at the specified index.
 	idMat3		   SubMat3( int n ) const;
-	float		   Trace() const;
-	float		   Determinant() const;
-	idMat6		   Transpose() const; // returns transpose
-	idMat6&		   TransposeSelf();
-	idMat6		   Inverse() const;		// returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseSelf();		// returns false if determinant is zero
-	idMat6		   InverseFast() const; // returns the inverse ( m * m.Inverse() = identity )
-	bool		   InverseFastSelf();	// returns false if determinant is zero
 
+	//! Returns the trace of the 6x6 matrix, which is the sum of its diagonal elements.
+	float		   Trace() const;
+
+	//! Computes and returns the determinant of the 6x6 matrix.
+	float		   Determinant() const;
+
+	//! Returns the transpose of this 6x6 matrix
+	idMat6		   Transpose() const;
+
+	//! Transposes the matrix in place and returns a reference to itself.
+	idMat6&		   TransposeSelf();
+
+	//! Returns the inverse of this matrix
+	idMat6		   Inverse() const;
+
+	//! Computes the inverse of the 6x6 matrix in-place and returns true if successful, false if the matrix is singular.
+	bool		   InverseSelf();
+
+	//! Returns the inverse of the matrix
+	idMat6		   InverseFast() const;
+
+	//! Computes the inverse of the 6x6 matrix in-place and returns true if successful, false if the matrix is singular.
+	bool		   InverseFastSelf();
+
+	//! Returns the dimension of the 6x6 matrix, which is always 36.
 	int			   GetDimension() const;
 
+	//! Returns a pointer to the float representation of the matrix data
 	const float*   ToFloatPtr() const;
+
+	//! Returns a pointer to the first element of the matrix data.
 	float*		   ToFloatPtr();
+
+	//! Returns a string representation of the matrix with the specified precision
 	const char*	   ToString( int precision = 2 ) const;
 
 private:
@@ -2030,16 +2435,19 @@ ID_INLINE idMat6& idMat6::operator-=( const idMat6& a )
 	return *this;
 }
 
+//! Multiplies a 6D vector by a 6x6 matrix and returns the resulting vector.
 ID_INLINE idVec6 operator*( const idVec6& vec, const idMat6& mat )
 {
 	return mat * vec;
 }
 
+//! Multiplies a 6x6 matrix by a scalar value.
 ID_INLINE idMat6 operator*( const float a, idMat6 const& mat )
 {
 	return mat * a;
 }
 
+//! Multiplies the given vector by the matrix and assigns the result back to the vector.
 ID_INLINE idVec6& operator*=( idVec6& vec, const idMat6& mat )
 {
 	vec = mat * vec;

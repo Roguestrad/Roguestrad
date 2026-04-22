@@ -30,23 +30,23 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MATH_SIMD_H__
 #define __MATH_SIMD_H__
 
-/*
-===============================================================================
-
-	Single Instruction Multiple Data (SIMD)
-
-	For optimal use data should be aligned on a 16 byte boundary.
-	All idSIMDProcessor routines are thread safe.
-
-===============================================================================
+/*!
+	\class idSIMD
+	\brief Provides SIMD instruction set management and initialization for optimized processing.
 */
-
 class idSIMD
 {
 public:
+	//! Initializes the SIMD system by setting up the generic implementation
 	static void Init();
+
+	//! Initializes the SIMD processor based on CPU capabilities and module context.
 	static void InitProcessor( const char* module, bool forceGeneric );
+
+	//! Initializes the SIMD processor and sets up the generic implementation
 	static void Shutdown();
+
+	//! Executes SIMD processing tests and prints performance results.
 	static void Test_f( const class idCmdArgs& args );
 };
 
@@ -84,9 +84,20 @@ class idJointQuat;
 class idJointMat;
 struct dominantTri_t;
 
+/*!
+	\class idSIMDProcessor
+	\brief Interface for SIMD-optimized computational operations.
+
+	This class serves as an abstract interface for implementing SIMD-optimized versions of various computational functions. It provides a standardized way to perform operations like min/max
+   calculations, memory copying and filling, and joint transformation operations using SIMD instructions. The interface is designed to allow different implementations based on the available CPU
+   capabilities, with the base implementation providing a fallback to generic operations. Derived classes would typically provide optimized versions of the functions for specific CPU architectures or
+   instruction sets.
+
+*/
 class idSIMDProcessor
 {
 public:
+	//! Initializes the idSIMDProcessor object with default CPUID_NONE value.
 	idSIMDProcessor() { cpuid = CPUID_NONE; }
 
 	cpuid_t cpuid;
