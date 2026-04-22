@@ -34,30 +34,12 @@ If you have questions concerning this license or the applicable additional terms
 #include "../sound/WaveFile.h"
 #include "../renderer/CmdlineProgressbar.h"
 
-/*
-================================================================================================
-
-idResourceContainer
-
-================================================================================================
-*/
-
-/*
-========================
-idResourceContainer::ReOpen
-========================
-*/
 void idResourceContainer::ReOpen()
 {
 	delete resourceFile;
 	resourceFile = fileSystem->OpenFileRead( fileName );
 }
 
-/*
-========================
-idResourceContainer::Init
-========================
-*/
 bool idResourceContainer::Init( const char* _fileName )
 {
 	if( idStr::Icmp( _fileName, "_ordered.resources" ) == 0 ) {
@@ -118,11 +100,6 @@ bool idResourceContainer::Init( const char* _fileName )
 	return true;
 }
 
-/*
-========================
-idResourceContainer::WriteManifestFile
-========================
-*/
 void idResourceContainer::WriteManifestFile( const char* name, const idStrList& list )
 {
 	idStr filename( name );
@@ -139,11 +116,6 @@ void idResourceContainer::WriteManifestFile( const char* name, const idStrList& 
 	}
 }
 
-/*
-========================
-idResourceContainer::ReadManifestFile
-========================
-*/
 int idResourceContainer::ReadManifestFile( const char* name, idStrList& list )
 {
 	idFile* inFile = fileSystem->OpenFileRead( name );
@@ -162,11 +134,6 @@ int idResourceContainer::ReadManifestFile( const char* name, idStrList& list )
 	return list.Num();
 }
 
-/*
-========================
-idResourceContainer::UpdateResourceFile
-========================
-*/
 void idResourceContainer::UpdateResourceFile( const char* _filename, const idStrList& _filesToUpdate )
 {
 	idFile* outFile = fileSystem->OpenFileWrite( va( "%s.new", _filename ) );
@@ -287,11 +254,6 @@ void idResourceContainer::UpdateResourceFile( const char* _filename, const idStr
 	delete inFile;
 }
 
-/*
-========================
-idResourceContainer::ExtractResourceFile
-========================
-*/
 void idResourceContainer::ExtractResourceFile( const char* _fileName, const char* _outPath, bool _copyWavs, bool _all )
 {
 	idFile* inFile = fileSystem->OpenFileRead( _fileName );
@@ -451,11 +413,6 @@ void idResourceContainer::ExtractResourceFile( const char* _fileName, const char
 	Mem_Free( buf );
 }
 
-/*
-========================
-idResourceContainer::Open
-========================
-*/
 void idResourceContainer::WriteResourceFile( const char* manifestName, const idStrList& manifest, const bool& _writeManifest )
 {
 	if( manifest.Num() == 0 ) {

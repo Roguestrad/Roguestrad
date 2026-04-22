@@ -30,19 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-================================================================================================
-
-idPreloadManifest
-
-================================================================================================
-*/
-
-/*
-========================
-idPreloadManifest::LoadManifest
-========================
-*/
 bool idPreloadManifest::LoadManifest( const char* fileName )
 {
 	idFile* inFile = fileSystem->OpenFileReadMemory( fileName );
@@ -60,18 +47,6 @@ bool idPreloadManifest::LoadManifest( const char* fileName )
 	return false;
 }
 
-/*
-================================================================================================
-
-idFileManifest
-
-================================================================================================
-*/
-/*
-========================
-idFileManifest::LoadManifest
-========================
-*/
 bool idFileManifest::LoadManifest( const char* _fileName )
 {
 	idFile* file = fileSystem->OpenFileRead( _fileName, false );
@@ -81,13 +56,6 @@ bool idFileManifest::LoadManifest( const char* _fileName )
 	return false;
 }
 
-/*
-========================
-idFileManifest::LoadManifestFromFile
-
-// this will delete the file when finished
-========================
-*/
 bool idFileManifest::LoadManifestFromFile( idFile* file )
 {
 	if( file == NULL ) {
@@ -110,11 +78,6 @@ bool idFileManifest::LoadManifestFromFile( idFile* file )
 	return true;
 }
 
-/*
-========================
-idFileManifest::WriteManifestFile
-========================
-*/
 void idFileManifest::WriteManifestFile( const char* fileName )
 {
 	idFile* file = fileSystem->OpenFileWrite( fileName );
@@ -130,11 +93,6 @@ void idFileManifest::WriteManifestFile( const char* fileName )
 	delete file;
 }
 
-/*
-========================
-idPreloadManifest::WriteManifestFile
-========================
-*/
 void idPreloadManifest::WriteManifest( const char* fileName )
 {
 	idFile* file = fileSystem->OpenFileWrite( fileName, "fs_savepath" );
@@ -144,11 +102,6 @@ void idPreloadManifest::WriteManifest( const char* fileName )
 	}
 }
 
-/*
-========================
-idFileManifest::FindFile
-========================
-*/
 int idFileManifest::FindFile( const char* fileName )
 {
 	const int key = cacheHash.GenerateKey( fileName, false );
@@ -160,11 +113,6 @@ int idFileManifest::FindFile( const char* fileName )
 	return -1;
 }
 
-/*
-========================
-idFileManifest::RemoveAll
-========================
-*/
 void idFileManifest::RemoveAll( const char* _fileName )
 {
 	for( int i = 0; i < cacheTable.Num(); i++ ) {
@@ -177,21 +125,11 @@ void idFileManifest::RemoveAll( const char* _fileName )
 	}
 }
 
-/*
-========================
-idFileManifest::GetFileNameByIndex
-========================
-*/
 const idStr& idFileManifest::GetFileNameByIndex( int idx ) const
 {
 	return cacheTable[idx];
 }
 
-/*
-=========================
-idFileManifest::AddFile
-=========================
-*/
 void idFileManifest::AddFile( const char* fileName )
 {
 	// if ( FindFile( fileName ) == NULL ) {

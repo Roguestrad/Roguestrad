@@ -40,10 +40,17 @@ If you have questions concerning this license or the applicable additional terms
 */
 class idResourceContainer;
 
+/*!
+	\class idResourceCacheEntry
+	\brief Manages resource cache entries for storing and retrieving cached resource data.
+*/
 class idResourceCacheEntry
 {
 public:
+	//! Initializes a new resource cache entry and clears its contents.
 	idResourceCacheEntry() { Clear(); }
+
+	//! Clears all fields of the resource cache entry.
 	void Clear()
 	{
 		filename.Empty();
@@ -51,6 +58,8 @@ public:
 		length = 0;
 		owner  = NULL;
 	}
+
+	//! Reads resource cache entry data from a file
 	size_t Read( idFile* f )
 	{
 		size_t sz = f->ReadString( filename );
@@ -58,6 +67,8 @@ public:
 		sz += f->ReadBig( length );
 		return sz;
 	}
+
+	//! Writes resource cache entry data to a file
 	size_t Write( idFile* f )
 	{
 		size_t sz = f->WriteString( filename );
@@ -76,11 +87,23 @@ public:
 };
 
 static const uint32 RESOURCE_FILE_MAGIC = 0xD000000D;
+
+/*!
+	\class idResourceContainer
+	\brief Manages resource containers including file loading, parsing, and extraction.
+
+	The idResourceContainer class provides functionality for handling resource containers, which are files containing organized collections of resources. It supports initialization by loading and
+   parsing resource files, opening individual files within the container, and managing the container's lifecycle through opening and closing operations. The class also offers methods for writing new
+   resource files and manifest files, as well as reading existing manifest files. It can extract resources from a container file to a specified output path, with support for converting audio files and
+   filtering extraction results. Additionally, it provides capabilities for updating resource files by adding or modifying entries.
+
+*/
 class idResourceContainer
 {
 	friend class idFileSystemLocal;
 	// friend class	idReadSpawnThread;
 public:
+	//! Initializes a new instance of the idResourceContainer class.
 	idResourceContainer()
 	{
 		resourceFile	 = NULL;
@@ -89,21 +112,51 @@ public:
 		resourceMagic	 = 0;
 		numFileResources = 0;
 	}
+
+	//! Destructor for idResourceContainer that cleans up resource file and clears the cache table.
 	~idResourceContainer()
 	{
 		delete resourceFile;
 		cacheTable.Clear();
 	}
+
+	//! Initializes the resource container by loading and parsing the resource file.
 	bool		Init( const char* fileName );
+
+	//! Writes a resource file containing the specified manifest entries, split into 1GB chunks if necessary.
 	static void WriteResourceFile( const char* fileName, const idStrList& manifest, const bool& _writeManifest );
+
+	//! Writes a manifest file containing a list of resource paths with the specified name.
 	static void WriteManifestFile( const char* name, const idStrList& list );
+
+	//! Reads a manifest file and populates a string list with its contents.
 	static int	ReadManifestFile( const char* filename, idStrList& list );
+
+	/*!
+		\brief Extracts resource files from a container file, optionally converting WAV files and filtering output based on flags
+
+		This function reads a resource container file and extracts its contents to the specified output path. It handles both binary resource files and audio files, with special processing for WAV
+	   files that converts them from internal formats to standard WAV files. The function supports filtering of output files through the 'all' parameter and can optionally copy WAV files with
+	   additional processing. Progress tracking is enabled when copying WAV files.
+
+		\param fileName Path to the resource container file to extract from
+		\param outPath Destination path where extracted files will be written
+		\param copyWavs Flag indicating whether to process and convert WAV files
+		\param all Flag indicating whether to extract all files or filter out certain categories
+	*/
 	static void ExtractResourceFile( const char* fileName, const char* outPath, bool copyWavs, bool all );
+
+	//! Updates a resource file with new or modified files.
 	static void UpdateResourceFile( const char* filename, const idStrList& filesToAdd );
 	idFile*		OpenFile( const char* fileName );
+
+	//! Returns the file name associated with the resource container.
 	const char* GetFileName() const { return fileName.c_str(); }
+
+	//! Reopens the resource file by closing the current handle and creating a new one.
 	void		ReOpen();
 
+	//! Returns the number of file resources in the container.
 	int			GetNumFileResources() const { return numFileResources; }
 
 private:

@@ -34,29 +34,48 @@ idCVar*		  idCVar::staticVars = NULL;
 
 extern idCVar net_allowCheats;
 
-/*
-===============================================================================
+/*!
+	\class idInternalCVar
+	\brief Manages internal console variable state and operations with support for string, boolean, integer, and float value types.
 
-	idInternalCVar
+	Provides a concrete implementation for console variables that handles value updates, type conversions, and synchronization with external state. The class supports multiple value types through
+   specialized setter methods and maintains internal string representations that are updated based on the current value. It handles initialization from static declarations and manages flags such as
+   cheat status and server-side updates. Memory management for string values is handled internally with methods for copying and allocating string arrays.
 
-===============================================================================
 */
-
 class idInternalCVar : public idCVar
 {
 	friend class idCVarSystemLocal;
 
 public:
+	//! Constructs a new internal CVar with default values.
 	idInternalCVar();
+
+	//! Initializes a new internal CVar with the specified name, value, and flags
 	idInternalCVar( const char* newName, const char* newValue, int newFlags );
+
+	//! Initializes an internal console variable from an existing console variable.
 	idInternalCVar( const idCVar* cvar );
+
+	//! Destructor for idInternalCVar that frees the allocated memory for valueStrings.
 	virtual ~idInternalCVar();
 
+	//! Copies an array of string values into newly allocated memory.
 	const char** CopyValueStrings( const char** strings );
+
+	//! Updates the internal cvar state with values from a static declaration, handling multiple initializations and warnings.
 	void		 Update( const idCVar* cvar );
+
+	//! Updates the internal value of the CVar based on its current string representation and type flags
 	void		 UpdateValue();
+
+	//! Updates the cheat flag for the console variable based on its current flags.
 	void		 UpdateCheat();
+
+	//! Sets the value of the CVar, with optional force and server origin flags
 	void		 Set( const char* newValue, bool force, bool fromServer );
+
+	//! Resets the CVar to its default value
 	void		 Reset();
 
 private:
@@ -65,20 +84,25 @@ private:
 	idStr				valueString;	   // value
 	idStr				descriptionString; // description
 
+	//! Returns the reset string value of the internal console variable.
 	virtual const char* InternalGetResetString() const;
 
+	//! Sets the string value of the internal cvar.
 	virtual void		InternalSetString( const char* newValue );
+
+	//! Sets the internal string value of the console variable on the server side.
 	virtual void		InternalServerSetString( const char* newValue );
+
+	//! Sets the internal boolean value of the CVar and updates its string representation.
 	virtual void		InternalSetBool( const bool newValue );
+
+	//! Sets the internal integer value of the CVar by converting the integer to a string and calling Set.
 	virtual void		InternalSetInteger( const int newValue );
+
+	//! Sets the internal float value of the CVar and updates its string representation.
 	virtual void		InternalSetFloat( const float newValue );
 };
 
-/*
-============
-idInternalCVar::idInternalCVar
-============
-*/
 idInternalCVar::idInternalCVar()
 {
 }
@@ -131,22 +155,12 @@ idInternalCVar::idInternalCVar( const idCVar* cvar )
 	internalVar = this;
 }
 
-/*
-============
-idInternalCVar::~idInternalCVar
-============
-*/
 idInternalCVar::~idInternalCVar()
 {
 	Mem_Free( valueStrings );
 	valueStrings = NULL;
 }
 
-/*
-============
-idInternalCVar::CopyValueStrings
-============
-*/
 const char** idInternalCVar::CopyValueStrings( const char** strings )
 {
 	int			 i, totalLength;
@@ -175,11 +189,6 @@ const char** idInternalCVar::CopyValueStrings( const char** strings )
 	return ptr;
 }
 
-/*
-============
-idInternalCVar::Update
-============
-*/
 void idInternalCVar::Update( const idCVar* cvar )
 {
 	// if this is a statically declared variable
@@ -222,11 +231,6 @@ void idInternalCVar::Update( const idCVar* cvar )
 	}
 }
 
-/*
-============
-idInternalCVar::UpdateValue
-============
-*/
 void idInternalCVar::UpdateValue()
 {
 	bool clamped = false;
@@ -292,11 +296,6 @@ void idInternalCVar::UpdateValue()
 	}
 }
 
-/*
-============
-idInternalCVar::UpdateCheat
-============
-*/
 void idInternalCVar::UpdateCheat()
 {
 	// all variables are considered cheats except for a few types
@@ -307,11 +306,6 @@ void idInternalCVar::UpdateCheat()
 	}
 }
 
-/*
-============
-idInternalCVar::Set
-============
-*/
 void idInternalCVar::Set( const char* newValue, bool force, bool fromServer )
 {
 	if( common->IsMultiplayer() && !fromServer ) {
@@ -355,11 +349,6 @@ void idInternalCVar::Set( const char* newValue, bool force, bool fromServer )
 	cvarSystem->SetModifiedFlags( flags );
 }
 
-/*
-============
-idInternalCVar::Reset
-============
-*/
 void idInternalCVar::Reset()
 {
 	valueString = resetString;
@@ -367,119 +356,135 @@ void idInternalCVar::Reset()
 	UpdateValue();
 }
 
-/*
-============
-idInternalCVar::InternalGetResetString
-============
-*/
 const char* idInternalCVar::InternalGetResetString() const
 {
 	return resetString;
 }
 
-/*
-============
-idInternalCVar::InternalSetString
-============
-*/
 void idInternalCVar::InternalSetString( const char* newValue )
 {
 	Set( newValue, true, false );
 }
 
-/*
-===============
-idInternalCVar::InternalServerSetString
-===============
-*/
 void idInternalCVar::InternalServerSetString( const char* newValue )
 {
 	Set( newValue, true, true );
 }
 
-/*
-============
-idInternalCVar::InternalSetBool
-============
-*/
 void idInternalCVar::InternalSetBool( const bool newValue )
 {
 	Set( idStr( newValue ), true, false );
 }
 
-/*
-============
-idInternalCVar::InternalSetInteger
-============
-*/
 void idInternalCVar::InternalSetInteger( const int newValue )
 {
 	Set( idStr( newValue ), true, false );
 }
 
-/*
-============
-idInternalCVar::InternalSetFloat
-============
-*/
 void idInternalCVar::InternalSetFloat( const float newValue )
 {
 	Set( idStr( newValue ), true, false );
 }
 
-/*
-===============================================================================
+/*!
+	\class idCVarSystemLocal
+	\brief Manages console variables and their system-level operations.
 
-	idCVarSystemLocal
+	The idCVarSystemLocal class provides a comprehensive interface for managing console variables within the system. It handles the registration, retrieval, modification, and persistence of console
+   variables, along with command-line interface functionality. The class supports various data types for console variables including strings, booleans, integers, and floats, and offers mechanisms for
+   flagging variables for specific behaviors or persistence. It also provides command completion and argument handling capabilities for console interaction. The system can be initialized and shut
+   down, and supports operations to write flagged variables to files, move variables to dictionaries, and reset variables to their default values. The implementation ensures that console variables are
+   properly tracked and managed throughout the system's lifecycle.
 
-===============================================================================
 */
-
 class idCVarSystemLocal : public idCVarSystem
 {
 public:
+	//! Initializes an idCVarSystemLocal instance with default values.
 	idCVarSystemLocal();
 
 	virtual ~idCVarSystemLocal()
 	{
 	}
 
+	//! Initializes the console variable system
 	virtual void		Init();
+
+	//! Shuts down the console variable system and releases all allocated resources.
 	virtual void		Shutdown();
+
+	//! Returns true if the CVar system has been initialized.
 	virtual bool		IsInitialized() const;
 
+	//! Registers a console variable with the system
 	virtual void		Register( idCVar* cvar );
 
+	//! Finds and returns a CVAR by its string name
 	virtual idCVar*		Find( const char* name );
 
+	//! Sets the string value of a console variable by name with optional flags.
 	virtual void		SetCVarString( const char* name, const char* value, int flags = 0 );
+
+	//! Sets a console variable to a boolean value.
 	virtual void		SetCVarBool( const char* name, const bool value, int flags = 0 );
+
+	//! Sets the value of a console variable to an integer.
 	virtual void		SetCVarInteger( const char* name, const int value, int flags = 0 );
+
+	//! Sets the value of a float console variable by name
 	virtual void		SetCVarFloat( const char* name, const float value, int flags = 0 );
 
+	//! Retrieves the string value of a console variable by its name, returning an empty string if the variable is not found.
 	virtual const char* GetCVarString( const char* name ) const;
+
+	//! Retrieves the boolean value of a console variable by name, returning false if the variable does not exist.
 	virtual bool		GetCVarBool( const char* name ) const;
+
+	//! Retrieves the integer value of a console variable by name, returning 0 if the variable does not exist.
 	virtual int			GetCVarInteger( const char* name ) const;
+
+	//! Returns the float value of a CVar identified by the given name, or 0.0f if the CVar is not found.
 	virtual float		GetCVarFloat( const char* name ) const;
 
+	//! Handles command-line arguments for console variables by either printing their value or setting a new value.
 	virtual bool		Command( const idCmdArgs& args );
 
+	//! Fills the callback function with the names of all console variables.
 	virtual void		CommandCompletion( void ( *callback )( const char* s ) );
+
+	//! Performs command argument completion for a given command string using a callback function
 	virtual void		ArgCompletion( const char* cmdString, void ( *callback )( const char* s ) );
 
+	//! Sets the modified flags to indicate which CVars have been changed.
 	virtual void		SetModifiedFlags( int flags );
+
+	//! Returns the flags indicating which CVars have been modified.
 	virtual int			GetModifiedFlags() const;
+
+	//! Clears the specified modified flags from the cvar system
 	virtual void		ClearModifiedFlags( int flags );
 
+	//! Resets cvar variables that have any of the specified flags set.
 	virtual void		ResetFlaggedVariables( int flags );
+
+	//! Removes auto-completion from console variables flagged with the specified flags.
 	virtual void		RemoveFlaggedAutoCompletion( int flags );
+
+	//! Writes configuration variable settings to a file for variables matching specified flags.
 	virtual void		WriteFlaggedVariables( int flags, const char* setCmd, idFile* f ) const;
 
+	//! Moves CVars with specified flags to a dictionary, optionally filtering modified variables only
 	virtual void		MoveCVarsToDict( int flags, idDict& dict, bool onlyModified ) const;
+
+	//! Sets cvar values from a dictionary
 	virtual void		SetCVarsFromDict( const idDict& dict );
 
 	void				RegisterInternal( idCVar* cvar );
+
+	//! Finds and returns the internal cvar with the specified name, or NULL if not found.
 	idInternalCVar*		FindInternal( const char* name ) const;
+
+	//! Sets the value and flags of a console variable, creating it if it doesn't exist.
 	void				SetInternal( const char* name, const char* value, int flags );
 
 private:
@@ -489,12 +494,25 @@ private:
 	int								  modifiedFlags;
 
 private:
+	//! Toggles a console variable between 0 and 1, or cycles through multiple string values.
 	static void Toggle_f( const idCmdArgs& args );
+
+	//! Sets a console variable to the specified string value.
 	static void Set_f( const idCmdArgs& args );
+
+	//! Resets a console variable to its default value.
 	static void Reset_f( const idCmdArgs& args );
+
+	//! Lists console variables matching specified flags and optional search criteria.
 	static void ListByFlags( const idCmdArgs& args, cvarFlags_t flags );
+
+	//! Lists all console variables with the specified flags.
 	static void List_f( const idCmdArgs& args );
+
+	//! Resets console variables to their default values while preserving read-only and initialized variables.
 	static void Restart_f( const idCmdArgs& args );
+
+	//! Adds a value to an existing cvar and updates its float value.
 	static void CvarAdd_f( const idCmdArgs& args );
 };
 
@@ -506,6 +524,18 @@ idCVarSystem*	  cvarSystem = &localCVarSystem;
 #define NUM_DESCRIPTION_CHARS ( NUM_COLUMNS - NUM_NAME_CHARS )
 #define FORMAT_STRING		  "%-32s "
 
+/*!
+	\brief Creates a column-formatted string from input text with specified width and indentation.
+
+	This function processes the input text to format it into columns of a specified width, inserting the provided indentation string at line breaks. It handles word wrapping by breaking lines at
+   appropriate boundaries, avoiding breaking words at inconvenient characters. The function modifies the provided idStr object to store the result and returns a pointer to the formatted string.
+
+	\param text The input text to be formatted into columns
+	\param columnWidth The maximum width of each column in characters
+	\param indent The string to insert at the beginning of each new line
+	\param string The output string object where the result is stored
+	\return A pointer to the formatted string stored in the idStr parameter
+*/
 const char* CreateColumn( const char* text, int columnWidth, const char* indent, idStr& string )
 {
 	int i, lastLine;
@@ -529,11 +559,6 @@ const char* CreateColumn( const char* text, int columnWidth, const char* indent,
 	return string.c_str();
 }
 
-/*
-============
-idCVarSystemLocal::FindInternal
-============
-*/
 idInternalCVar* idCVarSystemLocal::FindInternal( const char* name ) const
 {
 	int hash = cvarHash.GenerateKey( name, false );
@@ -545,11 +570,6 @@ idInternalCVar* idCVarSystemLocal::FindInternal( const char* name ) const
 	return NULL;
 }
 
-/*
-============
-idCVarSystemLocal::SetInternal
-============
-*/
 void idCVarSystemLocal::SetInternal( const char* name, const char* value, int flags )
 {
 	int				hash;
@@ -568,22 +588,12 @@ void idCVarSystemLocal::SetInternal( const char* name, const char* value, int fl
 	}
 }
 
-/*
-============
-idCVarSystemLocal::idCVarSystemLocal
-============
-*/
 idCVarSystemLocal::idCVarSystemLocal()
 {
 	initialized	  = false;
 	modifiedFlags = 0;
 }
 
-/*
-============
-idCVarSystemLocal::Init
-============
-*/
 void idCVarSystemLocal::Init()
 {
 	modifiedFlags = 0;
@@ -602,11 +612,6 @@ void idCVarSystemLocal::Init()
 	initialized = true;
 }
 
-/*
-============
-idCVarSystemLocal::Shutdown
-============
-*/
 void idCVarSystemLocal::Shutdown()
 {
 	cvars.DeleteContents( true );
@@ -614,21 +619,11 @@ void idCVarSystemLocal::Shutdown()
 	initialized = false;
 }
 
-/*
-============
-idCVarSystemLocal::IsInitialized
-============
-*/
 bool idCVarSystemLocal::IsInitialized() const
 {
 	return initialized;
 }
 
-/*
-============
-idCVarSystemLocal::Register
-============
-*/
 void idCVarSystemLocal::Register( idCVar* cvar )
 {
 	int				hash;
@@ -659,51 +654,26 @@ idCVar* idCVarSystemLocal::Find( const char* name )
 	return FindInternal( name );
 }
 
-/*
-============
-idCVarSystemLocal::SetCVarString
-============
-*/
 void idCVarSystemLocal::SetCVarString( const char* name, const char* value, int flags )
 {
 	SetInternal( name, value, flags );
 }
 
-/*
-============
-idCVarSystemLocal::SetCVarBool
-============
-*/
 void idCVarSystemLocal::SetCVarBool( const char* name, const bool value, int flags )
 {
 	SetInternal( name, idStr( value ), flags );
 }
 
-/*
-============
-idCVarSystemLocal::SetCVarInteger
-============
-*/
 void idCVarSystemLocal::SetCVarInteger( const char* name, const int value, int flags )
 {
 	SetInternal( name, idStr( value ), flags );
 }
 
-/*
-============
-idCVarSystemLocal::SetCVarFloat
-============
-*/
 void idCVarSystemLocal::SetCVarFloat( const char* name, const float value, int flags )
 {
 	SetInternal( name, idStr( value ), flags );
 }
 
-/*
-============
-idCVarSystemLocal::GetCVarString
-============
-*/
 const char* idCVarSystemLocal::GetCVarString( const char* name ) const
 {
 	idInternalCVar* internal = FindInternal( name );
@@ -713,11 +683,6 @@ const char* idCVarSystemLocal::GetCVarString( const char* name ) const
 	return "";
 }
 
-/*
-============
-idCVarSystemLocal::GetCVarBool
-============
-*/
 bool idCVarSystemLocal::GetCVarBool( const char* name ) const
 {
 	idInternalCVar* internal = FindInternal( name );
@@ -727,11 +692,6 @@ bool idCVarSystemLocal::GetCVarBool( const char* name ) const
 	return false;
 }
 
-/*
-============
-idCVarSystemLocal::GetCVarInteger
-============
-*/
 int idCVarSystemLocal::GetCVarInteger( const char* name ) const
 {
 	idInternalCVar* internal = FindInternal( name );
@@ -741,11 +701,6 @@ int idCVarSystemLocal::GetCVarInteger( const char* name ) const
 	return 0;
 }
 
-/*
-============
-idCVarSystemLocal::GetCVarFloat
-============
-*/
 float idCVarSystemLocal::GetCVarFloat( const char* name ) const
 {
 	idInternalCVar* internal = FindInternal( name );
@@ -755,11 +710,6 @@ float idCVarSystemLocal::GetCVarFloat( const char* name ) const
 	return 0.0f;
 }
 
-/*
-============
-idCVarSystemLocal::Command
-============
-*/
 bool idCVarSystemLocal::Command( const idCmdArgs& args )
 {
 	idInternalCVar* internal;
@@ -783,11 +733,6 @@ bool idCVarSystemLocal::Command( const idCmdArgs& args )
 	return true;
 }
 
-/*
-============
-idCVarSystemLocal::CommandCompletion
-============
-*/
 void idCVarSystemLocal::CommandCompletion( void ( *callback )( const char* s ) )
 {
 	for( int i = 0; i < cvars.Num(); i++ ) {
@@ -795,11 +740,6 @@ void idCVarSystemLocal::CommandCompletion( void ( *callback )( const char* s ) )
 	}
 }
 
-/*
-============
-idCVarSystemLocal::ArgCompletion
-============
-*/
 void idCVarSystemLocal::ArgCompletion( const char* cmdString, void ( *callback )( const char* s ) )
 {
 	idCmdArgs args;
@@ -817,41 +757,21 @@ void idCVarSystemLocal::ArgCompletion( const char* cmdString, void ( *callback )
 	}
 }
 
-/*
-============
-idCVarSystemLocal::SetModifiedFlags
-============
-*/
 void idCVarSystemLocal::SetModifiedFlags( int flags )
 {
 	modifiedFlags |= flags;
 }
 
-/*
-============
-idCVarSystemLocal::GetModifiedFlags
-============
-*/
 int idCVarSystemLocal::GetModifiedFlags() const
 {
 	return modifiedFlags;
 }
 
-/*
-============
-idCVarSystemLocal::ClearModifiedFlags
-============
-*/
 void idCVarSystemLocal::ClearModifiedFlags( int flags )
 {
 	modifiedFlags &= ~flags;
 }
 
-/*
-============
-idCVarSystemLocal::ResetFlaggedVariables
-============
-*/
 void idCVarSystemLocal::ResetFlaggedVariables( int flags )
 {
 	for( int i = 0; i < cvars.Num(); i++ ) {
@@ -862,11 +782,6 @@ void idCVarSystemLocal::ResetFlaggedVariables( int flags )
 	}
 }
 
-/*
-============
-idCVarSystemLocal::RemoveFlaggedAutoCompletion
-============
-*/
 void idCVarSystemLocal::RemoveFlaggedAutoCompletion( int flags )
 {
 	for( int i = 0; i < cvars.Num(); i++ ) {
@@ -877,14 +792,6 @@ void idCVarSystemLocal::RemoveFlaggedAutoCompletion( int flags )
 	}
 }
 
-/*
-============
-idCVarSystemLocal::WriteFlaggedVariables
-
-Appends lines containing "set variable value" for all variables
-with the "flags" flag set to true.
-============
-*/
 void idCVarSystemLocal::WriteFlaggedVariables( int flags, const char* setCmd, idFile* f ) const
 {
 	for( int i = 0; i < cvars.Num(); i++ ) {
@@ -895,11 +802,6 @@ void idCVarSystemLocal::WriteFlaggedVariables( int flags, const char* setCmd, id
 	}
 }
 
-/*
-============
-idCVarSystemLocal::MoveCVarsToDict
-============
-*/
 void idCVarSystemLocal::MoveCVarsToDict( int flags, idDict& dict, bool onlyModified ) const
 {
 	dict.Clear();
@@ -914,11 +816,6 @@ void idCVarSystemLocal::MoveCVarsToDict( int flags, idDict& dict, bool onlyModif
 	}
 }
 
-/*
-============
-idCVarSystemLocal::SetCVarsFromDict
-============
-*/
 void idCVarSystemLocal::SetCVarsFromDict( const idDict& dict )
 {
 	idInternalCVar* internal;
@@ -932,11 +829,6 @@ void idCVarSystemLocal::SetCVarsFromDict( const idDict& dict )
 	}
 }
 
-/*
-============
-idCVarSystemLocal::Toggle_f
-============
-*/
 void idCVarSystemLocal::Toggle_f( const idCmdArgs& args )
 {
 	int			argc, i;
@@ -993,11 +885,6 @@ void idCVarSystemLocal::Toggle_f( const idCmdArgs& args )
 	}
 }
 
-/*
-============
-idCVarSystemLocal::Set_f
-============
-*/
 void idCVarSystemLocal::Set_f( const idCmdArgs& args )
 {
 	const char* str;
@@ -1006,11 +893,6 @@ void idCVarSystemLocal::Set_f( const idCmdArgs& args )
 	localCVarSystem.SetCVarString( args.Argv( 1 ), str );
 }
 
-/*
-============
-idCVarSystemLocal::Reset_f
-============
-*/
 void idCVarSystemLocal::Reset_f( const idCmdArgs& args )
 {
 	idInternalCVar* cvar;
@@ -1027,11 +909,6 @@ void idCVarSystemLocal::Reset_f( const idCmdArgs& args )
 	cvar->Reset();
 }
 
-/*
-============
-idCVarSystemLocal::CvarAdd_f
-============
-*/
 void idCVarSystemLocal::CvarAdd_f( const idCmdArgs& args )
 {
 	if( args.Argc() != 3 ) {
@@ -1047,16 +924,7 @@ void idCVarSystemLocal::CvarAdd_f( const idCmdArgs& args )
 	cvar->SetFloat( newValue );
 	common->Printf( "%s = %f\n", cvar->GetName(), newValue );
 }
-//
 ///*
-//================================================
-// idSort_CommandDef
-//================================================
-//*/
-// class idSort_InternalCVar : public idSort_Quick< const idInternalCVar *, idSort_InternalCVar > {
-// public:
-//	int Compare( const idInternalCVar * & a, const idInternalCVar * & b ) const { return idStr::Icmp( a.GetName(), b.GetName() ); }
-//};
 
 void idCVarSystemLocal::ListByFlags( const idCmdArgs& args, cvarFlags_t flags )
 {
@@ -1221,21 +1089,11 @@ void idCVarSystemLocal::ListByFlags( const idCmdArgs& args, cvarFlags_t flags )
 					"listCvar -new [search string]     = list new RBDoom vars\n" );
 }
 
-/*
-============
-idCVarSystemLocal::List_f
-============
-*/
 void idCVarSystemLocal::List_f( const idCmdArgs& args )
 {
 	ListByFlags( args, CVAR_ALL );
 }
 
-/*
-============
-idCVarSystemLocal::Restart_f
-============
-*/
 void idCVarSystemLocal::Restart_f( const idCmdArgs& args )
 {
 	int				i, hash;

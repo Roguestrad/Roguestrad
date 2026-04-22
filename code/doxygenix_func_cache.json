@@ -16516,6 +16516,4490 @@
     "void ClearHuffmanFrequencies()": {
       "body_hash": "b79b9b469ed0e2731e5328a8062caa1b",
       "is_trivial": true
+    },
+    "void buttonState_t::Clear()": {
+      "body_hash": "2057d950400eec9e238d29ca58927516",
+      "is_trivial": true
+    },
+    "void buttonState_t::SetKeyState(int keystate, bool toggle)": {
+      "body_hash": "00ce6b5ffe4d10ec94e808fbeeec800c",
+      "is_trivial": true
+    },
+    "idBinaryToken::idBinaryToken()": {
+      "body_hash": "5af76dea6f04cc468badf10403799efc",
+      "is_trivial": true
+    },
+    "idBinaryToken::idBinaryToken(const idToken &tok)": {
+      "body_hash": "9859374dccfd32da4aa51a008f236440",
+      "is_trivial": true
+    },
+    "bool idBinaryToken::operator==(const idBinaryToken &b) const": {
+      "body_hash": "4110668eb1d7f1190e9722db48507a34",
+      "is_trivial": true
+    },
+    "void idBinaryToken::Read(idFile *inFile)": {
+      "body_hash": "3d2219c0b9e84753913c12cd68f1eeca",
+      "is_trivial": true
+    },
+    "void idBinaryToken::Write(idFile *inFile)": {
+      "body_hash": "881b8a9a50875fd287188e46d3c1dfb9",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_Integer(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "cd28857c606270d9e7981532ae725c34",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_String(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "9ac461e4259bce26c725247be0a3ea37",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_Decl(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "668e03878c5a0cb14aa407758821d86f",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_DefFile(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "11115882f9775e0768a548e2c58698cc",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_Boolean(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "536912f00781da95a7b2575ceb5c0e0e",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_FileName(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "224c7be7cfb5c1ce6ec5eb5e094871ae",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_MapName(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "c4b7709834d34302d9800f8341fb80d5",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_MapNameNoJson(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "5fd83a0ee9dc9603d960d9e81d486637",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_ModelName(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "8c536c1e7424e5d7a0f277a888c3a7c2",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_SoundName(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "3af088fc85131de0f4bb01473d1db151",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_ImageName(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "4373f36d655cab3a58844eeaaab7fe36",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_VideoName(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "1d97e72004c7ab07e9c4bb690a473d3e",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_ConfigName(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "cb9a4cfba2dd6e5603b1d45aaab58052",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_SaveGame(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "cc0945c166fcf3f29b0bfe98c217d929",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCmdSystem::ArgCompletion_DemoName(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "c8e56b99d3b0974afe50d3d46a4d36e8",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::Init()": {
+      "body_hash": "453bd2fdfcbf0da8b8924128bfd30a46",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::Shutdown()": {
+      "body_hash": "072c51a785a2de0122d31c60cc45d925",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::AddCommand(const char *cmdName, cmdFunction_t function, int flags, const char *description, argCompletion_t argCompletion=NULL)": {
+      "body_hash": "84bfb2384c386e4998032c4488e8b41a",
+      "is_trivial": false
+    },
+    "void idCmdSystemLocal::RemoveCommand(const char *cmdName)": {
+      "body_hash": "5d59a1dbe2dda0d6588221245b341257",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::RemoveFlaggedCommands(int flags)": {
+      "body_hash": "52e98b45775e85835db45205dc04acbd",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::CommandCompletion(void(*callback)(const char *s))": {
+      "body_hash": "9b86ee476462659c1e99551403989670",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::ArgCompletion(const char *cmdString, void(*callback)(const char *s))": {
+      "body_hash": "1bd740155a951d4a422e827400d57634",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::ExecuteCommandText(const char *text)": {
+      "body_hash": "4589f050d4b3514bee89a141d723f5e7",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::AppendCommandText(const char *text)": {
+      "body_hash": "3701cd219294ba509ef0c4f66c4c8a8a",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::BufferCommandText(cmdExecution_t exec, const char *text)": {
+      "body_hash": "2d46b7be958f0312f9a77dfb0ae21874",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::ExecuteCommandBuffer()": {
+      "body_hash": "ad0ff1e88a867c8331520586195524b0",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::ArgCompletion_FolderExtension(const idCmdArgs &args, void(*callback)(const char *s), const char *folder, int stripFolder,...)": {
+      "body_hash": "aba36f6645e2afd384ebe04fd707763a",
+      "is_trivial": false
+    },
+    "void idCmdSystemLocal::ArgCompletion_DeclName(const idCmdArgs &args, void(*callback)(const char *s), int type)": {
+      "body_hash": "926939a7a70982784f51c89f1d202164",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::BufferCommandArgs(cmdExecution_t exec, const idCmdArgs &args)": {
+      "body_hash": "c6e4f91376e5a2a2efdcef69c79d5585",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::SetupReloadEngine(const idCmdArgs &args)": {
+      "body_hash": "c5cd0209266ca475357b79e0938afcd9",
+      "is_trivial": true
+    },
+    "bool idCmdSystemLocal::PostReloadEngine()": {
+      "body_hash": "5f19c6d2612e6d054a19261dc6d3acb8",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::SetWait(int numFrames)": {
+      "body_hash": "d3c6afbeacb00dbf91a31f5afbae9aab",
+      "is_trivial": true
+    },
+    "commandDef_t * idCmdSystemLocal::GetCommands() const": {
+      "body_hash": "fcb3851148efedc849591c19d4d91a70",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::ExecuteTokenizedString(const idCmdArgs &args)": {
+      "body_hash": "73d5345115d663c5417172f3ea03cc83",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::InsertCommandText(const char *text)": {
+      "body_hash": "d0751013f4c902f15d53f220ae8242f9",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::ListByFlags(const idCmdArgs &args, cmdFlags_t flags)": {
+      "body_hash": "e47e420814fdd395ef589a0304a0584b",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::List_f(const idCmdArgs &args)": {
+      "body_hash": "5e07e7333e5484fedd736fc755be8a69",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::SystemList_f(const idCmdArgs &args)": {
+      "body_hash": "90e2171594a80d55064740b84b015e32",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::RendererList_f(const idCmdArgs &args)": {
+      "body_hash": "df366aff354c7757aafd95928e572bcf",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::SoundList_f(const idCmdArgs &args)": {
+      "body_hash": "74cae57fd58d0762e882ea7ba0d1e77f",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::GameList_f(const idCmdArgs &args)": {
+      "body_hash": "beb850a344a250ef5cc7af125bcec4d7",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::ToolList_f(const idCmdArgs &args)": {
+      "body_hash": "241241eb16766f07726877f416175d09",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::Exec_f(const idCmdArgs &args)": {
+      "body_hash": "a19823d478774860a9b13704952b8541",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::Vstr_f(const idCmdArgs &args)": {
+      "body_hash": "ca60c3a5ad7821eb48916975daff57f3",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::Echo_f(const idCmdArgs &args)": {
+      "body_hash": "fc1df130ae1f89293c14a4784fb4ad20",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::Parse_f(const idCmdArgs &args)": {
+      "body_hash": "ef4b443e743e0387e37cea9a6c127ef5",
+      "is_trivial": true
+    },
+    "void idCmdSystemLocal::Wait_f(const idCmdArgs &args)": {
+      "body_hash": "32ef78970c390e7098af1d572a3042c8",
+      "is_trivial": true
+    },
+    "idCommandLink::idCommandLink(const char *cmdName, cmdFunction_t function, const char *description, argCompletion_t argCompletion=NULL)": {
+      "body_hash": "c8679df1dceaeb59076379a57bfd76e4",
+      "is_trivial": false
+    },
+    "void idCommonDialog::Init()": {
+      "body_hash": "aa67bd81536723ec381f3a1ed6ce0860",
+      "is_trivial": true
+    },
+    "void idCommonDialog::Render(bool loading)": {
+      "body_hash": "eefb83c69834720debc2215a8889863e",
+      "is_trivial": true
+    },
+    "void idCommonDialog::Shutdown()": {
+      "body_hash": "7550390e97aa60ce8323083e1e068795",
+      "is_trivial": true
+    },
+    "void idCommonDialog::Restart()": {
+      "body_hash": "97c98f8dc7efaa773d673aa0c332b284",
+      "is_trivial": true
+    },
+    "bool idCommonDialog::IsDialogPausing()": {
+      "body_hash": "4c968a18ed521cd134a0a2dcf29a8dfa",
+      "is_trivial": true
+    },
+    "void idCommonDialog::ClearDialogs(bool forceClear=false)": {
+      "body_hash": "bfe3d64247e7912ff4dbaa643d0ff37c",
+      "is_trivial": true
+    },
+    "bool idCommonDialog::HasDialogMsg(gameDialogMessages_t msg, bool *isNowActive)": {
+      "body_hash": "9bc7272f0d4ecf2521771abcb68f0b42",
+      "is_trivial": true
+    },
+    "void idCommonDialog::AddDialog(gameDialogMessages_t msg, dialogType_t type, idSWFScriptFunction *acceptCallback, idSWFScriptFunction *cancelCallback, bool pause, const char *location=NULL, int lineNumber=0, bool leaveOnMapHeapReset=false, bool waitOnAtlas=false, bool renderDuringLoad=false)": {
+      "body_hash": "33738ed18d89ac79773212efef33f984",
+      "is_trivial": false
+    },
+    "void idCommonDialog::AddDynamicDialog(gameDialogMessages_t msg, const idStaticList< idSWFScriptFunction *, 4 > &callbacks, const idStaticList< idStrId, 4 > &optionText, bool pause, idStrStatic< 256 > overrideMsg, bool leaveOnMapHeapReset=false, bool waitOnAtlas=false, bool renderDuringLoad=false)": {
+      "body_hash": "1602b5dd36716b642dc8f89f12d3049d",
+      "is_trivial": false
+    },
+    "void idCommonDialog::AddDialogIntVal(const char *name, int val)": {
+      "body_hash": "9bd6717cee046f6e57647aa91856656e",
+      "is_trivial": true
+    },
+    "bool idCommonDialog::IsDialogActive()": {
+      "body_hash": "bb2e61af89d0c55bb860b646b8ed8eb8",
+      "is_trivial": true
+    },
+    "void idCommonDialog::ClearDialog(gameDialogMessages_t msg, const char *location=NULL, int lineNumber=0)": {
+      "body_hash": "c8a37e1eaaf08bcc5c77d78958a09356",
+      "is_trivial": true
+    },
+    "void idCommonDialog::ShowSaveIndicator(bool show)": {
+      "body_hash": "1aa112da92c07a29e63db58cebaf8646",
+      "is_trivial": true
+    },
+    "bool idCommonDialog::HasAnyActiveDialog() const": {
+      "body_hash": "ea2ea0157a263b19e203b9fcfcaa6d7b",
+      "is_trivial": true
+    },
+    "void idCommonDialog::ClearAllDialogHack()": {
+      "body_hash": "26fe90af60d5b24fe89ae3ea5f43279a",
+      "is_trivial": true
+    },
+    "idStr idCommonDialog::GetDialogMsg(gameDialogMessages_t msg, idStr &message, idStr &title)": {
+      "body_hash": "45eec9b95e30381f73ff9715881cc5f5",
+      "is_trivial": true
+    },
+    "bool idCommonDialog::HandleDialogEvent(const sysEvent_t *sev)": {
+      "body_hash": "a0a792b943e01e4da12ddfb91acad2b5",
+      "is_trivial": true
+    },
+    "void idCommonDialog::RemoveWaitDialogs()": {
+      "body_hash": "f3c3f8770cef43f566a7a79f70df2f4c",
+      "is_trivial": true
+    },
+    "void idCommonDialog::ShowDialog(const idDialogInfo &info)": {
+      "body_hash": "16669c056d18df864ff33be04648841a",
+      "is_trivial": true
+    },
+    "void idCommonDialog::ShowNextDialog()": {
+      "body_hash": "feb1261ac48c19a32bb10153c442de8f",
+      "is_trivial": true
+    },
+    "void idCommonDialog::ActivateDialog(bool activate)": {
+      "body_hash": "311870b3c20ffbe584e3b2da5c86613e",
+      "is_trivial": true
+    },
+    "void idCommonDialog::AddDialogInternal(idDialogInfo &info)": {
+      "body_hash": "a6197c1de6f659494926a9ff9bd7084c",
+      "is_trivial": true
+    },
+    "void idCommonDialog::ReleaseCallBacks(int index)": {
+      "body_hash": "7564018b19bc365868b73b9e80da1f39",
+      "is_trivial": true
+    },
+    "idCommonLocal::idCommonLocal()": {
+      "body_hash": "88592efee2498990babd18a32c8a2809",
+      "is_trivial": true
+    },
+    "void idCommonLocal::Init(int argc, const char *const *argv, const char *cmdline)": {
+      "body_hash": "b1739d002ac292475fa71dfc3d96a91d",
+      "is_trivial": true
+    },
+    "void idCommonLocal::Shutdown()": {
+      "body_hash": "bc7ae2965c5aaa07f35dd57b38246677",
+      "is_trivial": true
+    },
+    "void idCommonLocal::CreateMainMenu()": {
+      "body_hash": "c409aec16fbf0292267d23e71506524c",
+      "is_trivial": true
+    },
+    "void idCommonLocal::Quit()": {
+      "body_hash": "3965771b11d7771ba58fb0847dbc18cd",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::IsInitialized() const": {
+      "body_hash": "63b340d8efcc43bb2bf79665e32539f4",
+      "is_trivial": true
+    },
+    "void idCommonLocal::Frame()": {
+      "body_hash": "bd4964619d0ed385bab956dc6261ccad",
+      "is_trivial": true
+    },
+    "void idCommonLocal::UpdateScreen(bool captureToImage, bool releaseMouse=true)": {
+      "body_hash": "7231ffb9621fc0f135e21fb4fae61833",
+      "is_trivial": true
+    },
+    "void idCommonLocal::UpdateLevelLoadPacifier()": {
+      "body_hash": "a28009a010ff448345f01544e363ec05",
+      "is_trivial": true
+    },
+    "void idCommonLocal::StartupVariable(const char *match)": {
+      "body_hash": "85ed579ce0fa7b24e30144afe5c6bd6b",
+      "is_trivial": true
+    },
+    "void idCommonLocal::InitTool(const toolFlag_t tool, const idDict *dict, idEntity *entity)": {
+      "body_hash": "d84759c585cde2999ff529c0b43555c2",
+      "is_trivial": true
+    },
+    "void idCommonLocal::WriteConfigToFile(const char *filename)": {
+      "body_hash": "23d57ddf64e964af2172c32aeaf3c5af",
+      "is_trivial": true
+    },
+    "void idCommonLocal::BeginRedirect(char *buffer, int buffersize, void(*flush)(const char *))": {
+      "body_hash": "dc5d7914aeb52f48dcef88eaed726e27",
+      "is_trivial": true
+    },
+    "void idCommonLocal::EndRedirect()": {
+      "body_hash": "11198adce4b39ea132b6e8ff90db088c",
+      "is_trivial": true
+    },
+    "void idCommonLocal::SetRefreshOnPrint(bool set)": {
+      "body_hash": "11bd3a45ab0a6bd67b14d6ff3e5eefd7",
+      "is_trivial": true
+    },
+    "void idCommonLocal::VPrintf(const char *fmt, va_list arg)": {
+      "body_hash": "8ad83c9c1b49271cea0cd6adfd475ea3",
+      "is_trivial": true
+    },
+    "void idCommonLocal::PrintWarnings()": {
+      "body_hash": "0851d27a8088986e561bb2127a30572d",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ClearWarnings(const char *reason)": {
+      "body_hash": "7e72b399719be37d33cbaae225683772",
+      "is_trivial": true
+    },
+    "virtual void virtual void virtual bool idCommonLocal::IsShuttingDown() const": {
+      "body_hash": "cb4d501b043a37d7eac16d3ca3edec7a",
+      "is_trivial": true
+    },
+    "const char * idCommonLocal::KeysFromBinding(const char *bind)": {
+      "body_hash": "2291e6c5afdd8cb14af5b4c857dbd434",
+      "is_trivial": true
+    },
+    "const char * idCommonLocal::BindingFromKey(const char *key)": {
+      "body_hash": "4a3f51f086fc66e33178f386e4353767",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::IsMultiplayer()": {
+      "body_hash": "a7f479aff90deea1117c6ce7f320f4da",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::IsServer()": {
+      "body_hash": "60c3b9e047e83584b4f48dbb77ed9771",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::IsClient()": {
+      "body_hash": "e08685b2a89fa4363cc2e6e90bac8acf",
+      "is_trivial": true
+    },
+    "virtual bool idCommonLocal::GetConsoleUsed()": {
+      "body_hash": "c92152ad8cdd449b69e8f6fd8aca8b20",
+      "is_trivial": true
+    },
+    "int idCommonLocal::GetSnapRate()": {
+      "body_hash": "c9f11ac0f7950640a0070632a2852bec",
+      "is_trivial": true
+    },
+    "void idCommonLocal::NetReceiveReliable(int peer, int type, idBitMsg &msg)": {
+      "body_hash": "8090358966b069717c0848ef6a843e8e",
+      "is_trivial": true
+    },
+    "void idCommonLocal::NetReceiveSnapshot(class idSnapShot &ss)": {
+      "body_hash": "2bac5166646c756b381938ad7610f640",
+      "is_trivial": true
+    },
+    "void idCommonLocal::NetReceiveUsercmds(int peer, idBitMsg &msg)": {
+      "body_hash": "e03d99d57dbe8c0bd9ae1e012fe5080c",
+      "is_trivial": true
+    },
+    "void idCommonLocal::NetReadUsercmds(int clientNum, idBitMsg &msg)": {
+      "body_hash": "309f876d5757e500e623c0ec6533e30c",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::ProcessEvent(const sysEvent_t *event)": {
+      "body_hash": "486f3f2e2efa8827ea6d92abad2af769",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::LoadGame(const char *saveName)": {
+      "body_hash": "5b5e2ebaa06057ff0e47dd0b2be79c17",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::SaveGame(const char *saveName)": {
+      "body_hash": "4ec149541700c728d09a5aaeb0ba83e3",
+      "is_trivial": true
+    },
+    "int idCommonLocal::ButtonState(int key)": {
+      "body_hash": "f6ddb89b04b1252f76051e1476ebb155",
+      "is_trivial": true
+    },
+    "int idCommonLocal::KeyState(int key)": {
+      "body_hash": "f0b44c41497a4cbffc7c8553fe70c5d1",
+      "is_trivial": true
+    },
+    "virtual idGame * idCommonLocal::Game()": {
+      "body_hash": "5dc0cda57b0b41fb7e46382513803a01",
+      "is_trivial": true
+    },
+    "virtual idRenderWorld * idCommonLocal::RW()": {
+      "body_hash": "310b62808877672f6da5840c306f806e",
+      "is_trivial": true
+    },
+    "virtual idSoundWorld * idCommonLocal::SW()": {
+      "body_hash": "0a7571f5154b69b3adba0850e1cb66be",
+      "is_trivial": true
+    },
+    "virtual idSoundWorld * idCommonLocal::MenuSW()": {
+      "body_hash": "7957e7a42961ca8280bad9251291d9f9",
+      "is_trivial": true
+    },
+    "virtual idSession * idCommonLocal::Session()": {
+      "body_hash": "b0791004867c216bfdd2608d0d4cb8f6",
+      "is_trivial": true
+    },
+    "virtual idCommonDialog & idCommonLocal::Dialog()": {
+      "body_hash": "65df05dc176b6359ec1cebfd323c811e",
+      "is_trivial": true
+    },
+    "void idCommonLocal::OnSaveCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "6760267ead35739532fb5c004ed1ac30",
+      "is_trivial": true
+    },
+    "void idCommonLocal::OnLoadCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "230ff7f91106a870f97592e3abd446a5",
+      "is_trivial": true
+    },
+    "void idCommonLocal::OnLoadFilesCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "188f35de5ed3cd7341682f50ffd2a847",
+      "is_trivial": true
+    },
+    "void idCommonLocal::OnEnumerationCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "055892d7a5e35b158d3fa2b2e17f3e59",
+      "is_trivial": true
+    },
+    "void idCommonLocal::OnDeleteCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "9369cbf6649c7b26b5e8083afb70769a",
+      "is_trivial": true
+    },
+    "void idCommonLocal::TriggerScreenWipe(const char *_wipeMaterial, bool hold)": {
+      "body_hash": "2ba10b9dc74c7de14a834c2042d04bab",
+      "is_trivial": true
+    },
+    "void idCommonLocal::OnStartHosting(idMatchParameters &parms)": {
+      "body_hash": "dd2d5a6de098bfad5439666c73391f6a",
+      "is_trivial": true
+    },
+    "virtual int idCommonLocal::GetGameFrame()": {
+      "body_hash": "2ef228f9bf97de4ea923d46b61b2eec7",
+      "is_trivial": true
+    },
+    "void idCommonLocal::InitializeMPMapsModes()": {
+      "body_hash": "b502df3722f578e651e17e3f5cb203d0",
+      "is_trivial": true
+    },
+    "virtual const idStrList & idCommonLocal::GetModeList() const": {
+      "body_hash": "d8e93fbc8792771bd48a7c339b515387",
+      "is_trivial": true
+    },
+    "virtual const idStrList & idCommonLocal::GetModeDisplayList() const": {
+      "body_hash": "7d9080b0dc068256839a3253a33668e6",
+      "is_trivial": true
+    },
+    "virtual const idList< mpMap_t > & idCommonLocal::GetMapList() const": {
+      "body_hash": "fe348cc049743b4d1e60dd49adbf48cc",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ResetPlayerInput(int playerIndex)": {
+      "body_hash": "a076f4d119eb023ec754d10de00f7bda",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::JapaneseCensorship() const": {
+      "body_hash": "f4e2161060043f8773631d85d6b04177",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::QueueShowShell()": {
+      "body_hash": "318361af1e678a1aba993ca78e0d5aea",
+      "is_trivial": true
+    },
+    "void idCommonLocal::Draw()": {
+      "body_hash": "a195e50ba7f8c487f551fe697ca69e26",
+      "is_trivial": true
+    },
+    "void idCommonLocal::WaitGameThread()": {
+      "body_hash": "5ecb65cfc876a4be61316ffd88d2b13a",
+      "is_trivial": true
+    },
+    "int idCommonLocal::GetGameThreadTotalTime() const": {
+      "body_hash": "2efd48db449b7d10b03353dd82733f61",
+      "is_trivial": true
+    },
+    "int idCommonLocal::GetGameThreadGameTime() const": {
+      "body_hash": "05978f5db8053e16a21414435c60bd69",
+      "is_trivial": true
+    },
+    "int idCommonLocal::GetGameThreadRenderTime() const": {
+      "body_hash": "a6d92f0c678c3e0d206b18aec5cc3be6",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererBackEndMicroseconds() const": {
+      "body_hash": "cc5d15b0764492ceffd9966930121f6c",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererMaskedOcclusionRasterizationMicroseconds() const": {
+      "body_hash": "0e8d20813674e14a140317a972fdd0ee",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererIdleMicroseconds() const": {
+      "body_hash": "943def7d0e90aab4ecd84a270ca4d184",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGPUMicroseconds() const": {
+      "body_hash": "76ca742374a75f5a4861fee7a9d06f64",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuBeginDrawingMicroseconds() const": {
+      "body_hash": "17598675bd136cf7071b5df4ff167caa",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuEarlyZMicroseconds() const": {
+      "body_hash": "b2eb8b147b31e6c88e9b07b50a17ba64",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuGeometryMicroseconds() const": {
+      "body_hash": "54a78247b3264d3928091dee263a9315",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuSSAOMicroseconds() const": {
+      "body_hash": "5424fe8a5b360ad62fc0d54dd49004bd",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuSSRMicroseconds() const": {
+      "body_hash": "100da6659f00256f56c9a2795958e4c8",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuAmbientPassMicroseconds() const": {
+      "body_hash": "fbb32169eb2c4f5708eaeed6c9555cb8",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuShadowAtlasPassMicroseconds() const": {
+      "body_hash": "d3f563f4b7e258b57efe389fbe6ec1fa",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuInteractionsMicroseconds() const": {
+      "body_hash": "5beaa74e6d81dbbb3737ddf899da6b18",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuShaderPassMicroseconds() const": {
+      "body_hash": "0496fb246f9f4cd859a609fc6e5f5f12",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuFogAllLightsMicroseconds() const": {
+      "body_hash": "8db3d8a08f718bd28d64029dff65c4b9",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuBloomMicroseconds() const": {
+      "body_hash": "2d35e20f696fb0de11388161665adfaa",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuShaderPassPostMicroseconds() const": {
+      "body_hash": "d5f3795b9c2a6b7fb8a106961f4a6d24",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuMotionVectorsMicroseconds() const": {
+      "body_hash": "2eb3d8bd93141b02adf5d4dc60703db7",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuTAAMicroseconds() const": {
+      "body_hash": "15d69ecb34100934c36b73d232ab3658",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuToneMapPassMicroseconds() const": {
+      "body_hash": "f6cc0460c8499190a211e6fc7a909073",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuPostProcessingMicroseconds() const": {
+      "body_hash": "09a118a474edac3633c0eb760884a009",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuDrawGuiMicroseconds() const": {
+      "body_hash": "33dc79df47b39e780593ffdc3611d2cd",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuCrtPostProcessingMicroseconds() const": {
+      "body_hash": "365468684fa05c74d677292f9f8f906e",
+      "is_trivial": true
+    },
+    "void idCommonLocal::SetRendererMvkEncodeMicroseconds(uint64 mvkEncodeMicroSeconds)": {
+      "body_hash": "65be49a0b6f0aca1fe53ed22703e6533",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererMvkEncodeMicroseconds() const": {
+      "body_hash": "199bfd77b0c1e400ac025cb498bd97eb",
+      "is_trivial": true
+    },
+    "void idCommonLocal::SetRendererGpuMemoryMB(uint64 gpuMemoryMB)": {
+      "body_hash": "a6acc9858425792a5ce46471dfce2e04",
+      "is_trivial": true
+    },
+    "uint64 idCommonLocal::GetRendererGpuMemoryMB() const": {
+      "body_hash": "50b99f097127b8783449d4c519b97ee3",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierInfo(VERIFY_FORMAT_STRING const char *fmt,...)": {
+      "body_hash": "971598d10cdaad795ff9e8f1b5a98fd7",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierProgressTotal(int total)": {
+      "body_hash": "a0d566cb7c095850995fbe2cafe9096f",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierProgressIncrement(int step)": {
+      "body_hash": "1776c5cf97dd3d53914d16da1c6448df",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::LoadPacifierRunning()": {
+      "body_hash": "5d0b51d82b6d894faffffadacd220ddc",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierBinarizeFilename(const char *filename, const char *reason)": {
+      "body_hash": "4018aade32ccbce3dbbda6922197e969",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierBinarizeInfo(const char *info)": {
+      "body_hash": "b26dd01c558388d9b6a0038975c0b539",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierBinarizeMiplevel(int level, int maxLevel)": {
+      "body_hash": "ca38b0d9de735ece17589c2c20f8db93",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierBinarizeProgress(float progress)": {
+      "body_hash": "d59d5d73a9aa5b05bf11e5cfbf31af69",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierBinarizeEnd()": {
+      "body_hash": "8c798b97372920f9618acc2dec0a2c84",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierBinarizeProgressTotal(int total)": {
+      "body_hash": "17c48b35edb9516c4fe84fcdc67c8f8d",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadPacifierBinarizeProgressIncrement(int step)": {
+      "body_hash": "6f725db827e160d909b1bbbaa7839eef",
+      "is_trivial": true
+    },
+    "const char * idCommonLocal::GetCurrentMapName()": {
+      "body_hash": "364a121170f9768dbddb6c38b9bd5d23",
+      "is_trivial": true
+    },
+    "void idCommonLocal::StartNewGame(const char *mapName, bool devmap, int gameMode)": {
+      "body_hash": "a0cdc9e8bde29adb5f422556f1639c78",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LeaveGame()": {
+      "body_hash": "b5cf4db74158d5954cda5f8856d7d53e",
+      "is_trivial": true
+    },
+    "void idCommonLocal::InitLanguageDict()": {
+      "body_hash": "d3ee96e5a570acd099f0b360ffe2b394",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LocalizeGui(const char *fileName, idLangDict &langDict)": {
+      "body_hash": "54c8b3ec9b017df7817f47d312f330c3",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LocalizeMapData(const char *fileName, idLangDict &langDict)": {
+      "body_hash": "1048a8ebc07b87d72d73d9711731ca7f",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LocalizeSpecificMapData(const char *fileName, idLangDict &langDict, const idLangDict &replaceArgs)": {
+      "body_hash": "41054b60fbcc785eec2443f73dfb592f",
+      "is_trivial": true
+    },
+    "idUserCmdMgr & idCommonLocal::GetUCmdMgr()": {
+      "body_hash": "a93379573fa9c799d158a2ed61607202",
+      "is_trivial": true
+    },
+    "void idCommonLocal::InitCommands()": {
+      "body_hash": "3fce91d53160238d8a00a5df6d44b28d",
+      "is_trivial": true
+    },
+    "void idCommonLocal::InitSIMD()": {
+      "body_hash": "99d9eebfba69d14d75db8c02d2e334d0",
+      "is_trivial": true
+    },
+    "void idCommonLocal::AddStartupCommands()": {
+      "body_hash": "6ba0d140162b0875b22c81a345b044d2",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ParseCommandLine(int argc, const char *const *argv)": {
+      "body_hash": "2b750987c2ddb18a85052e5505ac0ac9",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::SafeMode()": {
+      "body_hash": "1664f6f6c2f18d146d43b19eba56bf0a",
+      "is_trivial": true
+    },
+    "void idCommonLocal::CloseLogFile()": {
+      "body_hash": "43a35241f2c66c61c59a7d52e0cf9d94",
+      "is_trivial": true
+    },
+    "void idCommonLocal::WriteConfiguration()": {
+      "body_hash": "68442d1b41c2ca2432bf875ae5ceabb2",
+      "is_trivial": true
+    },
+    "void idCommonLocal::DumpWarnings()": {
+      "body_hash": "342d12186d34d55c096b771e62923677",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadGameDLL()": {
+      "body_hash": "7cb38e97dc80ba804c893f950bf2a784",
+      "is_trivial": true
+    },
+    "void idCommonLocal::UnloadGameDLL()": {
+      "body_hash": "d721ea78a1c3b82144e8da0c2520437d",
+      "is_trivial": true
+    },
+    "void idCommonLocal::CleanupShell()": {
+      "body_hash": "85bfb12129d35c835fc6146e7f636cac",
+      "is_trivial": true
+    },
+    "void idCommonLocal::RenderBink(const char *path)": {
+      "body_hash": "5641028a8aa8375b2ab45339259789d5",
+      "is_trivial": true
+    },
+    "void idCommonLocal::RenderSplash()": {
+      "body_hash": "eabe87efa15aea3ca90e5046683ee2df",
+      "is_trivial": true
+    },
+    "void idCommonLocal::FilterLangList(idStrList *list, idStr lang)": {
+      "body_hash": "274890212d9f70a50602ade2c2afdffb",
+      "is_trivial": true
+    },
+    "void idCommonLocal::CheckStartupStorageRequirements()": {
+      "body_hash": "76a66d5cc83cb581591cde87b15545e5",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ExitMenu()": {
+      "body_hash": "d8614da2bfb6efdc6e96536e5b2abbef",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::MenuEvent(const sysEvent_t *event)": {
+      "body_hash": "c3ed2f4f94781827242a7de1cc24868d",
+      "is_trivial": true
+    },
+    "void idCommonLocal::StartMenu(bool playIntro=false)": {
+      "body_hash": "00bf9583b43cc683af3e231b7110820e",
+      "is_trivial": true
+    },
+    "void idCommonLocal::GuiFrameEvents()": {
+      "body_hash": "93a40eac9dcf3341bd9c4417adc0aefb",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ProcessGameReturn(const gameReturn_t &ret)": {
+      "body_hash": "c45219a13dece7d211fc5b26abcc8d59",
+      "is_trivial": true
+    },
+    "void idCommonLocal::RunNetworkSnapshotFrame()": {
+      "body_hash": "f52b3b3c75f3567f26759953a2d337e3",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ExecuteReliableMessages()": {
+      "body_hash": "1317854bde08b4f43a33725f113e8aa2",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ProcessSnapshot(idSnapShot &ss)": {
+      "body_hash": "36f80246e006e6133f8e18f5d33da2e9",
+      "is_trivial": true
+    },
+    "int idCommonLocal::CalcSnapTimeBuffered(int &totalBufferedTime, int &totalRecvTime)": {
+      "body_hash": "8f297774c66257c2813827c65ae5f156",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ProcessNextSnapshot()": {
+      "body_hash": "bd7eef11c1461e761cf060e6eed7a806",
+      "is_trivial": true
+    },
+    "void idCommonLocal::InterpolateSnapshot(netTimes_t &prev, netTimes_t &next, float fraction, bool predict)": {
+      "body_hash": "33503def3bc378ac33dae9ed455cd149",
+      "is_trivial": false
+    },
+    "void idCommonLocal::ResetNetworkingState()": {
+      "body_hash": "71a528c0da881e69b34f8fa9d79a0378",
+      "is_trivial": true
+    },
+    "void idCommonLocal::SendSnapshots()": {
+      "body_hash": "80ce5a9a11e00afcbc9fec3f5b40b02e",
+      "is_trivial": true
+    },
+    "void idCommonLocal::SendUsercmds(int localClientNum)": {
+      "body_hash": "1802518f6f0fd2f89f14c90ab93843c5",
+      "is_trivial": true
+    },
+    "void idCommonLocal::LoadLoadingGui(const char *mapName, bool &hellMap)": {
+      "body_hash": "c7c6405c7cc68bcb84e985cb616c54a4",
+      "is_trivial": true
+    },
+    "void idCommonLocal::BusyWait()": {
+      "body_hash": "0e2fd3f23302d6016cf53f8cec73d6ed",
+      "is_trivial": true
+    },
+    "bool idCommonLocal::WaitForSessionState(idSession::sessionState_t desiredState)": {
+      "body_hash": "b3e806951ca6815e8d4835c9da224b58",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ExecuteMapChange()": {
+      "body_hash": "e1184ce3011da7277ff7739120380a60",
+      "is_trivial": true
+    },
+    "void idCommonLocal::UnloadMap()": {
+      "body_hash": "4621bc9c3e97d071ef41205ed1c2e191",
+      "is_trivial": true
+    },
+    "void idCommonLocal::Stop(bool resetSession=true)": {
+      "body_hash": "f527923739c33c6aeb35b3dc41c51d0b",
+      "is_trivial": true
+    },
+    "void idCommonLocal::DrawWipeModel()": {
+      "body_hash": "820f2c649b0f6ed257a6e275b2a9143d",
+      "is_trivial": true
+    },
+    "void idCommonLocal::DrawLoadPacifierProgressbar()": {
+      "body_hash": "1a7bcc746a8b97fd19123a1cc14283d9",
+      "is_trivial": true
+    },
+    "void idCommonLocal::StartWipe(const char *materialName, bool hold=false)": {
+      "body_hash": "826140164bd3f4bb52ce20c07ea255cb",
+      "is_trivial": true
+    },
+    "void idCommonLocal::CompleteWipe()": {
+      "body_hash": "441633b22dbc14c41fe357f1d8a1a78f",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ClearWipe()": {
+      "body_hash": "19a5f615fd6b5efd90cee97038e0cb6b",
+      "is_trivial": true
+    },
+    "void idCommonLocal::MoveToNewMap(const char *mapName, bool devmap)": {
+      "body_hash": "a602bc742cab9adf809d319c2706b08e",
+      "is_trivial": true
+    },
+    "void idCommonLocal::ScrubSaveGameFileName(idStr &saveFileName) const": {
+      "body_hash": "fb7749409f810c95c286e0eb979cbb31",
+      "is_trivial": true
+    },
+    "idCompressor * idCompressor::AllocNoCompression()": {
+      "body_hash": "32c99ce91f6fe2ed2e0728a225a2714e",
+      "is_trivial": true
+    },
+    "idCompressor * idCompressor::AllocBitStream()": {
+      "body_hash": "94641cffd6f04054e30448eae7e3aa70",
+      "is_trivial": true
+    },
+    "idCompressor * idCompressor::AllocRunLength()": {
+      "body_hash": "d36398e938189bb42e282df694285ba2",
+      "is_trivial": true
+    },
+    "idCompressor * idCompressor::AllocRunLength_ZeroBased()": {
+      "body_hash": "61c026e42b4c393a5779126d6a5f622b",
+      "is_trivial": true
+    },
+    "idCompressor * idCompressor::AllocHuffman()": {
+      "body_hash": "3ca9bc9ae150a3d040cf9eac8e2131c1",
+      "is_trivial": true
+    },
+    "idCompressor * idCompressor::AllocArithmetic()": {
+      "body_hash": "8ffa4b14179a68a74718b331a6b94bcf",
+      "is_trivial": true
+    },
+    "idCompressor * idCompressor::AllocLZSS()": {
+      "body_hash": "f40e7fc5589663d7818b747d657a7c7b",
+      "is_trivial": true
+    },
+    "idCompressor * idCompressor::AllocLZSS_WordAligned()": {
+      "body_hash": "11897e754edbe977d446e9c4c1b2ac6e",
+      "is_trivial": true
+    },
+    "idCompressor * idCompressor::AllocLZW()": {
+      "body_hash": "c453a852a3ab7569d9fc595105fcf691",
+      "is_trivial": true
+    },
+    "idCompressor_Arithmetic::idCompressor_Arithmetic()": {
+      "body_hash": "00e31cc7a84063e471261030e3a268f3",
+      "is_trivial": true
+    },
+    "void idCompressor_Arithmetic::Init(idFile *f, bool compress, int wordLength)": {
+      "body_hash": "b23f1f21e8bed4c64451868d252df8af",
+      "is_trivial": true
+    },
+    "void idCompressor_Arithmetic::FinishCompress()": {
+      "body_hash": "3636badab04f7e714a828afc82304286",
+      "is_trivial": true
+    },
+    "int idCompressor_Arithmetic::Write(const void *inData, int inLength)": {
+      "body_hash": "e1a4733b9c1513930bb2bf1ed7b7adca",
+      "is_trivial": true
+    },
+    "int idCompressor_Arithmetic::Read(void *outData, int outLength)": {
+      "body_hash": "954cb4fb8a12830057638051134a372a",
+      "is_trivial": true
+    },
+    "void idCompressor_Arithmetic::InitProbabilities()": {
+      "body_hash": "dfaf450543b830f5fd45c4862960855d",
+      "is_trivial": true
+    },
+    "int idCompressor_Arithmetic::ProbabilityForCount(unsigned int count)": {
+      "body_hash": "b46afd3199663d7b85b06422dd65e53d",
+      "is_trivial": true
+    },
+    "void idCompressor_Arithmetic::CharToSymbol(byte c, acSymbol_t *symbol)": {
+      "body_hash": "4e67eeee40843d74a35edad56331bf5c",
+      "is_trivial": true
+    },
+    "void idCompressor_Arithmetic::EncodeSymbol(acSymbol_t *symbol)": {
+      "body_hash": "ca4545efd0a798e89ce87dcdf84158de",
+      "is_trivial": true
+    },
+    "int idCompressor_Arithmetic::SymbolFromCount(unsigned int count, acSymbol_t *symbol)": {
+      "body_hash": "672c074bd2744e654087ead4a54ce178",
+      "is_trivial": true
+    },
+    "int idCompressor_Arithmetic::GetCurrentCount()": {
+      "body_hash": "f3e34043e7dfb4b4ed5e660142844d34",
+      "is_trivial": true
+    },
+    "void idCompressor_Arithmetic::RemoveSymbolFromStream(acSymbol_t *symbol)": {
+      "body_hash": "0ccd3aa466603ba393685cd96196d9de",
+      "is_trivial": true
+    },
+    "void idCompressor_Arithmetic::PutBit(int bit)": {
+      "body_hash": "d5817bf8b2fc0c35ce3ebaa2f94580a2",
+      "is_trivial": true
+    },
+    "int idCompressor_Arithmetic::GetBit()": {
+      "body_hash": "d96fe0130d9180c3aaebb887c5640800",
+      "is_trivial": true
+    },
+    "idCompressor_BitStream::idCompressor_BitStream()": {
+      "body_hash": "d7554b6b77892ae83b36b7c34a63bc97",
+      "is_trivial": true
+    },
+    "void idCompressor_BitStream::Init(idFile *f, bool compress, int wordLength)": {
+      "body_hash": "38aae415382087f95a9e9c9909023ea9",
+      "is_trivial": true
+    },
+    "void idCompressor_BitStream::FinishCompress()": {
+      "body_hash": "b0bb8fbcf2488b858410c97b348a738e",
+      "is_trivial": true
+    },
+    "float idCompressor_BitStream::GetCompressionRatio() const": {
+      "body_hash": "90a137bec8eca56ab6b666fafd9a5192",
+      "is_trivial": true
+    },
+    "int idCompressor_BitStream::Write(const void *inData, int inLength)": {
+      "body_hash": "928b0fd1e05ee7d14dd0624c155ccb3b",
+      "is_trivial": true
+    },
+    "int idCompressor_BitStream::Read(void *outData, int outLength)": {
+      "body_hash": "bcb70b862c735091b122bc7456ed3220",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCompressor_BitStream::InitCompress(const void *inData, const int inLength)": {
+      "body_hash": "cb3b8cb951a7ace3c3b0d3c91ce363ea",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCompressor_BitStream::InitDecompress(void *outData, int outLength)": {
+      "body_hash": "bcc07820cd801128f07531bd055cfb6b",
+      "is_trivial": true
+    },
+    "int idCompressor_BitStream::ReadBits(int numBits)": {
+      "body_hash": "0b398dcd7b31ecd9460d880e70078bae",
+      "is_trivial": true
+    },
+    "void idCompressor_BitStream::UnreadBits(int numBits)": {
+      "body_hash": "d7c7525b2d2fc96be6d3c8a8b27bd6d8",
+      "is_trivial": true
+    },
+    "int idCompressor_BitStream::Compare(const byte *src1, int bitPtr1, const byte *src2, int bitPtr2, int maxBits) const": {
+      "body_hash": "e6a7f05c6043217cabe49f81a91656cc",
+      "is_trivial": false
+    },
+    "idCompressor_Huffman::idCompressor_Huffman()": {
+      "body_hash": "b0564eaded5497c01038861ec993d808",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::Init(idFile *f, bool compress, int wordLength)": {
+      "body_hash": "b0800bb942644df2221caddb877e3311",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::FinishCompress()": {
+      "body_hash": "efa32167fd8a4eed62c88e0b66c985f6",
+      "is_trivial": true
+    },
+    "float idCompressor_Huffman::GetCompressionRatio() const": {
+      "body_hash": "ee99790d93ada4013b4bdf06da697d31",
+      "is_trivial": true
+    },
+    "int idCompressor_Huffman::Write(const void *inData, int inLength)": {
+      "body_hash": "03be8cf3803913a425eeac801448e29d",
+      "is_trivial": true
+    },
+    "int idCompressor_Huffman::Read(void *outData, int outLength)": {
+      "body_hash": "6936a01250aa6dc3c8ff86b297b046d9",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::AddRef(byte ch)": {
+      "body_hash": "ad0f97fb54d7ae9fbcbe62d751a7dc6a",
+      "is_trivial": true
+    },
+    "int idCompressor_Huffman::Receive(huffmanNode_t *node, int *ch)": {
+      "body_hash": "c06b9bbbd475e0dea2f2743216da0b87",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::Transmit(int ch, byte *fout)": {
+      "body_hash": "5c05292c96d80a2b314c9d5eb8a6e26f",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::PutBit(int bit, byte *fout, int *offset)": {
+      "body_hash": "b45b3a76f33e37517aeb5e1b0dc7b11b",
+      "is_trivial": true
+    },
+    "int idCompressor_Huffman::GetBit(byte *fout, int *offset)": {
+      "body_hash": "db88cf6e7831b69e9e7cbb0487887054",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::Add_bit(char bit, byte *fout)": {
+      "body_hash": "bf2e071f58a2f30cfa19d155de0042fa",
+      "is_trivial": true
+    },
+    "int idCompressor_Huffman::Get_bit()": {
+      "body_hash": "d7a9521f2ccfa0d9acdf8da55536faa2",
+      "is_trivial": true
+    },
+    "huffmanNode_t ** idCompressor_Huffman::Get_ppnode()": {
+      "body_hash": "3022928dc10e3e4b2c32444eadd9d9d9",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::Free_ppnode(huffmanNode_t **ppnode)": {
+      "body_hash": "2400611d4c6f1904ecf48aba798f96df",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::Swap(huffmanNode_t *node1, huffmanNode_t *node2)": {
+      "body_hash": "b27fa237cf8c5fd1e1a50ee4fe08a62b",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::Swaplist(huffmanNode_t *node1, huffmanNode_t *node2)": {
+      "body_hash": "68d03d730e6771f1edfd2089d8a0d2c4",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::Increment(huffmanNode_t *node)": {
+      "body_hash": "caac0b414ebaf0562f534d0efe5521bc",
+      "is_trivial": true
+    },
+    "void idCompressor_Huffman::Send(huffmanNode_t *node, huffmanNode_t *child, byte *fout)": {
+      "body_hash": "8c243fd25d2890685e874f6a290e0b82",
+      "is_trivial": true
+    },
+    "idCompressor_LZSS::idCompressor_LZSS()": {
+      "body_hash": "735fe6d4b3ef632bb0898a8c702f5787",
+      "is_trivial": true
+    },
+    "void idCompressor_LZSS::Init(idFile *f, bool compress, int wordLength)": {
+      "body_hash": "e2f6b2c12e4d4973b841bae61f95d8e0",
+      "is_trivial": true
+    },
+    "void idCompressor_LZSS::FinishCompress()": {
+      "body_hash": "c165f13096810549b778129bfc5d460c",
+      "is_trivial": true
+    },
+    "int idCompressor_LZSS::Write(const void *inData, int inLength)": {
+      "body_hash": "627c54e0efec45e5089e2e0aa094cf35",
+      "is_trivial": true
+    },
+    "int idCompressor_LZSS::Read(void *outData, int outLength)": {
+      "body_hash": "058406136958daa60343dc0a0d6e9816",
+      "is_trivial": true
+    },
+    "bool idCompressor_LZSS::FindMatch(int startWord, int startValue, int &wordOffset, int &numWords)": {
+      "body_hash": "110273eedeaecd93587fdfe8dffbe9fc",
+      "is_trivial": false
+    },
+    "void idCompressor_LZSS::AddToHash(int index, int hash)": {
+      "body_hash": "6fd60e53d33842f7722d152639155af5",
+      "is_trivial": true
+    },
+    "int idCompressor_LZSS::GetWordFromBlock(int wordOffset) const": {
+      "body_hash": "949318ec3d9606d390cfdbfd6a0248b6",
+      "is_trivial": true
+    },
+    "void idCompressor_LZSS::CompressBlock()": {
+      "body_hash": "d0073ca02938b2e7b21b3402cfa57442",
+      "is_trivial": true
+    },
+    "void idCompressor_LZSS::DecompressBlock()": {
+      "body_hash": "36191c6e95ded077381893ea66e9ec74",
+      "is_trivial": true
+    },
+    "idCompressor_LZSS_WordAligned::idCompressor_LZSS_WordAligned()": {
+      "body_hash": "becfbcbcdb0e7d16dfde8e51df334204",
+      "is_trivial": true
+    },
+    "void idCompressor_LZSS_WordAligned::Init(idFile *f, bool compress, int wordLength)": {
+      "body_hash": "a308f0b69795b7871c3dbd14cdca517a",
+      "is_trivial": true
+    },
+    "void idCompressor_LZSS_WordAligned::CompressBlock()": {
+      "body_hash": "ce770d1852155072912396a4b586e2b0",
+      "is_trivial": true
+    },
+    "void idCompressor_LZSS_WordAligned::DecompressBlock()": {
+      "body_hash": "2b038928ac4d65da64b55422980b65aa",
+      "is_trivial": true
+    },
+    "idCompressor_LZW::idCompressor_LZW()": {
+      "body_hash": "a32bdc8b97c8611e73a6e5d4e1faf64c",
+      "is_trivial": true
+    },
+    "void idCompressor_LZW::Init(idFile *f, bool compress, int wordLength)": {
+      "body_hash": "b5d55836317d3ed8fcd83f3350cb3e20",
+      "is_trivial": true
+    },
+    "void idCompressor_LZW::FinishCompress()": {
+      "body_hash": "b97189c810d6a0c945d60c9f558be601",
+      "is_trivial": true
+    },
+    "int idCompressor_LZW::Write(const void *inData, int inLength)": {
+      "body_hash": "e0135f6d9829c99b061fe899286ad763",
+      "is_trivial": true
+    },
+    "int idCompressor_LZW::Read(void *outData, int outLength)": {
+      "body_hash": "65d1fd132a01f205d0adcb329ec2151d",
+      "is_trivial": true
+    },
+    "int idCompressor_LZW::AddToDict(int w, int k)": {
+      "body_hash": "272af84c5587182696b7c2993da98eb6",
+      "is_trivial": true
+    },
+    "int idCompressor_LZW::Lookup(int w, int k)": {
+      "body_hash": "84e4f3aebab9cd3d65ea665b1ce1f55c",
+      "is_trivial": true
+    },
+    "bool idCompressor_LZW::BumpBits()": {
+      "body_hash": "8a548318fd7c836f07213f551cfb0e02",
+      "is_trivial": true
+    },
+    "int idCompressor_LZW::WriteChain(int code)": {
+      "body_hash": "b53df124a1c3faa11d96ece0b24143c1",
+      "is_trivial": true
+    },
+    "void idCompressor_LZW::DecompressBlock()": {
+      "body_hash": "c9904d76a92c7a5619c7d98b507795be",
+      "is_trivial": true
+    },
+    "idCompressor_None::idCompressor_None()": {
+      "body_hash": "4af6894f42957209e3872b4656520bc6",
+      "is_trivial": true
+    },
+    "void idCompressor_None::Init(idFile *f, bool compress, int wordLength)": {
+      "body_hash": "e78274108507d51bc320ca4c976a6d28",
+      "is_trivial": true
+    },
+    "void idCompressor_None::FinishCompress()": {
+      "body_hash": "13c4cbd08203c6c49f9a637eb05c4026",
+      "is_trivial": true
+    },
+    "float idCompressor_None::GetCompressionRatio() const": {
+      "body_hash": "4e68a1d2df609d3c68d54fa895bda0f8",
+      "is_trivial": true
+    },
+    "const char * idCompressor_None::GetName()": {
+      "body_hash": "f2e06d0fc28986c7ca63897e8aac0b4c",
+      "is_trivial": true
+    },
+    "const char * idCompressor_None::GetFullPath()": {
+      "body_hash": "b23bc57971059188ba2929f1c4587076",
+      "is_trivial": true
+    },
+    "int idCompressor_None::Read(void *outData, int outLength)": {
+      "body_hash": "283de688118478802478a176dd5483ff",
+      "is_trivial": true
+    },
+    "int idCompressor_None::Write(const void *inData, int inLength)": {
+      "body_hash": "22e2551f1423f1db363992332363c406",
+      "is_trivial": true
+    },
+    "int idCompressor_None::Length()": {
+      "body_hash": "507afda83b5a784e4ce1199967114b6a",
+      "is_trivial": true
+    },
+    "ID_TIME_T idCompressor_None::Timestamp()": {
+      "body_hash": "ac40f74e4762c217686c9f5c48c98959",
+      "is_trivial": true
+    },
+    "int idCompressor_None::Tell()": {
+      "body_hash": "48b90941a72f2e2c3240d5dc0e8a5154",
+      "is_trivial": true
+    },
+    "void idCompressor_None::ForceFlush()": {
+      "body_hash": "2e76069a8df088e3b041efa4d6e97ed8",
+      "is_trivial": true
+    },
+    "void idCompressor_None::Flush()": {
+      "body_hash": "9f9c65e98b5e924e2710e3c0bf833e6d",
+      "is_trivial": true
+    },
+    "int idCompressor_None::Seek(long offset, fsOrigin_t origin)": {
+      "body_hash": "15d50415b54184acdbe6490c3802431e",
+      "is_trivial": true
+    },
+    "idCompressor_RunLength::idCompressor_RunLength()": {
+      "body_hash": "44815a0240c93de85e06fba3e443abf9",
+      "is_trivial": true
+    },
+    "void idCompressor_RunLength::Init(idFile *f, bool compress, int wordLength)": {
+      "body_hash": "79e176138be94ccc0df22e020edd5346",
+      "is_trivial": true
+    },
+    "int idCompressor_RunLength::Write(const void *inData, int inLength)": {
+      "body_hash": "1e060c99a83243be7af38d35946a9f0a",
+      "is_trivial": true
+    },
+    "int idCompressor_RunLength::Read(void *outData, int outLength)": {
+      "body_hash": "b7f15dd93df4daf8b4094d55d3017403",
+      "is_trivial": true
+    },
+    "idCompressor_RunLength_ZeroBased::idCompressor_RunLength_ZeroBased()": {
+      "body_hash": "9bd874ca6495a2a4b7a577c176e3b0b4",
+      "is_trivial": true
+    },
+    "int idCompressor_RunLength_ZeroBased::Write(const void *inData, int inLength)": {
+      "body_hash": "0c537081c92ea25da3296a137cb992f5",
+      "is_trivial": true
+    },
+    "int idCompressor_RunLength_ZeroBased::Read(void *outData, int outLength)": {
+      "body_hash": "b0941a779db078ffc32368e782cbae6f",
+      "is_trivial": true
+    },
+    "idConsoleHistory::idConsoleHistory()": {
+      "body_hash": "d666ea8b16ac7c9b61fe751ff55c4ca6",
+      "is_trivial": true
+    },
+    "void idConsoleHistory::LoadHistoryFile()": {
+      "body_hash": "75c5e310392affa6dafb4bcf2a663c68",
+      "is_trivial": true
+    },
+    "void idConsoleHistory::AddToHistory(const char *line, bool writeHistoryFile=true)": {
+      "body_hash": "5ce38546d8481e26d4836144a7f3bc50",
+      "is_trivial": true
+    },
+    "idStr idConsoleHistory::RetrieveFromHistory(bool backward)": {
+      "body_hash": "a64e82cd57b75b8af150f9d075eeb70a",
+      "is_trivial": true
+    },
+    "void idConsoleHistory::PrintHistory()": {
+      "body_hash": "e0513bbead116236e510be58f5845ec6",
+      "is_trivial": true
+    },
+    "void idConsoleHistory::ClearHistory()": {
+      "body_hash": "94bb4e2fb472b876d8809321af80f38d",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Init()": {
+      "body_hash": "84e31271ffc7ff135faf34b42d7ba6c1",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Shutdown()": {
+      "body_hash": "e9009a129fbb70312c6e454a51d377cd",
+      "is_trivial": true
+    },
+    "bool idConsoleLocal::ProcessEvent(const sysEvent_t *event, bool forceAccept)": {
+      "body_hash": "1a56eabac9737b0bc01a75a0b7170084",
+      "is_trivial": true
+    },
+    "bool idConsoleLocal::Active()": {
+      "body_hash": "1cd47bc79492d4d0a2f5bce19dc4c1b8",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::ClearNotifyLines()": {
+      "body_hash": "5f5b2697ea9fa59fd5859df49e7cc6cf",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Open()": {
+      "body_hash": "0cf6d31e7bc7d2270bb38bb7fb1db974",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Close()": {
+      "body_hash": "cd9881f6c46725f7494c0120b83ce47f",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Print(const char *text)": {
+      "body_hash": "3e577287da003be1a1639a403a0e2b0e",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Draw(bool forceFullScreen)": {
+      "body_hash": "a92a722ce481ae48cb41094d8de9bcf4",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::PrintOverlay(idOverlayHandle &handle, justify_t justify, const char *text,...)": {
+      "body_hash": "e8e7b12163ef8d47ad4d86b7bc9e0c38",
+      "is_trivial": false
+    },
+    "idDebugGraph * idConsoleLocal::CreateGraph(int numItems)": {
+      "body_hash": "d7b5a34d0c2364720776160831ffe1b4",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::DestroyGraph(idDebugGraph *graph)": {
+      "body_hash": "085031e704b4f856787fb9b60967b3c6",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Dump(const char *toFile)": {
+      "body_hash": "0707dc89e7701c80e28f214e75130aff",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Clear()": {
+      "body_hash": "393277e3c6cccdb65b0d362f3e046366",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Resize()": {
+      "body_hash": "17509f859bf6328d8ad9f0b99a57fb90",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::KeyDownEvent(int key)": {
+      "body_hash": "eef518b761b331efa71b6bab68f62755",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Linefeed()": {
+      "body_hash": "8e24fa9dcfc7c64d5378425589977d2d",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::PageUp()": {
+      "body_hash": "2be0b1dfeb6d7a5d366d097337f706ad",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::PageDown()": {
+      "body_hash": "5e8bd4f213a1a2d73e1970b596996868",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Top()": {
+      "body_hash": "a2a0edd864a99b37175ee593fc367b51",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Bottom()": {
+      "body_hash": "9b66f7cdca1dc2a8c86b3b71b8cafa08",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::DrawInput()": {
+      "body_hash": "ffbfe2d326fbaa478b14c6d1b8c0627d",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::DrawNotify()": {
+      "body_hash": "375da4f6659b7d5c429f9d27d13d6422",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::DrawSolidConsole(float frac)": {
+      "body_hash": "12fc345dd9b37370f75d7bbeb2ab12e2",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::Scroll()": {
+      "body_hash": "9bf483323f1a3bfb77be4b62777e0e60",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::SetDisplayFraction(float frac)": {
+      "body_hash": "e828e8c6acc1273dd12f184acde6bd57",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::UpdateDisplayFraction()": {
+      "body_hash": "9a806ba748b5b2a4705dd6fee79f4648",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::DrawTextLeftAlign(float x, float &y, const char *text,...)": {
+      "body_hash": "82a99c1e7906682fa71267f8b7650f25",
+      "is_trivial": false
+    },
+    "void idConsoleLocal::DrawTextRightAlign(float x, float &y, const char *text,...)": {
+      "body_hash": "6feea99373d2d3b8295c166c2eb69807",
+      "is_trivial": false
+    },
+    "float idConsoleLocal::DrawFPS(float y)": {
+      "body_hash": "9c529cb4434240134bfea000d27c14d5",
+      "is_trivial": true
+    },
+    "float idConsoleLocal::DrawMemoryUsage(float y)": {
+      "body_hash": "74d782ade654fd68ca77c39f854b02fa",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::DrawOverlayText(float &leftY, float &rightY, float &centerY)": {
+      "body_hash": "80b18424cfcbbe5036e221c3eb431653",
+      "is_trivial": true
+    },
+    "void idConsoleLocal::DrawDebugGraphs()": {
+      "body_hash": "c289dc607a3813e33d0822ab24509ab2",
+      "is_trivial": true
+    },
+    "idCVar::idCVar()": {
+      "body_hash": "1ef044e15fd39ed9f797a3a0c18a9f17",
+      "is_trivial": true
+    },
+    "ID_INLINE idCVar::idCVar(const char *name, const char *value, int flags, const char *description, argCompletion_t valueCompletion=NULL)": {
+      "body_hash": "8000d6ae58aa55cc7d0ab92f6cd45f2f",
+      "is_trivial": false
+    },
+    "ID_INLINE idCVar::idCVar(const char *name, const char *value, int flags, const char *description, float valueMin, float valueMax, argCompletion_t valueCompletion=NULL)": {
+      "body_hash": "f2fcf8d1ecc0551fb9f1da07365f5ebc",
+      "is_trivial": false
+    },
+    "ID_INLINE idCVar::idCVar(const char *name, const char *value, int flags, const char *description, const char **valueStrings, argCompletion_t valueCompletion=NULL)": {
+      "body_hash": "5083d2e109ff388913c749d65e5ed9c5",
+      "is_trivial": false
+    },
+    "const char * idCVar::GetName() const": {
+      "body_hash": "c28bf9728b4a4ff6b646b80ab4472ec1",
+      "is_trivial": true
+    },
+    "int idCVar::GetFlags() const": {
+      "body_hash": "8403d2fedf0ef6f08bc2f8416e7df5a8",
+      "is_trivial": true
+    },
+    "const char * idCVar::GetDescription() const": {
+      "body_hash": "286350a197d4d30814900df4e3c06381",
+      "is_trivial": true
+    },
+    "float idCVar::GetMinValue() const": {
+      "body_hash": "5b67acd6e4d6f4f76fc31763b58b56c7",
+      "is_trivial": true
+    },
+    "float idCVar::GetMaxValue() const": {
+      "body_hash": "65cb96372ee750a61ee692b09d835991",
+      "is_trivial": true
+    },
+    "const char ** idCVar::GetValueStrings() const": {
+      "body_hash": "6d62b3e244fc8929d948c4516bbef725",
+      "is_trivial": true
+    },
+    "argCompletion_t idCVar::GetValueCompletion() const": {
+      "body_hash": "370bdfc14671615e0752a759d0dc1322",
+      "is_trivial": true
+    },
+    "bool idCVar::IsModified() const": {
+      "body_hash": "0e1a66a56b2929169d14f966597b834d",
+      "is_trivial": true
+    },
+    "void idCVar::SetModified()": {
+      "body_hash": "8a7e9af70bd64419a493e335ec1b51b8",
+      "is_trivial": true
+    },
+    "void idCVar::ClearModified()": {
+      "body_hash": "f3221e745bbba28522a1b565ba324bce",
+      "is_trivial": true
+    },
+    "const char * idCVar::GetDefaultString() const": {
+      "body_hash": "918f64f097a0b9cf2b8557c1a7d4348b",
+      "is_trivial": true
+    },
+    "const char * idCVar::GetString() const": {
+      "body_hash": "ab220bcdbbd4fe18418e0b317d4ff0d1",
+      "is_trivial": true
+    },
+    "bool idCVar::GetBool() const": {
+      "body_hash": "82d0de45d53b0fb4b0692856a97c34c3",
+      "is_trivial": true
+    },
+    "int idCVar::GetInteger() const": {
+      "body_hash": "fbd7b5f554f1b9eeeaab5e8d626baaa3",
+      "is_trivial": true
+    },
+    "float idCVar::GetFloat() const": {
+      "body_hash": "762cf7e4c1c6bf81a29627eb5f3bfa1c",
+      "is_trivial": true
+    },
+    "void idCVar::SetString(const char *value)": {
+      "body_hash": "74c42a297f89c3a04fc43e5da51281b0",
+      "is_trivial": true
+    },
+    "void idCVar::SetBool(const bool value)": {
+      "body_hash": "a3c13239eee12ea718319362672b2823",
+      "is_trivial": true
+    },
+    "void idCVar::SetInteger(const int value)": {
+      "body_hash": "ad4b6da9e324cfde60723eacee583765",
+      "is_trivial": true
+    },
+    "void idCVar::SetFloat(const float value)": {
+      "body_hash": "7feb0a80fe63468763059c35be3d4791",
+      "is_trivial": true
+    },
+    "void idCVar::SetInternalVar(idCVar *cvar)": {
+      "body_hash": "82a4121fa57a39361233e498cf411965",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCVar::RegisterStaticVars()": {
+      "body_hash": "8b3ee5307b843da10c2966af8c4a82ca",
+      "is_trivial": true
+    },
+    "ID_INLINE void idCVar::Init(const char *name, const char *value, int flags, const char *description, float valueMin, float valueMax, const char **valueStrings, argCompletion_t valueCompletion)": {
+      "body_hash": "21962d89b450fbc4697b0f288395b9a6",
+      "is_trivial": false
+    },
+    "virtual void idCVar::InternalSetString(const char *newValue)": {
+      "body_hash": "bd3e973bed11b096b929447b1a393b94",
+      "is_trivial": true
+    },
+    "virtual void idCVar::InternalSetBool(const bool newValue)": {
+      "body_hash": "c15b6b4a762c9d6e883e536d9f9bbff0",
+      "is_trivial": true
+    },
+    "virtual void idCVar::InternalSetInteger(const int newValue)": {
+      "body_hash": "f479fdbda0e2f36feff7ec8b184f4686",
+      "is_trivial": true
+    },
+    "virtual void idCVar::InternalSetFloat(const float newValue)": {
+      "body_hash": "ab8fc6a9ee9ea6b0966f5f20eed598aa",
+      "is_trivial": true
+    },
+    "virtual const char * idCVar::InternalGetResetString() const": {
+      "body_hash": "7fc1bc02d5aed806e319bbc2040be18a",
+      "is_trivial": true
+    },
+    "idCVarSystemLocal::idCVarSystemLocal()": {
+      "body_hash": "e1ed182c8d70eeda0e6ba01e5f181f2f",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::Init()": {
+      "body_hash": "9609f45696b6a9ef05a33b870db142cc",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::Shutdown()": {
+      "body_hash": "998a69070b1e4cc62309c46884ab772b",
+      "is_trivial": true
+    },
+    "bool idCVarSystemLocal::IsInitialized() const": {
+      "body_hash": "a5ec30e3cce3a1c1fc38951db4893762",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::Register(idCVar *cvar)": {
+      "body_hash": "975cfce136c046655538e78e7735ed61",
+      "is_trivial": true
+    },
+    "idCVar * idCVarSystemLocal::Find(const char *name)": {
+      "body_hash": "2aed72caa24d760e9d9520eafcaf8b05",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::SetCVarString(const char *name, const char *value, int flags=0)": {
+      "body_hash": "8605482791a93cfb1d26d90b04d79e28",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::SetCVarBool(const char *name, const bool value, int flags=0)": {
+      "body_hash": "b6d5a690a385b5ad6eff786e332b9ab4",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::SetCVarFloat(const char *name, const float value, int flags=0)": {
+      "body_hash": "d713ded49d7dc22fdbc81ef625ca0e52",
+      "is_trivial": true
+    },
+    "const char * idCVarSystemLocal::GetCVarString(const char *name) const": {
+      "body_hash": "9fd13a9fd8abbca7bf67b901c09a5f7c",
+      "is_trivial": true
+    },
+    "bool idCVarSystemLocal::GetCVarBool(const char *name) const": {
+      "body_hash": "eb312dd23d77f7b2d5fc47f1f15a6897",
+      "is_trivial": true
+    },
+    "int idCVarSystemLocal::GetCVarInteger(const char *name) const": {
+      "body_hash": "34da8512d5c59b0f93d74ed836ac3844",
+      "is_trivial": true
+    },
+    "float idCVarSystemLocal::GetCVarFloat(const char *name) const": {
+      "body_hash": "786870467a0498e17f27ce3f9da675bf",
+      "is_trivial": true
+    },
+    "bool idCVarSystemLocal::Command(const idCmdArgs &args)": {
+      "body_hash": "85a9993acb18afae91660b6ad5eacaa4",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::CommandCompletion(void(*callback)(const char *s))": {
+      "body_hash": "5a1be3920b17fddef0ea4e7dcceac945",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::ArgCompletion(const char *cmdString, void(*callback)(const char *s))": {
+      "body_hash": "f28c9c24f034487b965f854b36a8c3e4",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::SetModifiedFlags(int flags)": {
+      "body_hash": "44298dace356cb4fa1843190a4eb8b39",
+      "is_trivial": true
+    },
+    "int idCVarSystemLocal::GetModifiedFlags() const": {
+      "body_hash": "6dc8eb584c938f8308c878a9a1089180",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::ClearModifiedFlags(int flags)": {
+      "body_hash": "ef0fb722e6fa13514fe6e2e4f551d44e",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::ResetFlaggedVariables(int flags)": {
+      "body_hash": "3335b965a88764a2c8bfc62b150f5609",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::RemoveFlaggedAutoCompletion(int flags)": {
+      "body_hash": "7ff1f8325fa1e50aeda7c3ec706b72ed",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::WriteFlaggedVariables(int flags, const char *setCmd, idFile *f) const": {
+      "body_hash": "3ee6323b3a6799a962966cae3395338b",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::MoveCVarsToDict(int flags, idDict &dict, bool onlyModified) const": {
+      "body_hash": "1e27b9809e0c0fd56ba3b83e17dc4e44",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::SetCVarsFromDict(const idDict &dict)": {
+      "body_hash": "de165d9413a0ab11d0b8cacc6919b17a",
+      "is_trivial": true
+    },
+    "idInternalCVar * idCVarSystemLocal::FindInternal(const char *name) const": {
+      "body_hash": "2ce8be0ada23ea5cfe6745fef38aca98",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::SetInternal(const char *name, const char *value, int flags)": {
+      "body_hash": "cb48a4a6e08c071849b39eeac78c6ddc",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::Toggle_f(const idCmdArgs &args)": {
+      "body_hash": "0eca788906e6640efdf090ac35404545",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::Set_f(const idCmdArgs &args)": {
+      "body_hash": "c5b7b7758590808098cb396ace4b1c09",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::Reset_f(const idCmdArgs &args)": {
+      "body_hash": "a90ddac178741c660316bebc371a531c",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::ListByFlags(const idCmdArgs &args, cvarFlags_t flags)": {
+      "body_hash": "8d66cf9401530183bd81482baf8ed687",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::List_f(const idCmdArgs &args)": {
+      "body_hash": "1f613698ecc32a35fe3bcbc78c2d134b",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::Restart_f(const idCmdArgs &args)": {
+      "body_hash": "ff1444d82c81efc2f274bb005ea213b5",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::CvarAdd_f(const idCmdArgs &args)": {
+      "body_hash": "5f216d85fabdd57edead1c63f2b342b6",
+      "is_trivial": true
+    },
+    "idDebugGraph::idDebugGraph(int numItems=0)": {
+      "body_hash": "cbeb0fd8a841f3d4d5865c47e4eb57c0",
+      "is_trivial": true
+    },
+    "void idDebugGraph::Enable(bool b)": {
+      "body_hash": "070ba4de55aa6e9d1648e9d4457bb2da",
+      "is_trivial": true
+    },
+    "void idDebugGraph::Init(int numBars)": {
+      "body_hash": "b913ab61e2444104c832694949621135",
+      "is_trivial": true
+    },
+    "void idDebugGraph::AddGridLine(float value, const idVec4 &color)": {
+      "body_hash": "5afd5f59b7f389c6ae19eae44e542aed",
+      "is_trivial": true
+    },
+    "void idDebugGraph::SetValue(int b, float value, const idVec4 &color)": {
+      "body_hash": "820425b432a4a9a4dd5773d1485ff2a2",
+      "is_trivial": true
+    },
+    "float idDebugGraph::GetValue(int b)": {
+      "body_hash": "53b8dd61857b0368fa1bc8a1a3f0613d",
+      "is_trivial": true
+    },
+    "void idDebugGraph::SetLabel(int b, const char *text)": {
+      "body_hash": "b52d92bb45a76df2d3cfe9c0d6162120",
+      "is_trivial": true
+    },
+    "void idDebugGraph::SetFillMode(fillMode_t m)": {
+      "body_hash": "0c264f1b4ffae4584bff6610f025ece7",
+      "is_trivial": true
+    },
+    "void idDebugGraph::SetSideways(bool s)": {
+      "body_hash": "4d9a4f74a35122300caa324ba194bd67",
+      "is_trivial": true
+    },
+    "void idDebugGraph::SetBackgroundColor(const idVec4 &color)": {
+      "body_hash": "6b979512e868652222e783efea5d1cc6",
+      "is_trivial": true
+    },
+    "void idDebugGraph::SetLabelColor(const idVec4 &color)": {
+      "body_hash": "3f117dc56770848a6668231c7fd88816",
+      "is_trivial": true
+    },
+    "void idDebugGraph::SetBorder(float b)": {
+      "body_hash": "dc7ef44b6305aae9f00f79edac99fdd2",
+      "is_trivial": true
+    },
+    "void idDebugGraph::Render(idRenderSystem *gui)": {
+      "body_hash": "f4795ab7fb6a6fdf52084cd6ebb98cc3",
+      "is_trivial": true
+    },
+    "idDialogInfo::idDialogInfo()": {
+      "body_hash": "c04a0800fb12df46f077b08151e7ada3",
+      "is_trivial": true
+    },
+    "idEditField::idEditField()": {
+      "body_hash": "ab4055091057bbe822ed38e29ee2c6bc",
+      "is_trivial": true
+    },
+    "void idEditField::Clear()": {
+      "body_hash": "cd6f9252fcd4933b41ac938ca6eb0a30",
+      "is_trivial": true
+    },
+    "void idEditField::SetWidthInChars(int w)": {
+      "body_hash": "1ce1d75acb0a2317fae2d2f5c9bb50da",
+      "is_trivial": true
+    },
+    "void idEditField::SetCursor(int c)": {
+      "body_hash": "4e54730386a0ab5c53bd934141fb2de1",
+      "is_trivial": true
+    },
+    "int idEditField::GetCursor() const": {
+      "body_hash": "e7a5f731c6fb3d1993a894cde5477f0f",
+      "is_trivial": true
+    },
+    "void idEditField::ClearAutoComplete()": {
+      "body_hash": "10ad0a2bbbc22ea9fd47161f40339cb1",
+      "is_trivial": true
+    },
+    "int idEditField::GetAutoCompleteLength() const": {
+      "body_hash": "67feaca5f655e32854a4cc1b4d9757b1",
+      "is_trivial": true
+    },
+    "void idEditField::AutoComplete()": {
+      "body_hash": "23f4cff71e8fd00a755c1f48f7d7114e",
+      "is_trivial": true
+    },
+    "void idEditField::CharEvent(int c)": {
+      "body_hash": "d61adc0b2a0ea7a26a2e3f6e94c65ac9",
+      "is_trivial": true
+    },
+    "void idEditField::KeyDownEvent(int key)": {
+      "body_hash": "1cb67e006bc69a1f827201b8f673cbe2",
+      "is_trivial": true
+    },
+    "void idEditField::Paste()": {
+      "body_hash": "554356f8fa12f0e17cd7d82174024603",
+      "is_trivial": true
+    },
+    "char * idEditField::GetBuffer()": {
+      "body_hash": "3d8a7c63ddc2bbd4afd9d96974a38abe",
+      "is_trivial": true
+    },
+    "void idEditField::Draw(int x, int y, int width, bool showCursor)": {
+      "body_hash": "4bb73963e83197180ae01ef97a59d3e6",
+      "is_trivial": false
+    },
+    "void idEditField::SetBuffer(const char *buffer)": {
+      "body_hash": "6c8882310c9e3ea4dbf01ac780d5cc56",
+      "is_trivial": true
+    },
+    "idEventLoop::idEventLoop()": {
+      "body_hash": "69a3a1a1e1f85c4a03e31e282a573bce",
+      "is_trivial": true
+    },
+    "void idEventLoop::Init()": {
+      "body_hash": "b0be924094bdd3386505ecd7af677f0d",
+      "is_trivial": true
+    },
+    "void idEventLoop::Shutdown()": {
+      "body_hash": "6401856bbcfcadfaffeaa81c4da81dd5",
+      "is_trivial": true
+    },
+    "sysEvent_t idEventLoop::GetEvent()": {
+      "body_hash": "5859532b892de1acb37841db45eec392",
+      "is_trivial": true
+    },
+    "int idEventLoop::RunEventLoop(bool commandExecution=true)": {
+      "body_hash": "a66f856255172a13311560fd34cb5252",
+      "is_trivial": true
+    },
+    "int idEventLoop::Milliseconds()": {
+      "body_hash": "24a243654b929045b105d3787766496a",
+      "is_trivial": true
+    },
+    "int idEventLoop::JournalLevel() const": {
+      "body_hash": "80606d980e20c4ea5cf9421b3659532c",
+      "is_trivial": true
+    },
+    "sysEvent_t idEventLoop::GetRealEvent()": {
+      "body_hash": "ff4e4a6b612225551f84542a7a8f20bc",
+      "is_trivial": true
+    },
+    "void idEventLoop::ProcessEvent(sysEvent_t ev)": {
+      "body_hash": "e4b383deb5513a6254c8762819a77781",
+      "is_trivial": true
+    },
+    "void idEventLoop::PushEvent(sysEvent_t *event)": {
+      "body_hash": "170b9b18379e5f10efff39eafd2fd97b",
+      "is_trivial": true
+    },
+    "const char * idFile::GetName() const": {
+      "body_hash": "035f902626d1d58ee397ea04b2edf37f",
+      "is_trivial": true
+    },
+    "const char * idFile::GetFullPath() const": {
+      "body_hash": "16fdcfff2fe504508ab2f6b39f395cba",
+      "is_trivial": true
+    },
+    "int idFile::Read(void *buffer, int len)": {
+      "body_hash": "887d6c87a84b8a6333b11466f26ea2a9",
+      "is_trivial": true
+    },
+    "int idFile::Write(const void *buffer, int len)": {
+      "body_hash": "ebf2f1b8a861b3477da0222f6c9e061c",
+      "is_trivial": true
+    },
+    "int idFile::Length() const": {
+      "body_hash": "21ff756d5b80a0a44f155e89a874974e",
+      "is_trivial": true
+    },
+    "ID_TIME_T idFile::Timestamp() const": {
+      "body_hash": "b0f9bfe59704b35223e6243392eb5296",
+      "is_trivial": true
+    },
+    "int idFile::Tell() const": {
+      "body_hash": "648ca442aff29a96e4439866a146ebf9",
+      "is_trivial": true
+    },
+    "void idFile::ForceFlush()": {
+      "body_hash": "a2ee727a9b5c6a45855608916e81c692",
+      "is_trivial": true
+    },
+    "void idFile::Flush()": {
+      "body_hash": "ac9e278dd9931b085b98b7a07e29d60e",
+      "is_trivial": true
+    },
+    "int idFile::Seek(long offset, fsOrigin_t origin)": {
+      "body_hash": "5994eff67bd06dfcd08df726404ebbb5",
+      "is_trivial": true
+    },
+    "void idFile::Rewind()": {
+      "body_hash": "77af0bd5a15c62168de73b9d1c1815d5",
+      "is_trivial": true
+    },
+    "int idFile::Printf(VERIFY_FORMAT_STRING const char *fmt,...)": {
+      "body_hash": "8062b5fb86d9f19e910d4d10ecbc19ea",
+      "is_trivial": true
+    },
+    "int idFile::VPrintf(const char *fmt, va_list arg)": {
+      "body_hash": "c40709d0ae99637a2dcb49c9c4c402bf",
+      "is_trivial": true
+    },
+    "int idFile::WriteFloatString(VERIFY_FORMAT_STRING const char *fmt,...)": {
+      "body_hash": "60fb65c6b19ccefd797cf6f5eecf7c56",
+      "is_trivial": true
+    },
+    "int idFile::ReadInt(int &value)": {
+      "body_hash": "93d1094b02d12baa84561545aaacf72d",
+      "is_trivial": true
+    },
+    "int idFile::ReadUnsignedInt(unsigned int &value)": {
+      "body_hash": "92cc61f02b55c6b7538e14f79e3688da",
+      "is_trivial": true
+    },
+    "int idFile::ReadShort(short &value)": {
+      "body_hash": "6e0f5a9cc0be031efc606a4cb82f892b",
+      "is_trivial": true
+    },
+    "int idFile::ReadUnsignedShort(unsigned short &value)": {
+      "body_hash": "8a87aac2d7a988d8b44cf6dfb81d9d87",
+      "is_trivial": true
+    },
+    "int idFile::ReadChar(char &value)": {
+      "body_hash": "6067632b94570c2549833c30bea6f6a7",
+      "is_trivial": true
+    },
+    "int idFile::ReadUnsignedChar(unsigned char &value)": {
+      "body_hash": "49ec8571028d3b19dc1d448f2dd838a1",
+      "is_trivial": true
+    },
+    "int idFile::ReadFloat(float &value)": {
+      "body_hash": "38fea84649bf1fc2be9a9d46e6f15412",
+      "is_trivial": true
+    },
+    "int idFile::ReadBool(bool &value)": {
+      "body_hash": "1edeeaa3b647e56845f7a7f16faafad2",
+      "is_trivial": true
+    },
+    "int idFile::ReadString(idStr &string)": {
+      "body_hash": "232c5edf4c3ef88ccf1a14f344da33ef",
+      "is_trivial": true
+    },
+    "int idFile::ReadVec2(idVec2 &vec)": {
+      "body_hash": "8349c9bc6f64f8b5bfb4afdb203c049f",
+      "is_trivial": true
+    },
+    "int idFile::ReadVec3(idVec3 &vec)": {
+      "body_hash": "72b556368c14c02d24c58ea52b7edf02",
+      "is_trivial": true
+    },
+    "int idFile::ReadVec4(idVec4 &vec)": {
+      "body_hash": "2a40f3c596ab091d34ac10a7babcbb14",
+      "is_trivial": true
+    },
+    "int idFile::ReadVec6(idVec6 &vec)": {
+      "body_hash": "b39330a27ae57fe579203145668fab3f",
+      "is_trivial": true
+    },
+    "int idFile::ReadMat3(idMat3 &mat)": {
+      "body_hash": "8f6d298b0c44f9001d636fea0347a58f",
+      "is_trivial": true
+    },
+    "int idFile::WriteInt(const int value)": {
+      "body_hash": "9e947ec73b5dd7c35795952a4d0c48a9",
+      "is_trivial": true
+    },
+    "int idFile::WriteUnsignedInt(const unsigned int value)": {
+      "body_hash": "abe88ecb8874c84c81b07f8459e51ee9",
+      "is_trivial": true
+    },
+    "int idFile::WriteShort(const short value)": {
+      "body_hash": "e20445b03fa48d732dc2eb0c342b2292",
+      "is_trivial": true
+    },
+    "int idFile::WriteUnsignedShort(unsigned short value)": {
+      "body_hash": "7fd0a69f110a0b99b68df271eafb17fb",
+      "is_trivial": true
+    },
+    "int idFile::WriteChar(const char value)": {
+      "body_hash": "1c7f79684e1fe093f9e56d26af97c1bf",
+      "is_trivial": true
+    },
+    "int idFile::WriteUnsignedChar(const unsigned char value)": {
+      "body_hash": "bd4dd97a5a661ed8a04369209292fa08",
+      "is_trivial": true
+    },
+    "int idFile::WriteBool(const bool value)": {
+      "body_hash": "ff7b8aa3f098a5665940a168120e6f07",
+      "is_trivial": true
+    },
+    "int idFile::WriteString(const char *string)": {
+      "body_hash": "8391fd1e50cecfccfe68cecc871127a0",
+      "is_trivial": true
+    },
+    "int idFile::WriteVec2(const idVec2 &vec)": {
+      "body_hash": "c05b2252734af887adc7c09cb92fc054",
+      "is_trivial": true
+    },
+    "int idFile::WriteVec3(const idVec3 &vec)": {
+      "body_hash": "1da23ce4ee9d4e0de4ad5692ce9938c2",
+      "is_trivial": true
+    },
+    "int idFile::WriteVec4(const idVec4 &vec)": {
+      "body_hash": "6b61996548bfd8c7589dadc0100c8938",
+      "is_trivial": true
+    },
+    "int idFile::WriteVec6(const idVec6 &vec)": {
+      "body_hash": "843fff224a540ab55a3f318c588d8f52",
+      "is_trivial": true
+    },
+    "int idFile::WriteMat3(const idMat3 &mat)": {
+      "body_hash": "215f8ca6d4e30dba9219878e2dee762f",
+      "is_trivial": true
+    },
+    "ID_INLINE size_t idFile::ReadBig(type &c)": {
+      "body_hash": "1a1448880991ffd5e10bb9e1be6c0730",
+      "is_trivial": true
+    },
+    "ID_INLINE size_t idFile::ReadBigArray(type *c, int count)": {
+      "body_hash": "b27eea37545f5de1dd271f394f83b3ca",
+      "is_trivial": true
+    },
+    "ID_INLINE size_t idFile::WriteBig(const type &c)": {
+      "body_hash": "2e4bc982336331d68902b6014279fd4e",
+      "is_trivial": true
+    },
+    "ID_INLINE size_t idFile::WriteBigArray(const type *c, int count)": {
+      "body_hash": "6ae23d26270bde9237bc59f867cd5ec6",
+      "is_trivial": true
+    },
+    "const char * idFileList::GetBasePath() const": {
+      "body_hash": "7b945e8af4518ed27bbbcff1d3aa0725",
+      "is_trivial": true
+    },
+    "int idFileList::GetNumFiles() const": {
+      "body_hash": "95a1e62680cbcc73b943db04a9273b80",
+      "is_trivial": true
+    },
+    "const char * idFileList::GetFile(int index) const": {
+      "body_hash": "db011af69098ffa38c9a200b3867b10e",
+      "is_trivial": true
+    },
+    "const idStrList & idFileList::GetList() const": {
+      "body_hash": "12dd658f1da4700057cbc56cc48330fd",
+      "is_trivial": true
+    },
+    "idFileLocal::idFileLocal(idFile *_file)": {
+      "body_hash": "cd2955cc5daeb31db4d90754370bcb55",
+      "is_trivial": true
+    },
+    "idFileLocal::~idFileLocal()": {
+      "body_hash": "b16ccf7ab5789ee3a450e8f200f4358e",
+      "is_trivial": true
+    },
+    "idFileLocal::operator idFile *() const": {
+      "body_hash": "8d6adb32e85081d624c1755d1c6d8b37",
+      "is_trivial": true
+    },
+    "idFile * idFileLocal::operator->() const": {
+      "body_hash": "e20a51ed1a57bc70d2fc3403e6c4b2ac",
+      "is_trivial": true
+    },
+    "idFileManifest::idFileManifest()": {
+      "body_hash": "cd5c265f192c477b2518b4dce15f24ea",
+      "is_trivial": true
+    },
+    "bool idFileManifest::LoadManifest(const char *fileName)": {
+      "body_hash": "5c4610e626f46ed346c12d997e8d0a02",
+      "is_trivial": true
+    },
+    "bool idFileManifest::LoadManifestFromFile(idFile *file)": {
+      "body_hash": "88120e24c36816f467753150dc8e8bcf",
+      "is_trivial": true
+    },
+    "void idFileManifest::WriteManifestFile(const char *fileName)": {
+      "body_hash": "3fe3bc6ecd282a03534b8c58481349d6",
+      "is_trivial": true
+    },
+    "int idFileManifest::NumFiles()": {
+      "body_hash": "c60cd4b1abcdef896509a70fcea5247b",
+      "is_trivial": true
+    },
+    "int idFileManifest::FindFile(const char *fileName)": {
+      "body_hash": "29a9ad4f5175c0b0aaa0e6edcb973220",
+      "is_trivial": true
+    },
+    "const idStr & idFileManifest::GetFileNameByIndex(int idx) const": {
+      "body_hash": "f3ff091fe8698750d5f724b32ab73b64",
+      "is_trivial": true
+    },
+    "const char * idFileManifest::GetManifestName()": {
+      "body_hash": "1a876ea97c605de081de0c33042ead82",
+      "is_trivial": true
+    },
+    "void idFileManifest::RemoveAll(const char *filename)": {
+      "body_hash": "50202940848b165e8499bee66b0e12cb",
+      "is_trivial": true
+    },
+    "void idFileManifest::AddFile(const char *filename)": {
+      "body_hash": "5b546fc5a90d0690ac9d6086d9f9269b",
+      "is_trivial": true
+    },
+    "void idFileManifest::PopulateList(idStaticList< idStr, 16384 > &dest)": {
+      "body_hash": "1f04bb6a037a3d5c4a48d4cc769a127b",
+      "is_trivial": true
+    },
+    "void idFileManifest::Print()": {
+      "body_hash": "944f17e5b072cd97adb75f21c55e5ffb",
+      "is_trivial": true
+    },
+    "ID_TIME_T idFileSystem::GetTimestamp(const char *relativePath)": {
+      "body_hash": "23bd30c780d8aa71ff0c52407d896cf7",
+      "is_trivial": true
+    },
+    "idFileSystemLocal::idFileSystemLocal()": {
+      "body_hash": "8049df3d3828d246976cd9f2054f9a32",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::Init()": {
+      "body_hash": "81ff04095863ecdd024a660cb3817d0d",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::Restart()": {
+      "body_hash": "b6b7d4a1dd286447209f1fa6b1813d23",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::Shutdown(bool reloading)": {
+      "body_hash": "656adb6b8fdd036c6547878896a31cc6",
+      "is_trivial": true
+    },
+    "bool idFileSystemLocal::IsInitialized() const": {
+      "body_hash": "08b2708d1c6d5d2e91647e68420e23ce",
+      "is_trivial": true
+    },
+    "idFileList * idFileSystemLocal::ListFiles(const char *relativePath, const char *extension, bool sort=false, bool fullRelativePath=false, const char *gamedir=NULL)": {
+      "body_hash": "eaa9b5a637680709394e9bc42f84956e",
+      "is_trivial": false
+    },
+    "idFileList * idFileSystemLocal::ListFilesTree(const char *relativePath, const char *extension, bool sort=false, bool allowSubdirsForResourcePaks=false, const char *gamedir=NULL)": {
+      "body_hash": "f74db6b95179b9b16178d645cd8d7f2d",
+      "is_trivial": false
+    },
+    "void idFileSystemLocal::FreeFileList(idFileList *fileList)": {
+      "body_hash": "bd4346286a2a8bb53ab7c2b6836b7b06",
+      "is_trivial": true
+    },
+    "const char * idFileSystemLocal::OSPathToRelativePath(const char *OSPath)": {
+      "body_hash": "c22f4f0413c2c55c0fe8d4ff1f8378c2",
+      "is_trivial": true
+    },
+    "const char * idFileSystemLocal::RelativePathToOSPath(const char *relativePath, const char *basePath)": {
+      "body_hash": "9693847102b42ee718b93d14a45d9aef",
+      "is_trivial": true
+    },
+    "const char * idFileSystemLocal::BuildOSPath(const char *base, const char *game, const char *relativePath)": {
+      "body_hash": "8a593c3b86f0b653de1273ae738022c0",
+      "is_trivial": true
+    },
+    "const char * idFileSystemLocal::BuildOSPath(const char *base, const char *relativePath)": {
+      "body_hash": "06cecd2a1c812105dfecd6d96b511ef0",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::CreateOSPath(const char *OSPath)": {
+      "body_hash": "312ed79a0e1fe39dcaac8ebc2682f137",
+      "is_trivial": true
+    },
+    "int idFileSystemLocal::ReadFile(const char *relativePath, void **buffer, ID_TIME_T *timestamp)": {
+      "body_hash": "7894b7120de12c8b989f896a6f1d98bf",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::FreeFile(void *buffer)": {
+      "body_hash": "4f26ac4af67f399f97e88a8e2780c4b9",
+      "is_trivial": true
+    },
+    "int idFileSystemLocal::WriteFile(const char *relativePath, const void *buffer, int size, const char *basePath=\"fs_savepath\")": {
+      "body_hash": "8fd0923d73d24b0a9f6fff461fa75d81",
+      "is_trivial": false
+    },
+    "void idFileSystemLocal::RemoveFile(const char *relativePath)": {
+      "body_hash": "514e5a0a5a27a78bec053194dc7bd368",
+      "is_trivial": true
+    },
+    "bool idFileSystemLocal::RemoveDir(const char *relativePath)": {
+      "body_hash": "89c82cca6cfd73292e4b68c396c1a1f3",
+      "is_trivial": true
+    },
+    "bool idFileSystemLocal::RenameFile(const char *relativePath, const char *newName, const char *basePath=\"fs_savepath\")": {
+      "body_hash": "9d97f2151647f99fe26340820e29093c",
+      "is_trivial": true
+    },
+    "idFile * idFileSystemLocal::OpenFileReadFlags(const char *relativePath, int searchFlags, bool allowCopyFiles=true, const char *gamedir=NULL)": {
+      "body_hash": "7495683f9ee8f6fdee29392d5e141504",
+      "is_trivial": false
+    },
+    "idFile * idFileSystemLocal::OpenFileRead(const char *relativePath, bool allowCopyFiles=true, const char *gamedir=NULL)": {
+      "body_hash": "f1fb30b75d17be1fcf9c46ae95d3d51c",
+      "is_trivial": true
+    },
+    "idFile * idFileSystemLocal::OpenFileReadMemory(const char *relativePath, bool allowCopyFiles=true, const char *gamedir=NULL)": {
+      "body_hash": "0fddfd8590583197a36bcaac110dd5f1",
+      "is_trivial": true
+    },
+    "idFile * idFileSystemLocal::OpenFileWrite(const char *relativePath, const char *basePath=\"fs_savepath\")": {
+      "body_hash": "d2652a07b715e7732fa209039100a9b5",
+      "is_trivial": true
+    },
+    "idFile * idFileSystemLocal::OpenFileAppend(const char *relativePath, bool sync=false, const char *basePath=\"fs_basepath\")": {
+      "body_hash": "23ed1309c65ce95fde783dfcf7ca72f0",
+      "is_trivial": true
+    },
+    "idFile * idFileSystemLocal::OpenFileByMode(const char *relativePath, fsMode_t mode)": {
+      "body_hash": "16c915f7e9950d938506d438757b03c7",
+      "is_trivial": true
+    },
+    "idFile * idFileSystemLocal::OpenExplicitFileRead(const char *OSPath)": {
+      "body_hash": "19b66220ea6f042e70fbdf3a9a6c38b5",
+      "is_trivial": true
+    },
+    "idFile * idFileSystemLocal::OpenExplicitFileWrite(const char *OSPath)": {
+      "body_hash": "0466d0a975b73206fe9d7847cdca5125",
+      "is_trivial": true
+    },
+    "idFile_Cached * idFileSystemLocal::OpenExplicitPakFile(const char *OSPath)": {
+      "body_hash": "d3e6500bd5c8e3673882246257816f88",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::CloseFile(idFile *f)": {
+      "body_hash": "e0b5d416949005f6b72571e0096f5a8c",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::FindDLL(const char *basename, char dllPath[MAX_OSPATH])": {
+      "body_hash": "faa28f943fab8d95b9b09e7143a5ece0",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::CopyFile(const char *fromOSPath, const char *toOSPath)": {
+      "body_hash": "29707785385dbd928d4ab92b747e753c",
+      "is_trivial": true
+    },
+    "findFile_t idFileSystemLocal::FindFile(const char *path)": {
+      "body_hash": "23389193cf358923f127b117eed90fed",
+      "is_trivial": true
+    },
+    "bool idFileSystemLocal::FilenameCompare(const char *s1, const char *s2) const": {
+      "body_hash": "4b6b7119dc714843eff0399d0632b129",
+      "is_trivial": true
+    },
+    "int idFileSystemLocal::GetFileLength(const char *relativePath)": {
+      "body_hash": "21e1e094e7119a23c3fc5f9f2c646076",
+      "is_trivial": true
+    },
+    "sysFolder_t idFileSystemLocal::IsFolder(const char *relativePath, const char *basePath=\"fs_basepath\")": {
+      "body_hash": "0be71a869ce704bd6237355bf2791c23",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::EnableBackgroundCache(bool enable)": {
+      "body_hash": "885384ca3550035b43bbac32ea80ed63",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::BeginLevelLoad(const char *name, char *_blockBuffer, int _blockBufferSize)": {
+      "body_hash": "adc13caafd20fbb5dd30b4564c6cf7cb",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::EndLevelLoad()": {
+      "body_hash": "d101b3e48de56760f2b9d41c4ce44d21",
+      "is_trivial": true
+    },
+    "bool idFileSystemLocal::InProductionMode()": {
+      "body_hash": "6e31e26f19a87f4c0e3965ddb4ca66ef",
+      "is_trivial": true
+    },
+    "virtual bool idFileSystemLocal::IsDoom2004() const": {
+      "body_hash": "64eb5cc88c3ab479fb72ec8dee919513",
+      "is_trivial": true
+    },
+    "virtual bool idFileSystemLocal::IsDoom2019() const": {
+      "body_hash": "5f8f3c7f5fbada249d8e2e9180609b3b",
+      "is_trivial": true
+    },
+    "virtual bool idFileSystemLocal::UsingZipFiles()": {
+      "body_hash": "203b6e3b0c584e82f93d5e4b301a0461",
+      "is_trivial": true
+    },
+    "virtual bool idFileSystemLocal::UsingResourceFiles()": {
+      "body_hash": "d2f7da8807bd1a413332a9d5b6f40d32",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::UnloadMapResources(const char *name)": {
+      "body_hash": "ff8e2d0cf00d658e7b2addfa7452d343",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::UnloadResourceContainer(const char *name)": {
+      "body_hash": "ca5d3d0db1ffdb180927fa5355ee95fd",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::StartPreload(const idStrList &_preload)": {
+      "body_hash": "74aea429ce8d8fe1e78f5692d9a0c7a5",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::StopPreload()": {
+      "body_hash": "5cee8184e30a0225884e5ee1b04662da",
+      "is_trivial": true
+    },
+    "idFile * idFileSystemLocal::GetResourceFile(const char *fileName, bool memFile)": {
+      "body_hash": "4550c1f5c720fab97755579c7cf05ae2",
+      "is_trivial": true
+    },
+    "bool idFileSystemLocal::GetResourceCacheEntry(const char *fileName, idResourceCacheEntry &rc)": {
+      "body_hash": "56a74722ef461201dc398ef3edb0d440",
+      "is_trivial": true
+    },
+    "int idFileSystemLocal::ReadFromBGL(idFile *_resourceFile, void *_buffer, int _offset, int _len)": {
+      "body_hash": "aa135d82b8c359712f57de2b7b381d56",
+      "is_trivial": false
+    },
+    "bool idFileSystemLocal::IsBinaryModel(const idStr &resName) const": {
+      "body_hash": "cd806c9ae6b91527a6e4e975080815d8",
+      "is_trivial": true
+    },
+    "bool idFileSystemLocal::IsSoundSample(const idStr &resName) const": {
+      "body_hash": "474e60f4ee13728e623d171e768e136e",
+      "is_trivial": true
+    },
+    "virtual void idFileSystemLocal::FreeResourceBuffer()": {
+      "body_hash": "af2dd72ba324338ded490f98e1ee9322",
+      "is_trivial": true
+    },
+    "virtual void idFileSystemLocal::AddImagePreload(const char *resName, int _filter, int _repeat, int _usage, int _cube)": {
+      "body_hash": "915f05a7d0b62c5be47602790ae1048e",
+      "is_trivial": false
+    },
+    "virtual void idFileSystemLocal::AddSamplePreload(const char *resName)": {
+      "body_hash": "e0ba40f753a5715fcd8c0c900f08926a",
+      "is_trivial": true
+    },
+    "virtual void idFileSystemLocal::AddModelPreload(const char *resName)": {
+      "body_hash": "19e7444246b162edff2e860cae498450",
+      "is_trivial": true
+    },
+    "virtual void idFileSystemLocal::AddAnimPreload(const char *resName)": {
+      "body_hash": "75caeb529239fd8ccb63b2fb388012fd",
+      "is_trivial": true
+    },
+    "virtual void idFileSystemLocal::AddCollisionPreload(const char *resName)": {
+      "body_hash": "13fc9e58c686ef5813136f01bdd258c7",
+      "is_trivial": true
+    },
+    "virtual void idFileSystemLocal::AddParticlePreload(const char *resName)": {
+      "body_hash": "7bb196b8ce5b5bdcfb0b6a33d876c22c",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::BuildOrderedStartupContainer()": {
+      "body_hash": "f47052b2df67f653c4edad398493452b",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::Dir_f(const idCmdArgs &args)": {
+      "body_hash": "ede0046146f67794be9a91a86fa97811",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::DirTree_f(const idCmdArgs &args)": {
+      "body_hash": "8ea39b9e3a9f3962b47abd2c36525dd4",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::Path_f(const idCmdArgs &args)": {
+      "body_hash": "3287508e1ed24d300855047c59026f1b",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::TouchFile_f(const idCmdArgs &args)": {
+      "body_hash": "a3f634be0f241ba3cea8e119a70e6d16",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::TouchFileList_f(const idCmdArgs &args)": {
+      "body_hash": "006e3bd9d4dafc1d4932bf0d2d6f296c",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::BuildGame_f(const idCmdArgs &args)": {
+      "body_hash": "610d9ffbeb1753402f05d1bcc781432a",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::WriteResourceFile_f(const idCmdArgs &args)": {
+      "body_hash": "e69315a2f7c884861489dd662bda3573",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::ExtractResourceFile_f(const idCmdArgs &args)": {
+      "body_hash": "3fbba0e9ed683f5b197aa80a8cb58883",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::UpdateResourceFile_f(const idCmdArgs &args)": {
+      "body_hash": "171e29836e7b1d9d201f48bc2348969d",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::GenerateResourceCRCs_f(const idCmdArgs &args)": {
+      "body_hash": "2a031ecc3411d11a0b3912416cfeb770",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::CreateCRCsForResourceFileList(const idFileList &list)": {
+      "body_hash": "a96ee0aee9c0e589e25af950aa439171",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::ClearResourcePacks()": {
+      "body_hash": "ea162aeb2652724a022340a2ffd4168b",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::WriteResourcePacks()": {
+      "body_hash": "16b3608d89575455ff8e252467f928e6",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::AddRenderProgs(idStrList &files)": {
+      "body_hash": "f019dc70a0ee1b2646754e03fea7ca98",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::AddFonts(idStrList &files)": {
+      "body_hash": "688bfc0d17003a10558cf8eab36c7501",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::ReplaceSeparators(idStr &path, char sep=PATHSEPARATOR_CHAR)": {
+      "body_hash": "efa1086deef227431f83cd0397f4e880",
+      "is_trivial": true
+    },
+    "int idFileSystemLocal::ListOSFiles(const char *directory, const char *extension, idStrList &list)": {
+      "body_hash": "5c0363648139ac9a344b4ab36eeb4617",
+      "is_trivial": true
+    },
+    "idFileHandle idFileSystemLocal::OpenOSFile(const char *name, fsMode_t mode)": {
+      "body_hash": "41c66e6310c232b4bf794db4ce2e6ae8",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::CloseOSFile(idFileHandle o)": {
+      "body_hash": "1dc9b02ae5e9939d4cafe3b704084164",
+      "is_trivial": true
+    },
+    "int idFileSystemLocal::DirectFileLength(idFileHandle o)": {
+      "body_hash": "b98d35ab13d7276fd777c048283dac1e",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::CopyFile(idFile *src, const char *toOSPath)": {
+      "body_hash": "41b92c0077724353392410ed0440efda",
+      "is_trivial": true
+    },
+    "int idFileSystemLocal::AddUnique(const char *name, idStrList &list, idHashIndex &hashIndex) const": {
+      "body_hash": "be0e493c7e2eba6672db785474ae2d48",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::GetExtensionList(const char *extension, idStrList &extensionList) const": {
+      "body_hash": "da05a10531f5b88a511c9c7b45234c30",
+      "is_trivial": true
+    },
+    "int idFileSystemLocal::GetFileList(const char *relativePath, const idStrList &extensions, idStrList &list, idHashIndex &hashIndex, bool fullRelativePath, bool allowSubdirsForResourcePaks=false, const char *gamedir=NULL)": {
+      "body_hash": "1d929a98f61285385bc13844e4afe4b5",
+      "is_trivial": false
+    },
+    "int idFileSystemLocal::GetFileListTree(const char *relativePath, const idStrList &extensions, idStrList &list, idHashIndex &hashIndex, bool allowSubdirsForResourcePaks=false, const char *gamedir=NULL)": {
+      "body_hash": "9a06cae734cb6d8e845bc89a68491336",
+      "is_trivial": false
+    },
+    "void idFileSystemLocal::AddGameDirectory(const char *path, const char *dir)": {
+      "body_hash": "ae53dee744d594f31aa76f7ef57ada06",
+      "is_trivial": true
+    },
+    "idVec2i idFileSystemLocal::AddResourceFile(const char *resourceFileName)": {
+      "body_hash": "fd362f1c529ad22dea44ea0d39d65b8a",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::RemoveMapResourceFile(const char *resourceFileName)": {
+      "body_hash": "a2f2fe2d102d57b057751bdcafe884bd",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::RemoveResourceFileByIndex(const idVec2i &idx)": {
+      "body_hash": "52a9e2a33ba22c74d62a44d3ac80003e",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::RemoveResourceFile(const char *resourceFileName)": {
+      "body_hash": "ab50f7726c941df57363d82b31c7a77f",
+      "is_trivial": true
+    },
+    "idVec2i idFileSystemLocal::FindResourceFile(const char *resourceFileName)": {
+      "body_hash": "2a46f8237cbc607f780e2b9cdb884fbc",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::SetupGameDirectories(const char *gameName)": {
+      "body_hash": "03fa02367981d4bd7be8f170de2d7e37",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::Startup()": {
+      "body_hash": "58e1ecb5898406888cd768304f0c2380",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::InitPrecache()": {
+      "body_hash": "e43728f66141afdb56796d18cf35b26e",
+      "is_trivial": true
+    },
+    "void idFileSystemLocal::ReOpenCacheFiles()": {
+      "body_hash": "d47e65762adc329b05b10469390ed80d",
+      "is_trivial": true
+    },
+    "idFile * idFileSystemLocal::GetZipFile(const char *fileName, bool memFile)": {
+      "body_hash": "dd2f22c09207fc34567e22a0868170f1",
+      "is_trivial": true
+    },
+    "bool idFileSystemLocal::GetZipCacheEntry(const char *fileName, idZipCacheEntry &rc)": {
+      "body_hash": "8e56120750a35400f1690e0eaa2b2bec",
+      "is_trivial": true
+    },
+    "idFile_BitMsg::idFile_BitMsg(idBitMsg &msg)": {
+      "body_hash": "f57d8cc06de6233393b9f9a29f402a5a",
+      "is_trivial": true
+    },
+    "idFile_BitMsg::idFile_BitMsg(const idBitMsg &msg)": {
+      "body_hash": "58263df8d27c28194c38e6a7ecff0113",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_BitMsg::GetName() const": {
+      "body_hash": "426f8689ca67d42ff75f9572d35c9470",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_BitMsg::GetFullPath() const": {
+      "body_hash": "c9ff445dcbf6967fac053f0ae2ce358a",
+      "is_trivial": true
+    },
+    "int idFile_BitMsg::Read(void *buffer, int len)": {
+      "body_hash": "5b67223210bf98285ee98a22a3bfc25e",
+      "is_trivial": true
+    },
+    "int idFile_BitMsg::Write(const void *buffer, int len)": {
+      "body_hash": "d6b840b251e5093bd4e9b9d127003335",
+      "is_trivial": true
+    },
+    "int idFile_BitMsg::Length() const": {
+      "body_hash": "1cc00ff71d854a9a96010672b52c4fa2",
+      "is_trivial": true
+    },
+    "ID_TIME_T idFile_BitMsg::Timestamp() const": {
+      "body_hash": "b2b2d54aa8a518c18f53abeec2cb2ee9",
+      "is_trivial": true
+    },
+    "int idFile_BitMsg::Tell() const": {
+      "body_hash": "c309ff2d01c7cbc90b0f75a1976b7aca",
+      "is_trivial": true
+    },
+    "void idFile_BitMsg::ForceFlush()": {
+      "body_hash": "684e3c40b573c41bf4a20871fc1d6250",
+      "is_trivial": true
+    },
+    "void idFile_BitMsg::Flush()": {
+      "body_hash": "9703a7e17e355b93ff0bfe44e38dd60f",
+      "is_trivial": true
+    },
+    "int idFile_BitMsg::Seek(long offset, fsOrigin_t origin)": {
+      "body_hash": "414faaf61b87f91a0a1856132d69b0d4",
+      "is_trivial": true
+    },
+    "idFile_Cached::idFile_Cached()": {
+      "body_hash": "92369d57c0e78e729c5080056c4f6e46",
+      "is_trivial": true
+    },
+    "idFile_Cached::~idFile_Cached()": {
+      "body_hash": "8fc023b984ce26315022c26171e064ea",
+      "is_trivial": true
+    },
+    "void idFile_Cached::CacheData(uint64 offset, uint64 length)": {
+      "body_hash": "0dc880032c85bf8bb6c779980851a056",
+      "is_trivial": true
+    },
+    "int idFile_Cached::Read(void *buffer, int len)": {
+      "body_hash": "0c1b70a2bba7d480053a5f754d58e326",
+      "is_trivial": true
+    },
+    "int idFile_Cached::Tell() const": {
+      "body_hash": "647fd400be74f1901b90a99ad55c4d10",
+      "is_trivial": true
+    },
+    "int idFile_Cached::Seek(long offset, fsOrigin_t origin)": {
+      "body_hash": "1442c0bfeecee0c6f7b877f72461c467",
+      "is_trivial": true
+    },
+    "idFile_InnerResource::idFile_InnerResource(const char *_name, idFile *rezFile, int _offset, int _len)": {
+      "body_hash": "20f199e19e608adbe635ca8e390061d5",
+      "is_trivial": false
+    },
+    "idFile_InnerResource::~idFile_InnerResource()": {
+      "body_hash": "3342339ec951fbed6b4d5e4a33e07c8f",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_InnerResource::GetName() const": {
+      "body_hash": "426f8689ca67d42ff75f9572d35c9470",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_InnerResource::GetFullPath() const": {
+      "body_hash": "c9ff445dcbf6967fac053f0ae2ce358a",
+      "is_trivial": true
+    },
+    "int idFile_InnerResource::Read(void *buffer, int len)": {
+      "body_hash": "444d83f1ac66c61bea93b15666b3fe71",
+      "is_trivial": true
+    },
+    "virtual int idFile_InnerResource::Write(const void *buffer, int len)": {
+      "body_hash": "59889883beb4bd611a42e00a58dd72b7",
+      "is_trivial": true
+    },
+    "virtual int idFile_InnerResource::Length() const": {
+      "body_hash": "68e815eade97a72d7924cd36e3177c22",
+      "is_trivial": true
+    },
+    "virtual ID_TIME_T idFile_InnerResource::Timestamp() const": {
+      "body_hash": "796a8f874dd5e6e7312b2e58fc27e5e3",
+      "is_trivial": true
+    },
+    "int idFile_InnerResource::Tell() const": {
+      "body_hash": "d74494147634b03a1db4fced587a42b8",
+      "is_trivial": true
+    },
+    "int idFile_InnerResource::Seek(long offset, fsOrigin_t origin)": {
+      "body_hash": "92ba55c3cc8ca18e17d81a9f9936d55e",
+      "is_trivial": true
+    },
+    "void idFile_InnerResource::SetResourceBuffer(byte *buf)": {
+      "body_hash": "808595e7718c2ea32649e1f80564f46d",
+      "is_trivial": true
+    },
+    "idFile_InZip::idFile_InZip()": {
+      "body_hash": "990cfdd364d272b84a3946b268f4e7dc",
+      "is_trivial": true
+    },
+    "idFile_InZip::~idFile_InZip()": {
+      "body_hash": "c2eafb066d2f8786d50114a508e202ce",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_InZip::GetName() const": {
+      "body_hash": "426f8689ca67d42ff75f9572d35c9470",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_InZip::GetFullPath() const": {
+      "body_hash": "e8b5907bcc4bdf0a410bfa98f1666128",
+      "is_trivial": true
+    },
+    "int idFile_InZip::Read(void *buffer, int len)": {
+      "body_hash": "52a1bdd561c706aa9fb26fdaf0dbc26d",
+      "is_trivial": true
+    },
+    "int idFile_InZip::Write(const void *buffer, int len)": {
+      "body_hash": "f9679e75f0a58e057371d00b16bc4e2c",
+      "is_trivial": true
+    },
+    "int idFile_InZip::Length() const": {
+      "body_hash": "8404cb0c94c2dc8a4c93b90b52b2ea94",
+      "is_trivial": true
+    },
+    "ID_TIME_T idFile_InZip::Timestamp() const": {
+      "body_hash": "39037c1b8467e8adb7c76732c41b6d05",
+      "is_trivial": true
+    },
+    "int idFile_InZip::Tell() const": {
+      "body_hash": "d54bc0ea7d7d35c4f773a28ad4e1326a",
+      "is_trivial": true
+    },
+    "void idFile_InZip::ForceFlush()": {
+      "body_hash": "622b708573f1a9733abe6d9bd77a7081",
+      "is_trivial": true
+    },
+    "void idFile_InZip::Flush()": {
+      "body_hash": "25d334b4ca3e8672cd5f9ec370edc3ce",
+      "is_trivial": true
+    },
+    "int idFile_InZip::Seek(long offset, fsOrigin_t origin)": {
+      "body_hash": "d0400b3ae8dc3b0d1ff6b9829e202e95",
+      "is_trivial": true
+    },
+    "idFile_Memory::idFile_Memory()": {
+      "body_hash": "ad61d657a41af95659409f925b858d75",
+      "is_trivial": true
+    },
+    "idFile_Memory::idFile_Memory(const char *name)": {
+      "body_hash": "911635de853d2325eaedf5e26839cf6b",
+      "is_trivial": true
+    },
+    "idFile_Memory::idFile_Memory(const char *name, char *data, int length)": {
+      "body_hash": "3a665d84ceb4a6c0d888311548d1e506",
+      "is_trivial": true
+    },
+    "idFile_Memory::idFile_Memory(const char *name, const char *data, int length)": {
+      "body_hash": "5954e57f9bc082d50192c330b5703fe6",
+      "is_trivial": true
+    },
+    "idFile_Memory::~idFile_Memory()": {
+      "body_hash": "b5058910f368808daebaf002a40bba20",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_Memory::GetName() const": {
+      "body_hash": "426f8689ca67d42ff75f9572d35c9470",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_Memory::GetFullPath() const": {
+      "body_hash": "c9ff445dcbf6967fac053f0ae2ce358a",
+      "is_trivial": true
+    },
+    "int idFile_Memory::Read(void *buffer, int len)": {
+      "body_hash": "b45c0c104b9e9abde41e6dc75e30b2e1",
+      "is_trivial": true
+    },
+    "int idFile_Memory::Write(const void *buffer, int len)": {
+      "body_hash": "6ebc7c52ab8b1b2f817730f9d96171c4",
+      "is_trivial": true
+    },
+    "int idFile_Memory::Length() const": {
+      "body_hash": "69ea15eeef91ab7eb07059c727aee8a0",
+      "is_trivial": true
+    },
+    "void idFile_Memory::SetLength(size_t len)": {
+      "body_hash": "fcb2cd62456edef559da710945b3a505",
+      "is_trivial": true
+    },
+    "ID_TIME_T idFile_Memory::Timestamp() const": {
+      "body_hash": "7abb54e5ec5aea6469ce7c531ced4c65",
+      "is_trivial": true
+    },
+    "int idFile_Memory::Tell() const": {
+      "body_hash": "e1ede7349cd213d342f03927d7d6344c",
+      "is_trivial": true
+    },
+    "void idFile_Memory::ForceFlush()": {
+      "body_hash": "2551eb8bf2c7d1ab9d55ebd6122a302c",
+      "is_trivial": true
+    },
+    "void idFile_Memory::Flush()": {
+      "body_hash": "92ff3bfa760243345142d940b8c0a518",
+      "is_trivial": true
+    },
+    "int idFile_Memory::Seek(long offset, fsOrigin_t origin)": {
+      "body_hash": "d80e33931da8be73e8b400b3d02c592a",
+      "is_trivial": true
+    },
+    "void idFile_Memory::SetMaxLength(size_t len)": {
+      "body_hash": "690d9cb49cfcc78e167adb6107efa2b0",
+      "is_trivial": true
+    },
+    "void idFile_Memory::MakeReadOnly()": {
+      "body_hash": "a1e0fd2307b4a903fe39795e7ffd6aac",
+      "is_trivial": true
+    },
+    "void idFile_Memory::MakeWritable()": {
+      "body_hash": "c2321687d560f59595241d9f4b56e34c",
+      "is_trivial": true
+    },
+    "void idFile_Memory::Clear(bool freeMemory=true)": {
+      "body_hash": "8ab28be968cef6992ca888f6321158c3",
+      "is_trivial": true
+    },
+    "void idFile_Memory::SetData(const char *data, int length)": {
+      "body_hash": "c2faec31b41f0ee7fe222895d905bc61",
+      "is_trivial": true
+    },
+    "const char * idFile_Memory::GetDataPtr() const": {
+      "body_hash": "0467f55389d97efa1ece82263cf1e884",
+      "is_trivial": true
+    },
+    "char * idFile_Memory::GetDataPtr()": {
+      "body_hash": "d83074b7b3c29dd9281e3510a7073db7",
+      "is_trivial": true
+    },
+    "void idFile_Memory::SetGranularity(int g)": {
+      "body_hash": "8274ac0658ee2907933075aa6a696b24",
+      "is_trivial": true
+    },
+    "void idFile_Memory::PreAllocate(size_t len)": {
+      "body_hash": "5db8663435f0ed1e14dd52e69180a825",
+      "is_trivial": true
+    },
+    "void idFile_Memory::TruncateData(size_t len)": {
+      "body_hash": "a4f323c3d90fb34bb14e7cf3f10ea8ff",
+      "is_trivial": true
+    },
+    "void idFile_Memory::TakeDataOwnership()": {
+      "body_hash": "b28e501d700ec8ac4e8d1c9496f8a27e",
+      "is_trivial": true
+    },
+    "size_t idFile_Memory::GetMaxLength()": {
+      "body_hash": "774e12a9fa80d1c6ed8db8898ae1db1d",
+      "is_trivial": true
+    },
+    "size_t idFile_Memory::GetAllocated()": {
+      "body_hash": "df6927f1042b1e3ab5ed7feeb2d06a3f",
+      "is_trivial": true
+    },
+    "idFile_Permanent::idFile_Permanent()": {
+      "body_hash": "e0b6ba6a20c5129609cc0fe46f0a1574",
+      "is_trivial": true
+    },
+    "idFile_Permanent::~idFile_Permanent()": {
+      "body_hash": "18d8fdd6ba148689bbaff610d0882f54",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_Permanent::GetName() const": {
+      "body_hash": "426f8689ca67d42ff75f9572d35c9470",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_Permanent::GetFullPath() const": {
+      "body_hash": "e8b5907bcc4bdf0a410bfa98f1666128",
+      "is_trivial": true
+    },
+    "int idFile_Permanent::Read(void *buffer, int len)": {
+      "body_hash": "71cbd2392062f5e5bf43d2863ba60502",
+      "is_trivial": true
+    },
+    "int idFile_Permanent::Write(const void *buffer, int len)": {
+      "body_hash": "92b552b7540ea30c2c80b18ed985b43f",
+      "is_trivial": true
+    },
+    "int idFile_Permanent::Length() const": {
+      "body_hash": "a1771b79c20110902300133994bc3cc9",
+      "is_trivial": true
+    },
+    "ID_TIME_T idFile_Permanent::Timestamp() const": {
+      "body_hash": "ffad07a15b1c88265cfa79f1e866b50d",
+      "is_trivial": true
+    },
+    "int idFile_Permanent::Tell() const": {
+      "body_hash": "2f7b2948b0532ab8e2da3dc2d6983ceb",
+      "is_trivial": true
+    },
+    "void idFile_Permanent::ForceFlush()": {
+      "body_hash": "55cb6a54a7a4f3e052e6ad3dc8cb357a",
+      "is_trivial": true
+    },
+    "void idFile_Permanent::Flush()": {
+      "body_hash": "7488ab9baf1a5f2f12c0aa9a2be80cb4",
+      "is_trivial": true
+    },
+    "int idFile_Permanent::Seek(long offset, fsOrigin_t origin)": {
+      "body_hash": "cad5223e377899ee077e52f928fcac3c",
+      "is_trivial": true
+    },
+    "idFileHandle idFile_Permanent::GetFilePtr()": {
+      "body_hash": "c0b6f13c3d7ec4dc125ee253b15f1d91",
+      "is_trivial": true
+    },
+    "idFile_SaveGame::idFile_SaveGame()": {
+      "body_hash": "746f1d19247a42ea48c56221b483e43c",
+      "is_trivial": true
+    },
+    "idFile_SaveGame::idFile_SaveGame(const char *_name)": {
+      "body_hash": "061f5e92030c9503dae065584b932e54",
+      "is_trivial": true
+    },
+    "idFile_SaveGame::idFile_SaveGame(const char *_name, int type_)": {
+      "body_hash": "cca6482b81f577d47360dd470cd2267a",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGame::operator==(const idFile_SaveGame &other) const": {
+      "body_hash": "90a5276cf3bac39313932205c6e75cfc",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGame::operator==(const char *_name) const": {
+      "body_hash": "f24f0c4bd6dd291c811877a36ba41033",
+      "is_trivial": true
+    },
+    "void idFile_SaveGame::SetNameAndType(const char *_name, int _type)": {
+      "body_hash": "e23a3e3b3a9e2cfc1534576cba18a655",
+      "is_trivial": true
+    },
+    "idFile_SaveGamePipelined::idFile_SaveGamePipelined()": {
+      "body_hash": "8a8f1e0b1e0258a749f59b7afbe36c5e",
+      "is_trivial": true
+    },
+    "idFile_SaveGamePipelined::~idFile_SaveGamePipelined()": {
+      "body_hash": "efa53b26245782d7330d3dd70d4d0135",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGamePipelined::OpenForReading(const char *const filename, bool useNativeFile)": {
+      "body_hash": "043502b6c127996e11361b775a428971",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGamePipelined::OpenForWriting(const char *const filename, bool useNativeFile)": {
+      "body_hash": "6a71ad5a1deb1e67b944a17f62ae7bbc",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGamePipelined::OpenForReading(idFile *file)": {
+      "body_hash": "ddeb4ee735a2a5f2fc9099201b9bc2db",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGamePipelined::OpenForWriting(idFile *file)": {
+      "body_hash": "05077d8514770f128e09dc612b52e56e",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::Finish()": {
+      "body_hash": "0f285b780ea05edbdfb8d2b2aaebea99",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::Abort()": {
+      "body_hash": "631063714d8c7a4491e5817f1cebb647",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGamePipelined::ReadBuildVersion()": {
+      "body_hash": "0ddf216a19324c12927d108a8fb4cdf9",
+      "is_trivial": true
+    },
+    "const char * idFile_SaveGamePipelined::GetBuildVersion() const": {
+      "body_hash": "a68360347be6396b1ae3d4cfc9df1c0c",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGamePipelined::ReadSaveFormatVersion()": {
+      "body_hash": "3789739d13eac6e5212b178967f40cce",
+      "is_trivial": true
+    },
+    "int idFile_SaveGamePipelined::GetSaveFormatVersion() const": {
+      "body_hash": "bb02609c6ac27ccb9e0f3a6bc0cc8df6",
+      "is_trivial": true
+    },
+    "int idFile_SaveGamePipelined::GetPointerSize() const": {
+      "body_hash": "668786387082ef6fa86c6fc9f7f7a863",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_SaveGamePipelined::GetName() const": {
+      "body_hash": "426f8689ca67d42ff75f9572d35c9470",
+      "is_trivial": true
+    },
+    "virtual const char * idFile_SaveGamePipelined::GetFullPath() const": {
+      "body_hash": "c9ff445dcbf6967fac053f0ae2ce358a",
+      "is_trivial": true
+    },
+    "int idFile_SaveGamePipelined::Read(void *buffer, int len)": {
+      "body_hash": "60b4b7e6714b626ba011cae48cbddeb7",
+      "is_trivial": true
+    },
+    "int idFile_SaveGamePipelined::Write(const void *buffer, int len)": {
+      "body_hash": "f376cdee2d1296bd67c8b3206879d9a2",
+      "is_trivial": true
+    },
+    "virtual int idFile_SaveGamePipelined::Length() const": {
+      "body_hash": "6d164d0ccece6d1bda81c41cee213ce1",
+      "is_trivial": true
+    },
+    "virtual void idFile_SaveGamePipelined::SetLength(size_t len)": {
+      "body_hash": "1aece9fb2dc429e6cfc0914f5c59c952",
+      "is_trivial": true
+    },
+    "virtual int idFile_SaveGamePipelined::Tell() const": {
+      "body_hash": "c5c7dcb27ad24d04621c25c6faa0139f",
+      "is_trivial": true
+    },
+    "virtual int idFile_SaveGamePipelined::Seek(long offset, fsOrigin_t origin)": {
+      "body_hash": "4be06023d117e81d7093e149fa1bb374",
+      "is_trivial": true
+    },
+    "virtual ID_TIME_T idFile_SaveGamePipelined::Timestamp() const": {
+      "body_hash": "796a8f874dd5e6e7312b2e58fc27e5e3",
+      "is_trivial": true
+    },
+    "mode_t idFile_SaveGamePipelined::GetMode() const": {
+      "body_hash": "f68b2df20a671d245c5a2ec4d6e08c1c",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGamePipelined::NextReadBlock(blockForIO_t *block, size_t lastReadBytes)": {
+      "body_hash": "d2762a3ef657206cd0ee77d259ef8c18",
+      "is_trivial": true
+    },
+    "static void idFile_SaveGamePipelined::CancelToTerminate()": {
+      "body_hash": "9967c95126f583b86b03d5b59fef269c",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::FlushUncompressedBlock()": {
+      "body_hash": "67d272709a5589d12a10d3077670c816",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::FlushCompressedBlock()": {
+      "body_hash": "b46e970ffed47f238efd03118c7ca057",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::CompressBlock()": {
+      "body_hash": "12965796c1067ee71a81fb1badbd708b",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::WriteBlock()": {
+      "body_hash": "3e3587eebe22ab6b10deb1b14714ae25",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::PumpUncompressedBlock()": {
+      "body_hash": "7cb1320f28b78d66fd9171cb60f4459f",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::PumpCompressedBlock()": {
+      "body_hash": "dffccac7a35dca2ee94c9a4be7758adf",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::DecompressBlock()": {
+      "body_hash": "e6e8adb06240b72008da4a3094934da4",
+      "is_trivial": true
+    },
+    "void idFile_SaveGamePipelined::ReadBlock()": {
+      "body_hash": "5a3bf18131e160e7e470668d454cc883",
+      "is_trivial": true
+    },
+    "idGameThread::idGameThread()": {
+      "body_hash": "72084c5b594f4565c74c809cba039c5e",
+      "is_trivial": true
+    },
+    "gameReturn_t idGameThread::RunGameAndDraw(int numGameFrames, idUserCmdMgr &userCmdMgr_, bool isClient_, int startGameFrame)": {
+      "body_hash": "c52cc1868452c22859876c2b4034ff38",
+      "is_trivial": false
+    },
+    "void idGameThread::SetThreadTotalTime(const int inTime)": {
+      "body_hash": "9772164728165f4dc2e7906bd613c44b",
+      "is_trivial": true
+    },
+    "int idGameThread::GetThreadTotalTime() const": {
+      "body_hash": "b950aa4445acdbe32619f8ab13f39e91",
+      "is_trivial": true
+    },
+    "void idGameThread::SetThreadGameTime(const int time)": {
+      "body_hash": "4969cfddb1db7cd1fdd431926e899e03",
+      "is_trivial": true
+    },
+    "int idGameThread::GetThreadGameTime() const": {
+      "body_hash": "226cbaaed3b926a2871e613ac77d7752",
+      "is_trivial": true
+    },
+    "void idGameThread::SetThreadRenderTime(const int time)": {
+      "body_hash": "fbb2fdeea6f582368f8d32b80871acc8",
+      "is_trivial": true
+    },
+    "int idGameThread::GetThreadRenderTime() const": {
+      "body_hash": "9010fef54db3d0e40b963a80c1e7e050",
+      "is_trivial": true
+    },
+    "int idGameThread::Run()": {
+      "body_hash": "a47f552ebf5c8d884d826106a805aa64",
+      "is_trivial": true
+    },
+    "idInternalCVar::idInternalCVar()": {
+      "body_hash": "3984873cbda5b766c1897cd47da144d2",
+      "is_trivial": true
+    },
+    "idInternalCVar::idInternalCVar(const char *newName, const char *newValue, int newFlags)": {
+      "body_hash": "fb595b6a2cc8d8e647e73cfeceb353d0",
+      "is_trivial": true
+    },
+    "idInternalCVar::idInternalCVar(const idCVar *cvar)": {
+      "body_hash": "d191d3c5f4a920d3bbe0fee21208b854",
+      "is_trivial": true
+    },
+    "idInternalCVar::~idInternalCVar()": {
+      "body_hash": "9e9e8dffbb0393620ff8af314b12b3d7",
+      "is_trivial": true
+    },
+    "const char ** idInternalCVar::CopyValueStrings(const char **strings)": {
+      "body_hash": "f50cecbac52db4ea91021af7bbff60ac",
+      "is_trivial": true
+    },
+    "void idInternalCVar::Update(const idCVar *cvar)": {
+      "body_hash": "e98e4fa765af9e5e43d9f169b38b709d",
+      "is_trivial": true
+    },
+    "void idInternalCVar::UpdateValue()": {
+      "body_hash": "6e3619f1f33e77371f3f9f7a14bc82be",
+      "is_trivial": true
+    },
+    "void idInternalCVar::UpdateCheat()": {
+      "body_hash": "578f836cc92de0e9ff5cfc68d691154f",
+      "is_trivial": true
+    },
+    "void idInternalCVar::Set(const char *newValue, bool force, bool fromServer)": {
+      "body_hash": "115cdaf14da56b55520656a7f609b2cf",
+      "is_trivial": true
+    },
+    "void idInternalCVar::Reset()": {
+      "body_hash": "c855de30bd20d9b7939a241434c8fd63",
+      "is_trivial": true
+    },
+    "const char * idInternalCVar::InternalGetResetString() const": {
+      "body_hash": "744575cb370816d55ebc909b136c77f6",
+      "is_trivial": true
+    },
+    "void idInternalCVar::InternalSetString(const char *newValue)": {
+      "body_hash": "0746d74c998ae7e61d3375b09b706f2f",
+      "is_trivial": true
+    },
+    "void idInternalCVar::InternalServerSetString(const char *newValue)": {
+      "body_hash": "bd05208320f82d246ebe6ebfb1d2181e",
+      "is_trivial": true
+    },
+    "void idInternalCVar::InternalSetBool(const bool newValue)": {
+      "body_hash": "faa4976634f9999bc2a8c33e4161d3b7",
+      "is_trivial": true
+    },
+    "void idInternalCVar::InternalSetInteger(const int newValue)": {
+      "body_hash": "a595a7bf1e75e4a1f0112459b8c57830",
+      "is_trivial": true
+    },
+    "void idInternalCVar::InternalSetFloat(const float newValue)": {
+      "body_hash": "9026aec2def1f4af581125b588f47944",
+      "is_trivial": true
+    },
+    "idKey::idKey()": {
+      "body_hash": "8eb0aa9d0729dd2130074ea4045b4930",
+      "is_trivial": true
+    },
+    "void idKeyInput::Init()": {
+      "body_hash": "2190c8f26dfd5f741436efeb2ea93ef3",
+      "is_trivial": true
+    },
+    "void idKeyInput::Shutdown()": {
+      "body_hash": "87b5802b26910a7f1fd0c137caf5b892",
+      "is_trivial": true
+    },
+    "void idKeyInput::ArgCompletion_KeyName(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "949d7ddebf178fbd0558330fdd2eb254",
+      "is_trivial": true
+    },
+    "void idKeyInput::PreliminaryKeyEvent(int keyNum, bool down)": {
+      "body_hash": "bce8f6b613a1c3e2009e233daa465ba5",
+      "is_trivial": true
+    },
+    "bool idKeyInput::IsDown(int keyNum)": {
+      "body_hash": "bc460998d04baa18b77239cdba1930bb",
+      "is_trivial": true
+    },
+    "int idKeyInput::GetUsercmdAction(int keyNum)": {
+      "body_hash": "12eb183529b65dfc1632ee79a238e339",
+      "is_trivial": true
+    },
+    "bool idKeyInput::GetOverstrikeMode()": {
+      "body_hash": "99ed8fa073c25639b7dc2a03c6b671ca",
+      "is_trivial": true
+    },
+    "void idKeyInput::SetOverstrikeMode(bool state)": {
+      "body_hash": "ff1af81ed1fdb19fe578ff0cc3e58516",
+      "is_trivial": true
+    },
+    "void idKeyInput::ClearStates()": {
+      "body_hash": "a934e3bf5f1fde5630fd6582e9cfdd7f",
+      "is_trivial": true
+    },
+    "keyNum_t idKeyInput::StringToKeyNum(const char *str)": {
+      "body_hash": "26bfaa234e62d7b3f384ce54540a8031",
+      "is_trivial": true
+    },
+    "const char * idKeyInput::KeyNumToString(keyNum_t keyNum)": {
+      "body_hash": "b73d3ffab30ed3355f3193f0bf4c29c3",
+      "is_trivial": true
+    },
+    "const char * idKeyInput::LocalizedKeyName(keyNum_t keyNum)": {
+      "body_hash": "b51fded069cb702ec95d401f3a5aa403",
+      "is_trivial": true
+    },
+    "void idKeyInput::SetBinding(int keyNum, const char *binding)": {
+      "body_hash": "1d272e4eaec26bb564718f6f3d4dbf50",
+      "is_trivial": true
+    },
+    "const char * idKeyInput::GetBinding(int keyNum)": {
+      "body_hash": "6020815f3ed7b47fb0833c1145b6cde8",
+      "is_trivial": true
+    },
+    "bool idKeyInput::UnbindBinding(const char *bind)": {
+      "body_hash": "745d414797922e2afcfd8d0487376864",
+      "is_trivial": true
+    },
+    "int idKeyInput::NumBinds(const char *binding)": {
+      "body_hash": "9309be5ef353764cde44b3c9695153d6",
+      "is_trivial": true
+    },
+    "bool idKeyInput::ExecKeyBinding(int keyNum)": {
+      "body_hash": "88b436e0258f512a851fc4fb10d467bd",
+      "is_trivial": true
+    },
+    "const char * idKeyInput::KeysFromBinding(const char *bind)": {
+      "body_hash": "d21f2747ef3ea6203b933346abc17caa",
+      "is_trivial": true
+    },
+    "const char * idKeyInput::BindingFromKey(const char *key)": {
+      "body_hash": "97ac3c43c5732d5c85cd4684d4745224",
+      "is_trivial": true
+    },
+    "bool idKeyInput::KeyIsBoundTo(int keyNum, const char *binding)": {
+      "body_hash": "aad49b030bc59035eff7d306a7dc02ef",
+      "is_trivial": true
+    },
+    "void idKeyInput::WriteBindings(idFile *f)": {
+      "body_hash": "a56a1f4c8e2571fa362aa2e535886b83",
+      "is_trivial": true
+    },
+    "keyBindings_t idKeyInput::KeyBindingsFromBinding(const char *bind, bool firstOnly=false, bool localized=false)": {
+      "body_hash": "9b810ba2f225bc73164cd5eb4547aeb8",
+      "is_trivial": true
+    },
+    "idOverlayHandle::idOverlayHandle()": {
+      "body_hash": "a2ba118557598dc7523085b4a323b76d",
+      "is_trivial": true
+    },
+    "idPlayerProfile::idPlayerProfile()": {
+      "body_hash": "21c47e862d461d15b4b59f9245ec3b37",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::SetDefaults()": {
+      "body_hash": "866846a837863227283371e73ad4f5a5",
+      "is_trivial": true
+    },
+    "bool idPlayerProfile::Serialize(idSerializer &ser)": {
+      "body_hash": "d6648cad5e84b256741dcab6f4cd3314",
+      "is_trivial": true
+    },
+    "const int idPlayerProfile::GetDeviceNumForProfile() const": {
+      "body_hash": "30c15787de54e7c36b40141ce24de5b2",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::SetDeviceNumForProfile(int num)": {
+      "body_hash": "c2f78a7b7b29ffc3580dd79130e2e5ce",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::SaveSettings(bool forceDirty)": {
+      "body_hash": "4020c4ebfb76d695d5922ca4adbcb389",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::LoadSettings()": {
+      "body_hash": "4fa87e3c8715fbe2fd5ec010082689e5",
+      "is_trivial": true
+    },
+    "state_t idPlayerProfile::GetState() const": {
+      "body_hash": "049b5cab9ed4064a6be7b6096c4f29f9",
+      "is_trivial": true
+    },
+    "state_t idPlayerProfile::GetRequestedState() const": {
+      "body_hash": "39539d0fabe6bce77504b98bd0489944",
+      "is_trivial": true
+    },
+    "bool idPlayerProfile::IsDirty()": {
+      "body_hash": "aa90f22db14db47d53554fd8bcc52dbc",
+      "is_trivial": true
+    },
+    "bool idPlayerProfile::GetAchievement(const int id) const": {
+      "body_hash": "ce2f8a6181723b265c1066652266e58d",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::SetAchievement(const int id)": {
+      "body_hash": "3162bf0b5b14c408ffbcbed27c10e4e8",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::ClearAchievement(const int id)": {
+      "body_hash": "c61b078ee850819fbfd6b6615a354fa7",
+      "is_trivial": true
+    },
+    "int idPlayerProfile::GetDlcReleaseVersion() const": {
+      "body_hash": "44a92f52f324fa39d9819ba9902b8a39",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::SetDlcReleaseVersion(int version)": {
+      "body_hash": "b84c81833f1a774a219ae61d7da1936b",
+      "is_trivial": true
+    },
+    "int idPlayerProfile::GetLevel() const": {
+      "body_hash": "8a775dfdb104bea2e6096d0407aef52f",
+      "is_trivial": true
+    },
+    "int idPlayerProfile::GetConfig() const": {
+      "body_hash": "64823c00ac0000b0d5d5672856464ee2",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::SetConfig(int config, bool save)": {
+      "body_hash": "3ef9f92b59f64fc40b567a758e9ba41f",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::RestoreDefault()": {
+      "body_hash": "003d20c77e969b1271ba0bfc562993fd",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::SetLeftyFlip(bool lf)": {
+      "body_hash": "6ea4f084f337d24a26bb04dd77fb1c9d",
+      "is_trivial": true
+    },
+    "bool idPlayerProfile::GetLeftyFlip() const": {
+      "body_hash": "d3590864529b6d4e0b7811334c2e5104",
+      "is_trivial": true
+    },
+    "idPlayerProfile * idPlayerProfile::CreatePlayerProfile(int deviceIndex)": {
+      "body_hash": "aa5acee2fdb808e6a7cdebf6fad88d28",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::StatSetInt(int s, int v)": {
+      "body_hash": "263d20aeefc77327ec383a792966edbc",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::StatSetFloat(int s, float v)": {
+      "body_hash": "a30e7b106aae5b49779daaea4b599087",
+      "is_trivial": true
+    },
+    "int idPlayerProfile::StatGetInt(int s) const": {
+      "body_hash": "b344cff61aea58dd0c84ba26022f3347",
+      "is_trivial": true
+    },
+    "float idPlayerProfile::StatGetFloat(int s) const": {
+      "body_hash": "45828884ba8d6f332ff43fb62b14cd58",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::SetState(state_t value)": {
+      "body_hash": "272a1e1cadd78f2f6dfbc84470915349",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::SetRequestedState(state_t value)": {
+      "body_hash": "f528a26edb1d8932fb8a7285906f060d",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::MarkDirty(bool isDirty)": {
+      "body_hash": "ffd1134c775c6b6534a24030f207a794",
+      "is_trivial": true
+    },
+    "void idPlayerProfile::ExecConfig(bool save=false, bool forceDefault=false)": {
+      "body_hash": "18884399c10929eccaabf5a6cc515545",
+      "is_trivial": true
+    },
+    "idPreloadManifest::idPreloadManifest()": {
+      "body_hash": "ca7cff2fc5f0c2ed4f5790565b5383a3",
+      "is_trivial": true
+    },
+    "bool idPreloadManifest::LoadManifest(const char *fileName)": {
+      "body_hash": "75a71251dd5e4cd9eda11dd197e78809",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::WriteManifest(const char *fileName)": {
+      "body_hash": "1830744d5d3d691029a0269d496d5b9e",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::WriteManifestToFile(idFile *outFile)": {
+      "body_hash": "9ed80fc653796019b5f0918dc32a0d2d",
+      "is_trivial": true
+    },
+    "int idPreloadManifest::NumResources() const": {
+      "body_hash": "d5e28b2b24fab3a90db3a07169cda1c4",
+      "is_trivial": true
+    },
+    "const preloadEntry_s & idPreloadManifest::GetPreloadByIndex(int idx) const": {
+      "body_hash": "79da9a4ce3679cd7bb54a62fc7c23ae9",
+      "is_trivial": true
+    },
+    "const idStr & idPreloadManifest::GetResourceNameByIndex(int idx) const": {
+      "body_hash": "f573244f79eab58fa1aa62759b6b25dc",
+      "is_trivial": true
+    },
+    "const char * idPreloadManifest::GetManifestName() const": {
+      "body_hash": "6ea7b92e7ecd741fc3137d4ae65c9798",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::Add(const preloadEntry_s &p)": {
+      "body_hash": "17037e68ea86ede795cd9dc679a130a3",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::AddSample(const char *_resourceName)": {
+      "body_hash": "b365071146037d75c61ddaeb07fd2204",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::AddModel(const char *_resourceName)": {
+      "body_hash": "53f73b8956d88840469d5a2156cc2457",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::AddParticle(const char *_resourceName)": {
+      "body_hash": "b4c40e909e0075be0abb9f5382a5810a",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::AddAnim(const char *_resourceName)": {
+      "body_hash": "34f75732effccfa5a7160b5ba80ca9c0",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::AddCollisionModel(const char *_resourceName)": {
+      "body_hash": "de4dc6bc1afdc1aad08a40b0aaf45918",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::AddImage(const char *_resourceName, int _filter, int _repeat, int _usage, int _cube)": {
+      "body_hash": "6a09b339d0daac9623df520a71f97e6c",
+      "is_trivial": false
+    },
+    "void idPreloadManifest::Clear()": {
+      "body_hash": "9229772d45ee100c3df294ee3b870acf",
+      "is_trivial": true
+    },
+    "int idPreloadManifest::FindResource(const char *name)": {
+      "body_hash": "ed37400de09d4ddbc0ad3c8803643a4a",
+      "is_trivial": true
+    },
+    "void idPreloadManifest::Print()": {
+      "body_hash": "259071fbc24fba8f146200f5c807a58d",
+      "is_trivial": true
+    },
+    "idResourceCacheEntry::idResourceCacheEntry()": {
+      "body_hash": "1849500154f3387d2df69d865aa1a95d",
+      "is_trivial": true
+    },
+    "void idResourceCacheEntry::Clear()": {
+      "body_hash": "b806918864198e56368f4d2c622447bf",
+      "is_trivial": true
+    },
+    "size_t idResourceCacheEntry::Read(idFile *f)": {
+      "body_hash": "1e83dc2a142206efc1d500717c9f0f9c",
+      "is_trivial": true
+    },
+    "size_t idResourceCacheEntry::Write(idFile *f)": {
+      "body_hash": "e1a5ca2e909d5048c389f0e9cdb7b21b",
+      "is_trivial": true
+    },
+    "idResourceContainer::idResourceContainer()": {
+      "body_hash": "c9b19b859a2cb30e62c27d4cff1babca",
+      "is_trivial": true
+    },
+    "idResourceContainer::~idResourceContainer()": {
+      "body_hash": "c02fb7fdee5f9e006930dadcba6e0034",
+      "is_trivial": true
+    },
+    "bool idResourceContainer::Init(const char *fileName)": {
+      "body_hash": "e2d14446d5a57f07299b96994214cc9a",
+      "is_trivial": true
+    },
+    "const char * idResourceContainer::GetFileName() const": {
+      "body_hash": "0ed771d77a3f4c952e8d4605ef9e31dc",
+      "is_trivial": true
+    },
+    "void idResourceContainer::ReOpen()": {
+      "body_hash": "9da1d956f82c996e67d6d8eecc336b01",
+      "is_trivial": true
+    },
+    "int idResourceContainer::GetNumFileResources() const": {
+      "body_hash": "34fb72704ad9260b7d8ed06121798c55",
+      "is_trivial": true
+    },
+    "void idResourceContainer::WriteResourceFile(const char *fileName, const idStrList &manifest, const bool &_writeManifest)": {
+      "body_hash": "cba98eebdd9c51304e3140ebce3cbdc6",
+      "is_trivial": true
+    },
+    "void idResourceContainer::WriteManifestFile(const char *name, const idStrList &list)": {
+      "body_hash": "d2c8f090dacb09ef0cb8cd3f00a627d8",
+      "is_trivial": true
+    },
+    "int idResourceContainer::ReadManifestFile(const char *filename, idStrList &list)": {
+      "body_hash": "c9e17412daf0db1a2c6081db1f1a1974",
+      "is_trivial": true
+    },
+    "void idResourceContainer::ExtractResourceFile(const char *fileName, const char *outPath, bool copyWavs, bool all)": {
+      "body_hash": "2d8c9bf399ffd84f8f80c491a11d14a5",
+      "is_trivial": false
+    },
+    "void idResourceContainer::UpdateResourceFile(const char *filename, const idStrList &filesToAdd)": {
+      "body_hash": "7819d395cfc086d8fbd98246a5d5e741",
+      "is_trivial": true
+    },
+    "idScopedProfileEvent::idScopedProfileEvent(const char *name)": {
+      "body_hash": "0e8d71f1e983646e8569dc24063b96e3",
+      "is_trivial": true
+    },
+    "idSerializer::idSerializer(idBitMsg &msg_, bool writing_)": {
+      "body_hash": "9a2c30f95ee6c8ebb9f332f9b212fdcd",
+      "is_trivial": true
+    },
+    "bool idSerializer::IsReading()": {
+      "body_hash": "f867597cca55861c5796f136d64e4488",
+      "is_trivial": true
+    },
+    "bool idSerializer::IsWriting()": {
+      "body_hash": "7831925b6ef49717a6ece94b9028cc58",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeRange(int &value, int minSize, int maxSize)": {
+      "body_hash": "43b0a191fa2f5af341241769fd14e44d",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeUMax(int &value, int maxSize)": {
+      "body_hash": "f0d3043682ee0f4fc25ef9353f370ae1",
+      "is_trivial": true
+    },
+    "int idSerializer::SerializeUMaxNonRef(int value, int maxSize)": {
+      "body_hash": "2dafd0530a7f16f686ebbc3d5d5d7460",
+      "is_trivial": true
+    },
+    "bool idSerializer::SerializeBoolNonRef(bool value)": {
+      "body_hash": "9ddc16adf88e2c9cb0323c1a301143ce",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeQ(idVec3 &value)": {
+      "body_hash": "b43e0075009a5857b4343d5044fb8ed1",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeQ(float &value)": {
+      "body_hash": "4aaf42c848414ca210363b8165477ee2",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeUQ(float &value)": {
+      "body_hash": "d5d8f0aef13046c66ccb6eeb4e5752b1",
+      "is_trivial": true
+    },
+    "ID_INLINE void idSerializer::SerializeQ(idMat3 &axis, int bits=15)": {
+      "body_hash": "fc3de8204ef062c30d855bf487d3aba6",
+      "is_trivial": true
+    },
+    "ID_INLINE void idSerializer::Serialize(idMat3 &axis)": {
+      "body_hash": "a17ce7c2b6615171deda51428b505dc1",
+      "is_trivial": true
+    },
+    "ID_INLINE void idSerializer::SerializeC(idMat3 &axis)": {
+      "body_hash": "b31feb4683dcdc0c65b3efe67c1d588d",
+      "is_trivial": true
+    },
+    "ID_INLINE void idSerializer::SerializePacked(int &original)": {
+      "body_hash": "bfb4137f411f0923097f89b98b7de3c3",
+      "is_trivial": true
+    },
+    "ID_INLINE void idSerializer::SerializeSPacked(int &original)": {
+      "body_hash": "2924a78c84bc94f0dbc09be5fd395c23",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeString(char *s, int bufferSize)": {
+      "body_hash": "4ad5abab50eb9c67585888df61e1164a",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeString(idStr &s)": {
+      "body_hash": "b1efa19e98f8af6679609050c9c046ca",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeDelta(int32 &value, const int32 &base)": {
+      "body_hash": "7b5055969e0fe3a4b76bc0c89134d6aa",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeDelta(int16 &value, const int16 &base)": {
+      "body_hash": "8ef94af93c9cd56a80cdaa56b3cae043",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeDelta(int8 &value, const int8 &base)": {
+      "body_hash": "891a6bcc5d2d55d47bc616742d150ce0",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeDelta(uint16 &value, const uint16 &base)": {
+      "body_hash": "b0d0f922326a441d4410be0c14602e13",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeDelta(uint8 &value, const uint8 &base)": {
+      "body_hash": "1d64aae0b86f28d15d85f802584383ea",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeDelta(float &value, const float &base)": {
+      "body_hash": "5b97acbc356fd4a0f486e454e430c5bc",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(int64 &value)": {
+      "body_hash": "384e2c0e8dd063fc5bb25d593228b6d4",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(uint64 &value)": {
+      "body_hash": "f305062b067ca0a04842edf6c2861a92",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(int32 &value)": {
+      "body_hash": "5871a9864fa6b683d678da6a24e32409",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(uint32 &value)": {
+      "body_hash": "6b5d5133e5373ad3db3d8f14d3ac9610",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(int16 &value)": {
+      "body_hash": "5413346e0fb03b1859f00f69817f96cb",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(uint16 &value)": {
+      "body_hash": "f81cde77afaa88ab415f3048a19c9694",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(uint8 &value)": {
+      "body_hash": "7bb6a2732a51580f1e3c3d3517e4f5e7",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(int8 &value)": {
+      "body_hash": "7b1e4ded83b42c22592572bbeff0cc72",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(bool &value)": {
+      "body_hash": "2c84899b78e30e24001d5df75b849bca",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(float &value)": {
+      "body_hash": "4245f8772155a30d57275dc426963a9c",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(idRandom2 &value)": {
+      "body_hash": "d447350b2d7660368a9cff47204affaa",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(idVec3 &value)": {
+      "body_hash": "11880583550c1a18b5af1c5944998c0f",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(idVec2 &value)": {
+      "body_hash": "c743a362ed23d4d9728a8b1ae3fc15d5",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(idVec6 &value)": {
+      "body_hash": "bf91b593cd12606278af354b3cd5b584",
+      "is_trivial": true
+    },
+    "void idSerializer::Serialize(idVec4 &value)": {
+      "body_hash": "ca9a72b1d5c27deb7e0e35e8388a2f02",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeAngle(float &value)": {
+      "body_hash": "ac2ab8e3bdd31eb49bfcb71384375c58",
+      "is_trivial": true
+    },
+    "void idSerializer::SanityCheck()": {
+      "body_hash": "9c82523df190fb79ec7a3368fa852359",
+      "is_trivial": true
+    },
+    "void idSerializer::SerializeCheckpoint(const char *file, int line)": {
+      "body_hash": "b8daf90144946e1db5dcc1c380521b32",
+      "is_trivial": true
+    },
+    "idBitMsg & idSerializer::GetMsg()": {
+      "body_hash": "19bc13030c4943a27f6ead6d2ef0c197",
+      "is_trivial": true
+    },
+    "ID_INLINE void idSerializer::SerializeListElement(const idList< _type_ * > &list, const _type_ *&element)": {
+      "body_hash": "438ecf38f6b6ce278de6bf1a8333fca6",
+      "is_trivial": true
+    },
+    "idSerializerScopedBlock::idSerializerScopedBlock(idSerializer &ser_, int maxSizeBytes_)": {
+      "body_hash": "b0b4ea59f2f0036926ff0069a4aaee77",
+      "is_trivial": true
+    },
+    "idSerializerScopedBlock::~idSerializerScopedBlock()": {
+      "body_hash": "4e57feac3fa3a187d67f122b2de0265e",
+      "is_trivial": true
+    },
+    "int idSort_CommandDef::Compare(const commandDef_t &a, const commandDef_t &b) const": {
+      "body_hash": "2c4ee282768e94c9aff461a8a4d2afb6",
+      "is_trivial": true
+    },
+    "int idSort_Preload::Compare(const preloadSort_t &a, const preloadSort_t &b) const": {
+      "body_hash": "c0917f64ee7a2f6d4fbc34a9121ffd1e",
+      "is_trivial": true
+    },
+    "virtual int idSGFcompressThread::Run()": {
+      "body_hash": "457c10ee6db8ea3e3a9ec4b2a5ebda75",
+      "is_trivial": true
+    },
+    "virtual int idSGFdecompressThread::Run()": {
+      "body_hash": "4e5d1014898d8ec79fced7f1501ef206",
+      "is_trivial": true
+    },
+    "virtual int idSGFreadThread::Run()": {
+      "body_hash": "3fa2b3538e0e6979b4a70428a3b20d4f",
+      "is_trivial": true
+    },
+    "virtual int idSGFwriteThread::Run()": {
+      "body_hash": "6dfaccb847e621ad3ae8358f54547311",
+      "is_trivial": true
+    },
+    "idTokenIndexes::idTokenIndexes()": {
+      "body_hash": "92a58945264bf9fb4aef0ce8c9f3a9eb",
+      "is_trivial": true
+    },
+    "void idTokenIndexes::Clear()": {
+      "body_hash": "409b90c21eef6dbba996a7b6d998ab2a",
+      "is_trivial": true
+    },
+    "int idTokenIndexes::Append(short sdx)": {
+      "body_hash": "e67aa103b18da88a52c6c809680349b5",
+      "is_trivial": true
+    },
+    "int idTokenIndexes::Num()": {
+      "body_hash": "1536549dc412df13353318bd9f192b00",
+      "is_trivial": true
+    },
+    "void idTokenIndexes::SetNum(int num)": {
+      "body_hash": "e77274c3e76c0452a525c1675d896a8c",
+      "is_trivial": true
+    },
+    "short & idTokenIndexes::operator[](const int index)": {
+      "body_hash": "10e0b6a4e60f85919a5478300e337895",
+      "is_trivial": true
+    },
+    "void idTokenIndexes::SetName(const char *name)": {
+      "body_hash": "014574e8676a4f2c2295314e90351aeb",
+      "is_trivial": true
+    },
+    "const char * idTokenIndexes::GetName()": {
+      "body_hash": "ff500244fb2d831170a06ce8fb7ba3b4",
+      "is_trivial": true
+    },
+    "void idTokenIndexes::Write(idFile *outFile)": {
+      "body_hash": "77f16b7e64713c4bad42b2608c39aa94",
+      "is_trivial": true
+    },
+    "void idTokenIndexes::Read(idFile *inFile)": {
+      "body_hash": "eafe115d6cafd6d2e8ebca75fcaa8609",
+      "is_trivial": true
+    },
+    "idTokenParser::idTokenParser()": {
+      "body_hash": "7449e7813449136b6d8a9e4e358a2121",
+      "is_trivial": true
+    },
+    "void idTokenParser::Clear()": {
+      "body_hash": "682329d491936bda529179917fcdb95d",
+      "is_trivial": true
+    },
+    "void idTokenParser::LoadFromFile(const char *filename)": {
+      "body_hash": "f52710d1415f460e69546adb8e5f8d60",
+      "is_trivial": true
+    },
+    "void idTokenParser::WriteToFile(const char *filename)": {
+      "body_hash": "30e4f22a0c50c4b7a748e69b8f5ad983",
+      "is_trivial": true
+    },
+    "void idTokenParser::LoadFromParser(idParser &parser, const char *guiName)": {
+      "body_hash": "efa9dcc3b2c71005bd58669ce9e55d9d",
+      "is_trivial": true
+    },
+    "bool idTokenParser::StartParsing(const char *fileName)": {
+      "body_hash": "3a0ef7704f25145f35500a9f8a3e24b0",
+      "is_trivial": true
+    },
+    "void idTokenParser::DoneParsing()": {
+      "body_hash": "1c94f375378d3906862636e6cf30baaa",
+      "is_trivial": true
+    },
+    "bool idTokenParser::IsLoaded()": {
+      "body_hash": "db7ffe5742376175fcb29df226563a05",
+      "is_trivial": true
+    },
+    "bool idTokenParser::ReadToken(idToken *tok)": {
+      "body_hash": "41e72635e61f3aa852ebdac65f4bb90b",
+      "is_trivial": true
+    },
+    "int idTokenParser::ExpectTokenString(const char *string)": {
+      "body_hash": "a803f35bae0dfc3317b19404dd64d3fb",
+      "is_trivial": true
+    },
+    "int idTokenParser::ExpectTokenType(int type, int subtype, idToken *token)": {
+      "body_hash": "ba9e357888183811b86c128c18ace7b2",
+      "is_trivial": true
+    },
+    "int idTokenParser::ExpectAnyToken(idToken *token)": {
+      "body_hash": "3925559b7ecc8d2807a2a7df818ac6a8",
+      "is_trivial": true
+    },
+    "void idTokenParser::SetMarker()": {
+      "body_hash": "cf6ecd52cf55b82b505b05e262ddda41",
+      "is_trivial": true
+    },
+    "void idTokenParser::UnreadToken(const idToken *token)": {
+      "body_hash": "07e7734b54ce272a944d4a579646f2b0",
+      "is_trivial": true
+    },
+    "void idTokenParser::Error(VERIFY_FORMAT_STRING const char *str,...) ID_INSTANCE_ATTRIBUTE_PRINTF(1": {
+      "body_hash": "a83660899a5d88c80eb76870132c60c2",
+      "is_trivial": true
+    },
+    "void idTokenParser::Warning(VERIFY_FORMAT_STRING const char *str,...) ID_INSTANCE_ATTRIBUTE_PRINTF(1": {
+      "body_hash": "870afd933bd3ea6acd6322f7107e6e1e",
+      "is_trivial": true
+    },
+    "int idTokenParser::ParseInt()": {
+      "body_hash": "3bdaae8c862dbc7b7c45da91d38356d3",
+      "is_trivial": true
+    },
+    "bool idTokenParser::ParseBool()": {
+      "body_hash": "97f7d6788edaf700dd9563be56fb606b",
+      "is_trivial": true
+    },
+    "float idTokenParser::ParseFloat(bool *errorFlag=NULL)": {
+      "body_hash": "b519e5a6f76a04e8463c93cf283421b4",
+      "is_trivial": true
+    },
+    "void idTokenParser::UpdateTimeStamp(ID_TIME_T &t)": {
+      "body_hash": "486674fc36f04ce5e71e7a70e18c1594",
+      "is_trivial": true
+    },
+    "idUsercmdGenLocal::idUsercmdGenLocal()": {
+      "body_hash": "efa8f37100c628a3199f2ef24ff90c4d",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::Init()": {
+      "body_hash": "3b88e4399b2b0eed2836b0c2e41cdf3a",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::InitForNewMap()": {
+      "body_hash": "f2c30249762706c3c52325fbdd6051a4",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::Shutdown()": {
+      "body_hash": "75b6574105c16af2f787f7751a500111",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::Clear()": {
+      "body_hash": "ef342edeafcb165ea225f0427a8fe7a5",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::ClearAngles()": {
+      "body_hash": "9664744306750243e352916c5094594d",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::InhibitUsercmd(inhibit_t subsystem, bool inhibit)": {
+      "body_hash": "f8a8a721fd8655c43aa1832aa5436f80",
+      "is_trivial": true
+    },
+    "int idUsercmdGenLocal::CommandStringUsercmdData(const char *cmdString)": {
+      "body_hash": "9af6e1c6b277718fbfa90cd10987aafc",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::BuildCurrentUsercmd(int deviceNum)": {
+      "body_hash": "b49b52c1d99ff38ca5c5814d6380fb15",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::MouseState(int *x, int *y, int *button, bool *down)": {
+      "body_hash": "f6abfdf6ea91ebc08c56c51cb53f2470",
+      "is_trivial": false
+    },
+    "int idUsercmdGenLocal::ButtonState(int key)": {
+      "body_hash": "1046773ee517d07194d4f5a0da400f04",
+      "is_trivial": true
+    },
+    "int idUsercmdGenLocal::KeyState(int key)": {
+      "body_hash": "26adf790ee7f1fd01f3bde03a0c08bb7",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::MakeCurrent()": {
+      "body_hash": "dceb184e7f6589a7996da478bf1aa877",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::InitCurrent()": {
+      "body_hash": "1785a400fd8ce57292b2bcc837738c87",
+      "is_trivial": true
+    },
+    "bool idUsercmdGenLocal::Inhibited()": {
+      "body_hash": "e854047cc06cce7739dfdae0deea333c",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::AdjustAngles()": {
+      "body_hash": "f1b125a76d5ea9caf97a66e07937bd81",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::KeyMove()": {
+      "body_hash": "d6a5ab3d08f2d51f411f419099fb57d9",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::CircleToSquare(float &axis_x, float &axis_y) const": {
+      "body_hash": "6c2c7e58a11df1e55eb9e3fa26a8763d",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::HandleJoystickAxis(int keyNum, float unclampedValue, float threshold, bool positive)": {
+      "body_hash": "7aaa2e124a098584811752d6c41b5612",
+      "is_trivial": false
+    },
+    "void idUsercmdGenLocal::JoystickMove()": {
+      "body_hash": "50bf24a62e2be17d11f97eb9c50e8365",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::JoystickMove2()": {
+      "body_hash": "77d1c6cd8d44a10d03adb70448615b07",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::VRControlMove()": {
+      "body_hash": "d15eee9ab264479431b3c4bc99c5905e",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::VRTrackedMove()": {
+      "body_hash": "5d647476f9683e1f8ab3b1bf180a0868",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::MouseMove()": {
+      "body_hash": "bced9395cf3ee6f0a58fc5a14e1cc526",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::CmdButtons()": {
+      "body_hash": "9efd9a641e1bea831878039402194d62",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::AimAssist()": {
+      "body_hash": "09d7e9d3b90446901bf2b19bcfdc8d04",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::Mouse()": {
+      "body_hash": "60f8667900552e0d991dd7c0dca139ac",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::Keyboard()": {
+      "body_hash": "82e2f7e0b77b15936de43065760182e1",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::Joystick(int deviceNum)": {
+      "body_hash": "ea2d3972478c871efdb3c24c33ba8647",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::VRControllers()": {
+      "body_hash": "3606a239c8a3acbbd9e7fef8efd69047",
+      "is_trivial": true
+    },
+    "void idUsercmdGenLocal::Key(int keyNum, bool down)": {
+      "body_hash": "633823232a9d453bd66941276ca9a8d8",
+      "is_trivial": true
+    },
+    "idUserCmdMgr::idUserCmdMgr()": {
+      "body_hash": "4cd92cadfbeb8f488037f5688ccf629f",
+      "is_trivial": true
+    },
+    "void idUserCmdMgr::SetDefaults()": {
+      "body_hash": "a703fd8f40be26b212ffb2fc7d399c8d",
+      "is_trivial": true
+    },
+    "void idUserCmdMgr::PutUserCmdForPlayer(int playerIndex, const usercmd_t &cmd)": {
+      "body_hash": "c82255ddb44e028f33b98b2f52a94af5",
+      "is_trivial": true
+    },
+    "void idUserCmdMgr::ResetPlayer(int playerIndex)": {
+      "body_hash": "bd05ccfbbb2dc3d2335b3c5ef0bd8006",
+      "is_trivial": true
+    },
+    "bool idUserCmdMgr::HasUserCmdForPlayer(int playerIndex, int buffer=0) const": {
+      "body_hash": "f01096cf9cedf2bf748ea3598c8493eb",
+      "is_trivial": true
+    },
+    "bool idUserCmdMgr::HasUserCmdForClientTimeBuffer(int playerIndex, int millisecondBuffer)": {
+      "body_hash": "9c6c903af17f94cd644ba807cbef334b",
+      "is_trivial": true
+    },
+    "const usercmd_t & idUserCmdMgr::NewestUserCmdForPlayer(int playerIndex)": {
+      "body_hash": "2f387ab0c5af81a383af807f03a1715d",
+      "is_trivial": true
+    },
+    "const usercmd_t & idUserCmdMgr::GetUserCmdForPlayer(int playerIndex)": {
+      "body_hash": "6d047b99b5632a98c16fa10649566a8d",
+      "is_trivial": true
+    },
+    "int idUserCmdMgr::GetNextUserCmdClientTime(int playerIndex) const": {
+      "body_hash": "5d5a40c8125effb5426db478bfd34178",
+      "is_trivial": true
+    },
+    "usercmd_t & idUserCmdMgr::GetWritableUserCmdForPlayer(int playerIndex)": {
+      "body_hash": "7b0b75e07cb3c4e11b31c1750e6c814d",
+      "is_trivial": true
+    },
+    "void idUserCmdMgr::MakeReadPtrCurrentForPlayer(int playerIndex)": {
+      "body_hash": "80852e97f6fd7db8b6d5cf0e678192c0",
+      "is_trivial": true
+    },
+    "void idUserCmdMgr::SkipBufferedCmdsForPlayer(int playerIndex)": {
+      "body_hash": "9cb8f5a85eb9813d6b5673fa31cfedc8",
+      "is_trivial": true
+    },
+    "int idUserCmdMgr::GetNumUnreadFrames(int playerIndex)": {
+      "body_hash": "597c78b27bf36072f390c3208afc3787",
+      "is_trivial": true
+    },
+    "int idUserCmdMgr::GetPlayerCmds(int user, usercmd_t **buffer, const int bufferSize)": {
+      "body_hash": "ff31ec7b043969b3f409af324d5d1a9a",
+      "is_trivial": true
+    },
+    "idZipCacheEntry::idZipCacheEntry()": {
+      "body_hash": "8bc137e4b6e42d15b9c79fda88fbd5c2",
+      "is_trivial": true
+    },
+    "void idZipCacheEntry::Clear()": {
+      "body_hash": "b806918864198e56368f4d2c622447bf",
+      "is_trivial": true
+    },
+    "idZipContainer::idZipContainer()": {
+      "body_hash": "6122ce51e49a533aa0a74ac95eba20f9",
+      "is_trivial": true
+    },
+    "idZipContainer::~idZipContainer()": {
+      "body_hash": "d4b8b36f8036dbb3f07aa52086053cd3",
+      "is_trivial": true
+    },
+    "bool idZipContainer::Init(const char *fileName)": {
+      "body_hash": "f1f3e5bec8bb8acdadf1a553a019ced9",
+      "is_trivial": true
+    },
+    "idFile_InZip * idZipContainer::OpenFile(const idZipCacheEntry &rt, const char *relativePath)": {
+      "body_hash": "2967873aaa0fbf0615aa24c1824a3ac8",
+      "is_trivial": true
+    },
+    "const char * idZipContainer::GetFileName() const": {
+      "body_hash": "0ed771d77a3f4c952e8d4605ef9e31dc",
+      "is_trivial": true
+    },
+    "int idZipContainer::GetNumFileResources() const": {
+      "body_hash": "34fb72704ad9260b7d8ed06121798c55",
+      "is_trivial": true
+    },
+    "int idZipContainer::GetChecksum() const": {
+      "body_hash": "08015d1e4d4ca43451bfaaf17bfa6eb9",
+      "is_trivial": true
+    },
+    "usercmd_t::usercmd_t()": {
+      "body_hash": "7698c33bbd5e9fb19a65af4e24e5620c",
+      "is_trivial": true
+    },
+    "void usercmd_t::Serialize(class idSerializer &s, const usercmd_t &base)": {
+      "body_hash": "55a647f2453d82ccc05b840b02c110aa",
+      "is_trivial": true
+    },
+    "void usercmd_t::ByteSwap()": {
+      "body_hash": "3547effe7249182b12470bbebe479a3e",
+      "is_trivial": true
+    },
+    "bool usercmd_t::operator==(const usercmd_t &rhs) const": {
+      "body_hash": "7dadc7d2222ca9242ea89f1dc74478ff",
+      "is_trivial": true
+    },
+    "void OBJExporter::ConvertBrushToOBJ(OBJGroup &group, const idMapBrush *mapBrush, int entityNum, int primitiveNum, const idMat4 &transform)": {
+      "body_hash": "7f95a8fde5583d2057291bf6c27f5c11",
+      "is_trivial": false
+    },
+    "void OBJExporter::ConvertPatchToOBJ(OBJGroup &group, const idMapPatch *patch, int entityNum, int primitiveNum, const idMat4 &transform)": {
+      "body_hash": "1713f8c8ce0b494c4a7954df1e92b1fe",
+      "is_trivial": false
+    },
+    "void OBJExporter::ConvertMeshToOBJ(OBJGroup &group, const MapPolygonMesh *mesh, int entityNum, int primitiveNum, const idMat4 &transform)": {
+      "body_hash": "1ce09898a5dee754386350eee75bb84e",
+      "is_trivial": false
+    },
+    "void OBJExporter::Write(const char *relativePath, const char *basePath=\"fs_basepath\")": {
+      "body_hash": "4fbf73b1d28ba7388e8b103a82533389",
+      "is_trivial": true
+    },
+    "imagePreload_s::imagePreload_s()": {
+      "body_hash": "ab3161677ffe46c12555fdb83c0e8b1f",
+      "is_trivial": true
+    },
+    "void imagePreload_s::Write(idFile *f)": {
+      "body_hash": "d313a6b64f96353954283c05773b603e",
+      "is_trivial": true
+    },
+    "void imagePreload_s::Read(idFile *f)": {
+      "body_hash": "fc2a6763dff857ddb93542103f016756",
+      "is_trivial": true
+    },
+    "bool imagePreload_s::operator==(const imagePreload_s &b) const": {
+      "body_hash": "6cac10b2fb71e7fde6c8d9d013c712f9",
+      "is_trivial": true
+    },
+    "void mpMap_t::operator=(const mpMap_t &src)": {
+      "body_hash": "c87af927395e77462258f9e3eaa13627",
+      "is_trivial": true
+    },
+    "preloadEntry_s::preloadEntry_s()": {
+      "body_hash": "3061db684875a15aab6fd02cbab177a2",
+      "is_trivial": true
+    },
+    "bool preloadEntry_s::operator==(const preloadEntry_s &b) const": {
+      "body_hash": "984fba519c28674cbe7b5d0826f484b2",
+      "is_trivial": true
+    },
+    "void preloadEntry_s::Write(idFile *outFile)": {
+      "body_hash": "f24c9f6bb8844087ef8eb752c9451fe4",
+      "is_trivial": true
+    },
+    "void preloadEntry_s::Read(idFile *inFile)": {
+      "body_hash": "39b81b0a21ec505eb5cf81a586b2c0f1",
+      "is_trivial": true
+    },
+    "testEndianNess_t::testEndianNess_t()": {
+      "body_hash": "0e34f51e3a50eaf85c979dce8cb38e5f",
+      "is_trivial": true
+    },
+    "bool testEndianNess_t::operator==(testEndianNess_t &test) const": {
+      "body_hash": "8f8a38a89700fdf988413f7d0aad21da",
+      "is_trivial": true
+    },
+    "version_s::version_s()": {
+      "body_hash": "a2210ee64102714e99e3b752cd3a6f6e",
+      "is_trivial": true
+    },
+    "idCommandLink * CommandLinks(idCommandLink *cl=NULL)": {
+      "body_hash": "006cf2b467f04f5be3099013dab10d00",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(printMemInfo, \"prints memory debugging data\", NULL)": {
+      "body_hash": "293e2c1006a6704280843cd12d1f8f89",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(error, \"causes an error\", NULL)": {
+      "body_hash": "efc4ce3aea19800d7d6574466ba19cc0",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(freeze, \"freezes the game for a number of seconds\", NULL)": {
+      "body_hash": "3cfd1fb0b7a4474e4911b2c4de24306c",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(crash, \"causes a crash\", NULL)": {
+      "body_hash": "56419ff2c558fcaf493e7d4b90f21b2d",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(quit, \"quits the game\", NULL)": {
+      "body_hash": "b57c7a80a283075b35d0b79c414c6d94",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(exit, \"exits the game\", NULL)": {
+      "body_hash": "a3105fe25f8817b9eb80b20e8006e885",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(writeConfig, \"writes a config file\", NULL)": {
+      "body_hash": "a1789eb1e96a668225e83f60c48a1b19",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(reloadLanguage, \"reload language dict\", NULL)": {
+      "body_hash": "3e16dd89f1852507b2451f1e50fba120",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(finishBuild, \"finishes the build process\", NULL)": {
+      "body_hash": "ad65f06328ec1f8c4eff04148e38e781",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(writePrecache, \"writes precache commands\", NULL)": {
+      "body_hash": "3fe0e0ac8573ad175b94100e93f0a71e",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(disconnect, \"disconnects from a game\", NULL)": {
+      "body_hash": "d72b3122f40be6a3e51928cc45480932",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(hitch, \"hitches the game\", NULL)": {
+      "body_hash": "544e261c1eb968f5c69c84b98a55115e",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(showStringMemory, \"shows memory used by strings\", NULL)": {
+      "body_hash": "6e1e460a9ca285d1556a1cf7bdfcc28a",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(showDictMemory, \"shows memory used by dictionaries\", NULL)": {
+      "body_hash": "a7be5e84201ec3f21fd5a60d002de4a5",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(listDictKeys, \"lists all keys used by dictionaries\", NULL)": {
+      "body_hash": "9e37e2a9b4057903451ebaf111103755",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(listDictValues, \"lists all values used by dictionaries\", NULL)": {
+      "body_hash": "6a4a00b3aa530772b2fe037239c2f365",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testSIMD, \"test SIMD code\", NULL)": {
+      "body_hash": "2f759eb3e8a6eaa4d25ff998506f4e10",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testFormattingSizes, \"test printf format security\", 0)": {
+      "body_hash": "e3d9693f837443b54a6f78653f169cb9",
+      "is_trivial": true
+    },
+    "ID_INLINE int FRAME_TO_MSEC(int64 frame)": {
+      "body_hash": "11dd8fccbfc9b60c84e0b74158d2a6ed",
+      "is_trivial": true
+    },
+    "ID_INLINE int MSEC_TO_FRAME_FLOOR(int msec)": {
+      "body_hash": "71d9fa3fc59101ced288fa9f614415e3",
+      "is_trivial": true
+    },
+    "ID_INLINE int MSEC_ALIGN_TO_FRAME(int msec)": {
+      "body_hash": "764f2760ceb504977a927202b97a7f89",
+      "is_trivial": true
+    },
+    "ID_INLINE void BeginProfileNamedEventColor(uint32 color, VERIFY_FORMAT_STRING const char *szName)": {
+      "body_hash": "16a3b82436aca2c8f98cf47d4bd2c7e5",
+      "is_trivial": true
+    },
+    "ID_INLINE void EndProfileNamedEvent()": {
+      "body_hash": "cdf029f963f09c3a34a4e29bacd2c7b1",
+      "is_trivial": true
+    },
+    "ID_INLINE void BeginProfileNamedEvent(VERIFY_FORMAT_STRING const char *szName)": {
+      "body_hash": "abe6a54e6d0f9f1ade5966c9c2d741d3",
+      "is_trivial": true
+    },
+    "ID_INLINE bool BeginTraceRecording(const char *szName)": {
+      "body_hash": "bdb8920a6c7d5616780be445c4acb94b",
+      "is_trivial": true
+    },
+    "ID_INLINE bool EndTraceRecording()": {
+      "body_hash": "0381f607278bda0bfe4f16371a7afc8c",
+      "is_trivial": true
+    },
+    "bool DialogMsgShouldWait(gameDialogMessages_t msg)": {
+      "body_hash": "e5057a7e8b4a7786880aa304a58c31e3",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(commonDialogClear, \"clears all dialogs that may be hung\", 0)": {
+      "body_hash": "1f73edc416f90bccc0220178b1ea53e4",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testShowDialog, \"show a dialog\", 0)": {
+      "body_hash": "4e516d212ef44b11fdfe96a64b61c201",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testShowDynamicDialog, \"show a dynamic dialog\", 0)": {
+      "body_hash": "7d40145a3ac96115f852ec3da10a072d",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testShowDialogBug, \"show a dynamic dialog\", 0)": {
+      "body_hash": "40db643bb3106aba3ec58c2a993d4294",
+      "is_trivial": true
+    },
+    "void HandleInsufficientStorage(const idSaveLoadParms &parms)": {
+      "body_hash": "7c101bdc08cac66dbc637f61605180e3",
+      "is_trivial": true
+    },
+    "bool HandleCommonErrors(const idSaveLoadParms &parms)": {
+      "body_hash": "1e5ac451dedac16154d1b55b877c99ff",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(loadGame, \"loads a game\", idCmdSystem::ArgCompletion_SaveGame)": {
+      "body_hash": "e6cfb5cb50db23cc4610fcb43c4d7ea7",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(saveGame, \"saves a game\", NULL)": {
+      "body_hash": "b9b489f667b36ea6ad4da4bbcadd79f5",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(map, \"loads a map\", idCmdSystem::ArgCompletion_MapName)": {
+      "body_hash": "d6f54c9ab54d634ddbd88005baa13fe0",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(restartMap, \"restarts the current map\", NULL)": {
+      "body_hash": "5d57d249a968d97d678d47618b30a7d0",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(devmap, \"loads a map in developer mode\", idCmdSystem::ArgCompletion_MapName)": {
+      "body_hash": "1521256e1905735732e93f03db46871a",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(netmap, \"loads a map in multiplayer mode\", idCmdSystem::ArgCompletion_MapName)": {
+      "body_hash": "c4a717ecf3f9d8fcb25d29dba87b9f76",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testmap, \"tests a map\", idCmdSystem::ArgCompletion_MapName)": {
+      "body_hash": "271c0bd905a76b756e86b9f6c3d09faf",
+      "is_trivial": true
+    },
+    "void LoadMapLocalizeData(ListHash &listHash)": {
+      "body_hash": "75f1f7ddcd051c89fdb295e855afbe79",
+      "is_trivial": true
+    },
+    "void LoadGuiParmExcludeList(idStrList &list)": {
+      "body_hash": "2e89d5bf921b2ff95ca2f134bae055ab",
+      "is_trivial": true
+    },
+    "bool TestMapVal(idStr &str)": {
+      "body_hash": "913764f212144cc28dd7f8c7468bde33",
+      "is_trivial": true
+    },
+    "bool TestGuiParm(const char *parm, const char *value, idStrList &excludeList)": {
+      "body_hash": "ec1b7e4f22b9c7c9604aa5e49ac31b04",
+      "is_trivial": true
+    },
+    "void GetFileList(const char *dir, const char *ext, idStrList &list)": {
+      "body_hash": "9e5b9b58eec923d311795e708104182b",
+      "is_trivial": true
+    },
+    "int LocalizeMap(const char *mapName, idLangDict &langDict, ListHash &listHash, idStrList &excludeList, bool writeFile)": {
+      "body_hash": "9d9f353c9cbb856f5c1a81112a13a7ce",
+      "is_trivial": false
+    },
+    "CONSOLE_COMMAND(localizeMaps, \"localize maps\", NULL)": {
+      "body_hash": "004738fa11dd3471a914641bd1737233",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(localizeGuis, \"localize guis\", NULL)": {
+      "body_hash": "f75425beb63368e91168094f10704303",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(localizeGuiParmsTest, \"Create test files that show gui parms localized and ignored.\", NULL)": {
+      "body_hash": "99758abdff1aa8a9206a61b7532716d2",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(localizeMapsTest, \"Create test files that shows which strings will be localized.\", NULL)": {
+      "body_hash": "eeb5b069f5868caa0975835d8b40ad31",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(exportMapToOBJ, \"Convert .map file to .obj/.mtl \", idCmdSystem::ArgCompletion_MapName)": {
+      "body_hash": "779e678a1b61cc7590459bb66b79dac2",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(convertMap, \"Convert .map file to new map format with polygons instead of brushes\", idCmdSystem::ArgCompletion_MapNameNoJson)": {
+      "body_hash": "5f870af25ecbf1cb72db631acc009d9f",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(convertMapToJSON, \"Convert .map file to new .json map format with polygons instead of brushes\", idCmdSystem::ArgCompletion_MapNameNoJson)": {
+      "body_hash": "ba29df092d36b23866d54bb05e1706c7",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(convertMapToValve220, \"Convert .map file to the Valve 220 map format for TrenchBroom\", idCmdSystem::ArgCompletion_MapNameNoJson)": {
+      "body_hash": "439729fd69a66ae6c86a412a310715b4",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(checkMapsForBrushEntities, \"List all brush entities in all .map files\", idCmdSystem::ArgCompletion_MapNameNoJson)": {
+      "body_hash": "7d030e6e614931e0f5272e6329440e41",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(convertMapQuakeToDoom, \"Convert Quake .map in Valve 220 map format for Doom 3 BFG\", idCmdSystem::ArgCompletion_MapNameNoJson)": {
+      "body_hash": "4d4f3f60068a3216e43abbcc067a3d08",
+      "is_trivial": true
+    },
+    "static void Con_Clear_f(const idCmdArgs &args)": {
+      "body_hash": "bccf1b9a89e131e944b414bbff51598d",
+      "is_trivial": true
+    },
+    "static void Con_Dump_f(const idCmdArgs &args)": {
+      "body_hash": "4262120570204c03629cbb6e0a2a23b6",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(history, \"Displays the console command history\", 0)": {
+      "body_hash": "36e5c2f2b403bf7c63930a0926ae21cd",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(clearHistory, \"Clears the console history\", 0)": {
+      "body_hash": "4e8914e4938d7d344c78c582f8c1d8aa",
+      "is_trivial": true
+    },
+    "const char * CreateColumn(const char *text, int columnWidth, const char *indent, idStr &string)": {
+      "body_hash": "9b40be05b77b95c8cfc559cb82942a3a",
+      "is_trivial": false
+    },
+    "static void FindMatches(const char *s)": {
+      "body_hash": "4d68de8337cec05363056eaaf63c80c8",
+      "is_trivial": true
+    },
+    "static void FindIndexMatch(const char *s)": {
+      "body_hash": "5294c1bc24f4a8b1ff000c501fa0bbd0",
+      "is_trivial": true
+    },
+    "static void PrintMatches(const char *s)": {
+      "body_hash": "bfa44799cbbbc69f261ade2081db07f3",
+      "is_trivial": true
+    },
+    "static void PrintCvarMatches(const char *s)": {
+      "body_hash": "64ddc9b05e234610d5c3c38c9e348d41",
+      "is_trivial": true
+    },
+    "int FS_WriteFloatString(char *buf, int bufsize, const char *fmt, va_list argPtr)": {
+      "body_hash": "175fe11c3f85a1c53bfa8c6bf308771d",
+      "is_trivial": false
+    },
+    "void * memcpy2(void *__restrict b, const void *__restrict a, size_t n)": {
+      "body_hash": "7cbb394d6e9eab89d6389cc88b6dd67a",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(outputHistogram, \"\", 0)": {
+      "body_hash": "9ecfafe41c70d4cff51399d5f00e52a7",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(clearHistogram, \"\", 0)": {
+      "body_hash": "616269af79310f8448f27a5315516a41",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testEndianNessWrite, \"Tests the read/write compatibility between platforms\", 0)": {
+      "body_hash": "bef6c9291f9c52216693457c44fef2b9",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testEndianNessRead, \"Tests the read/write compatibility between platforms\", 0)": {
+      "body_hash": "a61d70ddd9e276f730abbfff19cd2f36",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testEndianNessReset, \"Tests the read/write compatibility between platforms\", 0)": {
+      "body_hash": "3a355cbeebdf90f00b3c5ddc59a93f4b",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(testListFiles, \"Tests the list files function\", 0)": {
+      "body_hash": "0ff247e2739905b3f7c3203fcb8b5c1b",
+      "is_trivial": true
+    },
+    "bool FileExistsInAllManifests(const char *filename, idList< idFileManifest > &manifests)": {
+      "body_hash": "d1687836a497758a905d5e1fa6494035",
+      "is_trivial": true
+    },
+    "bool FileExistsInAllPreloadManifests(const char *filename, idList< idPreloadManifest > &manifests)": {
+      "body_hash": "b42c21df67005d7d674bf99cad670cd2",
+      "is_trivial": true
+    },
+    "void RemoveFileFromAllManifests(const char *filename, idList< idFileManifest > &manifests)": {
+      "body_hash": "55fcb1792839ce74c9fa5fdbc01366ba",
+      "is_trivial": true
+    },
+    "bool IsExcludedFile(const idStr &resName)": {
+      "body_hash": "d933c9d95cad9679ded379b241f82fa3",
+      "is_trivial": true
+    },
+    "static bool IsOSPath(const char *path)": {
+      "body_hash": "6e0d68778add7e816e45ef785cb62bcf",
+      "is_trivial": true
+    },
+    "void ZlibFree(void *opaque, void *address)": {
+      "body_hash": "94edeb10d83c061086435d59eee418ce",
+      "is_trivial": true
+    },
+    "static void TestProcessFile(const char *const filename)": {
+      "body_hash": "03abd043dce5bbf5b805e3884b061139",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(TestSaveGameFile, \"Exercises the pipelined savegame code\", 0)": {
+      "body_hash": "3be33c0970d73448e8d6628bb05d59c6",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(TestCompressionSpeeds, \"Compares zlib and our code\", 0)": {
+      "body_hash": "828d143752e4ce5497c8f6a79b367706",
+      "is_trivial": true
+    },
+    "void Key_Unbind_f(const idCmdArgs &args)": {
+      "body_hash": "34b5e28b452d9c8c66ff81645bab2286",
+      "is_trivial": true
+    },
+    "void Key_Unbindall_f(const idCmdArgs &args)": {
+      "body_hash": "677b078b60377bf5cff6367e874c9c7d",
+      "is_trivial": true
+    },
+    "void Key_Unbindallvr_f(const idCmdArgs &args)": {
+      "body_hash": "628977df606240a2512cd2617d4062dd",
+      "is_trivial": true
+    },
+    "void Key_Bind_f(const idCmdArgs &args)": {
+      "body_hash": "66878eeeed5fb9862a8ce3d73c6a7844",
+      "is_trivial": true
+    },
+    "void Key_BindUnBindTwo_f(const idCmdArgs &args)": {
+      "body_hash": "1b07bfa1ccd48068687b80dd46004e59",
+      "is_trivial": true
+    },
+    "void Key_ListBinds_f(const idCmdArgs &args)": {
+      "body_hash": "e007ad86ecea0de6e0a855fd820d2bcc",
+      "is_trivial": true
+    },
+    "int Key_CovertHIDCode(int hid)": {
+      "body_hash": "122954e2c3ff031a2bbf7e51ac88e768",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(setProfileDefaults, \"sets profile settings to default and saves\", 0)": {
+      "body_hash": "c26ad6a26885bbb8368d433dfc72c529",
+      "is_trivial": true
+    },
+    "idVec2 JoypadFunction(const idVec2 raw, const float aimAssistScale, const float threshold, const float range, const transferFunction_t shape, const bool mergedThreshold)": {
+      "body_hash": "7ee90eca834c260c159a5540cebbbbab",
+      "is_trivial": false
+    },
+    "void DrawJoypadTexture(const int size, byte image[], const idVec2 raw, const float threshold, const float range, const transferFunction_t shape, const bool mergedThreshold)": {
+      "body_hash": "8ef2fc41c759caa208877ea9e4df8de1",
+      "is_trivial": false
+    },
+    "void DrawJoypadTexture(const int size, byte image[])": {
+      "body_hash": "5247f7a8d62a4df616203e963b80e74a",
+      "is_trivial": true
+    },
+    "void idCompressor_Arithmetic::UpdateProbabilities(acSymbol_t *symbol)": {
+      "body_hash": "2d3cac24b5983426b12a12c794bf55ff",
+      "is_trivial": true
+    },
+    "void idCompressor_Arithmetic::WriteOverflowBits()": {
+      "body_hash": "f5daa2d621a562ab684bcaea4c0ac715",
+      "is_trivial": true
+    },
+    "void idCompressor_BitStream::WriteBits(int value, int numBits)": {
+      "body_hash": "318d33a274cd11ce69553e2cf686bf8a",
+      "is_trivial": true
+    },
+    "void idCVarSystemLocal::SetCVarInteger(const char *name, const int value, int flags=0)": {
+      "body_hash": "1ea29cd7cc45e8fc7d5cebfc10d01343",
+      "is_trivial": true
+    },
+    "void idDebugGraph::SetPosition(float x, float y, float w, float h)": {
+      "body_hash": "15cb99522c61ba356d51a0469607f01a",
+      "is_trivial": false
+    },
+    "int idFile::WriteFloat(const float value)": {
+      "body_hash": "ea7d628d2d855b20599b315f53e40ee0",
+      "is_trivial": true
+    },
+    "bool idFile_SaveGamePipelined::NextWriteBlock(blockForIO_t *block)": {
+      "body_hash": "36456cde92522136f7c4fdc6b082a8c4",
+      "is_trivial": true
+    },
+    "ID_INLINE int MSEC_TO_FRAME_CEIL(int msec)": {
+      "body_hash": "4a978c60bbfdd94954cdcb8c24642d17",
+      "is_trivial": true
+    },
+    "void * ZlibAlloc(void *opaque, uInt items, uInt size)": {
+      "body_hash": "5dc9bee8a99f9871bdcb5b172f60e364",
+      "is_trivial": true
     }
   }
 }

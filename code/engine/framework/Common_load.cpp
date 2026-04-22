@@ -49,13 +49,6 @@ extern idCVar g_demoMode;
 // This is for the dirty hack to get a dialog to show up before we capture the screen for autorender.
 const int	  NumScreenUpdatesToShowDialog = 25;
 
-/*
-================
-idCommonLocal::StartWipe
-
-Draws and captures the current state, then starts a wipe with that image
-================
-*/
 void		  idCommonLocal::StartWipe( const char* _wipeMaterial, bool hold )
 {
 	console->Close();
@@ -71,11 +64,6 @@ void		  idCommonLocal::StartWipe( const char* _wipeMaterial, bool hold )
 	wipeHold	  = hold;
 }
 
-/*
-================
-idCommonLocal::CompleteWipe
-================
-*/
 void idCommonLocal::CompleteWipe()
 {
 	while( Sys_Milliseconds() < wipeStopTime ) {
@@ -88,11 +76,6 @@ void idCommonLocal::CompleteWipe()
 	BusyWait();
 }
 
-/*
-================
-idCommonLocal::ClearWipe
-================
-*/
 void idCommonLocal::ClearWipe()
 {
 	wipeHold	  = false;
@@ -101,11 +84,6 @@ void idCommonLocal::ClearWipe()
 	wipeForced	  = false;
 }
 
-/*
-===============
-idCommonLocal::StartNewGame
-===============
-*/
 void idCommonLocal::StartNewGame( const char* mapName, bool devmap, int gameMode )
 {
 	if( session->GetSignInManager().GetMasterLocalUser() == NULL ) {
@@ -158,12 +136,6 @@ void idCommonLocal::StartNewGame( const char* mapName, bool devmap, int gameMode
 	}
 }
 
-/*
-===============
-idCommonLocal::MoveToNewMap
-Single player transition from one map to another
-===============
-*/
 void idCommonLocal::MoveToNewMap( const char* mapName, bool devmap )
 {
 	idMatchParameters matchParameters;
@@ -191,15 +163,6 @@ void idCommonLocal::MoveToNewMap( const char* mapName, bool devmap )
 	}
 }
 
-/*
-===============
-idCommonLocal::UnloadMap
-
-Performs cleanup that needs to happen between maps, or when a
-game is exited.
-Exits with mapSpawned = false
-===============
-*/
 void idCommonLocal::UnloadMap()
 {
 	// end the current map in the game
@@ -210,11 +173,6 @@ void idCommonLocal::UnloadMap()
 	mapSpawned = false;
 }
 
-/*
-===============
-idCommonLocal::LoadLoadingGui
-===============
-*/
 void idCommonLocal::LoadLoadingGui( const char* mapName, bool& hellMap )
 {
 	defaultLoadscreen = false;
@@ -331,15 +289,6 @@ void idCommonLocal::LoadLoadingGui( const char* mapName, bool& hellMap )
 	}
 }
 
-/*
-===============
-idCommonLocal::ExecuteMapChange
-
-Performs the initialization of a game based on session match parameters, used for both single
-player and multiplayer, but not for renderDemos, which don't create a game at all.
-Exits with mapSpawned = true
-===============
-*/
 void idCommonLocal::ExecuteMapChange()
 {
 	if( session->GetState() != idSession::LOADING ) {
@@ -608,13 +557,6 @@ void idCommonLocal::ExecuteMapChange()
 	soundSystem->Render();
 }
 
-/*
-===============
-idCommonLocal::UpdateLevelLoadPacifier
-
-Pumps the session and if multiplayer, displays dialogs during the loading process.
-===============
-*/
 void idCommonLocal::UpdateLevelLoadPacifier()
 {
 	autoRenderIconType_t icon			  = AUTORENDER_DEFAULTICON;
@@ -688,7 +630,6 @@ void idCommonLocal::UpdateLevelLoadPacifier()
 	}
 }
 
-// RB begin
 void idCommonLocal::LoadPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... )
 {
 	char	msg[256];
@@ -760,9 +701,7 @@ bool idCommonLocal::LoadPacifierRunning()
 {
 	return loadPacifierExpectedCount > 0;
 }
-// RB end
 
-// foresthale 2014-05-30: loading progress pacifier for binarize operations only
 void idCommonLocal::LoadPacifierBinarizeFilename( const char* filename, const char* reason )
 {
 	idLib::Printf( "Binarize File: '%s' - reason '%s'\n", filename, reason );
@@ -788,7 +727,6 @@ void idCommonLocal::LoadPacifierBinarizeMiplevel( int level, int maxLevel )
 	loadPacifierBinarizeMiplevelTotal = maxLevel;
 }
 
-// foresthale 2014-05-30: loading progress pacifier for binarize operations only
 void idCommonLocal::LoadPacifierBinarizeProgress( float progress )
 {
 	static int lastUpdateTime = 0;
@@ -810,7 +748,6 @@ void idCommonLocal::LoadPacifierBinarizeProgress( float progress )
 	}
 }
 
-// foresthale 2014-05-30: loading progress pacifier for binarize operations only
 void idCommonLocal::LoadPacifierBinarizeEnd()
 {
 	loadPacifierBinarizeActive			= false;
@@ -824,14 +761,12 @@ void idCommonLocal::LoadPacifierBinarizeEnd()
 	loadPacifierBinarizeMiplevelTotal	= 0;
 }
 
-// foresthale 2014-05-30: loading progress pacifier for binarize operations only
 void idCommonLocal::LoadPacifierBinarizeProgressTotal( int total )
 {
 	loadPacifierBinarizeProgressTotal	= total;
 	loadPacifierBinarizeProgressCurrent = 0;
 }
 
-// foresthale 2014-05-30: loading progress pacifier for binarize operations only
 void idCommonLocal::LoadPacifierBinarizeProgressIncrement( int step )
 {
 	loadPacifierBinarizeProgressCurrent += step;
@@ -841,13 +776,6 @@ void idCommonLocal::LoadPacifierBinarizeProgressIncrement( int step )
 	}
 }
 
-/*
-===============
-idCommonLocal::ScrubSaveGameFileName
-
-Turns a bad file name into a good one or your money back
-===============
-*/
 void idCommonLocal::ScrubSaveGameFileName( idStr& saveFileName ) const
 {
 	int	  i;
@@ -875,11 +803,6 @@ void idCommonLocal::ScrubSaveGameFileName( idStr& saveFileName ) const
 	}
 }
 
-/*
-===============
-idCommonLocal::SaveGame
-===============
-*/
 bool idCommonLocal::SaveGame( const char* saveName )
 {
 	if( pipelineFile != NULL ) {
@@ -975,11 +898,6 @@ bool idCommonLocal::SaveGame( const char* saveName )
 	return true;
 }
 
-/*
-===============
-idCommonLocal::LoadGame
-===============
-*/
 bool idCommonLocal::LoadGame( const char* saveName )
 {
 	if( IsMultiplayer() ) {
@@ -1049,21 +967,13 @@ bool idCommonLocal::LoadGame( const char* saveName )
 	return false;
 }
 
-/*
-========================
-HandleInsufficientStorage
-========================
-*/
+//! Displays a retry save dialog when there is insufficient storage space for saving.
 void HandleInsufficientStorage( const idSaveLoadParms& parms )
 {
 	session->GetSaveGameManager().ShowRetySaveDialog( parms.directory, parms.requiredSpaceInBytes );
 }
 
-/*
-========================
-HandleCommonErrors
-========================
-*/
+//! Handles common save and load errors by processing error codes and updating save game status
 bool HandleCommonErrors( const idSaveLoadParms& parms )
 {
 	common->Dialog().ShowSaveIndicator( false );
@@ -1107,11 +1017,6 @@ bool HandleCommonErrors( const idSaveLoadParms& parms )
 	return false;
 }
 
-/*
-========================
-idCommonLocal::OnSaveCompleted
-========================
-*/
 void idCommonLocal::OnSaveCompleted( idSaveLoadParms& parms )
 {
 	assert( pipelineFile != NULL );
@@ -1127,11 +1032,6 @@ void idCommonLocal::OnSaveCompleted( idSaveLoadParms& parms )
 	}
 }
 
-/*
-========================
-idCommonLocal::OnLoadCompleted
-========================
-*/
 void idCommonLocal::OnLoadCompleted( idSaveLoadParms& parms )
 {
 	if( !HandleCommonErrors( parms ) ) {
@@ -1139,11 +1039,6 @@ void idCommonLocal::OnLoadCompleted( idSaveLoadParms& parms )
 	}
 }
 
-/*
-========================
-idCommonLocal::OnLoadFilesCompleted
-========================
-*/
 void idCommonLocal::OnLoadFilesCompleted( idSaveLoadParms& parms )
 {
 	if( ( mapSpawnData.savegameFile != NULL ) && ( parms.GetError() == SAVEGAME_E_NONE ) ) {
@@ -1191,11 +1086,6 @@ void idCommonLocal::OnLoadFilesCompleted( idSaveLoadParms& parms )
 	mapSpawnData.savegameFile = NULL;
 }
 
-/*
-========================
-idCommonLocal::TriggerScreenWipe
-========================
-*/
 void idCommonLocal::TriggerScreenWipe( const char* _wipeMaterial, bool hold )
 {
 	StartWipe( _wipeMaterial, hold );
@@ -1204,11 +1094,6 @@ void idCommonLocal::TriggerScreenWipe( const char* _wipeMaterial, bool hold )
 	renderSystem->BeginAutomaticBackgroundSwaps( AUTORENDER_DEFAULTICON );
 }
 
-/*
-========================
-idCommonLocal::OnEnumerationCompleted
-========================
-*/
 void idCommonLocal::OnEnumerationCompleted( idSaveLoadParms& parms )
 {
 	if( parms.GetError() == SAVEGAME_E_NONE ) {
@@ -1216,11 +1101,6 @@ void idCommonLocal::OnEnumerationCompleted( idSaveLoadParms& parms )
 	}
 }
 
-/*
-========================
-idCommonLocal::OnDeleteCompleted
-========================
-*/
 void idCommonLocal::OnDeleteCompleted( idSaveLoadParms& parms )
 {
 	if( parms.GetError() == SAVEGAME_E_NONE ) {
@@ -1228,22 +1108,14 @@ void idCommonLocal::OnDeleteCompleted( idSaveLoadParms& parms )
 	}
 }
 
-/*
-===============
-LoadGame_f
-===============
-*/
+//! Loads a saved game from the specified file or from the quick save.
 CONSOLE_COMMAND_SHIP( loadGame, "loads a game", idCmdSystem::ArgCompletion_SaveGame )
 {
 	console->Close();
 	commonLocal.LoadGame( ( args.Argc() > 1 ) ? args.Argv( 1 ) : "quick" );
 }
 
-/*
-===============
-SaveGame_f
-===============
-*/
+//! Saves the current game state to a file with an optional name
 CONSOLE_COMMAND_SHIP( saveGame, "saves a game", NULL )
 {
 	const char* savename = ( args.Argc() > 1 ) ? args.Argv( 1 ) : "quick";
@@ -1252,23 +1124,13 @@ CONSOLE_COMMAND_SHIP( saveGame, "saves a game", NULL )
 	}
 }
 
-/*
-==================
-Common_Map_f
-
-Restart the server on a different map
-==================
-*/
+//! Loads a specified map in the game.
 CONSOLE_COMMAND_SHIP( map, "loads a map", idCmdSystem::ArgCompletion_MapName )
 {
 	commonLocal.StartNewGame( args.Argv( 1 ), false, GAME_MODE_SINGLEPLAYER );
 }
 
-/*
-==================
-Common_RestartMap_f
-==================
-*/
+//! Restarts the current map in demo mode
 CONSOLE_COMMAND_SHIP( restartMap, "restarts the current map", NULL )
 {
 	if( g_demoMode.GetBool() ) {
@@ -1276,25 +1138,13 @@ CONSOLE_COMMAND_SHIP( restartMap, "restarts the current map", NULL )
 	}
 }
 
-/*
-==================
-Common_DevMap_f
-
-Restart the server on a different map in developer mode
-==================
-*/
+//! Loads a specified map in developer mode
 CONSOLE_COMMAND_SHIP( devmap, "loads a map in developer mode", idCmdSystem::ArgCompletion_MapName )
 {
 	commonLocal.StartNewGame( args.Argv( 1 ), true, GAME_MODE_SINGLEPLAYER );
 }
 
-/*
-==================
-Common_NetMap_f
-
-Restart the server on a different map in multiplayer mode
-==================
-*/
+//! Loads a specified map in multiplayer mode with an optional game mode parameter.
 CONSOLE_COMMAND_SHIP( netmap, "loads a map in multiplayer mode", idCmdSystem::ArgCompletion_MapName )
 {
 	int gameMode = 0; // Default to deathmatch
@@ -1304,11 +1154,7 @@ CONSOLE_COMMAND_SHIP( netmap, "loads a map in multiplayer mode", idCmdSystem::Ar
 	commonLocal.StartNewGame( args.Argv( 1 ), true, gameMode );
 }
 
-/*
-==================
-Common_TestMap_f
-==================
-*/
+//! Executes a map test by loading the specified map file.
 CONSOLE_COMMAND( testmap, "tests a map", idCmdSystem::ArgCompletion_MapName )
 {
 	idStr map, string;
@@ -1327,7 +1173,3 @@ CONSOLE_COMMAND( testmap, "tests a map", idCmdSystem::ArgCompletion_MapName )
 	sprintf( string, "devmap %s", map.c_str() );
 	cmdSystem->BufferCommandText( CMD_EXEC_NOW, string );
 }
-
-// TODO finish this
-#if 0
-#endif

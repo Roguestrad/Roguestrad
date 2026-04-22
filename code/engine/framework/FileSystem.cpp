@@ -133,128 +133,342 @@ struct searchpath_t {
 #define FSFLAG_SEARCH_DIRS	   ( 1 << 0 )
 #define FSFLAG_RETURN_FILE_MEM ( 1 << 1 )
 
+/*!
+	\class idFileSystemLocal
+	\brief Provides local file system operations with support for resource files, zip archives, and directory traversal.
+
+	Implements a comprehensive file system interface that handles local file operations, resource management, and various file access patterns. The class supports reading and writing files, managing
+   search paths, and working with zip archives and resource containers. It provides methods for listing files, opening files in different modes, and managing file system state including
+   initialization, shutdown, and restart operations. The implementation handles different file access patterns including direct file system access, zip file access, and resource file access. It also
+   includes functionality for managing preload operations, caching, and background file operations. The class supports various file system configurations including game directories, base paths, and
+   save paths, and provides utility methods for path manipulation, file copying, and directory creation.
+
+*/
 class idFileSystemLocal : public idFileSystem
 {
 public:
+	//! Initializes a new instance of the idFileSystemLocal class.
 	idFileSystemLocal();
 
+	//! Initializes the file system with default paths and performs basic startup checks.
 	virtual void		   Init();
+
+	//! Restarts the file system by shutting down and re-initializing it, ensuring default configuration is loaded.
 	virtual void		   Restart();
+
+	//! Shuts down the file system and frees all resources
 	virtual void		   Shutdown( bool reloading );
+
+	//! Returns true if the file system has been initialized and has search paths configured.
 	virtual bool		   IsInitialized() const;
+
+	/*!
+		\brief Lists files in a specified directory with optional sorting and filtering by extension
+
+		Returns a file list containing all files matching the specified extension in the given relative path. The function supports optional sorting of the results and can be configured to use full
+	   relative paths. The gamedir parameter allows specifying a game directory for the search, which can be NULL to use the default directory. The returned list must be freed using the FreeFileList
+	   function.
+
+		\param relativePath The directory path relative to the game directory to search for files
+		\param extension The file extension to filter results by, supports wildcards
+		\param sort Whether to sort the results alphabetically
+		\param fullRelativePath Whether to include full relative paths in the results
+		\param gamedir The game directory to search in, or NULL for default
+		\return A pointer to a newly allocated idFileList containing the matching files
+	*/
 	virtual idFileList*	   ListFiles( const char* relativePath, const char* extension, bool sort = false, bool fullRelativePath = false, const char* gamedir = NULL );
+
+	/*!
+		\brief Returns a list of files in a directory tree matching a specified extension
+
+		This function retrieves all files from a specified directory and its subdirectories that match a given file extension. It supports optional sorting of the results and can handle resource pak
+	   subdirectories. The function creates a new idFileList object containing the matching files. The relativePath parameter specifies the starting directory, extension specifies the file extension
+	   pattern, and sort determines whether to sort the results alphabetically. The gamedir parameter allows specifying a game directory override, and allowSubdirsForResourcePaks controls whether
+	   subdirectories in resource paks should be considered.
+
+		\param relativePath The directory path to search for files
+		\param extension The file extension pattern to match
+		\param sort Whether to sort the results alphabetically
+		\param allowSubdirsForResourcePaks Whether to allow subdirectories in resource paks
+		\param gamedir The game directory to use, or NULL for default
+		\return A pointer to a new idFileList object containing the matching files, or NULL if an error occurred
+	*/
 	virtual idFileList*	   ListFilesTree( const char* relativePath, const char* extension, bool sort = false, bool allowSubdirsForResourcePaks = false, const char* gamedir = NULL );
+
+	//! Frees the memory allocated for a file list.
 	virtual void		   FreeFileList( idFileList* fileList );
+
+	//! Converts an operating system path to a relative path by removing base directory components.
 	virtual const char*	   OSPathToRelativePath( const char* OSPath );
+
+	//! Converts a relative file path to an operating system path using the specified base path
 	virtual const char*	   RelativePathToOSPath( const char* relativePath, const char* basePath );
+
+	//! Constructs an operating system path by combining a base path, game folder, and relative path.
 	virtual const char*	   BuildOSPath( const char* base, const char* game, const char* relativePath );
+
+	//! Constructs and returns a platform-specific operating system path from a base path and relative path
 	virtual const char*	   BuildOSPath( const char* base, const char* relativePath );
+
+	//! Creates any directories needed to store the given filename
 	virtual void		   CreateOSPath( const char* OSPath );
+
+	//! Reads a file from the filesystem into a buffer, returning the file length or -1 on failure.
 	virtual int			   ReadFile( const char* relativePath, void** buffer, ID_TIME_T* timestamp );
+
+	//! Frees memory allocated by ReadFile.
 	virtual void		   FreeFile( void* buffer );
+
+	/*!
+		\brief Writes data to a file at the specified relative path using the given base path
+
+		This function writes a specified amount of data to a file identified by its relative path. The file is opened for writing using the provided base path, and the data is written to the file. If
+	   the file cannot be opened, the function returns -1. The function returns the number of bytes successfully written to the file. If the filesystem is not initialized or if null parameters are
+	   provided, a fatal error occurs.
+
+		\param relativePath The relative path to the file to be written
+		\param buffer Pointer to the data to be written to the file
+		\param size The number of bytes to write from the buffer
+		\param basePath The base path to use for determining the file location, defaults to fs_savepath
+		\return The number of bytes successfully written to the file, or -1 if the operation fails
+		\throws Fatal error if the filesystem is not initialized or if null parameters are passed
+	*/
 	virtual int			   WriteFile( const char* relativePath, const void* buffer, int size, const char* basePath = "fs_savepath" );
+
+	//! Removes the specified file from the file system
 	virtual void		   RemoveFile( const char* relativePath );
+
+	//! Removes a directory from the file system.
 	virtual bool		   RemoveDir( const char* relativePath );
+
+	//! Renames a file from one path to another using the specified base path.
 	virtual bool		   RenameFile( const char* relativePath, const char* newName, const char* basePath = "fs_savepath" );
+
+	/*!
+		\brief Opens a file for reading using the specified search flags and parameters.
+
+		This function searches for a file in the configured filesystem paths based on the provided relative path and search flags. It handles different file sources including zip files, resource
+	   files, and regular filesystem entries. The function supports various search behaviors through the searchFlags parameter, such as searching directories or returning file contents in memory. It
+	   also manages file copying and manifest tracking when enabled. The function performs security checks to prevent directory traversal attempts and returns a file handle or NULL if the file cannot
+	   be found.
+
+		\param relativePath The path of the file to open relative to the search paths
+		\param searchFlags Flags controlling how the file search is performed
+		\param allowCopyFiles Whether to allow copying files to the save path
+		\param gamedir The game directory to search in, or NULL for all directories
+		\return A file handle for reading the file, or NULL if the file could not be found or opened
+		\throws FatalError if the filesystem is not initialized, or if a NULL relativePath parameter is passed
+	*/
 	virtual idFile*		   OpenFileReadFlags( const char* relativePath, int searchFlags, bool allowCopyFiles = true, const char* gamedir = NULL );
+
+	//! Opens a file for reading using the specified parameters and search directories.
 	virtual idFile*		   OpenFileRead( const char* relativePath, bool allowCopyFiles = true, const char* gamedir = NULL );
+
+	//! Opens a file for reading and returns a file handle that provides memory access to the file contents.
 	virtual idFile*		   OpenFileReadMemory( const char* relativePath, bool allowCopyFiles = true, const char* gamedir = NULL );
+
+	//! Opens a file for writing at the specified path relative to the given base path.
 	virtual idFile*		   OpenFileWrite( const char* relativePath, const char* basePath = "fs_savepath" );
+
+	//! Opens a file for appending, creating it if it does not exist.
 	virtual idFile*		   OpenFileAppend( const char* relativePath, bool sync = false, const char* basePath = "fs_basepath" );
+
+	//! Opens a file for reading, writing, or appending based on the specified mode.
 	virtual idFile*		   OpenFileByMode( const char* relativePath, fsMode_t mode );
+
+	//! Opens a file for reading using the specified OS path and returns a file handle.
 	virtual idFile*		   OpenExplicitFileRead( const char* OSPath );
+
+	//! Opens a file for writing at the specified OS path and returns a file handle.
 	virtual idFile*		   OpenExplicitFileWrite( const char* OSPath );
+
+	//! Opens a file for reading from a full OS path and returns a cached file handle.
 	virtual idFile_Cached* OpenExplicitPakFile( const char* OSPath );
+
+	//! Closes a file by deleting the file handle
 	virtual void		   CloseFile( idFile* f );
+
+	//! Searches for a dynamic library file and returns its full path.
 	virtual void		   FindDLL( const char* basename, char dllPath[MAX_OSPATH] );
+
+	//! Copies a file from one OS path to another, handling special cases for audio files and localization.
 	virtual void		   CopyFile( const char* fromOSPath, const char* toOSPath );
+
+	//! Checks if a file exists in the file system by attempting to open it for reading.
 	virtual findFile_t	   FindFile( const char* path );
+
+	//! Compares two filename strings ignoring case and separator characters
 	virtual bool		   FilenameCompare( const char* s1, const char* s2 ) const;
+
+	//! Returns the length of a file specified by its relative path
 	virtual int			   GetFileLength( const char* relativePath );
+
+	//! Checks if a given relative path corresponds to a folder within the specified base path
 	virtual sysFolder_t	   IsFolder( const char* relativePath, const char* basePath = "fs_basepath" );
-	// resource tracking
+
+	//! Enables or disables background caching for file system operations.
 	virtual void		   EnableBackgroundCache( bool enable );
+
+	//! Initializes a new level load operation with the specified manifest name and resource buffer.
 	virtual void		   BeginLevelLoad( const char* name, char* _blockBuffer, int _blockBufferSize );
+
+	//! Finalizes a level load operation and prepares the system to free unreferenced media.
 	virtual void		   EndLevelLoad();
 
-	// RB begin
+	//! Returns true if the engine is running in production mode.
 	virtual bool		   InProductionMode();
 
-	// Returns true if Doom 2004 is detected
+	//! Returns true if Doom 2004 is detected.
 	virtual bool		   IsDoom2004() const
 	{
 		return doom2004Found;
 	}
 
-	// Returns true if Doom 2019 is detected
-	// that one is BFG without Doom 1 & 2 and without multiplayer
+	//! Returns true if Doom 2019 is detected
 	virtual bool IsDoom2019() const
 	{
 		return doom2019Found;
 	}
 
+	//! Returns whether zip files are being used by the file system
 	virtual bool UsingZipFiles()
 	{
 		return zipFilesFound;
 	}
-	// RB end
+
+	//! Returns true if the file system is using resource files for the current build.
 	virtual bool UsingResourceFiles()
 	{
 		// was return resourceFiles.Num() > 0;
 		return resourceFilesFound;
 	}
+
+	//! Unloads resources associated with a specified map name.
 	virtual void UnloadMapResources( const char* name );
+
+	//! Unloads a resource container by its name.
 	virtual void UnloadResourceContainer( const char* name );
 
+	//! Initiates the preload process for a list of resources.
 	virtual void StartPreload( const idStrList& _preload );
+
+	//! Stops the preload operation.
 	virtual void StopPreload();
+
+	//! Returns a file handle for a resource file if it exists and can be loaded into memory, otherwise returns NULL.
 	idFile*		 GetResourceFile( const char* fileName, bool memFile );
+
+	//! Checks if a resource cache entry exists for the given file name and retrieves its information
 	bool		 GetResourceCacheEntry( const char* fileName, idResourceCacheEntry& rc );
+
+	/*!
+		\brief Reads data from a resource file at a specified offset into a buffer
+
+		This function reads a specified number of bytes from a resource file starting at a given offset into a provided buffer. It first checks if the file pointer is at the correct position, and if
+	   not, it seeks to the specified offset before performing the read operation. The function returns the number of bytes actually read, which may be less than requested if the end of file is
+	   reached or if an error occurs.
+
+		\param _resourceFile Pointer to the resource file to read from
+		\param _buffer Pointer to the buffer where the read data will be stored
+		\param _offset The offset in the file to start reading from
+		\param _len The number of bytes to read
+		\return The number of bytes actually read from the file, or zero if an error occurred
+	*/
 	virtual int	 ReadFromBGL( idFile* _resourceFile, void* _buffer, int _offset, int _len );
+
+	//! Returns true if the given resource name corresponds to a binary model file.
 	virtual bool IsBinaryModel( const idStr& resName ) const;
+
+	//! Checks if the given resource name corresponds to a sound sample file.
 	virtual bool IsSoundSample( const idStr& resName ) const;
+
+	//! Resets the resource buffer availability to its full size.
 	virtual void FreeResourceBuffer()
 	{
 		resourceBufferAvailable = resourceBufferSize;
 	}
+
+	/*!
+		\brief Adds an image resource to the preload list with specified filtering, repeat, usage, and cube map settings.
+
+		This function is used to register an image resource for preloading during level loading. It specifies how the image should be filtered, repeated, used, and whether it's a cube map. The actual
+	   preloading is delegated to an internal preload list managed by the file system.
+
+		\param resName Name of the image resource to preload
+		\param cube Flag indicating if the image is a cube map
+		\param filter Filtering mode for the image
+		\param repeat Repeat mode for the image
+		\param usage Usage flags for the image
+	*/
 	virtual void AddImagePreload( const char* resName, int _filter, int _repeat, int _usage, int _cube )
 	{
 		preloadList.AddImage( resName, _filter, _repeat, _usage, _cube );
 	}
+
+	//! Adds a sound sample resource name to the preload list for the file system.
 	virtual void AddSamplePreload( const char* resName )
 	{
 		preloadList.AddSample( resName );
 	}
+
+	//! Adds a model resource name to the preload list
 	virtual void AddModelPreload( const char* resName )
 	{
 		preloadList.AddModel( resName );
 	}
+
+	//! Adds an animation resource to the preload list
 	virtual void AddAnimPreload( const char* resName )
 	{
 		preloadList.AddAnim( resName );
 	}
+
+	//! Adds a collision model resource to the preload list.
 	virtual void AddCollisionPreload( const char* resName )
 	{
 		preloadList.AddCollisionModel( resName );
 	}
+
+	//! Adds a particle resource to the preload list
 	virtual void AddParticlePreload( const char* resName )
 	{
 		preloadList.AddParticle( resName );
 	}
 
+	//! Lists files in a specified directory with an optional file extension filter.
 	static void Dir_f( const idCmdArgs& args );
+
+	//! Lists files in a directory tree matching a specified extension.
 	static void DirTree_f( const idCmdArgs& args );
+
+	//! Prints the current search path configuration including directories and zip files.
 	static void Path_f( const idCmdArgs& args );
+
+	//! Updates the timestamp of a file to the current time.
 	static void TouchFile_f( const idCmdArgs& args );
+
+	//! Parses a text file and touches each file listed in it, one per line.
 	static void TouchFileList_f( const idCmdArgs& args );
+
+	//! Writes resource packs for the game.
 	static void BuildGame_f( const idCmdArgs& args );
-	// static void				FileStats_f( const idCmdArgs &args );
+
+	//! Writes a resource file manifest to disk
 	static void WriteResourceFile_f( const idCmdArgs& args );
+
+	//! Parses command line arguments to extract resource files from a container.
 	static void ExtractResourceFile_f( const idCmdArgs& args );
+
+	//! Updates a resource file by adding specified files to it.
 	static void UpdateResourceFile_f( const idCmdArgs& args );
+
+	//! Generates CRC checksum files for resource files.
 	static void GenerateResourceCRCs_f( const idCmdArgs& args );
+
+	//! Creates CRC files for all resource files in the provided file list
 	static void CreateCRCsForResourceFileList( const idFileList& list );
 
+	//! Builds an ordered container of startup files by collecting and deduplicating various asset and script files from specific directories.
 	void		BuildOrderedStartupContainer();
 
 private:
@@ -288,40 +502,113 @@ private:
 	bool				 doom2019Found		= false;
 
 private:
-	// .resource file creation
+	//! Clears all resource packs from the file system.
 	void		 ClearResourcePacks();
+
+	//! Writes resource pack files by analyzing manifest and preload data from map files
 	void		 WriteResourcePacks();
+
+	//! Adds render program files from multiple directories to the provided list.
 	void		 AddRenderProgs( idStrList& files );
+
+	//! Adds font files from specific directories to the provided list.
 	void		 AddFonts( idStrList& files );
 
+	//! Replaces all forward and back slashes in the given path string with the specified separator character.
 	void		 ReplaceSeparators( idStr& path, char sep = PATHSEPARATOR_CHAR );
+
+	//! Retrieves a list of files from the operating system directory matching the specified extension.
 	int			 ListOSFiles( const char* directory, const char* extension, idStrList& list );
+
+	//! Opens a file on the operating system using the specified file name and access mode.
 	idFileHandle OpenOSFile( const char* name, fsMode_t mode );
+
+	//! Closes an operating system file handle.
 	void		 CloseOSFile( idFileHandle o );
+
+	//! Returns the length of a file given its handle
 	int			 DirectFileLength( idFileHandle o );
+
+	//! Copies the contents of a file to a specified destination path.
 	void		 CopyFile( idFile* src, const char* toOSPath );
+
+	//! Adds a unique string to a list and hash index, returning the index of the string in the list.
 	int			 AddUnique( const char* name, idStrList& list, idHashIndex& hashIndex ) const;
+
+	//! Parses a string of extensions separated by pipes and adds each extension to the provided list.
 	void		 GetExtensionList( const char* extension, idStrList& extensionList ) const;
 
-	// RB: added bool allowSubdirsForResourcePaks
+	/*!
+		\brief Retrieves a list of files from the filesystem matching specified extensions and path criteria
+
+		This function searches for files in the filesystem that match the given relative path and extensions. It handles multiple search paths including resource files, zip files, and direct
+	   filesystem access. The function supports filtering by game directory and can optionally allow subdirectories in resource paks. The results are stored in the provided list with duplicate entries
+	   removed using the hash index for uniqueness. The function returns the number of matching files found.
+
+		\param relativePath The relative path to search for files
+		\param extensions List of file extensions to match
+		\param list Output list to store matching file names
+		\param hashIndex Hash index used for duplicate removal
+		\param fullRelativePath Whether to include the full relative path in results
+		\param allowSubdirsForResourcePaks Whether to allow files in subdirectories within resource paks
+		\param gamedir Optional game directory filter, or NULL for all directories
+		\return The number of files found matching the specified criteria
+		\throws FatalError if the filesystem is not initialized
+	*/
 	int			 GetFileList(
 				 const char* relativePath, const idStrList& extensions, idStrList& list, idHashIndex& hashIndex, bool fullRelativePath, bool allowSubdirsForResourcePaks = false, const char* gamedir = NULL );
+
+	/*!
+		\brief Recursively searches for files with specified extensions in a directory tree and adds them to a list with hashing.
+
+		This function performs a recursive search through directory sub trees starting from the given relative path. It first retrieves all subdirectories and then recursively calls itself for each
+	   subdirectory. It also retrieves files from the current directory that match the specified extensions. The function uses a hash index to organize the file list for efficient lookup. The gamedir
+	   parameter can be used to specify a game directory, and allowSubdirsForResourcePaks controls whether subdirectories within resource paks are allowed.
+
+		\param relativePath The directory path to start the recursive search from
+		\param extensions List of file extensions to search for
+		\param list Output list to store the found file paths
+		\param hashIndex Hash index to organize the file list for fast lookup
+		\param allowSubdirsForResourcePaks Flag to control if subdirectories in resource paks should be allowed
+		\param gamedir Optional game directory to search in
+		\return The total number of files found and added to the list
+	*/
 	int		GetFileListTree( const char* relativePath, const idStrList& extensions, idStrList& list, idHashIndex& hashIndex, bool allowSubdirsForResourcePaks = false, const char* gamedir = NULL );
+
+	//! Adds a game directory to the search paths if it doesn't already exist
 	void	AddGameDirectory( const char* path, const char* dir );
 
+	//! Adds a resource file to the file system and returns its index.
 	idVec2i AddResourceFile( const char* resourceFileName );
+
+	//! Removes a map resource file from the file system.
 	void	RemoveMapResourceFile( const char* resourceFileName );
+
+	//! Removes a resource file from the file system by its index.
 	void	RemoveResourceFileByIndex( const idVec2i& idx );
+
+	//! Removes a resource file from the file system by its file name.
 	void	RemoveResourceFile( const char* resourceFileName );
+
+	//! Searches for a resource file by name and returns its index in the search paths.
 	idVec2i FindResourceFile( const char* resourceFileName );
 
+	//! Sets up game directories using the basepath and savepath configuration values.
 	void	SetupGameDirectories( const char* gameName );
+
+	//! Initializes the file system and sets up game directories.
 	void	Startup();
+
+	//! Initializes the precache functionality for the file system.
 	void	InitPrecache();
+
+	//! Reopens cache files if background caching is enabled.
 	void	ReOpenCacheFiles();
 
-	// RB: PK4 support
+	//! Returns a file handle for a file inside a zip archive, or NULL if not found.
 	idFile* GetZipFile( const char* fileName, bool memFile );
+
+	//! Retrieves cache entry information for a file from zip archives.
 	bool	GetZipCacheEntry( const char* fileName, idZipCacheEntry& rc );
 };
 
@@ -343,11 +630,6 @@ idCVar			  fs_enableBackgroundCaching( "fs_enableBackgroundCaching", "1", CVAR_S
 idFileSystemLocal fileSystemLocal;
 idFileSystem*	  fileSystem = &fileSystemLocal;
 
-/*
-================
-idFileSystemLocal::ReadFromBGL
-================
-*/
 int				  idFileSystemLocal::ReadFromBGL( idFile* _resourceFile, void* _buffer, int _offset, int _len )
 {
 	if( _resourceFile->Tell() != _offset ) {
@@ -356,29 +638,14 @@ int				  idFileSystemLocal::ReadFromBGL( idFile* _resourceFile, void* _buffer, i
 	return _resourceFile->Read( _buffer, _len );
 }
 
-/*
-================
-idFileSystemLocal::StartPreload
-================
-*/
 void idFileSystemLocal::StartPreload( const idStrList& _preload )
 {
 }
 
-/*
-================
-idFileSystemLocal::StopPreload
-================
-*/
 void idFileSystemLocal::StopPreload()
 {
 }
 
-/*
-================
-idFileSystemLocal::idFileSystemLocal
-================
-*/
 idFileSystemLocal::idFileSystemLocal()
 {
 	loadCount				= 0;
@@ -389,13 +656,6 @@ idFileSystemLocal::idFileSystemLocal()
 	numFilesOpenedAsCached	= 0;
 }
 
-/*
-===========
-idFileSystemLocal::FilenameCompare
-
-Ignore case and separator char distinctions
-===========
-*/
 bool idFileSystemLocal::FilenameCompare( const char* s1, const char* s2 ) const
 {
 	int c1, c2;
@@ -426,11 +686,6 @@ bool idFileSystemLocal::FilenameCompare( const char* s1, const char* s2 ) const
 	return false; // strings are equal
 }
 
-/*
-========================
-idFileSystemLocal::GetFileLength
-========================
-*/
 int idFileSystemLocal::GetFileLength( const char* relativePath )
 {
 	idFile* f;
@@ -475,11 +730,6 @@ int idFileSystemLocal::GetFileLength( const char* relativePath )
 	return len;
 }
 
-/*
-================
-idFileSystemLocal::OpenOSFile
-================
-*/
 idFileHandle idFileSystemLocal::OpenOSFile( const char* fileName, fsMode_t mode )
 {
 	idFileHandle fp;
@@ -583,11 +833,6 @@ idFileHandle idFileSystemLocal::OpenOSFile( const char* fileName, fsMode_t mode 
 	return fp;
 }
 
-/*
-================
-idFileSystemLocal::CloseOSFile
-================
-*/
 void idFileSystemLocal::CloseOSFile( idFileHandle o )
 {
 	// RB begin
@@ -599,11 +844,6 @@ void idFileSystemLocal::CloseOSFile( idFileHandle o )
 	// RB end
 }
 
-/*
-================
-idFileSystemLocal::DirectFileLength
-================
-*/
 int idFileSystemLocal::DirectFileLength( idFileHandle o )
 {
 	// RB begin
@@ -623,13 +863,6 @@ int idFileSystemLocal::DirectFileLength( idFileHandle o )
 	// RB end
 }
 
-/*
-============
-idFileSystemLocal::CreateOSPath
-
-Creates any directories needed to store the given filename
-============
-*/
 void idFileSystemLocal::CreateOSPath( const char* OSPath )
 {
 	char* ofs;
@@ -661,11 +894,6 @@ void idFileSystemLocal::CreateOSPath( const char* OSPath )
 	}
 }
 
-/*
-=================
-idFileSystemLocal::EnableBackgroundCache
-=================
-*/
 void idFileSystemLocal::EnableBackgroundCache( bool enable )
 {
 	if( !fs_enableBackgroundCaching.GetBool() ) {
@@ -673,11 +901,6 @@ void idFileSystemLocal::EnableBackgroundCache( bool enable )
 	}
 }
 
-/*
-=================
-idFileSystemLocal::BeginLevelLoad
-=================
-*/
 void idFileSystemLocal::BeginLevelLoad( const char* name, char* _blockBuffer, int _blockBufferSize )
 {
 	if( name == NULL || *name == '\0' ) {
@@ -703,12 +926,6 @@ void idFileSystemLocal::BeginLevelLoad( const char* name, char* _blockBuffer, in
 	}
 }
 
-/*
-=================
-idFileSystemLocal::UnloadResourceContainer
-
-=================
-*/
 void idFileSystemLocal::UnloadResourceContainer( const char* name )
 {
 	if( name == NULL || *name == '\0' ) {
@@ -717,11 +934,6 @@ void idFileSystemLocal::UnloadResourceContainer( const char* name )
 	RemoveResourceFile( va( "%s.resources", name ) );
 }
 
-/*
-=================
-idFileSystemLocal::UnloadMapResources
-=================
-*/
 void idFileSystemLocal::UnloadMapResources( const char* name )
 {
 	if( name == NULL || *name == '\0' || idStr::Icmp( "_startup", name ) == 0 ) {
@@ -738,12 +950,6 @@ void idFileSystemLocal::UnloadMapResources( const char* name )
 	// RB end
 }
 
-/*
-=================
-idFileSystemLocal::EndLevelLoad
-
-=================
-*/
 void idFileSystemLocal::EndLevelLoad()
 {
 	if( fs_buildResources.GetBool() ) {
@@ -781,15 +987,14 @@ void idFileSystemLocal::EndLevelLoad()
 	resourceBufferSize		= 0;
 }
 
-// RB begin
 bool idFileSystemLocal::InProductionMode()
 {
 	// return fs_resourceLoadPriority.GetBool() && ( resourceFiles.Num() > 0 ) || ( com_productionMode.GetInteger() != 0 );
 
 	return ( com_productionMode.GetInteger() != 0 );
 }
-// RB end
 
+//! Checks if a file exists in all given manifests, excluding startup and PC manifests
 bool FileExistsInAllManifests( const char* filename, idList<idFileManifest>& manifests )
 {
 	for( int i = 0; i < manifests.Num(); i++ ) {
@@ -806,6 +1011,7 @@ bool FileExistsInAllManifests( const char* filename, idList<idFileManifest>& man
 	return true;
 }
 
+//! Checks if a file exists in all preload manifests except those with "_startup" in their name
 bool FileExistsInAllPreloadManifests( const char* filename, idList<idPreloadManifest>& manifests )
 {
 	for( int i = 0; i < manifests.Num(); i++ ) {
@@ -819,6 +1025,7 @@ bool FileExistsInAllPreloadManifests( const char* filename, idList<idPreloadMani
 	return true;
 }
 
+//! Removes a specified file from all manifests except those marked as startup or PC.
 void RemoveFileFromAllManifests( const char* filename, idList<idFileManifest>& manifests )
 {
 	for( int i = 0; i < manifests.Num(); i++ ) {
@@ -832,11 +1039,6 @@ void RemoveFileFromAllManifests( const char* filename, idList<idFileManifest>& m
 	}
 }
 
-/*
-================
-idFileSystemLocal::AddPerPlatformResources
-================
-*/
 void idFileSystemLocal::AddRenderProgs( idStrList& files )
 {
 	idStrList work;
@@ -865,11 +1067,6 @@ void idFileSystemLocal::AddRenderProgs( idStrList& files )
 	}
 }
 
-/*
-================
-idFileSystemLocal::AddSoundResources
-================
-*/
 void idFileSystemLocal::AddFonts( idStrList& files )
 {
 	// temp fix for getting idaudio files in
@@ -889,6 +1086,7 @@ void idFileSystemLocal::AddFonts( idStrList& files )
 const char* excludeExtensions[]	 = { ".idxma", ".idmsf", ".idwav", ".xma", ".msf", ".wav", ".resource" };
 const int	numExcludeExtensions = sizeof( excludeExtensions ) / sizeof( excludeExtensions[0] );
 
+//! Checks if a resource name has an excluded file extension.
 bool		IsExcludedFile( const idStr& resName )
 {
 	for( int k = 0; k < numExcludeExtensions; k++ ) {
@@ -899,11 +1097,6 @@ bool		IsExcludedFile( const idStr& resName )
 	return false;
 }
 
-/*
-================
-idFileSystemLocal::IsBinaryModel
-================
-*/
 bool idFileSystemLocal::IsBinaryModel( const idStr& resName ) const
 {
 	idStrStatic<32> ext;
@@ -914,11 +1107,6 @@ bool idFileSystemLocal::IsBinaryModel( const idStr& resName ) const
 	return false;
 }
 
-/*
-================
-idFileSystemLocal::IsSoundSample
-================
-*/
 bool idFileSystemLocal::IsSoundSample( const idStr& resName ) const
 {
 	idStrStatic<32> ext;
@@ -1137,11 +1325,6 @@ void idFileSystemLocal::BuildOrderedStartupContainer()
 	idResourceContainer::WriteResourceFile( "_ordered.resources", orderedFiles, false );
 }
 
-/*
-================
-idFileSystemLocal::WriteResourcePacks
-================
-*/
 void idFileSystemLocal::WriteResourcePacks()
 {
 	idStrList		  filesNotCommonToAllMaps( 16384 ); // files that are not shared by all maps, used to trim the common list
@@ -1419,13 +1602,6 @@ void idFileSystemLocal::WriteResourcePacks()
 	ClearResourcePacks();
 }
 
-/*
-=================
-idFileSystemLocal::CopyFile
-
-Copy a fully specified file from one place to another`
-=================
-*/
 void idFileSystemLocal::CopyFile( const char* fromOSPath, const char* toOSPath )
 {
 	if( idStr::Icmp( fromOSPath, toOSPath ) == 0 ) {
@@ -1554,13 +1730,6 @@ void idFileSystemLocal::CopyFile( idFile* src, const char* toOSPath )
 	delete dst;
 }
 
-/*
-====================
-idFileSystemLocal::ReplaceSeparators
-
-Fix things up differently for win/unix/mac
-====================
-*/
 void idFileSystemLocal::ReplaceSeparators( idStr& path, char sep )
 {
 	char* s;
@@ -1572,11 +1741,7 @@ void idFileSystemLocal::ReplaceSeparators( idStr& path, char sep )
 	}
 }
 
-/*
-========================
-IsOSPath
-========================
-*/
+//! Checks if a given path is already in operating system format
 static bool IsOSPath( const char* path )
 {
 	assert( path );
@@ -1600,11 +1765,6 @@ static bool IsOSPath( const char* path )
 	return false;
 }
 
-/*
-========================
-idFileSystemLocal::BuildOSPath
-========================
-*/
 const char* idFileSystemLocal::BuildOSPath( const char* base, const char* relativePath )
 {
 	// handle case of this already being an OS path
@@ -1639,18 +1799,6 @@ const char* idFileSystemLocal::BuildOSPath( const char* base, const char* game, 
 	return OSPath;
 }
 
-/*
-================
-idFileSystemLocal::OSPathToRelativePath
-
-takes a full OS path, as might be found in data from a media creation
-program, and converts it to a relativePath by stripping off directories
-
-Returns false if the osPath tree doesn't match any of the existing
-search paths.
-
-================
-*/
 const char* idFileSystemLocal::OSPathToRelativePath( const char* OSPath )
 {
 	if( ( OSPath[0] != '/' ) && ( OSPath[0] != '\\' ) && ( idStr::FindChar( OSPath, ':' ) < 0 ) ) {
@@ -1714,13 +1862,6 @@ const char* idFileSystemLocal::OSPathToRelativePath( const char* OSPath )
 	return OSPath;
 }
 
-/*
-=====================
-idFileSystemLocal::RelativePathToOSPath
-
-Returns a fully qualified path that can be used with stdio libraries
-=====================
-*/
 const char* idFileSystemLocal::RelativePathToOSPath( const char* relativePath, const char* basePath )
 {
 	const char* path = cvarSystem->GetCVarString( basePath );
@@ -1730,11 +1871,6 @@ const char* idFileSystemLocal::RelativePathToOSPath( const char* relativePath, c
 	return BuildOSPath( path, gameFolder, relativePath );
 }
 
-/*
-=================
-idFileSystemLocal::RemoveFile
-=================
-*/
 void idFileSystemLocal::RemoveFile( const char* relativePath )
 {
 	idStr OSPath;
@@ -1770,11 +1906,6 @@ void idFileSystemLocal::RemoveFile( const char* relativePath )
 	// RB end
 }
 
-/*
-========================
-idFileSystemLocal::RemoveDir
-========================
-*/
 bool idFileSystemLocal::RemoveDir( const char* relativePath )
 {
 	bool success = true;
@@ -1785,15 +1916,6 @@ bool idFileSystemLocal::RemoveDir( const char* relativePath )
 	return success;
 }
 
-/*
-============
-idFileSystemLocal::ReadFile
-
-Filename are relative to the search path
-a null buffer will just return the file length and time without loading
-timestamp can be NULL if not required
-============
-*/
 int idFileSystemLocal::ReadFile( const char* relativePath, void** buffer, ID_TIME_T* timestamp )
 {
 	idFile* f;
@@ -1909,11 +2031,6 @@ int idFileSystemLocal::ReadFile( const char* relativePath, void** buffer, ID_TIM
 	return len;
 }
 
-/*
-=============
-idFileSystemLocal::FreeFile
-=============
-*/
 void idFileSystemLocal::FreeFile( void* buffer )
 {
 	if( !IsInitialized() ) {
@@ -1927,13 +2044,6 @@ void idFileSystemLocal::FreeFile( void* buffer )
 	Mem_Free( buffer );
 }
 
-/*
-============
-idFileSystemLocal::WriteFile
-
-Filenames are relative to the search path
-============
-*/
 int idFileSystemLocal::WriteFile( const char* relativePath, const void* buffer, int size, const char* basePath )
 {
 	idFile* f;
@@ -1959,11 +2069,6 @@ int idFileSystemLocal::WriteFile( const char* relativePath, const void* buffer, 
 	return size;
 }
 
-/*
-========================
-idFileSystemLocal::RenameFile
-========================
-*/
 bool idFileSystemLocal::RenameFile( const char* relativePath, const char* newName, const char* basePath )
 {
 	const char* path = cvarSystem->GetCVarString( basePath );
@@ -1998,11 +2103,6 @@ bool idFileSystemLocal::RenameFile( const char* relativePath, const char* newNam
 	return success;
 }
 
-/*
-===============
-idFileSystemLocal::AddUnique
-===============
-*/
 int idFileSystemLocal::AddUnique( const char* name, idStrList& list, idHashIndex& hashIndex ) const
 {
 	int i, hashKey;
@@ -2018,11 +2118,6 @@ int idFileSystemLocal::AddUnique( const char* name, idStrList& list, idHashIndex
 	return i;
 }
 
-/*
-===============
-idFileSystemLocal::GetExtensionList
-===============
-*/
 void idFileSystemLocal::GetExtensionList( const char* extension, idStrList& extensionList ) const
 {
 	int s, e, l;
@@ -2041,14 +2136,6 @@ void idFileSystemLocal::GetExtensionList( const char* extension, idStrList& exte
 	}
 }
 
-/*
-===============
-idFileSystemLocal::GetFileList
-
-Does not clear the list first so this can be used to progressively build a file list.
-When 'sort' is true only the new files added to the list are sorted.
-===============
-*/
 int idFileSystemLocal::GetFileList(
 	const char* relativePath, const idStrList& extensions, idStrList& list, idHashIndex& hashIndex, bool fullRelativePath, bool allowSubdirsForResourcePaks, const char* gamedir )
 {
@@ -2244,11 +2331,6 @@ int idFileSystemLocal::GetFileList(
 	return list.Num();
 }
 
-/*
-===============
-idFileSystemLocal::ListFiles
-===============
-*/
 idFileList* idFileSystemLocal::ListFiles( const char* relativePath, const char* extension, bool sort, bool fullRelativePath, const char* gamedir )
 {
 	idHashIndex hashIndex( 4096, 4096 );
@@ -2268,11 +2350,6 @@ idFileList* idFileSystemLocal::ListFiles( const char* relativePath, const char* 
 	return fileList;
 }
 
-/*
-===============
-idFileSystemLocal::GetFileListTree
-===============
-*/
 int idFileSystemLocal::GetFileListTree( const char* relativePath, const idStrList& extensions, idStrList& list, idHashIndex& hashIndex, bool allowSubdirsForResourcePaks, const char* gamedir )
 {
 	int			i;
@@ -2298,11 +2375,6 @@ int idFileSystemLocal::GetFileListTree( const char* relativePath, const idStrLis
 	return list.Num();
 }
 
-/*
-===============
-idFileSystemLocal::ListFilesTree
-===============
-*/
 idFileList* idFileSystemLocal::ListFilesTree( const char* relativePath, const char* extension, bool sort, bool allowSubdirsForResourcePaks, const char* gamedir )
 {
 	idHashIndex hashIndex( 4096, 4096 );
@@ -2323,23 +2395,11 @@ idFileList* idFileSystemLocal::ListFilesTree( const char* relativePath, const ch
 	return fileList;
 }
 
-/*
-===============
-idFileSystemLocal::FreeFileList
-===============
-*/
 void idFileSystemLocal::FreeFileList( idFileList* fileList )
 {
 	delete fileList;
 }
 
-/*
-===============
-idFileSystemLocal::ListOSFiles
-
- call to the OS for a listing of files in an OS directory
-===============
-*/
 int idFileSystemLocal::ListOSFiles( const char* directory, const char* extension, idStrList& list )
 {
 	if( !extension ) {
@@ -2349,11 +2409,6 @@ int idFileSystemLocal::ListOSFiles( const char* directory, const char* extension
 	return Sys_ListFiles( directory, extension, list );
 }
 
-/*
-================
-idFileSystemLocal::Dir_f
-================
-*/
 void idFileSystemLocal::Dir_f( const idCmdArgs& args )
 {
 	idStr		relativePath;
@@ -2392,11 +2447,6 @@ void idFileSystemLocal::Dir_f( const idCmdArgs& args )
 	fileSystemLocal.FreeFileList( fileList );
 }
 
-/*
-================
-idFileSystemLocal::DirTree_f
-================
-*/
 void idFileSystemLocal::DirTree_f( const idCmdArgs& args )
 {
 	idStr		relativePath;
@@ -2435,30 +2485,15 @@ void idFileSystemLocal::DirTree_f( const idCmdArgs& args )
 	fileSystemLocal.FreeFileList( fileList );
 }
 
-/*
-================
-idFileSystemLocal::ClearResourcePacks
-================
-*/
 void idFileSystemLocal::ClearResourcePacks()
 {
 }
 
-/*
-================
-idFileSystemLocal::BuildGame_f
-================
-*/
 void idFileSystemLocal::BuildGame_f( const idCmdArgs& args )
 {
 	fileSystemLocal.WriteResourcePacks();
 }
 
-/*
-================
-idFileSystemLocal::WriteResourceFile_f
-================
-*/
 void idFileSystemLocal::WriteResourceFile_f( const idCmdArgs& args )
 {
 	if( args.Argc() != 2 ) {
@@ -2471,11 +2506,6 @@ void idFileSystemLocal::WriteResourceFile_f( const idCmdArgs& args )
 	idResourceContainer::WriteResourceFile( args.Argv( 1 ), manifest, false );
 }
 
-/*
-================
-idFileSystemLocal::UpdateResourceFile_f
-================
-*/
 void idFileSystemLocal::UpdateResourceFile_f( const idCmdArgs& args )
 {
 	if( args.Argc() < 3 ) {
@@ -2491,11 +2521,6 @@ void idFileSystemLocal::UpdateResourceFile_f( const idCmdArgs& args )
 	idResourceContainer::UpdateResourceFile( filename, filesToAdd );
 }
 
-/*
-================
-idFileSystemLocal::ExtractResourceFile_f
-================
-*/
 void idFileSystemLocal::ExtractResourceFile_f( const idCmdArgs& args )
 {
 	if( args.Argc() < 3 ) {
@@ -2522,11 +2547,6 @@ void idFileSystemLocal::ExtractResourceFile_f( const idCmdArgs& args )
 	idResourceContainer::ExtractResourceFile( filename, outPath, copyWaves, allFileTypes );
 }
 
-/*
-============
-idFileSystemLocal::Path_f
-============
-*/
 void idFileSystemLocal::Path_f( const idCmdArgs& args )
 {
 	common->Printf( "Current search path:\n" );
@@ -2549,14 +2569,6 @@ void idFileSystemLocal::Path_f( const idCmdArgs& args )
 	}
 }
 
-/*
-============
-idFileSystemLocal::TouchFile_f
-
-The only purpose of this function is to allow game script files to copy
-arbitrary files furing an "fs_copyfiles 1" run.
-============
-*/
 void idFileSystemLocal::TouchFile_f( const idCmdArgs& args )
 {
 	idFile* f;
@@ -2572,13 +2584,6 @@ void idFileSystemLocal::TouchFile_f( const idCmdArgs& args )
 	}
 }
 
-/*
-============
-idFileSystemLocal::TouchFileList_f
-
-Takes a text file and touches every file in it, use one file per line.
-============
-*/
 void idFileSystemLocal::TouchFileList_f( const idCmdArgs& args )
 {
 	if( args.Argc() != 2 ) {
@@ -2605,13 +2610,6 @@ void idFileSystemLocal::TouchFileList_f( const idCmdArgs& args )
 	}
 }
 
-/*
-============
-idFileSystemLocal::GenerateResourceCRCs_f
-
-Generates a CRC checksum file for each .resources file.
-============
-*/
 void idFileSystemLocal::GenerateResourceCRCs_f( const idCmdArgs& args )
 {
 	idLib::Printf( "Generating CRCs for resource files...\n" );
@@ -2629,11 +2627,6 @@ void idFileSystemLocal::GenerateResourceCRCs_f( const idCmdArgs& args )
 	idLib::Printf( "Done generating CRCs for resource files.\n" );
 }
 
-/*
-================
-idFileSystemLocal::CreateCRCsForResourceFileList
-================
-*/
 void idFileSystemLocal::CreateCRCsForResourceFileList( const idFileList& list )
 {
 	for( int fileIndex = 0; fileIndex < list.GetNumFiles(); ++fileIndex ) {
@@ -2705,11 +2698,6 @@ void idFileSystemLocal::CreateCRCsForResourceFileList( const idFileList& list )
 	}
 }
 
-/*
-================
-idFileSystemLocal::AddResourceFile
-================
-*/
 idVec2i idFileSystemLocal::AddResourceFile( const char* resourceFileName )
 {
 	// RB: check if it was already added
@@ -2736,11 +2724,6 @@ idVec2i idFileSystemLocal::AddResourceFile( const char* resourceFileName )
 	return idVec2i( -1, -1 );
 }
 
-/*
-================
-idFileSystemLocal::FindResourceFile
-================
-*/
 idVec2i idFileSystemLocal::FindResourceFile( const char* resourceFileName )
 {
 	for( int sp = searchPaths.Num() - 1; sp >= 0; sp-- ) {
@@ -2755,11 +2738,6 @@ idVec2i idFileSystemLocal::FindResourceFile( const char* resourceFileName )
 
 	return idVec2i( -1, -1 );
 }
-/*
-================
-idFileSystemLocal::RemoveResourceFileByIndex
-================
-*/
 void idFileSystemLocal::RemoveResourceFileByIndex( const idVec2i& idx )
 {
 	if( idx.x >= 0 && idx.x < searchPaths.Num() ) {
@@ -2772,11 +2750,6 @@ void idFileSystemLocal::RemoveResourceFileByIndex( const idVec2i& idx )
 	}
 }
 
-/*
-================
-idFileSystemLocal::RemoveMapResourceFile
-================
-*/
 void idFileSystemLocal::RemoveMapResourceFile( const char* resourceFileName )
 {
 #if 0
@@ -2804,13 +2777,6 @@ void idFileSystemLocal::RemoveResourceFile( const char* resourceFileName )
 #endif
 }
 
-/*
-================
-idFileSystemLocal::AddGameDirectory
-
-Sets gameFolder, adds the directory to the head of the search paths
-================
-*/
 void idFileSystemLocal::AddGameDirectory( const char* path, const char* dir )
 {
 	// check if the search path already exists
@@ -2898,13 +2864,6 @@ void idFileSystemLocal::AddGameDirectory( const char* path, const char* dir )
 	// RB end
 }
 
-/*
-================
-idFileSystemLocal::SetupGameDirectories
-
-  Takes care of the correct search order.
-================
-*/
 void idFileSystemLocal::SetupGameDirectories( const char* gameName )
 {
 	// setup basepath
@@ -2917,11 +2876,6 @@ void idFileSystemLocal::SetupGameDirectories( const char* gameName )
 	}
 }
 
-/*
-================
-idFileSystemLocal::InitPrecache
-================
-*/
 void idFileSystemLocal::InitPrecache()
 {
 	if( !fs_enableBackgroundCaching.GetBool() ) {
@@ -2930,11 +2884,6 @@ void idFileSystemLocal::InitPrecache()
 	numFilesOpenedAsCached = 0;
 }
 
-/*
-================
-idFileSystemLocal::ReOpenCacheFiles
-================
-*/
 void idFileSystemLocal::ReOpenCacheFiles()
 {
 	if( !fs_enableBackgroundCaching.GetBool() ) {
@@ -2942,11 +2891,6 @@ void idFileSystemLocal::ReOpenCacheFiles()
 	}
 }
 
-/*
-================
-idFileSystemLocal::Startup
-================
-*/
 void idFileSystemLocal::Startup()
 {
 	common->Printf( "------ Initializing File System ------\n" );
@@ -3035,11 +2979,6 @@ void idFileSystemLocal::Init()
 #endif
 }
 
-/*
-================
-idFileSystemLocal::Restart
-================
-*/
 void idFileSystemLocal::Restart()
 {
 	// free anything we currently have loaded
@@ -3057,13 +2996,6 @@ void idFileSystemLocal::Restart()
 #endif
 }
 
-/*
-================
-idFileSystemLocal::Shutdown
-
-Frees all resources and closes all files
-================
-*/
 void idFileSystemLocal::Shutdown( bool reloading )
 {
 	gameFolder.Clear();
@@ -3080,31 +3012,11 @@ void idFileSystemLocal::Shutdown( bool reloading )
 	cmdSystem->RemoveCommand( "touchFile" );
 }
 
-/*
-================
-idFileSystemLocal::IsInitialized
-================
-*/
 bool idFileSystemLocal::IsInitialized() const
 {
 	return ( searchPaths.Num() != 0 );
 }
 
-/*
-=================================================================================
-
-Opening files
-
-=================================================================================
-*/
-
-/*
-========================
-idFileSystemLocal::GetResourceCacheEntry
-
-Returns false if the entry isn't found
-========================
-*/
 bool idFileSystemLocal::GetResourceCacheEntry( const char* fileName, idResourceCacheEntry& rc )
 {
 	idStrStatic<MAX_OSPATH> canonical;
@@ -3145,14 +3057,6 @@ bool idFileSystemLocal::GetResourceCacheEntry( const char* fileName, idResourceC
 	return false;
 }
 
-/*
-========================
-idFileSystemLocal::GetZipCacheEntry
-
-Returns false if the entry isn't found
-========================
-*/
-// RB begin
 bool idFileSystemLocal::GetZipCacheEntry( const char* fileName, idZipCacheEntry& rc )
 {
 	idStrStatic<MAX_OSPATH> canonical;
@@ -3191,13 +3095,6 @@ bool idFileSystemLocal::GetZipCacheEntry( const char* fileName, idZipCacheEntry&
 	return false;
 }
 
-/*
-========================
-idFileSystemLocal::GetZipFile
-
-Returns NULL
-========================
-*/
 idFile* idFileSystemLocal::GetZipFile( const char* fileName, bool memFile )
 {
 	if( !UsingZipFiles() ) {
@@ -3252,15 +3149,6 @@ idFile* idFileSystemLocal::GetZipFile( const char* fileName, bool memFile )
 	return NULL;
 }
 
-// RB en
-
-/*
-========================
-idFileSystemLocal::GetResourceFile
-
-Returns NULL
-========================
-*/
 idFile* idFileSystemLocal::GetResourceFile( const char* fileName, bool memFile )
 {
 	if( !UsingResourceFiles() ) {
@@ -3307,16 +3195,6 @@ idFile* idFileSystemLocal::GetResourceFile( const char* fileName, bool memFile )
 	return NULL;
 }
 
-/*
-===========
-idFileSystemLocal::OpenFileReadFlags
-
-Finds the file in the search path, following search flag recommendations
-Returns filesize and an open FILE pointer.
-Used for streaming data out of either a
-separate file or a ZIP file.
-===========
-*/
 idFile* idFileSystemLocal::OpenFileReadFlags( const char* relativePath, int searchFlags, bool allowCopyFiles, const char* gamedir )
 {
 	if( !IsInitialized() ) {
@@ -3502,21 +3380,11 @@ idFile* idFileSystemLocal::OpenFileRead( const char* relativePath, bool allowCop
 	return OpenFileReadFlags( relativePath, FSFLAG_SEARCH_DIRS, allowCopyFiles, gamedir );
 }
 
-/*
-===========
-idFileSystemLocal::OpenFileReadMemory
-===========
-*/
 idFile* idFileSystemLocal::OpenFileReadMemory( const char* relativePath, bool allowCopyFiles, const char* gamedir )
 {
 	return OpenFileReadFlags( relativePath, FSFLAG_SEARCH_DIRS | FSFLAG_RETURN_FILE_MEM, allowCopyFiles, gamedir );
 }
 
-/*
-===========
-idFileSystemLocal::OpenFileWrite
-===========
-*/
 idFile* idFileSystemLocal::OpenFileWrite( const char* relativePath, const char* basePath )
 {
 	const char*		  path;
@@ -3556,11 +3424,6 @@ idFile* idFileSystemLocal::OpenFileWrite( const char* relativePath, const char* 
 	return f;
 }
 
-/*
-===========
-idFileSystemLocal::OpenExplicitFileRead
-===========
-*/
 idFile* idFileSystemLocal::OpenExplicitFileRead( const char* OSPath )
 {
 	idFile_Permanent* f;
@@ -3590,11 +3453,6 @@ idFile* idFileSystemLocal::OpenExplicitFileRead( const char* OSPath )
 	return f;
 }
 
-/*
-===========
-idFileSystemLocal::OpenExplicitPakFile
-===========
-*/
 idFile_Cached* idFileSystemLocal::OpenExplicitPakFile( const char* OSPath )
 {
 	idFile_Cached* f;
@@ -3624,11 +3482,6 @@ idFile_Cached* idFileSystemLocal::OpenExplicitPakFile( const char* OSPath )
 	return f;
 }
 
-/*
-===========
-idFileSystemLocal::OpenExplicitFileWrite
-===========
-*/
 idFile* idFileSystemLocal::OpenExplicitFileWrite( const char* OSPath )
 {
 	idFile_Permanent* f;
@@ -3659,11 +3512,6 @@ idFile* idFileSystemLocal::OpenExplicitFileWrite( const char* OSPath )
 	return f;
 }
 
-/*
-===========
-idFileSystemLocal::OpenFileAppend
-===========
-*/
 idFile* idFileSystemLocal::OpenFileAppend( const char* relativePath, bool sync, const char* basePath )
 {
 	const char*		  path;
@@ -3701,11 +3549,6 @@ idFile* idFileSystemLocal::OpenFileAppend( const char* relativePath, bool sync, 
 	return f;
 }
 
-/*
-================
-idFileSystemLocal::OpenFileByMode
-================
-*/
 idFile* idFileSystemLocal::OpenFileByMode( const char* relativePath, fsMode_t mode )
 {
 	if( mode == FS_READ ) {
@@ -3721,11 +3564,6 @@ idFile* idFileSystemLocal::OpenFileByMode( const char* relativePath, fsMode_t mo
 	return NULL;
 }
 
-/*
-==============
-idFileSystemLocal::CloseFile
-==============
-*/
 void idFileSystemLocal::CloseFile( idFile* f )
 {
 	if( !IsInitialized() ) {
@@ -3734,11 +3572,6 @@ void idFileSystemLocal::CloseFile( idFile* f )
 	delete f;
 }
 
-/*
-=================
-idFileSystemLocal::FindDLL
-=================
-*/
 void idFileSystemLocal::FindDLL( const char* name, char _dllPath[MAX_OSPATH] )
 {
 	char dllName[MAX_OSPATH];
@@ -3760,11 +3593,6 @@ void idFileSystemLocal::FindDLL( const char* name, char _dllPath[MAX_OSPATH] )
 	idStr::snPrintf( _dllPath, MAX_OSPATH, dllPath.c_str() );
 }
 
-/*
-===============
-idFileSystemLocal::FindFile
-===============
-*/
 findFile_t idFileSystemLocal::FindFile( const char* path )
 {
 	idFile* f = OpenFileReadFlags( path, FSFLAG_SEARCH_DIRS );
@@ -3775,11 +3603,6 @@ findFile_t idFileSystemLocal::FindFile( const char* path )
 	return FIND_YES;
 }
 
-/*
-===============
-idFileSystemLocal::IsFolder
-===============
-*/
 sysFolder_t idFileSystemLocal::IsFolder( const char* relativePath, const char* basePath )
 {
 	return Sys_IsFolder( RelativePathToOSPath( relativePath, basePath ) );

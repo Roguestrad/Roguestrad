@@ -204,14 +204,14 @@ enum dialogType_t {
 	DIALOG_BENCHMARK,
 };
 
-/*
-================================================
-idDialogInfo
-================================================
+/*!
+	\class idDialogInfo
+	\brief Manages dialog information for in-game conversations.
 */
 class idDialogInfo
 {
 public:
+	//! Initializes a new instance of the idDialogInfo class with default values.
 	idDialogInfo()
 	{
 		msg				 = GDM_INVALID;
@@ -252,10 +252,9 @@ public:
 	idStrId				 txt4;
 };
 
-/*
-================================================
-idLoadScreenInfo
-================================================
+/*!
+	\class idLoadScreenInfo
+	\brief Manages information displayed during load screens.
 */
 class idLoadScreenInfo
 {
@@ -264,25 +263,58 @@ public:
 	idStr value;
 };
 
-/*
-==============================================================
+/*!
+	\class idCommonDialog
+	\brief Manages game dialog interfaces including display, rendering, and event handling.
 
-  Common Dialog
+	The idCommonDialog class serves as the central system for managing all dialog interfaces within the application. It handles the initialization, rendering, and shutdown of dialog systems while
+   providing methods to add, clear, and control various dialog messages. The class supports both static and dynamic dialogs with customizable callbacks and display options, allowing for flexible UI
+   interactions. It maintains an internal list of dialog entries and manages their lifecycle including activation, deactivation, and rendering during different application states such as loading. The
+   system also handles dialog events and can pause the game when dialogs are active, providing hooks for script callbacks and localization support for dialog messages and titles. The class ensures
+   proper resource management through initialization and shutdown routines, and offers utilities to clear specific or all dialogs as needed for different game states and conditions.
 
-==============================================================
 */
-
 class idCommonDialog
 {
 public:
+	//! Initializes the common dialog system by setting up SWF dialogs and binding dialog constants.
 	void  Init();
+
+	//! Renders the common dialog interface, handling message display and UI updates.
 	void  Render( bool loading );
+
+	//! Shuts down the common dialog system by clearing dialogs and deleting associated resources.
 	void  Shutdown();
+
+	//! Restarts the common dialog system by shutting down and reinitializing it.
 	void  Restart();
 
+	//! Returns true if dialog is currently pausing the game, false otherwise.
 	bool  IsDialogPausing() { return dialogPause; }
+
+	//! Clears dialog messages from the list, optionally forcing clear all messages.
 	void  ClearDialogs( bool forceClear = false );
+
+	//! Checks if a dialog message is present in the dialog system and optionally returns whether it is currently active
 	bool  HasDialogMsg( gameDialogMessages_t msg, bool* isNowActive );
+
+	/*!
+		\brief Adds a dialog to be displayed with specified message, type, and callback functions.
+
+		This function creates and adds a dialog entry to the dialog system. It initializes the dialog with the provided parameters including message type, accept and cancel callbacks, pause behavior,
+	   and various flags for controlling the dialog's lifecycle and rendering. The dialog is added to an internal dialog list managed by the system.
+
+		\param msg The game dialog message to display
+		\param type The type of dialog to create
+		\param acceptCallback Callback function to invoke when the dialog is accepted
+		\param cancelCallback Callback function to invoke when the dialog is cancelled
+		\param pause Whether to pause the game when the dialog is shown
+		\param location Source file location where this function was called from
+		\param lineNumber Line number in the source file where this function was called
+		\param leaveOnMapHeapReset Whether to preserve the dialog when the map heap is reset
+		\param waitOnAtlas Whether to wait for texture atlas loading before displaying
+		\param renderDuringLoad Whether to render the dialog during asset loading
+	*/
 	void  AddDialog( gameDialogMessages_t msg,
 		 dialogType_t					  type,
 		 idSWFScriptFunction*			  acceptCallback,
@@ -293,6 +325,23 @@ public:
 		 bool							  leaveOnMapHeapReset = false,
 		 bool							  waitOnAtlas		  = false,
 		 bool							  renderDuringLoad	  = false );
+
+	/*!
+		\brief Adds a dynamic dialog to the dialog system with specified message, callbacks, and options.
+
+		This function creates and adds a dynamic dialog to the dialog system. It initializes a dialog info structure with the provided parameters including message, callbacks for different dialog
+	   actions, option text for dialog buttons, and various flags controlling dialog behavior. The dialog is added to the internal dialog list for rendering and processing. The function handles up to
+	   four callbacks and four option text entries for different dialog buttons.
+
+		\param msg The game dialog message identifier to display
+		\param callbacks List of script function callbacks for dialog actions (accept, cancel, alt1, alt2)
+		\param optionText List of string identifiers for dialog button texts
+		\param pause Whether to pause the game when the dialog is displayed
+		\param overrideMsg Override message text to display instead of the message identifier
+		\param leaveOnMapHeapReset Whether to keep the dialog when the map heap is reset
+		\param waitOnAtlas Whether to wait for atlas loading before displaying
+		\param renderDuringLoad Whether to render the dialog during asset loading
+	*/
 	void  AddDynamicDialog( gameDialogMessages_t	  msg,
 		 const idStaticList<idSWFScriptFunction*, 4>& callbacks,
 		 const idStaticList<idStrId, 4>&			  optionText,
@@ -301,22 +350,48 @@ public:
 		 bool										  leaveOnMapHeapReset = false,
 		 bool										  waitOnAtlas		  = false,
 		 bool										  renderDuringLoad	  = false );
+
+	//! Sets an integer value for a specified dialog name if the dialog is valid.
 	void  AddDialogIntVal( const char* name, int val );
+
+	//! Returns true if a dialog is currently active
 	bool  IsDialogActive();
+
+	//! Clears a specific dialog message from the dialog system
 	void  ClearDialog( gameDialogMessages_t msg, const char* location = NULL, int lineNumber = 0 );
+
+	//! Displays or hides the save indicator dialog based on the show parameter.
 	void  ShowSaveIndicator( bool show );
+
+	//! Returns true if there is at least one active dialog in the message list.
 	bool  HasAnyActiveDialog() const { return ( messageList.Num() > 0 ) && ( !messageList[0].clear ); }
 
+	//! Clears all dialog entries in the message list by setting their clear flags.
 	void  ClearAllDialogHack();
+
+	//! Returns a localized dialog message and title based on the specified game dialog message type
 	idStr GetDialogMsg( gameDialogMessages_t msg, idStr& message, idStr& title );
+
+	//! Handles a system event for the dialog, returning true if the event was processed.
 	bool  HandleDialogEvent( const sysEvent_t* sev );
 
 protected:
+	//! Removes wait dialogs from the message list.
 	void RemoveWaitDialogs();
+
+	//! Displays a dialog box with the specified message and options.
 	void ShowDialog( const idDialogInfo& info );
+
+	//! Displays the next pending dialog message from the message list.
 	void ShowNextDialog();
+
+	//! Activates or deactivates the common dialog.
 	void ActivateDialog( bool activate );
+
+	//! Adds a dialog to the internal list, avoiding duplicates and managing dialog display.
 	void AddDialogInternal( idDialogInfo& info );
+
+	//! Releases all callback objects associated with the message at the specified index
 	void ReleaseCallBacks( int index );
 
 private:

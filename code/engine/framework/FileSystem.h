@@ -66,15 +66,25 @@ typedef enum { FS_READ = 0, FS_WRITE = 1, FS_APPEND = 2 } fsMode_t;
 
 typedef enum { FIND_NO, FIND_YES } findFile_t;
 
-// file list for directory listings
+/*!
+	\class idFileList
+	\brief Container for managing lists of files with support for directory listings.
+*/
 class idFileList
 {
 	friend class idFileSystemLocal;
 
 public:
+	//! Returns the base path string stored in the file list.
 	const char*		 GetBasePath() const { return basePath; }
+
+	//! Returns the number of files in the file list
 	int				 GetNumFiles() const { return list.Num(); }
+
+	//! Returns the file name at the specified index in the file list.
 	const char*		 GetFile( int index ) const { return list[index]; }
+
+	//! Returns the internal list of files stored in this file list container
 	const idStrList& GetList() const { return list; }
 
 private:
@@ -82,6 +92,18 @@ private:
 	idStrList list;
 };
 
+/*!
+	\class idFileSystem
+	\brief Provides a virtual interface for file system operations and resource management.
+
+	This abstract class defines a comprehensive interface for file system operations, including file reading, writing, listing, and resource management. It supports various file access patterns, from
+   standard file I/O to specialized operations like reading from packed archives and managing resource preloading. The interface is designed to be implemented by concrete file system providers that
+   handle the actual file operations and resource management logic. It also includes functionality for managing background caching, level loading, and resource container operations. The class supports
+   multiple operating system path formats and provides utilities for path conversion between OS-specific and relative paths. Memory management for file buffers and resource data is handled through
+   dedicated allocation and deallocation methods. The interface is intended to be used by other components that need to access files or resources without being directly tied to specific file system
+   implementations.
+
+*/
 class idFileSystem
 {
 public:
@@ -193,7 +215,7 @@ public:
 	// ignore case and seperator char distinctions
 	virtual bool		   FilenameCompare( const char* s1, const char* s2 ) const = 0;
 
-	// This is just handy
+	//! Returns the timestamp of the specified file path
 	ID_TIME_T			   GetTimestamp( const char* relativePath )
 	{
 		ID_TIME_T timestamp = FILE_NOT_FOUND_TIMESTAMP;

@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Common_local.h"
 
-/*
-==============
-idCommonLocal::InitializeMPMapsModes
-==============
-*/
 void idCommonLocal::InitializeMPMapsModes()
 {
 	const char** gameModes		  = NULL;
@@ -69,11 +64,6 @@ void idCommonLocal::InitializeMPMapsModes()
 	}
 }
 
-/*
-==============
-idCommonLocal::OnStartHosting
-==============
-*/
 void idCommonLocal::OnStartHosting( idMatchParameters& parms )
 {
 	if( ( parms.matchFlags & MATCH_REQUIRE_PARTY_LOBBY ) == 0 ) {
@@ -119,11 +109,6 @@ void idCommonLocal::OnStartHosting( idMatchParameters& parms )
 	parms.numSlots = session->GetTitleStorageInt( "MAX_PLAYERS_ALLOWED", 4 );
 }
 
-/*
-==============
-idCommonLocal::StartMainMenu
-==============
-*/
 void idCommonLocal::StartMenu( bool playIntro )
 {
 	if( game && game->Shell_IsActive() ) {
@@ -138,11 +123,6 @@ void idCommonLocal::StartMenu( bool playIntro )
 	console->Close();
 }
 
-/*
-===============
-idCommonLocal::ExitMenu
-===============
-*/
 void idCommonLocal::ExitMenu()
 {
 	if( game ) {
@@ -150,13 +130,6 @@ void idCommonLocal::ExitMenu()
 	}
 }
 
-/*
-==============
-idCommonLocal::MenuEvent
-
-Executes any commands returned by the gui
-==============
-*/
 bool idCommonLocal::MenuEvent( const sysEvent_t* event )
 {
 	if( session->GetSignInManager().ProcessInputEvent( event ) ) {
@@ -174,11 +147,6 @@ bool idCommonLocal::MenuEvent( const sysEvent_t* event )
 	return false;
 }
 
-/*
-=================
-idCommonLocal::GuiFrameEvents
-=================
-*/
 void idCommonLocal::GuiFrameEvents()
 {
 	if( game ) {

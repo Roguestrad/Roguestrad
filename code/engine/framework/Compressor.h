@@ -30,28 +30,46 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __COMPRESSOR_H__
 #define __COMPRESSOR_H__
 
-/*
-===============================================================================
+/*!
+	\class idCompressor
+	\brief A base class for implementing various compression algorithms that wraps file I/O operations.
 
-	idCompressor is a layer ontop of idFile which provides lossless data
-	compression. The compressor can be used as a regular file and multiple
-	compressors can be stacked ontop of each other.
+	This class serves as an abstract interface for different compression implementations, providing a unified way to handle compression and decompression operations through file-like abstractions. It
+   inherits from idFile, allowing it to be used in contexts expecting file I/O operations while adding compression capabilities. The class defines a set of factory methods for creating specific
+   compression implementations such as bit stream, run-length, Huffman, arithmetic, LZSS, and LZW compressors. These implementations can be used to compress data during write operations and decompress
+   data during read operations. The interface also includes methods for managing the compression state, obtaining compression statistics, and performing standard file operations like seeking,
+   flushing, and telling the current position. Each concrete implementation of this interface will provide its own compression strategy while maintaining the same external interface for consistent
+   usage.
 
-===============================================================================
 */
-
 class idCompressor : public idFile
 {
 public:
-	// compressor allocation
+	//! Allocates and returns a new instance of a no-compression compressor.
 	static idCompressor* AllocNoCompression();
+
+	//! Allocates and returns a new bit stream compressor instance.
 	static idCompressor* AllocBitStream();
+
+	//! Allocates and returns a new instance of a run-length compressor.
 	static idCompressor* AllocRunLength();
+
+	//! Allocates and returns a new instance of idCompressor_RunLength_ZeroBased.
 	static idCompressor* AllocRunLength_ZeroBased();
+
+	//! Allocates and returns a new Huffman compressor instance.
 	static idCompressor* AllocHuffman();
+
+	//! Allocates and returns a new arithmetic compressor instance.
 	static idCompressor* AllocArithmetic();
+
+	//! Allocates and returns a new LZSS compressor instance.
 	static idCompressor* AllocLZSS();
+
+	//! Allocates and returns a new LZSS_WordAligned compressor instance.
 	static idCompressor* AllocLZSS_WordAligned();
+
+	//! Allocates and returns a new LZW compressor instance.
 	static idCompressor* AllocLZW();
 
 	// initialization

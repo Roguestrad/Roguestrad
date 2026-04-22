@@ -29,17 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-================================================================================================
-Contains the DebugGraph implementation.
-================================================================================================
-*/
-
-/*
-========================
-idDebugGraph::idDebugGraph
-========================
-*/
 idDebugGraph::idDebugGraph( int numItems ) :
 	bgColor( 0.0f, 0.0f, 0.0f, 0.5f ),
 	fontColor( 1.0f, 1.0f, 1.0f, 1.0f ),
@@ -52,11 +41,6 @@ idDebugGraph::idDebugGraph( int numItems ) :
 	Init( numItems );
 }
 
-/*
-========================
-idDebugGraph::Init
-========================
-*/
 void idDebugGraph::Init( int numBars )
 {
 	bars.SetNum( numBars );
@@ -67,11 +51,6 @@ void idDebugGraph::Init( int numBars )
 	}
 }
 
-/*
-========================
-idDebugGraph::AddGridLine
-========================
-*/
 void idDebugGraph::AddGridLine( float value, const idVec4& color )
 {
 	graphPlot_t& line = grid.Alloc();
@@ -79,11 +58,6 @@ void idDebugGraph::AddGridLine( float value, const idVec4& color )
 	line.color		  = color;
 }
 
-/*
-========================
-idDebugGraph::SetValue
-========================
-*/
 void idDebugGraph::SetValue( int b, float value, const idVec4& color )
 {
 	if( !enable ) {
@@ -100,11 +74,6 @@ void idDebugGraph::SetValue( int b, float value, const idVec4& color )
 	}
 }
 
-/*
-========================
-idDebugGraph::SetLabel
-========================
-*/
 void idDebugGraph::SetLabel( int b, const char* text )
 {
 	if( labels.Num() != bars.Num() ) {
@@ -113,11 +82,6 @@ void idDebugGraph::SetLabel( int b, const char* text )
 	labels[b] = text;
 }
 
-/*
-========================
-idDebugGraph::Render
-========================
-*/
 void idDebugGraph::Render( idRenderSystem* gui )
 {
 	if( !enable ) {

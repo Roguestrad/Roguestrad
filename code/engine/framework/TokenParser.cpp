@@ -121,7 +121,6 @@ int idTokenParser::ExpectTokenString( const char* string )
 	}
 	return 1;
 }
-// expect a certain token type
 int idTokenParser::ExpectTokenType( int type, int subtype, idToken* token )
 {
 	idStr str;
@@ -198,7 +197,6 @@ int idTokenParser::ExpectTokenType( int type, int subtype, idToken* token )
 	}
 	return 1;
 }
-// expect a token
 int idTokenParser::ExpectAnyToken( idToken* token )
 {
 	if( !ReadToken( token ) ) {
@@ -252,7 +250,6 @@ int idTokenParser::ParseInt()
 	}
 	return token.GetIntValue();
 }
-// read a boolean
 bool idTokenParser::ParseBool()
 {
 	idToken token;
@@ -262,8 +259,6 @@ bool idTokenParser::ParseBool()
 	}
 	return ( token.GetIntValue() != 0 );
 }
-// read a floating point number.  If errorFlag is NULL, a non-numeric token will
-// issue an Error().  If it isn't NULL, it will issue a Warning() and set *errorFlag = true
 float idTokenParser::ParseFloat( bool* errorFlag )
 {
 	idToken token;

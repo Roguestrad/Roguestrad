@@ -40,11 +40,6 @@ idCVar com_timestampPrints( "com_timestampPrints", "0", CVAR_SYSTEM, "print time
 idCVar com_printFilter( "com_printFilter", "", CVAR_SYSTEM, "only print lines that contain this, add multiple filters with a ; delimeter" );
 #endif
 
-/*
-==================
-idCommonLocal::BeginRedirect
-==================
-*/
 void idCommonLocal::BeginRedirect( char* buffer, int buffersize, void ( *flush )( const char* ) )
 {
 	if( !buffer || !buffersize || !flush ) {
@@ -57,11 +52,6 @@ void idCommonLocal::BeginRedirect( char* buffer, int buffersize, void ( *flush )
 	*rd_buffer = 0;
 }
 
-/*
-==================
-idCommonLocal::EndRedirect
-==================
-*/
 void idCommonLocal::EndRedirect()
 {
 	if( rd_flush && rd_buffer[0] ) {
@@ -73,11 +63,6 @@ void idCommonLocal::EndRedirect()
 	rd_flush	  = NULL;
 }
 
-/*
-==================
-idCommonLocal::CloseLogFile
-==================
-*/
 void idCommonLocal::CloseLogFile()
 {
 	if( logFile ) {
@@ -87,23 +72,11 @@ void idCommonLocal::CloseLogFile()
 	}
 }
 
-/*
-==================
-idCommonLocal::SetRefreshOnPrint
-==================
-*/
 void idCommonLocal::SetRefreshOnPrint( bool set )
 {
 	com_refreshOnPrint = set;
 }
 
-/*
-==================
-idCommonLocal::VPrintf
-
-A raw string should NEVER be passed as fmt, because of "%f" type crashes.
-==================
-*/
 void idCommonLocal::VPrintf( const char* fmt, va_list args )
 {
 	static bool logFileFailed = false;
@@ -360,11 +333,6 @@ void idCommonLocal::Warning( const char* fmt, ... )
 	}
 }
 
-/*
-==================
-idCommonLocal::PrintWarnings
-==================
-*/
 void idCommonLocal::PrintWarnings()
 {
 	int i;
@@ -388,22 +356,12 @@ void idCommonLocal::PrintWarnings()
 	}
 }
 
-/*
-==================
-idCommonLocal::ClearWarnings
-==================
-*/
 void idCommonLocal::ClearWarnings( const char* reason )
 {
 	warningCaption = reason;
 	warningList.Clear();
 }
 
-/*
-==================
-idCommonLocal::DumpWarnings
-==================
-*/
 void idCommonLocal::DumpWarnings()
 {
 	int		i;

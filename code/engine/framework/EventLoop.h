@@ -42,29 +42,39 @@ If you have questions concerning this license or the applicable additional terms
 
 const int MAX_PUSHED_EVENTS = 64;
 
+/*!
+	\class idEventLoop
+	\brief Manages system events and provides a mechanism for event processing and journaling.
+
+	The idEventLoop class provides a central mechanism for handling system events within the application. It supports both normal event processing and journaling capabilities, allowing events to be
+   recorded and replayed. The class maintains an event queue for managing events that are pushed for later processing. It interfaces with the system to retrieve real events and can operate in
+   different journal modes, indicated by the journal level. The event loop can be initialized to set up journaling and shutdown to properly close journal files. The class offers methods for retrieving
+   events, processing them, and dispatching them to appropriate handlers based on their type. It also provides timing capabilities through the Milliseconds method.
+
+*/
 class idEventLoop
 {
 public:
+	//! Initializes the event loop object.
 	idEventLoop();
 	~idEventLoop();
 
+	//! Initializes the event loop and sets up journaling if enabled.
 	void	   Init();
 
-	// Closes the journal file if needed.
+	//! Closes the journal file if needed.
 	void	   Shutdown();
 
-	// It is possible to get an event at the beginning of a frame that
-	// has a time stamp lower than the last event from the previous frame.
+	//! Retrieves the next available system event, either from pushed events or directly from the real event source.
 	sysEvent_t GetEvent();
 
-	// Dispatches all pending events and returns the current time.
+	//! Dispatches pending events and returns the current time.
 	int		   RunEventLoop( bool commandExecution = true );
 
-	// Gets the current time in a way that will be journaled properly,
-	// as opposed to Sys_Milliseconds(), which always reads a real timer.
+	//! Returns the current time in milliseconds since the start of the application
 	int		   Milliseconds();
 
-	// Returns the journal level, 1 = record, 2 = play back.
+	//! Returns the current journal level, where 1 indicates recording and 2 indicates playback.
 	int		   JournalLevel() const;
 
 	// Journal file.
@@ -80,8 +90,13 @@ private:
 
 	static idCVar com_journal;
 
+	//! Retrieves the next system event, either from the journal file or directly from the system.
 	sysEvent_t	  GetRealEvent();
+
+	//! Processes a system event by handling key inputs, console commands, or forwarding to the common event processor.
 	void		  ProcessEvent( sysEvent_t ev );
+
+	//! Adds a system event to the event queue for later processing.
 	void		  PushEvent( sysEvent_t* event );
 };
 

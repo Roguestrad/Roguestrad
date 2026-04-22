@@ -45,22 +45,25 @@ extern float	   com_engineHz_latched;
 extern const int64 com_engineHz_numerator;
 extern int64	   com_engineHz_denominator;
 
-// Returns the msec the frame starts on
+//! Converts a frame count to milliseconds using engine frequency constants.
 ID_INLINE int	   FRAME_TO_MSEC( int64 frame )
 {
 	return ( int )( ( frame * com_engineHz_numerator ) / com_engineHz_denominator );
 }
-// Rounds DOWN to the nearest frame
+
+//! Converts milliseconds to the nearest frame count, rounding down to the nearest frame.
 ID_INLINE int MSEC_TO_FRAME_FLOOR( int msec )
 {
 	return ( int )( ( ( ( int64 )msec * com_engineHz_denominator ) + ( com_engineHz_denominator - 1 ) ) / com_engineHz_numerator );
 }
-// Rounds UP to the nearest frame
+
+//! Converts milliseconds to the nearest frame count, rounding up to the nearest frame.
 ID_INLINE int MSEC_TO_FRAME_CEIL( int msec )
 {
 	return ( int )( ( ( ( int64 )msec * com_engineHz_denominator ) + ( com_engineHz_numerator - 1 ) ) / com_engineHz_numerator );
 }
-// Aligns msec so it starts on a frame bondary
+
+//! Aligns the given millisecond value to the nearest frame boundary
 ID_INLINE int MSEC_ALIGN_TO_FRAME( int msec )
 {
 	return FRAME_TO_MSEC( MSEC_TO_FRAME_CEIL( msec ) );
@@ -78,21 +81,30 @@ class idMatchParameters;
 
 struct lobbyConnectInfo_t;
 
+//! Begins a named profiling event with the specified color.
 ID_INLINE void BeginProfileNamedEventColor( uint32 color, VERIFY_FORMAT_STRING const char* szName )
 {
 }
+
+//! Ends a named event profile
 ID_INLINE void EndProfileNamedEvent()
 {
 }
 
+//! Begins a named profile event with a fixed green color
 ID_INLINE void BeginProfileNamedEvent( VERIFY_FORMAT_STRING const char* szName )
 {
 	BeginProfileNamedEventColor( ( uint32 )0xFF00FF00, szName );
 }
 
+/*!
+	\class idScopedProfileEvent
+	\brief A scoped profile event for performance monitoring.
+*/
 class idScopedProfileEvent
 {
 public:
+	//! Initializes a scoped profile event with the specified name.
 	idScopedProfileEvent( const char* name ) { BeginProfileNamedEvent( name ); }
 	~idScopedProfileEvent() { EndProfileNamedEvent(); }
 };
@@ -103,11 +115,13 @@ public:
 	#define SCOPED_PROFILE_EVENT( x ) idScopedProfileEvent scopedProfileEvent_##__LINE__( x )
 #endif
 
+//! Function is a stub that currently always returns false.
 ID_INLINE bool BeginTraceRecording( const char* szName )
 {
 	return false;
 }
 
+//! Ends the trace recording process and returns false.
 ID_INLINE bool EndTraceRecording()
 {
 	return false;
@@ -164,6 +178,7 @@ struct MemInfo_t {
 struct mpMap_t {
 	mpMap_t& operator=( mpMap_t&& src ) = default;
 
+	//! Assigns the contents of another mpMap_t instance to this instance
 	void	 operator=( const mpMap_t& src )
 	{
 		mapFile		   = src.mapFile;
@@ -178,6 +193,16 @@ struct mpMap_t {
 
 static const int MAX_LOGGED_STATS = 60 * 120; // log every half second
 
+/*!
+	\class idCommon
+	\brief Interface for core engine initialization, shutdown, and runtime management.
+
+	Provides an abstract interface for engine lifecycle management including initialization with command line arguments, shutdown procedures, and frame execution. Handles system-level operations such
+   as input processing, event handling, and display updates. Supports multiplayer functionality with network-related methods and game state management. Offers logging and debugging capabilities
+   through various print functions and warning systems. Includes interfaces for game, render, and sound worlds, as well as session management. Manages save and load operations with callbacks for
+   different stages of the process. The interface also supports pacifier progress updates for loading operations and provides methods for handling game-specific configurations and settings.
+
+*/
 class idCommon
 {
 public:

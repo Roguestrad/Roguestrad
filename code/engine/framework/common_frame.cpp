@@ -72,14 +72,6 @@ idCVar		  timescale( "timescale", "1", CVAR_SYSTEM | CVAR_FLOAT, "Number of game
 extern idCVar in_useJoystick;
 extern idCVar in_joystickRumble;
 
-/*
-===============
-idGameThread::Run
-
-Run in a background thread for performance, but can also
-be called directly in the foreground thread for comparison.
-===============
-*/
 int			  idGameThread::Run()
 {
 	commonLocal.frameTiming.startGameTime = Sys_Microseconds();
@@ -144,12 +136,6 @@ int			  idGameThread::Run()
 	return 0;
 }
 
-/*
-===============
-idGameThread::RunGameAndDraw
-
-===============
-*/
 gameReturn_t idGameThread::RunGameAndDraw( int numGameFrames_, idUserCmdMgr& userCmdMgr_, bool isClient_, int startGameFrame )
 {
 	// this should always immediately return
@@ -178,13 +164,6 @@ gameReturn_t idGameThread::RunGameAndDraw( int numGameFrames_, idUserCmdMgr& use
 	return latchedRet;
 }
 
-/*
-===============
-idCommonLocal::DrawWipeModel
-
-Draw the fade material over everything that has been drawn
-===============
-*/
 void idCommonLocal::DrawWipeModel()
 {
 	if( wipeStartTime >= wipeStopTime ) {
@@ -202,7 +181,6 @@ void idCommonLocal::DrawWipeModel()
 	renderSystem->DrawStretchPic( 0, 0, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0, 0, 1, 1, wipeMaterial );
 }
 
-// RB begin
 void idCommonLocal::DrawLoadPacifierProgressbar()
 {
 	if( loadPacifierExpectedCount <= 0 ) {
@@ -222,13 +200,7 @@ void idCommonLocal::DrawLoadPacifierProgressbar()
 
 	renderSystem->DrawSmallStringExt( 0, renderSystem->GetVirtualHeight() - 64, loadPacifierStatus, idVec4( 1.0f, 1.0f, 1.0f, 1.0f ), true );
 }
-// RB end
 
-/*
-===============
-idCommonLocal::Draw
-===============
-*/
 void idCommonLocal::Draw()
 {
 	// debugging tool to test frame dropping behavior
@@ -350,14 +322,6 @@ void idCommonLocal::Draw()
 	}
 }
 
-/*
-===============
-idCommonLocal::UpdateScreen
-
-This is an out-of-sequence screen update, not the normal game rendering
-===============
-*/
-// DG: added possibility to *not* release mouse in UpdateScreen(), it fucks up the view angle for screenshots
 void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 {
 	if( insideUpdateScreen || com_shuttingDown ) {
@@ -454,11 +418,6 @@ extern idCVar com_forceGenericSIMD;
 extern idCVar com_pause;
 extern idCVar com_activeApp;
 
-/*
-=================
-idCommonLocal::Frame
-=================
-*/
 void		  idCommonLocal::Frame()
 {
 	try {

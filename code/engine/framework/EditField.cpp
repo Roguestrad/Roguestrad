@@ -32,11 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 
 static autoComplete_t globalAutoComplete;
 
-/*
-===============
-FindMatches
-===============
-*/
+//! Finds matching strings for auto-completion by comparing input string against a global completion string and updating match count and current match.
 static void			  FindMatches( const char* s )
 {
 	int i;
@@ -60,11 +56,7 @@ static void			  FindMatches( const char* s )
 	globalAutoComplete.currentMatch[i] = 0;
 }
 
-/*
-===============
-FindIndexMatch
-===============
-*/
+//! Finds and matches an index in the auto-completion system
 static void FindIndexMatch( const char* s )
 {
 	if( idStr::Icmpn( s, globalAutoComplete.completionString, strlen( globalAutoComplete.completionString ) ) != 0 ) {
@@ -78,11 +70,7 @@ static void FindIndexMatch( const char* s )
 	globalAutoComplete.findMatchIndex++;
 }
 
-/*
-===============
-PrintMatches
-===============
-*/
+//! Prints a matching string if it starts with the current auto-completion match.
 static void PrintMatches( const char* s )
 {
 	if( idStr::Icmpn( s, globalAutoComplete.currentMatch, strlen( globalAutoComplete.currentMatch ) ) == 0 ) {
@@ -90,11 +78,7 @@ static void PrintMatches( const char* s )
 	}
 }
 
-/*
-===============
-PrintCvarMatches
-===============
-*/
+//! Prints console variable matches that start with the given string prefix.
 static void PrintCvarMatches( const char* s )
 {
 	if( idStr::Icmpn( s, globalAutoComplete.currentMatch, strlen( globalAutoComplete.currentMatch ) ) == 0 ) {
@@ -102,11 +86,6 @@ static void PrintCvarMatches( const char* s )
 	}
 }
 
-/*
-===============
-idEditField::idEditField
-===============
-*/
 idEditField::idEditField()
 {
 	widthInChars = 0;
@@ -122,11 +101,6 @@ idEditField::~idEditField()
 {
 }
 
-/*
-===============
-idEditField::Clear
-===============
-*/
 void idEditField::Clear()
 {
 	buffer[0]			= 0;
@@ -136,43 +110,23 @@ void idEditField::Clear()
 	autoComplete.valid	= false;
 }
 
-/*
-===============
-idEditField::SetWidthInChars
-===============
-*/
 void idEditField::SetWidthInChars( int w )
 {
 	assert( w <= MAX_EDIT_LINE );
 	widthInChars = w;
 }
 
-/*
-===============
-idEditField::SetCursor
-===============
-*/
 void idEditField::SetCursor( int c )
 {
 	assert( c <= MAX_EDIT_LINE );
 	cursor = c;
 }
 
-/*
-===============
-idEditField::GetCursor
-===============
-*/
 int idEditField::GetCursor() const
 {
 	return cursor;
 }
 
-/*
-===============
-idEditField::ClearAutoComplete
-===============
-*/
 void idEditField::ClearAutoComplete()
 {
 	if( autoComplete.length > 0 && autoComplete.length <= ( int )strlen( buffer ) ) {
@@ -185,21 +139,11 @@ void idEditField::ClearAutoComplete()
 	autoComplete.valid	= false;
 }
 
-/*
-===============
-idEditField::GetAutoCompleteLength
-===============
-*/
 int idEditField::GetAutoCompleteLength() const
 {
 	return autoComplete.length;
 }
 
-/*
-===============
-idEditField::AutoComplete
-===============
-*/
 void idEditField::AutoComplete()
 {
 	char	  completionArgString[MAX_EDIT_LINE];
@@ -300,11 +244,6 @@ void idEditField::AutoComplete()
 	}
 }
 
-/*
-===============
-idEditField::CharEvent
-===============
-*/
 void idEditField::CharEvent( int ch )
 {
 	int len;
@@ -381,11 +320,6 @@ void idEditField::CharEvent( int ch )
 	}
 }
 
-/*
-===============
-idEditField::KeyDownEvent
-===============
-*/
 void idEditField::KeyDownEvent( int key )
 {
 	int len;
@@ -496,11 +430,6 @@ void idEditField::KeyDownEvent( int key )
 	}
 }
 
-/*
-===============
-idEditField::Paste
-===============
-*/
 void idEditField::Paste()
 {
 	char* cbd;
@@ -521,21 +450,11 @@ void idEditField::Paste()
 	Mem_Free( cbd );
 }
 
-/*
-===============
-idEditField::GetBuffer
-===============
-*/
 char* idEditField::GetBuffer()
 {
 	return buffer;
 }
 
-/*
-===============
-idEditField::SetBuffer
-===============
-*/
 void idEditField::SetBuffer( const char* buf )
 {
 	Clear();
@@ -543,11 +462,6 @@ void idEditField::SetBuffer( const char* buf )
 	SetCursor( strlen( buffer ) );
 }
 
-/*
-===============
-idEditField::Draw
-===============
-*/
 void idEditField::Draw( int x, int y, int width, bool showCursor )
 {
 	int	 len;

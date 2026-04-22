@@ -51,57 +51,147 @@ struct overlayText_t {
 	int		  time;
 };
 
-// the console will query the cvar and command systems for
-// command completion information
+/*!
+	\class idConsoleLocal
+	\brief Manages console input, output, and display functionality for user interaction.
 
+	Provides a complete console interface with input handling, text rendering, and debug visualization capabilities. The class integrates with system events to process user input and manages various
+   console states including active/inactive, display positioning, and text scrolling. It supports both standard console output and overlay text rendering with configurable alignment and positioning.
+   The console handles command execution, debug graph visualization, and performance statistics display. Memory management is handled through dedicated graph creation and destruction methods, while
+   text rendering supports color codes, line wrapping, and automatic layout adjustments. The implementation maintains separate drawing functions for different console views including full-screen solid
+   console, notification lines, and debug overlays, with support for dynamic resizing and display fraction control.
+
+*/
 class idConsoleLocal : public idConsole
 {
 public:
+	//! Initializes the console local state and configuration
 	virtual void		  Init();
+
+	//! Shuts down the console local by removing registered commands and cleaning up debug graphs.
 	virtual void		  Shutdown();
+
+	//! Processes console input events and toggles the console display when the console key is pressed.
 	virtual bool		  ProcessEvent( const sysEvent_t* event, bool forceAccept );
+
+	//! Returns true if the console is active and catching input
 	virtual bool		  Active();
+
+	//! Clears the notification line timers by resetting them to zero.
 	virtual void		  ClearNotifyLines();
+
+	//! Opens the console for user input.
 	virtual void		  Open();
+
+	//! Closes the console by resetting its state and clearing notify lines.
 	virtual void		  Close();
+
+	//! Prints text to the console with support for color codes and line wrapping.
 	virtual void		  Print( const char* text );
+
+	//! Draws the console UI, with optional full-screen rendering.
 	virtual void		  Draw( bool forceFullScreen );
 
+	/*!
+		\brief Prints overlay text to the screen at a specified handle location with given justification
+
+		This function displays text overlay on the screen at a location specified by the handle parameter. The text is formatted using variadic arguments and will only be printed if the handle is
+	   valid and the time has changed since last print. The function allocates a new overlay entry and updates the handle with the new index and timestamp. The text is justified according to the
+	   justify parameter and displayed for a specified duration.
+
+		\param handle Handle to the overlay location, updated with index and time after printing
+		\param justify Justification type for the text alignment
+		\param text Format string for the text to be printed
+	*/
 	virtual void		  PrintOverlay( idOverlayHandle& handle, justify_t justify, const char* text, ... );
 
+	//! Creates a new debug graph with the specified number of items and adds it to the console's debug graph list
 	virtual idDebugGraph* CreateGraph( int numItems );
+
+	//! Removes and deletes a debug graph from the console's collection.
 	virtual void		  DestroyGraph( idDebugGraph* graph );
 
+	//! Writes the console output to a specified file.
 	void				  Dump( const char* toFile );
+
+	//! Clears the console text buffer and moves the display to the end.
 	void				  Clear();
 
 private:
+	//! Updates console dimensions based on current virtual screen size.
 	void				  Resize();
 
+	//! Handles console input events such as F-key bindings, command execution, and navigation.
 	void				  KeyDownEvent( int key );
 
+	//! Advances the console output to the next line.
 	void				  Linefeed();
 
+	//! Moves the console display up by two lines.
 	void				  PageUp();
+
+	//! Moves the console display down by two lines.
 	void				  PageDown();
+
+	//! Moves the console display to the top.
 	void				  Top();
+
+	//! Sets the display to the current value.
 	void				  Bottom();
 
+	//! Draws the console input line with a prompt and auto-complete highlighting.
 	void				  DrawInput();
+
+	//! Draws the last few lines of output transparently over the game view.
 	void				  DrawNotify();
+
+	//! Draws the console with a solid background using the specified fraction for height calculation
 	void				  DrawSolidConsole( float frac );
 
+	//! Handles scrolling text in the console using page up and page down keys.
 	void				  Scroll();
+
+	//! Sets the display fraction for the console.
 	void				  SetDisplayFraction( float frac );
+
+	//! Updates the console display fraction based on the console speed setting.
 	void				  UpdateDisplayFraction();
 
+	/*!
+		\brief Draws text at the specified x position with left alignment, updating the y position for the next line.
+
+		This function renders text using the console's small string drawing functionality with left alignment. It accepts a variable argument list to format the input text, which is then drawn on the
+	   screen at the specified x coordinate and current y position. The y coordinate is incremented by the height of the character plus 4 pixels to account for spacing.
+
+		\param x The x coordinate where the text should be drawn
+		\param y The y coordinate where the text should be drawn, updated with the next line position
+		\param text The format string for the text to be drawn
+	*/
 	void				  DrawTextLeftAlign( float x, float& y, const char* text, ... );
+
+	/*!
+		\brief Draws right-aligned text on the screen at the specified position
+
+		This function draws text on the screen with right alignment. The x coordinate specifies the right edge of the text, and the y coordinate specifies the vertical position. The text is formatted
+	   using variadic arguments similar to printf. The function calculates the appropriate left edge based on the text length and draws it using the small string rendering function. The y coordinate
+	   is updated to account for the text height and spacing for subsequent text lines
+
+		\param x The x-coordinate of the right edge of the text
+		\param y The y-coordinate of the text baseline, updated to the next line position
+		\param text The text to draw, with formatting support
+	*/
 	void				  DrawTextRightAlign( float x, float& y, const char* text, ... );
 
+	//! Draws FPS and performance statistics on the screen at the specified vertical position.
 	float				  DrawFPS( float y );
+
+	//! Returns the input y value for memory usage display purposes.
 	float				  DrawMemoryUsage( float y );
 
+	//! Draws overlay text messages on the console using specified Y coordinates for alignment.
 	void				  DrawOverlayText( float& leftY, float& rightY, float& centerY );
+
+	//! Renders all debug graphs managed by the console local instance.
 	void				  DrawDebugGraphs();
 
 	//============================
@@ -165,19 +255,6 @@ idCVar idConsoleLocal::con_noPrint( "con_noPrint", "0", CVAR_BOOL | CVAR_SYSTEM 
 idCVar idConsoleLocal::con_noPrint( "con_noPrint", "1", CVAR_BOOL | CVAR_SYSTEM | CVAR_NOCHEAT, "print on the console but not onscreen when console is pulled up" );
 #endif
 
-/*
-=============================================================================
-
-	Misc stats
-
-=============================================================================
-*/
-
-/*
-==================
-idConsoleLocal::DrawTextLeftAlign
-==================
-*/
 void idConsoleLocal::DrawTextLeftAlign( float x, float& y, const char* text, ... )
 {
 	char	string[MAX_STRING_CHARS];
@@ -189,11 +266,6 @@ void idConsoleLocal::DrawTextLeftAlign( float x, float& y, const char* text, ...
 	y += SMALLCHAR_HEIGHT + 4;
 }
 
-/*
-==================
-idConsoleLocal::DrawTextRightAlign
-==================
-*/
 void idConsoleLocal::DrawTextRightAlign( float x, float& y, const char* text, ... )
 {
 	char	string[MAX_STRING_CHARS];
@@ -568,33 +640,18 @@ float idConsoleLocal::DrawFPS( float y )
 	return y;
 }
 
-/*
-==================
-idConsoleLocal::DrawMemoryUsage
-==================
-*/
 float idConsoleLocal::DrawMemoryUsage( float y )
 {
 	return y;
 }
 
-//=========================================================================
-
-/*
-==============
-Con_Clear_f
-==============
-*/
+//! Clears the local console output.
 static void Con_Clear_f( const idCmdArgs& args )
 {
 	localConsole.Clear();
 }
 
-/*
-==============
-Con_Dump_f
-==============
-*/
+//! Writes the console output to a text file.
 static void Con_Dump_f( const idCmdArgs& args )
 {
 	if( args.Argc() != 2 ) {
@@ -610,11 +667,6 @@ static void Con_Dump_f( const idCmdArgs& args )
 	localConsole.Dump( fileName.c_str() );
 }
 
-/*
-==============
-idConsoleLocal::Init
-==============
-*/
 void idConsoleLocal::Init()
 {
 	int i;
@@ -646,11 +698,6 @@ void idConsoleLocal::Init()
 	cmdSystem->AddCommand( "conDump", Con_Dump_f, CMD_FL_SYSTEM, "dumps the console text to a file" );
 }
 
-/*
-==============
-idConsoleLocal::Shutdown
-==============
-*/
 void idConsoleLocal::Shutdown()
 {
 	cmdSystem->RemoveCommand( "clear" );
@@ -659,21 +706,11 @@ void idConsoleLocal::Shutdown()
 	debugGraphs.DeleteContents( true );
 }
 
-/*
-================
-idConsoleLocal::Active
-================
-*/
 bool idConsoleLocal::Active()
 {
 	return keyCatching;
 }
 
-/*
-================
-idConsoleLocal::ClearNotifyLines
-================
-*/
 void idConsoleLocal::ClearNotifyLines()
 {
 	int i;
@@ -683,11 +720,6 @@ void idConsoleLocal::ClearNotifyLines()
 	}
 }
 
-/*
-================
-idConsoleLocal::Open
-================
-*/
 void idConsoleLocal::Open()
 {
 	if( keyCatching ) {
@@ -700,11 +732,6 @@ void idConsoleLocal::Open()
 	SetDisplayFraction( 0.5f );
 }
 
-/*
-================
-idConsoleLocal::Close
-================
-*/
 void idConsoleLocal::Close()
 {
 	keyCatching = false;
@@ -729,13 +756,6 @@ void idConsoleLocal::Clear()
 	Bottom(); // go to end
 }
 
-/*
-================
-idConsoleLocal::Dump
-
-Save the console contents out to a file
-================
-*/
 void idConsoleLocal::Dump( const char* fileName )
 {
 	int		l, x, i;
@@ -787,11 +807,6 @@ void idConsoleLocal::Dump( const char* fileName )
 	fileSystem->CloseFile( f );
 }
 
-/*
-==============
-idConsoleLocal::Resize
-==============
-*/
 void idConsoleLocal::Resize()
 {
 	if( renderSystem->GetVirtualWidth() == lastVirtualScreenWidth && renderSystem->GetVirtualHeight() == lastVirtualScreenHeight ) {
@@ -819,11 +834,6 @@ void idConsoleLocal::Resize()
 #endif
 }
 
-/*
-================
-idConsoleLocal::PageUp
-================
-*/
 void idConsoleLocal::PageUp()
 {
 	display -= 2;
@@ -832,11 +842,6 @@ void idConsoleLocal::PageUp()
 	}
 }
 
-/*
-================
-idConsoleLocal::PageDown
-================
-*/
 void idConsoleLocal::PageDown()
 {
 	display += 2;
@@ -845,41 +850,16 @@ void idConsoleLocal::PageDown()
 	}
 }
 
-/*
-================
-idConsoleLocal::Top
-================
-*/
 void idConsoleLocal::Top()
 {
 	display = 0;
 }
 
-/*
-================
-idConsoleLocal::Bottom
-================
-*/
 void idConsoleLocal::Bottom()
 {
 	display = current;
 }
 
-/*
-=============================================================================
-
-CONSOLE LINE EDITING
-
-==============================================================================
-*/
-
-/*
-====================
-KeyDownEvent
-
-Handles history and console scrollback
-====================
-*/
 void idConsoleLocal::KeyDownEvent( int key )
 {
 	// Execute F key bindings
@@ -986,12 +966,6 @@ void idConsoleLocal::KeyDownEvent( int key )
 	consoleField.KeyDownEvent( key );
 }
 
-/*
-==============
-Scroll
-deals with scrolling text because we don't have key repeat
-==============
-*/
 void idConsoleLocal::Scroll()
 {
 	if( lastKeyEvent == -1 || ( lastKeyEvent + 200 ) > eventLoop->Milliseconds() ) {
@@ -1011,26 +985,12 @@ void idConsoleLocal::Scroll()
 	}
 }
 
-/*
-==============
-SetDisplayFraction
-
-Causes the console to start opening the desired amount.
-==============
-*/
 void idConsoleLocal::SetDisplayFraction( float frac )
 {
 	finalFrac = frac;
 	fracTime  = Sys_Milliseconds();
 }
 
-/*
-==============
-UpdateDisplayFraction
-
-Scrolls the console up or down based on conspeed
-==============
-*/
 void idConsoleLocal::UpdateDisplayFraction()
 {
 	if( con_speed.GetFloat() <= 0.1f ) {
@@ -1055,11 +1015,6 @@ void idConsoleLocal::UpdateDisplayFraction()
 	}
 }
 
-/*
-==============
-ProcessEvent
-==============
-*/
 bool idConsoleLocal::ProcessEvent( const sysEvent_t* event, bool forceAccept )
 {
 	const bool consoleKey = event->evType == SE_KEY && event->evValue == K_GRAVE && com_allowConsole.GetBool();
@@ -1118,19 +1073,6 @@ bool idConsoleLocal::ProcessEvent( const sysEvent_t* event, bool forceAccept )
 	return false;
 }
 
-/*
-==============================================================================
-
-PRINTING
-
-==============================================================================
-*/
-
-/*
-===============
-Linefeed
-===============
-*/
 void idConsoleLocal::Linefeed()
 {
 	int i;
@@ -1151,13 +1093,6 @@ void idConsoleLocal::Linefeed()
 	}
 }
 
-/*
-================
-Print
-
-Handles cursor positioning, line wrapping, etc
-================
-*/
 void idConsoleLocal::Print( const char* txt )
 {
 	int y;
@@ -1236,21 +1171,6 @@ void idConsoleLocal::Print( const char* txt )
 	}
 }
 
-/*
-==============================================================================
-
-DRAWING
-
-==============================================================================
-*/
-
-/*
-================
-DrawInput
-
-Draw the editline after a ] prompt
-================
-*/
 void idConsoleLocal::DrawInput()
 {
 	int y, autoCompleteLength;
@@ -1276,13 +1196,6 @@ void idConsoleLocal::DrawInput()
 	consoleField.Draw( LOCALSAFE_LEFT + 2 * SMALLCHAR_WIDTH, y, renderSystem->GetVirtualWidth() - 3 * SMALLCHAR_WIDTH, true );
 }
 
-/*
-================
-DrawNotify
-
-Draws the last few lines of output transparently over the game top
-================
-*/
 void idConsoleLocal::DrawNotify()
 {
 	int	   x, v;
@@ -1330,13 +1243,6 @@ void idConsoleLocal::DrawNotify()
 	renderSystem->SetColor( colorWhite );
 }
 
-/*
-================
-DrawSolidConsole
-
-Draws the console with the solid background
-================
-*/
 void idConsoleLocal::DrawSolidConsole( float frac )
 {
 	int	   i, x;
@@ -1505,11 +1411,6 @@ void idConsoleLocal::Draw( bool forceFullScreen )
 	DrawDebugGraphs();
 }
 
-/*
-========================
-idConsoleLocal::PrintOverlay
-========================
-*/
 void idConsoleLocal::PrintOverlay( idOverlayHandle& handle, justify_t justify, const char* text, ... )
 {
 	if( handle.index >= 0 && handle.index < overlayText.Num() ) {
@@ -1533,11 +1434,6 @@ void idConsoleLocal::PrintOverlay( idOverlayHandle& handle, justify_t justify, c
 	handle.time	 = overlay.time;
 }
 
-/*
-========================
-idConsoleLocal::DrawOverlayText
-========================
-*/
 void idConsoleLocal::DrawOverlayText( float& leftY, float& rightY, float& centerY )
 {
 	for( int i = 0; i < overlayText.Num(); i++ ) {
@@ -1593,11 +1489,6 @@ void idConsoleLocal::DrawOverlayText( float& leftY, float& rightY, float& center
 	overlayText.SetNum( 0 );
 }
 
-/*
-========================
-idConsoleLocal::CreateGraph
-========================
-*/
 idDebugGraph* idConsoleLocal::CreateGraph( int numItems )
 {
 	idDebugGraph* graph = new( TAG_SYSTEM ) idDebugGraph( numItems );
@@ -1605,22 +1496,12 @@ idDebugGraph* idConsoleLocal::CreateGraph( int numItems )
 	return graph;
 }
 
-/*
-========================
-idConsoleLocal::DestroyGraph
-========================
-*/
 void idConsoleLocal::DestroyGraph( idDebugGraph* graph )
 {
 	debugGraphs.Remove( graph );
 	delete graph;
 }
 
-/*
-========================
-idConsoleLocal::DrawDebugGraphs
-========================
-*/
 void idConsoleLocal::DrawDebugGraphs()
 {
 	for( int i = 0; i < debugGraphs.Num(); i++ ) {

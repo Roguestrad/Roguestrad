@@ -40,9 +40,20 @@ static const int initialBaseTicksPerSec = initialHz * initialBaseTicks;
 static const int LOAD_TIP_CHANGE_INTERVAL = 12000;
 static const int LOAD_TIP_COUNT			  = 26;
 
+/*!
+	\class idGameThread
+	\brief Manages threaded execution of game logic and rendering with time tracking capabilities.
+
+	The idGameThread class extends idSysThread to provide specialized functionality for executing game logic and rendering operations in a threaded environment. It supports both threaded and main
+   thread execution based on SMP settings, allowing for parallel processing of game frames while maintaining proper synchronization. The class handles user command preparation and execution, tracking
+   game, render, and total thread times for performance monitoring and optimization. It provides methods for initiating game frame execution cycles and retrieving timing information for the current
+   thread's execution.
+
+*/
 class idGameThread : public idSysThread
 {
 public:
+	//! Initializes a new instance of the idGameThread class.
 	idGameThread() :
 		gameTime(),
 		drawTime(),
@@ -56,22 +67,41 @@ public:
 	{
 	}
 
-	// the gameReturn_t is from the previous frame, the
-	// new frame will be running in parallel on exit
+	/*!
+		\brief Executes game logic and drawing for a specified number of frames in a threaded manner, returning the result from the previous frame.
+
+		This function prepares user commands for background execution and starts either a threaded or main thread execution based on SMP settings. It returns the game return value from the previous
+	   frame while the new frame runs in parallel. The function ensures that the user commands are properly saved and the thread is signaled to begin execution, or runs the game directly in the main
+	   thread for non-SMP configurations or editor modes.
+
+		\param numGameFrames Number of game frames to execute
+		\param userCmdMgr_ Reference to the user command manager containing commands for the game frames
+		\param isClient_ Flag indicating if this is a client thread
+		\param startGameFrame Starting game frame number for the execution
+		\return The game return value from the previous frame execution.
+	*/
 	gameReturn_t RunGameAndDraw( int numGameFrames, idUserCmdMgr& userCmdMgr_, bool isClient_, int startGameFrame );
 
-	// Accessors to the stored frame/thread time information
+	//! Sets the total thread time value.
 	void		 SetThreadTotalTime( const int inTime ) { threadTime = inTime; }
 
+	//! Returns the total time spent by the game thread.
 	int			 GetThreadTotalTime() const { return threadTime; }
 
+	//! Sets the game time value for the current thread.
 	void		 SetThreadGameTime( const int time ) { threadGameTime = time; }
+
+	//! Returns the game time associated with the current thread.
 	int			 GetThreadGameTime() const { return threadGameTime; }
 
+	//! Sets the render time for the game thread.
 	void		 SetThreadRenderTime( const int time ) { threadRenderTime = time; }
+
+	//! Returns the render time of the game thread.
 	int			 GetThreadRenderTime() const { return threadRenderTime; }
 
 private:
+	//! Executes the main game thread routine including game logic and rendering.
 	virtual int	  Run();
 
 	int			  gameTime;
@@ -120,188 +150,329 @@ struct frameTiming_t {
 #define SAVEGAME_DESCRIPTION_FILENAME "gamedata.txt"
 #define SAVEGAME_STRINGS_FILENAME	  "gamedata.strings"
 
+/*!
+	\class idCommonLocal
+	\brief Provides core engine initialization, management, and runtime services for the application.
+
+	This class serves as the primary interface for engine initialization, configuration management, and runtime operation. It handles system initialization with command line arguments, manages game
+   state, processes input events, and coordinates rendering and networking activities. The class maintains the main execution loop through its Frame method and provides facilities for saving and
+   loading game states, managing console output, and handling user interactions. It also includes functionality for multiplayer networking, map loading, and resource management. The class implements
+   various utility methods for debugging, logging, and system diagnostics, making it the central hub for engine-wide operations and coordination between different subsystems.
+
+*/
 class idCommonLocal : public idCommon
 {
 	friend class idConsoleLocal;
 
 public:
+	//! Initializes all members of the idCommonLocal class to their default values.
 	idCommonLocal();
 
+	//! Initializes the common engine components with the specified command line arguments.
 	virtual void				   Init( int argc, const char* const* argv, const char* cmdline );
+
+	//! Shuts down the common engine systems and releases all allocated resources.
 	virtual void				   Shutdown();
+
+	//! Creates the main menu for the game.
 	virtual void				   CreateMainMenu();
+
+	//! Terminates the application by shutting down the common system and exiting the process.
 	virtual void				   Quit();
+
+	//! Returns true if the common system has been fully initialized.
 	virtual bool				   IsInitialized() const;
+
+	//! Main frame processing function that updates game state, handles input, and manages rendering
 	virtual void				   Frame();
-	// DG: added possibility to *not* release mouse in UpdateScreen(), it fucks up the view angle for screenshots
+
+	//! Updates the screen by rendering the current frame and handling mouse capture.
 	virtual void				   UpdateScreen( bool captureToImage, bool releaseMouse = true );
-	// DG end
-	virtual void				   UpdateLevelLoadPacifier(); // Indefinate
+
+	//! Updates the level load pacifier during map changes and background swaps.
+	virtual void				   UpdateLevelLoadPacifier();
+
+	//! Processes command line set commands for console variables, optionally filtering by a specific variable name.
 	virtual void				   StartupVariable( const char* match );
+
+	//! Initializes a tool with the specified flags, dictionary, and entity.
 	virtual void				   InitTool( const toolFlag_t tool, const idDict* dict, idEntity* entity );
+
+	//! Writes the current configuration to the specified file.
 	virtual void				   WriteConfigToFile( const char* filename );
+
+	//! Begins redirection of console output to the specified buffer.
 	virtual void				   BeginRedirect( char* buffer, int buffersize, void ( *flush )( const char* ) );
+
+	//! Stops redirection of console output.
 	virtual void				   EndRedirect();
+
+	//! Sets whether the screen should be refreshed after printing messages.
 	virtual void				   SetRefreshOnPrint( bool set );
 	virtual void				   Printf( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
+
+	//! Prints a formatted message to the console and log file, handling varargs input.
 	virtual void				   VPrintf( const char* fmt, va_list arg );
 	virtual void				   DPrintf( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
 	virtual void				   VerbosePrintf( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
 	virtual void				   Warning( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
 	virtual void				   DWarning( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
+
+	//! Prints all queued warning messages.
 	virtual void				   PrintWarnings();
+
+	//! Clears all queued warnings and sets the warning caption to the provided reason.
 	virtual void				   ClearWarnings( const char* reason );
 	virtual void				   Error( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
 	virtual void				   FatalError( VERIFY_FORMAT_STRING const char* fmt, ... ) ID_INSTANCE_ATTRIBUTE_PRINTF( 1, 2 );
+
+	//! Returns true if the common initialization is complete.
 	virtual bool				   IsShuttingDown() const { return com_shuttingDown; }
 
+	//! Returns the key bound to the specified command.
 	virtual const char*			   KeysFromBinding( const char* bind );
+
+	//! Returns the command bound to the specified key
 	virtual const char*			   BindingFromKey( const char* key );
 
+	//! Returns true if the game is currently in multiplayer mode.
 	virtual bool				   IsMultiplayer();
+
+	//! Checks if the current game instance is running as a server.
 	virtual bool				   IsServer();
+
+	//! Returns true if the current game session is running as a multiplayer client.
 	virtual bool				   IsClient();
 
+	//! Returns true if the player has ever enabled the console
 	virtual bool				   GetConsoleUsed() { return consoleUsed; }
 
+	//! Returns the current network snapshot rate setting
 	virtual int					   GetSnapRate();
 
+	//! Handles receiving a reliable network message from a peer
 	virtual void				   NetReceiveReliable( int peer, int type, idBitMsg& msg );
+
+	//! Processes and stores an incoming network snapshot while managing the snapshot buffer.
 	virtual void				   NetReceiveSnapshot( class idSnapShot& ss );
+
+	//! Handles incoming user commands from a specific network peer
 	virtual void				   NetReceiveUsercmds( int peer, idBitMsg& msg );
+
+	//! Reads user commands from a network message for a specified client
 	void						   NetReadUsercmds( int clientNum, idBitMsg& msg );
 
+	//! Processes a system event, handling dialog, console, menu, and game input events.
 	virtual bool				   ProcessEvent( const sysEvent_t* event );
 
+	//! Loads a saved game from the specified save name
 	virtual bool				   LoadGame( const char* saveName );
+
+	//! Saves the current game state to a specified save file.
 	virtual bool				   SaveGame( const char* saveName );
 
+	//! Returns the state of the specified button
 	virtual int					   ButtonState( int key );
+
+	//! Returns the state of the specified key
 	virtual int					   KeyState( int key );
 
+	//! Returns a pointer to the active game instance.
 	virtual idGame*				   Game() { return game; }
+
+	//! Returns the render world interface.
 	virtual idRenderWorld*		   RW() { return renderWorld; }
+
+	//! Returns the sound world instance used by the common interface.
 	virtual idSoundWorld*		   SW() { return soundWorld; }
+
+	//! Returns the sound world used for menu audio processing.
 	virtual idSoundWorld*		   MenuSW() { return menuSoundWorld; }
+
+	//! Returns a pointer to the current session object.
 	virtual idSession*			   Session() { return session; }
+
+	//! Returns a reference to the common dialog interface used for displaying user notifications and prompts.
 	virtual idCommonDialog&		   Dialog() { return commonDialog; }
 
+	//! Handles the completion of a save game operation, including cleanup and error reporting
 	virtual void				   OnSaveCompleted( idSaveLoadParms& parms );
+
+	//! Handles the completion of a savegame load operation and displays an error dialog if loading failed.
 	virtual void				   OnLoadCompleted( idSaveLoadParms& parms );
+
+	//! Handles the completion of loading save game files and initiates the game load process.
 	virtual void				   OnLoadFilesCompleted( idSaveLoadParms& parms );
+
+	//! Handles the completion of save game enumeration, updating the saved games list on success.
 	virtual void				   OnEnumerationCompleted( idSaveLoadParms& parms );
+
+	//! Handles the completion of a save game deletion operation
 	virtual void				   OnDeleteCompleted( idSaveLoadParms& parms );
+
+	//! Initializes and completes a screen wipe effect using the specified material and hold setting.
 	virtual void				   TriggerScreenWipe( const char* _wipeMaterial, bool hold );
 
+	//! Handles the setup of match parameters when starting to host a game session.
 	virtual void				   OnStartHosting( idMatchParameters& parms );
 
+	//! Returns the current game frame count.
 	virtual int					   GetGameFrame() { return gameFrame; }
 
+	//! Initializes the list of multiplayer maps and game modes by loading data from the game and map definitions.
 	virtual void				   InitializeMPMapsModes();
+
+	//! Returns a constant reference to the list of available game modes.
 	virtual const idStrList&	   GetModeList() const { return mpGameModes; }
+
+	//! Returns the list of multiplayer mode display names.
 	virtual const idStrList&	   GetModeDisplayList() const { return mpDisplayGameModes; }
+
+	//! Returns the list of multiplayer maps available in the game.
 	virtual const idList<mpMap_t>& GetMapList() const { return mpGameMaps; }
 
+	//! Resets the input state for the specified player index
 	virtual void				   ResetPlayerInput( int playerIndex );
 
+	//! Returns true if Japanese censorship is enabled, otherwise false.
 	virtual bool				   JapaneseCensorship() const;
 
+	//! Sets a flag to request the shell to be shown on the next frame.
 	virtual void				   QueueShowShell() { showShellRequested = true; }
 
 public:
-	void   Draw(); // called by gameThread
+	//! Draws the game frame and handles various rendering states including loading screens, game views, and console overlays.
+	void   Draw();
 
-	// foresthale 2014-03-01: added WaitGameThread() method
+	//! Waits for the game thread to complete its execution.
 	void   WaitGameThread() { gameThread.WaitForThread(); }
 
+	//! Returns the total elapsed time in milliseconds for the game thread.
 	int	   GetGameThreadTotalTime() const { return gameThread.GetThreadTotalTime(); }
 
+	//! Returns the game thread's elapsed game time in milliseconds.
 	int	   GetGameThreadGameTime() const { return gameThread.GetThreadGameTime(); }
 
+	//! Returns the render time of the game thread in milliseconds.
 	int	   GetGameThreadRenderTime() const { return gameThread.GetThreadRenderTime(); }
 
+	//! Returns the backend rendering time in microseconds.
 	uint64 GetRendererBackEndMicroseconds() const { return time_backend; }
 
+	//! Returns the time spent on masked occlusion rasterization in microseconds.
 	uint64 GetRendererMaskedOcclusionRasterizationMicroseconds() const { return time_moc; }
 
+	//! Returns the number of microseconds the renderer was idle between the start of rendering and the completion of synchronization.
 	uint64 GetRendererIdleMicroseconds() const { return mainFrameTiming.startRenderTime - mainFrameTiming.finishSyncTime; }
 
+	//! Returns the GPU time in microseconds for the renderer.
 	uint64 GetRendererGPUMicroseconds() const { return time_gpu; }
 
-	// RB begin
+	//! Returns the GPU begin drawing microseconds timestamp from the backend statistics.
 	uint64 GetRendererGpuBeginDrawingMicroseconds() const { return stats_backend.gpuBeginDrawingMicroSec; }
 
+	//! Returns the GPU early Z microseconds spent in the renderer.
 	uint64 GetRendererGpuEarlyZMicroseconds() const { return stats_backend.gpuDepthMicroSec; }
 
+	//! Returns the GPU geometry processing time in microseconds.
 	uint64 GetRendererGpuGeometryMicroseconds() const { return stats_backend.gpuGeometryMicroSec; }
 
+	//! Returns the GPU time spent on screen space ambient occlusion in microseconds.
 	uint64 GetRendererGpuSSAOMicroseconds() const { return stats_backend.gpuScreenSpaceAmbientOcclusionMicroSec; }
 
+	//! Returns the GPU screen space reflections time in microseconds.
 	uint64 GetRendererGpuSSRMicroseconds() const { return stats_backend.gpuScreenSpaceReflectionsMicroSec; }
 
+	//! Returns the GPU ambient pass execution time in microseconds.
 	uint64 GetRendererGpuAmbientPassMicroseconds() const { return stats_backend.gpuAmbientPassMicroSec; }
 
+	//! Returns the GPU shadow atlas pass execution time in microseconds.
 	uint64 GetRendererGpuShadowAtlasPassMicroseconds() const { return stats_backend.gpuShadowAtlasPassMicroSec; }
 
+	//! Returns the GPU interaction time in microseconds.
 	uint64 GetRendererGpuInteractionsMicroseconds() const { return stats_backend.gpuInteractionsMicroSec; }
 
+	//! Returns the GPU shader pass execution time in microseconds.
 	uint64 GetRendererGpuShaderPassMicroseconds() const { return stats_backend.gpuShaderPassMicroSec; }
 
+	//! Returns the GPU fog all lights microseconds statistic.
 	uint64 GetRendererGpuFogAllLightsMicroseconds() const { return stats_backend.gpuFogAllLightsMicroSec; }
 
+	//! Returns the GPU bloom time in microseconds.
 	uint64 GetRendererGpuBloomMicroseconds() const { return stats_backend.gpuBloomMicroSec; }
 
+	//! Returns the GPU shader pass post microseconds spent in the renderer.
 	uint64 GetRendererGpuShaderPassPostMicroseconds() const { return stats_backend.gpuShaderPassPostMicroSec; }
 
+	//! Returns the GPU motion vectors rendering time in microseconds.
 	uint64 GetRendererGpuMotionVectorsMicroseconds() const { return stats_backend.gpuMotionVectorsMicroSec; }
 
+	//! Returns the GPU temporal anti-aliasing time in microseconds.
 	uint64 GetRendererGpuTAAMicroseconds() const { return stats_backend.gpuTemporalAntiAliasingMicroSec; }
 
+	//! Returns the GPU tone mapping pass execution time in microseconds.
 	uint64 GetRendererGpuToneMapPassMicroseconds() const { return stats_backend.gpuToneMapPassMicroSec; }
 
+	//! Returns the GPU post-processing time in microseconds.
 	uint64 GetRendererGpuPostProcessingMicroseconds() const { return stats_backend.gpuPostProcessingMicroSec; }
 
+	//! Returns the GPU draw GUI microseconds statistic from the renderer backend.
 	uint64 GetRendererGpuDrawGuiMicroseconds() const { return stats_backend.gpuDrawGuiMicroSec; }
 
+	//! Returns the GPU CRT post-processing time in microseconds.
 	uint64 GetRendererGpuCrtPostProcessingMicroseconds() const { return stats_backend.gpuCrtPostProcessingMicroSec; }
-	// RB end
 
-	// SRS start
+	//! Sets the Metal encoder microseconds value for the renderer.
 	void   SetRendererMvkEncodeMicroseconds( uint64 mvkEncodeMicroSeconds )
 	{
 		metal_encode = mvkEncodeMicroSeconds;
 		return;
 	}
 
+	//! Returns the accumulated microseconds spent on Metal encoder operations.
 	uint64 GetRendererMvkEncodeMicroseconds() const { return metal_encode; }
 
+	//! Sets the GPU memory value for the renderer.
 	void   SetRendererGpuMemoryMB( uint64 gpuMemoryMB )
 	{
 		gpu_memory = gpuMemoryMB;
 		return;
 	}
 
+	//! Returns the amount of GPU memory used by the renderer in megabytes.
 	uint64		  GetRendererGpuMemoryMB() const { return gpu_memory; }
-	// SRS end
 
-	// RB begin
+	//! Sets the load pacifier status message using a format string and variable arguments.
 	virtual void  LoadPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... );
-	virtual void  LoadPacifierProgressTotal( int total );
-	virtual void  LoadPacifierProgressIncrement( int step );
-	virtual bool  LoadPacifierRunning();
-	// RB end
 
-	// foresthale 2014-05-30: a special binarize pacifier has to be shown in
-	// some cases, which includes filename and ETA information, note that
-	// the progress function takes 0-1 float, not 0-100, and can be called
-	// very quickly (it will check that enough time has passed when updating)
+	//! Initializes the pacifier progress tracking with the specified total count.
+	virtual void  LoadPacifierProgressTotal( int total );
+
+	//! Increments the load pacifier progress by the specified step amount
+	virtual void  LoadPacifierProgressIncrement( int step );
+
+	//! Returns true if a pacifier progress indicator is currently active.
+	virtual bool  LoadPacifierRunning();
+
+	//! Initializes the pacifier display for a binarization operation with the specified filename and reason.
 	virtual void  LoadPacifierBinarizeFilename( const char* filename, const char* reason );
+
+	//! Sets the pacifier binarize information string
 	virtual void  LoadPacifierBinarizeInfo( const char* info );
+
+	//! Sets the current and total miplevel values for the pacifier binarization process.
 	virtual void  LoadPacifierBinarizeMiplevel( int level, int maxLevel );
+
+	//! Updates the binarization progress pacifier with the given progress value
 	virtual void  LoadPacifierBinarizeProgress( float progress );
+
+	//! Ends the binarize operation pacifier display
 	virtual void  LoadPacifierBinarizeEnd();
-	// for images in particular we can measure more accurately this way (to deal with mipmaps)
+
+	//! Sets the total progress value for the pacifier binarization process
 	virtual void  LoadPacifierBinarizeProgressTotal( int total );
+
+	//! Increments the binarize progress counter by the specified step value.
 	virtual void  LoadPacifierBinarizeProgressIncrement( int step );
 
 	virtual void  RogmapPacifierFilename( const char* filename, const char* reason ) {};
@@ -313,18 +484,28 @@ public:
 	frameTiming_t mainFrameTiming;
 
 public: // These are public because they are called directly by static functions in this file
+		//! Returns the name of the currently loaded map.
 	const char*	  GetCurrentMapName() { return currentMapName.c_str(); }
 
-	// loads a map and starts a new game on it
+	//! Loads a map and starts a new game on it
 	void		  StartNewGame( const char* mapName, bool devmap, int gameMode );
+
+	//! Exits the current game session and returns to the main menu.
 	void		  LeaveGame();
 
-	// localization
+	//! Initializes the language dictionary by loading relevant language files
 	void		  InitLanguageDict();
+
+	//! Processes a GUI file to localize its text strings using the provided language dictionary.
 	void		  LocalizeGui( const char* fileName, idLangDict& langDict );
+
+	//! Processes map data localization using the provided language dictionary and file name.
 	void		  LocalizeMapData( const char* fileName, idLangDict& langDict );
+
+	//! Localizes specific map data by replacing strings in entity key-value pairs with localized versions from a language dictionary.
 	void		  LocalizeSpecificMapData( const char* fileName, idLangDict& langDict, const idLangDict& replaceArgs );
 
+	//! Returns a reference to the user command manager.
 	idUserCmdMgr& GetUCmdMgr() { return userCmdMgr; }
 
 private:
@@ -512,65 +693,143 @@ private:
 	bool							  showShellRequested;
 
 private:
+	//! Initializes and registers command-line commands for map compilation and AAS file processing tools.
 	void InitCommands();
+
+	//! Initializes the SIMD processor for the doom application.
 	void InitSIMD();
+
+	//! Adds startup commands to the command system by buffering tokenized console lines.
 	void AddStartupCommands();
+
+	//! Parses command line arguments and processes console commands for the common local functionality.
 	void ParseCommandLine( int argc, const char* const* argv );
+
+	//! Checks if the command line contains safe or cvar_restart arguments to skip loading the config file.
 	bool SafeMode();
+
+	//! Closes the current log file if one is open.
 	void CloseLogFile();
+
+	//! Writes archived console variables and key bindings to the configuration file if they have been modified
 	void WriteConfiguration();
+
+	//! Writes accumulated warnings and errors to a file and optionally opens it in Notepad on Windows.
 	void DumpWarnings();
+
+	//! Loads the game dynamic library and initializes the game object.
 	void LoadGameDLL();
+
+	//! Unloads the game DLL and shuts down the game object if loaded.
 	void UnloadGameDLL();
+
+	//! Cleans up the game shell by calling the game's cleanup function if the game pointer is valid.
 	void CleanupShell();
+
+	//! Renders a Bink video file at the specified path
 	void RenderBink( const char* path );
+
+	//! Renders the splash screen with proper aspect ratio handling and black bars if needed.
 	void RenderSplash();
+
+	//! Filters a list of strings to retain only those that match the specified language prefix.
 	void FilterLangList( idStrList* list, idStr lang );
+
+	//! Checks if there is sufficient storage space available for save games and profiles during startup
 	void CheckStartupStorageRequirements();
 
+	//! Exits the menu by hiding the game shell.
 	void ExitMenu();
+
+	//! Processes input events for menu and GUI handling
 	bool MenuEvent( const sysEvent_t* event );
 
+	//! Initializes and displays the main menu interface.
 	void StartMenu( bool playIntro = false );
+
+	//! Synchronizes the game session with the shell for GUI frame events.
 	void GuiFrameEvents();
 
+	//! Processes game return values including vibration feedback and session commands
 	void ProcessGameReturn( const gameReturn_t& ret );
 
+	//! Processes network snapshot frames and handles game timing for client interpolation.
 	void RunNetworkSnapshotFrame();
+
+	//! Processes all reliable messages that have been received and clears the queue afterwards.
 	void ExecuteReliableMessages();
 
-	// Snapshot interpolation
+	//! Processes a snapshot received from the server for synchronization and gameplay state updates.
 	void ProcessSnapshot( idSnapShot& ss );
+
+	//! Calculates and returns the amount of game time left in buffered snapshots after accounting for interpolation.
 	int	 CalcSnapTimeBuffered( int& totalBufferedTime, int& totalRecvTime );
+
+	//! Processes the next available snapshot in the receive buffer.
 	void ProcessNextSnapshot();
+
+	/*!
+		\brief Interpolates network snapshot data between two time points based on a fraction value
+
+		This function performs interpolation of network time data between two snapshots represented by prev and next parameters. It calculates an interpolated server time value using the provided
+	   fraction and updates the global server time accordingly. The function also sets up interpolation parameters for the game engine to maintain smooth networked gameplay. The predict parameter may
+	   influence how the interpolation is applied in relation to prediction logic
+
+		\param prev Previous network snapshot time data
+		\param next Next network snapshot time data
+		\param fraction Interpolation fraction between 0 and 1
+		\param predict Flag indicating if prediction logic should be applied
+	*/
 	void InterpolateSnapshot( netTimes_t& prev, netTimes_t& next, float fraction, bool predict );
+
+	//! Resets all networking state variables and clears snapshot buffers.
 	void ResetNetworkingState();
 
 	int	 NetworkFrame();
+
+	//! Sends game state snapshots to connected peers if conditions are met.
 	void SendSnapshots();
+
+	//! Sends user commands for the specified local client to the game session.
 	void SendUsercmds( int localClientNum );
 
+	//! Loads and displays the appropriate loading GUI for the specified map, handling demo mode andHellMap states.
 	void LoadLoadingGui( const char* mapName, bool& hellMap );
 
-	// Meant to be used like:
-	// while ( waiting ) { BusyWait(); }
+	//! Provides a busy-wait loop implementation that processes events and updates the screen during waiting periods.
 	void BusyWait();
+
+	//! Waits for the session to reach the specified desired state
 	bool WaitForSessionState( idSession::sessionState_t desiredState );
 
+	//! Executes a map change using session match parameters for game initialization
 	void ExecuteMapChange();
+
+	//! Unloads the current map and performs necessary cleanup.
 	void UnloadMap();
 
+	//! Stops the current session and cleans up resources, optionally resetting the session state.
 	void Stop( bool resetSession = true );
 
-	// called by Draw when the scene to scene wipe is still running
+	//! Draws the wipe model during scene transitions.
 	void DrawWipeModel();
-	void DrawLoadPacifierProgressbar(); // RB
+
+	//! Draws a progress bar for the loading pacifier.
+	void DrawLoadPacifierProgressbar();
+
+	//! Starts a screen wipe effect using the specified material.
 	void StartWipe( const char* materialName, bool hold = false );
+
+	//! Waits until the wipe effect is complete and ensures it is fully faded out.
 	void CompleteWipe();
+
+	//! Resets all wipe-related state flags and timers to their default values.
 	void ClearWipe();
 
+	//! Transitions to a new map in single player mode.
 	void MoveToNewMap( const char* mapName, bool devmap );
 
+	//! Replaces invalid characters in a save game file name with underscores.
 	void ScrubSaveGameFileName( idStr& saveFileName ) const;
 };
 

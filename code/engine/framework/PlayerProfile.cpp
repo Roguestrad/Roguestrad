@@ -41,26 +41,15 @@ const int16 PROFILE_TAG		  = ( 'D' << 8 ) | '3';
 const int8	PROFILE_VER_MAJOR = 10; // If this is changed, you should reset the minor version and remove all backward compatible code
 const int8	PROFILE_VER_MINOR = 0;	// Within each major version, minor versions can be supported for backward compatibility
 
+/*!
+	\class idPlayerProfileLocal
+	\brief A local player profile implementation that extends the base player profile functionality.
+*/
 class idPlayerProfileLocal : public idPlayerProfile
 {
 };
 idPlayerProfileLocal playerProfiles[MAX_INPUT_DEVICES];
 
-/*
-========================
-Contains data that needs to be saved out on a per player profile basis, global for the lifetime of the player so
-the data can be shared across computers.
-- HUD tint colors
-- key bindings
-- etc...
-========================
-*/
-
-/*
-========================
-idPlayerProfile * CreatePlayerProfile
-========================
-*/
 idPlayerProfile*	 idPlayerProfile::CreatePlayerProfile( int deviceIndex )
 {
 	playerProfiles[deviceIndex].SetDefaults();
@@ -68,11 +57,6 @@ idPlayerProfile*	 idPlayerProfile::CreatePlayerProfile( int deviceIndex )
 	return &playerProfiles[deviceIndex];
 }
 
-/*
-========================
-idPlayerProfile::idPlayerProfile
-========================
-*/
 idPlayerProfile::idPlayerProfile()
 {
 	SetDefaults();
@@ -85,11 +69,6 @@ idPlayerProfile::idPlayerProfile()
 	dirty		   = false;
 }
 
-/*
-========================
-idPlayerProfile::SetDefaults
-========================
-*/
 void idPlayerProfile::SetDefaults()
 {
 	achievementBits	  = 0;
@@ -115,11 +94,6 @@ idPlayerProfile::~idPlayerProfile()
 {
 }
 
-/*
-========================
-idPlayerProfile::Serialize
-========================
-*/
 bool idPlayerProfile::Serialize( idSerializer& ser )
 {
 	// NOTE:
@@ -215,53 +189,28 @@ bool idPlayerProfile::Serialize( idSerializer& ser )
 	return true;
 }
 
-/*
-========================
-idPlayerProfile::StatSetInt
-========================
-*/
 void idPlayerProfile::StatSetInt( int s, int v )
 {
 	stats[s].i = v;
 	MarkDirty( true );
 }
 
-/*
-========================
-idPlayerProfile::StatSetFloat
-========================
-*/
 void idPlayerProfile::StatSetFloat( int s, float v )
 {
 	stats[s].f = v;
 	MarkDirty( true );
 }
 
-/*
-========================
-idPlayerProfile::StatGetInt
-========================
-*/
 int idPlayerProfile::StatGetInt( int s ) const
 {
 	return stats[s].i;
 }
 
-/*
-========================
-idPlayerProfile::StatGetFloat
-========================
-*/
 float idPlayerProfile::StatGetFloat( int s ) const
 {
 	return stats[s].f;
 }
 
-/*
-========================
-idPlayerProfile::SaveSettings
-========================
-*/
 void idPlayerProfile::SaveSettings( bool forceDirty )
 {
 	if( state != SAVING ) {
@@ -274,11 +223,6 @@ void idPlayerProfile::SaveSettings( bool forceDirty )
 	}
 }
 
-/*
-========================
-idPlayerProfile::SaveSettings
-========================
-*/
 void idPlayerProfile::LoadSettings()
 {
 	if( state != LOADING ) {
@@ -288,11 +232,6 @@ void idPlayerProfile::LoadSettings()
 	}
 }
 
-/*
-========================
-idPlayerProfile::SetAchievement
-========================
-*/
 void idPlayerProfile::SetAchievement( const int id )
 {
 	if( id >= idAchievementSystem::MAX_ACHIEVEMENTS ) {
@@ -317,11 +256,6 @@ void idPlayerProfile::SetAchievement( const int id )
 	}
 }
 
-/*
-========================
-idPlayerProfile::ClearAchievement
-========================
-*/
 void idPlayerProfile::ClearAchievement( const int id )
 {
 	if( id >= idAchievementSystem::MAX_ACHIEVEMENTS ) {
@@ -338,11 +272,6 @@ void idPlayerProfile::ClearAchievement( const int id )
 	MarkDirty( true );
 }
 
-/*
-========================
-idPlayerProfile::GetAchievement
-========================
-*/
 bool idPlayerProfile::GetAchievement( const int id ) const
 {
 	if( id >= idAchievementSystem::MAX_ACHIEVEMENTS ) {
@@ -357,43 +286,23 @@ bool idPlayerProfile::GetAchievement( const int id ) const
 	}
 }
 
-/*
-========================
-idPlayerProfile::SetConfig
-========================
-*/
 void idPlayerProfile::SetConfig( int config, bool save )
 {
 	configSet = config;
 	ExecConfig( save );
 }
 
-/*
-========================
-idPlayerProfile::SetConfig
-========================
-*/
 void idPlayerProfile::RestoreDefault()
 {
 	ExecConfig( true, true );
 }
 
-/*
-========================
-idPlayerProfile::SetLeftyFlip
-========================
-*/
 void idPlayerProfile::SetLeftyFlip( bool lf )
 {
 	leftyFlip = lf;
 	ExecConfig( true );
 }
 
-/*
-========================
-idPlayerProfile::ExecConfig
-========================
-*/
 void idPlayerProfile::ExecConfig( bool save, bool forceDefault )
 {
 	int flags = 0;
@@ -422,6 +331,7 @@ void idPlayerProfile::ExecConfig( bool save, bool forceDefault )
 	}
 }
 
+//! Sets profile settings to default and saves them
 CONSOLE_COMMAND( setProfileDefaults, "sets profile settings to default and saves", 0 )
 {
 	if( session->GetSignInManager().GetMasterLocalUser() == NULL ) {

@@ -104,52 +104,132 @@ typedef enum {
 	CVAR_NEW		 = BIT( 19 )  // added for RBDoom
 } cvarFlags_t;
 
-/*
-===============================================================================
+/*!
+	\class idCVar
+	\brief A console variable class for managing configurable parameters with various data types and constraints.
 
-	idCVar
+	This class provides a comprehensive interface for handling console variables, which are used to configure runtime behavior. It supports different data types including strings, booleans, integers,
+   and floats, with optional constraints such as numeric ranges and predefined value lists. The class maintains internal state for tracking modifications and provides methods for both getting and
+   setting values. Construction methods allow for initialization with various parameter combinations, including optional value completion functions for command-line interaction. The class handles
+   registration with a central console variable system and supports static variable registration through inline methods. Virtual methods enable extension for custom behavior during value setting
+   operations.
 
-===============================================================================
 */
-
 class idCVar
 {
 public:
-	// Never use the default constructor.
+	//! Prevents instantiation of the default constructor for idCVar.
 	idCVar() { assert( typeid( this ) != typeid( idCVar ) ); }
 
-	// Always use one of the following constructors.
+	/*!
+		\brief Constructs an idCVar object with the specified name, value, flags, description, and optional value completion function.
+
+		This constructor initializes a console variable with the provided parameters. It automatically sets up the value completion function if the CVAR_BOOL flag is specified and no completion
+	   function is provided. The constructor calls the Init method to perform the actual initialization of the console variable internal state.
+
+		\param name Name of the console variable
+		\param value Initial value of the console variable
+		\param flags Flags that define the behavior and properties of the console variable
+		\param description Description text for the console variable
+		\param valueCompletion Optional function pointer for command line argument completion
+	*/
 	idCVar( const char* name, const char* value, int flags, const char* description, argCompletion_t valueCompletion = NULL );
+
+	/*!
+		\brief Constructs an idCVar object with a name, initial value, flags, description, and numeric range constraints
+
+		This constructor initializes a console variable with a specified name, default value, and associated flags. It also sets up the variable's description, minimum and maximum allowed values, and
+	   optional argument completion callback. The constructor is marked as ID_INLINE, indicating it should be inlined for performance. The internal initialization is delegated to the Init method,
+	   which handles the actual setup of the console variable's properties and registration within the system
+
+		\param name Name of the console variable
+		\param value Initial value of the console variable
+		\param flags Flags that define the behavior and properties of the console variable
+		\param description Description text for the console variable
+		\param valueMin Minimum allowed value for the console variable
+		\param valueMax Maximum allowed value for the console variable
+		\param valueCompletion Optional callback function for argument completion assistance
+	*/
 	idCVar( const char* name, const char* value, int flags, const char* description, float valueMin, float valueMax, argCompletion_t valueCompletion = NULL );
+
+	/*!
+		\brief Constructs an idCVar object with the specified name, value, flags, description, and value strings.
+
+		This constructor initializes a console variable with the provided parameters, including the variable's name, initial value, flags, description, and a list of valid value strings. The
+	   constructor delegates to the Init method to perform the actual initialization work.
+
+		\param name Name of the console variable
+		\param value Initial value of the console variable
+		\param flags Flags that define the behavior and properties of the console variable
+		\param description Description of the console variable
+		\param valueStrings Array of strings representing the valid values for the console variable
+		\param valueCompletion Optional function for argument completion
+	*/
 	idCVar( const char* name, const char* value, int flags, const char* description, const char** valueStrings, argCompletion_t valueCompletion = NULL );
 
 	virtual ~idCVar() { }
 
+	//! Returns the name of the console variable.
 	const char*		GetName() const { return internalVar->name; }
+
+	//! Returns the flags associated with this cvar
 	int				GetFlags() const { return internalVar->flags; }
+
+	//! Returns the description string associated with this console variable.
 	const char*		GetDescription() const { return internalVar->description; }
+
+	//! Returns the minimum allowed value for this CVar.
 	float			GetMinValue() const { return internalVar->valueMin; }
+
+	//! Retrieves the maximum allowed value for this CVar.
 	float			GetMaxValue() const { return internalVar->valueMax; }
+
+	//! Returns the array of strings representing the valid values for this cvar.
 	const char**	GetValueStrings() const { return valueStrings; }
+
+	//! Returns the argument completion data for the cvar's value.
 	argCompletion_t GetValueCompletion() const { return valueCompletion; }
 
+	//! Returns true if the console variable has been modified since the last clear.
 	bool			IsModified() const { return ( internalVar->flags & CVAR_MODIFIED ) != 0; }
+
+	//! Marks the console variable as modified.
 	void			SetModified() { internalVar->flags |= CVAR_MODIFIED; }
+
+	//! Clears the modified flag from the internal variable.
 	void			ClearModified() { internalVar->flags &= ~CVAR_MODIFIED; }
 
+	//! Returns the default string value of the console variable.
 	const char*		GetDefaultString() const { return internalVar->InternalGetResetString(); }
+
+	//! Returns the string value of the console variable.
 	const char*		GetString() const { return internalVar->value; }
+
+	//! Returns the boolean value of the console variable.
 	bool			GetBool() const { return ( internalVar->integerValue != 0 ); }
+
+	//! Returns the integer value of this cvar.
 	int				GetInteger() const { return internalVar->integerValue; }
+
+	//! Returns the float value stored in the cvar.
 	float			GetFloat() const { return internalVar->floatValue; }
 
+	//! Sets the string value of the cvar.
 	void			SetString( const char* value ) { internalVar->InternalSetString( value ); }
+
+	//! Sets the boolean value of the cvar.
 	void			SetBool( const bool value ) { internalVar->InternalSetBool( value ); }
+
+	//! Sets the integer value of the console variable.
 	void			SetInteger( const int value ) { internalVar->InternalSetInteger( value ); }
+
+	//! Sets the float value of the console variable.
 	void			SetFloat( const float value ) { internalVar->InternalSetFloat( value ); }
 
+	//! Sets the internal variable of this cvar to the provided cvar.
 	void			SetInternalVar( idCVar* cvar ) { internalVar = cvar; }
 
+	//! Registers static CVar variables with the CVar system.
 	static void		RegisterStaticVars();
 
 protected:
@@ -167,13 +247,37 @@ protected:
 	idCVar*			next;			 // next statically declared cvar
 
 private:
+	/*!
+		\brief Initializes a console variable with the specified name, value, flags, and other properties.
+
+		This function sets up the internal state of a console variable object, including its name, initial value, flags, description, and value constraints. It also handles registration of the
+	   variable with the console variable system, either through a static list or by calling the cvar system's register function. The function ensures that the variable is marked as static and
+	   initializes various internal fields such as integer and float values, as well as pointers to related structures.
+
+		\param name Name of the console variable
+		\param value Initial value of the console variable
+		\param flags Flags that define the behavior and properties of the console variable
+		\param description Description text for the console variable
+		\param valueMin Minimum allowed value for the console variable
+		\param valueMax Maximum allowed value for the console variable
+		\param valueStrings Array of strings that represent valid values for the console variable
+		\param valueCompletion Function pointer for tab completion of the console variable value
+	*/
 	void				Init( const char* name, const char* value, int flags, const char* description, float valueMin, float valueMax, const char** valueStrings, argCompletion_t valueCompletion );
 
+	//! Sets the internal string value of the console variable.
 	virtual void		InternalSetString( const char* newValue ) { }
+
+	//! Sets the console variable to the specified boolean value.
 	virtual void		InternalSetBool( const bool newValue ) { }
+
+	//! Sets the internal integer value of the console variable.
 	virtual void		InternalSetInteger( const int newValue ) { }
+
+	//! Sets the internal float value of the console variable.
 	virtual void		InternalSetFloat( const float newValue ) { }
 
+	//! Returns the reset string value of the console variable.
 	virtual const char* InternalGetResetString() const { return value; }
 
 	static idCVar*		staticVars;
@@ -195,14 +299,15 @@ ID_INLINE idCVar::idCVar( const char* name, const char* value, int flags, const 
 	Init( name, value, flags, description, 1, -1, valueStrings, valueCompletion );
 }
 
-/*
-===============================================================================
+/*!
+	\class idCVarSystem
+	\brief System for managing configuration variables with registration, retrieval, and command-line interface support.
 
-	idCVarSystem
+	Provides a centralized interface for handling configuration variables, allowing registration of cvars, setting and getting their values in various types, and integration with command-line argument
+   processing. The system supports flagging variables for different purposes such as persistence or auto-completion, and offers methods to serialize and deserialize cvar states. It is designed to be
+   extended by concrete implementations that handle the actual storage and logic for cvar management.
 
-===============================================================================
 */
-
 class idCVarSystem
 {
 public:
@@ -259,19 +364,6 @@ public:
 };
 
 extern idCVarSystem* cvarSystem;
-
-/*
-===============================================================================
-
-	CVar Registration
-
-	Each DLL using CVars has to declare a private copy of the static variable
-	idCVar::staticVars like this: idCVar * idCVar::staticVars = NULL;
-	Furthermore idCVar::RegisterStaticVars() has to be called after the
-	cvarSystem pointer is set when the DLL is first initialized.
-
-===============================================================================
-*/
 
 ID_INLINE void		 idCVar::Init( const char* name, const char* value, int flags, const char* description, float valueMin, float valueMax, const char** valueStrings, argCompletion_t valueCompletion )
 {

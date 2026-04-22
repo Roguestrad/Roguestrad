@@ -29,32 +29,59 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-=================================================================================
+/*!
+	\class idCompressor_None
+	\brief Provides no-op compression functionality for file I/O operations.
 
-	idCompressor_None
+	The idCompressor_None class serves as a null implementation of the idCompressor interface, offering no actual compression or decompression capabilities. It delegates all operations to the
+   underlying file stream without any transformation. The class is designed to provide a consistent interface for file operations regardless of whether compression is required, allowing for uniform
+   handling of compressed and uncompressed data streams. This implementation is typically used when compression is disabled or as a fallback mechanism to ensure compatibility with compression-aware
+   code paths.
 
-=================================================================================
 */
-
 class idCompressor_None : public idCompressor
 {
 public:
+	//! Constructs a new instance of idCompressor_None.
 	idCompressor_None();
 
+	//! Initializes the compressor with the specified file, compression flag, and word length.
 	void		Init( idFile* f, bool compress, int wordLength );
+
+	//! Finishes the compression process for the none compressor.
 	void		FinishCompress();
+
+	//! Returns the compression ratio for the none compressor, which is always zero.
 	float		GetCompressionRatio() const;
 
+	//! Returns the name of the collision model file.
 	const char* GetName();
+
+	//! Returns the full path of the file associated with this compressor instance.
 	const char* GetFullPath();
+
+	//! Reads data from the compressed stream into the provided buffer.
 	int			Read( void* outData, int outLength );
+
+	//! Writes data to a file using the None compressor
 	int			Write( const void* inData, int inLength );
+
+	//! Returns the length of the file handled by this compressor instance.
 	int			Length();
+
+	//! Returns the timestamp of the compressed file
 	ID_TIME_T	Timestamp();
+
+	//! Returns the current position in the compressed data stream
 	int			Tell();
+
+	//! Forces the compressor file to flush its contents
 	void		ForceFlush();
+
+	//! Flushes the associated file stream if it exists.
 	void		Flush();
+
+	//! This function always fails and reports an error since seeking is not supported on idCompressor.
 	int			Seek( long offset, fsOrigin_t origin );
 
 protected:
@@ -62,52 +89,27 @@ protected:
 	bool	compress;
 };
 
-/*
-================
-idCompressor_None::idCompressor_None
-================
-*/
 idCompressor_None::idCompressor_None()
 {
 	file	 = NULL;
 	compress = true;
 }
 
-/*
-================
-idCompressor_None::Init
-================
-*/
 void idCompressor_None::Init( idFile* f, bool compress, int wordLength )
 {
 	this->file	   = f;
 	this->compress = compress;
 }
 
-/*
-================
-idCompressor_None::FinishCompress
-================
-*/
 void idCompressor_None::FinishCompress()
 {
 }
 
-/*
-================
-idCompressor_None::GetCompressionRatio
-================
-*/
 float idCompressor_None::GetCompressionRatio() const
 {
 	return 0.0f;
 }
 
-/*
-================
-idCompressor_None::GetName
-================
-*/
 const char* idCompressor_None::GetName()
 {
 	if( file ) {
@@ -117,11 +119,6 @@ const char* idCompressor_None::GetName()
 	}
 }
 
-/*
-================
-idCompressor_None::GetFullPath
-================
-*/
 const char* idCompressor_None::GetFullPath()
 {
 	if( file ) {
@@ -131,11 +128,6 @@ const char* idCompressor_None::GetFullPath()
 	}
 }
 
-/*
-================
-idCompressor_None::Write
-================
-*/
 int idCompressor_None::Write( const void* inData, int inLength )
 {
 	if( compress == false || inLength <= 0 ) {
@@ -144,11 +136,6 @@ int idCompressor_None::Write( const void* inData, int inLength )
 	return file->Write( inData, inLength );
 }
 
-/*
-================
-idCompressor_None::Read
-================
-*/
 int idCompressor_None::Read( void* outData, int outLength )
 {
 	if( compress == true || outLength <= 0 ) {
@@ -157,11 +144,6 @@ int idCompressor_None::Read( void* outData, int outLength )
 	return file->Read( outData, outLength );
 }
 
-/*
-================
-idCompressor_None::Length
-================
-*/
 int idCompressor_None::Length()
 {
 	if( file ) {
@@ -171,11 +153,6 @@ int idCompressor_None::Length()
 	}
 }
 
-/*
-================
-idCompressor_None::Timestamp
-================
-*/
 ID_TIME_T idCompressor_None::Timestamp()
 {
 	if( file ) {
@@ -185,11 +162,6 @@ ID_TIME_T idCompressor_None::Timestamp()
 	}
 }
 
-/*
-================
-idCompressor_None::Tell
-================
-*/
 int idCompressor_None::Tell()
 {
 	if( file ) {
@@ -199,11 +171,6 @@ int idCompressor_None::Tell()
 	}
 }
 
-/*
-================
-idCompressor_None::ForceFlush
-================
-*/
 void idCompressor_None::ForceFlush()
 {
 	if( file ) {
@@ -211,11 +178,6 @@ void idCompressor_None::ForceFlush()
 	}
 }
 
-/*
-================
-idCompressor_None::Flush
-================
-*/
 void idCompressor_None::Flush()
 {
 	if( file ) {
@@ -223,39 +185,43 @@ void idCompressor_None::Flush()
 	}
 }
 
-/*
-================
-idCompressor_None::Seek
-================
-*/
 int idCompressor_None::Seek( long offset, fsOrigin_t origin )
 {
 	common->Error( "cannot seek on idCompressor" );
 	return -1;
 }
 
-/*
-=================================================================================
+/*!
+	\class idCompressor_BitStream
+	\brief Provides bit-level compression and decompression functionality for streaming data.
 
-	idCompressor_BitStream
+	This class implements a bit stream compressor that extends basic compression capabilities by operating at the bit level. It supports initialization with files for reading or writing, and can
+   handle both compression and decompression operations. The class provides methods for writing and reading data, as well as specialized functions for bit-level operations such as writing and reading
+   specific numbers of bits, and undoing bit reads. It also includes utility functions for initializing compression and decompression with specific data buffers, and for comparing bits between
+   different byte arrays. The compression ratio can be retrieved as a percentage, and the class manages internal buffering for efficient processing.
 
-	Base class for bit stream compression.
-
-=================================================================================
 */
-
 class idCompressor_BitStream : public idCompressor_None
 {
 public:
+	//! Initializes a new instance of the idCompressor_BitStream class.
 	idCompressor_BitStream()
 	{
 	}
 
+	//! Initializes the bit stream compressor with the specified file, compression mode, and word length.
 	void  Init( idFile* f, bool compress, int wordLength );
+
+	//! Finalizes the compression process by writing any remaining buffered data to the output file
 	void  FinishCompress();
+
+	//! Returns the compression ratio as a percentage.
 	float GetCompressionRatio() const;
 
+	//! Writes data to the bit stream compressor
 	int	  Write( const void* inData, int inLength );
+
+	//! Reads data from the bit stream into the provided output buffer
 	int	  Read( void* outData, int outLength );
 
 protected:
@@ -275,19 +241,38 @@ protected:
 	byte*		writeData;
 
 protected:
+	//! Initializes the compression bit stream with input data and length.
 	void InitCompress( const void* inData, const int inLength );
+
+	//! Initializes the decompression process with the specified output data buffer and length.
 	void InitDecompress( void* outData, int outLength );
+
+	//! Writes a specified number of bits from an integer value to the bit stream.
 	void WriteBits( int value, int numBits );
+
+	//! Reads a specified number of bits from the bit stream and returns the value.
 	int	 ReadBits( int numBits );
+
+	//! Moves the read position backward by the specified number of bits.
 	void UnreadBits( int numBits );
+
+	/*!
+		\brief Compares bits from two byte arrays starting at specified bit positions up to a maximum number of bits.
+
+		This function compares bits from two byte arrays starting at specified bit pointers. It first attempts to optimize the comparison by aligning the bit pointers and comparing bytes as integers
+	   when possible. If the bit pointers are not aligned or the maximum bits is small, it falls back to comparing each bit individually. The function returns the number of bits that match before a
+	   mismatch is found.
+
+		\param src1 First byte array to compare
+		\param bitPtr1 Bit pointer into the first array
+		\param src2 Second byte array to compare
+		\param bitPtr2 Bit pointer into the second array
+		\param maxBits Maximum number of bits to compare
+		\return The number of bits that match between the two arrays before a mismatch is encountered, or maxBits if all bits match.
+	*/
 	int	 Compare( const byte* src1, int bitPtr1, const byte* src2, int bitPtr2, int maxBits ) const;
 };
 
-/*
-================
-idCompressor_BitStream::Init
-================
-*/
 void idCompressor_BitStream::Init( idFile* f, bool compress, int wordLength )
 {
 	assert( wordLength >= 1 && wordLength <= 32 );
@@ -309,11 +294,6 @@ void idCompressor_BitStream::Init( idFile* f, bool compress, int wordLength )
 	writeData		= NULL;
 }
 
-/*
-================
-idCompressor_BitStream::InitCompress
-================
-*/
 ID_INLINE void idCompressor_BitStream::InitCompress( const void* inData, const int inLength )
 {
 	readLength = inLength;
@@ -329,11 +309,6 @@ ID_INLINE void idCompressor_BitStream::InitCompress( const void* inData, const i
 	}
 }
 
-/*
-================
-idCompressor_BitStream::InitDecompress
-================
-*/
 ID_INLINE void idCompressor_BitStream::InitDecompress( void* outData, int outLength )
 {
 	if( !readLength ) {
@@ -349,11 +324,6 @@ ID_INLINE void idCompressor_BitStream::InitDecompress( void* outData, int outLen
 	writeData	= ( byte* )outData;
 }
 
-/*
-================
-idCompressor_BitStream::WriteBits
-================
-*/
 void idCompressor_BitStream::WriteBits( int value, int numBits )
 {
 	int put, fraction;
@@ -396,11 +366,6 @@ void idCompressor_BitStream::WriteBits( int value, int numBits )
 	}
 }
 
-/*
-================
-idCompressor_BitStream::ReadBits
-================
-*/
 int idCompressor_BitStream::ReadBits( int numBits )
 {
 	int value, valueBits, get, fraction;
@@ -447,11 +412,6 @@ int idCompressor_BitStream::ReadBits( int numBits )
 	return value;
 }
 
-/*
-================
-idCompressor_BitStream::UnreadBits
-================
-*/
 void idCompressor_BitStream::UnreadBits( int numBits )
 {
 	readByte -= ( numBits >> 3 );
@@ -472,11 +432,6 @@ void idCompressor_BitStream::UnreadBits( int numBits )
 	}
 }
 
-/*
-================
-idCompressor_BitStream::Compare
-================
-*/
 int idCompressor_BitStream::Compare( const byte* src1, int bitPtr1, const byte* src2, int bitPtr2, int maxBits ) const
 {
 	int i;
@@ -566,11 +521,6 @@ int idCompressor_BitStream::Write( const void* inData, int inLength )
 	return i;
 }
 
-/*
-================
-idCompressor_BitStream::FinishCompress
-================
-*/
 void idCompressor_BitStream::FinishCompress()
 {
 	if( compress == false ) {
@@ -606,11 +556,6 @@ int idCompressor_BitStream::Read( void* outData, int outLength )
 	return i;
 }
 
-/*
-================
-idCompressor_BitStream::GetCompressionRatio
-================
-*/
 float idCompressor_BitStream::GetCompressionRatio() const
 {
 	if( compress ) {
@@ -620,49 +565,37 @@ float idCompressor_BitStream::GetCompressionRatio() const
 	}
 }
 
-/*
-=================================================================================
-
-	idCompressor_RunLength
-
-	The following algorithm implements run length compression with an arbitrary
-	word size.
-
-=================================================================================
+/*!
+	\class idCompressor_RunLength
+	\brief A run-length encoding compressor that extends bit stream functionality for data compression and decompression.
 */
-
 class idCompressor_RunLength : public idCompressor_BitStream
 {
 public:
+	//! Constructs a new instance of the run-length compressor.
 	idCompressor_RunLength()
 	{
 	}
 
+	//! Initializes the run-length compressor with the specified file, compression mode, and word length.
 	void Init( idFile* f, bool compress, int wordLength );
 
+	//! Writes compressed data using run-length encoding.
 	int	 Write( const void* inData, int inLength );
+
+	//! Reads and decompresses data using run-length encoding.
 	int	 Read( void* outData, int outLength );
 
 private:
 	int runLengthCode;
 };
 
-/*
-================
-idCompressor_RunLength::Init
-================
-*/
 void idCompressor_RunLength::Init( idFile* f, bool compress, int wordLength )
 {
 	idCompressor_BitStream::Init( f, compress, wordLength );
 	runLengthCode = ( 1 << wordLength ) - 1;
 }
 
-/*
-================
-idCompressor_RunLength::Write
-================
-*/
 int idCompressor_RunLength::Write( const void* inData, int inLength )
 {
 	int bits, nextBits, count;
@@ -704,11 +637,6 @@ int idCompressor_RunLength::Write( const void* inData, int inLength )
 	return inLength;
 }
 
-/*
-================
-idCompressor_RunLength::Read
-================
-*/
 int idCompressor_RunLength::Read( void* outData, int outLength )
 {
 	int bits, count;
@@ -738,35 +666,27 @@ int idCompressor_RunLength::Read( void* outData, int outLength )
 	return writeByte;
 }
 
-/*
-=================================================================================
-
-	idCompressor_RunLength_ZeroBased
-
-	The following algorithm implements run length compression with an arbitrary
-	word size for data with a lot of zero bits.
-
-=================================================================================
+/*!
+	\class idCompressor_RunLength_ZeroBased
+	\brief A compressor that implements run-length encoding with zero-based compression for data serialization.
 */
-
 class idCompressor_RunLength_ZeroBased : public idCompressor_BitStream
 {
 public:
+	//! Constructs a new instance of the zero-based run-length compressor.
 	idCompressor_RunLength_ZeroBased()
 	{
 	}
 
+	//! Writes compressed data using run-length encoding with zero-based compression.
 	int Write( const void* inData, int inLength );
+
+	//! Reads decompressed data from the compressor into the provided output buffer
 	int Read( void* outData, int outLength );
 
 private:
 };
 
-/*
-================
-idCompressor_RunLength_ZeroBased::Write
-================
-*/
 int idCompressor_RunLength_ZeroBased::Write( const void* inData, int inLength )
 {
 	int bits, count;
@@ -794,11 +714,6 @@ int idCompressor_RunLength_ZeroBased::Write( const void* inData, int inLength )
 	return inLength;
 }
 
-/*
-================
-idCompressor_RunLength_ZeroBased::Read
-================
-*/
 int idCompressor_RunLength_ZeroBased::Read( void* outData, int outLength )
 {
 	int bits, count;
@@ -829,10 +744,6 @@ int idCompressor_RunLength_ZeroBased::Read( void* outData, int outLength )
 
 	idCompressor_Huffman
 
-	The following algorithm is based on the adaptive Huffman algorithm described
-	in Sayood's Data Compression book. The ranks are not actually stored, but
-	implicitly defined by the location of a node within a doubly-linked list
-
 =================================================================================
 */
 
@@ -848,18 +759,36 @@ typedef struct nodetype {
 	int				  symbol;
 } huffmanNode_t;
 
+/*!
+	\class idCompressor_Huffman
+	\brief Huffman compressor implementation for efficient data compression and decompression.
+
+	The following algorithm is based on the adaptive Huffman algorithm described
+	in Sayood's Data Compression book. The ranks are not actually stored, but
+	implicitly defined by the location of a node within a doubly-linked list
+
+*/
 class idCompressor_Huffman : public idCompressor_None
 {
 public:
+	//! Default constructor for the Huffman compressor.
 	idCompressor_Huffman()
 	{
 	}
 
+	//! Initializes the Huffman compressor with the specified file, compression mode, and word length.
 	void  Init( idFile* f, bool compress, int wordLength );
+
+	//! Finalizes the compression process and writes any remaining data to the output file.
 	void  FinishCompress();
+
+	//! Returns the compression ratio as a percentage.
 	float GetCompressionRatio() const;
 
+	//! Writes compressed data using Huffman compression algorithm
 	int	  Write( const void* inData, int inLength );
+
+	//! Reads compressed data from a file and decompresses it using Huffman decompression
 	int	  Read( void* outData, int outLength );
 
 private:
@@ -883,27 +812,46 @@ private:
 	huffmanNode_t*	nodePtrs[768];
 
 private:
+	//! Increments the reference count for the given byte symbol in the Huffman compression tree.
 	void			AddRef( byte ch );
+
+	//! Receives and decodes a symbol using the Huffman tree.
 	int				Receive( huffmanNode_t* node, int* ch );
+
+	//! Transmits a symbol using Huffman encoding.
 	void			Transmit( int ch, byte* fout );
+
+	//! Writes a single bit to the output buffer at the specified offset and updates the offset.
 	void			PutBit( int bit, byte* fout, int* offset );
+
+	//! Retrieves a single bit from the input buffer at the specified offset and updates the offset.
 	int				GetBit( byte* fout, int* offset );
 
+	//! Adds a single bit to the output buffer at the current bit position.
 	void			Add_bit( char bit, byte* fout );
+
+	//! Retrieves a single bit from the input file using buffering.
 	int				Get_bit();
+
+	//! Returns a pointer to a huffmanNode_t pointer from the freelist or allocates a new one
 	huffmanNode_t** Get_ppnode();
+
+	//! Frees a huffmanNode_t pointer and adds it back to the freelist
 	void			Free_ppnode( huffmanNode_t** ppnode );
+
+	//! Swaps the positions of two nodes within the Huffman tree.
 	void			Swap( huffmanNode_t* node1, huffmanNode_t* node2 );
+
+	//! Swaps two nodes in a doubly linked list used for Huffman tree node ranking.
 	void			Swaplist( huffmanNode_t* node1, huffmanNode_t* node2 );
+
+	//! Increments the weight of a Huffman node and updates its position in the Huffman tree
 	void			Increment( huffmanNode_t* node );
+
+	//! Sends the prefix code for a given huffman node to the output buffer.
 	void			Send( huffmanNode_t* node, huffmanNode_t* child, byte* fout );
 };
 
-/*
-================
-idCompressor_Huffman::Init
-================
-*/
 void idCompressor_Huffman::Init( idFile* f, bool compress, int wordLength )
 {
 	int i;
@@ -948,11 +896,6 @@ void idCompressor_Huffman::Init( idFile* f, bool compress, int wordLength )
 	}
 }
 
-/*
-================
-idCompressor_Huffman::PutBit
-================
-*/
 void idCompressor_Huffman::PutBit( int bit, byte* fout, int* offset )
 {
 	bloc = *offset;
@@ -964,11 +907,6 @@ void idCompressor_Huffman::PutBit( int bit, byte* fout, int* offset )
 	*offset = bloc;
 }
 
-/*
-================
-idCompressor_Huffman::GetBit
-================
-*/
 int idCompressor_Huffman::GetBit( byte* fin, int* offset )
 {
 	int t;
@@ -979,13 +917,6 @@ int idCompressor_Huffman::GetBit( byte* fin, int* offset )
 	return t;
 }
 
-/*
-================
-idCompressor_Huffman::Add_bit
-
-  Add a bit to the output file (buffered)
-================
-*/
 void idCompressor_Huffman::Add_bit( char bit, byte* fout )
 {
 	if( ( bloc & 7 ) == 0 ) {
@@ -995,13 +926,6 @@ void idCompressor_Huffman::Add_bit( char bit, byte* fout )
 	bloc++;
 }
 
-/*
-================
-idCompressor_Huffman::Get_bit
-
-  Get one bit from the input file (buffered)
-================
-*/
 int idCompressor_Huffman::Get_bit()
 {
 	int t;
@@ -1017,11 +941,6 @@ int idCompressor_Huffman::Get_bit()
 	return t;
 }
 
-/*
-================
-idCompressor_Huffman::Get_ppnode
-================
-*/
 huffmanNode_t** idCompressor_Huffman::Get_ppnode()
 {
 	huffmanNode_t** tppnode;
@@ -1034,24 +953,12 @@ huffmanNode_t** idCompressor_Huffman::Get_ppnode()
 	}
 }
 
-/*
-================
-idCompressor_Huffman::Free_ppnode
-================
-*/
 void idCompressor_Huffman::Free_ppnode( huffmanNode_t** ppnode )
 {
 	*ppnode	 = ( huffmanNode_t* )freelist;
 	freelist = ppnode;
 }
 
-/*
-================
-idCompressor_Huffman::Swap
-
-  Swap the location of the given two nodes in the tree.
-================
-*/
 void idCompressor_Huffman::Swap( huffmanNode_t* node1, huffmanNode_t* node2 )
 {
 	huffmanNode_t *par1, *par2;
@@ -1083,13 +990,6 @@ void idCompressor_Huffman::Swap( huffmanNode_t* node1, huffmanNode_t* node2 )
 	node2->parent = par1;
 }
 
-/*
-================
-idCompressor_Huffman::Swaplist
-
-  Swap the given two nodes in the linked list (update ranks)
-================
-*/
 void idCompressor_Huffman::Swaplist( huffmanNode_t* node1, huffmanNode_t* node2 )
 {
 	huffmanNode_t* par1;
@@ -1122,11 +1022,6 @@ void idCompressor_Huffman::Swaplist( huffmanNode_t* node1, huffmanNode_t* node2 
 	}
 }
 
-/*
-================
-idCompressor_Huffman::Increment
-================
-*/
 void idCompressor_Huffman::Increment( huffmanNode_t* node )
 {
 	huffmanNode_t* lnode;
@@ -1166,11 +1061,6 @@ void idCompressor_Huffman::Increment( huffmanNode_t* node )
 	}
 }
 
-/*
-================
-idCompressor_Huffman::AddRef
-================
-*/
 void idCompressor_Huffman::AddRef( byte ch )
 {
 	huffmanNode_t *tnode, *tnode2;
@@ -1243,13 +1133,6 @@ void idCompressor_Huffman::AddRef( byte ch )
 	}
 }
 
-/*
-================
-idCompressor_Huffman::Receive
-
-  Get a symbol.
-================
-*/
 int idCompressor_Huffman::Receive( huffmanNode_t* node, int* ch )
 {
 	while( node && node->symbol == INTERNAL_NODE ) {
@@ -1265,13 +1148,6 @@ int idCompressor_Huffman::Receive( huffmanNode_t* node, int* ch )
 	return ( *ch = node->symbol );
 }
 
-/*
-================
-idCompressor_Huffman::Send
-
-  Send the prefix code for this node.
-================
-*/
 void idCompressor_Huffman::Send( huffmanNode_t* node, huffmanNode_t* child, byte* fout )
 {
 	if( node->parent ) {
@@ -1286,13 +1162,6 @@ void idCompressor_Huffman::Send( huffmanNode_t* node, huffmanNode_t* child, byte
 	}
 }
 
-/*
-================
-idCompressor_Huffman::Transmit
-
-  Send a symbol.
-================
-*/
 void idCompressor_Huffman::Transmit( int ch, byte* fout )
 {
 	int i;
@@ -1307,11 +1176,6 @@ void idCompressor_Huffman::Transmit( int ch, byte* fout )
 	}
 }
 
-/*
-================
-idCompressor_Huffman::Write
-================
-*/
 int idCompressor_Huffman::Write( const void* inData, int inLength )
 {
 	int i, ch;
@@ -1337,11 +1201,6 @@ int idCompressor_Huffman::Write( const void* inData, int inLength )
 	return i;
 }
 
-/*
-================
-idCompressor_Huffman::FinishCompress
-================
-*/
 void idCompressor_Huffman::FinishCompress()
 {
 	if( compress == false ) {
@@ -1356,11 +1215,6 @@ void idCompressor_Huffman::FinishCompress()
 	}
 }
 
-/*
-================
-idCompressor_Huffman::Read
-================
-*/
 int idCompressor_Huffman::Read( void* outData, int outLength )
 {
 	int i, j, ch;
@@ -1398,11 +1252,6 @@ int idCompressor_Huffman::Read( void* outData, int outLength )
 	return i;
 }
 
-/*
-================
-idCompressor_Huffman::GetCompressionRatio
-================
-*/
 float idCompressor_Huffman::GetCompressionRatio() const
 {
 	return ( unCompressedSize - compressedSize ) * 100.0f / unCompressedSize;
@@ -1428,17 +1277,34 @@ const int AC_MSB2_MASK	 = 0x4000;
 const int AC_HIGH_INIT	 = 0xffff;
 const int AC_LOW_INIT	 = 0x0000;
 
+/*!
+	\class idCompressor_Arithmetic
+	\brief Arithmetic compressor implementation for lossless data compression.
+
+	This class implements an arithmetic compression algorithm that provides high compression ratios by encoding data based on probability distributions. It extends the bit stream base class to provide
+   arithmetic-specific functionality for both compression and decompression operations. The compressor maintains internal state for probability tracking and bit-level operations during the encoding
+   and decoding processes. The implementation supports initialization with specific file handles and compression parameters, handles the complete compression lifecycle including finalization, and
+   provides methods for reading and writing compressed data. The class manages probability updates and symbol conversions to enable efficient arithmetic coding.
+
+*/
 class idCompressor_Arithmetic : public idCompressor_BitStream
 {
 public:
+	//! Constructs a new arithmetic compressor instance.
 	idCompressor_Arithmetic()
 	{
 	}
 
+	//! Initializes the arithmetic compressor with the given file, compression mode, and word length.
 	void Init( idFile* f, bool compress, int wordLength );
+
+	//! Completes the arithmetic compression process by writing any remaining overflow bits and finalizing the compression stream.
 	void FinishCompress();
 
+	//! Writes compressed data using arithmetic compression algorithm
 	int	 Write( const void* inData, int inLength );
+
+	//! Reads decompressed data from the arithmetic compressor into the provided buffer
 	int	 Read( void* outData, int outLength );
 
 private:
@@ -1465,28 +1331,40 @@ private:
 	unsigned int   scale;
 
 private:
+	//! Initializes the arithmetic compression probabilities for the compressor.
 	void InitProbabilities();
+
+	//! Updates the arithmetic compression probabilities for the given symbol.
 	void UpdateProbabilities( acSymbol_t* symbol );
+
+	//! Returns the probability index for a given count value in arithmetic compression.
 	int	 ProbabilityForCount( unsigned int count );
 
+	//! Converts a character to an arithmetic coding symbol using probability mappings.
 	void CharToSymbol( byte c, acSymbol_t* symbol );
+
+	//! Encodes a symbol using arithmetic encoding with the provided symbol data.
 	void EncodeSymbol( acSymbol_t* symbol );
 
+	//! Maps a count value to an arithmetic coding symbol with associated probability bounds
 	int	 SymbolFromCount( unsigned int count, acSymbol_t* symbol );
+
+	//! Returns the current count value used in arithmetic compression.
 	int	 GetCurrentCount();
+
+	//! Removes a symbol from the arithmetic compression stream by updating the compression range and handling bit operations.
 	void RemoveSymbolFromStream( acSymbol_t* symbol );
 
+	//! Encodes a single bit into the arithmetic compression buffer.
 	void PutBit( int bit );
+
+	//! Returns a single bit from the compressed data stream.
 	int	 GetBit();
 
+	//! Writes overflow bits to handle arithmetic compression underflow conditions.
 	void WriteOverflowBits();
 };
 
-/*
-================
-idCompressor_Arithmetic::Init
-================
-*/
 void idCompressor_Arithmetic::Init( idFile* f, bool compress, int wordLength )
 {
 	idCompressor_BitStream::Init( f, compress, wordLength );
@@ -1495,11 +1373,6 @@ void idCompressor_Arithmetic::Init( idFile* f, bool compress, int wordLength )
 	symbolBit	 = 0;
 }
 
-/*
-================
-idCompressor_Arithmetic::InitProbabilities
-================
-*/
 void idCompressor_Arithmetic::InitProbabilities()
 {
 	high		  = AC_HIGH_INIT;
@@ -1515,11 +1388,6 @@ void idCompressor_Arithmetic::InitProbabilities()
 	scale = ( 1 << AC_WORD_LENGTH );
 }
 
-/*
-================
-idCompressor_Arithmetic::UpdateProbabilities
-================
-*/
 void idCompressor_Arithmetic::UpdateProbabilities( acSymbol_t* symbol )
 {
 	int i, x;
@@ -1536,11 +1404,6 @@ void idCompressor_Arithmetic::UpdateProbabilities( acSymbol_t* symbol )
 	scale++;
 }
 
-/*
-================
-idCompressor_Arithmetic::GetCurrentCount
-================
-*/
 int idCompressor_Arithmetic::GetCurrentCount()
 {
 	// DG: use int instead of long for 64bit compatibility
@@ -1548,11 +1411,6 @@ int idCompressor_Arithmetic::GetCurrentCount()
 	// DG end
 }
 
-/*
-================
-idCompressor_Arithmetic::ProbabilityForCount
-================
-*/
 int idCompressor_Arithmetic::ProbabilityForCount( unsigned int count )
 {
 #if 1
@@ -1595,11 +1453,6 @@ int idCompressor_Arithmetic::ProbabilityForCount( unsigned int count )
 #endif
 }
 
-/*
-================
-idCompressor_Arithmetic::SymbolFromCount
-================
-*/
 int idCompressor_Arithmetic::SymbolFromCount( unsigned int count, acSymbol_t* symbol )
 {
 	int p			 = ProbabilityForCount( count );
@@ -1609,11 +1462,6 @@ int idCompressor_Arithmetic::SymbolFromCount( unsigned int count, acSymbol_t* sy
 	return p;
 }
 
-/*
-================
-idCompressor_Arithmetic::RemoveSymbolFromStream
-================
-*/
 void idCompressor_Arithmetic::RemoveSymbolFromStream( acSymbol_t* symbol )
 {
 	// DG: use int instead of long for 64bit compatibility
@@ -1643,11 +1491,6 @@ void idCompressor_Arithmetic::RemoveSymbolFromStream( acSymbol_t* symbol )
 	}
 }
 
-/*
-================
-idCompressor_Arithmetic::GetBit
-================
-*/
 int idCompressor_Arithmetic::GetBit()
 {
 	int getbit;
@@ -1666,11 +1509,6 @@ int idCompressor_Arithmetic::GetBit()
 	return getbit;
 }
 
-/*
-================
-idCompressor_Arithmetic::EncodeSymbol
-================
-*/
 void idCompressor_Arithmetic::EncodeSymbol( acSymbol_t* symbol )
 {
 	unsigned int range;
@@ -1706,11 +1544,6 @@ void idCompressor_Arithmetic::EncodeSymbol( acSymbol_t* symbol )
 	}
 }
 
-/*
-================
-idCompressor_Arithmetic::CharToSymbol
-================
-*/
 void idCompressor_Arithmetic::CharToSymbol( byte c, acSymbol_t* symbol )
 {
 	symbol->low		 = probabilities[c].low;
@@ -1718,11 +1551,6 @@ void idCompressor_Arithmetic::CharToSymbol( byte c, acSymbol_t* symbol )
 	symbol->position = c;
 }
 
-/*
-================
-idCompressor_Arithmetic::PutBit
-================
-*/
 void idCompressor_Arithmetic::PutBit( int putbit )
 {
 	symbolBuffer |= ( putbit & 1 ) << symbolBit;
@@ -1739,11 +1567,6 @@ void idCompressor_Arithmetic::PutBit( int putbit )
 	}
 }
 
-/*
-================
-idCompressor_Arithmetic::WriteOverflowBits
-================
-*/
 void idCompressor_Arithmetic::WriteOverflowBits()
 {
 	WriteBits( low >> AC_MSB2_SHIFT, 1 );
@@ -1789,11 +1612,6 @@ int idCompressor_Arithmetic::Write( const void* inData, int inLength )
 	return inLength;
 }
 
-/*
-================
-idCompressor_Arithmetic::FinishCompress
-================
-*/
 void idCompressor_Arithmetic::FinishCompress()
 {
 	if( compress == false ) {
@@ -1805,11 +1623,6 @@ void idCompressor_Arithmetic::FinishCompress()
 	idCompressor_BitStream::FinishCompress();
 }
 
-/*
-================
-idCompressor_Arithmetic::Read
-================
-*/
 int idCompressor_Arithmetic::Read( void* outData, int outLength )
 {
 	int i, j;
@@ -1872,17 +1685,36 @@ const int LZSS_HASH_MASK   = ( 1 << LZSS_HASH_BITS ) - 1;
 const int LZSS_OFFSET_BITS = 11;
 const int LZSS_LENGTH_BITS = 5;
 
+/*!
+	\class idCompressor_LZSS
+	\brief LZSS compression implementation that provides lossless data compression and decompression.
+
+	This class implements the LZSS (Lempel-Ziv-Storer-Szymanski) compression algorithm, which is a lossless data compression method that uses a combination of literal copying and reference-based
+   encoding. The compressor maintains an internal buffer to store previously processed data and uses a hash table to efficiently find matching sequences. It inherits from idCompressor_BitStream,
+   indicating it operates at a bit-level for optimal compression efficiency. The class supports both compression and decompression modes through initialization with appropriate file handles and mode
+   flags. Data processing occurs in blocks, with methods to write input data for compression and read decompressed output. Memory management is handled internally by the compressor, with the hash
+   table and buffer being managed automatically during compression operations. The FindMatch method performs the core matching algorithm to locate repeated sequences, which is essential for
+   compression efficiency. This design allows for streaming compression and decompression of data with minimal memory overhead.
+
+*/
 class idCompressor_LZSS : public idCompressor_BitStream
 {
 public:
+	//! Initializes a new instance of the LZSS compressor.
 	idCompressor_LZSS()
 	{
 	}
 
+	//! Initializes the LZSS compressor with the specified file, compression mode, and word length.
 	void Init( idFile* f, bool compress, int wordLength );
+
+	//! Finalizes the compression process for LZSS compressor
 	void FinishCompress();
 
+	//! Writes data to the LZSS compressor, compressing it if compression is enabled.
 	int	 Write( const void* inData, int inLength );
+
+	//! Reads decompressed data from the LZSS compressor into the provided output buffer.
 	int	 Read( void* outData, int outLength );
 
 protected:
@@ -1898,18 +1730,33 @@ protected:
 	int	 hashNext[LZSS_BLOCK_SIZE * 8];
 
 protected:
+	/*!
+		\brief Finds the best matching sequence in the compression buffer for the current input word.
+
+		This function searches for the longest matching sequence in the previously compressed portion of the data, using a hash table for efficient lookup. It updates the word offset and number of
+	   matching words. The function returns true if a match of sufficient length is found, false otherwise.
+
+		\param startWord The index of the current word in the compression buffer
+		\param startValue The value of the current word to match against
+		\param wordOffset Output parameter that will contain the offset of the best matching sequence
+		\param numWords Output parameter that will contain the number of words that match
+		\return true if a match of at least minMatchWords length is found, false otherwise
+	*/
 	bool		 FindMatch( int startWord, int startValue, int& wordOffset, int& numWords );
+
+	//! Updates the hash table by adding a new index to the linked list at the specified hash position.
 	void		 AddToHash( int index, int hash );
+
+	//! Retrieves a word value from a compressed block at the specified offset.
 	int			 GetWordFromBlock( int wordOffset ) const;
+
+	//! Compresses a block of data using the LZSS algorithm.
 	virtual void CompressBlock();
+
+	//! Decompresses a block of data using LZSS algorithm.
 	virtual void DecompressBlock();
 };
 
-/*
-================
-idCompressor_LZSS::Init
-================
-*/
 void idCompressor_LZSS::Init( idFile* f, bool compress, int wordLength )
 {
 	idCompressor_BitStream::Init( f, compress, wordLength );
@@ -1922,11 +1769,6 @@ void idCompressor_LZSS::Init( idFile* f, bool compress, int wordLength )
 	blockIndex	  = 0;
 }
 
-/*
-================
-idCompressor_LZSS::FindMatch
-================
-*/
 bool idCompressor_LZSS::FindMatch( int startWord, int startValue, int& wordOffset, int& numWords )
 {
 	int i, n, hash, bottom, maxBits;
@@ -1953,22 +1795,12 @@ bool idCompressor_LZSS::FindMatch( int startWord, int startValue, int& wordOffse
 	return ( numWords >= minMatchWords );
 }
 
-/*
-================
-idCompressor_LZSS::AddToHash
-================
-*/
 void idCompressor_LZSS::AddToHash( int index, int hash )
 {
 	hashNext[index] = hashTable[hash];
 	hashTable[hash] = index;
 }
 
-/*
-================
-idCompressor_LZSS::GetWordFromBlock
-================
-*/
 int idCompressor_LZSS::GetWordFromBlock( int wordOffset ) const
 {
 	int blockBit, blockByte, value, valueBits, get, fraction;
@@ -2004,11 +1836,6 @@ int idCompressor_LZSS::GetWordFromBlock( int wordOffset ) const
 	return value;
 }
 
-/*
-================
-idCompressor_LZSS::CompressBlock
-================
-*/
 void idCompressor_LZSS::CompressBlock()
 {
 	int i, startWord, startValue, wordOffset, numWords;
@@ -2042,11 +1869,6 @@ void idCompressor_LZSS::CompressBlock()
 	blockSize = 0;
 }
 
-/*
-================
-idCompressor_LZSS::DecompressBlock
-================
-*/
 void idCompressor_LZSS::DecompressBlock()
 {
 	int i, offset, startWord, numWords;
@@ -2071,11 +1893,6 @@ void idCompressor_LZSS::DecompressBlock()
 	blockSize = Min( writeByte, LZSS_BLOCK_SIZE );
 }
 
-/*
-================
-idCompressor_LZSS::Write
-================
-*/
 int idCompressor_LZSS::Write( const void* inData, int inLength )
 {
 	int i, n;
@@ -2101,11 +1918,6 @@ int idCompressor_LZSS::Write( const void* inData, int inLength )
 	return inLength;
 }
 
-/*
-================
-idCompressor_LZSS::FinishCompress
-================
-*/
 void idCompressor_LZSS::FinishCompress()
 {
 	if( compress == false ) {
@@ -2117,11 +1929,6 @@ void idCompressor_LZSS::FinishCompress()
 	idCompressor_BitStream::FinishCompress();
 }
 
-/*
-================
-idCompressor_LZSS::Read
-================
-*/
 int idCompressor_LZSS::Read( void* outData, int outLength )
 {
 	int i, n;
@@ -2153,35 +1960,29 @@ int idCompressor_LZSS::Read( void* outData, int outLength )
 	return outLength;
 }
 
-/*
-=================================================================================
-
-	idCompressor_LZSS_WordAligned
-
-	Outputs word aligned compressed data.
-
-=================================================================================
+/*!
+	\class idCompressor_LZSS_WordAligned
+	\brief Provides word-aligned lossless data compression and decompression using the LZSS algorithm.
 */
-
 class idCompressor_LZSS_WordAligned : public idCompressor_LZSS
 {
 public:
+	//! Constructs a new instance of the word-aligned LZSS compressor.
 	idCompressor_LZSS_WordAligned()
 	{
 	}
 
+	//! Initializes the LZSS word-aligned compressor with the specified file, compression mode, and word length.
 	void Init( idFile* f, bool compress, int wordLength );
 
 private:
+	//! Compresses a block of data using the LZSS word-aligned compression algorithm.
 	virtual void CompressBlock();
+
+	//! Decompresses a block of data using LZSS word-aligned compression.
 	virtual void DecompressBlock();
 };
 
-/*
-================
-idCompressor_LZSS_WordAligned::Init
-================
-*/
 void idCompressor_LZSS_WordAligned::Init( idFile* f, bool compress, int wordLength )
 {
 	idCompressor_LZSS::Init( f, compress, wordLength );
@@ -2194,11 +1995,6 @@ void idCompressor_LZSS_WordAligned::Init( idFile* f, bool compress, int wordLeng
 	blockIndex	  = 0;
 }
 
-/*
-================
-idCompressor_LZSS_WordAligned::CompressBlock
-================
-*/
 void idCompressor_LZSS_WordAligned::CompressBlock()
 {
 	int i, startWord, startValue, wordOffset, numWords;
@@ -2231,11 +2027,6 @@ void idCompressor_LZSS_WordAligned::CompressBlock()
 	blockSize = 0;
 }
 
-/*
-================
-idCompressor_LZSS_WordAligned::DecompressBlock
-================
-*/
 void idCompressor_LZSS_WordAligned::DecompressBlock()
 {
 	int i, offset, startWord, numWords;
@@ -2261,10 +2052,9 @@ void idCompressor_LZSS_WordAligned::DecompressBlock()
 	blockSize = Min( writeByte, LZSS_BLOCK_SIZE );
 }
 
-/*
-=================================================================================
-
-	idCompressor_LZW
+/*!
+	\class idCompressor_LZW
+	\brief LZW compression and decompression implementation for handling binary data streams.
 
 	http://www.unisys.com/about__unisys/lzw
 	http://www.dogma.net/markn/articles/lzw/lzw.htm
@@ -2306,29 +2096,41 @@ void idCompressor_LZSS_WordAligned::DecompressBlock()
 
 	Dictionary entries 0-255 are always going to have the values 0-255
 
-=================================================================================
 */
-
 class idCompressor_LZW : public idCompressor_BitStream
 {
 public:
+	//! Constructs a new instance of the LZW compressor.
 	idCompressor_LZW()
 	{
 	}
 
+	//! Initializes the LZW compressor with the given file, compression mode, and word length.
 	void Init( idFile* f, bool compress, int wordLength );
+
+	//! Finalizes the LZW compression process by writing remaining bits and completing the compression stream.
 	void FinishCompress();
 
+	//! Writes compressed data using LZW compression algorithm.
 	int	 Write( const void* inData, int inLength );
+
+	//! Reads decompressed data into the provided buffer.
 	int	 Read( void* outData, int outLength );
 
 protected:
+	//! Adds a new entry to the LZW compression dictionary and returns the code for the new entry.
 	int				 AddToDict( int w, int k );
+
+	//! Looks up a dictionary entry based on the given w and k values and returns its index or -1 if not found.
 	int				 Lookup( int w, int k );
 
+	//! Increments the code bits and clears the dictionary when the maximum code is reached
 	bool			 BumpBits();
 
+	//! Writes a chain of characters from the LZW dictionary to the output stream and returns the first character of the chain.
 	int				 WriteChain( int code );
+
+	//! Decompresses a block of data using the LZW algorithm.
 	void			 DecompressBlock();
 
 	static const int LZW_BLOCK_SIZE = 32767;
@@ -2359,11 +2161,6 @@ protected:
 	int			oldCode;
 };
 
-/*
-================
-idCompressor_LZW::Init
-================
-*/
 void idCompressor_LZW::Init( idFile* f, bool compress, int wordLength )
 {
 	idCompressor_BitStream::Init( f, compress, wordLength );
@@ -2384,11 +2181,6 @@ void idCompressor_LZW::Init( idFile* f, bool compress, int wordLength )
 	oldCode = -1;
 }
 
-/*
-================
-idCompressor_LZW::Read
-================
-*/
 int idCompressor_LZW::Read( void* outData, int outLength )
 {
 	int i, n;
@@ -2420,11 +2212,6 @@ int idCompressor_LZW::Read( void* outData, int outLength )
 	return outLength;
 }
 
-/*
-================
-idCompressor_LZW::Lookup
-================
-*/
 int idCompressor_LZW::Lookup( int w, int k )
 {
 	int j;
@@ -2442,11 +2229,6 @@ int idCompressor_LZW::Lookup( int w, int k )
 	return -1;
 }
 
-/*
-================
-idCompressor_LZW::AddToDict
-================
-*/
 int idCompressor_LZW::AddToDict( int w, int k )
 {
 	dictionary[nextCode].k = k;
@@ -2455,14 +2237,6 @@ int idCompressor_LZW::AddToDict( int w, int k )
 	return nextCode++;
 }
 
-/*
-================
-idCompressor_LZW::BumpBits
-
-Possibly increments codeBits
-Returns true if the dictionary was cleared
-================
-*/
 bool idCompressor_LZW::BumpBits()
 {
 	if( nextCode == ( 1 << codeBits ) ) {
@@ -2477,22 +2251,12 @@ bool idCompressor_LZW::BumpBits()
 	return false;
 }
 
-/*
-================
-idCompressor_LZW::FinishCompress
-================
-*/
 void idCompressor_LZW::FinishCompress()
 {
 	WriteBits( w, codeBits );
 	idCompressor_BitStream::FinishCompress();
 }
 
-/*
-================
-idCompressor_LZW::Write
-================
-*/
 int idCompressor_LZW::Write( const void* inData, int inLength )
 {
 	int i;
@@ -2517,12 +2281,6 @@ int idCompressor_LZW::Write( const void* inData, int inLength )
 	return inLength;
 }
 
-/*
-================
-idCompressor_LZW::WriteChain
-The chain is stored backwards, so we have to write it to a buffer then output the buffer in reverse
-================
-*/
 int idCompressor_LZW::WriteChain( int code )
 {
 	byte chain[LZW_DICT_SIZE];
@@ -2540,11 +2298,6 @@ int idCompressor_LZW::WriteChain( int code )
 	return firstChar;
 }
 
-/*
-================
-idCompressor_LZW::DecompressBlock
-================
-*/
 void idCompressor_LZW::DecompressBlock()
 {
 	int code, firstChar;
@@ -2585,99 +2338,46 @@ void idCompressor_LZW::DecompressBlock()
 	blockSize = Min( writeByte, LZW_BLOCK_SIZE );
 }
 
-/*
-=================================================================================
-
-	idCompressor
-
-=================================================================================
-*/
-
-/*
-================
-idCompressor::AllocNoCompression
-================
-*/
 idCompressor* idCompressor::AllocNoCompression()
 {
 	return new( TAG_IDFILE ) idCompressor_None();
 }
 
-/*
-================
-idCompressor::AllocBitStream
-================
-*/
 idCompressor* idCompressor::AllocBitStream()
 {
 	return new( TAG_IDFILE ) idCompressor_BitStream();
 }
 
-/*
-================
-idCompressor::AllocRunLength
-================
-*/
 idCompressor* idCompressor::AllocRunLength()
 {
 	return new( TAG_IDFILE ) idCompressor_RunLength();
 }
 
-/*
-================
-idCompressor::AllocRunLength_ZeroBased
-================
-*/
 idCompressor* idCompressor::AllocRunLength_ZeroBased()
 {
 	return new( TAG_IDFILE ) idCompressor_RunLength_ZeroBased();
 }
 
-/*
-================
-idCompressor::AllocHuffman
-================
-*/
 idCompressor* idCompressor::AllocHuffman()
 {
 	return new( TAG_IDFILE ) idCompressor_Huffman();
 }
 
-/*
-================
-idCompressor::AllocArithmetic
-================
-*/
 idCompressor* idCompressor::AllocArithmetic()
 {
 	return new( TAG_IDFILE ) idCompressor_Arithmetic();
 }
 
-/*
-================
-idCompressor::AllocLZSS
-================
-*/
 idCompressor* idCompressor::AllocLZSS()
 {
 	return new( TAG_IDFILE ) idCompressor_LZSS();
 }
 
-/*
-================
-idCompressor::AllocLZSS_WordAligned
-================
-*/
 idCompressor* idCompressor::AllocLZSS_WordAligned()
 {
 	return new( TAG_IDFILE ) idCompressor_LZSS_WordAligned();
 }
 
-/*
-================
-idCompressor::AllocLZW
-================
-*/
 idCompressor* idCompressor::AllocLZW()
 {
 	return new( TAG_IDFILE ) idCompressor_LZW();

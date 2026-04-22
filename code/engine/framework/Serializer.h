@@ -87,14 +87,20 @@ If you have questions concerning this license or the applicable additional terms
 
 #define SERIALIZE_CHECKPOINT( ser ) ser.SerializeCheckpoint( __FILE__, __LINE__ );
 
-/*
-========================
-idSerializer
-========================
+/*!
+	\class idSerializer
+	\brief A serializer for handling data serialization and deserialization with various data type support and optimization techniques.
+
+	The idSerializer provides a comprehensive interface for serializing and deserializing different data types to and from a message buffer. It supports both reading and writing modes, with
+   specialized methods for handling integers, floating-point numbers, vectors, matrices, strings, and boolean values. The serializer includes functionality for quantization, delta encoding, and packed
+   integer serialization to optimize data transmission. It also offers methods for handling lists and checkpoints to ensure data integrity during serialization processes. The class is designed to work
+   with bit-level messaging systems and provides utilities for various optimization techniques such as compression and precision control.
+
 */
 class idSerializer
 {
 public:
+	//! Constructs an idSerializer object with the specified message buffer and writing mode.
 	idSerializer( idBitMsg& msg_, bool writing_ ) :
 		writing( writing_ ),
 		msg( &msg_ )
@@ -105,11 +111,14 @@ public:
 	{
 	}
 
+	//! Returns true if the serializer is in reading mode, false if in writing mode.
 	bool IsReading() { return !writing; }
+
+	//! Returns true if the serializer is in write mode.
 	bool IsWriting() { return writing; }
 
-	// SerializeRange - minSize through maxSize inclusive of all possible values
-	void SerializeRange( int& value, int minSize, int maxSize ) // Supports signed types
+	//! Serializes an integer value within a specified range, supporting signed types.
+	void SerializeRange( int& value, int minSize, int maxSize )
 	{
 		SanityCheck();
 		if( writing ) {
@@ -120,8 +129,8 @@ public:
 		assert( value >= minSize && value <= maxSize );
 	}
 
-	// SerializeUMax - maxSize inclusive, unsigned
-	void SerializeUMax( int& value, int maxSize ) // Unsigned only
+	//! Serializes an unsigned integer value using a maximum size constraint.
+	void SerializeUMax( int& value, int maxSize )
 	{
 		SanityCheck();
 		if( writing ) {
@@ -132,8 +141,8 @@ public:
 		assert( value <= maxSize );
 	}
 
-	// SerializeUMaxNonRef - maxSize inclusive, unsigned, no reference
-	int SerializeUMaxNonRef( int value, int maxSize ) // Unsigned only
+	//! Serializes an unsigned integer value within the specified maximum size range.
+	int SerializeUMaxNonRef( int value, int maxSize )
 	{
 		SanityCheck();
 		if( writing ) {
@@ -156,6 +165,7 @@ public:
 		}
 	};
 
+	//! Serializes a boolean value for reading or writing.
 	bool SerializeBoolNonRef( bool value )
 	{
 		SanityCheck(); // We return a value so we can support bit fields (can't pass by reference)
@@ -185,7 +195,8 @@ public:
 	}
 	void SerializeQ( idMat3& axis, int bits = 15 ) { Serialize( axis ); }
 #else
-	// SerializeQ - Quantizes a float to a variable number of bits (assumes signed, uses simple quantization)
+
+	//! Serializes a vector using quantization with a specified maximum value and number of bits.
 	template<int _max_, int _numBits_>
 	void SerializeQ( idVec3& value )
 	{
@@ -196,6 +207,8 @@ public:
 			msg->ReadQuantizedVector<idVec3, _max_, _numBits_>( value );
 		}
 	}
+
+	//! Serializes a floating-point value using quantization.
 	template<int _max_, int _numBits_>
 	void SerializeQ( float& value )
 	{
@@ -206,6 +219,8 @@ public:
 			value = msg->ReadQuantizedFloat<_max_, _numBits_>();
 		}
 	}
+
+	//! Serializes a quantized unsigned float value for writing or reading.
 	template<int _max_, int _numBits_>
 	void SerializeUQ( float& value )
 	{
@@ -216,18 +231,27 @@ public:
 			value = msg->ReadQuantizedUFloat<_max_, _numBits_>();
 		}
 	}
-	void SerializeQ( idMat3& axis, int bits = 15 ); // Default to 15 bits per component, which has almost unnoticeable quantization
+
+	//! Serializes a 3x3 matrix as a quaternion using bit-level compression with configurable precision.
+	void SerializeQ( idMat3& axis, int bits = 15 );
 #endif
 
-	void Serialize( idMat3& axis );	 // Raw 3x3 matrix serialize
-	void SerializeC( idMat3& axis ); // Uses compressed quaternion
+	//! Serializes a 3x3 matrix by serializing each of its row vectors.
+	void Serialize( idMat3& axis );
 
+	//! Serializes a 3x3 matrix using a compressed quaternion representation.
+	void SerializeC( idMat3& axis );
+
+	//! Serializes an integer using a packed format that is more efficient for small values.
 	template<typename _type_>
 	void SerializeListElement( const idList<_type_*>& list, const _type_*& element );
 
 	void SerializePacked( int& original );
+
+	//! Serializes a signed integer using a packed format that encodes the sign in the first byte
 	void SerializeSPacked( int& original );
 
+	//! Serializes a string to or from a message buffer
 	void SerializeString( char* s, int bufferSize )
 	{
 		SanityCheck();
@@ -237,7 +261,8 @@ public:
 			msg->ReadString( s, bufferSize );
 		}
 	}
-	// void	SerializeString( idAtomicString & s )		{ SanityCheck(); if ( writing ) { msg->WriteString(s); } else { idStr temp; msg->ReadString( temp ); s.Set( temp ); } }
+
+	//! Serializes a string by writing it to or reading it from a message buffer depending on the serialization mode.
 	void SerializeString( idStr& s )
 	{
 		SanityCheck();
@@ -247,8 +272,8 @@ public:
 			msg->ReadString( s );
 		}
 	}
-	// void	SerializeString( idStrId & s )				{ SanityCheck(); if ( writing ) { msg->WriteString(s.GetKey()); } else { idStr key; msg->ReadString( key ); s.Set( key );} }
 
+	//! Serializes a delta-encoded integer value relative to a base value.
 	void SerializeDelta( int32& value, const int32& base )
 	{
 		SanityCheck();
@@ -258,6 +283,8 @@ public:
 			value = msg->ReadDeltaLong( base );
 		}
 	}
+
+	//! Serializes a16-bit integer value as a delta from a base value
 	void SerializeDelta( int16& value, const int16& base )
 	{
 		SanityCheck();
@@ -267,6 +294,8 @@ public:
 			value = msg->ReadDeltaShort( base );
 		}
 	}
+
+	//! Serializes a signed 8-bit integer value as a delta relative to a base value
 	void SerializeDelta( int8& value, const int8& base )
 	{
 		SanityCheck();
@@ -277,6 +306,7 @@ public:
 		}
 	}
 
+	//! Serializes a delta-encoded 16-bit unsigned integer value relative to a base value.
 	void SerializeDelta( uint16& value, const uint16& base )
 	{
 		SanityCheck();
@@ -286,6 +316,8 @@ public:
 			value = msg->ReadDeltaUShort( base );
 		}
 	}
+
+	//! Serializes a byte value as a delta from a base value.
 	void SerializeDelta( uint8& value, const uint8& base )
 	{
 		SanityCheck();
@@ -296,6 +328,7 @@ public:
 		}
 	}
 
+	//! Serializes a floating-point value as a delta from a base value.
 	void SerializeDelta( float& value, const float& base )
 	{
 		SanityCheck();
@@ -306,7 +339,7 @@ public:
 		}
 	}
 
-	// Common types, no compression
+	//! Serializes a 64-bit integer value for reading or writing.
 	void Serialize( int64& value )
 	{
 		SanityCheck();
@@ -316,6 +349,8 @@ public:
 			value = msg->ReadLongLong();
 		}
 	}
+
+	//! Serializes a 64-bit unsigned integer value for reading from or writing to a message buffer
 	void Serialize( uint64& value )
 	{
 		SanityCheck();
@@ -325,6 +360,8 @@ public:
 			value = msg->ReadLongLong();
 		}
 	}
+
+	//! Serializes a 32-bit integer value by reading from or writing to a message buffer.
 	void Serialize( int32& value )
 	{
 		SanityCheck();
@@ -334,6 +371,8 @@ public:
 			value = msg->ReadLong();
 		}
 	}
+
+	//! Serializes a 32-bit unsigned integer value by reading from or writing to a message buffer.
 	void Serialize( uint32& value )
 	{
 		SanityCheck();
@@ -343,6 +382,8 @@ public:
 			value = msg->ReadLong();
 		}
 	}
+
+	//! Serializes a 16-bit signed integer value by reading from or writing to a message buffer.
 	void Serialize( int16& value )
 	{
 		SanityCheck();
@@ -352,6 +393,8 @@ public:
 			value = msg->ReadShort();
 		}
 	}
+
+	//! Serializes a 16-bit unsigned integer value by reading from or writing to a message buffer.
 	void Serialize( uint16& value )
 	{
 		SanityCheck();
@@ -361,6 +404,8 @@ public:
 			value = msg->ReadUShort();
 		}
 	}
+
+	//! Serializes a single byte value to or from a message buffer.
 	void Serialize( uint8& value )
 	{
 		SanityCheck();
@@ -370,6 +415,8 @@ public:
 			value = msg->ReadByte();
 		}
 	}
+
+	//! Serializes a signed 8-bit integer value to or from a message buffer
 	void Serialize( int8& value )
 	{
 		SanityCheck();
@@ -379,6 +426,8 @@ public:
 			value = msg->ReadChar();
 		}
 	}
+
+	//! Serializes a boolean value to or from a message buffer
 	void Serialize( bool& value )
 	{
 		SanityCheck();
@@ -388,6 +437,8 @@ public:
 			value = msg->ReadByte() != 0;
 		}
 	}
+
+	//! Serializes a float value by reading from or writing to a message buffer
 	void Serialize( float& value )
 	{
 		SanityCheck();
@@ -397,6 +448,8 @@ public:
 			value = msg->ReadFloat();
 		}
 	}
+
+	//! Serializes a random number generator seed into or from a message stream.
 	void Serialize( idRandom2& value )
 	{
 		SanityCheck();
@@ -406,6 +459,8 @@ public:
 			value.SetSeed( msg->ReadLong() );
 		}
 	}
+
+	//! Serializes a 3D vector value by reading from or writing to a message buffer
 	void Serialize( idVec3& value )
 	{
 		SanityCheck();
@@ -415,6 +470,8 @@ public:
 			msg->ReadVectorFloat( value );
 		}
 	}
+
+	//! Serializes a 2D vector value by reading from or writing to a message buffer
 	void Serialize( idVec2& value )
 	{
 		SanityCheck();
@@ -424,6 +481,8 @@ public:
 			msg->ReadVectorFloat( value );
 		}
 	}
+
+	//! Serializes a 6-dimensional vector value by writing or reading it from a message buffer.
 	void Serialize( idVec6& value )
 	{
 		SanityCheck();
@@ -433,6 +492,8 @@ public:
 			msg->ReadVectorFloat( value );
 		}
 	}
+
+	//! Serializes a 4-dimensional vector value by reading from or writing to a message buffer
 	void Serialize( idVec4& value )
 	{
 		SanityCheck();
@@ -443,7 +504,7 @@ public:
 		}
 	}
 
-	// serialize an angle, normalized to between 0 to 360 and quantized to 16 bits
+	//! Serializes an angle normalized to 0-360 degrees using 16-bit quantization
 	void SerializeAngle( float& value )
 	{
 		SanityCheck();
@@ -458,47 +519,7 @@ public:
 		}
 	}
 
-	// void	Serialize( degrees_t & value )	{
-	//			SanityCheck();
-	//			float angle = value.Get();
-	//			Serialize( angle );
-	//			value.Set( angle );
-	//		}
-	// void	SerializeAngle( degrees_t & value )	{
-	//			SanityCheck();
-	//			float angle = value.Get();
-	//			SerializeAngle( angle );
-	//			value.Set( angle );
-	//		}
-	// void	Serialize( radians_t & value ) {
-	//			SanityCheck();
-	//			// convert to degrees
-	//			degrees_t d( value.Get() * idMath::M_RAD2DEG );
-	//			Serialize( d );
-	//			if ( !writing ) {
-	//				// if reading, get the value we read in degrees and convert back to radians
-	//				value.Set( d.Get() * idMath::M_DEG2RAD );
-	//			}
-	//		}
-	// void	SerializeAngle( radians_t & value ) {
-	//			SanityCheck();
-	//			// convert to degrees
-	//			degrees_t d( value.Get() * idMath::M_RAD2DEG );
-	//			// serialize as normalized degrees between 0 - 360
-	//			SerializeAngle( d );
-	//			if ( !writing ) {
-	//				// if reading, get the value we read in degrees and convert back to radians
-	//				value.Set( d.Get() * idMath::M_DEG2RAD );
-	//			}
-	//		}
-	//
-	// void	Serialize( idColor & value ) {
-	//	Serialize( value.r );
-	//	Serialize( value.g );
-	//	Serialize( value.b );
-	//	Serialize( value.a );
-	// }
-
+	//! Performs a sanity check during serialization by validating magic numbers.
 	void SanityCheck()
 	{
 #ifdef SERIALIZE_SANITYCHECK
@@ -510,7 +531,6 @@ public:
 			int m	 = msg->ReadUShort();
 			assert( cccc == 0xCCCC );
 			assert( m == magic );
-			// For release builds
 			if( cccc != 0xCCCC ) { idLib::Error( "idSerializer::SanityCheck - cccc != 0xCCCC" ); }
 			if( m != magic ) { idLib::Error( "idSerializer::SanityCheck - m != magic" ); }
 		}
@@ -518,6 +538,7 @@ public:
 #endif
 	}
 
+	//! Serializes a checkpoint tag to verify serialization integrity at the specified file and line.
 	void SerializeCheckpoint( const char* file, int line )
 	{
 #ifdef ENABLE_SERIALIZE_CHECKPOINTS
@@ -528,6 +549,7 @@ public:
 #endif
 	}
 
+	//! Returns a reference to the internal idBitMsg object used for serialization
 	idBitMsg& GetMsg() { return *msg; }
 
 private:
@@ -538,9 +560,14 @@ private:
 #endif
 };
 
+/*!
+	\class idSerializerScopedBlock
+	\brief A scoped block for managing serialization operations with a specified maximum size.
+*/
 class idSerializerScopedBlock
 {
 public:
+	//! Initializes a scoped block for serialization with a specified maximum size.
 	idSerializerScopedBlock( idSerializer& ser_, int maxSizeBytes_ )
 	{
 		ser			 = &ser_;
@@ -550,6 +577,7 @@ public:
 		startWriteBits = ser->GetMsg().GetWriteBit();
 	}
 
+	//! Destroys the scoped block and ensures proper serialization of remaining bits and bytes.
 	~idSerializerScopedBlock()
 	{
 		// Serialize remaining bits
@@ -641,11 +669,6 @@ ID_INLINE void idSerializer::SerializeQ( idMat3& axis, int bits )
 }
 #endif
 
-/*
-========================
-idSerializer::Serialize
-========================
-*/
 ID_INLINE void idSerializer::Serialize( idMat3& axis )
 {
 	SanityCheck();
@@ -655,11 +678,6 @@ ID_INLINE void idSerializer::Serialize( idMat3& axis )
 	Serialize( axis[2] );
 }
 
-/*
-========================
-idSerializer::SerializeC
-========================
-*/
 ID_INLINE void idSerializer::SerializeC( idMat3& axis )
 {
 	SanityCheck();
@@ -681,11 +699,7 @@ ID_INLINE void idSerializer::SerializeC( idMat3& axis )
 	}
 }
 
-/*
-========================
-idSerializer::SerializeListElement
-========================
-*/
+//! Serializes a list element by writing its index during writing or reading it back during reading
 template<typename _type_>
 ID_INLINE void idSerializer::SerializeListElement( const idList<_type_*>& list, const _type_*& element )
 {
@@ -702,15 +716,6 @@ ID_INLINE void idSerializer::SerializeListElement( const idList<_type_*>& list, 
 	}
 }
 
-/*
-========================
-idSerializer::SerializePacked
-Writes out 7 bits at a time, using every 8th bit to signify more bits exist
-
-NOTE - Signed values work with this function, but take up more bytes
-Use SerializeSPacked if you anticipate lots of negative values
-========================
-*/
 ID_INLINE void idSerializer::SerializePacked( int& original )
 {
 	SanityCheck();
@@ -740,15 +745,6 @@ ID_INLINE void idSerializer::SerializePacked( int& original )
 	}
 }
 
-/*
-========================
-idSerializer::SerializeSPacked
-Writes out 7 bits at a time, using every 8th bit to signify more bits exist
-
-NOTE - An extra bit of the first byte is used to store the sign
-(this function supports negative values, but will use 2 bytes for values greater than 63)
-========================
-*/
 ID_INLINE void idSerializer::SerializeSPacked( int& value )
 {
 	SanityCheck();

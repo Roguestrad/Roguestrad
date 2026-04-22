@@ -44,25 +44,33 @@ enum saveGameType_t {
 	SAVEGAMEFILE_OPTIONAL	  = BIT( 7 )  // if this flag is not set and missing, there is an error
 };
 
-/*
-================================================
-idFile_SaveGame
-================================================
+/*!
+	\class idFile_SaveGame
+	\brief A file abstraction for save game data management.
+
+	This class provides a file interface specifically designed for handling save game data, extending memory-based file functionality. It manages save game file names and types, supporting equality
+   comparisons and name/type configuration. The class is intended to encapsulate the behavior of save game files within the application's file handling system.
+
 */
 class idFile_SaveGame : public idFile_Memory
 {
 public:
+	//! Constructs a new idFile_SaveGame object with default values.
 	idFile_SaveGame() :
 		type( SAVEGAMEFILE_NONE ),
 		error( false )
 	{
 	}
+
+	//! Initializes a save game file object with the specified name.
 	idFile_SaveGame( const char* _name ) :
 		idFile_Memory( _name ),
 		type( SAVEGAMEFILE_NONE ),
 		error( false )
 	{
 	}
+
+	//! Constructs an idFile_SaveGame object with the specified file name and type.
 	idFile_SaveGame( const char* _name, int type_ ) :
 		idFile_Memory( _name ),
 		type( type_ ),
@@ -72,8 +80,13 @@ public:
 
 	virtual ~idFile_SaveGame() { }
 
+	//! Compares two idFile_SaveGame objects for equality based on their names.
 	bool operator==( const idFile_SaveGame& other ) const { return idStr::Icmp( GetName(), other.GetName() ) == 0; }
+
+	//! Compares the file name with the provided string for equality in a case-insensitive manner
 	bool operator==( const char* _name ) const { return idStr::Icmp( GetName(), _name ) == 0; }
+
+	//! Sets the name and type of the save game file.
 	void SetNameAndType( const char* _name, int _type )
 	{
 		name = _name;
@@ -100,6 +113,17 @@ struct blockForIO_t {
 	size_t bytes;
 };
 
+/*!
+	\class idFile_SaveGamePipelined
+	\brief A file abstraction for handling save game data with pipelined compression and threading support.
+
+	This class provides a file interface for reading and writing save game data with pipelined compression and decompression operations. It supports both reading and writing modes, with automatic
+   handling of compression threading and block management. The class manages internal buffers for compressed and uncompressed data, facilitating efficient I/O operations during save game processing.
+   It includes methods for opening files in different modes, reading and writing data with proper buffering, and managing the completion or abortion of ongoing operations. The implementation handles
+   file metadata such as build version and save format version, allowing for compatibility checking. It also provides utilities for managing memory blocks during compression and decompression
+   processes.
+
+*/
 class idFile_SaveGamePipelined : public idFile
 {
 public:
@@ -110,59 +134,86 @@ public:
 	static const int COMPRESSED_BLOCK_SIZE	 = 128 * 1024;
 	static const int UNCOMPRESSED_BLOCK_SIZE = 256 * 1024;
 
+	//! Initializes a new instance of the idFile_SaveGamePipelined class.
 	idFile_SaveGamePipelined();
+
+	//! Destroys the save game pipelined file object and cleans up all associated resources.
 	virtual ~idFile_SaveGamePipelined();
 
+	//! Opens a save game file for reading with optional native file handling and decompression threading.
 	bool				OpenForReading( const char* const filename, bool useNativeFile );
+
+	//! Opens a file for writing with optional pipelined compression and threading support
 	bool				OpenForWriting( const char* const filename, bool useNativeFile );
 
+	//! Opens the save game file for reading with pipelined decompression
 	bool				OpenForReading( idFile* file );
+
+	//! Opens the save game file for writing with optional pipelined compression and threading.
 	bool				OpenForWriting( idFile* file );
 
-	// Finish any reading or writing.
+	//! Completes any ongoing read or write operations and cleans up resources.
 	void				Finish();
 
-	// Abort any reading or writing.
+	//! Aborts any ongoing read or write operations.
 	void				Abort();
 
-	// Cancel any reading or writing for app termination
+	//! Cancels any ongoing read or write operations to prepare for application termination.
 	static void			CancelToTerminate() { cancelToTerminate = true; }
 
+	//! Reads the build version from the save game file and returns true if successful.
 	bool				ReadBuildVersion();
+
+	//! Returns the build version string stored in the save game pipelined file object.
 	const char*			GetBuildVersion() const { return buildVersion; }
 
+	//! Reads and validates the save format version from the file.
 	bool				ReadSaveFormatVersion();
+
+	//! Returns the save format version used by the save game pipelined file.
 	int					GetSaveFormatVersion() const { return saveFormatVersion; }
+
+	//! Returns the pointer size used for save game serialization.
 	int					GetPointerSize() const;
 
-	//------------------------
-	// idFile Interface
-	//------------------------
-
+	//! Returns the name of the save game pipelined file.
 	virtual const char* GetName() const { return name.c_str(); }
+
+	//! Returns the full path of the file as a null-terminated string.
 	virtual const char* GetFullPath() const { return name.c_str(); }
+
+	//! Reads data from a save game pipelined file into the provided buffer
 	virtual int			Read( void* buffer, int len );
+
+	//! Writes data to the save game pipelined file, buffering uncompressed data until block boundaries.
 	virtual int			Write( const void* buffer, int len );
 
-	// this file is strictly streaming, you can't seek at all
+	//! Returns the length of the file in bytes.
 	virtual int			Length() const
 	{
 		// RB: 64 bit fix, we don't need support for files bigger than 2 GB
 		return ( int )compressedLength;
 		// RB end
 	}
+
+	//! Sets the length of the save game pipelined file to the specified value.
 	virtual void SetLength( size_t len ) { compressedLength = len; }
+
+	//! Returns the current position in the file.
 	virtual int	 Tell() const
 	{
 		assert( 0 );
 		return 0;
 	}
+
+	//! This function is not implemented and always asserts.
 	virtual int Seek( long offset, fsOrigin_t origin )
 	{
 		assert( 0 );
 		return 0;
 	}
 
+	//! Returns the timestamp of the save game pipelined file.
 	virtual ID_TIME_T Timestamp() const { return 0; }
 
 	//------------------------
@@ -172,20 +223,13 @@ public:
 
 	enum mode_t { CLOSED, WRITE, READ };
 
-	// Get the file mode: read/write.
+	//! Returns the file mode for the save game pipelined file, indicating whether it is in read or write mode.
 	mode_t GetMode() const { return mode; }
 
-	// Called by a background thread to get the next block to be written out.
-	// This may block until a block has been made available through the pipeline.
-	// Pass in NULL to notify the last write failed.
-	// Returns false if there are no more blocks.
+	//! Retrieves the next block for writing from the pipeline, potentially blocking until one becomes available.
 	bool   NextWriteBlock( blockForIO_t* block );
 
-	// Called by a background thread to get the next block to read data into and to
-	// report the number of bytes written to the previous block.
-	// This may block until space is available to place the next block.
-	// Pass in NULL to notify the end of the file was reached.
-	// Returns false if there are no more blocks.
+	//! Retrieves the next block for reading data into and reports the number of bytes written to the previous block, potentially blocking until space is available.
 	bool   NextReadBlock( blockForIO_t* block, size_t lastReadBytes );
 
 private:
@@ -261,14 +305,28 @@ private:
 	//------------------------
 	static bool cancelToTerminate;
 
+	//! Flushes the uncompressed block by waiting for the compression thread and preparing the next block for Zlib compression.
 	void		FlushUncompressedBlock();
+
+	//! Flushes the compressed block to the output file or buffer
 	void		FlushCompressedBlock();
+
+	//! Compresses a block of data using zlib compression
 	void		CompressBlock();
+
+	//! Writes the current block of data to the native file and resets the tracking variables.
 	void		WriteBlock();
 
+	//! Processes the next block of uncompressed data from the save game file.
 	void		PumpUncompressedBlock();
+
+	//! Processes the next compressed block of data for the save game pipelined file.
 	void		PumpCompressedBlock();
+
+	//! Decompresses a block of data using the zlib library.
 	void		DecompressBlock();
+
+	//! Reads a block of data from the native file into the compressed buffer.
 	void		ReadBlock();
 };
 

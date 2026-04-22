@@ -42,10 +42,17 @@ If you have questions concerning this license or the applicable additional terms
 
 class idZipContainer;
 
+/*!
+	\class idZipCacheEntry
+	\brief A cache entry for storing zip file data.
+*/
 class idZipCacheEntry
 {
 public:
+	//! Constructs a new idZipCacheEntry object and initializes it by clearing its contents.
 	idZipCacheEntry() { Clear(); }
+
+	//! Clears all members of the zip cache entry
 	void Clear()
 	{
 		filename.Empty();
@@ -63,29 +70,48 @@ public:
 	idZipContainer*					  owner;
 };
 
+/*!
+	\class idZipContainer
+	\brief A container for managing zip file resources and providing access to compressed files.
+
+	The idZipContainer class provides functionality for opening, parsing, and managing zip files. It maintains a cache of file resources and offers methods to initialize the container, open files from
+   within the zip, and retrieve metadata about the container's contents. The class handles the lifecycle of the zip file handle and ensures proper cleanup through its destructor. This container is
+   designed to provide efficient access to compressed file resources while maintaining an internal cache for performance optimization.
+
+*/
 class idZipContainer
 {
 	friend class idFileSystemLocal;
 
 public:
+	//! Initializes a new instance of the idZipContainer class with default values.
 	idZipContainer()
 	{
 		zipFileHandle	 = NULL;
 		checksum		 = 0;
 		numFileResources = 0;
 	}
+
+	//! Destructor for idZipContainer that closes the zip file handle and clears the cache table.
 	~idZipContainer()
 	{
 		unzClose( zipFileHandle );
 		cacheTable.Clear();
 	}
+
+	//! Initializes the zip container by opening and parsing the specified zip file.
 	bool		  Init( const char* fileName );
+
+	//! Opens a file from a zip container and returns a handle to it
 	idFile_InZip* OpenFile( const idZipCacheEntry& rt, const char* relativePath );
 
+	//! Returns the file name stored in the zip container.
 	const char*	  GetFileName() const { return fileName.c_str(); }
 
+	//! Returns the number of file resources in the zip container.
 	int			  GetNumFileResources() const { return numFileResources; }
 
+	//! Returns the checksum value calculated for the zip container.
 	int			  GetChecksum() const { return checksum; }
 
 private:

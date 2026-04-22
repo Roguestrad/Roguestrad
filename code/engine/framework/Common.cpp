@@ -50,6 +50,7 @@ extern DeviceManager* deviceManager;
 #endif
 
 struct version_s {
+	//! Constructs a version string with engine version, build number, debug flag, build string, date, and time.
 	version_s()
 	{
 		idStr::snPrintf( string, sizeof( string ), "%s.%d%s %s %s %s", ENGINE_VERSION, BUILD_NUMBER, BUILD_DEBUG, BUILD_STRING, ID__DATE__, ID__TIME__ );
@@ -117,11 +118,6 @@ idCVar com_skipIntroVideos( "com_skipIntroVideos", "0", CVAR_BOOL, "skips intro 
 idCVar com_skipIntroVideos( "com_skipIntroVideos", "1", CVAR_BOOL, "skips intro videos" );
 #endif
 
-/*
-==================
-idCommonLocal::idCommonLocal
-==================
-*/
 idCommonLocal::idCommonLocal() :
 	readSnapshotIndex( 0 ),
 	writeSnapshotIndex( 0 ),
@@ -194,11 +190,6 @@ idCommonLocal::idCommonLocal() :
 	ClearWipe();
 }
 
-/*
-==================
-idCommonLocal::Quit
-==================
-*/
 void idCommonLocal::Quit()
 {
 	// don't try to shutdown if we are in a recursive error
@@ -229,11 +220,6 @@ doom set test blah + map test
 int		  com_numConsoleLines;
 idCmdArgs com_consoleLines[MAX_CONSOLE_LINES];
 
-/*
-==================
-idCommonLocal::ParseCommandLine
-==================
-*/
 void	  idCommonLocal::ParseCommandLine( int argc, const char* const* argv )
 {
 	int i, current_count;
@@ -264,14 +250,6 @@ void	  idCommonLocal::ParseCommandLine( int argc, const char* const* argv )
 	}
 }
 
-/*
-==================
-idCommonLocal::SafeMode
-
-Check for "safe" on the command line, which will
-skip loading of config file (DoomConfig.cfg)
-==================
-*/
 bool idCommonLocal::SafeMode()
 {
 	int i;
@@ -285,17 +263,6 @@ bool idCommonLocal::SafeMode()
 	return false;
 }
 
-/*
-==================
-idCommonLocal::StartupVariable
-
-Searches for command line parameters that are set commands.
-If match is not NULL, only that cvar will be looked for.
-That is necessary because cddir and basedir need to be set
-before the filesystem is started, but all other sets should
-be after execing the config and default.
-==================
-*/
 void idCommonLocal::StartupVariable( const char* match )
 {
 	int i = 0;
@@ -313,12 +280,6 @@ void idCommonLocal::StartupVariable( const char* match )
 	}
 }
 
-// DG: add doom3 tools
-/*
-=================
-idCommonLocal::InitTool
-=================
-*/
 void idCommonLocal::InitTool( const toolFlag_t tool, const idDict* dict, idEntity* entity )
 {
 	if( tool & EDITOR_LIGHT ) {
@@ -329,19 +290,7 @@ void idCommonLocal::InitTool( const toolFlag_t tool, const idDict* dict, idEntit
 		ImGuiTools::AfEditorInit();
 	}
 }
-// DG end
 
-/*
-==================
-idCommonLocal::AddStartupCommands
-
-Adds command line parameters as script statements
-Commands are separated by + signs
-
-Returns true if any late commands were added, which
-will keep the demoloop from immediately starting
-==================
-*/
 void idCommonLocal::AddStartupCommands()
 {
 	// quote every token, so args with semicolons can work
@@ -354,11 +303,6 @@ void idCommonLocal::AddStartupCommands()
 	}
 }
 
-/*
-==================
-idCommonLocal::WriteConfigToFile
-==================
-*/
 void idCommonLocal::WriteConfigToFile( const char* filename )
 {
 	idFile* f = fileSystem->OpenFileWrite( filename );
@@ -372,13 +316,6 @@ void idCommonLocal::WriteConfigToFile( const char* filename )
 	fileSystem->CloseFile( f );
 }
 
-/*
-===============
-idCommonLocal::WriteConfiguration
-
-Writes key bindings and archived cvars to config file if modified
-===============
-*/
 void idCommonLocal::WriteConfiguration()
 {
 	// if we are quiting without fully initializing, make sure
@@ -410,57 +347,27 @@ void idCommonLocal::WriteConfiguration()
 #endif
 }
 
-/*
-===============
-KeysFromBinding()
-Returns the key bound to the command
-===============
-*/
 const char* idCommonLocal::KeysFromBinding( const char* bind )
 {
 	return idKeyInput::KeysFromBinding( bind );
 }
 
-/*
-===============
-BindingFromKey()
-Returns the binding bound to key
-===============
-*/
 const char* idCommonLocal::BindingFromKey( const char* key )
 {
 	return idKeyInput::BindingFromKey( key );
 }
 
-/*
-===============
-ButtonState()
-Returns the state of the button
-===============
-*/
 int idCommonLocal::ButtonState( int key )
 {
 	return usercmdGen->ButtonState( key );
 }
 
-/*
-===============
-ButtonState()
-Returns the state of the key
-===============
-*/
 int idCommonLocal::KeyState( int key )
 {
 	return usercmdGen->KeyState( key );
 }
 
-/*
-============
-idCmdSystemLocal::PrintMemInfo_f
-
-This prints out memory debugging data
-============
-*/
+//! Prints memory debugging data including image, model, and sound asset usage.
 CONSOLE_COMMAND( printMemInfo, "prints memory debugging data", NULL )
 {
 	MemInfo_t mi;
@@ -499,13 +406,7 @@ CONSOLE_COMMAND( printMemInfo, "prints memory debugging data", NULL )
 	fileSystem->CloseFile( f );
 }
 
-/*
-==================
-Com_Error_f
-
-Just throw a fatal error to test error shutdown procedures.
-==================
-*/
+//! Causes an error for testing error shutdown procedures.
 CONSOLE_COMMAND( error, "causes an error", NULL )
 {
 	if( !com_developer.GetBool() ) {
@@ -520,13 +421,7 @@ CONSOLE_COMMAND( error, "causes an error", NULL )
 	}
 }
 
-/*
-==================
-Com_Freeze_f
-
-Just freeze in place for a given number of seconds to test error recovery.
-==================
-*/
+//! Freezes the game execution for the specified number of seconds.
 CONSOLE_COMMAND( freeze, "freezes the game for a number of seconds", NULL )
 {
 	float s;
@@ -554,13 +449,7 @@ CONSOLE_COMMAND( freeze, "freezes the game for a number of seconds", NULL )
 	}
 }
 
-/*
-=================
-Com_Crash_f
-
-A way to force a bus error for development reasons
-=================
-*/
+//! Causes a crash for development purposes
 CONSOLE_COMMAND( crash, "causes a crash", NULL )
 {
 	if( !com_developer.GetBool() ) {
@@ -574,27 +463,19 @@ CONSOLE_COMMAND( crash, "causes a crash", NULL )
 #endif
 }
 
-/*
-=================
-Com_Quit_f
-=================
-*/
+//! Quits the game by calling the commonLocal.Quit() method.
 CONSOLE_COMMAND_SHIP( quit, "quits the game", NULL )
 {
 	commonLocal.Quit();
 }
+
+//! Exits the game by calling the common local quit function.
 CONSOLE_COMMAND_SHIP( exit, "exits the game", NULL )
 {
 	commonLocal.Quit();
 }
 
-/*
-===============
-Com_WriteConfig_f
-
-Write the config file to a specific name
-===============
-*/
+//! Writes the configuration file to the specified filename with a .cfg extension.
 CONSOLE_COMMAND_SHIP( writeConfig, "writes a config file", NULL )
 {
 	idStr filename;
@@ -610,11 +491,6 @@ CONSOLE_COMMAND_SHIP( writeConfig, "writes a config file", NULL )
 	commonLocal.WriteConfigToFile( filename );
 }
 
-/*
-========================
-idCommonLocal::CheckStartupStorageRequirements
-========================
-*/
 void idCommonLocal::CheckStartupStorageRequirements()
 {
 	// RB: disabled savegame and profile storage checks, because it fails sometimes without any clear reason
@@ -703,21 +579,11 @@ void idCommonLocal::CheckStartupStorageRequirements()
 	session->GetAchievementSystem().Start();
 }
 
-/*
-===============
-idCommonLocal::JapaneseCensorship
-===============
-*/
 bool idCommonLocal::JapaneseCensorship() const
 {
 	return com_japaneseCensorship.GetBool() || com_isJapaneseSKU;
 }
 
-/*
-===============
-idCommonLocal::FilterLangList
-===============
-*/
 void idCommonLocal::FilterLangList( idStrList* list, idStr lang )
 {
 	idStr temp;
@@ -778,11 +644,7 @@ void		  idCommonLocal::InitLanguageDict()
 	fileSystem->FreeFileList( langFiles );
 }
 
-/*
-=================
-ReloadLanguage_f
-=================
-*/
+//! Reloads the language dictionary.
 CONSOLE_COMMAND( reloadLanguage, "reload language dict", NULL )
 {
 	commonLocal.InitLanguageDict();
@@ -790,11 +652,7 @@ CONSOLE_COMMAND( reloadLanguage, "reload language dict", NULL )
 
 #include "../renderer/Image.h"
 
-/*
-=================
-Com_FinishBuild_f
-=================
-*/
+//! Finishes the build process by caching dictionary media.
 CONSOLE_COMMAND( finishBuild, "finishes the build process", NULL )
 {
 	if( game ) {
@@ -802,11 +660,6 @@ CONSOLE_COMMAND( finishBuild, "finishes the build process", NULL )
 	}
 }
 
-/*
-=================
-idCommonLocal::RenderSplash
-=================
-*/
 void idCommonLocal::RenderSplash()
 {
 	const float sysWidth	 = renderSystem->GetWidth() * renderSystem->GetPixelAspect();
@@ -833,11 +686,6 @@ void idCommonLocal::RenderSplash()
 	renderSystem->RenderCommandBuffers( cmd );
 }
 
-/*
-=================
-idCommonLocal::RenderBink
-=================
-*/
 void idCommonLocal::RenderBink( const char* path )
 {
 	const float sysWidth	= renderSystem->GetWidth() * renderSystem->GetPixelAspect();
@@ -940,22 +788,12 @@ void idCommonLocal::RenderBink( const char* path )
 	material->MakeDefault();
 }
 
-/*
-=================
-idCommonLocal::InitSIMD
-=================
-*/
 void idCommonLocal::InitSIMD()
 {
 	idSIMD::InitProcessor( "doom", com_forceGenericSIMD.GetBool() );
 	com_forceGenericSIMD.ClearModified();
 }
 
-/*
-=================
-idCommonLocal::LoadGameDLL
-=================
-*/
 void idCommonLocal::LoadGameDLL()
 {
 #ifdef __DOOM_DLL__
@@ -1021,11 +859,6 @@ void idCommonLocal::LoadGameDLL()
 	}
 }
 
-/*
-=================
-idCommonLocal::UnloadGameDLL
-=================
-*/
 void idCommonLocal::CleanupShell()
 {
 	if( game != NULL ) {
@@ -1033,11 +866,6 @@ void idCommonLocal::CleanupShell()
 	}
 }
 
-/*
-=================
-idCommonLocal::UnloadGameDLL
-=================
-*/
 void idCommonLocal::UnloadGameDLL()
 {
 	// shut down the game object
@@ -1057,23 +885,11 @@ void idCommonLocal::UnloadGameDLL()
 #endif
 }
 
-/*
-=================
-idCommonLocal::IsInitialized
-=================
-*/
 bool idCommonLocal::IsInitialized() const
 {
 	return com_fullyInitialized;
 }
 
-//======================================================================================
-
-/*
-=================
-idCommonLocal::Init
-=================
-*/
 void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline )
 {
 	try {
@@ -1382,11 +1198,6 @@ void idCommonLocal::Init( int argc, const char* const* argv, const char* cmdline
 	}
 }
 
-/*
-=================
-idCommonLocal::Shutdown
-=================
-*/
 void idCommonLocal::Shutdown()
 {
 	if( com_shuttingDown ) {
@@ -1526,11 +1337,6 @@ void idCommonLocal::Shutdown()
 	idLib::ShutDown();
 }
 
-/*
-========================
-idCommonLocal::CreateMainMenu
-========================
-*/
 void idCommonLocal::CreateMainMenu()
 {
 	if( game != NULL ) {
@@ -1554,13 +1360,6 @@ void idCommonLocal::CreateMainMenu()
 	}
 }
 
-/*
-===============
-idCommonLocal::Stop
-
-called on errors and game exits
-===============
-*/
 void idCommonLocal::Stop( bool resetSession )
 {
 	ClearWipe();
@@ -1581,11 +1380,6 @@ void idCommonLocal::Stop( bool resetSession )
 	}
 }
 
-/*
-===============
-idCommonLocal::BusyWait
-===============
-*/
 void idCommonLocal::BusyWait()
 {
 	Sys_GenerateEvents();
@@ -1597,11 +1391,6 @@ void idCommonLocal::BusyWait()
 	session->Pump();
 }
 
-/*
-===============
-idCommonLocal::InitCommands
-===============
-*/
 void idCommonLocal::InitCommands()
 {
 	// compilers
@@ -1611,11 +1400,6 @@ void idCommonLocal::InitCommands()
 	cmdSystem->AddCommand( "runReach", RunReach_f, CMD_FL_TOOL, "calculates reachability for an AAS file", idCmdSystem::ArgCompletion_MapName );
 }
 
-/*
-===============
-idCommonLocal::WaitForSessionState
-===============
-*/
 bool idCommonLocal::WaitForSessionState( idSession::sessionState_t desiredState )
 {
 	if( session->GetState() == desiredState ) {
@@ -1637,11 +1421,6 @@ bool idCommonLocal::WaitForSessionState( idSession::sessionState_t desiredState 
 	}
 }
 
-/*
-========================
-idCommonLocal::LeaveGame
-========================
-*/
 void idCommonLocal::LeaveGame()
 {
 	const bool captureToImage = false;
@@ -1657,11 +1436,6 @@ void idCommonLocal::LeaveGame()
 	StartMenu();
 }
 
-/*
-===============
-idCommonLocal::ProcessEvent
-===============
-*/
 bool idCommonLocal::ProcessEvent( const sysEvent_t* event )
 {
 	// Leyland: moved this up
@@ -1733,21 +1507,12 @@ bool idCommonLocal::ProcessEvent( const sysEvent_t* event )
 	return false;
 }
 
-/*
-========================
-idCommonLocal::ResetPlayerInput
-========================
-*/
 void idCommonLocal::ResetPlayerInput( int playerIndex )
 {
 	userCmdMgr.ResetPlayer( playerIndex );
 }
 
-/*
-==================
-Common_WritePrecache_f
-==================
-*/
+//! Writes precache commands to a specified configuration file
 CONSOLE_COMMAND( writePrecache, "writes precache commands", NULL )
 {
 	if( args.Argc() != 2 ) {
@@ -1764,21 +1529,13 @@ CONSOLE_COMMAND( writePrecache, "writes precache commands", NULL )
 	fileSystem->CloseFile( f );
 }
 
-/*
-================
-Common_Disconnect_f
-================
-*/
+//! Disconnects from a game session
 CONSOLE_COMMAND_SHIP( disconnect, "disconnects from a game", NULL )
 {
 	session->QuitMatch();
 }
 
-/*
-===============
-Common_Hitch_f
-===============
-*/
+//! Pauses the game for a specified number of milliseconds
 CONSOLE_COMMAND( hitch, "hitches the game", NULL )
 {
 	if( args.Argc() == 2 ) {
@@ -1788,31 +1545,39 @@ CONSOLE_COMMAND( hitch, "hitches the game", NULL )
 	}
 }
 
+//! Displays memory usage information for strings
 CONSOLE_COMMAND( showStringMemory, "shows memory used by strings", NULL )
 {
 	idStr::ShowMemoryUsage_f( args );
 }
+
+//! Displays memory usage information for dictionaries
 CONSOLE_COMMAND( showDictMemory, "shows memory used by dictionaries", NULL )
 {
 	idDict::ShowMemoryUsage_f( args );
 }
+
+//! Lists all keys used by dictionaries.
 CONSOLE_COMMAND( listDictKeys, "lists all keys used by dictionaries", NULL )
 {
 	idDict::ListKeys_f( args );
 }
+
+//! Lists all values used by dictionaries
 CONSOLE_COMMAND( listDictValues, "lists all values used by dictionaries", NULL )
 {
 	idDict::ListValues_f( args );
 }
+
+//! Registers a console command to test SIMD code functionality
 CONSOLE_COMMAND( testSIMD, "test SIMD code", NULL )
 {
 	idSIMD::Test_f( args );
 }
 
-// RB begin
+//! Tests printf format security by printing the sizes of int32 and int64 types.
 CONSOLE_COMMAND( testFormattingSizes, "test printf format security", 0 )
 {
 	common->Printf( " sizeof( int32 ): %" PRIuSIZE " bytes\n", sizeof( int32 ) );
 	common->Printf( " sizeof( int64 ): %" PRIuSIZE " bytes\n", sizeof( int64 ) );
 }
-// RB end

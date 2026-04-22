@@ -34,11 +34,6 @@ idConsoleHistory consoleHistory;
 
 const char*		 HISTORY_FILE_NAME = "consoleHistory.txt";
 
-/*
-========================
-idConsoleHistory::AddToHistory
-========================
-*/
 void			 idConsoleHistory::AddToHistory( const char* line, bool writeHistoryFile )
 {
 	// empty lines never modify history
@@ -93,11 +88,6 @@ void			 idConsoleHistory::AddToHistory( const char* line, bool writeHistoryFile 
 	}
 }
 
-/*
-========================
-idConsoleHistory::RetrieveFromHistory
-========================
-*/
 idStr idConsoleHistory::RetrieveFromHistory( bool backward )
 {
 	// if there are no commands in the history
@@ -126,11 +116,6 @@ idStr idConsoleHistory::RetrieveFromHistory( bool backward )
 	return historyLines[returnLine & ( COMMAND_HISTORY - 1 )];
 }
 
-/*
-========================
-idConsoleHistory::LoadHistoryFile
-========================
-*/
 void idConsoleHistory::LoadHistoryFile()
 {
 	idLexer lex;
@@ -147,11 +132,6 @@ void idConsoleHistory::LoadHistoryFile()
 	}
 }
 
-/*
-========================
-idConsoleHistory::PrintHistory
-========================
-*/
 void idConsoleHistory::PrintHistory()
 {
 	for( int i = numHistory - COMMAND_HISTORY; i < numHistory; i++ ) {
@@ -162,11 +142,6 @@ void idConsoleHistory::PrintHistory()
 	}
 }
 
-/*
-========================
-idConsoleHistory::ClearHistory
-========================
-*/
 void idConsoleHistory::ClearHistory()
 {
 	upPoint	   = 0;
@@ -175,21 +150,13 @@ void idConsoleHistory::ClearHistory()
 	numHistory = 0;
 }
 
-/*
-========================
-history
-========================
-*/
+//! Displays the console command history.
 CONSOLE_COMMAND_SHIP( history, "Displays the console command history", 0 )
 {
 	consoleHistory.PrintHistory();
 }
 
-/*
-========================
-clearHistory
-========================
-*/
+//! Clears the console history.
 CONSOLE_COMMAND_SHIP( clearHistory, "Clears the console history", 0 )
 {
 	consoleHistory.ClearHistory();

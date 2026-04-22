@@ -54,11 +54,6 @@ idCVar in_joystickRumble( "in_joystickRumble", "1", CVAR_SYSTEM | CVAR_ARCHIVE |
 idCVar in_invertLook( "in_invertLook", "0", CVAR_ARCHIVE | CVAR_BOOL, "inverts the look controls so the forward looks up (flight controls) - the proper way to play games!" );
 idCVar in_mouseInvertLook( "in_mouseInvertLook", "0", CVAR_ARCHIVE | CVAR_BOOL, "inverts the look controls so the forward looks up (flight controls) - the proper way to play games!" );
 
-/*
-================
-usercmd_t::ByteSwap
-================
-*/
 void   usercmd_t::ByteSwap()
 {
 	angles[0] = LittleShort( angles[0] );
@@ -66,11 +61,6 @@ void   usercmd_t::ByteSwap()
 	angles[2] = LittleShort( angles[2] );
 }
 
-/*
-================
-usercmd_t::Serialize
-================
-*/
 void usercmd_t::Serialize( idSerializer& ser, const usercmd_t& base )
 {
 	ser.SerializeDelta( buttons, base.buttons );
@@ -90,11 +80,6 @@ void usercmd_t::Serialize( idSerializer& ser, const usercmd_t& base )
 	ser.SerializeDelta( impulseSequence, base.impulseSequence );
 }
 
-/*
-================
-usercmd_t::operator==
-================
-*/
 bool usercmd_t::operator==( const usercmd_t& rhs ) const
 {
 	return ( buttons == rhs.buttons && forwardmove == rhs.forwardmove && rightmove == rhs.rightmove && angles[0] == rhs.angles[0] && angles[1] == rhs.angles[1] && angles[2] == rhs.angles[2] &&
@@ -158,6 +143,10 @@ userCmdString_t userCmdStrings[] = {
 	{ NULL, UB_NONE },
 };
 
+/*!
+	\class buttonState_t
+	\brief A class for managing the state of button inputs.
+*/
 class buttonState_t
 {
 public:
@@ -168,26 +157,20 @@ public:
 	{
 		Clear();
 	};
+
+	//! Clears the button state by resetting held flag and on counter.
 	void Clear();
+
+	//! Sets the key state for a button, handling toggle logic and state tracking.
 	void SetKeyState( int keystate, bool toggle );
 };
 
-/*
-================
-buttonState_t::Clear
-================
-*/
 void buttonState_t::Clear()
 {
 	held = false;
 	on	 = 0;
 }
 
-/*
-================
-buttonState_t::SetKeyState
-================
-*/
 void buttonState_t::SetKeyState( int keystate, bool toggle )
 {
 	if( !toggle ) {
@@ -205,25 +188,45 @@ const int NUM_USER_COMMANDS = sizeof( userCmdStrings ) / sizeof( userCmdString_t
 
 const int MAX_CHAT_BUFFER = 127;
 
+/*!
+	\class idUsercmdGenLocal
+	\brief Local user command generator that processes input device states to create user commands for game simulation.
+
+	This class implements a local user command generator responsible for translating input device states from various sources including keyboard, mouse, joystick, and VR controllers into user commands
+   that represent player actions. It maintains the state of input devices and provides methods to initialize, update, and process input events for command generation. The class inherits from a base
+   user command generator and extends its functionality with device-specific input handling methods for local player control. It manages input inhibition flags, view angle adjustments, and specialized
+   input transformations such as joystick axis circle-to-square conversion. The implementation supports different input subsystems and provides methods to clear input states, retrieve current command
+   data, and handle different types of input devices for player interaction within the simulation environment.
+
+*/
 class idUsercmdGenLocal : public idUsercmdGen
 {
 public:
+	//! Initializes a new instance of the idUsercmdGenLocal class with default values.
 	idUsercmdGenLocal();
 
+	//! Initializes the user command generator local state.
 	void	  Init();
 
+	//! Initializes the user command generator for a new map by resetting all input states and clearing command buffers.
 	void	  InitForNewMap();
 
+	//! Marks the user command generator as uninitialized.
 	void	  Shutdown();
 
+	//! Clears all user command generation state including buttons, keys, and mouse input.
 	void	  Clear();
 
+	//! Clears the view angles by setting them to zero.
 	void	  ClearAngles();
 
+	//! Sets or clears an inhibition flag for a specified user command subsystem.
 	void	  InhibitUsercmd( inhibit_t subsystem, bool inhibit );
 
+	//! Returns the button code associated with a given command string for user command generation.
 	int		  CommandStringUsercmdData( const char* cmdString );
 
+	//! Initializes and updates the current user command based on input device activity.
 	void	  BuildCurrentUsercmd( int deviceNum );
 
 	usercmd_t GetCurrentUsercmd()
@@ -231,34 +234,92 @@ public:
 		return cmd;
 	};
 
+	/*!
+		\brief Sets the mouse state values for x, y, button, and down parameters.
+
+		This function populates the provided pointers with the current mouse state information. The x and y parameters are set to the continuous mouse coordinates, button is set to the current mouse
+	   button state, and down is set to whether the mouse button is currently pressed.
+
+		\param x Pointer to store the current X coordinate of the mouse
+		\param y Pointer to store the current Y coordinate of the mouse
+		\param button Pointer to store the current mouse button state
+		\param down Pointer to store whether the mouse button is currently pressed
+	*/
 	void MouseState( int* x, int* y, int* button, bool* down );
 
+	//! Returns the state of a button as either 0 or 1
 	int	 ButtonState( int key );
+
+	//! Returns the state of a specified key, indicating whether it is pressed or not
 	int	 KeyState( int key );
 
 private:
+	//! Creates the current user command for the frame
 	void		  MakeCurrent();
+
+	//! Initializes the current user command for the frame.
 	void		  InitCurrent();
 
+	//! Returns true if user command generation is currently inhibited
 	bool		  Inhibited();
+
+	//! Adjusts the local view angles based on input states and speed settings.
 	void		  AdjustAngles();
+
+	//! Updates the user command with movement inputs from key states.
 	void		  KeyMove();
+
+	//! Converts circular input coordinates to square-like coordinates using a specific transformation algorithm.
 	void		  CircleToSquare( float& axis_x, float& axis_y ) const;
+
+	/*!
+		\brief Processes joystick axis input to generate user commands for movement and looking.
+
+		This function handles joystick axis input by determining if the axis value exceeds a specified threshold. If so, it calculates a normalized value and applies it to either movement controls or
+	   look controls based on the key mapping. The function supports both positive and negative axis directions, and applies sensitivity adjustments, aim assist scaling, and look dampening based on
+	   configuration settings.
+
+		\param keyNum The key number mapped to the joystick axis
+		\param unclampedValue The raw joystick axis value, which can be negative or positive
+		\param threshold The threshold value that determines if the axis input is significant enough to be processed
+		\param positive A flag indicating if the function expects a positive value from the axis
+	*/
 	void		  HandleJoystickAxis( int keyNum, float unclampedValue, float threshold, bool positive );
+
+	//! Processes joystick input to generate user commands for both analog sticks and triggers.
 	void		  JoystickMove();
+
+	//! Processes joystick input to update player movement and view angles.
 	void		  JoystickMove2();
-	void		  VRControlMove(); // Leyland VR
-	void		  VRTrackedMove(); // Leyland VR
+
+	//! Handles VR controller movement and turning input for player control.
+	void		  VRControlMove();
+
+	//! Updates VR tracking data for head and controller inputs.
+	void		  VRTrackedMove();
+
+	//! Processes mouse movement input to update view angles
 	void		  MouseMove();
+
+	//! Sets the button states for the user command based on input button states.
 	void		  CmdButtons();
 
+	//! Updates the view angles with aim assist corrections from the game.
 	void		  AimAssist();
 
+	//! Processes mouse input events and translates them into user commands
 	void		  Mouse();
-	void		  Keyboard();
-	void		  Joystick( int deviceNum );
-	void		  VRControllers(); // Leyland VR
 
+	//! Processes keyboard input events for user command generation.
+	void		  Keyboard();
+
+	//! Processes joystick input events for the specified device
+	void		  Joystick( int deviceNum );
+
+	//! Processes VR controller input events and updates the user command with grab states.
+	void		  VRControllers();
+
+	//! Handles keyboard and mouse button presses and releases for user command generation
 	void		  Key( int keyNum, bool down );
 
 	idVec3		  viewangles;
@@ -328,11 +389,6 @@ idCVar idUsercmdGenLocal::m_showMouseRate( "m_showMouseRate", "0", CVAR_SYSTEM |
 static idUsercmdGenLocal localUsercmdGen;
 idUsercmdGen*			 usercmdGen = &localUsercmdGen;
 
-/*
-================
-idUsercmdGenLocal::idUsercmdGenLocal
-================
-*/
 idUsercmdGenLocal::idUsercmdGenLocal()
 {
 	initialized = false;
@@ -362,11 +418,6 @@ idUsercmdGenLocal::idUsercmdGenLocal()
 	Clear();
 }
 
-/*
-================
-idUsercmdGenLocal::InhibitUsercmd
-================
-*/
 void idUsercmdGenLocal::InhibitUsercmd( inhibit_t subsystem, bool inhibit )
 {
 	if( inhibit ) {
@@ -376,13 +427,6 @@ void idUsercmdGenLocal::InhibitUsercmd( inhibit_t subsystem, bool inhibit )
 	}
 }
 
-/*
-===============
-idUsercmdGenLocal::ButtonState
-
-Returns (the fraction of the frame) that the key was down
-===============
-*/
 int idUsercmdGenLocal::ButtonState( int key )
 {
 	if( key < 0 || key >= UB_MAX_BUTTONS ) {
@@ -391,14 +435,6 @@ int idUsercmdGenLocal::ButtonState( int key )
 	return ( buttonState[key] > 0 ) ? 1 : 0;
 }
 
-/*
-===============
-idUsercmdGenLocal::KeyState
-
-Returns (the fraction of the frame) that the key was down
-bk20060111
-===============
-*/
 int idUsercmdGenLocal::KeyState( int key )
 {
 	if( key < 0 || key >= K_LAST_KEY ) {
@@ -407,27 +443,11 @@ int idUsercmdGenLocal::KeyState( int key )
 	return ( keyState[key] ) ? 1 : 0;
 }
 
-//=====================================================================
-
-/*
-================
-idUsercmdGenLocal::Inhibited
-
-is user cmd generation inhibited
-================
-*/
 bool idUsercmdGenLocal::Inhibited()
 {
 	return ( inhibitCommands != 0 );
 }
 
-/*
-================
-idUsercmdGenLocal::AdjustAngles
-
-Moves the local angle positions
-================
-*/
 void idUsercmdGenLocal::AdjustAngles()
 {
 	float speed = MS2SEC( 16 );
@@ -443,13 +463,6 @@ void idUsercmdGenLocal::AdjustAngles()
 	viewangles[PITCH] += speed * in_pitchSpeed.GetFloat() * ButtonState( UB_LOOKDOWN );
 }
 
-/*
-================
-idUsercmdGenLocal::KeyMove
-
-Sets the usercmd_t based on key states
-================
-*/
 void idUsercmdGenLocal::KeyMove()
 {
 	int forward = 0;
@@ -465,11 +478,6 @@ void idUsercmdGenLocal::KeyMove()
 	cmd.rightmove += idMath::ClampChar( side );
 }
 
-/*
-=================
-idUsercmdGenLocal::MouseMove
-=================
-*/
 void idUsercmdGenLocal::MouseMove()
 {
 	float	   mx, my;
@@ -518,11 +526,6 @@ void idUsercmdGenLocal::MouseMove()
 	viewangles[PITCH] += m_pitch.GetFloat() * in_mouseSpeed.GetFloat() * ( in_mouseInvertLook.GetBool() ? -my : my );
 }
 
-/*
-========================
-idUsercmdGenLocal::CircleToSquare
-========================
-*/
 void idUsercmdGenLocal::CircleToSquare( float& axis_x, float& axis_y ) const
 {
 	// bring everything in the first quadrant
@@ -578,11 +581,6 @@ void idUsercmdGenLocal::CircleToSquare( float& axis_x, float& axis_y ) const
 	}
 }
 
-/*
-========================
-idUsercmdGenLocal::HandleJoystickAxis
-========================
-*/
 void idUsercmdGenLocal::HandleJoystickAxis( int keyNum, float unclampedValue, float threshold, bool positive )
 {
 	if( ( unclampedValue > 0.0f ) && !positive ) {
@@ -682,11 +680,6 @@ void idUsercmdGenLocal::HandleJoystickAxis( int keyNum, float unclampedValue, fl
 	}
 }
 
-/*
-=================
-idUsercmdGenLocal::JoystickMove
-=================
-*/
 void idUsercmdGenLocal::JoystickMove()
 {
 	float threshold		   = joy_deadZone.GetFloat();
@@ -716,10 +709,20 @@ void idUsercmdGenLocal::JoystickMove()
 
 enum transferFunction_t { FUNC_LINEAR, FUNC_LOGARITHMIC, FUNC_EXPONENTIAL };
 
-/*
-=================
-JoypadFunction
-=================
+/*!
+	\brief Applies thresholding, scaling, and transfer function shaping to joypad input vectors for consistent movement and aim behavior.
+
+	This function processes raw joypad input to normalize and shape the input for gameplay purposes. It applies thresholding to remove small input values, scales the input to a full range, and applies
+   a transfer function to adjust the response curve. The function supports two thresholding modes: independent for each axis or combined for both axes. It also includes an aim assist scaling factor to
+   optionally slow down input for precision. The output is a normalized vector that can be used for movement or look direction control in the game.
+
+	\param raw Raw joypad input vector with X and Y components
+	\param aimAssistScale Scale factor for aim assist functionality, typically 1.0f or a value less than 1.0f
+	\param threshold Deadzone threshold value for input, below which input is ignored
+	\param range Maximum range of input to be scaled to full output range
+	\param shape Transfer function type to apply for input shaping
+	\param mergedThreshold Whether to apply thresholding independently on each axis or together
+	\return A normalized idVec2 vector representing the processed joypad input after thresholding, scaling, and transfer function application.
 */
 idVec2 JoypadFunction( const idVec2 raw, const float aimAssistScale, const float threshold, const float range, const transferFunction_t shape, const bool mergedThreshold )
 {
@@ -789,12 +792,21 @@ idVec2 JoypadFunction( const idVec2 raw, const float aimAssistScale, const float
 	return reScaled * clamped;
 }
 
-/*
-=================
-DrawJoypadTexture
+/*!
+	\brief Draws axis and threshold/range rings into an RGBA image for joypad texture visualization
 
-Draws axis and threshold / range rings into an RGBA image
-=================
+	This function generates a visual representation of joypad input characteristics by drawing axis lines, threshold rings, and range rings onto a provided RGBA image buffer. The function takes raw
+   joystick values and maps them through a transfer function to determine ring positions. It supports both merged and separate threshold settings and uses a circular drawing algorithm to render the
+   rings. The resulting image can be used for visualization or debugging of joystick input processing.
+
+	\param size Dimensions of the square image buffer in pixels
+	\param image Pointer to the RGBA image buffer where the visualization will be drawn
+	\param raw Raw joystick input values in the range [-1, 1] for X and Y axes
+	\param threshold Threshold value that determines the inner ring position
+	\param range Range value that determines the outer ring position
+	\param shape Transfer function type that defines how input values are mapped
+	\param mergedThreshold Flag indicating whether to use merged threshold rendering
+	\throws Assertion may be triggered if raw input values are out of expected range
 */
 void DrawJoypadTexture( const int size,
 	byte						  image[],
@@ -898,13 +910,7 @@ void DrawJoypadTexture( const int size,
 
 static idVec2 lastLookJoypad;
 
-/*
-=================
-DrawJoypadTexture
-
-Can be called to fill in a scratch texture for visualization
-=================
-*/
+//! Fills a scratch texture with joypad input data for visualization purposes.
 void		  DrawJoypadTexture( const int size, byte image[] )
 {
 	const float				 threshold		 = joy_deadZone.GetFloat();
@@ -915,11 +921,6 @@ void		  DrawJoypadTexture( const int size, byte image[] )
 	DrawJoypadTexture( size, image, lastLookJoypad, threshold, range, shape, mergedThreshold );
 }
 
-/*
-=================
-idUsercmdGenLocal::JoystickMove2
-=================
-*/
 void idUsercmdGenLocal::JoystickMove2()
 {
 	const bool				 invertLook		 = in_invertLook.GetBool();
@@ -1248,11 +1249,6 @@ void		  idUsercmdGenLocal::VRControlMove()
 	}
 }
 
-/*
-=================
-idUsercmdGenLocal::VRTrackedMove
-=================
-*/
 void idUsercmdGenLocal::VRTrackedMove()
 {
 	cmd.vrHasHead = vrSystem->GetHead( cmd.vrHeadOrigin, cmd.vrHeadAxis );
@@ -1279,11 +1275,6 @@ void idUsercmdGenLocal::VRTrackedMove()
 	}
 }
 
-/*
-==============
-idUsercmdGenLocal::CmdButtons
-==============
-*/
 void idUsercmdGenLocal::CmdButtons()
 {
 	cmd.buttons = 0;
@@ -1321,13 +1312,6 @@ void idUsercmdGenLocal::CmdButtons()
 	// Leyland end
 }
 
-/*
-================
-idUsercmdGenLocal::InitCurrent
-
-inits the current command for this frame
-================
-*/
 void idUsercmdGenLocal::InitCurrent()
 {
 	memset( &cmd, 0, sizeof( cmd ) );
@@ -1336,13 +1320,6 @@ void idUsercmdGenLocal::InitCurrent()
 	cmd.buttons |= ( in_alwaysRun.GetBool() && common->IsMultiplayer() ) ? BUTTON_RUN : 0;
 }
 
-/*
-================
-idUsercmdGenLocal::MakeCurrent
-
-creates the current command for this frame
-================
-*/
 void idUsercmdGenLocal::MakeCurrent()
 {
 	idVec3 oldAngles = viewangles;
@@ -1413,11 +1390,6 @@ void idUsercmdGenLocal::MakeCurrent()
 	impulse			= cmd.impulse;
 }
 
-/*
-================
-idUsercmdGenLocal::AimAssist
-================
-*/
 void idUsercmdGenLocal::AimAssist()
 {
 	// callback to the game to update the aim assist for the current device
@@ -1433,15 +1405,6 @@ void idUsercmdGenLocal::AimAssist()
 	viewangles[ROLL] += aimAssistAngles.roll;
 }
 
-//=====================================================================
-
-/*
-================
-idUsercmdGenLocal::CommandStringUsercmdData
-
-Returns the button if the command string is used by the usercmd generator.
-================
-*/
 int idUsercmdGenLocal::CommandStringUsercmdData( const char* cmdString )
 {
 	for( userCmdString_t* ucs = userCmdStrings; ucs->string; ucs++ ) {
@@ -1462,11 +1425,6 @@ void idUsercmdGenLocal::Init()
 	initialized = true;
 }
 
-/*
-================
-idUsercmdGenLocal::InitForNewMap
-================
-*/
 void idUsercmdGenLocal::InitForNewMap()
 {
 	impulseSequence = 0;
@@ -1489,21 +1447,11 @@ void idUsercmdGenLocal::InitForNewMap()
 	ClearAngles();
 }
 
-/*
-================
-idUsercmdGenLocal::Shutdown
-================
-*/
 void idUsercmdGenLocal::Shutdown()
 {
 	initialized = false;
 }
 
-/*
-================
-idUsercmdGenLocal::Clear
-================
-*/
 void idUsercmdGenLocal::Clear()
 {
 	// clears all key states
@@ -1518,11 +1466,6 @@ void idUsercmdGenLocal::Clear()
 	mouseDown		  = false;
 }
 
-/*
-================
-idUsercmdGenLocal::ClearAngles
-================
-*/
 void idUsercmdGenLocal::ClearAngles()
 {
 	viewangles.Zero();
@@ -1630,11 +1573,6 @@ void idUsercmdGenLocal::Mouse()
 	}
 }
 
-/*
-===============
-idUsercmdGenLocal::Keyboard
-===============
-*/
 void idUsercmdGenLocal::Keyboard()
 {
 	int numEvents = Sys_PollKeyboardInputEvents();
@@ -1688,13 +1626,6 @@ void idUsercmdGenLocal::Joystick( int deviceNum )
 	Sys_EndJoystickInputEvents();
 }
 
-/*
-===============
-Leyland VR
-
-idUsercmdGenLocal::VRControllers
-===============
-*/
 void idUsercmdGenLocal::VRControllers()
 {
 	int numEvents = vrSystem->PollGameInputEvents();
@@ -1717,11 +1648,6 @@ void idUsercmdGenLocal::VRControllers()
 	}
 }
 
-/*
-================
-idUsercmdGenLocal::MouseState
-================
-*/
 void idUsercmdGenLocal::MouseState( int* x, int* y, int* button, bool* down )
 {
 	*x		= continuousMouseX;
@@ -1730,11 +1656,6 @@ void idUsercmdGenLocal::MouseState( int* x, int* y, int* button, bool* down )
 	*down	= mouseDown;
 }
 
-/*
-================
-idUsercmdGenLocal::BuildCurrentUsercmd
-================
-*/
 void idUsercmdGenLocal::BuildCurrentUsercmd( int deviceNum )
 {
 	pollTime = Sys_Milliseconds();

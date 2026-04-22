@@ -40,6 +40,8 @@ LoadMapLocalizeData
 =================
 */
 typedef idHashTable<idStrList> ListHash;
+
+//! Loads localized map data from a configuration file into the provided hash list
 void						   LoadMapLocalizeData( ListHash& listHash )
 {
 	idStr		fileName = "map_localize.cfg";
@@ -71,6 +73,7 @@ void						   LoadMapLocalizeData( ListHash& listHash )
 	}
 }
 
+//! Loads a list of GUI parameter names to exclude from processing.
 void LoadGuiParmExcludeList( idStrList& list )
 {
 	idStr		fileName = "guiparm_exclude.cfg";
@@ -91,6 +94,7 @@ void LoadGuiParmExcludeList( idStrList& list )
 	}
 }
 
+//! Checks if a string value is not already localized by looking for a specific prefix.
 bool TestMapVal( idStr& str )
 {
 	// Already Localized?
@@ -101,6 +105,7 @@ bool TestMapVal( idStr& str )
 	return true;
 }
 
+//! Tests if a GUI parameter value should be localized by checking various exclusion conditions
 bool TestGuiParm( const char* parm, const char* value, idStrList& excludeList )
 {
 	idStr testVal = value;
@@ -132,6 +137,7 @@ bool TestGuiParm( const char* parm, const char* value, idStrList& excludeList )
 	return true;
 }
 
+//! Recursively retrieves a list of files with a specified extension from a directory and its subdirectories.
 void GetFileList( const char* dir, const char* ext, idStrList& list )
 {
 	// Recurse Subdirectories
@@ -153,6 +159,20 @@ void GetFileList( const char* dir, const char* ext, idStrList& list )
 	}
 }
 
+/*!
+	\brief Localizes string values in map entities and optionally writes the modified map file
+
+	This function processes a map file to localize string values found in entity key-value pairs. It parses the map file, iterates through each entity, and localizes strings based on predefined
+   localization rules stored in listHash. The function handles special cases like info_location entities and gui_parm key-value pairs. When writeFile is true and localization occurs, it creates a
+   backup of the original map file before writing the modified version. The function returns the total count of localized strings.
+
+	\param mapName Path to the map file to be localized
+	\param langDict Language dictionary used to store and retrieve localized strings
+	\param listHash Hash table containing localization rules for different entity types
+	\param excludeList List of strings to exclude from localization
+	\param writeFile Flag indicating whether to write the modified map file back to disk
+	\return The total number of localized strings found and processed in the map file
+*/
 int LocalizeMap( const char* mapName, idLangDict& langDict, ListHash& listHash, idStrList& excludeList, bool writeFile )
 {
 	common->Printf( "Localizing Map '%s'\n", mapName );
@@ -229,11 +249,7 @@ int LocalizeMap( const char* mapName, idLangDict& langDict, ListHash& listHash, 
 	return strCount;
 }
 
-/*
-=================
-LocalizeMaps_f
-=================
-*/
+//! Localizes map data by processing string tables and updating dictionaries based on command arguments.
 CONSOLE_COMMAND( localizeMaps, "localize maps", NULL )
 {
 	if( args.Argc() < 2 ) {
@@ -311,11 +327,7 @@ CONSOLE_COMMAND( localizeMaps, "localize maps", NULL )
 	}
 }
 
-/*
-=================
-LocalizeGuis_f
-=================
-*/
+//! Localizes GUI files by loading string tables and applying translations to GUI assets.
 CONSOLE_COMMAND( localizeGuis, "localize guis", NULL )
 {
 	if( args.Argc() != 2 ) {
@@ -373,6 +385,7 @@ CONSOLE_COMMAND( localizeGuis, "localize guis", NULL )
 	strTable.Save( filename );
 }
 
+//! Creates test files that show GUI parameters localized and ignored.
 CONSOLE_COMMAND( localizeGuiParmsTest, "Create test files that show gui parms localized and ignored.", NULL )
 {
 	common->SetRefreshOnPrint( true );
@@ -418,6 +431,7 @@ CONSOLE_COMMAND( localizeGuiParmsTest, "Create test files that show gui parms lo
 	common->SetRefreshOnPrint( false );
 }
 
+//! Creates test files that show which strings will be localized.
 CONSOLE_COMMAND( localizeMapsTest, "Create test files that shows which strings will be localized.", NULL )
 {
 	ListHash listHash;
@@ -495,11 +509,6 @@ CONSOLE_COMMAND( localizeMapsTest, "Create test files that shows which strings w
 	common->SetRefreshOnPrint( false );
 }
 
-/*
-===============
-idCommonLocal::LocalizeSpecificMapData
-===============
-*/
 void idCommonLocal::LocalizeSpecificMapData( const char* fileName, idLangDict& langDict, const idLangDict& replaceArgs )
 {
 	idStr	  out, ws, work;
@@ -526,11 +535,6 @@ void idCommonLocal::LocalizeSpecificMapData( const char* fileName, idLangDict& l
 	}
 }
 
-/*
-===============
-idCommonLocal::LocalizeMapData
-===============
-*/
 void idCommonLocal::LocalizeMapData( const char* fileName, idLangDict& langDict )
 {
 	const char* buffer = NULL;
@@ -570,11 +574,6 @@ void idCommonLocal::LocalizeMapData( const char* fileName, idLangDict& langDict 
 	common->SetRefreshOnPrint( false );
 }
 
-/*
-===============
-idCommonLocal::LocalizeGui
-===============
-*/
 void idCommonLocal::LocalizeGui( const char* fileName, idLangDict& langDict )
 {
 	idStr		out, ws, work;

@@ -31,27 +31,13 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "File_SaveGame.h"
 
-/*
-
-TODO: CRC on each block
-
-*/
-
-/*
-========================
-ZlibAlloc
-========================
-*/
+//! Allocates memory for Zlib compression operations.
 void* ZlibAlloc( void* opaque, uInt items, uInt size )
 {
 	return Mem_Alloc( items * size, TAG_SAVEGAMES );
 }
 
-/*
-========================
-ZlibFree
-========================
-*/
+//! Frees memory allocated by zlib using the engine's memory allocator.
 void ZlibFree( void* opaque, void* address )
 {
 	Mem_Free( address );
@@ -66,9 +52,14 @@ idCVar sgf_windowBits( "sgf_windowBits", "-15", CVAR_INTEGER, "zlib window bits"
 
 bool   idFile_SaveGamePipelined::cancelToTerminate = false;
 
+/*!
+	\class idSGFcompressThread
+	\brief A thread class responsible for executing compression operations.
+*/
 class idSGFcompressThread : public idSysThread
 {
 public:
+	//! Executes the thread's main routine and returns an integer result
 	virtual int Run()
 	{
 		sgf->CompressBlock();
@@ -76,9 +67,15 @@ public:
 	}
 	idFile_SaveGamePipelined* sgf;
 };
+
+/*!
+	\class idSGFdecompressThread
+	\brief A thread class that executes decompression operations in a separate execution context.
+*/
 class idSGFdecompressThread : public idSysThread
 {
 public:
+	//! Executes the decompression block operation in a separate thread and returns zero upon completion.
 	virtual int Run()
 	{
 		sgf->DecompressBlock();
@@ -86,9 +83,15 @@ public:
 	}
 	idFile_SaveGamePipelined* sgf;
 };
+
+/*!
+	\class idSGFwriteThread
+	\brief A thread class responsible for executing asynchronous write operations.
+*/
 class idSGFwriteThread : public idSysThread
 {
 public:
+	//! Executes the thread's main routine and returns an integer result
 	virtual int Run()
 	{
 		sgf->WriteBlock();
@@ -96,9 +99,15 @@ public:
 	}
 	idFile_SaveGamePipelined* sgf;
 };
+
+/*!
+	\class idSGFreadThread
+	\brief A thread class for handling asynchronous file reading operations.
+*/
 class idSGFreadThread : public idSysThread
 {
 public:
+	//! Executes the thread's main routine and returns an integer result
 	virtual int Run()
 	{
 		sgf->ReadBlock();
@@ -107,11 +116,6 @@ public:
 	idFile_SaveGamePipelined* sgf;
 };
 
-/*
-============================
-idFile_SaveGamePipelined::idFile_SaveGamePipelined
-============================
-*/
 idFile_SaveGamePipelined::idFile_SaveGamePipelined() :
 	mode( CLOSED ),
 	compressedLength( 0 ),
@@ -144,11 +148,6 @@ idFile_SaveGamePipelined::idFile_SaveGamePipelined() :
 	zStream.zfree  = ZlibFree;
 }
 
-/*
-============================
-idFile_SaveGamePipelined::~idFile_SaveGamePipelined
-============================
-*/
 idFile_SaveGamePipelined::~idFile_SaveGamePipelined()
 {
 	Finish();
@@ -181,21 +180,11 @@ idFile_SaveGamePipelined::~idFile_SaveGamePipelined()
 	dataIO	 = NULL;
 }
 
-/*
-========================
-idFile_SaveGamePipelined::ReadBuildVersion
-========================
-*/
 bool idFile_SaveGamePipelined::ReadBuildVersion()
 {
 	return ReadString( buildVersion ) != 0;
 }
 
-/*
-========================
-idFile_SaveGamePipelined::ReadSaveFormatVersion
-========================
-*/
 bool idFile_SaveGamePipelined::ReadSaveFormatVersion()
 {
 	if( ReadBig( pointerSize ) <= 0 ) {
@@ -204,11 +193,6 @@ bool idFile_SaveGamePipelined::ReadSaveFormatVersion()
 	return ReadBig( saveFormatVersion ) != 0;
 }
 
-/*
-========================
-idFile_SaveGamePipelined::GetPointerSize
-========================
-*/
 int idFile_SaveGamePipelined::GetPointerSize() const
 {
 	if( pointerSize == 0 ) {
@@ -219,11 +203,6 @@ int idFile_SaveGamePipelined::GetPointerSize() const
 	}
 }
 
-/*
-============================
-idFile_SaveGamePipelined::Finish
-============================
-*/
 void idFile_SaveGamePipelined::Finish()
 {
 	if( mode == WRITE ) {
@@ -278,11 +257,6 @@ void idFile_SaveGamePipelined::Finish()
 	mode = CLOSED;
 }
 
-/*
-============================
-idFile_SaveGamePipelined::Abort
-============================
-*/
 void idFile_SaveGamePipelined::Abort()
 {
 	if( mode == WRITE ) {
@@ -319,19 +293,6 @@ void idFile_SaveGamePipelined::Abort()
 	mode = CLOSED;
 }
 
-/*
-===================================================================================
-
-WRITE PATH
-
-===================================================================================
-*/
-
-/*
-============================
-idFile_SaveGamePipelined::OpenForWriting
-============================
-*/
 bool idFile_SaveGamePipelined::OpenForWriting( const char* const filename, bool useNativeFile )
 {
 	assert( mode == CLOSED );
@@ -384,11 +345,6 @@ bool idFile_SaveGamePipelined::OpenForWriting( const char* const filename, bool 
 	return true;
 }
 
-/*
-============================
-idFile_SaveGamePipelined::OpenForWriting
-============================
-*/
 bool idFile_SaveGamePipelined::OpenForWriting( idFile* file )
 {
 	assert( mode == CLOSED );
@@ -438,15 +394,6 @@ bool idFile_SaveGamePipelined::OpenForWriting( idFile* file )
 	return true;
 }
 
-/*
-============================
-idFile_SaveGamePipelined::NextWriteBlock
-
-Modifies:
-	dataIO
-	bytesIO
-============================
-*/
 bool idFile_SaveGamePipelined::NextWriteBlock( blockForIO_t* block )
 {
 	assert( mode == WRITE );
@@ -477,16 +424,6 @@ bool idFile_SaveGamePipelined::NextWriteBlock( blockForIO_t* block )
 	return true;
 }
 
-/*
-============================
-idFile_SaveGamePipelined::WriteBlock
-
-Modifies:
-	dataIO
-	bytesIO
-	nativeFile
-============================
-*/
 void idFile_SaveGamePipelined::WriteBlock()
 {
 	assert( nativeFile != NULL );
@@ -499,23 +436,6 @@ void idFile_SaveGamePipelined::WriteBlock()
 	bytesIO = 0;
 }
 
-/*
-============================
-idFile_SaveGamePipelined::FlushCompressedBlock
-
-Called when a compressed block fills up, and also to flush the final partial block.
-Flushes everything from [compressedConsumedBytes -> compressedProducedBytes)
-
-Reads:
-	compressed
-	compressedProducedBytes
-
-Modifies:
-	dataZlib
-	bytesZlib
-	compressedConsumedBytes
-============================
-*/
 void idFile_SaveGamePipelined::FlushCompressedBlock()
 {
 	// block until the background thread is done with the last block
@@ -545,22 +465,6 @@ void idFile_SaveGamePipelined::FlushCompressedBlock()
 	}
 }
 
-/*
-============================
-idFile_SaveGamePipelined::CompressBlock
-
-Called when an uncompressed block fills up, and also to flush the final partial block.
-Flushes everything from [uncompressedConsumedBytes -> uncompressedProducedBytes)
-
-Modifies:
-	dataZlib
-	bytesZlib
-	compressed
-	compressedProducedBytes
-	zStream
-	zStreamEndHit
-============================
-*/
 void idFile_SaveGamePipelined::CompressBlock()
 {
 	zStream.next_in	 = ( Bytef* )dataZlib;
@@ -610,23 +514,6 @@ void idFile_SaveGamePipelined::CompressBlock()
 	}
 }
 
-/*
-============================
-idFile_SaveGamePipelined::FlushUncompressedBlock
-
-Called when an uncompressed block fills up, and also to flush the final partial block.
-Flushes everything from [uncompressedConsumedBytes -> uncompressedProducedBytes)
-
-Reads:
-	uncompressed
-	uncompressedProducedBytes
-
-Modifies:
-	dataZlib
-	bytesZlib
-	uncompressedConsumedBytes
-============================
-*/
 void idFile_SaveGamePipelined::FlushUncompressedBlock()
 {
 	// block until the background thread has completed
@@ -649,15 +536,6 @@ void idFile_SaveGamePipelined::FlushUncompressedBlock()
 	}
 }
 
-/*
-============================
-idFile_SaveGamePipelined::Write
-
-Modifies:
-	uncompressed
-	uncompressedProducedBytes
-============================
-*/
 int idFile_SaveGamePipelined::Write( const void* buffer, int length )
 {
 	if( buffer == NULL || length <= 0 ) {
@@ -695,19 +573,6 @@ int idFile_SaveGamePipelined::Write( const void* buffer, int length )
 	return length;
 }
 
-/*
-===================================================================================
-
-READ PATH
-
-===================================================================================
-*/
-
-/*
-============================
-idFile_SaveGamePipelined::OpenForReading
-============================
-*/
 bool idFile_SaveGamePipelined::OpenForReading( const char* const filename, bool useNativeFile )
 {
 	assert( mode == CLOSED );
@@ -751,11 +616,6 @@ bool idFile_SaveGamePipelined::OpenForReading( const char* const filename, bool 
 	return true;
 }
 
-/*
-============================
-idFile_SaveGamePipelined::OpenForReading
-============================
-*/
 bool idFile_SaveGamePipelined::OpenForReading( idFile* file )
 {
 	assert( mode == CLOSED );
@@ -796,18 +656,6 @@ bool idFile_SaveGamePipelined::OpenForReading( idFile* file )
 	return true;
 }
 
-/*
-============================
-idFile_SaveGamePipelined::NextReadBlock
-
-Reads the next data block from the filesystem into the memory buffer.
-
-Modifies:
-	compressed
-	compressedProducedBytes
-	nativeFileEndHit
-============================
-*/
 bool idFile_SaveGamePipelined::NextReadBlock( blockForIO_t* block, size_t lastReadBytes )
 {
 	assert( mode == READ );
@@ -837,19 +685,6 @@ bool idFile_SaveGamePipelined::NextReadBlock( blockForIO_t* block, size_t lastRe
 	return true;
 }
 
-/*
-============================
-idFile_SaveGamePipelined::ReadBlock
-
-Reads the next data block from the filesystem into the memory buffer.
-
-Modifies:
-	compressed
-	compressedProducedBytes
-	nativeFile
-	nativeFileEndHit
-============================
-*/
 void idFile_SaveGamePipelined::ReadBlock()
 {
 	assert( nativeFile != NULL );
@@ -867,20 +702,6 @@ void idFile_SaveGamePipelined::ReadBlock()
 	}
 }
 
-/*
-============================
-idFile_SaveGamePipelined::PumpCompressedBlock
-
-Reads:
-	compressed
-	compressedProducedBytes
-
-Modifies:
-	dataIO
-	byteIO
-	compressedConsumedBytes
-============================
-*/
 void idFile_SaveGamePipelined::PumpCompressedBlock()
 {
 	// block until the background thread is done with the last block
@@ -909,32 +730,6 @@ void idFile_SaveGamePipelined::PumpCompressedBlock()
 	}
 }
 
-/*
-============================
-idFile_SaveGamePipelined::DecompressBlock
-
-Decompresses the next data block from the memory buffer
-
-Normally this runs in a separate thread when signalled, but
-can be called in the main thread for debugging.
-
-This will not exit until a complete block has been decompressed,
-unless end-of-file is reached.
-
-This may require additional compressed blocks to be read.
-
-Reads:
-	nativeFileEndHit
-
-Modifies:
-	dataIO
-	bytesIO
-	uncompressed
-	uncompressedProducedBytes
-	zStreamEndHit
-	zStream
-============================
-*/
 void idFile_SaveGamePipelined::DecompressBlock()
 {
 	if( zStreamEndHit ) {
@@ -997,22 +792,6 @@ void idFile_SaveGamePipelined::DecompressBlock()
 	assert( ( uncompressedProducedBytes & ( UNCOMPRESSED_BLOCK_SIZE - 1 ) ) == 0 );
 }
 
-/*
-============================
-idFile_SaveGamePipelined::PumpUncompressedBlock
-
-Called when an uncompressed block is drained.
-
-Reads:
-	uncompressed
-	uncompressedProducedBytes
-
-Modifies:
-	dataZlib
-	bytesZlib
-	uncompressedConsumedBytes
-============================
-*/
 void idFile_SaveGamePipelined::PumpUncompressedBlock()
 {
 	if( decompressThread != NULL ) {
@@ -1075,19 +854,7 @@ int idFile_SaveGamePipelined::Read( void* buffer, int length )
 	return ioCount;
 }
 
-/*
-===================================================================================
-
-TEST CODE
-
-===================================================================================
-*/
-
-/*
-============================
-TestProcessFile
-============================
-*/
+//! Processes a file for testing savegame compression and decompression.
 static void TestProcessFile( const char* const filename )
 {
 	idLib::Printf( "Processing %s:\n", filename );
@@ -1140,11 +907,7 @@ static void TestProcessFile( const char* const filename )
 	Mem_Free( testData );
 }
 
-/*
-============================
-TestSaveGameFile
-============================
-*/
+//! Exercises the pipelined savegame code by processing a test map file
 CONSOLE_COMMAND( TestSaveGameFile, "Exercises the pipelined savegame code", 0 )
 {
 #if 1
@@ -1160,11 +923,7 @@ CONSOLE_COMMAND( TestSaveGameFile, "Exercises the pipelined savegame code", 0 )
 #endif
 }
 
-/*
-============================
-TestCompressionSpeeds
-============================
-*/
+//! Compares the compression speeds of zlib and the engine's LZW implementation.
 CONSOLE_COMMAND( TestCompressionSpeeds, "Compares zlib and our code", 0 )
 {
 	const char* const filename = "-colorMap.tga";

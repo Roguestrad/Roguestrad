@@ -69,20 +69,25 @@ typedef void ( *cmdFunction_t )( const idCmdArgs& args );
 // argument completion function
 typedef void ( *argCompletion_t )( const idCmdArgs& args, void ( *callback )( const char* s ) );
 
-/*
-================================================
-idCommandLink is a convenient way to get a function registered as a
-ConsoleCommand without having to add an explicit call to idCmdSystem->AddCommand() in a startup
-function somewhere. Simply declare a static variable with the parameters and it will get
-executed before main(). For example:
-
-static idCommandLink sys_dumpMemory( "sys_dumpMemory", Sys_DumpMemory_f, "Walks the heap and reports stats" );
-================================================
+/*!
+	\class idCommandLink
+	\brief A command link for registering console commands that automatically registers during static initialization.
 */
-
 class idCommandLink
 {
 public:
+	/*!
+		\brief Constructs a command link for registering console commands without explicit startup calls
+
+		This constructor initializes a command link that registers a console command with the command system. The command link is designed to be used as a static variable so that commands get
+	   automatically registered before the main function starts execution. It stores the command name, function pointer, description, and optional argument completion callback for later registration
+	   by the command system.
+
+		\param cmdName Name of the console command to register
+		\param function Function to be called when the command is executed
+		\param description Description text for the command shown in help
+		\param argCompletion Optional callback for argument completion functionality
+	*/
 	idCommandLink( const char* cmdName, cmdFunction_t function, const char* description, argCompletion_t argCompletion = NULL );
 	idCommandLink*	next;
 	const char*		cmdName_;
@@ -91,8 +96,7 @@ public:
 	argCompletion_t argCompletion_;
 };
 
-// The command system will create commands for all the static definitions
-// when it initializes.
+//! Returns or sets the global list of console command links used by the command system
 idCommandLink* CommandLinks( idCommandLink* cl = NULL );
 
 /*
@@ -136,6 +140,15 @@ created using the CONSOLE_COMMAND_SHIP macro.
 	idCommandLink name##_v( #name, name##_f, comment, completion ); \
 	void		  name##_f( const idCmdArgs& args )
 
+/*!
+	\class idCmdSystem
+	\brief Command system for managing and executing console commands.
+
+	The idCmdSystem class provides an interface for command management within the engine. It allows for the registration, execution, and completion of console commands. The system supports adding and
+   removing commands, executing command text immediately or buffering it for later execution, and provides various argument completion helpers for different types of command parameters. The interface
+   is designed to be implemented by concrete command system classes that handle the actual command processing and management.
+
+*/
 class idCmdSystem
 {
 public:
@@ -177,13 +190,17 @@ public:
 	virtual void SetupReloadEngine( const idCmdArgs& args ) = 0;
 	virtual bool PostReloadEngine()							= 0;
 
-	// Default argument completion functions.
+	//! Completes command arguments with definition file names from the def/ folder.
 	static void	 ArgCompletion_DefFile( const idCmdArgs& args, void ( *callback )( const char* s ) );
+
+	//! Completes command arguments with boolean values 0 and 1.
 	static void	 ArgCompletion_Boolean( const idCmdArgs& args, void ( *callback )( const char* s ) );
 	template<int min, int max>
 	static void ArgCompletion_Integer( const idCmdArgs& args, void ( *callback )( const char* s ) );
 	template<const char** strings>
 	static void ArgCompletion_String( const idCmdArgs& args, void ( *callback )( const char* s ) );
+
+	//! Performs command argument completion for file names using the specified callback.
 	template<int type>
 	static void ArgCompletion_Decl( const idCmdArgs& args, void ( *callback )( const char* s ) );
 	static void ArgCompletion_FileName( const idCmdArgs& args, void ( *callback )( const char* s ) );
@@ -211,6 +228,7 @@ ID_INLINE void idCmdSystem::ArgCompletion_Boolean( const idCmdArgs& args, void (
 	callback( va( "%s 1", args.Argv( 0 ) ) );
 }
 
+//! Completes command arguments with integer values within a specified range.
 template<int min, int max>
 ID_INLINE void idCmdSystem::ArgCompletion_Integer( const idCmdArgs& args, void ( *callback )( const char* s ) )
 {
@@ -219,6 +237,7 @@ ID_INLINE void idCmdSystem::ArgCompletion_Integer( const idCmdArgs& args, void (
 	}
 }
 
+//! Completes command arguments using a list of strings and calls a callback for each completed argument.
 template<const char** strings>
 ID_INLINE void idCmdSystem::ArgCompletion_String( const idCmdArgs& args, void ( *callback )( const char* s ) )
 {
@@ -227,6 +246,7 @@ ID_INLINE void idCmdSystem::ArgCompletion_String( const idCmdArgs& args, void ( 
 	}
 }
 
+//! Completes command arguments with declaration names using the provided callback.
 template<int type>
 ID_INLINE void idCmdSystem::ArgCompletion_Decl( const idCmdArgs& args, void ( *callback )( const char* s ) )
 {

@@ -38,36 +38,87 @@ struct keyBindings_t {
 
 class idSerializer;
 
-// Converts from a USB HID code to a K_ code
+//! Converts a USB HID code to a K_ code
 int Key_CovertHIDCode( int hid );
 
+/*!
+	\class idKeyInput
+	\brief Manages keyboard input handling, key state tracking, and command binding for user actions.
+
+	The idKeyInput class provides comprehensive keyboard input management, including tracking key states, managing command bindings, and handling input event processing. It supports initialization and
+   shutdown procedures for the input system, maintains key state information for both system and user commands, and provides facilities for binding commands to keys. The class handles various
+   key-related operations such as converting between key names and numbers, retrieving localized key names for display, and executing bound commands. It also offers functionality for managing multiple
+   types of bindings including keyboard, mouse, and gamepad inputs. The implementation supports console command completion for key names and provides methods for clearing input states and writing
+   bindings to files. The system tracks global key up/down states and maintains an overstrike mode setting for keyboard input.
+
+*/
 class idKeyInput
 {
 public:
+	//! Initializes the key input system by allocating memory for key states and registering console commands for key binding operations.
 	static void			 Init();
+
+	//! Shuts down the key input system by deallocating the keys array.
 	static void			 Shutdown();
 
+	//! Completes command arguments with key names by invoking a callback for each key name.
 	static void			 ArgCompletion_KeyName( const idCmdArgs& args, void ( *callback )( const char* s ) );
+
+	//! Tracks global key up/down state for system key events
 	static void			 PreliminaryKeyEvent( int keyNum, bool down );
+
+	//! Checks if a specific key is currently pressed down.
 	static bool			 IsDown( int keyNum );
+
+	//! Returns the user command action associated with the specified key number.
 	static int			 GetUsercmdAction( int keyNum );
+
+	//! Returns the current overstrike mode state for keyboard input.
 	static bool			 GetOverstrikeMode();
+
+	//! Sets the overstrike mode state for keyboard input.
 	static void			 SetOverstrikeMode( bool state );
+
+	//! Clears the state of all input keys and user command generation.
 	static void			 ClearStates();
 
-	static keyNum_t		 StringToKeyNum( const char* str );	  // This is used by the "bind" command
-	static const char*	 KeyNumToString( keyNum_t keyNum );	  // This is the inverse of StringToKeyNum, used for config files
-	static const char*	 LocalizedKeyName( keyNum_t keyNum ); // This returns text suitable to print on screen
+	//! Converts a string representation of a key to its corresponding key number
+	static keyNum_t		 StringToKeyNum( const char* str );
 
+	//! Converts a key number to its string representation
+	static const char*	 KeyNumToString( keyNum_t keyNum );
+
+	//! Returns a localized string representation of a key number suitable for display on screen.
+	static const char*	 LocalizedKeyName( keyNum_t keyNum );
+
+	//! Sets the binding for a specified key number to the given command string.
 	static void			 SetBinding( int keyNum, const char* binding );
+
+	//! Returns the binding string for a specified key number
 	static const char*	 GetBinding( int keyNum );
+
+	//! Removes the binding associated with the specified command string
 	static bool			 UnbindBinding( const char* bind );
+
+	//! Returns the number of key bindings associated with the specified command name.
 	static int			 NumBinds( const char* binding );
+
+	//! Executes the command bound to a given key number.
 	static bool			 ExecKeyBinding( int keyNum );
+
+	//! Returns the localized name of the key for the given binding.
 	static const char*	 KeysFromBinding( const char* bind );
+
+	//! Returns the binding for the localized name of the key.
 	static const char*	 BindingFromKey( const char* key );
+
+	//! Checks if a specific key is bound to the given command binding
 	static bool			 KeyIsBoundTo( int keyNum, const char* binding );
+
+	//! Writes key binding commands to the specified file
 	static void			 WriteBindings( idFile* f );
+
+	//! Converts a key binding string into separate keyboard, mouse, and gamepad bindings.
 	static keyBindings_t KeyBindingsFromBinding( const char* bind, bool firstOnly = false, bool localized = false );
 };
 

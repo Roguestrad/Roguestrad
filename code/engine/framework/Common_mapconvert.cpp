@@ -32,6 +32,10 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../renderer/Image.h"
 
+/*!
+	\class OBJExporter
+	\brief A utility class for converting map geometry data into OBJ format with support for brushes, patches, and mesh polygons.
+*/
 class OBJExporter
 {
 public:
@@ -54,10 +58,51 @@ public:
 	idList<OBJGroup>		  groups;
 	idList<const idMaterial*> materials;
 
+	/*!
+		\brief Converts a map brush into OBJ format by processing its sides and generating vertex data with texture coordinates and normals.
+
+		This function processes a map brush and converts it into an OBJ object format by iterating through each brush side. For each side, it calculates the winding, clips it against other brush
+	   planes, and generates vertex data including texture coordinates and normals. The function handles degenerate planes, processes texture vectors, and supports different projection types including
+	   Valve 220. The resulting geometry is stored in the provided OBJ group structure.
+
+		\param group The OBJ group where the converted brush data will be stored
+		\param mapBrush Pointer to the map brush to be converted
+		\param entityNum The entity number associated with the brush
+		\param primitiveNum The primitive number of the brush within the entity
+		\param transform Transformation matrix to apply to the brush vertices
+	*/
 	void					  ConvertBrushToOBJ( OBJGroup& group, const idMapBrush* mapBrush, int entityNum, int primitiveNum, const idMat4& transform );
+
+	/*!
+		\brief Converts a map patch to OBJ format by subdividing it and generating faces with transformed vertices
+
+		This function processes a map patch by first creating a copy of it and then subdividing it either explicitly or using default curve subdivision parameters. It then extracts the material
+	   associated with the patch and adds it to the list of materials. For each triangle in the subdivided patch, a new face is created in the OBJ object, with vertices transformed by the provided
+	   transformation matrix. The function ensures proper vertex ordering and assigns the correct material to each face.
+
+		\param group The OBJ group to which the patch will be added
+		\param patch The map patch to convert
+		\param entityNum The entity number associated with the patch
+		\param primitiveNum The primitive number for naming the OBJ object
+		\param transform The transformation matrix to apply to the patch vertices
+	*/
 	void					  ConvertPatchToOBJ( OBJGroup& group, const idMapPatch* patch, int entityNum, int primitiveNum, const idMat4& transform );
+
+	/*!
+		\brief Converts a mesh polygon into OBJ format by transforming vertices and organizing them into faces with associated materials
+
+		This function processes a mesh polygon and converts it into OBJ format by applying the provided transformation matrix to each vertex. It creates a new object within the specified group and
+	   populates it with faces that reference the vertices and materials from the input mesh
+
+		\param group The OBJ group to which the converted mesh will be added
+		\param mesh The input mesh containing polygon data to be converted
+		\param entityNum The entity number associated with the mesh
+		\param primitiveNum The primitive number used to name the output object
+		\param transform The transformation matrix to be applied to each vertex
+	*/
 	void					  ConvertMeshToOBJ( OBJGroup& group, const MapPolygonMesh* mesh, int entityNum, int primitiveNum, const idMat4& transform );
 
+	//! Writes geometry and material data to OBJ and MTL files
 	void					  Write( const char* relativePath, const char* basePath = "fs_basepath" );
 };
 
@@ -396,6 +441,7 @@ void OBJExporter::ConvertMeshToOBJ( OBJGroup& group, const MapPolygonMesh* mesh,
 	}
 }
 
+//! Exports a map file to OBJ and MTL format for 3D model conversion.
 CONSOLE_COMMAND( exportMapToOBJ, "Convert .map file to .obj/.mtl ", idCmdSystem::ArgCompletion_MapName )
 {
 	common->SetRefreshOnPrint( true );
@@ -524,6 +570,7 @@ CONSOLE_COMMAND( exportMapToOBJ, "Convert .map file to .obj/.mtl ", idCmdSystem:
 	common->SetRefreshOnPrint( false );
 }
 
+//! Converts a .map file to a new map format using polygons instead of brushes
 CONSOLE_COMMAND( convertMap, "Convert .map file to new map format with polygons instead of brushes", idCmdSystem::ArgCompletion_MapNameNoJson )
 {
 	common->SetRefreshOnPrint( true );
@@ -563,6 +610,7 @@ CONSOLE_COMMAND( convertMap, "Convert .map file to new map format with polygons 
 	common->SetRefreshOnPrint( false );
 }
 
+//! Converts a .map file to a new .json map format using polygon mesh representation instead of brushes
 CONSOLE_COMMAND( convertMapToJSON, "Convert .map file to new .json map format with polygons instead of brushes", idCmdSystem::ArgCompletion_MapNameNoJson )
 {
 	common->SetRefreshOnPrint( true );
@@ -602,6 +650,7 @@ CONSOLE_COMMAND( convertMapToJSON, "Convert .map file to new .json map format wi
 	common->SetRefreshOnPrint( false );
 }
 
+//! Converts a .map file to the Valve 220 map format for TrenchBroom.
 CONSOLE_COMMAND_SHIP( convertMapToValve220, "Convert .map file to the Valve 220 map format for TrenchBroom", idCmdSystem::ArgCompletion_MapNameNoJson )
 {
 	common->SetRefreshOnPrint( true );
@@ -646,6 +695,7 @@ CONSOLE_COMMAND_SHIP( convertMapToValve220, "Convert .map file to the Valve 220 
 	common->SetRefreshOnPrint( false );
 }
 
+//! Lists all brush entities found in .map files
 CONSOLE_COMMAND( checkMapsForBrushEntities, "List all brush entities in all .map files", idCmdSystem::ArgCompletion_MapNameNoJson )
 {
 	// int totalImagesCount = 0;
@@ -699,6 +749,7 @@ CONSOLE_COMMAND( checkMapsForBrushEntities, "List all brush entities in all .map
 	}
 }
 
+//! Converts Quake .map files in Valve 220 format to Doom 3 BFG format
 CONSOLE_COMMAND_SHIP( convertMapQuakeToDoom, "Convert Quake .map in Valve 220 map format for Doom 3 BFG", idCmdSystem::ArgCompletion_MapNameNoJson )
 {
 	common->SetRefreshOnPrint( true );

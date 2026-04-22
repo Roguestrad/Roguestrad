@@ -32,11 +32,16 @@ If you have questions concerning this license or the applicable additional terms
 
 enum justify_t { JUSTIFY_LEFT, JUSTIFY_RIGHT, JUSTIFY_CENTER_LEFT, JUSTIFY_CENTER_RIGHT };
 
+/*!
+	\class idOverlayHandle
+	\brief Handle class for managing overlay resources.
+*/
 class idOverlayHandle
 {
 	friend class idConsoleLocal;
 
 public:
+	//! Initializes an overlay handle with default values.
 	idOverlayHandle() :
 		index( -1 ),
 		time( 0 )
@@ -48,8 +53,9 @@ private:
 	int time;
 };
 
-/*
-===============================================================================
+/*!
+	\class idConsole
+	\brief The idConsole class provides an interface for console functionality including input processing, display rendering, and debug visualization.
 
 	The console is strictly for development and advanced users. It should
 	never be used to convey actual game information to the user, which should
@@ -58,9 +64,7 @@ private:
 	The force options are for the editor console display window, which
 	doesn't respond to pull up / pull down
 
-===============================================================================
 */
-
 class idConsole
 {
 public:

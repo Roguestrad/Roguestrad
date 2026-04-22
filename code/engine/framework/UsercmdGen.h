@@ -88,9 +88,14 @@ const int IMPULSE_29 = 29; // quick 1
 const int IMPULSE_30 = 30; // quick 2
 const int IMPULSE_31 = 31; // quick 3
 
+/*!
+	\class usercmd_t
+	\brief Represents a user command structure for network synchronization and input processing.
+*/
 class usercmd_t
 {
 public:
+	//! Initializes a new instance of the usercmd_t structure with default values.
 	usercmd_t() :
 		forwardmove(),
 		rightmove(),
@@ -148,8 +153,13 @@ public:
 	// Leyland end
 
 public:
+	//! Serializes user command data using the provided serializer, comparing against a base command to reduce bandwidth.
 	void Serialize( class idSerializer& s, const usercmd_t& base );
-	void ByteSwap(); // on big endian systems, byte swap the shorts and ints
+
+	//! Converts the byte order of the angles members from big endian to little endian.
+	void ByteSwap();
+
+	//! Compares two usercmd_t objects for equality
 	bool operator==( const usercmd_t& rhs ) const;
 };
 
@@ -217,6 +227,15 @@ typedef struct {
 	usercmdButton_t button;
 } userCmdString_t;
 
+/*!
+	\class idUsercmdGen
+	\brief User command generation interface for handling input and building game commands.
+
+	This abstract class defines the interface for generating user commands based on input from various devices such as keyboard, mouse, and game controllers. It provides methods for initializing,
+   shutting down, and managing input state, as well as building and retrieving the current user command. The interface supports inhibition of specific input subsystems and provides access to mouse and
+   key states. The class is designed to be implemented by concrete classes that handle the actual input processing and command building for different platform or input device configurations.
+
+*/
 class idUsercmdGen
 {
 public:
@@ -263,16 +282,23 @@ public:
 extern idUsercmdGen*   usercmdGen;
 extern userCmdString_t userCmdStrings[];
 
-/*
-================================================
-idUserCmdMgr
-================================================
+/*!
+	\class idUserCmdMgr
+	\brief Manages user commands for players in a game engine.
+
+	The user command manager handles the buffering and retrieval of user input commands for multiple players. It maintains separate command buffers for each player and provides mechanisms to store,
+   retrieve, and manage command frames. The system supports both read and write operations on command buffers, allowing for command processing and synchronization. Commands are stored with timestamps
+   and can be retrieved based on player index, frame tracking, and time buffers. The manager also provides functionality to reset player state, skip buffered commands, and check command availability.
+   This design enables efficient command handling in networked game environments where command timing and synchronization are critical.
+
 */
 class idUserCmdMgr
 {
 public:
+	//! Initializes a new instance of the user command manager.
 	idUserCmdMgr() { SetDefaults(); }
 
+	//! Initializes the user command manager state by resetting all command buffer entries and frame tracking data.
 	void SetDefaults()
 	{
 		for( int i = 0; i < cmdBuffer.Num(); ++i ) {
@@ -291,6 +317,7 @@ public:
 	idArray<int, MAX_PLAYERS>									 writeFrame; //"where we write to next"
 	idArray<int, MAX_PLAYERS>									 readFrame;	 //"the last frame we read"
 
+	//! Stores a user command for the specified player in the command buffer.
 	void														 PutUserCmdForPlayer( int playerIndex, const usercmd_t& cmd )
 	{
 		cmdBuffer[writeFrame[playerIndex] % USERCMD_BUFFER_SIZE][playerIndex] = cmd;
@@ -301,6 +328,7 @@ public:
 		writeFrame[playerIndex]++;
 	}
 
+	//! Resets the player command buffer for the specified player index.
 	void ResetPlayer( int playerIndex )
 	{
 		for( int i = 0; i < USERCMD_BUFFER_SIZE; i++ ) {
@@ -310,6 +338,7 @@ public:
 		readFrame[playerIndex]	= -1;
 	}
 
+	//! Checks if there are user commands available for a specific player with an optional buffer
 	bool HasUserCmdForPlayer( int playerIndex, int buffer = 0 ) const
 	{
 		// return true if the last frame we read from (+ buffer) is < the last frame we wrote to
@@ -318,6 +347,7 @@ public:
 		return hasCmd;
 	}
 
+	//! Checks if there are enough user commands buffered for a player to cover a specified time buffer.
 	bool HasUserCmdForClientTimeBuffer( int playerIndex, int millisecondBuffer )
 	{
 		// return true if there is at least one command in addition to enough
@@ -337,12 +367,14 @@ public:
 		return isTimeGreaterThanBuffer;
 	}
 
+	//! Returns the most recent user command for the specified player.
 	const usercmd_t& NewestUserCmdForPlayer( int playerIndex )
 	{
 		int index = Max( writeFrame[playerIndex] - 1, 0 );
 		return cmdBuffer[index % USERCMD_BUFFER_SIZE][playerIndex];
 	}
 
+	//! Returns the user command for the specified player at the current read frame.
 	const usercmd_t& GetUserCmdForPlayer( int playerIndex )
 	{
 		// Get the next cmd we should process (not necessarily the newest)
@@ -361,6 +393,7 @@ public:
 		return result;
 	}
 
+	//! Returns the client game milliseconds timestamp of the next user command for the specified player index.
 	int GetNextUserCmdClientTime( int playerIndex ) const
 	{
 		if( !HasUserCmdForPlayer( playerIndex ) ) { return 0; }
@@ -370,7 +403,7 @@ public:
 		return cmd.clientGameMilliseconds;
 	}
 
-	// Hack to let the player inject his position into the correct usercmd.
+	//! Returns a writable user command for the specified player index.
 	usercmd_t& GetWritableUserCmdForPlayer( int playerIndex )
 	{
 		// Get the next cmd we should process (not necessarily the newest)
@@ -389,6 +422,7 @@ public:
 		return result;
 	}
 
+	//! Moves the read pointer for the specified player to the last written command, effectively marking all previous commands as processed.
 	void MakeReadPtrCurrentForPlayer( int playerIndex )
 	{
 		// forces us to the head of our read buffer. As if we have processed every cmd available to us and now HasUserCmdForPlayer() returns FALSE
@@ -400,6 +434,7 @@ public:
 		readFrame[playerIndex] = writeFrame[playerIndex] - 1;
 	}
 
+	//! Advances the read frame for a player to skip buffered commands and ensure fresh commands are available.
 	void SkipBufferedCmdsForPlayer( int playerIndex )
 	{
 		// Similar to MakeReadPtrCurrentForPlayer, except:
@@ -408,8 +443,10 @@ public:
 		readFrame[playerIndex] = Max( readFrame[playerIndex], writeFrame[playerIndex] - 2 );
 	}
 
+	//! Returns the number of unread user command frames for the specified player.
 	int GetNumUnreadFrames( int playerIndex ) { return ( writeFrame[playerIndex] - 1 ) - readFrame[playerIndex]; }
 
+	//! Retrieves player commands for a specified user and returns the number of commands retrieved.
 	int GetPlayerCmds( int user, usercmd_t** buffer, const int bufferSize )
 	{
 		// Fallback to getting cmds from the userCmdMgr

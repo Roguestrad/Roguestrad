@@ -32,19 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #define BINARY_CONFIG "binary.conf"
 
-/*
-================================================================================================
-
-idZipContainer
-
-================================================================================================
-*/
-
-/*
-========================
-idZipContainer::Init
-========================
-*/
 bool idZipContainer::Init( const char* _fileName )
 {
 	unzFile			  uf;
@@ -174,11 +161,6 @@ bool idZipContainer::Init( const char* _fileName )
 	return true;
 }
 
-/*
-===========
-idZipContainer::ReadFileFromZip
-===========
-*/
 idFile_InZip* idZipContainer::OpenFile( const idZipCacheEntry& rt, const char* relativePath )
 {
 	// set position in pk4 file to the file (in the zip/pk4) we want a handle on

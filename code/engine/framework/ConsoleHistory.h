@@ -29,18 +29,20 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __CONSOLEHISTORY_H__
 #define __CONSOLEHISTORY_H__
 
-/*
+/*!
+	\class idConsoleHistory
+	\brief Manages command history for console input.
 
-This should behave like the windows command prompt, with the addition
-of a persistant history file.
-
-Note that commands bound to keys do not go through the console history.
+	The idConsoleHistory class maintains a circular buffer of previously entered console commands, allowing users to navigate through their command history using up/down arrow keys. It supports
+   loading history from a persistent file, adding new commands, retrieving commands in forward or backward direction, printing the entire history, and clearing all history data. The class handles both
+   in-memory command storage and file-based persistence, making it suitable for maintaining user command sequences across sessions. The history buffer operates as a circular queue with a fixed maximum
+   size, ensuring efficient memory usage while providing the expected console history behavior.
 
 */
-
 class idConsoleHistory
 {
 public:
+	//! Initializes a new instance of the idConsoleHistory class.
 	idConsoleHistory() :
 		upPoint( 0 ),
 		downPoint( 0 ),
@@ -50,20 +52,19 @@ public:
 		ClearHistory();
 	}
 
+	//! Loads command history from a file into the console history buffer.
 	void  LoadHistoryFile();
 
-	// the line should not have a \n
-	// Empty lines are never added to the history.
-	// If the command is the same as the last returned history line, nothing is changed.
+	//! Adds a command line to the console history and optionally writes it to the history file.
 	void  AddToHistory( const char* line, bool writeHistoryFile = true );
 
-	// the string will not have a \n
-	// Returns an empty string if there is nothing to retrieve in that
-	// direction.
+	//! Retrieves a command from the console history in the specified direction.
 	idStr RetrieveFromHistory( bool backward );
 
-	// console commands
+	//! Prints the command history to the console.
 	void  PrintHistory();
+
+	//! Clears the console history by resetting all history tracking variables.
 	void  ClearHistory();
 
 private:

@@ -75,52 +75,27 @@ idCVar			 net_maxExtrapolationInMS( "net_maxExtrapolationInMS", "0", CVAR_INTEGE
 
 static const int SNAP_USERCMDS = 8192;
 
-/*
-===============
-idCommonLocal::IsMultiplayer
-===============
-*/
 bool			 idCommonLocal::IsMultiplayer()
 {
 	idLobbyBase& lobby = session->GetPartyLobbyBase();
 	return ( ( ( lobby.GetMatchParms().matchFlags & MATCH_ONLINE ) != 0 ) && ( session->GetState() > idSession::IDLE ) );
 }
 
-/*
-===============
-idCommonLocal::IsServer
-===============
-*/
 bool idCommonLocal::IsServer()
 {
 	return IsMultiplayer() && session->GetActingGameStateLobbyBase().IsHost();
 }
 
-/*
-===============
-idCommonLocal::IsClient
-===============
-*/
 bool idCommonLocal::IsClient()
 {
 	return IsMultiplayer() && session->GetActingGameStateLobbyBase().IsPeer();
 }
 
-/*
-===============
-idCommonLocal::SendSnapshots
-===============
-*/
 int idCommonLocal::GetSnapRate()
 {
 	return net_snapRate.GetInteger();
 }
 
-/*
-===============
-idCommonLocal::SendSnapshots
-===============
-*/
 void idCommonLocal::SendSnapshots()
 {
 	if( !mapSpawned ) {
@@ -144,11 +119,6 @@ void idCommonLocal::SendSnapshots()
 	nextSnapshotSendTime = MSEC_ALIGN_TO_FRAME( currentTime + net_snapRate.GetInteger() );
 }
 
-/*
-===============
-idCommonLocal::NetReceiveSnapshot
-===============
-*/
 void idCommonLocal::NetReceiveSnapshot( class idSnapShot& ss )
 {
 	ss.SetRecvTime( Sys_Milliseconds() );
@@ -168,11 +138,6 @@ void idCommonLocal::NetReceiveSnapshot( class idSnapShot& ss )
 	}
 }
 
-/*
-===============
-idCommonLocal::SendUsercmd
-===============
-*/
 void idCommonLocal::SendUsercmds( int localClientNum )
 {
 	if( !mapSpawned ) {
@@ -208,11 +173,6 @@ void idCommonLocal::SendUsercmds( int localClientNum )
 	nextUsercmdSendTime = MSEC_ALIGN_TO_FRAME( currentTime + net_ucmdRate.GetInteger() );
 }
 
-/*
-===============
-idCommonLocal::NetReceiveUsercmds
-===============
-*/
 void idCommonLocal::NetReceiveUsercmds( int peer, idBitMsg& msg )
 {
 	int clientNum = Game()->MapPeerToClient( peer );
@@ -224,11 +184,6 @@ void idCommonLocal::NetReceiveUsercmds( int peer, idBitMsg& msg )
 	NetReadUsercmds( clientNum, msg );
 }
 
-/*
-===============
-idCommonLocal::NetReceiveReliable
-===============
-*/
 void idCommonLocal::NetReceiveReliable( int peer, int type, idBitMsg& msg )
 {
 	int clientNum = Game()->MapPeerToClient( peer );
@@ -248,11 +203,6 @@ void idCommonLocal::NetReceiveReliable( int peer, int type, idBitMsg& msg )
 	memcpy( reliable.data, msgData, msgSize );
 }
 
-/*
-========================
-idCommonLocal::ProcessSnapshot
-========================
-*/
 void idCommonLocal::ProcessSnapshot( idSnapShot& ss )
 {
 	int time = Sys_Milliseconds();
@@ -314,11 +264,6 @@ void idCommonLocal::ProcessSnapshot( idSnapShot& ss )
 	oldss		  = ss;
 }
 
-/*
-========================
-idCommonLocal::NetReadUsercmds
-========================
-*/
 void idCommonLocal::NetReadUsercmds( int clientNum, idBitMsg& msg )
 {
 	if( clientNum == -1 ) {
@@ -371,11 +316,6 @@ void idCommonLocal::NetReadUsercmds( int clientNum, idBitMsg& msg )
 	}
 }
 
-/*
-========================
-idCommonLocal::ProcessNextSnapshot
-========================
-*/
 void idCommonLocal::ProcessNextSnapshot()
 {
 	if( readSnapshotIndex == writeSnapshotIndex ) {
@@ -386,14 +326,6 @@ void idCommonLocal::ProcessNextSnapshot()
 	readSnapshotIndex++;
 }
 
-/*
-========================
-idCommonLocal::CalcSnapTimeBuffered
-Return the amount of game time left of buffered snapshots
-totalBufferedTime - total amount of snapshot time (includng what we've already past in current interpolate)
-totalRecvTime - total real time (sys_milliseconds) all of totalBufferedTime was received over
-========================
-*/
 int idCommonLocal::CalcSnapTimeBuffered( int& totalBufferedTime, int& totalRecvTime )
 {
 	totalBufferedTime = snapRate;
@@ -425,11 +357,6 @@ int idCommonLocal::CalcSnapTimeBuffered( int& totalBufferedTime, int& totalRecvT
 	return timeLeft;
 }
 
-/*
-========================
-idCommonLocal::InterpolateSnapshot
-========================
-*/
 void idCommonLocal::InterpolateSnapshot( netTimes_t& prev, netTimes_t& next, float fraction, bool predict )
 {
 	int serverTime = Lerp( prev.serverTime, next.serverTime, fraction );
@@ -440,11 +367,6 @@ void idCommonLocal::InterpolateSnapshot( netTimes_t& prev, netTimes_t& next, flo
 	// Game()->RunFrame( &userCmdMgr, &ret, true );
 }
 
-/*
-========================
-idCommonLocal::RunNetworkSnapshotFrame
-========================
-*/
 void idCommonLocal::RunNetworkSnapshotFrame()
 {
 	// Process any reliable messages we've received
@@ -587,11 +509,6 @@ void idCommonLocal::RunNetworkSnapshotFrame()
 	time_gameFrame = Sys_Microseconds() - time_gameFrame;
 }
 
-/*
-========================
-idCommonLocal::ExecuteReliableMessages
-========================
-*/
 void idCommonLocal::ExecuteReliableMessages()
 {
 	// Process any reliable messages we've received
@@ -603,11 +520,6 @@ void idCommonLocal::ExecuteReliableMessages()
 	reliableQueue.Clear();
 }
 
-/*
-========================
-idCommonLocal::ResetNetworkingState
-========================
-*/
 void idCommonLocal::ResetNetworkingState()
 {
 	snapTime			= 0;

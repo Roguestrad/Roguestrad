@@ -35,11 +35,6 @@ idCVar		 idEventLoop::com_journal( "com_journal", "0", CVAR_INIT | CVAR_SYSTEM, 
 idEventLoop	 eventLoopLocal;
 idEventLoop* eventLoop = &eventLoopLocal;
 
-/*
-=================
-idEventLoop::idEventLoop
-=================
-*/
 idEventLoop::idEventLoop()
 {
 	com_journalFile		= NULL;
@@ -56,11 +51,6 @@ idEventLoop::~idEventLoop()
 {
 }
 
-/*
-=================
-idEventLoop::GetRealEvent
-=================
-*/
 sysEvent_t idEventLoop::GetRealEvent()
 {
 	int		   r;
@@ -109,11 +99,6 @@ sysEvent_t idEventLoop::GetRealEvent()
 	return ev;
 }
 
-/*
-=================
-idEventLoop::PushEvent
-=================
-*/
 void idEventLoop::PushEvent( sysEvent_t* event )
 {
 	sysEvent_t* ev;
@@ -140,11 +125,6 @@ void idEventLoop::PushEvent( sysEvent_t* event )
 	com_pushedEventsHead++;
 }
 
-/*
-=================
-idEventLoop::GetEvent
-=================
-*/
 sysEvent_t idEventLoop::GetEvent()
 {
 	if( com_pushedEventsHead > com_pushedEventsTail ) {
@@ -154,11 +134,6 @@ sysEvent_t idEventLoop::GetEvent()
 	return GetRealEvent();
 }
 
-/*
-=================
-idEventLoop::ProcessEvent
-=================
-*/
 void idEventLoop::ProcessEvent( sysEvent_t ev )
 {
 	// track key up / down states
@@ -180,11 +155,6 @@ void idEventLoop::ProcessEvent( sysEvent_t ev )
 	}
 }
 
-/*
-===============
-idEventLoop::RunEventLoop
-===============
-*/
 int idEventLoop::RunEventLoop( bool commandExecution )
 {
 	sysEvent_t ev;
@@ -207,11 +177,6 @@ int idEventLoop::RunEventLoop( bool commandExecution )
 	return 0; // never reached
 }
 
-/*
-=============
-idEventLoop::Init
-=============
-*/
 void idEventLoop::Init()
 {
 	initialTimeOffset = Sys_Milliseconds();
@@ -236,11 +201,6 @@ void idEventLoop::Init()
 	}
 }
 
-/*
-=============
-idEventLoop::Shutdown
-=============
-*/
 void idEventLoop::Shutdown()
 {
 	if( com_journalFile ) {
@@ -253,13 +213,6 @@ void idEventLoop::Shutdown()
 	}
 }
 
-/*
-================
-idEventLoop::Milliseconds
-
-Can be used for profiling, but will be journaled accurately
-================
-*/
 int idEventLoop::Milliseconds()
 {
 #if 1 // FIXME!
@@ -279,11 +232,6 @@ int idEventLoop::Milliseconds()
 #endif
 }
 
-/*
-================
-idEventLoop::JournalLevel
-================
-*/
 int idEventLoop::JournalLevel() const
 {
 	return com_journal.GetInteger();

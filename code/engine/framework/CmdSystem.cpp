@@ -53,41 +53,97 @@ typedef struct commandDef_s {
 	char*				 description;
 } commandDef_t;
 
-/*
-================================================
-idCmdSystemLocal
-================================================
+/*!
+	\class idCmdSystemLocal
+	\brief Manages console commands and their execution within the system.
+
+	Provides the core functionality for registering, executing, and managing console commands. It handles command registration with flags and descriptions, supports command argument completion, and
+   maintains a command buffer for deferred execution. The system supports various command types including engine reloads, script execution, and command listing with filtering by flags. Command
+   handlers are linked to command names and can be executed either immediately or buffered for later processing. The class also supports specialized completion functions for files, declarations, and
+   specific command categories.
+
 */
 class idCmdSystemLocal : public idCmdSystem
 {
 public:
+	//! Initializes the command system by registering standard commands and linking declared commands.
 	virtual void Init();
+
+	//! Shuts down the command system and frees all allocated memory.
 	virtual void Shutdown();
 
+	/*!
+		\brief Registers a new console command with the command system
+
+		Adds a new command to the console command list with the specified name, function handler, flags, and description. The function checks if a command with the same name already exists and reports
+	   an error if it does. The command is stored in a linked list structure for later execution
+
+		\param cmdName Name of the command to register
+		\param function Function pointer to the command handler
+		\param flags Flags that control command execution behavior
+		\param description Description text for the command shown in help
+		\param argCompletion Optional function for argument completion suggestions
+	*/
 	virtual void AddCommand( const char* cmdName, cmdFunction_t function, int flags, const char* description, argCompletion_t argCompletion = NULL );
+
+	//! Removes a command with the specified name from the command system.
 	virtual void RemoveCommand( const char* cmdName );
+
+	//! Removes all commands that have any of the specified flags set.
 	virtual void RemoveFlaggedCommands( int flags );
 
+	//! Populates a callback function with the names of all registered commands.
 	virtual void CommandCompletion( void ( *callback )( const char* s ) );
+
+	//! Performs command argument completion by matching the command string and calling a callback for each valid argument.
 	virtual void ArgCompletion( const char* cmdString, void ( *callback )( const char* s ) );
+
+	//! Executes a string of command text by tokenizing and processing each command.
 	virtual void ExecuteCommandText( const char* text );
+
+	//! Appends command text to the end of the command buffer
 	virtual void AppendCommandText( const char* text );
 
+	//! Adds command text to the command buffer for later execution with specified execution type.
 	virtual void BufferCommandText( cmdExecution_t exec, const char* text );
+
+	//! Executes all commands stored in the command buffer until it is empty
 	virtual void ExecuteCommandBuffer();
 
+	/*!
+		\brief Provides command argument completion for files and folders with specified extensions, using a callback to handle each completed string.
+
+		This function implements argument completion for commands that involve file or folder paths. It lists files and folders in the specified directory, filtering out certain entries like autosave
+	   files and extra entity files. The completion results are passed to a provided callback function. The folder path and extension arguments are processed to build the completion strings, and the
+	   stripFolder parameter controls whether to strip the base folder prefix from the results. The function supports variadic extension arguments for listing files with multiple extensions.
+
+		\param args The command arguments provided to the completion function.
+		\param callback A function to be called for each completed string.
+		\param folder The base folder path to use for completion.
+		\param stripFolder Controls whether to strip the base folder prefix from results.
+		\param extension Variadic parameter list of file extensions to include in the file listing.
+	*/
 	virtual void ArgCompletion_FolderExtension( const idCmdArgs& args, void ( *callback )( const char* s ), const char* folder, int stripFolder, ... );
+
+	//! Completes command arguments with declaration names of a specified type
 	virtual void ArgCompletion_DeclName( const idCmdArgs& args, void ( *callback )( const char* s ), int type );
 
+	//! Buffers command arguments for execution based on the specified execution type.
 	virtual void BufferCommandArgs( cmdExecution_t exec, const idCmdArgs& args );
 
+	//! Schedules a engine reload for the next command execution and stores the provided command arguments for post-reload execution.
 	virtual void SetupReloadEngine( const idCmdArgs& args );
+
+	//! Executes queued commands after an engine reload if they exist.
 	virtual bool PostReloadEngine();
 
+	//! Sets the number of frames to wait.
 	void		 SetWait( int numFrames )
 	{
 		wait = numFrames;
 	}
+
+	//! Returns a pointer to the first command definition in the command list.
 	commandDef_t* GetCommands() const
 	{
 		return commands;
@@ -112,20 +168,46 @@ private:
 	idCmdArgs		  postReload;
 
 private:
+	//! Executes a command string that has been tokenized into arguments.
 	void		ExecuteTokenizedString( const idCmdArgs& args );
+
+	//! Inserts command text into the command buffer, appending a newline character.
 	void		InsertCommandText( const char* text );
 
+	//! Lists commands filtered by specified flags and optional match string
 	static void ListByFlags( const idCmdArgs& args, cmdFlags_t flags );
+
+	//! Lists all console commands matching the specified flags.
 	static void List_f( const idCmdArgs& args );
+
+	//! Lists system commands that match the provided arguments.
 	static void SystemList_f( const idCmdArgs& args );
+
+	//! Lists renderer-related commands.
 	static void RendererList_f( const idCmdArgs& args );
+
+	//! Lists sound commands available in the command system.
 	static void SoundList_f( const idCmdArgs& args );
+
+	//! Lists game-related commands.
 	static void GameList_f( const idCmdArgs& args );
+
+	//! Lists commands that have the tool flag set.
 	static void ToolList_f( const idCmdArgs& args );
+
+	//! Executes a script file by reading and buffering its contents for command execution.
 	static void Exec_f( const idCmdArgs& args );
+
+	//! Executes a command text from a cvar value
 	static void Vstr_f( const idCmdArgs& args );
+
+	//! Prints all command arguments except the first one to the console.
 	static void Echo_f( const idCmdArgs& args );
+
+	//! Prints out how the command line was parsed for debugging purposes.
 	static void Parse_f( const idCmdArgs& args );
+
+	//! Sets the command system to wait for a specified number of frames before continuing execution.
 	static void Wait_f( const idCmdArgs& args );
 	static void PrintMemInfo_f( const idCmdArgs& args );
 };
@@ -133,25 +215,20 @@ private:
 idCmdSystemLocal cmdSystemLocal;
 idCmdSystem*	 cmdSystem = &cmdSystemLocal;
 
-/*
-================================================
-idSort_CommandDef
-================================================
+/*!
+	\class idSort_CommandDef
+	\brief The idSort_CommandDef class provides case-insensitive alphabetical sorting for command definition structures.
 */
 class idSort_CommandDef : public idSort_Quick<commandDef_t, idSort_CommandDef>
 {
 public:
+	//! Compares two command definition structures based on their names in a case-insensitive manner
 	int Compare( const commandDef_t& a, const commandDef_t& b ) const
 	{
 		return idStr::Icmp( a.name, b.name );
 	}
 };
 
-/*
-============
-idCmdSystemLocal::ListByFlags
-============
-*/
 void idCmdSystemLocal::ListByFlags( const idCmdArgs& args, cmdFlags_t flags )
 {
 	int							i;
@@ -188,71 +265,36 @@ void idCmdSystemLocal::ListByFlags( const idCmdArgs& args, cmdFlags_t flags )
 	common->Printf( "%i commands\n", cmdList.Num() );
 }
 
-/*
-============
-idCmdSystemLocal::List_f
-============
-*/
 void idCmdSystemLocal::List_f( const idCmdArgs& args )
 {
 	idCmdSystemLocal::ListByFlags( args, CMD_FL_ALL );
 }
 
-/*
-============
-idCmdSystemLocal::SystemList_f
-============
-*/
 void idCmdSystemLocal::SystemList_f( const idCmdArgs& args )
 {
 	idCmdSystemLocal::ListByFlags( args, CMD_FL_SYSTEM );
 }
 
-/*
-============
-idCmdSystemLocal::RendererList_f
-============
-*/
 void idCmdSystemLocal::RendererList_f( const idCmdArgs& args )
 {
 	idCmdSystemLocal::ListByFlags( args, CMD_FL_RENDERER );
 }
 
-/*
-============
-idCmdSystemLocal::SoundList_f
-============
-*/
 void idCmdSystemLocal::SoundList_f( const idCmdArgs& args )
 {
 	idCmdSystemLocal::ListByFlags( args, CMD_FL_SOUND );
 }
 
-/*
-============
-idCmdSystemLocal::GameList_f
-============
-*/
 void idCmdSystemLocal::GameList_f( const idCmdArgs& args )
 {
 	idCmdSystemLocal::ListByFlags( args, CMD_FL_GAME );
 }
 
-/*
-============
-idCmdSystemLocal::ToolList_f
-============
-*/
 void idCmdSystemLocal::ToolList_f( const idCmdArgs& args )
 {
 	idCmdSystemLocal::ListByFlags( args, CMD_FL_TOOL );
 }
 
-/*
-===============
-idCmdSystemLocal::Exec_f
-===============
-*/
 void idCmdSystemLocal::Exec_f( const idCmdArgs& args )
 {
 	char* f;
@@ -278,13 +320,6 @@ void idCmdSystemLocal::Exec_f( const idCmdArgs& args )
 	fileSystem->FreeFile( f );
 }
 
-/*
-===============
-idCmdSystemLocal::Vstr_f
-
-Inserts the current value of a cvar as command text
-===============
-*/
 void idCmdSystemLocal::Vstr_f( const idCmdArgs& args )
 {
 	const char* v;
@@ -299,13 +334,6 @@ void idCmdSystemLocal::Vstr_f( const idCmdArgs& args )
 	cmdSystemLocal.BufferCommandText( CMD_EXEC_APPEND, va( "%s\n", v ) );
 }
 
-/*
-===============
-idCmdSystemLocal::Echo_f
-
-Just prints the rest of the line to the console
-===============
-*/
 void idCmdSystemLocal::Echo_f( const idCmdArgs& args )
 {
 	int i;
@@ -316,13 +344,6 @@ void idCmdSystemLocal::Echo_f( const idCmdArgs& args )
 	common->Printf( "\n" );
 }
 
-/*
-============
-idCmdSystemLocal::Wait_f
-
-Causes execution of the remainder of the command buffer to be delayed until next frame.
-============
-*/
 void idCmdSystemLocal::Wait_f( const idCmdArgs& args )
 {
 	if( args.Argc() == 2 ) {
@@ -332,13 +353,6 @@ void idCmdSystemLocal::Wait_f( const idCmdArgs& args )
 	}
 }
 
-/*
-============
-idCmdSystemLocal::Parse_f
-
-This just prints out how the rest of the line was parsed, as a debugging tool.
-============
-*/
 void idCmdSystemLocal::Parse_f( const idCmdArgs& args )
 {
 	int i;
@@ -348,11 +362,6 @@ void idCmdSystemLocal::Parse_f( const idCmdArgs& args )
 	}
 }
 
-/*
-============
-idCmdSystemLocal::Init
-============
-*/
 void idCmdSystemLocal::Init()
 {
 	AddCommand( "listCmds", List_f, CMD_FL_SYSTEM, "lists commands" );
@@ -377,11 +386,6 @@ void idCmdSystemLocal::Init()
 	textLength = 0;
 }
 
-/*
-============
-idCmdSystemLocal::Shutdown
-============
-*/
 void idCmdSystemLocal::Shutdown()
 {
 	commandDef_t* cmd;
@@ -399,11 +403,6 @@ void idCmdSystemLocal::Shutdown()
 	postReload.Clear();
 }
 
-/*
-============
-idCmdSystemLocal::AddCommand
-============
-*/
 void idCmdSystemLocal::AddCommand( const char* cmdName, cmdFunction_t function, int flags, const char* description, argCompletion_t argCompletion )
 {
 	commandDef_t* cmd;
@@ -428,11 +427,6 @@ void idCmdSystemLocal::AddCommand( const char* cmdName, cmdFunction_t function, 
 	commands		   = cmd;
 }
 
-/*
-============
-idCmdSystemLocal::RemoveCommand
-============
-*/
 void idCmdSystemLocal::RemoveCommand( const char* cmdName )
 {
 	commandDef_t *cmd, **last;
@@ -449,11 +443,6 @@ void idCmdSystemLocal::RemoveCommand( const char* cmdName )
 	}
 }
 
-/*
-============
-idCmdSystemLocal::RemoveFlaggedCommands
-============
-*/
 void idCmdSystemLocal::RemoveFlaggedCommands( int flags )
 {
 	commandDef_t *cmd, **last;
@@ -470,11 +459,6 @@ void idCmdSystemLocal::RemoveFlaggedCommands( int flags )
 	}
 }
 
-/*
-============
-idCmdSystemLocal::CommandCompletion
-============
-*/
 void idCmdSystemLocal::CommandCompletion( void ( *callback )( const char* s ) )
 {
 	commandDef_t* cmd;
@@ -484,11 +468,6 @@ void idCmdSystemLocal::CommandCompletion( void ( *callback )( const char* s ) )
 	}
 }
 
-/*
-============
-idCmdSystemLocal::ArgCompletion
-============
-*/
 void idCmdSystemLocal::ArgCompletion( const char* cmdString, void ( *callback )( const char* s ) )
 {
 	commandDef_t* cmd;
@@ -507,11 +486,6 @@ void idCmdSystemLocal::ArgCompletion( const char* cmdString, void ( *callback )(
 	}
 }
 
-/*
-============
-idCmdSystemLocal::ExecuteTokenizedString
-============
-*/
 void idCmdSystemLocal::ExecuteTokenizedString( const idCmdArgs& args )
 {
 	commandDef_t *cmd, **prev;
@@ -553,26 +527,11 @@ void idCmdSystemLocal::ExecuteTokenizedString( const idCmdArgs& args )
 	common->Printf( "Unknown command '%s'\n", args.Argv( 0 ) );
 }
 
-/*
-============
-idCmdSystemLocal::ExecuteCommandText
-
-Tokenizes, then executes.
-============
-*/
 void idCmdSystemLocal::ExecuteCommandText( const char* text )
 {
 	ExecuteTokenizedString( idCmdArgs( text, false ) );
 }
 
-/*
-============
-idCmdSystemLocal::InsertCommandText
-
-Adds command text immediately after the current command
-Adds a \n to the text
-============
-*/
 void idCmdSystemLocal::InsertCommandText( const char* text )
 {
 	int len;
@@ -598,13 +557,6 @@ void idCmdSystemLocal::InsertCommandText( const char* text )
 	textLength += len;
 }
 
-/*
-============
-idCmdSystemLocal::AppendCommandText
-
-Adds command text at the end of the buffer, does NOT add a final \n
-============
-*/
 void idCmdSystemLocal::AppendCommandText( const char* text )
 {
 	int l;
@@ -619,11 +571,6 @@ void idCmdSystemLocal::AppendCommandText( const char* text )
 	textLength += l;
 }
 
-/*
-============
-idCmdSystemLocal::BufferCommandText
-============
-*/
 void idCmdSystemLocal::BufferCommandText( cmdExecution_t exec, const char* text )
 {
 	switch( exec ) {
@@ -645,11 +592,6 @@ void idCmdSystemLocal::BufferCommandText( cmdExecution_t exec, const char* text 
 	}
 }
 
-/*
-============
-idCmdSystemLocal::BufferCommandArgs
-============
-*/
 void idCmdSystemLocal::BufferCommandArgs( cmdExecution_t exec, const idCmdArgs& args )
 {
 	switch( exec ) {
@@ -668,11 +610,6 @@ void idCmdSystemLocal::BufferCommandArgs( cmdExecution_t exec, const idCmdArgs& 
 	}
 }
 
-/*
-============
-idCmdSystemLocal::ExecuteCommandBuffer
-============
-*/
 void idCmdSystemLocal::ExecuteCommandBuffer()
 {
 	int		  i;
@@ -729,12 +666,6 @@ void idCmdSystemLocal::ExecuteCommandBuffer()
 	}
 }
 
-/*
-============
-idCmdSystemLocal::ArgCompletion_FolderExtension
-============
-*/
-// SRS - Changed stripFolder type from bool to int for compatibility with va_start()
 void idCmdSystemLocal::ArgCompletion_FolderExtension( const idCmdArgs& args, void ( *callback )( const char* s ), const char* folder, int stripFolder, ... )
 {
 	int			i;
@@ -803,11 +734,6 @@ void idCmdSystemLocal::ArgCompletion_FolderExtension( const idCmdArgs& args, voi
 	}
 }
 
-/*
-============
-idCmdSystemLocal::ArgCompletion_DeclName
-============
-*/
 void idCmdSystemLocal::ArgCompletion_DeclName( const idCmdArgs& args, void ( *callback )( const char* s ), int type )
 {
 	int i, num;
@@ -821,22 +747,12 @@ void idCmdSystemLocal::ArgCompletion_DeclName( const idCmdArgs& args, void ( *ca
 	}
 }
 
-/*
-============
-idCmdSystemLocal::SetupReloadEngine
-============
-*/
 void idCmdSystemLocal::SetupReloadEngine( const idCmdArgs& args )
 {
 	BufferCommandText( CMD_EXEC_APPEND, "reloadEngine\n" );
 	postReload = args;
 }
 
-/*
-============
-idCmdSystemLocal::PostReloadEngine
-============
-*/
 bool idCmdSystemLocal::PostReloadEngine()
 {
 	if( !postReload.Argc() ) {
