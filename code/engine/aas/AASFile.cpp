@@ -33,19 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "AASFile.h"
 #include "AASFile_local.h"
 
-/*
-===============================================================================
-
-	idReachability
-
-===============================================================================
-*/
-
-/*
-================
-Reachability_Write
-================
-*/
+//! Writes reachability data to a file.
 bool Reachability_Write( idFile* fp, idReachability* reach )
 {
 	fp->WriteFloatString( "\t\t%d %d (%f %f %f) (%f %f %f) %d %d",
@@ -62,11 +50,7 @@ bool Reachability_Write( idFile* fp, idReachability* reach )
 	return true;
 }
 
-/*
-================
-Reachability_Read
-================
-*/
+//! Reads reachability data from a lexer into a reachability structure.
 bool Reachability_Read( idLexer& src, idReachability* reach )
 {
 	reach->travelType = src.ParseInt();
@@ -78,11 +62,6 @@ bool Reachability_Read( idLexer& src, idReachability* reach )
 	return true;
 }
 
-/*
-================
-idReachability::CopyBase
-================
-*/
 void idReachability::CopyBase( idReachability& reach )
 {
 	travelType = reach.travelType;
@@ -93,19 +72,7 @@ void idReachability::CopyBase( idReachability& reach )
 	travelTime = reach.travelTime;
 }
 
-/*
-===============================================================================
-
-	idReachability_Special
-
-===============================================================================
-*/
-
-/*
-================
-Reachability_Special_Write
-================
-*/
+//! Writes reachability special data to a file.
 bool Reachability_Special_Write( idFile* fp, idReachability_Special* reach )
 {
 	int				  i;
@@ -121,11 +88,7 @@ bool Reachability_Special_Write( idFile* fp, idReachability_Special* reach )
 	return true;
 }
 
-/*
-================
-Reachability_Special_Read
-================
-*/
+//! Reads reachability special data from a lexer stream into a reachability structure
 bool Reachability_Special_Read( idLexer& src, idReachability_Special* reach )
 {
 	idToken key, value;
@@ -141,19 +104,6 @@ bool Reachability_Special_Read( idLexer& src, idReachability_Special* reach )
 	return false;
 }
 
-/*
-===============================================================================
-
-	idAASSettings
-
-===============================================================================
-*/
-
-/*
-============
-idAASSettings::idAASSettings
-============
-*/
 idAASSettings::idAASSettings()
 {
 	numBoundingBoxes		= 1;
@@ -182,11 +132,6 @@ idAASSettings::idAASSettings()
 	tt_startWalkOffLedge = 100;
 }
 
-/*
-============
-idAASSettings::ParseBool
-============
-*/
 bool idAASSettings::ParseBool( idLexer& src, bool& b )
 {
 	if( !src.ExpectTokenString( "=" ) ) {
@@ -196,11 +141,6 @@ bool idAASSettings::ParseBool( idLexer& src, bool& b )
 	return true;
 }
 
-/*
-============
-idAASSettings::ParseInt
-============
-*/
 bool idAASSettings::ParseInt( idLexer& src, int& i )
 {
 	if( !src.ExpectTokenString( "=" ) ) {
@@ -210,11 +150,6 @@ bool idAASSettings::ParseInt( idLexer& src, int& i )
 	return true;
 }
 
-/*
-============
-idAASSettings::ParseFloat
-============
-*/
 bool idAASSettings::ParseFloat( idLexer& src, float& f )
 {
 	if( !src.ExpectTokenString( "=" ) ) {
@@ -224,11 +159,6 @@ bool idAASSettings::ParseFloat( idLexer& src, float& f )
 	return true;
 }
 
-/*
-============
-idAASSettings::ParseVector
-============
-*/
 bool idAASSettings::ParseVector( idLexer& src, idVec3& vec )
 {
 	if( !src.ExpectTokenString( "=" ) ) {
@@ -237,11 +167,6 @@ bool idAASSettings::ParseVector( idLexer& src, idVec3& vec )
 	return ( src.Parse1DMatrix( 3, vec.ToFloatPtr() ) != 0 );
 }
 
-/*
-============
-idAASSettings::ParseBBoxes
-============
-*/
 bool idAASSettings::ParseBBoxes( idLexer& src )
 {
 	idToken	 token;
@@ -268,11 +193,6 @@ bool idAASSettings::ParseBBoxes( idLexer& src )
 	return false;
 }
 
-/*
-============
-idAASSettings::FromParser
-============
-*/
 bool idAASSettings::FromParser( idLexer& src )
 {
 	idToken token;
@@ -372,11 +292,6 @@ bool idAASSettings::FromParser( idLexer& src )
 	return true;
 }
 
-/*
-============
-idAASSettings::FromFile
-============
-*/
 bool idAASSettings::FromFile( const idStr& fileName )
 {
 	idLexer src( LEXFL_ALLOWPATHNAMES | LEXFL_NOSTRINGESCAPECHARS | LEXFL_NOSTRINGCONCAT );
@@ -404,11 +319,6 @@ bool idAASSettings::FromFile( const idStr& fileName )
 	return true;
 }
 
-/*
-============
-idAASSettings::FromDict
-============
-*/
 bool idAASSettings::FromDict( const char* name, const idDict* dict )
 {
 	idBounds bounds;
@@ -493,11 +403,6 @@ bool idAASSettings::FromDict( const char* name, const idDict* dict )
 	return true;
 }
 
-/*
-============
-idAASSettings::WriteToFile
-============
-*/
 bool idAASSettings::WriteToFile( idFile* fp ) const
 {
 	int i;
@@ -528,11 +433,6 @@ bool idAASSettings::WriteToFile( idFile* fp ) const
 	return true;
 }
 
-/*
-============
-idAASSettings::ValidForBounds
-============
-*/
 bool idAASSettings::ValidForBounds( const idBounds& bounds ) const
 {
 	int i;
@@ -548,11 +448,6 @@ bool idAASSettings::ValidForBounds( const idBounds& bounds ) const
 	return true;
 }
 
-/*
-============
-idAASSettings::ValidEntity
-============
-*/
 bool idAASSettings::ValidEntity( const char* classname ) const
 {
 	idStr	 use_aas;
@@ -611,11 +506,6 @@ bool idAASSettings::ValidEntity( const char* classname ) const
 #define AAS_VERTEX_GRANULARITY 4096
 #define AAS_EDGE_GRANULARITY   4096
 
-/*
-================
-idAASFileLocal::idAASFileLocal
-================
-*/
 idAASFileLocal::idAASFileLocal()
 {
 	planeList.SetGranularity( AAS_PLANE_GRANULARITY );
@@ -631,11 +521,6 @@ idAASFileLocal::idAASFileLocal()
 	clusters.SetGranularity( AAS_LIST_GRANULARITY );
 }
 
-/*
-================
-idAASFileLocal::~idAASFileLocal
-================
-*/
 idAASFileLocal::~idAASFileLocal()
 {
 	int				i;
@@ -649,11 +534,6 @@ idAASFileLocal::~idAASFileLocal()
 	}
 }
 
-/*
-================
-idAASFileLocal::Clear
-================
-*/
 void idAASFileLocal::Clear()
 {
 	planeList.Clear();
@@ -669,11 +549,6 @@ void idAASFileLocal::Clear()
 	clusters.Clear();
 }
 
-/*
-================
-idAASFileLocal::Write
-================
-*/
 bool idAASFileLocal::Write( const idStr& fileName, unsigned int mapFileCRC )
 {
 	int				i, num;
@@ -810,11 +685,6 @@ bool idAASFileLocal::Write( const idStr& fileName, unsigned int mapFileCRC )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::ParseIndex
-================
-*/
 bool idAASFileLocal::ParseIndex( idLexer& src, idList<aasIndex_t>& indexes )
 {
 	int		   numIndexes, i;
@@ -838,11 +708,6 @@ bool idAASFileLocal::ParseIndex( idLexer& src, idList<aasIndex_t>& indexes )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::ParsePlanes
-================
-*/
 bool idAASFileLocal::ParsePlanes( idLexer& src )
 {
 	int		numPlanes, i;
@@ -869,11 +734,6 @@ bool idAASFileLocal::ParsePlanes( idLexer& src )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::ParseVertices
-================
-*/
 bool idAASFileLocal::ParseVertices( idLexer& src )
 {
 	int	   numVertices, i;
@@ -897,11 +757,6 @@ bool idAASFileLocal::ParseVertices( idLexer& src )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::ParseEdges
-================
-*/
 bool idAASFileLocal::ParseEdges( idLexer& src )
 {
 	int		  numEdges, i;
@@ -926,11 +781,6 @@ bool idAASFileLocal::ParseEdges( idLexer& src )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::ParseFaces
-================
-*/
 bool idAASFileLocal::ParseFaces( idLexer& src )
 {
 	int		  numFaces, i;
@@ -959,11 +809,6 @@ bool idAASFileLocal::ParseFaces( idLexer& src )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::ParseReachabilities
-================
-*/
 bool idAASFileLocal::ParseReachabilities( idLexer& src, int areaNum )
 {
 	int						num, j;
@@ -998,11 +843,6 @@ bool idAASFileLocal::ParseReachabilities( idLexer& src, int areaNum )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::LinkReversedReachability
-================
-*/
 void idAASFileLocal::LinkReversedReachability()
 {
 	int				i;
@@ -1017,11 +857,6 @@ void idAASFileLocal::LinkReversedReachability()
 	}
 }
 
-/*
-================
-idAASFileLocal::ParseAreas
-================
-*/
 bool idAASFileLocal::ParseAreas( idLexer& src )
 {
 	int		  numAreas, i;
@@ -1061,11 +896,6 @@ bool idAASFileLocal::ParseAreas( idLexer& src )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::ParseNodes
-================
-*/
 bool idAASFileLocal::ParseNodes( idLexer& src )
 {
 	int		  numNodes, i;
@@ -1091,11 +921,6 @@ bool idAASFileLocal::ParseNodes( idLexer& src )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::ParsePortals
-================
-*/
 bool idAASFileLocal::ParsePortals( idLexer& src )
 {
 	int			numPortals, i;
@@ -1123,11 +948,6 @@ bool idAASFileLocal::ParsePortals( idLexer& src )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::ParseClusters
-================
-*/
 bool idAASFileLocal::ParseClusters( idLexer& src )
 {
 	int			 numClusters, i;
@@ -1154,11 +974,6 @@ bool idAASFileLocal::ParseClusters( idLexer& src )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::FinishAreas
-================
-*/
 void idAASFileLocal::FinishAreas()
 {
 	int i;
@@ -1169,11 +984,6 @@ void idAASFileLocal::FinishAreas()
 	}
 }
 
-/*
-================
-idAASFileLocal::Load
-================
-*/
 bool idAASFileLocal::Load( const idStr& fileName, unsigned int mapFileCRC )
 {
 	idLexer		 src( LEXFL_NOFATALERRORS | LEXFL_NOSTRINGESCAPECHARS | LEXFL_NOSTRINGCONCAT | LEXFL_ALLOWPATHNAMES );
@@ -1297,11 +1107,6 @@ bool idAASFileLocal::Load( const idStr& fileName, unsigned int mapFileCRC )
 	return true;
 }
 
-/*
-================
-idAASFileLocal::MemorySize
-================
-*/
 int idAASFileLocal::MemorySize() const
 {
 	int size;
@@ -1322,11 +1127,6 @@ int idAASFileLocal::MemorySize() const
 	return size;
 }
 
-/*
-================
-idAASFileLocal::PrintInfo
-================
-*/
 void idAASFileLocal::PrintInfo() const
 {
 	common->Printf( "%6d KB file size\n", MemorySize() >> 10 );
@@ -1335,11 +1135,6 @@ void idAASFileLocal::PrintInfo() const
 	ReportRoutingEfficiency();
 }
 
-/*
-================
-idAASFileLocal::NumReachabilities
-================
-*/
 int idAASFileLocal::NumReachabilities() const
 {
 	int				i, num;
@@ -1354,11 +1149,6 @@ int idAASFileLocal::NumReachabilities() const
 	return num;
 }
 
-/*
-================
-idAASFileLocal::ReportRoutingEfficiency
-================
-*/
 void idAASFileLocal::ReportRoutingEfficiency() const
 {
 	int numReachableAreas, total, i, n;
@@ -1377,11 +1167,6 @@ void idAASFileLocal::ReportRoutingEfficiency() const
 	common->Printf( "%6d KB max routing cache\n", ( total * 3 ) >> 10 );
 }
 
-/*
-================
-idAASFileLocal::DeleteReachabilities
-================
-*/
 void idAASFileLocal::DeleteReachabilities()
 {
 	int				i;

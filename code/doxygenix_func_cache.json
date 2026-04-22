@@ -14296,6 +14296,366 @@
     "void operator delete(void *p, size_t) noexcept": {
       "body_hash": "f02808813d17b50e603c1688ef8b66b7",
       "is_trivial": true
+    },
+    "const char * idAASFile::GetName() const": {
+      "body_hash": "e5879fa54cbddc895b45df089a2e4d14",
+      "is_trivial": true
+    },
+    "unsigned int idAASFile::GetCRC() const": {
+      "body_hash": "e424346085d268a26b6094aa1638cfc0",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumPlanes() const": {
+      "body_hash": "2d19e14b700459278a6dfcb399133b79",
+      "is_trivial": true
+    },
+    "const idPlane & idAASFile::GetPlane(int index) const": {
+      "body_hash": "848678d535b01d60cebb3857a0c892df",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumVertices() const": {
+      "body_hash": "76c63d8b2e7d64dc190a1013c21028ba",
+      "is_trivial": true
+    },
+    "const aasVertex_t & idAASFile::GetVertex(int index) const": {
+      "body_hash": "5abf512749a49258477e6fb3017721db",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumEdges() const": {
+      "body_hash": "5069700545b525f2ec386d616ef51be5",
+      "is_trivial": true
+    },
+    "const aasEdge_t & idAASFile::GetEdge(int index) const": {
+      "body_hash": "6c722da6b9cc8474594f0357ed11cc51",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumEdgeIndexes() const": {
+      "body_hash": "aeb4083a1198fd58c96896c3ed91f222",
+      "is_trivial": true
+    },
+    "const aasIndex_t & idAASFile::GetEdgeIndex(int index) const": {
+      "body_hash": "33f7369c9830c77b4109791557328107",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumFaces() const": {
+      "body_hash": "bc0f83f171d39dd9a461f99207185089",
+      "is_trivial": true
+    },
+    "const aasFace_t & idAASFile::GetFace(int index) const": {
+      "body_hash": "526ff7df7f0e5821995830d172933d56",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumFaceIndexes() const": {
+      "body_hash": "69ffcd51f34d451df20af27b4c359a99",
+      "is_trivial": true
+    },
+    "const aasIndex_t & idAASFile::GetFaceIndex(int index) const": {
+      "body_hash": "b90a41a0a36a81a8c4c40b14ed23ce85",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumAreas() const": {
+      "body_hash": "faf045d25f59d98386c4d0affc07f6c5",
+      "is_trivial": true
+    },
+    "const aasArea_t & idAASFile::GetArea(int index)": {
+      "body_hash": "c5ac13b5caf3c00e900a0ec9148fae47",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumNodes() const": {
+      "body_hash": "d91b1247e50d32c47deb595de2ed0ae5",
+      "is_trivial": true
+    },
+    "const aasNode_t & idAASFile::GetNode(int index) const": {
+      "body_hash": "fca8501219162e67aa5c413eeac9cd36",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumPortals() const": {
+      "body_hash": "18523bdcd5d6897aee0ff0f837dfd8e8",
+      "is_trivial": true
+    },
+    "const aasPortal_t & idAASFile::GetPortal(int index)": {
+      "body_hash": "7cdd91145eec5501c7348f622f47485c",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumPortalIndexes() const": {
+      "body_hash": "dc3fccdb3f2404fb0ed3d9f70088ca82",
+      "is_trivial": true
+    },
+    "const aasIndex_t & idAASFile::GetPortalIndex(int index) const": {
+      "body_hash": "ee9026b645ac55f8979417a94992f643",
+      "is_trivial": true
+    },
+    "int idAASFile::GetNumClusters() const": {
+      "body_hash": "1bb136f0f9aa6b7d8952ea8d0f31af9f",
+      "is_trivial": true
+    },
+    "const aasCluster_t & idAASFile::GetCluster(int index) const": {
+      "body_hash": "664a322010dd457c1e37fa2655be3974",
+      "is_trivial": true
+    },
+    "const idAASSettings & idAASFile::GetSettings() const": {
+      "body_hash": "387419588c5c3b71e9c0d42ea95e0bc0",
+      "is_trivial": true
+    },
+    "void idAASFile::SetPortalMaxTravelTime(int index, int time)": {
+      "body_hash": "4edde68dde942c60b6be9fa674630c9f",
+      "is_trivial": true
+    },
+    "void idAASFile::SetAreaTravelFlag(int index, int flag)": {
+      "body_hash": "32ac94bd1eb65cc904968f7e0b11e148",
+      "is_trivial": true
+    },
+    "void idAASFile::RemoveAreaTravelFlag(int index, int flag)": {
+      "body_hash": "febe68369608d017b5792888d2df80bf",
+      "is_trivial": true
+    },
+    "idAASFileLocal::idAASFileLocal()": {
+      "body_hash": "e3b32e84046224c6ccd653170a731b76",
+      "is_trivial": true
+    },
+    "idAASFileLocal::~idAASFileLocal()": {
+      "body_hash": "68ded5c640d56c594b38327273edc894",
+      "is_trivial": true
+    },
+    "idVec3 idAASFileLocal::EdgeCenter(int edgeNum) const": {
+      "body_hash": "e64809943d832199eb9718371062401d",
+      "is_trivial": true
+    },
+    "idVec3 idAASFileLocal::FaceCenter(int faceNum) const": {
+      "body_hash": "f1e42ded8e76320a98158c7c823ab89e",
+      "is_trivial": true
+    },
+    "idVec3 idAASFileLocal::AreaCenter(int areaNum) const": {
+      "body_hash": "8227f836a0d34b770cdfe98dad67e24d",
+      "is_trivial": true
+    },
+    "idBounds idAASFileLocal::EdgeBounds(int edgeNum) const": {
+      "body_hash": "dd2456a2e74adb58d2c9440fbb8e9ba4",
+      "is_trivial": true
+    },
+    "idBounds idAASFileLocal::FaceBounds(int faceNum) const": {
+      "body_hash": "4580af09392c7695e46a9f0b16abaf06",
+      "is_trivial": true
+    },
+    "idBounds idAASFileLocal::AreaBounds(int areaNum) const": {
+      "body_hash": "7d00bf1caecaaabb9c3d767678bb4bc8",
+      "is_trivial": true
+    },
+    "int idAASFileLocal::PointAreaNum(const idVec3 &origin) const": {
+      "body_hash": "93172178c88e2da6d3862e24e7234a2f",
+      "is_trivial": true
+    },
+    "int idAASFileLocal::PointReachableAreaNum(const idVec3 &origin, const idBounds &searchBounds, const int areaFlags, const int excludeTravelFlags) const": {
+      "body_hash": "aef7f2af04a25d19ae20c9a26515f5c2",
+      "is_trivial": false
+    },
+    "int idAASFileLocal::BoundsReachableAreaNum(const idBounds &bounds, const int areaFlags, const int excludeTravelFlags) const": {
+      "body_hash": "3e2a89dfe78d07659ef263053501d394",
+      "is_trivial": true
+    },
+    "void idAASFileLocal::PushPointIntoAreaNum(int areaNum, idVec3 &point) const": {
+      "body_hash": "557ce3087622ede31ba89ebf1ffecc65",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::Trace(aasTrace_t &trace, const idVec3 &start, const idVec3 &end) const": {
+      "body_hash": "3a6f3ec301953ad287d2dc879e973b1b",
+      "is_trivial": true
+    },
+    "void idAASFileLocal::PrintInfo() const": {
+      "body_hash": "fec979142524d7c6ee7055ce51440e7d",
+      "is_trivial": true
+    },
+    "virtual bool idAASFileLocal::HasNewFeatures() const": {
+      "body_hash": "6ed263fbd1d1ca52ca3e09e72323a7a9",
+      "is_trivial": true
+    },
+    "float idAASFileLocal::GetFloorDistance(int areaNum, const idPlane &floorPlane, const idVec3 &point, const float bboxHeight, const float maxEdgeDist)": {
+      "body_hash": "3c4cb64554e21ee3bbbf708ac0a687cc",
+      "is_trivial": false
+    },
+    "bool idAASFileLocal::Load(const idStr &fileName, unsigned int mapFileCRC)": {
+      "body_hash": "1fdc6c1b72e498546ea8425c9c72e461",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::Write(const idStr &fileName, unsigned int mapFileCRC)": {
+      "body_hash": "5dc579571b8ab4d6e555d5815a4fac28",
+      "is_trivial": true
+    },
+    "int idAASFileLocal::MemorySize() const": {
+      "body_hash": "b6eb1c2cd4926cf3f7c0d5dd6043bec4",
+      "is_trivial": true
+    },
+    "void idAASFileLocal::ReportRoutingEfficiency() const": {
+      "body_hash": "bd39ad4e17ec1a2909dd9e6e150a51ae",
+      "is_trivial": true
+    },
+    "void idAASFileLocal::Optimize()": {
+      "body_hash": "ed537cee3ee86f5342091f9fd61759fd",
+      "is_trivial": true
+    },
+    "void idAASFileLocal::LinkReversedReachability()": {
+      "body_hash": "5652a43fd52dc00df048b47cb3e02d40",
+      "is_trivial": true
+    },
+    "void idAASFileLocal::FinishAreas()": {
+      "body_hash": "5dc4a9cfdf31915d3f0683ffac0517ed",
+      "is_trivial": true
+    },
+    "void idAASFileLocal::Clear()": {
+      "body_hash": "92f687692b704b4d7acd34502476dc5f",
+      "is_trivial": true
+    },
+    "void idAASFileLocal::DeleteReachabilities()": {
+      "body_hash": "581d25d5d88661173cf8b09e0c07297c",
+      "is_trivial": true
+    },
+    "void idAASFileLocal::DeleteClusters()": {
+      "body_hash": "cb1e3d182e91c79d3a6b0b5b3caca521",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParseIndex(idLexer &src, idList< aasIndex_t > &indexes)": {
+      "body_hash": "8218793d189702024d406783ecde68d6",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParsePlanes(idLexer &src)": {
+      "body_hash": "c18668a3277682025e8b0dd89a79fdfe",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParseVertices(idLexer &src)": {
+      "body_hash": "8b28f64ec39c2b43dd62da15db1cd82a",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParseEdges(idLexer &src)": {
+      "body_hash": "41cc2e8eaad360fe07aabc62a9e8dcb1",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParseFaces(idLexer &src)": {
+      "body_hash": "43e8e4b8e663af527e3a4b76b21b258d",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParseReachabilities(idLexer &src, int areaNum)": {
+      "body_hash": "ec534bc038de89be471a70410a5bb29d",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParseAreas(idLexer &src)": {
+      "body_hash": "19b7a8883eb7809d52aab710420be993",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParseNodes(idLexer &src)": {
+      "body_hash": "06e868d7091cfbea2452ce3d4fc6df70",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParsePortals(idLexer &src)": {
+      "body_hash": "2da20d382777910b8675b9a662cc9855",
+      "is_trivial": true
+    },
+    "bool idAASFileLocal::ParseClusters(idLexer &src)": {
+      "body_hash": "97e4424f35ad9e922b22594f08e759af",
+      "is_trivial": true
+    },
+    "int idAASFileLocal::BoundsReachableAreaNum_r(int nodeNum, const idBounds &bounds, const int areaFlags, const int excludeTravelFlags) const": {
+      "body_hash": "7a015b7e2db5908fc657d09b8010cc39",
+      "is_trivial": false
+    },
+    "void idAASFileLocal::MaxTreeDepth_r(int nodeNum, int &depth, int &maxDepth) const": {
+      "body_hash": "dd1fbdb88c08b2e82e89708b4b2ad83a",
+      "is_trivial": true
+    },
+    "int idAASFileLocal::MaxTreeDepth() const": {
+      "body_hash": "28178280137e9cef669516ddce8116fd",
+      "is_trivial": true
+    },
+    "int idAASFileLocal::AreaContentsTravelFlags(int areaNum) const": {
+      "body_hash": "f8213c75c6ec88274e06fee5f7650bb5",
+      "is_trivial": true
+    },
+    "idVec3 idAASFileLocal::AreaReachableGoal(int areaNum) const": {
+      "body_hash": "3f122d0a12f0693d741d7e1367a7cbae",
+      "is_trivial": true
+    },
+    "int idAASFileLocal::NumReachabilities() const": {
+      "body_hash": "20d499985b9b9d65022ee7be58b4efa7",
+      "is_trivial": true
+    },
+    "idAASFile * idAASFileManagerLocal::LoadAAS(const char *fileName, unsigned int mapFileCRC)": {
+      "body_hash": "8ed5227123bec98e1cdf8cbeaf49c003",
+      "is_trivial": true
+    },
+    "void idAASFileManagerLocal::FreeAAS(idAASFile *file)": {
+      "body_hash": "4de91fb9429710054bf2ea82b4a70458",
+      "is_trivial": true
+    },
+    "idAASSettings::idAASSettings()": {
+      "body_hash": "c25d89c7c632e7059baa595470ef8f3f",
+      "is_trivial": true
+    },
+    "bool idAASSettings::FromFile(const idStr &fileName)": {
+      "body_hash": "ffb4345fd9d7ef00107746feef4f1d99",
+      "is_trivial": true
+    },
+    "bool idAASSettings::FromParser(idLexer &src)": {
+      "body_hash": "45e1c9b3cc4620c8288f38be15ebb471",
+      "is_trivial": true
+    },
+    "bool idAASSettings::FromDict(const char *name, const idDict *dict)": {
+      "body_hash": "64607f881894f4a6e2adef51a2cbd0d7",
+      "is_trivial": true
+    },
+    "bool idAASSettings::WriteToFile(idFile *fp) const": {
+      "body_hash": "6ed12cdce98882327e4b9c800e96a5b6",
+      "is_trivial": true
+    },
+    "bool idAASSettings::ValidForBounds(const idBounds &bounds) const": {
+      "body_hash": "3245990b30239bc06dc06f4e5dc3f8ef",
+      "is_trivial": true
+    },
+    "bool idAASSettings::ValidEntity(const char *classname) const": {
+      "body_hash": "5232532fdd7f61a9714dab4ac4a74218",
+      "is_trivial": true
+    },
+    "bool idAASSettings::ParseBool(idLexer &src, bool &b)": {
+      "body_hash": "a8301a92ffbcb7e0fd973c3c0230c2d7",
+      "is_trivial": true
+    },
+    "bool idAASSettings::ParseInt(idLexer &src, int &i)": {
+      "body_hash": "17c60980c4cd69c14d6d32737076442b",
+      "is_trivial": true
+    },
+    "bool idAASSettings::ParseFloat(idLexer &src, float &f)": {
+      "body_hash": "bb0f6a7d156c16314123d41e380c9442",
+      "is_trivial": true
+    },
+    "bool idAASSettings::ParseVector(idLexer &src, idVec3 &vec)": {
+      "body_hash": "177f3c27ce0229eb468a299b3caf8d0f",
+      "is_trivial": true
+    },
+    "bool idAASSettings::ParseBBoxes(idLexer &src)": {
+      "body_hash": "9ea68af0bae8779a08f0d7b742f4247b",
+      "is_trivial": true
+    },
+    "void idReachability::CopyBase(idReachability &reach)": {
+      "body_hash": "41af602aad2cf71c0cd9ec700bdc4a26",
+      "is_trivial": true
+    },
+    "aasTrace_s::aasTrace_s()": {
+      "body_hash": "9b005a6bb7f2fad790e76a423613dc3e",
+      "is_trivial": true
+    },
+    "bool Reachability_Write(idFile *fp, idReachability *reach)": {
+      "body_hash": "bdbac836778389f246d733dfccf0e2ec",
+      "is_trivial": true
+    },
+    "bool Reachability_Read(idLexer &src, idReachability *reach)": {
+      "body_hash": "840f6cb39b9c938e1c163c38d05c5549",
+      "is_trivial": true
+    },
+    "bool Reachability_Special_Write(idFile *fp, idReachability_Special *reach)": {
+      "body_hash": "d18cf2a87f1eb9ff892b1de30bb7740c",
+      "is_trivial": true
+    },
+    "bool Reachability_Special_Read(idLexer &src, idReachability_Special *reach)": {
+      "body_hash": "dd286f0cb74e7cbfba26b7a067959320",
+      "is_trivial": true
     }
   }
 }

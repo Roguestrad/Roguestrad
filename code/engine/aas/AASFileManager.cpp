@@ -33,14 +33,10 @@ If you have questions concerning this license or the applicable additional terms
 #include "AASFile.h"
 #include "AASFile_local.h"
 
-/*
-===============================================================================
-
-	AAS File Manager
-
-===============================================================================
+/*!
+	\class idAASFileManagerLocal
+	\brief Manages loading and freeing of AAS files in a local file system context.
 */
-
 class idAASFileManagerLocal : public idAASFileManager
 {
 public:
@@ -48,18 +44,16 @@ public:
 	{
 	}
 
+	//! Loads an AAS file with the specified file name and map file CRC, returning a pointer to the loaded file or null if loading fails.
 	virtual idAASFile* LoadAAS( const char* fileName, unsigned int mapFileCRC );
+
+	//! Frees the memory allocated for an AAS file by deleting the provided file pointer.
 	virtual void	   FreeAAS( idAASFile* file );
 };
 
 idAASFileManagerLocal AASFileManagerLocal;
 idAASFileManager*	  AASFileManager = &AASFileManagerLocal;
 
-/*
-================
-idAASFileManagerLocal::LoadAAS
-================
-*/
 idAASFile*			  idAASFileManagerLocal::LoadAAS( const char* fileName, unsigned int mapFileCRC )
 {
 	idAASFileLocal* file = new( TAG_AAS ) idAASFileLocal();
@@ -70,11 +64,6 @@ idAASFile*			  idAASFileManagerLocal::LoadAAS( const char* fileName, unsigned in
 	return file;
 }
 
-/*
-================
-idAASFileManagerLocal::FreeAAS
-================
-*/
 void idAASFileManagerLocal::FreeAAS( idAASFile* file )
 {
 	delete file;

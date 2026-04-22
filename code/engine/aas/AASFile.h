@@ -93,7 +93,10 @@ If you have questions concerning this license or the applicable additional terms
 
 #define MAX_AAS_BOUNDING_BOXES	   4
 
-// reachability to another area
+/*!
+	\class idReachability
+	\brief The class represents reachability information between different areas in a navigation graph.
+*/
 class idReachability
 {
 public:
@@ -110,33 +113,62 @@ public:
 	idReachability* rev_next;		 // next reachability in reversed list
 	unsigned short* areaTravelTimes; // travel times within the fromAreaNum from reachabilities that lead towards this area
 public:
+	//! Copies the base properties from another reachability object.
 	void CopyBase( idReachability& reach );
 };
 
+/*!
+	\class idReachability_Walk
+	\brief A class representing walkable reachability information for navigation.
+*/
 class idReachability_Walk : public idReachability
 {
 };
 
+/*!
+	\class idReachability_BarrierJump
+	\brief A reachability class for barrier jump movements.
+*/
 class idReachability_BarrierJump : public idReachability
 {
 };
 
+/*!
+	\class idReachability_WaterJump
+	\brief Represents a water jump reachability for navigation mesh pathfinding.
+*/
 class idReachability_WaterJump : public idReachability
 {
 };
 
+/*!
+	\class idReachability_WalkOffLedge
+	\brief A reachability type representing movement off a ledge by walking.
+*/
 class idReachability_WalkOffLedge : public idReachability
 {
 };
 
+/*!
+	\class idReachability_Swim
+	\brief A specialized reachability class for swimming movement in a game environment.
+*/
 class idReachability_Swim : public idReachability
 {
 };
 
+/*!
+	\class idReachability_Fly
+	\brief A specialized reachability implementation for flying movement navigation.
+*/
 class idReachability_Fly : public idReachability
 {
 };
 
+/*!
+	\class idReachability_Special
+	\brief Specialized reachability implementation for advanced navigation.
+*/
 class idReachability_Special : public idReachability
 {
 public:
@@ -220,6 +252,8 @@ typedef struct aasTrace_s {
 	int		numAreas;		 // number of areas the trace went through
 	int*	areas;			 // array to store areas the trace went through
 	idVec3* points;			 // points where the trace entered each new area
+
+	//! Initializes a new instance of the aasTrace_s structure with default values.
 	aasTrace_s()
 	{
 		areas		  = NULL;
@@ -229,7 +263,15 @@ typedef struct aasTrace_s {
 	}
 } aasTrace_t;
 
-// settings
+/*!
+	\class idAASSettings
+	\brief Manages configuration settings for AAS navigation mesh generation and validation.
+
+	Provides a comprehensive interface for loading, parsing, and validating AAS settings from various sources including files, lexer streams, and dictionaries. The class supports initialization with
+   default values and offers methods to check the validity of entity bounds and classnames for AAS processing. It also handles the serialization of settings to files and includes utility functions for
+   parsing basic data types and bounding box definitions from token streams.
+
+*/
 class idAASSettings
 {
 public:
@@ -260,20 +302,41 @@ public:
 	int		 tt_startWalkOffLedge;
 
 public:
+	//! Initializes default settings for AAS navigation mesh generation.
 	idAASSettings();
 
+	//! Loads AAS settings from a specified file.
 	bool FromFile( const idStr& fileName );
+
+	//! Parses AAS settings from a lexer token stream
 	bool FromParser( idLexer& src );
+
+	//! Initializes AAS settings from a dictionary
 	bool FromDict( const char* name, const idDict* dict );
+
+	//! Writes the AAS settings to the specified file.
 	bool WriteToFile( idFile* fp ) const;
+
+	//! Checks if the given bounds are valid for the AAS settings.
 	bool ValidForBounds( const idBounds& bounds ) const;
+
+	//! Checks if an entity class is valid for use with the AAS system based on its definition and bounding box constraints.
 	bool ValidEntity( const char* classname ) const;
 
 private:
+	//! Parses a boolean value from the lexer input and stores it in the provided boolean reference.
 	bool ParseBool( idLexer& src, bool& b );
+
+	//! Parses an integer value from a lexer token stream and stores it in the provided variable.
 	bool ParseInt( idLexer& src, int& i );
+
+	//! Parses a float value from the lexer and stores it in the provided variable
 	bool ParseFloat( idLexer& src, float& f );
+
+	//! Parses a 3D vector from the lexer input stream and stores it in the provided vector variable.
 	bool ParseVector( idLexer& src, idVec3& vec );
+
+	//! Parses bounding box data from a lexer input stream
 	bool ParseBBoxes( idLexer& src );
 };
 
@@ -300,41 +363,103 @@ private:
 
 */
 
+/*!
+	\class idAASFile
+	\brief Provides access to and management of AAS file data structures.
+
+	This class serves as an abstract interface for accessing geometric and navigational data stored in AAS files. It provides methods to retrieve various components such as planes, vertices, edges,
+   faces, areas, nodes, portals, and clusters that define the layout and navigation properties of a level. The interface includes functions for getting basic file information like name and CRC
+   checksum, as well as functionality for querying reachability and performing spatial queries. It also exposes settings and travel flag manipulation methods. The class is designed to be extended by
+   concrete implementations that provide actual data loading and access.
+
+*/
 class idAASFile
 {
 public:
 	virtual ~idAASFile() { }
 
+	//! Returns the name of the AAS file.
 	const char*			 GetName() const { return name.c_str(); }
+
+	//! Returns the CRC checksum of the AAS file.
 	unsigned int		 GetCRC() const { return crc; }
 
+	//! Returns the number of planes in the AAS file.
 	int					 GetNumPlanes() const { return planeList.Num(); }
+
+	//! Returns a reference to the plane at the specified index in the AAS file.
 	const idPlane&		 GetPlane( int index ) const { return planeList[index]; }
+
+	//! Returns the number of vertices in the AAS file.
 	int					 GetNumVertices() const { return vertices.Num(); }
+
+	//! Returns a const reference to the vertex at the specified index in the AAS file
 	const aasVertex_t&	 GetVertex( int index ) const { return vertices[index]; }
+
+	//! Returns the number of edges in the AAS file.
 	int					 GetNumEdges() const { return edges.Num(); }
+
+	//! Returns a constant reference to the AAS edge at the specified index.
 	const aasEdge_t&	 GetEdge( int index ) const { return edges[index]; }
+
+	//! Returns the number of edge indexes stored in the AAS file.
 	int					 GetNumEdgeIndexes() const { return edgeIndex.Num(); }
+
+	//! Returns the edge index at the specified index.
 	const aasIndex_t&	 GetEdgeIndex( int index ) const { return edgeIndex[index]; }
+
+	//! Returns the number of faces in the AAS file.
 	int					 GetNumFaces() const { return faces.Num(); }
+
+	//! Returns a constant reference to the face at the specified index.
 	const aasFace_t&	 GetFace( int index ) const { return faces[index]; }
+
+	//! Returns the number of face indexes in the AAS file.
 	int					 GetNumFaceIndexes() const { return faceIndex.Num(); }
+
+	//! Returns a reference to the face index at the specified index in the AAS file.
 	const aasIndex_t&	 GetFaceIndex( int index ) const { return faceIndex[index]; }
+
+	//! Returns the number of areas in the AAS file.
 	int					 GetNumAreas() const { return areas.Num(); }
+
+	//! Returns a reference to the AAS area at the specified index.
 	const aasArea_t&	 GetArea( int index ) { return areas[index]; }
+
+	//! Returns the number of nodes in the AAS file.
 	int					 GetNumNodes() const { return nodes.Num(); }
+
+	//! Returns a const reference to the AAS node at the specified index.
 	const aasNode_t&	 GetNode( int index ) const { return nodes[index]; }
+
+	//! Returns the number of portals in the AAS file.
 	int					 GetNumPortals() const { return portals.Num(); }
+
+	//! Returns a reference to the portal at the specified index.
 	const aasPortal_t&	 GetPortal( int index ) { return portals[index]; }
+
+	//! Returns the number of portal indexes in the AAS file.
 	int					 GetNumPortalIndexes() const { return portalIndex.Num(); }
+
+	//! Returns a constant reference to the portal index at the specified array index.
 	const aasIndex_t&	 GetPortalIndex( int index ) const { return portalIndex[index]; }
+
+	//! Returns the number of clusters in the AAS file.
 	int					 GetNumClusters() const { return clusters.Num(); }
+
+	//! Returns a reference to the AAS cluster at the specified index.
 	const aasCluster_t&	 GetCluster( int index ) const { return clusters[index]; }
 
+	//! Returns a const reference to the AAS settings stored in the file.
 	const idAASSettings& GetSettings() const { return settings; }
 
+	//! Sets the maximum travel time for a portal at the specified index.
 	void				 SetPortalMaxTravelTime( int index, int time ) { portals[index].maxAreaTravelTime = time; }
+
+	//! Sets a travel flag for the specified area in the AAS file.
 	void				 SetAreaTravelFlag( int index, int flag ) { areas[index].travelFlags |= flag; }
+
+	//! Removes a travel flag from an area in the AAS file.
 	void				 RemoveAreaTravelFlag( int index, int flag ) { areas[index].travelFlags &= ~flag; }
 
 	virtual idVec3		 EdgeCenter( int edgeNum ) const = 0;

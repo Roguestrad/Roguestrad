@@ -33,17 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "AASFile.h"
 #include "AASFile_local.h"
 
-//===============================================================
-//
-//	Environment Sampling
-//
-//===============================================================
-
-/*
-================
-idAASFileLocal::EdgeCenter
-================
-*/
 idVec3 idAASFileLocal::EdgeCenter( int edgeNum ) const
 {
 	const aasEdge_t* edge;
@@ -51,11 +40,6 @@ idVec3 idAASFileLocal::EdgeCenter( int edgeNum ) const
 	return ( vertices[edge->vertexNum[0]] + vertices[edge->vertexNum[1]] ) * 0.5f;
 }
 
-/*
-================
-idAASFileLocal::FaceCenter
-================
-*/
 idVec3 idAASFileLocal::FaceCenter( int faceNum ) const
 {
 	int				 i, edgeNum;
@@ -77,11 +61,6 @@ idVec3 idAASFileLocal::FaceCenter( int faceNum ) const
 	return center;
 }
 
-/*
-================
-idAASFileLocal::AreaCenter
-================
-*/
 idVec3 idAASFileLocal::AreaCenter( int areaNum ) const
 {
 	int				 i, faceNum;
@@ -101,11 +80,6 @@ idVec3 idAASFileLocal::AreaCenter( int areaNum ) const
 	return center;
 }
 
-/*
-============
-idAASFileLocal::AreaReachableGoal
-============
-*/
 idVec3 idAASFileLocal::AreaReachableGoal( int areaNum ) const
 {
 	int				 i, faceNum, numFaces;
@@ -142,11 +116,6 @@ idVec3 idAASFileLocal::AreaReachableGoal( int areaNum ) const
 	return trace.endpos;
 }
 
-/*
-================
-idAASFileLocal::EdgeBounds
-================
-*/
 idBounds idAASFileLocal::EdgeBounds( int edgeNum ) const
 {
 	const aasEdge_t* edge;
@@ -158,11 +127,6 @@ idBounds idAASFileLocal::EdgeBounds( int edgeNum ) const
 	return bounds;
 }
 
-/*
-================
-idAASFileLocal::FaceBounds
-================
-*/
 idBounds idAASFileLocal::FaceBounds( int faceNum ) const
 {
 	int				 i, edgeNum;
@@ -181,11 +145,6 @@ idBounds idAASFileLocal::FaceBounds( int faceNum ) const
 	return bounds;
 }
 
-/*
-================
-idAASFileLocal::AreaBounds
-================
-*/
 idBounds idAASFileLocal::AreaBounds( int areaNum ) const
 {
 	int				 i, faceNum;
@@ -202,11 +161,6 @@ idBounds idAASFileLocal::AreaBounds( int areaNum ) const
 	return bounds;
 }
 
-/*
-============
-idAASFileLocal::PointAreaNum
-============
-*/
 int idAASFileLocal::PointAreaNum( const idVec3& origin ) const
 {
 	int				 nodeNum;
@@ -228,11 +182,6 @@ int idAASFileLocal::PointAreaNum( const idVec3& origin ) const
 	return 0;
 }
 
-/*
-============
-idAASFileLocal::PointReachableAreaNum
-============
-*/
 int idAASFileLocal::PointReachableAreaNum( const idVec3& origin, const idBounds& searchBounds, const int areaFlags, const int excludeTravelFlags ) const
 {
 	int		   areaList[32], areaNum, i;
@@ -291,11 +240,6 @@ int idAASFileLocal::PointReachableAreaNum( const idVec3& origin, const idBounds&
 	return 0;
 }
 
-/*
-============
-idAASFileLocal::BoundsReachableAreaNum_r
-============
-*/
 int idAASFileLocal::BoundsReachableAreaNum_r( int nodeNum, const idBounds& bounds, const int areaFlags, const int excludeTravelFlags ) const
 {
 	int				 res;
@@ -326,21 +270,11 @@ int idAASFileLocal::BoundsReachableAreaNum_r( int nodeNum, const idBounds& bound
 	return 0;
 }
 
-/*
-============
-idAASFileLocal::BoundsReachableAreaNum
-============
-*/
 int idAASFileLocal::BoundsReachableAreaNum( const idBounds& bounds, const int areaFlags, const int excludeTravelFlags ) const
 {
 	return BoundsReachableAreaNum_r( 1, bounds, areaFlags, excludeTravelFlags );
 }
 
-/*
-============
-idAASFileLocal::PushPointIntoAreaNum
-============
-*/
 void idAASFileLocal::PushPointIntoAreaNum( int areaNum, idVec3& point ) const
 {
 	int				 i, faceNum;
@@ -560,11 +494,6 @@ bool idAASFileLocal::Trace( aasTrace_t& trace, const idVec3& start, const idVec3
 	return false;
 }
 
-/*
-============
-idAASLocal::AreaContentsTravelFlags
-============
-*/
 int idAASFileLocal::AreaContentsTravelFlags( int areaNum ) const
 {
 	if( areas[areaNum].contents & AREACONTENTS_WATER ) {
@@ -573,11 +502,6 @@ int idAASFileLocal::AreaContentsTravelFlags( int areaNum ) const
 	return TFL_AIR;
 }
 
-/*
-============
-idAASFileLocal::MaxTreeDepth_r
-============
-*/
 void idAASFileLocal::MaxTreeDepth_r( int nodeNum, int& depth, int& maxDepth ) const
 {
 	const aasNode_t* node;
@@ -598,11 +522,6 @@ void idAASFileLocal::MaxTreeDepth_r( int nodeNum, int& depth, int& maxDepth ) co
 	depth--;
 }
 
-/*
-============
-idAASFileLocal::MaxTreeDepth
-============
-*/
 int idAASFileLocal::MaxTreeDepth() const
 {
 	int depth, maxDepth;
@@ -612,13 +531,6 @@ int idAASFileLocal::MaxTreeDepth() const
 	return maxDepth;
 }
 
-/*
-============
-idAASFileLocal::GetFloorDistance
-============
-*/
-
-// jmarshall
 float idAASFileLocal::GetFloorDistance( int areaNum, const idPlane& floorPlane, const idVec3& point, const float bboxHeight, const float maxEdgeDist )
 {
 	aasArea_t*	area;

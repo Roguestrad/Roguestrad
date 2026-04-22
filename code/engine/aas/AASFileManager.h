@@ -30,14 +30,10 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __AASFILEMANAGER_H__
 #define __AASFILEMANAGER_H__
 
-/*
-===============================================================================
-
-	AAS File Manager
-
-===============================================================================
+/*!
+	\class idAASFileManager
+	\brief Manages loading and freeing of AAS files.
 */
-
 class idAASFileManager
 {
 public:
