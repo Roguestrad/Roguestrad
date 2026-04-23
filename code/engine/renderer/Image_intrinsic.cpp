@@ -260,6 +260,7 @@ static void R_HDR_RGBA16FImage_ResNative( idImage* image, nvrhi::ICommandList* c
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true );
 }
 
+//! Generates a high dynamic range RGBA16F image with native resolution using UAV format.
 static void R_HDR_RGBA16FImage_ResNative_UAV( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true, true );

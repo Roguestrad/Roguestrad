@@ -626,13 +626,7 @@ void R_SetNewMode( const bool fullInit )
 	}
 }
 
-/*
-=====================
-R_ReloadSurface_f
-
-Reload the material displayed by r_showSurfaceInfo
-=====================
-*/
+//! Reloads the material displayed by r_showSurfaceInfo.
 static void R_ReloadSurface_f( const idCmdArgs& args )
 {
 	modelTrace_t mt;
@@ -664,11 +658,7 @@ static void R_ReloadSurface_f( const idCmdArgs& args )
 	deviceManager->GetDevice()->executeCommandList( commandList );
 }
 
-/*
-==============
-R_ListModes_f
-==============
-*/
+//! Lists all available video modes for each display
 static void R_ListModes_f( const idCmdArgs& args )
 {
 	for( int displayNum = 0;; displayNum++ ) {
@@ -682,15 +672,7 @@ static void R_ListModes_f( const idCmdArgs& args )
 	}
 }
 
-/*
-=============
-R_TestImage_f
-
-Display the given image centered on the screen.
-testimage <number>
-testimage <filename>
-=============
-*/
+//! Displays a specified image centered on the screen either by index or file name.
 void R_TestImage_f( const idCmdArgs& args )
 {
 	int imageNum;
@@ -715,13 +697,7 @@ void R_TestImage_f( const idCmdArgs& args )
 	}
 }
 
-/*
-=============
-R_TestVideo_f
-
-Plays the cinematic file in a testImage
-=============
-*/
+//! Plays a cinematic file using a test image and optional audio
 void R_TestVideo_f( const idCmdArgs& args )
 {
 	if( tr.testVideo ) {
@@ -752,6 +728,7 @@ void R_TestVideo_f( const idCmdArgs& args )
 	common->SW()->PlayShaderDirectly( wavString.c_str() );
 }
 
+//! Compares two material surface areas for sorting purposes.
 static int R_QsortSurfaceAreas( const void* a, const void* b )
 {
 	const idMaterial *ea, *eb;
@@ -788,6 +765,8 @@ Prints a list of the materials sorted by surface area
 ===================
 */
 #pragma warning( disable : 6385 ) // This is simply to get pass a false defect for /analyze -- if you can figure out a better way, please let Shawn know...
+
+//! Reports surface areas of all materials in sorted order.
 void R_ReportSurfaceAreas_f( const idCmdArgs& args )
 {
 	unsigned int	   i;
@@ -1241,6 +1220,19 @@ void R_ScreenShot_f( const idCmdArgs& args )
 	common->Printf( "Wrote %s\n", checkname.c_str() );
 }
 
+/*!
+	\brief Loads and transforms cubemap images from an original directory to a destination directory with specified naming conventions and rotations.
+
+	This function processes six cubemap images from a source directory, applies transformations such as rotations and flips, and saves the transformed images to a destination directory with a
+   specified naming convention. It handles error checking for image loading and size validation, and performs cleanup of memory buffers after processing. The function operates on images named
+   according to the provided direction mappings and ensures all images have matching dimensions before processing.
+
+	\param orgDirection Array of 6 strings representing the original direction suffixes for cubemap images
+	\param orgDir Path to the directory containing the original cubemap images
+	\param destDirection Array of 6 strings representing the destination direction suffixes for cubemap images
+	\param destDir Path to the directory where transformed cubemap images will be saved
+	\param baseName Base name used for constructing image file names
+*/
 void R_TransformCubemap( const char* orgDirection[6], const char* orgDir, const char* destDirection[6], const char* destDir, const char* baseName )
 {
 	idStr fullname;
@@ -1294,16 +1286,7 @@ void R_TransformCubemap( const char* orgDirection[6], const char* orgDir, const 
 	}
 }
 
-/*
-==================
-R_TransformEnvToSkybox_f
-
-R_TransformEnvToSkybox_f <basename>
-
-transforms env textures (of the type px, py, pz, nx, ny, nz)
-to skybox textures ( forward, back, left, right, up, down)
-==================
-*/
+//! Transforms environment cube map textures to skybox texture format.
 void R_TransformEnvToSkybox_f( const idCmdArgs& args )
 {
 	if( args.Argc() != 2 ) {
@@ -1314,17 +1297,7 @@ void R_TransformEnvToSkybox_f( const idCmdArgs& args )
 	R_TransformCubemap( envDirection, "env", skyDirection, "skybox", args.Argv( 1 ) );
 }
 
-/*
-==================
-R_TransformSkyboxToEnv_f
-
-R_TransformSkyboxToEnv_f <basename>
-
-transforms skybox textures ( forward, back, left, right, up, down)
-to env textures (of the type px, py, pz, nx, ny, nz)
-==================
-*/
-
+//! Transforms skybox textures to env textures.
 void R_TransformSkyboxToEnv_f( const idCmdArgs& args )
 {
 	if( args.Argc() != 2 ) {
@@ -1360,11 +1333,7 @@ void R_SetColorMappings()
 #endif
 }
 
-/*
-================
-GfxInfo_f
-================
-*/
+//! Prints graphics system information including CPU, graphics API, render device, and display settings.
 void GfxInfo_f( const idCmdArgs& args )
 {
 	common->Printf( "CPU: %s\n", Sys_GetProcessorString() );
@@ -1406,11 +1375,7 @@ void GfxInfo_f( const idCmdArgs& args )
 	}
 }
 
-/*
-=================
-R_VidRestart_f
-=================
-*/
+//! Restarts the video mode without re-initializing the OpenGL context.
 void R_VidRestart_f( const idCmdArgs& args )
 {
 	// if OpenGL isn't started, do nothing
@@ -1422,11 +1387,7 @@ void R_VidRestart_f( const idCmdArgs& args )
 	R_SetNewMode( false );
 }
 
-/*
-=================
-R_InitMaterials
-=================
-*/
+//! Initializes the material system by loading default materials and setting up GUI font material.
 void R_InitMaterials()
 {
 	tr.defaultMaterial = declManager->FindMaterial( "_default", false );
@@ -1448,13 +1409,7 @@ void R_InitMaterials()
 	io.Fonts->TexID = ( void* )( intptr_t )tr.imgGuiMaterial;
 }
 
-/*
-=================
-R_SizeUp_f
-
-Keybinding command
-=================
-*/
+//! Increases the screen fraction by 10 units, clamped to a maximum of 100.
 static void R_SizeUp_f( const idCmdArgs& args )
 {
 	if( r_screenFraction.GetInteger() + 10 > 100 ) {
@@ -1464,13 +1419,7 @@ static void R_SizeUp_f( const idCmdArgs& args )
 	}
 }
 
-/*
-=================
-R_SizeDown_f
-
-Keybinding command
-=================
-*/
+//! Adjusts the screen fraction value by decrements of ten, with a minimum limit of ten.
 static void R_SizeDown_f( const idCmdArgs& args )
 {
 	if( r_screenFraction.GetInteger() - 10 < 10 ) {
@@ -1480,13 +1429,7 @@ static void R_SizeDown_f( const idCmdArgs& args )
 	}
 }
 
-/*
-===============
-TouchGui_f
-
-  this is called from the main thread
-===============
-*/
+//! Touches a GUI element specified by the command line argument.
 void R_TouchGui_f( const idCmdArgs& args )
 {
 	const char* gui = args.Argv( 1 );
@@ -1502,11 +1445,7 @@ void R_TouchGui_f( const idCmdArgs& args )
 	uiManager->Touch( gui );
 }
 
-/*
-=================
-VR_ResetPose_f
-=================
-*/
+//! Resets the virtual reality pose if the VR system is active.
 void VR_ResetPose_f( const idCmdArgs& args )
 {
 	if( vrSystem->IsActive() ) {
@@ -1514,12 +1453,7 @@ void VR_ResetPose_f( const idCmdArgs& args )
 	}
 }
 
-/*
-=================
-VR_LogDevices_f
-=================
-*/
-
+//! Logs virtual reality device information if the VR system is active.
 void VR_LogDevices_f( const idCmdArgs& args )
 {
 	if( vrSystem->IsActive() ) {
@@ -1527,11 +1461,7 @@ void VR_LogDevices_f( const idCmdArgs& args )
 	}
 }
 
-/*
-=================
-R_InitCommands
-=================
-*/
+//! Initializes renderer commands by registering various console commands with the command system.
 void R_InitCommands()
 {
 	cmdSystem->AddCommand( "sizeUp", R_SizeUp_f, CMD_FL_RENDERER, "makes the rendered view larger" );
@@ -1641,11 +1571,7 @@ void idRenderSystemLocal::Clear()
 #endif
 }
 
-/*
-=============
-R_MakeFullScreenTris
-=============
-*/
+//! Creates and returns a full-screen triangle mesh for rendering
 static srfTriangles_t* R_MakeFullScreenTris()
 {
 	// copy verts and indexes
@@ -1690,11 +1616,7 @@ static srfTriangles_t* R_MakeFullScreenTris()
 	return tri;
 }
 
-/*
-=============
-R_MakeZeroOneCubeTris
-=============
-*/
+//! Creates and returns a triangle mesh representing a unit cube with coordinates from 0 to 1.
 static srfTriangles_t* R_MakeZeroOneCubeTris()
 {
 	srfTriangles_t* tri = ( srfTriangles_t* )Mem_ClearedAlloc( sizeof( *tri ), TAG_RENDER_TOOLS );
@@ -1898,6 +1820,7 @@ static void R_MakeUnitCubeTrisForMaskedOcclusionCulling()
 }
 #endif
 
+//! Creates and returns a triangle mesh for a unit sphere with specific vertex and index allocations.
 static srfTriangles_t* R_MakeZeroOneSphereTris()
 {
 	srfTriangles_t* tri = ( srfTriangles_t* )Mem_ClearedAlloc( sizeof( *tri ), TAG_RENDER_TOOLS );
@@ -1958,15 +1881,8 @@ static srfTriangles_t* R_MakeZeroOneSphereTris()
 
 	return tri;
 }
-// RB end
 
-/*
-================
-R_MakeTestImageTriangles
-
-Initializes the Test Image Triangles
-================
-*/
+//! Creates and initializes a test image triangle mesh for rendering
 srfTriangles_t* R_MakeTestImageTriangles()
 {
 	srfTriangles_t* tri = ( srfTriangles_t* )Mem_ClearedAlloc( sizeof( *tri ), TAG_RENDER_TOOLS );

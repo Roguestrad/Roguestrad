@@ -471,6 +471,19 @@ public:
 						uint						sampleCount	   = 1,
 						cubeFiles_t					cubeFiles	   = CF_2D );
 
+	/*!
+		\brief Generates a cubic image from six input texture face buffers with specified dimensions and properties
+
+		This function creates a cubic texture image from six input buffers representing the faces of a cube. It initializes the image properties, loads the cube data from memory, and allocates the
+	   image resource. The function handles both GPU and non-GPU rendering paths, with specialized processing for NVRHI-based graphics systems. The image is allocated in a way that supports the
+	   specified filtering and usage parameters, and the texture is tracked for proper resource state management.
+
+		\param pic Array of six pointers to byte buffers containing image data for each cube face
+		\param size Width and height dimension of each cube face in pixels
+		\param filter Texture filtering method to use for the generated cube image
+		\param usage Usage flags indicating how the texture will be used
+		\param commandList Command list for GPU resource operations in NVRHI-based rendering
+	*/
 	void				 GenerateCubeImage( const byte* pic[6], int size, textureFilter_t filter, textureUsage_t usage, nvrhi::ICommandList* commandList );
 
 	//! Updates the texture parameters for anisotropy and trilinear filtering.

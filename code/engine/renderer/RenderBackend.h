@@ -534,6 +534,8 @@ private:
 
 	//! Sets up the world space for debug rendering.
 	void DBG_SimpleWorldSetup();
+
+	//! Clears the entire screen with normal rasterization while disabling texturing.
 	void DBG_PolygonClear();
 
 	//! Configures OpenGL state to display destination alpha information for debugging purposes.

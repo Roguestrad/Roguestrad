@@ -102,16 +102,6 @@ void idRenderBackend::DBG_SimpleWorldSetup()
 	currentScissor = viewDef->scissor;
 }
 
-/*
-=================
-idRenderBackend::DBG_PolygonClear
-
-This will cover the entire screen with normal rasterization.
-Texturing is disabled, but the existing glColor, glDepthMask,
-glColorMask, and the enabled state of depth buffering and
-stenciling will matter.
-=================
-*/
 void idRenderBackend::DBG_PolygonClear()
 {
 }
@@ -1387,11 +1377,6 @@ void RB_ClearDebugText( int time )
 	rb_numDebugText = num;
 }
 
-/*
-================
-RB_AddDebugText
-================
-*/
 void RB_AddDebugText( const char* text, const idVec3& origin, float scale, const idVec4& color, const idMat3& viewAxis, const int align, const int lifetime, const bool depthTest )
 {
 	debugText_t* debugText;

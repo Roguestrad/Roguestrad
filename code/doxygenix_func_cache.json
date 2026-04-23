@@ -23022,7 +23022,7 @@
       "is_trivial": true
     },
     "void idRenderBackend::GetCurrentBindingLayout(int bindingLayoutType)": {
-      "body_hash": "e81fd422723fcf88c72ea0c91709f07f",
+      "body_hash": "e96bd73c86c449c8f910b6522ecbdcc3",
       "is_trivial": true
     },
     "void idRenderBackend::ResizeImages()": {
@@ -28872,6 +28872,62 @@
     "viewLight_t * R_SetLightDefViewLight(idRenderLightLocal *light)": {
       "body_hash": "26aca2b72056c655f8694e173c44dc2e",
       "is_trivial": true
+    },
+    "void idDxtDecoder::DecompressNormalMapDXT1(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "f08b4db0f2dad851844339833819f5ac",
+      "is_trivial": false
+    },
+    "ID_INLINE void idDxtEncoder::CompressImageDXT5Fast(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "011c40053c381fec3b3900446f85509a",
+      "is_trivial": false
+    },
+    "ID_INLINE void idDxtEncoder::CompressImageR11G11B10_BC6Fast(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "e699ae953a8ca7699881643b9dd9b9b3",
+      "is_trivial": false
+    },
+    "void idDxtEncoder::CompressYCoCgAlphaDXT5Fast(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "2b4d51f63d1a6cc1c7d17dd3d5b9befd",
+      "is_trivial": false
+    },
+    "void idDxtEncoder::CompressNormalMapDXT1Fast_SSE2(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "e57cf8d6e528eaaa230afdc24a1737cb",
+      "is_trivial": false
+    },
+    "void idDxtEncoder::CompressNormalMapDXT5Fast_Generic(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "50d47831ac0340a0260f1226016b09b2",
+      "is_trivial": false
+    },
+    "ID_INLINE unsigned int idDxtEncoder::ColorDistance(const byte *c1, const byte *c2) const": {
+      "body_hash": "491e85dcd5b517f7f2f709e61add4e03",
+      "is_trivial": true
+    },
+    "void idDxtEncoder::LerpRGB13GimpDDS(byte *dst, byte *a, byte *b)": {
+      "body_hash": "c50b267fa83d479ca20b35dfc37a1811",
+      "is_trivial": true
+    },
+    "void idImage::GenerateCubeImage(const byte *pic[6], int size, textureFilter_t filter, textureUsage_t usage, nvrhi::ICommandList *commandList)": {
+      "body_hash": "ddcc50352b3cab308959760a6c31305b",
+      "is_trivial": false
+    },
+    "void idRenderBackend::DBG_PolygonClear()": {
+      "body_hash": "953a186bfae5014a0b4fb9e704c23f16",
+      "is_trivial": true
+    },
+    "void TonemapPass::SimpleRender(nvrhi::ICommandList *commandList, const ToneMappingParameters &params, const viewDef_t *viewDef, nvrhi::ITexture *sourceTexture, nvrhi::FramebufferHandle _targetFb)": {
+      "body_hash": "edc1e0b63a17427c1f83ff3026af8aac",
+      "is_trivial": false
+    },
+    "static void R_HDR_RGBA16FImage_ResNative_UAV(idImage *image, nvrhi::ICommandList *commandList)": {
+      "body_hash": "e9dac3cb7a71258967231745acf0b75e",
+      "is_trivial": true
+    },
+    "void R_AllocStaticTriSurfDupVerts(srfTriangles_t *tri, int numDupVerts)": {
+      "body_hash": "114dc09b6789503893cc2d406bd72111",
+      "is_trivial": true
+    },
+    "void RB_AddDebugText(const char *text, const idVec3 &origin, float scale, const idVec4 &color, const idMat3 &viewAxis, const int align, const int lifetime, const bool depthTest)": {
+      "body_hash": "60283941ca1723388e6441889ae406e2",
+      "is_trivial": false
     }
   }
 }

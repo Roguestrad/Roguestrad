@@ -93,6 +93,19 @@ public:
 	*/
 	void Render( nvrhi::ICommandList* commandList, const ToneMappingParameters& params, const viewDef_t* viewDef, nvrhi::ITexture* sourceTexture, nvrhi::FramebufferHandle _targetFb );
 
+	/*!
+		\brief Performs tone mapping rendering by processing a source texture through a series of histogram-based exposure computations and final rendering steps.
+
+		This function executes a complete tone mapping pass which includes resetting the histogram, adding the current frame to the histogram for exposure calculation, computing the exposure value
+	   based on the provided parameters, and finally rendering the tone-mapped result to the specified framebuffer. It operates on a single frame of input texture data and updates the exposure
+	   dynamically based on the scene's luminance distribution.
+
+		\param commandList The command list to record rendering commands onto
+		\param params Parameters controlling the tone mapping behavior
+		\param viewDef The view definition for the current rendering context
+		\param sourceTexture The input texture to apply tone mapping to
+		\param _targetFb The framebuffer to render the tone-mapped result into
+	*/
 	void SimpleRender( nvrhi::ICommandList* commandList, const ToneMappingParameters& params, const viewDef_t* viewDef, nvrhi::ITexture* sourceTexture, nvrhi::FramebufferHandle _targetFb );
 
 	//! Checks whether the tonemap pass has been successfully loaded.

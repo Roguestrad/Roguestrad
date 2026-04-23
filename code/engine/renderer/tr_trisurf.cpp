@@ -382,11 +382,6 @@ void R_AllocStaticTriSurfMirroredVerts( srfTriangles_t* tri, int numMirroredVert
 	tri->mirroredVerts = ( int* )Mem_Alloc16( numMirroredVerts * sizeof( *tri->mirroredVerts ), TAG_TRI_MIR_VERT );
 }
 
-/*
-=================
-R_AllocStaticTriSurfDupVerts
-=================
-*/
 void R_AllocStaticTriSurfDupVerts( srfTriangles_t* tri, int numDupVerts )
 {
 	assert( tri->dupVerts == NULL );

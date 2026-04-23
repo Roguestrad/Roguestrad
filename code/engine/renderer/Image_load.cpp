@@ -383,13 +383,6 @@ void idImage::GenerateImage( const byte* pic,
 	// RB end
 }
 
-/*
-====================
-GenerateCubeImage
-
-Non-square cube sides are not allowed
-====================
-*/
 void idImage::GenerateCubeImage( const byte* pic[6], int size, textureFilter_t filterParm, textureUsage_t usageParm, nvrhi::ICommandList* commandList )
 {
 	PurgeImage();

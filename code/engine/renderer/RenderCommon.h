@@ -1961,6 +1961,8 @@ void			R_AllocStaticTriSurfDominantTris( srfTriangles_t* tri, int numVerts );
 
 //! Allocates memory for mirrored vertex indices on a static triangle surface.
 void			R_AllocStaticTriSurfMirroredVerts( srfTriangles_t* tri, int numMirroredVerts );
+
+//! Allocates memory for duplicate vertex data for a triangle surface.
 void			R_AllocStaticTriSurfDupVerts( srfTriangles_t* tri, int numDupVerts );
 
 //! Allocates memory for motion-occlusion culling indexes for a triangle surface.
@@ -2183,6 +2185,22 @@ void		 RB_SetMVP( const idRenderMatrix& mvp );
 
 //! Calculates and returns the pixel length of a given text string when rendered with specified scaling and length parameters.
 float		 RB_DrawTextLength( const char* text, float scale, int len );
+
+/*!
+	\brief Adds debug text to be rendered during rendering
+
+	This function queues debug text for rendering by storing the provided text information in a global debug text array. The text will be displayed at the specified origin position with the given
+   scale, color, and alignment. The render time is determined by the lifetime parameter and the current debug text time. The text can optionally be depth tested to ensure proper rendering order.
+
+	\param text The text to be displayed
+	\param origin The 3D position where the text will be rendered
+	\param scale The scaling factor for the text size
+	\param color The color of the text as RGBA values
+	\param viewAxis The view axis used for alignment of the text
+	\param align The alignment of the text (e.g., left, center, right)
+	\param lifetime The duration in milliseconds for which the text will be displayed
+	\param depthTest Flag to enable or disable depth testing for the text rendering
+*/
 void		 RB_AddDebugText( const char* text, const idVec3& origin, float scale, const idVec4& color, const idMat3& viewAxis, const int align, const int lifetime, const bool depthTest );
 
 //! Clears debug text from the render backend, optionally retaining text with a specified lifetime.

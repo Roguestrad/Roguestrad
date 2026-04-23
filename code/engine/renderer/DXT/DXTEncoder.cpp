@@ -74,11 +74,6 @@ typedef uint32 dword;
 
 #define BLOCK_OFFSET( x, y, w, bs ) ( ( ( y ) >> 2 ) * ( ( bs ) * ( ( ( w ) + 3 ) >> 2 ) ) + ( ( bs ) * ( ( x ) >> 2 ) ) )
 
-/*
-========================
-idDxtEncoder::NV4XHardwareBugFix
-========================
-*/
 void idDxtEncoder::NV4XHardwareBugFix( byte* minColor, byte* maxColor ) const
 {
 	int minq = ( ( minColor[0] << 16 ) | ( minColor[1] << 8 ) | minColor[2] ) & 0x00F8FCF8;
@@ -93,11 +88,6 @@ void idDxtEncoder::NV4XHardwareBugFix( byte* minColor, byte* maxColor ) const
 	*( int* )maxColor = max;
 }
 
-/*
-========================
-idDxtEncoder::HasConstantValuePer4x4Block
-========================
-*/
 bool idDxtEncoder::HasConstantValuePer4x4Block( const byte* inBuf, int width, int height, int channel ) const
 {
 	if( width < 4 || height < 4 ) {
@@ -129,11 +119,6 @@ bool idDxtEncoder::HasConstantValuePer4x4Block( const byte* inBuf, int width, in
 	return true;
 }
 
-/*
-========================
-idDxtEncoder::WriteTinyColorDXT1
-========================
-*/
 void idDxtEncoder::WriteTinyColorDXT1( const byte* inBuf, int width, int height )
 {
 	int numBlocks = ( ( width + 3 ) / 4 ) * ( ( height + 3 ) / 4 );
@@ -152,11 +137,6 @@ void idDxtEncoder::WriteTinyColorDXT1( const byte* inBuf, int width, int height 
 	}
 }
 
-/*
-========================
-idDxtEncoder::WriteTinyColorDXT5
-========================
-*/
 void idDxtEncoder::WriteTinyColorDXT5( const byte* inBuf, int width, int height )
 {
 	int numBlocks = ( ( width + 3 ) / 4 ) * ( ( height + 3 ) / 4 );
@@ -184,11 +164,6 @@ void idDxtEncoder::WriteTinyColorDXT5( const byte* inBuf, int width, int height 
 	}
 }
 
-/*
-========================
-idDxtEncoder::WriteTinyColorCTX1DXT5A
-========================
-*/
 void idDxtEncoder::WriteTinyColorCTX1DXT5A( const byte* inBuf, int width, int height )
 {
 	int numBlocks = ( ( width + 3 ) / 4 ) * ( ( height + 3 ) / 4 );
@@ -218,11 +193,6 @@ void idDxtEncoder::WriteTinyColorCTX1DXT5A( const byte* inBuf, int width, int he
 	}
 }
 
-/*
-========================
-idDxtEncoder::WriteTinyNormalMapDXT5
-========================
-*/
 void idDxtEncoder::WriteTinyNormalMapDXT5( const byte* inBuf, int width, int height )
 {
 	int numBlocks = ( ( width + 3 ) / 4 ) * ( ( height + 3 ) / 4 );
@@ -250,11 +220,6 @@ void idDxtEncoder::WriteTinyNormalMapDXT5( const byte* inBuf, int width, int hei
 	}
 }
 
-/*
-========================
-idDxtEncoder::WriteTinyNormalMapDXN
-========================
-*/
 void idDxtEncoder::WriteTinyNormalMapDXN( const byte* inBuf, int width, int height )
 {
 	int numBlocks = ( ( width + 3 ) / 4 ) * ( ( height + 3 ) / 4 );
@@ -287,11 +252,6 @@ void idDxtEncoder::WriteTinyNormalMapDXN( const byte* inBuf, int width, int heig
 	}
 }
 
-/*
-========================
-idDxtEncoder::WriteTinyDXT5A
-========================
-*/
 void idDxtEncoder::WriteTinyDXT5A( const byte* inBuf, int width, int height )
 {
 	int numBlocks = ( ( width + 3 ) / 4 ) * ( ( height + 3 ) / 4 );
@@ -315,14 +275,6 @@ void idDxtEncoder::WriteTinyDXT5A( const byte* inBuf, int width, int height )
 	}
 }
 
-/*
-========================
-idDxtEncoder::ExtractBlock
-
-params:	inPtr		- input image, 4 bytes per pixel
-paramO:	colorBlock	- 4*4 output tile, 4 bytes per pixel
-========================
-*/
 ID_INLINE void idDxtEncoder::ExtractBlock( const byte* inPtr, int width, byte* colorBlock ) const
 {
 	for( int j = 0; j < 4; j++ ) {
@@ -331,11 +283,7 @@ ID_INLINE void idDxtEncoder::ExtractBlock( const byte* inPtr, int width, byte* c
 	}
 }
 
-/*
-========================
-SwapColors
-========================
-*/
+//! Swaps the RGB color values between two color structures.
 void SwapColors( byte* c1, byte* c2 )
 {
 	byte tm[3];
@@ -344,18 +292,6 @@ void SwapColors( byte* c1, byte* c2 )
 	memcpy( c2, tm, 3 );
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxColorsMaxDist
-
-Finds the two RGB colors in a 4x4 block furthest apart. Also finds the two alpha values
-furthest apart.
-
-params: colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- 4 byte min color
-paramO:	maxColor	- 4 byte max color
-========================
-*/
 void idDxtEncoder::GetMinMaxColorsMaxDist( const byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	int maxDistC = -1;
@@ -382,18 +318,6 @@ void idDxtEncoder::GetMinMaxColorsMaxDist( const byte* colorBlock, byte* minColo
 	}
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxColorsLuminance
-
-Finds the two RGB colors in a 4x4 block furthest apart based on luminance. Also finds the two
-alpha values furthest apart.
-
-params: colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- 4 byte min color
-paramO:	maxColor	- 4 byte max color
-========================
-*/
 void idDxtEncoder::GetMinMaxColorsLuminance( const byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	int maxLumC = 0, minLumC = 256 * 4;
@@ -424,16 +348,6 @@ void idDxtEncoder::GetMinMaxColorsLuminance( const byte* colorBlock, byte* minCo
 	}
 }
 
-/*
-========================
-idDxtEncoder::GetSquareAlphaError
-
-params:	colorBlock	- 16 pixel block for which to find color indexes
-paramO:	minAlpha	- Min alpha found
-paramO:	maxAlpha	- Max alpha found
-return: 4 byte color index block
-========================
-*/
 int idDxtEncoder::GetSquareAlphaError( const byte* colorBlock, const int alphaOffset, const byte minAlpha, const byte maxAlpha, int lastError ) const
 {
 	int	 i, j;
@@ -478,15 +392,6 @@ int idDxtEncoder::GetSquareAlphaError( const byte* colorBlock, const int alphaOf
 	return error;
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxAlphaHQ
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor		- 4 byte min color found
-paramO:	maxColor		- 4 byte max color found
-========================
-*/
 int idDxtEncoder::GetMinMaxAlphaHQ( const byte* colorBlock, const int alphaOffset, byte* minColor, byte* maxColor ) const
 {
 	int	 i, j;
@@ -532,16 +437,6 @@ int idDxtEncoder::GetMinMaxAlphaHQ( const byte* colorBlock, const int alphaOffse
 	return bestError;
 }
 
-/*
-========================
-idDxtEncoder::GetSquareColorsError
-
-params:	colorBlock	- 16 pixel block for which to find color indexes
-paramO:	color0		- 4 byte min color found
-paramO:	color1		- 4 byte max color found
-return: 4 byte color index block
-========================
-*/
 int idDxtEncoder::GetSquareColorsError( const byte* colorBlock, const unsigned short color0, const unsigned short color1, int lastError ) const
 {
 	int	 i, j;
@@ -585,16 +480,6 @@ int idDxtEncoder::GetSquareColorsError( const byte* colorBlock, const unsigned s
 	return error;
 }
 
-/*
-========================
-idDxtEncoder::GetSquareNormalYError
-
-params:	colorBlock	- 16 pixel block for which to find color indexes
-paramO:	color0		- 4 byte min color found
-paramO:	color1		- 4 byte max color found
-return: 4 byte color index block
-========================
-*/
 int idDxtEncoder::GetSquareNormalYError( const byte* colorBlock, const unsigned short color0, const unsigned short color1, int lastError, int scale ) const
 {
 	int	 i, j;
@@ -640,18 +525,6 @@ int idDxtEncoder::GetSquareNormalYError( const byte* colorBlock, const unsigned 
 	return error;
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxColorsHQ
-
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to
-compress the 4x4 block. Also finds the minimum and maximum alpha values.
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- 4 byte min color found
-paramO:	maxColor	- 4 byte max color found
-========================
-*/
 int idDxtEncoder::GetMinMaxColorsHQ( const byte* colorBlock, byte* minColor, byte* maxColor, bool noBlack ) const
 {
 	int			   i;
@@ -773,16 +646,6 @@ int idDxtEncoder::GetMinMaxColorsHQ( const byte* colorBlock, byte* minColor, byt
 	return bestError;
 }
 
-/*
-========================
-idDxtEncoder::GetSquareCTX1Error
-
-params:	colorBlock	- 16 pixel block for which to find color indexes
-paramO:	color0		- Min color found
-paramO:	color1		- Max color found
-return: 4 byte color index block
-========================
-*/
 int idDxtEncoder::GetSquareCTX1Error( const byte* colorBlock, const byte* color0, const byte* color1, int lastError ) const
 {
 	int	 i, j;
@@ -817,18 +680,6 @@ int idDxtEncoder::GetSquareCTX1Error( const byte* colorBlock, const byte* color0
 	return error;
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxCTX1HQ
-
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to
-compress the 4x4 block. Also finds the minimum and maximum alpha values.
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- 4 byte Min color found
-paramO:	maxColor	- 4 byte Max color found
-========================
-*/
 int idDxtEncoder::GetMinMaxCTX1HQ( const byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	int	 i;
@@ -910,18 +761,6 @@ int idDxtEncoder::GetMinMaxCTX1HQ( const byte* colorBlock, byte* minColor, byte*
 	return bestError;
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxNormalYHQ
-
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to
-compress the 4x4 block. Also finds the minimum and maximum alpha values.
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- 4 byte Min color found
-paramO:	maxColor	- 4 byte Max color found
-========================
-*/
 int idDxtEncoder::GetMinMaxNormalYHQ( const byte* colorBlock, byte* minColor, byte* maxColor, bool noBlack, int scale ) const
 {
 	unsigned short bestMinColor565, bestMaxColor565;
@@ -1009,11 +848,7 @@ ALIGN16( static dword SIMD_SSE2_dword_maskFirstThree[4] ) = { 0xFFFFFFFF, 0xFFFF
 ALIGN16( static dword SIMD_SSE2_dword_maskWords[4] )	  = { 0x0000FFFF, 0x0000FFFF, 0x0000FFFF, 0x00000000 };
 #define R_SHUFFLE_PS( x, y, z, w ) ( ( ( w ) & 3 ) << 6 | ( ( z ) & 3 ) << 4 | ( ( y ) & 3 ) << 2 | ( ( x ) & 3 ) )
 
-/*
-========================
-NormalDistanceDXT1
-========================
-*/
+//! Computes the squared distance between a normalized vector and its DXT1 compressed representation.
 int NormalDistanceDXT1( const int* vector, const int* normalized )
 {
 #if defined( _MSC_VER ) && defined( _M_IX86 )
@@ -1076,11 +911,7 @@ int NormalDistanceDXT1( const int* vector, const int* normalized )
 #endif
 }
 
-/*
-========================
-NormalDistanceDXT5
-========================
-*/
+//! Computes the squared distance between two normalized vectors represented as integers in DXT5 format.
 int NormalDistanceDXT5( const int* vector, const int* normalized )
 {
 #if _MSC_VER && defined( _M_IX86 )
@@ -1162,16 +993,6 @@ int NormalDistanceDXT5( const int* vector, const int* normalized )
 #endif
 }
 
-/*
-========================
-idDxtEncoder::GetSquareNormalsDXT1Error
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	color0		- 4 byte Min color found
-paramO:	color1		- 4 byte Max color found
-return: 4 byte color index block
-========================
-*/
 int idDxtEncoder::GetSquareNormalsDXT1Error( const int* colorBlock, const unsigned short color0, const unsigned short color1, int lastError, unsigned int& colorIndices ) const
 {
 	byte byteColors[2][4];
@@ -1230,18 +1051,6 @@ int idDxtEncoder::GetSquareNormalsDXT1Error( const int* colorBlock, const unsign
 	return error;
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxNormalsDXT1HQ
-
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to
-compress the 4x4 block. Also finds the minimum and maximum alpha values.
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- 4 byte Min color found
-paramO:	maxColor	- 4 byte Max color found
-========================
-*/
 int idDxtEncoder::GetMinMaxNormalsDXT1HQ( const byte* colorBlock, byte* minColor, byte* maxColor, unsigned int& colorIndices, bool noBlack ) const
 {
 	int			   i;
@@ -1360,15 +1169,6 @@ int idDxtEncoder::GetMinMaxNormalsDXT1HQ( const byte* colorBlock, byte* minColor
 	return bestError;
 }
 
-/*
-========================
-idDxtEncoder::GetSquareNormalsDXT5Error
-
-params:	normalBlock	- 16 pixel block for which to find normal indexes
-paramO:	minNormal	- Min normal found
-paramO:	maxNormal	- Max normal found
-========================
-*/
 int idDxtEncoder::GetSquareNormalsDXT5Error( const int* normalBlock, const byte* minNormal, const byte* maxNormal, int lastError, unsigned int& colorIndices, byte* alphaIndices ) const
 {
 	byte		   alphas[8];
@@ -1461,18 +1261,6 @@ int idDxtEncoder::GetSquareNormalsDXT5Error( const int* normalBlock, const byte*
 	return error;
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxNormalsDXT5HQ
-
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to
-compress the 4x4 block. Also finds the minimum and maximum alpha values.
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- 4 byte Min color found
-paramO:	maxColor	- 4 byte Max color found
-========================
-*/
 int idDxtEncoder::GetMinMaxNormalsDXT5HQ( const byte* colorBlock, byte* minColor, byte* maxColor, unsigned int& colorIndices, byte* alphaIndices ) const
 {
 	int			 i;
@@ -1600,18 +1388,6 @@ int idDxtEncoder::GetMinMaxNormalsDXT5HQ( const byte* colorBlock, byte* minColor
 	return bestError;
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxNormalsDXT5HQFast
-
-Uses an exhaustive search to find the two RGB colors that produce the least error when used to
-compress the 4x4 block. Also finds the minimum and maximum alpha values.
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- 4 byte Min color found
-paramO:	maxColor	- 4 byte Max color found
-========================
-*/
 int idDxtEncoder::GetMinMaxNormalsDXT5HQFast( const byte* colorBlock, byte* minColor, byte* maxColor, unsigned int& colorIndices, byte* alphaIndices ) const
 {
 	int			 i0, i1, i2, i3, j0, j1, j2, j3;
@@ -1774,16 +1550,6 @@ int idDxtEncoder::GetMinMaxNormalsDXT5HQFast( const byte* colorBlock, byte* minC
 	return bestError;
 }
 
-/*
-========================
-idDxtEncoder::FindColorIndices
-
-params:	colorBlock	- 16 pixel block for which find color indexes
-paramO:	color0		- Min color found
-paramO:	color1		- Max color found
-return: 4 byte color index block
-========================
-*/
 int idDxtEncoder::FindColorIndices( const byte* colorBlock, const unsigned short color0, const unsigned short color1, unsigned int& result ) const
 {
 	int			 i, j;
@@ -1831,17 +1597,6 @@ int idDxtEncoder::FindColorIndices( const byte* colorBlock, const unsigned short
 	return error;
 }
 
-/*
-========================
-idDxtEncoder::FindAlphaIndices
-
-params:	colorBlock	- 16 pixel block for which find alpha indexes
-paramO:	alpha0		- Min alpha found
-paramO:	alpha1		- Max alpha found
-params:	rindexes	- 6 byte alpha index block
-return: error metric for this compression
-========================
-*/
 int idDxtEncoder::FindAlphaIndices( const byte* colorBlock, const int alphaOffset, const byte alpha0, const byte alpha1, byte* rindexes ) const
 {
 	int			 i, j;
@@ -1891,16 +1646,6 @@ int idDxtEncoder::FindAlphaIndices( const byte* colorBlock, const int alphaOffse
 	return error;
 }
 
-/*
-========================
-idDxtEncoder::FindCTX1Indices
-
-params:	colorBlock	- 16 pixel block for which find color indexes
-paramO:	color0		- Min color found
-paramO:	color1		- Max color found
-return: 4 byte color index block
-========================
-*/
 int idDxtEncoder::FindCTX1Indices( const byte* colorBlock, const byte* color0, const byte* color1, unsigned int& result ) const
 {
 	int			 i, j;
@@ -1939,16 +1684,6 @@ int idDxtEncoder::FindCTX1Indices( const byte* colorBlock, const byte* color0, c
 	return error;
 }
 
-/*
-========================
-idDxtEncoder::CompressImageDXT1HQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageDXT1HQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -2010,16 +1745,6 @@ void idDxtEncoder::CompressImageDXT1HQ( const byte* inBuf, byte* outBuf, int wid
 	// idLib::Printf( "\r100%%\n" );
 }
 
-/*
-========================
-idDxtEncoder::CompressImageDXT5HQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageDXT5HQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -2104,16 +1829,6 @@ void idDxtEncoder::CompressImageDXT5HQ( const byte* inBuf, byte* outBuf, int wid
 	// idLib::Printf( "\r100%%\n" );
 }
 
-/*
-========================
-idDxtEncoder::CompressImageCTX1HQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageCTX1HQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -2162,13 +1877,6 @@ void idDxtEncoder::CompressImageCTX1HQ( const byte* inBuf, byte* outBuf, int wid
 	// idLib::Printf( "\r100%%\n" );
 }
 
-/*
-========================
-idDxtEncoder::ScaleYCoCg
-
-params:	colorBlock	- 16 pixel block for which find color indexes
-========================
-*/
 void idDxtEncoder::ScaleYCoCg( byte* colorBlock ) const
 {
 	ALIGN16( byte minColor[4] );
@@ -2219,15 +1927,6 @@ void idDxtEncoder::ScaleYCoCg( byte* colorBlock ) const
 	}
 }
 
-// LordHavoc begin
-
-/*
-========================
-idDxtEncoder::ExtractBlockGimpDDS
-
-Extract 4x4 BGRA block
-========================
-*/
 void idDxtEncoder::ExtractBlockGimpDDS( const byte* src, int x, int y, int w, int h, byte* block )
 {
 	int		  i, j;
@@ -2248,13 +1947,6 @@ void idDxtEncoder::ExtractBlockGimpDDS( const byte* src, int x, int y, int w, in
 	}
 }
 
-/*
-========================
-idDxtEncoder::EncodeAlphaBlockBC3GimpDDS
-
-Write DXT5 alpha block
-========================
-*/
 void idDxtEncoder::EncodeAlphaBlockBC3GimpDDS( byte* dst, const byte* block, const int offset )
 {
 	int i, v, mn, mx;
@@ -2310,11 +2002,6 @@ void idDxtEncoder::EncodeAlphaBlockBC3GimpDDS( byte* dst, const byte* block, con
 	}
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxYCoCgGimpDDS
-========================
-*/
 void idDxtEncoder::GetMinMaxYCoCgGimpDDS( const byte* block, byte* mincolor, byte* maxcolor )
 {
 	int i;
@@ -2337,11 +2024,6 @@ void idDxtEncoder::GetMinMaxYCoCgGimpDDS( const byte* block, byte* mincolor, byt
 	}
 }
 
-/*
-========================
-idDxtEncoder::ScaleYCoCgGimpDDS
-========================
-*/
 void idDxtEncoder::ScaleYCoCgGimpDDS( byte* block, byte* mincolor, byte* maxcolor )
 {
 	const int s0 = 128 / 2 - 1;
@@ -2382,11 +2064,6 @@ void idDxtEncoder::ScaleYCoCgGimpDDS( byte* block, byte* mincolor, byte* maxcolo
 	}
 }
 
-/*
-========================
-idDxtEncoder::InsetBBoxYCoCgGimpDDS
-========================
-*/
 void idDxtEncoder::InsetBBoxYCoCgGimpDDS( byte* mincolor, byte* maxcolor )
 {
 	int inset[4], mini[4], maxi[4];
@@ -2413,11 +2090,6 @@ void idDxtEncoder::InsetBBoxYCoCgGimpDDS( byte* mincolor, byte* maxcolor )
 	maxcolor[1] = ( maxi[1] & 0xfc ) | ( maxi[1] >> 6 );
 }
 
-/*
-========================
-idDxtEncoder::SelectDiagonalYCoCgGimpDDS
-========================
-*/
 void idDxtEncoder::SelectDiagonalYCoCgGimpDDS( const byte* block, byte* mincolor, byte* maxcolor )
 {
 	byte mid0, mid1, side, mask, b0, b1, c0, c1;
@@ -2447,13 +2119,6 @@ void idDxtEncoder::SelectDiagonalYCoCgGimpDDS( const byte* block, byte* mincolor
 	maxcolor[1] = c1;
 }
 
-/*
-========================
-idDxtEncoder::LerpRGB13GimpDDS
-
-Linear interpolation at 1/3 point between a and b
-========================
-*/
 void idDxtEncoder::LerpRGB13GimpDDS( byte* dst, byte* a, byte* b )
 {
 #if 0
@@ -2471,34 +2136,17 @@ void idDxtEncoder::LerpRGB13GimpDDS( byte* dst, byte* a, byte* b )
 #endif
 }
 
-/*
-========================
-idDxtEncoder::Mul8BitGimpDDS
-========================
-*/
 inline int idDxtEncoder::Mul8BitGimpDDS( int a, int b )
 {
 	int t = a * b + 128;
 	return ( ( t + ( t >> 8 ) ) >> 8 );
 }
 
-/*
-========================
-idDxtEncoder::PackRGB565GimpDDS
-
-Pack BGR8 to RGB565
-========================
-*/
 inline unsigned short idDxtEncoder::PackRGB565GimpDDS( const byte* c )
 {
 	return ( ( Mul8BitGimpDDS( c[2], 31 ) << 11 ) | ( Mul8BitGimpDDS( c[1], 63 ) << 5 ) | ( Mul8BitGimpDDS( c[0], 31 ) ) );
 }
 
-/*
-========================
-idDxtEncoder::EncodeYCoCgBlockGimpDDS
-========================
-*/
 void idDxtEncoder::EncodeYCoCgBlockGimpDDS( byte* dst, byte* block )
 {
 	byte		 colors[4][3], *maxcolor, *mincolor;
@@ -2550,18 +2198,6 @@ void idDxtEncoder::EncodeYCoCgBlockGimpDDS( byte* dst, byte* block )
 	PUTL32( dst + 4, mask );
 }
 
-// LordHavoc end
-
-/*
-========================
-idDxtEncoder::CompressYCoCgDXT5HQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressYCoCgDXT5HQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -2649,16 +2285,6 @@ void idDxtEncoder::CompressYCoCgDXT5HQ( const byte* inBuf, byte* outBuf, int wid
 	// idLib::Printf( "\r100%%\n" );
 }
 
-/*
-========================
-idDxtEncoder::CompressYCoCgCTX1DXT5AHQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressYCoCgCTX1DXT5AHQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -2740,11 +2366,6 @@ void idDxtEncoder::CompressYCoCgCTX1DXT5AHQ( const byte* inBuf, byte* outBuf, in
 	// idLib::Printf( "\r100%%\n" );
 }
 
-/*
-========================
-idDxtEncoder::RotateNormalsDXT1
-========================
-*/
 void idDxtEncoder::RotateNormalsDXT1( byte* block ) const
 {
 	byte rotatedBlock[64];
@@ -2854,16 +2475,6 @@ void idDxtEncoder::CompressNormalMapDXT1HQ( const byte* inBuf, byte* outBuf, int
 	// idLib::Printf( "\r100%%\n" );
 }
 
-/*
-========================
-idDxtEncoder::CompressNormalMapDXT1RenormalizeHQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressNormalMapDXT1RenormalizeHQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -2927,16 +2538,6 @@ static int c_scaled4x;
 static int c_differentBias;
 static int c_biasHelped;
 
-/*
-========================
-idDxtEncoder::BiasScaleNormalY
-
-	* scale2x = 33%
-	* scale4x = 23%
-	* bias + scale2x = 30%
-	* bias + scale4x = 55%
-========================
-*/
 void	   idDxtEncoder::BiasScaleNormalY( byte* colorBlock ) const
 {
 	byte minColor = 255;
@@ -3002,11 +2603,6 @@ void	   idDxtEncoder::BiasScaleNormalY( byte* colorBlock ) const
 	}
 }
 
-/*
-========================
-idDxtEncoder::RotateNormalsDXT5
-========================
-*/
 void idDxtEncoder::RotateNormalsDXT5( byte* block ) const
 {
 	byte rotatedBlock[64];
@@ -3085,16 +2681,6 @@ void idDxtEncoder::RotateNormalsDXT5( byte* block ) const
 	}
 }
 
-/*
-========================
-idDxtEncoder::CompressNormalMapDXT5HQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressNormalMapDXT5HQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -3189,16 +2775,6 @@ void idDxtEncoder::CompressNormalMapDXT5HQ( const byte* inBuf, byte* outBuf, int
 	// idLib::Printf( "\r100%%\n" );
 }
 
-/*
-========================
-idDxtEncoder::CompressNormalMapDXT5RenormalizeHQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressNormalMapDXT5RenormalizeHQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -3267,16 +2843,6 @@ void idDxtEncoder::CompressNormalMapDXT5RenormalizeHQ( const byte* inBuf, byte* 
 	////idLib::Printf( "\r100%%\n" );
 }
 
-/*
-========================
-idDxtEncoder::CompressNormalMapDXN2HQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressNormalMapDXN2HQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -3347,18 +2913,6 @@ void idDxtEncoder::CompressNormalMapDXN2HQ( const byte* inBuf, byte* outBuf, int
 	// idLib::Printf( "\r100%%\n" );
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxBBox
-
-Takes the extents of the bounding box of the colors in the 4x4 block in RGB space.
-Also finds the minimum and maximum alpha values.
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- 4 byte Min color found
-paramO:	maxColor	- 4 byte Max color found
-========================
-*/
 ID_INLINE void idDxtEncoder::GetMinMaxBBox( const byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	minColor[0] = minColor[1] = minColor[2] = minColor[3] = 255;
@@ -3392,11 +2946,6 @@ ID_INLINE void idDxtEncoder::GetMinMaxBBox( const byte* colorBlock, byte* minCol
 	}
 }
 
-/*
-========================
-idDxtEncoder::InsetColorsBBox
-========================
-*/
 ID_INLINE void idDxtEncoder::InsetColorsBBox( byte* minColor, byte* maxColor ) const
 {
 	byte inset[4];
@@ -3417,11 +2966,6 @@ ID_INLINE void idDxtEncoder::InsetColorsBBox( byte* minColor, byte* maxColor ) c
 	maxColor[3] = ( maxColor[3] >= inset[3] ) ? maxColor[3] - inset[3] : 0;
 }
 
-/*
-========================
-idDxtEncoder::SelectColorsDiagonal
-========================
-*/
 void idDxtEncoder::SelectColorsDiagonal( const byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	byte mid0 = byte( ( ( int )minColor[0] + maxColor[0] + 1 ) >> 1 );
@@ -3488,16 +3032,6 @@ void idDxtEncoder::SelectColorsDiagonal( const byte* colorBlock, byte* minColor,
 	}
 }
 
-/*
-========================
-idDxtEncoder::EmitColorIndices
-
-params:	colorBlock	- 16 pixel block for which find color indexes
-paramO:	minColor	- Min color found
-paramO:	maxColor	- Max color found
-return: 4 byte color index block
-========================
-*/
 void idDxtEncoder::EmitColorIndices( const byte* colorBlock, const byte* minColor, const byte* maxColor )
 {
 #if 1
@@ -3710,16 +3244,6 @@ void idDxtEncoder::EmitColorIndices( const byte* colorBlock, const byte* minColo
 #endif
 }
 
-/*
-========================
-idDxtEncoder::EmitColorAlphaIndices
-
-params:	colorBlock	- 16 pixel block for which find color indexes
-paramO:	minColor	- Min color found
-paramO:	maxColor	- Max color found
-return: 4 byte color index block
-========================
-*/
 void idDxtEncoder::EmitColorAlphaIndices( const byte* colorBlock, const byte* minColor, const byte* maxColor )
 {
 	ALIGN16( uint16 colors[4][4] );
@@ -3785,16 +3309,6 @@ void idDxtEncoder::EmitColorAlphaIndices( const byte* colorBlock, const byte* mi
 	EmitUInt( result );
 }
 
-/*
-========================
-idDxtEncoder::EmitCTX1Indices
-
-params:	colorBlock	- 16 pixel block for which find color indexes
-paramO:	minColor	- Min color found
-paramO:	maxColor	- Max color found
-return: 4 byte color index block
-========================
-*/
 void idDxtEncoder::EmitCTX1Indices( const byte* colorBlock, const byte* minColor, const byte* maxColor )
 {
 	ALIGN16( uint16 colors[4][2] );
@@ -3997,16 +3511,6 @@ void idDxtEncoder::EmitAlphaIndices( const byte* colorBlock, const int offset, c
 #endif
 }
 
-/*
-========================
-idDxtEncoder::CompressImageDXT1Fast_Generic
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageDXT1Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -4040,16 +3544,6 @@ void idDxtEncoder::CompressImageDXT1Fast_Generic( const byte* inBuf, byte* outBu
 	}
 }
 
-/*
-========================
-idDxtEncoder::CompressImageDXT1AlphaFast_Generic
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageDXT1AlphaFast_Generic( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -4089,16 +3583,6 @@ void idDxtEncoder::CompressImageDXT1AlphaFast_Generic( const byte* inBuf, byte* 
 	}
 }
 
-/*
-========================
-idDxtEncoder::CompressImageDXT5Fast_Generic
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageDXT5Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -4141,11 +3625,6 @@ void idDxtEncoder::CompressImageDXT5Fast_Generic( const byte* inBuf, byte* outBu
 	}
 }
 
-/*
-========================
-idDxtEncoder::ScaleYCoCg
-========================
-*/
 void idDxtEncoder::ScaleYCoCg( byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	int m0 = abs( minColor[0] - 128 );
@@ -4183,11 +3662,6 @@ void idDxtEncoder::ScaleYCoCg( byte* colorBlock, byte* minColor, byte* maxColor 
 	}
 }
 
-/*
-========================
-idDxtEncoder::InsetYCoCgBBox
-========================
-*/
 ID_INLINE void idDxtEncoder::InsetYCoCgBBox( byte* minColor, byte* maxColor ) const
 {
 #if 0
@@ -4339,11 +3813,6 @@ ID_INLINE void idDxtEncoder::InsetYCoCgBBox( byte* minColor, byte* maxColor ) co
 #endif
 }
 
-/*
-========================
-idDxtEncoder::InsetYCoCgAlpaBBox
-========================
-*/
 ID_INLINE void idDxtEncoder::InsetYCoCgAlpaBBox( byte* minColor, byte* maxColor ) const
 {
 	int inset[4];
@@ -4386,11 +3855,6 @@ ID_INLINE void idDxtEncoder::InsetYCoCgAlpaBBox( byte* minColor, byte* maxColor 
 	maxColor[3] = byte( maxi[3] );
 }
 
-/*
-========================
-idDxtEncoder::SelectYCoCgDiagonal
-========================
-*/
 void idDxtEncoder::SelectYCoCgDiagonal( const byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	byte side = 0;
@@ -4422,16 +3886,6 @@ void idDxtEncoder::SelectYCoCgDiagonal( const byte* colorBlock, byte* minColor, 
 	maxColor[1] = c1;
 }
 
-/*
-========================
-idDxtEncoder::CompressYCoCgDXT5Fast_Generic
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressYCoCgDXT5Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -4477,16 +3931,6 @@ void idDxtEncoder::CompressYCoCgDXT5Fast_Generic( const byte* inBuf, byte* outBu
 	}
 }
 
-/*
-========================
-idDxtEncoder::CompressYCoCgAlphaDXT5Fast
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressYCoCgAlphaDXT5Fast( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -4537,16 +3981,6 @@ void idDxtEncoder::CompressYCoCgAlphaDXT5Fast( const byte* inBuf, byte* outBuf, 
 	}
 }
 
-/*
-========================
-idDxtEncoder::CompressYCoCgCTX1DXT5AFast_Generic
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressYCoCgCTX1DXT5AFast_Generic( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -4660,11 +4094,6 @@ void idDxtEncoder::EmitGreenIndices( const byte* block, const int offset, const 
 #endif
 }
 
-/*
-========================
-idDxtEncoder::InsetNormalsBBoxDXT5
-========================
-*/
 void idDxtEncoder::InsetNormalsBBoxDXT5( byte* minNormal, byte* maxNormal ) const
 {
 	int inset[4];
@@ -4693,11 +4122,6 @@ void idDxtEncoder::InsetNormalsBBoxDXT5( byte* minNormal, byte* maxNormal ) cons
 	maxNormal[1] = byte( ( maxi[1] & C565_6_MASK ) | ( maxi[1] >> 6 ) );
 }
 
-/*
-========================
-idDxtEncoder::InsetNormalsBBox3Dc
-========================
-*/
 void idDxtEncoder::InsetNormalsBBox3Dc( byte* minNormal, byte* maxNormal ) const
 {
 	int inset[4];
@@ -4726,16 +4150,6 @@ void idDxtEncoder::InsetNormalsBBox3Dc( byte* minNormal, byte* maxNormal ) const
 	maxNormal[1] = ( byte )maxi[1];
 }
 
-/*
-========================
-idDxtEncoder::CompressNormalMapDXT5Fast_Generic
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressNormalMapDXT5Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -4773,16 +4187,6 @@ void idDxtEncoder::CompressNormalMapDXT5Fast_Generic( const byte* inBuf, byte* o
 	}
 }
 
-/*
-========================
-idDxtEncoder::CompressImageDXN1Fast_Generic
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageDXN1Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -4815,16 +4219,6 @@ void idDxtEncoder::CompressImageDXN1Fast_Generic( const byte* inBuf, byte* outBu
 	}
 }
 
-/*
-========================
-idDxtEncoder::CompressNormalMapDXN2Fast_Generic
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressNormalMapDXN2Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -4862,11 +4256,6 @@ void idDxtEncoder::CompressNormalMapDXN2Fast_Generic( const byte* inBuf, byte* o
 	}
 }
 
-/*
-========================
-idDxtEncoder::DecodeDXNAlphaValues
-========================
-*/
 void idDxtEncoder::DecodeDXNAlphaValues( const byte* inBuf, byte* values )
 {
 	int			 i;
@@ -4906,15 +4295,6 @@ void idDxtEncoder::DecodeDXNAlphaValues( const byte* inBuf, byte* values )
 	}
 }
 
-/*
-========================
-idDxtEncoder::EncodeNormalRGBIndices
-
-params:	values	- 16 normal block for which to find normal Y indices
-paramO:	min		- Min grayscale value
-paramO:	max		- Max grayscale value
-========================
-*/
 void idDxtEncoder::EncodeNormalRGBIndices( byte* outBuf, const byte min, const byte max, const byte* values )
 {
 	const int COLOR_RANGE = 3;
@@ -4959,16 +4339,6 @@ void idDxtEncoder::EncodeNormalRGBIndices( byte* outBuf, const byte min, const b
 	outBuf[7] = byte( ( result >> 24 ) & 0xFF );
 }
 
-/*
-========================
-idDxtEncoder::ConvertNormalMapDXN2_DXT5
-
-params:	inBuf		- normal map compressed in DXN2 format
-paramO:	outBuf		- result of compression in DXT5 format
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::ConvertNormalMapDXN2_DXT5( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte values[16] );
@@ -5019,11 +4389,6 @@ void idDxtEncoder::ConvertNormalMapDXN2_DXT5( const byte* inBuf, byte* outBuf, i
 	}
 }
 
-/*
-========================
-idDxtEncoder::DecodeNormalYValues
-========================
-*/
 void idDxtEncoder::DecodeNormalYValues( const byte* inBuf, byte& min, byte& max, byte* values )
 {
 	int			   i;
@@ -5051,11 +4416,6 @@ void idDxtEncoder::DecodeNormalYValues( const byte* inBuf, byte& min, byte& max,
 	min = normalsY[1];
 }
 
-/*
-========================
-idDxtEncoder::EncodeDXNAlphaValues
-========================
-*/
 void idDxtEncoder::EncodeDXNAlphaValues( byte* outBuf, const byte min, const byte max, const byte* values )
 {
 	int			 i;
@@ -5098,16 +4458,6 @@ void idDxtEncoder::EncodeDXNAlphaValues( byte* outBuf, const byte min, const byt
 	outBuf[7] = byte( ( indexes[13] >> 1 ) | ( indexes[14] << 2 ) | ( indexes[15] << 5 ) );
 }
 
-/*
-========================
-idDxtEncoder::ConvertNormalMapDXT5_DXN2
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::ConvertNormalMapDXT5_DXN2( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte values[16] );
@@ -5146,16 +4496,6 @@ void idDxtEncoder::ConvertNormalMapDXT5_DXN2( const byte* inBuf, byte* outBuf, i
 	}
 }
 
-/*
-========================
-idDxtEncoder::ConvertImageDXN1_DXT1
-
-params:	inBuf		- normal map compressed in DXN1 format
-paramO:	outBuf		- result of compression in DXT1 format
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::ConvertImageDXN1_DXT1( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte values[16] );

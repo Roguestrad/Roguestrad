@@ -36,11 +36,6 @@ Contains the DxtDecoder implementation.
 #include "DXTCodec_local.h"
 #include "DXTCodec.h"
 
-/*
-========================
-idDxtDecoder::EmitBlock
-========================
-*/
 void idDxtDecoder::EmitBlock( byte* outPtr, int x, int y, const byte* colorBlock )
 {
 	outPtr += ( y * width + x ) * 4;
@@ -50,11 +45,6 @@ void idDxtDecoder::EmitBlock( byte* outPtr, int x, int y, const byte* colorBlock
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecodeAlphaValues
-========================
-*/
 void idDxtDecoder::DecodeAlphaValues( byte* colorBlock, const int offset )
 {
 	int			 i;
@@ -95,11 +85,6 @@ void idDxtDecoder::DecodeAlphaValues( byte* colorBlock, const int offset )
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecodeColorValues
-========================
-*/
 void idDxtDecoder::DecodeColorValues( byte* colorBlock, bool noBlack, bool writeAlpha )
 {
 	byte		   colors[4][4];
@@ -147,11 +132,6 @@ void idDxtDecoder::DecodeColorValues( byte* colorBlock, bool noBlack, bool write
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecodeCTX1Values
-========================
-*/
 void idDxtDecoder::DecodeCTX1Values( byte* colorBlock )
 {
 	byte colors[4][2];
@@ -174,11 +154,6 @@ void idDxtDecoder::DecodeCTX1Values( byte* colorBlock )
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressImageDXT1
-========================
-*/
 void idDxtDecoder::DecompressImageDXT1( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	byte block[64];
@@ -195,11 +170,6 @@ void idDxtDecoder::DecompressImageDXT1( const byte* inBuf, byte* outBuf, int wid
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressImageDXT5
-========================
-*/
 void idDxtDecoder::DecompressImageDXT5( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	byte block[64];
@@ -239,11 +209,6 @@ void idDxtDecoder::DecompressImageDXT5_nVidia7x( const byte* inBuf, byte* outBuf
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressYCoCgDXT5
-========================
-*/
 void idDxtDecoder::DecompressYCoCgDXT5( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	DecompressImageDXT5_nVidia7x( inBuf, outBuf, width, height );
@@ -256,11 +221,6 @@ void idDxtDecoder::DecompressYCoCgDXT5( const byte* inBuf, byte* outBuf, int wid
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressYCoCgCTX1DXT5A
-========================
-*/
 void idDxtDecoder::DecompressYCoCgCTX1DXT5A( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	byte block[64];
@@ -278,11 +238,6 @@ void idDxtDecoder::DecompressYCoCgCTX1DXT5A( const byte* inBuf, byte* outBuf, in
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecodeNormalYValues
-========================
-*/
 void idDxtDecoder::DecodeNormalYValues( byte* normalBlock, const int offsetY, byte& c0, byte& c1 )
 {
 	int			   i;
@@ -312,11 +267,7 @@ void idDxtDecoder::DecodeNormalYValues( byte* normalBlock, const int offsetY, by
 	}
 }
 
-/*
-========================
-UShortSqrt
-========================
-*/
+//! Computes the square root of an unsigned short integer and returns the result as a byte.
 byte UShortSqrt( unsigned short s )
 {
 #if 1
@@ -347,11 +298,6 @@ byte UShortSqrt( unsigned short s )
 #endif
 }
 
-/*
-========================
-idDxtDecoder::DeriveNormalZValues
-========================
-*/
 void idDxtDecoder::DeriveNormalZValues( byte* normalBlock )
 {
 	int i;
@@ -363,10 +309,17 @@ void idDxtDecoder::DeriveNormalZValues( byte* normalBlock )
 	}
 }
 
-/*
-========================
-idDxtDecoder::UnRotateNormals
-========================
+/*!
+	\brief Reverses the rotation applied to normal vectors in a block and scales them appropriately
+
+	This function processes a block of normal vector data by reversing a previously applied rotation and adjusting the scale based on the provided parameters. It takes the rotation value from c0 to
+   compute the angle of rotation and applies the inverse transformation to the x and y components of each normal vector. The scale is determined from c1 and used to adjust the y component before the
+   rotation is reversed. The function operates on 16 normal vectors stored as 4-component floats, modifying only the x and y components while leaving the z and w components unchanged.
+
+	\param block Pointer to the input block containing normalized normal vector data
+	\param normals Pointer to the output array where the unrotated normals will be stored
+	\param c0 Byte value representing the rotation angle (scaled by 255)
+	\param c1 Byte value controlling the scale factor for y component adjustment
 */
 void UnRotateNormals( const byte* block, float* normals, byte c0, byte c1 )
 {
@@ -386,11 +339,6 @@ void UnRotateNormals( const byte* block, float* normals, byte c0, byte c1 )
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressNormalMapDXT1
-========================
-*/
 void idDxtDecoder::DecompressNormalMapDXT1( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	byte block[64];
@@ -433,11 +381,6 @@ void idDxtDecoder::DecompressNormalMapDXT1( const byte* inBuf, byte* outBuf, int
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressNormalMapDXT1Renormalize
-========================
-*/
 void idDxtDecoder::DecompressNormalMapDXT1Renormalize( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	byte block[64];
@@ -469,11 +412,6 @@ void idDxtDecoder::DecompressNormalMapDXT1Renormalize( const byte* inBuf, byte* 
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressNormalMapDXT5Renormalize
-========================
-*/
 void idDxtDecoder::DecompressNormalMapDXT5Renormalize( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	byte block[64];
@@ -512,10 +450,17 @@ void idDxtDecoder::DecompressNormalMapDXT5Renormalize( const byte* inBuf, byte* 
 	}
 }
 
-/*
-========================
-idDxtDecoder::BiasScaleNormalY
-========================
+/*!
+	\brief Applies bias and scale transformation to normal data in the Y channel
+
+	This function modifies normal map data in-place by applying a bias and scale transformation to the Y component of normals. It takes the input normal data and adjusts it according to the provided
+   bias and scale values derived from the c0 and c1 parameters. The transformation is applied to 16 normal entries, with each entry being offset by the offsetY parameter. The function uses a fixed
+   offset of 128 for normalization and applies the scale factor to adjust the range of values
+
+	\param normals Pointer to the normal data array to be modified
+	\param offsetY Offset in the normal array for the Y component
+	\param c0 Bias parameter used to calculate the bias value
+	\param c1 Scale parameter used to calculate the scale factor
 */
 void BiasScaleNormalY( byte* normals, const int offsetY, const byte c0, const byte c1 )
 {
@@ -526,10 +471,17 @@ void BiasScaleNormalY( byte* normals, const int offsetY, const byte c0, const by
 	}
 }
 
-/*
-========================
-idDxtDecoder::BiasScaleNormals
-========================
+/*!
+	\brief Transforms normalized block data into scaled and biased normal vectors.
+
+	This function processes a block of normalized data and converts it into a set of scaled and biased normal vectors. The bias value is derived from the first input byte by subtracting four, and the
+   scale factor is calculated from the second input byte by right-shifting it by three bits and adding one. The transformation applies a bias and scale to the second component of each normal vector
+   while leaving the first component unchanged.
+
+	\param block Pointer to the input block of normalized data.
+	\param normals Pointer to the output array of transformed normal vectors.
+	\param c0 First byte used to calculate the bias value.
+	\param c1 Second byte used to calculate the scale value.
 */
 void BiasScaleNormals( const byte* block, float* normals, const byte c0, const byte c1 )
 {
@@ -541,11 +493,6 @@ void BiasScaleNormals( const byte* block, float* normals, const byte c0, const b
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressNormalMapDXT5
-========================
-*/
 void idDxtDecoder::DecompressNormalMapDXT5( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	byte block[64];
@@ -587,11 +534,6 @@ void idDxtDecoder::DecompressNormalMapDXT5( const byte* inBuf, byte* outBuf, int
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressNormalMapDXN2
-========================
-*/
 void idDxtDecoder::DecompressNormalMapDXN2( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	byte block[64];
@@ -632,11 +574,6 @@ void idDxtDecoder::DecompressNormalMapDXN2( const byte* inBuf, byte* outBuf, int
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecomposeColorBlock
-========================
-*/
 void idDxtDecoder::DecomposeColorBlock( byte colors[2][4], byte colorIndices[16], bool noBlack )
 {
 	int			   i;
@@ -665,11 +602,6 @@ void idDxtDecoder::DecomposeColorBlock( byte colors[2][4], byte colorIndices[16]
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecomposeAlphaBlock
-========================
-*/
 void idDxtDecoder::DecomposeAlphaBlock( byte colors[2][4], byte alphaIndices[16] )
 {
 	int			  i;
@@ -735,11 +667,6 @@ void idDxtDecoder::DecomposeImageDXT1( const byte* inBuf, byte* colorIndices, by
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecomposeImageDXT5
-========================
-*/
 void idDxtDecoder::DecomposeImageDXT5( const byte* inBuf, byte* colorIndices, byte* alphaIndices, byte* pic1, byte* pic2, int width, int height )
 {
 	byte colors[2][4];
