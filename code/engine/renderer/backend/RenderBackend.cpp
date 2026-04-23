@@ -38,8 +38,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../frontend/tr_local.h"
 #include "Framebuffer.h"
 
-#include "engine/imgui/ImGui_Hooks.h"
-
 #include "engine/sys/DeviceManager.h"
 extern DeviceManager* deviceManager;
 

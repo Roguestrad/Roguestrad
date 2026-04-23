@@ -1840,16 +1840,6 @@ void idRenderBackend::StereoRenderExecuteBackEndCommands( const emptyCommand_t* 
 	GL_EndFrame();
 }
 
-void idRenderBackend::ImGui_RenderDrawLists( ImDrawData* draw_data )
-{
-	if( draw_data->CmdListsCount == 0 ) {
-		// Nothing to do.
-		return;
-	}
-
-	tr.guiModel->EmitImGui( draw_data );
-}
-
 void idRenderBackend::ResizeImages()
 {
 	glimpParms_t parms;

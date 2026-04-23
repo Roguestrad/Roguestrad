@@ -29024,6 +29024,14 @@
     "static void R_MakeUnitCubeTrisForMaskedOcclusionCulling()": {
       "body_hash": "6c3bbd33bfcc3aaa5459cc5748e45f77",
       "is_trivial": true
+    },
+    "void idDxtEncoder::CompressImageDXT5Fast_SSE2(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "b39625a1247cb372343d3233fac1a7f5",
+      "is_trivial": false
+    },
+    "void idDxtEncoder::EmitGreenIndices_SSE2(const byte *block, const int channelBitOffset, const int minGreen, const int maxGreen)": {
+      "body_hash": "d3b611551bf49e8ebe98c9b5b2a7b367",
+      "is_trivial": false
     }
   }
 }

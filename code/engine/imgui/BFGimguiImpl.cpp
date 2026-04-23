@@ -941,7 +941,7 @@ void Render()
 		}
 
 		ImGui::Render();
-		idRenderBackend::ImGui_RenderDrawLists( ImGui::GetDrawData() );
+		renderSystem->ImGui_RenderDrawLists( ImGui::GetDrawData() );
 		g_haveNewFrame = false;
 		g_insideRender = false;
 	}

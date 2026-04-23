@@ -268,6 +268,7 @@ struct vidMode_t {
 extern idCVar r_useVirtualScreenResolution;
 
 class idRenderWorld;
+struct ImDrawData;
 
 /*!
 	\class idRenderSystem
@@ -386,6 +387,9 @@ public:
 	virtual void				  DrawSmallStringExt( int x, int y, const char* string, const idVec4& setColor, bool forceColor ) = 0;
 	virtual void				  DrawBigChar( int x, int y, int ch )															  = 0;
 	virtual void				  DrawBigStringExt( int x, int y, const char* string, const idVec4& setColor, bool forceColor )	  = 0;
+
+	//! Renders ImGui draw lists using the provided draw data
+	virtual void				  ImGui_RenderDrawLists( ImDrawData* draw_data ) = 0;
 
 	virtual void				  DrawCRTPostFX() = 0; // RB
 

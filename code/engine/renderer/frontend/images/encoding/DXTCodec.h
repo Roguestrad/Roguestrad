@@ -211,6 +211,20 @@ public:
 		\throws assertion failure if width or height is less than 4, or not divisible by 4
 	*/
 	void CompressImageDXT5Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height );
+
+	/*!
+		\brief Compresses a 4x4 block of RGBA image data into DXT5 format using SSE2 optimization.
+
+		This function performs DXT5 texture compression on a 4x4 pixel block of image data. It uses SSE2 instructions for optimization and assumes the input width and height are multiples of 4. The
+	   function processes the image in 4x4 pixel chunks, extracting color blocks, computing minimum and maximum colors, adjusting color bounds, and emitting compressed color and alpha data to the
+	   output buffer. Padding is handled for both source and destination buffers during processing.
+
+		\param inBuf Pointer to the source image data in RGBA format
+		\param outBuf Pointer to the output buffer where compressed DXT5 data will be written
+		\param width Width of the input image, must be a multiple of 4
+		\param height Height of the input image, must be a multiple of 4
+		\throws assertion failure if width or height is less than 4 or not a multiple of 4
+	*/
 	void CompressImageDXT5Fast_SSE2( const byte* inBuf, byte* outBuf, int width, int height );
 
 	/*!
@@ -1266,6 +1280,19 @@ private:
 		\param maxAlpha Maximum alpha value for the block
 	*/
 	void				  EmitAlphaIndices_SSE2( const byte* colorBlock, const int channelBitOffset, const int minAlpha, const int maxAlpha );
+
+	/*!
+		\brief Encodes green color indices for a DXT block using SSE2 instructions based on the provided block data and color range.
+
+		This function processes a 16-byte block of pixel data to extract and encode green color indices using SSE2 SIMD instructions. It takes the block data, applies bit shifting and masking to
+	   extract the green channel values, then uses the provided minimum and maximum green values to calculate and emit the encoded indices. The function performs multiple steps including bit
+	   manipulation, arithmetic operations, and vector comparisons to determine the appropriate color indices for compression.
+
+		\param block Pointer to the 16-byte block data containing pixel information
+		\param channelBitOffset Bit offset to apply when extracting the green channel values
+		\param minGreen Minimum green value in the block
+		\param maxGreen Maximum green value in the block
+	*/
 	void				  EmitGreenIndices_SSE2( const byte* block, const int channelBitOffset, const int minGreen, const int maxGreen );
 
 	//! This function scales YCoCg color values using SSE2 instructions for a color block with specified minimum and maximum colors.

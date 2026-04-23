@@ -1118,6 +1118,9 @@ public:
 	*/
 	virtual void				  DrawBigStringExt( int x, int y, const char* string, const idVec4& setColor, bool forceColor );
 
+	//! Renders ImGui draw lists using the provided draw data
+	virtual void				  ImGui_RenderDrawLists( ImDrawData* draw_data );
+
 	//! Draws CRT post-processing effects to the screen
 	virtual void				  DrawCRTPostFX();
 

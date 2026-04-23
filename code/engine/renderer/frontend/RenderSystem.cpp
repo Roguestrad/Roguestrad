@@ -421,6 +421,16 @@ void idRenderSystemLocal::DrawBigStringExt( int x, int y, const char* string, co
 	SetColor( colorWhite );
 }
 
+void idRenderSystemLocal::ImGui_RenderDrawLists( ImDrawData* draw_data )
+{
+	if( draw_data->CmdListsCount == 0 ) {
+		// Nothing to do.
+		return;
+	}
+
+	guiModel->EmitImGui( draw_data );
+}
+
 const emptyCommand_t* idRenderSystemLocal::SwapCommandBuffers(
 	uint64* frontEndMicroSec, uint64* backEndMicroSec, uint64* mocMicroSec, uint64* gpuMicroSec, backEndCounters_t* bc, performanceCounters_t* pc )
 {
@@ -429,11 +439,6 @@ const emptyCommand_t* idRenderSystemLocal::SwapCommandBuffers(
 	return SwapCommandBuffers_FinishCommandBuffers();
 }
 
-/*
-=====================
-idRenderSystemLocal::SwapCommandBuffers_FinishRendering
-=====================
-*/
 #define FPS_FRAMES 6
 void idRenderSystemLocal::SwapCommandBuffers_FinishRendering(
 	uint64* frontEndMicroSec, uint64* backEndMicroSec, uint64* mocMicroSec, uint64* gpuMicroSec, backEndCounters_t* bc, performanceCounters_t* pc )

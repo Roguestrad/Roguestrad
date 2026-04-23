@@ -106,10 +106,6 @@ all state modified by the back end is separated from the front end state
 
 ===========================================================================
 */
-struct ImDrawData;
-
-class IRenderPass;
-class ForwardShadingPass;
 
 /*!
 	\class idRenderBackend
@@ -132,31 +128,52 @@ public:
 	~idRenderBackend();
 
 	//! Initializes the render backend system and sets up graphics device resources.
-	void		Init();
+	void				 Init();
 
 	//! Performs cleanup operations for the rendering backend before shutdown.
-	void		Shutdown();
+	void				 Shutdown();
 
 	//! Executes backend rendering commands for 3D and 2D views, buffer management, and post-processing effects.
-	void		ExecuteBackEndCommands( const emptyCommand_t* cmds );
+	void				 ExecuteBackEndCommands( const emptyCommand_t* cmds );
 
 	//! Renders the draw list twice with modifications for left and right eye views in stereo rendering mode
-	void		StereoRenderExecuteBackEndCommands( const emptyCommand_t* const allCmds );
+	void				 StereoRenderExecuteBackEndCommands( const emptyCommand_t* const allCmds );
 
 	//! Performs a blocking swap of OpenGL buffers, ensuring GPU idleness at vsync
-	void		GL_BlockingSwapBuffers();
+	void				 GL_BlockingSwapBuffers();
 
 	//! Checks for changes in console variables that affect rendering and updates the rendering state accordingly.
-	void		CheckCVars();
+	void				 CheckCVars();
 
 	//! Clears all cached rendering pipeline data and resets associated resources.
-	void		ClearCaches();
-
-	//! Renders ImGui draw lists using the provided draw data.
-	static void ImGui_RenderDrawLists( ImDrawData* draw_data );
+	void				 ClearCaches();
 
 	//! Renders a draw surface with optional shadow counter support
-	void		DrawElementsWithCounters( const drawSurf_t* surf, bool shadowCounter = false );
+	void				 DrawElementsWithCounters( const drawSurf_t* surf, bool shadowCounter = false );
+
+	//! Returns the current OpenGL state bits tracked by the render backend
+	uint64				 GL_GetCurrentState() const;
+
+	//! Returns the current pixel offset for temporal anti-aliasing based on the given frame index.
+	idVec2				 GetCurrentPixelOffset( int frameIndex ) const;
+
+	//! Clears the pipeline cache.
+	void				 ResetPipelineCache();
+
+	//! Sets the current image for rendering operations.
+	void				 SetCurrentImage( idImage* image );
+
+	//! Returns the current image being processed by the render backend.
+	idImage*			 GetCurrentImage();
+
+	//! Returns the image at the specified index from the render backend context.
+	idImage*			 GetImageAt( int index );
+
+	//! Returns a reference to the common rendering passes object.
+	CommonRenderPasses&	 GetCommonPasses() { return commonPasses; }
+
+	//! Returns the current command list used for rendering operations.
+	nvrhi::ICommandList* GL_GetCommandList() const { return commandList; }
 
 private:
 	//! Draws a flicker box when the r_drawFlickerBox console variable is enabled.
@@ -391,22 +408,11 @@ private:
 
 private:
 	//! Initializes the rendering backend for a new frame
-	void GL_StartFrame();
+	void		   GL_StartFrame();
 
 	//! Ends the current frame and prepares for the next one.
-	void GL_EndFrame();
+	void		   GL_EndFrame();
 
-public:
-	//! Returns the current OpenGL state bits tracked by the render backend
-	uint64				 GL_GetCurrentState() const;
-
-	//! Returns the current pixel offset for temporal anti-aliasing based on the given frame index.
-	idVec2				 GetCurrentPixelOffset( int frameIndex ) const;
-
-	//! Returns the current command list used for rendering operations.
-	nvrhi::ICommandList* GL_GetCommandList() const { return commandList; }
-
-private:
 	//! Returns the current OpenGL state with stencil bits cleared.
 	uint64		   GL_GetCurrentStateMinusStencil() const;
 
@@ -720,22 +726,6 @@ private:
 	nvrhi::ShaderHandle																				   pixelShader;
 
 	int																								   prevBindingLayoutType;
-
-public:
-	//! Clears the pipeline cache.
-	void				ResetPipelineCache();
-
-	//! Sets the current image for rendering operations.
-	void				SetCurrentImage( idImage* image );
-
-	//! Returns the current image being processed by the render backend.
-	idImage*			GetCurrentImage();
-
-	//! Returns the image at the specified index from the render backend context.
-	idImage*			GetImageAt( int index );
-
-	//! Returns a reference to the common rendering passes object.
-	CommonRenderPasses& GetCommonPasses() { return commonPasses; }
 };
 
 #endif

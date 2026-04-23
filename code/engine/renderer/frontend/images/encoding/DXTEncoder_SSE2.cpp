@@ -961,16 +961,6 @@ void idDxtEncoder::CompressImageDXT1AlphaFast_SSE2( const byte* inBuf, byte* out
 	#endif
 }
 
-/*
-========================
-idDxtEncoder::CompressImageDXT5Fast_SSE2
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageDXT5Fast_SSE2( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -1268,15 +1258,6 @@ void idDxtEncoder::CompressYCoCgDXT5Fast_SSE2( const byte* inBuf, byte* outBuf, 
 	#endif
 }
 
-/*
-========================
-idDxtEncoder::EmitGreenIndices_SSE2
-
-params:	block		- 16-normal block for which to find normal Y indices
-paramO:	minGreen	- Minimal normal Y found
-paramO:	maxGreen	- Maximal normal Y found
-========================
-*/
 void idDxtEncoder::EmitGreenIndices_SSE2( const byte* block, const int channelBitOffset, const int minGreen, const int maxGreen )
 {
 	__m128i block0 = *( ( __m128i* )( &block[0] ) );

@@ -1798,7 +1798,7 @@ void idWeapon::OwnerDied()
 
 	// Update the grabber effects
 	/*
-	if( /*!common->IsMultiplayer() && grabberState != -1 )
+	if( !common->IsMultiplayer() && grabberState != -1 )
 	{
 		grabber.Update( owner, hide );
 	}
