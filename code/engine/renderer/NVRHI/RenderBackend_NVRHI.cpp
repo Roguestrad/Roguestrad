@@ -33,11 +33,11 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "../RenderCommon.h"
-#include "../RenderBackend.h"
+#include "../frontend/tr_local.h"
+#include "../backend/RenderBackend.h"
 #include "../../framework/Common_local.h"
 #include "imgui.h"
-#include "../ImmediateMode.h"
+#include "../backend/ImmediateMode.h"
 
 #include "nvrhi/utils.h"
 #include <engine/sys/DeviceManager.h>

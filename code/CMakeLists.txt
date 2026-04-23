@@ -564,10 +564,22 @@ file(GLOB FRAMEWORK_IMGUI_SOURCES engine/imgui/*.cpp)
 
 file(GLOB RENDERER_INCLUDES engine/renderer/*.h)
 file(GLOB RENDERER_SOURCES engine/renderer/*.cpp)
-file(GLOB RENDERER_COLOR_INCLUDES engine/renderer/Color/*.h)
-file(GLOB RENDERER_COLOR_SOURCES engine/renderer/Color/*.cpp)
-file(GLOB RENDERER_DXT_INCLUDES engine/renderer/DXT/*.h)
-file(GLOB RENDERER_DXT_SOURCES engine/renderer/DXT/*.cpp)
+file(GLOB RENDERER_FRONTEND_INCLUDES engine/renderer/frontend/*.h)
+file(GLOB RENDERER_FRONTEND_SOURCES engine/renderer/frontend/*.cpp)
+file(GLOB RENDERER_FRONTEND_IMAGES_INCLUDES engine/renderer/frontend/images/*.h)
+file(GLOB RENDERER_FRONTEND_IMAGES_SOURCES engine/renderer/frontend/images/*.cpp)
+file(GLOB RENDERER_FRONTEND_MODELS_INCLUDES engine/renderer/frontend/models/*.h)
+file(GLOB RENDERER_FRONTEND_MODELS_SOURCES engine/renderer/frontend/models/*.cpp)
+file(GLOB RENDERER_FRONTEND_FONTS_INCLUDES engine/renderer/frontend/fonts/*.h)
+file(GLOB RENDERER_FRONTEND_FONTS_SOURCES engine/renderer/frontend/fonts/*.cpp)
+file(GLOB RENDERER_BACKEND_INCLUDES engine/renderer/backend/*.h)
+file(GLOB RENDERER_BACKEND_SOURCES engine/renderer/backend/*.cpp)
+file(GLOB RENDERER_BACKEND_PASSES_INCLUDES engine/renderer/backend/passes/*.h)
+file(GLOB RENDERER_BACKEND_PASSES_SOURCES engine/renderer/backend/passes/*.cpp)
+file(GLOB RENDERER_COLOR_INCLUDES engine/renderer/frontend/images/color/*.h)
+file(GLOB RENDERER_COLOR_SOURCES engine/renderer/frontend/images/color/*.cpp)
+file(GLOB RENDERER_DXT_INCLUDES engine/renderer/frontend/images/encoding/*.h)
+file(GLOB RENDERER_DXT_SOURCES engine/renderer/frontend/images/encoding/*.cpp)
 
 
 file(GLOB RENDERER_SMAA_INCLUDES engine/renderer/SMAA/*.h)
@@ -953,6 +965,18 @@ source_group("engine\\imgui" FILES ${FRAMEWORK_IMGUI_SOURCES})
 
 source_group("engine\\renderer" FILES ${RENDERER_INCLUDES})
 source_group("engine\\renderer" FILES ${RENDERER_SOURCES})
+source_group("engine\\renderer\\frontend" FILES ${RENDERER_FRONTEND_INCLUDES})
+source_group("engine\\renderer\\frontend" FILES ${RENDERER_FRONTEND_SOURCES})
+source_group("engine\\renderer\\frontend\\images" FILES ${RENDERER_FRONTEND_IMAGES_INCLUDES})
+source_group("engine\\renderer\\frontend\\images" FILES ${RENDERER_FRONTEND_IMAGES_SOURCES})
+source_group("engine\\renderer\\frontend\\models" FILES ${RENDERER_FRONTEND_MODELS_INCLUDES})
+source_group("engine\\renderer\\frontend\\models" FILES ${RENDERER_FRONTEND_MODELS_SOURCES})
+source_group("engine\\renderer\\frontend\\fonts" FILES ${RENDERER_FRONTEND_FONTS_INCLUDES})
+source_group("engine\\renderer\\frontend\\fonts" FILES ${RENDERER_FRONTEND_FONTS_SOURCES})
+source_group("engine\\renderer\\backend" FILES ${RENDERER_BACKEND_INCLUDES})
+source_group("engine\\renderer\\backend" FILES ${RENDERER_BACKEND_SOURCES})
+source_group("engine\\renderer\\backend\\passes" FILES ${RENDERER_BACKEND_PASSES_INCLUDES})
+source_group("engine\\renderer\\backend\\passes" FILES ${RENDERER_BACKEND_PASSES_SOURCES})
 
 source_group("engine\\renderer\\Color" FILES ${RENDERER_COLOR_INCLUDES})
 source_group("engine\\renderer\\Color" FILES ${RENDERER_COLOR_SOURCES})
@@ -1108,6 +1132,12 @@ set(RBDOOM3_INCLUDES
 			${FRAMEWORK_INCLUDES}
 			${FRAMEWORK_DECLS_INCLUDES}
 			${RENDERER_INCLUDES}
+			${RENDERER_FRONTEND_INCLUDES}
+			${RENDERER_FRONTEND_IMAGES_INCLUDES}
+			${RENDERER_FRONTEND_MODELS_INCLUDES}
+			${RENDERER_FRONTEND_FONTS_INCLUDES}
+			${RENDERER_BACKEND_INCLUDES}
+			${RENDERER_BACKEND_PASSES_INCLUDES}
 			${RENDERER_COLOR_INCLUDES}
 			${RENDERER_DXT_INCLUDES}
 			${RENDERER_PASSES_INCLUDES}
@@ -1139,7 +1169,7 @@ set(RBDOOM3_INCLUDES
 
 			${COMPILER_INCLUDES}
 			${COMPILER_AAS_INCLUDES} ${COMPILER_AAS_SOURCES}
-			${COMPILER_ROGMAP_INCLUDES} ${COMPILER_ROGMAP_SOURCES}
+			${COMPILER_ROGMAP_INCLUDES}
 
 			${TOOLS_INCLUDES}
 			${IMGUI_EDITOR_INCLUDES}
@@ -1167,6 +1197,12 @@ set(RBDOOM3_SOURCES
 			${FRAMEWORK_SOURCES}
 			${FRAMEWORK_DECLS_SOURCES}
 			${RENDERER_SOURCES}
+			${RENDERER_FRONTEND_SOURCES}
+			${RENDERER_FRONTEND_IMAGES_SOURCES}
+			${RENDERER_FRONTEND_MODELS_SOURCES}
+			${RENDERER_FRONTEND_FONTS_SOURCES}
+			${RENDERER_BACKEND_SOURCES}
+			${RENDERER_BACKEND_PASSES_SOURCES}
 			${RENDERER_COLOR_SOURCES}
 			${RENDERER_DXT_SOURCES}
 			${RENDERER_PASSES_SOURCES}
@@ -1189,7 +1225,7 @@ set(RBDOOM3_SOURCES
 			${COMMON_SOURCES}
 
 			${COMPILER_AAS_SOURCES}
-			${COMPILER_DMAP_SOURCES}
+			${COMPILER_ROGMAP_SOURCES}
 
 			${IMGUI_EDITOR_SOURCES}
 			${IMGUI_EDITOR_LIGHT_SOURCES}
@@ -1328,9 +1364,9 @@ if(MSVC)
 		set(RBDOOM3_PRECOMPILED_SOURCES ${RBDOOM3_SOURCES})
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${ZLIB_SOURCES} ${BINKDEC_SOURCES} ${IMGUI_SOURCES} ${IMGUI_NODE_EDITOR_SOURCES} ${MIKKTSPACE_SOURCES} ${OGGVORBIS_SOURCES} ${OPTICK_SOURCES} ${LUA_SOURCES} ${LUASOCKET_SOURCES} ${PUGIXML_SOURCES})
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/libs/zlib/minizip/ioapi.c)
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTDecoder.cpp)
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTEncoder.cpp)
-		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/DXT/DXTEncoder_SSE2.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/frontend/images/encoding/DXTDecoder.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/frontend/images/encoding/DXTEncoder.cpp)
+		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES ${CMAKE_CURRENT_SOURCE_DIR}/engine/renderer/frontend/images/encoding/DXTEncoder_SSE2.cpp)
 
 		list(REMOVE_ITEM RBDOOM3_PRECOMPILED_SOURCES game/gamesys/Class.cpp)
 		#foreach( src_file ${RBDOOM3_PRECOMPILED_SOURCES} )

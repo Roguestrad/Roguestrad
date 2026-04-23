@@ -27,6 +27,8 @@
 #pragma hdrstop
 
 #include "DeviceManager.h"
+#include "../renderer/ScreenRect.h"
+#include "../renderer/backend/Framebuffer.h"
 
 DeviceManager* DeviceManager::Create( nvrhi::GraphicsAPI api )
 {
@@ -78,7 +80,7 @@ void DeviceManager::BackBufferResizing()
 
 void DeviceManager::BackBufferResized()
 {
-	if( tr.IsInitialized() ) {
+	if( renderSystem->IsInitialized() ) {
 		Framebuffer::ResizeFramebuffers();
 	}
 }

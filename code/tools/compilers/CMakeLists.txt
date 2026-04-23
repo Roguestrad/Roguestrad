@@ -67,42 +67,42 @@ set(MC_FRAMEWORK_SOURCES
 	)
 
 set(MC_RENDERER_INCLUDES
-	../../engine/renderer/BinaryImage.h
-	../../engine/renderer/Color/ColorSpace.h
+	../../engine/renderer/frontend/images/BinaryImage.h
+	../../engine/renderer/frontend/images/color/ColorSpace.h
 	../../engine/renderer/Image.h
 	../../engine/renderer/Material.h
 	../../engine/renderer/ModelManager.h
 	../../engine/renderer/Model.h
-	../../engine/renderer/Model_gltf.h
-	../../engine/renderer/Model_ase.h
-	../../engine/renderer/Model_lwo.h
-	../../engine/renderer/Model_ma.h
-	../../engine/renderer/Model_obj.h
+	../../engine/renderer/frontend/models/Model_gltf.h
+	../../engine/renderer/frontend/models/Model_ase.h
+	../../engine/renderer/frontend/models/Model_lwo.h
+	../../engine/renderer/frontend/models/Model_ma.h
+	../../engine/renderer/frontend/models/Model_obj.h
 	)
 set(MC_RENDERER_SOURCES
-	../../engine/renderer/BinaryImage.cpp
-	../../engine/renderer/Color/ColorSpace.cpp
-	../../engine/renderer/DXT/DXTEncoder.cpp
-	../../engine/renderer/DXT/DXTEncoder_SSE2.cpp
-	../../engine/renderer/GLMatrix.cpp
-	../../engine/renderer/ImageManager.cpp
-	../../engine/renderer/Image_files.cpp
-	#../../engine/renderer/Image_intrinsic.cpp TODO
-	../../engine/renderer/Image_load.cpp
-	../../engine/renderer/Image_process.cpp
-	../../engine/renderer/Image_program.cpp
+	../../engine/renderer/frontend/images/BinaryImage.cpp
+	../../engine/renderer/frontend/images/color/ColorSpace.cpp
+	../../engine/renderer/frontend/images/encoding/DXTEncoder.cpp
+	../../engine/renderer/frontend/images/encoding/DXTEncoder_SSE2.cpp
+	../../engine/renderer/frontend/GLMatrix.cpp
+	../../engine/renderer/frontend/images/ImageManager.cpp
+	../../engine/renderer/frontend/images/Image_files.cpp
+	#../../engine/renderer/frontend/images/Image_intrinsic.cpp TODO
+	../../engine/renderer/frontend/images/Image_load.cpp
+	../../engine/renderer/frontend/images/Image_process.cpp
+	../../engine/renderer/frontend/images/Image_program.cpp
 	../../engine/stub/Image_stub.cpp
 	../../engine/renderer/Material.cpp
-	../../engine/renderer/tr_trisurf.cpp
+	../../engine/renderer/frontend/tr_trisurf.cpp
 	#../../engine/renderer/VertexCache.cpp
-	../../engine/renderer/ModelManager.cpp
-	../../engine/renderer/Model.cpp
-	../../engine/renderer/Model_gltf.cpp
-	#../../engine/renderer/Model_md5.cpp
-	../../engine/renderer/Model_ase.cpp
-	../../engine/renderer/Model_lwo.cpp
-	../../engine/renderer/Model_ma.cpp
-	../../engine/renderer/Model_obj.cpp
+	../../engine/renderer/frontend/models/ModelManager.cpp
+	../../engine/renderer/frontend/models/Model.cpp
+	../../engine/renderer/frontend/models/Model_gltf.cpp
+	#../../engine/renderer/frontend/models/Model_md5.cpp
+	../../engine/renderer/frontend/models/Model_ase.cpp
+	../../engine/renderer/frontend/models/Model_lwo.cpp
+	../../engine/renderer/frontend/models/Model_ma.cpp
+	../../engine/renderer/frontend/models/Model_obj.cpp
 	)
 
 file(GLOB MC_MIKKTSPACE_INCLUDES ../../libs/mikktspace/*.h)

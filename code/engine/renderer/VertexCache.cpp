@@ -33,7 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "RenderCommon.h"
+#include "frontend/tr_local.h"
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;
 

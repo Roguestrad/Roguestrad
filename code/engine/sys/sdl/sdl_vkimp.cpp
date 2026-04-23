@@ -45,7 +45,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <vulkan/vulkan.h>
 #include <vector>
 
-#include "engine/renderer/RenderCommon.h"
+#include "engine/renderer/frontend/tr_local.h"
 #include "sdl_local.h"
 
 #include <engine/sys/DeviceManager.h>

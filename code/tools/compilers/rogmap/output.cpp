@@ -31,6 +31,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
+//! Allocates and returns a new static triangle surface structure.
+srfTriangles_t* R_AllocStaticTriSurf();
+
 #include "dmap.h"
 
 //=================================================================================

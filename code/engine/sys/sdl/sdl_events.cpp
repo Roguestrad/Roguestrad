@@ -41,7 +41,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include <SDL.h>
 
-#include "engine/renderer/RenderCommon.h"
+#include "engine/renderer/frontend/tr_local.h"
 #include "sdl_local.h"
 #include "../posix/posix_public.h"
 

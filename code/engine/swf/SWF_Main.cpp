@@ -29,7 +29,10 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
-#include "../renderer/DXT/DXTCodec.h"
+#include "../renderer/frontend/images/encoding/DXTCodec.h"
+#include "../renderer/frontend/tr_local.h"
+
+// void LoadSTB_RGBA8( const char* filename, unsigned char** pic, int* width, int* height, ID_TIME_T* timestamp );
 
 #include <luawrapper.hpp>
 

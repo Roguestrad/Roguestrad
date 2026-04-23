@@ -37,6 +37,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "engine/imgui/BFGimgui.h"
 #include "engine/renderer/Material.h"
 #include "engine/renderer/Image.h"
+#include "engine/renderer/frontend/tr_local.h" // for viewDef_t and MVP math
 
 namespace ImGuiTools
 {
@@ -884,8 +885,8 @@ void LightEditor::Draw()
 			showTool = false;
 		}
 
-		viewDef_t viewDef;
-		if( gameEdit->PlayerGetRenderView( viewDef.renderView ) ) {
+		renderView_t rv;
+		if( gameEdit->PlayerGetRenderView( rv ) ) {
 			ImGui::Separator();
 
 			ImGui::Text( "X: %f Y: %f", io.MousePos.x, io.MousePos.y );
@@ -961,9 +962,8 @@ void LightEditor::Draw()
 
 			ImGuizmo::SetID( 0 );
 
-			// viewDef_t viewDef;
-			// if( gameEdit->PlayerGetRenderView( viewDef.renderView ) )
-			{
+			viewDef_t viewDef;
+			if( gameEdit->PlayerGetRenderView( viewDef.renderView ) ) {
 				R_SetupViewMatrix( &viewDef, STEREOPOS_MONO );
 				R_SetupProjectionMatrix( &viewDef, false, 2 );
 

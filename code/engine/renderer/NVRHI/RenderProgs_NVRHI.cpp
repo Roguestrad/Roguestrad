@@ -33,7 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <ShaderMake/ShaderBlob.h>
 #pragma hdrstop
 
-#include "../RenderCommon.h"
+#include "../frontend/tr_local.h"
 #include <engine/sys/DeviceManager.h>
 
 void idRenderProgManager::StartFrame()

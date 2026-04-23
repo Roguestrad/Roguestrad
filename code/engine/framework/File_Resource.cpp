@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "../sound/WaveFile.h"
-#include "../renderer/CmdlineProgressbar.h"
+#include "../renderer/frontend/CmdlineProgressbar.h"
 
 void idResourceContainer::ReOpen()
 {

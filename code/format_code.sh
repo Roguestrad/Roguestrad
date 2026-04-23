@@ -74,14 +74,8 @@ find . -regex ".*\.\(h\|hpp\)" \
 	! -path "./libs/*" \
 	! -path "./extern/*" \
 	! -path "./idlib/sys/sys_defines.h" \
-	! -path "./engine/renderer/Image_blueNoiseVC_1M.h" \
-	! -path "./engine/renderer/Image_blueNoiseVC_2.h" \
-	! -path "./engine/renderer/Image_brdfLut.h" \
-	! -path "./engine/renderer/Image_env_UAC_lobby_amb.h" \
-	! -path "./engine/renderer/Image_env_UAC_lobby_spec.h" \
-	! -path "./engine/renderer/SMAA/AreaTex.h" \
-	! -path "./engine/renderer/SMAA/SearchTex.h" \
-    ! -path "./engine/renderer/simplex.h" \
+	! -path "./engine/renderer/frontend/images/baked/*.h" \
+    ! -path "./engine/renderer/backend/simplex.h" \
     ! -path "./game/gamesys/GameTypeInfo.h" \
 	-print0 | xargs -0 -P 16 "$CLANGFMT_BIN" -i --verbose
 

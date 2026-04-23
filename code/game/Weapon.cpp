@@ -33,6 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Game_local.h"
 #include "PredictedValue_impl.h"
+#include "../engine/renderer/frontend/tr_local.h" // FIXME remove, only needed for tr.vrSkin
 
 /***********************************************************************
 

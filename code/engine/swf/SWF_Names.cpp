@@ -29,6 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
+#include "../renderer/Font.h"
 
 // RB begin
 const char* idSWF::GetDictTypeName( swfDictType_t type )

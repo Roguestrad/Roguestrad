@@ -25,7 +25,7 @@
 
 #include "precompiled.h"
 
-#include "../renderer/RenderSystem.h"
+#include "../renderer/frontend/tr_local.h"
 #include "../framework/Common_local.h"
 #include "DeviceManager.h"
 

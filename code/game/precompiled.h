@@ -44,9 +44,8 @@ If you have questions concerning this license or the applicable additional terms
 #include "../engine/decls/DeclPDA.h"
 
 // renderer
-#include "../engine/renderer/Cinematic.h"
+#include "../engine/renderer/frontend/images/Cinematic.h"
 #include "../engine/renderer/Material.h"
-#include "../engine/renderer/RenderCommon.h"
 #include "../engine/renderer/Model.h"
 #include "../engine/renderer/ModelManager.h"
 // sound engine

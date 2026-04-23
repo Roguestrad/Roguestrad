@@ -255,7 +255,7 @@ typedef enum {
 
 typedef void ( *ImageGeneratorFunction )( idImage* image, nvrhi::ICommandList* commandList );
 
-#include "BinaryImage.h"
+#include "frontend/images/BinaryImage.h"
 
 #define MAX_IMAGE_NAME 256
 

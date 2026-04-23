@@ -33,7 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifdef __TYPEINFOGEN__
 	#define VR_OPTIONS 0
 #else
-	#include "../../engine/renderer/RenderCommon.h"
+	// #include "../../engine/renderer/RenderCommon.h"
 #endif
 
 enum mainMenuTransition_t { MENU_TRANSITION_INVALID = -1, MENU_TRANSITION_SIMPLE, MENU_TRANSITION_ADVANCE, MENU_TRANSITION_BACK, MENU_TRANSITION_FORCE };

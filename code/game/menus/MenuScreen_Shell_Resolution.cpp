@@ -29,7 +29,11 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 #include "../Game_local.h"
-#include "engine/renderer/RenderCommon.h"
+
+bool			 R_GetModeListForDisplay( const int requestedDisplayNum, idList<vidMode_t>& modeList );
+
+extern idCVar	 r_fullscreen;
+extern idCVar	 r_vidMode;
 
 const static int NUM_SETTING_OPTIONS = 7;
 

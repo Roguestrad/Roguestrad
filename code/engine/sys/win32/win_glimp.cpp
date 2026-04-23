@@ -48,7 +48,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "win_local.h"
 #include "rc/doom_resource.h"
-#include "../../renderer/RenderCommon.h"
+#include "../../renderer/frontend/tr_local.h"
 
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;

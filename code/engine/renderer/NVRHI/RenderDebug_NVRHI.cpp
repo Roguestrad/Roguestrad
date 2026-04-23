@@ -33,9 +33,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-#include "../RenderCommon.h"
-#include "../simplex.h" // line font definition
-#include "../ImmediateMode.h"
+#include "../frontend/tr_local.h"
+#include "../backend/simplex.h" // line font definition
+#include "../backend/ImmediateMode.h"
 
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;

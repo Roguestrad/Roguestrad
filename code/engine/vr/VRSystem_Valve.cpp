@@ -30,6 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma hdrstop
 #include "precompiled.h"
+#include "../renderer/frontend/tr_local.h"
 
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;

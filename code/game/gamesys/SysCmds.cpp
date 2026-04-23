@@ -2410,6 +2410,9 @@ void Cmd_TestId_f( const idCmdArgs& args )
 // RB begin
 void Cmd_EditLights_f( const idCmdArgs& args )
 {
+	extern idCVar r_singleLight;
+	extern idCVar r_showLights;
+
 	if( g_editEntityMode.GetInteger() != 1 ) {
 		g_editEntityMode.SetInteger( 1 );
 

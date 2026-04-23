@@ -34,6 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "Game_local.h"
+#include "../engine/renderer/frontend/tr_local.h" // FIXME remove - for tr.guiModel access
 
 #ifdef GAME_DLL
 

@@ -32,7 +32,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "win_local.h"
-#include "../../renderer/RenderCommon.h"
+#include "../../renderer/frontend/tr_local.h" // for glConfig
 
 #include <windowsx.h>
 #include <engine/sys/DeviceManager.h>

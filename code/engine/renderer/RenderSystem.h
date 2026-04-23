@@ -100,6 +100,19 @@ enum antiAliasingMode_t {
 #endif
 };
 
+enum renderMode_t {
+	RENDERMODE_DOOM,
+	RENDERMODE_2BIT,
+	RENDERMODE_2BIT_HIGHRES,
+	RENDERMODE_C64,
+	RENDERMODE_C64_HIGHRES,
+	RENDERMODE_CPC,
+	RENDERMODE_CPC_HIGHRES,
+	RENDERMODE_GENESIS,
+	RENDERMODE_GENESIS_HIGHRES,
+	RENDERMODE_PSX,
+};
+
 // CPU counters and timers
 struct performanceCounters_t {
 	int	   c_box_cull_in;
@@ -202,17 +215,55 @@ struct glconfig_t {
 	float			  pixelAspect;
 };
 
+// Used for initializing the D3D12/Vulkan device contexts
+struct glimpParms_t {
+	int	 x; // ignored in fullscreen
+	int	 y; // ignored in fullscreen
+	int	 width;
+	int	 height;
+	int	 fullScreen; // 0 = windowed, otherwise 1 based monitor number to go full screen on
+	// -1 = borderless window for spanning multiple displays
+	bool startMaximized = false;
+	int	 displayHz;
+	int	 multiSamples;
+};
+
 struct emptyCommand_t;
 
-const int	  SMALLCHAR_WIDTH  = 8;
-const int	  SMALLCHAR_HEIGHT = 16;
-const int	  BIGCHAR_WIDTH	   = 16;
-const int	  BIGCHAR_HEIGHT   = 16;
+const int SMALLCHAR_WIDTH  = 8;
+const int SMALLCHAR_HEIGHT = 16;
+const int BIGCHAR_WIDTH	   = 16;
+const int BIGCHAR_HEIGHT   = 16;
 
 // all drawing is done to a 640 x 480 virtual screen size
 // and will be automatically scaled to the real resolution
-const int	  SCREEN_WIDTH	= 640;
-const int	  SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH	= 640;
+const int SCREEN_HEIGHT = 480;
+
+struct vidMode_t {
+	int width;
+	int height;
+	int displayHz;
+
+	//! Initializes a vidMode_t object with default screen dimensions and refresh rate.
+	vidMode_t()
+	{
+		width	  = SCREEN_WIDTH;
+		height	  = SCREEN_HEIGHT;
+		displayHz = 60;
+	}
+
+	//! Constructor for vidMode_t that initializes width, height, and displayHz members.
+	vidMode_t( int width, int height, int displayHz ) :
+		width( width ),
+		height( height ),
+		displayHz( displayHz )
+	{
+	}
+
+	//! Compares two vidMode_t objects for equality based on width, height, and displayHz.
+	bool operator==( const vidMode_t& a ) { return a.width == width && a.height == height && a.displayHz == displayHz; }
+};
 
 extern idCVar r_useVirtualScreenResolution;
 

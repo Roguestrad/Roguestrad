@@ -103,7 +103,7 @@ constexpr uint32 NUM_FRAME_DATA = 3;
 // RB: make Optick profiling available everywhere
 #include "../libs/optick/optick.h"
 
-#include "../engine/renderer/Cinematic.h"
+#include "../engine/renderer/frontend/images/Cinematic.h"
 #include "../engine/renderer/Material.h"
 #include "../engine/renderer/BufferObject.h"
 #include "../engine/renderer/VertexCache.h"
@@ -111,8 +111,9 @@ constexpr uint32 NUM_FRAME_DATA = 3;
 #include "../engine/renderer/ModelManager.h"
 #include "../engine/renderer/RenderSystem.h"
 #include "../engine/renderer/RenderWorld.h"
-#include "../engine/renderer/BindingCache.h"
-#include "../engine/renderer/RenderCommon.h"
+#include "../engine/renderer/backend/BindingCache.h"
+
+#include "../engine/vr/VRSystem.h"
 
 // sound engine
 #include "../engine/sound/sound.h"

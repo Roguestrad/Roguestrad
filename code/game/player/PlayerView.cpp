@@ -31,6 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "../Game_local.h"
+#include "../engine/renderer/frontend/tr_local.h" // FIXME remove - for tr.guiModel access
 
 // _D3XP : rename all gameLocal.time to gameLocal.slow.time for merge!
 

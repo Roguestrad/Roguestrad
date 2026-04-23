@@ -29,7 +29,7 @@ If you have questions concerning this license or the applicable additional terms
 */
 #include "precompiled.h"
 #pragma hdrstop
-#include "../renderer/RenderCommon.h"
+#include "../renderer/frontend/tr_local.h" // FIXME remove, needed for direct tr.guiModel access
 
 idCVar		  swf_timescale( "swf_timescale", "1", CVAR_FLOAT, "timescale for swf files" );
 idCVar		  swf_stopat( "swf_stopat", "0", CVAR_FLOAT, "stop at a specific frame" );

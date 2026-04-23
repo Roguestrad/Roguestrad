@@ -28,7 +28,7 @@ If you have questions concerning this license or the applicable additional terms
 ===========================================================================
 */
 
-#include "../../../engine/renderer/RenderCommon.h"
+#include "../../../engine/renderer/frontend/tr_local.h"
 
 // DMAP TODO
 #define DMAP_INLINE_MODELS 1

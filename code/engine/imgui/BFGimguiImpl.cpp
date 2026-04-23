@@ -33,8 +33,9 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "BFGimgui.h"
 #include "ImGuizmo.h"
-// #include "renderer/RenderCommon.h"
-#include "engine/renderer/RenderBackend.h"
+
+// #include "engine/renderer/backend/RenderBackend.h" // TODO remove, because Imgui rendering happens in the frontend using idGuiModel
+#include "engine/renderer/frontend/tr_local.h" // TODO remove, because Imgui rendering happens in the frontend using idGuiModel
 
 static idCVar imgui_showDemoWindow( "imgui_showDemoWindow", "0", CVAR_GUI | CVAR_BOOL, "show big ImGui demo window" );
 static idCVar imgui_showSimpleNodeEditorExample( "imgui_showSimpleNodeEditorExample", "0", CVAR_GUI | CVAR_BOOL, "" );

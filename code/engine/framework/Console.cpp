@@ -31,9 +31,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 #include "ConsoleHistory.h"
-#include "../renderer/ResolutionScale.h"
 #include "Common_local.h"
-#include "../imgui/BFGimgui.h"
+#include "../renderer/frontend/tr_local.h" // for glConfig, FIXME remove
+#include "imgui.h"
 
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;

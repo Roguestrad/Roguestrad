@@ -32,6 +32,7 @@
 #include <unordered_set>
 
 #include "../framework/Common_local.h"
+#include "../renderer/frontend/tr_local.h"
 #include "DeviceManager.h"
 
 #include <nvrhi/vulkan.h>

@@ -36,11 +36,19 @@ const static int NUM_SYSTEM_OPTIONS_OPTIONS = 8;
 extern idCVar	 r_graphicsAPI;
 extern idCVar	 r_antiAliasing;
 extern idCVar	 r_useFilmicPostFX;
+extern idCVar	 r_useCRTPostFX;
 extern idCVar	 r_swapInterval;
 extern idCVar	 s_volume_dB;
 extern idCVar	 r_exposure; // RB: use this to control HDR exposure or brightness in LDR mode
 extern idCVar	 r_lightScale;
+extern idCVar	 r_renderMode;
+extern idCVar	 r_forceAmbient;
+extern idCVar	 r_useSSAO;
 extern idCVar	 r_useSSR;
+extern idCVar	 r_fullscreen;
+extern idCVar	 r_vidMode;
+
+bool			 R_GetModeListForDisplay( const int displayNum, idList<vidMode_t>& modeList );
 
 /*
 ========================

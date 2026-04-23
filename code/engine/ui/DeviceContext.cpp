@@ -33,11 +33,12 @@ If you have questions concerning this license or the applicable additional terms
 #include "DeviceContext.h"
 
 #include "imgui.h"
-#include "../renderer/RenderCommon.h"
+#include "../renderer/frontend/tr_local.h"
 
 extern idCVar	   in_useJoystick;
 
 // bypass rendersystem to directly work on guiModel
+// TODO remove
 extern idGuiModel* tr_guiModel;
 
 idVec4			   idDeviceContext::colorPurple;

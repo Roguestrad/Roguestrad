@@ -33,7 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 
 idCVar image_pixelLook( "image_pixelLook", "0", CVAR_BOOL | CVAR_ARCHIVE, "Turn off linear filtering on most textures to achieve the 90s software renderer look" );
 
-#include "../renderer/RenderCommon.h"
+#include "../renderer/frontend/tr_local.h"
 
 /*
 ====================

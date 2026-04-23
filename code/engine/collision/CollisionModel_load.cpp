@@ -51,7 +51,7 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 
 #include "CollisionModel_local.h"
-#include "../renderer/Model_gltf.h"
+#include "../renderer/frontend/models/Model_gltf.h"
 
 #define CMODEL_BINARYFILE_EXT "bcmodel"
 

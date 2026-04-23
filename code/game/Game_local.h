@@ -76,6 +76,9 @@ class idMenuHandler_Shell;
 class EnvironmentProbe; // RB
 class iceBot;
 
+extern idCVar		  r_singleLight;
+extern idCVar		  r_showLights;
+
 const int			  MAX_CLIENTS					 = MAX_PLAYERS;
 const int			  MAX_CLIENTS_IN_PVS			 = MAX_CLIENTS >> 3;
 const int			  GENTITYNUM_BITS				 = 12;
