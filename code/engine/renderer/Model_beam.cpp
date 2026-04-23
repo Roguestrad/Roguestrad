@@ -42,31 +42,16 @@ two points that faces the view, like a dynamic deform tube.
 
 static const char* beam_SnapshotName = "_beam_Snapshot_";
 
-/*
-===============
-idRenderModelBeam::IsDynamicModel
-===============
-*/
 dynamicModel_t	   idRenderModelBeam::IsDynamicModel() const
 {
 	return DM_CONTINUOUS; // regenerate for every view
 }
 
-/*
-===============
-idRenderModelBeam::IsLoaded
-===============
-*/
 bool idRenderModelBeam::IsLoaded() const
 {
 	return true; // don't ever need to load
 }
 
-/*
-===============
-idRenderModelBeam::InstantiateDynamicModel
-===============
-*/
 idRenderModel* idRenderModelBeam::InstantiateDynamicModel( const struct renderEntity_s* renderEntity, const viewDef_t* viewDef, idRenderModel* cachedModel )
 {
 	idRenderModelStatic* staticModel;
@@ -184,11 +169,6 @@ idRenderModel* idRenderModelBeam::InstantiateDynamicModel( const struct renderEn
 	return staticModel;
 }
 
-/*
-===============
-idRenderModelBeam::Bounds
-===============
-*/
 idBounds idRenderModelBeam::Bounds( const struct renderEntity_s* renderEntity ) const
 {
 	idBounds b;

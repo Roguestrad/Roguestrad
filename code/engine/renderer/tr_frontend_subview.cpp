@@ -48,10 +48,17 @@ struct orientation_t {
 	idMat3 axis;
 };
 
-/*
-=================
-R_MirrorPoint
-=================
+/*!
+	\brief Transforms a point from one coordinate system to another using surface and camera orientations
+
+	This function performs a coordinate transformation by first translating the input point relative to the surface origin, then projecting it onto the camera's axis system, and finally translating
+   the result to the camera's origin. The transformation effectively mirrors the point from the surface coordinate system to the camera coordinate system. The function uses a standard basis
+   transformation approach where each component of the local vector is dotted with the surface axis vectors and then multiplied by the corresponding camera axis vectors.
+
+	\param in Input point in world coordinates
+	\param surface Surface orientation containing origin and axis vectors for the source coordinate system
+	\param camera Camera orientation containing origin and axis vectors for the target coordinate system
+	\param out Output point in camera coordinates
 */
 static void R_MirrorPoint( const idVec3& in, orientation_t* surface, orientation_t* camera, idVec3& out )
 {
@@ -66,10 +73,17 @@ static void R_MirrorPoint( const idVec3& in, orientation_t* surface, orientation
 	out = transformed + camera->origin;
 }
 
-/*
-=================
-R_MirrorVector
-=================
+/*!
+	\brief Mirrors a vector using surface and camera orientation data
+
+	This function performs vector mirroring by taking an input vector and transforming it based on the orientation data from both a surface and a camera. The transformation is computed by first
+   calculating the dot product of the input vector with each axis of the surface orientation, then using these values to weight the corresponding axes of the camera orientation to construct the output
+   vector.
+
+	\param in Input vector to be mirrored
+	\param surface Orientation data representing the surface
+	\param camera Orientation data representing the camera
+	\param out Output vector containing the mirrored result
 */
 static void R_MirrorVector( const idVec3& in, orientation_t* surface, orientation_t* camera, idVec3& out )
 {
@@ -80,14 +94,7 @@ static void R_MirrorVector( const idVec3& in, orientation_t* surface, orientatio
 	}
 }
 
-/*
-=============
-R_PlaneForSurface
-
-Returns the plane for the first triangle in the surface
-FIXME: check for degenerate triangle?
-=============
-*/
+//! Calculates and returns the plane equation for the first triangle of a surface using its vertex positions.
 static void R_PlaneForSurface( const srfTriangles_t* tri, idPlane& plane )
 {
 	idDrawVert* v1 = tri->verts + tri->indexes[0];
@@ -96,19 +103,6 @@ static void R_PlaneForSurface( const srfTriangles_t* tri, idPlane& plane )
 	plane.FromPoints( v1->xyz, v2->xyz, v3->xyz );
 }
 
-/*
-=========================
-R_PreciseCullSurface
-
-Check the surface for visibility on a per-triangle basis
-for cases when it is going to be VERY expensive to draw (subviews)
-
-If not culled, also returns the bounding box of the surface in
-Normalized Device Coordinates, so it can be used to crop the scissor rect.
-
-OPTIMIZE: we could also take exact portal passing into consideration
-=========================
-*/
 bool R_PreciseCullSurface( const drawSurf_t* drawSurf, idBounds& ndcBounds )
 {
 	const srfTriangles_t* tri = drawSurf->frontEndGeo;
@@ -204,11 +198,7 @@ bool R_PreciseCullSurface( const drawSurf_t* drawSurf, idBounds& ndcBounds )
 	return false;
 }
 
-/*
-========================
-R_MirrorViewBySurface
-========================
-*/
+//! Creates a mirrored view definition based on a given draw surface for reflection effects
 static viewDef_t* R_MirrorViewBySurface( const drawSurf_t* drawSurf )
 {
 	// copy the viewport size from the original
@@ -263,11 +253,7 @@ static viewDef_t* R_MirrorViewBySurface( const drawSurf_t* drawSurf )
 	return parms;
 }
 
-/*
-========================
-R_PortalViewBySurface
-========================
-*/
+//! Creates a new view definition for rendering a portal view based on a given surface.
 static viewDef_t* R_PortalViewBySurface( const drawSurf_t* surf )
 {
 	if( !surf->space->entityDef->parms.remoteRenderView ) {
@@ -348,11 +334,7 @@ static viewDef_t* R_PortalViewBySurface( const drawSurf_t* surf )
 	return parms;
 }
 
-/*
-========================
-R_XrayViewBySurface
-========================
-*/
+//! Creates and initializes a new xray subview definition based on a given draw surface.
 static viewDef_t* R_XrayViewBySurface( const drawSurf_t* drawSurf )
 {
 	// copy the viewport size from the original
@@ -366,11 +348,7 @@ static viewDef_t* R_XrayViewBySurface( const drawSurf_t* drawSurf )
 	return parms;
 }
 
-/*
-===============
-R_RemoteRender
-===============
-*/
+//! Performs remote rendering for a given surface and texture stage
 static void R_RemoteRender( const drawSurf_t* surf, textureStage_t* stage )
 {
 	// remote views can be reused in a single frame
@@ -421,11 +399,7 @@ static void R_RemoteRender( const drawSurf_t* surf, textureStage_t* stage )
 	tr.UnCrop();
 }
 
-/*
-=================
-R_MirrorRender
-=================
-*/
+//! Renders a mirror view for the given surface and texture stage.
 void R_MirrorRender( const drawSurf_t* surf, textureStage_t* stage, idScreenRect scissor )
 {
 	// remote views can be reused in a single frame
@@ -465,11 +439,7 @@ void R_MirrorRender( const drawSurf_t* surf, textureStage_t* stage, idScreenRect
 	tr.UnCrop();
 }
 
-/*
-=================
-R_XrayRender
-=================
-*/
+//! R_XrayRender renders a surface with xray visualization using a specified texture stage and scissor rectangle.
 void R_XrayRender( const drawSurf_t* surf, textureStage_t* stage, idScreenRect scissor )
 {
 	// remote views can be reused in a single frame
@@ -512,11 +482,7 @@ void R_XrayRender( const drawSurf_t* surf, textureStage_t* stage, idScreenRect s
 	tr.UnCrop();
 }
 
-/*
-==================
-R_GenerateSurfaceSubview
-==================
-*/
+//! Generates a subview for a given draw surface if it has a subview material.
 bool R_GenerateSurfaceSubview( const drawSurf_t* drawSurf )
 {
 	// for testing the performance hit
@@ -623,73 +589,6 @@ bool R_GenerateSurfaceSubview( const drawSurf_t* drawSurf )
 	return false;
 }
 
-/*
-=================
-R_EnvironmentProbeRender
-=================
-*/
-static void R_EnvironmentProbeRender( const RenderEnvprobeLocal* )
-{
-#if 0
-	// remote views can be reused in a single frame
-	//if( stage->dynamicFrameCount == tr.frameCount )
-	//{
-	//	return;
-	//}
-
-	// issue a new view command
-	// copy the viewport size from the original
-	viewDef_t* parms = ( viewDef_t* )R_FrameAlloc( sizeof( *parms ) );
-	*parms = *tr.viewDef;
-	parms->renderView.viewID = 0;	// clear to allow player bodies to show up, and suppress view weapons
-
-	parms->isSubview = true;
-	//parms->isXraySubview = true;
-
-	if( parms == NULL )
-	{
-		return;
-	}
-
-	int stageWidth = 256;
-	int stageHeight = 256;
-
-	tr.CropRenderSize( stageWidth, stageHeight );
-
-	tr.GetCroppedViewport( &parms->viewport );
-
-	parms->scissor.x1 = 0;
-	parms->scissor.y1 = 0;
-	parms->scissor.x2 = parms->viewport.x2 - parms->viewport.x1;
-	parms->scissor.y2 = parms->viewport.y2 - parms->viewport.y1;
-
-	parms->superView = tr.viewDef;
-	//parms->subviewSurface = surf;
-
-	// generate render commands for it
-	R_RenderView( parms );
-
-	// copy this rendering to the image
-	//stage->dynamicFrameCount = tr.frameCount;
-	//stage->image = globalImages->scratchImage2;
-
-	tr.CaptureRenderToImage( globalImages->scratchImage2->GetName(), true );
-	tr.UnCrop();
-#endif
-}
-
-/*
-================
-R_GenerateSubViews
-
-If we need to render another view to complete the current view,
-generate it first.
-
-It is important to do this after all drawSurfs for the current
-view have been generated, because it may create a subview which
-would change tr.viewCount.
-================
-*/
 bool R_GenerateSubViews( const drawSurf_t* const drawSurfs[], const int numDrawSurfs )
 {
 	SCOPED_PROFILE_EVENT( "R_GenerateSubViews" );

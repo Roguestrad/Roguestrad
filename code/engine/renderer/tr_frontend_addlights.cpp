@@ -49,20 +49,6 @@ extern idCVar r_useShadowPreciseInsideTest;
 idCVar		  r_useAreasConnectedForShadowCulling( "r_useAreasConnectedForShadowCulling", "2", CVAR_RENDERER | CVAR_INTEGER, "cull entities cut off by doors" );
 idCVar		  r_useParallelAddLights( "r_useParallelAddLights", "1", CVAR_RENDERER | CVAR_BOOL | CVAR_NOCHEAT, "aadd all lights in parallel with jobs" );
 
-/*
-============================
-R_ShadowBounds
-
-Even though the extruded shadows are drawn projected to infinity, their effects are limited
-to a fraction of the light's volume.  An extruded box would require 12 faces to specify and
-be a lot of trouble, but an axial bounding box is quick and easy to determine.
-
-If the light is completely contained in the view, there is no value in trying to cull the
-shadows, as they will all pass.
-
-Pure function.
-============================
-*/
 void		  R_ShadowBounds( const idBounds& modelBounds, const idBounds& lightBounds, const idVec3& lightOrigin, idBounds& shadowBounds )
 {
 	for( int i = 0; i < 3; i++ ) {
@@ -71,11 +57,6 @@ void		  R_ShadowBounds( const idBounds& modelBounds, const idBounds& lightBounds
 	}
 }
 
-/*
-============================
-idRenderEntityLocal::IsDirectlyVisible()
-============================
-*/
 bool idRenderEntityLocal::IsDirectlyVisible() const
 {
 	if( viewCount != tr.viewCount ) {
@@ -89,22 +70,7 @@ bool idRenderEntityLocal::IsDirectlyVisible() const
 	return true;
 }
 
-/*
-===================
-R_AddSingleLight
-
-May be run in parallel.
-
-Sets vLight->removeFromList to true if the light should be removed from the list.
-Builds a chain of entities that need to be added for shadows only off vLight->shadowOnlyViewEntities.
-Allocates and fills in vLight->entityInteractionState.
-
-Calc the light shader values, removing any light from the viewLight list
-if it is determined to not have any visible effect due to being flashed off or turned off.
-
-Add any precomputed shadow volumes.
-===================
-*/
+//! Processes and adds a single light to the view light list for rendering.
 static void R_AddSingleLight( viewLight_t* vLight )
 {
 	// until proven otherwise
@@ -561,11 +527,6 @@ static void R_AddSingleLight( viewLight_t* vLight )
 
 REGISTER_PARALLEL_JOB( R_AddSingleLight, "R_AddSingleLight" );
 
-/*
-=================
-R_AddLights
-=================
-*/
 void R_AddLights()
 {
 	SCOPED_PROFILE_EVENT( "R_AddLights" );
@@ -617,11 +578,6 @@ void R_AddLights()
 	}
 }
 
-/*
-=====================
-R_OptimizeViewLightsList
-=====================
-*/
 void R_OptimizeViewLightsList()
 {
 	// go through each visible light

@@ -88,22 +88,44 @@ extern "C" {
 	#include <BinkDecoder.h>
 #endif // USE_BINKDEC
 
+/*!
+	\class idCinematicLocal
+	\brief idCinematicLocal handles cinematic video playback with support for multiple formats and decoding routines.
+
+	This class provides functionality for initializing, playing, and managing cinematic video content from various file formats including RoQ, BIK, MP4, and WebM. It includes methods for retrieving
+   video frame data at specific times, managing playback state, and handling format-specific decoding operations. The class supports both general cinematic operations such as initialization from file
+   and playback control, as well as lower-level video decoding routines for processing RoQ format video data. Memory management is handled through standard C++ RAII principles with appropriate
+   initialization and cleanup methods.
+
+*/
 class idCinematicLocal : public idCinematic
 {
 public:
+	//! Initializes a new instance of the idCinematicLocal class for handling cinematic video playback.
 	idCinematicLocal();
+
+	//! Destructor for idCinematicLocal that cleans up resources used for cinematic playback.
 	virtual ~idCinematicLocal();
 
+	//! Initializes a cinematic from a file, supporting multiple formats including RoQ, BIK, MP4, and WebM.
 	virtual bool	  InitFromFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
+
+	//! Retrieves cinematic image data for the specified time from a video stream.
 	virtual cinData_t ImageForTime( int milliseconds, nvrhi::ICommandList* commandList );
+
+	//! Returns the length of the cinematic animation in milliseconds
 	virtual int		  AnimationLength();
-	// RB begin
+
+	//! Returns true if the cinematic is currently playing.
 	bool			  IsPlaying() const;
-	// RB end
+
+	//! Closes the cinematic playback and releases all associated resources.
 	virtual void	  Close();
-	// SRS begin
+
+	//! Returns the start time of the cinematic.
 	virtual int		  GetStartTime();
-	// SRS end
+
+	//! Resets the cinematic playback start time and sets the status to playing.
 	virtual void	  ResetTime( int time );
 
 private:
@@ -198,26 +220,66 @@ private:
 	bool			smootheddouble;
 	bool			inMemory;
 
+	//! Initializes the RoQ cinematic playback parameters from the file header.
 	void			RoQ_init();
+
+	//! Decodes and blits VQ video data into the status buffer
 	void			blitVQQuad32fs( byte** status, unsigned char* data );
+
+	//! Shuts down the RoQ cinematic playback and closes the associated file.
 	void			RoQShutdown();
+
+	//! Handles the interrupt processing for RoQ video frames in the cinematic playback
 	void			RoQInterrupt();
 
+	//! Copies 8x8 blocks of data from source to destination with specific memory layout handling.
 	void			move8_32( byte* src, byte* dst, int spl );
+
+	//! Copies 4 rows of pixel data from source to destination with specified stride.
 	void			move4_32( byte* src, byte* dst, int spl );
+
+	//! Copies 64 32-bit values from source to destination with specific indexing
 	void			blit8_32( byte* src, byte* dst, int spl );
+
+	//! Copies 16 32-bit values from source to destination with specific alignment handling.
 	void			blit4_32( byte* src, byte* dst, int spl );
+
+	//! Copies a 2x2 pixel block from source to destination with specific memory layout
 	void			blit2_32( byte* src, byte* dst, int spl );
 
-	// RB: 64 bit fixes, changed long to int
+	//! Converts YUV color values to a 16-bit RGB value.
 	unsigned short	yuv_to_rgb( int y, int u, int v );
+
+	//! Converts YUV color values to a 24-bit RGB color value.
 	unsigned int	yuv_to_rgb24( int y, int u, int v );
 
+	//! Decodes a codebook for cinematic video processing using YUV to RGB conversion
 	void			decodeCodeBook( byte* input, unsigned short roq_flags );
+
+	/*!
+		\brief Recursively processes image quadrants for cinematic rendering.
+
+		This function recursively divides a specified region of an image into smaller quadrants based on the given size and offset parameters. It calculates screen coordinates and updates the status
+	   array with pointers to image data for each processed quadrant. The recursion continues until the quadrant size reaches the minimum specified size.
+
+		\param startX The starting X coordinate of the quadrant region
+		\param startY The starting Y coordinate of the quadrant region
+		\param quadSize The size of the current quadrant to process
+		\param xOff The horizontal offset to apply to the starting X coordinate
+		\param yOff The vertical offset to apply to the starting Y coordinate
+	*/
 	void			recurseQuad( int startX, int startY, int quadSize, int xOff, int yOff );
+
+	//! Sets up quad-based rendering for cinematic playback with specified offset.
 	void			setupQuad( int xOff, int yOff );
+
+	//! Reads quad information from the provided byte data and initializes cinematic dimensions and parameters.
 	void			readQuadInfo( byte* qData );
+
+	//! Prepares motion compensation data for RoQ cinematic decoding.
 	void			RoQPrepMcomp( int xoff, int yoff );
+
+	//! Resets the RoQ cinematic playback state and seeks to the beginning of the file.
 	void			RoQReset();
 	// RB end
 
@@ -257,14 +319,6 @@ static unsigned short* vq8	= NULL;
 
 extern idCVar		   s_noSound;
 
-//===========================================
-
-/*
-==============
-idCinematic::InitCinematic
-==============
-*/
-// RB: 64 bit fixes, changed long to int
 void				   idCinematic::InitCinematic()
 {
 	// Carl: Doom 3 ROQ:
@@ -292,11 +346,6 @@ void				   idCinematic::InitCinematic()
 	vq8	 = ( word* )Mem_Alloc( 256 * 256 * 4 * sizeof( word ), TAG_CINEMATIC );
 }
 
-/*
-==============
-idCinematic::ShutdownCinematic
-==============
-*/
 void idCinematic::ShutdownCinematic()
 {
 	// Carl: Original Doom 3 RoQ files:
@@ -310,70 +359,35 @@ void idCinematic::ShutdownCinematic()
 	vq8 = NULL;
 }
 
-/*
-==============
-idCinematic::Alloc
-==============
-*/
 idCinematic* idCinematic::Alloc()
 {
 	return new idCinematicLocal; // Carl: Use the proper class like in Doom 3, not just the unimplemented abstract one.
 }
 
-/*
-==============
-idCinematic::~idCinematic
-==============
-*/
 idCinematic::~idCinematic()
 {
 	Close();
 }
 
-/*
-==============
-idCinematic::InitFromFile
-==============
-*/
 bool idCinematic::InitFromFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList )
 {
 	return false; // Carl: this is just the abstract virtual method
 }
 
-/*
-==============
-idCinematic::AnimationLength
-==============
-*/
 int idCinematic::AnimationLength()
 {
 	return 0;
 }
 
-/*
-==============
-idCinematic::GetStartTime
-==============
-*/
 int idCinematic::GetStartTime()
 {
 	return -1; // SRS - this is just the abstract virtual method
 }
 
-/*
-==============
-idCinematic::ResetTime
-==============
-*/
 void idCinematic::ResetTime( int milliseconds )
 {
 }
 
-/*
-==============
-idCinematic::ImageForTime
-==============
-*/
 cinData_t idCinematic::ImageForTime( int milliseconds, nvrhi::ICommandList* commandList )
 {
 	cinData_t c;
@@ -383,40 +397,19 @@ cinData_t idCinematic::ImageForTime( int milliseconds, nvrhi::ICommandList* comm
 	return c;
 }
 
-/*
-==============
-idCinematic::ExportToTGA
-==============
-*/
 void idCinematic::ExportToTGA( bool skipExisting )
 {
 }
 
-/*
-==============
-idCinematic::GetFrameRate
-==============
-*/
 float idCinematic::GetFrameRate() const
 {
 	return 30.0f;
 }
 
-/*
-==============
-idCinematic::Close
-==============
-*/
 void idCinematic::Close()
 {
 }
 
-// RB begin
-/*
-==============
-idCinematic::IsPlaying
-==============
-*/
 bool idCinematic::IsPlaying() const
 {
 	return false;
@@ -432,15 +425,7 @@ CinematicAudio::~CinematicAudio
 CinematicAudio::~CinematicAudio()
 {
 }
-// SRS end
 
-//===========================================
-
-/*
-==============
-idCinematicLocal::idCinematicLocal
-==============
-*/
 idCinematicLocal::idCinematicLocal()
 {
 	qStatus[0] = ( byte** )Mem_Alloc( 32768 * sizeof( byte* ), TAG_CINEMATIC );
@@ -521,11 +506,6 @@ idCinematicLocal::idCinematicLocal()
 	}
 }
 
-/*
-==============
-idCinematicLocal::~idCinematicLocal
-==============
-*/
 idCinematicLocal::~idCinematicLocal()
 {
 	Close();
@@ -932,11 +912,6 @@ void idCinematicLocal::BinkDecReset()
 }
 #endif // USE_BINKDEC
 
-/*
-==============
-idCinematicLocal::InitFromFile
-==============
-*/
 bool idCinematicLocal::InitFromFile( const char* qpath, bool amilooping, nvrhi::ICommandList* commandList )
 {
 	unsigned short RoQID;
@@ -1062,11 +1037,6 @@ bool idCinematicLocal::InitFromFile( const char* qpath, bool amilooping, nvrhi::
 	return false;
 }
 
-/*
-==============
-idCinematicLocal::Close
-==============
-*/
 void idCinematicLocal::Close()
 {
 	if( image ) {
@@ -1126,56 +1096,27 @@ void idCinematicLocal::Close()
 #endif
 }
 
-/*
-==============
-idCinematicLocal::AnimationLength
-==============
-*/
 int idCinematicLocal::AnimationLength()
 {
 	return animationLength;
 }
 
-// RB begin
-/*
-==============
-idCinematicLocal::IsPlaying
-==============
-*/
 bool idCinematicLocal::IsPlaying() const
 {
 	return ( status == FMV_PLAY );
 }
-// RB end
 
-// SRS - Implement virtual method to override abstract virtual method
-/*
-==============
- idCinematicLocal::GetStartTime
-==============
-*/
 int idCinematicLocal::GetStartTime()
 {
 	return startTime;
 }
-// SRS end
 
-/*
-==============
-idCinematicLocal::ResetTime
-==============
-*/
 void idCinematicLocal::ResetTime( int time )
 {
 	startTime = time; // originally this was: ( backEnd.viewDef ) ? 1000 * backEnd.viewDef->floatTime : -1;
 	status	  = FMV_PLAY;
 }
 
-/*
-==============
-idCinematicLocal::ImageForTime
-==============
-*/
 cinData_t idCinematicLocal::ImageForTime( int thisTime, nvrhi::ICommandList* commandList )
 {
 	cinData_t cinData;
@@ -1597,11 +1538,6 @@ cinData_t idCinematicLocal::ImageForTimeBinkDec( int thisTime, nvrhi::ICommandLi
 }
 #endif
 
-/*
-==============
-idCinematicLocal::move8_32
-==============
-*/
 void idCinematicLocal::move8_32( byte* src, byte* dst, int spl )
 {
 #if 1
@@ -1740,11 +1676,6 @@ void idCinematicLocal::move8_32( byte* src, byte* dst, int spl )
 #endif
 }
 
-/*
-==============
-idCinematicLocal::move4_32
-==============
-*/
 void idCinematicLocal::move4_32( byte* src, byte* dst, int spl )
 {
 #if 1
@@ -1799,11 +1730,6 @@ void idCinematicLocal::move4_32( byte* src, byte* dst, int spl )
 #endif
 }
 
-/*
-==============
-idCinematicLocal::blit8_32
-==============
-*/
 void idCinematicLocal::blit8_32( byte* src, byte* dst, int spl )
 {
 #if 1
@@ -1942,11 +1868,6 @@ void idCinematicLocal::blit8_32( byte* src, byte* dst, int spl )
 #endif
 }
 
-/*
-==============
-idCinematicLocal::blit4_32
-==============
-*/
 void idCinematicLocal::blit4_32( byte* src, byte* dst, int spl )
 {
 #if 1
@@ -1998,11 +1919,6 @@ void idCinematicLocal::blit4_32( byte* src, byte* dst, int spl )
 #endif
 }
 
-/*
-==============
-idCinematicLocal::blit2_32
-==============
-*/
 void idCinematicLocal::blit2_32( byte* src, byte* dst, int spl )
 {
 #if 1
@@ -2030,11 +1946,6 @@ void idCinematicLocal::blit2_32( byte* src, byte* dst, int spl )
 #endif
 }
 
-/*
-==============
-idCinematicLocal::blitVQQuad32fs
-==============
-*/
 void idCinematicLocal::blitVQQuad32fs( byte** status, unsigned char* data )
 {
 	unsigned short newd, celdata, code;
@@ -2154,12 +2065,6 @@ void idCinematicLocal::blitVQQuad32fs( byte** status, unsigned char* data )
 		b++;                 \
 	}
 
-/*
-==============
-idCinematicLocal::yuv_to_rgb
-==============
-*/
-// RB: 64 bit fixes, changed long to int
 unsigned short idCinematicLocal::yuv_to_rgb( int y, int u, int v )
 {
 	int r, g, b, YY = ( int )( ROQ_YY_tab[( y )] );
@@ -2189,14 +2094,7 @@ unsigned short idCinematicLocal::yuv_to_rgb( int y, int u, int v )
 
 	return ( unsigned short )( ( r << 11 ) + ( g << 5 ) + ( b ) );
 }
-// RB end
 
-/*
-==============
-idCinematicLocal::yuv_to_rgb24
-==============
-*/
-// RB: 64 bit fixes, changed long to int
 unsigned int idCinematicLocal::yuv_to_rgb24( int y, int u, int v )
 {
 	int r, g, b, YY = ( int )( ROQ_YY_tab[( y )] );
@@ -2226,14 +2124,7 @@ unsigned int idCinematicLocal::yuv_to_rgb24( int y, int u, int v )
 
 	return LittleLong( ( r ) + ( g << 8 ) + ( b << 16 ) );
 }
-// RB end
 
-/*
-==============
-idCinematicLocal::decodeCodeBook
-==============
-*/
-// RB: 64 bit fixes, changed long to int
 void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 {
 	int				i, j, two, four;
@@ -2427,14 +2318,7 @@ void idCinematicLocal::decodeCodeBook( byte* input, unsigned short roq_flags )
 		}
 	}
 }
-// RB end
 
-/*
-==============
-idCinematicLocal::recurseQuad
-==============
-*/
-// RB: 64 bit fixes, changed long to int
 void idCinematicLocal::recurseQuad( int startX, int startY, int quadSize, int xOff, int yOff )
 {
 	byte* scroff;
@@ -2470,14 +2354,7 @@ void idCinematicLocal::recurseQuad( int startX, int startY, int quadSize, int xO
 		recurseQuad( startX + quadSize, startY + quadSize, quadSize, xOff, yOff );
 	}
 }
-// RB end
 
-/*
-==============
-idCinematicLocal::setupQuad
-==============
-*/
-// RB: 64 bit fixes, changed long to int
 void idCinematicLocal::setupQuad( int xOff, int yOff )
 {
 	int	  numQuadCels, i, x, y;
@@ -2505,13 +2382,7 @@ void idCinematicLocal::setupQuad( int xOff, int yOff )
 		qStatus[1][i] = temp; // eoq
 	}
 }
-// RB end
 
-/*
-==============
-idCinematicLocal::readQuadInfo
-==============
-*/
 void idCinematicLocal::readQuadInfo( byte* qData )
 {
 	xsize	= qData[0] + qData[1] * 256;
@@ -2541,12 +2412,6 @@ void idCinematicLocal::readQuadInfo( byte* qData )
 	drawY = CIN_HEIGHT;
 }
 
-/*
-==============
-idCinematicLocal::RoQPrepMcomp
-==============
-*/
-// RB: 64 bit fixes, changed long to int
 void idCinematicLocal::RoQPrepMcomp( int xoff, int yoff )
 {
 	int i, j, x, y, temp, temp2;
@@ -2566,13 +2431,7 @@ void idCinematicLocal::RoQPrepMcomp( int xoff, int yoff )
 		}
 	}
 }
-// RB end
 
-/*
-==============
-idCinematicLocal::RoQReset
-==============
-*/
 void idCinematicLocal::RoQReset()
 {
 	iFile->Seek( 0, FS_SEEK_SET );
@@ -2586,6 +2445,7 @@ void idCinematicLocal::RoQReset()
 struct jpeg_error_mgr jerr;
 #endif
 
+//! Decompresses JPEG data into the provided output buffer
 int JPEGBlit( byte* wStatus, byte* data, int datasize )
 {
 #ifndef ID_USE_LIBJPEG
@@ -2712,11 +2572,6 @@ int JPEGBlit( byte* wStatus, byte* data, int datasize )
 	return 1;
 }
 
-/*
-==============
-idCinematicLocal::RoQInterrupt
-==============
-*/
 void idCinematicLocal::RoQInterrupt()
 {
 	byte* framedata;
@@ -2832,11 +2687,6 @@ redump:
 	RoQPlayed += RoQFrameSize + 8;
 }
 
-/*
-==============
-idCinematicLocal::RoQ_init
-==============
-*/
 void idCinematicLocal::RoQ_init()
 {
 	RoQPlayed = 24;
@@ -2855,11 +2705,6 @@ void idCinematicLocal::RoQ_init()
 	roq_flags	 = file[14] + file[15] * 256;
 }
 
-/*
-==============
-idCinematicLocal::RoQShutdown
-==============
-*/
 void idCinematicLocal::RoQShutdown()
 {
 	// SRS - Depending on status, this could prevent closing of iFile on shutdown, disable it
@@ -2879,13 +2724,6 @@ void idCinematicLocal::RoQShutdown()
 	fileName = "";
 }
 
-//===========================================
-
-/*
-==============
-idSndWindow::InitFromFile
-==============
-*/
 bool idSndWindow::InitFromFile( const char* qpath, bool looping )
 {
 	idStr fname = qpath;
@@ -2899,21 +2737,11 @@ bool idSndWindow::InitFromFile( const char* qpath, bool looping )
 	return true;
 }
 
-/*
-==============
-idSndWindow::ImageForTime
-==============
-*/
 cinData_t idSndWindow::ImageForTime( int milliseconds )
 {
 	return soundSystem->ImageForTime( milliseconds, showWaveform );
 }
 
-/*
-==============
-idSndWindow::AnimationLength
-==============
-*/
 int idSndWindow::AnimationLength()
 {
 	return -1;

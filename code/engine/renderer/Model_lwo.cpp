@@ -39,14 +39,6 @@ If you have questions concerning this license or the applicable additional terms
 
 ======================================================================
 */
-
-/*
-======================================================================
-lwFreeClip()
-
-Free memory used by an lwClip.
-====================================================================== */
-
 void lwFreeClip( lwClip* clip )
 {
 	if( clip ) {
@@ -93,13 +85,6 @@ void lwFreeClip( lwClip* clip )
 		Mem_Free( clip );
 	}
 }
-
-/*
-======================================================================
-lwGetClip()
-
-Read image references from a CLIP chunk in an LWO2 file.
-====================================================================== */
 
 lwClip* lwGetClip( idFile* fp, int cksize )
 {
@@ -314,13 +299,6 @@ Fail:
 	return NULL;
 }
 
-/*
-======================================================================
-lwFindClip()
-
-Returns an lwClip pointer, given a clip index.
-====================================================================== */
-
 lwClip* lwFindClip( lwClip* list, int index )
 {
 	lwClip* clip;
@@ -335,13 +313,7 @@ lwClip* lwFindClip( lwClip* list, int index )
 	return clip;
 }
 
-/*
-======================================================================
-lwFreeEnvelope()
-
-Free the memory used by an lwEnvelope.
-====================================================================== */
-
+//! Frees the memory pointed to by ptr using the internal memory allocator.
 void lwFree( void* ptr )
 {
 	Mem_Free( ptr );
@@ -359,17 +331,11 @@ void lwFreeEnvelope( lwEnvelope* env )
 	}
 }
 
+//! Compares two lwKey structures based on their time values.
 static int compare_keys( lwKey* k1, lwKey* k2 )
 {
 	return k1->time > k2->time ? 1 : k1->time < k2->time ? -1 : 0;
 }
-
-/*
-======================================================================
-lwGetEnvelope()
-
-Read an ENVL chunk from an LWO2 file.
-====================================================================== */
 
 lwEnvelope* lwGetEnvelope( idFile* fp, int cksize )
 {
@@ -528,13 +494,6 @@ Fail:
 	return NULL;
 }
 
-/*
-======================================================================
-lwFindEnvelope()
-
-Returns an lwEnvelope pointer, given an envelope index.
-====================================================================== */
-
 lwEnvelope* lwFindEnvelope( lwEnvelope* list, int index )
 {
 	lwEnvelope* env;
@@ -549,19 +508,19 @@ lwEnvelope* lwFindEnvelope( lwEnvelope* list, int index )
 	return env;
 }
 
-/*
-======================================================================
-range()
+/*!
+	\brief Returns the equivalent value of a periodic function within the principal interval [lo, hi] and optionally calculates the number of wavelengths between the input and output values.
 
-Given the value v of a periodic function, returns the equivalent value
-v2 in the principal interval [lo, hi].  If i isn't NULL, it receives
-the number of wavelengths between v and v2.
+	This function maps a given value v of a periodic function to its equivalent value v2 within the principal interval [lo, hi]. It handles periodicity by computing how many wavelengths separate the
+   input from the output. If the pointer i is not null, it stores the number of wavelengths between v and v2. The function is particularly useful for handling periodic behaviors in animation and
+   time-based systems. When the interval size r is zero, it returns the lower bound and sets i to zero. The implementation uses floating-point arithmetic and the floor function to compute the result.
 
-   v2 = v - i * (hi - lo)
-
-For example, range( 3 pi, 0, 2 pi, i ) returns pi, with i = 1.
-====================================================================== */
-
+	\param v The input value of the periodic function
+	\param lo The lower bound of the principal interval
+	\param hi The upper bound of the principal interval
+	\param i Pointer to an integer that will receive the number of wavelengths between v and v2, or NULL if not needed
+	\return The equivalent value of v within the principal interval [lo, hi]
+*/
 static float range( float v, float lo, float hi, int* i )
 {
 	float v2, r = hi - lo;
@@ -581,13 +540,18 @@ static float range( float v, float lo, float hi, int* i )
 	return v2;
 }
 
-/*
-======================================================================
-hermite()
+/*!
+	\brief Calculates Hermite coefficients for interpolation given a parameter t
 
-Calculate the Hermite coefficients.
-====================================================================== */
+	This function computes four Hermite coefficients used for cubic Hermite interpolation. The coefficients are calculated based on the input parameter t and stored in the provided output pointers.
+   The function implements the standard Hermite basis functions where h1, h2, h3, and h4 represent the blending functions for position and tangent interpolation.
 
+	\param t Interpolation parameter typically in range [0,1]
+	\param h1 Pointer to store first Hermite coefficient
+	\param h2 Pointer to store second Hermite coefficient
+	\param h3 Pointer to store third Hermite coefficient
+	\param h4 Pointer to store fourth Hermite coefficient
+*/
 static void hermite( float t, float* h1, float* h2, float* h3, float* h4 )
 {
 	float t2, t3;
@@ -601,13 +565,19 @@ static void hermite( float t, float* h1, float* h2, float* h3, float* h4 )
 	*h3 = *h4 - t2 + t;
 }
 
-/*
-======================================================================
-bezier()
+/*!
+	\brief Computes the interpolated value along a 1D cubic Bezier curve using the given control points and parameter.
 
-Interpolate the value of a 1D Bezier curve.
-====================================================================== */
+	This function evaluates a cubic Bezier curve in one dimension. The curve is defined by four control points x0, x1, x2, and x3, and the parameter t ranges from 0 to 1. The function uses the
+   standard Bezier polynomial formulation to compute the curve value at the given parameter t. The implementation uses precomputed powers of t to optimize the evaluation.
 
+	\param x0 First control point of the Bezier curve
+	\param x1 Second control point of the Bezier curve
+	\param x2 Third control point of the Bezier curve
+	\param x3 Fourth control point of the Bezier curve
+	\param t Parameter along the curve, typically in the range [0, 1]
+	\return The interpolated value along the cubic Bezier curve at parameter t
+*/
 static float bezier( float x0, float x1, float x2, float x3, float t )
 {
 	float a, b, c, t2, t3;
@@ -622,16 +592,22 @@ static float bezier( float x0, float x1, float x2, float x3, float t )
 	return a * t3 + b * t2 + c * t + x0;
 }
 
-/*
-======================================================================
-bez2_time()
+/*!
+	\brief Finds the parameter t for a BEZ2 curve where the bezier function returns the specified time value using binary search.
 
-Find the t for which bezier() returns the input time.  The handle
-endpoints of a BEZ2 curve represent the control points, and these have
-(time, value) coordinates, so time is used as both a coordinate and a
-parameter for this curve type.
-====================================================================== */
+	This function performs a binary search to determine the parameter t value for a cubic Bezier curve defined by four control points (x0, x1, x2, x3) such that the curve evaluated at t produces the
+   given time value. The search is bounded by the t0 and t1 parameters which are updated during the recursive process. The function recursively narrows the search interval until the difference between
+   the desired time and the actual curve value is within a small tolerance of 0.0001.
 
+	\param x0 x coordinate of the first control point
+	\param x1 x coordinate of the second control point
+	\param x2 x coordinate of the third control point
+	\param x3 x coordinate of the fourth control point
+	\param time the target time value to find t for
+	\param t0 lower bound of the search interval for t
+	\param t1 upper bound of the search interval for t
+	\return The parameter t value for which the bezier curve evaluates to the input time
+*/
 static float bez2_time( float x0, float x1, float x2, float x3, float time, float* t0, float* t1 )
 {
 	float v, t;
@@ -650,13 +626,7 @@ static float bez2_time( float x0, float x1, float x2, float x3, float time, floa
 	}
 }
 
-/*
-======================================================================
-bez2()
-
-Interpolate the value of a BEZ2 curve.
-====================================================================== */
-
+//! Interpolate the value of a BEZ2 curve using the provided keys and time parameter
 static float bez2( lwKey* key0, lwKey* key1, float time )
 {
 	float x, y, t, t0 = 0.0f, t1 = 1.0f;
@@ -678,15 +648,7 @@ static float bez2( lwKey* key0, lwKey* key1, float time )
 	return bezier( key0->value, y, key1->param[1] + key1->value, key1->value, t );
 }
 
-/*
-======================================================================
-outgoing()
-
-Return the outgoing tangent to the curve at key0.  The value returned
-for the BEZ2 case is used when extrapolating a linear pre behavior and
-when interpolating a non-BEZ2 span.
-====================================================================== */
-
+//! Computes the outgoing tangent value for a keyframe curve at key0 based on its shape and neighboring keys.
 static float outgoing( lwKey* key0, lwKey* key1 )
 {
 	float a, b, d, t, out;
@@ -741,14 +703,7 @@ static float outgoing( lwKey* key0, lwKey* key1 )
 	return out;
 }
 
-/*
-======================================================================
-incoming()
-
-Return the incoming tangent to the curve at key1.  The value returned
-for the BEZ2 case is used when extrapolating a linear post behavior.
-====================================================================== */
-
+//! Calculates the incoming tangent to a curve at key1 based on the interpolation method defined by key1's shape.
 static float incoming( lwKey* key0, lwKey* key1 )
 {
 	float a, b, d, t, in;
@@ -803,14 +758,7 @@ static float incoming( lwKey* key0, lwKey* key1 )
 	return in;
 }
 
-/*
-======================================================================
-evalEnvelope()
-
-Given a list of keys and a time, returns the interpolated value of the
-envelope at that time.
-====================================================================== */
-
+//! Evaluates the interpolated value of an envelope at a given time.
 float evalEnvelope( lwEnvelope* env, float time )
 {
 	lwKey *key0, *key1, *skey, *ekey;
@@ -953,13 +901,6 @@ float evalEnvelope( lwEnvelope* env, float time )
 	}
 }
 
-/*
-======================================================================
-lwListFree()
-
-Free the items in a list.
-====================================================================== */
-
 void lwListFree( void* list, void ( *freeNode )( void* ) )
 {
 	lwNode *node, *next;
@@ -971,13 +912,6 @@ void lwListFree( void* list, void ( *freeNode )( void* ) )
 		node = next;
 	}
 }
-
-/*
-======================================================================
-lwListAdd()
-
-Append a node to a list.
-====================================================================== */
 
 void lwListAdd( void** list, void* node )
 {
@@ -995,13 +929,6 @@ void lwListAdd( void** list, void* node )
 	tail->next				  = ( lwNode* )node;
 	( ( lwNode* )node )->prev = tail;
 }
-
-/*
-======================================================================
-lwListInsert()
-
-Insert a node into a list in sorted order.
-====================================================================== */
 
 void lwListInsert( void** vlist, void* vitem, int ( *compare )( void*, void* ) )
 {
@@ -1474,13 +1401,6 @@ char* sgetS0( unsigned char** bp )
 	return s;
 }
 
-/*
-======================================================================
-lwFreeLayer()
-
-Free memory used by an lwLayer.
-====================================================================== */
-
 void lwFreeLayer( lwLayer* layer )
 {
 	if( layer ) {
@@ -1494,13 +1414,6 @@ void lwFreeLayer( lwLayer* layer )
 	}
 }
 
-/*
-======================================================================
-lwFreeObject()
-
-Free memory used by an lwObject.
-====================================================================== */
-
 void lwFreeObject( lwObject* object )
 {
 	if( object ) {
@@ -1512,27 +1425,6 @@ void lwFreeObject( lwObject* object )
 		Mem_Free( object );
 	}
 }
-
-/*
-======================================================================
-lwGetObject()
-
-Returns the contents of a LightWave object, given its filename, or
-NULL if the file couldn't be loaded.  On failure, failID and failpos
-can be used to diagnose the cause.
-
-1.  If the file isn't an LWO2 or an LWOB, failpos will contain 12 and
-	failID will be unchanged.
-
-2.  If an error occurs while reading, failID will contain the most
-	recently read IFF chunk ID, and failpos will contain the value
-	returned by fp->Tell() at the time of the failure.
-
-3.  If the file couldn't be opened, or an error occurs while reading
-	the first 12 bytes, both failID and failpos will be unchanged.
-
-If you don't need this information, failID and failpos can be NULL.
-====================================================================== */
 
 lwObject* lwGetObject( const char* filename, unsigned int* failID, int* failpos )
 {
@@ -1814,14 +1706,7 @@ Fail:
 #define ID_TFP0 LWID_( 'T', 'F', 'P', '0' )
 #define ID_TFP1 LWID_( 'T', 'F', 'P', '1' )
 
-/*
-======================================================================
-add_clip()
-
-Add a clip to the clip list.  Used to store the contents of an RIMG or
-TIMG surface subchunk.
-====================================================================== */
-
+//! Adds a clip to the clip list for use in storing RIMG or TIMG surface subchunk contents.
 static int add_clip( char* s, lwClip** clist, int* nclips )
 {
 	lwClip* clip;
@@ -1855,14 +1740,19 @@ static int add_clip( char* s, lwClip** clist, int* nclips )
 	return clip->index;
 }
 
-/*
-======================================================================
-add_tvel()
+/*!
+	\brief Adds a triple of envelopes to simulate texture velocity parameters.
 
-Add a triple of envelopes to simulate the old texture velocity
-parameters.
-====================================================================== */
+	This function creates three envelope structures representing position velocity components for texture animation. Each envelope contains two keys that define a linear interpolation between the
+   initial position and a computed final position based on velocity. The function allocates memory for the envelopes and keys, initializes their properties, and adds them to the provided list. The
+   envelopes are labeled as Position.X, Position.Y, and Position.Z to represent the three spatial dimensions.
 
+	\param pos Initial position values for the three dimensions
+	\param vel Velocity values for the three dimensions
+	\param elist Pointer to an array of envelope pointers where new envelopes will be added
+	\param nenvs Pointer to an integer tracking the number of envelopes already in the list
+	\return The index of the first envelope added, or 0 if memory allocation fails
+*/
 static int add_tvel( float pos[], float vel[], lwEnvelope** elist, int* nenvs )
 {
 	lwEnvelope* env	 = NULL;
@@ -1905,13 +1795,7 @@ static int add_tvel( float pos[], float vel[], lwEnvelope** elist, int* nenvs )
 	return env->index - 2;
 }
 
-/*
-======================================================================
-get_texture()
-
-Create a new texture for BTEX, CTEX, etc. subchunks.
-====================================================================== */
-
+//! Creates a new texture object from a string identifier, setting appropriate properties based on the identifier type.
 static lwTexture* get_texture( char* s )
 {
 	lwTexture* tex;
@@ -1948,13 +1832,6 @@ static lwTexture* get_texture( char* s )
 
 	return tex;
 }
-
-/*
-======================================================================
-lwGetSurface5()
-
-Read an lwSurface from an LWOB file.
-====================================================================== */
 
 lwSurface* lwGetSurface5( idFile* fp, int cksize, lwObject* obj )
 {
@@ -2314,14 +2191,6 @@ Fail:
 	return NULL;
 }
 
-/*
-======================================================================
-lwGetPolygons5()
-
-Read polygon records from a POLS chunk in an LWOB file.  The polygons
-are added to the array in the lwPolygonList.
-====================================================================== */
-
 int lwGetPolygons5( idFile* fp, int cksize, lwPolygonList* plist, int ptoffset )
 {
 	lwPolygon*	   pp;
@@ -2401,27 +2270,6 @@ Fail:
 	lwFreePolygons( plist );
 	return 0;
 }
-
-/*
-======================================================================
-getLWObject5()
-
-Returns the contents of an LWOB, given its filename, or NULL if the
-file couldn't be loaded.  On failure, failID and failpos can be used
-to diagnose the cause.
-
-1.  If the file isn't an LWOB, failpos will contain 12 and failID will
-	be unchanged.
-
-2.  If an error occurs while reading an LWOB, failID will contain the
-	most recently read IFF chunk ID, and failpos will contain the
-	value returned by fp->Tell() at the time of the failure.
-
-3.  If the file couldn't be opened, or an error occurs while reading
-	the first 12 bytes, both failID and failpos will be unchanged.
-
-If you don't need this information, failID and failpos can be NULL.
-====================================================================== */
 
 lwObject* lwGetObject5( const char* filename, unsigned int* failID, int* failpos )
 {
@@ -2566,13 +2414,6 @@ Fail2:
 	return NULL;
 }
 
-/*
-======================================================================
-lwFreePoints()
-
-Free the memory used by an lwPointList.
-====================================================================== */
-
 void lwFreePoints( lwPointList* point )
 {
 	int i;
@@ -2592,13 +2433,6 @@ void lwFreePoints( lwPointList* point )
 		memset( point, 0, sizeof( lwPointList ) );
 	}
 }
-
-/*
-======================================================================
-lwFreePolygons()
-
-Free the memory used by an lwPolygonList.
-====================================================================== */
 
 void lwFreePolygons( lwPolygonList* plist )
 {
@@ -2622,14 +2456,6 @@ void lwFreePolygons( lwPolygonList* plist )
 		memset( plist, 0, sizeof( lwPolygonList ) );
 	}
 }
-
-/*
-======================================================================
-lwGetPoints()
-
-Read point records from a PNTS chunk in an LWO2 file.  The points are
-added to the array in the lwPointList.
-====================================================================== */
 
 int lwGetPoints( idFile* fp, int cksize, lwPointList* point )
 {
@@ -2676,14 +2502,6 @@ int lwGetPoints( idFile* fp, int cksize, lwPointList* point )
 	return 1;
 }
 
-/*
-======================================================================
-lwGetBoundingBox()
-
-Calculate the bounding box for a point list, but only if the bounding
-box hasn't already been initialized.
-====================================================================== */
-
 void lwGetBoundingBox( lwPointList* point, float bbox[] )
 {
 	int i, j;
@@ -2710,13 +2528,6 @@ void lwGetBoundingBox( lwPointList* point, float bbox[] )
 		}
 	}
 }
-
-/*
-======================================================================
-lwAllocPolygons()
-
-Allocate or extend the polygon arrays to hold new records.
-====================================================================== */
 
 int lwAllocPolygons( lwPolygonList* plist, int npols, int nverts )
 {
@@ -2756,14 +2567,6 @@ int lwAllocPolygons( lwPolygonList* plist, int npols, int nverts )
 
 	return 1;
 }
-
-/*
-======================================================================
-lwGetPolygons()
-
-Read polygon records from a POLS chunk in an LWO2 file.  The polygons
-are added to the array in the lwPolygonList.
-====================================================================== */
 
 int lwGetPolygons( idFile* fp, int cksize, lwPolygonList* plist, int ptoffset )
 {
@@ -2842,15 +2645,6 @@ Fail:
 	return 0;
 }
 
-/*
-======================================================================
-lwGetPolyNormals()
-
-Calculate the polygon normals.  By convention, LW's polygon normals
-are found as the cross product of the first and last edges.  It's
-undefined for one- and two-point polygons.
-====================================================================== */
-
 void lwGetPolyNormals( lwPointList* point, lwPolygonList* polygon )
 {
 	int	  i, j;
@@ -2876,15 +2670,6 @@ void lwGetPolyNormals( lwPointList* point, lwPolygonList* polygon )
 		normalize( polygon->pol[i].norm );
 	}
 }
-
-/*
-======================================================================
-lwGetPointPolygons()
-
-For each point, fill in the indexes of the polygons that share the
-point.  Returns 0 if any of the memory allocations fail, otherwise
-returns 1.
-====================================================================== */
 
 int lwGetPointPolygons( lwPointList* point, lwPolygonList* polygon )
 {
@@ -2922,15 +2707,6 @@ int lwGetPointPolygons( lwPointList* point, lwPolygonList* polygon )
 
 	return 1;
 }
-
-/*
-======================================================================
-lwResolvePolySurfaces()
-
-Convert tag indexes into actual lwSurface pointers.  If any polygons
-point to tags for which no corresponding surface can be found, a
-default surface is created.
-====================================================================== */
 
 int lwResolvePolySurfaces( lwPolygonList* polygon, lwTagList* tlist, lwSurface** surf, int* nsurfs )
 {
@@ -2984,21 +2760,6 @@ int lwResolvePolySurfaces( lwPolygonList* polygon, lwTagList* tlist, lwSurface**
 	return 1;
 }
 
-/*
-======================================================================
-lwGetVertNormals()
-
-Calculate the vertex normals.  For each polygon vertex, sum the
-normals of the polygons that share the point.  If the normals of the
-current and adjacent polygons form an angle greater than the max
-smoothing angle for the current polygon's surface, the normal of the
-adjacent polygon is excluded from the sum.  It's also excluded if the
-polygons aren't in the same smoothing group.
-
-Assumes that lwGetPointPolygons(), lwGetPolyNormals() and
-lwResolvePolySurfaces() have already been called.
-====================================================================== */
-
 void lwGetVertNormals( lwPointList* point, lwPolygonList* polygon )
 {
 	int	  j, k, n, g, h, p;
@@ -3040,13 +2801,6 @@ void lwGetVertNormals( lwPointList* point, lwPolygonList* polygon )
 	}
 }
 
-/*
-======================================================================
-lwFreeTags()
-
-Free memory used by an lwTagList.
-====================================================================== */
-
 void lwFreeTags( lwTagList* tlist )
 {
 	int i;
@@ -3062,14 +2816,6 @@ void lwFreeTags( lwTagList* tlist )
 		memset( tlist, 0, sizeof( lwTagList ) );
 	}
 }
-
-/*
-======================================================================
-lwGetTags()
-
-Read tag strings from a TAGS chunk in an LWO2 file.  The tags are
-added to the lwTagList array.
-====================================================================== */
 
 int lwGetTags( idFile* fp, int cksize, lwTagList* tlist )
 {
@@ -3131,13 +2877,6 @@ Fail:
 	return 0;
 }
 
-/*
-======================================================================
-lwGetPolygonTags()
-
-Read polygon tags from a PTAG chunk in an LWO2 file.
-====================================================================== */
-
 int lwGetPolygonTags( idFile* fp, int cksize, lwTagList* tlist, lwPolygonList* plist )
 {
 	unsigned int type;
@@ -3179,13 +2918,6 @@ int lwGetPolygonTags( idFile* fp, int cksize, lwTagList* tlist, lwPolygonList* p
 	return 1;
 }
 
-/*
-======================================================================
-lwFreePlugin()
-
-Free the memory used by an lwPlugin.
-====================================================================== */
-
 void lwFreePlugin( lwPlugin* p )
 {
 	if( p ) {
@@ -3201,13 +2933,6 @@ void lwFreePlugin( lwPlugin* p )
 		Mem_Free( p );
 	}
 }
-
-/*
-======================================================================
-lwFreeTexture()
-
-Free the memory used by an lwTexture.
-====================================================================== */
 
 void lwFreeTexture( lwTexture* t )
 {
@@ -3245,13 +2970,6 @@ void lwFreeTexture( lwTexture* t )
 	}
 }
 
-/*
-======================================================================
-lwFreeSurface()
-
-Free the memory used by an lwSurface.
-====================================================================== */
-
 void lwFreeSurface( lwSurface* surf )
 {
 	if( surf ) {
@@ -3278,15 +2996,6 @@ void lwFreeSurface( lwSurface* surf )
 		Mem_Free( surf );
 	}
 }
-
-/*
-======================================================================
-lwGetTHeader()
-
-Read a texture map header from a SURF.BLOK in an LWO2 file.  This is
-the first subchunk in a BLOK, and its contents are common to all three
-texture types.
-====================================================================== */
 
 int lwGetTHeader( idFile* fp, int hsz, lwTexture* tex )
 {
@@ -3376,14 +3085,6 @@ int lwGetTHeader( idFile* fp, int hsz, lwTexture* tex )
 	set_flen( fp->Tell() - pos );
 	return 1;
 }
-
-/*
-======================================================================
-lwGetTMap()
-
-Read a texture map from a SURF.BLOK in an LWO2 file.  The TMAP
-defines the mapping from texture to world or object coordinates.
-====================================================================== */
 
 int lwGetTMap( idFile* fp, int tmapsz, lwTMap* tmap )
 {
@@ -3476,13 +3177,6 @@ int lwGetTMap( idFile* fp, int tmapsz, lwTMap* tmap )
 	set_flen( fp->Tell() - pos );
 	return 1;
 }
-
-/*
-======================================================================
-lwGetImageMap()
-
-Read an lwImageMap from a SURF.BLOK in an LWO2 file.
-====================================================================== */
 
 int lwGetImageMap( idFile* fp, int rsz, lwTexture* tex )
 {
@@ -3595,13 +3289,6 @@ int lwGetImageMap( idFile* fp, int rsz, lwTexture* tex )
 	return 1;
 }
 
-/*
-======================================================================
-lwGetProcedural()
-
-Read an lwProcedural from a SURF.BLOK in an LWO2 file.
-====================================================================== */
-
 int lwGetProcedural( idFile* fp, int rsz, lwTexture* tex )
 {
 	unsigned int   id;
@@ -3682,13 +3369,6 @@ int lwGetProcedural( idFile* fp, int rsz, lwTexture* tex )
 	set_flen( fp->Tell() - pos );
 	return 1;
 }
-
-/*
-======================================================================
-lwGetGradient()
-
-Read an lwGradient from a SURF.BLOK in an LWO2 file.
-====================================================================== */
 
 int lwGetGradient( idFile* fp, int rsz, lwTexture* tex )
 {
@@ -3796,13 +3476,6 @@ int lwGetGradient( idFile* fp, int rsz, lwTexture* tex )
 	return 1;
 }
 
-/*
-======================================================================
-lwGetTexture()
-
-Read an lwTexture from a SURF.BLOK in an LWO2 file.
-====================================================================== */
-
 lwTexture* lwGetTexture( idFile* fp, int bloksz, unsigned int type )
 {
 	lwTexture*	   tex;
@@ -3848,13 +3521,6 @@ lwTexture* lwGetTexture( idFile* fp, int bloksz, unsigned int type )
 	set_flen( bloksz );
 	return tex;
 }
-
-/*
-======================================================================
-lwGetShader()
-
-Read a shader record from a SURF.BLOK in an LWO2 file.
-====================================================================== */
 
 lwPlugin* lwGetShader( idFile* fp, int bloksz )
 {
@@ -3949,33 +3615,19 @@ Fail:
 	return NULL;
 }
 
-/*
-======================================================================
-compare_textures()
-compare_shaders()
-
-Callbacks for the lwListInsert() function, which is called to add
-textures to surface channels and shaders to surfaces.
-====================================================================== */
-
+//! Compares two lwTexture objects based on their order strings.
 static int compare_textures( lwTexture* a, lwTexture* b )
 {
 	return strcmp( a->ord, b->ord );
 }
 
+//! Compares two shader plugins lexicographically by their order string.
 static int compare_shaders( lwPlugin* a, lwPlugin* b )
 {
 	return strcmp( a->ord, b->ord );
 }
 
-/*
-======================================================================
-add_texture()
-
-Finds the surface channel (lwTParam or lwCParam) to which a texture is
-applied, then calls lwListInsert().
-====================================================================== */
-
+//! Finds the surface channel to which a texture is applied and inserts it into the appropriate list.
 static int add_texture( lwSurface* surf, lwTexture* tex )
 {
 	lwTexture** list;
@@ -4019,13 +3671,6 @@ static int add_texture( lwSurface* surf, lwTexture* tex )
 	return 1;
 }
 
-/*
-======================================================================
-lwDefaultSurface()
-
-Allocate and initialize a surface.
-====================================================================== */
-
 lwSurface* lwDefaultSurface()
 {
 	lwSurface* surf;
@@ -4046,13 +3691,6 @@ lwSurface* lwDefaultSurface()
 
 	return surf;
 }
-
-/*
-======================================================================
-lwGetSurface()
-
-Read an lwSurface from an LWO2 file.
-====================================================================== */
 
 lwSurface* lwGetSurface( idFile* fp, int cksize )
 {
@@ -4327,13 +3965,6 @@ void normalize( float v[] )
 	}
 }
 
-/*
-======================================================================
-lwFreeVMap()
-
-Free memory used by an lwVMap.
-====================================================================== */
-
 void lwFreeVMap( lwVMap* vmap )
 {
 	if( vmap ) {
@@ -4355,13 +3986,6 @@ void lwFreeVMap( lwVMap* vmap )
 		Mem_Free( vmap );
 	}
 }
-
-/*
-======================================================================
-lwGetVMap()
-
-Read an lwVMap from a VMAP or VMAD chunk in an LWO2.
-====================================================================== */
 
 lwVMap* lwGetVMap( idFile* fp, int cksize, int ptoffset, int poloffset, int perpoly )
 {
@@ -4459,13 +4083,6 @@ Fail:
 	return NULL;
 }
 
-/*
-======================================================================
-lwGetPointVMaps()
-
-Fill in the lwVMapPt structure for each point.
-====================================================================== */
-
 int lwGetPointVMaps( lwPointList* point, lwVMap* vmap )
 {
 	lwVMap* vm;
@@ -4512,13 +4129,6 @@ int lwGetPointVMaps( lwPointList* point, lwVMap* vmap )
 
 	return 1;
 }
-
-/*
-======================================================================
-lwGetPolyVMaps()
-
-Fill in the lwVMapPt structure for each polygon vertex.
-====================================================================== */
 
 int lwGetPolyVMaps( lwPolygonList* polygon, lwVMap* vmap )
 {

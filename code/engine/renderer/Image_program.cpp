@@ -59,24 +59,17 @@ Manager
 
 #include "RenderCommon.h"
 
-/*
+/*!
+	\brief Converts a heightmap into a normal map using gradient estimation
 
-Anywhere that an image name is used (diffusemaps, bumpmaps, specularmaps, lights, etc),
-an imageProgram can be specified.
+	This function transforms a heightmap represented as an array of bytes into a normal map by estimating gradients from neighboring pixels. It first converts the input data to grayscale, then
+   computes normal vectors at each pixel by analyzing height differences in the x and y directions. The scale parameter controls the intensity of the normal map effect. The function handles edge cases
+   by wrapping around the texture boundaries using bit masking operations. The resulting normal map is stored back in the input data array with RGBA format where the alpha channel is set to 255.
 
-This allows load time operations, like heightmap-to-normalmap conversion and image
-composition, to be automatically handled in a way that supports timestamped reloads.
-
-*/
-
-/*
-=================
-R_HeightmapToNormalMap
-
-it is not possible to convert a heightmap into a normal map
-properly without knowing the texture coordinate stretching.
-We can assume constant and equal ST vectors for walls, but not for characters.
-=================
+	\param data Pointer to the heightmap data in RGBA format
+	\param width Width of the heightmap in pixels
+	\param height Height of the heightmap in pixels
+	\param scale Scaling factor for the normal map intensity
 */
 static void R_HeightmapToNormalMap( byte* data, int width, int height, float scale )
 {
@@ -136,10 +129,16 @@ static void R_HeightmapToNormalMap( byte* data, int width, int height, float sca
 	R_StaticFree( depth );
 }
 
-/*
-=================
-R_ImageScale
-=================
+/*!
+	\brief Scales image data by applying a color channel scale factor to each pixel component.
+
+	This function modifies image data in-place by scaling each pixel component with corresponding values from the scale array. The scale array contains four floating-point values that represent
+   multipliers for the red, green, blue, and alpha channels respectively. Each pixel component is clamped between 0 and 255 after scaling.
+
+	\param data Pointer to the image data array
+	\param width Width of the image in pixels
+	\param height Height of the image in pixels
+	\param scale Array of four scale factors for RGB and alpha channels
 */
 static void R_ImageScale( byte* data, int width, int height, float scale[4] )
 {
@@ -159,11 +158,7 @@ static void R_ImageScale( byte* data, int width, int height, float scale[4] )
 	}
 }
 
-/*
-=================
-R_InvertAlpha
-=================
-*/
+//! Inverts the alpha channel of an image buffer in place
 static void R_InvertAlpha( byte* data, int width, int height )
 {
 	int i;
@@ -176,11 +171,7 @@ static void R_InvertAlpha( byte* data, int width, int height )
 	}
 }
 
-/*
-=================
-R_InvertGreen
-=================
-*/
+//! Inverts the green channel of the provided image data
 static void R_InvertGreen( byte* data, int width, int height )
 {
 	int i;
@@ -193,11 +184,7 @@ static void R_InvertGreen( byte* data, int width, int height )
 	}
 }
 
-/*
-=================
-R_InvertColor
-=================
-*/
+//! Inverts the RGB color values of image data in place.
 static void R_InvertColor( byte* data, int width, int height )
 {
 	int i;
@@ -212,11 +199,19 @@ static void R_InvertColor( byte* data, int width, int height )
 	}
 }
 
-/*
-===================
-R_AddNormalMaps
+/*!
+	\brief Adds normal map data from the second texture to the first texture and renormalizes the result.
 
-===================
+	This function takes two normal maps as input and combines them by adding the normal vector from the second map to the first. The normal vectors are converted from byte values to normalized float
+   vectors, the second map's normals are added to the first, and the result is renormalized to ensure it remains a valid unit vector. The function handles resampling of the second map to match the
+   dimensions of the first if necessary. The resulting combined normal map is stored in the first map's data.
+
+	\param data1 Pointer to the first normal map data
+	\param width1 Width of the first normal map
+	\param height1 Height of the first normal map
+	\param data2 Pointer to the second normal map data
+	\param width2 Width of the second normal map
+	\param height2 Height of the second normal map
 */
 static void R_AddNormalMaps( byte* data1, int width1, int height1, byte* data2, int width2, int height2 )
 {
@@ -268,11 +263,7 @@ static void R_AddNormalMaps( byte* data1, int width1, int height1, byte* data2, 
 	}
 }
 
-/*
-================
-R_SmoothNormalMap
-================
-*/
+//! Applies smoothing to a normal map by averaging neighboring normal vectors.
 static void R_SmoothNormalMap( byte* data, int width, int height )
 {
 	byte*		 orig;
@@ -317,11 +308,18 @@ static void R_SmoothNormalMap( byte* data, int width, int height )
 	R_StaticFree( orig );
 }
 
-/*
-===================
-R_ImageAdd
+/*!
+	\brief Adds the pixel data of two images together, with clamping to prevent overflow.
 
-===================
+	This function takes two image buffers and adds their pixel values together. If the dimensions of the two images differ, the second image is resampled to match the first. The addition is performed
+   component-wise on RGBA values, with each component clamped to the range [0, 255]. The result is stored in the first image buffer.
+
+	\param data1 The first image buffer to store the result
+	\param width1 Width of the first image
+	\param height1 Height of the first image
+	\param data2 The second image buffer to add
+	\param width2 Width of the second image
+	\param height2 Height of the second image
 */
 static void R_ImageAdd( byte* data1, int width1, int height1, byte* data2, int width2, int height2 )
 {
@@ -352,7 +350,25 @@ static void R_ImageAdd( byte* data1, int width1, int height1, byte* data2, int w
 	}
 }
 
-// SP begin
+/*!
+	\brief Combines grayscale texture data from two or three input arrays into RGBA format in the first array
+
+	This function takes three grayscale texture arrays and combines them into a single RGBA texture array. The first array's red channel is filled with data from the first input array. The second
+   array's red channel is filled with data from the second input array. The third array's red channel is used for the blue channel of the output if the third array is provided and has matching
+   dimensions with the first array. The alpha channel is set to 255 for all pixels. The function assumes all input arrays contain grayscale data and performs assertions to verify that the first two
+   arrays have matching dimensions.
+
+	\param data1 Output RGBA texture data array
+	\param width1 Width of the first texture
+	\param height1 Height of the first texture
+	\param data2 Input grayscale texture data for green channel
+	\param width2 Width of the second texture
+	\param height2 Height of the second texture
+	\param data3 Optional grayscale texture data for blue channel
+	\param width3 Width of the third texture
+	\param height3 Height of the third texture
+	\throws assertion failure if width1 != width2 or height1 != height2
+*/
 static void R_CombineRgba( byte* data1, int width1, int height1, byte* data2, int width2, int height2, byte* data3, int width3, int height3 )
 {
 	assert( width1 == width2 );
@@ -387,11 +403,7 @@ static void R_CombineRgba( byte* data1, int width1, int height1, byte* data2, in
 // we build a canonical token form of the image program here
 static char parseBuffer[MAX_IMAGE_NAME];
 
-/*
-===================
-AppendToken
-===================
-*/
+//! Appends a token to the parse buffer with a leading space if not at the beginning.
 static void AppendToken( idToken& token )
 {
 	// add a leading space if not at the beginning
@@ -401,11 +413,7 @@ static void AppendToken( idToken& token )
 	idStr::Append( parseBuffer, MAX_IMAGE_NAME, token.c_str() );
 }
 
-/*
-===================
-MatchAndAppendToken
-===================
-*/
+//! Matches a token string from the lexer and appends it to the parse buffer.
 static void MatchAndAppendToken( idLexer& src, const char* match )
 {
 	if( !src.ExpectTokenString( match ) ) {
@@ -415,14 +423,21 @@ static void MatchAndAppendToken( idLexer& src, const char* match )
 	idStr::Append( parseBuffer, MAX_IMAGE_NAME, match );
 }
 
-/*
-===================
-R_ParseImageProgram_r
+/*!
+	\brief Parses an image program from a lexer and applies various image processing operations.
 
-If pic is NULL, the timestamps will be filled in, but no image will be generated
-If both pic and timestamps are NULL, it will just advance past it, which can be
-used to parse an image program from a text stream.
-===================
+	This function recursively parses an image program specified in a lexer, applying various image processing operations such as heightmap conversion, normal map addition, smoothing, image addition,
+   scaling, and color inversion. It handles special tokens like _black and _white by replacing them with specific texture paths. The function can operate in different modes depending on whether the
+   output image pointer, width, height, and timestamps are provided. If pic is NULL, only timestamps are filled in without generating an image. If both pic and timestamps are NULL, it just advances
+   through the input without processing.
+
+	\param src Lexer object containing the image program tokens
+	\param pic Pointer to store the resulting image data, or NULL to only parse without generating an image
+	\param width Pointer to store the image width
+	\param height Pointer to store the image height
+	\param timestamps Pointer to store the timestamp of the image, or NULL to skip timestamp retrieval
+	\param usage Pointer to store the texture usage flag, or NULL to skip usage flag setting
+	\return True if the image program was parsed and processed successfully, false otherwise.
 */
 static bool R_ParseImageProgram_r( idLexer& src, byte** pic, int* width, int* height, ID_TIME_T* timestamps, textureUsage_t* usage )
 {
@@ -726,10 +741,19 @@ static bool R_ParseImageProgram_r( idLexer& src, byte** pic, int* width, int* he
 	return true;
 }
 
-/*
-===================
-R_LoadImageProgram
-===================
+/*!
+	\brief Loads and parses an image program file, extracting texture data and metadata.
+
+	This function serves as the entry point for loading image programs, which are typically used for defining texture properties and behaviors in the engine. It initializes a lexer to process the
+   input file, sets appropriate parsing flags, and calls the recursive parsing function to extract image data and associated metadata such as dimensions, timestamp, and usage flags. The function
+   handles memory management for the lexer and ensures proper cleanup.
+
+	\param name name
+	\param pic byte **
+	\param width int *
+	\param height int *
+	\param timestamps ID_TIME_T *
+	\param usage textureUsage_t *
 */
 void R_LoadImageProgram( const char* name, byte** pic, int* width, int* height, ID_TIME_T* timestamps, textureUsage_t* usage )
 {
@@ -748,11 +772,6 @@ void R_LoadImageProgram( const char* name, byte** pic, int* width, int* height, 
 	src.FreeSource();
 }
 
-/*
-===================
-R_ParsePastImageProgram
-===================
-*/
 const char* R_ParsePastImageProgram( idLexer& src )
 {
 	parseBuffer[0] = 0;

@@ -138,7 +138,10 @@ typedef struct maModel_s {
 
 } maModel_t;
 
+//! Loads a MA model from the specified file name
 maModel_t* MA_Load( const char* fileName );
+
+//! Frees all memory allocated for a maModel_t structure and its associated data.
 void	   MA_Free( maModel_t* ma );
 
 #endif /* !__MODEL_MA_H__ */

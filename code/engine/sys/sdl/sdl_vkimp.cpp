@@ -590,11 +590,6 @@ static void FillStaticVidModes( idList<vidMode_t>& modeList )
 	modeList.SortWithTemplate( idSort_VidMode() );
 }
 
-/*
-====================
-R_GetModeListForDisplay
-====================
-*/
 bool R_GetModeListForDisplay( const int requestedDisplayNum, idList<vidMode_t>& modeList )
 {
 	assert( requestedDisplayNum >= 0 );

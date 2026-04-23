@@ -58,21 +58,13 @@ idCVar				  r_useLightStencilSelect( "r_useLightStencilSelect", "0", CVAR_RENDER
 
 extern idCVar		  stereoRender_swapEyes;
 
-/*
-================
-SetVertexParm
-================
-*/
+//! Sets a vertex parameter value for the specified render parameter.
 static ID_INLINE void SetVertexParm( renderParm_t rp, const float value[4] )
 {
 	renderProgManager.SetUniformValue( rp, value );
 }
 
-/*
-================
-SetVertexParms
-================
-*/
+//! Sets vertex parameters for rendering by configuring uniform values.
 static ID_INLINE void SetVertexParms( renderParm_t rp, const float values[], int num )
 {
 	for( int i = 0; i < num; i++ ) {
@@ -80,31 +72,19 @@ static ID_INLINE void SetVertexParms( renderParm_t rp, const float values[], int
 	}
 }
 
-/*
-================
-SetFragmentParm
-================
-*/
+//! Sets a fragment shader parameter value.
 static ID_INLINE void SetFragmentParm( renderParm_t rp, const float value[4] )
 {
 	renderProgManager.SetUniformValue( rp, value );
 }
 
-/*
-================
-RB_SetMVP
-================
-*/
+//! Sets the model-view-projection matrix for rendering.
 void RB_SetMVP( const idRenderMatrix& mvp )
 {
 	SetVertexParms( RENDERPARM_MVPMATRIX_X, mvp[0], 4 );
 }
 
-/*
-================
-RB_SetMVPWithStereoOffset
-================
-*/
+//! Sets the model-view-projection matrix with a stereo offset applied to the translation component.
 static void RB_SetMVPWithStereoOffset( const idRenderMatrix& mvp, const float stereoOffset )
 {
 	idRenderMatrix offset = mvp;
@@ -117,11 +97,7 @@ static const float zero[4]	 = { 0, 0, 0, 0 };
 static const float one[4]	 = { 1, 1, 1, 1 };
 static const float negOne[4] = { -1, -1, -1, -1 };
 
-/*
-================
-RB_SetVertexColorParms
-================
-*/
+//! Configures vertex color parameters based on the specified stage vertex color type.
 void			   RB_SetVertexColorParms( stageVertexColor_t svc )
 {
 	switch( svc ) {
@@ -140,11 +116,7 @@ void			   RB_SetVertexColorParms( stageVertexColor_t svc )
 	}
 }
 
-/*
-======================
-RB_GetShaderTextureMatrix
-======================
-*/
+//! Computes a 4x4 texture transformation matrix from shader registers and texture stage data
 void RB_GetShaderTextureMatrix( const float* shaderRegisters, const textureStage_t* texture, float matrix[16] )
 {
 	matrix[0 * 4 + 0] = shaderRegisters[texture->matrix[0][0]];
@@ -177,11 +149,7 @@ void RB_GetShaderTextureMatrix( const float* shaderRegisters, const textureStage
 	matrix[3 * 4 + 3] = 1.0f;
 }
 
-/*
-======================
-RB_LoadShaderTextureMatrix
-======================
-*/
+//! Loads and applies the texture matrix for a given shader and texture stage
 void RB_LoadShaderTextureMatrix( const float* shaderRegisters, const textureStage_t* texture )
 {
 	float texS[4] = { 1.0f, 0.0f, 0.0f, 0.0f };
@@ -205,11 +173,7 @@ void RB_LoadShaderTextureMatrix( const float* shaderRegisters, const textureStag
 	SetVertexParm( RENDERPARM_TEXTUREMATRIX_T, texT );
 }
 
-/*
-=====================
-RB_BakeTextureMatrixIntoTexgen
-=====================
-*/
+//! Combines a texture matrix with light projection planes to update the texture generation parameters
 void RB_BakeTextureMatrixIntoTexgen( idPlane lightProject[3], const float* textureMatrix )
 {
 	float genMatrix[16];
@@ -248,13 +212,6 @@ void RB_BakeTextureMatrixIntoTexgen( idPlane lightProject[3], const float* textu
 	lightProject[1][3] = final[3 * 4 + 1];
 }
 
-/*
-======================
-idRenderBackend::BindVariableStageImage
-
-Handles generating a cinematic frame if needed
-======================
-*/
 void idRenderBackend::BindVariableStageImage( const textureStage_t* texture, const float* shaderRegisters, nvrhi::ICommandList* commandList )
 {
 	if( texture->cinematic ) {
@@ -315,11 +272,6 @@ void idRenderBackend::BindVariableStageImage( const textureStage_t* texture, con
 	}
 }
 
-/*
-================
-idRenderBackend::PrepareStageTexturing
-================
-*/
 void idRenderBackend::PrepareStageTexturing( const shaderStage_t* pStage, const drawSurf_t* surf )
 {
 	float useTexGenParm[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
@@ -567,11 +519,6 @@ void idRenderBackend::PrepareStageTexturing( const shaderStage_t* pStage, const 
 	SetVertexParm( RENDERPARM_TEXGEN_0_ENABLED, useTexGenParm );
 }
 
-/*
-================
-idRenderBackend::FinishStageTexturing
-================
-*/
 void idRenderBackend::FinishStageTexturing( const shaderStage_t* pStage, const drawSurf_t* surf )
 {
 	if( pStage->texture.cinematic ) {
@@ -593,7 +540,6 @@ void idRenderBackend::FinishStageTexturing( const shaderStage_t* pStage, const d
 	}
 }
 
-// RB: moved this up because we need to call this several times for shadow mapping
 void idRenderBackend::ResetViewportAndScissorToDefaultCamera( const viewDef_t* _viewDef )
 {
 	// set the window clipping
@@ -608,7 +554,6 @@ void idRenderBackend::ResetViewportAndScissorToDefaultCamera( const viewDef_t* _
 
 	currentScissor = viewDef->scissor;
 }
-// RB end
 
 /*
 =========================================================================================
@@ -616,12 +561,6 @@ void idRenderBackend::ResetViewportAndScissorToDefaultCamera( const viewDef_t* _
 DEPTH BUFFER RENDERING
 
 =========================================================================================
-*/
-
-/*
-==================
-idRenderBackend::FillDepthBufferGeneric
-==================
 */
 void idRenderBackend::FillDepthBufferGeneric( const drawSurf_t* const* drawSurfs, int numDrawSurfs )
 {
@@ -796,24 +735,6 @@ void idRenderBackend::FillDepthBufferGeneric( const drawSurf_t* const* drawSurfs
 	SetFragmentParm( RENDERPARM_ALPHA_TEST, vec4_zero.ToFloatPtr() );
 }
 
-/*
-=====================
-idRenderBackend::FillDepthBufferFast
-
-Optimized fast path code.
-
-If there are subview surfaces, they must be guarded in the depth buffer to allow
-the mirror / subview to show through underneath the current view rendering.
-
-Surfaces with perforated shaders need the full shader setup done, but should be
-drawn after the opaque surfaces.
-
-The bulk of the surfaces should be simple opaque geometry that can be drawn very rapidly.
-
-If there are no subview surfaces, we could clear to black and use fast-Z rendering
-on the 360.
-=====================
-*/
 void idRenderBackend::FillDepthBufferFast( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 	if( numDrawSurfs == 0 ) {
@@ -932,11 +853,6 @@ const int INTERACTION_TEXUNIT_SPECULAR_CUBE1 = 8;
 const int INTERACTION_TEXUNIT_SPECULAR_CUBE2 = 9;
 const int INTERACTION_TEXUNIT_SPECULAR_CUBE3 = 10;
 
-/*
-==================
-idRenderBackend::SetupInteractionStage
-==================
-*/
 void	  idRenderBackend::SetupInteractionStage( const shaderStage_t* surfaceStage, const float* surfaceRegs, const float lightColor[4], idVec4 matrix[2], float color[4] )
 {
 	if( surfaceStage->texture.hasMatrix ) {
@@ -980,11 +896,6 @@ void	  idRenderBackend::SetupInteractionStage( const shaderStage_t* surfaceStage
 	}
 }
 
-/*
-=================
-idRenderBackend::DrawSingleInteraction
-=================
-*/
 void idRenderBackend::DrawSingleInteraction( drawInteraction_t* din, bool useFastPath, bool useIBL, bool setInteractionShader )
 {
 	if( !useFastPath ) {
@@ -1349,13 +1260,7 @@ void idRenderBackend::DrawSingleInteraction( drawInteraction_t* din, bool useFas
 	DrawElementsWithCounters( din->surf );
 }
 
-/*
-=================
-RB_SetupForFastPathInteractions
-
-These are common for all fast path surfaces
-=================
-*/
+//! Sets up rendering parameters for fast path surface interactions with specified diffuse and specular colors.
 static void RB_SetupForFastPathInteractions( const idVec4& diffuseColor, const idVec4& specularColor )
 {
 	const idVec4 sMatrix( 1, 0, 0, 0 );
@@ -1379,13 +1284,6 @@ static void RB_SetupForFastPathInteractions( const idVec4& diffuseColor, const i
 	SetFragmentParm( RENDERPARM_SPECULARMODIFIER, specularColor.ToFloatPtr() );
 }
 
-/*
-=============
-idRenderBackend::RenderInteractions
-
-With added sorting and trivial path work.
-=============
-*/
 void idRenderBackend::RenderInteractions( const drawSurf_t* surfList, const viewLight_t* vLight, int depthFunc, bool performStencilTest, bool useLightDepthBounds, stereoOrigin_t stereoOrigin )
 {
 	if( surfList == NULL ) {
@@ -1805,20 +1703,12 @@ void idRenderBackend::RenderInteractions( const drawSurf_t* surfList, const view
 	renderProgManager.Unbind();
 }
 
-// RB begin
-
 /*
 =========================================================================================
 
 AMBIENT PASS RENDERING
 
 =========================================================================================
-*/
-
-/*
-==================
-idRenderBackend::AmbientPass
-==================
 */
 void idRenderBackend::AmbientPass( const drawSurf_t* const* drawSurfs, int numDrawSurfs, bool fillGbuffer, const stereoOrigin_t stereoOrigin )
 {
@@ -2236,8 +2126,6 @@ void idRenderBackend::AmbientPass( const drawSurf_t* const* drawSurfs, int numDr
 	renderLog.CloseMainBlock();
 }
 
-// RB end
-
 /*
 ==============================================================================================
 
@@ -2246,10 +2134,19 @@ SHADOW MAPS RENDERING
 ==============================================================================================
 */
 
-/*
-same as D3DXMatrixOrthoOffCenterRH
+/*!
+	\brief Creates a right-handed orthogonal projection matrix and stores it in the provided 16-element array.
 
-http://msdn.microsoft.com/en-us/library/bb205348(VS.85).aspx
+	This function constructs a 4x4 orthogonal projection matrix suitable for use in a right-handed coordinate system. The matrix is stored in row-major order in the provided array m. The function
+   takes six parameters defining the view volume: left, right, bottom, top, zNear, and zFar. The resulting matrix maps the specified viewing volume to clip space.
+
+	\param m Pointer to a 16-element array where the resulting matrix will be stored
+	\param left The x-coordinate of the left vertical clipping plane
+	\param right The x-coordinate of the right vertical clipping plane
+	\param bottom The y-coordinate of the bottom horizontal clipping plane
+	\param top The y-coordinate of the top horizontal clipping plane
+	\param zNear The z-coordinate of the near clipping plane
+	\param zFar The z-coordinate of the far clipping plane
 */
 static void MatrixOrthogonalProjectionRH( float m[16], float left, float right, float bottom, float top, float zNear, float zFar )
 {
@@ -2271,6 +2168,7 @@ static void MatrixOrthogonalProjectionRH( float m[16], float left, float right, 
 	m[15] = 1;
 }
 
+//! Sets the given matrix to a cropping transformation based on the specified min and max bounds.
 void MatrixCrop( float m[16], const idVec3 mins, const idVec3 maxs )
 {
 	float scaleX, scaleY, scaleZ;
@@ -2303,6 +2201,18 @@ void MatrixCrop( float m[16], const idVec3 mins, const idVec3 maxs )
 	m[15] = 1;
 }
 
+/*!
+	\brief Creates a right-handed look-at view matrix using the specified eye position, viewing direction, and up vector.
+
+	This function constructs a 4x4 transformation matrix that represents a right-handed view transformation. The matrix is designed to orient the camera at the given eye position, looking toward the
+   specified direction while maintaining the provided up vector for proper orientation. The function internally normalizes the input vectors and computes the orthonormal basis for the view matrix. The
+   resulting matrix can be used for camera transformations in 3D graphics rendering.
+
+	\param m Output 4x4 matrix that will contain the look-at transformation
+	\param eye Position of the camera in world space
+	\param dir Direction the camera is looking at, must not be parallel to the up vector
+	\param up Up vector for the camera, should not be parallel to the direction vector
+*/
 void MatrixLookAtRH( float m[16], const idVec3& eye, const idVec3& dir, const idVec3& up )
 {
 	idVec3 dirN;
@@ -2336,11 +2246,6 @@ void MatrixLookAtRH( float m[16], const idVec3& eye, const idVec3& dir, const id
 	m[15] = 1;
 }
 
-/*
-=====================
-idRenderBackend::SetupShadowMapMatrices
-=====================
-*/
 void idRenderBackend::SetupShadowMapMatrices( viewLight_t* vLight, int side, idRenderMatrix& lightProjectionRenderMatrix, idRenderMatrix& lightViewRenderMatrix, const stereoOrigin_t stereoOrigin )
 {
 	if( vLight->parallel && side >= 0 ) {
@@ -2639,11 +2544,6 @@ void idRenderBackend::SetupShadowMapMatrices( viewLight_t* vLight, int side, idR
 	}
 }
 
-/*
-=====================
-idRenderBackend::ShadowMapPassPerforated
-=====================
-*/
 void idRenderBackend::ShadowMapPassPerforated(
 	const drawSurf_t** drawSurfs, int numDrawSurfs, viewLight_t* vLight, int side, const idRenderMatrix& lightProjectionRenderMatrix, const idRenderMatrix& lightViewRenderMatrix )
 {
@@ -2837,11 +2737,6 @@ void idRenderBackend::ShadowMapPassPerforated(
 	renderLog.CloseBlock();
 }
 
-/*
-=====================
-idRenderBackend::ShadowMapPassFast
-=====================
-*/
 void idRenderBackend::ShadowMapPassFast( const drawSurf_t* drawSurfs, viewLight_t* vLight, int side, bool atlas, const stereoOrigin_t stereoOrigin )
 {
 	if( r_skipShadows.GetBool() ) {
@@ -3007,15 +2902,22 @@ void idRenderBackend::ShadowMapPassFast( const drawSurf_t* drawSurfs, viewLight_
 	renderLog.CloseBlock();
 }
 
+/*!
+	\class idSortrects
+	\brief A sorting utility for rectangles based on their size metrics.
+*/
 class idSortrects : public idSort_Quick<int, idSortrects>
 {
 public:
+	//! Computes a metric for the size of a rectangle represented by a 2D integer vector.
 	int SizeMetric( idVec2i v ) const
 	{
 		// skinny rects will sort earlier than square ones, because
 		// they are more likely to grow the entire region
 		return v.x * v.x + v.y * v.y;
 	}
+
+	//! Compares two integer indices based on their size metrics for sorting purposes.
 	int Compare( const int& a, const int& b ) const
 	{
 		return SizeMetric( ( *inputSizes )[b] ) - SizeMetric( ( *inputSizes )[a] );
@@ -3285,18 +3187,6 @@ void idRenderBackend::ShadowAtlasPass( const viewDef_t* _viewDef, const stereoOr
 	renderLog.CloseMainBlock();
 }
 
-/*
-==============================================================================================
-
-DRAW INTERACTIONS
-
-==============================================================================================
-*/
-/*
-==================
-idRenderBackend::DrawInteractions
-==================
-*/
 void idRenderBackend::DrawInteractions( const viewDef_t* _viewDef, stereoOrigin_t stereoOrigin )
 {
 	if( r_skipInteractions.GetBool() || viewDef->viewLights == NULL ) {
@@ -3448,17 +3338,6 @@ void idRenderBackend::DrawInteractions( const viewDef_t* _viewDef, stereoOrigin_
 NON-INTERACTION SHADER PASSES
 
 =============================================================================================
-*/
-
-/*
-=====================
-idRenderBackend::DrawShaderPasses
-
-Draw non-light dependent passes
-
-If we are rendering Guis, the drawSurf_t::sort value is a depth offset that can
-be multiplied by guiEye for polarity and screenSeparation for scale.
-=====================
 */
 int idRenderBackend::DrawShaderPasses( const drawSurf_t* const* const drawSurfs, const int numDrawSurfs, const float guiStereoScreenOffset, const int stereoEye, const stereoOrigin_t stereoOrigin )
 {
@@ -3843,19 +3722,6 @@ int idRenderBackend::DrawShaderPasses( const drawSurf_t* const* const drawSurfs,
 	return i;
 }
 
-/*
-=============================================================================================
-
-BLEND LIGHT PROJECTION
-
-=============================================================================================
-*/
-
-/*
-=====================
-idRenderBackend::T_BlendLight
-=====================
-*/
 void idRenderBackend::T_BlendLight( const drawSurf_t* drawSurfs, const viewLight_t* vLight )
 {
 	currentSpace = NULL;
@@ -3899,14 +3765,6 @@ void idRenderBackend::T_BlendLight( const drawSurf_t* drawSurfs, const viewLight
 	}
 }
 
-/*
-=====================
-idRenderBackend::BlendLight
-
-Dual texture together the falloff and projection texture with a blend
-mode to the framebuffer, instead of interacting with the surface texture
-=====================
-*/
 void idRenderBackend::BlendLight( const drawSurf_t* drawSurfs, const drawSurf_t* drawSurfs2, const viewLight_t* vLight, const stereoOrigin_t stereoOrigin )
 {
 	if( drawSurfs == NULL ) {
@@ -3970,12 +3828,6 @@ FOG LIGHTS
 
 =========================================================================================================
 */
-
-/*
-=====================
-idRenderBackend::T_BasicFog
-=====================
-*/
 void idRenderBackend::T_BasicFog( const drawSurf_t* drawSurfs, const idPlane fogPlanes[4], const idRenderMatrix* inverseBaseLightProject )
 {
 	currentSpace = NULL;
@@ -4031,11 +3883,6 @@ void idRenderBackend::T_BasicFog( const drawSurf_t* drawSurfs, const idPlane fog
 	}
 }
 
-/*
-==================
-idRenderBackend::FogPass
-==================
-*/
 void idRenderBackend::FogPass( const drawSurf_t* drawSurfs, const drawSurf_t* drawSurfs2, const viewLight_t* vLight, const stereoOrigin_t stereoOrigin )
 {
 	renderLog.OpenBlock( vLight->lightShader->GetName(), colorCyan );
@@ -4126,11 +3973,6 @@ void idRenderBackend::FogPass( const drawSurf_t* drawSurfs, const drawSurf_t* dr
 	renderLog.CloseBlock();
 }
 
-/*
-==================
-idRenderBackend::FogAllLights
-==================
-*/
 void idRenderBackend::FogAllLights( const stereoOrigin_t stereoOrigin )
 {
 	if( r_skipFogLights.GetBool() || r_showOverDraw.GetInteger() != 0 || viewDef->viewLights == NULL || viewDef->isXraySubview /* don't fog in xray mode*/ ) {
@@ -4354,7 +4196,6 @@ idVec2 idRenderBackend::GetCurrentPixelOffset( int frameIndex ) const
 	return idVec2( 0, 0 );
 }
 
-// RB: FIXME currently not used
 void idRenderBackend::Bloom( const viewDef_t* _viewDef )
 {
 	if( _viewDef->guiMode != GUIMODE_NONE || ( _viewDef->renderView.rdflags & RDF_IRRADIANCE ) ) {
@@ -4658,9 +4499,6 @@ void idRenderBackend::DrawScreenSpaceAmbientOcclusion( const viewDef_t* _viewDef
 	renderLog.CloseMainBlock();
 }
 
-/*
-NVRHI SSAO using compute shaders.
-*/
 void idRenderBackend::DrawScreenSpaceAmbientOcclusion2( const viewDef_t* _viewDef )
 {
 	if( !r_useSSAO.GetBool() || vrSystem->IsActive() ) {
@@ -4707,15 +4545,6 @@ void idRenderBackend::DrawScreenSpaceAmbientOcclusion2( const viewDef_t* _viewDe
 BACKEND COMMANDS
 
 =========================================================================================================
-*/
-
-/*
-====================
-RB_ExecuteBackEndCommands
-
-This function will be called syncronously if running without
-smp extensions, or asyncronously by another thread.
-====================
 */
 void idRenderBackend::ExecuteBackEndCommands( const emptyCommand_t* cmds )
 {
@@ -4825,11 +4654,6 @@ void idRenderBackend::ExecuteBackEndCommands( const emptyCommand_t* cmds )
 	}
 }
 
-/*
-==================
-idRenderBackend::DrawViewInternal
-==================
-*/
 void idRenderBackend::DrawViewInternal( const viewDef_t* _viewDef, const int stereoEye, const stereoOrigin_t stereoOrigin )
 {
 	// OPTICK_EVENT( "Backend_DrawViewInternal" );
@@ -5303,13 +5127,6 @@ void idRenderBackend::DrawViewInternal( const viewDef_t* _viewDef, const int ste
 	renderLog.CloseBlock();
 }
 
-/*
-==================
-idRenderBackend::MotionBlur
-
-Experimental feature
-==================
-*/
 void idRenderBackend::MotionBlur()
 {
 #if 0
@@ -5414,15 +5231,6 @@ void idRenderBackend::MotionBlur()
 #endif
 }
 
-/*
-==================
-idRenderBackend::DrawView
-
-StereoEye will always be 0 in mono modes, or -1 / 1 in stereo modes.
-If the view is a GUI view that is repeated for both eyes, the viewDef.stereoEye value
-is 0, so the stereoEye parameter is not always the same as that.
-==================
-*/
 void idRenderBackend::DrawView( const void* data, const int stereoEye )
 {
 	// OPTICK_EVENT( "Backend_DrawView" );
@@ -5766,13 +5574,6 @@ void idRenderBackend::DrawView( const void* data, const int stereoEye )
 	}
 }
 
-/*
-==================
-idRenderBackend::CopyRender
-
-Copy part of the current framebuffer to an image
-==================
-*/
 void idRenderBackend::CopyRender( const void* data )
 {
 	const copyRenderCommand_t* cmd = ( const copyRenderCommand_t* )data;

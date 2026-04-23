@@ -76,18 +76,38 @@ struct overlay_t {
 	const idMaterial* material;
 };
 
+/*!
+	\class idRenderModelOverlay
+	\brief Manages rendering overlays for 3D models with deferred creation and drawing surface generation.
+
+	The idRenderModelOverlay class provides functionality for creating and managing overlays that can be applied to 3D render models. It supports deferred overlay creation, allowing overlays to be
+   added and processed at a later time. The class maintains internal data structures for overlay information and can generate draw surfaces for rendering overlays in a view context. Overlays can be
+   created with specific texture coordinates and materials, and the class provides methods to reset its state and free allocated resources. The class is designed to work with render models and view
+   entities to facilitate the overlay rendering process, handling the creation and management of overlay geometry and rendering data.
+
+*/
 class idRenderModelOverlay
 {
 public:
+	//! Initializes a new instance of the idRenderModelOverlay class.
 	idRenderModelOverlay();
+
+	//! Destructor for the idRenderModelOverlay class that frees all allocated overlays.
 	~idRenderModelOverlay();
 
+	//! Resets the overlay data structures to their initial state.
 	void			   ReUse();
 
+	//! Adds a deferred overlay with the specified projection parameters to the overlay list.
 	void			   AddDeferredOverlay( const overlayProjectionParms_t& localParms );
+
+	//! Creates deferred overlays for the specified render model.
 	void			   CreateDeferredOverlays( const idRenderModel* model );
 
+	//! Returns the number of unique overlay draw surfaces in the render model.
 	unsigned int	   GetNumOverlayDrawSurfs();
+
+	//! Creates a draw surface for an overlay using the specified view entity, base model, and overlay index
 	struct drawSurf_t* CreateOverlayDrawSurf( const struct viewEntity_t* space, const idRenderModel* baseModel, unsigned int index );
 
 private:
@@ -102,7 +122,10 @@ private:
 	const idMaterial*		 overlayMaterials[MAX_OVERLAYS];
 	unsigned int			 numOverlayMaterials;
 
+	//! Creates an overlay for a render model using specified texture coordinates and material.
 	void					 CreateOverlay( const idRenderModel* model, const idPlane localTextureAxis[2], const idMaterial* material );
+
+	//! Frees the memory allocated for the overlay vertices and indexes.
 	void					 FreeOverlay( overlay_t& overlay );
 };
 

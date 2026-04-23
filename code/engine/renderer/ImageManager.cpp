@@ -60,6 +60,8 @@ reloadImages <all>
 ===============
 */
 #if !defined( DMAP )
+
+//! Reloads image resources in the rendering system, with an option to reload all images.
 void R_ReloadImages_f( const idCmdArgs& args )
 {
 	bool all = false;
@@ -89,11 +91,7 @@ typedef struct {
 	int		 index;
 } sortedImage_t;
 
-/*
-=======================
-R_QsortImageSizes
-=======================
-*/
+//! Compares two image size entries for sorting in descending order by size, with alphabetical fallback.
 static int R_QsortImageSizes( const void* a, const void* b )
 {
 	const sortedImage_t *ea, *eb;
@@ -110,11 +108,7 @@ static int R_QsortImageSizes( const void* a, const void* b )
 	return idStr::Icmp( ea->image->GetName(), eb->image->GetName() );
 }
 
-/*
-=======================
-R_QsortImageName
-=======================
-*/
+//! Sorts image names for qsort comparison.
 static int R_QsortImageName( const void* a, const void* b )
 {
 	const sortedImage_t *ea, *eb;
@@ -125,11 +119,6 @@ static int R_QsortImageName( const void* a, const void* b )
 	return idStr::Icmp( ea->image->GetName(), eb->image->GetName() );
 }
 
-/*
-===============
-R_ListImages_f
-===============
-*/
 void idImageManager::R_ListImages_f( const idCmdArgs& args )
 {
 	int		 i, partialSize;
@@ -249,14 +238,6 @@ void idImageManager::R_ListImages_f( const idCmdArgs& args )
 	idLib::Printf( " %5.1f total megabytes of images\n\n\n", totalSize / ( 1024 * 1024.0 ) );
 }
 
-/*
-==============
-AllocImage
-
-Allocates an idImage, adds it to the list,
-copies the name, and adds it to the hash chain.
-==============
-*/
 idImage* idImageManager::AllocImage( const char* name )
 {
 	if( strlen( name ) >= MAX_IMAGE_NAME ) {
@@ -272,14 +253,6 @@ idImage* idImageManager::AllocImage( const char* name )
 	return image;
 }
 
-/*
-==============
-AllocStandaloneImage
-
-Allocates an idImage,does not add it to the list or hash chain
-
-==============
-*/
 idImage* idImageManager::AllocStandaloneImage( const char* name )
 {
 	if( strlen( name ) >= MAX_IMAGE_NAME ) {
@@ -291,15 +264,6 @@ idImage* idImageManager::AllocStandaloneImage( const char* name )
 	return image;
 }
 
-/*
-==================
-ImageFromFunction
-
-Images that are procedurally generated are allways specified
-with a callback which must work at any time, allowing the OpenGL
-system to be completely regenerated if needed.
-==================
-*/
 idImage* idImageManager::ImageFromFunction( const char* _name, ImageGeneratorFunction generatorFunction )
 {
 	// strip any .tga file extensions from anywhere in the _name
@@ -333,14 +297,6 @@ idImage* idImageManager::ImageFromFunction( const char* _name, ImageGeneratorFun
 	return image;
 }
 
-/*
-===============
-ImageFromFile
-
-Finds or loads the given image, always returning a valid image pointer.
-Loading of the image may be deferred for dynamic loading.
-==============
-*/
 idImage* idImageManager::ImageFromFile( const char* _name, textureFilter_t filter, textureRepeat_t repeat, textureUsage_t usage, cubeFiles_t cubeMap, int cubeMapSize )
 {
 	if( !_name || !_name[0] || idStr::Icmp( _name, "default" ) == 0 || idStr::Icmp( _name, "_default" ) == 0 ) {
@@ -426,11 +382,6 @@ idImage* idImageManager::ImageFromFile( const char* _name, textureFilter_t filte
 	return image;
 }
 
-/*
-========================
-idImageManager::ScratchImage
-========================
-*/
 idImage* idImageManager::ScratchImage( const char* _name, idImageOpts* imgOpts, textureFilter_t filter, textureRepeat_t repeat, textureUsage_t usage )
 {
 	if( !_name || !_name[0] ) {
@@ -489,11 +440,6 @@ idImage* idImageManager::ScratchImage( const char* _name, idImageOpts* imgOpts, 
 	return newImage;
 }
 
-/*
-===============
-idImageManager::ScratchImage
-===============
-*/
 idImage* idImageManager::ScratchImage( const char* name, const idImageOpts& opts )
 {
 	if( !name || !name[0] ) {
@@ -514,11 +460,6 @@ idImage* idImageManager::ScratchImage( const char* name, const idImageOpts& opts
 	return image;
 }
 
-/*
-===============
-idImageManager::GetImage
-===============
-*/
 idImage* idImageManager::GetImage( const char* _name ) const
 {
 	if( !_name || !_name[0] || idStr::Icmp( _name, "default" ) == 0 || idStr::Icmp( _name, "_default" ) == 0 ) {
@@ -548,11 +489,6 @@ idImage* idImageManager::GetImage( const char* _name ) const
 	return NULL;
 }
 
-/*
-===============
-PurgeAllImages
-===============
-*/
 void idImageManager::PurgeAllImages()
 {
 	for( int i = 0; i < images.Num(); i++ ) {
@@ -560,11 +496,6 @@ void idImageManager::PurgeAllImages()
 	}
 }
 
-/*
-===============
-ReloadImages
-===============
-*/
 void idImageManager::ReloadImages( bool all, nvrhi::ICommandList* commandList )
 {
 	for( int i = 0; i < images.Num(); i++ ) {
@@ -574,14 +505,7 @@ void idImageManager::ReloadImages( bool all, nvrhi::ICommandList* commandList )
 	LoadDeferredImages( commandList );
 }
 
-/*
-===============
-R_CombineCubeImages_f
-
-Used to combine animations of six separate tga files into
-a serials of 6x taller tga files, for preparation to roq compress
-===============
-*/
+//! Combines six separate TGA image files into a single taller TGA file for each frame.
 void R_CombineCubeImages_f( const idCmdArgs& args )
 {
 	if( args.Argc() != 2 ) {
@@ -657,11 +581,6 @@ void R_CombineCubeImages_f( const idCmdArgs& args )
 	common->SetRefreshOnPrint( false );
 }
 
-/*
-===============
-Init
-===============
-*/
 void idImageManager::Init()
 {
 	images.Resize( 1024, 1024 );
@@ -680,11 +599,6 @@ void idImageManager::Init()
 	LoadDeferredImages();
 }
 
-/*
-===============
-Shutdown
-===============
-*/
 void idImageManager::Shutdown()
 {
 	images.DeleteContents( true );
@@ -692,12 +606,6 @@ void idImageManager::Shutdown()
 	commandList.Reset();
 }
 
-/*
-====================
-idImageManager::BeginLevelLoad
-Frees all images used by the previous level
-====================
-*/
 void idImageManager::BeginLevelLoad()
 {
 	insideLevelLoad = true;
@@ -721,11 +629,6 @@ void idImageManager::BeginLevelLoad()
 	}
 }
 
-/*
-====================
-idImageManager::ExcludePreloadImage
-====================
-*/
 bool idImageManager::ExcludePreloadImage( const char* name )
 {
 	idStrStatic<MAX_OSPATH> imgName = name;
@@ -742,11 +645,6 @@ bool idImageManager::ExcludePreloadImage( const char* name )
 	return false;
 }
 
-/*
-====================
-idImageManager::Preload
-====================
-*/
 void idImageManager::Preload( const idPreloadManifest& manifest, const bool& mapPreload )
 {
 	if( preLoad_Images.GetBool() && manifest.NumResources() > 0 ) {
@@ -867,11 +765,6 @@ void idImageManager::EndLevelLoad()
 }
 #endif
 
-/*
-===============
-idImageManager::PrintMemInfo
-===============
-*/
 void idImageManager::PrintMemInfo( MemInfo_t* mi )
 {
 	int		i, j, total = 0;

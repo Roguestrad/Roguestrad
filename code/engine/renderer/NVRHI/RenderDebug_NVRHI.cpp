@@ -59,11 +59,6 @@ static void			  RB_DrawText( const char* text, const idVec3& origin, float scale
 
 void				  RB_SetMVP( const idRenderMatrix& mvp );
 
-/*
-================
-RB_DrawBounds
-================
-*/
 void				  RB_DrawBounds( const idBounds& bounds )
 {
 	if( bounds.IsCleared() ) {
@@ -71,11 +66,6 @@ void				  RB_DrawBounds( const idBounds& bounds )
 	}
 }
 
-/*
-================
-idRenderBackend::DBG_SimpleSurfaceSetup
-================
-*/
 void idRenderBackend::DBG_SimpleSurfaceSetup( const drawSurf_t* drawSurf )
 {
 	// change the matrix if needed
@@ -98,11 +88,6 @@ void idRenderBackend::DBG_SimpleSurfaceSetup( const drawSurf_t* drawSurf )
 	}
 }
 
-/*
-================
-idRenderBackend::DBG_SimpleWorldSetup
-================
-*/
 void idRenderBackend::DBG_SimpleWorldSetup()
 {
 	currentSpace = &viewDef->worldSpace;
@@ -131,11 +116,6 @@ void idRenderBackend::DBG_PolygonClear()
 {
 }
 
-/*
-====================
-idRenderBackend::DBG_ShowDestinationAlpha
-====================
-*/
 void idRenderBackend::DBG_ShowDestinationAlpha()
 {
 	GL_State( GLS_SRCBLEND_DST_ALPHA | GLS_DSTBLEND_ZERO | GLS_DEPTHMASK | GLS_DEPTHFUNC_ALWAYS );
@@ -144,46 +124,18 @@ void idRenderBackend::DBG_ShowDestinationAlpha()
 	DBG_PolygonClear();
 }
 
-/*
-===================
-idRenderBackend::DBG_ScanStencilBuffer
-
-Debugging tool to see what values are in the stencil buffer
-===================
-*/
 void idRenderBackend::DBG_ScanStencilBuffer()
 {
 }
 
-/*
-===================
-idRenderBackend::DBG_CountStencilBuffer
-
-Print an overdraw count based on stencil index values
-===================
-*/
 void idRenderBackend::DBG_CountStencilBuffer()
 {
 }
 
-/*
-===================
-idRenderBackend::DBG_ColorByStencilBuffer
-
-Sets the screen colors based on the contents of the
-stencil buffer.  Stencil of 0 = black, 1 = red, 2 = green,
-3 = blue, ..., 7+ = white
-===================
-*/
 void idRenderBackend::DBG_ColorByStencilBuffer()
 {
 }
 
-/*
-==================
-idRenderBackend::DBG_ShowOverdraw
-==================
-*/
 void idRenderBackend::DBG_ShowOverdraw()
 {
 	const idMaterial* material;
@@ -255,38 +207,14 @@ void idRenderBackend::DBG_ShowOverdraw()
 	}
 }
 
-/*
-===================
-idRenderBackend::DBG_ShowIntensity
-
-Debugging tool to see how much dynamic range a scene is using.
-The greatest of the rgb values at each pixel will be used, with
-the resulting color shading from red at 0 to green at 128 to blue at 255
-===================
-*/
 void idRenderBackend::DBG_ShowIntensity()
 {
 }
 
-/*
-===================
-idRenderBackend::DBG_ShowDepthBuffer
-
-Draw the depth buffer as colors
-===================
-*/
 void idRenderBackend::DBG_ShowDepthBuffer()
 {
 }
 
-/*
-=================
-idRenderBackend::DBG_ShowLightCount
-
-This is a debugging tool that will draw each surface with a color
-based on how many lights are effecting it
-=================
-*/
 void idRenderBackend::DBG_ShowLightCount()
 {
 	int				   i;
@@ -327,16 +255,6 @@ void idRenderBackend::DBG_ShowLightCount()
 	}
 }
 
-/*
-====================
-idRenderBackend::DBG_RenderDrawSurfListWithFunction
-
-The triangle functions can check backEnd.currentSpace != surf->space
-to see if they need to perform any new matrix setup.  The modelview
-matrix will already have been loaded, and backEnd.currentSpace will
-be updated after the triangle function completes.
-====================
-*/
 void idRenderBackend::DBG_RenderDrawSurfListWithFunction( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 	currentSpace = NULL;
@@ -419,16 +337,6 @@ void idRenderBackend::DBG_RenderDrawSurfListWithFunction( drawSurf_t** drawSurfs
 	}
 }
 
-/*
-=================
-idRenderBackend::DBG_ShowSilhouette
-
-Blacks out all edges, then adds color for each edge that a shadow
-plane extends from, allowing you to see doubled edges
-
-FIXME: not thread safe!
-=================
-*/
 void idRenderBackend::DBG_ShowSilhouette()
 {
 #if 0
@@ -514,13 +422,6 @@ void idRenderBackend::DBG_ShowSilhouette()
 #endif
 }
 
-/*
-=====================
-idRenderBackend::DBG_ShowTris
-
-Debugging tool
-=====================
-*/
 void idRenderBackend::DBG_ShowTris( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 	modelTrace_t mt;
@@ -639,13 +540,6 @@ void idRenderBackend::DBG_ShowSurfaceInfo( drawSurf_t** drawSurfs, int numDrawSu
 	tr.primaryWorld->DrawText( surfMatName, surfPoint, 0.35f, colorCyan, tr.primaryView->renderView.viewaxis );
 }
 
-/*
-=====================
-idRenderBackend::DBG_ShowViewEntitys
-
-Debugging tool
-=====================
-*/
 void idRenderBackend::DBG_ShowViewEntitys( viewEntity_t* vModels )
 {
 	if( !r_showViewEntitys.GetBool() ) {
@@ -714,108 +608,38 @@ void idRenderBackend::DBG_ShowViewEntitys( viewEntity_t* vModels )
 	}
 }
 
-/*
-=====================
-idRenderBackend::DBG_ShowTexturePolarity
-
-Shade triangle red if they have a positive texture area
-green if they have a negative texture area, or blue if degenerate area
-=====================
-*/
 void idRenderBackend::DBG_ShowTexturePolarity( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 }
 
-/*
-=====================
-idRenderBackend::DBG_ShowUnsmoothedTangents
-
-Shade materials that are using unsmoothed tangents
-=====================
-*/
 void idRenderBackend::DBG_ShowUnsmoothedTangents( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 }
 
-/*
-=====================
-RB_ShowTangentSpace
-
-Shade a triangle by the RGB colors of its tangent space
-1 = tangents[0]
-2 = tangents[1]
-3 = normal
-=====================
-*/
 void idRenderBackend::DBG_ShowTangentSpace( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 }
 
-/*
-=====================
-idRenderBackend::DBG_ShowVertexColor
-
-Draw each triangle with the solid vertex colors
-=====================
-*/
 void idRenderBackend::DBG_ShowVertexColor( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 }
 
-/*
-=====================
-idRenderBackend::DBG_ShowNormals
-
-Debugging tool
-=====================
-*/
 void idRenderBackend::DBG_ShowNormals( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 }
 
-/*
-=====================
-idRenderBackend::DBG_ShowTextureVectors
-
-Draw texture vectors in the center of each triangle
-=====================
-*/
 void idRenderBackend::DBG_ShowTextureVectors( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 }
 
-/*
-=====================
-idRenderBackend::DBG_ShowDominantTris
-
-Draw lines from each vertex to the dominant triangle center
-=====================
-*/
 void idRenderBackend::DBG_ShowDominantTris( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 }
 
-/*
-=====================
-idRenderBackend::DBG_ShowEdges
-
-Debugging tool
-=====================
-*/
 void idRenderBackend::DBG_ShowEdges( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 }
 
-/*
-==============
-RB_ShowLights
-
-Visualize all light volumes used in the current scene
-r_showLights 1	: just print volumes numbers, highlighting ones covering the view
-r_showLights 2	: also draw planes of each volume
-r_showLights 3	: also draw edges of each volume
-==============
-*/
 void idRenderBackend::DBG_ShowLights()
 {
 	if( !r_showLights.GetInteger() ) {
@@ -866,24 +690,22 @@ void idRenderBackend::DBG_ShowLights()
 	}
 }
 
-// RB begin
-/*
-==============
-RB_ShowViewEnvprobes
-
-Visualize all environment probes used in the current scene
-==============
+/*!
+	\class idSort_DebugCompareViewEnvprobe
+	\brief A comparator class for sorting environment probes based on their distance from a specified view origin.
 */
 class idSort_DebugCompareViewEnvprobe : public idSort_Quick<RenderEnvprobeLocal*, idSort_DebugCompareViewEnvprobe>
 {
 	idVec3 viewOrigin;
 
 public:
+	//! Constructs an idSort_DebugCompareViewEnvprobe object with the specified origin.
 	idSort_DebugCompareViewEnvprobe( const idVec3& origin )
 	{
 		viewOrigin = origin;
 	}
 
+	//! Compares two RenderEnvprobeLocal objects based on their distance from a view origin.
 	int Compare( RenderEnvprobeLocal* const& a, RenderEnvprobeLocal* const& b ) const
 	{
 		float adist = ( viewOrigin - a->parms.origin ).LengthSqr();
@@ -1470,15 +1292,7 @@ void idRenderBackend::DBG_ShowShadowMapLODs()
 		}
 	}
 }
-// RB end
 
-/*
-=====================
-idRenderBackend::DBG_ShowPortals
-
-Debugging tool, won't work correctly with SMP or when mirrors are present
-=====================
-*/
 void idRenderBackend::DBG_ShowPortals()
 {
 	if( !r_showPortals.GetBool() ) {
@@ -1541,11 +1355,6 @@ void idRenderBackend::DBG_ShowPortals()
 	}
 }
 
-/*
-================
-idRenderBackend::DBG_ClearDebugText
-================
-*/
 void RB_ClearDebugText( int time )
 {
 	int			 i;
@@ -1600,13 +1409,6 @@ void RB_AddDebugText( const char* text, const idVec3& origin, float scale, const
 	}
 }
 
-/*
-================
-RB_DrawTextLength
-
-  returns the length of the given text
-================
-*/
 float RB_DrawTextLength( const char* text, float scale, int len )
 {
 	int	  i, num, index, charIndex;
@@ -1642,13 +1444,19 @@ float RB_DrawTextLength( const char* text, float scale, int len )
 	return textLen;
 }
 
-/*
-================
-RB_DrawText
+/*!
+	\brief Draws text in 3D space using simplex character glyphs aligned to the view axis
 
-  oriented on the viewaxis
-  align can be 0-left, 1-center (default), 2-right
-================
+	This function renders text in 3D using a simple character glyph system where each character is composed of line segments. The text is positioned at the specified origin and oriented along the
+   provided view axis. The function supports left, center, and right alignment options. It calculates the position and orientation of each character based on the view axis and renders the text using
+   immediate mode rendering
+
+	\param text The null-terminated string to render
+	\param origin The 3D position where the text should be drawn
+	\param scale Scaling factor for the text size
+	\param color RGBA color values for the text
+	\param viewAxis The view axis defining the orientation of the text
+	\param align Text alignment: 0=left, 1=center (default), 2=right
 */
 static void RB_DrawText( const char* text, const idVec3& origin, float scale, const idVec4& color, const idMat3& viewAxis, const int align )
 {
@@ -1725,11 +1533,6 @@ static void RB_DrawText( const char* text, const idVec3& origin, float scale, co
 	}
 }
 
-/*
-================
-idRenderBackend::DBG_ShowDebugText
-================
-*/
 void idRenderBackend::DBG_ShowDebugText()
 {
 	int			 i;
@@ -1786,11 +1589,6 @@ void idRenderBackend::DBG_ShowDebugText()
 	// glLineWidth( 1 );
 }
 
-/*
-================
-RB_ClearDebugLines
-================
-*/
 void RB_ClearDebugLines( int time )
 {
 	int			 i;
@@ -1818,11 +1616,6 @@ void RB_ClearDebugLines( int time )
 	rb_numDebugLines = num;
 }
 
-/*
-================
-RB_AddDebugLine
-================
-*/
 void RB_AddDebugLine( const idVec4& color, const idVec3& start, const idVec3& end, const int lifeTime, const bool depthTest )
 {
 	debugLine_t* line;
@@ -1837,11 +1630,6 @@ void RB_AddDebugLine( const idVec4& color, const idVec3& start, const idVec3& en
 	}
 }
 
-/*
-================
-idRenderBackend::DBG_ShowDebugLines
-================
-*/
 void idRenderBackend::DBG_ShowDebugLines()
 {
 	int			 i;
@@ -1918,11 +1706,6 @@ void idRenderBackend::DBG_ShowDebugLines()
 	GL_State( GLS_DEFAULT );
 }
 
-/*
-================
-RB_ClearDebugPolygons
-================
-*/
 void RB_ClearDebugPolygons( int time )
 {
 	int				i;
@@ -1951,11 +1734,6 @@ void RB_ClearDebugPolygons( int time )
 	rb_numDebugPolygons = num;
 }
 
-/*
-================
-RB_AddDebugPolygon
-================
-*/
 void RB_AddDebugPolygon( const idVec4& color, const idWinding& winding, const int lifeTime, const bool depthTest )
 {
 	debugPolygon_t* poly;
@@ -1969,60 +1747,26 @@ void RB_AddDebugPolygon( const idVec4& color, const idWinding& winding, const in
 	}
 }
 
-/*
-================
-idRenderBackend::DBG_ShowDebugPolygons
-================
-*/
 void idRenderBackend::DBG_ShowDebugPolygons()
 {
 }
 
-/*
-================
-idRenderBackend::DBG_ShowCenterOfProjection
-================
-*/
 void idRenderBackend::DBG_ShowCenterOfProjection()
 {
 }
 
-/*
-================
-idRenderBackend::DBG_ShowLines
-
-Draw exact pixel lines to check pixel center sampling
-================
-*/
 void idRenderBackend::DBG_ShowLines()
 {
 }
 
-/*
-================
-idRenderBackend::DBG_TestGamma
-================
-*/
 void idRenderBackend::DBG_TestGamma()
 {
 }
 
-/*
-==================
-idRenderBackend::DBG_TestGammaBias
-==================
-*/
 void idRenderBackend::DBG_TestGammaBias()
 {
 }
 
-/*
-================
-idRenderBackend::DBG_TestImage
-
-Display a single image over most of the screen
-================
-*/
 void idRenderBackend::DBG_TestImage()
 {
 	idImage* image	 = NULL;
@@ -2151,39 +1895,19 @@ void idRenderBackend::DBG_TestImage()
 	DrawElementsWithCounters( &testImageSurface );
 }
 
-// RB begin
 void idRenderBackend::DBG_ShowShadowMaps()
 {
 }
-// RB end
 
-/*
-=================
-RB_DrawExpandedTriangles
-=================
-*/
+//! Draws expanded triangles for rendering with a specified radius and view origin.
 static void RB_DrawExpandedTriangles( const srfTriangles_t* tri, const float radius, const idVec3& vieworg )
 {
 }
 
-/*
-================
-idRenderBackend::DBG_ShowTrace
-
-Debug visualization
-
-FIXME: not thread safe!
-================
-*/
 void idRenderBackend::DBG_ShowTrace( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 }
 
-/*
-=================
-idRenderBackend::DBG_RenderDebugTools
-=================
-*/
 void idRenderBackend::DBG_RenderDebugTools( drawSurf_t** drawSurfs, int numDrawSurfs )
 {
 	if( viewDef->renderView.rdflags & RDF_IRRADIANCE ) {
@@ -2258,11 +1982,6 @@ void idRenderBackend::DBG_RenderDebugTools( drawSurf_t** drawSurfs, int numDrawS
 	renderLog.CloseMainBlock();
 }
 
-/*
-=================
-RB_ShutdownDebugTools
-=================
-*/
 void RB_ShutdownDebugTools()
 {
 	for( int i = 0; i < MAX_DEBUG_POLYGONS; i++ ) {

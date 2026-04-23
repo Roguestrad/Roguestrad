@@ -40,40 +40,21 @@ extern DeviceManager* deviceManager;
 
 idRenderProgManager	  renderProgManager;
 
-/*
-================================================================================================
-idRenderProgManager::idRenderProgManager()
-================================================================================================
-*/
 idRenderProgManager::idRenderProgManager()
 {
 }
 
-/*
-================================================================================================
-idRenderProgManager::~idRenderProgManager()
-================================================================================================
-*/
 idRenderProgManager::~idRenderProgManager()
 {
 }
 
-/*
-================================================================================================
-R_ReloadShaders
-================================================================================================
-*/
+//! Reloads all shaders in the rendering system.
 static void R_ReloadShaders( const idCmdArgs& args )
 {
 	renderProgManager.KillAllShaders();
 	renderProgManager.LoadAllShaders();
 }
 
-/*
-================================================================================================
-idRenderProgManager::Init()
-================================================================================================
-*/
 void idRenderProgManager::Init( nvrhi::IDevice* device )
 {
 	common->Printf( "----- Initializing Render Shaders -----\n" );
@@ -1008,11 +989,6 @@ void idRenderProgManager::Init( nvrhi::IDevice* device )
 	cmdSystem->AddCommand( "reloadShaders", R_ReloadShaders, CMD_FL_RENDERER, "reloads shaders" );
 }
 
-/*
-================================================================================================
-idRenderProgManager::LoadAllShaders()
-================================================================================================
-*/
 void idRenderProgManager::LoadAllShaders()
 {
 	for( int i = 0; i < shaders.Num(); i++ ) {
@@ -1029,11 +1005,6 @@ void idRenderProgManager::LoadAllShaders()
 	}
 }
 
-/*
-================================================================================================
-idRenderProgManager::Shutdown()
-================================================================================================
-*/
 void idRenderProgManager::Shutdown()
 {
 	KillAllShaders();
@@ -1059,13 +1030,6 @@ void idRenderProgManager::Shutdown()
 	}
 }
 
-/*
-================================================================================================
-idRenderProgManager::FindVertexShader
-================================================================================================
-*/
-
-// TODO REMOVE
 int idRenderProgManager::FindShader( const char* name, rpStage_t stage )
 {
 	idStr shaderName( name );
@@ -1151,11 +1115,6 @@ bool idRenderProgManager::IsShaderBound() const
 	return ( currentIndex != -1 );
 }
 
-/*
-================================================================================================
-idRenderProgManager::SetRenderParms
-================================================================================================
-*/
 void idRenderProgManager::SetRenderParms( renderParm_t rp, const float values[], int num )
 {
 	for( int i = 0; i < num; i++ ) {
@@ -1163,21 +1122,12 @@ void idRenderProgManager::SetRenderParms( renderParm_t rp, const float values[],
 	}
 }
 
-/*
-================================================================================================
-idRenderProgManager::SetRenderParm
-================================================================================================
-*/
 void idRenderProgManager::SetRenderParm( renderParm_t rp, const float value[4] )
 {
 	SetUniformValue( rp, value );
 }
 
-/*
-========================
-RpPrintState
-========================
-*/
+//! Prints the human-readable state of OpenGL rendering settings from a bitfield.
 void RpPrintState( uint64 stateBits )
 {
 	// culling

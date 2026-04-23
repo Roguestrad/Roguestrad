@@ -57,12 +57,13 @@ static const int GLYPH_PADDING = 2;
 	#define FT26_TRUNC( x ) ( ( x ) >> 6 )
 	#define FT26_ROUND( x ) FT26_FLOOR( ( x ) + 32 )
 
-// Convert a float value to 26.6 fixed point
+//! Converts a float value to 26.6 fixed point format.
 static inline int FloatTo26_6( float v )
 {
 	return ( int )( v * 64.0f + ( v >= 0.0f ? 0.5f : -0.5f ) );
 }
 
+//! Fills a list with codepoints that are present in the given font.
 static void STB_EnumerateCodepoints( const stbtt_fontinfo* font, idList<uint32>& outChars )
 {
 	outChars.Clear();
@@ -76,15 +77,6 @@ static void STB_EnumerateCodepoints( const stbtt_fontinfo* font, idList<uint32>&
 	}
 }
 
-/*
-==============================
-idFont::LoadFromTrueTypeFont
-
-Loads a .ttf file via stb_truetype, renders all glyphs into a single-
-channel atlas texture, fills in fontInfo_t with BFG-compatible glyph
-metrics and writes the atlas as a TGA.
-==============================
-*/
 bool idFont::LoadFromTrueTypeFont()
 {
 	idStr ttfPath = va( "newfonts/%s", GetName() );

@@ -55,11 +55,6 @@ idSysInterlockedInteger frameAllocTypeCount[FRAME_ALLOC_MAX];
 int						frameHighWaterTypeCount[FRAME_ALLOC_MAX];
 #endif
 
-/*
-====================
-R_ToggleSmpFrame
-====================
-*/
 void R_ToggleSmpFrame()
 {
 	// update the highwater mark
@@ -98,11 +93,6 @@ void R_ToggleSmpFrame()
 	frameData->cmdHead->next				= NULL;
 }
 
-/*
-=====================
-R_ShutdownFrameData
-=====================
-*/
 void R_ShutdownFrameData()
 {
 	frameData = NULL;
@@ -112,11 +102,6 @@ void R_ShutdownFrameData()
 	}
 }
 
-/*
-=====================
-R_InitFrameData
-=====================
-*/
 void R_InitFrameData()
 {
 	R_ShutdownFrameData();
@@ -131,22 +116,7 @@ void R_InitFrameData()
 	R_ToggleSmpFrame();
 }
 
-/*
-================
-R_FrameAlloc
-
-This data will be automatically freed when the
-current frame's back end completes.
-
-This should only be called by the front end.  The
-back end shouldn't need to allocate memory.
-
-All temporary data, like dynamic tesselations
-and local spaces are allocated here.
-
-All memory is cache-line-cleared for the best performance.
-================
-*/
+//! Allocates aligned memory for rendering frame data with cache-line clearing
 void* R_FrameAlloc( int bytes, frameAllocType_t type )
 {
 #if defined( TRACK_FRAME_ALLOCS )
@@ -172,30 +142,14 @@ void* R_FrameAlloc( int bytes, frameAllocType_t type )
 	return ptr;
 }
 
-/*
-==================
-R_ClearedFrameAlloc
-==================
-*/
+//! Allocates cleared memory from the frame allocator for rendering purposes.
 void* R_ClearedFrameAlloc( int bytes, frameAllocType_t type )
 {
 	// NOTE: every allocation is cache line cleared
 	return R_FrameAlloc( bytes, type );
 }
 
-/*
-==========================================================================================
-
-FONT-END STATIC MEMORY ALLOCATION
-
-==========================================================================================
-*/
-
-/*
-=================
-R_StaticAlloc
-=================
-*/
+//! Allocates a static memory block of specified size with the given memory tag, terminating the application on failure.
 void* R_StaticAlloc( int bytes, const memTag_t tag )
 {
 	tr.pc.c_alloc++;
@@ -209,11 +163,6 @@ void* R_StaticAlloc( int bytes, const memTag_t tag )
 	return buf;
 }
 
-/*
-=================
-R_ClearedStaticAlloc
-=================
-*/
 void* R_ClearedStaticAlloc( int bytes )
 {
 	void* buf = R_StaticAlloc( bytes );
@@ -221,30 +170,13 @@ void* R_ClearedStaticAlloc( int bytes )
 	return buf;
 }
 
-/*
-=================
-R_StaticFree
-=================
-*/
 void R_StaticFree( void* data )
 {
 	tr.pc.c_free++;
 	Mem_Free( data );
 }
 
-/*
-==========================================================================================
-
-FONT-END RENDERING
-
-==========================================================================================
-*/
-
-/*
-=================
-R_SortDrawSurfs
-=================
-*/
+//! Sorts an array of draw surfaces based on sort value, depth, and index
 static void R_SortDrawSurfs( drawSurf_t** drawSurfs, const int numDrawSurfs )
 {
 #if 1
@@ -366,7 +298,7 @@ static void R_SortDrawSurfs( drawSurf_t** drawSurfs, const int numDrawSurfs )
 #endif
 }
 
-// RB begin
+//! Sets up split frustums for shadow mapping based on the provided view definition.
 static void R_SetupSplitFrustums( viewDef_t* viewDef )
 {
 	idVec3		planeOrigin;
@@ -422,16 +354,22 @@ static void R_SetupSplitFrustums( viewDef_t* viewDef )
 	}
 }
 
+/*!
+	\class idSort_CompareEnvprobe
+	\brief A sorting comparator for environment probe objects based on their distance from a specified view origin.
+*/
 class idSort_CompareEnvprobe : public idSort_Quick<RenderEnvprobeLocal*, idSort_CompareEnvprobe>
 {
 	idVec3 viewOrigin;
 
 public:
+	//! Constructor for idSort_CompareEnvprobe that initializes the view origin.
 	idSort_CompareEnvprobe( const idVec3& origin )
 	{
 		viewOrigin = origin;
 	}
 
+	//! Compares two RenderEnvprobeLocal objects based on their distance from a view origin
 	int Compare( RenderEnvprobeLocal* const& a, RenderEnvprobeLocal* const& b ) const
 	{
 		float adist = ( viewOrigin - a->parms.origin ).LengthSqr();
@@ -449,6 +387,7 @@ public:
 	}
 };
 
+//! Finds the closest environment probes for the current view and sets up global probe bounds and image references.
 static void R_FindClosestEnvironmentProbes()
 {
 	// set safe defaults
@@ -548,7 +487,7 @@ static void R_FindClosestEnvironmentProbes()
 	}
 }
 
-// this one tries to interpolate between probes over time
+//! Finds the closest environment probes and interpolates between them over time for smooth lighting transitions
 static void R_FindClosestEnvironmentProbes2()
 {
 	// set safe defaults
@@ -715,18 +654,7 @@ static void R_FindClosestEnvironmentProbes2()
 		tr.viewDef->globalProbeBounds.Clear();
 	}
 }
-// RB end
 
-/*
-================
-R_RenderView
-
-A view may be either the actual camera view,
-a mirror / remote location, or a 3D view on a gui surface.
-
-Parms will typically be allocated with R_FrameAlloc
-================
-*/
 void R_RenderView( viewDef_t* parms )
 {
 	// save view in case we are a subview

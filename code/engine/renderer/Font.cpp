@@ -40,21 +40,24 @@ const char* DEFAULT_FONT = "Arial_Narrow";
 static const float old_scale2 = 0.6f;
 static const float old_scale1 = 0.3f;
 
-/*
-==============================
-Old_SelectValueForScale
-==============================
+/*!
+	\brief Selects a value based on the provided scale from three options using a threshold comparison.
+
+	This function performs a threshold-based selection among three floating-point values. It compares the input scale against two predefined thresholds, old_scale1 and old_scale2, to determine which
+   of the three values to return. The selection process is as follows: if the scale is greater than or equal to old_scale2, it returns v2; otherwise, if the scale is greater than or equal to
+   old_scale1, it returns v1; otherwise, it returns v0. This is commonly used for font scaling in the engine where different font metrics are selected based on the current scale factor.
+
+	\param scale The scale factor used to determine which value to select
+	\param v0 The first value to select from, used when scale is below both thresholds
+	\param v1 The second value to select from, used when scale is between the thresholds
+	\param v2 The third value to select from, used when scale is above or equal to the second threshold
+	\return The selected value from v0, v1, or v2 based on the comparison with the thresholds.
 */
 ID_INLINE float	   Old_SelectValueForScale( float scale, float v0, float v1, float v2 )
 {
 	return ( scale >= old_scale2 ) ? v2 : ( scale >= old_scale1 ) ? v1 : v0;
 }
 
-/*
-==============================
-idFont::RemapFont
-==============================
-*/
 idFont* idFont::RemapFont( const char* baseName )
 {
 	idStr cleanName = baseName;
@@ -81,11 +84,6 @@ idFont* idFont::RemapFont( const char* baseName )
 	return NULL;
 }
 
-/*
-==============================
-idFont::~idFont
-==============================
-*/
 idFont::~idFont()
 {
 	// SRS - Free glyph data before deleting fontInfo, otherwise will leak
@@ -98,11 +96,6 @@ idFont::~idFont()
 	delete fontInfo;
 }
 
-/*
-==============================
-idFont::idFont
-==============================
-*/
 idFont::idFont( const char* n ) :
 	name( n )
 {
@@ -146,11 +139,7 @@ struct oldGlyphInfo_t {
 };
 static const int GLYPHS_PER_FONT = 256;
 
-/*
-==============================
-LoadOldGlyphData
-==============================
-*/
+//! Loads old glyph data from a file for font compatibility.
 bool			 LoadOldGlyphData( const char* filename, oldGlyphInfo_t glyphInfo[GLYPHS_PER_FONT] )
 {
 	idFile* fd = fileSystem->OpenFileRead( filename );
@@ -178,6 +167,7 @@ bool			 LoadOldGlyphData( const char* filename, oldGlyphInfo_t glyphInfo[GLYPHS_
 	return true;
 }
 
+//! Saves old glyph data to a file.
 static bool SaveOldGlyphData( const char* filename, oldGlyphInfo_t glyphInfo[GLYPHS_PER_FONT] )
 {
 	idFile* fd = fileSystem->OpenFileWrite( filename );
@@ -208,11 +198,6 @@ static bool SaveOldGlyphData( const char* filename, oldGlyphInfo_t glyphInfo[GLY
 	return true;
 }
 
-/*
-==============================
-idFont::LoadFont
-==============================
-*/
 bool idFont::LoadFont()
 {
 	idStr	fontName = va( "newfonts/%s/48.dat", GetName() );
@@ -324,11 +309,6 @@ bool idFont::LoadFont()
 	return true;
 }
 
-/*
-==============================
-idFont::GetGlyphIndex
-==============================
-*/
 int idFont::GetGlyphIndex( uint32 idx ) const
 {
 	if( idx < 128 ) {
@@ -353,11 +333,6 @@ int idFont::GetGlyphIndex( uint32 idx ) const
 	return ( fontInfo->charIndex[offset] == idx ) ? offset : -1;
 }
 
-/*
-==============================
-idFont::GetLineHeight
-==============================
-*/
 float idFont::GetLineHeight( float scale ) const
 {
 	if( alias != NULL ) {
@@ -369,11 +344,6 @@ float idFont::GetLineHeight( float scale ) const
 	return 0.0f;
 }
 
-/*
-==============================
-idFont::GetAscender
-==============================
-*/
 float idFont::GetAscender( float scale ) const
 {
 	if( alias != NULL ) {
@@ -385,11 +355,6 @@ float idFont::GetAscender( float scale ) const
 	return 0.0f;
 }
 
-/*
-==============================
-idFont::GetMaxCharWidth
-==============================
-*/
 float idFont::GetMaxCharWidth( float scale ) const
 {
 	if( alias != NULL ) {
@@ -401,11 +366,6 @@ float idFont::GetMaxCharWidth( float scale ) const
 	return 0.0f;
 }
 
-/*
-==============================
-idFont::GetGlyphWidth
-==============================
-*/
 float idFont::GetGlyphWidth( float scale, uint32 idx ) const
 {
 	if( alias != NULL ) {
@@ -424,11 +384,6 @@ float idFont::GetGlyphWidth( float scale, uint32 idx ) const
 	return 0.0f;
 }
 
-/*
-==============================
-idFont::GetScaledGlyph
-==============================
-*/
 void idFont::GetScaledGlyph( float scale, uint32 idx, scaledGlyphInfo_t& glyphInfo ) const
 {
 	if( alias != NULL ) {
@@ -462,11 +417,6 @@ void idFont::GetScaledGlyph( float scale, uint32 idx, scaledGlyphInfo_t& glyphIn
 	memset( &glyphInfo, 0, sizeof( glyphInfo ) );
 }
 
-/*
-==============================
-idFont::Touch
-==============================
-*/
 void idFont::Touch()
 {
 	if( alias != NULL ) {
@@ -478,14 +428,6 @@ void idFont::Touch()
 	}
 }
 
-/*
-==============================
-idFont::DumpFontToJSON
-
-Debug helper: serializes the in-memory fontInfo to a human-readable
-JSON file so we can inspect glyph metrics, atlas coordinates, etc.
-==============================
-*/
 void idFont::DumpFontToJSON()
 {
 	if( fontInfo == NULL ) {
@@ -572,14 +514,6 @@ void idFont::DumpFontToJSON()
 	common->Printf( "DumpFontToJSON: Wrote '%s'\n", jsonPath.c_str() );
 }
 
-/*
-==============================
-idFont::WriteFont
-
-Writes fontInfo_t to a binary .dat file in the BFG format so that
-subsequent loads can skip the TTF rendering pass.
-==============================
-*/
 bool idFont::WriteFont()
 {
 	if( fontInfo == NULL ) {

@@ -89,7 +89,10 @@ typedef struct aseModel_s {
 	idList<aseObject_t*, TAG_MODEL>	  objects;
 } aseModel_t;
 
+//! Loads an ASE model from a file and returns a parsed aseModel_t structure.
 aseModel_t* ASE_Load( const char* fileName );
+
+//! Frees all memory allocated for an ASE model structure
 void		ASE_Free( aseModel_t* ase );
 
 #endif /* !__MODEL_ASE_H__ */

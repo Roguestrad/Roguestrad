@@ -32,24 +32,16 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "RenderCommon.h"
 
-/*
-===========================================================================
+/*!
+	\brief Calculates the facing information for surface triangles relative to a light source for culling purposes.
 
-idInteraction implementation
+	This function determines whether each triangle of a surface is facing towards or away from a light source. It allocates memory for a facing array that indicates the orientation of each triangle.
+   The facing array includes an extra element to handle dangling edge silhouettes, ensuring proper culling behavior. The function returns early if the facing array is already populated.
 
-===========================================================================
-*/
-
-/*
-================
-R_CalcInteractionFacing
-
-Determines which triangles of the surface are facing towards the light origin.
-
-The facing array should be allocated with one extra index than
-the number of surface triangles, which will be used to handle dangling
-edge silhouettes.
-================
+	\param ent The render entity containing the surface data
+	\param tri The triangle data structure describing the surface geometry
+	\param light The light source used to determine facing orientation
+	\param cullInfo The culling information structure where the facing array will be stored
 */
 void R_CalcInteractionFacing( const idRenderEntityLocal* ent, const srfTriangles_t* tri, const idRenderLightLocal* light, srfCullInfo_t& cullInfo )
 {
@@ -79,15 +71,17 @@ void R_CalcInteractionFacing( const idRenderEntityLocal* ent, const srfTriangles
 	cullInfo.facing[numFaces] = 1; // for dangling edges to reference
 }
 
-/*
-=====================
-R_CalcInteractionCullBits
+/*!
+	\brief Calculates culling bits for triangle surface interactions with a light source to determine which vertices are outside the light frustum.
 
-We want to cull a little on the sloppy side, because the pre-clipping
-of geometry to the lights in dmap will give many cases that are right
-at the border. We throw things out on the border, because if any one
-vertex is clearly inside, the entire triangle will be accepted.
-=====================
+	This function computes culling information for a triangle surface relative to a light source by transforming the light frustum planes into the surface's local space. It first checks if the entire
+   surface is front-facing the light frustum and marks it as fully inside if so. Otherwise, it calculates per-vertex culling bits indicating which clipping planes each vertex is behind. The function
+   uses a static allocation for the culling bits and applies a slop factor to handle boundary cases where vertices are near the light frustum edges.
+
+	\param ent Pointer to the render entity containing the surface
+	\param tri Pointer to triangle data describing the surface geometry
+	\param light Pointer to the light source used for culling calculation
+	\param cullInfo Reference to culling information structure to be populated
 */
 void R_CalcInteractionCullBits( const idRenderEntityLocal* ent, const srfTriangles_t* tri, const idRenderLightLocal* light, srfCullInfo_t& cullInfo )
 {
@@ -133,11 +127,7 @@ void R_CalcInteractionCullBits( const idRenderEntityLocal* ent, const srfTriangl
 	}
 }
 
-/*
-================
-R_FreeInteractionCullInfo
-================
-*/
+//! Frees the memory allocated for the culling information structure.
 void R_FreeInteractionCullInfo( srfCullInfo_t& cullInfo )
 {
 	if( cullInfo.facing != NULL ) {
@@ -152,16 +142,19 @@ void R_FreeInteractionCullInfo( srfCullInfo_t& cullInfo )
 	}
 }
 
-/*
-====================
-R_CreateInteractionLightTris
+/*!
+	\brief Creates a subset of triangles for lighting interaction with a specific light, culling triangles based on visibility and backface settings.
 
-This is only used for the static interaction case, dynamic interactions
-just draw everything and let the GPU deal with it.
+	This function generates a new triangle surface that represents the portion of the original triangle set that should be lit by the specified light. It performs per-triangle culling based on
+   visibility and backface settings, ensuring that only relevant triangles are included in the lighting calculation. The resulting surface references the original vertex data but may have a reduced
+   set of triangle indexes. The function handles both complete front-facing culling and partial frustum culling for triangles that are partially visible.
+   This is only used for the static interaction case, dynamic interactions just draw everything and let the GPU deal with it.
 
-The resulting surface will be a subset of the original triangles,
-it will never clip triangles, but it may cull on a per-triangle basis.
-====================
+	\param ent The render entity that the triangle surface belongs to
+	\param tri The original triangle surface to process
+	\param light The light definition that will be used for lighting the surface
+	\param shader The material shader that defines how the surface should receive lighting
+	\return A new triangle surface containing only the triangles that should be lit by the light, or NULL if no triangles qualify for lighting
 */
 static srfTriangles_t* R_CreateInteractionLightTris( const idRenderEntityLocal* ent, const srfTriangles_t* tri, const idRenderLightLocal* light, const idMaterial* shader )
 {
@@ -312,11 +305,6 @@ static srfTriangles_t* R_CreateInteractionLightTris( const idRenderEntityLocal* 
 	return newTri;
 }
 
-/*
-===============
-idInteraction::idInteraction
-===============
-*/
 idInteraction::idInteraction()
 {
 	numSurfaces		  = 0;
@@ -330,11 +318,6 @@ idInteraction::idInteraction()
 	staticInteraction = false;
 }
 
-/*
-===============
-idInteraction::AllocAndLink
-===============
-*/
 idInteraction* idInteraction::AllocAndLink( idRenderEntityLocal* edef, idRenderLightLocal* ldef )
 {
 	if( edef == NULL || ldef == NULL ) {
@@ -385,14 +368,6 @@ idInteraction* idInteraction::AllocAndLink( idRenderEntityLocal* edef, idRenderL
 	return interaction;
 }
 
-/*
-===============
-idInteraction::FreeSurfaces
-
-Frees the surfaces, but leaves the interaction linked in, so it
-will be regenerated automatically
-===============
-*/
 void idInteraction::FreeSurfaces()
 {
 	// anything regenerated is no longer an optimized static version
@@ -405,11 +380,6 @@ void idInteraction::FreeSurfaces()
 	this->numSurfaces = -1;
 }
 
-/*
-===============
-idInteraction::Unlink
-===============
-*/
 void idInteraction::Unlink()
 {
 	// unlink from the entity's list
@@ -439,13 +409,6 @@ void idInteraction::Unlink()
 	this->lightNext = this->lightPrev = NULL;
 }
 
-/*
-===============
-idInteraction::UnlinkAndFree
-
-Removes links and puts it back on the free list.
-===============
-*/
 void idInteraction::UnlinkAndFree()
 {
 	// clear the table pointer
@@ -469,17 +432,6 @@ void idInteraction::UnlinkAndFree()
 	renderWorld->interactionAllocator.Free( this );
 }
 
-/*
-===============
-idInteraction::MakeEmpty
-
-Relinks the interaction at the end of both the light and entity chains
-and adds the INTERACTION_EMPTY marker to the interactionTable.
-
-It is necessary to keep the empty interaction so when entities or lights move
-they can set all the interactionTable values to NULL.
-===============
-*/
 void idInteraction::MakeEmpty()
 {
 	// an empty interaction has no surfaces
@@ -513,23 +465,11 @@ void idInteraction::MakeEmpty()
 	entityDef->world->interactionTable[interactionIndex] = INTERACTION_EMPTY;
 }
 
-/*
-===============
-idInteraction::HasShadows
-===============
-*/
 bool idInteraction::HasShadows() const
 {
 	return !entityDef->parms.noShadow && lightDef->LightCastsShadows();
 }
 
-/*
-======================
-CreateStaticInteraction
-
-Called by idRenderWorldLocal::GenerateAllInteractions
-======================
-*/
 void idInteraction::CreateStaticInteraction( nvrhi::ICommandList* commandList )
 {
 	// note that it is a static interaction
@@ -600,11 +540,6 @@ void idInteraction::CreateStaticInteraction( nvrhi::ICommandList* commandList )
 	}
 }
 
-/*
-===================
-R_ShowInteractionMemory_f
-===================
-*/
 void R_ShowInteractionMemory_f( const idCmdArgs& args )
 {
 	int entities				 = 0;

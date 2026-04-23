@@ -37,6 +37,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;
 
+//! Lists framebuffers for debugging purposes.
 static void			  R_ListFramebuffers_f( const idCmdArgs& args )
 {
 	// TODO

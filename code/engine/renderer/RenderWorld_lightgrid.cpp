@@ -831,6 +831,7 @@ static inline idVec3 MapXYSToDirection( uint64 x, uint64 y, uint64 s, uint64 wid
 	return dir;
 }
 
+//! Calculates light grid point data using spherical harmonics from cubemap radiance.
 void CalculateLightGridPointJob( calcLightGridPointParms_t* parms )
 {
 	halfFloat_t* buffers[6];
@@ -938,6 +939,7 @@ void CalculateLightGridPointJob( calcLightGridPointParms_t* parms )
 
 REGISTER_PARALLEL_JOB( CalculateLightGridPointJob, "CalculateLightGridPointJob" );
 
+//! Bakes irradiance and visibility light grid data for the primary world.
 CONSOLE_COMMAND_SHIP( bakeLightGrids, "Bake irradiance/vis light grid data", NULL )
 {
 	idStr		 baseName;

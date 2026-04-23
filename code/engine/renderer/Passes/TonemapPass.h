@@ -39,6 +39,16 @@ struct ToneMappingParameters {
 	bool  enableColorLUT		  = true;
 };
 
+/*!
+	\class TonemapPass
+	\brief A class that handles tone mapping operations including histogram computation, exposure calculation, and final tonemap rendering.
+
+	The TonemapPass class manages the complete tone mapping pipeline for rendering operations. It initializes GPU resources such as shaders, constant buffers, storage buffers, binding sets, and
+   pipelines for both histogram computation and final tonemapping. The class supports loading and applying color lookup tables, and handles the complete flow from histogram accumulation to exposure
+   adjustment and final tonemap rendering. It provides methods for rendering with full tone mapping capabilities as well as simplified rendering, exposure reset, histogram reset, and frame histogram
+   addition. The class is designed to work with GPU command lists and framebuffer objects for efficient GPU-side processing of tone mapping operations.
+
+*/
 class TonemapPass
 {
 public:
@@ -50,23 +60,55 @@ public:
 		idImage*		colorLUT				  = nullptr;
 	};
 
+	//! Initializes a new instance of the TonemapPass class.
 	TonemapPass();
 
+	/*!
+		\brief Initializes the tonemap pass with the provided device handle, common passes, parameters, and sample framebuffer.
+
+		This function sets up all necessary resources for the tonemap pass including shaders, constant buffers, storage buffers, binding sets, and pipelines. It configures the histogram and exposure
+	   computation shaders as well as the final tonemapping shader. The function also handles the setup of the color lookup table if provided and initializes the render and compute pipelines for the
+	   tonemapping operations. The function asserts that the histogram bins do not exceed 256.
+
+		\param deviceHandle The device handle used for creating GPU resources
+		\param commonPasses Pointer to the common render passes for shared resources
+		\param params Structure containing creation parameters for the tonemap pass
+		\param _sampleFramebuffer The framebuffer to be used for the sampling operation
+		\throws assertion failure if histogramBins in params exceeds 256
+	*/
 	void Init( nvrhi::DeviceHandle deviceHandle, CommonRenderPasses* commonPasses, const CreateParameters& params, nvrhi::IFramebuffer* _sampleFramebuffer );
 
+	/*!
+		\brief Applies tone mapping to a source texture and renders the result to a target framebuffer.
+
+		This function performs tone mapping on a given source texture using specified tone mapping parameters and renders the output to the provided framebuffer. It manages binding sets for shader
+	   resources and ensures proper GPU state setup before drawing a full-screen quad. The function handles caching of binding sets based on source texture hash for performance optimization. The tone
+	   mapping parameters control exposure, white point, and luminance adaptation, with optional color lookup table support.
+
+		\param commandList The command list to record rendering commands into
+		\param params The tone mapping parameters including exposure, white point, and luminance settings
+		\param viewDef The view definition containing viewport and scissor information for rendering
+		\param sourceTexture The input texture to apply tone mapping to
+		\param targetFb The target framebuffer to render the tone mapped output to
+	*/
 	void Render( nvrhi::ICommandList* commandList, const ToneMappingParameters& params, const viewDef_t* viewDef, nvrhi::ITexture* sourceTexture, nvrhi::FramebufferHandle _targetFb );
 
 	void SimpleRender( nvrhi::ICommandList* commandList, const ToneMappingParameters& params, const viewDef_t* viewDef, nvrhi::ITexture* sourceTexture, nvrhi::FramebufferHandle _targetFb );
 
+	//! Checks whether the tonemap pass has been successfully loaded.
 	bool IsLoaded() const { return isLoaded; }
 
 private:
+	//! Resets the exposure by clearing the exposure buffer with the specified initial exposure value.
 	void							ResetExposure( nvrhi::ICommandList* commandList, float initialExposure );
 
+	//! Clears the histogram buffer using the provided command list.
 	void							ResetHistogram( nvrhi::ICommandList* commandList );
 
+	//! Adds a frame to the histogram using the provided command list, view definition, and source texture
 	void							AddFrameToHistogram( nvrhi::ICommandList* commandList, const viewDef_t* viewDef, nvrhi::ITexture* sourceTexture );
 
+	//! Computes the exposure for tone mapping using the provided parameters and command list.
 	void							ComputeExposure( nvrhi::ICommandList* commandList, const ToneMappingParameters& params );
 
 	bool							isLoaded;

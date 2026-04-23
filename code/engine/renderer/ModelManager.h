@@ -31,14 +31,10 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __MODELMANAGER_H__
 #define __MODELMANAGER_H__
 
-/*
-==============================================================================================
-
-	idImportOptions
-
-==============================================================================================
+/*!
+	\class idNamePair
+	\brief A simple class to store a name-value pair.
 */
-
 class idNamePair
 {
 public:
@@ -46,6 +42,10 @@ public:
 	idStr to;
 };
 
+/*!
+	\class idAnimGroup
+	\brief A set of joint names forming a group.
+*/
 class idAnimGroup
 {
 public:
@@ -53,6 +53,10 @@ public:
 	idStrList joints;
 };
 
+/*!
+	\class idImportOptions
+	\brief A class for managing import options with initialization and reset capabilities.
+*/
 class idImportOptions
 {
 public:
@@ -92,23 +96,25 @@ public:
 	idStr				 modelDefName;
 	idStr				 modelDefFileName;
 	ID_TIME_T			 declSourceTimeStamp; // timestamp of the .def where this modelDef option comes from
-	// RB end
 
+	//! Initializes a new instance of the idImportOptions class.
 	idImportOptions();
+
+	//! Resets all import options to their default values.
 	void Reset();
+
+	//! Initializes import options using the provided command line and OS path.
 	void Init( const char* commandline, const char* ospath );
 };
 
-/*
-===============================================================================
+/*!
+	\class idRenderModelManager
+	\brief Manager for handling render models within the engine.
 
-	Model Manager
+	This class serves as an abstract interface for managing render models, providing methods for initialization, shutdown, model loading, and memory management. It supports operations like finding,
+   checking, and reloading models, as well as handling level transitions and precaching. The interface is designed to be implemented by concrete renderer-specific managers.
 
-	Temporarily created models do not need to be added to the model manager.
-
-===============================================================================
 */
-
 class idRenderModelManager
 {
 public:

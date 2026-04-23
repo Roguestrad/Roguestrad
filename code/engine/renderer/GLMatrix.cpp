@@ -41,12 +41,6 @@ OLD MATRIX MATH
 
 ==========================================================================================
 */
-
-/*
-======================
-R_AxisToModelMatrix
-======================
-*/
 void R_AxisToModelMatrix( const idMat3& axis, const idVec3& origin, float modelMatrix[16] )
 {
 	modelMatrix[0 * 4 + 0] = axis[0][0];
@@ -70,11 +64,7 @@ void R_AxisToModelMatrix( const idMat3& axis, const idVec3& origin, float modelM
 	modelMatrix[3 * 4 + 3] = 1.0f;
 }
 
-/*
-==========================
-R_MatrixMultiply
-==========================
-*/
+//! Multiplies two 4x4 matrices and stores the result in the output matrix.
 void R_MatrixMultiply( const float a[16], const float b[16], float out[16] )
 {
 #if defined( USE_INTRINSICS_SSE )
@@ -150,11 +140,6 @@ void R_MatrixMultiply( const float a[16], const float b[16], float out[16] )
 #endif
 }
 
-/*
-======================
-R_MatrixTranspose
-======================
-*/
 void R_MatrixTranspose( const float in[16], float out[16] )
 {
 	for( int i = 0; i < 4; i++ ) {
@@ -164,11 +149,6 @@ void R_MatrixTranspose( const float in[16], float out[16] )
 	}
 }
 
-/*
-==========================
-R_TransformModelToClip
-==========================
-*/
 void R_TransformModelToClip( const idVec3& src, const float* modelMatrix, const float* projectionMatrix, idPlane& eye, idPlane& dst )
 {
 	for( int i = 0; i < 4; i++ ) {
@@ -180,13 +160,6 @@ void R_TransformModelToClip( const idVec3& src, const float* modelMatrix, const 
 	}
 }
 
-/*
-==========================
-R_TransformClipToDevice
-
-Clip to normalized device coordinates
-==========================
-*/
 void R_TransformClipToDevice( const idPlane& clip, idVec3& ndc )
 {
 	const float invW = 1.0f / clip[3];
@@ -228,13 +201,6 @@ void R_GlobalToNormalizedDeviceCoordinates( const idVec3& global, idVec3& ndc )
 }
 #endif
 
-/*
-======================
-R_LocalPointToGlobal
-
-NOTE: assumes no skewing or scaling transforms
-======================
-*/
 void R_LocalPointToGlobal( const float modelMatrix[16], const idVec3& in, idVec3& out )
 {
 	out[0] = in[0] * modelMatrix[0 * 4 + 0] + in[1] * modelMatrix[1 * 4 + 0] + in[2] * modelMatrix[2 * 4 + 0] + modelMatrix[3 * 4 + 0];
@@ -242,13 +208,6 @@ void R_LocalPointToGlobal( const float modelMatrix[16], const idVec3& in, idVec3
 	out[2] = in[0] * modelMatrix[0 * 4 + 2] + in[1] * modelMatrix[1 * 4 + 2] + in[2] * modelMatrix[2 * 4 + 2] + modelMatrix[3 * 4 + 2];
 }
 
-/*
-======================
-R_GlobalPointToLocal
-
-NOTE: assumes no skewing or scaling transforms
-======================
-*/
 void R_GlobalPointToLocal( const float modelMatrix[16], const idVec3& in, idVec3& out )
 {
 	idVec3 temp;
@@ -262,13 +221,6 @@ void R_GlobalPointToLocal( const float modelMatrix[16], const idVec3& in, idVec3
 	out[2] = temp[0] * modelMatrix[2 * 4 + 0] + temp[1] * modelMatrix[2 * 4 + 1] + temp[2] * modelMatrix[2 * 4 + 2];
 }
 
-/*
-======================
-R_LocalVectorToGlobal
-
-NOTE: assumes no skewing or scaling transforms
-======================
-*/
 void R_LocalVectorToGlobal( const float modelMatrix[16], const idVec3& in, idVec3& out )
 {
 	out[0] = in[0] * modelMatrix[0 * 4 + 0] + in[1] * modelMatrix[1 * 4 + 0] + in[2] * modelMatrix[2 * 4 + 0];
@@ -276,13 +228,6 @@ void R_LocalVectorToGlobal( const float modelMatrix[16], const idVec3& in, idVec
 	out[2] = in[0] * modelMatrix[0 * 4 + 2] + in[1] * modelMatrix[1 * 4 + 2] + in[2] * modelMatrix[2 * 4 + 2];
 }
 
-/*
-======================
-R_GlobalVectorToLocal
-
-NOTE: assumes no skewing or scaling transforms
-======================
-*/
 void R_GlobalVectorToLocal( const float modelMatrix[16], const idVec3& in, idVec3& out )
 {
 	out[0] = in[0] * modelMatrix[0 * 4 + 0] + in[1] * modelMatrix[0 * 4 + 1] + in[2] * modelMatrix[0 * 4 + 2];
@@ -290,13 +235,6 @@ void R_GlobalVectorToLocal( const float modelMatrix[16], const idVec3& in, idVec
 	out[2] = in[0] * modelMatrix[2 * 4 + 0] + in[1] * modelMatrix[2 * 4 + 1] + in[2] * modelMatrix[2 * 4 + 2];
 }
 
-/*
-======================
-R_GlobalPlaneToLocal
-
-NOTE: assumes no skewing or scaling transforms
-======================
-*/
 void R_GlobalPlaneToLocal( const float modelMatrix[16], const idPlane& in, idPlane& out )
 {
 	out[0] = in[0] * modelMatrix[0 * 4 + 0] + in[1] * modelMatrix[0 * 4 + 1] + in[2] * modelMatrix[0 * 4 + 2];
@@ -305,13 +243,6 @@ void R_GlobalPlaneToLocal( const float modelMatrix[16], const idPlane& in, idPla
 	out[3] = in[0] * modelMatrix[3 * 4 + 0] + in[1] * modelMatrix[3 * 4 + 1] + in[2] * modelMatrix[3 * 4 + 2] + in[3];
 }
 
-/*
-======================
-R_LocalPlaneToGlobal
-
-NOTE: assumes no skewing or scaling transforms
-======================
-*/
 void R_LocalPlaneToGlobal( const float modelMatrix[16], const idPlane& in, idPlane& out )
 {
 	out[0] = in[0] * modelMatrix[0 * 4 + 0] + in[1] * modelMatrix[1 * 4 + 0] + in[2] * modelMatrix[2 * 4 + 0];
@@ -328,13 +259,7 @@ WORLD/VIEW/PROJECTION MATRIX SETUP
 ==========================================================================================
 */
 
-/*
-======================
-R_SetupViewMatrix
-
-Sets up the world to view matrix for a given viewParm
-======================
-*/
+//! Sets up the world to view matrix for a given view definition and stereo origin.
 void R_SetupViewMatrix( viewDef_t* viewDef, stereoOrigin_t stereoOrigin )
 {
 	// clang-format off
@@ -387,13 +312,6 @@ void R_SetupViewMatrix( viewDef_t* viewDef, stereoOrigin_t stereoOrigin )
 	R_MatrixMultiply( viewerMatrix, s_flipMatrix, world->modelViewMatrix );
 }
 
-/*
-======================
-R_SetupProjectionMatrix
-
-This uses the "infinite far z" trick
-======================
-*/
 idCVar r_centerX( "r_centerX", "0", CVAR_FLOAT, "projection matrix center adjust" );
 idCVar r_centerY( "r_centerY", "0", CVAR_FLOAT, "projection matrix center adjust" );
 idCVar r_centerScale( "r_centerScale", "1", CVAR_FLOAT, "projection matrix center adjust" );
@@ -560,7 +478,18 @@ void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stere
 	// SP End
 }
 
-// RB: standard OpenGL projection matrix
+/*!
+	\brief Sets up a projection matrix for a view definition with specified near and far clipping planes
+
+	This function calculates and populates a 4x4 projection matrix based on the field of view parameters from the provided view definition. It accounts for viewport dimensions, jittering values, and
+   stereo separation. The matrix is constructed using standard OpenGL projection matrix formulas with adjustments for depth buffering and potential stereo rendering. When the view definition indicates
+   a flipped projection, the function modifies the matrix accordingly.
+
+	\param viewDef Pointer to the view definition containing view parameters and viewport information
+	\param zNear Near clipping plane distance
+	\param zFar Far clipping plane distance
+	\param projectionMatrix Output array for the 16-element projection matrix
+*/
 void R_SetupProjectionMatrix2( const viewDef_t* viewDef, const float zNear, const float zFar, float projectionMatrix[16] )
 {
 	float		ymax = viewDef->renderView.GetFovTop();
@@ -617,12 +546,6 @@ void R_SetupProjectionMatrix2( const viewDef_t* viewDef, const float zNear, cons
 	}
 }
 
-/*
-=================
-R_SetupUnprojection
-create a matrix with similar functionality like gluUnproject, project from window space to world space
-=================
-*/
 void R_SetupUnprojection( viewDef_t* viewDef )
 {
 	R_MatrixFullInverse( viewDef->projectionMatrix, viewDef->unprojectionToCameraMatrix );
@@ -636,6 +559,7 @@ void R_SetupUnprojection( viewDef_t* viewDef )
 
 #endif // #if !defined( DMAP )
 
+//! Computes the inverse of a 4x4 matrix and stores the result in the provided output matrix.
 void R_MatrixFullInverse( const float a[16], float r[16] )
 {
 	idMat4 am;
@@ -661,9 +585,8 @@ void R_MatrixFullInverse( const float a[16], float r[16] )
 		}
 	}
 }
-// RB end
-
 // SP begin
+//! Returns the sign of the input float value as -1.0, 0.0, or 1.0.
 inline float sgn( float a )
 {
 	if( a > 0.0f ) {
@@ -675,7 +598,7 @@ inline float sgn( float a )
 	return ( 0.0f );
 }
 
-// clipPlane is a plane in camera space.
+//! Modifies the projection matrix of a view definition using a clip plane in camera space
 void ModifyProjectionMatrix( viewDef_t* viewDef, const idPlane& clipPlane )
 {
 	// clang-format off
@@ -726,12 +649,7 @@ void ModifyProjectionMatrix( viewDef_t* viewDef, const idPlane& clipPlane )
 	memcpy( viewDef->projectionMatrix, matrix, sizeof( float ) * 16 );
 }
 
-/*
-=====================
-R_ObliqueProjection - adjust near plane of previously set projection matrix to perform an oblique projection
-credits to motorsep: https://github.com/motorsep/StormEngine2/blob/743a0f9581a10837a91cb296ff5a1114535e8d4e/neo/renderer/tr_frontend_subview.cpp#L225
-=====================
-*/
+//! Adjusts the near plane of the projection matrix to perform an oblique projection using the specified view parameters.
 void R_ObliqueProjection( viewDef_t* parms )
 {
 	float	mvt[16]; // model view transpose

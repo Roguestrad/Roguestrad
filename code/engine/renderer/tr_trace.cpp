@@ -36,10 +36,19 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../idlib/geometry/DrawVert_intrinsics.h"
 
-/*
-====================
-R_TracePointCullStatic
-====================
+/*!
+	\brief Performs static culling of draw vertices against a set of clip planes using SIMD instructions
+
+	This function culls draw vertices against four clip planes by computing the distance of each vertex from each plane and applying a radius-based margin. It uses SSE intrinsics to process multiple
+   vertices in parallel for improved performance. The results are stored in a bit mask indicating which vertices passed the culling test, and the total culling result is aggregated into a single byte
+   value.
+
+	\param cullBits Output bit array indicating which vertices pass culling
+	\param totalOr Reference to output byte aggregating overall culling result
+	\param radius Radius to apply to the culling test for each vertex
+	\param planes Array of four clip planes defining the culling boundaries
+	\param verts Array of draw vertices to cull
+	\param numVerts Number of vertices in the verts array
 */
 static void R_TracePointCullStatic( byte* cullBits, byte& totalOr, const float radius, const idPlane* planes, const idDrawVert* verts, const int numVerts )
 {
@@ -215,10 +224,21 @@ static void R_TracePointCullStatic( byte* cullBits, byte& totalOr, const float r
 #endif
 }
 
-/*
-====================
-R_TracePointCullSkinned
-====================
+/*!
+	\brief Performs SIMD-optimized point culling for skinned vertices against a set of clipping planes.
+
+	This function culls skinned vertices against four clipping planes using SIMD intrinsics for performance. It computes the distance of each vertex from each plane, adds a radius to the distance, and
+   determines if the vertex is inside or outside the clipping volume. The results are stored in a bit array indicating which vertices are culled and a total OR operation is performed to accumulate the
+   culling state.
+
+	\param cullBits Output bit array indicating which vertices are culled (1 = culled, 0 = not culled)
+	\param totalOr Output OR result of all culling bits for fast rejection testing
+	\param radius Radius to be added to distance calculations for culling
+	\param planes Array of four clipping planes used for culling
+	\param verts Array of skinned vertices to be culled
+	\param numVerts Number of vertices in the verts array
+	\param joints Joint transformation matrices for skinning
+	\throws assertion failure if cullBits or verts are not 16-byte aligned
 */
 static void R_TracePointCullSkinned( byte* cullBits, byte& totalOr, const float radius, const idPlane* planes, const idDrawVert* verts, const int numVerts, const idJointMat* joints )
 {
@@ -394,12 +414,21 @@ static void R_TracePointCullSkinned( byte* cullBits, byte& totalOr, const float 
 #endif
 }
 
-/*
-====================
-R_LineIntersectsTriangleExpandedWithCircle
+/*!
+	\brief Tests if a line segment intersects a triangle expanded with a circle in the triangle plane
 
-The triangle is expanded in the plane with a circle of the given radius.
-====================
+	This function determines if a line segment from start to end intersects with a triangle defined by three vertices. The triangle is expanded with a circular boundary of the specified radius in the
+   triangle's plane. The function uses plane distance checks and edge distance calculations to determine intersection. If an intersection is found, the hit structure is updated with the intersection
+   point, normal, and fraction along the ray.
+
+	\param hit output structure containing intersection data
+	\param start starting point of the line segment
+	\param end ending point of the line segment
+	\param circleRadius radius of the circle used to expand the triangle in the plane
+	\param triVert0 first vertex of the triangle
+	\param triVert1 second vertex of the triangle
+	\param triVert2 third vertex of the triangle
+	\return true if the line segment intersects the expanded triangle, false otherwise
 */
 static bool R_LineIntersectsTriangleExpandedWithCircle(
 	localTrace_t& hit, const idVec3& start, const idVec3& end, const float circleRadius, const idVec3& triVert0, const idVec3& triVert1, const idVec3& triVert2 )
@@ -547,11 +576,6 @@ static bool R_LineIntersectsTriangleExpandedWithCircle(
 	return true;
 }
 
-/*
-====================
-R_LocalTrace
-====================
-*/
 localTrace_t R_LocalTrace( const idVec3& start, const idVec3& end, const float radius, const srfTriangles_t* tri )
 {
 	localTrace_t hit;

@@ -60,15 +60,6 @@ idCVar			   r_lodMaterialDistance( "r_lodMaterialDistance",
 
 static const float CHECK_BOUNDS_EPSILON = 1.0f;
 
-/*
-==================
-R_ClearEntityDefDynamicModel
-
-If we know the reference bounds stays the same, we
-only need to do this on entity update, not the full
-R_FreeEntityDefDerivedData
-==================
-*/
 void			   R_ClearEntityDefDynamicModel( idRenderEntityLocal* def )
 {
 	// free all the interaction surfaces
@@ -84,11 +75,6 @@ void			   R_ClearEntityDefDynamicModel( idRenderEntityLocal* def )
 	def->dynamicModelFrameCount = 0;
 }
 
-/*
-==================
-R_IssueEntityDefCallback
-==================
-*/
 bool R_IssueEntityDefCallback( idRenderEntityLocal* def )
 {
 	idBounds oldBounds = def->localReferenceBounds;
@@ -116,17 +102,6 @@ bool R_IssueEntityDefCallback( idRenderEntityLocal* def )
 	return update;
 }
 
-/*
-===================
-R_EntityDefDynamicModel
-
-This is also called by the game code for idRenderWorldLocal::ModelTrace(), and idRenderWorldLocal::Trace() which is bad for performance...
-
-Issues a deferred entity callback if necessary.
-If the model isn't dynamic, it returns the original.
-Returns the cached dynamic model if present, otherwise creates it.
-===================
-*/
 idRenderModel* R_EntityDefDynamicModel( idRenderEntityLocal* def )
 {
 	if( def->dynamicModelFrameCount == tr.frameCount ) {
@@ -194,11 +169,6 @@ idRenderModel* R_EntityDefDynamicModel( idRenderEntityLocal* def )
 	return def->dynamicModel;
 }
 
-/*
-===================
-R_SetupDrawSurfShader
-===================
-*/
 void R_SetupDrawSurfShader( drawSurf_t* drawSurf, const idMaterial* shader, const renderEntity_t* renderEntity )
 {
 	drawSurf->material = shader;
@@ -243,10 +213,17 @@ void R_SetupDrawSurfShader( drawSurf_t* drawSurf, const idMaterial* shader, cons
 	}
 }
 
-/*
-===================
-R_SetupDrawSurfJoints
-===================
+/*!
+	\brief Sets up joint cache data for draw surface rendering with GPU skinning support
+
+	Initializes the joint cache for a draw surface by checking if GPU skinning is enabled and if the model has joint data. When GPU skinning is available and the model has inverted joint data, it
+   allocates or retrieves joint buffer data from the vertex cache. If GPU skinning is disabled or no joint data is available, it sets the joint cache to zero.
+
+	\param drawSurf Pointer to the draw surface structure to configure
+	\param tri Pointer to triangle data containing the static model with joints
+	\param shader Pointer to the material shader applied to the surface
+	\param commandList Pointer to the command list for GPU command submission
+	\throws assertion failure if the model's inverted joints buffer is not properly initialized
 */
 void R_SetupDrawSurfJoints( drawSurf_t* drawSurf, const srfTriangles_t* tri, const idMaterial* shader, nvrhi::ICommandList* commandList )
 {
@@ -266,19 +243,7 @@ void R_SetupDrawSurfJoints( drawSurf_t* drawSurf, const srfTriangles_t* tri, con
 	drawSurf->jointCache = model->jointsInvertedBuffer;
 }
 
-/*
-===================
-R_AddSingleModel
-
-May be run in parallel.
-
-Here is where dynamic models actually get instantiated, and necessary
-interaction surfaces get created. This is all done on a sort-by-model
-basis to keep source data in cache (most likely L2) as any interactions
-and shadows are generated, since dynamic models will typically be lit by
-two or more lights.
-===================
-*/
+//! Adds a single model to the rendering list for the specified view entity
 void R_AddSingleModel( viewEntity_t* vEntity )
 {
 	// we will add all interaction surfs here, to be chained to the lights in later serial code
@@ -1009,13 +974,6 @@ void R_AddSingleModel( viewEntity_t* vEntity )
 
 REGISTER_PARALLEL_JOB( R_AddSingleModel, "R_AddSingleModel" );
 
-/*
-=================
-R_LinkDrawSurfToView
-
-Als called directly by GuiModel
-=================
-*/
 void R_LinkDrawSurfToView( drawSurf_t* drawSurf, viewDef_t* viewDef )
 {
 	// if it doesn't fit, resize the list
@@ -1038,15 +996,6 @@ void R_LinkDrawSurfToView( drawSurf_t* drawSurf, viewDef_t* viewDef )
 	viewDef->numDrawSurfs++;
 }
 
-/*
-===================
-R_AddModels
-
-The end result of running this is the addition of drawSurf_t to the
-tr.viewDef->drawSurfs[] array and light link chains, along with
-frameData and vertexCache allocations to support the drawSurfs.
-===================
-*/
 void R_AddModels()
 {
 	SCOPED_PROFILE_EVENT( "R_AddModels" );

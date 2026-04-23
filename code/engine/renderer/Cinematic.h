@@ -66,65 +66,76 @@ typedef struct {
 	int		 status;
 } cinData_t;
 
+/*!
+	\class idCinematic
+	\brief Manages cinematic playback including initialization, rendering, and resource management.
+
+	The idCinematic class provides functionality for loading, playing, and rendering cinematic sequences. It handles initialization from file, memory management, and frame rendering using provided
+   command lists. The class supports looping playback, time reset, and frame rate control. It includes methods for exporting frames to TGA format and querying cinematic properties such as length and
+   start time. The class uses a factory pattern for allocation with a private subclass implementation. Memory cleanup is handled through explicit shutdown and close methods.
+
+*/
 class idCinematic
 {
 public:
-	// initialize cinematic play back data
+	//! Initializes cinematic playback data including YUV conversion tables and memory allocations for video processing.
 	static void			InitCinematic();
 
-	// shutdown cinematic play back data
+	//! Shuts down the cinematic playback data by freeing allocated memory.
 	static void			ShutdownCinematic();
 
-	// allocates and returns a private subclass that implements the methods
-	// This should be used instead of new
+	//! Allocates and returns a private subclass that implements the cinematic methods
 	static idCinematic* Alloc();
 
-	// frees all allocated memory
+	//! Cleans up all allocated memory for the cinematic.
 	virtual ~idCinematic();
 
-	// returns false if it failed to load
+	//! Initializes the cinematic from a file and returns true if successful
 	virtual bool	  InitFromFile( const char* qpath, bool looping, nvrhi::ICommandList* commandList );
 
-	// returns the length of the animation in milliseconds
+	//! Returns the length of the animation in milliseconds
 	virtual int		  AnimationLength();
 
-	// RB: let us know wether this video went EOF or is still active
+	//! Returns true if the cinematic is currently playing, false otherwise.
 	virtual bool	  IsPlaying() const;
-	// RB end
 
-	// the pointers in cinData_t will remain valid until the next UpdateForTime() call
+	//! Returns cinematic image data for the specified time using the provided command list.
 	virtual cinData_t ImageForTime( int milliseconds, nvrhi::ICommandList* commandList );
 
-	// closes the file and frees all allocated memory
+	//! Closes the cinematic file and frees all allocated memory.
 	virtual void	  Close();
 
-	// sets the cinematic to start at that time (can be in the past)
+	//! Resets the cinematic time to the specified milliseconds value, allowing the cinematic to start at that time, even if it's in the past.
 	virtual void	  ResetTime( int time );
 
-	// gets the time the cinematic started
+	//! Returns the start time of the cinematic
 	virtual int		  GetStartTime();
 
+	//! Exports cinematic frames to TGA image files
 	virtual void	  ExportToTGA( bool skipExisting = true );
 
+	//! Returns the fixed frame rate of 30.0 for the cinematic playback.
 	virtual float	  GetFrameRate() const;
 };
 
-/*
-===============================================
-
-	Sound meter.
-
-===============================================
+/*!
+	\class idSndWindow
+	\brief Manages sound window visualization and playback functionality.
 */
-
 class idSndWindow : public idCinematic
 {
 public:
+	//! Initializes a new instance of the idSndWindow class with waveform display disabled.
 	idSndWindow() { showWaveform = false; }
 	~idSndWindow() { }
 
+	//! Initializes the sound window from a file path, setting waveform display based on the file name.
 	bool	  InitFromFile( const char* qpath, bool looping );
+
+	//! Returns cinematic image data for the specified time in milliseconds.
 	cinData_t ImageForTime( int milliseconds );
+
+	//! Returns the animation length of the sound window.
 	int		  AnimationLength();
 
 private:

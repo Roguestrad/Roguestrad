@@ -46,14 +46,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #define DEFAULT_SIZE 16
 
-/*
-==================
-idImage::MakeDefault
-
-the default image will be grey with a white box outline
-to allow you to see the mapping coordinates on a surface
-==================
-*/
 void idImage::MakeDefault( nvrhi::ICommandList* commandList )
 {
 	int	 x, y;
@@ -96,11 +88,13 @@ void idImage::MakeDefault( nvrhi::ICommandList* commandList )
 	defaulted = true;
 }
 
+//! Sets the provided image to its default state using the given command list.
 static void R_DefaultImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->MakeDefault( commandList );
 }
 
+//! Sets the image data to a solid white texture using the provided command list.
 static void R_WhiteImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -110,6 +104,7 @@ static void R_WhiteImage( idImage* image, nvrhi::ICommandList* commandList )
 	image->GenerateImage( ( byte* )data, DEFAULT_SIZE, DEFAULT_SIZE, TF_DEFAULT, TR_REPEAT, TD_DEFAULT, commandList );
 }
 
+//! Sets the provided image to a solid black texture using the specified command list.
 static void R_BlackImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -119,6 +114,7 @@ static void R_BlackImage( idImage* image, nvrhi::ICommandList* commandList )
 	image->GenerateImage( ( byte* )data, DEFAULT_SIZE, DEFAULT_SIZE, TF_DEFAULT, TR_REPEAT, TD_DEFAULT, commandList );
 }
 
+//! Sets the specified image to a solid black diffuse texture.
 static void R_BlackDiffuseImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -128,6 +124,7 @@ static void R_BlackDiffuseImage( idImage* image, nvrhi::ICommandList* commandLis
 	image->GenerateImage( ( byte* )data, DEFAULT_SIZE, DEFAULT_SIZE, TF_DEFAULT, TR_REPEAT, TD_DIFFUSE, commandList );
 }
 
+//! Generates a cyan-colored image with the specified dimensions and uploads it to the GPU using the provided command list.
 static void R_CyanImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -144,6 +141,7 @@ static void R_CyanImage( idImage* image, nvrhi::ICommandList* commandList )
 	image->GenerateImage( ( byte* )data, DEFAULT_SIZE, DEFAULT_SIZE, TF_DEFAULT, TR_REPEAT, TD_DIFFUSE, commandList );
 }
 
+//! Sets the image data to a red clay color pattern.
 static void R_RedClayImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -160,6 +158,7 @@ static void R_RedClayImage( idImage* image, nvrhi::ICommandList* commandList )
 	image->GenerateImage( ( byte* )data, DEFAULT_SIZE, DEFAULT_SIZE, TF_DEFAULT, TR_REPEAT, TD_DIFFUSE, commandList );
 }
 
+//! Generates a chrome specular image with default settings.
 static void R_ChromeSpecImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -176,6 +175,7 @@ static void R_ChromeSpecImage( idImage* image, nvrhi::ICommandList* commandList 
 	image->GenerateImage( ( byte* )data, DEFAULT_SIZE, DEFAULT_SIZE, TF_DEFAULT, TR_REPEAT, TD_SPECULAR_PBR_RMAO, commandList );
 }
 
+//! Generates a plastic specular image with fixed color values for the specified image and command list.
 static void R_PlasticSpecImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -192,6 +192,7 @@ static void R_PlasticSpecImage( idImage* image, nvrhi::ICommandList* commandList
 	image->GenerateImage( ( byte* )data, DEFAULT_SIZE, DEFAULT_SIZE, TF_DEFAULT, TR_REPEAT, TD_SPECULAR_PBR_RMAO, commandList );
 }
 
+//! Sets the image data to a predefined RGBA8 color value.
 static void R_RGBA8Image( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -205,11 +206,13 @@ static void R_RGBA8Image( idImage* image, nvrhi::ICommandList* commandList )
 	image->GenerateImage( ( byte* )data, DEFAULT_SIZE, DEFAULT_SIZE, TF_DEFAULT, TR_REPEAT, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Generates an RGBA8 image for rendering using the specified command list.
 static void R_RGBA8Image_RT( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( nullptr, 512, 512, TF_NEAREST, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, nullptr, true, false, 1 );
 }
 
+//! Generates a linear RGBA8 image with specific color data and sets up the image with specified texture parameters.
 static void R_RGBA8LinearImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -223,11 +226,13 @@ static void R_RGBA8LinearImage( idImage* image, nvrhi::ICommandList* commandList
 	image->GenerateImage( ( byte* )data, DEFAULT_SIZE, DEFAULT_SIZE, TF_LINEAR, TR_REPEAT, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Generates a native image for the specified image and command list.
 static void R_LdrNativeImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, nullptr, true, false, 1 );
 }
 
+//! Generates a depth image with specified parameters using the provided command list.
 static void R_DepthImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	uint sampleCount = R_GetMSAASamples();
@@ -235,7 +240,7 @@ static void R_DepthImage( idImage* image, nvrhi::ICommandList* commandList )
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_DEPTH_STENCIL, nullptr, true, false, sampleCount );
 }
 
-// RB begin
+//! Generates a high dynamic range RGBA16F image with optional MSAA support for the given image and command list.
 static void R_HDR_RGBA16FImage_ResNative_MSAAOpt( idImage* image, nvrhi::ICommandList* commandList )
 {
 	uint sampleCount = R_GetMSAASamples();
@@ -243,11 +248,13 @@ static void R_HDR_RGBA16FImage_ResNative_MSAAOpt( idImage* image, nvrhi::IComman
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true, sampleCount == 1, sampleCount );
 }
 
+//! Resizes an image to native resolution with RG16F format.
 static void R_HDR_RG16FImage_ResNative( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RG16F, nullptr, true );
 }
 
+//! Resizes the given image to the native render resolution with RGBA16F format.
 static void R_HDR_RGBA16FImage_ResNative( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true );
@@ -258,60 +265,73 @@ static void R_HDR_RGBA16FImage_ResNative_UAV( idImage* image, nvrhi::ICommandLis
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true, true );
 }
 
+//! Generates an HDR RGBA16F image for GUI rendering with specified screen dimensions.
 static void R_HDR_RGBA16FImage_ResGui( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, SCREEN_WIDTH, SCREEN_HEIGHT, TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true );
 }
 
+//! Generates a high dynamic range environment probe image with specified parameters.
 static void R_EnvprobeImage_HDR( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, ENVPROBE_CAPTURE_SIZE, ENVPROBE_CAPTURE_SIZE, TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true );
 }
 
+//! Generates a depth-stencil image for environment probe capture with specified dimensions and texture parameters.
 static void R_EnvprobeImage_Depth( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, ENVPROBE_CAPTURE_SIZE, ENVPROBE_CAPTURE_SIZE, TF_NEAREST, TR_CLAMP, TD_DEPTH_STENCIL, nullptr, true );
 }
 
+//! Generates an RGBA8 image for GUI rendering with specified dimensions and texture parameters.
 static void R_RGBA8Image_ResGui( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, SCREEN_WIDTH, SCREEN_HEIGHT, TF_DEFAULT, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, nullptr, true );
 }
 
+//! Generates a high dynamic range RGBA16F image with linear filtering and clamped texture coordinates.
 static void R_HDR_RGBA16FImage_ResNative_Linear( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true );
 }
 
+//! Generates a high dynamic range RGBA16F image with native resolution and no multi-sampling.
 static void R_HDR_RGBA16FImage_ResNative_NoMSAA( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true );
 }
 
+//! Resizes the given image to one quarter of its original dimensions with RGBA16F format.
 static void R_HDR_RGBA16FImage_ResQuarter( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth() / 4, renderSystem->GetHeight() / 4, TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true );
 }
 
+//! Resizes the given image to a quarter of its original dimensions using linear filtering.
 static void R_HDR_RGBA16FImage_ResQuarter_Linear( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth() / 4, renderSystem->GetHeight() / 4, TF_LINEAR, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, nullptr, true );
 }
 
+//! Generates a 64x64 RGBA16F image with nearest filtering and clamped texture coordinates.
 static void R_HDR_RGBA16FImage_Res64( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, 64, 64, TF_NEAREST, TR_CLAMP, TD_RGBA16F, nullptr, true );
 }
+
+//! Generates a native resolution image for SMAA processing.
 static void R_SMAAImage_ResNative( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_LINEAR, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, nullptr, true );
 }
 
+//! Resizes the ambient occlusion image to the native resolution using the provided command list.
 static void R_AmbientOcclusionImage_ResNative( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_LINEAR, TR_CLAMP, TD_R8F, nullptr, true, true );
 }
 
+//! Generates a native resolution image for the geometry buffer using the specified command list.
 static void R_GeometryBufferImage_ResNative( idImage* image, nvrhi::ICommandList* commandList )
 {
 	uint sampleCount = R_GetMSAASamples();
@@ -319,27 +339,31 @@ static void R_GeometryBufferImage_ResNative( idImage* image, nvrhi::ICommandList
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_LINEAR, TR_CLAMP, TD_RGBA16F, nullptr, true, false, sampleCount );
 }
 
+//! Resizes the SSAO image to half the screen width and height.
 static void R_SSAOImage_ResHalf( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth() / 2, renderSystem->GetHeight() / 2, TF_LINEAR, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, nullptr, true );
 }
 
+//! Generates a native resolution hierarchical Z-buffer image for the specified image and command list.
 static void R_HierarchicalZBufferImage_ResNative( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST_MIPMAP, TR_CLAMP, TD_R32F, nullptr, true, true );
 }
 
+//! Resizes the given image to the native resolution using linear filtering.
 static void R_R8Image_ResNative_Linear( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_LINEAR, TR_CLAMP, TD_LOOKUP_TABLE_MONO, nullptr, true );
 }
-// RB end
 
+//! Resizes the provided image to native resolution using HDR RGBA8 format.
 static void R_HDR_RGBA8Image_ResNative( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_NEAREST, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, commandList, true );
 }
 
+//! Generates an alpha notch image for use in alpha test clip planes.
 static void R_AlphaNotchImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[2][4];
@@ -354,6 +378,7 @@ static void R_AlphaNotchImage( idImage* image, nvrhi::ICommandList* commandList 
 	image->GenerateImage( ( byte* )data, 2, 1, TF_NEAREST, TR_CLAMP, TD_LOOKUP_TABLE_ALPHA, commandList );
 }
 
+//! Generates a flat normal image for default bump mapping.
 static void R_FlatNormalImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[DEFAULT_SIZE][DEFAULT_SIZE][4];
@@ -371,13 +396,7 @@ static void R_FlatNormalImage( idImage* image, nvrhi::ICommandList* commandList 
 	image->GenerateImage( ( byte* )data, 16, 16, TF_DEFAULT, TR_REPEAT, TD_BUMP, commandList );
 }
 
-/*
-================
-R_CreateNoFalloffImage
-
-This is a solid white texture that is zero clamped.
-================
-*/
+//! Creates a solid white texture with zero clamping for falloff calculations.
 static void R_CreateNoFalloffImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int	 x, y;
@@ -405,6 +424,7 @@ third will still be projection based
 */
 const int FOG_SIZE = 128;
 
+//! Generates a fog image with radial alpha gradient for the specified command list.
 void	  R_FogImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int	  x, y;
@@ -453,6 +473,8 @@ Height values below zero are inside the fog volume
 */
 static const float RAMP_RANGE = 8;
 static const float DEEP_RANGE = -30;
+
+//! Calculates the fog fraction based on the height difference between a view point and a target point
 static float	   FogFraction( float viewHeight, float targetHeight )
 {
 	float total = idMath::Fabs( targetHeight - viewHeight );
@@ -515,14 +537,7 @@ static float	   FogFraction( float viewHeight, float targetHeight )
 	return frac;
 }
 
-/*
-================
-R_FogEnterImage
-
-Modulate the fog alpha density based on the distance of the
-start and end points to the terminator plane
-================
-*/
+//! Sets the fog alpha density based on distance from the terminator plane for the specified image
 void R_FogEnterImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int	 x, y;
@@ -559,6 +574,7 @@ R_QuadraticImage
 static const int QUADRATIC_WIDTH  = 32;
 static const int QUADRATIC_HEIGHT = 4;
 
+//! Generates a quadratic lookup table image for image processing effects.
 void			 R_QuadraticImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int	 x, y;
@@ -591,36 +607,41 @@ void			 R_QuadraticImage( idImage* image, nvrhi::ICommandList* commandList )
 	image->GenerateImage( ( byte* )data, QUADRATIC_WIDTH, QUADRATIC_HEIGHT, TF_DEFAULT, TR_CLAMP, TD_LOOKUP_TABLE_RGB1, commandList );
 }
 
-// RB begin
+//! Generates a shadow map image for atlas rendering with specified dimensions and settings.
 static void R_CreateShadowMapImage_Atlas( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( NULL, r_shadowMapAtlasSize.GetInteger(), r_shadowMapAtlasSize.GetInteger(), TF_LINEAR, TR_CLAMP_TO_ZERO_ALPHA, TD_DEPTH, commandList, true );
 }
 
+//! Generates a shadow map image with specified resolution and formatting
 static void R_CreateShadowMapImage_Res0( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int size = shadowMapResolutions[0];
 	image->GenerateShadowArray( size, size, TF_LINEAR, TR_CLAMP_TO_ZERO_ALPHA, TD_SHADOW_ARRAY, commandList );
 }
 
+//! Creates a shadow map image with resolution 1 for the given image and command list
 static void R_CreateShadowMapImage_Res1( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int size = shadowMapResolutions[1];
 	image->GenerateShadowArray( size, size, TF_LINEAR, TR_CLAMP_TO_ZERO_ALPHA, TD_SHADOW_ARRAY, commandList );
 }
 
+//! Creates a shadow map image with a specific resolution for use in rendering.
 static void R_CreateShadowMapImage_Res2( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int size = shadowMapResolutions[2];
 	image->GenerateShadowArray( size, size, TF_LINEAR, TR_CLAMP_TO_ZERO_ALPHA, TD_SHADOW_ARRAY, commandList );
 }
 
+//! Generates a shadow map image array with specified resolution and texture parameters.
 static void R_CreateShadowMapImage_Res3( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int size = shadowMapResolutions[3];
 	image->GenerateShadowArray( size, size, TF_LINEAR, TR_CLAMP_TO_ZERO_ALPHA, TD_SHADOW_ARRAY, commandList );
 }
 
+//! Generates a shadow map image with a specific resolution using the provided command list.
 static void R_CreateShadowMapImage_Res4( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int size = shadowMapResolutions[4];
@@ -628,6 +649,8 @@ static void R_CreateShadowMapImage_Res4( idImage* image, nvrhi::ICommandList* co
 }
 
 const static int JITTER_SIZE = 128;
+
+//! Generates a 16-bit jitter image for use in rendering.
 static void		 R_CreateJitterImage16( idImage* image, nvrhi::ICommandList* commandList )
 {
 	static byte data[JITTER_SIZE][JITTER_SIZE * 16][4];
@@ -649,6 +672,7 @@ static void		 R_CreateJitterImage16( idImage* image, nvrhi::ICommandList* comman
 	image->GenerateImage( ( byte* )data, JITTER_SIZE * 16, JITTER_SIZE, TF_NEAREST, TR_REPEAT, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Creates a jitter image for use in rendering
 static void R_CreateJitterImage4( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[JITTER_SIZE][JITTER_SIZE * 4][4];
@@ -670,6 +694,7 @@ static void R_CreateJitterImage4( idImage* image, nvrhi::ICommandList* commandLi
 	image->GenerateImage( ( byte* )data, JITTER_SIZE * 4, JITTER_SIZE, TF_NEAREST, TR_REPEAT, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Generates a jitter image with random RGBA values for use in rendering.
 static void R_CreateJitterImage1( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[JITTER_SIZE][JITTER_SIZE][4];
@@ -686,6 +711,7 @@ static void R_CreateJitterImage1( idImage* image, nvrhi::ICommandList* commandLi
 	image->GenerateImage( ( byte* )data, JITTER_SIZE, JITTER_SIZE, TF_NEAREST, TR_REPEAT, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Generates a random 256x256 RGBA image with no transparency.
 static void R_CreateRandom256Image( idImage* image, nvrhi::ICommandList* commandList )
 {
 	byte data[256][256][4];
@@ -702,7 +728,7 @@ static void R_CreateRandom256Image( idImage* image, nvrhi::ICommandList* command
 	image->GenerateImage( ( byte* )data, 256, 256, TF_NEAREST, TR_REPEAT, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
-// RB
+//! Generates a blue noise image from precomputed byte data and uploads it to the specified image resource.
 static void R_CreateBlueNoise256Image( idImage* image, nvrhi::ICommandList* commandList )
 {
 	static byte data[BLUENOISE_TEX_HEIGHT][BLUENOISE_TEX_WIDTH][4];
@@ -725,6 +751,7 @@ static void R_CreateBlueNoise256Image( idImage* image, nvrhi::ICommandList* comm
 	image->GenerateImage( ( byte* )data, BLUENOISE_TEX_WIDTH, BLUENOISE_TEX_HEIGHT, TF_NEAREST, TR_REPEAT, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Creates a heatmap image with five color gradients for visualization purposes
 static void R_CreateHeatmap5ColorsImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int			  x, y;
@@ -769,6 +796,7 @@ static void R_CreateHeatmap5ColorsImage( idImage* image, nvrhi::ICommandList* co
 	image->GenerateImage( ( byte* )data, FALLOFF_TEXTURE_SIZE, 16, TF_LINEAR, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Creates a heatmap image with 7 distinct color gradients for visualization purposes.
 static void R_CreateHeatmap7ColorsImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	int			  x, y;
@@ -813,6 +841,7 @@ static void R_CreateHeatmap7ColorsImage( idImage* image, nvrhi::ICommandList* co
 	image->GenerateImage( ( byte* )data, FALLOFF_TEXTURE_SIZE, 16, TF_LINEAR, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Generates a grain image with random RGB values for use in visual effects.
 static void R_CreateGrainImage1( idImage* image, nvrhi::ICommandList* commandList )
 {
 	const static int GRAIN_SIZE = 128;
@@ -843,6 +872,7 @@ static void R_CreateGrainImage1( idImage* image, nvrhi::ICommandList* commandLis
 	image->GenerateImage( ( byte* )data, GRAIN_SIZE, GRAIN_SIZE, TF_NEAREST, TR_REPEAT, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Creates an SMAA area image for image processing.
 static void R_CreateSMAAAreaImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	static byte data[AREATEX_HEIGHT][AREATEX_WIDTH][4];
@@ -866,6 +896,7 @@ static void R_CreateSMAAAreaImage( idImage* image, nvrhi::ICommandList* commandL
 	image->GenerateImage( ( byte* )data, AREATEX_WIDTH, AREATEX_HEIGHT, TF_LINEAR, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, commandList );
 }
 
+//! Creates an SMAA search image from predefined byte data and uploads it to the specified image resource
 static void R_CreateSMAASearchImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	static byte data[SEARCHTEX_HEIGHT][SEARCHTEX_WIDTH][4];
@@ -889,6 +920,7 @@ static void R_CreateSMAASearchImage( idImage* image, nvrhi::ICommandList* comman
 	image->GenerateImage( ( byte* )data, SEARCHTEX_WIDTH, SEARCHTEX_HEIGHT, TF_LINEAR, TR_CLAMP, TD_LOOKUP_TABLE_MONO, commandList );
 }
 
+//! Creates an ImGui font image from the specified image and command list.
 static void R_CreateImGuiFontImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	ImGuiIO& io = ImGui::GetIO();
@@ -908,11 +940,13 @@ static void R_CreateImGuiFontImage( idImage* image, nvrhi::ICommandList* command
 	// io.Fonts->ClearTexData();
 }
 
+//! Generates a BRDF lookup table image using provided texture bytes and rendering command list.
 static void R_CreateBrdfLutImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( ( byte* )brfLutTexBytes, BRDFLUT_TEX_WIDTH, BRDFLUT_TEX_HEIGHT, TF_LINEAR, TR_CLAMP, TD_RG16F, commandList );
 }
 
+//! Generates an environment probe image for the UAC lobby irradiance using the specified image and command list.
 static void R_CreateEnvprobeImage_UAC_lobby_irradiance( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( ( byte* )IMAGE_ENV_UAC_LOBBY_AMB_H_Bytes,
@@ -928,6 +962,7 @@ static void R_CreateEnvprobeImage_UAC_lobby_irradiance( idImage* image, nvrhi::I
 		CF_2D_PACKED_MIPCHAIN );
 }
 
+//! Generates a radiance environment probe image for the UAC lobby with specified texture parameters.
 static void R_CreateEnvprobeImage_UAC_lobby_radiance( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( ( byte* )IMAGE_ENV_UAC_LOBBY_SPEC_H_Bytes,
@@ -943,6 +978,7 @@ static void R_CreateEnvprobeImage_UAC_lobby_radiance( idImage* image, nvrhi::ICo
 		CF_2D_PACKED_MIPCHAIN );
 }
 
+//! Generates a stereo image for VR rendering with specified dimensions and settings.
 static void R_VR_StereoImage( idImage* image, nvrhi::ICommandList* commandList )
 {
 	// idVec2i eyeResolution = vrSystem->GetEyeResolution();
@@ -950,23 +986,18 @@ static void R_VR_StereoImage( idImage* image, nvrhi::ICommandList* commandList )
 	image->GenerateImage( NULL, renderSystem->GetWidth(), renderSystem->GetHeight(), TF_LINEAR, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, nullptr, true, false, 1 );
 }
 
-// RB end
-
+//! Generates an image for GUI editing with specified parameters.
 static void R_GuiEditFunction( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( nullptr, 640, 480, TF_NEAREST, TR_CLAMP, TD_LOOKUP_TABLE_RGBA, nullptr, true, false, 1 );
 }
 
+//! Generates a depth-stencil image for GUI edit functionality.
 static void R_GuiEditDepthStencilFunction( idImage* image, nvrhi::ICommandList* commandList )
 {
 	image->GenerateImage( nullptr, 640, 480, TF_NEAREST, TR_CLAMP, TD_DEPTH_STENCIL, nullptr, true, false, 1 );
 }
 
-/*
-================
-idImageManager::CreateIntrinsicImages
-================
-*/
 void idImageManager::CreateIntrinsicImages()
 {
 	// create built in images
@@ -1084,6 +1115,7 @@ void idImageManager::CreateIntrinsicImages()
 	release_assert( hellLoadingIconImage->referencedOutsideLevelLoad );
 }
 
+//! Loads an image file and generates a C header file containing the image data as a static byte array.
 CONSOLE_COMMAND( makeImageHeader, "load an image and turn it into a .h file", NULL )
 {
 	byte* buffer;
@@ -1157,13 +1189,20 @@ CONSOLE_COMMAND( makeImageHeader, "load an image and turn it into a .h file", NU
 	Mem_Free( buffer );
 }
 
+/*!
+	\class idSortColors
+	\brief A sorting implementation for 3D color vectors based on their magnitude.
+*/
 class idSortColors : public idSort_Quick<idVec3, idSortColors>
 {
 public:
+	//! Computes the squared magnitude of a 3D vector for sorting purposes.
 	int SizeMetric( const idVec3& v ) const
 	{
 		return v.x * v.x + v.y * v.y + v.z * v.z;
 	}
+
+	//! Compares two idVec3 color values based on their size metrics
 	int Compare( const idVec3& a, const idVec3& b ) const
 	{
 		// idVec3 diff = b - a;
@@ -1173,6 +1212,7 @@ public:
 	}
 };
 
+//! Computes the average of a list of 3D vectors.
 idVec3 Average( const idList<idVec3>& colors )
 {
 	idVec3 avg = vec3_zero;
@@ -1186,11 +1226,22 @@ idVec3 Average( const idList<idVec3>& colors )
 	return avg;
 }
 
+//! Returns the median element from a sorted list of idVec3 colors
 idVec3 Median( const idList<idVec3>& sortedPal )
 {
 	return sortedPal[sortedPal.Num() / 2];
 }
 
+/*!
+	\brief Loads a .pal palette file, parses its colors, and outputs formatted color data to console.
+
+	This console command processes a JASC-PAL format palette file by reading its contents, parsing the color information, and printing formatted color data to the console. It calculates and displays
+   the median absolute deviation and standard deviation of the color values. The function expects at least one argument specifying the palette file name and optionally a second argument for the export
+   name. It handles file reading and memory management internally, and currently only outputs data to console without creating header files.
+
+	\param exportname Optional name for the export file (unused in current implementation)
+	\param filename Name of the .pal palette file to load
+*/
 CONSOLE_COMMAND( makePaletteHeader, "load a .pal palette, build an image from it and turn it into a .h file", NULL )
 {
 	if( args.Argc() < 2 ) {

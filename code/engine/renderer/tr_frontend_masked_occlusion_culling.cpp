@@ -43,11 +43,7 @@ If you have questions concerning this license or the applicable additional terms
 
 static const float CHECK_BOUNDS_EPSILON = 1.0f;
 
-/*
-==================
-R_SortViewEntities
-==================
-*/
+//! Sorts view entities into an order optimized for parallel processing in the rendering pipeline
 viewEntity_t*	   R_SortViewEntities( viewEntity_t* vEntities )
 {
 	SCOPED_PROFILE_EVENT( "R_SortViewEntities" );
@@ -476,13 +472,6 @@ void R_RenderSingleModel( viewEntity_t* vEntity )
 }
 #endif
 
-// REGISTER_PARALLEL_JOB( R_AddSingleModel, "R_AddSingleModel" );
-
-/*
-===================
-R_FillMaskedOcclusionBufferWithModels
-===================
-*/
 void R_FillMaskedOcclusionBufferWithModels( viewDef_t* viewDef )
 {
 	SCOPED_PROFILE_EVENT( "R_FillMaskedOcclusionBufferWithModels" );

@@ -190,10 +190,14 @@ static void	 mkGetNormal( const SMikkTSpaceContext* pContext, float fvNormOut[],
 static void	 mkGetTexCoord( const SMikkTSpaceContext* pContext, float fvTexcOut[], const int iFace, const int iVert );
 static void	 mkSetTSpaceBasic( const SMikkTSpaceContext* pContext, const float fvTangent[], const float fSign, const int iFace, const int iVert );
 
-// Helper class for loading in the interface functions for mikktspace.
+/*!
+	\class idMikkTSpaceInterface
+	\brief Helper class for loading interface functions for tangent space calculation.
+*/
 class idMikkTSpaceInterface
 {
 public:
+	//! Initializes the MikkTSpace interface with all required callback function pointers.
 	idMikkTSpaceInterface();
 
 	SMikkTSpaceInterface mkInterface;
@@ -203,15 +207,6 @@ static idMikkTSpaceInterface mikkTSpaceInterface;
 
 static void					 SetUpMikkTSpaceContext( SMikkTSpaceContext* context );
 
-// SP end
-
-/*
-=================
-R_TriSurfMemory
-
-For memory profiling
-=================
-*/
 int							 R_TriSurfMemory( const srfTriangles_t* tri )
 {
 	int total = 0;
@@ -254,11 +249,6 @@ int							 R_TriSurfMemory( const srfTriangles_t* tri )
 	return total;
 }
 
-/*
-==============
-R_FreeStaticTriSurfVertexCaches
-==============
-*/
 void R_FreeStaticTriSurfVertexCaches( srfTriangles_t* tri )
 {
 	// we don't support reclaiming static geometry memory
@@ -327,11 +317,6 @@ void R_FreeStaticTriSurf( srfTriangles_t* tri )
 	Mem_Free( tri );
 }
 
-/*
-==============
-R_FreeStaticTriSurfVerts
-==============
-*/
 void R_FreeStaticTriSurfVerts( srfTriangles_t* tri )
 {
 	// we don't support reclaiming static geometry memory
@@ -346,24 +331,12 @@ void R_FreeStaticTriSurfVerts( srfTriangles_t* tri )
 	}
 }
 
-/*
-==============
-R_AllocStaticTriSurf
-==============
-*/
 srfTriangles_t* R_AllocStaticTriSurf()
 {
 	srfTriangles_t* tris = ( srfTriangles_t* )Mem_ClearedAlloc( sizeof( srfTriangles_t ), TAG_SRFTRIS );
 	return tris;
 }
 
-/*
-=================
-R_CopyStaticTriSurf
-
-This only duplicates the indexes and verts, not any of the derived data.
-=================
-*/
 srfTriangles_t* R_CopyStaticTriSurf( const srfTriangles_t* tri )
 {
 	srfTriangles_t* newTri;
@@ -379,55 +352,30 @@ srfTriangles_t* R_CopyStaticTriSurf( const srfTriangles_t* tri )
 	return newTri;
 }
 
-/*
-=================
-R_AllocStaticTriSurfVerts
-=================
-*/
 void R_AllocStaticTriSurfVerts( srfTriangles_t* tri, int numVerts )
 {
 	assert( tri->verts == NULL );
 	tri->verts = ( idDrawVert* )Mem_Alloc16( numVerts * sizeof( idDrawVert ), TAG_TRI_VERTS );
 }
 
-/*
-=================
-R_AllocStaticTriSurfIndexes
-=================
-*/
 void R_AllocStaticTriSurfIndexes( srfTriangles_t* tri, int numIndexes )
 {
 	assert( tri->indexes == NULL );
 	tri->indexes = ( triIndex_t* )Mem_Alloc16( numIndexes * sizeof( triIndex_t ), TAG_TRI_INDEXES );
 }
 
-/*
-=================
-R_AllocStaticTriSurfSilIndexes
-=================
-*/
 void R_AllocStaticTriSurfSilIndexes( srfTriangles_t* tri, int numIndexes )
 {
 	assert( tri->silIndexes == NULL );
 	tri->silIndexes = ( triIndex_t* )Mem_Alloc16( numIndexes * sizeof( triIndex_t ), TAG_TRI_SIL_INDEXES );
 }
 
-/*
-=================
-R_AllocStaticTriSurfDominantTris
-=================
-*/
 void R_AllocStaticTriSurfDominantTris( srfTriangles_t* tri, int numVerts )
 {
 	assert( tri->dominantTris == NULL );
 	tri->dominantTris = ( dominantTri_t* )Mem_Alloc16( numVerts * sizeof( dominantTri_t ), TAG_TRI_DOMINANT_TRIS );
 }
 
-/*
-=================
-R_AllocStaticTriSurfMirroredVerts
-=================
-*/
 void R_AllocStaticTriSurfMirroredVerts( srfTriangles_t* tri, int numMirroredVerts )
 {
 	assert( tri->mirroredVerts == NULL );
@@ -445,33 +393,18 @@ void R_AllocStaticTriSurfDupVerts( srfTriangles_t* tri, int numDupVerts )
 	tri->dupVerts = ( int* )Mem_Alloc16( numDupVerts * 2 * sizeof( *tri->dupVerts ), TAG_TRI_DUP_VERT );
 }
 
-/*
-=================
-R_AllocStaticTriSurfMocIndexes
-=================
-*/
 void R_AllocStaticTriSurfMocIndexes( srfTriangles_t* tri, int numIndexes )
 {
 	assert( tri->mocIndexes == NULL );
 	tri->mocIndexes = ( unsigned int* )Mem_Alloc16( numIndexes * sizeof( unsigned int ), TAG_TRI_MOC_VERT );
 }
 
-/*
-=================
-R_AllocStaticTriSurfMocVerts
-=================
-*/
 void R_AllocStaticTriSurfMocVerts( srfTriangles_t* tri, int numVerts )
 {
 	assert( tri->mocVerts == NULL );
 	tri->mocVerts = ( idVec4* )Mem_Alloc16( numVerts * sizeof( idVec4 ), TAG_TRI_MOC_VERT );
 }
 
-/*
-=================
-R_ResizeStaticTriSurfVerts
-=================
-*/
 void R_ResizeStaticTriSurfVerts( srfTriangles_t* tri, int numVerts )
 {
 	idDrawVert* newVerts = ( idDrawVert* )Mem_Alloc16( numVerts * sizeof( idDrawVert ), TAG_TRI_VERTS );
@@ -481,11 +414,6 @@ void R_ResizeStaticTriSurfVerts( srfTriangles_t* tri, int numVerts )
 	tri->verts = newVerts;
 }
 
-/*
-=================
-R_ResizeStaticTriSurfIndexes
-=================
-*/
 void R_ResizeStaticTriSurfIndexes( srfTriangles_t* tri, int numIndexes )
 {
 	triIndex_t* newIndexes = ( triIndex_t* )Mem_Alloc16( numIndexes * sizeof( triIndex_t ), TAG_TRI_INDEXES );
@@ -495,49 +423,22 @@ void R_ResizeStaticTriSurfIndexes( srfTriangles_t* tri, int numIndexes )
 	tri->indexes = newIndexes;
 }
 
-/*
-=================
-R_ReferenceStaticTriSurfVerts
-=================
-*/
 void R_ReferenceStaticTriSurfVerts( srfTriangles_t* tri, const srfTriangles_t* reference )
 {
 	tri->verts = reference->verts;
 }
 
-/*
-=================
-R_ReferenceStaticTriSurfIndexes
-=================
-*/
 void R_ReferenceStaticTriSurfIndexes( srfTriangles_t* tri, const srfTriangles_t* reference )
 {
 	tri->indexes = reference->indexes;
 }
 
-/*
-=================
-R_FreeStaticTriSurfSilIndexes
-=================
-*/
 void R_FreeStaticTriSurfSilIndexes( srfTriangles_t* tri )
 {
 	Mem_Free( tri->silIndexes );
 	tri->silIndexes = NULL;
 }
 
-/*
-===============
-R_RangeCheckIndexes
-
-Check for syntactically incorrect indexes, like out of range values.
-Does not check for semantics, like degenerate triangles.
-
-No vertexes is acceptable if no indexes.
-No indexes is acceptable.
-More vertexes than are referenced by indexes are acceptable.
-===============
-*/
 void R_RangeCheckIndexes( const srfTriangles_t* tri )
 {
 	int i;
@@ -567,21 +468,12 @@ void R_RangeCheckIndexes( const srfTriangles_t* tri )
 	}
 }
 
-/*
-=================
-R_BoundTriSurf
-=================
-*/
 void R_BoundTriSurf( srfTriangles_t* tri )
 {
 	SIMDProcessor->MinMax( tri->bounds[0], tri->bounds[1], tri->verts, tri->numVerts );
 }
 
-/*
-=================
-R_CreateSilRemap
-=================
-*/
+//! Creates a remap table for vertex deduplication based on XYZ coordinates
 static int* R_CreateSilRemap( const srfTriangles_t* tri )
 {
 	int				  c_removed, c_unique;
@@ -625,14 +517,6 @@ static int* R_CreateSilRemap( const srfTriangles_t* tri )
 	return remap;
 }
 
-/*
-=================
-R_CreateSilIndexes
-
-Uniquing vertexes only on xyz before creating sil edges reduces
-the edge count by about 20% on Q3 models
-=================
-*/
 void R_CreateSilIndexes( srfTriangles_t* tri )
 {
 	int	 i;
@@ -655,11 +539,7 @@ void R_CreateSilIndexes( srfTriangles_t* tri )
 	R_StaticFree( remap );
 }
 
-/*
-=====================
-R_CreateDupVerts
-=====================
-*/
+//! Creates duplicate vertex indices for a triangle surface based on vertex remapping.
 void R_CreateDupVerts( srfTriangles_t* tri )
 {
 	int				 i;
@@ -691,13 +571,7 @@ void R_CreateDupVerts( srfTriangles_t* tri )
 	memcpy( tri->dupVerts, tempDupVerts.Ptr(), tri->numDupVerts * 2 * sizeof( tri->dupVerts[0] ) );
 }
 
-/*
-===============
-R_FaceNegativePolarity
-
-Returns true if the texture polarity of the face is negative, false if it is positive or zero
-===============
-*/
+//! Returns true if the texture polarity of the face is negative, false if it is positive or zero
 static bool R_FaceNegativePolarity( const srfTriangles_t* tri, int firstIndex )
 {
 	const idDrawVert* a = tri->verts + tri->indexes[firstIndex + 0];
@@ -745,6 +619,7 @@ struct tangentVert_t {
 	int	 negativeRemap;
 };
 
+//! Duplicates mirrored vertexes in a triangle surface to handle texture polarity separation
 static void R_DuplicateMirroredVertexes( srfTriangles_t* tri )
 {
 	tangentVert_t*			   vert;
@@ -806,14 +681,7 @@ static void R_DuplicateMirroredVertexes( srfTriangles_t* tri )
 	}
 }
 
-/*
-============
-R_DeriveMikktspaceTangents
-
-Derives the tangent space for the given triangles using the Mikktspace standard.
-Normals must be calculated beforehand.
-============
-*/
+//! Computes tangent space vectors for triangle data using the Mikktspace standard.
 static bool R_DeriveMikktspaceTangents( srfTriangles_t* tri )
 {
 	SMikkTSpaceContext context;
@@ -823,15 +691,7 @@ static bool R_DeriveMikktspaceTangents( srfTriangles_t* tri )
 	return ( genTangSpaceDefault( &context ) != 0 );
 }
 
-/*
-============
-R_DeriveNormalsAndTangents
-
-Derives the normal and orthogonal tangent vectors for the triangle vertices.
-For each vertex the normal and tangent vectors are derived from all triangles
-using the vertex which results in smooth tangents across the mesh.
-============
-*/
+//! Computes and sets normal, tangent, and bitangent vectors for triangle vertices.
 void R_DeriveNormalsAndTangents( srfTriangles_t* tri )
 {
 	idTempArray<idVec3> vertexNormals( tri->numVerts );
@@ -962,11 +822,7 @@ void R_DeriveNormalsAndTangents( srfTriangles_t* tri )
 	}
 }
 
-/*
-============
-R_DeriveUnsmoothedNormalsAndTangents
-============
-*/
+//! Computes unsmoothed normals and tangents for triangle vertices using dominant triangle data
 void R_DeriveUnsmoothedNormalsAndTangents( srfTriangles_t* tri )
 {
 	for( int i = 0; i < tri->numVerts; i++ ) {
@@ -1027,14 +883,6 @@ void R_DeriveUnsmoothedNormalsAndTangents( srfTriangles_t* tri )
 	}
 }
 
-/*
-=====================
-R_CreateVertexNormals
-
-Averages together the contributions of all faces that are
-used by a vertex, creating drawVert->normal
-=====================
-*/
 void R_CreateVertexNormals( srfTriangles_t* tri )
 {
 	if( tri->silIndexes == NULL ) {
@@ -1077,40 +925,7 @@ void R_CreateVertexNormals( srfTriangles_t* tri )
 	}
 }
 
-/*
-=================
-R_DeriveTangentsWithoutNormals
-
-Build texture space tangents for bump mapping
-If a surface is deformed, this must be recalculated
-
-This assumes that any mirrored vertexes have already been duplicated, so
-any shared vertexes will have the tangent spaces smoothed across.
-
-Texture wrapping slightly complicates this, but as long as the normals
-are shared, and the tangent vectors are projected onto the normals, the
-separate vertexes should wind up with identical tangent spaces.
-
-mirroring a normalmap WILL cause a slightly visible seam unless the normals
-are completely flat around the edge's full bilerp support.
-
-Vertexes which are smooth shaded must have their tangent vectors
-in the same plane, which will allow a seamless
-rendering as long as the normal map is even on both sides of the
-seam.
-
-A smooth shaded surface may have multiple tangent vectors at a vertex
-due to texture seams or mirroring, but it should only have a single
-normal vector.
-
-Each triangle has a pair of tangent vectors in it's plane
-
-Should we consider having vertexes point at shared tangent spaces
-to save space or speed transforms?
-
-this version only handles bilateral symetry
-=================
-*/
+//! Computes tangent vectors for triangle mesh vertices without relying on pre-computed normals, using either Mikktspace or a custom algorithm.
 void R_DeriveTangentsWithoutNormals( srfTriangles_t* tri, bool useMikktspace )
 {
 	// SP begin
@@ -1252,6 +1067,7 @@ typedef struct {
 	int faceNum;
 } indexSort_t;
 
+//! Compares two index sort elements based on their vertex numbers and returns an integer less than, equal to, or greater than zero.
 static int IndexSort( const void* a, const void* b )
 {
 	if( ( ( indexSort_t* )a )->vertexNum < ( ( indexSort_t* )b )->vertexNum ) {
@@ -1263,6 +1079,7 @@ static int IndexSort( const void* a, const void* b )
 	return 0;
 }
 
+//! Computes dominant triangles for each vertex in a triangle surface
 void R_BuildDominantTris( srfTriangles_t* tri )
 {
 	int			   i, j;
@@ -1377,15 +1194,6 @@ void R_BuildDominantTris( srfTriangles_t* tri )
 	R_StaticFree( ind );
 }
 
-/*
-==================
-R_DeriveTangents
-
-This is called once for static surfaces, and every frame for deforming surfaces
-
-Builds tangents, normals, and face planes
-==================
-*/
 void R_DeriveTangents( srfTriangles_t* tri )
 {
 	if( tri->tangentsCalculated ) {
@@ -1404,16 +1212,6 @@ void R_DeriveTangents( srfTriangles_t* tri )
 	tri->tangentsCalculated = true;
 }
 
-/*
-=================
-R_RemoveDuplicatedTriangles
-
-silIndexes must have already been calculated
-
-silIndexes are used instead of indexes, because duplicated
-triangles could have different texture coordinates.
-=================
-*/
 void R_RemoveDuplicatedTriangles( srfTriangles_t* tri )
 {
 	int c_removed;
@@ -1447,13 +1245,6 @@ void R_RemoveDuplicatedTriangles( srfTriangles_t* tri )
 	}
 }
 
-/*
-=================
-R_RemoveDegenerateTriangles
-
-silIndexes must have already been calculated
-=================
-*/
 void R_RemoveDegenerateTriangles( srfTriangles_t* tri )
 {
 	int c_removed;
@@ -1484,11 +1275,7 @@ void R_RemoveDegenerateTriangles( srfTriangles_t* tri )
 	}
 }
 
-/*
-=================
-R_TestDegenerateTextureSpace
-=================
-*/
+//! Tests for degenerate texture space in triangle surfaces.
 void R_TestDegenerateTextureSpace( srfTriangles_t* tri )
 {
 	int c_degenerate;
@@ -1513,11 +1300,6 @@ void R_TestDegenerateTextureSpace( srfTriangles_t* tri )
 	}
 }
 
-/*
-=================
-R_RemoveUnusedVerts
-=================
-*/
 void R_RemoveUnusedVerts( srfTriangles_t* tri )
 {
 	int	 i;
@@ -1575,14 +1357,6 @@ void R_RemoveUnusedVerts( srfTriangles_t* tri )
 	R_StaticFree( mark );
 }
 
-/*
-=================
-R_MergeSurfaceList
-
-Only deals with vertexes and indexes, not silhouettes, planes, etc.
-Does NOT perform a cleanup triangles, so there may be duplicated verts in the result.
-=================
-*/
 srfTriangles_t* R_MergeSurfaceList( const srfTriangles_t** surfaces, int numSurfaces )
 {
 	srfTriangles_t*		  newTri;
@@ -1619,14 +1393,6 @@ srfTriangles_t* R_MergeSurfaceList( const srfTriangles_t** surfaces, int numSurf
 	return newTri;
 }
 
-/*
-=================
-R_MergeTriangles
-
-Only deals with vertexes and indexes, not silhouettes, planes, etc.
-Does NOT perform a cleanup triangles, so there may be duplicated verts in the result.
-=================
-*/
 srfTriangles_t* R_MergeTriangles( const srfTriangles_t* tri1, const srfTriangles_t* tri2 )
 {
 	const srfTriangles_t* tris[2];
@@ -1637,17 +1403,6 @@ srfTriangles_t* R_MergeTriangles( const srfTriangles_t* tri1, const srfTriangles
 	return R_MergeSurfaceList( tris, 2 );
 }
 
-/*
-=================
-R_ReverseTriangles
-
-Lit two sided surfaces need to have the triangles actually duplicated,
-they can't just turn on two sided lighting, because the normal and tangents
-are wrong on the other sides.
-
-This should be called before R_CleanupTriangles
-=================
-*/
 void R_ReverseTriangles( srfTriangles_t* tri )
 {
 	int i;
@@ -1669,13 +1424,6 @@ void R_ReverseTriangles( srfTriangles_t* tri )
 	}
 }
 
-/*
-=================
-R_CleanupTriangles
-
-FIXME: allow createFlat and createSmooth normals, as well as explicit
-=================
-*/
 void R_CleanupTriangles( srfTriangles_t* tri, bool createNormals, bool identifySilEdges, bool useUnsmoothedTangents, bool useMikktspace )
 {
 	R_RangeCheckIndexes( tri );
@@ -1710,19 +1458,6 @@ void R_CleanupTriangles( srfTriangles_t* tri, bool createNormals, bool identifyS
 	R_CreateMaskedOcclusionCullingTris( tri );
 }
 
-/*
-===================================================================================
-
-DEFORMED SURFACES
-
-===================================================================================
-*/
-
-/*
-===================
-R_BuildDeformInfo
-===================
-*/
 deformInfo_t* R_BuildDeformInfo( int numVerts, const idDrawVert* verts, int numIndexes, const int* indexes, bool useUnsmoothedTangents )
 {
 	srfTriangles_t tri;
@@ -1777,12 +1512,6 @@ deformInfo_t* R_BuildDeformInfo( int numVerts, const idDrawVert* verts, int numI
 	return deform;
 }
 
-/*
-==============================
-R_CreateDeformStaticVertices
-==============================
-Uploads static vertices to the vertex cache.
-*/
 void R_CreateDeformStaticVertices( deformInfo_t* deform, nvrhi::ICommandList* commandList )
 {
 #if !defined( DMAP )
@@ -1791,11 +1520,6 @@ void R_CreateDeformStaticVertices( deformInfo_t* deform, nvrhi::ICommandList* co
 #endif
 }
 
-/*
-===================
-R_FreeDeformInfo
-===================
-*/
 void R_FreeDeformInfo( deformInfo_t* deformInfo )
 {
 	if( deformInfo->verts != NULL ) {
@@ -1816,11 +1540,6 @@ void R_FreeDeformInfo( deformInfo_t* deformInfo )
 	R_StaticFree( deformInfo );
 }
 
-/*
-===================
-R_DeformInfoMemoryUsed
-===================
-*/
 int R_DeformInfoMemoryUsed( deformInfo_t* deformInfo )
 {
 	int total = 0;
@@ -1855,11 +1574,6 @@ VERTEX / INDEX CACHING
 
 #if !defined( DMAP )
 
-/*
-===================
-R_InitDrawSurfFromTri
-===================
-*/
 void R_InitDrawSurfFromTri( drawSurf_t& ds, srfTriangles_t& tri, nvrhi::ICommandList* commandList )
 {
 	if( tri.numIndexes == 0 ) {
@@ -1887,14 +1601,6 @@ void R_InitDrawSurfFromTri( drawSurf_t& ds, srfTriangles_t& tri, nvrhi::ICommand
 	ds.jointCache	= 0;
 }
 
-/*
-===================
-R_CreateStaticBuffersForTri
-
-For static surfaces, the indexes, ambient, and shadow buffers can be pre-created at load
-time, rather than being re-created each frame in the frame temporary buffers.
-===================
-*/
 void R_CreateStaticBuffersForTri( srfTriangles_t& tri, nvrhi::ICommandList* commandList )
 {
 	tri.indexCache	 = 0;
@@ -1913,28 +1619,43 @@ void R_CreateStaticBuffersForTri( srfTriangles_t& tri, nvrhi::ICommandList* comm
 
 #endif
 
-// SP begin
+//! Allocates a block of memory with the specified size.
 static void* mkAlloc( int bytes )
 {
 	return R_StaticAlloc( bytes );
 }
 
+//! Frees memory allocated by mkMalloc.
 static void mkFree( void* mem )
 {
 	R_StaticFree( mem );
 }
 
+//! Returns the number of faces by dividing the total number of indices by three.
 static int mkGetNumFaces( const SMikkTSpaceContext* pContext )
 {
 	srfTriangles_t* tris = reinterpret_cast<srfTriangles_t*>( pContext->m_pUserData );
 	return tris->numIndexes / 3;
 }
 
+//! Returns the number of vertices of a face, which is always 3.
 static int mkGetNumVerticesOfFace( const SMikkTSpaceContext* pContext, const int iFace )
 {
 	return 3;
 }
 
+/*!
+	\brief Retrieves the position of a specific vertex from a triangle mesh.
+
+	This function extracts the 3D position coordinates of a vertex identified by face and vertex indices from a triangle mesh. The vertex data is stored in the user data of the context, which is
+   expected to be a pointer to srfTriangles_t structure. The function uses the face index to calculate the starting position in the index buffer, then retrieves the vertex index from the index buffer
+   and fetches the position from the corresponding vertex in the vertex buffer.
+
+	\param pContext Pointer to the context containing the triangle mesh data
+	\param fvPosOut Output array where the 3D position coordinates will be written
+	\param iFace Index of the face in the triangle mesh
+	\param iVert Index of the vertex within the face (0-2)
+*/
 static void mkGetPosition( const SMikkTSpaceContext* pContext, float fvPosOut[], const int iFace, const int iVert )
 {
 	srfTriangles_t*	  tris = reinterpret_cast<srfTriangles_t*>( pContext->m_pUserData );
@@ -1948,6 +1669,17 @@ static void mkGetPosition( const SMikkTSpaceContext* pContext, float fvPosOut[],
 	fvPosOut[2] = vert.xyz[2];
 }
 
+/*!
+	\brief Retrieves the normal vector for a specified vertex of a face from the triangle data
+
+	This function extracts the normal vector from a specific vertex of a face within a triangle surface. It uses the provided context to access the triangle data, calculates the vertex index based on
+   the face and vertex identifiers, and retrieves the normal from the corresponding vertex in the triangle mesh
+
+	\param pContext Context containing user data with triangle information
+	\param fvNormOut Output array where the normal vector components will be stored
+	\param iFace Index of the face within the triangle mesh
+	\param iVert Index of the vertex within the specified face (0-2)
+*/
 static void mkGetNormal( const SMikkTSpaceContext* pContext, float fvNormOut[], const int iFace, const int iVert )
 {
 	srfTriangles_t*	  tris = reinterpret_cast<srfTriangles_t*>( pContext->m_pUserData );
@@ -1962,6 +1694,17 @@ static void mkGetNormal( const SMikkTSpaceContext* pContext, float fvNormOut[], 
 	fvNormOut[2]		   = norm.z;
 }
 
+/*!
+	\brief Retrieves texture coordinates for a specified vertex of a face from triangle data
+
+	This function extracts texture coordinate information for a given vertex within a specific face of a triangle mesh. It uses the provided context to access the triangle data structure and retrieves
+   the texture coordinates from the corresponding vertex. The texture coordinates are stored in the output array in standard 2D coordinate format.
+
+	\param pContext Pointer to the SMikkTSpaceContext that contains the triangle data
+	\param fvTexcOut Output array to store the retrieved texture coordinates
+	\param iFace Index of the face within the triangle mesh
+	\param iVert Index of the vertex within the specified face
+*/
 static void mkGetTexCoord( const SMikkTSpaceContext* pContext, float fvTexcOut[], const int iFace, const int iVert )
 {
 	srfTriangles_t*	  tris = reinterpret_cast<srfTriangles_t*>( pContext->m_pUserData );
@@ -1975,6 +1718,18 @@ static void mkGetTexCoord( const SMikkTSpaceContext* pContext, float fvTexcOut[]
 	fvTexcOut[1]			   = texCoord.y;
 }
 
+/*!
+	\brief Sets the tangent and bi-tangent sign for a specified vertex based on the provided tangent vector and face information
+
+	This function updates the tangent vector and bi-tangent sign for a vertex in a triangle mesh. It retrieves the vertex index from the face and vertex indices, then applies the tangent vector and
+   sign to the corresponding vertex in the mesh data structure
+
+	\param pContext Context containing user data pointing to the triangle mesh
+	\param fvTangent Array of three floats representing the tangent vector components
+	\param fSign Sign value for the bi-tangent
+	\param iFace Index of the face within the mesh
+	\param iVert Index of the vertex within the face (0-2)
+*/
 static void mkSetTSpaceBasic( const SMikkTSpaceContext* pContext, const float fvTangent[], const float fSign, const int iFace, const int iVert )
 {
 	srfTriangles_t* tris = reinterpret_cast<srfTriangles_t*>( pContext->m_pUserData );
@@ -2000,14 +1755,12 @@ idMikkTSpaceInterface::idMikkTSpaceInterface() :
 	mkInterface.m_setTSpaceBasic	   = mkSetTSpaceBasic;
 }
 
+//! Initializes the MikkTSpace context with the required interface.
 static void SetUpMikkTSpaceContext( SMikkTSpaceContext* context )
 {
 	context->m_pInterface = &mikkTSpaceInterface.mkInterface;
 }
 
-// SP end
-
-// RB: Determines the closest point between a point and a triangle
 idVec3 R_ClosestPointPointTriangle( const idVec3& point, const idVec3& vertex1, const idVec3& vertex2, const idVec3& vertex3 )
 {
 	idVec3 result;

@@ -56,6 +56,7 @@ typedef struct {
 
 static ma_t maGlobal;
 
+//! Parses the header of a node from the provided parser and stores the information in the given header structure.
 void		MA_ParseNodeHeader( idParser& parser, maNodeHeader_t* header )
 {
 	memset( header, 0, sizeof( maNodeHeader_t ) );
@@ -77,6 +78,20 @@ void		MA_ParseNodeHeader( idParser& parser, maNodeHeader_t* header )
 	}
 }
 
+/*!
+	\brief Parses index range information from a header string and returns true if successful.
+
+	This function extracts minimum and maximum index values from a header string using a mini parser. It first loads the header name into a parser and optionally skips until a specified string. It
+   then looks for an opening bracket, parses the minimum index, and determines if there is a maximum index by checking for a closing bracket or parsing another integer. The function returns false if
+   no index range is found, otherwise true.
+
+	\param header Pointer to the attribute header containing the name to parse
+	\param minIndex Reference to store the parsed minimum index value
+	\param maxIndex Reference to store the parsed maximum index value
+	\param headerType Type string used for parser initialization
+	\param skipString Optional string to skip until before parsing indices
+	\return True if index range was successfully parsed, false otherwise.
+*/
 bool MA_ParseHeaderIndex( maAttribHeader_t* header, int& minIndex, int& maxIndex, const char* headerType, const char* skipString )
 {
 	idParser miniParse;
@@ -101,6 +116,7 @@ bool MA_ParseHeaderIndex( maAttribHeader_t* header, int& minIndex, int& maxIndex
 	return true;
 }
 
+//! Parses an attribute header from a parser and stores the result in the provided header structure.
 bool MA_ParseAttribHeader( idParser& parser, maAttribHeader_t* header )
 {
 	idToken token;
@@ -119,6 +135,7 @@ bool MA_ParseAttribHeader( idParser& parser, maAttribHeader_t* header )
 	return true;
 }
 
+//! Reads a 3D vector from the parser and adjusts for Maya's coordinate system.
 bool MA_ReadVec3( idParser& parser, idVec3& vec )
 {
 	idToken token;
@@ -134,6 +151,7 @@ bool MA_ReadVec3( idParser& parser, idVec3& vec )
 	return true;
 }
 
+//! Checks if the given token indicates a complete node operation such as createNode, connectAttr, or select.
 bool IsNodeComplete( idToken& token )
 {
 	if( !token.Icmp( "createNode" ) || !token.Icmp( "connectAttr" ) || !token.Icmp( "select" ) ) {
@@ -142,6 +160,7 @@ bool IsNodeComplete( idToken& token )
 	return false;
 }
 
+//! Parses a transform node from the given parser and stores it in the global model.
 bool MA_ParseTransform( idParser& parser )
 {
 	maNodeHeader_t header;
@@ -198,6 +217,7 @@ bool MA_ParseTransform( idParser& parser )
 	return true;
 }
 
+//! Parses vertex data from a parser and stores it in the mesh attribute header.
 bool MA_ParseVertex( idParser& parser, maAttribHeader_t* header )
 {
 	maMesh_t* pMesh = &maGlobal.currentObject->mesh;
@@ -226,6 +246,7 @@ bool MA_ParseVertex( idParser& parser, maAttribHeader_t* header )
 	return true;
 }
 
+//! Parses vertex transform data from a parser and stores it in the mesh attribute header.
 bool MA_ParseVertexTransforms( idParser& parser, maAttribHeader_t* header )
 {
 	maMesh_t* pMesh = &maGlobal.currentObject->mesh;
@@ -278,6 +299,7 @@ bool MA_ParseVertexTransforms( idParser& parser, maAttribHeader_t* header )
 	return true;
 }
 
+//! Parses edge data from the parser and stores it in the mesh header
 bool MA_ParseEdge( idParser& parser, maAttribHeader_t* header )
 {
 	maMesh_t* pMesh = &maGlobal.currentObject->mesh;
@@ -306,6 +328,7 @@ bool MA_ParseEdge( idParser& parser, maAttribHeader_t* header )
 	return true;
 }
 
+//! Parses normal vertex data from a parser and stores it in the mesh header
 bool MA_ParseNormal( idParser& parser, maAttribHeader_t* header )
 {
 	maMesh_t* pMesh = &maGlobal.currentObject->mesh;
@@ -355,6 +378,7 @@ bool MA_ParseNormal( idParser& parser, maAttribHeader_t* header )
 	return true;
 }
 
+//! Parses face data from a Maya parser and populates the mesh face structure
 bool MA_ParseFace( idParser& parser, maAttribHeader_t* header )
 {
 	maMesh_t* pMesh = &maGlobal.currentObject->mesh;
@@ -432,6 +456,7 @@ bool MA_ParseFace( idParser& parser, maAttribHeader_t* header )
 	return true;
 }
 
+//! Parses color values from a parser and stores them in the mesh attribute header.
 bool MA_ParseColor( idParser& parser, maAttribHeader_t* header )
 {
 	maMesh_t* pMesh = &maGlobal.currentObject->mesh;
@@ -461,6 +486,7 @@ bool MA_ParseColor( idParser& parser, maAttribHeader_t* header )
 	return true;
 }
 
+//! Parses texture vertex data from a parser into a mesh attribute header.
 bool MA_ParseTVert( idParser& parser, maAttribHeader_t* header )
 {
 	maMesh_t* pMesh = &maGlobal.currentObject->mesh;
@@ -507,9 +533,7 @@ bool MA_ParseTVert( idParser& parser, maAttribHeader_t* header )
 	return true;
 }
 
-/*
- *	Quick check to see if the vert participates in a shared normal
- */
+//! Checks if a vertex in a mesh face participates in a shared normal.
 bool MA_QuickIsVertShared( int faceIndex, int vertIndex )
 {
 	maMesh_t* pMesh	  = &maGlobal.currentObject->mesh;
@@ -527,6 +551,17 @@ bool MA_QuickIsVertShared( int faceIndex, int vertIndex )
 	return false;
 }
 
+/*!
+	\brief Retrieves the shared face and vertex index for a given face and vertex in a mesh.
+
+	This function searches for a shared edge on the specified face that contains the given vertex. It then finds another face that shares this edge and returns the index of that face along with the
+   vertex index within that face. The function sets both output parameters to -1 if no shared face is found.
+
+	\param faceIndex Index of the face to search for shared edge
+	\param vertIndex Index of the vertex within the face to search for
+	\param sharedFace Output parameter for the index of the shared face
+	\param sharedVert Output parameter for the index of the shared vertex within the shared face
+*/
 void MA_GetSharedFace( int faceIndex, int vertIndex, int& sharedFace, int& sharedVert )
 {
 	maMesh_t* pMesh	  = &maGlobal.currentObject->mesh;
@@ -559,6 +594,7 @@ void MA_GetSharedFace( int faceIndex, int vertIndex, int& sharedFace, int& share
 	}
 }
 
+//! Parses a mesh from the provided parser and adds it to the current model.
 void MA_ParseMesh( idParser& parser )
 {
 	maObject_t* object;
@@ -688,6 +724,7 @@ void MA_ParseMesh( idParser& parser )
 	MA_VERBOSE( ( va( "\tfaces:%d\n", maGlobal.currentObject->mesh.numFaces ) ) );
 }
 
+//! Parses a file node from the given parser and stores its information.
 void MA_ParseFileNode( idParser& parser )
 {
 	// Get the header info from the node
@@ -725,6 +762,7 @@ void MA_ParseFileNode( idParser& parser )
 	}
 }
 
+//! Parses a material node from the provided parser and stores it in the global model's material nodes map.
 void MA_ParseMaterialNode( idParser& parser )
 {
 	// Get the header info from the node
@@ -740,6 +778,7 @@ void MA_ParseMaterialNode( idParser& parser )
 	maGlobal.model->materialNodes.Set( matNode->name, matNode );
 }
 
+//! Parses a node creation command from the given parser and delegates to specific parsing functions based on the node type.
 void MA_ParseCreateNode( idParser& parser )
 {
 	idToken token;
@@ -756,6 +795,7 @@ void MA_ParseCreateNode( idParser& parser )
 	}
 }
 
+//! Adds a material to the global model and returns its index
 int MA_AddMaterial( const char* materialName )
 {
 	maMaterialNode_t** destNode;
@@ -786,6 +826,7 @@ int MA_AddMaterial( const char* materialName )
 	return -1;
 }
 
+//! Parses a Maya connect attribute statement from the provided parser
 bool MA_ParseConnectAttr( idParser& parser )
 {
 	idStr	temp;
@@ -851,6 +892,17 @@ bool MA_ParseConnectAttr( idParser& parser )
 	return true;
 }
 
+/*!
+	\brief Sets the given matrix to a scaling transformation along the x, y, and z axes.
+
+	This function initializes the provided matrix as an identity matrix and then sets the diagonal elements to the specified scale factors. The resulting matrix represents a uniform scaling
+   transformation that scales objects along each axis by the corresponding factor.
+
+	\param mat The matrix to be set to the scaling transformation
+	\param x The scale factor along the x-axis
+	\param y The scale factor along the y-axis
+	\param z The scale factor along the z-axis
+*/
 void MA_BuildScale( idMat4& mat, float x, float y, float z )
 {
 	mat.Identity();
@@ -859,6 +911,7 @@ void MA_BuildScale( idMat4& mat, float x, float y, float z )
 	mat[2][2] = z;
 }
 
+//! Builds a rotation matrix for a specified axis and angle.
 void MA_BuildAxisRotation( idMat4& mat, float ang, int axis )
 {
 	float sinAng = idMath::Sin( ang );
@@ -887,6 +940,7 @@ void MA_BuildAxisRotation( idMat4& mat, float ang, int axis )
 	}
 }
 
+//! Applies transformation matrices to the vertices of all meshes in the given model
 void MA_ApplyTransformation( maModel_t* model )
 {
 	for( int i = 0; i < model->objects.Num(); i++ ) {
@@ -929,11 +983,7 @@ void MA_ApplyTransformation( maModel_t* model )
 	}
 }
 
-/*
-=================
-MA_Parse
-=================
-*/
+//! Parses a model from a buffer and returns a maModel_t pointer
 maModel_t* MA_Parse( const char* buffer, const char* filename, bool verbose )
 {
 	memset( &maGlobal, 0, sizeof( maGlobal ) );
@@ -971,11 +1021,6 @@ maModel_t* MA_Parse( const char* buffer, const char* filename, bool verbose )
 	return maGlobal.model;
 }
 
-/*
-=================
-MA_Load
-=================
-*/
 maModel_t* MA_Load( const char* fileName )
 {
 	char*	   buf;
@@ -1003,11 +1048,6 @@ maModel_t* MA_Load( const char* fileName )
 	return ma;
 }
 
-/*
-=================
-MA_Free
-=================
-*/
 void MA_Free( maModel_t* ma )
 {
 	int			  i;

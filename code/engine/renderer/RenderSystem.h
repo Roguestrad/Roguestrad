@@ -218,6 +218,16 @@ extern idCVar r_useVirtualScreenResolution;
 
 class idRenderWorld;
 
+/*!
+	\class idRenderSystem
+	\brief Interface for managing rendering operations, resources, and system state.
+
+	Provides a standardized interface for rendering system functionality including initialization, resource management, display configuration, and graphics operations. The interface supports rendering
+   various graphical elements like textured quads, triangles, and UI components while maintaining control over OpenGL state and rendering performance. It manages render worlds, fonts, materials, and
+   handles frame-level operations such as command buffer management and screenshot capture. The system supports both standard and stereo rendering modes and provides access to rendering statistics and
+   performance counters.
+
+*/
 class idRenderSystem
 {
 public:
@@ -278,6 +288,19 @@ public:
 	virtual void		   ResetFonts()							= 0;
 
 	virtual void		   SetColor( const idVec4& rgba ) = 0;
+
+	/*!
+		\brief Sets the color value for subsequent rendering operations using individual red, green, blue, and alpha components.
+
+		This function configures the current color state for the rendering system by accepting separate red, green, blue, and alpha float values. It internally converts these values into a single
+	   idVec4 color object and forwards the call to the SetColor method. The color values are typically expected to be in the range of 0.0 to 1.0, where 0.0 represents no intensity and 1.0 represents
+	   full intensity for each color component.
+
+		\param r Red color component value, typically in the range 0.0 to 1.0
+		\param g Green color component value, typically in the range 0.0 to 1.0
+		\param b Blue color component value, typically in the range 0.0 to 1.0
+		\param a Alpha color component value, typically in the range 0.0 to 1.0
+	*/
 	virtual void		   SetColor4( float r, float g, float b, float a ) { SetColor( idVec4( r, g, b, a ) ); }
 
 	virtual uint32		   GetColor() = 0;
@@ -288,6 +311,19 @@ public:
 
 	virtual void		   DrawFilled( const idVec4& color, float x, float y, float w, float h )																	= 0;
 	virtual void		   DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial* material, float z = 0.0f ) = 0;
+
+	/*!
+		\brief Draws a textured quad with specified rectangle and texture coordinates using the given material and optional depth value.
+
+		This function renders a textured rectangle on the screen using the provided material and texture coordinates. The rectangle is defined by the rect parameter, which contains x, y, width, and
+	   height values. Texture coordinates are defined by the st parameter, containing s1, t1, s2, and t2 values. The z parameter controls the depth of the quad in the rendering pipeline. This is an
+	   overloaded convenience method that internally calls the float-based DrawStretchPic function.
+
+		\param rect Screen coordinates for the rectangle (x, y, width, height)
+		\param st Texture coordinates for the rectangle (s1, t1, s2, t2)
+		\param material Material to use for rendering the quad
+		\param z Depth value for the quad in the rendering pipeline
+	*/
 	void DrawStretchPic( const idVec4& rect, const idVec4& st, const idMaterial* material, float z = 0.0f ) { DrawStretchPic( rect.x, rect.y, rect.z, rect.w, st.x, st.y, st.z, st.w, material, z ); }
 	virtual void				  DrawStretchPic( const idVec4& topLeft, const idVec4& topRight, const idVec4& bottomRight, const idVec4& bottomLeft, const idMaterial* material, float z = 0.0f ) = 0;
 	virtual void				  DrawStretchTri( const idVec2& p1, const idVec2& p2, const idVec2& p3, const idVec2& t1, const idVec2& t2, const idVec2& t3, const idMaterial* material )		   = 0;
@@ -372,7 +408,7 @@ extern idRenderSystem* renderSystem;
 // for use by dmap to do the carving-on-light-boundaries and for the editor for display
 void				   R_LightProjectionMatrix( const idVec3& origin, const idPlane& rearPlane, idVec4 mat[4] );
 
-// used by the view shot taker
+//! Generates a unique screenshot filename using a base name and increments a number until an unused filename is found.
 void				   R_ScreenshotFilename( int& lastNumber, const char* base, idStr& fileName );
 
 #endif /* !__RENDERER_H__ */

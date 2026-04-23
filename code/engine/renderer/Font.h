@@ -103,33 +103,65 @@ struct scaledGlyphInfo_t {
 	const class idMaterial* material;
 };
 
+/*!
+	\class idFont
+	\brief A font management class for handling font resources and rendering information.
+
+	This class provides comprehensive management of font resources including loading, initialization, and rendering data retrieval. It supports both pre-loaded font files and dynamic generation from
+   TrueType fonts. The class maintains font properties such as line height, ascender, and character widths at various scales. It also provides functionality for remapping font names, retrieving glyph
+   information, and serializing font data for debugging. Resource management is handled through constructor, destructor, and touch methods to ensure proper loading and retention of font assets.
+
+*/
 class idFont
 {
 public:
+	//! Constructs a font object with the specified name, initializing its properties and handling font aliasing.
 	idFont( const char* n );
+
+	//! Destroys the font object and frees all associated memory.
 	~idFont();
 
+	//! Ensures the font resources are loaded and marked for retention.
 	void		Touch();
 
+	//! Returns the name of the font.
 	const char* GetName() const { return name; }
+
+	//! Returns true if the font has been properly initialized and is ready for use.
 	const bool	IsValid() const { return ( alias != nullptr || fontInfo != nullptr ); }
 
+	//! Returns the line height for the font at the specified scale.
 	float		GetLineHeight( float scale ) const;
+
+	//! Returns the ascender height of the font scaled by the given factor.
 	float		GetAscender( float scale ) const;
+
+	//! Returns the maximum width of any character in the font scaled by the given factor.
 	float		GetMaxCharWidth( float scale ) const;
 
+	//! Returns the width of a specified glyph character scaled by a given factor.
 	float		GetGlyphWidth( float scale, uint32 idx ) const;
+
+	//! Retrieves scaled glyph information for a specified font index and scale factor
 	void		GetScaledGlyph( float scale, uint32 idx, scaledGlyphInfo_t& glyphInfo ) const;
 
 private:
+	//! Remaps a font name to a registered font, returning NULL if the font cannot be remapped.
 	static idFont* RemapFont( const char* baseName );
 
+	//! Returns the glyph index for a given character index from the font data
 	int			   GetGlyphIndex( uint32 idx ) const;
 
+	//! Loads font data from a file or generates it from a TrueType font if the file is not found.
 	bool		   LoadFont();
 
+	//! Loads a TrueType font file and initializes font information for rendering.
 	bool		   LoadFromTrueTypeFont();
+
+	//! Writes font information to a binary file for future use
 	bool		   WriteFont();
+
+	//! Serializes font information to a JSON file for debugging purposes
 	void		   DumpFontToJSON();
 
 public:

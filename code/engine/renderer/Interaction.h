@@ -77,6 +77,16 @@ class idRenderEntityLocal;
 class idRenderLightLocal;
 class RenderEnvprobeLocal;
 
+/*!
+	\class idInteraction
+	\brief Manages interactions between render entities and light definitions.
+
+	The idInteraction class represents and manages the relationship between render entities and light definitions, handling the linking and un-linking of interactions within the rendering system. It
+   supports operations for creating static interactions, freeing surface data, and managing the lifecycle of interaction objects. The class provides functionality to determine if an interaction is
+   empty or deferred, and whether it has shadow data. It handles memory management through allocation and freeing mechanisms, allowing interactions to be properly linked and unlinked from entity and
+   light lists. This class is designed to support efficient rendering by maintaining proper interaction state and enabling the creation of static interactions for optimized rendering.
+
+*/
 class idInteraction
 {
 public:
@@ -102,41 +112,39 @@ public:
 	bool				  staticInteraction; // true if the interaction was created at map load time in static buffer space
 
 public:
+	//! Initializes a new instance of the idInteraction class with default values.
 	idInteraction();
 
-	// because these are generated and freed each game tic for active elements all
-	// over the world, we use a custom pool allocater to avoid memory allocation overhead
-	// and fragmentation
+	//! Allocates and links a new interaction between a render entity and light definition.
 	static idInteraction* AllocAndLink( idRenderEntityLocal* edef, idRenderLightLocal* ldef );
 
-	// unlinks from the entity and light, frees all surfaceInteractions,
-	// and puts it back on the free list
+	//! Unlinks the interaction from entity and light, frees all surface interactions, and puts it back on the free list
 	void				  UnlinkAndFree();
 
-	// free the interaction surfaces
+	//! Frees the interaction surfaces and marks the interaction as not static.
 	void				  FreeSurfaces();
 
-	// makes the interaction empty for when the light and entity do not actually intersect
-	// all empty interactions are linked at the end of the light's and entity's interaction list
+	//! Makes the interaction empty by clearing its surfaces and relinking it at the end of both entity's and light's interaction lists.
 	void				  MakeEmpty();
 
-	// returns true if the interaction is empty
+	//! Returns true if the interaction is empty
 	bool				  IsEmpty() const { return ( numSurfaces == 0 ); }
 
-	// returns true if the interaction is not yet completely created
+	//! Returns true if the interaction is not yet completely created.
 	bool				  IsDeferred() const { return ( numSurfaces == -1 ); }
 
-	// returns true if the interaction has shadows
+	//! Returns true if the interaction has shadows.
 	bool				  HasShadows() const;
 
-	// called by GenerateAllInteractions
+	//! Initializes a static interaction for the entity with the specified command list
 	void				  CreateStaticInteraction( nvrhi::ICommandList* commandList );
 
 private:
-	// unlink from entity and light lists
+	//! Unlinks the interaction from both the entity's and light's interaction lists.
 	void Unlink();
 };
 
+//! Displays memory usage statistics for light interactions and related data structures
 void R_ShowInteractionMemory_f( const idCmdArgs& args );
 
 #endif /* !__INTERACTION_H__ */

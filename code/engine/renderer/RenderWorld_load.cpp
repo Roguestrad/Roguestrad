@@ -33,11 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "RenderCommon.h"
 
-/*
-================
-idRenderWorldLocal::FreeWorld
-================
-*/
 void idRenderWorldLocal::FreeWorld()
 {
 	// this will free all the lightDefs and entityDefs
@@ -99,11 +94,6 @@ void idRenderWorldLocal::FreeWorld()
 	mapName = "<FREED>";
 }
 
-/*
-================
-idRenderWorldLocal::TouchWorldModels
-================
-*/
 void idRenderWorldLocal::TouchWorldModels()
 {
 	for( int i = 0; i < localModels.Num(); i++ ) {
@@ -111,11 +101,6 @@ void idRenderWorldLocal::TouchWorldModels()
 	}
 }
 
-/*
-================
-idRenderWorldLocal::ReadBinaryShadowModel
-================
-*/
 idRenderModel* idRenderWorldLocal::ReadBinaryModel( idFile* fileIn )
 {
 	idStrStatic<MAX_OSPATH> name;
@@ -132,11 +117,6 @@ idRenderModel* idRenderWorldLocal::ReadBinaryModel( idFile* fileIn )
 
 extern idCVar  binaryLoadRenderModels;
 
-/*
-================
-idRenderWorldLocal::ParseModel
-================
-*/
 idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName, ID_TIME_T mapTimeStamp, idFile* fileOut )
 {
 	idToken token;
@@ -284,11 +264,6 @@ idRenderModel* idRenderWorldLocal::ParseModel( idLexer* src, const char* mapName
 	return model;
 }
 
-/*
-================
-idRenderWorldLocal::SetupAreaRefs
-================
-*/
 void idRenderWorldLocal::SetupAreaRefs()
 {
 	connectedAreaNum = 0;
@@ -303,11 +278,6 @@ void idRenderWorldLocal::SetupAreaRefs()
 	}
 }
 
-/*
-================
-idRenderWorldLocal::ParseInterAreaPortals
-================
-*/
 void idRenderWorldLocal::ParseInterAreaPortals( idLexer* src, idFile* fileOut )
 {
 	src->ExpectTokenString( "{" );
@@ -400,11 +370,6 @@ void idRenderWorldLocal::ParseInterAreaPortals( idLexer* src, idFile* fileOut )
 	src->ExpectTokenString( "}" );
 }
 
-/*
-================
-idRenderWorldLocal::ParseInterAreaPortals
-================
-*/
 void idRenderWorldLocal::ReadBinaryAreaPortals( idFile* file )
 {
 	file->ReadBig( numPortalAreas );
@@ -466,11 +431,6 @@ void idRenderWorldLocal::ReadBinaryAreaPortals( idFile* file )
 	}
 }
 
-/*
-================
-idRenderWorldLocal::ParseNodes
-================
-*/
 void idRenderWorldLocal::ParseNodes( idLexer* src, idFile* fileOut )
 {
 	src->ExpectTokenString( "{" );
@@ -513,11 +473,6 @@ void idRenderWorldLocal::ParseNodes( idLexer* src, idFile* fileOut )
 	src->ExpectTokenString( "}" );
 }
 
-/*
-================
-idRenderWorldLocal::ReadBinaryNodes
-================
-*/
 void idRenderWorldLocal::ReadBinaryNodes( idFile* file )
 {
 	file->ReadBig( numAreaNodes );
@@ -533,11 +488,6 @@ void idRenderWorldLocal::ReadBinaryNodes( idFile* file )
 	}
 }
 
-/*
-================
-idRenderWorldLocal::CommonChildrenArea_r
-================
-*/
 int idRenderWorldLocal::CommonChildrenArea_r( areaNode_t* node )
 {
 	int nums[2];
@@ -570,13 +520,6 @@ int idRenderWorldLocal::CommonChildrenArea_r( areaNode_t* node )
 	return common;
 }
 
-/*
-=================
-idRenderWorldLocal::ClearWorld
-
-Sets up for a single area world
-=================
-*/
 void idRenderWorldLocal::ClearWorld()
 {
 	numPortalAreas = 1;
@@ -594,13 +537,6 @@ void idRenderWorldLocal::ClearWorld()
 	areaNodes[0].children[1] = -1;
 }
 
-/*
-=================
-idRenderWorldLocal::FreeDefs
-
-dump all the interactions
-=================
-*/
 void idRenderWorldLocal::FreeDefs()
 {
 	generateAllInteractionsCalled = false;
@@ -649,14 +585,6 @@ void idRenderWorldLocal::FreeDefs()
 	}
 }
 
-/*
-=================
-idRenderWorldLocal::InitFromMap
-
-A NULL or empty name will make a world without a map model, which
-is still useful for displaying a bare model
-=================
-*/
 bool idRenderWorldLocal::InitFromMap( const char* name )
 {
 	idLexer*	   src;
@@ -849,11 +777,6 @@ bool idRenderWorldLocal::InitFromMap( const char* name )
 	return true;
 }
 
-/*
-=====================
-idRenderWorldLocal::ClearPortalStates
-=====================
-*/
 void idRenderWorldLocal::ClearPortalStates()
 {
 	// all portals start off open
@@ -870,11 +793,6 @@ void idRenderWorldLocal::ClearPortalStates()
 	}
 }
 
-/*
-=====================
-idRenderWorldLocal::AddWorldModelEntities
-=====================
-*/
 void idRenderWorldLocal::AddWorldModelEntities()
 {
 	// add the world model for each portal area
@@ -936,11 +854,6 @@ void idRenderWorldLocal::AddWorldModelEntities()
 	}
 }
 
-/*
-=====================
-CheckAreaForPortalSky
-=====================
-*/
 bool idRenderWorldLocal::CheckAreaForPortalSky( int areaNum )
 {
 	assert( areaNum >= 0 && areaNum < numPortalAreas );
@@ -956,11 +869,6 @@ bool idRenderWorldLocal::CheckAreaForPortalSky( int areaNum )
 	return false;
 }
 
-/*
-=====================
-ResetLocalRenderModels
-=====================
-*/
 void idRenderWorldLocal::ResetLocalRenderModels()
 {
 	localModels.Clear(); // Clear out the list when switching between expansion packs, so InitFromMap doesn't try to delete the list whose content has already been deleted by the model manager being

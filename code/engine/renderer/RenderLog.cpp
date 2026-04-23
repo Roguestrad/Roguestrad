@@ -62,13 +62,7 @@ const char*			  renderLogMainBlockLabels[] = { ASSERT_ENUM_STRING( MRB_GPU_TIME,
 
 extern uint64		  Sys_Microseconds();
 
-/*
-========================
-PC_BeginNamedEvent
-
-FIXME: this is not thread safe on the PC
-========================
-*/
+//! Begins a named event for profiling with the specified name and color.
 void				  PC_BeginNamedEvent( const char* szName, const idVec4& color, nvrhi::ICommandList* commandList )
 {
 	if( r_logLevel.GetInteger() <= 0 ) {
@@ -80,11 +74,7 @@ void				  PC_BeginNamedEvent( const char* szName, const idVec4& color, nvrhi::IC
 	}
 }
 
-/*
-========================
-PC_EndNamedEvent
-========================
-*/
+//! Ends a named event in the command list if logging is enabled.
 void PC_EndNamedEvent( nvrhi::ICommandList* commandList )
 {
 	if( r_logLevel.GetInteger() <= 0 ) {
@@ -139,11 +129,6 @@ void idRenderLog::EndFrame()
 	commandList = nullptr;
 }
 
-/*
-========================
-idRenderLog::OpenMainBlock
-========================
-*/
 void idRenderLog::OpenMainBlock( renderLogMainBlock_t block )
 {
 	// SRS - Use glConfig.timerQueryAvailable flag to control timestamp capture for all platforms
@@ -159,11 +144,6 @@ void idRenderLog::OpenMainBlock( renderLogMainBlock_t block )
 	}
 }
 
-/*
-========================
-idRenderLog::CloseMainBlock
-========================
-*/
 void idRenderLog::CloseMainBlock( int _block )
 {
 	// SRS - Use glConfig.timerQueryAvailable flag to control timestamp capture for all platforms
@@ -184,11 +164,6 @@ void idRenderLog::CloseMainBlock( int _block )
 	}
 }
 
-/*
-========================
-idRenderLog::FetchGPUTimers
-========================
-*/
 void idRenderLog::FetchGPUTimers( backEndCounters_t& pc )
 {
 	frameCounter++;
@@ -284,11 +259,6 @@ void idRenderLog::FetchGPUTimers( backEndCounters_t& pc )
 	}
 }
 
-/*
-========================
-idRenderLog::OpenBlock
-========================
-*/
 void idRenderLog::OpenBlock( const char* label, const idVec4& color )
 {
 	PC_BeginNamedEvent( label, color, commandList );

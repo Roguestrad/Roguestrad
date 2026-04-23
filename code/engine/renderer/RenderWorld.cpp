@@ -36,11 +36,6 @@ If you have questions concerning this license or the applicable additional terms
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;
 
-/*
-===================
-R_ListRenderLightDefs_f
-===================
-*/
 void				  R_ListRenderLightDefs_f( const idCmdArgs& args )
 {
 	int					i;
@@ -81,11 +76,6 @@ void				  R_ListRenderLightDefs_f( const idCmdArgs& args )
 	common->Printf( "%i lightDefs, %i interactions, %i areaRefs\n", active, totalIntr, totalRef );
 }
 
-/*
-===================
-R_ListRenderEntityDefs_f
-===================
-*/
 void R_ListRenderEntityDefs_f( const idCmdArgs& args )
 {
 	int					 i;
@@ -126,11 +116,6 @@ void R_ListRenderEntityDefs_f( const idCmdArgs& args )
 	common->Printf( "total active: %i\n", active );
 }
 
-/*
-===================
-idRenderWorldLocal::idRenderWorldLocal
-===================
-*/
 idRenderWorldLocal::idRenderWorldLocal()
 {
 	mapName.Clear();
@@ -164,11 +149,6 @@ idRenderWorldLocal::idRenderWorldLocal()
 	}
 }
 
-/*
-===================
-idRenderWorldLocal::~idRenderWorldLocal
-===================
-*/
 idRenderWorldLocal::~idRenderWorldLocal()
 {
 	// free all the entityDefs, lightDefs, portals, etc
@@ -188,11 +168,6 @@ idRenderWorldLocal::~idRenderWorldLocal()
 	RB_ClearDebugText( 0 );
 }
 
-/*
-===================
-ResizeInteractionTable
-===================
-*/
 void idRenderWorldLocal::ResizeInteractionTable()
 {
 	// we overflowed the interaction table, so make it larger
@@ -217,11 +192,6 @@ void idRenderWorldLocal::ResizeInteractionTable()
 	R_StaticFree( oldInteractionTable );
 }
 
-/*
-===================
-AddEntityDef
-===================
-*/
 qhandle_t idRenderWorldLocal::AddEntityDef( const renderEntity_t* re )
 {
 	// try and reuse a free spot
@@ -333,14 +303,6 @@ void idRenderWorldLocal::UpdateEntityDef( qhandle_t entityHandle, const renderEn
 	R_CreateEntityRefs( def );
 }
 
-/*
-===================
-FreeEntityDef
-
-Frees all references and lit surfaces from the model, and
-NULL's out it's entry in the world list
-===================
-*/
 void idRenderWorldLocal::FreeEntityDef( qhandle_t entityHandle )
 {
 	idRenderEntityLocal* def;
@@ -370,11 +332,6 @@ void idRenderWorldLocal::FreeEntityDef( qhandle_t entityHandle )
 	entityDefs[entityHandle] = NULL;
 }
 
-/*
-==================
-GetRenderEntity
-==================
-*/
 const renderEntity_t* idRenderWorldLocal::GetRenderEntity( qhandle_t entityHandle ) const
 {
 	idRenderEntityLocal* def;
@@ -393,11 +350,6 @@ const renderEntity_t* idRenderWorldLocal::GetRenderEntity( qhandle_t entityHandl
 	return &def->parms;
 }
 
-/*
-==================
-AddLightDef
-==================
-*/
 qhandle_t idRenderWorldLocal::AddLightDef( const renderLight_t* rlight )
 {
 	// try and reuse a free spot
@@ -414,16 +366,6 @@ qhandle_t idRenderWorldLocal::AddLightDef( const renderLight_t* rlight )
 	return lightHandle;
 }
 
-/*
-=================
-UpdateLightDef
-
-The generation of all the derived interaction data will
-usually be deferred until it is visible in a scene
-
-Does not write to the demo file, which will only be done for visible lights
-=================
-*/
 void idRenderWorldLocal::UpdateLightDef( qhandle_t lightHandle, const renderLight_t* rlight )
 {
 	if( r_skipUpdates.GetBool() ) {
@@ -478,14 +420,6 @@ void idRenderWorldLocal::UpdateLightDef( qhandle_t lightHandle, const renderLigh
 	}
 }
 
-/*
-====================
-FreeLightDef
-
-Frees all references and lit surfaces from the light, and
-NULL's out it's entry in the world list
-====================
-*/
 void idRenderWorldLocal::FreeLightDef( qhandle_t lightHandle )
 {
 	idRenderLightLocal* light;
@@ -507,11 +441,6 @@ void idRenderWorldLocal::FreeLightDef( qhandle_t lightHandle )
 	lightDefs[lightHandle] = NULL;
 }
 
-/*
-==================
-GetRenderLight
-==================
-*/
 const renderLight_t* idRenderWorldLocal::GetRenderLight( qhandle_t lightHandle ) const
 {
 	idRenderLightLocal* def;
@@ -530,7 +459,6 @@ const renderLight_t* idRenderWorldLocal::GetRenderLight( qhandle_t lightHandle )
 	return &def->parms;
 }
 
-// RB begin
 qhandle_t idRenderWorldLocal::AddEnvprobeDef( const renderEnvironmentProbe_t* ep )
 {
 	// try and reuse a free spot
@@ -545,16 +473,6 @@ qhandle_t idRenderWorldLocal::AddEnvprobeDef( const renderEnvironmentProbe_t* ep
 	return envprobeHandle;
 }
 
-/*
-=================
-UpdateEnvprobeDef
-
-The generation of all the derived interaction data will
-usually be deferred until it is visible in a scene
-
-Does not write to the demo file, which will only be done for visible lights
-=================
-*/
 void idRenderWorldLocal::UpdateEnvprobeDef( qhandle_t envprobeHandle, const renderEnvironmentProbe_t* ep )
 {
 	if( r_skipUpdates.GetBool() ) {
@@ -600,14 +518,6 @@ void idRenderWorldLocal::UpdateEnvprobeDef( qhandle_t envprobeHandle, const rend
 	}
 }
 
-/*
-====================
-FreeEnvprobeDef
-
-Frees all references and lit surfaces from the light, and
-NULL's out it's entry in the world list
-====================
-*/
 void idRenderWorldLocal::FreeEnvprobeDef( qhandle_t envprobeHandle )
 {
 	RenderEnvprobeLocal* probe;
@@ -646,13 +556,7 @@ const renderEnvironmentProbe_t* idRenderWorldLocal::GetRenderEnvprobe( qhandle_t
 
 	return &def->parms;
 }
-// RB end
 
-/*
-================
-idRenderWorldLocal::ProjectDecalOntoWorld
-================
-*/
 void idRenderWorldLocal::ProjectDecalOntoWorld(
 	const idFixedWinding& winding, const idVec3& projectionOrigin, const bool parallel, const float fadeDepth, const idMaterial* material, const int startTime )
 {
@@ -709,11 +613,6 @@ void idRenderWorldLocal::ProjectDecalOntoWorld(
 	}
 }
 
-/*
-====================
-idRenderWorldLocal::ProjectDecal
-====================
-*/
 void idRenderWorldLocal::ProjectDecal(
 	qhandle_t entityHandle, const idFixedWinding& winding, const idVec3& projectionOrigin, const bool parallel, const float fadeDepth, const idMaterial* material, const int startTime )
 {
@@ -757,11 +656,6 @@ void idRenderWorldLocal::ProjectDecal(
 	def->decals->AddDeferredDecal( localParms );
 }
 
-/*
-====================
-idRenderWorldLocal::ProjectOverlay
-====================
-*/
 void idRenderWorldLocal::ProjectOverlay( qhandle_t entityHandle, const idPlane localTextureAxis[2], const idMaterial* material, const int startTime )
 {
 	if( entityHandle < 0 || entityHandle >= entityDefs.Num() ) {
@@ -792,11 +686,6 @@ void idRenderWorldLocal::ProjectOverlay( qhandle_t entityHandle, const idPlane l
 	def->overlays->AddDeferredOverlay( localParms );
 }
 
-/*
-====================
-idRenderWorldLocal::AllocDecal
-====================
-*/
 idRenderModelDecal* idRenderWorldLocal::AllocDecal( qhandle_t newEntityHandle, int startTime )
 {
 	int oldest	   = 0;
@@ -823,11 +712,6 @@ idRenderModelDecal* idRenderWorldLocal::AllocDecal( qhandle_t newEntityHandle, i
 	return decals[oldest].decals;
 }
 
-/*
-====================
-idRenderWorldLocal::AllocOverlay
-====================
-*/
 idRenderModelOverlay* idRenderWorldLocal::AllocOverlay( qhandle_t newEntityHandle, int startTime )
 {
 	int oldest	   = 0;
@@ -854,11 +738,6 @@ idRenderModelOverlay* idRenderWorldLocal::AllocOverlay( qhandle_t newEntityHandl
 	return overlays[oldest].overlays;
 }
 
-/*
-====================
-idRenderWorldLocal::RemoveDecals
-====================
-*/
 void idRenderWorldLocal::RemoveDecals( qhandle_t entityHandle )
 {
 	if( entityHandle < 0 || entityHandle >= entityDefs.Num() ) {
@@ -875,29 +754,11 @@ void idRenderWorldLocal::RemoveDecals( qhandle_t entityHandle )
 	R_FreeEntityDefOverlay( def );
 }
 
-/*
-====================
-idRenderWorldLocal::SetRenderView
-
-Sets the current view so any calls to the render world will use the correct parms.
-====================
-*/
 void idRenderWorldLocal::SetRenderView( const renderView_t* renderView )
 {
 	tr.primaryRenderView = *renderView;
 }
 
-/*
-====================
-idRenderWorldLocal::RenderScene
-
-Draw a 3D view into a part of the window, then return
-to 2D drawing.
-
-Rendering a scene may require multiple views to be rendered
-to handle mirrors,
-====================
-*/
 void idRenderWorldLocal::RenderScene( const renderView_t* renderView )
 {
 	if( !tr.IsInitialized() ) {
@@ -1019,21 +880,11 @@ void idRenderWorldLocal::RenderScene( const renderView_t* renderView )
 	tr.guiModel->Clear();
 }
 
-/*
-===================
-idRenderWorldLocal::NumAreas
-===================
-*/
 int idRenderWorldLocal::NumAreas() const
 {
 	return numPortalAreas;
 }
 
-/*
-===================
-idRenderWorldLocal::NumPortalsInArea
-===================
-*/
 int idRenderWorldLocal::NumPortalsInArea( int areaNum )
 {
 	portalArea_t* area;
@@ -1052,11 +903,6 @@ int idRenderWorldLocal::NumPortalsInArea( int areaNum )
 	return count;
 }
 
-/*
-===================
-idRenderWorldLocal::GetPortal
-===================
-*/
 exitPortal_t idRenderWorldLocal::GetPortal( int areaNum, int portalNum )
 {
 	portalArea_t* area;
@@ -1088,11 +934,6 @@ exitPortal_t idRenderWorldLocal::GetPortal( int areaNum, int portalNum )
 	return ret;
 }
 
-/*
-===================
-RB: idRenderWorldLocal::AreaBounds
-===================
-*/
 idBounds idRenderWorldLocal::AreaBounds( int areaNum ) const
 {
 	if( areaNum < 0 || areaNum > numPortalAreas ) {
@@ -1104,14 +945,6 @@ idBounds idRenderWorldLocal::AreaBounds( int areaNum ) const
 	return area->globalBounds;
 }
 
-/*
-===============
-idRenderWorldLocal::PointInAreaNum
-
-Will return -1 if the point is not in an area, otherwise
-it will return 0 <= value < tr.world->numPortalAreas
-===============
-*/
 int idRenderWorldLocal::PointInArea( const idVec3& point ) const
 {
 	areaNode_t* node;
@@ -1145,11 +978,6 @@ int idRenderWorldLocal::PointInArea( const idVec3& point ) const
 	return -1;
 }
 
-/*
-===================
-idRenderWorldLocal::BoundsInAreas_r
-===================
-*/
 void idRenderWorldLocal::BoundsInAreas_r( int nodeNum, const idBounds& bounds, int* areas, int* numAreas, int maxAreas ) const
 {
 	int			side, i;
@@ -1191,14 +1019,6 @@ void idRenderWorldLocal::BoundsInAreas_r( int nodeNum, const idBounds& bounds, i
 	return;
 }
 
-/*
-===================
-idRenderWorldLocal::BoundsInAreas
-
-  fills the *areas array with the number of the areas the bounds are in
-  returns the total number of areas the bounds are in
-===================
-*/
 int idRenderWorldLocal::BoundsInAreas( const idBounds& bounds, int* areas, int maxAreas ) const
 {
 	int numAreas = 0;
@@ -1214,16 +1034,6 @@ int idRenderWorldLocal::BoundsInAreas( const idBounds& bounds, int* areas, int m
 	return numAreas;
 }
 
-/*
-================
-idRenderWorldLocal::GuiTrace
-
-checks a ray trace against any gui surfaces in an entity, returning the
-fraction location of the trace on the gui surface, or -1,-1 if no hit.
-this doesn't do any occlusion testing, simply ignoring non-gui surfaces.
-start / end are in global world coordinates.
-================
-*/
 guiPoint_t idRenderWorldLocal::GuiTrace( qhandle_t entityHandle, const idVec3 start, const idVec3 end ) const
 {
 	guiPoint_t pt;
@@ -1290,11 +1100,6 @@ guiPoint_t idRenderWorldLocal::GuiTrace( qhandle_t entityHandle, const idVec3 st
 	return pt;
 }
 
-/*
-===================
-idRenderWorldLocal::ModelTrace
-===================
-*/
 bool idRenderWorldLocal::ModelTrace( modelTrace_t& trace, qhandle_t entityHandle, const idVec3& start, const idVec3& end, const float radius ) const
 {
 	memset( &trace, 0, sizeof( trace ) );
@@ -1516,11 +1321,6 @@ bool		idRenderWorldLocal::Trace( modelTrace_t& trace, const idVec3& start, const
 	return ( trace.fraction < 1.0f );
 }
 
-/*
-==================
-idRenderWorldLocal::RecurseProcBSP
-==================
-*/
 void idRenderWorldLocal::RecurseProcBSP_r( modelTrace_t* results, int parentNodeNum, int nodeNum, float p1f, float p2f, const idVec3& p1, const idVec3& p2 ) const
 {
 	float		t1, t2;
@@ -1571,11 +1371,6 @@ void idRenderWorldLocal::RecurseProcBSP_r( modelTrace_t* results, int parentNode
 	RecurseProcBSP_r( results, nodeNum, node->children[side ^ 1], midf, p2f, mid, p2 );
 }
 
-/*
-==================
-idRenderWorldLocal::FastWorldTrace
-==================
-*/
 bool idRenderWorldLocal::FastWorldTrace( modelTrace_t& results, const idVec3& start, const idVec3& end ) const
 {
 	memset( &results, 0, sizeof( modelTrace_t ) );
@@ -1587,22 +1382,6 @@ bool idRenderWorldLocal::FastWorldTrace( modelTrace_t& results, const idVec3& st
 	return false;
 }
 
-/*
-=================================================================================
-
-CREATE MODEL REFS
-
-=================================================================================
-*/
-
-/*
-=================
-idRenderWorldLocal::AddEntityRefToArea
-
-This is called by R_PushVolumeIntoTree and also directly
-for the world model references that are precalculated.
-=================
-*/
 void idRenderWorldLocal::AddEntityRefToArea( idRenderEntityLocal* def, portalArea_t* area )
 {
 	areaReference_t* ref;
@@ -1636,11 +1415,6 @@ void idRenderWorldLocal::AddEntityRefToArea( idRenderEntityLocal* def, portalAre
 	ref->areaPrev->areaNext = ref;
 }
 
-/*
-===================
-idRenderWorldLocal::AddLightRefToArea
-===================
-*/
 void idRenderWorldLocal::AddLightRefToArea( idRenderLightLocal* light, portalArea_t* area )
 {
 	areaReference_t* lref;
@@ -1666,7 +1440,6 @@ void idRenderWorldLocal::AddLightRefToArea( idRenderLightLocal* light, portalAre
 	area->lightRefs.areaNext		   = lref;
 }
 
-// RB begin
 void idRenderWorldLocal::AddEnvprobeRefToArea( RenderEnvprobeLocal* probe, portalArea_t* area )
 {
 	areaReference_t* lref;
@@ -1691,16 +1464,7 @@ void idRenderWorldLocal::AddEnvprobeRefToArea( RenderEnvprobeLocal* probe, porta
 	lref->areaPrev						  = &area->envprobeRefs;
 	area->envprobeRefs.areaNext			  = lref;
 }
-// RB end
 
-/*
-===================
-idRenderWorldLocal::GenerateAllInteractions
-
-Force the generation of all light / surface interactions at the start of a level
-If this isn't called, they will all be dynamically generated
-===================
-*/
 void idRenderWorldLocal::GenerateAllInteractions()
 {
 	if( !tr.IsInitialized() ) {
@@ -1784,11 +1548,6 @@ void idRenderWorldLocal::GenerateAllInteractions()
 	generateAllInteractionsCalled = true;
 }
 
-/*
-===================
-idRenderWorldLocal::FreeInteractions
-===================
-*/
 void idRenderWorldLocal::FreeInteractions()
 {
 	int					 i;
@@ -1806,21 +1565,6 @@ void idRenderWorldLocal::FreeInteractions()
 	}
 }
 
-/*
-==================
-idRenderWorldLocal::PushFrustumIntoTree_r
-
-Used for both light volumes and model volumes.
-
-This does not clip the points by the planes, so some slop
-occurs.
-
-tr.viewCount should be bumped before calling, allowing it
-to prevent double checking areas.
-
-We might alternatively choose to do this with an area flow.
-==================
-*/
 void idRenderWorldLocal::PushFrustumIntoTree_r( idRenderEntityLocal* def, idRenderLightLocal* light, const frustumCorners_t& corners, int nodeNum )
 {
 	if( nodeNum < 0 ) {
@@ -1875,11 +1619,6 @@ void idRenderWorldLocal::PushFrustumIntoTree_r( idRenderEntityLocal* def, idRend
 	}
 }
 
-/*
-==============
-idRenderWorldLocal::PushFrustumIntoTree
-==============
-*/
 void idRenderWorldLocal::PushFrustumIntoTree( idRenderEntityLocal* def, idRenderLightLocal* light, const idRenderMatrix& frustumTransform, const idBounds& frustumBounds )
 {
 	if( areaNodes == NULL ) {
@@ -1893,7 +1632,6 @@ void idRenderWorldLocal::PushFrustumIntoTree( idRenderEntityLocal* def, idRender
 	PushFrustumIntoTree_r( def, light, corners, 0 );
 }
 
-// RB begin
 void idRenderWorldLocal::PushEnvprobeIntoTree_r( RenderEnvprobeLocal* probe, int nodeNum )
 {
 	if( nodeNum < 0 ) {
@@ -1943,36 +1681,18 @@ void idRenderWorldLocal::PushEnvprobeIntoTree_r( RenderEnvprobeLocal* probe, int
 		}
 	}
 }
-// RB end
 
-//===================================================================
-
-/*
-====================
-idRenderWorldLocal::DebugClearLines
-====================
-*/
 void idRenderWorldLocal::DebugClearLines( int time )
 {
 	RB_ClearDebugLines( time );
 	RB_ClearDebugText( time );
 }
 
-/*
-====================
-idRenderWorldLocal::DebugLine
-====================
-*/
 void idRenderWorldLocal::DebugLine( const idVec4& color, const idVec3& start, const idVec3& end, const int lifetime, const bool depthTest )
 {
 	RB_AddDebugLine( color, start, end, lifetime, depthTest );
 }
 
-/*
-================
-idRenderWorldLocal::DebugArrow
-================
-*/
 void idRenderWorldLocal::DebugArrow( const idVec4& color, const idVec3& start, const idVec3& end, int size, const int lifetime )
 {
 	idVec3		 forward, right, up, v1, v2;
@@ -2019,11 +1739,6 @@ void idRenderWorldLocal::DebugArrow( const idVec4& color, const idVec3& start, c
 	}
 }
 
-/*
-====================
-idRenderWorldLocal::DebugWinding
-====================
-*/
 void idRenderWorldLocal::DebugWinding( const idVec4& color, const idWinding& w, const idVec3& origin, const idMat3& axis, const int lifetime, const bool depthTest )
 {
 	int	   i;
@@ -2041,11 +1756,6 @@ void idRenderWorldLocal::DebugWinding( const idVec4& color, const idWinding& w, 
 	}
 }
 
-/*
-====================
-idRenderWorldLocal::DebugCircle
-====================
-*/
 void idRenderWorldLocal::DebugCircle( const idVec4& color, const idVec3& origin, const idVec3& dir, const float radius, const int numSteps, const int lifetime, const bool depthTest )
 {
 	int	   i;
@@ -2064,11 +1774,6 @@ void idRenderWorldLocal::DebugCircle( const idVec4& color, const idVec3& origin,
 	}
 }
 
-/*
-============
-idRenderWorldLocal::DebugSphere
-============
-*/
 void idRenderWorldLocal::DebugSphere( const idVec4& color, const idSphere& sphere, const int lifetime, const bool depthTest /*_D3XP*/ )
 {
 	int	   i, j, n, num;
@@ -2102,11 +1807,6 @@ void idRenderWorldLocal::DebugSphere( const idVec4& color, const idSphere& spher
 	}
 }
 
-/*
-====================
-idRenderWorldLocal::DebugBounds
-====================
-*/
 void idRenderWorldLocal::DebugBounds( const idVec4& color, const idBounds& bounds, const idVec3& org, const int lifetime )
 {
 	int	   i;
@@ -2128,11 +1828,6 @@ void idRenderWorldLocal::DebugBounds( const idVec4& color, const idBounds& bound
 	}
 }
 
-/*
-====================
-idRenderWorldLocal::DebugBox
-====================
-*/
 void idRenderWorldLocal::DebugBox( const idVec4& color, const idBox& box, const int lifetime )
 {
 	int	   i;
@@ -2146,15 +1841,6 @@ void idRenderWorldLocal::DebugBox( const idVec4& color, const idBox& box, const 
 	}
 }
 
-/*
-============
-idRenderWorldLocal::DebugCone
-
-  dir is the cone axis
-  radius1 is the radius at the apex
-  radius2 is the radius at apex+dir
-============
-*/
 void idRenderWorldLocal::DebugCone( const idVec4& color, const idVec3& apex, const idVec3& dir, float radius1, float radius2, const int lifetime )
 {
 	int	   i;
@@ -2192,11 +1878,6 @@ void idRenderWorldLocal::DebugCone( const idVec4& color, const idVec3& apex, con
 	}
 }
 
-/*
-================
-idRenderWorldLocal::DebugAxis
-================
-*/
 void idRenderWorldLocal::DebugAxis( const idVec3& origin, const idMat3& axis )
 {
 	idVec3 start = origin;
@@ -2214,31 +1895,16 @@ void idRenderWorldLocal::DebugAxis( const idVec3& origin, const idMat3& axis )
 	DebugArrow( colorBlue, start, end, 2 );
 }
 
-/*
-====================
-idRenderWorldLocal::DebugClearPolygons
-====================
-*/
 void idRenderWorldLocal::DebugClearPolygons( int time )
 {
 	RB_ClearDebugPolygons( time );
 }
 
-/*
-====================
-idRenderWorldLocal::DebugPolygon
-====================
-*/
 void idRenderWorldLocal::DebugPolygon( const idVec4& color, const idWinding& winding, const int lifeTime, const bool depthTest )
 {
 	RB_AddDebugPolygon( color, winding, lifeTime, depthTest );
 }
 
-/*
-================
-idRenderWorldLocal::DebugScreenRect
-================
-*/
 void idRenderWorldLocal::DebugScreenRect( const idVec4& color, const idScreenRect& rect, const viewDef_t* viewDef, const int lifetime )
 {
 	int		 i;
@@ -2270,47 +1936,22 @@ void idRenderWorldLocal::DebugScreenRect( const idVec4& color, const idScreenRec
 	}
 }
 
-/*
-================
-idRenderWorldLocal::DrawTextLength
-
-  returns the length of the given text
-================
-*/
 float idRenderWorldLocal::DrawTextLength( const char* text, float scale, int len )
 {
 	return RB_DrawTextLength( text, scale, len );
 }
 
-/*
-================
-idRenderWorldLocal::DrawText
-
-  oriented on the viewaxis
-  align can be 0-left, 1-center (default), 2-right
-================
-*/
 void idRenderWorldLocal::DrawText( const char* text, const idVec3& origin, float scale, const idVec4& color, const idMat3& viewAxis, const int align, const int lifetime, const bool depthTest )
 {
 	RB_AddDebugText( text, origin, scale, color, viewAxis, align, lifetime, depthTest );
 }
 
-/*
-===============
-idRenderWorldLocal::RegenerateWorld
-===============
-*/
 void idRenderWorldLocal::RegenerateWorld()
 {
 	R_FreeDerivedData();
 	R_ReCreateWorldReferences();
 }
 
-/*
-===============
-R_GlobalShaderOverride
-===============
-*/
 bool R_GlobalShaderOverride( const idMaterial** shader )
 {
 	if( !( *shader )->IsDrawn() ) {
@@ -2330,11 +1971,7 @@ bool R_GlobalShaderOverride( const idMaterial** shader )
 	return false;
 }
 
-/*
-===============
-R_RemapShaderBySkin
-===============
-*/
+//! Returns a remapped material shader based on skin and custom shader parameters
 const idMaterial* R_RemapShaderBySkin( const idMaterial* shader, const idDeclSkin* skin, const idMaterial* customShader )
 {
 	if( !shader ) {

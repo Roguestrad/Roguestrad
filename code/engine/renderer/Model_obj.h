@@ -55,7 +55,10 @@ struct objModel_t {
 	idList<objObject_t*, TAG_MODEL> objects;
 };
 
+//! Loads an OBJ model file and returns a parsed model object
 objModel_t* OBJ_Load( const char* fileName );
+
+//! Frees all memory associated with an object model by deleting its objects and the model itself.
 void		OBJ_Free( objModel_t* obj );
 
 #endif /* !__MODEL_OBJ_H__ */

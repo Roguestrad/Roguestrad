@@ -98,32 +98,72 @@ ALIGNTYPE16
 	// RB end
 	;
 
+/*!
+	\class idRenderModelDecal
+	\brief Manages decal rendering for 3D models by handling decal creation, tracking, and rendering.
+
+	This class serves as a central manager for decals applied to 3D models, providing functionality to create, track, and render decals efficiently. It supports deferred decal creation, where
+   projection parameters are stored and applied later to specific models. The class handles both parallel and perspective projections, computes necessary bounding and texture coordinate data, and
+   manages the lifecycle of decals including fading and removal. Decals are organized by materials, and the class provides mechanisms to merge decals when possible to reduce rendering overhead. It
+   also provides utilities to transform decal parameters between global and local coordinate spaces, and to create draw surfaces for rendering decals in the scene.
+
+*/
 class idRenderModelDecal
 {
 public:
+	//! Initializes all decal-related member variables to their default values.
 	idRenderModelDecal();
 	~idRenderModelDecal();
 
-	// Creates decal projection parameters.
+	/*!
+		\brief Creates decal projection parameters from a winding, projection origin, and material.
+
+		This function initializes projection parameters for a decal based on the provided winding, projection origin, and material. It validates the winding size, computes the projection bounds, and
+	   calculates the bounding planes, texture axes, and fade planes. The function supports both parallel and non-parallel projections, adjusting the bounds and plane calculations accordingly. It also
+	   computes the texture coordinate axes for the decal based on the winding's texture coordinates.
+
+		\param parms Output structure to store the computed projection parameters
+		\param winding The winding defining the decal's boundary
+		\param projectionOrigin The origin point from which the decal is projected
+		\param parallel Flag indicating whether the projection is parallel or perspective
+		\param fadeDepth The depth over which the decal fades
+		\param material The material to be applied to the decal
+		\param startTime The start time for the decal effect
+		\return True if the projection parameters were successfully created, false otherwise.
+	*/
 	static bool CreateProjectionParms(
 		decalProjectionParms_t& parms, const idFixedWinding& winding, const idVec3& projectionOrigin, const bool parallel, const float fadeDepth, const idMaterial* material, const int startTime );
 
-	// Transform the projection parameters from global space to local.
+	/*!
+		\brief Transforms decal projection parameters from global space to local space using the provided origin and axis.
+
+		This function converts projection parameters from global coordinate space to local coordinate space for a decal. It applies a transformation matrix derived from the provided origin and axis to
+	   each of the bounding planes, fade planes, and texture axes. The projection origin is transformed using the model matrix, and the projection bounds are adjusted by translating and rotating them
+	   according to the specified origin and axis. The material, parallel flag, fade depth, start time, and force parameters are copied directly from the global parameters.
+
+		\param localParms Output structure containing the transformed decal projection parameters in local space
+		\param globalParms Input structure containing the decal projection parameters in global space
+		\param origin The origin of the local coordinate system
+		\param axis The axis orientation of the local coordinate system
+	*/
 	static void		   GlobalProjectionParmsToLocal( decalProjectionParms_t& localParms, const decalProjectionParms_t& globalParms, const idVec3& origin, const idMat3& axis );
 
-	// clear the model for reuse
+	//! Clears the model for reuse by resetting all decal tracking variables.
 	void			   ReUse();
 
-	// Save the parameters for the renderer front-end to actually create the decal.
+	//! Adds a decal projection parameters to the deferred decals list for later rendering.
 	void			   AddDeferredDecal( const decalProjectionParms_t& localParms );
 
-	// Creates a decal on the given model.
+	//! Creates decals on the given model from deferred decal parameters.
 	void			   CreateDeferredDecals( const idRenderModel* model );
 
-	// Remove decals that are completely faded away.
+	//! Removes decals that have fully faded away based on the provided time.
 	void			   RemoveFadedDecals( int time );
 
+	//! Returns the number of unique decal materials used in the decal model.
 	unsigned int	   GetNumDecalDrawSurfs();
+
+	//! Creates a decal draw surface for the specified view entity and decal index
 	struct drawSurf_t* CreateDecalDrawSurf( const struct viewEntity_t* space, unsigned int index );
 
 private:
@@ -138,7 +178,22 @@ private:
 	const idMaterial*	   decalMaterials[MAX_DECALS];
 	unsigned int		   numDecalMaterials;
 
+	/*!
+		\brief Creates a decal from a winding by adding vertices and indices to an existing decal or a new one
+
+		The function attempts to merge the new decal with the previous one if conditions are met such as matching material, start time, and sufficient vertex/index capacity. Otherwise, it creates a
+	   new decal entry. It processes the winding points to generate vertex data with depth fade values based on the provided fade planes and depth. The function also ensures that the index buffer size
+	   is aligned to 16-byte boundaries by adding degenerate triangles as needed
+
+		\param w The winding defining the decal shape
+		\param decalMaterial The material to apply to the decal
+		\param fadePlanes Two planes used to calculate depth fade values for vertices
+		\param fadeDepth The depth over which the fade occurs
+		\param startTime The start time for the decal
+	*/
 	void				   CreateDecalFromWinding( const idWinding& w, const idMaterial* decalMaterial, const idPlane fadePlanes[2], float fadeDepth, int startTime );
+
+	//! Creates a decal on the given model using the specified projection parameters
 	void				   CreateDecal( const idRenderModel* model, const decalProjectionParms_t& localParms );
 };
 

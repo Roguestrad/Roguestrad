@@ -37,11 +37,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../framework/Common_local.h"
 #include "RenderCommon.h"
 
-/*
-================
-BitsForFormat
-================
-*/
 int BitsForFormat( textureFormat_t format )
 {
 	switch( format ) {
@@ -103,6 +98,7 @@ int BitsForFormat( textureFormat_t format )
 	}
 }
 
+//! Returns the block size in bytes for a given texture format.
 int BlockSizeForFormat( const textureFormat_t& format )
 {
 	switch( format ) {
@@ -121,12 +117,6 @@ int BlockSizeForFormat( const textureFormat_t& format )
 	}
 }
 
-/*
-=========================
-GetRowBytes
-Returns the row bytes for the given image.
-=========================
-*/
 int GetRowPitch( const textureFormat_t& format, int width )
 {
 	bool bc = ( format == FMT_DXT1 || format == FMT_DXT5 || format == FMT_BC6H || format == FMT_BC7 );
@@ -140,11 +130,6 @@ int GetRowPitch( const textureFormat_t& format, int width )
 	return width * ( bpe / 8 );
 }
 
-/*
-========================
-idImage::DeriveOpts
-========================
-*/
 ID_INLINE void idImage::DeriveOpts()
 {
 	if( opts.format == FMT_NONE ) {
@@ -307,11 +292,6 @@ ID_INLINE void idImage::DeriveOpts()
 	}
 }
 
-/*
-========================
-idImage::AllocImage
-========================
-*/
 void idImage::AllocImage( const idImageOpts& imgOpts, textureFilter_t tf, textureRepeat_t tr )
 {
 	filter = tf;
@@ -321,11 +301,6 @@ void idImage::AllocImage( const idImageOpts& imgOpts, textureFilter_t tf, textur
 	AllocImage();
 }
 
-/*
-================
-GenerateImage
-================
-*/
 void idImage::GenerateImage( const byte* pic,
 	int									 width,
 	int									 height,
@@ -477,7 +452,6 @@ void idImage::GenerateCubeImage( const byte* pic[6], int size, textureFilter_t f
 	isLoaded = true;
 }
 
-// RB begin
 void idImage::GenerateShadowArray( int width, int height, textureFilter_t filterParm, textureRepeat_t repeatParm, textureUsage_t usageParm, nvrhi::ICommandList* commandList )
 {
 	PurgeImage();
@@ -500,15 +474,7 @@ void idImage::GenerateShadowArray( int width, int height, textureFilter_t filter
 
 	isLoaded = true;
 }
-// RB end
 
-/*
-===============
-GetGeneratedName
-
-name contains GetName() upon entry
-===============
-*/
 void idImage::GetGeneratedName( idStr& _name, const textureUsage_t& _usage, const cubeFiles_t& _cube )
 {
 	idStrStatic<64> extension;
@@ -522,14 +488,6 @@ void idImage::GetGeneratedName( idStr& _name, const textureUsage_t& _usage, cons
 	}
 }
 
-/*
-===============
-ActuallyLoadImage
-
-Absolutely every image goes through this path
-On exit, the idImage will have a valid OpenGL texture number that can be bound
-===============
-*/
 void idImage::ActuallyLoadImage( bool fromBackEnd, nvrhi::ICommandList* commandList )
 {
 	// RB: might have been called doubled by nested LoadDeferredImages
@@ -848,13 +806,6 @@ void idImage::DeferredPurgeImage()
 	globalImages->imagesToLoad.Remove( this );
 }
 
-/*
-=============
-RB_UploadScratchImage
-
-if rows = cols * 6, assume it is a cube map animation
-=============
-*/
 void idImage::UploadScratch( const byte* data, int cols, int rows, nvrhi::ICommandList* commandList )
 {
 #if !defined( DMAP )
@@ -941,11 +892,6 @@ void idImage::UploadScratch( const byte* data, int cols, int rows, nvrhi::IComma
 #endif
 }
 
-/*
-==================
-StorageSize
-==================
-*/
 int idImage::StorageSize() const
 {
 	if( !IsLoaded() ) {
@@ -964,11 +910,6 @@ int idImage::StorageSize() const
 	return int( baseSize );
 }
 
-/*
-==================
-Print
-==================
-*/
 void idImage::Print() const
 {
 	if( generatorFunction ) {
@@ -1077,11 +1018,6 @@ void idImage::Print() const
 	common->Printf( " %s\n", GetName() );
 }
 
-/*
-===============
-idImage::Reload
-===============
-*/
 void idImage::Reload( bool force, nvrhi::ICommandList* commandList )
 {
 	// always regenerate functional images

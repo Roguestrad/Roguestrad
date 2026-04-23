@@ -25,7 +25,6 @@
 
 #include "MipMapGenPass.h"
 #include "MipMapGenPass_cb.h"
-// #include "renderer/RenderCommon.h"
 
 #include <cassert>
 #include <mutex>
@@ -53,6 +52,7 @@
 // instances and ownership is thread-safe.
 //
 
+//! Creates a null texture handle for use in compute shaders
 static nvrhi::TextureHandle createNullTexture( nvrhi::DeviceHandle device )
 {
 	nvrhi::TextureDesc desc;
@@ -74,6 +74,7 @@ static nvrhi::TextureHandle createNullTexture( nvrhi::DeviceHandle device )
 struct MipMapGenPass::NullTextures {
 	nvrhi::TextureHandle				 lod[NUM_LODS];
 
+	//! Returns a shared pointer to a NullTextures instance configured with null textures for all LOD levels.
 	static std::shared_ptr<NullTextures> get( nvrhi::DeviceHandle device )
 	{
 		static std::mutex				   _mutex;

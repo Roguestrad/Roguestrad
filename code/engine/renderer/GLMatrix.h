@@ -31,48 +31,78 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __GLMATRIX_H__
 #define __GLMATRIX_H__
 
-/*
-==========================================================================================
-
-This deals with column-major (OpenGL style) matrices where transforms are
-applied with right-multiplication.
-
-This is the old DOOM3 matrix code that should really to be replaced with idRenderMatrix.
-
-==========================================================================================
-*/
-
+//! Converts an axis and origin into a 4x4 model matrix.
 void R_AxisToModelMatrix( const idMat3& axis, const idVec3& origin, float modelMatrix[16] );
+
+//! Transposes a 4x4 matrix stored as a flat array of 16 floats.
 void R_MatrixTranspose( const float in[16], float out[16] );
 void R_MatrixMultiply( const float* a, const float* b, float* out );
 
+/*!
+	\brief Transforms a 3D model space point into clip space using model and projection matrices
+
+	This function performs a two-step transformation process. First, it transforms the input 3D point from model space to eye space using the provided model matrix. Then, it transforms the resulting
+   eye space point to clip space using the projection matrix. The function operates on 4-component vectors where the fourth component is implicitly set to 1.0 for the input point.
+
+	\param src The input 3D point in model space coordinates
+	\param modelMatrix A 4x4 matrix that transforms model space to eye space
+	\param projectionMatrix A 4x4 matrix that transforms eye space to clip space
+	\param eye Intermediate eye space coordinates (output parameter)
+	\param dst Final clip space coordinates (output parameter)
+*/
 void R_TransformModelToClip( const idVec3& src, const float* modelMatrix, const float* projectionMatrix, idPlane& eye, idPlane& dst );
+
+//! Transforms a clip-space plane to normalized device coordinates.
 void R_TransformClipToDevice( const idPlane& clip, idVec3& ndc );
+
+//! Converts global world coordinates to normalized device coordinates using the current view and projection matrices.
 void R_GlobalToNormalizedDeviceCoordinates( const idVec3& global, idVec3& ndc );
 
-// note that these assume a normalized matrix, and will not work with scaled axis
+//! Converts a global point to local coordinates using the provided model matrix
 void R_GlobalPointToLocal( const float modelMatrix[16], const idVec3& in, idVec3& out );
+
+//! Transforms a local point to global space using the provided model matrix.
 void R_LocalPointToGlobal( const float modelMatrix[16], const idVec3& in, idVec3& out );
 
+//! Converts a vector from global space to local space using a model matrix.
 void R_GlobalVectorToLocal( const float modelMatrix[16], const idVec3& in, idVec3& out );
+
+//! Transforms a local vector to global space using a model matrix.
 void R_LocalVectorToGlobal( const float modelMatrix[16], const idVec3& in, idVec3& out );
 
+//! Converts a global plane to local space using the provided model matrix.
 void R_GlobalPlaneToLocal( const float modelMatrix[16], const idPlane& in, idPlane& out );
+
+//! Transforms a local plane into global space using the provided model matrix
 void R_LocalPlaneToGlobal( const float modelMatrix[16], const idPlane& in, idPlane& out );
 
+//! Sets up the world to view matrix for a given view definition and stereo origin.
 void R_SetupViewMatrix( viewDef_t* viewDef, stereoOrigin_t so );
 
-// stereoEye 2 == ignore VR eye specific FOV and use the combined full FOV
+//! Sets up the projection matrix for a view definition with optional stereo eye handling and jittering.
 void R_SetupProjectionMatrix( viewDef_t* viewDef, bool doJitter, const int stereoEye );
 
-// RB begin
+//! Initializes unprojection matrices for the specified view definition.
 void R_SetupUnprojection( viewDef_t* viewDef );
-void R_SetupProjectionMatrix2( const viewDef_t* viewDef, const float zNear, const float zFar, float out[16] );
-void R_MatrixFullInverse( const float in[16], float r[16] );
-// RB end
 
-// SP begin
+/*!
+	\brief Sets up a projection matrix for rendering based on view definition and near/far clipping distances
+
+	This function calculates and populates a 4x4 projection matrix for OpenGL rendering using the provided view definition, near and far clipping distances. It takes into account field of view
+   parameters, viewport dimensions, and jittering for antialiasing. The matrix is constructed to handle stereo rendering through the stereoScreenSeparation parameter and supports flipping the
+   projection for special rendering effects. The function operates on a pre-allocated 16-element float array that will contain the resulting matrix
+
+	\param viewDef Pointer to the view definition containing rendering parameters and viewport information
+	\param zNear Near clipping distance for the projection
+	\param zFar Far clipping distance for the projection
+	\param out Output array that will contain the 4x4 projection matrix (16 floats)
+*/
+void R_SetupProjectionMatrix2( const viewDef_t* viewDef, const float zNear, const float zFar, float out[16] );
+
+//! Computes the inverse of a 4x4 matrix and stores the result in the output matrix
+void R_MatrixFullInverse( const float in[16], float r[16] );
+
+//! Applies oblique projection adjustment to the given view definition using the first clip plane.
 void R_ObliqueProjection( viewDef_t* viewDef );
-// SP end
 
 #endif /* !__GLMATRIX_H__ */

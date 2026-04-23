@@ -48,21 +48,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "RenderCommon.h"
 
-/*
-
-This file only has a single entry point:
-
-void R_LoadImage( const char *name, byte **pic, int *width, int *height, bool makePowerOf2 );
-
-*/
-
-/*
- * Include file for users of JPEG library.
- * You will need to have included system headers that define at least
- * the typedefs FILE and size_t before you can include jpeglib.h.
- * (stdio.h is sufficient on ANSI-conforming systems.)
- * You may also wish to include "jerror.h".
- */
+//! Reports a JPEG error and terminates execution with a fatal error message.
 void jpg_Error( const char* fmt, ... )
 {
 	va_list argptr;
@@ -75,6 +61,7 @@ void jpg_Error( const char* fmt, ... )
 	common->FatalError( "%s", msg );
 }
 
+//! Prints a formatted message to the common console output.
 void jpg_Printf( const char* fmt, ... )
 {
 	va_list argptr;
@@ -87,10 +74,19 @@ void jpg_Printf( const char* fmt, ... )
 	common->Printf( "%s", msg );
 }
 
-/*
-================
-R_WriteTGA
-================
+/*!
+	\brief Writes image data to a TGA file with specified dimensions and optional vertical flip.
+
+	This function creates a TGA file from raw image data by converting RGB values to BGR format and writing the data with appropriate TGA headers. The function supports flipping the vertical
+   orientation of the image by setting the flipVertical parameter. The image data is expected to be in RGBA format. The function uses a temporary buffer to construct the TGA file structure including
+   the header and pixel data.
+
+	\param filename Name of the file to write the TGA data to
+	\param data Pointer to the raw image data in RGBA format
+	\param width Width of the image in pixels
+	\param height Height of the image in pixels
+	\param flipVertical Flag indicating whether to flip the image vertically
+	\param basePath Base path to use for writing the file
 */
 void R_WriteTGA( const char* filename, const byte* data, int width, int height, bool flipVertical, const char* basePath )
 {
@@ -141,19 +137,6 @@ typedef struct _TargaHeader {
 	unsigned char  pixel_size, attributes;
 } TargaHeader;
 
-/*
-=========================================================
-
-TARGA LOADING
-
-=========================================================
-*/
-
-/*
-=============
-LoadTGA
-=============
-*/
 void LoadTGA( const char* name, byte** pic, int* width, int* height, ID_TIME_T* timestamp )
 {
 	int			columns, rows, numPixels, fileSize, numBytes;
@@ -386,19 +369,18 @@ void LoadTGA( const char* name, byte** pic, int* width, int* height, ID_TIME_T* 
 	fileSystem->FreeFile( buffer );
 }
 
-/*
-=========================================================
+/*!
+	\brief Loads an RGBA8 image from a file using stb_image and allocates memory for the image data
 
-JPEG/PNG LOADING
+	This function loads an image file in RGBA8 format using the stb_image library. It reads the file into memory, decodes it as an RGBA image with 4 channels, and allocates static memory for the
+   output image data. The function handles cases where only the file timestamp is needed by checking if the pic parameter is NULL. It also includes error handling for cases where the image cannot be
+   decoded by stb_image, logging a warning message in such cases.
 
-Interfaces with STB_image
-=========================================================
-*/
-
-/*
-=============
-LoadSTB_RGBA8
-=============
+	\param filename The path to the image file to load
+	\param pic Pointer to a pointer where the image data will be stored
+	\param width Pointer to store the width of the loaded image
+	\param height Pointer to store the height of the loaded image
+	\param timestamp Pointer to store the file modification timestamp
 */
 void LoadSTB_RGBA8( const char* filename, unsigned char** pic, int* width, int* height, ID_TIME_T* timestamp )
 {
@@ -447,32 +429,27 @@ void LoadSTB_RGBA8( const char* filename, unsigned char** pic, int* width, int* 
 	}
 }
 
-// RB begin
-/*
-=========================================================
-
-PNG LOADING
-
-=========================================================
-*/
-
-/*
-==================
-WriteScreenshotForSTBIW
-
-Callback to each stbi_write_* function
-==================
-*/
+//! Writes screenshot data to a file using STBI callback interface
 static void WriteScreenshotForSTBIW( void* context, void* data, int size )
 {
 	idFile* f = ( idFile* )context;
 	f->Write( data, size );
 }
 
-/*
-================
-R_WritePNG
-================
+/*!
+	\brief Writes image data to a PNG file with specified dimensions and pixel format
+
+	This function creates a PNG file from raw image data. It validates that the number of bytes per pixel is either 3 or 4, which correspond to RGB and RGBA formats respectively. The function uses the
+   STBI library to write the PNG file with compression based on the r_screenshotPngCompression console variable. If the file cannot be opened for writing, an error message is printed to the console.
+   The function does not handle any file path creation or validation beyond opening the file.
+
+	\param filename Name of the PNG file to create
+	\param data Pointer to the raw image data
+	\param bytesPerPixel Number of bytes per pixel (must be 3 for RGB or 4 for RGBA)
+	\param width Width of the image in pixels
+	\param height Height of the image in pixels
+	\param basePath Base path to use when creating the file
+	\throws Error is thrown if bytesPerPixel is not 3 or 4, or if the file cannot be opened for writing
 */
 void R_WritePNG( const char* filename, const byte* data, int bytesPerPixel, int width, int height, const char* basePath )
 {
@@ -490,19 +467,20 @@ void R_WritePNG( const char* filename, const byte* data, int bytesPerPixel, int 
 	stbi_write_png_to_func( WriteScreenshotForSTBIW, file, width, height, bytesPerPixel, data, bytesPerPixel * width );
 }
 
-/*
-=========================================================
+/*!
+	\brief Loads an EXR image file and converts it to a packed R11G11B10F format
 
-EXR LOADING
+	This function loads an EXR image file from the specified filename and converts the image data to a packed R11G11B10F format for use in the engine. If the pic parameter is NULL, only the file
+   timestamp is retrieved. The function handles memory allocation and deallocation for both the loaded file data and the converted image data. The image data is converted from floating-point RGBA
+   values to a packed 32-bit format where each color channel is stored with reduced precision. The function uses the LoadEXRFromMemory helper to parse the EXR file data and includes error handling for
+   file loading and parsing failures.
 
-Interfaces with tinyexr
-=========================================================
-*/
-
-/*
-=======================
-LoadEXR
-=======================
+	\param filename Path to the EXR file to load
+	\param pic Pointer to store the converted image data, or NULL to only get timestamp
+	\param width Pointer to store the image width
+	\param height Pointer to store the image height
+	\param timestamp Pointer to store the file timestamp
+	\throws Throws an error if the EXR file cannot be parsed or loaded
 */
 static void LoadEXR( const char* filename, unsigned char** pic, int* width, int* height, ID_TIME_T* timestamp )
 {
@@ -583,10 +561,20 @@ static void LoadEXR( const char* filename, unsigned char** pic, int* width, int*
 	Mem_Free( ( void* )fbuffer );
 }
 
-/*
-================
-R_WriteEXR
-================
+/*!
+	\brief Writes a half-precision floating-point image to an OpenEXR file format
+
+	This function outputs image data in the OpenEXR format, which is commonly used for high dynamic range imaging. The implementation supports RGB data with 16-bit half-precision floating-point
+   values. It can utilize either a custom minimal EXR writer or the TinyEXR library for compression. The function handles memory allocation and file I/O operations internally, writing the image data
+   to the specified file path using the provided base path for file system access.
+
+	\param filename The path and name of the EXR file to create
+	\param rgba16f Pointer to the half-precision floating-point pixel data
+	\param channelsPerPixel Number of channels per pixel (should be 3 for RGB)
+	\param width Width of the image in pixels
+	\param height Height of the image in pixels
+	\param basePath Base path for file system operations
+	\throws Error if channelsPerPixel is not 3
 */
 void R_WriteEXR( const char* filename, const void* rgba16f, int channelsPerPixel, int width, int height, const char* basePath )
 {
@@ -814,23 +802,19 @@ cleanup:
 
 #endif
 }
-// RB end
 
-/*
-=========================================================
+/*!
+	\brief Loads HDR image data from a file and converts it to packed R11G11B10F format.
 
-HDR LOADING
+	This function reads an HDR image file and converts the floating-point color data into a packed 32-bit format using R11G11B10F encoding. If the pic parameter is null, only the file timestamp is
+   retrieved. The function allocates memory for the output image data using R_StaticAlloc and handles memory cleanup internally.
 
-Interfaces with stb_image
-=========================================================
-*/
-
-/*
-=======================
-LoadHDR
-
-RB: load floating point data from memory and convert it into packed R11G11B10F data
-=======================
+	\param filename The path to the HDR file to load
+	\param pic Pointer to store the resulting image data in R11G11B10F format, or NULL to only retrieve the timestamp
+	\param width Pointer to store the width of the loaded image
+	\param height Pointer to store the height of the loaded image
+	\param timestamp Pointer to store the file timestamp, or NULL
+	\throws Throws an error if the HDR file does not contain exactly 3 channels
 */
 static void LoadHDR( const char* filename, unsigned char** pic, int* width, int* height, ID_TIME_T* timestamp )
 {
@@ -905,29 +889,21 @@ static imageExtToLoader_t imageLoaders[] = {
 
 static const int numImageLoaders = sizeof( imageLoaders ) / sizeof( imageLoaders[0] );
 
-/*
-=================
-R_LoadImage
+/*!
+	\brief Loads an image file and returns its pixel data, dimensions, and timestamp.
 
-Loads any of the supported image types into a cannonical
-32 bit format.
+	This function loads an image file specified by the given file name. It supports multiple image formats through registered image loaders. The function can return the image data, width, height, and
+   timestamp. If pic is NULL, only the timestamp is retrieved without loading the image data. The function handles special cases for PBR (Physically Based Rendering) textures by attempting to load
+   alternative files with _rmao suffixes. The loaded image data is allocated using R_StaticAlloc and must be freed using R_StaticFree. The function supports converting images to power-of-2 dimensions,
+   though this functionality is currently commented out.
 
-Automatically attempts to load .jpg files if .tga files fail to load.
-
-*pic will be NULL if the load failed.
-
-Anything that is going to make this into a texture would use
-makePowerOf2 = true, but something loading an image as a lookup
-table of some sort would leave it in identity form.
-
-It is important to do this at image load time instead of texture load
-time for bump maps.
-
-Timestamp may be NULL if the value is going to be ignored
-
-If pic is NULL, the image won't actually be loaded, it will just find the
-timestamp.
-=================
+	\param cname The name of the image file to load
+	\param pic Pointer to a byte pointer where the loaded image data will be stored, or NULL to only retrieve the timestamp
+	\param width Pointer to an integer where the image width will be stored
+	\param height Pointer to an integer where the image height will be stored
+	\param timestamp Pointer to an ID_TIME_T where the file timestamp will be stored, or NULL if timestamp is not needed
+	\param makePowerOf2 Whether to convert the image to power-of-2 dimensions (currently unused)
+	\param usage Pointer to textureUsage_t that indicates how the image is intended to be used, affecting PBR lookup behavior
 */
 void			 R_LoadImage( const char* cname, byte** pic, int* width, int* height, ID_TIME_T* timestamp, bool makePowerOf2, textureUsage_t* usage )
 {
@@ -1062,12 +1038,20 @@ retry:
 	*/
 }
 
-/*
-=======================
-R_LoadCubeImages
+/*!
+	\brief Loads six image files with specific extensions to form a cube map, handling different file naming conventions and coordinate systems.
 
-Loads six files with proper extensions
-=======================
+	This function loads six image files that constitute a cube map, using different naming schemes based on the cube file extension type. It supports native, camera, Quake1, single, and panorama cube
+   map formats. For single and panorama formats, it generates the cube map sides from a single image. The function also handles timestamp checking and performs necessary image transformations based on
+   the cube map type. It returns true on successful loading of all six images, or false if any image fails to load or if dimensions mismatch.
+
+	\param imgName Base name of the cube map images
+	\param extensions Type of cube map file naming convention to use
+	\param pics Array of pointers to store the loaded image data for each of the six cube map sides
+	\param outSize Pointer to store the size of the cube map sides
+	\param timestamp Pointer to store the latest timestamp among all loaded images
+	\param cubeMapSize Size of the cube map sides, used for single and panorama cube map processing
+	\return True if all six images are successfully loaded and processed, false otherwise
 */
 bool R_LoadCubeImages( const char* imgName, cubeFiles_t extensions, byte* pics[6], int* outSize, ID_TIME_T* timestamp, int cubeMapSize )
 {

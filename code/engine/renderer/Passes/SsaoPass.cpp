@@ -25,8 +25,6 @@
 #include <precompiled.h>
 #pragma hdrstop
 
-// #include "../RenderCommon.h"
-
 #include "SsaoPass.h"
 #include "SsaoPass_cb.h"
 
@@ -140,7 +138,6 @@ SsaoPass::SsaoPass( nvrhi::IDevice* device, const CreateParameters& params, Comm
 	}
 }
 
-// Backwards compatibility constructor
 SsaoPass::SsaoPass( nvrhi::IDevice* device, CommonRenderPasses* commonPasses, nvrhi::ITexture* gbufferDepth, nvrhi::ITexture* gbufferNormals, nvrhi::ITexture* destinationTexture ) :
 	SsaoPass( device, CreateParameters { idVec2( gbufferDepth->getDesc().width, gbufferDepth->getDesc().height ), false, false, false, 1 }, commonPasses )
 {

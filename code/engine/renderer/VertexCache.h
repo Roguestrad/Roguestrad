@@ -102,39 +102,105 @@ struct geoBufferSet_t {
 	int						allocations; // number of index and vertex allocations combined
 };
 
+/*!
+	\class idVertexCache
+	\brief Manages temporary and static vertex, index, and joint data for GPU rendering.
+
+	Provides a caching system for geometry data used in rendering operations, supporting both temporary frame-specific allocations and static data that persists across frames. The cache handles
+   vertex, index, and joint data separately with appropriate memory management and alignment. Memory is allocated in chunks and can be mapped for CPU writing before being uploaded to the GPU. The
+   system supports both dynamic and static allocation patterns, with automatic cleanup of temporary data at the end of each frame. The cache can be initialized with a specific alignment requirement
+   and operates through a command list interface for GPU operations. Static data allocation is separate from the regular frame-based allocation and is used for data that does not change between
+   frames.
+
+*/
 class idVertexCache
 {
 public:
+	//! Initializes the vertex cache with specified alignment and command list
 	void			  Init( int uniformBufferOffsetAlignment, nvrhi::ICommandList* commandList );
+
+	//! Shuts down the vertex cache by freeing all buffer objects.
 	void			  Shutdown();
+
+	//! Clears all vertex cache data and reinitializes it with the specified command list.
 	void			  PurgeAll( nvrhi::ICommandList* commandList );
 
-	// call on loading a new map
+	//! Frees static data used by the vertex cache.
 	void			  FreeStaticData();
 
-	// this data is only valid for one frame of rendering
+	/*!
+		\brief Allocates vertex cache memory for rendering data that is valid for one frame.
+
+		This function allocates a block of vertex cache memory for storing vertex data that will be used during rendering. The allocated memory is only valid for one frame and will be automatically
+	   disposed of at the end of the frame. The function supports allocating memory with or without initial data, and can optionally specify a command list for GPU operations. The returned handle can
+	   be used to map the allocated memory for writing vertex data.
+
+		\param data Pointer to the initial vertex data to copy into the cache, or NULL if no initial data is provided
+		\param num Number of vertices to allocate space for
+		\param size Size of each vertex structure, defaults to sizeof(idDrawVert)
+		\param commandList Optional command list for GPU operations, can be NULL
+		\return A handle to the allocated vertex cache block that can be used to map the memory for writing
+	*/
 	vertCacheHandle_t AllocVertex( const void* data, int num, size_t size = sizeof( idDrawVert ), nvrhi::ICommandList* commandList = nullptr );
+
+	/*!
+		\brief Allocates index buffer memory for vertex caching in the rendering pipeline
+
+		This function allocates memory for index data within the vertex cache system, which is used to store and manage vertex and index buffers for rendering operations. The allocated memory is
+	   specific to index data and can be used to store triangle indices for mesh rendering. The function handles the actual allocation by delegating to the internal ActuallyAlloc function, which
+	   manages the cache allocation and potentially binds the buffer to a command list for GPU operations. The size parameter defaults to the size of a triangle index type, and the commandList
+	   parameter allows for specifying a command list for GPU command recording.
+
+		\param data Pointer to the index data to be stored, or NULL to allocate memory without initial data
+		\param num Number of indices to allocate
+		\param size Size of each index element, defaults to size of triIndex_t
+		\param commandList Optional command list for GPU command recording, can be NULL
+		\return Handle to the allocated index buffer in the vertex cache
+	*/
 	vertCacheHandle_t AllocIndex( const void* data, int num, size_t size = sizeof( triIndex_t ), nvrhi::ICommandList* commandList = nullptr );
+
+	/*!
+		\brief Allocates joint animation data in the vertex cache for rendering
+
+		This function allocates joint animation data in the vertex cache, typically used for GPU skinning operations. It takes joint data, number of joints, and optional size parameter, then stores
+	   the data in the cache for use during rendering. The function is commonly called during model setup where joint matrices need to be uploaded to the GPU for skinning calculations.
+
+		\param data Pointer to the joint data to be cached
+		\param num Number of joints to cache
+		\param size Size of each joint element, defaults to size of idJointMat
+		\param commandList Command list for GPU operations, can be null
+		\return Handle to the cached joint data that can be used for rendering
+	*/
 	vertCacheHandle_t AllocJoint( const void* data, int num, size_t size = sizeof( idJointMat ), nvrhi::ICommandList* commandList = nullptr );
 
-	// this data is valid until the next map load
+	//! Allocates static vertex data into the vertex cache
 	vertCacheHandle_t AllocStaticVertex( const void* data, int bytes, nvrhi::ICommandList* commandList );
+
+	//! Allocates static index data for vertex caching
 	vertCacheHandle_t AllocStaticIndex( const void* data, int bytes, nvrhi::ICommandList* commandList );
 
+	//! Returns a pointer to the mapped vertex buffer for the specified cache handle.
 	byte*			  MappedVertexBuffer( vertCacheHandle_t handle );
+
+	//! Returns a pointer to the mapped index buffer for the specified vertex cache handle.
 	byte*			  MappedIndexBuffer( vertCacheHandle_t handle );
 
-	// Returns false if it's been purged
-	// This can only be called by the front end, the back end should only be looking at
-	// vertCacheHandle_t that are already validated.
+	//! Checks if the vertex cache handle is still valid and has not been purged.
 	bool			  CacheIsCurrent( const vertCacheHandle_t handle );
+
+	//! Checks if the given vertex cache handle represents a static cache entry.
 	static bool		  CacheIsStatic( const vertCacheHandle_t handle ) { return ( handle & VERTCACHE_STATIC ) != 0; }
 
-	// vb/ib is a temporary reference -- don't store it
+	//! Retrieves a vertex buffer reference from the cache using the provided handle.
 	bool			  GetVertexBuffer( vertCacheHandle_t handle, idVertexBuffer* vb );
+
+	//! Retrieves the index buffer for a given vertex cache handle.
 	bool			  GetIndexBuffer( vertCacheHandle_t handle, idIndexBuffer* ib );
+
+	//! Retrieves the joint buffer for a given vertex cache handle and references it into the provided uniform buffer.
 	bool			  GetJointBuffer( vertCacheHandle_t handle, idUniformBuffer* jb );
 
+	//! Initializes the vertex cache for the next frame by unmapping the current frame and preparing the next frame for CPU writing.
 	void			  BeginBackEnd();
 
 public:
@@ -152,7 +218,21 @@ public:
 	int				  mostUsedIndex;
 	int				  mostUsedJoint;
 
-	// Try to make room for <bytes> bytes
+	/*!
+		\brief Allocates vertex cache memory for geometry data with specified alignment and updates the buffer.
+
+		This function allocates memory in the vertex cache for geometry data based on the specified cache type. It handles three cache types: index, vertex, and joint, each with their own alignment
+	   requirements. The function ensures proper alignment of the data and updates the corresponding buffer with the provided data if it is not null. It also tracks allocation statistics and
+	   constructs a handle to reference the allocated memory.
+
+		\param vcs Reference to the geometry buffer set to allocate from
+		\param data Pointer to the data to be copied into the cache, or NULL if no initial data is provided
+		\param bytes Size in bytes of the data to be allocated
+		\param type Type of cache to allocate memory in
+		\param commandList Command list to use for buffer updates
+		\return A handle to the allocated cache memory that can be used to reference the data later
+		\throws Error if there is insufficient space in the cache for the requested allocation
+	*/
 	vertCacheHandle_t ActuallyAlloc( geoBufferSet_t& vcs, const void* data, int bytes, cacheType_t type, nvrhi::ICommandList* commandList );
 };
 

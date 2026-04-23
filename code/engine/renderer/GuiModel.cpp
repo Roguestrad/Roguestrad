@@ -40,11 +40,6 @@ const float idGuiModel::STEREO_DEPTH_NEAR	 = 0.0f;
 const float idGuiModel::STEREO_DEPTH_MID	 = 0.5f;
 const float idGuiModel::STEREO_DEPTH_FAR	 = 1.0f;
 
-/*
-================
-idGuiModel::idGuiModel
-================
-*/
 idGuiModel::idGuiModel()
 {
 	// identity color for drawsurf register evaluation
@@ -62,25 +57,12 @@ idGuiModel::idGuiModel()
 	// Leyland end
 }
 
-/*
-================
-idGuiModel::Clear
-
-Begins collecting draw commands into surfaces
-================
-*/
 void idGuiModel::Clear()
 {
 	surfaces.SetNum( 0 );
 	AdvanceSurf();
 }
 
-// Leyland VR
-/*
-================
-idGuiModel::SetViewEyeBuffer
-================
-*/
 void idGuiModel::SetViewEyeBuffer( int veb )
 {
 	if( veb == viewEyeBuffer ) {
@@ -91,11 +73,6 @@ void idGuiModel::SetViewEyeBuffer( int veb )
 	viewEyeBuffer = veb;
 }
 
-/*
-================
-idGuiModel::SetMode
-================
-*/
 void idGuiModel::SetMode( guiMode_t a_mode )
 {
 	if( a_mode != mode ) {
@@ -105,11 +82,6 @@ void idGuiModel::SetMode( guiMode_t a_mode )
 	mode = a_mode;
 }
 
-/*
-================
-idGuiModel::UpdateVRShell
-================
-*/
 bool idGuiModel::UpdateVRShell()
 {
 	if( vr_seated.GetBool() ) {
@@ -142,11 +114,6 @@ bool idGuiModel::UpdateVRShell()
 	return true;
 }
 
-/*
-================
-idGuiModel::ActivateVRShell
-================
-*/
 void idGuiModel::ActivateVRShell( bool b )
 {
 	if( !vrShellActive && b ) {
@@ -155,11 +122,6 @@ void idGuiModel::ActivateVRShell( bool b )
 	vrShellActive = b;
 }
 
-/*
-================
-idGuiModel::GetVRShell
-================
-*/
 bool idGuiModel::GetVRShell( idVec3& origin, idMat3& axis )
 {
 	if( vrShellNeedsUpdate && !UpdateVRShell() ) {
@@ -170,24 +132,13 @@ bool idGuiModel::GetVRShell( idVec3& origin, idMat3& axis )
 	return true;
 }
 
-/*
-================
-idGuiModel::SetVRShell
-================
-*/
 void idGuiModel::SetVRShell( const idVec3& origin, const idMat3& axis )
 {
 	vrShellOrigin	   = origin;
 	vrShellAxis		   = axis;
 	vrShellNeedsUpdate = false;
 }
-// Leyland end
 
-/*
-================
-idGuiModel::BeginFrame
-================
-*/
 void idGuiModel::BeginFrame()
 {
 	vertexBlock	  = vertexCache.AllocVertex( NULL, MAX_VERTS );
@@ -200,13 +151,6 @@ void idGuiModel::BeginFrame()
 }
 
 idCVar stereoRender_defaultGuiDepth( "stereoRender_defaultGuiDepth", "0", CVAR_RENDERER, "Fraction of separation when not specified" );
-/*
-================
-EmitSurfaces
-
-For full screen GUIs, we can add in per-surface stereoscopic depth effects
-================
-*/
 void   idGuiModel::EmitSurfaces( float modelMatrix[16], float modelViewMatrix[16], bool depthHack, bool allowFullScreenStereoDepth, bool linkAsEntity )
 {
 	viewEntity_t* guiSpace = ( viewEntity_t* )R_ClearedFrameAlloc( sizeof( *guiSpace ), FRAME_ALLOC_VIEW_ENTITY );
@@ -334,11 +278,6 @@ void   idGuiModel::EmitSurfaces( float modelMatrix[16], float modelViewMatrix[16
 	}
 }
 
-/*
-====================
-EmitToCurrentView
-====================
-*/
 void idGuiModel::EmitToCurrentView( float modelMatrix[16], bool depthHack )
 {
 	float modelViewMatrix[16];
@@ -348,19 +287,9 @@ void idGuiModel::EmitToCurrentView( float modelMatrix[16], bool depthHack )
 	EmitSurfaces( modelMatrix, modelViewMatrix, depthHack, false /* stereoDepthSort */, true /* link as entity */ );
 }
 
-// DG: move function declaration here (=> out of EmitFullScreen() method) because it confused clang
-// (and possibly other compilers that just didn't complain and silently made it a float variable
-// initialized to something, probably 0.0f)
+//! Returns the screen separation distance used for GUI rendering in stereo vision setups.
 float GetScreenSeparationForGuis();
-// DG end
 
-/*
-================
-idGuiModel::EmitFullScreen
-
-Creates a view that covers the screen and emit the surfaces
-================
-*/
 void  idGuiModel::EmitFullScreen( Framebuffer* renderTarget )
 {
 	if( surfaces[0].numIndexes == 0 ) {
@@ -474,12 +403,6 @@ void  idGuiModel::EmitFullScreen( Framebuffer* renderTarget )
 	R_AddDrawViewCmd( viewDef, true );
 }
 
-// RB begin
-/*
-================
-idGuiModel::ImGui_RenderDrawLists
-================
-*/
 void idGuiModel::EmitImGui( ImDrawData* drawData )
 {
 	const float sysWidth  = renderSystem->GetWidth();
@@ -550,13 +473,7 @@ void idGuiModel::EmitImGui( ImDrawData* drawData )
 		}
 	}
 }
-// RB end
 
-/*
-=============
-AdvanceSurf
-=============
-*/
 void idGuiModel::AdvanceSurf()
 {
 	guiModelSurface_t s;
@@ -579,11 +496,6 @@ void idGuiModel::AdvanceSurf()
 	surf = &surfaces[surfaces.Num() - 1];
 }
 
-/*
-=============
-AllocTris
-=============
-*/
 idDrawVert* idGuiModel::AllocTris( int numVerts, const triIndex_t* indexes, int numIndexes, const idMaterial* material, const uint64 glState, const stereoDepthType_t stereoType )
 {
 	idScreenRect clipRect;
@@ -591,11 +503,6 @@ idDrawVert* idGuiModel::AllocTris( int numVerts, const triIndex_t* indexes, int 
 	return AllocTris( numVerts, indexes, numIndexes, material, glState, stereoType, clipRect );
 }
 
-/*
-=============
-AllocTris
-=============
-*/
 idDrawVert* idGuiModel::AllocTris(
 	int vertCount, const triIndex_t* tempIndexes, int indexCount, const idMaterial* material, const uint64 glState, const stereoDepthType_t stereoType, const idScreenRect& clipRect )
 {

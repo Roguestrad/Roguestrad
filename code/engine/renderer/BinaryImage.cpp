@@ -47,11 +47,6 @@ If you have questions concerning this license or the applicable additional terms
 
 idCVar image_highQualityCompression( "image_highQualityCompression", "0", CVAR_BOOL, "Use high quality (slow) compression" );
 
-/*
-========================
-idBinaryImage::Load2DFromMemory
-========================
-*/
 void   idBinaryImage::Load2DFromMemory( int width, int height, const byte* pic_const, int numLevels, textureFormat_t& textureFormat, textureColor_t& colorFormat, bool gammaMips )
 {
 	fileData.textureType = DTT_2D;
@@ -262,11 +257,6 @@ void   idBinaryImage::Load2DFromMemory( int width, int height, const byte* pic_c
 	Mem_Free( pic );
 }
 
-/*
-========================
-RB idBinaryImage::Load2DAtlasMipchainFromMemory
-========================
-*/
 void idBinaryImage::Load2DAtlasMipchainFromMemory( int width, int height, const byte* pic_const, int numLevels, textureFormat_t& textureFormat, textureColor_t& colorFormat )
 {
 	int sourceWidth = width * ( 2.0f / 3.0f ); // RB
@@ -513,13 +503,18 @@ void idBinaryImage::Load2DAtlasMipchainFromMemory( int width, int height, const 
 	Mem_Free( sourcePic );
 }
 
-/*
-========================
-PadImageTo4x4
+/*!
+	\brief Pads a source image to a 4x4 block by replicating texels for DXT compression requirements
 
-DXT Compression requres a complete 4x4 block, even if the GPU will only be sampling
-a subset of it, so pad to 4x4 with replicated texels to maximize compression.
-========================
+	This function takes a source image of specified width and height and pads it to a fixed 4x4 block size. The padding is done by replicating texels from the source image using modulo arithmetic to
+   ensure that the output block contains valid pixel data even when the source dimensions are smaller than 4x4. The function is specifically designed to meet DXT compression requirements where
+   complete 4x4 blocks are necessary even when only a subset of the block will be sampled by the GPU. The source image must have dimensions no larger than 4 in either direction.
+
+	\param src Pointer to the source image data
+	\param width Width of the source image in pixels
+	\param height Height of the source image in pixels
+	\param dest Destination buffer for the 4x4 padded image data
+	\throws Assertion failure if width or height exceeds 4, or if width or height is non-positive
 */
 static void PadImageTo4x4( const byte* src, int width, int height, byte dest[64] )
 {
@@ -539,11 +534,6 @@ static void PadImageTo4x4( const byte* src, int width, int height, byte dest[64]
 	}
 }
 
-/*
-========================
-idBinaryImage::LoadCubeFromMemory
-========================
-*/
 void idBinaryImage::LoadCubeFromMemory( int width, const byte* pics[6], int numLevels, textureFormat_t& textureFormat, bool gammaMips )
 {
 	common->LoadPacifierBinarizeInfo( va( "cube (%d)", width ) );
@@ -672,11 +662,6 @@ void idBinaryImage::LoadCubeFromMemory( int width, const byte* pics[6], int numL
 	}
 }
 
-/*
-========================
-idBinaryImage::WriteGeneratedFile
-========================
-*/
 ID_TIME_T idBinaryImage::WriteGeneratedFile( ID_TIME_T sourceFileTime )
 {
 	idStr binaryFileName;
@@ -712,13 +697,6 @@ ID_TIME_T idBinaryImage::WriteGeneratedFile( ID_TIME_T sourceFileTime )
 	return file->Timestamp();
 }
 
-/*
-==========================
-idBinaryImage::LoadFromGeneratedFile
-
-Load the preprocessed image from the generated folder.
-==========================
-*/
 ID_TIME_T idBinaryImage::LoadFromGeneratedFile( ID_TIME_T sourceFileTime )
 {
 	idStr binaryFileName;
@@ -861,20 +839,10 @@ bool idBinaryImage::LoadFromGeneratedFile( idFile* bFile, ID_TIME_T sourceTimeSt
 	return true;
 }
 
-/*
-==========================
-idBinaryImage::MakeGeneratedFileName
-==========================
-*/
 void idBinaryImage::MakeGeneratedFileName( idStr& gfn )
 {
 	GetGeneratedFileName( gfn, GetName() );
 }
-/*
-==========================
-idBinaryImage::GetGeneratedFileName
-==========================
-*/
 void idBinaryImage::GetGeneratedFileName( idStr& gfn, const char* name )
 {
 	gfn.Format( "generated/images/%s.bimage", name );

@@ -69,11 +69,13 @@ typedef struct {
 
 static ase_t	  ase;
 
+//! Returns the current mesh being processed during ASE file parsing.
 static aseMesh_t* ASE_GetCurrentMesh()
 {
 	return ase.currentMesh;
 }
 
+//! Determines if a character is a token delimiter.
 static int CharIsTokenDelimiter( int ch )
 {
 	if( ch <= 32 ) {
@@ -82,6 +84,7 @@ static int CharIsTokenDelimiter( int ch )
 	return 0;
 }
 
+//! Parses the next token from the ASE file buffer
 static int ASE_GetToken( bool restOfLine )
 {
 	int i = 0;
@@ -116,6 +119,7 @@ static int ASE_GetToken( bool restOfLine )
 	return 1;
 }
 
+//! Parses a braced block of tokens using the provided parser function.
 static void ASE_ParseBracedBlock( void ( *parser )( const char* token ) )
 {
 	int indent = 0;
@@ -140,6 +144,7 @@ static void ASE_ParseBracedBlock( void ( *parser )( const char* token ) )
 	}
 }
 
+//! Skips over enclosing braces in the ASE file parser.
 static void ASE_SkipEnclosingBraces()
 {
 	int indent = 0;
@@ -158,11 +163,13 @@ static void ASE_SkipEnclosingBraces()
 	}
 }
 
+//! Skips the rest of the current line by consuming the remaining tokens on it.
 static void ASE_SkipRestOfLine()
 {
 	ASE_GetToken( true );
 }
 
+//! Processes ASE file tokens related to material diffuse map and texture coordinates.
 static void ASE_KeyMAP_DIFFUSE( const char* token )
 {
 	aseMaterial_t* material;
@@ -210,6 +217,7 @@ static void ASE_KeyMAP_DIFFUSE( const char* token )
 	}
 }
 
+//! Parses ASE material tokens to extract diffuse map and material name information.
 static void ASE_KeyMATERIAL( const char* token )
 {
 	if( !strcmp( token, "*MAP_DIFFUSE" ) ) {
@@ -237,6 +245,7 @@ static void ASE_KeyMATERIAL( const char* token )
 	}
 }
 
+//! Processes ASE material list tokens to parse material count or individual material definitions.
 static void ASE_KeyMATERIAL_LIST( const char* token )
 {
 	if( !strcmp( token, "*MATERIAL_COUNT" ) ) {
@@ -255,6 +264,7 @@ static void ASE_KeyMATERIAL_LIST( const char* token )
 	}
 }
 
+//! Parses transformation matrix rows from ASE file tokens and updates the current object's mesh transform.
 static void ASE_KeyNODE_TM( const char* token )
 {
 	int i;
@@ -282,6 +292,7 @@ static void ASE_KeyNODE_TM( const char* token )
 	}
 }
 
+//! Parses vertex coordinates from ASE mesh data and stores them in the current mesh.
 static void ASE_KeyMESH_VERTEX_LIST( const char* token )
 {
 	aseMesh_t* pMesh = ASE_GetCurrentMesh();
@@ -308,6 +319,7 @@ static void ASE_KeyMESH_VERTEX_LIST( const char* token )
 	}
 }
 
+//! Parses and processes face data from ASE files for mesh generation.
 static void ASE_KeyMESH_FACE_LIST( const char* token )
 {
 	aseMesh_t* pMesh = ASE_GetCurrentMesh();
@@ -350,6 +362,7 @@ static void ASE_KeyMESH_FACE_LIST( const char* token )
 	}
 }
 
+//! Parses texture face data from ASE files for mesh rendering.
 static void ASE_KeyTFACE_LIST( const char* token )
 {
 	aseMesh_t* pMesh = ASE_GetCurrentMesh();
@@ -376,6 +389,7 @@ static void ASE_KeyTFACE_LIST( const char* token )
 	}
 }
 
+//! Processes a token for MESH_CFACE data during ASE mesh parsing.
 static void ASE_KeyCFACE_LIST( const char* token )
 {
 	aseMesh_t* pMesh = ASE_GetCurrentMesh();
@@ -400,6 +414,7 @@ static void ASE_KeyCFACE_LIST( const char* token )
 	}
 }
 
+//! Parses texture vertex data from ASE file format.
 static void ASE_KeyMESH_TVERTLIST( const char* token )
 {
 	aseMesh_t* pMesh = ASE_GetCurrentMesh();
@@ -436,6 +451,7 @@ static void ASE_KeyMESH_TVERTLIST( const char* token )
 	}
 }
 
+//! Parses color vertex data for a mesh from an ASE file.
 static void ASE_KeyMESH_CVERTLIST( const char* token )
 {
 	aseMesh_t* pMesh = ASE_GetCurrentMesh();
@@ -464,6 +480,7 @@ static void ASE_KeyMESH_CVERTLIST( const char* token )
 	}
 }
 
+//! Parses face and vertex normals from ASE mesh data.
 static void ASE_KeyMESH_NORMALS( const char* token )
 {
 	aseMesh_t* pMesh = ASE_GetCurrentMesh();
@@ -540,6 +557,7 @@ static void ASE_KeyMESH_NORMALS( const char* token )
 	}
 }
 
+//! Processes ASE mesh token commands to extract mesh data.
 static void ASE_KeyMESH( const char* token )
 {
 	aseMesh_t* pMesh = ASE_GetCurrentMesh();
@@ -631,6 +649,7 @@ static void ASE_KeyMESH( const char* token )
 	}
 }
 
+//! Parses and loads a mesh animation frame when the token *MESH is encountered.
 static void ASE_KeyMESH_ANIMATION( const char* token )
 {
 	aseMesh_t* mesh;
@@ -651,6 +670,7 @@ static void ASE_KeyMESH_ANIMATION( const char* token )
 	}
 }
 
+//! Processes ASE GEOMOBJECT key tokens to parse mesh and animation data.
 static void ASE_KeyGEOMOBJECT( const char* token )
 {
 	aseObject_t* object;
@@ -701,6 +721,7 @@ static void ASE_KeyGEOMOBJECT( const char* token )
 	}
 }
 
+//! Initializes and parses a geometry object from an ASE file.
 void ASE_ParseGeomObject()
 {
 	aseObject_t* object;
@@ -717,6 +738,7 @@ void ASE_ParseGeomObject()
 	ASE_ParseBracedBlock( ASE_KeyGEOMOBJECT );
 }
 
+//! Parses ASE GeomObject tokens during file parsing.
 static void ASE_KeyGROUP( const char* token )
 {
 	if( !strcmp( token, "*GEOMOBJECT" ) ) {
@@ -724,11 +746,7 @@ static void ASE_KeyGROUP( const char* token )
 	}
 }
 
-/*
-=================
-ASE_Parse
-=================
-*/
+//! Parses ASE model data from a buffer and returns a parsed model object
 aseModel_t* ASE_Parse( const char* buffer, bool verbose )
 {
 	memset( &ase, 0, sizeof( ase ) );
@@ -772,11 +790,6 @@ aseModel_t* ASE_Parse( const char* buffer, bool verbose )
 	return ase.model;
 }
 
-/*
-=================
-ASE_Load
-=================
-*/
 aseModel_t* ASE_Load( const char* fileName )
 {
 	char*		buf;
@@ -796,11 +809,6 @@ aseModel_t* ASE_Load( const char* fileName )
 	return ase;
 }
 
-/*
-=================
-ASE_Free
-=================
-*/
 void ASE_Free( aseModel_t* ase )
 {
 	int			   i, j;

@@ -63,13 +63,14 @@ enum renderLogMainBlock_t {
 	MRB_TOTAL_QUERIES = MRB_TOTAL * 2,
 };
 
-/*
-================================================
-idRenderLog
+/*!
+	\class idRenderLog
+	\brief A performance logging abstraction layer for rendering operations.
 
-// Performance Events abstraction layer for OpenGL, Vulkan, DX12
-// see https://devblogs.nvidia.com/best-practices-gpu-performance-events/
-================================================
+	Provides an interface for tracking rendering performance through timed events and batches. Supports initialization and shutdown of logging infrastructure, frame-level tracking with command list
+   management, and event block handling for organizing timing data. Includes methods for printing log messages and fetching GPU timer statistics into performance counters. The implementation maintains
+   timer queries for render batches and frames, allowing for detailed profiling of rendering operations across different graphics APIs.
+
 */
 class idRenderLog
 {
@@ -85,23 +86,43 @@ private:
 	idStaticList<bool, MRB_TOTAL * NUM_FRAME_DATA>					  timerUsed;
 
 public:
+	//! Initializes a new instance of the idRenderLog class.
 	idRenderLog();
 
+	//! Initializes the render log by creating timer queries for each render batch and frame data.
 	void Init();
+
+	//! Shuts down the render log by clearing the command list and resetting timer queries.
 	void Shutdown();
 
+	//! Initializes the render log frame with the provided command list.
 	void StartFrame( nvrhi::ICommandList* _commandList );
+
+	//! Finalizes the rendering frame by resetting the command list pointer.
 	void EndFrame();
+
+	//! Closes the render log.
 	void Close() { }
+
+	//! Returns zero to indicate the render log is not active
 	int	 Active() { return 0; }
 
+	//! Begins a named event block for rendering logging with the specified label and color.
 	void OpenBlock( const char* label, const idVec4& color = colorBlack );
+
+	//! Closes the current rendering block in the render log.
 	void CloseBlock();
+
+	//! Opens a main block for rendering log with timer query support.
 	void OpenMainBlock( renderLogMainBlock_t block );
+
+	//! Closes a main render block and records its timing information if timer queries are available
 	void CloseMainBlock( int block = -1 );
 
+	//! Prints a formatted string to the render log.
 	void Printf( VERIFY_FORMAT_STRING const char* fmt, ... ) { }
 
+	//! Updates GPU timer data into the provided back-end counters structure.
 	void FetchGPUTimers( backEndCounters_t& pc );
 };
 

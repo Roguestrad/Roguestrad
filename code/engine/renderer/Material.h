@@ -461,34 +461,54 @@ static const char* predef_lightstylesinfo[] =
 	"Fluorescent Flicker",
 	"Slow Pulse (no black)"
 };
-
 // clang-format on
-// RB end
 
+/*!
+	\class idMaterial
+	\brief Represents a material definition used for rendering surfaces with various properties and shader stages.
+
+	This class encapsulates the definition of a material used in rendering, including its shader stages, surface properties, lighting interactions, and rendering parameters. It provides functionality
+   for parsing material definitions from text, managing shader stages and their properties, and determining how the material should be rendered. The class supports various rendering features such as
+   blending modes, stencil operations, deformations, and cinematic effects. It also handles material flags, content and surface flags, and provides methods for retrieving material properties used
+   during the rendering pipeline. The class inherits from idDecl, indicating it's a declaration that can be loaded and managed by the engine's resource system. It supports loading and saving material
+   definitions, reloading images, and managing references to associated textures.
+
+*/
 class idMaterial : public idDecl
 {
 public:
+	//! Initializes a new instance of the idMaterial class.
 	idMaterial();
 	virtual ~idMaterial();
 
+	//! Returns the size of the material declaration in memory
 	virtual size_t		 Size() const;
+
+	//! Sets the text source to a default text if necessary, generating an implicit material definition based on the material name.
 	virtual bool		 SetDefaultText();
+
+	//! Returns the default definition string that can be parsed to recreate a declaration's default state
 	virtual const char*	 DefaultDefinition() const;
+
+	//! Parses the given text data for the material declaration, returning true if successful.
 	virtual bool		 Parse( const char* text, const int textLength, bool allowBinaryVersion );
+
+	//! Frees any pointers held by the material and prepares it for re-parsing.
 	virtual void		 FreeData();
+
+	//! Prints the material declaration data to the console
 	virtual void		 Print() const;
 
-	// BSM Nerve: Added for material editor
+	//! Saves the material to a file.
 	bool				 Save( const char* fileName = NULL );
 
-	// returns the internal image name for stage 0, which can be used
-	// for the renderer CaptureRenderToImage() call
-	// I'm not really sure why this needs to be virtual...
+	//! Returns the internal image name for stage 0, which can be used for the renderer CaptureRenderToImage() call
 	virtual const char*	 ImageName() const;
 
+	//! Reloads all images used by the material stages.
 	void				 ReloadImages( bool force, nvrhi::ICommandList* commandList ) const;
 
-	// returns number of stages this material contains
+	//! Returns the number of stages contained in this material.
 	const int			 GetNumStages() const { return numStages; }
 
 	// if the material is simple, all that needs to be known are
@@ -498,132 +518,92 @@ public:
 	idImage*			 GetFastPathDiffuseImage() const { return fastPathDiffuseImage; };
 	idImage*			 GetFastPathSpecularImage() const { return fastPathSpecularImage; };
 
-	// get a specific stage
+	//! Returns a specific shader stage from the material by index
 	const shaderStage_t* GetStage( const int index ) const
 	{
 		assert( index >= 0 && index < numStages );
 		return &stages[index];
 	}
 
-	// get the first bump map stage, or NULL if not present.
-	// used for bumpy-specular
+	//! Returns the first bump map stage from the material, or NULL if no bump stage is present.
 	const shaderStage_t* GetBumpStage() const;
 
-	// returns true if the material will draw anything at all.  Triggers, portals,
-	// etc, will not have anything to draw.  A not drawn surface can still castShadow,
-	// which can be used to make a simplified shadow hull for a complex object set
-	// as noShadow
+	//! Returns true if the material will draw anything at all
 	bool				 IsDrawn() const { return ( numStages > 0 || entityGui != 0 || gui != NULL ); }
 
-	// returns true if the material will draw any non light interaction stages
+	//! Returns true if the material will draw any non light interaction stages.
 	bool				 HasAmbient() const { return ( numAmbientStages > 0 ); }
 
-	// returns true if material has a gui
+	//! Returns true if the material has a GUI.
 	bool				 HasGui() const { return ( entityGui != 0 || gui != NULL ); }
 
-	// returns true if the material will generate another view, either as
-	// a mirror or dynamic rendered image
+	//! Returns true if the material will generate another view, either as a mirror or dynamic rendered image.
 	bool				 HasSubview() const { return hasSubview; }
 
+	//! Returns true if the material is a portal subview.
 	bool				 IsPortalSubView() const { return subViewType == SubViewType::SUBVIEW_DIRECT_PORTAL; }
 
+	//! Returns true if the material is configured as a mirror sub-view, otherwise false.
 	bool				 IsMirrorSubView() const { return subViewType == SubViewType::SUBVIEW_MIRROR; }
 
-	// returns true if the material will generate shadows, not making a
-	// distinction between global and no-self shadows
+	//! Returns true if the material will generate shadows, without distinguishing between global and self-shadowing.
 	bool				 SurfaceCastsShadow() const { return TestMaterialFlag( MF_FORCESHADOWS ) || !TestMaterialFlag( MF_NOSHADOWS ); }
 
-	// returns true if the material will generate interactions with fog/blend lights
-	// All non-translucent surfaces receive fog unless they are explicitly noFog
+	//! Returns true if the material will generate interactions with fog or blend lights
 	bool				 ReceivesFog() const { return ( IsDrawn() && !noFog && coverage != MC_TRANSLUCENT ); }
 
-	// returns true if the material will generate interactions with normal lights
-	// Many special effect surfaces don't have any bump/diffuse/specular
-	// stages, and don't interact with lights at all
+	//! Returns true if the material will generate interactions with normal lights and receives lighting.
 	bool				 ReceivesLighting() const { return ( numAmbientStages != numStages ) && ( materialFlags & MF_UNLIT ) == 0; }
 
-	// returns true if the material should generate interactions on sides facing away
-	// from light centers, as with noshadow and noselfshadow options
+	//! Returns true if the material should generate lighting interactions on sides facing away from light centers.
 	bool				 ReceivesLightingOnBackSides() const { return ( materialFlags & ( MF_NOSELFSHADOW | MF_NOSHADOWS ) ) != 0; }
 
-	// Standard two-sided triangle rendering won't work with bump map lighting, because
-	// the normal and tangent vectors won't be correct for the back sides.  When two
-	// sided lighting is desired. typically for alpha tested surfaces, this is
-	// addressed by having CleanupModelSurfaces() create duplicates of all the triangles
-	// with apropriate order reversal.
+	//! Returns true if back sides should be created for this material, typically for alpha tested surfaces with two-sided lighting.
 	bool				 ShouldCreateBackSides() const { return shouldCreateBackSides; }
 
-	// characters and models that are created by a complete renderbump can use a faster
-	// method of tangent and normal vector generation than surfaces which have a flat
-	// renderbump wrapped over them.
+	//! Returns whether the material uses unsmoothed tangents for tangent and normal vector generation.
 	bool				 UseUnsmoothedTangents() const { return unsmoothedTangents; }
 
-	// RB: characters and models that baked in Blender or Substance designer use the newer
-	// Mikkelsen tangent space standard.
-	// see: https://bgolus.medium.com/generating-perfect-normal-maps-for-unity-f929e673fc57
+	//! Returns whether the material uses the Mikkelsen tangent space standard for normal map calculations.
 	bool				 UseMikkTSpace() const { return mikktspace; }
 
-	// by default, monsters can have blood overlays placed on them, but this can
-	// be overrided on a per-material basis with the "noOverlays" material command.
-	// This will always return false for translucent surfaces
+	//! Returns whether the material allows overlays to be placed on it
 	bool				 AllowOverlays() const { return allowOverlays; }
 
-	// MC_OPAQUE, MC_PERFORATED, or MC_TRANSLUCENT, for interaction list linking and
-	// dmap flood filling
-	// The depth buffer will not be filled for MC_TRANSLUCENT surfaces
-	// FIXME: what do nodraw surfaces return?
+	//! Returns the coverage type of the material, which determines how it interacts with the depth buffer and rendering pipeline.
 	materialCoverage_t	 Coverage() const { return coverage; }
 
-	// returns true if this material takes precedence over other in coplanar cases
+	//! Returns true if this material takes precedence over the other material in coplanar cases based on drawing status and coverage.
 	bool				 HasHigherRogmapPriority( const idMaterial& other ) const { return ( IsDrawn() && !other.IsDrawn() ) || ( Coverage() < other.Coverage() ); }
 
-	// returns a idUserInterface if it has a global gui, or NULL if no gui
+	//! Returns the global user interface associated with this material, or NULL if no global GUI is defined.
 	idUserInterface*	 GlobalGui() const { return gui; }
 
-	// a discrete surface will never be merged with other surfaces by dmap, which is
-	// necessary to prevent mutliple gui surfaces, mirrors, autosprites, and some other
-	// special effects from being combined into a single surface
-	// guis, merging sprites or other effects, mirrors and remote views are always discrete
+	//! Determines whether the material represents a discrete surface that should not be merged with others during rendering.
 	bool				 IsDiscrete() const { return ( entityGui || gui || deform != DFRM_NONE || sort == SS_SUBVIEW || ( surfaceFlags & SURF_DISCRETE ) != 0 ); }
 
-	// Normally, dmap chops each surface by every BSP boundary, then reoptimizes.
-	// For gigantic polygons like sky boxes, this can cause a huge number of planar
-	// triangles that make the optimizer take forever to turn back into a single
-	// triangle.  The "noFragment" option causes dmap to only break the polygons at
-	// area boundaries, instead of every BSP boundary.  This has the negative effect
-	// of not automatically fixing up interpenetrations, so when this is used, you
-	// should manually make the edges of your sky box exactly meet, instead of poking
-	// into each other.
+	//! Returns true if the material has the no fragment flag set, indicating that the surface should not be split by BSP boundaries during dmap processing.
 	bool				 NoFragment() const { return ( surfaceFlags & SURF_NOFRAGMENT ) != 0; }
 
-	// RB: occluder surfaces are invisible and only get rendered to the masked occlusion depth buffer
+	//! Returns true if the material is an occluder surface that renders to the masked occlusion depth buffer
 	bool				 IsOccluder() const { return ( surfaceFlags & SURF_OCCLUSION ) != 0; }
 
-	//------------------------------------------------------------------
-	// light shader specific functions, only called for light entities
-
-	// lightshader option to fill with fog from viewer instead of light from center
+	//! Returns true if the material is configured as a fog light shader.
 	bool				 IsFogLight() const { return fogLight; }
 
-	// perform simple blending of the projection, instead of interacting with bumps and textures
+	//! Returns true if the material uses blend lighting instead of normal light interaction.
 	bool				 IsBlendLight() const { return blendLight; }
 
-	// an ambient light has non-directional bump mapping and no specular
+	//! Returns true if the material is an ambient light.
 	bool				 IsAmbientLight() const { return ambientLight; }
 
-	// implicitly no-shadows lights (ambients, fogs, etc) will never cast shadows
-	// but individual light entities can also override this value
+	//! Determines whether the material casts shadows based on its flags and lighting properties.
 	bool				 LightCastsShadows() const { return TestMaterialFlag( MF_FORCESHADOWS ) || ( !fogLight && !ambientLight && !blendLight && !TestMaterialFlag( MF_NOSHADOWS ) ); }
 
-	// fog lights, blend lights, ambient lights, etc will all have to have interaction
-	// triangles generated for sides facing away from the light as well as those
-	// facing towards the light.  It is debatable if noshadow lights should effect back
-	// sides, making everything "noSelfShadow", but that would make noshadow lights
-	// potentially slower than normal lights, which detracts from their optimization
-	// ability, so they currently do not.
+	//! Returns true if the material's lighting effects should be applied to back faces of geometry.
 	bool				 LightEffectsBackSides() const { return fogLight || ambientLight || blendLight; }
 
-	// NULL unless an image is explicitly specified in the shader with "lightFalloffShader <image>"
+	//! Returns the light falloff image associated with this material, or NULL if not explicitly specified.
 	idImage*			 LightFalloffImage() const { return lightFalloffImage; }
 
 	//------------------------------------------------------------------
@@ -631,30 +611,31 @@ public:
 	// returns the renderbump command line for this shader, or an empty string if not present
 	const char*			 GetRenderBump() const { return renderBump; };
 
-	// set specific material flag(s)
+	//! Sets the specified material flag(s) on the material.
 	void				 SetMaterialFlag( const int flag ) const { materialFlags |= flag; }
 
-	// clear specific material flag(s)
+	//! Clears the specified material flag(s) from the material.
 	void				 ClearMaterialFlag( const int flag ) const { materialFlags &= ~flag; }
 
-	// test for existance of specific material flag(s)
+	//! Tests whether a specific material flag is set
 	bool				 TestMaterialFlag( const int flag ) const { return ( materialFlags & flag ) != 0; }
 
-	// get content flags
+	//! Retrieves the content flags associated with the material.
 	const int			 GetContentFlags() const { return contentFlags; }
 
-	// get surface flags
+	//! Returns the surface flags of the material
 	const int			 GetSurfaceFlags() const { return surfaceFlags; }
 
-	// gets name for surface type (stone, metal, flesh, etc.)
+	//! Returns the surface type constant for this material.
 	const surfTypes_t	 GetSurfaceType() const { return static_cast<surfTypes_t>( surfaceFlags & SURF_TYPE_MASK ); }
 
-	// get material description
+	//! Returns the material description string.
 	const char*			 GetDescription() const { return desc; }
 
-	// get sort order
+	//! Returns the sort order value for the material.
 	const float			 GetSort() const { return sort; }
 
+	//! Returns the stereo eye value for the material.
 	const int			 GetStereoEye() const { return stereoEye; }
 
 	// this is only used by the gui system to force sorting order
@@ -662,75 +643,95 @@ public:
 	// this is done this way as there are 2000 tgas the guis use
 	void				 SetSort( float s ) const { sort = s; };
 
-	// DFRM_NONE, DFRM_SPRITE, etc
+	//! Returns the deformation type of the material.
 	deform_t			 Deform() const { return deform; }
 
-	// flare size, expansion size, etc
+	//! Returns the deform register value at the specified index.
 	const int			 GetDeformRegister( int index ) const { return deformRegisters[index]; }
 
-	// particle system to emit from surface and table for turbulent
+	//! Returns the deformation declaration associated with this material.
 	const idDecl*		 GetDeformDecl() const { return deformDecl; }
 
-	// currently a surface can only have one unique texgen for all the stages
+	//! Returns the texture generation type used by the material's stages.
 	texgen_t			 Texgen() const;
 
-	// wobble sky parms
+	//! Returns a pointer to the texture generation registers used for wobble sky parameters.
 	const int*			 GetTexGenRegisters() const { return texGenRegisters; }
 
-	// get cull type
+	//! Returns the cull type of the material.
 	const cullType_t	 GetCullType() const { return cullType; }
 
+	//! Returns the editor alpha value for the material.
 	float				 GetEditorAlpha() const { return editorAlpha; }
 
+	//! Returns the GUI entity ID associated with this material.
 	int					 GetEntityGui() const { return entityGui; }
 
+	//! Returns the decal information associated with this material.
 	decalInfo_t			 GetDecalInfo() const { return decalInfo; }
 
-	// spectrums are used for "invisible writing" that can only be
-	// illuminated by a light of matching spectrum
+	//! Returns the spectrum value used for invisible writing illumination matching.
 	int					 Spectrum() const { return spectrum; }
 
+	//! Returns the polygon offset value for the material.
 	float				 GetPolygonOffset() const { return polygonOffset; }
 
+	//! Returns the surface area of the material
 	float				 GetSurfaceArea() const { return surfaceArea; }
+
+	//! Adds the specified area value to the material's surface area.
 	void				 AddToSurfaceArea( float area ) { surfaceArea += area; }
 
-	//------------------------------------------------------------------
-
-	// returns the length, in milliseconds, of the videoMap on this material,
-	// or zero if it doesn't have one
+	//! Returns the length in milliseconds of the cinematic animation on this material, or zero if it doesn't have one.
 	int					 CinematicLength() const;
 
+	//! Closes and cleans up any cinematic textures associated with the material stages.
 	void				 CloseCinematic() const;
 
+	//! Resets the cinematic time for all stages that have cinematic textures.
 	void				 ResetCinematicTime( int time ) const;
 
+	//! Returns the start time of the cinematic associated with the material
 	int					 GetCinematicStartTime() const;
 
+	//! Updates the cinematic state of the material based on the provided time value.
 	void				 UpdateCinematic( int time ) const;
 
-	// RB: added because we can't rely on the FFmpeg feedback how long a video really is
+	//! Checks if the cinematic playback is currently active for this material.
 	bool				 CinematicIsPlaying() const;
-	// RB end
 
-	//------------------------------------------------------------------
-
-	// gets an image for the editor to use
+	//! Returns the editor image for this material, potentially deriving it from stage textures if no explicit editor image is defined.
 	idImage*			 GetEditorImage() const;
-	idImage*			 GetLightEditorImage() const; // RB
+
+	//! Returns the first available image from the material's stages for use in the light editor, or the default editor image if none are found.
+	idImage*			 GetLightEditorImage() const;
+
+	//! Returns the width of the image associated with the first stage of this material
 	int					 GetImageWidth() const;
+
+	//! Returns the height of the image associated with the first stage of this material
 	int					 GetImageHeight() const;
 
+	//! Sets the GUI for this material using the provided GUI name.
 	void				 SetGui( const char* _gui ) const;
 
-	//------------------------------------------------------------------
-
-	// returns number of registers this material contains
+	//! Returns the number of registers this material contains
 	const int			 GetNumRegisters() const { return numRegisters; }
 
-	// Regs should point to a float array large enough to hold GetNumRegisters() floats.
-	// FloatTime is passed in because different entities, which may be running in parallel,
-	// can be in different time groups.
+	/*!
+		\brief Evaluates shader expression registers using local and global parameters, time, and sound emitter data.
+
+		This function computes the final values of shader expression registers by first copying predefined material constants, then applying local and global shader parameters, and finally executing a
+	   series of operations defined in the material's expression bytecode. The operations include arithmetic, comparison, modulo, table lookups, and sound amplitude evaluation. The floatTime parameter
+	   allows entities running in parallel to be in different time groups.
+
+		\param registers Output array where computed register values will be stored
+		\param localShaderParms Array of local shader parameters for the entity
+		\param globalShaderParms Array of global shader parameters for the current frame
+		\param floatTime Current time value used for time-based expressions
+		\param soundEmitter Pointer to the sound emitter for sound-based register evaluation
+		\throws FatalError if an invalid opcode is encountered during expression evaluation
+	*/
 	void				 EvaluateRegisters(
 						float* registers, const float localShaderParms[MAX_ENTITY_SHADER_PARMS], const float globalShaderParms[MAX_GLOBAL_SHADER_PARMS], const float floatTime, idSoundEmitter* soundEmitter ) const;
 
@@ -741,14 +742,14 @@ public:
 
 	bool		 SuppressInSubview() const { return suppressInSubview; };
 	bool		 IsPortalSky() const { return portalSky; };
+
+	//! Increments the reference count of the material and its associated textures.
 	void		 AddReference();
 
-	// motorsep 11-23-2014; material LOD keys that define what LOD iteration the surface falls into
-	// lod1 - lod4 defines several levels of LOD
-	// persistentLOD specifies the LOD iteration that still being rendered, even after the camera is beyond the distance at which LOD iteration should not be rendered
-
+	//! Determines if the material is a level of detail (LOD) surface.
 	bool		 IsLOD() const { return ( materialFlags & ( MF_LOD1 | MF_LOD2 | MF_LOD3 | MF_LOD4 ) ) != 0; }
-	// foresthale 2014-11-24: added IsLODVisibleForDistance method
+
+	//! Determines if a material's level of detail is visible based on distance and LOD settings.
 	bool		 IsLODVisibleForDistance( float distance, float lodBase ) const
 	{
 		int	  bit = ( materialFlags & ( MF_LOD1 | MF_LOD2 | MF_LOD3 | MF_LOD4 ) ) >> MF_LOD1_SHIFT;
@@ -757,42 +758,115 @@ public:
 		return distance >= m1 && ( distance < m2 || ( materialFlags & ( MF_LOD_PERSISTENT ) ) );
 	}
 
-	// RB: for exporting materials to Blender
+	//! Exports material data to a JSON file for use in Blender.
 	void ExportJSON( idFile* file, bool lastEntry ) const;
 
 private:
-	// parse the entire material
+	//! Initializes all member variables of the material to their default values.
 	void	 CommonInit();
+
+	//! Parses a material definition from a lexer token stream
 	void	 ParseMaterial( idLexer& src );
+
+	//! Checks if the next token in the lexer matches the specified string, setting a default flag and returning false if it does not match.
 	bool	 MatchToken( idLexer& src, const char* match );
+
+	//! Parses the sort parameter for the material from the provided lexer token stream.
 	void	 ParseSort( idLexer& src );
+
+	//! Parses the stereo eye parameter from the lexer input.
 	void	 ParseStereoEye( idLexer& src );
+
+	//! Parses blend mode settings from a lexer token and configures the shader stage draw state bits accordingly.
 	void	 ParseBlend( idLexer& src, shaderStage_t* stage );
+
+	//! Parses a vertex parameter for a shader stage from the given lexer input.
 	void	 ParseVertexParm( idLexer& src, newShaderStage_t* newStage );
+
+	//! Parses a vertex parameter configuration from the lexer input and stores it in the shader stage.
 	void	 ParseVertexParm2( idLexer& src, newShaderStage_t* newStage );
+
+	//! Parses a fragment map definition from the source lexer and sets up the corresponding image parameters in the shader stage.
 	void	 ParseFragmentMap( idLexer& src, newShaderStage_t* newStage );
+
+	//! Parses a stencil comparison function token and sets the corresponding stencil comparison value.
 	void	 ParseStencilCompare( const idToken& token, stencilComp_t* stencilComp );
+
+	//! Parses a stencil operation token and sets the corresponding stencil operation value.
 	void	 ParseStencilOperation( const idToken& token, stencilOperation_t* stencilOp );
+
+	//! Parses stencil configuration parameters from a lexer token stream into a stencil stage structure.
 	void	 ParseStencil( idLexer& src, stencilStage_t* stencilStage );
+
+	//! Parses a single stage definition from the material definition lexer input
 	void	 ParseStage( idLexer& src, const textureRepeat_t trpDefault = TR_REPEAT );
+
+	//! Parses a deform type from a lexer token and sets the corresponding deform parameters.
 	void	 ParseDeform( idLexer& src );
+
+	//! Parses decal information from a lexer including stay time, fade time, and start/end color values.
 	void	 ParseDecalInfo( idLexer& src );
+
+	//! Checks if the provided token matches any surface parameter bit flags and updates the material's surface and content flags accordingly.
 	bool	 CheckSurfaceParm( idToken* token );
+
+	//! Returns the index of a material expression register that contains the specified float value, or creates a new one if it doesn't exist.
 	int		 GetExpressionConstant( float f );
+
+	//! Returns a temporary register index for expression evaluation in the material.
 	int		 GetExpressionTemporary();
+
+	//! Returns a pointer to the next available expression operation slot in the material's shader operations array.
 	expOp_t* GetExpressionOp();
+
+	//! Emit a bytecode operation for the material expression parser.
 	int		 EmitOp( int a, int b, expOpType_t opType );
+
+	/*!
+		\brief Parses an expression operation and emits the corresponding opcode.
+
+		This function parses the next operand in the expression using the specified priority level, then emits an operation opcode combining the current operand 'a' with the parsed operand 'b'. It is
+	   used during material expression parsing to handle binary operations with proper operator precedence.
+
+		\param src Lexer object used to parse the input source for the expression
+		\param a The left operand of the operation
+		\param opType The type of operation to emit
+		\param priority The priority level used to determine which operands to parse
+		\return The result of emitting the operation opcode combining operands a and b
+	*/
 	int		 ParseEmitOp( idLexer& src, int a, expOpType_t opType, int priority );
+
+	//! Parses a term from the lexer and returns a register index or expression constant
 	int		 ParseTerm( idLexer& src );
+
+	//! Parses a mathematical expression with specified priority level and returns the register index of the result
 	int		 ParseExpressionPriority( idLexer& src, int priority );
+
+	//! Parses a mathematical expression from the lexer and returns a register index.
 	int		 ParseExpression( idLexer& src );
+
+	//! Clears the shader stage by resetting its draw state bits and color registers.
 	void	 ClearStage( shaderStage_t* ss );
+
+	//! Converts a string representation of a source blend mode to its corresponding OpenGL blend mode constant.
 	int		 NameToSrcBlendMode( const idStr& name );
+
+	//! Converts a blend mode name string to its corresponding destination blend mode constant
 	int		 NameToDstBlendMode( const idStr& name );
-	void	 MultiplyTextureMatrix( textureStage_t* ts, int registers[2][3] ); // FIXME: for some reason the const is bad for gcc and Mac
+
+	//! Multiplies the texture matrix of a texture stage with the provided registers
+	void	 MultiplyTextureMatrix( textureStage_t* ts, int registers[2][3] );
+
+	//! Sorts interaction stages in the material, ensuring proper ordering of lighting stages.
 	void	 SortInteractionStages();
+
+	//! Adds implicit shader stages for bump, diffuse, and specular lighting when they are missing from the material.
 	void	 AddImplicitStages( const textureRepeat_t trpDefault = TR_REPEAT );
+
+	//! Checks if material registers are constant and evaluates them once for optimization
 	void	 CheckForConstantRegisters();
+
+	//! Initializes fast path image references for materials that qualify for optimized rendering.
 	void	 SetFastPathImages();
 
 private:

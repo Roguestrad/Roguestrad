@@ -24,7 +24,6 @@
 #include "precompiled.h"
 #pragma hdrstop
 
-// #include "../RenderCommon.h"
 #include "TonemapPass.h"
 #include "TonemapPass_cb.h"
 

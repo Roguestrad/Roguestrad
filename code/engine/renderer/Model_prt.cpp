@@ -35,43 +35,23 @@ If you have questions concerning this license or the applicable additional terms
 
 static const char* parametricParticle_SnapshotName = "_ParametricParticle_Snapshot_";
 
-/*
-====================
-idRenderModelPrt::idRenderModelPrt
-====================
-*/
 idRenderModelPrt::idRenderModelPrt()
 {
 	particleSystem = NULL;
 }
 
-/*
-====================
-idRenderModelPrt::InitFromFile
-====================
-*/
 void idRenderModelPrt::InitFromFile( const char* fileName, const idImportOptions* options )
 {
 	name		   = fileName;
 	particleSystem = static_cast<const idDeclParticle*>( declManager->FindType( DECL_PARTICLE, fileName ) );
 }
 
-/*
-=================
-idRenderModelPrt::TouchData
-=================
-*/
 void idRenderModelPrt::TouchData()
 {
 	// Ensure our particle system is added to the list of referenced decls
 	particleSystem = static_cast<const idDeclParticle*>( declManager->FindType( DECL_PARTICLE, name ) );
 }
 
-/*
-====================
-idRenderModelPrt::InstantiateDynamicModel
-====================
-*/
 idRenderModel* idRenderModelPrt::InstantiateDynamicModel( const struct renderEntity_s* renderEntity, const viewDef_t* viewDef, idRenderModel* cachedModel )
 {
 	idRenderModelStatic* staticModel;
@@ -242,41 +222,21 @@ idRenderModel* idRenderModelPrt::InstantiateDynamicModel( const struct renderEnt
 	return staticModel;
 }
 
-/*
-====================
-idRenderModelPrt::IsDynamicModel
-====================
-*/
 dynamicModel_t idRenderModelPrt::IsDynamicModel() const
 {
 	return DM_CONTINUOUS;
 }
 
-/*
-====================
-idRenderModelPrt::Bounds
-====================
-*/
 idBounds idRenderModelPrt::Bounds( const struct renderEntity_s* ent ) const
 {
 	return particleSystem->bounds;
 }
 
-/*
-====================
-idRenderModelPrt::DepthHack
-====================
-*/
 float idRenderModelPrt::DepthHack() const
 {
 	return particleSystem->depthHack;
 }
 
-/*
-====================
-idRenderModelPrt::Memory
-====================
-*/
 int idRenderModelPrt::Memory() const
 {
 	int total = 0;

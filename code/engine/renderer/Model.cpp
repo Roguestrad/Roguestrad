@@ -51,11 +51,6 @@ static const byte		  BRM_VERSION		   = BRM_VERSION_MOC_DATA;
 static const unsigned int BRM_MAGIC_BFG = ( 'B' << 24 ) | ( 'R' << 16 ) | ( 'M' << 8 ) | BRM_VERSION_BFG;
 static const unsigned int BRM_MAGIC		= ( 'B' << 24 ) | ( 'R' << 16 ) | ( 'M' << 8 ) | BRM_VERSION;
 
-/*
-================
-idRenderModelStatic::idRenderModelStatic
-================
-*/
 idRenderModelStatic::idRenderModelStatic()
 {
 	name = "<undefined>";
@@ -79,21 +74,11 @@ idRenderModelStatic::idRenderModelStatic()
 	jointsInvertedBuffer	 = 0;
 }
 
-/*
-================
-idRenderModelStatic::~idRenderModelStatic
-================
-*/
 idRenderModelStatic::~idRenderModelStatic()
 {
 	PurgeModel();
 }
 
-/*
-==============
-idRenderModelStatic::Print
-==============
-*/
 void idRenderModelStatic::Print() const
 {
 	common->Printf( "%s\n", name.c_str() );
@@ -121,11 +106,6 @@ void idRenderModelStatic::Print() const
 	}
 }
 
-/*
-==============
-idRenderModelStatic::Memory
-==============
-*/
 int idRenderModelStatic::Memory() const
 {
 	int totalBytes = 0;
@@ -145,11 +125,6 @@ int idRenderModelStatic::Memory() const
 	return totalBytes;
 }
 
-/*
-==============
-idRenderModelStatic::List
-==============
-*/
 void idRenderModelStatic::List() const
 {
 	int totalTris  = 0;
@@ -191,20 +166,22 @@ void idRenderModelStatic::List() const
 	common->Printf( "\n" );
 }
 
-/*
-================
-idRenderModelStatic::IsDefaultModel
-================
-*/
 bool idRenderModelStatic::IsDefaultModel() const
 {
 	return defaulted;
 }
 
-/*
-================
-AddCubeFace
-================
+/*!
+	\brief Adds a single cube face defined by four vertices to the triangle mesh.
+
+	This function adds a rectangular face to a triangle mesh by defining four vertices and their corresponding texture coordinates. Each vertex is scaled by a factor of 8 before being added to the
+   mesh. The function also sets up the appropriate triangle indexes to form two triangles that make up the face. The mesh's vertex and index counts are updated accordingly.
+
+	\param tri Pointer to the triangle mesh structure to which the face will be added
+	\param v1 First vertex of the face
+	\param v2 Second vertex of the face
+	\param v3 Third vertex of the face
+	\param v4 Fourth vertex of the face
 */
 static void AddCubeFace( srfTriangles_t* tri, idVec3 v1, idVec3 v2, idVec3 v3, idVec3 v4 )
 {
@@ -235,11 +212,6 @@ static void AddCubeFace( srfTriangles_t* tri, idVec3 v1, idVec3 v2, idVec3 v3, i
 	tri->numIndexes += 6;
 }
 
-/*
-================
-idRenderModelStatic::MakeDefaultModel
-================
-*/
 void idRenderModelStatic::MakeDefaultModel()
 {
 	defaulted = true;
@@ -277,22 +249,12 @@ void idRenderModelStatic::MakeDefaultModel()
 	FinishSurfaces( false );
 }
 
-/*
-================
-idRenderModelStatic::PartialInitFromFile
-================
-*/
 void idRenderModelStatic::PartialInitFromFile( const char* fileName )
 {
 	fastLoad = true;
 	InitFromFile( fileName, nullptr );
 }
 
-/*
-================
-idRenderModelStatic::InitFromFile
-================
-*/
 void idRenderModelStatic::InitFromFile( const char* fileName, const idImportOptions* options )
 {
 	bool  loaded;
@@ -348,11 +310,6 @@ void idRenderModelStatic::InitFromFile( const char* fileName, const idImportOpti
 	FinishSurfaces( useMikktspace );
 }
 
-/*
-========================
-idRenderModelStatic::LoadBinaryModel
-========================
-*/
 bool idRenderModelStatic::LoadBinaryModel( idFile* file, const ID_TIME_T sourceTimeStamp, const ID_TIME_T declSourceTimeStampUnused )
 {
 	if( file == NULL ) {
@@ -563,11 +520,6 @@ bool idRenderModelStatic::LoadBinaryModel( idFile* file, const ID_TIME_T sourceT
 	return true;
 }
 
-/*
-========================
-idRenderModelStatic::WriteBinaryModel
-========================
-*/
 void idRenderModelStatic::WriteBinaryModel( idFile* file, ID_TIME_T* _timeStamp ) const
 {
 	if( file == NULL ) {
@@ -700,7 +652,6 @@ void idRenderModelStatic::WriteBinaryModel( idFile* file, ID_TIME_T* _timeStamp 
 	file->WriteBig( hasShadowCastingSurfaces );
 }
 
-// RB begin
 void idRenderModelStatic::ExportOBJ( idFile* objFile, idFile* mtlFile, ID_TIME_T* _timeStamp )
 {
 	if( objFile == NULL || mtlFile == NULL ) {
@@ -789,24 +740,13 @@ void idRenderModelStatic::ExportOBJ( idFile* objFile, idFile* mtlFile, ID_TIME_T
 		mtlFile->Printf( "\n" );
 	}
 }
-// RB end
 
-/*
-================
-idRenderModelStatic::LoadModel
-================
-*/
 void idRenderModelStatic::LoadModel()
 {
 	PurgeModel();
 	InitFromFile( name, nullptr );
 }
 
-/*
-================
-idRenderModelStatic::InitEmpty
-================
-*/
 void idRenderModelStatic::InitEmpty( const char* fileName )
 {
 	// model names of the form _area* are static parts of the
@@ -826,11 +766,6 @@ void idRenderModelStatic::InitEmpty( const char* fileName )
 	bounds.Zero();
 }
 
-/*
-================
-idRenderModelStatic::AddSurface
-================
-*/
 void idRenderModelStatic::AddSurface( modelSurface_t surface )
 {
 	surfaces.Append( surface );
@@ -839,27 +774,16 @@ void idRenderModelStatic::AddSurface( modelSurface_t surface )
 	}
 }
 
-/*
-================
-idRenderModelStatic::Name
-================
-*/
 const char* idRenderModelStatic::Name() const
 {
 	return name;
 }
 
-/*
-================
-idRenderModelStatic::Timestamp
-================
-*/
 ID_TIME_T idRenderModelStatic::Timestamp() const
 {
 	return timeStamp;
 }
 
-// RB begin
 ID_TIME_T idRenderModelStatic::DeclTimestamp() const
 {
 	return declTimeStamp;
@@ -869,43 +793,22 @@ const char* idRenderModelStatic::GetModelDefName() const
 {
 	return declModelDefName;
 }
-// RB end
 
-/*
-================
-idRenderModelStatic::NumSurfaces
-================
-*/
 int idRenderModelStatic::NumSurfaces() const
 {
 	return surfaces.Num();
 }
 
-/*
-================
-idRenderModelStatic::NumBaseSurfaces
-================
-*/
 int idRenderModelStatic::NumBaseSurfaces() const
 {
 	return surfaces.Num() - overlaysAdded;
 }
 
-/*
-================
-idRenderModelStatic::Surface
-================
-*/
 const modelSurface_t* idRenderModelStatic::Surface( int surfaceNum ) const
 {
 	return &surfaces[surfaceNum];
 }
 
-/*
-================
-idRenderModelStatic::AllocSurfaceTriangles
-================
-*/
 srfTriangles_t* idRenderModelStatic::AllocSurfaceTriangles( int numVerts, int numIndexes ) const
 {
 	srfTriangles_t* tri = R_AllocStaticTriSurf();
@@ -914,72 +817,37 @@ srfTriangles_t* idRenderModelStatic::AllocSurfaceTriangles( int numVerts, int nu
 	return tri;
 }
 
-/*
-================
-idRenderModelStatic::FreeSurfaceTriangles
-================
-*/
 void idRenderModelStatic::FreeSurfaceTriangles( srfTriangles_t* tris ) const
 {
 	R_FreeStaticTriSurf( tris );
 }
 
-/*
-================
-idRenderModelStatic::IsStaticWorldModel
-================
-*/
 bool idRenderModelStatic::IsStaticWorldModel() const
 {
 	return isStaticWorldModel;
 }
 
-/*
-================
-idRenderModelStatic::IsDynamicModel
-================
-*/
 dynamicModel_t idRenderModelStatic::IsDynamicModel() const
 {
 	// dynamic subclasses will override this
 	return DM_STATIC;
 }
 
-/*
-================
-idRenderModelStatic::IsReloadable
-================
-*/
 bool idRenderModelStatic::IsReloadable() const
 {
 	return reloadable;
 }
 
-/*
-================
-idRenderModelStatic::Bounds
-================
-*/
 idBounds idRenderModelStatic::Bounds( const struct renderEntity_s* mdef ) const
 {
 	return bounds;
 }
 
-/*
-================
-idRenderModelStatic::DepthHack
-================
-*/
 float idRenderModelStatic::DepthHack() const
 {
 	return 0.0f;
 }
 
-/*
-================
-idRenderModelStatic::InstantiateDynamicModel
-================
-*/
 idRenderModel* idRenderModelStatic::InstantiateDynamicModel( const struct renderEntity_s* ent, const viewDef_t* view, idRenderModel* cachedModel )
 {
 	if( cachedModel ) {
@@ -990,93 +858,36 @@ idRenderModel* idRenderModelStatic::InstantiateDynamicModel( const struct render
 	return NULL;
 }
 
-/*
-================
-idRenderModelStatic::NumJoints
-================
-*/
 int idRenderModelStatic::NumJoints() const
 {
 	return 0;
 }
 
-/*
-================
-idRenderModelStatic::GetJoints
-================
-*/
 const idMD5Joint* idRenderModelStatic::GetJoints() const
 {
 	return NULL;
 }
 
-/*
-================
-idRenderModelStatic::GetJointHandle
-================
-*/
 jointHandle_t idRenderModelStatic::GetJointHandle( const char* name ) const
 {
 	return INVALID_JOINT;
 }
 
-/*
-================
-idRenderModelStatic::GetJointName
-================
-*/
 const char* idRenderModelStatic::GetJointName( jointHandle_t handle ) const
 {
 	return "";
 }
 
-/*
-================
-idRenderModelStatic::GetDefaultPose
-================
-*/
 const idJointQuat* idRenderModelStatic::GetDefaultPose() const
 {
 	return NULL;
 }
 
-/*
-================
-idRenderModelStatic::NearestJoint
-================
-*/
 int idRenderModelStatic::NearestJoint( int surfaceNum, int a, int b, int c ) const
 {
 	return INVALID_JOINT;
 }
 
-//=====================================================================
-
-/*
-================
-idRenderModelStatic::FinishSurfaces
-
-The mergeShadows option allows surfaces with different textures to share
-silhouette edges for shadow calculation, instead of leaving shared edges
-hanging.
-
-If any of the original shaders have the noSelfShadow flag set, the surfaces
-can't be merged, because they will need to be drawn in different order.
-
-If there is only one surface, a separate merged surface won't be generated.
-
-A model with multiple surfaces can't later have a skinned shader change the
-state of the noSelfShadow flag.
-
------------------
-
-Creates mirrored copies of two sided surfaces with normal maps, which would
-otherwise light funny.
-
-Extends the bounds of deformed surfaces so they don't cull incorrectly at screen edges.
-
-================
-*/
 void idRenderModelStatic::FinishSurfaces( bool useMikktspace )
 {
 	int i;
@@ -1236,11 +1047,6 @@ typedef struct matchVert_s {
 	idVec3				normal;
 } matchVert_t;
 
-/*
-=================
-idRenderModelStatic::ConvertOBJToModelSurfaces
-=================
-*/
 bool idRenderModelStatic::ConvertOBJToModelSurfaces( const objModel_t* model )
 {
 	objObject_t*	  mesh;
@@ -1545,13 +1351,7 @@ bool idRenderModelStatic::ConvertOBJToModelSurfaces( const objModel_t* model )
 
 	return true;
 }
-// RB end
 
-/*
-=================
-idRenderModelStatic::ConvertASEToModelSurfaces
-=================
-*/
 bool idRenderModelStatic::ConvertASEToModelSurfaces( const struct aseModel_s* ase )
 {
 	aseObject_t*	  object;
@@ -1866,11 +1666,6 @@ bool idRenderModelStatic::ConvertASEToModelSurfaces( const struct aseModel_s* as
 	return true;
 }
 
-/*
-=================
-idRenderModelStatic::ConvertLWOToModelSurfaces
-=================
-*/
 bool idRenderModelStatic::ConvertLWOToModelSurfaces( const struct st_lwObject* lwo )
 {
 	const idMaterial *im1, *im2;
@@ -2220,11 +2015,6 @@ bool idRenderModelStatic::ConvertLWOToModelSurfaces( const struct st_lwObject* l
 	return true;
 }
 
-/*
-=================
-idRenderModelStatic::ConvertLWOToASE
-=================
-*/
 struct aseModel_s* idRenderModelStatic::ConvertLWOToASE( const struct st_lwObject* obj, const char* fileName )
 {
 	int			j, k;
@@ -2386,11 +2176,6 @@ struct aseModel_s* idRenderModelStatic::ConvertLWOToASE( const struct st_lwObjec
 	return ase;
 }
 
-/*
-=================
-idRenderModelStatic::ConvertMAToModelSurfaces
-=================
-*/
 bool idRenderModelStatic::ConvertMAToModelSurfaces( const struct maModel_s* ma )
 {
 	maObject_t*		  object;
@@ -2729,11 +2514,6 @@ bool idRenderModelStatic::ConvertMAToModelSurfaces( const struct maModel_s* ma )
 	return true;
 }
 
-/*
-=================
-idRenderModelStatic::LoadASE
-=================
-*/
 bool idRenderModelStatic::LoadASE( const char* fileName, ID_TIME_T* sourceTimeStamp )
 {
 	aseModel_t* ase;
@@ -2753,11 +2533,6 @@ bool idRenderModelStatic::LoadASE( const char* fileName, ID_TIME_T* sourceTimeSt
 	return true;
 }
 
-/*
-=================
-idRenderModelStatic::LoadLWO
-=================
-*/
 bool idRenderModelStatic::LoadLWO( const char* fileName, ID_TIME_T* sourceTimeStamp )
 {
 	unsigned int failID;
@@ -2779,11 +2554,6 @@ bool idRenderModelStatic::LoadLWO( const char* fileName, ID_TIME_T* sourceTimeSt
 	return true;
 }
 
-/*
-=================
-idRenderModelStatic::LoadMA
-=================
-*/
 bool idRenderModelStatic::LoadMA( const char* fileName, ID_TIME_T* sourceTimeStamp )
 {
 	maModel_t* ma;
@@ -2803,11 +2573,6 @@ bool idRenderModelStatic::LoadMA( const char* fileName, ID_TIME_T* sourceTimeSta
 	return true;
 }
 
-/*
-=================
-idRenderModelStatic::LoadOBJ
-=================
-*/
 bool idRenderModelStatic::LoadOBJ( const char* fileName, ID_TIME_T* sourceTimeStamp )
 {
 	objModel_t* obj;
@@ -2826,15 +2591,7 @@ bool idRenderModelStatic::LoadOBJ( const char* fileName, ID_TIME_T* sourceTimeSt
 
 	return true;
 }
-// RB end
 
-//=============================================================================
-
-/*
-================
-idRenderModelStatic::PurgeModel
-================
-*/
 void idRenderModelStatic::PurgeModel()
 {
 	for( int i = 0; i < surfaces.Num(); i++ ) {
@@ -2854,13 +2611,6 @@ void idRenderModelStatic::PurgeModel()
 	purged = true;
 }
 
-/*
-==============
-idRenderModelStatic::FreeVertexCache
-
-We are about to restart the vertex cache, so dump everything
-==============
-*/
 void idRenderModelStatic::FreeVertexCache()
 {
 	for( int j = 0; j < surfaces.Num(); j++ ) {
@@ -2872,41 +2622,21 @@ void idRenderModelStatic::FreeVertexCache()
 	}
 }
 
-/*
-================
-idRenderModelStatic::IsLoaded
-================
-*/
 bool idRenderModelStatic::IsLoaded()
 {
 	return !purged;
 }
 
-/*
-================
-idRenderModelStatic::SetLevelLoadReferenced
-================
-*/
 void idRenderModelStatic::SetLevelLoadReferenced( bool referenced )
 {
 	levelLoadReferenced = referenced;
 }
 
-/*
-================
-idRenderModelStatic::IsLevelLoadReferenced
-================
-*/
 bool idRenderModelStatic::IsLevelLoadReferenced()
 {
 	return levelLoadReferenced;
 }
 
-/*
-=================
-idRenderModelStatic::TouchData
-=================
-*/
 void idRenderModelStatic::TouchData()
 {
 	for( int i = 0; i < surfaces.Num(); i++ ) {
@@ -2918,20 +2648,10 @@ void idRenderModelStatic::TouchData()
 	}
 }
 
-/*
-=================
-idRenderModelStatic::CreateBuffers
-=================
-*/
 void idRenderModelStatic::CreateBuffers( nvrhi::ICommandList* commandList )
 {
 }
 
-/*
-=================
-idRenderModelStatic::DeleteSurfaceWithId
-=================
-*/
 bool idRenderModelStatic::DeleteSurfaceWithId( int id )
 {
 	int i;
@@ -2946,11 +2666,6 @@ bool idRenderModelStatic::DeleteSurfaceWithId( int id )
 	return false;
 }
 
-/*
-=================
-idRenderModelStatic::DeleteSurfacesWithNegativeId
-=================
-*/
 void idRenderModelStatic::DeleteSurfacesWithNegativeId()
 {
 	for( int i = 0; i < surfaces.Num(); i++ ) {
@@ -2962,11 +2677,6 @@ void idRenderModelStatic::DeleteSurfacesWithNegativeId()
 	}
 }
 
-/*
-=================
-idRenderModelStatic::FindSurfaceWithId
-=================
-*/
 bool idRenderModelStatic::FindSurfaceWithId( int id, int& surfaceNum ) const
 {
 	for( int i = 0; i < surfaces.Num(); i++ ) {

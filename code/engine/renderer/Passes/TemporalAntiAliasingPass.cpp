@@ -28,8 +28,6 @@
 #include "TemporalAntiAliasingPass_cb.h"
 #include "CommonPasses.h"
 
-// #include "../RenderCommon.h"
-
 #include <nvrhi/utils.h>
 
 #include <assert.h>
@@ -198,6 +196,7 @@ void TemporalAntiAliasingPass::AdvanceFrame()
 	}
 }
 
+//! Computes the Van der Corput sequence value for a given base and index.
 static float VanDerCorput( size_t base, size_t index )
 {
 	float ret		  = 0.0f;

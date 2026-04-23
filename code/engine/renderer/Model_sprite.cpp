@@ -41,31 +41,16 @@ A simple sprite model that always faces the view axis.
 
 static const char* sprite_SnapshotName = "_sprite_Snapshot_";
 
-/*
-===============
-idRenderModelSprite::IsDynamicModel
-===============
-*/
 dynamicModel_t	   idRenderModelSprite::IsDynamicModel() const
 {
 	return DM_CONTINUOUS;
 }
 
-/*
-===============
-idRenderModelSprite::IsLoaded
-===============
-*/
 bool idRenderModelSprite::IsLoaded() const
 {
 	return true;
 }
 
-/*
-===============
-idRenderModelSprite::InstantiateDynamicModel
-===============
-*/
 idRenderModel* idRenderModelSprite::InstantiateDynamicModel( const struct renderEntity_s* renderEntity, const viewDef_t* viewDef, idRenderModel* cachedModel )
 {
 	idRenderModelStatic* staticModel;
@@ -177,11 +162,6 @@ idRenderModel* idRenderModelSprite::InstantiateDynamicModel( const struct render
 	return staticModel;
 }
 
-/*
-===============
-idRenderModelSprite::Bounds
-===============
-*/
 idBounds idRenderModelSprite::Bounds( const struct renderEntity_s* renderEntity ) const
 {
 	idBounds b;

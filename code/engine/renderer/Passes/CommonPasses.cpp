@@ -29,7 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-// #include "../RenderCommon.h"
 #include "CommonPasses.h"
 
 CommonRenderPasses::CommonRenderPasses() :
@@ -37,12 +36,14 @@ CommonRenderPasses::CommonRenderPasses() :
 {
 }
 
+//! Checks if the given texture dimension is supported for blitting operations.
 static bool IsSupportedBlitDimension( nvrhi::TextureDimension dimension )
 {
 	return dimension == nvrhi::TextureDimension::Texture2D || dimension == nvrhi::TextureDimension::Texture2DArray || dimension == nvrhi::TextureDimension::TextureCube ||
 		   dimension == nvrhi::TextureDimension::TextureCubeArray;
 }
 
+//! Checks if the given texture dimension represents a texture array type.
 static bool IsTextureArray( nvrhi::TextureDimension dimension )
 {
 	return dimension == nvrhi::TextureDimension::Texture2DArray || dimension == nvrhi::TextureDimension::TextureCube || dimension == nvrhi::TextureDimension::TextureCubeArray;

@@ -42,11 +42,7 @@ idVertexCache		  vertexCache;
 idCVar				  r_showVertexCache( "r_showVertexCache", "0", CVAR_RENDERER | CVAR_BOOL, "Print stats about the vertex cache every frame" );
 idCVar				  r_showVertexCacheTimings( "r_showVertexCacheTimings", "0", CVAR_RENDERER | CVAR_BOOL, "Print stats about the vertex cache every frame" );
 
-/*
-==============
-ClearGeoBufferSet
-==============
-*/
+//! Clears the memory usage statistics and allocation count of the given geometry buffer set.
 static void			  ClearGeoBufferSet( geoBufferSet_t& gbs )
 {
 	gbs.indexMemUsed.SetValue( 0 );
@@ -55,11 +51,7 @@ static void			  ClearGeoBufferSet( geoBufferSet_t& gbs )
 	gbs.allocations = 0;
 }
 
-/*
-==============
-MapGeoBufferSet
-==============
-*/
+//! Maps the vertex, index, and joint buffers of a geometry buffer set if they are not already mapped.
 static void MapGeoBufferSet( geoBufferSet_t& gbs )
 {
 	if( gbs.mappedVertexBase == NULL ) {
@@ -75,11 +67,7 @@ static void MapGeoBufferSet( geoBufferSet_t& gbs )
 	}
 }
 
-/*
-==============
-UnmapGeoBufferSet
-==============
-*/
+//! Unmaps the vertex, index, and joint buffers of a geoBufferSet_t if they are currently mapped.
 static void UnmapGeoBufferSet( geoBufferSet_t& gbs )
 {
 	if( gbs.mappedVertexBase != NULL ) {
@@ -98,10 +86,18 @@ static void UnmapGeoBufferSet( geoBufferSet_t& gbs )
 	}
 }
 
-/*
-==============
-AllocGeoBufferSet
-==============
+/*!
+	\brief Allocates vertex, index, and joint buffers for a geometry buffer set with specified byte sizes and usage type
+
+	This function initializes the vertex and index buffers of a geometry buffer set with the specified byte sizes and usage type. If joint bytes are greater than zero, it also allocates a joint
+   buffer. The function then clears the buffer set to ensure it starts in a clean state
+
+	\param gbs Reference to the geometry buffer set to be allocated
+	\param vertexBytes Number of bytes to allocate for the vertex buffer
+	\param indexBytes Number of bytes to allocate for the index buffer
+	\param jointBytes Number of bytes to allocate for the joint buffer, or 0 if not used
+	\param usage Usage type for the buffers
+	\param commandList Command list to use for the buffer allocation
 */
 static void AllocGeoBufferSet( geoBufferSet_t& gbs, const int vertexBytes, const int indexBytes, const int jointBytes, bufferUsageType_t usage, nvrhi::ICommandList* commandList )
 {
@@ -114,11 +110,6 @@ static void AllocGeoBufferSet( geoBufferSet_t& gbs, const int vertexBytes, const
 	ClearGeoBufferSet( gbs );
 }
 
-/*
-==============
-idVertexCache::Init
-==============
-*/
 void idVertexCache::Init( int _uniformBufferOffsetAlignment, nvrhi::ICommandList* commandList )
 {
 	currentFrame = 0;
@@ -145,11 +136,6 @@ void idVertexCache::Init( int _uniformBufferOffsetAlignment, nvrhi::ICommandList
 	MapGeoBufferSet( frameData[listNum] );
 }
 
-/*
-==============
-idVertexCache::Shutdown
-==============
-*/
 void idVertexCache::Shutdown()
 {
 	for( int i = 0; i < NUM_FRAME_DATA; i++ ) {
@@ -164,24 +150,12 @@ void idVertexCache::Shutdown()
 	staticData.jointBuffer.FreeBufferObject();
 }
 
-/*
-==============
-idVertexCache::PurgeAll
-==============
-*/
 void idVertexCache::PurgeAll( nvrhi::ICommandList* commandList )
 {
 	Shutdown();
 	Init( uniformBufferOffsetAlignment, commandList );
 }
 
-/*
-==============
-idVertexCache::FreeStaticData
-
-call on loading a new map
-==============
-*/
 void idVertexCache::FreeStaticData()
 {
 	ClearGeoBufferSet( staticData );
@@ -190,11 +164,6 @@ void idVertexCache::FreeStaticData()
 	mostUsedJoint  = 0;
 }
 
-/*
-==============
-idVertexCache::ActuallyAlloc
-==============
-*/
 vertCacheHandle_t idVertexCache::ActuallyAlloc( geoBufferSet_t& vcs, const void* data, int bytes, cacheType_t type, nvrhi::ICommandList* commandList )
 {
 	if( bytes == 0 ) {
@@ -283,41 +252,21 @@ vertCacheHandle_t idVertexCache::ActuallyAlloc( geoBufferSet_t& vcs, const void*
 	return handle;
 }
 
-/*
-==============
-idVertexCache::AllocVertex
-==============
-*/
 vertCacheHandle_t idVertexCache::AllocVertex( const void* data, int num, size_t size /*= sizeof( idDrawVert ) */, nvrhi::ICommandList* commandList )
 {
 	return ActuallyAlloc( frameData[listNum], data, num * size, CACHE_VERTEX, commandList );
 }
 
-/*
-==============
-idVertexCache::AllocIndex
-==============
-*/
 vertCacheHandle_t idVertexCache::AllocIndex( const void* data, int num, size_t size /*= sizeof( triIndex_t ) */, nvrhi::ICommandList* commandList )
 {
 	return ActuallyAlloc( frameData[listNum], data, num * size, CACHE_INDEX, commandList );
 }
 
-/*
-==============
-idVertexCache::AllocJoint
-==============
-*/
 vertCacheHandle_t idVertexCache::AllocJoint( const void* data, int num, size_t size /*= sizeof( idJointMat ) */, nvrhi::ICommandList* commandList )
 {
 	return ActuallyAlloc( frameData[listNum], data, num * size, CACHE_JOINT, commandList );
 }
 
-/*
-==============
-idVertexCache::AllocStaticVertex
-==============
-*/
 vertCacheHandle_t idVertexCache::AllocStaticVertex( const void* data, int bytes, nvrhi::ICommandList* commandList )
 {
 	if( staticData.vertexMemUsed.GetValue() + bytes > STATIC_VERTEX_MEMORY ) {
@@ -326,11 +275,6 @@ vertCacheHandle_t idVertexCache::AllocStaticVertex( const void* data, int bytes,
 	return ActuallyAlloc( staticData, data, bytes, CACHE_VERTEX, commandList );
 }
 
-/*
-==============
-idVertexCache::AllocStaticIndex
-==============
-*/
 vertCacheHandle_t idVertexCache::AllocStaticIndex( const void* data, int bytes, nvrhi::ICommandList* commandList )
 {
 	if( staticData.indexMemUsed.GetValue() + bytes > STATIC_INDEX_MEMORY ) {
@@ -339,11 +283,6 @@ vertCacheHandle_t idVertexCache::AllocStaticIndex( const void* data, int bytes, 
 	return ActuallyAlloc( staticData, data, bytes, CACHE_INDEX, commandList );
 }
 
-/*
-==============
-idVertexCache::MappedVertexBuffer
-==============
-*/
 byte* idVertexCache::MappedVertexBuffer( vertCacheHandle_t handle )
 {
 	release_assert( !CacheIsStatic( handle ) );
@@ -353,11 +292,6 @@ byte* idVertexCache::MappedVertexBuffer( vertCacheHandle_t handle )
 	return frameData[listNum].mappedVertexBase + offset;
 }
 
-/*
-==============
-idVertexCache::MappedIndexBuffer
-==============
-*/
 byte* idVertexCache::MappedIndexBuffer( vertCacheHandle_t handle )
 {
 	release_assert( !CacheIsStatic( handle ) );
@@ -367,11 +301,6 @@ byte* idVertexCache::MappedIndexBuffer( vertCacheHandle_t handle )
 	return frameData[listNum].mappedIndexBase + offset;
 }
 
-/*
-==============
-idVertexCache::CacheIsCurrent
-==============
-*/
 bool idVertexCache::CacheIsCurrent( const vertCacheHandle_t handle )
 {
 	const int isStatic = handle & VERTCACHE_STATIC;
@@ -385,11 +314,6 @@ bool idVertexCache::CacheIsCurrent( const vertCacheHandle_t handle )
 	return true;
 }
 
-/*
-==============
-idVertexCache::GetVertexBuffer
-==============
-*/
 bool idVertexCache::GetVertexBuffer( vertCacheHandle_t handle, idVertexBuffer* vb )
 {
 	const int	 isStatic = handle & VERTCACHE_STATIC;
@@ -407,11 +331,6 @@ bool idVertexCache::GetVertexBuffer( vertCacheHandle_t handle, idVertexBuffer* v
 	return true;
 }
 
-/*
-==============
-idVertexCache::GetIndexBuffer
-==============
-*/
 bool idVertexCache::GetIndexBuffer( vertCacheHandle_t handle, idIndexBuffer* ib )
 {
 	const int	 isStatic = handle & VERTCACHE_STATIC;
@@ -429,11 +348,6 @@ bool idVertexCache::GetIndexBuffer( vertCacheHandle_t handle, idIndexBuffer* ib 
 	return true;
 }
 
-/*
-==============
-idVertexCache::GetJointBuffer
-==============
-*/
 bool idVertexCache::GetJointBuffer( vertCacheHandle_t handle, idUniformBuffer* jb )
 {
 	const int	 isStatic	 = handle & VERTCACHE_STATIC;
@@ -451,11 +365,6 @@ bool idVertexCache::GetJointBuffer( vertCacheHandle_t handle, idUniformBuffer* j
 	return true;
 }
 
-/*
-==============
-idVertexCache::BeginBackEnd
-==============
-*/
 void idVertexCache::BeginBackEnd()
 {
 	mostUsedVertex = Max( mostUsedVertex, frameData[listNum].vertexMemUsed.GetValue() );

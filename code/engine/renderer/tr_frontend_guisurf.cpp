@@ -34,22 +34,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "RenderCommon.h"
 #include "Model_local.h"
 
-/*
-==========================================================================================
-
-GUI SURFACES
-
-==========================================================================================
-*/
-
-/*
-================
-R_SurfaceToTextureAxis
-
-Calculates two axis for the surface such that a point dotted against
-the axis will give a 0.0 to 1.0 range in S and T when inside the gui surface
-================
-*/
 void R_SurfaceToTextureAxis( const srfTriangles_t* tri, idVec3& origin, idVec3 axis[3] )
 {
 	// find the bounds of the texture
@@ -124,14 +108,7 @@ void R_SurfaceToTextureAxis( const srfTriangles_t* tri, idVec3& origin, idVec3 a
 	VectorMA( origin, boundsOrg.y - aST.y, axis[1], origin );
 }
 
-/*
-=================
-R_RenderGuiSurf
-
-Create a texture space on the given surface and
-call the GUI generator to create quads for it.
-=================
-*/
+//! Renders a GUI surface using the provided user interface and draw surface information
 static void R_RenderGuiSurf( idUserInterface* gui, const drawSurf_t* drawSurf )
 {
 	SCOPED_PROFILE_EVENT( "R_RenderGuiSurf" );
@@ -189,11 +166,6 @@ static void R_RenderGuiSurf( idUserInterface* gui, const drawSurf_t* drawSurf )
 	tr.guiRecursionLevel--;
 }
 
-/*
-================
-R_AddInGameGuis
-================
-*/
 void R_AddInGameGuis( const drawSurf_t* const drawSurfs[], const int numDrawSurfs )
 {
 	SCOPED_PROFILE_EVENT( "R_AddInGameGuis" );
@@ -223,17 +195,6 @@ void R_AddInGameGuis( const drawSurf_t* const drawSurfs[], const int numDrawSurf
 	}
 }
 
-/*
-================,
-R_ReloadGuis_f
-
-Reloads any guis that have had their file timestamps changed.
-An optional "all" parameter will cause all models to reload, even
-if they are not out of date.
-
-Should we also reload the map models?
-================
-*/
 void R_ReloadGuis_f( const idCmdArgs& args )
 {
 	bool all;

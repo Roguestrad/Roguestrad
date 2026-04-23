@@ -31,15 +31,26 @@ If you have questions concerning this license or the applicable additional terms
 
 #include <nvrhi/nvrhi.h>
 
+/*!
+	\class BindingCache
+	\brief A cache for managing binding sets in a graphics rendering pipeline.
+*/
 class BindingCache
 {
 public:
+	//! Initializes a new instance of the BindingCache class with default values.
 	BindingCache();
 
+	//! Initializes the binding cache with the provided device.
 	void					Init( nvrhi::IDevice* _device );
+
+	//! Clears all binding sets and resets the cache state.
 	void					Clear();
 
+	//! Retrieves a cached binding set from the cache based on the provided description and layout.
 	nvrhi::BindingSetHandle GetCachedBindingSet( const nvrhi::BindingSetDesc& desc, nvrhi::IBindingLayout* layout );
+
+	//! Retrieves or creates a binding set from the cache based on the provided description and layout.
 	nvrhi::BindingSetHandle GetOrCreateBindingSet( const nvrhi::BindingSetDesc& desc, nvrhi::IBindingLayout* layout );
 
 private:
@@ -49,14 +60,23 @@ private:
 	idSysMutex						mutex;
 };
 
+/*!
+	\class SamplerCache
+	\brief A cache for managing sampler objects.
+*/
 class SamplerCache
 {
 public:
+	//! Initializes an empty SamplerCache instance.
 	SamplerCache() { }
 
+	//! Initializes the sampler cache with the provided device
 	void				 Init( nvrhi::IDevice* _device );
+
+	//! Clears all samplers from the cache.
 	void				 Clear();
 
+	//! Returns or creates a sampler handle based on the provided sampler description
 	nvrhi::SamplerHandle GetOrCreateSampler( nvrhi::SamplerDesc samplerDesc );
 
 private:

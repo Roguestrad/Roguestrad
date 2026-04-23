@@ -63,11 +63,6 @@ struct vertexWeight_t {
 	float  jointWeight;
 };
 
-/*
-====================
-idMD5Mesh::idMD5Mesh
-====================
-*/
 idMD5Mesh::idMD5Mesh()
 {
 	shader			 = NULL;
@@ -80,11 +75,6 @@ idMD5Mesh::idMD5Mesh()
 	surfaceNum		 = 0;
 }
 
-/*
-====================
-idMD5Mesh::~idMD5Mesh
-====================
-*/
 idMD5Mesh::~idMD5Mesh()
 {
 	if( meshJoints != NULL ) {
@@ -97,11 +87,6 @@ idMD5Mesh::~idMD5Mesh()
 	}
 }
 
-/*
-====================
-idMD5Mesh::ParseMesh
-====================
-*/
 void idMD5Mesh::ParseMesh( idLexer& parser, int numJoints, const idJointMat* joints )
 {
 	idToken token;
@@ -402,10 +387,16 @@ void idMD5Mesh::ParseMesh( idLexer& parser, int numJoints, const idJointMat* joi
 	Mem_Free( basePose );
 }
 
-/*
-============
-TransformVertsAndTangents
-============
+/*!
+	\brief Transforms vertex positions, normals, and tangents using weighted joint matrices
+
+	This function transforms vertex data by applying skinning transformations based on joint matrices. It uses weighted influences from the base vertex colors and applies the corresponding joint
+   transformations to compute the final vertex attributes. The transformation includes position, normal, and tangent vectors, with the tangent's w component preserved from the original vertex.
+
+	\param targetVerts Output array of transformed vertices
+	\param numVerts Number of vertices to transform
+	\param baseVerts Input array of base vertices to transform
+	\param joints Array of joint transformation matrices
 */
 void TransformVertsAndTangents( idDrawVert* targetVerts, const int numVerts, const idDrawVert* baseVerts, const idJointMat* joints )
 {
@@ -435,11 +426,6 @@ void TransformVertsAndTangents( idDrawVert* targetVerts, const int numVerts, con
 	}
 }
 
-/*
-====================
-idMD5Mesh::UpdateSurface
-====================
-*/
 void idMD5Mesh::UpdateSurface( const struct renderEntity_s* ent, const idJointMat* entJoints, const idJointMat* entJointsInverted, modelSurface_t* surf )
 {
 	tr.pc.c_deformedSurfaces++;
@@ -499,11 +485,6 @@ void idMD5Mesh::UpdateSurface( const struct renderEntity_s* ent, const idJointMa
 	CalculateBounds( entJoints, tri->bounds );
 }
 
-/*
-====================
-idMD5Mesh::CalculateBounds
-====================
-*/
 void idMD5Mesh::CalculateBounds( const idJointMat* entJoints, idBounds& bounds ) const
 {
 #if defined( USE_INTRINSICS_SSE )
@@ -552,11 +533,6 @@ void idMD5Mesh::CalculateBounds( const idJointMat* entJoints, idBounds& bounds )
 #endif
 }
 
-/*
-====================
-idMD5Mesh::NearestJoint
-====================
-*/
 int idMD5Mesh::NearestJoint( int a, int b, int c ) const
 {
 	// duplicated vertices might not have weights
@@ -592,11 +568,6 @@ int idMD5Mesh::NearestJoint( int a, int b, int c ) const
 
 ***********************************************************************/
 
-/*
-====================
-idRenderModelMD5::ParseJoint
-====================
-*/
 void idRenderModelMD5::ParseJoint( idLexer& parser, idMD5Joint* joint, idJointQuat* defaultPose )
 {
 	//
@@ -627,22 +598,12 @@ void idRenderModelMD5::ParseJoint( idLexer& parser, idMD5Joint* joint, idJointQu
 	defaultPose->q.w = defaultPose->q.CalcW();
 }
 
-/*
-====================
-idRenderModelMD5::InitFromFile
-====================
-*/
 void idRenderModelMD5::InitFromFile( const char* fileName, const idImportOptions* options )
 {
 	name = fileName;
 	LoadModel();
 }
 
-/*
-========================
-idRenderModelMD5::LoadBinaryModel
-========================
-*/
 bool idRenderModelMD5::LoadBinaryModel( idFile* file, const ID_TIME_T sourceTimeStamp, const ID_TIME_T declSourceTimeStamp )
 {
 	if( !idRenderModelStatic::LoadBinaryModel( file, sourceTimeStamp, declSourceTimeStamp ) ) {
@@ -764,11 +725,6 @@ bool idRenderModelMD5::LoadBinaryModel( idFile* file, const ID_TIME_T sourceTime
 	return true;
 }
 
-/*
-========================
-idRenderModelMD5::WriteBinaryModel
-========================
-*/
 void idRenderModelMD5::WriteBinaryModel( idFile* file, ID_TIME_T* _timeStamp ) const
 {
 	idRenderModelStatic::WriteBinaryModel( file );
@@ -849,14 +805,6 @@ void idRenderModelMD5::WriteBinaryModel( idFile* file, ID_TIME_T* _timeStamp ) c
 	}
 }
 
-/*
-====================
-idRenderModelMD5::LoadModel
-
-used for initial loads, reloadModel, and reloading the data of purged models
-Upon exit, the model will absolutely be valid, but possibly as a default model
-====================
-*/
 void idRenderModelMD5::LoadModel()
 {
 	int		version;
@@ -967,11 +915,6 @@ void idRenderModelMD5::CreateBuffers( nvrhi::ICommandList* commandList )
 	}
 }
 
-/*
-==============
-idRenderModelMD5::Print
-==============
-*/
 void idRenderModelMD5::Print() const
 {
 	common->Printf( "%s\n", name.c_str() );
@@ -992,11 +935,6 @@ void idRenderModelMD5::Print() const
 	common->Printf( "%4i joints.\n", joints.Num() );
 }
 
-/*
-==============
-idRenderModelMD5::List
-==============
-*/
 void idRenderModelMD5::List() const
 {
 	int				 i;
@@ -1017,14 +955,6 @@ void idRenderModelMD5::List() const
 	common->Printf( "\n" );
 }
 
-/*
-====================
-idRenderModelMD5::Bounds
-
-This calculates a rough bounds by using the joint radii without
-transforming all the points
-====================
-*/
 idBounds idRenderModelMD5::Bounds( const renderEntity_t* ent ) const
 {
 	if( ent == NULL ) {
@@ -1035,11 +965,6 @@ idBounds idRenderModelMD5::Bounds( const renderEntity_t* ent ) const
 	return ent->bounds;
 }
 
-/*
-====================
-idRenderModelMD5::DrawJoints
-====================
-*/
 void idRenderModelMD5::DrawJoints( const renderEntity_t* ent, const viewDef_t* view ) const
 {
 	int				  i;
@@ -1083,10 +1008,18 @@ void idRenderModelMD5::DrawJoints( const renderEntity_t* ent, const viewDef_t* v
 	}
 }
 
-/*
-====================
-TransformJoints
-====================
+/*!
+	\brief Applies matrix transformation to joint data by multiplying corresponding joints from two input arrays and storing the result in the output array
+
+	This function performs joint transformation by multiplying pairs of joint matrices from two input arrays and storing the results in an output array. It uses SSE intrinsics for optimized
+   performance when available, processing two joints at a time. When SSE is not available, it falls back to a standard loop using the idJointMat::Multiply method. The function assumes that all input
+   and output pointers are properly aligned to 16-byte boundaries as verified by assertions.
+
+	\param outJoints pointer to the output array of joint matrices where results are stored
+	\param numJoints total number of joints to process
+	\param inJoints1 pointer to the first input array of joint matrices
+	\param inJoints2 pointer to the second input array of joint matrices
+	\throws assertion failure if any of the pointer alignments do not meet 16-byte boundary requirements
 */
 static void TransformJoints( idJointMat* __restrict outJoints, const int numJoints, const idJointMat* __restrict inJoints1, const idJointMat* __restrict inJoints2 )
 {
@@ -1183,11 +1116,6 @@ static void TransformJoints( idJointMat* __restrict outJoints, const int numJoin
 #endif
 }
 
-/*
-====================
-idRenderModelMD5::InstantiateDynamicModel
-====================
-*/
 idRenderModel* idRenderModelMD5::InstantiateDynamicModel( const struct renderEntity_s* ent, const viewDef_t* view, idRenderModel* cachedModel )
 {
 	if( cachedModel != NULL && !r_useCachedDynamicModels.GetBool() ) {
@@ -1289,51 +1217,26 @@ idRenderModel* idRenderModelMD5::InstantiateDynamicModel( const struct renderEnt
 	return staticModel;
 }
 
-/*
-====================
-idRenderModelMD5::IsDynamicModel
-====================
-*/
 dynamicModel_t idRenderModelMD5::IsDynamicModel() const
 {
 	return DM_CACHED;
 }
 
-/*
-====================
-idRenderModelMD5::NumJoints
-====================
-*/
 int idRenderModelMD5::NumJoints() const
 {
 	return joints.Num();
 }
 
-/*
-====================
-idRenderModelMD5::GetJoints
-====================
-*/
 const idMD5Joint* idRenderModelMD5::GetJoints() const
 {
 	return joints.Ptr();
 }
 
-/*
-====================
-idRenderModelMD5::GetDefaultPose
-====================
-*/
 const idJointQuat* idRenderModelMD5::GetDefaultPose() const
 {
 	return defaultPose.Ptr();
 }
 
-/*
-====================
-idRenderModelMD5::GetJointHandle
-====================
-*/
 jointHandle_t idRenderModelMD5::GetJointHandle( const char* name ) const
 {
 	const idMD5Joint* joint = joints.Ptr();
@@ -1346,11 +1249,6 @@ jointHandle_t idRenderModelMD5::GetJointHandle( const char* name ) const
 	return INVALID_JOINT;
 }
 
-/*
-=====================
-idRenderModelMD5::GetJointName
-=====================
-*/
 const char* idRenderModelMD5::GetJointName( jointHandle_t handle ) const
 {
 	if( ( handle < 0 ) || ( handle >= joints.Num() ) ) {
@@ -1360,11 +1258,6 @@ const char* idRenderModelMD5::GetJointName( jointHandle_t handle ) const
 	return joints[handle].name;
 }
 
-/*
-====================
-idRenderModelMD5::NearestJoint
-====================
-*/
 int idRenderModelMD5::NearestJoint( int surfaceNum, int a, int b, int c ) const
 {
 	if( surfaceNum > meshes.Num() ) {
@@ -1380,15 +1273,6 @@ int idRenderModelMD5::NearestJoint( int surfaceNum, int a, int b, int c ) const
 	return 0;
 }
 
-/*
-====================
-idRenderModelMD5::TouchData
-
-models that are already loaded at level start time
-will still touch their materials to make sure they
-are kept loaded
-====================
-*/
 void idRenderModelMD5::TouchData()
 {
 	for( int i = 0; i < meshes.Num(); i++ ) {
@@ -1396,14 +1280,6 @@ void idRenderModelMD5::TouchData()
 	}
 }
 
-/*
-===================
-idRenderModelMD5::PurgeModel
-
-frees all the data, but leaves the class around for dangling references,
-which can regenerate the data with LoadModel()
-===================
-*/
 void idRenderModelMD5::PurgeModel()
 {
 	purged = true;
@@ -1412,11 +1288,6 @@ void idRenderModelMD5::PurgeModel()
 	meshes.Clear();
 }
 
-/*
-===================
-idRenderModelMD5::Memory
-===================
-*/
 int idRenderModelMD5::Memory() const
 {
 	int total = sizeof( *this );
@@ -1440,7 +1311,6 @@ int idRenderModelMD5::Memory() const
 	return total;
 }
 
-// RB begin
 void idRenderModelMD5::ExportOBJ( idFile* objFile, idFile* mtlFile, ID_TIME_T* _timeStamp )
 {
 	if( objFile == NULL || mtlFile == NULL ) {
@@ -1470,4 +1340,3 @@ void idRenderModelMD5::ExportOBJ( idFile* objFile, idFile* mtlFile, ID_TIME_T* _
 		delete newmodel;
 	}
 }
-// RB end

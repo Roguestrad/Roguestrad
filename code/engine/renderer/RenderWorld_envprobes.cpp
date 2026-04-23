@@ -41,14 +41,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "../sys/DeviceManager.h"
 extern DeviceManager* deviceManager;
 
-/*
-=============
-R_SetEnvprobeDefViewEnvprobe
-
-If the envprobeDef is not already on the viewEnvprobe list, create
-a viewEnvprobe and add it to the list with an empty scissor rect.
-=============
-*/
+//! Sets up a view environment probe for the current frame if not already done
 viewEnvprobe_t*		  R_SetEnvprobeDefViewEnvprobe( RenderEnvprobeLocal* probe )
 {
 	if( probe->viewCount == tr.viewCount ) {
@@ -98,13 +91,6 @@ viewEnvprobe_t*		  R_SetEnvprobeDefViewEnvprobe( RenderEnvprobeLocal* probe )
 	return vProbe;
 }
 
-/*
-================
-CullEnvprobeByPortals
-
-Return true if the light frustum does not intersect the current portal chain.
-================
-*/
 bool idRenderWorldLocal::CullEnvprobeByPortals( const RenderEnvprobeLocal* probe, const portalStack_t* ps )
 {
 	if( r_useLightPortalCulling.GetInteger() == 1 ) {
@@ -120,14 +106,6 @@ bool idRenderWorldLocal::CullEnvprobeByPortals( const RenderEnvprobeLocal* probe
 	return false;
 }
 
-/*
-===================
-AddAreaViewEnvprobes
-
-This is the only point where lights get added to the viewLights list.
-Any lights that are visible through the current portalStack will have their scissor rect updated.
-===================
-*/
 void idRenderWorldLocal::AddAreaViewEnvprobes( int areaNum, const portalStack_t* ps )
 {
 	portalArea_t* area = &portalAreas[areaNum];
@@ -165,11 +143,6 @@ void idRenderWorldLocal::AddAreaViewEnvprobes( int areaNum, const portalStack_t*
 	}
 }
 
-/*
-==================
-R_SampleCubeMapHDR
-==================
-*/
 void R_SampleCubeMapHDR( const idVec3& dir, int size, byte* buffers[6], float result[3], float& u, float& v )
 {
 	float adir[3];
@@ -280,15 +253,7 @@ void R_SampleCubeMapHDR16F( const idVec3& dir, int size, halfFloat_t* buffers[6]
 	result[2] = F16toF32( buffers[axis][( y * size + x ) * 3 + 2] );
 }
 
-// http://holger.dammertz.org/stuff/notes_HammersleyOnHemisphere.html
-
-// To implement the Hammersley point set we only need an efficent way to implement the Van der Corput radical inverse phi2(i).
-// Since it is in base 2 we can use some basic bit operations to achieve this.
-// The brilliant book Hacker's Delight [warren01] provides us a a simple way to reverse the bits in a given 32bit integer. Using this, the following code then implements phi2(i)
-
-// RB: radical inverse implementation from the Mitsuba PBR system
-
-// Van der Corput radical inverse in base 2 with single precision
+//! Computes the van der Corput radical inverse in base 2 with single precision for the given input and scramble value
 inline float RadicalInverse_VdC( uint32_t n, uint32_t scramble = 0U )
 {
 	/* Efficiently reverse the bits in 'n' using binary operations */
@@ -308,12 +273,13 @@ inline float RadicalInverse_VdC( uint32_t n, uint32_t scramble = 0U )
 	return ( float )n / ( float )( 1U << 24 );
 }
 
-// The ith point xi is then computed by
+//! Computes the ith point of a 2D Hammersley sequence with N points
 inline idVec2 Hammersley2D( uint i, uint N )
 {
 	return idVec2( float( i ) / float( N ), RadicalInverse_VdC( i ) );
 }
 
+//! Generates a weighted sample direction using GGX distribution for importance sampling.
 idVec3 ImportanceSampleGGX( const idVec2& Xi, const idVec3& N, float roughness )
 {
 	float  a = roughness * roughness;
@@ -340,6 +306,7 @@ idVec3 ImportanceSampleGGX( const idVec2& Xi, const idVec3& N, float roughness )
 	return sampleVec;
 }
 
+//! Calculates the Schlick-GGX geometry function for IBL lighting.
 float Geometry_SchlickGGX( float NdotV, float roughness )
 {
 	// note that we use a different k for IBL
@@ -352,6 +319,19 @@ float Geometry_SchlickGGX( float NdotV, float roughness )
 	return nom / denom;
 }
 
+/*!
+	\brief Computes the Smith geometry shadowing/masking term for microfacet surface reflectance models.
+
+	This function calculates the geometric attenuation factor used in physically based rendering to determine how much light is shadowed or masked by microfacets on a surface. It takes into account
+   the surface normal, view direction, and light direction vectors along with the surface roughness parameter. The calculation uses the Schlick-GGX approximation for both view and light directions to
+   compute the combined geometric term. The result is a value between 0 and 1 that represents the probability that a microfacet will not be shadowed or masked.
+
+	\param N Surface normal vector
+	\param V View direction vector
+	\param L Light direction vector
+	\param roughness Surface roughness parameter, typically in range [0,1]
+	\return Geometric shadowing/masking term value in range [0, 1]
+*/
 float Geometry_Smith( idVec3 N, idVec3 V, idVec3 L, float roughness )
 {
 	float NdotV = Max( ( N * V ), 0.0f );
@@ -363,6 +343,7 @@ float Geometry_Smith( idVec3 N, idVec3 V, idVec3 L, float roughness )
 	return ggx1 * ggx2;
 }
 
+//! Integrates the BRDF for a given view direction and roughness to compute reflection properties
 idVec2 IntegrateBRDF( float NdotV, float roughness, int sampleCount )
 {
 	idVec3 V;
@@ -403,7 +384,7 @@ idVec2 IntegrateBRDF( float NdotV, float roughness, int sampleCount )
 	return idVec2( A, B );
 }
 
-// Compute normalized oct coord, mapping top left of top left pixel to (-1,-1)
+//! Computes normalized octahedral coordinates for a given pixel position within a probe with border side dimension.
 idVec2 NormalizedOctCoord( int x, int y, const int probeWithBorderSide )
 {
 #if 0
@@ -433,6 +414,7 @@ idVec2 NormalizedOctCoord( int x, int y, const int probeWithBorderSide )
 #endif
 }
 
+//! Converts octahedral coordinates to normalized device coordinates
 static inline idVec2 NormalizedOctCoordNoBorder( int x, int y, const int probeWithBorderSide )
 {
 	int	   probeSideLength = probeWithBorderSide;
@@ -497,6 +479,20 @@ static inline float CubemapTexelSolidAngle( float u, float v, float _invFaceSize
 	return solidAngle;
 }
 
+/*!
+	\brief Converts 2D pixel coordinates and cubemap side index to a normalized 3D direction vector
+
+	This function maps 2D coordinates on a cubemap face to a 3D direction vector by first normalizing the pixel coordinates to the range [-1, 1], then using the side index to determine which face of
+   the cube the coordinates belong to. The function handles six different cubemap faces corresponding to the six possible directions (positive and negative X, Y, Z). The resulting vector is normalized
+   to unit length.
+
+	\param x X coordinate of the pixel on the cubemap face
+	\param y Y coordinate of the pixel on the cubemap face
+	\param s Cubemap side index (0-5 representing +X, -X, +Y, -Y, +Z, -Z)
+	\param width Width of the cubemap face in pixels
+	\param height Height of the cubemap face in pixels
+	\return Normalized 3D direction vector corresponding to the specified pixel coordinates and cubemap side
+*/
 static inline idVec3 MapXYSToDirection( uint64 x, uint64 y, uint64 s, uint64 width, uint64 height )
 {
 	float u = ( ( x + 0.5f ) / float( width ) ) * 2.0f - 1.0f;
@@ -532,6 +528,7 @@ static inline idVec3 MapXYSToDirection( uint64 x, uint64 y, uint64 s, uint64 wid
 	return dir;
 }
 
+//! Calculates irradiance for environment probes using spherical harmonics from source cubemap data
 void CalculateIrradianceJob( calcEnvprobeParms_t* parms )
 {
 	halfFloat_t* buffers[6];
@@ -674,6 +671,7 @@ void CalculateIrradianceJob( calcEnvprobeParms_t* parms )
 	parms->time = end - start;
 }
 
+//! Calculates radiance for environment probe using specified parameters
 void CalculateRadianceJob( calcEnvprobeParms_t* parms )
 {
 	halfFloat_t* buffers[6];
@@ -778,6 +776,20 @@ void CalculateRadianceJob( calcEnvprobeParms_t* parms )
 REGISTER_PARALLEL_JOB( CalculateIrradianceJob, "CalculateIrradianceJob" );
 REGISTER_PARALLEL_JOB( CalculateRadianceJob, "CalculateRadianceJob" );
 
+/*!
+	\brief Generates an ambient map texture for environment lighting from input buffers
+
+	This function creates an ambient map by processing input radiance buffers for six faces of an environment probe. It supports both irradiance and radiance calculations depending on the specular
+   parameter. The resulting texture is stored in EXR format and can be processed either synchronously or asynchronously using worker threads. The function allocates memory for the output buffer and
+   manages the job queue for environment probe calculations.
+
+	\param baseName Base name for the output file
+	\param buffers Array of 6 pointers to input radiance data for each face
+	\param suffix File suffix to append to the base name
+	\param outSize Width and height of the output texture
+	\param specular True to calculate radiance, false to calculate irradiance
+	\param useThreads True to process using multiple threads, false for single-threaded operation
+*/
 void R_MakeAmbientMap( const char* baseName, byte* buffers[6], const char* suffix, int outSize, bool specular, bool useThreads )
 {
 	idStr				 fullname;
@@ -823,6 +835,7 @@ void R_MakeAmbientMap( const char* baseName, byte* buffers[6], const char* suffi
 	}
 }
 
+//! Bakes environment probes for the current map
 CONSOLE_COMMAND_SHIP( bakeEnvironmentProbes, "Bake environment probes", NULL )
 {
 	idStr		 fullname;
@@ -1101,6 +1114,7 @@ CONSOLE_COMMAND_SHIP( bakeEnvironmentProbes, "Bake environment probes", NULL )
 	r_clear.SetInteger( oldClear );
 }
 
+//! Generates a GGX BRDF lookup table for environment rendering.
 CONSOLE_COMMAND( makeBrdfLUT, "make a GGX BRDF lookup table", NULL )
 {
 	int					   outSize = 256;

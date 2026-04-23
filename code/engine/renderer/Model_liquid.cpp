@@ -36,11 +36,6 @@ If you have questions concerning this license or the applicable additional terms
 #define LIQUID_MAX_SKIP_FRAMES 5
 #define LIQUID_MAX_TYPES	   3
 
-/*
-====================
-idRenderModelLiquid::idRenderModelLiquid
-====================
-*/
 idRenderModelLiquid::idRenderModelLiquid()
 {
 	verts_x		= 32;
@@ -60,11 +55,6 @@ idRenderModelLiquid::idRenderModelLiquid()
 	random.SetSeed( 0 );
 }
 
-/*
-====================
-idRenderModelLiquid::GenerateSurface
-====================
-*/
 modelSurface_t idRenderModelLiquid::GenerateSurface( float lerp )
 {
 	srfTriangles_t* tri;
@@ -114,11 +104,6 @@ modelSurface_t idRenderModelLiquid::GenerateSurface( float lerp )
 	return surf;
 }
 
-/*
-====================
-idRenderModelLiquid::WaterDrop
-====================
-*/
 void idRenderModelLiquid::WaterDrop( int x, int y, float* page )
 {
 	int	  cx, cy;
@@ -165,11 +150,6 @@ void idRenderModelLiquid::WaterDrop( int x, int y, float* page )
 	}
 }
 
-/*
-====================
-idRenderModelLiquid::IntersectBounds
-====================
-*/
 void idRenderModelLiquid::IntersectBounds( const idBounds& bounds, float displacement )
 {
 	int	   cx, cy;
@@ -213,11 +193,6 @@ void idRenderModelLiquid::IntersectBounds( const idBounds& bounds, float displac
 	}
 }
 
-/*
-====================
-idRenderModelLiquid::Update
-====================
-*/
 void idRenderModelLiquid::Update()
 {
 	int	   x, y;
@@ -281,11 +256,6 @@ void idRenderModelLiquid::Update()
 	}
 }
 
-/*
-====================
-idRenderModelLiquid::Reset
-====================
-*/
 void idRenderModelLiquid::Reset()
 {
 	int i, x, y;
@@ -310,11 +280,6 @@ void idRenderModelLiquid::Reset()
 	}
 }
 
-/*
-====================
-idRenderModelLiquid::InitFromFile
-====================
-*/
 void idRenderModelLiquid::InitFromFile( const char* fileName, nvrhi::ICommandList* commandList, const idImportOptions* options )
 {
 	int			i, x, y;
@@ -433,11 +398,6 @@ void idRenderModelLiquid::InitFromFile( const char* fileName, nvrhi::ICommandLis
 	Reset();
 }
 
-/*
-====================
-idRenderModelLiquid::InstantiateDynamicModel
-====================
-*/
 idRenderModel* idRenderModelLiquid::InstantiateDynamicModel( const struct renderEntity_s* ent, const viewDef_t* view, idRenderModel* cachedModel )
 {
 	idRenderModelStatic* staticModel;
@@ -485,32 +445,17 @@ idRenderModel* idRenderModelLiquid::InstantiateDynamicModel( const struct render
 	return staticModel;
 }
 
-/*
-====================
-idRenderModelLiquid::IsDynamicModel
-====================
-*/
 dynamicModel_t idRenderModelLiquid::IsDynamicModel() const
 {
 	return DM_CONTINUOUS;
 }
 
-/*
-====================
-idRenderModelLiquid::Bounds
-====================
-*/
 idBounds idRenderModelLiquid::Bounds( const struct renderEntity_s* ent ) const
 {
 	// FIXME: need to do this better
 	return bounds;
 }
 
-/*
-====================
-idRenderModelLiquid::CreateBuffers
-====================
-*/
 void idRenderModelLiquid::CreateBuffers( nvrhi::ICommandList* commandList )
 {
 	R_CreateDeformStaticVertices( deformInfo, commandList );

@@ -33,19 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "RenderCommon.h"
 
-/*
-=================================================================================
-
-ENTITY DEFS
-
-=================================================================================
-*/
-
-/*
-=================
-R_DeriveEntityData
-=================
-*/
+//! Computes and derives the model matrix, render matrix, and bounds for a render entity based on its parameters.
 void R_DeriveEntityData( idRenderEntityLocal* entity )
 {
 	R_AxisToModelMatrix( entity->parms.axis, entity->parms.origin, entity->modelMatrix );
@@ -59,14 +47,6 @@ void R_DeriveEntityData( idRenderEntityLocal* entity )
 	idRenderMatrix::ProjectedBounds( entity->globalReferenceBounds, entity->inverseBaseModelProject, bounds_unitCube, false );
 }
 
-/*
-===================
-R_FreeEntityDefDerivedData
-
-Used by both FreeEntityDef and UpdateEntityDef
-Does not actually free the entityDef.
-===================
-*/
 void R_FreeEntityDefDerivedData( idRenderEntityLocal* def, bool keepDecals, bool keepCachedDynamicModel )
 {
 	// free all the interactions
@@ -105,21 +85,11 @@ void R_FreeEntityDefDerivedData( idRenderEntityLocal* def, bool keepDecals, bool
 	def->entityRefs = NULL;
 }
 
-/*
-===================
-R_FreeEntityDefDecals
-===================
-*/
 void R_FreeEntityDefDecals( idRenderEntityLocal* def )
 {
 	def->decals = NULL;
 }
 
-/*
-===================
-R_FreeEntityDefFadedDecals
-===================
-*/
 void R_FreeEntityDefFadedDecals( idRenderEntityLocal* def, int time )
 {
 	if( def->decals != NULL ) {
@@ -127,26 +97,12 @@ void R_FreeEntityDefFadedDecals( idRenderEntityLocal* def, int time )
 	}
 }
 
-/*
-===================
-R_FreeEntityDefOverlay
-===================
-*/
 void R_FreeEntityDefOverlay( idRenderEntityLocal* def )
 {
 	def->overlays = NULL;
 }
 
-/*
-===============
-R_CreateEntityRefs
-
-Creates all needed model references in portal areas,
-chaining them to both the area and the entityDef.
-
-Bumps tr.viewCount, which means viewCount can change many times each frame.
-===============
-*/
+//! Creates entity references for rendering by deriving bounds and pushing them into the BSP tree.
 void R_CreateEntityRefs( idRenderEntityLocal* entity )
 {
 	if( entity->parms.hModel == NULL ) {
@@ -182,21 +138,7 @@ void R_CreateEntityRefs( idRenderEntityLocal* entity )
 	entity->world->PushFrustumIntoTree( entity, NULL, entity->inverseBaseModelProject, bounds_unitCube );
 }
 
-/*
-=================================================================================
-
-LIGHT DEFS
-
-=================================================================================
-*/
-
-/*
-========================
-R_ComputePointLightProjectionMatrix
-
-Computes the light projection matrix for a point light.
-========================
-*/
+//! Computes the light projection matrix for a point light.
 static float R_ComputePointLightProjectionMatrix( idRenderLightLocal* light, idRenderMatrix& localProject )
 {
 	assert( light->parms.pointLight );
@@ -218,13 +160,7 @@ static float R_ComputePointLightProjectionMatrix( idRenderLightLocal* light, idR
 static const float SPOT_LIGHT_MIN_Z_NEAR = 8.0f;
 static const float SPOT_LIGHT_MIN_Z_FAR	 = 16.0f;
 
-/*
-========================
-R_ComputeSpotLightProjectionMatrix
-
-Computes the light projection matrix for a spot light.
-========================
-*/
+//! Computes the projection matrix for a spot light and returns a scaling factor.
 static float	   R_ComputeSpotLightProjectionMatrix( idRenderLightLocal* light, idRenderMatrix& localProject )
 {
 	const float	 targetDistSqr = light->parms.target.LengthSqr();
@@ -281,13 +217,7 @@ static float	   R_ComputeSpotLightProjectionMatrix( idRenderLightLocal* light, i
 	return 1.0f / ( zNear + zFar );
 }
 
-/*
-========================
-R_ComputeParallelLightProjectionMatrix
-
-Computes the light projection matrix for a parallel light.
-========================
-*/
+//! Computes the projection matrix for a parallel light.
 static float R_ComputeParallelLightProjectionMatrix( idRenderLightLocal* light, idRenderMatrix& localProject )
 {
 	assert( light->parms.parallel );
@@ -306,13 +236,6 @@ static float R_ComputeParallelLightProjectionMatrix( idRenderLightLocal* light, 
 	return 1.0f;
 }
 
-/*
-=================
-R_DeriveLightData
-
-Fills everything in based on light->parms
-=================
-*/
 void R_DeriveLightData( idRenderLightLocal* light )
 {
 	// decide which light shader we are going to use
@@ -432,13 +355,7 @@ void R_DeriveLightData( idRenderLightLocal* light )
 	idRenderMatrix::ProjectedBounds( light->globalLightBounds, light->inverseBaseLightProject, bounds_zeroOneCube, false );
 }
 
-/*
-====================
-R_FreeLightDefDerivedData
-
-Frees all references and lit surfaces from the light
-====================
-*/
+//! Frees all references and lit surfaces from the light
 void R_FreeLightDefDerivedData( idRenderLightLocal* ldef )
 {
 	// remove any portal fog references
@@ -466,7 +383,6 @@ void R_FreeLightDefDerivedData( idRenderLightLocal* ldef )
 	ldef->references = NULL;
 }
 
-// RB begin
 void R_RenderLightFrustum( const renderLight_t& renderLight, idPlane lightFrustum[6] )
 {
 	idRenderLightLocal fakeLight;
@@ -483,14 +399,6 @@ void R_RenderLightFrustum( const renderLight_t& renderLight, idPlane lightFrustu
 	}
 }
 
-/*
-=====================
-R_PolytopeSurface
-
-Generate vertexes and indexes for a polytope, and optionally returns the polygon windings.
-The positive sides of the planes will be visible.
-=====================
-*/
 srfTriangles_t* R_PolytopeSurface( int numPlanes, const idPlane* planes, idWinding** windings )
 {
 	int				i, j;
@@ -563,13 +471,8 @@ srfTriangles_t* R_PolytopeSurface( int numPlanes, const idPlane* planes, idWindi
 
 	return tri;
 }
-// RB end
 
-/*
-===============
-WindingCompletelyInsideLight
-===============
-*/
+//! Determines if a winding is completely inside a light's projection volume.
 static bool WindingCompletelyInsideLight( const idWinding* w, const idRenderLightLocal* ldef )
 {
 	for( int i = 0; i < w->GetNumPoints(); i++ ) {
@@ -580,14 +483,7 @@ static bool WindingCompletelyInsideLight( const idWinding* w, const idRenderLigh
 	return true;
 }
 
-/*
-======================
-R_CreateLightDefFogPortals
-
-When a fog light is created or moved, see if it completely
-encloses any portals, which may allow them to be fogged closed.
-======================
-*/
+//! Creates fog portals for a light definition if the light is a fog light and completely encloses portals.
 static void R_CreateLightDefFogPortals( idRenderLightLocal* ldef )
 {
 	ldef->foggedPortals = NULL;
@@ -624,11 +520,6 @@ static void R_CreateLightDefFogPortals( idRenderLightLocal* ldef )
 	}
 }
 
-/*
-=================
-R_CreateLightRefs
-=================
-*/
 void R_CreateLightRefs( idRenderLightLocal* light )
 {
 	// derive light data
@@ -666,14 +557,7 @@ void R_CreateLightRefs( idRenderLightLocal* light )
 	R_CreateLightDefFogPortals( light );
 }
 
-/*
-=================================================================================
-
-ENVPROBE DEFS
-
-=================================================================================
-*/
-
+//! Derives environment probe data for a given render environment probe.
 void R_DeriveEnvprobeData( RenderEnvprobeLocal* probe )
 {
 	idStr basename = probe->world->mapName;
@@ -798,21 +682,6 @@ void R_FreeEnvprobeDefDerivedData( RenderEnvprobeLocal* probe )
 	probe->references = NULL;
 }
 
-/*
-=================================================================================
-
-WORLD MODEL & LIGHT DEFS
-
-=================================================================================
-*/
-
-/*
-===================
-R_FreeDerivedData
-
-ReloadModels and RegenerateWorld call this
-===================
-*/
 void R_FreeDerivedData()
 {
 	for( int j = 0; j < tr.worlds.Num(); j++ ) {
@@ -846,11 +715,6 @@ void R_FreeDerivedData()
 	}
 }
 
-/*
-===================
-R_CheckForEntityDefsUsingModel
-===================
-*/
 void R_CheckForEntityDefsUsingModel( idRenderModel* model )
 {
 	for( int j = 0; j < tr.worlds.Num(); j++ ) {
@@ -870,13 +734,6 @@ void R_CheckForEntityDefsUsingModel( idRenderModel* model )
 	}
 }
 
-/*
-===================
-R_ReCreateWorldReferences
-
-ReloadModels and RegenerateWorld call this
-===================
-*/
 void R_ReCreateWorldReferences()
 {
 	// let the interaction generation code know this

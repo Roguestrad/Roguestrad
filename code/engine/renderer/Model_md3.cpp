@@ -40,7 +40,6 @@ If you have questions concerning this license or the applicable additional terms
 
 ***********************************************************************/
 
-// DG: added constructor to make sure all members are initialized
 idRenderModelMD3::idRenderModelMD3() :
 	index( -1 ),
 	dataSize( 0 ),
@@ -51,11 +50,6 @@ idRenderModelMD3::idRenderModelMD3() :
 
 #define LL( x ) x = LittleLong( x )
 
-/*
-=================
-idRenderModelMD3::InitFromFile
-=================
-*/
 void idRenderModelMD3::InitFromFile( const char* fileName, const idImportOptions* options )
 {
 	int				i, j;
@@ -210,21 +204,11 @@ void idRenderModelMD3::InitFromFile( const char* fileName, const idImportOptions
 	fileSystem->FreeFile( buffer );
 }
 
-/*
-=================
-idRenderModelMD3::IsDynamicModel
-=================
-*/
 dynamicModel_t idRenderModelMD3::IsDynamicModel() const
 {
 	return DM_CACHED;
 }
 
-/*
-=================
-idRenderModelMD3::LerpMeshVertexes
-=================
-*/
 void idRenderModelMD3::LerpMeshVertexes( srfTriangles_t* tri, const struct md3Surface_s* surf, const float backlerp, const int frame, const int oldframe ) const
 {
 	short *oldXyz, *newXyz;
@@ -272,11 +256,6 @@ void idRenderModelMD3::LerpMeshVertexes( srfTriangles_t* tri, const struct md3Su
 	}
 }
 
-/*
-=============
-idRenderModelMD3::InstantiateDynamicModel
-=============
-*/
 idRenderModel* idRenderModelMD3::InstantiateDynamicModel( const struct renderEntity_s* ent, const viewDef_t* view, idRenderModel* cachedModel )
 {
 	int					 i, j;
@@ -351,12 +330,6 @@ idRenderModel* idRenderModelMD3::InstantiateDynamicModel( const struct renderEnt
 
 	return staticModel;
 }
-
-/*
-=====================
-idRenderModelMD3::Bounds
-=====================
-*/
 
 idBounds idRenderModelMD3::Bounds( const struct renderEntity_s* ent ) const
 {

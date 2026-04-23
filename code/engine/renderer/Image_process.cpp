@@ -100,14 +100,6 @@ byte* R_ResampleTexture( const byte* in, int inwidth, int inheight, int outwidth
 	return out;
 }
 
-/*
-================
-R_Dropsample
-
-Used to resample images in a more general than quartering fashion.
-Normal maps and such should not be bilerped.
-================
-*/
 byte* R_Dropsample( const byte* in, int inwidth, int inheight, int outwidth, int outheight )
 {
 	int			i, j, k;
@@ -133,28 +125,7 @@ byte* R_Dropsample( const byte* in, int inwidth, int inheight, int outwidth, int
 	return out;
 }
 
-/*
-================
-R_SetAlphaNormalDivergence
-
-If any of the angles inside the cone would directly reflect to the light, there will be
-a specular highlight.  The intensity of the highlight is inversely proportional to the
-area of the spread.
-
-Light source area is important for the base size.
-
-area subtended in light is the divergence times the distance
-
-Shininess value is subtracted from the divergence
-
-Sets the alpha channel to the greatest divergence dot product of the surrounding texels.
-1.0 = flat, 0.0 = turns a 90 degree angle
-Lower values give less shiny specular
-With mip maps, the lowest samnpled value will be retained
-
-Should we rewrite the normal as the centered average?
-================
-*/
+//! Sets the alpha channel of each pixel based on the divergence of its normal vector compared to surrounding texels.
 void R_SetAlphaNormalDivergence( byte* in, int width, int height )
 {
 	for( int y = 0; y < height; y++ ) {
@@ -307,13 +278,6 @@ float mip_gammaTable[256] =
 };
 // clang-format on
 
-/*
-================
-R_MipMapGamma
-
-Returns a new copy of the texture, quartered in size with gamma correction.
-================
-*/
 byte* R_MipMapWithGamma( const byte* in, int width, int height )
 {
 	int			i, j;
@@ -370,13 +334,6 @@ byte* R_MipMapWithGamma( const byte* in, int width, int height )
 	return out;
 }
 
-/*
-================
-R_MipMap
-
-Returns a new copy of the texture, quartered in size and filtered.
-================
-*/
 byte* R_MipMap( const byte* in, int width, int height )
 {
 	int			i, j;
@@ -430,7 +387,6 @@ byte* R_MipMap( const byte* in, int width, int height )
 	return out;
 }
 
-// RB begin
 byte* R_MipMapR11G11B10F( const byte* in, int width, int height )
 {
 	int			i, j;
@@ -566,15 +522,7 @@ byte* R_MipMapR11G11B10F( const byte* in, int width, int height )
 
 	return out;
 }
-// RB end
 
-/*
-==================
-R_BlendOverTexture
-
-Apply a color blend over a set of pixels
-==================
-*/
 void R_BlendOverTexture( byte* data, int pixelCount, const byte blend[4] )
 {
 	int i;
@@ -593,13 +541,6 @@ void R_BlendOverTexture( byte* data, int pixelCount, const byte blend[4] )
 	}
 }
 
-/*
-==================
-R_HorizontalFlip
-
-Flip the image in place
-==================
-*/
 void R_HorizontalFlip( byte* data, int width, int height )
 {
 	int i, j;
@@ -669,8 +610,7 @@ void R_RotatePic( byte* data, int width )
 	R_StaticFree( temp );
 }
 
-// transforms in both ways, the images from a cube map,
-// in both the Env map and the Skybox map systems.
+//! Applies cube map transformations to the given data based on the iteration value.
 void R_ApplyCubeMapTransforms( int iter, byte* data, int size )
 {
 	if( ( iter == 1 ) || ( iter == 2 ) ) {
@@ -686,9 +626,6 @@ void R_ApplyCubeMapTransforms( int iter, byte* data, int size )
 		R_HorizontalFlip( data, size, size );
 	}
 }
-
-// This is the most efficient way to atlas a mip chain to a 2d texture
-// https://twitter.com/SebAaltonen/status/1327188239451611139
 
 idVec4 R_CalculateMipRect( uint dimensions, uint mip )
 {
@@ -717,7 +654,6 @@ int R_CalculateUsedAtlasPixels( int dimensions )
 	return numPixels;
 }
 
-// SP begin
 byte* R_GenerateCubeMapSideFromSingleImage( const byte* in, int srcWidth, int srcHeight, int size, int side )
 {
 	size_t x = 0, y = 0;
@@ -777,7 +713,6 @@ byte* R_GenerateCubeMapSideFromSingleImage( const byte* in, int srcWidth, int sr
 
 	return out;
 }
-// SP end
 
 // RB: ripped from cmft utils by Dario Manesku
 /*
@@ -965,6 +900,7 @@ static inline void TexelCoordToVecWarp( float* _out3f, float _u, float _v, uint8
 	TexelCoordToVec( _out3f, _u, _v, _faceId );
 }
 
+//! Multiplies each component of a 3D vector by a scalar value.
 inline void vec3Mul( float* __restrict _result, const float* __restrict _a, float _b )
 {
 	_result[0] = _a[0] * _b;
@@ -972,6 +908,7 @@ inline void vec3Mul( float* __restrict _result, const float* __restrict _a, floa
 	_result[2] = _a[2] * _b;
 }
 
+//! Computes the dot product of two 3D vectors
 inline float vec3Dot( const float* __restrict _a, const float* __restrict _b )
 {
 	return _a[0] * _b[0] + _a[1] * _b[1] + _a[2] * _b[2];
@@ -1008,6 +945,7 @@ static inline void VecToTexelCoord( float& _u, float& _v, uint8_t& _faceIdx, con
 
 #define CMFT_RPI 0.31830988618379067153f
 
+//! Converts a 3D vector to spherical coordinates u and v.
 static inline void LatLongFromVec( float& _u, float& _v, const float _vec[3] )
 {
 	const float phi	  = atan2f( _vec[0], _vec[2] );
@@ -1017,6 +955,7 @@ static inline void LatLongFromVec( float& _u, float& _v, const float _vec[3] )
 	_v = theta * CMFT_RPI;
 }
 
+//! Converts latitude and longitude coordinates to a 3D vector.
 static inline void VecFromLatLong( float _vec[3], float _u, float _v )
 {
 	const float phi	  = _u * idMath::TWO_PI;
@@ -1027,6 +966,20 @@ static inline void VecFromLatLong( float _vec[3], float _u, float _v )
 	_vec[2] = -sinf( theta ) * cosf( phi );
 }
 
+/*!
+	\brief Generates a single cube map side from a panorama image by mapping 3D vectors to 2D texture coordinates.
+
+	This function takes a panorama image represented as a byte array and generates one side of a cube map by transforming 3D vectors into 2D texture coordinates. It uses a transformation matrix to
+   convert the coordinate system from Doom's convention to the standard one, and then maps the resulting vector back to latitude-longitude coordinates to sample from the input panorama. The function
+   allocates memory for the output cube map side and performs the necessary transformations for each pixel in the output face.
+
+	\param in Pointer to the input panorama image data
+	\param srcWidth Width of the source panorama image
+	\param srcHeight Height of the source panorama image
+	\param cubeWidth Width of the output cube map face
+	\param side Index of the cube map side to generate (0-5)
+	\return Pointer to the generated cube map side data
+*/
 byte* R_GenerateCubeMapSideFromPanoramaImage( const byte* in, int srcWidth, int srcHeight, int cubeWidth, int side )
 {
 	size_t		 x = 0, y = 0;
@@ -1087,4 +1040,3 @@ byte* R_GenerateCubeMapSideFromPanoramaImage( const byte* in, int srcWidth, int 
 
 	return out;
 }
-// RB end

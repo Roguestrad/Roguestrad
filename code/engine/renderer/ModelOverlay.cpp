@@ -36,11 +36,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../idlib/geometry/DrawVert_intrinsics.h"
 
-/*
-====================
-idRenderModelOverlay::idRenderModelOverlay
-====================
-*/
 idRenderModelOverlay::idRenderModelOverlay() :
 	firstOverlay( 0 ),
 	nextOverlay( 0 ),
@@ -51,11 +46,6 @@ idRenderModelOverlay::idRenderModelOverlay() :
 	memset( overlays, 0, sizeof( overlays ) );
 }
 
-/*
-====================
-idRenderModelOverlay::~idRenderModelOverlay
-====================
-*/
 idRenderModelOverlay::~idRenderModelOverlay()
 {
 	for( unsigned int i = 0; i < MAX_OVERLAYS; i++ ) {
@@ -63,11 +53,6 @@ idRenderModelOverlay::~idRenderModelOverlay()
 	}
 }
 
-/*
-=================
-idRenderModelOverlay::ReUse
-=================
-*/
 void idRenderModelOverlay::ReUse()
 {
 	firstOverlay		 = 0;
@@ -81,11 +66,6 @@ void idRenderModelOverlay::ReUse()
 	}
 }
 
-/*
-====================
-idRenderModelOverlay::FreeOverlay
-====================
-*/
 void idRenderModelOverlay::FreeOverlay( overlay_t& overlay )
 {
 	if( overlay.verts != NULL ) {
@@ -97,10 +77,21 @@ void idRenderModelOverlay::FreeOverlay( overlay_t& overlay )
 	memset( &overlay, 0, sizeof( overlay ) );
 }
 
-/*
-====================
-R_OverlayPointCullStatic
-====================
+/*!
+	\brief Performs static culling and texture coordinate calculation for overlay points using plane distances
+
+	This function processes a set of vertices to determine whether they should be culled based on their distance from two clipping planes. For each vertex, it calculates the distance from each plane
+   and stores the results as half-precision floating point values in the texture coordinate arrays. The culling bits are calculated by checking if the distances are negative, with each bit
+   representing the culling status for a specific plane or its inverted distance. The implementation uses SSE intrinsics for optimized performance when available, falling back to scalar computation
+   otherwise. All input arrays must be 16-byte aligned for optimal performance.
+
+	\param cullBits Output array storing culling bit flags for each vertex
+	\param texCoordS Output array storing s texture coordinates as half-float values
+	\param texCoordT Output array storing t texture coordinates as half-float values
+	\param planes Array of two clipping planes used for distance calculations
+	\param verts Array of vertices to process for culling and coordinate calculation
+	\param numVerts Number of vertices to process in the verts array
+	\throws assertion failure if any of the input arrays are not 16-byte aligned
 */
 static void R_OverlayPointCullStatic( byte* cullBits, halfFloat_t* texCoordS, halfFloat_t* texCoordT, const idPlane* planes, const idDrawVert* verts, const int numVerts )
 {
@@ -216,10 +207,20 @@ static void R_OverlayPointCullStatic( byte* cullBits, halfFloat_t* texCoordS, ha
 #endif
 }
 
-/*
-====================
-R_OverlayPointCullSkinned
-====================
+/*!
+	\brief Performs point culling and texture coordinate calculation for skinned vertex data using plane distances
+
+	This function processes skinned vertex data to determine whether vertices are inside or outside of two clipping planes, and calculates texture coordinates based on the signed distances from these
+   planes. It supports both SSE optimized and scalar implementations. The function uses half-precision floating point values for texture coordinates and stores culling bit flags indicating the result
+   of the plane distance tests. Each vertex is processed in batches to optimize memory access patterns.
+
+	\param cullBits Output array storing the culling results as bit flags for each vertex
+	\param texCoordS Output array storing the S component of texture coordinates for each vertex
+	\param texCoordT Output array storing the T component of texture coordinates for each vertex
+	\param planes Two clipping planes used to determine vertex culling and texture coordinate calculation
+	\param verts Input array of skinned vertices to process
+	\param numVerts Number of vertices in the verts array
+	\param joints Joint transformation matrices used for skinning the vertices
 */
 static void R_OverlayPointCullSkinned( byte* cullBits, halfFloat_t* texCoordS, halfFloat_t* texCoordT, const idPlane* planes, const idDrawVert* verts, const int numVerts, const idJointMat* joints )
 {
@@ -335,15 +336,6 @@ static void R_OverlayPointCullSkinned( byte* cullBits, halfFloat_t* texCoordS, h
 #endif
 }
 
-/*
-=====================
-idRenderModelOverlay::CreateOverlay
-
-This projects on both front and back sides to avoid seams
-The material should be clamped, because entire triangles are added, some of which
-may extend well past the 0.0 to 1.0 texture range
-=====================
-*/
 void idRenderModelOverlay::CreateOverlay( const idRenderModel* model, const idPlane localTextureAxis[2], const idMaterial* material )
 {
 	// count up the maximum possible vertices and indexes per surface
@@ -477,11 +469,6 @@ void idRenderModelOverlay::CreateOverlay( const idRenderModel* model, const idPl
 	}
 }
 
-/*
-====================
-idRenderModelOverlay::CreateDeferredOverlays
-====================
-*/
 void idRenderModelOverlay::CreateDeferredOverlays( const idRenderModel* model )
 {
 	for( unsigned int i = firstDeferredOverlay; i < nextDeferredOverlay; i++ ) {
@@ -494,11 +481,6 @@ void idRenderModelOverlay::CreateDeferredOverlays( const idRenderModel* model )
 	nextDeferredOverlay	 = 0;
 }
 
-/*
-====================
-idRenderModelOverlay::AddDeferredOverlay
-====================
-*/
 void idRenderModelOverlay::AddDeferredOverlay( const overlayProjectionParms_t& localParms )
 {
 	deferredOverlays[nextDeferredOverlay++ & ( MAX_DEFERRED_OVERLAYS - 1 )] = localParms;
@@ -507,10 +489,20 @@ void idRenderModelOverlay::AddDeferredOverlay( const overlayProjectionParms_t& l
 	}
 }
 
-/*
-====================
-R_CopyOverlaySurface
-====================
+/*!
+	\brief Copies overlay surface data including vertices and triangle indexes from a source mesh to a destination buffer with optional SIMD optimization.
+
+	This function copies vertices and triangle indexes from an overlay structure to a destination buffer. It supports both SIMD-optimized and scalar implementations. The function performs alignment
+   checks on input data and properly maps vertex indices from the overlay to the source mesh. The vertices are copied with their texture coordinates updated from the overlay data. Triangle indexes are
+   offset by the number of destination vertices to maintain proper index referencing in the final mesh.
+
+	\param verts Destination buffer for the vertices
+	\param numVerts Number of vertices in the destination buffer
+	\param indexes Destination buffer for the triangle indexes
+	\param numIndexes Number of triangle indexes in the destination buffer
+	\param overlay Source overlay data structure containing vertex and index information
+	\param sourceVerts Source vertex buffer containing the original vertex data
+	\throws Assertion failures if alignment or bounds checks fail
 */
 static void R_CopyOverlaySurface( idDrawVert* verts, int numVerts, triIndex_t* indexes, int numIndexes, const overlay_t* overlay, const idDrawVert* sourceVerts )
 {
@@ -581,11 +573,6 @@ static void R_CopyOverlaySurface( idDrawVert* verts, int numVerts, triIndex_t* i
 #endif
 }
 
-/*
-=====================
-idRenderModelOverlay::GetNumOverlayDrawSurfs
-=====================
-*/
 unsigned int idRenderModelOverlay::GetNumOverlayDrawSurfs()
 {
 	numOverlayMaterials = 0;
@@ -607,11 +594,6 @@ unsigned int idRenderModelOverlay::GetNumOverlayDrawSurfs()
 	return numOverlayMaterials;
 }
 
-/*
-====================
-idRenderModelOverlay::CreateOverlayDrawSurf
-====================
-*/
 drawSurf_t* idRenderModelOverlay::CreateOverlayDrawSurf( const viewEntity_t* space, const idRenderModel* baseModel, unsigned int index )
 {
 	if( index < 0 || index >= numOverlayMaterials ) {

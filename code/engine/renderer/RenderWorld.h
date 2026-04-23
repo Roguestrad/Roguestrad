@@ -71,11 +71,13 @@ const int	  SHADERPARM_PARTICLE_STOPTIME = 8; // don't spawn any more particles 
 // guis
 const int	  MAX_RENDERENTITY_GUI = 3;
 
-// the renderEntity_s::joints array needs to point at enough memory to store the number of joints rounded up to two for SIMD
+//! Rounds up the number of joints to the next even number for SIMD alignment.
 ID_INLINE int SIMD_ROUND_JOINTS( int numJoints )
 {
 	return ( ( numJoints + 1 ) & ~1 );
 }
+
+//! Initializes the last joint in the joint array to match the previous joint when the number of joints is odd.
 ID_INLINE void SIMD_INIT_LAST_JOINT( idJointMat* joints, int numJoints )
 {
 	if( numJoints & 1 ) { joints[numJoints] = joints[numJoints - 1]; }
@@ -241,7 +243,7 @@ private:
 	float fov_left, fov_right, fov_top, fov_bottom; // as tangents
 
 public:
-	// assumes tangents
+	//! Sets the field of view values for the render view.
 	void SetFov( const idVec4& fov )
 	{
 		fov_left   = fov[0];
@@ -253,7 +255,7 @@ public:
 		fov_y = ( atan( fov_top ) - atan( fov_bottom ) ) * idMath::M_RAD2DEG;
 	}
 
-	// assumes degrees
+	//! Sets the field of view angles for the render view in degrees
 	void SetFovXY( float fovX, float fovY )
 	{
 		fov_x = fovX;
@@ -271,7 +273,7 @@ public:
 		fov_top	   = fovY;
 	}
 
-	// returns fov in degrees like in old Doom 3
+	//! Returns the horizontal and vertical field of view angles in degrees.
 	void GetFovXY( float& fovX, float& fovY ) const
 	{
 		fovX = fov_x;
@@ -281,12 +283,16 @@ public:
 		// fov_y = ( atan( fov_top ) - atan( fov_bottom ) ) * idMath::M_RAD2DEG;
 	}
 
+	//! Returns the left field of view angle of the render view.
 	float			  GetFovLeft() const { return fov_left; }
 
+	//! Returns the right field of view value for the render view
 	float			  GetFovRight() const { return fov_right; }
 
+	//! Returns the top field of view angle of the render view.
 	float			  GetFovTop() const { return fov_top; }
 
+	//! Returns the bottom field of view angle.
 	float			  GetFovBottom() const { return fov_bottom; }
 
 	// player views will set this to a non-zero integer for model suppress / allow
@@ -364,6 +370,15 @@ typedef enum {
 	#endif
 #endif
 
+/*!
+	\class idRenderWorld
+	\brief Interface for managing and rendering 3D scenes with entities, lights, and environment probes.
+
+	This class provides a virtual interface for rendering world content including entities, lights, and environment probes. It supports adding, updating, and removing these renderable objects, as well
+   as performing spatial queries and rendering operations. The interface allows for scene management, portal connectivity, tracing, and debugging visualization. It is designed to be implemented by
+   concrete renderers that handle the actual rendering logic.
+
+*/
 class idRenderWorld
 {
 public:

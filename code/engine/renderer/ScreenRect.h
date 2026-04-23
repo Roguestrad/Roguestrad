@@ -30,16 +30,15 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SCREENRECT_H__
 #define __SCREENRECT_H__
 
-/*
-================================================================================================
+/*!
+	\class idScreenRect
+	\brief Represents a rectangular screen area with methods for manipulation and comparison.
 
-idScreenRect
+	This class encapsulates a screen rectangle defined by its boundaries, optimized for use with draw surfaces. It provides operations to compare rectangles, check if they are empty, calculate
+   dimensions, expand or contract boundaries, and compute intersections or unions with other rectangles. The compact design ensures efficient storage and handling, particularly when associated with
+   rendering operations.
 
-idScreenRect gets carried around with each drawSurf, so it makes sense
-to keep it compact, instead of just using the idBounds class
-================================================================================================
 */
-
 class idScreenRect
 {
 public:
@@ -53,27 +52,44 @@ public:
 	float zmin;
 	float zmax;
 
+	//! Compares this screen rectangle with another for equality
 	bool  operator==( idScreenRect& other ) const;
+
+	//! Checks if this screen rectangle is not equal to another screen rectangle.
 	bool  operator!=( idScreenRect& other ) const;
 
-	// clear to backwards values
+	//! Clears the screen rectangle by setting its coordinates to backward values.
 	void  Clear();
+
+	//! Returns true if the screen rectangle is empty, meaning it has no area.
 	bool  IsEmpty() const;
+
+	//! Returns the width of the screen rectangle.
 	short GetWidth() const { return x2 - x1 + 1; }
+
+	//! Returns the height of the screen rectangle.
 	short GetHeight() const { return y2 - y1 + 1; }
+
+	//! Returns the area of the screen rectangle calculated as width times height
 	int	  GetArea() const { return ( x2 - x1 + 1 ) * ( y2 - y1 + 1 ); }
 
-	// expand by one pixel each way to fix roundoffs
+	//! Expands the screen rectangle by one pixel in each direction to fix rounding errors.
 	void  Expand();
 
-	// adds a point
+	//! Adds a point to the screen rectangle by updating its bounds.
 	void  AddPoint( float x, float y );
 
+	//! Intersects this screen rectangle with another screen rectangle.
 	void  Intersect( const idScreenRect& rect );
+
+	//! Expands this screen rectangle to include the area of the given rectangle.
 	void  Union( const idScreenRect& rect );
+
+	//! Checks if this screen rectangle is equal to another screen rectangle.
 	bool  Equals( const idScreenRect& rect ) const;
 };
 
+//! Displays a colored rectangle on the screen at the specified screen coordinates.
 void R_ShowColoredScreenRect( const idScreenRect& rect, int colorIndex );
 
 #endif /* !__SCREENRECT_H__ */

@@ -49,33 +49,74 @@ idCVar		  preload_MapModels( "preload_MapModels", "1", CVAR_SYSTEM | CVAR_BOOL, 
 
 // RB begin
 idCVar		  postLoadExportModels( "postLoadExportModels", "0", CVAR_BOOL | CVAR_RENDERER | CVAR_NEW, "export models after loading to OBJ model format" );
-// RB end
 
+/*!
+	\class idRenderModelManagerLocal
+	\brief Manages the lifecycle, loading, and rendering of render models within the engine.
+
+	The class serves as a local manager for render models, handling their allocation, loading, unloading, and caching during level transitions. It maintains a collection of loaded models and provides
+   mechanisms for model preloading, reloading, and memory management. The manager supports both default and custom models, with specialized functionality for level loading operations and resource
+   cleanup. It integrates with the engine's command system to expose debugging and management functionality through console commands.
+
+*/
 class idRenderModelManagerLocal : public idRenderModelManager
 {
 public:
+	//! Initializes the local render model manager by setting all model pointers to NULL and insideLevelLoad to false.
 	idRenderModelManagerLocal();
 	virtual ~idRenderModelManagerLocal()
 	{
 	}
 
+	//! Initializes the render model manager and sets up default models.
 	virtual void		   Init();
+
+	//! Shuts down the render model manager by freeing all allocated resources.
 	virtual void		   Shutdown();
+
+	//! Allocates and returns a new render model instance.
 	virtual idRenderModel* AllocModel();
+
+	//! Frees a static render model, ensuring it is not one of the default models.
 	virtual void		   FreeModel( idRenderModel* model );
+
+	//! Finds and returns a render model by its name, with optional import options.
 	virtual idRenderModel* FindModel( const char* modelName, const idImportOptions* options = NULL );
+
+	//! Returns a render model by its name, or NULL if not found
 	virtual idRenderModel* CheckModel( const char* modelName );
+
+	//! Returns the default cube model used when no specific model is provided.
 	virtual idRenderModel* DefaultModel();
+
+	//! Adds a render model to the manager's internal collection.
 	virtual void		   AddModel( idRenderModel* model );
+
+	//! Removes a render model from the model manager's internal collections.
 	virtual void		   RemoveModel( idRenderModel* model );
+
+	//! Reloads model files, either all models or only changed ones based on the forceAll parameter.
 	virtual void		   ReloadModels( bool forceAll = false );
+
+	//! Initializes mesh buffers for all loaded render models using the provided command list
 	virtual void		   CreateMeshBuffers( nvrhi::ICommandList* commandList );
+
+	//! Frees the vertex caches for all loaded render models.
 	virtual void		   FreeModelVertexCaches();
+
+	//! Writes touchModel commands for reloadable render models to the specified file.
 	virtual void		   WritePrecacheCommands( idFile* file );
+
+	//! Initializes the render model manager for a new level load operation.
 	virtual void		   BeginLevelLoad();
+
+	//! Completes level loading by purging unused models and loading new ones.
 	virtual void		   EndLevelLoad();
+
+	//! Preloads render models and particle effects specified in the manifest for the current level.
 	virtual void		   Preload( const idPreloadManifest& manifest );
 
+	//! Prints memory usage information for loaded render models to a file
 	virtual void		   PrintMemInfo( MemInfo_t* mi );
 
 private:
@@ -87,22 +128,25 @@ private:
 	bool							  insideLevelLoad; // don't actually load now
 	nvrhi::CommandListHandle		  commandList;
 
+	//! Retrieves a render model by name, creating it if it doesn't exist and the flag is set.
 	idRenderModel*					  GetModel( const char* modelName, bool createIfNotFound, const idImportOptions* options );
 
+	//! Prints the contents of a specified model to the console.
 	static void						  PrintModel_f( const idCmdArgs& args );
+
+	//! Displays a list of loaded render models with their memory usage and geometry statistics.
 	static void						  ListModels_f( const idCmdArgs& args );
+
+	//! Reloads models based on the command arguments provided.
 	static void						  ReloadModels_f( const idCmdArgs& args );
+
+	//! Precaches a specific model by name.
 	static void						  TouchModel_f( const idCmdArgs& args );
 };
 
 idRenderModelManagerLocal localModelManager;
 idRenderModelManager*	  renderModelManager = &localModelManager;
 
-/*
-==============
-idRenderModelManagerLocal::idRenderModelManagerLocal
-==============
-*/
 idRenderModelManagerLocal::idRenderModelManagerLocal()
 {
 	defaultModel	= NULL;
@@ -111,11 +155,6 @@ idRenderModelManagerLocal::idRenderModelManagerLocal()
 	insideLevelLoad = false;
 }
 
-/*
-==============
-idRenderModelManagerLocal::PrintModel_f
-==============
-*/
 void idRenderModelManagerLocal::PrintModel_f( const idCmdArgs& args )
 {
 	idRenderModel* model;
@@ -134,11 +173,6 @@ void idRenderModelManagerLocal::PrintModel_f( const idCmdArgs& args )
 	model->Print();
 }
 
-/*
-==============
-idRenderModelManagerLocal::ListModels_f
-==============
-*/
 void idRenderModelManagerLocal::ListModels_f( const idCmdArgs& args )
 {
 	int totalMem = 0;
@@ -165,11 +199,6 @@ void idRenderModelManagerLocal::ListModels_f( const idCmdArgs& args )
 	common->Printf( "total memory: %4.1fM\n", ( float )totalMem / ( 1024 * 1024 ) );
 }
 
-/*
-==============
-idRenderModelManagerLocal::ReloadModels_f
-==============
-*/
 void idRenderModelManagerLocal::ReloadModels_f( const idCmdArgs& args )
 {
 	if( idStr::Icmp( args.Argv( 1 ), "all" ) == 0 ) {
@@ -179,13 +208,6 @@ void idRenderModelManagerLocal::ReloadModels_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==============
-idRenderModelManagerLocal::TouchModel_f
-
-Precache a specific model
-==============
-*/
 void idRenderModelManagerLocal::TouchModel_f( const idCmdArgs& args )
 {
 	const char* model = args.Argv( 1 );
@@ -204,11 +226,6 @@ void idRenderModelManagerLocal::TouchModel_f( const idCmdArgs& args )
 	}
 }
 
-/*
-=================
-idRenderModelManagerLocal::WritePrecacheCommands
-=================
-*/
 void idRenderModelManagerLocal::WritePrecacheCommands( idFile* f )
 {
 	for( int i = 0; i < models.Num(); i++ ) {
@@ -228,11 +245,6 @@ void idRenderModelManagerLocal::WritePrecacheCommands( idFile* f )
 	}
 }
 
-/*
-=================
-idRenderModelManagerLocal::Init
-=================
-*/
 void idRenderModelManagerLocal::Init()
 {
 #if !defined( DMAP )
@@ -279,11 +291,6 @@ void idRenderModelManagerLocal::Init()
 #endif
 }
 
-/*
-=================
-idRenderModelManagerLocal::Shutdown
-=================
-*/
 void idRenderModelManagerLocal::Shutdown()
 {
 	models.DeleteContents( true );
@@ -291,11 +298,6 @@ void idRenderModelManagerLocal::Shutdown()
 	commandList.Reset();
 }
 
-/*
-=================
-idRenderModelManagerLocal::GetModel
-=================
-*/
 idRenderModel* idRenderModelManagerLocal::GetModel( const char* _modelName, bool createIfNotFound, const idImportOptions* options )
 {
 	if( !_modelName || !_modelName[0] ) {
@@ -523,21 +525,11 @@ idRenderModel* idRenderModelManagerLocal::GetModel( const char* _modelName, bool
 	return model;
 }
 
-/*
-=================
-idRenderModelManagerLocal::AllocModel
-=================
-*/
 idRenderModel* idRenderModelManagerLocal::AllocModel()
 {
 	return new( TAG_MODEL ) idRenderModelStatic();
 }
 
-/*
-=================
-idRenderModelManagerLocal::FreeModel
-=================
-*/
 void idRenderModelManagerLocal::FreeModel( idRenderModel* model )
 {
 	if( !model ) {
@@ -565,51 +557,26 @@ void idRenderModelManagerLocal::FreeModel( idRenderModel* model )
 	delete model;
 }
 
-/*
-=================
-idRenderModelManagerLocal::FindModel
-=================
-*/
 idRenderModel* idRenderModelManagerLocal::FindModel( const char* modelName, const idImportOptions* options )
 {
 	return GetModel( modelName, true, options );
 }
 
-/*
-=================
-idRenderModelManagerLocal::CheckModel
-=================
-*/
 idRenderModel* idRenderModelManagerLocal::CheckModel( const char* modelName )
 {
 	return GetModel( modelName, false, nullptr );
 }
 
-/*
-=================
-idRenderModelManagerLocal::DefaultModel
-=================
-*/
 idRenderModel* idRenderModelManagerLocal::DefaultModel()
 {
 	return defaultModel;
 }
 
-/*
-=================
-idRenderModelManagerLocal::AddModel
-=================
-*/
 void idRenderModelManagerLocal::AddModel( idRenderModel* model )
 {
 	hash.Add( hash.GenerateKey( model->Name(), false ), models.Append( model ) );
 }
 
-/*
-=================
-idRenderModelManagerLocal::RemoveModel
-=================
-*/
 void idRenderModelManagerLocal::RemoveModel( idRenderModel* model )
 {
 	int index = models.FindIndex( model );
@@ -713,11 +680,6 @@ void idRenderModelManagerLocal::CreateMeshBuffers( nvrhi::ICommandList* commandL
 	}
 }
 
-/*
-=================
-idRenderModelManagerLocal::FreeModelVertexCaches
-=================
-*/
 void idRenderModelManagerLocal::FreeModelVertexCaches()
 {
 	for( int i = 0; i < models.Num(); i++ ) {
@@ -726,11 +688,6 @@ void idRenderModelManagerLocal::FreeModelVertexCaches()
 	}
 }
 
-/*
-=================
-idRenderModelManagerLocal::BeginLevelLoad
-=================
-*/
 void idRenderModelManagerLocal::BeginLevelLoad()
 {
 	insideLevelLoad = true;
@@ -752,11 +709,6 @@ void idRenderModelManagerLocal::BeginLevelLoad()
 #endif
 }
 
-/*
-=================
-idRenderModelManagerLocal::Preload
-=================
-*/
 void idRenderModelManagerLocal::Preload( const idPreloadManifest& manifest )
 {
 	if( preload_MapModels.GetBool() ) {
@@ -813,11 +765,6 @@ void idRenderModelManagerLocal::Preload( const idPreloadManifest& manifest )
 	}
 }
 
-/*
-=================
-idRenderModelManagerLocal::EndLevelLoad
-=================
-*/
 void idRenderModelManagerLocal::EndLevelLoad()
 {
 	common->Printf( "----- idRenderModelManagerLocal::EndLevelLoad -----\n" );
@@ -895,11 +842,6 @@ void idRenderModelManagerLocal::EndLevelLoad()
 	common->Printf( "---------------------------------------------------\n" );
 }
 
-/*
-=================
-idRenderModelManagerLocal::PrintMemInfo
-=================
-*/
 void idRenderModelManagerLocal::PrintMemInfo( MemInfo_t* mi )
 {
 	int		i, j, totalMem = 0;
@@ -949,20 +891,7 @@ void idRenderModelManagerLocal::PrintMemInfo( MemInfo_t* mi )
 	fileSystem->CloseFile( f );
 }
 
-// RB: added Maya exporter options
-/*
-==============================================================================================
-
-	idTokenizer
-
-==============================================================================================
-*/
-
-/*
-=================
-MayaError
-=================
-*/
+//! Throws an exception with a formatted error message.
 void MayaError( const char* fmt, ... )
 {
 	va_list argptr;
@@ -975,6 +904,16 @@ void MayaError( const char* fmt, ... )
 	throw idException( text );
 }
 
+/*!
+	\class idTokenizer
+	\brief A tokenizer class for parsing and retrieving tokens from a text buffer.
+
+	This class provides functionality to parse a text buffer into tokens and retrieve them sequentially or by index. It supports advancing through tokens, peeking at the current token, and rewinding
+   the token stream. The tokenizer operates on a buffer that can be set using the SetTokens method, and subsequent calls to NextToken will iterate through the parsed tokens. The TokenAvailable method
+   can be used to check if more tokens are present, and the Num method returns the total count of tokens. The CurrentToken method provides access to the most recently retrieved token, while GetToken
+   allows accessing tokens by their index. The UnGetToken method enables backing up one step in the token stream.
+
+*/
 class idTokenizer
 {
 private:
@@ -992,7 +931,10 @@ public:
 		tokens.Clear();
 	};
 
+	//! Sets the tokens in the tokenizer by parsing the provided buffer string.
 	int			SetTokens( const char* buffer );
+
+	//! Returns the next token from the tokenizer, or NULL if no more tokens are available.
 	const char* NextToken( const char* errorstring = NULL );
 
 	bool		TokenAvailable()
@@ -1023,11 +965,6 @@ public:
 	};
 };
 
-/*
-====================
-idTokenizer::SetTokens
-====================
-*/
 int idTokenizer::SetTokens( const char* buffer )
 {
 	const char* cmd;
@@ -1056,11 +993,6 @@ int idTokenizer::SetTokens( const char* buffer )
 	return tokens.Num();
 }
 
-/*
-====================
-idTokenizer::NextToken
-====================
-*/
 const char* idTokenizer::NextToken( const char* errorstring )
 {
 	if( currentToken < tokens.Num() ) {

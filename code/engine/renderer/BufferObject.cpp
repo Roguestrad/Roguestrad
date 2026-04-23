@@ -95,6 +95,7 @@ void CopyBuffer( byte* dst, const byte* src, int numBytes )
 
 #else
 
+//! Copies a specified number of bytes from the source buffer to the destination buffer.
 void CopyBuffer( byte* dst, const byte* src, int numBytes )
 {
 	assert_16_byte_aligned( dst );
@@ -110,12 +111,6 @@ void CopyBuffer( byte* dst, const byte* src, int numBytes )
 	idBufferObject
 
 ================================================================================================
-*/
-
-/*
-========================
-idBufferObject::idBufferObject
-========================
 */
 idBufferObject::idBufferObject()
 {
@@ -141,22 +136,11 @@ idBufferObject::idBufferObject()
 
 ================================================================================================
 */
-
-/*
-========================
-idVertexBuffer::~idVertexBuffer
-========================
-*/
 idVertexBuffer::~idVertexBuffer()
 {
 	FreeBufferObject();
 }
 
-/*
-========================
-idVertexBuffer::Reference
-========================
-*/
 void idVertexBuffer::Reference( const idVertexBuffer& other )
 {
 	assert( IsMapped() == false );
@@ -207,22 +191,11 @@ idIndexBuffer
 
 ================================================================================================
 */
-
-/*
-========================
-idIndexBuffer::~idIndexBuffer
-========================
-*/
 idIndexBuffer::~idIndexBuffer()
 {
 	FreeBufferObject();
 }
 
-/*
-========================
-idIndexBuffer::Reference
-========================
-*/
 void idIndexBuffer::Reference( const idIndexBuffer& other )
 {
 	assert( IsMapped() == false );
@@ -273,22 +246,11 @@ idUniformBuffer
 
 ================================================================================================
 */
-
-/*
-========================
-idUniformBuffer::~idUniformBuffer
-========================
-*/
 idUniformBuffer::~idUniformBuffer()
 {
 	FreeBufferObject();
 }
 
-/*
-========================
-idUniformBuffer::Reference
-========================
-*/
 void idUniformBuffer::Reference( const idUniformBuffer& other )
 {
 	assert( IsMapped() == false );

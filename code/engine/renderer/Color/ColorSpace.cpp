@@ -61,11 +61,6 @@ To *Color-Convert RGB and YCoCg* ColorSpaces, use the following conversions:
 #define COCG_TO_G( co, cg )		   ( cg )
 #define COCG_TO_B( co, cg )		   ( -co - cg )
 
-/*
-========================
-idColorSpace::ConvertRGBToYCoCg
-========================
-*/
 void idColorSpace::ConvertRGBToYCoCg( byte* dst, const byte* src, int width, int height )
 {
 	for( int i = 0; i < width * height; i++ ) {
@@ -80,11 +75,6 @@ void idColorSpace::ConvertRGBToYCoCg( byte* dst, const byte* src, int width, int
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertYCoCgToRGB
-========================
-*/
 void idColorSpace::ConvertYCoCgToRGB( byte* dst, const byte* src, int width, int height )
 {
 	for( int i = 0; i < width * height; i++ ) {
@@ -99,11 +89,6 @@ void idColorSpace::ConvertYCoCgToRGB( byte* dst, const byte* src, int width, int
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertRGBToCoCg_Y
-========================
-*/
 void idColorSpace::ConvertRGBToCoCg_Y( byte* dst, const byte* src, int width, int height )
 {
 	for( int i = 0; i < width * height; i++ ) {
@@ -118,11 +103,6 @@ void idColorSpace::ConvertRGBToCoCg_Y( byte* dst, const byte* src, int width, in
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertCoCg_YToRGB
-========================
-*/
 void idColorSpace::ConvertCoCg_YToRGB( byte* dst, const byte* src, int width, int height )
 {
 	for( int i = 0; i < width * height; i++ ) {
@@ -137,14 +117,6 @@ void idColorSpace::ConvertCoCg_YToRGB( byte* dst, const byte* src, int width, in
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertCoCgSYToRGB
-
-A scale factor is encoded in the Z value to give better compression of
-the color channels.
-========================
-*/
 void idColorSpace::ConvertCoCgSYToRGB( byte* dst, const byte* src, int width, int height )
 {
 	for( int i = 0; i < width * height; i++ ) {
@@ -162,11 +134,6 @@ void idColorSpace::ConvertCoCgSYToRGB( byte* dst, const byte* src, int width, in
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertRGBToYCoCg420
-========================
-*/
 void idColorSpace::ConvertRGBToYCoCg420( byte* dst, const byte* src, int width, int height )
 {
 	int numSamples = 0;
@@ -208,11 +175,6 @@ void idColorSpace::ConvertRGBToYCoCg420( byte* dst, const byte* src, int width, 
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertYCoCg420ToRGB
-========================
-*/
 void idColorSpace::ConvertYCoCg420ToRGB( byte* dst, const byte* src, int width, int height )
 {
 	int numSamples = width * height * 2 - width;
@@ -296,11 +258,6 @@ const int g034414 = 22554;	// int( 0.34414 * (1<<16) + 0.5 )
 #define CBCR_TO_G( cb, cr )		   ( ( ycbcr_round - cb * g034414 - cr * g071414 ) >> ycbcr_shift )
 #define CBCR_TO_B( cb, cr )		   ( ( ycbcr_round + cb * b177200 ) >> ycbcr_shift )
 
-/*
-========================
-idColorSpace::ConvertRGBToYCbCr
-========================
-*/
 void idColorSpace::ConvertRGBToYCbCr( byte* dst, const byte* src, int width, int height )
 {
 	for( int i = 0; i < width * height; i++ ) {
@@ -315,11 +272,6 @@ void idColorSpace::ConvertRGBToYCbCr( byte* dst, const byte* src, int width, int
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertYCbCrToRGB
-========================
-*/
 void idColorSpace::ConvertYCbCrToRGB( byte* dst, const byte* src, int width, int height )
 {
 	for( int i = 0; i < width * height; i++ ) {
@@ -332,11 +284,6 @@ void idColorSpace::ConvertYCbCrToRGB( byte* dst, const byte* src, int width, int
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertRGBToCbCr_Y
-========================
-*/
 void idColorSpace::ConvertRGBToCbCr_Y( byte* dst, const byte* src, int width, int height )
 {
 	for( int i = 0; i < width * height; i++ ) {
@@ -351,11 +298,6 @@ void idColorSpace::ConvertRGBToCbCr_Y( byte* dst, const byte* src, int width, in
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertCbCr_YToRGB
-========================
-*/
 void idColorSpace::ConvertCbCr_YToRGB( byte* dst, const byte* src, int width, int height )
 {
 	for( int i = 0; i < width * height; i++ ) {
@@ -370,11 +312,6 @@ void idColorSpace::ConvertCbCr_YToRGB( byte* dst, const byte* src, int width, in
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertRGBToYCbCr420
-========================
-*/
 void idColorSpace::ConvertRGBToYCbCr420( byte* dst, const byte* src, int width, int height )
 {
 	int numSamples = 0;
@@ -416,11 +353,6 @@ void idColorSpace::ConvertRGBToYCbCr420( byte* dst, const byte* src, int width, 
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertYCbCr420ToRGB
-========================
-*/
 void idColorSpace::ConvertYCbCr420ToRGB( byte* dst, const byte* src, int width, int height )
 {
 	int numSamples = width * height * 2 - width;
@@ -453,33 +385,6 @@ void idColorSpace::ConvertYCbCr420ToRGB( byte* dst, const byte* src, int width, 
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertNormalMapToStereographicHeightMap
-
-Converts a tangent space normal map to a height map.
-The iterative algorithm is pretty crappy but it's reasonably fast and good enough for testing purposes.
-The algorithm uses a stereographic projection of the normals to reduce the entropy and preserve
-significantly more detail.
-
-A better approach would be to solve the massive but rather sparse matrix system:
-
-[ c(1,0)      c(1,1)      ...  c(1,w*h)    ] [ H(1,1) ]     [ Nx(1,1) ]
-[ c(2,0)      c(2,1)      ...  c(2,w*h)    ] [ H(1,2) ]  =  [ Ny(1,1) ]
-[ ...                                      ] [ ...    ]     [ ...     ]
-[ ...                                      ] [ H(w,h) ]     [ Nx(w,h) ]
-[ c(w*h*2,0)  c(w*h*2,1)  ...  c(w*h*2,w*h)]                [ Ny(w,h) ]
-
-Where: w = width, h = height, H(i,j) = height, Nx(i,j) = (normal.x/(1+normal.z), Ny(i,j) = (normal.y/(1+normal.z)
-The c(i,j) are setup such that:
-
-Nx(i,j) = H(i,j) - H(i,j+1)
-Ny(i,j) = H(i,j) - H(i+1,j)
-Nx(i,w) = H(i,w)
-Ny(h,j) = H(h,j)
-
-========================
-*/
 void idColorSpace::ConvertNormalMapToStereographicHeightMap( byte* heightMap, const byte* normalMap, int width, int height, float& scale )
 {
 	idTempArray<float> buffer( ( width + 1 ) * ( height + 1 ) * sizeof( float ) );
@@ -548,13 +453,6 @@ void idColorSpace::ConvertNormalMapToStereographicHeightMap( byte* heightMap, co
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertStereographicHeightMapToNormalMap
-
-This converts a heightmap of a stereographically projected normal map back into a regular normal map.
-========================
-*/
 void idColorSpace::ConvertStereographicHeightMapToNormalMap( byte* normalMap, const byte* heightMap, int width, int height, float scale )
 {
 	for( int i = 0; i < height; i++ ) {
@@ -581,11 +479,6 @@ void idColorSpace::ConvertStereographicHeightMapToNormalMap( byte* normalMap, co
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertRGBToMonochrome
-========================
-*/
 void idColorSpace::ConvertRGBToMonochrome( byte* mono, const byte* rgb, int width, int height )
 {
 	for( int i = 0; i < height; i++ ) {
@@ -595,11 +488,6 @@ void idColorSpace::ConvertRGBToMonochrome( byte* mono, const byte* rgb, int widt
 	}
 }
 
-/*
-========================
-idColorSpace::ConvertMonochromeToRGB
-========================
-*/
 void idColorSpace::ConvertMonochromeToRGB( byte* rgb, const byte* mono, int width, int height )
 {
 	for( int i = 0; i < height; i++ ) {

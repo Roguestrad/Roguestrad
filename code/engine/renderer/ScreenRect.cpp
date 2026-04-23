@@ -32,39 +32,16 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "RenderCommon.h"
 
-/*
-==========================================================================================
-
-idScreenRect
-
-==========================================================================================
-*/
-
-/*
-======================
-idScreenRect::operator==
-======================
-*/
 bool idScreenRect::operator==( idScreenRect& other ) const
 {
 	return x1 == other.x1 && y1 == other.y1 && x2 == other.x2 && y2 == other.y2 && zmin == other.zmin && zmax == other.zmax;
 }
 
-/*
-======================
-idScreenRect::operator==
-======================
-*/
 bool idScreenRect::operator!=( idScreenRect& other ) const
 {
 	return !( *this == other );
 }
 
-/*
-======================
-idScreenRect::Clear
-======================
-*/
 void idScreenRect::Clear()
 {
 	x1 = y1 = 32000;
@@ -73,11 +50,6 @@ void idScreenRect::Clear()
 	zmax	= 1.0f;
 }
 
-/*
-======================
-idScreenRect::AddPoint
-======================
-*/
 void idScreenRect::AddPoint( float x, float y )
 {
 	int ix = idMath::Ftoi( x );
@@ -97,11 +69,6 @@ void idScreenRect::AddPoint( float x, float y )
 	}
 }
 
-/*
-======================
-idScreenRect::Expand
-======================
-*/
 void idScreenRect::Expand()
 {
 	x1--;
@@ -110,11 +77,6 @@ void idScreenRect::Expand()
 	y2++;
 }
 
-/*
-======================
-idScreenRect::Intersect
-======================
-*/
 void idScreenRect::Intersect( const idScreenRect& rect )
 {
 	if( rect.x1 > x1 ) {
@@ -131,11 +93,6 @@ void idScreenRect::Intersect( const idScreenRect& rect )
 	}
 }
 
-/*
-======================
-idScreenRect::Union
-======================
-*/
 void idScreenRect::Union( const idScreenRect& rect )
 {
 	if( rect.x1 < x1 ) {
@@ -152,31 +109,16 @@ void idScreenRect::Union( const idScreenRect& rect )
 	}
 }
 
-/*
-======================
-idScreenRect::Equals
-======================
-*/
 bool idScreenRect::Equals( const idScreenRect& rect ) const
 {
 	return ( x1 == rect.x1 && x2 == rect.x2 && y1 == rect.y1 && y2 == rect.y2 );
 }
 
-/*
-======================
-idScreenRect::IsEmpty
-======================
-*/
 bool idScreenRect::IsEmpty() const
 {
 	return ( x1 > x2 || y1 > y2 );
 }
 
-/*
-======================
-R_ShowColoredScreenRect
-======================
-*/
 void R_ShowColoredScreenRect( const idScreenRect& rect, int colorIndex )
 {
 	if( !rect.IsEmpty() ) {

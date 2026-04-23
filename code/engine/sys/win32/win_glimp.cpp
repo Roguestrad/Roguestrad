@@ -91,13 +91,6 @@ static void GLimp_RestoreGamma()
 	ReleaseDC( GetDesktopWindow(), hDC );
 }
 
-/*
-========================
-GLimp_SetGamma
-
-The renderer calls this when the user adjusts r_gamma or r_brightness
-========================
-*/
 void GLimp_SetGamma( unsigned short red[256], unsigned short green[256], unsigned short blue[256] )
 {
 	unsigned short table[3][256];
@@ -883,21 +876,6 @@ static int GetDisplayFrequency( glimpParms_t parms )
 	return devmode.dmDisplayFrequency;
 }
 
-/*
-===================
-GLimp_Init
-
-This is the platform specific OpenGL initialization function.  It
-is responsible for loading OpenGL, initializing it,
-creating a window of the appropriate size, doing
-fullscreen manipulations, etc.  Its overall responsibility is
-to make sure that a functional OpenGL subsystem is operating
-when it returns to the ref.
-
-If there is any failure, the renderer will revert back to safe
-parameters and try again.
-===================
-*/
 bool GLimp_Init( glimpParms_t parms )
 {
 	HDC hDC;
@@ -978,13 +956,6 @@ bool GLimp_Init( glimpParms_t parms )
 	return true;
 }
 
-/*
-===================
-GLimp_SetScreenParms
-
-Sets up the screen based on passed parms..
-===================
-*/
 bool GLimp_SetScreenParms( glimpParms_t parms )
 {
 	// Optionally ChangeDisplaySettings to get a different fullscreen resolution.
@@ -1057,14 +1028,6 @@ void DeviceManager::Shutdown()
 	}
 }
 
-/*
-===================
-GLimp_Shutdown
-
-This routine does all OS specific shutdown procedures for the OpenGL
-subsystem.
-===================
-*/
 void GLimp_Shutdown()
 {
 	if( deviceManager ) {

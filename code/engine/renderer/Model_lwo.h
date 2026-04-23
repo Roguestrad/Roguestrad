@@ -558,105 +558,274 @@ typedef struct st_lwObject {
 	int			nsurfs;
 } lwObject;
 
-/* lwo2.c */
-
+//! Loads a LightWave object file and returns a parsed object structure
 lwObject*	lwGetObject( const char* filename, unsigned int* failID, int* failpos );
+
+//! Frees the memory used by an lwObject structure and its nested components.
 void		lwFreeObject( lwObject* object );
+
+//! Frees the memory used by an lwLayer structure and its associated data.
 void		lwFreeLayer( lwLayer* layer );
 
-/* pntspols.c */
-
+//! Frees the memory allocated for a lwPointList structure and its contained data.
 void		lwFreePoints( lwPointList* point );
+
+//! Frees the memory allocated for a lwPolygonList structure and its nested data.
 void		lwFreePolygons( lwPolygonList* plist );
+
+//! Reads point records from a PNTS chunk in an LWO2 file and adds them to the provided point list.
 int			lwGetPoints( idFile* fp, int cksize, lwPointList* point );
+
+//! Calculates the bounding box for a point list only if it hasn't been initialized yet
 void		lwGetBoundingBox( lwPointList* point, float bbox[] );
+
+//! Allocates or extends polygon arrays to hold new records
 int			lwAllocPolygons( lwPolygonList* plist, int npols, int nverts );
+
+/*!
+	\brief Reads polygon records from a POLS chunk in an LWO2 file and adds them to the provided polygon list
+
+	This function processes a POLS chunk from an LWO2 file format, parsing polygon data including vertex indices and flags. It allocates memory for the polygons and vertices based on the chunk size,
+   then populates the lwPolygonList with the parsed polygon information. The function handles error cases by freeing allocated memory and returning failure codes. The ptoffset parameter is used to
+   adjust vertex indices when adding polygons to the list. The function returns 1 on success and 0 on failure.
+
+	\param fp File pointer to the LWO2 file being read
+	\param cksize Size of the POLS chunk in bytes
+	\param plist Pointer to the polygon list structure to be populated
+	\param ptoffset Offset value to adjust vertex indices by
+	\return Returns 1 on successful parsing and population of the polygon list, or 0 on failure
+*/
 int			lwGetPolygons( idFile* fp, int cksize, lwPolygonList* plist, int ptoffset );
+
+//! Calculates polygon normals using the cross product of the first and last edges
 void		lwGetPolyNormals( lwPointList* point, lwPolygonList* polygon );
+
+//! Populates each point with the indices of polygons that share the point
 int			lwGetPointPolygons( lwPointList* point, lwPolygonList* polygon );
+
+/*!
+	\brief Resolves polygon surface tags into actual surface pointers, creating default surfaces for missing tags.
+
+	This function takes a list of polygons and a tag list containing surface names, and resolves the surface tags into actual lwSurface pointers. It iterates through the polygon list and for each
+   polygon, it looks up the corresponding surface in the provided surface list. If a surface is not found for a given tag, a default surface is created and added to the surface list. The function also
+   updates the polygon's surface pointer to point to the resolved surface. The nsurfs parameter is updated to reflect the number of surfaces in the list.
+
+	\param polygon Pointer to the polygon list structure containing the polygons to resolve
+	\param tlist Pointer to the tag list structure containing the surface names
+	\param surf Double pointer to the surface list structure where resolved surfaces are stored
+	\param nsurfs Pointer to an integer that tracks the number of surfaces in the list
+	\return Returns 1 on successful resolution, 0 on failure due to allocation issues or invalid indices
+*/
 int			lwResolvePolySurfaces( lwPolygonList* polygon, lwTagList* tlist, lwSurface** surf, int* nsurfs );
+
+//! Computes vertex normals by averaging polygon normals for shared points
 void		lwGetVertNormals( lwPointList* point, lwPolygonList* polygon );
+
+//! Frees the memory used by a lwTagList structure.
 void		lwFreeTags( lwTagList* tlist );
+
+//! Reads tag strings from a TAGS chunk in an LWO2 file and adds them to the provided tag list array.
 int			lwGetTags( idFile* fp, int cksize, lwTagList* tlist );
+
+/*!
+	\brief Reads polygon tags from a PTAG chunk in an LWO2 file format
+
+	This function processes polygon tag data from a PTAG chunk within an LWO2 file, handling different tag types such as surface, particle, and smooth group tags. It reads the tag type from the file,
+   validates it against known identifiers, and then reads polygon-tag pairs to populate the appropriate fields in the polygon list. The function supports seeking to skip over chunks that don't match
+   the expected tag types. It is primarily used during LWO2 model loading to associate polygon data with tags, such as surface materials, particle systems, or smoothing groups.
+
+	\param fp File pointer to the LWO2 file being read
+	\param cksize Size of the chunk to read
+	\param tlist Pointer to the tag list structure to populate
+	\param plist Pointer to the polygon list structure to associate tags with
+	\return Returns 1 on successful processing, 0 if there is an error in reading or processing
+*/
 int			lwGetPolygonTags( idFile* fp, int cksize, lwTagList* tlist, lwPolygonList* plist );
 
-/* vmap.c */
-
+//! Frees the memory allocated for a lwVMap structure and its embedded data members.
 void		lwFreeVMap( lwVMap* vmap );
+
+/*!
+	\brief Reads and parses a vertex map (VMAP or VMAD) chunk from an LWO2 file format.
+
+	This function reads a vertex map chunk from a file pointer, parses its structure, and allocates memory for the vertex map data. It supports both VMAP and VMAD chunks with optional per-polygon
+   mapping. The chunk contains vertex indices, optional polygon indices, and vertex data values. The function handles memory allocation and cleanup, returning NULL on failure.
+
+	\param fp File pointer to read the chunk data from
+	\param cksize Size of the chunk to read in bytes
+	\param ptoffset Point offset for mapping vertex indices
+	\param poloffset Polygon offset for mapping polygon indices
+	\param perpoly Flag indicating if mapping is per-polygon (1) or per-vertex (0)
+	\return Pointer to a new lwVMap structure containing parsed vertex map data, or NULL on failure
+*/
 lwVMap*		lwGetVMap( idFile* fp, int cksize, int ptoffset, int poloffset, int perpoly );
+
+//! Populates the lwVMapPt structure for each point based on the provided vmap data.
 int			lwGetPointVMaps( lwPointList* point, lwVMap* vmap );
+
+//! Populates the lwVMapPt structure for each vertex in the polygon list based on the provided vmap data
 int			lwGetPolyVMaps( lwPolygonList* polygon, lwVMap* vmap );
 
-/* clip.c */
-
+//! Frees the memory allocated for a lightwave clip structure and its associated resources
 void		lwFreeClip( lwClip* clip );
+
+//! Reads image references from a CLIP chunk in an LWO2 file and returns a parsed clip structure.
 lwClip*		lwGetClip( idFile* fp, int cksize );
+
+//! Returns an lwClip pointer given a clip index from a list of clips
 lwClip*		lwFindClip( lwClip* list, int index );
 
-/* envelope.c */
-
+//! Frees the memory used by an lwEnvelope structure and its associated data.
 void		lwFreeEnvelope( lwEnvelope* env );
+
+//! Reads an ENVL chunk from an LWO2 file and returns a populated envelope structure.
 lwEnvelope* lwGetEnvelope( idFile* fp, int cksize );
+
+//! Returns an lwEnvelope pointer from a list given an envelope index
 lwEnvelope* lwFindEnvelope( lwEnvelope* list, int index );
 float		lwEvalEnvelope( lwEnvelope* env, float time );
 
-/* surface.c */
-
+//! Frees the memory used by an lwPlugin structure and its associated fields
 void		lwFreePlugin( lwPlugin* p );
+
+//! Frees the memory used by an lwTexture structure and its associated data.
 void		lwFreeTexture( lwTexture* t );
+
+//! Frees the memory allocated for an lwSurface structure and its associated resources.
 void		lwFreeSurface( lwSurface* surf );
+
+//! Reads a texture map header from a SURF.BLOK in an LWO2 file.
 int			lwGetTHeader( idFile* fp, int hsz, lwTexture* tex );
+
+//! Reads texture map data from an LWO2 file surface block
 int			lwGetTMap( idFile* fp, int tmapsz, lwTMap* tmap );
+
+//! Reads an image map from a SURF.BLOK in an LWO2 file
 int			lwGetImageMap( idFile* fp, int rsz, lwTexture* tex );
+
+//! Reads a procedural texture definition from a LWO2 file block
 int			lwGetProcedural( idFile* fp, int rsz, lwTexture* tex );
+
+//! Reads gradient data from a LWO2 file's SURF.BLOK section into a texture structure
 int			lwGetGradient( idFile* fp, int rsz, lwTexture* tex );
+
+//! Reads an lwTexture from a SURF.BLOK in an LWO2 file
 lwTexture*	lwGetTexture( idFile* fp, int bloksz, unsigned int type );
+
+//! Reads a shader record from a SURF.BLOK in an LWO2 file
 lwPlugin*	lwGetShader( idFile* fp, int bloksz );
+
+//! Reads and parses an lwSurface structure from an LWO2 file format.
 lwSurface*	lwGetSurface( idFile* fp, int cksize );
+
+//! Allocates and initializes a default surface object.
 lwSurface*	lwDefaultSurface();
 
-/* lwob.c */
-
+//! Parses and creates a surface definition from an LWOB file
 lwSurface*	lwGetSurface5( idFile* fp, int cksize, lwObject* obj );
+
+/*!
+	\brief Reads polygon records from a POLS chunk in an LWOB file and adds them to the provided polygon list.
+
+	This function processes a POLS chunk from an LWOB file format, parsing polygon data including vertex indices and surface information. It allocates memory for the polygons and vertices based on the
+   chunk size and data structure. The function handles offset adjustments for vertex indices using the provided ptoffset parameter. It returns 1 on success or 0 on failure, with error handling that
+   frees allocated memory and returns NULL for surface-related functions.
+
+	\param fp File pointer to the LWOB file being read
+	\param cksize Size of the POLS chunk in bytes
+	\param plist Pointer to the polygon list structure where polygons will be added
+	\param ptoffset Offset value to adjust vertex indices by
+	\return 1 if the polygon data was successfully read and processed, 0 if there was an error during processing
+	\throws NULL pointer dereference if fp or plist are NULL, memory allocation failure if lwAllocPolygons fails
+*/
 int			lwGetPolygons5( idFile* fp, int cksize, lwPolygonList* plist, int ptoffset );
+
+//! Loads a LightWave object file and returns a parsed object structure
 lwObject*	lwGetObject5( const char* filename, unsigned int* failID, int* failpos );
 
-/* list.c */
-
+//! Frees all nodes in a linked list by calling the provided free function on each node.
 void		lwListFree( void* list, void ( *freeNode )( void* ) );
+
+//! Appends a node to the end of a linked list.
 void		lwListAdd( void** list, void* node );
+
+//! Inserts a node into a list in sorted order using the provided comparison function.
 void		lwListInsert( void** vlist, void* vitem, int ( *compare )( void*, void* ) );
 
-/* vecmath.c */
-
+//! Computes the dot product of two 3D vectors represented as float arrays
 float		dot( float a[], float b[] );
+
+//! Computes the cross product of two 3D vectors and stores the result in a third vector
 void		cross( float a[], float b[], float c[] );
+
+//! Normalizes the input vector in place by dividing each component by its magnitude.
 void		normalize( float v[] );
 #define vecangle( a, b ) ( float )idMath::ACos( dot( a, b ) )
 
-/* lwio.c */
-
+//! Sets the file length to the specified integer value.
 void		   set_flen( int i );
+
+//! Returns the current file length value.
 int			   get_flen();
+
+//! Reads a specified number of bytes from a file into a newly allocated memory block
 void*		   getbytes( idFile* fp, int size );
+
+//! Skips n bytes in the given file pointer.
 void		   skipbytes( idFile* fp, int n );
+
+//! Reads a signed 8-bit integer from the given file pointer.
 int			   getI1( idFile* fp );
+
+//! Reads a signed 16-bit integer from a file stream and returns it
 short		   getI2( idFile* fp );
+
+//! Reads a 32-bit signed integer from the given file handle.
 int			   getI4( idFile* fp );
+
+//! Reads a single unsigned byte from the given file pointer.
 unsigned char  getU1( idFile* fp );
+
+//! Reads a 16-bit unsigned integer from a file and returns it in host byte order.
 unsigned short getU2( idFile* fp );
+
+//! Reads a 32-bit unsigned integer from the given file handle in big-endian byte order.
 unsigned int   getU4( idFile* fp );
+
+//! Reads and decodes a variable-length integer value from a file
 int			   getVX( idFile* fp );
+
+//! Reads a 32-bit floating point value from a file handle
 float		   getF4( idFile* fp );
+
+//! Reads a null-terminated string from a file pointer
 char*		   getS0( idFile* fp );
+
+//! Reads a signed 8-bit integer from the byte pointer and advances the pointer
 int			   sgetI1( unsigned char** bp );
+
+//! Reads a signed 16-bit integer from the given byte pointer and advances the pointer.
 short		   sgetI2( unsigned char** bp );
+
+//! Reads a 32-bit signed integer from the given byte pointer and advances the pointer.
 int			   sgetI4( unsigned char** bp );
+
+//! Reads and returns the next unsigned byte from the given byte pointer, advancing the pointer.
 unsigned char  sgetU1( unsigned char** bp );
+
+//! Reads an unsigned short value from a byte buffer and advances the buffer pointer by two bytes.
 unsigned short sgetU2( unsigned char** bp );
+
+//! Reads a 4-byte unsigned integer from a byte pointer in big-endian format and advances the pointer.
 unsigned int   sgetU4( unsigned char** bp );
+
+//! Reads a variable-length signed integer from a buffer and advances the buffer pointer.
 int			   sgetVX( unsigned char** bp );
+
+//! Reads a 32-bit float value from the given byte pointer, advances the pointer, and returns the value.
 float		   sgetF4( unsigned char** bp );
+
+//! Reads a null-terminated string from a buffer and advances the buffer pointer.
 char*		   sgetS0( unsigned char** bp );
 
 #endif /* !__LWO2_H__ */

@@ -62,6 +62,7 @@ struct viewDef_t;
 
 // our only drawing geometry type
 struct srfTriangles_t {
+	//! Initializes an empty srfTriangles_t object.
 	srfTriangles_t() { }
 
 	idBounds			 bounds; // for culling
@@ -127,17 +128,28 @@ enum dynamicModel_t {
 
 enum jointHandle_t { INVALID_JOINT = -1 };
 
+/*!
+	\class idMD5Joint
+	\brief A class representing a joint in an MD5 animation system.
+*/
 class idMD5Joint
 {
 public:
+	//! Initializes an idMD5Joint object with a null parent pointer.
 	idMD5Joint() { parent = NULL; }
 	idStr			  name;
 	const idMD5Joint* parent;
 };
 
-// the init methods may be called again on an already created model when
-// a reloadModels is issued
+/*!
+	\class idRenderModel
+	\brief Abstract base class for managing 3D model data and rendering resources.
 
+	This class defines the interface for handling 3D model data including loading from files, binary serialization, and rendering buffer management. It supports various model operations such as
+   surface management, joint information access, and dynamic model instantiation. The interface is designed to work with both static and dynamic models, supporting different rendering scenarios
+   including world models, entity models, and animated models. The class is intended to be inherited by concrete implementations that provide specific model loading and rendering capabilities.
+
+*/
 class idRenderModel
 {
 public:

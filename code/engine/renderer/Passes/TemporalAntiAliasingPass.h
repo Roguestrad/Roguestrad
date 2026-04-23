@@ -36,6 +36,10 @@ struct TemporalAntiAliasingParameters {
 	bool  enableHistoryClamping = true;
 };
 
+/*!
+	\class TemporalAntiAliasingPass
+	\brief A pass for implementing temporal antialiasing in a graphics rendering pipeline.
+*/
 class TemporalAntiAliasingPass
 {
 private:
@@ -68,14 +72,43 @@ public:
 		uint32_t		 numConstantBufferVersions = 16;
 	};
 
+	//! Constructs a new TemporalAntiAliasingPass object with default initialization.
 	TemporalAntiAliasingPass();
 
+	/*!
+		\brief Initializes the temporal anti-aliasing pass with the specified device, common passes, view definition, and creation parameters.
+
+		This function sets up the necessary resources and state for performing temporal anti-aliasing, including creating compute shaders, samplers, constant buffers, and binding sets based on the
+	   provided parameters. It also handles MSAA-specific shader selection and stencil buffer setup if motion vector stencil masking is enabled. The function asserts that feedback textures have
+	   matching dimensions and formats, and that required UAV flags are set.
+
+		\param device The device to create GPU resources on
+		\param commonPasses Pointer to common render passes for shared resources
+		\param viewDef Pointer to the view definition for the current frame
+		\param params Creation parameters including textures and buffer configurations for TAA
+		\throws common->Error() when the source depth texture format doesn't have a stencil plane
+	*/
 	void	 Init( nvrhi::IDevice* device, CommonRenderPasses* commonPasses, const viewDef_t* viewDef, const CreateParameters& params );
 
+	/*!
+		\brief Performs temporal antialiasing resolution using the provided command list and parameters.
+
+		This function executes the temporal resolve pass for antialiasing, which combines current and historical frame data to produce a high-quality antialiased output. It sets up constant buffer
+	   values based on viewport information and TAA parameters, configures the compute shader state, and dispatches the compute job with appropriate grid sizes.
+
+		\param commandList The command list to record the rendering commands into
+		\param params Configuration parameters for the temporal antialiasing process
+		\param feedbackIsValid Flag indicating whether valid feedback from previous frame is available for blending
+		\param viewDef Pointer to the view definition containing viewport and rendering context information
+	*/
 	void	 TemporalResolve( nvrhi::ICommandList* commandList, const TemporalAntiAliasingParameters& params, bool feedbackIsValid, const viewDef_t* viewDef );
 
+	//! Advances the temporal anti-aliasing frame index and updates jitter parameters for R2 sequence.
 	void	 AdvanceFrame();
+
+	//! Returns the current pixel offset for temporal anti-aliasing based on the frame index and jittering method.
 	idVec2	 GetCurrentPixelOffset( int frameIndex );
 
+	//! Returns the current frame index used for temporal anti-aliasing.
 	uint32_t GetFrameIndex() const { return m_FrameIndex; }
 };

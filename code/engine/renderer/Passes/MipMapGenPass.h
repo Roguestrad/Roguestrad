@@ -25,6 +25,10 @@
 
 class CommonRenderPasses;
 
+/*!
+	\class MipMapGenPass
+	\brief A pass for generating and displaying texture mipmaps.
+*/
 class MipMapGenPass
 {
 public:
@@ -35,15 +39,13 @@ public:
 		MODE_MINMAX = 3, // min() and max() reductions of R channel into RG channels
 	};
 
-	// note : 'texture' must have been allocated with some mip levels
+	//! Initializes a MipMapGenPass instance to generate mipmaps for the provided texture using the specified mode.
 	MipMapGenPass( nvrhi::IDevice* device, nvrhi::TextureHandle texture, Mode mode = Mode::MODE_MAX );
 
-	// Dispatches reduction kernel : reads LOD 0 and populates
-	// LOD 1 and up
+	//! Dispatches the mipmap generation compute shader passes to generate texture mipmaps from LOD 0 up to the specified maximum LOD level
 	void Dispatch( nvrhi::ICommandList* commandList, int maxLOD = -1 );
 
-	// debug : blits mip-map levels in spiral pattern to 'target'
-	// (assumes 'target' texture resolution is high enough...)
+	//! Displays mip-map levels of a texture in a spiral pattern on the target framebuffer.
 	void Display( CommonRenderPasses& commonPasses, nvrhi::ICommandList* commandList, nvrhi::IFramebuffer* target );
 
 private:

@@ -34,24 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Model_obj.h"
 
-/*
-======================================================================
-
-	Parses Wavefront export files. This parser is designed to work with Blender and 3D Studio Max
-
-
-	The goal is to parse the information into memory exactly as it is
-	represented in the file.  Users of the data will then move it
-	into a form that is more convenient for them.
-
-======================================================================
-*/
-
-/*
-=================
-OBJ_Parse
-=================
-*/
+//! Parses an OBJ model file from a memory buffer and returns a parsed model object
 objModel_t* OBJ_Parse( const char* fileName, const char* objFileBuffer, int length )
 {
 	objModel_t*				model = new( TAG_MODEL ) objModel_t;
@@ -211,11 +194,6 @@ objModel_t* OBJ_Parse( const char* fileName, const char* objFileBuffer, int leng
 	return model;
 }
 
-/*
-=================
-OBJ_Load
-=================
-*/
 objModel_t* OBJ_Load( const char* fileName )
 {
 	char*		objBuffer;
@@ -235,11 +213,7 @@ objModel_t* OBJ_Load( const char* fileName )
 	return obj;
 }
 
-/*
-=================
-OBJ_Free
-=================
-*/
+//! Frees all memory associated with an object model by deleting its objects and the model itself.
 void OBJ_Free( objModel_t* model )
 {
 	if( !model ) {

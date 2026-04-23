@@ -55,14 +55,7 @@ visible in the portal areas that can be seen from the current viewpoint.
 =======================================================================
 */
 
-/*
-=============
-R_SetLightDefViewLight
-
-If the lightDef is not already on the viewLight list, create
-a viewLight and add it to the list with an empty scissor rect.
-=============
-*/
+//! Creates or retrieves a viewLight for the given light definition and adds it to the view light chain
 viewLight_t* R_SetLightDefViewLight( idRenderLightLocal* light )
 {
 	if( light->viewCount == tr.viewCount ) {
@@ -88,14 +81,6 @@ viewLight_t* R_SetLightDefViewLight( idRenderLightLocal* light )
 	return vLight;
 }
 
-/*
-=============
-R_SetEntityDefViewEntity
-
-If the entityDef is not already on the viewEntity list, create
-a viewEntity and add it to the list with an empty scissor rect.
-=============
-*/
 viewEntity_t* R_SetEntityDefViewEntity( idRenderEntityLocal* def )
 {
 	if( def->viewCount == tr.viewCount ) {
@@ -119,13 +104,6 @@ viewEntity_t* R_SetEntityDefViewEntity( idRenderEntityLocal* def )
 	return vModel;
 }
 
-/*
-================
-CullEntityByPortals
-
-Return true if the entity reference bounds do not intersect the current portal chain.
-================
-*/
 bool idRenderWorldLocal::CullEntityByPortals( const idRenderEntityLocal* entity, const portalStack_t* ps )
 {
 	if( r_useEntityPortalCulling.GetInteger() == 1 ) {
@@ -193,13 +171,6 @@ bool idRenderWorldLocal::CullEntityByPortals( const idRenderEntityLocal* entity,
 	return false;
 }
 
-/*
-===================
-AddAreaViewEntities
-
-Any models that are visible through the current portalStack will have their scissor rect updated.
-===================
-*/
 void idRenderWorldLocal::AddAreaViewEntities( int areaNum, const portalStack_t* ps )
 {
 	portalArea_t* area = &portalAreas[areaNum];
@@ -239,13 +210,6 @@ void idRenderWorldLocal::AddAreaViewEntities( int areaNum, const portalStack_t* 
 	}
 }
 
-/*
-================
-CullLightByPortals
-
-Return true if the light frustum does not intersect the current portal chain.
-================
-*/
 bool idRenderWorldLocal::CullLightByPortals( const idRenderLightLocal* light, const portalStack_t* ps )
 {
 	if( r_useLightPortalCulling.GetInteger() == 1 ) {
@@ -310,14 +274,6 @@ bool idRenderWorldLocal::CullLightByPortals( const idRenderLightLocal* light, co
 	return false;
 }
 
-/*
-===================
-AddAreaViewLights
-
-This is the only point where lights get added to the viewLights list.
-Any lights that are visible through the current portalStack will have their scissor rect updated.
-===================
-*/
 void idRenderWorldLocal::AddAreaViewLights( int areaNum, const portalStack_t* ps )
 {
 	portalArea_t* area = &portalAreas[areaNum];
@@ -354,14 +310,6 @@ void idRenderWorldLocal::AddAreaViewLights( int areaNum, const portalStack_t* ps
 	}
 }
 
-/*
-===================
-AddAreaToView
-
-This may be entered multiple times with different planes
-if more than one portal sees into the area
-===================
-*/
 void idRenderWorldLocal::AddAreaToView( int areaNum, const portalStack_t* ps )
 {
 	// mark the viewCount, so r_showPortals can display the considered portals
@@ -373,11 +321,6 @@ void idRenderWorldLocal::AddAreaToView( int areaNum, const portalStack_t* ps )
 	AddAreaViewEnvprobes( areaNum, ps ); // RB
 }
 
-/*
-===================
-idRenderWorldLocal::ScreenRectForWinding
-===================
-*/
 idScreenRect idRenderWorldLocal::ScreenRectFromWinding( const idWinding* w, const viewEntity_t* space )
 {
 	const float	 viewWidth	= ( float )tr.viewDef->viewport.x2 - ( float )tr.viewDef->viewport.x1;
@@ -402,11 +345,6 @@ idScreenRect idRenderWorldLocal::ScreenRectFromWinding( const idWinding* w, cons
 	return r;
 }
 
-/*
-===================
-idRenderWorldLocal::PortalIsFoggedOut
-===================
-*/
 bool idRenderWorldLocal::PortalIsFoggedOut( const portal_t* p )
 {
 	idRenderLightLocal* ldef = p->doublePortal->fogLight;
@@ -451,11 +389,6 @@ bool idRenderWorldLocal::PortalIsFoggedOut( const portal_t* p )
 	return true;
 }
 
-/*
-===================
-idRenderWorldLocal::FloodViewThroughArea_r
-===================
-*/
 void idRenderWorldLocal::FloodViewThroughArea_r( const idVec3& origin, int areaNum, const portalStack_t* ps )
 {
 	portalArea_t* area = &portalAreas[areaNum];
@@ -572,15 +505,6 @@ void idRenderWorldLocal::FloodViewThroughArea_r( const idVec3& origin, int areaN
 	}
 }
 
-/*
-=======================
-idRenderWorldLocal::FlowViewThroughPortals
-
-Finds viewLights and viewEntities by flowing from an origin through the visible
-portals that the origin point can see into. The planes array defines a volume with
-the planes pointing outside the volume. Zero planes assumes an unbounded volume.
-=======================
-*/
 void idRenderWorldLocal::FlowViewThroughPortals( const idVec3& origin, int numPlanes, const idPlane* planes )
 {
 	portalStack_t ps;
@@ -607,11 +531,6 @@ void idRenderWorldLocal::FlowViewThroughPortals( const idVec3& origin, int numPl
 	}
 }
 
-/*
-===================
-idRenderWorldLocal::BuildConnectedAreas_r
-===================
-*/
 void idRenderWorldLocal::BuildConnectedAreas_r( int areaNum )
 {
 	if( tr.viewDef->connectedAreas[areaNum] ) {
@@ -629,13 +548,6 @@ void idRenderWorldLocal::BuildConnectedAreas_r( int areaNum )
 	}
 }
 
-/*
-===================
-idRenderWorldLocal::BuildConnectedAreas
-
-This is only valid for a given view, not all views in a frame
-===================
-*/
 void idRenderWorldLocal::BuildConnectedAreas()
 {
 	tr.viewDef->connectedAreas = ( bool* )R_FrameAlloc( numPortalAreas * sizeof( tr.viewDef->connectedAreas[0] ) );
@@ -653,20 +565,6 @@ void idRenderWorldLocal::BuildConnectedAreas()
 	BuildConnectedAreas_r( tr.viewDef->areaNum );
 }
 
-/*
-=============
-idRenderWorldLocal::FindViewLightsAndEntites
-
-All the modelrefs and lightrefs that are in visible areas
-will have viewEntitys and viewLights created for them.
-
-The scissorRects on the viewEntitys and viewLights may be empty if
-they were considered, but not actually visible.
-
-Entities and lights can have cached viewEntities / viewLights that
-will be used if the viewCount variable matches.
-=============
-*/
 void idRenderWorldLocal::FindViewLightsAndEntities()
 {
 	SCOPED_PROFILE_EVENT( "FindViewLightsAndEntities" );
@@ -733,12 +631,6 @@ void idRenderWorldLocal::FindViewLightsAndEntities()
 Light linking into the BSP tree by flooding through portals
 
 =======================================================================
-*/
-
-/*
-===================
-idRenderWorldLocal::FloodLightThroughArea_r
-===================
 */
 void idRenderWorldLocal::FloodLightThroughArea_r( idRenderLightLocal* light, int areaNum, const portalStack_t* ps )
 {
@@ -847,15 +739,6 @@ void idRenderWorldLocal::FloodLightThroughArea_r( idRenderLightLocal* light, int
 	}
 }
 
-/*
-=======================
-idRenderWorldLocal::FlowLightThroughPortals
-
-Adds an arearef in each area that the light center flows into.
-This can only be used for shadow casting lights that have a generated
-prelight, because shadows are cast from back side which may not be in visible areas.
-=======================
-*/
 void idRenderWorldLocal::FlowLightThroughPortals( idRenderLightLocal* light )
 {
 	// if the light origin areaNum is not in a valid area,
@@ -884,25 +767,11 @@ Portal State Management
 
 =======================================================================
 */
-
-/*
-==============
-NumPortals
-==============
-*/
 int idRenderWorldLocal::NumPortals() const
 {
 	return numInterAreaPortals;
 }
 
-/*
-==============
-FindPortal
-
-Game code uses this to identify which portals are inside doors.
-Returns 0 if no portal contacts the bounds
-==============
-*/
 qhandle_t idRenderWorldLocal::FindPortal( const idBounds& b ) const
 {
 	int				i, j;
@@ -926,11 +795,6 @@ qhandle_t idRenderWorldLocal::FindPortal( const idBounds& b ) const
 	return 0;
 }
 
-/*
-=============
-FloodConnectedAreas
-=============
-*/
 void idRenderWorldLocal::FloodConnectedAreas( portalArea_t* area, int portalAttributeIndex )
 {
 	if( area->connectedAreaNum[portalAttributeIndex] == connectedAreaNum ) {
@@ -945,11 +809,6 @@ void idRenderWorldLocal::FloodConnectedAreas( portalArea_t* area, int portalAttr
 	}
 }
 
-/*
-==============
-AreasAreConnected
-==============
-*/
 bool idRenderWorldLocal::AreasAreConnected( int areaNum1, int areaNum2, portalConnection_t connection ) const
 {
 	if( areaNum1 == -1 || areaNum2 == -1 ) {
@@ -974,13 +833,6 @@ bool idRenderWorldLocal::AreasAreConnected( int areaNum1, int areaNum2, portalCo
 	return portalAreas[areaNum1].connectedAreaNum[attribute] == portalAreas[areaNum2].connectedAreaNum[attribute];
 }
 
-/*
-==============
-SetPortalState
-
-doors explicitly close off portals when shut
-==============
-*/
 void idRenderWorldLocal::SetPortalState( qhandle_t portal, int blockTypes )
 {
 	if( portal == 0 ) {
@@ -1006,11 +858,6 @@ void idRenderWorldLocal::SetPortalState( qhandle_t portal, int blockTypes )
 	}
 }
 
-/*
-==============
-GetPortalState
-==============
-*/
 int idRenderWorldLocal::GetPortalState( qhandle_t portal )
 {
 	if( portal == 0 ) {

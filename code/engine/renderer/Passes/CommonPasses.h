@@ -65,6 +65,10 @@ struct BlitConstants {
 	float  sharpenFactor;
 };
 
+/*!
+	\class CommonRenderPasses
+	\brief Manages common render passes and texture blitting operations for graphics rendering.
+*/
 class CommonRenderPasses
 {
 protected:
@@ -75,10 +79,14 @@ protected:
 		nvrhi::IShader*					shader;
 		nvrhi::BlendState::RenderTarget blendState;
 
+		//! Compares this PSO cache key with another for equality based on framebuffer info, shader, and blend state
 		bool							operator==( const PsoCacheKey& other ) const { return fbinfo == other.fbinfo && shader == other.shader && blendState == other.blendState; }
+
+		//! Compares this PSO cache key with another for inequality
 		bool							operator!=( const PsoCacheKey& other ) const { return !( *this == other ); }
 
 		struct Hash {
+			//! Computes a hash value for a PSO cache key using combined hash values of its components.
 			size_t operator()( const PsoCacheKey& s ) const
 			{
 				size_t hash = 0;
@@ -110,14 +118,31 @@ public:
 
 	nvrhi::BindingLayoutHandle m_BlitBindingLayout;
 
+	//! Initializes a new instance of the CommonRenderPasses class with a null device pointer.
 	CommonRenderPasses();
 
+	//! Initializes the common render passes and sampler objects for the given device.
 	void Init( nvrhi::IDevice* device );
+
+	//! Releases all resources and resets the state of the common render passes system.
 	void Shutdown();
 
+	//! Copies texture data from a source texture to a target framebuffer using specified blit parameters.
 	void BlitTexture( nvrhi::ICommandList* commandList, const BlitParameters& params, BindingCache* bindingCache = nullptr );
 
-	// Simplified form of BlitTexture that blits the entire source texture, mip 0 slice 0, into the entire target framebuffer using a linear sampler.
+	/*!
+		\brief Copies the entire source texture into the target framebuffer using a linear sampler
+
+		This function performs a texture blit operation from a source texture to a target framebuffer. It simplifies the process by using the entire source texture at mip level 0 and slice 0, and
+	   copies it to the entire target framebuffer. The operation uses a linear sampler for filtering. The function internally constructs a BlitParameters structure and delegates the actual blit
+	   operation to the overloaded BlitTexture method that accepts these parameters.
+
+		\param commandList The command list to record the blit operation commands into
+		\param targetFramebuffer The framebuffer to blit the source texture into
+		\param sourceTexture The texture to copy data from
+		\param bindingCache Optional binding cache for managing shader resource bindings
+		\throws assertion failure if commandList, targetFramebuffer, or sourceTexture is null
+	*/
 	void BlitTexture( nvrhi::ICommandList* commandList, nvrhi::IFramebuffer* targetFramebuffer, nvrhi::ITexture* sourceTexture, BindingCache* bindingCache = nullptr );
 };
 

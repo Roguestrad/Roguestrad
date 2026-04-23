@@ -97,11 +97,6 @@ VkImageUsageFlags	  pickImageUsage( const nvrhi::TextureDesc& desc )
 }
 #endif
 
-/*
-====================
-idImage::idImage
-====================
-*/
 idImage::idImage( const char* name ) :
 	imgName( name )
 {
@@ -140,11 +135,6 @@ idImage::idImage( const char* name ) :
 	DeferredLoadImage();
 }
 
-/*
-====================
-idImage::~idImage
-====================
-*/
 idImage::~idImage()
 {
 	PurgeImage();
@@ -153,11 +143,6 @@ idImage::~idImage()
 	DeferredPurgeImage();
 }
 
-/*
-====================
-idImage::IsLoaded
-====================
-*/
 bool idImage::IsLoaded() const
 {
 	return isLoaded;
@@ -224,71 +209,34 @@ void idImage::CreateSampler()
 	// sampler = deviceManager->GetDevice()->createSampler( samplerDesc );
 }
 
-/*
-==============
-Bind
-
-Automatically enables 2D mapping or cube mapping if needed
-==============
-*/
 void idImage::Bind()
 {
 	backEnd.SetCurrentImage( this );
 }
 
-/*
-====================
-CopyFramebuffer
-====================
-*/
 void idImage::CopyFramebuffer( int x, int y, int imageWidth, int imageHeight )
 {
 	backEnd.pc.c_copyFrameBuffer++;
 }
 
-/*
-====================
-CopyDepthbuffer
-====================
-*/
 void idImage::CopyDepthbuffer( int x, int y, int imageWidth, int imageHeight )
 {
 	backEnd.pc.c_copyFrameBuffer++;
 }
 
-/*
-========================
-idImage::SubImageUpload
-========================
-*/
 void idImage::SubImageUpload( int mipLevel, int x, int y, int z, int width, int height, const void* pic, nvrhi::ICommandList* commandList, int pixelPitch )
 {
 	assert( x >= 0 && y >= 0 && mipLevel >= 0 && width >= 0 && height >= 0 && mipLevel < opts.numLevels );
 }
 
-/*
-========================
-idImage::SetSamplerState
-========================
-*/
 void idImage::SetSamplerState( textureFilter_t tf, textureRepeat_t tr )
 {
 }
 
-/*
-========================
-idImage::SetTexParameters
-========================
-*/
 void idImage::SetTexParameters()
 {
 }
 
-/*
-========================
-idImage::GetSampler
-========================
-*/
 void* idImage::GetSampler( SamplerCache& samplerCache )
 {
 	if( R_UsePixelatedLook() ) {
@@ -309,16 +257,6 @@ void* idImage::GetSampler( SamplerCache& samplerCache )
 	return ( void* )sampler.Get();
 }
 
-/*
-========================
-idImage::AllocImage
-
-Every image will pass through this function. Allocates all the necessary MipMap levels for the
-Image, but doesn't put anything in them.
-
-This should not be done during normal game-play, if you can avoid it.
-========================
-*/
 void idImage::AllocImage()
 {
 	PurgeImage();
@@ -573,11 +511,6 @@ void idImage::AllocImage()
 	assert( texture );
 }
 
-/*
-========================
-idImage::PurgeImage
-========================
-*/
 void idImage::PurgeImage()
 {
 	texture.Reset();
@@ -597,11 +530,6 @@ void idImage::PurgeImage()
 	defaulted = false;
 }
 
-/*
-========================
-idImage::Resize
-========================
-*/
 void idImage::Resize( int width, int height )
 {
 	if( opts.width == width && opts.height == height ) {
@@ -613,11 +541,7 @@ void idImage::Resize( int width, int height )
 }
 
 #if defined( USE_AMD_ALLOCATOR )
-/*
-====================
-idImage::EmptyGarbage
-====================
-*/
+
 void idImage::EmptyGarbage()
 {
 	if( m_VmaAllocator ) {

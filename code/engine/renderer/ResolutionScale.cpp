@@ -51,11 +51,6 @@ idCVar			   rs_raiseFraction( "rs_raiseFraction", "0.06", CVAR_FLOAT, "Raise the
 idCVar			   rs_raiseFrames( "rs_raiseFrames", "5", CVAR_INTEGER, "Require this many frames below rs_raiseMilliseconds" );
 idCVar			   rs_display( "rs_display", "0", CVAR_INTEGER, "0 - percentages, 1 - pixels per frame" );
 
-/*
-========================
-idResolutionScale::idResolutionScale
-========================
-*/
 idResolutionScale::idResolutionScale()
 {
 	dropMilliseconds  = 15.0f;
@@ -64,32 +59,17 @@ idResolutionScale::idResolutionScale()
 	currentResolution = 1.0f;
 }
 
-/*
-========================
-idResolutionScale::InitForMap
-========================
-*/
 void idResolutionScale::InitForMap( const char* mapName )
 {
 	dropMilliseconds  = rs_dropMilliseconds.GetFloat();
 	raiseMilliseconds = rs_raiseMilliseconds.GetFloat();
 }
 
-/*
-========================
-idResolutionScale::ResetToFullResolution
-========================
-*/
 void idResolutionScale::ResetToFullResolution()
 {
 	currentResolution = 1.0f;
 }
 
-/*
-========================
-idResolutionScale::GetCurrentResolutionScale
-========================
-*/
 void idResolutionScale::GetCurrentResolutionScale( float& x, float& y )
 {
 	assert( currentResolution >= MINIMUM_RESOLUTION_SCALE );
@@ -129,11 +109,6 @@ void idResolutionScale::GetCurrentResolutionScale( float& x, float& y )
 	}
 }
 
-/*
-========================
-idResolutionScale::SetCurrentGPUFrameTime
-========================
-*/
 void idResolutionScale::SetCurrentGPUFrameTime( int microseconds )
 {
 	float old		   = currentResolution;
@@ -172,11 +147,6 @@ void idResolutionScale::SetCurrentGPUFrameTime( int microseconds )
 	}
 }
 
-/*
-========================
-idResolutionScale::GetConsoleText
-========================
-*/
 void idResolutionScale::GetConsoleText( idStr& s )
 {
 	float x;

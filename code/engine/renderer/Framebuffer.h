@@ -48,53 +48,116 @@ static const int IRRADIANCE_OCTAHEDRON_SIZE = 30 + 2;
 // if we use higher resolutions than this than the shadow casting lights don't fit into the 16384^2 atlas anymore
 static int		 shadowMapResolutions[MAX_SHADOWMAP_RESOLUTIONS] = { 1024, 512, 256, 256, 128 };
 
+/*!
+	\class Framebuffer
+	\brief A framebuffer abstraction managing rendering targets and their attachments.
+
+	This class provides a high-level interface for managing framebuffer objects within a rendering system. It handles the creation, configuration, and binding of framebuffers with various attachments
+   including color, depth, and stencil buffers. The class supports both manual attachment of 2D images and automatic initialization with specified dimensions. Framebuffers can be resized, checked for
+   errors, and queried for their properties such as dimensions and multisampling status. The implementation includes functionality for tracking active framebuffers, managing default framebuffer state,
+   and coordinating with a global framebuffer registry for resource management and cleanup.
+
+*/
 class Framebuffer
 {
 public:
+	//! Initializes a new framebuffer with the specified name and dimensions.
 	Framebuffer( const char* name, int width, int height );
+
+	//! Constructs a Framebuffer object with the specified name and framebuffer description
 	Framebuffer( const char* name, const nvrhi::FramebufferDesc& desc );
 
+	//! Destroys the Framebuffer object and resets its API object.
 	virtual ~Framebuffer();
 
+	//! Initializes the framebuffer system and registers the listFramebuffers console command.
 	static void			Init();
+
+	//! Shuts down the framebuffer system by deleting all framebuffers.
 	static void			Shutdown();
+
+	//! Checks the status of all framebuffers.
 	static void			CheckFramebuffers();
+
+	//! Returns a framebuffer with the specified name, or NULL if not found.
 	static Framebuffer* Find( const char* name );
+
+	//! Resizes all global framebuffers in the rendering system to match the current back buffer count and optionally reloads associated images.
 	static void			ResizeFramebuffers( bool reloadImages = true );
+
+	//! Reloads all images used in the framebuffer.
 	static void			ReloadImages();
 
+	//! Binds this framebuffer to the current rendering context.
 	void				Bind();
+
+	//! Checks whether the framebuffer is currently bound to the rendering context.
 	bool				IsBound();
+
+	//! Unbinds the current framebuffer and binds the back buffer.
 	static void			Unbind();
+
+	//! Checks if the default framebuffer is currently active.
 	static bool			IsDefaultFramebufferActive();
+
+	//! Returns a pointer to the currently active framebuffer object.
 	static Framebuffer* GetActiveFramebuffer();
 
+	//! Adds a color buffer to the framebuffer with the specified format, index, and optional multisamples.
 	void				AddColorBuffer( int format, int index, int multiSamples = 0 );
+
+	//! Adds a depth buffer to the framebuffer with the specified format and optional multisamples.
 	void				AddDepthBuffer( int format, int multiSamples = 0 );
+
+	//! Adds a stencil buffer to the framebuffer with the specified format and optional multi-sampling.
 	void				AddStencilBuffer( int format, int multiSamples = 0 );
 
+	/*!
+		\brief Attaches a 2D image to the specified framebuffer target at the given index with optional mipmap level
+
+		This function associates a 2D image resource with a specific target in the framebuffer object. The target parameter specifies which framebuffer attachment point to use, such as color, depth,
+	   or stencil buffers. The image parameter provides the texture or image data to be attached, while index indicates the attachment point index. The mipmapLod parameter allows specifying a
+	   particular mipmap level to attach, defaulting to level 0 if not specified.
+
+		\param target Framebuffer attachment target such as color, depth, or stencil buffers
+		\param image Pointer to the idImage resource to be attached
+		\param index Attachment point index within the framebuffer
+		\param mipmapLod Optional mipmap level to attach, defaults to 0
+	*/
 	void				AttachImage2D( int target, idImage* image, int index, int mipmapLod = 0 );
+
+	//! Attaches a depth image to the framebuffer for the specified target.
 	void				AttachImageDepth( int target, idImage* image );
+
+	//! Attaches a depth layer from an image to the framebuffer.
 	void				AttachImageDepthLayer( idImage* image, int layer );
 
-	// check for OpenGL errors
+	//! Checks for OpenGL errors. FIXME outdated
 	void				Check();
+
+	//! Returns the OpenGL framebuffer identifier associated with this framebuffer object.
 	uint32_t			GetFramebuffer() const { return frameBuffer; }
 
+	//! Returns the width of the framebuffer in pixels.
 	int					GetWidth() const { return width; }
 
+	//! Returns the height of the framebuffer in pixels
 	int					GetHeight() const { return height; }
 
+	//! Returns true if the framebuffer uses multi-sampled antialiasing.
 	bool				IsMultiSampled() const { return msaaSamples; }
 
+	//! Resizes the framebuffer to the specified width and height.
 	void				Resize( int width_, int height_ )
 	{
 		width  = width_;
 		height = height_;
 	}
 
+	//! Returns the NVRHI API object for this framebuffer
 	nvrhi::IFramebuffer* GetApiObject() { return apiObject; }
 
+	//! Returns the viewport information of the framebuffer as an idScreenRect.
 	idScreenRect		 GetViewPortInfo() const;
 
 private:

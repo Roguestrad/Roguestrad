@@ -76,11 +76,6 @@ typedef struct mtrParsingData_s {
 
 idCVar r_forceSoundOpAmplitude( "r_forceSoundOpAmplitude", "0", CVAR_FLOAT, "Don't call into the sound system for amplitudes" );
 
-/*
-=============
-idMaterial::CommonInit
-=============
-*/
 void   idMaterial::CommonInit()
 {
 	desc				  = "<none>";
@@ -139,11 +134,6 @@ void   idMaterial::CommonInit()
 	decalInfo.end[3]   = 0;
 }
 
-/*
-=============
-idMaterial::idMaterial
-=============
-*/
 idMaterial::idMaterial()
 {
 	CommonInit();
@@ -162,11 +152,6 @@ idMaterial::~idMaterial()
 {
 }
 
-/*
-===============
-idMaterial::FreeData
-===============
-*/
 void idMaterial::FreeData()
 {
 	int i;
@@ -204,11 +189,6 @@ void idMaterial::FreeData()
 	}
 }
 
-/*
-==============
-idMaterial::GetEditorImage
-==============
-*/
 idImage* idMaterial::GetEditorImage() const
 {
 	if( editorImage ) {
@@ -264,7 +244,6 @@ idImage* idMaterial::GetEditorImage() const
 	return editorImage;
 }
 
-// RB - just look for first stage and fallback to editor image like D3Radiant does
 idImage* idMaterial::GetLightEditorImage() const
 {
 	if( numStages && stages ) {
@@ -342,13 +321,6 @@ static infoParm_t infoParms[] = {
 
 static const int numInfoParms = sizeof( infoParms ) / sizeof( infoParms[0] );
 
-/*
-===============
-idMaterial::CheckSurfaceParm
-
-See if the current token matches one of the surface parm bit flags
-===============
-*/
 bool			 idMaterial::CheckSurfaceParm( idToken* token )
 {
 	for( int i = 0; i < numInfoParms; i++ ) {
@@ -368,13 +340,6 @@ bool			 idMaterial::CheckSurfaceParm( idToken* token )
 	return false;
 }
 
-/*
-===============
-idMaterial::MatchToken
-
-Sets defaultShader and returns false if the next token doesn't match
-===============
-*/
 bool idMaterial::MatchToken( idLexer& src, const char* match )
 {
 	if( !src.ExpectTokenString( match ) ) {
@@ -384,11 +349,6 @@ bool idMaterial::MatchToken( idLexer& src, const char* match )
 	return true;
 }
 
-/*
-=================
-idMaterial::ParseSort
-=================
-*/
 void idMaterial::ParseSort( idLexer& src )
 {
 	idToken token;
@@ -424,11 +384,6 @@ void idMaterial::ParseSort( idLexer& src )
 	}
 }
 
-/*
-=================
-idMaterial::ParseStereoEye
-=================
-*/
 void idMaterial::ParseStereoEye( idLexer& src )
 {
 	idToken token;
@@ -448,11 +403,6 @@ void idMaterial::ParseStereoEye( idLexer& src )
 	}
 }
 
-/*
-=================
-idMaterial::ParseDecalInfo
-=================
-*/
 void idMaterial::ParseDecalInfo( idLexer& src )
 {
 	idToken token;
@@ -468,11 +418,6 @@ void idMaterial::ParseDecalInfo( idLexer& src )
 	}
 }
 
-/*
-=============
-idMaterial::GetExpressionConstant
-=============
-*/
 int idMaterial::GetExpressionConstant( float f )
 {
 	int i;
@@ -494,11 +439,6 @@ int idMaterial::GetExpressionConstant( float f )
 	return i;
 }
 
-/*
-=============
-idMaterial::GetExpressionTemporary
-=============
-*/
 int idMaterial::GetExpressionTemporary()
 {
 	if( numRegisters >= MAX_EXPRESSION_REGISTERS ) {
@@ -511,11 +451,6 @@ int idMaterial::GetExpressionTemporary()
 	return numRegisters - 1;
 }
 
-/*
-=============
-idMaterial::GetExpressionOp
-=============
-*/
 expOp_t* idMaterial::GetExpressionOp()
 {
 	if( numOps == MAX_EXPRESSION_OPS ) {
@@ -527,11 +462,6 @@ expOp_t* idMaterial::GetExpressionOp()
 	return &pd->shaderOps[numOps++];
 }
 
-/*
-=================
-idMaterial::EmitOp
-=================
-*/
 int idMaterial::EmitOp( int a, int b, expOpType_t opType )
 {
 	expOp_t* op;
@@ -575,11 +505,6 @@ int idMaterial::EmitOp( int a, int b, expOpType_t opType )
 	return op->c;
 }
 
-/*
-=================
-idMaterial::ParseEmitOp
-=================
-*/
 int idMaterial::ParseEmitOp( idLexer& src, int a, expOpType_t opType, int priority )
 {
 	int b;
@@ -588,13 +513,6 @@ int idMaterial::ParseEmitOp( idLexer& src, int a, expOpType_t opType, int priori
 	return EmitOp( a, b, opType );
 }
 
-/*
-=================
-idMaterial::ParseTerm
-
-Returns a register index
-=================
-*/
 int idMaterial::ParseTerm( idLexer& src )
 {
 	idToken token;
@@ -813,23 +731,11 @@ int idMaterial::ParseExpressionPriority( idLexer& src, int priority )
 	return a;
 }
 
-/*
-=================
-idMaterial::ParseExpression
-
-Returns a register index
-=================
-*/
 int idMaterial::ParseExpression( idLexer& src )
 {
 	return ParseExpressionPriority( src, TOP_PRIORITY );
 }
 
-/*
-===============
-idMaterial::ClearStage
-===============
-*/
 void idMaterial::ClearStage( shaderStage_t* ss )
 {
 	ss->drawStateBits	   = 0;
@@ -837,11 +743,6 @@ void idMaterial::ClearStage( shaderStage_t* ss )
 	ss->color.registers[0] = ss->color.registers[1] = ss->color.registers[2] = ss->color.registers[3] = GetExpressionConstant( 1 );
 }
 
-/*
-===============
-idMaterial::NameToSrcBlendMode
-===============
-*/
 int idMaterial::NameToSrcBlendMode( const idStr& name )
 {
 	if( !name.Icmp( "GL_ONE" ) ) {
@@ -871,11 +772,6 @@ int idMaterial::NameToSrcBlendMode( const idStr& name )
 	return GLS_SRCBLEND_ONE;
 }
 
-/*
-===============
-idMaterial::NameToDstBlendMode
-===============
-*/
 int idMaterial::NameToDstBlendMode( const idStr& name )
 {
 	if( !name.Icmp( "GL_ONE" ) ) {
@@ -902,11 +798,6 @@ int idMaterial::NameToDstBlendMode( const idStr& name )
 	return GLS_DSTBLEND_ONE;
 }
 
-/*
-================
-idMaterial::ParseBlend
-================
-*/
 void idMaterial::ParseBlend( idLexer& src, shaderStage_t* stage )
 {
 	idToken token;
@@ -958,15 +849,6 @@ void idMaterial::ParseBlend( idLexer& src, shaderStage_t* stage )
 	stage->drawStateBits = srcBlend | dstBlend;
 }
 
-/*
-================
-idMaterial::ParseVertexParm
-
-If there is a single value, it will be repeated across all elements
-If there are two values, 3 = 0.0, 4 = 1.0
-if there are three values, 4 = 1.0
-================
-*/
 void idMaterial::ParseVertexParm( idLexer& src, newShaderStage_t* newStage )
 {
 	idToken token;
@@ -1010,11 +892,6 @@ void idMaterial::ParseVertexParm( idLexer& src, newShaderStage_t* newStage )
 	newStage->vertexParms[parm][3] = ParseExpression( src );
 }
 
-/*
-================
-idMaterial::ParseVertexParm2
-================
-*/
 void idMaterial::ParseVertexParm2( idLexer& src, newShaderStage_t* newStage )
 {
 	idToken token;
@@ -1039,11 +916,6 @@ void idMaterial::ParseVertexParm2( idLexer& src, newShaderStage_t* newStage )
 	newStage->vertexParms[parm][3] = ParseExpression( src );
 }
 
-/*
-================
-idMaterial::ParseFragmentMap
-================
-*/
 void idMaterial::ParseFragmentMap( idLexer& src, newShaderStage_t* newStage )
 {
 	const char*		str;
@@ -1156,11 +1028,6 @@ void idMaterial::ParseFragmentMap( idLexer& src, newShaderStage_t* newStage )
 	}
 }
 
-/*
-===============
-idMaterial::ParseStencilCompare
-===============
-*/
 void idMaterial::ParseStencilCompare( const idToken& token, stencilComp_t* stencilComp )
 {
 	if( !token.Icmp( "Greater" ) ) {
@@ -1206,11 +1073,6 @@ void idMaterial::ParseStencilCompare( const idToken& token, stencilComp_t* stenc
 	common->Warning( "Material %s expected a valid stencil comparison function. Got %s", GetName(), token.c_str() );
 }
 
-/*
-===============
-idMaterial::ParseStencilOperation
-===============
-*/
 void idMaterial::ParseStencilOperation( const idToken& token, stencilOperation_t* stencilOp )
 {
 	if( !token.Icmp( "Keep" ) ) {
@@ -1256,11 +1118,6 @@ void idMaterial::ParseStencilOperation( const idToken& token, stencilOperation_t
 	common->Warning( "Material %s expected a valid stencil operation function. Got %s", GetName(), token.c_str() );
 }
 
-/*
-===============
-idMaterial::ParseStencil
-===============
-*/
 void idMaterial::ParseStencil( idLexer& src, stencilStage_t* stencilStage )
 {
 	idToken token;
@@ -1330,11 +1187,6 @@ void idMaterial::ParseStencil( idLexer& src, stencilStage_t* stencilStage )
 	}
 }
 
-/*
-===============
-idMaterial::MultiplyTextureMatrix
-===============
-*/
 void idMaterial::MultiplyTextureMatrix( textureStage_t* ts, int registers[2][3] )
 {
 	int old[2][3];
@@ -1357,22 +1209,6 @@ void idMaterial::MultiplyTextureMatrix( textureStage_t* ts, int registers[2][3] 
 	ts->matrix[1][2] = EmitOp( EmitOp( EmitOp( old[1][0], registers[0][2], OP_TYPE_MULTIPLY ), EmitOp( old[1][1], registers[1][2], OP_TYPE_MULTIPLY ), OP_TYPE_ADD ), old[1][2], OP_TYPE_ADD );
 }
 
-/*
-=================
-idMaterial::ParseStage
-
-An open brace has been parsed
-
-
-{
-	if <expression>
-	map <imageprogram>
-	"nearest" "linear" "clamp" "zeroclamp" "uncompressed" "highquality" "nopicmip"
-	scroll, scale, rotate
-}
-
-=================
-*/
 void idMaterial::ParseStage( idLexer& src, const textureRepeat_t trpDefault )
 {
 	idToken			 token;
@@ -1983,11 +1819,6 @@ void idMaterial::ParseStage( idLexer& src, const textureRepeat_t trpDefault )
 	}
 }
 
-/*
-===============
-idMaterial::ParseDeform
-===============
-*/
 void idMaterial::ParseDeform( idLexer& src )
 {
 	idToken token;
@@ -2068,21 +1899,6 @@ void idMaterial::ParseDeform( idLexer& src )
 	SetMaterialFlag( MF_DEFAULTED );
 }
 
-/*
-==============
-idMaterial::AddImplicitStages
-
-If a material has diffuse or specular stages without any
-bump stage, add an implicit _flat bumpmap stage.
-
-If a material has a bump stage but no diffuse or specular
-stage, add a _white diffuse stage.
-
-It is valid to have either a diffuse or specular without the other.
-
-It is valid to have a reflection map and a bump map for bumpy reflection
-==============
-*/
 void idMaterial::AddImplicitStages( const textureRepeat_t trpDefault /* = TR_REPEAT  */ )
 {
 	char	buffer[1024];
@@ -2133,19 +1949,6 @@ void idMaterial::AddImplicitStages( const textureRepeat_t trpDefault /* = TR_REP
 	}
 }
 
-/*
-===============
-idMaterial::SortInteractionStages
-
-The renderer expects bump, then diffuse, then specular
-There can be multiple bump maps, followed by additional
-diffuse and specular stages, which allows cross-faded bump mapping.
-
-Ambient stages can be interspersed anywhere, but they are
-ignored during interactions, and all the interaction
-stages are ignored during ambient drawing.
-===============
-*/
 void idMaterial::SortInteractionStages()
 {
 	int j;
@@ -2178,16 +1981,6 @@ void idMaterial::SortInteractionStages()
 	}
 }
 
-/*
-=================
-idMaterial::ParseMaterial
-
-The current text pointer is at the explicit text definition of the
-Parse it into the global material variable. Later functions will optimize it.
-
-If there is any error during parsing, defaultShader will be set.
-=================
-*/
 void idMaterial::ParseMaterial( idLexer& src )
 {
 	idToken		token;
@@ -2555,11 +2348,6 @@ void idMaterial::ParseMaterial( idLexer& src )
 	}
 }
 
-/*
-=========================
-idMaterial::SetGui
-=========================
-*/
 void idMaterial::SetGui( const char* _gui ) const
 {
 #if !defined( DMAP )
@@ -2567,13 +2355,6 @@ void idMaterial::SetGui( const char* _gui ) const
 #endif
 }
 
-/*
-=========================
-idMaterial::Parse
-
-Parses the current material definition and finds all necessary images.
-=========================
-*/
 bool idMaterial::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer			 src;
@@ -2813,21 +2594,11 @@ void		idMaterial::Print() const
 	}
 }
 
-/*
-===============
-idMaterial::Save
-===============
-*/
 bool idMaterial::Save( const char* fileName )
 {
 	return ReplaceSourceFileText();
 }
 
-/*
-===============
-idMaterial::AddReference
-===============
-*/
 void idMaterial::AddReference()
 {
 	refCount++;
@@ -2841,15 +2612,6 @@ void idMaterial::AddReference()
 	}
 }
 
-/*
-===============
-idMaterial::EvaluateRegisters
-
-Parameters are taken from the localSpace and the renderView,
-then all expressions are evaluated, leaving the material registers
-set to their apropriate values.
-===============
-*/
 void idMaterial::EvaluateRegisters(
 	float* registers, const float localShaderParms[MAX_ENTITY_SHADER_PARMS], const float globalShaderParms[MAX_GLOBAL_SHADER_PARMS], const float floatTime, idSoundEmitter* soundEmitter ) const
 {
@@ -2947,11 +2709,6 @@ void idMaterial::EvaluateRegisters(
 	}
 }
 
-/*
-=============
-idMaterial::Texgen
-=============
-*/
 texgen_t idMaterial::Texgen() const
 {
 	if( stages ) {
@@ -2965,33 +2722,18 @@ texgen_t idMaterial::Texgen() const
 	return TG_EXPLICIT;
 }
 
-/*
-=============
-idMaterial::GetImageWidth
-=============
-*/
 int idMaterial::GetImageWidth() const
 {
 	assert( GetStage( 0 ) && GetStage( 0 )->texture.image );
 	return GetStage( 0 )->texture.image->GetUploadWidth();
 }
 
-/*
-=============
-idMaterial::GetImageHeight
-=============
-*/
 int idMaterial::GetImageHeight() const
 {
 	assert( GetStage( 0 ) && GetStage( 0 )->texture.image );
 	return GetStage( 0 )->texture.image->GetUploadHeight();
 }
 
-/*
-=============
-idMaterial::CinematicLength
-=============
-*/
 int idMaterial::CinematicLength() const
 {
 	if( !stages || !stages[0].texture.cinematic ) {
@@ -3000,20 +2742,10 @@ int idMaterial::CinematicLength() const
 	return stages[0].texture.cinematic->AnimationLength();
 }
 
-/*
-=============
-idMaterial::UpdateCinematic
-=============
-*/
 void idMaterial::UpdateCinematic( int time ) const
 {
 }
 
-/*
-=============
-idMaterial::CloseCinematic
-=============
-*/
 void idMaterial::CloseCinematic() const
 {
 	for( int i = 0; i < numStages; i++ ) {
@@ -3025,11 +2757,6 @@ void idMaterial::CloseCinematic() const
 	}
 }
 
-/*
-=============
-idMaterial::ResetCinematicTime
-=============
-*/
 void idMaterial::ResetCinematicTime( int time ) const
 {
 	for( int i = 0; i < numStages; i++ ) {
@@ -3039,11 +2766,6 @@ void idMaterial::ResetCinematicTime( int time ) const
 	}
 }
 
-/*
-=============
-idMaterial::GetCinematicStartTime
-=============
-*/
 int idMaterial::GetCinematicStartTime() const
 {
 	for( int i = 0; i < numStages; i++ ) {
@@ -3054,7 +2776,6 @@ int idMaterial::GetCinematicStartTime() const
 	return -1;
 }
 
-// RB: added because we can't rely on the FFmpeg feedback how long a video really is
 bool idMaterial::CinematicIsPlaying() const
 {
 	if( !stages || !stages[0].texture.cinematic ) {
@@ -3063,16 +2784,7 @@ bool idMaterial::CinematicIsPlaying() const
 
 	return stages[0].texture.cinematic->IsPlaying();
 }
-// RB end
 
-/*
-==================
-idMaterial::CheckForConstantRegisters
-
-As of 5/2/03, about half of the unique materials loaded on typical
-maps are constant, but 2/3 of the surface references are.
-==================
-*/
 void idMaterial::CheckForConstantRegisters()
 {
 	assert( constantRegisters == NULL );
@@ -3095,11 +2807,6 @@ void idMaterial::CheckForConstantRegisters()
 	EvaluateRegisters( constantRegisters, shaderParms, viewDef.renderView.shaderParms, 0.0f, 0 );
 }
 
-/*
-===================
-idMaterial::ImageName
-===================
-*/
 const char* idMaterial::ImageName() const
 {
 	if( numStages == 0 ) {
@@ -3112,21 +2819,11 @@ const char* idMaterial::ImageName() const
 	return "_scratch";
 }
 
-/*
-=================
-idMaterial::Size
-=================
-*/
 size_t idMaterial::Size() const
 {
 	return sizeof( idMaterial );
 }
 
-/*
-===================
-idMaterial::SetDefaultText
-===================
-*/
 bool idMaterial::SetDefaultText()
 {
 	// if there exists an image with the same name
@@ -3175,11 +2872,6 @@ bool idMaterial::SetDefaultText()
 	}
 }
 
-/*
-===================
-idMaterial::DefaultDefinition
-===================
-*/
 const char* idMaterial::DefaultDefinition() const
 {
 	return "{\n"
@@ -3194,11 +2886,6 @@ const char* idMaterial::DefaultDefinition() const
 		   "}";
 }
 
-/*
-===================
-idMaterial::GetBumpStage
-===================
-*/
 const shaderStage_t* idMaterial::GetBumpStage() const
 {
 	for( int i = 0; i < numStages; i++ ) {
@@ -3231,13 +2918,6 @@ void idMaterial::ReloadImages( bool force, nvrhi::ICommandList* commandList ) co
 }
 #endif
 
-/*
-=============
-idMaterial::SetFastPathImages
-
-See if the material is trivial for the fast path
-=============
-*/
 void idMaterial::SetFastPathImages()
 {
 	fastPathBumpImage	  = NULL;
@@ -3316,7 +2996,6 @@ fail:
 	fastPathSpecularImage = NULL;
 }
 
-// RB begin
 void idMaterial::ExportJSON( idFile* file, bool lastEntry ) const
 {
 	idImage* image = GetEditorImage();
@@ -3393,8 +3072,7 @@ class NWPrincipledPreferences(bpy.types.PropertyGroup):
 
 #if !defined( DMAP )
 
-// RB: completely rewritten from IcedTech1 and adjusted to generate PBR materials for typical asset store conventions
-// this also supports file suffices used by Blender's Node Wranger addon
+//! Generates .mtr material files from model or texture folders using PBR conventions with support for Unreal Engine mode.
 CONSOLE_COMMAND_SHIP( makeMaterials, "Make .mtr file from a models or textures folder using PBR conventions", idCmdSystem::ArgCompletion_ImageName )
 {
 	if( args.Argc() < 2 ) {

@@ -84,8 +84,6 @@ void idRenderEntityLocal::RemoveDecals()
 {
 }
 
-//======================================================================
-
 idRenderLightLocal::idRenderLightLocal()
 {
 	memset( &parms, 0, sizeof( parms ) );
@@ -126,8 +124,6 @@ int idRenderLightLocal::GetIndex()
 {
 	return index;
 }
-
-//======================================================================
 
 RenderEnvprobeLocal::RenderEnvprobeLocal()
 {

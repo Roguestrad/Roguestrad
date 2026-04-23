@@ -36,20 +36,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../idlib/geometry/DrawVert_intrinsics.h"
 
-// decalFade	filter 5 0.1
-// polygonOffset
-// {
-// map invertColor( textures/splat )
-// blend GL_ZERO GL_ONE_MINUS_SRC
-// vertexColor
-// clamp
-// }
-
-/*
-==================
-idRenderModelDecal::idRenderModelDecal
-==================
-*/
 idRenderModelDecal::idRenderModelDecal() :
 	firstDecal( 0 ),
 	nextDecal( 0 ),
@@ -70,11 +56,6 @@ idRenderModelDecal::~idRenderModelDecal()
 {
 }
 
-/*
-=================
-idRenderModelDecal::CreateProjectionParms
-=================
-*/
 bool idRenderModelDecal::CreateProjectionParms(
 	decalProjectionParms_t& parms, const idFixedWinding& winding, const idVec3& projectionOrigin, const bool parallel, const float fadeDepth, const idMaterial* material, const int startTime )
 {
@@ -164,11 +145,6 @@ bool idRenderModelDecal::CreateProjectionParms(
 	return true;
 }
 
-/*
-=================
-idRenderModelDecal::GlobalProjectionParmsToLocal
-=================
-*/
 void idRenderModelDecal::GlobalProjectionParmsToLocal( decalProjectionParms_t& localParms, const decalProjectionParms_t& globalParms, const idVec3& origin, const idMat3& axis )
 {
 	float modelMatrix[16];
@@ -193,11 +169,6 @@ void idRenderModelDecal::GlobalProjectionParmsToLocal( decalProjectionParms_t& l
 	localParms.force	 = globalParms.force;
 }
 
-/*
-=================
-idRenderModelDecal::ReUse
-=================
-*/
 void idRenderModelDecal::ReUse()
 {
 	firstDecal		   = 0;
@@ -207,11 +178,6 @@ void idRenderModelDecal::ReUse()
 	numDecalMaterials  = 0;
 }
 
-/*
-=================
-idRenderModelDecal::CreateDecalFromWinding
-=================
-*/
 void idRenderModelDecal::CreateDecalFromWinding( const idWinding& w, const idMaterial* decalMaterial, const idPlane fadePlanes[2], float fadeDepth, int startTime )
 {
 	// Often we are appending a new triangle to an existing decal, so merge with the previous decal if possible
@@ -272,10 +238,18 @@ void idRenderModelDecal::CreateDecalFromWinding( const idWinding& w, const idMat
 	}
 }
 
-/*
-============
-R_DecalPointCullStatic
-============
+/*!
+	\brief Culls decal points against a set of planes using SIMD optimizations when available.
+
+	This function determines whether a set of 3D vertices lies on the positive side of each of six planes by computing the distance from each vertex to each plane. The results are stored in a byte
+   array where each byte represents the culling result for a vertex, with each bit indicating whether the vertex is inside (1) or outside (0) the corresponding plane. The function uses SSE intrinsics
+   for optimized performance when available, falling back to a scalar implementation otherwise. The function assumes that the input arrays are properly aligned for 16-byte operations.
+
+	\param cullBits output array storing the culling results for each vertex, with each byte containing 8 bits indicating inside/outside status for 6 planes
+	\param planes array of 6 planes used for culling
+	\param verts array of vertices to cull against the planes
+	\param numVerts number of vertices in the verts array
+	\throws assertions for 16-byte alignment of cullBits and verts
 */
 static void R_DecalPointCullStatic( byte* cullBits, const idPlane* planes, const idDrawVert* verts, const int numVerts )
 {
@@ -537,11 +511,6 @@ void idRenderModelDecal::CreateDecal( const idRenderModel* model, const decalPro
 	}
 }
 
-/*
-=====================
-idRenderModelDecal::CreateDeferredDecals
-=====================
-*/
 void idRenderModelDecal::CreateDeferredDecals( const idRenderModel* model )
 {
 	for( unsigned int i = firstDeferredDecal; i < nextDeferredDecal; i++ ) {
@@ -554,11 +523,6 @@ void idRenderModelDecal::CreateDeferredDecals( const idRenderModel* model )
 	nextDeferredDecal  = 0;
 }
 
-/*
-=====================
-idRenderModelDecal::AddDeferredDecal
-=====================
-*/
 void idRenderModelDecal::AddDeferredDecal( const decalProjectionParms_t& localParms )
 {
 	deferredDecals[nextDeferredDecal++ & ( MAX_DEFERRED_DECALS - 1 )] = localParms;
@@ -567,11 +531,6 @@ void idRenderModelDecal::AddDeferredDecal( const decalProjectionParms_t& localPa
 	}
 }
 
-/*
-=====================
-idRenderModelDecal::RemoveFadedDecals
-=====================
-*/
 void idRenderModelDecal::RemoveFadedDecals( int time )
 {
 	for( unsigned int i = firstDecal; i < nextDecal; i++ ) {
@@ -670,11 +629,6 @@ static void R_CopyDecalSurface( idDrawVert* verts, int numVerts, triIndex_t* ind
 #endif
 }
 
-/*
-=====================
-idRenderModelDecal::GetNumDecalDrawSurfs
-=====================
-*/
 unsigned int idRenderModelDecal::GetNumDecalDrawSurfs()
 {
 	numDecalMaterials = 0;
@@ -696,11 +650,6 @@ unsigned int idRenderModelDecal::GetNumDecalDrawSurfs()
 	return numDecalMaterials;
 }
 
-/*
-=====================
-idRenderModelDecal::CreateDecalDrawSurf
-=====================
-*/
 drawSurf_t* idRenderModelDecal::CreateDecalDrawSurf( const viewEntity_t* space, unsigned int index )
 {
 	if( index < 0 || index >= numDecalMaterials ) {

@@ -245,12 +245,14 @@ struct shaderMacro_t {
 	idStr name;
 	idStr definition;
 
+	//! Default constructor for shaderMacro_t that initializes name and definition with default values
 	shaderMacro_t() :
 		name(),
 		definition()
 	{
 	}
 
+	//! Constructs a shader macro with the specified name and definition.
 	shaderMacro_t( const idStr& _name, const idStr& _definition ) :
 		name( _name ),
 		definition( _definition )
@@ -415,265 +417,385 @@ enum {
 	MAX_BUILTINS
 };
 
-/*
-================================================================================================
-idRenderProgManager
-================================================================================================
+/*!
+	\class idRenderProgManager
+	\brief Manages shader programs and rendering state for the graphics pipeline.
+
+	The idRenderProgManager class is responsible for organizing and managing shader programs, uniform parameters, and rendering state within the graphics pipeline. It provides functionality to
+   initialize, load, and bind various shader programs for different rendering stages, including built-in shaders for common rendering tasks such as GUI elements, lighting, and post-processing effects.
+   The manager handles shader creation, loading, and binding, as well as uniform parameter management for shader inputs. It supports multiple shader stages, vertex layouts, and shader macros to enable
+   flexible rendering configurations. The class also includes methods for managing render parameters, committing uniform values, and handling binding layouts for different shader types. This manager
+   acts as a central coordinator for all shader-related operations, ensuring proper state management and efficient shader program usage during rendering.
+
 */
 class idRenderProgManager
 {
 public:
+	//! Initializes a new instance of the idRenderProgManager class.
 	idRenderProgManager();
 	virtual ~idRenderProgManager();
 
+	//! Initializes the render shader manager with the specified graphics device.
 	void Init( nvrhi::IDevice* device );
+
+	//! Shuts down the render program manager by killing all shaders and resetting binding layouts
 	void Shutdown();
 
+	//! Initializes the render program manager for a new frame.
 	void StartFrame();
 
+	//! Sets a render parameter value for the specified render parameter.
 	void SetRenderParm( renderParm_t rp, const float value[4] );
+
+	//! Sets multiple render parameters from an array of float values.
 	void SetRenderParms( renderParm_t rp, const float values[], int numValues );
 
+	//! Finds or creates a shader with the specified name and stage
 	int	 FindShader( const char* name, rpStage_t stage );
 	int	 FindShader( const char* name, rpStage_t stage, const char* nameOutSuffix, uint32 features, bool builtin, vertexLayoutType_t vertexLayout = LAYOUT_DRAW_VERT );
+
+	/*!
+		\brief Finds or creates a shader with the specified parameters and returns its index in the shader list
+
+		This function searches for an existing shader that matches the provided name, stage, suffix, macros, and builtin flag. If a matching shader is found, it loads the shader and returns its index.
+	   If no matching shader is found, it creates a new shader entry with the provided parameters, appends it to the shader list, loads it, and returns the new index. The shader name is stripped of
+	   its file extension before comparison
+
+		\param name Name of the shader to find or create
+		\param stage The rendering stage for the shader
+		\param nameOutSuffix Suffix to append to the shader name for output
+		\param macros List of shader macros to use for the shader
+		\param builtin Flag indicating if the shader is built-in
+		\param vertexLayout The vertex layout type for the shader, defaults to LAYOUT_DRAW_VERT
+		\return The index of the found or created shader in the shaders list
+	*/
 	int	 FindShader( const char* name, rpStage_t stage, const char* nameOutSuffix, const idList<shaderMacro_t>& macros, bool builtin, vertexLayoutType_t vertexLayout = LAYOUT_DRAW_VERT );
 
+	//! Returns the shader handle at the specified index from the shader collection
 	nvrhi::ShaderHandle GetShader( int index );
 
+	//! Retrieves the program information for a specified index from the render program manager.
 	programInfo_t		GetProgramInfo( int index );
 
+	//! Returns the index of the currently active render program.
 	int					CurrentProgram() const { return currentIndex; }
 
+	//! Binds the program at the specified index for rendering.
 	void				BindProgram( int progIndex );
 
+	//! Binds the built-in GUI shader for rendering GUI elements.
 	void				BindShader_GUI() { BindShader_Builtin( BUILTIN_GUI ); }
 
+	//! Binds the built-in color shader for rendering.
 	void				BindShader_Color() { BindShader_Builtin( BUILTIN_COLOR ); }
 
-	// RB begin
+	//! Binds the color skinned shader program for rendering.
 	void				BindShader_ColorSkinned() { BindShader_Builtin( BUILTIN_COLOR_SKINNED ); }
 
+	//! Binds the built-in vertex color shader for rendering.
 	void				BindShader_VertexColor() { BindShader_Builtin( BUILTIN_VERTEX_COLOR ); }
 
+	//! Binds the image-based lighting shader for rendering.
 	void				BindShader_ImageBasedLighting() { BindShader_Builtin( BUILTIN_AMBIENT_LIGHTING_IBL ); }
 
+	//! Binds the image-based lighting shader for skinned models.
 	void				BindShader_ImageBasedLightingSkinned() { BindShader_Builtin( BUILTIN_AMBIENT_LIGHTING_IBL_SKINNED ); }
 
+	//! Binds the image-based lighting PBR shader program for rendering.
 	void				BindShader_ImageBasedLighting_PBR() { BindShader_Builtin( BUILTIN_AMBIENT_LIGHTING_IBL_PBR ); }
 
+	//! Binds the image-based lighting shader for skinned PBR rendering.
 	void				BindShader_ImageBasedLightingSkinned_PBR() { BindShader_Builtin( BUILTIN_AMBIENT_LIGHTING_IBL_PBR_SKINNED ); }
 
+	//! Binds the image-based light grid shader program.
 	void				BindShader_ImageBasedLightGrid() { BindShader_Builtin( BUILTIN_AMBIENT_LIGHTGRID_IBL ); }
 
+	//! Binds the image-based light grid skinned shader for rendering.
 	void				BindShader_ImageBasedLightGridSkinned() { BindShader_Builtin( BUILTIN_AMBIENT_LIGHTGRID_IBL_SKINNED ); }
 
+	//! Binds the image-based light grid PBR shader for rendering.
 	void				BindShader_ImageBasedLightGrid_PBR() { BindShader_Builtin( BUILTIN_AMBIENT_LIGHTGRID_IBL_PBR ); }
 
+	//! Binds the image-based light grid skinned PBR shader.
 	void				BindShader_ImageBasedLightGridSkinned_PBR() { BindShader_Builtin( BUILTIN_AMBIENT_LIGHTGRID_IBL_PBR_SKINNED ); }
 
+	//! Binds the small geometry buffer builtin shader.
 	void				BindShader_SmallGeometryBuffer() { BindShader_Builtin( BUILTIN_SMALL_GEOMETRY_BUFFER ); }
 
+	//! Binds the small geometry buffer skinned shader for rendering.
 	void				BindShader_SmallGeometryBufferSkinned() { BindShader_Builtin( BUILTIN_SMALL_GEOMETRY_BUFFER_SKINNED ); }
-	// RB end
 
+	//! Binds the built-in textured shader for rendering.
 	void				BindShader_Texture() { BindShader_Builtin( BUILTIN_TEXTURED ); }
 
+	//! Binds the built-in shader for texture with vertex color.
 	void				BindShader_TextureVertexColor() { BindShader_Builtin( BUILTIN_TEXTURE_VERTEXCOLOR ); }
 
+	//! Binds the texture vertex color sRGB shader program.
 	void				BindShader_TextureVertexColor_sRGB() { BindShader_Builtin( BUILTIN_TEXTURE_VERTEXCOLOR_SRGB ); }
 
+	//! Binds the texture vertex color skinned shader program for rendering.
 	void				BindShader_TextureVertexColorSkinned() { BindShader_Builtin( BUILTIN_TEXTURE_VERTEXCOLOR_SKINNED ); }
 
+	//! Binds the texture texture generation vertex color shader.
 	void				BindShader_TextureTexGenVertexColor() { BindShader_Builtin( BUILTIN_TEXTURE_TEXGEN_VERTEXCOLOR ); }
 
+	//! Binds the interaction shader program for rendering.
 	void				BindShader_Interaction() { BindShader_Builtin( BUILTIN_INTERACTION ); }
 
+	//! Binds the interaction skinned shader for rendering.
 	void				BindShader_InteractionSkinned() { BindShader_Builtin( BUILTIN_INTERACTION_SKINNED ); }
 
+	//! Binds the ambient interaction shader for rendering.
 	void				BindShader_InteractionAmbient() { BindShader_Builtin( BUILTIN_INTERACTION_AMBIENT ); }
 
+	//! Binds the interaction ambient skinned shader program.
 	void				BindShader_InteractionAmbientSkinned() { BindShader_Builtin( BUILTIN_INTERACTION_AMBIENT_SKINNED ); }
 
-	// PBR variantes
-
+	//! Binds the PBR interaction shader for rendering.
 	void				BindShader_PBR_Interaction() { BindShader_Builtin( BUILTIN_PBR_INTERACTION ); }
 
+	//! Binds the PBR interaction skinned shader for rendering.
 	void				BindShader_PBR_InteractionSkinned() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SKINNED ); }
 
+	//! Binds the PBR interaction ambient shader for rendering.
 	void				BindShader_PBR_InteractionAmbient() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_AMBIENT ); }
 
+	//! Binds the PBR interaction ambient skinned built-in shader.
 	void				BindShader_PBR_InteractionAmbientSkinned() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_AMBIENT_SKINNED ); }
 
-	//
-	// regular shadow mapping
-	//
-
+	//! Binds the shader for interaction shadow mapping with spot light.
 	void				BindShader_Interaction_ShadowMapping_Spot() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_MAPPING_SPOT ); }
 
+	//! Binds the shader for spot shadow mapping with skinned geometry.
 	void				BindShader_Interaction_ShadowMapping_Spot_Skinned() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_MAPPING_SPOT_SKINNED ); }
 
+	//! Binds the shader for point light shadow mapping interaction.
 	void				BindShader_Interaction_ShadowMapping_Point() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_MAPPING_POINT ); }
 
+	//! Binds the shader for point light shadow mapping with skinned geometry.
 	void				BindShader_Interaction_ShadowMapping_Point_Skinned() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_MAPPING_POINT_SKINNED ); }
 
+	//! Binds the shader for interaction shadow mapping in parallel mode.
 	void				BindShader_Interaction_ShadowMapping_Parallel() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_MAPPING_PARALLEL ); }
 
+	//! Binds the shader for interaction shadow mapping in parallel skinned rendering.
 	void				BindShader_Interaction_ShadowMapping_Parallel_Skinned() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_MAPPING_PARALLEL_SKINNED ); }
 
+	//! Binds the PBR interaction shadow mapping spot shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowMapping_Spot() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_MAPPING_SPOT ); }
 
+	//! Binds the PBR interaction shadow mapping spot skinned shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowMapping_Spot_Skinned() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_MAPPING_SPOT_SKINNED ); }
 
+	//! Binds the PBR interaction shadow mapping point shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowMapping_Point() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_MAPPING_POINT ); }
 
+	//! Binds the PBR interaction shadow mapping point skinned shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowMapping_Point_Skinned() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_MAPPING_POINT_SKINNED ); }
 
+	//! Binds the PBR interaction shadow mapping parallel shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowMapping_Parallel() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_MAPPING_PARALLEL ); }
 
+	//! Binds the PBR interaction shadow mapping parallel skinned shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowMapping_Parallel_Skinned() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_MAPPING_PARALLEL_SKINNED ); }
 
-	//
-	// shadow mapping using a big atlas
-	//
-
+	//! Binds the shader for interaction shadow mapping using a spot light atlas.
 	void				BindShader_Interaction_ShadowAtlas_Spot() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_ATLAS_SPOT ); }
 
+	//! Binds the shader for skinned spot shadow interactions.
 	void				BindShader_Interaction_ShadowAtlas_Spot_Skinned() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_ATLAS_SPOT_SKINNED ); }
 
+	//! Binds the interaction shadow atlas point builtin shader.
 	void				BindShader_Interaction_ShadowAtlas_Point() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_ATLAS_POINT ); }
 
+	//! Binds the shader for interaction shadow atlas point skinned rendering.
 	void				BindShader_Interaction_ShadowAtlas_Point_Skinned() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_ATLAS_POINT_SKINNED ); }
 
+	//! Binds the shadow atlas parallel interaction shader.
 	void				BindShader_Interaction_ShadowAtlas_Parallel() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_ATLAS_PARALLEL ); }
 
+	//! Binds the shader for interaction shadow atlas parallel skinned rendering.
 	void				BindShader_Interaction_ShadowAtlas_Parallel_Skinned() { BindShader_Builtin( BUILTIN_INTERACTION_SHADOW_ATLAS_PARALLEL_SKINNED ); }
 
+	//! Binds the PBR interaction shadow atlas spot shader.
 	void				BindShader_PBR_Interaction_ShadowAtlas_Spot() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_ATLAS_SPOT ); }
 
+	//! Binds the PBR interaction shadow atlas spot skinned shader.
 	void				BindShader_PBR_Interaction_ShadowAtlas_Spot_Skinned() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_ATLAS_SPOT_SKINNED ); }
 
+	//! Binds the PBR interaction shadow atlas point shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowAtlas_Point() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_ATLAS_POINT ); }
 
+	//! Binds the PBR interaction shadow atlas point skinned shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowAtlas_Point_Skinned() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_ATLAS_POINT_SKINNED ); }
 
+	//! Binds the PBR interaction shadow atlas parallel shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowAtlas_Parallel() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_ATLAS_PARALLEL ); }
 
+	//! Binds the PBR interaction shadow atlas parallel skinned shader for rendering.
 	void				BindShader_PBR_Interaction_ShadowAtlas_Parallel_Skinned() { BindShader_Builtin( BUILTIN_PBR_INTERACTION_SHADOW_ATLAS_PARALLEL_SKINNED ); }
 
-	//
-	// debug tools
-	//
-
+	//! Binds the debug light grid shader for rendering.
 	void				BindShader_DebugLightGrid() { BindShader_Builtin( BUILTIN_DEBUG_LIGHTGRID ); }
 
+	//! Binds the debug light grid skinned shader for rendering.
 	void				BindShader_DebugLightGridSkinned() { BindShader_Builtin( BUILTIN_DEBUG_LIGHTGRID_SKINNED ); }
 
+	//! Binds the debug octahedron shader for rendering.
 	void				BindShader_DebugOctahedron() { BindShader_Builtin( BUILTIN_DEBUG_OCTAHEDRON ); }
 
+	//! Binds the debug octahedron skinned shader for rendering.
 	void				BindShader_DebugOctahedronSkinned() { BindShader_Builtin( BUILTIN_DEBUG_OCTAHEDRON_SKINNED ); }
-	// RB end
 
+	//! Binds the environment shader program for rendering.
 	void				BindShader_Environment() { BindShader_Builtin( BUILTIN_ENVIRONMENT ); }
 
+	//! Binds the environment skinned shader program for rendering.
 	void				BindShader_EnvironmentSkinned() { BindShader_Builtin( BUILTIN_ENVIRONMENT_SKINNED ); }
 
+	//! Binds the built-in bumpy environment shader for rendering.
 	void				BindShader_BumpyEnvironment() { BindShader_Builtin( BUILTIN_BUMPY_ENVIRONMENT ); }
 
+	//! Binds the bumpy environment skinned shader for rendering.
 	void				BindShader_BumpyEnvironmentSkinned() { BindShader_Builtin( BUILTIN_BUMPY_ENVIRONMENT_SKINNED ); }
 
+	//! Binds the bumpy environment shader program for rendering.
 	void				BindShader_BumpyEnvironment2() { BindShader_Builtin( BUILTIN_BUMPY_ENVIRONMENT2 ); }
 
+	//! Binds the bumpy environment2 skinned shader for rendering.
 	void				BindShader_BumpyEnvironment2Skinned() { BindShader_Builtin( BUILTIN_BUMPY_ENVIRONMENT2_SKINNED ); }
 
+	//! Binds the BumpyEnvironment2_SSR shader program for rendering.
 	void				BindShader_BumpyEnvironment2_SSR() { BindShader_Builtin( BUILTIN_BUMPY_ENVIRONMENT2_SSR ); }
 
+	//! Binds the BumpyEnvironment2_SSR_Skinned shader program for rendering.
 	void				BindShader_BumpyEnvironment2_SSR_Skinned() { BindShader_Builtin( BUILTIN_BUMPY_ENVIRONMENT2_SSR_SKINNED ); }
 
+	//! Binds the depth rendering shader.
 	void				BindShader_Depth() { BindShader_Builtin( BUILTIN_DEPTH ); }
 
+	//! Binds the depth skinned shader for rendering.
 	void				BindShader_DepthSkinned() { BindShader_Builtin( BUILTIN_DEPTH_SKINNED ); }
 
+	//! Binds the blend light shader for rendering.
 	void				BindShader_BlendLight() { BindShader_Builtin( BUILTIN_BLENDLIGHT ); }
 
+	//! Binds the fog shader program for rendering.
 	void				BindShader_Fog() { BindShader_Builtin( BUILTIN_FOG ); }
 
+	//! Binds the fog skinned shader program.
 	void				BindShader_FogSkinned() { BindShader_Builtin( BUILTIN_FOG_SKINNED ); }
 
+	//! Binds the skybox shader for rendering.
 	void				BindShader_SkyBox() { BindShader_Builtin( BUILTIN_SKYBOX ); }
 
+	//! Binds the wobble sky shader for rendering.
 	void				BindShader_WobbleSky() { BindShader_Builtin( BUILTIN_WOBBLESKY ); }
 
+	//! Binds the stereo deghosting shader for rendering.
 	void				BindShader_StereoDeGhost() { BindShader_Builtin( BUILTIN_STEREO_DEGHOST ); }
 
+	//! Binds the stereo warp shader for rendering.
 	void				BindShader_StereoWarp() { BindShader_Builtin( BUILTIN_STEREO_WARP ); }
 
+	//! Binds the stereo interlace shader for rendering.
 	void				BindShader_StereoInterlace() { BindShader_Builtin( BUILTIN_STEREO_INTERLACE ); }
 
+	//! Binds the post-process shader program for rendering.
 	void				BindShader_PostProcess() { BindShader_Builtin( BUILTIN_POSTPROCESS ); }
 
+	//! Binds the Retro C64 post-process shader for rendering.
 	void				BindShader_PostProcess_RetroC64() { BindShader_Builtin( BUILTIN_POSTPROCESS_RETRO_C64 ); }
 
+	//! Binds the Retro CPC post-process shader for rendering.
 	void				BindShader_PostProcess_RetroCPC() { BindShader_Builtin( BUILTIN_POSTPROCESS_RETRO_CPC ); }
 
+	//! Binds the retro 2-bit post-process shader for rendering.
 	void				BindShader_PostProcess_Retro2Bit() { BindShader_Builtin( BUILTIN_POSTPROCESS_RETRO_2BIT ); }
 
+	//! Binds the Retro Genesis post-process shader for rendering.
 	void				BindShader_PostProcess_RetroGenesis() { BindShader_Builtin( BUILTIN_POSTPROCESS_RETRO_GENESIS ); }
 
+	//! Binds the Retro PSX post-process shader for rendering.
 	void				BindShader_PostProcess_RetroPSX() { BindShader_Builtin( BUILTIN_POSTPROCESS_RETRO_PSX ); }
 
+	//! Binds the CRT Mattias shader program for rendering.
 	void				BindShader_CrtMattias() { BindShader_Builtin( BUILTIN_CRT_MATTIAS ); }
 
+	//! Binds the CRT new pixie shader for rendering.
 	void				BindShader_CrtNewPixie() { BindShader_Builtin( BUILTIN_CRT_NUPIXIE ); }
 
+	//! Binds the CRT easy mode shader for rendering.
 	void				BindShader_CrtEasyMode() { BindShader_Builtin( BUILTIN_CRT_EASYMODE ); }
 
+	//! Binds the screen shader program for rendering.
 	void				BindShader_Screen() { BindShader_Builtin( BUILTIN_SCREEN ); }
 
+	//! Binds the tonemap shader program for use in rendering.
 	void				BindShader_Tonemap() { BindShader_Builtin( BUILTIN_TONEMAP ); }
 
+	//! Binds the builtin brightpass shader for rendering.
 	void				BindShader_Brightpass() { BindShader_Builtin( BUILTIN_BRIGHTPASS ); }
 
+	//! Binds the built-in shader for chromatic glare effects.
 	void				BindShader_HDRGlareChromatic() { BindShader_Builtin( BUILTIN_HDR_GLARE_CHROMATIC ); }
 
+	//! Binds the HDR debug shader for rendering.
 	void				BindShader_HDRDebug() { BindShader_Builtin( BUILTIN_HDR_DEBUG ); }
 
+	//! Binds the shader used for SMAA edge detection.
 	void				BindShader_SMAA_EdgeDetection() { BindShader_Builtin( BUILTIN_SMAA_EDGE_DETECTION ); }
 
+	//! Binds the SMAA blending weight calculation shader.
 	void				BindShader_SMAA_BlendingWeightCalculation() { BindShader_Builtin( BUILTIN_SMAA_BLENDING_WEIGHT_CALCULATION ); }
 
+	//! Binds the SMAA neighborhood blending shader for rendering.
 	void				BindShader_SMAA_NeighborhoodBlending() { BindShader_Builtin( BUILTIN_SMAA_NEIGHBORHOOD_BLENDING ); }
 
+	//! Binds the ambient occlusion shader for rendering.
 	void				BindShader_AmbientOcclusion() { BindShader_Builtin( BUILTIN_AMBIENT_OCCLUSION ); }
 
+	//! Binds the ambient occlusion and output shader program.
 	void				BindShader_AmbientOcclusionAndOutput() { BindShader_Builtin( BUILTIN_AMBIENT_OCCLUSION_AND_OUTPUT ); }
 
+	//! Binds the ambient occlusion blur shader for rendering.
 	void				BindShader_AmbientOcclusionBlur() { BindShader_Builtin( BUILTIN_AMBIENT_OCCLUSION_BLUR ); }
 
+	//! Binds the ambient occlusion blur and output shader for rendering.
 	void				BindShader_AmbientOcclusionBlurAndOutput() { BindShader_Builtin( BUILTIN_AMBIENT_OCCLUSION_BLUR_AND_OUTPUT ); }
 
+	//! Binds the deep G-buffer radiosity shader for rendering.
 	void				BindShader_DeepGBufferRadiosity() { BindShader_Builtin( BUILTIN_DEEP_GBUFFER_RADIOSITY_SSGI ); }
 
+	//! Binds the deep G-buffer radiosity blur shader for rendering.
 	void				BindShader_DeepGBufferRadiosityBlur() { BindShader_Builtin( BUILTIN_DEEP_GBUFFER_RADIOSITY_BLUR ); }
 
+	//! Binds the deep G-buffer radiosity blur and output shader program.
 	void				BindShader_DeepGBufferRadiosityBlurAndOutput() { BindShader_Builtin( BUILTIN_DEEP_GBUFFER_RADIOSITY_BLUR_AND_OUTPUT ); }
 
+	//! Binds the BINK shader program for rendering.
 	void				BindShader_Bink() { BindShader_Builtin( BUILTIN_BINK ); }
 
+	//! Binds the Bink sRGB shader program for rendering.
 	void				BindShader_Bink_sRGB() { BindShader_Builtin( BUILTIN_BINK_SRGB ); }
 
+	//! Binds the built-in shader for Bink GUI rendering.
 	void				BindShader_BinkGUI() { BindShader_Builtin( BUILTIN_BINK_GUI ); }
 
+	//! Binds the motion blur shader for rendering.
 	void				BindShader_MotionBlur() { BindShader_Builtin( BUILTIN_MOTION_BLUR ); }
 
+	//! Binds the motion vectors shader for use in rendering.
 	void				BindShader_MotionVectors() { BindShader_Builtin( BUILTIN_TAA_MOTION_VECTORS ); }
 
+	//! Binds the debug shadow map shader.
 	void				BindShader_DebugShadowMap() { BindShader_Builtin( BUILTIN_DEBUG_SHADOWMAP ); }
-	// RB end
 
-	// the joints buffer should only be bound for vertex programs that use joints
+	//! Returns true if the current shader program uses joint data for skinning.
 	bool				ShaderUsesJoints() const { return renderProgs[currentIndex].usesJoints; }
 
-	// the rpEnableSkinning render parm should only be set for vertex programs that use it
+	//! Returns true if the current shader has optional skinning support.
 	bool				ShaderHasOptionalSkinning() const
 	{
 		// #if defined( USE_NVRHI )
@@ -684,35 +806,66 @@ public:
 		// #endif
 	}
 
-	// unbind the currently bound render program
+	//! Unbinds the currently bound render program.
 	void			 Unbind();
 
-	// RB begin
+	//! Checks whether a shader is currently bound to the rendering pipeline.
 	bool			 IsShaderBound() const;
-	// RB end
 
-	// this should only be called via the reload shader console command
+	//! Loads all shaders and render programs managed by the renderer.
 	void			 LoadAllShaders();
+
+	//! Destroys all shaders managed by the render program manager
 	void			 KillAllShaders();
 
 	static const int MAX_GLSL_USER_PARMS = 8;
 	const char*		 GetGLSLParmName( int rp ) const;
 
+	//! Sets a uniform value for a specified render parameter.
 	void			 SetUniformValue( const renderParm_t rp, const float value[4] );
+
+	//! Commits uniform values based on the provided state bits.
 	void			 CommitUniforms( uint64 stateBits );
+
+	/*!
+		\brief Finds or creates a graphics program with the specified vertex and fragment shader indices and binding type.
+
+		This function searches for an existing graphics program that matches the provided vertex shader index and fragment shader index. If a matching program is not found, it creates a new program
+	   entry, loads the program with the specified shaders, and returns the index of the program. The program is identified by its name and uses the specified binding layout type.
+
+		\param name The name of the program to find or create
+		\param vIndex Index of the vertex shader to use for this program
+		\param fIndex Index of the fragment shader to use for this program
+		\param bindingType The binding layout type to use for this program, defaults to BINDING_LAYOUT_DEFAULT
+		\return Index of the found or newly created graphics program
+	*/
 	int				 FindProgram( const char* name, int vIndex, int fIndex, bindingLayoutType_t bindingType = BINDING_LAYOUT_DEFAULT );
+
+	//! Initializes all uniform values to zero
 	void			 ZeroUniforms();
+
+	//! Returns the allocated size of the uniforms array.
 	int				 UniformSize();
 
+	//! Updates the constant buffer if changes have been made
 	bool			 CommitConstantBuffer( nvrhi::ICommandList* commandList, bool bindingLayoutTypeChanged );
 
+	//! Returns the constant buffer used for shader parameter bindings in the rendering pipeline.
 	ID_INLINE nvrhi::IBuffer* ConstantBuffer()
 	{
 		return constantBuffer; //[BindingLayoutType()];
 	}
+
+	//! Returns a reference to the uniform buffer for the current binding layout type.
 	ID_INLINE idUniformBuffer& BindingParamUbo() { return bindingParmUbo[BindingLayoutType()]; }
+
+	//! Returns the input layout handle for the current render program.
 	ID_INLINE nvrhi::InputLayoutHandle InputLayout() { return renderProgs[currentIndex].inputLayout; }
+
+	//! Returns the binding layout type for the current render program.
 	ID_INLINE int					   BindingLayoutType() { return renderProgs[currentIndex].bindingLayoutType; }
+
+	//! Returns a pointer to the binding layout list for the specified layout type.
 	ID_INLINE idStaticList<nvrhi::BindingLayoutHandle, nvrhi::c_MaxBindingLayouts>* GetBindingLayout( int layoutType ) { return &bindingLayouts[layoutType]; }
 
 	idUniformBuffer																	renderParmUbo;
@@ -722,20 +875,27 @@ public:
 	static const char*																FindEmbeddedSourceShader( const char* name );
 
 private:
+	//! Loads a shader at the specified index and stage if it hasn't already been loaded.
 	void			  LoadShader( int index, rpStage_t stage );
 
-	// Reads the binary fileName and returns a ShaderBlob.
+	//! Reads a binary shader file and returns its contents in a ShaderBlob structure.
 	ShaderBlob		  GetBytecode( const char* fileName );
 
 	int				  builtinShaders[MAX_BUILTINS];
+
+	//! Binds a built-in shader program by its index.
 	void			  BindShader_Builtin( int i ) { BindProgram( i ); }
 
+	//! Loads a shader program with the specified vertex and fragment shader indices into the given program index.
 	void			  LoadProgram( const int programIndex, const int vertexShaderIndex, const int fragmentShaderIndex );
+
+	//! Loads a compute program with the specified indices into the render program manager.
 	void			  LoadComputeProgram( const int programIndex, const int computeShaderIndex );
 
 	static const uint INVALID_PROGID = 0xFFFFFFFF;
 
 	struct shader_t {
+		//! Initializes a new shader_t object with default values.
 		shader_t() :
 			name(),
 			nameOutSuffix(),
@@ -758,6 +918,7 @@ private:
 	};
 
 	struct renderProg_t {
+		//! Initializes a new instance of the renderProg_t struct with default values.
 		renderProg_t() :
 			name(),
 			vertexShaderIndex( -1 ),
@@ -784,6 +945,7 @@ private:
 		idStaticList<nvrhi::BindingLayoutHandle, nvrhi::c_MaxBindingLayouts> bindingLayouts;
 	};
 
+	//! Loads a shader from a bytecode file and creates a shader handle for the specified shader stage.
 	void								   LoadShader( shader_t& shader );
 
 	int									   currentIndex;

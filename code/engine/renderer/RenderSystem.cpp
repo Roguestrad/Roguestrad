@@ -43,14 +43,6 @@ idRenderSystemLocal	  tr;
 idRenderBackend		  backEnd;
 idRenderSystem*		  renderSystem = &tr;
 
-/*
-=====================
-R_PerformanceCounters
-
-This prints both front and back end counters, so it should
-only be called when the back end thread is idle.
-=====================
-*/
 void				  idRenderSystemLocal::PrintPerformanceCounters()
 {
 	if( r_showPrimitives.GetInteger() != 0 ) {
@@ -90,11 +82,6 @@ void				  idRenderSystemLocal::PrintPerformanceCounters()
 	memset( &backEnd.pc, 0, sizeof( backEnd.pc ) );
 }
 
-/*
-====================
-RenderCommandBuffers
-====================
-*/
 void idRenderSystemLocal::RenderCommandBuffers( const emptyCommand_t* const cmdHead )
 {
 	// if there isn't a draw view command, do nothing to avoid swapping a bad frame
@@ -125,15 +112,6 @@ void idRenderSystemLocal::RenderCommandBuffers( const emptyCommand_t* const cmdH
 	resolutionScale.InitForMap( NULL );
 }
 
-/*
-============
-R_GetCommandBuffer
-
-Returns memory for a command buffer (stretchPicCommand_t,
-drawSurfsCommand_t, etc) and links it to the end of the
-current command chain.
-============
-*/
 void* R_GetCommandBuffer( int bytes )
 {
 	emptyCommand_t* cmd;
@@ -146,11 +124,7 @@ void* R_GetCommandBuffer( int bytes )
 	return ( void* )cmd;
 }
 
-/*
-=================
-R_ViewStatistics
-=================
-*/
+//! Reports statistics about the given view if surface visualization is enabled.
 static void R_ViewStatistics( viewDef_t* parms )
 {
 	// report statistics about this view
@@ -160,14 +134,6 @@ static void R_ViewStatistics( viewDef_t* parms )
 	common->Printf( "view:%p surfs:%i\n", parms, parms->numDrawSurfs );
 }
 
-/*
-=============
-R_AddDrawViewCmd
-
-This is the main 3D rendering command.  A single scene may
-have multiple views if a mirror, portal, or dynamic texture is present.
-=============
-*/
 void R_AddDrawViewCmd( viewDef_t* parms, bool guiOnly )
 {
 	drawSurfsCommand_t* cmd;
@@ -182,14 +148,6 @@ void R_AddDrawViewCmd( viewDef_t* parms, bool guiOnly )
 	R_ViewStatistics( parms );
 }
 
-/*
-=============
-R_AddPostProcess
-
-This issues the command to do a post process after all the views have
-been rendered.
-=============
-*/
 void R_AddDrawPostProcess( viewDef_t* parms )
 {
 	postProcessCommand_t* cmd = ( postProcessCommand_t* )R_GetCommandBuffer( sizeof( *cmd ) );
@@ -197,13 +155,6 @@ void R_AddDrawPostProcess( viewDef_t* parms )
 	cmd->viewDef			  = parms;
 }
 
-//=================================================================================
-
-/*
-=============
-idRenderSystemLocal::idRenderSystemLocal
-=============
-*/
 idRenderSystemLocal::idRenderSystemLocal() :
 	unitSquareTriangles( NULL ),
 	zeroOneCubeTriangles( NULL ),
@@ -215,73 +166,36 @@ idRenderSystemLocal::idRenderSystemLocal() :
 	Clear();
 }
 
-/*
-=============
-idRenderSystemLocal::~idRenderSystemLocal
-=============
-*/
 idRenderSystemLocal::~idRenderSystemLocal()
 {
 }
 
-/*
-=============
-idRenderSystemLocal::SetColor
-=============
-*/
 void idRenderSystemLocal::SetColor( const idVec4& rgba )
 {
 	currentColorNativeBytesOrder = LittleLong( PackColor( rgba ) );
 }
 
-/*
-=============
-idRenderSystemLocal::GetColor
-=============
-*/
 uint32 idRenderSystemLocal::GetColor()
 {
 	return LittleLong( currentColorNativeBytesOrder );
 }
 
-/*
-=============
-idRenderSystemLocal::SetGLState
-=============
-*/
 void idRenderSystemLocal::SetGLState( const uint64 glState )
 {
 	currentGLState = glState;
 }
 
-/*
-=============
-Leyland VR
-
-idRenderSystemLocal::SetStereoDepth
-=============
-*/
 void idRenderSystemLocal::SetStereoDepth( enum stereoDepthType_t stereoDepth )
 {
 	currentStereoDepth = stereoDepth;
 }
 
-/*
-=============
-idRenderSystemLocal::DrawFilled
-=============
-*/
 void idRenderSystemLocal::DrawFilled( const idVec4& color, float x, float y, float w, float h )
 {
 	SetColor( color );
 	DrawStretchPic( x, y, w, h, 0.0f, 0.0f, 1.0f, 1.0f, whiteMaterial );
 }
 
-/*
-=============
-idRenderSystemLocal::DrawStretchPic
-=============
-*/
 void idRenderSystemLocal::DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial* material, float z )
 {
 	DrawStretchPic( idVec4( x, y, s1, t1 ), idVec4( x + w, y, s2, t1 ), idVec4( x + w, y + h, s2, t2 ), idVec4( x, y + h, s1, t2 ), material, z );
@@ -345,11 +259,6 @@ void			  idRenderSystemLocal::DrawStretchPic( const idVec4& topLeft, const idVec
 	WriteDrawVerts16( verts, localVerts, 4 );
 }
 
-/*
-=============
-idRenderSystemLocal::DrawStretchTri
-=============
-*/
 void idRenderSystemLocal::DrawStretchTri( const idVec2& p1, const idVec2& p2, const idVec2& p3, const idVec2& t1, const idVec2& t2, const idVec2& t3, const idMaterial* material )
 {
 	if( !IsInitialized() ) {
@@ -393,23 +302,11 @@ void idRenderSystemLocal::DrawStretchTri( const idVec2& p1, const idVec2& p2, co
 	WriteDrawVerts16( verts, localVerts, 3 );
 }
 
-/*
-=============
-idRenderSystemLocal::AllocTris
-=============
-*/
 idDrawVert* idRenderSystemLocal::AllocTris( int numVerts, const triIndex_t* indexes, int numIndexes, const idMaterial* material, const stereoDepthType_t stereoType )
 {
 	return guiModel->AllocTris( numVerts, indexes, numIndexes, material, currentGLState, stereoType );
 }
 
-/*
-=====================
-idRenderSystemLocal::DrawSmallChar
-
-small chars are drawn at native screen resolution
-=====================
-*/
 void idRenderSystemLocal::DrawSmallChar( int x, int y, int ch )
 {
 	int	  row, col;
@@ -436,16 +333,6 @@ void idRenderSystemLocal::DrawSmallChar( int x, int y, int ch )
 	DrawStretchPic( x, y, SMALLCHAR_WIDTH, SMALLCHAR_HEIGHT, fcol, frow, fcol + size, frow + size, charSetMaterial );
 }
 
-/*
-==================
-idRenderSystemLocal::DrawSmallStringExt
-
-Draws a multi-colored string with a drop shadow, optionally forcing
-to a fixed color.
-
-Coordinates are at 640 by 480 virtual resolution
-==================
-*/
 void idRenderSystemLocal::DrawSmallStringExt( int x, int y, const char* string, const idVec4& setColor, bool forceColor )
 {
 	idVec4				 color;
@@ -477,11 +364,6 @@ void idRenderSystemLocal::DrawSmallStringExt( int x, int y, const char* string, 
 	SetColor( colorWhite );
 }
 
-/*
-=====================
-idRenderSystemLocal::DrawBigChar
-=====================
-*/
 void idRenderSystemLocal::DrawBigChar( int x, int y, int ch )
 {
 	int	  row, col;
@@ -508,16 +390,6 @@ void idRenderSystemLocal::DrawBigChar( int x, int y, int ch )
 	DrawStretchPic( x, y, BIGCHAR_WIDTH, BIGCHAR_HEIGHT, fcol, frow, fcol + size, frow + size, charSetMaterial );
 }
 
-/*
-==================
-idRenderSystemLocal::DrawBigStringExt
-
-Draws a multi-colored string with a drop shadow, optionally forcing
-to a fixed color.
-
-Coordinates are at 640 by 480 virtual resolution
-==================
-*/
 void idRenderSystemLocal::DrawBigStringExt( int x, int y, const char* string, const idVec4& setColor, bool forceColor )
 {
 	idVec4		color;
@@ -549,24 +421,6 @@ void idRenderSystemLocal::DrawBigStringExt( int x, int y, const char* string, co
 	SetColor( colorWhite );
 }
 
-//======================================================================================
-
-/*
-====================
-idRenderSystemLocal::SwapCommandBuffers
-
-Performs final closeout of any gui models being defined.
-
-Waits for the previous GPU rendering to complete and vsync.
-
-Returns the head of the linked command list that was just closed off.
-
-Returns timing information from the previous frame.
-
-After this is called, new command buffers can be built up in parallel
-with the rendering of the closed off command buffers by RenderCommandBuffers()
-====================
-*/
 const emptyCommand_t* idRenderSystemLocal::SwapCommandBuffers(
 	uint64* frontEndMicroSec, uint64* backEndMicroSec, uint64* mocMicroSec, uint64* gpuMicroSec, backEndCounters_t* bc, performanceCounters_t* pc )
 {
@@ -643,11 +497,6 @@ void idRenderSystemLocal::SwapCommandBuffers_FinishRendering(
 	Framebuffer::CheckFramebuffers();
 }
 
-/*
-=====================
-idRenderSystemLocal::SwapCommandBuffers_FinishCommandBuffers
-=====================
-*/
 const emptyCommand_t* idRenderSystemLocal::SwapCommandBuffers_FinishCommandBuffers()
 {
 	OPTICK_EVENT( "SwapCommandBuffers_FinishCommandBuffers" );
@@ -733,27 +582,11 @@ const emptyCommand_t* idRenderSystemLocal::SwapCommandBuffers_FinishCommandBuffe
 	return commandBufferHead;
 }
 
-/*
-=====================
-idRenderSystemLocal::GetCroppedViewport
-
-Returns the current cropped pixel coordinates
-=====================
-*/
 void idRenderSystemLocal::GetCroppedViewport( idScreenRect* viewport )
 {
 	*viewport = renderCrops[currentRenderCrop];
 }
 
-/*
-========================
-idRenderSystemLocal::PerformResolutionScaling
-
-The 3D rendering size can be smaller than the full window resolution to reduce
-fill rate requirements while still allowing the GUIs to be full resolution.
-In split screen mode the rendering size is also smaller.
-========================
-*/
 void idRenderSystemLocal::PerformResolutionScaling( int& newWidth, int& newHeight )
 {
 	float xScale = 1.0f;
@@ -764,11 +597,6 @@ void idRenderSystemLocal::PerformResolutionScaling( int& newWidth, int& newHeigh
 	newHeight = idMath::Ftoi( GetHeight() * yScale );
 }
 
-/*
-================
-idRenderSystemLocal::CropRenderSize
-================
-*/
 void idRenderSystemLocal::CropRenderSize( int width, int height )
 {
 	if( !IsInitialized() ) {
@@ -795,11 +623,6 @@ void idRenderSystemLocal::CropRenderSize( int width, int height )
 	current.y2 = previous.y2;
 }
 
-/*
-================
-idRenderSystemLocal::CropRenderSize
-================
-*/
 void idRenderSystemLocal::CropRenderSize( int x, int y, int width, int height, bool topLeftAncor )
 {
 	if( !IsInitialized() ) {
@@ -833,11 +656,6 @@ void idRenderSystemLocal::CropRenderSize( int x, int y, int width, int height, b
 	}
 }
 
-/*
-================
-idRenderSystemLocal::UnCrop
-================
-*/
 void idRenderSystemLocal::UnCrop()
 {
 	if( !IsInitialized() ) {
@@ -855,11 +673,6 @@ void idRenderSystemLocal::UnCrop()
 	currentRenderCrop--;
 }
 
-/*
-================
-idRenderSystemLocal::CaptureRenderToImage
-================
-*/
 void idRenderSystemLocal::CaptureRenderToImage( const char* imageName, bool clearColorAfterCopy )
 {
 	if( !IsInitialized() ) {
@@ -888,11 +701,6 @@ void idRenderSystemLocal::CaptureRenderToImage( const char* imageName, bool clea
 	guiModel->Clear();
 }
 
-/*
-==============
-idRenderSystemLocal::AllocRenderWorld
-==============
-*/
 idRenderWorld* idRenderSystemLocal::AllocRenderWorld()
 {
 	idRenderWorldLocal* rw;
@@ -901,11 +709,6 @@ idRenderWorld* idRenderSystemLocal::AllocRenderWorld()
 	return rw;
 }
 
-/*
-==============
-idRenderSystemLocal::FreeRenderWorld
-==============
-*/
 void idRenderSystemLocal::FreeRenderWorld( idRenderWorld* rw )
 {
 	if( primaryWorld == rw ) {
@@ -915,11 +718,6 @@ void idRenderSystemLocal::FreeRenderWorld( idRenderWorld* rw )
 	delete rw;
 }
 
-/*
-==============
-idRenderSystemLocal::PrintMemInfo
-==============
-*/
 void idRenderSystemLocal::PrintMemInfo( MemInfo_t* mi )
 {
 	// sum up image totals
@@ -931,11 +729,6 @@ void idRenderSystemLocal::PrintMemInfo( MemInfo_t* mi )
 	// compute render totals
 }
 
-/*
-===============
-idRenderSystemLocal::UploadImage
-===============
-*/
 bool idRenderSystemLocal::UploadImage( const char* imageName, const byte* data, int width, int height )
 {
 	idImage* image = globalImages->GetImage( imageName );
@@ -953,7 +746,6 @@ bool idRenderSystemLocal::UploadImage( const char* imageName, const byte* data, 
 	return true;
 }
 
-// RB
 void idRenderSystemLocal::DrawCRTPostFX()
 {
 	if( !IsInitialized() ) {

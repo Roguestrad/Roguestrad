@@ -36,20 +36,10 @@ If you have questions concerning this license or the applicable additional terms
 #include "../RenderCommon.h"
 #include <engine/sys/DeviceManager.h>
 
-/*
-========================
-idRenderProgManager::StartFrame
-========================
-*/
 void idRenderProgManager::StartFrame()
 {
 }
 
-/*
-================================================================================================
-idRenderProgManager::BindProgram
-================================================================================================
-*/
 void idRenderProgManager::BindProgram( int index )
 {
 	if( currentIndex == index ) {
@@ -59,21 +49,11 @@ void idRenderProgManager::BindProgram( int index )
 	currentIndex = index;
 }
 
-/*
-================================================================================================
-idRenderProgManager::Unbind
-================================================================================================
-*/
 void idRenderProgManager::Unbind()
 {
 	currentIndex = -1;
 }
 
-/*
-================================================================================================
-idRenderProgManager::LoadShader
-================================================================================================
-*/
 void idRenderProgManager::LoadShader( int index, rpStage_t stage )
 {
 	if( shaders[index].handle ) {
@@ -85,31 +65,21 @@ void idRenderProgManager::LoadShader( int index, rpStage_t stage )
 
 extern DeviceManager*	   deviceManager;
 
-/*
-================================================================================================
- createShaderPermutation
+/*!
+	\brief Creates a shader permutation by finding the appropriate binary code and returning a shader handle
 
- * Copyright (c) 2014-2021, NVIDIA CORPORATION. All rights reserved.
- *
- * Permission is hereby granted, free of charge, to any person obtaining a
- * copy of this software and associated documentation files (the "Software"),
- * to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense,
- * and/or sell copies of the Software, and to permit persons to whom the
- * Software is furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL
- * THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
- * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE.
- *
-================================================================================================
+	This function searches for a specific shader permutation within a provided binary blob using the given constants and shader description. If found, it creates and returns a shader handle using the
+   device. If the permutation is not found and errorIfNotFound is true, it logs an error message. The function takes ownership of the binary data by copying it into the ownedByteCode vector
+
+	\param device The device to create the shader on
+	\param d The shader description to use for creation
+	\param blob The binary blob containing shader permutations
+	\param blobSize The size of the binary blob
+	\param constants Array of shader constants used to find the permutation
+	\param numConstants Number of constants in the constants array
+	\param ownedByteCode Vector to store the copied binary code for ownership
+	\param errorIfNotFound Whether to log an error if the permutation is not found
+	\return A shader handle for the created shader permutation, or nullptr if not found and errorIfNotFound is false
 */
 static nvrhi::ShaderHandle CreateShaderPermutation( nvrhi::IDevice* device,
 	const nvrhi::ShaderDesc&										d,
@@ -143,11 +113,6 @@ static nvrhi::ShaderHandle CreateShaderPermutation( nvrhi::IDevice* device,
 	return nullptr;
 }
 
-/*
-================================================================================================
-idRenderProgManager::LoadGLSLShader
-================================================================================================
-*/
 void idRenderProgManager::LoadShader( shader_t& shader )
 {
 	idStr			  stage;
@@ -205,11 +170,6 @@ void idRenderProgManager::LoadShader( shader_t& shader )
 	Mem_Free( shaderBlob.data );
 }
 
-/*
-================================================================================================
-idRenderProgManager::GetBytecode
-================================================================================================
-*/
 ShaderBlob idRenderProgManager::GetBytecode( const char* fileName )
 {
 	ShaderBlob blob;
@@ -223,11 +183,6 @@ ShaderBlob idRenderProgManager::GetBytecode( const char* fileName )
 	return blob;
 }
 
-/*
-================================================================================================
-idRenderProgManager::LoadGLSLProgram
-================================================================================================
-*/
 void idRenderProgManager::LoadProgram( const int programIndex, const int vertexShaderIndex, const int fragmentShaderIndex )
 {
 	renderProg_t& prog		 = renderProgs[programIndex];
@@ -239,11 +194,6 @@ void idRenderProgManager::LoadProgram( const int programIndex, const int vertexS
 	prog.bindingLayouts = bindingLayouts[prog.bindingLayoutType];
 }
 
-/*
-================================================================================================
-idRenderProgManager::LoadComputeProgram
-================================================================================================
-*/
 void idRenderProgManager::LoadComputeProgram( const int programIndex, const int computeShaderIndex )
 {
 	renderProg_t& prog		= renderProgs[programIndex];
@@ -254,11 +204,6 @@ void idRenderProgManager::LoadComputeProgram( const int programIndex, const int 
 	prog.bindingLayouts = bindingLayouts[prog.bindingLayoutType];
 }
 
-/*
-================================================================================================
-idRenderProgManager::FindProgram
-================================================================================================
-*/
 int idRenderProgManager::FindProgram( const char* name, int vIndex, int fIndex, bindingLayoutType_t bindingType )
 {
 	for( int i = 0; i < renderProgs.Num(); ++i ) {
@@ -281,20 +226,10 @@ int idRenderProgManager::UniformSize()
 	return uniforms.Allocated();
 }
 
-/*
-================================================================================================
-idRenderProgManager::CommitUnforms
-================================================================================================
-*/
 void idRenderProgManager::CommitUniforms( uint64 stateBits )
 {
 }
 
-/*
-================================================================================================
-idRenderProgManager::KillAllShaders()
-================================================================================================
-*/
 void idRenderProgManager::KillAllShaders()
 {
 	Unbind();
@@ -308,11 +243,6 @@ void idRenderProgManager::KillAllShaders()
 	}
 }
 
-/*
-================================================================================================
-idRenderProgManager::SetUniformValue
-================================================================================================
-*/
 void idRenderProgManager::SetUniformValue( const renderParm_t rp, const float value[4] )
 {
 	for( int i = 0; i < 4; i++ ) {
@@ -322,11 +252,6 @@ void idRenderProgManager::SetUniformValue( const renderParm_t rp, const float va
 	uniformsChanged = true;
 }
 
-/*
-================================================================================================
-idRenderProgManager::ZeroUniforms
-================================================================================================
-*/
 void idRenderProgManager::ZeroUniforms()
 {
 	memset( uniforms.Ptr(), 0, uniforms.Allocated() );
@@ -334,7 +259,6 @@ void idRenderProgManager::ZeroUniforms()
 	uniformsChanged = true;
 }
 
-// Only updates the constant buffer if it was updated at all
 bool idRenderProgManager::CommitConstantBuffer( nvrhi::ICommandList* commandList, bool bindingLayoutTypeChanged )
 {
 	// RB: It would be better to NUM_BINDING_LAYOUTS uniformsChanged entrys but we don't know the current binding layout type when we set the uniforms.

@@ -124,6 +124,8 @@ void idRenderModelGLTF::ProcessNode_r( gltfNode* modelNode, const idMat4& parent
 		ProcessNode_r( nodeList[child], nodeToWorldTransform, globalTransform, data );
 	}
 }
+
+//! Keeps specified nodes from a glTF data structure based on a list of node names and wildcard patterns.
 static void KeepNodes( gltfData* data, const idStrList& keepList, idList<int, TAG_MODEL>& boneList )
 {
 	idStrList	finalList;
@@ -206,6 +208,7 @@ static void KeepNodes( gltfData* data, const idStrList& keepList, idList<int, TA
 	boneList = nodesToKeep;
 }
 
+//! Returns the glTF node with the specified name from the given bone list
 static gltfNode* GetBoneNode( gltfData* data, const idList<int, TAG_MODEL>& boneList, const idStr& name )
 {
 	auto& nodelist = data->NodeList();
@@ -218,6 +221,7 @@ static gltfNode* GetBoneNode( gltfData* data, const idList<int, TAG_MODEL>& bone
 	return nullptr;
 }
 
+//! Remaps nodes in GLTF data by setting parent-child relationships between specified bone nodes.
 static void RemapNodes( gltfData* data, const idList<idNamePair>& remapList, const idList<int, TAG_MODEL>& boneList )
 {
 	// we need to be _very_ careful with modifying the GLTF data since it is not saved or cached!!!
@@ -237,6 +241,7 @@ static void RemapNodes( gltfData* data, const idList<idNamePair>& remapList, con
 	}
 }
 
+//! Adds an origin bone to the GLTF data and returns its index.
 static int AddOriginBone( gltfData* data, idList<int, TAG_MODEL>& bones, gltfNode* root )
 {
 	// we need to be _very_ careful with modifying the GLTF data since it is not saved or cached!!!
@@ -261,6 +266,7 @@ static int AddOriginBone( gltfData* data, idList<int, TAG_MODEL>& bones, gltfNod
 	return newIdx;
 }
 
+//! Renames GLTF nodes based on a list of name pairs.
 static void RenameNodes( gltfData* data, const idList<idNamePair>& renameList, const idList<int, TAG_MODEL>& boneList )
 {
 	// we need to be _very_ careful with modifying the GLTF data since it is not saved or cached!!!
@@ -278,7 +284,20 @@ static void RenameNodes( gltfData* data, const idList<idNamePair>& renameList, c
 	}
 }
 
-// return Armature/Rig node
+/*!
+	\brief Finds the root node of a glTF model, which is typically an armature or rig, by searching for skeletal animation data.
+
+	This function attempts to locate the root node of a glTF model that contains skeletal animation data. It follows a prioritized search strategy: first, it looks for a specified armature name in the
+   import options; second, it searches for a given root node name; third, it attempts to find the root by examining the skeleton associated with skinned meshes; and finally, it falls back to using the
+   first mesh from the default scene if no armature is found. The function populates the root name, ID, and optionally the skin pointer with information about the found root node.
+
+	\param data Pointer to the glTF data structure containing the model information
+	\param options Pointer to import options that may specify an armature name to search for
+	\param rootName Reference to a string that will be filled with the name of the found root node
+	\param rootID Pointer to an integer that will be filled with the ID of the found root node
+	\param rootSkin Pointer to a pointer that will be filled with the skin associated with the root node if found
+	\return Pointer to the found glTF node that serves as the root of the model hierarchy, typically an armature or rig node; returns nullptr if no suitable root node is found.
+*/
 static gltfNode* FindModelRoot( gltfData* data, const idImportOptions* options, idStr& rootName, int* rootID, gltfSkin** rootSkin )
 {
 	// According to CG Dive is the most common workflow to get skeletal models from Blender into UE4/5
@@ -412,11 +431,6 @@ static gltfNode* FindModelRoot( gltfData* data, const idImportOptions* options, 
 	return root;
 }
 
-// constructs a renderModel from a gltfScene node found in the "models" scene of the given gltfFile.
-// override with gltf_modelSceneName
-// warning : nodeName cannot have dots!
-// [fileName].[nodeName/nodeId].[gltf/glb]
-// If no nodeName/nodeId is given, all primitives active in default scene will be added as surfaces.
 void idRenderModelGLTF::InitFromFile( const char* fileName, const idImportOptions* options )
 {
 	hasAnimations				  = false;
@@ -761,7 +775,6 @@ const idMD5Joint* idRenderModelGLTF::FindMD5Joint( const idStr& name ) const
 	return &staticJoint;
 }
 
-// unused
 void idRenderModelGLTF::UpdateMd5Joints()
 {
 	// FIXME, for added origin with no skin
@@ -824,6 +837,7 @@ void idRenderModelGLTF::DrawJoints( const struct renderEntity_s* ent, const view
 #endif
 }
 
+//! Computes the pose from glTF2 bone data by resolving node matrices and converting to joint quaternions
 static idList<idJointQuat> GetPose( idList<gltfNode>& bones, idJointMat* poseMat, const idMat4& globalTransform )
 {
 	// resolve each glTF2 bone to world space and convert to idJointQuat
@@ -865,6 +879,7 @@ static idList<idJointQuat> GetPose( idList<gltfNode>& bones, idJointMat* poseMat
 	return ret;
 }
 
+//! Copies a list of bones from the input data into the output list and fixes parent references.
 static int CopyBones( gltfData* data, const idList<int>& bones, idList<gltfNode>& out )
 {
 	out.Clear();
@@ -896,6 +911,20 @@ static int CopyBones( gltfData* data, const idList<int>& bones, idList<gltfNode>
 
 #if !defined( DMAP )
 
+/*!
+	\brief Collects bone information from GLTF data for animation processing
+
+	This function gathers bone data from a GLTF animation and related skin information to prepare for animation processing. It handles both skinned and boneless animations, and applies various node
+   modifications based on import options. The function fills out bone indices and joint information structures that are used later in the animation generation pipeline.
+
+	\param data Pointer to the GLTF data structure containing scene information
+	\param gltfAnim Pointer to the GLTF animation structure to process
+	\param bones Output list of bone indices extracted from the animation
+	\param jointInfo Output list of joint animation information structures
+	\param skin Pointer to the GLTF skin structure, or null if boneless animation
+	\param options Pointer to import options that control how nodes are processed
+	\return Boolean indicating whether the animation is boneless (true) or has skeletal bones (false)
+*/
 static bool GatherBoneInfo( gltfData* data, gltfAnimation* gltfAnim, idList<int, TAG_MODEL>& bones, idList<jointAnimInfo_t, TAG_MD5_ANIM>& jointInfo, gltfSkin* skin, const idImportOptions* options )
 {
 	bool  boneLess	 = false;
@@ -1605,6 +1634,20 @@ dynamicModel_t idRenderModelGLTF::IsDynamicModel() const
 	return model_state;
 }
 
+/*!
+	\brief Transforms vertex positions, normals, and tangents using joint matrices and returns a list of unique joint IDs used in the transformation.
+
+	This function applies skinning transformations to a set of vertices using weighted joint matrices. It processes each vertex by retrieving the associated joint matrices based on color indices,
+   computing a weighted sum of the joint transformations, and applying the resulting transformation to the vertex's position, normal, and tangent. The function also gathers unique joint IDs referenced
+   in the vertex data. The transformation is applied in a way that preserves the original vertex data structure while updating it with transformed values. The weights are extracted from the second
+   color component of each vertex, normalized to the 0-1 range. The function assumes that the input vertices are properly formatted with joint indices and weights in their color components.
+
+	\param targetVerts Output array of transformed vertices
+	\param numVerts Number of vertices to transform
+	\param baseVerts Input array of base vertices to transform
+	\param joints Array of joint transformation matrices
+	\return List of unique joint IDs that were used during the vertex transformation process
+*/
 idList<int> TransformVertsAndTangents_GLTF( idDrawVert* targetVerts, const int numVerts, const idDrawVert* baseVerts, const idJointMat* joints )
 {
 	idList<int> jointIds;
@@ -1740,10 +1783,18 @@ void idRenderModelGLTF::UpdateSurface( const struct renderEntity_s* ent, const i
 #endif
 }
 
-/*
-====================
-TransformJoints
-====================
+/*!
+	\brief Performs fast joint transformation by multiplying corresponding joint matrices from two input arrays and storing the results in an output array
+
+	This function applies a SIMD-optimized matrix multiplication operation on pairs of joint matrices. It processes two joint matrices at a time using SSE intrinsics for improved performance. The
+   transformation combines the first joint matrix with the second joint matrix using matrix multiplication, preserving the last element of each matrix row. For cases where SSE intrinsics are not
+   available, it falls back to a standard joint matrix multiplication implementation. All input and output pointers must be 16-byte aligned for proper SIMD operation
+
+	\param outJoints Output array where transformed joint matrices will be stored
+	\param numJoints Number of joint matrices to process
+	\param inJoints1 First input array of joint matrices
+	\param inJoints2 Second input array of joint matrices
+	\throws assertion failure if any of the pointer parameters are not 16-byte aligned
 */
 static void TransformJointsFast( idJointMat* __restrict outJoints, const int numJoints, const idJointMat* __restrict inJoints1, const idJointMat* __restrict inJoints2 )
 {

@@ -128,12 +128,6 @@ VkBufferUsageFlags	pickBufferUsage( const nvrhi::BufferDesc& desc )
 
 ================================================================================================
 */
-
-/*
-========================
-UnbindBufferObjects
-========================
-*/
 void UnbindBufferObjects()
 {
 	// glBindBuffer( GL_ARRAY_BUFFER, 0 );
@@ -147,12 +141,6 @@ idVertexBuffer
 
 ================================================================================================
 */
-
-/*
-========================
-idVertexBuffer::idVertexBuffer
-========================
-*/
 idVertexBuffer::idVertexBuffer()
 {
 	// SRS - Generic initialization handled by idBufferObject base class
@@ -160,11 +148,6 @@ idVertexBuffer::idVertexBuffer()
 	SetDebugName( "Vertex Buffer" );
 }
 
-/*
-========================
-idVertexBuffer::AllocBufferObject
-========================
-*/
 bool idVertexBuffer::AllocBufferObject( const void* data, int allocSize, bufferUsageType_t _usage, nvrhi::ICommandList* commandList )
 {
 	assert( !bufferHandle );
@@ -233,11 +216,6 @@ bool idVertexBuffer::AllocBufferObject( const void* data, int allocSize, bufferU
 	return true;
 }
 
-/*
-========================
-idVertexBuffer::FreeBufferObject
-========================
-*/
 void idVertexBuffer::FreeBufferObject()
 {
 	if( IsMapped() ) {
@@ -269,11 +247,6 @@ void idVertexBuffer::FreeBufferObject()
 	ClearWithoutFreeing();
 }
 
-/*
-========================
-idVertexBuffer::Update
-========================
-*/
 void idVertexBuffer::Update( const void* data, int updateSize, int offset, bool initialUpdate, nvrhi::ICommandList* commandList ) const
 {
 	assert( bufferHandle );
@@ -302,11 +275,6 @@ void idVertexBuffer::Update( const void* data, int updateSize, int offset, bool 
 	}
 }
 
-/*
-========================
-idVertexBuffer::MapBuffer
-========================
-*/
 void* idVertexBuffer::MapBuffer( bufferMapType_t mapType )
 {
 	assert( bufferHandle );
@@ -336,11 +304,6 @@ void* idVertexBuffer::MapBuffer( bufferMapType_t mapType )
 	return buffer;
 }
 
-/*
-========================
-idVertexBuffer::UnmapBuffer
-========================
-*/
 void idVertexBuffer::UnmapBuffer()
 {
 	assert( bufferHandle );
@@ -359,11 +322,6 @@ void idVertexBuffer::UnmapBuffer()
 	SetUnmapped();
 }
 
-/*
-========================
-idVertexBuffer::ClearWithoutFreeing
-========================
-*/
 void idVertexBuffer::ClearWithoutFreeing()
 {
 	size				= 0;
@@ -383,12 +341,6 @@ idIndexBuffer
 
 ================================================================================================
 */
-
-/*
-========================
-idIndexBuffer::idIndexBuffer
-========================
-*/
 idIndexBuffer::idIndexBuffer()
 {
 	// SRS - Generic initialization handled by idBufferObject base class
@@ -396,11 +348,6 @@ idIndexBuffer::idIndexBuffer()
 	SetDebugName( "Index Buffer" );
 }
 
-/*
-========================
-idIndexBuffer::AllocBufferObject
-========================
-*/
 bool idIndexBuffer::AllocBufferObject( const void* data, int allocSize, bufferUsageType_t _usage, nvrhi::ICommandList* commandList )
 {
 	assert( !bufferHandle );
@@ -471,11 +418,6 @@ bool idIndexBuffer::AllocBufferObject( const void* data, int allocSize, bufferUs
 	return true;
 }
 
-/*
-========================
-idIndexBuffer::FreeBufferObject
-========================
-*/
 void idIndexBuffer::FreeBufferObject()
 {
 	if( IsMapped() ) {
@@ -507,11 +449,6 @@ void idIndexBuffer::FreeBufferObject()
 	ClearWithoutFreeing();
 }
 
-/*
-========================
-idIndexBuffer::Update
-========================
-*/
 void idIndexBuffer::Update( const void* data, int updateSize, int offset, bool initialUpdate, nvrhi::ICommandList* commandList ) const
 {
 	assert( bufferHandle );
@@ -541,11 +478,6 @@ void idIndexBuffer::Update( const void* data, int updateSize, int offset, bool i
 	}
 }
 
-/*
-========================
-idIndexBuffer::MapBuffer
-========================
-*/
 void* idIndexBuffer::MapBuffer( bufferMapType_t mapType )
 {
 	assert( bufferHandle );
@@ -575,11 +507,6 @@ void* idIndexBuffer::MapBuffer( bufferMapType_t mapType )
 	return buffer;
 }
 
-/*
-========================
-idIndexBuffer::UnmapBuffer
-========================
-*/
 void idIndexBuffer::UnmapBuffer()
 {
 	assert( bufferHandle );
@@ -598,11 +525,6 @@ void idIndexBuffer::UnmapBuffer()
 	SetUnmapped();
 }
 
-/*
-========================
-idIndexBuffer::ClearWithoutFreeing
-========================
-*/
 void idIndexBuffer::ClearWithoutFreeing()
 {
 	size				= 0;
@@ -622,12 +544,6 @@ idUniformBuffer
 
 ================================================================================================
 */
-
-/*
-========================
-idUniformBuffer::idUniformBuffer
-========================
-*/
 idUniformBuffer::idUniformBuffer()
 {
 	// SRS - Generic initialization handled by idBufferObject base class
@@ -635,11 +551,6 @@ idUniformBuffer::idUniformBuffer()
 	SetDebugName( "Uniform Buffer" );
 }
 
-/*
-========================
-idUniformBuffer::AllocBufferObject
-========================
-*/
 bool idUniformBuffer::AllocBufferObject( const void* data, int allocSize, bufferUsageType_t allocatedUsage, nvrhi::ICommandList* commandList )
 {
 	assert( !bufferHandle );
@@ -714,11 +625,6 @@ bool idUniformBuffer::AllocBufferObject( const void* data, int allocSize, buffer
 	return true;
 }
 
-/*
-========================
-idUniformBuffer::FreeBufferObject
-========================
-*/
 void idUniformBuffer::FreeBufferObject()
 {
 	if( IsMapped() ) {
@@ -750,11 +656,6 @@ void idUniformBuffer::FreeBufferObject()
 	ClearWithoutFreeing();
 }
 
-/*
-========================
-idUniformBuffer::Update
-========================
-*/
 void idUniformBuffer::Update( const void* data, int updateSize, int offset, bool initialUpdate, nvrhi::ICommandList* commandList ) const
 {
 	assert( bufferHandle );
@@ -783,11 +684,6 @@ void idUniformBuffer::Update( const void* data, int updateSize, int offset, bool
 	}
 }
 
-/*
-========================
-idUniformBuffer::MapBuffer
-========================
-*/
 void* idUniformBuffer::MapBuffer( bufferMapType_t mapType )
 {
 	assert( bufferHandle );
@@ -817,11 +713,6 @@ void* idUniformBuffer::MapBuffer( bufferMapType_t mapType )
 	return buffer;
 }
 
-/*
-========================
-idUniformBuffer::UnmapBuffer
-========================
-*/
 void idUniformBuffer::UnmapBuffer()
 {
 	assert( bufferHandle );
@@ -840,11 +731,6 @@ void idUniformBuffer::UnmapBuffer()
 	SetUnmapped();
 }
 
-/*
-========================
-idUniformBuffer::ClearWithoutFreeing
-========================
-*/
 void idUniformBuffer::ClearWithoutFreeing()
 {
 	size				= 0;

@@ -38,11 +38,13 @@ struct PipelineKey {
 	Framebuffer* framebuffer;
 };
 
+//! Compares two PipelineKey objects for equality based on their state, program, framebuffer, depthBias, and slopeBias members.
 inline bool operator==( const PipelineKey& lhs, const PipelineKey& rhs )
 {
 	return lhs.state == rhs.state && lhs.program == rhs.program && lhs.framebuffer == rhs.framebuffer && lhs.depthBias == rhs.depthBias && lhs.slopeBias == rhs.slopeBias;
 }
 
+//! Computes a hash value for a PipelineKey object using combined hash values of its components.
 template<>
 struct std::hash<PipelineKey> {
 	std::size_t operator()( const PipelineKey& key ) const noexcept
@@ -57,20 +59,39 @@ struct std::hash<PipelineKey> {
 	}
 };
 
+/*!
+	\class PipelineCache
+	\brief Manages caching and creation of graphics pipelines for efficient rendering.
+
+	The PipelineCache class provides a mechanism for storing and retrieving graphics pipeline objects to avoid redundant creation during rendering. It initializes with a device handle and maintains a
+   collection of cached pipelines indexed by pipeline keys. The class supports creating new pipelines on demand, clearing the cache, and configuring render state objects based on state bits and
+   pipeline keys. It also handles conversion of stencil operation bits into depth-stencil state descriptions for proper rendering configuration. The cache is designed to be cleared or invalidated
+   during shutdown to ensure proper resource cleanup.
+
+*/
 class PipelineCache
 {
 public:
+	//! Constructs a new PipelineCache instance.
 	PipelineCache();
 
+	//! Initializes the pipeline cache with the provided device handle.
 	void						  Init( nvrhi::DeviceHandle deviceHandle );
+
+	//! Invalidates the device reference to ensure proper cleanup during shutdown
 	void						  Shutdown();
 
+	//! Clears all cached pipelines and their hash entries.
 	void						  Clear();
 
+	//! Returns or creates a graphics pipeline handle based on the provided pipeline key
 	nvrhi::GraphicsPipelineHandle GetOrCreatePipeline( const PipelineKey& key );
 
 private:
+	//! Configures a render state object based on state bits and a pipeline key
 	void														  GetRenderState( uint64 stateBits, PipelineKey key, nvrhi::RenderState& renderState );
+
+	//! Converts stencil operation bits into a depth-stencil state stencil operation description.
 	nvrhi::DepthStencilState::StencilOpDesc						  GetStencilOpState( uint64 stateBits );
 
 	nvrhi::DeviceHandle											  device;

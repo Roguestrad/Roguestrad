@@ -45,44 +45,112 @@ class Framebuffer;
 
 struct ImDrawData;
 
+/*!
+	\class idGuiModel
+	\brief This class is a helper to batch 2D rendering surfaces in the renderer frontend.
+
+*/
 class idGuiModel
 {
 public:
+	//! Initializes a new instance of the idGuiModel class with default values.
 	idGuiModel();
 
+	//! Clears all surfaces from the GUI model.
 	void		Clear();
 
-	// Leyland VR
+	//! Sets the view eye buffer for the GUI model.
 	void		SetViewEyeBuffer( int veb );
+
+	//! Returns the view eye buffer index used for GUI rendering.
 	int			GetViewEyeBuffer() { return viewEyeBuffer; }
 
+	//! Sets the GUI mode and triggers a full screen event if the mode changes.
 	void		SetMode( guiMode_t a_mode );
+
+	//! Returns the current GUI mode of the model
 	guiMode_t	GetMode() { return mode; }
 
+	//! Updates the virtual reality shell origin and axis based on VR system data
 	bool		UpdateVRShell();
-	void		ActivateVRShell( bool b );
-	bool		GetVRShell( idVec3& origin, idMat3& axis );
-	void		SetVRShell( const idVec3& origin, const idMat3& axis );
-	// Leyland end
 
-	// allocates memory for verts and indexes in frame-temporary buffer memory
+	//! Activates or deactivates the VR shell based on the boolean parameter.
+	void		ActivateVRShell( bool b );
+
+	//! Retrieves the VR shell origin and axis for GUI rendering.
+	bool		GetVRShell( idVec3& origin, idMat3& axis );
+
+	//! Sets the VR shell origin and axis for the GUI model.
+	void		SetVRShell( const idVec3& origin, const idMat3& axis );
+
+	//! Initializes the GUI model frame by allocating vertex and index buffers and clearing the state.
 	void		BeginFrame();
 
+	//! Emits the GUI model to the current view with the specified model matrix and depth hack option.
 	void		EmitToCurrentView( float modelMatrix[16], bool depthHack );
+
+	//! Creates a full-screen view and emits GUI surfaces for rendering
 	void		EmitFullScreen( Framebuffer* renderTarget = nullptr );
+
+	/*!
+		\brief Emits GUI surfaces with optional stereo depth effects and depth hacking for rendering
+
+		This function processes and submits GUI surfaces for rendering with support for stereo 3D effects and depth hacking. It allocates rendering space for each surface, sets up transformation
+	   matrices, and handles surface linking when required. The function also evaluates shader registers for each surface and manages scissor rectangles for clipping. When stereo depth is enabled, it
+	   adjusts surface sorting and modifies vertex z-coordinates to create depth effects for virtual reality systems.
+
+		\param modelMatrix The model transformation matrix for the GUI surface
+		\param modelViewMatrix The model-view transformation matrix for the GUI surface
+		\param depthHack Flag to enable or disable depth hacking effect
+		\param allowFullScreenStereoDepth Flag to enable full-screen stereo depth effects for 3D displays
+		\param linkAsEntity Flag to determine if the GUI surface should be linked as an entity in the rendering system
+	*/
 	void		EmitSurfaces( float modelMatrix[16], float modelViewMatrix[16], bool depthHack, bool allowFullScreenStereoDepth, bool linkAsEntity );
 
-	// RB
+	//! Emits ImGui draw data to the rendering system
 	void		EmitImGui( ImDrawData* drawData );
 
-	// the returned pointer will be in write-combined memory, so only make contiguous
-	// 32 bit writes and never read from it.
+	/*!
+		\brief Allocates vertex data for triangle primitives with the specified parameters and returns a pointer to the allocated vertices.
+
+		This function allocates memory for vertex data used in rendering triangle primitives. The returned pointer points to write-combined memory, which means only 32-bit contiguous writes should be
+	   performed and reads are not recommended. The function handles clipping and uses an internal clipping rectangle. It validates input parameters and returns NULL if material is NULL or if
+	   index/vertex limits are exceeded.
+
+		\param numVerts Number of vertices to allocate
+		\param indexes Array of triangle indices referencing the vertices
+		\param numIndexes Number of indices in the index array
+		\param material Pointer to the material used for rendering
+		\param glState OpenGL state flags for the rendering operation
+		\param stereoType Type of stereo depth for the rendering operation
+		\return Pointer to the allocated idDrawVert array for vertex data, or NULL if allocation fails
+		\throws No explicit throws, but may warn about exceeding MAX_INDEXES or MAX_VERTS limits
+	*/
 	idDrawVert* AllocTris( int numVerts, const triIndex_t* indexes, int numIndexes, const idMaterial* material, const uint64 glState, const stereoDepthType_t stereoType );
+
+	/*!
+		\brief Allocates vertex and index data for rendering triangles with specified material and rendering state
+
+		This function allocates vertex and index data for rendering triangle primitives. It manages vertex and index buffers, handling buffer reallocation when necessary and ensuring proper alignment.
+	   The function also handles surface state changes by breaking the current surface when material, OpenGL state, stereo type, or clip rectangle changes. It supports both aligned and unaligned index
+	   writing for performance optimization. The function returns a pointer to the allocated vertex data that can be filled by the caller.
+
+		\param numVerts Number of vertices already allocated in the current surface
+		\param indexes Array of triangle indices to be added
+		\param numIndexes Number of indices to be added
+		\param material Material to be used for the rendered triangles
+		\param glState OpenGL state flags for rendering
+		\param stereoType Stereo depth type for the rendering
+		\param clipRect Screen clipping rectangle for the surface
+		\return Pointer to the allocated vertex data that can be filled by the caller
+		\throws idLib::Warning when MAX_INDEXES or MAX_VERTS limits are exceeded
+	*/
 	idDrawVert* AllocTris(
 		int numVerts, const triIndex_t* indexes, int numIndexes, const idMaterial* material, const uint64 glState, const stereoDepthType_t stereoType, const idScreenRect& clipRect );
 
 	//---------------------------
 private:
+	//! Advances to the next surface in the GUI model, preparing it for rendering.
 	void								 AdvanceSurf();
 
 	// Leyland VR

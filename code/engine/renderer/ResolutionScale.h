@@ -29,29 +29,29 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __RESOLUTIONSCALE_H__
 #define __RESOLUTIONSCALE_H__
 
+/*!
+	\class idResolutionScale
+	\brief Manages dynamic resolution scaling based on performance metrics.
+*/
 class idResolutionScale
 {
 public:
+	//! Constructs an idResolutionScale object with default values.
 	idResolutionScale();
 
+	//! Initializes the resolution scale settings for the specified map.
 	void InitForMap( const char* mapName );
 
-	// Returns a float from 0.5 to 1.0, representing
-	// the estimated resolution downscale needed to
-	// maintain the target framerate.
+	//! Retrieves the current horizontal and vertical resolution scale factors.
 	void GetCurrentResolutionScale( float& x, float& y );
 
-	// This should be called after any discontinuous
-	// view movement or force texture loading to prevent
-	// the unusual frames from causing an excessively
-	// low dynamic resolution.
+	//! Resets the resolution scale to full resolution.
 	void ResetToFullResolution();
 
-	// Systems that don't have accurate GPU timing can pass 0
-	// to this, which will effectively disable resolution scaling.
+	//! Sets the current GPU frame time and adjusts the resolution scale based on the timing.
 	void SetCurrentGPUFrameTime( int microseconds );
 
-	// return console display text
+	//! Populates the provided string with console display text representing the current resolution scale settings.
 	void GetConsoleText( idStr& s );
 
 private:

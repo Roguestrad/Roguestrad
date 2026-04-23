@@ -34,18 +34,19 @@ If you have questions concerning this license or the applicable additional terms
 #include "RenderCommon.h"
 #include "Model_local.h"
 
-/*
-==========================================================================================
+/*!
+	\brief Completes deformation processing by updating surface geometry and caching vertex/index data
 
-DEFORM SURFACES
+	Finalizes a deformation operation by allocating vertex and index caches for the new geometry, updating the surface's geometry reference and caching information, and returning the modified surface.
+   The function sets up the necessary graphics resource caching for the deformed surface using the provided vertex and index data. The command list parameter is used for GPU command recording during
+   cache allocation. Joint cache is explicitly set to zero as this function handles static geometry deformation.
 
-==========================================================================================
-*/
-
-/*
-=================
-R_FinishDeform
-=================
+	\param surf Input surface to be updated with new geometry
+	\param newTri New triangle data describing the deformed surface geometry
+	\param newVerts Array of vertex data for the deformed surface
+	\param newIndexes Array of index data defining the triangle connectivity
+	\param commandList Graphics command list for GPU resource allocation
+	\return Updated surface reference with new geometry and caching information
 */
 static drawSurf_t* R_FinishDeform( drawSurf_t* surf, srfTriangles_t* newTri, const idDrawVert* newVerts, const triIndex_t* newIndexes, nvrhi::ICommandList* commandList )
 {
@@ -62,14 +63,7 @@ static drawSurf_t* R_FinishDeform( drawSurf_t* surf, srfTriangles_t* newTri, con
 	return surf;
 }
 
-/*
-=====================
-R_AutospriteDeform
-
-Assuming all the triangles for this shader are independant
-quads, rebuild them as forward facing sprites.
-=====================
-*/
+//! Rebuilds triangle quads as forward-facing sprites for autosprite deformation.
 static drawSurf_t* R_AutospriteDeform( drawSurf_t* surf )
 {
 	const srfTriangles_t* srcTri = surf->frontEndGeo;
@@ -145,18 +139,7 @@ static drawSurf_t* R_AutospriteDeform( drawSurf_t* surf )
 	return R_FinishDeform( surf, newTri, newVerts, newIndexes, nullptr );
 }
 
-/*
-=====================
-R_TubeDeform
-
-Will pivot a rectangular quad along the center of its long axis.
-
-Note that a geometric tube with even quite a few sides will almost certainly render
-much faster than this, so this should only be for faked volumetric tubes.
-Make sure this is used with twosided translucent shaders, because the exact side
-order may not be correct.
-=====================
-*/
+//! Applies tube deformation to a draw surface for rendering.
 static drawSurf_t* R_TubeDeform( drawSurf_t* surf )
 {
 	static int			  edgeVerts[6][2] = { { 0, 1 }, { 1, 2 }, { 2, 0 }, { 3, 4 }, { 4, 5 }, { 5, 3 } };
@@ -262,6 +245,8 @@ R_WindingFromTriangles
 =====================
 */
 #define MAX_TRI_WINDING_INDEXES 16
+
+//! Computes a winding from triangle indices by traversing edges and avoiding internal connections
 int R_WindingFromTriangles( const srfTriangles_t* tri, triIndex_t indexes[MAX_TRI_WINDING_INDEXES] )
 {
 	int i, j, k, l;
@@ -341,11 +326,7 @@ int R_WindingFromTriangles( const srfTriangles_t* tri, triIndex_t indexes[MAX_TR
 	return numIndexes;
 }
 
-/*
-=====================
-R_FlareDeform
-=====================
-*/
+//! Applies a flare deformation to a draw surface, modifying its geometry and appearance based on the viewer's position and orientation relative to the surface plane.
 static drawSurf_t* R_FlareDeform( drawSurf_t* surf )
 {
 	const srfTriangles_t* srcTri = surf->frontEndGeo;
@@ -473,13 +454,7 @@ static drawSurf_t* R_FlareDeform( drawSurf_t* surf )
 	return R_FinishDeform( surf, newTri, newVerts, triIndexes, nullptr );
 }
 
-/*
-=====================
-R_ExpandDeform
-
-Expands the surface along it's normals by a shader amount
-=====================
-*/
+//! Expands a surface along its normals by a shader-defined amount.
 static drawSurf_t* R_ExpandDeform( drawSurf_t* surf )
 {
 	const srfTriangles_t* srcTri = surf->frontEndGeo;
@@ -502,13 +477,7 @@ static drawSurf_t* R_ExpandDeform( drawSurf_t* surf )
 	return R_FinishDeform( surf, newTri, newVerts, srcTri->indexes, nullptr );
 }
 
-/*
-=====================
-R_MoveDeform
-
-Moves the surface along the X axis, mostly just for demoing the deforms
-=====================
-*/
+//! Moves a surface along the X axis using deformation parameters
 static drawSurf_t* R_MoveDeform( drawSurf_t* surf )
 {
 	const srfTriangles_t* srcTri = surf->frontEndGeo;
@@ -531,13 +500,7 @@ static drawSurf_t* R_MoveDeform( drawSurf_t* surf )
 	return R_FinishDeform( surf, newTri, newVerts, srcTri->indexes, nullptr );
 }
 
-/*
-=====================
-R_TurbulentDeform
-
-Turbulently deforms the texture coordinates.
-=====================
-*/
+//! Turbulently deforms the texture coordinates of a draw surface.
 static drawSurf_t* R_TurbulentDeform( drawSurf_t* surf )
 {
 	const srfTriangles_t* srcTri = surf->frontEndGeo;
@@ -589,6 +552,19 @@ typedef struct {
 	idVec3	 mid;
 } eyeIsland_t;
 
+/*!
+	\brief Recursively adds a triangle and its neighboring triangles to an eye island while tracking used triangles.
+
+	This function adds a given triangle to an eye island and recursively processes all neighboring triangles that share vertices with the current triangle. It marks triangles as used to avoid
+   reprocessing and updates the island's bounding volume. The function checks for a maximum triangle limit and will trigger an error if exceeded. GPU skinning is considered when computing vertex
+   positions.
+
+	\param tri Pointer to the triangle data structure containing vertex and index information
+	\param triangleNum Index of the current triangle to be added to the island
+	\param usedList Boolean array tracking which triangles have been processed
+	\param island Pointer to the eye island structure where triangles are accumulated
+	\throws Error when MAX_EYEBALL_TRIS limit is exceeded
+*/
 static void AddTriangleToIsland_r( const srfTriangles_t* tri, int triangleNum, bool* usedList, eyeIsland_t* island )
 {
 	usedList[triangleNum] = true;
@@ -630,14 +606,7 @@ static void AddTriangleToIsland_r( const srfTriangles_t* tri, int triangleNum, b
 	}
 }
 
-/*
-=====================
-R_EyeballDeform
-
-Each eyeball surface should have an separate upright triangle behind it, long end
-pointing out the eye, and another single triangle in front of the eye for the focus point.
-=====================
-*/
+//! Processes a draw surface to deform it into an eyeball shape with separate islands for the eye and focus point.
 static drawSurf_t* R_EyeballDeform( drawSurf_t* surf )
 {
 	const srfTriangles_t* srcTri = surf->frontEndGeo;
@@ -773,13 +742,7 @@ static drawSurf_t* R_EyeballDeform( drawSurf_t* surf )
 	return R_FinishDeform( surf, newTri, newVerts, newIndexes, nullptr );
 }
 
-/*
-=====================
-R_ParticleDeform
-
-Emit particles from the surface.
-=====================
-*/
+//! Generates particle effects from a surface using either area-based or triangle-based distribution.
 static drawSurf_t* R_ParticleDeform( drawSurf_t* surf, bool useArea, nvrhi::ICommandList* commandList )
 {
 	const renderEntity_t* renderEntity	 = &surf->space->entityDef->parms;
@@ -1028,11 +991,6 @@ drawSurf_t* R_DeformDrawSurf( drawSurf_t* drawSurf )
 	return R_DeformDrawSurf( drawSurf, drawSurf->material->Deform() );
 }
 
-/*
-=================
-R_DeformDrawSurf
-=================
-*/
 drawSurf_t* R_DeformDrawSurf( drawSurf_t* drawSurf, deform_t deformType )
 {
 	if( r_skipDeforms.GetBool() ) {

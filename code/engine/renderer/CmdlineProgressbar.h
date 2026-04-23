@@ -30,7 +30,10 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __CMDLINE_PROGRESSBAR_H__
 #define __CMDLINE_PROGRESSBAR_H__
 
-// CommandlineProgressBar draws a nice progressbar in the console like you would get with boost
+/*!
+	\class CommandlineProgressBar
+	\brief CommandlineProgressBar provides a console-based visual progress indicator for tracking process completion.
+*/
 class CommandlineProgressBar
 {
 private:
@@ -43,6 +46,7 @@ private:
 	int	   sysHeight = 720;
 
 public:
+	//! Initializes a command line progress bar with the expected count and display dimensions.
 	CommandlineProgressBar( int _expectedCount, int width, int height )
 	{
 		expectedCount = _expectedCount;
@@ -50,10 +54,16 @@ public:
 		sysHeight	  = height;
 	}
 
+	//! Initializes and displays the command-line progress bar with percentage markers and visual indicators.
 	void Start();
+
+	//! Increments the progress bar counter and updates the display with a visual indicator.
 	void Increment( bool updateScreen );
 
+	//! Resets the command line progress bar state to its initial values.
 	void Reset();
+
+	//! Resets the progress bar state with a new expected count.
 	void Reset( int expected );
 };
 

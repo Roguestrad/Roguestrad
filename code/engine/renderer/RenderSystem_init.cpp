@@ -1529,9 +1529,6 @@ void VR_LogDevices_f( const idCmdArgs& args )
 
 /*
 =================
-
-/*
-=================
 R_InitCommands
 =================
 */
