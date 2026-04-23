@@ -42,11 +42,6 @@ idCVar		  s_device( "s_device", "-1", CVAR_INTEGER | CVAR_ARCHIVE, "Which audio 
 idCVar		  s_showPerfData( "s_showPerfData", "0", CVAR_BOOL, "Show XAudio2 Performance data" );
 extern idCVar s_volume_dB;
 
-/*
-========================
-idSoundHardware_OpenAL::idSoundHardware_OpenAL
-========================
-*/
 idSoundHardware_OpenAL::idSoundHardware_OpenAL()
 {
 	openalDevice  = NULL;
@@ -120,6 +115,7 @@ void idSoundHardware_OpenAL::PrintALInfo()
 	CheckALErrors();
 }
 
+//! Lists available audio playback devices and prints default device information.
 void listDevices_f( const idCmdArgs& args )
 {
 	idLib::Printf( "Available playback devices:\n" );
@@ -145,11 +141,6 @@ void listDevices_f( const idCmdArgs& args )
 	idSoundHardware_OpenAL::PrintALCInfo( ( ALCdevice* )soundSystem->GetOpenALDevice() );
 }
 
-/*
-========================
-idSoundHardware_OpenAL::Init
-========================
-*/
 void idSoundHardware_OpenAL::Init()
 {
 	cmdSystem->AddCommand( "listDevices", listDevices_f, 0, "Lists the connected sound devices", NULL );
@@ -250,11 +241,6 @@ void idSoundHardware_OpenAL::Init()
 	}
 }
 
-/*
-========================
-idSoundHardware_OpenAL::Shutdown
-========================
-*/
 void idSoundHardware_OpenAL::Shutdown()
 {
 	for( int i = 0; i < voices.Num(); i++ ) {
@@ -293,11 +279,6 @@ void idSoundHardware_OpenAL::Shutdown()
 	*/
 }
 
-/*
-========================
-idSoundHardware_OpenAL::AllocateVoice
-========================
-*/
 idSoundVoice* idSoundHardware_OpenAL::AllocateVoice( const idSoundSample* leadinSample, const idSoundSample* loopingSample )
 {
 	if( leadinSample == NULL ) {
@@ -331,11 +312,6 @@ idSoundVoice* idSoundHardware_OpenAL::AllocateVoice( const idSoundSample* leadin
 	return NULL;
 }
 
-/*
-========================
-idSoundHardware_OpenAL::FreeVoice
-========================
-*/
 void idSoundHardware_OpenAL::FreeVoice( idSoundVoice* voice )
 {
 	voice->Stop();
@@ -345,11 +321,6 @@ void idSoundHardware_OpenAL::FreeVoice( idSoundVoice* voice )
 	zombieVoices.Append( voice );
 }
 
-/*
-========================
-idSoundHardware_OpenAL::Update
-========================
-*/
 void idSoundHardware_OpenAL::Update()
 {
 	if( openalDevice == NULL ) {

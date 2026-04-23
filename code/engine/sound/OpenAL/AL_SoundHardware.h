@@ -34,34 +34,53 @@ class idSoundSample_OpenAL;
 class idSoundVoice_OpenAL;
 class idSoundHardware_OpenAL;
 
-/*
-================================================
-idSoundHardware_OpenAL
-================================================
-*/
+/*!
+	\class idSoundHardware_OpenAL
+	\brief Provides OpenAL-based audio hardware abstraction and management for sound playback.
 
+	This class serves as a bridge between the audio subsystem and OpenAL, handling device and context initialization, voice allocation and management, and system updates. It maintains pools of
+   available and zombie voices for efficient audio resource utilization. The class initializes OpenAL hardware during startup and properly cleans up resources during shutdown. It provides methods for
+   allocating voices for sound playback, freeing voices, and updating the hardware state. The implementation includes utility functions for printing device and implementation information for debugging
+   purposes.
+
+*/
 class idSoundHardware_OpenAL
 {
 public:
+	//! Initializes a new instance of the idSoundHardware_OpenAL class.
 	idSoundHardware_OpenAL();
 
+	//! Initializes the OpenAL sound hardware by creating a device and context, and sets up sound system components.
 	void		  Init();
+
+	//! Shuts down the OpenAL sound hardware and cleans up all associated resources.
 	void		  Shutdown();
 
+	//! Updates the OpenAL sound hardware state and handles zombie sound voices.
 	void		  Update();
 
+	//! Allocates a sound voice for playing a leadin sample with an optional looping sample.
 	idSoundVoice* AllocateVoice( const idSoundSample* leadinSample, const idSoundSample* loopingSample );
+
+	//! Frees the specified sound voice by stopping it and adding it to the zombie voices list.
 	void		  FreeVoice( idSoundVoice* voice );
 
 	// listDevices needs this
 	ALCdevice*	  GetOpenALDevice() const { return openalDevice; };
 
+	//! Returns the number of zombie voices managed by the OpenAL sound hardware.
 	int			  GetNumZombieVoices() const { return zombieVoices.Num(); }
+
+	//! Returns the number of free audio voices available for use.
 	int			  GetNumFreeVoices() const { return freeVoices.Num(); }
 
-	// OpenAL info
+	//! Prints a list of OpenAL audio devices to the console.
 	static void	  PrintDeviceList( const char* list );
+
+	//! Prints OpenAL and OpenAL Soft information for the specified device.
 	static void	  PrintALCInfo( ALCdevice* device );
+
+	//! Prints OpenAL implementation information including vendor, renderer, version, and extensions.
 	static void	  PrintALInfo();
 
 protected:
@@ -69,14 +88,6 @@ protected:
 	friend class idSoundVoice_OpenAL;
 
 private:
-	/*
-	IXAudio2* pXAudio2;
-	IXAudio2MasteringVoice* pMasterVoice;
-	IXAudio2SubmixVoice* pSubmixVoice;
-
-	idSoundEngineCallback	soundEngineCallback;
-	*/
-
 	ALCdevice*													openalDevice;
 	ALCcontext*													openalContext;
 
@@ -95,10 +106,9 @@ private:
 	idStaticList<idSoundVoice_OpenAL*, MAX_HARDWARE_VOICES * 2> freeVoices;
 };
 
-/*
-================================================
-idSoundHardware
-================================================
+/*!
+	\class idSoundHardware
+	\brief Manages audio hardware resources and playback for sound processing.
 */
 class idSoundHardware : public idSoundHardware_OpenAL
 {

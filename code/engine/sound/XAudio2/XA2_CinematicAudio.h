@@ -27,13 +27,26 @@
 #ifndef __CINEMATIC_AUDIO_XA2_H__
 	#define __CINEMATIC_AUDIO_XA2_H__
 
+/*!
+	\class CinematicAudio_XAudio2
+	\brief Provides XAudio2-based audio playback for cinematic content.
+*/
 class CinematicAudio_XAudio2 : public CinematicAudio
 {
 public:
+	//! Initializes a new instance of the CinematicAudio_XAudio2 class.
 	CinematicAudio_XAudio2();
+
+	//! Initializes audio playback for cinematic content using the provided audio context.
 	void InitAudio( void* audioContext );
+
+	//! Submits audio data to the XAudio2 buffer and plays it
 	void PlayAudio( uint8_t* data, int size );
+
+	//! Stops and flushes the audio source voice if it exists.
 	void ResetAudio();
+
+	//! Stops and cleans up the audio source voice used for cinematic music playback.
 	void ShutdownAudio();
 
 private:

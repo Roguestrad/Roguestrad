@@ -41,11 +41,19 @@ CinematicAudio_XAudio2::CinematicAudio_XAudio2() :
 {
 }
 
-// SRS - Implement the voice callback interface to determine when audio buffers can be freed
+/*!
+	\class VoiceCallback
+	\brief A voice callback implementation for managing audio buffer lifecycle and processing events.
+
+	This class implements the voice callback interface to handle various audio processing events and manage the lifecycle of audio buffers. It provides handlers for buffer start and end events, loop
+   endings, stream endings, voice errors, and voice processing pass events. The implementation ensures proper cleanup of audio buffer data after playback completion and handles various asynchronous
+   audio processing callbacks. The class is designed to work with audio subsystems that require callback-based buffer management and event handling.
+
+*/
 class VoiceCallback : public IXAudio2VoiceCallback
 {
 public:
-	// SRS - We must free the audio buffer once it has finished playing
+	//! Frees the audio buffer data after it has finished playing
 	void OnBufferEnd( void* data )
 	{
 #if defined( USE_FFMPEG )
@@ -55,29 +63,39 @@ public:
 		data = NULL;
 #endif
 	}
-	// Unused methods are stubs
+
+	//! This function is a stub implementation for handling buffer start events in voice callback processing.
 	void OnBufferStart( void* pBufferContext )
 	{
 	}
+
+	//! Handles the end of a loop for a voice callback buffer context.
 	void OnLoopEnd( void* pBufferContext )
 	{
 	}
+
+	//! Handles the event when a voice stream ends.
 	void OnStreamEnd()
 	{
 	}
+
+	//! Handles voice error callback events with buffer context and error code.
 	void OnVoiceError( void* pBufferContext, HRESULT Error )
 	{
 	}
+
+	//! Placeholder function for voice processing pass end callback.
 	void OnVoiceProcessingPassEnd()
 	{
 	}
+
+	//! Handles the start of a voice processing pass when the specified number of bytes are required.
 	void OnVoiceProcessingPassStart( UINT32 BytesRequired )
 	{
 	}
 };
 
 VoiceCallback voiceCallback;
-// SRS end
 
 void		  CinematicAudio_XAudio2::InitAudio( void* audioContext )
 {

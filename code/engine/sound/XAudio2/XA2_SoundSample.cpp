@@ -59,11 +59,6 @@ static void FreeBuffer( void* p )
 	return Mem_Free( p );
 }
 
-/*
-========================
-idSoundSample_XAudio2::idSoundSample_XAudio2
-========================
-*/
 idSoundSample_XAudio2::idSoundSample_XAudio2()
 {
 	timestamp			= FILE_NOT_FOUND_TIMESTAMP;
@@ -81,21 +76,11 @@ idSoundSample_XAudio2::idSoundSample_XAudio2()
 	lastPlayedTime = 0;
 }
 
-/*
-========================
-idSoundSample_XAudio2::~idSoundSample_XAudio2
-========================
-*/
 idSoundSample_XAudio2::~idSoundSample_XAudio2()
 {
 	FreeData();
 }
 
-/*
-========================
-idSoundSample_XAudio2::WriteGeneratedSample
-========================
-*/
 void idSoundSample_XAudio2::WriteGeneratedSample( idFile* fileOut )
 {
 	fileOut->WriteBig( SOUND_MAGIC_IDMSA );
@@ -114,11 +99,6 @@ void idSoundSample_XAudio2::WriteGeneratedSample( idFile* fileOut )
 		fileOut->Write( buffers[i].buffer, buffers[i].bufferSize );
 	};
 }
-/*
-========================
-idSoundSample_XAudio2::WriteAllSamples
-========================
-*/
 void idSoundSample_XAudio2::WriteAllSamples( const idStr& sampleName )
 {
 	idSoundSample_XAudio2* samplePC = new idSoundSample_XAudio2();
@@ -141,11 +121,6 @@ void idSoundSample_XAudio2::WriteAllSamples( const idStr& sampleName )
 	delete samplePC;
 }
 
-/*
-========================
-idSoundSample_XAudio2::LoadGeneratedSound
-========================
-*/
 bool idSoundSample_XAudio2::LoadGeneratedSample( const idStr& filename )
 {
 	idFileLocal fileIn( fileSystem->OpenFileReadMemory( filename ) );
@@ -176,11 +151,6 @@ bool idSoundSample_XAudio2::LoadGeneratedSample( const idStr& filename )
 	}
 	return false;
 }
-/*
-========================
-idSoundSample_XAudio2::Load
-========================
-*/
 void idSoundSample_XAudio2::LoadResource()
 {
 	FreeData();
@@ -265,11 +235,6 @@ void idSoundSample_XAudio2::LoadResource()
 	return;
 }
 
-/*
-========================
-idSoundSample_XAudio2::LoadOgg
-========================
-*/
 bool idSoundSample_XAudio2::LoadOgg( const idStr& filename )
 {
 	idSoundDecoder_Vorbis decoder;
@@ -297,11 +262,6 @@ bool idSoundSample_XAudio2::LoadOgg( const idStr& filename )
 	return ( val != -1 );
 }
 
-/*
-========================
-idSoundSample_XAudio2::LoadWav
-========================
-*/
 bool idSoundSample_XAudio2::LoadWav( const idStr& filename )
 {
 	// load the wave
@@ -438,11 +398,6 @@ bool idSoundSample_XAudio2::LoadWav( const idStr& filename )
 	return true;
 }
 
-/*
-========================
-idSoundSample_XAudio2::MakeDefault
-========================
-*/
 void idSoundSample_XAudio2::MakeDefault()
 {
 	FreeData();
@@ -480,13 +435,6 @@ void idSoundSample_XAudio2::MakeDefault()
 	playLength = DEFAULT_NUM_SAMPLES;
 }
 
-/*
-========================
-idSoundSample_XAudio2::FreeData
-
-Called before deleting the object and at the start of LoadResource()
-========================
-*/
 void idSoundSample_XAudio2::FreeData()
 {
 	if( buffers.Num() > 0 ) {
@@ -506,11 +454,6 @@ void idSoundSample_XAudio2::FreeData()
 	playLength		= 0;
 }
 
-/*
-========================
-idSoundSample_XAudio2::LoadAmplitude
-========================
-*/
 bool idSoundSample_XAudio2::LoadAmplitude( const idStr& name )
 {
 	amplitude.Clear();
@@ -523,11 +466,6 @@ bool idSoundSample_XAudio2::LoadAmplitude( const idStr& name )
 	return true;
 }
 
-/*
-========================
-idSoundSample_XAudio2::GetAmplitude
-========================
-*/
 float idSoundSample_XAudio2::GetAmplitude( int timeMS ) const
 {
 	if( timeMS < 0 || timeMS > LengthInMsec() ) {

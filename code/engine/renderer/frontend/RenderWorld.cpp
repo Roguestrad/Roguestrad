@@ -804,7 +804,6 @@ void idRenderWorldLocal::RenderScene( const renderView_t* renderView )
 		tr.CropRenderSize( 0, 0, windowWidth, windowHeight, true );
 		tr.GetCroppedViewport( &parms->viewport );
 	} else {
-
 		// screenFraction is just for quickly testing fill rate limitations
 		if( r_screenFraction.GetInteger() != 100 ) {
 			windowWidth	 = ( windowWidth * r_screenFraction.GetInteger() ) / 100;

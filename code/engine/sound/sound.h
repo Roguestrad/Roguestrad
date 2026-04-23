@@ -75,34 +75,60 @@ typedef struct {
 // flagged with a non-zero class full volume
 const int SOUND_MAX_CLASSES = 4;
 
-// it is somewhat tempting to make this a virtual class to hide the private
-// details here, but that doesn't fit easily with the decl manager at the moment.
+/*!
+	\class idSoundShader
+	\brief Manages sound shader declarations including parsing, storage, and retrieval of sound parameters.
+
+	This class handles the declaration and management of sound shaders, which define how sounds are processed and played. It inherits from idDecl and provides functionality for parsing sound shader
+   definitions from text, storing sound parameters, and retrieving information about the sounds. The class supports default sound handling, alternate sound definitions, and maintains a collection of
+   sound entries that can be accessed by index. It includes methods for initializing properties, freeing memory, and outputting information to the console for debugging purposes. The implementation
+   avoids virtual inheritance to maintain compatibility with the declaration manager system.
+
+*/
 class idSoundShader : public idDecl
 {
 public:
+	//! Initializes a new instance of the idSoundShader class.
 	idSoundShader();
 	virtual ~idSoundShader();
 
+	//! Returns the size of the sound shader declaration in memory
 	virtual size_t					  Size() const;
+
+	//! Sets the text source to a default text if necessary.
 	virtual bool					  SetDefaultText();
+
+	//! Returns the default definition string that can be parsed to recreate a declaration's default state
 	virtual const char*				  DefaultDefinition() const;
+
+	//! Parses the given text data for the sound shader declaration, returning true if successful.
 	virtual bool					  Parse( const char* text, const int textLength, bool allowBinaryVersion );
+
+	//! Frees any pointers held by the sound shader subclass and prepares the declaration for re-parsing.
 	virtual void					  FreeData();
+
+	//! Outputs the sound shader declaration name and its associated sound samples to the console
 	virtual void					  List() const;
 
-	// so the editor can draw correct default sound spheres
-	// this is currently defined as meters, which sucks, IMHO.
-	virtual float					  GetMinDistance() const; // FIXME: replace this with a GetSoundShaderParms()
+	//! Returns the minimum distance for the sound shader.
+	virtual float					  GetMinDistance() const;
+
+	//! Returns the maximum distance for the sound shader.
 	virtual float					  GetMaxDistance() const;
 
-	// returns NULL if an AltSound isn't defined in the shader.
-	// we use this for pairing a specific broken light sound with a normal light sound
+	//! Returns the alternate sound shader associated with this sound shader, or NULL if none is defined.
 	virtual const idSoundShader*	  GetAltSound() const;
 
+	//! Checks if the sound shader has a default sound entry.
 	virtual bool					  HasDefaultSound() const;
 
+	//! Returns a pointer to the sound shader parameters.
 	virtual const soundShaderParms_t* GetParms() const;
+
+	//! Returns the number of sounds in the sound shader.
 	virtual int						  GetNumSounds() const;
+
+	//! Returns the name of the sound at the specified index from the sound shader entries.
 	virtual const char*				  GetSound( int index ) const;
 
 private:
@@ -122,7 +148,10 @@ private:
 	idList<idSoundSample*, TAG_AUDIO> entries;
 
 private:
+	//! Initializes the sound shader properties to their default values.
 	void Init();
+
+	//! Parses sound shader parameters and entries from a lexer stream
 	bool ParseShader( idLexer& src );
 };
 
@@ -140,6 +169,15 @@ static const int SCHANNEL_ANY = 0; // used in queries and commands to effect eve
 static const int SCHANNEL_ONE = 1; // any following integer can be used as a channel number
 typedef int		 s_channelType;	   // the game uses its own series of enums, and we don't want to require casts
 
+/*!
+	\class idSoundEmitter
+	\brief An interface for managing sound emission and playback.
+
+	This class provides a standardized interface for handling sound events, including starting, stopping, modifying, and fading sounds. It supports updating emitter properties such as position and
+   sound parameters, and allows for checking the current playback state. The interface is designed to be implemented by concrete sound emitter classes that handle the actual audio processing and
+   output.
+
+*/
 class idSoundEmitter
 {
 public:
@@ -177,17 +215,15 @@ public:
 	virtual int	  Index() const = 0;
 };
 
-/*
-===============================================================================
+/*!
+	\class idSoundWorld
+	\brief Manages multiple independent sound environments with support for sound emitters, listener placement, and game state serialization.
 
-	SOUND WORLD
+	This interface defines a sound world that can manage multiple independent sound environments, similar to how render worlds operate independently. It provides methods for creating and managing
+   sound emitters, placing listeners within the sound world, controlling playback of sounds, and handling game state serialization. The sound world supports operations like stopping all sounds, fading
+   sound classes, playing sounds directly from shaders, and managing pause states. It also includes functionality for handling special audio effects such as slow motion and environmental suit effects.
 
-There can be multiple independent sound worlds, just as there can be multiple
-independent render worlds.  The prime example is the editor sound preview
-option existing simultaniously with a live game.
-===============================================================================
 */
-
 class idSoundWorld
 {
 public:
@@ -254,6 +290,14 @@ typedef struct {
 	int	  current44kHzTime;
 } soundDecoderInfo_t;
 
+/*!
+	\class idSoundSystem
+	\brief Interface for managing audio systems and sound playback.
+
+	This class serves as an abstract interface for audio system management, providing methods to initialize and shutdown audio subsystems, allocate and free sound worlds, manage playback states, and
+   handle sound-related operations such as muting, level loading, and memory information. It acts as a central point for controlling all audio-related functionality within the application.
+
+*/
 class idSoundSystem
 {
 public:

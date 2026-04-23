@@ -46,11 +46,6 @@ idCVar s_drawSounds( "s_drawSounds", "0", CVAR_INTEGER, "", 0, 2, idCmdSystem::A
 idCVar s_showVoices( "s_showVoices", "0", CVAR_BOOL, "show active voices" );
 idCVar s_volume_dB( "s_volume_dB", "0", CVAR_ARCHIVE | CVAR_FLOAT, "volume in dB" );
 
-/*
-========================
-idSoundWorldLocal::idSoundWorldLocal
-========================
-*/
 idSoundWorldLocal::idSoundWorldLocal()
 {
 	volumeFade.Clear();
@@ -78,11 +73,6 @@ idSoundWorldLocal::idSoundWorldLocal()
 	enviroSuitActive = false;
 }
 
-/*
-========================
-idSoundWorldLocal::~idSoundWorldLocal
-========================
-*/
 idSoundWorldLocal::~idSoundWorldLocal()
 {
 	if( soundSystemLocal.currentSoundWorld == this ) {
@@ -105,13 +95,6 @@ idSoundWorldLocal::~idSoundWorldLocal()
 	localSound	= NULL;
 }
 
-/*
-========================
-idSoundWorldLocal::AllocSoundEmitter
-
-This is called from the main thread.
-========================
-*/
 idSoundEmitter* idSoundWorldLocal::AllocSoundEmitter()
 {
 	idSoundEmitterLocal* emitter = emitterAllocator.Alloc();
@@ -119,32 +102,17 @@ idSoundEmitter* idSoundWorldLocal::AllocSoundEmitter()
 	return emitter;
 }
 
-/*
-========================
-idSoundWorldLocal::AllocSoundChannel
-========================
-*/
 idSoundChannel* idSoundWorldLocal::AllocSoundChannel()
 {
 	return channelAllocator.Alloc();
 }
 
-/*
-========================
-idSoundWorldLocal::FreeSoundChannel
-========================
-*/
 void idSoundWorldLocal::FreeSoundChannel( idSoundChannel* channel )
 {
 	channel->Mute();
 	channelAllocator.Free( channel );
 }
 
-/*
-========================
-idSoundWorldLocal::CurrentShakeAmplitude
-========================
-*/
 float idSoundWorldLocal::CurrentShakeAmplitude()
 {
 	if( s_constantAmplitude.GetFloat() >= 0.0f ) {
@@ -153,11 +121,6 @@ float idSoundWorldLocal::CurrentShakeAmplitude()
 	return shakeAmp;
 }
 
-/*
-========================
-idSoundWorldLocal::PlaceListener
-========================
-*/
 void idSoundWorldLocal::PlaceListener( const idVec3& origin, const idMat3& axis, const int id )
 {
 	if( s_lockListener.GetBool() ) {
@@ -175,19 +138,21 @@ void idSoundWorldLocal::PlaceListener( const idVec3& origin, const idMat3& axis,
 	}
 }
 
-/*
-========================
-idActiveChannel
-========================
+/*!
+	\class idActiveChannel
+	\brief Manages active sound channel references with associated sort keys for prioritization.
 */
 class idActiveChannel
 {
 public:
+	//! Initializes an idActiveChannel object with null channel pointer and zero sort key.
 	idActiveChannel() :
 		channel( NULL ),
 		sortKey( 0 )
 	{
 	}
+
+	//! Initializes a new instance of idActiveChannel with the specified sound channel and sort key.
 	idActiveChannel( idSoundChannel* channel_, int sortKey_ ) :
 		channel( channel_ ),
 		sortKey( sortKey_ )
@@ -198,13 +163,7 @@ public:
 	int				sortKey;
 };
 
-/*
-========================
-MapVolumeFromFadeDB
-
-Ramp down volumes that are close to fadeDB so that fadeDB is DB_SILENCE
-========================
-*/
+//! Maps a volume level to a faded volume level, clamping values below the fade threshold to silence.
 float MapVolumeFromFadeDB( const float volumeDB, const float fadeDB )
 {
 	if( volumeDB <= fadeDB ) {
@@ -224,18 +183,19 @@ float MapVolumeFromFadeDB( const float volumeDB, const float fadeDB )
 	return mappedDB;
 }
 
-/*
-========================
-AdjustForCushionChannels
+/*!
+	\brief Adjusts audio channel volumes to smoothly transition sounds when the number of active channels exceeds available hardware voices.
 
-In the very common case of having more sounds that would contribute to the
-mix than there are available hardware voices, it can be an audible discontinuity
-when a channel initially gets a voice or loses a voice.
-To avoid this, make sure that the last few hardware voices are mixed with a volume
-of zero, so they won't make a difference as they come and go.
-It isn't obvious what the exact best volume ramping method should be, just that
-it smoothly change frame to frame.
-========================
+	This function manages audio cushioning by gradually ramping down the volume of lower-priority audio channels when the total number of active sounds exceeds the maximum number of available hardware
+   voices. It prevents abrupt audio changes that would otherwise occur when sounds gain or lose hardware voice allocation. The function calculates a target volume level based on the volume of the
+   channel that would be the first to be censored, then drifts the current volume level toward this target at a rate determined by the drift rate parameter. The adjustment ensures that the last few
+   hardware voices are gradually faded out rather than abruptly cut off, providing a smoother listening experience when audio resources are constrained.
+
+	\param activeEmitterChannels List of currently active audio channels sorted by priority
+	\param uncushionedChannels Number of channels that should be fully audible before applying cushioning
+	\param currentCushionDB Current volume level of the cushioning effect
+	\param driftRate Rate at which the cushioning volume changes per frame
+	\return The updated cushioning volume level after applying the drift adjustment
 */
 static float AdjustForCushionChannels(
 	const idStaticList<idActiveChannel, MAX_HARDWARE_VOICES>& activeEmitterChannels, const int uncushionedChannels, const float currentCushionDB, const float driftRate )
@@ -277,11 +237,6 @@ static float AdjustForCushionChannels(
 	return driftedDB;
 }
 
-/*
-========================
-idSoundWorldLocal::Update
-========================
-*/
 void idSoundWorldLocal::Update()
 {
 	// ------------------
@@ -497,11 +452,6 @@ void idSoundWorldLocal::Update()
 	}
 }
 
-/*
-========================
-idSoundWorldLocal::OnReloadSound
-========================
-*/
 void idSoundWorldLocal::OnReloadSound( const idDecl* shader )
 {
 	for( int i = 0; i < emitters.Num(); i++ ) {
@@ -509,11 +459,6 @@ void idSoundWorldLocal::OnReloadSound( const idDecl* shader )
 	}
 }
 
-/*
-========================
-idSoundWorldLocal::EmitterForIndex
-========================
-*/
 idSoundEmitter* idSoundWorldLocal::EmitterForIndex( int index )
 {
 	// This is only used by save/load code which assumes index = 0 is invalid
@@ -527,11 +472,6 @@ idSoundEmitter* idSoundWorldLocal::EmitterForIndex( int index )
 	return emitters[index];
 }
 
-/*
-========================
-idSoundWorldLocal::ClearAllSoundEmitters
-========================
-*/
 void idSoundWorldLocal::ClearAllSoundEmitters()
 {
 	for( int i = 0; i < emitters.Num(); i++ ) {
@@ -542,13 +482,6 @@ void idSoundWorldLocal::ClearAllSoundEmitters()
 	localSound = AllocSoundEmitter();
 }
 
-/*
-========================
-idSoundWorldLocal::StopAllSounds
-
-This is called from the main thread.
-========================
-*/
 void idSoundWorldLocal::StopAllSounds()
 {
 	for( int i = 0; i < emitters.Num(); i++ ) {
@@ -556,11 +489,6 @@ void idSoundWorldLocal::StopAllSounds()
 	}
 }
 
-/*
-========================
-idSoundWorldLocal::PlayShaderDirectly
-========================
-*/
 int idSoundWorldLocal::PlayShaderDirectly( const char* name, int channel )
 {
 	if( name == NULL || name[0] == 0 ) {
@@ -576,11 +504,6 @@ int idSoundWorldLocal::PlayShaderDirectly( const char* name, int channel )
 	}
 }
 
-/*
-========================
-idSoundWorldLocal::Skip
-========================
-*/
 void idSoundWorldLocal::Skip( int time )
 {
 	accumulatedPauseTime -= time;
@@ -588,11 +511,6 @@ void idSoundWorldLocal::Skip( int time )
 	pauseFade.Fade( 0.0f, s_unpauseFadeInTime.GetInteger(), GetSoundTime() );
 }
 
-/*
-========================
-idSoundWorldLocal::Pause
-========================
-*/
 void idSoundWorldLocal::Pause()
 {
 	if( !isPaused ) {
@@ -610,11 +528,6 @@ void idSoundWorldLocal::Pause()
 	}
 }
 
-/*
-========================
-idSoundWorldLocal::UnPause
-========================
-*/
 void idSoundWorldLocal::UnPause()
 {
 	if( isPaused ) {
@@ -635,11 +548,6 @@ void idSoundWorldLocal::UnPause()
 	}
 }
 
-/*
-========================
-idSoundWorldLocal::GetSoundTime
-========================
-*/
 int idSoundWorldLocal::GetSoundTime()
 {
 	if( isPaused ) {
@@ -762,10 +670,6 @@ void idSoundWorldLocal::ResolveOrigin( const int stackDepth, const soundPortalTr
 	}
 }
 
-/*
-idSoundWorldLocal::WriteToSaveGame
-=================
-*/
 void idSoundWorldLocal::WriteToSaveGame( idFile* savefile )
 {
 	struct helper {
@@ -837,11 +741,6 @@ void idSoundWorldLocal::WriteToSaveGame( idFile* savefile )
 	}
 }
 
-/*
-=================
-idSoundWorldLocal::ReadFromSaveGame
-=================
-*/
 void idSoundWorldLocal::ReadFromSaveGame( idFile* savefile )
 {
 	struct helper {
@@ -941,14 +840,6 @@ void idSoundWorldLocal::ReadFromSaveGame( idFile* savefile )
 	}
 }
 
-/*
-=================
-idSoundWorldLocal::FadeSoundClasses
-
-fade all sounds in the world with a given shader soundClass
-to is in Db, over is in seconds
-=================
-*/
 void idSoundWorldLocal::FadeSoundClasses( const int soundClass, const float to, const float over )
 {
 	if( soundClass < 0 || soundClass >= SOUND_MAX_CLASSES ) {
@@ -958,11 +849,6 @@ void idSoundWorldLocal::FadeSoundClasses( const int soundClass, const float to, 
 	soundClassFade[soundClass].Fade( to, SEC2MS( over ), GetSoundTime() );
 }
 
-/*
-=================
-idSoundWorldLocal::SetSlowmoSpeed
-=================
-*/
 void idSoundWorldLocal::SetSlowmoSpeed( float speed )
 {
 	slowmoSpeed = speed;

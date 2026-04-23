@@ -36,13 +36,26 @@
 	#define MIN_BUFFERS 4  // SRS - Minimum buffers to fill before triggering playback
 	#define NUM_BUFFERS 16 // SRS - Total buffers available to support variable rate codecs
 
+/*!
+	\class CinematicAudio_OpenAL
+	\brief Manages cinematic audio playback using OpenAL audio streaming.
+*/
 class CinematicAudio_OpenAL : public CinematicAudio
 {
 public:
+	//! Initializes a new instance of the CinematicAudio_OpenAL class and sets up OpenAL audio resources.
 	CinematicAudio_OpenAL();
+
+	//! Initializes audio playback for cinematic content using the provided audio context
 	void InitAudio( void* audioContext );
+
+	//! Plays audio data using OpenAL audio streaming with buffered queuing and unqueuing of audio buffers
 	void PlayAudio( uint8_t* data, int size );
+
+	//! Resets the audio state and cleans up allocated buffers.
 	void ResetAudio();
+
+	//! Shuts down the audio system by stopping sources, deleting buffers, and freeing allocated memory.
 	void ShutdownAudio();
 
 private:

@@ -52,6 +52,7 @@ void* _decoder_realloc( void* memblock, size_t size );
 void  _decoder_free( void* memblock );
 }
 
+//! Allocates memory of the specified size and returns a pointer to it.
 void* _decoder_malloc( size_t size )
 {
 	void* ptr = malloc( size );
@@ -59,6 +60,7 @@ void* _decoder_malloc( size_t size )
 	return ptr;
 }
 
+//! Allocates and initializes memory for an array of elements.
 void* _decoder_calloc( size_t num, size_t size )
 {
 	void* ptr = malloc( num * size );
@@ -67,6 +69,7 @@ void* _decoder_calloc( size_t num, size_t size )
 	return ptr;
 }
 
+//! Reallocates a memory block to a new size, returning a pointer to the reallocated memory.
 void* _decoder_realloc( void* memblock, size_t size )
 {
 	void* ptr = realloc( ( byte* )memblock, size );
@@ -74,23 +77,23 @@ void* _decoder_realloc( void* memblock, size_t size )
 	return ptr;
 }
 
+//! Frees a memory block allocated by the decoder.
 void _decoder_free( void* memblock )
 {
 	free( ( byte* )memblock );
 }
 
-/*
-===================================================================================
+/*!
+	\brief Reads audio data from an OGG file into a destination buffer
 
-  OggVorbis file loading/decoding.
+	This function reads audio data from an OGG file handle into a destination buffer. It combines the size1 and size2 parameters to determine the total number of bytes to read. The function is
+   typically used as a callback for decoding OGG audio files.
 
-===================================================================================
-*/
-
-/*
-====================
-FS_ReadOGG
-====================
+	\param dest Pointer to the destination buffer where the audio data will be stored
+	\param size1 Size of each element to read
+	\param size2 Number of elements to read
+	\param fh File handle for the OGG file
+	\return The number of bytes actually read from the file
 */
 size_t FS_ReadOGG( void* dest, size_t size1, size_t size2, void* fh )
 {
@@ -98,11 +101,7 @@ size_t FS_ReadOGG( void* dest, size_t size1, size_t size2, void* fh )
 	return f->Read( dest, size1 * size2 );
 }
 
-/*
-====================
-FS_SeekOGG
-====================
-*/
+//! Sets the read position within an OGG file handle.
 int FS_SeekOGG( void* fh, ogg_int64_t to, int type )
 {
 	fsOrigin_t retype = FS_SEEK_SET;
@@ -120,32 +119,20 @@ int FS_SeekOGG( void* fh, ogg_int64_t to, int type )
 	return f->Seek( to, retype );
 }
 
-/*
-====================
-FS_CloseOGG
-====================
-*/
+//! Closes an OGG file handle and returns an integer status code.
 int FS_CloseOGG( void* fh )
 {
 	return 0;
 }
 
-/*
-====================
-FS_TellOGG
-====================
-*/
+//! Returns the current position in the OGG file handle.
 long FS_TellOGG( void* fh )
 {
 	idFile* f = reinterpret_cast<idFile*>( fh );
 	return f->Tell();
 }
 
-/*
-====================
-ov_openFile
-====================
-*/
+//! Initializes an Ogg Vorbis file reader from an idFile pointer.
 int ov_openFile( idFile* f, OggVorbis_File* vf )
 {
 	ov_callbacks callbacks;
@@ -159,11 +146,6 @@ int ov_openFile( idFile* f, OggVorbis_File* vf )
 	return ov_open_callbacks( ( void* )f, vf, NULL, -1, callbacks );
 }
 
-/*
-====================
-idSoundDecoder_Vorbis::idSoundDecoder_Vorbis
-====================
-*/
 idSoundDecoder_Vorbis::idSoundDecoder_Vorbis()
 {
 	sample	   = nullptr;
@@ -171,11 +153,6 @@ idSoundDecoder_Vorbis::idSoundDecoder_Vorbis()
 	mhmmio	   = nullptr;
 }
 
-/*
-====================
-idSoundDecoder_Vorbis::~idSoundDecoder_Vorbis
-====================
-*/
 idSoundDecoder_Vorbis::~idSoundDecoder_Vorbis()
 {
 	if( sample ) {
@@ -192,11 +169,6 @@ idSoundDecoder_Vorbis::~idSoundDecoder_Vorbis()
 	}
 }
 
-/*
-====================
-idSoundDecoder_Vorbis::GetFormat
-====================
-*/
 void idSoundDecoder_Vorbis::GetFormat( idWaveFile::waveFmt_t& format )
 {
 	vorbis_info* vi = ov_info( vorbisFile, -1 );
@@ -209,32 +181,17 @@ void idSoundDecoder_Vorbis::GetFormat( idWaveFile::waveFmt_t& format )
 	format.basic.avgBytesPerSec = format.basic.samplesPerSec * format.basic.blockSize;
 }
 
-/*
-====================
-idSoundDecoder_Vorbis::Seek
-====================
-*/
 void idSoundDecoder_Vorbis::Seek( int samplePos )
 {
 	ov_pcm_seek( vorbisFile, samplePos );
 }
 
-/*
-====================
-idSoundDecoder_Vorbis::IsEOS
-====================
-*/
 bool idSoundDecoder_Vorbis::IsEOS()
 {
 	int64 size = ov_pcm_total( this->vorbisFile, -1 );
 	return ov_pcm_tell( vorbisFile ) >= size;
 }
 
-/*
-====================
-idSoundDecoder_Vorbis::Size
-====================
-*/
 int64_t idSoundDecoder_Vorbis::Size()
 {
 	vorbis_info* vi		 = ov_info( vorbisFile, -1 );
@@ -242,21 +199,11 @@ int64_t idSoundDecoder_Vorbis::Size()
 	return mdwSize * sizeof( short );
 }
 
-/*
-====================
-idSoundDecoder_Vorbis::CompressedSize
-====================
-*/
 int64_t idSoundDecoder_Vorbis::CompressedSize()
 {
 	return ov_pcm_total( this->vorbisFile, -1 );
 }
 
-/*
-====================
-idSoundDecoder_Vorbis::Read
-====================
-*/
 int idSoundDecoder_Vorbis::Read( void* pBuffer, int dwSizeToRead )
 {
 	int				total	  = dwSizeToRead;
@@ -280,11 +227,6 @@ int idSoundDecoder_Vorbis::Read( void* pBuffer, int dwSizeToRead )
 	return dwSizeToRead;
 }
 
-/*
-====================
-idSoundDecoder_Vorbis::Open
-====================
-*/
 bool idSoundDecoder_Vorbis::Open( const char* fileName )
 {
 	if( mhmmio ) {

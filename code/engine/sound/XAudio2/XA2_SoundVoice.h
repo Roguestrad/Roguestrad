@@ -31,63 +31,74 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int MAX_QUEUED_BUFFERS = 3;
 
-/*
-================================================
-idSoundVoice_XAudio2
-================================================
+/*!
+	\class idSoundVoice_XAudio2
+	\brief Manages XAudio2 audio playback for sound voices.
+
+	This class provides a concrete implementation of sound voice management specifically for XAudio2 audio system. It handles the creation, initialization, and control of audio playback for sound
+   samples, including lead-in and looping samples. The class manages the hardware resources through XAudio2 interfaces and provides methods for starting, stopping, pausing, and updating audio
+   playback. It also handles buffer management and sample rate configuration. The class is designed to work with sound samples that have been prepared for XAudio2 playback and maintains state
+   information about the current playback position, volume, and pitch. The implementation ensures proper cleanup of hardware resources when the sound voice is destroyed or flushed.
+
 */
 class idSoundVoice_XAudio2 : public idSoundVoice_Base
 {
 public:
+	//! Initializes a new instance of the idSoundVoice_XAudio2 class with default values.
 	idSoundVoice_XAudio2();
+
+	//! Destroys the XAudio2 sound voice and cleans up internal resources.
 	~idSoundVoice_XAudio2();
 
+	//! Initializes the sound voice with lead-in and looping sound samples for XAudio2 audio playback.
 	void   Create( const idSoundSample* leadinSample, const idSoundSample* loopingSample );
 
-	// Start playing at a particular point in the buffer.  Does an Update() too
+	//! Starts playing a sound at a specified offset with given flags.
 	void   Start( int offsetMS, int ssFlags );
 
-	// Stop playing.
+	//! Stops the audio playback for the sound voice.
 	void   Stop();
 
-	// Stop consuming buffers
+	//! Pauses the sound voice by stopping the source voice and setting the paused flag.
 	void   Pause();
-	// Start consuming buffers again
+
+	//! Resumes audio playback for a sound voice that was previously paused.
 	void   UnPause();
 
-	// Sends new position/volume/pitch information to the hardware
+	//! Updates the sound voice hardware state with current position, volume, and pitch information.
 	bool   Update();
 
-	// returns the RMS levels of the most recently processed block of audio, SSF_FLICKER must have been passed to Start
+	//! Returns the root mean square amplitude of the most recently processed audio block for this voice.
 	float  GetAmplitude();
 
-	// returns true if we can re-use this voice
+	//! Returns true if the voice can be reused for the given sound sample format
 	bool   CompatibleFormat( idSoundSample_XAudio2* s );
 
+	//! Returns the sample rate of the audio voice.
 	uint32 GetSampleRate() const { return sampleRate; }
 
-	// callback function
+	//! Handles the start of a sound buffer by setting up the next buffer to play.
 	void   OnBufferStart( idSoundSample_XAudio2* sample, int bufferNumber );
 
 private:
 	friend class idSoundHardware_XAudio2;
 
-	// Returns true when all the buffers are finished processing
+	//! Returns true when the audio source voice is currently playing audio buffers.
 	bool				   IsPlaying();
 
-	// Called after the voice has been stopped
+	//! Flushes the source buffers of the XAudio2 voice after it has been stopped.
 	void				   FlushSourceBuffers();
 
-	// Destroy the internal hardware resource
+	//! Destroys the internal hardware resource for the sound voice.
 	void				   DestroyInternal();
 
-	// Helper function used by the initial start as well as for looping a streamed buffer
+	//! Restarts sound playback at the specified sample offset.
 	int					   RestartAt( int offsetSamples );
 
-	// Helper function to submit a buffer
+	//! Submits an audio buffer to the XAudio2 voice for playback
 	int					   SubmitBuffer( idSoundSample_XAudio2* sample, int bufferNumber, int offset );
 
-	// Adjust the voice frequency based on the new sample rate for the buffer
+	//! Sets the sample rate for the audio voice and updates the filter and frequency ratio parameters accordingly.
 	void				   SetSampleRate( uint32 newSampleRate, uint32 operationSet );
 
 	IXAudio2SourceVoice*   pSourceVoice;

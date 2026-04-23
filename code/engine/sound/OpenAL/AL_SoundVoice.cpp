@@ -38,11 +38,6 @@ idCVar		 s_debugHardware( "s_debugHardware", "0", CVAR_BOOL, "Print a message an
 static int	 SYSTEM_SAMPLE_RATE			 = 44100;
 static float ONE_OVER_SYSTEM_SAMPLE_RATE = 1.0f / SYSTEM_SAMPLE_RATE;
 
-/*
-========================
-idSoundVoice_OpenAL::idSoundVoice_OpenAL
-========================
-*/
 idSoundVoice_OpenAL::idSoundVoice_OpenAL() :
 	triggered( false ),
 	openalSource( 0 ),
@@ -56,21 +51,11 @@ idSoundVoice_OpenAL::idSoundVoice_OpenAL() :
 {
 }
 
-/*
-========================
-idSoundVoice_OpenAL::~idSoundVoice_OpenAL
-========================
-*/
 idSoundVoice_OpenAL::~idSoundVoice_OpenAL()
 {
 	DestroyInternal();
 }
 
-/*
-========================
-idSoundVoice_OpenAL::CompatibleFormat
-========================
-*/
 bool idSoundVoice_OpenAL::CompatibleFormat( idSoundSample_OpenAL* s )
 {
 	if( alIsSource( openalSource ) ) {
@@ -81,11 +66,6 @@ bool idSoundVoice_OpenAL::CompatibleFormat( idSoundSample_OpenAL* s )
 	return false;
 }
 
-/*
-========================
-idSoundVoice_OpenAL::Create
-========================
-*/
 void idSoundVoice_OpenAL::Create( const idSoundSample* leadinSample_, const idSoundSample* loopingSample_ )
 {
 	if( IsPlaying() ) {
@@ -178,11 +158,6 @@ void idSoundVoice_OpenAL::Create( const idSoundSample* leadinSample_, const idSo
 	// OnBufferStart( leadinSample, 0 );
 }
 
-/*
-========================
-idSoundVoice_OpenAL::DestroyInternal
-========================
-*/
 void idSoundVoice_OpenAL::DestroyInternal()
 {
 	if( alIsSource( openalSource ) ) {
@@ -222,11 +197,6 @@ void idSoundVoice_OpenAL::DestroyInternal()
 	}
 }
 
-/*
-========================
-idSoundVoice_OpenAL::Start
-========================
-*/
 void idSoundVoice_OpenAL::Start( int offsetMS, int ssFlags )
 {
 	if( s_debugHardware.GetBool() ) {
@@ -290,11 +260,6 @@ void idSoundVoice_OpenAL::Start( int offsetMS, int ssFlags )
 	UnPause();
 }
 
-/*
-========================
-idSoundVoice_OpenAL::RestartAt
-========================
-*/
 int idSoundVoice_OpenAL::RestartAt( int offsetSamples )
 {
 	offsetSamples &= ~127;
@@ -320,11 +285,6 @@ int idSoundVoice_OpenAL::RestartAt( int offsetSamples )
 	return 0;
 }
 
-/*
-========================
-idSoundVoice_OpenAL::SubmitBuffer
-========================
-*/
 int idSoundVoice_OpenAL::SubmitBuffer( idSoundSample_OpenAL* sample, int bufferNumber, int offset )
 {
 	if( sample == NULL || ( bufferNumber < 0 ) || ( bufferNumber >= sample->buffers.Num() ) ) {
@@ -446,11 +406,6 @@ int idSoundVoice_OpenAL::SubmitBuffer( idSoundSample_OpenAL* sample, int bufferN
 	*/
 }
 
-/*
-========================
-idSoundVoice_OpenAL::Update
-========================
-*/
 bool idSoundVoice_OpenAL::Update()
 {
 	/*
@@ -485,11 +440,6 @@ bool idSoundVoice_OpenAL::Update()
 	return true;
 }
 
-/*
-========================
-idSoundVoice_OpenAL::IsPlaying
-========================
-*/
 bool idSoundVoice_OpenAL::IsPlaying()
 {
 	if( !alIsSource( openalSource ) ) {
@@ -508,11 +458,6 @@ bool idSoundVoice_OpenAL::IsPlaying()
 	// return ( state.BuffersQueued != 0 );
 }
 
-/*
-========================
-idSoundVoice_OpenAL::FlushSourceBuffers
-========================
-*/
 void idSoundVoice_OpenAL::FlushSourceBuffers()
 {
 	if( alIsSource( openalSource ) ) {
@@ -520,11 +465,6 @@ void idSoundVoice_OpenAL::FlushSourceBuffers()
 	}
 }
 
-/*
-========================
-idSoundVoice_OpenAL::Pause
-========================
-*/
 void idSoundVoice_OpenAL::Pause()
 {
 	if( !alIsSource( openalSource ) || paused ) {
@@ -540,11 +480,6 @@ void idSoundVoice_OpenAL::Pause()
 	paused = true;
 }
 
-/*
-========================
-idSoundVoice_OpenAL::UnPause
-========================
-*/
 void idSoundVoice_OpenAL::UnPause()
 {
 	if( !alIsSource( openalSource ) || !paused ) {
@@ -560,11 +495,6 @@ void idSoundVoice_OpenAL::UnPause()
 	paused = false;
 }
 
-/*
-========================
-idSoundVoice_OpenAL::Stop
-========================
-*/
 void idSoundVoice_OpenAL::Stop()
 {
 	if( !alIsSource( openalSource ) ) {
@@ -584,11 +514,6 @@ void idSoundVoice_OpenAL::Stop()
 	}
 }
 
-/*
-========================
-idSoundVoice_OpenAL::GetAmplitude
-========================
-*/
 float idSoundVoice_OpenAL::GetAmplitude()
 {
 	// TODO
@@ -633,11 +558,6 @@ float idSoundVoice_OpenAL::GetAmplitude()
 	*/
 }
 
-/*
-========================
-idSoundVoice_OpenAL::ResetSampleRate
-========================
-*/
 void idSoundVoice_OpenAL::SetSampleRate( uint32 newSampleRate, uint32 operationSet )
 {
 	/*
@@ -683,11 +603,6 @@ void idSoundVoice_OpenAL::SetSampleRate( uint32 newSampleRate, uint32 operationS
 	*/
 }
 
-/*
-========================
-idSoundVoice_OpenAL::OnBufferStart
-========================
-*/
 void idSoundVoice_OpenAL::OnBufferStart( idSoundSample_OpenAL* sample, int bufferNumber )
 {
 	// SetSampleRate( sample->SampleRate(), XAUDIO2_COMMIT_NOW );

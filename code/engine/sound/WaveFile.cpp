@@ -37,14 +37,6 @@ Contains the WaveFile implementation.
 
 #include "WaveFile.h"
 
-/*
-========================
-idWaveFile::Open
-
-Returns true if the Open was successful and the file matches the expected format. If this
-returns false, there is no need to call Close.
-========================
-*/
 bool idWaveFile::Open( const char* filename )
 {
 	Close();
@@ -118,13 +110,6 @@ bool idWaveFile::Open( const char* filename )
 	return true;
 }
 
-/*
-========================
-idWaveFile::SeekToChunk
-
-Seeks to the specified chunk and returns the size of the chunk or 0 if the chunk wasn't found.
-========================
-*/
 uint32 idWaveFile::SeekToChunk( uint32 id )
 {
 	for( int i = 0; i < chunks.Num(); i++ ) {
@@ -136,13 +121,6 @@ uint32 idWaveFile::SeekToChunk( uint32 id )
 	return 0;
 }
 
-/*
-========================
-idWaveFile::GetChunkOffset
-
-Seeks to the specified chunk and returns the size of the chunk or 0 if the chunk wasn't found.
-========================
-*/
 uint32 idWaveFile::GetChunkOffset( uint32 id )
 {
 	for( int i = 0; i < chunks.Num(); i++ ) {
@@ -182,14 +160,6 @@ typedef struct XMA2WAVEFORMAT {
 					   // also the number of entries in its seek table)
 } XMA2WAVEFORMAT;
 
-/*
-========================
-idWaveFile::ReadWaveFormat
-
-Reads a wave format header, returns NULL if it found one and read it.
-otherwise, returns a human-readable error message.
-========================
-*/
 const char* idWaveFile::ReadWaveFormat( waveFmt_t& format )
 {
 	memset( &format, 0, sizeof( format ) );
@@ -272,13 +242,6 @@ const char* idWaveFile::ReadWaveFormat( waveFmt_t& format )
 	return NULL;
 }
 
-/*
-========================
-idWaveFile::ReadWaveFormatDirect
-
-Reads a wave format header from a file ptr,
-========================
-*/
 bool idWaveFile::ReadWaveFormatDirect( waveFmt_t& format, idFile* file )
 {
 	file->Read( &format.basic, sizeof( format.basic ) );
@@ -350,13 +313,6 @@ bool idWaveFile::ReadWaveFormatDirect( waveFmt_t& format, idFile* file )
 	return true;
 }
 
-/*
-========================
-idWaveFile::WriteWaveFormatDirect
-
-Writes a wave format header to a file ptr,
-========================
-*/
 bool idWaveFile::WriteWaveFormatDirect( waveFmt_t& format, idFile* file, bool wavFile )
 {
 	// idSwapClass<waveFmt_t::basic_t> swap;
@@ -402,14 +358,6 @@ bool idWaveFile::WriteWaveFormatDirect( waveFmt_t& format, idFile* file, bool wa
 	return true;
 }
 
-/*
-========================
-idWaveFile::WriteWaveFormatDirect
-
-Writes a wave format header to a file ptr,
-========================
-*/
-
 bool idWaveFile::WriteSampleDataDirect( idList<sampleData_t>& sampleData, idFile* file )
 {
 	static const uint32 sample = 'smpl';
@@ -441,14 +389,6 @@ bool idWaveFile::WriteSampleDataDirect( idList<sampleData_t>& sampleData, idFile
 	return true;
 }
 
-/*
-========================
-idWaveFile::WriteWaveFormatDirect
-
-Writes a data chunk to a file ptr
-========================
-*/
-
 bool idWaveFile::WriteDataDirect( char* _data, uint32 size, idFile* file )
 {
 	static const uint32 data = 'data';
@@ -458,14 +398,6 @@ bool idWaveFile::WriteDataDirect( char* _data, uint32 size, idFile* file )
 	file->Write( _data, size );
 	return true;
 }
-
-/*
-========================
-idWaveFile::WriteWaveFormatDirect
-
-Writes a wave header to a file ptr,
-========================
-*/
 
 bool idWaveFile::WriteHeaderDirect( uint32 fileSize, idFile* file )
 {
@@ -477,13 +409,6 @@ bool idWaveFile::WriteHeaderDirect( uint32 fileSize, idFile* file )
 	return true;
 }
 
-/*
-========================
-idWaveFile::ReadLoopPoint
-
-Reads a loop point from a 'smpl' chunk in a wave file, returns 0 if none are found.
-========================
-*/
 bool idWaveFile::ReadLoopData( int& start, int& end )
 {
 	uint32 chunkSize = SeekToChunk( samplerChunk_t::id );
@@ -514,13 +439,6 @@ bool idWaveFile::ReadLoopData( int& start, int& end )
 	return true;
 }
 
-/*
-========================
-idWaveFile::Close
-
-Closes the file and frees resources.
-========================
-*/
 void idWaveFile::Close()
 {
 	if( file != NULL ) {

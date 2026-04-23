@@ -25,6 +25,10 @@
 #ifndef __CINEMATIC_AUDIO_H__
 	#define __CINEMATIC_AUDIO_H__
 
+/*!
+	\class CinematicAudio
+	\brief Interface for cinematic audio playback functionality.
+*/
 class CinematicAudio
 {
 public:

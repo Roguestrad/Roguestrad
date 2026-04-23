@@ -63,11 +63,6 @@ static void FreeBuffer( void* p )
 	return Mem_Free( p );
 }
 
-/*
-========================
-idSoundSample_XAudio2::idSoundSample_XAudio2
-========================
-*/
 idSoundSample::idSoundSample()
 {
 	timestamp			= FILE_NOT_FOUND_TIMESTAMP;
@@ -85,21 +80,11 @@ idSoundSample::idSoundSample()
 	lastPlayedTime = 0;
 }
 
-/*
-========================
-idSoundSample::~idSoundSample
-========================
-*/
 idSoundSample::~idSoundSample()
 {
 	FreeData();
 }
 
-/*
-========================
-idSoundSample::WriteGeneratedSample
-========================
-*/
 void idSoundSample::WriteGeneratedSample( idFile* fileOut )
 {
 	fileOut->WriteBig( SOUND_MAGIC_IDMSA );
@@ -118,11 +103,6 @@ void idSoundSample::WriteGeneratedSample( idFile* fileOut )
 		fileOut->Write( buffers[i].buffer, buffers[i].bufferSize );
 	};
 }
-/*
-========================
-idSoundSample::WriteAllSamples
-========================
-*/
 void idSoundSample::WriteAllSamples( const idStr& sampleName )
 {
 	idSoundSample* samplePC = new idSoundSample();
@@ -145,11 +125,6 @@ void idSoundSample::WriteAllSamples( const idStr& sampleName )
 	delete samplePC;
 }
 
-/*
-========================
-idSoundSample::LoadGeneratedSound
-========================
-*/
 bool idSoundSample::LoadGeneratedSample( const idStr& filename )
 {
 	idFileLocal fileIn( fileSystem->OpenFileReadMemory( filename ) );
@@ -180,11 +155,6 @@ bool idSoundSample::LoadGeneratedSample( const idStr& filename )
 	}
 	return false;
 }
-/*
-========================
-idSoundSample::Load
-========================
-*/
 void idSoundSample::LoadResource()
 {
 	FreeData();
@@ -252,11 +222,6 @@ void idSoundSample::LoadResource()
 	return;
 }
 
-/*
-========================
-idSoundSample::LoadWav
-========================
-*/
 bool idSoundSample::LoadWav( const idStr& filename )
 {
 	// load the wave
@@ -393,11 +358,6 @@ bool idSoundSample::LoadWav( const idStr& filename )
 	return true;
 }
 
-/*
-========================
-idSoundSample::MakeDefault
-========================
-*/
 void idSoundSample::MakeDefault()
 {
 	FreeData();
@@ -435,13 +395,6 @@ void idSoundSample::MakeDefault()
 	playLength = DEFAULT_NUM_SAMPLES;
 }
 
-/*
-========================
-idSoundSample::FreeData
-
-Called before deleting the object and at the start of LoadResource()
-========================
-*/
 void idSoundSample::FreeData()
 {
 	if( buffers.Num() > 0 ) {
@@ -461,11 +414,6 @@ void idSoundSample::FreeData()
 	playLength		= 0;
 }
 
-/*
-========================
-idSoundSample::LoadAmplitude
-========================
-*/
 bool idSoundSample::LoadAmplitude( const idStr& name )
 {
 	amplitude.Clear();
@@ -478,11 +426,6 @@ bool idSoundSample::LoadAmplitude( const idStr& name )
 	return true;
 }
 
-/*
-========================
-idSoundSample::GetAmplitude
-========================
-*/
 float idSoundSample::GetAmplitude( int timeMS ) const
 {
 	if( timeMS < 0 || timeMS > LengthInMsec() ) {

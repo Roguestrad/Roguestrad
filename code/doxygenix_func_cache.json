@@ -29092,6 +29092,1430 @@
     "void ED_OnFrame(float deltaTime)": {
       "body_hash": "225b8de98e8c16b59103a9b3d55fcd8b",
       "is_trivial": true
+    },
+    "idActiveChannel::idActiveChannel()": {
+      "body_hash": "73d2c645fa4bbfe6acf2d5072e262117",
+      "is_trivial": true
+    },
+    "idActiveChannel::idActiveChannel(idSoundChannel *channel_, int sortKey_)": {
+      "body_hash": "37727c8b666fb868d40fa84c8e81c735",
+      "is_trivial": true
+    },
+    "bool idSoundChannel::CanMute() const": {
+      "body_hash": "cb45a72febdd074571310c6d651a3659",
+      "is_trivial": true
+    },
+    "void idSoundChannel::Mute()": {
+      "body_hash": "0b407f46f6fcb1b6fa43296afbaa92ec",
+      "is_trivial": true
+    },
+    "bool idSoundChannel::CheckForCompletion(int currentTime)": {
+      "body_hash": "08b595ae398427efb4f5b8fa6dd7c088",
+      "is_trivial": true
+    },
+    "void idSoundChannel::UpdateVolume(int currentTime)": {
+      "body_hash": "c0d50d79adea246f565a4f6873e35238",
+      "is_trivial": true
+    },
+    "void idSoundChannel::UpdateHardware(float volumeAdd, int currentTime)": {
+      "body_hash": "d5895fd43b3c98b3811f35f44122a183",
+      "is_trivial": true
+    },
+    "bool idSoundChannel::IsLooping() const": {
+      "body_hash": "dd4a3f6e4b5d9134bcaa2ad3b6ab208c",
+      "is_trivial": true
+    },
+    "idSoundChannel::idSoundChannel()": {
+      "body_hash": "ab16e0c2c87a6fd3b908eccc9d18ed4b",
+      "is_trivial": true
+    },
+    "idSoundDecoder_Vorbis::idSoundDecoder_Vorbis()": {
+      "body_hash": "8c363003c4096fd15d3bd4f1d5dddb42",
+      "is_trivial": true
+    },
+    "idSoundDecoder_Vorbis::~idSoundDecoder_Vorbis()": {
+      "body_hash": "5d45d04e03235716110cf300abb52d63",
+      "is_trivial": true
+    },
+    "bool idSoundDecoder_Vorbis::Open(const char *fileName)": {
+      "body_hash": "e4d19184378b12594488042f7a8b8f6b",
+      "is_trivial": true
+    },
+    "bool idSoundDecoder_Vorbis::IsEOS()": {
+      "body_hash": "495d9b3a4cf8152b5f478eef49bc5359",
+      "is_trivial": true
+    },
+    "void idSoundDecoder_Vorbis::Seek(int samplePos)": {
+      "body_hash": "6a85470c338fdec98dd4a51d1fba4343",
+      "is_trivial": true
+    },
+    "int idSoundDecoder_Vorbis::Read(void *buffer, int bufferSize)": {
+      "body_hash": "a663b9e357eaab8db1aa867caa864dbc",
+      "is_trivial": true
+    },
+    "int64_t idSoundDecoder_Vorbis::Size()": {
+      "body_hash": "deb997ab5d9a6e34648b7accb0abc806",
+      "is_trivial": true
+    },
+    "int64_t idSoundDecoder_Vorbis::CompressedSize()": {
+      "body_hash": "ee7f4ec2c39f1a6fd83e8aa2f356b4cd",
+      "is_trivial": true
+    },
+    "void idSoundDecoder_Vorbis::GetFormat(idWaveFile::waveFmt_t &format)": {
+      "body_hash": "a0d3a84dd7d0cddb61064e96948124d7",
+      "is_trivial": true
+    },
+    "void idSoundEmitterLocal::Free(bool immediate)": {
+      "body_hash": "9d62c852940f80efaac81b50d309fe1f",
+      "is_trivial": true
+    },
+    "void idSoundEmitterLocal::Reset()": {
+      "body_hash": "022050e9e67148d456359eec8151e729",
+      "is_trivial": true
+    },
+    "void idSoundEmitterLocal::UpdateEmitter(const idVec3 &origin, int listenerId, const soundShaderParms_t *parms)": {
+      "body_hash": "df35efeaace98906e0bdf32abb33f105",
+      "is_trivial": true
+    },
+    "int idSoundEmitterLocal::StartSound(const idSoundShader *shader, const s_channelType channel, float diversity=0, int shaderFlags=0, bool allowSlow=true)": {
+      "body_hash": "129531f61165d789bd011895edf40a8b",
+      "is_trivial": false
+    },
+    "void idSoundEmitterLocal::ModifySound(const s_channelType channel, const soundShaderParms_t *parms)": {
+      "body_hash": "ad1d23a2675f8568f7997cf0642d4b5d",
+      "is_trivial": true
+    },
+    "void idSoundEmitterLocal::StopSound(const s_channelType channel)": {
+      "body_hash": "934b8079d3451b719af248a97c5e5d5b",
+      "is_trivial": true
+    },
+    "void idSoundEmitterLocal::FadeSound(const s_channelType channel, float to, float over)": {
+      "body_hash": "009e538d732fd7274bd731be101ffdd2",
+      "is_trivial": true
+    },
+    "bool idSoundEmitterLocal::CurrentlyPlaying(const s_channelType channel=SCHANNEL_ANY) const": {
+      "body_hash": "b5dc8afca7b34d4b975873b895247644",
+      "is_trivial": true
+    },
+    "float idSoundEmitterLocal::CurrentAmplitude()": {
+      "body_hash": "2c19d9a28e33e513069911aa318b9ce9",
+      "is_trivial": true
+    },
+    "int idSoundEmitterLocal::Index() const": {
+      "body_hash": "fc8ec4ad25d8e18dc0ca6e69e643b2b1",
+      "is_trivial": true
+    },
+    "void idSoundEmitterLocal::Init(int i, idSoundWorldLocal *sw)": {
+      "body_hash": "afca45f0d4c72d5952de247830399586",
+      "is_trivial": true
+    },
+    "bool idSoundEmitterLocal::CheckForCompletion(int currentTime)": {
+      "body_hash": "276017dd9b9eba0e5fa8b61f5f6b8e5f",
+      "is_trivial": true
+    },
+    "void idSoundEmitterLocal::OverrideParms(const soundShaderParms_t *base, const soundShaderParms_t *over, soundShaderParms_t *out)": {
+      "body_hash": "267276728c7efa6418a572cb5db8a965",
+      "is_trivial": true
+    },
+    "void idSoundEmitterLocal::Update(int currentTime)": {
+      "body_hash": "6f8b93bcec8af3759d931f14a589a65b",
+      "is_trivial": true
+    },
+    "void idSoundEmitterLocal::OnReloadSound(const idDecl *decl)": {
+      "body_hash": "44d7a37954722e0c8973076b1c1820d6",
+      "is_trivial": true
+    },
+    "idSoundEmitterLocal::idSoundEmitterLocal()": {
+      "body_hash": "e7fff8a61efa65b871823e7fa2d85bbd",
+      "is_trivial": true
+    },
+    "idSoundEmitterLocal::~idSoundEmitterLocal()": {
+      "body_hash": "70ad5681b8b764680ef9f124da69f0b8",
+      "is_trivial": true
+    },
+    "idSoundEngineCallback::STDMETHOD_(void, OnProcessingPassStart)(THIS)": {
+      "body_hash": "2e4c4449346e5802d616dfd694ec0ecd",
+      "is_trivial": true
+    },
+    "idSoundEngineCallback::STDMETHOD_(void, OnProcessingPassEnd)(THIS)": {
+      "body_hash": "1d4fde09b18f6dfa191201337e3df955",
+      "is_trivial": true
+    },
+    "idSoundFade::idSoundFade()": {
+      "body_hash": "800b2c2ad392cdf4d17140e2101f7def",
+      "is_trivial": true
+    },
+    "void idSoundFade::Clear()": {
+      "body_hash": "562f2b07705b295a7d74b772302db632",
+      "is_trivial": true
+    },
+    "void idSoundFade::SetVolume(float to)": {
+      "body_hash": "35d2da8e5f01e538c094899b9df90180",
+      "is_trivial": true
+    },
+    "void idSoundFade::Fade(float to, int length, int soundTime)": {
+      "body_hash": "47495395a2fd6edc044a33874d9cee1a",
+      "is_trivial": true
+    },
+    "float idSoundFade::GetVolume(int soundTime) const": {
+      "body_hash": "622f1c5efac4f03d69984de5ab621bb1",
+      "is_trivial": true
+    },
+    "idSoundHardware::idSoundHardware()": {
+      "body_hash": "9ffe19f5313feb2f705e7d53d590d580",
+      "is_trivial": true
+    },
+    "void idSoundHardware::Init()": {
+      "body_hash": "a5d765a0a64c4de598c3c7891205c70e",
+      "is_trivial": true
+    },
+    "void idSoundHardware::Shutdown()": {
+      "body_hash": "431a9d55e7774b5062b5da39ce94c0f4",
+      "is_trivial": true
+    },
+    "void idSoundHardware::Update()": {
+      "body_hash": "5b50b5ebe7fbe8cf5e9299842bb663ec",
+      "is_trivial": true
+    },
+    "void * idSoundHardware::GetIXAudio2() const": {
+      "body_hash": "9afc54a5839fe1c99a541ec2095965f0",
+      "is_trivial": true
+    },
+    "idSoundVoice * idSoundHardware::AllocateVoice(const idSoundSample *leadinSample, const idSoundSample *loopingSample)": {
+      "body_hash": "cbc8e51296a974cec5577fe944b4b511",
+      "is_trivial": true
+    },
+    "void idSoundHardware::FreeVoice(idSoundVoice *voice)": {
+      "body_hash": "e40e0c5aa005299dfb726586dfdc679f",
+      "is_trivial": true
+    },
+    "int idSoundHardware::GetNumZombieVoices() const": {
+      "body_hash": "d2aa7eddfdf7d7fcc6ecf670c8fd7990",
+      "is_trivial": true
+    },
+    "int idSoundHardware::GetNumFreeVoices() const": {
+      "body_hash": "2860dc9ea0a30be43963c74c20258639",
+      "is_trivial": true
+    },
+    "idSoundHardware_OpenAL::idSoundHardware_OpenAL()": {
+      "body_hash": "aea5e6dea3d3e1aaecd8cc49241a6561",
+      "is_trivial": true
+    },
+    "void idSoundHardware_OpenAL::Init()": {
+      "body_hash": "8ff60bf34de28b2f34368c36be97ac2c",
+      "is_trivial": true
+    },
+    "void idSoundHardware_OpenAL::Shutdown()": {
+      "body_hash": "92030647fda390ecac604786fdc5ab3f",
+      "is_trivial": true
+    },
+    "void idSoundHardware_OpenAL::Update()": {
+      "body_hash": "08d444cf464008a311fb665794f433c6",
+      "is_trivial": true
+    },
+    "idSoundVoice * idSoundHardware_OpenAL::AllocateVoice(const idSoundSample *leadinSample, const idSoundSample *loopingSample)": {
+      "body_hash": "4d38fbb270a7a747dcf0fb7c4bcafda1",
+      "is_trivial": true
+    },
+    "void idSoundHardware_OpenAL::FreeVoice(idSoundVoice *voice)": {
+      "body_hash": "2de61045a4a746fcb592f6c326b3f13c",
+      "is_trivial": true
+    },
+    "int idSoundHardware_OpenAL::GetNumZombieVoices() const": {
+      "body_hash": "7197de8677a2e1df9f334164ce0751af",
+      "is_trivial": true
+    },
+    "int idSoundHardware_OpenAL::GetNumFreeVoices() const": {
+      "body_hash": "10206a69d90ea170a3719b4163b973eb",
+      "is_trivial": true
+    },
+    "void idSoundHardware_OpenAL::PrintDeviceList(const char *list)": {
+      "body_hash": "34eb843aed8b638ab416d0121a53a50c",
+      "is_trivial": true
+    },
+    "void idSoundHardware_OpenAL::PrintALCInfo(ALCdevice *device)": {
+      "body_hash": "a6bc1ab47910462ffe72203e1cd54320",
+      "is_trivial": true
+    },
+    "void idSoundHardware_OpenAL::PrintALInfo()": {
+      "body_hash": "33d69e17fa2a16aa75a447906c39c730",
+      "is_trivial": true
+    },
+    "idSoundHardware_XAudio2::idSoundHardware_XAudio2()": {
+      "body_hash": "e49c68215f445a4f30e4d6010812ae82",
+      "is_trivial": true
+    },
+    "void idSoundHardware_XAudio2::Init()": {
+      "body_hash": "637d93f962e822688ff6e81e11eccaaf",
+      "is_trivial": true
+    },
+    "void idSoundHardware_XAudio2::Shutdown()": {
+      "body_hash": "85f3c791ab4ed98d0680e2e0fe23f171",
+      "is_trivial": true
+    },
+    "void idSoundHardware_XAudio2::Update()": {
+      "body_hash": "462588db98f73d5965fcd51f2a0657fe",
+      "is_trivial": true
+    },
+    "idSoundVoice * idSoundHardware_XAudio2::AllocateVoice(const idSoundSample *leadinSample, const idSoundSample *loopingSample)": {
+      "body_hash": "1a30d8a3bc9c8ce5f41c29590b110e67",
+      "is_trivial": true
+    },
+    "void idSoundHardware_XAudio2::FreeVoice(idSoundVoice *voice)": {
+      "body_hash": "301f3e418e658b36ac2e7ce2f00552f3",
+      "is_trivial": true
+    },
+    "int idSoundHardware_XAudio2::GetNumZombieVoices() const": {
+      "body_hash": "7197de8677a2e1df9f334164ce0751af",
+      "is_trivial": true
+    },
+    "int idSoundHardware_XAudio2::GetNumFreeVoices() const": {
+      "body_hash": "10206a69d90ea170a3719b4163b973eb",
+      "is_trivial": true
+    },
+    "idSoundSample::idSoundSample()": {
+      "body_hash": "748a5fb59dcc99dc2081c2c7d3a9cc3a",
+      "is_trivial": true
+    },
+    "idSoundSample::~idSoundSample()": {
+      "body_hash": "441fcfb8d1faa098de395f6de0370f18",
+      "is_trivial": true
+    },
+    "void idSoundSample::LoadResource()": {
+      "body_hash": "36e4aead76347b3deb07d38eb2fa901c",
+      "is_trivial": true
+    },
+    "void idSoundSample::SetName(const char *n)": {
+      "body_hash": "235149d3ff06487b28e5cfc06f0813eb",
+      "is_trivial": true
+    },
+    "const char * idSoundSample::GetName() const": {
+      "body_hash": "f2a0f45e96a60344f19eb84715bcf517",
+      "is_trivial": true
+    },
+    "ID_TIME_T idSoundSample::GetTimestamp() const": {
+      "body_hash": "cf64168c476f50f8f5bdeecca83900fd",
+      "is_trivial": true
+    },
+    "void idSoundSample::MakeDefault()": {
+      "body_hash": "a0f849cd9a0f53162e58ff750e69d84d",
+      "is_trivial": true
+    },
+    "void idSoundSample::FreeData()": {
+      "body_hash": "942b0b5426ea1763df8a37832a6e080d",
+      "is_trivial": true
+    },
+    "int idSoundSample::LengthInMsec() const": {
+      "body_hash": "4219d1883b1649632cd21de47ea41891",
+      "is_trivial": true
+    },
+    "int idSoundSample::SampleRate() const": {
+      "body_hash": "c94585458c965ad8c137501c903272d1",
+      "is_trivial": true
+    },
+    "int idSoundSample::NumSamples() const": {
+      "body_hash": "d5f4d34a3cb259b824e671647c659fad",
+      "is_trivial": true
+    },
+    "int idSoundSample::NumChannels() const": {
+      "body_hash": "1ad471ae4c6b19fe74b832446a216087",
+      "is_trivial": true
+    },
+    "int idSoundSample::BufferSize() const": {
+      "body_hash": "9a71accee3928854dad41f2b50afd5bd",
+      "is_trivial": true
+    },
+    "bool idSoundSample::IsCompressed() const": {
+      "body_hash": "1e7aae67cb3fae24226ab55ac9d4bc01",
+      "is_trivial": true
+    },
+    "bool idSoundSample::IsDefault() const": {
+      "body_hash": "4adffe90c96667b3d46a220ea19de072",
+      "is_trivial": true
+    },
+    "bool idSoundSample::IsLoaded() const": {
+      "body_hash": "3c29fd3bf1b1b6527f89c5eae8bd8608",
+      "is_trivial": true
+    },
+    "void idSoundSample::SetNeverPurge()": {
+      "body_hash": "b7e6a0014e91f0afc5364f2d754942e2",
+      "is_trivial": true
+    },
+    "bool idSoundSample::GetNeverPurge() const": {
+      "body_hash": "992b06675ba593922560a148a8e00b20",
+      "is_trivial": true
+    },
+    "void idSoundSample::SetLevelLoadReferenced()": {
+      "body_hash": "8c107c7ae087c58d333b135f60342108",
+      "is_trivial": true
+    },
+    "void idSoundSample::ResetLevelLoadReferenced()": {
+      "body_hash": "3611b4d6a9fa8c7356fcc7a8aac6ff52",
+      "is_trivial": true
+    },
+    "bool idSoundSample::GetLevelLoadReferenced() const": {
+      "body_hash": "358ef5e33a7db879f1abde513579f395",
+      "is_trivial": true
+    },
+    "int idSoundSample::GetLastPlayedTime() const": {
+      "body_hash": "1b436c9b1023f449b583ad4690d1c743",
+      "is_trivial": true
+    },
+    "void idSoundSample::SetLastPlayedTime(int t)": {
+      "body_hash": "35ff6396b2aa5d4262b708a20335357b",
+      "is_trivial": true
+    },
+    "float idSoundSample::GetAmplitude(int timeMS) const": {
+      "body_hash": "b823f1ff278783defc8792612d683802",
+      "is_trivial": true
+    },
+    "bool idSoundSample::LoadWav(const idStr &name)": {
+      "body_hash": "a699b9924aec69d01c5fcbf12746288c",
+      "is_trivial": true
+    },
+    "bool idSoundSample::LoadAmplitude(const idStr &name)": {
+      "body_hash": "0a0f14c8f688c49a2c96f395675ae397",
+      "is_trivial": true
+    },
+    "void idSoundSample::WriteAllSamples(const idStr &sampleName)": {
+      "body_hash": "c938c80d4f437e740c39380e49a533e4",
+      "is_trivial": true
+    },
+    "bool idSoundSample::LoadGeneratedSample(const idStr &name)": {
+      "body_hash": "3788e29aa67a1eaea8c5a3ba40944618",
+      "is_trivial": true
+    },
+    "void idSoundSample::WriteGeneratedSample(idFile *fileOut)": {
+      "body_hash": "fb6321c7479da87cb894e57751646ff5",
+      "is_trivial": true
+    },
+    "idSoundSample_OpenAL::idSoundSample_OpenAL()": {
+      "body_hash": "150eb1284d801eb2ad33fde98e8ad782",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::SetName(const char *n)": {
+      "body_hash": "235149d3ff06487b28e5cfc06f0813eb",
+      "is_trivial": true
+    },
+    "const char * idSoundSample_OpenAL::GetName() const": {
+      "body_hash": "f2a0f45e96a60344f19eb84715bcf517",
+      "is_trivial": true
+    },
+    "ID_TIME_T idSoundSample_OpenAL::GetTimestamp() const": {
+      "body_hash": "cf64168c476f50f8f5bdeecca83900fd",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::MakeDefault()": {
+      "body_hash": "58c9b6ba4606b7eb3fa1a08f81af410f",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::FreeData()": {
+      "body_hash": "d849b37e177008d4ad29df96141f0cca",
+      "is_trivial": true
+    },
+    "int idSoundSample_OpenAL::LengthInMsec() const": {
+      "body_hash": "4219d1883b1649632cd21de47ea41891",
+      "is_trivial": true
+    },
+    "int idSoundSample_OpenAL::SampleRate() const": {
+      "body_hash": "c94585458c965ad8c137501c903272d1",
+      "is_trivial": true
+    },
+    "int idSoundSample_OpenAL::NumSamples() const": {
+      "body_hash": "d5f4d34a3cb259b824e671647c659fad",
+      "is_trivial": true
+    },
+    "int idSoundSample_OpenAL::NumChannels() const": {
+      "body_hash": "1ad471ae4c6b19fe74b832446a216087",
+      "is_trivial": true
+    },
+    "int idSoundSample_OpenAL::BufferSize() const": {
+      "body_hash": "9a71accee3928854dad41f2b50afd5bd",
+      "is_trivial": true
+    },
+    "bool idSoundSample_OpenAL::IsCompressed() const": {
+      "body_hash": "1e7aae67cb3fae24226ab55ac9d4bc01",
+      "is_trivial": true
+    },
+    "bool idSoundSample_OpenAL::IsDefault() const": {
+      "body_hash": "4adffe90c96667b3d46a220ea19de072",
+      "is_trivial": true
+    },
+    "bool idSoundSample_OpenAL::IsLoaded() const": {
+      "body_hash": "3c29fd3bf1b1b6527f89c5eae8bd8608",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::SetNeverPurge()": {
+      "body_hash": "b7e6a0014e91f0afc5364f2d754942e2",
+      "is_trivial": true
+    },
+    "bool idSoundSample_OpenAL::GetNeverPurge() const": {
+      "body_hash": "992b06675ba593922560a148a8e00b20",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::SetLevelLoadReferenced()": {
+      "body_hash": "8c107c7ae087c58d333b135f60342108",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::ResetLevelLoadReferenced()": {
+      "body_hash": "3611b4d6a9fa8c7356fcc7a8aac6ff52",
+      "is_trivial": true
+    },
+    "bool idSoundSample_OpenAL::GetLevelLoadReferenced() const": {
+      "body_hash": "358ef5e33a7db879f1abde513579f395",
+      "is_trivial": true
+    },
+    "int idSoundSample_OpenAL::GetLastPlayedTime() const": {
+      "body_hash": "1b436c9b1023f449b583ad4690d1c743",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::SetLastPlayedTime(int t)": {
+      "body_hash": "35ff6396b2aa5d4262b708a20335357b",
+      "is_trivial": true
+    },
+    "float idSoundSample_OpenAL::GetAmplitude(int timeMS) const": {
+      "body_hash": "92c78d068bddcd08caef564a374965bb",
+      "is_trivial": true
+    },
+    "ALenum idSoundSample_OpenAL::GetOpenALBufferFormat() const": {
+      "body_hash": "aaea4f51d7cb3d2b8bbaa7556dca1650",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::CreateOpenALBuffer()": {
+      "body_hash": "df3d2667027beb93ba2b3458c0dafb86",
+      "is_trivial": true
+    },
+    "idSoundSample_OpenAL::~idSoundSample_OpenAL()": {
+      "body_hash": "366dd50e62bfcfc08e6a4ef50e267a31",
+      "is_trivial": true
+    },
+    "bool idSoundSample_OpenAL::LoadWav(const idStr &name)": {
+      "body_hash": "1049b7b4d60f08c3534b3f1d89775119",
+      "is_trivial": true
+    },
+    "bool idSoundSample_OpenAL::LoadAmplitude(const idStr &name)": {
+      "body_hash": "1aa5b5ba0b618391806639a772c789bd",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::WriteAllSamples(const idStr &sampleName)": {
+      "body_hash": "b5b20a02ca7eff37d2cd2fb8c4c613d9",
+      "is_trivial": true
+    },
+    "bool idSoundSample_OpenAL::LoadGeneratedSample(const idStr &name)": {
+      "body_hash": "452238654376fddc457e69e774a3ebda",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::WriteGeneratedSample(idFile *fileOut)": {
+      "body_hash": "e4bc92c0e5d668b3031a2af4e5d0e9c6",
+      "is_trivial": true
+    },
+    "int32 idSoundSample_OpenAL::MS_ADPCM_nibble(MS_ADPCM_decodeState_t *state, int8 nybble)": {
+      "body_hash": "b8ba4a945e778cbdb61280b7144ceeb1",
+      "is_trivial": true
+    },
+    "int idSoundSample_OpenAL::MS_ADPCM_decode(uint8 **audio_buf, uint32 *audio_len)": {
+      "body_hash": "954fc8c1b439d474662e61727337240a",
+      "is_trivial": true
+    },
+    "idSoundSample_XAudio2::idSoundSample_XAudio2()": {
+      "body_hash": "42d1653d6dcd3efaa8d170578b098c4a",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::LoadResource()": {
+      "body_hash": "2cc239aaa681f9aac645530da190b3bc",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::SetName(const char *n)": {
+      "body_hash": "235149d3ff06487b28e5cfc06f0813eb",
+      "is_trivial": true
+    },
+    "const char * idSoundSample_XAudio2::GetName() const": {
+      "body_hash": "f2a0f45e96a60344f19eb84715bcf517",
+      "is_trivial": true
+    },
+    "ID_TIME_T idSoundSample_XAudio2::GetTimestamp() const": {
+      "body_hash": "cf64168c476f50f8f5bdeecca83900fd",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::MakeDefault()": {
+      "body_hash": "2b9556cb9f16ec3fa76e27f33af17117",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::FreeData()": {
+      "body_hash": "6e8743ae7665a729ad614d9f19d9c59e",
+      "is_trivial": true
+    },
+    "int idSoundSample_XAudio2::LengthInMsec() const": {
+      "body_hash": "4219d1883b1649632cd21de47ea41891",
+      "is_trivial": true
+    },
+    "int idSoundSample_XAudio2::SampleRate() const": {
+      "body_hash": "c94585458c965ad8c137501c903272d1",
+      "is_trivial": true
+    },
+    "int idSoundSample_XAudio2::NumSamples() const": {
+      "body_hash": "d5f4d34a3cb259b824e671647c659fad",
+      "is_trivial": true
+    },
+    "int idSoundSample_XAudio2::NumChannels() const": {
+      "body_hash": "1ad471ae4c6b19fe74b832446a216087",
+      "is_trivial": true
+    },
+    "int idSoundSample_XAudio2::BufferSize() const": {
+      "body_hash": "9a71accee3928854dad41f2b50afd5bd",
+      "is_trivial": true
+    },
+    "bool idSoundSample_XAudio2::IsCompressed() const": {
+      "body_hash": "1e7aae67cb3fae24226ab55ac9d4bc01",
+      "is_trivial": true
+    },
+    "bool idSoundSample_XAudio2::IsDefault() const": {
+      "body_hash": "4adffe90c96667b3d46a220ea19de072",
+      "is_trivial": true
+    },
+    "bool idSoundSample_XAudio2::IsLoaded() const": {
+      "body_hash": "3c29fd3bf1b1b6527f89c5eae8bd8608",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::SetNeverPurge()": {
+      "body_hash": "b7e6a0014e91f0afc5364f2d754942e2",
+      "is_trivial": true
+    },
+    "bool idSoundSample_XAudio2::GetNeverPurge() const": {
+      "body_hash": "992b06675ba593922560a148a8e00b20",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::SetLevelLoadReferenced()": {
+      "body_hash": "8c107c7ae087c58d333b135f60342108",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::ResetLevelLoadReferenced()": {
+      "body_hash": "3611b4d6a9fa8c7356fcc7a8aac6ff52",
+      "is_trivial": true
+    },
+    "bool idSoundSample_XAudio2::GetLevelLoadReferenced() const": {
+      "body_hash": "358ef5e33a7db879f1abde513579f395",
+      "is_trivial": true
+    },
+    "int idSoundSample_XAudio2::GetLastPlayedTime() const": {
+      "body_hash": "1b436c9b1023f449b583ad4690d1c743",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::SetLastPlayedTime(int t)": {
+      "body_hash": "35ff6396b2aa5d4262b708a20335357b",
+      "is_trivial": true
+    },
+    "float idSoundSample_XAudio2::GetAmplitude(int timeMS) const": {
+      "body_hash": "4bbdaa42a33d9a30b1bd5963bfc677c6",
+      "is_trivial": true
+    },
+    "idSoundSample_XAudio2::~idSoundSample_XAudio2()": {
+      "body_hash": "0d2af6acba70338e01ccf99a93522a0d",
+      "is_trivial": true
+    },
+    "bool idSoundSample_XAudio2::LoadWav(const idStr &name)": {
+      "body_hash": "4ac73c41573e36a8b5d5ebd48c037ec0",
+      "is_trivial": true
+    },
+    "bool idSoundSample_XAudio2::LoadOgg(const idStr &name)": {
+      "body_hash": "04cb1ea9fbd1e4bd18f70160db77cfe3",
+      "is_trivial": true
+    },
+    "bool idSoundSample_XAudio2::LoadAmplitude(const idStr &name)": {
+      "body_hash": "b466aba7fcee117b34300e9e265700a2",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::WriteAllSamples(const idStr &sampleName)": {
+      "body_hash": "cd85a9e0b2815d5c3ce932a73b06c043",
+      "is_trivial": true
+    },
+    "bool idSoundSample_XAudio2::LoadGeneratedSample(const idStr &name)": {
+      "body_hash": "ae2324b3bd9992fdb954cec92bc3fe8b",
+      "is_trivial": true
+    },
+    "void idSoundSample_XAudio2::WriteGeneratedSample(idFile *fileOut)": {
+      "body_hash": "a44e71bd686ef1b10d6c0b0cd126032e",
+      "is_trivial": true
+    },
+    "idSoundShader::idSoundShader()": {
+      "body_hash": "18e341191856059c95d2c0ec320a738e",
+      "is_trivial": true
+    },
+    "size_t idSoundShader::Size() const": {
+      "body_hash": "d5bc168257f24e19a8befb7139ce4510",
+      "is_trivial": true
+    },
+    "bool idSoundShader::SetDefaultText()": {
+      "body_hash": "9419ebad5f3499aa15698246c96733f0",
+      "is_trivial": true
+    },
+    "const char * idSoundShader::DefaultDefinition() const": {
+      "body_hash": "2fd4923f8d8b32389a9d04748330446b",
+      "is_trivial": true
+    },
+    "bool idSoundShader::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "c907357bfd2d5af7308862f4777e75f8",
+      "is_trivial": true
+    },
+    "void idSoundShader::FreeData()": {
+      "body_hash": "2a1fb89bbaa3734230d7640a64f3e212",
+      "is_trivial": true
+    },
+    "void idSoundShader::List() const": {
+      "body_hash": "bce1d3587d4cf4486763ab383132c179",
+      "is_trivial": true
+    },
+    "float idSoundShader::GetMinDistance() const": {
+      "body_hash": "1881b1d5fcdf515ac479fbb499814dd4",
+      "is_trivial": true
+    },
+    "float idSoundShader::GetMaxDistance() const": {
+      "body_hash": "dee31826ab89ef56556ee4a656f359de",
+      "is_trivial": true
+    },
+    "const idSoundShader * idSoundShader::GetAltSound() const": {
+      "body_hash": "c5fc32d942f1070a578c18a74bf8dd05",
+      "is_trivial": true
+    },
+    "bool idSoundShader::HasDefaultSound() const": {
+      "body_hash": "7f89b50ffbd6d61bde6bc8d8a786c8d8",
+      "is_trivial": true
+    },
+    "const soundShaderParms_t * idSoundShader::GetParms() const": {
+      "body_hash": "87fc14aff3f5894386afecc05809b63c",
+      "is_trivial": true
+    },
+    "int idSoundShader::GetNumSounds() const": {
+      "body_hash": "cf94714def8e097c28f6e22d0cc838c3",
+      "is_trivial": true
+    },
+    "const char * idSoundShader::GetSound(int index) const": {
+      "body_hash": "8291c95f0b36f018e94c9797025ba5ef",
+      "is_trivial": true
+    },
+    "void idSoundShader::Init()": {
+      "body_hash": "ff2e7140a3f51055823c9fa1a26e2b19",
+      "is_trivial": true
+    },
+    "bool idSoundShader::ParseShader(idLexer &src)": {
+      "body_hash": "7ec8ed9bae9906a0c5dba35f513db12a",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::Init()": {
+      "body_hash": "eec560bdc8c0edd8ebe51bf6f1da728b",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::Shutdown()": {
+      "body_hash": "c35a50ae9470b4b0ed072e5357ca169c",
+      "is_trivial": true
+    },
+    "idSoundWorld * idSoundSystemLocal::AllocSoundWorld(idRenderWorld *rw)": {
+      "body_hash": "b3f3ddc9937abcf8f5e245cdfb5bd120",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::FreeSoundWorld(idSoundWorld *sw)": {
+      "body_hash": "7bb9e5c760c132507243ab317f596c85",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::SetPlayingSoundWorld(idSoundWorld *soundWorld)": {
+      "body_hash": "0165fbb8fe936023db28ef45d6526475",
+      "is_trivial": true
+    },
+    "idSoundWorld * idSoundSystemLocal::GetPlayingSoundWorld()": {
+      "body_hash": "f496892530007dbfd25acb666f36e734",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::Render()": {
+      "body_hash": "9aa738580b6b01ed3f3b0a9b22b9eed4",
+      "is_trivial": true
+    },
+    "virtual void idSoundSystemLocal::MuteBackgroundMusic(bool mute)": {
+      "body_hash": "ef5fb916928eb426e4299c7bffa7f050",
+      "is_trivial": true
+    },
+    "virtual void idSoundSystemLocal::SetMute(bool mute)": {
+      "body_hash": "7eb99a05e61700f2a04410454c82f2be",
+      "is_trivial": true
+    },
+    "virtual bool idSoundSystemLocal::IsMuted()": {
+      "body_hash": "c180c6f85640fd7a00b68451419e6882",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::OnReloadSound(const idDecl *sound)": {
+      "body_hash": "e5e623ae4d7cbac45d162f295bad936d",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::StopAllSounds()": {
+      "body_hash": "4f265c4786065bec9742513bd1f95cec",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::InitStreamBuffers()": {
+      "body_hash": "d53d11bd5a9f03d2788c0c9df7373d7c",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::FreeStreamBuffers()": {
+      "body_hash": "8aa14d0215604c085a28baf5b5c017ca",
+      "is_trivial": true
+    },
+    "void * idSoundSystemLocal::GetIXAudio2() const": {
+      "body_hash": "d2ace5d079bc1f091b03c6f50058566c",
+      "is_trivial": true
+    },
+    "void * idSoundSystemLocal::GetOpenALDevice() const": {
+      "body_hash": "f75ab727ee82c82c26780f4665a8e38e",
+      "is_trivial": true
+    },
+    "cinData_t idSoundSystemLocal::ImageForTime(const int milliseconds, const bool waveform)": {
+      "body_hash": "b4e1f94a74087a4eddb1fcee0bf9d48a",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::BeginLevelLoad()": {
+      "body_hash": "ec39f0ddce933c81ec5afcdc583e08ef",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::EndLevelLoad()": {
+      "body_hash": "3b2d55aee8433ab237ce93f3538c3aa5",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::PrintMemInfo(MemInfo_t *mi)": {
+      "body_hash": "8b65da7977631401675052d779819de7",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::StopVoicesWithSample(const idSoundSample *const sample)": {
+      "body_hash": "689add01c046421134730e530f61510e",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::Restart()": {
+      "body_hash": "1b6b52e71b7bacfb7f8eb0f1727b0541",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::SetNeedsRestart()": {
+      "body_hash": "158f8e6a38689da2380a0b6886a29eb3",
+      "is_trivial": true
+    },
+    "int idSoundSystemLocal::SoundTime() const": {
+      "body_hash": "ec3ff5c5ddb65e37d8979976d4180a2f",
+      "is_trivial": true
+    },
+    "idSoundVoice * idSoundSystemLocal::AllocateVoice(const idSoundSample *leadinSample, const idSoundSample *loopingSample)": {
+      "body_hash": "792cf28141b9900ff2142b9d91a61eb4",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::FreeVoice(idSoundVoice *)": {
+      "body_hash": "a13cb75c6ab14e103cb8f90ac3a8feca",
+      "is_trivial": true
+    },
+    "idSoundSample * idSoundSystemLocal::LoadSample(const char *name)": {
+      "body_hash": "c5e61b9fff20aa0ace7192a745d8d36f",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::Preload(idPreloadManifest &preload)": {
+      "body_hash": "70385a478f6cb1f894bf0b0d2430ccf4",
+      "is_trivial": true
+    },
+    "idSoundSystemLocal::bufferContext_t * idSoundSystemLocal::ObtainStreamBufferContext()": {
+      "body_hash": "c39bc9d95aa313b088f7d89cd3cf29af",
+      "is_trivial": true
+    },
+    "void idSoundSystemLocal::ReleaseStreamBufferContext(bufferContext_t *p)": {
+      "body_hash": "f885bfb71db5ea3bf617cee703a79711",
+      "is_trivial": true
+    },
+    "idSoundSystemLocal::idSoundSystemLocal()": {
+      "body_hash": "c095b6ad98c63f00085bcbcf912d4570",
+      "is_trivial": true
+    },
+    "void idSoundVoice::Create(const idSoundSample *leadinSample, const idSoundSample *loopingSample)": {
+      "body_hash": "6fe79e5c61a649f2f956e25f0bc43000",
+      "is_trivial": true
+    },
+    "void idSoundVoice::Start(int offsetMS, int ssFlags)": {
+      "body_hash": "3121526f767e57adb65ccf0bd091f9cc",
+      "is_trivial": true
+    },
+    "void idSoundVoice::Stop()": {
+      "body_hash": "1b0a8e507616571f3ea6019a1de88db2",
+      "is_trivial": true
+    },
+    "void idSoundVoice::Pause()": {
+      "body_hash": "9223787115737791c2350d6d26f3dc94",
+      "is_trivial": true
+    },
+    "void idSoundVoice::UnPause()": {
+      "body_hash": "c76ba7cfee9685f31673587fd9c2400f",
+      "is_trivial": true
+    },
+    "bool idSoundVoice::Update()": {
+      "body_hash": "dbdf8b5cb0ad49cf0124f17741d20608",
+      "is_trivial": true
+    },
+    "float idSoundVoice::GetAmplitude()": {
+      "body_hash": "09a295f211eae3aefb7cc650471ed80f",
+      "is_trivial": true
+    },
+    "bool idSoundVoice::CompatibleFormat(idSoundSample *s)": {
+      "body_hash": "12f4bc57ae38854c1ed4cc10cf211727",
+      "is_trivial": true
+    },
+    "uint32 idSoundVoice::GetSampleRate() const": {
+      "body_hash": "5f75b78a167774b3456b12f329fa031f",
+      "is_trivial": true
+    },
+    "void idSoundVoice::OnBufferStart(idSoundSample *sample, int bufferNumber)": {
+      "body_hash": "d7ce10c6834a698065d117101688a1bb",
+      "is_trivial": true
+    },
+    "idSoundVoice_Base::idSoundVoice_Base()": {
+      "body_hash": "905d2321a2255a29259723353e2a3eb6",
+      "is_trivial": true
+    },
+    "void idSoundVoice_Base::CalculateSurround(int srcChannels, float pLevelMatrix[MAX_CHANNELS_PER_VOICE *MAX_CHANNELS_PER_VOICE], float scale)": {
+      "body_hash": "ef6d91602393128a7854acb24d96b22e",
+      "is_trivial": true
+    },
+    "virtual void idSoundVoice_Base::SetPosition(const idVec3 &p)": {
+      "body_hash": "8e1ed1f55d0cb2ec3021c7be765ac66f",
+      "is_trivial": true
+    },
+    "virtual void idSoundVoice_Base::SetGain(float g)": {
+      "body_hash": "3260d3ce1842ce1bfe1a2074797abc59",
+      "is_trivial": true
+    },
+    "virtual void idSoundVoice_Base::SetPitch(float p)": {
+      "body_hash": "34533fee72aee66f190a5b718b164458",
+      "is_trivial": true
+    },
+    "void idSoundVoice_Base::SetCenterChannel(float c)": {
+      "body_hash": "396c9d9a2589fb0650fa5c2d374dbd22",
+      "is_trivial": true
+    },
+    "void idSoundVoice_Base::SetInnerRadius(float r)": {
+      "body_hash": "f3dd245334f0df1ea770cd3d4760afd2",
+      "is_trivial": true
+    },
+    "void idSoundVoice_Base::SetChannelMask(uint32 mask)": {
+      "body_hash": "88b273cfb1644e32dffa7a66864c9fbd",
+      "is_trivial": true
+    },
+    "void idSoundVoice_Base::SetOcclusion(float f)": {
+      "body_hash": "0bc5e5178a6e564fecf49c77b9b56b4f",
+      "is_trivial": true
+    },
+    "float idSoundVoice_Base::GetGain()": {
+      "body_hash": "0f86ee3bea0b8e22904e165f427a2153",
+      "is_trivial": true
+    },
+    "float idSoundVoice_Base::GetPitch()": {
+      "body_hash": "4554fabb14a69a93378b5f3088b2f534",
+      "is_trivial": true
+    },
+    "void idSoundVoice_Base::InitSurround(int outputChannels, int channelMask)": {
+      "body_hash": "e37874fc507e852c2bb4183ec2270ba8",
+      "is_trivial": true
+    },
+    "idSoundVoice_OpenAL::idSoundVoice_OpenAL()": {
+      "body_hash": "ae7980061b4da49208a57bcfdc2c9e15",
+      "is_trivial": true
+    },
+    "idSoundVoice_OpenAL::~idSoundVoice_OpenAL()": {
+      "body_hash": "bd6f827fa31143270b4925e6225ae446",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::SetPosition(const idVec3 &p)": {
+      "body_hash": "eafd5ad3096b638a525fa4f8a7c1208b",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::SetGain(float gain)": {
+      "body_hash": "8966b7d9b2141e11c296c9b27ed5556a",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::SetPitch(float p)": {
+      "body_hash": "8f6c18951ef2a31c34de3c34c8fdfbb0",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::Create(const idSoundSample *leadinSample, const idSoundSample *loopingSample)": {
+      "body_hash": "01696fcaf7d7f667e5bcad6bf68f0dfa",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::Start(int offsetMS, int ssFlags)": {
+      "body_hash": "2c9b5a7843a2b13532163410f612318b",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::Stop()": {
+      "body_hash": "b0a478b6c54272faf41e85268134f6c1",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::Pause()": {
+      "body_hash": "5080629b0d29666bd613af8f195f254b",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::UnPause()": {
+      "body_hash": "97e803f0571dbad0775250366ac292cf",
+      "is_trivial": true
+    },
+    "bool idSoundVoice_OpenAL::Update()": {
+      "body_hash": "75539eb824f5e5aa6749e4adb6637441",
+      "is_trivial": true
+    },
+    "float idSoundVoice_OpenAL::GetAmplitude()": {
+      "body_hash": "efb59ae6ae65b4091492a929b1a56ff7",
+      "is_trivial": true
+    },
+    "bool idSoundVoice_OpenAL::CompatibleFormat(idSoundSample_OpenAL *s)": {
+      "body_hash": "6d6cb03386af6528b16b5c452942b350",
+      "is_trivial": true
+    },
+    "uint32 idSoundVoice_OpenAL::GetSampleRate() const": {
+      "body_hash": "0365eb1f6016a5a1176a01f669cc6c6d",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::OnBufferStart(idSoundSample_OpenAL *sample, int bufferNumber)": {
+      "body_hash": "5a772ebaafa9dc45f4bbae57436863ba",
+      "is_trivial": true
+    },
+    "bool idSoundVoice_OpenAL::IsPlaying()": {
+      "body_hash": "5104457b066cc721a63db7d0ee738565",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::FlushSourceBuffers()": {
+      "body_hash": "a3127a41b74e33640bc512504a4bbeed",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::DestroyInternal()": {
+      "body_hash": "f9eba4d1ae9b48d3a539bd4693a6c214",
+      "is_trivial": true
+    },
+    "int idSoundVoice_OpenAL::RestartAt(int offsetSamples)": {
+      "body_hash": "2d453e05756f1deb2e836afded8bbdf5",
+      "is_trivial": true
+    },
+    "int idSoundVoice_OpenAL::SubmitBuffer(idSoundSample_OpenAL *sample, int bufferNumber, int offset)": {
+      "body_hash": "14618c8c3a25042b858e00fb37c51a1a",
+      "is_trivial": true
+    },
+    "void idSoundVoice_OpenAL::SetSampleRate(uint32 newSampleRate, uint32 operationSet)": {
+      "body_hash": "78d8163ffa7e49c303fe8f969c06f3ba",
+      "is_trivial": true
+    },
+    "idSoundVoice_XAudio2::idSoundVoice_XAudio2()": {
+      "body_hash": "deda1fc74b362415e13534c96e929dde",
+      "is_trivial": true
+    },
+    "idSoundVoice_XAudio2::~idSoundVoice_XAudio2()": {
+      "body_hash": "17029beb17ff023a39086cd901891aaa",
+      "is_trivial": true
+    },
+    "void idSoundVoice_XAudio2::Create(const idSoundSample *leadinSample, const idSoundSample *loopingSample)": {
+      "body_hash": "95131aa768ed322c0271b67880c963c4",
+      "is_trivial": true
+    },
+    "void idSoundVoice_XAudio2::Start(int offsetMS, int ssFlags)": {
+      "body_hash": "a3429dcd07be6d47877664e9d028815c",
+      "is_trivial": true
+    },
+    "void idSoundVoice_XAudio2::Stop()": {
+      "body_hash": "c757f055a7e92943e47f50d1e9a111cc",
+      "is_trivial": true
+    },
+    "void idSoundVoice_XAudio2::Pause()": {
+      "body_hash": "d757708068593b3ac349b6e0ce50b1a7",
+      "is_trivial": true
+    },
+    "void idSoundVoice_XAudio2::UnPause()": {
+      "body_hash": "0b282536098a3f2f7a4700fe48927026",
+      "is_trivial": true
+    },
+    "bool idSoundVoice_XAudio2::Update()": {
+      "body_hash": "68d0d4577d2ecdd1620cb200c436607d",
+      "is_trivial": true
+    },
+    "float idSoundVoice_XAudio2::GetAmplitude()": {
+      "body_hash": "e0e118ee04c4c049e0d997397972e767",
+      "is_trivial": true
+    },
+    "bool idSoundVoice_XAudio2::CompatibleFormat(idSoundSample_XAudio2 *s)": {
+      "body_hash": "1ccda5b72ed6f75946670590d0a08de6",
+      "is_trivial": true
+    },
+    "uint32 idSoundVoice_XAudio2::GetSampleRate() const": {
+      "body_hash": "0365eb1f6016a5a1176a01f669cc6c6d",
+      "is_trivial": true
+    },
+    "void idSoundVoice_XAudio2::OnBufferStart(idSoundSample_XAudio2 *sample, int bufferNumber)": {
+      "body_hash": "1cd3e2488bcb5da3c81cd56d4d6eb5b9",
+      "is_trivial": true
+    },
+    "bool idSoundVoice_XAudio2::IsPlaying()": {
+      "body_hash": "aa7bcf438cf6b2ef5a58978c97579a79",
+      "is_trivial": true
+    },
+    "void idSoundVoice_XAudio2::FlushSourceBuffers()": {
+      "body_hash": "0c2fe3f7e3ca00657afb8f54e606e812",
+      "is_trivial": true
+    },
+    "void idSoundVoice_XAudio2::DestroyInternal()": {
+      "body_hash": "26acafc88e1eeba9ef4a0f317e39b9a0",
+      "is_trivial": true
+    },
+    "int idSoundVoice_XAudio2::RestartAt(int offsetSamples)": {
+      "body_hash": "277bcf3654e0e0fd201afa1d46188213",
+      "is_trivial": true
+    },
+    "int idSoundVoice_XAudio2::SubmitBuffer(idSoundSample_XAudio2 *sample, int bufferNumber, int offset)": {
+      "body_hash": "0ebccd4e785875188a4f1f298033a06a",
+      "is_trivial": true
+    },
+    "void idSoundVoice_XAudio2::SetSampleRate(uint32 newSampleRate, uint32 operationSet)": {
+      "body_hash": "5e421f494bebb992640fbbd990fbccaf",
+      "is_trivial": true
+    },
+    "idSoundWorldLocal::idSoundWorldLocal()": {
+      "body_hash": "e81f5cb1f7c2c81c1dd01083b36f0dff",
+      "is_trivial": true
+    },
+    "idSoundWorldLocal::~idSoundWorldLocal()": {
+      "body_hash": "16846d3699076c8d68f7f5b20b687953",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::ClearAllSoundEmitters()": {
+      "body_hash": "d2f10a089f5cf3885867934489833d72",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::StopAllSounds()": {
+      "body_hash": "47fedbd5aa3d43543bb603752e091565",
+      "is_trivial": true
+    },
+    "idSoundEmitter * idSoundWorldLocal::AllocSoundEmitter()": {
+      "body_hash": "f0b17b8c25149efc1a2b14e8ed24b20e",
+      "is_trivial": true
+    },
+    "idSoundEmitter * idSoundWorldLocal::EmitterForIndex(int index)": {
+      "body_hash": "d485c4cfb8f96032d7d63b7017c919c9",
+      "is_trivial": true
+    },
+    "float idSoundWorldLocal::CurrentShakeAmplitude()": {
+      "body_hash": "cd6320c250ca9c7edba21ce8268189de",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::PlaceListener(const idVec3 &origin, const idMat3 &axis, const int listenerId)": {
+      "body_hash": "b4e6bfbaa605c52789dd8278ed501740",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::FadeSoundClasses(const int soundClass, const float to, const float over)": {
+      "body_hash": "1a0638bd89d5cb531cc80066a81b06cb",
+      "is_trivial": true
+    },
+    "int idSoundWorldLocal::PlayShaderDirectly(const char *name, int channel=-1)": {
+      "body_hash": "1d8fda15e8b28009498beb4b686a3b02",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::Skip(int time)": {
+      "body_hash": "a63444f684a29069625d3d689d1cc1f2",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::Pause()": {
+      "body_hash": "aabf22f9b6721c4e11da72c01a645049",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::UnPause()": {
+      "body_hash": "8fcd3f80fb1e74319f0eef46742f9173",
+      "is_trivial": true
+    },
+    "virtual bool idSoundWorldLocal::IsPaused()": {
+      "body_hash": "f280d4ad60fc400e4e4059955e6faaa8",
+      "is_trivial": true
+    },
+    "int idSoundWorldLocal::GetSoundTime()": {
+      "body_hash": "f803828fc294e4062ca94b6c374ca13f",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::WriteToSaveGame(idFile *savefile)": {
+      "body_hash": "60d90971a3287203bbcab06006b7e675",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::ReadFromSaveGame(idFile *savefile)": {
+      "body_hash": "41301c8b10139537a7473b5f9fb8af32",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::SetSlowmoSpeed(float speed)": {
+      "body_hash": "6b135d0e6d10d1d3dd56303401921ea4",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::SetEnviroSuit(bool active)": {
+      "body_hash": "7b1b984ca185360fb98ce1171f08e158",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::Update()": {
+      "body_hash": "c8ad53d28da080e090610df00eff5fc9",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::OnReloadSound(const idDecl *decl)": {
+      "body_hash": "f0da00758fd3dd953e881252ea153aec",
+      "is_trivial": true
+    },
+    "idSoundChannel * idSoundWorldLocal::AllocSoundChannel()": {
+      "body_hash": "329c704141a6bbc7a93b22d1870b7dd2",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::FreeSoundChannel(idSoundChannel *)": {
+      "body_hash": "90b8b6d3a7ae2912d18b68ffaa2c28fc",
+      "is_trivial": true
+    },
+    "void idSoundWorldLocal::ResolveOrigin(const int stackDepth, const soundPortalTrace_t *prevStack, const int soundArea, const float dist, const idVec3 &soundOrigin, idSoundEmitterLocal *def)": {
+      "body_hash": "aa6274c82fb2bc5c9067270fe7349f0a",
+      "is_trivial": false
+    },
+    "idStreamingVoiceContext::STDMETHOD_(void, OnVoiceProcessingPassStart)(UINT32 BytesRequired)": {
+      "body_hash": "d884b42cf7584c52f814162e160c8051",
+      "is_trivial": true
+    },
+    "idStreamingVoiceContext::STDMETHOD_(void, OnVoiceProcessingPassEnd)()": {
+      "body_hash": "354f1ba74b0e36b7165e3dbb564c4aa0",
+      "is_trivial": true
+    },
+    "idStreamingVoiceContext::STDMETHOD_(void, OnStreamEnd)()": {
+      "body_hash": "70126830c8409c551881e1c4c988a341",
+      "is_trivial": true
+    },
+    "idStreamingVoiceContext::STDMETHOD_(void, OnBufferStart)(void *pContext)": {
+      "body_hash": "efff5a4149a50116fd01b2f4fc08ec8c",
+      "is_trivial": true
+    },
+    "idStreamingVoiceContext::STDMETHOD_(void, OnLoopEnd)(void *)": {
+      "body_hash": "f49443070dc52f8e4cbe4d2ac6dc278a",
+      "is_trivial": true
+    },
+    "idStreamingVoiceContext::STDMETHOD_(void, OnVoiceError)(void *": {
+      "body_hash": "203a3d571edf826264120c75d4553b0f",
+      "is_trivial": true
+    },
+    "idStreamingVoiceContext::STDMETHOD_(void, OnBufferEnd)(void *pContext)": {
+      "body_hash": "b2dfa01dd8ca206104984f149f24826a",
+      "is_trivial": true
+    },
+    "ID_INLINE idWaveFile::idWaveFile()": {
+      "body_hash": "5a1c69fae89104f0dd0d174e3004aea2",
+      "is_trivial": true
+    },
+    "ID_INLINE idWaveFile::~idWaveFile()": {
+      "body_hash": "5cb5c40f3b8f73f02981889e42bc789d",
+      "is_trivial": true
+    },
+    "bool idWaveFile::Open(const char *filename)": {
+      "body_hash": "baf940b29f28713c2743658beeacd943",
+      "is_trivial": true
+    },
+    "void idWaveFile::Close()": {
+      "body_hash": "e47680d036a9fcd8050c9e04fcd99e2c",
+      "is_trivial": true
+    },
+    "uint32 idWaveFile::SeekToChunk(uint32 id)": {
+      "body_hash": "fe1cc79b0dc4d1d58b555cd798c15e7d",
+      "is_trivial": true
+    },
+    "size_t idWaveFile::Read(void *buffer, size_t len)": {
+      "body_hash": "c27d952e337c14cdf7fe769ffb9c4c21",
+      "is_trivial": true
+    },
+    "uint32 idWaveFile::GetChunkOffset(uint32 id)": {
+      "body_hash": "9958c471362626831a9193c1e69b3783",
+      "is_trivial": true
+    },
+    "ID_TIME_T idWaveFile::Timestamp()": {
+      "body_hash": "4219c686b8fe5f2bc50f07d2264b8fc2",
+      "is_trivial": true
+    },
+    "const char * idWaveFile::Name()": {
+      "body_hash": "65a91788b4a75c66dae63f1f95a1db7a",
+      "is_trivial": true
+    },
+    "const char * idWaveFile::ReadWaveFormat(waveFmt_t &waveFmt)": {
+      "body_hash": "daf779f7828be2357ffd926e92a76ba3",
+      "is_trivial": true
+    },
+    "bool idWaveFile::ReadLoopData(int &start, int &end)": {
+      "body_hash": "d3c59455f06d04ae7262c8ee43d164e7",
+      "is_trivial": true
+    },
+    "bool idWaveFile::ReadWaveFormatDirect(waveFmt_t &format, idFile *file)": {
+      "body_hash": "b16d97bd89445a1833c465474a52f382",
+      "is_trivial": true
+    },
+    "bool idWaveFile::WriteWaveFormatDirect(waveFmt_t &format, idFile *file, bool wavFile)": {
+      "body_hash": "795485bfa6f2cca10532f60fd1e62d5b",
+      "is_trivial": true
+    },
+    "bool idWaveFile::WriteSampleDataDirect(idList< sampleData_t > &sampleData, idFile *file)": {
+      "body_hash": "17de49c234dab9553859ffab4a2daf9f",
+      "is_trivial": true
+    },
+    "bool idWaveFile::WriteDataDirect(char *_data, uint32 size, idFile *file)": {
+      "body_hash": "b4a75b3adde765631cd95d1c02318a4a",
+      "is_trivial": true
+    },
+    "bool idWaveFile::WriteHeaderDirect(uint32 fileSize, idFile *file)": {
+      "body_hash": "a5ead55f06199aa62574ddfdcb478175",
+      "is_trivial": true
+    },
+    "CinematicAudio_OpenAL::CinematicAudio_OpenAL()": {
+      "body_hash": "97bd9f4e74a7ca8058bead41cbcb7ac4",
+      "is_trivial": true
+    },
+    "void CinematicAudio_OpenAL::InitAudio(void *audioContext)": {
+      "body_hash": "8ffef7b4c987805246e4da67f5d7f6b3",
+      "is_trivial": true
+    },
+    "void CinematicAudio_OpenAL::PlayAudio(uint8_t *data, int size)": {
+      "body_hash": "95cb6ae06553a57b9a9dc0beae65f16f",
+      "is_trivial": true
+    },
+    "void CinematicAudio_OpenAL::ResetAudio()": {
+      "body_hash": "1183504e86a8f546de8293c72d636195",
+      "is_trivial": true
+    },
+    "void CinematicAudio_OpenAL::ShutdownAudio()": {
+      "body_hash": "9c1fb38faf63fd49575e507a4cb68278",
+      "is_trivial": true
+    },
+    "void CinematicAudio_XAudio2::InitAudio(void *audioContext)": {
+      "body_hash": "1d01e5b3689a73e5a0057567d47331c9",
+      "is_trivial": true
+    },
+    "void CinematicAudio_XAudio2::PlayAudio(uint8_t *data, int size)": {
+      "body_hash": "0f880ea1ef4c0e7b35c83ad76bc4d355",
+      "is_trivial": true
+    },
+    "void CinematicAudio_XAudio2::ResetAudio()": {
+      "body_hash": "72326123cd3a3123134feb10e49b767d",
+      "is_trivial": true
+    },
+    "void CinematicAudio_XAudio2::ShutdownAudio()": {
+      "body_hash": "5b78c20e0f5127acbf73eceb1b259321",
+      "is_trivial": true
+    },
+    "void VoiceCallback::OnBufferEnd(void *data)": {
+      "body_hash": "4fb1fe808d2b2c82fccc2888a991bd3f",
+      "is_trivial": true
+    },
+    "void VoiceCallback::OnBufferStart(void *pBufferContext)": {
+      "body_hash": "0a2b0f2199bc65823b62d985e2fe1295",
+      "is_trivial": true
+    },
+    "void VoiceCallback::OnLoopEnd(void *pBufferContext)": {
+      "body_hash": "3fe5842d996529743e3e0686c0f6b5b8",
+      "is_trivial": true
+    },
+    "void VoiceCallback::OnStreamEnd()": {
+      "body_hash": "f544d0d86cb59ea430a3ae52c3bb8e49",
+      "is_trivial": true
+    },
+    "void VoiceCallback::OnVoiceError(void *pBufferContext, HRESULT Error)": {
+      "body_hash": "2adf7b755e1c9cc98c8ed4adcc33a262",
+      "is_trivial": true
+    },
+    "void VoiceCallback::OnVoiceProcessingPassEnd()": {
+      "body_hash": "958e9c82b161b494925f31d852aaf0d3",
+      "is_trivial": true
+    },
+    "void VoiceCallback::OnVoiceProcessingPassStart(UINT32 BytesRequired)": {
+      "body_hash": "0038e8a129c838c065d6e647c62f6d13",
+      "is_trivial": true
+    },
+    "void * _decoder_malloc(size_t size)": {
+      "body_hash": "3b96fff8c9e55fbc32e3066d620f7359",
+      "is_trivial": true
+    },
+    "void * _decoder_calloc(size_t num, size_t size)": {
+      "body_hash": "24be7fce71e074ffb5650ac6f40ff0c7",
+      "is_trivial": true
+    },
+    "void * _decoder_realloc(void *memblock, size_t size)": {
+      "body_hash": "e75f3b2151e2b5f657bdcc567df4e18e",
+      "is_trivial": true
+    },
+    "void _decoder_free(void *memblock)": {
+      "body_hash": "c40be06d40045fbe5d8090c7d0f4250f",
+      "is_trivial": true
+    },
+    "size_t FS_ReadOGG(void *dest, size_t size1, size_t size2, void *fh)": {
+      "body_hash": "036d1bea306c3039a1c29e40c6611bff",
+      "is_trivial": false
+    },
+    "int FS_SeekOGG(void *fh, ogg_int64_t to, int type)": {
+      "body_hash": "b4c60cb4870c763d11302010a906e631",
+      "is_trivial": true
+    },
+    "int FS_CloseOGG(void *fh)": {
+      "body_hash": "47de545ccbf412bba5783c14252aab28",
+      "is_trivial": true
+    },
+    "long FS_TellOGG(void *fh)": {
+      "body_hash": "cfe5652d5d0161cdff6b61221cc74588",
+      "is_trivial": true
+    },
+    "int ov_openFile(idFile *f, OggVorbis_File *vf)": {
+      "body_hash": "191a8c3627d758374525e02884578aaa",
+      "is_trivial": true
+    },
+    "ID_INLINE_EXTERN uint32 MsecToSamples(uint32 msec, uint32 sampleRate)": {
+      "body_hash": "741a06da6c180cf225d26811eb370512",
+      "is_trivial": true
+    },
+    "ID_INLINE_EXTERN uint32 SamplesToMsec(uint32 samples, uint32 sampleRate)": {
+      "body_hash": "6bd0cfe54e5d59de3a20ea869e9fbf74",
+      "is_trivial": true
+    },
+    "ID_INLINE_EXTERN float DBtoLinear(float db)": {
+      "body_hash": "0190fa4030b4039f15fc742968686cc3",
+      "is_trivial": true
+    },
+    "ID_INLINE_EXTERN float LinearToDB(float linear)": {
+      "body_hash": "19f12c5ae05455783ecd39306f13811d",
+      "is_trivial": true
+    },
+    "void TestSound_f(const idCmdArgs &args)": {
+      "body_hash": "ed2682810f35db73513cb95595e12150",
+      "is_trivial": true
+    },
+    "void RestartSound_f(const idCmdArgs &args)": {
+      "body_hash": "76e45479134f76612d2c0a0592301e68",
+      "is_trivial": true
+    },
+    "void ListSamples_f(const idCmdArgs &args)": {
+      "body_hash": "a7e061998b5a93f1058754349d7fb87b",
+      "is_trivial": true
+    },
+    "float MapVolumeFromFadeDB(const float volumeDB, const float fadeDB)": {
+      "body_hash": "d2c47f4cb828639f40e26479aefb9c8c",
+      "is_trivial": true
+    },
+    "static float AdjustForCushionChannels(const idStaticList< idActiveChannel, 48 > &activeEmitterChannels, const int uncushionedChannels, const float currentCushionDB, const float driftRate)": {
+      "body_hash": "8c971f33344565019871a122e6212999",
+      "is_trivial": false
+    },
+    "idSoundSystemLocal::bufferContext_t::bufferContext_t()": {
+      "body_hash": "62619edb2403c836ddc9aba80a7ed870",
+      "is_trivial": true
+    },
+    "void listDevices_f(const idCmdArgs &args)": {
+      "body_hash": "1fe1f4e89e20e276b78db43bd9997376",
+      "is_trivial": true
+    },
+    "static void * AllocBuffer(int size, const char *name)": {
+      "body_hash": "2c6272d6494fc0b0c0fe55cca9556439",
+      "is_trivial": true
+    },
+    "static void FreeBuffer(void *p)": {
+      "body_hash": "39da2c75397ee493582235c079e2dd9d",
+      "is_trivial": true
+    },
+    "void idSoundSample_OpenAL::LoadResource()": {
+      "body_hash": "7627d28e439e9bb7b6150bb18406e74d",
+      "is_trivial": true
+    },
+    "CinematicAudio_XAudio2::CinematicAudio_XAudio2()": {
+      "body_hash": "1d48cea65090023636f83be23c81ef7f",
+      "is_trivial": true
     }
   }
 }

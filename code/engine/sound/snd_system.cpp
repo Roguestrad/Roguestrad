@@ -49,21 +49,7 @@ idCVar			   preLoad_Samples( "preLoad_Samples", "1", CVAR_SYSTEM | CVAR_BOOL, "p
 idSoundSystemLocal soundSystemLocal;
 idSoundSystem*	   soundSystem = &soundSystemLocal;
 
-/*
-================================================================================================
-
-idSoundSystemLocal
-
-================================================================================================
-*/
-
-/*
-========================
-TestSound_f
-
-This is called from the main thread.
-========================
-*/
+//! Plays a sound shader directly from the command line using the specified file.
 void			   TestSound_f( const idCmdArgs& args )
 {
 	if( args.Argc() != 2 ) {
@@ -75,22 +61,13 @@ void			   TestSound_f( const idCmdArgs& args )
 	}
 }
 
-/*
-========================
-RestartSound_f
-========================
-*/
+//! Restarts the sound system.
 void RestartSound_f( const idCmdArgs& args )
 {
 	soundSystemLocal.Restart();
 }
 
-/*
-========================
-ListSamples_f
-
-========================
-*/
+//! Prints a list of all sound samples and their sizes to the console.
 void ListSamples_f( const idCmdArgs& args )
 {
 	idLib::Printf( "Sound samples\n-------------\n" );
@@ -103,11 +80,6 @@ void ListSamples_f( const idCmdArgs& args )
 	idLib::Printf( "%05dkb total size\n", totSize / 1024 );
 }
 
-/*
-========================
-idSoundSystemLocal::Restart
-========================
-*/
 void idSoundSystemLocal::Restart()
 {
 	// Mute all channels in all worlds
@@ -158,11 +130,6 @@ void idSoundSystemLocal::Init()
 	idLib::Printf( "--------------------------------------\n" );
 }
 
-/*
-========================
-idSoundSystemLocal::InitStreamBuffers
-========================
-*/
 void idSoundSystemLocal::InitStreamBuffers()
 {
 	streamBufferMutex.Lock();
@@ -184,11 +151,6 @@ void idSoundSystemLocal::InitStreamBuffers()
 	streamBufferMutex.Unlock();
 }
 
-/*
-========================
-idSoundSystemLocal::FreeStreamBuffers
-========================
-*/
 void idSoundSystemLocal::FreeStreamBuffers()
 {
 	streamBufferMutex.Lock();
@@ -198,11 +160,6 @@ void idSoundSystemLocal::FreeStreamBuffers()
 	streamBufferMutex.Unlock();
 }
 
-/*
-========================
-idSoundSystemLocal::Shutdown
-========================
-*/
 void idSoundSystemLocal::Shutdown()
 {
 	hardware.Shutdown();
@@ -211,13 +168,6 @@ void idSoundSystemLocal::Shutdown()
 	sampleHash.Free();
 }
 
-/*
-========================
-idSoundSystemLocal::ObtainStreamBuffer
-
-Get a stream buffer from the free pool, returns NULL if none are available
-========================
-*/
 idSoundSystemLocal::bufferContext_t* idSoundSystemLocal::ObtainStreamBufferContext()
 {
 	bufferContext_t* bufferContext = NULL;
@@ -231,13 +181,6 @@ idSoundSystemLocal::bufferContext_t* idSoundSystemLocal::ObtainStreamBufferConte
 	return bufferContext;
 }
 
-/*
-========================
-idSoundSystemLocal::ReleaseStreamBuffer
-
-Releases a stream buffer back to the free pool
-========================
-*/
 void idSoundSystemLocal::ReleaseStreamBufferContext( bufferContext_t* bufferContext )
 {
 	streamBufferMutex.Lock();
@@ -247,11 +190,6 @@ void idSoundSystemLocal::ReleaseStreamBufferContext( bufferContext_t* bufferCont
 	streamBufferMutex.Unlock();
 }
 
-/*
-========================
-idSoundSystemLocal::AllocSoundWorld
-========================
-*/
 idSoundWorld* idSoundSystemLocal::AllocSoundWorld( idRenderWorld* rw )
 {
 	idSoundWorldLocal* local = new( TAG_AUDIO ) idSoundWorldLocal;
@@ -260,11 +198,6 @@ idSoundWorld* idSoundSystemLocal::AllocSoundWorld( idRenderWorld* rw )
 	return local;
 }
 
-/*
-========================
-idSoundSystemLocal::FreeSoundWorld
-========================
-*/
 void idSoundSystemLocal::FreeSoundWorld( idSoundWorld* sw )
 {
 	idSoundWorldLocal* local = static_cast<idSoundWorldLocal*>( sw );
@@ -272,13 +205,6 @@ void idSoundSystemLocal::FreeSoundWorld( idSoundWorld* sw )
 	delete local;
 }
 
-/*
-========================
-idSoundSystemLocal::SetPlayingSoundWorld
-
-Specifying NULL will cause silence to be played.
-========================
-*/
 void idSoundSystemLocal::SetPlayingSoundWorld( idSoundWorld* soundWorld )
 {
 	if( currentSoundWorld == soundWorld ) {
@@ -293,21 +219,11 @@ void idSoundSystemLocal::SetPlayingSoundWorld( idSoundWorld* soundWorld )
 	}
 }
 
-/*
-========================
-idSoundSystemLocal::GetPlayingSoundWorld
-========================
-*/
 idSoundWorld* idSoundSystemLocal::GetPlayingSoundWorld()
 {
 	return currentSoundWorld;
 }
 
-/*
-========================
-idSoundSystemLocal::Render
-========================
-*/
 void idSoundSystemLocal::Render()
 {
 	if( needsRestart ) {
@@ -329,11 +245,6 @@ void idSoundSystemLocal::Render()
 	soundTime = Sys_Milliseconds();
 }
 
-/*
-========================
-idSoundSystemLocal::OnReloadSound
-========================
-*/
 void idSoundSystemLocal::OnReloadSound( const idDecl* sound )
 {
 	for( int i = 0; i < soundWorlds.Num(); i++ ) {
@@ -341,11 +252,6 @@ void idSoundSystemLocal::OnReloadSound( const idDecl* sound )
 	}
 }
 
-/*
-========================
-idSoundSystemLocal::StopAllSounds
-========================
-*/
 void idSoundSystemLocal::StopAllSounds()
 {
 	for( int i = 0; i < soundWorlds.Num(); i++ ) {
@@ -360,11 +266,6 @@ void idSoundSystemLocal::StopAllSounds()
 	}
 }
 
-/*
-========================
-idSoundSystemLocal::GetIXAudio2
-========================
-*/
 void* idSoundSystemLocal::GetIXAudio2() const
 {
 	// RB begin
@@ -376,12 +277,6 @@ void* idSoundSystemLocal::GetIXAudio2() const
 	// RB end
 }
 
-/*
-========================
-idSoundSystemLocal::GetOpenALDevice
-========================
-*/
-// RB begin
 void* idSoundSystemLocal::GetOpenALDevice() const
 {
 #if defined( USE_OPENAL )
@@ -390,43 +285,22 @@ void* idSoundSystemLocal::GetOpenALDevice() const
 	return ( void* )hardware.GetIXAudio2();
 #endif
 }
-// RB end
 
-/*
-========================
-idSoundSystemLocal::SoundTime
-========================
-*/
 int idSoundSystemLocal::SoundTime() const
 {
 	return soundTime;
 }
 
-/*
-========================
-idSoundSystemLocal::AllocateVoice
-========================
-*/
 idSoundVoice* idSoundSystemLocal::AllocateVoice( const idSoundSample* leadinSample, const idSoundSample* loopingSample )
 {
 	return hardware.AllocateVoice( leadinSample, loopingSample );
 }
 
-/*
-========================
-idSoundSystemLocal::FreeVoice
-========================
-*/
 void idSoundSystemLocal::FreeVoice( idSoundVoice* voice )
 {
 	hardware.FreeVoice( voice );
 }
 
-/*
-========================
-idSoundSystemLocal::LoadSample
-========================
-*/
 idSoundSample* idSoundSystemLocal::LoadSample( const char* name )
 {
 	idStrStatic<MAX_OSPATH> canonical = name;
@@ -458,13 +332,6 @@ idSoundSample* idSoundSystemLocal::LoadSample( const char* name )
 	return sample;
 }
 
-/*
-========================
-idSoundSystemLocal::StopVoicesWithSample
-
-A sample is about to be freed, make sure the hardware isn't mixing from it.
-========================
-*/
 void idSoundSystemLocal::StopVoicesWithSample( const idSoundSample* const sample )
 {
 	for( int w = 0; w < soundWorlds.Num(); w++ ) {
@@ -486,11 +353,6 @@ void idSoundSystemLocal::StopVoicesWithSample( const idSoundSample* const sample
 	}
 }
 
-/*
-========================
-idSoundSystemLocal::FreeVoice
-========================
-*/
 cinData_t idSoundSystemLocal::ImageForTime( const int milliseconds, const bool waveform )
 {
 	cinData_t cd;
@@ -504,11 +366,6 @@ cinData_t idSoundSystemLocal::ImageForTime( const int milliseconds, const bool w
 	return cd;
 }
 
-/*
-========================
-idSoundSystemLocal::BeginLevelLoad
-========================
-*/
 void idSoundSystemLocal::BeginLevelLoad()
 {
 	insideLevelLoad = true;
@@ -521,11 +378,6 @@ void idSoundSystemLocal::BeginLevelLoad()
 	}
 }
 
-/*
-========================
-idSoundSystemLocal::Preload
-========================
-*/
 void idSoundSystemLocal::Preload( idPreloadManifest& manifest )
 {
 	idStrStatic<MAX_OSPATH> filename;
@@ -575,11 +427,6 @@ void idSoundSystemLocal::Preload( idPreloadManifest& manifest )
 	common->Printf( "----------------------------------------\n" );
 }
 
-/*
-========================
-idSoundSystemLocal::EndLevelLoad
-========================
-*/
 void idSoundSystemLocal::EndLevelLoad()
 {
 	insideLevelLoad = false;

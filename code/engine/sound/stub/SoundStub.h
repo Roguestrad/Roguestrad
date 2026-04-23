@@ -47,56 +47,65 @@ If you have questions concerning this license or the applicable additional terms
 class idSoundVoice : public idSoundVoice_Base
 {
 public:
+	//! Initializes the sound voice with lead-in and looping sound samples
 	void   Create( const idSoundSample* leadinSample, const idSoundSample* loopingSample ) { }
 
-	// Start playing at a particular point in the buffer.  Does an Update() too
+	//! Starts playing sound at a specified offset with given flags.
 	void   Start( int offsetMS, int ssFlags ) { }
 
-	// Stop playing.
+	//! Stops the sound voice from playing.
 	void   Stop() { }
 
-	// Stop consuming buffers
+	//! Pauses the sound voice execution.
 	void   Pause() { }
-	// Start consuming buffers again
+
+	//! Resumes sound processing after a pause.
 	void   UnPause() { }
 
-	// Sends new position/volume/pitch information to the hardware
+	//! Updates the sound voice hardware state with new position, volume, and pitch information.
 	bool   Update() { return false; }
 
-	// returns the RMS levels of the most recently processed block of audio, SSF_FLICKER must have been passed to Start
+	//! Returns the RMS amplitude of the most recently processed audio block
 	float  GetAmplitude() { return 0.0f; }
 
-	// returns true if we can re-use this voice
+	//! Returns true if the voice can be reused for the given sound sample.
 	bool   CompatibleFormat( idSoundSample* s ) { return false; }
 
+	//! Returns the sample rate of the sound voice.
 	uint32 GetSampleRate() const { return 0; }
 
-	// callback function
+	//! Callback function invoked when a sound buffer starts playing.
 	void   OnBufferStart( idSoundSample* sample, int bufferNumber ) { }
 };
 
 class idSoundHardware
 {
 public:
+	//! Constructs a new instance of the sound hardware class.
 	idSoundHardware() { }
 
-	void  Init() { }
-	void  Shutdown() { }
+	//! Initializes the sound hardware interface
+	void		  Init() { }
 
-	void  Update() { }
+	//! Shuts down the sound hardware system
+	void		  Shutdown() { }
 
-	// FIXME: this is a bad name when having multiple sound backends... and maybe it's not even needed
-	void* GetIXAudio2() const // NOTE: originally this returned IXAudio2*, but that was casted to void later anyway
-	{
-		return NULL;
-	}
+	//! Updates the sound hardware state.
+	void		  Update() { }
 
+	//! Returns a void pointer to the XAudio2 interface, or NULL if not available.
+	void*		  GetIXAudio2() const { return NULL; }
+
+	//! Allocates a sound voice for playback of lead-in and looping sound samples
 	idSoundVoice* AllocateVoice( const idSoundSample* leadinSample, const idSoundSample* loopingSample ) { return NULL; }
 
+	//! Frees the specified sound voice resource.
 	void		  FreeVoice( idSoundVoice* voice ) { }
 
+	//! Returns the number of zombie voices currently in use by the sound hardware.
 	int			  GetNumZombieVoices() const { return 0; }
 
+	//! Returns the number of free audio voices available for playback.
 	int			  GetNumFreeVoices() const { return 0; }
 };
 
@@ -105,56 +114,92 @@ public:
 class idSoundSample
 {
 public:
+	//! Constructs a new idSoundSample object with default values.
 	idSoundSample();
 
-	~idSoundSample(); // destructor should be public so lists of  soundsamples can be destroyed etc
+	//! Destroys the sound sample and frees its associated data.
+	~idSoundSample();
 
-	// Loads and initializes the resource based on the name.
+	//! Loads and initializes sound resource data
 	virtual void LoadResource();
 
+	//! Sets the name of the sound sample to the provided string.
 	void		 SetName( const char* n ) { name = n; }
+
+	//! Returns the name of the sound sample.
 	const char*	 GetName() const { return name; }
+
+	//! Retrieves the timestamp associated with the sound sample.
 	ID_TIME_T	 GetTimestamp() const { return timestamp; }
 
-	// turns it into a beep
+	//! Initializes the sound sample with default beep-like audio data
 	void		 MakeDefault();
 
-	// frees all data
+	//! Frees all allocated data buffers and resets the sound sample state.
 	void		 FreeData();
 
+	//! Returns the length of the sound sample in milliseconds.
 	int			 LengthInMsec() const { return SamplesToMsec( NumSamples(), SampleRate() ); }
+
+	//! Returns the sample rate of the sound sample in Hz.
 	int			 SampleRate() const { return format.basic.samplesPerSec; }
+
+	//! Returns the number of samples in the sound sample.
 	int			 NumSamples() const { return playLength; }
+
+	//! Returns the number of audio channels in the sound sample.
 	int			 NumChannels() const { return format.basic.numChannels; }
+
+	//! Returns the total buffer size of the sound sample.
 	int			 BufferSize() const { return totalBufferSize; }
 
+	//! Returns true if the sound sample is in a compressed format
 	bool		 IsCompressed() const { return ( format.basic.formatTag != idWaveFile::FORMAT_PCM ); }
 
+	//! Returns true if the sound sample is the default sample, indicating it was not found.
 	bool		 IsDefault() const { return timestamp == FILE_NOT_FOUND_TIMESTAMP; }
+
+	//! Returns true if the sound sample has been successfully loaded.
 	bool		 IsLoaded() const { return loaded; }
 
+	//! Sets the sound sample to never be purged from memory.
 	void		 SetNeverPurge() { neverPurge = true; }
+
+	//! Returns whether the sound sample should never be purged during level load operations.
 	bool		 GetNeverPurge() const { return neverPurge; }
 
+	//! Marks the sound sample as referenced during level load.
 	void		 SetLevelLoadReferenced() { levelLoadReferenced = true; }
+
+	//! Resets the level load referenced flag to false.
 	void		 ResetLevelLoadReferenced() { levelLoadReferenced = false; }
+
+	//! Returns whether the sound sample was referenced during level loading.
 	bool		 GetLevelLoadReferenced() const { return levelLoadReferenced; }
 
+	//! Returns the last time the sound sample was played.
 	int			 GetLastPlayedTime() const { return lastPlayedTime; }
+
+	//! Sets the last played time for the sound sample.
 	void		 SetLastPlayedTime( int t ) { lastPlayedTime = t; }
 
+	//! Returns the amplitude of the sound sample at the specified time in milliseconds
 	float		 GetAmplitude( int timeMS ) const;
 
 protected:
-	/*
-		friend class idSoundHardware_XAudio2;
-		friend class idSoundVoice_XAudio2;
-	*/
-
+	//! Loads a WAV audio file and prepares its data for playback.
 	bool LoadWav( const idStr& name );
+
+	//! Loads amplitude data from a file into the sound sample
 	bool LoadAmplitude( const idStr& name );
+
+	//! Writes all samples to a file with the specified name.
 	void WriteAllSamples( const idStr& sampleName );
+
+	//! Loads a generated sound sample from a file
 	bool LoadGeneratedSample( const idStr& name );
+
+	//! Writes the generated sound sample data to the specified file output.
 	void WriteGeneratedSample( idFile* fileOut );
 
 	struct sampleBuffer_t {

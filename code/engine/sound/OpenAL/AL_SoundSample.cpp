@@ -42,31 +42,18 @@ const uint32  SOUND_MAGIC_IDMSA = 0x6D7A7274;
 
 extern idCVar sys_lang;
 
-/*
-========================
-AllocBuffer
-========================
-*/
+//! Allocates a memory buffer of the specified size for audio use.
 static void*  AllocBuffer( int size, const char* name )
 {
 	return Mem_Alloc( size, TAG_AUDIO );
 }
 
-/*
-========================
-FreeBuffer
-========================
-*/
+//! Frees a memory buffer allocated by the engine.
 static void FreeBuffer( void* p )
 {
 	return Mem_Free( p );
 }
 
-/*
-========================
-idSoundSample_OpenAL::idSoundSample_OpenAL
-========================
-*/
 idSoundSample_OpenAL::idSoundSample_OpenAL()
 {
 	timestamp			= FILE_NOT_FOUND_TIMESTAMP;
@@ -86,21 +73,11 @@ idSoundSample_OpenAL::idSoundSample_OpenAL()
 	openalBuffer = 0;
 }
 
-/*
-========================
-idSoundSample_OpenAL::~idSoundSample_OpenAL
-========================
-*/
 idSoundSample_OpenAL::~idSoundSample_OpenAL()
 {
 	FreeData();
 }
 
-/*
-========================
-idSoundSample_OpenAL::WriteGeneratedSample
-========================
-*/
 void idSoundSample_OpenAL::WriteGeneratedSample( idFile* fileOut )
 {
 	fileOut->WriteBig( SOUND_MAGIC_IDMSA );
@@ -119,11 +96,6 @@ void idSoundSample_OpenAL::WriteGeneratedSample( idFile* fileOut )
 		fileOut->Write( buffers[i].buffer, buffers[i].bufferSize );
 	};
 }
-/*
-========================
-idSoundSample_OpenAL::WriteAllSamples
-========================
-*/
 void idSoundSample_OpenAL::WriteAllSamples( const idStr& sampleName )
 {
 	idSoundSample_OpenAL* samplePC = new idSoundSample_OpenAL();
@@ -146,11 +118,6 @@ void idSoundSample_OpenAL::WriteAllSamples( const idStr& sampleName )
 	delete samplePC;
 }
 
-/*
-========================
-idSoundSample_OpenAL::LoadGeneratedSound
-========================
-*/
 bool idSoundSample_OpenAL::LoadGeneratedSample( const idStr& filename )
 {
 #if 1
@@ -184,11 +151,6 @@ bool idSoundSample_OpenAL::LoadGeneratedSample( const idStr& filename )
 
 	return false;
 }
-/*
-========================
-idSoundSample_OpenAL::Load
-========================
-*/
 void idSoundSample_OpenAL::LoadResource()
 {
 	FreeData();
@@ -332,11 +294,6 @@ void idSoundSample_OpenAL::CreateOpenALBuffer()
 	}
 }
 
-/*
-========================
-idSoundSample_OpenAL::LoadWav
-========================
-*/
 bool idSoundSample_OpenAL::LoadWav( const idStr& filename )
 {
 	// load the wave
@@ -473,11 +430,6 @@ bool idSoundSample_OpenAL::LoadWav( const idStr& filename )
 	return true;
 }
 
-/*
-========================
-idSoundSample_OpenAL::MakeDefault
-========================
-*/
 void idSoundSample_OpenAL::MakeDefault()
 {
 	FreeData();
@@ -537,13 +489,6 @@ void idSoundSample_OpenAL::MakeDefault()
 	}
 }
 
-/*
-========================
-idSoundSample_OpenAL::FreeData
-
-Called before deleting the object and at the start of LoadResource()
-========================
-*/
 void idSoundSample_OpenAL::FreeData()
 {
 	if( buffers.Num() > 0 ) {
@@ -574,11 +519,6 @@ void idSoundSample_OpenAL::FreeData()
 	}
 }
 
-/*
-========================
-idSoundSample_OpenAL::LoadAmplitude
-========================
-*/
 bool idSoundSample_OpenAL::LoadAmplitude( const idStr& name )
 {
 	amplitude.Clear();
@@ -591,11 +531,6 @@ bool idSoundSample_OpenAL::LoadAmplitude( const idStr& name )
 	return true;
 }
 
-/*
-========================
-idSoundSample_OpenAL::GetAmplitude
-========================
-*/
 float idSoundSample_OpenAL::GetAmplitude( int timeMS ) const
 {
 	if( timeMS < 0 || timeMS > LengthInMsec() ) {

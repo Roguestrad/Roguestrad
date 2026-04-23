@@ -42,19 +42,6 @@ idCVar		  s_centerFractionVO( "s_centerFractionVO", "0.75", CVAR_FLOAT, "Portion
 extern idCVar s_playDefaultSound;
 extern idCVar s_noSound;
 
-/*
-================================================================================================
-
-	idSoundFade
-
-================================================================================================
-*/
-
-/*
-========================
-idSoundFade::Clear
-========================
-*/
 void		  idSoundFade::Clear()
 {
 	fadeStartTime	= 0;
@@ -63,11 +50,6 @@ void		  idSoundFade::Clear()
 	fadeEndVolume	= 0.0f;
 }
 
-/*
-========================
-idSoundFade::SetVolume
-========================
-*/
 void idSoundFade::SetVolume( float to )
 {
 	fadeStartVolume = to;
@@ -76,11 +58,6 @@ void idSoundFade::SetVolume( float to )
 	fadeEndTime		= 0;
 }
 
-/*
-========================
-idSoundFade::Fade
-========================
-*/
 void idSoundFade::Fade( float to, int length, int soundTime )
 {
 	int startTime = soundTime;
@@ -94,11 +71,6 @@ void idSoundFade::Fade( float to, int length, int soundTime )
 	fadeEndTime		= startTime + length;
 }
 
-/*
-========================
-idSoundFade::GetVolume
-========================
-*/
 float idSoundFade::GetVolume( const int soundTime ) const
 {
 	const float fadeDuration = ( fadeEndTime - fadeStartTime );
@@ -115,11 +87,6 @@ float idSoundFade::GetVolume( const int soundTime ) const
 	}
 }
 
-/*
-========================
-idSoundChannel::idSoundChannel
-========================
-*/
 idSoundChannel::idSoundChannel()
 {
 	emitter		  = NULL;
@@ -148,25 +115,11 @@ idSoundChannel::~idSoundChannel()
 {
 }
 
-/*
-========================
-idSoundChannel::CanMute
-Never actually mute VO because we can't restart them precisely enough for lip syncing to not fuck up
-========================
-*/
 bool idSoundChannel::CanMute() const
 {
 	return true;
 }
 
-/*
-========================
-idSoundChannel::Mute
-
-A muted sound is considered still running, and can restart when a listener
-gets close enough.
-========================
-*/
 void idSoundChannel::Mute()
 {
 	if( hardwareVoice != NULL ) {
@@ -175,21 +128,11 @@ void idSoundChannel::Mute()
 	}
 }
 
-/*
-========================
-idSoundChannel::IsLooping
-========================
-*/
 bool idSoundChannel::IsLooping() const
 {
 	return ( parms.soundShaderFlags & SSF_LOOPING ) != 0;
 }
 
-/*
-========================
-idSoundChannel::CheckForCompletion
-========================
-*/
 bool idSoundChannel::CheckForCompletion( int currentTime )
 {
 	if( leadinSample == NULL ) {
@@ -202,11 +145,6 @@ bool idSoundChannel::CheckForCompletion( int currentTime )
 	return false;
 }
 
-/*
-========================
-idSoundChannel::UpdateVolume
-========================
-*/
 void idSoundChannel::UpdateVolume( int currentTime )
 {
 	idSoundWorldLocal* soundWorld = emitter->soundWorld;
@@ -287,11 +225,6 @@ void idSoundChannel::UpdateVolume( int currentTime )
 	}
 }
 
-/*
-========================
-idSoundChannel::UpdateHardware
-========================
-*/
 void idSoundChannel::UpdateHardware( float volumeAdd, int currentTime )
 {
 	idSoundWorldLocal* soundWorld = emitter->soundWorld;
@@ -368,39 +301,16 @@ void idSoundChannel::UpdateHardware( float volumeAdd, int currentTime )
 	}
 }
 
-/*
-================================================================================================
-
-	idSoundEmitterLocal
-
-================================================================================================
-*/
-
-/*
-========================
-idSoundEmitterLocal::idSoundEmitterLocal
-========================
-*/
 idSoundEmitterLocal::idSoundEmitterLocal()
 {
 	Init( 0, NULL );
 }
 
-/*
-========================
-idSoundEmitterLocal::~idSoundEmitterLocal
-========================
-*/
 idSoundEmitterLocal::~idSoundEmitterLocal()
 {
 	assert( channels.Num() == 0 );
 }
 
-/*
-========================
-idSoundEmitterLocal::Clear
-========================
-*/
 void idSoundEmitterLocal::Init( int i, idSoundWorldLocal* sw )
 {
 	index	   = i;
@@ -421,11 +331,6 @@ void idSoundEmitterLocal::Init( int i, idSoundWorldLocal* sw )
 	memset( &parms, 0, sizeof( parms ) );
 }
 
-/*
-========================
-idSoundEmitterLocal::Reset
-========================
-*/
 void idSoundEmitterLocal::Reset()
 {
 	for( int i = 0; i < channels.Num(); i++ ) {
@@ -435,11 +340,6 @@ void idSoundEmitterLocal::Reset()
 	Init( index, soundWorld );
 }
 
-/*
-==================
-idSoundEmitterLocal::OverrideParms
-==================
-*/
 void idSoundEmitterLocal::OverrideParms( const soundShaderParms_t* base, const soundShaderParms_t* over, soundShaderParms_t* out )
 {
 	if( !over ) {
@@ -474,17 +374,6 @@ void idSoundEmitterLocal::OverrideParms( const soundShaderParms_t* base, const s
 	out->soundShaderFlags = base->soundShaderFlags | over->soundShaderFlags;
 }
 
-/*
-========================
-idSoundEmitterLocal::CheckForCompletion
-
-Checks to see if any of the channels have completed, removing them as they do
-
-This will also play any postSounds on the same channel as their owner.
-
-Returns true if the emitter should be freed.
-========================
-*/
 bool idSoundEmitterLocal::CheckForCompletion( int currentTime )
 {
 	for( int i = channels.Num() - 1; i >= 0; i-- ) {
@@ -498,11 +387,6 @@ bool idSoundEmitterLocal::CheckForCompletion( int currentTime )
 	return ( canFree && channels.Num() == 0 );
 }
 
-/*
-========================
-idSoundEmitterLocal::Update
-========================
-*/
 void idSoundEmitterLocal::Update( int currentTime )
 {
 	if( channels.Num() == 0 ) {
@@ -574,11 +458,6 @@ void idSoundEmitterLocal::Update( int currentTime )
 	return;
 }
 
-/*
-========================
-idSoundEmitterLocal::Index
-========================
-*/
 int idSoundEmitterLocal::Index() const
 {
 	assert( soundWorld );
@@ -587,13 +466,6 @@ int idSoundEmitterLocal::Index() const
 	return index;
 }
 
-/*
-========================
-idSoundEmitterLocal::Free
-
-Doesn't free it until the next update.
-========================
-*/
 void idSoundEmitterLocal::Free( bool immediate )
 {
 	assert( soundWorld );
@@ -611,11 +483,6 @@ void idSoundEmitterLocal::Free( bool immediate )
 	canFree = true;
 }
 
-/*
-========================
-idSoundEmitterLocal::UpdateEmitter
-========================
-*/
 void idSoundEmitterLocal::UpdateEmitter( const idVec3& origin, int listenerId, const soundShaderParms_t* parms )
 {
 	assert( soundWorld != NULL );
@@ -626,17 +493,6 @@ void idSoundEmitterLocal::UpdateEmitter( const idVec3& origin, int listenerId, c
 	this->parms		= *parms;
 }
 
-/*
-========================
-idSoundEmitterLocal::StartSound
-
-in most cases play sounds immediately, however
-  intercept sounds using SSF_FINITE_SPEED_OF_SOUND
-  and schedule them for playback later
-
-return: int	- the length of the started sound in msec.
-========================
-*/
 int idSoundEmitterLocal::StartSound( const idSoundShader* shader, const s_channelType channel, float diversity, int shaderFlags, bool allowSlow )
 {
 	assert( soundWorld != NULL );
@@ -807,26 +663,10 @@ int idSoundEmitterLocal::StartSound( const idSoundShader* shader, const s_channe
 	return length;
 }
 
-/*
-========================
-idSoundEmitterLocal::OnReloadSound
-
-This is a shortened version of StartSound, called whenever a sound shader is reloaded.
-If the emitter is currently playing the given sound shader, restart it so
-a change in the sound sample used for a given sound shader will be picked up.
-========================
-*/
 void idSoundEmitterLocal::OnReloadSound( const idDecl* decl )
 {
 }
 
-/*
-========================
-idSoundEmitterLocal::StopSound
-
-Can pass SCHANNEL_ANY.
-========================
-*/
 void idSoundEmitterLocal::StopSound( const s_channelType channel )
 {
 	assert( soundWorld != NULL );
@@ -847,11 +687,6 @@ void idSoundEmitterLocal::StopSound( const s_channelType channel )
 	}
 }
 
-/*
-========================
-idSoundEmitterLocal::ModifySound
-========================
-*/
 void idSoundEmitterLocal::ModifySound( const s_channelType channel, const soundShaderParms_t* parms )
 {
 	assert( soundWorld != NULL );
@@ -871,11 +706,6 @@ void idSoundEmitterLocal::ModifySound( const s_channelType channel, const soundS
 	}
 }
 
-/*
-========================
-idSoundEmitterLocal::FadeSound
-========================
-*/
 void idSoundEmitterLocal::FadeSound( const s_channelType channel, float to, float over )
 {
 	assert( soundWorld != NULL );
@@ -898,11 +728,6 @@ void idSoundEmitterLocal::FadeSound( const s_channelType channel, float to, floa
 	}
 }
 
-/*
-========================
-idSoundEmitterLocal::CurrentlyPlaying
-========================
-*/
 bool idSoundEmitterLocal::CurrentlyPlaying( const s_channelType channel ) const
 {
 	if( channel == SCHANNEL_ANY ) {
@@ -922,11 +747,6 @@ bool idSoundEmitterLocal::CurrentlyPlaying( const s_channelType channel ) const
 	return false;
 }
 
-/*
-========================
-idSoundEmitterLocal::CurrentAmplitude
-========================
-*/
 float idSoundEmitterLocal::CurrentAmplitude()
 {
 	float amplitude	  = 0.0f;

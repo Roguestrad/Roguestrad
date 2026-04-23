@@ -35,10 +35,9 @@ class idSoundVoice_XAudio2;
 // RB
 class idSoundHardware_XAudio2;
 
-/*
-================================================
-idSoundEngineCallback
-================================================
+/*!
+	\class idSoundEngineCallback
+	\brief Provides callbacks for XAudio2 engine processing events and error handling.
 */
 class idSoundEngineCallback : public IXAudio2EngineCallback
 {
@@ -46,10 +45,10 @@ public:
 	idSoundHardware_XAudio2* hardware;
 
 private:
-	// Called by XAudio2 just before an audio processing pass begins.
+	//! Called by XAudio2 just before an audio processing pass begins.
 	STDMETHOD_( void, OnProcessingPassStart )( THIS ) { }
 
-	// Called just after an audio processing pass ends.
+	//! Called just after an audio processing pass ends.
 	STDMETHOD_( void, OnProcessingPassEnd )( THIS ) { }
 
 	// Called in the event of a critical system error which requires XAudio2
@@ -57,29 +56,44 @@ private:
 	STDMETHOD_( void, OnCriticalError )( THIS_ HRESULT Error );
 };
 
-/*
-================================================
-idSoundHardware_XAudio2
-================================================
-*/
+/*!
+	\class idSoundHardware_XAudio2
+	\brief Manages XAudio2 sound hardware resources and provides sound playback functionality.
 
+	This class serves as the primary interface for interacting with XAudio2 audio hardware, handling initialization, shutdown, and runtime updates of the audio system. It provides methods for
+   allocating and freeing sound voices, managing zombie voices, and retrieving XAudio2 resource handles. The class maintains a pool of available voices for sound playback and handles cleanup of
+   completed voices. The implementation supports lead-in and looping sample playback through the voice allocation mechanism. Memory management is handled through explicit allocation and freeing of
+   voice resources.
+
+*/
 class idSoundHardware_XAudio2
 {
 public:
+	//! Initializes a new instance of the idSoundHardware_XAudio2 class.
 	idSoundHardware_XAudio2();
 
+	//! Initializes the XAudio2 sound hardware system
 	void		  Init();
+
+	//! Shuts down the XAudio2 sound hardware by cleaning up all audio voices and releasing XAudio2 resources.
 	void		  Shutdown();
 
+	//! Updates the XAudio2 sound hardware state, including volume, zombie voice cleanup, and level metering.
 	void		  Update();
 
+	//! Allocates a sound voice for playing sound samples with optional lead-in and looping samples.
 	idSoundVoice* AllocateVoice( const idSoundSample* leadinSample, const idSoundSample* loopingSample );
+
+	//! Releases a sound voice resource by stopping it and adding it to the zombie voices list for later cleanup.
 	void		  FreeVoice( idSoundVoice* voice );
 
 	// video playback needs this
 	IXAudio2*	  GetIXAudio2() const { return pXAudio2; };
 
+	//! Returns the number of zombie voices managed by the XAudio2 sound hardware.
 	int			  GetNumZombieVoices() const { return zombieVoices.Num(); }
+
+	//! Returns the number of free voices available for sound playback.
 	int			  GetNumFreeVoices() const { return freeVoices.Num(); }
 
 protected:

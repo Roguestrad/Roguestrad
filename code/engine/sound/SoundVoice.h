@@ -30,40 +30,55 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SOUNDVOICE_H__
 #define __SOUNDVOICE_H__
 
-/*
-================================================
-idSoundVoice_Base
-================================================
-*/
+/*!
+	\class idSoundVoice_Base
+	\brief Base class for managing sound voice properties and parameters.
 
+	Provides fundamental functionality for controlling sound voice attributes such as position, gain, pitch, and surround sound configuration. The class serves as a foundation for audio spatialization
+   and mixing, offering methods to set and retrieve voice parameters while supporting surround sound matrix calculations. It handles basic audio property management including occlusion effects and
+   channel masking, enabling precise control over how sounds are rendered in a 3D audio environment. The interface is designed to be extended by derived classes that implement specific audio playback
+   behaviors while maintaining consistent parameter handling and configuration routines.
+
+*/
 class idSoundVoice_Base
 {
 public:
+	//! Initializes all member variables to their default values.
 	idSoundVoice_Base();
 
+	//! Initializes surround sound speaker positions and mappings based on output channels and channel mask
 	static void			 InitSurround( int outputChannels, int channelMask );
 
+	//! Calculates surround sound matrix coefficients for audio channel mapping
 	void				 CalculateSurround( int srcChannels, float pLevelMatrix[MAX_CHANNELS_PER_VOICE * MAX_CHANNELS_PER_VOICE], float scale );
 
-	// RB begin
+	//! Sets the position of the sound voice to the specified 3D point.
 	virtual void		 SetPosition( const idVec3& p ) { position = p; }
 
+	//! Sets the gain value for the sound voice.
 	virtual void		 SetGain( float g ) { gain = g; }
 
+	//! Sets the pitch value for the sound voice.
 	virtual void		 SetPitch( float p ) { pitch = p; }
-	// RB end
 
+	//! Sets the center channel value for the sound voice.
 	void				 SetCenterChannel( float c ) { centerChannel = c; }
 
+	//! Sets the inner radius value for the sound voice.
 	void				 SetInnerRadius( float r ) { innerRadius = r; }
+
+	//! Sets the channel mask for the sound voice.
 	void				 SetChannelMask( uint32 mask ) { channelMask = mask; }
 
 	const idSoundSample* GetCurrentSample();
 
-	// Controls the low pass filter, where 0.0f = no filtering, 1.0f = full filter
+	//! Sets the occlusion value for the sound voice, controlling the low pass filter effect.
 	void				 SetOcclusion( float f ) { occlusion = f; }
 
+	//! Retrieves the gain value associated with the sound voice.
 	float				 GetGain() { return gain; }
+
+	//! Returns the pitch value of the sound voice.
 	float				 GetPitch() { return pitch; }
 
 protected:

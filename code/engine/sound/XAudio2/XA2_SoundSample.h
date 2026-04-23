@@ -29,64 +29,113 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __XA2_SOUNDSAMPLE_H__
 #define __XA2_SOUNDSAMPLE_H__
 
-/*
-================================================
-idSoundSample_XAudio2
-================================================
-*/
 class idSampleInfo;
+
+/*!
+	\class idSoundSample_XAudio2
+	\brief Manages sound sample data and provides functionality for loading, querying, and manipulating audio resources in XAudio2.
+
+	This class serves as a container for sound sample data and provides methods for loading various audio formats, including WAV, Ogg Vorbis, and generated samples. It maintains metadata about the
+   audio such as sample rate, number of channels, and buffer size, and offers methods to query the length, amplitude, and other properties of the sound sample. The class supports loading audio
+   resources from files, initializing default samples, and managing the lifecycle of loaded data through load and free operations. Additionally, it tracks loading and playback state information, such
+   as timestamps, last played time, and reference flags used during level loading operations. The class interfaces with XAudio2 for audio playback and resource management.
+
+*/
 class idSoundSample_XAudio2
 {
 public:
+	//! Initializes a new instance of the idSoundSample_XAudio2 class with default values.
 	idSoundSample_XAudio2();
 
-	// Loads and initializes the resource based on the name.
+	//! Loads and initializes the sound resource based on the sample name.
 	virtual void LoadResource();
 
+	//! Sets the name of the sound sample.
 	void		 SetName( const char* n ) { name = n; }
+
+	//! Returns the name of the sound sample.
 	const char*	 GetName() const { return name; }
+
+	//! Retrieves the timestamp value stored in the idSoundSample_XAudio2 instance.
 	ID_TIME_T	 GetTimestamp() const { return timestamp; }
 
-	// turns it into a beep
+	//! Initializes the sound sample with default PCM audio data containing a beep pattern
 	void		 MakeDefault();
 
-	// frees all data
+	//! Frees all allocated data and resets the sound sample state
 	void		 FreeData();
 
+	//! Returns the length of the sound sample in milliseconds.
 	int			 LengthInMsec() const { return SamplesToMsec( NumSamples(), SampleRate() ); }
+
+	//! Returns the sample rate of the sound sample in samples per second.
 	int			 SampleRate() const { return format.basic.samplesPerSec; }
+
+	//! Returns the total number of samples in the sound sample.
 	int			 NumSamples() const { return playLength; }
+
+	//! Returns the number of audio channels in the sound sample.
 	int			 NumChannels() const { return format.basic.numChannels; }
+
+	//! Returns the total buffer size of the sound sample.
 	int			 BufferSize() const { return totalBufferSize; }
 
+	//! Returns true if the sound sample is in a compressed format
 	bool		 IsCompressed() const { return ( format.basic.formatTag != idWaveFile::FORMAT_PCM ); }
 
+	//! Returns true if the sound sample is the default sample.
 	bool		 IsDefault() const { return timestamp == FILE_NOT_FOUND_TIMESTAMP; }
+
+	//! Returns true if the sound sample has been successfully loaded.
 	bool		 IsLoaded() const { return loaded; }
 
+	//! Sets the sound sample to never be purged from memory.
 	void		 SetNeverPurge() { neverPurge = true; }
+
+	//! Returns whether the sound sample should never be purged during level load operations.
 	bool		 GetNeverPurge() const { return neverPurge; }
 
+	//! Marks the sound sample as referenced during level load.
 	void		 SetLevelLoadReferenced() { levelLoadReferenced = true; }
+
+	//! Resets the level load reference flag for the sound sample.
 	void		 ResetLevelLoadReferenced() { levelLoadReferenced = false; }
+
+	//! Returns whether the sound sample is referenced during level loading.
 	bool		 GetLevelLoadReferenced() const { return levelLoadReferenced; }
 
+	//! Returns the last played time of the sound sample.
 	int			 GetLastPlayedTime() const { return lastPlayedTime; }
+
+	//! Sets the last played time for the sound sample.
 	void		 SetLastPlayedTime( int t ) { lastPlayedTime = t; }
 
+	//! Retrieves the amplitude of the sound sample at a specified time in milliseconds.
 	float		 GetAmplitude( int timeMS ) const;
 
 protected:
 	friend class idSoundHardware_XAudio2;
 	friend class idSoundVoice_XAudio2;
 
+	//! Destructor for the idSoundSample_XAudio2 class that releases allocated resources.
 	~idSoundSample_XAudio2();
 
+	//! Loads a WAV audio file into the sound sample for XAudio2.
 	bool LoadWav( const idStr& name );
+
+	//! Loads an Ogg Vorbis sound sample from the specified file name.
 	bool LoadOgg( const idStr& name );
+
+	//! Loads amplitude data from a file into the sound sample
 	bool LoadAmplitude( const idStr& name );
+
+	//! Writes all samples to a file
 	void WriteAllSamples( const idStr& sampleName );
+
+	//! Loads a generated sound sample from a file
 	bool LoadGeneratedSample( const idStr& name );
+
+	//! Writes the generated sound sample data to the specified file output stream.
 	void WriteGeneratedSample( idFile* fileOut );
 
 	struct sampleBuffer_t {

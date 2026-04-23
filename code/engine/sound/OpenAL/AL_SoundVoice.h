@@ -32,17 +32,26 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int MAX_QUEUED_BUFFERS = 3;
 
-/*
-================================================
-idSoundVoice_OpenAL
-================================================
+/*!
+	\class idSoundVoice_OpenAL
+	\brief Manages OpenAL audio playback for sound voices.
+
+	This class provides the OpenAL-specific implementation for managing audio playback of sound voices. It handles the creation, configuration, and control of OpenAL audio sources, including setting
+   position, gain, and pitch properties. The class supports lead-in and looping sound samples, and provides methods for starting, stopping, pausing, and resuming playback. It also handles buffer
+   management and updates the hardware state to reflect current audio properties. The class is designed to work with OpenAL sound samples and can be reused with compatible samples to avoid unnecessary
+   resource creation. Memory management is handled through the base class and OpenAL resource cleanup is performed through explicit destroy methods.
+
 */
 class idSoundVoice_OpenAL : public idSoundVoice_Base
 {
 public:
+	//! Initializes a new instance of the idSoundVoice_OpenAL class with default values.
 	idSoundVoice_OpenAL();
+
+	//! Destructor for the idSoundVoice_OpenAL class that cleans up internal resources.
 	~idSoundVoice_OpenAL();
 
+	//! Sets the position of the sound voice in 3D space for OpenAL audio rendering.
 	void SetPosition( const idVec3& p )
 	{
 		idSoundVoice_Base::SetPosition( p );
@@ -50,6 +59,7 @@ public:
 		alSource3f( openalSource, AL_POSITION, -p.y, p.z, -p.x );
 	}
 
+	//! Sets the gain or volume level for the OpenAL sound voice.
 	void SetGain( float gain )
 	{
 		idSoundVoice_Base::SetGain( gain );
@@ -57,6 +67,7 @@ public:
 		alSourcef( openalSource, AL_GAIN, ( gain ) < ( 1.0f ) ? ( gain ) : ( 1.0f ) );
 	}
 
+	//! Sets the pitch multiplier for the sound voice.
 	void SetPitch( float p )
 	{
 		idSoundVoice_Base::SetPitch( p );
@@ -64,53 +75,55 @@ public:
 		alSourcef( openalSource, AL_PITCH, p );
 	}
 
+	//! Initializes a sound voice with lead-in and looping sound samples.
 	void   Create( const idSoundSample* leadinSample, const idSoundSample* loopingSample );
 
-	// Start playing at a particular point in the buffer.  Does an Update() too
+	//! Start playing the sound at a specific time offset with given flags.
 	void   Start( int offsetMS, int ssFlags );
 
-	// Stop playing.
+	//! Stops the audio playback for this sound voice.
 	void   Stop();
 
-	// Stop consuming buffers
+	//! Pauses the OpenAL sound source if it is active and not already paused.
 	void   Pause();
 
-	// Start consuming buffers again
+	//! Resumes playback of the audio source if it is currently paused
 	void   UnPause();
 
-	// Sends new position/volume/pitch information to the hardware
+	//! Updates the sound voice hardware state with current position, volume, and pitch information.
 	bool   Update();
 
-	// returns the RMS levels of the most recently processed block of audio, SSF_FLICKER must have been passed to Start
+	//! Returns the RMS amplitude of the most recently processed audio block for this sound voice.
 	float  GetAmplitude();
 
-	// returns true if we can re-use this voice
+	//! Returns true if the voice can be reused with the given sound sample.
 	bool   CompatibleFormat( idSoundSample_OpenAL* s );
 
+	//! Returns the sample rate of the audio voice.
 	uint32 GetSampleRate() const { return sampleRate; }
 
-	// callback function
+	//! Handles the start of a sound buffer playback by preparing the next buffer for submission.
 	void   OnBufferStart( idSoundSample_OpenAL* sample, int bufferNumber );
 
 private:
 	friend class idSoundHardware_OpenAL;
 
-	// Returns true when all the buffers are finished processing
+	//! Returns true when the sound voice is currently playing.
 	bool				  IsPlaying();
 
-	// Called after the voice has been stopped
+	//! Flushes the audio buffers for the OpenAL source associated with this sound voice.
 	void				  FlushSourceBuffers();
 
-	// Destroy the internal hardware resource
+	//! Destroys the internal OpenAL hardware resource associated with this sound voice.
 	void				  DestroyInternal();
 
-	// Helper function used by the initial start as well as for looping a streamed buffer
+	//! Restarts audio playback at the specified sample offset.
 	int					  RestartAt( int offsetSamples );
 
-	// Helper function to submit a buffer
+	//! Submits a sound buffer to the OpenAL source for playback.
 	int					  SubmitBuffer( idSoundSample_OpenAL* sample, int bufferNumber, int offset );
 
-	// Adjust the voice frequency based on the new sample rate for the buffer
+	//! Adjusts the voice frequency based on the new sample rate for the buffer.
 	void				  SetSampleRate( uint32 newSampleRate, uint32 operationSet );
 
 	// IXAudio2SourceVoice* 	pSourceVoice;
@@ -134,10 +147,10 @@ private:
 	bool				  paused;
 };
 
-/*
-================================================
-idSoundVoice
-================================================
+/*!
+	\class idSoundVoice
+	\brief Manages the playback state and hardware interaction for a single sound instance.
+
 */
 class idSoundVoice : public idSoundVoice_OpenAL
 {

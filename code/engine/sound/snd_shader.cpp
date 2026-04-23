@@ -38,11 +38,6 @@ extern idCVar s_maxSamples;
 
 typedef enum { SPEAKER_LEFT = 0, SPEAKER_RIGHT, SPEAKER_CENTER, SPEAKER_LFE, SPEAKER_BACKLEFT, SPEAKER_BACKRIGHT } speakerLabel;
 
-/*
-===============
-idSoundShader::Init
-===============
-*/
 void idSoundShader::Init()
 {
 	leadin		 = false;
@@ -50,11 +45,6 @@ void idSoundShader::Init()
 	altSound	 = NULL;
 }
 
-/*
-===============
-idSoundShader::idSoundShader
-===============
-*/
 idSoundShader::idSoundShader()
 {
 	Init();
@@ -69,30 +59,15 @@ idSoundShader::~idSoundShader()
 {
 }
 
-/*
-=================
-idSoundShader::Size
-=================
-*/
 size_t idSoundShader::Size() const
 {
 	return sizeof( idSoundShader );
 }
 
-/*
-===============
-idSoundShader::idSoundShader::FreeData
-===============
-*/
 void idSoundShader::FreeData()
 {
 }
 
-/*
-===================
-idSoundShader::SetDefaultText
-===================
-*/
 bool idSoundShader::SetDefaultText()
 {
 	idStr wavname;
@@ -135,11 +110,6 @@ bool idSoundShader::SetDefaultText()
 	}
 }
 
-/*
-===================
-DefaultDefinition
-===================
-*/
 const char* idSoundShader::DefaultDefinition() const
 {
 	return "{\n"
@@ -148,13 +118,6 @@ const char* idSoundShader::DefaultDefinition() const
 		   "}";
 }
 
-/*
-===============
-idSoundShader::Parse
-
-  this is called by the declManager
-===============
-*/
 bool idSoundShader::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	idLexer src;
@@ -170,11 +133,6 @@ bool idSoundShader::Parse( const char* text, const int textLength, bool allowBin
 	return true;
 }
 
-/*
-===============
-idSoundShader::ParseShader
-===============
-*/
 bool idSoundShader::ParseShader( idLexer& src )
 {
 	idToken token;
@@ -356,11 +314,6 @@ bool idSoundShader::ParseShader( idLexer& src )
 	return true;
 }
 
-/*
-===============
-idSoundShader::List
-===============
-*/
 void idSoundShader::List() const
 {
 	idStrList shaders;
@@ -374,41 +327,21 @@ void idSoundShader::List() const
 	}
 }
 
-/*
-===============
-idSoundShader::GetAltSound
-===============
-*/
 const idSoundShader* idSoundShader::GetAltSound() const
 {
 	return altSound;
 }
 
-/*
-===============
-idSoundShader::GetMinDistance
-===============
-*/
 float idSoundShader::GetMinDistance() const
 {
 	return parms.minDistance;
 }
 
-/*
-===============
-idSoundShader::GetMaxDistance
-===============
-*/
 float idSoundShader::GetMaxDistance() const
 {
 	return parms.maxDistance;
 }
 
-/*
-===============
-idSoundShader::HasDefaultSound
-===============
-*/
 bool idSoundShader::HasDefaultSound() const
 {
 	for( int i = 0; i < entries.Num(); i++ ) {
@@ -419,31 +352,16 @@ bool idSoundShader::HasDefaultSound() const
 	return false;
 }
 
-/*
-===============
-idSoundShader::GetParms
-===============
-*/
 const soundShaderParms_t* idSoundShader::GetParms() const
 {
 	return &parms;
 }
 
-/*
-===============
-idSoundShader::GetNumSounds
-===============
-*/
 int idSoundShader::GetNumSounds() const
 {
 	return entries.Num();
 }
 
-/*
-===============
-idSoundShader::GetSound
-===============
-*/
 const char* idSoundShader::GetSound( int index ) const
 {
 	if( index >= 0 && index < entries.Num() ) {

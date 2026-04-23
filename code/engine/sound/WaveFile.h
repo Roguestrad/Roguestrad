@@ -29,30 +29,44 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __WAVEFILE_H
 #define __WAVEFILE_H
 
-/*
-================================================================================================
-Contains the WaveFile declaration.
-================================================================================================
-*/
+/*!
+	\class idWaveFile
+	\brief Provides functionality for reading and writing RIFF WAVE audio files.
 
-/*
-================================================
-idWaveFile is used for reading generic RIFF WAVE files.
-================================================
+	The idWaveFile class serves as a comprehensive interface for handling RIFF WAVE audio files, supporting both reading and writing operations. It provides methods for opening and closing files,
+   seeking to specific data chunks, reading and writing audio format information, and managing sample data. The class handles the low-level details of parsing WAV file structures including format
+   headers, data chunks, and loop information. It supports direct file I/O operations through associated file objects and maintains internal state to track file position and metadata. The class is
+   designed to work with standard WAV file formats and provides access to various audio properties such as timestamp, file name, and format details.
+
 */
 class idWaveFile
 {
 public:
+	//! Constructs an idWaveFile object with a null file pointer.
 	ID_INLINE idWaveFile();
+
+	//! Destructor for the idWaveFile class that closes the wave file.
 	ID_INLINE ~idWaveFile();
 
+	//! Opens a wave file for reading and validates its format
 	bool		Open( const char* filename );
+
+	//! Closes the wave file and frees allocated resources.
 	void		Close();
+
+	//! Seeks to the specified chunk and returns its size, or 0 if the chunk wasn't found
 	uint32		SeekToChunk( uint32 id );
+
+	//! Reads data from the wave file into the provided buffer.
 	size_t		Read( void* buffer, size_t len ) { return file->Read( buffer, len ); }
+
+	//! Returns the offset of the specified chunk ID or 0 if not found
 	uint32		GetChunkOffset( uint32 id );
 
+	//! Returns the timestamp of the wave file.
 	ID_TIME_T	Timestamp() { return file->Timestamp(); }
+
+	//! Returns the name of the wave file.
 	const char* Name() { return ( file == NULL ? "" : file->GetName() ); }
 
 	// This maps to the channel mask in waveFmtExtensible_t
@@ -195,13 +209,25 @@ public:
 		uint32 playCount;  // ignored
 	};
 
+	//! Reads a wave format header and returns NULL if successful, otherwise returns an error message.
 	const char* ReadWaveFormat( waveFmt_t& waveFmt );
+
+	//! Reads and parses wave format information from a file pointer into a format structure
 	static bool ReadWaveFormatDirect( waveFmt_t& format, idFile* file );
+
+	//! Writes a wave format header to the specified file.
 	static bool WriteWaveFormatDirect( waveFmt_t& format, idFile* file, bool wavFile );
+
+	//! Writes sample data to a wave file
 	static bool WriteSampleDataDirect( idList<sampleData_t>& sampleData, idFile* file );
+
+	//! Writes a data chunk to the specified file.
 	static bool WriteDataDirect( char* _data, uint32 size, idFile* file );
+
+	//! Writes a WAV file header to the specified file.
 	static bool WriteHeaderDirect( uint32 fileSize, idFile* file );
 
+	//! Reads loop data from a wave file's smpl chunk and returns true if successful.
 	bool		ReadLoopData( int& start, int& end );
 
 private:
@@ -216,21 +242,11 @@ private:
 	idStaticList<chunk_t, 32> chunks;
 };
 
-/*
-========================
-idWaveFile::idWaveFile
-========================
-*/
 ID_INLINE idWaveFile::idWaveFile() :
 	file( NULL )
 {
 }
 
-/*
-========================
-idWaveFile::~idWaveFile
-========================
-*/
 ID_INLINE idWaveFile::~idWaveFile()
 {
 	Close();

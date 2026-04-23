@@ -37,35 +37,53 @@ idCVar		 s_debugHardware( "s_debugHardware", "0", CVAR_BOOL, "Print a message an
 static int	 SYSTEM_SAMPLE_RATE			 = 44100;
 static float ONE_OVER_SYSTEM_SAMPLE_RATE = 1.0f / SYSTEM_SAMPLE_RATE;
 
-/*
-========================
-idStreamingVoiceContext
-========================
+/*!
+	\class idStreamingVoiceContext
+	\brief Manages XAudio2 voice callbacks for streaming audio playback.
+
+	This class implements the IXAudio2VoiceCallback interface to handle various events in the XAudio2 audio system's streaming voice context. It provides callback handlers for voice processing pass
+   start and end, stream end, buffer start and end, loop end, and voice error events. The class is designed to integrate with the audio subsystem's streaming audio capabilities, allowing for proper
+   management of audio buffer processing and event handling during playback. The callback methods enable the audio system to respond appropriately to different stages and potential errors in the
+   streaming audio pipeline.
+
 */
 class idStreamingVoiceContext : public IXAudio2VoiceCallback
 {
 public:
+	//! Handles the start of a voice processing pass in the XAudio2 audio system
 	STDMETHOD_( void, OnVoiceProcessingPassStart )( UINT32 BytesRequired )
 	{
 	}
+
+	//! Handles the end of a voice processing pass in the XAudio2 audio system.
 	STDMETHOD_( void, OnVoiceProcessingPassEnd )()
 	{
 	}
+
+	//! Handles the event when an audio stream ends in the XAudio2 streaming voice context.
 	STDMETHOD_( void, OnStreamEnd )()
 	{
 	}
+
+	//! Handles the start of a buffer event for streaming audio playback.
 	STDMETHOD_( void, OnBufferStart )( void* pContext )
 	{
 		idSoundSystemLocal::bufferContext_t* bufferContext = ( idSoundSystemLocal::bufferContext_t* )pContext;
 		bufferContext->voice->OnBufferStart( bufferContext->sample, bufferContext->bufferNumber );
 	}
+
+	//! Handles the end of a loop in a streaming audio voice context.
 	STDMETHOD_( void, OnLoopEnd )( void* )
 	{
 	}
+
+	//! Handles voice error events in the XAudio2 audio system.
 	STDMETHOD_( void, OnVoiceError )( void*, HRESULT hr )
 	{
 		idLib::Warning( "OnVoiceError( %d )", hr );
 	}
+
+	//! Handles the completion of an audio buffer in the streaming voice context
 	STDMETHOD_( void, OnBufferEnd )( void* pContext )
 	{
 		idSoundSystemLocal::bufferContext_t* bufferContext = ( idSoundSystemLocal::bufferContext_t* )pContext;
@@ -73,11 +91,6 @@ public:
 	}
 } streamContext;
 
-/*
-========================
-idSoundVoice_XAudio2::idSoundVoice_XAudio2
-========================
-*/
 idSoundVoice_XAudio2::idSoundVoice_XAudio2() :
 	pSourceVoice( NULL ),
 	leadinSample( NULL ),
@@ -90,21 +103,11 @@ idSoundVoice_XAudio2::idSoundVoice_XAudio2() :
 {
 }
 
-/*
-========================
-idSoundVoice_XAudio2::~idSoundVoice_XAudio2
-========================
-*/
 idSoundVoice_XAudio2::~idSoundVoice_XAudio2()
 {
 	DestroyInternal();
 }
 
-/*
-========================
-idSoundVoice_XAudio2::CompatibleFormat
-========================
-*/
 bool idSoundVoice_XAudio2::CompatibleFormat( idSoundSample_XAudio2* s )
 {
 	if( pSourceVoice == NULL ) {
@@ -114,11 +117,6 @@ bool idSoundVoice_XAudio2::CompatibleFormat( idSoundSample_XAudio2* s )
 	return false;
 }
 
-/*
-========================
-idSoundVoice_XAudio2::Create
-========================
-*/
 void idSoundVoice_XAudio2::Create( const idSoundSample* leadinSample_, const idSoundSample* loopingSample_ )
 {
 	if( IsPlaying() ) {
@@ -156,11 +154,6 @@ void idSoundVoice_XAudio2::Create( const idSoundSample* leadinSample_, const idS
 	pSourceVoice->SetVolume( 0.0f );
 }
 
-/*
-========================
-idSoundVoice_XAudio2::DestroyInternal
-========================
-*/
 void idSoundVoice_XAudio2::DestroyInternal()
 {
 	if( pSourceVoice != NULL ) {
@@ -173,11 +166,6 @@ void idSoundVoice_XAudio2::DestroyInternal()
 	}
 }
 
-/*
-========================
-idSoundVoice_XAudio2::Start
-========================
-*/
 void idSoundVoice_XAudio2::Start( int offsetMS, int ssFlags )
 {
 	if( s_debugHardware.GetBool() ) {
@@ -232,11 +220,6 @@ void idSoundVoice_XAudio2::Start( int offsetMS, int ssFlags )
 	UnPause();
 }
 
-/*
-========================
-idSoundVoice_XAudio2::RestartAt
-========================
-*/
 int idSoundVoice_XAudio2::RestartAt( int offsetSamples )
 {
 	offsetSamples &= ~127;
@@ -262,11 +245,6 @@ int idSoundVoice_XAudio2::RestartAt( int offsetSamples )
 	return 0;
 }
 
-/*
-========================
-idSoundVoice_XAudio2::SubmitBuffer
-========================
-*/
 int idSoundVoice_XAudio2::SubmitBuffer( idSoundSample_XAudio2* sample, int bufferNumber, int offset )
 {
 	if( sample == NULL || ( bufferNumber < 0 ) || ( bufferNumber >= sample->buffers.Num() ) ) {
@@ -302,11 +280,6 @@ int idSoundVoice_XAudio2::SubmitBuffer( idSoundSample_XAudio2* sample, int buffe
 	return buffer.AudioBytes;
 }
 
-/*
-========================
-idSoundVoice_XAudio2::Update
-========================
-*/
 bool idSoundVoice_XAudio2::Update()
 {
 	if( pSourceVoice == NULL || leadinSample == NULL ) {
@@ -337,11 +310,6 @@ bool idSoundVoice_XAudio2::Update()
 	return true;
 }
 
-/*
-========================
-idSoundVoice_XAudio2::IsPlaying
-========================
-*/
 bool idSoundVoice_XAudio2::IsPlaying()
 {
 	if( pSourceVoice == NULL ) {
@@ -352,11 +320,6 @@ bool idSoundVoice_XAudio2::IsPlaying()
 	return ( state.BuffersQueued != 0 );
 }
 
-/*
-========================
-idSoundVoice_XAudio2::FlushSourceBuffers
-========================
-*/
 void idSoundVoice_XAudio2::FlushSourceBuffers()
 {
 	if( pSourceVoice != NULL ) {
@@ -364,11 +327,6 @@ void idSoundVoice_XAudio2::FlushSourceBuffers()
 	}
 }
 
-/*
-========================
-idSoundVoice_XAudio2::Pause
-========================
-*/
 void idSoundVoice_XAudio2::Pause()
 {
 	if( !pSourceVoice || paused ) {
@@ -381,11 +339,6 @@ void idSoundVoice_XAudio2::Pause()
 	paused = true;
 }
 
-/*
-========================
-idSoundVoice_XAudio2::UnPause
-========================
-*/
 void idSoundVoice_XAudio2::UnPause()
 {
 	if( !pSourceVoice || !paused ) {
@@ -398,11 +351,6 @@ void idSoundVoice_XAudio2::UnPause()
 	paused = false;
 }
 
-/*
-========================
-idSoundVoice_XAudio2::Stop
-========================
-*/
 void idSoundVoice_XAudio2::Stop()
 {
 	if( !pSourceVoice ) {
@@ -417,11 +365,6 @@ void idSoundVoice_XAudio2::Stop()
 	}
 }
 
-/*
-========================
-idSoundVoice_XAudio2::GetAmplitude
-========================
-*/
 float idSoundVoice_XAudio2::GetAmplitude()
 {
 	if( !hasVUMeter ) {
@@ -456,11 +399,6 @@ float idSoundVoice_XAudio2::GetAmplitude()
 	return rms / ( float )levels.ChannelCount;
 }
 
-/*
-========================
-idSoundVoice_XAudio2::ResetSampleRate
-========================
-*/
 void idSoundVoice_XAudio2::SetSampleRate( uint32 newSampleRate, uint32 operationSet )
 {
 	if( pSourceVoice == NULL || leadinSample == NULL ) {
@@ -496,11 +434,6 @@ void idSoundVoice_XAudio2::SetSampleRate( uint32 newSampleRate, uint32 operation
 	pSourceVoice->SetFrequencyRatio( freqRatio, operationSet );
 }
 
-/*
-========================
-idSoundVoice_XAudio2::OnBufferStart
-========================
-*/
 void idSoundVoice_XAudio2::OnBufferStart( idSoundSample_XAudio2* sample, int bufferNumber )
 {
 	SetSampleRate( sample->SampleRate(), XAUDIO2_COMMIT_NOW );

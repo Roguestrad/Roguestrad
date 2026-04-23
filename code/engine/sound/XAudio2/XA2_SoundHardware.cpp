@@ -140,11 +140,6 @@ std::vector<AudioDevice> EnumerateAudioDevices( _Out_opt_ AudioDevice* defaultDe
 }
 #endif
 
-/*
-========================
-idSoundHardware_XAudio2::idSoundHardware_XAudio2
-========================
-*/
 idSoundHardware_XAudio2::idSoundHardware_XAudio2()
 {
 	pXAudio2	 = NULL;
@@ -278,11 +273,6 @@ void listDevices_f( const idCmdArgs& args )
 	// RB end
 }
 
-/*
-========================
-idSoundHardware_XAudio2::Init
-========================
-*/
 void idSoundHardware_XAudio2::Init()
 {
 	cmdSystem->AddCommand( "listDevices", listDevices_f, 0, "Lists the connected sound devices", NULL );
@@ -494,11 +484,6 @@ void idSoundHardware_XAudio2::Init()
 	// RB end
 }
 
-/*
-========================
-idSoundHardware_XAudio2::Shutdown
-========================
-*/
 void idSoundHardware_XAudio2::Shutdown()
 {
 	for( int i = 0; i < voices.Num(); i++ ) {
@@ -541,11 +526,6 @@ void idSoundHardware_XAudio2::Shutdown()
 	}
 }
 
-/*
-========================
-idSoundHardware_XAudio2::AllocateVoice
-========================
-*/
 idSoundVoice* idSoundHardware_XAudio2::AllocateVoice( const idSoundSample* leadinSample, const idSoundSample* loopingSample )
 {
 	if( leadinSample == NULL ) {
@@ -579,11 +559,6 @@ idSoundVoice* idSoundHardware_XAudio2::AllocateVoice( const idSoundSample* leadi
 	return NULL;
 }
 
-/*
-========================
-idSoundHardware_XAudio2::FreeVoice
-========================
-*/
 void idSoundHardware_XAudio2::FreeVoice( idSoundVoice* voice )
 {
 	voice->Stop();
@@ -593,11 +568,6 @@ void idSoundHardware_XAudio2::FreeVoice( idSoundVoice* voice )
 	zombieVoices.Append( voice );
 }
 
-/*
-========================
-idSoundHardware_XAudio2::Update
-========================
-*/
 void idSoundHardware_XAudio2::Update()
 {
 	if( pXAudio2 == NULL ) {

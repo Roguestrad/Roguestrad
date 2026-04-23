@@ -44,11 +44,6 @@ int	   idSoundVoice_Base::dstMap[MAX_CHANNELS_PER_VOICE]			  = { 0 };
 int	   idSoundVoice_Base::invMap[idWaveFile::CHANNEL_INDEX_MAX]		  = { 0 };
 float  idSoundVoice_Base::omniLevel									  = 1.0f;
 
-/*
-========================
-idSoundVoice_Base::idSoundVoice_Base
-========================
-*/
 idSoundVoice_Base::idSoundVoice_Base() :
 	position( 0.0f ),
 	gain( 1.0f ),
@@ -62,11 +57,6 @@ idSoundVoice_Base::idSoundVoice_Base() :
 {
 }
 
-/*
-========================
-idSoundVoice_Base::InitSurround
-========================
-*/
 void idSoundVoice_Base::InitSurround( int outputChannels, int channelMask )
 {
 	speakerPositions[idWaveFile::CHANNEL_INDEX_FRONT_LEFT].Set( 0.70710678118654752440084436210485f, 0.70710678118654752440084436210485f );			// 45 degrees
@@ -152,11 +142,6 @@ void idSoundVoice_Base::InitSurround( int outputChannels, int channelMask )
 	}
 }
 
-/*
-========================
-idSoundVoice_Base::CalculateSurround
-========================
-*/
 void idSoundVoice_Base::CalculateSurround( int srcChannels, float pLevelMatrix[MAX_CHANNELS_PER_VOICE * MAX_CHANNELS_PER_VOICE], float scale )
 {
 	// Hack for mono
