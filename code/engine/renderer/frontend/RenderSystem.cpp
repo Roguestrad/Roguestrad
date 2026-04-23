@@ -107,9 +107,6 @@ void idRenderSystemLocal::RenderCommandBuffers( const emptyCommand_t* const cmdH
 	if( !r_skipBackEnd.GetBool() ) {
 		backEnd.ExecuteBackEndCommands( cmdHead );
 	}
-
-	// pass in null for now - we may need to do some map specific hackery in the future
-	resolutionScale.InitForMap( NULL );
 }
 
 void* R_GetCommandBuffer( int bytes )
@@ -590,16 +587,6 @@ const emptyCommand_t* idRenderSystemLocal::SwapCommandBuffers_FinishCommandBuffe
 void idRenderSystemLocal::GetCroppedViewport( idScreenRect* viewport )
 {
 	*viewport = renderCrops[currentRenderCrop];
-}
-
-void idRenderSystemLocal::PerformResolutionScaling( int& newWidth, int& newHeight )
-{
-	float xScale = 1.0f;
-	float yScale = 1.0f;
-	resolutionScale.GetCurrentResolutionScale( xScale, yScale );
-
-	newWidth  = idMath::Ftoi( GetWidth() * xScale );
-	newHeight = idMath::Ftoi( GetHeight() * yScale );
 }
 
 void idRenderSystemLocal::CropRenderSize( int width, int height )

@@ -4553,8 +4553,6 @@ void idRenderBackend::ExecuteBackEndCommands( const emptyCommand_t* cmds )
 	int c_setBuffers  = 0;
 	int c_copyRenders = 0;
 
-	resolutionScale.SetCurrentGPUFrameTime( commonLocal.GetRendererGPUMicroseconds() );
-
 	// make sure the swapchains and rendertargets have the size requested
 	// by the window system
 	ResizeImages();

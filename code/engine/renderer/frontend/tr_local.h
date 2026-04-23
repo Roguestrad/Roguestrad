@@ -1246,8 +1246,6 @@ public:
 	//! Returns the current cropped pixel coordinates in the provided viewport rectangle.
 	void GetCroppedViewport( idScreenRect* viewport );
 
-	//! Adjusts the rendering width and height based on the current resolution scale.
-	void PerformResolutionScaling( int& newWidth, int& newHeight );
 	int	 GetFrameCount() const { return frameCount; };
 
 	//! Handles frame-specific rendering operations including surface tracing and information display.
@@ -2242,7 +2240,6 @@ public:
 
 //=============================================
 
-#include "../ResolutionScale.h"
 #include "../backend/RenderLog.h"
 #include "GLMatrix.h"
 
