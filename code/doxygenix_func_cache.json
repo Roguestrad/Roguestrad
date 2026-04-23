@@ -29032,6 +29032,66 @@
     "void idDxtEncoder::EmitGreenIndices_SSE2(const byte *block, const int channelBitOffset, const int minGreen, const int maxGreen)": {
       "body_hash": "d3b611551bf49e8ebe98c9b5b2a7b367",
       "is_trivial": false
+    },
+    "bool ImGui::DragVec3(const char *label, idVec3 &v, float v_speed=1.0f, float v_min=0.0f, float v_max=0.0f, const char *display_format=\"%.1f\", float power=1.0f, bool ignoreLabelWidth=true)": {
+      "body_hash": "a6479bd6da961df277eae79714dd77f3",
+      "is_trivial": false
+    },
+    "bool ImGui::DragVec3fitLabel(const char *label, idVec3 &v, float v_speed=1.0f, float v_min=0.0f, float v_max=0.0f, const char *display_format=\"%.1f\", float power=1.0f)": {
+      "body_hash": "d46c124a63522fe96b7d3bccb90f00d9",
+      "is_trivial": false
+    },
+    "bool ImGuiHook::Init(int windowWidth, int windowHeight)": {
+      "body_hash": "06074af3976a3747d2222933088e3d99",
+      "is_trivial": true
+    },
+    "void ImGuiHook::NotifyDisplaySizeChanged(int width, int height)": {
+      "body_hash": "778a6c2afa9af713378ad04eb65ea511",
+      "is_trivial": true
+    },
+    "bool ImGuiHook::InjectSysEvent(const sysEvent_t *event)": {
+      "body_hash": "09f9562cb478693953e0da4c5f4ac5b7",
+      "is_trivial": true
+    },
+    "bool ImGuiHook::RightMouseActive()": {
+      "body_hash": "152f1044b503b0107a7f2672c27a4c0a",
+      "is_trivial": true
+    },
+    "bool ImGuiHook::InjectMouseWheel(int delta)": {
+      "body_hash": "dceb2b2e3f65bfc415e811bda9b3e5e0",
+      "is_trivial": true
+    },
+    "void ImGuiHook::NewFrame()": {
+      "body_hash": "55d6ef5f9e7d56b78ffb0ca1700e92b5",
+      "is_trivial": true
+    },
+    "bool ImGuiHook::IsReadyToRender()": {
+      "body_hash": "81c1903da33cc638b466aba11381c50a",
+      "is_trivial": true
+    },
+    "void ImGuiHook::Render()": {
+      "body_hash": "446b12fcd307ff6ce73c9a0be6420aac",
+      "is_trivial": true
+    },
+    "void ImGuiHook::Destroy()": {
+      "body_hash": "4fa04d11278aab46953886b3df1c5297",
+      "is_trivial": true
+    },
+    "bool ImGuiHook::IsInitialized()": {
+      "body_hash": "f211f17bcf7f42a4278d3d6c253c0c12",
+      "is_trivial": true
+    },
+    "void ED_Simple_OnStart()": {
+      "body_hash": "3885167dff764abafc1a746550c01b36",
+      "is_trivial": true
+    },
+    "void ED_Simple_OnStop(ax::NodeEditor::EditorContext *context)": {
+      "body_hash": "bf4d11c82080b8f50ea108167f28ffd5",
+      "is_trivial": true
+    },
+    "void ED_OnFrame(float deltaTime)": {
+      "body_hash": "225b8de98e8c16b59103a9b3d55fcd8b",
+      "is_trivial": true
     }
   }
 }

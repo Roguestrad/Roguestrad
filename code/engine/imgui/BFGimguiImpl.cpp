@@ -34,17 +34,9 @@ If you have questions concerning this license or the applicable additional terms
 #include "BFGimgui.h"
 #include "ImGuizmo.h"
 
-// #include "engine/renderer/backend/RenderBackend.h" // TODO remove, because Imgui rendering happens in the frontend using idGuiModel
-#include "engine/renderer/frontend/tr_local.h" // TODO remove, because Imgui rendering happens in the frontend using idGuiModel
-
 static idCVar imgui_showDemoWindow( "imgui_showDemoWindow", "0", CVAR_GUI | CVAR_BOOL, "show big ImGui demo window" );
 static idCVar imgui_showSimpleNodeEditorExample( "imgui_showSimpleNodeEditorExample", "0", CVAR_GUI | CVAR_BOOL, "" );
 
-// our custom ImGui functions from BFGimgui.h
-
-// like DragFloat3(), but with "X: ", "Y: " or "Z: " prepended to each display_format, for vectors
-// if !ignoreLabelWidth, it makes sure the label also fits into the current item width.
-//    note that this screws up alignment with consecutive "value+label widgets" (like Drag* or ColorEdit*)
 bool		  ImGui::DragVec3( const char* label, idVec3& v, float v_speed, float v_min, float v_max, const char* display_format, float power, bool ignoreLabelWidth )
 {
 	bool value_changed = false;
@@ -78,9 +70,6 @@ bool		  ImGui::DragVec3( const char* label, idVec3& v, float v_speed, float v_mi
 	return value_changed;
 }
 
-// shortcut for DragXYZ with ignorLabelWidth = false
-// very similar, but adjusts width to width of label to make sure it's not cut off
-// sometimes useful, but might not align with consecutive "value+label widgets" (like Drag* or ColorEdit*)
 bool ImGui::DragVec3fitLabel( const char* label, idVec3& v, float v_speed, float v_min, float v_max, const char* display_format, float power )
 {
 	return ImGui::DragVec3( label, v, v_speed, v_min, v_max, display_format, power, false );
@@ -94,6 +83,7 @@ namespace ed = ax::NodeEditor;
 
 static ax::NodeEditor::EditorContext* g_EDcontext = nullptr;
 
+//! Initializes the editor with a Simple.json configuration file.
 void								  ED_Simple_OnStart()
 {
 	ed::Config config;
@@ -101,11 +91,13 @@ void								  ED_Simple_OnStart()
 	g_EDcontext			= ed::CreateEditor( &config );
 }
 
+//! Destroys the NodeEditor editor context.
 void ED_Simple_OnStop( ax::NodeEditor::EditorContext* context )
 {
 	ed::DestroyEditor( context );
 }
 
+//! Handles the frame update for the editor, displaying FPS and rendering a simple node graph.
 void ED_OnFrame( float deltaTime )
 {
 	auto& io = ImGui::GetIO();
@@ -690,6 +682,7 @@ namespace
 
 } // anon namespace
 
+//! Initializes the ImGui library with the specified window dimensions.
 bool Init( int windowWidth, int windowHeight )
 {
 	if( IsInitialized() ) {
@@ -764,6 +757,7 @@ bool Init( int windowWidth, int windowHeight )
 	return true;
 }
 
+//! Updates the display size and reinitializes the ImGui hook when the size changes.
 void NotifyDisplaySizeChanged( int width, int height )
 {
 	if( g_DisplaySize.x != width || g_DisplaySize.y != height ) {
@@ -786,7 +780,7 @@ void NotifyDisplaySizeChanged( int width, int height )
 	}
 }
 
-// inject a sys event
+//! Injects a system event into the ImGui hook for processing.
 bool InjectSysEvent( const sysEvent_t* event )
 {
 	if( IsInitialized() && ( UseInput() || RightMouseActive() ) ) {
@@ -828,11 +822,13 @@ bool InjectSysEvent( const sysEvent_t* event )
 	return false;
 }
 
+//! Returns true if the right mouse button is currently pressed.
 bool RightMouseActive()
 {
 	return g_MousePressed[1];
 }
 
+//! Injects a mouse wheel input event with the specified delta value
 bool InjectMouseWheel( int delta )
 {
 	if( IsInitialized() && UseInput() && delta != 0 ) {
@@ -842,6 +838,7 @@ bool InjectMouseWheel( int delta )
 	return false;
 }
 
+//! Initializes the ImGui frame for rendering.
 void NewFrame()
 {
 	if( !g_haveNewFrame && IsInitialized() && ShowWindows() ) {
@@ -887,6 +884,7 @@ void NewFrame()
 	}
 }
 
+//! Returns true if the ImGui hook is initialized and windows should be shown, indicating it's ready to render UI elements.
 bool IsReadyToRender()
 {
 	if( IsInitialized() && ShowWindows() ) {
@@ -902,6 +900,7 @@ bool IsReadyToRender()
 	return false;
 }
 
+//! Renders the ImGui interface for the engine's debug and tool windows
 void Render()
 {
 	if( !g_insideRender && IsInitialized() && ShowWindows() ) {
@@ -947,6 +946,7 @@ void Render()
 	}
 }
 
+//! Destroys the ImGui context if it is initialized
 void Destroy()
 {
 	if( IsInitialized() ) {
@@ -956,6 +956,7 @@ void Destroy()
 	}
 }
 
+//! Checks if the ImGui hook system is initialized and ready for use.
 bool IsInitialized()
 {
 	// checks if imgui is up and running
