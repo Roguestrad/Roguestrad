@@ -49,6 +49,7 @@ public:
 	idDxtEncoder() { srcPadding = dstPadding = 0; }
 	~idDxtEncoder() { }
 
+	//! Sets the source padding value for the DXT encoder.
 	void SetSrcPadding( int pad ) { srcPadding = pad; }
 
 	//! Sets the destination padding value for the DXT encoder.
@@ -95,6 +96,20 @@ public:
 		\throws assertion failure if width or height is less than 4, or not a multiple of 4
 	*/
 	void CompressImageDXT1Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height );
+
+	/*!
+		\brief Compresses a 4x4 block of RGBA image data into DXT1 format using SSE2 optimizations
+
+		This function performs DXT1 texture compression on image data using SSE2 instructions for improved performance. It processes the input image in 4x4 pixel blocks, extracting color information
+	   and generating compressed output. The function assumes the input width and height are multiples of 4 and handles padding for the output buffer. The compression uses a min/max color box approach
+	   to determine the two endpoint colors for each block. The function includes a test mode that validates the SSE2 implementation against a generic reference implementation to ensure correctness.
+
+		\param inBuf pointer to the input RGBA image data
+		\param outBuf pointer to the output compressed DXT1 data
+		\param width width of the input image in pixels
+		\param height height of the input image in pixels
+		\throws assertion failure if width or height is less than 4, or if width or height are not divisible by 4
+	*/
 	void CompressImageDXT1Fast_SSE2( const byte* inBuf, byte* outBuf, int width, int height );
 
 	/*!
@@ -138,6 +153,21 @@ public:
 		\throws assertion failure if width or height is less than 4, or not divisible by 4
 	*/
 	void CompressImageDXT1AlphaFast_Generic( const byte* inBuf, byte* outBuf, int width, int height );
+
+	/*!
+		\brief Compresses a 4x4 block of RGBA image data into DXT1 format with alpha channel using SSE2 optimization.
+
+		This function performs DXT1 alpha compression on a 4x4 pixel block of image data using SSE2 instruction set for optimization. The input image data is expected to be in RGBA format with 4 bytes
+	   per pixel. The function processes the image in 4x4 pixel blocks and emits 64-bit compressed blocks to the output buffer. It uses minimum and maximum color bounding box computation to determine
+	   color indices for compression. The compression handles alpha channel by examining the minimum alpha value and choosing appropriate color encoding. The function includes a test mode that
+	   validates the SSE2 implementation against a generic implementation.
+
+		\param inBuf pointer to the input RGBA image data
+		\param outBuf pointer to the output compressed DXT1 data
+		\param width width of the image in pixels, must be multiple of 4
+		\param height height of the image in pixels, must be multiple of 4
+		\throws Assertion failure if width or height is less than 4 or not divisible by 4
+	*/
 	void CompressImageDXT1AlphaFast_SSE2( const byte* inBuf, byte* outBuf, int width, int height );
 
 	/*!
@@ -210,9 +240,35 @@ public:
 	*/
 	void CompressImageR11G11B10_BC6Fast( const byte* inBuf, byte* outBuf, int width, int height );
 
+	/*!
+		\brief This function is a placeholder that currently asserts and does not perform any actual compression.
+
+		The function is intended to compress image data using the BC6 format with R11G11B10 layout, but the current implementation only asserts and does not perform the actual compression. It takes an
+	   input buffer containing image data and an output buffer for the compressed result, along with the width and height of the image.
+
+		\param inBuf Pointer to the input buffer containing the image data to be compressed
+		\param outBuf Pointer to the output buffer where the compressed image data will be stored
+		\param width Width of the image in pixels
+		\param height Height of the image in pixels
+		\throws Asserts when called, indicating that the function is not yet implemented
+	*/
 	void CompressImageR11G11B10_BC6Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height ) { assert( 0 ); }
 
 #if( defined( USE_INTRINSICS_SSE ) || defined( USE_INTRINSICS_NEON ) )
+
+	/*!
+		\brief Compresses R11G11B10 image data to BC6H format using SIMD optimization
+
+		This function performs BC6H compression on R11G11B10 format image data using SIMD optimization. It validates the input dimensions to ensure they are multiples of 4, allocates a temporary
+	   half-precision floating-point buffer, converts the input image data from R11G11B10 format to FP16, and then compresses the data using BC6H algorithm. The function requires input width and
+	   height to be at least 4 pixels and divisible by 4 to function correctly.
+
+		\param inBuf Input buffer containing R11G11B10 format image data
+		\param outBuf Output buffer to store the BC6H compressed data
+		\param width Width of the input image in pixels
+		\param height Height of the input image in pixels
+		\throws Error when allocation of FP16 buffer fails
+	*/
 	void CompressImageR11G11B10_BC6Fast_SIMD( const byte* inBuf, byte* outBuf, int width, int height );
 #endif
 
@@ -258,9 +314,34 @@ public:
 		\throws Assertion failure when called
 	*/
 	void CompressImageCTX1Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height ) { assert( 0 ); }
+
+	/*!
+		\brief This function is a placeholder that currently asserts and does not perform any actual compression.
+
+		The function is intended to compress image data using a fast SSE2 implementation for the CTX1 format, but currently it only contains an assertion that always fails. This suggests that the
+	   actual implementation is either incomplete or has been disabled for some reason. The parameters specify the input buffer, output buffer, width, and height of the image to be compressed.
+
+		\param inBuf Pointer to the input image data buffer
+		\param outBuf Pointer to the output compressed data buffer
+		\param width Width of the image in pixels
+		\param height Height of the image in pixels
+		\throws Assertion failure when called
+	*/
 	void CompressImageCTX1Fast_SSE2( const byte* inBuf, byte* outBuf, int width, int height ) { assert( 0 ); }
 
-	// high quality DXN1 (aka DXT5A or ATI1N) compression, uses exhaustive search to find a line through color space and is very slow
+	/*!
+		\brief Compresses an image using high quality DXN1 compression with exhaustive search for optimal color line placement.
+
+		This function performs high quality DXN1 compression, also known as DXT5A or ATI1N compression. It uses an exhaustive search algorithm to find the optimal line through the color space, which
+	   results in superior quality but significantly slower performance compared to standard compression methods. The compression is designed for use with normal maps or other textures where quality
+	   is prioritized over speed. The implementation currently contains an assertion that will always fail, indicating this function is not yet implemented or is intentionally disabled.
+
+		\param inBuf Input buffer containing the source image data
+		\param outBuf Output buffer where the compressed image will be stored
+		\param width Width of the input image in pixels
+		\param height Height of the input image in pixels
+		\throws Assertion failure due to assert( 0 ) statement indicating the function is not implemented
+	*/
 	void CompressImageDXN1HQ( const byte* inBuf, byte* outBuf, int width, int height ) { assert( 0 ); }
 
 	/*!
@@ -349,6 +430,21 @@ public:
 		\throws assertion failure if width or height are less than 4 or not multiples of 4
 	*/
 	void CompressYCoCgDXT5Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height );
+
+	/*!
+		\brief Compresses a 4x4 block of RGBA image data into DXT5 format using YCoCg color space with SSE2 optimizations
+
+		This function performs DXT5 compression on image data using the YCoCg color space representation for improved quality. It processes the input image in 4x4 pixel blocks, applying SSE2
+	   optimizations for performance. The function extracts color blocks, determines min/max color values, scales colors in YCoCg space, and encodes alpha and color indices according to the DXT5
+	   format specification. The implementation includes validation checks for block dimensions and uses aligned memory allocation for SSE2 operations. A test mode is included that validates the SSE2
+	   implementation against a generic reference implementation.
+
+		\param inBuf pointer to input RGBA image data
+		\param outBuf pointer to output compressed DXT5 data
+		\param width width of the image in pixels
+		\param height height of the image in pixels
+		\throws assertion failures when width or height are not multiples of 4, or when block validation fails
+	*/
 	void CompressYCoCgDXT5Fast_SSE2( const byte* inBuf, byte* outBuf, int width, int height );
 
 	/*!
@@ -409,9 +505,35 @@ public:
 		\throws assertion failures if input dimensions are invalid or if constant value assumption is violated
 	*/
 	void CompressYCoCgCTX1DXT5AFast_Generic( const byte* inBuf, byte* outBuf, int width, int height );
+
+	/*!
+		\brief This function is a placeholder that currently asserts and does not perform any compression operation.
+
+		The function is intended to compress image data using the YCoCgCTX1 DXT5A format with SSE2 optimization. It takes an input buffer containing image data and an output buffer to store the
+	   compressed result. The width and height parameters specify the dimensions of the input image. However, the current implementation only contains an assertion that fails, indicating that the
+	   function is not yet implemented.
+
+		\param inBuf Pointer to the input buffer containing image data to be compressed
+		\param outBuf Pointer to the output buffer where the compressed data will be stored
+		\param width Width of the input image in pixels
+		\param height Height of the input image in pixels
+		\throws Assertion failure when called
+	*/
 	void CompressYCoCgCTX1DXT5AFast_SSE2( const byte* inBuf, byte* outBuf, int width, int height ) { assert( 0 ); }
 
-	// high quality tangent space NxNyNz normal map compression into DXT1 format (Nz is not used)
+	/*!
+		\brief Compresses a normal map into DXT1 format with high quality
+
+		This function performs high quality compression of a normal map into DXT1 format. The input is a buffer containing normal map data with RGBA channels, where the Z component is not used in the
+	   compression. The output is a compressed DXT1 format buffer. The function handles edge cases where the width or height are less than 4 by using a specialized tiny color compression method. For
+	   larger images, it processes the image in 4x4 pixel blocks, extracting color information and finding optimal color indices for DXT1 compression. The function also manages padding for both input
+	   and output buffers.
+
+		\param inBuf Input buffer containing normal map data with RGBA channels
+		\param outBuf Output buffer for the compressed DXT1 data
+		\param width Width of the normal map in pixels
+		\param height Height of the normal map in pixels
+	*/
 	void CompressNormalMapDXT1HQ( const byte* inBuf, byte* outBuf, int width, int height );
 
 	/*!
@@ -442,6 +564,19 @@ public:
 		\throws assertion failure when called
 	*/
 	void CompressNormalMapDXT1Fast( const byte* inBuf, byte* outBuf, int width, int height ) { assert( 0 ); }
+
+	/*!
+		\brief This function is a placeholder that always asserts and does not perform any actual compression of normal map data.
+
+		The function is declared to compress normal map data using DXT1 format but currently does nothing more than assert. It takes an input buffer containing normal map data, and output buffer for
+	   the compressed result, along with width and height dimensions. The actual implementation is not provided and always triggers an assertion failure.
+
+		\param inBuf Input buffer containing normal map data to be compressed
+		\param outBuf Output buffer where the compressed DXT1 data will be stored
+		\param width Width of the input normal map in pixels
+		\param height Height of the input normal map in pixels
+		\throws assertion failure
+	*/
 	void CompressNormalMapDXT1Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height ) { assert( 0 ); }
 
 	/*!
@@ -516,6 +651,20 @@ public:
 		\throws assertion failure if width or height is less than 4 or not a multiple of 4
 	*/
 	void CompressNormalMapDXT5Fast_Generic( const byte* inBuf, byte* outBuf, int width, int height );
+
+	/*!
+		\brief Compresses a normal map into DXT5 format using SSE2 optimizations for faster processing.
+
+		This function takes a normal map image buffer and compresses it into DXT5 format. It processes the input buffer in 4x4 pixel blocks, using SSE2 instructions for optimized performance. The
+	   function assumes the input dimensions are multiples of 4. It uses a combination of minimum and maximum bounding box calculations, along with color indexing, to determine the optimal compression
+	   for each block. The function also includes a test mode that compares the SSE2 output with a generic implementation for verification.
+
+		\param inBuf Input buffer containing the normal map data in _y_x component order
+		\param outBuf Output buffer where the compressed DXT5 data will be written
+		\param width Width of the input normal map, must be a multiple of 4
+		\param height Height of the input normal map, must be a multiple of 4
+		\throws assertions for invalid input dimensions
+	*/
 	void CompressNormalMapDXT5Fast_SSE2( const byte* inBuf, byte* outBuf, int width, int height );
 
 	/*!
@@ -589,7 +738,18 @@ public:
 	*/
 	void ConvertImageDXN1_DXT1( const byte* inBuf, byte* outBuf, int width, int height );
 
-	// fast single channel conversion from DXT1 to DXN1 (aka DXT5A or ATI1N), reasonably fast (also works in-place)
+	/*!
+		\brief Converts an image from DXT1 format to DXN1 format with reasonable performance.
+
+		This function performs a fast single channel conversion from DXT1 to DXN1 format. The conversion is reasonably fast and supports in-place operations. The function is currently unimplemented
+	   and will assert on execution.
+
+		\param inBuf Input buffer containing the DXT1 formatted image data
+		\param outBuf Output buffer where the DXN1 formatted image data will be stored
+		\param width Width of the image in pixels
+		\param height Height of the image in pixels
+		\throws assert( 0 ) when called, indicating the function is not implemented
+	*/
 	void ConvertImageDXT1_DXN1( const byte* inBuf, byte* outBuf, int width, int height ) { assert( 0 ); }
 
 	/*!
@@ -653,6 +813,8 @@ private:
 
 	//! Converts a 3-byte color to a 16-bit 565 format.
 	unsigned short		  ColorTo565( const byte* color ) const;
+
+	//! Converts RGB color components to a 16-bit 565 format.
 	unsigned short		  ColorTo565( byte r, byte g, byte b ) const;
 
 	//! Converts a 16-bit 565-format color value to an RGB color array.
@@ -1036,23 +1198,83 @@ private:
 
 	//! EmitCTX1Indices computes and emits color indices for a 4x4 pixel block using min and max color values.
 	void				  EmitCTX1Indices( const byte* colorBlock, const byte* minColor, const byte* maxColor );
+
+	/*!
+		\brief Encodes alpha indices for a 4x4 pixel block using the specified min and max alpha values.
+
+		This function takes a 4x4 pixel color block and determines the optimal alpha index for each pixel based on the provided minimum and maximum alpha values. It uses a specific algorithm to map
+	   the alpha values to 3-bit indices which are then emitted as bytes. The algorithm computes intermediate alpha values and compares each pixel's alpha against these values to determine the index.
+	   The results are packed into 6 bytes for transmission.
+
+		\param colorBlock Pointer to the 16 pixel block for which alpha indexes need to be calculated
+		\param channel The channel offset to use when reading alpha values from the color block
+		\param minAlpha Minimum alpha value found in the block
+		\param maxAlpha Maximum alpha value found in the block
+		\throws assertion failure if maxAlpha is less than minAlpha
+	*/
 	void				  EmitAlphaIndices( const byte* colorBlock, const int channel, const byte minAlpha, const byte maxAlpha );
+
+	/*!
+		\brief Encodes and emits green color indices for a DXT block based on the provided min and max green values
+
+		This function processes a 4x4 pixel block to determine the green color indices for each pixel. It uses a weighted averaging approach to compute three threshold values that are used to classify
+	   pixel green values into four possible indices. The function employs bit manipulation to efficiently pack these indices into a 32-bit result which is then emitted. The implementation includes
+	   two code paths, with the primary path using a specific mathematical formula for threshold calculation, while the alternative path uses a brute force nearest neighbor approach.
+
+		\param block Pointer to the block data containing pixel information
+		\param channel Offset into the block data to start processing
+		\param minGreen Minimum green value found in the block
+		\param maxGreen Maximum green value found in the block
+		\throws assertion failure if maxGreen is less than minGreen
+	*/
 	void				  EmitGreenIndices( const byte* block, const int channel, const byte minGreen, const byte maxGreen );
 
-	// Keeping the ASM versions to keep the performance of 32-bit debug builds reasonable.
-	// The implementation using intrinsics is very slow in debug builds because registers are continuously spilled to memory.
+	//! Extracts a 4x4 block of pixel data using SSE2 intrinsics.
 	void				  ExtractBlock_SSE2( const byte* inPtr, int width, byte* colorBlock ) const;
+
+	//! Computes the minimum and maximum colors from a 4x4 DXT color block using SSE2 instructions
 	void				  GetMinMaxBBox_SSE2( const byte* colorBlock, byte* minColor, byte* maxColor ) const;
+
+	//! Adjusts the minimum and maximum color values for a bounding box using SSE2 instructions.
 	void				  InsetColorsBBox_SSE2( byte* minColor, byte* maxColor ) const;
+
+	//! Adjusts normal bounding box values for DXT5 compression using SSE2 instructions.
 	void				  InsetNormalsBBoxDXT5_SSE2( byte* minNormal, byte* maxNormal ) const;
+
+	//! Computes and emits color indices for a DXT color block using SSE2 optimizations.
 	void				  EmitColorIndices_SSE2( const byte* colorBlock, const byte* minColor, const byte* maxColor );
+
+	//! Encodes color indices for a DXT texture block using SSE2 instructions.
 	void				  EmitColorAlphaIndices_SSE2( const byte* colorBlock, const byte* minColor, const byte* maxColor );
+
+	//! Computes and emits color indices for a DXT color block using SSE2 instructions.
 	void				  EmitCoCgIndices_SSE2( const byte* colorBlock, const byte* minColor, const byte* maxColor );
+
+	//! Encodes alpha indices for a DXT alpha block using SSE2 instructions
 	void				  EmitAlphaIndices_SSE2( const byte* colorBlock, const int minAlpha, const int maxAlpha );
+
+	/*!
+		\brief Encodes alpha indices for a DXTC texture block using SSE2 instructions.
+
+		This function processes a color block to extract and encode alpha indices using SSE2 SIMD instructions. It shifts the input data by a specified bit offset, masks the results to extract byte
+	   values, and then performs a series of arithmetic and comparison operations to determine the appropriate alpha indices. The function computes weighted averages to determine the alpha values,
+	   compares them with the input data, and finally packs the results into a 32-bit output value that represents the encoded alpha indices.
+
+		\param colorBlock Pointer to the input color block data
+		\param channelBitOffset Bit offset used to extract the alpha channel data
+		\param minAlpha Minimum alpha value for the block
+		\param maxAlpha Maximum alpha value for the block
+	*/
 	void				  EmitAlphaIndices_SSE2( const byte* colorBlock, const int channelBitOffset, const int minAlpha, const int maxAlpha );
 	void				  EmitGreenIndices_SSE2( const byte* block, const int channelBitOffset, const int minGreen, const int maxGreen );
+
+	//! This function scales YCoCg color values using SSE2 instructions for a color block with specified minimum and maximum colors.
 	void				  ScaleYCoCg_SSE2( byte* colorBlock, byte* minColor, byte* maxColor ) const;
+
+	//! Computes and updates the minimum and maximum color values using SSE2 instructions for YCoCg color space bounding box adjustment.
 	void				  InsetYCoCgBBox_SSE2( byte* minColor, byte* maxColor ) const;
+
+	//! Selects the YCoCg diagonal for a color block using SSE2 instructions
 	void				  SelectYCoCgDiagonal_SSE2( const byte* colorBlock, byte* minColor, byte* maxColor ) const;
 
 	void				  EmitNormalYIndices( const byte* normalBlock, const int offset, const byte minNormalY, const byte maxNormalY );
@@ -1103,9 +1325,6 @@ private:
 		\param values Array of 16 grayscale values representing normal data to encode
 	*/
 	void				  EncodeNormalRGBIndices( byte* outBuf, const byte min, const byte max, const byte* values );
-
-	// RB
-	void				  EncodeBC6HMode11( const float* block, byte* outBlock, float& msle );
 };
 
 ID_INLINE void idDxtEncoder::CompressImageDXT1Fast( const byte* inBuf, byte* outBuf, int width, int height )
@@ -1294,7 +1513,17 @@ public:
 	*/
 	void DecompressImageDXT5( const byte* inBuf, byte* outBuf, int width, int height );
 
-	// DXT5 decompression with nVidia 7x hardware bug
+	/*!
+		\brief Decompresses DXT5 formatted image data with nVidia 7x hardware bug compatibility.
+
+		This function performs DXT5 image decompression using a specific algorithm that accounts for a hardware bug present in nVidia 7x graphics chips. The decompression processes the input data in
+	   4x4 pixel blocks, decoding both alpha and color information for each block. The output buffer must be large enough to hold the decompressed pixel data.
+
+		\param inBuf Pointer to the input compressed DXT5 data
+		\param outBuf Pointer to the output decompressed pixel data buffer
+		\param width Width of the image in pixels
+		\param height Height of the image in pixels
+	*/
 	void DecompressImageDXT5_nVidia7x( const byte* inBuf, byte* outBuf, int width, int height );
 
 	/*!
@@ -1423,7 +1652,20 @@ public:
 	*/
 	void DecompressNormalMapDXN2( const byte* inBuf, byte* outBuf, int width, int height );
 
-	// decompose a DXT image into indices and two images with colors
+	/*!
+		\brief Decomposes a DXT1 compressed image into color indices and two color images.
+
+		This function takes a DXT1 compressed image buffer and decomposes it into three components: color indices that define how pixels are colored, and two separate image buffers containing the
+	   color data. The function processes the input image in 4x4 blocks, extracting color information and index data from each block. The width and height parameters define the dimensions of the image
+	   being processed.
+
+		\param inBuf Input buffer containing the DXT1 compressed image data
+		\param colorIndices Output buffer to store the color indices for each pixel
+		\param pic1 Output buffer to store the first set of color data
+		\param pic2 Output buffer to store the second set of color data
+		\param width Width of the image in pixels
+		\param height Height of the image in pixels
+	*/
 	void DecomposeImageDXT1( const byte* inBuf, byte* colorIndices, byte* pic1, byte* pic2, int width, int height );
 
 	/*!

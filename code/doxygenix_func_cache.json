@@ -26646,7 +26646,7 @@
       "is_trivial": false
     },
     "void CopyBuffer(byte *dst, const byte *src, int numBytes)": {
-      "body_hash": "18174633263c6c293c5ee0fd936295e4",
+      "body_hash": "72e8dd3b0aed46755c2461f9b78ea3f6",
       "is_trivial": true
     },
     "void UnbindBufferObjects()": {
@@ -28928,6 +28928,102 @@
     "void RB_AddDebugText(const char *text, const idVec3 &origin, float scale, const idVec4 &color, const idMat3 &viewAxis, const int align, const int lifetime, const bool depthTest)": {
       "body_hash": "60283941ca1723388e6441889ae406e2",
       "is_trivial": false
+    },
+    "static void R_CopyDecalSurface(idDrawVert *verts, int numVerts, triIndex_t *indexes, int numIndexes, const decal_t *decal, const float fadeColor[4])": {
+      "body_hash": "92e4b2774f40d59eab466fed8ac92cc9",
+      "is_trivial": false
+    },
+    "void idDxtEncoder::CompressImageDXT1Fast_SSE2(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "e8203ea0d16385d3a3b3eb4f20597b43",
+      "is_trivial": false
+    },
+    "void idDxtEncoder::CompressImageDXT1AlphaFast_SSE2(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "df7e81fc7acadbd76720f716935bdef6",
+      "is_trivial": false
+    },
+    "void idDxtEncoder::CompressImageR11G11B10_BC6Fast_SIMD(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "80a7b68069f8ed1ea983b0c7f269a3be",
+      "is_trivial": false
+    },
+    "void idDxtEncoder::CompressYCoCgDXT5Fast_SSE2(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "5130eb32729847d04fad513d9e6ea887",
+      "is_trivial": false
+    },
+    "void idDxtEncoder::CompressNormalMapDXT5Fast_SSE2(const byte *inBuf, byte *outBuf, int width, int height)": {
+      "body_hash": "562bf0b5e6da8c30dfc0f29f9be627cc",
+      "is_trivial": false
+    },
+    "ID_INLINE void idDxtEncoder::ExtractBlock_SSE2(const byte *inPtr, int width, byte *colorBlock) const": {
+      "body_hash": "ad9f57e4bef1cc9fd9337a35245117a8",
+      "is_trivial": true
+    },
+    "ID_INLINE void idDxtEncoder::GetMinMaxBBox_SSE2(const byte *colorBlock, byte *minColor, byte *maxColor) const": {
+      "body_hash": "2f22e78cb42e924d535cc98eb1b1a108",
+      "is_trivial": true
+    },
+    "ID_INLINE void idDxtEncoder::InsetColorsBBox_SSE2(byte *minColor, byte *maxColor) const": {
+      "body_hash": "d637ef3f84e23a9e72b58a432145cc52",
+      "is_trivial": true
+    },
+    "void idDxtEncoder::InsetNormalsBBoxDXT5_SSE2(byte *minNormal, byte *maxNormal) const": {
+      "body_hash": "1e47a37f5ab391eab7984ba1c1176310",
+      "is_trivial": true
+    },
+    "void idDxtEncoder::EmitColorIndices_SSE2(const byte *colorBlock, const byte *minColor, const byte *maxColor)": {
+      "body_hash": "ef28a4e107678f0f91d9f29d1aeab14a",
+      "is_trivial": true
+    },
+    "void idDxtEncoder::EmitColorAlphaIndices_SSE2(const byte *colorBlock, const byte *minColor, const byte *maxColor)": {
+      "body_hash": "36765ec00130be02d8046c19862940da",
+      "is_trivial": true
+    },
+    "void idDxtEncoder::EmitCoCgIndices_SSE2(const byte *colorBlock, const byte *minColor, const byte *maxColor)": {
+      "body_hash": "a831f9967ce88ecb4a8116b8d859246b",
+      "is_trivial": true
+    },
+    "void idDxtEncoder::EmitAlphaIndices_SSE2(const byte *colorBlock, const int minAlpha, const int maxAlpha)": {
+      "body_hash": "95602e32afd05130c23ae1f575ff7d46",
+      "is_trivial": true
+    },
+    "void idDxtEncoder::EmitAlphaIndices_SSE2(const byte *colorBlock, const int channelBitOffset, const int minAlpha, const int maxAlpha)": {
+      "body_hash": "93e5d88698cf981e3429886cf17fe8b4",
+      "is_trivial": false
+    },
+    "ID_INLINE void idDxtEncoder::ScaleYCoCg_SSE2(byte *colorBlock, byte *minColor, byte *maxColor) const": {
+      "body_hash": "4e6d9dde2d06059342ad397ca395c7bd",
+      "is_trivial": true
+    },
+    "ID_INLINE void idDxtEncoder::InsetYCoCgBBox_SSE2(byte *minColor, byte *maxColor) const": {
+      "body_hash": "6d0faffe3c0f2586d47ec9f65a0e3228",
+      "is_trivial": true
+    },
+    "ID_INLINE void idDxtEncoder::SelectYCoCgDiagonal_SSE2(const byte *colorBlock, byte *minColor, byte *maxColor) const": {
+      "body_hash": "f39ebd61e8b72f8689c788b02e82ff7d",
+      "is_trivial": true
+    },
+    "void R_RenderSingleModel(viewEntity_t *vEntity)": {
+      "body_hash": "8e04372c7d2215b94428e61000d2c47b",
+      "is_trivial": true
+    },
+    "static void TonemapDepth(float *depth, unsigned char *image, int w, int h)": {
+      "body_hash": "5a3acd4d44cb0a2c42e3b251137fb476",
+      "is_trivial": false
+    },
+    "CONSOLE_COMMAND(maskShot, \"Dumping masked occlusion culling buffer\", NULL)": {
+      "body_hash": "53fc5d3e35faa111b34de9984d493611",
+      "is_trivial": true
+    },
+    "static void ConvertR11G11B10ImageToFP16(const byte *inBuf, int width, int height, halfFloat_t *outBuf)": {
+      "body_hash": "d3be021da978ca1bd2bd02a8f52c9f82",
+      "is_trivial": false
+    },
+    "static void R_MakeZeroOneCubeTrisForMaskedOcclusionCulling()": {
+      "body_hash": "48255d3b8c2d2191ff835a9b10f13ad0",
+      "is_trivial": true
+    },
+    "static void R_MakeUnitCubeTrisForMaskedOcclusionCulling()": {
+      "body_hash": "6c3bbd33bfcc3aaa5459cc5748e45f77",
+      "is_trivial": true
     }
   }
 }

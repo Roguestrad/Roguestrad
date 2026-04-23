@@ -104,6 +104,8 @@ two or more lights.
 ===================
 */
 #if defined( USE_INTRINSICS_SSE )
+
+//! Renders a single model entity for the current view.
 void R_RenderSingleModel( viewEntity_t* vEntity )
 {
 	// we will add all interaction surfs here, to be chained to the lights in later serial code
@@ -557,6 +559,18 @@ void R_FillMaskedOcclusionBufferWithModels( viewDef_t* viewDef )
 }
 
 #if defined( USE_INTRINSICS_SSE )
+
+/*!
+	\brief Maps depth values to grayscale image data using tonemapping.
+
+	This function takes an array of depth values and converts them into grayscale pixel data for visualization. It first determines the minimum and maximum depth values, excluding zero values which
+   represent cleared pixels. Then, it applies a tonemapping algorithm to scale the depth values to the range [32, 255] and assigns the resulting intensity to all three RGB channels of each pixel.
+
+	\param depth Array of depth values, where zero represents cleared pixels
+	\param image Output image buffer with 3 bytes per pixel (RGB)
+	\param w Width of the depth and image arrays
+	\param h Height of the depth and image arrays
+*/
 static void TonemapDepth( float* depth, unsigned char* image, int w, int h )
 {
 	// Find min/max w coordinate (discard cleared pixels)
@@ -581,6 +595,7 @@ static void TonemapDepth( float* depth, unsigned char* image, int w, int h )
 	}
 }
 
+//! Dumps the masked occlusion culling buffer to EXR and PNG image files for visualization purposes.
 CONSOLE_COMMAND( maskShot, "Dumping masked occlusion culling buffer", NULL )
 {
 	unsigned int width, height;

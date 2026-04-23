@@ -145,14 +145,6 @@ ALIGN16( static byte SIMD_SSE2_byte_scale_mask3[16] )  = { 0xFF, 0xFF, 0x00, 0xF
 ALIGN16( static byte SIMD_SSE2_byte_scale_mask4[16] )  = { 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00 };
 ALIGN16( static byte SIMD_SSE2_byte_minus_128_0[16] )  = { ( byte )-128, ( byte )-128, 0, 0, ( byte )-128, ( byte )-128, 0, 0, ( byte )-128, ( byte )-128, 0, 0, ( byte )-128, ( byte )-128, 0, 0 };
 
-/*
-========================
-idDxtEncoder::ExtractBlock_SSE2
-
-params:	inPtr		- input image, 4 bytes per pixel
-paramO:	colorBlock	- 4*4 output tile, 4 bytes per pixel
-========================
-*/
 ID_INLINE void idDxtEncoder::ExtractBlock_SSE2( const byte* inPtr, int width, byte* colorBlock ) const
 {
 	*( ( __m128i* )( &colorBlock[0] ) )	 = _mm_load_si128( ( __m128i* )( inPtr + width * 4 * 0 ) );
@@ -161,17 +153,6 @@ ID_INLINE void idDxtEncoder::ExtractBlock_SSE2( const byte* inPtr, int width, by
 	*( ( __m128i* )( &colorBlock[48] ) ) = _mm_load_si128( ( __m128i* )( inPtr + width * 4 * 3 ) );
 }
 
-/*
-========================
-idDxtEncoder::GetMinMaxBBox_SSE2
-
-Takes the extents of the bounding box of the colors in the 4x4 block.
-
-params:	colorBlock	- 4*4 input tile, 4 bytes per pixel
-paramO:	minColor	- Min 4 byte output color
-paramO:	maxColor	- Max 4 byte output color
-========================
-*/
 ID_INLINE void idDxtEncoder::GetMinMaxBBox_SSE2( const byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	__m128i block0 = *( ( __m128i* )( &colorBlock[0] ) );
@@ -203,11 +184,6 @@ ID_INLINE void idDxtEncoder::GetMinMaxBBox_SSE2( const byte* colorBlock, byte* m
 	*( ( int* )minColor ) = _mm_cvtsi128_si32( min6 );
 }
 
-/*
-========================
-idDxtEncoder::InsetColorsBBox_SSE2
-========================
-*/
 ID_INLINE void idDxtEncoder::InsetColorsBBox_SSE2( byte* minColor, byte* maxColor ) const
 {
 	__m128i min = _mm_cvtsi32_si128( *( int* )minColor );
@@ -230,16 +206,6 @@ ID_INLINE void idDxtEncoder::InsetColorsBBox_SSE2( byte* minColor, byte* maxColo
 	*( ( int* )maxColor ) = _mm_cvtsi128_si32( xmm1 );
 }
 
-/*
-========================
-idDxtEncoder::EmitColorIndices_SSE2
-
-params:	colorBlock	- 16 pixel block for which to find color indices
-paramO:	minColor	- Min alpha found
-paramO:	maxColor	- Max alpha found
-return: 4 byte color index block
-========================
-*/
 void idDxtEncoder::EmitColorIndices_SSE2( const byte* colorBlock, const byte* minColor_, const byte* maxColor_ )
 {
 	__m128c zero   = SIMD_SSE2_zero;
@@ -375,16 +341,6 @@ void idDxtEncoder::EmitColorIndices_SSE2( const byte* colorBlock, const byte* mi
 	EmitUInt( out );
 }
 
-/*
-========================
-idDxtEncoder::EmitColorAlphaIndices_SSE2
-
-params:	colorBlock	- 16 pixel block for which find color indexes
-paramO:	minColor	- Min color found
-paramO:	maxColor	- Max color found
-return: 4 byte color index block
-========================
-*/
 void idDxtEncoder::EmitColorAlphaIndices_SSE2( const byte* colorBlock, const byte* minColor_, const byte* maxColor_ )
 {
 	__m128c zero   = SIMD_SSE2_zero;
@@ -519,16 +475,6 @@ void idDxtEncoder::EmitColorAlphaIndices_SSE2( const byte* colorBlock, const byt
 	EmitUInt( out );
 }
 
-/*
-========================
-idDxtEncoder::EmitCoCgIndices_SSE2
-
-params:	colorBlock	- 16 pixel block for which to find color indices
-paramO:	minColor	- Min alpha found
-paramO:	maxColor	- Max alpha found
-return: 4 byte color index block
-========================
-*/
 void idDxtEncoder::EmitCoCgIndices_SSE2( const byte* colorBlock, const byte* minColor_, const byte* maxColor_ )
 {
 	__m128c zero   = SIMD_SSE2_zero;
@@ -651,15 +597,6 @@ void idDxtEncoder::EmitCoCgIndices_SSE2( const byte* colorBlock, const byte* min
 	EmitUInt( out );
 }
 
-/*
-========================
-idDxtEncoder::EmitAlphaIndices_SSE2
-
-params:	block		- 16 pixel block for which to find alpha indices
-paramO:	minAlpha	- Min alpha found
-paramO:	maxAlpha	- Max alpha found
-========================
-*/
 void idDxtEncoder::EmitAlphaIndices_SSE2( const byte* block, const int minAlpha_, const int maxAlpha_ )
 {
 	__m128i block0 = *( ( __m128i* )( &block[0] ) );
@@ -788,11 +725,6 @@ void idDxtEncoder::EmitAlphaIndices_SSE2( const byte* block, const int minAlpha_
 	outData--;
 }
 
-/*
-========================
-idDxtEncoder::EmitAlphaIndices_SSE2
-========================
-*/
 void idDxtEncoder::EmitAlphaIndices_SSE2( const byte* block, const int channelBitOffset, const int minAlpha_, const int maxAlpha_ )
 {
 	__m128i block0 = *( ( __m128i* )( &block[0] ) );
@@ -928,16 +860,6 @@ void idDxtEncoder::EmitAlphaIndices_SSE2( const byte* block, const int channelBi
 	outData--;
 }
 
-/*
-========================
-idDxtEncoder::CompressImageDXT1Fast_SSE2
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageDXT1Fast_SSE2( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -986,16 +908,6 @@ void idDxtEncoder::CompressImageDXT1Fast_SSE2( const byte* inBuf, byte* outBuf, 
 	#endif
 }
 
-/*
-========================
-idDxtEncoder::CompressImageDXT1AlphaFast_SSE2
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressImageDXT1AlphaFast_SSE2( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -1110,11 +1022,6 @@ void idDxtEncoder::CompressImageDXT5Fast_SSE2( const byte* inBuf, byte* outBuf, 
 	#endif
 }
 
-/*
-========================
-idDxtEncoder::ScaleYCoCg_SSE2
-========================
-*/
 ID_INLINE void idDxtEncoder::ScaleYCoCg_SSE2( byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	__m128i block0 = *( ( __m128i* )( &colorBlock[0] ) );
@@ -1206,11 +1113,6 @@ ID_INLINE void idDxtEncoder::ScaleYCoCg_SSE2( byte* colorBlock, byte* minColor, 
 	*( ( __m128i* )( &colorBlock[48] ) ) = _mm_sub_epi8( temp3, ( const __m128i& )SIMD_SSE2_byte_minus_128_0 );
 }
 
-/*
-========================
-idDxtEncoder::InsetYCoCgBBox_SSE2
-========================
-*/
 ID_INLINE void idDxtEncoder::InsetYCoCgBBox_SSE2( byte* minColor, byte* maxColor ) const
 {
 	__m128c temp0, temp1, temp2, temp3, temp4, temp5, temp6, temp7;
@@ -1245,16 +1147,6 @@ ID_INLINE void idDxtEncoder::InsetYCoCgBBox_SSE2( byte* minColor, byte* maxColor
 	*( int* )maxColor = _mm_cvtsi128_si32( temp1 );
 }
 
-/*
-========================
-idDxtEncoder::SelectYCoCgDiagonal_SSE2
-
-params:	colorBlock	- 16 pixel block to find color indexes for
-paramO:	minColor	- min color found
-paramO:	maxColor	- max color found
-return: diagonal to use
-========================
-*/
 ID_INLINE void idDxtEncoder::SelectYCoCgDiagonal_SSE2( const byte* colorBlock, byte* minColor, byte* maxColor ) const
 {
 	__m128i block0 = *( ( __m128i* )( &colorBlock[0] ) );
@@ -1319,16 +1211,6 @@ ID_INLINE void idDxtEncoder::SelectYCoCgDiagonal_SSE2( const byte* colorBlock, b
 	*( int* )maxColor = _mm_cvtsi128_si32( temp7 );
 }
 
-/*
-========================
-idDxtEncoder::CompressYCoCgDXT5Fast_SSE2
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressYCoCgDXT5Fast_SSE2( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -1495,11 +1377,6 @@ void idDxtEncoder::EmitGreenIndices_SSE2( const byte* block, const int channelBi
 	EmitUInt( result );
 }
 
-/*
-========================
-idDxtEncoder::InsetNormalsBBoxDXT5_SSE2
-========================
-*/
 void idDxtEncoder::InsetNormalsBBoxDXT5_SSE2( byte* minNormal, byte* maxNormal ) const
 {
 	__m128i temp0, temp1, temp2, temp3;
@@ -1540,16 +1417,6 @@ void idDxtEncoder::InsetNormalsBBoxDXT5_SSE2( byte* minNormal, byte* maxNormal )
 	*( int* )maxNormal = _mm_cvtsi128_si32( temp1 );
 }
 
-/*
-========================
-idDxtEncoder::CompressNormalMapDXT5Fast_SSE2
-
-params:	inBuf		- image to compress in _y_x component order
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressNormalMapDXT5Fast_SSE2( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );

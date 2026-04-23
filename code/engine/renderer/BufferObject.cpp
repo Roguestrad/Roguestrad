@@ -56,6 +56,7 @@ bool IsWriteCombined( void* base )
 
 #if defined( USE_INTRINSICS_SSE )
 
+//! Copies a specified number of bytes from a source buffer to a destination buffer using optimized SIMD instructions for performance.
 void CopyBuffer( byte* dst, const byte* src, int numBytes )
 {
 	assert_16_byte_aligned( dst );

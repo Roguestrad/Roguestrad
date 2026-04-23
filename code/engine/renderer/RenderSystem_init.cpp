@@ -1706,6 +1706,8 @@ static srfTriangles_t* R_MakeZeroOneCubeTris()
 
 // RB begin
 #if defined( USE_INTRINSICS_SSE )
+
+//! Initializes vertex and index data for a unit cube used in masked occlusion culling
 static void R_MakeZeroOneCubeTrisForMaskedOcclusionCulling()
 {
 	const float low	 = 0.0f;
@@ -1785,6 +1787,7 @@ static void R_MakeZeroOneCubeTrisForMaskedOcclusionCulling()
 	indexes[11 * 3 + 2] = 6;
 }
 
+//! Initializes vertex data for a unit cube used in masked occlusion culling.
 static void R_MakeUnitCubeTrisForMaskedOcclusionCulling()
 {
 	const float low	 = -1.0f;

@@ -2411,16 +2411,6 @@ void idDxtEncoder::RotateNormalsDXT1( byte* block ) const
 	}
 }
 
-/*
-========================
-idDxtEncoder::CompressNormalMapDXT1HQ
-
-params:	inBuf		- image to compress
-paramO:	outBuf		- result of compression
-params:	width		- width of image
-params:	height		- height of image
-========================
-*/
 void idDxtEncoder::CompressNormalMapDXT1HQ( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	ALIGN16( byte block[64] );
@@ -3364,15 +3354,6 @@ void idDxtEncoder::EmitCTX1Indices( const byte* colorBlock, const byte* minColor
 	EmitUInt( result );
 }
 
-/*
-========================
-idDxtEncoder::EmitAlphaIndices
-
-params:	colorBlock	- 16 pixel block for which find alpha indexes
-paramO:	minAlpha	- Min alpha found
-paramO:	maxAlpha	- Max alpha found
-========================
-*/
 void idDxtEncoder::EmitAlphaIndices( const byte* colorBlock, const int offset, const byte minAlpha, const byte maxAlpha )
 {
 	assert( maxAlpha >= minAlpha );
@@ -4023,15 +4004,6 @@ void idDxtEncoder::CompressYCoCgCTX1DXT5AFast_Generic( const byte* inBuf, byte* 
 	}
 }
 
-/*
-========================
-idDxtEncoder::EmitGreenIndices
-
-params:	block		- block for which to find green indices
-paramO:	minGreen	- Min green found
-paramO:	maxGreen	- Max green found
-========================
-*/
 void idDxtEncoder::EmitGreenIndices( const byte* block, const int offset, const byte minGreen, const byte maxGreen )
 {
 	assert( maxGreen >= minGreen );
@@ -4635,11 +4607,17 @@ void idDxtEncoder::CompressImageR11G11B10_BC6Fast_Generic( const byte* inBuf, by
 	#if defined( USE_INTRINSICS_SSE ) || defined( USE_INTRINSICS_NEON )
 		#include "../../libs/ispc_texcomp/ispc_texcomp.h"
 
-/*
-========================
-ConvertR11G11B10ImageToFP16
-Converts the entire image from R11G11B10 to FP16
-========================
+/*!
+	\brief Converts an image from R11G11B10 format to FP16 format.
+
+	This function takes an input buffer containing image data in R11G11B10 format and converts it to FP16 format. Each pixel is decompressed from its packed 32-bit representation into three float
+   values representing RGB components. The alpha channel is set to 1.0f for all pixels. The conversion process handles the unpacking and floating-point conversion for each pixel in the specified width
+   and height dimensions.
+
+	\param inBuf Input buffer containing image data in R11G11B10 format
+	\param width Width of the image in pixels
+	\param height Height of the image in pixels
+	\param outBuf Output buffer where converted FP16 image data will be stored
 */
 static void ConvertR11G11B10ImageToFP16( const byte* inBuf, int width, int height, halfFloat_t* outBuf )
 {
@@ -4667,12 +4645,6 @@ static void ConvertR11G11B10ImageToFP16( const byte* inBuf, int width, int heigh
 	}
 }
 
-/*
-========================
-idDxtEncoder::CompressImageR11G11B10_BC6Fast_SIMD
-ISPC-Variant with ISPCTextureCompressor for BC6H
-========================
-*/
 void idDxtEncoder::CompressImageR11G11B10_BC6Fast_SIMD( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	if( width < 4 || height < 4 || ( width & 3 ) != 0 || ( height & 3 ) != 0 ) {

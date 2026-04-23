@@ -187,11 +187,6 @@ void idDxtDecoder::DecompressImageDXT5( const byte* inBuf, byte* outBuf, int wid
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecompressImageDXT5_nVidia7x
-========================
-*/
 void idDxtDecoder::DecompressImageDXT5_nVidia7x( const byte* inBuf, byte* outBuf, int width, int height )
 {
 	byte block[64];
@@ -636,11 +631,6 @@ void idDxtDecoder::DecomposeAlphaBlock( byte colors[2][4], byte alphaIndices[16]
 	}
 }
 
-/*
-========================
-idDxtDecoder::DecomposeImageDXT1
-========================
-*/
 void idDxtDecoder::DecomposeImageDXT1( const byte* inBuf, byte* colorIndices, byte* pic1, byte* pic2, int width, int height )
 {
 	byte colors[2][4];

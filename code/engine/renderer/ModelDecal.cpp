@@ -553,10 +553,19 @@ void idRenderModelDecal::RemoveFadedDecals( int time )
 	}
 }
 
-/*
-=====================
-R_CopyDecalSurface
-=====================
+/*!
+	\brief Copies decal surface data including vertices and indexes while applying depth and time-based fading.
+
+	This function copies vertex data from a decal source to a destination buffer, applying color fading based on depth and time. It also copies index data and adjusts index values to account for
+   vertex offset. The implementation supports both SSE optimized and generic code paths. Memory alignment assertions ensure proper data alignment for SIMD operations.
+
+	\param verts Destination buffer for vertex data
+	\param numVerts Number of vertices in the destination buffer
+	\param indexes Destination buffer for index data
+	\param numIndexes Number of indexes in the destination buffer
+	\param decal Source decal data containing vertices, indexes, and depth fade information
+	\param fadeColor Color fading values applied to the decal surface
+	\throws assertions for memory alignment and data integrity
 */
 static void R_CopyDecalSurface( idDrawVert* verts, int numVerts, triIndex_t* indexes, int numIndexes, const decal_t* decal, const float fadeColor[4] )
 {
