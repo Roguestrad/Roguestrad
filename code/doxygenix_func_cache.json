@@ -44884,6 +44884,886 @@
     "bool PathTrace(const idEntity *ent, const idAAS *aas, const idVec3 &start, const idVec3 &end, int stopEvent, struct pathTrace_s &trace, predictedPath_t &path)": {
       "body_hash": "0d4f380df204b54cedaf7bb4a8d6101f",
       "is_trivial": false
+    },
+    "idAnim::idAnim()": {
+      "body_hash": "22ed63cab1894fa578150b5f0df5ac06",
+      "is_trivial": true
+    },
+    "idAnim::idAnim(const idDeclModelDef *modelDef, const idAnim *anim)": {
+      "body_hash": "f878675f4840bcbf5fdb9ea46d9f721d",
+      "is_trivial": true
+    },
+    "idAnim::~idAnim()": {
+      "body_hash": "267d69edc36c9f84b0f47cde13c8ee63",
+      "is_trivial": true
+    },
+    "void idAnim::SetAnim(const idDeclModelDef *modelDef, const char *sourcename, const char *animname, int num, const idMD5Anim *md5anims[ANIM_MaxSyncedAnims])": {
+      "body_hash": "e05736097f4399adaee9f01aeb6c6613",
+      "is_trivial": false
+    },
+    "const char * idAnim::Name() const": {
+      "body_hash": "bdd58b337cb4bdeba710e332a72afe62",
+      "is_trivial": true
+    },
+    "const char * idAnim::FullName() const": {
+      "body_hash": "df81aa6c8b55b49d307b641740c65086",
+      "is_trivial": true
+    },
+    "const idMD5Anim * idAnim::MD5Anim(int num) const": {
+      "body_hash": "0ba0412681ecb1ffc5c9475e99bfaf2c",
+      "is_trivial": true
+    },
+    "const idDeclModelDef * idAnim::ModelDef() const": {
+      "body_hash": "a864729470472a1d3a7d38bc968f06ca",
+      "is_trivial": true
+    },
+    "int idAnim::Length() const": {
+      "body_hash": "ccdcce7a46ebfbaf5c272e70259d9757",
+      "is_trivial": true
+    },
+    "int idAnim::NumFrames() const": {
+      "body_hash": "75da57f7bde2644285907684dfc53c86",
+      "is_trivial": true
+    },
+    "int idAnim::NumAnims() const": {
+      "body_hash": "9e1acf3cc8274e20bb1fbc998dccb676",
+      "is_trivial": true
+    },
+    "bool idAnim::GetOrigin(idVec3 &offset, int animNum, int time, int cyclecount) const": {
+      "body_hash": "d929681662867444cdf8248f588067d3",
+      "is_trivial": false
+    },
+    "bool idAnim::GetOriginRotation(idQuat &rotation, int animNum, int currentTime, int cyclecount) const": {
+      "body_hash": "f61fa6188e7bdc73daf8fb29756a92de",
+      "is_trivial": false
+    },
+    "ID_INLINE bool idAnim::GetBounds(idBounds &bounds, int animNum, int time, int cyclecount) const": {
+      "body_hash": "07699a32299f620178368700b18727ae",
+      "is_trivial": false
+    },
+    "const char * idAnim::AddFrameCommand(const class idDeclModelDef *modelDef, int framenum, idLexer &src, const idDict *def)": {
+      "body_hash": "80273200500c639631f7911d1fbc8168",
+      "is_trivial": false
+    },
+    "void idAnim::CallFrameCommands(idEntity *ent, int from, int to) const": {
+      "body_hash": "2b99dec952727768380381f1afbed1a6",
+      "is_trivial": true
+    },
+    "bool idAnim::HasFrameCommands() const": {
+      "body_hash": "145cb9f890a54fd1b98aa0acb7c76daa",
+      "is_trivial": true
+    },
+    "int idAnim::FindFrameForFrameCommand(frameCommandType_t framecommand, const frameCommand_t **command) const": {
+      "body_hash": "3f85e2e6e6710c577a03340eb00d5310",
+      "is_trivial": true
+    },
+    "void idAnim::SetAnimFlags(const animFlags_t &animflags)": {
+      "body_hash": "55d5ee5c2097471c05f92db10ff8fdbb",
+      "is_trivial": true
+    },
+    "const animFlags_t & idAnim::GetAnimFlags() const": {
+      "body_hash": "8986ba4438ee3d545ed87b1eae1755bc",
+      "is_trivial": true
+    },
+    "idAnimator::idAnimator()": {
+      "body_hash": "7976eb1cb6fbffc6ceefb87c4a8650f7",
+      "is_trivial": true
+    },
+    "idAnimator::~idAnimator()": {
+      "body_hash": "fb38a93529c3037f20b5470d8ec0fbec",
+      "is_trivial": true
+    },
+    "size_t idAnimator::Allocated() const": {
+      "body_hash": "6dc845ba81ffa06043d17e93ea2c3626",
+      "is_trivial": true
+    },
+    "size_t idAnimator::Size() const": {
+      "body_hash": "19c514a7d2fc86048d89ebb83e7c3ec3",
+      "is_trivial": true
+    },
+    "void idAnimator::Save(idSaveGame *savefile) const": {
+      "body_hash": "b59b4fb904aba2e8c6d9b4ac0fa6d8b7",
+      "is_trivial": true
+    },
+    "void idAnimator::Restore(idRestoreGame *savefile)": {
+      "body_hash": "413d78880dc2c03d4d4dcac5e999420a",
+      "is_trivial": true
+    },
+    "void idAnimator::SetEntity(idEntity *ent)": {
+      "body_hash": "9aade6c8264206142d4f0ad1d284fe34",
+      "is_trivial": true
+    },
+    "idEntity * idAnimator::GetEntity() const": {
+      "body_hash": "8fd3529256e0d9b66e6dc47ea38d8932",
+      "is_trivial": true
+    },
+    "void idAnimator::RemoveOriginOffset(bool remove)": {
+      "body_hash": "38d8bc984b1d6c8da4607cd749b7071b",
+      "is_trivial": true
+    },
+    "bool idAnimator::RemoveOrigin() const": {
+      "body_hash": "78bf749daab4ef4e5fae6e978688bd89",
+      "is_trivial": true
+    },
+    "void idAnimator::GetJointList(const char *jointnames, idList< jointHandle_t > &jointList) const": {
+      "body_hash": "eaf5d2232aac97ffbe7a61f55511f534",
+      "is_trivial": true
+    },
+    "int idAnimator::NumAnims() const": {
+      "body_hash": "131f69220e72513264f52b63d06fd3ce",
+      "is_trivial": true
+    },
+    "const idAnim * idAnimator::GetAnim(int index) const": {
+      "body_hash": "7c89759a3ec6d4f33c35e5cb67655832",
+      "is_trivial": true
+    },
+    "int idAnimator::GetAnim(const char *name) const": {
+      "body_hash": "cf8e6cf8f9563e7244eb8ccf95b1eba5",
+      "is_trivial": true
+    },
+    "bool idAnimator::HasAnim(const char *name) const": {
+      "body_hash": "280e73a81f1bb5676f7f27ab7641ccd0",
+      "is_trivial": true
+    },
+    "void idAnimator::ServiceAnims(int fromtime, int totime)": {
+      "body_hash": "c750189fc66154742f08b3dd75232d0b",
+      "is_trivial": true
+    },
+    "bool idAnimator::IsAnimating(int currentTime) const": {
+      "body_hash": "4be06a35e6b34c272c913e4c9bb3dab8",
+      "is_trivial": true
+    },
+    "void idAnimator::GetJoints(int *numJoints, idJointMat **jointsPtr)": {
+      "body_hash": "02f7d6462ea4b97851e98b4be8f53c88",
+      "is_trivial": true
+    },
+    "int idAnimator::NumJoints() const": {
+      "body_hash": "0016c237deb8cf4a60fa93a71722b36d",
+      "is_trivial": true
+    },
+    "jointHandle_t idAnimator::GetFirstChild(jointHandle_t jointnum) const": {
+      "body_hash": "c8891b0dcd1cd0852bf1e1bdd90320f7",
+      "is_trivial": true
+    },
+    "jointHandle_t idAnimator::GetFirstChild(const char *name) const": {
+      "body_hash": "9af239c5b00b9aad902d8280a9b51c04",
+      "is_trivial": true
+    },
+    "idRenderModel * idAnimator::SetModel(const char *modelname)": {
+      "body_hash": "ea6105fc0db2220e5af82c2a5b51f053",
+      "is_trivial": true
+    },
+    "idRenderModel * idAnimator::ModelHandle() const": {
+      "body_hash": "d8480d66fe538859d0fb08e416f425f4",
+      "is_trivial": true
+    },
+    "const idDeclModelDef * idAnimator::ModelDef() const": {
+      "body_hash": "1a57287ac4db2ef012f5cc884bd93c97",
+      "is_trivial": true
+    },
+    "void idAnimator::ForceUpdate()": {
+      "body_hash": "d923576abd91856f76dcd22794ed543a",
+      "is_trivial": true
+    },
+    "void idAnimator::ClearForceUpdate()": {
+      "body_hash": "09f49dc3925010a2b2bbdc8f48bfc2b1",
+      "is_trivial": true
+    },
+    "bool idAnimator::CreateFrame(int animtime, bool force)": {
+      "body_hash": "a016793f141efe4955a2d1c0b053abd5",
+      "is_trivial": true
+    },
+    "bool idAnimator::FrameHasChanged(int animtime) const": {
+      "body_hash": "012bd5bf97f2529d8b11293623076937",
+      "is_trivial": true
+    },
+    "void idAnimator::GetDelta(int fromtime, int totime, idVec3 &delta) const": {
+      "body_hash": "4d5306919a8dff67bf8c3dcd05a4635f",
+      "is_trivial": true
+    },
+    "bool idAnimator::GetDeltaRotation(int fromtime, int totime, idMat3 &delta) const": {
+      "body_hash": "09c127dddad8d887f70968c000e726fd",
+      "is_trivial": true
+    },
+    "void idAnimator::GetOrigin(int currentTime, idVec3 &pos) const": {
+      "body_hash": "bd851122ee0ee0016e00b4364c89852e",
+      "is_trivial": true
+    },
+    "bool idAnimator::GetBounds(int currentTime, idBounds &bounds)": {
+      "body_hash": "e55ba59a105d0856ee58d9bb1c70ba40",
+      "is_trivial": true
+    },
+    "idAnimBlend * idAnimator::CurrentAnim(int channelNum)": {
+      "body_hash": "25a2274c891e613d6926d6c866a096f2",
+      "is_trivial": true
+    },
+    "void idAnimator::Clear(int channelNum, int currentTime, int cleartime)": {
+      "body_hash": "79e1765638d6370a08a5378d27e52d3f",
+      "is_trivial": true
+    },
+    "void idAnimator::SetFrame(int channelNum, int animnum, int frame, int currenttime, int blendtime)": {
+      "body_hash": "d32fd7e638bb9fbe0f648fef4c10d69e",
+      "is_trivial": false
+    },
+    "void idAnimator::CycleAnim(int channelNum, int animnum, int currenttime, int blendtime)": {
+      "body_hash": "b5524e386e01f48b56365f35f7dc513d",
+      "is_trivial": false
+    },
+    "void idAnimator::PlayAnim(int channelNum, int animnum, int currenttime, int blendTime)": {
+      "body_hash": "c673b9df86fedad0432cc5722edb6509",
+      "is_trivial": false
+    },
+    "void idAnimator::SetJointPos(jointHandle_t jointnum, jointModTransform_t transform_type, const idVec3 &pos)": {
+      "body_hash": "3f1eddd2d4f762bb1eb6ff81c4cd9037",
+      "is_trivial": true
+    },
+    "void idAnimator::SetJointAxis(jointHandle_t jointnum, jointModTransform_t transform_type, const idMat3 &mat)": {
+      "body_hash": "3d332561b3d48e0bad2318e60985b89a",
+      "is_trivial": true
+    },
+    "void idAnimator::ClearJoint(jointHandle_t jointnum)": {
+      "body_hash": "e437aad556358db4e1ec3204f0b43553",
+      "is_trivial": true
+    },
+    "void idAnimator::ClearAllJoints()": {
+      "body_hash": "46dfeb15341c627e8c0de3829568c3f1",
+      "is_trivial": true
+    },
+    "void idAnimator::InitAFPose()": {
+      "body_hash": "4273f74e652c0ecd22e9bd78617124de",
+      "is_trivial": true
+    },
+    "void idAnimator::FinishAFPose(int animnum, const idBounds &bounds, const int time)": {
+      "body_hash": "0a8843762e19cf3ce86b5949557562ec",
+      "is_trivial": true
+    },
+    "void idAnimator::SetAFPoseBlendWeight(float blendWeight)": {
+      "body_hash": "5b15c54fbfd23cb760c80056ecf1fdc2",
+      "is_trivial": true
+    },
+    "bool idAnimator::BlendAFPose(idJointQuat *blendFrame) const": {
+      "body_hash": "2c4c91f037da9bf3629dde06126b391f",
+      "is_trivial": true
+    },
+    "void idAnimator::ClearAFPose()": {
+      "body_hash": "2adfd734a51b93477173f55daea9b258",
+      "is_trivial": true
+    },
+    "void idAnimator::ClearAllAnims(int currentTime, int cleartime)": {
+      "body_hash": "d2b54c52f8d0cf08e2f2b09a09da7b23",
+      "is_trivial": true
+    },
+    "jointHandle_t idAnimator::GetJointHandle(const char *name) const": {
+      "body_hash": "34e3cbff60581465c41dcc9acfc51802",
+      "is_trivial": true
+    },
+    "const char * idAnimator::GetJointName(jointHandle_t handle) const": {
+      "body_hash": "6beb7cd615ee39a85fca6104bb61be24",
+      "is_trivial": true
+    },
+    "int idAnimator::GetChannelForJoint(jointHandle_t joint) const": {
+      "body_hash": "82df3b764f5731c25df548215eb03597",
+      "is_trivial": true
+    },
+    "bool idAnimator::GetJointTransform(jointHandle_t jointHandle, int currenttime, idVec3 &offset, idMat3 &axis)": {
+      "body_hash": "4bcb9cb35cbaabce5135264ef0ccffed",
+      "is_trivial": false
+    },
+    "bool idAnimator::GetJointLocalTransform(jointHandle_t jointHandle, int currentTime, idVec3 &offset, idMat3 &axis)": {
+      "body_hash": "1c182ee63f46de63e217a8e808d73ec8",
+      "is_trivial": false
+    },
+    "int idAnimator::NumFrames(int animnum) const": {
+      "body_hash": "110896edab6c1413b1ebcd8c1230bcda",
+      "is_trivial": true
+    },
+    "int idAnimator::NumSyncedAnims(int animnum) const": {
+      "body_hash": "6e8d6df98dc1cbc0c8a34fb639f375c2",
+      "is_trivial": true
+    },
+    "const char * idAnimator::AnimName(int animnum) const": {
+      "body_hash": "cfefa0c1e52b32774e4c48add50960b1",
+      "is_trivial": true
+    },
+    "const char * idAnimator::AnimFullName(int animnum) const": {
+      "body_hash": "9686fc2243a95764919aa149e7859fc2",
+      "is_trivial": true
+    },
+    "int idAnimator::AnimLength(int animnum) const": {
+      "body_hash": "9ff61f44891ae0985759a2d4f6186b63",
+      "is_trivial": true
+    },
+    "const idVec3 & idAnimator::TotalMovementDelta(int animnum) const": {
+      "body_hash": "8d406bd67329a56e8db0ad219973972c",
+      "is_trivial": true
+    },
+    "void idAnimator::FreeData()": {
+      "body_hash": "9815a229589c8cdde710361ab2412388",
+      "is_trivial": true
+    },
+    "void idAnimator::PushAnims(int channel, int currentTime, int blendTime)": {
+      "body_hash": "e99b8c5dbb31bd87505c03055e73199a",
+      "is_trivial": true
+    },
+    "void idAnimBlend::Reset(const idDeclModelDef *_modelDef)": {
+      "body_hash": "e300389f8574fb8af38183225f39c90c",
+      "is_trivial": true
+    },
+    "void idAnimBlend::CallFrameCommands(idEntity *ent, int fromtime, int totime) const": {
+      "body_hash": "00d8f7748eacde1bc13df0ee164cc346",
+      "is_trivial": true
+    },
+    "void idAnimBlend::SetFrame(const idDeclModelDef *modelDef, int animnum, int frame, int currenttime, int blendtime)": {
+      "body_hash": "8c82e756fda7d87944dcf98aa78bdc24",
+      "is_trivial": false
+    },
+    "void idAnimBlend::CycleAnim(const idDeclModelDef *modelDef, int animnum, int currenttime, int blendtime)": {
+      "body_hash": "56ff155719c1cee0db5f7575b0c0e5fe",
+      "is_trivial": false
+    },
+    "void idAnimBlend::PlayAnim(const idDeclModelDef *modelDef, int animnum, int currenttime, int blendtime)": {
+      "body_hash": "212bd4905c6b5dc6b349d120265d74ea",
+      "is_trivial": false
+    },
+    "bool idAnimBlend::BlendAnim(int currentTime, int channel, int numJoints, idJointQuat *blendFrame, float &blendWeight, bool removeOrigin, bool overrideBlend, bool printInfo) const": {
+      "body_hash": "6585ee4cb83b5ef606c0a9082ecf990a",
+      "is_trivial": false
+    },
+    "void idAnimBlend::BlendOrigin(int currentTime, idVec3 &blendPos, float &blendWeight, bool removeOriginOffset) const": {
+      "body_hash": "e4b8635b2e357b5a9aa729cf1444bdf2",
+      "is_trivial": false
+    },
+    "void idAnimBlend::BlendDelta(int fromtime, int totime, idVec3 &blendDelta, float &blendWeight) const": {
+      "body_hash": "f2a3dc87da3269bd4aabdb4e8bb57344",
+      "is_trivial": false
+    },
+    "void idAnimBlend::BlendDeltaRotation(int fromtime, int totime, idQuat &blendDelta, float &blendWeight) const": {
+      "body_hash": "35733c749526631c2569add465a47397",
+      "is_trivial": false
+    },
+    "bool idAnimBlend::AddBounds(int currentTime, idBounds &bounds, bool removeOriginOffset) const": {
+      "body_hash": "ca9504966223ea96a3cf41da8ba5bf77",
+      "is_trivial": true
+    },
+    "idAnimBlend::idAnimBlend()": {
+      "body_hash": "d58d4ca36ed52ddb701f25a3c8f11afa",
+      "is_trivial": true
+    },
+    "void idAnimBlend::Save(idSaveGame *savefile) const": {
+      "body_hash": "75983588fec9420168d1a58d7f3d440c",
+      "is_trivial": true
+    },
+    "void idAnimBlend::Restore(idRestoreGame *savefile, const idDeclModelDef *modelDef)": {
+      "body_hash": "0207144936ee3bbf30c101cf30851be5",
+      "is_trivial": true
+    },
+    "const char * idAnimBlend::AnimName() const": {
+      "body_hash": "3647cf9844fc0cf2f66bc85b563c047e",
+      "is_trivial": true
+    },
+    "const char * idAnimBlend::AnimFullName() const": {
+      "body_hash": "242278fe504e38b4aefa607d3ebc8ab2",
+      "is_trivial": true
+    },
+    "float idAnimBlend::GetWeight(int currenttime) const": {
+      "body_hash": "4ad0d417524c433c89a2df264bf37e99",
+      "is_trivial": true
+    },
+    "float idAnimBlend::GetFinalWeight() const": {
+      "body_hash": "815b88a2bb75d56a49b1d62bcbaded6d",
+      "is_trivial": true
+    },
+    "void idAnimBlend::SetWeight(float newweight, int currenttime, int blendtime)": {
+      "body_hash": "fae98e9300ba55e48937983edefd49a0",
+      "is_trivial": true
+    },
+    "int idAnimBlend::NumSyncedAnims() const": {
+      "body_hash": "ea14cd68a383fb7ae0002e1d32c835ee",
+      "is_trivial": true
+    },
+    "bool idAnimBlend::SetSyncedAnimWeight(int num, float weight)": {
+      "body_hash": "f383a026cf0c22e86b4ff2af18b97b4f",
+      "is_trivial": true
+    },
+    "void idAnimBlend::Clear(int currentTime, int clearTime)": {
+      "body_hash": "8a6f68954bf3fd4594a75efa40eed3de",
+      "is_trivial": true
+    },
+    "bool idAnimBlend::IsDone(int currentTime) const": {
+      "body_hash": "8542a2a95361e3812fb6ddb8a07eb54c",
+      "is_trivial": true
+    },
+    "bool idAnimBlend::FrameHasChanged(int currentTime) const": {
+      "body_hash": "5560521d8869f9b8793b9755e490513a",
+      "is_trivial": true
+    },
+    "int idAnimBlend::GetCycleCount() const": {
+      "body_hash": "7029caddb18f068236ff1134f0b40b79",
+      "is_trivial": true
+    },
+    "void idAnimBlend::SetCycleCount(int count)": {
+      "body_hash": "d95426a382ce814534024a8cdc784ab5",
+      "is_trivial": true
+    },
+    "void idAnimBlend::SetPlaybackRate(int currentTime, float newRate)": {
+      "body_hash": "a46e0300f23ba6874f4a57996b8c1c05",
+      "is_trivial": true
+    },
+    "float idAnimBlend::GetPlaybackRate() const": {
+      "body_hash": "9479af128ef66b804f9882fd12ee0a90",
+      "is_trivial": true
+    },
+    "void idAnimBlend::SetStartTime(int startTime)": {
+      "body_hash": "a03e35ab20d2619e1c6ec4654ae6633d",
+      "is_trivial": true
+    },
+    "int idAnimBlend::GetStartTime() const": {
+      "body_hash": "1d021c87e1c51f9640df774edcfa2cd1",
+      "is_trivial": true
+    },
+    "int idAnimBlend::GetEndTime() const": {
+      "body_hash": "05ca851202cdf92ed60ea226d41fa02f",
+      "is_trivial": true
+    },
+    "int idAnimBlend::GetFrameNumber(int currenttime) const": {
+      "body_hash": "0c9e66ba28e6643fe99152768070f1d2",
+      "is_trivial": true
+    },
+    "int idAnimBlend::AnimTime(int currenttime) const": {
+      "body_hash": "ec87c6ab7d3f875f1f8afcfbacd920da",
+      "is_trivial": true
+    },
+    "int idAnimBlend::NumFrames() const": {
+      "body_hash": "ff179c5316291adeeb89568979e74c36",
+      "is_trivial": true
+    },
+    "int idAnimBlend::Length() const": {
+      "body_hash": "656704ed756677f577e61b6f3e6ba0a3",
+      "is_trivial": true
+    },
+    "int idAnimBlend::PlayLength() const": {
+      "body_hash": "1b77d22ca98251ccc9cecf03db36274d",
+      "is_trivial": true
+    },
+    "void idAnimBlend::AllowMovement(bool allow)": {
+      "body_hash": "21f71a1f5777e54a9bdcdafce010804a",
+      "is_trivial": true
+    },
+    "void idAnimBlend::AllowFrameCommands(bool allow)": {
+      "body_hash": "7c4068b11d97b68b41158a1ddbda47bf",
+      "is_trivial": true
+    },
+    "const idAnim * idAnimBlend::Anim() const": {
+      "body_hash": "ff76f643f063137f20c7b7235b02aa3f",
+      "is_trivial": true
+    },
+    "int idAnimBlend::AnimNum() const": {
+      "body_hash": "997f95567b09f01c941ea95c00d74a03",
+      "is_trivial": true
+    },
+    "idAnimManager::idAnimManager()": {
+      "body_hash": "400c32548331dd1be7735837a248cc55",
+      "is_trivial": true
+    },
+    "idAnimManager::~idAnimManager()": {
+      "body_hash": "72833c3b1484a8a73e2411bd55be854e",
+      "is_trivial": true
+    },
+    "void idAnimManager::Shutdown()": {
+      "body_hash": "c019d0fb3a4baf2dcafd9f0872580103",
+      "is_trivial": true
+    },
+    "idMD5Anim * idAnimManager::GetAnim(const char *name, const idImportOptions *options)": {
+      "body_hash": "1d1e2ccb53e542fa0d569efb27faeb68",
+      "is_trivial": true
+    },
+    "void idAnimManager::Preload(const idPreloadManifest &manifest)": {
+      "body_hash": "03d64671117ba263248d849cfe8a6b78",
+      "is_trivial": true
+    },
+    "void idAnimManager::ReloadAnims()": {
+      "body_hash": "35ffd99c4d2ae6b8186084479709fdfd",
+      "is_trivial": true
+    },
+    "void idAnimManager::ListAnims() const": {
+      "body_hash": "e7250c08ae8553fee176be724c427cfb",
+      "is_trivial": true
+    },
+    "int idAnimManager::JointIndex(const char *name)": {
+      "body_hash": "c93e93403aef80cd10e790117be73ecf",
+      "is_trivial": true
+    },
+    "const char * idAnimManager::JointName(int index) const": {
+      "body_hash": "53b0f5d2a80a1946208a6f0b038657be",
+      "is_trivial": true
+    },
+    "void idAnimManager::FlushUnusedAnims()": {
+      "body_hash": "82a738b7fca54e3826f78a42acecfb11",
+      "is_trivial": true
+    },
+    "ID_INLINE idAFPoseJointMod::idAFPoseJointMod()": {
+      "body_hash": "38e195d986562c14053656da74b7ea8c",
+      "is_trivial": true
+    },
+    "idDeclModelDef::idDeclModelDef()": {
+      "body_hash": "e41b9820ccb42b8eb58eaa788135dceb",
+      "is_trivial": true
+    },
+    "idDeclModelDef::~idDeclModelDef()": {
+      "body_hash": "2931b2571e910552763e51aba77f5642",
+      "is_trivial": true
+    },
+    "size_t idDeclModelDef::Size() const": {
+      "body_hash": "63d59167d02a18868256f58efd151b76",
+      "is_trivial": true
+    },
+    "const char * idDeclModelDef::DefaultDefinition() const": {
+      "body_hash": "cef363274f4c76f4e06c8fb66a20a654",
+      "is_trivial": true
+    },
+    "bool idDeclModelDef::Parse(const char *text, const int textLength, bool allowBinaryVersion)": {
+      "body_hash": "733ffce18d4b6cb997592bf86fcca115",
+      "is_trivial": true
+    },
+    "void idDeclModelDef::FreeData()": {
+      "body_hash": "bee8aed33911a0338bbc7335f587aadd",
+      "is_trivial": true
+    },
+    "void idDeclModelDef::Touch() const": {
+      "body_hash": "688de59e49cbd00ef86f793e70242688",
+      "is_trivial": true
+    },
+    "const idDeclSkin * idDeclModelDef::GetDefaultSkin() const": {
+      "body_hash": "5216b59604a12c2b0d180d5dbba0d614",
+      "is_trivial": true
+    },
+    "const idJointQuat * idDeclModelDef::GetDefaultPose() const": {
+      "body_hash": "9bfe81e18055b01825b33db4c61e652a",
+      "is_trivial": true
+    },
+    "void idDeclModelDef::SetupJoints(int *numJoints, idJointMat **jointList, idBounds &frameBounds, bool removeOriginOffset) const": {
+      "body_hash": "1dccb3de98ce60ee0288dc4489efcc6d",
+      "is_trivial": false
+    },
+    "idRenderModel * idDeclModelDef::ModelHandle() const": {
+      "body_hash": "2e107b77549b6421f2689fdc6b9a9a4a",
+      "is_trivial": true
+    },
+    "void idDeclModelDef::GetJointList(const char *jointnames, idList< jointHandle_t > &jointList) const": {
+      "body_hash": "0a57122cfe56e9971e9e68f512acf203",
+      "is_trivial": true
+    },
+    "const jointInfo_t * idDeclModelDef::FindJoint(const char *name) const": {
+      "body_hash": "841c7ca0f7da75bfdc193266975eea42",
+      "is_trivial": true
+    },
+    "int idDeclModelDef::NumAnims() const": {
+      "body_hash": "a6cf33eb848a23db7525f74fb5b916ec",
+      "is_trivial": true
+    },
+    "const idAnim * idDeclModelDef::GetAnim(int index) const": {
+      "body_hash": "e38f8bc5c3ee539fef628b455e48e7d1",
+      "is_trivial": true
+    },
+    "int idDeclModelDef::GetSpecificAnim(const char *name) const": {
+      "body_hash": "7832720ec47911a08f8427b5cd107701",
+      "is_trivial": true
+    },
+    "int idDeclModelDef::GetAnim(const char *name) const": {
+      "body_hash": "e87afcb1bb705e739b7a1aa606d281c9",
+      "is_trivial": true
+    },
+    "bool idDeclModelDef::HasAnim(const char *name) const": {
+      "body_hash": "24bc46b469287c866cd077d4009dd407",
+      "is_trivial": true
+    },
+    "const idDeclSkin * idDeclModelDef::GetSkin() const": {
+      "body_hash": "a3b37853901525ea266855545e3aca97",
+      "is_trivial": true
+    },
+    "const char * idDeclModelDef::GetModelName() const": {
+      "body_hash": "7a870b76e0ece5ca93281690ce1df05e",
+      "is_trivial": true
+    },
+    "const idList< jointInfo_t > & idDeclModelDef::Joints() const": {
+      "body_hash": "c9b7ade80760eff4783e57a9889982a5",
+      "is_trivial": true
+    },
+    "const int * idDeclModelDef::JointParents() const": {
+      "body_hash": "e7a5413e7f8ffac1fcea4516df7dadec",
+      "is_trivial": true
+    },
+    "int idDeclModelDef::NumJoints() const": {
+      "body_hash": "10e513280bd74f98a390e64bae2ca467",
+      "is_trivial": true
+    },
+    "const jointInfo_t * idDeclModelDef::GetJoint(int jointHandle) const": {
+      "body_hash": "03de55e62022b0503b54fdd39721e08f",
+      "is_trivial": true
+    },
+    "const char * idDeclModelDef::GetJointName(int jointHandle) const": {
+      "body_hash": "de389437d23e73036456782ad4ed9889",
+      "is_trivial": true
+    },
+    "int idDeclModelDef::NumJointsOnChannel(int channel) const": {
+      "body_hash": "49ab0b8a84b8c6b4449e43e2b5242892",
+      "is_trivial": true
+    },
+    "const int * idDeclModelDef::GetChannelJoints(int channel) const": {
+      "body_hash": "013af02ac84c9f9f958ecac979cb54e1",
+      "is_trivial": true
+    },
+    "const idVec3 & idDeclModelDef::GetVisualOffset() const": {
+      "body_hash": "8c75d219df8b34f795a274d04f59d97d",
+      "is_trivial": true
+    },
+    "const idImportOptions * idDeclModelDef::GetImportOptions() const": {
+      "body_hash": "8e0615a4c3711933ea64b5af3f78e319",
+      "is_trivial": true
+    },
+    "void idDeclModelDef::CopyDecl(const idDeclModelDef *decl)": {
+      "body_hash": "a9c06f03ba052216aceb262e26c936ed",
+      "is_trivial": true
+    },
+    "bool idDeclModelDef::ParseAnim(idLexer &src, int numDefaultAnims, const idStr &defaultCommands)": {
+      "body_hash": "75800bc6a9461f373a421ab43cdbcea4",
+      "is_trivial": true
+    },
+    "idMD5Anim::idMD5Anim()": {
+      "body_hash": "ecc48e7db1ffe02c2745bef46f5e2c5f",
+      "is_trivial": true
+    },
+    "idMD5Anim::~idMD5Anim()": {
+      "body_hash": "a5e5dd47ce347d7b7cf26fea1f7df5d0",
+      "is_trivial": true
+    },
+    "void idMD5Anim::Free()": {
+      "body_hash": "ee80217b367b8eaa214c565b9eaa6aa7",
+      "is_trivial": true
+    },
+    "bool idMD5Anim::Reload()": {
+      "body_hash": "8854201a485b580e173c47976860338b",
+      "is_trivial": true
+    },
+    "size_t idMD5Anim::Allocated() const": {
+      "body_hash": "836d516e79cc4900f4b4043eceb2c829",
+      "is_trivial": true
+    },
+    "bool idMD5Anim::LoadAnim(const char *filename, const idImportOptions *options)": {
+      "body_hash": "fd43af5258b7f4c7ceb0e0a743a60a47",
+      "is_trivial": true
+    },
+    "bool idMD5Anim::LoadBinary(idFile *file, ID_TIME_T sourceTimeStamp)": {
+      "body_hash": "b4c93f21af908581c0e4b13ae0d5ec77",
+      "is_trivial": true
+    },
+    "void idMD5Anim::WriteBinary(idFile *file, ID_TIME_T sourceTimeStamp)": {
+      "body_hash": "e19b12935af49911a143e11e8af22cf7",
+      "is_trivial": true
+    },
+    "void idMD5Anim::IncreaseRefs() const": {
+      "body_hash": "733ef18f4775256391a6741d4ed7dd0a",
+      "is_trivial": true
+    },
+    "void idMD5Anim::DecreaseRefs() const": {
+      "body_hash": "8919f373e791efe736aac29c8bb2698d",
+      "is_trivial": true
+    },
+    "int idMD5Anim::NumRefs() const": {
+      "body_hash": "ec014c34467a814f53c24dc3e985ac1e",
+      "is_trivial": true
+    },
+    "void idMD5Anim::CheckModelHierarchy(const idRenderModel *model) const": {
+      "body_hash": "9686218faf4d68b22fdd5b0fa543bfe9",
+      "is_trivial": true
+    },
+    "void idMD5Anim::GetInterpolatedFrame(frameBlend_t &frame, idJointQuat *joints, const int *index, int numIndexes) const": {
+      "body_hash": "7c3baa0f73a878cf9db3ee6063f0147c",
+      "is_trivial": false
+    },
+    "void idMD5Anim::GetSingleFrame(int framenum, idJointQuat *joints, const int *index, int numIndexes) const": {
+      "body_hash": "2f5f00f25ad2a1dab668acd26169d012",
+      "is_trivial": false
+    },
+    "int idMD5Anim::Length() const": {
+      "body_hash": "901e3f158be14c55d5558761fd4c5f59",
+      "is_trivial": true
+    },
+    "int idMD5Anim::NumFrames() const": {
+      "body_hash": "629c42503a8945cf8eb3a8fbbe6c414a",
+      "is_trivial": true
+    },
+    "int idMD5Anim::NumJoints() const": {
+      "body_hash": "7e7f2afd96a176d4bebd0435f5bf83b4",
+      "is_trivial": true
+    },
+    "const idVec3 & idMD5Anim::TotalMovementDelta() const": {
+      "body_hash": "c301e29081f72f225714e774a2424503",
+      "is_trivial": true
+    },
+    "const char * idMD5Anim::Name() const": {
+      "body_hash": "686971b8eb21c76932484fd9c644843f",
+      "is_trivial": true
+    },
+    "void idMD5Anim::GetFrameBlend(int framenum, frameBlend_t &frame) const": {
+      "body_hash": "f1150a9a5796d0d3fd55b00485e26f01",
+      "is_trivial": true
+    },
+    "void idMD5Anim::ConvertTimeToFrame(int time, int cyclecount, frameBlend_t &frame) const": {
+      "body_hash": "76be22b2c74be02f1a924c182aaaecf2",
+      "is_trivial": true
+    },
+    "void idMD5Anim::GetOrigin(idVec3 &offset, int currentTime, int cyclecount) const": {
+      "body_hash": "750cb495204d9e14b59b34a6624a96df",
+      "is_trivial": true
+    },
+    "void idMD5Anim::GetOriginRotation(idQuat &rotation, int time, int cyclecount) const": {
+      "body_hash": "d2718d6d5782d5c48b97d9f5a4cd76d8",
+      "is_trivial": true
+    },
+    "void idMD5Anim::GetBounds(idBounds &bounds, int currentTime, int cyclecount) const": {
+      "body_hash": "a0bb5023ac49e499c1baf866bdcfbcd3",
+      "is_trivial": true
+    },
+    "idTestModel::idTestModel()": {
+      "body_hash": "1cc05e77e38bb20edb1897e357cbfcfe",
+      "is_trivial": true
+    },
+    "idTestModel::~idTestModel()": {
+      "body_hash": "6235cb8cd428bb97b15045e61dcd1311",
+      "is_trivial": true
+    },
+    "void idTestModel::Save(idSaveGame *savefile)": {
+      "body_hash": "2a9d2a27f9903aaef9fa7adddcd4a83f",
+      "is_trivial": true
+    },
+    "void idTestModel::Restore(idRestoreGame *savefile)": {
+      "body_hash": "e294dcb2204682e147656424b7be42e4",
+      "is_trivial": true
+    },
+    "void idTestModel::Spawn()": {
+      "body_hash": "d19a025950e120c21eecae63235ed6c5",
+      "is_trivial": true
+    },
+    "bool idTestModel::ShouldConstructScriptObjectAtSpawn() const": {
+      "body_hash": "61782bbe86c984a25211b224be4b7023",
+      "is_trivial": true
+    },
+    "void idTestModel::NextAnim(const idCmdArgs &args)": {
+      "body_hash": "8f6d159bc78a0de8e231b95924e11004",
+      "is_trivial": true
+    },
+    "void idTestModel::PrevAnim(const idCmdArgs &args)": {
+      "body_hash": "8b0ebeaff72718c0e9bf9900d7b8312e",
+      "is_trivial": true
+    },
+    "void idTestModel::NextFrame(const idCmdArgs &args)": {
+      "body_hash": "8ea53d90e4dabed10cd9c76ef57b677c",
+      "is_trivial": true
+    },
+    "void idTestModel::PrevFrame(const idCmdArgs &args)": {
+      "body_hash": "949ac37b0df1d30dda91a8bb14d82b1b",
+      "is_trivial": true
+    },
+    "void idTestModel::TestAnim(const idCmdArgs &args)": {
+      "body_hash": "78b3a3d5f139723cda79af97505f44d3",
+      "is_trivial": true
+    },
+    "void idTestModel::BlendAnim(const idCmdArgs &args)": {
+      "body_hash": "dcbde9d20bb0a061ba8660d79aeb5275",
+      "is_trivial": true
+    },
+    "void idTestModel::KeepTestModel_f(const idCmdArgs &args)": {
+      "body_hash": "016da867b3c0717509340c774964f614",
+      "is_trivial": true
+    },
+    "void idTestModel::TestModel_f(const idCmdArgs &args)": {
+      "body_hash": "f560cc0dbc4b4a6d572906a880c29ffd",
+      "is_trivial": true
+    },
+    "void idTestModel::ArgCompletion_TestModel(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "6db4205f18e7df80270c86f5bd060726",
+      "is_trivial": true
+    },
+    "void idTestModel::TestSkin_f(const idCmdArgs &args)": {
+      "body_hash": "8cb3bb8040d7c7d8ec83a2bee45404a0",
+      "is_trivial": true
+    },
+    "void idTestModel::TestShaderParm_f(const idCmdArgs &args)": {
+      "body_hash": "89b2be163ed9bf6efb4803d870a20fd7",
+      "is_trivial": true
+    },
+    "void idTestModel::TestParticleStopTime_f(const idCmdArgs &args)": {
+      "body_hash": "c504558621d63b5d3873e9d8a8a8b98a",
+      "is_trivial": true
+    },
+    "void idTestModel::TestAnim_f(const idCmdArgs &args)": {
+      "body_hash": "b7f72b08f2b83282181b8e9992a5aa11",
+      "is_trivial": true
+    },
+    "void idTestModel::ArgCompletion_TestAnim(const idCmdArgs &args, void(*callback)(const char *s))": {
+      "body_hash": "5315952fa8a1ec8be53153bde016d9cd",
+      "is_trivial": true
+    },
+    "void idTestModel::TestBlend_f(const idCmdArgs &args)": {
+      "body_hash": "4390beb4c59be74c0b48d841128ebf16",
+      "is_trivial": true
+    },
+    "void idTestModel::TestModelNextAnim_f(const idCmdArgs &args)": {
+      "body_hash": "9dc1531277c77c498f3c05e70e5e0440",
+      "is_trivial": true
+    },
+    "void idTestModel::TestModelPrevAnim_f(const idCmdArgs &args)": {
+      "body_hash": "b457faeec7f2b14db2ebb3b2a22ac06c",
+      "is_trivial": true
+    },
+    "void idTestModel::TestModelNextFrame_f(const idCmdArgs &args)": {
+      "body_hash": "09b7a61c3c6d3f02e84eac08c2b21232",
+      "is_trivial": true
+    },
+    "void idTestModel::TestModelPrevFrame_f(const idCmdArgs &args)": {
+      "body_hash": "fd6821690afc307fbbb5b071ddfe9c11",
+      "is_trivial": true
+    },
+    "void idTestModel::Think()": {
+      "body_hash": "2fcf924665e19676225f8961babb4ab7",
+      "is_trivial": true
+    },
+    "void idTestModel::Event_Footstep()": {
+      "body_hash": "566d7c1142cd6f8892ccb9814412e38f",
+      "is_trivial": true
+    },
+    "int DecodeInterpolatedFrames(idJointQuat *joints, idJointQuat *blendJoints, int *lerpIndex, const float *frame1, const float *frame2, const jointAnimInfo_t *jointInfo, const int *index, const int numIndexes)": {
+      "body_hash": "f9a92d686d0c92be73688521cd485477",
+      "is_trivial": false
+    },
+    "void DecodeSingleFrame(idJointQuat *joints, const float *frame, const jointAnimInfo_t *jointInfo, const int *index, const int numIndexes)": {
+      "body_hash": "b8e09d375b453b4025552fd146b72a5b",
+      "is_trivial": false
+    },
+    "ID_INLINE int FRAME2MS(int framenum)": {
+      "body_hash": "ed6d3b23f67172de73532e20ee8f97c2",
+      "is_trivial": true
+    },
+    "const idDeclModelDef * ANIM_GetModelDefFromEntityDef(const idDict *args)": {
+      "body_hash": "bc0ea5b39ab8380d5cbcd82da6291a4b",
+      "is_trivial": true
+    },
+    "const idVec3 & idAnim::TotalMovementDelta() const": {
+      "body_hash": "e02d8a6d028133445569dc37a2eb820f",
+      "is_trivial": true
+    },
+    "void idAnimator::SyncAnimChannels(int channelNum, int fromChannelNum, int currenttime, int blendTime)": {
+      "body_hash": "2eb6a29e117bf62e8ac9f3b24b1abacf",
+      "is_trivial": false
+    },
+    "void idAnimator::SetAFPoseJointMod(const jointHandle_t jointNum, const AFJointModType_t mod, const idMat3 &axis, const idVec3 &origin)": {
+      "body_hash": "9fbef9ae0718ce373e1542ffc790af33",
+      "is_trivial": false
+    },
+    "const animFlags_t idAnimator::GetAnimFlags(int animnum) const": {
+      "body_hash": "74a8bbc907ade8b92ca39573df48a134",
+      "is_trivial": true
     }
   }
 }

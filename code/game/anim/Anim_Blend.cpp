@@ -46,11 +46,6 @@ static const char* channelNames[ANIM_NumAnimChannels] = { "all", "torso", "legs"
 
 ***********************************************************************/
 
-/*
-=====================
-idAnim::idAnim
-=====================
-*/
 idAnim::idAnim()
 {
 	modelDef = NULL;
@@ -59,11 +54,6 @@ idAnim::idAnim()
 	memset( &flags, 0, sizeof( flags ) );
 }
 
-/*
-=====================
-idAnim::idAnim
-=====================
-*/
 idAnim::idAnim( const idDeclModelDef* modelDef, const idAnim* anim )
 {
 	int i;
@@ -92,11 +82,6 @@ idAnim::idAnim( const idDeclModelDef* modelDef, const idAnim* anim )
 	}
 }
 
-/*
-=====================
-idAnim::~idAnim
-=====================
-*/
 idAnim::~idAnim()
 {
 	int i;
@@ -110,11 +95,6 @@ idAnim::~idAnim()
 	}
 }
 
-/*
-=====================
-idAnim::SetAnim
-=====================
-*/
 void idAnim::SetAnim( const idDeclModelDef* modelDef, const char* sourcename, const char* animname, int num, const idMD5Anim* md5anims[ANIM_MaxSyncedAnims] )
 {
 	int i;
@@ -146,33 +126,16 @@ void idAnim::SetAnim( const idDeclModelDef* modelDef, const char* sourcename, co
 	frameCommands.Clear();
 }
 
-/*
-=====================
-idAnim::Name
-=====================
-*/
 const char* idAnim::Name() const
 {
 	return name;
 }
 
-/*
-=====================
-idAnim::FullName
-=====================
-*/
 const char* idAnim::FullName() const
 {
 	return realname;
 }
 
-/*
-=====================
-idAnim::MD5Anim
-
-index 0 will never be NULL.  Any anim >= NumAnims will return NULL.
-=====================
-*/
 const idMD5Anim* idAnim::MD5Anim( int num ) const
 {
 	if( anims[0] == NULL ) {
@@ -181,21 +144,11 @@ const idMD5Anim* idAnim::MD5Anim( int num ) const
 	return anims[num];
 }
 
-/*
-=====================
-idAnim::ModelDef
-=====================
-*/
 const idDeclModelDef* idAnim::ModelDef() const
 {
 	return modelDef;
 }
 
-/*
-=====================
-idAnim::Length
-=====================
-*/
 int idAnim::Length() const
 {
 	if( !anims[0] ) {
@@ -205,11 +158,6 @@ int idAnim::Length() const
 	return anims[0]->Length();
 }
 
-/*
-=====================
-idAnim::NumFrames
-=====================
-*/
 int idAnim::NumFrames() const
 {
 	if( !anims[0] ) {
@@ -219,21 +167,11 @@ int idAnim::NumFrames() const
 	return anims[0]->NumFrames();
 }
 
-/*
-=====================
-idAnim::NumAnims
-=====================
-*/
 int idAnim::NumAnims() const
 {
 	return numAnims;
 }
 
-/*
-=====================
-idAnim::TotalMovementDelta
-=====================
-*/
 const idVec3& idAnim::TotalMovementDelta() const
 {
 	if( !anims[0] ) {
@@ -243,11 +181,6 @@ const idVec3& idAnim::TotalMovementDelta() const
 	return anims[0]->TotalMovementDelta();
 }
 
-/*
-=====================
-idAnim::GetOrigin
-=====================
-*/
 bool idAnim::GetOrigin( idVec3& offset, int animNum, int currentTime, int cyclecount ) const
 {
 	if( !anims[animNum] ) {
@@ -259,11 +192,6 @@ bool idAnim::GetOrigin( idVec3& offset, int animNum, int currentTime, int cyclec
 	return true;
 }
 
-/*
-=====================
-idAnim::GetOriginRotation
-=====================
-*/
 bool idAnim::GetOriginRotation( idQuat& rotation, int animNum, int currentTime, int cyclecount ) const
 {
 	if( !anims[animNum] ) {
@@ -275,11 +203,6 @@ bool idAnim::GetOriginRotation( idQuat& rotation, int animNum, int currentTime, 
 	return true;
 }
 
-/*
-=====================
-idAnim::GetBounds
-=====================
-*/
 ID_INLINE bool idAnim::GetBounds( idBounds& bounds, int animNum, int currentTime, int cyclecount ) const
 {
 	if( !anims[animNum] ) {
@@ -290,13 +213,6 @@ ID_INLINE bool idAnim::GetBounds( idBounds& bounds, int animNum, int currentTime
 	return true;
 }
 
-/*
-=====================
-idAnim::AddFrameCommand
-
-Returns NULL if no error.
-=====================
-*/
 const char* idAnim::AddFrameCommand( const idDeclModelDef* modelDef, int framenum, idLexer& src, const idDict* def )
 {
 	int				   i;
@@ -768,11 +684,6 @@ const char* idAnim::AddFrameCommand( const idDeclModelDef* modelDef, int framenu
 }
 
 #if !defined( DMAP )
-/*
-=====================
-idAnim::CallFrameCommands
-=====================
-*/
 void idAnim::CallFrameCommands( idEntity* ent, int from, int to ) const
 {
 	int index;
@@ -1076,11 +987,6 @@ void idAnim::CallFrameCommands( idEntity* ent, int from, int to ) const
 }
 #endif // #if !defined( DMAP )
 
-/*
-=====================
-idAnim::FindFrameForFrameCommand
-=====================
-*/
 int idAnim::FindFrameForFrameCommand( frameCommandType_t framecommand, const frameCommand_t** command ) const
 {
 	int frame;
@@ -1112,11 +1018,6 @@ int idAnim::FindFrameForFrameCommand( frameCommandType_t framecommand, const fra
 	return -1;
 }
 
-/*
-=====================
-idAnim::HasFrameCommands
-=====================
-*/
 bool idAnim::HasFrameCommands() const
 {
 	if( !frameCommands.Num() ) {
@@ -1125,21 +1026,11 @@ bool idAnim::HasFrameCommands() const
 	return true;
 }
 
-/*
-=====================
-idAnim::SetAnimFlags
-=====================
-*/
 void idAnim::SetAnimFlags( const animFlags_t& animflags )
 {
 	flags = animflags;
 }
 
-/*
-=====================
-idAnim::GetAnimFlags
-=====================
-*/
 const animFlags_t& idAnim::GetAnimFlags() const
 {
 	return flags;
@@ -1153,23 +1044,11 @@ const animFlags_t& idAnim::GetAnimFlags() const
 
 #if !defined( DMAP )
 
-/*
-=====================
-idAnimBlend::idAnimBlend
-=====================
-*/
 idAnimBlend::idAnimBlend()
 {
 	Reset( NULL );
 }
 
-/*
-=====================
-idAnimBlend::Save
-
-archives object for save game file
-=====================
-*/
 void idAnimBlend::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -1194,13 +1073,6 @@ void idAnimBlend::Save( idSaveGame* savefile ) const
 	savefile->WriteBool( allowFrameCommands );
 }
 
-/*
-=====================
-idAnimBlend::Restore
-
-unarchives object from save game file
-=====================
-*/
 void idAnimBlend::Restore( idRestoreGame* savefile, const idDeclModelDef* modelDef )
 {
 	int i;
@@ -1233,11 +1105,6 @@ void idAnimBlend::Restore( idRestoreGame* savefile, const idDeclModelDef* modelD
 	savefile->ReadBool( allowFrameCommands );
 }
 
-/*
-=====================
-idAnimBlend::Reset
-=====================
-*/
 void idAnimBlend::Reset( const idDeclModelDef* _modelDef )
 {
 	modelDef		   = _modelDef;
@@ -1259,11 +1126,6 @@ void idAnimBlend::Reset( const idDeclModelDef* _modelDef )
 	blendDuration	= 0;
 }
 
-/*
-=====================
-idAnimBlend::FullName
-=====================
-*/
 const char* idAnimBlend::AnimFullName() const
 {
 	const idAnim* anim = Anim();
@@ -1274,11 +1136,6 @@ const char* idAnimBlend::AnimFullName() const
 	return anim->FullName();
 }
 
-/*
-=====================
-idAnimBlend::AnimName
-=====================
-*/
 const char* idAnimBlend::AnimName() const
 {
 	const idAnim* anim = Anim();
@@ -1289,11 +1146,6 @@ const char* idAnimBlend::AnimName() const
 	return anim->Name();
 }
 
-/*
-=====================
-idAnimBlend::NumFrames
-=====================
-*/
 int idAnimBlend::NumFrames() const
 {
 	const idAnim* anim = Anim();
@@ -1304,11 +1156,6 @@ int idAnimBlend::NumFrames() const
 	return anim->NumFrames();
 }
 
-/*
-=====================
-idAnimBlend::Length
-=====================
-*/
 int idAnimBlend::Length() const
 {
 	const idAnim* anim = Anim();
@@ -1319,11 +1166,6 @@ int idAnimBlend::Length() const
 	return anim->Length();
 }
 
-/*
-=====================
-idAnimBlend::GetWeight
-=====================
-*/
 float idAnimBlend::GetWeight( int currentTime ) const
 {
 	int	  timeDelta;
@@ -1343,21 +1185,11 @@ float idAnimBlend::GetWeight( int currentTime ) const
 	return w;
 }
 
-/*
-=====================
-idAnimBlend::GetFinalWeight
-=====================
-*/
 float idAnimBlend::GetFinalWeight() const
 {
 	return blendEndValue;
 }
 
-/*
-=====================
-idAnimBlend::SetWeight
-=====================
-*/
 void idAnimBlend::SetWeight( float newweight, int currentTime, int blendTime )
 {
 	blendStartValue = GetWeight( currentTime );
@@ -1370,11 +1202,6 @@ void idAnimBlend::SetWeight( float newweight, int currentTime, int blendTime )
 	}
 }
 
-/*
-=====================
-idAnimBlend::NumSyncedAnims
-=====================
-*/
 int idAnimBlend::NumSyncedAnims() const
 {
 	const idAnim* anim = Anim();
@@ -1385,11 +1212,6 @@ int idAnimBlend::NumSyncedAnims() const
 	return anim->NumAnims();
 }
 
-/*
-=====================
-idAnimBlend::SetSyncedAnimWeight
-=====================
-*/
 bool idAnimBlend::SetSyncedAnimWeight( int num, float weight )
 {
 	const idAnim* anim = Anim();
@@ -1405,11 +1227,6 @@ bool idAnimBlend::SetSyncedAnimWeight( int num, float weight )
 	return true;
 }
 
-/*
-=====================
-idAnimBlend::SetFrame
-=====================
-*/
 void idAnimBlend::SetFrame( const idDeclModelDef* modelDef, int _animNum, int _frame, int currentTime, int blendTime )
 {
 	Reset( modelDef );
@@ -1449,11 +1266,6 @@ void idAnimBlend::SetFrame( const idDeclModelDef* modelDef, int _animNum, int _f
 	blendStartValue = 0.0f;
 }
 
-/*
-=====================
-idAnimBlend::CycleAnim
-=====================
-*/
 void idAnimBlend::CycleAnim( const idDeclModelDef* modelDef, int _animNum, int currentTime, int blendTime )
 {
 	Reset( modelDef );
@@ -1490,11 +1302,6 @@ void idAnimBlend::CycleAnim( const idDeclModelDef* modelDef, int _animNum, int c
 	blendStartValue = 0.0f;
 }
 
-/*
-=====================
-idAnimBlend::PlayAnim
-=====================
-*/
 void idAnimBlend::PlayAnim( const idDeclModelDef* modelDef, int _animNum, int currentTime, int blendTime )
 {
 	Reset( modelDef );
@@ -1526,11 +1333,6 @@ void idAnimBlend::PlayAnim( const idDeclModelDef* modelDef, int _animNum, int cu
 	blendStartValue = 0.0f;
 }
 
-/*
-=====================
-idAnimBlend::Clear
-=====================
-*/
 void idAnimBlend::Clear( int currentTime, int clearTime )
 {
 	if( !clearTime ) {
@@ -1540,11 +1342,6 @@ void idAnimBlend::Clear( int currentTime, int clearTime )
 	}
 }
 
-/*
-=====================
-idAnimBlend::IsDone
-=====================
-*/
 bool idAnimBlend::IsDone( int currentTime ) const
 {
 	if( !frame && ( endtime > 0 ) && ( currentTime >= endtime ) ) {
@@ -1558,11 +1355,6 @@ bool idAnimBlend::IsDone( int currentTime ) const
 	return false;
 }
 
-/*
-=====================
-idAnimBlend::FrameHasChanged
-=====================
-*/
 bool idAnimBlend::FrameHasChanged( int currentTime ) const
 {
 	// if we don't have an anim, no change
@@ -1588,21 +1380,11 @@ bool idAnimBlend::FrameHasChanged( int currentTime ) const
 	return true;
 }
 
-/*
-=====================
-idAnimBlend::GetCycleCount
-=====================
-*/
 int idAnimBlend::GetCycleCount() const
 {
 	return cycle;
 }
 
-/*
-=====================
-idAnimBlend::SetCycleCount
-=====================
-*/
 void idAnimBlend::SetCycleCount( int count )
 {
 	const idAnim* anim = Anim();
@@ -1639,11 +1421,6 @@ void idAnimBlend::SetCycleCount( int count )
 	}
 }
 
-/*
-=====================
-idAnimBlend::SetPlaybackRate
-=====================
-*/
 void idAnimBlend::SetPlaybackRate( int currentTime, float newRate )
 {
 	int animTime;
@@ -1665,21 +1442,11 @@ void idAnimBlend::SetPlaybackRate( int currentTime, float newRate )
 	SetCycleCount( cycle );
 }
 
-/*
-=====================
-idAnimBlend::GetPlaybackRate
-=====================
-*/
 float idAnimBlend::GetPlaybackRate() const
 {
 	return rate;
 }
 
-/*
-=====================
-idAnimBlend::SetStartTime
-=====================
-*/
 void idAnimBlend::SetStartTime( int _startTime )
 {
 	starttime = _startTime;
@@ -1688,11 +1455,6 @@ void idAnimBlend::SetStartTime( int _startTime )
 	SetCycleCount( cycle );
 }
 
-/*
-=====================
-idAnimBlend::GetStartTime
-=====================
-*/
 int idAnimBlend::GetStartTime() const
 {
 	if( !animNum ) {
@@ -1702,11 +1464,6 @@ int idAnimBlend::GetStartTime() const
 	return starttime;
 }
 
-/*
-=====================
-idAnimBlend::GetEndTime
-=====================
-*/
 int idAnimBlend::GetEndTime() const
 {
 	if( !animNum ) {
@@ -1716,11 +1473,6 @@ int idAnimBlend::GetEndTime() const
 	return endtime;
 }
 
-/*
-=====================
-idAnimBlend::PlayLength
-=====================
-*/
 int idAnimBlend::PlayLength() const
 {
 	if( !animNum ) {
@@ -1734,31 +1486,16 @@ int idAnimBlend::PlayLength() const
 	return endtime - starttime + timeOffset;
 }
 
-/*
-=====================
-idAnimBlend::AllowMovement
-=====================
-*/
 void idAnimBlend::AllowMovement( bool allow )
 {
 	allowMove = allow;
 }
 
-/*
-=====================
-idAnimBlend::AllowFrameCommands
-=====================
-*/
 void idAnimBlend::AllowFrameCommands( bool allow )
 {
 	allowFrameCommands = allow;
 }
 
-/*
-=====================
-idAnimBlend::Anim
-=====================
-*/
 const idAnim* idAnimBlend::Anim() const
 {
 	if( !modelDef ) {
@@ -1769,21 +1506,11 @@ const idAnim* idAnimBlend::Anim() const
 	return anim;
 }
 
-/*
-=====================
-idAnimBlend::AnimNum
-=====================
-*/
 int idAnimBlend::AnimNum() const
 {
 	return animNum;
 }
 
-/*
-=====================
-idAnimBlend::AnimTime
-=====================
-*/
 int idAnimBlend::AnimTime( int currentTime ) const
 {
 	int			  time;
@@ -1820,11 +1547,6 @@ int idAnimBlend::AnimTime( int currentTime ) const
 	}
 }
 
-/*
-=====================
-idAnimBlend::GetFrameNumber
-=====================
-*/
 int idAnimBlend::GetFrameNumber( int currentTime ) const
 {
 	const idMD5Anim* md5anim;
@@ -1847,11 +1569,6 @@ int idAnimBlend::GetFrameNumber( int currentTime ) const
 	return frameinfo.frame1 + 1;
 }
 
-/*
-=====================
-idAnimBlend::CallFrameCommands
-=====================
-*/
 void idAnimBlend::CallFrameCommands( idEntity* ent, int fromtime, int totime ) const
 {
 	const idMD5Anim* md5anim;
@@ -1893,11 +1610,6 @@ void idAnimBlend::CallFrameCommands( idEntity* ent, int fromtime, int totime ) c
 	}
 }
 
-/*
-=====================
-idAnimBlend::BlendAnim
-=====================
-*/
 bool idAnimBlend::BlendAnim( int currentTime, int channel, int numJoints, idJointQuat* blendFrame, float& blendWeight, bool removeOriginOffset, bool overrideBlend, bool printInfo ) const
 {
 	int				 i;
@@ -2028,11 +1740,6 @@ bool idAnimBlend::BlendAnim( int currentTime, int channel, int numJoints, idJoin
 	return true;
 }
 
-/*
-=====================
-idAnimBlend::BlendOrigin
-=====================
-*/
 void idAnimBlend::BlendOrigin( int currentTime, idVec3& blendPos, float& blendWeight, bool removeOriginOffset ) const
 {
 	float  lerp;
@@ -2079,11 +1786,6 @@ void idAnimBlend::BlendOrigin( int currentTime, idVec3& blendPos, float& blendWe
 	}
 }
 
-/*
-=====================
-idAnimBlend::BlendDelta
-=====================
-*/
 void idAnimBlend::BlendDelta( int fromtime, int totime, idVec3& blendDelta, float& blendWeight ) const
 {
 	idVec3 pos1;
@@ -2139,11 +1841,6 @@ void idAnimBlend::BlendDelta( int fromtime, int totime, idVec3& blendDelta, floa
 	}
 }
 
-/*
-=====================
-idAnimBlend::BlendDeltaRotation
-=====================
-*/
 void idAnimBlend::BlendDeltaRotation( int fromtime, int totime, idQuat& blendDelta, float& blendWeight ) const
 {
 	idQuat q1;
@@ -2209,11 +1906,6 @@ void idAnimBlend::BlendDeltaRotation( int fromtime, int totime, idQuat& blendDel
 	}
 }
 
-/*
-=====================
-idAnimBlend::AddBounds
-=====================
-*/
 bool idAnimBlend::AddBounds( int currentTime, idBounds& bounds, bool removeOriginOffset ) const
 {
 	int		 i;
@@ -2262,11 +1954,6 @@ bool idAnimBlend::AddBounds( int currentTime, idBounds& bounds, bool removeOrigi
 
 ***********************************************************************/
 
-/*
-=====================
-idDeclModelDef::idDeclModelDef
-=====================
-*/
 idDeclModelDef::idDeclModelDef()
 {
 	modelHandle = NULL;
@@ -2277,31 +1964,16 @@ idDeclModelDef::idDeclModelDef()
 	}
 }
 
-/*
-=====================
-idDeclModelDef::~idDeclModelDef
-=====================
-*/
 idDeclModelDef::~idDeclModelDef()
 {
 	FreeData();
 }
 
-/*
-=================
-idDeclModelDef::Size
-=================
-*/
 size_t idDeclModelDef::Size() const
 {
 	return sizeof( idDeclModelDef );
 }
 
-/*
-=====================
-idDeclModelDef::CopyDecl
-=====================
-*/
 void idDeclModelDef::CopyDecl( const idDeclModelDef* decl )
 {
 	int i;
@@ -2326,11 +1998,6 @@ void idDeclModelDef::CopyDecl( const idDeclModelDef* decl )
 	}
 }
 
-/*
-=====================
-idDeclModelDef::FreeData
-=====================
-*/
 void idDeclModelDef::FreeData()
 {
 	anims.DeleteContents( true );
@@ -2344,21 +2011,11 @@ void idDeclModelDef::FreeData()
 	}
 }
 
-/*
-================
-idDeclModelDef::DefaultDefinition
-================
-*/
 const char* idDeclModelDef::DefaultDefinition() const
 {
 	return "{ }";
 }
 
-/*
-====================
-idDeclModelDef::FindJoint
-====================
-*/
 const jointInfo_t* idDeclModelDef::FindJoint( const char* name ) const
 {
 	int				  i;
@@ -2378,21 +2035,11 @@ const jointInfo_t* idDeclModelDef::FindJoint( const char* name ) const
 	return NULL;
 }
 
-/*
-=====================
-idDeclModelDef::ModelHandle
-=====================
-*/
 idRenderModel* idDeclModelDef::ModelHandle() const
 {
 	return ( idRenderModel* )modelHandle;
 }
 
-/*
-=====================
-idDeclModelDef::GetJointList
-=====================
-*/
 void idDeclModelDef::GetJointList( const char* jointnames, idList<jointHandle_t>& jointList ) const
 {
 #if !defined( DMAP )
@@ -2483,11 +2130,6 @@ void idDeclModelDef::GetJointList( const char* jointnames, idList<jointHandle_t>
 #endif
 }
 
-/*
-=====================
-idDeclModelDef::Touch
-=====================
-*/
 void idDeclModelDef::Touch() const
 {
 	if( modelHandle ) {
@@ -2495,31 +2137,16 @@ void idDeclModelDef::Touch() const
 	}
 }
 
-/*
-=====================
-idDeclModelDef::GetDefaultSkin
-=====================
-*/
 const idDeclSkin* idDeclModelDef::GetDefaultSkin() const
 {
 	return skin;
 }
 
-/*
-=====================
-idDeclModelDef::GetDefaultPose
-=====================
-*/
 const idJointQuat* idDeclModelDef::GetDefaultPose() const
 {
 	return modelHandle->GetDefaultPose();
 }
 
-/*
-=====================
-idDeclModelDef::SetupJoints
-=====================
-*/
 void idDeclModelDef::SetupJoints( int* numJoints, idJointMat** jointList, idBounds& frameBounds, bool removeOriginOffset ) const
 {
 #if !defined( DMAP )
@@ -2572,11 +2199,6 @@ void idDeclModelDef::SetupJoints( int* numJoints, idJointMat** jointList, idBoun
 #endif
 }
 
-/*
-=====================
-idDeclModelDef::ParseAnim
-=====================
-*/
 bool idDeclModelDef::ParseAnim( idLexer& src, int numDefaultAnims, const idStr& defaultCommands )
 {
 	int				 i;
@@ -2784,11 +2406,6 @@ bool idDeclModelDef::ParseAnim( idLexer& src, int numDefaultAnims, const idStr& 
 	return true;
 }
 
-/*
-================
-idDeclModelDef::Parse
-================
-*/
 bool idDeclModelDef::Parse( const char* text, const int textLength, bool allowBinaryVersion )
 {
 	int					  i;
@@ -3079,11 +2696,6 @@ bool idDeclModelDef::Parse( const char* text, const int textLength, bool allowBi
 	return true;
 }
 
-/*
-=====================
-idDeclModelDef::HasAnim
-=====================
-*/
 bool idDeclModelDef::HasAnim( const char* name ) const
 {
 	int i;
@@ -3098,23 +2710,11 @@ bool idDeclModelDef::HasAnim( const char* name ) const
 	return false;
 }
 
-/*
-=====================
-idDeclModelDef::NumAnims
-=====================
-*/
 int idDeclModelDef::NumAnims() const
 {
 	return anims.Num() + 1;
 }
 
-/*
-=====================
-idDeclModelDef::GetSpecificAnim
-
-Gets the exact anim for the name, without randomization.
-=====================
-*/
 int idDeclModelDef::GetSpecificAnim( const char* name ) const
 {
 	int i;
@@ -3130,11 +2730,6 @@ int idDeclModelDef::GetSpecificAnim( const char* name ) const
 	return 0;
 }
 
-/*
-=====================
-idDeclModelDef::GetAnim
-=====================
-*/
 const idAnim* idDeclModelDef::GetAnim( int index ) const
 {
 	if( ( index < 1 ) || ( index > anims.Num() ) ) {
@@ -3187,21 +2782,11 @@ int idDeclModelDef::GetAnim( const char* name ) const
 }
 #endif
 
-/*
-=====================
-idDeclModelDef::GetSkin
-=====================
-*/
 const idDeclSkin* idDeclModelDef::GetSkin() const
 {
 	return skin;
 }
 
-/*
-=====================
-idDeclModelDef::GetModelName
-=====================
-*/
 const char* idDeclModelDef::GetModelName() const
 {
 	if( modelHandle ) {
@@ -3211,31 +2796,16 @@ const char* idDeclModelDef::GetModelName() const
 	}
 }
 
-/*
-=====================
-idDeclModelDef::Joints
-=====================
-*/
 const idList<jointInfo_t>& idDeclModelDef::Joints() const
 {
 	return joints;
 }
 
-/*
-=====================
-idDeclModelDef::JointParents
-=====================
-*/
 const int* idDeclModelDef::JointParents() const
 {
 	return jointParents.Ptr();
 }
 
-/*
-=====================
-idDeclModelDef::NumJoints
-=====================
-*/
 int idDeclModelDef::NumJoints() const
 {
 	return joints.Num();
@@ -3243,11 +2813,6 @@ int idDeclModelDef::NumJoints() const
 
 #if !defined( DMAP )
 
-/*
-=====================
-idDeclModelDef::GetJoint
-=====================
-*/
 const jointInfo_t* idDeclModelDef::GetJoint( int jointHandle ) const
 {
 	if( ( jointHandle < 0 ) || ( jointHandle > joints.Num() ) ) {
@@ -3256,11 +2821,6 @@ const jointInfo_t* idDeclModelDef::GetJoint( int jointHandle ) const
 	return &joints[jointHandle];
 }
 
-/*
-====================
-idDeclModelDef::GetJointName
-====================
-*/
 const char* idDeclModelDef::GetJointName( int jointHandle ) const
 {
 	const idMD5Joint* joint;
@@ -3277,11 +2837,6 @@ const char* idDeclModelDef::GetJointName( int jointHandle ) const
 	return joint[jointHandle].name.c_str();
 }
 
-/*
-=====================
-idDeclModelDef::NumJointsOnChannel
-=====================
-*/
 int idDeclModelDef::NumJointsOnChannel( int channel ) const
 {
 	if( ( channel < 0 ) || ( channel >= ANIM_NumAnimChannels ) ) {
@@ -3291,11 +2846,6 @@ int idDeclModelDef::NumJointsOnChannel( int channel ) const
 	return channelJoints[channel].Num();
 }
 
-/*
-=====================
-idDeclModelDef::GetChannelJoints
-=====================
-*/
 const int* idDeclModelDef::GetChannelJoints( int channel ) const
 {
 	if( ( channel < 0 ) || ( channel >= ANIM_NumAnimChannels ) ) {
@@ -3305,11 +2855,6 @@ const int* idDeclModelDef::GetChannelJoints( int channel ) const
 	return channelJoints[channel].Ptr();
 }
 
-/*
-=====================
-idDeclModelDef::GetVisualOffset
-=====================
-*/
 const idVec3& idDeclModelDef::GetVisualOffset() const
 {
 	return offset;
@@ -3325,11 +2870,6 @@ const idVec3& idDeclModelDef::GetVisualOffset() const
 
 #if !defined( DMAP )
 
-/*
-=====================
-idAnimator::idAnimator
-=====================
-*/
 idAnimator::idAnimator()
 {
 	int i, j;
@@ -3358,21 +2898,11 @@ idAnimator::idAnimator()
 	}
 }
 
-/*
-=====================
-idAnimator::~idAnimator
-=====================
-*/
 idAnimator::~idAnimator()
 {
 	FreeData();
 }
 
-/*
-=====================
-idAnimator::Allocated
-=====================
-*/
 size_t idAnimator::Allocated() const
 {
 	size_t size;
@@ -3382,13 +2912,6 @@ size_t idAnimator::Allocated() const
 	return size;
 }
 
-/*
-=====================
-idAnimator::Save
-
-archives object for save game file
-=====================
-*/
 void idAnimator::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -3454,13 +2977,6 @@ void idAnimator::Save( idSaveGame* savefile ) const
 	}
 }
 
-/*
-=====================
-idAnimator::Restore
-
-unarchives object from save game file
-=====================
-*/
 void idAnimator::Restore( idRestoreGame* savefile )
 {
 	int i;
@@ -3537,11 +3053,6 @@ void idAnimator::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-=====================
-idAnimator::FreeData
-=====================
-*/
 void idAnimator::FreeData()
 {
 	int i, j;
@@ -3567,11 +3078,6 @@ void idAnimator::FreeData()
 	ForceUpdate();
 }
 
-/*
-=====================
-idAnimator::PushAnims
-=====================
-*/
 void idAnimator::PushAnims( int channelNum, int currentTime, int blendTime )
 {
 	int			 i;
@@ -3591,11 +3097,6 @@ void idAnimator::PushAnims( int channelNum, int currentTime, int blendTime )
 	ForceUpdate();
 }
 
-/*
-=====================
-idAnimator::SetModel
-=====================
-*/
 idRenderModel* idAnimator::SetModel( const char* modelname )
 {
 	int i, j;
@@ -3634,61 +3135,31 @@ idRenderModel* idAnimator::SetModel( const char* modelname )
 	return modelDef->ModelHandle();
 }
 
-/*
-=====================
-idAnimator::Size
-=====================
-*/
 size_t idAnimator::Size() const
 {
 	return sizeof( *this ) + Allocated();
 }
 
-/*
-=====================
-idAnimator::SetEntity
-=====================
-*/
 void idAnimator::SetEntity( idEntity* ent )
 {
 	entity = ent;
 }
 
-/*
-=====================
-idAnimator::GetEntity
-=====================
-*/
 idEntity* idAnimator::GetEntity() const
 {
 	return entity;
 }
 
-/*
-=====================
-idAnimator::RemoveOriginOffset
-=====================
-*/
 void idAnimator::RemoveOriginOffset( bool remove )
 {
 	removeOriginOffset = remove;
 }
 
-/*
-=====================
-idAnimator::RemoveOrigin
-=====================
-*/
 bool idAnimator::RemoveOrigin() const
 {
 	return removeOriginOffset;
 }
 
-/*
-=====================
-idAnimator::GetJointList
-=====================
-*/
 void idAnimator::GetJointList( const char* jointnames, idList<jointHandle_t>& jointList ) const
 {
 	if( modelDef ) {
@@ -3696,11 +3167,6 @@ void idAnimator::GetJointList( const char* jointnames, idList<jointHandle_t>& jo
 	}
 }
 
-/*
-=====================
-idAnimator::NumAnims
-=====================
-*/
 int idAnimator::NumAnims() const
 {
 	if( !modelDef ) {
@@ -3710,11 +3176,6 @@ int idAnimator::NumAnims() const
 	return modelDef->NumAnims();
 }
 
-/*
-=====================
-idAnimator::GetAnim
-=====================
-*/
 const idAnim* idAnimator::GetAnim( int index ) const
 {
 	if( !modelDef ) {
@@ -3724,11 +3185,6 @@ const idAnim* idAnimator::GetAnim( int index ) const
 	return modelDef->GetAnim( index );
 }
 
-/*
-=====================
-idAnimator::GetAnim
-=====================
-*/
 int idAnimator::GetAnim( const char* name ) const
 {
 	if( !modelDef ) {
@@ -3738,11 +3194,6 @@ int idAnimator::GetAnim( const char* name ) const
 	return modelDef->GetAnim( name );
 }
 
-/*
-=====================
-idAnimator::HasAnim
-=====================
-*/
 bool idAnimator::HasAnim( const char* name ) const
 {
 	if( !modelDef ) {
@@ -3752,21 +3203,11 @@ bool idAnimator::HasAnim( const char* name ) const
 	return modelDef->HasAnim( name );
 }
 
-/*
-=====================
-idAnimator::NumJoints
-=====================
-*/
 int idAnimator::NumJoints() const
 {
 	return numJoints;
 }
 
-/*
-=====================
-idAnimator::ModelHandle
-=====================
-*/
 idRenderModel* idAnimator::ModelHandle() const
 {
 	if( !modelDef ) {
@@ -3776,21 +3217,11 @@ idRenderModel* idAnimator::ModelHandle() const
 	return modelDef->ModelHandle();
 }
 
-/*
-=====================
-idAnimator::ModelDef
-=====================
-*/
 const idDeclModelDef* idAnimator::ModelDef() const
 {
 	return modelDef;
 }
 
-/*
-=====================
-idAnimator::CurrentAnim
-=====================
-*/
 idAnimBlend* idAnimator::CurrentAnim( int channelNum )
 {
 	if( ( channelNum < 0 ) || ( channelNum >= ANIM_NumAnimChannels ) ) {
@@ -3801,11 +3232,6 @@ idAnimBlend* idAnimator::CurrentAnim( int channelNum )
 	return &channels[channelNum][0];
 }
 
-/*
-=====================
-idAnimator::Clear
-=====================
-*/
 void idAnimator::Clear( int channelNum, int currentTime, int cleartime )
 {
 	int			 i;
@@ -3823,11 +3249,6 @@ void idAnimator::Clear( int channelNum, int currentTime, int cleartime )
 	ForceUpdate();
 }
 
-/*
-=====================
-idAnimator::SetFrame
-=====================
-*/
 void idAnimator::SetFrame( int channelNum, int animNum, int frame, int currentTime, int blendTime )
 {
 	if( ( channelNum < 0 ) || ( channelNum >= ANIM_NumAnimChannels ) ) {
@@ -3845,11 +3266,6 @@ void idAnimator::SetFrame( int channelNum, int animNum, int frame, int currentTi
 	}
 }
 
-/*
-=====================
-idAnimator::CycleAnim
-=====================
-*/
 void idAnimator::CycleAnim( int channelNum, int animNum, int currentTime, int blendTime )
 {
 	if( ( channelNum < 0 ) || ( channelNum >= ANIM_NumAnimChannels ) ) {
@@ -3867,11 +3283,6 @@ void idAnimator::CycleAnim( int channelNum, int animNum, int currentTime, int bl
 	}
 }
 
-/*
-=====================
-idAnimator::PlayAnim
-=====================
-*/
 void idAnimator::PlayAnim( int channelNum, int animNum, int currentTime, int blendTime )
 {
 	if( ( channelNum < 0 ) || ( channelNum >= ANIM_NumAnimChannels ) ) {
@@ -3889,11 +3300,6 @@ void idAnimator::PlayAnim( int channelNum, int animNum, int currentTime, int ble
 	}
 }
 
-/*
-=====================
-idAnimator::SyncAnimChannels
-=====================
-*/
 void idAnimator::SyncAnimChannels( int channelNum, int fromChannelNum, int currentTime, int blendTime )
 {
 	if( ( channelNum < 0 ) || ( channelNum >= ANIM_NumAnimChannels ) || ( fromChannelNum < 0 ) || ( fromChannelNum >= ANIM_NumAnimChannels ) ) {
@@ -3921,11 +3327,6 @@ void idAnimator::SyncAnimChannels( int channelNum, int fromChannelNum, int curre
 	}
 }
 
-/*
-=====================
-idAnimator::SetJointPos
-=====================
-*/
 void idAnimator::SetJointPos( jointHandle_t jointnum, jointModTransform_t transform_type, const idVec3& pos )
 {
 	int			i;
@@ -3962,11 +3363,6 @@ void idAnimator::SetJointPos( jointHandle_t jointnum, jointModTransform_t transf
 	ForceUpdate();
 }
 
-/*
-=====================
-idAnimator::SetJointAxis
-=====================
-*/
 void idAnimator::SetJointAxis( jointHandle_t jointnum, jointModTransform_t transform_type, const idMat3& mat )
 {
 	int			i;
@@ -4003,11 +3399,6 @@ void idAnimator::SetJointAxis( jointHandle_t jointnum, jointModTransform_t trans
 	ForceUpdate();
 }
 
-/*
-=====================
-idAnimator::ClearJoint
-=====================
-*/
 void idAnimator::ClearJoint( jointHandle_t jointnum )
 {
 	int i;
@@ -4028,11 +3419,6 @@ void idAnimator::ClearJoint( jointHandle_t jointnum )
 	}
 }
 
-/*
-=====================
-idAnimator::ClearAllJoints
-=====================
-*/
 void idAnimator::ClearAllJoints()
 {
 	if( jointMods.Num() ) {
@@ -4041,11 +3427,6 @@ void idAnimator::ClearAllJoints()
 	jointMods.DeleteContents( true );
 }
 
-/*
-=====================
-idAnimator::ClearAllAnims
-=====================
-*/
 void idAnimator::ClearAllAnims( int currentTime, int cleartime )
 {
 	int i;
@@ -4058,11 +3439,6 @@ void idAnimator::ClearAllAnims( int currentTime, int cleartime )
 	ForceUpdate();
 }
 
-/*
-====================
-idAnimator::GetDelta
-====================
-*/
 void idAnimator::GetDelta( int fromtime, int totime, idVec3& delta ) const
 {
 	int				   i;
@@ -4090,11 +3466,6 @@ void idAnimator::GetDelta( int fromtime, int totime, idVec3& delta ) const
 	}
 }
 
-/*
-====================
-idAnimator::GetDeltaRotation
-====================
-*/
 bool idAnimator::GetDeltaRotation( int fromtime, int totime, idMat3& delta ) const
 {
 	int				   i;
@@ -4131,11 +3502,6 @@ bool idAnimator::GetDeltaRotation( int fromtime, int totime, idMat3& delta ) con
 	}
 }
 
-/*
-====================
-idAnimator::GetOrigin
-====================
-*/
 void idAnimator::GetOrigin( int currentTime, idVec3& pos ) const
 {
 	int				   i;
@@ -4165,11 +3531,6 @@ void idAnimator::GetOrigin( int currentTime, idVec3& pos ) const
 	pos += modelDef->GetVisualOffset();
 }
 
-/*
-====================
-idAnimator::GetBounds
-====================
-*/
 bool idAnimator::GetBounds( int currentTime, idBounds& bounds )
 {
 	int				   i, j;
@@ -4225,11 +3586,6 @@ bool idAnimator::GetBounds( int currentTime, idBounds& bounds )
 	return true;
 }
 
-/*
-=====================
-idAnimator::InitAFPose
-=====================
-*/
 void idAnimator::InitAFPose()
 {
 	if( !modelDef ) {
@@ -4242,11 +3598,6 @@ void idAnimator::InitAFPose()
 	AFPoseJointFrame.SetNum( modelDef->Joints().Num() );
 }
 
-/*
-=====================
-idAnimator::SetAFPoseJointMod
-=====================
-*/
 void idAnimator::SetAFPoseJointMod( const jointHandle_t jointNum, const AFJointModType_t mod, const idMat3& axis, const idVec3& origin )
 {
 	AFPoseJointMods[jointNum].mod	 = mod;
@@ -4259,11 +3610,6 @@ void idAnimator::SetAFPoseJointMod( const jointHandle_t jointNum, const AFJointM
 	}
 }
 
-/*
-=====================
-idAnimator::FinishAFPose
-=====================
-*/
 void idAnimator::FinishAFPose( int animNum, const idBounds& bounds, const int time )
 {
 	int		   i, j;
@@ -4399,21 +3745,11 @@ void idAnimator::FinishAFPose( int animNum, const idBounds& bounds, const int ti
 	ForceUpdate();
 }
 
-/*
-=====================
-idAnimator::SetAFPoseBlendWeight
-=====================
-*/
 void idAnimator::SetAFPoseBlendWeight( float blendWeight )
 {
 	AFPoseBlendWeight = blendWeight;
 }
 
-/*
-=====================
-idAnimator::BlendAFPose
-=====================
-*/
 bool idAnimator::BlendAFPose( idJointQuat* blendFrame ) const
 {
 	if( !AFPoseJoints.Num() ) {
@@ -4425,11 +3761,6 @@ bool idAnimator::BlendAFPose( idJointQuat* blendFrame ) const
 	return true;
 }
 
-/*
-=====================
-idAnimator::ClearAFPose
-=====================
-*/
 void idAnimator::ClearAFPose()
 {
 	if( AFPoseJoints.Num() ) {
@@ -4441,11 +3772,6 @@ void idAnimator::ClearAFPose()
 	AFPoseTime = 0;
 }
 
-/*
-=====================
-idAnimator::ServiceAnims
-=====================
-*/
 void idAnimator::ServiceAnims( int fromtime, int totime )
 {
 	int			 i, j;
@@ -4475,11 +3801,6 @@ void idAnimator::ServiceAnims( int fromtime, int totime )
 	}
 }
 
-/*
-=====================
-idAnimator::IsAnimating
-=====================
-*/
 bool idAnimator::IsAnimating( int currentTime ) const
 {
 	int				   i, j;
@@ -4506,11 +3827,6 @@ bool idAnimator::IsAnimating( int currentTime ) const
 	return false;
 }
 
-/*
-=====================
-idAnimator::FrameHasChanged
-=====================
-*/
 bool idAnimator::FrameHasChanged( int currentTime ) const
 {
 	int				   i, j;
@@ -4541,11 +3857,6 @@ bool idAnimator::FrameHasChanged( int currentTime ) const
 	return false;
 }
 
-/*
-=====================
-idAnimator::CreateFrame
-=====================
-*/
 bool idAnimator::CreateFrame( int currentTime, bool force )
 {
 	int				   i, j;
@@ -4787,33 +4098,17 @@ bool idAnimator::CreateFrame( int currentTime, bool force )
 	return true;
 }
 
-/*
-=====================
-idAnimator::ForceUpdate
-=====================
-*/
 void idAnimator::ForceUpdate()
 {
 	lastTransformTime = -1;
 	forceUpdate		  = true;
 }
 
-/*
-=====================
-idAnimator::ClearForceUpdate
-=====================
-*/
 void idAnimator::ClearForceUpdate()
 {
 	forceUpdate = false;
 }
 
-/*
-=====================
-idAnimator::GetJointTransform>	gamex86.dll!idAnimator::ForceUpdate()  Line 4268	C++
-
-=====================
-*/
 bool idAnimator::GetJointTransform( jointHandle_t jointHandle, int currentTime, idVec3& offset, idMat3& axis )
 {
 	if( !modelDef || ( jointHandle < 0 ) || ( jointHandle >= modelDef->NumJoints() ) ) {
@@ -4828,11 +4123,6 @@ bool idAnimator::GetJointTransform( jointHandle_t jointHandle, int currentTime, 
 	return true;
 }
 
-/*
-=====================
-idAnimator::GetJointLocalTransform
-=====================
-*/
 bool idAnimator::GetJointLocalTransform( jointHandle_t jointHandle, int currentTime, idVec3& offset, idMat3& axis )
 {
 	if( !modelDef ) {
@@ -4865,11 +4155,6 @@ bool idAnimator::GetJointLocalTransform( jointHandle_t jointHandle, int currentT
 	return true;
 }
 
-/*
-=====================
-idAnimator::GetJointHandle
-=====================
-*/
 jointHandle_t idAnimator::GetJointHandle( const char* name ) const
 {
 	if( !modelDef || !modelDef->ModelHandle() ) {
@@ -4879,11 +4164,6 @@ jointHandle_t idAnimator::GetJointHandle( const char* name ) const
 	return modelDef->ModelHandle()->GetJointHandle( name );
 }
 
-/*
-=====================
-idAnimator::GetJointName
-=====================
-*/
 const char* idAnimator::GetJointName( jointHandle_t handle ) const
 {
 	if( !modelDef || !modelDef->ModelHandle() ) {
@@ -4893,11 +4173,6 @@ const char* idAnimator::GetJointName( jointHandle_t handle ) const
 	return modelDef->ModelHandle()->GetJointName( handle );
 }
 
-/*
-=====================
-idAnimator::GetChannelForJoint
-=====================
-*/
 int idAnimator::GetChannelForJoint( jointHandle_t joint ) const
 {
 	if( !modelDef ) {
@@ -4913,21 +4188,11 @@ int idAnimator::GetChannelForJoint( jointHandle_t joint ) const
 	return modelDef->GetJoint( joint )->channel;
 }
 
-/*
-=====================
-idAnimator::GetFirstChild
-=====================
-*/
 jointHandle_t idAnimator::GetFirstChild( const char* name ) const
 {
 	return GetFirstChild( GetJointHandle( name ) );
 }
 
-/*
-=====================
-idAnimator::GetFirstChild
-=====================
-*/
 jointHandle_t idAnimator::GetFirstChild( jointHandle_t jointnum ) const
 {
 	int				   i;
@@ -4951,22 +4216,12 @@ jointHandle_t idAnimator::GetFirstChild( jointHandle_t jointnum ) const
 	return jointnum;
 }
 
-/*
-=====================
-idAnimator::GetJoints
-=====================
-*/
 void idAnimator::GetJoints( int* numJoints, idJointMat** jointsPtr )
 {
 	*numJoints = this->numJoints;
 	*jointsPtr = this->joints;
 }
 
-/*
-=====================
-idAnimator::GetAnimFlags
-=====================
-*/
 const animFlags_t idAnimator::GetAnimFlags( int animNum ) const
 {
 	animFlags_t	  result;
@@ -4980,11 +4235,6 @@ const animFlags_t idAnimator::GetAnimFlags( int animNum ) const
 	return result;
 }
 
-/*
-=====================
-idAnimator::NumFrames
-=====================
-*/
 int idAnimator::NumFrames( int animNum ) const
 {
 	const idAnim* anim = GetAnim( animNum );
@@ -4995,11 +4245,6 @@ int idAnimator::NumFrames( int animNum ) const
 	}
 }
 
-/*
-=====================
-idAnimator::NumSyncedAnims
-=====================
-*/
 int idAnimator::NumSyncedAnims( int animNum ) const
 {
 	const idAnim* anim = GetAnim( animNum );
@@ -5010,11 +4255,6 @@ int idAnimator::NumSyncedAnims( int animNum ) const
 	}
 }
 
-/*
-=====================
-idAnimator::AnimName
-=====================
-*/
 const char* idAnimator::AnimName( int animNum ) const
 {
 	const idAnim* anim = GetAnim( animNum );
@@ -5025,11 +4265,6 @@ const char* idAnimator::AnimName( int animNum ) const
 	}
 }
 
-/*
-=====================
-idAnimator::AnimFullName
-=====================
-*/
 const char* idAnimator::AnimFullName( int animNum ) const
 {
 	const idAnim* anim = GetAnim( animNum );
@@ -5040,11 +4275,6 @@ const char* idAnimator::AnimFullName( int animNum ) const
 	}
 }
 
-/*
-=====================
-idAnimator::AnimLength
-=====================
-*/
 int idAnimator::AnimLength( int animNum ) const
 {
 	const idAnim* anim = GetAnim( animNum );
@@ -5055,11 +4285,6 @@ int idAnimator::AnimLength( int animNum ) const
 	}
 }
 
-/*
-=====================
-idAnimator::TotalMovementDelta
-=====================
-*/
 const idVec3& idAnimator::TotalMovementDelta( int animNum ) const
 {
 	const idAnim* anim = GetAnim( animNum );
@@ -5080,11 +4305,7 @@ const idVec3& idAnimator::TotalMovementDelta( int animNum ) const
 
 #if !defined( DMAP )
 
-/*
-=====================
-ANIM_GetModelDefFromEntityDef
-=====================
-*/
+//! Returns the model definition from the entity definition arguments.
 const idDeclModelDef* ANIM_GetModelDefFromEntityDef( const idDict* args )
 {
 	const idDeclModelDef* modelDef;

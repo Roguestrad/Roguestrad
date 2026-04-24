@@ -48,11 +48,6 @@ bool					  idAnimManager::forceExport = false;
 
 ***********************************************************************/
 
-/*
-====================
-idMD5Anim::idMD5Anim
-====================
-*/
 idMD5Anim::idMD5Anim()
 {
 	ref_count			  = 0;
@@ -64,21 +59,11 @@ idMD5Anim::idMD5Anim()
 	totaldelta.Zero();
 }
 
-/*
-====================
-idMD5Anim::idMD5Anim
-====================
-*/
 idMD5Anim::~idMD5Anim()
 {
 	Free();
 }
 
-/*
-====================
-idMD5Anim::Free
-====================
-*/
 void idMD5Anim::Free()
 {
 	numFrames			  = 0;
@@ -95,61 +80,31 @@ void idMD5Anim::Free()
 	componentFrames.Clear();
 }
 
-/*
-====================
-idMD5Anim::NumFrames
-====================
-*/
 int idMD5Anim::NumFrames() const
 {
 	return numFrames;
 }
 
-/*
-====================
-idMD5Anim::NumJoints
-====================
-*/
 int idMD5Anim::NumJoints() const
 {
 	return numJoints;
 }
 
-/*
-====================
-idMD5Anim::Length
-====================
-*/
 int idMD5Anim::Length() const
 {
 	return animLength;
 }
 
-/*
-=====================
-idMD5Anim::TotalMovementDelta
-=====================
-*/
 const idVec3& idMD5Anim::TotalMovementDelta() const
 {
 	return totaldelta;
 }
 
-/*
-=====================
-idMD5Anim::TotalMovementDelta
-=====================
-*/
 const char* idMD5Anim::Name() const
 {
 	return name;
 }
 
-/*
-====================
-idMD5Anim::Reload
-====================
-*/
 bool idMD5Anim::Reload()
 {
 	idStr filename;
@@ -160,22 +115,12 @@ bool idMD5Anim::Reload()
 	return LoadAnim( filename, &importOptions );
 }
 
-/*
-====================
-idMD5Anim::Allocated
-====================
-*/
 size_t idMD5Anim::Allocated() const
 {
 	size_t size = bounds.Allocated() + jointInfo.Allocated() + componentFrames.Allocated() + name.Allocated();
 	return size;
 }
 
-/*
-====================
-idMD5Anim::LoadAnim
-====================
-*/
 bool idMD5Anim::LoadAnim( const char* filename, const idImportOptions* options )
 {
 	idLexer parser( LEXFL_ALLOWPATHNAMES | LEXFL_NOSTRINGESCAPECHARS | LEXFL_NOSTRINGCONCAT );
@@ -421,11 +366,6 @@ bool idMD5Anim::LoadAnim( const char* filename, const idImportOptions* options )
 	return true;
 }
 
-/*
-========================
-idMD5Anim::LoadBinary
-========================
-*/
 bool idMD5Anim::LoadBinary( idFile* file, ID_TIME_T sourceTimeStamp )
 {
 	if( file == NULL ) {
@@ -505,11 +445,6 @@ bool idMD5Anim::LoadBinary( idFile* file, ID_TIME_T sourceTimeStamp )
 	return true;
 }
 
-/*
-========================
-idMD5Anim::WriteBinary
-========================
-*/
 void idMD5Anim::WriteBinary( idFile* file, ID_TIME_T sourceTimeStamp )
 {
 	if( file == NULL ) {
@@ -562,41 +497,21 @@ void idMD5Anim::WriteBinary( idFile* file, ID_TIME_T sourceTimeStamp )
 	// file->WriteBig( ref_count );
 }
 
-/*
-====================
-idMD5Anim::IncreaseRefs
-====================
-*/
 void idMD5Anim::IncreaseRefs() const
 {
 	ref_count++;
 }
 
-/*
-====================
-idMD5Anim::DecreaseRefs
-====================
-*/
 void idMD5Anim::DecreaseRefs() const
 {
 	ref_count--;
 }
 
-/*
-====================
-idMD5Anim::NumRefs
-====================
-*/
 int idMD5Anim::NumRefs() const
 {
 	return ref_count;
 }
 
-/*
-====================
-idMD5Anim::GetFrameBlend
-====================
-*/
 void idMD5Anim::GetFrameBlend( int framenum, frameBlend_t& frame ) const
 {
 	frame.cycleCount = 0;
@@ -615,11 +530,6 @@ void idMD5Anim::GetFrameBlend( int framenum, frameBlend_t& frame ) const
 	frame.frame2 = framenum;
 }
 
-/*
-====================
-idMD5Anim::ConvertTimeToFrame
-====================
-*/
 void idMD5Anim::ConvertTimeToFrame( int time, int cyclecount, frameBlend_t& frame ) const
 {
 	int frameTime;
@@ -666,11 +576,6 @@ void idMD5Anim::ConvertTimeToFrame( int time, int cyclecount, frameBlend_t& fram
 	frame.frontlerp = 1.0f - frame.backlerp;
 }
 
-/*
-====================
-idMD5Anim::GetOrigin
-====================
-*/
 void idMD5Anim::GetOrigin( idVec3& offset, int time, int cyclecount ) const
 {
 	offset = baseFrame[0].t;
@@ -706,11 +611,6 @@ void idMD5Anim::GetOrigin( idVec3& offset, int time, int cyclecount ) const
 	}
 }
 
-/*
-====================
-idMD5Anim::GetOriginRotation
-====================
-*/
 void idMD5Anim::GetOriginRotation( idQuat& rotation, int time, int cyclecount ) const
 {
 	int animBits = jointInfo[0].animBits;
@@ -820,11 +720,6 @@ void idMD5Anim::GetOriginRotation( idQuat& rotation, int time, int cyclecount ) 
 	rotation.Slerp( q1, q2, frame.backlerp );
 }
 
-/*
-====================
-idMD5Anim::GetBounds
-====================
-*/
 void idMD5Anim::GetBounds( idBounds& bnds, int time, int cyclecount ) const
 {
 	frameBlend_t frame;
@@ -860,11 +755,22 @@ void idMD5Anim::GetBounds( idBounds& bnds, int time, int cyclecount ) const
 	bnds[1] -= offset;
 }
 
-/*
-====================
-DecodeInterpolatedFrames
+/*!
+	\brief Decodes interpolated animation frames for a specified set of joints, updating their transformation data based on two animation frames and return the number of joints that were actually
+   interpolated.
 
-====================
+	This function processes a list of joints specified by index and updates their transformation data by interpolating between two animation frames. It identifies which joints have animation data and
+   copies the relevant data from the two frames into the joints and blendJoints arrays. The function returns the count of joints that were interpolated.
+
+	\param joints Pointer to the array of joint transformations that will be updated with the first animation frame data
+	\param blendJoints Pointer to the array of joint transformations that will be updated with the second animation frame data
+	\param lerpIndex Pointer to an array that will store the indices of joints that actually underwent interpolation
+	\param frame1 Pointer to the first animation frame data
+	\param frame2 Pointer to the second animation frame data
+	\param jointInfo Pointer to the joint animation info for each joint
+	\param index Pointer to the list of joint indices to be processed
+	\param numIndexes Number of joints specified in the index array
+	\return The number of joints that were actually interpolated and added to the lerpIndex array
 */
 int DecodeInterpolatedFrames(
 	idJointQuat* joints, idJointQuat* blendJoints, int* lerpIndex, const float* frame1, const float* frame2, const jointAnimInfo_t* jointInfo, const int* index, const int numIndexes )
@@ -922,11 +828,6 @@ int DecodeInterpolatedFrames(
 	return numLerpJoints;
 }
 
-/*
-====================
-idMD5Anim::GetInterpolatedFrame
-====================
-*/
 void idMD5Anim::GetInterpolatedFrame( frameBlend_t& frame, idJointQuat* joints, const int* index, int numIndexes ) const
 {
 	// copy the baseframe
@@ -952,11 +853,18 @@ void idMD5Anim::GetInterpolatedFrame( frameBlend_t& frame, idJointQuat* joints, 
 	}
 }
 
-/*
-====================
-DecodeSingleFrame
+/*!
+	\brief Decodes animation frame data for a specified set of joints into joint transformation quaternions
 
-====================
+	This function processes animation data from a frame buffer and populates joint transformation information for a list of joints. It decodes translation and rotation components based on animBits
+   flags in the joint animation info. The translation components (tx, ty, tz) and rotation components (qx, qy, qz) are extracted from the frame data and assigned to the corresponding joint
+   transformation fields. The w component of the quaternion is calculated from the other three components.
+
+	\param joints Output array of joint transformations to be populated
+	\param frame Input animation frame data buffer
+	\param jointInfo Information about joint animation properties and component offsets
+	\param index Array of joint indices to process
+	\param numIndexes Number of joints to process from the index array
 */
 void DecodeSingleFrame( idJointQuat* joints, const float* frame, const jointAnimInfo_t* jointInfo, const int* index, const int numIndexes )
 {
@@ -998,11 +906,6 @@ void DecodeSingleFrame( idJointQuat* joints, const float* frame, const jointAnim
 	}
 }
 
-/*
-====================
-idMD5Anim::GetSingleFrame
-====================
-*/
 void idMD5Anim::GetSingleFrame( int framenum, idJointQuat* joints, const int* index, int numIndexes ) const
 {
 	// copy the baseframe
@@ -1018,11 +921,6 @@ void idMD5Anim::GetSingleFrame( int framenum, idJointQuat* joints, const int* in
 	DecodeSingleFrame( joints, frame, jointInfo.Ptr(), index, numIndexes );
 }
 
-/*
-====================
-idMD5Anim::CheckModelHierarchy
-====================
-*/
 #if !defined( DMAP )
 void idMD5Anim::CheckModelHierarchy( const idRenderModel* model ) const
 {
@@ -1065,30 +963,15 @@ void idMD5Anim::CheckModelHierarchy( const idRenderModel* model ) const
 
 ***********************************************************************/
 
-/*
-====================
-idAnimManager::idAnimManager
-====================
-*/
 idAnimManager::idAnimManager()
 {
 }
 
-/*
-====================
-idAnimManager::~idAnimManager
-====================
-*/
 idAnimManager::~idAnimManager()
 {
 	Shutdown();
 }
 
-/*
-====================
-idAnimManager::Shutdown
-====================
-*/
 void idAnimManager::Shutdown()
 {
 	animations.DeleteContents();
@@ -1096,11 +979,6 @@ void idAnimManager::Shutdown()
 	jointnamesHash.Free();
 }
 
-/*
-====================
-idAnimManager::GetAnim
-====================
-*/
 idMD5Anim* idAnimManager::GetAnim( const char* name, const idImportOptions* options )
 {
 	idMD5Anim** animptrptr;
@@ -1135,11 +1013,6 @@ idMD5Anim* idAnimManager::GetAnim( const char* name, const idImportOptions* opti
 	return anim;
 }
 
-/*
-================
-idAnimManager::Preload
-================
-*/
 void idAnimManager::Preload( const idPreloadManifest& manifest )
 {
 	if( manifest.NumResources() >= 0 ) {
@@ -1159,11 +1032,6 @@ void idAnimManager::Preload( const idPreloadManifest& manifest )
 	}
 }
 
-/*
-================
-idAnimManager::ReloadAnims
-================
-*/
 void idAnimManager::ReloadAnims()
 {
 	int			i;
@@ -1177,11 +1045,6 @@ void idAnimManager::ReloadAnims()
 	}
 }
 
-/*
-================
-idAnimManager::JointIndex
-================
-*/
 int idAnimManager::JointIndex( const char* name )
 {
 	int i, hash;
@@ -1198,22 +1061,12 @@ int idAnimManager::JointIndex( const char* name )
 	return i;
 }
 
-/*
-================
-idAnimManager::JointName
-================
-*/
 const char* idAnimManager::JointName( int index ) const
 {
 	return jointnames[index];
 }
 
 #if !defined( DMAP )
-/*
-================
-idAnimManager::ListAnims
-================
-*/
 void idAnimManager::ListAnims() const
 {
 	int			i;
@@ -1247,11 +1100,6 @@ void idAnimManager::ListAnims() const
 }
 #endif
 
-/*
-================
-idAnimManager::FlushUnusedAnims
-================
-*/
 void idAnimManager::FlushUnusedAnims()
 {
 	int				   i;

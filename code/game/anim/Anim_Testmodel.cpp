@@ -59,11 +59,6 @@ EVENT( EV_FootstepLeft, idTestModel::Event_Footstep )
 EVENT( EV_FootstepRight, idTestModel::Event_Footstep )
 END_CLASS
 
-/*
-================
-idTestModel::idTestModel
-================
-*/
 idTestModel::idTestModel()
 {
 	head		 = NULL;
@@ -76,31 +71,16 @@ idTestModel::idTestModel()
 	frame		 = 0;
 }
 
-/*
-================
-idTestModel::Save
-================
-*/
 void idTestModel::Save( idSaveGame* savefile )
 {
 }
 
-/*
-================
-idTestModel::Restore
-================
-*/
 void idTestModel::Restore( idRestoreGame* savefile )
 {
 	// FIXME: one day we may actually want to save/restore test models, but for now we'll just delete them
 	delete this;
 }
 
-/*
-================
-idTestModel::Spawn
-================
-*/
 void idTestModel::Spawn()
 {
 	idVec3			  size;
@@ -206,11 +186,6 @@ void idTestModel::Spawn()
 	BecomeActive( TH_THINK );
 }
 
-/*
-================
-idTestModel::~idTestModel
-================
-*/
 idTestModel::~idTestModel()
 {
 	StopSound( SND_CHANNEL_ANY, false );
@@ -228,34 +203,16 @@ idTestModel::~idTestModel()
 	}
 }
 
-/*
-===============
-idTestModel::Event_Footstep
-===============
-*/
 void idTestModel::Event_Footstep()
 {
 	StartSound( "snd_footstep", SND_CHANNEL_BODY, 0, false, NULL );
 }
 
-/*
-================
-idTestModel::ShouldConstructScriptObjectAtSpawn
-
-Called during idEntity::Spawn to see if it should construct the script object or not.
-Overridden by subclasses that need to spawn the script object themselves.
-================
-*/
 bool idTestModel::ShouldConstructScriptObjectAtSpawn() const
 {
 	return false;
 }
 
-/*
-================
-idTestModel::Think
-================
-*/
 void idTestModel::Think()
 {
 	idVec3	 pos;
@@ -412,11 +369,6 @@ void idTestModel::Think()
 	}
 }
 
-/*
-================
-idTestModel::NextAnim
-================
-*/
 void idTestModel::NextAnim( const idCmdArgs& args )
 {
 	if( !animator.NumAnims() ) {
@@ -459,11 +411,6 @@ void idTestModel::NextAnim( const idCmdArgs& args )
 	frame = 1;
 }
 
-/*
-================
-idTestModel::PrevAnim
-================
-*/
 void idTestModel::PrevAnim( const idCmdArgs& args )
 {
 	if( !animator.NumAnims() ) {
@@ -505,11 +452,6 @@ void idTestModel::PrevAnim( const idCmdArgs& args )
 	frame = 1;
 }
 
-/*
-================
-idTestModel::NextFrame
-================
-*/
 void idTestModel::NextFrame( const idCmdArgs& args )
 {
 	if( !anim || ( ( g_testModelAnimate.GetInteger() != 3 ) && ( g_testModelAnimate.GetInteger() != 5 ) ) ) {
@@ -527,11 +469,6 @@ void idTestModel::NextFrame( const idCmdArgs& args )
 	mode = -1;
 }
 
-/*
-================
-idTestModel::PrevFrame
-================
-*/
 void idTestModel::PrevFrame( const idCmdArgs& args )
 {
 	if( !anim || ( ( g_testModelAnimate.GetInteger() != 3 ) && ( g_testModelAnimate.GetInteger() != 5 ) ) ) {
@@ -549,11 +486,6 @@ void idTestModel::PrevFrame( const idCmdArgs& args )
 	mode = -1;
 }
 
-/*
-================
-idTestModel::TestAnim
-================
-*/
 void idTestModel::TestAnim( const idCmdArgs& args )
 {
 	idStr		  name;
@@ -601,11 +533,6 @@ void idTestModel::TestAnim( const idCmdArgs& args )
 	mode = -1;
 }
 
-/*
-=====================
-idTestModel::BlendAnim
-=====================
-*/
 void idTestModel::BlendAnim( const idCmdArgs& args )
 {
 	int anim1;
@@ -642,14 +569,6 @@ void idTestModel::BlendAnim( const idCmdArgs& args )
 
 ***********************************************************************/
 
-/*
-=================
-idTestModel::KeepTestModel_f
-
-Makes the current test model permanent, allowing you to place
-multiple test models
-=================
-*/
 void idTestModel::KeepTestModel_f( const idCmdArgs& args )
 {
 	if( !gameLocal.testmodel ) {
@@ -662,13 +581,6 @@ void idTestModel::KeepTestModel_f( const idCmdArgs& args )
 	gameLocal.testmodel = NULL;
 }
 
-/*
-=================
-idTestModel::TestSkin_f
-
-Sets a skin on an existing testModel
-=================
-*/
 void idTestModel::TestSkin_f( const idCmdArgs& args )
 {
 	idVec3	  offset;
@@ -697,13 +609,6 @@ void idTestModel::TestSkin_f( const idCmdArgs& args )
 	gameLocal.testmodel->SetSkin( declManager->FindSkin( name ) );
 }
 
-/*
-=================
-idTestModel::TestShaderParm_f
-
-Sets a shaderParm on an existing testModel
-=================
-*/
 void idTestModel::TestShaderParm_f( const idCmdArgs& args )
 {
 	idVec3	  offset;
@@ -743,14 +648,6 @@ void idTestModel::TestShaderParm_f( const idCmdArgs& args )
 	gameLocal.testmodel->SetShaderParm( parm, value );
 }
 
-/*
-=================
-idTestModel::TestModel_f
-
-Creates a static modelDef in front of the current position, which
-can then be moved around
-=================
-*/
 void idTestModel::TestModel_f( const idCmdArgs& args )
 {
 	idVec3		  offset;
@@ -804,11 +701,6 @@ void idTestModel::TestModel_f( const idCmdArgs& args )
 	gameLocal.testmodel->renderEntity.shaderParms[SHADERPARM_TIMEOFFSET] = -MS2SEC( gameLocal.time );
 }
 
-/*
-=====================
-idTestModel::ArgCompletion_TestModel
-=====================
-*/
 void idTestModel::ArgCompletion_TestModel( const idCmdArgs& args, void ( *callback )( const char* s ) )
 {
 	int i, num;
@@ -824,11 +716,6 @@ void idTestModel::ArgCompletion_TestModel( const idCmdArgs& args, void ( *callba
 	cmdSystem->ArgCompletion_FolderExtension( args, callback, "models/", false, ".lwo", ".ase", ".md5mesh", ".ma", ".mb", NULL );
 }
 
-/*
-=====================
-idTestModel::TestParticleStopTime_f
-=====================
-*/
 void idTestModel::TestParticleStopTime_f( const idCmdArgs& args )
 {
 	if( !gameLocal.testmodel ) {
@@ -840,11 +727,6 @@ void idTestModel::TestParticleStopTime_f( const idCmdArgs& args )
 	gameLocal.testmodel->UpdateVisuals();
 }
 
-/*
-=====================
-idTestModel::TestAnim_f
-=====================
-*/
 void idTestModel::TestAnim_f( const idCmdArgs& args )
 {
 	if( !gameLocal.testmodel ) {
@@ -855,11 +737,6 @@ void idTestModel::TestAnim_f( const idCmdArgs& args )
 	gameLocal.testmodel->TestAnim( args );
 }
 
-/*
-=====================
-idTestModel::ArgCompletion_TestAnim
-=====================
-*/
 void idTestModel::ArgCompletion_TestAnim( const idCmdArgs& args, void ( *callback )( const char* s ) )
 {
 	if( gameLocal.testmodel ) {
@@ -870,11 +747,6 @@ void idTestModel::ArgCompletion_TestAnim( const idCmdArgs& args, void ( *callbac
 	}
 }
 
-/*
-=====================
-idTestModel::TestBlend_f
-=====================
-*/
 void idTestModel::TestBlend_f( const idCmdArgs& args )
 {
 	if( !gameLocal.testmodel ) {
@@ -885,11 +757,6 @@ void idTestModel::TestBlend_f( const idCmdArgs& args )
 	gameLocal.testmodel->BlendAnim( args );
 }
 
-/*
-=====================
-idTestModel::TestModelNextAnim_f
-=====================
-*/
 void idTestModel::TestModelNextAnim_f( const idCmdArgs& args )
 {
 	if( !gameLocal.testmodel ) {
@@ -900,11 +767,6 @@ void idTestModel::TestModelNextAnim_f( const idCmdArgs& args )
 	gameLocal.testmodel->NextAnim( args );
 }
 
-/*
-=====================
-idTestModel::TestModelPrevAnim_f
-=====================
-*/
 void idTestModel::TestModelPrevAnim_f( const idCmdArgs& args )
 {
 	if( !gameLocal.testmodel ) {
@@ -915,11 +777,6 @@ void idTestModel::TestModelPrevAnim_f( const idCmdArgs& args )
 	gameLocal.testmodel->PrevAnim( args );
 }
 
-/*
-=====================
-idTestModel::TestModelNextFrame_f
-=====================
-*/
 void idTestModel::TestModelNextFrame_f( const idCmdArgs& args )
 {
 	if( !gameLocal.testmodel ) {
@@ -930,11 +787,6 @@ void idTestModel::TestModelNextFrame_f( const idCmdArgs& args )
 	gameLocal.testmodel->NextFrame( args );
 }
 
-/*
-=====================
-idTestModel::TestModelPrevFrame_f
-=====================
-*/
 void idTestModel::TestModelPrevFrame_f( const idCmdArgs& args )
 {
 	if( !gameLocal.testmodel ) {
