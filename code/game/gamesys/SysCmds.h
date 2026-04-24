@@ -30,6 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SYS_CMDS_H__
 #define __SYS_CMDS_H__
 
+//! Draws debug lines for visualization in the game world.
 void D_DrawDebugLines();
 
 #endif /* !__SYS_CMDS_H__ */

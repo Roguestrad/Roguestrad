@@ -4,21 +4,11 @@
 
 const int HISTORY_COUNT = 50;
 
-/*
-=====================
-stateParms_t::Wait
-=====================
-*/
 void	  stateParms_t::Wait( float seconds )
 {
 	time = gameLocal.time + SEC2MS( seconds );
 }
 
-/*
-=====================
-stateParms_t::Save
-=====================
-*/
 void stateParms_t::Save( idSaveGame* saveFile ) const
 {
 	saveFile->WriteInt( blendFrames );
@@ -26,11 +16,6 @@ void stateParms_t::Save( idSaveGame* saveFile ) const
 	saveFile->WriteInt( stage );
 }
 
-/*
-=====================
-stateParms_t::Restore
-=====================
-*/
 void stateParms_t::Restore( idRestoreGame* saveFile )
 {
 	saveFile->ReadInt( blendFrames );
@@ -38,11 +23,6 @@ void stateParms_t::Restore( idRestoreGame* saveFile )
 	saveFile->ReadInt( stage );
 }
 
-/*
-=====================
-stateCall_t::Save
-=====================
-*/
 void stateCall_t::Save( idSaveGame* saveFile ) const
 {
 	saveFile->WriteString( state );
@@ -52,11 +32,6 @@ void stateCall_t::Save( idSaveGame* saveFile ) const
 	parms.Save( saveFile );
 }
 
-/*
-=====================
-stateCall_t::Save
-=====================
-*/
 void stateCall_t::Restore( idRestoreGame* saveFile, const idClass* owner )
 {
 	saveFile->ReadString( state );
@@ -65,11 +40,6 @@ void stateCall_t::Restore( idRestoreGame* saveFile, const idClass* owner )
 	parms.Restore( saveFile );
 }
 
-/*
-=====================
-rvStateThread::rvStateThread
-=====================
-*/
 rvStateThread::rvStateThread()
 {
 	owner		= NULL;
@@ -82,31 +52,16 @@ rvStateThread::rvStateThread()
 	memset( &fl, 0, sizeof( fl ) );
 }
 
-/*
-=====================
-rvStateThread::~rvStateThread
-=====================
-*/
 rvStateThread::~rvStateThread()
 {
 	Clear( true );
 }
 
-/*
-=====================
-rvStateThread::SetOwner
-=====================
-*/
 void rvStateThread::SetOwner( idClass* _owner )
 {
 	owner = _owner;
 }
 
-/*
-=====================
-rvStateThread::Post
-=====================
-*/
 stateResult_t rvStateThread::PostState( const char* name, int blendFrames, int delay, int flags )
 {
 	stateCall_t* call;
@@ -137,22 +92,12 @@ stateResult_t rvStateThread::PostState( const char* name, int blendFrames, int d
 	return SRESULT_OK;
 }
 
-/*
-=====================
-rvStateThread::Set
-=====================
-*/
 stateResult_t rvStateThread::SetState( const char* name, int blendFrames, int delay, int flags )
 {
 	Clear();
 	return PostState( name, blendFrames, delay, flags );
 }
 
-/*
-=====================
-rvStateThread::InterruptState
-=====================
-*/
 stateResult_t rvStateThread::InterruptState( const char* name, int blendFrames, int delay, int flags )
 {
 	stateCall_t* call;
@@ -171,21 +116,11 @@ stateResult_t rvStateThread::InterruptState( const char* name, int blendFrames, 
 	return PostState( name, blendFrames, delay, flags );
 }
 
-/*
-=====================
-rvStateThread::CurrentStateIs
-=====================
-*/
 bool rvStateThread::CurrentStateIs( const char* name ) const
 {
 	return ( !IsIdle() ) ? name == GetState()->state : false;
 }
 
-/*
-=====================
-rvStateThread::Clear
-=====================
-*/
 void rvStateThread::Clear( bool ignoreStateCalls )
 {
 	stateCall_t* call;
@@ -219,11 +154,6 @@ void rvStateThread::Clear( bool ignoreStateCalls )
 	interrupted.Clear();
 }
 
-/*
-=====================
-rvStateThread::Execute
-=====================
-*/
 stateResult_t rvStateThread::Execute()
 {
 	stateCall_t* call = NULL;
@@ -393,11 +323,6 @@ stateResult_t rvStateThread::Execute()
 	return lastResult;
 }
 
-/*
-=====================
-rvStateThread::Save
-=====================
-*/
 void rvStateThread::Save( idSaveGame* saveFile ) const
 {
 	saveFile->WriteString( name.c_str() );
@@ -421,11 +346,6 @@ void rvStateThread::Save( idSaveGame* saveFile ) const
 	// TOSAVE: 	stateResult_t				lastResult;
 }
 
-/*
-=====================
-rvStateThread::Restore
-=====================
-*/
 void rvStateThread::Restore( idRestoreGame* saveFile, idClass* owner )
 {
 	int			 numStates;

@@ -57,6 +57,16 @@ Event are used for scheduling tasks and for linking script commands.
 class idClass;
 class idTypeInfo;
 
+/*!
+	\class idEventDef
+	\brief Defines event types and their argument formats for event-driven systems.
+
+	This class represents event definitions used in an event-driven architecture, storing metadata about event commands including their names, argument formats, return types, and associated event
+   numbers. It provides methods to query event properties such as argument count, sizes, and offsets. The class supports finding events by name and retrieving event definitions by number. It is
+   designed to work with a system that manages event registration and dispatch, where each event has a unique identifier and predefined argument structure. Event definitions are typically created at
+   initialization time and remain static during execution.
+
+*/
 class idEventDef
 {
 private:
@@ -74,25 +84,57 @@ private:
 	static int		   numEventDefs;
 
 public:
+	//! Initializes a new event definition with the specified command, argument format, and return type.
 	idEventDef( const char* command, const char* formatspec = NULL, char returnType = 0 );
 
+	//! Returns the name of the event definition.
 	const char*				 GetName() const;
+
+	//! Returns the argument format string for this event definition.
 	const char*				 GetArgFormat() const;
+
+	//! Returns the format specification index associated with this event definition.
 	unsigned int			 GetFormatspecIndex() const;
+
+	//! Returns the return type of the event definition.
 	char					 GetReturnType() const;
+
+	//! Returns the event number associated with this event definition.
 	int						 GetEventNum() const;
+
+	//! Returns the number of arguments associated with this event definition.
 	int						 GetNumArgs() const;
+
+	//! Returns the size of the arguments for the event definition.
 	size_t					 GetArgSize() const;
+
+	//! Returns the offset for a specific argument index in the event definition.
 	int						 GetArgOffset( int arg ) const;
 
+	//! Returns the number of event commands defined in the event definition.
 	static int				 NumEventCommands();
+
+	//! Retrieves the event definition command for the specified event number.
 	static const idEventDef* GetEventCommand( int eventnum );
+
+	//! Finds and returns the event definition with the specified name, or NULL if not found.
 	static const idEventDef* FindEvent( const char* name );
 };
 
 class idSaveGame;
 class idRestoreGame;
 
+/*!
+	\class idEvent
+	\brief Manages event scheduling, execution, and persistence within the game engine.
+
+	The idEvent class provides a comprehensive system for handling events in the game engine, including scheduling events to be executed at specific times, managing event arguments, and processing
+   events during game updates. It supports both regular and fast event processing, maintains an event queue for pending operations, and provides functionality for saving and restoring event state
+   during game loading. The class handles memory management for events through an internal pool and supports cancellation of events associated with specific objects. Event arguments are validated
+   during copying to ensure type safety and correct argument counts. The system initializes and shuts down cleanly, and supports saving event data to save games while properly handling trace
+   information.
+
+*/
 class idEvent
 {
 private:
@@ -109,117 +151,108 @@ private:
 public:
 	static bool initialized;
 
+	//! Destructor for the idEvent class that releases associated resources.
 	~idEvent();
 
+	//! Allocates a new event with the specified definition and arguments.
 	static idEvent* Alloc( const idEventDef* evdef, int numargs, va_list args );
-	// RB: 64 bit fix, changed int to intptr_t
-	static void		CopyArgs( const idEventDef* evdef, int numargs, va_list args, intptr_t data[D_EVENT_MAXARGS] );
-	// RB end
 
+	/*!
+		\brief Copies event arguments from a variable argument list to a fixed-size data array while validating argument types and counts.
+
+		This function processes the arguments of an event by copying them from a va_list to an array of intptr_t values. It validates that the number of arguments matches the expected count defined by
+	   the event definition and ensures each argument matches the expected type. The function is used internally for handling event argument passing in the game engine. It includes special handling
+	   for NULL entity arguments which are cast to integer 0 to prevent false type errors.
+
+		\param evdef Pointer to the event definition that defines the expected arguments
+		\param numargs Number of arguments to copy
+		\param args Variable argument list containing the arguments to copy
+		\param data Target array to store the copied argument values
+		\throws gameLocal.Error is called when the number of arguments doesn't match or when an argument type doesn't match the expected type
+	*/
+	static void		CopyArgs( const idEventDef* evdef, int numargs, va_list args, intptr_t data[D_EVENT_MAXARGS] );
+
+	//! Frees the memory and resets the event data.
 	void			Free();
+
+	//! Schedules an event to be executed at a specified time relative to the game clock.
 	void			Schedule( idClass* object, const idTypeInfo* cls, int time );
+
+	//! Returns the data pointer of the event.
 	byte*			GetData();
 
+	//! Cancels all events associated with a given object and optional event definition.
 	static void		CancelEvents( const idClass* obj, const idEventDef* evdef = NULL );
+
+	//! Clears the event list by resetting all events in the event pool and clearing the free list and event queue.
 	static void		ClearEventList();
+
+	//! Processes all pending events in the event queue up to the current game time
 	static void		ServiceEvents();
+
+	//! Processes fast events in the event queue until the specified time limit is reached.
 	static void		ServiceFastEvents();
+
+	//! Initializes the event system and prepares it for use.
 	static void		Init();
+
+	//! Shuts down the event system and releases associated resources.
 	static void		Shutdown();
 
-	// save games
-	static void		Save( idSaveGame* savefile );		// archives object for save game file
-	static void		Restore( idRestoreGame* savefile ); // unarchives object from save game file
+	//! Saves the event queue to a save game file.
+	static void		Save( idSaveGame* savefile );
+
+	//! Restores event data from a save game file.
+	static void		Restore( idRestoreGame* savefile );
+
+	//! Saves a trace structure to a save game file
 	static void		SaveTrace( idSaveGame* savefile, const trace_t& trace );
+
+	//! Restores a trace from a save file
 	static void		RestoreTrace( idRestoreGame* savefile, trace_t& trace );
 };
 
-/*
-================
-idEvent::GetData
-================
-*/
 ID_INLINE byte* idEvent::GetData()
 {
 	return data;
 }
 
-/*
-================
-idEventDef::GetName
-================
-*/
 ID_INLINE const char* idEventDef::GetName() const
 {
 	return name;
 }
 
-/*
-================
-idEventDef::GetArgFormat
-================
-*/
 ID_INLINE const char* idEventDef::GetArgFormat() const
 {
 	return formatspec;
 }
 
-/*
-================
-idEventDef::GetFormatspecIndex
-================
-*/
 ID_INLINE unsigned int idEventDef::GetFormatspecIndex() const
 {
 	return formatspecIndex;
 }
 
-/*
-================
-idEventDef::GetReturnType
-================
-*/
 ID_INLINE char idEventDef::GetReturnType() const
 {
 	return returnType;
 }
 
-/*
-================
-idEventDef::GetNumArgs
-================
-*/
 ID_INLINE int idEventDef::GetNumArgs() const
 {
 	return numargs;
 }
 
-/*
-================
-idEventDef::GetArgSize
-================
-*/
 ID_INLINE size_t idEventDef::GetArgSize() const
 {
 	return argsize;
 }
 
-/*
-================
-idEventDef::GetArgOffset
-================
-*/
 ID_INLINE int idEventDef::GetArgOffset( int arg ) const
 {
 	assert( ( arg >= 0 ) && ( arg < D_EVENT_MAXARGS ) );
 	return argOffset[arg];
 }
 
-/*
-================
-idEventDef::GetEventNum
-================
-*/
 ID_INLINE int idEventDef::GetEventNum() const
 {
 	return eventnum;

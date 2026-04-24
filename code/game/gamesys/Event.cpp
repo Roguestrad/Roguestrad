@@ -54,11 +54,6 @@ int			idEventDef::numEventDefs = 0;
 static bool eventError = false;
 static char eventErrorMsg[128];
 
-/*
-================
-idEventDef::idEventDef
-================
-*/
 idEventDef::idEventDef( const char* command, const char* formatspec, char returnType )
 {
 	idEventDef*	 ev;
@@ -177,31 +172,16 @@ idEventDef::idEventDef( const char* command, const char* formatspec, char return
 	numEventDefs++;
 }
 
-/*
-================
-idEventDef::NumEventCommands
-================
-*/
 int idEventDef::NumEventCommands()
 {
 	return numEventDefs;
 }
 
-/*
-================
-idEventDef::GetEventCommand
-================
-*/
 const idEventDef* idEventDef::GetEventCommand( int eventnum )
 {
 	return eventDefList[eventnum];
 }
 
-/*
-================
-idEventDef::FindEvent
-================
-*/
 const idEventDef* idEventDef::FindEvent( const char* name )
 {
 	idEventDef* ev;
@@ -236,21 +216,11 @@ bool									  idEvent::initialized = false;
 
 idDynamicBlockAlloc<byte, 16 * 1024, 256> idEvent::eventDataAllocator;
 
-/*
-================
-idEvent::~idEvent()
-================
-*/
 idEvent::~idEvent()
 {
 	Free();
 }
 
-/*
-================
-idEvent::Alloc
-================
-*/
 idEvent* idEvent::Alloc( const idEventDef* evdef, int numargs, va_list args )
 {
 	idEvent*	ev;
@@ -344,12 +314,6 @@ idEvent* idEvent::Alloc( const idEventDef* evdef, int numargs, va_list args )
 	return ev;
 }
 
-/*
-================
-idEvent::CopyArgs
-================
-*/
-// RB: 64 bit fixes, changed int to intptr_t
 void idEvent::CopyArgs( const idEventDef* evdef, int numargs, va_list args, intptr_t data[D_EVENT_MAXARGS] )
 {
 	// RB end
@@ -375,11 +339,6 @@ void idEvent::CopyArgs( const idEventDef* evdef, int numargs, va_list args, intp
 	}
 }
 
-/*
-================
-idEvent::Free
-================
-*/
 void idEvent::Free()
 {
 	if( data ) {
@@ -396,11 +355,6 @@ void idEvent::Free()
 	eventNode.AddToEnd( FreeEvents );
 }
 
-/*
-================
-idEvent::Schedule
-================
-*/
 void idEvent::Schedule( idClass* obj, const idTypeInfo* type, int time )
 {
 	idEvent* event;
@@ -447,11 +401,6 @@ void idEvent::Schedule( idClass* obj, const idTypeInfo* type, int time )
 	}
 }
 
-/*
-================
-idEvent::CancelEvents
-================
-*/
 void idEvent::CancelEvents( const idClass* obj, const idEventDef* evdef )
 {
 	idEvent* event;
@@ -480,11 +429,6 @@ void idEvent::CancelEvents( const idClass* obj, const idEventDef* evdef )
 	}
 }
 
-/*
-================
-idEvent::ClearEventList
-================
-*/
 void idEvent::ClearEventList()
 {
 	int i;
@@ -503,11 +447,6 @@ void idEvent::ClearEventList()
 	}
 }
 
-/*
-================
-idEvent::ServiceEvents
-================
-*/
 void idEvent::ServiceEvents()
 {
 	idEvent*		  event;
@@ -608,11 +547,6 @@ void idEvent::ServiceEvents()
 	}
 }
 
-/*
-================
-idEvent::ServiceFastEvents
-================
-*/
 void idEvent::ServiceFastEvents()
 {
 	idEvent*		  event;
@@ -711,11 +645,6 @@ void idEvent::ServiceFastEvents()
 	}
 }
 
-/*
-================
-idEvent::Init
-================
-*/
 void idEvent::Init()
 {
 	gameLocal.Printf( "Initializing event system\n" );
@@ -746,11 +675,6 @@ void idEvent::Init()
 	initialized = true;
 }
 
-/*
-================
-idEvent::Shutdown
-================
-*/
 void idEvent::Shutdown()
 {
 	gameLocal.Printf( "Shutdown event system\n" );
@@ -768,11 +692,6 @@ void idEvent::Shutdown()
 	initialized = false;
 }
 
-/*
-================
-idEvent::Save
-================
-*/
 void idEvent::Save( idSaveGame* savefile )
 {
 	char*		str;
@@ -873,11 +792,6 @@ void idEvent::Save( idSaveGame* savefile )
 	}
 }
 
-/*
-================
-idEvent::Restore
-================
-*/
 void idEvent::Restore( idRestoreGame* savefile )
 {
 	char*		str;
@@ -1041,14 +955,6 @@ void idEvent::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
- ================
- idEvent::ReadTrace
-
- idRestoreGame has a ReadTrace procedure, but unfortunately idEvent wants the material
- string name at the of the data structure rather than in the middle
- ================
- */
 void idEvent::RestoreTrace( idRestoreGame* savefile, trace_t& trace )
 {
 	savefile->ReadFloat( trace.fraction );
@@ -1066,14 +972,6 @@ void idEvent::RestoreTrace( idRestoreGame* savefile, trace_t& trace )
 	savefile->ReadInt( trace.c.id );
 }
 
-/*
- ================
- idEvent::WriteTrace
-
- idSaveGame has a WriteTrace procedure, but unfortunately idEvent wants the material
- string name at the of the data structure rather than in the middle
-================
- */
 void idEvent::SaveTrace( idSaveGame* savefile, const trace_t& trace )
 {
 	savefile->WriteFloat( trace.fraction );

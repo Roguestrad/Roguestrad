@@ -42032,6 +42032,1146 @@
     "LRESULT WINAPI InputLineWndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)": {
       "body_hash": "9565e3fa0187869a690f0f5b1b028dd5",
       "is_trivial": false
+    },
+    "idAllocError::idAllocError(const char *text=\"\")": {
+      "body_hash": "4cacf8c0c64eed2fea2a6ef6af71be3b",
+      "is_trivial": true
+    },
+    "idClass * idClass::CreateInstance()": {
+      "body_hash": "e0ac6361c5b51ca36d71cb88209e40ef",
+      "is_trivial": true
+    },
+    "void idClass::Init()": {
+      "body_hash": "76a02f72edff8467888fbc8215d14bd5",
+      "is_trivial": true
+    },
+    "void idClass::Shutdown()": {
+      "body_hash": "09251bab7551c1ab8a88b47a4d7bb75f",
+      "is_trivial": true
+    },
+    "idTypeInfo * idClass::GetClass(const char *name)": {
+      "body_hash": "7eaa788e28301fd4dfa6490882fb6906",
+      "is_trivial": true
+    },
+    "void idClass::DisplayInfo_f(const idCmdArgs &args)": {
+      "body_hash": "93c69e526dac8cd328c685c086e485b7",
+      "is_trivial": true
+    },
+    "void idClass::ListClasses_f(const idCmdArgs &args)": {
+      "body_hash": "c7f37f90a5db0bbf06fe7a42c2a5fad2",
+      "is_trivial": true
+    },
+    "void idClass::ExportScriptEvents_f(const idCmdArgs &args)": {
+      "body_hash": "8fcfe01289d584e46019c0e9748a85df",
+      "is_trivial": true
+    },
+    "idClass * idClass::CreateInstance(const char *name)": {
+      "body_hash": "47e7df2b84010ce2852eeaa4404302dc",
+      "is_trivial": true
+    },
+    "static int idClass::GetNumTypes()": {
+      "body_hash": "efe697f8c0d1cbdda28bcf7391d22304",
+      "is_trivial": true
+    },
+    "int idClass::GetTypeNumBits()": {
+      "body_hash": "d9d80f75c524cb4d1661a9d39952619c",
+      "is_trivial": true
+    },
+    "idTypeInfo * idClass::GetType(int num)": {
+      "body_hash": "db869fffd2ee301f2978393dd7946793",
+      "is_trivial": true
+    },
+    "idTypeInfo * idClass::GetType() const": {
+      "body_hash": "e0ac6361c5b51ca36d71cb88209e40ef",
+      "is_trivial": true
+    },
+    "void * idClass::operator new(size_t)": {
+      "body_hash": "7b694808f4e360f2d80e467544ed5925",
+      "is_trivial": true
+    },
+    "void idClass::operator delete(void *)": {
+      "body_hash": "176e7d7bd28a2c421a7473564d945f22",
+      "is_trivial": true
+    },
+    "idClass::~idClass()": {
+      "body_hash": "84437aaaca63e2111477160552a53c88",
+      "is_trivial": true
+    },
+    "void idClass::Spawn()": {
+      "body_hash": "9fcdc1cd7c9e4f8d3e14eeca8c2a3afe",
+      "is_trivial": true
+    },
+    "void idClass::CallSpawn()": {
+      "body_hash": "9a7c7fd444da88c1e09b3e4c4ef44d9b",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idClass::IsType(const idTypeInfo &c) const": {
+      "body_hash": "98afb799f90ce2a4fb670168250f9045",
+      "is_trivial": true
+    },
+    "const char * idClass::GetClassname() const": {
+      "body_hash": "18efe51466444f7729f4c25412d8ade1",
+      "is_trivial": true
+    },
+    "const char * idClass::GetSuperclass() const": {
+      "body_hash": "a2e593984b0399201daac7e94317f6d8",
+      "is_trivial": true
+    },
+    "void idClass::FindUninitializedMemory()": {
+      "body_hash": "b19db1ed2f38d361106c49d0dd4573e9",
+      "is_trivial": true
+    },
+    "virtual void idClass::SharedThink()": {
+      "body_hash": "f8fbb8661eff72f0dec56dc8ddc7aced",
+      "is_trivial": true
+    },
+    "T * idClass::Cast()": {
+      "body_hash": "46da75b7b8d9a51f12f51215b9d15c05",
+      "is_trivial": true
+    },
+    "const T * idClass::Cast() const": {
+      "body_hash": "9f7640423baf1e2c96967e7aa5e8531d",
+      "is_trivial": true
+    },
+    "virtual idClass * idClass::InvokeChild()": {
+      "body_hash": "8debe96522ee0181cbe3b7343c8afd1b",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idClass::RespondsTo(const idEventDef &ev) const": {
+      "body_hash": "9ed17dc01d5a93d56d212b17e988abd8",
+      "is_trivial": true
+    },
+    "bool idClass::PostEventMS(const idEventDef *ev, int time)": {
+      "body_hash": "732fa25334b9725910bac6ac3b8d5241",
+      "is_trivial": true
+    },
+    "bool idClass::PostEventMS(const idEventDef *ev, int time, idEventArg arg1)": {
+      "body_hash": "5ded251c714c89bd0f3bf1dd8aded442",
+      "is_trivial": true
+    },
+    "bool idClass::PostEventMS(const idEventDef *ev, int time, idEventArg arg1, idEventArg arg2)": {
+      "body_hash": "484a7e6fa4fb22e7f8f51704b2623d2f",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventMS(const idEventDef *ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3)": {
+      "body_hash": "95d2f8bd2edeecb56d211d35c8bf56a3",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventMS(const idEventDef *ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4)": {
+      "body_hash": "cd129e711297bdc6ecde8b91e34787ec",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventMS(const idEventDef *ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5)": {
+      "body_hash": "4321e79044b5c23c22f4b91e3404ab45",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventMS(const idEventDef *ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7)": {
+      "body_hash": "722e1b8a5e8fb5eadfadb9aac42913c8",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventMS(const idEventDef *ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7, idEventArg arg8)": {
+      "body_hash": "eaaaf3d4f1ac09f667fc8f6b5e83f0d0",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventSec(const idEventDef *ev, float time)": {
+      "body_hash": "904beffe625a3100a14e3934fba4603a",
+      "is_trivial": true
+    },
+    "bool idClass::PostEventSec(const idEventDef *ev, float time, idEventArg arg1)": {
+      "body_hash": "0dacdb535a600349aa77ad45b43bd65e",
+      "is_trivial": true
+    },
+    "bool idClass::PostEventSec(const idEventDef *ev, float time, idEventArg arg1, idEventArg arg2)": {
+      "body_hash": "23c373a1b60d5104591be6f39fbb2a77",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventSec(const idEventDef *ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3)": {
+      "body_hash": "942bd2118eb43bc2792ddc69e65a235e",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventSec(const idEventDef *ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4)": {
+      "body_hash": "b6f96223362ea82c65bed486006cb340",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventSec(const idEventDef *ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5)": {
+      "body_hash": "6785a76690fae5a1f8d29641c9b71b10",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventSec(const idEventDef *ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6)": {
+      "body_hash": "8ce88658928ed75f9fdf701fbad8e74f",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventSec(const idEventDef *ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7)": {
+      "body_hash": "6fefac0303abc45aeb96afb71b3c8460",
+      "is_trivial": false
+    },
+    "bool idClass::PostEventSec(const idEventDef *ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7, idEventArg arg8)": {
+      "body_hash": "d724095b33b8a870ffc0725577fb5bf3",
+      "is_trivial": false
+    },
+    "bool idClass::ProcessEvent(const idEventDef *ev)": {
+      "body_hash": "731812d209a64f2ddc73f095abea2fbb",
+      "is_trivial": true
+    },
+    "bool idClass::ProcessEvent(const idEventDef *ev, idEventArg arg1)": {
+      "body_hash": "f8ab69585908e5431bbe6eb43e078ca3",
+      "is_trivial": true
+    },
+    "bool idClass::ProcessEvent(const idEventDef *ev, idEventArg arg1, idEventArg arg2)": {
+      "body_hash": "9e8d2ce69aaace9276d994ac46a6e68b",
+      "is_trivial": true
+    },
+    "bool idClass::ProcessEvent(const idEventDef *ev, idEventArg arg1, idEventArg arg2, idEventArg arg3)": {
+      "body_hash": "bb011e1f052d9f5ad69da684f557659b",
+      "is_trivial": false
+    },
+    "bool idClass::ProcessEvent(const idEventDef *ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4)": {
+      "body_hash": "92b2d1d8d412a0092a0f6cb65067ce4a",
+      "is_trivial": false
+    },
+    "bool idClass::ProcessEvent(const idEventDef *ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5)": {
+      "body_hash": "a93b1fd5a159facc02058409e661d94e",
+      "is_trivial": false
+    },
+    "bool idClass::ProcessEvent(const idEventDef *ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6)": {
+      "body_hash": "0efb57548198cd2bfc755a556919e043",
+      "is_trivial": false
+    },
+    "bool idClass::ProcessEvent(const idEventDef *ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7)": {
+      "body_hash": "d00deb5da01484bb33ad84342b14782d",
+      "is_trivial": false
+    },
+    "bool idClass::ProcessEvent(const idEventDef *ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7, idEventArg arg8)": {
+      "body_hash": "9bd1a02acca76b625c60cb06a7919cbd",
+      "is_trivial": false
+    },
+    "bool idClass::ProcessEventArgPtr(const idEventDef *ev, intptr_t *data)": {
+      "body_hash": "e0aec1f81655da01a3744bbebf5bea14",
+      "is_trivial": true
+    },
+    "void idClass::CancelEvents(const idEventDef *ev)": {
+      "body_hash": "088fc3be86e14851034d20279d6a76ae",
+      "is_trivial": true
+    },
+    "void idClass::Event_Remove()": {
+      "body_hash": "3cbc6370997d7b20b53b49606d0bcce9",
+      "is_trivial": true
+    },
+    "void idClass::Event_SafeRemove()": {
+      "body_hash": "7fceb9a6766bb8e6e471668d12e476f3",
+      "is_trivial": true
+    },
+    "classSpawnFunc_t idClass::CallSpawnFunc(idTypeInfo *cls)": {
+      "body_hash": "52f6f6680def3eecfd92a178a0b4c2d2",
+      "is_trivial": true
+    },
+    "bool idClass::PostEventArgs(const idEventDef *ev, int time, int numargs,...)": {
+      "body_hash": "c5699e2d0c7b4d26b26d3841bf48da39",
+      "is_trivial": false
+    },
+    "bool idClass::ProcessEventArgs(const idEventDef *ev, int numargs,...)": {
+      "body_hash": "42d0a2994fa97507de7b315fb2c897e5",
+      "is_trivial": true
+    },
+    "idEvent::~idEvent()": {
+      "body_hash": "56fe201e1c7dda05b5b5b7636251571f",
+      "is_trivial": true
+    },
+    "void idEvent::Free()": {
+      "body_hash": "265f23ad6f6b58ddc74b0bdfaa590c7a",
+      "is_trivial": true
+    },
+    "void idEvent::Schedule(idClass *object, const idTypeInfo *cls, int time)": {
+      "body_hash": "802bfd63a2017629b5008bc57db8a5c2",
+      "is_trivial": true
+    },
+    "ID_INLINE byte * idEvent::GetData()": {
+      "body_hash": "64952c808128550fe411314ae83bd70f",
+      "is_trivial": true
+    },
+    "idEvent * idEvent::Alloc(const idEventDef *evdef, int numargs, va_list args)": {
+      "body_hash": "3f813446d053348b612fe548cfd66806",
+      "is_trivial": true
+    },
+    "void idEvent::CopyArgs(const idEventDef *evdef, int numargs, va_list args, intptr_t data[8])": {
+      "body_hash": "9f3dfacf960edcb72643735c237bf3fa",
+      "is_trivial": false
+    },
+    "void idEvent::CancelEvents(const idClass *obj, const idEventDef *evdef=NULL)": {
+      "body_hash": "f93774486298048da6d2831b7b83803d",
+      "is_trivial": true
+    },
+    "void idEvent::ClearEventList()": {
+      "body_hash": "1604d0f8725a0cb13e5cf763fcce7350",
+      "is_trivial": true
+    },
+    "void idEvent::ServiceEvents()": {
+      "body_hash": "70504c7a48c4e9558feb2ce71a6655fc",
+      "is_trivial": true
+    },
+    "void idEvent::ServiceFastEvents()": {
+      "body_hash": "f019b5a5822c1daa3e86faee62127a6a",
+      "is_trivial": true
+    },
+    "void idEvent::Init()": {
+      "body_hash": "7bb90c88d4e7ddf607b6dd7ee1cfe1b8",
+      "is_trivial": true
+    },
+    "void idEvent::Shutdown()": {
+      "body_hash": "454b6c685d1cc1bb1be88b445e1e2630",
+      "is_trivial": true
+    },
+    "void idEvent::Save(idSaveGame *savefile)": {
+      "body_hash": "f8bc5d74b3e72e15f4baac6a7d99072b",
+      "is_trivial": true
+    },
+    "void idEvent::Restore(idRestoreGame *savefile)": {
+      "body_hash": "c85caa10cf8d87891c49cf8fa4958c1f",
+      "is_trivial": true
+    },
+    "void idEvent::SaveTrace(idSaveGame *savefile, const trace_t &trace)": {
+      "body_hash": "079d661f40183ed55e11866947977972",
+      "is_trivial": true
+    },
+    "void idEvent::RestoreTrace(idRestoreGame *savefile, trace_t &trace)": {
+      "body_hash": "0b5555548d27da8169563735d8df454d",
+      "is_trivial": true
+    },
+    "idEventDef::idEventDef(const char *command, const char *formatspec=NULL, char returnType=0)": {
+      "body_hash": "1e574ac21130f185e29c06774b700bd6",
+      "is_trivial": true
+    },
+    "ID_INLINE const char * idEventDef::GetName() const": {
+      "body_hash": "dd8c7cb8c443b29f8689a6368321b7a7",
+      "is_trivial": true
+    },
+    "ID_INLINE const char * idEventDef::GetArgFormat() const": {
+      "body_hash": "1c2fbf83ec420ca7ebe5f22f619c914a",
+      "is_trivial": true
+    },
+    "ID_INLINE unsigned int idEventDef::GetFormatspecIndex() const": {
+      "body_hash": "9c0c5812df0bd50745d348d1a594587f",
+      "is_trivial": true
+    },
+    "ID_INLINE char idEventDef::GetReturnType() const": {
+      "body_hash": "5e93a6c7d178902adfdb447da87718c7",
+      "is_trivial": true
+    },
+    "ID_INLINE int idEventDef::GetEventNum() const": {
+      "body_hash": "b345edb71039bfe1f46ea43289caac05",
+      "is_trivial": true
+    },
+    "ID_INLINE int idEventDef::GetNumArgs() const": {
+      "body_hash": "abd3ab4a6ddcb1866cbe2cf66bf92c11",
+      "is_trivial": true
+    },
+    "ID_INLINE size_t idEventDef::GetArgSize() const": {
+      "body_hash": "f80f6dd5361f17930e1a0a10ad038e56",
+      "is_trivial": true
+    },
+    "ID_INLINE int idEventDef::GetArgOffset(int arg) const": {
+      "body_hash": "369bf94f0fb420713c0a8d7b81114237",
+      "is_trivial": true
+    },
+    "int idEventDef::NumEventCommands()": {
+      "body_hash": "93eba2e3054d8c44223bb714e7b80e8d",
+      "is_trivial": true
+    },
+    "const idEventDef * idEventDef::GetEventCommand(int eventnum)": {
+      "body_hash": "2d9df45935b941ff587c3d48edbbdbf5",
+      "is_trivial": true
+    },
+    "const idEventDef * idEventDef::FindEvent(const char *name)": {
+      "body_hash": "12cf53de532a95512e7696db75fcb92e",
+      "is_trivial": true
+    },
+    "idRestoreGame::idRestoreGame(idFile *savefile, idFile *stringTableFile, int saveVersion)": {
+      "body_hash": "754590ce348d15950cbeffbc43767c76",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadDecls()": {
+      "body_hash": "fd99ba7b21343734f5f16aaa48236247",
+      "is_trivial": true
+    },
+    "void idRestoreGame::CreateObjects()": {
+      "body_hash": "3a9aa1cb73ffce564c39683d74045c87",
+      "is_trivial": true
+    },
+    "void idRestoreGame::RestoreObjects()": {
+      "body_hash": "01ef79c24d85b1ca47b7df3139229cbd",
+      "is_trivial": true
+    },
+    "void idRestoreGame::DeleteObjects()": {
+      "body_hash": "ad510a87cba9af0eb714517b44f020a7",
+      "is_trivial": true
+    },
+    "void idRestoreGame::Error(VERIFY_FORMAT_STRING const char *fmt,...)": {
+      "body_hash": "d8e02e3d70deb291e53d7c73b2393df4",
+      "is_trivial": true
+    },
+    "void idRestoreGame::Read(void *buffer, int len)": {
+      "body_hash": "e1f4e63131bb0bed4f562e08ffcddb44",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadInt(int &value)": {
+      "body_hash": "9cab73d91b51fa06f419c52508d69cc2",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadJoint(jointHandle_t &value)": {
+      "body_hash": "f94f0513c9f51ce70d770826ce9603cb",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadShort(short &value)": {
+      "body_hash": "cf30db6a62827efd1f31a06879029666",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadByte(byte &value)": {
+      "body_hash": "6732f15e3c0f513469c712ca0691e211",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadSignedChar(signed char &value)": {
+      "body_hash": "07eff327aa865ba0837eda0f26c898da",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadFloat(float &value)": {
+      "body_hash": "e1454824b9f8d268847c8730510cbacc",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadBool(bool &value)": {
+      "body_hash": "0bd3bfd9220ab58ebf5d22950e4e1ff2",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadString(idStr &string)": {
+      "body_hash": "190a0952670aa55a0db63b6ce872e13b",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadVec2(idVec2 &vec)": {
+      "body_hash": "d117fb42a1963a3f32ab37ec2bf5fb2e",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadVec3(idVec3 &vec)": {
+      "body_hash": "778ebcc230b94d161abecab871c90b59",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadVec4(idVec4 &vec)": {
+      "body_hash": "2e9907217e7900a82442eb433262e731",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadVec6(idVec6 &vec)": {
+      "body_hash": "277ff3949e16bea0930c6c9ae5036d72",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadWinding(idWinding &winding)": {
+      "body_hash": "80069a261171119e05895da9029753fe",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadBounds(idBounds &bounds)": {
+      "body_hash": "8c53eb2f61f4f236c918d2d78a40ec87",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadMat3(idMat3 &mat)": {
+      "body_hash": "7d88e50bf5e274947db46b8b9097b03e",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadAngles(idAngles &angles)": {
+      "body_hash": "828023221119df3da7a6115365cf35a3",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadObject(idClass *&obj)": {
+      "body_hash": "6191e34738f063ee649a5006bc2c9474",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadStaticObject(idClass &obj)": {
+      "body_hash": "e3ab2018ebc5c85327106ad7c0246652",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadDict(idDict *dict)": {
+      "body_hash": "a273da41c3f79e22da83ff2560d4c1b3",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadMaterial(const idMaterial *&material)": {
+      "body_hash": "c0c7a2a286c19dfa49f256c3d7f12582",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadSkin(const idDeclSkin *&skin)": {
+      "body_hash": "1a5867848227fe0421b8d18c0c022606",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadParticle(const idDeclParticle *&particle)": {
+      "body_hash": "b3bd2a78fe21e51452eb5d831d4b5b4d",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadFX(const idDeclFX *&fx)": {
+      "body_hash": "0713704b94bed2265ea4c9c904653f19",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadSoundShader(const idSoundShader *&shader)": {
+      "body_hash": "d1923063e6d705c01303e24471cce936",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadModelDef(const idDeclModelDef *&modelDef)": {
+      "body_hash": "52b44ed3e5865b7521bc40968e55a10c",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadModel(idRenderModel *&model)": {
+      "body_hash": "c66cc5d74839643864046e3e609984fd",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadUserInterface(idUserInterface *&ui)": {
+      "body_hash": "82c35d1cd75065db16073d70fd933e04",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadRenderEntity(renderEntity_t &renderEntity)": {
+      "body_hash": "0fde2268618c2b97e458bc80d3d72fdf",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadRenderLight(renderLight_t &renderLight)": {
+      "body_hash": "6eabbd1dfe1673b1262b3abd6d51b03d",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadRenderEnvprobe(renderEnvironmentProbe_t &renderEnvprobe)": {
+      "body_hash": "9d5cba72221a79c40435a8cdef7b3fbc",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadRefSound(refSound_t &refSound)": {
+      "body_hash": "21192ce1e0057217d013a33a1c901a47",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadRenderView(renderView_t &view)": {
+      "body_hash": "d80adb05510d40873b2720cf5388785d",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadUsercmd(usercmd_t &usercmd)": {
+      "body_hash": "4db96393c970dcb2a259621d623e240c",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadContactInfo(contactInfo_t &contactInfo)": {
+      "body_hash": "8d476af43ffed6bb1d5208944b1060a2",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadTrace(trace_t &trace)": {
+      "body_hash": "e528304ee1fbd40235f74057330be425",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadTraceModel(idTraceModel &trace)": {
+      "body_hash": "8f273dbf4da5926bdd1ff7ee8929c279",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadClipModel(idClipModel *&clipModel)": {
+      "body_hash": "7c20fbda090b4d4eec1bdfa85acc83f9",
+      "is_trivial": true
+    },
+    "void idRestoreGame::ReadSoundCommands()": {
+      "body_hash": "58813d119a41492f7227e72b64ab8050",
+      "is_trivial": true
+    },
+    "int idRestoreGame::GetBuildNumber() const": {
+      "body_hash": "6f1732261d14ac6aa57c7a1f681dd660",
+      "is_trivial": true
+    },
+    "void idRestoreGame::CallRestore_r(const idTypeInfo *cls, idClass *obj)": {
+      "body_hash": "c927bb38f2e34106cdfb2a9f92be10e4",
+      "is_trivial": true
+    },
+    "idSaveGame::idSaveGame(idFile *savefile, idFile *stringFile, int inVersion)": {
+      "body_hash": "742862096abf6280f11de8a295abae22",
+      "is_trivial": true
+    },
+    "idSaveGame::~idSaveGame()": {
+      "body_hash": "1389c4e7f4f9af6d9f2f0365decc3022",
+      "is_trivial": true
+    },
+    "void idSaveGame::Close()": {
+      "body_hash": "052fe0b282d7447d1d1a04e81afdd1ee",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteDecls()": {
+      "body_hash": "76eed7eaa13373fb76deb5b42fd7b590",
+      "is_trivial": true
+    },
+    "void idSaveGame::AddObject(const idClass *obj)": {
+      "body_hash": "58bb25aed5fa06aa8eeaa3e326e80398",
+      "is_trivial": true
+    },
+    "void idSaveGame::Resize(const int count)": {
+      "body_hash": "3e23b075f4c5fe974fdebdaafc733775",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteObjectList()": {
+      "body_hash": "3d1bafeee60432a808e1dadec8b0e4df",
+      "is_trivial": true
+    },
+    "void idSaveGame::Write(const void *buffer, int len)": {
+      "body_hash": "13dc1ebe580ea5941cedea8c6347ef99",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteInt(const int value)": {
+      "body_hash": "98b44b3071f322da93768b2937ec9e20",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteJoint(const jointHandle_t value)": {
+      "body_hash": "2654907816d11f0d36b7d7b7f01756b9",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteShort(const short value)": {
+      "body_hash": "d5b184176d71443d359eeca3a1059e2f",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteByte(const byte value)": {
+      "body_hash": "d55d77f57a8be4abfb1ba5d457c52218",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteSignedChar(const signed char value)": {
+      "body_hash": "c49208d7a8ba1b4f29bc791c78e616ae",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteFloat(const float value)": {
+      "body_hash": "3c182a2b68fc8e6ad59b9af1e16ca176",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteBool(const bool value)": {
+      "body_hash": "6f1eeef987685f96c15e33736201fd26",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteString(const char *string)": {
+      "body_hash": "80f015e76e381a179b0781863ebeb086",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteVec2(const idVec2 &vec)": {
+      "body_hash": "08d0a0b879008af1c28d6717c00d4007",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteVec3(const idVec3 &vec)": {
+      "body_hash": "5b705b3c7ef64fb37ecbef02e188129f",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteVec4(const idVec4 &vec)": {
+      "body_hash": "25fd08efcfc05c321aee8ea8c02b4098",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteVec6(const idVec6 &vec)": {
+      "body_hash": "a9e4d209b055a32fbc2824e4e2d2707b",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteWinding(const idWinding &winding)": {
+      "body_hash": "071e5a2c9d5dbceaf24652dcbce1a91d",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteBounds(const idBounds &bounds)": {
+      "body_hash": "9530d5a6f6846f38fcafe2b70e99ec8c",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteMat3(const idMat3 &mat)": {
+      "body_hash": "bb0a031d286a7d305ba0bfc54025786c",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteAngles(const idAngles &angles)": {
+      "body_hash": "eb40632303326213661d2196c3b39bd3",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteObject(const idClass *obj)": {
+      "body_hash": "17e0e7ddae3463d51e584c306787acd7",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteStaticObject(const idClass &obj)": {
+      "body_hash": "2aa5e94324eec7e52e889adbbb31d822",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteDict(const idDict *dict)": {
+      "body_hash": "050a522cd6b584bc2effabca4cd59f1d",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteSkin(const idDeclSkin *skin)": {
+      "body_hash": "4490a15430c62aad7b2b98a5152352a6",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteParticle(const idDeclParticle *particle)": {
+      "body_hash": "13521eefd00851f205fd6569c73cfafe",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteFX(const idDeclFX *fx)": {
+      "body_hash": "8c81a9052c20577aa2f0bad418f7233b",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteSoundShader(const idSoundShader *shader)": {
+      "body_hash": "83bd28d705f0572ed311111d7215ab51",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteModelDef(const class idDeclModelDef *modelDef)": {
+      "body_hash": "0a8ac8b29a3f9c1e27e4fb010a4e9c2f",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteModel(const idRenderModel *model)": {
+      "body_hash": "0a830c8cc1891c76fa9ad3b355731e1d",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteUserInterface(const idUserInterface *ui, bool unique)": {
+      "body_hash": "e798b4b4f9a814b9c57094bb2344065a",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteRenderEntity(const renderEntity_t &renderEntity)": {
+      "body_hash": "ed06d25866c8f3fc65a994b47c926255",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteRenderEnvprobe(const renderEnvironmentProbe_t &renderEnvprobe)": {
+      "body_hash": "5ec25e3f1ec75f82921842a42253b4dd",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteRefSound(const refSound_t &refSound)": {
+      "body_hash": "844d1666a750dc355a407b7ed2166b9b",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteRenderView(const renderView_t &view)": {
+      "body_hash": "12dba114ef68cdc65079491a579a105d",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteUsercmd(const usercmd_t &usercmd)": {
+      "body_hash": "524511b9c140f63b806091f6a97a956b",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteContactInfo(const contactInfo_t &contactInfo)": {
+      "body_hash": "ce2801a238aa48cc191dfc6e9905d65e",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteTrace(const trace_t &trace)": {
+      "body_hash": "1c606096ed286c64727192023206e6cb",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteTraceModel(const idTraceModel &trace)": {
+      "body_hash": "e8773e1f41d2da36c77159627040c528",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteClipModel(const class idClipModel *clipModel)": {
+      "body_hash": "1ac4a8d2909dd5b883bcbdebc075efbe",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteSoundCommands()": {
+      "body_hash": "a4329db6b0fc08fcd7e788b31b16026c",
+      "is_trivial": true
+    },
+    "void idSaveGame::WriteBuildNumber(const int value)": {
+      "body_hash": "5b652fca76e30d9422d75b2bff27bd2d",
+      "is_trivial": true
+    },
+    "int idSaveGame::GetBuildNumber() const": {
+      "body_hash": "6f1732261d14ac6aa57c7a1f681dd660",
+      "is_trivial": true
+    },
+    "int idSaveGame::GetCurrentSaveSize() const": {
+      "body_hash": "3f1688954dd28e66ded3029041639ad7",
+      "is_trivial": true
+    },
+    "void idSaveGame::CallSave_r(const idTypeInfo *cls, const idClass *obj)": {
+      "body_hash": "f76ab14856413a0e59d688a4321f3552",
+      "is_trivial": true
+    },
+    "idTypeInfo::idTypeInfo(const char *classname, const char *superclass, idEventFunc< idClass > *eventCallbacks, idClass *(*CreateInstance)(), void(idClass::*Spawn)(), void(idClass::*Save)(idSaveGame *savefile) const, void(idClass::*Restore)(idRestoreGame *savefile))": {
+      "body_hash": "b25a9f7d4fc89f1c65c8dd0448f97280",
+      "is_trivial": false
+    },
+    "idTypeInfo::~idTypeInfo()": {
+      "body_hash": "157a7d364cc30bf38f81587eed22bf57",
+      "is_trivial": true
+    },
+    "void idTypeInfo::Init()": {
+      "body_hash": "177d74e0b3dedeba0a87afcfa04e8378",
+      "is_trivial": true
+    },
+    "void idTypeInfo::Shutdown()": {
+      "body_hash": "bd6343a0adb317b446500d6cfdd4a5ba",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idTypeInfo::IsType(const idTypeInfo &superclass) const": {
+      "body_hash": "30867c8536b113c82b6e91fcf3b457b3",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idTypeInfo::RespondsTo(const idEventDef &ev) const": {
+      "body_hash": "e150f389acfe00240eb24cba360fc110",
+      "is_trivial": true
+    },
+    "rvStateThread::rvStateThread()": {
+      "body_hash": "295f4ee37991353dfa7e0f361eae0a54",
+      "is_trivial": true
+    },
+    "rvStateThread::~rvStateThread()": {
+      "body_hash": "7e4db30a394c4c37acae9116b936126a",
+      "is_trivial": true
+    },
+    "ID_INLINE void rvStateThread::SetName(const char *name)": {
+      "body_hash": "19ef84534c8ec47367f4b651e2d5bbc0",
+      "is_trivial": true
+    },
+    "void rvStateThread::SetOwner(idClass *owner)": {
+      "body_hash": "5d1f8da91808112fd0edef61ebf72961",
+      "is_trivial": true
+    },
+    "stateResult_t rvStateThread::InterruptState(const char *state, int blendFrames=0, int delay=0, int flags=0)": {
+      "body_hash": "0533f3d7c7beb9d573764de6fb10077e",
+      "is_trivial": false
+    },
+    "stateResult_t rvStateThread::PostState(const char *state, int blendFrames=0, int delay=0, int flags=0)": {
+      "body_hash": "513e93a947e9c6a0323c9e4ab00eebb0",
+      "is_trivial": false
+    },
+    "stateResult_t rvStateThread::SetState(const char *state, int blendFrames=0, int delay=0, int flags=0)": {
+      "body_hash": "15e247b358e9756c0d79bf09bb4bda0c",
+      "is_trivial": false
+    },
+    "ID_INLINE stateCall_t * rvStateThread::GetState() const": {
+      "body_hash": "168e2fec66af3dd4a4114e17904e7edd",
+      "is_trivial": true
+    },
+    "bool rvStateThread::CurrentStateIs(const char *name) const": {
+      "body_hash": "1aae84cbd5fac0d4d3c8537dea2ad102",
+      "is_trivial": true
+    },
+    "stateResult_t rvStateThread::Execute()": {
+      "body_hash": "e12f39448900e69f75519b7d2214e1d9",
+      "is_trivial": true
+    },
+    "void rvStateThread::Clear(bool ignoreStateCalls=false)": {
+      "body_hash": "835b8f56eb06f7be336566d2d31bb7f3",
+      "is_trivial": true
+    },
+    "ID_INLINE bool rvStateThread::IsIdle() const": {
+      "body_hash": "2af21f7764f62f61fd13f6f232a1faca",
+      "is_trivial": true
+    },
+    "ID_INLINE bool rvStateThread::IsExecuting() const": {
+      "body_hash": "6acf0c77892d047f248651244ec4fb31",
+      "is_trivial": true
+    },
+    "void rvStateThread::Save(idSaveGame *saveFile) const": {
+      "body_hash": "e4397a54d30979200aff5f8ef99ad30d",
+      "is_trivial": true
+    },
+    "void rvStateThread::Restore(idRestoreGame *saveFile, idClass *owner)": {
+      "body_hash": "812c7fe74419ce048f0b00ca35803296",
+      "is_trivial": true
+    },
+    "eventCallback_t::eventCallback_t()": {
+      "body_hash": "0bcdce7fcc183351c75fedb3c97de989",
+      "is_trivial": true
+    },
+    "T eventCallback_t::As() const": {
+      "body_hash": "a36b50074176460f4034750801a82c9d",
+      "is_trivial": true
+    },
+    "eventCallback_t::operator bool() const": {
+      "body_hash": "aff552b04dc69a75c4a3f3e3ce142203",
+      "is_trivial": true
+    },
+    "static eventCallback_t eventCallback_t::From(T fn)": {
+      "body_hash": "78520a4fd1dab20dee236997bda33e23",
+      "is_trivial": true
+    },
+    "gameVersion_s::gameVersion_s()": {
+      "body_hash": "b930455702ac9c2e107cd5f6febb24fa",
+      "is_trivial": true
+    },
+    "void stateCall_t::Save(idSaveGame *saveFile) const": {
+      "body_hash": "c5999a6290a4edb4419d65464cd967d3",
+      "is_trivial": true
+    },
+    "void stateCall_t::Restore(idRestoreGame *saveFile, const idClass *owner)": {
+      "body_hash": "26ae752e2f04e8b4e1f219658a0c436d",
+      "is_trivial": true
+    },
+    "void stateParms_t::Wait(float seconds)": {
+      "body_hash": "672ba746e7f8726db85073f0b78e026b",
+      "is_trivial": true
+    },
+    "void stateParms_t::Save(idSaveGame *saveFile) const": {
+      "body_hash": "7f09c5d1dc8c85ac8afce11581f547fd",
+      "is_trivial": true
+    },
+    "void stateParms_t::Restore(idRestoreGame *saveFile)": {
+      "body_hash": "6bee20b5b86992bc0dbe688e5837c41c",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(addBot, \"adds a bot to a multiplayer game\", NULL)": {
+      "body_hash": "5fbecd382706e357003a7d88ae8b7c75",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND_SHIP(fillbots, \"fills the match with bots\", NULL)": {
+      "body_hash": "c475768428e2428adb660b58c14ce2de",
+      "is_trivial": true
+    },
+    "float Cmd_GetFloatArg(const idCmdArgs &args, int &argNum)": {
+      "body_hash": "548b6df7b4f796a08f011eec721128e7",
+      "is_trivial": true
+    },
+    "void Cmd_EntityList_f(const idCmdArgs &args)": {
+      "body_hash": "3db79a77a7172cfdcaa10ba5b1da1650",
+      "is_trivial": true
+    },
+    "void Cmd_ActiveEntityList_f(const idCmdArgs &args)": {
+      "body_hash": "873420bf9bd67ebf65d4353e88c8ca93",
+      "is_trivial": true
+    },
+    "void Cmd_ListSpawnArgs_f(const idCmdArgs &args)": {
+      "body_hash": "75d59714c22b252fe1963bdc59c8dc0d",
+      "is_trivial": true
+    },
+    "void Cmd_ReloadScript_f(const idCmdArgs &args)": {
+      "body_hash": "80bc45eb383a69c08507949fac303120",
+      "is_trivial": true
+    },
+    "CONSOLE_COMMAND(reloadScript2, \"Doesn't thow an error...  Use this when switching game modes\", 0)": {
+      "body_hash": "04da018b8e95db864dea1f9702c5f9ca",
+      "is_trivial": true
+    },
+    "void Cmd_Script_f(const idCmdArgs &args)": {
+      "body_hash": "4708db184b15f423932548c38dd083ae",
+      "is_trivial": true
+    },
+    "void KillEntities(const idCmdArgs &args, const idTypeInfo &superClass)": {
+      "body_hash": "de032fa2783cf0735814d3d9b9192be2",
+      "is_trivial": true
+    },
+    "void Cmd_KillMonsters_f(const idCmdArgs &args)": {
+      "body_hash": "3242fa1c5a067ca338ccc1d79195692b",
+      "is_trivial": true
+    },
+    "void Cmd_KillMovables_f(const idCmdArgs &args)": {
+      "body_hash": "38477f9338317c4d3782f366e7de0f82",
+      "is_trivial": true
+    },
+    "void Cmd_KillRagdolls_f(const idCmdArgs &args)": {
+      "body_hash": "80193c492ede002ee9537ebd0ba10bc3",
+      "is_trivial": true
+    },
+    "void Cmd_Give_f(const idCmdArgs &args)": {
+      "body_hash": "c326b17b8a828c0f534adec4f227bb46",
+      "is_trivial": true
+    },
+    "void Cmd_CenterView_f(const idCmdArgs &args)": {
+      "body_hash": "6de0cab205595fe6e1049ba8d46fba6b",
+      "is_trivial": true
+    },
+    "void Cmd_God_f(const idCmdArgs &args)": {
+      "body_hash": "1aa06da69f717364cc371719cf2c7fd8",
+      "is_trivial": true
+    },
+    "void Cmd_Notarget_f(const idCmdArgs &args)": {
+      "body_hash": "a75f44e829898c496c9af52ad943b3ee",
+      "is_trivial": true
+    },
+    "void Cmd_Noclip_f(const idCmdArgs &args)": {
+      "body_hash": "812cf599fdcfbc3abd3eb5fcc091343d",
+      "is_trivial": true
+    },
+    "void Cmd_PlayerModel_f(const idCmdArgs &args)": {
+      "body_hash": "03e3888974e93bd07e7f62962de8ad75",
+      "is_trivial": true
+    },
+    "static void Cmd_Say(bool team, const idCmdArgs &args)": {
+      "body_hash": "a7a398b44ac3866260af36cea18d2f34",
+      "is_trivial": true
+    },
+    "static void Cmd_Say_f(const idCmdArgs &args)": {
+      "body_hash": "e130096cbc9ef298c13dbaab5470dce9",
+      "is_trivial": true
+    },
+    "static void Cmd_SayTeam_f(const idCmdArgs &args)": {
+      "body_hash": "3615314518d45e8c13c20a200a4df62f",
+      "is_trivial": true
+    },
+    "static void Cmd_AddChatLine_f(const idCmdArgs &args)": {
+      "body_hash": "a0513c415f4359612ae6c8896a71dcc6",
+      "is_trivial": true
+    },
+    "void Cmd_GetViewpos_f(const idCmdArgs &args)": {
+      "body_hash": "2ffff19ec967208c9fb6cf79443ddf8d",
+      "is_trivial": true
+    },
+    "void Cmd_SetViewpos_f(const idCmdArgs &args)": {
+      "body_hash": "a0896f8f3d7c592984beda563a944650",
+      "is_trivial": true
+    },
+    "void Cmd_Teleport_f(const idCmdArgs &args)": {
+      "body_hash": "5e61b342676a8816649ba724727b51fd",
+      "is_trivial": true
+    },
+    "void Cmd_Trigger_f(const idCmdArgs &args)": {
+      "body_hash": "a125ad3f9e1ea15a9f93f61de5d72bf9",
+      "is_trivial": true
+    },
+    "void Cmd_Spawn_f(const idCmdArgs &args)": {
+      "body_hash": "92ff4f39fa22ab451e6ef3cbbf8bf039",
+      "is_trivial": true
+    },
+    "void Cmd_Damage_f(const idCmdArgs &args)": {
+      "body_hash": "d4d67d9f3a2c9d951edc4f9eac18fde9",
+      "is_trivial": true
+    },
+    "void Cmd_Remove_f(const idCmdArgs &args)": {
+      "body_hash": "59703fdc2b54491cc65c85e27979fd47",
+      "is_trivial": true
+    },
+    "void Cmd_TestLight_f(const idCmdArgs &args)": {
+      "body_hash": "9da5cb12d4ff4e84ec3b3a5974b58168",
+      "is_trivial": true
+    },
+    "void Cmd_TestPointLight_f(const idCmdArgs &args)": {
+      "body_hash": "e2eb5aae46dd9d54950b8e2b26a7ca09",
+      "is_trivial": true
+    },
+    "void Cmd_PopLight_f(const idCmdArgs &args)": {
+      "body_hash": "89d92b24036161da4082956b1c87eec6",
+      "is_trivial": true
+    },
+    "void Cmd_ClearLights_f(const idCmdArgs &args)": {
+      "body_hash": "db6f2f9978afaed39ee4038c66a79e45",
+      "is_trivial": true
+    },
+    "void Cmd_TestFx_f(const idCmdArgs &args)": {
+      "body_hash": "11cf6b1219426a39573798ad4529fd2e",
+      "is_trivial": true
+    },
+    "static void Cmd_AddDebugLine_f(const idCmdArgs &args)": {
+      "body_hash": "36fbf180d05bc24936b4b4a35ad1865a",
+      "is_trivial": true
+    },
+    "static void Cmd_RemoveDebugLine_f(const idCmdArgs &args)": {
+      "body_hash": "944585d97fe01fda6b2f82a3efab3530",
+      "is_trivial": true
+    },
+    "static void Cmd_BlinkDebugLine_f(const idCmdArgs &args)": {
+      "body_hash": "0e1cff8d6bf605b88e3507af040568d9",
+      "is_trivial": true
+    },
+    "static void PrintFloat(float f)": {
+      "body_hash": "d33fe09f80c9a82f8f876270a21b4978",
+      "is_trivial": true
+    },
+    "static void Cmd_ListDebugLines_f(const idCmdArgs &args)": {
+      "body_hash": "ecac0f9e2769e6f65f4be31744ae3dbd",
+      "is_trivial": true
+    },
+    "static void Cmd_ListCollisionModels_f(const idCmdArgs &args)": {
+      "body_hash": "d006263281aa9fa1578680f6d38dc2dd",
+      "is_trivial": true
+    },
+    "static void Cmd_CollisionModelInfo_f(const idCmdArgs &args)": {
+      "body_hash": "1c78c810d70dd4325bc544142267eeac",
+      "is_trivial": true
+    },
+    "static void Cmd_ReloadAnims_f(const idCmdArgs &args)": {
+      "body_hash": "55e380cc5a33746d48c8c96ef8f76e81",
+      "is_trivial": true
+    },
+    "static void Cmd_ListAnims_f(const idCmdArgs &args)": {
+      "body_hash": "c83674f281f5e6dc99db5220fb95ddfd",
+      "is_trivial": true
+    },
+    "static void Cmd_AASStats_f(const idCmdArgs &args)": {
+      "body_hash": "4c0c571750115b54c34abd6a18fff4ad",
+      "is_trivial": true
+    },
+    "static void Cmd_TestDamage_f(const idCmdArgs &args)": {
+      "body_hash": "5029d606c726de94b6c2c83fcaefdf15",
+      "is_trivial": true
+    },
+    "static void Cmd_TestBoneFx_f(const idCmdArgs &args)": {
+      "body_hash": "6e115c77c927b5fcd2a9d83241e392bf",
+      "is_trivial": true
+    },
+    "static void Cmd_TestDeath_f(const idCmdArgs &args)": {
+      "body_hash": "98659d117d9277d956207d0df24b5f51",
+      "is_trivial": true
+    },
+    "static void Cmd_WeaponSplat_f(const idCmdArgs &args)": {
+      "body_hash": "45517c604c42434a4756b342b1e95b74",
+      "is_trivial": true
+    },
+    "static void Cmd_SaveSelected_f(const idCmdArgs &args)": {
+      "body_hash": "b57dc2ef5d3084766f5c4ccbb9844083",
+      "is_trivial": true
+    },
+    "static void Cmd_DeleteSelected_f(const idCmdArgs &args)": {
+      "body_hash": "22d41d67045f475f0542fdd5516eccc0",
+      "is_trivial": true
+    },
+    "static void Cmd_SaveMoveables_f(const idCmdArgs &args)": {
+      "body_hash": "e0bab5f03a3958b1404f940224cc7831",
+      "is_trivial": true
+    },
+    "static void Cmd_SaveRagdolls_f(const idCmdArgs &args)": {
+      "body_hash": "af24377335bdbeee12d8fe317f85f4fb",
+      "is_trivial": true
+    },
+    "static void Cmd_BindRagdoll_f(const idCmdArgs &args)": {
+      "body_hash": "3308debb4d8671b9d12a707a6d2e9ac8",
+      "is_trivial": true
+    },
+    "static void Cmd_UnbindRagdoll_f(const idCmdArgs &args)": {
+      "body_hash": "fa02c7ff37acfb682c8f2f26c81bd973",
+      "is_trivial": true
+    },
+    "static void Cmd_GameError_f(const idCmdArgs &args)": {
+      "body_hash": "f5b54b5854ab8b5b8d7b8293a6a7b291",
+      "is_trivial": true
+    },
+    "static void Cmd_SaveLights_f(const idCmdArgs &args)": {
+      "body_hash": "40b4d2ba10edd82339cdd7fd352f3d77",
+      "is_trivial": true
+    },
+    "static void Cmd_SaveEnvprobes_f(const idCmdArgs &args)": {
+      "body_hash": "a76b70647e250baae117d555a100ea69",
+      "is_trivial": true
+    },
+    "static void Cmd_SaveParticles_f(const idCmdArgs &args)": {
+      "body_hash": "c4fd405ffa6e93c11304f1d1b736da7e",
+      "is_trivial": true
+    },
+    "static void Cmd_DisasmScript_f(const idCmdArgs &args)": {
+      "body_hash": "f3e26b0c995e8718f1207d841778d32d",
+      "is_trivial": true
+    },
+    "static void Cmd_TestSave_f(const idCmdArgs &args)": {
+      "body_hash": "bd78499149dd4d390cbbf0f76aaafca1",
+      "is_trivial": true
+    },
+    "static void Cmd_RecordViewNotes_f(const idCmdArgs &args)": {
+      "body_hash": "6b40a9ddfabc8ecd2d89a51b6802f8e5",
+      "is_trivial": true
+    },
+    "static void Cmd_CloseViewNotes_f(const idCmdArgs &args)": {
+      "body_hash": "b4b1e0bf801e203725cee4d7f3448b1d",
+      "is_trivial": true
+    },
+    "static void Cmd_ShowViewNotes_f(const idCmdArgs &args)": {
+      "body_hash": "aa5c7199f7310f3532cf13c58b152fb7",
+      "is_trivial": true
+    },
+    "bool FindEntityGUIs(idEntity *ent, const modelSurface_t **surfaces, int maxSurfs, int &guiSurfaces)": {
+      "body_hash": "b753d2ccfbfdb77b7245c65fdd1cc54a",
+      "is_trivial": false
+    },
+    "void Cmd_NextGUI_f(const idCmdArgs &args)": {
+      "body_hash": "5a7bebe14fa3ba2167bf8d0b41d3d2f3",
+      "is_trivial": true
+    },
+    "void Cmd_SetActorState_f(const idCmdArgs &args)": {
+      "body_hash": "5cf53b444fb5063194c7f4fd9921ca27",
+      "is_trivial": true
+    },
+    "void Cmd_TestId_f(const idCmdArgs &args)": {
+      "body_hash": "0a162842ff3087530136986f81b2524c",
+      "is_trivial": true
+    },
+    "void Cmd_EditLights_f(const idCmdArgs &args)": {
+      "body_hash": "3e21312086f4cc326dcc35975033215f",
+      "is_trivial": true
+    },
+    "void Cmd_ShowAfEditor_f(const idCmdArgs &args)": {
+      "body_hash": "d0027d8d847b9873e2372f3f5b95d9f9",
+      "is_trivial": true
+    },
+    "void D_DrawDebugLines()": {
+      "body_hash": "a487eaf34f0df9237efa6233186eb8a5",
+      "is_trivial": true
     }
   }
 }

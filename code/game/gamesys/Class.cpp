@@ -57,17 +57,6 @@ static idTypeInfo*			   typelist = NULL;
 static idHierarchy<idTypeInfo> classHierarchy;
 static int					   eventCallbackMemory = 0;
 
-/*
-================
-idTypeInfo::idClassType()
-
-Constructor for class.  Should only be called from CLASS_DECLARATION macro.
-Handles linking class definition into class hierarchy.  This should only happen
-at startup as idTypeInfos are statically defined.  Since static variables can be
-initialized in any order, the constructor must handle the case that subclasses
-are initialized before superclasses.
-================
-*/
 idTypeInfo::idTypeInfo( const char* classname,
 	const char*						superclass,
 	idEventFunc<idClass>*			eventCallbacks,
@@ -114,24 +103,11 @@ idTypeInfo::idTypeInfo( const char* classname,
 	}
 }
 
-/*
-================
-idTypeInfo::~idTypeInfo
-================
-*/
 idTypeInfo::~idTypeInfo()
 {
 	Shutdown();
 }
 
-/*
-================
-idTypeInfo::Init
-
-Initializes the event callback table for the class.  Creates a
-table for fast lookups of event functions.  Should only be called once.
-================
-*/
 void idTypeInfo::Init()
 {
 	idTypeInfo*			  c;
@@ -210,15 +186,6 @@ void idTypeInfo::Init()
 	delete[] set;
 }
 
-/*
-================
-idTypeInfo::Shutdown
-
-Should only be called when DLL or EXE is being shutdown.
-Although it cleans up any allocated memory, it doesn't bother to remove itself
-from the class list since the program is shutting down.
-================
-*/
 void idTypeInfo::Shutdown()
 {
 	// free up the memory used for event lookups
@@ -256,21 +223,11 @@ int								 idClass::typeNumBits = 0;
 int								 idClass::memused	  = 0;
 int								 idClass::numobjects  = 0;
 
-/*
-================
-idClass::GetTypeNumBits
-================
-*/
 int								 idClass::GetTypeNumBits()
 {
 	return typeNumBits;
 }
 
-/*
-================
-idClass::CallSpawn
-================
-*/
 void idClass::CallSpawn()
 {
 	idTypeInfo* type;
@@ -279,11 +236,6 @@ void idClass::CallSpawn()
 	CallSpawnFunc( type );
 }
 
-/*
-================
-idClass::CallSpawnFunc
-================
-*/
 classSpawnFunc_t idClass::CallSpawnFunc( idTypeInfo* cls )
 {
 	classSpawnFunc_t func;
@@ -302,11 +254,6 @@ classSpawnFunc_t idClass::CallSpawnFunc( idTypeInfo* cls )
 	return cls->Spawn;
 }
 
-/*
-================
-idClass::FindUninitializedMemory
-================
-*/
 void idClass::FindUninitializedMemory()
 {
 #ifdef ID_DEBUG_UNINITIALIZED_MEMORY
@@ -325,42 +272,20 @@ void idClass::FindUninitializedMemory()
 #endif
 }
 
-/*
-================
-idClass::Spawn
-================
-*/
 void idClass::Spawn()
 {
 }
 
-/*
-================
-idClass::~idClass
-
-Destructor for object.  Cancels any events that depend on this object.
-================
-*/
 idClass::~idClass()
 {
 	idEvent::CancelEvents( this );
 }
 
-/*
-================
-idClass::DisplayInfo_f
-================
-*/
 void idClass::DisplayInfo_f( const idCmdArgs& args )
 {
 	gameLocal.Printf( "Class memory status: %i bytes allocated in %i objects\n", memused, numobjects );
 }
 
-/*
-================
-idClass::ListClasses_f
-================
-*/
 void idClass::ListClasses_f( const idCmdArgs& args )
 {
 	int			i;
@@ -377,11 +302,6 @@ void idClass::ListClasses_f( const idCmdArgs& args )
 	gameLocal.Printf( "...%d classes", types.Num() );
 }
 
-/*
-================
-idClass::CreateInstance
-================
-*/
 idClass* idClass::CreateInstance( const char* name )
 {
 	const idTypeInfo* type;
@@ -396,16 +316,6 @@ idClass* idClass::CreateInstance( const char* name )
 	return obj;
 }
 
-/*
-================
-idClass::Init
-
-Should be called after all idTypeInfos are initialized, so must be called
-manually upon game code initialization.  Tells all the idTypeInfos to initialize
-their event callback table for the associated class.  This should only be called
-once during the execution of the program or DLL.
-================
-*/
 void idClass::Init()
 {
 	idTypeInfo* c;
@@ -451,11 +361,6 @@ void idClass::Init()
 	gameLocal.Printf( "...%i classes, %i bytes for event callbacks\n", types.Num(), eventCallbackMemory );
 }
 
-/*
-================
-idClass::Shutdown
-================
-*/
 void idClass::Shutdown()
 {
 	idTypeInfo* c;
@@ -469,11 +374,6 @@ void idClass::Shutdown()
 	initialized = false;
 }
 
-/*
-================
-idClass::new
-================
-*/
 void* idClass::operator new( size_t s )
 {
 	int* p;
@@ -487,11 +387,6 @@ void* idClass::operator new( size_t s )
 	return p + 1;
 }
 
-/*
-================
-idClass::delete
-================
-*/
 void idClass::operator delete( void* ptr )
 {
 	int* p;
@@ -504,14 +399,6 @@ void idClass::operator delete( void* ptr )
 	}
 }
 
-/*
-================
-idClass::GetClass
-
-Returns the idTypeInfo for the name of the class passed in.  This is a static function
-so it must be called as idClass::GetClass( classname )
-================
-*/
 idTypeInfo* idClass::GetClass( const char* name )
 {
 	idTypeInfo* c;
@@ -548,11 +435,6 @@ idTypeInfo* idClass::GetClass( const char* name )
 	return NULL;
 }
 
-/*
-================
-idClass::GetType
-================
-*/
 idTypeInfo* idClass::GetType( const int typeNum )
 {
 	idTypeInfo* c;
@@ -570,13 +452,6 @@ idTypeInfo* idClass::GetType( const int typeNum )
 	return NULL;
 }
 
-/*
-================
-idClass::GetClassname
-
-Returns the text classname of the object.
-================
-*/
 const char* idClass::GetClassname() const
 {
 	idTypeInfo* type;
@@ -585,13 +460,6 @@ const char* idClass::GetClassname() const
 	return type->classname;
 }
 
-/*
-================
-idClass::GetSuperclass
-
-Returns the text classname of the superclass.
-================
-*/
 const char* idClass::GetSuperclass() const
 {
 	idTypeInfo* cls;
@@ -600,21 +468,11 @@ const char* idClass::GetSuperclass() const
 	return cls->superclass;
 }
 
-/*
-================
-idClass::CancelEvents
-================
-*/
 void idClass::CancelEvents( const idEventDef* ev )
 {
 	idEvent::CancelEvents( this, ev );
 }
 
-/*
-================
-idClass::PostEventArgs
-================
-*/
 bool idClass::PostEventArgs( const idEventDef* ev, int time, int numargs, ... )
 {
 	idTypeInfo* c;
@@ -658,61 +516,31 @@ bool idClass::PostEventArgs( const idEventDef* ev, int time, int numargs, ... )
 	return true;
 }
 
-/*
-================
-idClass::PostEventMS
-================
-*/
 bool idClass::PostEventMS( const idEventDef* ev, int time )
 {
 	return PostEventArgs( ev, time, 0 );
 }
 
-/*
-================
-idClass::PostEventMS
-================
-*/
 bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1 )
 {
 	return PostEventArgs( ev, time, 1, &arg1 );
 }
 
-/*
-================
-idClass::PostEventMS
-================
-*/
 bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEventArg arg2 )
 {
 	return PostEventArgs( ev, time, 2, &arg1, &arg2 );
 }
 
-/*
-================
-idClass::PostEventMS
-================
-*/
 bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3 )
 {
 	return PostEventArgs( ev, time, 3, &arg1, &arg2, &arg3 );
 }
 
-/*
-================
-idClass::PostEventMS
-================
-*/
 bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4 )
 {
 	return PostEventArgs( ev, time, 4, &arg1, &arg2, &arg3, &arg4 );
 }
 
-/*
-================
-idClass::PostEventMS
-================
-*/
 bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5 )
 {
 	return PostEventArgs( ev, time, 5, &arg1, &arg2, &arg3, &arg4, &arg5 );
@@ -728,121 +556,61 @@ bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEv
 	return PostEventArgs( ev, time, 6, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6 );
 }
 
-/*
-================
-idClass::PostEventMS
-================
-*/
 bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7 )
 {
 	return PostEventArgs( ev, time, 7, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7 );
 }
 
-/*
-================
-idClass::PostEventMS
-================
-*/
 bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7, idEventArg arg8 )
 {
 	return PostEventArgs( ev, time, 8, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7, &arg8 );
 }
 
-/*
-================
-idClass::PostEventSec
-================
-*/
 bool idClass::PostEventSec( const idEventDef* ev, float time )
 {
 	return PostEventArgs( ev, SEC2MS( time ), 0 );
 }
 
-/*
-================
-idClass::PostEventSec
-================
-*/
 bool idClass::PostEventSec( const idEventDef* ev, float time, idEventArg arg1 )
 {
 	return PostEventArgs( ev, SEC2MS( time ), 1, &arg1 );
 }
 
-/*
-================
-idClass::PostEventSec
-================
-*/
 bool idClass::PostEventSec( const idEventDef* ev, float time, idEventArg arg1, idEventArg arg2 )
 {
 	return PostEventArgs( ev, SEC2MS( time ), 2, &arg1, &arg2 );
 }
 
-/*
-================
-idClass::PostEventSec
-================
-*/
 bool idClass::PostEventSec( const idEventDef* ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3 )
 {
 	return PostEventArgs( ev, SEC2MS( time ), 3, &arg1, &arg2, &arg3 );
 }
 
-/*
-================
-idClass::PostEventSec
-================
-*/
 bool idClass::PostEventSec( const idEventDef* ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4 )
 {
 	return PostEventArgs( ev, SEC2MS( time ), 4, &arg1, &arg2, &arg3, &arg4 );
 }
 
-/*
-================
-idClass::PostEventSec
-================
-*/
 bool idClass::PostEventSec( const idEventDef* ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5 )
 {
 	return PostEventArgs( ev, SEC2MS( time ), 5, &arg1, &arg2, &arg3, &arg4, &arg5 );
 }
 
-/*
-================
-idClass::PostEventSec
-================
-*/
 bool idClass::PostEventSec( const idEventDef* ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6 )
 {
 	return PostEventArgs( ev, SEC2MS( time ), 6, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6 );
 }
 
-/*
-================
-idClass::PostEventSec
-================
-*/
 bool idClass::PostEventSec( const idEventDef* ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7 )
 {
 	return PostEventArgs( ev, SEC2MS( time ), 7, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7 );
 }
 
-/*
-================
-idClass::PostEventSec
-================
-*/
 bool idClass::PostEventSec( const idEventDef* ev, float time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7, idEventArg arg8 )
 {
 	return PostEventArgs( ev, SEC2MS( time ), 8, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7, &arg8 );
 }
 
-/*
-================
-idClass::ProcessEventArgs
-================
-*/
 bool idClass::ProcessEventArgs( const idEventDef* ev, int numargs, ... )
 {
 	idTypeInfo* c;
@@ -871,102 +639,51 @@ bool idClass::ProcessEventArgs( const idEventDef* ev, int numargs, ... )
 	return true;
 }
 
-/*
-================
-idClass::ProcessEvent
-================
-*/
 bool idClass::ProcessEvent( const idEventDef* ev )
 {
 	return ProcessEventArgs( ev, 0 );
 }
 
-/*
-================
-idClass::ProcessEvent
-================
-*/
 bool idClass::ProcessEvent( const idEventDef* ev, idEventArg arg1 )
 {
 	return ProcessEventArgs( ev, 1, &arg1 );
 }
 
-/*
-================
-idClass::ProcessEvent
-================
-*/
 bool idClass::ProcessEvent( const idEventDef* ev, idEventArg arg1, idEventArg arg2 )
 {
 	return ProcessEventArgs( ev, 2, &arg1, &arg2 );
 }
 
-/*
-================
-idClass::ProcessEvent
-================
-*/
 bool idClass::ProcessEvent( const idEventDef* ev, idEventArg arg1, idEventArg arg2, idEventArg arg3 )
 {
 	return ProcessEventArgs( ev, 3, &arg1, &arg2, &arg3 );
 }
 
-/*
-================
-idClass::ProcessEvent
-================
-*/
 bool idClass::ProcessEvent( const idEventDef* ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4 )
 {
 	return ProcessEventArgs( ev, 4, &arg1, &arg2, &arg3, &arg4 );
 }
 
-/*
-================
-idClass::ProcessEvent
-================
-*/
 bool idClass::ProcessEvent( const idEventDef* ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5 )
 {
 	return ProcessEventArgs( ev, 5, &arg1, &arg2, &arg3, &arg4, &arg5 );
 }
 
-/*
-================
-idClass::ProcessEvent
-================
-*/
 bool idClass::ProcessEvent( const idEventDef* ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6 )
 {
 	return ProcessEventArgs( ev, 6, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6 );
 }
 
-/*
-================
-idClass::ProcessEvent
-================
-*/
 bool idClass::ProcessEvent( const idEventDef* ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7 )
 {
 	return ProcessEventArgs( ev, 7, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7 );
 }
 
-/*
-================
-idClass::ProcessEvent
-================
-*/
 bool idClass::ProcessEvent( const idEventDef* ev, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6, idEventArg arg7, idEventArg arg8 )
 {
 	return ProcessEventArgs( ev, 8, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6, &arg7, &arg8 );
 }
 
-/*
-================
-idClass::ProcessEventArgPtr
-================
-*/
-// RB: 64 bit fixes, changed int to intptr_t
 bool idClass::ProcessEventArgPtr( const idEventDef* ev, intptr_t* data )
 {
 	// RB end
@@ -1084,28 +801,17 @@ bool idClass::ProcessEventArgPtr( const idEventDef* ev, intptr_t* data )
 	return true;
 }
 
-/*
-================
-idClass::Event_Remove
-================
-*/
 void idClass::Event_Remove()
 {
 	delete this;
 }
 
-/*
-================
-idClass::Event_SafeRemove
-================
-*/
 void idClass::Event_SafeRemove()
 {
 	// Forces the remove to be done at a safe time
 	PostEventMS( &EV_Remove, 0 );
 }
 
-// RB: development tool
 void idClass::ExportScriptEvents_f( const idCmdArgs& args )
 {
 	// allocate temporary memory for flags so that the subclass's event callbacks

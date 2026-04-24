@@ -34,6 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../tools/imgui/afeditor/AfEditor.h"
 
+//! Adds a bot to a multiplayer game using the specified bot file.
 CONSOLE_COMMAND_SHIP( addBot, "adds a bot to a multiplayer game", NULL )
 {
 	if( args.Argc() < 2 ) {
@@ -43,6 +44,7 @@ CONSOLE_COMMAND_SHIP( addBot, "adds a bot to a multiplayer game", NULL )
 	gameLocal.AddBot( args.Argv( 1 ) );
 }
 
+//! Fills the match with bots of various types.
 CONSOLE_COMMAND_SHIP( fillbots, "fills the match with bots", NULL )
 {
 	gameLocal.AddBot( "dark" );
@@ -54,11 +56,7 @@ CONSOLE_COMMAND_SHIP( fillbots, "fills the match with bots", NULL )
 	gameLocal.AddBot( "sarge" );
 }
 
-/*
-==================
-Cmd_GetFloatArg
-==================
-*/
+//! Parses and returns the next argument from the command line arguments as a float.
 float Cmd_GetFloatArg( const idCmdArgs& args, int& argNum )
 {
 	const char* value;
@@ -67,11 +65,7 @@ float Cmd_GetFloatArg( const idCmdArgs& args, int& argNum )
 	return atof( value );
 }
 
-/*
-===================
-Cmd_EntityList_f
-===================
-*/
+//! Prints a list of entities matching an optional filter string.
 void Cmd_EntityList_f( const idCmdArgs& args )
 {
 	int		  e;
@@ -112,11 +106,7 @@ void Cmd_EntityList_f( const idCmdArgs& args )
 	gameLocal.Printf( "...%d entities\n...%d bytes of spawnargs\n", count, size );
 }
 
-/*
-===================
-Cmd_ActiveEntityList_f
-===================
-*/
+//! Prints a list of all active entities in the game along with their details.
 void Cmd_ActiveEntityList_f( const idCmdArgs& args )
 {
 	idEntity* check;
@@ -135,11 +125,7 @@ void Cmd_ActiveEntityList_f( const idCmdArgs& args )
 	gameLocal.Printf( "...%d active entities\n", count );
 }
 
-/*
-===================
-Cmd_ListSpawnArgs_f
-===================
-*/
+//! Lists all spawn arguments of a specified entity.
 void Cmd_ListSpawnArgs_f( const idCmdArgs& args )
 {
 	int		  i;
@@ -157,11 +143,7 @@ void Cmd_ListSpawnArgs_f( const idCmdArgs& args )
 	}
 }
 
-/*
-===================
-Cmd_ReloadScript_f
-===================
-*/
+//! Reloads the game script and exits the current map to apply changes.
 void Cmd_ReloadScript_f( const idCmdArgs& args )
 {
 	// shutdown the map because entities may point to script objects
@@ -179,6 +161,7 @@ void Cmd_ReloadScript_f( const idCmdArgs& args )
 	gameLocal.Error( "Exiting map to reload scripts" );
 }
 
+//! Reloads and recompiles the game scripts without throwing an error.
 CONSOLE_COMMAND( reloadScript2, "Doesn't thow an error...  Use this when switching game modes", 0 )
 {
 	// shutdown the map because entities may point to script objects
@@ -193,11 +176,7 @@ CONSOLE_COMMAND( reloadScript2, "Doesn't thow an error...  Use this when switchi
 	}
 }
 
-/*
-===================
-Cmd_Script_f
-===================
-*/
+//! Executes a console script command with cheat protection.
 void Cmd_Script_f( const idCmdArgs& args )
 {
 	const char*		  script;
@@ -230,13 +209,7 @@ void Cmd_Script_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-KillEntities
-
-Kills all the entities of the given class in a level.
-==================
-*/
+//! Kills all entities of a specified class in the game level, excluding those named in the arguments.
 void KillEntities( const idCmdArgs& args, const idTypeInfo& superClass )
 {
 	idEntity*	ent;
@@ -268,13 +241,7 @@ void KillEntities( const idCmdArgs& args, const idTypeInfo& superClass )
 	}
 }
 
-/*
-==================
-Cmd_KillMonsters_f
-
-Kills all the monsters in a level.
-==================
-*/
+//! Kills all monsters and projectiles in the level.
 void Cmd_KillMonsters_f( const idCmdArgs& args )
 {
 	KillEntities( args, idAI::Type );
@@ -283,13 +250,7 @@ void Cmd_KillMonsters_f( const idCmdArgs& args )
 	KillEntities( args, idProjectile::Type );
 }
 
-/*
-==================
-Cmd_KillMovables_f
-
-Kills all the moveables in a level.
-==================
-*/
+//! Kills all moveables in the level if cheats are enabled.
 void Cmd_KillMovables_f( const idCmdArgs& args )
 {
 	if( !gameLocal.GetLocalPlayer() || !gameLocal.CheatsOk( false ) ) {
@@ -298,13 +259,7 @@ void Cmd_KillMovables_f( const idCmdArgs& args )
 	KillEntities( args, idMoveable::Type );
 }
 
-/*
-==================
-Cmd_KillRagdolls_f
-
-Kills all the ragdolls in a level.
-==================
-*/
+//! Kills all ragdolls in the level if cheats are enabled.
 void Cmd_KillRagdolls_f( const idCmdArgs& args )
 {
 	if( !gameLocal.GetLocalPlayer() || !gameLocal.CheatsOk( false ) ) {
@@ -314,13 +269,7 @@ void Cmd_KillRagdolls_f( const idCmdArgs& args )
 	KillEntities( args, idAFEntity_WithAttachedHead::Type );
 }
 
-/*
-==================
-Cmd_Give_f
-
-Give items to a client
-==================
-*/
+//! Gives specified items or powers to the local player, with support for various cheat commands.
 void Cmd_Give_f( const idCmdArgs& args )
 {
 	const char* name;
@@ -460,13 +409,7 @@ void Cmd_Give_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_CenterView_f
-
-Centers the players pitch
-==================
-*/
+//! Centers the player's view pitch to zero.
 void Cmd_CenterView_f( const idCmdArgs& args )
 {
 	idPlayer* player;
@@ -482,15 +425,7 @@ void Cmd_CenterView_f( const idCmdArgs& args )
 	player->SetViewAngles( ang );
 }
 
-/*
-==================
-Cmd_God_f
-
-Sets client to godmode
-
-argv(0) god
-==================
-*/
+//! Toggles god mode for the local player.
 void Cmd_God_f( const idCmdArgs& args )
 {
 	const char* msg;
@@ -512,15 +447,7 @@ void Cmd_God_f( const idCmdArgs& args )
 	gameLocal.Printf( "%s", msg );
 }
 
-/*
-==================
-Cmd_Notarget_f
-
-Sets client to notarget
-
-argv(0) notarget
-==================
-*/
+//! Toggles the notarget flag for the local player.
 void Cmd_Notarget_f( const idCmdArgs& args )
 {
 	const char* msg;
@@ -542,13 +469,7 @@ void Cmd_Notarget_f( const idCmdArgs& args )
 	gameLocal.Printf( "%s", msg );
 }
 
-/*
-==================
-Cmd_Noclip_f
-
-argv(0) noclip
-==================
-*/
+//! Toggles the noclip mode for the local player.
 void Cmd_Noclip_f( const idCmdArgs& args )
 {
 	const char* msg;
@@ -569,11 +490,7 @@ void Cmd_Noclip_f( const idCmdArgs& args )
 	gameLocal.Printf( "%s", msg );
 }
 
-/*
-=================
-Cmd_PlayerModel_f
-=================
-*/
+//! Sets the player model for the local player based on the provided model name.
 void Cmd_PlayerModel_f( const idCmdArgs& args )
 {
 	idPlayer*	player;
@@ -599,11 +516,7 @@ void Cmd_PlayerModel_f( const idCmdArgs& args )
 	player->SpawnToPoint( pos, ang );
 }
 
-/*
-==================
-Cmd_Say
-==================
-*/
+//! Handles sending chat messages in multiplayer games, with team-specific behavior.
 static void Cmd_Say( bool team, const idCmdArgs& args )
 {
 	const char* cmd = team ? "sayTeam" : "say";
@@ -661,41 +574,25 @@ static void Cmd_Say( bool team, const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_Say_f
-==================
-*/
+//! Handles the console command for sending a chat message.
 static void Cmd_Say_f( const idCmdArgs& args )
 {
 	Cmd_Say( false, args );
 }
 
-/*
-==================
-Cmd_SayTeam_f
-==================
-*/
+//! Sends a team chat message using the provided command arguments.
 static void Cmd_SayTeam_f( const idCmdArgs& args )
 {
 	Cmd_Say( true, args );
 }
 
-/*
-==================
-Cmd_AddChatLine_f
-==================
-*/
+//! Adds a chat line to the multiplayer game chat system.
 static void Cmd_AddChatLine_f( const idCmdArgs& args )
 {
 	gameLocal.mpGame.AddChatLine( args.Argv( 1 ) );
 }
 
-/*
-==================
-Cmd_GetViewpos_f
-==================
-*/
+//! Outputs the current player's view position and yaw angle.
 void Cmd_GetViewpos_f( const idCmdArgs& args )
 {
 	idPlayer* player;
@@ -716,11 +613,7 @@ void Cmd_GetViewpos_f( const idCmdArgs& args )
 	}
 }
 
-/*
-=================
-Cmd_SetViewpos_f
-=================
-*/
+//! Sets the player view position and optional yaw angle.
 void Cmd_SetViewpos_f( const idCmdArgs& args )
 {
 	idVec3	  origin;
@@ -751,11 +644,7 @@ void Cmd_SetViewpos_f( const idCmdArgs& args )
 	player->Teleport( origin, angles, NULL );
 }
 
-/*
-=================
-Cmd_Teleport_f
-=================
-*/
+//! Teleports the local player to the specified entity.
 void Cmd_Teleport_f( const idCmdArgs& args )
 {
 	idVec3	  origin;
@@ -786,11 +675,7 @@ void Cmd_Teleport_f( const idCmdArgs& args )
 	player->Teleport( origin, angles, ent );
 }
 
-/*
-=================
-Cmd_Trigger_f
-=================
-*/
+//! Triggers a specified entity by name if cheats are enabled.
 void Cmd_Trigger_f( const idCmdArgs& args )
 {
 	idVec3	  origin;
@@ -819,11 +704,7 @@ void Cmd_Trigger_f( const idCmdArgs& args )
 	ent->TriggerGuis();
 }
 
-/*
-===================
-Cmd_Spawn_f
-===================
-*/
+//! Spawns a game entity with the specified class name and key/value pairs at the player's location with a default angle of 180 degrees.
 void Cmd_Spawn_f( const idCmdArgs& args )
 {
 	const char *key, *value;
@@ -873,13 +754,7 @@ void Cmd_Spawn_f( const idCmdArgs& args )
 	gameLocal.SpawnEntityDef( dict );
 }
 
-/*
-==================
-Cmd_Damage_f
-
-Damages the specified entity
-==================
-*/
+//! Applies damage to a specified entity using console command arguments
 void Cmd_Damage_f( const idCmdArgs& args )
 {
 	if( !gameLocal.GetLocalPlayer() || !gameLocal.CheatsOk( false ) ) {
@@ -899,13 +774,7 @@ void Cmd_Damage_f( const idCmdArgs& args )
 	ent->Damage( gameLocal.world, gameLocal.world, idVec3( 0, 0, 1 ), "damage_moverCrush", atoi( args.Argv( 2 ) ), INVALID_JOINT );
 }
 
-/*
-==================
-Cmd_Remove_f
-
-Removes the specified entity
-==================
-*/
+//! Removes the specified entity from the game.
 void Cmd_Remove_f( const idCmdArgs& args )
 {
 	if( !gameLocal.GetLocalPlayer() || !gameLocal.CheatsOk( false ) ) {
@@ -925,11 +794,7 @@ void Cmd_Remove_f( const idCmdArgs& args )
 	delete ent;
 }
 
-/*
-===================
-Cmd_TestLight_f
-===================
-*/
+//! Creates a new light entity based on command line arguments and the player's view orientation.
 void Cmd_TestLight_f( const idCmdArgs& args )
 {
 	int			i;
@@ -984,11 +849,7 @@ void Cmd_TestLight_f( const idCmdArgs& args )
 	gameLocal.Printf( "Created new light\n" );
 }
 
-/*
-===================
-Cmd_TestPointLight_f
-===================
-*/
+//! Creates a new point light entity based on command line arguments.
 void Cmd_TestPointLight_f( const idCmdArgs& args )
 {
 	const char *key = NULL, *value = NULL, *name = NULL;
@@ -1031,11 +892,7 @@ void Cmd_TestPointLight_f( const idCmdArgs& args )
 	gameLocal.Printf( "Created new point light\n" );
 }
 
-/*
-==================
-Cmd_PopLight_f
-==================
-*/
+//! Removes the most recently spawned light entity from the game level.
 void Cmd_PopLight_f( const idCmdArgs& args )
 {
 	idEntity*	 ent;
@@ -1077,11 +934,7 @@ void Cmd_PopLight_f( const idCmdArgs& args )
 	}
 }
 
-/*
-====================
-Cmd_ClearLights_f
-====================
-*/
+//! Clears all lights in the game, optionally removing them from the map.
 void Cmd_ClearLights_f( const idCmdArgs& args )
 {
 	idEntity*	 ent;
@@ -1110,11 +963,7 @@ void Cmd_ClearLights_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_TestFx_f
-==================
-*/
+//! Executes a command to test and spawn a particle effect at the player's position.
 void Cmd_TestFx_f( const idCmdArgs& args )
 {
 	idVec3		offset;
@@ -1159,11 +1008,7 @@ typedef struct {
 
 gameDebugLine_t debugLines[MAX_DEBUGLINES];
 
-/*
-==================
-Cmd_AddDebugLine_f
-==================
-*/
+//! Adds a debug line to the game world for visualization purposes.
 static void		Cmd_AddDebugLine_f( const idCmdArgs& args )
 {
 	int			i, argNum;
@@ -1204,11 +1049,7 @@ static void		Cmd_AddDebugLine_f( const idCmdArgs& args )
 	debugLines[i].color	  = Cmd_GetFloatArg( args, argNum );
 }
 
-/*
-==================
-Cmd_RemoveDebugLine_f
-==================
-*/
+//! Removes a debug line from the debug lines array by its index.
 static void Cmd_RemoveDebugLine_f( const idCmdArgs& args )
 {
 	int			i, num;
@@ -1238,11 +1079,7 @@ static void Cmd_RemoveDebugLine_f( const idCmdArgs& args )
 	debugLines[i].used = false;
 }
 
-/*
-==================
-Cmd_BlinkDebugLine_f
-==================
-*/
+//! Toggles the blink state of a debug line specified by index.
 static void Cmd_BlinkDebugLine_f( const idCmdArgs& args )
 {
 	int			i, num;
@@ -1272,11 +1109,7 @@ static void Cmd_BlinkDebugLine_f( const idCmdArgs& args )
 	debugLines[i].blink = !debugLines[i].blink;
 }
 
-/*
-==================
-PrintFloat
-==================
-*/
+//! Prints a floating-point number formatted to two decimal places followed by spaces to ensure a minimum width of seven characters.
 static void PrintFloat( float f )
 {
 	char buf[128];
@@ -1289,11 +1122,7 @@ static void PrintFloat( float f )
 	gameLocal.Printf( buf );
 }
 
-/*
-==================
-Cmd_ListDebugLines_f
-==================
-*/
+//! Prints all active debug lines to the console
 static void Cmd_ListDebugLines_f( const idCmdArgs& args )
 {
 	int i, num;
@@ -1322,11 +1151,6 @@ static void Cmd_ListDebugLines_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-D_DrawDebugLines
-==================
-*/
 void D_DrawDebugLines()
 {
 	int	   i;
@@ -1360,11 +1184,7 @@ void D_DrawDebugLines()
 	}
 }
 
-/*
-==================
-Cmd_ListCollisionModels_f
-==================
-*/
+//! Lists all collision models when cheats are enabled.
 static void Cmd_ListCollisionModels_f( const idCmdArgs& args )
 {
 	if( !gameLocal.CheatsOk() ) {
@@ -1374,11 +1194,7 @@ static void Cmd_ListCollisionModels_f( const idCmdArgs& args )
 	collisionModelManager->ListModels();
 }
 
-/*
-==================
-Cmd_CollisionModelInfo_f
-==================
-*/
+//! Outputs collision model information for a specified model or all models if the 'all' argument is provided.
 static void Cmd_CollisionModelInfo_f( const idCmdArgs& args )
 {
 	const char* value;
@@ -1401,11 +1217,7 @@ static void Cmd_CollisionModelInfo_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_ReloadAnims_f
-==================
-*/
+//! Reloads all animations in the game.
 static void Cmd_ReloadAnims_f( const idCmdArgs& args )
 {
 	// don't allow reloading anims when cheats are disabled,
@@ -1417,11 +1229,7 @@ static void Cmd_ReloadAnims_f( const idCmdArgs& args )
 	animationLib.ReloadAnims();
 }
 
-/*
-==================
-Cmd_ListAnims_f
-==================
-*/
+//! Lists animations for a specified entity or all loaded animations.
 static void Cmd_ListAnims_f( const idCmdArgs& args )
 {
 	idEntity*	  ent;
@@ -1469,11 +1277,7 @@ static void Cmd_ListAnims_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_AASStats_f
-==================
-*/
+//! Command function to display AAS statistics for a specified AAS number.
 static void Cmd_AASStats_f( const idCmdArgs& args )
 {
 	int aasNum;
@@ -1491,11 +1295,7 @@ static void Cmd_AASStats_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_TestDamage_f
-==================
-*/
+//! Executes a test damage command on the local player using a specified damage definition and optional angle.
 static void Cmd_TestDamage_f( const idCmdArgs& args )
 {
 	idPlayer*	player;
@@ -1530,11 +1330,7 @@ static void Cmd_TestDamage_f( const idCmdArgs& args )
 	player->health = player->inventory.maxHealth;
 }
 
-/*
-==================
-Cmd_TestBoneFx_f
-==================
-*/
+//! Executes a bone effect test command on the local player.
 static void Cmd_TestBoneFx_f( const idCmdArgs& args )
 {
 	idPlayer*	player;
@@ -1556,11 +1352,7 @@ static void Cmd_TestBoneFx_f( const idCmdArgs& args )
 	player->StartFxOnBone( fx, bone );
 }
 
-/*
-==================
-Cmd_TestDamage_f
-==================
-*/
+//! Executes a test death command for the local player with optional gib spawning.
 static void Cmd_TestDeath_f( const idCmdArgs& args )
 {
 	idPlayer* player;
@@ -1581,11 +1373,7 @@ static void Cmd_TestDeath_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_WeaponSplat_f
-==================
-*/
+//! Executes a command to apply a blood splat effect to the player's weapon.
 static void Cmd_WeaponSplat_f( const idCmdArgs& args )
 {
 	idPlayer* player;
@@ -1598,11 +1386,7 @@ static void Cmd_WeaponSplat_f( const idCmdArgs& args )
 	player->weapon.GetEntity()->BloodSplat( 2.0f );
 }
 
-/*
-==================
-Cmd_SaveSelected_f
-==================
-*/
+//! Saves the currently selected entity to a map file.
 static void Cmd_SaveSelected_f( const idCmdArgs& args )
 {
 	int			 i;
@@ -1664,11 +1448,7 @@ static void Cmd_SaveSelected_f( const idCmdArgs& args )
 	mapFile->Write( mapName, ".map" );
 }
 
-/*
-==================
-Cmd_DeleteSelected_f
-==================
-*/
+//! Deletes the currently selected entity from the game world.
 static void Cmd_DeleteSelected_f( const idCmdArgs& args )
 {
 	idPlayer* player;
@@ -1683,11 +1463,7 @@ static void Cmd_DeleteSelected_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_SaveMoveables_f
-==================
-*/
+//! Saves the state of moveable entities to a map file
 static void Cmd_SaveMoveables_f( const idCmdArgs& args )
 {
 	int			 e, i;
@@ -1765,11 +1541,7 @@ static void Cmd_SaveMoveables_f( const idCmdArgs& args )
 	mapFile->Write( mapName, ".map" );
 }
 
-/*
-==================
-Cmd_SaveRagdolls_f
-==================
-*/
+//! Saves the state of articulated figures in the current map to a specified map file.
 static void Cmd_SaveRagdolls_f( const idCmdArgs& args )
 {
 	int				 e, i;
@@ -1837,11 +1609,7 @@ static void Cmd_SaveRagdolls_f( const idCmdArgs& args )
 	mapFile->Write( mapName, ".map" );
 }
 
-/*
-==================
-Cmd_BindRagdoll_f
-==================
-*/
+//! Binds the selected entity to the ragdoll system for the local player.
 static void Cmd_BindRagdoll_f( const idCmdArgs& args )
 {
 	idPlayer* player;
@@ -1856,11 +1624,7 @@ static void Cmd_BindRagdoll_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_UnbindRagdoll_f
-==================
-*/
+//! Unbinds the selected ragdoll entity from the player
 static void Cmd_UnbindRagdoll_f( const idCmdArgs& args )
 {
 	idPlayer* player;
@@ -1875,21 +1639,13 @@ static void Cmd_UnbindRagdoll_f( const idCmdArgs& args )
 	}
 }
 
-/*
-==================
-Cmd_GameError_f
-==================
-*/
+//! Immediately triggers a game error.
 static void Cmd_GameError_f( const idCmdArgs& args )
 {
 	gameLocal.Error( "game error" );
 }
 
-/*
-==================
-Cmd_SaveLights_f
-==================
-*/
+//! Saves the state of all lights in the current level to a map file.
 static void Cmd_SaveLights_f( const idCmdArgs& args )
 {
 	int			 e, i;
@@ -1945,12 +1701,7 @@ static void Cmd_SaveLights_f( const idCmdArgs& args )
 	mapFile->Write( mapName, ".map" );
 }
 
-// RB begin
-/*
-==================
-Cmd_SaveEnvprobes_f
-==================
-*/
+//! Saves environment probe entities to a map file for the specified map or the current map.
 static void Cmd_SaveEnvprobes_f( const idCmdArgs& args )
 {
 	int				  e;
@@ -1999,13 +1750,8 @@ static void Cmd_SaveEnvprobes_f( const idCmdArgs& args )
 	// write out the map file
 	mapExportFile.Write( mapName, ".map" );
 }
-// RB end
 
-/*
-==================
-Cmd_SaveParticles_f
-==================
-*/
+//! Saves particle system states to a map file for the specified map or the current map.
 static void Cmd_SaveParticles_f( const idCmdArgs& args )
 {
 	int			 e;
@@ -2054,21 +1800,13 @@ static void Cmd_SaveParticles_f( const idCmdArgs& args )
 	mapFile->Write( mapName, ".map" );
 }
 
-/*
-==================
-Cmd_DisasmScript_f
-==================
-*/
+//! Disassembles the current script program.
 static void Cmd_DisasmScript_f( const idCmdArgs& args )
 {
 	gameLocal.program.Disassemble();
 }
 
-/*
-==================
-Cmd_TestSave_f
-==================
-*/
+//! Saves the current game state to a test save file.
 static void Cmd_TestSave_f( const idCmdArgs& args )
 {
 	idFile *f, *strings;
@@ -2079,11 +1817,7 @@ static void Cmd_TestSave_f( const idCmdArgs& args )
 	fileSystem->CloseFile( f );
 }
 
-/*
-==================
-Cmd_RecordViewNotes_f
-==================
-*/
+//! Records view position and comments to a text file for map view notes.
 static void Cmd_RecordViewNotes_f( const idCmdArgs& args )
 {
 	idPlayer* player;
@@ -2128,11 +1862,7 @@ static void Cmd_RecordViewNotes_f( const idCmdArgs& args )
 	// player->hud->HandleNamedEvent( "showViewComments" );
 }
 
-/*
-==================
-Cmd_CloseViewNotes_f
-==================
-*/
+//! Closes the view notes interface for the local player.
 static void Cmd_CloseViewNotes_f( const idCmdArgs& args )
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -2146,11 +1876,7 @@ static void Cmd_CloseViewNotes_f( const idCmdArgs& args )
 	// player->hud->HandleNamedEvent( "hideViewComments" );
 }
 
-/*
-==================
-Cmd_ShowViewNotes_f
-==================
-*/
+//! Displays view notes and teleports the player to the specified view position.
 static void Cmd_ShowViewNotes_f( const idCmdArgs& args )
 {
 	static idLexer parser( LEXFL_ALLOWPATHNAMES | LEXFL_NOSTRINGESCAPECHARS | LEXFL_NOSTRINGCONCAT | LEXFL_NOFATALERRORS );
@@ -2196,13 +1922,17 @@ static void Cmd_ShowViewNotes_f( const idCmdArgs& args )
 	}
 }
 
-/*
-=================
-FindEntityGUIs
+/*!
+	\brief Checks if the specified entity has any surfaces with GUI materials and returns them
 
-helper function for Cmd_NextGUI_f.  Checks the passed entity to determine if it
-has any valid gui surfaces.
-=================
+	This function examines the render model of the given entity to identify surfaces that use materials with GUI shaders. It populates an array of surface pointers with those GUI surfaces up to the
+   maximum allowed count. The function is typically used to determine if an entity has interactive GUI elements that can be manipulated by the user.
+
+	\param ent Entity to check for GUI surfaces
+	\param surfaces Array to store pointers to GUI surfaces
+	\param maxSurfs Maximum number of surfaces that can be stored in the surfaces array
+	\param guiSurfaces Reference to an integer that will be set to the count of GUI surfaces found
+	\return True if at least one GUI surface is found, false otherwise
 */
 bool FindEntityGUIs( idEntity* ent, const modelSurface_t** surfaces, int maxSurfs, int& guiSurfaces )
 {
@@ -2241,11 +1971,7 @@ bool FindEntityGUIs( idEntity* ent, const modelSurface_t** surfaces, int maxSurf
 	return ( guiSurfaces != 0 );
 }
 
-/*
-=================
-Cmd_NextGUI_f
-=================
-*/
+//! Advances to the next GUI surface on the next entity with GUI properties in the game.
 void Cmd_NextGUI_f( const idCmdArgs& args )
 {
 	idVec3				  origin;
@@ -2360,6 +2086,7 @@ void Cmd_NextGUI_f( const idCmdArgs& args )
 	player->Teleport( origin, angles, NULL );
 }
 
+//! Sets the state of a specified actor entity.
 void Cmd_SetActorState_f( const idCmdArgs& args )
 {
 	if( args.Argc() != 3 ) {
@@ -2383,12 +2110,7 @@ void Cmd_SetActorState_f( const idCmdArgs& args )
 	actor->PostEventMS( &AI_SetState, 0, args.Argv( 2 ) );
 }
 
-/*
-===============
-Cmd_TestId_f
-outputs a string from the string table for the specified id
-===============
-*/
+//! Outputs a string from the string table for the specified id.
 void Cmd_TestId_f( const idCmdArgs& args )
 {
 	idStr id;
@@ -2407,7 +2129,7 @@ void Cmd_TestId_f( const idCmdArgs& args )
 	gameLocal.mpGame.AddChatLine( idLocalization::GetString( id ), "<nothing>", "<nothing>", "<nothing>" );
 }
 
-// RB begin
+//! Toggles light editing mode and switches the player to fly mode.
 void Cmd_EditLights_f( const idCmdArgs& args )
 {
 	extern idCVar r_singleLight;
@@ -2431,9 +2153,8 @@ void Cmd_EditLights_f( const idCmdArgs& args )
 	// put player into fly mode
 	Cmd_Noclip_f( args );
 }
-// RB end
 
-// SP begin
+//! Toggles the physics articulated frame editor mode in the game engine.
 void Cmd_ShowAfEditor_f( const idCmdArgs& args )
 {
 	if( g_editEntityMode.GetInteger() != 3 ) {

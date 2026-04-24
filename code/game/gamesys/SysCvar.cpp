@@ -43,6 +43,8 @@ All game cvars should be defined here.
 */
 
 struct gameVersion_s {
+
+//! Initializes the game version string with compile-time version information.
 	gameVersion_s() { idStr::snPrintf( string, sizeof( string ), "%s.%d%s %s %s %s", ENGINE_VERSION, BUILD_NUMBER, BUILD_DEBUG, BUILD_STRING, ID__DATE__, ID__TIME__ ); }
 	char	string[256];
 } gameVersion;

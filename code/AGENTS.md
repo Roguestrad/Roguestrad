@@ -15,7 +15,7 @@ Roguestrad is a RBDOOM-3-BFG fork for indie standalone development.
   - `/engine/framework/`   : Core framework and runtime
   - `/engine/imgui/`       : ImGui integration
   - `/engine/renderer/`    : Rendering system
-    - `/engine/renderer/backend/`          : Executes render cmdlist with either D3D12 or Vulkan
+    - `/engine/renderer/backend/`          : Executes render cmdlist with D3D12 or Vulkan
       - `/engine/renderer/backend/passes/` : Special render passes like TAA
     - `/engine/renderer/frontend/`         : idRenderSystem delegates most calls to frontend which handles resource loading, occlusion culling and builds a cmdlist for the renderer backend of what is to draw
       - `/engine/renderer/frontend/fonts/`  : .dat and .ttf loading
@@ -25,12 +25,12 @@ Roguestrad is a RBDOOM-3-BFG fork for indie standalone development.
         - `/engine/renderer/frontend/images/encoding/` : BC1-6 encoding / decoding
       - `/engine/renderer/frontend/models/` : Model support for ase, lwo, obj, .md3, .md5, .gltf
     - `/engine/renderer/NVRHI/`            : NVRHI specific implementations of mostly the renderer backend
-  - `/engine/shaders/`     : Engine shader sources
+  - `/engine/shaders/`     : HLSL shaders
   - `/engine/sound/`       : Audio system (OpenAL/XAudio2/stub)
   - `/engine/stub/`        : Stubbed subsystems
-  - `/engine/swf/`         : SWF/Flash UI system
+  - `/engine/swf/`         : SWF/Flash UI system with new SVG support
   - `/engine/sys/`         : Platform/system layers (common/posix/sdl/win32)
-  - `/engine/ui/`          : UI system
+  - `/engine/ui/`          : UI legacy system
   - `/engine/vr/`          : VR integration
 - `/extern/`               : External dependencies (submodules/vendor drops)
   - `/extern/imgui-node-editor/`

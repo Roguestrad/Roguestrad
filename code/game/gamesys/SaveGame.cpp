@@ -58,12 +58,6 @@ variables that weren't in previous versions with safe information.
 At the head of the save game is enough information to restore the player to the beginning of the level should the
 file be unloadable in some way (for example, due to script changes).
 */
-
-/*
-================
-idSaveGame::idSaveGame()
-================
-*/
 idSaveGame::idSaveGame( idFile* savefile, idFile* stringTableFile, int saveVersion )
 {
 	// compressor = idCompressor::AllocLZW();
@@ -80,11 +74,6 @@ idSaveGame::idSaveGame( idFile* savefile, idFile* stringTableFile, int saveVersi
 	curStringTableOffset = 0;
 }
 
-/*
-================
-idSaveGame::~idSaveGame()
-================
-*/
 idSaveGame::~idSaveGame()
 {
 	// compressor->FinishCompress();
@@ -95,11 +84,6 @@ idSaveGame::~idSaveGame()
 	}
 }
 
-/*
-================
-idSaveGame::Close
-================
-*/
 void idSaveGame::Close()
 {
 	WriteSoundCommands();
@@ -132,11 +116,6 @@ void idSaveGame::Close()
 #endif
 }
 
-/*
-================
-idSaveGame::WriteDecls
-================
-*/
 void idSaveGame::WriteDecls()
 {
 	// Write out all loaded decls
@@ -156,11 +135,6 @@ void idSaveGame::WriteDecls()
 	}
 }
 
-/*
-================
-idSaveGame::WriteObjectList
-================
-*/
 void idSaveGame::WriteObjectList()
 {
 	WriteInt( objects.Num() - 1 );
@@ -169,11 +143,6 @@ void idSaveGame::WriteObjectList()
 	}
 }
 
-/*
-================
-idSaveGame::CallSave_r
-================
-*/
 void idSaveGame::CallSave_r( const idTypeInfo* cls, const idClass* obj )
 {
 	if( cls->super ) {
@@ -187,101 +156,51 @@ void idSaveGame::CallSave_r( const idTypeInfo* cls, const idClass* obj )
 	( obj->*cls->Save )( this );
 }
 
-/*
-================
-idSaveGame::AddObject
-================
-*/
 void idSaveGame::AddObject( const idClass* obj )
 {
 	objects.AddUnique( obj );
 }
 
-/*
-================
-idSaveGame::Write
-================
-*/
 void idSaveGame::Write( const void* buffer, int len )
 {
 	file->Write( buffer, len );
 }
 
-/*
-================
-idSaveGame::WriteInt
-================
-*/
 void idSaveGame::WriteInt( const int value )
 {
 	file->WriteBig( value );
 }
 
-/*
-================
-idSaveGame::WriteJoint
-================
-*/
 void idSaveGame::WriteJoint( const jointHandle_t value )
 {
 	file->WriteBig( ( int& )value );
 }
 
-/*
-================
-idSaveGame::WriteShort
-================
-*/
 void idSaveGame::WriteShort( const short value )
 {
 	file->WriteBig( value );
 }
 
-/*
-================
-idSaveGame::WriteByte
-================
-*/
 void idSaveGame::WriteByte( const byte value )
 {
 	file->Write( &value, sizeof( value ) );
 }
 
-/*
-================
-idSaveGame::WriteSignedChar
-================
-*/
 void idSaveGame::WriteSignedChar( const signed char value )
 {
 	file->Write( &value, sizeof( value ) );
 }
 
-/*
-================
-idSaveGame::WriteFloat
-================
-*/
 void idSaveGame::WriteFloat( const float value )
 {
 	file->WriteBig( value );
 }
 
-/*
-================
-idSaveGame::WriteBool
-================
-*/
 void idSaveGame::WriteBool( const bool value )
 {
 	file->WriteBool( value );
 }
 
-/*
-================
-idSaveGame::WriteString
-================
-*/
 void idSaveGame::WriteString( const char* string )
 {
 	if( string == NULL || *string == 0 ) {
@@ -308,61 +227,31 @@ void idSaveGame::WriteString( const char* string )
 	curStringTableOffset += ( strlen( string ) + 4 );
 }
 
-/*
-================
-idSaveGame::WriteVec2
-================
-*/
 void idSaveGame::WriteVec2( const idVec2& vec )
 {
 	file->WriteBig( vec );
 }
 
-/*
-================
-idSaveGame::WriteVec3
-================
-*/
 void idSaveGame::WriteVec3( const idVec3& vec )
 {
 	file->WriteBig( vec );
 }
 
-/*
-================
-idSaveGame::WriteVec4
-================
-*/
 void idSaveGame::WriteVec4( const idVec4& vec )
 {
 	file->WriteBig( vec );
 }
 
-/*
-================
-idSaveGame::WriteVec6
-================
-*/
 void idSaveGame::WriteVec6( const idVec6& vec )
 {
 	file->WriteBig( vec );
 }
 
-/*
-================
-idSaveGame::WriteBounds
-================
-*/
 void idSaveGame::WriteBounds( const idBounds& bounds )
 {
 	file->WriteBig( bounds );
 }
 
-/*
-================
-idSaveGame::WriteBounds
-================
-*/
 void idSaveGame::WriteWinding( const idWinding& w )
 {
 	int i, num;
@@ -374,31 +263,16 @@ void idSaveGame::WriteWinding( const idWinding& w )
 	}
 }
 
-/*
-================
-idSaveGame::WriteMat3
-================
-*/
 void idSaveGame::WriteMat3( const idMat3& mat )
 {
 	file->WriteBig( mat );
 }
 
-/*
-================
-idSaveGame::WriteAngles
-================
-*/
 void idSaveGame::WriteAngles( const idAngles& angles )
 {
 	file->WriteBig( angles );
 }
 
-/*
-================
-idSaveGame::WriteObject
-================
-*/
 void idSaveGame::WriteObject( const idClass* obj )
 {
 	int index;
@@ -414,21 +288,11 @@ void idSaveGame::WriteObject( const idClass* obj )
 	WriteInt( index );
 }
 
-/*
-================
-idSaveGame::WriteStaticObject
-================
-*/
 void idSaveGame::WriteStaticObject( const idClass& obj )
 {
 	CallSave_r( obj.GetType(), &obj );
 }
 
-/*
-================
-idSaveGame::WriteDict
-================
-*/
 void idSaveGame::WriteDict( const idDict* dict )
 {
 	int				  num;
@@ -462,11 +326,6 @@ void idSaveGame::WriteMaterial( const idMaterial* material )
 	}
 }
 
-/*
-================
-idSaveGame::WriteSkin
-================
-*/
 void idSaveGame::WriteSkin( const idDeclSkin* skin )
 {
 	if( !skin ) {
@@ -476,11 +335,6 @@ void idSaveGame::WriteSkin( const idDeclSkin* skin )
 	}
 }
 
-/*
-================
-idSaveGame::WriteParticle
-================
-*/
 void idSaveGame::WriteParticle( const idDeclParticle* particle )
 {
 	if( !particle ) {
@@ -490,11 +344,6 @@ void idSaveGame::WriteParticle( const idDeclParticle* particle )
 	}
 }
 
-/*
-================
-idSaveGame::WriteFX
-================
-*/
 void idSaveGame::WriteFX( const idDeclFX* fx )
 {
 	if( !fx ) {
@@ -504,11 +353,6 @@ void idSaveGame::WriteFX( const idDeclFX* fx )
 	}
 }
 
-/*
-================
-idSaveGame::WriteModelDef
-================
-*/
 void idSaveGame::WriteModelDef( const idDeclModelDef* modelDef )
 {
 	if( !modelDef ) {
@@ -518,11 +362,6 @@ void idSaveGame::WriteModelDef( const idDeclModelDef* modelDef )
 	}
 }
 
-/*
-================
-idSaveGame::WriteSoundShader
-================
-*/
 void idSaveGame::WriteSoundShader( const idSoundShader* shader )
 {
 	const char* name;
@@ -535,11 +374,6 @@ void idSaveGame::WriteSoundShader( const idSoundShader* shader )
 	}
 }
 
-/*
-================
-idSaveGame::WriteModel
-================
-*/
 void idSaveGame::WriteModel( const idRenderModel* model )
 {
 	const char* name;
@@ -552,11 +386,6 @@ void idSaveGame::WriteModel( const idRenderModel* model )
 	}
 }
 
-/*
-================
-idSaveGame::WriteUserInterface
-================
-*/
 void idSaveGame::WriteUserInterface( const idUserInterface* ui, bool unique )
 {
 	const char* name;
@@ -573,11 +402,6 @@ void idSaveGame::WriteUserInterface( const idUserInterface* ui, bool unique )
 	}
 }
 
-/*
-================
-idSaveGame::WriteRenderEntity
-================
-*/
 void idSaveGame::WriteRenderEntity( const renderEntity_t& renderEntity )
 {
 	int i;
@@ -676,7 +500,6 @@ void idSaveGame::WriteRenderLight( const renderLight_t& renderLight )
 	}
 }
 
-// RB begin
 void idSaveGame::WriteRenderEnvprobe( const renderEnvironmentProbe_t& renderEnvprobe )
 {
 	WriteVec3( renderEnvprobe.origin );
@@ -688,13 +511,7 @@ void idSaveGame::WriteRenderEnvprobe( const renderEnvironmentProbe_t& renderEnvp
 		WriteFloat( renderEnvprobe.shaderParms[i] );
 	}
 }
-// Rb end
 
-/*
-================
-idSaveGame::WriteRefSound
-================
-*/
 void idSaveGame::WriteRefSound( const refSound_t& refSound )
 {
 	if( refSound.referenceSound ) {
@@ -716,11 +533,6 @@ void idSaveGame::WriteRefSound( const refSound_t& refSound )
 	WriteInt( refSound.parms.soundClass );
 }
 
-/*
-================
-idSaveGame::WriteRenderView
-================
-*/
 void idSaveGame::WriteRenderView( const renderView_t& view )
 {
 	int i;
@@ -750,11 +562,6 @@ void idSaveGame::WriteRenderView( const renderView_t& view )
 	}
 }
 
-/*
-===================
-idSaveGame::WriteUsercmd
-===================
-*/
 void idSaveGame::WriteUsercmd( const usercmd_t& usercmd )
 {
 	// Leyland TODO: on save game update, we need to save as uint16
@@ -770,11 +577,6 @@ void idSaveGame::WriteUsercmd( const usercmd_t& usercmd )
 	WriteByte( usercmd.impulseSequence );
 }
 
-/*
-===================
-idSaveGame::WriteContactInfo
-===================
-*/
 void idSaveGame::WriteContactInfo( const contactInfo_t& contactInfo )
 {
 	WriteInt( ( int )contactInfo.type );
@@ -789,11 +591,6 @@ void idSaveGame::WriteContactInfo( const contactInfo_t& contactInfo )
 	WriteInt( contactInfo.id );
 }
 
-/*
-===================
-idSaveGame::WriteTrace
-===================
-*/
 void idSaveGame::WriteTrace( const trace_t& trace )
 {
 	WriteFloat( trace.fraction );
@@ -802,11 +599,6 @@ void idSaveGame::WriteTrace( const trace_t& trace )
 	WriteContactInfo( trace.c );
 }
 
-/*
- ===================
- idRestoreGame::WriteTraceModel
- ===================
- */
 void idSaveGame::WriteTraceModel( const idTraceModel& trace )
 {
 	int j, k;
@@ -841,11 +633,6 @@ void idSaveGame::WriteTraceModel( const idTraceModel& trace )
 	file->Write( tmp, 3 );
 }
 
-/*
-===================
-idSaveGame::WriteClipModel
-===================
-*/
 void idSaveGame::WriteClipModel( const idClipModel* clipModel )
 {
 	if( clipModel != NULL ) {
@@ -856,21 +643,11 @@ void idSaveGame::WriteClipModel( const idClipModel* clipModel )
 	}
 }
 
-/*
-===================
-idSaveGame::WriteSoundCommands
-===================
-*/
 void idSaveGame::WriteSoundCommands()
 {
 	gameSoundWorld->WriteToSaveGame( file );
 }
 
-/*
-======================
-idSaveGame::WriteBuildNumber
-======================
-*/
 void idSaveGame::WriteBuildNumber( const int value )
 {
 	WriteInt( BUILD_NUMBER );
@@ -882,11 +659,6 @@ void idSaveGame::WriteBuildNumber( const int value )
 
 ***********************************************************************/
 
-/*
-================
-idRestoreGame::RestoreGame
-================
-*/
 idRestoreGame::idRestoreGame( idFile* savefile, idFile* stringTableFile, int saveVersion )
 {
 	file	   = savefile;
@@ -894,20 +666,10 @@ idRestoreGame::idRestoreGame( idFile* savefile, idFile* stringTableFile, int sav
 	version	   = saveVersion;
 }
 
-/*
-================
-idRestoreGame::~idRestoreGame()
-================
-*/
 idRestoreGame::~idRestoreGame()
 {
 }
 
-/*
-================
-idRestoreGame::ReadDecls
-================
-*/
 void idRestoreGame::ReadDecls()
 {
 	idStr declName;
@@ -922,11 +684,6 @@ void idRestoreGame::ReadDecls()
 	}
 }
 
-/*
-================
-void idRestoreGame::CreateObjects
-================
-*/
 void idRestoreGame::CreateObjects()
 {
 	int			i, num;
@@ -954,11 +711,6 @@ void idRestoreGame::CreateObjects()
 	}
 }
 
-/*
-================
-void idRestoreGame::RestoreObjects
-================
-*/
 void idRestoreGame::RestoreObjects()
 {
 	int i;
@@ -991,11 +743,6 @@ void idRestoreGame::RestoreObjects()
 #endif
 }
 
-/*
-====================
-void idRestoreGame::DeleteObjects
-====================
-*/
 void idRestoreGame::DeleteObjects()
 {
 	// Remove the NULL object before deleting
@@ -1004,11 +751,6 @@ void idRestoreGame::DeleteObjects()
 	objects.DeleteContents( true );
 }
 
-/*
-================
-idRestoreGame::Error
-================
-*/
 void idRestoreGame::Error( const char* fmt, ... )
 {
 	va_list argptr;
@@ -1023,11 +765,6 @@ void idRestoreGame::Error( const char* fmt, ... )
 	gameLocal.Error( "%s", text );
 }
 
-/*
-================
-idRestoreGame::CallRestore_r
-================
-*/
 void idRestoreGame::CallRestore_r( const idTypeInfo* cls, idClass* obj )
 {
 	if( cls->super ) {
@@ -1041,91 +778,46 @@ void idRestoreGame::CallRestore_r( const idTypeInfo* cls, idClass* obj )
 	( obj->*cls->Restore )( this );
 }
 
-/*
-================
-idRestoreGame::Read
-================
-*/
 void idRestoreGame::Read( void* buffer, int len )
 {
 	file->Read( buffer, len );
 }
 
-/*
-================
-idRestoreGame::ReadInt
-================
-*/
 void idRestoreGame::ReadInt( int& value )
 {
 	file->ReadBig( value );
 }
 
-/*
-================
-idRestoreGame::ReadJoint
-================
-*/
 void idRestoreGame::ReadJoint( jointHandle_t& value )
 {
 	file->ReadBig( ( int& )value );
 }
 
-/*
-================
-idRestoreGame::ReadShort
-================
-*/
 void idRestoreGame::ReadShort( short& value )
 {
 	file->ReadBig( value );
 }
 
-/*
-================
-idRestoreGame::ReadByte
-================
-*/
 void idRestoreGame::ReadByte( byte& value )
 {
 	file->Read( &value, sizeof( value ) );
 }
 
-/*
-================
-idRestoreGame::ReadSignedChar
-================
-*/
 void idRestoreGame::ReadSignedChar( signed char& value )
 {
 	file->Read( &value, sizeof( value ) );
 }
 
-/*
-================
-idRestoreGame::ReadFloat
-================
-*/
 void idRestoreGame::ReadFloat( float& value )
 {
 	file->ReadBig( value );
 }
 
-/*
-================
-idRestoreGame::ReadBool
-================
-*/
 void idRestoreGame::ReadBool( bool& value )
 {
 	file->ReadBig( value );
 }
 
-/*
-================
-idRestoreGame::ReadString
-================
-*/
 void idRestoreGame::ReadString( idStr& string )
 {
 	string.Empty();
@@ -1143,61 +835,31 @@ void idRestoreGame::ReadString( idStr& string )
 	return;
 }
 
-/*
-================
-idRestoreGame::ReadVec2
-================
-*/
 void idRestoreGame::ReadVec2( idVec2& vec )
 {
 	file->ReadBig( vec );
 }
 
-/*
-================
-idRestoreGame::ReadVec3
-================
-*/
 void idRestoreGame::ReadVec3( idVec3& vec )
 {
 	file->ReadBig( vec );
 }
 
-/*
-================
-idRestoreGame::ReadVec4
-================
-*/
 void idRestoreGame::ReadVec4( idVec4& vec )
 {
 	file->ReadBig( vec );
 }
 
-/*
-================
-idRestoreGame::ReadVec6
-================
-*/
 void idRestoreGame::ReadVec6( idVec6& vec )
 {
 	file->ReadBig( vec );
 }
 
-/*
-================
-idRestoreGame::ReadBounds
-================
-*/
 void idRestoreGame::ReadBounds( idBounds& bounds )
 {
 	file->ReadBig( bounds );
 }
 
-/*
-================
-idRestoreGame::ReadWinding
-================
-*/
 void idRestoreGame::ReadWinding( idWinding& w )
 {
 	int i, num;
@@ -1209,31 +871,16 @@ void idRestoreGame::ReadWinding( idWinding& w )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadMat3
-================
-*/
 void idRestoreGame::ReadMat3( idMat3& mat )
 {
 	file->ReadBig( mat );
 }
 
-/*
-================
-idRestoreGame::ReadAngles
-================
-*/
 void idRestoreGame::ReadAngles( idAngles& angles )
 {
 	file->ReadBig( angles );
 }
 
-/*
-================
-idRestoreGame::ReadObject
-================
-*/
 void idRestoreGame::ReadObject( idClass*& obj )
 {
 	int index;
@@ -1245,21 +892,11 @@ void idRestoreGame::ReadObject( idClass*& obj )
 	obj = objects[index];
 }
 
-/*
-================
-idRestoreGame::ReadStaticObject
-================
-*/
 void idRestoreGame::ReadStaticObject( idClass& obj )
 {
 	CallRestore_r( obj.GetType(), &obj );
 }
 
-/*
-================
-idRestoreGame::ReadDict
-================
-*/
 void idRestoreGame::ReadDict( idDict* dict )
 {
 	int	  num;
@@ -1281,11 +918,6 @@ void idRestoreGame::ReadDict( idDict* dict )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadMaterial
-================
-*/
 void idRestoreGame::ReadMaterial( const idMaterial*& material )
 {
 	idStr name;
@@ -1298,11 +930,6 @@ void idRestoreGame::ReadMaterial( const idMaterial*& material )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadSkin
-================
-*/
 void idRestoreGame::ReadSkin( const idDeclSkin*& skin )
 {
 	idStr name;
@@ -1315,11 +942,6 @@ void idRestoreGame::ReadSkin( const idDeclSkin*& skin )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadParticle
-================
-*/
 void idRestoreGame::ReadParticle( const idDeclParticle*& particle )
 {
 	idStr name;
@@ -1332,11 +954,6 @@ void idRestoreGame::ReadParticle( const idDeclParticle*& particle )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadFX
-================
-*/
 void idRestoreGame::ReadFX( const idDeclFX*& fx )
 {
 	idStr name;
@@ -1349,11 +966,6 @@ void idRestoreGame::ReadFX( const idDeclFX*& fx )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadSoundShader
-================
-*/
 void idRestoreGame::ReadSoundShader( const idSoundShader*& shader )
 {
 	idStr name;
@@ -1366,11 +978,6 @@ void idRestoreGame::ReadSoundShader( const idSoundShader*& shader )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadModelDef
-================
-*/
 void idRestoreGame::ReadModelDef( const idDeclModelDef*& modelDef )
 {
 	idStr name;
@@ -1383,11 +990,6 @@ void idRestoreGame::ReadModelDef( const idDeclModelDef*& modelDef )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadModel
-================
-*/
 void idRestoreGame::ReadModel( idRenderModel*& model )
 {
 	idStr name;
@@ -1400,11 +1002,6 @@ void idRestoreGame::ReadModel( idRenderModel*& model )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadUserInterface
-================
-*/
 void idRestoreGame::ReadUserInterface( idUserInterface*& ui )
 {
 	idStr name;
@@ -1426,11 +1023,6 @@ void idRestoreGame::ReadUserInterface( idUserInterface*& ui )
 	}
 }
 
-/*
-================
-idRestoreGame::ReadRenderEntity
-================
-*/
 void idRestoreGame::ReadRenderEntity( renderEntity_t& renderEntity )
 {
 	int i;
@@ -1489,11 +1081,6 @@ void idRestoreGame::ReadRenderEntity( renderEntity_t& renderEntity )
 	ReadInt( renderEntity.xrayIndex );
 }
 
-/*
-================
-idRestoreGame::ReadRenderLight
-================
-*/
 void idRestoreGame::ReadRenderLight( renderLight_t& renderLight )
 {
 	int index;
@@ -1530,7 +1117,6 @@ void idRestoreGame::ReadRenderLight( renderLight_t& renderLight )
 	renderLight.referenceSound = gameSoundWorld->EmitterForIndex( index );
 }
 
-// RB begin
 void idRestoreGame::ReadRenderEnvprobe( renderEnvironmentProbe_t& renderEnvprobe )
 {
 	ReadVec3( renderEnvprobe.origin );
@@ -1542,13 +1128,7 @@ void idRestoreGame::ReadRenderEnvprobe( renderEnvironmentProbe_t& renderEnvprobe
 		ReadFloat( renderEnvprobe.shaderParms[i] );
 	}
 }
-// RB end
 
-/*
-================
-idRestoreGame::ReadRefSound
-================
-*/
 void idRestoreGame::ReadRefSound( refSound_t& refSound )
 {
 	int index;
@@ -1569,11 +1149,6 @@ void idRestoreGame::ReadRefSound( refSound_t& refSound )
 	ReadInt( refSound.parms.soundClass );
 }
 
-/*
-================
-idRestoreGame::ReadRenderView
-================
-*/
 void idRestoreGame::ReadRenderView( renderView_t& view )
 {
 	int	  i;
@@ -1602,11 +1177,6 @@ void idRestoreGame::ReadRenderView( renderView_t& view )
 	}
 }
 
-/*
-=================
-idRestoreGame::ReadUsercmd
-=================
-*/
 void idRestoreGame::ReadUsercmd( usercmd_t& usercmd )
 {
 	// Leyland TODO: on save game update, we need to read as uint16
@@ -1622,11 +1192,6 @@ void idRestoreGame::ReadUsercmd( usercmd_t& usercmd )
 	ReadByte( usercmd.impulseSequence );
 }
 
-/*
-===================
-idRestoreGame::ReadContactInfo
-===================
-*/
 void idRestoreGame::ReadContactInfo( contactInfo_t& contactInfo )
 {
 	ReadInt( ( int& )contactInfo.type );
@@ -1641,11 +1206,6 @@ void idRestoreGame::ReadContactInfo( contactInfo_t& contactInfo )
 	ReadInt( contactInfo.id );
 }
 
-/*
-===================
-idRestoreGame::ReadTrace
-===================
-*/
 void idRestoreGame::ReadTrace( trace_t& trace )
 {
 	ReadFloat( trace.fraction );
@@ -1654,11 +1214,6 @@ void idRestoreGame::ReadTrace( trace_t& trace )
 	ReadContactInfo( trace.c );
 }
 
-/*
- ===================
- idRestoreGame::ReadTraceModel
- ===================
- */
 void idRestoreGame::ReadTraceModel( idTraceModel& trace )
 {
 	int j, k;
@@ -1692,11 +1247,6 @@ void idRestoreGame::ReadTraceModel( idTraceModel& trace )
 	file->Read( tmp, 3 );
 }
 
-/*
-=====================
-idRestoreGame::ReadClipModel
-=====================
-*/
 void idRestoreGame::ReadClipModel( idClipModel*& clipModel )
 {
 	bool restoreClipModel;
@@ -1710,11 +1260,6 @@ void idRestoreGame::ReadClipModel( idClipModel*& clipModel )
 	}
 }
 
-/*
-=====================
-idRestoreGame::ReadSoundCommands
-=====================
-*/
 void idRestoreGame::ReadSoundCommands()
 {
 	gameSoundWorld->StopAllSounds();
