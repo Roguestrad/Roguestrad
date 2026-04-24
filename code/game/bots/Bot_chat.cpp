@@ -51,11 +51,6 @@ const char* bot_death_praise[] = { "%s: %s not bad for an amateur.",
 	"%s: Take a moment to reflect on your accomplishment %s",
 	"%s: Your pretty good for a dousche %s" };
 
-/*
-====================
-iceBot::BotSendChatMessage
-====================
-*/
 void		iceBot::BotSendChatMessage( botChat_t chat, const char* targetName )
 {
 	switch( chat ) {

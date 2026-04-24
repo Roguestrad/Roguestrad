@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-=====================
-iceBot::state_SeekNBG
-=====================
-*/
 stateResult_t iceBot::state_SeekNBG( stateParms_t* parms )
 {
 	bot_goal_t goal;

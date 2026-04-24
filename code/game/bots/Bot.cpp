@@ -43,11 +43,6 @@ idCVar bot_skill( "bot_skill", "3", CVAR_INTEGER, "" );
 CLASS_DECLARATION( idPlayer, iceBot )
 END_CLASS
 
-/*
-===================
-iceBot::iceBot
-===================
-*/
 iceBot::iceBot()
 {
 	// bs.action = NULL;
@@ -55,21 +50,11 @@ iceBot::iceBot()
 	gameLocal.RegisterBot( this );
 }
 
-/*
-===================
-iceBot::~iceBot
-===================
-*/
 iceBot::~iceBot()
 {
 	gameLocal.UnRegisterBot( this );
 }
 
-/*
-==================
-iceBot::SetEnemy
-==================
-*/
 void iceBot::SetEnemy( idPlayer* player, idVec3 origin )
 {
 	if( bs.enemy == -1 ) {
@@ -81,11 +66,6 @@ void iceBot::SetEnemy( idPlayer* player, idVec3 origin )
 	}
 }
 
-/*
-==================
-iceBot::BotUpdateInventory
-==================
-*/
 void iceBot::BotUpdateInventory()
 {
 	bs.inventory[INVENTORY_ARMOR]			= inventory.armor;
@@ -120,11 +100,6 @@ void iceBot::BotUpdateInventory()
 	bs.inventory[INVENTORY_BLUEFLAG]		= 0;
 }
 
-/*
-===================
-iceBot::Spawn
-===================
-*/
 void iceBot::Spawn()
 {
 	idStr botName;
@@ -197,11 +172,6 @@ void iceBot::Spawn()
 	}
 }
 
-/*
-===================
-iceBot::Think
-===================
-*/
 void iceBot::BotMoveToGoalOrigin( idVec3 goalOrigin )
 {
 	bs.botinput.dir		   = ( goalOrigin - firstPersonViewOrigin );
@@ -220,11 +190,6 @@ void iceBot::BotMoveToGoalOrigin( idVec3 goalOrigin )
 	bs.botinput.dir.Normalize();
 }
 
-/*
-===================
-iceBot::SpawnToPoint
-===================
-*/
 void iceBot::SpawnToPoint( const idVec3& spawn_origin, const idAngles& spawn_angles )
 {
 	idPlayer::SpawnToPoint( spawn_origin, spawn_angles );
@@ -234,22 +199,12 @@ void iceBot::SpawnToPoint( const idVec3& spawn_origin, const idAngles& spawn_ang
 		stateThread.SetState( "state_SeekLTG" );
 	}
 }
-/*
-===================
-iceBot::StateThreadChanged
-===================
-*/
 void iceBot::StateThreadChanged()
 {
 	// Ensure if we are switching states, pop the last goal.
 	bs.ltg_time = 0;
 }
 
-/*
-===================
-iceBot::ServerThink
-===================
-*/
 void iceBot::ServerThink()
 {
 	bs.origin				= GetPhysics()->GetOrigin();
@@ -328,11 +283,6 @@ void iceBot::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir,
 	SetEnemy( player, attacker->GetOrigin() );
 }
 
-/*
-=======================
-iceBot::InflictedDamageEvent
-=======================
-*/
 void iceBot::InflictedDamageEvent( idEntity* target )
 {
 	idPlayer* player = target->Cast<idPlayer>();
@@ -343,11 +293,6 @@ void iceBot::InflictedDamageEvent( idEntity* target )
 	}
 }
 
-/*
-=======================
-iceBot::PresenceTypeBoundingBox
-=======================
-*/
 void iceBot::PresenceTypeBoundingBox( int presencetype, idVec3& mins, idVec3& maxs )
 {
 	int	   index;
@@ -378,11 +323,6 @@ void iceBot::PresenceTypeBoundingBox( int presencetype, idVec3& mins, idVec3& ma
 	maxs = boxmaxs[index];
 }
 
-/*
-===================
-iceBot::Think
-===================
-*/
 void iceBot::Think()
 {
 	if( !hasSpawned ) {

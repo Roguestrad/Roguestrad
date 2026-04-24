@@ -185,8 +185,10 @@ class rvmBotAIBotActionBase;
 
 // fuzzy seperator
 struct fuzzyseperator_t {
+	//! Initializes a new instance of the fuzzyseperator_t class and resets its internal state.
 	fuzzyseperator_t() { Reset(); }
 
+	//! Resets all fields of the fuzzyseperator_t object to their default values
 	void Reset()
 	{
 		inUse	  = false;
@@ -213,8 +215,10 @@ struct fuzzyseperator_t {
 
 // fuzzy weight
 struct weight_t {
+	//! Initializes a weight_t object with default values.
 	weight_t() { Reset(); }
 
+	//! Resets the weight_t object by clearing its name and resetting the first separator pointer.
 	void Reset()
 	{
 		name.Clear();
@@ -227,8 +231,10 @@ struct weight_t {
 
 // weight configuration
 struct weightconfig_t {
+	//! Initializes a weightconfig_t object and resets its configuration.
 	weightconfig_t() { Reset(); }
 
+	//! Resets all weight configuration values to their default state
 	void Reset()
 	{
 		inUse	   = false;
@@ -369,6 +375,7 @@ struct weightconfig_t {
 
 // characteristic value
 struct cvalue {
+	//! Initializes a cvalue object with default integer, float, and string values.
 	cvalue()
 	{
 		integer = 0;
@@ -383,6 +390,7 @@ struct cvalue {
 
 // a characteristic
 struct bot_characteristic_t {
+	//! Initializes a bot characteristic with a default type value of zero.
 	bot_characteristic_t() { type = 0; }
 
 	char   type;  // characteristic type
@@ -391,6 +399,7 @@ struct bot_characteristic_t {
 
 // a bot character
 struct bot_character_t {
+	//! Initializes a new instance of the bot_character_t class with default values.
 	bot_character_t()
 	{
 		filename = "";
@@ -407,8 +416,10 @@ struct bot_character_t {
 // the bot input, will be converted to an usercmd_t
 // the bot input, will be converted to an usercmd_t
 struct bot_input_t {
+	//! Constructs a new bot_input_t object and initializes it by resetting all input fields.
 	bot_input_t() { Reset(); }
 
+	//! Resets all fields of the bot input structure to their default values
 	void Reset()
 	{
 		thinktime = 0;
@@ -710,14 +721,17 @@ typedef enum {
 	MOVE_JUMP,
 } botMoveFlags_t;
 
-//
-// rvmBotUtil
-//
+/*!
+	\class rvmBotUtil
+	\brief Utility class providing random number generation functions for bot behavior.
+*/
 class rvmBotUtil
 {
 public:
+	//! Returns a random floating point value between 0 and 1.
 	static float random() { return ( ( rand() & 0x7fff ) / ( ( float )0x7fff ) ); }
 
+	//! Returns a random float value in the range [-1.0, 1.0).
 	static float crandom() { return ( 2.0 * ( random() - 0.5 ) ); }
 };
 
@@ -727,6 +741,7 @@ public:
 #include "Bot_goal.h"
 
 struct bot_state_t {
+	//! Initializes a new instance of the bot_state_t structure with default values.
 	bot_state_t()
 	{
 		character = NULL;
@@ -734,6 +749,8 @@ struct bot_state_t {
 		ws		  = 0;
 		Reset();
 	}
+
+	//! Resets all member variables of the bot state to their default values
 	void Reset()
 	{
 		attackerEntity		   = NULL;
@@ -822,9 +839,16 @@ struct bot_state_t {
 
 #define Bot_Time() ( ( float )gameLocal.time / 1000.0f )
 
-//
-// iceBot
-//
+/*!
+	\class iceBot
+	\brief A bot entity that implements AI behaviors for pursuit, combat, and movement.
+
+	This class extends the player entity to provide autonomous bot behavior with distinct states for combat and movement. The bot manages its own AI state transitions, enemy targeting, inventory
+   updates, and tactical decision making. It handles various combat scenarios including chasing enemies, engaging in battles, retreating when necessary, and respawning after death. The bot's behavior
+   is controlled through state machines that govern different phases of combat and movement. It can navigate toward goals, select appropriate weapons, and perform actions such as using items or aiming
+   at enemies. The bot integrates with the game engine's input and physics systems to execute realistic movement and actions.
+
+*/
 class iceBot : public idPlayer
 {
 public:
@@ -832,33 +856,57 @@ public:
 
 	CLASS_PROTOTYPE( iceBot );
 
+	//! Initializes a new instance of the iceBot class.
 	iceBot();
+
+	//! Destructor for the iceBot class that unregisters the bot from the game.
 	~iceBot();
 
+	//! Initializes the ice bot entity and sets up its AI state.
 	void		 Spawn();
+
+	//! Executes the bot's thinking logic including server-side updates and debug visualization.
 	virtual void Think() override;
+
+	//! Spawns the bot at the specified origin and angles, initializing its behavior state.
 	virtual void SpawnToPoint( const idVec3& spawn_origin, const idAngles& spawn_angles ) override;
 	virtual void Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir, const char* damageDefName, const float damageScale, const int location ) override;
+
+	//! Handles the event when damage is inflicted on a target entity.
 	virtual void InflictedDamageEvent( idEntity* target ) override;
+
+	//! Updates the state thread time to zero when switching states.
 	virtual void StateThreadChanged() override;
 
+	//! Sets the enemy for the ice bot to the specified player and origin.
 	void		 SetEnemy( idPlayer* player, idVec3 origin );
 
+	//! Processes bot input and updates user commands for the bot entity.
 	void		 BotInputFrame( idUserCmdMgr& cmdMgr );
+
+	//! Resets the user command fields to their default values.
 	void		 Bot_ResetUcmd( usercmd_t& ucmd );
 
+	//! Sets the minimum and maximum bounding box values for a specified presence type.
 	static void	 PresenceTypeBoundingBox( int presencetype, idVec3& mins, idVec3& maxs );
 
 private:
+	//! Sends a chat message to a target player based on the specified chat type.
 	void BotSendChatMessage( botChat_t chat, const char* targetName );
 
+	//! Converts bot input data into a user command structure for engine processing.
 	void BotInputToUserCommand( bot_input_t* bi, usercmd_t* ucmd, int time );
 
+	//! Moves the bot toward the specified goal origin.
 	void BotMoveToGoalOrigin( idVec3 goalOrigin );
 
+	//! Processes bot behavior and movement logic for a single server frame.
 	void ServerThink();
+
+	//! Updates the bot's inventory state based on the current weapon and ammo counts.
 	void BotUpdateInventory();
 
+	//! Checks if the bot has a specific weapon equipped.
 	bool HasWeapon( int index ) { return inventory.weapons & ( 1 << index ); }
 
 private:
@@ -872,26 +920,101 @@ private:
 	int weapon_rocketlauncher;
 
 protected:
+	//! Checks if a bot is dead by verifying if the associated player's health is less than or equal to zero.
 	bool	   BotIsDead( bot_state_t* bs );
+
+	//! Determines whether the bot has reached its specified goal.
 	bool	   BotReachedGoal( bot_state_t* bs, bot_goal_t* goal );
+
+	//! Retrieves or updates the long-term goal for a bot based on its current state and inventory.
 	int		   BotGetItemLongTermGoal( bot_state_t* bs, int tfl, bot_goal_t* goal );
+
+	//! Selects the best available weapon for the bot based on current state and inventory.
 	void	   BotChooseWeapon( bot_state_t* bs );
+
+	//! Finds and returns an enemy for the bot based on visibility, distance, and combat conditions.
 	int		   BotFindEnemy( bot_state_t* bs, int curenemy );
+
+	//! Checks if the specified entity is a dead player.
 	bool	   EntityIsDead( idEntity* entity );
+
+	/*!
+		\brief Checks if a bot entity is visible to a viewer within a specified field of view
+
+		This function determines the visibility of a bot entity from a viewer's perspective by testing if the entity falls within the specified field of view. It uses an internal test function to
+	   perform the actual visibility check and returns a float value representing the visibility result.
+
+		\param viewer Identifier of the viewer bot
+		\param eye 3D position of the viewer's eye
+		\param viewangles View angles of the viewer
+		\param fov Field of view in degrees
+		\param ent Identifier of the entity to test visibility for
+		\return Float value representing the visibility result of the entity
+	*/
 	float	   BotEntityVisible( int viewer, idVec3 eye, idAngles viewangles, float fov, int ent );
+
+	/*!
+		\brief Calculates the visibility of an entity from a viewer's perspective, considering fog, water, and field of vision.
+
+		This function determines how visible an entity is from a given viewer position and angle, taking into account various environmental factors such as fog density, water surfaces, and the
+	   entity's position relative to the viewer's field of vision. It performs multiple trace calculations to determine the best visibility value among different points in the entity's bounding box.
+	   The function returns a value between 0 and 1, where 1 indicates full visibility and 0 indicates complete invisibility.
+
+		\param viewer The index of the entity acting as the viewer
+		\param eye The 3D position of the viewer's eye
+		\param viewangles The viewing angles of the viewer
+		\param fov The field of vision angle of the viewer
+		\param ent The index of the entity being tested for visibility
+		\param allowHeightTest If true, performs additional height-based trace tests to improve accuracy
+		\return A float value in the range [0, 1] representing the visibility of the entity, where 1 indicates full visibility and 0 indicates complete invisibility
+	*/
 	float	   BotEntityVisibleTest( int viewer, idVec3 eye, idAngles viewangles, float fov, int ent, bool allowHeightTest );
+
+	//! Updates the bot's battle inventory with enemy position and distance information.
 	void	   BotUpdateBattleInventory( bot_state_t* bs, int enemy );
+
+	//! Returns the aggression level of a bot based on its inventory and enemy state.
 	float	   BotAggression( bot_state_t* bs );
+
+	//! Returns true if the bot wants to retreat based on its aggression level.
 	int		   BotWantsToRetreat( bot_state_t* bs );
+
+	//! Bot uses teleporter or medkit when health falls below certain thresholds.
 	void	   BotBattleUseItems( bot_state_t* bs );
+
+	//! Sets the bot's aim angle to target the enemy player or entity.
 	void	   BotAimAtEnemy( bot_state_t* bs );
+
+	//! Checks if the bot should attack its current enemy based on various conditions and timing
 	void	   BotCheckAttack( bot_state_t* bs );
+
+	//! Determines if the bot wants to chase a target based on its aggression level.
 	bool	   BotWantsToChase( bot_state_t* bs );
+
+	/*!
+		\brief Determines the best nearby goal for a bot based on its current state and travel flags.
+
+		This function evaluates the available goals near the bot's current position and selects the most appropriate one based on the specified travel flags and range. It uses the bot's game state,
+	   origin, and inventory to make this decision.
+
+		\param bs Pointer to the bot's current game state
+		\param tfl Travel flags that define the type of travel allowed
+		\param ltg Pointer to the goal structure to be filled with the selected goal
+		\param range Maximum distance to consider for nearby goals
+		\return Integer value indicating success or failure of the goal selection process
+	*/
 	int		   BotNearbyGoal( bot_state_t* bs, int tfl, bot_goal_t* ltg, float range );
+
+	//! Generates a random point near a given position within a specified radius using AAS data.
 	void	   BotGetRandomPointNearPosition( idVec3 point, idVec3& randomPoint, float radius );
+
+	//! Moves the bot in a random direction based on the provided bot state.
 	int		   BotMoveInRandomDirection( bot_state_t* bs );
+
+	//! Sets the current goal for the bot state and updates the goal's frame number.
 	void	   BotMoveToGoal( bot_state_t* bs, bot_goal_t* goal );
 
+	//! Moves the bot to a cover point based on the target position and obstacle avoidance.
 	void	   MoveToCoverPoint();
 
 	static int WP_MACHINEGUN;
@@ -900,13 +1023,28 @@ protected:
 	static int WP_ROCKET_LAUNCHER;
 
 private:
+	//! Handles the bot's chase state behavior when pursuing an enemy.
 	stateResult_t state_Chase( stateParms_t* parms );
+
+	//! Handles the battle fight state for an ice bot by managing enemy engagement and combat actions.
 	stateResult_t state_BattleFight( stateParms_t* parms );
+
+	//! Handles the battle state for the bot when it is engaged in combat with an enemy.
 	stateResult_t state_BattleNBG( stateParms_t* parms );
+
+	//! Handles the bot retreat state logic during combat.
 	stateResult_t state_Retreat( stateParms_t* parms );
+
+	//! Handles the bot respawn state logic during gameplay.
 	stateResult_t state_Respawn( stateParms_t* parms );
+
+	//! Bot seeks a near-by goal.
 	stateResult_t state_SeekNBG( stateParms_t* parms );
+
+	//! Moves the bot towards a long-term goal while seeking enemies.
 	stateResult_t state_SeekLTG( stateParms_t* parms );
+
+	//! Handles the bot's behavior when it has been attacked and is retaliating.
 	stateResult_t state_Attacked( stateParms_t* parms );
 
 private:

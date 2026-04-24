@@ -38,22 +38,12 @@ idCVar			 bot_itemsfile( "bot_itemsfile", "items.c", CVAR_CHEAT, "" );
 
 idBotGoalManager botGoalManager;
 
-/*
-==================
-idBotGoalManager::idBotGoalManager
-==================
-*/
 idBotGoalManager::idBotGoalManager()
 {
 	freelevelitems = NULL;
 	levelitems	   = NULL;
 }
 
-/*
-==================
-idBotGoalManager::BotGoalStateFromHandle
-==================
-*/
 bot_goalstate_t* idBotGoalManager::BotGoalStateFromHandle( int handle )
 {
 	if( handle <= 0 || handle > MAX_CLIENTS ) {
@@ -69,11 +59,6 @@ bot_goalstate_t* idBotGoalManager::BotGoalStateFromHandle( int handle )
 	return &botgoalstates[handle];
 }
 
-/*
-==================
-idBotGoalManager::BotInterbreedGoalFuzzyLogic
-==================
-*/
 void idBotGoalManager::BotInterbreedGoalFuzzyLogic( int parent1, int parent2, int child )
 {
 	bot_goalstate_t *p1, *p2, *c;
@@ -85,11 +70,6 @@ void idBotGoalManager::BotInterbreedGoalFuzzyLogic( int parent1, int parent2, in
 	botFuzzyWeightManager.InterbreedWeightConfigs( p1->itemweightconfig, p2->itemweightconfig, c->itemweightconfig );
 }
 
-/*
-========================
-idBotGoalManager::BotSaveGoalFuzzyLogic
-========================
-*/
 void idBotGoalManager::BotSaveGoalFuzzyLogic( int goalstate, char* filename )
 {
 	bot_goalstate_t* gs;
@@ -99,11 +79,6 @@ void idBotGoalManager::BotSaveGoalFuzzyLogic( int goalstate, char* filename )
 	// WriteWeightConfig(filename, gs->itemweightconfig);
 }
 
-/*
-========================
-idBotGoalManager::BotMutateGoalFuzzyLogic
-========================
-*/
 void idBotGoalManager::BotMutateGoalFuzzyLogic( int goalstate, float range )
 {
 	bot_goalstate_t* gs;
@@ -113,11 +88,6 @@ void idBotGoalManager::BotMutateGoalFuzzyLogic( int goalstate, float range )
 	botFuzzyWeightManager.EvolveWeightConfig( gs->itemweightconfig );
 }
 
-/*
-========================
-idBotGoalManager::ParseItemInfo
-========================
-*/
 void idBotGoalManager::ParseItemInfo( idParser& parser, iteminfo_t* itemInfo )
 {
 	idToken token;
@@ -187,11 +157,6 @@ void idBotGoalManager::ParseItemInfo( idParser& parser, iteminfo_t* itemInfo )
 	}
 }
 
-/*
-========================
-idBotGoalManager::LoadItemConfig
-========================
-*/
 itemconfig_t* idBotGoalManager::LoadItemConfig( char* filename )
 {
 	idToken		 token;
@@ -247,11 +212,6 @@ itemconfig_t* idBotGoalManager::LoadItemConfig( char* filename )
 	return itemconfig;
 }
 
-/*
-========================
-idBotGoalManager::ItemWeightIndex
-========================
-*/
 int* idBotGoalManager::ItemWeightIndex( weightconfig_t* iwc, itemconfig_t* ic )
 {
 	int *index, i;
@@ -268,11 +228,6 @@ int* idBotGoalManager::ItemWeightIndex( weightconfig_t* iwc, itemconfig_t* ic )
 	return index;
 }
 
-/*
-========================
-idBotGoalManager::InitLevelItemHeap
-========================
-*/
 void idBotGoalManager::InitLevelItemHeap()
 {
 	for( int i = 0; i < MAX_BOT_LEVEL_ITEMS - 1; i++ ) {
@@ -284,11 +239,6 @@ void idBotGoalManager::InitLevelItemHeap()
 	freelevelitems = levelitemheap;
 }
 
-/*
-========================
-idBotGoalManager::AllocLevelItem
-========================
-*/
 levelitem_t* idBotGoalManager::AllocLevelItem()
 {
 	levelitem_t* li;
@@ -305,22 +255,12 @@ levelitem_t* idBotGoalManager::AllocLevelItem()
 	return li;
 }
 
-/*
-========================
-idBotGoalManager::FreeLevelItem
-========================
-*/
 void idBotGoalManager::FreeLevelItem( levelitem_t* li )
 {
 	li->next	   = freelevelitems;
 	freelevelitems = li;
 }
 
-/*
-========================
-idBotGoalManager::AddLevelItemToList
-========================
-*/
 void idBotGoalManager::AddLevelItemToList( levelitem_t* li )
 {
 	if( levelitems ) {
@@ -332,11 +272,6 @@ void idBotGoalManager::AddLevelItemToList( levelitem_t* li )
 	levelitems = li;
 }
 
-/*
-========================
-idBotGoalManager::RemoveLevelItemFromList
-========================
-*/
 void idBotGoalManager::RemoveLevelItemFromList( levelitem_t* li )
 {
 	if( li->prev ) {
@@ -349,11 +284,6 @@ void idBotGoalManager::RemoveLevelItemFromList( levelitem_t* li )
 	}
 }
 
-/*
-========================
-idBotGoalManager::BotFreeInfoEntities
-========================
-*/
 void idBotGoalManager::BotFreeInfoEntities()
 {
 	maplocation_t *ml, *nextml;
@@ -377,11 +307,6 @@ void idBotGoalManager::BotFreeInfoEntities()
 	campspots.Clear();
 }
 
-/*
-========================
-idBotGoalManager::BotInitInfoEntities
-========================
-*/
 void idBotGoalManager::BotInitInfoEntities()
 {
 	// char classname[MAX_EPAIRKEY];
@@ -427,11 +352,6 @@ void idBotGoalManager::BotInitInfoEntities()
 	common->Printf( "%d camp spots\n", campspots.Num() );
 }
 
-/*
-=======================
-idBotGoalManager::InitLevelItems
-=======================
-*/
 void idBotGoalManager::InitLevelItems()
 {
 	int			  i, spawnflags, value;
@@ -567,11 +487,6 @@ void idBotGoalManager::InitLevelItems()
 	gameLocal.Printf( "found %d level items\n", numlevelitems );
 }
 
-/*
-=======================
-idBotGoalManager::BotGoalName
-=======================
-*/
 void idBotGoalManager::BotGoalName( int number, char* name, int size )
 {
 	levelitem_t* li;
@@ -589,11 +504,6 @@ void idBotGoalManager::BotGoalName( int number, char* name, int size )
 	}
 }
 
-/*
-=======================
-idBotGoalManager::BotResetAvoidGoals
-=======================
-*/
 void idBotGoalManager::BotResetAvoidGoals( int goalstate )
 {
 	bot_goalstate_t* gs;
@@ -606,11 +516,6 @@ void idBotGoalManager::BotResetAvoidGoals( int goalstate )
 	memset( gs->avoidgoaltimes, 0, MAX_AVOIDGOALS * sizeof( float ) );
 }
 
-/*
-=======================
-idBotGoalManager::BotResetAvoidGoals
-=======================
-*/
 void idBotGoalManager::BotDumpAvoidGoals( int goalstate )
 {
 	int				 i;
@@ -630,11 +535,6 @@ void idBotGoalManager::BotDumpAvoidGoals( int goalstate )
 	}
 }
 
-/*
-=======================
-idBotGoalManager::BotAddToAvoidGoals
-=======================
-*/
 void idBotGoalManager::BotAddToAvoidGoals( bot_goalstate_t* gs, int number, float avoidtime )
 {
 	int i;
@@ -658,11 +558,6 @@ void idBotGoalManager::BotAddToAvoidGoals( bot_goalstate_t* gs, int number, floa
 	}
 }
 
-/*
-=======================
-idBotGoalManager::BotAddToAvoidGoals
-=======================
-*/
 void idBotGoalManager::BotRemoveFromAvoidGoals( int goalstate, int number )
 {
 	int				 i;
@@ -682,11 +577,6 @@ void idBotGoalManager::BotRemoveFromAvoidGoals( int goalstate, int number )
 	}
 }
 
-/*
-=======================
-idBotGoalManager::BotAvoidGoalTime
-=======================
-*/
 float idBotGoalManager::BotAvoidGoalTime( int goalstate, int number )
 {
 	int				 i;
@@ -706,11 +596,6 @@ float idBotGoalManager::BotAvoidGoalTime( int goalstate, int number )
 	return 0;
 }
 
-/*
-=======================
-idBotGoalManager::BotSetAvoidGoalTime
-=======================
-*/
 void idBotGoalManager::BotSetAvoidGoalTime( int goalstate, int number, float avoidtime )
 {
 	bot_goalstate_t* gs;
@@ -744,11 +629,6 @@ void idBotGoalManager::BotSetAvoidGoalTime( int goalstate, int number, float avo
 	}
 }
 
-/*
-=======================
-idBotGoalManager::BotGetLevelItemGoal
-=======================
-*/
 int idBotGoalManager::BotGetLevelItemGoal( int index, char* name, bot_goal_t* goal )
 {
 	levelitem_t* li;
@@ -802,11 +682,6 @@ int idBotGoalManager::BotGetLevelItemGoal( int index, char* name, bot_goal_t* go
 	return -1;
 }
 
-/*
-=========================
-idBotGoalManager::BotGetMapLocationGoal
-=========================
-*/
 int idBotGoalManager::BotGetMapLocationGoal( char* name, bot_goal_t* goal )
 {
 	maplocation_t* ml;
@@ -827,11 +702,6 @@ int idBotGoalManager::BotGetMapLocationGoal( char* name, bot_goal_t* goal )
 	return false;
 }
 
-/*
-=========================
-idBotGoalManager::BotGetNextCampSpotGoal
-=========================
-*/
 int idBotGoalManager::BotGetNextCampSpotGoal( int num, bot_goal_t* goal )
 {
 	int			i;
@@ -857,11 +727,6 @@ int idBotGoalManager::BotGetNextCampSpotGoal( int num, bot_goal_t* goal )
 	return 0;
 }
 
-/*
-============================
-idBotGoalManager::BotFindEntityForLevelItem
-============================
-*/
 void idBotGoalManager::BotFindEntityForLevelItem( levelitem_t* li )
 {
 	int			  ent, modelindex;
@@ -1103,11 +968,6 @@ void idBotGoalManager::UpdateEntityItems()
 	}
 }
 
-/*
-====================
-idBotGoalManager::BotDumpGoalStack
-====================
-*/
 void idBotGoalManager::BotDumpGoalStack( int goalstate )
 {
 	int				 i;
@@ -1124,11 +984,6 @@ void idBotGoalManager::BotDumpGoalStack( int goalstate )
 	}
 }
 
-/*
-====================
-BotPushGoal
-====================
-*/
 void idBotGoalManager::BotPushGoal( int goalstate, bot_goal_t* goal )
 {
 	bot_goalstate_t* gs;
@@ -1146,11 +1001,6 @@ void idBotGoalManager::BotPushGoal( int goalstate, bot_goal_t* goal )
 	gs->goalstack[gs->goalstacktop] = *goal;
 }
 
-/*
-====================
-idBotGoalManager::BotPopGoal
-====================
-*/
 void idBotGoalManager::BotPopGoal( int goalstate )
 {
 	bot_goalstate_t* gs;
@@ -1164,11 +1014,6 @@ void idBotGoalManager::BotPopGoal( int goalstate )
 	}
 }
 
-/*
-====================
-idBotGoalManager::BotEmptyGoalStack
-====================
-*/
 void idBotGoalManager::BotEmptyGoalStack( int goalstate )
 {
 	bot_goalstate_t* gs;
@@ -1180,11 +1025,6 @@ void idBotGoalManager::BotEmptyGoalStack( int goalstate )
 	gs->goalstacktop = 0;
 }
 
-/*
-====================
-idBotGoalManager::BotGetTopGoal
-====================
-*/
 int idBotGoalManager::BotGetTopGoal( int goalstate, bot_goal_t* goal )
 {
 	bot_goalstate_t* gs;
@@ -1200,11 +1040,6 @@ int idBotGoalManager::BotGetTopGoal( int goalstate, bot_goal_t* goal )
 	return true;
 }
 
-/*
-====================
-idBotGoalManager::BotGetSecondGoal
-====================
-*/
 int idBotGoalManager::BotGetSecondGoal( int goalstate, bot_goal_t* goal )
 {
 	bot_goalstate_t* gs;
@@ -1220,11 +1055,6 @@ int idBotGoalManager::BotGetSecondGoal( int goalstate, bot_goal_t* goal )
 	return true;
 }
 
-/*
-====================
-idBotGoalManager::BotChooseLTGItem
-====================
-*/
 int idBotGoalManager::BotChooseLTGItem( int goalstate, idVec3 origin, int* inventory, int travelflags )
 {
 	int				 t, weightnum;
@@ -1403,11 +1233,6 @@ int idBotGoalManager::BotChooseLTGItem( int goalstate, idVec3 origin, int* inven
 	return true;
 }
 
-/*
-====================
-idBotGoalManager::BotChooseNBGItem
-====================
-*/
 int idBotGoalManager::BotChooseNBGItem( int goalstate, idVec3 origin, int* inventory, int travelflags, bot_goal_t* ltg, float maxtime )
 {
 	int				 areanum, t, weightnum, ltg_time;
@@ -1579,11 +1404,6 @@ int idBotGoalManager::BotChooseNBGItem( int goalstate, idVec3 origin, int* inven
 	return true;
 }
 
-/*
-====================
-idBotGoalManager::BotTouchingGoal
-====================
-*/
 int idBotGoalManager::BotTouchingGoal( idVec3 origin, bot_goal_t* goal )
 {
 	int	   i;
@@ -1610,11 +1430,6 @@ int idBotGoalManager::BotTouchingGoal( idVec3 origin, bot_goal_t* goal )
 	return true;
 }
 
-/*
-========================
-idBotGoalManager::BotItemGoalInVisButNotVisible
-========================
-*/
 int idBotGoalManager::BotItemGoalInVisButNotVisible( int viewer, idVec3 eye, idAngles viewangles, bot_goal_t* goal )
 {
 	// aas_entityinfo_t entinfo;
@@ -1655,11 +1470,6 @@ int idBotGoalManager::BotItemGoalInVisButNotVisible( int viewer, idVec3 eye, idA
 	return false;
 }
 
-/*
-========================
-BotResetGoalState
-========================
-*/
 void idBotGoalManager::BotResetGoalState( int goalstate )
 {
 	bot_goalstate_t* gs;
@@ -1676,11 +1486,6 @@ void idBotGoalManager::BotResetGoalState( int goalstate )
 	BotResetAvoidGoals( goalstate );
 }
 
-/*
-========================
-idBotGoalManager::BotResetGoalState
-========================
-*/
 int idBotGoalManager::BotLoadItemWeights( int goalstate, char* filename )
 {
 	bot_goalstate_t* gs;
@@ -1709,11 +1514,6 @@ int idBotGoalManager::BotLoadItemWeights( int goalstate, char* filename )
 	return BLERR_NOERROR;
 }
 
-/*
-========================
-idBotGoalManager::BotResetGoalState
-========================
-*/
 void idBotGoalManager::BotFreeItemWeights( int goalstate )
 {
 	bot_goalstate_t* gs;
@@ -1731,11 +1531,6 @@ void idBotGoalManager::BotFreeItemWeights( int goalstate )
 	// jmarshall end
 }
 
-/*
-========================
-idBotGoalManager::BotAllocGoalState
-========================
-*/
 int idBotGoalManager::BotAllocGoalState( int client )
 {
 	int i;
@@ -1750,11 +1545,6 @@ int idBotGoalManager::BotAllocGoalState( int client )
 	return 0;
 }
 
-/*
-========================
-idBotGoalManager::BotFreeGoalState
-========================
-*/
 void idBotGoalManager::BotFreeGoalState( int handle )
 {
 	if( handle <= 0 || handle > MAX_CLIENTS ) {
@@ -1774,11 +1564,6 @@ void idBotGoalManager::BotFreeGoalState( int handle )
 	botgoalstates[handle].Reset();
 }
 
-/*
-========================
-idBotGoalManager::BotSetupGoalAI
-========================
-*/
 int idBotGoalManager::BotSetupGoalAI()
 {
 	// load the item configuration
@@ -1792,11 +1577,6 @@ int idBotGoalManager::BotSetupGoalAI()
 	return BLERR_NOERROR;
 }
 
-/*
-========================
-idBotGoalManager::BotSetupGoalAI
-========================
-*/
 void idBotGoalManager::BotShutdownGoalAI()
 {
 	int i;
@@ -1827,11 +1607,6 @@ void idBotGoalManager::BotShutdownGoalAI()
 	}
 }
 
-/*
-=======================
-idBotGoalManager::BotNearGoal(
-=======================
-*/
 bool idBotGoalManager::BotNearGoal( idVec3 p1, idVec3 p2 )
 {
 	idVec3 p1_z, p2_z;

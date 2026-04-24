@@ -142,32 +142,71 @@ If you have questions concerning this license or the applicable additional terms
 // how much the bot fires it's weapon
 #define CHARACTERISTIC_FIRETHROTTLE					47 // float [0, 1]
 
-//
-// idBotCharacterStatsManager
-//
+/*!
+	\class idBotCharacterStatsManager
+	\brief Manages bot character statistics and profiles for AI behavior.
+
+	The manager handles loading, initialization, and retrieval of bot character statistics from files. It provides functionality to allocate character instances and access various characteristic
+   values such as floats and strings. The class maintains default character profiles and ensures valid access to characteristic indices. It supports loading custom character files and freeing their
+   associated resources.
+
+*/
 class idBotCharacterStatsManager
 {
 public:
+	//! Constructs a new bot character stats manager instance.
 	idBotCharacterStatsManager();
 
-	// Inits the stats manager.
+	//! Initializes the bot character stats manager by loading the default character profile.
 	void			 Init();
 
-	// Loads a character file.
+	//! Loads a bot character from a file and returns a pointer to the character data.
 	bot_character_t* BotLoadCharacterFromFile( const char* charfile, int skill );
 
-	// Free character file.
+	//! Frees the specified bot character file by marking it as not in use.
 	void			 FreeCharacterFile( bot_character_t* ch );
 
-	// Returns the default character stats profile.
+	//! Returns the default character stats profile.
 	bot_character_t* GetDefaultCharProfile() { return default_char_profile; }
 
+	//! Validates that a characteristic index is within valid bounds and initialized for a given bot character.
 	int				 CheckCharacteristicIndex( bot_character_t* ch, int index );
+
+	//! Returns the float value of a specified character characteristic.
 	float			 Characteristic_Float( bot_character_t* ch, int index );
+
+	/*!
+		\brief Copies a string characteristic value from a bot character to a buffer
+
+		This function retrieves a string characteristic value from the specified bot character and copies it to the provided buffer. It first validates that the characteristic index is within valid
+	   range, and then checks that the characteristic type is indeed a string. If the index is invalid or the type doesn't match, the function will return early without modifying the buffer. If the
+	   characteristic is not a string type, an error is reported through the game local error system.
+
+		\param ch Pointer to the bot character structure containing the characteristics
+		\param index Index of the characteristic to retrieve
+		\param buf Output buffer to store the string characteristic value
+		\param size Size of the output buffer to prevent overflow
+		\throws Error message when the characteristic index is invalid or the characteristic type is not a string
+	*/
 	void			 Characteristic_String( bot_character_t* ch, int index, char* buf, int size );
+
+	/*!
+		\brief Returns a bounded float characteristic value within the specified minimum and maximum range.
+
+		This function retrieves a float characteristic value for a given bot character and ensures it stays within the provided bounds. If the minimum value is greater than the maximum value, an error
+	   is triggered. The function first gets the characteristic value using Characteristic_Float, then clamps it between the specified minimum and maximum values.
+
+		\param ch Pointer to the bot character structure
+		\param index Index of the characteristic to retrieve
+		\param min Minimum allowed value for the characteristic
+		\param max Maximum allowed value for the characteristic
+		\return A float value that is bounded between min and max, or the original characteristic value if it is within the range
+		\throws An error is thrown if min is greater than max
+	*/
 	float			 Characteristic_BFloat( bot_character_t* ch, int index, float min, float max );
 
 private:
+	//! Allocates and returns a bot character instance from the character stats manager.
 	bot_character_t* AllocBotCharacter();
 
 	bot_character_t* default_char_profile;

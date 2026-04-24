@@ -45764,6 +45764,698 @@
     "const animFlags_t idAnimator::GetAnimFlags(int animnum) const": {
       "body_hash": "74a8bbc907ade8b92ca39573df48a134",
       "is_trivial": true
+    },
+    "iceBot::iceBot()": {
+      "body_hash": "d3bc810ba8932b0267a868663c8da408",
+      "is_trivial": true
+    },
+    "iceBot::~iceBot()": {
+      "body_hash": "7cb309b987930afb0fb88589417b7f08",
+      "is_trivial": true
+    },
+    "void iceBot::Spawn()": {
+      "body_hash": "be3779cf8a5d4ab1b46e6fda25555753",
+      "is_trivial": true
+    },
+    "void iceBot::Think() override": {
+      "body_hash": "0f9d405f62391fb7c9ac611b4890e6a9",
+      "is_trivial": true
+    },
+    "void iceBot::SpawnToPoint(const idVec3 &spawn_origin, const idAngles &spawn_angles) override": {
+      "body_hash": "1fcc2661a8b84544fce9514666f88973",
+      "is_trivial": true
+    },
+    "void iceBot::InflictedDamageEvent(idEntity *target) override": {
+      "body_hash": "fb388ffaaee72ec6742e2e338fea7b67",
+      "is_trivial": true
+    },
+    "void iceBot::StateThreadChanged() override": {
+      "body_hash": "9a35f95ef986e4709f7b3665d5c970b6",
+      "is_trivial": true
+    },
+    "void iceBot::SetEnemy(idPlayer *player, idVec3 origin)": {
+      "body_hash": "0fe4d9c4212c53cb25a3992ebccc8902",
+      "is_trivial": true
+    },
+    "void iceBot::BotInputFrame(idUserCmdMgr &cmdMgr)": {
+      "body_hash": "44bd7129338aca7a35688c88a8958589",
+      "is_trivial": true
+    },
+    "void iceBot::Bot_ResetUcmd(usercmd_t &ucmd)": {
+      "body_hash": "c72a46a0485fbdb4bfb735594f38c16e",
+      "is_trivial": true
+    },
+    "void iceBot::PresenceTypeBoundingBox(int presencetype, idVec3 &mins, idVec3 &maxs)": {
+      "body_hash": "13d9aae877203b1110a584581127c3f1",
+      "is_trivial": true
+    },
+    "void iceBot::BotSendChatMessage(botChat_t chat, const char *targetName)": {
+      "body_hash": "e147041dda8c9602b013c978f162c87f",
+      "is_trivial": true
+    },
+    "void iceBot::BotInputToUserCommand(bot_input_t *bi, usercmd_t *ucmd, int time)": {
+      "body_hash": "d16f8cbeb4c6ec230b0a726c7928f8c9",
+      "is_trivial": true
+    },
+    "void iceBot::BotMoveToGoalOrigin(idVec3 goalOrigin)": {
+      "body_hash": "749e0b898811d65159a27615efd4c6c4",
+      "is_trivial": true
+    },
+    "void iceBot::ServerThink()": {
+      "body_hash": "c70fb7b2423e1bfdc70735b19ab9249a",
+      "is_trivial": true
+    },
+    "void iceBot::BotUpdateInventory()": {
+      "body_hash": "a6932d7538f757f1c3017132a5a1e47b",
+      "is_trivial": true
+    },
+    "bool iceBot::HasWeapon(int index)": {
+      "body_hash": "62c461cdcdb0a6fdfe8ebbd03a0fa133",
+      "is_trivial": true
+    },
+    "stateResult_t iceBot::state_Chase(stateParms_t *parms)": {
+      "body_hash": "c98a9ff78cb70b7f04116fc325f15fa6",
+      "is_trivial": true
+    },
+    "stateResult_t iceBot::state_BattleFight(stateParms_t *parms)": {
+      "body_hash": "fdc277536a98fff664935714a4ac9879",
+      "is_trivial": true
+    },
+    "stateResult_t iceBot::state_BattleNBG(stateParms_t *parms)": {
+      "body_hash": "d1b2c180abdc3e9824050376227a341f",
+      "is_trivial": true
+    },
+    "stateResult_t iceBot::state_Retreat(stateParms_t *parms)": {
+      "body_hash": "3ab183ca1c77170fdcea7b4e98278616",
+      "is_trivial": true
+    },
+    "stateResult_t iceBot::state_Respawn(stateParms_t *parms)": {
+      "body_hash": "6341fb46bad9394882fd290e2dd4d3db",
+      "is_trivial": true
+    },
+    "stateResult_t iceBot::state_SeekNBG(stateParms_t *parms)": {
+      "body_hash": "8f9628cbb0c95b343044d5b2cbb29e3c",
+      "is_trivial": true
+    },
+    "stateResult_t iceBot::state_SeekLTG(stateParms_t *parms)": {
+      "body_hash": "e62c20215c9bf1aa4797ae97576b26c0",
+      "is_trivial": true
+    },
+    "stateResult_t iceBot::state_Attacked(stateParms_t *parms)": {
+      "body_hash": "26f504b08a5eed1098403018590e4dcb",
+      "is_trivial": true
+    },
+    "bool iceBot::BotIsDead(bot_state_t *bs)": {
+      "body_hash": "ef1ca7ed3a5e1c5ff25b990e0b3c921f",
+      "is_trivial": true
+    },
+    "bool iceBot::BotReachedGoal(bot_state_t *bs, bot_goal_t *goal)": {
+      "body_hash": "fe006466aebb5b202912204b76f89782",
+      "is_trivial": true
+    },
+    "int iceBot::BotGetItemLongTermGoal(bot_state_t *bs, int tfl, bot_goal_t *goal)": {
+      "body_hash": "55f394ced95c80534992c593085c12ea",
+      "is_trivial": true
+    },
+    "void iceBot::BotChooseWeapon(bot_state_t *bs)": {
+      "body_hash": "8733d008cc836b827ddbc619fc35a608",
+      "is_trivial": true
+    },
+    "int iceBot::BotFindEnemy(bot_state_t *bs, int curenemy)": {
+      "body_hash": "ccea21aa9f693f948a634a506961be61",
+      "is_trivial": true
+    },
+    "bool iceBot::EntityIsDead(idEntity *entity)": {
+      "body_hash": "4f5acd97a113f775403c04e4fedc4e4a",
+      "is_trivial": true
+    },
+    "float iceBot::BotEntityVisible(int viewer, idVec3 eye, idAngles viewangles, float fov, int ent)": {
+      "body_hash": "2a631d971f928e6d8ec849ad427ee303",
+      "is_trivial": false
+    },
+    "float iceBot::BotEntityVisibleTest(int viewer, idVec3 eye, idAngles viewangles, float fov, int ent, bool allowHeightTest)": {
+      "body_hash": "9f0a1548a65c4390eb16ecd699e45aef",
+      "is_trivial": false
+    },
+    "void iceBot::BotUpdateBattleInventory(bot_state_t *bs, int enemy)": {
+      "body_hash": "ba637cb5066d00a7b65e325f2d9fce06",
+      "is_trivial": true
+    },
+    "float iceBot::BotAggression(bot_state_t *bs)": {
+      "body_hash": "9bca9be7ceb695192f69a0dddbcf9a0b",
+      "is_trivial": true
+    },
+    "int iceBot::BotWantsToRetreat(bot_state_t *bs)": {
+      "body_hash": "480bfbe60a371a09bab2291114f23c6e",
+      "is_trivial": true
+    },
+    "void iceBot::BotBattleUseItems(bot_state_t *bs)": {
+      "body_hash": "c636b96060a57535e5aa982b16d6ffd6",
+      "is_trivial": true
+    },
+    "void iceBot::BotAimAtEnemy(bot_state_t *bs)": {
+      "body_hash": "9c9fbcbe8df491a985ed57f2bf210249",
+      "is_trivial": true
+    },
+    "void iceBot::BotCheckAttack(bot_state_t *bs)": {
+      "body_hash": "f3530d36ff2aff54a5795eff5a16edce",
+      "is_trivial": true
+    },
+    "bool iceBot::BotWantsToChase(bot_state_t *bs)": {
+      "body_hash": "0f22238cefd4a51db83aba6220ef6dd8",
+      "is_trivial": true
+    },
+    "int iceBot::BotNearbyGoal(bot_state_t *bs, int tfl, bot_goal_t *ltg, float range)": {
+      "body_hash": "cf70b50c18e836f9c91b20983c07b9ee",
+      "is_trivial": false
+    },
+    "int iceBot::BotMoveInRandomDirection(bot_state_t *bs)": {
+      "body_hash": "68712ce696e4fea7a512e3d3a9071287",
+      "is_trivial": true
+    },
+    "void iceBot::BotMoveToGoal(bot_state_t *bs, bot_goal_t *goal)": {
+      "body_hash": "528e650a7e6a72a49ff21eeb1af2d578",
+      "is_trivial": true
+    },
+    "void iceBot::MoveToCoverPoint()": {
+      "body_hash": "9201735151be167774cae3bffa6f8463",
+      "is_trivial": true
+    },
+    "idBotCharacterStatsManager::idBotCharacterStatsManager()": {
+      "body_hash": "a4516759898464448612537ca5e93a9b",
+      "is_trivial": true
+    },
+    "void idBotCharacterStatsManager::Init()": {
+      "body_hash": "9c9067bfe182e03a0737961ba56c1773",
+      "is_trivial": true
+    },
+    "bot_character_t * idBotCharacterStatsManager::BotLoadCharacterFromFile(const char *charfile, int skill)": {
+      "body_hash": "95de746f531d3620c8de367e72e36a45",
+      "is_trivial": true
+    },
+    "void idBotCharacterStatsManager::FreeCharacterFile(bot_character_t *ch)": {
+      "body_hash": "07c468c5bf26832371ec3ebaa3593e44",
+      "is_trivial": true
+    },
+    "bot_character_t * idBotCharacterStatsManager::GetDefaultCharProfile()": {
+      "body_hash": "f654272341b2a9a8b171c14409b7328c",
+      "is_trivial": true
+    },
+    "int idBotCharacterStatsManager::CheckCharacteristicIndex(bot_character_t *ch, int index)": {
+      "body_hash": "cf16538698b866ae686cae72fa34ce31",
+      "is_trivial": true
+    },
+    "float idBotCharacterStatsManager::Characteristic_Float(bot_character_t *ch, int index)": {
+      "body_hash": "d4ef83f17a529a4dde7df4bc31561efd",
+      "is_trivial": true
+    },
+    "void idBotCharacterStatsManager::Characteristic_String(bot_character_t *ch, int index, char *buf, int size)": {
+      "body_hash": "399e8b407127052f424bc874001822c0",
+      "is_trivial": false
+    },
+    "bot_character_t * idBotCharacterStatsManager::AllocBotCharacter()": {
+      "body_hash": "e822c3077aca358bac71e17e49bba4fd",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::Init()": {
+      "body_hash": "0cd724a1c421ca13e3c0da79e5ab0788",
+      "is_trivial": true
+    },
+    "weightconfig_t * idBotFuzzyWeightManager::ReadWeightConfig(char *filename)": {
+      "body_hash": "982db15fa1b78c0e722b075106624b65",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::BotShutdownWeights()": {
+      "body_hash": "4ae2a711b790160f2b80570923b1fca6",
+      "is_trivial": true
+    },
+    "int idBotFuzzyWeightManager::FindFuzzyWeight(weightconfig_t *wc, char *name)": {
+      "body_hash": "2f3f0d70a7f69f2567129186a53c40f9",
+      "is_trivial": true
+    },
+    "float idBotFuzzyWeightManager::FuzzyWeight(int *inventory, weightconfig_t *wc, int weightnum)": {
+      "body_hash": "7548727619c1a394e0bf1f8456d6a5f5",
+      "is_trivial": true
+    },
+    "float idBotFuzzyWeightManager::FuzzyWeightUndecided(int *inventory, weightconfig_t *wc, int weightnum)": {
+      "body_hash": "26a0d4399331895472dda62035f958c3",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::EvolveFuzzySeperator_r(fuzzyseperator_t *fs)": {
+      "body_hash": "dd06ec87ea7ff97244672a577536c24a",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::EvolveWeightConfig(weightconfig_t *config)": {
+      "body_hash": "c4c3f46b9646e08d80445f4d58c5d764",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::ScaleWeight(weightconfig_t *config, char *name, float scale)": {
+      "body_hash": "7c9d957e22eee50a5656a97699865694",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::ScaleFuzzyBalanceRange(weightconfig_t *config, float scale)": {
+      "body_hash": "5c7ef2156caa9a738871046da7f3ef5c",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::InterbreedWeightConfigs(weightconfig_t *config1, weightconfig_t *config2, weightconfig_t *configout)": {
+      "body_hash": "7babac3c696a0716eea64268d1c31c3e",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::FreeWeightConfig(weightconfig_t *config)": {
+      "body_hash": "79493bba46040ed2b6e15a78ac4a3ccd",
+      "is_trivial": true
+    },
+    "fuzzyseperator_t * idBotFuzzyWeightManager::AllocFuzzyWeight()": {
+      "body_hash": "612125b9bd2c1096bffb606660cea504",
+      "is_trivial": true
+    },
+    "bool idBotFuzzyWeightManager::ReadValue(idParser &source, float *value)": {
+      "body_hash": "43fbec647845cc00c3b8b9c0cab7f44c",
+      "is_trivial": true
+    },
+    "int idBotFuzzyWeightManager::ReadFuzzyWeight(idParser &source, fuzzyseperator_t *fs)": {
+      "body_hash": "ae8f4aed478c7d7022d7b63ad1e6c84c",
+      "is_trivial": true
+    },
+    "int idBotFuzzyWeightManager::InterbreedFuzzySeperator_r(fuzzyseperator_t *fs1, fuzzyseperator_t *fs2, fuzzyseperator_t *fsout)": {
+      "body_hash": "ba62253e75a553e555c13e9c8987130c",
+      "is_trivial": true
+    },
+    "fuzzyseperator_t * idBotFuzzyWeightManager::ReadFuzzySeperators_r(idParser &source)": {
+      "body_hash": "2843ff3666f78f558ef36165fbb7b9e4",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::FreeWeightConfig2(weightconfig_t *config)": {
+      "body_hash": "a101258de12c968b0af64cf4d33bd89d",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::FreeFuzzySeperators_r(fuzzyseperator_t *fs)": {
+      "body_hash": "cb7434273ce7892cda67d84d96ade078",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::ScaleFuzzySeperatorBalanceRange_r(fuzzyseperator_t *fs, float scale)": {
+      "body_hash": "8dbbbaa9df67bbe10bfeb0cc31dad006",
+      "is_trivial": true
+    },
+    "void idBotFuzzyWeightManager::ScaleFuzzySeperator_r(fuzzyseperator_t *fs, float scale)": {
+      "body_hash": "7d5d5dba62d06518bf626f07e47a9cee",
+      "is_trivial": true
+    },
+    "float idBotFuzzyWeightManager::FuzzyWeight_r(int *inventory, fuzzyseperator_t *fs)": {
+      "body_hash": "3311c5678dc736c0caea9f9061429136",
+      "is_trivial": true
+    },
+    "float idBotFuzzyWeightManager::FuzzyWeightUndecided_r(int *inventory, fuzzyseperator_t *fs)": {
+      "body_hash": "2e93b7c715b91b2fb6ba0d3c21674d51",
+      "is_trivial": true
+    },
+    "idBotGoalManager::idBotGoalManager()": {
+      "body_hash": "eafeb033cf6f2c728461ffc3ec506c07",
+      "is_trivial": true
+    },
+    "int idBotGoalManager::BotSetupGoalAI()": {
+      "body_hash": "d6e624f9dd47713b1f95fc8e0cc9a861",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::InitLevelItems()": {
+      "body_hash": "7404aab877dfc9fbef56b73e22fcb838",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::UpdateEntityItems()": {
+      "body_hash": "904a8ed6a6745639a09e1f8bd18608c9",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotPushGoal(int goalstate, bot_goal_t *goal)": {
+      "body_hash": "06df920b13f00cf1a27ce42185dbc475",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotPopGoal(int goalstate)": {
+      "body_hash": "19e6219e24384c25a16cbad651461059",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotEmptyGoalStack(int goalstate)": {
+      "body_hash": "3ec619d39408d60c9c6c6b5a95d2b7d2",
+      "is_trivial": true
+    },
+    "int idBotGoalManager::BotLoadItemWeights(int goalstate, char *filename)": {
+      "body_hash": "69ea5fb7a4e291581361b1b194a44ebd",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotResetGoalState(int goalstate)": {
+      "body_hash": "a976dd9f6bd6e628a1cd3b843da4fbe1",
+      "is_trivial": true
+    },
+    "int idBotGoalManager::BotItemGoalInVisButNotVisible(int viewer, idVec3 eye, idAngles viewangles, bot_goal_t *goal)": {
+      "body_hash": "33fdad2335ddc4a2a65fb67387350dc6",
+      "is_trivial": false
+    },
+    "int idBotGoalManager::BotChooseLTGItem(int goalstate, idVec3 origin, int *inventory, int travelflags)": {
+      "body_hash": "5b296a0a1e8d846aaa8644d70ead149c",
+      "is_trivial": false
+    },
+    "int idBotGoalManager::BotChooseNBGItem(int goalstate, idVec3 origin, int *inventory, int travelflags, bot_goal_t *ltg, float maxtime)": {
+      "body_hash": "ee95664d99fcfd180ef279b569932027",
+      "is_trivial": false
+    },
+    "int idBotGoalManager::BotTouchingGoal(idVec3 origin, bot_goal_t *goal)": {
+      "body_hash": "dc692eafc33bac4d33c6c6dd23d6c0fd",
+      "is_trivial": true
+    },
+    "int idBotGoalManager::BotAllocGoalState(int client)": {
+      "body_hash": "6665db8a69be3d6ac154e734297756d6",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotGoalName(int number, char *name, int size)": {
+      "body_hash": "861aaabf710eb9f7f7500afb27fa11a9",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotFreeGoalState(int handle)": {
+      "body_hash": "a5ea56e742f6ffd30bba6f2d70c83ce0",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotShutdownGoalAI()": {
+      "body_hash": "be7322f9127657617ba353ccb9934bac",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotFreeItemWeights(int goalstate)": {
+      "body_hash": "b9686420754ec23a094cfa294ae37866",
+      "is_trivial": true
+    },
+    "bool idBotGoalManager::BotNearGoal(idVec3 p1, idVec3 p2)": {
+      "body_hash": "84e4f2d6ad2926c6d1a004f9469a37eb",
+      "is_trivial": true
+    },
+    "int idBotGoalManager::BotGetTopGoal(int goalstate, bot_goal_t *goal)": {
+      "body_hash": "37fc92018402f1f1b370c43deeb073d9",
+      "is_trivial": true
+    },
+    "int idBotGoalManager::BotGetSecondGoal(int goalstate, bot_goal_t *goal)": {
+      "body_hash": "663521839def988a243bed631ca00ba3",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotDumpGoalStack(int goalstate)": {
+      "body_hash": "d89f3cfc58b6d3894d0bb06379d39433",
+      "is_trivial": true
+    },
+    "int idBotGoalManager::BotGetLevelItemGoal(int index, char *name, bot_goal_t *goal)": {
+      "body_hash": "edb17fc90f59d581971ca7bd8f69e93a",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotSetAvoidGoalTime(int goalstate, int number, float avoidtime)": {
+      "body_hash": "92857535a6cceca41f948f52f0f7eecd",
+      "is_trivial": true
+    },
+    "float idBotGoalManager::BotAvoidGoalTime(int goalstate, int number)": {
+      "body_hash": "6898c7e6f703966fcb99e749139451b3",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotResetAvoidGoals(int goalstate)": {
+      "body_hash": "ed60097c5ff7f39195f9f427dd0104cc",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotDumpAvoidGoals(int goalstate)": {
+      "body_hash": "2ecb23ee8fcaa9b68bca253907758d3d",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotAddToAvoidGoals(bot_goalstate_t *gs, int number, float avoidtime)": {
+      "body_hash": "5c46572ccfd008195046591f508e10ba",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotRemoveFromAvoidGoals(int goalstate, int number)": {
+      "body_hash": "c77549142d36935e9decf0ae90a30281",
+      "is_trivial": true
+    },
+    "int idBotGoalManager::BotGetMapLocationGoal(char *name, bot_goal_t *goal)": {
+      "body_hash": "a367b7a75d04f24d56f8d61e030a3646",
+      "is_trivial": true
+    },
+    "int idBotGoalManager::BotGetNextCampSpotGoal(int num, bot_goal_t *goal)": {
+      "body_hash": "a6d4a5473650b7be98b1178a317c3ab9",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotFindEntityForLevelItem(levelitem_t *li)": {
+      "body_hash": "96961a6f8d740a4c82eabe14eccc7d85",
+      "is_trivial": true
+    },
+    "levelitem_t * idBotGoalManager::AllocLevelItem()": {
+      "body_hash": "155df81f0a61ed8c1b364ff2ad67c2b3",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::FreeLevelItem(levelitem_t *li)": {
+      "body_hash": "e12df3e53070495659602af679d737a3",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::AddLevelItemToList(levelitem_t *li)": {
+      "body_hash": "7e6b16c863deca3644f16c75da693057",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::RemoveLevelItemFromList(levelitem_t *li)": {
+      "body_hash": "7bc22b217a1412e28963f0f30b684a74",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotFreeInfoEntities()": {
+      "body_hash": "d2e7af5629658e66904a4f31deaaac13",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotInitInfoEntities()": {
+      "body_hash": "336b91eedc11fe0865a00b161d264798",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::InitLevelItemHeap()": {
+      "body_hash": "f914ab12e18475a3c1d02508cd4a1854",
+      "is_trivial": true
+    },
+    "int * idBotGoalManager::ItemWeightIndex(weightconfig_t *iwc, itemconfig_t *ic)": {
+      "body_hash": "6b7d723192facb7f5f3d6d1072a0e451",
+      "is_trivial": true
+    },
+    "itemconfig_t * idBotGoalManager::LoadItemConfig(char *filename)": {
+      "body_hash": "cad75898653802ebb1bd042b5dfdf96a",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotSaveGoalFuzzyLogic(int goalstate, char *filename)": {
+      "body_hash": "bc5c29f65ae87ae2676454713f124241",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotMutateGoalFuzzyLogic(int goalstate, float range)": {
+      "body_hash": "be4f42bc8723c3d8d0b28e509b8bf278",
+      "is_trivial": true
+    },
+    "bot_goalstate_t * idBotGoalManager::BotGoalStateFromHandle(int handle)": {
+      "body_hash": "3844e13e5b1433e9db5bd5160e4c7388",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::BotInterbreedGoalFuzzyLogic(int parent1, int parent2, int child)": {
+      "body_hash": "ff9f04921488234760db81b5cee8ff36",
+      "is_trivial": true
+    },
+    "void idBotGoalManager::ParseItemInfo(idParser &parser, iteminfo_t *itemInfo)": {
+      "body_hash": "69af53bc9d17c78862805e02c263a495",
+      "is_trivial": true
+    },
+    "void idBotWeaponInfoManager::Init()": {
+      "body_hash": "b1a5e676e00cd6b2c516efa19bb2e56d",
+      "is_trivial": true
+    },
+    "int idBotWeaponInfoManager::BotLoadWeaponWeights(int weaponstate, char *filename)": {
+      "body_hash": "3caf0a9875f35cd27e405ce789bbb4ca",
+      "is_trivial": true
+    },
+    "void idBotWeaponInfoManager::BotGetWeaponInfo(int weaponstate, int weapon, bot_weaponinfo_t *weaponinfo)": {
+      "body_hash": "dc5aeafc9a340e71d7c6dc0a157ac886",
+      "is_trivial": true
+    },
+    "int idBotWeaponInfoManager::BotChooseBestFightWeapon(int weaponstate, int *inventory)": {
+      "body_hash": "69e91162487bcaf77ab109aa6d19cb01",
+      "is_trivial": true
+    },
+    "void idBotWeaponInfoManager::BotResetWeaponState(int weaponstate)": {
+      "body_hash": "daf062ae367f2fa41ad8c846c021843d",
+      "is_trivial": true
+    },
+    "int idBotWeaponInfoManager::BotAllocWeaponState()": {
+      "body_hash": "6dc02179304f890711d636762021ea57",
+      "is_trivial": true
+    },
+    "void idBotWeaponInfoManager::BotFreeWeaponState(int ws)": {
+      "body_hash": "8e70919f363ed218dd886d58af16bd1d",
+      "is_trivial": true
+    },
+    "int idBotWeaponInfoManager::BotValidWeaponNumber(int weaponnum)": {
+      "body_hash": "106cd09eefe90c4eb65eb747772fc3f4",
+      "is_trivial": true
+    },
+    "bot_weaponstate_t * idBotWeaponInfoManager::BotWeaponStateFromHandle(int handle)": {
+      "body_hash": "19358a2925139f5f0299699c3d1a2b19",
+      "is_trivial": true
+    },
+    "void idBotWeaponInfoManager::WeaponWeightIndex(weightconfig_t *wwc, bot_weaponstate_t *weaponState)": {
+      "body_hash": "8a47faf91183c70fe5e3fca77e37f64b",
+      "is_trivial": true
+    },
+    "void idBotWeaponInfoManager::BotFreeWeaponWeights(int weaponstate)": {
+      "body_hash": "b0600e5a226268fc8dc7028d61a8e8f0",
+      "is_trivial": true
+    },
+    "void idBotWeaponInfoManager::LoadWeaponConfig(char *filename)": {
+      "body_hash": "9634904fdbcb654c1aa78435f03ce7ba",
+      "is_trivial": true
+    },
+    "void idBotWeaponInfoManager::ParseWeaponInfo(idParser &parser, bot_weaponinfo_t &newWeaponInfo)": {
+      "body_hash": "60925b51afc9ea989ac00cdbc6ae5af2",
+      "is_trivial": true
+    },
+    "void idBotWeaponInfoManager::ParseProjectileInfo(idParser &parser, projectileinfo_t &newProjectileInfo)": {
+      "body_hash": "53031289ee9a106513497c0020ed40ff",
+      "is_trivial": true
+    },
+    "static float rvmBotUtil::random()": {
+      "body_hash": "978072ea241f9535e37dd67c079311d8",
+      "is_trivial": true
+    },
+    "static float rvmBotUtil::crandom()": {
+      "body_hash": "31a72d4f0097cf97c8e964fe02e58c02",
+      "is_trivial": true
+    },
+    "bot_characteristic_t::bot_characteristic_t()": {
+      "body_hash": "97debd363737dcd065c707cb3331a518",
+      "is_trivial": true
+    },
+    "bot_character_t::bot_character_t()": {
+      "body_hash": "8b5dc7393e866272df198fced4241fd5",
+      "is_trivial": true
+    },
+    "bot_goalstate_t::bot_goalstate_t()": {
+      "body_hash": "73354020e6ca05aec472bcba38d145d0",
+      "is_trivial": true
+    },
+    "void bot_goalstate_t::Reset()": {
+      "body_hash": "fa1c3f3c69bb78ca09f94682c82f72d6",
+      "is_trivial": true
+    },
+    "bot_goalstate_t::~bot_goalstate_t()": {
+      "body_hash": "ad08718c8e8aad562ebb7694dcdaf776",
+      "is_trivial": true
+    },
+    "bool bot_goalstate_t::InUse()": {
+      "body_hash": "5e5e3e0c18879081f2f0dc2f42c840b2",
+      "is_trivial": true
+    },
+    "bot_goal_t::bot_goal_t()": {
+      "body_hash": "e4560bc67a330b5fa8e12cc2466d838f",
+      "is_trivial": true
+    },
+    "void bot_goal_t::Reset()": {
+      "body_hash": "883b17802e132aff64af89cd405394ef",
+      "is_trivial": true
+    },
+    "bot_input_t::bot_input_t()": {
+      "body_hash": "6ea6d418f6a3ac61888af040a60ce9f4",
+      "is_trivial": true
+    },
+    "void bot_input_t::Reset()": {
+      "body_hash": "9b96afa4a022fb2349b4c8ff87b77258",
+      "is_trivial": true
+    },
+    "bot_state_t::bot_state_t()": {
+      "body_hash": "4c932805f673bc5364d41490b6c99065",
+      "is_trivial": true
+    },
+    "void bot_state_t::Reset()": {
+      "body_hash": "613f95bcd302bf5e7db17dd063d5b29a",
+      "is_trivial": true
+    },
+    "bot_weaponinfo_t::bot_weaponinfo_t()": {
+      "body_hash": "69e0119b27aa2497d010708be2b0056d",
+      "is_trivial": true
+    },
+    "bot_weaponstate_t::bot_weaponstate_t()": {
+      "body_hash": "c3e988450c9336caab282eda759dc307",
+      "is_trivial": true
+    },
+    "void bot_weaponstate_t::Reset()": {
+      "body_hash": "7e054f924b49fea6e00f36b1666e1e69",
+      "is_trivial": true
+    },
+    "campspot_t::campspot_t()": {
+      "body_hash": "24e3ef288914c94951c75d8398599214",
+      "is_trivial": true
+    },
+    "void campspot_t::Reset()": {
+      "body_hash": "e34433c896e1cfd2c469ecd5b72874c5",
+      "is_trivial": true
+    },
+    "cvalue::cvalue()": {
+      "body_hash": "bf9137db9863fa3ba31247463b37e2a6",
+      "is_trivial": true
+    },
+    "fuzzyseperator_t::fuzzyseperator_t()": {
+      "body_hash": "646f0ffe4edf9c3473a95f9cd347120a",
+      "is_trivial": true
+    },
+    "void fuzzyseperator_t::Reset()": {
+      "body_hash": "c3292ff7bb2703e76d4d90dbec71508d",
+      "is_trivial": true
+    },
+    "itemconfig_t::itemconfig_t()": {
+      "body_hash": "05d00555e3c2f00f6ca8440e9912ae34",
+      "is_trivial": true
+    },
+    "void itemconfig_t::Reset()": {
+      "body_hash": "4b6d8642799b53f18b6de29c4c9abdac",
+      "is_trivial": true
+    },
+    "iteminfo_t::iteminfo_t()": {
+      "body_hash": "c929b399589b662cfedafb0505ffa8c2",
+      "is_trivial": true
+    },
+    "void iteminfo_t::Reset()": {
+      "body_hash": "ae592b9fdaf774ba0079cf8052f08d93",
+      "is_trivial": true
+    },
+    "levelitem_t::levelitem_t()": {
+      "body_hash": "d45fd5e75ace1cfcada9cd1994a7ddda",
+      "is_trivial": true
+    },
+    "void levelitem_t::Reset()": {
+      "body_hash": "aa477fb10882ecb591767d9a29509222",
+      "is_trivial": true
+    },
+    "maplocation_t::maplocation_t()": {
+      "body_hash": "e2813591b39e7969e82752e1a3cf6e27",
+      "is_trivial": true
+    },
+    "void maplocation_t::Reset()": {
+      "body_hash": "78a74e468474ffde7d80505a43b90106",
+      "is_trivial": true
+    },
+    "projectileinfo_t::projectileinfo_t()": {
+      "body_hash": "b2431d9a6fa44f3dce22d02330cc5190",
+      "is_trivial": true
+    },
+    "weightconfig_t::weightconfig_t()": {
+      "body_hash": "0e2319bebae0a490185dbbebb05ddd19",
+      "is_trivial": true
+    },
+    "void weightconfig_t::Reset()": {
+      "body_hash": "a7151bc698ade2a568f64c5b48bcdf03",
+      "is_trivial": true
+    },
+    "weight_t::weight_t()": {
+      "body_hash": "2ffb3cb992a59408197a5c4d34b7584f",
+      "is_trivial": true
+    },
+    "void weight_t::Reset()": {
+      "body_hash": "ed919ec65c2fa306e4488db55029d33f",
+      "is_trivial": true
+    },
+    "void iceBot::BotGetRandomPointNearPosition(idVec3 point, idVec3 &randomPoint, float radius)": {
+      "body_hash": "4b58f8e3f692b90d9e9f00982c1b7108",
+      "is_trivial": true
+    },
+    "float idBotCharacterStatsManager::Characteristic_BFloat(bot_character_t *ch, int index, float min, float max)": {
+      "body_hash": "edea765ee8a32fb9d98fcdcd3ff85bc9",
+      "is_trivial": false
     }
   }
 }

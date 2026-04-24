@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-=====================
-iceBot::state_BattleFight
-=====================
-*/
 stateResult_t iceBot::state_BattleFight( stateParms_t* parms )
 {
 	int		  areanum;

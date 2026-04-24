@@ -33,11 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-/*
-==============
-iceBot::BotInputToUserCommand
-==============
-*/
 void iceBot::BotInputToUserCommand( bot_input_t* bi, usercmd_t* ucmd, int time )
 {
 	idVec3 forward, right;
@@ -144,11 +139,6 @@ void iceBot::BotInputToUserCommand( bot_input_t* bi, usercmd_t* ucmd, int time )
 	}
 }
 
-/*
-================
-iceBot::ResetUcmd
-================
-*/
 void iceBot::Bot_ResetUcmd( usercmd_t& ucmd )
 {
 	ucmd.forwardmove = 0;
@@ -159,11 +149,6 @@ void iceBot::Bot_ResetUcmd( usercmd_t& ucmd )
 	memset( &ucmd.buttons, 0, sizeof( ucmd.buttons ) );
 }
 
-/*
-========================
-iceBot::BotInputFrame
-========================
-*/
 void iceBot::BotInputFrame( idUserCmdMgr& cmdMgr )
 {
 	usercmd_t botcmd = {}; //(usercmd_t&)cmdMgr.GetUserCmdForPlayer(entityNumber); // gameLocal.usercmds[entityNumber];

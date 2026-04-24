@@ -37,11 +37,6 @@ idCVar				   bot_weaponsfile( "bot_weaponsfile", "weapons.c", CVAR_GAME | CVAR_C
 
 idBotWeaponInfoManager botWeaponInfoManager;
 
-/*
-=========================
-idBotWeaponInfoManager::BotValidWeaponNumber
-=========================
-*/
 int					   idBotWeaponInfoManager::BotValidWeaponNumber( int weaponnum )
 {
 	if( weaponnum <= 0 || weaponnum > BOT_MAX_WEAPONS ) {
@@ -51,11 +46,6 @@ int					   idBotWeaponInfoManager::BotValidWeaponNumber( int weaponnum )
 	return true;
 }
 
-/*
-=========================
-idBotWeaponInfoManager::BotWeaponStateFromHandle
-=========================
-*/
 bot_weaponstate_t* idBotWeaponInfoManager::BotWeaponStateFromHandle( int handle )
 {
 	if( handle <= 0 || handle > MAX_CLIENTS ) {
@@ -65,11 +55,6 @@ bot_weaponstate_t* idBotWeaponInfoManager::BotWeaponStateFromHandle( int handle 
 	return &botweaponstates[handle];
 }
 
-/*
-========================
-idBotWeaponInfoManager::ParseProjectileInfo
-========================
-*/
 void idBotWeaponInfoManager::ParseProjectileInfo( idParser& parser, projectileinfo_t& newProjectileInfo )
 {
 	idToken token;
@@ -124,11 +109,6 @@ void idBotWeaponInfoManager::ParseProjectileInfo( idParser& parser, projectilein
 	}
 }
 
-/*
-========================
-idBotWeaponInfoManager::ParseWeaponInfo
-========================
-*/
 void idBotWeaponInfoManager::ParseWeaponInfo( idParser& parser, bot_weaponinfo_t& newWeaponInfo )
 {
 	idToken token;
@@ -177,11 +157,6 @@ void idBotWeaponInfoManager::ParseWeaponInfo( idParser& parser, bot_weaponinfo_t
 	}
 }
 
-/*
-========================
-idBotWeaponInfoManager::LoadWeaponConfig
-========================
-*/
 void idBotWeaponInfoManager::LoadWeaponConfig( char* filename )
 {
 	idParser parser;
@@ -245,11 +220,6 @@ void idBotWeaponInfoManager::LoadWeaponConfig( char* filename )
 	}
 }
 
-/*
-========================
-idBotWeaponInfoManager::Init
-========================
-*/
 void idBotWeaponInfoManager::Init()
 {
 	iceScopedLexerBaseFolder scopedBaseFolder( BOTFILESBASEFOLDER );
@@ -257,11 +227,6 @@ void idBotWeaponInfoManager::Init()
 	LoadWeaponConfig( ( char* )bot_weaponsfile.GetString() );
 }
 
-/*
-=====================
-WeaponWeightIndex
-=====================
-*/
 void idBotWeaponInfoManager::WeaponWeightIndex( weightconfig_t* wwc, bot_weaponstate_t* weaponState )
 {
 	for( int i = 0; i < BOT_MAX_WEAPONS; i++ ) {
@@ -269,11 +234,6 @@ void idBotWeaponInfoManager::WeaponWeightIndex( weightconfig_t* wwc, bot_weapons
 	}
 }
 
-/*
-=====================
-idBotWeaponInfoManager::WeaponWeightIndex
-=====================
-*/
 void idBotWeaponInfoManager::BotFreeWeaponWeights( int weaponstate )
 {
 	bot_weaponstate_t* ws;
@@ -287,11 +247,6 @@ void idBotWeaponInfoManager::BotFreeWeaponWeights( int weaponstate )
 	//	if (ws->weaponweightindex) FreeMemory(ws->weaponweightindex);
 }
 
-/*
-=====================
-BotLoadWeaponWeights
-=====================
-*/
 int idBotWeaponInfoManager::BotLoadWeaponWeights( int weaponstate, char* filename )
 {
 	bot_weaponstate_t* ws;
@@ -313,11 +268,6 @@ int idBotWeaponInfoManager::BotLoadWeaponWeights( int weaponstate, char* filenam
 	return BLERR_NOERROR;
 }
 
-/*
-=====================
-idBotWeaponInfoManager::BotGetWeaponInfo
-=====================
-*/
 void idBotWeaponInfoManager::BotGetWeaponInfo( int weaponstate, int weapon, bot_weaponinfo_t* weaponinfo )
 {
 	bot_weaponstate_t* ws;
@@ -333,11 +283,6 @@ void idBotWeaponInfoManager::BotGetWeaponInfo( int weaponstate, int weapon, bot_
 	*weaponinfo = this->weaponinfo[weapon];
 }
 
-/*
-=====================
-idBotWeaponInfoManager::BotChooseBestFightWeapon
-=====================
-*/
 int idBotWeaponInfoManager::BotChooseBestFightWeapon( int weaponstate, int* inventory )
 {
 	int				   i, index, bestweapon;
@@ -373,11 +318,6 @@ int idBotWeaponInfoManager::BotChooseBestFightWeapon( int weaponstate, int* inve
 	return bestweapon;
 }
 
-/*
-=====================
-idBotWeaponInfoManager::BotResetWeaponState
-=====================
-*/
 void idBotWeaponInfoManager::BotResetWeaponState( int weaponstate )
 {
 	weightconfig_t*	   weaponweightconfig;
@@ -396,11 +336,6 @@ void idBotWeaponInfoManager::BotResetWeaponState( int weaponstate )
 	memcpy( ws->weaponweightindex, weaponweightindex, sizeof( int ) * BOT_MAX_WEAPONS );
 }
 
-/*
-=====================
-idBotWeaponInfoManager::BotAllocWeaponState
-=====================
-*/
 int idBotWeaponInfoManager::BotAllocWeaponState()
 {
 	int i;
@@ -415,11 +350,6 @@ int idBotWeaponInfoManager::BotAllocWeaponState()
 	return 0;
 }
 
-/*
-=====================
-idBotWeaponInfoManager::BotAllocWeaponState
-=====================
-*/
 void idBotWeaponInfoManager::BotFreeWeaponState( int ws )
 {
 	botweaponstates[ws].inUse = false;

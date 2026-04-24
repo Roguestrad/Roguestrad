@@ -35,21 +35,11 @@ If you have questions concerning this license or the applicable additional terms
 
 idBotCharacterStatsManager botCharacterStatsManager;
 
-/*
-====================
-idBotCharacterStatsManager::idBotCharacterStatsManager
-====================
-*/
 idBotCharacterStatsManager::idBotCharacterStatsManager()
 {
 	default_char_profile = nullptr;
 }
 
-/*
-====================
-idBotCharacterStatsManager::Init
-====================
-*/
 void idBotCharacterStatsManager::Init()
 {
 	default_char_profile = BotLoadCharacterFromFile( "bots/default_c.c", 1 );
@@ -58,11 +48,6 @@ void idBotCharacterStatsManager::Init()
 	}
 }
 
-/*
-============================
-idBotCharacterStatsManager::AllocBotCharacter
-============================
-*/
 bot_character_t* idBotCharacterStatsManager::AllocBotCharacter()
 {
 	bot_character_t* ch = NULL;
@@ -93,21 +78,11 @@ bot_character_t* idBotCharacterStatsManager::AllocBotCharacter()
 	return ch;
 }
 
-/*
-============================
-idBotCharacterStatsManager::FreeCharacterFile
-============================
-*/
 void idBotCharacterStatsManager::FreeCharacterFile( bot_character_t* ch )
 {
 	ch->inUse = false;
 }
 
-/*
-============================
-idBotCharacterStatsManager::BotLoadCharacterFromFile
-============================
-*/
 bot_character_t* idBotCharacterStatsManager::BotLoadCharacterFromFile( const char* charfile, int skill )
 {
 	int				 indent, index;
@@ -236,11 +211,6 @@ bot_character_t* idBotCharacterStatsManager::BotLoadCharacterFromFile( const cha
 	return ch;
 }
 
-/*
-============================
-idBotCharacterStatsManager::CheckCharacteristicIndex
-============================
-*/
 int idBotCharacterStatsManager::CheckCharacteristicIndex( bot_character_t* ch, int index )
 {
 	if( index < 0 || index >= MAX_CHARACTERISTICS ) {
@@ -254,11 +224,6 @@ int idBotCharacterStatsManager::CheckCharacteristicIndex( bot_character_t* ch, i
 	return true;
 }
 
-/*
-============================
-idBotCharacterStatsManager::Characteristic_Float
-============================
-*/
 float idBotCharacterStatsManager::Characteristic_Float( bot_character_t* ch, int index )
 {
 	if( !ch ) {
@@ -282,11 +247,6 @@ float idBotCharacterStatsManager::Characteristic_Float( bot_character_t* ch, int
 	return 0;
 }
 
-/*
-============================
-Characteristic_String
-============================
-*/
 void idBotCharacterStatsManager::Characteristic_String( bot_character_t* ch, int index, char* buf, int size )
 {
 	// check if the index is in range
@@ -303,11 +263,6 @@ void idBotCharacterStatsManager::Characteristic_String( bot_character_t* ch, int
 	gameLocal.Error( "characteristic %d is not a string\n", index );
 }
 
-/*
-============================
-idBotCharacterStatsManager::Characteristic_BFloat
-============================
-*/
 float idBotCharacterStatsManager::Characteristic_BFloat( bot_character_t* ch, int index, float min, float max )
 {
 	float value;

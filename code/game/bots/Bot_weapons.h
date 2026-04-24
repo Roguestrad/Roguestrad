@@ -43,6 +43,7 @@ If you have questions concerning this license or the applicable additional terms
 #define DAMAGETYPE_VISIBLE 4 // damage to all entities visible to the projectile
 
 struct projectileinfo_t {
+	//! Initializes a new instance of the projectileinfo_t struct with default values.
 	projectileinfo_t()
 	{
 		name	   = "";
@@ -77,6 +78,7 @@ struct projectileinfo_t {
 };
 
 struct bot_weaponinfo_t {
+	//! Constructs a default bot weapon info object with all fields initialized to zero or empty values.
 	bot_weaponinfo_t()
 	{
 		valid		   = 0;
@@ -131,8 +133,10 @@ struct bot_weaponinfo_t {
 };
 
 struct bot_weaponstate_t {
+	//! Constructs a new bot weapon state and initializes it to default values.
 	bot_weaponstate_t() { Reset(); }
 
+	//! Resets the bot weapon state to its initial condition
 	void Reset()
 	{
 		inUse			   = false;
@@ -147,31 +151,61 @@ struct bot_weaponstate_t {
 	int				weaponweightindex[BOT_MAX_WEAPONS]; // weapon weight index
 };
 
-//
-// idBotWeaponInfoManager
-//
+/*!
+	\class idBotWeaponInfoManager
+	\brief Manages bot weapon information and configurations for different weapon states.
+
+	The idBotWeaponInfoManager class is responsible for handling weapon configuration data and state management for bot entities. It provides functionality to initialize weapon information, load and
+   parse weapon configurations from files, and manage different weapon states for bots. The class supports allocating and freeing weapon states, validating weapon numbers, and choosing the best fight
+   weapon based on inventory and weapon weights. It also handles parsing of weapon and projectile information from parsers, and provides mechanisms to reset weapon states and free allocated resources.
+   The class uses fuzzy weight management for determining optimal weapon selections and maintains a collection of weapon information structures indexed by weapon state and weapon number.
+
+*/
 class idBotWeaponInfoManager
 {
 public:
+	//! Initializes the bot weapon info manager by loading weapon configuration.
 	void Init();
 
+	//! Loads weapon weight configurations for a specified weapon state from a given file.
 	int	 BotLoadWeaponWeights( int weaponstate, char* filename );
+
+	//! Retrieves weapon information for a specified weapon state and weapon number.
 	void BotGetWeaponInfo( int weaponstate, int weapon, bot_weaponinfo_t* weaponinfo );
+
+	//! Selects the best fight weapon for a bot based on weapon state and inventory.
 	int	 BotChooseBestFightWeapon( int weaponstate, int* inventory );
+
+	//! Resets the bot weapon state to its initial configuration.
 	void BotResetWeaponState( int weaponstate );
+
+	//! Allocates and returns an available weapon state index for a bot.
 	int	 BotAllocWeaponState();
+
+	//! Frees a bot weapon state by marking it as unused and resetting its properties.
 	void BotFreeWeaponState( int ws );
 
 private:
+	//! Validates that a weapon number is within the acceptable range for bot weapons.
 	int				   BotValidWeaponNumber( int weaponnum );
+
+	//! Returns a pointer to the bot weapon state corresponding to the given handle.
 	bot_weaponstate_t* BotWeaponStateFromHandle( int handle );
+
+	//! Initializes the weapon weight index for each weapon in the bot's weapon state using fuzzy weight management.
 	void			   WeaponWeightIndex( weightconfig_t* wwc, bot_weaponstate_t* weaponState );
+
+	//! Frees the weapon weights for the specified bot weapon state
 	void			   BotFreeWeaponWeights( int weaponstate );
 
 private:
+	//! Loads bot weapon configuration data from a specified file.
 	void LoadWeaponConfig( char* filename );
 
+	//! Parses weapon information from a parser and populates a bot weapon info structure.
 	void ParseWeaponInfo( idParser& parser, bot_weaponinfo_t& newWeaponInfo );
+
+	//! Parses projectile information from a parser and stores it in the provided projectile info structure
 	void ParseProjectileInfo( idParser& parser, projectileinfo_t& newProjectileInfo );
 
 private:

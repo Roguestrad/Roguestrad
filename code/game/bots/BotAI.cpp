@@ -40,11 +40,6 @@ int	 iceBot::WP_SHOTGUN			= -1;
 int	 iceBot::WP_PLASMAGUN		= -1;
 int	 iceBot::WP_ROCKET_LAUNCHER = -1;
 
-/*
-=========================
-iceBot::BotIsDead
-=========================
-*/
 bool iceBot::BotIsDead( bot_state_t* bs )
 {
 	idPlayer* player = gameLocal.GetClientByNum( bs->client );
@@ -55,11 +50,6 @@ bool iceBot::BotIsDead( bot_state_t* bs )
 	return false;
 }
 
-/*
-==================
-iceBot::BotReachedGoal
-==================
-*/
 bool iceBot::BotReachedGoal( bot_state_t* bs, bot_goal_t* goal )
 {
 	if( goal->flags & GFL_ITEM ) {
@@ -83,11 +73,6 @@ bool iceBot::BotReachedGoal( bot_state_t* bs, bot_goal_t* goal )
 	return false;
 }
 
-/*
-==================
-iceBot::BotChooseWeapon
-==================
-*/
 void iceBot::BotChooseWeapon( bot_state_t* bs )
 {
 	int newweaponnum;
@@ -109,11 +94,6 @@ void iceBot::BotChooseWeapon( bot_state_t* bs )
 	//}
 }
 
-/*
-==================
-iceBot::BotGetItemLongTermGoal
-==================
-*/
 int iceBot::BotGetItemLongTermGoal( bot_state_t* bs, int tfl, bot_goal_t* goal )
 {
 	// if the bot has no goal
@@ -182,11 +162,6 @@ int iceBot::BotGetItemLongTermGoal( bot_state_t* bs, int tfl, bot_goal_t* goal )
 	return true;
 }
 
-/*
-==================
-iceBot::EntityIsDead
-==================
-*/
 bool iceBot::EntityIsDead( idEntity* entity )
 {
 	{
@@ -198,13 +173,6 @@ bool iceBot::EntityIsDead( idEntity* entity )
 	return false;
 }
 
-/*
-==================
-BotEntityVisibleTest
-
-returns visibility in the range [0, 1] taking fog and water surfaces into account
-==================
-*/
 float iceBot::BotEntityVisibleTest( int viewer, idVec3 eye, idAngles viewangles, float fov, int ent, bool allowHeightTest )
 {
 	int		  i, contents_mask, passent, hitent, infog, inwater, otherinfog, pc;
@@ -338,21 +306,11 @@ float iceBot::BotEntityVisibleTest( int viewer, idVec3 eye, idAngles viewangles,
 	return bestvis;
 }
 
-/*
-==================
-iceBot::BotEntityVisible
-==================
-*/
 float iceBot::BotEntityVisible( int viewer, idVec3 eye, idAngles viewangles, float fov, int ent )
 {
 	return BotEntityVisibleTest( viewer, eye, viewangles, fov, ent, true );
 }
 
-/*
-==================
-iceBot::BotUpdateBattleInventory
-==================
-*/
 void iceBot::BotUpdateBattleInventory( bot_state_t* bs, int enemy )
 {
 	idVec3	  dir;
@@ -367,11 +325,6 @@ void iceBot::BotUpdateBattleInventory( bot_state_t* bs, int enemy )
 	// FIXME: add num visible enemies and num visible team mates to the inventory
 }
 
-/*
-==================
-iceBot::BotAggression
-==================
-*/
 float iceBot::BotAggression( bot_state_t* bs )
 {
 	// if the bot has quad
@@ -433,11 +386,6 @@ float iceBot::BotAggression( bot_state_t* bs )
 	return 0;
 }
 
-/*
-==================
-iceBot::BotWantsToRetreat
-==================
-*/
 int iceBot::BotWantsToRetreat( bot_state_t* bs )
 {
 	if( BotAggression( bs ) < 50 ) {
@@ -446,11 +394,6 @@ int iceBot::BotWantsToRetreat( bot_state_t* bs )
 	return false;
 }
 
-/*
-==================
-iceBot::BotBattleUseItems
-==================
-*/
 void iceBot::BotBattleUseItems( bot_state_t* bs )
 {
 	if( bs->inventory[INVENTORY_HEALTH] < 40 ) {
@@ -466,11 +409,6 @@ void iceBot::BotBattleUseItems( bot_state_t* bs )
 	}
 }
 
-/*
-==================
-iceBot::BotFindEnemy
-==================
-*/
 int iceBot::BotFindEnemy( bot_state_t* bs, int curenemy )
 {
 	int		  i, healthdecrease;
@@ -625,22 +563,12 @@ int iceBot::BotFindEnemy( bot_state_t* bs, int curenemy )
 	return false;
 }
 
-/*
-==================
-iceBot::BotMoveToGoal
-==================
-*/
 void iceBot::BotMoveToGoal( bot_state_t* bs, bot_goal_t* goal )
 {
 	bs->currentGoal			 = *goal;
 	bs->currentGoal.framenum = gameLocal.framenum;
 }
 
-/*
-==================
-iceBot::BotAimAtEnemy
-==================
-*/
 void iceBot::BotAimAtEnemy( bot_state_t* bs )
 {
 	int				 i, enemyvisible;
@@ -991,11 +919,6 @@ void iceBot::BotAimAtEnemy( bot_state_t* bs )
 	// jmarshall end
 }
 
-/*
-==================
-iceBot::BotWantsToChase
-==================
-*/
 bool iceBot::BotWantsToChase( bot_state_t* bs )
 {
 	if( BotAggression( bs ) > 50 ) {
@@ -1004,11 +927,6 @@ bool iceBot::BotWantsToChase( bot_state_t* bs )
 	return false;
 }
 
-/*
-==================
-iceBot::BotNearbyGoal
-==================
-*/
 int iceBot::BotNearbyGoal( bot_state_t* bs, int tfl, bot_goal_t* ltg, float range )
 {
 	int ret;
@@ -1033,11 +951,6 @@ int iceBot::BotNearbyGoal( bot_state_t* bs, int tfl, bot_goal_t* ltg, float rang
 	return ret;
 }
 
-/*
-=======================
-iceBot::BotGetRandomPointNearPosition
-=======================
-*/
 void iceBot::BotGetRandomPointNearPosition( idVec3 point, idVec3& randomPoint, float radius )
 {
 	idAAS*			 aas  = gameLocal.GetBotAAS();
@@ -1053,11 +966,6 @@ void iceBot::BotGetRandomPointNearPosition( idVec3 point, idVec3& randomPoint, f
 	randomPoint = file->GetVertex( edge.vertexNum[0] );
 }
 
-/*
-=======================
-iceBot::BotMoveInRandomDirection
-=======================
-*/
 int iceBot::BotMoveInRandomDirection( bot_state_t* bs )
 {
 	iceBot* ent = gameLocal.entities[bs->client]->Cast<iceBot>();
@@ -1084,11 +992,6 @@ int iceBot::BotMoveInRandomDirection( bot_state_t* bs )
 	return 0;
 }
 
-/*
-============
-iceBot::ShowHideArea
-============
-*/
 void iceBot::MoveToCoverPoint()
 {
 	int			  areaNum, numObstacles;
@@ -1111,11 +1014,6 @@ void iceBot::MoveToCoverPoint()
 	}
 }
 
-/*
-==================
-iceBot::BotCheckAttack
-==================
-*/
 void iceBot::BotCheckAttack( bot_state_t* bs )
 {
 	float			 points, reactiontime, fov, firethrottle;

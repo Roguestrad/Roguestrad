@@ -34,44 +34,87 @@ If you have questions concerning this license or the applicable additional terms
 #define MAX_WEIGHT_FILES	128
 #define MAX_FUZZY_OPERATORS 8192
 
+/*!
+	\class idBotFuzzyWeightManager
+	\brief Manages fuzzy weight configurations and calculations for bot behavior.
+
+	The idBotFuzzyWeightManager class provides functionality for initializing, configuring, and computing fuzzy weights used in bot decision-making. It handles parsing weight configuration files,
+   managing fuzzy separator structures, and performing operations like weight scaling, evolution, and interbreeding. The class supports both basic fuzzy weight calculations and specialized
+   computations for undecided states. It also includes memory management functions for allocating and freeing fuzzy separator structures and weight configurations. The manager is designed to work with
+   inventory-based inputs to determine appropriate fuzzy weights for various bot behaviors.
+
+*/
 class idBotFuzzyWeightManager
 {
 public:
-	// Init the fuzzy weight manager.
+	//! Initializes the fuzzy weight manager by clearing the fuzzy separators array.
 	void			Init();
 
-	// Parses a weight config file.
+	//! Parses a weight configuration file and returns a pointer to the parsed configuration
 	weightconfig_t* ReadWeightConfig( char* filename );
 
+	//! Initializes the weight file list for the bot fuzzy weight manager.
 	void			BotShutdownWeights();
 
-	// Fuzzy Weight simulation functions.
+	//! Finds the index of a fuzzy weight by its name in the weight configuration
 	int				FindFuzzyWeight( weightconfig_t* wc, char* name );
+
+	//! Computes a fuzzy weight value based on inventory and weight configuration.
 	float			FuzzyWeight( int* inventory, weightconfig_t* wc, int weightnum );
+
+	//! Calculates a fuzzy weight value for an undecided state based on inventory and weight configuration.
 	float			FuzzyWeightUndecided( int* inventory, weightconfig_t* wc, int weightnum );
+
+	//! Recursively evolves a fuzzy separator by applying random mutations to its weight within defined bounds.
 	void			EvolveFuzzySeperator_r( fuzzyseperator_t* fs );
+
+	//! Evolve the fuzzy separator configuration for each weight in the provided configuration.
 	void			EvolveWeightConfig( weightconfig_t* config );
+
+	//! Scales the fuzzy weights for a specified configuration by a given factor
 	void			ScaleWeight( weightconfig_t* config, char* name, float scale );
+
+	//! Scales the fuzzy balance range for a given weight configuration by a specified factor.
 	void			ScaleFuzzyBalanceRange( weightconfig_t* config, float scale );
+
+	//! Interbreeds two fuzzy weight configurations into a third configuration.
 	void			InterbreedWeightConfigs( weightconfig_t* config1, weightconfig_t* config2, weightconfig_t* configout );
+
+	//! Frees the memory allocated for a weight configuration object.
 	void			FreeWeightConfig( weightconfig_t* config );
 
 private:
+	//! Allocates and returns a new fuzzy weight structure from the manager's pool.
 	fuzzyseperator_t* AllocFuzzyWeight();
+
+	//! Reads a floating-point value from the parser, handling negative values by setting them to zero.
 	bool			  ReadValue( idParser& source, float* value );
+
+	//! Reads a fuzzy weight configuration from a parser source and stores it in the provided fuzzy separator structure.
 	int				  ReadFuzzyWeight( idParser& source, fuzzyseperator_t* fs );
 
+	//! Combines two fuzzy separator configurations into a third configuration through recursive interbreeding.
 	int				  InterbreedFuzzySeperator_r( fuzzyseperator_t* fs1, fuzzyseperator_t* fs2, fuzzyseperator_t* fsout );
 
+	//! Parses fuzzy separator definitions from a parser source and returns a linked list of fuzzy separator structures.
 	fuzzyseperator_t* ReadFuzzySeperators_r( idParser& source );
 
+	//! Frees the memory associated with a weight configuration's separators
 	void			  FreeWeightConfig2( weightconfig_t* config );
+
+	//! Frees all fuzzy separators in the given fuzzy separator tree.
 	void			  FreeFuzzySeperators_r( fuzzyseperator_t* fs );
 
+	//! Scales the weight range of balance fuzzy separators recursively
 	void			  ScaleFuzzySeperatorBalanceRange_r( fuzzyseperator_t* fs, float scale );
 
+	//! Recursively scales fuzzy separator weights by a given factor while maintaining bounds.
 	void			  ScaleFuzzySeperator_r( fuzzyseperator_t* fs, float scale );
+
+	//! Recursively computes a fuzzy weight based on inventory values and fuzzy logic separators.
 	float			  FuzzyWeight_r( int* inventory, fuzzyseperator_t* fs );
+
+	//! Computes a fuzzy weight for an undecided state based on inventory and fuzzy separator values.
 	float			  FuzzyWeightUndecided_r( int* inventory, fuzzyseperator_t* fs );
 
 	weightconfig_t	  weightFileList[MAX_WEIGHT_FILES];

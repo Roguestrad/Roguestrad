@@ -35,21 +35,11 @@ If you have questions concerning this license or the applicable additional terms
 
 idBotFuzzyWeightManager botFuzzyWeightManager;
 
-/*
-========================
-idBotFuzzyWeightManager::Init
-========================
-*/
 void					idBotFuzzyWeightManager::Init()
 {
 	memset( &fuzzyseperators[0], 0, sizeof( fuzzyseperators ) );
 }
 
-/*
-========================
-idBotFuzzyWeightManager::AllocFuzzyWeight
-========================
-*/
 fuzzyseperator_t* idBotFuzzyWeightManager::AllocFuzzyWeight()
 {
 	for( int i = 0; i < MAX_FUZZY_OPERATORS; i++ ) {
@@ -64,11 +54,6 @@ fuzzyseperator_t* idBotFuzzyWeightManager::AllocFuzzyWeight()
 	return NULL;
 }
 
-/*
-========================
-idBotFuzzyWeightManager::ReadValue
-========================
-*/
 bool idBotFuzzyWeightManager::ReadValue( idParser& source, float* value )
 {
 	idToken token;
@@ -94,11 +79,6 @@ bool idBotFuzzyWeightManager::ReadValue( idParser& source, float* value )
 	return true;
 }
 
-/*
-===================
-idBotFuzzyWeightManager::ReadFuzzyWeight
-===================
-*/
 int idBotFuzzyWeightManager::ReadFuzzyWeight( idParser& source, fuzzyseperator_t* fs )
 {
 	if( source.CheckTokenString( "balance" ) ) {
@@ -148,11 +128,6 @@ int idBotFuzzyWeightManager::ReadFuzzyWeight( idParser& source, fuzzyseperator_t
 	return true;
 }
 
-/*
-===================
-idBotFuzzyWeightManager::FreeFuzzySeperators_r
-===================
-*/
 void idBotFuzzyWeightManager::FreeFuzzySeperators_r( fuzzyseperator_t* fs )
 {
 	if( !fs ) {
@@ -168,11 +143,6 @@ void idBotFuzzyWeightManager::FreeFuzzySeperators_r( fuzzyseperator_t* fs )
 	fs->inUse = false;
 }
 
-/*
-===================
-FreeWeightConfig2
-===================
-*/
 void idBotFuzzyWeightManager::FreeWeightConfig2( weightconfig_t* config )
 {
 	int i;
@@ -186,11 +156,6 @@ void idBotFuzzyWeightManager::FreeWeightConfig2( weightconfig_t* config )
 	}
 }
 
-/*
-===================
-idBotFuzzyWeightManager::FreeWeightConfig
-===================
-*/
 void idBotFuzzyWeightManager::FreeWeightConfig( weightconfig_t* config )
 {
 	// if (!LibVarGetValue("bot_reloadcharacters"))
@@ -199,11 +164,6 @@ void idBotFuzzyWeightManager::FreeWeightConfig( weightconfig_t* config )
 	FreeWeightConfig2( config );
 }
 
-/*
-===================
-idBotFuzzyWeightManager::ReadFuzzySeperators_r
-===================
-*/
 fuzzyseperator_t* idBotFuzzyWeightManager::ReadFuzzySeperators_r( idParser& source )
 {
 	int				  newindent, index, founddefault;
@@ -331,11 +291,6 @@ fuzzyseperator_t* idBotFuzzyWeightManager::ReadFuzzySeperators_r( idParser& sour
 	return firstfs;
 }
 
-/*
-=====================
-idBotFuzzyWeightManager::ReadWeightConfig
-=====================
-*/
 weightconfig_t* idBotFuzzyWeightManager::ReadWeightConfig( char* filename )
 {
 	int				  newindent, avail = 0, n;
@@ -452,11 +407,6 @@ weightconfig_t* idBotFuzzyWeightManager::ReadWeightConfig( char* filename )
 	return config;
 }
 
-/*
-==================
-idBotFuzzyWeightManager::FindFuzzyWeight
-==================
-*/
 int idBotFuzzyWeightManager::FindFuzzyWeight( weightconfig_t* wc, char* name )
 {
 	int i;
@@ -469,11 +419,6 @@ int idBotFuzzyWeightManager::FindFuzzyWeight( weightconfig_t* wc, char* name )
 	return -1;
 }
 
-/*
-==================
-idBotFuzzyWeightManager::FuzzyWeight_r
-==================
-*/
 float idBotFuzzyWeightManager::FuzzyWeight_r( int* inventory, fuzzyseperator_t* fs )
 {
 	float scale, w1, w2;
@@ -511,11 +456,6 @@ float idBotFuzzyWeightManager::FuzzyWeight_r( int* inventory, fuzzyseperator_t* 
 	return fs->weight;
 }
 
-/*
-============================
-idBotFuzzyWeightManager::FuzzyWeightUndecided_r
-============================
-*/
 float idBotFuzzyWeightManager::FuzzyWeightUndecided_r( int* inventory, fuzzyseperator_t* fs )
 {
 	float scale, w1, w2;
@@ -553,31 +493,16 @@ float idBotFuzzyWeightManager::FuzzyWeightUndecided_r( int* inventory, fuzzysepe
 	return fs->weight;
 }
 
-/*
-=================
-idBotFuzzyWeightManager::FuzzyWeight
-=================
-*/
 float idBotFuzzyWeightManager::FuzzyWeight( int* inventory, weightconfig_t* wc, int weightnum )
 {
 	return FuzzyWeight_r( inventory, wc->weights[weightnum].firstseperator );
 }
 
-/*
-=================
-idBotFuzzyWeightManager::FuzzyWeightUndecided
-=================
-*/
 float idBotFuzzyWeightManager::FuzzyWeightUndecided( int* inventory, weightconfig_t* wc, int weightnum )
 {
 	return FuzzyWeightUndecided_r( inventory, wc->weights[weightnum].firstseperator );
 }
 
-/*
-====================
-idBotFuzzyWeightManager::EvolveFuzzySeperator_r
-====================
-*/
 void idBotFuzzyWeightManager::EvolveFuzzySeperator_r( fuzzyseperator_t* fs )
 {
 	if( fs->child ) {
@@ -602,11 +527,6 @@ void idBotFuzzyWeightManager::EvolveFuzzySeperator_r( fuzzyseperator_t* fs )
 	}
 }
 
-/*
-====================
-idBotFuzzyWeightManager::EvolveWeightConfig
-====================
-*/
 void idBotFuzzyWeightManager::EvolveWeightConfig( weightconfig_t* config )
 {
 	int i;
@@ -616,11 +536,6 @@ void idBotFuzzyWeightManager::EvolveWeightConfig( weightconfig_t* config )
 	}
 }
 
-/*
-====================
-idBotFuzzyWeightManager::ScaleWeight
-====================
-*/
 void idBotFuzzyWeightManager::ScaleFuzzySeperator_r( fuzzyseperator_t* fs, float scale )
 {
 	if( fs->child ) {
@@ -640,11 +555,6 @@ void idBotFuzzyWeightManager::ScaleFuzzySeperator_r( fuzzyseperator_t* fs, float
 	}
 }
 
-/*
-====================
-idBotFuzzyWeightManager::ScaleWeight
-====================
-*/
 void idBotFuzzyWeightManager::ScaleWeight( weightconfig_t* config, char* name, float scale )
 {
 	int i;
@@ -662,11 +572,6 @@ void idBotFuzzyWeightManager::ScaleWeight( weightconfig_t* config, char* name, f
 	}
 }
 
-/*
-====================
-idBotFuzzyWeightManager::ScaleFuzzySeperatorBalanceRange_r
-====================
-*/
 void idBotFuzzyWeightManager::ScaleFuzzySeperatorBalanceRange_r( fuzzyseperator_t* fs, float scale )
 {
 	if( fs->child ) {
@@ -685,11 +590,6 @@ void idBotFuzzyWeightManager::ScaleFuzzySeperatorBalanceRange_r( fuzzyseperator_
 	}
 }
 
-/*
-====================
-idBotFuzzyWeightManager::ScaleFuzzyBalanceRange
-====================
-*/
 void idBotFuzzyWeightManager::ScaleFuzzyBalanceRange( weightconfig_t* config, float scale )
 {
 	int i;
@@ -704,11 +604,6 @@ void idBotFuzzyWeightManager::ScaleFuzzyBalanceRange( weightconfig_t* config, fl
 	}
 }
 
-/*
-====================
-idBotFuzzyWeightManager::InterbreedFuzzySeperator_r
-====================
-*/
 int idBotFuzzyWeightManager::InterbreedFuzzySeperator_r( fuzzyseperator_t* fs1, fuzzyseperator_t* fs2, fuzzyseperator_t* fsout )
 {
 	if( fs1->child ) {
@@ -744,11 +639,6 @@ int idBotFuzzyWeightManager::InterbreedFuzzySeperator_r( fuzzyseperator_t* fs1, 
 	return true;
 }
 
-/*
-====================
-idBotFuzzyWeightManager::InterbreedWeightConfigs
-====================
-*/
 void idBotFuzzyWeightManager::InterbreedWeightConfigs( weightconfig_t* config1, weightconfig_t* config2, weightconfig_t* configout )
 {
 	int i;
@@ -763,11 +653,6 @@ void idBotFuzzyWeightManager::InterbreedWeightConfigs( weightconfig_t* config1, 
 	}
 }
 
-/*
-=======================
-idBotFuzzyWeightManager::BotShutdownWeights
-=======================
-*/
 void idBotFuzzyWeightManager::BotShutdownWeights()
 {
 	int i;
