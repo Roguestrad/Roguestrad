@@ -15,6 +15,16 @@ Roguestrad is a RBDOOM-3-BFG fork for indie standalone development.
   - `/engine/framework/`   : Core framework and runtime
   - `/engine/imgui/`       : ImGui integration
   - `/engine/renderer/`    : Rendering system
+    - `/engine/renderer/backend/`          : Executes render cmdlist with either D3D12 or Vulkan
+      - `/engine/renderer/backend/passes/` : Special render passes like TAA
+    - `/engine/renderer/frontend/`         : idRenderSystem delegates most calls to frontend which handles resource loading, occlusion culling and builds a cmdlist for the renderer backend of what is to draw
+      - `/engine/renderer/frontend/fonts/`  : .dat and .ttf loading
+      - `/engine/renderer/frontend/images/` : Image loading and caching to .bimage files
+        - `/engine/renderer/frontend/images/baked/`    : Header dumps of preprocessed image files
+        - `/engine/renderer/frontend/images/color/`    : Color conversion tools
+        - `/engine/renderer/frontend/images/encoding/` : BC1-6 encoding / decoding
+      - `/engine/renderer/frontend/models/` : Model support for ase, lwo, obj, .md3, .md5, .gltf
+    - `/engine/renderer/NVRHI/`            : NVRHI specific implementations of mostly the renderer backend
   - `/engine/shaders/`     : Engine shader sources
   - `/engine/sound/`       : Audio system (OpenAL/XAudio2/stub)
   - `/engine/stub/`        : Stubbed subsystems
