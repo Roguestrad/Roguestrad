@@ -76,6 +76,8 @@ typedef struct pathNode_s {
 	struct pathNode_s* parent;
 	struct pathNode_s* children[2];
 	struct pathNode_s* next;
+
+	//! Initializes all member variables of the pathNode_s structure to their default values.
 	void			   Init();
 } pathNode_t;
 
@@ -92,11 +94,7 @@ void pathNode_s::Init()
 
 idBlockAlloc<pathNode_t, 128> pathNodeAllocator;
 
-/*
-============
-LineIntersectsPath
-============
-*/
+//! Checks if a line segment intersects with a path defined by a sequence of nodes.
 bool						  LineIntersectsPath( const idVec2& start, const idVec2& end, const pathNode_t* node )
 {
 	float  d0, d1, d2, d3;
@@ -120,11 +118,7 @@ bool						  LineIntersectsPath( const idVec2& start, const idVec2& end, const pa
 	return false;
 }
 
-/*
-============
-PointInsideObstacle
-============
-*/
+//! Checks if a point is inside any obstacle and returns the index of the first matching obstacle, or -1 if none are found.
 int PointInsideObstacle( const obstacle_t* obstacles, const int numObstacles, const idVec2& point )
 {
 	int i;
@@ -145,10 +139,18 @@ int PointInsideObstacle( const obstacle_t* obstacles, const int numObstacles, co
 	return -1;
 }
 
-/*
-============
-GetPointOutsideObstacles
-============
+/*!
+	\brief Moves a point outside of obstacles by finding the closest valid position outside the obstacle structure.
+
+	This function attempts to find a valid point outside of any obstacle that contains the input point. It first checks if the point is inside an obstacle and, if so, tries to push it out along the
+   direction of the closest obstacle edge. If that fails, it performs a more complex search using a queue-based approach to explore neighboring obstacles and find a valid point outside the obstacle
+   structure. It updates the point parameter to the new position and sets the obstacle and edgeNum parameters to indicate which obstacle and edge were used to find the new point.
+
+	\param obstacles Array of obstacle structures to check against
+	\param numObstacles Number of obstacles in the obstacles array
+	\param point Input point to move outside obstacles, updated to the new valid position
+	\param obstacle Optional pointer to store the index of the obstacle used to find the new point
+	\param edgeNum Optional pointer to store the edge number used to find the new point
 */
 void GetPointOutsideObstacles( const obstacle_t* obstacles, const int numObstacles, idVec2& point, int* obstacle, int* edgeNum )
 {
@@ -269,10 +271,22 @@ void GetPointOutsideObstacles( const obstacle_t* obstacles, const int numObstacl
 	gameLocal.Warning( "GetPointOutsideObstacles: no valid point found" );
 }
 
-/*
-============
-GetFirstBlockingObstacle
-============
+/*!
+	\brief Checks if a movement delta intersects with any obstacles and returns the closest blocking obstacle.
+
+	This function determines if a movement vector from a starting position intersects with any of the provided obstacles. It tests each obstacle for intersection with the movement ray and tracks the
+   closest intersection that blocks progress. The function skips a specified obstacle during testing and returns information about the first obstacle that blocks the movement path. The movement is
+   defined by a start position and a delta vector. Intersection tests are performed using the obstacle's winding data and ray intersection methods.
+
+	\param obstacles Array of obstacles to test against
+	\param numObstacles Number of obstacles in the obstacles array
+	\param skipObstacle Index of obstacle to skip during testing
+	\param startPos Starting position for the movement ray
+	\param delta Movement delta vector defining direction and distance
+	\param blockingScale Output parameter for the scale of the blocking intersection
+	\param blockingObstacle Output parameter for the index of the blocking obstacle
+	\param blockingEdgeNum Output parameter for the edge number of the blocking intersection
+	\return True if an obstacle blocks the movement path, false otherwise.
 */
 bool GetFirstBlockingObstacle(
 	const obstacle_t* obstacles, int numObstacles, int skipObstacle, const idVec2& startPos, const idVec2& delta, float& blockingScale, int& blockingObstacle, int& blockingEdgeNum )
@@ -308,10 +322,23 @@ bool GetFirstBlockingObstacle(
 	return ( blockingScale < 1.0f );
 }
 
-/*
-============
-GetObstacles
-============
+/*!
+	\brief Fills an array of obstacle structures for navigation purposes based on physics and AAS data
+
+	This function collects and processes dynamic obstacles that may block movement between two points. It gathers clip models that touch the specified bounds, checks if they are valid obstacles (such
+   as actors or moveables), and excludes those that can be stepped over or are irrelevant. For each valid obstacle, it creates a 2D winding representation that can be used for collision detection.
+   Additionally, it adds obstacles representing AAS walls in the specified area. The function returns the number of obstacles found and stored in the output array.
+
+	\param physics Physics object that defines the movement constraints
+	\param aas AAS navigation data for wall obstacle creation
+	\param ignore Entity to ignore during obstacle detection
+	\param areaNum AAS area number for wall obstacle detection
+	\param startPos Starting position for obstacle detection
+	\param seekPos Target position for obstacle detection
+	\param obstacles Output array to fill with obstacle data
+	\param maxObstacles Maximum number of obstacles the array can hold
+	\param clipBounds Bounds used to determine which clip models to consider
+	\return Number of obstacles filled into the obstacles array
 */
 int GetObstacles(
 	const idPhysics* physics, const idAAS* aas, const idEntity* ignore, int areaNum, const idVec3& startPos, const idVec3& seekPos, obstacle_t* obstacles, int maxObstacles, idBounds& clipBounds )
@@ -490,11 +517,7 @@ int GetObstacles(
 	return numObstacles;
 }
 
-/*
-============
-FreePathTree_r
-============
-*/
+//! Recursively frees all nodes in a path tree starting from the given node.
 void FreePathTree_r( pathNode_t* node )
 {
 	if( node->children[0] ) {
@@ -506,11 +529,7 @@ void FreePathTree_r( pathNode_t* node )
 	pathNodeAllocator.Free( node );
 }
 
-/*
-============
-DrawPathTree
-============
-*/
+//! Draws a visual representation of a path tree structure using debug arrows.
 void DrawPathTree( const pathNode_t* root, const float height )
 {
 	int				  i;
@@ -531,10 +550,18 @@ void DrawPathTree( const pathNode_t* root, const float height )
 	}
 }
 
-/*
-============
-GetPathNodeDelta
-============
+/*!
+	\brief Computes and sets the delta vector for a path node based on obstacle boundaries and goal position
+
+	This function calculates the movement delta for a path node by determining the closest edge of an obstacle winding. If the node is not blocked, it also checks if the current edge faces the seek
+   position and whether the line to the seek position intersects the current path. If so, it updates the delta to point directly towards the seek position. The function also checks for overlapping
+   edges in the path to avoid invalid routes. Returns true if the node is valid and can be used for pathfinding, false otherwise.
+
+	\param node Pointer to the path node being processed
+	\param obstacles Array of obstacle definitions containing winding data
+	\param seekPos The target position to seek towards
+	\param blocked Flag indicating if the current node is blocked by an obstacle
+	\return True if the node delta was successfully computed and the node is valid for pathfinding, false if the node would create an invalid path due to overlapping edges
 */
 bool GetPathNodeDelta( pathNode_t* node, const obstacle_t* obstacles, const idVec2& seekPos, bool blocked )
 {
@@ -594,10 +621,20 @@ bool GetPathNodeDelta( pathNode_t* node, const obstacle_t* obstacles, const idVe
 	return true;
 }
 
-/*
-============
-BuildPathTree
-============
+/*!
+	\brief Builds a path tree for obstacle avoidance navigation from a start position to a seek position.
+
+	This function constructs a tree of path nodes that represent possible paths from the start position to the seek position, taking into account obstacles in the environment. It uses a queue-based
+   approach to explore potential paths, dynamically branching when obstacles are encountered. The function returns the root node of the constructed path tree, which can be used to determine a valid
+   path or to continue pathfinding.
+
+	\param obstacles Array of obstacle data structures defining the environment's obstacles
+	\param numObstacles Number of obstacles in the obstacles array
+	\param clipBounds Bounds defining the clipping area within which the path must stay
+	\param startPos Starting position for the pathfinding operation
+	\param seekPos Target position to navigate towards
+	\param path Output parameter containing the final obstacle path information
+	\return Pointer to the root node of the constructed path tree
 */
 pathNode_t* BuildPathTree( const obstacle_t* obstacles, int numObstacles, const idBounds& clipBounds, const idVec2& startPos, const idVec2& seekPos, obstaclePath_t& path )
 {
@@ -698,11 +735,7 @@ pathNode_t* BuildPathTree( const obstacle_t* obstacles, int numObstacles, const 
 	return root;
 }
 
-/*
-============
-PrunePathTree
-============
-*/
+//! Prunes a path tree by removing branches that do not lead to the nearest node from the seek position.
 void PrunePathTree( pathNode_t* root, const idVec2& seekPos )
 {
 	int			i;
@@ -749,10 +782,19 @@ void PrunePathTree( pathNode_t* root, const idVec2& seekPos )
 	}
 }
 
-/*
-============
-OptimizePath
-============
+/*!
+	\brief Optimizes a path by finding shortcut points between nodes while avoiding obstacles
+
+	This function takes a path defined by a root node and a leaf node, along with a list of obstacles, and computes an optimized path that shortcuts when possible. It iterates through the path nodes,
+   checking for potential shortcuts between current and next nodes. For each shortcut, it verifies that the path between the nodes does not intersect with any obstacles. The optimization process
+   maintains the original starting point and adds shortcut points to reduce the overall path length.
+
+	\param root Starting node of the path to optimize
+	\param leafNode Ending node of the path to optimize
+	\param obstacles Array of obstacles that may block the path
+	\param numObstacles Number of obstacles in the obstacles array
+	\param optimizedPath Output array where the optimized path points are stored
+	\return Number of points in the optimized path
 */
 int OptimizePath( const pathNode_t* root, const pathNode_t* leafNode, const obstacle_t* obstacles, int numObstacles, idVec2 optimizedPath[MAX_OBSTACLE_PATH] )
 {
@@ -807,11 +849,7 @@ int OptimizePath( const pathNode_t* root, const pathNode_t* leafNode, const obst
 	return numPathPoints;
 }
 
-/*
-============
-PathLength
-============
-*/
+//! Calculates the total length of a path while adding a penalty if the path does not align with the current direction.
 float PathLength( idVec2 optimizedPath[MAX_OBSTACLE_PATH], int numPathPoints, const idVec2& curDir )
 {
 	int	  i;
@@ -830,12 +868,20 @@ float PathLength( idVec2 optimizedPath[MAX_OBSTACLE_PATH], int numPathPoints, co
 	return pathLength;
 }
 
-/*
-============
-FindOptimalPath
+/*!
+	\brief Finds an optimal path around obstacles from a root node toward a goal, updating the seek position with the next best point.
 
-  Returns true if there is a path all the way to the goal.
-============
+	This function performs a pathfinding operation to find the optimal path from a given root node to a goal while avoiding obstacles. It evaluates multiple potential paths and selects the one with
+   the shortest length. The function updates the seekPos parameter with the next point in the calculated path. The path is optimized using the OptimizePath and PathLength helper functions and
+   considers the current direction vector for path evaluation. The function returns true if a path to the goal exists, and false otherwise.
+
+	\param root The starting node for the pathfinding operation
+	\param obstacles Array of obstacle definitions to avoid
+	\param numObstacles Number of obstacles in the obstacles array
+	\param height The z-coordinate to set for the seek position
+	\param curDir Current direction vector used for path optimization
+	\param seekPos Output parameter updated with the next optimal position in the path
+	\return true if a path to the goal exists, false otherwise
 */
 bool FindOptimalPath( const pathNode_t* root, const obstacle_t* obstacles, int numObstacles, const float height, const idVec3& curDir, idVec3& seekPos )
 {
@@ -925,13 +971,6 @@ bool FindOptimalPath( const pathNode_t* root, const obstacle_t* obstacles, int n
 	return pathToGoalExists;
 }
 
-/*
-============
-idAI::FindPathAroundObstacles
-
-  Finds a path around dynamic obstacles using a path tree with clockwise and counter clockwise edge walks.
-============
-*/
 bool idAI::FindPathAroundObstacles( const idPhysics* physics, const idAAS* aas, const idEntity* ignore, const idVec3& startPos, const idVec3& seekPos, obstaclePath_t& path )
 {
 	int			numObstacles, areaNum, insideObstacle;
@@ -1002,11 +1041,6 @@ bool idAI::FindPathAroundObstacles( const idPhysics* physics, const idAAS* aas, 
 	return pathToGoalExists;
 }
 
-/*
-============
-idAI::FreeObstacleAvoidanceNodes
-============
-*/
 void idAI::FreeObstacleAvoidanceNodes()
 {
 	pathNodeAllocator.Shutdown();
@@ -1033,12 +1067,21 @@ typedef struct pathTrace_s {
 	const idEntity* blockingEntity;
 } pathTrace_t;
 
-/*
-============
-PathTrace
+/*!
+	\brief Performs a path trace from start to end position, checking for stop events and AAS traversal.
 
-  Returns true if a stop event was triggered.
-============
+	This function traces a path from a starting position to an ending position, utilizing both AAS (Area Awareness System) for efficient pathfinding and traditional clip tracing for obstacle
+   detection. It checks for specific stop events like entering ledge areas or obstacles and updates the trace and path information accordingly. The function returns true if a stop event was triggered,
+   otherwise false. The AAS system is used when available and properly initialized; otherwise, it falls back to standard collision detection.
+
+	\param ent The entity for which the path is being traced
+	\param aas Pointer to the AAS system for area traversal information
+	\param start The starting position of the trace
+	\param end The ending position of the trace
+	\param stopEvent Bitmask of stop events to check for during the trace
+	\param trace Structure to store the trace results including fraction, end position, normal, and blocking entity
+	\param path Structure to store the predicted path information when a stop event occurs
+	\return True if a stop event was triggered, false otherwise
 */
 bool PathTrace( const idEntity* ent, const idAAS* aas, const idVec3& start, const idVec3& end, int stopEvent, struct pathTrace_s& trace, predictedPath_t& path )
 {
@@ -1118,13 +1161,6 @@ bool PathTrace( const idEntity* ent, const idAAS* aas, const idVec3& start, cons
 	return false;
 }
 
-/*
-============
-idAI::PredictPath
-
-  Can also be used when there is no AAS file available however ledges are not detected.
-============
-*/
 bool idAI::PredictPath( const idEntity* ent, const idAAS* aas, const idVec3& start, const idVec3& velocity, int totalTime, int frameTime, int stopEvent, predictedPath_t& path )
 {
 	int			i, j, step, numFrames, curFrameTime;
@@ -1275,26 +1311,6 @@ bool idAI::PredictPath( const idEntity* ent, const idAAS* aas, const idVec3& sta
 	return false;
 }
 
-/*
-===============================================================================
-
-	Trajectory Prediction
-
-	Finds the best collision free trajectory for a clip model based on an
-	initial position, target position and speed.
-
-===============================================================================
-*/
-
-/*
-=====================
-Ballistics
-
-  get the ideal aim pitch angle in order to hit the target
-  also get the time it takes for the projectile to arrive at the target
-=====================
-*/
-
 int Ballistics( const idVec3& start, const idVec3& end, float speed, float gravity, ballistics_t bal[2] )
 {
 	int	  n, i;
@@ -1351,11 +1367,6 @@ static float HeightForTrajectory( const idVec3& start, float zVel, float gravity
 }
 #endif
 
-/*
-=====================
-idAI::TestTrajectory
-=====================
-*/
 bool idAI::TestTrajectory( const idVec3& start,
 	const idVec3&						 end,
 	float								 zVel,
@@ -1448,14 +1459,6 @@ bool idAI::TestTrajectory( const idVec3& start,
 	return result;
 }
 
-/*
-=====================
-idAI::PredictTrajectory
-
-  returns true if there is a collision free trajectory for the clip model
-  aimDir is set to the ideal aim direction in order to hit the target
-=====================
-*/
 bool idAI::PredictTrajectory( const idVec3& firePos,
 	const idVec3&							target,
 	float									projectileSpeed,
@@ -1560,12 +1563,6 @@ bool idAI::PredictTrajectory( const idVec3& firePos,
 	return false;
 }
 
-// jmarshall begin
-/*
-=====================
-idAI::idle_followPathEntities
-=====================
-*/
 void idAI::idle_followPathEntities( idEntity* pathnode )
 {
 	idStr	  nodeaction;

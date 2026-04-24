@@ -50,11 +50,6 @@ static const char* moveCommandString[NUM_MOVE_COMMANDS] = { "MOVE_NONE",
 	"MOVE_SLIDE_TO_POSITION",
 	"MOVE_WANDER" };
 
-/*
-=====================
-idMoveState::idMoveState
-=====================
-*/
 idMoveState::idMoveState()
 {
 	moveType	= MOVETYPE_ANIM;
@@ -78,11 +73,6 @@ idMoveState::idMoveState()
 	anim		   = 0;
 }
 
-/*
-=====================
-idMoveState::Save
-=====================
-*/
 void idMoveState::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteInt( ( int )moveType );
@@ -106,11 +96,6 @@ void idMoveState::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( anim );
 }
 
-/*
-=====================
-idMoveState::Restore
-=====================
-*/
 void idMoveState::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadInt( ( int& )moveType );
@@ -134,21 +119,11 @@ void idMoveState::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( anim );
 }
 
-/*
-=====================
-idAI::Event_GetMoveType
-=====================
-*/
 void idAI::Event_GetMoveType()
 {
 	idThread::ReturnInt( move.moveType );
 }
 
-/*
-=====================
-idAI::Event_SetMoveTypes
-=====================
-*/
 void idAI::Event_SetMoveType( int moveType )
 {
 	if( ( moveType < 0 ) || ( moveType >= NUM_MOVETYPES ) ) {
@@ -173,11 +148,6 @@ void idAI::Event_SaveMove()
 	savedMove = move;
 }
 
-/*
-=====================
-idAI::Event_RestoreMove
-=====================
-*/
 void idAI::Event_RestoreMove()
 {
 	idVec3 goalPos;
@@ -242,11 +212,6 @@ void idAI::Event_RestoreMove()
 	}
 }
 
-/*
-=====================
-idAI::Event_AllowMovement
-=====================
-*/
 void idAI::Event_AllowMovement( float flag )
 {
 	allowMove = ( flag != 0.0f );
@@ -258,11 +223,6 @@ void idAI::Event_AllowMovement( float flag )
 
 ***********************************************************************/
 
-/*
-============
-idAI::KickObstacles
-============
-*/
 void idAI::KickObstacles( const idVec3& dir, float force, idEntity* alwaysKick )
 {
 	int			 i, numListedClipModels;
@@ -321,11 +281,7 @@ void idAI::KickObstacles( const idVec3& dir, float force, idEntity* alwaysKick )
 	}
 }
 
-/*
-============
-ValidForBounds
-============
-*/
+//! Checks if the given bounds are valid for the specified AAS settings
 bool ValidForBounds( const idAASSettings* settings, const idBounds& bounds )
 {
 	int i;
@@ -341,11 +297,6 @@ bool ValidForBounds( const idAASSettings* settings, const idBounds& bounds )
 	return true;
 }
 
-/*
-=====================
-idAI::SetAAS
-=====================
-*/
 void idAI::SetAAS()
 {
 	idStr use_aas;
@@ -368,11 +319,6 @@ void idAI::SetAAS()
 	gameLocal.Printf( "WARNING: %s has no AAS file\n", name.c_str() );
 }
 
-/*
-=====================
-idAI::DrawRoute
-=====================
-*/
 void idAI::DrawRoute() const
 {
 	if( aas && move.toAreaNum && move.moveCommand != MOVE_NONE && move.moveCommand != MOVE_WANDER && move.moveCommand != MOVE_FACE_ENEMY && move.moveCommand != MOVE_FACE_ENTITY &&
@@ -385,11 +331,6 @@ void idAI::DrawRoute() const
 	}
 }
 
-/*
-=====================
-idAI::ReachedPos
-=====================
-*/
 bool idAI::ReachedPos( const idVec3& pos, const moveCommand_t moveCommand ) const
 {
 	if( move.moveType == MOVETYPE_SLIDE ) {
@@ -414,11 +355,6 @@ bool idAI::ReachedPos( const idVec3& pos, const moveCommand_t moveCommand ) cons
 	return false;
 }
 
-/*
-=====================
-idAI::PointReachableAreaNum
-=====================
-*/
 int idAI::PointReachableAreaNum( const idVec3& pos, const float boundsScale ) const
 {
 	int		 areaNum;
@@ -443,11 +379,6 @@ int idAI::PointReachableAreaNum( const idVec3& pos, const float boundsScale ) co
 	return areaNum;
 }
 
-/*
-=====================
-idAI::PathToGoal
-=====================
-*/
 bool idAI::PathToGoal( aasPath_t& path, int areaNum, const idVec3& origin, int goalAreaNum, const idVec3& goalOrigin ) const
 {
 	idVec3 org;
@@ -476,16 +407,6 @@ bool idAI::PathToGoal( aasPath_t& path, int areaNum, const idVec3& origin, int g
 	}
 }
 
-/*
-=====================
-idAI::TravelDistance
-
-Returns the approximate travel distance from one position to the goal, or if no AAS, the straight line distance.
-
-This is feakin' slow, so it's not good to do it too many times per frame.  It also is slower the further you
-are from the goal, so try to break the goals up into shorter distances.
-=====================
-*/
 float idAI::TravelDistance( const idVec3& start, const idVec3& end ) const
 {
 	int		  fromArea;
@@ -545,11 +466,6 @@ float idAI::TravelDistance( const idVec3& start, const idVec3& end ) const
 	return travelTime;
 }
 
-/*
-=====================
-idAI::StopMove
-=====================
-*/
 void idAI::StopMove( moveStatus_t status )
 {
 	AI_MOVE_DONE		= true;
@@ -572,13 +488,6 @@ void idAI::StopMove( moveStatus_t status )
 	move.lastMoveTime = gameLocal.time;
 }
 
-/*
-=====================
-idAI::FaceEnemy
-
-Continually face the enemy's last known position.  MoveDone is always true in this case.
-=====================
-*/
 bool idAI::FaceEnemy()
 {
 	idActor* enemyEnt = enemy.GetEntity();
@@ -601,13 +510,6 @@ bool idAI::FaceEnemy()
 	return true;
 }
 
-/*
-=====================
-idAI::FaceEntity
-
-Continually face the entity position.  MoveDone is always true in this case.
-=====================
-*/
 bool idAI::FaceEntity( idEntity* ent )
 {
 	if( !ent ) {
@@ -630,11 +532,6 @@ bool idAI::FaceEntity( idEntity* ent )
 	return true;
 }
 
-/*
-=====================
-idAI::DirectMoveToPosition
-=====================
-*/
 bool idAI::DirectMoveToPosition( const idVec3& pos )
 {
 	if( ReachedPos( pos, move.moveCommand ) ) {
@@ -662,11 +559,6 @@ bool idAI::DirectMoveToPosition( const idVec3& pos )
 	return true;
 }
 
-/*
-=====================
-idAI::MoveToEnemyHeight
-=====================
-*/
 bool idAI::MoveToEnemyHeight()
 {
 	idActor* enemyEnt = enemy.GetEntity();
@@ -689,11 +581,6 @@ bool idAI::MoveToEnemyHeight()
 	return true;
 }
 
-/*
-=====================
-idAI::MoveToEnemy
-=====================
-*/
 bool idAI::MoveToEnemy()
 {
 	int		  areaNum;
@@ -762,11 +649,6 @@ bool idAI::MoveToEnemy()
 	return true;
 }
 
-/*
-=====================
-idAI::MoveToEntity
-=====================
-*/
 bool idAI::MoveToEntity( idEntity* ent )
 {
 	int		  areaNum;
@@ -834,11 +716,6 @@ bool idAI::MoveToEntity( idEntity* ent )
 	return true;
 }
 
-/*
-=====================
-idAI::MoveOutOfRange
-=====================
-*/
 bool idAI::MoveOutOfRange( idEntity* ent, float range )
 {
 	int			  areaNum;
@@ -892,11 +769,6 @@ bool idAI::MoveOutOfRange( idEntity* ent, float range )
 	return true;
 }
 
-/*
-=====================
-idAI::MoveToAttackPosition
-=====================
-*/
 bool idAI::MoveToAttackPosition( idEntity* ent, int attack_anim )
 {
 	int			  areaNum;
@@ -945,11 +817,6 @@ bool idAI::MoveToAttackPosition( idEntity* ent, int attack_anim )
 	return true;
 }
 
-/*
-=====================
-idAI::MoveToPosition
-=====================
-*/
 bool idAI::MoveToPosition( const idVec3& pos )
 {
 	idVec3	  org;
@@ -994,11 +861,6 @@ bool idAI::MoveToPosition( const idVec3& pos )
 	return true;
 }
 
-/*
-=====================
-idAI::MoveToCover
-=====================
-*/
 bool idAI::MoveToCover( idEntity* entity, const idVec3& hideFromPos )
 {
 	int			  areaNum;
@@ -1044,11 +906,6 @@ bool idAI::MoveToCover( idEntity* entity, const idVec3& hideFromPos )
 	return true;
 }
 
-/*
-=====================
-idAI::SlideToPosition
-=====================
-*/
 bool idAI::SlideToPosition( const idVec3& pos, float time )
 {
 	StopMove( MOVE_STATUS_DONE );
@@ -1074,11 +931,6 @@ bool idAI::SlideToPosition( const idVec3& pos, float time )
 	return true;
 }
 
-/*
-=====================
-idAI::WanderAround
-=====================
-*/
 bool idAI::WanderAround()
 {
 	StopMove( MOVE_STATUS_DONE );
@@ -1100,12 +952,6 @@ bool idAI::WanderAround()
 	return true;
 }
 
-// jmarshall begin
-/*
-================
-idAI::CanReachEntity
-================
-*/
 bool idAI::CanReachEntity( idEntity* ent )
 {
 	aasPath_t path;
@@ -1142,11 +988,6 @@ bool idAI::CanReachEntity( idEntity* ent )
 	return true;
 }
 
-/*
-================
-idAI::CanReachEnemy
-================
-*/
 bool idAI::CanReachEnemy()
 {
 	aasPath_t path;
@@ -1182,23 +1023,12 @@ bool idAI::CanReachEnemy()
 		return true;
 	}
 }
-// jmarshall end
 
-/*
-=====================
-idAI::MoveDone
-=====================
-*/
 bool idAI::MoveDone() const
 {
 	return ( move.moveCommand == MOVE_NONE );
 }
 
-/*
-================
-idAI::StepDirection
-================
-*/
 bool idAI::StepDirection( float dir )
 {
 	predictedPath_t path;
@@ -1257,11 +1087,6 @@ bool idAI::StepDirection( float dir )
 	return ( path.endEvent == 0 );
 }
 
-/*
-================
-idAI::NewWanderDir
-================
-*/
 bool idAI::NewWanderDir( const idVec3& dest )
 {
 	float deltax, deltay;
@@ -1349,11 +1174,6 @@ bool idAI::NewWanderDir( const idVec3& dest )
 	return false;
 }
 
-/*
-=====================
-idAI::GetMovePos
-=====================
-*/
 bool idAI::GetMovePos( idVec3& seekPos )
 {
 	int		  areaNum;
@@ -1454,11 +1274,6 @@ bool idAI::GetMovePos( idVec3& seekPos )
 
 ***********************************************************************/
 
-/*
-=====================
-idAI::Turn
-=====================
-*/
 void idAI::Turn()
 {
 	float		diff;
@@ -1527,11 +1342,6 @@ void idAI::Turn()
 	}
 }
 
-/*
-=====================
-idAI::FacingIdeal
-=====================
-*/
 bool idAI::FacingIdeal()
 {
 	float diff;
@@ -1550,11 +1360,6 @@ bool idAI::FacingIdeal()
 	return false;
 }
 
-/*
-=====================
-idAI::TurnToward
-=====================
-*/
 bool idAI::TurnToward( float yaw )
 {
 	ideal_yaw	= idMath::AngleNormalize180( yaw );
@@ -1562,11 +1367,6 @@ bool idAI::TurnToward( float yaw )
 	return result;
 }
 
-/*
-=====================
-idAI::TurnToward
-=====================
-*/
 bool idAI::TurnToward( const idVec3& pos )
 {
 	idVec3 dir;
@@ -1591,11 +1391,6 @@ bool idAI::TurnToward( const idVec3& pos )
 
 ***********************************************************************/
 
-/*
-================
-idAI::ApplyImpulse
-================
-*/
 void idAI::ApplyImpulse( idEntity* ent, int id, const idVec3& point, const idVec3& impulse )
 {
 	// FIXME: Jim take a look at this and see if this is a reasonable thing to do
@@ -1606,11 +1401,6 @@ void idAI::ApplyImpulse( idEntity* ent, int id, const idVec3& point, const idVec
 	}
 }
 
-/*
-=====================
-idAI::GetMoveDelta
-=====================
-*/
 void idAI::GetMoveDelta( const idMat3& oldaxis, const idMat3& axis, idVec3& delta )
 {
 	idVec3 oldModelOrigin;
@@ -1631,11 +1421,6 @@ void idAI::GetMoveDelta( const idMat3& oldaxis, const idMat3& axis, idVec3& delt
 	delta *= physicsObj.GetGravityAxis();
 }
 
-/*
-=====================
-idAI::CheckObstacleAvoidance
-=====================
-*/
 void idAI::CheckObstacleAvoidance( const idVec3& goalPos, idVec3& newPos )
 {
 	idEntity*	   obstacle;
@@ -1726,11 +1511,6 @@ void idAI::CheckObstacleAvoidance( const idVec3& goalPos, idVec3& newPos )
 	}
 }
 
-/*
-=====================
-idAI::DeadMove
-=====================
-*/
 void idAI::DeadMove()
 {
 	idVec3				delta;
@@ -1747,11 +1527,6 @@ void idAI::DeadMove()
 	AI_ONGROUND = physicsObj.OnGround();
 }
 
-/*
-=====================
-idAI::AnimMove
-=====================
-*/
 void idAI::AnimMove()
 {
 	idVec3				goalPos;
@@ -1850,10 +1625,18 @@ void idAI::AnimMove()
 	}
 }
 
-/*
-=====================
-Seek
-=====================
+/*!
+	\brief Calculates the velocity needed to seek toward a predicted goal position based on current velocity and prediction time
+
+	This function implements a simple seek behavior for AI or physics simulation. It predicts where the object will be at a future time based on current velocity, then calculates the velocity vector
+   needed to move toward that predicted position. The calculation uses the time delta between current and previous frames to scale the velocity adjustment. The function is commonly used in game AI for
+   object movement towards targets.
+
+	\param vel Current velocity vector of the object
+	\param org Current origin position of the object
+	\param goal Target goal position to seek toward
+	\param prediction Time duration to predict future position
+	\return The velocity vector needed to move toward the predicted goal position
 */
 idVec3 Seek( idVec3& vel, const idVec3& org, const idVec3& goal, float prediction )
 {
@@ -1869,11 +1652,6 @@ idVec3 Seek( idVec3& vel, const idVec3& org, const idVec3& goal, float predictio
 	return seekVel;
 }
 
-/*
-=====================
-idAI::SlideMove
-=====================
-*/
 void idAI::SlideMove()
 {
 	idVec3				goalPos;
@@ -2025,11 +1803,6 @@ void idAI::AdjustFlyingAngles()
 	}
 }
 
-/*
-=====================
-idAI::AddFlyBob
-=====================
-*/
 void idAI::AddFlyBob( idVec3& vel )
 {
 	idVec3 fly_bob_add;
@@ -2046,11 +1819,6 @@ void idAI::AddFlyBob( idVec3& vel )
 	}
 }
 
-/*
-=====================
-idAI::AdjustFlyHeight
-=====================
-*/
 void idAI::AdjustFlyHeight( idVec3& vel, const idVec3& goalPos )
 {
 	const idVec3&	origin = physicsObj.GetOrigin();
@@ -2095,11 +1863,6 @@ void idAI::AdjustFlyHeight( idVec3& vel, const idVec3& goalPos )
 	}
 }
 
-/*
-=====================
-idAI::FlySeekGoal
-=====================
-*/
 void idAI::FlySeekGoal( idVec3& vel, idVec3& goalPos )
 {
 	idVec3 seekVel;
@@ -2110,11 +1873,6 @@ void idAI::FlySeekGoal( idVec3& vel, idVec3& goalPos )
 	vel += seekVel;
 }
 
-/*
-=====================
-idAI::AdjustFlySpeed
-=====================
-*/
 void idAI::AdjustFlySpeed( idVec3& vel )
 {
 	float speed;
@@ -2134,11 +1892,6 @@ void idAI::AdjustFlySpeed( idVec3& vel )
 	vel *= speed;
 }
 
-/*
-=====================
-idAI::FlyTurn
-=====================
-*/
 void idAI::FlyTurn()
 {
 	if( move.moveCommand == MOVE_FACE_ENEMY ) {
@@ -2154,11 +1907,6 @@ void idAI::FlyTurn()
 	Turn();
 }
 
-/*
-=====================
-idAI::FlyMove
-=====================
-*/
 void idAI::FlyMove()
 {
 	idVec3 goalPos;
@@ -2239,11 +1987,6 @@ void idAI::FlyMove()
 	}
 }
 
-/*
-=====================
-idAI::StaticMove
-=====================
-*/
 void idAI::StaticMove()
 {
 	idActor* enemyEnt = enemy.GetEntity();

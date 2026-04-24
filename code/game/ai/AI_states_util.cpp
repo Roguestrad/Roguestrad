@@ -33,11 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-/*
-=====================
-idAI::combat_chase
-=====================
-*/
 stateResult_t idAI::combat_chase( stateParms_t* parms, bool& result )
 {
 	float delta;
@@ -119,13 +114,6 @@ stateResult_t idAI::combat_chase( stateParms_t* parms, bool& result )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-monster_base::check_blocked
-
-returns true when an attack was called, since the move command may be different from when entering the function.
-=====================
-*/
 stateResult_t idAI::check_blocked( stateParms_t* parms, bool& result )
 {
 	idEntity* obstacle;

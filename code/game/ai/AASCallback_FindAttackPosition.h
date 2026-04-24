@@ -31,22 +31,31 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __AASCALLBACK_FINDATTACKPOSITION_H__
 #define __AASCALLBACK_FINDATTACKPOSITION_H__
 
-// #include "AASCallback_AvoidLocation.h"
-
-/*
-===============================================================================
-
-	idAASCallback_FindCoverArea
-
-===============================================================================
+/*!
+	\class idAASCallback_FindAttackPosition
+	\brief Callback class for finding valid attack positions using AAS navigation data.
 */
-
 class idAASCallback_FindAttackPosition : public idAASCallback
 {
 public:
+	/*!
+		\brief Constructor for idAASCallback_FindAttackPosition that initializes callback parameters for attack position finding
+
+		Initializes the callback object with AI entity, gravity axis, target entity, target position, and fire offset parameters. Sets up exclude bounds around the AI entity and configures the PVS
+	   (Potentially Visible Set) for the target area to optimize AAS (Area Awareness System) queries during attack position calculation.
+
+		\param self The AI entity that will perform the attack
+		\param gravityAxis The gravity axis defining the orientation of the AI's world space
+		\param target The target entity to which the attack position is being calculated
+		\param targetPos The world position of the target entity
+		\param fireOffset The offset from the AI's position where the fire/attack originates
+	*/
 	idAASCallback_FindAttackPosition( const idAI* self, const idMat3& gravityAxis, idEntity* target, const idVec3& targetPos, const idVec3& fireOffset );
+
+	//! Destructor for the idAASCallback_FindAttackPosition class that frees the target PVS.
 	~idAASCallback_FindAttackPosition();
 
+	//! Checks if a given AAS area is a valid goal position for finding an attack position.
 	virtual bool AreaIsGoal( const idAAS* aas, int areaNum ) override;
 
 private:

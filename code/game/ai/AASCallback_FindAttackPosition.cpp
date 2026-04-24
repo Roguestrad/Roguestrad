@@ -36,11 +36,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AASCallback_FindAttackPosition.h"
 
-/*
-============
-idAASCallback_FindAttackPosition::idAASCallback_FindAttackPosition
-============
-*/
 idAASCallback_FindAttackPosition::idAASCallback_FindAttackPosition( const idAI* self, const idMat3& gravityAxis, idEntity* target, const idVec3& targetPos, const idVec3& fireOffset )
 {
 	int numPVSAreas;
@@ -60,21 +55,11 @@ idAASCallback_FindAttackPosition::idAASCallback_FindAttackPosition( const idAI* 
 	targetPVS	= gameLocal.pvs.SetupCurrentPVS( PVSAreas, numPVSAreas );
 }
 
-/*
-============
-idAASCallback_FindAttackPosition::~idAASCallback_FindAttackPosition
-============
-*/
 idAASCallback_FindAttackPosition::~idAASCallback_FindAttackPosition()
 {
 	gameLocal.pvs.FreeCurrentPVS( targetPVS );
 }
 
-/*
-============
-idAASCallback_FindAttackPosition::TestArea
-============
-*/
 bool idAASCallback_FindAttackPosition::AreaIsGoal( const idAAS* aas, int areaNum )
 {
 	idVec3 dir;

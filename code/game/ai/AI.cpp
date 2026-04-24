@@ -33,11 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-/*
-=====================
-idAI::idAI
-=====================
-*/
 idAI::idAI()
 {
 	aas			= NULL;
@@ -141,11 +136,6 @@ idAI::idAI()
 	focusAlignTime		= 0;
 }
 
-/*
-=====================
-idAI::~idAI
-=====================
-*/
 idAI::~idAI()
 {
 	delete projectileClipModel;
@@ -161,11 +151,6 @@ idAI::~idAI()
 	}
 }
 
-/*
-=====================
-idAI::Save
-=====================
-*/
 void idAI::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteInt( travelFlags );
@@ -299,12 +284,6 @@ void idAI::Save( idSaveGame* savefile ) const
 	harvestEnt.Save( savefile );
 }
 
-// jmarshall begin
-/*
-=====================
-idAI::combat_lost
-=====================
-*/
 void idAI::combat_lost()
 {
 	// if (!ignore_lostcombat) {
@@ -312,11 +291,6 @@ void idAI::combat_lost()
 	//}
 }
 
-/*
-=====================
-idAI::GetCombatNode
-=====================
-*/
 idEntity* idAI::GetCombatNode()
 {
 	int			  i;
@@ -391,11 +365,6 @@ idEntity* idAI::GetCombatNode()
 	return bestNode;
 }
 
-/*
-=====================
-idAI::TestAnimMove
-=====================
-*/
 bool idAI::TestAnimMove( const char* animname )
 {
 	int				anim;
@@ -418,13 +387,7 @@ bool idAI::TestAnimMove( const char* animname )
 
 	return path.endEvent == 0;
 }
-// jmarshall end
 
-/*
-=====================
-idAI::Restore
-=====================
-*/
 void idAI::Restore( idRestoreGame* savefile )
 {
 	bool	 restorePhysics;
@@ -617,12 +580,6 @@ void idAI::Restore( idRestoreGame* savefile )
 	// }
 }
 
-// jmarshall begin
-/*
-=====================
-idAI::FindEnemyInCombatNodes
-=====================
-*/
 idEntity* idAI::FindEnemyInCombatNodes()
 {
 	int			  i, j;
@@ -663,13 +620,7 @@ idEntity* idAI::FindEnemyInCombatNodes()
 
 	return NULL;
 }
-// jmarshall end
 
-/*
-=====================
-idAI::Spawn
-=====================
-*/
 void idAI::Spawn()
 {
 	const char*		  jointname;
@@ -955,11 +906,6 @@ void idAI::Gib( const idVec3& dir, const char* damageDefName )
 	idActor::Gib( dir, damageDefName );
 }
 
-/*
-===================
-idAI::InitMuzzleFlash
-===================
-*/
 void idAI::InitMuzzleFlash()
 {
 	const char* shader;
@@ -1021,13 +967,6 @@ void idAI::List_f( const idCmdArgs& args )
 	gameLocal.Printf( "...%d monsters\n", count );
 }
 
-/*
-================
-idAI::DormantBegin
-
-called when entity becomes dormant
-================
-*/
 void idAI::DormantBegin()
 {
 	// since dormant happens on a timer, we wont get to update particles to
@@ -1045,13 +984,6 @@ void idAI::DormantBegin()
 	idActor::DormantBegin();
 }
 
-/*
-================
-idAI::DormantEnd
-
-called when entity wakes from being dormant
-================
-*/
 void idAI::DormantEnd()
 {
 	if( enemy.GetEntity() && !enemyNode.InList() ) {
@@ -1068,12 +1000,6 @@ void idAI::DormantEnd()
 	idActor::DormantEnd();
 }
 
-// jmarshall begin
-/*
-======================
-idAI::checkForEnemy
-======================
-*/
 bool idAI::checkForEnemy( float use_fov )
 {
 	idEntity* enemy = NULL;
@@ -1282,11 +1208,6 @@ void   idAI::Think()
 
 ***********************************************************************/
 
-/*
-=====================
-idAI::LinkScriptVariables
-=====================
-*/
 void idAI::LinkScriptVariables()
 {
 	// jmarshall begin
@@ -1323,11 +1244,6 @@ void idAI::LinkScriptVariables()
 	AI_PUSHED.LinkTo( scriptObject, "AI_PUSHED" );
 }
 
-/*
-=====================
-idAI::UpdateAIScript
-=====================
-*/
 void idAI::UpdateAIScript()
 {
 	UpdateScript();
@@ -1341,11 +1257,6 @@ void idAI::UpdateAIScript()
 	}
 }
 
-/*
-=====================
-idAI::GetClosestHiddenTarget
-=====================
-*/
 idEntity* idAI::GetClosestHiddenTarget( const char* type )
 {
 	int			  i;
@@ -1389,11 +1300,6 @@ idEntity* idAI::GetClosestHiddenTarget( const char* type )
 	return bestEnt;
 }
 
-/*
-=====================
-idAI::EntityCanSeePos
-=====================
-*/
 bool idAI::EntityCanSeePos( idActor* actor, const idVec3& actorOrigin, const idVec3& pos )
 {
 	idVec3		eye, point;
@@ -1433,11 +1339,6 @@ bool idAI::EntityCanSeePos( idActor* actor, const idVec3& actorOrigin, const idV
 	return false;
 }
 
-/*
-=====================
-idAI::BlockedFailSafe
-=====================
-*/
 void idAI::BlockedFailSafe()
 {
 	if( !ai_blockedFailSafe.GetBool() || blockedRadius < 0.0f ) {
@@ -1461,11 +1362,6 @@ void idAI::BlockedFailSafe()
 
 ***********************************************************************/
 
-/*
-=====================
-idAI::ReactionTo
-=====================
-*/
 int idAI::ReactionTo( const idEntity* ent )
 {
 	if( ent->fl.hidden ) {
@@ -1501,11 +1397,6 @@ int idAI::ReactionTo( const idEntity* ent )
 	return ATTACK_IGNORE;
 }
 
-/*
-=====================
-idAI::Pain
-=====================
-*/
 bool idAI::Pain( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 	idActor* actor;
@@ -1536,11 +1427,6 @@ bool idAI::Pain( idEntity* inflictor, idEntity* attacker, int damage, const idVe
 	return ( AI_PAIN != 0 );
 }
 
-/*
-=====================
-idAI::SpawnParticles
-=====================
-*/
 void idAI::SpawnParticles( const char* keyName )
 {
 	const idKeyValue* kv = spawnArgs.MatchPrefix( keyName, NULL );
@@ -1565,11 +1451,6 @@ void idAI::SpawnParticles( const char* keyName )
 	}
 }
 
-/*
-=====================
-idAI::SpawnParticlesOnJoint
-=====================
-*/
 const idDeclParticle* idAI::SpawnParticlesOnJoint( particleEmitter_t& pe, const char* particleName, const char* jointName )
 {
 	idVec3 origin;
@@ -1603,11 +1484,6 @@ const idDeclParticle* idAI::SpawnParticlesOnJoint( particleEmitter_t& pe, const 
 	return pe.particle;
 }
 
-/*
-=====================
-idAI::Killed
-=====================
-*/
 void idAI::Killed( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 	idAngles	ang;
@@ -1735,11 +1611,6 @@ void idAI::Killed( idEntity* inflictor, idEntity* attacker, int damage, const id
 
 ***********************************************************************/
 
-/*
-=====================
-idAI::PlayCinematic
-=====================
-*/
 void idAI::PlayCinematic()
 {
 	const char* animname;
@@ -1809,13 +1680,6 @@ void idAI::PlayCinematic()
 	fl.neverDormant = true;
 }
 
-/*
-=====================
-idAI::Activate
-
-Notifies the script that a monster has been activated by a trigger or flashlight
-=====================
-*/
 void idAI::Activate( idEntity* activator )
 {
 	idPlayer* player;
@@ -1870,22 +1734,12 @@ void idAI::Activate( idEntity* activator )
 	}
 }
 
-/*
-=====================
-idAI::EnemyDead
-=====================
-*/
 void idAI::EnemyDead()
 {
 	ClearEnemy();
 	AI_ENEMY_DEAD = true;
 }
 
-/*
-=====================
-idAI::TalkTo
-=====================
-*/
 void idAI::TalkTo( idActor* actor )
 {
 	if( talk_state != TALK_OK ) {
@@ -1905,21 +1759,11 @@ void idAI::TalkTo( idActor* actor )
 	}
 }
 
-/*
-=====================
-idAI::GetEnemy
-=====================
-*/
 idActor* idAI::GetEnemy() const
 {
 	return enemy.GetEntity();
 }
 
-/*
-=====================
-idAI::GetTalkState
-=====================
-*/
 talkState_t idAI::GetTalkState() const
 {
 	if( ( talk_state != TALK_NEVER ) && AI_DEAD ) {
@@ -1931,11 +1775,6 @@ talkState_t idAI::GetTalkState() const
 	return talk_state;
 }
 
-/*
-=====================
-idAI::TouchedByFlashlight
-=====================
-*/
 void idAI::TouchedByFlashlight( idActor* flashlight_owner )
 {
 	if( wakeOnFlashlight ) {
@@ -1943,11 +1782,6 @@ void idAI::TouchedByFlashlight( idActor* flashlight_owner )
 	}
 }
 
-/*
-=====================
-idAI::ClearEnemy
-=====================
-*/
 void idAI::ClearEnemy()
 {
 	if( move.moveCommand == MOVE_TO_ENEMY ) {
@@ -1963,11 +1797,6 @@ void idAI::ClearEnemy()
 	SetChatSound();
 }
 
-/*
-=====================
-idAI::EnemyPositionValid
-=====================
-*/
 bool idAI::EnemyPositionValid() const
 {
 	trace_t tr;
@@ -1991,12 +1820,6 @@ bool idAI::EnemyPositionValid() const
 	return false;
 }
 
-// jmarshall begin
-/*
-================
-idAI::PlayCustomAnim
-================
-*/
 void idAI::PlayCustomAnim( idStr animname, float blendIn, float blendOut )
 {
 	scriptThread->ClearStack();
@@ -2020,11 +1843,6 @@ void idAI::PlayCustomCycle( idStr animname, float blendTime )
 	scriptThread->CallFunction( scriptObject.GetFunction( "playCustomCycle" ), false );
 }
 
-/*
-======================
-idAI::trigger_wakeup_targets
-======================
-*/
 void idAI::trigger_wakeup_targets()
 {
 	idStr	  key;
@@ -2046,11 +1864,6 @@ void idAI::trigger_wakeup_targets()
 	}
 }
 
-/*
-======================
-idAI::checkForEnemy
-======================
-*/
 void idAI::sight_enemy()
 {
 	idStr animname;
@@ -2069,13 +1882,7 @@ void idAI::sight_enemy()
 		Event_SetNeverDormant( GetFloatKey( "neverdormant" ) );
 	}
 }
-// jmarshall end
 
-/*
-=====================
-idAI::SetEnemyPosition
-=====================
-*/
 void idAI::SetEnemyPosition()
 {
 	idActor* enemyEnt = enemy.GetEntity();
@@ -2166,11 +1973,6 @@ void idAI::SetEnemyPosition()
 	}
 }
 
-/*
-=====================
-idAI::UpdateEnemyPosition
-=====================
-*/
 void idAI::UpdateEnemyPosition()
 {
 	idActor*		enemyEnt = enemy.GetEntity();
@@ -2240,11 +2042,6 @@ void idAI::UpdateEnemyPosition()
 	}
 }
 
-/*
-=====================
-idAI::SetEnemy
-=====================
-*/
 void idAI::SetEnemy( idActor* newEnemy )
 {
 	int enemyAreaNum;
@@ -2288,11 +2085,6 @@ void idAI::SetEnemy( idActor* newEnemy )
 	}
 }
 
-/*
-============
-idAI::FirstVisiblePointOnPath
-============
-*/
 idVec3 idAI::FirstVisiblePointOnPath( const idVec3 origin, const idVec3& target, int travelFlags ) const
 {
 	int				i, areaNum, targetAreaNum, curAreaNum, travelTime;
@@ -2337,13 +2129,6 @@ idVec3 idAI::FirstVisiblePointOnPath( const idVec3 origin, const idVec3& target,
 	return origin;
 }
 
-/*
-===================
-idAI::CalculateAttackOffsets
-
-calculate joint positions on attack frames so we can do proper "can hit" tests
-===================
-*/
 void idAI::CalculateAttackOffsets()
 {
 	const idDeclModelDef* modelDef;
@@ -2388,11 +2173,6 @@ void idAI::CalculateAttackOffsets()
 	animator.RemoveOriginOffset( true );
 }
 
-/*
-=====================
-idAI::CreateProjectileClipModel
-=====================
-*/
 void idAI::CreateProjectileClipModel() const
 {
 	if( projectileClipModel == NULL ) {
@@ -2402,11 +2182,6 @@ void idAI::CreateProjectileClipModel() const
 	}
 }
 
-/*
-=====================
-idAI::GetAimDir
-=====================
-*/
 bool idAI::GetAimDir( const idVec3& firePos, idEntity* aimAtEnt, const idEntity* ignore, idVec3& aimDir ) const
 {
 	idVec3 targetPos1;
@@ -2457,32 +2232,17 @@ bool idAI::GetAimDir( const idVec3& firePos, idEntity* aimAtEnt, const idEntity*
 	return result;
 }
 
-/*
-=====================
-idAI::BeginAttack
-=====================
-*/
 void idAI::BeginAttack( const char* name )
 {
 	attack		   = name;
 	lastAttackTime = gameLocal.time;
 }
 
-/*
-=====================
-idAI::EndAttack
-=====================
-*/
 void idAI::EndAttack()
 {
 	attack = "";
 }
 
-/*
-=====================
-idAI::CreateProjectile
-=====================
-*/
 idProjectile* idAI::CreateProjectile( const idVec3& pos, const idVec3& dir )
 {
 	idEntity*	ent;
@@ -2508,11 +2268,6 @@ idProjectile* idAI::CreateProjectile( const idVec3& pos, const idVec3& dir )
 	return projectile.GetEntity();
 }
 
-/*
-=====================
-idAI::RemoveProjectile
-=====================
-*/
 void idAI::RemoveProjectile()
 {
 	if( projectile.GetEntity() ) {
@@ -2521,11 +2276,6 @@ void idAI::RemoveProjectile()
 	}
 }
 
-/*
-=====================
-idAI::LaunchProjectile
-=====================
-*/
 idProjectile* idAI::LaunchProjectile( const char* jointname, idEntity* target, bool clampToAttackCone )
 {
 	idVec3			   muzzle;
@@ -2654,16 +2404,6 @@ idProjectile* idAI::LaunchProjectile( const char* jointname, idEntity* target, b
 	return lastProjectile;
 }
 
-/*
-================
-idAI::DamageFeedback
-
-callback function for when another entity received damage from this entity.  damage can be adjusted and returned to the caller.
-
-FIXME: This gets called when we call idPlayer::CalcDamagePoints from idAI::AttackMelee, which then checks for a saving throw,
-possibly forcing a miss.  This is harmless behavior ATM, but is not intuitive.
-================
-*/
 void idAI::DamageFeedback( idEntity* victim, idEntity* inflictor, int& damage )
 {
 	if( ( victim == this ) && inflictor->IsType( idProjectile::Type ) ) {
@@ -2675,16 +2415,6 @@ void idAI::DamageFeedback( idEntity* victim, idEntity* inflictor, int& damage )
 	}
 }
 
-/*
-=====================
-idAI::DirectDamage
-
-Causes direct damage to an entity
-
-kickDir is specified in the monster's coordinate system, and gives the direction
-that the view kick and knockback should go
-=====================
-*/
 void idAI::DirectDamage( const char* meleeDefName, idEntity* ent )
 {
 	const idDict*		 meleeDef;
@@ -2724,12 +2454,6 @@ void idAI::DirectDamage( const char* meleeDefName, idEntity* ent )
 	EndAttack();
 }
 
-// jmarshall begin
-/*
-=====================
-idAI::enemy_dead
-=====================
-*/
 void idAI::enemy_dead()
 {
 	AI_ENEMY_DEAD = false;
@@ -2740,13 +2464,7 @@ void idAI::enemy_dead()
 		SetState( "state_Combat" );
 	}
 }
-// jmarshall end
 
-/*
-=====================
-idAI::TestMelee
-=====================
-*/
 bool idAI::TestMelee() const
 {
 	trace_t	 trace;
@@ -2793,18 +2511,6 @@ bool idAI::TestMelee() const
 	return false;
 }
 
-/*
-=====================
-idAI::AttackMelee
-
-jointname allows the endpoint to be exactly specified in the model,
-as for the commando tentacle.  If not specified, it will be set to
-the facing direction + melee_range.
-
-kickDir is specified in the monster's coordinate system, and gives the direction
-that the view kick and knockback should go
-=====================
-*/
 bool idAI::AttackMelee( const char* meleeDefName )
 {
 	const idDict*		 meleeDef;
@@ -2881,11 +2587,6 @@ bool idAI::AttackMelee( const char* meleeDefName )
 	return true;
 }
 
-/*
-================
-idAI::PushWithAF
-================
-*/
 void idAI::PushWithAF()
 {
 	int		  i, j;
@@ -2930,11 +2631,6 @@ void idAI::PushWithAF()
 
 ***********************************************************************/
 
-/*
-================
-idAI::GetMuzzle
-================
-*/
 void idAI::GetMuzzle( const char* jointname, idVec3& muzzle, idMat3& axis )
 {
 	jointHandle_t joint;
@@ -2951,11 +2647,6 @@ void idAI::GetMuzzle( const char* jointname, idVec3& muzzle, idMat3& axis )
 	}
 }
 
-/*
-================
-idAI::TriggerWeaponEffects
-================
-*/
 void idAI::TriggerWeaponEffects( const idVec3& muzzle )
 {
 	idVec3 org;
@@ -2988,11 +2679,6 @@ void idAI::TriggerWeaponEffects( const idVec3& muzzle )
 	}
 }
 
-/*
-================
-idAI::UpdateMuzzleFlash
-================
-*/
 void idAI::UpdateMuzzleFlash()
 {
 	if( worldMuzzleFlashHandle != -1 ) {
@@ -3009,11 +2695,6 @@ void idAI::UpdateMuzzleFlash()
 	}
 }
 
-/*
-================
-idAI::Hide
-================
-*/
 void idAI::Hide()
 {
 	idActor::Hide();
@@ -3028,11 +2709,6 @@ void idAI::Hide()
 	StopMove( MOVE_STATUS_DONE );
 }
 
-/*
-================
-idAI::Show
-================
-*/
 void idAI::Show()
 {
 	idActor::Show();
@@ -3049,11 +2725,6 @@ void idAI::Show()
 	StartSound( "snd_ambient", SND_CHANNEL_AMBIENT, 0, false, NULL );
 }
 
-/*
-=====================
-idAI::SetChatSound
-=====================
-*/
 void idAI::SetChatSound()
 {
 	const char* snd;
@@ -3082,13 +2753,6 @@ void idAI::SetChatSound()
 	}
 }
 
-/*
-================
-idAI::CanPlayChatterSounds
-
-Used for playing chatter sounds on monsters.
-================
-*/
 bool idAI::CanPlayChatterSounds() const
 {
 	if( AI_DEAD ) {
@@ -3110,11 +2774,6 @@ bool idAI::CanPlayChatterSounds() const
 	return true;
 }
 
-/*
-=====================
-idAI::PlayChatter
-=====================
-*/
 void idAI::PlayChatter()
 {
 	// check if it's time to play a chat sound
@@ -3128,11 +2787,6 @@ void idAI::PlayChatter()
 	chat_time = gameLocal.time + chat_min + gameLocal.random.RandomFloat() * ( chat_max - chat_min );
 }
 
-/*
-=====================
-idAI::UpdateParticles
-=====================
-*/
 void idAI::UpdateParticles()
 {
 	if( ( thinkFlags & TH_UPDATEPARTICLES ) && !IsHidden() ) {
@@ -3170,11 +2824,6 @@ void idAI::UpdateParticles()
 	}
 }
 
-/*
-=====================
-idAI::TriggerParticles
-=====================
-*/
 void idAI::TriggerParticles( const char* jointName )
 {
 	jointHandle_t jointNum;
@@ -3188,15 +2837,6 @@ void idAI::TriggerParticles( const char* jointName )
 	}
 }
 
-// jmarshall begin
-/*
-================
-idActor::ConstructScriptObject
-
-Called during idEntity::Spawn.  Calls the constructor on the script object.
-Can be overridden by subclasses when a thread doesn't need to be allocated.
-================
-*/
 idThread* idAI::ConstructScriptObject()
 {
 	// make sure we have a scriptObject
@@ -3217,11 +2857,6 @@ idThread* idAI::ConstructScriptObject()
 	return scriptThread;
 }
 
-/*
-================
-CallConstructor
-================
-*/
 void idAI::CallConstructor()
 {
 	const function_t* constructor;
@@ -3239,7 +2874,6 @@ void idAI::CallConstructor()
 
 	AI_Begin();
 }
-// jmarshall end
 
 void idAI::TriggerFX( const char* joint, const char* fx )
 {
@@ -3350,11 +2984,6 @@ void idAI::StopEmitter( const char* name )
 
 ***********************************************************************/
 
-/*
-================
-idAI::UpdateAnimationControllers
-================
-*/
 bool idAI::UpdateAnimationControllers()
 {
 	idVec3			local;
@@ -3548,11 +3177,6 @@ EVENT( EV_CombatNode_MarkUsed, idCombatNode::Event_MarkUsed )
 EVENT( EV_Activate, idCombatNode::Event_Activate )
 END_CLASS
 
-/*
-=====================
-idCombatNode::idCombatNode
-=====================
-*/
 idCombatNode::idCombatNode()
 {
 	min_dist   = 0.0f;
@@ -3566,11 +3190,6 @@ idCombatNode::idCombatNode()
 	disabled = false;
 }
 
-/*
-=====================
-idCombatNode::Save
-=====================
-*/
 void idCombatNode::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteFloat( min_dist );
@@ -3584,11 +3203,6 @@ void idCombatNode::Save( idSaveGame* savefile ) const
 	savefile->WriteBool( disabled );
 }
 
-/*
-=====================
-idCombatNode::Restore
-=====================
-*/
 void idCombatNode::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadFloat( min_dist );
@@ -3602,11 +3216,6 @@ void idCombatNode::Restore( idRestoreGame* savefile )
 	savefile->ReadBool( disabled );
 }
 
-/*
-=====================
-idCombatNode::Spawn
-=====================
-*/
 void idCombatNode::Spawn()
 {
 	float fov;
@@ -3635,21 +3244,11 @@ void idCombatNode::Spawn()
 	disabled = spawnArgs.GetBool( "start_off" );
 }
 
-/*
-=====================
-idCombatNode::IsDisabled
-=====================
-*/
 bool idCombatNode::IsDisabled() const
 {
 	return disabled;
 }
 
-/*
-=====================
-idCombatNode::DrawDebugInfo
-=====================
-*/
 void idCombatNode::DrawDebugInfo()
 {
 	idEntity*	  ent;
@@ -3700,11 +3299,6 @@ void idCombatNode::DrawDebugInfo()
 	}
 }
 
-/*
-=====================
-idCombatNode::EntityInView
-=====================
-*/
 bool idCombatNode::EntityInView( idActor* actor, const idVec3& pos )
 {
 	if( !actor || ( actor->health <= 0 ) ) {
@@ -3738,21 +3332,11 @@ bool idCombatNode::EntityInView( idActor* actor, const idVec3& pos )
 	return true;
 }
 
-/*
-=====================
-idCombatNode::Event_Activate
-=====================
-*/
 void idCombatNode::Event_Activate( idEntity* activator )
 {
 	disabled = !disabled;
 }
 
-/*
-=====================
-idCombatNode::Event_MarkUsed
-=====================
-*/
 void idCombatNode::Event_MarkUsed()
 {
 	if( spawnArgs.GetBool( "use_once" ) ) {

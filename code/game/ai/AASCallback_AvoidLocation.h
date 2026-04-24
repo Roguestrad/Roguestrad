@@ -31,29 +31,37 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __AASCALLBACK_AVOIDLOCATION_H__
 #define __AASCALLBACK_AVOIDLOCATION_H__
 
-/*
-===============================================================================
-
-	idAASCallback_AvoidLocation
-
-===============================================================================
-*/
-
 struct idAASObstacle {
 	idBounds		 absBounds;	   // absolute bounds of obstacle
 	mutable idBounds expAbsBounds; // expanded absolute bounds of obstacle
 };
 
+/*!
+	\class idAASCallback_AvoidLocation
+	\brief A callback class for avoiding specific locations during pathfinding in an AAS system.
+
+	This class extends the base AAS callback functionality to provide pathfinding logic that avoids specified locations. It is designed to be used in navigation systems where certain areas or points
+   should be avoided when calculating paths. The callback maintains information about a location to avoid and any obstacles that might affect the path calculation. The class is intended to be
+   subclassed, with the AreaIsGoal method requiring implementation to define goal area logic. The primary use case is in environments where dynamic obstacle avoidance is required during path searches.
+
+*/
 class idAASCallback_AvoidLocation : public idAASCallback
 {
 public:
+	//! Initializes the avoid location callback with default values.
 	idAASCallback_AvoidLocation();
 	~idAASCallback_AvoidLocation();
 
+	//! Sets the location to avoid and calculates the distance from the start position.
 	void		 SetAvoidLocation( const idVec3& start, const idVec3& avoidLocation );
+
+	//! Sets the obstacles for the AAS callback avoiding location.
 	void		 SetObstacles( const idAAS* aas, const idAASObstacle* obstacles, int numObstacles );
 
+	//! Checks if a path between two points is valid by ensuring it does not intersect any obstacles.
 	virtual bool PathValid( const idAAS* aas, const idVec3& start, const idVec3& end );
+
+	//! Returns additional travel time for a path to avoid a specified location.
 	virtual int	 AdditionalTravelTimeForPath( const idAAS* aas, const idVec3& start, const idVec3& end );
 	virtual bool AreaIsGoal( const idAAS* aas, int areaNum ) = 0;
 

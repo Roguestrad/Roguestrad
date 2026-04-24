@@ -33,11 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-/*
-=====================
-idAI::state_TeleportTriggered
-=====================
-*/
 stateResult_t idAI::state_TeleportTriggered( stateParms_t* parms )
 {
 	int teleportType = 0;
@@ -119,11 +114,6 @@ stateResult_t idAI::state_TeleportTriggered( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-=====================
-idAI::state_TriggerAnim
-=====================
-*/
 stateResult_t idAI::state_TriggerAnim( stateParms_t* parms )
 {
 	idStr triggerAnim;
@@ -183,11 +173,6 @@ stateResult_t idAI::state_TriggerAnim( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-=====================
-idAI::state_TriggerHidden
-=====================
-*/
 stateResult_t idAI::state_TriggerHidden( stateParms_t* parms )
 {
 	enum {
@@ -226,11 +211,6 @@ stateResult_t idAI::state_TriggerHidden( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-=====================
-idAI::state_WakeUp
-=====================
-*/
 stateResult_t idAI::state_WakeUp( stateParms_t* parms )
 {
 	float	  waittime;
@@ -270,11 +250,6 @@ stateResult_t idAI::state_WakeUp( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-idAI::state_Spawner
-=====================
-*/
 stateResult_t idAI::state_Spawner( stateParms_t* parms )
 {
 	idEntity* ent;
@@ -326,11 +301,6 @@ stateResult_t idAI::state_Spawner( stateParms_t* parms )
 	return SRESULT_WAIT;
 }
 
-/*
-=====================
-monster_base::wait_for_enemy
-=====================
-*/
 stateResult_t idAI::wait_for_enemy( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -355,11 +325,6 @@ stateResult_t idAI::wait_for_enemy( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-idAI::wake_on_trigger
-=====================
-*/
 stateResult_t idAI::wake_on_trigger( stateParms_t* parms )
 {
 	idStr	  animname;
@@ -429,11 +394,6 @@ stateResult_t idAI::wake_on_trigger( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-idAI::walk_on_trigger
-=====================
-*/
 stateResult_t idAI::walk_on_trigger( stateParms_t* parms )
 {
 	idEntity* path;
@@ -521,11 +481,6 @@ stateResult_t idAI::walk_on_trigger( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-idAI::State_WakeUp
-================
-*/
 stateResult_t idAI::wake_on_enemy( stateParms_t* parms )
 {
 	idStr	  animname;
@@ -595,11 +550,6 @@ stateResult_t idAI::wake_on_enemy( stateParms_t* parms )
 
 	return SRESULT_DONE;
 }
-/*
-================
-idAI::wake_call_constructor
-================
-*/
 stateResult_t idAI::wake_call_constructor( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -614,11 +564,6 @@ stateResult_t idAI::wake_call_constructor( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-================
-idAI::wake_on_attackcone
-================
-*/
 stateResult_t idAI::wake_on_attackcone( stateParms_t* parms )
 {
 	idStr	  animname;
@@ -717,11 +662,6 @@ stateResult_t idAI::wake_on_attackcone( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-==================
-idAI::state_Killed
-==================
-*/
 stateResult_t idAI::state_Killed( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -743,11 +683,6 @@ stateResult_t idAI::state_Killed( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-idAI::state_Dead
-=====================
-*/
 stateResult_t idAI::state_Dead( stateParms_t* parms )
 {
 	// if (parms->stage == 0)

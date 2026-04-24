@@ -36,22 +36,12 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AASCallback_FindAreaOutOfRange.h"
 
-/*
-============
-idAASCallback_FindAreaOutOfRange::idAASCallback_FindAreaOutOfRange
-============
-*/
 idAASCallback_FindAreaOutOfRange::idAASCallback_FindAreaOutOfRange( const idVec3& targetPos, float maxDist )
 {
 	this->targetPos	 = targetPos;
 	this->maxDistSqr = maxDist * maxDist;
 }
 
-/*
-============
-idAASCallback_FindAreaOutOfRange::AreaIsGoal
-============
-*/
 bool idAASCallback_FindAreaOutOfRange::AreaIsGoal( const idAAS* aas, int areaNum )
 {
 	const idVec3& areaCenter = aas->AreaCenter( areaNum );

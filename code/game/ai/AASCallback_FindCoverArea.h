@@ -33,20 +33,20 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AASCallback_AvoidLocation.h"
 
-/*
-===============================================================================
-
-	idAASCallback_FindCoverArea
-
-===============================================================================
+/*!
+	\class idAASCallback_FindCoverArea
+	\brief A callback class for finding valid AAS areas that provide cover from a specified position.
 */
-
 class idAASCallback_FindCoverArea : public idAASCallback_AvoidLocation
 {
 public:
+	//! Initializes the cover area finder with the position to hide from.
 	idAASCallback_FindCoverArea( const idVec3& hideFromPos );
+
+	//! Destructor for the idAASCallback_FindCoverArea class that frees the current PVS.
 	~idAASCallback_FindCoverArea();
 
+	//! Returns true if the specified AAS area is a valid goal for cover finding.
 	virtual bool AreaIsGoal( const idAAS* aas, int areaNum );
 
 private:

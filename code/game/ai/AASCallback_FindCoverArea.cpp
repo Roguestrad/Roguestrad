@@ -36,11 +36,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AASCallback_FindCoverArea.h"
 
-/*
-============
-idAASCallback_FindCoverArea::idAASCallback_FindCoverArea
-============
-*/
 idAASCallback_FindCoverArea::idAASCallback_FindCoverArea( const idVec3& hideFromPos )
 {
 	int		 numPVSAreas;
@@ -51,21 +46,11 @@ idAASCallback_FindCoverArea::idAASCallback_FindCoverArea( const idVec3& hideFrom
 	hidePVS		= gameLocal.pvs.SetupCurrentPVS( PVSAreas, numPVSAreas );
 }
 
-/*
-============
-idAASCallback_FindCoverArea::~idAASCallback_FindCoverArea
-============
-*/
 idAASCallback_FindCoverArea::~idAASCallback_FindCoverArea()
 {
 	gameLocal.pvs.FreeCurrentPVS( hidePVS );
 }
 
-/*
-============
-idAASCallback_FindCoverArea::AreaIsGoal
-============
-*/
 bool idAASCallback_FindCoverArea::AreaIsGoal( const idAAS* aas, int areaNum )
 {
 	idVec3 areaCenter;

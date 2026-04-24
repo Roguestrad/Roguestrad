@@ -40,11 +40,6 @@ END_CLASS
 #define FOLLOW_MINDIST 80
 #define FOLLOW_RUNDIST 180
 
-/*
-================
-iceAI_Follower::Init
-================
-*/
 void iceAI_Follower::Init()
 {
 	inCustomAnim = false;
@@ -67,11 +62,6 @@ void iceAI_Follower::Init()
 	stateThread.SetState( "state_idle" );
 }
 
-/*
-================
-iceAI_Follower::state_idle
-================
-*/
 stateResult_t iceAI_Follower::state_idle( stateParms_t* parms )
 {
 	Event_StopMove();
@@ -80,11 +70,6 @@ stateResult_t iceAI_Follower::state_idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-================
-iceAI_Follower::state_idle_frame
-================
-*/
 stateResult_t iceAI_Follower::state_idle_frame( stateParms_t* parms )
 {
 	if( AI_TALK ) {
@@ -96,11 +81,6 @@ stateResult_t iceAI_Follower::state_idle_frame( stateParms_t* parms )
 	return SRESULT_WAIT;
 }
 
-/*
-================
-iceAI_Follower::state_idle_frame
-================
-*/
 stateResult_t iceAI_Follower::state_talk_anim( stateParms_t* parms )
 {
 	if( AnimDone( ANIMCHANNEL_TORSO, 0 ) ) {
@@ -130,11 +110,6 @@ stateResult_t iceAI_Follower::state_follow( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-================
-iceAI_Follower::state_follow_frame
-================
-*/
 stateResult_t iceAI_Follower::state_follow_frame( stateParms_t* parms )
 {
 	Event_LookAtEntity( leader, 0.1f );
@@ -159,11 +134,6 @@ stateResult_t iceAI_Follower::state_follow_frame( stateParms_t* parms )
 	return SRESULT_WAIT;
 }
 
-/*
-================
-iceAI_Follower::state_get_closer
-================
-*/
 stateResult_t iceAI_Follower::state_get_closer( stateParms_t* parms )
 {
 	bool switchState = !( !AI_DEST_UNREACHABLE && !AI_MOVE_DONE && ( DistanceTo( leader ) > FOLLOW_MINDIST ) );
@@ -186,11 +156,6 @@ stateResult_t iceAI_Follower::state_get_closer( stateParms_t* parms )
 	return SRESULT_WAIT;
 }
 
-/*
-================
-iceAI_Follower::state_killed
-================
-*/
 stateResult_t iceAI_Follower::state_killed( stateParms_t* parms )
 {
 	Event_StopMove();

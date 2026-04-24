@@ -43172,6 +43172,1718 @@
     "void D_DrawDebugLines()": {
       "body_hash": "a487eaf34f0df9237efa6233186eb8a5",
       "is_trivial": true
+    },
+    "void iceAI_Follower::Init() override": {
+      "body_hash": "bd7c5600c0e8f9aff56085ce1c264953",
+      "is_trivial": true
+    },
+    "stateResult_t iceAI_Follower::state_idle(stateParms_t *parms)": {
+      "body_hash": "033f4ce83642598ba6382f4b998b2716",
+      "is_trivial": true
+    },
+    "stateResult_t iceAI_Follower::state_idle_frame(stateParms_t *parms)": {
+      "body_hash": "de45e12d9a62d5f442b891b1b6dd122a",
+      "is_trivial": true
+    },
+    "stateResult_t iceAI_Follower::state_follow_frame(stateParms_t *parms)": {
+      "body_hash": "8c71d650ff7765010ebc18f7752cd4db",
+      "is_trivial": true
+    },
+    "stateResult_t iceAI_Follower::state_get_closer(stateParms_t *parms)": {
+      "body_hash": "39eb02882be97740f644b2add77a4a91",
+      "is_trivial": true
+    },
+    "stateResult_t iceAI_Follower::state_killed(stateParms_t *parms)": {
+      "body_hash": "8774cb6b6402964e2e6836be6c29bac9",
+      "is_trivial": true
+    },
+    "stateResult_t iceAI_Follower::state_talk_anim(stateParms_t *parms)": {
+      "body_hash": "ae79b034d2d0b6e4f50eaceee00e68a5",
+      "is_trivial": true
+    },
+    "idAAS * idAAS::Alloc()": {
+      "body_hash": "b7ae677087d0faf5cdb0fb1fd3945ddf",
+      "is_trivial": true
+    },
+    "idAASCallback_AvoidLocation::idAASCallback_AvoidLocation()": {
+      "body_hash": "47d129c68d5893b89649025a85e7128d",
+      "is_trivial": true
+    },
+    "void idAASCallback_AvoidLocation::SetAvoidLocation(const idVec3 &start, const idVec3 &avoidLocation)": {
+      "body_hash": "83e7ff8742402d148eccd37985519eb8",
+      "is_trivial": true
+    },
+    "void idAASCallback_AvoidLocation::SetObstacles(const idAAS *aas, const idAASObstacle *obstacles, int numObstacles)": {
+      "body_hash": "c56265aa1ef1903ec97534ce52874dc3",
+      "is_trivial": true
+    },
+    "bool idAASCallback_AvoidLocation::PathValid(const idAAS *aas, const idVec3 &start, const idVec3 &end)": {
+      "body_hash": "1481af27477f76fa068af0bd652b0ecb",
+      "is_trivial": true
+    },
+    "int idAASCallback_AvoidLocation::AdditionalTravelTimeForPath(const idAAS *aas, const idVec3 &start, const idVec3 &end)": {
+      "body_hash": "c6b417f01a4d9c8bd0b085631079e40c",
+      "is_trivial": true
+    },
+    "idAASCallback_FindAreaOutOfRange::idAASCallback_FindAreaOutOfRange(const idVec3 &targetPos, float maxDist)": {
+      "body_hash": "c43739e8fd6b84e9faa1d34bb8fa2d70",
+      "is_trivial": true
+    },
+    "bool idAASCallback_FindAreaOutOfRange::AreaIsGoal(const idAAS *aas, int areaNum)": {
+      "body_hash": "c8cb56b80710d0be4c26aea205558916",
+      "is_trivial": true
+    },
+    "idAASCallback_FindAttackPosition::idAASCallback_FindAttackPosition(const idAI *self, const idMat3 &gravityAxis, idEntity *target, const idVec3 &targetPos, const idVec3 &fireOffset)": {
+      "body_hash": "0984d121d2676d37b36be852acfcb30f",
+      "is_trivial": false
+    },
+    "idAASCallback_FindAttackPosition::~idAASCallback_FindAttackPosition()": {
+      "body_hash": "f277feaf5725fa038800d022d26292a5",
+      "is_trivial": true
+    },
+    "bool idAASCallback_FindAttackPosition::AreaIsGoal(const idAAS *aas, int areaNum) override": {
+      "body_hash": "3f870489ff442460ef9d7cd9bfea0457",
+      "is_trivial": true
+    },
+    "idAASCallback_FindCoverArea::idAASCallback_FindCoverArea(const idVec3 &hideFromPos)": {
+      "body_hash": "6a0f8326b7b4791c6496352fb0a9df5f",
+      "is_trivial": true
+    },
+    "idAASCallback_FindCoverArea::~idAASCallback_FindCoverArea()": {
+      "body_hash": "46e4f757ee6d529b3e55aa43f6d6ecec",
+      "is_trivial": true
+    },
+    "bool idAASCallback_FindCoverArea::AreaIsGoal(const idAAS *aas, int areaNum)": {
+      "body_hash": "5bd02fcc7e6d937ed4aab675a42a185f",
+      "is_trivial": true
+    },
+    "idAASLocal::idAASLocal()": {
+      "body_hash": "73ef127bd37ae9667a2c3a9da452d322",
+      "is_trivial": true
+    },
+    "idAASLocal::~idAASLocal()": {
+      "body_hash": "2ef5947db99262f541b93471d9d57abf",
+      "is_trivial": true
+    },
+    "bool idAASLocal::Init(const idStr &mapName, unsigned int mapFileCRC)": {
+      "body_hash": "0b86f95585e3e9b2bb443fadfead644c",
+      "is_trivial": true
+    },
+    "void idAASLocal::Shutdown()": {
+      "body_hash": "c9a3d462a2f4922c3261107ee5b2f6b2",
+      "is_trivial": true
+    },
+    "void idAASLocal::Stats() const": {
+      "body_hash": "72e44ae0f0e40a03860f7e1b3d999771",
+      "is_trivial": true
+    },
+    "void idAASLocal::Test(const idVec3 &origin)": {
+      "body_hash": "ba0b3e38ccad3a9bf787ed488a79cb80",
+      "is_trivial": true
+    },
+    "const idAASSettings * idAASLocal::GetSettings() const": {
+      "body_hash": "4fad6345fa3badaa18932a026d1e3d2f",
+      "is_trivial": true
+    },
+    "int idAASLocal::PointAreaNum(const idVec3 &origin) const": {
+      "body_hash": "6d22a5c8b7aae20de79567390894d090",
+      "is_trivial": true
+    },
+    "int idAASLocal::PointReachableAreaNum(const idVec3 &origin, const idBounds &searchBounds, const int areaFlags) const": {
+      "body_hash": "d7f5e393a8848db3a4d68b14de5acfc0",
+      "is_trivial": true
+    },
+    "int idAASLocal::BoundsReachableAreaNum(const idBounds &bounds, const int areaFlags) const": {
+      "body_hash": "b00492ce21d5d74bffcac81b42212901",
+      "is_trivial": true
+    },
+    "void idAASLocal::PushPointIntoAreaNum(int areaNum, idVec3 &origin) const": {
+      "body_hash": "4bd70bcb7a9290b2fd2e6df02f0f3e80",
+      "is_trivial": true
+    },
+    "idVec3 idAASLocal::AreaCenter(int areaNum) const": {
+      "body_hash": "c170e8b2425b1c8293524e0cb33b8ad7",
+      "is_trivial": true
+    },
+    "int idAASLocal::AreaFlags(int areaNum) const": {
+      "body_hash": "5aca762a63b7a45787ffa9525907a791",
+      "is_trivial": true
+    },
+    "int idAASLocal::AreaTravelFlags(int areaNum) const": {
+      "body_hash": "061d8a68a932cb8ac05bcde5f73682d3",
+      "is_trivial": true
+    },
+    "bool idAASLocal::Trace(aasTrace_t &trace, const idVec3 &start, const idVec3 &end) const": {
+      "body_hash": "4efe12de26e284268540e2f85c014d2e",
+      "is_trivial": true
+    },
+    "const idPlane & idAASLocal::GetPlane(int planeNum) const": {
+      "body_hash": "4802e33c0f603a9309ef0e1d1f986637",
+      "is_trivial": true
+    },
+    "int idAASLocal::GetWallEdges(int areaNum, const idBounds &bounds, int travelFlags, int *edges, int maxEdges) const": {
+      "body_hash": "ca24cf53c5d1d5d3d17fd8ab3001e0b7",
+      "is_trivial": false
+    },
+    "void idAASLocal::SortWallEdges(int *edges, int numEdges) const": {
+      "body_hash": "2bb5aef6a3df48f198c8e26ad4d0f0e9",
+      "is_trivial": true
+    },
+    "void idAASLocal::GetEdgeVertexNumbers(int edgeNum, int verts[2]) const": {
+      "body_hash": "8db5162536bc198ffc285585db4a0789",
+      "is_trivial": true
+    },
+    "void idAASLocal::GetEdge(int edgeNum, idVec3 &start, idVec3 &end) const": {
+      "body_hash": "d199c36beb5aa38c02a7205d984959ec",
+      "is_trivial": true
+    },
+    "bool idAASLocal::SetAreaState(const idBounds &bounds, const int areaContents, bool disabled)": {
+      "body_hash": "8d44cc57b622b9dcb1dd9d7fb984d713",
+      "is_trivial": true
+    },
+    "aasHandle_t idAASLocal::AddObstacle(const idBounds &bounds)": {
+      "body_hash": "2c3fbe7f92c437f66277d60b8dca7321",
+      "is_trivial": true
+    },
+    "void idAASLocal::RemoveObstacle(const aasHandle_t handle)": {
+      "body_hash": "3b993bc9248524296ab15badf395539f",
+      "is_trivial": true
+    },
+    "void idAASLocal::RemoveAllObstacles()": {
+      "body_hash": "3707aaaebaece30d4d41c68f3eb18567",
+      "is_trivial": true
+    },
+    "int idAASLocal::TravelTimeToGoalArea(int areaNum, const idVec3 &origin, int goalAreaNum, int travelFlags) const": {
+      "body_hash": "20ca56063d419f3b0d54a048597b9bd8",
+      "is_trivial": false
+    },
+    "bool idAASLocal::RouteToGoalArea(int areaNum, const idVec3 origin, int goalAreaNum, int travelFlags, int &travelTime, idReachability **reach) const": {
+      "body_hash": "08ec34004bcdcac73d1c2a400d617def",
+      "is_trivial": false
+    },
+    "bool idAASLocal::WalkPathToGoal(aasPath_t &path, int areaNum, const idVec3 &origin, int goalAreaNum, const idVec3 &goalOrigin, int travelFlags) const": {
+      "body_hash": "d0a221954fa5760ab77751de812d534b",
+      "is_trivial": false
+    },
+    "bool idAASLocal::WalkPathValid(int areaNum, const idVec3 &origin, int goalAreaNum, const idVec3 &goalOrigin, int travelFlags, idVec3 &endPos, int &endAreaNum) const": {
+      "body_hash": "f14244c79f92f55617476f32a3fc193e",
+      "is_trivial": false
+    },
+    "bool idAASLocal::FlyPathToGoal(aasPath_t &path, int areaNum, const idVec3 &origin, int goalAreaNum, const idVec3 &goalOrigin, int travelFlags) const": {
+      "body_hash": "d9c1a832d1fdec409ca8f8f07ce133ea",
+      "is_trivial": false
+    },
+    "bool idAASLocal::FlyPathValid(int areaNum, const idVec3 &origin, int goalAreaNum, const idVec3 &goalOrigin, int travelFlags, idVec3 &endPos, int &endAreaNum) const": {
+      "body_hash": "ad6d6184f055c156ebb2310f14df9ed3",
+      "is_trivial": false
+    },
+    "void idAASLocal::ShowWalkPath(const idVec3 &origin, int goalAreaNum, const idVec3 &goalOrigin) const": {
+      "body_hash": "0761c76739642b9b08c8a7d803399081",
+      "is_trivial": true
+    },
+    "void idAASLocal::ShowFlyPath(const idVec3 &origin, int goalAreaNum, const idVec3 &goalOrigin) const": {
+      "body_hash": "efc3afeb0d2b2d3d0fed6816fe61e1e5",
+      "is_trivial": true
+    },
+    "bool idAASLocal::FindNearestGoal(aasGoal_t &goal, int areaNum, const idVec3 origin, const idVec3 &target, int travelFlags, aasObstacle_t *obstacles, int numObstacles, idAASCallback &callback) const": {
+      "body_hash": "100c701545e20d5a60e7624dee12959b",
+      "is_trivial": false
+    },
+    "const idBounds & idAASLocal::DefaultSearchBounds() const": {
+      "body_hash": "c07f05e061b69dfe133afaaae7872b22",
+      "is_trivial": true
+    },
+    "int idAASLocal::AdjustPositionAndGetArea(idVec3 &origin)": {
+      "body_hash": "fdfff9f669f1291faafa7f10bb27c2e8",
+      "is_trivial": true
+    },
+    "void idAASLocal::ShowArea(const idVec3 &origin) const": {
+      "body_hash": "9361b193b8770f5cd38252339d51a6e6",
+      "is_trivial": true
+    },
+    "void idAASLocal::DrawAreas() const": {
+      "body_hash": "aaa308e91b685c905cdf49a07017a63c",
+      "is_trivial": true
+    },
+    "virtual idAASFile * idAASLocal::GetAASFile()": {
+      "body_hash": "01080d099f0d20c8bf3169c66646110e",
+      "is_trivial": true
+    },
+    "void idAASLocal::DrawArea(int areaNum) const": {
+      "body_hash": "a40902ab9eba7c544c2252eb1108b805",
+      "is_trivial": true
+    },
+    "bool idAASLocal::SetupRouting()": {
+      "body_hash": "8b9b5f9599c63cf02542419b62bf132f",
+      "is_trivial": true
+    },
+    "void idAASLocal::ShutdownRouting()": {
+      "body_hash": "c993954aecb0ed97356396d1d5ca38ac",
+      "is_trivial": true
+    },
+    "unsigned short idAASLocal::AreaTravelTime(int areaNum, const idVec3 &start, const idVec3 &end) const": {
+      "body_hash": "015f1651e13f6522ab7f03ab1a8e76e5",
+      "is_trivial": true
+    },
+    "void idAASLocal::CalculateAreaTravelTimes()": {
+      "body_hash": "7deef9df9568ecb6665406f4bd3f8738",
+      "is_trivial": true
+    },
+    "void idAASLocal::DeleteAreaTravelTimes()": {
+      "body_hash": "35c792910377eb22f0cedfa779f5db41",
+      "is_trivial": true
+    },
+    "void idAASLocal::SetupRoutingCache()": {
+      "body_hash": "49d8667e4b102361a6e178c25f3dc1d0",
+      "is_trivial": true
+    },
+    "void idAASLocal::DeleteClusterCache(int clusterNum)": {
+      "body_hash": "43d6671044a11c5f2edf5cba9cf492d4",
+      "is_trivial": true
+    },
+    "void idAASLocal::DeletePortalCache()": {
+      "body_hash": "302f943bf65f5c69df84e743aed630bb",
+      "is_trivial": true
+    },
+    "void idAASLocal::ShutdownRoutingCache()": {
+      "body_hash": "f56dd5e33996311784376a8fb9a76bd6",
+      "is_trivial": true
+    },
+    "void idAASLocal::RoutingStats() const": {
+      "body_hash": "14edfd3cf3c2dd0580699d6ca782601e",
+      "is_trivial": true
+    },
+    "void idAASLocal::LinkCache(idRoutingCache *cache) const": {
+      "body_hash": "689f4d4ca8fd2bdce6685a7f0f094d72",
+      "is_trivial": true
+    },
+    "void idAASLocal::UnlinkCache(idRoutingCache *cache) const": {
+      "body_hash": "ba65dee5d297b4c1cbf4963ce2672cd7",
+      "is_trivial": true
+    },
+    "void idAASLocal::DeleteOldestCache() const": {
+      "body_hash": "cc80701a50e72ca8a2da6102d81ce7f2",
+      "is_trivial": true
+    },
+    "idReachability * idAASLocal::GetAreaReachability(int areaNum, int reachabilityNum) const": {
+      "body_hash": "f7e4124c576ded45738c4ecee1f7bb21",
+      "is_trivial": true
+    },
+    "ID_INLINE int idAASLocal::ClusterAreaNum(int clusterNum, int areaNum) const": {
+      "body_hash": "3ad197b318439c99516c5ec8183c45aa",
+      "is_trivial": true
+    },
+    "void idAASLocal::UpdateAreaRoutingCache(idRoutingCache *areaCache) const": {
+      "body_hash": "470801be03726f17625b3d9296ab206b",
+      "is_trivial": true
+    },
+    "idRoutingCache * idAASLocal::GetAreaRoutingCache(int clusterNum, int areaNum, int travelFlags) const": {
+      "body_hash": "770fb599f0d9b1f66347ac115364ed20",
+      "is_trivial": true
+    },
+    "void idAASLocal::UpdatePortalRoutingCache(idRoutingCache *portalCache) const": {
+      "body_hash": "33a9f3b0c211fc4c4cc45d49fe3e4691",
+      "is_trivial": true
+    },
+    "idRoutingCache * idAASLocal::GetPortalRoutingCache(int clusterNum, int areaNum, int travelFlags) const": {
+      "body_hash": "8c02592af1cbb8146b466617d684a33c",
+      "is_trivial": true
+    },
+    "void idAASLocal::RemoveRoutingCacheUsingArea(int areaNum)": {
+      "body_hash": "4b5abcf8acaa8c25abe5cb1e08bced91",
+      "is_trivial": true
+    },
+    "void idAASLocal::DisableArea(int areaNum)": {
+      "body_hash": "fb34fdcee57722ac5db1b160056d72a6",
+      "is_trivial": true
+    },
+    "void idAASLocal::EnableArea(int areaNum)": {
+      "body_hash": "7e5163e4c43cbe52fc29d18eb49db04f",
+      "is_trivial": true
+    },
+    "bool idAASLocal::SetAreaState_r(int nodeNum, const idBounds &bounds, const int areaContents, bool disabled)": {
+      "body_hash": "e8ee73982a1f01c895dee6ca98d868a9",
+      "is_trivial": false
+    },
+    "void idAASLocal::GetBoundsAreas_r(int nodeNum, const idBounds &bounds, idList< int > &areas) const": {
+      "body_hash": "5776cc42c5e2a6c526677493b4aa0c20",
+      "is_trivial": true
+    },
+    "void idAASLocal::SetObstacleState(const idRoutingObstacle *obstacle, bool enable)": {
+      "body_hash": "669085ea42dbcb3b0c8ae92d496fd58e",
+      "is_trivial": true
+    },
+    "bool idAASLocal::EdgeSplitPoint(idVec3 &split, int edgeNum, const idPlane &plane) const": {
+      "body_hash": "b3b6e66ccbae4d6132afa4f58f0f829a",
+      "is_trivial": true
+    },
+    "bool idAASLocal::FloorEdgeSplitPoint(idVec3 &split, int areaNum, const idPlane &splitPlane, const idPlane &frontPlane, bool closest) const": {
+      "body_hash": "0088eac8204e76ea97875cb357e27b88",
+      "is_trivial": false
+    },
+    "idVec3 idAASLocal::SubSampleWalkPath(int areaNum, const idVec3 &origin, const idVec3 &start, const idVec3 &end, int travelFlags, int &endAreaNum) const": {
+      "body_hash": "77462faece1ef798833190bd7e8dbc74",
+      "is_trivial": false
+    },
+    "idVec3 idAASLocal::SubSampleFlyPath(int areaNum, const idVec3 &origin, const idVec3 &start, const idVec3 &end, int travelFlags, int &endAreaNum) const": {
+      "body_hash": "4fcf632d418345b47c80a92c754756de",
+      "is_trivial": false
+    },
+    "void idAASLocal::DrawCone(const idVec3 &origin, const idVec3 &dir, float radius, const idVec4 &color) const": {
+      "body_hash": "3b90fa67527288d4b3fb76c7b1f2b9aa",
+      "is_trivial": false
+    },
+    "void idAASLocal::DrawFace(int faceNum, bool side) const": {
+      "body_hash": "a865acda8006522e77775a220d2b8eb6",
+      "is_trivial": true
+    },
+    "void idAASLocal::DrawEdge(int edgeNum, bool arrow) const": {
+      "body_hash": "edecfcc581e76df72abd7ec8e0854721",
+      "is_trivial": true
+    },
+    "void idAASLocal::DrawReachability(const idReachability *reach) const": {
+      "body_hash": "20d317051a999001281729242ac60897",
+      "is_trivial": true
+    },
+    "void idAASLocal::ShowWallEdges(const idVec3 &origin) const": {
+      "body_hash": "05cd9bc47550b50773561bd70ea60760",
+      "is_trivial": true
+    },
+    "void idAASLocal::ShowHideArea(const idVec3 &origin, int targerAreaNum) const": {
+      "body_hash": "a2d2d8676a32dbb5079cb90936e10239",
+      "is_trivial": true
+    },
+    "bool idAASLocal::PullPlayer(const idVec3 &origin, int toAreaNum) const": {
+      "body_hash": "d7a1f6e40c14233a9a271e0b23d9bae5",
+      "is_trivial": true
+    },
+    "void idAASLocal::RandomPullPlayer(const idVec3 &origin) const": {
+      "body_hash": "83b3138e2f5df642e0c63b8b61ed780f",
+      "is_trivial": true
+    },
+    "void idAASLocal::ShowPushIntoArea(const idVec3 &origin) const": {
+      "body_hash": "c35b2e83a9de6faa8fd2bd9e9cc540c1",
+      "is_trivial": true
+    },
+    "idAI::idAI()": {
+      "body_hash": "675d45d126c75f58fd66e7a712da88cf",
+      "is_trivial": true
+    },
+    "idAI::~idAI()": {
+      "body_hash": "1099ddb43fafeb902da4e4bbf346bdd9",
+      "is_trivial": true
+    },
+    "void idAI::Save(idSaveGame *savefile) const": {
+      "body_hash": "118473c491161c65edd9eb07027da905",
+      "is_trivial": true
+    },
+    "void idAI::Restore(idRestoreGame *savefile)": {
+      "body_hash": "5c773545ec78dc865fec60b69b603f8a",
+      "is_trivial": true
+    },
+    "void idAI::Spawn()": {
+      "body_hash": "d58908c7faf7805ed4d6c85c5f44da02",
+      "is_trivial": true
+    },
+    "idEntity * idAI::HeardSound(int ignore_team)": {
+      "body_hash": "93097e83655561fccd02d7936ca37b5f",
+      "is_trivial": true
+    },
+    "idActor * idAI::GetEnemy() const": {
+      "body_hash": "2d2ee8f1f4505b9a2eb52a4a4c5f1ca1",
+      "is_trivial": true
+    },
+    "void idAI::TalkTo(idActor *actor)": {
+      "body_hash": "59b4e18889a14808c2d44d9023ef902b",
+      "is_trivial": true
+    },
+    "talkState_t idAI::GetTalkState() const": {
+      "body_hash": "20912190365edd527172a900a70dc301",
+      "is_trivial": true
+    },
+    "float idAI::EnemyRange()": {
+      "body_hash": "70e9fe838828ba945ad1755114f5d7b3",
+      "is_trivial": true
+    },
+    "bool idAI::GetAimDir(const idVec3 &firePos, idEntity *aimAtEnt, const idEntity *ignore, idVec3 &aimDir) const": {
+      "body_hash": "16db2d664a412dc536bee6c6fbb774f4",
+      "is_trivial": false
+    },
+    "void idAI::TouchedByFlashlight(idActor *flashlight_owner)": {
+      "body_hash": "cbe7dec331e071bc76d1037b1e02ac31",
+      "is_trivial": true
+    },
+    "void idAI::Gib(const idVec3 &dir, const char *damageDefName)": {
+      "body_hash": "7d6a740cd0caecdc6efdc7ac785db8ec",
+      "is_trivial": true
+    },
+    "int idAI::ReactionTo(const idEntity *ent)": {
+      "body_hash": "274f0c19ed77b58e4c6d3513997820a6",
+      "is_trivial": true
+    },
+    "idThread * idAI::ConstructScriptObject()": {
+      "body_hash": "270cf83ed3ac024ef4fe24de3b9a1ba4",
+      "is_trivial": true
+    },
+    "void idAI::ClearEnemy()": {
+      "body_hash": "999b0f8c66bd4ec901e084ed7cf51156",
+      "is_trivial": true
+    },
+    "bool idAI::FindPathAroundObstacles(const idPhysics *physics, const idAAS *aas, const idEntity *ignore, const idVec3 &startPos, const idVec3 &seekPos, obstaclePath_t &path)": {
+      "body_hash": "9eeb36dd35c54ec301ce30c2ada14ebf",
+      "is_trivial": false
+    },
+    "void idAI::FreeObstacleAvoidanceNodes()": {
+      "body_hash": "19897432ed2e01fb5485f480ec6a3b80",
+      "is_trivial": true
+    },
+    "bool idAI::PredictPath(const idEntity *ent, const idAAS *aas, const idVec3 &start, const idVec3 &velocity, int totalTime, int frameTime, int stopEvent, predictedPath_t &path)": {
+      "body_hash": "3a70d8d3c1e19d5fe3302001b603a76a",
+      "is_trivial": false
+    },
+    "bool idAI::TestTrajectory(const idVec3 &start, const idVec3 &end, float zVel, float gravity, float time, float max_height, const idClipModel *clip, int clipmask, const idEntity *ignore, const idEntity *targetEntity, int drawtime)": {
+      "body_hash": "0654ea218711964ede775cceacbdbf1f",
+      "is_trivial": false
+    },
+    "bool idAI::PredictTrajectory(const idVec3 &firePos, const idVec3 &target, float projectileSpeed, const idVec3 &projGravity, const idClipModel *clip, int clipmask, float max_height, const idEntity *ignore, const idEntity *targetEntity, int drawtime, idVec3 &aimDir)": {
+      "body_hash": "10b6086bb3cf698fa5ea4a36f025673b",
+      "is_trivial": false
+    },
+    "virtual void idAI::Init()": {
+      "body_hash": "5e5806543008dd68d5b4e27c28397de3",
+      "is_trivial": true
+    },
+    "bool idAI::checkForEnemy(float use_fov)": {
+      "body_hash": "3dff8dd3747a8afadc6dd1d07a053712",
+      "is_trivial": true
+    },
+    "void idAI::SetAAS()": {
+      "body_hash": "91b5b8f335a7f98654b3fbe3c7da9461",
+      "is_trivial": true
+    },
+    "void idAI::DormantBegin()": {
+      "body_hash": "436da80c9b0bdf83469f2b1c8f40e7a3",
+      "is_trivial": true
+    },
+    "void idAI::DormantEnd()": {
+      "body_hash": "93ebe41789eed8c40333c16aaefb3784",
+      "is_trivial": true
+    },
+    "void idAI::Think()": {
+      "body_hash": "57df75fd59b1984073cd0a9d27afd424",
+      "is_trivial": true
+    },
+    "void idAI::Activate(idEntity *activator)": {
+      "body_hash": "75187dc6915c91b6ccbfd5d312a61c2d",
+      "is_trivial": true
+    },
+    "virtual int idAI::check_attacks()": {
+      "body_hash": "8f4f06efc77dab053c02492a87df0a4d",
+      "is_trivial": true
+    },
+    "virtual void idAI::do_attack(int attack_flags)": {
+      "body_hash": "dc5c84b2ae002a097c468b8dcabc1fa1",
+      "is_trivial": true
+    },
+    "void idAI::enemy_dead()": {
+      "body_hash": "46e5fa9684b187e600e4c7280881bb79",
+      "is_trivial": true
+    },
+    "void idAI::PlayCustomAnim(idStr animname, float blendIn, float blendOut)": {
+      "body_hash": "cd435f15439ed1f0c653358f56e3ae2f",
+      "is_trivial": true
+    },
+    "void idAI::trigger_wakeup_targets()": {
+      "body_hash": "8e110a4c1d21864591c13bfcf4dedbf6",
+      "is_trivial": true
+    },
+    "void idAI::sight_enemy()": {
+      "body_hash": "6be28406bfb1343c975a04f23a1e1f2f",
+      "is_trivial": true
+    },
+    "void idAI::CallConstructor()": {
+      "body_hash": "e13cae38dcd8c4da15b2b32682bfe050",
+      "is_trivial": true
+    },
+    "void idAI::EnemyDead()": {
+      "body_hash": "3406c4b76827fcd2ac011c82603eb06f",
+      "is_trivial": true
+    },
+    "bool idAI::CanPlayChatterSounds() const": {
+      "body_hash": "0e5112a9f909c7c9aba67627d34a9555",
+      "is_trivial": true
+    },
+    "void idAI::SetChatSound()": {
+      "body_hash": "51317248074d5cd08a51a9d95221a45a",
+      "is_trivial": true
+    },
+    "void idAI::PlayChatter()": {
+      "body_hash": "b30a37b6931b1068f1cd584bfbb8f96a",
+      "is_trivial": true
+    },
+    "void idAI::Hide()": {
+      "body_hash": "d6eb40f58a3c9bc31546e10e54750048",
+      "is_trivial": true
+    },
+    "void idAI::Show()": {
+      "body_hash": "3df902f7f08942427e5e49c653430d4f",
+      "is_trivial": true
+    },
+    "idVec3 idAI::FirstVisiblePointOnPath(const idVec3 origin, const idVec3 &target, int travelFlags) const": {
+      "body_hash": "166432bf151785cd0731724d2cfba6a6",
+      "is_trivial": true
+    },
+    "void idAI::CalculateAttackOffsets()": {
+      "body_hash": "c1ff225f8de933f1b55ee16175452c97",
+      "is_trivial": true
+    },
+    "void idAI::PlayCinematic()": {
+      "body_hash": "85ba8f4b0a23b75b2efe0964f2c12b92",
+      "is_trivial": true
+    },
+    "void idAI::ApplyImpulse(idEntity *ent, int id, const idVec3 &point, const idVec3 &impulse)": {
+      "body_hash": "8779869f2ebcfbad819f08bd0dc77036",
+      "is_trivial": false
+    },
+    "void idAI::GetMoveDelta(const idMat3 &oldaxis, const idMat3 &axis, idVec3 &delta)": {
+      "body_hash": "493d5076bad8ba93c9678a53fabc2a86",
+      "is_trivial": true
+    },
+    "void idAI::CheckObstacleAvoidance(const idVec3 &goalPos, idVec3 &newPos)": {
+      "body_hash": "ad4e012c41c9f752f2350bdd0057a48e",
+      "is_trivial": true
+    },
+    "void idAI::DeadMove()": {
+      "body_hash": "8e5757ee48a8953e266ca8ee9a1e454d",
+      "is_trivial": true
+    },
+    "void idAI::AnimMove()": {
+      "body_hash": "ed70642d68841d3e95c9dceda5e03da2",
+      "is_trivial": true
+    },
+    "void idAI::SlideMove()": {
+      "body_hash": "17dd2a937573aa7c3704025147a4f573",
+      "is_trivial": true
+    },
+    "void idAI::AddFlyBob(idVec3 &vel)": {
+      "body_hash": "a2bcabdc453d782891709aecbe17b562",
+      "is_trivial": true
+    },
+    "void idAI::AdjustFlyHeight(idVec3 &vel, const idVec3 &goalPos)": {
+      "body_hash": "8901a92393513ae74b25fad742105a58",
+      "is_trivial": true
+    },
+    "void idAI::FlySeekGoal(idVec3 &vel, idVec3 &goalPos)": {
+      "body_hash": "83ec185f4de57e76b70cd56183fc5559",
+      "is_trivial": true
+    },
+    "void idAI::AdjustFlySpeed(idVec3 &vel)": {
+      "body_hash": "82ec12238c48629dfdcec67f041b3acf",
+      "is_trivial": true
+    },
+    "void idAI::FlyTurn()": {
+      "body_hash": "a708c09ee90b338a19af8df8284a0e60",
+      "is_trivial": true
+    },
+    "void idAI::FlyMove()": {
+      "body_hash": "3a33e94e8037454b2289a6623f85d800",
+      "is_trivial": true
+    },
+    "void idAI::StaticMove()": {
+      "body_hash": "8b246594396f45806eac9fe2448d387b",
+      "is_trivial": true
+    },
+    "bool idAI::Pain(idEntity *inflictor, idEntity *attacker, int damage, const idVec3 &dir, int location)": {
+      "body_hash": "2a54a6704c45f1de23daf39deb9ed7ba",
+      "is_trivial": false
+    },
+    "void idAI::Killed(idEntity *inflictor, idEntity *attacker, int damage, const idVec3 &dir, int location)": {
+      "body_hash": "5118351a8640def1127577e27986b9ab",
+      "is_trivial": false
+    },
+    "void idAI::KickObstacles(const idVec3 &dir, float force, idEntity *alwaysKick)": {
+      "body_hash": "f0f286ac8281f3dbab693fed1465480e",
+      "is_trivial": true
+    },
+    "bool idAI::ReachedPos(const idVec3 &pos, const moveCommand_t moveCommand) const": {
+      "body_hash": "584cb883de42cbd41d9220f42dc53167",
+      "is_trivial": true
+    },
+    "float idAI::TravelDistance(const idVec3 &start, const idVec3 &end) const": {
+      "body_hash": "c27e4f3ee9f710acac1f40d87337fffe",
+      "is_trivial": true
+    },
+    "int idAI::PointReachableAreaNum(const idVec3 &pos, const float boundsScale=2.0f) const": {
+      "body_hash": "a1874eb3dff41e9865c95a9d1cedf4ee",
+      "is_trivial": true
+    },
+    "bool idAI::PathToGoal(aasPath_t &path, int areaNum, const idVec3 &origin, int goalAreaNum, const idVec3 &goalOrigin) const": {
+      "body_hash": "d49cddba5c6c37fe8b921f91b8a651f2",
+      "is_trivial": false
+    },
+    "void idAI::DrawRoute() const": {
+      "body_hash": "6c9ed97dc12c89b084322cd93606da83",
+      "is_trivial": true
+    },
+    "bool idAI::GetMovePos(idVec3 &seekPos)": {
+      "body_hash": "101b5f64203d2cc364ef304f049afd9d",
+      "is_trivial": true
+    },
+    "bool idAI::MoveDone() const": {
+      "body_hash": "5456a06f98ea6d75a0dec2e852a0210e",
+      "is_trivial": true
+    },
+    "bool idAI::EntityCanSeePos(idActor *actor, const idVec3 &actorOrigin, const idVec3 &pos)": {
+      "body_hash": "71f669e99a64dab01b787396cd7cab03",
+      "is_trivial": true
+    },
+    "void idAI::BlockedFailSafe()": {
+      "body_hash": "c4d868a2c0de8d081c8b550a52cb30d9",
+      "is_trivial": true
+    },
+    "void idAI::StopMove(moveStatus_t status)": {
+      "body_hash": "a85368f88b2b778a2e27d63088be7b75",
+      "is_trivial": true
+    },
+    "bool idAI::FaceEnemy()": {
+      "body_hash": "554f95ef299b4ec8a6c0eeffe55c5af0",
+      "is_trivial": true
+    },
+    "bool idAI::FaceEntity(idEntity *ent)": {
+      "body_hash": "64cb4c43b91daa45399d1e2f08ec9f69",
+      "is_trivial": true
+    },
+    "bool idAI::DirectMoveToPosition(const idVec3 &pos)": {
+      "body_hash": "39b895a8815f578feb16a19f33eab116",
+      "is_trivial": true
+    },
+    "bool idAI::MoveToEnemyHeight()": {
+      "body_hash": "2ee542bc6a73140bd44072dac0dc64ff",
+      "is_trivial": true
+    },
+    "bool idAI::MoveOutOfRange(idEntity *entity, float range)": {
+      "body_hash": "74bbb5cea9909901b2117e799a14e955",
+      "is_trivial": true
+    },
+    "bool idAI::MoveToAttackPosition(idEntity *ent, int attack_anim)": {
+      "body_hash": "23d173f62514297e2ef759520d09b4b9",
+      "is_trivial": true
+    },
+    "bool idAI::MoveToEnemy()": {
+      "body_hash": "d5c722a358162231171bdd1b1f53514e",
+      "is_trivial": true
+    },
+    "bool idAI::MoveToEntity(idEntity *ent)": {
+      "body_hash": "32101db10abb8854db59018a6d7e6509",
+      "is_trivial": true
+    },
+    "bool idAI::MoveToPosition(const idVec3 &pos)": {
+      "body_hash": "26d725d17752ae8edf1e3abe7e07c762",
+      "is_trivial": true
+    },
+    "bool idAI::MoveToCover(idEntity *entity, const idVec3 &pos)": {
+      "body_hash": "91733eacb44545e91d417d86380df1ff",
+      "is_trivial": true
+    },
+    "bool idAI::SlideToPosition(const idVec3 &pos, float time)": {
+      "body_hash": "8feb0c123104be9a8aa8f231b2d34ebe",
+      "is_trivial": true
+    },
+    "bool idAI::WanderAround()": {
+      "body_hash": "7f0c5e9dad3e64133c791bcc332c684b",
+      "is_trivial": true
+    },
+    "bool idAI::StepDirection(float dir)": {
+      "body_hash": "bba0f2f093a1e0a311b4bfe29ef59a6e",
+      "is_trivial": true
+    },
+    "bool idAI::NewWanderDir(const idVec3 &dest)": {
+      "body_hash": "a1eedbed103dfd0d5b9ec5fa2c8273b0",
+      "is_trivial": true
+    },
+    "const idDeclParticle * idAI::SpawnParticlesOnJoint(particleEmitter_t &pe, const char *particleName, const char *jointName)": {
+      "body_hash": "90cf031f151513de6b9d8dd5985f23cb",
+      "is_trivial": true
+    },
+    "void idAI::SpawnParticles(const char *keyName)": {
+      "body_hash": "aa3067a30924aea8e591f52c1159daba",
+      "is_trivial": true
+    },
+    "bool idAI::FacingIdeal()": {
+      "body_hash": "8e95458d547581479010fdfc225b23ac",
+      "is_trivial": true
+    },
+    "void idAI::Turn()": {
+      "body_hash": "bcdae18fb2f66fe1fdeecd3cf24a56e0",
+      "is_trivial": true
+    },
+    "bool idAI::TurnToward(float yaw)": {
+      "body_hash": "02c205b7e20c1572ce9e411b4686bae1",
+      "is_trivial": true
+    },
+    "bool idAI::TurnToward(const idVec3 &pos)": {
+      "body_hash": "0cf2ce57a9e6c9b0004cf36ffca74bf9",
+      "is_trivial": true
+    },
+    "bool idAI::EnemyPositionValid() const": {
+      "body_hash": "18bcb27b2675531ff731074e704faa8e",
+      "is_trivial": true
+    },
+    "void idAI::SetEnemyPosition()": {
+      "body_hash": "5577a57328da165851a52af9bc1fff55",
+      "is_trivial": true
+    },
+    "void idAI::UpdateEnemyPosition()": {
+      "body_hash": "a3e220d2107b1d55814dfe4841c9e2b7",
+      "is_trivial": true
+    },
+    "void idAI::SetEnemy(idActor *newEnemy)": {
+      "body_hash": "e639a6eee321fff522c7f6fb1f517475",
+      "is_trivial": true
+    },
+    "bool idAI::CanReachEntity(idEntity *ent)": {
+      "body_hash": "b037c2f3a17f8214008caec77963a60d",
+      "is_trivial": true
+    },
+    "bool idAI::CanReachEnemy()": {
+      "body_hash": "9a27ee6c51f5cf4c1a9b28e305a284c6",
+      "is_trivial": true
+    },
+    "void idAI::CreateProjectileClipModel() const": {
+      "body_hash": "9a33857daab1cb4cb3cd8fee299caf2c",
+      "is_trivial": true
+    },
+    "idProjectile * idAI::CreateProjectile(const idVec3 &pos, const idVec3 &dir)": {
+      "body_hash": "6cfd829326ea9266779a0977e19fe3e2",
+      "is_trivial": true
+    },
+    "void idAI::RemoveProjectile()": {
+      "body_hash": "3300105e082ffa29f6eacc511d1a4698",
+      "is_trivial": true
+    },
+    "idProjectile * idAI::LaunchProjectile(const char *jointname, idEntity *target, bool clampToAttackCone)": {
+      "body_hash": "93592b20577af7ea93bf27c5e896813a",
+      "is_trivial": true
+    },
+    "void idAI::DamageFeedback(idEntity *victim, idEntity *inflictor, int &damage)": {
+      "body_hash": "41c8a1a2bc524fa62fde10557b5077e7",
+      "is_trivial": true
+    },
+    "void idAI::DirectDamage(const char *meleeDefName, idEntity *ent)": {
+      "body_hash": "40130be6f835a83a0a4558f887a285d0",
+      "is_trivial": true
+    },
+    "bool idAI::TestMelee() const": {
+      "body_hash": "ee52bfa962ccbc8bfdfc1eb532b6c5c7",
+      "is_trivial": true
+    },
+    "bool idAI::AttackMelee(const char *meleeDefName)": {
+      "body_hash": "aedb8cf74294491d1486f41ba44345ea",
+      "is_trivial": true
+    },
+    "void idAI::BeginAttack(const char *name)": {
+      "body_hash": "09be1d3bcfa3ae8b39345529975b0129",
+      "is_trivial": true
+    },
+    "void idAI::EndAttack()": {
+      "body_hash": "aef7f5f4ef5a21202d8afdd109690eb3",
+      "is_trivial": true
+    },
+    "void idAI::PushWithAF()": {
+      "body_hash": "98be110cbca65846109529ac789ecc1b",
+      "is_trivial": true
+    },
+    "void idAI::GetMuzzle(const char *jointname, idVec3 &muzzle, idMat3 &axis)": {
+      "body_hash": "b74504fef3bfa1dd23b067f1aad594c6",
+      "is_trivial": true
+    },
+    "void idAI::InitMuzzleFlash()": {
+      "body_hash": "607b6dcd942de08e8fe8430d8f456d5a",
+      "is_trivial": true
+    },
+    "void idAI::TriggerWeaponEffects(const idVec3 &muzzle)": {
+      "body_hash": "3ee480cf9af30947db4a9ef9eae37d2a",
+      "is_trivial": true
+    },
+    "void idAI::UpdateMuzzleFlash()": {
+      "body_hash": "b5f5536017f64a46d4e67f24257ec8ba",
+      "is_trivial": true
+    },
+    "bool idAI::UpdateAnimationControllers()": {
+      "body_hash": "168855c74376446007d52d32ef931ef9",
+      "is_trivial": true
+    },
+    "void idAI::UpdateParticles()": {
+      "body_hash": "884bac769cfe2d2b6cda90b0b81faf01",
+      "is_trivial": true
+    },
+    "void idAI::TriggerParticles(const char *jointName)": {
+      "body_hash": "8640348c9d6b99442e329748c9dddf4c",
+      "is_trivial": true
+    },
+    "void idAI::combat_lost()": {
+      "body_hash": "0691f8244eb083cd91f9343151fca223",
+      "is_trivial": true
+    },
+    "idEntity * idAI::GetCombatNode()": {
+      "body_hash": "57a4b081916e2abe4229af64fccdbd81",
+      "is_trivial": true
+    },
+    "bool idAI::TestAnimMove(const char *animname)": {
+      "body_hash": "b19d23055686e1ab85968ee3e3a03690",
+      "is_trivial": true
+    },
+    "void idAI::TriggerFX(const char *joint, const char *fx)": {
+      "body_hash": "229095c9537c9c83a068132bf1830ffb",
+      "is_trivial": true
+    },
+    "idEntity * idAI::StartEmitter(const char *name, const char *joint, const char *particle)": {
+      "body_hash": "0c86e41633f8f04d1d66e6f1cc66a3f1",
+      "is_trivial": true
+    },
+    "idEntity * idAI::GetEmitter(const char *name)": {
+      "body_hash": "acb22808013a9ea8f101584c114a5d3f",
+      "is_trivial": true
+    },
+    "void idAI::StopEmitter(const char *name)": {
+      "body_hash": "056fab7fcf45ed8472aafe8c7c43a4e6",
+      "is_trivial": true
+    },
+    "idEntity * idAI::FindEnemyInCombatNodes()": {
+      "body_hash": "82167f6e36c16b81fc22510cca82687e",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::check_blocked(stateParms_t *parms, bool &result)": {
+      "body_hash": "31902d03fee49aca571c619272dfd966",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::combat_chase(stateParms_t *parms, bool &result)": {
+      "body_hash": "fb2f9ff54baa89e1c61eb4e83a556ceb",
+      "is_trivial": true
+    },
+    "void idAI::LinkScriptVariables()": {
+      "body_hash": "ac019093d4272c53625f41448e24418f",
+      "is_trivial": true
+    },
+    "void idAI::UpdateAIScript()": {
+      "body_hash": "bd9456f71f8f4b36f2d97ae0a88c8ca2",
+      "is_trivial": true
+    },
+    "idEntity * idAI::GetClosestHiddenTarget(const char *type)": {
+      "body_hash": "734fd25c38082528497279ed311e2165",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_Spawner(stateParms_t *parms)": {
+      "body_hash": "07529218a8c92992ed51bc19a52b96c9",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_WakeUp(stateParms_t *parms)": {
+      "body_hash": "0a3ca581c81f11faa86aac1e4636947f",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::wake_on_attackcone(stateParms_t *parms)": {
+      "body_hash": "1d4147f375d67d3a96c92fb3c776ad0e",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::walk_on_trigger(stateParms_t *parms)": {
+      "body_hash": "73518e022943128fb4112c049bb43526",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::wake_on_trigger(stateParms_t *parms)": {
+      "body_hash": "e3de7856ffd66f72f8f9ffda2ea851d0",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::wake_on_enemy(stateParms_t *parms)": {
+      "body_hash": "c190718a1d0d65ed7c73bfa2d7b86e9a",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::wait_for_enemy(stateParms_t *parms)": {
+      "body_hash": "3110b718200cd933396604c99f4096e5",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_TriggerAnim(stateParms_t *parms)": {
+      "body_hash": "0f183e194c89af07cc99876db8ec5b84",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_TeleportTriggered(stateParms_t *parms)": {
+      "body_hash": "4e096baba6a9e65f38a2db2246425986",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_TriggerHidden(stateParms_t *parms)": {
+      "body_hash": "b2386ac7a5b14a07c774b8b3208d5ee3",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::wake_call_constructor(stateParms_t *parms)": {
+      "body_hash": "64e5a0b1288387b5f2970d9f0e302255",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_Killed(stateParms_t *parms)": {
+      "body_hash": "f77c4de2410136163466fc233b3312f5",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_Dead(stateParms_t *parms)": {
+      "body_hash": "d91929e83ed0c3e30f95806e7b1c79ab",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::combat_wander(stateParms_t *parms)": {
+      "body_hash": "ebd0844715f368afd2e4725e5c7d020e",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_LostCombat(stateParms_t *parms)": {
+      "body_hash": "d5693354f2f9a667b1f25dc9788d33be",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_LostCombat_No_Node(stateParms_t *parms)": {
+      "body_hash": "7d45e7cb97e8f09ff8f5e5d28802604d",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_LostCombat_Node(stateParms_t *parms)": {
+      "body_hash": "82f89d53cb49919ff772d5a0a92efeda",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_LostCombat_Finish(stateParms_t *parms)": {
+      "body_hash": "0e6f364b46c317121470ced4e7643e28",
+      "is_trivial": true
+    },
+    "stateResult_t idAI::state_Combat(stateParms_t *parms)": {
+      "body_hash": "d922a0ad3826a26aa6f6e7a9c30b18e9",
+      "is_trivial": true
+    },
+    "bool idAI::CanHitEnemy()": {
+      "body_hash": "7ef385f2e04897be8314a6f900851075",
+      "is_trivial": true
+    },
+    "bool idAI::EntityInAttackCone(idEntity *ent)": {
+      "body_hash": "60b5026346d97017ddc47eeaefd879a0",
+      "is_trivial": true
+    },
+    "float idAI::EnemyRange2D()": {
+      "body_hash": "f7f77ca721156fd2269b90d6d825dffd",
+      "is_trivial": true
+    },
+    "float idAI::TestChargeAttack()": {
+      "body_hash": "b4da9564d9912f22f5b6291db81ce0c9",
+      "is_trivial": true
+    },
+    "idVec3 idAI::GetEnemyEyePos()": {
+      "body_hash": "d7ce1e800f9e8830462f598697a0c012",
+      "is_trivial": true
+    },
+    "idVec3 idAI::GetJumpVelocity(const idVec3 &pos, float speed, float max_height)": {
+      "body_hash": "2e00a35087e1e8fd998fffe46ea4a6aa",
+      "is_trivial": true
+    },
+    "void idAI::Event_Activate(idEntity *activator)": {
+      "body_hash": "58d772043d042905ce76813f1ae7d2fb",
+      "is_trivial": true
+    },
+    "idActor * idAI::FindEnemy(int useFOV)": {
+      "body_hash": "976632de1586b79e6da3b6f4b537ce05",
+      "is_trivial": true
+    },
+    "idActor * idAI::FindEnemyAI(int useFOV)": {
+      "body_hash": "867ca12692ca2e4f74825a67cbd03dd3",
+      "is_trivial": true
+    },
+    "void idAI::Event_Touch(idEntity *other, trace_t *trace)": {
+      "body_hash": "221593eb93a4ef6408972943588f0993",
+      "is_trivial": true
+    },
+    "void idAI::Event_FindEnemy(int useFOV)": {
+      "body_hash": "97125012974a9294a897148d5f271e1f",
+      "is_trivial": true
+    },
+    "void idAI::Event_FindEnemyAI(int useFOV)": {
+      "body_hash": "8be7fa714ef377c7ccb6cc964e71dd63",
+      "is_trivial": true
+    },
+    "void idAI::Event_CheckForEnemy(float use_fov)": {
+      "body_hash": "bb9ff5db8203fd2d5e7aefbafef13d08",
+      "is_trivial": true
+    },
+    "void idAI::Event_FindEnemyInCombatNodes()": {
+      "body_hash": "99f0ca12fedbb97314e9ff54515e04f9",
+      "is_trivial": true
+    },
+    "idVec3 idAI::PredictEnemyPos(float time)": {
+      "body_hash": "787b387d057d7aae7d4a634d8361eaf4",
+      "is_trivial": true
+    },
+    "void idAI::Event_ClosestReachableEnemyOfEntity(idEntity *team_mate)": {
+      "body_hash": "0056b243e77327a76c7ba55f67ad5ddc",
+      "is_trivial": true
+    },
+    "void idAI::Event_HeardSound(int ignore_team)": {
+      "body_hash": "9fcf29fc8f3760b0e4564591ea386115",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetEnemy(idEntity *ent)": {
+      "body_hash": "53a7ffd51b087f06a7c3630fd7294127",
+      "is_trivial": true
+    },
+    "void idAI::Event_ClearEnemy()": {
+      "body_hash": "dbe0a914c576e0ad0451519cfdbdda77",
+      "is_trivial": true
+    },
+    "void idAI::Event_MuzzleFlash(const char *jointname)": {
+      "body_hash": "b2858c8840526e17d2b7b34cac39475e",
+      "is_trivial": true
+    },
+    "void idAI::Event_CreateMissile(const char *jointname)": {
+      "body_hash": "bbf9425c33a5feb7faf3d4d8b6a1d085",
+      "is_trivial": true
+    },
+    "void idAI::Event_AttackMissile(const char *jointname)": {
+      "body_hash": "4ebef36ece4d64e32eef807dcaa7da46",
+      "is_trivial": true
+    },
+    "bool idAI::TestAnimMoveTowardEnemy(const char *animname)": {
+      "body_hash": "59847263493994c7fc84170c7c0786f7",
+      "is_trivial": true
+    },
+    "void idAI::Event_FireMissileAtTarget(const char *jointname, const char *targetname)": {
+      "body_hash": "69f93c65961e2a8986116a5cbe4b01d4",
+      "is_trivial": true
+    },
+    "void idAI::Event_LaunchMissile(const idVec3 &muzzle, const idAngles &ang)": {
+      "body_hash": "da6c98c88b5d6e4d8a0ea74eec1d2063",
+      "is_trivial": true
+    },
+    "void idAI::Event_LaunchHomingMissile()": {
+      "body_hash": "c901dae604de0a5fde1452b986baf914",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetHomingMissileGoal()": {
+      "body_hash": "22470986d8ce33287d38d9e87272276f",
+      "is_trivial": true
+    },
+    "void idAI::Event_LaunchProjectile(const char *entityDefName)": {
+      "body_hash": "eb5adbda54ccf6762ab151459dffa308",
+      "is_trivial": true
+    },
+    "void idAI::Event_AttackMelee(const char *meleeDefName)": {
+      "body_hash": "b58e5b5c89927df5c5befdfb43447573",
+      "is_trivial": true
+    },
+    "void idAI::Event_DirectDamage(idEntity *damageTarget, const char *damageDefName)": {
+      "body_hash": "588e3aacede303ce8858441eaab3a0ee",
+      "is_trivial": true
+    },
+    "bool idAI::CanHitEnemyFromAnim(const char *animname)": {
+      "body_hash": "35e1661b78b4eb26fd2e15e3e1ba1581",
+      "is_trivial": true
+    },
+    "void idAI::Event_RadiusDamageFromJoint(const char *jointname, const char *damageDefName)": {
+      "body_hash": "04a73c5102c6ac9e3987f10131c0f24e",
+      "is_trivial": true
+    },
+    "void idAI::Event_BeginAttack(const char *name)": {
+      "body_hash": "e3248c99c82b29e0b3d8218a2376a63d",
+      "is_trivial": true
+    },
+    "void idAI::Event_EndAttack()": {
+      "body_hash": "25f11d6533147a4de36d06fb0e48b1cf",
+      "is_trivial": true
+    },
+    "void idAI::Event_MeleeAttackToJoint(const char *jointname, const char *meleeDefName)": {
+      "body_hash": "05edb1ff2a7f34833c5d20cb10ece4c5",
+      "is_trivial": true
+    },
+    "void idAI::Event_RandomPath()": {
+      "body_hash": "fcb96ebedaa753208878e550648b42a1",
+      "is_trivial": true
+    },
+    "void idAI::Event_CanBecomeSolid()": {
+      "body_hash": "9784a22dc2659997181212d32d7dacba",
+      "is_trivial": true
+    },
+    "bool idAI::CanBecomeSolid()": {
+      "body_hash": "9ac902b3b6339242117cd6456cdf75e9",
+      "is_trivial": true
+    },
+    "void idAI::Event_BecomeSolid()": {
+      "body_hash": "ff1d2383ba29f6edb6d075b78d203b99",
+      "is_trivial": true
+    },
+    "void idAI::Event_BecomeNonSolid()": {
+      "body_hash": "8f8e7223933e4a5f7ccef0b21a23bf06",
+      "is_trivial": true
+    },
+    "void idAI::Event_BecomeRagdoll()": {
+      "body_hash": "e3166c27dd1364be66980f25631b2cde",
+      "is_trivial": true
+    },
+    "void idAI::Event_StopRagdoll()": {
+      "body_hash": "4a8509d0e78aab8755823a4e44768099",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetHealth(float newHealth)": {
+      "body_hash": "73533d0b329bd8bc4fcfa65125aab213",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetHealth()": {
+      "body_hash": "1d3c3d023ffe836e0e715ed004477b5e",
+      "is_trivial": true
+    },
+    "void idAI::Event_AllowDamage()": {
+      "body_hash": "4f185f8a70d745385fe1ea2c7de1ebf5",
+      "is_trivial": true
+    },
+    "void idAI::Event_IgnoreDamage()": {
+      "body_hash": "a73942281da3de77f8ec26c3d07dab27",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetCurrentYaw()": {
+      "body_hash": "ee3f2477391a97d7668b04677c7f00fb",
+      "is_trivial": true
+    },
+    "void idAI::Event_TurnTo(float angle)": {
+      "body_hash": "7833220bf150d325afee748481b5a236",
+      "is_trivial": true
+    },
+    "void idAI::Event_TurnToPos(const idVec3 &pos)": {
+      "body_hash": "e8e481d88c54adeeef66e767d276a42e",
+      "is_trivial": true
+    },
+    "void idAI::Event_TurnToEntity(idEntity *ent)": {
+      "body_hash": "a2e5ce62efa88306483678cc76ccdc8e",
+      "is_trivial": true
+    },
+    "void idAI::Event_MoveStatus()": {
+      "body_hash": "82fba259b8b27b97496f5aca5ac82aa0",
+      "is_trivial": true
+    },
+    "void idAI::Event_StopMove()": {
+      "body_hash": "7dfca0141fafc49a670b760dc168829d",
+      "is_trivial": true
+    },
+    "void idAI::Event_MoveToCover()": {
+      "body_hash": "eb8181fe6c188dea1b6729d2c7005f5a",
+      "is_trivial": true
+    },
+    "void idAI::Event_MoveToEnemy()": {
+      "body_hash": "6df47e59ca5da5b52611fd03516609d2",
+      "is_trivial": true
+    },
+    "void idAI::Event_MoveToEnemyHeight()": {
+      "body_hash": "149c880c997f13392133833464bfcc44",
+      "is_trivial": true
+    },
+    "void idAI::Event_MoveOutOfRange(idEntity *entity, float range)": {
+      "body_hash": "a9a623a99f0911cae4d8db3c6709ffc2",
+      "is_trivial": true
+    },
+    "void idAI::Event_MoveToAttackPosition(idEntity *entity, const char *attack_anim)": {
+      "body_hash": "d07f0a682fb21eaebc6caaf0c02aabd6",
+      "is_trivial": true
+    },
+    "void idAI::Event_MoveToEntity(idEntity *ent)": {
+      "body_hash": "a5c3669ade80e95e7eb106d1fc00c760",
+      "is_trivial": true
+    },
+    "void idAI::Event_MoveToPosition(const idVec3 &pos)": {
+      "body_hash": "3b770f7bee7958ce39056e86e8ffaf76",
+      "is_trivial": true
+    },
+    "void idAI::Event_SlideTo(const idVec3 &pos, float time)": {
+      "body_hash": "baeba70699f02504af1b8d7a1f57ac46",
+      "is_trivial": true
+    },
+    "void idAI::Event_Wander()": {
+      "body_hash": "c04858a19c22f5f0cac1713279d11543",
+      "is_trivial": true
+    },
+    "void idAI::Event_FacingIdeal()": {
+      "body_hash": "e7c2c94fe68207ebab28b010ef17dad5",
+      "is_trivial": true
+    },
+    "void idAI::Event_FaceEnemy()": {
+      "body_hash": "0faa64ab4d368819625b5d4638b8dc1a",
+      "is_trivial": true
+    },
+    "void idAI::Event_WaitAction(const char *waitForState)": {
+      "body_hash": "c919379cad8999f9bd4dee7508a2692f",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetCombatNode()": {
+      "body_hash": "bb65d926fbc9767d7502e2cf80430905",
+      "is_trivial": true
+    },
+    "void idAI::Event_EnemyInCombatCone(idEntity *ent, int use_current_enemy_location)": {
+      "body_hash": "259a0b1e77180052d6ac77c0c40a092d",
+      "is_trivial": true
+    },
+    "void idAI::Event_WaitMove()": {
+      "body_hash": "6b1f179f9be7a1d553584546a4b2ca23",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetJumpVelocity(const idVec3 &pos, float speed, float max_height)": {
+      "body_hash": "6e3a2917c0016f38c59b0be5294bc287",
+      "is_trivial": true
+    },
+    "void idAI::Event_EntityInAttackCone(idEntity *ent)": {
+      "body_hash": "54efac1aeccbcffd1d965ff27e690366",
+      "is_trivial": true
+    },
+    "void idAI::Event_CanSeeEntity(idEntity *ent)": {
+      "body_hash": "e9446efc0177d4cdf7ef884091d0c47f",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetTalkTarget(idEntity *target)": {
+      "body_hash": "eb264674ecf13aa648e57cecef55fa4d",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetTalkTarget()": {
+      "body_hash": "d10ee1830838b3e7d773dcd10b16d555",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetTalkState(int state)": {
+      "body_hash": "3214139b791500a18e1002d01f80b1a0",
+      "is_trivial": true
+    },
+    "void idAI::Event_EnemyRange()": {
+      "body_hash": "2e2b678f695b06d6e173999aed268a56",
+      "is_trivial": true
+    },
+    "void idAI::Event_EnemyRange2D()": {
+      "body_hash": "6ee803ae722eefa75dbb85b288c5eae0",
+      "is_trivial": true
+    },
+    "void idAI::Event_IsAwake()": {
+      "body_hash": "e851e5dfcb8b567b85cd29ab69674aa0",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetEnemy()": {
+      "body_hash": "48faadb3445a00952f136cc6bea26e8d",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetEnemyPos()": {
+      "body_hash": "e662ebbbe90ce05606adc1373a70d5eb",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetEnemyEyePos()": {
+      "body_hash": "015de6eff9f197655b8e82010be3081c",
+      "is_trivial": true
+    },
+    "void idAI::Event_PredictEnemyPos(float time)": {
+      "body_hash": "917132e7b55e5afd473ac347bf81612d",
+      "is_trivial": true
+    },
+    "void idAI::Event_CanHitEnemy()": {
+      "body_hash": "3b4f97fa8b8e7e5ffb352bde692020cf",
+      "is_trivial": true
+    },
+    "void idAI::Event_CanHitEnemyFromAnim(const char *animname)": {
+      "body_hash": "2c7af6061cf428fc78cae0d1477e2233",
+      "is_trivial": true
+    },
+    "bool idAI::CanHitEnemyFromJoint(const char *jointname)": {
+      "body_hash": "104695050d22745b70f90ae65da1f469",
+      "is_trivial": true
+    },
+    "void idAI::Event_CanHitEnemyFromJoint(const char *jointname)": {
+      "body_hash": "2c0722e6b7e8fc46c8567323e5fff390",
+      "is_trivial": true
+    },
+    "void idAI::Event_EnemyPositionValid()": {
+      "body_hash": "f0d9a13812fa37e65e805f1709ed0dd2",
+      "is_trivial": true
+    },
+    "void idAI::Event_ChargeAttack(const char *damageDef)": {
+      "body_hash": "c68cc7dbc1bdc869c75e049526c0ad0d",
+      "is_trivial": true
+    },
+    "void idAI::Event_TestChargeAttack()": {
+      "body_hash": "0ec7a61e9232aebd9b3d183d81970c3f",
+      "is_trivial": true
+    },
+    "void idAI::Event_TestAnimMoveTowardEnemy(const char *animname)": {
+      "body_hash": "411ae761d59b3c63608284a36d3c6f2f",
+      "is_trivial": true
+    },
+    "void idAI::Event_TestAnimMove(const char *animname)": {
+      "body_hash": "ddc48ae775dd79a625cbc39780a152eb",
+      "is_trivial": true
+    },
+    "void idAI::Event_TestMoveToPosition(const idVec3 &position)": {
+      "body_hash": "7a0f4bd5b01495c489dd1f4d7eff3d98",
+      "is_trivial": true
+    },
+    "void idAI::Event_TestMeleeAttack()": {
+      "body_hash": "29c1fc55ef15d6473dde181b70657e44",
+      "is_trivial": true
+    },
+    "void idAI::Event_TestAnimAttack(const char *animname)": {
+      "body_hash": "d16b1242e772ef2c33d913cefa2ea085",
+      "is_trivial": true
+    },
+    "void idAI::Event_Shrivel(float shirvel_time)": {
+      "body_hash": "e6caca0085dc4de26ca135822782210a",
+      "is_trivial": true
+    },
+    "void idAI::Event_Burn()": {
+      "body_hash": "b84457abad70c18b07b102f656679c05",
+      "is_trivial": true
+    },
+    "void idAI::Event_PreBurn()": {
+      "body_hash": "4f416591c57ab2f5691d113c8ec84747",
+      "is_trivial": true
+    },
+    "void idAI::Event_ClearBurn()": {
+      "body_hash": "6d346f9c9e7fbe0a219f10924519d86d",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetSmokeVisibility(int num, int on)": {
+      "body_hash": "50d9cad322cee3175d05b0c4d6b356ac",
+      "is_trivial": true
+    },
+    "void idAI::Event_StopThinking()": {
+      "body_hash": "4e2c57d771fe225b11dcd7c0e7c24254",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetTurnDelta()": {
+      "body_hash": "d0ecb587c90ea7274d7f7c8ae027851e",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetMoveType()": {
+      "body_hash": "cda3d36a7484e748317bf56f8d067fd5",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetMoveType(int moveType)": {
+      "body_hash": "a1f4a7edc2a6bdb2a5a2770db9337086",
+      "is_trivial": true
+    },
+    "void idAI::Event_RestoreMove()": {
+      "body_hash": "78eaa86d44fd4ac99094c2706ee879bf",
+      "is_trivial": true
+    },
+    "void idAI::Event_AllowMovement(float flag)": {
+      "body_hash": "530d1d347a27ae5b6da4cc2a552ce892",
+      "is_trivial": true
+    },
+    "void idAI::Event_JumpFrame()": {
+      "body_hash": "9e44c8554ed15bef86c674e2285f6ddc",
+      "is_trivial": true
+    },
+    "void idAI::Event_EnableClip()": {
+      "body_hash": "8c3f81a8ea1cbe71c40bd7acb57ff52f",
+      "is_trivial": true
+    },
+    "void idAI::Event_DisableClip()": {
+      "body_hash": "5a4cbe2b34847db93f5e42e153fa23c2",
+      "is_trivial": true
+    },
+    "void idAI::Event_EnableGravity()": {
+      "body_hash": "3a4b34dd63c4078470e5a1ffb4b2bd2b",
+      "is_trivial": true
+    },
+    "void idAI::Event_DisableGravity()": {
+      "body_hash": "981245b2afacb520b12aec1e7ee4bb63",
+      "is_trivial": true
+    },
+    "void idAI::Event_EnableAFPush()": {
+      "body_hash": "b021863d86173d5f3ebcd1911544d71d",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetFlySpeed(float speed)": {
+      "body_hash": "5b0ea893c2791697927bbd027aca592a",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetFlyOffset(int offset)": {
+      "body_hash": "e76232affdce86d81c8b02a6bb2202d3",
+      "is_trivial": true
+    },
+    "void idAI::Event_ClearFlyOffset()": {
+      "body_hash": "12f189776fa6169c7016fe834b68447d",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetClosestHiddenTarget(const char *type)": {
+      "body_hash": "4e8c9bba5dc814f9177fa4109312362b",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetRandomTarget(const char *type)": {
+      "body_hash": "f2b0dbbc407d62836c8db1fcc08a47ac",
+      "is_trivial": true
+    },
+    "void idAI::Event_TravelDistanceToPoint(const idVec3 &pos)": {
+      "body_hash": "e0a96fb2ba73dafcdeb97351d8cfbd45",
+      "is_trivial": true
+    },
+    "void idAI::Event_TravelDistanceToEntity(idEntity *ent)": {
+      "body_hash": "55ce51dad3e5d7c180e0bb7441b619bd",
+      "is_trivial": true
+    },
+    "void idAI::Event_TravelDistanceBetweenPoints(const idVec3 &source, const idVec3 &dest)": {
+      "body_hash": "aabc0dc30779efff7acc475df1231ab4",
+      "is_trivial": true
+    },
+    "void idAI::Event_TravelDistanceBetweenEntities(idEntity *source, idEntity *dest)": {
+      "body_hash": "5d356ea30da85bae1f902dd5e8b735d7",
+      "is_trivial": true
+    },
+    "void idAI::Event_LookAtEntity(idEntity *ent, float duration)": {
+      "body_hash": "575a29f05fbcdaa7d80bc5ac0f2b2744",
+      "is_trivial": true
+    },
+    "void idAI::Event_LookAtEnemy(float duration)": {
+      "body_hash": "bec5e5b7a96f33a18be38017f2a0cdae",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetJointMod(int allowJointMod)": {
+      "body_hash": "db43cac167843f9682ac121fef5b6aeb",
+      "is_trivial": true
+    },
+    "void idAI::Event_ThrowMoveable()": {
+      "body_hash": "59c98a5f3545362763f07cafc06bd985",
+      "is_trivial": true
+    },
+    "void idAI::Event_ThrowAF()": {
+      "body_hash": "166d53a329f47116b85427289e8cbc52",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetAngles(idAngles const &ang)": {
+      "body_hash": "a696d05d49c866a9cb3c320526cfca46",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetAngles()": {
+      "body_hash": "87c3eca7fe711529583b0bc3de58f6cc",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetTrajectoryToPlayer()": {
+      "body_hash": "48f4e737b5c0925a88f5a495b60a0a67",
+      "is_trivial": true
+    },
+    "void idAI::Event_RealKill()": {
+      "body_hash": "e8e4261e451cc46de173dec3091de4ce",
+      "is_trivial": true
+    },
+    "void idAI::Event_Kill()": {
+      "body_hash": "42ac59c26bda928c5d3ca9454b84aef4",
+      "is_trivial": true
+    },
+    "void idAI::Event_WakeOnFlashlight(int enable)": {
+      "body_hash": "b37b48fa14568fe605bfa0b44c8fe5f9",
+      "is_trivial": true
+    },
+    "void idAI::Event_LocateEnemy()": {
+      "body_hash": "45c53bdb6f7bf5507ebce0b78c92e0da",
+      "is_trivial": true
+    },
+    "void idAI::Event_KickObstacles(idEntity *kickEnt, float force)": {
+      "body_hash": "84f0b902c0f01707dc254ddeb561025f",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetObstacle()": {
+      "body_hash": "acd34265a0ea047b930068ac06daf33a",
+      "is_trivial": true
+    },
+    "void idAI::Event_PushPointIntoAAS(const idVec3 &pos)": {
+      "body_hash": "83251ae4c944d40c3338e7ba4e3a61a2",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetTurnRate()": {
+      "body_hash": "d5f2be7350f7c18222e44cabeae44cc0",
+      "is_trivial": true
+    },
+    "void idAI::Event_SetTurnRate(float rate)": {
+      "body_hash": "503177112e7a228395caeaec0a31bd67",
+      "is_trivial": true
+    },
+    "void idAI::Event_AnimTurn(float angles)": {
+      "body_hash": "4482f0d948bae2c751f09357dd5a6d27",
+      "is_trivial": true
+    },
+    "void idAI::Event_AllowHiddenMovement(int enable)": {
+      "body_hash": "0460f9961c368cea97a4620181ebea63",
+      "is_trivial": true
+    },
+    "void idAI::Event_TriggerParticles(const char *jointName)": {
+      "body_hash": "579b953504139b78d54ca89a4af07f4f",
+      "is_trivial": true
+    },
+    "void idAI::Event_FindActorsInBounds(const idVec3 &mins, const idVec3 &maxs)": {
+      "body_hash": "db15dfaa55c7c773e813e710234ce722",
+      "is_trivial": true
+    },
+    "void idAI::Event_CanReachPosition(const idVec3 &pos)": {
+      "body_hash": "9280ffe01ddf42523398280ad6df291b",
+      "is_trivial": true
+    },
+    "void idAI::Event_CanReachEntity(idEntity *ent)": {
+      "body_hash": "f4a0bf13035edea4d381bc8abd0f8d23",
+      "is_trivial": true
+    },
+    "void idAI::Event_CanReachEnemy()": {
+      "body_hash": "ea7ad4894bb630735815e2ca3c8a8902",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetReachableEntityPosition(idEntity *ent)": {
+      "body_hash": "fe681a7c30e423724dab1a15a7b00a6e",
+      "is_trivial": true
+    },
+    "void idAI::Event_MoveToPositionDirect(const idVec3 &pos)": {
+      "body_hash": "522c2ce0d8f2babe9a7d392cb19edb00",
+      "is_trivial": true
+    },
+    "void idAI::Event_AvoidObstacles(int ignore)": {
+      "body_hash": "2d72765cf826cfb436679143da47c4bf",
+      "is_trivial": true
+    },
+    "void idAI::Event_TriggerFX(const char *joint, const char *fx)": {
+      "body_hash": "21fddfd68e58e74a26f2d0e825273f2e",
+      "is_trivial": true
+    },
+    "void idAI::Event_StartEmitter(const char *name, const char *joint, const char *particle)": {
+      "body_hash": "70f0d321622bf3310d9abfcd7d340034",
+      "is_trivial": true
+    },
+    "void idAI::Event_GetEmitter(const char *name)": {
+      "body_hash": "6859e05808ce37534babed30f3b8cc0a",
+      "is_trivial": true
+    },
+    "void idAI::Event_StopEmitter(const char *name)": {
+      "body_hash": "e05727ebd9c838072ca1dedee5f4f3ea",
+      "is_trivial": true
+    },
+    "void idAI::idle_followPathEntities(idEntity *pathnode)": {
+      "body_hash": "f14b2df58b322c5b98b5b61cc538f537",
+      "is_trivial": true
+    },
+    "idCombatNode::idCombatNode()": {
+      "body_hash": "90fbd19b35381025b6a953686ce30cb2",
+      "is_trivial": true
+    },
+    "void idCombatNode::Save(idSaveGame *savefile) const": {
+      "body_hash": "dda0a9c43449b7e1038b88e8aae15fc7",
+      "is_trivial": true
+    },
+    "void idCombatNode::Restore(idRestoreGame *savefile)": {
+      "body_hash": "9d15284a3bdde67592a5c4d3a52bd94d",
+      "is_trivial": true
+    },
+    "void idCombatNode::Spawn()": {
+      "body_hash": "38717c92e61aed169a6d5765d5e5b4a8",
+      "is_trivial": true
+    },
+    "bool idCombatNode::IsDisabled() const": {
+      "body_hash": "47945064c8742185e1e00e6473aebb36",
+      "is_trivial": true
+    },
+    "bool idCombatNode::EntityInView(idActor *actor, const idVec3 &pos)": {
+      "body_hash": "cbd34a1731a8628d8f4d9076697ba921",
+      "is_trivial": true
+    },
+    "void idCombatNode::DrawDebugInfo()": {
+      "body_hash": "fd1eb00fadaa6e19dcbe9bedd750df19",
+      "is_trivial": true
+    },
+    "void idCombatNode::Event_Activate(idEntity *activator)": {
+      "body_hash": "c31c69f552347511f93a81f32efe8434",
+      "is_trivial": true
+    },
+    "void idCombatNode::Event_MarkUsed()": {
+      "body_hash": "8c594ccf82c9f65ccd02ed4a9a38a216",
+      "is_trivial": true
+    },
+    "idMoveState::idMoveState()": {
+      "body_hash": "0cc4d87911136d430b6ef012a23c18a5",
+      "is_trivial": true
+    },
+    "void idMoveState::Save(idSaveGame *savefile) const": {
+      "body_hash": "ef9f970c27a55064991a3b97c4081040",
+      "is_trivial": true
+    },
+    "void idMoveState::Restore(idRestoreGame *savefile)": {
+      "body_hash": "447b4bce4850559c1c1bfe52319ea377",
+      "is_trivial": true
+    },
+    "idRoutingCache::idRoutingCache(int size)": {
+      "body_hash": "ab3dfb1770cd17cfc9a1da1a1c1989d0",
+      "is_trivial": true
+    },
+    "idRoutingCache::~idRoutingCache()": {
+      "body_hash": "c40d8bde959d5f59acb97e884dd87c7c",
+      "is_trivial": true
+    },
+    "int idRoutingCache::Size() const": {
+      "body_hash": "50aee4fe97e119032c1c005eb033d741",
+      "is_trivial": true
+    },
+    "idRoutingObstacle::idRoutingObstacle()": {
+      "body_hash": "daf43eec3c7f37c600a482968830f6c9",
+      "is_trivial": true
+    },
+    "void pathNode_s::Init()": {
+      "body_hash": "8a521235ca7f1a21e969ab193051f191",
+      "is_trivial": true
+    },
+    "int Ballistics(const idVec3 &start, const idVec3 &end, float speed, float gravity, ballistics_t bal[2])": {
+      "body_hash": "0a2608f390a6ed15c34055d765ab9f4c",
+      "is_trivial": false
+    },
+    "bool ValidForBounds(const idAASSettings *settings, const idBounds &bounds)": {
+      "body_hash": "3f205f97d8272199f89a3ff141918f0d",
+      "is_trivial": true
+    },
+    "idVec3 Seek(idVec3 &vel, const idVec3 &org, const idVec3 &goal, float prediction)": {
+      "body_hash": "a78c619b5c26f2f7c818d4ba9d875866",
+      "is_trivial": false
+    },
+    "bool LineIntersectsPath(const idVec2 &start, const idVec2 &end, const pathNode_t *node)": {
+      "body_hash": "49eb9fcd9add34bf97d9e749a9660d7e",
+      "is_trivial": true
+    },
+    "int PointInsideObstacle(const obstacle_t *obstacles, const int numObstacles, const idVec2 &point)": {
+      "body_hash": "8b7c921b26ef37bcf0d215fbcb949cb9",
+      "is_trivial": true
+    },
+    "void GetPointOutsideObstacles(const obstacle_t *obstacles, const int numObstacles, idVec2 &point, int *obstacle, int *edgeNum)": {
+      "body_hash": "ed0eeee4fda5ef4713865e09c6630791",
+      "is_trivial": false
+    },
+    "bool GetFirstBlockingObstacle(const obstacle_t *obstacles, int numObstacles, int skipObstacle, const idVec2 &startPos, const idVec2 &delta, float &blockingScale, int &blockingObstacle, int &blockingEdgeNum)": {
+      "body_hash": "bd60d58006d8d13ab27d3b287733d9d0",
+      "is_trivial": false
+    },
+    "int GetObstacles(const idPhysics *physics, const idAAS *aas, const idEntity *ignore, int areaNum, const idVec3 &startPos, const idVec3 &seekPos, obstacle_t *obstacles, int maxObstacles, idBounds &clipBounds)": {
+      "body_hash": "809c5e04606f6efc3155b7bf115e8ba8",
+      "is_trivial": false
+    },
+    "void FreePathTree_r(pathNode_t *node)": {
+      "body_hash": "78cd67a1008616d30fea76a6c6782204",
+      "is_trivial": true
+    },
+    "void DrawPathTree(const pathNode_t *root, const float height)": {
+      "body_hash": "109a0f4e5ed5226d9b1fc50e6bde53b3",
+      "is_trivial": true
+    },
+    "bool GetPathNodeDelta(pathNode_t *node, const obstacle_t *obstacles, const idVec2 &seekPos, bool blocked)": {
+      "body_hash": "9ae6542432d0dcba640521e1c4f73f40",
+      "is_trivial": false
+    },
+    "pathNode_t * BuildPathTree(const obstacle_t *obstacles, int numObstacles, const idBounds &clipBounds, const idVec2 &startPos, const idVec2 &seekPos, obstaclePath_t &path)": {
+      "body_hash": "ab20c76ea696be810bf5722dddcc2407",
+      "is_trivial": false
+    },
+    "void PrunePathTree(pathNode_t *root, const idVec2 &seekPos)": {
+      "body_hash": "f726d319d2be0dfedcdfe19bac346e60",
+      "is_trivial": true
+    },
+    "int OptimizePath(const pathNode_t *root, const pathNode_t *leafNode, const obstacle_t *obstacles, int numObstacles, idVec2 optimizedPath[MAX_OBSTACLE_PATH])": {
+      "body_hash": "0f9e1f1b75f94e62732b5d454b66082f",
+      "is_trivial": false
+    },
+    "float PathLength(idVec2 optimizedPath[MAX_OBSTACLE_PATH], int numPathPoints, const idVec2 &curDir)": {
+      "body_hash": "0c9060384f0d3d89507f9ba6189cd8a8",
+      "is_trivial": true
+    },
+    "bool FindOptimalPath(const pathNode_t *root, const obstacle_t *obstacles, int numObstacles, const float height, const idVec3 &curDir, idVec3 &seekPos)": {
+      "body_hash": "fa795658d96238f974eefdc71f4faeae",
+      "is_trivial": false
+    },
+    "bool PathTrace(const idEntity *ent, const idAAS *aas, const idVec3 &start, const idVec3 &end, int stopEvent, struct pathTrace_s &trace, predictedPath_t &path)": {
+      "body_hash": "0d4f380df204b54cedaf7bb4a8d6101f",
+      "is_trivial": false
     }
   }
 }

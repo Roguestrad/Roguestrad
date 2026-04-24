@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../Game_local.h" // for print and error
 #include "AASCallback_AvoidLocation.h"
 
-/*
-============
-idAASCallback_AvoidLocation::idAASCallback_AvoidLocation
-============
-*/
 idAASCallback_AvoidLocation::idAASCallback_AvoidLocation()
 {
 	avoidLocation.Zero();
@@ -57,22 +52,12 @@ idAASCallback_AvoidLocation::~idAASCallback_AvoidLocation()
 {
 }
 
-/*
-============
-idAASCallback_AvoidLocation::SetAvoidLocation
-============
-*/
 void idAASCallback_AvoidLocation::SetAvoidLocation( const idVec3& start, const idVec3& avoidLocation )
 {
 	this->avoidLocation = avoidLocation;
 	this->avoidDist		= ( avoidLocation - start ).Length();
 }
 
-/*
-============
-idAASCallback_AvoidLocation::SetObstacles
-============
-*/
 void idAASCallback_AvoidLocation::SetObstacles( const idAAS* aas, const idAASObstacle* obstacles, int numObstacles )
 {
 	this->obstacles	   = obstacles;
@@ -84,11 +69,6 @@ void idAASCallback_AvoidLocation::SetObstacles( const idAAS* aas, const idAASObs
 	}
 }
 
-/*
-============
-idAASCallback_AvoidLocation::PathValid
-============
-*/
 bool idAASCallback_AvoidLocation::PathValid( const idAAS* aas, const idVec3& start, const idVec3& end )
 {
 	// path may not go through any obstacles
@@ -101,11 +81,6 @@ bool idAASCallback_AvoidLocation::PathValid( const idAAS* aas, const idVec3& sta
 	return true;
 }
 
-/*
-============
-idAASCallback_AvoidLocation::AdditionalTravelTimeForPath
-============
-*/
 int idAASCallback_AvoidLocation::AdditionalTravelTimeForPath( const idAAS* aas, const idVec3& start, const idVec3& end )
 {
 	if( avoidDist <= 0.0f ) {

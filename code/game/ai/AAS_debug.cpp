@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../Game_local.h" // for cvars and debug drawing
 #include "AASCallback_FindCoverArea.h"
 
-/*
-============
-idAASLocal::DrawCone
-============
-*/
 void idAASLocal::DrawCone( const idVec3& origin, const idVec3& dir, float radius, const idVec4& color ) const
 {
 	int	   i;
@@ -62,11 +57,6 @@ void idAASLocal::DrawCone( const idVec3& origin, const idVec3& dir, float radius
 	}
 }
 
-/*
-============
-idAASLocal::DrawReachability
-============
-*/
 void idAASLocal::DrawReachability( const idReachability* reach ) const
 {
 	gameRenderWorld->DebugArrow( colorCyan, reach->start, reach->end, 2 );
@@ -86,11 +76,6 @@ void idAASLocal::DrawReachability( const idReachability* reach ) const
 	}
 }
 
-/*
-============
-idAASLocal::DrawEdge
-============
-*/
 void idAASLocal::DrawEdge( int edgeNum, bool arrow ) const
 {
 	const aasEdge_t* edge;
@@ -114,11 +99,6 @@ void idAASLocal::DrawEdge( int edgeNum, bool arrow ) const
 	}
 }
 
-/*
-============
-idAASLocal::DrawFace
-============
-*/
 void idAASLocal::DrawFace( int faceNum, bool side ) const
 {
 	int				 i, j, numEdges, firstEdge;
@@ -149,11 +129,6 @@ void idAASLocal::DrawFace( int faceNum, bool side ) const
 	gameRenderWorld->DebugArrow( colorGreen, mid, end, 1 );
 }
 
-/*
-============
-idAASLocal::DrawArea
-============
-*/
 void idAASLocal::DrawArea( int areaNum ) const
 {
 	// jmarshall
@@ -180,22 +155,11 @@ void idAASLocal::DrawArea( int areaNum ) const
 	// jmarshall end
 }
 
-/*
-============
-idAASLocal::DefaultSearchBounds
-============
-*/
 const idBounds& idAASLocal::DefaultSearchBounds() const
 {
 	return file->GetSettings().boundingBoxes[0];
 }
 
-/*
-============
-idAASLocal::DrawAreas
-============
-*/
-// jmarshall
 void idAASLocal::DrawAreas() const
 {
 	int viewAreaNum = PointReachableAreaNum( gameLocal.GetLocalPlayer()->GetOrigin(), DefaultSearchBounds(), ( AREA_REACHABLE_WALK | AREA_REACHABLE_FLY ) );
@@ -214,13 +178,7 @@ void idAASLocal::DrawAreas() const
 		numRenderedAreas++;
 	}
 }
-// jmarshall end
 
-/*
-============
-idAASLocal::ShowArea
-============
-*/
 void idAASLocal::ShowArea( const idVec3& origin ) const
 {
 	static int		 lastAreaNum;
@@ -275,11 +233,6 @@ void idAASLocal::ShowArea( const idVec3& origin ) const
 	DrawArea( areaNum );
 }
 
-/*
-============
-idAASLocal::ShowWalkPath
-============
-*/
 void idAASLocal::ShowWalkPath( const idVec3& origin, int goalAreaNum, const idVec3& goalOrigin ) const
 {
 	int				i, areaNum, curAreaNum, travelTime;
@@ -321,11 +274,6 @@ void idAASLocal::ShowWalkPath( const idVec3& origin, int goalAreaNum, const idVe
 	}
 }
 
-/*
-============
-idAASLocal::ShowFlyPath
-============
-*/
 void idAASLocal::ShowFlyPath( const idVec3& origin, int goalAreaNum, const idVec3& goalOrigin ) const
 {
 	int				i, areaNum, curAreaNum, travelTime;
@@ -367,11 +315,6 @@ void idAASLocal::ShowFlyPath( const idVec3& origin, int goalAreaNum, const idVec
 	}
 }
 
-/*
-============
-idAASLocal::ShowWallEdges
-============
-*/
 void idAASLocal::ShowWallEdges( const idVec3& origin ) const
 {
 	int		  i, areaNum, numEdges, edges[1024];
@@ -392,11 +335,6 @@ void idAASLocal::ShowWallEdges( const idVec3& origin ) const
 	}
 }
 
-/*
-============
-idAASLocal::ShowHideArea
-============
-*/
 void idAASLocal::ShowHideArea( const idVec3& origin, int targetAreaNum ) const
 {
 	int			  areaNum, numObstacles;
@@ -421,11 +359,6 @@ void idAASLocal::ShowHideArea( const idVec3& origin, int targetAreaNum ) const
 	}
 }
 
-/*
-============
-idAASLocal::PullPlayer
-============
-*/
 bool idAASLocal::PullPlayer( const idVec3& origin, int toAreaNum ) const
 {
 	int		  areaNum;
@@ -472,11 +405,6 @@ bool idAASLocal::PullPlayer( const idVec3& origin, int toAreaNum ) const
 	}
 }
 
-/*
-============
-idAASLocal::RandomPullPlayer
-============
-*/
 void idAASLocal::RandomPullPlayer( const idVec3& origin ) const
 {
 	int rnd, i, n;
@@ -495,11 +423,6 @@ void idAASLocal::RandomPullPlayer( const idVec3& origin ) const
 	}
 }
 
-/*
-============
-idAASLocal::ShowPushIntoArea
-============
-*/
 void idAASLocal::ShowPushIntoArea( const idVec3& origin ) const
 {
 	int	   areaNum;
@@ -511,11 +434,6 @@ void idAASLocal::ShowPushIntoArea( const idVec3& origin ) const
 	gameRenderWorld->DebugArrow( colorGreen, origin, target, 1 );
 }
 
-/*
-============
-idAASLocal::Test
-============
-*/
 void idAASLocal::Test( const idVec3& origin )
 {
 	if( !file ) {

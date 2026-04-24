@@ -33,19 +33,17 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AASCallback_AvoidLocation.h"
 
-/*
-===============================================================================
-
-	idAASCallback_FindAreaOutOfRange
-
-===============================================================================
+/*!
+	\class idAASCallback_FindAreaOutOfRange
+	\brief A callback class for identifying AAS areas that are out of range from a target position.
 */
-
 class idAASCallback_FindAreaOutOfRange : public idAASCallback_AvoidLocation
 {
 public:
+	//! Initializes a callback for finding AAS areas that are out of range from a target position.
 	idAASCallback_FindAreaOutOfRange( const idVec3& targetPos, float maxDist );
 
+	//! Determines whether a given AAS area is a valid goal based on distance and line-of-sight criteria.
 	virtual bool AreaIsGoal( const idAAS* aas, int areaNum );
 
 private:

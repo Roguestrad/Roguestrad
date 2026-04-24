@@ -43,14 +43,6 @@ const int	maxFlyPathIterations  = 10;
 const float maxFlyPathDistance	  = 500.0f;
 const float flyPathSampleDistance = 8.0f;
 
-/*
-============
-idAASLocal::EdgeSplitPoint
-
-  calculates split point of the edge with the plane
-  returns true if the split point is between the edge vertices
-============
-*/
 bool		idAASLocal::EdgeSplitPoint( idVec3& split, int edgeNum, const idPlane& plane ) const
 {
 	const aasEdge_t* edge;
@@ -71,14 +63,6 @@ bool		idAASLocal::EdgeSplitPoint( idVec3& split, int edgeNum, const idPlane& pla
 	return true;
 }
 
-/*
-============
-idAASLocal::FloorEdgeSplitPoint
-
-  calculates either the closest or furthest point on the floor of the area which also lies on the pathPlane
-  the point has to be on the front side of the frontPlane to be valid
-============
-*/
 bool idAASLocal::FloorEdgeSplitPoint( idVec3& bestSplit, int areaNum, const idPlane& pathPlane, const idPlane& frontPlane, bool closest ) const
 {
 	int				 i, j, faceNum, edgeNum;
@@ -131,13 +115,6 @@ bool idAASLocal::FloorEdgeSplitPoint( idVec3& bestSplit, int areaNum, const idPl
 	}
 }
 
-/*
-============
-idAASLocal::WalkPathValid
-
-  returns true if one can walk in a straight line between origin and goalOrigin
-============
-*/
 bool idAASLocal::WalkPathValid( int areaNum, const idVec3& origin, int goalAreaNum, const idVec3& goalOrigin, int travelFlags, idVec3& endPos, int& endAreaNum ) const
 {
 	int				 curAreaNum, lastAreaNum, lastAreas[4], lastAreaIndex;
@@ -244,11 +221,6 @@ bool idAASLocal::WalkPathValid( int areaNum, const idVec3& origin, int goalAreaN
 	return true;
 }
 
-/*
-============
-idAASLocal::SubSampleWalkPath
-============
-*/
 idVec3 idAASLocal::SubSampleWalkPath( int areaNum, const idVec3& origin, const idVec3& start, const idVec3& end, int travelFlags, int& endAreaNum ) const
 {
 	int	   i, numSamples, curAreaNum;
@@ -272,13 +244,6 @@ idVec3 idAASLocal::SubSampleWalkPath( int areaNum, const idVec3& origin, const i
 	return point;
 }
 
-/*
-============
-idAASLocal::WalkPathToGoal
-
-  FIXME: don't stop optimizing on first failure ?
-============
-*/
 bool idAASLocal::WalkPathToGoal( aasPath_t& path, int areaNum, const idVec3& origin, int goalAreaNum, const idVec3& goalOrigin, int travelFlags ) const
 {
 	int				i, travelTime, curAreaNum, lastAreas[4], lastAreaIndex, endAreaNum;
@@ -392,13 +357,6 @@ bool idAASLocal::WalkPathToGoal( aasPath_t& path, int areaNum, const idVec3& ori
 	return true;
 }
 
-/*
-============
-idAASLocal::FlyPathValid
-
-  returns true if one can fly in a straight line between origin and goalOrigin
-============
-*/
 bool idAASLocal::FlyPathValid( int areaNum, const idVec3& origin, int goalAreaNum, const idVec3& goalOrigin, int travelFlags, idVec3& endPos, int& endAreaNum ) const
 {
 	aasTrace_t trace;
@@ -421,11 +379,6 @@ bool idAASLocal::FlyPathValid( int areaNum, const idVec3& origin, int goalAreaNu
 	return false;
 }
 
-/*
-============
-idAASLocal::SubSampleFlyPath
-============
-*/
 idVec3 idAASLocal::SubSampleFlyPath( int areaNum, const idVec3& origin, const idVec3& start, const idVec3& end, int travelFlags, int& endAreaNum ) const
 {
 	int	   i, numSamples, curAreaNum;
@@ -449,13 +402,6 @@ idVec3 idAASLocal::SubSampleFlyPath( int areaNum, const idVec3& origin, const id
 	return point;
 }
 
-/*
-============
-idAASLocal::FlyPathToGoal
-
-  FIXME: don't stop optimizing on first failure ?
-============
-*/
 bool idAASLocal::FlyPathToGoal( aasPath_t& path, int areaNum, const idVec3& origin, int goalAreaNum, const idVec3& goalOrigin, int travelFlags ) const
 {
 	int				i, travelTime, curAreaNum, lastAreas[4], lastAreaIndex, endAreaNum;
@@ -550,11 +496,6 @@ typedef struct wallEdge_s {
 	struct wallEdge_s* next;
 } wallEdge_t;
 
-/*
-============
-idAASLocal::SortWallEdges
-============
-*/
 void idAASLocal::SortWallEdges( int* edges, int numEdges ) const
 {
 	int			 i, j, k, numSequences;
@@ -603,11 +544,6 @@ void idAASLocal::SortWallEdges( int* edges, int numEdges ) const
 	}
 }
 
-/*
-============
-idAASLocal::GetWallEdges
-============
-*/
 int idAASLocal::GetWallEdges( int areaNum, const idBounds& bounds, int travelFlags, int* edges, int maxEdges ) const
 {
 	int				 i, j, k, l, face1Num, face2Num, edge1Num, edge2Num, numEdges, absEdge1Num;

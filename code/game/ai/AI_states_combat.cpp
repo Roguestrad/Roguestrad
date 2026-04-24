@@ -33,13 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-/*
-=====================
-idAI::state_Combat
-
-This is the main state for all enemies.
-=====================
-*/
 stateResult_t idAI::state_Combat( stateParms_t* parms )
 {
 	if( parms->stage == 1 || parms->stage == 2 ) {
@@ -93,11 +86,6 @@ stateResult_t idAI::state_Combat( stateParms_t* parms )
 	return SRESULT_WAIT;
 }
 
-/*
-=====================
-idAI::state_LostCombat
-=====================
-*/
 stateResult_t idAI::state_LostCombat( stateParms_t* parms )
 {
 	idVec3	  ang;
@@ -121,11 +109,6 @@ stateResult_t idAI::state_LostCombat( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-=====================
-idAI::state_LostCombat_Node
-=====================
-*/
 stateResult_t idAI::state_LostCombat_Node( stateParms_t* parms )
 {
 	idVec3	  ang;
@@ -238,11 +221,6 @@ stateResult_t idAI::state_LostCombat_Node( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-idAI::state_LostCombat_No_Node
-=====================
-*/
 stateResult_t idAI::state_LostCombat_No_Node( stateParms_t* parms )
 {
 	if( parms->stage == 7 ) {
@@ -359,11 +337,6 @@ done:
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-idAI::state_LostCombat_Finish
-=====================
-*/
 stateResult_t idAI::state_LostCombat_Finish( stateParms_t* parms )
 {
 	if( lost_time >= gameLocal.SysScriptTime() ) {
@@ -382,11 +355,6 @@ stateResult_t idAI::state_LostCombat_Finish( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-idAI::combat_wander
-=====================
-*/
 stateResult_t idAI::combat_wander( stateParms_t* parms )
 {
 	float mintime;
