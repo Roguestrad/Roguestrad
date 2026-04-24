@@ -87,6 +87,11 @@ def is_under_dir(path: Path, directory: Optional[Path]) -> bool:
         return False
 
 
+def should_skip_project_file(path: Path) -> bool:
+    name = path.name.lower()
+    return name in {"gametypeinfo.h", "gametypeinfo.cpp"}
+
+
 def default_callsite_roots(project_root: Path) -> List[Path]:
     candidates = [
         project_root / "engine",
@@ -2481,6 +2486,8 @@ def generate_doxygen_comments(
                 p = (repo_root / p).resolve()
             if not p.exists():
                 continue
+            if should_skip_project_file(p):
+                continue
 
             is_header = p.suffix.lower() in {".h", ".hpp", ".hh", ".hxx"}
             cand = (p, f.line, is_header)
@@ -2492,7 +2499,7 @@ def generate_doxygen_comments(
                 bp = f.bodyfile
                 if not bp.is_absolute():
                     bp = (repo_root / bp).resolve()
-                if bp.exists():
+                if bp.exists() and not should_skip_project_file(bp):
                     impl_candidate = (bp, int(f.bodystart), False)
 
         if len(header_candidates) > 1 and impl_candidate:
@@ -2536,6 +2543,8 @@ def generate_doxygen_comments(
 
         if scope_path and not is_under_dir(fpath, scope_path):
             continue
+        if should_skip_project_file(fpath):
+            continue
 
         # Ignore operators because they are usually too trivial
         # if func.name.startswith("operator"):
@@ -2545,6 +2554,9 @@ def generate_doxygen_comments(
             continue
 
         if func.name in ("compile_time_assert", "assert_sizeof", "assert_offsetof"):
+            continue
+
+        if func.name.startswith("As<eventCallback_"):
             continue
 
         if func.is_pure_virtual:
@@ -2859,6 +2871,7 @@ def generate_class_comments(
     skipped_struct = 0
     # skipped_non_header = 0
     skipped_out_of_scope = 0
+    skipped_project_excluded = 0
     skipped_existing_doxygen = 0
     skipped_no_decl = 0
 
@@ -2875,6 +2888,9 @@ def generate_class_comments(
             continue
         if scope_path and not is_under_dir(cpath, scope_path):
             skipped_out_of_scope += 1
+            continue
+        if should_skip_project_file(cpath):
+            skipped_project_excluded += 1
             continue
         # if not is_header(cpath):
         #     skipped_non_header += 1
@@ -2925,6 +2941,7 @@ def generate_class_comments(
             f"structs={skipped_struct}, "
             # f"non_header={skipped_non_header}, "
             f"out_of_scope={skipped_out_of_scope}, "
+            f"project_excluded={skipped_project_excluded}, "
             f"existing_doxygen={skipped_existing_doxygen}, "
             f"no_decl={skipped_no_decl}"
         )
