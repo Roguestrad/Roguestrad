@@ -73,31 +73,16 @@ const char* Sys_EXEPath()
 	return buf;
 }
 
-/*
-===============
-Sys_GetProcessorId
-===============
-*/
 cpuid_t Sys_GetProcessorId()
 {
 	return CPUID_GENERIC;
 }
 
-/*
-===============
-Sys_GetProcessorString
-===============
-*/
 const char* Sys_GetProcessorString()
 {
 	return "generic";
 }
 
-/*
-===============
-Sys_ClockTicksPerSecond
-===============
-*/
 double Sys_ClockTicksPerSecond()
 {
 	static bool	  init = false;
@@ -113,6 +98,7 @@ double Sys_ClockTicksPerSecond()
 	return ret;
 }
 
+//! Returns the number of logical, physical, and package CPU cores.
 void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCPUPackages )
 {
 	static bool	  init			  = false;
@@ -208,17 +194,8 @@ void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCP
 	numLogicalCPUCores	= s_numLogicalCPUCores;
 	numCPUPackages		= s_numCPUPackages;
 }
-// RB end
 
-/*
-==================
-Sys_DoStartProcess
-if we don't fork, this function never returns
-the no-fork lets you keep the terminal when you're about to spawn an installer
-
-if the command contains spaces, system() is used. Otherwise the more straightforward execl ( system() blows though )
-==================
-*/
+//! Starts an external process by executing the specified executable file, optionally forking the process.
 void Sys_DoStartProcess( const char* exeName, bool dofork )
 {
 	bool use_system = false;
@@ -268,11 +245,7 @@ void Sys_DoStartProcess( const char* exeName, bool dofork )
 	}
 }
 
-/*
- ==================
- Sys_DoPreferences
- ==================
- */
+//! Handles system preferences configuration.
 void Sys_DoPreferences()
 {
 }
@@ -352,22 +325,12 @@ void abrt_func( mcheck_status status )
 
 #endif
 
-/*
-========================
-Sys_GetCmdLine
-========================
-*/
 const char* Sys_GetCmdLine()
 {
 	// DG: don't use this, use cmdargv and cmdargc instead!
 	return "TODO Sys_GetCmdLine";
 }
 
-/*
-========================
-Sys_ReLaunch
-========================
-*/
 void Sys_ReLaunch()
 {
 	// DG: implementing this... basic old fork() exec() (+ setsid()) routine..
@@ -441,11 +404,7 @@ void Sys_ReLaunch()
 	// DG end
 }
 
-/*
-===============
-main
-===============
-*/
+//! Entry point for the application that initializes and runs the main loop.
 int main( int argc, const char** argv )
 {
 	// DG: needed for Sys_ReLaunch()

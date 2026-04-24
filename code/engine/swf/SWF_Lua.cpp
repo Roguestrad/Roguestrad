@@ -70,6 +70,7 @@ static const luaL_Reg loadedlibs[] = { { "_G", luaopen_base },
 */
 static const luaL_Reg preloadedlibs[] = { { NULL, NULL } };
 
+//! Initializes the Lua state with standard library functions.
 LUALIB_API void		  luaL_openlibs( lua_State* L )
 {
 	const luaL_Reg* lib;

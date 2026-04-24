@@ -39,31 +39,62 @@ typedef struct {
 	idSimpleWindow* simp;
 } drawWin_t;
 
+/*!
+	\class idSimpleWindow
+	\brief A lightweight window wrapper that provides simplified access to window properties and rendering functionality.
+
+	This class serves as a simplified interface for window management, offering access to window variables and basic rendering operations. It maintains a reference to an underlying window object and
+   provides methods to query and modify window properties, calculate display coordinates, and handle rendering operations. The class supports serialization for save game functionality and provides
+   mechanisms for updating window state and drawing operations. It is designed to facilitate efficient window handling while maintaining compatibility with existing window systems through the idWindow
+   interface.
+
+*/
 class idSimpleWindow
 {
 	friend class idWindow;
 
 public:
+	//! Initializes a simple window by copying properties from an existing window.
 	idSimpleWindow( idWindow* win );
 	virtual ~idSimpleWindow();
+
+	//! Redraws the window at the specified offset position.
 	void		 Redraw( float x, float y );
+
+	//! Updates the window state and optionally redraws the window.
 	void		 StateChanged( bool redraw );
 
 	idStr		 name;
 
+	//! Returns a pointer to the window variable with the specified name, or NULL if not found.
 	idWinVar*	 GetWinVarByName( const char* _name );
+
+	//! Returns the offset of a specified window variable within the class instance
 	int			 GetWinVarOffset( idWinVar* wv, drawWin_t* owner );
+
+	//! Returns the total memory size of the simple window object including its member strings
 	size_t		 Size();
 
+	//! Returns the parent window of this simple window
 	idWindow*	 GetParent() { return mParent; }
 
+	//! Writes the window's state to a save game file.
 	virtual void WriteToSaveGame( idFile* savefile );
+
+	//! Loads window state information from a save game file
 	virtual void ReadFromSaveGame( idFile* savefile );
 
 protected:
+	//! Calculates the client rectangle for the window based on the provided offsets and window properties.
 	void				  CalcClientRect( float xofs, float yofs );
+
+	//! Sets up transformation matrices for the window based on the provided offsets and current window properties.
 	void				  SetupTransforms( float x, float y );
+
+	//! Draws the background of the window using the specified rectangle area.
 	void				  DrawBackground( const idRectangle& drawRect );
+
+	//! Draws the border and caption for the simple window using the provided rectangle dimensions.
 	void				  DrawBorderAndCaption( const idRectangle& drawRect );
 
 	idUserInterfaceLocal* gui;

@@ -29,10 +29,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __PACKET_PROCESSOR_H__
 #define __PACKET_PROCESSOR_H__
 
-/*
-================================================
-idPacketProcessor
-================================================
+/*!
+	\class idPacketProcessor
+	\brief A packet processor that manages outgoing and incoming network communication with rate limiting and reliable message handling.
+
+	This class handles network packet processing for both outgoing and incoming messages, including reliable message queuing, rate limiting, and packet fragmentation. It maintains statistics for
+   outgoing and incoming data rates and provides methods for queuing and processing reliable acknowledgments. The processor supports both in-band and out-of-band communication and handles
+   connectionless packets for peer-to-peer communication scenarios. It tracks packet transmission times, manages reliable message state, and ensures proper message sequencing and reassembly of
+   fragmented packets. The class also provides functionality for verifying and cleaning the reliable message queue, as well as processing connectionless outgoing and incoming messages with appropriate
+   headers.
+
 */
 class idPacketProcessor
 {
@@ -54,8 +60,10 @@ public:
 
 	static const int		 BANDWIDTH_AVERAGE_PERIOD = 250;
 
+	//! Constructs an idPacketProcessor object and initializes it.
 	idPacketProcessor() { Reset(); }
 
+	//! Resets all internal state variables and data queues of the packet processor.
 	void Reset()
 	{
 		msgWritePos		 = 0;
@@ -106,61 +114,132 @@ public:
 	static const int MAX_OOB_MSG_SIZE = MAX_PACKET_SIZE - 1;		   // We don't allow fragmentation for out-of-band msg's, and we need a byte for the header
 
 private:
+	//! Queues a reliable acknowledgment for the specified sequence number.
 	void QueueReliableAck( int lastReliable );
+
+	//! Finalizes reading a packet by processing its header and extracting reliable data.
 	int	 FinalizeRead( idBitMsg& inMsg, idBitMsg& outMsg, int& userValue );
 
 public:
+	//! Returns true if more data can be sent based on the rate limit.
 	bool CanSendMoreData() const;
+
+	//! Updates the outgoing packet rate calculation based on the given time and size parameters.
 	void UpdateOutgoingRate( const int time, const int size );
+
+	//! Updates the incoming packet rate calculation based on the provided time and size parameters.
 	void UpdateIncomingRate( const int time, const int size );
 
+	//! Refreshes the outgoing and incoming packet rates.
 	void RefreshRates( int time )
 	{
 		UpdateOutgoingRate( time, 0 );
 		UpdateIncomingRate( time, 0 );
 	}
 
-	// Used to queue reliable msg's, to be sent on the next ProcessOutgoing
+	//! Queues a reliable message to be sent on the next process outgoing call.
 	bool			   QueueReliableMessage( byte type, const byte* data, int dataLen );
-	// Used to process a msg ready to be sent, could get fragmented into multiple fragments
+
+	/*!
+		\brief Processes an outgoing message for sending, potentially fragmenting it if necessary.
+
+		This function prepares an outgoing message for transmission by initializing the unsent message buffer and handling reliable data accumulation. It supports both in-band and out-of-band packet
+	   types, with special handling for reliable acknowledgments. For in-band packets, reliable messages are compressed using LZW compression before being sent. The function ensures that fragmentation
+	   is properly handled for large messages. It returns false if the message cannot be processed due to internal state violations or size constraints.
+
+		\param time The current time for processing
+		\param msg The message data to be sent
+		\param isOOB Flag indicating whether this is an out-of-band packet
+		\param userData User data to be included in the packet header
+		\return True if the message was successfully processed for sending, false otherwise
+	*/
 	bool			   ProcessOutgoing( const int time, const idBitMsg& msg, bool isOOB, int userData );
-	// Used to get each fragment for sending through the actual net connection
+
+	//! Retrieves the next send fragment for transmission through the network connection
 	bool			   GetSendFragment( const int time, sessionId_t sessionID, idBitMsg& outMsg );
-	// Used to process a fragment received.  Returns true when msg was reconstructed.
+
+	/*!
+		\brief Processes an incoming packet, handling both regular and fragmented messages, and returns the appropriate processing result type.
+
+		This function processes incoming network packets, handling both regular and fragmented packets. It validates the packet session ID against the expected one, checks for connectionless IDs, and
+	   manages fragmented packet reconstruction. For fragmented packets, it tracks sequence numbers and rebuilds the complete message before finalizing the read operation. The function returns
+	   different values based on whether the packet was processed successfully, requires more fragments, or indicates an error.
+
+		\param time Current system time in milliseconds
+		\param expectedSessionID Expected session ID to validate against the packet's session ID
+		\param msg Input message containing the packet data
+		\param out Output message for the reconstructed packet data
+		\param userData Reference to user data associated with the packet
+		\param peerNum Peer number identifier for the sender
+		\return Return type indicating the result of packet processing: RETURN_TYPE_NONE for incomplete fragments or errors, RETURN_TYPE_OOB for out-of-band connectionless packets, or other values for
+	   successfully processed regular packets. \throws Throws an error when there is a fragmented message buffer overflow.
+	*/
 	int				   ProcessIncoming( int time, sessionId_t expectedSessionID, idBitMsg& msg, idBitMsg& out, int& userData, const int peerNum );
 
-	// Returns true if there are more fragments to send
+	//! Returns true if there are more message fragments remaining to be sent
 	bool			   HasMoreFragments() const { return ( unsentMsg.GetRemainingData() > 0 ); }
 
-	// Num reliables not ack'd
+	//! Returns the number of reliable messages that are currently queued and not yet acknowledged.
 	int				   NumQueuedReliables() { return reliable.Num(); }
-	// True if we need to send a reliable ack
+
+	//! Returns true if a reliable ack needs to be sent
 	int				   NeedToSendReliableAck() { return queuedReliableAck >= 0 ? true : false; }
 
-	// Used for out-of-band non connected peers
-	// This doesn't actually support fragmentation, it is just simply here to hide the
-	// header structure, so the caller doesn't have to skip over the header data.
+	/*!
+		\brief Processes connectionless outgoing messages by wrapping them with appropriate headers for out-of-band communication.
+
+		This function prepares a connectionless outgoing message by adding outer and inner packet headers. It constructs an outer header using a session ID derived from the lobby type and an inner
+	   header with a specified packet type and user data. The original message data is then appended to the output buffer. The function is used for communicating with non-connected peers in
+	   out-of-band scenarios.
+
+		\param msg The input message data to be sent
+		\param out The output buffer where the complete packet will be written
+		\param lobbyType The lobby type identifier used to derive the session ID
+		\param userData User-defined data to be included in the inner packet header
+		\return true indicating successful processing of the connectionless outgoing message
+	*/
 	static bool		   ProcessConnectionlessOutgoing( idBitMsg& msg, idBitMsg& out, int lobbyType, int userData );
+
+	//! Processes incoming connectionless packets and extracts user data and message content
 	static bool		   ProcessConnectionlessIncoming( idBitMsg& msg, idBitMsg& out, int& userData );
 
-	// Used to "peek" at a session id of a message fragment
+	//! Retrieves the session ID from a message without consuming the read state
 	static sessionId_t GetSessionID( idBitMsg& msg );
 
+	//! Returns the number of reliable packets in the packet processor.
 	int				   GetNumReliables() const { return numReliable; }
+
+	//! Returns a pointer to the reliable message at the specified index.
 	const byte*		   GetReliable( int i ) const { return reliableMsgPtrs[i]; }
+
+	//! Returns the size of a reliable message at the specified index.
 	int				   GetReliableSize( int i ) const { return reliableMsgSize[i]; }
 
+	//! Sets the last send time value to the provided integer.
 	void			   SetLastSendTime( int i ) { lastSendTime = i; }
+
+	//! Returns the timestamp of the last send operation performed by this packet processor.
 	int				   GetLastSendTime() const { return lastSendTime; }
+
+	//! Returns the outgoing data rate in bytes per second.
 	float			   GetOutgoingRateBytes() const { return outgoingRateBytes; }
+
+	//! Returns the number of outgoing bytes processed by this packet processor.
 	int				   GetOutgoingBytes() const { return outgoingBytes; }
+
+	//! Returns the incoming data rate in bytes per second.
 	float			   GetIncomingRateBytes() const { return incomingRateBytes; }
+
+	//! Returns the number of incoming bytes processed by the packet processor.
 	int				   GetIncomingBytes() const { return incomingBytes; }
 
-	// more reliable computation, based on a suitably small interval
+	//! Returns the current outgoing packet rate computed over a small interval for more reliable network statistics.
 	int				   GetOutgoingRate2() const { return currentOutgoingRate; }
+
+	//! Returns the current incoming data rate in bytes per second.
 	int				   GetIncomingRate2() const { return currentIncomingRate; }
-	// decrease a fragmentation counter, so we reflect how much we're maxing the MTU
+
+	//! Decrements a fragmentation counter and returns true if the counter was greater than zero.
 	bool			   TickFragmentAccumulator()
 	{
 		if( fragmentAccumulator > 0 ) {
@@ -170,8 +249,10 @@ public:
 		return false;
 	}
 
+	//! Returns the size of reliable data in the packet processor.
 	int	 GetReliableDataSize() const { return reliable.GetDataLength(); }
 
+	//! Verifies and cleans the reliable message queue by keeping messages below a threshold and replacing others with a specified message.
 	void VerifyEmptyReliableQueue( byte keepMsgBelowThis, byte replaceWithThisMsg );
 
 private:
@@ -186,57 +267,78 @@ private:
 	static const int FRAGMENT_START;  //				= 0;
 	static const int FRAGMENT_MIDDLE; //			= 1;
 	static const int FRAGMENT_END;	  //			= 2;
-	// DG end
 
+	/*!
+		\class idPacketProcessor::idOuterPacketHeader
+		\brief A header structure for outer packets that contains session identification information.
+	*/
 	class idOuterPacketHeader
 	{
 	public:
+		//! Initializes a new instance of idOuterPacketHeader with an invalid session ID.
 		idOuterPacketHeader() :
 			sessionID( SESSION_ID_INVALID )
 		{
 		}
+
+		//! Initializes a new outer packet header with the specified session ID.
 		idOuterPacketHeader( sessionId_t sessionID_ ) :
 			sessionID( sessionID_ )
 		{
 		}
 
+		//! Writes the session ID to the message
 		void		WriteToMsg( idBitMsg& msg ) { msg.WriteUShort( sessionID ); }
 
+		//! Reads the session ID from the provided bit message.
 		void		ReadFromMsg( idBitMsg& msg ) { sessionID = msg.ReadUShort(); }
 
+		//! Returns the session ID stored in the outer packet header
 		sessionId_t GetSessionID() { return sessionID; }
 
 	private:
 		sessionId_t sessionID;
 	};
 
+	/*!
+		\class idPacketProcessor::idInnerPacketHeader
+		\brief A class representing the header structure for inner packet data within a packet processing system.
+	*/
 	class idInnerPacketHeader
 	{
 	public:
+		//! Initializes a new instance of the idInnerPacketHeader class with default values for type and userData fields.
 		idInnerPacketHeader() :
 			type( 0 ),
 			userData( 0 )
 		{
 		}
+
+		//! Constructs an inner packet header with the specified type and user data.
 		idInnerPacketHeader( int inType, int inData ) :
 			type( inType ),
 			userData( inData )
 		{
 		}
 
+		//! Writes the packet header data to the provided message buffer.
 		void WriteToMsg( idBitMsg& msg )
 		{
 			msg.WriteBits( type, 2 );
 			msg.WriteBits( userData, 6 );
 		}
 
+		//! Reads packet header information from a bit message.
 		void ReadFromMsg( idBitMsg& msg )
 		{
 			type	 = msg.ReadBits( 2 );
 			userData = msg.ReadBits( 6 );
 		}
 
+		//! Returns the type identifier of the inner packet header.
 		int Type() { return type; }
+
+		//! Returns the user data value stored in the inner packet header
 		int Value() { return userData; }
 
 	private:

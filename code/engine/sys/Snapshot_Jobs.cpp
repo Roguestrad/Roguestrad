@@ -31,6 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Snapshot_Jobs.h"
 
+//! Computes a CRC32 checksum for the given data block.
 uint32 SnapObjChecksum( const uint8* data, int length )
 {
 	// RB: 64 bit fixes, changed long to int
@@ -40,11 +41,7 @@ uint32 SnapObjChecksum( const uint8* data, int length )
 	return CRC32_BlockChecksum( data, length );
 }
 
-/*
-========================
-ObjectsSame
-========================
-*/
+//! Compares two object state structures to determine if they represent the same object with identical data.
 ID_INLINE bool ObjectsSame( objJobState_t& newState, objJobState_t& oldState )
 {
 	assert( newState.valid && oldState.valid );
@@ -68,14 +65,6 @@ ID_INLINE bool ObjectsSame( objJobState_t& newState, objJobState_t& oldState )
 	return false; // Not the same
 }
 
-/*
-========================
-SnapshotObjectJob
-This job processes objects by delta comparing them, and then zrle encoding them to the dest stream
-The dest stream is then eventually read by the lzw job, and then lzw compressed into the final delta packet
-ready to be sent to peers.
-========================
-*/
 void SnapshotObjectJob( objParms_t* parms )
 {
 	int			   visIndex	 = parms->visIndex;
@@ -215,11 +204,7 @@ void SnapshotObjectJob( objParms_t* parms )
 #endif
 }
 
-/*
-========================
-FinishLZWStream
-========================
-*/
+//! Finalizes an LZW compression stream and updates the delta information
 static void FinishLZWStream( lzwParm_t* parm, idLZWCompressor* lzwCompressor )
 {
 	if( lzwCompressor->IsOverflowed() ) {
@@ -248,11 +233,7 @@ static void FinishLZWStream( lzwParm_t* parm, idLZWCompressor* lzwCompressor )
 	parm->ioData->numlzwDeltas++;
 }
 
-/*
-========================
-NewLZWStream
-========================
-*/
+//! Initializes a new LZW stream for compression using the provided parameters and compressor.
 static void NewLZWStream( lzwParm_t* parm, idLZWCompressor* lzwCompressor )
 {
 	// Reset compressor
@@ -268,11 +249,7 @@ static void NewLZWStream( lzwParm_t* parm, idLZWCompressor* lzwCompressor )
 	lzwCompressor->WriteAgnostic( parm->curTime );
 }
 
-/*
-========================
-ContinueLZWStream
-========================
-*/
+//! Continues an LZW compression stream from where it left off.
 static void ContinueLZWStream( lzwParm_t* parm, idLZWCompressor* lzwCompressor )
 {
 	// Continue compressor where we left off
@@ -280,13 +257,7 @@ static void ContinueLZWStream( lzwParm_t* parm, idLZWCompressor* lzwCompressor )
 	lzwCompressor->Start( &parm->ioData->lzwMem[parm->ioData->lzwBytes], maxSize, true );
 }
 
-/*
-========================
-LZWJobInternal
-This job takes a stream of objects, which should already be zrle compressed, and then lzw compresses them
-and builds a final delta packet ready to be sent to peers.
-========================
-*/
+//! LZWJobInternal processes a stream of zrle-compressed objects and lzw-compresses them into a delta packet for network transmission.
 void LZWJobInternal( lzwParm_t* parm, unsigned int dmaTag )
 {
 	assert( parm->numObjects > 0 );

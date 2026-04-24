@@ -95,11 +95,6 @@ void swf_jpeg_term_source( jpeg_decompress_struct* cinfo )
 }
 #endif
 
-/*
-========================
-idSWF::idDecompressJPEG::idDecompressJPEG
-========================
-*/
 idSWF::idDecompressJPEG::idDecompressJPEG()
 {
 #ifdef ID_USE_LIBJPEG
@@ -120,11 +115,6 @@ idSWF::idDecompressJPEG::idDecompressJPEG()
 #endif
 }
 
-/*
-========================
-idSWF::idDecompressJPEG::~idDecompressJPEG
-========================
-*/
 idSWF::idDecompressJPEG::~idDecompressJPEG()
 {
 #ifdef ID_USE_LIBJPEG
@@ -136,11 +126,6 @@ idSWF::idDecompressJPEG::~idDecompressJPEG()
 #endif
 }
 
-/*
-========================
-idSWF::idDecompressJPEG::Load
-========================
-*/
 byte* idSWF::idDecompressJPEG::Load( const byte* input, int inputSize, int& width, int& height )
 {
 #ifdef ID_USE_LIBJPEG
@@ -216,13 +201,19 @@ byte* idSWF::idDecompressJPEG::Load( const byte* input, int inputSize, int& widt
 #endif
 }
 
-/*
-========================
-idSWF::WriteSwfImageAtlas
+/*!
+	\brief Allocates rectangular regions within a larger rectangle using a greedy corner-packing algorithm.
 
-Now that all images have been found, allocate them in an atlas
-and write it out.
-========================
+	This function takes a list of input rectangle sizes and determines optimal positions for each rectangle within a larger container. It uses a greedy approach that attempts to place each rectangle
+   at a corner of previously placed rectangles, minimizing the total area required. The rectangles are sorted by size beforehand to improve packing efficiency. The algorithm ensures that the resulting
+   total size aligns with GPU texture requirements by rounding widths to multiples of 32 DXT blocks. The function will fail if a rectangle cannot be placed within the prescribed limits.
+
+	\param inputSizes List of input rectangle sizes to be allocated
+	\param outputPositions Output list of positions where each input rectangle is placed
+	\param totalSize Total size of the resulting rectangle container
+	\param START_MAX Initial maximum size used for allocation checks
+	\param imageMax Maximum allowed size for any dimension, or 0 to disable limit
+	\throws FatalError if a rectangle cannot be fitted within the limits
 */
 void  RectAllocator( const idList<idVec2i>& inputSizes, idList<idVec2i>& outputPositions, idVec2i& totalSize, const int START_MAX = 16384, const int imageMax = 1024 );
 float RectPackingFraction( const idList<idVec2i>& inputSizes, const idVec2i totalSize );
@@ -365,12 +356,6 @@ void  idSWF::WriteSwfImageAtlas( const char* filename )
 	R_WritePNG( filename, swfAtlas.Ptr(), 4, atlasWidth, atlasHeight, "fs_basepath" );
 }
 
-/*
-========================
-idSWF::LoadImage
-Loads RGBA data into an image at the specificied character id in the dictionary
-========================
-*/
 void idSWF::PackImage( int characterID, const byte* imageData, int width, int height )
 {
 	idSWFDictionaryEntry* entry = AddDictionaryEntry( characterID, SWF_DICT_IMAGE );
@@ -405,13 +390,6 @@ void idSWF::PackImage( int characterID, const byte* imageData, int width, int he
 	entry->material = NULL;
 }
 
-/*
-========================
-idSWF::JPEGTables
-Reads jpeg table data, there can only be one of these in the file, and it has to come before any DefineBits tags
-We don't have to worry about clearing the jpeg object because jpeglib will automagically overwrite any tables that are already set (I think?)
-========================
-*/
 void idSWF::JPEGTables( idSWFBitStream& bitstream )
 {
 	if( bitstream.Length() == 0 ) {
@@ -422,12 +400,6 @@ void idSWF::JPEGTables( idSWFBitStream& bitstream )
 	jpeg.Load( bitstream.ReadData( bitstream.Length() ), bitstream.Length(), width, height );
 }
 
-/*
-========================
-idSWF::DefineBits
-Reads a partial jpeg image, using the tables set by the JPEGTables tag
-========================
-*/
 void idSWF::DefineBits( idSWFBitStream& bitstream )
 {
 	uint16 characterID = bitstream.ReadU16();
@@ -445,12 +417,6 @@ void idSWF::DefineBits( idSWFBitStream& bitstream )
 	Mem_Free( imageData );
 }
 
-/*
-========================
-idSWF::DefineBitsJPEG2
-Identical to DefineBits, except it uses a local JPEG table (not the one defined by JPEGTables)
-========================
-*/
 void idSWF::DefineBitsJPEG2( idSWFBitStream& bitstream )
 {
 	uint16			 characterID = bitstream.ReadU16();
@@ -470,12 +436,6 @@ void idSWF::DefineBitsJPEG2( idSWFBitStream& bitstream )
 	Mem_Free( imageData );
 }
 
-/*
-========================
-idSWF::DefineBitsJPEG3
-Mostly identical to DefineBitsJPEG2, except it has an additional zlib compressed alpha map
-========================
-*/
 void idSWF::DefineBitsJPEG3( idSWFBitStream& bitstream )
 {
 	uint16			 characterID = bitstream.ReadU16();
@@ -508,11 +468,6 @@ void idSWF::DefineBitsJPEG3( idSWFBitStream& bitstream )
 	Mem_Free( imageData );
 }
 
-/*
-========================
-idSWF::DefineBitsLossless
-========================
-*/
 void idSWF::DefineBitsLossless( idSWFBitStream& bitstream )
 {
 	uint16			  characterID = bitstream.ReadU16();
@@ -588,11 +543,6 @@ void idSWF::DefineBitsLossless( idSWFBitStream& bitstream )
 	PackImage( characterID, imageData, width, height );
 }
 
-/*
-========================
-idSWF::DefineBitsLossless2
-========================
-*/
 void idSWF::DefineBitsLossless2( idSWFBitStream& bitstream )
 {
 	uint16			  characterID = bitstream.ReadU16();

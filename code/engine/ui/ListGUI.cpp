@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "ListGUILocal.h"
 
-/*
-====================
-idListGUILocal::StateChanged
-====================
-*/
 void idListGUILocal::StateChanged()
 {
 	int i;
@@ -55,21 +50,11 @@ void idListGUILocal::StateChanged()
 	m_pGUI->StateChanged( Sys_Milliseconds() );
 }
 
-/*
-====================
-idListGUILocal::GetNumSelections
-====================
-*/
 int idListGUILocal::GetNumSelections()
 {
 	return m_pGUI->State().GetInt( va( "%s_numsel", m_name.c_str() ) );
 }
 
-/*
-====================
-idListGUILocal::GetSelection
-====================
-*/
 int idListGUILocal::GetSelection( char* s, int size, int _sel ) const
 {
 	if( s ) {
@@ -90,22 +75,12 @@ int idListGUILocal::GetSelection( char* s, int size, int _sel ) const
 	return m_ids[sel];
 }
 
-/*
-====================
-idListGUILocal::SetSelection
-====================
-*/
 void idListGUILocal::SetSelection( int sel )
 {
 	m_pGUI->SetStateInt( va( "%s_sel_0", m_name.c_str() ), sel );
 	StateChanged();
 }
 
-/*
-====================
-idListGUILocal::Add
-====================
-*/
 void idListGUILocal::Add( int id, const idStr& s )
 {
 	int i = m_ids.FindIndex( id );
@@ -118,11 +93,6 @@ void idListGUILocal::Add( int id, const idStr& s )
 	StateChanged();
 }
 
-/*
-====================
-idListGUILocal::Push
-====================
-*/
 void idListGUILocal::Push( const idStr& s )
 {
 	Append( s );
@@ -130,11 +100,6 @@ void idListGUILocal::Push( const idStr& s )
 	StateChanged();
 }
 
-/*
-====================
-idListGUILocal::Del
-====================
-*/
 bool idListGUILocal::Del( int id )
 {
 	int i = m_ids.FindIndex( id );
@@ -147,11 +112,6 @@ bool idListGUILocal::Del( int id )
 	return true;
 }
 
-/*
-====================
-idListGUILocal::Clear
-====================
-*/
 void idListGUILocal::Clear()
 {
 	m_ids.Clear();
@@ -162,32 +122,17 @@ void idListGUILocal::Clear()
 	}
 }
 
-/*
-====================
-idListGUILocal::IsConfigured
-====================
-*/
 bool idListGUILocal::IsConfigured() const
 {
 	return m_pGUI != NULL;
 }
 
-/*
-====================
-idListGUILocal::SetStateChanges
-====================
-*/
 void idListGUILocal::SetStateChanges( bool enable )
 {
 	m_stateUpdates = enable;
 	StateChanged();
 }
 
-/*
-====================
-idListGUILocal::Shutdown
-====================
-*/
 void idListGUILocal::Shutdown()
 {
 	m_pGUI = NULL;

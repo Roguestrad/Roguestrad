@@ -128,6 +128,7 @@ saveGameCheck_t
 ================================================
 */
 struct saveGameCheck_t {
+	//! Constructs a saveGameCheck_t object with default values.
 	saveGameCheck_t()
 	{
 		exists		   = false;
@@ -139,19 +140,29 @@ struct saveGameCheck_t {
 	const char* autosaveFolder;
 };
 
-/*
-================================================
-idSaveGameDetails
-================================================
+/*!
+	\class idSaveGameDetails
+	\brief Provides details about save game data including map name, location, language, playtime, and other metadata.
+
+	This class encapsulates information related to a save game, such as the map name, location descriptor, language, playtime, expansion, difficulty, and save version. It supports comparison
+   operations for ordering and equality checking based on slot names and date. The class includes methods for clearing all data and retrieving individual metadata values. It is designed to store and
+   manage save game details in a structured manner, allowing for easy access and comparison of save game information.
+
 */
 class idSaveGameDetails
 {
 public:
+	//! Initializes a new instance of the idSaveGameDetails class.
 	idSaveGameDetails();
 	~idSaveGameDetails() { Clear(); }
 
+	//! Clears all members of the save game details object.
 	void			   Clear();
+
+	//! Compares this save game details object with another for equality based on their slot names
 	bool			   operator==( const idSaveGameDetails& other ) const { return ( idStr::Icmp( slotName, other.slotName ) == 0 ); }
+
+	//! Assigns the contents of another idSaveGameDetails object to this object
 	idSaveGameDetails& operator=( const idSaveGameDetails& other )
 	{
 		descriptors.Clear();
@@ -161,15 +172,29 @@ public:
 		slotName	= other.slotName;
 		return *this;
 	}
-	// for std::sort, sort newer (larger date) towards start of list
+
+	//! Compares this save game details object with another to determine ordering based on date.
 	bool  operator<( const idSaveGameDetails& other ) const { return date > other.date; }
 
+	//! Returns the map name associated with the save game details.
 	idStr GetMapName() const { return descriptors.GetString( SAVEGAME_DETAIL_FIELD_MAP, "" ); }
+
+	//! Returns the location descriptor string from the save game details.
 	idStr GetLocation() const { return descriptors.GetString( SAVEGAME_DETAIL_FIELD_MAP_LOCATE, "" ); }
+
+	//! Returns the language identifier stored in the save game details.
 	idStr GetLanguage() const { return descriptors.GetString( SAVEGAME_DETAIL_FIELD_LANGUAGE, "" ); }
+
+	//! Returns the playtime stored in the save game details.
 	int	  GetPlaytime() const { return descriptors.GetInt( SAVEGAME_DETAIL_FIELD_PLAYTIME, 0 ); }
+
+	//! Returns the expansion identifier for the save game details.
 	int	  GetExpansion() const { return descriptors.GetInt( SAVEGAME_DETAIL_FIELD_EXPANSION, 0 ); }
+
+	//! Returns the difficulty level stored in the save game details.
 	int	  GetDifficulty() const { return descriptors.GetInt( SAVEGAME_DETAIL_FIELD_DIFFICULTY, -1 ); }
+
+	//! Returns the save version number stored in the save game details.
 	int	  GetSaveVersion() const { return descriptors.GetInt( SAVEGAME_DETAIL_FIELD_SAVE_VERSION, 0 ); }
 
 public:
@@ -184,24 +209,46 @@ typedef idStaticList<idSaveGameDetails, MAX_SAVEGAMES> saveGameDetailsList_t;
 // Making a unique_ptr to handle lifetime issues better
 typedef idList<idFile_SaveGame*, TAG_SAVEGAMES>		   saveFileEntryList_t;
 
-/*
-================================================
-idSaveLoadParms
-================================================
+/*!
+	\class idSaveLoadParms
+	\brief Manages parameters and state for save and load operations.
+
+	Handles the configuration and state tracking for save and load operations, including error handling and file operation management. Supports initialization with default values based on input
+   device, resetting cancellation flags, and managing pipelined save game file operations. The class encapsulates the necessary parameters and provides mechanisms to track errors and handle save game
+   file operations.
+
 */
 class idSaveLoadParms
 {
 public:
+	//! Initializes a new instance of the idSaveLoadParms class.
 	idSaveLoadParms();
+
+	//! Destructor for idSaveLoadParms that cleans up auto-deleted save game files.
 	~idSaveLoadParms();
 
+	//! Resets the cancelled flag to false.
 	void					ResetCancelled();
+
+	//! Initializes the save load parameters to their default values.
 	void					Init();
-	void					SetDefaults( int inputDevice = -1 ); // doesn't clear out things that should be persistent across entire processor
+
+	//! Initializes the save load parameters with default values based on the specified input device or the master user.
+	void					SetDefaults( int inputDevice = -1 );
+
+	//! Cancels all pipelined save game file operations by notifying them of failure or end-of-file.
 	void					CancelSaveGameFilePipelines();
+
+	//! Aborts all pipelined save game files in the parameters list.
 	void					AbortSaveGameFilePipeline();
+
+	//! Returns the error code stored in the save load parameters.
 	const int&				GetError() const { return errorCode; }
+
+	//! Returns a constant reference to the collection of error codes that are handled by this save/load parameter object.
 	const int&				GetHandledErrors() const { return handledErrorCodes; }
+
+	//! Returns the handle associated with this save game parameter object
 	const saveGameHandle_t& GetHandle() const { return handle; }
 
 public:
@@ -230,8 +277,10 @@ public:
 	saveGameHandle_t handle;
 
 private:
-	// Don't allow copies
+	//! Constructs a new instance as a copy of an existing idSaveLoadParms instance.
 	idSaveLoadParms( const idSaveLoadParms& s ) { }
+
+	//! Assigns the contents of another idSaveLoadParms instance to this instance.
 	void operator=( const idSaveLoadParms& s ) { }
 };
 
@@ -250,6 +299,7 @@ saveGameThreadArgs_t
 ================================================
 */
 struct saveGameThreadArgs_t {
+	//! Constructor for saveGameThreadArgs_t that initializes the saveLoadParms to NULL.
 	saveGameThreadArgs_t() :
 		saveLoadParms( NULL )
 	{
@@ -258,29 +308,51 @@ struct saveGameThreadArgs_t {
 	idSaveLoadParms* saveLoadParms;
 };
 
-/*
-================================================
-idSaveGameThread
-================================================
+/*!
+	\class idSaveGameThread
+	\brief A thread class responsible for managing save game operations including saving, loading, and enumerating save files.
+
+	This class extends idSysThread to provide a dedicated thread for handling save game operations. It supports asynchronous execution of save, load, and enumeration tasks while providing mechanisms
+   to cancel pending operations. The thread manages various file operations including creating, deleting, and listing save game files and directories. The class is designed to handle the complexity of
+   file I/O operations in a separate thread to prevent blocking the main application thread. It provides methods for both individual save game operations and bulk operations on multiple save files or
+   directories.
+
 */
 class idSaveGameThread : public idSysThread
 {
 public:
+	//! Constructs a new idSaveGameThread object.
 	idSaveGameThread() :
 		cancel( false )
 	{
 	}
 
+	//! Executes the thread's main routine and returns an integer result.
 	int	 Run();
+
+	//! Signals the save game thread to cancel all pending operations.
 	void CancelOperations() { cancel = true; }
 
 private:
+	//! Saves game data to the specified location
 	int Save();
+
+	//! Loads save game data from files into memory.
 	int Load();
+
+	//! Enumerates save game files and populates the details list with information about each save game.
 	int Enumerate();
+
+	//! This function deletes a complete savegame directory.
 	int Delete();
+
+	//! Deletes all savegame directories and files
 	int DeleteAll();
+
+	//! Deletes specified save game files and optionally cleans up matching files in the save game folder.
 	int DeleteFiles();
+
+	//! Enumerates save game files in a specified directory that match a given pattern.
 	int EnumerateFiles();
 
 public:
@@ -288,10 +360,14 @@ public:
 	volatile bool		 cancel;
 };
 
-/*
-================================================
-idSaveGameProcessor
-================================================
+/*!
+	\class idSaveGameProcessor
+	\brief A base class for processing save game operations with error handling and callback support.
+
+	The idSaveGameProcessor serves as a foundational class for managing save game operations, providing mechanisms for initialization, error validation, and completion callbacks. It supports
+   asynchronous processing through a dedicated thread and offers methods to check the processor's status, retrieve error codes, and manage system error dialog masks. The class is designed to be
+   inherited by specific save game processing implementations that handle the actual save or load logic.
+
 */
 class idSaveGameProcessor
 {
@@ -301,77 +377,61 @@ public:
 	DEFINE_CLASS( idSaveGameProcessor );
 	static const int MAX_COMPLETED_CALLBACKS = 5;
 
+	//! Initializes a new instance of the idSaveGameProcessor class.
 	idSaveGameProcessor();
 	virtual ~idSaveGameProcessor() { }
 
-	//------------------------
-	// Virtuals
-	//------------------------
-	// Basic init
+	//! Initializes the save game processor for operations.
 	virtual bool Init();
 
-	// This method should returns true if the processor has additional sub-states to
-	// manage.  The saveGameManager will retain the current state and Process() will be called again. When this method
-	// returns false Process() will not be called again. For example, during save, you might want to load other files
-	// and save them somewhere else, return true until you are done with the entire state.
+	//! Returns false to indicate no additional sub-states to manage
 	virtual bool Process() { return false; }
 
-	// Gives each processor to validate an error returned from the previous process call.
-	// This is useful when processors have a multi-stage Process() and expect some benign errors like
-	// deleting a savegame folder before copying into it.
+	//! Validates an error from a previous process call and returns true if the error is acceptable.
 	virtual bool ValidateLastError() { return false; }
 
-	// Processors need to override this if they will eventually reset the map.
-	// If it could possibly reset the map through any of its stages, including kicking off another processor in completed callback, return false.
-	// We will force non-simple processors to execute last and won't block the map heap reset due if non-simple processors are still executing.
+	//! Returns true to indicate this processor is simple and will not reset the map.
 	virtual bool IsSimpleProcessor() const { return true; }
 
-	// This is a fail-safe to catch a timing issue on the PS3 where the nextmap processor could sometimes hang during a level transition
+	//! Returns false to indicate that the save game processor should not time out
 	virtual bool ShouldTimeout() const { return false; }
 
-	//------------------------
-	// Commands
-	//------------------------
-	// Cancels this processor in whatever state it's currently in and sets an error code for SAVEGAME_E_CANCELLED
+	//! Cancels this processor and sets the error code to SAVEGAME_E_CANCELLED
 	void		 Cancel()
 	{
 		parms.cancelled = true;
 		parms.errorCode = SAVEGAME_E_CANCELLED;
 	}
 
-	//------------------------
-	// Accessors
-	//------------------------
-	// Returns error status
+	//! Returns the callback signal used for error status reporting.
 	idSysSignal&		   GetSignal() { return parms.callbackSignal; }
 
-	// Returns error status
+	//! Returns the error status of the save game processing operation.
 	const int&			   GetError() const { return parms.errorCode; }
 
-	// Returns the processor's save/load parms
+	//! Returns the processor's save/load parameters.
 	const idSaveLoadParms& GetParms() const { return parms; }
 
-	// Returns the processor's save/load parms
+	//! Returns a non-const reference to the processor's save/load parameters.
 	idSaveLoadParms&	   GetParmsNonConst() { return parms; }
 
-	// Returns if this processor is currently working
+	//! Returns whether this processor is currently working.
 	bool				   IsWorking() const { return working; }
 
-	// This is a way to tell the processor which errors shouldn't be handled by the processor or system.
+	//! Sets the error mask that determines which system errors should be skipped during processing.
 	void				   SetSkipSystemErrorDialogMask( const int errorMask ) { parms.skipErrorDialogMask = errorMask; }
+
+	//! Retrieves the mask used to determine which system error dialogs should be skipped.
 	int					   GetSkipSystemErrorDialogMask() const { return parms.skipErrorDialogMask; }
 
-	// Returns the handle given by execution
+	//! Returns the handle associated with the save game processor.
 	saveGameHandle_t	   GetHandle() const { return parms.GetHandle(); }
 
-	// These can be overridden by game code, like the GUI, when the processor is done executing.
-	// Game classes like the GUI can create a processor derived from a game's Save processor impl and simply use
-	// this method to know when everything is done.  It eases the burden of constantly checking the working flag.
-	// This will be called back within the game thread during SaveGameManager::Pump().
+	//! Adds a callback to be invoked when the save game processor has completed its execution.
 	void				   AddCompletedCallback( const idCallback& callback );
 
 private:
-	// Returns whether or not the thread is finished operating, should only be called by the savegame manager
+	//! Returns whether or not the save game processing thread has finished operating.
 	bool IsThreadFinished();
 
 protected:
@@ -385,18 +445,20 @@ private:
 	idStaticList<idCallback*, MAX_COMPLETED_CALLBACKS> completedCallbacks;
 };
 
-/*
-================================================
-idSaveGameManager
+/*!
+	\class idSaveGameManager
+	\brief Manages asynchronous save game operations through a processor strategy pattern.
 
-Why all the object-oriented nonsense?
-- Savegames need to be processed asynchronously, saving/loading/deleting files should happen during the game frame
+	Why all the object-oriented nonsense?
+
+	- Savegames need to be processed asynchronously, saving/loading/deleting files should happen during the game frame
 	so there is a common way to update the render device.
-- When executing commands, if no "strategy"s are used, the pump() method would need to have a switch statement,
+
+	- When executing commands, if no "strategy"s are used, the pump() method would need to have a switch statement,
 	extending the manager for other commands would mean modifying the manager itself for various commands.
 	By making it a strategy, we are able to create custom commands and define the behavior within game code and keep
 	the manager code in the engine static.
-================================================
+
 */
 class idSaveGameManager
 {
@@ -405,59 +467,86 @@ public:
 
 	const static int MAX_SAVEGAME_DIRECTORY_DEPTH = 5;
 
+	//! Initializes a new instance of the idSaveGameManager class.
 	explicit idSaveGameManager();
+
+	//! Destructor for the idSaveGameManager class that cleans up internal resources.
 	~idSaveGameManager();
 
-	// Called within main game thread
+	//! Processes save game operations in the main game thread.
 	void			  Pump();
 
-	// Has the storage device been selected yet?  This is only an issue on the 360, and primarily for development purposes
+	//! Checks if a storage device has been selected for saving.
 	bool			  IsStorageAvailable() const { return storageAvailable; }
+
+	//! Sets the storage availability status.
 	void			  SetStorageAvailable( const bool available ) { storageAvailable = available; }
 
-	// Check to see if a processor is set within the manager
+	//! Checks if the save game manager has an active processor.
 	bool			  IsWorking() const;
 
-	// Assign a processor to the manager.  The processor should belong in game-side code
-	// This queues up processors and executes them serially
-	// Returns whether or not the processor is immediately executed
+	//! Assigns a processor to the manager for asynchronous execution and returns a handle to track its progress.
 	saveGameHandle_t  ExecuteProcessor( idSaveGameProcessor* processor );
 
-	// Synchronous version, CompletedCallback is NOT called.
+	//! Executes a save game processor synchronously and waits for completion
 	saveGameHandle_t  ExecuteProcessorAndWait( idSaveGameProcessor* processor );
 
-	// Lets the currently processing queue finish, but clears the processor queue
+	//! Clears the processor queue while allowing currently processing items to finish
 	void			  Clear();
 
+	//! Waits for all save game processors to complete execution
 	void			  WaitForAllProcessors( bool overrideSimpleProcessorCheck = false );
 
+	//! Returns whether the save game operation has been cancelled.
 	const bool		  IsCancelled() const { return cancel; }
+
+	//! Cancels all save game processors and optionally forces cancellation of any in-flight processor.
 	void			  CancelAllProcessors( const bool forceCancelInFlightProcessor );
 
+	//! Cancels the save game processor and terminates the save thread.
 	void			  CancelToTerminate();
 
+	//! Returns a reference to the save game thread managed by this save game manager.
 	idSaveGameThread& GetSaveGameThread() { return saveThread; }
 
+	//! Checks if a save game operation identified by the handle has been completed.
 	bool			  IsSaveGameCompletedFromHandle( const saveGameHandle_t& handle ) const
 	{
 		return handle <= lastExecutedProcessorHandle || handle == 0; // last case should never be reached since it would be also be true in first case, this is just to show intent
 	}
+
+	//! Sets the folder and byte count for retry save operations after a device is selected on Xbox 360.
 	void						 Set360RetrySaveAfterDeviceSelected( const char* folder, const int64 bytes );
+
+	//! Returns true if the save manager is waiting to retry a save operation to the game autosave folder.
 	bool						 DeviceSelectorWaitingOnSaveRetry();
+
+	//! Displays a dialog to the user when there is insufficient storage space to save the game.
 	void						 ShowRetySaveDialog( const char* folder, const int64 bytes );
+
+	//! Displays a dialog for retrying save operations.
 	void						 ShowRetySaveDialog();
+
+	//! Clears the retry information stored in the save game manager.
 	void						 ClearRetryInfo();
+
+	//! Attempts to retry a save game operation.
 	void						 RetrySave();
-	// This will cause the processor to cancel execution, the completion callback will be called
+
+	//! Cancels a save or load operation identified by the given handle if it is not yet completed
 	void						 CancelWithHandle( const saveGameHandle_t& handle );
 
+	//! Returns the list of enumerated savegames
 	const saveGameDetailsList_t& GetEnumeratedSavegames() const { return enumeratedSaveGames; }
+
+	//! Returns a non-const reference to the list of enumerated save games.
 	saveGameDetailsList_t&		 GetEnumeratedSavegamesNonConst() { return enumeratedSaveGames; }
 
 private:
-	// These are to make sure that all processors start and finish in the same way without a lot of code duplication.
-	// We need to make sure that we adhere to PS3 system combination initialization issues.
+	//! Initializes and starts the next simple processor in the queue for execution.
 	void StartNextProcessor();
+
+	//! Finalizes a save game processor and cleans up its auto-deletable files
 	void FinishProcessor( idSaveGameProcessor* processor );
 
 	// Calls start on the processor after it's been assigned
@@ -483,19 +572,25 @@ private:
 	idSysSignal							  deviceRequestedSignal;
 };
 
-// Bridge between the session's APIs and the savegame thread
+//! Bridges session APIs to the savegame thread for asynchronous save operations.
 void		 Sys_ExecuteSavegameCommandAsync( idSaveLoadParms* savegameParms );
 
-// Folder prefix should be NULL for everything except PS3
-// Synchronous check, just checks if any savegame exists for master local user and if one is an autosave
+//! Checks if any savegames exist and whether an autosave exists.
 void		 Sys_SaveGameCheck( bool& exists, bool& autosaveExists );
 
+//! Returns the save folder path prefix for a given package type.
 const idStr& GetSaveFolder( idSaveGameManager::packageType_t type );
+
+//! Constructs a full save game folder path by prefixing the input folder name with the appropriate base save folder path for the specified package type.
 idStr		 AddSaveFolderPrefix( const char* folder, idSaveGameManager::packageType_t type );
+
+//! Removes the save folder prefix from the given folder path based on the specified package type.
 idStr		 RemoveSaveFolderPrefix( const char* folder, idSaveGameManager::packageType_t type );
 
+//! Reads save game details from a file and validates the checksum, marking the save as damaged if validation fails.
 bool		 SavegameReadDetailsFromFile( idFile* file, idSaveGameDetails& details );
 
+//! Converts a save game error mask into a human-readable string representation
 idStr		 GetSaveGameErrorString( int errorMask );
 
 #endif // __SYS_SAVEGAME_H__

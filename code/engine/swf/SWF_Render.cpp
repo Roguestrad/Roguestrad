@@ -56,21 +56,11 @@ extern idCVar in_useJoystick;
 #define STENCIL_DECR  -1
 #define STENCIL_INCR  -2
 
-/*
-========================
-idSWF::DrawStretchPic
-========================
-*/
 void idSWF::DrawStretchPic( float x, float y, float w, float h, float s1, float t1, float s2, float t2, const idMaterial* material )
 {
 	renderSystem->DrawStretchPic( x * scaleToVirtual.x, y * scaleToVirtual.y, w * scaleToVirtual.x, h * scaleToVirtual.y, s1, t1, s2, t2, material );
 }
 
-/*
-========================
-idSWF::DrawStretchPic
-========================
-*/
 void idSWF::DrawStretchPic( const idVec4& topLeft, const idVec4& topRight, const idVec4& bottomRight, const idVec4& bottomLeft, const idMaterial* material )
 {
 	renderSystem->DrawStretchPic( idVec4( topLeft.x * scaleToVirtual.x, topLeft.y * scaleToVirtual.y, topLeft.z, topLeft.w ),
@@ -80,11 +70,6 @@ void idSWF::DrawStretchPic( const idVec4& topLeft, const idVec4& topRight, const
 		material );
 }
 
-/*
-========================
-idSWF::Render
-========================
-*/
 void idSWF::Render( idRenderSystem* gui, int time, bool isSplitscreen )
 {
 	if( !IsLoaded() ) {
@@ -203,11 +188,6 @@ void idSWF::Render( idRenderSystem* gui, int time, bool isSplitscreen )
 	gui->SetGLState( 0 );
 }
 
-/*
-========================
-idSWF::RenderMask
-========================
-*/
 void idSWF::RenderMask( idRenderSystem* gui, const swfDisplayEntry_t* mask, const swfRenderState_t& renderState, const int stencilMode )
 {
 	swfRenderState_t renderState2;
@@ -226,11 +206,6 @@ void idSWF::RenderMask( idRenderSystem* gui, const swfDisplayEntry_t* mask, cons
 	}
 }
 
-/*
-========================
-idSWF::RenderSprite
-========================
-*/
 void idSWF::RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* spriteInstance, const swfRenderState_t& renderState, int time, bool isSplitscreen )
 {
 	if( spriteInstance == NULL ) {
@@ -458,11 +433,6 @@ void idSWF::RenderSprite( idRenderSystem* gui, idSWFSpriteInstance* spriteInstan
 	}
 }
 
-/*
-========================
-idSWF::GLStateForBlendMode
-========================
-*/
 uint64 idSWF::GLStateForRenderState( const swfRenderState_t& renderState )
 {
 	uint64 extraGLState = GLS_OVERRIDE | GLS_DEPTHFUNC_LESS | GLS_DEPTHMASK; // SWF GL State always overrides what's set in the material
@@ -502,11 +472,6 @@ uint64 idSWF::GLStateForRenderState( const swfRenderState_t& renderState )
 	}
 }
 
-/*
-========================
-idSWF::RenderMorphShape
-========================
-*/
 void idSWF::RenderMorphShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState )
 {
 	if( shape == NULL ) {
@@ -593,11 +558,6 @@ void idSWF::RenderMorphShape( idRenderSystem* gui, const idSWFShape* shape, cons
 	}
 }
 
-/*
-========================
-idSWF::RenderShape
-========================
-*/
 void idSWF::RenderShape( idRenderSystem* gui, const idSWFShape* shape, const swfRenderState_t& renderState )
 {
 	if( shape == NULL ) {
@@ -773,11 +733,6 @@ void idSWF::RenderShape( idRenderSystem* gui, const idSWFShape* shape, const swf
 	// RB end
 }
 
-/*
-========================
-idSWF::DrawEditCursor
-========================
-*/
 void idSWF::DrawEditCursor( idRenderSystem* gui, float x, float y, float w, float h, const swfMatrix_t& matrix )
 {
 	idVec2 topl = matrix.Transform( idVec2( x, y ) );
@@ -787,11 +742,6 @@ void idSWF::DrawEditCursor( idRenderSystem* gui, float x, float y, float w, floa
 	DrawStretchPic( idVec4( topl.x, topl.y, 0.0f, 0.0f ), idVec4( topr.x, topr.y, 1.0f, 0.0f ), idVec4( br.x, br.y, 1.0f, 1.0f ), idVec4( bl.x, bl.y, 0.0f, 1.0f ), white );
 }
 
-/*
-========================
-idSWF::RenderEditText
-========================
-*/
 void idSWF::RenderEditText( idRenderSystem* gui, idSWFTextInstance* textInstance, const swfRenderState_t& renderState, int time, bool isSplitscreen )
 {
 	if( textInstance == NULL ) {
@@ -1562,13 +1512,6 @@ void idSWF::RenderEditText( idRenderSystem* gui, idSWFTextInstance* textInstance
 	}
 }
 
-/*
-========================
-idSWF::FindTooltipIcons
-
-This replaces text like "_use" with platform specific text like "<JOY1>"
-========================
-*/
 void idSWF::FindTooltipIcons( idStr* text )
 {
 	tooltipIconList.Clear();
@@ -1640,7 +1583,6 @@ void idSWF::FindTooltipIcons( idStr* text )
 	}
 }
 
-// RB begin
 swfRect_t idSWF::CalcRect( const idSWFSpriteInstance* spriteInstance, const swfRenderState_t& renderState )
 {
 	swfRect_t bounds;

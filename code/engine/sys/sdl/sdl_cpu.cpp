@@ -150,15 +150,6 @@ double Sys_ClockTicksPerSecond()
 ==============================================================
 */
 
-/*
-========================
-Sys_CPUCount
-
-numLogicalCPUCores	- the number of logical CPU per core
-numPhysicalCPUCores	- the total number of cores per package
-numCPUPackages		- the total number of packages (physical processors)
-========================
-*/
 #if defined( _WIN32 )
 void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCPUPackages )
 {
@@ -168,11 +159,6 @@ void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCP
 }
 #endif
 
-/*
-================
-Sys_GetCPUId
-================
-*/
 cpuid_t Sys_GetCPUId()
 {
 	int flags;
@@ -267,10 +253,23 @@ static bitFlag_t   statusWordFlags[]	   = { { "Invalid operation", 0 },
 			{ "FPU busy", 15 },
 			{ "", 0 } };
 
-/*
-===============
-Sys_FPU_PrintStateFlags
-===============
+/*!
+	\brief Formats and prints FPU state flags into a buffer
+
+	This function takes FPU control and status word values along with other FPU state information and formats them into a human-readable string stored in the provided buffer. It prints the raw
+   register values and decodes the individual flag bits for both control and status words, including precision and rounding controls for the control word and condition codes for the status word. The
+   function is typically used for debugging or crash reporting to provide detailed FPU state information when an exception occurs.
+
+	\param buf Output buffer to store the formatted string
+	\param bufsize Size of the output buffer
+	\param ctrl FPU control word value
+	\param stat FPU status word value
+	\param tags FPU tag word value
+	\param inof FPU instruction offset value
+	\param inse FPU instruction selector value
+	\param opof FPU operand offset value
+	\param opse FPU operand selector value
+	\return The total number of characters written to the buffer, excluding the null terminator
 */
 int				   Sys_FPU_PrintStateFlags( char* buf, int bufsize, int ctrl, int stat, int tags, int inof, int inse, int opof, int opse )
 {
@@ -311,54 +310,27 @@ int				   Sys_FPU_PrintStateFlags( char* buf, int bufsize, int ctrl, int stat, i
 	return length;
 }
 
-/*
-===============
-Sys_FPU_StackIsEmpty
-===============
-*/
 bool Sys_FPU_StackIsEmpty()
 {
 	// TODO
 	return true;
 }
 
-/*
-===============
-Sys_FPU_ClearStack
-===============
-*/
 void Sys_FPU_ClearStack()
 {
 	// TODO
 }
 
-/*
-===============
-Sys_FPU_GetState
-
-  gets the FPU state without changing the state
-===============
-*/
 const char* Sys_FPU_GetState()
 {
 	return "TODO Sys_FPU_GetState()";
 }
 
-/*
-===============
-Sys_FPU_EnableExceptions
-===============
-*/
 void Sys_FPU_EnableExceptions( int exceptions )
 {
 	// TODO
 }
 
-/*
-===============
-Sys_FPU_SetPrecision
-===============
-*/
 void Sys_FPU_SetPrecision( int precision )
 {
 	// TODO
@@ -381,11 +353,6 @@ void Sys_FPU_SetPrecision( int precision )
 	*/
 }
 
-/*
-================
-Sys_FPU_SetRounding
-================
-*/
 void Sys_FPU_SetRounding( int rounding )
 {
 	// TODO
@@ -408,11 +375,6 @@ void Sys_FPU_SetRounding( int rounding )
 	*/
 }
 
-/*
-================
-Sys_FPU_SetDAZ
-================
-*/
 void Sys_FPU_SetDAZ( bool enable )
 {
 	/*
@@ -432,11 +394,6 @@ void Sys_FPU_SetDAZ( bool enable )
 	*/
 }
 
-/*
-================
-Sys_FPU_SetFTZ
-================
-*/
 void Sys_FPU_SetFTZ( bool enable )
 {
 	/*

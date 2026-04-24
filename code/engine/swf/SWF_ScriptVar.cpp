@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 
 extern idCVar swf_debugShowAddress;
 
-/*
-========================
-idSWFScriptVar::idSWFScriptVar
-========================
-*/
 idSWFScriptVar::idSWFScriptVar( const idSWFScriptVar& other )
 {
 	type  = other.type;
@@ -49,11 +44,6 @@ idSWFScriptVar::idSWFScriptVar( const idSWFScriptVar& other )
 	}
 }
 
-/*
-========================
-idSWFScriptVar::operator=
-========================
-*/
 idSWFScriptVar& idSWFScriptVar::operator=( const idSWFScriptVar& other )
 {
 	if( this != &other ) {
@@ -71,21 +61,11 @@ idSWFScriptVar& idSWFScriptVar::operator=( const idSWFScriptVar& other )
 	return *this;
 }
 
-/*
-========================
-idSWFScriptVar::~idSWFScriptVar
-========================
-*/
 idSWFScriptVar::~idSWFScriptVar()
 {
 	Free();
 }
 
-/*
-========================
-idSWFScriptVar::Free
-========================
-*/
 void idSWFScriptVar::Free()
 {
 	if( type == SWF_VAR_STRING ) {
@@ -101,11 +81,6 @@ void idSWFScriptVar::Free()
 	type		   = SWF_VAR_UNDEF;
 }
 
-/*
-========================
-idSWFScriptVar::SetObject
-========================
-*/
 void idSWFScriptVar::SetObject( idSWFScriptObject* o )
 {
 	Free();
@@ -118,11 +93,6 @@ void idSWFScriptVar::SetObject( idSWFScriptObject* o )
 	}
 }
 
-/*
-========================
-idSWFScriptVar::SetFunction
-========================
-*/
 void idSWFScriptVar::SetFunction( idSWFScriptFunction* f )
 {
 	Free();
@@ -135,11 +105,6 @@ void idSWFScriptVar::SetFunction( idSWFScriptFunction* f )
 	}
 }
 
-/*
-========================
-idSWFScriptVar::StrictEquals
-========================
-*/
 bool idSWFScriptVar::StrictEquals( const idSWFScriptVar& other )
 {
 	if( type != other.type ) {
@@ -170,11 +135,6 @@ bool idSWFScriptVar::StrictEquals( const idSWFScriptVar& other )
 	}
 }
 
-/*
-========================
-idSWFScriptVar::AbstractEquals
-========================
-*/
 bool idSWFScriptVar::AbstractEquals( const idSWFScriptVar& other )
 {
 	if( type == other.type ) {
@@ -251,11 +211,6 @@ bool idSWFScriptVar::AbstractEquals( const idSWFScriptVar& other )
 	}
 }
 
-/*
-========================
-idSWFScriptVar::ToString
-========================
-*/
 idStr idSWFScriptVar::ToString() const
 {
 	switch( type ) {
@@ -293,11 +248,6 @@ idStr idSWFScriptVar::ToString() const
 	}
 }
 
-/*
-========================
-idSWFScriptVar::ToFloat
-========================
-*/
 float idSWFScriptVar::ToFloat() const
 {
 	switch( type ) {
@@ -324,11 +274,6 @@ float idSWFScriptVar::ToFloat() const
 	}
 }
 
-/*
-========================
-idSWFScriptVar::ToBool
-========================
-*/
 bool idSWFScriptVar::ToBool() const
 {
 	switch( type ) {
@@ -355,11 +300,6 @@ bool idSWFScriptVar::ToBool() const
 	}
 }
 
-/*
-========================
-idSWFScriptVar::ToInteger
-========================
-*/
 int32 idSWFScriptVar::ToInteger() const
 {
 	switch( type ) {
@@ -387,11 +327,6 @@ int32 idSWFScriptVar::ToInteger() const
 	}
 }
 
-/*
-========================
-idSWFScriptVar::ToSprite
-========================
-*/
 idSWFSpriteInstance* idSWFScriptVar::ToSprite()
 {
 	if( IsObject() && value.object != NULL ) {
@@ -401,11 +336,6 @@ idSWFSpriteInstance* idSWFScriptVar::ToSprite()
 	return NULL;
 }
 
-/*
-========================
-idSWFScriptVar::ToText
-========================
-*/
 idSWFTextInstance* idSWFScriptVar::ToText()
 {
 	if( IsObject() && value.object != NULL ) {
@@ -415,11 +345,6 @@ idSWFTextInstance* idSWFScriptVar::ToText()
 	return NULL;
 }
 
-/*
-========================
-idSWFScriptVar::GetNestedVar
-========================
-*/
 idSWFScriptVar idSWFScriptVar::GetNestedVar( const char* arg1, const char* arg2, const char* arg3, const char* arg4, const char* arg5, const char* arg6 )
 {
 	if( !IsObject() ) {
@@ -429,11 +354,6 @@ idSWFScriptVar idSWFScriptVar::GetNestedVar( const char* arg1, const char* arg2,
 	return GetObject()->GetNestedVar( arg1, arg2, arg3, arg4, arg5, arg6 );
 }
 
-/*
-========================
-idSWFScriptVar::GetNestedObj
-========================
-*/
 idSWFScriptObject* idSWFScriptVar::GetNestedObj( const char* arg1, const char* arg2, const char* arg3, const char* arg4, const char* arg5, const char* arg6 )
 {
 	if( !IsObject() ) {
@@ -443,11 +363,6 @@ idSWFScriptObject* idSWFScriptVar::GetNestedObj( const char* arg1, const char* a
 	return GetObject()->GetNestedObj( arg1, arg2, arg3, arg4, arg5, arg6 );
 }
 
-/*
-========================
-idSWFScriptVar::GetNestedSprite
-========================
-*/
 idSWFSpriteInstance* idSWFScriptVar::GetNestedSprite( const char* arg1, const char* arg2, const char* arg3, const char* arg4, const char* arg5, const char* arg6 )
 {
 	if( !IsObject() ) {
@@ -457,11 +372,6 @@ idSWFSpriteInstance* idSWFScriptVar::GetNestedSprite( const char* arg1, const ch
 	return GetObject()->GetNestedSprite( arg1, arg2, arg3, arg4, arg5, arg6 );
 }
 
-/*
-========================
-idSWFScriptVar::GetNestedSprite
-========================
-*/
 idSWFTextInstance* idSWFScriptVar::GetNestedText( const char* arg1, const char* arg2, const char* arg3, const char* arg4, const char* arg5, const char* arg6 )
 {
 	if( !IsObject() ) {
@@ -471,11 +381,6 @@ idSWFTextInstance* idSWFScriptVar::GetNestedText( const char* arg1, const char* 
 	return GetObject()->GetNestedText( arg1, arg2, arg3, arg4, arg5, arg6 );
 }
 
-/*
-========================
-idSWFScriptVar::TypeOf
-========================
-*/
 const char* idSWFScriptVar::TypeOf() const
 {
 	switch( type ) {
@@ -516,11 +421,6 @@ const char* idSWFScriptVar::TypeOf() const
 	}
 }
 
-/*
-========================
-idSWFScriptVar::PrintToConsole
-========================
-*/
 void idSWFScriptVar::PrintToConsole() const
 {
 	idLib::Printf( "Object type: %s\n", TypeOf() );

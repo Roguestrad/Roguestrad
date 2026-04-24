@@ -301,7 +301,7 @@ public:
 	//! Sets the current render view parameters for subsequent rendering operations.
 	virtual void		 SetRenderView( const renderView_t* renderView );
 
-	//! Renders a scene using the provided view parameters, handling multiple subviews for mirrors and portals.
+	//! Renders a scene using the provided view parameters, handling multiple subviews for mirrors and portals
 	virtual void		 RenderScene( const renderView_t* renderView );
 
 	//! Returns the total number of portal areas in the render world.

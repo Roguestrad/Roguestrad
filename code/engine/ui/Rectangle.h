@@ -32,6 +32,17 @@ If you have questions concerning this license or the applicable additional terms
 // simple rectangle
 //
 extern void RotateVector( idVec3& v, idVec3 origin, float a, float c, float s );
+
+/*!
+	\class idRectangle
+	\brief A class representing a 2D rectangle with position, width, and height.
+
+	The idRectangle class encapsulates a 2D rectangle defined by its top-left corner coordinates, width, and height. It provides constructors for initializing rectangles with specific values, as well
+   as methods for geometric operations such as offsetting, clipping, and rotation. The class supports various arithmetic operators for component-wise operations and provides access to rectangle data
+   through indexed access and vector conversion. The Empty method appears to reset the rectangle to zero dimensions, though its precise behavior requires clarification. The class is designed for
+   efficient manipulation and comparison of rectangular regions in 2D space.
+
+*/
 class idRectangle
 {
 public:
@@ -39,7 +50,21 @@ public:
 	float y; // vert position
 	float w; // width
 	float h; // height;
+
+	//! Initializes a new idRectangle instance with all coordinates and dimensions set to zero.
 	idRectangle() { x = y = w = h = 0.0; }
+
+	/*!
+		\brief Constructs an idRectangle object with specified position and dimensions.
+
+		This constructor initializes the rectangle's position and size using the provided x, y, width, and height values. The x and y coordinates represent the top-left corner of the rectangle, while
+	   w and h represent the width and height respectively.
+
+		\param ix The x-coordinate of the rectangle's top-left corner
+		\param iy The y-coordinate of the rectangle's top-left corner
+		\param iw The width of the rectangle
+		\param ih The height of the rectangle
+	*/
 	idRectangle( float ix, float iy, float iw, float ih )
 	{
 		x = ix;
@@ -47,13 +72,21 @@ public:
 		w = iw;
 		h = ih;
 	}
+
+	//! Returns the bottom coordinate of the rectangle.
 	float Bottom() const { return y + h; }
+
+	//! Returns the right edge coordinate of the rectangle.
 	float Right() const { return x + w; }
+
+	//! Moves the rectangle's position by the specified x and y offsets.
 	void  Offset( float x, float y )
 	{
 		this->x += x;
 		this->y += y;
 	}
+
+	//! Checks if the given point is contained within the rectangle.
 	bool Contains( float xt, float yt )
 	{
 		if( w == 0.0 && h == 0.0 ) { return false; }
@@ -62,6 +95,7 @@ public:
 	}
 	void Empty() { x = y = w = h = 0.0; };
 
+	//! Clips this rectangle against another rectangle, adjusting position and size based on the sizeOnly flag.
 	void ClipAgainst( idRectangle r, bool sizeOnly )
 	{
 		if( !sizeOnly ) {
@@ -78,6 +112,7 @@ public:
 		if( y + h > r.y + r.h ) { h = ( r.y + r.h ) - y; }
 	}
 
+	//! Rotates the rectangle by the specified angle and stores the result in the output rectangle.
 	void Rotate( float a, idRectangle& out )
 	{
 		idVec3 p1, p2, p3, p4, p5;
@@ -102,15 +137,34 @@ public:
 		out.h = ( p4 - p1 ).Length();
 	}
 
+	//! Adds the coordinates and dimensions of another rectangle to this rectangle and returns a reference to this rectangle.
 	idRectangle&  operator+=( const idRectangle& a );
+
+	//! Subtracts the components of another rectangle from this rectangle and returns a reference to this rectangle.
 	idRectangle&  operator-=( const idRectangle& a );
+
+	//! Divides the coordinates of this rectangle by the corresponding coordinates of another rectangle.
 	idRectangle&  operator/=( const idRectangle& a );
+
+	//! Divides all components of the rectangle by the given scalar value.
 	idRectangle&  operator/=( const float a );
+
+	//! Multiplies all components of the rectangle by a scalar value and returns a reference to the modified rectangle.
 	idRectangle&  operator*=( const float a );
+
+	//! Assignment operator that copies values from a vector to the rectangle
 	idRectangle&  operator=( const idVec4 v );
+
+	//! Compares two idRectangle objects for equality and returns true if all components (x, y, w, h) are equal.
 	int			  operator==( const idRectangle& a ) const;
+
+	//! Provides indexed access to the rectangle's coordinates
 	float&		  operator[]( const int index );
+
+	//! Returns a string representation of the rectangle coordinates.
 	char*		  String() const;
+
+	//! Returns a const reference to the rectangle data as an idVec4.
 	const idVec4& ToVec4() const;
 };
 
@@ -189,13 +243,19 @@ ID_INLINE float& idRectangle::operator[]( int index )
 	return ( &x )[index];
 }
 
+/*!
+	\class idRegion
+	\brief A collection of rectangular regions used for area-based operations.
+*/
 class idRegion
 {
 public:
 	idRegion() {};
 
+	//! Clears all rectangles from the region.
 	void Empty() { rects.Clear(); }
 
+	//! Checks if the given coordinates are within any of the rectangles in the region.
 	bool Contains( float xt, float yt )
 	{
 		int c = rects.Num();
@@ -205,10 +265,22 @@ public:
 		return false;
 	}
 
+	/*!
+		\brief Adds a rectangular region to the region collection.
+
+		This function appends a new rectangle defined by its top-left corner coordinates (x, y) and its width (w) and height (h) to the internal collection of rectangles that make up the region.
+
+		\param x The x-coordinate of the top-left corner of the rectangle
+		\param y The y-coordinate of the top-left corner of the rectangle
+		\param w The width of the rectangle
+		\param h The height of the rectangle
+	*/
 	void		 AddRect( float x, float y, float w, float h ) { rects.Append( idRectangle( x, y, w, h ) ); }
 
+	//! Returns the number of rectangles in the region.
 	int			 GetRectCount() { return rects.Num(); }
 
+	//! Returns a pointer to the rectangle at the specified index in the region.
 	idRectangle* GetRect( int index )
 	{
 		if( index >= 0 && index < rects.Num() ) { return &rects[index]; }

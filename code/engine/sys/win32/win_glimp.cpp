@@ -53,11 +53,7 @@ If you have questions concerning this license or the applicable additional terms
 #include <engine/sys/DeviceManager.h>
 extern DeviceManager* deviceManager;
 
-/*
-========================
-GLimp_GetOldGammaRamp
-========================
-*/
+//! Saves the current gamma ramp settings for later restoration.
 static void			  GLimp_SaveGamma()
 {
 	HDC	 hDC;
@@ -69,11 +65,7 @@ static void			  GLimp_SaveGamma()
 	ReleaseDC( GetDesktopWindow(), hDC );
 }
 
-/*
-========================
-GLimp_RestoreGamma
-========================
-*/
+//! Restores the original hardware gamma ramp settings.
 static void GLimp_RestoreGamma()
 {
 	HDC	 hDC;
@@ -111,11 +103,7 @@ void GLimp_SetGamma( unsigned short red[256], unsigned short green[256], unsigne
 	}
 }
 
-/*
-====================
-GLW_CreateWindowClasses
-====================
-*/
+//! Creates and registers the window class used by the OpenGL window.
 static void GLW_CreateWindowClasses()
 {
 	WNDCLASS wc;
@@ -148,11 +136,7 @@ static void GLW_CreateWindowClasses()
 	win32.windowClassRegistered = true;
 }
 
-/*
-========================
-GetDisplayName
-========================
-*/
+//! Retrieves the display name for a specified device number.
 static const char* GetDisplayName( const int deviceNum )
 {
 	static DISPLAY_DEVICE device;
@@ -166,11 +150,7 @@ static const char* GetDisplayName( const int deviceNum )
 	return device.DeviceName;
 }
 
-/*
-========================
-GetDeviceName
-========================
-*/
+//! Retrieves the name of the display device at the specified device number.
 static idStr GetDeviceName( const int deviceNum )
 {
 	DISPLAY_DEVICE device = {};
@@ -190,10 +170,20 @@ static idStr GetDeviceName( const int deviceNum )
 	return idStr( device.DeviceName );
 }
 
-/*
-========================
-GetDisplayCoordinates
-========================
+/*!
+	\brief Retrieves the display coordinates and properties for a specified display device
+
+	This function obtains the positional and resolution information for a given display device by querying Windows display APIs. It uses EnumDisplayDevices and EnumDisplaySettings to gather
+   information about the display's position, size, and refresh rate. The function populates the provided parameters with the display's x and y coordinates, width, height, and refresh rate. It returns
+   true on successful retrieval of display information, false otherwise.
+
+	\param deviceNum Index of the display device to query
+	\param x Output parameter for the display's x coordinate
+	\param y Output parameter for the display's y coordinate
+	\param width Output parameter for the display's width in pixels
+	\param height Output parameter for the display's height in pixels
+	\param displayHz Output parameter for the display's refresh rate in Hertz
+	\return True if the display information was successfully retrieved, false otherwise
 */
 static bool GetDisplayCoordinates( const int deviceNum, int& x, int& y, int& width, int& height, int& displayHz )
 {
@@ -250,11 +240,7 @@ static bool GetDisplayCoordinates( const int deviceNum, int& x, int& y, int& wid
 	return true;
 }
 
-/*
-====================
-DMDFO
-====================
-*/
+//! Returns a string representation of the DMDFO enumeration value.
 static const char* DMDFO( int dmDisplayFixedOutput )
 {
 	switch( dmDisplayFixedOutput ) {
@@ -268,11 +254,7 @@ static const char* DMDFO( int dmDisplayFixedOutput )
 	return "UNKNOWN";
 }
 
-/*
-====================
-PrintDevMode
-====================
-*/
+//! Prints the details of a DEVMODE structure to the console.
 static void PrintDevMode( DEVMODE& devmode )
 {
 	common->Printf( "          dmPosition.x        : %i\n", devmode.dmPosition.x );
@@ -477,11 +459,7 @@ bool R_GetModeListForDisplay( const int requestedDisplayNum, idList<vidMode_t>& 
 	// Never gets here
 }
 
-/*
-====================
-Helper Functions
-====================
-*/
+//! Returns the maximum display device number available on the system.
 int DisplayMax()
 {
 	DISPLAY_DEVICE dd;
@@ -498,6 +476,7 @@ int DisplayMax()
 	return deviceMax;
 }
 
+//! Returns the display number of the primary display device
 int DisplayPrimary()
 {
 	DISPLAY_DEVICE dd;
@@ -519,12 +498,7 @@ int DisplayPrimary()
 	return deviceMin;
 }
 
-/*
-====================
-GetDisplayNum
-====================
-*/
-// SRS - Function to get display number for both fullscreen and windowed modes
+//! Determines the display number based on the provided rendering parameters for fullscreen or windowed modes.
 static int GetDisplayNum( glimpParms_t parms )
 {
 	int displayNum = -1;
@@ -559,10 +533,19 @@ static int GetDisplayNum( glimpParms_t parms )
 	return displayNum;
 }
 
-/*
-====================
-GLW_GetWindowDimensions
-====================
+/*!
+	\brief Retrieves the dimensions and position of a window based on the specified parameters.
+
+	This function calculates the window position and size based on the provided display parameters. It handles both fullscreen and windowed modes, adjusting the coordinates and dimensions accordingly.
+   If the specified display number is invalid, it falls back to the primary display and issues a warning. For windowed modes, it adjusts the window size to account for window borders. The function
+   returns false if it fails to retrieve display coordinates.
+
+	\param parms The parameters specifying the window and display settings including fullscreen mode, width, height, and position
+	\param x The output parameter for the x-coordinate of the window position
+	\param y The output parameter for the y-coordinate of the window position
+	\param w The output parameter for the width of the window
+	\param h The output parameter for the height of the window
+	\return True if the window dimensions and position were successfully retrieved, false otherwise
 */
 static bool GLW_GetWindowDimensions( const glimpParms_t parms, int& x, int& y, int& w, int& h )
 {
@@ -626,6 +609,18 @@ static bool GLW_GetWindowDimensions( const glimpParms_t parms, int& x, int& y, i
 	return true;
 }
 
+/*!
+	\brief Calculates centered window dimensions within primary display bounds
+
+	This function computes the centered position and size for a window based on the primary display coordinates. It takes the desired window width and height and adjusts the x and y coordinates to
+   center the window on the primary display while ensuring the window stays within display boundaries. The function modifies the input parameters to reflect the final computed window dimensions.
+
+	\param x Output parameter for the calculated x coordinate of the window
+	\param y Output parameter for the calculated y coordinate of the window
+	\param w Input parameter for the desired window width, output parameter for the final window width
+	\param h Input parameter for the desired window height, output parameter for the final window height
+	\return True if successful in calculating centered window dimensions, false otherwise
+*/
 static bool GetCenteredWindowDimensions( int& x, int& y, int& w, int& h )
 {
 	// get position and size of primary display for windowed mode (parms.fullScreen = 0)
@@ -750,11 +745,7 @@ void DeviceManager::UpdateWindowSize( const glimpParms_t& parms )
 	}
 }
 
-/*
-===================
-PrintCDSError
-===================
-*/
+//! Prints a human-readable error message for a given display change error code.
 static void PrintCDSError( int value )
 {
 	switch( value ) {
@@ -782,14 +773,7 @@ static void PrintCDSError( int value )
 	}
 }
 
-/*
-===================
-GLW_ChangeDislaySettingsIfNeeded
-
-Optionally ChangeDisplaySettings to get a different fullscreen resolution.
-Default uses the full desktop resolution.
-===================
-*/
+//! Changes display settings if needed to match the specified fullscreen parameters.
 static bool GLW_ChangeDislaySettingsIfNeeded( glimpParms_t parms )
 {
 	// If we had previously changed the display settings on a different monitor,

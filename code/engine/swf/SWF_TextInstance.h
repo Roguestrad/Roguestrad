@@ -30,6 +30,7 @@ If you have questions concerning this license or the applicable additional terms
 #define __SWF_TEXTINSTANCE_H__
 
 struct subTimingWordData_t {
+	//! Initializes a subTimingWordData_t object with default values.
 	subTimingWordData_t()
 	{
 		startTime  = 0;
@@ -41,62 +42,151 @@ struct subTimingWordData_t {
 	bool  forceBreak;
 };
 
+/*!
+	\class idSWFTextInstance
+	\brief Manages SWF text instances with various text rendering and subtitle functionality.
+
+	Provides comprehensive handling of SWF text instances including initialization, rendering, and subtitle management. Supports features such as random text generation, paragraph text handling,
+   stroke effects, drop shadows, and subtitle display states. The class maintains state for text content, character positioning, and rendering parameters while offering methods to query and modify
+   these properties. It interfaces with SWF edit text for configuration and manages both static and dynamic text content with timing and display considerations.
+
+*/
 class idSWFTextInstance
 {
 public:
+	//! Initializes a new instance of the idSWFTextInstance class.
 	idSWFTextInstance();
+
+	//! Destructor for the idSWFTextInstance class that clears and releases associated resources.
 	~idSWFTextInstance();
 
+	//! Initializes the SWF text instance with the provided edit text and SWF context.
 	void				 Init( idSWFEditText* editText, idSWF* _swf );
 
+	//! Returns the script object associated with this text instance
 	idSWFScriptObject*	 GetScriptObject() { return &scriptObject; }
 
+	//! Returns whether the text instance has a drop shadow effect enabled.
 	bool				 GetHasDropShadow() { return useDropShadow; }
+
+	//! Returns whether the text instance has a stroke effect enabled.
 	bool				 HasStroke() { return useStroke; }
+
+	//! Returns the stroke strength value of the text instance.
 	float				 GetStrokeStrength() { return strokeStrength; }
+
+	//! Returns the stroke weight value for the SWF text instance
 	float				 GetStrokeWeight() { return strokeWeight; }
 
-	// used for when text has random render mode set
+	//! Returns true if the text instance is currently generating random text.
 	bool				 IsGeneratingRandomText() { return generatingText; }
+
+	//! Initializes the random text generation process with the specified time duration.
 	void				 StartRandomText( int time );
+
+	//! Returns the current random text state for the SWF text instance at the given time
 	idStr				 GetRandomText( int time );
+
+	//! Initializes the text generation process for a SWF text instance.
 	void				 StartParagraphText( int time );
+
+	//! Returns the paragraph text for a given time, handling text generation and rendering delays.
 	idStr				 GetParagraphText( int time );
+
+	//! Checks if random text needs to be generated for the SWF text instance.
 	bool				 NeedsGenerateRandomText() { return triggerGenerate; }
+
+	//! Determines whether the text instance needs to play a sound.
 	bool				 NeedsSoundPlayed();
+
+	//! Clears the play sound flag for the SWF text instance.
 	void				 ClearPlaySound() { needsSoundUpdate = false; }
+
+	//! Returns the sound clip associated with this SWF text instance.
 	idStr				 GetSoundClip() { return soundClip; }
+
+	//! Sets whether the text instance should ignore color settings.
 	void				 SetIgnoreColor( bool ignore ) { ignoreColor = ignore; }
 
+	//! Sets the stroke information for the SWF text instance.
 	void				 SetStrokeInfo( bool use, float strength = 0.75f, float weight = 1.75f );
+
+	//! Calculates the maximum scroll value for a text instance based on the number of lines or the text content.
 	int					 CalcMaxScroll( int numLines = -1 );
+
+	//! Calculates and returns the number of lines needed to display the text within the given bounds
 	int					 CalcNumLines();
 
-	// subtitle functions
+	//! Sets the subtitle switching flag to false.
 	void				 SwitchSubtitleText( int time );
+
+	//! Updates the subtitle display state based on the provided time value.
 	bool				 UpdateSubtitle( int time );
+
+	//! Returns true if the text instance is a subtitle.
 	bool				 IsSubtitle() { return isSubtitle; }
+
+	//! Checks if the subtitle is currently being updated.
 	bool				 IsUpdatingSubtitle() { return subUpdating; }
+
+	//! Sets the end index for subtitle text rendering with a specified time.
 	void				 SetSubEndIndex( int endChar, int time );
+
+	//! Returns the index of the last word in the text instance.
 	int					 GetLastWordIndex() { return subLastWordIndex; }
+
+	//! Returns the index of the last word in the previous text line.
 	int					 GetPrevLastWordIndex() { return subPrevLastWordIndex; }
+
+	//! Updates the last word index and timing information for subtitle display based on the provided word count and time.
 	void				 LastWordChanged( int wordCount, int time );
+
+	//! Sets the starting index for sub-character rendering.
 	void				 SetSubStartIndex( int value ) { subCharStartIndex = value; }
+
+	//! Returns the ending index of a subtitle character range.
 	int					 GetSubEndIndex() { return subCharEndIndex; }
+
+	//! Returns the starting index for subtitle character processing.
 	int					 GetSubStartIndex() { return subCharStartIndex; }
+
+	//! Sets the sub next start index value for the SWF text instance.
 	void				 SetSubNextStartIndex( int value );
+
+	//! Returns the approximate subtitle break index based on the provided time.
 	int					 GetApporoximateSubtitleBreak( int time );
+
+	//! Returns whether the subtitle needs to be switched based on the current state.
 	bool				 SubNeedsSwitch() { return subNeedsSwitch; }
+
+	//! Returns the previous text content of the SWF text instance.
 	idStr				 GetPreviousText() { return subtitleText.c_str(); }
+
+	//! Marks the subtitle as complete and resets all subtitle-related state variables.
 	void				 SubtitleComplete();
+
+	//! Returns the sub-alignment value of the SWF text instance.
 	int					 GetSubAlignment() { return subAlign; }
+
+	//! Returns the speaker string associated with this SWF text instance.
 	idStr				 GetSpeaker() { return subSpeaker.c_str(); }
+
+	//! Cleans up subtitle-related data by resetting source ID, alignment, and text fields.
 	void				 SubtitleCleanup();
+
+	//! Returns the calculated length of the text content for this SWF text instance.
 	float				 GetTextLength();
+
+	//! Returns the starting character index of the input text.
 	int					 GetInputStartChar() { return inputTextStartChar; }
+
+	//! Sets the starting character position for input text.
 	void				 SetInputStartCharacter( int c ) { inputTextStartChar = c; }
 
+	//! Returns a pointer to the edit text associated with this text instance.
 	const idSWFEditText* GetEditText() const { return editText; }
+
+	//! Sets the text content of the SWF text instance and marks the length as not calculated.
 	void				 SetText( idStr val )
 	{
 		text			 = val;
@@ -193,14 +283,19 @@ public:
 	idList<subTimingWordData_t, TAG_SWF> subtitleTimingInfo;
 };
 
-/*
-================================================
-This is the prototype object that all the text instance script objects reference
-================================================
+/*!
+	\class idSWFScriptObject_TextInstancePrototype
+	\brief Text instance prototype for SWF script objects.
+
+	This class serves as the prototype for all text instance script objects within the SWF system. It establishes the foundational structure and provides access to various text-related properties and
+   functions. The class initializes text functions and variables during construction, setting up the necessary framework for text manipulation within the scripting environment. It inherits from
+   idSWFScriptObject, indicating its role within the broader SWF scripting hierarchy.
+
 */
 class idSWFScriptObject_TextInstancePrototype : public idSWFScriptObject
 {
 public:
+	//! Initializes the text instance prototype by setting up text functions and variables.
 	idSWFScriptObject_TextInstancePrototype();
 
 	//----------------------------------
@@ -219,9 +314,16 @@ public:
 		idSWFScriptVar Call( idSWFScriptObject* thisObject, const idSWFParmList& parms ); \
 	} scriptFunction_##x;
 
+	//! Handles key input events for a text instance, updating selection and text content based on keyboard input.
 	SWF_TEXT_FUNCTION_DECLARE( onKey );
+
+	//! Handles the onChar event for a text instance, processing character input and updating the text content.
 	SWF_TEXT_FUNCTION_DECLARE( onChar );
+
+	//! Initializes text generation parameters for a text instance object.
 	SWF_TEXT_FUNCTION_DECLARE( generateRnd );
+
+	//! Calculates and returns the number of lines in the text instance.
 	SWF_TEXT_FUNCTION_DECLARE( calcNumLines );
 
 	SWF_NATIVE_VAR_DECLARE( text );
@@ -250,14 +352,31 @@ public:
 
 	SWF_NATIVE_VAR_DECLARE_READONLY( _textLength );
 
+	//! Checks if the subtitle source ID matches the provided ID and handles subtitle completion logic.
 	SWF_TEXT_FUNCTION_DECLARE( subtitleSourceCheck );
+
+	//! Initializes subtitle display parameters and prepares the text instance for subtitle rendering.
 	SWF_TEXT_FUNCTION_DECLARE( subtitleStart );
+
+	//! Sets the subtitle length property of a text instance object.
 	SWF_TEXT_FUNCTION_DECLARE( subtitleLength );
+
+	//! Kills the subtitle by setting a flag to force kill the queued subtitle.
 	SWF_TEXT_FUNCTION_DECLARE( killSubtitle );
+
+	//! Sets the subtitle kill flag and resets the kill time delay for the text instance.
 	SWF_TEXT_FUNCTION_DECLARE( forceKillSubtitle );
+
+	//! Returns the last line of text from a text instance object.
 	SWF_TEXT_FUNCTION_DECLARE( subLastLine );
+
+	//! Adds subtitle information to the text instance with specified phrase, start time, and break flag.
 	SWF_TEXT_FUNCTION_DECLARE( addSubtitleInfo );
+
+	//! Terminates a subtitle by completing and cleaning up the subtitle process.
 	SWF_TEXT_FUNCTION_DECLARE( terminateSubtitle );
+
+	//! Clears the timing information associated with the text instance.
 	SWF_TEXT_FUNCTION_DECLARE( clearTimingInfo );
 };
 

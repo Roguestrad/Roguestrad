@@ -56,8 +56,7 @@ idCVar					 in_nograb( "in_nograb", "0", CVAR_SYSTEM | CVAR_NOCHEAT, "prevents i
 static bool				 grabbed = false;
 static SDL_Window*		 window	 = nullptr;
 
-// Eric: Integrate this into RBDoom3BFG's source code ecosystem.
-// Helper function for using SDL2 and Vulkan on Linux.
+//! Retrieves the required Vulkan instance extensions for SDL2 integration.
 std::vector<const char*> get_required_extensions()
 {
 	uint32_t				 sdlCount			   = 0;
@@ -137,16 +136,8 @@ void DeviceManager::UpdateWindowSize( const glimpParms_t& parms )
 	}
 }
 
-/*
-===================
-VKimp_PreInit
-
- R_GetModeListForDisplay is called before VKimp_Init(), but SDL needs SDL_Init() first.
- So do that in VKimp_PreInit()
- Calling that function more than once doesn't make a difference
-===================
-*/
-void VKimp_PreInit() // DG: added this function for SDL compatibility
+//! Initializes SDL video subsystem for Vulkan rendering compatibility.
+void VKimp_PreInit()
 {
 	if( !SDL_WasInit( SDL_INIT_VIDEO ) ) {
 #if defined( __APPLE__ ) && SDL_VERSION_ATLEAST( 2, 0, 2 )
@@ -159,13 +150,7 @@ void VKimp_PreInit() // DG: added this function for SDL compatibility
 	}
 }
 
-/*
-===================
- Helper functions for VKimp_Init() and VKimp_SetScreenParms()
-===================
-*/
-
-// SRS - Function to get display index for both fullscreen and windowed modes
+//! Returns the display index for a given set of graphics parameters, handling both fullscreen and windowed modes.
 static int GetDisplayIndex( glimpParms_t parms )
 {
 	int displayIdx = -1;
@@ -194,7 +179,7 @@ static int GetDisplayIndex( glimpParms_t parms )
 	return displayIdx;
 }
 
-// SRS - Function to get display frequency of monitor corresponding to the window position
+//! Retrieves the display refresh rate for the monitor corresponding to the specified window parameters
 static int GetDisplayFrequency( glimpParms_t parms )
 {
 	int displayIndex = GetDisplayIndex( parms );
@@ -212,11 +197,7 @@ static int GetDisplayFrequency( glimpParms_t parms )
 	return m.refresh_rate;
 }
 
-/*
-===================
-VKimp_Init
-===================
-*/
+//! Initializes the Vulkan subsystem with the specified graphics parameters.
 bool VKimp_Init( glimpParms_t parms )
 {
 	common->Printf( "Initializing Vulkan subsystem\n" );
@@ -308,11 +289,7 @@ bool VKimp_Init( glimpParms_t parms )
 	return true;
 }
 
-/*
-===================
- Helper functions for VKimp_SetScreenParms()
-===================
-*/
+//! Returns the display index for screen parameters handling
 static int ScreenParmsHandleDisplayIndex( glimpParms_t parms )
 {
 	// SRS - For reliable operation on all SDL2 platforms, disable fullscreen before monitor or mode switching
@@ -357,6 +334,7 @@ static int ScreenParmsHandleDisplayIndex( glimpParms_t parms )
 	return displayIdx;
 }
 
+//! Sets the screen parameters for fullscreen display mode.
 static bool SetScreenParmsFullscreen( glimpParms_t parms )
 {
 	SDL_DisplayMode m		   = { 0 };
@@ -398,6 +376,7 @@ static bool SetScreenParmsFullscreen( glimpParms_t parms )
 	return true;
 }
 
+//! Sets the screen parameters for windowed mode rendering.
 static bool SetScreenParmsWindowed( glimpParms_t parms )
 {
 	// SRS - verify window position for 0 and -1 windowed modes
@@ -436,11 +415,7 @@ static bool SetScreenParmsWindowed( glimpParms_t parms )
 	return true;
 }
 
-/*
-===================
-VKimp_SetScreenParms
-===================
-*/
+//! Sets the screen parameters for Vulkan rendering based on the provided display settings.
 bool VKimp_SetScreenParms( glimpParms_t parms )
 {
 	if( parms.fullScreen > 0 || parms.fullScreen == -2 ) {
@@ -470,11 +445,7 @@ void DeviceManager::Shutdown()
 	DestroyDeviceAndSwapChain();
 }
 
-/*
-===================
-VKimp_Shutdown
-===================
-*/
+//! Shuts down the Vulkan subsystem and optionally terminates SDL.
 void VKimp_Shutdown( bool shutdownSDL )
 {
 	common->Printf( "Shutting down Vulkan subsystem\n" );
@@ -493,11 +464,7 @@ void VKimp_Shutdown( bool shutdownSDL )
 	}
 }
 
-/*
-=================
-VKimp_SetGamma
-=================
-*/
+//! Sets the gamma ramp for the window
 void VKimp_SetGamma( unsigned short red[256], unsigned short green[256], unsigned short blue[256] )
 {
 	if( !window ) {
@@ -511,6 +478,7 @@ void VKimp_SetGamma( unsigned short red[256], unsigned short green[256], unsigne
 	}
 }
 
+//! Sets the input grab state for the window based on the provided flags.
 void VKimp_GrabInput( int flags )
 {
 	bool grab = flags & GRAB_ENABLE;
@@ -539,19 +507,20 @@ void VKimp_GrabInput( int flags )
 	SDL_SetWindowGrab( window, grab ? SDL_TRUE : SDL_FALSE );
 }
 
-/*
-====================
-DumpAllDisplayDevices
-====================
-*/
+//! Outputs a debug message indicating that DumpAllDisplayDevices functionality is not yet implemented.
 void DumpAllDisplayDevices()
 {
 	common->DPrintf( "TODO: DumpAllDisplayDevices\n" );
 }
 
+/*!
+	\class idSort_VidMode
+	\brief A sorting implementation for video mode structures.
+*/
 class idSort_VidMode : public idSort_Quick<vidMode_t, idSort_VidMode>
 {
 public:
+	//! Compares two video mode structures based on width, height, and refresh rate
 	int Compare( const vidMode_t& a, const vidMode_t& b ) const
 	{
 		int wd = a.width - b.width;
@@ -561,7 +530,7 @@ public:
 	}
 };
 
-// RB: resolutions supported by XreaL
+//! Populates the provided list with a set of standard video modes.
 static void FillStaticVidModes( idList<vidMode_t>& modeList )
 {
 	modeList.AddUnique( vidMode_t( 320, 240, 60 ) );
@@ -590,6 +559,7 @@ static void FillStaticVidModes( idList<vidMode_t>& modeList )
 	modeList.SortWithTemplate( idSort_VidMode() );
 }
 
+//! Retrieves the list of video modes available for a specified display.
 bool R_GetModeListForDisplay( const int requestedDisplayNum, idList<vidMode_t>& modeList )
 {
 	assert( requestedDisplayNum >= 0 );

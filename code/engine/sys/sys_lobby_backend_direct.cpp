@@ -36,21 +36,11 @@ extern idCVar			   net_ip;
 
 extern idLobbyToSessionCB* lobbyToSessionCB;
 
-/*
-========================
-idLobbyBackendDirect::idLobbyBackendWin
-========================
-*/
 idLobbyBackendDirect::idLobbyBackendDirect()
 {
 	state = STATE_INVALID;
 }
 
-/*
-========================
-idLobbyBackendDirect::StartHosting
-========================
-*/
 void idLobbyBackendDirect::StartHosting( const idMatchParameters& p, float skillLevel, lobbyBackendType_t type )
 {
 	NET_VERBOSE_PRINT( "idLobbyBackendDirect::StartHosting\n" );
@@ -62,11 +52,6 @@ void idLobbyBackendDirect::StartHosting( const idMatchParameters& p, float skill
 	isLocal = true;
 }
 
-/*
-========================
-idLobbyBackendDirect::StartFinding
-========================
-*/
 void idLobbyBackendDirect::StartFinding( const idMatchParameters& p, int numPartyUsers, float skillLevel )
 {
 	isLocal = MatchTypeIsLocal( p.matchFlags );
@@ -79,11 +64,6 @@ void idLobbyBackendDirect::StartFinding( const idMatchParameters& p, int numPart
 	}
 }
 
-/*
-========================
-idLobbyBackendDirect::GetSearchResults
-========================
-*/
 void idLobbyBackendDirect::GetSearchResults( idList<lobbyConnectInfo_t>& searchResults )
 {
 	lobbyConnectInfo_t fakeResult;
@@ -91,11 +71,6 @@ void idLobbyBackendDirect::GetSearchResults( idList<lobbyConnectInfo_t>& searchR
 	searchResults.Append( fakeResult );
 }
 
-/*
-========================
-idLobbyBackendDirect::JoinFromConnectInfo
-========================
-*/
 void idLobbyBackendDirect::JoinFromConnectInfo( const lobbyConnectInfo_t& connectInfo )
 {
 	if( lobbyToSessionCB->CanJoinLocalHost() ) {
@@ -113,60 +88,30 @@ void idLobbyBackendDirect::JoinFromConnectInfo( const lobbyConnectInfo_t& connec
 	isHost	= false;
 }
 
-/*
-========================
-idLobbyBackendDirect::Shutdown
-========================
-*/
 void idLobbyBackendDirect::Shutdown()
 {
 	state = STATE_SHUTDOWN;
 }
 
-/*
-========================
-idLobbyBackendDirect::BecomeHost
-========================
-*/
 void idLobbyBackendDirect::BecomeHost( int numInvites )
 {
 }
 
-/*
-========================
-idLobbyBackendDirect::FinishBecomeHost
-========================
-*/
 void idLobbyBackendDirect::FinishBecomeHost()
 {
 	isHost = true;
 }
 
-/*
-========================
-idLobbyBackendDirect::GetOwnerAddress
-========================
-*/
 void idLobbyBackendDirect::GetOwnerAddress( lobbyAddress_t& outAddr )
 {
 	outAddr.netAddr = address;
 	state			= STATE_READY;
 }
 
-/*
-========================
-idLobbyBackendDirect::SetIsJoinable
-========================
-*/
 void idLobbyBackendDirect::SetIsJoinable( bool joinable )
 {
 }
 
-/*
-========================
-idLobbyBackendDirect::GetConnectInfo
-========================
-*/
 lobbyConnectInfo_t idLobbyBackendDirect::GetConnectInfo()
 {
 	lobbyConnectInfo_t connectInfo;
@@ -194,66 +139,31 @@ lobbyConnectInfo_t idLobbyBackendDirect::GetConnectInfo()
 	return connectInfo;
 }
 
-/*
-========================
-idLobbyBackendDirect::IsOwnerOfConnectInfo
-========================
-*/
 bool idLobbyBackendDirect::IsOwnerOfConnectInfo( const lobbyConnectInfo_t& connectInfo ) const
 {
 	return Sys_CompareNetAdrBase( address, connectInfo.netAddr );
 }
 
-/*
-========================
-idLobbyBackendDirect::Pump
-========================
-*/
 void idLobbyBackendDirect::Pump()
 {
 }
 
-/*
-========================
-idLobbyBackendDirect::UpdateMatchParms
-========================
-*/
 void idLobbyBackendDirect::UpdateMatchParms( const idMatchParameters& p )
 {
 }
 
-/*
-========================
-idLobbyBackendDirect::UpdateLobbySkill
-========================
-*/
 void idLobbyBackendDirect::UpdateLobbySkill( float lobbySkill )
 {
 }
 
-/*
-========================
-idLobbyBackendDirect::SetInGame
-========================
-*/
 void idLobbyBackendDirect::SetInGame( bool value )
 {
 }
 
-/*
-========================
-idLobbyBackendDirect::RegisterUser
-========================
-*/
 void idLobbyBackendDirect::RegisterUser( lobbyUser_t* user, bool isLocal )
 {
 }
 
-/*
-========================
-idLobbyBackendDirect::UnregisterUser
-========================
-*/
 void idLobbyBackendDirect::UnregisterUser( lobbyUser_t* user, bool isLocal )
 {
 }

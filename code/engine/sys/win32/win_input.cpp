@@ -36,14 +36,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #define DINPUT_BUFFERSIZE 256
 
-/*
-============================================================
-
-DIRECT INPUT KEYBOARD CONTROL
-
-============================================================
-*/
-
+//! Initializes the DirectInput keyboard device for input handling.
 bool IN_StartupKeyboard()
 {
 	HRESULT hr;
@@ -146,11 +139,7 @@ bool IN_StartupKeyboard()
 	return true;
 }
 
-/*
-==========================
-IN_DeactivateKeyboard
-==========================
-*/
+//! Deactivates the keyboard input device.
 void IN_DeactivateKeyboard()
 {
 	if( !win32.g_pKeyboard ) {
@@ -159,20 +148,7 @@ void IN_DeactivateKeyboard()
 	win32.g_pKeyboard->Unacquire();
 }
 
-/*
-============================================================
-
-DIRECT INPUT MOUSE CONTROL
-
-============================================================
-*/
-
-/*
-========================
-IN_InitDirectInput
-========================
-*/
-
+//! Initializes the DirectInput subsystem for input handling.
 void IN_InitDirectInput()
 {
 	HRESULT hr;
@@ -192,11 +168,7 @@ void IN_InitDirectInput()
 	}
 }
 
-/*
-========================
-IN_InitDIMouse
-========================
-*/
+//! Initializes the DirectInput mouse device for the Windows platform
 bool IN_InitDIMouse()
 {
 	HRESULT hr;
@@ -264,11 +236,6 @@ bool IN_InitDIMouse()
 	return true;
 }
 
-/*
-==========================
-IN_ActivateMouse
-==========================
-*/
 void IN_ActivateMouse()
 {
 	int		i;
@@ -318,11 +285,6 @@ void IN_DeactivateMouse()
 	win32.mouseGrabbed = false;
 }
 
-/*
-==========================
-IN_DeactivateMouseIfWindowed
-==========================
-*/
 void IN_DeactivateMouseIfWindowed()
 {
 	if( !win32.cdsFullscreen ) {
@@ -385,13 +347,6 @@ void Sys_InitInput()
 	win32.in_mouse.ClearModified();
 }
 
-/*
-==================
-IN_Frame
-
-Called every frame, even if not generating commands
-==================
-*/
 void IN_Frame()
 {
 	bool shouldGrab = true;
@@ -683,6 +638,8 @@ JoystickSamplingThread
 static int threadTimeDeltas[256];
 static int threadPacket[256];
 static int threadCount;
+
+//! Thread function for sampling joystick input data
 void	   JoystickSamplingThread( void* data )
 {
 	static int	  prevTime				   = 0;
@@ -755,11 +712,6 @@ void	   JoystickSamplingThread( void* data )
 	}
 }
 
-/*
-========================
-idJoystickWin32::idJoystickWin32
-========================
-*/
 idJoystickWin32::idJoystickWin32()
 {
 	numEvents = 0;
@@ -769,11 +721,6 @@ idJoystickWin32::idJoystickWin32()
 	memset( joyAxis, 0, sizeof( joyAxis ) );
 }
 
-/*
-========================
-idJoystickWin32::Init
-========================
-*/
 bool idJoystickWin32::Init()
 {
 	idJoystick::Init();
@@ -793,11 +740,6 @@ bool idJoystickWin32::Init()
 	return false;
 }
 
-/*
-========================
-idJoystickWin32::SetRumble
-========================
-*/
 void idJoystickWin32::SetRumble( int inputDeviceNum, int rumbleLow, int rumbleHigh )
 {
 	if( inputDeviceNum < 0 || inputDeviceNum >= MAX_JOYSTICKS ) {
@@ -815,11 +757,6 @@ void idJoystickWin32::SetRumble( int inputDeviceNum, int rumbleLow, int rumbleHi
 	}
 }
 
-/*
-========================
-idJoystickWin32::PostInputEvent
-========================
-*/
 void idJoystickWin32::PostInputEvent( int inputDeviceNum, int event, int value, int range )
 {
 	// These events are used for GUI button presses
@@ -859,11 +796,6 @@ void idJoystickWin32::PostInputEvent( int inputDeviceNum, int event, int value, 
 	numEvents++;
 }
 
-/*
-========================
-idJoystickWin32::PollInputEvents
-========================
-*/
 int idJoystickWin32::PollInputEvents( int inputDeviceNum )
 {
 	numEvents = 0;

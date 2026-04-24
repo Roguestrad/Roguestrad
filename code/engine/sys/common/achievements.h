@@ -29,22 +29,38 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __WIN_ACHIEVEMENTS_H__
 #define __WIN_ACHIEVEMENTS_H__
 
-/*
-================================================
-idAchievementSystemWin
-================================================
+/*!
+	\class idAchievementSystemWin
+	\brief Windows-specific implementation of the achievement system interface.
+
+	This class is stub
+
 */
 class idAchievementSystemWin : public idAchievementSystem
 {
 public:
+	//! Constructs a new instance of the Windows achievement system.
 	idAchievementSystemWin();
 
+	//! Returns false indicating the achievement system is not initialized.
 	bool IsInitialized();
+
+	//! Unlocks the specified achievement for the given local user.
 	void AchievementUnlock( idLocalUser* user, const int achievementID );
+
+	//! Locks an achievement for the specified user.
 	void AchievementLock( idLocalUser* user, const int achievementID );
+
+	//! Locks all achievements up to the specified ID for the given user.
 	void AchievementLockAll( idLocalUser* user, const int maxId );
+
+	//! Processes achievement system updates each frame
 	void Pump();
+
+	//! Retrieves textual information about a given achievement and returns false indicating no implementation is provided.
 	bool GetAchievementDescription( idLocalUser* user, const int id, achievementDescription_t& data ) const;
+
+	//! Returns the achievement state for a given user
 	bool GetAchievementState( idLocalUser* user, idArray<bool, idAchievementSystem::MAX_ACHIEVEMENTS>& achievements ) const;
 };
 

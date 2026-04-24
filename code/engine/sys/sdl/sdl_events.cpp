@@ -60,10 +60,12 @@ struct kbd_poll_t {
 	int	 key;
 	bool state;
 
+	//! Initializes a new instance of the kbd_poll_t structure.
 	kbd_poll_t()
 	{
 	}
 
+	//! Initializes a keyboard poll event with a key value and its state.
 	kbd_poll_t( int k, bool s )
 	{
 		key	  = k;
@@ -75,10 +77,12 @@ struct mouse_poll_t {
 	int action;
 	int value;
 
+	//! Constructs a default mouse_poll_t object.
 	mouse_poll_t()
 	{
 	}
 
+	//! Constructs a mouse_poll_t object with the specified action and value parameters.
 	mouse_poll_t( int a, int v )
 	{
 		action = a;
@@ -93,10 +97,12 @@ struct joystick_poll_t {
 	int action;
 	int value;
 
+	//! Initializes a joystick poll structure with default values.
 	joystick_poll_t()
 	{
 	}
 
+	//! Initializes a joystick poll event with the specified action and value.
 	joystick_poll_t( int a, int v )
 	{
 		action = a;
@@ -110,6 +116,7 @@ bool						   buttonStates[K_LAST_KEY]; // For keeping track of button up/down ev
 
 #include "sdl2_scancode_mappings.h"
 
+//! Converts an SDL scancode to a key number.
 static int SDLScanCodeToKeyNum( SDL_Scancode sc )
 {
 	int idx = int( sc );
@@ -118,6 +125,7 @@ static int SDLScanCodeToKeyNum( SDL_Scancode sc )
 	return scanCodeToKeyNum[idx];
 }
 
+//! Converts a key number to an SDL scancode
 static SDL_Scancode KeyNumToSDLScanCode( int keyNum )
 {
 	if( keyNum < K_JOY1 ) {
@@ -130,7 +138,7 @@ static SDL_Scancode KeyNumToSDLScanCode( int keyNum )
 	return SDL_SCANCODE_UNKNOWN;
 }
 
-// both strings are expected to have at most SDL_TEXTINPUTEVENT_TEXT_SIZE chars/ints (including terminating null)
+//! Converts a UTF-8 encoded string to UTF-32 encoding
 static void ConvertUTF8toUTF32( const char* utf8str, int32* utf32buf )
 {
 	static SDL_iconv_t cd = SDL_iconv_t( -1 );
@@ -163,6 +171,7 @@ static void ConvertUTF8toUTF32( const char* utf8str, int32* utf32buf )
 	SDL_iconv( cd, NULL, &inbytesleft, NULL, &outbytesleft );
 }
 
+//! Pushes a console event with the specified string into the SDL event queue.
 static void PushConsoleEvent( const char* s )
 {
 	char*  b;
@@ -182,11 +191,6 @@ static void PushConsoleEvent( const char* s )
 	SDL_PushEvent( &event );
 }
 
-/*
-=================
-Sys_InitInput
-=================
-*/
 void Sys_InitInput()
 {
 	int numJoysticks, i;
@@ -217,11 +221,6 @@ void Sys_InitInput()
 	}
 }
 
-/*
-=================
-Sys_ShutdownInput
-=================
-*/
 void Sys_ShutdownInput()
 {
 	kbd_polls.Clear();
@@ -246,16 +245,14 @@ Sys_InitScanTable
 */
 // Windows has its own version due to the tools
 #ifndef _WIN32
+
+//! Initializes the system scan table for input handling.
 void Sys_InitScanTable()
 {
 }
 #endif
 
-/*
-===============
-Sys_GetConsoleKey
-===============
-*/
+//! Returns the console key character based on the current keyboard layout and shift state.
 unsigned char Sys_GetConsoleKey( bool shifted )
 {
 	static unsigned char keys[2] = { '`', '~' };
@@ -291,21 +288,12 @@ unsigned char Sys_GetConsoleKey( bool shifted )
 	return shifted ? keys[1] : keys[0];
 }
 
-/*
-===============
-Sys_MapCharForKey
-===============
-*/
+//! Maps a key value to a character by returning its lower 8 bits.
 unsigned char Sys_MapCharForKey( int key )
 {
 	return key & 0xff;
 }
 
-/*
-===============
-Sys_GrabMouseCursor
-===============
-*/
 void Sys_GrabMouseCursor( bool grabIt )
 {
 	int flags;
@@ -325,11 +313,6 @@ void Sys_GrabMouseCursor( bool grabIt )
 #endif
 }
 
-/*
-================
-Sys_GetEvent
-================
-*/
 sysEvent_t Sys_GetEvent()
 {
 	sysEvent_t				res = {};
@@ -750,11 +733,6 @@ sysEvent_t Sys_GetEvent()
 	return res;
 }
 
-/*
-================
-Sys_ClearEvents
-================
-*/
 void Sys_ClearEvents()
 {
 	SDL_Event ev;
@@ -766,11 +744,6 @@ void Sys_ClearEvents()
 	mouse_polls.SetNum( 0 );
 }
 
-/*
-================
-Sys_GenerateEvents
-================
-*/
 void Sys_GenerateEvents()
 {
 	char* s = Posix_ConsoleInput();
@@ -782,21 +755,12 @@ void Sys_GenerateEvents()
 	SDL_PumpEvents();
 }
 
-/*
-================
-Sys_PollKeyboardInputEvents
-================
-*/
 int Sys_PollKeyboardInputEvents()
 {
 	return kbd_polls.Num();
 }
 
-/*
-================
-Sys_ReturnKeyboardInputEvent
-================
-*/
+//! Returns the key and state of a keyboard input event from the polling buffer.
 int Sys_ReturnKeyboardInputEvent( const int n, int& key, bool& state )
 {
 	if( n >= kbd_polls.Num() ) {
@@ -808,21 +772,11 @@ int Sys_ReturnKeyboardInputEvent( const int n, int& key, bool& state )
 	return 1;
 }
 
-/*
-================
-Sys_EndKeyboardInputEvents
-================
-*/
 void Sys_EndKeyboardInputEvents()
 {
 	kbd_polls.SetNum( 0 );
 }
 
-/*
-================
-Sys_PollMouseInputEvents
-================
-*/
 int Sys_PollMouseInputEvents( int mouseEvents[MAX_MOUSE_EVENTS][2] )
 {
 	int numEvents = mouse_polls.Num();
@@ -880,10 +834,6 @@ void Sys_SetClipboardData( const char* string )
 	SDL_SetClipboardText( string );
 }
 
-//=====================================================================================
-//	Joystick Input Handling
-//=====================================================================================
-
 void Sys_SetRumble( int device, int low, int hi )
 {
 	// TODO;
@@ -897,12 +847,6 @@ int Sys_PollJoystickInputEvents( int deviceNum )
 	return numEvents;
 }
 
-// This funcion called by void idUsercmdGenLocal::Joystick( int deviceNum ) in
-// file UsercmdGen.cpp
-// action - must have values belonging to enum sys_jEvents (sys_public.h)
-// value - must be 1/0 for button or DPAD pressed/released
-//         for joystick axes must be in the range (-32769, 32768)
-//         for joystick trigger must be in the range (0, 32768)
 int Sys_ReturnJoystickInputEvent( const int n, int& action, int& value )
 {
 	// Get last element of the list and copy into argument references
@@ -913,8 +857,6 @@ int Sys_ReturnJoystickInputEvent( const int n, int& action, int& value )
 	return 1;
 }
 
-// This funcion called by void idUsercmdGenLocal::Joystick( int deviceNum ) in
-// file UsercmdGen.cpp
 void Sys_EndJoystickInputEvents()
 {
 	// Empty the joystick event container. This is called after

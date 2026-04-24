@@ -93,12 +93,6 @@ void SSDCrossHair::Draw( const idVec2& cursor )
 	dc->DrawMaterial( x, y, crosshairWidth, crosshairHeight, crosshairMaterial[currentCrosshair], colorWhite, 1.0f, 1.0f );
 }
 
-/*
-*****************************************************************************
-* SSDEntity
-****************************************************************************
-*/
-
 SSDEntity::SSDEntity()
 {
 	EntityInit();
@@ -333,12 +327,6 @@ idVec3 SSDEntity::ScreenToWorld( const idVec3& screenPos )
 
 	return worldPos;
 }
-
-/*
-*****************************************************************************
-* SSDMover
-****************************************************************************
-*/
 
 SSDMover::SSDMover()
 {

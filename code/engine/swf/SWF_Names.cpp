@@ -31,7 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../renderer/Font.h"
 
-// RB begin
 const char* idSWF::GetDictTypeName( swfDictType_t type )
 {
 #define SWF_DICT_NAME( x ) \
@@ -114,13 +113,7 @@ const char* idSWF::GetBlendModeName( uint8 blendMode )
 			return "normal";
 	}
 }
-// RB end
 
-/*
-========================
-idSWF::GetTagName
-========================
-*/
 const char* idSWF::GetTagName( swfTag_t tag )
 {
 #define SWF_TAG_NAME( x ) \
@@ -194,11 +187,6 @@ const char* idSWF::GetTagName( swfTag_t tag )
 	}
 }
 
-/*
-========================
-idSWF::GetActionName
-========================
-*/
 const char* idSWF::GetActionName( swfAction_t action )
 {
 #define SWF_ACTION_NAME( x ) \

@@ -34,9 +34,19 @@ class idTokenParser;
 class idWindow;
 class idWinVar;
 
+/*!
+	\class idRegister
+	\brief The idRegister class manages register configurations and data for variable storage and retrieval.
+
+	This class provides functionality for managing register values, including initialization, copying, enabling/disabling, and serialization to save files. The register can be configured with a name
+   and type, and supports operations to set and get values from arrays of floats. It is designed to handle variable data in a structured way, allowing for persistence through save game operations. The
+   class supports different register types and can be enabled or disabled to control whether the register is active. The implementation uses inline functions for performance-critical operations.
+
+*/
 class idRegister
 {
 public:
+	//! Initializes a new instance of the idRegister class.
 	idRegister();
 	idRegister( const char* p, int t );
 
@@ -50,11 +60,22 @@ public:
 	unsigned short regs[4];
 	idWinVar*	   var;
 
+	//! Sets register values from variable data into the provided registers array.
 	void		   SetToRegs( float* registers );
+
+	//! Copies register values into a variable based on the register type and configuration.
 	void		   GetFromRegs( float* registers );
+
+	//! Copies register values from the source register object to this register object.
 	void		   CopyRegs( idRegister* src );
+
+	//! Enables or disables the register based on the provided boolean value.
 	void		   Enable( bool b ) { enabled = b; }
+
+	//! Writes the register state to a save game file.
 	void		   WriteToSaveGame( idFile* savefile );
+
+	//! Restores the state of the register from a save game file.
 	void		   ReadFromSaveGame( idFile* savefile );
 };
 
@@ -80,20 +101,70 @@ ID_INLINE void idRegister::CopyRegs( idRegister* src )
 	regs[3] = src->regs[3];
 }
 
+/*!
+	\class idRegisterList
+	\brief A container for managing a collection of named registers with various data types.
+
+	The idRegisterList class provides functionality for storing, retrieving, and managing a collection of registers that can hold different types of data. It supports adding registers with values
+   parsed from token streams, initializing registers with predefined data, and looking up registers by name. The class maintains an internal hash table for efficient register lookup and provides
+   methods for serializing register states to and from save files. Registers can be reset to clear all stored data, and the class handles both textual and vector-based initialization of register
+   values.
+
+*/
 class idRegisterList
 {
 public:
+	//! Initializes a new instance of the idRegisterList class.
 	idRegisterList();
 	~idRegisterList();
 
+	/*!
+		\brief Adds a register to the register list with the specified name, type, and associated parser and window data
+
+		This function adds a new register to the register list if it doesn't already exist, or updates an existing register with new values. The register is initialized with the provided name and
+	   type, and its value is parsed from the token parser based on the register type. For string registers, the value is read as a token from the source and localized. For other types, expressions
+	   are parsed from the source and stored in the register. The function handles both cases where the register already exists and where it needs to be created.
+
+		\param name name of the register to add or update
+		\param type type identifier for the register
+		\param src pointer to the token parser for reading register values
+		\param win pointer to the window context for parsing expressions
+		\param var pointer to the window variable associated with this register
+		\throws assertion failure if the type is out of valid range
+	*/
 	void		AddReg( const char* name, int type, idTokenParser* src, idWindow* win, idWinVar* var );
+
+	/*!
+		\brief Adds a new register to the register list with the specified name, type, and data
+
+		This function adds a new register to the register list if a register with the given name does not already exist. It creates a new idRegister object with the provided name and type, initializes
+	   its variables, and populates the register data by evaluating the expression constants from the provided idVec4 data. The register is then added to the hash table for fast lookups.
+
+		\param name name of the register to add
+		\param type type identifier for the register
+		\param data vector data to initialize the register with
+		\param win window context used to evaluate expression constants
+		\param var window variable associated with this register
+		\throws assertion failure if the type is out of valid range
+	*/
 	void		AddReg( const char* name, int type, idVec4 data, idWindow* win, idWinVar* var );
 
+	//! Finds and returns a register with the specified name from the register list
 	idRegister* FindReg( const char* name );
+
+	//! Sets register values for all contained register objects from the provided float array.
 	void		SetToRegs( float* registers );
+
+	//! Copies register values from the provided array into the list of register objects.
 	void		GetFromRegs( float* registers );
+
+	//! Resets the register list by clearing all registers and the register hash.
 	void		Reset();
+
+	//! Writes the register list data to a save game file
 	void		WriteToSaveGame( idFile* savefile );
+
+	//! Restores the state of register entries from a save game file
 	void		ReadFromSaveGame( idFile* savefile );
 
 private:

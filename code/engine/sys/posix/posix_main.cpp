@@ -90,11 +90,6 @@ idCVar				  com_pid( "com_pid", "0", CVAR_INTEGER | CVAR_INIT | CVAR_SYSTEM, "pr
 static int			  set_exit = 0;
 static char			  exit_spawn[1024];
 
-/*
- ==============
- Sys_DefaultSavePath
- ==============
- */
 const char*			  Sys_DefaultSavePath()
 {
 #if defined( __APPLE__ )
@@ -116,11 +111,6 @@ const char*			  Sys_DefaultSavePath()
 	return savepath.c_str();
 }
 
-/*
-================
-Posix_Exit
-================
-*/
 void Posix_Exit( int ret )
 {
 	if( tty_enabled ) {
@@ -149,36 +139,16 @@ void Posix_Exit( int ret )
 	exit( ret );
 }
 
-/*
-================
-Posix_SetExit
-================
-*/
 void Posix_SetExit( int ret )
 {
 	set_exit = 0;
 }
 
-/*
-===============
-Posix_SetExitSpawn
-set the process to be spawned when we quit
-===============
-*/
 void Posix_SetExitSpawn( const char* exeName )
 {
 	idStr::Copynz( exit_spawn, exeName, 1024 );
 }
 
-/*
-==================
-idSysLocal::StartProcess
-if !quit, start the process asap
-otherwise, push it for execution at exit
-(i.e. let complete shutdown of the game and freeing of resources happen)
-NOTE: might even want to add a small delay?
-==================
-*/
 void idSysLocal::StartProcess( const char* exeName, bool quit )
 {
 	if( quit ) {
@@ -192,21 +162,11 @@ void idSysLocal::StartProcess( const char* exeName, bool quit )
 	Sys_DoStartProcess( exeName );
 }
 
-/*
-================
-Sys_Quit
-================
-*/
 void Sys_Quit()
 {
 	Posix_Exit( EXIT_SUCCESS );
 }
 
-/*
-===============
-Sys_Shutdown
-===============
-*/
 void Sys_Shutdown()
 {
 	basepath.Clear();
@@ -214,31 +174,12 @@ void Sys_Shutdown()
 	Posix_Shutdown();
 }
 
-/*
-===============
-Sys_FPU_EnableExceptions
-===============
-*/
-// void Sys_FPU_EnableExceptions( int exceptions )
-//{
-// }
-
-/*
-===============
-Sys_FPE_handler
-===============
-*/
 void Sys_FPE_handler( int signum, siginfo_t* info, void* context )
 {
 	assert( signum == SIGFPE );
 	Sys_Printf( "FPE\n" );
 }
 
-/*
-===============
-Sys_GetClockticks
-===============
-*/
 double Sys_GetClockTicks()
 {
 #if defined( __i386__ )
@@ -269,11 +210,6 @@ double Sys_GetClockTicks()
 	// RB end
 }
 
-/*
-===============
-MeasureClockTicks
-===============
-*/
 double MeasureClockTicks()
 {
 	double t0, t1;
@@ -303,12 +239,6 @@ Sys_Milliseconds
 
 // RB: changed long to int
 unsigned int sys_timeBase = 0;
-// RB end
-/* current time in ms, using sys_timeBase as origin
-   NOTE: sys_timeBase*1000 + curtime -> ms since the Epoch
-	 0x7fffffff ms - ~24 days
-		 or is it 48 days? the specs say int, but maybe it's casted from unsigned int?
-*/
 int			 Sys_Milliseconds()
 {
 	// DG: use clock_gettime on all platforms
@@ -355,6 +285,7 @@ Sys_Microseconds
 */
 static uint64 sys_microTimeBase = 0;
 
+//! Returns the current time in microseconds since an unspecified base time.
 uint64		  Sys_Microseconds()
 {
 #if 0
@@ -393,19 +324,6 @@ uint64		  Sys_Microseconds()
 #endif
 }
 
-/*
-================
-Sys_DefaultBasePath
-
-Get the default base path
-- binary image path
-- current directory
-- macOS app bundle resources directory path			// SRS - added macOS app bundle resources path
-- build directory path								// SRS - added build directory path
-- hardcoded
-Try to be intelligent: if there is no BASE_GAMEDIR, try the next path
-================
-*/
 const char* Sys_DefaultBasePath()
 {
 	struct stat st;
@@ -497,6 +415,7 @@ sysFolder_t Sys_IsFolder( const char* path )
 	return ( buffer.st_mode & S_IFDIR ) != 0 ? FOLDER_YES : FOLDER_NO;
 }
 
+//! Lists files in a directory that match a given extension pattern.
 int Sys_ListFiles( const char* directory, const char* extension, idStrList& list )
 {
 	struct dirent* d;
@@ -584,100 +503,6 @@ int Sys_ListFiles( const char* directory, const char* extension, idStrList& list
 	return list.Num();
 }
 
-/*
-============================================================================
-EVENT LOOP
-============================================================================
-*/
-/*
-#define	MAX_QUED_EVENTS		256
-#define	MASK_QUED_EVENTS	( MAX_QUED_EVENTS - 1 )
-
-static sysEvent_t eventQue[MAX_QUED_EVENTS];
-static int eventHead, eventTail;
-*/
-
-/*
-================
-Posix_QueEvent
-
-ptr should either be null, or point to a block of data that can be freed later
-================
-*/
-/*
-void Posix_QueEvent( sysEventType_t type, int value, int value2,
-					 int ptrLength, void* ptr )
-{
-	sysEvent_t* ev;
-
-	ev = &eventQue[eventHead & MASK_QUED_EVENTS];
-	if( eventHead - eventTail >= MAX_QUED_EVENTS )
-	{
-		common->Printf( "Posix_QueEvent: overflow\n" );
-		// we are discarding an event, but don't leak memory
-		// TTimo: verbose dropped event types?
-		if( ev->evPtr )
-		{
-			Mem_Free( ev->evPtr );
-			ev->evPtr = NULL;
-		}
-		eventTail++;
-	}
-
-	eventHead++;
-
-	ev->evType = type;
-	ev->evValue = value;
-	ev->evValue2 = value2;
-	ev->evPtrLength = ptrLength;
-	ev->evPtr = ptr;
-
-#if 0
-	common->Printf( "Event %d: %d %d\n", ev->evType, ev->evValue, ev->evValue2 );
-#endif
-}
-*/
-
-/*
-================
-Sys_GetEvent
-================
-*/
-/*
-sysEvent_t Sys_GetEvent()
-{
-	static sysEvent_t ev;
-
-	// return if we have data
-	if( eventHead > eventTail )
-	{
-		eventTail++;
-		return eventQue[( eventTail - 1 ) & MASK_QUED_EVENTS];
-	}
-	// return the empty event with the current time
-	memset( &ev, 0, sizeof( ev ) );
-
-	return ev;
-}
-*/
-
-/*
-================
-Sys_ClearEvents
-================
-*/
-/*
-void Sys_ClearEvents()
-{
-	eventHead = eventTail = 0;
-}
-*/
-
-/*
-================
-Posix_Cwd
-================
-*/
 const char* Posix_Cwd()
 {
 	static char cwd[MAX_OSPATH];
@@ -688,11 +513,7 @@ const char* Posix_Cwd()
 	return cwd;
 }
 
-/*
-=================
-Sys_GetMemoryStatus
-=================
-*/
+//! Returns stub implementation for system memory status information.
 void Sys_GetMemoryStatus( sysMemoryStats_t& stats )
 {
 	common->Printf( "FIXME: Sys_GetMemoryStatus stub\n" );
@@ -708,21 +529,10 @@ void Sys_GetExeLaunchMemoryStatus( sysMemoryStats_t& stats )
 	common->Printf( "FIXME: Sys_GetExeLaunchMemoryStatus\n" );
 }
 
-/*
-=================
-Sys_Init
-Posix_EarlyInit/Posix_LateInit is better
-=================
-*/
 void Sys_Init()
 {
 }
 
-/*
-=================
-Posix_Shutdown
-=================
-*/
 void Posix_Shutdown()
 {
 	for( int i = 0; i < COMMAND_HISTORY; i++ ) {
@@ -730,13 +540,7 @@ void Posix_Shutdown()
 	}
 }
 
-/*
-=================
-Sys_DLL_Load
-TODO: OSX - use the native API instead? NSModule
-=================
-*/
-// RB: 64 bit fixes, changed int to intptr_t
+//! Loads a dynamic link library from the specified file path and returns a handle to it.
 intptr_t Sys_DLL_Load( const char* path )
 {
 	void* handle = dlopen( path, RTLD_NOW );
@@ -746,14 +550,8 @@ intptr_t Sys_DLL_Load( const char* path )
 
 	return ( intptr_t )handle;
 }
-// RB end
 
-/*
-=================
-Sys_DLL_GetProcAddress
-=================
-*/
-// RB: 64 bit fixes, changed int to intptr_t
+//! Retrieves the address of a symbol from a dynamic library handle.
 void* Sys_DLL_GetProcAddress( intptr_t handle, const char* sym )
 {
 	// RB end
@@ -765,30 +563,18 @@ void* Sys_DLL_GetProcAddress( intptr_t handle, const char* sym )
 	return ret;
 }
 
-/*
-=================
-Sys_DLL_Unload
-=================
-*/
-// RB: 64 bit fixes, changed int to intptr_t
+//! Unloads a dynamic library handle.
 void Sys_DLL_Unload( intptr_t handle )
 {
 	// RB end
 	dlclose( ( void* )handle );
 }
 
-/*
-================
-Sys_ShowConsole
-================
-*/
 void Sys_ShowConsole( int visLevel, bool quitOnClose )
 {
 }
 
-// ---------------------------------------------------------------------------
-
-// only relevant when specified on command line
+//! Returns the default CD path as an empty string.
 const char* Sys_DefaultCDPath()
 {
 	return "";
@@ -830,57 +616,22 @@ void Sys_Sleep( int msec )
 #endif
 }
 
-// stub pretty much everywhere - heavy calling
+//! Stub function for flushing cache memory.
 void Sys_FlushCacheMemory( void* base, int bytes )
 {
 	//  Sys_Printf("Sys_FlushCacheMemory stub\n");
 }
 
-/*
-bool Sys_FPU_StackIsEmpty()
-{
-	return true;
-}
-
-void Sys_FPU_ClearStack()
-{
-}
-
-const char* Sys_FPU_GetState()
-{
-	return "";
-}
-
-void Sys_FPU_SetPrecision( int precision )
-{
-}
-*/
-
-/*
-================
-Sys_LockMemory
-================
-*/
 bool Sys_LockMemory( void* ptr, int bytes )
 {
 	return true;
 }
 
-/*
-================
-Sys_UnlockMemory
-================
-*/
 bool Sys_UnlockMemory( void* ptr, int bytes )
 {
 	return true;
 }
 
-/*
-================
-Sys_SetPhysicalWorkMemory
-================
-*/
 void Sys_SetPhysicalWorkMemory( int minBytes, int maxBytes )
 {
 	common->DPrintf( "TODO: Sys_SetPhysicalWorkMemory\n" );
@@ -912,11 +663,6 @@ int Sys_GetDriveFreeSpace( const char* path )
 	return ret;
 }
 
-/*
-========================
-Sys_GetDriveFreeSpaceInBytes
-========================
-*/
 int64 Sys_GetDriveFreeSpaceInBytes( const char* path )
 {
 	int64		   ret = 1;
@@ -935,24 +681,11 @@ int64 Sys_GetDriveFreeSpaceInBytes( const char* path )
 	return ret;
 }
 
-// RB end
-
-/*
-================
-Sys_AlreadyRunning
-return true if there is a copy of D3 running already
-================
-*/
 bool Sys_AlreadyRunning()
 {
 	return false;
 }
 
-/*
-===============
-Posix_EarlyInit
-===============
-*/
 void Posix_EarlyInit()
 {
 	// memset( &asyncThread, 0, sizeof( asyncThread ) );
@@ -966,11 +699,6 @@ void Posix_EarlyInit()
 	// Posix_InitPThreads();
 }
 
-/*
-===============
-Posix_LateInit
-===============
-*/
 void Posix_LateInit()
 {
 	Posix_InitConsoleInput();
@@ -985,11 +713,6 @@ void Posix_LateInit()
 	// Posix_StartAsyncThread();
 }
 
-/*
-===============
-Posix_InitConsoleInput
-===============
-*/
 void Posix_InitConsoleInput()
 {
 	struct termios tc;
@@ -1053,12 +776,7 @@ void Posix_InitConsoleInput()
 	}
 }
 
-/*
-================
-terminal support utilities
-================
-*/
-
+//! Removes the last character from the terminal output by sending backspace, space, and another backspace sequence.
 void tty_Del()
 {
 	char key;
@@ -1070,12 +788,14 @@ void tty_Del()
 	write( STDOUT_FILENO, &key, 1 );
 }
 
+//! Moves the terminal cursor left by one position.
 void tty_Left()
 {
 	char key = '\b';
 	write( STDOUT_FILENO, &key, 1 );
 }
 
+//! Sends an escape sequence to move the cursor right in a terminal.
 void tty_Right()
 {
 	char key = 27;
@@ -1083,8 +803,7 @@ void tty_Right()
 	write( STDOUT_FILENO, "[C", 2 );
 }
 
-// clear the display of the line currently edited
-// bring cursor back to beginning of line
+//! Hides the terminal input line by clearing the display and resetting the cursor position.
 void tty_Hide()
 {
 	int len, buf_len;
@@ -1109,7 +828,7 @@ void tty_Hide()
 	input_hide++;
 }
 
-// show the current line
+//! Displays the current input line on the terminal if terminal input is enabled.
 void tty_Show()
 {
 	//	int i;
@@ -1138,6 +857,7 @@ void tty_Show()
 	}
 }
 
+//! Flushes input from the terminal.
 void tty_FlushIn()
 {
 	char key;
@@ -1147,13 +867,6 @@ void tty_FlushIn()
 	Sys_Printf( "\n" );
 }
 
-/*
-================
-Posix_ConsoleInput
-Checks for a complete line of text typed in at the console.
-Return NULL if a complete line is not ready.
-================
-*/
 char* Posix_ConsoleInput()
 {
 	if( tty_enabled ) {
@@ -1413,34 +1126,7 @@ char* Posix_ConsoleInput()
 	return NULL;
 }
 
-/*
-called during frame loops, pacifier updates etc.
-this is only for console input polling and misc mouse grab tasks
-the actual mouse and keyboard input is in the Sys_Poll logic
-*/
-/*
-void Sys_GenerateEvents()
-{
-	char* s;
-	if( ( s = Posix_ConsoleInput() ) )
-	{
-		char* b;
-		int len;
-
-		len = strlen( s ) + 1;
-		b = ( char* )Mem_Alloc( len );
-		strcpy( b, s );
-		Posix_QueEvent( SE_CONSOLE, 0, 0, len, b );
-	}
-}
-*/
-
-/*
-===============
-low level output
-===============
-*/
-
+//! Outputs a formatted debug message to the console or Android log.
 void Sys_DebugPrintf( const char* fmt, ... )
 {
 #if defined( __ANDROID__ )
@@ -1475,6 +1161,7 @@ void Sys_DebugVPrintf( const char* fmt, va_list arg )
 #endif
 }
 
+//! Outputs formatted text to the system console or debug log.
 void Sys_Printf( const char* fmt, ... )
 {
 #if defined( __ANDROID__ )
@@ -1498,6 +1185,7 @@ void Sys_Printf( const char* fmt, ... )
 #endif
 }
 
+//! Prints a formatted string to the console using a variable argument list.
 void Sys_VPrintf( const char* fmt, va_list arg )
 {
 #if defined( __ANDROID__ )
@@ -1509,11 +1197,6 @@ void Sys_VPrintf( const char* fmt, va_list arg )
 #endif
 }
 
-/*
-================
-Sys_Error
-================
-*/
 void Sys_Error( const char* error, ... )
 {
 	va_list argptr;
@@ -1538,11 +1221,6 @@ void		  Sys_SetLanguageFromSystem()
 	sys_lang.SetString( Sys_DefaultLanguage() );
 }
 
-/*
-=================
-Sys_OpenURL
-=================
-*/
 void idSysLocal::OpenURL( const char* url, bool quit )
 {
 	const char* script_path;

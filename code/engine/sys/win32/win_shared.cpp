@@ -200,11 +200,6 @@ void Sys_SetPhysicalWorkMemory( int minBytes, int maxBytes )
 	::SetProcessWorkingSetSize( GetCurrentProcess(), minBytes, maxBytes );
 }
 
-/*
-================
-Sys_GetCurrentUser
-================
-*/
 char* Sys_GetCurrentUser()
 {
 	static char	  s_userName[1024];

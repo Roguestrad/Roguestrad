@@ -30,18 +30,22 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __LISTGUILOCAL_H__
 #define __LISTGUILOCAL_H__
 
-/*
-===============================================================================
+/*!
+	\class idListGUILocal
+	\brief A GUI list container that manages string elements with associated IDs and integrates with UI interfaces.
 
-	feed data to a listDef
-	each item has an id and a display string
+	This class provides a specialized list implementation designed for GUI applications, extending functionality for managing string elements with unique identifiers. It supports configuration with UI
+   interfaces, addition and removal of elements, selection handling, and state management. The class maintains an internal list of strings and their associated IDs, allowing for indexed access and
+   manipulation. It inherits from idList for core list operations and idListGUI for GUI-specific features. The GUI integration enables synchronization between list contents and UI state, including
+   selection tracking and state change notifications. Elements are managed through ID-based lookups, with methods supporting both explicit ID assignment and automatic ID generation. The class supports
+   clearing all elements, checking configuration status, and controlling state change notifications. Memory management is handled through the base list class, with no explicit ownership semantics
+   described in the provided information.
 
-===============================================================================
 */
-
 class idListGUILocal : protected idList<idStr, TAG_OLD_UI>, public idListGUI
 {
 public:
+	//! Initializes a new instance of the idListGUILocal class with default values.
 	idListGUILocal()
 	{
 		m_pGUI		   = NULL;
@@ -49,23 +53,44 @@ public:
 		m_stateUpdates = true;
 	}
 
-	// idListGUI interface
+	//! Configures the list GUI with the provided GUI interface and name.
 	void Config( idUserInterface* pGUI, const char* name )
 	{
 		m_pGUI = pGUI;
 		m_name = name;
 	}
+
+	//! Adds a string value associated with an ID to the list, updating it if the ID already exists
 	void Add( int id, const idStr& s );
-	// use the element count as index for the ids
+
+	//! Adds a new string element to the list and assigns it an ID based on the current element count.
 	void Push( const idStr& s );
+
+	//! Removes an element with the specified ID from the list and returns true if successful.
 	bool Del( int id );
+
+	//! Clears all elements from the list and resets associated GUI state if a GUI is present
 	void Clear();
+
+	//! Returns the number of elements in the list
 	int	 Num() { return idList<idStr, TAG_OLD_UI>::Num(); }
-	int	 GetSelection( char* s, int size, int sel = 0 ) const; // returns the id, not the list index (or -1)
+
+	//! Retrieves the ID of the selected item from a GUI list, returning -1 if no valid selection exists.
+	int	 GetSelection( char* s, int size, int sel = 0 ) const;
+
+	//! Sets the selection index for the GUI list element.
 	void SetSelection( int sel );
+
+	//! Returns the number of selected items in the list GUI.
 	int	 GetNumSelections();
+
+	//! Returns true if the GUI has been configured.
 	bool IsConfigured() const;
+
+	//! Enables or disables state changes for the list GUI.
 	void SetStateChanges( bool enable );
+
+	//! Clears all internal data and resets the GUI local list state
 	void Shutdown();
 
 private:
@@ -75,6 +100,7 @@ private:
 	idList<int, TAG_OLD_UI> m_ids;
 	bool					m_stateUpdates;
 
+	//! Updates the GUI state variables based on the current list contents and triggers a state change notification.
 	void					StateChanged();
 };
 

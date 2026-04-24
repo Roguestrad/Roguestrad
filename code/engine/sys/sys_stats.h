@@ -59,6 +59,7 @@ public:
 		idArray<int64, MAX_LEADERBOARD_COLUMNS> columns;
 	};
 
+	//! Initializes a new instance of the idLeaderboardCallback class with default values.
 	idLeaderboardCallback() :
 		def( NULL ),
 		startIndex( -1 ),
@@ -69,21 +70,43 @@ public:
 	}
 	virtual idLeaderboardCallback* Clone() const = 0;
 
-	// Used by the platform handlers to set data
+	//! Clears all rows from the leaderboard callback.
 	void						   ResetRows() { rows.Clear(); }
+
+	//! Appends a row to the leaderboard callback's internal collection of rows.
 	void						   AddRow( const row_t& row ) { rows.Append( row ); }
+
+	//! Sets the number of rows in the leaderboard to the specified integer value.
 	void						   SetNumRowsInLeaderboard( int32 i ) { numRowsInLeaderboard = i; }
+
+	//! Sets the leaderboard definition for this callback object.
 	void						   SetDef( const leaderboardDefinition_t* def_ ) { def = def_; }
+
+	//! Sets the start index for the leaderboard callback.
 	void						   SetStartIndex( int startIndex_ ) { startIndex = startIndex_; }
+
+	//! Sets the local index for the leaderboard callback.
 	void						   SetLocalIndex( int localIndex_ ) { localIndex = localIndex_; }
+
+	//! Sets the error code for the leaderboard callback.
 	void						   SetErrorCode( leaderboardError_t errorCode ) { this->errorCode = errorCode; }
 
-	// Used in user callback for information retrieval
+	//! Returns a pointer to the leaderboard definition associated with this callback.
 	const leaderboardDefinition_t* GetDef() const { return def; }
+
+	//! Returns the starting index stored in the leaderboard callback object.
 	int							   GetStartIndex() const { return startIndex; }
+
+	//! Returns a constant reference to the list of leaderboard rows.
 	const idList<row_t>&		   GetRows() const { return rows; }
+
+	//! Returns the number of rows currently in the leaderboard.
 	int							   GetNumRowsInLeaderboard() const { return numRowsInLeaderboard; }
+
+	//! Returns the local index stored in the leaderboard callback object.
 	int							   GetLocalIndex() const { return localIndex; }
+
+	//! Retrieves the error code from the leaderboard callback.
 	leaderboardError_t			   GetErrorCode() const { return this->errorCode; }
 
 protected:

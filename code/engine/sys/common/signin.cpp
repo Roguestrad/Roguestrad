@@ -46,22 +46,11 @@ idCVar win_partyCount( "win_partyCount", "0", CVAR_INTEGER, "debugginc var for p
 // DG: D3BFG got the username from steam, in the GPL release it just uses the hostname.
 //     this adds a name to set a player name
 idCVar ui_name( "ui_name", "", CVAR_ARCHIVE, "player name - leave empty for default name (system's hostname)" );
-// DG end
 
-/*
-========================
-idSignInManagerWin::Shutdown
-========================
-*/
 void   idSignInManagerWin::Shutdown()
 {
 }
 
-/*
-========================
-idSignInManagerWin::Pump
-========================
-*/
 void idSignInManagerWin::Pump()
 {
 	// If we have more users than we need, then set to the lower amount
@@ -85,22 +74,12 @@ void idSignInManagerWin::Pump()
 	}
 }
 
-/*
-========================
-idSignInManagerWin::RemoveLocalUserByIndex
-========================
-*/
 void idSignInManagerWin::RemoveLocalUserByIndex( int index )
 {
 	session->OnLocalUserSignout( &localUsers[index] );
 	localUsers.RemoveIndex( index );
 }
 
-/*
-========================
-idSignInManagerWin::RegisterLocalUser
-========================
-*/
 void idSignInManagerWin::RegisterLocalUser( int inputDevice )
 {
 	if( GetLocalUserByInputDevice( inputDevice ) != NULL ) {
@@ -145,11 +124,6 @@ void idSignInManagerWin::RegisterLocalUser( int inputDevice )
 	session->OnLocalUserSignin( &localUser );
 }
 
-/*
-========================
-idSignInManagerWin::CreateNewUser
-========================
-*/
 bool idSignInManagerWin::CreateNewUser( winUserState_t& state )
 {
 	// idScopedGlobalHeap	everythingHereGoesInTheGlobalHeap;	// users obviously persist across maps
@@ -166,6 +140,7 @@ bool idSignInManagerWin::CreateNewUser( winUserState_t& state )
 	return true;
 }
 
+//! Forces removal of all local users for PC testing purposes
 CONSOLE_COMMAND( testRemoveAllLocalUsers, "Forces removal of local users - mainly for PC testing", NULL )
 {
 	session->GetSignInManager().RemoveAllLocalUsers();

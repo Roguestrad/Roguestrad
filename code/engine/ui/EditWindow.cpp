@@ -184,11 +184,6 @@ void idEditWindow::Draw( int time, float x, float y )
 	dc->DrawText( buffer, scale, 0, color, rect, wrap, ( flags & WIN_FOCUS ) ? cursorPos : -1 );
 }
 
-/*
-=============
-idEditWindow::HandleEvent
-=============
-*/
 const char* idEditWindow::HandleEvent( const sysEvent_t* event, bool* updateVisuals )
 {
 	static char buffer[MAX_EDITFIELD];
@@ -441,13 +436,6 @@ void idEditWindow::PostParse()
 	flags |= WIN_CANFOCUS;
 }
 
-/*
-================
-idEditWindow::InitScroller
-
-This is the same as in idListWindow
-================
-*/
 void idEditWindow::InitScroller( bool horizontal )
 {
 	const char* thumbImage	 = "guis/assets/scrollbar_thumb.tga";
@@ -577,11 +565,6 @@ void idEditWindow::Activate( bool activate, idStr& act )
 	}
 }
 
-/*
-============
-idEditWindow::InitCvar
-============
-*/
 void idEditWindow::InitCvar()
 {
 	if( cvarStr[0] == '\0' ) {
@@ -599,11 +582,6 @@ void idEditWindow::InitCvar()
 	}
 }
 
-/*
-============
-idEditWindow::UpdateCvar
-============
-*/
 void idEditWindow::UpdateCvar( bool read, bool force )
 {
 	if( force || liveUpdate ) {
@@ -620,11 +598,6 @@ void idEditWindow::UpdateCvar( bool read, bool force )
 	}
 }
 
-/*
-============
-idEditWindow::RunNamedEvent
-============
-*/
 void idEditWindow::RunNamedEvent( const char* eventName )
 {
 	idStr event, group;

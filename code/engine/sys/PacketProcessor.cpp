@@ -45,14 +45,6 @@ idCVar	  net_maxRate( "net_maxRate", "50", CVAR_INTEGER, "max send rate in kilob
 
 idCVar	  net_showReliableCompression( "net_showReliableCompression", "0", CVAR_BOOL, "Show reliable compression ratio." );
 
-// we use an assert(0); return idiom in some places, which lint complains about
-// lint -e527	unreachable code at token 'return'
-
-/*
-================================================
-idPacketProcessor::QueueReliableAck
-================================================
-*/
 void	  idPacketProcessor::QueueReliableAck( int lastReliable )
 {
 	// NOTE - Even if it was the last known sequence, go ahead and ack it, in case our last ack for this sequence got dropped
@@ -62,11 +54,6 @@ void	  idPacketProcessor::QueueReliableAck( int lastReliable )
 	}
 }
 
-/*
-================================================
-idPacketProcessor::FinalizeRead
-================================================
-*/
 int idPacketProcessor::FinalizeRead( idBitMsg& inMsg, idBitMsg& outMsg, int& userValue )
 {
 	userValue = 0;
@@ -167,21 +154,11 @@ int idPacketProcessor::FinalizeRead( idBitMsg& inMsg, idBitMsg& outMsg, int& use
 	return ( header.Type() == PACKET_TYPE_OOB ) ? RETURN_TYPE_OOB : RETURN_TYPE_INBAND;
 }
 
-/*
-================================================
-idPacketProcessor::QueueReliableMessage
-================================================
-*/
 bool idPacketProcessor::QueueReliableMessage( byte type, const byte* data, int dataLen )
 {
 	return reliable.Append( reliableSequenceSend++, &type, 1, data, dataLen );
 }
 
-/*
-========================
-idPacketProcessor::CanSendMoreData
-========================
-*/
 bool idPacketProcessor::CanSendMoreData() const
 {
 	if( net_maxRate.GetInteger() == 0 ) {
@@ -191,11 +168,6 @@ bool idPacketProcessor::CanSendMoreData() const
 	return ( outgoingRateBytes <= net_maxRate.GetInteger() * 1024 );
 }
 
-/*
-========================
-idPacketProcessor::UpdateOutgoingRate
-========================
-*/
 void idPacketProcessor::UpdateOutgoingRate( const int time, const int size )
 {
 	outgoingBytes += size;
@@ -219,11 +191,6 @@ void idPacketProcessor::UpdateOutgoingRate( const int time, const int size )
 	}
 }
 
-/*
-=================
-idPacketProcessor::UpdateIncomingRate
-=================
-*/
 void idPacketProcessor::UpdateIncomingRate( const int time, const int size )
 {
 	incomingBytes += size;
@@ -246,12 +213,6 @@ void idPacketProcessor::UpdateIncomingRate( const int time, const int size )
 	}
 }
 
-/*
-================================================
-idPacketProcessor::ProcessOutgoing
-NOTE - We only compress reliables because we assume everything else has already been compressed.
-================================================
-*/
 bool idPacketProcessor::ProcessOutgoing( const int time, const idBitMsg& msg, bool isOOB, int userData )
 {
 	// We can only do ONE ProcessOutgoing call, then we need to do GetSendFragment to
@@ -353,11 +314,6 @@ bool idPacketProcessor::ProcessOutgoing( const int time, const idBitMsg& msg, bo
 	return true;
 }
 
-/*
-================================================
-idPacketProcessor::GetSendFragment
-================================================
-*/
 bool idPacketProcessor::GetSendFragment( const int time, sessionId_t sessionID, idBitMsg& outMsg )
 {
 	lastSendTime = time;
@@ -413,11 +369,6 @@ bool idPacketProcessor::GetSendFragment( const int time, sessionId_t sessionID, 
 	return true;
 }
 
-/*
-================================================
-idPacketProcessor::ProcessIncoming
-================================================
-*/
 int idPacketProcessor::ProcessIncoming( int time, sessionId_t expectedSessionID, idBitMsg& msg, idBitMsg& out, int& userData, const int peerNum )
 {
 	assert( msg.GetSize() <= MAX_FINAL_PACKET_SIZE );
@@ -491,11 +442,6 @@ int idPacketProcessor::ProcessIncoming( int time, sessionId_t expectedSessionID,
 	return RETURN_TYPE_NONE;
 }
 
-/*
-================================================
-idPacketProcessor::ProcessConnectionlessOutgoing
-================================================
-*/
 bool idPacketProcessor::ProcessConnectionlessOutgoing( idBitMsg& msg, idBitMsg& out, int lobbyType, int userData )
 {
 	sessionId_t			sessionID = lobbyType + 1;
@@ -514,11 +460,6 @@ bool idPacketProcessor::ProcessConnectionlessOutgoing( idBitMsg& msg, idBitMsg& 
 	return true;
 }
 
-/*
-================================================
-idPacketProcessor::ProcessConnectionlessIncoming
-================================================
-*/
 bool idPacketProcessor::ProcessConnectionlessIncoming( idBitMsg& msg, idBitMsg& out, int& userData )
 {
 	idOuterPacketHeader outerHeader;
@@ -549,11 +490,6 @@ bool idPacketProcessor::ProcessConnectionlessIncoming( idBitMsg& msg, idBitMsg& 
 	return true;
 }
 
-/*
-================================================
-idPacketProcessor::GetSessionID
-================================================
-*/
 idPacketProcessor::sessionId_t idPacketProcessor::GetSessionID( idBitMsg& msg )
 {
 	sessionId_t sessionID;
@@ -570,11 +506,6 @@ idPacketProcessor::sessionId_t idPacketProcessor::GetSessionID( idBitMsg& msg )
 	return sessionID;
 }
 
-/*
-================================================
-idPacketProcessor::VerifyEmptyReliableQueue
-================================================
-*/
 idCVar net_verifyReliableQueue( "net_verifyReliableQueue", "2", CVAR_INTEGER, "0: warn only, 1: error, 2: fixup, 3: fixup and verbose, 4: force test" );
 #define RELIABLE_VERBOSE                            \
 	if( net_verifyReliableQueue.GetInteger() >= 3 ) \

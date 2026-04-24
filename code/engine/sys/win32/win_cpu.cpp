@@ -156,6 +156,8 @@ HasCPUID
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Checks if the CPU supports the CPUID instruction.
 static bool HasCPUID() {
 	__asm 
 	{
@@ -201,6 +203,8 @@ CPUID
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Retrieves CPU identification information using the CPUID instruction
 static void CPUID( int func, unsigned regs[4] ) {
 	unsigned regEAX, regEBX, regECX, regEDX;
 
@@ -228,6 +232,8 @@ IsAMD
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Checks if the CPU vendor is AMD by examining the processor identification string.
 static bool IsAMD() {
 	char pstring[16];
 	char processorString[13];
@@ -262,6 +268,8 @@ HasCMOV
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Checks if the CPU supports Conditional Move instructions
 static bool HasCMOV() {
 	unsigned regs[4];
 
@@ -283,6 +291,8 @@ Has3DNow
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Checks if the CPU supports 3DNow! instruction set
 static bool Has3DNow() {
 	unsigned regs[4];
 
@@ -309,6 +319,8 @@ HasMMX
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Determines whether the CPU supports MMX instruction set.
 static bool HasMMX() {
 	unsigned regs[4];
 
@@ -330,6 +342,8 @@ HasSSE
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Checks if the CPU supports Streaming SIMD Extensions
 static bool HasSSE() {
 	unsigned regs[4];
 
@@ -351,6 +365,8 @@ HasSSE2
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Checks if the CPU supports Streaming SIMD Extensions 2 instructions.
 static bool HasSSE2() {
 	unsigned regs[4];
 
@@ -372,6 +388,8 @@ HasSSE3
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Determines whether the CPU supports SSE3 instructions.
 static bool HasSSE3() {
 	unsigned regs[4];
 
@@ -394,8 +412,8 @@ LogicalProcPerPhysicalProc
 // RB: no checks on Win64
 #if !defined(_WIN64)
 #define NUM_LOGICAL_BITS   0x00FF0000     // EBX[23:16] Bit 16-23 in ebx contains the number of logical
-                                          // processors per physical processor when execute cpuid with 
-                                          // eax set to 1
+
+//! Returns the number of logical processors per physical processor by reading the CPUID information.
 static unsigned char LogicalProcPerPhysicalProc() {
 	unsigned int regebx = 0;
 	__asm {
@@ -415,8 +433,8 @@ GetAPIC_ID
 // RB: no checks on Win64
 #if !defined(_WIN64)
 #define INITIAL_APIC_ID_BITS  0xFF000000  // EBX[31:24] Bits 24-31 (8 bits) return the 8-bit unique 
-                                          // initial APIC ID for the processor this code is running on.
-                                          // Default value = 0xff if HT is not supported
+
+//! Returns the initial APIC ID for the processor this code is running on
 static unsigned char GetAPIC_ID() {
 	unsigned int regebx = 0;
 	__asm {
@@ -445,6 +463,7 @@ CPUCount
 #define HT_SUPPORTED_NOT_ENABLED	3
 #define HT_CANNOT_DETECT			4
 
+//! Returns the number of logical and physical CPU cores and determines if Hyper-Threading is enabled.
 int CPUCount( int &logicalNum, int &physicalNum ) {
 	int statusFlag;
 	SYSTEM_INFO info;
@@ -539,6 +558,8 @@ HasHTT
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Checks if the CPU supports Hyper-Threading Technology
 static bool HasHTT() {
 	unsigned regs[4];
 	int logicalNum, physicalNum, HTStatusFlag;
@@ -566,6 +587,8 @@ HasDAZ
 */
 // RB: no checks on Win64
 #if !defined(_WIN64)
+
+//! Checks if the processor supports Denormals-Are-Zero mode.
 static bool HasDAZ() {
 	__declspec(align(16)) unsigned char FXSaveArea[512];
 	unsigned char *FXArea = FXSaveArea;
@@ -592,20 +615,7 @@ static bool HasDAZ() {
 }
 #endif
 
-/*
-================================================================================================
-
-	CPU
-
-================================================================================================
-*/
-
-/*
-========================
-CountSetBits 
-Helper function to count set bits in the processor mask.
-========================
-*/
+//! Counts the number of set bits in a processor mask
 DWORD CountSetBits( ULONG_PTR bitMask ) {
 	DWORD LSHIFT = sizeof( ULONG_PTR ) * 8 - 1;
 	DWORD bitSetCount = 0;
@@ -641,11 +651,7 @@ struct cpuInfo_t {
 	} cacheLevel[3];
 };
 
-/*
-========================
-GetCPUInfo
-========================
-*/
+//! Retrieves detailed CPU information including core counts, cache details, and NUMA node information
 bool GetCPUInfo( cpuInfo_t & cpuInfo ) {
 	PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL;
 	PSYSTEM_LOGICAL_PROCESSOR_INFORMATION ptr = NULL;
@@ -731,10 +737,16 @@ bool GetCPUInfo( cpuInfo_t & cpuInfo ) {
 	return true;
 }
 
-/*
-========================
-Sys_GetCPUCacheSize
-========================
+/*!
+	\brief Retrieves the cache size information for a specified CPU cache level
+
+	This function retrieves detailed cache information for a specific CPU cache level, including the number of cache units, total cache size, and line size. The function validates that the cache level is between 1 and 3, and then populates the provided output parameters with the corresponding cache information from the CPU's cache hierarchy. The cache information is obtained by calling the GetCPUInfo function to gather CPU-specific data.
+
+	\param level the cache level to query (1-3)
+	\param count reference to store the number of cache units
+	\param size reference to store the total cache size in bytes
+	\param lineSize reference to store the cache line size in bytes
+	\throws assertion failure if level is not between 1 and 3
 */
 void Sys_GetCPUCacheSize( int level, int & count, int & size, int & lineSize ) {
 	assert( level >= 1 && level <= 3 );
@@ -890,10 +902,20 @@ static bitFlag_t statusWordFlags[] = {
 	{ "", 0 }
 };
 
-/*
-===============
-Sys_FPU_PrintStateFlags
-===============
+/*!
+	\brief Formats and prints FPU register state flags to a character buffer
+
+	This function takes FPU (Floating Point Unit) register values and formats them into a human-readable string representation. It prints control word, status word, and tag word information along with detailed flag states. The function is primarily used for debugging and crash reporting purposes to provide detailed information about the FPU state when an exception occurs. The output includes bit flag values and their interpretations for both control and status words.
+
+	\param ptr Output buffer to write the formatted string
+	\param ctrl Control word value from FPU
+	\param stat Status word value from FPU
+	\param tags Tag word value from FPU
+	\param inof Instruction offset value from FPU
+	\param inse Instruction selector value from FPU
+	\param opof Operand offset value from FPU
+	\param opse Operand selector value from FPU
+	\return The total number of characters written to the output buffer, excluding the null terminator
 */
 int Sys_FPU_PrintStateFlags( char *ptr, int ctrl, int stat, int tags, int inof, int inse, int opof, int opse ) {
 	int i, length = 0;

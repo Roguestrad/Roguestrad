@@ -30,20 +30,10 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "sys_voicechat.h"
 
-/*
-================================================
-idVoiceChatMgr::Init
-================================================
-*/
 void idVoiceChatMgr::Init( void* pXAudio2 )
 {
 }
 
-/*
-================================================
-idVoiceChatMgr::Shutdown
-================================================
-*/
 void idVoiceChatMgr::Shutdown()
 {
 	// We shouldn't have voice users if everything shutdown correctly
@@ -54,11 +44,6 @@ void idVoiceChatMgr::Shutdown()
 	}
 }
 
-/*
-================================================
-idVoiceChatMgr::RegisterTalker
-================================================
-*/
 void idVoiceChatMgr::RegisterTalker( lobbyUser_t* user, int lobbyType, bool isLocal )
 {
 	int i = FindTalkerIndex( user, lobbyType );
@@ -92,11 +77,6 @@ void idVoiceChatMgr::RegisterTalker( lobbyUser_t* user, int lobbyType, bool isLo
 	UpdateRegisteredTalkers();
 }
 
-/*
-================================================
-idVoiceChatMgr::UnregisterTalker
-================================================
-*/
 void idVoiceChatMgr::UnregisterTalker( lobbyUser_t* user, int lobbyType, bool isLocal )
 {
 	int i = FindTalkerIndex( user, lobbyType );
@@ -122,11 +102,6 @@ void idVoiceChatMgr::UnregisterTalker( lobbyUser_t* user, int lobbyType, bool is
 	talkers.RemoveIndex( i ); // Finally, remove the talker
 }
 
-/*
-================================================
-idVoiceChatMgr::GetActiveLocalTalkers
-================================================
-*/
 void idVoiceChatMgr::GetActiveLocalTalkers( idStaticList<int, MAX_PLAYERS>& localTalkers )
 {
 	localTalkers.Clear();
@@ -148,11 +123,6 @@ void idVoiceChatMgr::GetActiveLocalTalkers( idStaticList<int, MAX_PLAYERS>& loca
 	}
 }
 
-/*
-================================================
-idVoiceChatMgr::GetRecipientsForTalker
-================================================
-*/
 void idVoiceChatMgr::GetRecipientsForTalker( int talkerIndex, idStaticList<const lobbyAddress_t*, MAX_PLAYERS>& recipients )
 {
 	recipients.Clear();
@@ -199,11 +169,6 @@ void idVoiceChatMgr::GetRecipientsForTalker( int talkerIndex, idStaticList<const
 	}
 }
 
-/*
-================================================
-idVoiceChatMgr::SetTalkerGroup
-================================================
-*/
 void idVoiceChatMgr::SetTalkerGroup( const lobbyUser_t* user, int lobbyType, int groupIndex )
 {
 	int i = FindTalkerIndex( user, lobbyType );
@@ -226,11 +191,6 @@ void idVoiceChatMgr::SetTalkerGroup( const lobbyUser_t* user, int lobbyType, int
 	UpdateRegisteredTalkers();
 }
 
-/*
-================================================
-idVoiceChatMgr::SetActiveLobby
-================================================
-*/
 void idVoiceChatMgr::SetActiveLobby( int lobbyType )
 {
 	if( activeLobbyType != lobbyType ) {
@@ -241,11 +201,6 @@ void idVoiceChatMgr::SetActiveLobby( int lobbyType )
 	}
 }
 
-/*
-================================================
-idVoiceChatMgr::SetActiveChatGroup
-================================================
-*/
 void idVoiceChatMgr::SetActiveChatGroup( int groupIndex )
 {
 	if( activeGroupIndex != groupIndex ) {
@@ -256,11 +211,6 @@ void idVoiceChatMgr::SetActiveChatGroup( int groupIndex )
 	}
 }
 
-/*
-================================================
-idVoiceChatMgr::FindTalkerByUserId
-================================================
-*/
 int idVoiceChatMgr::FindTalkerByUserId( lobbyUserID_t userID, int lobbyType )
 {
 	for( int i = 0; i < talkers.Num(); i++ ) {
@@ -272,11 +222,6 @@ int idVoiceChatMgr::FindTalkerByUserId( lobbyUserID_t userID, int lobbyType )
 	return -1; // Not found
 }
 
-/*
-================================================
-idVoiceChatMgr::GetLocalChatData
-================================================
-*/
 bool idVoiceChatMgr::GetLocalChatData( int talkerIndex, byte* data, int& dataSize )
 {
 	talker_t& talker = talkers[talkerIndex];
@@ -313,11 +258,6 @@ bool idVoiceChatMgr::GetLocalChatData( int talkerIndex, byte* data, int& dataSiz
 	return dataSize > 0 ? true : false;
 }
 
-/*
-================================================
-idVoiceChatMgr::SubmitIncomingChatData
-================================================
-*/
 void idVoiceChatMgr::SubmitIncomingChatData( const byte* data, int dataSize )
 {
 	lobbyUserID_t lobbyUserID;
@@ -346,11 +286,6 @@ void idVoiceChatMgr::SubmitIncomingChatData( const byte* data, int dataSize )
 	}
 }
 
-/*
-========================
-idVoiceChatMgr::GetVoiceState
-========================
-*/
 voiceState_t idVoiceChatMgr::GetVoiceState( const lobbyUser_t* user )
 {
 	int i = FindTalkerByUserId( user->lobbyUserID, activeLobbyType );
@@ -376,11 +311,6 @@ voiceState_t idVoiceChatMgr::GetVoiceState( const lobbyUser_t* user )
 	return talker.talking ? ( talker.talkingGlobal ? VOICECHAT_STATE_TALKING_GLOBAL : VOICECHAT_STATE_TALKING ) : VOICECHAT_STATE_NOT_TALKING;
 }
 
-/*
-========================
-idVoiceChatMgr::CanSendVoiceTo
-========================
-*/
 bool idVoiceChatMgr::CanSendVoiceTo( int talkerFromIndex, int talkerToIndex )
 {
 	talker_t& talkerFrom = talkers[talkerFromIndex];
@@ -398,21 +328,11 @@ bool idVoiceChatMgr::CanSendVoiceTo( int talkerFromIndex, int talkerToIndex )
 	return true;
 }
 
-/*
-========================
-idVoiceChatMgr::IsRestrictedByPrivleges
-========================
-*/
 bool idVoiceChatMgr::IsRestrictedByPrivleges()
 {
 	return ( disableVoiceReasons & REASON_PRIVILEGES ) != 0;
 }
 
-/*
-========================
-idVoiceChatMgr::ToggleMuteLocal
-========================
-*/
 void idVoiceChatMgr::ToggleMuteLocal( const lobbyUser_t* src, const lobbyUser_t* target )
 {
 	int fromTalkerIndex = FindTalkerByUserId( src->lobbyUserID, activeLobbyType );
@@ -432,15 +352,6 @@ void idVoiceChatMgr::ToggleMuteLocal( const lobbyUser_t* src, const lobbyUser_t*
 	targetTalker.isMuted = targetTalker.isMuted ? false : true;
 }
 
-//================================================
-//			**** INTERNAL **********
-//================================================
-
-/*
-================================================
-idVoiceChatMgr::FindTalkerIndex
-================================================
-*/
 int idVoiceChatMgr::FindTalkerIndex( const lobbyUser_t* user, int lobbyType )
 {
 	for( int i = 0; i < talkers.Num(); i++ ) {
@@ -452,11 +363,6 @@ int idVoiceChatMgr::FindTalkerIndex( const lobbyUser_t* user, int lobbyType )
 	return -1; // Not found
 }
 
-/*
-================================================
-idVoiceChatMgr::FindMachine
-================================================
-*/
 int idVoiceChatMgr::FindMachine( const lobbyAddress_t& address, int lobbyType )
 {
 	for( int i = 0; i < remoteMachines.Num(); i++ ) {
@@ -470,11 +376,6 @@ int idVoiceChatMgr::FindMachine( const lobbyAddress_t& address, int lobbyType )
 	return -1; // Not found
 }
 
-/*
-================================================
-idVoiceChatMgr::AddMachine
-================================================
-*/
 int idVoiceChatMgr::AddMachine( const lobbyAddress_t& address, int lobbyType )
 {
 	int machineIndex = FindMachine( address, lobbyType );
@@ -517,11 +418,6 @@ int idVoiceChatMgr::AddMachine( const lobbyAddress_t& address, int lobbyType )
 	return index;
 }
 
-/*
-================================================
-idVoiceChatMgr::RemoveMachine
-================================================
-*/
 void idVoiceChatMgr::RemoveMachine( int machineIndex, int lobbyType )
 {
 	assert( remoteMachines[machineIndex].refCount > 0 );
@@ -532,11 +428,6 @@ void idVoiceChatMgr::RemoveMachine( int machineIndex, int lobbyType )
 	remoteMachines[machineIndex].refCount--;
 }
 
-/*
-================================================
-idVoiceChatMgr::UpdateRegisteredTalkers
-================================================
-*/
 void idVoiceChatMgr::UpdateRegisteredTalkers()
 {
 	for( int pass = 0; pass < 2; pass++ ) {
@@ -563,11 +454,6 @@ void idVoiceChatMgr::UpdateRegisteredTalkers()
 	}
 }
 
-/*
-================================================
-idVoiceChatMgr::SetDisableVoiceReason
-================================================
-*/
 void idVoiceChatMgr::SetDisableVoiceReason( disableVoiceReason_t reason )
 {
 	if( ( disableVoiceReasons & reason ) == 0 ) {
@@ -576,11 +462,6 @@ void idVoiceChatMgr::SetDisableVoiceReason( disableVoiceReason_t reason )
 	}
 }
 
-/*
-================================================
-idVoiceChatMgr::ClearDisableVoiceReason
-================================================
-*/
 void idVoiceChatMgr::ClearDisableVoiceReason( disableVoiceReason_t reason )
 {
 	if( ( disableVoiceReasons & reason ) != 0 ) {
@@ -589,11 +470,6 @@ void idVoiceChatMgr::ClearDisableVoiceReason( disableVoiceReason_t reason )
 	}
 }
 
-/*
-================================================
-idVoiceChatMgr::SetHeadsetState
-================================================
-*/
 void idVoiceChatMgr::SetHeadsetState( int talkerIndex, bool state )
 {
 	talker_t& talker = talkers[talkerIndex];
@@ -601,11 +477,6 @@ void idVoiceChatMgr::SetHeadsetState( int talkerIndex, bool state )
 	talker.hasHeadset = state;
 }
 
-/*
-================================================
-idVoiceChatMgr::HasHeadsetStateChanged
-================================================
-*/
 bool idVoiceChatMgr::HasHeadsetStateChanged( int talkerIndex )
 {
 	talker_t& talker = talkers[talkerIndex];

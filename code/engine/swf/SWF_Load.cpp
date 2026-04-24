@@ -40,11 +40,6 @@ using namespace rapidjson;
 #define BSWF_VERSION 16 // bumped to 16 for storing atlas image dimensions for unbuffered loads
 #define BSWF_MAGIC	 ( ( 'B' << 24 ) | ( 'S' << 16 ) | ( 'W' << 8 ) | BSWF_VERSION )
 
-/*
-===================
-idSWF::LoadSWF
-===================
-*/
 bool idSWF::LoadSWF( const char* fullpath )
 {
 	idFile* rawfile = fileSystem->OpenFileRead( fullpath );
@@ -128,7 +123,6 @@ bool idSWF::LoadSWF( const char* fullpath )
 	return true;
 }
 
-// RB: write new .swf with only the information we care about
 void idSWF::WriteSWF( const char* swfFilename, const byte* atlasImageRGBA, int atlasImageWidth, int atlasImageHeight )
 {
 	idFile_SWF file( fileSystem->OpenFileWrite( swfFilename, "fs_basepath" ) );
@@ -372,13 +366,7 @@ void idSWF::WriteSWF( const char* swfFilename, const byte* atlasImageRGBA, int a
 	file->Seek( offsetof( swfHeader_t, fileLength ), FS_SEEK_SET );
 	file.WriteU32( fileSize );
 }
-// RB end
 
-/*
-===================
-idSWF::LoadBinary
-===================
-*/
 bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 {
 	idFile* f = fileSystem->OpenFileReadMemory( bfilename );
@@ -573,11 +561,6 @@ bool idSWF::LoadBinary( const char* bfilename, ID_TIME_T sourceTimeStamp )
 	return true;
 }
 
-/*
-===================
-idSWF::WriteBinary
-===================
-*/
 void idSWF::WriteBinary( const char* bfilename )
 {
 	idFileLocal file( fileSystem->OpenFileWrite( bfilename, "fs_basepath" ) );
@@ -726,32 +709,16 @@ void idSWF::WriteBinary( const char* bfilename )
 	}
 }
 
-/*
-===================
-idSWF::FileAttributes
-Extra data that won't fit in a SWF header
-===================
-*/
 void idSWF::FileAttributes( idSWFBitStream& bitstream )
 {
 	bitstream.Seek( 5 ); // 5 booleans
 }
 
-/*
-===================
-idSWF::Metadata
-===================
-*/
 void idSWF::Metadata( idSWFBitStream& bitstream )
 {
 	bitstream.ReadString(); // XML string
 }
 
-/*
-===================
-idSWF::SetBackgroundColor
-===================
-*/
 void idSWF::SetBackgroundColor( idSWFBitStream& bitstream )
 {
 	bitstream.Seek( 4 ); // int

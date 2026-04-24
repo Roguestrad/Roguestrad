@@ -30,35 +30,41 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SWF_TYPES1_H__
 #define __SWF_TYPES1_H__
 
+//! Converts a TWIP value to a float value by scaling with 1/20.
 ID_INLINE float SWFTWIP( int twip )
 {
 	return twip * ( 1.0f / 20.0f );
 }
+
+//! Converts a fixed-point integer value to its floating-point representation
 ID_INLINE float SWFFIXED16( int fixed )
 {
 	return fixed * ( 1.0f / 65536.0f );
 }
+
+//! Converts a fixed-point 8.8 integer value to floating-point.
 ID_INLINE float SWFFIXED8( int fixed )
 {
 	return fixed * ( 1.0f / 256.0f );
 }
 
-// RB begin
+//! Converts a float value to an integer using a fixed multiplier of 20
 ID_INLINE int FLOAT2SWFTWIP( float value )
 {
 	return ( int )( value * 20 );
 }
 
+//! Converts a floating-point value to a fixed-point integer representation using a 16.16 bit format.
 ID_INLINE int FLOAT2SWFFIXED16( float value )
 {
 	return ( int )( value * 65536 );
 }
 
+//! Converts a float value to a fixed-point integer representation scaled by 256.
 ID_INLINE int FLOAT2SWFFIXED8( float value )
 {
 	return ( int )( value * 256 );
 }
-// RB end
 
 struct swfHeader_t {
 	byte   compression;
@@ -69,11 +75,22 @@ struct swfHeader_t {
 };
 
 struct swfRect_t {
+	//! Initializes a swfRect_t object with both top-left and bottom-right corners set to (0, 0).
 	swfRect_t();
 	idVec2 tl;
 	idVec2 br;
 
-	// RB: helpers
+	/*!
+		\brief Initializes a swfRect_t object with the specified position and dimensions.
+
+		This constructor sets up a rectangle structure using the given top-left coordinates and dimensions. The top-left corner is defined by (x, y) and the bottom-right corner is calculated as (x +
+	   w, y + h). This is commonly used to define bounding boxes for graphical elements in SWF vector graphics.
+
+		\param x The x-coordinate of the top-left corner
+		\param y The y-coordinate of the top-left corner
+		\param w The width of the rectangle
+		\param h The height of the rectangle
+	*/
 	swfRect_t( float x, float y, float w, float h )
 	{
 		tl.x = x;
@@ -82,27 +99,43 @@ struct swfRect_t {
 		br.y = y + h;
 	}
 
+	//! Returns the x-coordinate of the top-left corner of the rectangle.
 	float x() const { return tl.x; }
 
+	//! Returns the y-coordinate of the top-left corner of the rectangle.
 	float y() const { return tl.y; }
 
+	//! Returns the width of the rectangle defined by the swfRect_t structure.
 	float w() const { return fabs( br.x - tl.x ); }
 
+	//! Returns the height of the rectangle as the absolute difference between the bottom and top y-coordinates.
 	float h() const { return fabs( br.y - tl.y ); }
 
+	//! Returns the bottom Y-coordinate of the rectangle
 	float Bottom() const { return br.y; }
 	// RB end
 };
 
 struct swfMatrix_t {
+	//! Initializes a new swfMatrix_t object with default values.
 	swfMatrix_t();
 	float		 xx, yy;
 	float		 xy, yx;
 	float		 tx, ty;
+
+	//! Scales the input vector using the matrix components xx, xy, yx, and yy.
 	idVec2		 Scale( const idVec2& in ) const;
+
+	//! Transforms a 2D vector using the matrix components xx, xy, tx, yy, yx, and ty.
 	idVec2		 Transform( const idVec2& in ) const;
+
+	//! Returns the matrix multiplication result of this matrix with another matrix.
 	swfMatrix_t	 Multiply( const swfMatrix_t& a ) const;
+
+	//! Returns the inverse of this transformation matrix.
 	swfMatrix_t	 Inverse() const;
+
+	//! Assigns the contents of another swfMatrix_t instance to this instance and returns a reference to this instance.
 	swfMatrix_t& operator=( const swfMatrix_t& a )
 	{
 		xx = a.xx;
@@ -114,28 +147,38 @@ struct swfMatrix_t {
 		return *this;
 	}
 
-	// RB begin
+	//! Parses an SVG transform string and updates the matrix components accordingly.
 	void ParseSVGTransformFromString( const char* str );
 
+	//! Compares two swfMatrix_t objects for equality.
 	bool operator==( const swfMatrix_t& a ) { return ( xx == a.xx && yy == a.yy && xy == a.xy && yx == a.yx && tx == a.tx && ty == a.ty ); }
 
+	//! Compares this swfMatrix_t object with another for inequality.
 	bool operator!=( const swfMatrix_t& a ) { return !( xx == a.xx && yy == a.yy && xy == a.xy && yx == a.yx && tx == a.tx && ty == a.ty ); }
 	// RB end
 };
 
 struct swfColorRGB_t {
+	//! Constructs a swfColorRGB_t object with default RGB values set to 255, 255, 255.
 	swfColorRGB_t();
+
+	//! Converts the RGB color values to a normalized vec4 with alpha set to 1.0.
 	idVec4 ToVec4() const;
 	uint8  r, g, b;
 };
 struct swfColorRGBA_t : public swfColorRGB_t {
+	//! Initializes a swfColorRGBA_t object with default alpha value of 255.
 	swfColorRGBA_t();
+
+	//! Converts the color components to a normalized idVec4 vector.
 	idVec4 ToVec4() const;
 	uint8  a;
 
+	//! Parses a color string in SVG format and sets the RGBA color components.
 	void   ParseSVGColorFromString( const char* str );
 };
 struct swfLineStyle_t {
+	//! Initializes a swfLineStyle_t object with default start and end width values of 20.
 	swfLineStyle_t();
 	uint16		   startWidth;
 	uint16		   endWidth;
@@ -143,6 +186,7 @@ struct swfLineStyle_t {
 	swfColorRGBA_t endColor;
 };
 struct swfGradientRecord_t {
+	//! Initializes a new instance of the swfGradientRecord_t struct with default start and end ratios set to zero.
 	swfGradientRecord_t();
 	uint8		   startRatio;
 	uint8		   endRatio;
@@ -150,11 +194,13 @@ struct swfGradientRecord_t {
 	swfColorRGBA_t endColor;
 };
 struct swfGradient_t {
+	//! Initializes a new swfGradient_t object with zero gradients.
 	swfGradient_t();
 	uint8				numGradients;
 	swfGradientRecord_t gradientRecords[16];
 };
 struct swfFillStyle_t {
+	//! Initializes a new instance of the swfFillStyle_t structure with default values.
 	swfFillStyle_t();
 	uint8		   type;		// 0 = solid, 1 = gradient, 4 = bitmap
 	uint8		   subType;		// 0 = linear, 2 = radial, 3 = focal; 0 = repeat, 1 = clamp, 2 = near repeat, 3 = near clamp
@@ -166,6 +212,11 @@ struct swfFillStyle_t {
 	float		   focalPoint;	// if type = 1 and subType = 3
 	uint16		   bitmapID;	// if type = 4
 };
+
+/*!
+	\class idSWFShapeDrawFill
+	\brief The class represents a fill style for drawing shapes in a SWF-based rendering system.
+*/
 class idSWFShapeDrawFill
 {
 public:
@@ -174,6 +225,11 @@ public:
 	idList<idVec2, TAG_SWF> endVerts;
 	idList<uint16, TAG_SWF> indices;
 };
+
+/*!
+	\class idSWFShapeDrawLine
+	\brief A class for drawing lines in a SWF shape context.
+*/
 class idSWFShapeDrawLine
 {
 public:
@@ -182,9 +238,15 @@ public:
 	idList<idVec2, TAG_SWF> endVerts;
 	idList<uint16, TAG_SWF> indices;
 };
+
+/*!
+	\class idSWFShape
+	\brief Manages SWF shape data for rendering and animation.
+*/
 class idSWFShape
 {
 public:
+	//! Destroys an idSWFShape object and releases its associated resources.
 	~idSWFShape()
 	{
 		fillDraws.Clear();
@@ -195,9 +257,15 @@ public:
 	idList<idSWFShapeDrawFill, TAG_SWF> fillDraws;
 	idList<idSWFShapeDrawLine, TAG_SWF> lineDraws;
 };
+
+/*!
+	\class idSWFFontGlyph
+	\brief The idSWFFontGlyph class represents a glyph in a font, storing character code and advance information.
+*/
 class idSWFFontGlyph
 {
 public:
+	//! Initializes a new instance of the idSWFFontGlyph class with default values for code and advance.
 	idSWFFontGlyph();
 	uint16					code;
 	int16					advance;
@@ -205,9 +273,15 @@ public:
 	idList<idVec2, TAG_SWF> verts;
 	idList<uint16, TAG_SWF> indices;
 };
+
+/*!
+	\class idSWFFont
+	\brief A class representing a SWF font used for text rendering.
+*/
 class idSWFFont
 {
 public:
+	//! Initializes a new instance of the idSWFFont class with default values.
 	idSWFFont();
 	class idFont*					fontID;
 	int16							ascent;	 // unused except for read/write
@@ -215,9 +289,15 @@ public:
 	int16							leading; // unused except for read/write
 	idList<idSWFFontGlyph, TAG_SWF> glyphs;	 // not really used in BFG assets
 };
+
+/*!
+	\class idSWFTextRecord
+	\brief Represents a text record in a SWF file.
+*/
 class idSWFTextRecord
 {
 public:
+	//! Initializes a new instance of the idSWFTextRecord class with default values.
 	idSWFTextRecord();
 	uint16		   fontID;
 	swfColorRGBA_t color;
@@ -228,10 +308,16 @@ public:
 	uint8		   numGlyphs;
 };
 struct swfGlyphEntry_t {
+	//! Initializes a new instance of the swfGlyphEntry_t structure with default values.
 	swfGlyphEntry_t();
 	uint32 index;
 	int32  advance;
 };
+
+/*!
+	\class idSWFText
+	\brief A class for handling text rendering and manipulation within a SWF-based user interface system.
+*/
 class idSWFText
 {
 public:
@@ -259,9 +345,14 @@ enum swfTextRenderMode_t {
 	SWF_TEXT_RENDER_MODE_COUNT,
 };
 
+/*!
+	\class idSWFEditText
+	\brief The idSWFEditText class represents an editable text element within a SWF-based user interface system.
+*/
 class idSWFEditText
 {
 public:
+	//! Initializes a new instance of the idSWFEditText class with default values.
 	idSWFEditText();
 	swfRect_t		   bounds;
 	uint32			   flags;
@@ -278,10 +369,15 @@ public:
 	idStr			   initialText;
 };
 struct swfColorXform_t {
+	//! Initializes a new swfColorXform_t instance with default multiply and add color values.
 	swfColorXform_t();
 	idVec4			 mul;
 	idVec4			 add;
+
+	//! Multiplies this color transformation with another color transformation and returns the result.
 	swfColorXform_t	 Multiply( const swfColorXform_t& a ) const;
+
+	//! Assigns the contents of another swfColorXform_t instance to this instance
 	swfColorXform_t& operator=( const swfColorXform_t& a )
 	{
 		mul = a.mul;
@@ -290,6 +386,7 @@ struct swfColorXform_t {
 	}
 };
 struct swfDisplayEntry_t {
+	//! Initializes a new instance of swfDisplayEntry_t with default values.
 	swfDisplayEntry_t();
 	uint16					   characterID;
 	uint16					   depth;
@@ -305,6 +402,7 @@ struct swfDisplayEntry_t {
 };
 
 struct svgDisplayEntry_t {
+	//! Initializes a new instance of svgDisplayEntry_t with default values.
 	svgDisplayEntry_t();
 	uint16					characterID;
 	uint16					depth;
@@ -320,6 +418,7 @@ struct svgDisplayEntry_t {
 };
 
 struct swfRenderState_t {
+	//! Initializes a new instance of the swfRenderState_t structure with default values.
 	swfRenderState_t();
 	swfMatrix_t		  matrix;
 	swfColorXform_t	  cxf;

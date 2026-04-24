@@ -84,6 +84,7 @@ struct columnDef_t {
 };
 
 struct leaderboardDefinition_t {
+	//! Initializes a new leaderboard definition with default values.
 	leaderboardDefinition_t() :
 		id( -1 ),
 		numColumns( 0 ),
@@ -94,6 +95,21 @@ struct leaderboardDefinition_t {
 	{
 	}
 
+	/*!
+		\brief Initializes a leaderboard definition with the specified parameters
+
+		Constructs a leaderboard definition object by initializing all member variables with the provided parameters. The constructor also registers the newly created leaderboard definition in the
+	   global array of registered leaderboards. The registration process ensures that the leaderboard is tracked and can be retrieved later using its ID. The function asserts that the number of
+	   registered leaderboards does not exceed the maximum allowed limit.
+
+		\param id_ Unique identifier for the leaderboard
+		\param numColumns_ Number of columns in the leaderboard
+		\param columnDefs_ Pointer to an array of column definitions
+		\param rankOrder_ Sorting order for the leaderboard ranks
+		\param supportsAttachments_ Flag indicating if the leaderboard supports attachments
+		\param checkAgainstCurrent_ Flag indicating if the leaderboard should check against current values
+		\throws assertion failure if the number of registered leaderboards exceeds MAX_LEADERBOARDS
+	*/
 	leaderboardDefinition_t( int id_, int numColumns_, const columnDef_t* columnDefs_, rankOrder_t rankOrder_, bool supportsAttachments_, bool checkAgainstCurrent_ ) :
 		id( id_ ),
 		numColumns( numColumns_ ),
@@ -114,10 +130,13 @@ struct leaderboardDefinition_t {
 };
 
 struct column_t {
+	//! Constructs a column_t object with the specified 64-bit integer value.
 	column_t( int64 value_ ) :
 		value( value_ )
 	{
 	}
+
+	//! Initializes a new instance of the column_t struct with default values.
 	column_t() { }
 
 	int64 value;
@@ -146,7 +165,24 @@ public:
 };
 
 const leaderboardDefinition_t* Sys_FindLeaderboardDef( int id );
+
+/*!
+	\brief Creates and registers a new leaderboard definition with the specified parameters
+
+	This function allocates memory for a new leaderboard definition and initializes it with the provided configuration parameters. It attempts to reuse an existing slot in the registered leaderboards
+   array if one is available, otherwise it appends a new slot. The function handles the management of leaderboard resources and returns a pointer to the newly created definition.
+
+	\param id_ Unique identifier for the leaderboard
+	\param numColumns_ Number of columns in the leaderboard
+	\param columnDefs_ Array of column definitions for the leaderboard
+	\param rankOrder_ Sorting order for rankings in the leaderboard
+	\param supportsAttachments_ Flag indicating if the leaderboard supports attachment data
+	\param checkAgainstCurrent_ Flag indicating if scores should be checked against current values
+	\return Pointer to the newly created leaderboard definition, or NULL if allocation fails
+*/
 leaderboardDefinition_t*	   Sys_CreateLeaderboardDef( int id_, int numColumns_, const columnDef_t* columnDefs_, rankOrder_t rankOrder_, bool supportsAttachments_, bool checkAgainstCurrent_ );
+
+//! Destroys all leaderboard definitions by deleting their contents.
 void						   Sys_DestroyLeaderboardDefs();
 
 #endif // !__SYS_STATS_MISC_H__

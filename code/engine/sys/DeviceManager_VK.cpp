@@ -95,9 +95,20 @@ static bool optickStateChangedCallback( Optick::State::Type state )
 	#endif
 #endif
 
+/*!
+	\class DeviceManager_VK
+	\brief Manages Vulkan graphics device initialization, rendering context creation, and frame presentation for the graphics backend.
+
+	This class provides a complete interface for managing Vulkan graphics device resources, including device creation, swap chain management, and frame rendering operations. It handles the
+   initialization and teardown of Vulkan instance, physical device, logical device, and swap chain components. The class also manages back buffer indexing, frame begin/end operations, and
+   platform-specific presentation. It supports query operations for enabled Vulkan extensions and layers, and provides debug callback functionality for validation layer reporting. The implementation
+   extends the base DeviceManager interface to provide Vulkan-specific functionality while maintaining compatibility with the rendering pipeline.
+
+*/
 class DeviceManager_VK : public DeviceManager
 {
 public:
+	//! Returns the NVRHI device instance, using the validation layer if available.
 	[[nodiscard]] nvrhi::IDevice* GetDevice() const override
 	{
 		if( m_ValidationLayer ) {
@@ -107,20 +118,26 @@ public:
 		return m_NvrhiDevice;
 	}
 
+	//! Returns the graphics API type, which is Vulkan.
 	[[nodiscard]] nvrhi::GraphicsAPI GetGraphicsAPI() const override
 	{
 		return nvrhi::GraphicsAPI::VULKAN;
 	}
 
+	//! Returns the Vulkan graphics queue family index
 	int GetGraphicsFamilyIndex() const override
 	{
 		return m_GraphicsQueueFamily;
 	}
 
 protected:
+	//! Creates a Vulkan device and swap chain for the graphics rendering context.
 	bool CreateDeviceAndSwapChain() override;
+
+	//! Destroys the Vulkan device, swap chain, and associated resources.
 	void DestroyDeviceAndSwapChain() override;
 
+	//! Resizes the swap chain when the device is available.
 	void ResizeSwapChain() override
 	{
 		if( m_VulkanDevice ) {
@@ -129,10 +146,13 @@ protected:
 		}
 	}
 
+	//! Returns the current back buffer texture for rendering.
 	nvrhi::ITexture* GetCurrentBackBuffer() override
 	{
 		return m_SwapChainImages[m_SwapChainIndex].rhiHandle;
 	}
+
+	//! Returns the back buffer texture at the specified index, or null if the index is out of bounds.
 	nvrhi::ITexture* GetBackBuffer( uint32_t index ) override
 	{
 		if( index < m_SwapChainImages.size() ) {
@@ -140,39 +160,53 @@ protected:
 		}
 		return nullptr;
 	}
+
+	//! Returns the current swap chain index used for back buffer management in Vulkan rendering.
 	uint32_t GetCurrentBackBufferIndex() override
 	{
 		return m_SwapChainIndex;
 	}
+
+	//! Returns the number of back buffers available for rendering.
 	uint32_t GetBackBufferCount() override
 	{
 		return uint32_t( m_SwapChainImages.size() );
 	}
 
+	//! Begins a new frame for Vulkan rendering by acquiring the next image from the swap chain and updating GPU memory statistics
 	void		BeginFrame() override;
+
+	//! Completes the Vulkan rendering frame by signaling the presentation semaphore and handling platform-specific timing.
 	void		EndFrame() override;
+
+	//! Present the rendered frame to the display using Vulkan.
 	void		Present() override;
 
+	//! Returns a pointer to the null-terminated string that describes the graphics renderer.
 	const char* GetRendererString() const override
 	{
 		return m_RendererString.c_str();
 	}
 
+	//! Checks if a Vulkan instance extension is enabled by name.
 	bool IsVulkanInstanceExtensionEnabled( const char* extensionName ) const override
 	{
 		return enabledExtensions.instance.find( extensionName ) != enabledExtensions.instance.end();
 	}
 
+	//! Checks if a Vulkan device extension is enabled for the current device.
 	bool IsVulkanDeviceExtensionEnabled( const char* extensionName ) const override
 	{
 		return enabledExtensions.device.find( extensionName ) != enabledExtensions.device.end();
 	}
 
+	//! Checks if a specified Vulkan layer is enabled.
 	bool IsVulkanLayerEnabled( const char* layerName ) const override
 	{
 		return enabledExtensions.layers.find( layerName ) != enabledExtensions.layers.end();
 	}
 
+	//! Populates the provided vector with the names of all enabled Vulkan instance extensions.
 	void GetEnabledVulkanInstanceExtensions( std::vector<std::string>& extensions ) const override
 	{
 		for( const auto& ext : enabledExtensions.instance ) {
@@ -180,6 +214,7 @@ protected:
 		}
 	}
 
+	//! Populates the provided vector with the names of all enabled Vulkan device extensions.
 	void GetEnabledVulkanDeviceExtensions( std::vector<std::string>& extensions ) const override
 	{
 		for( const auto& ext : enabledExtensions.device ) {
@@ -187,6 +222,7 @@ protected:
 		}
 	}
 
+	//! Populates the provided vector with the names of all enabled Vulkan layers.
 	void GetEnabledVulkanLayers( std::vector<std::string>& layers ) const override
 	{
 		for( const auto& ext : enabledExtensions.layers ) {
@@ -195,13 +231,28 @@ protected:
 	}
 
 private:
+	//! Creates a Vulkan instance with the required extensions and layers
 	bool createInstance();
+
+	//! Creates a Vulkan window surface for the current platform.
 	bool createWindowSurface();
+
+	//! Installs a debug callback for Vulkan instance error reporting.
 	void installDebugCallback();
+
+	//! Picks an appropriate Vulkan physical device based on required extensions, features, and capabilities.
 	bool pickPhysicalDevice();
+
+	//! Finds suitable queue families for graphics, compute, transfer, and presentation operations
 	bool findQueueFamilies( vk::PhysicalDevice physicalDevice, vk::SurfaceKHR surface );
+
+	//! Creates a Vulkan device with the configured extensions and features.
 	bool createDevice();
+
+	//! Creates a Vulkan swap chain for the device manager.
 	bool createSwapChain();
+
+	//! Destroys the Vulkan swap chain and releases associated resources.
 	void destroySwapChain();
 
 	struct VulkanExtensionSet {
@@ -336,6 +387,23 @@ private:
 #endif
 
 private:
+	/*!
+		\brief Handles Vulkan debug messages by filtering and printing them based on their type and severity.
+
+		This function serves as a callback for Vulkan debug reporting. It filters out ignored validation message locations and prints the remaining messages to the console with appropriate prefixes
+	   indicating their severity level. The function checks the debug report flags to determine the message type and formats the output accordingly. It returns VK_FALSE to indicate that the validation
+	   layer should continue reporting.
+
+		\param flags Debug report flags indicating the type and severity of the message
+		\param objType Type of the Vulkan object associated with the message
+		\param obj Handle of the Vulkan object associated with the message
+		\param location Location in the code where the message originated
+		\param code Error or warning code associated with the message
+		\param layerPrefix Prefix identifying the layer that generated the message
+		\param msg The actual debug message text
+		\param userData Pointer to user data, expected to point to a DeviceManager_VK instance
+		\return VK_FALSE to indicate that the validation layer should continue reporting
+	*/
 	static VKAPI_ATTR vk::Bool32 VKAPI_CALL vulkanDebugCallback(
 		vk::DebugReportFlagsEXT flags, vk::DebugReportObjectTypeEXT objType, uint64_t obj, size_t location, int32_t code, const char* layerPrefix, const char* msg, void* userData )
 	{
@@ -365,6 +433,7 @@ private:
 	}
 };
 
+//! Converts a string set into a vector of C-style string pointers
 static std::vector<const char*> stringSetToVector( const std::unordered_set<std::string>& set )
 {
 	std::vector<const char*> ret;
@@ -375,6 +444,7 @@ static std::vector<const char*> stringSetToVector( const std::unordered_set<std:
 	return ret;
 }
 
+//! Converts an unordered_set to a vector containing the same elements
 template<typename T>
 static std::vector<T> setToVector( const std::unordered_set<T>& set )
 {
@@ -966,13 +1036,6 @@ bool DeviceManager_VK::createDevice()
 	return true;
 }
 
-/*
- * Vulkan Example base class
- *
- * Copyright (C) by Sascha Willems - www.saschawillems.de
- *
- * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
- */
 bool DeviceManager_VK::createWindowSurface()
 {
 	// Create the platform-specific surface

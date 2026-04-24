@@ -46,10 +46,15 @@ struct achievementDescription_t {
 	bool hidden;
 };
 
-/*
-================================================
-idAchievementSystem
-================================================
+/*!
+	\class idAchievementSystem
+	\brief Provides platform-specific achievement tracking and management functionality.
+
+	This class serves as an abstract interface for handling achievements within the application. It provides methods for initialization, user registration, achievement unlocking and locking, state
+   management, and synchronization with platform-specific services. The system supports multiple local users and maintains separate achievement states for each user. The interface includes methods for
+   retrieving achievement descriptions, managing achievement state caches, and performing system-wide operations such as reset and cancellation of pending actions. The class is designed to be
+   implemented by platform-specific subclasses that handle the actual achievement system integration.
+
 */
 class idAchievementSystem
 {
@@ -58,70 +63,63 @@ public:
 
 	virtual ~idAchievementSystem() { }
 
-	// PC and PS3 initialize for the system, not for a particular controller
+	//! Initializes the achievement system for the current platform
 	virtual void Init() { }
 
-	// PS3 has to wait to install the .TRP file until *after* we determine there's enough space, for consistent user messaging
+	//! Starts the achievement system.
 	virtual void Start() { }
 
-	// Do any necessary cleanup
+	//! Performs necessary cleanup operations for the achievement system.
 	virtual void Shutdown() { }
 
-	// Is the achievement system ready for requests
+	//! Checks if the achievement system is ready for requests.
 	virtual bool IsInitialized() { return false; }
 
-	// Add a local user to the system
+	//! Registers a local user with the achievement system
 	virtual void RegisterLocalUser( idLocalUser* user ) { }
 
-	// This is only necessary on the 360 right now, we need this because the 360 maintains a buffer of pending actions
-	// per user.  If a user is removed from the system, we need to inform the system so it can cancel it's in flight actions
-	// and allow the buffers to be reused
+	//! Removes a local user from the achievement system and cancels any pending actions associated with that user.
 	virtual void RemoveLocalUser( idLocalUser* user ) { }
 
 	// Unlocks the achievement, all platforms silently fail if the achievement has already been unlocked
 	virtual void AchievementUnlock( idLocalUser* user, const int achievementID ) = 0;
 
-	// Puts the achievement back to its original state, platform implementation may not allow this
+	//! Unlocks an achievement for the specified user.
 	virtual void AchievementLock( idLocalUser* user, const int achievementID ) { }
 
-	// Puts alls achievements back to their original state, platform implementation may not allow this
+	//! Resets all achievements to their original state for the specified user.
 	virtual void AchievementLockAll( idLocalUser* user, const int maxId ) { }
 
 	// Should be done every frame
 	virtual void Pump() = 0;
 
-	// Cancels all in-flight achievements for all users if NULL, resets the system so a Init() must be re-issued
+	//! Resets the achievement system state, optionally for a specific user
 	virtual void Reset( idLocalUser* user = NULL ) { }
 
-	// Cancels all in-flight achievements, not very useful on PC
+	//! Cancels all in-flight achievements for the specified user
 	virtual void Cancel( idLocalUser* user ) { }
 
-	// Retrieves textual information about a given achievement
-	// returns false if there was an error
+	//! Retrieves textual information about a given achievement and returns false if there was an error.
 	virtual bool GetAchievementDescription( idLocalUser* user, const int id, achievementDescription_t& data ) const { return false; }
 
-	// How much storage is required
-	// returns false if there was an error
+	//! Returns the storage size required for trophies and returns true on success.
 	virtual bool GetRequiredStorage( uint64& requiredSizeTrophiesBytes )
 	{
 		requiredSizeTrophiesBytes = 0;
 		return true;
 	}
 
-	// Retrieves state about of all achievements cached locally (may not be online yet)
-	// returns false if there was an error
+	//! Retrieves the cached local state of all achievements for a given user.
 	virtual bool GetAchievementState( idLocalUser* user, idArray<bool, idAchievementSystem::MAX_ACHIEVEMENTS>& achievements ) const { return false; }
 
-	// Sets state of all the achievements within list (for debug purposes only)
-	// returns false if there was an error
+	//! Sets the state of all achievements in the provided list for debug purposes and returns false if an error occurs.
 	virtual bool SetAchievementState( idLocalUser* user, idArray<bool, idAchievementSystem::MAX_ACHIEVEMENTS>& achievements ) { return false; }
 
-	// You want to get the server's cached achievement status into the user because the profile may not have been
-	// saved with the achievement bits after an achievement was granted.
+	//! Synchronizes achievement bits from the server cache to the user's profile
 	void		 SyncAchievementBits( idLocalUser* user );
 
 protected:
-	// Retrieves the index from the local user list
+	//! Retrieves the index of the specified local user in the user list.
 	int											  GetLocalUserIndex( idLocalUser* user ) const { return users.FindIndex( user ); }
 
 	idStaticList<idLocalUser*, MAX_LOCAL_PLAYERS> users;

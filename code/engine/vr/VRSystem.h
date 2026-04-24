@@ -40,9 +40,19 @@ VR
 
 enum class VrAPI : uint8_t { OPENVR, OPENXR };
 
+/*!
+	\class VRSystem
+	\brief A virtual interface for managing VR hardware and input systems.
+
+	This class provides a standardized interface for VR system functionality including initialization, device management, input handling, and rendering operations. It serves as an abstract base class
+   that allows different VR hardware implementations to be plugged in while maintaining a consistent API. The interface supports both seated and standing VR experiences, handles controller input and
+   haptic feedback, and manages the rendering pipeline for stereoscopic VR displays. All methods are virtual, making this class suitable for inheritance and polymorphic usage.
+
+*/
 class VRSystem
 {
 public:
+	//! Initializes the VR system
 	static void Init();
 
 	virtual ~VRSystem() { }

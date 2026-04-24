@@ -41,6 +41,15 @@ If you have questions concerning this license or the applicable additional terms
 
 class idFile;
 
+/*!
+	\class idUserInterface
+	\brief Interface for handling user interface elements and their interactions.
+
+	This class defines the abstract interface for user interface systems, providing methods for initialization, event handling, state management, and rendering. It serves as a foundation for
+   implementing interactive UI components that can respond to user input and update their visual representation. The interface supports various data types for state variables and provides mechanisms
+   for saving and loading UI state. The class is designed to be inherited by concrete UI implementations that provide specific behavior for different types of user interfaces.
+
+*/
 class idUserInterface
 {
 public:
@@ -110,6 +119,16 @@ public:
 	virtual float		  CursorY()						= 0;
 };
 
+/*!
+	\class idUserInterfaceManager
+	\brief Manages user interface elements and their lifecycle within the engine.
+
+	The idUserInterfaceManager serves as a central coordinator for user interface management, handling the creation, loading, and disposal of interface elements. It provides methods for initializing
+   and shutting down the UI system, preloading resources, and managing different types of UI elements such as regular guis and list guis. The manager supports operations like finding existing guis,
+   allocating new ones, and handling level loading scenarios. It acts as an abstract interface that allows for different implementations of UI management while maintaining a consistent API for the
+   rest of the engine. The manager is responsible for ensuring that UI elements are properly loaded, configured, and cleaned up during the application's lifecycle.
+
+*/
 class idUserInterfaceManager
 {
 public:

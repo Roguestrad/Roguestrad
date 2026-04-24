@@ -43,12 +43,8 @@ extern idCVar savegame_error;
 #ifndef _WIN32 // DG: unify win32 and posix savegames
 	#define ERROR_SUCCESS 0
 #endif
-// RB end
-/*
-========================
-void Sys_ExecuteSavegameCommandAsync
-========================
-*/
+
+//! Executes a savegame command asynchronously using the specified parameters.
 void Sys_ExecuteSavegameCommandAsyncImpl( idSaveLoadParms* savegameParms )
 {
 	assert( savegameParms != NULL );
@@ -62,11 +58,7 @@ void Sys_ExecuteSavegameCommandAsyncImpl( idSaveLoadParms* savegameParms )
 	session->GetSaveGameManager().GetSaveGameThread().SignalWork();
 }
 
-/*
-========================
-idLocalUser * GetLocalUserFromUserId
-========================
-*/
+//! Returns the local user from the save game parameters if valid, otherwise returns NULL
 idLocalUserWin* GetLocalUserFromSaveParms( const saveGameThreadArgs_t& data )
 {
 	if( ( data.saveLoadParms != NULL ) && ( data.saveLoadParms->inputDeviceId >= 0 ) ) {
@@ -82,11 +74,6 @@ idLocalUserWin* GetLocalUserFromSaveParms( const saveGameThreadArgs_t& data )
 	return NULL;
 }
 
-/*
-========================
-idSaveGameThread::SaveGame
-========================
-*/
 int idSaveGameThread::Save()
 {
 	idLocalUserWin* user = GetLocalUserFromSaveParms( data );
@@ -270,11 +257,6 @@ int idSaveGameThread::Save()
 	return ret;
 }
 
-/*
-========================
-idSessionLocal::LoadGame
-========================
-*/
 int idSaveGameThread::Load()
 {
 	idSaveLoadParms* callback	= data.saveLoadParms;
@@ -364,13 +346,6 @@ int idSaveGameThread::Load()
 	return ret;
 }
 
-/*
-========================
-idSaveGameThread::Delete
-
-This deletes a complete savegame directory
-========================
-*/
 int idSaveGameThread::Delete()
 {
 	idSaveLoadParms* callback	= data.saveLoadParms;
@@ -399,11 +374,6 @@ int idSaveGameThread::Delete()
 	return ret;
 }
 
-/*
-========================
-idSaveGameThread::Enumerate
-========================
-*/
 int idSaveGameThread::Enumerate()
 {
 	idSaveLoadParms* callback	= data.saveLoadParms;
@@ -486,11 +456,6 @@ int idSaveGameThread::Enumerate()
 	return ret;
 }
 
-/*
-========================
-idSaveGameThread::EnumerateFiles
-========================
-*/
 int idSaveGameThread::EnumerateFiles()
 {
 	idSaveLoadParms* callback = data.saveLoadParms;
@@ -554,11 +519,6 @@ int idSaveGameThread::EnumerateFiles()
 	return ret;
 }
 
-/*
-========================
-idSaveGameThread::DeleteFiles
-========================
-*/
 int idSaveGameThread::DeleteFiles()
 {
 	idSaveLoadParms* callback = data.saveLoadParms;
@@ -607,13 +567,6 @@ int idSaveGameThread::DeleteFiles()
 	return ret;
 }
 
-/*
-========================
-idSaveGameThread::DeleteAll
-
-This deletes all savegame directories
-========================
-*/
 int idSaveGameThread::DeleteAll()
 {
 	idSaveLoadParms* callback	= data.saveLoadParms;
@@ -644,11 +597,6 @@ int idSaveGameThread::DeleteAll()
 	return ret;
 }
 
-/*
-========================
-idSaveGameThread::Run
-========================
-*/
 int idSaveGameThread::Run()
 {
 	int ret = ERROR_SUCCESS;
@@ -704,11 +652,6 @@ int idSaveGameThread::Run()
 	return ret;
 }
 
-/*
-========================
-Sys_SaveGameCheck
-========================
-*/
 void Sys_SaveGameCheck( bool& exists, bool& autosaveExists )
 {
 	exists		   = false;

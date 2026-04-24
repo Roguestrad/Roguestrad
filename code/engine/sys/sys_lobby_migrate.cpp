@@ -34,11 +34,6 @@ idCVar net_migration_debug( "net_migration_debug", "0", CVAR_BOOL, "debug" );
 idCVar net_migration_disable( "net_migration_disable", "0", CVAR_BOOL, "debug" );
 idCVar net_migration_forcePeerAsHost( "net_migration_forcePeerAsHost", "-1", CVAR_INTEGER, "When set to >-1, it forces that peer number to be the new host during migration" );
 
-/*
-========================
-idLobby::IsBetterHost
-========================
-*/
 bool   idLobby::IsBetterHost( int ping1, lobbyUserID_t userId1, int ping2, lobbyUserID_t userId2 )
 {
 	if( lobbyType == TYPE_PARTY ) {
@@ -56,11 +51,6 @@ bool   idLobby::IsBetterHost( int ping1, lobbyUserID_t userId1, int ping2, lobby
 	return false;
 }
 
-/*
-========================
-idLobby::FindMigrationInviteIndex
-========================
-*/
 int idLobby::FindMigrationInviteIndex( lobbyAddress_t& address )
 {
 	if( migrationInfo.state == MIGRATE_NONE ) {
@@ -76,11 +66,6 @@ int idLobby::FindMigrationInviteIndex( lobbyAddress_t& address )
 	return -1;
 }
 
-/*
-========================
-idLobby::UpdateHostMigration
-========================
-*/
 void idLobby::UpdateHostMigration()
 {
 	int time = Sys_Milliseconds();
@@ -149,11 +134,6 @@ void idLobby::UpdateHostMigration()
 	}
 }
 
-/*
-========================
-idLobby::BuildMigrationInviteList
-========================
-*/
 void idLobby::BuildMigrationInviteList( bool inviteOldHost )
 {
 	migrationInfo.invites.Clear();
@@ -198,11 +178,6 @@ void idLobby::BuildMigrationInviteList( bool inviteOldHost )
 	}
 }
 
-/*
-========================
-idLobby::PickNewHost
-========================
-*/
 void idLobby::PickNewHost( bool forceMe, bool inviteOldHost )
 {
 	if( IsHost() ) {
@@ -213,11 +188,6 @@ void idLobby::PickNewHost( bool forceMe, bool inviteOldHost )
 	sessionCB->PrePickNewHost( *this, forceMe, inviteOldHost );
 }
 
-/*
-========================
-idLobby::PickNewHostInternal
-========================
-*/
 void idLobby::PickNewHostInternal( bool forceMe, bool inviteOldHost )
 {
 	if( migrationInfo.state == MIGRATE_PICKING_HOST ) {
@@ -292,11 +262,6 @@ void idLobby::PickNewHostInternal( bool forceMe, bool inviteOldHost )
 	}
 }
 
-/*
-========================
-idLobby::BecomeHost
-========================
-*/
 void idLobby::BecomeHost()
 {
 	if( !verify( migrationInfo.state == MIGRATE_PICKING_HOST ) ) {
@@ -338,12 +303,6 @@ void idLobby::BecomeHost()
 	SetState( STATE_CREATE_LOBBY_BACKEND );
 }
 
-/*
-========================
-idLobby::EndMigration
-This gets called when we are done migrating, and invites will no longer be sent out.
-========================
-*/
 void idLobby::EndMigration()
 {
 	if( migrationInfo.state == MIGRATE_NONE ) {
@@ -361,13 +320,6 @@ void idLobby::EndMigration()
 	migrationInfo.invites.Clear();
 }
 
-/*
-========================
-idLobby::ResetAllMigrationState
-This will reset all state related to host migration. Should be called
-at match end so our next game is not treated as a migrated game
-========================
-*/
 void idLobby::ResetAllMigrationState()
 {
 	migrationInfo.state = MIGRATE_NONE;
@@ -381,12 +333,6 @@ void idLobby::ResetAllMigrationState()
 	common->Dialog().ClearDialog( GDM_MIGRATING_RELAUNCHING );
 }
 
-/*
-========================
-idLobby::GetMigrationGameData
-This will setup the passed in idBitMsg to either read or write from the global migration game data buffer
-========================
-*/
 bool idLobby::GetMigrationGameData( idBitMsg& msg, bool reading )
 {
 	if( reading ) {
@@ -404,12 +350,6 @@ bool idLobby::GetMigrationGameData( idBitMsg& msg, bool reading )
 	return true;
 }
 
-/*
-========================
-idLobby::GetMigrationGameDataUser
-This will setup the passed in idBitMsg to either read or write from the user's migration game data buffer
-========================
-*/
 bool idLobby::GetMigrationGameDataUser( lobbyUserID_t lobbyUserID, idBitMsg& msg, bool reading )
 {
 	const int userNum = GetLobbyUserIndexByID( lobbyUserID );
@@ -445,11 +385,6 @@ bool idLobby::GetMigrationGameDataUser( lobbyUserID_t lobbyUserID, idBitMsg& msg
 	return false;
 }
 
-/*
-========================
-idLobby::HandleMigrationGameData
-========================
-*/
 void idLobby::HandleMigrationGameData( idBitMsg& msg )
 {
 	// Receives game migration data from the server. Just save off the raw data. If we ever become host we'll let the game code read
@@ -481,11 +416,6 @@ void idLobby::HandleMigrationGameData( idBitMsg& msg )
 	}
 }
 
-/*
-========================
-idLobby::SendMigrationGameData
-========================
-*/
 void idLobby::SendMigrationGameData()
 {
 	if( net_migration_disable.GetBool() ) {

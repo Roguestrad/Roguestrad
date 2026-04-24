@@ -40,19 +40,6 @@ void		  OutputDetailList( const saveGameDetailsList_t& savegameList );
 
 #pragma region PROCESSORS
 
-/*
-================================================================================================
-
-idSaveGameProcessorLoadFiles
-
-================================================================================================
-*/
-
-/*
-========================
-idSaveGameProcessorLoadFiles::InitLoadFiles
-========================
-*/
 bool idSaveGameProcessorLoadFiles::InitLoadFiles( const char* folder_, const saveFileEntryList_t& files, idSaveGameManager::packageType_t type )
 {
 	if( !idSaveGameProcessor::Init() ) {
@@ -70,11 +57,6 @@ bool idSaveGameProcessorLoadFiles::InitLoadFiles( const char* folder_, const sav
 	return true;
 }
 
-/*
-========================
-idSaveGameProcessorLoadFiles::Process
-========================
-*/
 bool idSaveGameProcessorLoadFiles::Process()
 {
 	// Platform-specific impl
@@ -84,19 +66,6 @@ bool idSaveGameProcessorLoadFiles::Process()
 	return false;
 }
 
-/*
-================================================================================================
-
-idSaveGameProcessorDelete
-
-================================================================================================
-*/
-
-/*
-========================
-idSaveGameProcessorDelete::Init
-========================
-*/
 bool idSaveGameProcessorDelete::InitDelete( const char* folder_, idSaveGameManager::packageType_t type )
 {
 	if( !idSaveGameProcessor::Init() ) {
@@ -110,11 +79,6 @@ bool idSaveGameProcessorDelete::InitDelete( const char* folder_, idSaveGameManag
 	return true;
 }
 
-/*
-========================
-idSaveGameProcessorDelete::Process
-========================
-*/
 bool idSaveGameProcessorDelete::Process()
 {
 	// Platform-specific impl
@@ -125,19 +89,6 @@ bool idSaveGameProcessorDelete::Process()
 	return false;
 }
 
-/*
-================================================================================================
-
-idSaveGameProcessorSaveFiles
-
-================================================================================================
-*/
-
-/*
-========================
-idSaveGameProcessorSaveFiles::InitSave
-========================
-*/
 bool idSaveGameProcessorSaveFiles::InitSave( const char* folder, const saveFileEntryList_t& files, const idSaveGameDetails& descriptionForPS3, idSaveGameManager::packageType_t type )
 {
 	if( !idSaveGameProcessor::Init() ) {
@@ -162,11 +113,6 @@ bool idSaveGameProcessorSaveFiles::InitSave( const char* folder, const saveFileE
 	return true;
 }
 
-/*
-========================
-idSaveGameProcessorSaveFiles::Process
-========================
-*/
 bool idSaveGameProcessorSaveFiles::Process()
 {
 	// Platform-specific implementation
@@ -177,17 +123,6 @@ bool idSaveGameProcessorSaveFiles::Process()
 	return false;
 }
 
-/*
-================================================================================================
-idSaveGameProcessorEnumerateGames
-================================================================================================
-*/
-
-/*
-========================
-idSaveGameProcessorEnumerateGames::Process
-========================
-*/
 bool idSaveGameProcessorEnumerateGames::Process()
 {
 	parms.mode = SAVEGAME_MBF_ENUMERATE | SAVEGAME_MBF_READ_DETAILS;
@@ -202,11 +137,6 @@ bool idSaveGameProcessorEnumerateGames::Process()
 
 #pragma endregion
 
-/*
-========================
-idSessionLocal::SaveGameSync
-========================
-*/
 saveGameHandle_t idSessionLocal::SaveGameSync( const char* name, const saveFileEntryList_t& files, const idSaveGameDetails& description )
 {
 	saveGameHandle_t	handle = 0;
@@ -236,11 +166,6 @@ saveGameHandle_t idSessionLocal::SaveGameSync( const char* name, const saveFileE
 	return handle;
 }
 
-/*
-========================
-idSessionLocal::SaveGameAsync
-========================
-*/
 saveGameHandle_t idSessionLocal::SaveGameAsync( const char* name, const saveFileEntryList_t& files, const idSaveGameDetails& description )
 {
 	saveGameHandle_t handle = 0;
@@ -285,11 +210,6 @@ saveGameHandle_t idSessionLocal::SaveGameAsync( const char* name, const saveFile
 	return handle;
 }
 
-/*
-========================
-idSessionLocal::OnSaveCompleted
-========================
-*/
 void idSessionLocal::OnSaveCompleted( idSaveLoadParms* parms )
 {
 	idLocalUser* master = session->GetSignInManager().GetMasterLocalUser();
@@ -326,13 +246,6 @@ void idSessionLocal::OnSaveCompleted( idSaveLoadParms* parms )
 	common->OnSaveCompleted( *parms );
 }
 
-/*
-========================
-idSessionLocal::LoadGameSync
-
-We still want to use the savegame manager because we could have file system operations in flight and need to
-========================
-*/
 saveGameHandle_t idSessionLocal::LoadGameSync( const char* name, saveFileEntryList_t& files )
 {
 	idSaveLoadParms& parms			  = processorLoadFiles->GetParmsNonConst();
@@ -422,20 +335,10 @@ saveGameHandle_t idSessionLocal::LoadGameSync( const char* name, saveFileEntryLi
 	return handle;
 }
 
-/*
-========================
-idSessionLocal::OnLoadCompleted
-========================
-*/
 void idSessionLocal::OnLoadCompleted( idSaveLoadParms* parms )
 {
 }
 
-/*
-========================
-idSessionLocal::EnumerateSaveGamesSync
-========================
-*/
 saveGameHandle_t idSessionLocal::EnumerateSaveGamesSync()
 {
 	saveGameHandle_t handle = 0;
@@ -478,11 +381,6 @@ saveGameHandle_t idSessionLocal::EnumerateSaveGamesSync()
 	return handle;
 }
 
-/*
-========================
-idSessionLocal::EnumerateSaveGamesAsync
-========================
-*/
 saveGameHandle_t idSessionLocal::EnumerateSaveGamesAsync()
 {
 	saveGameHandle_t handle = 0;
@@ -508,16 +406,12 @@ saveGameHandle_t idSessionLocal::EnumerateSaveGamesAsync()
 	return handle;
 }
 
+//! Compares two save game details based on their dates in descending order.
 int idSort_EnumeratedSavegames( const idSaveGameDetails* a, const idSaveGameDetails* b )
 {
 	return b->date - a->date;
 }
 
-/*
-========================
-idSessionLocal::OnEnumerationCompleted
-========================
-*/
 void idSessionLocal::OnEnumerationCompleted( idSaveLoadParms* parms )
 {
 	// idTech4 idList::sort is just a qsort wrapper, which doesn't deal with
@@ -550,11 +444,6 @@ void idSessionLocal::OnEnumerationCompleted( idSaveLoadParms* parms )
 	common->OnEnumerationCompleted( *parms );
 }
 
-/*
-========================
-idSessionLocal::DeleteSaveGameSync
-========================
-*/
 saveGameHandle_t idSessionLocal::DeleteSaveGameSync( const char* name )
 {
 	saveGameHandle_t handle = 0;
@@ -594,11 +483,6 @@ saveGameHandle_t idSessionLocal::DeleteSaveGameSync( const char* name )
 	return handle;
 }
 
-/*
-========================
-idSessionLocal::DeleteSaveGameAsync
-========================
-*/
 saveGameHandle_t idSessionLocal::DeleteSaveGameAsync( const char* name )
 {
 	saveGameHandle_t handle = 0;
@@ -621,11 +505,6 @@ saveGameHandle_t idSessionLocal::DeleteSaveGameAsync( const char* name )
 	return handle;
 }
 
-/*
-========================
-idSessionLocal::OnDeleteCompleted
-========================
-*/
 void idSessionLocal::OnDeleteCompleted( idSaveLoadParms* parms )
 {
 	common->Dialog().ShowSaveIndicator( false );
@@ -639,42 +518,22 @@ void idSessionLocal::OnDeleteCompleted( idSaveLoadParms* parms )
 	common->OnDeleteCompleted( *parms );
 }
 
-/*
-========================
-idSessionLocal::IsEnumerating
-========================
-*/
 bool idSessionLocal::IsEnumerating() const
 {
 	return !session->IsSaveGameCompletedFromHandle( processorEnumerate->GetHandle() );
 }
 
-/*
-========================
-idSessionLocal::GetEnumerationHandle
-========================
-*/
 saveGameHandle_t idSessionLocal::GetEnumerationHandle() const
 {
 	return processorEnumerate->GetHandle();
 }
 
-/*
-========================
-idSessionLocal::IsDLCAvailable
-========================
-*/
 bool idSessionLocal::IsDLCAvailable( const char* mapName )
 {
 	bool hasContentPackage = true;
 	return hasContentPackage;
 }
 
-/*
-========================
-idSessionLocal::LoadGameCheckDiscNumber
-========================
-*/
 bool idSessionLocal::LoadGameCheckDiscNumber( idSaveLoadParms& parms )
 {
 #if 0
@@ -728,11 +587,6 @@ bool idSessionLocal::LoadGameCheckDiscNumber( idSaveLoadParms& parms )
 	return ( parms.GetError() == SAVEGAME_E_NONE );
 }
 
-/*
-========================
-idSessionLocal::LoadGameCheckDescriptionFile
-========================
-*/
 bool idSessionLocal::LoadGameCheckDescriptionFile( idSaveLoadParms& parms )
 {
 	idFile_SaveGame** detailsFile = FindFromGenericPtr( parms.files, SAVEGAME_DETAILS_FILENAME );
@@ -763,6 +617,8 @@ COMMANDS
 
 ================================================================================================
 */
+
+//! Deletes all savegames without confirmation
 CONSOLE_COMMAND( testSavegameDeleteAll, "delete all savegames without confirmation", 0 )
 {
 	if( session == NULL ) {
@@ -782,6 +638,7 @@ CONSOLE_COMMAND( testSavegameDeleteAll, "delete all savegames without confirmati
 	idLib::Printf( "Error = 0x%08X, %s\n", parms.GetError(), GetSaveGameErrorString( parms.GetError() ).c_str() );
 }
 
+//! Deletes a savegame without confirmation.
 CONSOLE_COMMAND( testSavegameDelete, "deletes a savegames without confirmation", 0 )
 {
 	if( session == NULL ) {
@@ -812,6 +669,8 @@ CONSOLE_COMMAND( testSavegameEnumerateFiles, "enumerates all the files in a fold
 	}
 
 	idStr folder = session->GetCurrentSaveSlot();
+
+	//! Checks if there are more than one command line arguments provided
 	if( args.Argc() > 1 ) {
 		folder = args.Argv( 1 );
 	}
@@ -828,16 +687,13 @@ CONSOLE_COMMAND( testSavegameEnumerateFiles, "enumerates all the files in a fold
 	Sys_ExecuteSavegameCommandAsync( &parms );
 	parms.callbackSignal.Wait();
 
+	//! Iterates through the files in parms and prints each file's name with a yellow color prefix
 	for( int i = 0; i < parms.files.Num(); i++ ) {
 		idLib::Printf( S_COLOR_YELLOW "\t%d: %s\n" S_COLOR_DEFAULT, i, parms.files[i]->GetName() );
 	}
 }
 
-/*
-========================
-OutputDetailList
-========================
-*/
+//! Outputs detailed information about each savegame in the provided list.
 void OutputDetailList( const saveGameDetailsList_t& savegameList )
 {
 	for( int i = 0; i < savegameList.Num(); ++i ) {
@@ -850,6 +706,7 @@ void OutputDetailList( const saveGameDetailsList_t& savegameList )
 	}
 }
 
+//! Enumerates and displays available savegames in the game session
 CONSOLE_COMMAND( testSavegameEnumerate, "enumerates the savegames available", 0 )
 {
 	if( session == NULL ) {
@@ -868,6 +725,7 @@ CONSOLE_COMMAND( testSavegameEnumerate, "enumerates the savegames available", 0 
 	OutputDetailList( gameList );
 }
 
+//! Tests the existence of a savegame and autosave.
 CONSOLE_COMMAND( testSaveGameCheck, "tests existence of savegame", 0 )
 {
 	bool exists;
@@ -876,6 +734,14 @@ CONSOLE_COMMAND( testSaveGameCheck, "tests existence of savegame", 0 )
 	idLib::Printf( "Savegame check: exists = %d, autosaveExists = %d\n", exists, autosaveExists );
 }
 
+/*!
+	\brief Outputs the list of savegames already enumerated by the save manager
+
+	This console command prints the list of savegames that have already been enumerated by the save manager. It does not trigger a new enumeration of savegames. The command requires a valid session to
+   function properly. If no valid session exists, it prints an error message. The output is formatted using the OutputDetailList function which displays the details of each savegame in the enumerated
+   list.
+
+*/
 CONSOLE_COMMAND( testSaveGameOutputEnumeratedSavegames, "outputs the list of savegames already enumerated, this does not re-enumerate", 0 )
 {
 	if( session == NULL ) {
@@ -887,6 +753,7 @@ CONSOLE_COMMAND( testSaveGameOutputEnumeratedSavegames, "outputs the list of sav
 	OutputDetailList( savegames );
 }
 
+//! Returns the current save slot being used by the game session.
 CONSOLE_COMMAND( testSavegameGetCurrentSlot, "returns the current slot in use", 0 )
 {
 	if( session == NULL ) {
@@ -897,6 +764,7 @@ CONSOLE_COMMAND( testSavegameGetCurrentSlot, "returns the current slot in use", 
 	idLib::Printf( "Current slot: %s\n", session->GetCurrentSaveSlot() );
 }
 
+//! Sets the current savegame slot for testing purposes.
 CONSOLE_COMMAND( testSavegameSetCurrentSlot, "returns the current slot in use", 0 )
 {
 	if( session == NULL ) {
@@ -915,6 +783,7 @@ CONSOLE_COMMAND( testSavegameSetCurrentSlot, "returns the current slot in use", 
 	idLib::Printf( "Current slot: %s\n", session->GetCurrentSaveSlot() );
 }
 
+//! Sets a specific bit in the savegame_error integer value.
 CONSOLE_COMMAND( savegameSetErrorBit, "Allows you to set savegame_error by bit instead of integer value", 0 )
 {
 	int bit = atoi( args.Argv( 1 ) );

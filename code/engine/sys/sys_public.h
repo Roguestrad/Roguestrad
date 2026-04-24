@@ -424,15 +424,35 @@ struct sysEvent_t {
 	void*		   evPtr;		// this must be manually freed if not NULL
 
 	int			   inputDevice;
+
+	//! Checks if the system event is a key event.
 	bool		   IsKeyEvent() const { return evType == SE_KEY; }
+
+	//! Returns true if the system event is a mouse event.
 	bool		   IsMouseEvent() const { return evType == SE_MOUSE; }
+
+	//! Returns true if the system event is a mouse absolute event.
 	bool		   IsMouseAbsoluteEvent() const { return evType == SE_MOUSE_ABSOLUTE; }
+
+	//! Returns true if the system event is a character event.
 	bool		   IsCharEvent() const { return evType == SE_CHAR; }
+
+	//! Returns true if the system event is a joystick event.
 	bool		   IsJoystickEvent() const { return evType == SE_JOYSTICK; }
+
+	//! Returns true if the system event represents a key press.
 	bool		   IsKeyDown() const { return evValue2 != 0; }
+
+	//! Returns true if the key is in the up state.
 	bool		   IsKeyUp() const { return evValue2 == 0; }
+
+	//! Returns the key value stored in the system event
 	keyNum_t	   GetKey() const { return static_cast<keyNum_t>( evValue ); }
+
+	//! Returns the X coordinate value stored in the system event.
 	int			   GetXCoord() const { return evValue; }
+
+	//! Returns the Y coordinate value stored in the system event.
 	int			   GetYCoord() const { return evValue2; }
 };
 
@@ -447,24 +467,51 @@ struct sysMemoryStats_t {
 	int availExtendedVirtual;
 };
 
-// typedef unsigned long address_t; // DG: this isn't even used
-
+//! Initializes the system components.
 void		Sys_Init();
+
+//! Shuts down the system by clearing base and save paths and performing POSIX shutdown.
 void		Sys_Shutdown();
+
+//! Outputs an error message and terminates the application.
 void		Sys_Error( const char* error, ... );
+
+//! Returns the command line used to start the application.
 const char* Sys_GetCmdLine();
-// DG: Sys_ReLaunch() doesn't need any options (and the old way is painful for POSIX systems)
+
+//! Restarts the application in a new process with additional command-line arguments.
 void		Sys_ReLaunch();
-// DG end
+
+/*!
+	\brief Launches an external process using the provided path and arguments.
+
+	This function creates a new process by using the Windows API CreateProcess function. It constructs a command line string by combining the executable path with the provided arguments. If the
+   process creation fails, an error message is logged and the function returns. The function also appends a quit command to the command system to terminate the current process.
+
+	\param path The path to the executable to launch.
+	\param args Command line arguments to pass to the launched process.
+	\param launchData Additional data to be used in launching the process.
+	\param launchDataSize Size of the launch data in bytes.
+	\throws idLib::Error when the process cannot be started.
+*/
 void		Sys_Launch( const char* path, idCmdArgs& args, void* launchData, unsigned int launchDataSize );
+
+//! Sets the system language from the default language configuration.
 void		Sys_SetLanguageFromSystem();
+
+//! Returns the default language string based on available language files and system settings.
 const char* Sys_DefaultLanguage();
+
+//! Exits the application with a successful status code.
 void		Sys_Quit();
 
+//! Returns true if there is a copy of D3 running already
 bool		Sys_AlreadyRunning();
 
-// note that this isn't journaled...
+//! Retrieves the current text from the system clipboard and returns a copy of it
 char*		Sys_GetClipboardData();
+
+//! Sets the clipboard contents to the provided string.
 void		Sys_SetClipboardData( const char* string );
 
 // will go to the various text consoles
@@ -473,116 +520,146 @@ void		Sys_Printf( VERIFY_FORMAT_STRING const char* msg, ... );
 
 // guaranteed to be thread-safe
 void		Sys_DebugPrintf( VERIFY_FORMAT_STRING const char* fmt, ... );
+
+//! Outputs a formatted debug message to the console or Android log.
 void		Sys_DebugVPrintf( const char* fmt, va_list arg );
 
 // a decent minimum sleep time to avoid going below the process scheduler speeds
 #define SYS_MINSLEEP 20
 
-// allow game to yield CPU time
-// NOTE: due to SYS_MINSLEEP this is very bad portability karma, and should be completely removed
+//! Pauses execution for the specified number of milliseconds
 void		Sys_Sleep( int msec );
 
-// Sys_Milliseconds should only be used for profiling purposes,
-// any game related timing information should come from event timestamps
+//! Returns the number of milliseconds elapsed since the system started.
 int			Sys_Milliseconds();
 uint64		Sys_Microseconds();
 
-// for accurate performance testing
+//! Retrieves the current value of the CPU's performance counter for accurate timing measurements.
 double		Sys_GetClockTicks();
+
+//! Returns the measured CPU frequency in ticks per second.
 double		Sys_ClockTicksPerSecond();
 
-// returns a selection of the CPUID_* flags
+//! Returns a selection of the CPUID flags indicating the generic processor type
 cpuid_t		Sys_GetProcessorId();
+
+//! Returns a string identifier for the processor architecture.
 const char* Sys_GetProcessorString();
 
-// returns true if the FPU stack is empty
+//! Returns true if the FPU stack is empty.
 bool		Sys_FPU_StackIsEmpty();
 
-// empties the FPU stack
+//! Empties the FPU stack.
 void		Sys_FPU_ClearStack();
 
-// returns the FPU state as a string
+//! Returns a string representation of the current FPU state.
 const char* Sys_FPU_GetState();
 
-// enables the given FPU exceptions
+//! Enables the specified FPU exceptions.
 void		Sys_FPU_EnableExceptions( int exceptions );
 
-// sets the FPU precision
+//! Sets the FPU precision to the specified value.
 void		Sys_FPU_SetPrecision( int precision );
 
-// sets the FPU rounding mode
+//! Sets the FPU rounding mode.
 void		Sys_FPU_SetRounding( int rounding );
 
-// sets Flush-To-Zero mode (only available when CPUID_FTZ is set)
+//! Sets the Flush-To-Zero mode for the FPU based on the enable parameter.
 void		Sys_FPU_SetFTZ( bool enable );
 
-// sets Denormals-Are-Zero mode (only available when CPUID_DAZ is set)
+//! Sets the Denormals-Are-Zero mode for the FPU based on the enable parameter
 void		Sys_FPU_SetDAZ( bool enable );
 
-// returns amount of drive space in path
+//! Returns the amount of free space in megabytes on the drive containing the specified path
 int			Sys_GetDriveFreeSpace( const char* path );
 
-// returns amount of drive space in path in bytes
+//! Returns the amount of free space in bytes available on the drive containing the specified path
 int64		Sys_GetDriveFreeSpaceInBytes( const char* path );
 
-// returns memory stats
+//! Returns memory statistics.
 void		Sys_GetCurrentMemoryStatus( sysMemoryStats_t& stats );
+
+//! Returns placeholder information about executable launch memory status.
 void		Sys_GetExeLaunchMemoryStatus( sysMemoryStats_t& stats );
 
-// lock and unlock memory
+//! Locks a specified block of memory in place
 bool		Sys_LockMemory( void* ptr, int bytes );
+
+//! Unlocks a previously locked memory region.
 bool		Sys_UnlockMemory( void* ptr, int bytes );
 
-// set amount of physical work memory
+//! Sets the amount of physical work memory to be used by the system.
 void		Sys_SetPhysicalWorkMemory( int minBytes, int maxBytes );
 
-// DLL loading, the path should be a fully qualified OS path to the DLL file to be loaded
-
-// RB: 64 bit fixes, changed int to intptr_t
+//! Loads a dynamic link library from the specified file path and returns a handle to it
 intptr_t	Sys_DLL_Load( const char* dllName );
-void*		Sys_DLL_GetProcAddress( intptr_t dllHandle, const char* procName );
-void		Sys_DLL_Unload( intptr_t dllHandle );
-// RB end
 
-// event generation
+//! Retrieves the address of a symbol from a dynamically loaded library.
+void*		Sys_DLL_GetProcAddress( intptr_t dllHandle, const char* procName );
+
+//! Unloads a dynamic library using the provided handle.
+void		Sys_DLL_Unload( intptr_t dllHandle );
+
+//! Generates system events including console input and SDL events.
 void		Sys_GenerateEvents();
+
+//! Retrieves the next system event from the event queue.
 sysEvent_t	Sys_GetEvent();
+
+//! Clears all pending system events from the event queue.
 void		Sys_ClearEvents();
 
-// input is tied to windows, so it needs to be started up and shut down whenever
-// the main window is recreated
+//! Initializes the input system including keyboard, mouse, and game controller support.
 void		Sys_InitInput();
+
+//! Shuts down the input system by clearing all input polls and closing the SDL joystick if opened.
 void		Sys_ShutdownInput();
 
-// keyboard input polling
+//! Returns the number of keyboard input events that have been polled.
 int			Sys_PollKeyboardInputEvents();
+
+//! Retrieves a keyboard input event from the polling buffer.
 int			Sys_ReturnKeyboardInputEvent( const int n, int& ch, bool& state );
+
+//! Ends keyboard input event processing by clearing the keyboard polls array.
 void		Sys_EndKeyboardInputEvents();
 
 // DG: currently this is only used by idKeyInput::LocalizedKeyName() for !windows
 #ifndef _WIN32
-// return a human readable name for the key in the current keyboard layout (keynum is a directinput scancode)
+
+//! Returns a human readable name for a key using the current keyboard layout
 const char* Sys_GetKeyName( keyNum_t keynum );
 #endif
 // DG end
 
 // mouse input polling
 static const int MAX_MOUSE_EVENTS = 256;
+
+//! Retrieves and clears the current mouse input events, returning the number of events processed.
 int				 Sys_PollMouseInputEvents( int mouseEvents[MAX_MOUSE_EVENTS][2] );
 
-// joystick input polling
+//! Sets the rumble intensity for a specified input device.
 void			 Sys_SetRumble( int device, int low, int hi );
+
+//! Returns the number of joystick input events for the specified device.
 int				 Sys_PollJoystickInputEvents( int deviceNum );
+
+//! Returns joystick input event data for the specified index
 int				 Sys_ReturnJoystickInputEvent( const int n, int& action, int& value );
+
+//! Clears the joystick event container after all events have been processed.
 void			 Sys_EndJoystickInputEvents();
 
-// when the console is down, or the game is about to perform a lengthy
-// operation like map loading, the system can release the mouse cursor
-// when in windowed mode
+//! Grabs or releases the mouse cursor based on the grabIt parameter.
 void			 Sys_GrabMouseCursor( bool grabIt );
 
+//! Shows or hides the application window based on the specified boolean value.
 void			 Sys_ShowWindow( bool show );
+
+//! Checks whether the application window is visible.
 bool			 Sys_IsWindowVisible();
+
+//! Displays or hides the console window based on the visibility level and quit behavior.
 void			 Sys_ShowConsole( int visLevel, bool quitOnClose );
 
 // This really isn't the right place to have this, but since this is the 'top level' include
@@ -594,17 +671,23 @@ typedef HANDLE idFileHandle;
 #else
 typedef FILE* idFileHandle;
 #endif
-// RB end
 
+//! Returns the last modification time of a file handle.
 ID_TIME_T	Sys_FileTimeStamp( idFileHandle fp );
-// NOTE: do we need to guarantee the same output on all platforms?
+
+//! Converts a timestamp to a formatted date and time string based on the system language setting.
 const char* Sys_TimeStampToStr( ID_TIME_T timeStamp );
+
+//! Converts a time duration in seconds into a formatted string representation.
 const char* Sys_SecToStr( int sec );
 
+//! Returns the default base path for the application by checking multiple potential locations.
 const char* Sys_DefaultBasePath();
+
+//! Returns the default save path for the application.
 const char* Sys_DefaultSavePath();
 
-// know early if we are performing a fatal error shutdown so the error message doesn't get lost
+//! Sets a fatal error message that will be preserved during shutdown.
 void		Sys_SetFatalError( const char* error );
 
 // Execute the specified process and wait until it's done, calling workFn every waitMS milliseconds.
@@ -614,6 +697,24 @@ void		Sys_SetFatalError( const char* error );
 // spawned process, check the value returned in exitCode.
 typedef bool ( *execProcessWorkFunction_t )();
 typedef void ( *execOutputFunction_t )( const char* text );
+
+/*!
+	\brief Executes an external process with specified parameters and optional output handling.
+
+	This function creates and runs an external process using the Windows CreateProcess API. It sets up standard input and output handles through pipes for capturing process output and allows for
+   optional work function callbacks during execution. The function supports waiting for process completion with a timeout, reporting exit codes, and handling command line arguments with proper quoting
+   for paths containing spaces. The output function is called to report execution details and process output, while the work function can be used to provide progress updates or abort conditions.
+   Memory for command line buffers is allocated from the temporary memory pool.
+
+	\param appPath Path to the executable file to run
+	\param workingPath Working directory for the process
+	\param args Command line arguments to pass to the executable
+	\param workFn Optional function called periodically during process execution
+	\param outputFn Function to handle output messages from the process
+	\param waitMS Timeout in milliseconds to wait for process completion, -1 to not wait, INFINITE to block indefinitely
+	\param exitCode Output parameter receiving the process exit code
+	\return True if the process was successfully started, false if creation failed
+*/
 bool Sys_Exec( const char* appPath, const char* workingPath, const char* args, execProcessWorkFunction_t workFn, execOutputFunction_t outputFn, const int waitMS, unsigned int& exitCode );
 
 // localization
@@ -624,7 +725,11 @@ bool Sys_Exec( const char* appPath, const char* workingPath, const char* args, e
 #define ID_LANG_GERMAN	 "german"
 #define ID_LANG_SPANISH	 "spanish"
 #define ID_LANG_JAPANESE "japanese"
+
+//! Returns the number of supported languages.
 int			Sys_NumLangs();
+
+//! Returns the language name at the specified index.
 const char* Sys_Lang( int idx );
 
 /*
@@ -650,33 +755,77 @@ typedef struct {
 
 #define PORT_ANY -1
 
-/*
-================================================
-idUDP
-================================================
+/*!
+	\class idUDP
+	\brief idUDP provides a network interface for sending and receiving UDP packets with configurable port binding and error handling.
+
+	The idUDP class encapsulates UDP socket functionality for network communication, allowing initialization on specific ports, sending and receiving packets, and managing socket state. It supports
+   both blocking and non-blocking packet retrieval with timeout handling. The class maintains internal tracking of packet statistics and provides methods to check socket validity and configure silent
+   mode for debugging. Memory management is handled internally with no explicit ownership semantics, and the class is designed for use in network communication scenarios where reliable packet delivery
+   and address tracking are required.
+
 */
 class idUDP
 {
 public:
-	// this just zeros netSocket and port
+	//! Initializes the UDP socket with default values.
 	idUDP();
+
+	//! Destroys the UDP object and closes any open connections.
 	virtual ~idUDP();
 
-	// if the InitForPort fails, the idUDP.port field will remain 0
+	//! Initializes the UDP socket for the specified port number and returns true if successful.
 	bool	 InitForPort( int portNumber );
 
+	//! Returns the port number that this UDP instance is bound to
 	int		 GetPort() const { return bound_to.port; }
+
+	//! Returns the network address the UDP socket is bound to.
 	netadr_t GetAdr() const { return bound_to; }
+
+	//! Returns the bound IP address as a 32-bit unsigned integer.
 	uint32	 GetUIntAdr() const { return ( bound_to.ip[0] | bound_to.ip[1] << 8 | bound_to.ip[2] << 16 | bound_to.ip[3] << 24 ); }
+
+	//! Closes the UDP socket if it is open
 	void	 Close();
 
+	/*!
+		\brief Receives a UDP packet from the network socket
+
+		This function retrieves a UDP packet from the initialized network socket. It populates the provided address structure with the sender's network address and copies the packet data into the
+	   provided buffer. The function updates the size parameter with the actual received packet size. It returns false if no packet is available or if the packet is larger than the provided maximum
+	   size, and true on successful reception. The function tracks the number of packets read and total bytes read for monitoring purposes.
+
+		\param from Reference to a netadr_t structure that will be filled with the sender's network address
+		\param data Pointer to the buffer where the packet data will be copied
+		\param size Reference to an integer that specifies the maximum size of the buffer and is updated with the actual received size
+		\param maxSize Maximum allowed size of the packet to be received
+		\return true if a packet was successfully received and stored, false otherwise
+	*/
 	bool	 GetPacket( netadr_t& from, void* data, int& size, int maxSize );
 
+	/*!
+		\brief Attempts to receive a network packet in a blocking manner with a specified timeout
+
+		This function waits for incoming network data with a specified timeout before attempting to retrieve a packet. It first checks if data is available using Net_WaitForData, and if data is
+	   present, it retrieves the packet using GetPacket. The function returns false if no data is available within the timeout period or if the packet retrieval fails
+
+		\param from Reference to store the source address of the received packet
+		\param data Buffer to store the received packet data
+		\param size Reference to store the actual size of the received packet
+		\param maxSize Maximum size of the data buffer
+		\param timeout Timeout value in milliseconds to wait for data
+		\return True if a packet was successfully received, false otherwise
+	*/
 	bool	 GetPacketBlocking( netadr_t& from, void* data, int& size, int maxSize, int timeout );
 
+	//! Sends a network packet to the specified address.
 	void	 SendPacket( const netadr_t to, const void* data, int size );
 
+	//! Sets the silent state of the UDP instance.
 	void	 SetSilent( bool silent ) { this->silent = silent; }
+
+	//! Returns the silent state of the UDP socket.
 	bool	 GetSilent() const { return silent; }
 
 	int		 packetsRead;
@@ -685,6 +834,7 @@ public:
 	int		 packetsWritten;
 	int		 bytesWritten;
 
+	//! Checks if the UDP socket is open and valid for network communication.
 	bool	 IsOpen() const { return netSocket > 0; }
 
 private:
@@ -693,49 +843,75 @@ private:
 	bool	 silent;	// don't emit anything ( black hole )
 };
 
-// parses the port number
-// can also do DNS resolve if you ask for it.
-// NOTE: DNS resolve is a slow/blocking call, think before you use
-// ( could be exploited for server DoS )
+//! Converts a string representation of a network address to a netadr_t structure.
 bool		Sys_StringToNetAdr( const char* s, netadr_t* a, bool doDNSResolve );
+
+//! Converts a network address to a string representation
 const char* Sys_NetAdrToString( const netadr_t a );
+
+//! Determines if the given network address belongs to a local area network.
 bool		Sys_IsLANAddress( const netadr_t a );
+
+//! Compares two network addresses for equality, ignoring their port numbers
 bool		Sys_CompareNetAdrBase( const netadr_t a, const netadr_t b );
 
+//! Returns the number of local network interfaces available.
 int			Sys_GetLocalIPCount();
+
+//! Returns the local IP address at the specified index.
 const char* Sys_GetLocalIP( int i );
 
+//! Initializes the networking subsystem for the platform
 void		Sys_InitNetworking();
+
+//! Shuts down the networking subsystem.
 void		Sys_ShutdownNetworking();
 
-/*
-================================================
-idJoystick is managed by each platform's local Sys implementation, and
-provides full *Joy Pad* support (the most common device, these days).
-================================================
+/*!
+	\class idJoystick
+	\brief Manages joystick input device control and event handling.
+
+	This class provides an interface for joystick input device management, including initialization, shutdown, activation, and input event polling. It supports rumble effects and handles the retrieval
+   of input events from joystick devices. The class is designed to be implemented by platform-specific system code to provide full joystick support.
+
 */
 class idJoystick
 {
 public:
 	virtual ~idJoystick() { }
 
+	//! Initializes the joystick input device and returns true if successful.
 	virtual bool Init() { return false; }
+
+	//! Shuts down the joystick system
 	virtual void Shutdown() { }
+
+	//! Deactivates the joystick input device.
 	virtual void Deactivate() { }
+
+	//! Sets the rumble effect for a specified joystick device with low and high rumble intensities.
 	virtual void SetRumble( int deviceNum, int rumbleLow, int rumbleHigh ) { }
+
+	//! Polls input events from a specified joystick device and returns the number of events collected.
 	virtual int	 PollInputEvents( int inputDeviceNum ) { return 0; }
+
+	//! Returns input events from the joystick
 	virtual int	 ReturnInputEvent( const int n, int& action, int& value ) { return 0; }
+
+	//! Finalizes input event processing for the joystick.
 	virtual void EndInputEvents() { }
 };
 
-/*
-==============================================================
+/*!
+	\class idSys
+	\brief System abstraction layer providing low-level platform-specific functionality.
 
-	idSys
+	This class serves as a system abstraction layer that provides an interface to platform-specific functionality. It encapsulates operations related to debugging output, timing, processor
+   identification, FPU state management, memory locking, dynamic library loading, system events, and process control. The interface is designed to be implemented by platform-specific derived classes
+   to provide concrete functionality for different operating systems. All methods are pure virtual, indicating that concrete implementations must be provided by derived classes to support the system's
+   operation across different platforms.
 
-==============================================================
 */
-
 class idSys
 {
 public:

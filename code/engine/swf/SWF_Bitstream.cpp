@@ -53,22 +53,12 @@ int signForNumBits[33] = {	NBS( 0x01 ), NBS( 0x01 ), NBS( 0x02 ), NBS( 0x03 ),
 						 };
 // clang-format on
 
-/*
-========================
-idSWFBitStream::idSWFBitStream
-========================
-*/
 idSWFBitStream::idSWFBitStream()
 {
 	free = false;
 	Free();
 }
 
-/*
-========================
-idSWFBitStream::operator=
-========================
-*/
 idSWFBitStream& idSWFBitStream::operator=( idSWFBitStream& other )
 {
 	Free();
@@ -86,11 +76,6 @@ idSWFBitStream& idSWFBitStream::operator=( idSWFBitStream& other )
 	return *this;
 }
 
-/*
-========================
-idSWFBitStream::operator=
-========================
-*/
 idSWFBitStream& idSWFBitStream::operator=( idSWFBitStream&& other )
 {
 	Free();
@@ -112,11 +97,6 @@ idSWFBitStream& idSWFBitStream::operator=( idSWFBitStream&& other )
 	return *this;
 }
 
-/*
-========================
-idSWFBitStream::Free
-========================
-*/
 void idSWFBitStream::Free()
 {
 	if( free ) {
@@ -129,11 +109,6 @@ void idSWFBitStream::Free()
 	ResetBits();
 }
 
-/*
-========================
-idSWFBitStream::Load
-========================
-*/
 void idSWFBitStream::Load( const byte* data, uint32 len, bool copy )
 {
 	Free();
@@ -152,11 +127,6 @@ void idSWFBitStream::Load( const byte* data, uint32 len, bool copy )
 	ResetBits();
 }
 
-/*
-========================
-idSWFBitStream::ReadEncodedU32
-========================
-*/
 uint32 idSWFBitStream::ReadEncodedU32()
 {
 	uint32 result = 0;
@@ -170,11 +140,6 @@ uint32 idSWFBitStream::ReadEncodedU32()
 	return result;
 }
 
-/*
-========================
-idSWFBitStream::ReadData
-========================
-*/
 const byte* idSWFBitStream::ReadData( int size )
 {
 	assert( readp >= startp && readp <= endp );
@@ -191,11 +156,6 @@ const byte* idSWFBitStream::ReadData( int size )
 	return buffer;
 }
 
-/*
-========================
-idSWFBitStream::ReadInternalU
-========================
-*/
 ID_FORCE_INLINE unsigned int idSWFBitStream::ReadInternalU( uint64& regCurrentBit, uint64& regCurrentByte, unsigned int numBits )
 {
 	assert( numBits <= 32 );
@@ -212,11 +172,6 @@ ID_FORCE_INLINE unsigned int idSWFBitStream::ReadInternalU( uint64& regCurrentBi
 	return ( unsigned int )( ( regCurrentByte >> regCurrentBit ) & maskForNumBits[numBits] );
 }
 
-/*
-========================
-idSWFBitStream::ReadInternalS
-========================
-*/
 ID_FORCE_INLINE int idSWFBitStream::ReadInternalS( uint64& regCurrentBit, uint64& regCurrentByte, unsigned int numBits )
 {
 	int i = ( int )ReadInternalU( regCurrentBit, regCurrentByte, numBits );
@@ -226,31 +181,16 @@ ID_FORCE_INLINE int idSWFBitStream::ReadInternalS( uint64& regCurrentBit, uint64
 	return ( ( i + s ) ^ s );
 }
 
-/*
-========================
-idSWFBitStream::ReadU
-========================
-*/
 unsigned int idSWFBitStream::ReadU( unsigned int numBits )
 {
 	return ReadInternalU( currentBit, currentByte, numBits );
 }
 
-/*
-========================
-idSWFBitStream::ReadS
-========================
-*/
 int idSWFBitStream::ReadS( unsigned int numBits )
 {
 	return ReadInternalS( currentBit, currentByte, numBits );
 }
 
-/*
-========================
-idSWFBitStream::ReadRect
-========================
-*/
 void idSWFBitStream::ReadRect( swfRect_t& rect )
 {
 	uint64 regCurrentBit  = 0;
@@ -272,11 +212,6 @@ void idSWFBitStream::ReadRect( swfRect_t& rect )
 	currentByte = regCurrentByte;
 }
 
-/*
-========================
-idSWFBitStream::ReadMatrix
-========================
-*/
 void idSWFBitStream::ReadMatrix( swfMatrix_t& matrix )
 {
 	uint64		 regCurrentBit	= 0;
@@ -323,11 +258,6 @@ void idSWFBitStream::ReadMatrix( swfMatrix_t& matrix )
 	matrix.ty = SWFTWIP( ty );
 }
 
-/*
-========================
-idSWFBitStream::ReadColorXFormRGBA
-========================
-*/
 void idSWFBitStream::ReadColorXFormRGBA( swfColorXform_t& cxf )
 {
 	uint64		 regCurrentBit	= 0;
@@ -377,21 +307,11 @@ void idSWFBitStream::ReadColorXFormRGBA( swfColorXform_t& cxf )
 	}
 }
 
-/*
-========================
-idSWFBitStream::ReadString
-========================
-*/
 const char* idSWFBitStream::ReadString()
 {
 	return ( const char* )ReadData( idStr::Length( ( const char* )readp ) + 1 );
 }
 
-/*
-========================
-idSWFBitStream::ReadColorRGB
-========================
-*/
 void idSWFBitStream::ReadColorRGB( swfColorRGB_t& color )
 {
 	ResetBits();
@@ -400,11 +320,6 @@ void idSWFBitStream::ReadColorRGB( swfColorRGB_t& color )
 	color.b = *readp++;
 }
 
-/*
-========================
-idSWFBitStream::ReadColorRGBA
-========================
-*/
 void idSWFBitStream::ReadColorRGBA( swfColorRGBA_t& color )
 {
 	ResetBits();
@@ -414,11 +329,6 @@ void idSWFBitStream::ReadColorRGBA( swfColorRGBA_t& color )
 	color.a = *readp++;
 }
 
-/*
-========================
-idSWFBitStream::ReadGradient
-========================
-*/
 void idSWFBitStream::ReadGradient( swfGradient_t& grad, bool rgba )
 {
 	grad.numGradients = ReadU8() & 0xF; // the top 4 bits control spread and interpolation mode, but we ignore them
@@ -434,11 +344,6 @@ void idSWFBitStream::ReadGradient( swfGradient_t& grad, bool rgba )
 	}
 }
 
-/*
-========================
-idSWFBitStream::ReadMorphGradient
-========================
-*/
 void idSWFBitStream::ReadMorphGradient( swfGradient_t& grad )
 {
 	grad.numGradients = ReadU8() & 0xF; // the top 4 bits control spread and interpolation mode, but we ignore them

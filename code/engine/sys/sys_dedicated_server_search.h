@@ -30,26 +30,43 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __DEDICATEDSERVERSEARCH_H__
 #define __DEDICATEDSERVERSEARCH_H__
 
-/*
-================================================
-idDedicatedServerSearch
-================================================
+/*!
+	\class idDedicatedServerSearch
+	\brief Manages searching and tracking dedicated game servers.
+
+	Provides functionality to search for dedicated game servers, maintain a list of discovered servers, and handle server query responses. The class supports starting searches with a callback
+   mechanism to receive updates, clearing search results, and retrieving server information by index. It handles network address retrieval and server description data access. The search state can be
+   reset through the clear operation, and server data is managed internally with index-based access for server information and player lists.
+
 */
 class idDedicatedServerSearch
 {
 public:
+	//! Initializes a new instance of the idDedicatedServerSearch class with a null callback.
 	idDedicatedServerSearch();
+
+	//! Destructor for the idDedicatedServerSearch class that cleans up the callback object.
 	~idDedicatedServerSearch();
 
+	//! Initializes a dedicated server search with the provided callback.
 	void				 StartSearch( const idCallback& cb );
+
+	//! Clears the dedicated server search data and resets its state.
 	void				 Clear();
 
+	//! Handles a query acknowledgment from a dedicated server by updating its information or adding it to the list.
 	void				 HandleQueryAck( lobbyAddress_t& addr, idBitMsg& msg );
 
+	//! Retrieves the network address at the specified index if the index is valid.
 	bool				 GetAddrAtIndex( netadr_t& addr, int i );
+
+	//! Returns a pointer to the server information at the specified index, or NULL if the index is out of bounds.
 	const serverInfo_t*	 DescribeServerAtIndex( int i ) const;
+
+	//! Returns the list of players connected to the server at the specified index.
 	const idList<idStr>* GetServerPlayersAtIndex( int i ) const;
 
+	//! Returns the number of servers in the dedicated server search list.
 	int					 NumServers() const;
 
 private:

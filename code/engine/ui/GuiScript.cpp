@@ -35,11 +35,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "GuiScript.h"
 #include "UserInterfaceLocal.h"
 
-/*
-=========================
-Script_Set
-=========================
-*/
+//! Sets a window variable or command based on the provided source list.
 void Script_Set( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	idStr	  key, val;
@@ -68,11 +64,7 @@ void Script_Set( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 	( *src )[0].var->SetEval( false );
 }
 
-/*
-=========================
-Script_SetFocus
-=========================
-*/
+//! Sets focus to a window identified by a string parameter from the provided list.
 void Script_SetFocus( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	idWinStr* parm = dynamic_cast<idWinStr*>( ( *src )[0].var );
@@ -84,11 +76,7 @@ void Script_SetFocus( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 	}
 }
 
-/*
-=========================
-Script_ShowCursor
-=========================
-*/
+//! Controls the visibility of the cursor in the UI by setting or clearing the WIN_NOCURSOR flag based on a string parameter.
 void Script_ShowCursor( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	idWinStr* parm = dynamic_cast<idWinStr*>( ( *src )[0].var );
@@ -101,13 +89,7 @@ void Script_ShowCursor( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 	}
 }
 
-/*
-=========================
-Script_RunScript
-
- run scripts must come after any set cmd set's in the script
-=========================
-*/
+//! Appends a runScript command to the window's command string if the first source parameter is a string.
 void Script_RunScript( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	idWinStr* parm = dynamic_cast<idWinStr*>( ( *src )[0].var );
@@ -119,11 +101,7 @@ void Script_RunScript( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 	}
 }
 
-/*
-=========================
-Script_LocalSound
-=========================
-*/
+//! Executes a local sound script command using the provided window and source parameters.
 void Script_LocalSound( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	idWinStr* parm = dynamic_cast<idWinStr*>( ( *src )[0].var );
@@ -132,31 +110,19 @@ void Script_LocalSound( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 	}
 }
 
-/*
-=========================
-Script_EvalRegs
-=========================
-*/
+//! Evaluates the registers for the specified window with default parameters.
 void Script_EvalRegs( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	window->EvalRegs( -1, true );
 }
 
-/*
-=========================
-Script_EndGame
-=========================
-*/
+//! Ends the current game by disconnecting the client.
 void Script_EndGame( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	cmdSystem->BufferCommandText( CMD_EXEC_APPEND, "disconnect\n" );
 }
 
-/*
-=========================
-Script_ResetTime
-=========================
-*/
+//! Resets the time for a window or its child window based on script parameters.
 void Script_ResetTime( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	idWinStr*  parm = dynamic_cast<idWinStr*>( ( *src )[0].var );
@@ -178,21 +144,13 @@ void Script_ResetTime( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 	}
 }
 
-/*
-=========================
-Script_ResetCinematics
-=========================
-*/
+//! Resets the cinematics state of the specified window.
 void Script_ResetCinematics( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	window->ResetCinematics();
 }
 
-/*
-=========================
-Script_Transition
-=========================
-*/
+//! Executes a transition effect on a window using specified variables and timing parameters.
 void Script_Transition( idWindow* window, idList<idGSWinVar, TAG_OLD_UI>* src )
 {
 	// transitions always affect rect or vec4 vars
@@ -270,11 +228,6 @@ guiCommandDef_t commandList[] = { { "set", Script_Set, 2, 999 },
 
 int				scriptCommandCount = sizeof( commandList ) / sizeof( guiCommandDef_t );
 
-/*
-=========================
-idGuiScript::idGuiScript
-=========================
-*/
 idGuiScript::idGuiScript()
 {
 	ifList		 = NULL;
@@ -284,11 +237,6 @@ idGuiScript::idGuiScript()
 	parms.SetGranularity( 2 );
 }
 
-/*
-=========================
-idGuiScript::~idGuiScript
-=========================
-*/
 idGuiScript::~idGuiScript()
 {
 	delete ifList;
@@ -301,11 +249,6 @@ idGuiScript::~idGuiScript()
 	}
 }
 
-/*
-=========================
-idGuiScript::WriteToSaveGame
-=========================
-*/
 void idGuiScript::WriteToSaveGame( idFile* savefile )
 {
 	int i;
@@ -326,11 +269,6 @@ void idGuiScript::WriteToSaveGame( idFile* savefile )
 	}
 }
 
-/*
-=========================
-idGuiScript::ReadFromSaveGame
-=========================
-*/
 void idGuiScript::ReadFromSaveGame( idFile* savefile )
 {
 	int i;
@@ -351,11 +289,6 @@ void idGuiScript::ReadFromSaveGame( idFile* savefile )
 	}
 }
 
-/*
-=========================
-idGuiScript::Parse
-=========================
-*/
 bool idGuiScript::Parse( idTokenParser* src )
 {
 	int		i;
@@ -417,11 +350,6 @@ bool idGuiScript::Parse( idTokenParser* src )
 	return true;
 }
 
-/*
-=========================
-idGuiScriptList::Execute
-=========================
-*/
 void idGuiScriptList::Execute( idWindow* win )
 {
 	int c = list.Num();
@@ -444,11 +372,6 @@ void idGuiScriptList::Execute( idWindow* win )
 	}
 }
 
-/*
-=========================
-idGuiScriptList::FixupParms
-=========================
-*/
 void idGuiScript::FixupParms( idWindow* win )
 {
 	if( handler == &Script_Set ) {

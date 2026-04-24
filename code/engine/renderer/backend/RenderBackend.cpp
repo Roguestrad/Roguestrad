@@ -4536,13 +4536,6 @@ void idRenderBackend::DrawScreenSpaceAmbientOcclusion2( const viewDef_t* _viewDe
 	renderLog.CloseMainBlock();
 }
 
-/*
-=========================================================================================================
-
-BACKEND COMMANDS
-
-=========================================================================================================
-*/
 void idRenderBackend::ExecuteBackEndCommands( const emptyCommand_t* cmds )
 {
 	SCOPED_PROFILE_EVENT( "ExecuteBackEndCommands" );

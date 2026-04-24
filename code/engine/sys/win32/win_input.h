@@ -62,21 +62,55 @@ struct controllerState_t {
 	bool		 valid;
 };
 
+/*!
+	\class idJoystickWin32
+	\brief Windows-specific joystick input handler that processes and translates joystick events for game input.
+
+	This class provides Windows-specific implementation for joystick input handling, inheriting from a base joystick interface. It manages initialization of the joystick subsystem, polls input events
+   from connected devices, and translates these events into game actions or GUI button presses. The class supports rumble effects for joystick devices and maintains internal state for button presses
+   and axis movements. It processes different types of joystick events including action buttons, axis movements, and directional pad inputs. The implementation handles event queuing and maintains a
+   consistent interface for joystick input regardless of the specific device type connected.
+
+*/
 class idJoystickWin32 : idJoystick
 {
 public:
+	//! Initializes a new instance of the idJoystickWin32 class.
 	idJoystickWin32();
 
+	//! Initializes the joystick subsystem for Windows
 	virtual bool Init();
+
+	//! Sets the rumble intensity for both motors of a specified joystick device.
 	virtual void SetRumble( int deviceNum, int rumbleLow, int rumbleHigh );
+
+	//! Polls input events from a specified joystick device and returns the number of events detected
 	virtual int	 PollInputEvents( int inputDeviceNum );
+
+	//! Retrieves the action and value for a specified joystick input event index
 	virtual int	 ReturnInputEvent( const int n, int& action, int& value );
+
+	//! Completes the input event processing cycle for the joystick device.
 	virtual void EndInputEvents() { }
 
 protected:
 	friend void JoystickSamplingThread( void* data );
 
+	//! Sets the state of a joystick button and queues a key event if the state changes
 	void		PushButton( int inputDeviceNum, int key, bool value );
+
+	/*!
+		\brief Processes joystick input events and translates them into game input actions or GUI button presses.
+
+		This function handles various joystick events by mapping them to specific game actions or GUI button states. It processes button press events and axis movements, updating internal state and
+	   queuing events for the game engine. For axis events, it calculates a percentage value based on the input range and only queues a new event if the value has changed. The function distinguishes
+	   between different types of events, such as action buttons, joystick axes, and directional pad inputs.
+
+		\param inputDeviceNum The index of the input device
+		\param event The type of joystick event that occurred
+		\param value The value associated with the joystick event
+		\param range The range of the joystick axis values, defaults to 16384
+	*/
 	void		PostInputEvent( int inputDeviceNum, int event, int value, int range = 16384 );
 
 	idSysMutex	mutexXis; // lock this before using currentXis or stickIntegrations

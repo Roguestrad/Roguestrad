@@ -29,17 +29,29 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SWF_SHAPEPARSER_H__
 #define __SWF_SHAPEPARSER_H__
 
-/*
-================================================
-This class handles parsing and triangulating a shape
-================================================
+/*!
+	\class idSWFShapeParser
+	\brief Parser for SWF shape data that handles triangulation of geometric primitives.
+
+	This class provides functionality for parsing SWF shape data from bitstreams and converting it into triangulated geometric representations. It supports parsing regular shapes, morph shapes, and
+   font glyphs, handling both straight and curved edges through Bézier curve computation. The parser maintains state for pen position during edge parsing and manages vertex data in a shared buffer. It
+   includes methods for converting edge soup into vertex loops and performing triangulation using an ear clipping algorithm for both regular shapes and font glyphs. The class is designed to process
+   multiple bitstreams for morph animations and handles fill style definitions for different shape regions. The SWF coordinate system is converted to internal coordinates during parsing.
+
 */
 class idSWFShapeParser
 {
 public:
+	//! Constructs a new instance of the SWF shape parser.
 	idSWFShapeParser() { }
+
+	//! Parses SWF shape data from a bitstream and constructs a shape object with triangulated geometry.
 	void Parse( idSWFBitStream& bitstream, idSWFShape& shape, int recordType );
+
+	//! Parses morph shape data from a bitstream and initializes the corresponding shape object.
 	void ParseMorph( idSWFBitStream& bitstream, idSWFShape& shape );
+
+	//! Parses font shape data from a bitstream and triangulates it into a font glyph structure.
 	void ParseFont( idSWFBitStream& bitstream, idSWFFontGlyph& shape );
 
 private:
@@ -76,13 +88,39 @@ private:
 	idList<swfSPDrawLine_t, TAG_SWF> lineDraws;
 
 private:
+	//! Parses shape data from two SWF bitstreams, handling morph streams and edge definitions.
 	void ParseShapes( idSWFBitStream& bitstream1, idSWFBitStream* bitstream2, bool swap );
+
+	//! Reads fill style data from a bitstream and populates style information for shapes.
 	void ReadFillStyle( idSWFBitStream& bitstream );
+
+	/*!
+		\brief Parses a shape edge from a SWF bitstream, updating pen position and edge data
+
+		This function processes a single edge definition in a SWF shape, handling both straight and curved edges. For straight edges, it reads direction and distance values to update the pen position
+	   and defines the edge with a start and end point. For curved edges, it reads control point and end position data to define a cubic Bézier curve. The function maintains pen position state across
+	   multiple calls and stores vertex data in a shared vertex buffer. The SWF coordinate system is converted to internal coordinates using the SWFTWIP macro.
+
+		\param bitstream Input bitstream containing the edge data encoded in SWF format
+		\param penX Reference to current pen X coordinate, updated with final edge position
+		\param penY Reference to current pen Y coordinate, updated with final edge position
+		\param edge Output structure containing the parsed edge data including vertex indices and control point
+	*/
 	void ParseEdge( idSWFBitStream& bitstream, int32& penX, int32& penY, swfSPEdge_t& edge );
+
+	//! Converts edge soup into connected vertex loops for each fill style
 	void MakeLoops();
+
+	//! Converts shape fill loops into triangle draws using ear clipping algorithm
 	void TriangulateSoup( idSWFShape& shape );
+
+	//! Triangulates a font glyph shape into triangles using ear clipping algorithm
 	void TriangulateSoup( idSWFFontGlyph& shape );
+
+	//! Finds a valid ear vertex in a polygonal loop for triangulation.
 	int	 FindEarVert( const swfSPLineLoop_t& loop );
+
+	//! Adds a unique vertex to the shape draw fill, using either morph or non-morph logic based on the morph flag.
 	void AddUniqueVert( idSWFShapeDrawFill& drawFill, const idVec2& start, const idVec2& end );
 };
 

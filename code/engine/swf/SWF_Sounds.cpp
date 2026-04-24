@@ -29,20 +29,10 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-========================
-idSWF::DefineSound
-========================
-*/
 void idSWF::DefineSound( idSWFBitStream& bitstream )
 {
 }
 
-/*
-========================
-idSWFSpriteInstance::StartSound
-========================
-*/
 void idSWFSpriteInstance::StartSound( idSWFBitStream& bitstream )
 {
 }

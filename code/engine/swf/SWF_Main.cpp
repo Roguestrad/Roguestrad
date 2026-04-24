@@ -49,11 +49,6 @@ idSWFSpriteInstance* idSWF::luaSpriteInstance	= NULL;
 
 extern idCVar		 in_useJoystick;
 
-/*
-===================
-idSWF::idSWF
-===================
-*/
 idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON, bool exportSWF, bool exportSVG, bool noAnims, bool splitSVG )
 {
 	atlasMaterial = NULL;
@@ -479,11 +474,6 @@ idSWF::idSWF( const char* filename_, idSoundWorld* soundWorld_, bool exportJSON,
 	soundWorld = soundWorld_;
 }
 
-/*
-===================
-idSWF::~idSWF
-===================
-*/
 idSWF::~idSWF()
 {
 	spriteInstanceAllocator.Free( mainspriteInstance );
@@ -520,12 +510,6 @@ idSWF::~idSWF()
 	shortcutKeys->Release();
 }
 
-/*
-===================
-idSWF::Activate
-when a SWF is deactivated, it rewinds the timeline back to the start
-===================
-*/
 void idSWF::Activate( bool b )
 {
 	if( !isActive && b ) {
@@ -540,11 +524,6 @@ void idSWF::Activate( bool b )
 	isActive = b;
 }
 
-/*
-===================
-idSWF::InhibitControl
-===================
-*/
 bool idSWF::InhibitControl()
 {
 	if( !IsLoaded() || !IsActive() ) {
@@ -553,7 +532,6 @@ bool idSWF::InhibitControl()
 	return ( inhibitControl && useInhibtControl );
 }
 
-// RB begin
 void idSWF::SetGlobal( const char* name, const idSWFScriptVar& value )
 {
 	globals->Set( name, value );
@@ -606,13 +584,7 @@ void idSWF::SetGlobal( const char* name, const idSWFScriptVar& value )
 		// lua_printstack( L );
 	}
 }
-// RB end
 
-/*
-===================
-idSWF::PlaySound
-===================
-*/
 int idSWF::PlaySound( const char* sound, int channel, bool blocking )
 {
 	if( !IsActive() ) {
@@ -626,11 +598,6 @@ int idSWF::PlaySound( const char* sound, int channel, bool blocking )
 	}
 }
 
-/*
-===================
-idSWF::PlaySound
-===================
-*/
 void idSWF::StopSound( int channel )
 {
 	if( soundWorld != NULL ) {
@@ -640,55 +607,30 @@ void idSWF::StopSound( int channel )
 	}
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_inhibitControl::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_inhibitControl::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	pThis->inhibitControl = parms[0].ToBool();
 	return idSWFScriptVar();
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_inhibitControl::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_useInhibit::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	pThis->useInhibtControl = parms[0].ToBool();
 	return idSWFScriptVar();
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_deactivate::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_deactivate::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	pThis->Activate( false );
 	return idSWFScriptVar();
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_precacheSound::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_precacheSound::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	const idSoundShader* soundShader = declManager->FindSound( parms[0].ToString(), true );
 	return soundShader->GetName();
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_playSound::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_playSound::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	int channel = SCHANNEL_ANY;
@@ -702,11 +644,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_playSound::Call( idSWFScriptObject* th
 	return idSWFScriptVar();
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_stopSounds::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_stopSounds::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	int channel = SCHANNEL_ANY;
@@ -719,31 +656,16 @@ idSWFScriptVar idSWF::idSWFScriptFunction_stopSounds::Call( idSWFScriptObject* t
 	return idSWFScriptVar();
 }
 
-/*
-========================
-idSWFScriptFunction_GetPlatform::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_getPlatform::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	return pThis->GetPlatform();
 }
 
-/*
-========================
-idSWFScriptFunction_GetPlatform::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_getTruePlatform::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	return 2;
 }
 
-/*
-========================
-idSWFScriptFunction_GetPlatform::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_strReplace::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 3 ) {
@@ -758,11 +680,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_strReplace::Call( idSWFScriptObject* t
 	return str;
 }
 
-/*
-========================
-idSWFScriptFunction_GetPlatform::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_getLocalString::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() == 0 ) {
@@ -773,21 +690,11 @@ idSWFScriptVar idSWF::idSWFScriptFunction_getLocalString::Call( idSWFScriptObjec
 	return val;
 }
 
-/*
-========================
-idSWF::UseCircleForAccept
-========================
-*/
 bool idSWF::UseCircleForAccept()
 {
 	return false;
 }
 
-/*
-========================
-idSWF::GetPlatform
-========================
-*/
 int idSWF::GetPlatform()
 {
 	// Leyland VR
@@ -799,42 +706,22 @@ int idSWF::GetPlatform()
 	return 2;
 }
 
-/*
-========================
-idSWFScriptFunction_swapPS3Buttons::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_swapPS3Buttons::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	return pThis->UseCircleForAccept();
 }
 
-/*
-========================
-idSWFScriptFunction_getCVarInteger::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_getCVarInteger::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	return cvarSystem->GetCVarInteger( parms[0].ToString() );
 }
 
-/*
-========================
-idSWFScriptFunction_setCVarInteger::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_setCVarInteger::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	cvarSystem->SetCVarInteger( parms[0].ToString(), parms[1].ToInteger() );
 	return idSWFScriptVar();
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_acos::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_acos::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 1 ) {
@@ -843,11 +730,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_acos::Call( idSWFScriptObject* thisObj
 	return idMath::ACos( parms[0].ToFloat() );
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_cos::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_cos::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 1 ) {
@@ -856,11 +738,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_cos::Call( idSWFScriptObject* thisObje
 	return idMath::Cos( parms[0].ToFloat() );
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_sin::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_sin::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 1 ) {
@@ -869,11 +746,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_sin::Call( idSWFScriptObject* thisObje
 	return ( idMath::Sin( parms[0].ToFloat() ) );
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_round::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_round::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 1 ) {
@@ -883,11 +755,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_round::Call( idSWFScriptObject* thisOb
 	return value;
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_pow::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_pow::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 2 ) {
@@ -899,11 +766,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_pow::Call( idSWFScriptObject* thisObje
 	return ( idMath::Pow( value, power ) );
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_pow::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_sqrt::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 1 ) {
@@ -914,11 +776,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_sqrt::Call( idSWFScriptObject* thisObj
 	return ( idMath::Sqrt( value ) );
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_abs::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_abs::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 1 ) {
@@ -929,11 +786,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_abs::Call( idSWFScriptObject* thisObje
 	return value;
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_rand::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_rand::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	float min = 0.0f;
@@ -952,11 +804,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_rand::Call( idSWFScriptObject* thisObj
 	return min + pThis->GetRandom().RandomFloat() * ( max - min );
 }
 
-/*
-========================
-idSWFScriptFunction_floor::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_floor::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 1 || !parms[0].IsNumeric() ) {
@@ -969,11 +816,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_floor::Call( idSWFScriptObject* thisOb
 	return idSWFScriptVar( idMath::Floor( num ) );
 }
 
-/*
-========================
-idSWFScriptFunction_ceil::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_ceil::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 1 || !parms[0].IsNumeric() ) {
@@ -986,11 +828,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_ceil::Call( idSWFScriptObject* thisObj
 	return idSWFScriptVar( idMath::Ceil( num ) );
 }
 
-/*
-========================
-idSWFScriptFunction_toUpper::Call
-========================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_toUpper::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	if( parms.Num() != 1 || !parms[0].IsString() ) {
@@ -1003,11 +840,6 @@ idSWFScriptVar idSWF::idSWFScriptFunction_toUpper::Call( idSWFScriptObject* this
 	return val;
 }
 
-/*
-===================
-idSWF::idSWFScriptFunction_shortcutKeys_clear::Call
-===================
-*/
 idSWFScriptVar idSWF::idSWFScriptFunction_shortcutKeys_clear::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	idSWFScriptObject* object = pThis->shortcutKeys;
@@ -1066,7 +898,7 @@ void idSWF::idSWFScriptNativeVar_crop::Set( idSWFScriptObject* object, const idS
 	pThis->crop = value.ToBool();
 }
 
-// RB begin
+//! Exports all .bswf files to the exported/swf/ folder with optional settings.
 CONSOLE_COMMAND_SHIP( exportFlash, "Export all .bswf files to the exported/swf/ folder", NULL )
 {
 	bool exportSWF = false;

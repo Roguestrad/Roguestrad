@@ -34,11 +34,6 @@ extern idCVar fs_savepath;
 
 extern idCVar g_demoMode;
 
-/*
-========================
-idSignInManagerBase::ProcessInputEvent
-========================
-*/
 bool		  idSignInManagerBase::ProcessInputEvent( const sysEvent_t* ev )
 {
 	// If we could use more local users, poll for them
@@ -54,11 +49,6 @@ bool		  idSignInManagerBase::ProcessInputEvent( const sysEvent_t* ev )
 	return false;
 }
 
-/*
-========================
-idSignInManagerBase::GetDefaultProfile
-========================
-*/
 idPlayerProfile* idSignInManagerBase::GetDefaultProfile()
 {
 	if( defaultProfile == NULL ) {
@@ -68,11 +58,6 @@ idPlayerProfile* idSignInManagerBase::GetDefaultProfile()
 	return defaultProfile;
 }
 
-/*
-========================
-idSignInManagerBase::GetLocalUserByInputDevice
-========================
-*/
 idLocalUser* idSignInManagerBase::GetLocalUserByInputDevice( int index )
 {
 	for( int i = 0; i < GetNumLocalUsers(); i++ ) {
@@ -84,11 +69,6 @@ idLocalUser* idSignInManagerBase::GetLocalUserByInputDevice( int index )
 	return NULL; // Not found
 }
 
-/*
-========================
-idSignInManagerBase::GetLocalUserByHandle
-========================
-*/
 idLocalUser* idSignInManagerBase::GetLocalUserByHandle( localUserHandle_t handle )
 {
 	for( int i = 0; i < GetNumLocalUsers(); i++ ) {
@@ -100,11 +80,6 @@ idLocalUser* idSignInManagerBase::GetLocalUserByHandle( localUserHandle_t handle
 	return NULL; // Not found
 }
 
-/*
-========================
-idSignInManagerBase::GetPlayerProfileByInputDevice
-========================
-*/
 idPlayerProfile* idSignInManagerBase::GetPlayerProfileByInputDevice( int index )
 {
 	idLocalUser*	 user	 = session->GetSignInManager().GetLocalUserByInputDevice( index );
@@ -115,11 +90,6 @@ idPlayerProfile* idSignInManagerBase::GetPlayerProfileByInputDevice( int index )
 	return profile;
 }
 
-/*
-========================
-idSignInManagerBase::RemoveLocalUserByInputDevice
-========================
-*/
 bool idSignInManagerBase::RemoveLocalUserByInputDevice( int index )
 {
 	for( int i = 0; i < GetNumLocalUsers(); i++ ) {
@@ -132,11 +102,6 @@ bool idSignInManagerBase::RemoveLocalUserByInputDevice( int index )
 	return false; // Not found
 }
 
-/*
-========================
-idSignInManagerBase::RemoveLocalUserByHandle
-========================
-*/
 bool idSignInManagerBase::RemoveLocalUserByHandle( localUserHandle_t handle )
 {
 	for( int i = 0; i < GetNumLocalUsers(); i++ ) {
@@ -149,11 +114,6 @@ bool idSignInManagerBase::RemoveLocalUserByHandle( localUserHandle_t handle )
 	return false; // Not found
 }
 
-/*
-========================
-idSignInManagerBase::SaveUserProfiles
-========================
-*/
 void idSignInManagerBase::SaveUserProfiles()
 {
 	for( int i = 0; i < GetNumLocalUsers(); i++ ) {
@@ -167,11 +127,6 @@ void idSignInManagerBase::SaveUserProfiles()
 	}
 }
 
-/*
-========================
-idSignInManagerBase::RemoveAllLocalUsers
-========================
-*/
 void idSignInManagerBase::RemoveAllLocalUsers()
 {
 	while( GetNumLocalUsers() > 0 ) {
@@ -179,11 +134,6 @@ void idSignInManagerBase::RemoveAllLocalUsers()
 	}
 }
 
-/*
-========================
-idSignInManagerBase::ValidateLocalUsers
-========================
-*/
 void idSignInManagerBase::ValidateLocalUsers( bool requireOnline )
 {
 	if( !RequirePersistentMaster() ) {
@@ -200,11 +150,6 @@ void idSignInManagerBase::ValidateLocalUsers( bool requireOnline )
 	}
 }
 
-/*
-========================
-idSignInManagerBase::RequirePersistentMaster
-========================
-*/
 bool idSignInManagerBase::RequirePersistentMaster()
 {
 #ifdef ID_RETAIL
@@ -222,12 +167,6 @@ bool idSignInManagerBase::RequirePersistentMaster()
 #endif
 }
 
-/*
-========================
-idSignInManagerBase::GetUniqueLocalUserHandle
-Uniquely generate a handle based on name and time
-========================
-*/
 localUserHandle_t idSignInManagerBase::GetUniqueLocalUserHandle( const char* name )
 {
 	MD5_CTX		  ctx;

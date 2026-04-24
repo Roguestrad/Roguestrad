@@ -31,6 +31,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "libs/pugixml/pugixml.hpp"
 
+//! Combines two SWF matrices into a single matrix by performing matrix multiplication and translation combination.
 static swfMatrix_t CombineMatrix( const swfMatrix_t& a, const swfMatrix_t& b )
 {
 	swfMatrix_t out;
@@ -43,6 +44,7 @@ static swfMatrix_t CombineMatrix( const swfMatrix_t& a, const swfMatrix_t& b )
 	return out;
 }
 
+//! Combines two SWF color transforms into a single transform by multiplying multipliers and adding addends.
 static swfColorXform_t CombineColorXform( const swfColorXform_t& a, const swfColorXform_t& b )
 {
 	swfColorXform_t out;
@@ -57,6 +59,7 @@ static swfColorXform_t CombineColorXform( const swfColorXform_t& a, const swfCol
 	return out;
 }
 
+//! Returns the CSS blend mode string corresponding to the given SWF blend mode
 static const char* GetCSSBlendMode( int swfBlendMode )
 {
 	switch( swfBlendMode ) {
@@ -93,6 +96,7 @@ static const char* GetCSSBlendMode( int swfBlendMode )
 	}
 }
 
+//! Determines if a sequence of transformation matrices shows animation by comparing them against the first frame.
 static bool IsMatrixAnimated( const idList<swfMatrix_t>& frames )
 {
 	if( frames.Num() <= 1 ) {
@@ -191,6 +195,7 @@ void swfMatrix_t::ParseSVGTransformFromString( const char* str )
 	lexer.FreeSource();
 }
 
+//! Parses a color transformation from an SVG filter string using a hash table lookup
 static swfColorXform_t ParseColorXformFromFilter( const idHashTableT<idStr, swfColorXform_t>& svgFilterColorXforms, const char* filterStr )
 {
 	swfColorXform_t cxf;
@@ -223,6 +228,7 @@ static swfColorXform_t ParseColorXformFromFilter( const idHashTableT<idStr, swfC
 	return cxf;
 }
 
+//! Parses a string containing SVG color matrix values and stores the results in an output array.
 static bool ParseSVG_ColorMatrixValues( const char* valuesStr, float out[20] )
 {
 	if( valuesStr == NULL || valuesStr[0] == '\0' ) {
@@ -232,6 +238,7 @@ static bool ParseSVG_ColorMatrixValues( const char* valuesStr, float out[20] )
 	return true;
 }
 
+//! Parses a color transformation from an SVG filter node and stores it in the output structure.
 static bool ParseColorXformFromFilterNode( const pugi::xml_node& filterNode, swfColorXform_t& outCxf )
 {
 	outCxf.mul = vec4_one;
@@ -571,6 +578,7 @@ void swfColorRGBA_t::ParseSVGColorFromString( const char* str )
 	// 5) unknown color – do not change
 }
 
+//! Determines whether the given XML node represents a shape with direct primitive children but no sprite-like children.
 static bool HasDirectShapeChildren( const pugi::xml_node& g )
 {
 	const char* linkType = g.attribute( "link-type" ).value();
@@ -596,11 +604,13 @@ static bool HasDirectShapeChildren( const pugi::xml_node& g )
 	return true;
 }
 
+//! Checks if the given XML node has a direct child element named 'image'.
 static bool HasDirectImageChild( const pugi::xml_node& g )
 {
 	return g.child( "image" );
 }
 
+//! Extracts the target ID from an SVG animation node's href attribute
 static bool GetSVGAnimationTargetID( const pugi::xml_node& animNode, idStr& outTargetID )
 {
 	idStr href = animNode.attribute( "xlink:href" ).value();
@@ -615,6 +625,17 @@ static bool GetSVGAnimationTargetID( const pugi::xml_node& animNode, idStr& outT
 	return true;
 }
 
+/*!
+	\brief Registers an SVG animation target with the given parameters in the target map
+
+	This function adds a new entry to the target map for SVG animation handling. It validates that the owner is not null and the targetID is not empty before proceeding. The function creates a new
+   svgAnimTarget_t entry with the provided owner and depth, then stores it in the target map using the targetID as the key
+
+	\param targetMap The hash table map to store the animation target entries
+	\param targetID The identifier for the animation target
+	\param owner Pointer to the SWF sprite that owns the animation target
+	\param depth The depth level of the animation target
+*/
 static void RegisterSVGAnimationTarget( idHashTableT<idStr, idSWFSprite::svgAnimTarget_t>& targetMap, const idStr& targetID, idSWFSprite* owner, int depth )
 {
 	if( owner == NULL || targetID.IsEmpty() ) {
@@ -1034,12 +1055,6 @@ void idSWFSprite::LoadSVGNode_r(
 	}
 }
 
-// ---------------------------------------------------------------------------
-// ParseSVGAnimations
-// Iterates all collected animation nodes and populates parsedAnims on each
-// matching svgAnimTarget_t in the global target map.  Call this once after
-// all LoadSVGNode_r calls have completed.
-// ---------------------------------------------------------------------------
 void idSWFSprite::ParseSVGAnimations( idHashTableT<idStr, svgAnimTarget_t>& targetMap, const idList<pugi::xml_node>& animations )
 {
 	for( int a = 0; a < animations.Num(); a++ ) {
@@ -1079,12 +1094,6 @@ void idSWFSprite::ParseSVGAnimations( idHashTableT<idStr, svgAnimTarget_t>& targ
 	}
 }
 
-// ---------------------------------------------------------------------------
-// ApplySVGAnimationTargets
-// Builds SWF frame commands for this sprite from pre-parsed animation data.
-// parsedAnims must only contain entries whose depth belongs to this sprite
-// (i.e. collected from svgAnimTarget_t entries where owner == this).
-// ---------------------------------------------------------------------------
 void idSWFSprite::ApplySVGAnimationTargets( const idList<parsedAnim_t>& parsedAnims )
 {
 	frameCount = 1;

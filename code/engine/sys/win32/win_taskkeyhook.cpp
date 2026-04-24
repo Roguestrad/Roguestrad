@@ -49,14 +49,7 @@ BOOL  g_bBeep	   = FALSE; // beep on illegal key
 #pragma data_seg()
 #pragma comment( linker, "/SECTION:.mydata,RWS" ) // tell linker: make it shared
 
-/*
-================
-MyTaskKeyHookLL
-
-  Low-level keyboard hook:
-  Trap task-switching keys by returning without passing along.
-================
-*/
+//! Intercepts low-level keyboard input to block specific task-switching key combinations.
 LRESULT CALLBACK MyTaskKeyHookLL( int nCode, WPARAM wp, LPARAM lp )
 {
 	KBDLLHOOKSTRUCT* pkh = ( KBDLLHOOKSTRUCT* )lp;
@@ -78,24 +71,13 @@ LRESULT CALLBACK MyTaskKeyHookLL( int nCode, WPARAM wp, LPARAM lp )
 	return CallNextHookEx( g_hHookKbdLL, nCode, wp, lp );
 }
 
-/*
-================
-AreTaskKeysDisabled
-
-  Are task keys disabled--ie, is hook installed?
-  Note: This assumes there's no other hook that does the same thing!
-================
-*/
+//! Returns whether task keys are disabled by checking if a keyboard hook is installed.
 BOOL AreTaskKeysDisabled()
 {
 	return g_hHookKbdLL != NULL;
 }
 
-/*
-================
-IsTaskMgrDisabled
-================
-*/
+//! Checks whether the Task Manager is disabled in the Windows registry.
 BOOL IsTaskMgrDisabled()
 {
 	HKEY hk;
@@ -109,11 +91,6 @@ BOOL IsTaskMgrDisabled()
 	return RegQueryValueEx( hk, VAL_DisableTaskMgr, NULL, NULL, ( BYTE* )&val, &len ) == ERROR_SUCCESS && val == 1;
 }
 
-/*
-================
-DisableTaskKeys
-================
-*/
 void DisableTaskKeys( BOOL bDisable, BOOL bBeep, BOOL bTaskMgr )
 {
 	// task keys (Ctrl+Esc, Alt-Tab, etc.)

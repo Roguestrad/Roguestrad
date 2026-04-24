@@ -446,7 +446,7 @@ private:
 	//! Exports DXT compressed images from the generated directory to TrenchBroom compatible formats.
 	static void ExportImagesToTrenchBroom_f( const idCmdArgs& args );
 
-	//! Creates a zoo map for models by packing them using the BFG Rectangle Atlas packer
+	//! Creates a zoo map for models by packing them using the BFG Rectangle Atlas packer.
 	static void MakeZooMapForModels_f( const idCmdArgs& args );
 	// RB end
 };
@@ -3382,9 +3382,40 @@ struct Category_t {
 	idList<idVec2i>					   modelGroupPositions;
 	idVec2i							   totalSize;
 
-	// tree
-	// idList<Category_t*, TAG_SYSTEM>		subFolders;
+	/*!
+		\brief Allocates rectangular regions within a larger rectangle using a greedy corner-packing algorithm.
+
+		This function takes a list of input rectangle sizes and determines optimal positions for each rectangle within a larger container. It uses a greedy approach that attempts to place each
+	   rectangle at a corner of previously placed rectangles, minimizing the total area required. The rectangles are sorted by size beforehand to improve packing efficiency. The algorithm ensures that
+	   the resulting total size aligns with GPU texture requirements by rounding widths to multiples of 32 DXT blocks. The function will fail if a rectangle cannot be placed within the prescribed
+	   limits.
+
+		\param inputSizes List of input rectangle sizes to be allocated
+		\param outputPositions Output list of positions where each input rectangle is placed
+		\param totalSize Total size of the resulting rectangle container
+		\param START_MAX Initial maximum size used for allocation checks
+		\param imageMax Maximum allowed size for any dimension, or 0 to disable limit
+		\throws FatalError if a rectangle cannot be fitted within the limits
+	*/
+
+	/*!
+		\brief Allocates rectangular regions within a larger rectangle using a greedy corner-packing algorithm.
+
+		This function takes a list of input rectangle sizes and determines optimal positions for each rectangle within a larger container. It uses a greedy approach that attempts to place each
+	   rectangle at a corner of previously placed rectangles, minimizing the total area required. The rectangles are sorted by size beforehand to improve packing efficiency. The algorithm ensures that
+	   the resulting total size aligns with GPU texture requirements by rounding widths to multiples of 32 DXT blocks. The function will fail if a rectangle cannot be placed within the prescribed
+	   limits.
+
+		\param inputSizes List of input rectangle sizes to be allocated
+		\param outputPositions Output list of positions where each input rectangle is placed
+		\param totalSize Total size of the resulting rectangle container
+		\param START_MAX Initial maximum size used for allocation checks
+		\param imageMax Maximum allowed size for any dimension, or 0 to disable limit
+		\throws FatalError if a rectangle cannot be fitted within the limits
+	*/
 };
+
+//! Computes the fraction of area occupied by a list of rectangles within a total area.
 
 /*!
 	\brief Allocates rectangular regions within a larger rectangle using a greedy corner-packing algorithm.

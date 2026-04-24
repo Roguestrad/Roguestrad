@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "UserInterfaceLocal.h"
 #include "ChoiceWindow.h"
 
-/*
-============
-idChoiceWindow::InitVars
-============
-*/
 void idChoiceWindow::InitVars()
 {
 	if( cvarStr.Length() ) {
@@ -57,11 +52,6 @@ void idChoiceWindow::InitVars()
 	updateStr.Update();
 }
 
-/*
-============
-idChoiceWindow::CommonInit
-============
-*/
 void idChoiceWindow::CommonInit()
 {
 	currentChoice = 0;
@@ -282,7 +272,6 @@ idWinVar* idChoiceWindow::GetWinVarByName( const char* _name, bool fixup, drawWi
 	return idWindow::GetWinVarByName( _name, fixup, owner );
 }
 
-// update the lists whenever the WinVar have changed
 void idChoiceWindow::UpdateChoicesAndVals()
 {
 	idToken token;

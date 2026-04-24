@@ -33,6 +33,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "libs/pugixml/pugixml.hpp"
 
+//! Parses a string of 2D points and stores them in a list
 static void ParsePointsFromString( const char* pointsStr, idList<idVec2>& verts )
 {
 	verts.Clear();
@@ -113,7 +114,6 @@ void idSWF::ParseSVG_Image( const pugi::xml_node& node, int characterID, idSWFDi
 	}
 }
 
-// Parse Shape from <g> Node
 void idSWF::ParseSVG_Shape( const pugi::xml_node& node, idSWFShape* shape )
 {
 	if( !shape )
@@ -883,15 +883,6 @@ bool idSWF::LoadSVG( const char* filename )
 	return true;
 }
 
-/*
-========================
-idSWF::WriteSVGDefs
-
-Writes the <defs>...</defs> section containing all dictionary entries
-(IMAGE, SHAPE, MORPH, FONT, EDITTEXT) to the given file.
-Sprites are skipped in unfolded mode.
-========================
-*/
 void idSWF::WriteSVGDefs( idFile* file, const char* filenameWithoutExt, bool exportUnfolded, const char* imageHrefPrefix )
 {
 	const bool	exportBitmapShapesOnly = false;

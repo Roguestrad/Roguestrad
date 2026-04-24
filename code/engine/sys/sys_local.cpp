@@ -152,11 +152,6 @@ void idSysLocal::FPU_EnableExceptions( int exceptions )
 	Sys_FPU_EnableExceptions( exceptions );
 }
 
-/*
-=================
-Sys_TimeStampToStr
-=================
-*/
 const char* Sys_TimeStampToStr( ID_TIME_T timeStamp )
 {
 	static char timeString[MAX_STRING_CHARS];
@@ -215,11 +210,6 @@ const char* Sys_TimeStampToStr( ID_TIME_T timeStamp )
 	return timeString;
 }
 
-/*
-========================
-Sys_SecToStr
-========================
-*/
 const char* Sys_SecToStr( int sec )
 {
 	static char timeString[MAX_STRING_CHARS];
@@ -247,13 +237,11 @@ const char* Sys_SecToStr( int sec )
 	return timeString;
 }
 
-// return number of supported languages
 int Sys_NumLangs()
 {
 	return numLanguages;
 }
 
-// get language name by index
 const char* Sys_Lang( int idx )
 {
 	if( idx >= 0 && idx < numLanguages ) {

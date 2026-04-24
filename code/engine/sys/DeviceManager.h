@@ -111,8 +111,10 @@ struct DeviceCreationParameters {
 };
 
 struct DefaultMessageCallback : public nvrhi::IMessageCallback {
+	//! Returns the singleton instance of the DefaultMessageCallback class.
 	static DefaultMessageCallback& GetInstance();
 
+	//! Handles messages from nvrhi by routing them to appropriate logging functions based on severity.
 	void						   message( nvrhi::MessageSeverity severity, const char* messageText ) override;
 };
 
@@ -122,6 +124,7 @@ class idRenderBackend;
 class DeviceManager
 {
 public:
+	//! Creates a DeviceManager instance for the specified graphics API
 	static DeviceManager* Create( nvrhi::GraphicsAPI api );
 
 #if USE_VK && defined( VULKAN_USE_PLATFORM_SDL )
@@ -129,21 +132,23 @@ public:
 	VkResult CreateSDLWindowSurface( VkInstance instance, VkSurfaceKHR* surface );
 #endif
 
+	//! Creates an SDL window with Vulkan support and initializes the graphics device and swap chain
 	bool CreateWindowDeviceAndSwapChain( const glimpParms_t& params, const char* windowTitle );
 
-	// returns the size of the window in screen coordinates
+	//! Returns the width and height of the window in screen coordinates.
 	void GetWindowDimensions( int& width, int& height );
 
-	// returns the screen coordinate to pixel coordinate scale factor
+	//! Returns the screen coordinate to pixel coordinate scale factors for X and Y axes.
 	void GetDPIScaleInfo( float& x, float& y ) const
 	{
 		x = m_DPIScaleFactorX;
 		y = m_DPIScaleFactorY;
 	}
 
+	//! Updates the window size and handles back buffer resizing when window dimensions change.
 	void		UpdateWindowSize( const glimpParms_t& params );
 
-	// RB: for OpenVR to submit native Vulkan images
+	//! Returns the Vulkan queue family index for graphics operations
 	virtual int GetGraphicsFamilyIndex() const { return -1; }
 
 protected:
@@ -164,9 +169,13 @@ protected:
 
 	DeviceManager() = default;
 
+	//! Returns the graphics vendor type based on the provided vendor ID
 	graphicsVendor_t getGPUVendor( uint32_t vendorID ) const;
 
+	//! Shuts down the framebuffer when the back buffer is resizing.
 	void			 BackBufferResizing();
+
+	//! Notifies the device manager that the back buffer has been resized and updates framebuffers accordingly.
 	void			 BackBufferResized();
 
 	// device-specific methods
@@ -182,10 +191,16 @@ public:
 	[[nodiscard]] virtual const char*		 GetRendererString() const = 0;
 	[[nodiscard]] virtual nvrhi::GraphicsAPI GetGraphicsAPI() const	   = 0;
 
+	//! Returns the device creation parameters associated with the device manager.
 	const DeviceCreationParameters&			 GetDeviceParams();
-	virtual void							 SetVsyncEnabled( int vsyncMode ) { m_RequestedVSync = vsyncMode; /* will be processed later */ }
+
+	//! Sets the vertical synchronization mode for the device manager.
+	virtual void							 SetVsyncEnabled( int vsyncMode ) { m_RequestedVSync = vsyncMode; }
+
+	//! Reports live objects managed by the device manager.
 	virtual void							 ReportLiveObjects() { }
 
+	//! Returns the current frame index used for temporal anti-aliasing.
 	[[nodiscard]] uint32_t					 GetFrameIndex() const { return m_FrameIndex; }
 
 	virtual nvrhi::ITexture*				 GetCurrentBackBuffer()			 = 0;
@@ -193,24 +208,45 @@ public:
 	virtual uint32_t						 GetCurrentBackBufferIndex()	 = 0;
 	virtual uint32_t						 GetBackBufferCount()			 = 0;
 
+	//! Returns the current framebuffer for rendering.
 	nvrhi::IFramebuffer*					 GetCurrentFramebuffer();
+
+	//! Returns the framebuffer object at the specified index or null if the index is out of bounds.
 	nvrhi::IFramebuffer*					 GetFramebuffer( uint32_t index );
 
+	//! Shuts down the device manager by destroying the device and swap chain
 	void									 Shutdown();
 	virtual ~DeviceManager() = default;
 
+	//! Sets the window title for the device manager's window.
 	void		 SetWindowTitle( const char* title );
 
+	//! Checks if a Vulkan instance extension is enabled by name
 	virtual bool IsVulkanInstanceExtensionEnabled( const char* extensionName ) const { return false; }
+
+	//! Checks if a Vulkan device extension is enabled by name.
 	virtual bool IsVulkanDeviceExtensionEnabled( const char* extensionName ) const { return false; }
+
+	//! Checks if a Vulkan layer is enabled by name
 	virtual bool IsVulkanLayerEnabled( const char* layerName ) const { return false; }
+
+	//! This function is intended to populate a vector with the names of Vulkan instance extensions that are enabled for the device manager.
 	virtual void GetEnabledVulkanInstanceExtensions( std::vector<std::string>& extensions ) const { }
+
+	//! Retrieves the list of enabled Vulkan device extensions.
 	virtual void GetEnabledVulkanDeviceExtensions( std::vector<std::string>& extensions ) const { }
+
+	//! Retrieves the list of enabled Vulkan layers into the provided vector.
 	virtual void GetEnabledVulkanLayers( std::vector<std::string>& layers ) const { }
 
 private:
+	//! Creates and returns a new D3D11 device manager instance.
 	static DeviceManager* CreateD3D11();
+
+	//! Creates and returns a new instance of DeviceManager_DX12.
 	static DeviceManager* CreateD3D12();
+
+	//! Creates and returns a new instance of DeviceManager_VK.
 	static DeviceManager* CreateVK();
 
 	std::string			  m_WindowTitle;

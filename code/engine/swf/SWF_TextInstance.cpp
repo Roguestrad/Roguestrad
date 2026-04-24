@@ -44,21 +44,11 @@ idCVar									swf_textMaxInputLength( "swf_textMaxInputLength", "104", CVAR_INT
 idCVar									swf_textStrokeSize( "swf_textStrokeSize", "1.65f", CVAR_FLOAT, "size of font glyph stroke", 0.0f, 2.0f );
 idCVar									swf_textStrokeSizeGlyphSpacer( "swf_textStrokeSizeGlyphSpacer", "1.5f", CVAR_FLOAT, "additional space for spacing glyphs using stroke" );
 
-/*
-========================
-idSWFTextInstance::idSWFTextInstance
-========================
-*/
 idSWFTextInstance::idSWFTextInstance()
 {
 	swf = NULL;
 }
 
-/*
-========================
-idSWFTextInstance::~idSWFTextInstance
-================== ======
-*/
 idSWFTextInstance::~idSWFTextInstance()
 {
 	scriptObject.SetText( NULL );
@@ -68,11 +58,6 @@ idSWFTextInstance::~idSWFTextInstance()
 	subtitleTimingInfo.Clear();
 }
 
-/*
-========================
-idSWFTextInstance::Init
-========================
-*/
 void idSWFTextInstance::Init( idSWFEditText* _editText, idSWF* _swf )
 {
 	editText = _editText;
@@ -142,11 +127,6 @@ void idSWFTextInstance::Init( idSWFEditText* _editText, idSWF* _swf )
 	scriptObject.SetNoAutoDelete( true );
 }
 
-/*
-========================
-idSWFTextInstance::GetTextLength
-========================
-*/
 float idSWFTextInstance::GetTextLength()
 {
 	// CURRENTLY ONLY WORKS FOR SINGLE LINE TEXTFIELDS
@@ -202,11 +182,6 @@ float idSWFTextInstance::GetTextLength()
 	return textLength;
 }
 
-/*
-========================
-idSWFTextInstance::StartParagraphText
-========================
-*/
 void idSWFTextInstance::StartParagraphText( int time )
 {
 	generatingText	 = true;
@@ -237,11 +212,6 @@ void idSWFTextInstance::StartParagraphText( int time )
 	}
 }
 
-/*
-========================
-idSWFTextInstance::GetParagraphText
-========================
-*/
 idStr idSWFTextInstance::GetParagraphText( int time )
 {
 	if( triggerGenerate ) {
@@ -269,11 +239,6 @@ idStr idSWFTextInstance::GetParagraphText( int time )
 	return randomtext;
 }
 
-/*
-========================
-idSWFTextInstance::StartRandomText
-========================
-*/
 bool idSWFTextInstance::NeedsSoundPlayed()
 {
 	if( soundClip.IsEmpty() ) {
@@ -283,11 +248,6 @@ bool idSWFTextInstance::NeedsSoundPlayed()
 	return needsSoundUpdate;
 }
 
-/*
-========================
-idSWFTextInstance::StartRandomText
-========================
-*/
 void idSWFTextInstance::StartRandomText( int time )
 {
 	generatingText	 = true;
@@ -312,11 +272,6 @@ void idSWFTextInstance::StartRandomText( int time )
 	}
 }
 
-/*
-========================
-idSWFTextInstance::GetRandomText
-========================
-*/
 idStr idSWFTextInstance::GetRandomText( int time )
 {
 	if( triggerGenerate ) {
@@ -396,17 +351,6 @@ idStr idSWFTextInstance::GetRandomText( int time )
 	return randomtext;
 }
 
-/*
-==============================================
-SUBTITLE FUNCTIONALITY
-==============================================
-*/
-
-/*
-==============================================
-idSWFTextInstance::SwitchSubtitleText
-==============================================
-*/
 void idSWFTextInstance::SwitchSubtitleText( int time )
 {
 	subNeedsSwitch = false;
@@ -417,11 +361,6 @@ void idSWFTextInstance::SetSubNextStartIndex( int value )
 	subNextStartIndex = value;
 }
 
-/*
-==============================================
-idSWFTextInstance::UpdateSubtitle
-==============================================
-*/
 bool idSWFTextInstance::UpdateSubtitle( int time )
 {
 	if( subForceKillQueued ) {
@@ -466,11 +405,6 @@ bool idSWFTextInstance::UpdateSubtitle( int time )
 	return true;
 }
 
-/*
-==============================================
-idSWFTextInstance::SubtitleComplete
-==============================================
-*/
 void idSWFTextInstance::SetSubEndIndex( int endChar, int time )
 {
 	subCharEndIndex = endChar;
@@ -479,11 +413,6 @@ void idSWFTextInstance::SetSubEndIndex( int endChar, int time )
 	}
 }
 
-/*
-==============================================
-idSWFTextInstance::SubtitleComplete
-==============================================
-*/
 void idSWFTextInstance::SubtitleComplete()
 {
 	subInitialLine		 = true;
@@ -504,11 +433,6 @@ void idSWFTextInstance::SubtitleComplete()
 	subtitleTimingInfo.Clear();
 }
 
-/*
-==============================================
-idSWFTextInstance::LastWordChanged
-==============================================
-*/
 void idSWFTextInstance::LastWordChanged( int wordCount, int time )
 {
 	if( subPrevLastWordIndex + wordCount >= subtitleTimingInfo.Num() ) {
@@ -529,11 +453,6 @@ void idSWFTextInstance::LastWordChanged( int wordCount, int time )
 																				   // idLib::Printf( "switchtime set 1 %d last word %d\n", subSwitchTime, subLastWordIndex );
 }
 
-/*
-==============================================
-idSWFTextInstance::GetSubtitleBreak
-==============================================
-*/
 int idSWFTextInstance::GetApporoximateSubtitleBreak( int time )
 {
 	int	 wordIndex	   = subLastWordIndex;
@@ -588,11 +507,6 @@ int idSWFTextInstance::GetApporoximateSubtitleBreak( int time )
 	return subLastWordIndex;
 }
 
-/*
-==============================================
-idSWFTextInstance::SubtitleComplete
-==============================================
-*/
 void idSWFTextInstance::SubtitleCleanup()
 {
 	subSourceID = -1;
@@ -600,11 +514,6 @@ void idSWFTextInstance::SubtitleCleanup()
 	text		= "";
 }
 
-/*
-==============================================
-idSWFTextInstance::SetStrokeInfo
-==============================================
-*/
 void idSWFTextInstance::SetStrokeInfo( bool use, float strength, float weight )
 {
 	useStroke = use;
@@ -614,11 +523,6 @@ void idSWFTextInstance::SetStrokeInfo( bool use, float strength, float weight )
 	}
 }
 
-/*
-==============================================
-idSWFTextInstance::CalcMaxScroll
-==============================================
-*/
 int idSWFTextInstance::CalcMaxScroll( int numLines )
 {
 	if( numLines != -1 ) {

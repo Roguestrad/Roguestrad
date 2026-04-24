@@ -30,15 +30,16 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __LISTGUI_H__
 #define __LISTGUI_H__
 
-/*
-===============================================================================
+/*!
+	\class idListGUI
+	\brief Interface for managing GUI list elements with configuration and selection capabilities.
 
-	feed data to a listDef
-	each item has an id and a display string
+	This class defines an abstract interface for GUI list components that can be configured with a user interface, populated with string elements, and managed through selection operations. It provides
+   methods for adding, removing, and clearing list items, as well as retrieving and setting selection states. The interface supports configuring the list with a specific name, managing state changes,
+   and checking if the list has been properly initialized. The abstract nature of the interface allows for various implementations tailored to different GUI frameworks or display systems while
+   maintaining a consistent set of operations.
 
-===============================================================================
 */
-
 class idListGUI
 {
 public:

@@ -376,8 +376,8 @@ void Sys_ReLaunch()
 	// DG end
 }
 
-// OS X 10.11 or earlier doesn't have native clock_gettime()
-int clock_gettime( /*clk_id_t*/ clockid_t clock, struct timespec* tp ) // SRS - use APPLE clockid_t
+//! Provides high-resolution timing information on macOS systems by retrieving time from system or monotonic clocks.
+int clock_gettime(
 {
 	switch( clock ) {
 		case CLOCK_MONOTONIC_RAW:

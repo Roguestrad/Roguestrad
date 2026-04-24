@@ -54,11 +54,6 @@ const char* signames[] = {
 
 static char fatalError[1024];
 
-/*
-================
-Posix_ClearSigs
-================
-*/
 void		Posix_ClearSigs()
 {
 	struct sigaction action;
@@ -78,11 +73,7 @@ void		Posix_ClearSigs()
 	}
 }
 
-/*
-================
-sig_handler
-================
-*/
+//! Handles system signals for graceful shutdown.
 static void sig_handler( int signum, siginfo_t* info, void* context )
 {
 	static bool double_fault = false;
@@ -108,11 +99,6 @@ static void sig_handler( int signum, siginfo_t* info, void* context )
 	common->Quit();
 }
 
-/*
-================
-Posix_InitSigs
-================
-*/
 void Posix_InitSigs()
 {
 	struct sigaction action;

@@ -30,25 +30,52 @@ If you have questions concerning this license or the applicable additional terms
 #define __RENDERWINDOW_H
 
 class idUserInterfaceLocal;
+
+/*!
+	\class idRenderWindow
+	\brief A render window class that manages rendering operations and window variables for a user interface.
+
+	This class represents a specialized window implementation designed for rendering graphical content within a user interface system. It extends the base window functionality to provide rendering
+   capabilities and manages the association with a user interface instance. The class handles initialization, parsing of internal variables, animation building, and actual rendering operations. It
+   maintains a connection to a render world that is properly freed when the window is destroyed. The window variable management supports both regular and predefined variable lookups with special
+   handling for specific parameters like animClass. Memory allocation tracking is provided through the allocated method, which accounts for the window object and its associated data structures. The
+   rendering pipeline includes pre-render initialization, animation state updates, and frame rendering with timing information.
+
+*/
 class idRenderWindow : public idWindow
 {
 public:
+	//! Initializes a render window with the specified user interface.
 	idRenderWindow( idUserInterfaceLocal* gui );
+
+	//! Destroys the render window and frees the associated render world.
 	virtual ~idRenderWindow();
 
+	//! Initializes the render window after parsing.
 	virtual void	  PostParse();
+
+	//! Renders the window content with specified time and position parameters
 	virtual void	  Draw( int time, float x, float y );
 	virtual size_t	  Allocated() { return idWindow::Allocated(); };
-	//
-	//
+
+	//! Returns a window variable by name from the render window, with special handling for predefined variables.
 	virtual idWinVar* GetWinVarByName( const char* _name, bool winLookup = false, drawWin_t** owner = NULL );
 	//
 
 private:
+	//! Initializes the render window common properties.
 	void			 CommonInit();
+
+	//! Parses internal variables for the render window, specifically handling the animClass parameter.
 	virtual bool	 ParseInternalVar( const char* name, idTokenParser* src );
+
+	//! Renders the current frame with the specified time parameter.
 	void			 Render( int time );
+
+	//! Initializes the render window's world and entities before rendering.
 	void			 PreRender();
+
+	//! Updates the animation state for the render window based on the provided time.
 	void			 BuildAnimation( int time );
 	renderView_t	 refdef;
 	idRenderWorld*	 world;

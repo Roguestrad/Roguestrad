@@ -34,10 +34,10 @@ typedef struct {
 	int inputDevice;
 } winUserState_t;
 
-/*
-================================================
-idLocalUserWin
-================================================
+/*!
+	\class idLocalUserWin
+	\brief This class is stub
+
 */
 class idLocalUserWin : public idLocalUser
 {
@@ -45,11 +45,13 @@ public:
 	static const int MAX_GAMERTAG		= 64; // max number of bytes for a gamertag
 	static const int MAX_GAMERTAG_CHARS = 16; // max number of UTF-8 characters to show
 
+	//! Constructs an idLocalUserWin object with default values.
 	idLocalUserWin() :
 		inputDevice( 0 )
 	{
 	}
 
+	//! Moves the contents of another idLocalUserWin instance to this instance.
 	idLocalUserWin& operator=( idLocalUserWin&& other )
 	{
 		gamertag	= std::move( other.gamertag );
@@ -57,30 +59,47 @@ public:
 		return *this;
 	}
 
-	//==========================================================================================
-	// idLocalUser interface
-	//==========================================================================================
+	//! Checks if the local user profile is ready for persistent use.
 	virtual bool		IsProfileReady() const;
+
+	//! Returns true if the local user is online.
 	virtual bool		IsOnline() const;
+
+	//! Determines if the local user is currently in an online party.
 	virtual bool		IsInParty() const;
+
+	//! Returns the number of users in the party for this local user
 	virtual int			GetPartyCount() const;
+
+	//! Returns the online capabilities of the local user based on whether they are persistent and online.
 	virtual uint32		GetOnlineCaps() const { return ( IsPersistent() && IsOnline() ) ? ( CAP_IS_ONLINE | CAP_CAN_PLAY_ONLINE ) : 0; }
+
+	//! Returns the input device identifier for this local user.
 	virtual int			GetInputDevice() const { return inputDevice; }
+
+	//! Returns the gamer tag of the local user.
 	virtual const char* GetGamerTag() const { return gamertag.c_str(); }
+
+	//! Pumps the platform-specific input events for the local user.
 	virtual void		PumpPlatform() { }
 
-	//==========================================================================================
-	// idLocalUserWin interface
-	//==========================================================================================
+	//! Sets the input device identifier for the local user.
 	void				SetInputDevice( int inputDevice_ ) { inputDevice = inputDevice_; }
+
+	//! Sets the gamer tag for the local user.
 	void				SetGamerTag( const char* gamerTag_ ) { gamertag = gamerTag_; }
+
+	//! Returns the current input device state for the local user.
 	winUserState_t		GetUserState()
 	{
 		winUserState_t a = { inputDevice };
 		return a;
 	}
+
+	//! Verifies if the provided user state matches the current input device
 	bool VerifyUserState( winUserState_t& state );
 
+	//! Initializes the local user with the specified input device, gamertag, and number of local users.
 	void Init( int inputDevice_, const char* gamertag_, int numLocalUsers );
 
 private:

@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 using namespace rapidjson;
 
-/*
-========================
-idSWFSprite::idSWFSprite
-========================
-*/
 idSWFSprite::idSWFSprite( idSWF* _swf ) :
 	swf( _swf ),
 	frameCount( 0 ),
@@ -44,21 +39,11 @@ idSWFSprite::idSWFSprite( idSWF* _swf ) :
 {
 }
 
-/*
-========================
-idSWFSprite::~idSWFSprite
-========================
-*/
 idSWFSprite::~idSWFSprite()
 {
 	Mem_Free( commandBuffer );
 }
 
-/*
-========================
-idSWF::DefineSprite
-========================
-*/
 void idSWF::DefineSprite( idSWFBitStream& bitstream )
 {
 	uint16				  characterID = bitstream.ReadU16();
@@ -69,11 +54,6 @@ void idSWF::DefineSprite( idSWFBitStream& bitstream )
 	entry->sprite->Load( bitstream, false );
 }
 
-/*
-========================
-idSWFSprite::Load
-========================
-*/
 void idSWFSprite::Load( idSWFBitStream& bitstream, bool parseDictionary )
 {
 	frameCount = bitstream.ReadU16();
@@ -179,11 +159,6 @@ void idSWFSprite::Load( idSWFBitStream& bitstream, bool parseDictionary )
 	}
 }
 
-/*
-========================
-idSWFSprite::Read
-========================
-*/
 void idSWFSprite::Read( idFile* f )
 {
 	int num = 0;
@@ -229,11 +204,6 @@ void idSWFSprite::Read( idFile* f )
 	}
 }
 
-/*
-========================
-idSWFSprite::Write
-========================
-*/
 void idSWFSprite::Write( idFile* f )
 {
 	f->WriteBig( frameCount );

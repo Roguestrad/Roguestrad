@@ -46,6 +46,7 @@ extern idCVar r_windowY;
 extern idCVar r_windowWidth;
 extern idCVar r_windowHeight;
 
+//! Disables the Alt+Tab key combination for window switching.
 static void	  WIN_DisableAltTab()
 {
 	if( s_alttab_disabled || win32.win_allowAltTab.GetBool() ) {
@@ -67,6 +68,7 @@ static void	  WIN_DisableAltTab()
 	s_alttab_disabled = true;
 }
 
+//! Enables Alt+Tab window switching functionality.
 static void WIN_EnableAltTab()
 {
 	if( !s_alttab_disabled || win32.win_allowAltTab.GetBool() ) {
@@ -89,6 +91,7 @@ static void WIN_EnableAltTab()
 	s_alttab_disabled = false;
 }
 
+//! Adjusts window sizing constraints based on aspect ratio and minimum size requirements.
 void WIN_Sizing( WORD side, RECT* rect )
 {
 	if( !renderSystem->IsInitialized() || renderSystem->GetWidth() <= 0 || renderSystem->GetHeight() <= 0 ) {
@@ -155,13 +158,6 @@ void WIN_Sizing( WORD side, RECT* rect )
 
 extern DeviceManager* deviceManager;
 
-/*
-====================
-MainWndProc
-
-main window procedure
-====================
-*/
 LONG WINAPI			  MainWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	int key;

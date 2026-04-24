@@ -49,14 +49,6 @@ idCVar						binaryLoadGuis( "binaryLoadGuis", "1", CVAR_NEW, "enable binary load
 
 extern idCVar				sys_lang;
 
-/*
-===============================================================================
-
-	idUserInterfaceManagerLocal
-
-===============================================================================
-*/
-
 void						idUserInterfaceManagerLocal::Init()
 {
 	screenRect = idRectangle( 0, 0, 640, 480 );
@@ -291,14 +283,6 @@ void idUserInterfaceManagerLocal::FreeListGUI( idListGUI* listgui )
 {
 	delete listgui;
 }
-
-/*
-===============================================================================
-
-	idUserInterfaceLocal
-
-===============================================================================
-*/
 
 idUserInterfaceLocal::idUserInterfaceLocal()
 {
@@ -678,11 +662,6 @@ void idUserInterfaceLocal::RecurseSetKeyBindingNames( idWindow* window )
 	}
 }
 
-/*
-==============
-idUserInterfaceLocal::SetKeyBindingNames
-==============
-*/
 void idUserInterfaceLocal::SetKeyBindingNames()
 {
 	if( !desktop ) {
@@ -692,11 +671,6 @@ void idUserInterfaceLocal::SetKeyBindingNames()
 	RecurseSetKeyBindingNames( desktop );
 }
 
-/*
-==============
-idUserInterfaceLocal::SetCursor
-==============
-*/
 void idUserInterfaceLocal::SetCursor( float x, float y )
 {
 	cursorX = x;

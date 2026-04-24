@@ -57,11 +57,6 @@ idCVar net_pingRecoveryThrottleTimeInSeconds( "net_pingRecoveryThrottleTimeInSec
 
 idCVar net_peer_timeout_loading( "net_peer_timeout_loading", "90000", CVAR_INTEGER, "time in MS to disconnect clients during loading - production only" );
 
-/*
-========================
-idLobby::UpdateSnaps
-========================
-*/
 void   idLobby::UpdateSnaps()
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -105,12 +100,6 @@ void   idLobby::UpdateSnaps()
 #endif
 }
 
-/*
-========================
-idLobby::SendCompletedSnaps
-This function will send send off any previously submitted pending snaps if they are ready
-========================
-*/
 bool idLobby::SendCompletedSnaps()
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -148,11 +137,6 @@ bool idLobby::SendCompletedSnaps()
 	return sentAllSubmitted;
 }
 
-/*
-========================
-idLobby::SendResources
-========================
-*/
 bool idLobby::SendResources( int p )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -160,11 +144,6 @@ bool idLobby::SendResources( int p )
 	return false;
 }
 
-/*
-========================
-idLobby::SubmitPendingSnap
-========================
-*/
 bool idLobby::SubmitPendingSnap( int p )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -209,11 +188,6 @@ bool idLobby::SubmitPendingSnap( int p )
 	return true;
 }
 
-/*
-========================
-idLobby::SendCompletedPendingSnap
-========================
-*/
 void idLobby::SendCompletedPendingSnap( int p )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -330,11 +304,6 @@ void idLobby::SendCompletedPendingSnap( int p )
 	}
 }
 
-/*
-========================
-idLobby::CheckPeerThrottle
-========================
-*/
 void idLobby::CheckPeerThrottle( int p )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -437,11 +406,6 @@ void idLobby::CheckPeerThrottle( int p )
 	}
 }
 
-/*
-========================
-idLobby::ApplySnapshotDelta
-========================
-*/
 void idLobby::ApplySnapshotDelta( int p, int snapshotNumber )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -473,11 +437,6 @@ void idLobby::ApplySnapshotDelta( int p, int snapshotNumber )
 	}
 }
 
-/*
-========================
-idLobby::ApplySnapshotDeltaInternal
-========================
-*/
 bool idLobby::ApplySnapshotDeltaInternal( int p, int snapshotNumber )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -580,11 +539,6 @@ void   idLobby::SendSnapshotToPeer( idSnapShot& ss, int p )
 	peer.needToSubmitPendingSnap = true;
 }
 
-/*
-========================
-idLobby::AllPeersHaveBaseState
-========================
-*/
 bool idLobby::AllPeersHaveBaseState()
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -602,11 +556,6 @@ bool idLobby::AllPeersHaveBaseState()
 	return true;
 }
 
-/*
-========================
-idLobby::ThrottleSnapsForXSeconds
-========================
-*/
 void idLobby::ThrottleSnapsForXSeconds( int p, int seconds, bool recoverPing )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -621,11 +570,6 @@ void idLobby::ThrottleSnapsForXSeconds( int p, int seconds, bool recoverPing )
 	peers[p].recoverPing			  = recoverPing ? peers[p].lastPingRtt : 0;
 }
 
-/*
-========================
-idLobby::FirstSnapHasBeenSent
-========================
-*/
 bool idLobby::FirstSnapHasBeenSent( int p )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -657,13 +601,6 @@ bool idLobby::FirstSnapHasBeenSent( int p )
 	return true;
 }
 
-/*
-========================
-idLobby::EnsureAllPeersHaveBaseState
-This function ensures all peers that started the match together (they were in the lobby when it started) start together.
-Join in progress peers will be handled as they join.
-========================
-*/
 bool idLobby::EnsureAllPeersHaveBaseState()
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -690,11 +627,6 @@ bool idLobby::EnsureAllPeersHaveBaseState()
 	return true;
 }
 
-/*
-========================
-idLobby::AllPeersHaveStaleSnapObj
-========================
-*/
 bool idLobby::AllPeersHaveStaleSnapObj( int objId )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -715,11 +647,6 @@ bool idLobby::AllPeersHaveStaleSnapObj( int objId )
 	return true;
 }
 
-/*
-========================
-idLobby::AllPeersHaveExpectedSnapObj
-========================
-*/
 bool idLobby::AllPeersHaveExpectedSnapObj( int objId )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -748,11 +675,6 @@ bool idLobby::AllPeersHaveExpectedSnapObj( int objId )
 	return true;
 }
 
-/*
-========================
-idLobby::MarkSnapObjDeleted
-========================
-*/
 void idLobby::RefreshSnapObj( int objId )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -771,11 +693,6 @@ void idLobby::RefreshSnapObj( int objId )
 	}
 }
 
-/*
-========================
-idLobby::MarkSnapObjDeleted
-========================
-*/
 void idLobby::MarkSnapObjDeleted( int objId )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -795,11 +712,6 @@ void idLobby::MarkSnapObjDeleted( int objId )
 	}
 }
 
-/*
-========================
-idLobby::ResetBandwidthStats
-========================
-*/
 void idLobby::ResetBandwidthStats()
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -817,12 +729,6 @@ void idLobby::ResetBandwidthStats()
 	}
 }
 
-/*
-========================
-idLobby::DetectSaturation
-See if the ping shot up, which indicates a previously saturated connection
-========================
-*/
 void idLobby::DetectSaturation( int p )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );
@@ -845,11 +751,6 @@ void idLobby::DetectSaturation( int p )
 	}
 }
 
-/*
-========================
-idLobby::AddSnapObjTemplate
-========================
-*/
 void idLobby::AddSnapObjTemplate( int objID, idBitMsg& msg )
 {
 	assert( lobbyType == GetActingGameStateLobbyType() );

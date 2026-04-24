@@ -89,11 +89,6 @@ const int		 idWindow::NumRegisterVars = sizeof( RegisterVars ) / sizeof( idRegEn
 
 const char*		 idWindow::ScriptNames[] = { "onMouseEnter", "onMouseExit", "onAction", "onActivate", "onDeactivate", "onESC", "onEvent", "onTrigger", "onActionRelease", "onEnter", "onEnterRelease" };
 
-/*
-================
-idWindow::CommonInit
-================
-*/
 void			 idWindow::CommonInit()
 {
 	childID		= 0;
@@ -142,11 +137,6 @@ void			 idWindow::CommonInit()
 	hideCursor = false;
 }
 
-/*
-================
-idWindow::Size
-================
-*/
 size_t idWindow::Size()
 {
 	int c  = children.Num();
@@ -158,11 +148,6 @@ size_t idWindow::Size()
 	return sz;
 }
 
-/*
-================
-idWindow::Allocated
-================
-*/
 size_t idWindow::Allocated()
 {
 	int i, c;
@@ -200,22 +185,12 @@ size_t idWindow::Allocated()
 	return sz;
 }
 
-/*
-================
-idWindow::idWindow
-================
-*/
 idWindow::idWindow( idUserInterfaceLocal* ui )
 {
 	gui = ui;
 	CommonInit();
 }
 
-/*
-================
-idWindow::CleanUp
-================
-*/
 void idWindow::CleanUp()
 {
 	int i, c = drawWindows.Num();
@@ -239,21 +214,11 @@ void idWindow::CleanUp()
 	CommonInit();
 }
 
-/*
-================
-idWindow::~idWindow
-================
-*/
 idWindow::~idWindow()
 {
 	CleanUp();
 }
 
-/*
-================
-idWindow::Move
-================
-*/
 void idWindow::Move( float x, float y )
 {
 	idRectangle rct = rect;
@@ -266,43 +231,23 @@ void idWindow::Move( float x, float y )
 	rect = rct;
 }
 
-/*
-================
-idWindow::SetFont
-================
-*/
 void idWindow::SetFont()
 {
 	dc->SetFont( font );
 }
 
-/*
-================
-idWindow::GetMaxCharHeight
-================
-*/
 float idWindow::GetMaxCharHeight()
 {
 	SetFont();
 	return dc->MaxCharHeight( textScale );
 }
 
-/*
-================
-idWindow::GetMaxCharWidth
-================
-*/
 float idWindow::GetMaxCharWidth()
 {
 	SetFont();
 	return dc->MaxCharWidth( textScale );
 }
 
-/*
-================
-idWindow::Draw
-================
-*/
 void idWindow::Draw( int time, float x, float y )
 {
 	if( text.Length() == 0 ) {
@@ -328,11 +273,6 @@ void idWindow::Draw( int time, float x, float y )
 	}
 }
 
-/*
-================
-idWindow::BringToTop
-================
-*/
 void idWindow::BringToTop( idWindow* w )
 {
 	if( w && !( w->flags & WIN_MODAL ) ) {
@@ -352,11 +292,6 @@ void idWindow::BringToTop( idWindow* w )
 	}
 }
 
-/*
-================
-idWindow::Size
-================
-*/
 void idWindow::Size( float x, float y, float w, float h )
 {
 	idRectangle rct = rect;
@@ -368,11 +303,6 @@ void idWindow::Size( float x, float y, float w, float h )
 	CalcClientRect( 0, 0 );
 }
 
-/*
-================
-idWindow::MouseEnter
-================
-*/
 void idWindow::MouseEnter()
 {
 	if( noEvents ) {
@@ -382,11 +312,6 @@ void idWindow::MouseEnter()
 	RunScript( ON_MOUSEENTER );
 }
 
-/*
-================
-idWindow::MouseExit
-================
-*/
 void idWindow::MouseExit()
 {
 	if( noEvents ) {
@@ -396,11 +321,6 @@ void idWindow::MouseExit()
 	RunScript( ON_MOUSEEXIT );
 }
 
-/*
-================
-idWindow::GetChildWithOnAction
-================
-*/
 idWindow* idWindow::GetChildWithOnAction( float xd, float yd )
 {
 	int c = children.Num();
@@ -422,11 +342,6 @@ idWindow* idWindow::GetChildWithOnAction( float xd, float yd )
 	return this;
 }
 
-/*
-================
-idWindow::RouteMouseCoords
-================
-*/
 const char* idWindow::RouteMouseCoords( float xd, float yd )
 {
 	idStr str;
@@ -465,11 +380,6 @@ const char* idWindow::RouteMouseCoords( float xd, float yd )
 	return "";
 }
 
-/*
-================
-idWindow::Activate
-================
-*/
 void idWindow::Activate( bool activate, idStr& act )
 {
 	int n = ( activate ) ? ON_ACTIVATE : ON_DEACTIVATE;
@@ -488,11 +398,6 @@ void idWindow::Activate( bool activate, idStr& act )
 	}
 }
 
-/*
-================
-idWindow::Trigger
-================
-*/
 void idWindow::Trigger()
 {
 	RunScript( ON_TRIGGER );
@@ -503,11 +408,6 @@ void idWindow::Trigger()
 	StateChanged( true );
 }
 
-/*
-================
-idWindow::StateChanged
-================
-*/
 void idWindow::StateChanged( bool redraw )
 {
 	UpdateWinVars();
@@ -526,11 +426,6 @@ void idWindow::StateChanged( bool redraw )
 	}
 }
 
-/*
-================
-idWindow::SetCapture
-================
-*/
 idWindow* idWindow::SetCapture( idWindow* w )
 {
 	// only one child can have the focus
@@ -552,21 +447,11 @@ idWindow* idWindow::SetCapture( idWindow* w )
 	return last;
 }
 
-/*
-================
-idWindow::AddUpdateVar
-================
-*/
 void idWindow::AddUpdateVar( idWinVar* var )
 {
 	updateVars.AddUnique( var );
 }
 
-/*
-================
-idWindow::UpdateWinVars
-================
-*/
 void idWindow::UpdateWinVars()
 {
 	int c = updateVars.Num();
@@ -575,11 +460,6 @@ void idWindow::UpdateWinVars()
 	}
 }
 
-/*
-================
-idWindow::RunTimeEvents
-================
-*/
 bool idWindow::RunTimeEvents( int time )
 {
 	if( time == lastTimeRun ) {
@@ -611,11 +491,6 @@ bool idWindow::RunTimeEvents( int time )
 	return true;
 }
 
-/*
-================
-idWindow::RunNamedEvent
-================
-*/
 void idWindow::RunNamedEvent( const char* eventName )
 {
 	int i;
@@ -647,11 +522,6 @@ void idWindow::RunNamedEvent( const char* eventName )
 	}
 }
 
-/*
-================
-idWindow::Contains
-================
-*/
 bool idWindow::Contains( const idRectangle& sr, float x, float y )
 {
 	idRectangle r = sr;
@@ -660,11 +530,6 @@ bool idWindow::Contains( const idRectangle& sr, float x, float y )
 	return r.Contains( x, y );
 }
 
-/*
-================
-idWindow::Contains
-================
-*/
 bool idWindow::Contains( float x, float y )
 {
 	idRectangle r = drawRect;
@@ -673,11 +538,6 @@ bool idWindow::Contains( float x, float y )
 	return r.Contains( x, y );
 }
 
-/*
-================
-idWindow::AddCommand
-================
-*/
 void idWindow::AddCommand( const char* _cmd )
 {
 	idStr str = cmd;
@@ -690,11 +550,6 @@ void idWindow::AddCommand( const char* _cmd )
 	cmd = str;
 }
 
-/*
-================
-idWindow::HandleEvent
-================
-*/
 const char* idWindow::HandleEvent( const sysEvent_t* event, bool* updateVisuals )
 {
 	static bool actionDownRun;
@@ -943,11 +798,6 @@ const char* idWindow::HandleEvent( const sysEvent_t* event, bool* updateVisuals 
 	return gui->GetReturnCmd();
 }
 
-/*
-================
-idWindow::DebugDraw
-================
-*/
 void idWindow::DebugDraw( int time, float x, float y )
 {
 	static char buff[16384] = { 0 };
@@ -982,11 +832,6 @@ void idWindow::DebugDraw( int time, float x, float y )
 	}
 }
 
-/*
-================
-idWindow::Transition
-================
-*/
 void idWindow::Transition()
 {
 	int	 i, c = transitions.Num();
@@ -1033,11 +878,6 @@ void idWindow::Transition()
 	}
 }
 
-/*
-================
-idWindow::Time
-================
-*/
 void idWindow::Time()
 {
 	if( noTime ) {
@@ -1068,11 +908,6 @@ void idWindow::Time()
 	}
 }
 
-/*
-================
-idWindow::EvalRegs
-================
-*/
 float idWindow::EvalRegs( int test, bool force )
 {
 	static float	 regs[MAX_EXPRESSION_REGISTERS];
@@ -1097,11 +932,6 @@ float idWindow::EvalRegs( int test, bool force )
 	return 0.0;
 }
 
-/*
-================
-idWindow::DrawBackground
-================
-*/
 void idWindow::DrawBackground( const idRectangle& drawRect )
 {
 	if( backColor.w() ) {
@@ -1121,11 +951,6 @@ void idWindow::DrawBackground( const idRectangle& drawRect )
 	}
 }
 
-/*
-================
-idWindow::DrawBorderAndCaption
-================
-*/
 void idWindow::DrawBorderAndCaption( const idRectangle& drawRect )
 {
 	if( flags & WIN_BORDER && borderSize && borderColor.w() ) {
@@ -1133,11 +958,6 @@ void idWindow::DrawBorderAndCaption( const idRectangle& drawRect )
 	}
 }
 
-/*
-================
-idWindow::SetupTransforms
-================
-*/
 void idWindow::SetupTransforms( float x, float y )
 {
 	static idMat3 trans;
@@ -1166,11 +986,6 @@ void idWindow::SetupTransforms( float x, float y )
 	}
 }
 
-/*
-================
-idWindow::CalcRects
-================
-*/
 void idWindow::CalcRects( float x, float y )
 {
 	CalcClientRect( 0, 0 );
@@ -1188,11 +1003,6 @@ void idWindow::CalcRects( float x, float y )
 	clientRect.Offset( -x, -y );
 }
 
-/*
-================
-idWindow::Redraw
-================
-*/
 void idWindow::Redraw( float x, float y, bool hud )
 {
 	idStr str;
@@ -1302,11 +1112,6 @@ void idWindow::Redraw( float x, float y, bool hud )
 	textRect.Offset( -x, -y );
 }
 
-/*
-================
-idWindow::ArchiveToDictionary
-================
-*/
 void idWindow::ArchiveToDictionary( idDict* dict, bool useNames )
 {
 	// FIXME: rewrite without state
@@ -1316,11 +1121,6 @@ void idWindow::ArchiveToDictionary( idDict* dict, bool useNames )
 	}
 }
 
-/*
-================
-idWindow::InitFromDictionary
-================
-*/
 void idWindow::InitFromDictionary( idDict* dict, bool byName )
 {
 	// FIXME: rewrite without state
@@ -1330,11 +1130,6 @@ void idWindow::InitFromDictionary( idDict* dict, bool byName )
 	}
 }
 
-/*
-================
-idWindow::CalcClientRect
-================
-*/
 void idWindow::CalcClientRect( float xofs, float yofs )
 {
 	drawRect = rect;
@@ -1378,11 +1173,6 @@ void idWindow::CalcClientRect( float xofs, float yofs )
 	origin.Set( rect.x() + ( rect.w() / 2 ), rect.y() + ( rect.h() / 2 ) );
 }
 
-/*
-================
-idWindow::SetupBackground
-================
-*/
 void idWindow::SetupBackground()
 {
 	if( backGroundName.Length() ) {
@@ -1394,11 +1184,6 @@ void idWindow::SetupBackground()
 	backGroundName.SetMaterialPtr( &background );
 }
 
-/*
-================
-idWindow::SetupFromState
-================
-*/
 void idWindow::SetupFromState()
 {
 	idStr str;
@@ -1421,96 +1206,46 @@ void idWindow::SetupFromState()
 	}
 }
 
-/*
-================
-idWindow::Moved
-================
-*/
 void idWindow::Moved()
 {
 }
 
-/*
-================
-idWindow::Sized
-================
-*/
 void idWindow::Sized()
 {
 }
 
-/*
-================
-idWindow::GainFocus
-================
-*/
 void idWindow::GainFocus()
 {
 }
 
-/*
-================
-idWindow::LoseFocus
-================
-*/
 void idWindow::LoseFocus()
 {
 }
 
-/*
-================
-idWindow::GainCapture
-================
-*/
 void idWindow::GainCapture()
 {
 }
 
-/*
-================
-idWindow::LoseCapture
-================
-*/
 void idWindow::LoseCapture()
 {
 	flags &= ~WIN_CAPTURE;
 }
 
-/*
-================
-idWindow::SetFlag
-================
-*/
 void idWindow::SetFlag( unsigned int f )
 {
 	flags |= f;
 }
 
-/*
-================
-idWindow::ClearFlag
-================
-*/
 void idWindow::ClearFlag( unsigned int f )
 {
 	flags &= ~f;
 }
 
-/*
-================
-idWindow::SetParent
-================
-*/
 void idWindow::SetParent( idWindow* w )
 {
 	parent = w;
 }
 
-/*
-================
-idWindow::GetCaptureChild
-================
-*/
 idWindow* idWindow::GetCaptureChild()
 {
 	if( flags & WIN_DESKTOP ) {
@@ -1519,11 +1254,6 @@ idWindow* idWindow::GetCaptureChild()
 	return NULL;
 }
 
-/*
-================
-idWindow::GetFocusedChild
-================
-*/
 idWindow* idWindow::GetFocusedChild()
 {
 	if( flags & WIN_DESKTOP ) {
@@ -1532,11 +1262,6 @@ idWindow* idWindow::GetFocusedChild()
 	return NULL;
 }
 
-/*
-================
-idWindow::SetFocus
-================
-*/
 idWindow* idWindow::SetFocus( idWindow* w, bool scripts )
 {
 	// only one child can have the focus
@@ -1567,11 +1292,6 @@ idWindow* idWindow::SetFocus( idWindow* w, bool scripts )
 	return lastFocus;
 }
 
-/*
-================
-idWindow::ParseScript
-================
-*/
 bool idWindow::ParseScript( idTokenParser* src, idGuiScriptList& list, int* timeParm, bool elseBlock )
 {
 	bool	ifElseBlock = false;
@@ -1655,33 +1375,18 @@ bool idWindow::ParseScript( idTokenParser* src, idGuiScriptList& list, int* time
 	}
 }
 
-/*
-================
-idWindow::SaveExpressionParseState
-================
-*/
 void idWindow::SaveExpressionParseState()
 {
 	saveTemps = ( bool* )Mem_Alloc( MAX_EXPRESSION_REGISTERS * sizeof( bool ), TAG_CRAP );
 	memcpy( saveTemps, registerIsTemporary, MAX_EXPRESSION_REGISTERS * sizeof( bool ) );
 }
 
-/*
-================
-idWindow::RestoreExpressionParseState
-================
-*/
 void idWindow::RestoreExpressionParseState()
 {
 	memcpy( registerIsTemporary, saveTemps, MAX_EXPRESSION_REGISTERS * sizeof( bool ) );
 	Mem_Free( saveTemps );
 }
 
-/*
-================
-idWindow::ParseScriptEntry
-================
-*/
 bool idWindow::ParseScriptEntry( const char* name, idTokenParser* src )
 {
 	for( int i = 0; i < SCRIPT_COUNT; i++ ) {
@@ -1694,11 +1399,6 @@ bool idWindow::ParseScriptEntry( const char* name, idTokenParser* src )
 	return false;
 }
 
-/*
-================
-idWindow::DisableRegister
-================
-*/
 void idWindow::DisableRegister( const char* _name )
 {
 	idRegister* reg = RegList()->FindReg( _name );
@@ -1707,25 +1407,20 @@ void idWindow::DisableRegister( const char* _name )
 	}
 }
 
-/*
-================================
-idSort_TimeLine
-================================
+/*!
+	\class idSort_TimeLine
+	\brief Sorts timeline events based on their time values.
 */
 class idSort_TimeLine : public idSort_Quick<idTimeLineEvent*, idSort_TimeLine>
 {
 public:
+	//! Compares two timeline events based on their time values
 	int Compare( idTimeLineEvent* const& a, idTimeLineEvent* const& b ) const
 	{
 		return a->time - b->time;
 	}
 };
 
-/*
-================
-idWindow::PostParse
-================
-*/
 void idWindow::PostParse()
 {
 	// Sort timeline events
@@ -1733,11 +1428,6 @@ void idWindow::PostParse()
 	timeLineEvents.SortWithTemplate( sorter );
 }
 
-/*
-================
-idWindow::GetWinVarOffset
-================
-*/
 intptr_t idWindow::GetWinVarOffset( idWinVar* wv, drawWin_t* owner )
 {
 	// RB: 64 bit fixes, changed oldschool offsets using ptrdiff_t
@@ -1805,11 +1495,6 @@ intptr_t idWindow::GetWinVarOffset( idWinVar* wv, drawWin_t* owner )
 	return ret;
 }
 
-/*
-================
-idWindow::GetWinVarByName
-================
-*/
 idWinVar* idWindow::GetWinVarByName( const char* _name, bool fixup, drawWin_t** owner )
 {
 	idWinVar* retVar = NULL;
@@ -1913,11 +1598,6 @@ idWinVar* idWindow::GetWinVarByName( const char* _name, bool fixup, drawWin_t** 
 	return NULL;
 }
 
-/*
-================
-idWindow::ParseString
-================
-*/
 void idWindow::ParseString( idTokenParser* src, idStr& out )
 {
 	idToken tok;
@@ -1926,11 +1606,6 @@ void idWindow::ParseString( idTokenParser* src, idStr& out )
 	}
 }
 
-/*
-================
-idWindow::ParseVec4
-================
-*/
 void idWindow::ParseVec4( idTokenParser* src, idVec4& out )
 {
 	idToken tok;
@@ -1947,11 +1622,6 @@ void idWindow::ParseVec4( idTokenParser* src, idVec4& out )
 	out.w = atof( tok );
 }
 
-/*
-================
-idWindow::ParseInternalVar
-================
-*/
 bool idWindow::ParseInternalVar( const char* _name, idTokenParser* src )
 {
 	if( idStr::Icmp( _name, "showtime" ) == 0 ) {
@@ -2084,11 +1754,6 @@ bool idWindow::ParseInternalVar( const char* _name, idTokenParser* src )
 	return false;
 }
 
-/*
-================
-idWindow::ParseRegEntry
-================
-*/
 bool idWindow::ParseRegEntry( const char* name, idTokenParser* src )
 {
 	idStr work;
@@ -2149,11 +1814,6 @@ bool idWindow::ParseRegEntry( const char* name, idTokenParser* src )
 	return true;
 }
 
-/*
-================
-idWindow::SetInitialState
-================
-*/
 void idWindow::SetInitialState( const char* _name )
 {
 	name			  = _name;
@@ -2442,11 +2102,6 @@ bool idWindow::Parse( idTokenParser* src, bool rebuild )
 	return ret;
 }
 
-/*
-================
-idWindow::FindSimpleWinByName
-================
-*/
 idSimpleWindow* idWindow::FindSimpleWinByName( const char* _name )
 {
 	int c = drawWindows.Num();
@@ -2461,11 +2116,6 @@ idSimpleWindow* idWindow::FindSimpleWinByName( const char* _name )
 	return NULL;
 }
 
-/*
-================
-idWindow::FindChildByName
-================
-*/
 drawWin_t* idWindow::FindChildByName( const char* _name )
 {
 	static drawWin_t dw;
@@ -2493,21 +2143,11 @@ drawWin_t* idWindow::FindChildByName( const char* _name )
 	return NULL;
 }
 
-/*
-================
-idWindow::GetStrPtrByName
-================
-*/
 idStr* idWindow::GetStrPtrByName( const char* _name )
 {
 	return NULL;
 }
 
-/*
-================
-idWindow::AddTransition
-================
-*/
 void idWindow::AddTransition( idWinVar* dest, idVec4 from, idVec4 to, int time, float accelTime, float decelTime )
 {
 	idTransitionData data;
@@ -2516,21 +2156,11 @@ void idWindow::AddTransition( idWinVar* dest, idVec4 from, idVec4 to, int time, 
 	transitions.Append( data );
 }
 
-/*
-================
-idWindow::StartTransition
-================
-*/
 void idWindow::StartTransition()
 {
 	flags |= WIN_INTRANSITION;
 }
 
-/*
-================
-idWindow::ResetCinematics
-================
-*/
 void idWindow::ResetCinematics()
 {
 	if( background ) {
@@ -2538,11 +2168,6 @@ void idWindow::ResetCinematics()
 	}
 }
 
-/*
-================
-idWindow::ResetTime
-================
-*/
 void idWindow::ResetTime( int t )
 {
 	timeLine = gui->GetTime() - t;
@@ -2567,11 +2192,6 @@ void idWindow::ResetTime( int t )
 	}
 }
 
-/*
-================
-idWindow::RunScriptList
-================
-*/
 bool idWindow::RunScriptList( idGuiScriptList* src )
 {
 	if( src == NULL ) {
@@ -2594,11 +2214,6 @@ bool idWindow::RunScript( int n )
 	return false;
 }
 
-/*
-================
-idWindow::ExpressionConstant
-================
-*/
 int idWindow::ExpressionConstant( float f )
 {
 	int i;
@@ -2626,11 +2241,6 @@ int idWindow::ExpressionConstant( float f )
 	return i;
 }
 
-/*
-================
-idWindow::ExpressionTemporary
-================
-*/
 int idWindow::ExpressionTemporary()
 {
 	if( expressionRegisters.Num() == MAX_EXPRESSION_REGISTERS ) {
@@ -2643,11 +2253,6 @@ int idWindow::ExpressionTemporary()
 	return i;
 }
 
-/*
-================
-idWindow::ExpressionOp
-================
-*/
 wexpOp_t* idWindow::ExpressionOp()
 {
 	if( ops.Num() == MAX_EXPRESSION_OPS ) {
@@ -2660,12 +2265,6 @@ wexpOp_t* idWindow::ExpressionOp()
 	return &ops[i];
 }
 
-/*
-================
-idWindow::EmitOp
-================
-*/
-// DG: a, b and the return value are really pointers, so use intptr_t
 intptr_t idWindow::EmitOp( intptr_t a, intptr_t b, wexpOpType_t opType, wexpOp_t** opp )
 {
 	// DG end
@@ -2714,12 +2313,6 @@ intptr_t idWindow::EmitOp( intptr_t a, intptr_t b, wexpOpType_t opType, wexpOp_t
 	return op->c;
 }
 
-/*
-================
-idWindow::ParseEmitOp
-================
-*/
-// DG: a, b and the return value are really pointers, so use intptr_t
 intptr_t idWindow::ParseEmitOp( idTokenParser* src, intptr_t a, wexpOpType_t opType, int priority, wexpOp_t** opp )
 {
 	intptr_t b = ParseExpressionPriority( src, priority );
@@ -2727,14 +2320,6 @@ intptr_t idWindow::ParseEmitOp( idTokenParser* src, intptr_t a, wexpOpType_t opT
 	return EmitOp( a, b, opType, opp );
 }
 
-/*
-================
-idWindow::ParseTerm
-
-Returns a register index
-=================
-*/
-// DG: component and the return value are really pointers, so use intptr_t
 intptr_t idWindow::ParseTerm( idTokenParser* src, idWinVar* var, intptr_t component )
 {
 	// DG end
@@ -2833,7 +2418,6 @@ Returns a register index
 =================
 */
 #define TOP_PRIORITY 4
-// DG: a, component and the return value are really pointers, so use intptr_t
 intptr_t idWindow::ParseExpressionPriority( idTokenParser* src, int priority, idWinVar* var, intptr_t component )
 {
 	idToken	 token;
@@ -2927,11 +2511,6 @@ intptr_t idWindow::ParseExpression( idTokenParser* src, idWinVar* var, intptr_t 
 	return ParseExpressionPriority( src, TOP_PRIORITY, var );
 }
 
-/*
-================
-idWindow::ParseBracedExpression
-================
-*/
 void idWindow::ParseBracedExpression( idTokenParser* src )
 {
 	src->ExpectTokenString( "{" );
@@ -2939,15 +2518,6 @@ void idWindow::ParseBracedExpression( idTokenParser* src )
 	src->ExpectTokenString( "}" );
 }
 
-/*
-===============
-idWindow::EvaluateRegisters
-
-Parameters are taken from the localSpace and the renderView,
-then all expressions are evaluated, leaving the shader registers
-set to their apropriate values.
-===============
-*/
 void idWindow::EvaluateRegisters( float* registers )
 {
 	int		  i, b;
@@ -3074,11 +2644,6 @@ void idWindow::EvaluateRegisters( float* registers )
 	}
 }
 
-/*
-===============
-idWindow::WriteString
-===============
-*/
 void idWindow::WriteSaveGameString( const char* string, idFile* savefile )
 {
 	int len = strlen( string );
@@ -3087,11 +2652,6 @@ void idWindow::WriteSaveGameString( const char* string, idFile* savefile )
 	savefile->Write( string, len );
 }
 
-/*
-===============
-idWindow::WriteSaveGameTransition
-===============
-*/
 void idWindow::WriteSaveGameTransition( idTransitionData& trans, idFile* savefile )
 {
 	drawWin_t dw, *fdw;
@@ -3113,11 +2673,6 @@ void idWindow::WriteSaveGameTransition( idTransitionData& trans, idFile* savefil
 	}
 }
 
-/*
-===============
-idWindow::ReadSaveGameTransition
-===============
-*/
 void idWindow::ReadSaveGameTransition( idTransitionData& trans, idFile* savefile )
 {
 	int offset;
@@ -3137,11 +2692,6 @@ void idWindow::ReadSaveGameTransition( idTransitionData& trans, idFile* savefile
 	}
 }
 
-/*
-===============
-idWindow::WriteToSaveGame
-===============
-*/
 void idWindow::WriteToSaveGame( idFile* savefile )
 {
 	int i;
@@ -3268,11 +2818,6 @@ void idWindow::WriteToSaveGame( idFile* savefile )
 	}
 }
 
-/*
-===============
-idWindow::ReadSaveGameString
-===============
-*/
 void idWindow::ReadSaveGameString( idStr& string, idFile* savefile )
 {
 	int len;
@@ -3286,11 +2831,6 @@ void idWindow::ReadSaveGameString( idStr& string, idFile* savefile )
 	savefile->Read( &string[0], len );
 }
 
-/*
-===============
-idWindow::ReadFromSaveGame
-===============
-*/
 void idWindow::ReadFromSaveGame( idFile* savefile )
 {
 	int i;
@@ -3446,11 +2986,6 @@ void idWindow::ReadFromSaveGame( idFile* savefile )
 	}
 }
 
-/*
-===============
-idWindow::NumTransitions
-===============
-*/
 int idWindow::NumTransitions()
 {
 	int c = transitions.Num();
@@ -3460,11 +2995,6 @@ int idWindow::NumTransitions()
 	return c;
 }
 
-/*
-===============
-idWindow::FixupTransitions
-===============
-*/
 void idWindow::FixupTransitions()
 {
 	int i, c = transitions.Num();
@@ -3520,21 +3050,11 @@ void idWindow::FixupTransitions()
 	}
 }
 
-/*
-===============
-idWindow::AddChild
-===============
-*/
 void idWindow::AddChild( idWindow* win )
 {
 	win->childID = children.Append( win );
 }
 
-/*
-================
-idWindow::FixupParms
-================
-*/
 void idWindow::FixupParms()
 {
 	int i;
@@ -3577,11 +3097,6 @@ void idWindow::FixupParms()
 	}
 }
 
-/*
-================
-idWindow::IsSimple
-================
-*/
 bool idWindow::IsSimple()
 {
 	if( ops.Num() ) {
@@ -3609,11 +3124,6 @@ bool idWindow::IsSimple()
 	return true;
 }
 
-/*
-================
-idWindow::ContainsStateVars
-================
-*/
 bool idWindow::ContainsStateVars()
 {
 	if( updateVars.Num() ) {
@@ -3628,11 +3138,6 @@ bool idWindow::ContainsStateVars()
 	return false;
 }
 
-/*
-================
-idWindow::Interactive
-================
-*/
 bool idWindow::Interactive()
 {
 	if( scripts[ON_ACTION] ) {
@@ -3647,11 +3152,6 @@ bool idWindow::Interactive()
 	return false;
 }
 
-/*
-================
-idWindow::SetChildWinVarVal
-================
-*/
 void idWindow::SetChildWinVarVal( const char* name, const char* var, const char* val )
 {
 	drawWin_t* dw = FindChildByName( name );
@@ -3667,13 +3167,6 @@ void idWindow::SetChildWinVarVal( const char* name, const char* var, const char*
 	}
 }
 
-/*
-================
-idWindow::FindChildByPoint
-
-Finds the window under the given point
-================
-*/
 idWindow* idWindow::FindChildByPoint( float x, float y, idWindow** below )
 {
 	int c = children.Num();
@@ -3713,13 +3206,6 @@ idWindow* idWindow::FindChildByPoint( float x, float y, idWindow* below )
 	return FindChildByPoint( x, y, &below );
 }
 
-/*
-================
-idWindow::GetChildCount
-
-Returns the number of children
-================
-*/
 int idWindow::GetChildCount()
 {
 	return drawWindows.Num();
@@ -3737,13 +3223,6 @@ idWindow* idWindow::GetChild( int index )
 	return drawWindows[index].win;
 }
 
-/*
-================
-idWindow::GetChildIndex
-
-Returns the index of the given child window
-================
-*/
 int idWindow::GetChildIndex( idWindow* window )
 {
 	int find;
@@ -3755,14 +3234,6 @@ int idWindow::GetChildIndex( idWindow* window )
 	return -1;
 }
 
-/*
-================
-idWindow::RemoveChild
-
-Removes the child from the list of children.   Note that the child window being
-removed must still be deallocated by the caller
-================
-*/
 void idWindow::RemoveChild( idWindow* win )
 {
 	int find;
@@ -3778,13 +3249,6 @@ void idWindow::RemoveChild( idWindow* win )
 	}
 }
 
-/*
-================
-idWindow::InsertChild
-
-Inserts the given window as a child into the given location in the zorder.
-================
-*/
 bool idWindow::InsertChild( idWindow* win, idWindow* before )
 {
 	AddChild( win );
@@ -3809,11 +3273,6 @@ bool idWindow::InsertChild( idWindow* win, idWindow* before )
 	return true;
 }
 
-/*
-================
-idWindow::ScreenToClient
-================
-*/
 void idWindow::ScreenToClient( idRectangle* r )
 {
 	int		  x;
@@ -3829,11 +3288,6 @@ void idWindow::ScreenToClient( idRectangle* r )
 	r->y -= y;
 }
 
-/*
-================
-idWindow::ClientToScreen
-================
-*/
 void idWindow::ClientToScreen( idRectangle* r )
 {
 	int		  x;
@@ -3849,14 +3303,6 @@ void idWindow::ClientToScreen( idRectangle* r )
 	r->y += y;
 }
 
-/*
-================
-idWindow::SetDefaults
-
-Set the window do a default window with no text, no background and
-default colors, etc..
-================
-*/
 void idWindow::SetDefaults()
 {
 	forceAspectWidth  = 640.0f;
@@ -3884,15 +3330,6 @@ void idWindow::SetDefaults()
 	backGroundName = "";
 }
 
-/*
-================
-idWindow::UpdateFromDictionary
-
-The editor only has a dictionary to work with so the easiest way to push the
-values of the dictionary onto the window is for the window to interpret the
-dictionary as if were a file being parsed.
-================
-*/
 bool idWindow::UpdateFromDictionary( idDict& dict )
 {
 	const idKeyValue* kv;

@@ -38,11 +38,6 @@ idSWFConstantPool::idSWFConstantPool()
 {
 }
 
-/*
-========================
-idSWFConstantPool::Clear
-========================
-*/
 void idSWFConstantPool::Clear()
 {
 	for( int i = 0; i < pool.Num(); i++ ) {
@@ -51,11 +46,6 @@ void idSWFConstantPool::Clear()
 	pool.Clear();
 }
 
-/*
-========================
-idSWFConstantPool::Copy
-========================
-*/
 void idSWFConstantPool::Copy( const idSWFConstantPool& other )
 {
 	Clear();
@@ -66,11 +56,6 @@ void idSWFConstantPool::Copy( const idSWFConstantPool& other )
 	}
 }
 
-/*
-========================
-idSWFScriptFunction_Script::~idSWFScriptFunction_Script
-========================
-*/
 idSWFScriptFunction_Script::~idSWFScriptFunction_Script()
 {
 	for( int i = 0; i < scope.Num(); i++ ) {
@@ -83,11 +68,6 @@ idSWFScriptFunction_Script::~idSWFScriptFunction_Script()
 	}
 }
 
-/*
-========================
-idSWFScriptFunction_Script::Call
-========================
-*/
 void idSWFScriptFunction_Script::SetScope( idList<idSWFScriptObject*>& newScope )
 {
 	assert( scope.Num() == 0 );
@@ -105,11 +85,6 @@ void idSWFScriptFunction_Script::SetScope( idList<idSWFScriptObject*>& newScope 
 	}
 }
 
-/*
-========================
-idSWFScriptFunction_Script::Call
-========================
-*/
 idSWFScriptVar idSWFScriptFunction_Script::Call( idSWFScriptObject* thisObject, const idSWFParmList& parms )
 {
 	idSWFBitStream bitstream( data, length, false );
@@ -236,7 +211,6 @@ idSWFScriptVar idSWFScriptFunction_Script::Call( idSWFScriptObject* thisObject, 
 	return retVal;
 }
 
-// RB begin
 idStr idSWFScriptFunction_Script::CallToScript( idSWFScriptObject* thisObject, const idSWFParmList& parms, const char* filename, int characterID, int actionID )
 {
 	idSWFBitStream bitstream( data, length, false );
@@ -645,11 +619,6 @@ const char* GetSwfActionName( swfAction_t code )
 }
 }
 
-/*
-========================
-idSWFScriptFunction_Script::Run
-========================
-*/
 idSWFScriptVar idSWFScriptFunction_Script::Run( idSWFScriptObject* thisObject, idSWFStack& stack, idSWFBitStream& bitstream )
 {
 	static int			 callstackLevel = -1;
@@ -1477,7 +1446,6 @@ idSWFScriptVar idSWFScriptFunction_Script::Run( idSWFScriptObject* thisObject, i
 	return idSWFScriptVar();
 }
 
-// RB begin
 idStr idSWFScriptFunction_Script::UpdateIndent( int indentLevel ) const
 {
 	idStr indent;
@@ -2527,13 +2495,7 @@ finish:
 
 	return actionScript;
 }
-// RB end
 
-/*
-========================
-idSWF::Invoke
-========================
-*/
 void idSWF::Invoke( const char* functionName, const idSWFParmList& parms )
 {
 	idSWFScriptObject* obj		 = mainspriteInstance->GetScriptObject();
@@ -2548,11 +2510,6 @@ void idSWF::Invoke( const char* functionName, const idSWFParmList& parms )
 	}
 }
 
-/*
-========================
-idSWF::Invoke
-========================
-*/
 void idSWF::Invoke( const char* functionName, const idSWFParmList& parms, idSWFScriptVar& scriptVar )
 {
 	if( scriptVar.IsFunction() ) {
@@ -2567,11 +2524,6 @@ void idSWF::Invoke( const char* functionName, const idSWFParmList& parms, idSWFS
 	}
 }
 
-/*
-========================
-idSWF::Invoke
-========================
-*/
 void idSWF::Invoke( const char* functionName, const idSWFParmList& parms, bool& functionExists )
 {
 	idSWFScriptObject* obj		 = mainspriteInstance->GetScriptObject();

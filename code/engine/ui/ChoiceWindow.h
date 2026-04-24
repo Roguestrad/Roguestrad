@@ -32,34 +32,63 @@ If you have questions concerning this license or the applicable additional terms
 #include "Window.h"
 
 class idUserInterfaceLocal;
+
+/*!
+	\class idChoiceWindow
+	\brief A window class that manages user choices with associated scripts and cvar integration.
+
+	The idChoiceWindow class extends window functionality to support user selection from a list of options, where each option can trigger scripts and synchronize with console variables. It handles
+   event processing, rendering, activation, and state management for choice-based UI elements. The class integrates with the console variable system to maintain persistent state and supports both
+   direct cvar binding and GUI dictionary updates. Memory allocation tracking is provided through a virtual method for monitoring used resources. The window can be initialized with default values,
+   parse internal variables for configuration, and update its state based on cvar changes or user interaction.
+
+*/
 class idChoiceWindow : public idWindow
 {
 public:
+	//! Constructs an idChoiceWindow object with the specified user interface.
 	idChoiceWindow( idUserInterfaceLocal* gui );
 	virtual ~idChoiceWindow();
 
+	//! Handles input events for a choice window, updating the selected option and executing associated scripts.
 	virtual const char* HandleEvent( const sysEvent_t* event, bool* updateVisuals );
+
+	//! Processes post-parsing initialization and updates for the choice window
 	virtual void		PostParse();
+
+	//! Renders the choice window at the specified position with the given time
 	virtual void		Draw( int time, float x, float y );
+
+	//! Activates the choice window and updates its GUI state based on the current choice.
 	virtual void		Activate( bool activate, idStr& act );
 	virtual size_t		Allocated() { return idWindow::Allocated(); };
 
+	//! Retrieves a window variable by name from the choice window, returning predefined variables for specific names or delegating to the base window class for others.
 	virtual idWinVar*	GetWinVarByName( const char* _name, bool winLookup = false, drawWin_t** owner = NULL );
 
+	//! Executes a named event for the choice window, specifically handling cvar read and write operations.
 	void				RunNamedEvent( const char* eventName );
 
 private:
+	//! Parses internal variables for the choice window, handling 'choicetype' and 'currentchoice' parameters.
 	virtual bool  ParseInternalVar( const char* name, idTokenParser* src );
+
+	//! Initializes the choice window with default values.
 	void		  CommonInit();
+
+	//! Updates the choice window's current selection based on the associated cvar or GUI state.
 	void		  UpdateChoice();
+
+	//! Validates the current choice index and ensures there is at least one choice available.
 	void		  ValidateChoice();
 
+	//! Initializes variables for the choice window by processing associated cvar and gui strings.
 	void		  InitVars();
-	// true: read the updated cvar from cvar system, gui from dict
-	// false: write to the cvar system, to the gui dict
-	// force == true overrides liveUpdate 0
+
+	//! Updates variables by reading from or writing to the console variable system and GUI dictionary.
 	void		  UpdateVars( bool read, bool force = false );
 
+	//! Updates the choice lists and their corresponding values when the window variables change
 	void		  UpdateChoicesAndVals();
 
 	int			  currentChoice;

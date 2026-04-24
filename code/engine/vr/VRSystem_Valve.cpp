@@ -41,107 +41,198 @@ extern DeviceManager* deviceManager;
 
 #define MAX_VREVENTS 256
 
+/*!
+	\class VRSystem_Valve
+	\brief VRSystem_Valve provides a comprehensive interface for Valve-based VR hardware integration and management.
+
+	This class implements a full-featured VR system interface specifically designed for Valve hardware, extending the base VRSystem functionality. It handles initialization, shutdown, and continuous
+   updating of VR HMD devices, including tracking of head and controller poses. The class provides methods for retrieving pose data, managing input events, applying haptic feedback, and configuring
+   rendering parameters such as resolution, field of view, and screen separation. It includes specialized functions for converting between Valve's VR pose formats and the engine's internal vector and
+   matrix representations. The implementation supports both seated and standing VR modes, with dedicated methods for managing seated origin and axis transformations. Additionally, it offers event
+   queuing and processing capabilities for UI and game input, including conversion of analog stick inputs to D-pad directions and generation of mouse events for VR shell UI interactions.
+
+*/
 class VRSystem_Valve : public VRSystem
 {
+	//! Initializes the VR HMD system and returns true if successful.
 	virtual bool InitHMD();
+
+	//! Shuts down the HMD system.
 	virtual void ShutdownHMD()
 	{
 	}
+
+	//! Updates the state of the HMD device.
 	virtual void UpdateHMD()
 	{
 	}
 
+	//! Resets the pose of the VR system.
 	virtual void	ResetPose();
+
+	//! Logs information about detected VR devices including HMD and controllers.
 	virtual void	LogDevices();
 
+	//! Updates the VR rendering resolution based on the current scale factor and recommended render target size.
 	virtual void	UpdateResolution();
 
+	//! Returns the count of game input events that have been polled.
 	virtual int		PollGameInputEvents();
+
+	//! Retrieves a game input event from the VR system by index.
 	virtual int		ReturnGameInputEvent( const int n, int& action, int& value );
 
+	//! Submits stereo render images to the VR system for display.
 	virtual void	SubmitStereoRenders( nvrhi::ICommandList* commandList, idImage* image0, idImage* image1 );
+
+	//! Prepares for the swap operation by synchronizing frame data with the compositor.
 	virtual void	PreSwap();
+
+	//! Notifies the compositor after swapping and updates VR tracking and controller states.
 	virtual void	PostSwap();
 
+	//! Returns the render resolution for the VR system
 	virtual idVec2i GetRenderResolution() const
 	{
 		return idVec2i( hmdWidth, hmdHeight );
 	}
 
+	//! Returns the screen separation value for VR rendering.
 	virtual float GetScreenSeparation() const
 	{
 		return openVRScreenSeparation;
 	}
 
+	//! Returns the field of view for the specified eye
 	virtual idVec4 GetFOV( int eye ) const
 	{
 		return openVRfovEye[eye];
 	}
 
+	//! Returns the half inter-pupillary distance for VR rendering.
 	virtual float GetHalfIPD() const
 	{
 		return openVRHalfIPD;
 	}
 
+	//! Retrieves the current head position and orientation from the VR system.
 	virtual bool		  GetHead( idVec3& origin, idMat3& axis );
+
+	//! Returns the left controller position and orientation relative to the head.
 	virtual bool		  GetLeftController( idVec3& origin, idMat3& axis );
+
+	//! Returns the right controller's position and orientation relative to the head.
 	virtual bool		  GetRightController( idVec3& origin, idMat3& axis );
+
+	//! Applies haptic feedback to the left and right controllers with specified durations.
 	virtual void		  HapticPulse( int leftDuration, int rightDuration );
 
+	//! Retrieves the analog stick axis values from the left VR controller
 	virtual bool		  GetLeftControllerAxis( idVec2& axis );
+
+	//! Retrieves the analog axis values from the right VR controller
 	virtual bool		  GetRightControllerAxis( idVec2& axis );
 
+	//! Returns the state of the left controller press event
 	virtual bool		  LeftControllerWasPressed();
+
+	//! Checks if the left VR controller's touchpad is currently pressed.
 	virtual bool		  LeftControllerIsPressed();
 
+	//! Returns whether the right VR controller was pressed in the previous frame.
 	virtual bool		  RightControllerWasPressed();
+
+	//! Checks if the right controller's touchpad button is currently pressed.
 	virtual bool		  RightControllerIsPressed();
 
+	//! Returns the seated origin position for VR tracking.
 	virtual const idVec3& GetSeatedOrigin();
+
+	//! Returns the seated axis transformation matrix for VR rendering
 	virtual const idMat3& GetSeatedAxis();
+
+	//! Returns the inverse of the seated coordinate system axis matrix
 	virtual const idMat3& GetSeatedAxisInverse();
 
+	//! Returns the next UI event from the VR system's event queue
 	const sysEvent_t&	  UIEventNext();
 
+	//! Returns true if the Valve VR system is active and enabled.
 	virtual bool		  IsActive() const
 	{
 		return openVREnabled;
 	}
 
+	//! Returns true if the VR system is in seated mode.
 	virtual bool IsSeated() const
 	{
 		return openVRSeated;
 	}
 
+	//! Returns whether the left controller has a touchpad
 	virtual bool HasLeftTouchpad() const
 	{
 		return openVRLeftTouchpad;
 	}
 
+	//! Returns whether the right touchpad is available.
 	virtual bool HasRightTouchpad() const
 	{
 		return openVRRightTouchpad;
 	}
 
 private:
+	//! Converts a SteamVR matrix pose into an origin point and axis orientation.
 	void					 ConvertMatrix( const vr::HmdMatrix34_t& poseMat, idVec3& origin, idMat3& axis );
+
+	//! Returns the string property of a tracked device from the OpenVR system
 	idStr					 GetTrackedDeviceString( vr::TrackedDeviceIndex_t unDevice, vr::TrackedDeviceProperty prop, vr::TrackedPropertyError* peError = NULL );
 
+	//! Updates the scaling factors for the VR system based on player height and OpenVR measurements.
 	void					 UpdateScaling();
+
+	//! Updates the tracked controller states for the VR system
 	void					 UpdateControllers();
+
+	//! Updates the delta movement and height based on VR head pose data.
 	void					 MoveDelta( idVec3& delta, float& height );
 
-	// input
+	//! Clears all VR system events and reset controller states.
 	void					 ClearEvents();
+
+	//! Queues a UI event for processing with the specified event type and values
 	void					 UIEventQue( sysEventType_t type, int value, int value2 );
+
+	//! Queues a game event with the specified action and value.
 	void					 GameEventQue( int action, int value );
+
+	//! Converts axis values to a D-pad direction based on the specified mode.
 	int						 AxisToDPad( int mode, float x, float y );
+
+	//! Generates button events for VR controller inputs based on button ID, controller side, and press state.
 	void					 GenButtonEvent( uint32_t button, bool left, bool pressed );
+
+	//! Generates joystick axis events for VR controller input.
 	void					 GenJoyAxisEvents();
+
+	//! Generates mouse events for virtual reality shell UI based on head tracking data
 	void					 GenMouseEvents();
+
+	//! Converts a Valve VR tracked device pose to origin and axis components
 	bool					 ConvertPose( const vr::TrackedDevicePose_t& pose, idVec3& origin, idMat3& axis );
 
-	// unused
+	/*!
+		\brief Calculates and updates the view origin and axis for VR rendering with optional pitch override
+
+		This function computes the view parameters for VR rendering by adjusting the origin and axis based on the head pose data. It handles both seated and standing VR modes, applying appropriate
+	   transformations to the view matrix. The function can override the pitch using the provided eye offset value. The head pose must be valid for the function to succeed.
+
+		\param origin Output parameter for the calculated view origin
+		\param axis Output parameter for the calculated view axis
+		\param eyeOffset Offset to apply to the view for eye positioning
+		\param overridePitch True to override the pitch angle, false to use default behavior
+		\return True if the view calculation succeeded and the head pose is valid, false otherwise
+	*/
 	bool					 CalculateView( idVec3& origin, idMat3& axis, const idVec3& eyeOffset, bool overridePitch );
 
 	vr::IVRSystem*			 hmd		   = NULL;
@@ -1001,7 +1092,6 @@ bool VRSystem_Valve::GetHead( idVec3& origin, idMat3& axis )
 	return true;
 }
 
-// returns left controller position relative to the head
 bool VRSystem_Valve::GetLeftController( idVec3& origin, idMat3& axis )
 {
 	if( !m_HasLeftControllerPose || !m_HasHeadPose ) {
@@ -1014,7 +1104,6 @@ bool VRSystem_Valve::GetLeftController( idVec3& origin, idMat3& axis )
 	return true;
 }
 
-// returns right controller position relative to the head
 bool VRSystem_Valve::GetRightController( idVec3& origin, idMat3& axis )
 {
 	if( !m_HasRightControllerPose || !m_HasHeadPose ) {

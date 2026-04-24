@@ -51,34 +51,49 @@ enum matchFlags_t {
 	MATCH_JOIN_IN_PROGRESS		   = BIT( 7 ), // Join in progress supported for this match
 };
 
+//! Checks if the match type is online based on the provided match flags.
 ID_INLINE bool MatchTypeIsOnline( uint8 matchFlags )
 {
 	return ( matchFlags & MATCH_ONLINE ) ? true : false;
 }
+
+//! Returns true if the match is local, false if it is online
 ID_INLINE bool MatchTypeIsLocal( uint8 matchFlags )
 {
 	return !MatchTypeIsOnline( matchFlags );
 }
+
+//! Returns whether the match is private based on the provided match flags.
 ID_INLINE bool MatchTypeIsPrivate( uint8 matchFlags )
 {
 	return ( matchFlags & MATCH_PRIVATE ) ? true : false;
 }
+
+//! Returns true if the match type is ranked based on the provided match flags.
 ID_INLINE bool MatchTypeIsRanked( uint8 matchFlags )
 {
 	return ( matchFlags & MATCH_RANKED ) ? true : false;
 }
+
+//! Checks if the specified match flags indicate that statistics should be tracked for the game mode.
 ID_INLINE bool MatchTypeHasStats( uint8 matchFlags )
 {
 	return ( matchFlags & MATCH_STATS ) ? true : false;
 }
+
+//! Checks if the match is invite-only based on the provided match flags.
 ID_INLINE bool MatchTypeInviteOnly( uint8 matchFlags )
 {
 	return ( matchFlags & MATCH_INVITE_ONLY ) ? true : false;
 }
+
+//! Determines whether a match type is searchable based on its flags.
 ID_INLINE bool MatchTypeIsSearchable( uint8 matchFlags )
 {
 	return !MatchTypeIsPrivate( matchFlags );
 }
+
+//! Returns true if the match flags indicate a join is in progress.
 ID_INLINE bool MatchTypeIsJoinInProgress( uint8 matchFlags )
 {
 	return ( matchFlags & MATCH_JOIN_IN_PROGRESS ) ? true : false;
@@ -113,14 +128,14 @@ const int  DefaultPartyFlags	   = MATCH_JOIN_IN_PROGRESS | MATCH_ONLINE;
 const int  DefaultPublicGameFlags  = MATCH_JOIN_IN_PROGRESS | MATCH_REQUIRE_PARTY_LOBBY | MATCH_RANKED | MATCH_STATS;
 const int  DefaultPrivateGameFlags = MATCH_JOIN_IN_PROGRESS | MATCH_REQUIRE_PARTY_LOBBY | MATCH_PRIVATE;
 
-/*
-================================================
-idMatchParameters
-================================================
+/*!
+	\class idMatchParameters
+	\brief Handles serialization and deserialization of match configuration parameters.
 */
 class idMatchParameters
 {
 public:
+	//! Initializes a new instance of the idMatchParameters class with default values.
 	idMatchParameters() :
 		numSlots( MAX_PLAYERS ),
 		gameMode( GAME_MODE_RANDOM ),
@@ -131,17 +146,21 @@ public:
 	{
 	}
 
+	//! Writes the match parameters to the provided bit message.
 	void Write( idBitMsg& msg )
 	{
 		idSerializer s( msg, true );
 		Serialize( s );
 	}
+
+	//! Reads match parameters from a bit message.
 	void Read( idBitMsg& msg )
 	{
 		idSerializer s( msg, false );
 		Serialize( s );
 	}
 
+	//! Serializes the match parameters using the provided serializer
 	void Serialize( idSerializer& serializer )
 	{
 		serializer.Serialize( gameMode );
@@ -172,6 +191,7 @@ Results from calling ListServers/ServerInfo for game browser / system link.
 ================================================
 */
 struct serverInfo_t {
+	//! Initializes a serverInfo_t object with default values.
 	serverInfo_t() :
 		gameMode( GAME_MODE_RANDOM ),
 		gameMap( GAME_MAP_RANDOM ),
@@ -181,17 +201,21 @@ struct serverInfo_t {
 	{
 	}
 
+	//! Serializes the server information into a bit message
 	void Write( idBitMsg& msg )
 	{
 		idSerializer s( msg, true );
 		Serialize( s );
 	}
+
+	//! Reads server information from a bit message.
 	void Read( idBitMsg& msg )
 	{
 		idSerializer s( msg, false );
 		Serialize( s );
 	}
 
+	//! Serializes server information using the provided serializer
 	void Serialize( idSerializer& serializer )
 	{
 		serializer.SerializeString( serverName );
@@ -263,24 +287,29 @@ lobbyUserID_t
 */
 struct lobbyUserID_t {
 public:
+	//! Initializes a lobbyUserID_t object with default values.
 	lobbyUserID_t() :
 		lobbyType( 0xFF )
 	{
 	}
 
+	//! Constructs a lobby user ID using a local user handle and lobby type.
 	explicit lobbyUserID_t( localUserHandle_t localUser_, byte lobbyType_ ) :
 		localUserHandle( localUser_ ),
 		lobbyType( lobbyType_ )
 	{
 	}
 
+	//! Compares two lobbyUserID_t objects for equality based on their local user handle and lobby type.
 	bool operator==( const lobbyUserID_t& other ) const
 	{
 		return localUserHandle == other.localUserHandle && lobbyType == other.lobbyType; // Lobby type must match
 	}
 
+	//! Compares this lobby user ID with another for inequality.
 	bool operator!=( const lobbyUserID_t& other ) const { return !( *this == other ); }
 
+	//! Compares this lobby user ID with another for ordering purposes
 	bool operator<( const lobbyUserID_t& other ) const
 	{
 		if( localUserHandle == other.localUserHandle ) {
@@ -290,25 +319,33 @@ public:
 		return localUserHandle < other.localUserHandle;
 	}
 
+	//! Compares two lobby user IDs ignoring their lobby type
 	bool			  CompareIgnoreLobbyType( const lobbyUserID_t& other ) const { return localUserHandle == other.localUserHandle; }
 
+	//! Returns the local user handle associated with this lobby user ID
 	localUserHandle_t GetLocalUserHandle() const { return localUserHandle; }
+
+	//! Returns the lobby type associated with this lobby user ID.
 	byte			  GetLobbyType() const { return lobbyType; }
 
+	//! Returns true if the lobby user ID is valid
 	bool			  IsValid() const { return localUserHandle.IsValid() && lobbyType != 0xFF; }
 
+	//! Writes the lobby user ID data to a bit message stream
 	void			  WriteToMsg( idBitMsg& msg )
 	{
 		localUserHandle.WriteToMsg( msg );
 		msg.WriteByte( lobbyType );
 	}
 
+	//! Reads lobby user ID data from a bit message.
 	void ReadFromMsg( const idBitMsg& msg )
 	{
 		localUserHandle.ReadFromMsg( msg );
 		lobbyType = msg.ReadByte();
 	}
 
+	//! Serializes the lobby user ID data using the provided serializer.
 	void Serialize( idSerializer& ser );
 
 private:
@@ -316,10 +353,14 @@ private:
 	byte			  lobbyType;
 };
 
-/*
-================================================
-idLobbyBase
-================================================
+/*!
+	\class idLobbyBase
+	\brief Base class for managing lobby and peer networking functionality.
+
+	This class serves as an abstract base for managing lobby sessions, tracking user connections, handling reliable message transmission, and coordinating peer states within a networked environment.
+   It provides methods for querying user information, managing team assignments, handling bot users, and controlling network snapshot synchronization. The interface supports both host and peer roles,
+   with functionality for connection management, user validation, and network diagnostics.
+
 */
 class idLobbyBase
 {
@@ -392,10 +433,14 @@ public:
 	virtual void					 DrawDebugNetworkHUD_ServerSnapshotMetrics( bool draw ) = 0;
 };
 
-/*
-================================================
-idSession
-================================================
+/*!
+	\class idSession
+	\brief Manages session lifecycle, matchmaking, save games, and user authentication for a gaming session.
+
+	Provides an abstract interface for session management including initialization, shutdown, matchmaking, and game state coordination. Handles user authentication, leaderboards, achievements, save
+   games, and voice communication. The class supports various session states and lobby types while managing platform-specific systems like sign-in and marketplace integration. It also provides
+   mechanisms for loading, saving, and enumerating game data, as well as handling system UI states and network communication.
+
 */
 class idSession
 {
@@ -407,6 +452,7 @@ public:
 		OPTION_ALL				= 0xFFFFFFFF
 	};
 
+	//! Constructs an idSession object and initializes all member pointers to NULL.
 	idSession() :
 		signInManager( NULL ),
 		saveGameManager( NULL ),
@@ -414,6 +460,8 @@ public:
 		dedicatedServerSearch( NULL )
 	{
 	}
+
+	//! Destructor for the idSession class that cleans up managed resources.
 	virtual ~idSession();
 
 	virtual void				 Initialize() = 0;
@@ -528,21 +576,28 @@ public:
 	virtual bool				 GetTitleStorageBool( const char* name, bool defaultBool ) const			= 0;
 	virtual const char*			 GetTitleStorageString( const char* name, const char* defaultString ) const = 0;
 
+	//! Retrieves a floating-point value stored under the given name, returning false and setting out to the default value if the key is not found.
 	virtual bool				 GetTitleStorageFloat( const char* name, float defaultFloat, float& out ) const
 	{
 		out = defaultFloat;
 		return false;
 	}
+
+	//! Retrieves an integer value from title storage, returning false and setting out to defaultInt if the value is not found.
 	virtual bool GetTitleStorageInt( const char* name, int defaultInt, int& out ) const
 	{
 		out = defaultInt;
 		return false;
 	}
+
+	//! Retrieves a boolean value from title storage, returning false to indicate the value was not found.
 	virtual bool GetTitleStorageBool( const char* name, bool defaultBool, bool& out ) const
 	{
 		out = defaultBool;
 		return false;
 	}
+
+	//! Returns a title storage string value for the specified name, or the default string if not found.
 	virtual bool GetTitleStorageString( const char* name, const char* defaultString, const char** out ) const
 	{
 		if( out != NULL ) { *out = defaultString; }
@@ -610,15 +665,24 @@ public:
 	virtual void						 SendUsercmds( idBitMsg& msg )		  = 0;
 	virtual void						 SendSnapshot( class idSnapShot& ss ) = 0;
 
+	//! Returns the input routing configuration for up to MAX_INPUT_DEVICES devices.
 	virtual int							 GetInputRouting( int inputRouting[MAX_INPUT_DEVICES] );
 
 	virtual void						 UpdateSignInManager() = 0;
 
+	//! Returns a reference to the sign-in manager associated with the current session.
 	idSignInManagerBase&				 GetSignInManager() { return *signInManager; }
+
+	//! Returns a reference to the save game manager associated with the session.
 	idSaveGameManager&					 GetSaveGameManager() { return *saveGameManager; }
+
+	//! Returns a reference to the achievement system associated with the session.
 	idAchievementSystem&				 GetAchievementSystem() { return *achievementSystem; }
 
+	//! Returns true if a sign-in manager is available, otherwise false.
 	bool								 HasSignInManager() const { return ( signInManager != NULL ); }
+
+	//! Returns true if the achievement system is available, false otherwise.
 	bool								 HasAchievementSystem() const { return ( achievementSystem != NULL ); }
 
 	virtual bool						 IsSystemUIShowing() const		 = 0;
@@ -646,6 +710,8 @@ public:
 	// Invites
 	//=====================================================================================================
 	virtual void						 HandleBootableInvite( int64 lobbyId = 0 ) = 0;
+
+	//! Handles the exit spawn invite event for the session.
 	virtual void						 HandleExitspawnInvite( const lobbyConnectInfo_t& connectInfo ) { }
 	virtual void						 ClearBootableInvite()				 = 0;
 	virtual void						 ClearPendingInvite()				 = 0;
@@ -675,11 +741,6 @@ protected:
 	idDedicatedServerSearch* dedicatedServerSearch;
 };
 
-/*
-========================
-idSession::idGetInputRouting
-========================
-*/
 ID_INLINE int idSession::GetInputRouting( int inputRouting[MAX_INPUT_DEVICES] )
 {
 	for( int i = 0; i < MAX_INPUT_DEVICES; i++ ) {

@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma warning( disable : 4189 ) // local variable is initialized but not referenced
 
-/*
-========================
-idSWF::DefineFont2
-========================
-*/
 void idSWF::DefineFont2( idSWFBitStream& bitstream )
 {
 	uint16				  characterID = bitstream.ReadU16();
@@ -130,21 +125,11 @@ void idSWF::DefineFont2( idSWFBitStream& bitstream )
 	}
 }
 
-/*
-========================
-idSWF::DefineFont3
-========================
-*/
 void idSWF::DefineFont3( idSWFBitStream& bitstream )
 {
 	DefineFont2( bitstream );
 }
 
-/*
-========================
-idSWF::DefineTextX
-========================
-*/
 void idSWF::DefineTextX( idSWFBitStream& bitstream, bool rgba )
 {
 	uint16				  characterID = bitstream.ReadU16();
@@ -196,31 +181,16 @@ void idSWF::DefineTextX( idSWFBitStream& bitstream, bool rgba )
 	};
 }
 
-/*
-========================
-idSWF::DefineText
-========================
-*/
 void idSWF::DefineText( idSWFBitStream& bitstream )
 {
 	DefineTextX( bitstream, false );
 }
 
-/*
-========================
-idSWF::DefineText2
-========================
-*/
 void idSWF::DefineText2( idSWFBitStream& bitstream )
 {
 	DefineTextX( bitstream, true );
 }
 
-/*
-========================
-idSWF::DefineEditText
-========================
-*/
 void idSWF::DefineEditText( idSWFBitStream& bitstream )
 {
 	uint16				  characterID = bitstream.ReadU16();

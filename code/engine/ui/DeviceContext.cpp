@@ -127,8 +127,6 @@ void idDeviceContext::SetTransformInfo( const idVec3& org, const idMat3& m )
 	matIsIdentity = mat.IsIdentity();
 }
 
-//
-//  added method
 void idDeviceContext::GetTransformInfo( idVec3& org, idMat3& m )
 {
 	m	= mat;
@@ -224,11 +222,6 @@ bool idDeviceContext::ClippedCoords( float* x, float* y, float* w, float* h, flo
 	return ( *w == 0 || *h == 0 ) ? true : false;
 }
 
-/*
-=============
-DrawStretchPic
-=============
-*/
 void idDeviceContext::DrawWinding( idWinding& w, const idMaterial* mat )
 {
 	idPlane p;
@@ -524,10 +517,6 @@ void idDeviceContext::DrawCursor( float* x, float* y, float size )
 	renderSystem->SetColor( colorWhite );
 	DrawStretchPic( *x, *y, size, size, 0, 0, 1, 1, cursorImages[cursor] );
 }
-/*
- =======================================================================================================================
- =======================================================================================================================
- */
 
 void idDeviceContext::PaintChar( float x, float y, const scaledGlyphInfo_t& glyphInfo )
 {
@@ -679,7 +668,6 @@ const idMaterial* idDeviceContext::GetScrollBarImage( int index )
 	return scrollBarImages[SCROLLBAR_HBACK];
 }
 
-// this only supports left aligned text
 idRegion* idDeviceContext::GetTextRegion( const char* text, float textScale, idRectangle rectDraw, float xStart, float yStart )
 {
 	return NULL;
@@ -853,11 +841,6 @@ int idDeviceContext::DrawText( const char* text, float textScale, int textAlign,
 	return idMath::Ftoi( rectDraw.w / charSkip );
 }
 
-/*
-=============
-idRectangle::String
-=============
-*/
 char* idRectangle::String() const
 {
 	static int	index = 0;

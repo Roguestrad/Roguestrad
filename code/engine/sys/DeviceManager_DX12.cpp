@@ -52,6 +52,16 @@ idCVar r_graphicsAdapter( "r_graphicsAdapter", "", CVAR_RENDERER | CVAR_INIT | C
 idCVar r_dxMaxFrameLatency(
 	"r_dxMaxFrameLatency", "2", CVAR_RENDERER | CVAR_INIT | CVAR_ARCHIVE | CVAR_INTEGER | CVAR_NEW, "Maximum frame latency for DXGI swap chains (DX12 only)", 0, NUM_FRAME_DATA );
 
+/*!
+	\class DeviceManager_DX12
+	\brief Manages DirectX 12 device resources and rendering operations for the graphics backend.
+
+	This class provides a complete implementation for managing DirectX 12 graphics device resources, including device creation, swap chain management, and frame rendering operations. It serves as a
+   concrete implementation of the base DeviceManager interface specifically tailored for DirectX 12. The class handles the lifecycle of graphics resources such as the device, swap chain, and render
+   targets, while providing methods for frame management including begin/end frame operations and presentation. It integrates with the NVRHI graphics abstraction layer to provide access to DirectX 12
+   specific resources and functionality. The implementation supports standard rendering operations like back buffer management, buffer resizing, and memory reporting for debugging purposes.
+
+*/
 class DeviceManager_DX12 : public DeviceManager
 {
 	RefCountPtr<ID3D12Device>				 m_Device12;
@@ -74,41 +84,67 @@ class DeviceManager_DX12 : public DeviceManager
 	std::string								 m_RendererString;
 
 public:
+	//! Returns a string that identifies the graphics renderer being used.
 	const char* GetRendererString() const override
 	{
 		return m_RendererString.c_str();
 	}
 
+	//! Returns the NVRHI device instance managed by this DirectX 12 device manager.
 	nvrhi::IDevice* GetDevice() const override
 	{
 		return m_NvrhiDevice;
 	}
 
+	//! Reports live objects in the DirectX 12 device manager for debugging purposes.
 	void			   ReportLiveObjects() override;
 
+	//! Returns the graphics API type used by the device manager, which is DirectX 12.
 	nvrhi::GraphicsAPI GetGraphicsAPI() const override
 	{
 		return nvrhi::GraphicsAPI::D3D12;
 	}
 
 protected:
+	//! Creates a Direct3D 12 device and swap chain for rendering.
 	bool			 CreateDeviceAndSwapChain() override;
+
+	//! Destroys the DirectX 12 device and swap chain resources.
 	void			 DestroyDeviceAndSwapChain() override;
+
+	//! Resizes the swap chain buffers and recreates the render targets.
 	void			 ResizeSwapChain() override;
+
+	//! Returns the current back buffer texture for the DirectX 12 device manager.
 	nvrhi::ITexture* GetCurrentBackBuffer() override;
+
+	//! Returns a back buffer texture handle at the specified index, or null if the index is out of bounds.
 	nvrhi::ITexture* GetBackBuffer( uint32_t index ) override;
+
+	//! Returns the index of the current back buffer in the swap chain
 	uint32_t		 GetCurrentBackBufferIndex() override;
+
+	//! Returns the number of back buffers in the swap chain.
 	uint32_t		 GetBackBufferCount() override;
+
+	//! Initializes the DX12 rendering frame and updates GPU memory usage statistics.
 	void			 BeginFrame() override;
+
+	//! Finalizes the current frame rendering process for DirectX 12.
 	void			 EndFrame() override;
+
+	//! Present the rendered frame to the display using DirectX 12.
 	void			 Present() override;
 
 private:
+	//! Creates the render targets for the swap chain buffers.
 	bool CreateRenderTargets();
+
+	//! Releases all render targets and associated resources for the DirectX 12 device.
 	void ReleaseRenderTargets();
 };
 
-// Find an adapter whose name contains the given string.
+//! Finds a DirectX graphics adapter whose name contains the specified string
 static RefCountPtr<IDXGIAdapter> FindAdapter( const std::wstring& targetName )
 {
 	RefCountPtr<IDXGIAdapter>  targetAdapter;
@@ -158,45 +194,6 @@ static RefCountPtr<IDXGIAdapter> FindAdapter( const std::wstring& targetName )
 
 	return targetAdapter;
 }
-/* SRS - No longer needed, window centering now done in CreateWindowDeviceAndSwapChain() within win_glimp.cpp
-// Adjust window rect so that it is centred on the given adapter.  Clamps to fit if it's too big.
-static bool MoveWindowOntoAdapter( IDXGIAdapter* targetAdapter, RECT& rect )
-{
-	assert( targetAdapter != NULL );
-
-	HRESULT hres = S_OK;
-	unsigned int outputNo = 0;
-	while( SUCCEEDED( hres ) )
-	{
-		IDXGIOutput* pOutput = nullptr;
-		hres = targetAdapter->EnumOutputs( outputNo++, &pOutput );
-
-		if( SUCCEEDED( hres ) && pOutput )
-		{
-			DXGI_OUTPUT_DESC OutputDesc;
-			pOutput->GetDesc( &OutputDesc );
-			const RECT desktop = OutputDesc.DesktopCoordinates;
-			const int centreX = ( int )desktop.left + ( int )( desktop.right - desktop.left ) / 2;
-			const int centreY = ( int )desktop.top + ( int )( desktop.bottom - desktop.top ) / 2;
-			const int winW = rect.right - rect.left;
-			const int winH = rect.bottom - rect.top;
-			const int left = centreX - winW / 2;
-			const int right = left + winW;
-			const int top = centreY - winH / 2;
-			const int bottom = top + winH;
-			rect.left = Max( left, ( int )desktop.left );
-			rect.right = Min( right, ( int )desktop.right );
-			rect.bottom = Min( bottom, ( int )desktop.bottom );
-			rect.top = Max( top, ( int )desktop.top );
-
-			// If there is more than one output, go with the first found.  Multi-monitor support could go here.
-			return true;
-		}
-	}
-
-	return false;
-}
-*/
 void DeviceManager_DX12::ReportLiveObjects()
 {
 	nvrhi::RefCountPtr<IDXGIDebug> pDebug;
@@ -207,6 +204,7 @@ void DeviceManager_DX12::ReportLiveObjects()
 	}
 }
 
+//! Converts a UTF-8 encoded std::string to a std::wstring.
 std::wstring StrToWS( const std::string& str )
 {
 	int			 sizeNeeded = MultiByteToWideChar( CP_UTF8, 0, &str[0], ( int )str.size(), NULL, 0 );
@@ -215,6 +213,7 @@ std::wstring StrToWS( const std::string& str )
 	return wstrTo;
 }
 
+//! Converts a UTF-8 encoded idStr to a wide string.
 std::wstring StrToWS( const idStr& str )
 {
 	int			 sizeNeeded = MultiByteToWideChar( CP_UTF8, 0, str.c_str(), str.Length(), NULL, 0 );

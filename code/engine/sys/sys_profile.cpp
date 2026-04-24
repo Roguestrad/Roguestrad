@@ -33,17 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 idCVar profile_verbose( "profile_verbose", "0", CVAR_BOOL, "Turns on debug spam for profiles" );
 
-/*
-================================================
-idProfileMgr
-================================================
-*/
-
-/*
-========================
-idProfileMgr
-========================
-*/
 idProfileMgr::idProfileMgr() :
 	profileSaveProcessor( new( TAG_SAVEGAMES ) idSaveGameProcessorSaveProfile ),
 	profileLoadProcessor( new( TAG_SAVEGAMES ) idSaveGameProcessorLoadProfile ),
@@ -61,22 +50,12 @@ idProfileMgr::~idProfileMgr()
 {
 }
 
-/*
-========================
-idProfileMgr::Init
-========================
-*/
 void idProfileMgr::Init( idLocalUser* user_ )
 {
 	user   = user_;
 	handle = 0;
 }
 
-/*
-========================
-idProfileMgr::Pump
-========================
-*/
 void idProfileMgr::Pump()
 {
 	// profile can be NULL if we forced the user to register as in the case of map-ing into a level from the press start screen
@@ -125,11 +104,6 @@ void idProfileMgr::Pump()
 	}
 }
 
-/*
-========================
-idProfileMgr::GetProfile
-========================
-*/
 idPlayerProfile* idProfileMgr::GetProfile()
 {
 	assert( user != NULL );
@@ -150,11 +124,6 @@ idPlayerProfile* idProfileMgr::GetProfile()
 	return profile;
 }
 
-/*
-========================
-idProfileMgr::SaveSettingsAsync
-========================
-*/
 void idProfileMgr::SaveSettingsAsync()
 {
 	if( !saveGame_enable.GetBool() ) {
@@ -173,11 +142,6 @@ void idProfileMgr::SaveSettingsAsync()
 	}
 }
 
-/*
-========================
-idProfileMgr::LoadSettingsAsync
-========================
-*/
 void idProfileMgr::LoadSettingsAsync()
 {
 	if( profile != NULL && saveGame_enable.GetBool() ) {
@@ -200,11 +164,6 @@ void idProfileMgr::LoadSettingsAsync()
 	}
 }
 
-/*
-========================
-idProfileMgr::OnLoadSettingsCompleted
-========================
-*/
 void idProfileMgr::OnLoadSettingsCompleted( idSaveLoadParms* parms )
 {
 	// Don't process if error already detected
@@ -248,11 +207,6 @@ void idProfileMgr::OnLoadSettingsCompleted( idSaveLoadParms* parms )
 	}
 }
 
-/*
-========================
-idProfileMgr::OnSaveSettingsCompleted
-========================
-*/
 void idProfileMgr::OnSaveSettingsCompleted( idSaveLoadParms* parms )
 {
 	common->Dialog().ShowSaveIndicator( false );
@@ -265,28 +219,12 @@ void idProfileMgr::OnSaveSettingsCompleted( idSaveLoadParms* parms )
 	}
 }
 
-/*
-================================================
-idSaveGameProcessorSaveProfile
-================================================
-*/
-
-/*
-========================
-idSaveGameProcessorSaveProfile::idSaveGameProcessorSaveProfile
-========================
-*/
 idSaveGameProcessorSaveProfile::idSaveGameProcessorSaveProfile()
 {
 	profileFile = NULL;
 	profile		= NULL;
 }
 
-/*
-========================
-idSaveGameProcessorSaveProfile::InitSaveProfile
-========================
-*/
 bool idSaveGameProcessorSaveProfile::InitSaveProfile( idPlayerProfile* profile_, const char* folder )
 {
 	// Serialize the profile and pass a file to the processor
@@ -325,28 +263,12 @@ bool idSaveGameProcessorSaveProfile::InitSaveProfile( idPlayerProfile* profile_,
 	return true;
 }
 
-/*
-========================
-idSaveGameProcessorSaveProfile::Process
-========================
-*/
 bool idSaveGameProcessorSaveProfile::Process()
 {
 	// Files already setup for save, just execute as normal files
 	return idSaveGameProcessorSaveFiles::Process();
 }
 
-/*
-================================================
-idSaveGameProcessorLoadProfile
-================================================
-*/
-
-/*
-========================
-idSaveGameProcessorLoadProfile::idSaveGameProcessorLoadProfile
-========================
-*/
 idSaveGameProcessorLoadProfile::idSaveGameProcessorLoadProfile()
 {
 	profileFile = NULL;
@@ -362,11 +284,6 @@ idSaveGameProcessorLoadProfile::~idSaveGameProcessorLoadProfile()
 {
 }
 
-/*
-========================
-idSaveGameProcessorLoadProfile::InitLoadFiles
-========================
-*/
 bool idSaveGameProcessorLoadProfile::InitLoadProfile( idPlayerProfile* profile_, const char* folder_ )
 {
 	if( !idSaveGameProcessor::Init() ) {
@@ -385,21 +302,11 @@ bool idSaveGameProcessorLoadProfile::InitLoadProfile( idPlayerProfile* profile_,
 	return true;
 }
 
-/*
-========================
-idSaveGameProcessorLoadProfile::Process
-========================
-*/
 bool idSaveGameProcessorLoadProfile::Process()
 {
 	return idSaveGameProcessorLoadFiles::Process();
 }
 
-/*
-========================
-Sys_SaveGameProfileCheck
-========================
-*/
 bool Sys_SaveGameProfileCheck()
 {
 	bool		exists	   = false;

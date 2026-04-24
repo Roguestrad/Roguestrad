@@ -36,11 +36,6 @@ idCVar saveGame_enable( "saveGame_enable", "1", CVAR_BOOL, "are savegames enable
 
 void   Sys_ExecuteSavegameCommandAsyncImpl( idSaveLoadParms* savegameParms );
 
-/*
-========================
-Sys_ExecuteSavegameCommandAsync
-========================
-*/
 void   Sys_ExecuteSavegameCommandAsync( idSaveLoadParms* savegameParms )
 {
 	if( savegameParms == NULL ) {
@@ -77,6 +72,7 @@ const char* saveGameErrorStrings[SAVEGAME_E_NUM] = {
 	ASSERT_ENUM_STRING_BITFIELD( SAVEGAME_E_INCOMPATIBLE_NEWER_VERSION, 13 ),
 };
 
+//! Prints error code descriptions corresponding to each bit for savegame errors.
 CONSOLE_COMMAND( savegamePrintErrors, "Prints error code corresponding to each bit", 0 )
 {
 	idLib::Printf( "Bit  Description\n"
@@ -86,18 +82,6 @@ CONSOLE_COMMAND( savegamePrintErrors, "Prints error code corresponding to each b
 	}
 }
 
-/*
-========================
-GetSaveGameErrorString
-
-This returns a comma delimited string of all the errors within the bitfield.  We don't ever expect more than one error,
-the errors are bitfields so that they can be used to mask which errors we want to handle in the engine or leave up to the
-game.
-
-Example:
-	SAVEGAME_E_LOAD, SAVEGAME_E_INVALID_FILENAME
-========================
-*/
 idStr GetSaveGameErrorString( int errorMask )
 {
 	idStr errorString;
@@ -123,16 +107,6 @@ idStr GetSaveGameErrorString( int errorMask )
 	return errorString;
 }
 
-/*
-========================
-GetSaveFolder
-
-Prefixes help the PS3 filter what to show in lists
-Files using the hidden prefix are not shown in the load game screen
-Directory name for savegames, slot number or user-defined name appended to it
-TRC R116 - PS3 folder must start with the product code
-========================
-*/
 const idStr& GetSaveFolder( idSaveGameManager::packageType_t type )
 {
 	static bool								   initialized = false;
@@ -151,14 +125,6 @@ const idStr& GetSaveFolder( idSaveGameManager::packageType_t type )
 	return saveFolder[type];
 }
 
-/*
-========================
-idStr AddSaveFolderPrefix
-
-	input	= RAGE_0
-	output	= GAMES-RAGE_0
-========================
-*/
 idStr AddSaveFolderPrefix( const char* folder, idSaveGameManager::packageType_t type )
 {
 	idStr dir = GetSaveFolder( type );
@@ -167,14 +133,6 @@ idStr AddSaveFolderPrefix( const char* folder, idSaveGameManager::packageType_t 
 	return dir;
 }
 
-/*
-========================
-RemoveSaveFolderPrefix
-
-	input	= GAMES-RAGE_0
-	output	= RAGE_0
-========================
-*/
 idStr RemoveSaveFolderPrefix( const char* folder, idSaveGameManager::packageType_t type )
 {
 	idStr dir	 = folder;
@@ -183,13 +141,6 @@ idStr RemoveSaveFolderPrefix( const char* folder, idSaveGameManager::packageType
 	return dir;
 }
 
-/*
-========================
-bool SavegameReadDetailsFromFile
-
-returns false when catastrophic error occurs, not when damaged
-========================
-*/
 bool SavegameReadDetailsFromFile( idFile* file, idSaveGameDetails& details )
 {
 	details.damaged = false;
@@ -215,21 +166,11 @@ bool SavegameReadDetailsFromFile( idFile* file, idSaveGameDetails& details )
 	return true;
 }
 
-/*
-========================
-idSaveGameDetails::idSaveGameDetails
-========================
-*/
 idSaveGameDetails::idSaveGameDetails()
 {
 	Clear();
 }
 
-/*
-========================
-idSaveGameDetails::Clear
-========================
-*/
 void idSaveGameDetails::Clear()
 {
 	descriptors.Clear();
@@ -238,11 +179,6 @@ void idSaveGameDetails::Clear()
 	slotName[0] = '\0';
 }
 
-/*
-========================
-idSaveLoadParms::idSaveLoadParms
-========================
-*/
 idSaveLoadParms::idSaveLoadParms()
 {
 	// These are not done when we set defaults because SetDefaults is called internally within the execution of the processor and
@@ -252,11 +188,6 @@ idSaveLoadParms::idSaveLoadParms()
 	Init();
 }
 
-/*
-========================
-idSaveLoadParms::~idSaveLoadParms
-========================
-*/
 idSaveLoadParms::~idSaveLoadParms()
 {
 	for( int i = 0; i < files.Num(); ++i ) {
@@ -266,23 +197,11 @@ idSaveLoadParms::~idSaveLoadParms()
 	}
 }
 
-/*
-========================
-idSaveLoadParms::ResetCancelled
-========================
-*/
 void idSaveLoadParms::ResetCancelled()
 {
 	cancelled = false;
 }
 
-/*
-========================
-idSaveLoadParms::Init
-
-This should not touch anything statically created outside this class!
-========================
-*/
 void idSaveLoadParms::Init()
 {
 	files.Clear();
@@ -303,11 +222,6 @@ void idSaveLoadParms::Init()
 	// cancelled = false;
 }
 
-/*
-========================
-idSaveLoadParms::SetDefaults
-========================
-*/
 void idSaveLoadParms::SetDefaults( int newInputDevice )
 {
 	// These are pulled out so SetDefaults() isn't called during global instantiation of objects that have savegame processors
@@ -331,11 +245,6 @@ void idSaveLoadParms::SetDefaults( int newInputDevice )
 	}
 }
 
-/*
-========================
-idSaveLoadParms::CancelSaveGameFilePipelines
-========================
-*/
 void idSaveLoadParms::CancelSaveGameFilePipelines()
 {
 	for( int i = 0; i < files.Num(); i++ ) {
@@ -356,11 +265,6 @@ void idSaveLoadParms::CancelSaveGameFilePipelines()
 	}
 }
 
-/*
-========================
-idSaveLoadParms::AbortSaveGameFilePipeline
-========================
-*/
 void idSaveLoadParms::AbortSaveGameFilePipeline()
 {
 	for( int i = 0; i < files.Num(); i++ ) {
@@ -372,28 +276,12 @@ void idSaveLoadParms::AbortSaveGameFilePipeline()
 	}
 }
 
-/*
-================================================================================================
-idSaveGameProcessor
-================================================================================================
-*/
-
-/*
-========================
-idSaveGameProcessor::idSaveGameProcessor
-========================
-*/
 idSaveGameProcessor::idSaveGameProcessor() :
 	init( false ),
 	working( false )
 {
 }
 
-/*
-========================
-idSaveGameProcessor::Init
-========================
-*/
 bool idSaveGameProcessor::Init()
 {
 	if( !verify( !IsWorking() ) ) {
@@ -411,37 +299,16 @@ bool idSaveGameProcessor::Init()
 	return true;
 }
 
-/*
-========================
-idSaveGameProcessor::IsThreadFinished
-========================
-*/
 bool idSaveGameProcessor::IsThreadFinished()
 {
 	return parms.callbackSignal.Wait( 0 );
 }
 
-/*
-========================
-idSaveGameProcessor::AddCompletedCallback
-========================
-*/
 void idSaveGameProcessor::AddCompletedCallback( const idCallback& callback )
 {
 	completedCallbacks.Append( callback.Clone() );
 }
 
-/*
-================================================================================================
-idSaveGameManager
-================================================================================================
-*/
-
-/*
-========================
-idSaveGameManager::idSaveGameManager
-========================
-*/
 idSaveGameManager::idSaveGameManager() :
 	processor( NULL ),
 	cancel( false ),
@@ -455,22 +322,12 @@ idSaveGameManager::idSaveGameManager() :
 {
 }
 
-/*
-========================
-idSaveGameManager::~idSaveGameManager
-========================
-*/
 idSaveGameManager::~idSaveGameManager()
 {
 	processor = NULL;
 	enumeratedSaveGames.Clear();
 }
 
-/*
-========================
-idSaveGameManager::ExecuteProcessor
-========================
-*/
 saveGameHandle_t idSaveGameManager::ExecuteProcessor( idSaveGameProcessor* processor )
 {
 	idLib::PrintfIf( saveGame_verbose.GetBool(), "[%s] : %s\n", __FUNCTION__, processor->Name() );
@@ -505,11 +362,6 @@ saveGameHandle_t idSaveGameManager::ExecuteProcessor( idSaveGameProcessor* proce
 	return submittedProcessorHandle;
 }
 
-/*
-========================
-idSaveGameManager::ExecuteProcessorAndWait
-========================
-*/
 saveGameHandle_t idSaveGameManager::ExecuteProcessorAndWait( idSaveGameProcessor* processor )
 {
 	saveGameHandle_t handle = ExecuteProcessor( processor );
@@ -528,17 +380,6 @@ saveGameHandle_t idSaveGameManager::ExecuteProcessorAndWait( idSaveGameProcessor
 	return handle;
 }
 
-/*
-========================
-idSaveGameManager::WaitForAllProcessors
-
-Since the load & nextMap processors calls execute map change, we can't wait if they are the only ones in the queue
-If there are only resettable processors in the queue or no items in the queue, don't wait.
-
-We would need to overrideSimpleProcessorCheck if we were sure we had done something that would cause the processors
-to bail out nicely.  Something like canceling a disc swap during a loading disc swap dialog...
-========================
-*/
 void idSaveGameManager::WaitForAllProcessors( bool overrideSimpleProcessorCheck )
 {
 	assert( idLib::IsMainThread() );
@@ -562,11 +403,6 @@ void idSaveGameManager::WaitForAllProcessors( bool overrideSimpleProcessorCheck 
 	}
 }
 
-/*
-========================
-idSaveGameManager::CancelAllProcessors
-========================
-*/
 void idSaveGameManager::CancelAllProcessors( const bool forceCancelInFlightProcessor )
 {
 	assert( idLib::IsMainThread() );
@@ -584,11 +420,6 @@ void idSaveGameManager::CancelAllProcessors( const bool forceCancelInFlightProce
 	cancel = false;
 }
 
-/*
-========================
-idSaveGameManager::CancelToTerminate
-========================
-*/
 void idSaveGameManager::CancelToTerminate()
 {
 	if( processor != NULL ) {
@@ -598,11 +429,6 @@ void idSaveGameManager::CancelToTerminate()
 	}
 }
 
-/*
-========================
-idSaveGameManager::DeviceSelectorWaitingOnSaveRetry
-========================
-*/
 bool idSaveGameManager::DeviceSelectorWaitingOnSaveRetry()
 {
 	if( retryFolder == NULL ) {
@@ -612,33 +438,18 @@ bool idSaveGameManager::DeviceSelectorWaitingOnSaveRetry()
 	return ( idStr::Icmp( retryFolder, "GAME-autosave" ) == 0 );
 }
 
-/*
-========================
-idSaveGameManager::Set360RetrySaveAfterDeviceSelected
-========================
-*/
 void idSaveGameManager::Set360RetrySaveAfterDeviceSelected( const char* folder, const int64 bytes )
 {
 	retryFolder = folder;
 	retryBytes	= bytes;
 }
 
-/*
-========================
-idSaveGameManager::ClearRetryInfo
-========================
-*/
 void idSaveGameManager::ClearRetryInfo()
 {
 	retryFolder = NULL;
 	retryBytes	= 0;
 }
 
-/*
-========================
-idSaveGameManager::RetrySave
-========================
-*/
 void idSaveGameManager::RetrySave()
 {
 	if( DeviceSelectorWaitingOnSaveRetry() && !common->Dialog().HasDialogMsg( GDM_WARNING_FOR_NEW_DEVICE_ABOUT_TO_LOSE_PROGRESS, NULL ) ) {
@@ -646,21 +457,11 @@ void idSaveGameManager::RetrySave()
 	}
 }
 
-/*
-========================
-idSaveGameManager::ShowRetySaveDialog
-========================
-*/
 void idSaveGameManager::ShowRetySaveDialog()
 {
 	ShowRetySaveDialog( retryFolder, retryBytes );
 }
 
-/*
-========================
-idSaveGameManager::ShowRetySaveDialog
-========================
-*/
 void idSaveGameManager::ShowRetySaveDialog( const char* folder, const int64 bytes )
 {
 	idStaticList<idSWFScriptFunction*, 4> callbacks;
@@ -696,11 +497,6 @@ void idSaveGameManager::ShowRetySaveDialog( const char* folder, const int64 byte
 	common->Dialog().AddDynamicDialog( GDM_INSUFFICENT_STORAGE_SPACE, callbacks, optionText, true, msg, true );
 }
 
-/*
-========================
-idSaveGameManager::CancelWithHandle
-========================
-*/
 void idSaveGameManager::CancelWithHandle( const saveGameHandle_t& handle )
 {
 	if( handle == 0 || IsSaveGameCompletedFromHandle( handle ) ) {
@@ -724,13 +520,6 @@ void idSaveGameManager::CancelWithHandle( const saveGameHandle_t& handle )
 	}
 }
 
-/*
-========================
-idSaveGameManager::StartNextProcessor
-
-Get the next not-reset-capable processor.  If there aren't any left, just get what's next.
-========================
-*/
 void idSaveGameManager::StartNextProcessor()
 {
 	if( cancel ) {
@@ -760,11 +549,6 @@ void idSaveGameManager::StartNextProcessor()
 	}
 }
 
-/*
-========================
-idSaveGameManager::FinishProcessor
-========================
-*/
 void idSaveGameManager::FinishProcessor( idSaveGameProcessor* localProcessor )
 {
 	assert( localProcessor != NULL );
@@ -793,23 +577,11 @@ void idSaveGameManager::Clear()
 	processorQueue.Clear();
 }
 
-/*
-========================
-idSaveGameManager::IsWorking
-========================
-*/
 bool idSaveGameManager::IsWorking() const
 {
 	return processor != NULL;
 }
 
-/*
-========================
-idSaveGameManager::Pump
-
-Important sections called out with -- EXTRA LARGE -- comments!
-========================
-*/
 void idSaveGameManager::Pump()
 {
 	// After a processor is done, the next is pulled off the queue so the only way the manager isn't working is if

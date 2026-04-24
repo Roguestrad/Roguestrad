@@ -36,11 +36,6 @@ extern idCVar win_userOnline;
 extern idCVar win_isInParty;
 extern idCVar win_partyCount;
 
-/*
-========================
-idLocalUserWin::Init
-========================
-*/
 void		  idLocalUserWin::Init( int inputDevice_, const char* gamertag_, int numLocalUsers )
 {
 	if( numLocalUsers == 1 ) // Check for 1, since this is now incremented before we get in here
@@ -57,11 +52,6 @@ void		  idLocalUserWin::Init( int inputDevice_, const char* gamertag_, int numLo
 	inputDevice = inputDevice_;
 }
 
-/*
-========================
-idLocalUserWin::IsProfileReady
-========================
-*/
 bool idLocalUserWin::IsProfileReady() const
 {
 #ifdef _DEBUG
@@ -71,11 +61,6 @@ bool idLocalUserWin::IsProfileReady() const
 #endif
 }
 
-/*
-========================
-idLocalUserWin::IsOnline
-========================
-*/
 bool idLocalUserWin::IsOnline() const
 {
 #ifdef _DEBUG
@@ -85,11 +70,6 @@ bool idLocalUserWin::IsOnline() const
 #endif
 }
 
-/*
-========================
-idLocalUserWin::IsInParty
-========================
-*/
 bool idLocalUserWin::IsInParty() const
 {
 #ifdef _DEBUG
@@ -99,11 +79,6 @@ bool idLocalUserWin::IsInParty() const
 #endif
 }
 
-/*
-========================
-idLocalUserWin::GetPartyCount
-========================
-*/
 int idLocalUserWin::GetPartyCount() const
 {
 	// TODO: Implement
@@ -114,11 +89,6 @@ int idLocalUserWin::GetPartyCount() const
 #endif
 }
 
-/*
-========================
-idLocalUserWin::VerifyUserState
-========================
-*/
 bool idLocalUserWin::VerifyUserState( winUserState_t& state )
 {
 	if( state.inputDevice != inputDevice ) {

@@ -42,11 +42,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #define S_UNIQUE_CHANNEL 6
 
-/*
-*****************************************************************************
-* BOEntity
-****************************************************************************
-*/
 BOEntity::BOEntity( idGameBustOutWindow* _game )
 {
 	game	= _game;
@@ -69,11 +64,6 @@ BOEntity::~BOEntity()
 {
 }
 
-/*
-======================
-BOEntity::WriteToSaveGame
-======================
-*/
 void BOEntity::WriteToSaveGame( idFile* savefile )
 {
 	savefile->Write( &visible, sizeof( visible ) );
@@ -92,11 +82,6 @@ void BOEntity::WriteToSaveGame( idFile* savefile )
 	savefile->Write( &fadeOut, sizeof( fadeOut ) );
 }
 
-/*
-======================
-BOEntity::ReadFromSaveGame
-======================
-*/
 void BOEntity::ReadFromSaveGame( idFile* savefile, idGameBustOutWindow* _game )
 {
 	game = _game;
@@ -118,11 +103,6 @@ void BOEntity::ReadFromSaveGame( idFile* savefile, idGameBustOutWindow* _game )
 	savefile->Read( &fadeOut, sizeof( fadeOut ) );
 }
 
-/*
-======================
-BOEntity::SetMaterial
-======================
-*/
 void BOEntity::SetMaterial( const char* name )
 {
 	materialName = name;
@@ -130,22 +110,12 @@ void BOEntity::SetMaterial( const char* name )
 	material->SetSort( SS_GUI );
 }
 
-/*
-======================
-BOEntity::SetSize
-======================
-*/
 void BOEntity::SetSize( float _width, float _height )
 {
 	width  = _width;
 	height = _height;
 }
 
-/*
-======================
-BOEntity::SetVisible
-======================
-*/
 void BOEntity::SetColor( float r, float g, float b, float a )
 {
 	color.x = r;
@@ -154,21 +124,11 @@ void BOEntity::SetColor( float r, float g, float b, float a )
 	color.w = a;
 }
 
-/*
-======================
-BOEntity::SetVisible
-======================
-*/
 void BOEntity::SetVisible( bool isVisible )
 {
 	visible = isVisible;
 }
 
-/*
-======================
-BOEntity::Update
-======================
-*/
 void BOEntity::Update( float timeslice, int guiTime )
 {
 	if( !visible ) {
@@ -189,11 +149,6 @@ void BOEntity::Update( float timeslice, int guiTime )
 	}
 }
 
-/*
-======================
-BOEntity::Draw
-======================
-*/
 void BOEntity::Draw()
 {
 	if( visible ) {
@@ -201,11 +156,6 @@ void BOEntity::Draw()
 	}
 }
 
-/*
-*****************************************************************************
-* BOBrick
-****************************************************************************
-*/
 BOBrick::BOBrick()
 {
 	ent = NULL;
@@ -237,11 +187,6 @@ BOBrick::~BOBrick()
 {
 }
 
-/*
-======================
-BOBrick::WriteToSaveGame
-======================
-*/
 void BOBrick::WriteToSaveGame( idFile* savefile )
 {
 	savefile->Write( &x, sizeof( x ) );
@@ -256,11 +201,6 @@ void BOBrick::WriteToSaveGame( idFile* savefile )
 	savefile->Write( &index, sizeof( index ) );
 }
 
-/*
-======================
-BOBrick::ReadFromSaveGame
-======================
-*/
 void BOBrick::ReadFromSaveGame( idFile* savefile, idGameBustOutWindow* game )
 {
 	savefile->Read( &x, sizeof( x ) );
@@ -276,21 +216,11 @@ void BOBrick::ReadFromSaveGame( idFile* savefile, idGameBustOutWindow* game )
 	ent = game->entities[index];
 }
 
-/*
-======================
-BOBrick::SetColor
-======================
-*/
 void BOBrick::SetColor( idVec4 bcolor )
 {
 	ent->SetColor( bcolor.x, bcolor.y, bcolor.z, bcolor.w );
 }
 
-/*
-======================
-BOBrick::checkCollision
-======================
-*/
 collideDir_t BOBrick::checkCollision( idVec2 pos, idVec2 vel )
 {
 	idVec2		 ptA, ptB;
@@ -416,11 +346,6 @@ collideDir_t BOBrick::checkCollision( idVec2 pos, idVec2 vel )
 	return result;
 }
 
-/*
-*****************************************************************************
-* idGameBustOutWindow
-****************************************************************************
-*/
 idGameBustOutWindow::idGameBustOutWindow( idUserInterfaceLocal* g ) :
 	idWindow( g )
 {
@@ -435,11 +360,6 @@ idGameBustOutWindow::~idGameBustOutWindow()
 	Mem_Free( levelBoardData );
 }
 
-/*
-=============================
-idGameBustOutWindow::WriteToSaveGame
-=============================
-*/
 void idGameBustOutWindow::WriteToSaveGame( idFile* savefile )
 {
 	idWindow::WriteToSaveGame( savefile );
@@ -509,11 +429,6 @@ void idGameBustOutWindow::WriteToSaveGame( idFile* savefile )
 	}
 }
 
-/*
-=============================
-idGameBustOutWindow::ReadFromSaveGame
-=============================
-*/
 void idGameBustOutWindow::ReadFromSaveGame( idFile* savefile )
 {
 	idWindow::ReadFromSaveGame( savefile );
@@ -594,11 +509,6 @@ void idGameBustOutWindow::ReadFromSaveGame( idFile* savefile )
 	}
 }
 
-/*
-=============================
-idGameBustOutWindow::ResetGameState
-=============================
-*/
 void idGameBustOutWindow::ResetGameState()
 {
 	gamerunning = false;
@@ -623,11 +533,6 @@ void idGameBustOutWindow::ResetGameState()
 	ClearBoard();
 }
 
-/*
-=============================
-idGameBustOutWindow::CommonInit
-=============================
-*/
 void idGameBustOutWindow::CommonInit()
 {
 	BOEntity* ent;
@@ -659,11 +564,6 @@ void idGameBustOutWindow::CommonInit()
 	paddle->ent->SetMaterial( "game/bustout/paddle" );
 }
 
-/*
-=============================
-idGameBustOutWindow::HandleEvent
-=============================
-*/
 const char* idGameBustOutWindow::HandleEvent( const sysEvent_t* event, bool* updateVisuals )
 {
 	int			key = event->evValue;
@@ -697,11 +597,6 @@ const char* idGameBustOutWindow::HandleEvent( const sysEvent_t* event, bool* upd
 	return ret;
 }
 
-/*
-=============================
-idGameBustOutWindow::ParseInternalVar
-=============================
-*/
 bool idGameBustOutWindow::ParseInternalVar( const char* _name, idTokenParser* src )
 {
 	if( idStr::Icmp( _name, "gamerunning" ) == 0 ) {
@@ -735,11 +630,6 @@ bool idGameBustOutWindow::ParseInternalVar( const char* _name, idTokenParser* sr
 	return idWindow::ParseInternalVar( _name, src );
 }
 
-/*
-=============================
-idGameBustOutWindow::GetWinVarByName
-=============================
-*/
 idWinVar* idGameBustOutWindow::GetWinVarByName( const char* _name, bool winLookup, drawWin_t** owner )
 {
 	idWinVar* retVar = NULL;
@@ -763,21 +653,11 @@ idWinVar* idGameBustOutWindow::GetWinVarByName( const char* _name, bool winLooku
 	return idWindow::GetWinVarByName( _name, winLookup, owner );
 }
 
-/*
-=============================
-idGameBustOutWindow::PostParse
-=============================
-*/
 void idGameBustOutWindow::PostParse()
 {
 	idWindow::PostParse();
 }
 
-/*
-=============================
-idGameBustOutWindow::Draw
-=============================
-*/
 void idGameBustOutWindow::Draw( int time, float x, float y )
 {
 	int i;
@@ -790,21 +670,11 @@ void idGameBustOutWindow::Draw( int time, float x, float y )
 	}
 }
 
-/*
-=============================
-idGameBustOutWindow::Activate
-=============================
-*/
 const char* idGameBustOutWindow::Activate( bool activate )
 {
 	return "";
 }
 
-/*
-=============================
-idGameBustOutWindow::UpdateScore
-=============================
-*/
 void idGameBustOutWindow::UpdateScore()
 {
 	if( gameOver ) {
@@ -836,11 +706,6 @@ void idGameBustOutWindow::UpdateScore()
 	gui->SetStateString( "next_ball_score", va( "%i", nextBallScore ) );
 }
 
-/*
-=============================
-idGameBustOutWindow::ClearBoard
-=============================
-*/
 void idGameBustOutWindow::ClearBoard()
 {
 	int i, j;
@@ -859,11 +724,6 @@ void idGameBustOutWindow::ClearBoard()
 	}
 }
 
-/*
-=============================
-idGameBustOutWindow::ClearPowerups
-=============================
-*/
 void idGameBustOutWindow::ClearPowerups()
 {
 	while( powerUps.Num() ) {
@@ -872,11 +732,6 @@ void idGameBustOutWindow::ClearPowerups()
 	}
 }
 
-/*
-=============================
-idGameBustOutWindow::ClearBalls
-=============================
-*/
 void idGameBustOutWindow::ClearBalls()
 {
 	while( balls.Num() ) {
@@ -887,11 +742,6 @@ void idGameBustOutWindow::ClearBalls()
 	ballsInPlay = 0;
 }
 
-/*
-=============================
-idGameBustOutWindow::LoadBoardFiles
-=============================
-*/
 void idGameBustOutWindow::LoadBoardFiles()
 {
 	int		  i;
@@ -932,11 +782,6 @@ void idGameBustOutWindow::LoadBoardFiles()
 	boardDataLoaded = true;
 }
 
-/*
-=============================
-idGameBustOutWindow::SetCurrentBoard
-=============================
-*/
 void idGameBustOutWindow::SetCurrentBoard()
 {
 	int	  i, j;
@@ -990,11 +835,6 @@ void idGameBustOutWindow::SetCurrentBoard()
 	}
 }
 
-/*
-=============================
-idGameBustOutWindow::CreateNewBall
-=============================
-*/
 BOEntity* idGameBustOutWindow::CreateNewBall()
 {
 	BOEntity* ball;
@@ -1014,11 +854,6 @@ BOEntity* idGameBustOutWindow::CreateNewBall()
 	return ball;
 }
 
-/*
-=============================
-idGameBustOutWindow::CreatePowerup
-=============================
-*/
 BOEntity* idGameBustOutWindow::CreatePowerup( BOBrick* brick )
 {
 	BOEntity* powerEnt = new( TAG_OLD_UI ) BOEntity( this );
@@ -1051,11 +886,6 @@ BOEntity* idGameBustOutWindow::CreatePowerup( BOBrick* brick )
 	return powerEnt;
 }
 
-/*
-=============================
-idGameBustOutWindow::UpdatePowerups
-=============================
-*/
 void idGameBustOutWindow::UpdatePowerups()
 {
 	idVec2 pos;
@@ -1115,11 +945,6 @@ void idGameBustOutWindow::UpdatePowerups()
 	}
 }
 
-/*
-=============================
-idGameBustOutWindow::UpdatePaddle
-=============================
-*/
 void idGameBustOutWindow::UpdatePaddle()
 {
 	idVec2 cursorPos;
@@ -1144,11 +969,6 @@ void idGameBustOutWindow::UpdatePaddle()
 	paddleVelocity = ( paddle->x - oldPos );
 }
 
-/*
-=============================
-idGameBustOutWindow::UpdateBall
-=============================
-*/
 void idGameBustOutWindow::UpdateBall()
 {
 	int		   ballnum, i, j;
@@ -1306,11 +1126,6 @@ void idGameBustOutWindow::UpdateBall()
 	}
 }
 
-/*
-=============================
-idGameBustOutWindow::UpdateGame
-=============================
-*/
 void idGameBustOutWindow::UpdateGame()
 {
 	int i;

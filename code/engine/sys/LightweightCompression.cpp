@@ -30,21 +30,12 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "LightweightCompression.h"
 
-/*
-========================
-HashIndex
-========================
-*/
+//! Computes a hash index using XOR operation between two integers and a hash mask.
 static int HashIndex( int w, int k )
 {
 	return ( w ^ k ) & idLZWCompressor::HASH_MASK;
 }
 
-/*
-========================
-idLZWCompressor::Start
-========================
-*/
 void idLZWCompressor::Start( uint8* data_, int maxSize_, bool append )
 {
 	// Clear hash
@@ -95,11 +86,6 @@ void idLZWCompressor::Start( uint8* data_, int maxSize_, bool append )
 	savedTempBits	  = 0;
 }
 
-/*
-========================
-idLZWCompressor::ReadBits
-========================
-*/
 int idLZWCompressor::ReadBits( int bits )
 {
 	int bitsToRead = bits - lzwData->tempBits;
@@ -120,11 +106,6 @@ int idLZWCompressor::ReadBits( int bits )
 	return value;
 }
 
-/*
-========================
-idLZWCompressor::WriteBits
-========================
-*/
 void idLZWCompressor::WriteBits( uint32 value, int bits )
 {
 	// Queue up bits into temp value
@@ -144,14 +125,6 @@ void idLZWCompressor::WriteBits( uint32 value, int bits )
 	}
 }
 
-/*
-========================
-idLZWCompressor::WriteChain
-
-The chain is stored backwards, so we have to write it to a buffer then output the buffer in
-reverse.
-========================
-*/
 int idLZWCompressor::WriteChain( int code )
 {
 	byte chain[lzwCompressionData_t::LZW_DICT_SIZE];
@@ -169,11 +142,6 @@ int idLZWCompressor::WriteChain( int code )
 	return firstChar;
 }
 
-/*
-========================
-idLZWCompressor::DecompressBlock
-========================
-*/
 void idLZWCompressor::DecompressBlock()
 {
 	assert( blockIndex == blockSize ); // Make sure we've read all we can
@@ -214,11 +182,6 @@ void idLZWCompressor::DecompressBlock()
 	}
 }
 
-/*
-========================
-idLZWCompressor::ReadByte
-========================
-*/
 int idLZWCompressor::ReadByte( bool ignoreOverflow )
 {
 	if( blockIndex == blockSize ) {
@@ -237,11 +200,6 @@ int idLZWCompressor::ReadByte( bool ignoreOverflow )
 	return block[blockIndex++];
 }
 
-/*
-========================
-idLZWCompressor::WriteByte
-========================
-*/
 void idLZWCompressor::WriteByte( uint8 value )
 {
 	int code = Lookup( lzwData->codeWord, value );
@@ -261,11 +219,6 @@ void idLZWCompressor::WriteByte( uint8 value )
 	}
 }
 
-/*
-========================
-idLZWCompressor::Lookup
-========================
-*/
 int idLZWCompressor::Lookup( int w, int k )
 {
 	if( w == -1 ) {
@@ -283,11 +236,6 @@ int idLZWCompressor::Lookup( int w, int k )
 	return -1;
 }
 
-/*
-========================
-idLZWCompressor::AddToDict
-========================
-*/
 int idLZWCompressor::AddToDict( int w, int k )
 {
 	assert( w < 0xFFFF - 1 );
@@ -302,14 +250,6 @@ int idLZWCompressor::AddToDict( int w, int k )
 	return lzwData->nextCode++;
 }
 
-/*
-========================
-idLZWCompressor::BumpBits
-
-Possibly increments codeBits.
-	return: bool	- true, if the dictionary was cleared.
-========================
-*/
 bool idLZWCompressor::BumpBits()
 {
 	if( lzwData->nextCode == ( 1 << lzwData->codeBits ) ) {
@@ -324,11 +264,6 @@ bool idLZWCompressor::BumpBits()
 	return false;
 }
 
-/*
-========================
-idLZWCompressor::End
-========================
-*/
 int idLZWCompressor::End()
 {
 	assert( lzwData->tempBits < 8 );
@@ -351,11 +286,6 @@ int idLZWCompressor::End()
 	return Length() > 0 ? Length() : -1; // Total bytes written (or failure)
 }
 
-/*
-========================
-idLZWCompressor::Save
-========================
-*/
 void idLZWCompressor::Save()
 {
 	assert( !overflowed );
@@ -369,11 +299,6 @@ void idLZWCompressor::Save()
 	savedTempBits	  = lzwData->tempBits;
 }
 
-/*
-========================
-idLZWCompressor::Restore
-========================
-*/
 void idLZWCompressor::Restore()
 {
 	lzwData->bytesWritten = savedBytesWritten;
@@ -383,22 +308,10 @@ void idLZWCompressor::Restore()
 	lzwData->tempBits	  = savedTempBits;
 }
 
-/*
-========================
-idLZWCompressor::ClearHash
-========================
-*/
 void idLZWCompressor::ClearHash()
 {
 	memset( hash, 0xFF, sizeof( hash ) );
 }
-
-/*
-========================
-idZeroRunLengthCompressor
-Simple zero based run length encoder/decoder
-========================
-*/
 
 void idZeroRunLengthCompressor::Start( uint8* dest_, idLZWCompressor* comp_, int maxSize_ )
 {

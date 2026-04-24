@@ -330,11 +330,6 @@ idWinVar* idSimpleWindow::GetWinVarByName( const char* _name )
 	return retVar;
 }
 
-/*
-========================
-idSimpleWindow::WriteToSaveGame
-========================
-*/
 void idSimpleWindow::WriteToSaveGame( idFile* savefile )
 {
 	savefile->Write( &flags, sizeof( flags ) );
@@ -375,11 +370,6 @@ void idSimpleWindow::WriteToSaveGame( idFile* savefile )
 	}
 }
 
-/*
-========================
-idSimpleWindow::ReadFromSaveGame
-========================
-*/
 void idSimpleWindow::ReadFromSaveGame( idFile* savefile )
 {
 	savefile->Read( &flags, sizeof( flags ) );
@@ -432,10 +422,6 @@ void idSimpleWindow::ReadFromSaveGame( idFile* savefile )
 		background = NULL;
 	}
 }
-
-/*
-===============================
-*/
 
 size_t idSimpleWindow::Size()
 {

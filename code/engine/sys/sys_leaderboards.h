@@ -133,10 +133,9 @@ Contains the Achievement and LeaderBoard free function declarations.
 
 typedef int32 leaderboardHandle_t;
 
-/*
-================================================
-idLeaderBoardEntry
-================================================
+/*!
+	\class idLeaderBoardEntry
+	\brief Represents a single entry in a leaderboard.
 */
 class idLeaderBoardEntry
 {
@@ -163,10 +162,15 @@ enum leaderboardError_t {
 	LEADERBOARD_ERROR_MAX
 };
 
-/*
-================================================
-idLeaderboardCallback
-================================================
+/*!
+	\class idLeaderboardCallback
+	\brief A callback class for handling leaderboard data and associated metadata.
+
+	This class serves as a callback mechanism for managing leaderboard information, including rows of data, leaderboard definitions, and error states. It provides methods for setting and retrieving
+   leaderboard metadata such as start index, local index, and error code. The class supports operations for adding rows to a leaderboard, resetting the row collection, and determining the total number
+   of rows in the leaderboard. It also includes a virtual clone method for creating copies of the callback object. The class inherits from idCallback, indicating its role in a callback-based system
+   for leaderboard-related operations.
+
 */
 class idLeaderboardCallback : public idCallback
 {

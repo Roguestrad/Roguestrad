@@ -100,6 +100,7 @@ typedef enum D3_PROCESS_DPI_AWARENESS
 	D3_PROCESS_PER_MONITOR_DPI_AWARE = 2
 } YQ2_PROCESS_DPI_AWARENESS;
 
+//! Sets the DPI awareness for the process to enable proper high-DPI scaling on Windows.
 void Sys_SetDPIAwareness()
 {
 	// For Vista, Win7 and Win8
@@ -308,10 +309,16 @@ void Sys_Error( const char* error, ... )
 	exit( 1 );
 }
 
-/*
-========================
-Sys_Launch
-========================
+/*!
+	\brief Launches an external process using the provided path and arguments
+
+	This function creates a new process by executing the specified path with the given command line arguments. It constructs the full command line by combining the executable path with the provided data, then uses Windows API CreateProcess to start the new process. If the process creation fails, an error is logged and the function returns. The function also appends a quit command to the command system to terminate the current application
+
+	\param path The path to the executable to launch
+	\param args Command line arguments to pass to the launched process
+	\param data Additional data to be included in the command line
+	\param dataSize Size of the data buffer in bytes
+	\throws idLib::Error when the process creation fails
 */
 void Sys_Launch( const char* path, idCmdArgs& args,  void* data, unsigned int dataSize )
 {
@@ -461,27 +468,17 @@ void Sys_Sleep( int msec )
 	Sleep( msec );
 }
 
-/*
-==============
-Sys_ShowWindow
-==============
-*/
 void Sys_ShowWindow( bool show )
 {
 	::ShowWindow( win32.hWnd, show ? SW_SHOW : SW_HIDE );
 }
 
-/*
-==============
-Sys_IsWindowVisible
-==============
-*/
 bool Sys_IsWindowVisible()
 {
 	return ( ::IsWindowVisible( win32.hWnd ) != 0 );
 }
 
-// RB: Returns absolute path with \\?\ prefix for long path support
+//! Converts a UTF-8 path to a wide character string with long path support prefix
 wchar_t* MakeWindowsLongPathW( const char* utf8Path )
 {
 	if( !utf8Path || !utf8Path[0] )
@@ -688,11 +685,7 @@ sysFolder_t Sys_IsFolder( const char* path )
 	return ( buffer.st_mode & _S_IFDIR ) != 0 ? FOLDER_YES : FOLDER_NO;
 }
 
-/*
-==============
-Sys_Cwd
-==============
-*/
+//! Returns the current working directory as a UTF-8 string
 const char* Sys_Cwd()
 {
 	// RB: returns the current working directory as a UTF-8 string (static buffer) using the Windows wide-character API
@@ -717,13 +710,7 @@ const char* Sys_Cwd()
 	return cwd;
 }
 
-/*
-==============
-WidePath2ASCI
-
-raynorpat: shamelessly ripped from dhwem3
-==============
-*/
+//! Converts a wide-character Windows path to an ASCII path with backslashes replaced by forward slashes.
 static int WidePath2ASCI( char* dst, size_t size, const WCHAR* src )
 {
 	int len;
@@ -779,6 +766,7 @@ Sys_SteamBasePath
 */
 static char steamPathBuffer[MAX_OSPATH] = { 0 };
 
+//! Returns the base path for the Steam installation directory.
 static const char* Sys_SteamBasePath()
 {
 #if defined(STEAMPATH_NAME) || defined(STEAMPATH_APPID)
@@ -844,6 +832,7 @@ Sys_GogBasePath
 */
 static char gogPathBuffer[MAX_OSPATH] = { 0 };
 
+//! Retrieves the base path for GOG.com installed game files.
 static const char* Sys_GogBasePath()
 {
 #ifdef GOGPATH_ID
@@ -1009,10 +998,15 @@ const char* Sys_EXEPath()
 	return exe;
 }
 
-/*
-==============
-Sys_ListFiles
-==============
+/*!
+	\brief Recursively lists files in a directory that match a given pattern, storing results in a string list
+
+	This function performs a recursive search through a directory tree starting from baseDir. It uses Windows API functions to enumerate files and directories, filtering results based on a provided file pattern. For each matching file, the full path is converted from wide character to UTF-8 encoding and added to the provided string list. The function handles both files and directories, recursively processing subdirectories while maintaining proper path separators. The baseLen parameter is used to determine the starting position for path extraction to ensure correct relative path handling.
+
+	\param baseDir The base directory path to start the recursive search from
+	\param pattern The file pattern to match against (using Windows wildcard matching)
+	\param list The string list to append matching file paths to
+	\param baseLen The length of the base directory path to use for relative path calculation
 */
 static void ListFilesRecursive( const wchar_t* baseDir, const wchar_t* pattern, idStrList& list, size_t baseLen )
 {
@@ -1222,26 +1216,12 @@ void Sys_SetClipboardData( const char* string )
 	CloseClipboard();
 }
 
-/*
-========================
-ExecOutputFn
-========================
-*/
+//! Prints the provided text to the console output.
 static void ExecOutputFn( const char* text )
 {
 	idLib::Printf( text );
 }
 
-
-/*
-========================
-Sys_Exec
-
-if waitMsec is INFINITE, completely block until the process exits
-If waitMsec is -1, don't wait for the process to exit
-Other waitMsec values will allow the workFn to be called at those intervals.
-========================
-*/
 bool Sys_Exec(	const char* appPath, const char* workingPath, const char* args,
 				execProcessWorkFunction_t workFn, execOutputFunction_t outputFn, const int waitMS,
 				unsigned int& exitCode )
@@ -1487,14 +1467,6 @@ sysEvent_t	eventQue[MAX_QUED_EVENTS];
 int			eventHead = 0;
 int			eventTail = 0;
 
-/*
-================
-Sys_QueEvent
-
-Ptr should either be null, or point to a block of data that can
-be freed by the game later.
-================
-*/
 void Sys_QueEvent( sysEventType_t type, int value, int value2, int ptrLength, void* ptr, int inputDeviceNum )
 {
 	sysEvent_t* ev = &eventQue[ eventHead & MASK_QUED_EVENTS ];
@@ -1520,13 +1492,7 @@ void Sys_QueEvent( sysEventType_t type, int value, int value2, int ptrLength, vo
 	ev->inputDevice = inputDeviceNum;
 }
 
-/*
-=============
-Sys_PumpEvents
-
-This allows windows to be moved during renderbump
-=============
-*/
+//! Pumps Windows system events for message processing and handles application shutdown.
 void Sys_PumpEvents()
 {
 	MSG msg;
@@ -1625,15 +1591,7 @@ sysEvent_t Sys_GetEvent()
 	return ev;
 }
 
-//================================================================
-
-/*
-=================
-Sys_In_Restart_f
-
-Restart the input subsystem
-=================
-*/
+//! Restarts the input subsystem by shutting down and reinitializing it.
 void Sys_In_Restart_f( const idCmdArgs& args )
 {
 	Sys_ShutdownInput();
@@ -1936,16 +1894,7 @@ const char* Sys_GetProcessorString()
 	return win32.sys_cpustring.GetString();
 }
 
-//=======================================================================
-
-//#define SET_THREAD_AFFINITY
-
-
-/*
-====================
-Win_Frame
-====================
-*/
+//! Updates the Windows frame and handles viewlog console visibility.
 void Win_Frame()
 {
 	// if "viewlog" has been modified, show or hide the log console
@@ -1955,11 +1904,7 @@ void Win_Frame()
 	}
 }
 
-/*
-====================
-GetExceptionCodeInfo
-====================
-*/
+//! Returns a descriptive string for a given Windows exception code.
 const char* GetExceptionCodeInfo( UINT code )
 {
 	switch( code )
@@ -2009,13 +1954,7 @@ const char* GetExceptionCodeInfo( UINT code )
 	}
 }
 
-/*
-====================
-EmailCrashReport
-
-  emailer originally from Raven/Quake 4
-====================
-*/
+//! Sends a crash report email to the developers with the provided message text.
 void EmailCrashReport( LPSTR messageText )
 {
 	static int lastEmailTime = 0;
@@ -2148,10 +2087,16 @@ EXCEPTION_DISPOSITION __cdecl _except_handler( struct _EXCEPTION_RECORD* Excepti
 							/*	FPU_EXCEPTION_INEXACT_RESULT |			*/	\
 								0
 
-/*
-==================
-WinMain
-==================
+/*!
+	\brief Entry point for the Windows application that initializes the system and enters the main game loop.
+
+	This function serves as the primary entry point for the Windows application, setting up the necessary system resources and configurations before launching the main game loop. It initializes memory management, sets up debugging features, configures FPU settings, and handles console visibility. The function also manages critical sections for thread safety and ensures proper timing resolution. It initializes the common framework, handles command line arguments, and enters an infinite loop to continuously run the game frame.
+
+	\param hInstance Handle to the current instance of the application
+	\param hPrevInstance Handle to the previous instance of the application
+	\param lpCmdLine Pointer to the command line arguments
+	\param nCmdShow Controls how the window is to be shown
+	\return Returns an integer value representing the application's exit code
 */
 int WINAPI WinMain( HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow )
 {

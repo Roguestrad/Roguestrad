@@ -37,11 +37,6 @@ using namespace rapidjson;
 
 #define XSWF_VERSION 16
 
-/*
-===================
-idSWF::LoadJSON
-===================
-*/
 bool idSWF::LoadJSON( const char* filename )
 {
 	idFile* f = fileSystem->OpenFileReadMemory( filename );
@@ -449,11 +444,6 @@ bool idSWF::LoadJSON( const char* filename )
 	return true;
 }
 
-/*
-===================
-idSWF::WriteJSON
-===================
-*/
 void idSWF::WriteJSON( const char* jsonFilename )
 {
 	const bool	exportBitmapShapesOnly = false;

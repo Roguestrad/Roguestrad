@@ -95,7 +95,19 @@ typedef struct {
 
 static WinConData	  s_wcd;
 
-// SRS - use LRESULT vs LONG for type consistency with 64-bit and 32-bit
+/*!
+	\brief Window procedure for handling messages in the console window
+
+	This function processes Windows messages for the console window, handling various events such as activation, closing, color changes, system commands, and user commands like copying, quitting, and
+   clearing the console buffer. It manages the console's visual appearance and behavior, including setting focus, handling timer events for color polarity changes, and managing the console's
+   visibility and quit behavior.
+
+	\param hWnd Handle to the window receiving the message
+	\param uMsg The message identifier
+	\param wParam Additional message-specific information
+	\param lParam Additional message-specific information
+	\return Result of the message processing, typically the result of DefWindowProc for unhandled messages
+*/
 static LRESULT WINAPI ConWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	char*		cmdString;
@@ -193,7 +205,18 @@ static LRESULT WINAPI ConWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lP
 	return DefWindowProc( hWnd, uMsg, wParam, lParam );
 }
 
-// SRS - use LRESULT vs LONG for type consistency with 64-bit and 32-bit
+/*!
+	\brief Window procedure for handling input line events in the console
+
+	This function serves as the window procedure for managing input line events in the console. It handles keyboard focus, command history navigation using up and down arrow keys, entering commands
+   with the Enter key, tab completion, and clearing autocompletion buffers on normal key input. The function maintains a command history buffer and updates the console field accordingly.
+
+	\param hWnd Handle to the window receiving the message
+	\param uMsg The message being processed
+	\param wParam Additional message-specific information
+	\param lParam Additional message-specific information
+	\return The result of the window procedure, typically indicating whether the message was processed or should be passed to the default window procedure
+*/
 LRESULT WINAPI InputLineWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam )
 {
 	int key, cursor;
@@ -279,9 +302,6 @@ LRESULT WINAPI InputLineWndProc( HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 	return CallWindowProc( s_wcd.SysInputLineWndProc, hWnd, uMsg, wParam, lParam );
 }
 
-/*
-** Sys_CreateConsole
-*/
 void Sys_CreateConsole()
 {
 	HDC			hDC;
@@ -440,9 +460,6 @@ void Sys_CreateConsole()
 	}
 }
 
-/*
-** Sys_DestroyConsole
-*/
 void Sys_DestroyConsole()
 {
 	if( s_wcd.hWnd ) {
@@ -481,9 +498,7 @@ void Sys_ShowConsole( int visLevel, bool quitOnClose )
 	}
 }
 
-/*
-** Sys_ConsoleInput
-*/
+//! Returns the next console input line or NULL if none is available.
 char* Sys_ConsoleInput()
 {
 	if( s_wcd.consoleText[0] == 0 ) {
@@ -496,9 +511,7 @@ char* Sys_ConsoleInput()
 	return s_wcd.returnedText;
 }
 
-/*
-** Conbuf_AppendText
-*/
+//! Appends text to the console buffer while handling line endings and overflow conditions
 void Conbuf_AppendText( const char* pMsg )
 {
 #define CONSOLE_BUFFER_SIZE 16384
@@ -565,9 +578,7 @@ void Conbuf_AppendText( const char* pMsg )
 	SendMessage( s_wcd.hwndBuffer, EM_REPLACESEL, 0, ( LPARAM )buffer );
 }
 
-/*
-** Win_SetErrorText
-*/
+//! Sets the error text displayed in the Windows error box.
 void Win_SetErrorText( const char* buf )
 {
 	idStr::Copynz( s_wcd.errorString, buf, sizeof( s_wcd.errorString ) );

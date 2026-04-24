@@ -43,30 +43,71 @@ struct idTabRect {
 	float  iconVOffset;
 };
 
+/*!
+	\class idListWindow
+	\brief A list window implementation that manages selectable items with scrollable display and event handling.
+
+	The idListWindow class provides a user interface element for displaying and managing lists of selectable items. It inherits from idWindow and extends functionality to support scrolling, selection
+   management, and event processing within a graphical user interface. The class handles drawing, activation, and state changes while maintaining synchronization with associated buddy windows such as
+   scrollers. It supports parsing of internal variables to configure display properties and list behavior, including layout orientation and material settings. Selection state management is handled
+   through methods for setting, adding, checking, and clearing selections. The class integrates with a parent GUI system and provides memory allocation tracking. Initialization methods set up tab
+   stops, scroller behavior, and common properties for consistent window behavior.
+
+*/
 class idListWindow : public idWindow
 {
 public:
+	//! Constructs an idListWindow object with the specified user interface.
 	idListWindow( idUserInterfaceLocal* gui );
 
+	//! Handles window events for a list window, processing user input and updating selection state.
 	virtual const char* HandleEvent( const sysEvent_t* event, bool* updateVisuals );
+
+	//! Initializes tab stop information for the list window after parsing
 	virtual void		PostParse();
+
+	//! Draws the list window at the specified position and time
 	virtual void		Draw( int time, float x, float y );
+
+	//! Activates the list window and updates the list when activation occurs
 	virtual void		Activate( bool activate, idStr& act );
+
+	//! Updates the top value of the list window based on the scroller's current value when a buddy window updates.
 	virtual void		HandleBuddyUpdate( idWindow* buddy );
+
+	//! Updates the list window state and optionally redraws the interface.
 	virtual void		StateChanged( bool redraw = false );
 	virtual size_t		Allocated() { return idWindow::Allocated(); };
+
+	//! Retrieves a window variable by its name from the window hierarchy.
 	virtual idWinVar*	GetWinVarByName( const char* _name, bool winLookup = false, drawWin_t** owner = NULL );
 
+	//! Updates the list window by reading items from the GUI state and configuring the scroll range.
 	void				UpdateList();
 
 private:
+	//! Parses internal variables for the list window, handling various properties like horizontal layout, list name, and material settings.
 	virtual bool				   ParseInternalVar( const char* name, idTokenParser* src );
+
+	//! Initializes the common properties and members of the idListWindow class.
 	void						   CommonInit();
+
+	//! Initializes a scroller for the list window, setting up vertical or horizontal orientation based on the horizontal parameter.
 	void						   InitScroller( bool horizontal );
+
+	//! Sets the current selection to the specified index.
 	void						   SetCurrentSel( int sel );
+
+	//! Adds the specified selection index to the list of current selections.
 	void						   AddCurrentSel( int sel );
+
+	//! Returns the currently selected item index from the list window.
 	int							   GetCurrentSel();
+
+	//! Checks if the item at the specified index is currently selected.
 	bool						   IsSelected( int index );
+
+	//! Removes a specific selection index from the list of selected items.
 	void						   ClearSelection( int sel );
 
 	idList<idTabRect, TAG_OLD_UI>  tabInfo;

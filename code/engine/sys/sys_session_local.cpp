@@ -86,6 +86,7 @@ const char* idSessionLocal::stateToString[NUM_STATES] = {
 };
 
 struct netVersion_s {
+	//! Constructs a netVersion_s object with the engine version and build number formatted as a string.
 	netVersion_s()
 	{
 		idStr::snPrintf( string, sizeof( string ), "%s.%d", ENGINE_VERSION, BUILD_NUMBER );
@@ -93,12 +94,6 @@ struct netVersion_s {
 	char string[256];
 } netVersion;
 
-/*
-========================
-NetGetVersionChecksum
-========================
-*/
-// RB: 64 bit fixes, changed long to int
 unsigned int NetGetVersionChecksum()
 {
 #if 0
@@ -115,13 +110,7 @@ unsigned int NetGetVersionChecksum()
 	return ret;
 #endif
 }
-// RB end
 
-/*
-========================
-idSessionLocal::idSessionLocal
-========================
-*/
 idSessionLocal::idSessionLocal() :
 	processorSaveFiles( new( TAG_SAVEGAMES ) idSaveGameProcessorSaveFiles ),
 	processorLoadFiles( new( TAG_SAVEGAMES ) idSaveGameProcessorLoadFiles ),
@@ -131,11 +120,6 @@ idSessionLocal::idSessionLocal() :
 	InitBaseState();
 }
 
-/*
-========================
-idSessionLocal::idSessionLocal
-========================
-*/
 idSessionLocal::~idSessionLocal()
 {
 	// foresthale 2014-06-08: check before deleting these, the deletes were likely done in Shutdown already
@@ -161,11 +145,6 @@ idSessionLocal::~idSessionLocal()
 	}
 }
 
-/*
-========================
-idSessionLocal::InitBaseState
-========================
-*/
 void idSessionLocal::InitBaseState()
 {
 	// assert( mem.IsGlobalHeap() );
@@ -219,11 +198,6 @@ void idSessionLocal::InitBaseState()
 	waitingOnGameStateMembersToJoinTime	 = 0;
 }
 
-/*
-========================
-idSessionLocal::FinishDisconnect
-========================
-*/
 void idSessionLocal::FinishDisconnect()
 {
 	GetPort().Close();
@@ -239,11 +213,6 @@ void idSessionLocal::FinishDisconnect()
 
 idCVar net_connectTimeoutInSeconds( "net_connectTimeoutInSeconds", "15", CVAR_INTEGER, "timeout (in seconds) while connecting" );
 
-/*
-========================
-idSessionLocal::CreatePartyLobby
-========================
-*/
 void   idSessionLocal::CreatePartyLobby( const idMatchParameters& parms_ )
 {
 	NET_VERBOSE_PRINT( "NET: CreatePartyLobby\n" );
@@ -266,11 +235,6 @@ void   idSessionLocal::CreatePartyLobby( const idMatchParameters& parms_ )
 	SetState( STATE_CREATE_AND_MOVE_TO_PARTY_LOBBY );
 }
 
-/*
-========================
-idSessionLocal::CreateMatch
-========================
-*/
 void idSessionLocal::CreateMatch( const idMatchParameters& p )
 {
 	NET_VERBOSE_PRINT( "NET: CreateMatch\n" );
@@ -297,11 +261,6 @@ void idSessionLocal::CreateMatch( const idMatchParameters& p )
 	SetState( STATE_CREATE_AND_MOVE_TO_GAME_LOBBY );
 }
 
-/*
-========================
-idSessionLocal::CreateGameStateLobby
-========================
-*/
 void idSessionLocal::CreateGameStateLobby( const idMatchParameters& p )
 {
 	NET_VERBOSE_PRINT( "NET: CreateGameStateLobby\n" );
@@ -323,11 +282,6 @@ void idSessionLocal::CreateGameStateLobby( const idMatchParameters& p )
 	SetState( STATE_CREATE_AND_MOVE_TO_GAME_STATE_LOBBY );
 }
 
-/*
-========================
-idSessionLocal::FindOrCreateMatch
-========================
-*/
 void idSessionLocal::FindOrCreateMatch( const idMatchParameters& p )
 {
 	NET_VERBOSE_PRINT( "NET: FindOrCreateMatch\n" );
@@ -356,11 +310,6 @@ void idSessionLocal::FindOrCreateMatch( const idMatchParameters& p )
 	SetState( STATE_FIND_OR_CREATE_MATCH );
 }
 
-/*
-========================
-idSessionLocal::StartLoading
-========================
-*/
 void idSessionLocal::StartLoading()
 {
 	NET_VERBOSE_PRINT( "NET: StartLoading\n" );
@@ -384,11 +333,6 @@ void idSessionLocal::StartLoading()
 	SetState( STATE_LOADING );
 }
 
-/*
-========================
-idSessionLocal::StartMatch
-========================
-*/
 void idSessionLocal::StartMatch()
 {
 	NET_VERBOSE_PRINT( "NET: StartMatch\n" );
@@ -427,11 +371,6 @@ void idSessionLocal::StartMatch()
 	}
 }
 
-/*
-========================
-idSessionLocal::GetBackState
-========================
-*/
 idSessionLocal::sessionState_t idSessionLocal::GetBackState()
 {
 	sessionState_t currentState = GetState();
@@ -455,11 +394,6 @@ idSessionLocal::sessionState_t idSessionLocal::GetBackState()
 	return IDLE; // Otherwise, go to idle
 }
 
-/*
-========================
-idSessionLocal::Cancel
-========================
-*/
 void idSessionLocal::Cancel()
 {
 	NET_VERBOSE_PRINT( "NET: Cancel\n" );
@@ -515,11 +449,6 @@ void idSessionLocal::Cancel()
 	ValidateLobbies();
 }
 
-/*
-========================
-idSessionLocal::ShouldShowMigratingDialog
-========================
-*/
 bool idSessionLocal::ShouldShowMigratingDialog() const
 {
 	const idLobby* activeLobby = GetActivePlatformLobby();
@@ -531,11 +460,6 @@ bool idSessionLocal::ShouldShowMigratingDialog() const
 	return activeLobby->ShouldShowMigratingDialog();
 }
 
-/*
-========================
-idSessionLocal::IsCurrentLobbyMigrating
-========================
-*/
 bool idSessionLocal::IsCurrentLobbyMigrating() const
 {
 	const idLobby* activeLobby = GetActivePlatformLobby();
@@ -547,53 +471,26 @@ bool idSessionLocal::IsCurrentLobbyMigrating() const
 	return activeLobby->IsMigrating();
 }
 
-/*
-========================
-idSessionLocal::IsLosingConnectionToHost
-========================
-*/
 bool idSessionLocal::IsLosingConnectionToHost() const
 {
 	return GetActingGameStateLobby().IsLosingConnectionToHost();
 }
 
-/*
-========================
-idSessionLocal::WasMigrationGame
-returns true if we are hosting a migrated game and we had valid migration data
-========================
-*/
 bool idSessionLocal::WasMigrationGame() const
 {
 	return GetGameLobby().IsMigratedStatsGame();
 }
 
-/*
-========================
-idSessionLocal::ShouldRelaunchMigrationGame
-returns true if we are hosting a migrated game and we had valid migration data
-========================
-*/
 bool idSessionLocal::ShouldRelaunchMigrationGame() const
 {
 	return GetGameLobby().ShouldRelaunchMigrationGame() && !IsCurrentLobbyMigrating();
 }
 
-/*
-========================
-idSessionLocal::GetMigrationGameData
-========================
-*/
 bool idSessionLocal::GetMigrationGameData( idBitMsg& msg, bool reading )
 {
 	return GetGameLobby().GetMigrationGameData( msg, reading );
 }
 
-/*
-========================
-idSessionLocal::GetMigrationGameDataUser
-========================
-*/
 bool idSessionLocal::GetMigrationGameDataUser( lobbyUserID_t lobbyUserID, idBitMsg& msg, bool reading )
 {
 	if( GetGameStateLobby().IsHost() ) {
@@ -603,11 +500,6 @@ bool idSessionLocal::GetMigrationGameDataUser( lobbyUserID_t lobbyUserID, idBitM
 	return GetGameLobby().GetMigrationGameDataUser( lobbyUserID, msg, reading );
 }
 
-/*
-========================
-idSessionLocal::GetMatchParamUpdate
-========================
-*/
 bool idSessionLocal::GetMatchParamUpdate( int& peer, int& msg )
 {
 	if( storedPeer != -1 && storedMsgType != -1 ) {
@@ -620,13 +512,6 @@ bool idSessionLocal::GetMatchParamUpdate( int& peer, int& msg )
 	return false;
 }
 
-/*
-========================
-idSessionLocal::UpdatePartyParms
-
-Updates the party parameters when in a party lobby OR a game lobby in order to keep them always in sync.
-========================
-*/
 void idSessionLocal::UpdatePartyParms( const idMatchParameters& p )
 {
 	if( ( GetState() != PARTY_LOBBY && GetState() != GAME_LOBBY ) || !GetPartyLobby().IsHost() ) {
@@ -638,11 +523,6 @@ void idSessionLocal::UpdatePartyParms( const idMatchParameters& p )
 	GetPartyLobby().UpdateMatchParms( p );
 }
 
-/*
-========================
-idSessionLocal::UpdateMatchParms
-========================
-*/
 void idSessionLocal::UpdateMatchParms( const idMatchParameters& p )
 {
 	if( GetState() != GAME_LOBBY || !GetGameLobby().IsHost() ) {
@@ -654,11 +534,6 @@ void idSessionLocal::UpdateMatchParms( const idMatchParameters& p )
 	GetGameLobby().UpdateMatchParms( p );
 }
 
-/*
-========================
-idSessionLocal::StartSessions
-========================
-*/
 void idSessionLocal::StartSessions()
 {
 	if( GetPartyLobby().lobbyBackend != NULL ) {
@@ -672,11 +547,6 @@ void idSessionLocal::StartSessions()
 	SetLobbiesAreJoinable( false );
 }
 
-/*
-========================
-idSessionLocal::EndSessions
-========================
-*/
 void idSessionLocal::EndSessions()
 {
 	if( GetPartyLobby().lobbyBackend != NULL ) {
@@ -690,11 +560,6 @@ void idSessionLocal::EndSessions()
 	SetLobbiesAreJoinable( true );
 }
 
-/*
-========================
-idSessionLocal::SetLobbiesAreJoinable
-========================
-*/
 void idSessionLocal::SetLobbiesAreJoinable( bool joinable )
 {
 	// NOTE - We don't manipulate the joinable state when we are supporting join in progress
@@ -710,11 +575,6 @@ void idSessionLocal::SetLobbiesAreJoinable( bool joinable )
 	}
 }
 
-/*
-========================
-idSessionLocal::MoveToMainMenu
-========================
-*/
 void idSessionLocal::MoveToMainMenu()
 {
 	GetPartyLobby().Shutdown();
@@ -723,11 +583,6 @@ void idSessionLocal::MoveToMainMenu()
 	SetState( STATE_IDLE );
 }
 
-/*
-========================
-idSessionLocal::HandleVoiceRestrictionDialog
-========================
-*/
 void idSessionLocal::HandleVoiceRestrictionDialog()
 {
 	// don't bother complaining about voice restrictions when in a splitscreen lobby
@@ -742,14 +597,6 @@ void idSessionLocal::HandleVoiceRestrictionDialog()
 	}
 }
 
-/*
-========================
-idSessionLocal::WaitOnLobbyCreate
-
-Called from State_Create_And_Move_To_Party_Lobby and State_Create_And_Move_To_Game_Lobby and State_Create_And_Move_To_Game_State_Lobby.
-This function will create the lobby, then wait for it to either succeed or fail.
-========================
-*/
 bool idSessionLocal::WaitOnLobbyCreate( idLobby& lobby )
 {
 	assert( localState == STATE_CREATE_AND_MOVE_TO_PARTY_LOBBY || localState == STATE_CREATE_AND_MOVE_TO_GAME_LOBBY || localState == STATE_CREATE_AND_MOVE_TO_GAME_STATE_LOBBY );
@@ -777,12 +624,6 @@ bool idSessionLocal::WaitOnLobbyCreate( idLobby& lobby )
 	return true;
 }
 
-/*
-========================
-idSessionLocal::DetectDisconnectFromService
-Called from CreateMatch/CreatePartyLobby/FindOrCreateMatch state machines
-========================
-*/
 bool idSessionLocal::DetectDisconnectFromService( bool cancelAndShowMsg )
 {
 	const int DETECT_SERVICE_DISCONNECT_TIMEOUT_IN_SECONDS = session->GetTitleStorageInt( "DETECT_SERVICE_DISCONNECT_TIMEOUT_IN_SECONDS", 30 );
@@ -804,12 +645,6 @@ bool idSessionLocal::DetectDisconnectFromService( bool cancelAndShowMsg )
 	return false;
 }
 
-/*
-========================
-idSessionLocal::HandleConnectionFailed
-Called anytime a connection fails, and does the right thing.
-========================
-*/
 void idSessionLocal::HandleConnectionFailed( idLobby& lobby, bool wasFull )
 {
 	assert( localState == STATE_CONNECT_AND_MOVE_TO_PARTY || localState == STATE_CONNECT_AND_MOVE_TO_GAME || localState == STATE_CONNECT_AND_MOVE_TO_GAME_STATE );
@@ -862,12 +697,6 @@ void idSessionLocal::HandleConnectionFailed( idLobby& lobby, bool wasFull )
 	}
 }
 
-/*
-========================
-idSessionLocal::HandleConnectAndMoveToLobby
-Called from State_Connect_And_Move_To_Party/State_Connect_And_Move_To_Game
-========================
-*/
 bool idSessionLocal::HandleConnectAndMoveToLobby( idLobby& lobby )
 {
 	assert( localState == STATE_CONNECT_AND_MOVE_TO_PARTY || localState == STATE_CONNECT_AND_MOVE_TO_GAME || localState == STATE_CONNECT_AND_MOVE_TO_GAME_STATE );
@@ -982,11 +811,6 @@ bool idSessionLocal::HandleConnectAndMoveToLobby( idLobby& lobby )
 	return false;
 }
 
-/*
-========================
-idSessionLocal::State_Create_And_Move_To_Party_Lobby
-========================
-*/
 bool idSessionLocal::State_Create_And_Move_To_Party_Lobby()
 {
 	if( WaitOnLobbyCreate( GetPartyLobby() ) ) {
@@ -1010,11 +834,6 @@ bool idSessionLocal::State_Create_And_Move_To_Party_Lobby()
 	return HandlePackets(); // Valid but busy
 }
 
-/*
-========================
-idSessionLocal::State_Create_And_Move_To_Game_Lobby
-========================
-*/
 bool idSessionLocal::State_Create_And_Move_To_Game_Lobby()
 {
 	if( WaitOnLobbyCreate( GetGameLobby() ) ) {
@@ -1030,11 +849,6 @@ bool idSessionLocal::State_Create_And_Move_To_Game_Lobby()
 	return false;
 }
 
-/*
-========================
-idSessionLocal::State_Create_And_Move_To_Game_State_Lobby
-========================
-*/
 bool idSessionLocal::State_Create_And_Move_To_Game_State_Lobby()
 {
 	if( WaitOnLobbyCreate( GetGameStateLobby() ) ) {
@@ -1057,11 +871,6 @@ bool idSessionLocal::State_Create_And_Move_To_Game_State_Lobby()
 	return false;
 }
 
-/*
-========================
-idSessionLocal::State_Find_Or_Create_Match
-========================
-*/
 bool idSessionLocal::State_Find_Or_Create_Match()
 {
 	assert( connectType == CONNECT_FIND_OR_CREATE );
@@ -1092,51 +901,26 @@ bool idSessionLocal::State_Find_Or_Create_Match()
 	return true;
 }
 
-/*
-========================
-idSessionLocal::State_Connect_And_Move_To_Party
-========================
-*/
 bool idSessionLocal::State_Connect_And_Move_To_Party()
 {
 	return HandleConnectAndMoveToLobby( GetPartyLobby() );
 }
 
-/*
-========================
-idSessionLocal::State_Connect_And_Move_To_Game
-========================
-*/
 bool idSessionLocal::State_Connect_And_Move_To_Game()
 {
 	return HandleConnectAndMoveToLobby( GetGameLobby() );
 }
 
-/*
-========================
-idSessionLocal::State_Connect_And_Move_To_Game_State
-========================
-*/
 bool idSessionLocal::State_Connect_And_Move_To_Game_State()
 {
 	return HandleConnectAndMoveToLobby( GetGameStateLobby() );
 }
 
-/*
-========================
-idSessionLocal::State_InGame
-========================
-*/
 bool idSessionLocal::State_InGame()
 {
 	return HandlePackets();
 }
 
-/*
-========================
-idSessionLocal::State_Loading
-========================
-*/
 bool idSessionLocal::State_Loading()
 {
 	HandlePackets();
@@ -1209,11 +993,6 @@ bool idSessionLocal::State_Loading()
 	return true;
 }
 
-/*
-========================
-idSessionLocal::State_Busy
-========================
-*/
 bool idSessionLocal::State_Busy()
 {
 	idLobby* activeLobby = GetActivePlatformLobby();
@@ -1231,11 +1010,6 @@ bool idSessionLocal::State_Busy()
 	return HandlePackets();
 }
 
-/*
-========================
-idSessionLocal::VerifySnapshotInitialState
-========================
-*/
 void idSessionLocal::VerifySnapshotInitialState()
 {
 	// Verify that snapshot state is reset
@@ -1262,33 +1036,18 @@ void idSessionLocal::VerifySnapshotInitialState()
 	}
 }
 
-/*
-========================
-idSessionLocal::State_Party_Lobby_Host
-========================
-*/
 bool idSessionLocal::State_Party_Lobby_Host()
 {
 	HandleVoiceRestrictionDialog();
 	return HandlePackets();
 }
 
-/*
-========================
-idSessionLocal::State_Game_Lobby_Host
-========================
-*/
 bool idSessionLocal::State_Game_Lobby_Host()
 {
 	HandleVoiceRestrictionDialog();
 	return HandlePackets();
 }
 
-/*
-========================
-idSessionLocal::State_Game_State_Lobby_Host
-========================
-*/
 bool idSessionLocal::State_Game_State_Lobby_Host()
 {
 	HandleVoiceRestrictionDialog();
@@ -1337,22 +1096,12 @@ bool idSessionLocal::State_Game_State_Lobby_Host()
 	return HandlePackets();
 }
 
-/*
-========================
-idSessionLocal::State_Party_Lobby_Peer
-========================
-*/
 bool idSessionLocal::State_Party_Lobby_Peer()
 {
 	HandleVoiceRestrictionDialog();
 	return HandlePackets();
 }
 
-/*
-========================
-idSessionLocal::State_Game_Lobby_Peer
-========================
-*/
 bool idSessionLocal::State_Game_Lobby_Peer()
 {
 	HandleVoiceRestrictionDialog();
@@ -1382,11 +1131,6 @@ bool idSessionLocal::State_Game_Lobby_Peer()
 	return HandlePackets();
 }
 
-/*
-========================
-idSessionLocal::State_Game_State_Lobby_Peer
-========================
-*/
 bool idSessionLocal::State_Game_State_Lobby_Peer()
 {
 	// We are in charge of telling the dedicated host that all our members are in
@@ -1422,11 +1166,6 @@ bool idSessionLocal::State_Game_State_Lobby_Peer()
 	return State_Game_Lobby_Peer();
 }
 
-/*
-========================
-idSessionLocal::~idSession
-========================
-*/
 idSession::~idSession()
 {
 	if( signInManager ) {
@@ -1516,12 +1255,6 @@ idSession interface semi-common between platforms (#ifdef's in sys_session_local
 idCVar com_deviceZeroOverride( "com_deviceZeroOverride", "-1", CVAR_INTEGER, "change input routing for device 0 to poll a different device" );
 idCVar mp_bot_input_override( "mp_bot_input_override", "-1", CVAR_INTEGER, "Override local input routing for bot control" );
 
-/*
-========================
-idSessionLocal::GetInputRouting
-This function sets up inputRouting to be a mapping from inputDevice index to session user index.
-========================
-*/
 int	   idSessionLocal::GetInputRouting( int inputRouting[MAX_INPUT_DEVICES] )
 {
 	int numLocalUsers = 0;
@@ -1561,12 +1294,6 @@ int	   idSessionLocal::GetInputRouting( int inputRouting[MAX_INPUT_DEVICES] )
 	return numLocalUsers;
 }
 
-/*
-========================
-idSessionLocal::EndMatch
-EndMatch is meant for the host to cleanly end a match and return to the lobby page
-========================
-*/
 void idSessionLocal::EndMatch( bool premature /*=false*/ )
 {
 	if( verify( GetActingGameStateLobby().IsHost() ) ) {
@@ -1575,12 +1302,6 @@ void idSessionLocal::EndMatch( bool premature /*=false*/ )
 	}
 }
 
-/*
-========================
-idSessionLocal::EndMatch
-this is for when the game is over before we go back to lobby. Need this incase the host leaves during this time
-========================
-*/
 void idSessionLocal::MatchFinished()
 {
 	if( verify( GetActingGameStateLobby().IsHost() ) ) {
@@ -1589,12 +1310,6 @@ void idSessionLocal::MatchFinished()
 	}
 }
 
-/*
-========================
-idSessionLocal::QuitMatch
-QuitMatch is considered a premature ending of a match, and does the right thing depending on whether the host or peer is quitting
-========================
-*/
 void idSessionLocal::QuitMatch()
 {
 	if( GetActingGameStateLobby().IsHost() && !MatchTypeIsRanked( GetActingGameStateLobby().parms.matchFlags ) ) {
@@ -1605,22 +1320,11 @@ void idSessionLocal::QuitMatch()
 	}
 }
 
-/*
-========================
-idSessionLocal::QuitMatchToTitle
-QuitMatchToTitle will forcefully quit the match and return to the title screen.
-========================
-*/
 void idSessionLocal::QuitMatchToTitle()
 {
 	MoveToMainMenu();
 }
 
-/*
-========================
-idSessionLocal::ClearMigrationState
-========================
-*/
 void idSessionLocal::ClearMigrationState()
 {
 	// We are ending the match without migration, so clear that state
@@ -1628,11 +1332,6 @@ void idSessionLocal::ClearMigrationState()
 	GetGameLobby().ResetAllMigrationState();
 }
 
-/*
-========================
-idSessionLocal::EndMatchInternal
-========================
-*/
 void idSessionLocal::EndMatchInternal( bool premature /*=false*/ )
 {
 	assert( GetGameStateLobby().IsLobbyActive() == net_useGameStateLobby.GetBool() );
@@ -1698,11 +1397,6 @@ void idSessionLocal::EndMatchInternal( bool premature /*=false*/ )
 	}
 }
 
-/*
-========================
-idSessionLocal::MatchFinishedInternal
-========================
-*/
 void idSessionLocal::MatchFinishedInternal()
 {
 	ClearMigrationState();
@@ -1715,21 +1409,11 @@ void idSessionLocal::MatchFinishedInternal()
 	}
 }
 
-/*
-========================
-idSessionLocal::EndMatchForMigration
-========================
-*/
 void idSessionLocal::EndMatchForMigration()
 {
 	ClearVoiceGroups();
 }
 
-/*
-========================
-idSessionLocal::ShouldHavePartyLobby
-========================
-*/
 bool idSessionLocal::ShouldHavePartyLobby()
 {
 	if( GetActivePlatformLobby() == NULL ) {
@@ -1744,12 +1428,6 @@ bool idSessionLocal::ShouldHavePartyLobby()
 	return MatchTypeIsOnline( flags ) && ( ( flags & MATCH_PARTY_INVITE_PLACEHOLDER ) == 0 );
 }
 
-/*
-========================
-idSessionLocal::ValidateLobbies
-Determines if any of the session instances need to become the host
-========================
-*/
 void idSessionLocal::ValidateLobbies()
 {
 	if( localState == STATE_IDLE ) {
@@ -1771,11 +1449,6 @@ void idSessionLocal::ValidateLobbies()
 	}
 }
 
-/*
-========================
-idSessionLocal::ValidateLobby
-========================
-*/
 void idSessionLocal::ValidateLobby( idLobby& lobby )
 {
 	if( lobby.lobbyBackend == NULL || lobby.lobbyBackend->GetState() == idLobbyBackend::STATE_FAILED || lobby.GetState() == idLobby::STATE_FAILED ) {
@@ -1792,11 +1465,6 @@ void idSessionLocal::ValidateLobby( idLobby& lobby )
 	}
 }
 
-/*
-========================
-idSessionLocal::Pump
-========================
-*/
 void idSessionLocal::Pump()
 {
 	SCOPED_PROFILE_EVENT( "Session::Pump" );
@@ -1922,11 +1590,6 @@ void idSessionLocal::Pump()
 	}
 }
 
-/*
-========================
-idSessionLocal::ProcessSnapAckQueue
-========================
-*/
 void idSessionLocal::ProcessSnapAckQueue()
 {
 	if( GetActingGameStateLobby().IsLobbyActive() ) {
@@ -1934,11 +1597,6 @@ void idSessionLocal::ProcessSnapAckQueue()
 	}
 }
 
-/*
-========================
-idSessionLocal::UpdatePendingInvite
-========================
-*/
 void idSessionLocal::UpdatePendingInvite()
 {
 	if( pendingInviteMode == PENDING_INVITE_NONE ) {
@@ -1970,11 +1628,6 @@ void idSessionLocal::UpdatePendingInvite()
 	ConnectAndMoveToLobby( GetPartyLobby(), pendingInviteConnectInfo, wasFromInvite );
 }
 
-/*
-========================
-idSessionLocal::HandleState
-========================
-*/
 bool idSessionLocal::HandleState()
 {
 	// Handle individual lobby states
@@ -2037,11 +1690,6 @@ bool idSessionLocal::HandleState()
 	}
 }
 
-/*
-========================
-idSessionLocal::GetState
-========================
-*/
 idSessionLocal::sessionState_t idSessionLocal::GetState() const
 {
 	// Convert our internal state to one of the external states
@@ -2108,15 +1756,6 @@ const char* idSessionLocal::GetStateString() const
 	return stateToString[localState];
 }
 
-// idSession interface
-
-/*
-========================
-idSessionLocal::LoadingFinished
-
-Only called by idCommonLocal::FinalizeMapChange
-========================
-*/
 void idSessionLocal::LoadingFinished()
 {
 	NET_VERBOSE_PRINT( "NET: Loading Finished\n" );
@@ -2140,11 +1779,6 @@ void idSessionLocal::LoadingFinished()
 	SetFlushedStats( false );
 }
 
-/*
-========================
-idSessionLocal::SendUsercmds
-========================
-*/
 void idSessionLocal::SendUsercmds( idBitMsg& msg )
 {
 	if( localState != STATE_INGAME ) {
@@ -2189,11 +1823,6 @@ void idSessionLocal::SendUsercmds( idBitMsg& msg )
 	}
 }
 
-/*
-========================
-idSessionLocal::SendSnapshot
-========================
-*/
 void idSessionLocal::SendSnapshot( idSnapShot& ss )
 {
 	for( int p = 0; p < GetActingGameStateLobby().peers.Num(); p++ ) {
@@ -2215,11 +1844,6 @@ void idSessionLocal::SendSnapshot( idSnapShot& ss )
 	}
 }
 
-/*
-========================
-idSessionLocal::UpdateSignInManager
-========================
-*/
 void idSessionLocal::UpdateSignInManager()
 {
 	if( !HasSignInManager() ) {
@@ -2324,11 +1948,6 @@ void idSessionLocal::UpdateSignInManager()
 	GetGameStateLobby().SyncLobbyUsersWithLocalUsers( allowJoinGame, onlineMatch );
 }
 
-/*
-========================
-idSessionLocal::GetProfileFromMasterLocalUser
-========================
-*/
 idPlayerProfile* idSessionLocal::GetProfileFromMasterLocalUser()
 {
 	idPlayerProfile* profile	= NULL;
@@ -2347,21 +1966,11 @@ idPlayerProfile* idSessionLocal::GetProfileFromMasterLocalUser()
 	return profile;
 }
 
-/*
-========================
-idSessionLocal::GetPeerName
-========================
-*/
 const char* idSessionLocal::GetPeerName( int peerNum )
 {
 	return GetActingGameStateLobby().GetPeerName( peerNum );
 }
 
-/*
-========================
-idSessionLocal::SetState
-========================
-*/
 void idSessionLocal::SetState( state_t newState )
 {
 	assert( newState < NUM_STATES );
@@ -2396,11 +2005,6 @@ void idSessionLocal::SetState( state_t newState )
 	localState = newState;
 }
 
-/*
-========================
-idSessionLocal::HandlePackets
-========================
-*/
 bool idSessionLocal::HandlePackets()
 {
 	SCOPED_PROFILE_EVENT( "Session::HandlePackets" );
@@ -2456,11 +2060,6 @@ bool idSessionLocal::HandlePackets()
 	return false;
 }
 
-/*
-========================
-idSessionLocal::GetActivePlatformLobby
-========================
-*/
 idLobby* idSessionLocal::GetActivePlatformLobby()
 {
 	sessionState_t state = GetState();
@@ -2492,11 +2091,6 @@ const idLobby* idSessionLocal::GetActivePlatformLobby() const
 	return NULL;
 }
 
-/*
-========================
-idSessionLocal::GetActingGameStateLobby
-========================
-*/
 idLobby& idSessionLocal::GetActingGameStateLobby()
 {
 	if( net_useGameStateLobby.GetBool() ) {
@@ -2520,11 +2114,6 @@ const idLobby& idSessionLocal::GetActingGameStateLobby() const
 	return GetGameLobby();
 }
 
-/*
-========================
-idSessionLocal::GetLobbyFromType
-========================
-*/
 idLobby* idSessionLocal::GetLobbyFromType( idLobby::lobbyType_t lobbyType )
 {
 	switch( lobbyType ) {
@@ -2539,12 +2128,6 @@ idLobby* idSessionLocal::GetLobbyFromType( idLobby::lobbyType_t lobbyType )
 	return NULL;
 }
 
-/*
-========================
-idSessionLocal::GetActivePlatformLobbyBase
-This returns the base version for the idSession version
-========================
-*/
 idLobbyBase& idSessionLocal::GetActivePlatformLobbyBase()
 {
 	idLobby* activeLobby = GetActivePlatformLobby();
@@ -2556,11 +2139,6 @@ idLobbyBase& idSessionLocal::GetActivePlatformLobbyBase()
 	return stubLobby; // So we can return at least something
 }
 
-/*
-========================
-idSessionLocal::GetLobbyFromLobbyUserID
-========================
-*/
 idLobbyBase& idSessionLocal::GetLobbyFromLobbyUserID( lobbyUserID_t lobbyUserID )
 {
 	if( !lobbyUserID.IsValid() ) {
@@ -2576,11 +2154,6 @@ idLobbyBase& idSessionLocal::GetLobbyFromLobbyUserID( lobbyUserID_t lobbyUserID 
 	return stubLobby; // So we can return at least something
 }
 
-/*
-========================
-idSessionLocal::TickSendQueue
-========================
-*/
 void idSessionLocal::TickSendQueue()
 {
 	assert( !sendQueue.IsEmpty() );
@@ -2619,11 +2192,6 @@ void idSessionLocal::TickSendQueue()
 	}
 }
 
-/*
-========================
-idSessionLocal::QueuePacket
-========================
-*/
 void idSessionLocal::QueuePacket( idQueue<idQueuePacket, &idQueuePacket::queueNode>& queue, int time, const lobbyAddress_t& to, const void* data, int size, bool dedicated )
 {
 	// mem.PushHeap();
@@ -2642,11 +2210,6 @@ void idSessionLocal::QueuePacket( idQueue<idQueuePacket, &idQueuePacket::queueNo
 	// mem.PopHeap();
 }
 
-/*
-========================
-idSessionLocal::ReadRawPacketFromQueue
-========================
-*/
 bool idSessionLocal::ReadRawPacketFromQueue( int time, lobbyAddress_t& from, void* data, int& size, bool& outDedicated, int maxSize )
 {
 	idQueuePacket* packet = recvQueue.Peek();
@@ -2668,11 +2231,6 @@ bool idSessionLocal::ReadRawPacketFromQueue( int time, lobbyAddress_t& from, voi
 	return true;
 }
 
-/*
-========================
-idSessionLocal::SendRawPacket
-========================
-*/
 void idSessionLocal::SendRawPacket( const lobbyAddress_t& to, const void* data, int size, bool dedicated )
 {
 	const int now = Sys_Milliseconds();
@@ -2801,11 +2359,6 @@ bool idSessionLocal::ReadRawPacket( lobbyAddress_t& from, void* data, int& size,
 	return ReadRawPacketFromQueue( now, from, data, size, outDedicated, maxSize );
 }
 
-/*
-========================
-idSessionLocal::ConnectAndMoveToLobby
-========================
-*/
 void idSessionLocal::ConnectAndMoveToLobby( idLobby& lobby, const lobbyConnectInfo_t& connectInfo, bool fromInvite )
 {
 	// Since we are connecting directly to a lobby, make sure no search results are left over from previous FindOrCreateMatch results
@@ -2831,11 +2384,6 @@ void idSessionLocal::ConnectAndMoveToLobby( idLobby& lobby, const lobbyConnectIn
 	}
 }
 
-/*
-========================
-idSessionLocal::GoodbyeFromHost
-========================
-*/
 void idSessionLocal::GoodbyeFromHost( idLobby& lobby, int peerNum, const lobbyAddress_t& remoteAddress, int msgType )
 {
 	if( !verify( localState > STATE_IDLE ) ) {
@@ -2870,11 +2418,6 @@ void idSessionLocal::GoodbyeFromHost( idLobby& lobby, int peerNum, const lobbyAd
 	}
 }
 
-/*
-========================
-idSessionLocal::WriteLeaderboardToMsg
-========================
-*/
 void idSessionLocal::WriteLeaderboardToMsg( idBitMsg& msg, const leaderboardDefinition_t* leaderboard, const column_t* stats )
 {
 	assert( Sys_FindLeaderboardDef( leaderboard->id ) == leaderboard );
@@ -2894,11 +2437,6 @@ void idSessionLocal::WriteLeaderboardToMsg( idBitMsg& msg, const leaderboardDefi
 	}
 }
 
-/*
-========================
-idSessionLocal::ReadLeaderboardFromMsg
-========================
-*/
 const leaderboardDefinition_t* idSessionLocal::ReadLeaderboardFromMsg( idBitMsg& msg, column_t* stats )
 {
 	int							   id = msg.ReadLong();
@@ -2926,11 +2464,6 @@ const leaderboardDefinition_t* idSessionLocal::ReadLeaderboardFromMsg( idBitMsg&
 	return leaderboard;
 }
 
-/*
-========================
-idSessionLocal::SendLeaderboardStatsToPlayer
-========================
-*/
 void idSessionLocal::SendLeaderboardStatsToPlayer( lobbyUserID_t lobbyUserID, const leaderboardDefinition_t* leaderboard, const column_t* stats )
 {
 	const int sessionUserIndex = GetActingGameStateLobby().GetLobbyUserIndexByID( lobbyUserID );
@@ -2971,11 +2504,6 @@ void idSessionLocal::SendLeaderboardStatsToPlayer( lobbyUserID_t lobbyUserID, co
 	GetActingGameStateLobby().QueueReliableMessage( peerIndex, idLobby::RELIABLE_POST_STATS, msg.GetReadData(), msg.GetSize() );
 }
 
-/*
-========================
-idSessionLocal::RecvLeaderboardStatsForPlayer
-========================
-*/
 void idSessionLocal::RecvLeaderboardStatsForPlayer( idBitMsg& msg )
 {
 	column_t	  stats[MAX_LEADERBOARD_COLUMNS];
@@ -2993,21 +2521,12 @@ void idSessionLocal::RecvLeaderboardStatsForPlayer( idBitMsg& msg )
 	LeaderboardUpload( lobbyUserID, leaderboard, stats );
 }
 
-/*
-========================
-idSessionLocal::RequirePersistentMaster
-========================
-*/
 bool idSessionLocal::RequirePersistentMaster()
 {
 	return signInManager->RequirePersistentMaster();
 }
 
-/*
-========================
-CheckAndUpdateValue
-========================
-*/
+//! Checks if a value needs to be updated and updates it if necessary
 template<typename T>
 bool CheckAndUpdateValue( T& value, const T& newValue )
 {
@@ -3018,11 +2537,6 @@ bool CheckAndUpdateValue( T& value, const T& newValue )
 	return true;
 }
 
-/*
-========================
-lobbyUser_t::UpdateClientMutableData
-========================
-*/
 bool lobbyUser_t::UpdateClientMutableData( const idLocalUser* localUser )
 {
 	bool				   updated = false;
@@ -3036,11 +2550,6 @@ bool lobbyUser_t::UpdateClientMutableData( const idLocalUser* localUser )
 	return updated;
 }
 
-/*
-========================
-idSessionLocal::ComputeNextGameCoalesceTime
-========================
-*/
 void idSessionLocal::ComputeNextGameCoalesceTime()
 {
 	const int coalesceTimeInSeconds		  = session->GetTitleStorageInt( "net_LobbyCoalesceTimeInSeconds", net_LobbyCoalesceTimeInSeconds.GetInteger() );
@@ -3055,21 +2564,13 @@ void idSessionLocal::ComputeNextGameCoalesceTime()
 	}
 }
 
-/*
-========================
-lobbyUser_t::Net_BandwidthChallenge
-========================
-*/
+//! Starts or continues a network bandwidth challenge test.
 CONSOLE_COMMAND( Net_BandwidthChallenge, "Test network bandwidth", 0 )
 {
 	session->StartOrContinueBandwidthChallenge( true );
 }
 
-/*
-========================
-lobbyUser_t::Net_ThrottlePeer
-========================
-*/
+//! Tests network bandwidth by setting peer snapshot rate
 CONSOLE_COMMAND( Net_ThrottlePeer, "Test network bandwidth", 0 )
 {
 	int peerNum	 = -1;
@@ -3087,11 +2588,7 @@ CONSOLE_COMMAND( Net_ThrottlePeer, "Test network bandwidth", 0 )
 // FIXME: Move to sys_stats.cpp
 idStaticList<leaderboardDefinition_t*, MAX_LEADERBOARDS> registeredLeaderboards;
 
-/*
-========================
-Sys_FindLeaderboardDef
-========================
-*/
+//! Returns the leaderboard definition for the given ID, or NULL if not found
 const leaderboardDefinition_t*							 Sys_FindLeaderboardDef( int id )
 {
 	for( int i = 0; i < registeredLeaderboards.Num(); i++ ) {
@@ -3103,11 +2600,6 @@ const leaderboardDefinition_t*							 Sys_FindLeaderboardDef( int id )
 	return NULL;
 }
 
-/*
-========================
-Sys_CreateLeaderboardDef
-========================
-*/
 leaderboardDefinition_t* Sys_CreateLeaderboardDef( int id_, int numColumns_, const columnDef_t* columnDefs_, rankOrder_t rankOrder_, bool supportsAttachments_, bool checkAgainstCurrent_ )
 {
 	leaderboardDefinition_t* newDef = new( TAG_NETWORKING ) leaderboardDefinition_t( id_, numColumns_, columnDefs_, rankOrder_, supportsAttachments_, checkAgainstCurrent_ );
@@ -3124,24 +2616,12 @@ leaderboardDefinition_t* Sys_CreateLeaderboardDef( int id_, int numColumns_, con
 	return newDef;
 }
 
-/*
-========================
-Sys_CreateLeaderboardDef
-========================
-*/
 void Sys_DestroyLeaderboardDefs()
 {
 	// delete and clear all the contents of the registeredLeaderboards static list.
 	registeredLeaderboards.DeleteContents( true );
 }
 
-/*
-========================
-idSessionLocal::StartOrContinueBandwidthChallenge
-This will start a bandwidth test if one is not active
-returns true if a test has completed
-========================
-*/
 bool idSessionLocal::StartOrContinueBandwidthChallenge( bool forceStart )
 {
 	idLobby* activeLobby = GetActivePlatformLobby();
@@ -3162,12 +2642,6 @@ bool idSessionLocal::StartOrContinueBandwidthChallenge( bool forceStart )
 	return false;
 }
 
-/*
-========================
-idSessionLocal::DebugSetPeerSnaprate
-This is debug function for manually setting peer's snaprate in game
-========================
-*/
 void idSessionLocal::DebugSetPeerSnaprate( int peerIndex, int snapRateMS )
 {
 	idLobby* activeLobby = GetActivePlatformLobby();
@@ -3189,12 +2663,6 @@ void idSessionLocal::DebugSetPeerSnaprate( int peerIndex, int snapRateMS )
 	idLib::Printf( "Set peer %s new snapRate: %d\n", activeLobby->GetPeerName( peerIndex ), activeLobby->peers[peerIndex].throttledSnapRate );
 }
 
-/*
-========================
-idSessionLocal::DebugSetPeerSnaprate
-This is debug function for manually setting peer's snaprate in game
-========================
-*/
 float idSessionLocal::GetIncomingByteRate()
 {
 	idLobby* activeLobby = GetActivePlatformLobby();
@@ -3213,11 +2681,6 @@ float idSessionLocal::GetIncomingByteRate()
 	return total;
 }
 
-/*
-========================
-idSessionLocal::OnLocalUserSignin
-========================
-*/
 void idSessionLocal::OnLocalUserSignin( idLocalUser* user )
 {
 	// Do stuff before calling OnMasterLocalUserSignin()
@@ -3234,11 +2697,6 @@ void idSessionLocal::OnLocalUserSignin( idLocalUser* user )
 	}
 }
 
-/*
-========================
-idSessionLocal::OnLocalUserSignout
-========================
-*/
 void idSessionLocal::OnLocalUserSignout( idLocalUser* user )
 {
 	// Do stuff before calling OnMasterLocalUserSignout()
@@ -3249,11 +2707,6 @@ void idSessionLocal::OnLocalUserSignout( idLocalUser* user )
 	}
 }
 
-/*
-========================
-idSessionLocal::OnMasterLocalUserSignout
-========================
-*/
 void idSessionLocal::OnMasterLocalUserSignout()
 {
 	CancelSaveGameWithHandle( enumerationHandle );
@@ -3261,31 +2714,16 @@ void idSessionLocal::OnMasterLocalUserSignout()
 	GetSaveGameManager().GetEnumeratedSavegamesNonConst().Clear();
 }
 
-/*
-========================
-idSessionLocal::OnMasterLocalUserSignin
-========================
-*/
 void idSessionLocal::OnMasterLocalUserSignin()
 {
 	enumerationHandle = EnumerateSaveGamesAsync();
 }
 
-/*
-========================
-idSessionLocal::OnLocalUserProfileLoaded
-========================
-*/
 void idSessionLocal::OnLocalUserProfileLoaded( idLocalUser* user )
 {
 	user->RequestSyncAchievements();
 }
 
-/*
-========================
-idSessionLocal::SetVoiceGroupsToTeams
-========================
-*/
 void idSessionLocal::SetVoiceGroupsToTeams()
 {
 	// move voice chat to team
@@ -3313,11 +2751,6 @@ void idSessionLocal::SetVoiceGroupsToTeams()
 	SetActiveChatGroup( myTeam );
 }
 
-/*
-========================
-idSessionLocal::ClearVoiceGroups
-========================
-*/
 void idSessionLocal::ClearVoiceGroups()
 {
 	for( int i = 0; i < GetGameLobby().GetNumLobbyUsers(); ++i ) {
@@ -3337,11 +2770,6 @@ void idSessionLocal::ClearVoiceGroups()
 	SetActiveChatGroup( 0 );
 }
 
-/*
-========================
-idSessionLocal::SendVoiceAudio
-========================
-*/
 void idSessionLocal::SendVoiceAudio()
 {
 	if( voiceChat == NULL ) {
@@ -3399,11 +2827,6 @@ void idSessionLocal::SendVoiceAudio()
 	}
 }
 
-/*
-========================
-idSessionLocal::HandleOobVoiceAudio
-========================
-*/
 void idSessionLocal::HandleOobVoiceAudio( const lobbyAddress_t& from, const idBitMsg& msg )
 {
 	idLobby* activeLobby = GetActivePlatformLobby();
@@ -3417,21 +2840,11 @@ void idSessionLocal::HandleOobVoiceAudio( const lobbyAddress_t& from, const idBi
 	voiceChat->SubmitIncomingChatData( msg.GetReadData() + msg.GetReadCount(), msg.GetRemainingData() );
 }
 
-/*
-========================
-idSessionLocal::SetActiveChatGroup
-========================
-*/
 void idSessionLocal::SetActiveChatGroup( int groupIndex )
 {
 	voiceChat->SetActiveChatGroup( groupIndex );
 }
 
-/*
-========================
-idSessionLocal::GetLobbyUserVoiceState
-========================
-*/
 voiceState_t idSessionLocal::GetLobbyUserVoiceState( lobbyUserID_t lobbyUserID )
 {
 	idLobby* activeLobby = GetActivePlatformLobby();
@@ -3449,11 +2862,6 @@ voiceState_t idSessionLocal::GetLobbyUserVoiceState( lobbyUserID_t lobbyUserID )
 	return voiceChat->GetVoiceState( user );
 }
 
-/*
-========================
-idSessionLocal::GetDisplayStateFromVoiceState
-========================
-*/
 voiceStateDisplay_t idSessionLocal::GetDisplayStateFromVoiceState( voiceState_t voiceState ) const
 {
 	if( ( GetState() == GAME_LOBBY && MatchTypeIsLocal( GetGameLobby().GetMatchParms().matchFlags ) ) ||
@@ -3478,11 +2886,6 @@ voiceStateDisplay_t idSessionLocal::GetDisplayStateFromVoiceState( voiceState_t 
 	}
 }
 
-/*
-========================
-idSessionLocal::ToggleLobbyUserVoiceMute
-========================
-*/
 void idSessionLocal::ToggleLobbyUserVoiceMute( lobbyUserID_t lobbyUserID )
 {
 	idLobby* activeLobby = GetActivePlatformLobby();
@@ -3517,11 +2920,6 @@ void idSessionLocal::ToggleLobbyUserVoiceMute( lobbyUserID_t lobbyUserID )
 	voiceChat->ToggleMuteLocal( srcUser, targetUser );
 }
 
-/*
-========================
-idSessionLocal::UpdateMasterUserHeadsetState
-========================
-*/
 void idSessionLocal::UpdateMasterUserHeadsetState()
 {
 	if( GetState() != PARTY_LOBBY && GetState() != GAME_LOBBY && GetState() != INGAME ) {
@@ -3560,21 +2958,11 @@ void idSessionLocal::UpdateMasterUserHeadsetState()
 	}
 }
 
-/*
-========================
-idSessionLocal::GetNumContentPackages
-========================
-*/
 int idSessionLocal::GetNumContentPackages() const
 {
 	return downloadedContent.Num();
 }
 
-/*
-========================
-idSessionLocal::GetContentPackageID
-========================
-*/
 int idSessionLocal::GetContentPackageID( int contentIndex ) const
 {
 	assert( contentIndex < MAX_CONTENT_PACKAGES );
@@ -3586,11 +2974,6 @@ int idSessionLocal::GetContentPackageID( int contentIndex ) const
 	return 0;
 }
 
-/*
-========================
-idSessionLocal::GetContentPackagePath
-========================
-*/
 const char* idSessionLocal::GetContentPackagePath( int contentIndex ) const
 {
 	assert( contentIndex < MAX_CONTENT_PACKAGES );
@@ -3602,11 +2985,6 @@ const char* idSessionLocal::GetContentPackagePath( int contentIndex ) const
 	return NULL;
 }
 
-/*
-========================
-idSessionLocal::GetContentPackageIndexForID
-========================
-*/
 int idSessionLocal::GetContentPackageIndexForID( int contentID ) const
 {
 	int contentIndex = -1;
@@ -3631,11 +3009,6 @@ void idSessionLocal::SetLobbyUserRelativeScore( lobbyUserID_t lobbyUserID, int r
 	// All platforms but 360 stub this out
 }
 
-/*
-========================
-idSessionLocal::ReadTitleStorage
-========================
-*/
 void idSessionLocal::ReadTitleStorage( void* buffer, int bufferLen )
 {
 	// https://ps3.scedev.net/projects/ps3_sdk_docs/docs/ps3-en,NP_Lookup-Reference,sceNpLookupTitleSmallStorageAsync/1
@@ -3690,11 +3063,6 @@ void idSessionLocal::ReadTitleStorage( void* buffer, int bufferLen )
 	}
 }
 
-/*
-========================
-idSessionLocal::ReadDLCInfo
-========================
-*/
 bool idSessionLocal::ReadDLCInfo( idDict& dlcInfo, void* buffer, int bufferLen )
 {
 	idParser parser( LEXFL_NOERRORS | LEXFL_NOFATALERRORS | LEXFL_NOSTRINGCONCAT );
@@ -3723,11 +3091,6 @@ bool idSessionLocal::ReadDLCInfo( idDict& dlcInfo, void* buffer, int bufferLen )
 	return valid;
 }
 
-/*
-========================
-idSessionLocal::IsPlatformPartyInLobby
-========================
-*/
 bool idSessionLocal::IsPlatformPartyInLobby()
 {
 	idLocalUser* user  = session->GetSignInManager().GetMasterLocalUser();
@@ -3745,13 +3108,6 @@ bool idSessionLocal::IsPlatformPartyInLobby()
 	return false;
 }
 
-/*
-========================
-idSessionLocal::PrePickNewHost
-This is called when we have determined that we need to pick a new host.
-Call PickNewHostInternal to continue on with the host picking process.
-========================
-*/
 void idSessionLocal::PrePickNewHost( idLobby& lobby, bool forceMe, bool inviteOldHost )
 {
 	NET_VERBOSE_PRINT( "idSessionLocal::PrePickNewHost: (%s)\n", lobby.GetLobbyName() );
@@ -3821,13 +3177,6 @@ void idSessionLocal::PrePickNewHost( idLobby& lobby, bool forceMe, bool inviteOl
 		SetState( idSessionLocal::STATE_IDLE );
 	}
 }
-/*
-========================
-idSessionLocal::PreMigrateInvite
-This is called just before we get invited to a migrated session
-If we return false, the invite will be ignored
-========================
-*/
 bool idSessionLocal::PreMigrateInvite( idLobby& lobby )
 {
 	if( GetActivePlatformLobby() == NULL ) {
@@ -3865,28 +3214,12 @@ bool idSessionLocal::PreMigrateInvite( idLobby& lobby )
 	return true; // Non placeholder Party lobby invites joinable
 }
 
-/*
-================================================================================================
-lobbyAddress_t
-================================================================================================
-*/
-
-/*
-========================
-lobbyAddress_t::lobbyAddress_t
-========================
-*/
 lobbyAddress_t::lobbyAddress_t()
 {
 	memset( &netAddr, 0, sizeof( netAddr ) );
 	netAddr.type = NA_BAD;
 }
 
-/*
-========================
-lobbyAddress_t::InitFromIPandPort
-========================
-*/
 void lobbyAddress_t::InitFromIPandPort( const char* ip, int port )
 {
 	Sys_StringToNetAdr( ip, &netAddr, true );
@@ -3895,99 +3228,48 @@ void lobbyAddress_t::InitFromIPandPort( const char* ip, int port )
 	}
 }
 
-/*
-========================
-lobbyAddress_t::InitFromNetadr
-========================
-*/
 void lobbyAddress_t::InitFromNetadr( const netadr_t& netadr )
 {
 	assert( netadr.type != NA_BAD );
 	netAddr = netadr;
 }
 
-/*
-========================
-lobbyAddress_t::ToString
-========================
-*/
 const char* lobbyAddress_t::ToString() const
 {
 	return Sys_NetAdrToString( netAddr );
 }
 
-/*
-========================
-lobbyAddress_t::UsingRelay
-========================
-*/
 bool lobbyAddress_t::UsingRelay() const
 {
 	return false;
 }
 
-/*
-========================
-lobbyAddress_t::Compare
-========================
-*/
 bool lobbyAddress_t::Compare( const lobbyAddress_t& addr, bool ignoreSessionCheck ) const
 {
 	return Sys_CompareNetAdrBase( netAddr, addr.netAddr );
 }
 
-/*
-========================
-lobbyAddress_t::WriteToMsg
-========================
-*/
 void lobbyAddress_t::WriteToMsg( idBitMsg& msg ) const
 {
 	msg.WriteData( &netAddr, sizeof( netAddr ) );
 }
 
-/*
-========================
-lobbyAddress_t::ReadFromMsg
-========================
-*/
 void lobbyAddress_t::ReadFromMsg( idBitMsg& msg )
 {
 	msg.ReadData( &netAddr, sizeof( netAddr ) );
 }
 
-/*
-================================================================================================
-idNetSessionPort
-================================================================================================
-*/
-
-/*
-========================
-idNetSessionPort::idNetSessionPort
-========================
-*/
 idNetSessionPort::idNetSessionPort() :
 	forcePacketDropCurr( 0.0f ),
 	forcePacketDropPrev( 0.0f )
 {
 }
 
-/*
-========================
-idNetSessionPort::InitPort
-========================
-*/
 bool idNetSessionPort::InitPort( int portNumber, bool useBackend )
 {
 	return UDP.InitForPort( portNumber );
 }
 
-/*
-========================
-idNetSessionPort::ReadRawPacket
-========================
-*/
 bool idNetSessionPort::ReadRawPacket( lobbyAddress_t& from, void* data, int& size, int maxSize )
 {
 	bool			 result = UDP.GetPacket( from.netAddr, data, size, maxSize );
@@ -4003,11 +3285,6 @@ bool idNetSessionPort::ReadRawPacket( lobbyAddress_t& from, void* data, int& siz
 	return result;
 }
 
-/*
-========================
-idNetSessionPort::SendRawPacket
-========================
-*/
 void idNetSessionPort::SendRawPacket( const lobbyAddress_t& to, const void* data, int size )
 {
 	static idRandom2 random( Sys_Milliseconds() );
@@ -4019,34 +3296,17 @@ void idNetSessionPort::SendRawPacket( const lobbyAddress_t& to, const void* data
 	UDP.SendPacket( to.netAddr, data, size );
 }
 
-/*
-========================
-idNetSessionPort::IsOpen
-========================
-*/
 bool idNetSessionPort::IsOpen()
 {
 	return UDP.IsOpen();
 }
 
-/*
-========================
-idNetSessionPort::Close
-========================
-*/
 void idNetSessionPort::Close()
 {
 	UDP.Close();
 }
 
-/*
-================================================================================================
-Commands
-================================================================================================
-*/
-
-//====================================================================================
-
+//! Toggles mute status for a specified user in the voice chat system.
 CONSOLE_COMMAND( voicechat_mute, "TEMP", 0 )
 {
 	if( args.Argc() != 2 ) {
@@ -4058,32 +3318,20 @@ CONSOLE_COMMAND( voicechat_mute, "TEMP", 0 )
 	session->ToggleLobbyUserVoiceMute( session->GetActivePlatformLobbyBase().GetLobbyUserIdByOrdinal( i ) );
 }
 
-/*
-========================
-force_disconnect_all
-========================
-*/
+//! Force disconnects all local users from the session.
 CONSOLE_COMMAND( force_disconnect_all, "force disconnect on all users", 0 )
 {
 	session->GetSignInManager().RemoveAllLocalUsers();
 }
 
-/*
-========================
-void Net_DebugOutputSignedInUsers_f
-========================
-*/
+//! Outputs debug information about signed-in users.
 void Net_DebugOutputSignedInUsers_f( const idCmdArgs& args )
 {
 	session->GetSignInManager().DebugOutputLocalUserInfo();
 }
 idCommandLink Net_DebugOutputSignedInUsers( "net_debugOutputSignedInUsers", Net_DebugOutputSignedInUsers_f, "Outputs all the local users and other debugging information from the sign in manager" );
 
-/*
-========================
-void Net_RemoveUserFromLobby_f
-========================
-*/
+//! Removes a user from the lobby based on the provided local user number.
 void		  Net_RemoveUserFromLobby_f( const idCmdArgs& args )
 {
 	if( args.Argc() > 1 ) {
@@ -4100,11 +3348,7 @@ void		  Net_RemoveUserFromLobby_f( const idCmdArgs& args )
 
 idCommandLink Net_RemoveUserFromLobby( "net_removeUserFromLobby", Net_RemoveUserFromLobby_f, "Removes the given user from the lobby" );
 
-/*
-========================
-Net_dropClient
-========================
-*/
+//! Drops a client from the network session based on the specified client number and lobby type.
 CONSOLE_COMMAND( Net_DropClient, "Drop a client", 0 )
 {
 	if( args.Argc() < 3 ) {
@@ -4118,11 +3362,6 @@ CONSOLE_COMMAND( Net_DropClient, "Drop a client", 0 )
 	session->DropClient( atoi( args.Argv( 1 ) ), lobbyType );
 }
 
-/*
-========================
-idSessionLocal::DropClient
-========================
-*/
 void idSessionLocal::DropClient( int peerNum, int session )
 {
 	if( session == 1 || session >= 2 ) {
@@ -4133,11 +3372,6 @@ void idSessionLocal::DropClient( int peerNum, int session )
 	}
 }
 
-/*
-========================
-idSessionLocal::ListServersCommon
-========================
-*/
 void idSessionLocal::ListServersCommon()
 {
 	netadr_t broadcast;
@@ -4163,11 +3397,6 @@ void idSessionLocal::ListServersCommon()
 	GetPartyLobby().SendConnectionLess( address, idLobby::OOB_MATCH_QUERY, msg.GetReadData(), msg.GetSize() );
 }
 
-/*
-========================
-idSessionLocal::HandleDedicatedServerQueryRequest
-========================
-*/
 void idSessionLocal::HandleDedicatedServerQueryRequest( lobbyAddress_t& remoteAddr, idBitMsg& msg, int msgType )
 {
 	NET_VERBOSE_PRINT( "HandleDedicatedServerQueryRequest from %s\n", remoteAddr.ToString() );
@@ -4246,32 +3475,17 @@ void idSessionLocal::HandleDedicatedServerQueryRequest( lobbyAddress_t& remoteAd
 	GetPartyLobby().SendConnectionLess( remoteAddr, idLobby::OOB_MATCH_QUERY_ACK, retmsg.GetReadData(), retmsg.GetSize() );
 }
 
-/*
-========================
-idSessionLocal::HandleDedicatedServerQueryAck
-========================
-*/
 void idSessionLocal::HandleDedicatedServerQueryAck( lobbyAddress_t& remoteAddr, idBitMsg& msg )
 {
 	NET_VERBOSE_PRINT( "HandleDedicatedServerQueryAck from %s\n", remoteAddr.ToString() );
 	dedicatedServerSearch->HandleQueryAck( remoteAddr, msg );
 }
 
-/*
-========================
-idSessionLocal::ServerPlayerList
-========================
-*/
 const idList<idStr>* idSessionLocal::ServerPlayerList( int i )
 {
 	return NULL;
 }
 
-/*
-========================
-lobbyUserID_t::Serialize
-========================
-*/
 void lobbyUserID_t::Serialize( idSerializer& ser )
 {
 	localUserHandle.Serialize( ser );

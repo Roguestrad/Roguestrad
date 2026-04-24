@@ -169,8 +169,6 @@ void idRenderWindow::PostParse()
 	idWindow::PostParse();
 }
 
-//
-//
 idWinVar* idRenderWindow::GetWinVarByName( const char* _name, bool fixup, drawWin_t** owner )
 {
 	//

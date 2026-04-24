@@ -29,11 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-========================
-idSWF::idSWFDictionaryEntry::idSWFDictionaryEntry
-========================
-*/
 idSWFDictionaryEntry::idSWFDictionaryEntry() :
 	type( SWF_DICT_NULL ),
 	material( NULL ),
@@ -49,11 +44,6 @@ idSWFDictionaryEntry::idSWFDictionaryEntry() :
 {
 }
 
-/*
-========================
-idSWF::idSWFDictionaryEntry::idSWFDictionaryEntry
-========================
-*/
 idSWFDictionaryEntry::~idSWFDictionaryEntry()
 {
 	delete shape;
@@ -63,12 +53,6 @@ idSWFDictionaryEntry::~idSWFDictionaryEntry()
 	delete edittext;
 }
 
-/*
-========================
-idSWF::idSWFDictionaryEntry::operator=
-This exists mostly so idList works right
-========================
-*/
 idSWFDictionaryEntry& idSWFDictionaryEntry::operator=( idSWFDictionaryEntry& other )
 {
 	type			 = other.type;
@@ -91,11 +75,6 @@ idSWFDictionaryEntry& idSWFDictionaryEntry::operator=( idSWFDictionaryEntry& oth
 	return *this;
 }
 
-/*
-========================
-idSWF::idSWFDictionaryEntry::operator= (move)
-========================
-*/
 idSWFDictionaryEntry& idSWFDictionaryEntry::operator=( idSWFDictionaryEntry&& other )
 {
 	type			 = other.type;
@@ -118,11 +97,6 @@ idSWFDictionaryEntry& idSWFDictionaryEntry::operator=( idSWFDictionaryEntry&& ot
 	return *this;
 }
 
-/*
-========================
-idSWF::AddDictionaryEntry
-========================
-*/
 idSWFDictionaryEntry* idSWF::AddDictionaryEntry( int characterID, swfDictType_t type )
 {
 	if( dictionary.Num() < characterID + 1 ) {
@@ -152,11 +126,6 @@ idSWFDictionaryEntry* idSWF::AddDictionaryEntry( int characterID, swfDictType_t 
 	return &entry;
 }
 
-/*
-========================
-FindDictionaryEntry
-========================
-*/
 idSWFDictionaryEntry* idSWF::FindDictionaryEntry( int characterID, swfDictType_t type )
 {
 	if( dictionary.Num() < characterID + 1 ) {
@@ -172,11 +141,6 @@ idSWFDictionaryEntry* idSWF::FindDictionaryEntry( int characterID, swfDictType_t
 	return &dictionary[characterID];
 }
 
-/*
-========================
-FindDictionaryEntry
-========================
-*/
 idSWFDictionaryEntry* idSWF::FindDictionaryEntry( int characterID )
 {
 	if( dictionary.Num() < characterID + 1 ) {

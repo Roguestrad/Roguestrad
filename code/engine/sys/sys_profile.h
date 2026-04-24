@@ -37,31 +37,45 @@ class idSaveGameProcessorLoadProfile;
 class idLocalUser;
 class idPlayerProfile;
 
-/*
-================================================
-idProfileMgr
-================================================
+/*!
+	\class idProfileMgr
+	\brief Manages player profiles and asynchronous loading/saving of profile settings.
+
+	The idProfileMgr class serves as a central manager for player profiles, handling initialization with a local user, processing asynchronous profile operations, and maintaining the current player
+   profile. It supports both loading and saving profile settings asynchronously while managing the lifecycle of profile data. The class ensures that profile data is properly validated upon loading and
+   provides notifications upon saving completion. The manager is designed to integrate with a local user context and handle profile operations without blocking the main execution thread.
+
 */
 class idProfileMgr
 {
 public:
+	//! Initializes a new instance of the idProfileMgr class.
 	idProfileMgr();
 	~idProfileMgr();
 
 	// Not copyable because we use unique_ptrs.
 	idProfileMgr&	 operator=( const idProfileMgr& ) = delete;
 
-	// Called the first time it's asked to load
+	//! Initializes the profile manager with the specified local user.
 	void			 Init( idLocalUser* user );
 
+	//! Processes profile saving and loading operations.
 	void			 Pump();
+
+	//! Returns the player profile for the current user, creating it if necessary.
 	idPlayerProfile* GetProfile();
 
 private:
+	//! Loads profile settings asynchronously if profile and save game are enabled.
 	void LoadSettingsAsync();
+
+	//! Saves the current profile settings asynchronously if enabled and a profile exists.
 	void SaveSettingsAsync();
 
+	//! Handles completion of loading game profile settings by validating checksum and deserializing profile data
 	void OnLoadSettingsCompleted( idSaveLoadParms* parms );
+
+	//! Handles completion of saving game settings and displays appropriate UI notifications.
 	void OnSaveSettingsCompleted( idSaveLoadParms* parms );
 
 private:
@@ -73,19 +87,22 @@ private:
 	saveGameHandle_t								handle;
 };
 
-/*
-================================================
-idSaveGameProcessorSaveProfile
-================================================
+/*!
+	\class idSaveGameProcessorSaveProfile
+	\brief Manages save game profile processing for player data.
 */
 class idSaveGameProcessorSaveProfile : public idSaveGameProcessorSaveFiles
 {
 public:
 	DEFINE_CLASS( idSaveGameProcessorSaveProfile );
 
+	//! Initializes a new instance of the idSaveGameProcessorSaveProfile class.
 	idSaveGameProcessorSaveProfile();
 
+	//! Initializes a save profile for the player profile and folder
 	bool		 InitSaveProfile( idPlayerProfile* profile, const char* folder );
+
+	//! Executes the save profile processing by delegating to the save files processor.
 	virtual bool Process();
 
 private:
@@ -93,20 +110,23 @@ private:
 	idPlayerProfile* profile;
 };
 
-/*
-================================================
-idSaveGameProcessorLoadProfile
-================================================
+/*!
+	\class idSaveGameProcessorLoadProfile
+	\brief Provides functionality for loading and processing player profile save game data.
 */
 class idSaveGameProcessorLoadProfile : public idSaveGameProcessorLoadFiles
 {
 public:
 	DEFINE_CLASS( idSaveGameProcessorLoadProfile );
 
+	//! Initializes a new instance of the idSaveGameProcessorLoadProfile class.
 	idSaveGameProcessorLoadProfile();
 	~idSaveGameProcessorLoadProfile();
 
+	//! Initializes a load profile for player settings with the specified profile and folder.
 	bool		 InitLoadProfile( idPlayerProfile* profile, const char* folder );
+
+	//! Processes the load profile save game data by delegating to the base class implementation.
 	virtual bool Process();
 
 private:
@@ -114,7 +134,7 @@ private:
 	idPlayerProfile* profile;
 };
 
-// Synchronous check, just checks if a profile exists within the savegame location
+//! Checks if a save game profile exists in the savegame location
 bool Sys_SaveGameProfileCheck();
 
 #endif

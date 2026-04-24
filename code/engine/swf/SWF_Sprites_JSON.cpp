@@ -246,7 +246,6 @@ void idSWFSprite::WriteJSON( idFile* f, idFile* luaFile, int characterID )
 		f->WriteFloatString( "\t\t\t]" );
 	}
 }
-// RB end
 
 void idSWFSprite::WriteJSON_PlaceObject2( idFile* file, idFile* luaFile, idSWFBitStream& bitstream, int sourceCharacterID, int commandID, const char* indentPrefix )
 {

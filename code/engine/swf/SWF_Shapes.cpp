@@ -29,11 +29,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-========================
-idSWF::DefineShape
-========================
-*/
 void idSWF::DefineShape( idSWFBitStream& bitstream )
 {
 	uint16				  characterID = bitstream.ReadU16();
@@ -46,11 +41,6 @@ void idSWF::DefineShape( idSWFBitStream& bitstream )
 	swfShapeParser.Parse( bitstream, *entry->shape, 1 );
 }
 
-/*
-========================
-idSWF::DefineShape2
-========================
-*/
 void idSWF::DefineShape2( idSWFBitStream& bitstream )
 {
 	uint16				  characterID = bitstream.ReadU16();
@@ -63,11 +53,6 @@ void idSWF::DefineShape2( idSWFBitStream& bitstream )
 	swfShapeParser.Parse( bitstream, *entry->shape, 2 );
 }
 
-/*
-========================
-idSWF::DefineShape3
-========================
-*/
 void idSWF::DefineShape3( idSWFBitStream& bitstream )
 {
 	uint16				  characterID = bitstream.ReadU16();
@@ -80,11 +65,6 @@ void idSWF::DefineShape3( idSWFBitStream& bitstream )
 	swfShapeParser.Parse( bitstream, *entry->shape, 3 );
 }
 
-/*
-========================
-idSWF::DefineShape4
-========================
-*/
 void idSWF::DefineShape4( idSWFBitStream& bitstream )
 {
 	uint16				  characterID = bitstream.ReadU16();
@@ -97,11 +77,6 @@ void idSWF::DefineShape4( idSWFBitStream& bitstream )
 	swfShapeParser.Parse( bitstream, *entry->shape, 4 );
 }
 
-/*
-========================
-idSWF::DefineMorphShape
-========================
-*/
 void idSWF::DefineMorphShape( idSWFBitStream& bitstream )
 {
 	uint16				  characterID = bitstream.ReadU16();

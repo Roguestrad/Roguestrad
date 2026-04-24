@@ -33,11 +33,6 @@ idCVar net_optimalSnapDeltaSize( "net_optimalSnapDeltaSize", "1000", CVAR_INTEGE
 idCVar net_debugBaseStates( "net_debugBaseStates", "0", CVAR_BOOL, "Log out base state information" );
 idCVar net_skipClientDeltaAppend( "net_skipClientDeltaAppend", "0", CVAR_BOOL, "Simulate delta receive buffer overflowing" );
 
-/*
-========================
-idSnapshotProcessor::idSnapshotProcessor
-========================
-*/
 idSnapshotProcessor::idSnapshotProcessor()
 {
 	// assert( mem.IsGlobalHeap() );
@@ -52,11 +47,6 @@ idSnapshotProcessor::idSnapshotProcessor()
 	Reset( true );
 }
 
-/*
-========================
-idSnapshotProcessor::idSnapshotProcessor
-========================
-*/
 idSnapshotProcessor::~idSnapshotProcessor()
 {
 	// mem.PushHeap();
@@ -64,11 +54,6 @@ idSnapshotProcessor::~idSnapshotProcessor()
 	// mem.PopHeap();
 }
 
-/*
-========================
-idSnapshotProcessor::Reset
-========================
-*/
 void idSnapshotProcessor::Reset( bool cstor )
 {
 	hasPendingSnap			 = false;
@@ -90,11 +75,6 @@ void idSnapshotProcessor::Reset( bool cstor )
 	memset( &jobMemory->lzwInOutData, 0, sizeof( jobMemory->lzwInOutData ) );
 }
 
-/*
-========================
-idSnapshotProcessor::TrySetPendingSnapshot
-========================
-*/
 bool idSnapshotProcessor::TrySetPendingSnapshot( idSnapShot& ss )
 {
 	// Don't advance to the next snap until the last one was fully sent
@@ -106,21 +86,11 @@ bool idSnapshotProcessor::TrySetPendingSnapshot( idSnapShot& ss )
 	return true;
 }
 
-/*
-========================
-idSnapshotProcessor::PeekDeltaSequence
-========================
-*/
 void idSnapshotProcessor::PeekDeltaSequence( const char* deltaMem, int deltaSize, int& deltaSequence, int& deltaBaseSequence )
 {
 	idSnapShot::PeekDeltaSequence( deltaMem, deltaSize, deltaSequence, deltaBaseSequence );
 }
 
-/*
-========================
-idSnapshotProcessor::ApplyDeltaToSnapshot
-========================
-*/
 bool idSnapshotProcessor::ApplyDeltaToSnapshot( idSnapShot& snap, const char* deltaMem, int deltaSize, int visIndex )
 {
 	return snap.ReadDeltaForJob( deltaMem, deltaSize, visIndex, &templateStates );
@@ -132,11 +102,6 @@ bool idSnapshotProcessor::ApplyDeltaToSnapshot( idSnapShot& snap, const char* de
 static int g_maxlwMem = 100;
 #endif
 
-/*
-========================
-idSnapshotProcessor::SubmitPendingSnap
-========================
-*/
 void idSnapshotProcessor::SubmitPendingSnap( int visIndex, uint8* objMemory, int objMemorySize, lzwCompressionData_t* lzwData )
 {
 	assert_16_byte_aligned( objMemory );
@@ -192,11 +157,6 @@ void idSnapshotProcessor::SubmitPendingSnap( int visIndex, uint8* objMemory, int
 	pendingSnap.SubmitWriteDeltaToJobs( submitInfo );
 }
 
-/*
-========================
-idSnapshotProcessor::GetPendingSnapDelta
-========================
-*/
 int idSnapshotProcessor::GetPendingSnapDelta( byte* outBuffer, int maxLength )
 {
 	assert( PendingSnapReadyToSend() );
@@ -280,11 +240,6 @@ int idSnapshotProcessor::GetPendingSnapDelta( byte* outBuffer, int maxLength )
 	return size;
 }
 
-/*
-========================
-idSnapshotProcessor::IsBusyConfirmingPartialSnap
-========================
-*/
 bool idSnapshotProcessor::IsBusyConfirmingPartialSnap()
 {
 	if( partialBaseSequence != -1 && baseSequence <= partialBaseSequence ) {
@@ -294,13 +249,6 @@ bool idSnapshotProcessor::IsBusyConfirmingPartialSnap()
 	return false;
 }
 
-/*
-========================
-idSnapshotProcessor::ReceiveSnapshotDelta
-NOTE: we use ReadDeltaForJob twice, once to build the same base as the server (based on server acks, down ApplySnapshotDelta), and another time to apply the snapshot we just received
-could we avoid the double apply by keeping outSnap cached in memory and avoid rebuilding it from a delta when the next one comes around?
-========================
-*/
 bool idSnapshotProcessor::ReceiveSnapshotDelta( const byte* deltaData, int deltaLength, int visIndex, int& outSeq, int& outBaseSeq, idSnapShot& outSnap, bool& fullSnap )
 {
 	fullSnap = false;
@@ -372,13 +320,6 @@ bool idSnapshotProcessor::ReceiveSnapshotDelta( const byte* deltaData, int delta
 	return true;
 }
 
-/*
-========================
-idSnapshotProcessor::ApplySnapshotDelta
-Apply a snapshot delta to our current basestate, and make that the new base.
-We can remove all deltas that refer to the basetate we just removed.
-========================
-*/
 bool idSnapshotProcessor::ApplySnapshotDelta( int visIndex, int snapshotNumber )
 {
 	NET_VERBOSESNAPSHOT_PRINT_LEVEL( 6, va( "idSnapshotProcessor::ApplySnapshotDelta snapshotNumber: %d\n", snapshotNumber ) );
@@ -444,35 +385,32 @@ bool idSnapshotProcessor::ApplySnapshotDelta( int visIndex, int snapshotNumber )
 	return true;
 }
 
-/*
-========================
-idSnapshotProcessor::RemoveDeltasForOldBaseSequence
-Remove deltas for basestate we no longer have. We know we can remove them, because we will never
-be able to apply them, since the basestate needed to generate a full snap from these deltas is gone.
+void idSnapshotProcessor::RemoveDeltasForOldBaseSequence()
+{
+	/*
+	Remove deltas for basestate we no longer have. We know we can remove them, because we will never
+	be able to apply them, since the basestate needed to generate a full snap from these deltas is gone.
 
-Ways we can get deltas based on basestate we no longer have:
+	Ways we can get deltas based on basestate we no longer have:
 	1. Server sends sequence 50 based on 49.  It then sends sequence 51 based on 49.
 	   Client acks 50, server applies it to 49, 50 is new base state.
 	   Server now has a delta sequence 51 based on 49 that it won't ever be able to apply (50 is new basestate).
 
-This is annoying, because it makes a lot of our sanity checks incorrectly fire off for benign issues.
-Here is a series of events that make the old ( baseSequence != deltaBaseSequence ) assert:
+	This is annoying, because it makes a lot of our sanity checks incorrectly fire off for benign issues.
+	Here is a series of events that make the old ( baseSequence != deltaBaseSequence ) assert:
 
-Server:
-49->50, 49->51, ack 50, 50->52, ack 51 (bam), 50->53
+	Server:
+	49->50, 49->51, ack 50, 50->52, ack 51 (bam), 50->53
 
-Client
-49->50, ack 50, 49->51, ack 51 (bam), 50->52, 50->53
+	Client
+	49->50, ack 50, 49->51, ack 51 (bam), 50->52, 50->53
 
-The client above will ack 51, even though he can't even apply that delta.  To get around this, we simply don't
-allow delta to exist in the list, unless their basestate is the current basestate we maintain.
-This allows us to put sanity checks in place that don't fire off during benign conditions, and allow us
-to truly check for trashed conditions.
+	The client above will ack 51, even though he can't even apply that delta.  To get around this, we simply don't
+	allow delta to exist in the list, unless their basestate is the current basestate we maintain.
+	This allows us to put sanity checks in place that don't fire off during benign conditions, and allow us
+	to truly check for trashed conditions.
+	*/
 
-========================
-*/
-void idSnapshotProcessor::RemoveDeltasForOldBaseSequence()
-{
 	// Remove any deltas that would apply to the old base we no longer maintain
 	// (we will never be able to apply these, since we don't have that base anymore)
 	for( int i = deltas.Num() - 1; i >= 0; i-- ) {
@@ -487,12 +425,6 @@ void idSnapshotProcessor::RemoveDeltasForOldBaseSequence()
 	}
 }
 
-/*
-========================
-idSnapshotProcessor::SanityCheckDeltas
-Make sure delta sequence and basesequence values are valid, and in order, etc
-========================
-*/
 void idSnapshotProcessor::SanityCheckDeltas()
 {
 	int deltaSequence		  = 0;
@@ -512,11 +444,6 @@ void idSnapshotProcessor::SanityCheckDeltas()
 	}
 }
 
-/*
-========================
-idSnapshotProcessor::AddSnapObjTemplate
-========================
-*/
 void idSnapshotProcessor::AddSnapObjTemplate( int objID, idBitMsg& msg )
 {
 	extern idCVar			   net_ssTemplateDebug;

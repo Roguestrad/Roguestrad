@@ -35,33 +35,54 @@ If you have questions concerning this license or the applicable additional terms
 extern glconfig_t glConfig;
 
 void			  Posix_QueEvent( sysEventType_t type, int value, int value2, int ptrLength, void* ptr );
+
+//! Returns the current working directory as a null-terminated string.
 const char*		  Posix_Cwd();
 
-// called first thing. does InitSigs and various things
+//! Initializes POSIX-specific early system components including signal handling and base timing.
 void			  Posix_EarlyInit();
-// called after common has been initialized
+
+//! Initializes POSIX-specific console input and sets the process ID after common initialization.
 void			  Posix_LateInit();
 
 void			  Posix_InitPThreads();
+
+//! Initializes signal handlers for POSIX systems.
 void			  Posix_InitSigs();
+
+//! Clears all installed signal handlers to their default values on POSIX systems
 void			  Posix_ClearSigs();
 
+//! Terminates the program with the specified exit code and performs cleanup.
 void			  Posix_Exit( int ret );
-void			  Posix_SetExit( int ret );					 // override the exit code
-void			  Posix_SetExitSpawn( const char* exeName ); // set the process to be spawned when we quit
+
+//! Sets the exit code for the application.
+void			  Posix_SetExit( int ret );
+
+//! Sets the process to be spawned when the application exits.
+void			  Posix_SetExitSpawn( const char* exeName );
 
 bool			  Posix_AddKeyboardPollEvent( int key, bool state );
 bool			  Posix_AddMousePollEvent( int action, int value );
 
 void			  Posix_PollInput();
+
+//! Initializes console input for POSIX systems
 void			  Posix_InitConsoleInput();
+
+//! Clears the command history array.
 void			  Posix_Shutdown();
 
+//! Handles floating-point exception signals by printing an error message
 void			  Sys_FPE_handler( int signum, siginfo_t* info, void* context );
-void			  Sys_DoStartProcess( const char* exeName, bool dofork = true ); // if not forking, current process gets replaced
 
+//! Starts an external process by executing the specified executable file, optionally forking the process.
+void			  Sys_DoStartProcess( const char* exeName, bool dofork = true );
+
+//! Returns a complete line of text entered at the console or NULL if no complete line is ready
 char*			  Posix_ConsoleInput();
 
+//! Measures and returns the number of clock ticks per second by sampling the system clock over a one-second interval.
 double			  MeasureClockTicks();
 
 #ifdef __APPLE__

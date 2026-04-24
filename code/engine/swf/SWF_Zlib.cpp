@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include <zlib.h>
 
-/*
-========================
-idSWF::Inflate
-========================
-*/
 bool idSWF::Inflate( const byte* input, int inputSize, byte* output, int outputSize )
 {
 	struct local_swf_alloc_t {
@@ -63,7 +58,6 @@ bool idSWF::Inflate( const byte* input, int inputSize, byte* output, int outputS
 	return success;
 }
 
-// RB begin
 bool idSWF::Deflate( const byte* input, int inputSize, byte* output, int& outputSize )
 {
 	struct local_swf_alloc_t {

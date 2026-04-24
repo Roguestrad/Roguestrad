@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 
 extern idCVar fs_savepath;
 
-/*
-========================
-idLocalUser::idLocalUser
-========================
-*/
 idLocalUser::idLocalUser()
 {
 	memset( joiningLobby, 0, sizeof( joiningLobby ) );
@@ -63,52 +58,15 @@ void idLocalUser::Pump()
 	PumpPlatform();
 }
 
-/*
-========================
-idLocalUser::IsStorageDeviceAvailable
-========================
-*/
 bool idLocalUser::IsStorageDeviceAvailable() const
 {
 	return saveGame_enable.GetBool();
 }
 
-/*
-========================
-idLocalUser::ResetStorageDevice
-========================
-*/
 void idLocalUser::ResetStorageDevice()
 {
 }
 
-/*
-========================
-idLocalUser::StorageSizeAvailable
-========================
-*/
-// RB: disabled savegame and profile storage checks, because it fails sometimes without any clear reason
-/*
-bool idLocalUser::StorageSizeAvailable( uint64 minSizeInBytes, int64& neededBytes )
-{
-	int64 size = Sys_GetDriveFreeSpaceInBytes( fs_savepath.GetString() );
-
-	neededBytes = minSizeInBytes - size;
-	if( neededBytes < 0 )
-	{
-		neededBytes = 0;
-	}
-
-	return neededBytes == 0;
-}
-*/
-// RB end
-
-/*
-========================
-idLocalUser::SetStatInt
-========================
-*/
 void idLocalUser::SetStatInt( int s, int v )
 {
 	idPlayerProfile* profile = GetProfile();
@@ -117,11 +75,6 @@ void idLocalUser::SetStatInt( int s, int v )
 	}
 }
 
-/*
-========================
-idLocalUser::SetStatFloat
-========================
-*/
 void idLocalUser::SetStatFloat( int s, float v )
 {
 	idPlayerProfile* profile = GetProfile();
@@ -130,11 +83,6 @@ void idLocalUser::SetStatFloat( int s, float v )
 	}
 }
 
-/*
-========================
-idLocalUser::GetStatInt
-========================
-*/
 int idLocalUser::GetStatInt( int s )
 {
 	const idPlayerProfile* profile = GetProfile();
@@ -146,11 +94,6 @@ int idLocalUser::GetStatInt( int s )
 	return 0;
 }
 
-/*
-========================
-idLocalUser::GetStatFloat
-========================
-*/
 float idLocalUser::GetStatFloat( int s )
 {
 	const idPlayerProfile* profile = GetProfile();
@@ -162,11 +105,6 @@ float idLocalUser::GetStatFloat( int s )
 	return 0.0f;
 }
 
-/*
-========================
-idLocalUser::LoadProfileSettings
-========================
-*/
 void idLocalUser::LoadProfileSettings()
 {
 	idPlayerProfile* profile = GetProfileMgr().GetProfile();
@@ -184,11 +122,6 @@ void idLocalUser::LoadProfileSettings()
 	return;
 }
 
-/*
-========================
-idLocalUser::SaveProfileSettings
-========================
-*/
 void idLocalUser::SaveProfileSettings()
 {
 	idPlayerProfile* profile = GetProfileMgr().GetProfile();
@@ -199,11 +132,6 @@ void idLocalUser::SaveProfileSettings()
 	return;
 }
 
-/*
-========================
-localUserHandle_t::Serialize
-========================
-*/
 void localUserHandle_t::Serialize( idSerializer& ser )
 {
 	ser.Serialize( handle );

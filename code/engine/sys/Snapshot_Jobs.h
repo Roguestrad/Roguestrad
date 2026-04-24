@@ -122,7 +122,10 @@ struct ALIGNTYPE16 lzwParm_t {
 	lzwInOutData_t* ioData; // In/Out
 };
 
+//! Processes an object for snapshot generation by applying delta compression and RLE encoding
 extern void SnapshotObjectJob( objParms_t* parms );
+
+//! Performs an LZW compression or decompression job using the provided parameters.
 extern void LZWJob( lzwParm_t* parm );
 
 #endif // __SNAPSHOT_JOBS_H__

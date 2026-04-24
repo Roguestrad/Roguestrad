@@ -52,50 +52,61 @@ struct localUserHandle_t {
 public:
 	typedef uint32 userHandleType_t;
 
+	//! Constructs a default local user handle with a zero value.
 	localUserHandle_t() :
 		handle( 0 )
 	{
 	}
 
+	//! Constructs a local user handle with the specified user handle value.
 	explicit localUserHandle_t( userHandleType_t handle_ ) :
 		handle( handle_ )
 	{
 	}
 
+	//! Compares two localUserHandle_t objects for equality based on their handle values.
 	bool operator==( const localUserHandle_t& other ) const { return handle == other.handle; }
 
+	//! Compares this local user handle with another for ordering purposes.
 	bool operator<( const localUserHandle_t& other ) const { return handle < other.handle; }
 
+	//! Checks if the local user handle is valid by verifying that the handle value is greater than zero.
 	bool IsValid() const { return handle > 0; }
 
+	//! Writes the local user handle value to the provided message buffer.
 	void WriteToMsg( idBitMsg& msg ) { msg.WriteLong( handle ); }
 
+	//! Reads a long integer from the message and assigns it to the handle.
 	void ReadFromMsg( const idBitMsg& msg ) { handle = msg.ReadLong(); }
 
+	//! Serializes the handle member of the localUserHandle_t object using the provided serializer
 	void Serialize( idSerializer& ser );
 
 private:
 	userHandleType_t handle;
 };
 
-/*
-================================================
-idLocalUser
-An idLocalUser is a user holding a controller.
-It represents someone controlling the menu or game.
-They may not necessarily be in a game (which would be a session user of TYPE_GAME).
-A controller user references an input device (which is a gamepad, keyboard, etc).
-================================================
+/*!
+	\class idLocalUser
+	\brief Represents a local user controlling a game session through an input device.
+
+	The idLocalUser class serves as a representation of a user who controls the game or menu using an input device such as a gamepad or keyboard. It maintains user-specific data including profile
+   information, input device association, and online status. The class handles user input processing, achievement states, and profile settings management. It can be in different states such as joining
+   a lobby or playing online, and supports operations to load/save profile settings, manage statistics, and query user properties like online capabilities and storage device availability.
+
 */
 class idLocalUser
 {
 public:
+	//! Initializes a new instance of the idLocalUser class.
 	idLocalUser();
 	virtual ~idLocalUser() { }
 
+	//! Processes input and updates achievement states for the local user.
 	void		 Pump();
 	virtual void PumpPlatform() = 0;
 
+	//! Returns true if the local user is signed in and can save stats and profile information.
 	virtual bool IsPersistent() const
 	{
 		return IsProfileReady(); // True if this user is a persistent user, and can save stats, etc (signed in)
@@ -103,6 +114,8 @@ public:
 	virtual bool   IsProfileReady() const = 0; // True if IsPersistent is true AND profile is signed into LIVE service
 	virtual bool   IsOnline() const		  = 0; // True if this user has online capabilities
 	virtual uint32 GetOnlineCaps() const  = 0; // Returns combination of onlineCaps_t flags
+
+	//! Returns whether the original persistent owner has changed since it was first registered
 	virtual bool   HasOwnerChanged() const
 	{
 		return false; // Whether or not the original persistent owner has changed since it was first registered
@@ -114,38 +127,56 @@ public:
 
 	// Storage related
 	virtual bool
-		IsStorageDeviceAvailable() const; // Only false if the player has chosen to play without a storage device, only possible on 360, if available, everything needs to check for available space
+
+		//! Returns true if a storage device is available for save games, false if the player has chosen to play without one.
+							 IsStorageDeviceAvailable() const;
+
+	//! Resets the storage device associated with the local user.
 	virtual void			 ResetStorageDevice();
 
-	// RB: disabled savegame and profile storage checks, because it fails sometimes without any clear reason
-	// virtual bool				StorageSizeAvailable( uint64 minSizeInBytes, int64& neededBytes );
-	// RB end
-
-	// These set stats within the profile as a enum/value pair
+	//! Sets an integer statistic value for the local user profile.
 	virtual void			 SetStatInt( int stat, int value );
+
+	//! Sets a float statistic value for the local user profile.
 	virtual void			 SetStatFloat( int stat, float value );
+
+	//! Returns the integer value of a specified statistic for the local user.
 	virtual int				 GetStatInt( int stat );
+
+	//! Returns the float value of a specified stat for the local user.
 	virtual float			 GetStatFloat( int stat );
 
+	//! Returns the player profile associated with this local user
 	virtual idPlayerProfile* GetProfile() { return GetProfileMgr().GetProfile(); }
+
+	//! Returns a pointer to the player profile associated with this local user.
 	const idPlayerProfile*	 GetProfile() const { return const_cast<idLocalUser*>( this )->GetProfile(); }
 
+	//! Returns a reference to the profile manager associated with this local user.
 	idProfileMgr&			 GetProfileMgr() { return profileMgr; }
 
-	// Helper state to determine if the user is joining a party lobby or not
+	//! Sets the joining lobby state for a specified lobby type
 	void					 SetJoiningLobby( int lobbyType, bool value ) { joiningLobby[lobbyType] = value; }
+
+	//! Checks if a local user is joining a specific type of lobby.
 	bool					 IsJoiningLobby( int lobbyType ) const { return joiningLobby[lobbyType]; }
 
+	//! Checks if the local user has permission to play online
 	bool					 CanPlayOnline() const { return ( GetOnlineCaps() & CAP_CAN_PLAY_ONLINE ) > 0; }
 
+	//! Returns the local user handle associated with this local user instance.
 	localUserHandle_t		 GetLocalUserHandle() const { return localUserHandle; }
+
+	//! Sets the local user handle to the specified value.
 	void					 SetLocalUserHandle( localUserHandle_t newHandle ) { localUserHandle = newHandle; }
 
-	// Creates a new profile if one not already there
+	//! Loads or creates profile settings for the local user.
 	void					 LoadProfileSettings();
+
+	//! Saves the profile settings for the local user.
 	void					 SaveProfileSettings();
 
-	// Will attempt to sync the achievement bits between the server and the localUser when the achievement system is ready
+	//! Requests synchronization of achievement data between the server and local user.
 	void					 RequestSyncAchievements() { syncAchievementsRequested = true; }
 
 private:

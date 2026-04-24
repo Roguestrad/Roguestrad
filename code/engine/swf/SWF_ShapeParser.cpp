@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma warning( disable : 4189 ) // local variable is initialized but not referenced
 
-/*
-========================
-idSWFShapeParser::ParseShape
-========================
-*/
 void idSWFShapeParser::Parse( idSWFBitStream& bitstream, idSWFShape& shape, int recordType )
 {
 	extendedCount = ( recordType > 1 );
@@ -98,11 +93,6 @@ void idSWFShapeParser::Parse( idSWFBitStream& bitstream, idSWFShape& shape, int 
 	}
 }
 
-/*
-========================
-idSWFShapeParser::ParseMorph
-========================
-*/
 void idSWFShapeParser::ParseMorph( idSWFBitStream& bitstream, idSWFShape& shape )
 {
 	extendedCount = true;
@@ -127,11 +117,6 @@ void idSWFShapeParser::ParseMorph( idSWFBitStream& bitstream, idSWFShape& shape 
 	TriangulateSoup( shape );
 }
 
-/*
-========================
-idSWFShapeParser::ParseFont
-========================
-*/
 void idSWFShapeParser::ParseFont( idSWFBitStream& bitstream, idSWFFontGlyph& shape )
 {
 	extendedCount = false;
@@ -145,11 +130,6 @@ void idSWFShapeParser::ParseFont( idSWFBitStream& bitstream, idSWFFontGlyph& sha
 	TriangulateSoup( shape );
 }
 
-/*
-========================
-idSWFShapeParser::ParseShapes
-========================
-*/
 void idSWFShapeParser::ParseShapes( idSWFBitStream& bitstream1, idSWFBitStream* bitstream2, bool swap )
 {
 	int32  pen1X = 0;
@@ -309,11 +289,6 @@ void idSWFShapeParser::ParseShapes( idSWFBitStream& bitstream1, idSWFBitStream* 
 	}
 }
 
-/*
-========================
-idSWFShapeParser::ParseEdge
-========================
-*/
 void idSWFShapeParser::ParseEdge( idSWFBitStream& bitstream, int32& penX, int32& penY, swfSPEdge_t& edge )
 {
 	bool  straight = bitstream.ReadBool();
@@ -344,11 +319,6 @@ void idSWFShapeParser::ParseEdge( idSWFBitStream& bitstream, int32& penX, int32&
 	edge.v1 = verts.AddUnique( idVec2( SWFTWIP( penX ), SWFTWIP( penY ) ) );
 }
 
-/*
-========================
-idSWFShapeParser::MakeLoops
-========================
-*/
 void idSWFShapeParser::MakeLoops()
 {
 	// At this point, each fill style has an edge soup associated with it
@@ -581,11 +551,6 @@ void idSWFShapeParser::MakeLoops()
 	}
 }
 
-/*
-========================
-idSWFShapeParser::TriangulateSoup
-========================
-*/
 void idSWFShapeParser::TriangulateSoup( idSWFShape& shape )
 {
 	MakeLoops();
@@ -624,11 +589,6 @@ void idSWFShapeParser::TriangulateSoup( idSWFShape& shape )
 	}
 }
 
-/*
-========================
-idSWFShapeParser::TriangulateSoup
-========================
-*/
 void idSWFShapeParser::TriangulateSoup( idSWFFontGlyph& shape )
 {
 	MakeLoops();
@@ -666,9 +626,15 @@ struct earVert_t {
 	int	  i3;
 	float cross;
 };
+
+/*!
+	\class idSort_Ears
+	\brief Sorting implementation for earVert_t structures based on cross values.
+*/
 class idSort_Ears : public idSort_Quick<earVert_t, idSort_Ears>
 {
 public:
+	//! Compares two earVert_t structures based on their cross values and returns an integer less than, equal to, or greater than zero.
 	int Compare( const earVert_t& a, const earVert_t& b ) const
 	{
 		if( a.cross < b.cross ) {
@@ -680,11 +646,6 @@ public:
 	}
 };
 
-/*
-========================
-idSWFShapeParser::FindEarVert
-========================
-*/
 int idSWFShapeParser::FindEarVert( const swfSPLineLoop_t& loop )
 {
 	assert( loop.vindex1.Num() == loop.vindex2.Num() );
@@ -782,11 +743,6 @@ int idSWFShapeParser::FindEarVert( const swfSPLineLoop_t& loop )
 	return -1;
 }
 
-/*
-========================
-idSWFShapeParser::AddUniqueVert
-========================
-*/
 void idSWFShapeParser::AddUniqueVert( idSWFShapeDrawFill& drawFill, const idVec2& start, const idVec2& end )
 {
 	if( morph ) {
@@ -806,11 +762,6 @@ void idSWFShapeParser::AddUniqueVert( idSWFShapeDrawFill& drawFill, const idVec2
 	}
 }
 
-/*
-========================
-idSWFShapeParser::ReadFillStyle
-========================
-*/
 void idSWFShapeParser::ReadFillStyle( idSWFBitStream& bitstream )
 {
 	uint16 fillStyleCount = bitstream.ReadU8();

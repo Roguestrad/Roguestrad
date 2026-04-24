@@ -31,14 +31,22 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "sys_lobby_backend.h"
 
-/*
-================================================
-idVoiceChatMgr
-================================================
+/*!
+	\class idVoiceChatMgr
+	\brief Manages voice chat functionality including talker registration, data routing, and system state management.
+
+	The idVoiceChatMgr class serves as the central manager for voice chat operations within the system. It handles the registration and tracking of talkers across different lobby types, manages the
+   routing of voice data between local and remote participants, and maintains the overall state of the voice chat system. The class supports multiple lobby types and allows for grouping of talkers to
+   control communication patterns. It provides methods for initializing and shutting down the voice chat system, registering and unregistering talkers, retrieving active local talkers, and determining
+   communication relationships between talkers. The manager also handles headset state tracking, mute toggling, and system-level voice chat restrictions. The interface includes virtual methods for
+   platform-specific implementations of core voice chat operations such as data retrieval, submission, and talker registration, allowing for customization based on the underlying audio subsystem. The
+   class maintains internal data structures to track machines and talkers, manages reference counting for remote machines, and ensures proper cleanup during shutdown.
+
 */
 class idVoiceChatMgr
 {
 public:
+	//! Initializes a new instance of the idVoiceChatMgr class with default values.
 	idVoiceChatMgr() :
 		activeLobbyType( -1 ),
 		activeGroupIndex( 0 ),
@@ -50,27 +58,58 @@ public:
 
 	virtual ~idVoiceChatMgr() { } // SRS - Added virtual destructor
 
+	//! Initializes the voice chat manager with the specified XAudio2 pointer.
 	virtual void Init( void* pXAudio2 );
+
+	//! Shuts down the voice chat manager and performs cleanup assertions
 	virtual void Shutdown();
 
+	//! Registers a talker for voice chat in the specified lobby type.
 	void		 RegisterTalker( lobbyUser_t* user, int lobbyType, bool isLocal );
+
+	//! Removes a talker from the voice chat system based on the provided user, lobby type, and local flag.
 	void		 UnregisterTalker( lobbyUser_t* user, int lobbyType, bool isLocal );
+
+	//! Retrieves the list of active local talkers by filtering through all talkers and appending valid local ones to the provided list.
 	void		 GetActiveLocalTalkers( idStaticList<int, MAX_PLAYERS>& localTalkers );
+
+	//! Populates a list of remote talker addresses that should receive voice data from the specified local talker.
 	void		 GetRecipientsForTalker( int talkerIndex, idStaticList<const lobbyAddress_t*, MAX_PLAYERS>& recipients );
 
+	//! Sets the talker group index for a specified user in a lobby
 	void		 SetTalkerGroup( const lobbyUser_t* user, int lobbyType, int groupIndex );
 
+	//! Sets the active lobby type and updates registered talkers if the lobby type changes.
 	void		 SetActiveLobby( int lobbyType );
+
+	//! Sets the active chat group index and updates registered talkers accordingly.
 	void		 SetActiveChatGroup( int groupIndex );
+
+	//! Finds the index of a talker by its user ID and lobby type.
 	int			 FindTalkerByUserId( lobbyUserID_t lobbyUserID, int lobbyType );
+
+	//! Retrieves voice chat data for a local talker.
 	bool		 GetLocalChatData( int talkerIndex, byte* data, int& dataSize );
+
+	//! Processes incoming voice chat data for a specific talker in the voice chat manager.
 	void		 SubmitIncomingChatData( const byte* data, int dataSize );
+
+	//! Retrieves the voice chat state for a specified lobby user.
 	voiceState_t GetVoiceState( const lobbyUser_t* user );
+
+	//! Determines whether voice chat can be sent from one talker to another.
 	bool		 CanSendVoiceTo( int talkerFromIndex, int talkerToIndex );
+
+	//! Returns true if voice chat is restricted due to account privileges.
 	bool		 IsRestrictedByPrivleges();
 
+	//! Sets the headset state for a specified talker index.
 	void		 SetHeadsetState( int talkerIndex, bool state );
+
+	//! Returns the headset state for a specified talker index.
 	bool		 GetHeadsetState( int talkerIndex ) const { return talkers[talkerIndex].hasHeadset; }
+
+	//! Checks if the headset state has changed for a specified talker and resets the changed flag.
 	bool		 HasHeadsetStateChanged( int talkerIndex );
 
 	enum disableVoiceReason_t {
@@ -78,14 +117,23 @@ public:
 		REASON_PRIVILEGES = BIT( 1 ),
 	};
 
+	//! Sets the reason why voice chat is disabled.
 	void		 SetDisableVoiceReason( disableVoiceReason_t reason );
+
+	//! Removes a specific voice chat disable reason and updates registered talkers.
 	void		 ClearDisableVoiceReason( disableVoiceReason_t reason );
 
 	virtual bool GetLocalChatDataInternal( int talkerIndex, byte* data, int& dataSize )			   = 0;
 	virtual void SubmitIncomingChatDataInternal( int talkerIndex, const byte* data, int dataSize ) = 0;
 	virtual bool TalkerHasData( int talkerIndex )												   = 0;
+
+	//! Pumps the voice chat manager to process audio input and output.
 	virtual void Pump() { }
+
+	//! Flushes all voice chat buffers.
 	virtual void FlushBuffers() { }
+
+	//! Toggles the mute state for a target user based on the source user's request.
 	virtual void ToggleMuteLocal( const lobbyUser_t* src, const lobbyUser_t* target );
 
 protected:
@@ -97,6 +145,7 @@ protected:
 	};
 
 	struct talker_t {
+		//! Initializes a new talker_t instance with default values.
 		talker_t() :
 			user( NULL ),
 			isLocal( false ),
@@ -128,16 +177,26 @@ protected:
 		bool		 talkingGlobal;
 		int			 talkingTime;
 
+		//! Returns true if the talker is local, false otherwise.
 		bool		 IsLocal() const { return isLocal; }
 	};
 
 	virtual bool								   RegisterTalkerInternal( int index )	 = 0;
 	virtual void								   UnregisterTalkerInternal( int index ) = 0;
 
+	//! Finds the index of a talker in the voice chat manager based on user and lobby type.
 	int											   FindTalkerIndex( const lobbyUser_t* user, int lobbyType );
+
+	//! Finds a remote machine in the voice chat manager by its address and lobby type
 	int											   FindMachine( const lobbyAddress_t& address, int lobbyType );
+
+	//! Adds a machine to the voice chat manager or increments its reference count if it already exists
 	int											   AddMachine( const lobbyAddress_t& address, int lobbyType );
+
+	//! Decrements the reference count of a remote machine entry to potentially free it.
 	void										   RemoveMachine( int machineIndex, int lobbyType );
+
+	//! Updates the registration status of talkers based on their lobby type and system state.
 	void										   UpdateRegisteredTalkers();
 
 	idStaticList<talker_t, MAX_PLAYERS * 2>		   talkers;		   // * 2 to account for handling both session types

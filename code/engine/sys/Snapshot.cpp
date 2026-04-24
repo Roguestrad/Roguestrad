@@ -38,33 +38,18 @@ idCVar net_ssTemplateDebug( "net_ssTemplateDebug", "0", CVAR_BOOL, "Debug snapsh
 idCVar net_ssTemplateDebug_len( "net_ssTemplateDebug_len", "32", CVAR_INTEGER, "Offset to start template state debugging" );
 idCVar net_ssTemplateDebug_start( "net_ssTemplateDebug_start", "0", CVAR_INTEGER, "length of template state to print in debugging" );
 
-/*
-========================
-InDebugRange
-Helper function for net_ssTemplateDebug debugging
-========================
-*/
+//! Checks if the given integer falls within the debug range defined by net_ssTemplateDebug_start and net_ssTemplateDebug_len console variables.
 bool   InDebugRange( int i )
 {
 	return ( i >= net_ssTemplateDebug_start.GetInteger() && i < net_ssTemplateDebug_start.GetInteger() + net_ssTemplateDebug_len.GetInteger() );
 }
-/*
-========================
-PrintAlign
-Helper function for net_ssTemplateDebug debugging
-========================
-*/
+
+//! Prints the given text right-aligned in a 25-character wide field followed by a colon and a space.
 void PrintAlign( const char* text )
 {
 	idLib::Printf( "%25s: 0x", text );
 }
 
-/*
-========================
-idSnapShot::objectState_t::Print
-Helper function for net_ssTemplateDebug debugging
-========================
-*/
 void idSnapShot::objectState_t::Print( const char* name )
 {
 	unsigned int start = ( unsigned int )net_ssTemplateDebug_start.GetInteger();
@@ -78,11 +63,6 @@ void idSnapShot::objectState_t::Print( const char* name )
 	idLib::Printf( "\n" );
 }
 
-/*
-========================
-idSnapShot::objectBuffer_t::Alloc
-========================
-*/
 void idSnapShot::objectBuffer_t::Alloc( int s )
 {
 	// assert( mem.IsMapHeap() );
@@ -95,11 +75,6 @@ void idSnapShot::objectBuffer_t::Alloc( int s )
 	data[size] = 1;
 }
 
-/*
-========================
-idSnapShot::objectBuffer_t::AddRef
-========================
-*/
 void idSnapShot::objectBuffer_t::_AddRef()
 {
 	if( data != NULL ) {
@@ -109,11 +84,6 @@ void idSnapShot::objectBuffer_t::_AddRef()
 	}
 }
 
-/*
-========================
-idSnapShot::objectBuffer_t::Release
-========================
-*/
 void idSnapShot::objectBuffer_t::_Release()
 {
 	// assert( mem.IsMapHeap() );
@@ -127,11 +97,6 @@ void idSnapShot::objectBuffer_t::_Release()
 	}
 }
 
-/*
-========================
-idSnapShot::objectBuffer_t::operator=
-========================
-*/
 void idSnapShot::objectBuffer_t::operator=( const idSnapShot::objectBuffer_t& other )
 {
 	// assert( mem.IsMapHeap() );
@@ -143,22 +108,12 @@ void idSnapShot::objectBuffer_t::operator=( const idSnapShot::objectBuffer_t& ot
 	}
 }
 
-/*
-========================
-idSnapShot::idSnapShot
-========================
-*/
 idSnapShot::idSnapShot() :
 	time( 0 ),
 	recvTime( 0 )
 {
 }
 
-/*
-========================
-idSnapShot::idSnapShot
-========================
-*/
 idSnapShot::idSnapShot( const idSnapShot& other ) :
 	time( 0 ),
 	recvTime( 0 )
@@ -166,21 +121,11 @@ idSnapShot::idSnapShot( const idSnapShot& other ) :
 	*this = other;
 }
 
-/*
-========================
-idSnapShot::~idSnapShot
-========================
-*/
 idSnapShot::~idSnapShot()
 {
 	Clear();
 }
 
-/*
-========================
-idSnapShot::Clear
-========================
-*/
 void idSnapShot::Clear()
 {
 	time	 = 0;
@@ -192,11 +137,6 @@ void idSnapShot::Clear()
 	allocatedObjs.Shutdown();
 }
 
-/*
-========================
-idSnapShot::operator=
-========================
-*/
 void idSnapShot::operator=( const idSnapShot& other )
 {
 	// assert( mem.IsMapHeap() );
@@ -226,11 +166,6 @@ void idSnapShot::operator=( const idSnapShot& other )
 	}
 }
 
-/*
-========================
-idSnapShot::PeekDeltaSequence
-========================
-*/
 void idSnapShot::PeekDeltaSequence( const char* deltaMem, int deltaSize, int& sequence, int& baseSequence )
 {
 	lzwCompressionData_t lzwData;
@@ -241,11 +176,6 @@ void idSnapShot::PeekDeltaSequence( const char* deltaMem, int deltaSize, int& se
 	lzwCompressor.ReadAgnostic( baseSequence );
 }
 
-/*
-========================
-idSnapShot::ReadDeltaForJob
-========================
-*/
 bool idSnapShot::ReadDeltaForJob( const char* deltaMem, int deltaSize, int visIndex, idSnapShot* templateStates )
 {
 	bool report = net_verboseSnapshotReport.GetBool();
@@ -418,12 +348,6 @@ bool idSnapShot::ReadDeltaForJob( const char* deltaMem, int deltaSize, int visIn
 	return false;
 }
 
-/*
-========================
-idSnapShot::SubmitObjectJob
-========================
-*/
-
 void idSnapShot::SubmitObjectJob( const submitDeltaJobsInfo_t& submitDeltaJobsInfo,
 	objectState_t*											   newState,
 	objectState_t*											   oldState,
@@ -500,12 +424,6 @@ void idSnapShot::SubmitObjectJob( const submitDeltaJobsInfo_t& submitDeltaJobsIn
 	curHeader++;
 }
 
-/*
-========================
-idSnapShot::SubmitLZWJob
-Take the current list of delta'd + zlre processed objects, and write them to the lzw stream.
-========================
-*/
 void idSnapShot::SubmitLZWJob( const submitDeltaJobsInfo_t& writeDeltaInfo,
 	objParms_t*&											baseObjParm, // Pointer to the first obj parm for the current stream
 	objParms_t*&											curObjParm,	 // Current obj parm
@@ -541,13 +459,6 @@ void idSnapShot::SubmitLZWJob( const submitDeltaJobsInfo_t& writeDeltaInfo,
 	baseObjParm = curObjParm;
 }
 
-/*
-========================
-idSnapShot::GetTemplateState
-Helper function for getting template objectState.
-newState parameter is optional and is just used for debugging/printf comparison of the template and actual state
-========================
-*/
 idSnapShot::objectState_t* idSnapShot::GetTemplateState( int objNum, idSnapShot* templateStates, idSnapShot::objectState_t* newState /*=NULL*/ )
 {
 	objectState_t* oldState			 = NULL;
@@ -566,11 +477,6 @@ idSnapShot::objectState_t* idSnapShot::GetTemplateState( int objNum, idSnapShot*
 	return oldState;
 }
 
-/*
-========================
-idSnapShot::SubmitWriteDeltaToJobs
-========================
-*/
 void idSnapShot::SubmitWriteDeltaToJobs( const submitDeltaJobsInfo_t& submitDeltaJobInfo )
 {
 	objParms_t*	 curObjParms  = submitDeltaJobInfo.objParms;
@@ -654,11 +560,6 @@ void idSnapShot::SubmitWriteDeltaToJobs( const submitDeltaJobsInfo_t& submitDelt
 	SubmitLZWJob( submitDeltaJobInfo, baseObjParms, curObjParms, curlzwParms, false );
 }
 
-/*
-========================
-idSnapShot::ReadDelta
-========================
-*/
 bool idSnapShot::ReadDelta( idFile* file, int visIndex )
 {
 	file->ReadBig( time );
@@ -735,11 +636,6 @@ bool idSnapShot::ReadDelta( idFile* file, int visIndex )
 	return false;
 }
 
-/*
-========================
-idSnapShot::WriteObject
-========================
-*/
 void idSnapShot::WriteObject( idFile* file, int visIndex, objectState_t* newState, objectState_t* oldState, int& lastobjectNum )
 {
 	assert( newState != NULL || oldState != NULL );
@@ -847,20 +743,10 @@ void idSnapShot::WriteObject( idFile* file, int visIndex, objectState_t* newStat
 #endif
 }
 
-/*
-========================
-idSnapShot::PrintReport
-========================
-*/
 void idSnapShot::PrintReport()
 {
 }
 
-/*
-========================
-idSnapShot::WriteDelta
-========================
-*/
 bool idSnapShot::WriteDelta( idSnapShot& old, int visIndex, idFile* file, int maxLength, int optimalLength )
 {
 	file->WriteBig( time );
@@ -951,11 +837,6 @@ bool idSnapShot::WriteDelta( idSnapShot& old, int visIndex, idFile* file, int ma
 	return true;
 }
 
-/*
-========================
-idSnapShot::AddObject
-========================
-*/
 idSnapShot::objectState_t* idSnapShot::S_AddObject( int objectNum, uint32 visMask, const char* data, int _size, const char* tag )
 {
 	objectSize_t   size	 = _size;
@@ -971,12 +852,6 @@ idSnapShot::objectState_t* idSnapShot::S_AddObject( int objectNum, uint32 visMas
 	}
 	return &state;
 }
-
-/*
-========================
-idSnapShot::CopyObject
-========================
-*/
 
 bool idSnapShot::CopyObject( const idSnapShot& oldss, int objectNum, bool forceStale )
 {
@@ -1003,13 +878,6 @@ bool idSnapShot::CopyObject( const idSnapShot& oldss, int objectNum, bool forceS
 	return true;
 }
 
-/*
-========================
-idSnapShot::CompareObject
-start, end, and oldStart can optionally be passed in to compare subsections of the object
-default parameters will compare entire object
-========================
-*/
 int idSnapShot::CompareObject( const idSnapShot* oldss, int objectNum, int start, int end, int oldStart )
 {
 	if( oldss == NULL ) {
@@ -1051,11 +919,6 @@ int idSnapShot::CompareObject( const idSnapShot* oldss, int objectNum, int start
 	return bytes;
 }
 
-/*
-========================
-idSnapShot::GetObjectMsgByIndex
-========================
-*/
 int idSnapShot::GetObjectMsgByIndex( int i, idBitMsg& msg, bool ignoreIfStale ) const
 {
 	if( i < 0 || i >= objectStates.Num() ) {
@@ -1069,11 +932,6 @@ int idSnapShot::GetObjectMsgByIndex( int i, idBitMsg& msg, bool ignoreIfStale ) 
 	return state.objectNum;
 }
 
-/*
-========================
-idSnapShot::ObjectIsStaleByIndex
-========================
-*/
 bool idSnapShot::ObjectIsStaleByIndex( int i ) const
 {
 	if( i < 0 || i >= objectStates.Num() ) {
@@ -1082,11 +940,6 @@ bool idSnapShot::ObjectIsStaleByIndex( int i ) const
 	return objectStates[i]->stale;
 }
 
-/*
-========================
-idSnapShot::ObjectChangedCountByIndex
-========================
-*/
 int idSnapShot::ObjectChangedCountByIndex( int i ) const
 {
 	if( i < 0 || i >= objectStates.Num() ) {
@@ -1095,11 +948,6 @@ int idSnapShot::ObjectChangedCountByIndex( int i ) const
 	return objectStates[i]->changedCount;
 }
 
-/*
-========================
-idSnapShot::FindObjectIndexByID
-========================
-*/
 int idSnapShot::FindObjectIndexByID( int objectNum ) const
 {
 	int i = BinarySearch( objectNum );
@@ -1109,11 +957,6 @@ int idSnapShot::FindObjectIndexByID( int objectNum ) const
 	return -1;
 }
 
-/*
-========================
-idSnapShot::BinarySearch
-========================
-*/
 int idSnapShot::BinarySearch( int objectNum ) const
 {
 	int lo = 0;
@@ -1134,11 +977,6 @@ int idSnapShot::BinarySearch( int objectNum ) const
 	return hi;
 }
 
-/*
-========================
-idSnapShot::FindOrCreateObjectByID
-========================
-*/
 idSnapShot::objectState_t& idSnapShot::FindOrCreateObjectByID( int objectNum )
 {
 	// assert( mem.IsMapHeap() );
@@ -1157,11 +995,6 @@ idSnapShot::objectState_t& idSnapShot::FindOrCreateObjectByID( int objectNum )
 	return *objectStates[i];
 }
 
-/*
-========================
-idSnapShot::FindObjectByID
-========================
-*/
 idSnapShot::objectState_t* idSnapShot::FindObjectByID( int objectNum ) const
 {
 	// assert( mem.IsMapHeap() );
@@ -1175,11 +1008,6 @@ idSnapShot::objectState_t* idSnapShot::FindObjectByID( int objectNum ) const
 	return NULL;
 }
 
-/*
-========================
-idSnapShot::CleanupEmptyStates
-========================
-*/
 void idSnapShot::CleanupEmptyStates()
 {
 	for( int i = objectStates.Num() - 1; i >= 0; i-- ) {
@@ -1190,11 +1018,6 @@ void idSnapShot::CleanupEmptyStates()
 	}
 }
 
-/*
-========================
-idSnapShot::UpdateExpectedSeq
-========================
-*/
 void idSnapShot::UpdateExpectedSeq( int newSeq )
 {
 	for( int i = 0; i < objectStates.Num(); i++ ) {
@@ -1204,11 +1027,6 @@ void idSnapShot::UpdateExpectedSeq( int newSeq )
 	}
 }
 
-/*
-========================
-idSnapShot::FreeObjectState
-========================
-*/
 void idSnapShot::FreeObjectState( int index )
 {
 	assert( objectStates[index] != NULL );
@@ -1218,12 +1036,6 @@ void idSnapShot::FreeObjectState( int index )
 	objectStates[index] = NULL;
 }
 
-/*
-========================
-idSnapShot::ApplyToExistingState
-Take uncompressed state in msg and add it to existing state
-========================
-*/
 void idSnapShot::ApplyToExistingState( int objId, idBitMsg& msg )
 {
 	objectState_t* objectState = FindObjectByID( objId );

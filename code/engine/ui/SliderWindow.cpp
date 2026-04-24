@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "UserInterfaceLocal.h"
 #include "SliderWindow.h"
 
-/*
-============
-idSliderWindow::CommonInit
-============
-*/
 void idSliderWindow::CommonInit()
 {
 	value	 = 0.0;
@@ -352,11 +347,6 @@ void idSliderWindow::Activate( bool activate, idStr& act )
 	}
 }
 
-/*
-============
-idSliderWindow::InitCvar
-============
-*/
 void idSliderWindow::InitCvar()
 {
 	if( cvarStr[0] == '\0' ) {
@@ -376,11 +366,6 @@ void idSliderWindow::InitCvar()
 	}
 }
 
-/*
-============
-idSliderWindow::UpdateCvar
-============
-*/
 void idSliderWindow::UpdateCvar( bool read, bool force )
 {
 	if( buddyWin || !cvar ) {
@@ -399,11 +384,6 @@ void idSliderWindow::UpdateCvar( bool read, bool force )
 	}
 }
 
-/*
-============
-idSliderWindow::RunNamedEvent
-============
-*/
 void idSliderWindow::RunNamedEvent( const char* eventName )
 {
 	idStr event, group;

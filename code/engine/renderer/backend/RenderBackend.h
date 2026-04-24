@@ -133,7 +133,7 @@ public:
 	//! Performs cleanup operations for the rendering backend before shutdown.
 	void				 Shutdown();
 
-	//! Executes backend rendering commands for 3D and 2D views, buffer management, and post-processing effects.
+	//! Executes backend rendering commands for 3D and 2D views, buffer management, and post-processing effects
 	void				 ExecuteBackEndCommands( const emptyCommand_t* cmds );
 
 	//! Renders the draw list twice with modifications for left and right eye views in stereo rendering mode

@@ -32,21 +32,11 @@ If you have questions concerning this license or the applicable additional terms
 #include "sys_lobby_backend.h"
 #include "sys_dedicated_server_search.h"
 
-/*
-========================
-idDedicatedServerSearch::idDedicatedServerSearch
-========================
-*/
 idDedicatedServerSearch::idDedicatedServerSearch() :
 	callback( NULL )
 {
 }
 
-/*
-========================
-idDedicatedServerSearch::~idDedicatedServerSearch
-========================
-*/
 idDedicatedServerSearch::~idDedicatedServerSearch()
 {
 	if( callback != NULL ) {
@@ -54,22 +44,12 @@ idDedicatedServerSearch::~idDedicatedServerSearch()
 	}
 }
 
-/*
-========================
-idDedicatedServerSearch::StartSearch
-========================
-*/
 void idDedicatedServerSearch::StartSearch( const idCallback& cb )
 {
 	Clear();
 	callback = cb.Clone();
 }
 
-/*
-========================
-idDedicatedServerSearch::Clear
-========================
-*/
 void idDedicatedServerSearch::Clear()
 {
 	if( callback != NULL ) {
@@ -79,11 +59,6 @@ void idDedicatedServerSearch::Clear()
 	list.Clear();
 }
 
-/*
-========================
-idDedicatedServerSearch::Clear
-========================
-*/
 void idDedicatedServerSearch::HandleQueryAck( lobbyAddress_t& addr, idBitMsg& msg )
 {
 	bool found = false;
@@ -138,11 +113,6 @@ void idDedicatedServerSearch::HandleQueryAck( lobbyAddress_t& addr, idBitMsg& ms
 	}
 }
 
-/*
-========================
-idDedicatedServerSearch::GetAddrAtIndex
-========================
-*/
 bool idDedicatedServerSearch::GetAddrAtIndex( netadr_t& addr, int i )
 {
 	if( i >= 0 && i < list.Num() ) {
@@ -152,11 +122,6 @@ bool idDedicatedServerSearch::GetAddrAtIndex( netadr_t& addr, int i )
 	return false;
 }
 
-/*
-========================
-idDedicatedServerSearch::DescribeServerAtIndex
-========================
-*/
 const serverInfo_t* idDedicatedServerSearch::DescribeServerAtIndex( int i ) const
 {
 	if( i >= 0 && i < list.Num() ) {
@@ -165,11 +130,6 @@ const serverInfo_t* idDedicatedServerSearch::DescribeServerAtIndex( int i ) cons
 	return NULL;
 }
 
-/*
-========================
-idDedicatedServerSearch::GetServerPlayersAtIndex
-========================
-*/
 const idList<idStr>* idDedicatedServerSearch::GetServerPlayersAtIndex( int i ) const
 {
 	if( i >= 0 && i < list.Num() ) {
@@ -178,11 +138,6 @@ const idList<idStr>* idDedicatedServerSearch::GetServerPlayersAtIndex( int i ) c
 	return NULL;
 }
 
-/*
-========================
-idDedicatedServerSearch::NumServers
-========================
-*/
 int idDedicatedServerSearch::NumServers() const
 {
 	return list.Num();

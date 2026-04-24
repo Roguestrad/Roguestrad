@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "precompiled.h"
 #pragma hdrstop
 
-/*
-===================
-idSWF::HitTest
-===================
-*/
 idSWFScriptObject* idSWF::HitTest( idSWFSpriteInstance* spriteInstance, const swfRenderState_t& renderState, int x, int y, idSWFScriptObject* parentObject )
 {
 	if( spriteInstance->parent != NULL ) {
@@ -201,11 +196,6 @@ idSWFScriptObject* idSWF::HitTest( idSWFSpriteInstance* spriteInstance, const sw
 	return returnObject;
 }
 
-/*
-===================
-idSWF::HandleEvent
-===================
-*/
 bool idSWF::HandleEvent( const sysEvent_t* event )
 {
 	if( !IsLoaded() || !IsActive() || ( !inhibitControl && useInhibtControl ) ) {

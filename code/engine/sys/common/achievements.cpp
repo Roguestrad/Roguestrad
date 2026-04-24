@@ -36,77 +36,37 @@ extern idCVar achievements_Verbose;
 
 #define STEAM_ACHIEVEMENT_PREFIX "ach_"
 
-/*
-========================
-idAchievementSystemWin::idAchievementSystemWin
-========================
-*/
 idAchievementSystemWin::idAchievementSystemWin()
 {
 }
 
-/*
-========================
-idAchievementSystemWin::IsInitialized
-========================
-*/
 bool idAchievementSystemWin::IsInitialized()
 {
 	return false;
 }
 
-/*
-================================
-idAchievementSystemWin::AchievementUnlock
-================================
-*/
 void idAchievementSystemWin::AchievementUnlock( idLocalUser* user, int achievementID )
 {
 }
 
-/*
-========================
-idAchievementSystemWin::AchievementLock
-========================
-*/
 void idAchievementSystemWin::AchievementLock( idLocalUser* user, const int achievementID )
 {
 }
 
-/*
-========================
-idAchievementSystemWin::AchievementLockAll
-========================
-*/
 void idAchievementSystemWin::AchievementLockAll( idLocalUser* user, const int maxId )
 {
 }
 
-/*
-========================
-idAchievementSystemWin::GetAchievementDescription
-========================
-*/
 bool idAchievementSystemWin::GetAchievementDescription( idLocalUser* user, const int achievementID, achievementDescription_t& data ) const
 {
 	return false;
 }
 
-/*
-========================
-idAchievementSystemWin::GetAchievementState
-========================
-*/
 bool idAchievementSystemWin::GetAchievementState( idLocalUser* user, idArray<bool, idAchievementSystem::MAX_ACHIEVEMENTS>& achievements ) const
 {
 	return false;
 }
 
-/*
-================================
-idAchievementSystemWin::Pump
-================================
-*/
 void idAchievementSystemWin::Pump()
 {
 }

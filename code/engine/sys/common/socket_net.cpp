@@ -95,6 +95,7 @@ static bool	   winsockInitialized = false;
 
 #else // ! _WIN32
 
+//! Returns the last network error code that occurred.
 static int Net_GetLastError()
 {
 	return errno;
@@ -147,19 +148,7 @@ typedef struct {
 int			  num_interfaces = 0;
 net_interface netint[MAX_INTERFACES];
 
-/*
-================================================================================================
-
-	Free Functions
-
-================================================================================================
-*/
-
-/*
-========================
-NET_ErrorString
-========================
-*/
+//! Returns a string representation of the last network error.
 const char*	  NET_ErrorString()
 {
 #ifndef _WIN32
@@ -261,11 +250,7 @@ const char*	  NET_ErrorString()
 #endif // _WIN32
 }
 
-/*
-========================
-Net_NetadrToSockadr
-========================
-*/
+//! Converts a network address structure to a socket address structure.
 void Net_NetadrToSockadr( const netadr_t* a, sockaddr_in* s )
 {
 	memset( s, 0, sizeof( *s ) );
@@ -288,6 +273,8 @@ Net_SockadrToNetadr
 */
 #define LOOPBACK_NET	0x7F000000 // 127.0.0.0
 #define LOOPBACK_PREFIX 0xFF000000 // /8 or 255.0.0.0
+
+//! Converts a socket address structure to a network address structure.
 void Net_SockadrToNetadr( sockaddr_in* s, netadr_t* a )
 {
 	in_addr_t ip;
@@ -308,10 +295,18 @@ void Net_SockadrToNetadr( sockaddr_in* s, netadr_t* a )
 	}
 }
 
-/*
-========================
-Net_ExtractPort
-========================
+/*!
+	\brief Extracts a port number from a string and returns the host portion
+
+	This function parses a string that contains a host address and port number separated by a colon. It extracts the host portion into the provided buffer and parses the port number into the port
+   parameter. The function modifies the input buffer by null-terminating the host portion. If no colon is found or if the port number is invalid, the function returns false and sets the port to zero.
+   The port number must be a valid integer within the range of a long integer.
+
+	\param src Input string containing host and port separated by a colon
+	\param buf Output buffer to store the extracted host portion
+	\param bufsize Size of the output buffer
+	\param port Pointer to store the extracted port number
+	\return True if a valid port number was extracted, false otherwise
 */
 static bool Net_ExtractPort( const char* src, char* buf, int bufsize, int* port )
 {
@@ -335,11 +330,7 @@ static bool Net_ExtractPort( const char* src, char* buf, int bufsize, int* port 
 	return true;
 }
 
-/*
-========================
-Net_StringToSockaddr
-========================
-*/
+//! Converts a string representation of an address to a socket address structure
 static bool Net_StringToSockaddr( const char* s, sockaddr_in* sadr, bool doDNSResolve )
 {
 	/* NOTE: the doDNSResolve argument is ignored for two reasons:
@@ -372,11 +363,7 @@ static bool Net_StringToSockaddr( const char* s, sockaddr_in* sadr, bool doDNSRe
 	return true;
 }
 
-/*
-========================
-NET_IPSocket
-========================
-*/
+//! Creates a UDP socket for IP communication, optionally binding to a specific IP and port.
 int NET_IPSocket( const char* bind_ip, int port, netadr_t* bound_to )
 {
 	SOCKET		newsocket;
@@ -461,11 +448,7 @@ int NET_IPSocket( const char* bind_ip, int port, netadr_t* bound_to )
 	return newsocket;
 }
 
-/*
-========================
-NET_OpenSocks
-========================
-*/
+//! Initializes a connection to a SOCKS server for UDP communication on the specified port.
 void NET_OpenSocks( int port )
 {
 	sockaddr_in		address;
@@ -626,11 +609,7 @@ void NET_OpenSocks( int port )
 	usingSocks = true;
 }
 
-/*
-========================
-Net_WaitForData
-========================
-*/
+//! Checks if data is available to read from a network socket within a specified timeout period
 bool Net_WaitForData( int netSocket, int timeout )
 {
 	int			   ret;
@@ -666,10 +645,19 @@ bool Net_WaitForData( int netSocket, int timeout )
 	return true;
 }
 
-/*
-========================
-Net_GetUDPPacket
-========================
+/*!
+	\brief Attempts to receive a UDP packet on the specified socket, storing the packet data and source address.
+
+	This function receives a UDP packet from the network socket specified by netSocket. It fills the data buffer with the received packet content, updates the net_from address with the sender's
+   address, and sets the size parameter to the actual packet size. The function handles errors such as blocking operations and connection resets by returning false without error logging. If the
+   received packet exceeds the maximum allowed size, it logs a warning and returns false. The function returns true upon successful reception of a packet.
+
+	\param netSocket The socket file descriptor to receive the packet from
+	\param net_from Reference to the network address structure that will be filled with the sender's address
+	\param data Pointer to the buffer where packet data will be stored
+	\param size Reference to an integer that will be set to the size of the received packet
+	\param maxSize Maximum allowed size of the packet that can be received
+	\return True if a packet was successfully received, false otherwise
 */
 bool Net_GetUDPPacket( int netSocket, netadr_t& net_from, char* data, int& size, int maxSize )
 {
@@ -736,10 +724,17 @@ bool Net_GetUDPPacket( int netSocket, netadr_t& net_from, char* data, int& size,
 	return true;
 }
 
-/*
-========================
-Net_SendUDPPacket
-========================
+/*!
+	\brief Sends a UDP packet to the specified network address using the given socket and data.
+
+	This function sends a UDP packet over a specified socket to a given network address. It handles both direct socket communication and SOCKS proxy communication if SOCKS is enabled and the target
+   address is an IPv4 address. The function checks for errors during sending and logs a warning when an error occurs, except for broadcast addresses on PPP links which are silently ignored. The
+   function returns immediately if the socket is invalid.
+
+	\param netSocket The socket descriptor to send the packet from
+	\param length The length of the data to send
+	\param data Pointer to the data to send
+	\param to The target network address to send the packet to
 */
 void Net_SendUDPPacket( int netSocket, int length, const void* data, const netadr_t to )
 {
@@ -777,16 +772,12 @@ void Net_SendUDPPacket( int netSocket, int length, const void* data, const netad
 	}
 }
 
+//! Converts a 4-byte IP address to a dotted decimal string representation.
 static void ip_to_addr( const char ip[4], char* addr )
 {
 	idStr::snPrintf( addr, 16, "%d.%d.%d.%d", ( unsigned char )ip[0], ( unsigned char )ip[1], ( unsigned char )ip[2], ( unsigned char )ip[3] );
 }
 
-/*
-========================
-Sys_InitNetworking
-========================
-*/
 void Sys_InitNetworking()
 {
 	bool foundloopback = false;
@@ -1005,11 +996,6 @@ void Sys_InitNetworking()
 	}
 }
 
-/*
-========================
-Sys_ShutdownNetworking
-========================
-*/
 void Sys_ShutdownNetworking()
 {
 #ifdef _WIN32
@@ -1024,11 +1010,6 @@ void Sys_ShutdownNetworking()
 	}
 }
 
-/*
-========================
-Sys_StringToNetAdr
-========================
-*/
 bool Sys_StringToNetAdr( const char* s, netadr_t* a, bool doDNSResolve )
 {
 	sockaddr_in sadr;
@@ -1041,11 +1022,6 @@ bool Sys_StringToNetAdr( const char* s, netadr_t* a, bool doDNSResolve )
 	return true;
 }
 
-/*
-========================
-Sys_NetAdrToString
-========================
-*/
 const char* Sys_NetAdrToString( const netadr_t a )
 {
 	// DG: FIXME: those static buffers look fishy - I would feel better if they were
@@ -1069,11 +1045,7 @@ const char* Sys_NetAdrToString( const netadr_t a )
 	return s;
 }
 
-/*
-========================
-Sys_IsLANAddress
-========================
-*/
+//! Determines if a given network address belongs to a local area network.
 bool Sys_IsLANAddress( const netadr_t adr )
 {
 	if( adr.type == NA_LOOPBACK ) {
@@ -1107,13 +1079,6 @@ bool Sys_IsLANAddress( const netadr_t adr )
 	return false;
 }
 
-/*
-========================
-Sys_CompareNetAdrBase
-
-Compares without the port.
-========================
-*/
 bool Sys_CompareNetAdrBase( const netadr_t a, const netadr_t b )
 {
 	if( a.type != b.type ) {
@@ -1140,21 +1105,11 @@ bool Sys_CompareNetAdrBase( const netadr_t a, const netadr_t b )
 	return false;
 }
 
-/*
-========================
-Sys_GetLocalIPCount
-========================
-*/
 int Sys_GetLocalIPCount()
 {
 	return num_interfaces;
 }
 
-/*
-========================
-Sys_GetLocalIP
-========================
-*/
 const char* Sys_GetLocalIP( int i )
 {
 	if( ( i < 0 ) || ( i >= num_interfaces ) ) {
@@ -1163,19 +1118,6 @@ const char* Sys_GetLocalIP( int i )
 	return netint[i].addr;
 }
 
-/*
-================================================================================================
-
-	idUDP
-
-================================================================================================
-*/
-
-/*
-========================
-idUDP::idUDP
-========================
-*/
 idUDP::idUDP()
 {
 	netSocket = 0;
@@ -1187,21 +1129,11 @@ idUDP::idUDP()
 	bytesWritten   = 0;
 }
 
-/*
-========================
-idUDP::~idUDP
-========================
-*/
 idUDP::~idUDP()
 {
 	Close();
 }
 
-/*
-========================
-idUDP::InitForPort
-========================
-*/
 bool idUDP::InitForPort( int portNumber )
 {
 	// DG: don't specify an IP to bind for (and certainly not net_ip)
@@ -1217,11 +1149,6 @@ bool idUDP::InitForPort( int portNumber )
 	return true;
 }
 
-/*
-========================
-idUDP::Close
-========================
-*/
 void idUDP::Close()
 {
 	if( netSocket ) {
@@ -1250,11 +1177,6 @@ bool idUDP::GetPacket( netadr_t& from, void* data, int& size, int maxSize )
 	// DG end
 }
 
-/*
-========================
-idUDP::GetPacketBlocking
-========================
-*/
 bool idUDP::GetPacketBlocking( netadr_t& from, void* data, int& size, int maxSize, int timeout )
 {
 	if( !Net_WaitForData( netSocket, timeout ) ) {
@@ -1268,11 +1190,6 @@ bool idUDP::GetPacketBlocking( netadr_t& from, void* data, int& size, int maxSiz
 	return false;
 }
 
-/*
-========================
-idUDP::SendPacket
-========================
-*/
 void idUDP::SendPacket( const netadr_t to, const void* data, int size )
 {
 	if( to.type == NA_BAD ) {

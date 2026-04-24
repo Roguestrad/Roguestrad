@@ -37,11 +37,6 @@ If you have questions concerning this license or the applicable additional terms
 
 int	 idRegister::REGCOUNT[NUMTYPES] = { 4, 1, 1, 1, 0, 2, 3, 4 };
 
-/*
-====================
-idRegister::SetToRegs
-====================
-*/
 void idRegister::SetToRegs( float* registers )
 {
 	int			i;
@@ -99,11 +94,6 @@ void idRegister::SetToRegs( float* registers )
 	}
 }
 
-/*
-=================
-idRegister::GetFromRegs
-=================
-*/
 void idRegister::GetFromRegs( float* registers )
 {
 	idVec4		v;
@@ -157,11 +147,6 @@ void idRegister::GetFromRegs( float* registers )
 	}
 }
 
-/*
-=================
-idRegister::WriteToSaveGame
-=================
-*/
 void idRegister::WriteToSaveGame( idFile* savefile )
 {
 	int len;
@@ -178,11 +163,6 @@ void idRegister::WriteToSaveGame( idFile* savefile )
 	var->WriteToSaveGame( savefile );
 }
 
-/*
-================
-idRegister::ReadFromSaveGame
-================
-*/
 void idRegister::ReadFromSaveGame( idFile* savefile )
 {
 	int len;
@@ -199,11 +179,6 @@ void idRegister::ReadFromSaveGame( idFile* savefile )
 	var->ReadFromSaveGame( savefile );
 }
 
-/*
-====================
-idRegisterList::AddReg
-====================
-*/
 void idRegisterList::AddReg( const char* name, int type, idVec4 data, idWindow* win, idWinVar* var )
 {
 	if( FindReg( name ) == NULL ) {
@@ -219,11 +194,6 @@ void idRegisterList::AddReg( const char* name, int type, idVec4 data, idWindow* 
 	}
 }
 
-/*
-====================
-idRegisterList::AddReg
-====================
-*/
 void idRegisterList::AddReg( const char* name, int type, idTokenParser* src, idWindow* win, idWinVar* var )
 {
 	idRegister* reg;
@@ -270,23 +240,12 @@ void idRegisterList::AddReg( const char* name, int type, idTokenParser* src, idW
 	}
 }
 
-/*
-====================
-idRegisterList::GetFromRegs
-====================
-*/
 void idRegisterList::GetFromRegs( float* registers )
 {
 	for( int i = 0; i < regs.Num(); i++ ) {
 		regs[i]->GetFromRegs( registers );
 	}
 }
-
-/*
-====================
-idRegisterList::SetToRegs
-====================
-*/
 
 void idRegisterList::SetToRegs( float* registers )
 {
@@ -296,11 +255,6 @@ void idRegisterList::SetToRegs( float* registers )
 	}
 }
 
-/*
-====================
-idRegisterList::FindReg
-====================
-*/
 idRegister* idRegisterList::FindReg( const char* name )
 {
 	int hash = regHash.GenerateKey( name, false );
@@ -312,22 +266,12 @@ idRegister* idRegisterList::FindReg( const char* name )
 	return NULL;
 }
 
-/*
-====================
-idRegisterList::Reset
-====================
-*/
 void idRegisterList::Reset()
 {
 	regs.DeleteContents( true );
 	regHash.Clear();
 }
 
-/*
-=====================
-idRegisterList::WriteToSaveGame
-=====================
-*/
 void idRegisterList::WriteToSaveGame( idFile* savefile )
 {
 	int i, num;
@@ -340,11 +284,6 @@ void idRegisterList::WriteToSaveGame( idFile* savefile )
 	}
 }
 
-/*
-====================
-idRegisterList::ReadFromSaveGame
-====================
-*/
 void idRegisterList::ReadFromSaveGame( idFile* savefile )
 {
 	int i, num;

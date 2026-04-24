@@ -416,13 +416,6 @@ void idListWindow::PostParse()
 	flags |= WIN_CANFOCUS;
 }
 
-/*
-================
-idListWindow::InitScroller
-
-This is the same as in idEditWindow
-================
-*/
 void idListWindow::InitScroller( bool horizontal )
 {
 	const char* thumbImage	 = "guis/assets/scrollbar_thumb.tga";
