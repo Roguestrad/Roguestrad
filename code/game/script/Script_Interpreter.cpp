@@ -33,11 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-/*
-================
-idInterpreter::idInterpreter()
-================
-*/
 idInterpreter::idInterpreter()
 {
 	localstackUsed	= 0;
@@ -48,11 +43,6 @@ idInterpreter::idInterpreter()
 	Reset();
 }
 
-/*
-================
-idInterpreter::Save
-================
-*/
 void idInterpreter::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -99,11 +89,6 @@ void idInterpreter::Save( idSaveGame* savefile ) const
 	savefile->WriteBool( debug );
 }
 
-/*
-================
-idInterpreter::Restore
-================
-*/
 void idInterpreter::Restore( idRestoreGame* savefile )
 {
 	int	  i;
@@ -155,11 +140,6 @@ void idInterpreter::Restore( idRestoreGame* savefile )
 	savefile->ReadBool( debug );
 }
 
-/*
-================
-idInterpreter::Reset
-================
-*/
 void idInterpreter::Reset()
 {
 	callStackDepth = 0;
@@ -180,16 +160,6 @@ void idInterpreter::Reset()
 	doneProcessing = true;
 }
 
-/*
-================
-idInterpreter::GetRegisterValue
-
-Returns a string representation of the value of the register.  This is
-used primarily for the debugger and debugging
-
-//FIXME:  This is pretty much wrong.  won't access data in most situations.
-================
-*/
 bool idInterpreter::GetRegisterValue( const char* name, idStr& out, int scopeDepth )
 {
 	varEval_t		  reg;
@@ -345,61 +315,31 @@ bool idInterpreter::GetRegisterValue( const char* name, idStr& out, int scopeDep
 	}
 }
 
-/*
-================
-idInterpreter::GetCallstackDepth
-================
-*/
 int idInterpreter::GetCallstackDepth() const
 {
 	return callStackDepth;
 }
 
-/*
-================
-idInterpreter::GetCallstack
-================
-*/
 const prstack_t* idInterpreter::GetCallstack() const
 {
 	return &callStack[0];
 }
 
-/*
-================
-idInterpreter::GetCurrentFunction
-================
-*/
 const function_t* idInterpreter::GetCurrentFunction() const
 {
 	return currentFunction;
 }
 
-/*
-================
-idInterpreter::GetThread
-================
-*/
 idThread* idInterpreter::GetThread() const
 {
 	return thread;
 }
 
-/*
-================
-idInterpreter::SetThread
-================
-*/
 void idInterpreter::SetThread( idThread* pThread )
 {
 	thread = pThread;
 }
 
-/*
-================
-idInterpreter::CurrentLine
-================
-*/
 int idInterpreter::CurrentLine() const
 {
 	if( instructionPointer < 0 ) {
@@ -408,11 +348,6 @@ int idInterpreter::CurrentLine() const
 	return gameLocal.program.GetLineNumberForStatement( instructionPointer );
 }
 
-/*
-================
-idInterpreter::CurrentFile
-================
-*/
 const char* idInterpreter::CurrentFile() const
 {
 	if( instructionPointer < 0 ) {
@@ -421,11 +356,6 @@ const char* idInterpreter::CurrentFile() const
 	return gameLocal.program.GetFilenameForStatement( instructionPointer );
 }
 
-/*
-============
-idInterpreter::StackTrace
-============
-*/
 void idInterpreter::StackTrace() const
 {
 	const function_t* f;
@@ -458,13 +388,6 @@ void idInterpreter::StackTrace() const
 	}
 }
 
-/*
-============
-idInterpreter::Error
-
-Aborts the currently executing function
-============
-*/
 void idInterpreter::Error( const char* fmt, ... ) const
 {
 	va_list argptr;
@@ -484,13 +407,6 @@ void idInterpreter::Error( const char* fmt, ... ) const
 	}
 }
 
-/*
-============
-idInterpreter::Warning
-
-Prints file and line number information with warning.
-============
-*/
 void idInterpreter::Warning( const char* fmt, ... ) const
 {
 	va_list argptr;
@@ -508,11 +424,6 @@ void idInterpreter::Warning( const char* fmt, ... ) const
 	}
 }
 
-/*
-================
-idInterpreter::DisplayInfo
-================
-*/
 void idInterpreter::DisplayInfo() const
 {
 	const function_t* f;
@@ -543,13 +454,6 @@ void idInterpreter::DisplayInfo() const
 	}
 }
 
-/*
-====================
-idInterpreter::ThreadCall
-
-Copys the args from the calling thread's stack
-====================
-*/
 void idInterpreter::ThreadCall( idInterpreter* source, const function_t* func, int args )
 {
 	Reset();
@@ -568,15 +472,6 @@ void idInterpreter::ThreadCall( idInterpreter* source, const function_t* func, i
 	thread->SetThreadName( currentFunction->Name() );
 }
 
-/*
-================
-idInterpreter::EnterObjectFunction
-
-Calls a function on a script object.
-
-NOTE: If this is called from within a event called by this interpreter, the function arguments will be invalid after calling this function.
-================
-*/
 void idInterpreter::EnterObjectFunction( idEntity* self, const function_t* func, bool clearStack )
 {
 	if( clearStack ) {
@@ -590,15 +485,6 @@ void idInterpreter::EnterObjectFunction( idEntity* self, const function_t* func,
 	EnterFunction( func, false );
 }
 
-/*
-====================
-idInterpreter::EnterFunction
-
-Returns the new program statement counter
-
-NOTE: If this is called from within a event called by this interpreter, the function arguments will be invalid after calling this function.
-====================
-*/
 void idInterpreter::EnterFunction( const function_t* func, bool clearStack )
 {
 	int		   c;
@@ -669,11 +555,6 @@ void idInterpreter::EnterFunction( const function_t* func, bool clearStack )
 	}
 }
 
-/*
-====================
-idInterpreter::LeaveFunction
-====================
-*/
 void idInterpreter::LeaveFunction( idVarDef* returnDef )
 {
 	prstack_t* stack;
@@ -730,11 +611,6 @@ void idInterpreter::LeaveFunction( idVarDef* returnDef )
 	}
 }
 
-/*
-================
-idInterpreter::CallEvent
-================
-*/
 void idInterpreter::CallEvent( const function_t* func, int argsize )
 {
 	int				  i;
@@ -867,11 +743,6 @@ void idInterpreter::CallEvent( const function_t* func, int argsize )
 	popParms = 0;
 }
 
-/*
-================
-idInterpreter::BeginMultiFrameEvent
-================
-*/
 bool idInterpreter::BeginMultiFrameEvent( idEntity* ent, const idEventDef* event )
 {
 	if( eventEntity != ent ) {
@@ -888,11 +759,6 @@ bool idInterpreter::BeginMultiFrameEvent( idEntity* ent, const idEventDef* event
 	return true;
 }
 
-/*
-================
-idInterpreter::EndMultiFrameEvent
-================
-*/
 void idInterpreter::EndMultiFrameEvent( idEntity* ent, const idEventDef* event )
 {
 	if( multiFrameEvent != event ) {
@@ -902,21 +768,11 @@ void idInterpreter::EndMultiFrameEvent( idEntity* ent, const idEventDef* event )
 	multiFrameEvent = NULL;
 }
 
-/*
-================
-idInterpreter::MultiFrameEventInProgress
-================
-*/
 bool idInterpreter::MultiFrameEventInProgress() const
 {
 	return multiFrameEvent != NULL;
 }
 
-/*
-================
-idInterpreter::CallSysEvent
-================
-*/
 void idInterpreter::CallSysEvent( const function_t* func, int argsize )
 {
 	int				  i;
@@ -1000,11 +856,6 @@ void idInterpreter::CallSysEvent( const function_t* func, int argsize )
 	popParms = 0;
 }
 
-/*
-====================
-idInterpreter::Execute
-====================
-*/
 bool idInterpreter::Execute()
 {
 	varEval_t		  var_a;
@@ -1913,11 +1764,6 @@ bool idInterpreter::Execute()
 }
 
 // RB: moved from Script_Interpreter.h to avoid include problems with the script debugger
-/*
-================
-idInterpreter::GetEntity
-================
-*/
 idEntity* idInterpreter::GetEntity( int entnum ) const
 {
 	assert( entnum <= MAX_GENTITIES );
@@ -1927,11 +1773,6 @@ idEntity* idInterpreter::GetEntity( int entnum ) const
 	return NULL;
 }
 
-/*
-================
-idInterpreter::GetScriptObject
-================
-*/
 idScriptObject* idInterpreter::GetScriptObject( int entnum ) const
 {
 	idEntity* ent;

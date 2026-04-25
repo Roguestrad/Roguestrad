@@ -30,30 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-================================================================================================
-idMenuWidget_Help
-
-Shows a help tooltip message based on observed events.  It's expected that the widgets being
-observed are all buttons, and therefore have a GetDescription() call to get the help message.
-
-SWF object structure
---------------------
-HELPTOOLTIP (Frames: shown, shown, hide, hidden)
-	txtOption
-		txtValue (Text)
-Note: Frame 1 should, effectively, be a "hidden" state.
-
-Future work:
-- Make this act more like a help tooltip when on PC?
-================================================================================================
-*/
-
-/*
-========================
-idMenuWidget_Help::Update
-========================
-*/
 void idMenuWidget_Help::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -91,11 +67,6 @@ void idMenuWidget_Help::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_Help::ObserveEvent
-========================
-*/
 void idMenuWidget_Help::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	const idMenuWidget_Button* const button = dynamic_cast<const idMenuWidget_Button*>( &widget );

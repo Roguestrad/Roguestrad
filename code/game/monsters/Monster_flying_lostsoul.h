@@ -30,22 +30,47 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterLostSoul
+	\brief the monster lost soul AI class implements the behavior and state management for an ice-themed enemy creature.
+
+	This class extends the base AI functionality to define the specific behaviors of anmonster lost soul enemy. It manages the creature's state machine including initialization, idle behavior,
+   combat states such as charging, melee attacks, and retreating. The class handles AI initialization, begins the AI behavior, checks for applicable attacks based on positioning and timing, and
+   executes the corresponding attack actions. The implementation supports fly movement and idle animation during the begin state, and transitions between idle and combat states based on enemy
+   detection. The combat behavior includes charging, melee attacks, and retreat mechanics to provide varied and challenging enemy interactions.
+
+*/
 class iceMonsterLostSoul : public idAI
 {
 	CLASS_PROTOTYPE( iceMonsterLostSoul );
 
 public:
+	//! Initializes the AI system
 	virtual void Init() override;
+
+	//! Initializes the monster lost soul AI behavior.
 	virtual void AI_Begin() override;
 
+	//! Checks for and returns applicable attack flags for the monster lost soul based on enemy position and timing.
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action with the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the monster lost soul state with fly movement and idle animation.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for the monster lost soul, transitioning to combat when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Executes a charging attack move for the monster lost soul.
 	stateResult_t combat_charge( stateParms_t* parms );
+
+	//! Executes a melee attack animation and waits for it to complete.
 	stateResult_t combat_melee( stateParms_t* parms );
+
+	//! Handles the retreat behavior of the monster lost soul during combat.
 	stateResult_t combat_retreat( stateParms_t* parms );
 
 private:

@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../Game_local.h"
 
 const static int NUM_GAME_OPTIONS_OPTIONS = 8;
-/*
-========================
-idMenuScreen_Shell_MatchSettings::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_MatchSettings::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -105,11 +100,6 @@ void			 idMenuScreen_Shell_MatchSettings::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::Update
-========================
-*/
 void idMenuScreen_Shell_MatchSettings::Update()
 {
 	if( menuData != NULL ) {
@@ -149,22 +139,12 @@ void idMenuScreen_Shell_MatchSettings::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_MatchSettings::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	matchData.LoadData();
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::HideScreen
-========================
-*/
 void idMenuScreen_Shell_MatchSettings::HideScreen( const mainMenuTransition_t transitionType )
 {
 	if( matchData.IsDataChanged() ) {
@@ -173,11 +153,6 @@ void idMenuScreen_Shell_MatchSettings::HideScreen( const mainMenuTransition_t tr
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_MatchSettings::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -258,11 +233,6 @@ extern idCVar si_fragLimit;
 extern idCVar si_map;
 extern idCVar si_mode;
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::idMenuDataSource_MatchSettings
-========================
-*/
 idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::idMenuDataSource_MatchSettings()
 {
 	fields.SetNum( MAX_MATCH_FIELDS );
@@ -270,11 +240,6 @@ idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::idMenuDataSour
 	updateMap = false;
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::LoadData
-========================
-*/
 void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::LoadData()
 {
 	updateMap						  = false;
@@ -298,11 +263,6 @@ void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::LoadData(
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::CommitData
-========================
-*/
 void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::CommitData()
 {
 	cvarSystem->SetModifiedFlags( CVAR_ARCHIVE );
@@ -311,11 +271,6 @@ void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::CommitDat
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::GetMapName
-========================
-*/
 void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::GetMapName( int index, idStr& name )
 {
 	idLobbyBase&			 lobby			 = session->GetActivePlatformLobbyBase();
@@ -327,11 +282,6 @@ void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::GetMapNam
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::GetModeName
-========================
-*/
 void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::GetModeName( int index, idStr& name )
 {
 	idLobbyBase&			 lobby			 = session->GetActivePlatformLobbyBase();
@@ -343,11 +293,6 @@ void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::GetModeNa
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::AdjustField
-========================
-*/
 void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::AdjustField( const int fieldIndex, const int adjustAmount )
 {
 	const idStrList&	  modes = common->GetModeList();
@@ -444,11 +389,6 @@ void idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::AdjustFie
 	cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 }
 
-/*
-========================
-idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::IsDataChanged
-========================
-*/
 bool idMenuScreen_Shell_MatchSettings::idMenuDataSource_MatchSettings::IsDataChanged() const
 {
 	if( fields[MATCH_FIELD_TIME].ToString() != originalFields[MATCH_FIELD_TIME].ToString() ) {

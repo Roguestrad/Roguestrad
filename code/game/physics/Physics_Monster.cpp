@@ -37,11 +37,6 @@ END_CLASS
 
 const float OVERCLIP = 1.001f;
 
-/*
-=====================
-idPhysics_Monster::CheckGround
-=====================
-*/
 void		idPhysics_Monster::CheckGround( monsterPState_t& state )
 {
 	trace_t groundTrace;
@@ -84,11 +79,6 @@ void		idPhysics_Monster::CheckGround( monsterPState_t& state )
 	}
 }
 
-/*
-=====================
-idPhysics_Monster::SlideMove
-=====================
-*/
 monsterMoveResult_t idPhysics_Monster::SlideMove( idVec3& start, idVec3& velocity, const idVec3& delta )
 {
 	int		i;
@@ -122,14 +112,6 @@ monsterMoveResult_t idPhysics_Monster::SlideMove( idVec3& start, idVec3& velocit
 	return MM_BLOCKED;
 }
 
-/*
-=====================
-idPhysics_Monster::StepMove
-
-  move start into the delta direction
-  the velocity is clipped conform any collisions
-=====================
-*/
 monsterMoveResult_t idPhysics_Monster::StepMove( idVec3& start, idVec3& velocity, const idVec3& delta )
 {
 	trace_t				tr;
@@ -217,22 +199,12 @@ monsterMoveResult_t idPhysics_Monster::StepMove( idVec3& start, idVec3& velocity
 	return MM_STEPPED;
 }
 
-/*
-================
-idPhysics_Monster::Activate
-================
-*/
 void idPhysics_Monster::Activate()
 {
 	current.atRest = -1;
 	self->BecomeActive( TH_PHYSICS );
 }
 
-/*
-================
-idPhysics_Monster::Rest
-================
-*/
 void idPhysics_Monster::Rest()
 {
 	current.atRest = gameLocal.time;
@@ -240,21 +212,11 @@ void idPhysics_Monster::Rest()
 	self->BecomeInactive( TH_PHYSICS );
 }
 
-/*
-================
-idPhysics_Monster::PutToRest
-================
-*/
 void idPhysics_Monster::PutToRest()
 {
 	Rest();
 }
 
-/*
-================
-idPhysics_Monster::idPhysics_Monster
-================
-*/
 idPhysics_Monster::idPhysics_Monster()
 {
 	memset( &current, 0, sizeof( current ) );
@@ -272,11 +234,7 @@ idPhysics_Monster::idPhysics_Monster()
 	blockingEntity	= NULL;
 }
 
-/*
-================
-idPhysics_Monster_SavePState
-================
-*/
+//! Saves the monster physics state to the provided save file
 void idPhysics_Monster_SavePState( idSaveGame* savefile, const monsterPState_t& state )
 {
 	savefile->WriteVec3( state.origin );
@@ -287,11 +245,7 @@ void idPhysics_Monster_SavePState( idSaveGame* savefile, const monsterPState_t& 
 	savefile->WriteInt( state.atRest );
 }
 
-/*
-================
-idPhysics_Monster_RestorePState
-================
-*/
+//! Restores the monster physics state from a save file.
 void idPhysics_Monster_RestorePState( idRestoreGame* savefile, monsterPState_t& state )
 {
 	savefile->ReadVec3( state.origin );
@@ -302,11 +256,6 @@ void idPhysics_Monster_RestorePState( idRestoreGame* savefile, monsterPState_t& 
 	savefile->ReadInt( state.atRest );
 }
 
-/*
-================
-idPhysics_Monster::Save
-================
-*/
 void idPhysics_Monster::Save( idSaveGame* savefile ) const
 {
 	idPhysics_Monster_SavePState( savefile, current );
@@ -325,11 +274,6 @@ void idPhysics_Monster::Save( idSaveGame* savefile ) const
 	savefile->WriteObject( blockingEntity );
 }
 
-/*
-================
-idPhysics_Monster::Restore
-================
-*/
 void idPhysics_Monster::Restore( idRestoreGame* savefile )
 {
 	idPhysics_Monster_RestorePState( savefile, current );
@@ -348,11 +292,6 @@ void idPhysics_Monster::Restore( idRestoreGame* savefile )
 	savefile->ReadObject( reinterpret_cast<idClass*&>( blockingEntity ) );
 }
 
-/*
-================
-idPhysics_Monster::SetDelta
-================
-*/
 void idPhysics_Monster::SetDelta( const idVec3& d )
 {
 	delta = d;
@@ -361,111 +300,56 @@ void idPhysics_Monster::SetDelta( const idVec3& d )
 	}
 }
 
-/*
-================
-idPhysics_Monster::SetMaxStepHeight
-================
-*/
 void idPhysics_Monster::SetMaxStepHeight( const float newMaxStepHeight )
 {
 	maxStepHeight = newMaxStepHeight;
 }
 
-/*
-================
-idPhysics_Monster::GetMaxStepHeight
-================
-*/
 float idPhysics_Monster::GetMaxStepHeight() const
 {
 	return maxStepHeight;
 }
 
-/*
-================
-idPhysics_Monster::OnGround
-================
-*/
 bool idPhysics_Monster::OnGround() const
 {
 	return current.onGround;
 }
 
-/*
-================
-idPhysics_Monster::GetSlideMoveEntity
-================
-*/
 idEntity* idPhysics_Monster::GetSlideMoveEntity() const
 {
 	return blockingEntity;
 }
 
-/*
-================
-idPhysics_Monster::GetMoveResult
-================
-*/
 monsterMoveResult_t idPhysics_Monster::GetMoveResult() const
 {
 	return moveResult;
 }
 
-/*
-================
-idPhysics_Monster::ForceDeltaMove
-================
-*/
 void idPhysics_Monster::ForceDeltaMove( bool force )
 {
 	forceDeltaMove = force;
 }
 
-/*
-================
-idPhysics_Monster::UseFlyMove
-================
-*/
 void idPhysics_Monster::UseFlyMove( bool force )
 {
 	fly = force;
 }
 
-/*
-================
-idPhysics_Monster::UseVelocityMove
-================
-*/
 void idPhysics_Monster::UseVelocityMove( bool force )
 {
 	useVelocityMove = force;
 }
 
-/*
-================
-idPhysics_Monster::EnableImpact
-================
-*/
 void idPhysics_Monster::EnableImpact()
 {
 	noImpact = false;
 }
 
-/*
-================
-idPhysics_Monster::DisableImpact
-================
-*/
 void idPhysics_Monster::DisableImpact()
 {
 	noImpact = true;
 }
 
-/*
-================
-idPhysics_Monster::Evaluate
-================
-*/
 bool idPhysics_Monster::Evaluate( int timeStepMSec, int endTimeMSec )
 {
 	idVec3 masterOrigin, oldOrigin;
@@ -563,30 +447,15 @@ bool idPhysics_Monster::Evaluate( int timeStepMSec, int endTimeMSec )
 	return ( current.origin != oldOrigin );
 }
 
-/*
-================
-idPhysics_Monster::UpdateTime
-================
-*/
 void idPhysics_Monster::UpdateTime( int endTimeMSec )
 {
 }
 
-/*
-================
-idPhysics_Monster::GetTime
-================
-*/
 int idPhysics_Monster::GetTime() const
 {
 	return gameLocal.time;
 }
 
-/*
-================
-idPhysics_Monster::GetImpactInfo
-================
-*/
 void idPhysics_Monster::GetImpactInfo( const int id, const idVec3& point, impactInfo_t* info ) const
 {
 	info->invMass = invMass;
@@ -595,11 +464,6 @@ void idPhysics_Monster::GetImpactInfo( const int id, const idVec3& point, impact
 	info->velocity = current.velocity;
 }
 
-/*
-================
-idPhysics_Monster::ApplyImpulse
-================
-*/
 void idPhysics_Monster::ApplyImpulse( const int id, const idVec3& point, const idVec3& impulse )
 {
 	if( noImpact ) {
@@ -609,41 +473,21 @@ void idPhysics_Monster::ApplyImpulse( const int id, const idVec3& point, const i
 	Activate();
 }
 
-/*
-================
-idPhysics_Monster::IsAtRest
-================
-*/
 bool idPhysics_Monster::IsAtRest() const
 {
 	return current.atRest >= 0;
 }
 
-/*
-================
-idPhysics_Monster::GetRestStartTime
-================
-*/
 int idPhysics_Monster::GetRestStartTime() const
 {
 	return current.atRest;
 }
 
-/*
-================
-idPhysics_Monster::SaveState
-================
-*/
 void idPhysics_Monster::SaveState()
 {
 	saved = current;
 }
 
-/*
-================
-idPhysics_Monster::RestoreState
-================
-*/
 void idPhysics_Monster::RestoreState()
 {
 	current = saved;
@@ -653,11 +497,6 @@ void idPhysics_Monster::RestoreState()
 	EvaluateContacts();
 }
 
-/*
-================
-idPhysics_Player::SetOrigin
-================
-*/
 void idPhysics_Monster::SetOrigin( const idVec3& newOrigin, int id )
 {
 	idVec3 masterOrigin;
@@ -674,22 +513,12 @@ void idPhysics_Monster::SetOrigin( const idVec3& newOrigin, int id )
 	Activate();
 }
 
-/*
-================
-idPhysics_Player::SetAxis
-================
-*/
 void idPhysics_Monster::SetAxis( const idMat3& newAxis, int id )
 {
 	clipModel->Link( gameLocal.clip, self, 0, clipModel->GetOrigin(), newAxis );
 	Activate();
 }
 
-/*
-================
-idPhysics_Monster::Translate
-================
-*/
 void idPhysics_Monster::Translate( const idVec3& translation, int id )
 {
 	current.localOrigin += translation;
@@ -698,11 +527,6 @@ void idPhysics_Monster::Translate( const idVec3& translation, int id )
 	Activate();
 }
 
-/*
-================
-idPhysics_Monster::Rotate
-================
-*/
 void idPhysics_Monster::Rotate( const idRotation& rotation, int id )
 {
 	idVec3 masterOrigin;
@@ -719,55 +543,28 @@ void idPhysics_Monster::Rotate( const idRotation& rotation, int id )
 	Activate();
 }
 
-/*
-================
-idPhysics_Monster::SetLinearVelocity
-================
-*/
 void idPhysics_Monster::SetLinearVelocity( const idVec3& newLinearVelocity, int id )
 {
 	current.velocity = newLinearVelocity;
 	Activate();
 }
 
-/*
-================
-idPhysics_Monster::GetLinearVelocity
-================
-*/
 const idVec3& idPhysics_Monster::GetLinearVelocity( int id ) const
 {
 	return current.velocity;
 }
 
-/*
-================
-idPhysics_Monster::SetPushed
-================
-*/
 void idPhysics_Monster::SetPushed( int deltaTime )
 {
 	// velocity with which the monster is pushed
 	current.pushVelocity += ( current.origin - saved.origin ) / ( deltaTime * idMath::M_MS2SEC );
 }
 
-/*
-================
-idPhysics_Monster::GetPushedLinearVelocity
-================
-*/
 const idVec3& idPhysics_Monster::GetPushedLinearVelocity( const int id ) const
 {
 	return current.pushVelocity;
 }
 
-/*
-================
-idPhysics_Monster::SetMaster
-
-  the binding is never orientated
-================
-*/
 void idPhysics_Monster::SetMaster( idEntity* master, const bool orientated )
 {
 	idVec3 masterOrigin;
@@ -795,11 +592,6 @@ const int	MONSTER_VELOCITY_TOTAL_BITS	   = 16;
 const int	MONSTER_VELOCITY_EXPONENT_BITS = idMath::BitsForInteger( idMath::BitsForFloat( MONSTER_VELOCITY_MAX ) ) + 1;
 const int	MONSTER_VELOCITY_MANTISSA_BITS = MONSTER_VELOCITY_TOTAL_BITS - 1 - MONSTER_VELOCITY_EXPONENT_BITS;
 
-/*
-================
-idPhysics_Monster::WriteToSnapshot
-================
-*/
 void		idPhysics_Monster::WriteToSnapshot( idBitMsg& msg ) const
 {
 	msg.WriteFloat( current.origin[0] );
@@ -818,11 +610,6 @@ void		idPhysics_Monster::WriteToSnapshot( idBitMsg& msg ) const
 	msg.WriteBits( current.onGround, 1 );
 }
 
-/*
-================
-idPhysics_Monster::ReadFromSnapshot
-================
-*/
 void idPhysics_Monster::ReadFromSnapshot( const idBitMsg& msg )
 {
 	current.origin[0]		= msg.ReadFloat();

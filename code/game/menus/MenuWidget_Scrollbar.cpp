@@ -38,11 +38,6 @@ void idMenuWidget_ScrollBar::Initialize( idMenuHandler* data )
 	AddEventAction( WIDGET_EVENT_DRAG_STOP ).Set( new( TAG_SWF ) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_DRAG_STOP, WIDGET_EVENT_DRAG_STOP ) );
 }
 
-/*
-========================
-idMenuWidget_ScrollBar::Update
-========================
-*/
 void idMenuWidget_ScrollBar::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -96,11 +91,6 @@ void idMenuWidget_ScrollBar::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_ScrollBar::CalcTopAndBottom
-========================
-*/
 void idMenuWidget_ScrollBar::CalcTopAndBottom()
 {
 	if( GetSWFObject() == NULL ) {
@@ -135,11 +125,6 @@ void idMenuWidget_ScrollBar::CalcTopAndBottom()
 	yBot = tempPos;
 }
 
-/*
-========================
-idMenuWidget_ScrollBar::CalculatePosition
-========================
-*/
 void idMenuWidget_ScrollBar::CalculatePosition( float x, float y )
 {
 	if( GetSprite() == NULL ) {
@@ -203,11 +188,6 @@ void idMenuWidget_ScrollBar::CalculatePosition( float x, float y )
 	}
 }
 
-/*
-========================
-idMenuWidget_ScrollBar::HandleAction
-========================
-*/
 bool idMenuWidget_ScrollBar::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	widgetAction_t actionType = action.GetType();
@@ -240,11 +220,6 @@ bool idMenuWidget_ScrollBar::HandleAction( idWidgetAction& action, const idWidge
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuWidget_Help::ObserveEvent
-========================
-*/
 void idMenuWidget_ScrollBar::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	switch( event.type ) {

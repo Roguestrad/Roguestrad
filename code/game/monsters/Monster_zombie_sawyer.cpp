@@ -39,11 +39,6 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( iceMonsterZombie, iceMonsterZombieSawyer )
 END_CLASS
 
-/*
-====================
-iceMonsterZombieSawyer::AI_Begin
-====================
-*/
 void iceMonsterZombieSawyer::AI_Begin()
 {
 	Event_SetSmokeVisibility( ALL_PARTICLES, 0 );
@@ -51,11 +46,6 @@ void iceMonsterZombieSawyer::AI_Begin()
 	SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterZombieSawyer::state_Begin
-=====================
-*/
 stateResult_t iceMonsterZombieSawyer::state_Begin( stateParms_t* parms )
 {
 	Event_AnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 0 );
@@ -66,11 +56,6 @@ stateResult_t iceMonsterZombieSawyer::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieSawyer::state_Idle
-=====================
-*/
 stateResult_t iceMonsterZombieSawyer::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -85,11 +70,6 @@ stateResult_t iceMonsterZombieSawyer::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieSawyer::check_attacks
-=====================
-*/
 int iceMonsterZombieSawyer::check_attacks()
 {
 	int attack_flags;
@@ -102,11 +82,6 @@ int iceMonsterZombieSawyer::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-iceMonsterZombieSawyer::do_attack
-=====================
-*/
 void iceMonsterZombieSawyer::do_attack( int attack_flags )
 {
 	if( attack_flags & ATTACK_MELEE ) {
@@ -115,11 +90,6 @@ void iceMonsterZombieSawyer::do_attack( int attack_flags )
 	}
 }
 
-/*
-=====================
-iceMonsterZombieSawyer::combat_melee
-=====================
-*/
 stateResult_t iceMonsterZombieSawyer::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {

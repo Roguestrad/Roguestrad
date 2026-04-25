@@ -30,23 +30,50 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterZombieSecurityPistol
+	\brief A specialized zombie monster class implementing security pistol AI behavior with ranged attacks and dodge maneuvers.
+
+	This class represents a zombie monster variant that utilizes a security pistol weapon for ranged combat. It inherits from the basemonster zombie class and implements specific AI states for
+   beginning, idling, attacking, and dodging. The monster supports both standing and crouched attack animations, with the ability to perform right and left dodge maneuvers during combat. The AI system
+   is initialized through the Init and AI_Begin methods, which set up the monster's behavior and state management. Attack availability and execution are handled through the check_attacks and do_attack
+   methods, allowing the monster to switch between different combat behaviors based on the environment and target conditions.
+
+*/
 class iceMonsterZombieSecurityPistol : public iceMonsterZombie
 {
 	CLASS_PROTOTYPE( iceMonsterZombieSecurityPistol );
 
 public:
+	//! Initializes the AI system for the monster zombie security pistol.
 	virtual void Init() override;
+
+	//! Initializes the ai state for the monster zombie security pistol.
 	virtual void AI_Begin() override;
 
+	//! Returns flags indicating which attacks are available for the zombie security pistol to perform
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action based on the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the zombie security pistol monster's state and sets up idle animations and movement type.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for the zombie security pistol monster, transitioning to combat when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Handles the standing attack state for the zombie security pistol monster
 	stateResult_t stand_attack( stateParms_t* parms );
+
+	//! Performs a crouched ranged attack animation with possible dodge interrupts.
 	stateResult_t crouch_attack( stateParms_t* parms );
+
+	//! Performs a right dodge action during combat for the zombie security pistol monster.
 	stateResult_t combat_dodge_right( stateParms_t* parms );
+
+	//! Handles the left dodge maneuver during combat for the monster zombie security pistol AI.
 	stateResult_t combat_dodge_left( stateParms_t* parms );
 
 private:

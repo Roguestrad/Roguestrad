@@ -58,35 +58,79 @@ typedef enum {
 	PVS_CONNECTED_AREAS	 = 2  // PVS considering all topologically connected areas visible
 } pvsType_t;
 
+/*!
+	\class idPVS
+	\brief Manages potentially visible set calculations for determining which areas or objects are visible from a given position.
+
+	The idPVS class implements a system for computing and managing potentially visible sets to optimize rendering by determining which areas or objects are visible from a specific source. It supports
+   various methods for setting up PVS handles based on different source types including positions, bounds, and area numbers. The class provides functionality to check visibility for individual points,
+   bounds, or area sets against a given PVS handle, and includes methods for visualizing the PVS results. The system handles multiple PVS types and supports merging of PVS handles. Memory management
+   is handled through allocation and deallocation of PVS handles, with support for allocating handles for specific PVS entries. The implementation includes algorithms for computing visibility through
+   portals and passages, supporting both recursive flooding and passage-based calculations. The class also includes utilities for creating and destroying portal and passage data structures, and
+   provides methods for retrieving connected areas and checking portal sky visibility.
+
+*/
 class idPVS
 {
 public:
+	//! Initializes a new instance of the idPVS class.
 	idPVS();
+
+	//! Destructor for the idPVS class that shuts down the PVS system.
 	~idPVS();
-	// setup for the current map
+
+	//! Initializes the PVS system for the current map.
 	void		Init();
+
+	//! Deallocates all memory resources used by the PVS system.
 	void		Shutdown();
-	// get the area(s) the source is in
-	int			GetPVSArea( const idVec3& point ) const;							   // returns the area number
-	int			GetPVSAreas( const idBounds& bounds, int* areas, int maxAreas ) const; // returns number of areas
-	// setup current PVS for the source
+
+	//! Returns the area number that contains the specified point.
+	int			GetPVSArea( const idVec3& point ) const;
+
+	//! Returns the number of PVS areas that intersect with the given bounds.
+	int			GetPVSAreas( const idBounds& bounds, int* areas, int maxAreas ) const;
+
+	//! Sets up the current potentially visible set for the given source position and PVS type.
 	pvsHandle_t SetupCurrentPVS( const idVec3& source, const pvsType_t type = PVS_NORMAL ) const;
+
+	//! Sets up the PVS for the given source bounds and PVS type.
 	pvsHandle_t SetupCurrentPVS( const idBounds& source, const pvsType_t type = PVS_NORMAL ) const;
+
+	//! Sets up and returns a PVS handle for the specified source area and PVS type
 	pvsHandle_t SetupCurrentPVS( const int sourceArea, const pvsType_t type = PVS_NORMAL ) const;
+
+	//! Sets up and returns a handle to the potentially visible set for the given source areas and PVS type.
 	pvsHandle_t SetupCurrentPVS( const int* sourceAreas, const int numSourceAreas, const pvsType_t type = PVS_NORMAL ) const;
+
+	//! Merges two PVS handles into a new PVS handle using a bitwise OR operation
 	pvsHandle_t MergeCurrentPVS( pvsHandle_t pvs1, pvsHandle_t pvs2 ) const;
+
+	//! Frees a PVS handle that was previously allocated
 	void		FreeCurrentPVS( pvsHandle_t handle ) const;
-	// returns true if the target is within the current PVS
+
+	//! Returns true if the target is within the current PVS.
 	bool		InCurrentPVS( const pvsHandle_t handle, const idVec3& target ) const;
+
+	//! Checks if the given target bounds are visible from the current PVS handle.
 	bool		InCurrentPVS( const pvsHandle_t handle, const idBounds& target ) const;
+
+	//! Checks if a target area is visible from a given PVS handle
 	bool		InCurrentPVS( const pvsHandle_t handle, const int targetArea ) const;
+
+	//! Checks if the specified target areas are visible from the given PVS handle.
 	bool		InCurrentPVS( const pvsHandle_t handle, const int* targetAreas, int numTargetAreas ) const;
-	// draw all portals that are within the PVS of the source
+
+	//! Draws all portals within the PVS of the given source position.
 	void		DrawPVS( const idVec3& source, const pvsType_t type = PVS_NORMAL ) const;
+
+	//! Draws the potentially visible set for a given source bounds and type.
 	void		DrawPVS( const idBounds& source, const pvsType_t type = PVS_NORMAL ) const;
-	// visualize the PVS the handle points to
+
+	//! Visualizes the PVS the handle points to
 	void		DrawCurrentPVS( const pvsHandle_t handle, const idVec3& source ) const;
 
+	//! Checks if the given origin is visible from the specified PVS handle with portal sky.
 	bool		CheckAreasForPortalSky( const pvsHandle_t handle, const idVec3& origin );
 
 private:
@@ -106,19 +150,60 @@ private:
 	struct pvsArea_s*	 pvsAreas;
 
 private:
+	//! Returns the total number of portals in all areas of the render world.
 	int				   GetPortalCount() const;
+
+	//! Initializes and allocates data structures for potential visibility system calculations
 	void			   CreatePVSData();
+
+	//! Frees all memory allocated for the PVS data structures.
 	void			   DestroyPVSData();
+
+	//! Copies portal visibility data to might see data for all portals.
 	void			   CopyPortalPVSToMightSee() const;
+
+	//! Recursively floods PVS through portal frontiers starting from a given portal and area.
 	void			   FloodFrontPortalPVS_r( struct pvsPortal_s* portal, int areaNum ) const;
+
+	//! Computes potentially visible sets for portal fronts in the PVS system
 	void			   FrontPortalPVS() const;
+
+	//! Recursively floods through PVS passages to determine visibility between portals
 	struct pvsStack_s* FloodPassagePVS_r( struct pvsPortal_s* source, const struct pvsPortal_s* portal, struct pvsStack_s* prevStack ) const;
+
+	//! Calculates portal PVS by flooding through passages.
 	void			   PassagePVS() const;
+
+	/*!
+		\brief Adds passage boundaries between source and pass windings by computing separating planes
+
+		This function computes separating planes between two windings to determine passage boundaries in a visibility processing system. It iterates through vertices of both windings to find valid
+	   separating planes that put all source vertices on one side and all pass vertices on the other side. The function supports flipping the clipping normal and checks for duplicate planes to avoid
+	   redundant boundaries. The computed planes are stored in the bounds array up to the maximum allowed bounds.
+
+		\param source The source winding for boundary calculation
+		\param pass The pass winding for boundary calculation
+		\param flipClip Flag indicating whether to flip the clip normal
+		\param bounds Array to store the computed boundary planes
+		\param numBounds Reference to the number of computed bounds
+		\param maxBounds Maximum number of bounds that can be stored
+		\throws Warning message when maximum passage boundaries are exceeded
+	*/
 	void			   AddPassageBoundaries( const idWinding& source, const idWinding& pass, bool flipClip, idPlane* bounds, int& numBounds, int maxBounds ) const;
+
+	//! Creates passages for the PVS system by calculating visibility between portals.
 	void			   CreatePassages() const;
+
+	//! Destroys all passage data associated with the portals in the PVS.
 	void			   DestroyPassages() const;
+
+	//! Computes the total number of visible areas based on portal visibility information.
 	int				   AreaPVSFromPortalPVS() const;
+
+	//! Fills a boolean array with connected areas reachable from a source area, excluding areas blocked by view-blocking portals.
 	void			   GetConnectedAreas( int srcArea, bool* connectedAreas ) const;
+
+	//! Allocates and returns a handle for a PVS entry.
 	pvsHandle_t		   AllocCurrentPVS( unsigned int h ) const;
 };
 

@@ -870,6 +870,20 @@ public:
 
 	//! Spawns the bot at the specified origin and angles, initializing its behavior state.
 	virtual void SpawnToPoint( const idVec3& spawn_origin, const idAngles& spawn_angles ) override;
+
+	/*!
+		\brief Handles damage received by the ice bot entity, potentially triggering chat messages and enemy targeting based on the attacker.
+
+		This function processes damage taken by the ice bot, calling the base idPlayer::Damage implementation to apply the damage. It checks if the bot's health is reduced to zero or below, and if so,
+	   sends a death chat message if the attacker is a player. It also sets the attacker as an enemy for the bot when the attacker is valid.
+
+		\param inflictor Entity responsible for applying the damage
+		\param attacker Entity that caused the damage
+		\param dir Direction vector from which the damage originates
+		\param damageDefName Name of the damage definition to be applied
+		\param damageScale Scale factor to modify the damage amount
+		\param location Location index where the damage was applied
+	*/
 	virtual void Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir, const char* damageDefName, const float damageScale, const int location ) override;
 
 	//! Handles the event when damage is inflicted on a target entity.

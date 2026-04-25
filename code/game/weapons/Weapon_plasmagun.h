@@ -30,17 +30,36 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponPlasmaGun
+	\brief A plasma gun weapon implementation that extends basic weapon object functionality with specialized firing, reloading, and animation states.
+
+	This class implements a plasma gun weapon that inherits from a base weapon object. It provides specific behaviors for initializing the weapon, raising and lowering it with animations, handling
+   idle states, firing projectiles with ammo management, and managing the reloading process. The implementation follows a state-driven approach for weapon operations, using animation states and
+   parameters to control transitions and behavior. The class is designed to integrate with a larger weapon system while maintaining clear separation of plasma gun specific functionality.
+
+*/
 class iceWeaponPlasmaGun : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponPlasmaGun );
 
+	//! Initializes the plasma gun weapon object with the specified weapon parameters.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Raises the plasma gun weapon by playing the raise animation and waiting for it to complete.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Puts the plasma gun away by playing the putaway animation and transitioning to the holstered state.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the plasma gun weapon.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Fires the plasma gun weapon, handling ammo checks, projectile launching, and animation states.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Handles the reloading state for the plasma gun weapon.
 	stateResult_t Reload( stateParms_t* parms );
 
 private:

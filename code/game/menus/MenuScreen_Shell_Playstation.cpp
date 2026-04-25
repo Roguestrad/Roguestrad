@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../Game_local.h"
 
 const static int NUM_SETTING_OPTIONS = 8;
-/*
-========================
-idMenuScreen_Shell_Playstation::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_Playstation::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -93,11 +88,6 @@ void			 idMenuScreen_Shell_Playstation::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Playstation::Update
-========================
-*/
 void idMenuScreen_Shell_Playstation::Update()
 {
 	if( menuData != NULL ) {
@@ -140,31 +130,16 @@ void idMenuScreen_Shell_Playstation::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Playstation::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Playstation::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Playstation::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Playstation::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Playstation::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_Playstation::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

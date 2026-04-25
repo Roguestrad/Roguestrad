@@ -34,21 +34,11 @@ extern idCVar pm_stamina;
 extern idCVar in_useJoystick;
 extern idCVar flashlight_batteryDrainTimeMS;
 
-/*
-========================
-idMenuScreen_HUD::Initialize
-========================
-*/
 void		  idMenuScreen_HUD::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
 }
 
-/*
-========================
-idMenuScreen_HUD::ShowScreen
-========================
-*/
 void idMenuScreen_HUD::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	if( menuData != NULL ) {
@@ -173,20 +163,10 @@ void idMenuScreen_HUD::ShowScreen( const mainMenuTransition_t transitionType )
 	menuGUI->SetGlobal( "toggleNewNotification", new idTriggerNewPDAOrVideo( this ) );
 }
 
-/*
-========================
-idMenuScreen_HUD::HideScreen
-========================
-*/
 void idMenuScreen_HUD::HideScreen( const mainMenuTransition_t transitionType )
 {
 }
 
-/*
-========================
-idMenuScreen_HUD::Update
-========================
-*/
 void idMenuScreen_HUD::Update()
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -197,11 +177,6 @@ void idMenuScreen_HUD::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateHealth
-========================
-*/
 void idMenuScreen_HUD::UpdateHealthArmor( idPlayer* player )
 {
 	if( !playerInfo || !player ) {
@@ -271,11 +246,6 @@ void idMenuScreen_HUD::UpdateHealthArmor( idPlayer* player )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateStamina
-========================
-*/
 void idMenuScreen_HUD::UpdateStamina( idPlayer* player )
 {
 	if( !stamina || !player ) {
@@ -299,11 +269,6 @@ void idMenuScreen_HUD::UpdateStamina( idPlayer* player )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateLocation
-========================
-*/
 void idMenuScreen_HUD::UpdateWeaponInfo( idPlayer* player )
 {
 	if( !player || !ammoInfo ) {
@@ -450,11 +415,6 @@ void idMenuScreen_HUD::UpdateWeaponInfo( idPlayer* player )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::GiveWeapon
-========================
-*/
 void idMenuScreen_HUD::GiveWeapon( idPlayer* player, int weaponIndex )
 {
 	if( common->IsMultiplayer() ) {
@@ -489,11 +449,6 @@ void idMenuScreen_HUD::GiveWeapon( idPlayer* player, int weaponIndex )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateWeaponStates
-========================
-*/
 void idMenuScreen_HUD::UpdatePickupInfo( int index, const idStr& name )
 {
 	if( !pickupInfo ) {
@@ -507,11 +462,6 @@ void idMenuScreen_HUD::UpdatePickupInfo( int index, const idStr& name )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::IsPickupListReady
-========================
-*/
 bool idMenuScreen_HUD::IsPickupListReady()
 {
 	if( !pickupInfo ) {
@@ -525,11 +475,6 @@ bool idMenuScreen_HUD::IsPickupListReady()
 	return false;
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateWeaponStates
-========================
-*/
 void idMenuScreen_HUD::ShowPickups()
 {
 	if( !pickupInfo ) {
@@ -540,11 +485,6 @@ void idMenuScreen_HUD::ShowPickups()
 	pickupInfo->PlayFrame( "rollOn" );
 }
 
-/*
-========================
-idMenuScreen_HUD::SetCursorState
-========================
-*/
 void idMenuScreen_HUD::SetCursorState( idPlayer* player, cursorState_t state, int set )
 {
 	switch( state ) {
@@ -582,22 +522,12 @@ void idMenuScreen_HUD::SetCursorState( idPlayer* player, cursorState_t state, in
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::SetCursorText
-========================
-*/
 void idMenuScreen_HUD::SetCursorText( const idStr& action, const idStr& focus )
 {
 	cursorAction = action;
 	cursorFocus	 = focus;
 }
 
-/*
-========================
-idMenuScreen_HUD::CombatCursorFlash
-========================
-*/
 void idMenuScreen_HUD::CombatCursorFlash()
 {
 	if( cursorInCombat ) {
@@ -609,11 +539,6 @@ void idMenuScreen_HUD::CombatCursorFlash()
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateCursorState
-========================
-*/
 void idMenuScreen_HUD::UpdateCursorState()
 {
 	if( !cursorTalking && !cursorInCombat && !cursorGrabber && !cursorItem ) {
@@ -781,11 +706,6 @@ void idMenuScreen_HUD::UpdateCursorState()
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateSoulCube
-========================
-*/
 void idMenuScreen_HUD::UpdateSoulCube( bool ready )
 {
 	if( !soulcubeInfo ) {
@@ -800,11 +720,6 @@ void idMenuScreen_HUD::UpdateSoulCube( bool ready )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::ShowRespawnMessage
-========================
-*/
 void idMenuScreen_HUD::ShowRespawnMessage( bool show )
 {
 	if( !respawnMessage ) {
@@ -829,11 +744,6 @@ void idMenuScreen_HUD::ShowRespawnMessage( bool show )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateWeaponStates
-========================
-*/
 void idMenuScreen_HUD::UpdateWeaponStates( idPlayer* player, bool weaponChanged )
 {
 	if( !weaponPills ) {
@@ -1030,11 +940,6 @@ void idMenuScreen_HUD::UpdateWeaponStates( idPlayer* player, bool weaponChanged 
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateLocation
-========================
-*/
 void idMenuScreen_HUD::UpdateLocation( idPlayer* player )
 {
 	if( !locationName || !player ) {
@@ -1058,11 +963,6 @@ void idMenuScreen_HUD::UpdateLocation( idPlayer* player )
 	locationName->SetStrokeInfo( true, 0.6f, 2.0f );
 }
 
-/*
-========================
-idMenuScreen_HUD::ShowTip
-========================
-*/
 void idMenuScreen_HUD::ShowTip( const char* title, const char* tip )
 {
 	if( !tipInfo ) {
@@ -1101,11 +1001,6 @@ void idMenuScreen_HUD::ShowTip( const char* title, const char* tip )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::HideTip
-========================
-*/
 void idMenuScreen_HUD::HideTip()
 {
 	if( !tipInfo ) {
@@ -1122,11 +1017,6 @@ void idMenuScreen_HUD::HideTip()
 	tipSprite->PlayFrame( "rollOff" );
 }
 
-/*
-========================
-idMenuScreen_HUD::DownloadPDA
-========================
-*/
 void idMenuScreen_HUD::DownloadPDA( const idDeclPDA* pda, bool newSecurity )
 {
 	if( newPDADownload ) {
@@ -1154,11 +1044,6 @@ void idMenuScreen_HUD::DownloadPDA( const idDeclPDA* pda, bool newSecurity )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::DownloadVideo
-========================
-*/
 void idMenuScreen_HUD::DownloadVideo()
 {
 	if( newVideoDownload ) {
@@ -1174,11 +1059,6 @@ void idMenuScreen_HUD::DownloadVideo()
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdatedSecurity
-========================
-*/
 void idMenuScreen_HUD::UpdatedSecurity()
 {
 	if( security != NULL && securityText != NULL ) {
@@ -1189,11 +1069,6 @@ void idMenuScreen_HUD::UpdatedSecurity()
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::ClearNewPDAInfo
-========================
-*/
 void idMenuScreen_HUD::ClearNewPDAInfo()
 {
 	ToggleNewVideo( false );
@@ -1212,11 +1087,6 @@ void idMenuScreen_HUD::ClearNewPDAInfo()
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdatedSecurity
-========================
-*/
 void idMenuScreen_HUD::ToggleNewVideo( bool show )
 {
 	if( !newVideo ) {
@@ -1231,11 +1101,6 @@ void idMenuScreen_HUD::ToggleNewVideo( bool show )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdatedSecurity
-========================
-*/
 void idMenuScreen_HUD::ToggleNewPDA( bool show )
 {
 	if( !newPDA ) {
@@ -1250,11 +1115,6 @@ void idMenuScreen_HUD::ToggleNewPDA( bool show )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdatedSecurity
-========================
-*/
 void idMenuScreen_HUD::UpdateAudioLog( bool show )
 {
 	if( !audioLog ) {
@@ -1299,11 +1159,6 @@ void idMenuScreen_HUD::UpdateAudioLog( bool show )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdatedSecurity
-========================
-*/
 void idMenuScreen_HUD::UpdateCommunication( bool show, idPlayer* player )
 {
 	if( !communication || !player ) {
@@ -1366,11 +1221,6 @@ void idMenuScreen_HUD::UpdateCommunication( bool show, idPlayer* player )
 	oxygenComm = inVaccuum;
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateOxygen
-========================
-*/
 void idMenuScreen_HUD::UpdateOxygen( bool show, int val )
 {
 	if( !oxygen ) {
@@ -1420,11 +1270,6 @@ void idMenuScreen_HUD::UpdateOxygen( bool show, int val )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::SetupObjective
-========================
-*/
 void idMenuScreen_HUD::SetupObjective( const idStr& title, const idStr& desc, const idMaterial* screenshot )
 {
 	objTitle	  = title;
@@ -1432,21 +1277,11 @@ void idMenuScreen_HUD::SetupObjective( const idStr& title, const idStr& desc, co
 	objScreenshot = screenshot;
 }
 
-/*
-========================
-idMenuScreen_HUD::SetupObjective
-========================
-*/
 void idMenuScreen_HUD::SetupObjectiveComplete( const idStr& title )
 {
 	objCompleteTitle = title;
 }
 
-/*
-========================
-idMenuScreen_HUD::ShowObjective
-========================
-*/
 void idMenuScreen_HUD::ShowObjective( bool complete )
 {
 	if( complete ) {
@@ -1511,11 +1346,6 @@ void idMenuScreen_HUD::ShowObjective( bool complete )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::HideObjective
-========================
-*/
 void idMenuScreen_HUD::HideObjective( bool complete )
 {
 	if( complete ) {
@@ -1534,15 +1364,6 @@ void idMenuScreen_HUD::HideObjective( bool complete )
 	}
 }
 
-//******************************************************************************************
-// MULTIPLAYER FUNCITONS
-//******************************************************************************************
-
-/*
-========================
-idMenuScreen_HUD::ToggleMPInfo
-========================
-*/
 void idMenuScreen_HUD::ToggleMPInfo( bool show, bool showTeams, bool isCTF )
 {
 	if( !mpInfo ) {
@@ -1588,11 +1409,6 @@ void idMenuScreen_HUD::ToggleMPInfo( bool show, bool showTeams, bool isCTF )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::SetFlagState
-========================
-*/
 void idMenuScreen_HUD::SetFlagState( int team, int state )
 {
 	if( !mpInfo ) {
@@ -1617,11 +1433,6 @@ void idMenuScreen_HUD::SetFlagState( int team, int state )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::SetTeamScore
-========================
-*/
 void idMenuScreen_HUD::SetTeamScore( int team, int score )
 {
 	if( !mpInfo ) {
@@ -1642,11 +1453,6 @@ void idMenuScreen_HUD::SetTeamScore( int team, int score )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::SetTeam
-========================
-*/
 void idMenuScreen_HUD::SetTeam( int team )
 {
 	if( !mpInfo ) {
@@ -1664,11 +1470,6 @@ void idMenuScreen_HUD::SetTeam( int team )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::TriggerHitTarget
-========================
-*/
 void idMenuScreen_HUD::TriggerHitTarget( bool show, const idStr& target, int color )
 {
 	if( !mpHitInfo ) {
@@ -1696,11 +1497,6 @@ void idMenuScreen_HUD::TriggerHitTarget( bool show, const idStr& target, int col
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::ToggleLagged
-========================
-*/
 void idMenuScreen_HUD::ToggleLagged( bool show )
 {
 	if( !mpConnection ) {
@@ -1710,11 +1506,6 @@ void idMenuScreen_HUD::ToggleLagged( bool show )
 	mpConnection->SetVisible( show );
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateGameTime
-========================
-*/
 void idMenuScreen_HUD::UpdateGameTime( const char* time )
 {
 	if( !mpTime ) {
@@ -1727,11 +1518,6 @@ void idMenuScreen_HUD::UpdateGameTime( const char* time )
 	mpTime->SetStrokeInfo( true, 0.75f, 1.5f );
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateMessage
-========================
-*/
 void idMenuScreen_HUD::UpdateMessage( bool show, const idStr& message )
 {
 	if( !mpMessage ) {
@@ -1750,11 +1536,6 @@ void idMenuScreen_HUD::UpdateMessage( bool show, const idStr& message )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::ShowNewItem
-========================
-*/
 void idMenuScreen_HUD::ShowNewItem( const char* name, const char* icon )
 {
 	if( !newItem ) {
@@ -1786,11 +1567,6 @@ void idMenuScreen_HUD::ShowNewItem( const char* name, const char* icon )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateFlashlight
-========================
-*/
 void idMenuScreen_HUD::UpdateFlashlight( idPlayer* player )
 {
 	if( !player || !flashlight ) {
@@ -1810,11 +1586,6 @@ void idMenuScreen_HUD::UpdateFlashlight( idPlayer* player )
 	}
 }
 
-/*
-========================
-idMenuScreen_HUD::UpdateChattingHud
-========================
-*/
 void idMenuScreen_HUD::UpdateChattingHud( idPlayer* player )
 {
 	if( !mpChatObject || !GetSWFObject() ) {

@@ -52,11 +52,6 @@ END_CLASS
 #define CHAINGUN_WINDDOWN_TO_IDLE	0
 #define CHAINGUN_RELOAD_TO_IDLE		0
 
-/*
-===============
-iceWeaponChainGun::Init
-===============
-*/
 void iceWeaponChainGun::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -76,11 +71,6 @@ void iceWeaponChainGun::Init( idWeapon* weapon )
 	snd_winddown	   = FindSound( "snd_winddown" );
 }
 
-/*
-===============
-iceWeaponChainGun::UpdateBarrel
-===============
-*/
 void iceWeaponChainGun::UpdateBarrel()
 {
 	float	 currentTime;
@@ -110,11 +100,6 @@ void iceWeaponChainGun::UpdateBarrel()
 	}
 }
 
-/*
-===============
-iceWeaponChainGun::SpinUp
-===============
-*/
 void iceWeaponChainGun::SpinUp()
 {
 	start_rate = current_rate;
@@ -124,11 +109,6 @@ void iceWeaponChainGun::SpinUp()
 	owner->Event_StartSound( "snd_windup", SND_CHANNEL_BODY3, false );
 }
 
-/*
-===============
-iceWeaponChainGun::SpinDown
-===============
-*/
 void iceWeaponChainGun::SpinDown()
 {
 	start_rate = current_rate;
@@ -138,11 +118,6 @@ void iceWeaponChainGun::SpinDown()
 	owner->Event_StartSound( "snd_winddown", SND_CHANNEL_BODY3, false );
 }
 
-/*
-===============
-iceWeaponChainGun::Raise
-===============
-*/
 stateResult_t iceWeaponChainGun::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -163,11 +138,6 @@ stateResult_t iceWeaponChainGun::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponChainGun::Lower
-===============
-*/
 stateResult_t iceWeaponChainGun::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -189,11 +159,6 @@ stateResult_t iceWeaponChainGun::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponChainGun::Idle
-===============
-*/
 stateResult_t iceWeaponChainGun::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -218,11 +183,6 @@ stateResult_t iceWeaponChainGun::Idle( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponChainGun::Fire
-===============
-*/
 stateResult_t iceWeaponChainGun::Fire( stateParms_t* parms )
 {
 	float ammoClip;
@@ -280,11 +240,6 @@ stateResult_t iceWeaponChainGun::Fire( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponChainGun::Reload
-===============
-*/
 stateResult_t iceWeaponChainGun::Reload( stateParms_t* parms )
 {
 	enum RELOAD_State { RELOAD_NOTSET = 0, RELOAD_WAIT };

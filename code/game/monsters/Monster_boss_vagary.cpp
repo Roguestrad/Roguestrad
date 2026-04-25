@@ -73,30 +73,15 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idAI, iceMonsterBossVagary )
 END_CLASS
 
-/*
-=================
-iceMonsterDemonHellknight::Init
-=================
-*/
 void iceMonsterBossVagary::Init()
 {
 }
 
-/*
-=================
-iceMonsterDemonHellknight::AI_Begin
-=================
-*/
 void iceMonsterBossVagary::AI_Begin()
 {
 	Event_SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterBossVagary::state_Begin
-=====================
-*/
 stateResult_t iceMonsterBossVagary::state_Begin( stateParms_t* parms )
 {
 	Event_AnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 0 );
@@ -107,11 +92,6 @@ stateResult_t iceMonsterBossVagary::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterBossVagary::state_Idle
-=====================
-*/
 stateResult_t iceMonsterBossVagary::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -130,11 +110,6 @@ stateResult_t iceMonsterBossVagary::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterBossVagary::do_attack
-=====================
-*/
 void iceMonsterBossVagary::do_attack( int attack_flags )
 {
 	nextNoFOVAttack = gameLocal.SysScriptTime() + VAGARY_NOFOVTIME;
@@ -155,11 +130,6 @@ void iceMonsterBossVagary::do_attack( int attack_flags )
 	}
 }
 
-/*
-=====================
-iceMonsterBossVagary::combat_range
-=====================
-*/
 stateResult_t iceMonsterBossVagary::combat_range( stateParms_t* parms )
 {
 	if( parms->stage == 10 ) {
@@ -236,11 +206,6 @@ stateResult_t iceMonsterBossVagary::combat_range( stateParms_t* parms )
 	return SRESULT_WAIT;
 }
 
-/*
-=====================
-iceMonsterBossVagary::combat_melee
-=====================
-*/
 stateResult_t iceMonsterBossVagary::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -262,11 +227,6 @@ stateResult_t iceMonsterBossVagary::combat_melee( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterBossVagary::combat_dodge_left
-=====================
-*/
 stateResult_t iceMonsterBossVagary::combat_dodge_left( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -288,11 +248,6 @@ stateResult_t iceMonsterBossVagary::combat_dodge_left( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterBossVagary::combat_dodge_right
-=====================
-*/
 stateResult_t iceMonsterBossVagary::combat_dodge_right( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -314,11 +269,6 @@ stateResult_t iceMonsterBossVagary::combat_dodge_right( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterBossVagary::check_attacks
-=====================
-*/
 int iceMonsterBossVagary::check_attacks()
 {
 	float canMelee;
@@ -371,11 +321,6 @@ int iceMonsterBossVagary::check_attacks()
 	return attack_flags;
 }
 
-/*
-================
-iceMonsterBossVagary::ChooseObjectToThrow
-================
-*/
 idEntity* iceMonsterBossVagary::ChooseObjectToThrow( const idVec3& mins, const idVec3& maxs, float speed, float minDist, float offset )
 {
 	idEntity* ent;
@@ -443,11 +388,6 @@ idEntity* iceMonsterBossVagary::ChooseObjectToThrow( const idVec3& mins, const i
 	return NULL;
 }
 
-/*
-================
-iceMonsterBossVagary::ThrowObjectAtEnemy
-================
-*/
 void iceMonsterBossVagary::ThrowObjectAtEnemy( idEntity* ent, float speed )
 {
 	idVec3	   vel;

@@ -126,45 +126,74 @@ enum achievement_t {
 
 compile_time_assert( ACHIEVEMENTS_NUM <= idPlayerProfile::MAX_PLAYER_PROFILE_STATS );
 
-/*
-================================================
-idAchievementManager
+/*!
+	\class idAchievementManager
+	\brief Manages game achievements and player progress tracking.
 
-Manages a List of Achievements associated with a particular Player.
+	This class serves as a centralized manager for tracking and handling game achievements. It maintains state information about player accomplishments, kill counts, timestamps for significant events,
+   and damage receipt. The manager initializes with a player reference and provides methods for saving and restoring progress, incrementing achievement counters, and synchronizing achievement data
+   with user profiles. It supports both temporary in-game progress tracking and persistent data storage. The class is designed to work with a single instance per game session, coordinating achievement
+   triggers based on player actions and game events.
 
-This is setup to only have one achievement manager per game.
-================================================
 */
 class idAchievementManager
 {
 public:
+	//! Initializes a new instance of the idAchievementManager class.
 	idAchievementManager();
 
+	//! Initializes the achievement manager with the specified player
 	void		Init( idPlayer* player );
+
+	//! Checks if the achievement manager has been initialized.
 	bool		IsInitialized() const { return owner != NULL; }
 
-	// save games
-	void		Save( idSaveGame* savefile ) const; // archives object for save game file
-	void		Restore( idRestoreGame* savefile ); // unarchives object from save game file
+	//! Saves the achievement manager state to a save game file
+	void		Save( idSaveGame* savefile ) const;
+
+	//! Restores achievement data from a save game file.
+	void		Restore( idRestoreGame* savefile );
 
 	// Debug tool to reset achievement state and counts
 	void		Reset();
+
+	//! Returns the count of achievements for the specified achievement ID.
 	int			GetCount( const achievement_t eventId ) const { return counts[eventId]; }
 
-	// Adds a count to the tracked number of events, these events can be applied to multiple achievements
+	//! Increments the count for an achievement event and unlocks it if the required threshold is met
 	void		EventCompletesAchievement( const achievement_t eventId );
 
+	//! Returns the timestamp of when the last imp was killed.
 	int			GetLastImpKilledTime() { return lastImpKilledTime; }
+
+	//! Sets the timestamp for when the last imp was killed.
 	void		SetLastImpKilledTime( int time ) { lastImpKilledTime = time; }
+
+	//! Returns the time when the player was last killed.
 	int			GetLastPlayerKilledTime() { return lastPlayerKilledTime; }
+
+	//! Sets the timestamp of the last time the player was killed.
 	void		SetLastPlayerKilledTime( int time ) { lastPlayerKilledTime = time; }
+
+	//! Returns whether the player has took damage.
 	bool		GetPlayerTookDamage() { return playerTookDamage; }
+
+	//! Sets the player took damage flag to the specified boolean value.
 	void		SetPlayerTookDamage( bool bl ) { playerTookDamage = bl; }
+
+	//! Increments the kill count for Hell Time achievement and triggers the achievement when the threshold is reached.
 	void		IncrementHellTimeKills();
+
+	//! Resets the hell time kills counter to zero.
 	void		ResetHellTimeKills() { currentHellTimeKills = 0; }
+
+	//! Saves achievement counts to the provided player information dictionary
 	void		SavePersistentData( idDict& playerInfo );
+
+	//! Restores achievement progress from spawn arguments.
 	void		RestorePersistentData( const idDict& spawnArgs );
 
+	//! Completes a local user achievement by unlocking it if not already obtained
 	static void LocalUser_CompleteAchievement( achievement_t id );
 
 private:
@@ -178,7 +207,10 @@ private:
 
 	static bool					   cheatingDialogShown;
 
+	//! Returns the local user associated with the achievement manager.
 	idLocalUser*				   GetLocalUser();
+
+	//! Synchronizes achievement counts with the user's profile and statistics.
 	void						   SyncAchievments();
 };
 

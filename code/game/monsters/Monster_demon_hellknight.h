@@ -30,21 +30,44 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterDemonHellknight
+	\brief A specialized AI implementation for a demon hellknight monster.
+
+	This class implements the artificial intelligence behavior for a demon hellknight monster. It inherits from idAI and provides specialized state management for
+   initialization, idle behavior, and combat actions including melee and ranged attacks. The implementation handles monster-specific AI states such as beginning AI execution, idle monitoring for enemy
+   detection, and executing combat routines with appropriate animations and timing. The class is designed to integrate with a broader AI system while maintaining monster-specific behaviors through
+   overridden methods.
+
+*/
 class iceMonsterDemonHellknight : public idAI
 {
 	CLASS_PROTOTYPE( iceMonsterDemonHellknight );
 
 public:
+	//! Initializes the AI system for the monster demon hellknight.
 	virtual void Init() override;
+
+	//! Initializes the AI state for the monster demon hellknight.
 	virtual void AI_Begin() override;
 
+	//! Checks available attack types and returns flags indicating which attacks can be performed
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action with the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the hellknight monster state by setting up idle animations and move type.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for the monster demon hellknight, transitioning to combat when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Executes a melee attack state for the monster demon hellknight, handling look, facing, animation, and wait states.
 	stateResult_t combat_melee( stateParms_t* parms );
+
+	//! Handles the combat range state for the monster demon hellknight, managing attack timing and animation states.
 	stateResult_t combat_range( stateParms_t* parms );
 
 private:

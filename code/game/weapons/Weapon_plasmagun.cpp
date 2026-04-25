@@ -48,11 +48,6 @@ END_CLASS
 #define PLASMAGUN_FIRE_TO_IDLE	 4
 #define PLASMAGUN_RELOAD_TO_IDLE 4
 
-/*
-===============
-iceWeaponPlasmaGun::Init
-===============
-*/
 void iceWeaponPlasmaGun::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -62,11 +57,6 @@ void iceWeaponPlasmaGun::Init( idWeapon* weapon )
 	snd_lowammo = FindSound( "snd_lowammo" );
 }
 
-/*
-===============
-iceWeaponPlasmaGun::Raise
-===============
-*/
 stateResult_t iceWeaponPlasmaGun::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -87,11 +77,6 @@ stateResult_t iceWeaponPlasmaGun::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponPlasmaGun::Lower
-===============
-*/
 stateResult_t iceWeaponPlasmaGun::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -113,11 +98,6 @@ stateResult_t iceWeaponPlasmaGun::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponPlasmaGun::Idle
-===============
-*/
 stateResult_t iceWeaponPlasmaGun::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -137,11 +117,6 @@ stateResult_t iceWeaponPlasmaGun::Idle( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponPlasmaGun::Fire
-===============
-*/
 stateResult_t iceWeaponPlasmaGun::Fire( stateParms_t* parms )
 {
 	int ammoClip = owner->AmmoInClip();
@@ -173,11 +148,6 @@ stateResult_t iceWeaponPlasmaGun::Fire( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponPlasmaGun::Reload
-===============
-*/
 stateResult_t iceWeaponPlasmaGun::Reload( stateParms_t* parms )
 {
 	enum RELOAD_State { RELOAD_NOTSET = 0, RELOAD_WAIT };

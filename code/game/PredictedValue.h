@@ -32,36 +32,42 @@ If you have questions concerning this license or the applicable additional terms
 // #include "Game_local.h"
 #pragma once
 
-/*
-================================================
-A simple class to handle simple predictable values
-on multiplayer clients.
+/*!
+	\class idPredictedValue
+	\brief Template class for managing predicted values with snapshot-based updates.
 
-The class encapsulates the actual value to be stored
-as well as the client frame number on which it is set.
+	The idPredictedValue class template is designed to maintain predicted values that can be updated from snapshots while ensuring synchronization with client-side prediction timing. It supports
+   initialization with default or specified values, assignment operations, arithmetic operations, and explicit updates from snapshot data. The class tracks prediction time to determine when updates
+   from snapshots are valid. The UpdateFromSnapshot method verifies that updates occur only when the snapshot is newer than the current prediction or when it matches the expected client number,
+   preventing stale data from overwriting valid predictions. This design enables accurate client-side prediction with server reconciliation.
 
-When reading predicted values from a snapshot, the actual
-value is only updated if the server has processed the client's
-usercmd for the frame in which the client predicted the value.
-Got that?
-================================================
 */
 template<class type_>
 class idPredictedValue
 {
 public:
+	//! Initializes an idPredictedValue object with default values.
 	explicit idPredictedValue();
+
+	//! Constructs an idPredictedValue object with the specified initial value.
 	explicit idPredictedValue( const type_& value_ );
 
+	//! Sets the predicted value and updates the prediction time.
 	void					 Set( const type_& newValue );
 
+	//! Assigns a new value to the predicted value object and returns a reference to itself.
 	idPredictedValue<type_>& operator=( const type_& value );
 
+	//! Adds the specified value to the current value and returns a reference to this object
 	idPredictedValue<type_>& operator+=( const type_& toAdd );
+
+	//! Subtracts the given value from the stored predicted value and returns a reference to this instance.
 	idPredictedValue<type_>& operator-=( const type_& toSubtract );
 
+	//! Updates the predicted value from a snapshot if the client number matches or the snapshot is newer than the predicted value.
 	bool					 UpdateFromSnapshot( const type_& valueFromSnapshot, int clientNumber );
 
+	//! Returns the stored value of type_
 	type_					 Get() const { return value; }
 
 private:
@@ -72,6 +78,7 @@ private:
 	type_					 value;
 	int						 clientPredictedMilliseconds; // The time in which the client predicted the value.
 
+	//! Updates the prediction time for the predicted value based on the local player's client game milliseconds.
 	void					 UpdatePredictionTime();
 };
 

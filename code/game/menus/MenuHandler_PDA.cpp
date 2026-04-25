@@ -33,11 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 static const int MAX_PDA_ITEMS	 = 15;
 static const int MAX_NAV_OPTIONS = 4;
 
-/*
-========================
-idMenuHandler_PDA::Update
-========================
-*/
 void			 idMenuHandler_PDA::Update()
 {
 	if( gui == NULL || !gui->IsActive() ) {
@@ -101,22 +96,12 @@ void			 idMenuHandler_PDA::Update()
 	idMenuHandler::Update();
 }
 
-/*
-================================================
-idMenuHandler::TriggerMenu
-================================================
-*/
 void idMenuHandler_PDA::TriggerMenu()
 {
 	nextScreen = PDA_AREA_USER_DATA;
 	transition = MENU_TRANSITION_FORCE;
 }
 
-/*
-========================
-idMenuHandler_PDA::ActivateMenu
-========================
-*/
 void idMenuHandler_PDA::ActivateMenu( bool show )
 {
 	idMenuHandler::ActivateMenu( show );
@@ -164,11 +149,6 @@ void idMenuHandler_PDA::ActivateMenu( bool show )
 	}
 }
 
-/*
-========================
-idMenuHandler_PDA::Initialize
-========================
-*/
 void idMenuHandler_PDA::Initialize( const char* swfFile, idSoundWorld* sw )
 {
 	idMenuHandler::Initialize( swfFile, sw );
@@ -342,11 +322,6 @@ void idMenuHandler_PDA::Initialize( const char* swfFile, idSoundWorld* sw )
 	}
 }
 
-/*
-========================
-idMenuHandler_PDA::HandleAction
-========================
-*/
 bool idMenuHandler_PDA::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( activeScreen == PDA_AREA_INVALID ) {
@@ -486,11 +461,6 @@ bool idMenuHandler_PDA::HandleAction( idWidgetAction& action, const idWidgetEven
 	return idMenuHandler::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuHandler_PDA::PlayPDAAudioLog
-========================
-*/
 bool idMenuHandler_PDA::PlayPDAAudioLog( int pdaIndex, int audioIndex )
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -513,11 +483,6 @@ bool idMenuHandler_PDA::PlayPDAAudioLog( int pdaIndex, int audioIndex )
 	return false;
 }
 
-/*
-========================
-idMenuHandler_PDA::GetMenuScreen
-========================
-*/
 idMenuScreen* idMenuHandler_PDA::GetMenuScreen( int index )
 {
 	if( index < 0 || index >= PDA_NUM_AREAS ) {
@@ -527,11 +492,6 @@ idMenuScreen* idMenuHandler_PDA::GetMenuScreen( int index )
 	return menuScreens[index];
 }
 
-/*
-========================
-idMenuHandler_PDA::GetMenuScreen
-========================
-*/
 void idMenuHandler_PDA::UpdateAudioLogPlaying( bool playing )
 {
 	if( playing != audioLogPlaying && activeScreen == PDA_AREA_USER_DATA && menuScreens[activeScreen] != NULL ) {
@@ -544,11 +504,6 @@ void idMenuHandler_PDA::UpdateAudioLogPlaying( bool playing )
 	}
 }
 
-/*
-========================
-idMenuHandler_PDA::GetMenuScreen
-========================
-*/
 void idMenuHandler_PDA::UdpateVideoPlaying( bool playing )
 {
 	if( playing != videoPlaying ) {
@@ -571,11 +526,6 @@ void idMenuHandler_PDA::UdpateVideoPlaying( bool playing )
 	}
 }
 
-/*
-================================================
-idMenuHandler_PDA::Cleanup
-================================================
-*/
 void idMenuHandler_PDA::Cleanup()
 {
 	idMenuHandler::Cleanup();
@@ -585,11 +535,6 @@ void idMenuHandler_PDA::Cleanup()
 	}
 }
 
-/*
-================================================
-idMenuHandler_PDA::~idMenuHandler_PDA
-================================================
-*/
 idMenuHandler_PDA::~idMenuHandler_PDA()
 {
 	pdaScrollBar.Cleanup();

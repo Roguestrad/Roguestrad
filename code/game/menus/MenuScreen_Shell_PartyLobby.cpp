@@ -47,11 +47,6 @@ enum partyLobbyCmds_t {
 	PARTY_CMD_SHOW_PARTY_GAMES,
 };
 
-/*
-========================
-idMenuScreen_Shell_PartyLobby::Initialize
-========================
-*/
 void idMenuScreen_Shell_PartyLobby::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -115,11 +110,6 @@ void idMenuScreen_Shell_PartyLobby::Initialize( idMenuHandler* data )
 	AddEventAction( WIDGET_EVENT_SCROLL_UP_RSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( lobby, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_PartyLobby::Update
-========================
-*/
 void idMenuScreen_Shell_PartyLobby::Update()
 {
 	idLobbyBase& activeLobby = session->GetPartyLobbyBase();
@@ -311,11 +301,6 @@ void idMenuScreen_Shell_PartyLobby::UpdateOptions()
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_PartyLobby::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_PartyLobby::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	isPeer = false;
@@ -348,21 +333,11 @@ void idMenuScreen_Shell_PartyLobby::ShowScreen( const mainMenuTransition_t trans
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_PartyLobby::HideScreen
-========================
-*/
 void idMenuScreen_Shell_PartyLobby::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_PartyLobby::CanKickSelectedPlayer
-========================
-*/
 bool idMenuScreen_Shell_PartyLobby::CanKickSelectedPlayer( lobbyUserID_t& luid )
 {
 	idMatchParameters matchParameters = session->GetPartyLobbyBase().GetMatchParms();
@@ -378,11 +353,6 @@ bool idMenuScreen_Shell_PartyLobby::CanKickSelectedPlayer( lobbyUserID_t& luid )
 	return true;
 }
 
-/*
-========================
-idMenuScreen_Shell_PartyLobby::ShowLeaderboards
-========================
-*/
 void idMenuScreen_Shell_PartyLobby::ShowLeaderboards()
 {
 	const bool canPlayOnline = session->GetSignInManager().GetMasterLocalUser() != NULL && session->GetSignInManager().GetMasterLocalUser()->CanPlayOnline();
@@ -394,11 +364,6 @@ void idMenuScreen_Shell_PartyLobby::ShowLeaderboards()
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_PartyLobby::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_PartyLobby::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -610,11 +575,6 @@ bool idMenuScreen_Shell_PartyLobby::HandleAction( idWidgetAction& action, const 
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuScreen_Shell_PartyLobby::UpdateLobby
-========================
-*/
 void idMenuScreen_Shell_PartyLobby::UpdateLobby()
 {
 	if( menuData != NULL && menuData->ActiveScreen() != SHELL_AREA_PARTY_LOBBY ) {

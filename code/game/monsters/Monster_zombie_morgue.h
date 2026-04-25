@@ -30,19 +30,41 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterZombieMorgue
+	\brief Represents anmonster zombie entity with specialized AI behavior for morgue environments.
+
+	This class implements a specialized zombie monster variant designed for morgue-themed environments, extending base zombie functionality with unique AI states and combat behaviors. The entity
+   manages its state transitions through defined states including initialization, idle behavior, and melee combat. The AI system is initialized through the Init method, and the entity begins its AI
+   cycle with AI_Begin, which sets the initial state. State management includes handling idle conditions and transitioning to combat when enemies are detected. The class overrides standard attack
+   checking and execution methods to provide specific melee combat behavior tailored for the morgue environment. The class uses a state machine approach with specific state handlers for different AI
+   behaviors.
+
+*/
 class iceMonsterZombieMorgue : public iceMonsterZombie
 {
 	CLASS_PROTOTYPE( iceMonsterZombieMorgue );
 
 public:
+	//! Initializes the AI system
 	virtual void Init() override;
+
+	//! Sets the AI state to "state_Begin" for the monster zombie morgue.
 	virtual void AI_Begin() override;
 
+	//! Returns attack flags indicating whether melee attacks are available.
 	virtual int	 check_attacks() override;
+
+	//! Performs a melee attack action when the ATTACK_MELEE flag is set.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the zombie morgue monster state by setting up idle animations and move type.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for the monster zombie morgue, transitioning to combat when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Handles the melee combat state for the monster zombie morgue entity.
 	stateResult_t combat_melee( stateParms_t* parms );
 };

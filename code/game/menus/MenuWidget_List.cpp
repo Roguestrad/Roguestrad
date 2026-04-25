@@ -30,24 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-================================================================================================
-idMenuWidget_List
-
-Provides a paged view of this widgets children.  Each child is expected to take on the following
-naming scheme.  Children outside of the given window size (NumVisibleOptions) are not rendered,
-and will affect which type of arrow indicators are shown.
-
-Future work:
-- Make upIndicator another kind of widget (Image widget?)
-================================================================================================
-*/
-
-/*
-========================
-idMenuWidget_List::Update
-========================
-*/
 void idMenuWidget_List::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -95,11 +77,6 @@ void idMenuWidget_List::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_List::HandleAction
-========================
-*/
 bool idMenuWidget_List::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	const idSWFParmList& parms = action.GetParms();
@@ -119,24 +96,11 @@ bool idMenuWidget_List::HandleAction( idWidgetAction& action, const idWidgetEven
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuWidget_List::ObserveEvent
-========================
-*/
 void idMenuWidget_List::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	ExecuteEvent( event );
 }
 
-/*
-========================
-idMenuWidget_List::CalculatePositionFromIndexDelta
-
-Pure functional encapsulation of how to calculate a new index and offset based on how the user
-chose to move through the list.
-========================
-*/
 void idMenuWidget_List::CalculatePositionFromIndexDelta(
 	int& outIndex, int& outOffset, const int currentIndex, const int currentOffset, const int windowSize, const int maxSize, const int indexDelta, const bool allowWrapping, const bool wrapAround )
 	const
@@ -196,11 +160,6 @@ void idMenuWidget_List::CalculatePositionFromIndexDelta(
 	assert( outIndex >= outOffset && outIndex >= 0 && outOffset >= 0 );
 }
 
-/*
-========================
-idMenuWidget_List::CalculatePositionFromOffsetDelta
-========================
-*/
 void idMenuWidget_List::CalculatePositionFromOffsetDelta(
 	int& outIndex, int& outOffset, const int currentIndex, const int currentOffset, const int windowSize, const int maxSize, const int offsetDelta ) const
 {
@@ -228,11 +187,6 @@ void idMenuWidget_List::CalculatePositionFromOffsetDelta(
 	assert( outIndex >= outOffset && outIndex >= 0 && outOffset >= 0 );
 }
 
-/*
-========================
-idMenuWidget_List::Scroll
-========================
-*/
 void idMenuWidget_List::Scroll( const int scrollAmount, const bool wrapAround )
 {
 	if( GetTotalNumberOfOptions() == 0 ) {
@@ -256,11 +210,6 @@ void idMenuWidget_List::Scroll( const int scrollAmount, const bool wrapAround )
 	}
 }
 
-/*
-========================
-idMenuWidget_List::ScrollOffset
-========================
-*/
 void idMenuWidget_List::ScrollOffset( const int scrollAmount )
 {
 	if( GetTotalNumberOfOptions() == 0 ) {
@@ -281,15 +230,6 @@ void idMenuWidget_List::ScrollOffset( const int scrollAmount )
 	}
 }
 
-//*********************************************************************************
-// GAME BROWSER LIST
-//********************************************************************************
-
-/*
-========================
-idMenuWidget_GameBrowserList::Update
-========================
-*/
 void idMenuWidget_GameBrowserList::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -332,11 +272,6 @@ void idMenuWidget_GameBrowserList::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_GameBrowserList::PrepareListElement
-========================
-*/
 bool idMenuWidget_GameBrowserList::PrepareListElement( idMenuWidget& widget, const int childIndex )
 {
 	if( childIndex >= games.Num() ) {
@@ -359,21 +294,11 @@ bool idMenuWidget_GameBrowserList::PrepareListElement( idMenuWidget& widget, con
 	return true;
 }
 
-/*
-========================
-idMenuWidget_GameBrowserList::PrepareListElement
-========================
-*/
 void idMenuWidget_GameBrowserList::ClearGames()
 {
 	games.Clear();
 }
 
-/*
-========================
-idMenuWidget_GameBrowserList::PrepareListElement
-========================
-*/
 void idMenuWidget_GameBrowserList::AddGame( idStr name_, idStrId mapName_, idStr modeName_, int index_, int players_, int maxPlayers_, bool joinable_, bool validMap_ )
 {
 	idBrowserEntry_t entry;
@@ -390,21 +315,11 @@ void idMenuWidget_GameBrowserList::AddGame( idStr name_, idStrId mapName_, idStr
 	games.Append( entry );
 }
 
-/*
-========================
-idMenuWidget_GameBrowserList::GetTotalNumberOfOptions
-========================
-*/
 int idMenuWidget_GameBrowserList::GetTotalNumberOfOptions() const
 {
 	return games.Num();
 }
 
-/*
-========================
-idMenuWidget_GameBrowserList::PrepareListElement
-========================
-*/
 int idMenuWidget_GameBrowserList::GetServerIndex()
 {
 	if( GetViewIndex() < games.Num() ) {

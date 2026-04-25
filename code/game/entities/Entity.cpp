@@ -189,11 +189,7 @@ EVENT( EV_GetGuiParmFloat, idEntity::Event_GetGuiParmFloat )
 EVENT( EV_GuiNamedEvent, idEntity::Event_GuiNamedEvent )
 END_CLASS
 
-/*
-================
-UpdateGuiParms
-================
-*/
+//! Updates GUI parameters from a dictionary of arguments.
 void UpdateGuiParms( idUserInterface* gui, const idDict* args )
 {
 	if( gui == NULL || args == NULL ) {
@@ -208,11 +204,7 @@ void UpdateGuiParms( idUserInterface* gui, const idDict* args )
 	gui->StateChanged( gameLocal.time );
 }
 
-/*
-================
-AddRenderGui
-================
-*/
+//! Registers a user interface for rendering with the specified name and arguments.
 void AddRenderGui( const char* name, idUserInterface** gui, const idDict* args )
 {
 	const idKeyValue* kv = args->MatchPrefix( "gui_parm", NULL );
@@ -220,15 +212,6 @@ void AddRenderGui( const char* name, idUserInterface** gui, const idDict* args )
 	UpdateGuiParms( *gui, args );
 }
 
-/*
-================
-idGameEdit::ParseSpawnArgsToRenderEntity
-
-parse the static model parameters
-this is the canonical renderEntity parm parsing,
-which should be used by dmap and the editor
-================
-*/
 void idGameEdit::ParseSpawnArgsToRenderEntity( const idDict* args, renderEntity_t* renderEntity, const idDeclEntityDef* def )
 {
 	int					  i;
@@ -376,15 +359,6 @@ void idGameEdit::ParseSpawnArgsToRenderEntity( const idDict* args, renderEntity_
 	}
 }
 
-/*
-================
-idGameEdit::ParseSpawnArgsToRefSound
-
-parse the sound parameters
-this is the canonical refSound parm parsing,
-which should be used by dmap and the editor
-================
-*/
 void idGameEdit::ParseSpawnArgsToRefSound( const idDict* args, refSound_t* refSound )
 {
 	const char* temp;
@@ -429,16 +403,6 @@ void idGameEdit::ParseSpawnArgsToRefSound( const idDict* args, refSound_t* refSo
 	}
 }
 
-/*
-===============
-idEntity::UpdateChangeableSpawnArgs
-
-Any key val pair that might change during the course of the game ( via a gui or whatever )
-should be initialize here so a gui or other trigger can change something and have it updated
-properly. An optional source may be provided if the values reside in an outside dictionary and
-first need copied over to spawnArgs
-===============
-*/
 void idEntity::UpdateChangeableSpawnArgs( const idDict* source )
 {
 	int			i;
@@ -459,11 +423,6 @@ void idEntity::UpdateChangeableSpawnArgs( const idDict* source )
 	}
 }
 
-/*
-================
-idEntity::idEntity
-================
-*/
 idEntity::idEntity() :
 	useClientInterpolation( true ),
 	predictionKey( INVALID_PREDICTION_KEY ),
@@ -520,11 +479,6 @@ idEntity::idEntity() :
 	noGrab = false;
 }
 
-/*
-================
-idEntity::FixupLocalizedStrings
-================
-*/
 void idEntity::FixupLocalizedStrings()
 {
 	for( int i = 0; i < spawnArgs.GetNumKeyVals(); i++ ) {
@@ -535,11 +489,6 @@ void idEntity::FixupLocalizedStrings()
 	}
 }
 
-/*
-================
-idEntity::Spawn
-================
-*/
 void idEntity::Spawn()
 {
 	int				  i;
@@ -695,11 +644,6 @@ void idEntity::Spawn()
 	DetermineTimeGroup( spawnArgs.GetBool( "slowmo", "1" ) );
 }
 
-/*
-================
-idEntity::~idEntity
-================
-*/
 idEntity::~idEntity()
 {
 	DeconstructScriptObject();
@@ -742,11 +686,6 @@ idEntity::~idEntity()
 	gameLocal.UnregisterEntity( this );
 }
 
-/*
-================
-idEntity::Save
-================
-*/
 void idEntity::Save( idSaveGame* savefile ) const
 {
 	int i, j;
@@ -815,11 +754,6 @@ void idEntity::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( mpGUIState );
 }
 
-/*
-================
-idEntity::Restore
-================
-*/
 void idEntity::Restore( idRestoreGame* savefile )
 {
 	int	  i, j;
@@ -907,11 +841,6 @@ void idEntity::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-================
-idEntity::GetEntityDefName
-================
-*/
 const char* idEntity::GetEntityDefName() const
 {
 	if( entityDefNumber < 0 ) {
@@ -920,11 +849,6 @@ const char* idEntity::GetEntityDefName() const
 	return declManager->DeclByIndex( DECL_ENTITYDEF, entityDefNumber, false )->GetName();
 }
 
-/*
-================
-idEntity::SetName
-================
-*/
 void idEntity::SetName( const char* newname )
 {
 	if( name.Length() ) {
@@ -942,11 +866,6 @@ void idEntity::SetName( const char* newname )
 	}
 }
 
-/*
-================
-idEntity::GetName
-================
-*/
 const char* idEntity::GetName() const
 {
 	return name.c_str();
@@ -958,25 +877,12 @@ const char* idEntity::GetName() const
 
 ***********************************************************************/
 
-/*
-================
-idEntity::Think
-================
-*/
 void idEntity::Think()
 {
 	RunPhysics();
 	Present();
 }
 
-/*
-================
-idEntity::DoDormantTests
-
-Monsters and other expensive entities that are completely closed
-off from the player can skip all of their work
-================
-*/
 bool idEntity::DoDormantTests()
 {
 	if( fl.neverDormant ) {
@@ -1009,14 +915,6 @@ bool idEntity::DoDormantTests()
 	}
 }
 
-/*
-================
-idEntity::CheckDormant
-
-Monsters and other expensive entities that are completely closed
-off from the player can skip all of their work
-================
-*/
 bool idEntity::CheckDormant()
 {
 	bool dormant;
@@ -1033,43 +931,19 @@ bool idEntity::CheckDormant()
 	return dormant;
 }
 
-/*
-================
-idEntity::DormantBegin
-
-called when entity becomes dormant
-================
-*/
 void idEntity::DormantBegin()
 {
 }
 
-/*
-================
-idEntity::DormantEnd
-
-called when entity wakes from being dormant
-================
-*/
 void idEntity::DormantEnd()
 {
 }
 
-/*
-================
-idEntity::IsActive
-================
-*/
 bool idEntity::IsActive() const
 {
 	return activeNode.InList();
 }
 
-/*
-================
-idEntity::BecomeActive
-================
-*/
 void idEntity::BecomeActive( int flags )
 {
 	if( ( flags & TH_PHYSICS ) ) {
@@ -1096,11 +970,6 @@ void idEntity::BecomeActive( int flags )
 	}
 }
 
-/*
-================
-idEntity::BecomeInactive
-================
-*/
 void idEntity::BecomeInactive( int flags )
 {
 	if( ( flags & TH_PHYSICS ) ) {
@@ -1142,11 +1011,6 @@ void idEntity::BecomeInactive( int flags )
 
 ***********************************************************************/
 
-/*
-================
-idEntity::SetShaderParm
-================
-*/
 void idEntity::SetShaderParm( int parmnum, float value )
 {
 	if( ( parmnum < 0 ) || ( parmnum >= MAX_ENTITY_SHADER_PARMS ) ) {
@@ -1171,22 +1035,12 @@ void idEntity::SetColor( float red, float green, float blue )
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::SetColor
-================
-*/
 void idEntity::SetColor( const idVec3& color )
 {
 	SetColor( color[0], color[1], color[2] );
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::GetColor
-================
-*/
 void idEntity::GetColor( idVec3& out ) const
 {
 	out[0] = renderEntity.shaderParms[SHADERPARM_RED];
@@ -1194,11 +1048,6 @@ void idEntity::GetColor( idVec3& out ) const
 	out[2] = renderEntity.shaderParms[SHADERPARM_BLUE];
 }
 
-/*
-================
-idEntity::SetColor
-================
-*/
 void idEntity::SetColor( const idVec4& color )
 {
 	renderEntity.shaderParms[SHADERPARM_RED]   = color[0];
@@ -1208,11 +1057,6 @@ void idEntity::SetColor( const idVec4& color )
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::GetColor
-================
-*/
 void idEntity::GetColor( idVec4& out ) const
 {
 	out[0] = renderEntity.shaderParms[SHADERPARM_RED];
@@ -1221,22 +1065,12 @@ void idEntity::GetColor( idVec4& out ) const
 	out[3] = renderEntity.shaderParms[SHADERPARM_ALPHA];
 }
 
-/*
-================
-idEntity::UpdateAnimationControllers
-================
-*/
 bool idEntity::UpdateAnimationControllers()
 {
 	// any ragdoll and IK animation controllers should be updated here
 	return false;
 }
 
-/*
-================
-idEntity::SetModel
-================
-*/
 void idEntity::SetModel( const char* modelname )
 {
 	assert( modelname );
@@ -1261,32 +1095,17 @@ void idEntity::SetModel( const char* modelname )
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::SetSkin
-================
-*/
 void idEntity::SetSkin( const idDeclSkin* skin )
 {
 	renderEntity.customSkin = skin;
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::GetSkin
-================
-*/
 const idDeclSkin* idEntity::GetSkin() const
 {
 	return renderEntity.customSkin;
 }
 
-/*
-================
-idEntity::FreeModelDef
-================
-*/
 void idEntity::FreeModelDef()
 {
 	if( modelDefHandle != -1 ) {
@@ -1295,30 +1114,15 @@ void idEntity::FreeModelDef()
 	}
 }
 
-/*
-================
-idEntity::FreeLightDef
-================
-*/
 void idEntity::FreeLightDef()
 {
 }
 
-/*
-================
-idEntity::IsHidden
-================
-*/
 bool idEntity::IsHidden() const
 {
 	return fl.hidden;
 }
 
-/*
-================
-idEntity::Hide
-================
-*/
 void idEntity::Hide()
 {
 	if( !IsHidden() ) {
@@ -1328,11 +1132,6 @@ void idEntity::Hide()
 	}
 }
 
-/*
-================
-idEntity::Show
-================
-*/
 void idEntity::Show()
 {
 	if( IsHidden() ) {
@@ -1341,11 +1140,6 @@ void idEntity::Show()
 	}
 }
 
-/*
-================
-idEntity::UpdateModelTransform
-================
-*/
 void idEntity::UpdateModelTransform()
 {
 	idVec3 origin;
@@ -1361,11 +1155,6 @@ void idEntity::UpdateModelTransform()
 	}
 }
 
-/*
-================
-idEntity::UpdateModel
-================
-*/
 void idEntity::UpdateModel()
 {
 	renderEntity.timeGroup = timeGroup;
@@ -1399,22 +1188,12 @@ void idEntity::UpdateModel()
 	}
 }
 
-/*
-================
-idEntity::UpdateVisuals
-================
-*/
 void idEntity::UpdateVisuals()
 {
 	UpdateModel();
 	UpdateSound();
 }
 
-/*
-================
-idEntity::UpdatePVSAreas
-================
-*/
 void idEntity::UpdatePVSAreas()
 {
 	int		 localNumPVSAreas, localPVSAreas[32];
@@ -1439,11 +1218,6 @@ void idEntity::UpdatePVSAreas()
 	}
 }
 
-/*
-================
-idEntity::UpdatePVSAreas
-================
-*/
 void idEntity::UpdatePVSAreas( const idVec3& pos )
 {
 	int i;
@@ -1455,11 +1229,6 @@ void idEntity::UpdatePVSAreas( const idVec3& pos )
 	}
 }
 
-/*
-================
-idEntity::GetNumPVSAreas
-================
-*/
 int idEntity::GetNumPVSAreas()
 {
 	if( numPVSAreas < 0 ) {
@@ -1468,11 +1237,6 @@ int idEntity::GetNumPVSAreas()
 	return numPVSAreas;
 }
 
-/*
-================
-idEntity::GetPVSAreas
-================
-*/
 const int* idEntity::GetPVSAreas()
 {
 	if( numPVSAreas < 0 ) {
@@ -1481,23 +1245,11 @@ const int* idEntity::GetPVSAreas()
 	return PVSAreas;
 }
 
-/*
-================
-idEntity::ClearPVSAreas
-================
-*/
 void idEntity::ClearPVSAreas()
 {
 	numPVSAreas = -1;
 }
 
-/*
-================
-idEntity::PhysicsTeamInPVS
-
-  FIXME: for networking also return true if any of the entity shadows is in the PVS
-================
-*/
 bool idEntity::PhysicsTeamInPVS( pvsHandle_t pvsHandle )
 {
 	idEntity* part;
@@ -1514,11 +1266,6 @@ bool idEntity::PhysicsTeamInPVS( pvsHandle_t pvsHandle )
 	return false;
 }
 
-/*
-==============
-idEntity::BecomeReplicated
-==============
-*/
 void idEntity::BecomeReplicated()
 {
 	fl.skipReplication = false;
@@ -1528,11 +1275,6 @@ void idEntity::BecomeReplicated()
 	}
 }
 
-/*
-==============
-idEntity::ProjectOverlay
-==============
-*/
 void idEntity::ProjectOverlay( const idVec3& origin, const idVec3& dir, float size, const char* material )
 {
 	float	s, c;
@@ -1580,13 +1322,6 @@ void idEntity::ProjectOverlay( const idVec3& origin, const idVec3& dir, float si
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::Present
-
-Present is called to allow entities to generate refEntities, lights, etc for the renderer.
-================
-*/
 void idEntity::Present()
 {
 	if( !gameLocal.isNewFrame ) {
@@ -1617,31 +1352,16 @@ void idEntity::Present()
 	}
 }
 
-/*
-================
-idEntity::GetRenderEntity
-================
-*/
 renderEntity_t* idEntity::GetRenderEntity()
 {
 	return &renderEntity;
 }
 
-/*
-================
-idEntity::GetModelDefHandle
-================
-*/
 int idEntity::GetModelDefHandle()
 {
 	return modelDefHandle;
 }
 
-/*
-================
-idEntity::UpdateRenderEntity
-================
-*/
 bool idEntity::UpdateRenderEntity( renderEntity_t* renderEntity, const renderView_t* renderView )
 {
 	if( gameLocal.inCinematic && gameLocal.skipCinematic ) {
@@ -1661,12 +1381,6 @@ bool idEntity::UpdateRenderEntity( renderEntity_t* renderEntity, const renderVie
 	return false;
 }
 
-/*
-==============
-idEntity::GetKey
-==============
-*/
-// jmarshall
 const char* idEntity::GetKey( const char* key )
 {
 	const char* value;
@@ -1676,55 +1390,26 @@ const char* idEntity::GetKey( const char* key )
 	return value;
 }
 
-/*
-==============
-idEntity::GetFloat
-==============
-*/
-
 float idEntity::GetFloat( const char* key )
 {
 	return spawnArgs.GetFloat( key, "0" );
 }
 
-/*
-==============
-idEntity::GetInt
-==============
-*/
 int idEntity::GetInt( const char* key )
 {
 	return spawnArgs.GetInt( key, "0" );
 }
 
-/*
-==============
-idEntity::GetBool
-==============
-*/
 bool idEntity::GetBool( const char* key )
 {
 	return spawnArgs.GetBool( key, "0" );
 }
 
-/*
-================
-idEntity::GetOrigin
-================
-*/
 idVec3 idEntity::GetOrigin() const
 {
 	return GetLocalCoordinates( GetPhysics()->GetOrigin() );
 }
-// jmarshall end
 
-/*
-================
-idEntity::ModelCallback
-
-	NOTE: may not change the game state whatsoever!
-================
-*/
 bool idEntity::ModelCallback( renderEntity_t* renderEntity, const renderView_t* renderView )
 {
 	idEntity* ent;
@@ -1738,25 +1423,11 @@ bool idEntity::ModelCallback( renderEntity_t* renderEntity, const renderView_t* 
 	return ent->UpdateRenderEntity( renderEntity, renderView );
 }
 
-/*
-================
-idEntity::GetAnimator
-
-Subclasses will be responsible for allocating animator.
-================
-*/
 idAnimator* idEntity::GetAnimator()
 {
 	return NULL;
 }
 
-/*
-=============
-idEntity::GetRenderView
-
-This is used by remote camera views to look from an entity
-=============
-*/
 renderView_t* idEntity::GetRenderView()
 {
 	if( !renderView ) {
@@ -1789,23 +1460,11 @@ renderView_t* idEntity::GetRenderView()
 
 ***********************************************************************/
 
-/*
-================
-idEntity::CanPlayChatterSounds
-
-Used for playing chatter sounds on monsters.
-================
-*/
 bool idEntity::CanPlayChatterSounds() const
 {
 	return true;
 }
 
-/*
-================
-idEntity::StartSound
-================
-*/
 bool idEntity::StartSound( const char* soundName, const s_channelType channel, int soundShaderFlags, bool broadcast, int* length )
 {
 	const idSoundShader* shader;
@@ -1836,11 +1495,6 @@ bool idEntity::StartSound( const char* soundName, const s_channelType channel, i
 	return StartSoundShader( shader, channel, soundShaderFlags, broadcast, length );
 }
 
-/*
-================
-idEntity::StartSoundShader
-================
-*/
 bool idEntity::StartSoundShader( const idSoundShader* shader, const s_channelType channel, int soundShaderFlags, bool broadcast, int* length )
 {
 	float diversity;
@@ -1894,11 +1548,6 @@ bool idEntity::StartSoundShader( const idSoundShader* shader, const s_channelTyp
 	return true;
 }
 
-/*
-================
-idEntity::StopSound
-================
-*/
 void idEntity::StopSound( const s_channelType channel, bool broadcast )
 {
 	if( !gameLocal.isNewFrame ) {
@@ -1920,23 +1569,11 @@ void idEntity::StopSound( const s_channelType channel, bool broadcast )
 	}
 }
 
-/*
-================
-idEntity::SetSoundVolume
-
-  Must be called before starting a new sound.
-================
-*/
 void idEntity::SetSoundVolume( float volume )
 {
 	refSound.parms.volume = volume;
 }
 
-/*
-================
-idEntity::UpdateSound
-================
-*/
 void idEntity::UpdateSound()
 {
 	if( refSound.referenceSound ) {
@@ -1953,31 +1590,16 @@ void idEntity::UpdateSound()
 	}
 }
 
-/*
-================
-idEntity::GetListenerId
-================
-*/
 int idEntity::GetListenerId() const
 {
 	return refSound.listenerId;
 }
 
-/*
-================
-idEntity::GetSoundEmitter
-================
-*/
 idSoundEmitter* idEntity::GetSoundEmitter() const
 {
 	return refSound.referenceSound;
 }
 
-/*
-================
-idEntity::FreeSoundEmitter
-================
-*/
 void idEntity::FreeSoundEmitter( bool immediate )
 {
 	if( refSound.referenceSound ) {
@@ -1992,47 +1614,22 @@ void idEntity::FreeSoundEmitter( bool immediate )
 
 ***********************************************************************/
 
-/*
-================
-idEntity::PreBind
-================
-*/
 void idEntity::PreBind()
 {
 }
 
-/*
-================
-idEntity::PostBind
-================
-*/
 void idEntity::PostBind()
 {
 }
 
-/*
-================
-idEntity::PreUnbind
-================
-*/
 void idEntity::PreUnbind()
 {
 }
 
-/*
-================
-idEntity::PostUnbind
-================
-*/
 void idEntity::PostUnbind()
 {
 }
 
-/*
-================
-idEntity::InitBind
-================
-*/
 bool idEntity::InitBind( idEntity* master )
 {
 	if( master == this ) {
@@ -2061,11 +1658,6 @@ bool idEntity::InitBind( idEntity* master )
 	return true;
 }
 
-/*
-================
-idEntity::FinishBind
-================
-*/
 void idEntity::FinishBind()
 {
 	// set the master on the physics object
@@ -2085,13 +1677,6 @@ void idEntity::FinishBind()
 	teamMaster->BecomeActive( TH_PHYSICS );
 }
 
-/*
-================
-idEntity::Bind
-
-  bind relative to the visual position of the master
-================
-*/
 void idEntity::Bind( idEntity* master, bool orientated )
 {
 	if( !InitBind( master ) ) {
@@ -2110,13 +1695,6 @@ void idEntity::Bind( idEntity* master, bool orientated )
 	PostBind();
 }
 
-/*
-================
-idEntity::BindToJoint
-
-  bind relative to a joint of the md5 model used by the master
-================
-*/
 void idEntity::BindToJoint( idEntity* master, const char* jointname, bool orientated )
 {
 	jointHandle_t jointnum;
@@ -2149,13 +1727,6 @@ void idEntity::BindToJoint( idEntity* master, const char* jointname, bool orient
 	PostBind();
 }
 
-/*
-================
-idEntity::BindToJoint
-
-  bind relative to a joint of the md5 model used by the master
-================
-*/
 void idEntity::BindToJoint( idEntity* master, jointHandle_t jointnum, bool orientated )
 {
 	if( !InitBind( master ) ) {
@@ -2174,13 +1745,6 @@ void idEntity::BindToJoint( idEntity* master, jointHandle_t jointnum, bool orien
 	PostBind();
 }
 
-/*
-================
-idEntity::BindToBody
-
-  bind relative to a collision model used by the physics of the master
-================
-*/
 void idEntity::BindToBody( idEntity* master, int bodyId, bool orientated )
 {
 	if( !InitBind( master ) ) {
@@ -2203,11 +1767,6 @@ void idEntity::BindToBody( idEntity* master, int bodyId, bool orientated )
 	PostBind();
 }
 
-/*
-================
-idEntity::Unbind
-================
-*/
 void idEntity::Unbind()
 {
 	idEntity* prev;
@@ -2294,11 +1853,6 @@ void idEntity::Unbind()
 	PostUnbind();
 }
 
-/*
-================
-idEntity::RemoveBinds
-================
-*/
 void idEntity::RemoveBinds()
 {
 	idEntity* ent;
@@ -2327,11 +1881,6 @@ bool idEntity::IsBound() const
 	return false;
 }
 
-/*
-================
-idEntity::IsBoundTo
-================
-*/
 bool idEntity::IsBoundTo( idEntity* master ) const
 {
 	idEntity* ent;
@@ -2349,61 +1898,31 @@ bool idEntity::IsBoundTo( idEntity* master ) const
 	return false;
 }
 
-/*
-================
-idEntity::GetBindMaster
-================
-*/
 idEntity* idEntity::GetBindMaster() const
 {
 	return bindMaster;
 }
 
-/*
-================
-idEntity::GetBindJoint
-================
-*/
 jointHandle_t idEntity::GetBindJoint() const
 {
 	return bindJoint;
 }
 
-/*
-================
-idEntity::GetBindBody
-================
-*/
 int idEntity::GetBindBody() const
 {
 	return bindBody;
 }
 
-/*
-================
-idEntity::GetTeamMaster
-================
-*/
 idEntity* idEntity::GetTeamMaster() const
 {
 	return teamMaster;
 }
 
-/*
-================
-idEntity::GetNextTeamEntity
-================
-*/
 idEntity* idEntity::GetNextTeamEntity() const
 {
 	return teamChain;
 }
 
-/*
-=====================
-idEntity::ConvertLocalToWorldTransform
-=====================
-*/
 void idEntity::ConvertLocalToWorldTransform( idVec3& offset, idMat3& axis )
 {
 	UpdateModelTransform();
@@ -2412,17 +1931,6 @@ void idEntity::ConvertLocalToWorldTransform( idVec3& offset, idMat3& axis )
 	axis *= renderEntity.axis;
 }
 
-/*
-================
-idEntity::GetLocalVector
-
-Takes a vector in worldspace and transforms it into the parent
-object's localspace.
-
-Note: Does not take origin into acount.  Use getLocalCoordinate to
-convert coordinates.
-================
-*/
 idVec3 idEntity::GetLocalVector( const idVec3& vec ) const
 {
 	idVec3 pos;
@@ -2440,14 +1948,6 @@ idVec3 idEntity::GetLocalVector( const idVec3& vec ) const
 	return pos;
 }
 
-/*
-================
-idEntity::GetLocalCoordinates
-
-Takes a vector in world coordinates and transforms it into the parent
-object's local coordinates.
-================
-*/
 idVec3 idEntity::GetLocalCoordinates( const idVec3& vec ) const
 {
 	idVec3 pos;
@@ -2465,17 +1965,6 @@ idVec3 idEntity::GetLocalCoordinates( const idVec3& vec ) const
 	return pos;
 }
 
-/*
-================
-idEntity::GetWorldVector
-
-Takes a vector in the parent object's local coordinates and transforms
-it into world coordinates.
-
-Note: Does not take origin into acount.  Use getWorldCoordinate to
-convert coordinates.
-================
-*/
 idVec3 idEntity::GetWorldVector( const idVec3& vec ) const
 {
 	idVec3 pos;
@@ -2493,14 +1982,6 @@ idVec3 idEntity::GetWorldVector( const idVec3& vec ) const
 	return pos;
 }
 
-/*
-================
-idEntity::GetWorldCoordinates
-
-Takes a vector in the parent object's local coordinates and transforms
-it into world coordinates.
-================
-*/
 idVec3 idEntity::GetWorldCoordinates( const idVec3& vec ) const
 {
 	idVec3 pos;
@@ -2519,11 +2000,6 @@ idVec3 idEntity::GetWorldCoordinates( const idVec3& vec ) const
 	return pos;
 }
 
-/*
-================
-idEntity::GetMasterPosition
-================
-*/
 bool idEntity::GetMasterPosition( idVec3& masterOrigin, idMat3& masterAxis ) const
 {
 	idVec3		localOrigin;
@@ -2558,11 +2034,6 @@ bool idEntity::GetMasterPosition( idVec3& masterOrigin, idMat3& masterAxis ) con
 	}
 }
 
-/*
-================
-idEntity::GetWorldVelocities
-================
-*/
 void idEntity::GetWorldVelocities( idVec3& linearVelocity, idVec3& angularVelocity ) const
 {
 	linearVelocity	= physics->GetLinearVelocity();
@@ -2583,11 +2054,6 @@ void idEntity::GetWorldVelocities( idVec3& linearVelocity, idVec3& angularVeloci
 	}
 }
 
-/*
-================
-idEntity::JoinTeam
-================
-*/
 void idEntity::JoinTeam( idEntity* teammember )
 {
 	idEntity* ent;
@@ -2654,11 +2120,6 @@ void idEntity::JoinTeam( idEntity* teammember )
 	gameLocal.sortTeamMasters = true;
 }
 
-/*
-================
-idEntity::QuitTeam
-================
-*/
 void idEntity::QuitTeam()
 {
 	idEntity* ent;
@@ -2709,11 +2170,6 @@ void idEntity::QuitTeam()
 
 ***********************************************************************/
 
-/*
-================
-idEntity::InitDefaultPhysics
-================
-*/
 void idEntity::InitDefaultPhysics( const idVec3& origin, const idMat3& axis, const idDeclEntityDef* def )
 {
 	const char*	 temp;
@@ -2796,11 +2252,6 @@ void idEntity::InitDefaultPhysics( const idVec3& origin, const idMat3& axis, con
 	physics = &defaultPhysicsObj;
 }
 
-/*
-================
-idEntity::SetPhysics
-================
-*/
 void idEntity::SetPhysics( idPhysics* phys )
 {
 	// clear any contacts the current physics object has
@@ -2819,11 +2270,6 @@ void idEntity::SetPhysics( idPhysics* phys )
 	physics->SetMaster( bindMaster, fl.bindOrientated );
 }
 
-/*
-================
-idEntity::RestorePhysics
-================
-*/
 void idEntity::RestorePhysics( idPhysics* phys )
 {
 	assert( phys != NULL );
@@ -2831,21 +2277,11 @@ void idEntity::RestorePhysics( idPhysics* phys )
 	physics = phys;
 }
 
-/*
-================
-idEntity::GetPhysics
-================
-*/
 idPhysics* idEntity::GetPhysics() const
 {
 	return physics;
 }
 
-/*
-================
-idEntity::RunPhysics
-================
-*/
 bool idEntity::RunPhysics()
 {
 	int		  i, reachedTime;
@@ -3004,11 +2440,6 @@ bool idEntity::RunPhysics()
 	return true;
 }
 
-/*
-================
-idEntity::InterpolatePhysics
-================
-*/
 void idEntity::InterpolatePhysics( const float fraction )
 {
 	int		  i, startTime, endTime;
@@ -3122,11 +2553,6 @@ void idEntity::InterpolatePhysics( const float fraction )
 	}
 }
 
-/*
-================
-idEntity::InterpolatePhysicsOnly
-================
-*/
 void idEntity::InterpolatePhysicsOnly( const float fraction, bool updateTeam )
 {
 	if( physics && useClientInterpolation ) {
@@ -3159,11 +2585,6 @@ void idEntity::InterpolatePhysicsOnly( const float fraction, bool updateTeam )
 	}
 }
 
-/*
-================
-idEntity::UpdateFromPhysics
-================
-*/
 void idEntity::UpdateFromPhysics( bool moveBack )
 {
 	if( IsType( idActor::Type ) ) {
@@ -3184,21 +2605,11 @@ void idEntity::UpdateFromPhysics( bool moveBack )
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::GetPhysicsTimeStep
-================
-*/
 int idEntity::GetPhysicsTimeStep() const
 {
 	return gameLocal.time - gameLocal.previousTime;
 }
 
-/*
-================
-idEntity::SetOrigin
-================
-*/
 void idEntity::SetOrigin( const idVec3& org )
 {
 	GetPhysics()->SetOrigin( org );
@@ -3206,11 +2617,6 @@ void idEntity::SetOrigin( const idVec3& org )
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::SetAxis
-================
-*/
 void idEntity::SetAxis( const idMat3& axis )
 {
 	if( GetPhysics()->IsType( idPhysics_Actor::Type ) ) {
@@ -3222,21 +2628,11 @@ void idEntity::SetAxis( const idMat3& axis )
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::SetAngles
-================
-*/
 void idEntity::SetAngles( const idAngles& ang )
 {
 	SetAxis( ang.ToMat3() );
 }
 
-/*
-================
-idEntity::GetFloorPos
-================
-*/
 bool idEntity::GetFloorPos( float max_dist, idVec3& floorpos ) const
 {
 	trace_t result;
@@ -3256,21 +2652,11 @@ bool idEntity::GetFloorPos( float max_dist, idVec3& floorpos ) const
 	}
 }
 
-/*
-================
-idEntity::GetPhysicsToVisualTransform
-================
-*/
 bool idEntity::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis )
 {
 	return false;
 }
 
-/*
-================
-idEntity::GetPhysicsToSoundTransform
-================
-*/
 bool idEntity::GetPhysicsToSoundTransform( idVec3& origin, idMat3& axis )
 {
 	// by default play the sound at the center of the bounding box of the first clip model
@@ -3282,92 +2668,47 @@ bool idEntity::GetPhysicsToSoundTransform( idVec3& origin, idMat3& axis )
 	return false;
 }
 
-/*
-================
-idEntity::Collide
-================
-*/
 bool idEntity::Collide( const trace_t& collision, const idVec3& velocity )
 {
 	// this entity collides with collision.c.entityNum
 	return false;
 }
 
-/*
-================
-idEntity::GetImpactInfo
-================
-*/
 void idEntity::GetImpactInfo( idEntity* ent, int id, const idVec3& point, impactInfo_t* info )
 {
 	GetPhysics()->GetImpactInfo( id, point, info );
 }
 
-/*
-================
-idEntity::ApplyImpulse
-================
-*/
 void idEntity::ApplyImpulse( idEntity* ent, int id, const idVec3& point, const idVec3& impulse )
 {
 	GetPhysics()->ApplyImpulse( id, point, impulse );
 }
 
-/*
-================
-idEntity::AddForce
-================
-*/
 void idEntity::AddForce( idEntity* ent, int id, const idVec3& point, const idVec3& force )
 {
 	GetPhysics()->AddForce( id, point, force );
 }
 
-/*
-================
-idEntity::ActivatePhysics
-================
-*/
 void idEntity::ActivatePhysics( idEntity* ent )
 {
 	GetPhysics()->Activate();
 }
 
-/*
-================
-idEntity::IsAtRest
-================
-*/
 bool idEntity::IsAtRest() const
 {
 	return GetPhysics()->IsAtRest();
 }
 
-/*
-================
-idEntity::GetRestStartTime
-================
-*/
 int idEntity::GetRestStartTime() const
 {
 	return GetPhysics()->GetRestStartTime();
 }
 
-/*
-================
-idEntity::AddContactEntity
-================
-*/
 void idEntity::AddContactEntity( idEntity* ent )
 {
 	GetPhysics()->AddContactEntity( ent );
 }
 
-/*
-================
-idEntity::RemoveContactEntity
-================
-*/
 void idEntity::RemoveContactEntity( idEntity* ent )
 {
 	GetPhysics()->RemoveContactEntity( ent );
@@ -3379,14 +2720,6 @@ void idEntity::RemoveContactEntity( idEntity* ent )
 
 ***********************************************************************/
 
-/*
-============
-idEntity::CanDamage
-
-Returns true if the inflictor can directly damage the target.  Used for
-explosions and melee attacks.
-============
-*/
 bool idEntity::CanDamage( const idVec3& origin, idVec3& damagePoint ) const
 {
 	idVec3	dest;
@@ -3460,35 +2793,11 @@ bool idEntity::CanDamage( const idVec3& origin, idVec3& damagePoint ) const
 	return false;
 }
 
-/*
-================
-idEntity::DamageFeedback
-
-callback function for when another entity received damage from this entity.  damage can be adjusted and returned to the caller.
-================
-*/
 void idEntity::DamageFeedback( idEntity* victim, idEntity* inflictor, int& damage )
 {
 	// implemented in subclasses
 }
 
-/*
-============
-Damage
-
-this		entity that is being damaged
-inflictor	entity that is causing the damage
-attacker	entity that caused the inflictor to damage targ
-	example: this=monster, inflictor=rocket, attacker=player
-
-dir			direction of the attack for knockback in global space
-point		point at which the damage is being inflicted, used for headshots
-damage		amount of damage being inflicted
-
-inflictor, attacker, dir, and point can be NULL for environmental effects
-
-============
-*/
 void idEntity::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir, const char* damageDefName, const float damageScale, const int location )
 {
 	if( !fl.takedamage ) {
@@ -3530,11 +2839,6 @@ void idEntity::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& di
 	}
 }
 
-/*
-================
-idEntity::AddDamageEffect
-================
-*/
 void idEntity::AddDamageEffect( const trace_t& collision, const idVec3& velocity, const char* damageDefName )
 {
 	const char *		   sound, *decal, *key;
@@ -3571,27 +2875,11 @@ void idEntity::AddDamageEffect( const trace_t& collision, const idVec3& velocity
 	}
 }
 
-/*
-============
-idEntity::Pain
-
-Called whenever an entity recieves damage.  Returns whether the entity responds to the pain.
-This is a virtual function that subclasses are expected to implement.
-============
-*/
 bool idEntity::Pain( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 	return false;
 }
 
-/*
-============
-idEntity::Killed
-
-Called whenever an entity's health is reduced to 0 or less.
-This is a virtual function that subclasses are expected to implement.
-============
-*/
 void idEntity::Killed( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 }
@@ -3602,27 +2890,11 @@ void idEntity::Killed( idEntity* inflictor, idEntity* attacker, int damage, cons
 
 ***********************************************************************/
 
-/*
-================
-idEntity::ShouldConstructScriptObjectAtSpawn
-
-Called during idEntity::Spawn to see if it should construct the script object or not.
-Overridden by subclasses that need to spawn the script object themselves.
-================
-*/
 bool idEntity::ShouldConstructScriptObjectAtSpawn() const
 {
 	return true;
 }
 
-/*
-================
-idEntity::ConstructScriptObject
-
-Called during idEntity::Spawn.  Calls the constructor on the script object.
-Can be overridden by subclasses when a thread doesn't need to be allocated.
-================
-*/
 idThread* idEntity::ConstructScriptObject()
 {
 	idThread*		  thread;
@@ -3649,15 +2921,6 @@ idThread* idEntity::ConstructScriptObject()
 	return thread;
 }
 
-/*
-================
-idEntity::DeconstructScriptObject
-
-Called during idEntity::~idEntity.  Calls the destructor on the script object.
-Can be overridden by subclasses when a thread doesn't need to be allocated.
-Not called during idGameLocal::MapShutdown.
-================
-*/
 void idEntity::DeconstructScriptObject()
 {
 	idThread*		  thread;
@@ -3680,11 +2943,6 @@ void idEntity::DeconstructScriptObject()
 	}
 }
 
-/*
-================
-idEntity::HasSignal
-================
-*/
 bool idEntity::HasSignal( signalNum_t signalnum ) const
 {
 	if( !signals ) {
@@ -3694,11 +2952,6 @@ bool idEntity::HasSignal( signalNum_t signalnum ) const
 	return ( signals->signal[signalnum].Num() > 0 );
 }
 
-/*
-================
-idEntity::SetSignal
-================
-*/
 void idEntity::SetSignal( signalNum_t signalnum, idThread* thread, const function_t* function )
 {
 	int		 i;
@@ -3732,11 +2985,6 @@ void idEntity::SetSignal( signalNum_t signalnum, idThread* thread, const functio
 	signals->signal[signalnum].Append( sig );
 }
 
-/*
-================
-idEntity::ClearSignal
-================
-*/
 void idEntity::ClearSignal( idThread* thread, signalNum_t signalnum )
 {
 	assert( thread );
@@ -3752,11 +3000,6 @@ void idEntity::ClearSignal( idThread* thread, signalNum_t signalnum )
 	signals->signal[signalnum].Clear();
 }
 
-/*
-================
-idEntity::ClearSignalThread
-================
-*/
 void idEntity::ClearSignalThread( signalNum_t signalnum, idThread* thread )
 {
 	int i;
@@ -3785,11 +3028,6 @@ void idEntity::ClearSignalThread( signalNum_t signalnum, idThread* thread )
 	}
 }
 
-/*
-================
-idEntity::Signal
-================
-*/
 void idEntity::Signal( signalNum_t signalnum )
 {
 	int		  i;
@@ -3824,11 +3062,6 @@ void idEntity::Signal( signalNum_t signalnum )
 	}
 }
 
-/*
-================
-idEntity::SignalEvent
-================
-*/
 void idEntity::SignalEvent( idThread* thread, signalNum_t signalnum )
 {
 	if( ( signalnum < 0 ) || ( signalnum >= NUM_SIGNALS ) ) {
@@ -3848,11 +3081,6 @@ void idEntity::SignalEvent( idThread* thread, signalNum_t signalnum )
 
 ***********************************************************************/
 
-/*
-================
-idEntity::TriggerGuis
-================
-*/
 void idEntity::TriggerGuis()
 {
 	int i;
@@ -3863,11 +3091,6 @@ void idEntity::TriggerGuis()
 	}
 }
 
-/*
-================
-idEntity::HandleGuiCommands
-================
-*/
 bool idEntity::HandleGuiCommands( idEntity* entityGui, const char* cmds )
 {
 	idEntity* targetEnt;
@@ -4023,11 +3246,6 @@ bool idEntity::HandleGuiCommands( idEntity* entityGui, const char* cmds )
 	return ret;
 }
 
-/*
-================
-idEntity::HandleSingleGuiCommand
-================
-*/
 bool idEntity::HandleSingleGuiCommand( idEntity* entityGui, idLexer* src )
 {
 	return false;
@@ -4039,15 +3257,6 @@ bool idEntity::HandleSingleGuiCommand( idEntity* entityGui, idLexer* src )
 
 ***********************************************************************/
 
-/*
-===============
-idEntity::FindTargets
-
-We have to wait until all entities are spawned
-Used to build lists of targets after the entity is spawned.  Since not all entities
-have been spawned when the entity is created at map load time, we have to wait
-===============
-*/
 void idEntity::FindTargets()
 {
 	int i;
@@ -4063,11 +3272,6 @@ void idEntity::FindTargets()
 	}
 }
 
-/*
-================
-idEntity::RemoveNullTargets
-================
-*/
 void idEntity::RemoveNullTargets()
 {
 	int i;
@@ -4079,13 +3283,6 @@ void idEntity::RemoveNullTargets()
 	}
 }
 
-/*
-==============================
-idEntity::ActivateTargets
-
-"activator" should be set to the entity that initiated the firing.
-==============================
-*/
 void idEntity::ActivateTargets( idEntity* activator ) const
 {
 	idEntity* ent;
@@ -4114,11 +3311,6 @@ void idEntity::ActivateTargets( idEntity* activator ) const
 
 ***********************************************************************/
 
-/*
-================
-idEntity::Teleport
-================
-*/
 void idEntity::Teleport( const idVec3& origin, const idAngles& angles, idEntity* destination )
 {
 	GetPhysics()->SetOrigin( origin );
@@ -4127,13 +3319,6 @@ void idEntity::Teleport( const idVec3& origin, const idAngles& angles, idEntity*
 	UpdateVisuals();
 }
 
-/*
-============
-idEntity::TouchTriggers
-
-  Activate all trigger entities touched at the current position.
-============
-*/
 bool idEntity::TouchTriggers() const
 {
 	int			 i, numClipModels, numEntities;
@@ -4187,11 +3372,6 @@ bool idEntity::TouchTriggers() const
 	return ( numEntities != 0 );
 }
 
-/*
-================
-idEntity::GetSpline
-================
-*/
 idCurve_Spline<idVec3>* idEntity::GetSpline() const
 {
 	int						i, numPoints, t;
@@ -4233,11 +3413,6 @@ idCurve_Spline<idVec3>* idEntity::GetSpline() const
 	return spline;
 }
 
-/*
-===============
-idEntity::ShowEditingDialog
-===============
-*/
 void idEntity::ShowEditingDialog()
 {
 }
@@ -4258,64 +3433,31 @@ idVec3 idEntity::GetEditOrigin() const
 
 ***********************************************************************/
 
-/*
-================
-idEntity::Event_GetName
-================
-*/
 void idEntity::Event_GetName()
 {
 	idThread::ReturnString( name.c_str() );
 }
 
-/*
-================
-idEntity::Event_SetName
-================
-*/
 void idEntity::Event_SetName( const char* newname )
 {
 	SetName( newname );
 }
 
-/*
-===============
-idEntity::Event_FindTargets
-===============
-*/
 void idEntity::Event_FindTargets()
 {
 	FindTargets();
 }
 
-/*
-============
-idEntity::Event_ActivateTargets
-
-Activates any entities targeted by this entity.  Mainly used as an
-event to delay activating targets.
-============
-*/
 void idEntity::Event_ActivateTargets( idEntity* activator )
 {
 	ActivateTargets( activator );
 }
 
-/*
-================
-idEntity::Event_NumTargets
-================
-*/
 void idEntity::Event_NumTargets()
 {
 	idThread::ReturnFloat( targets.Num() );
 }
 
-/*
-================
-idEntity::Event_GetTarget
-================
-*/
 void idEntity::Event_GetTarget( float index )
 {
 	int i;
@@ -4328,11 +3470,6 @@ void idEntity::Event_GetTarget( float index )
 	}
 }
 
-/*
-================
-idEntity::Event_RandomTarget
-================
-*/
 void idEntity::Event_RandomTarget( const char* ignore )
 {
 	int		  num;
@@ -4370,61 +3507,31 @@ void idEntity::Event_RandomTarget( const char* ignore )
 	idThread::ReturnEntity( ent );
 }
 
-/*
-================
-idEntity::Event_BindToJoint
-================
-*/
 void idEntity::Event_BindToJoint( idEntity* master, const char* jointname, float orientated )
 {
 	BindToJoint( master, jointname, ( orientated != 0.0f ) );
 }
 
-/*
-================
-idEntity::Event_RemoveBinds
-================
-*/
 void idEntity::Event_RemoveBinds()
 {
 	RemoveBinds();
 }
 
-/*
-================
-idEntity::Event_Bind
-================
-*/
 void idEntity::Event_Bind( idEntity* master )
 {
 	Bind( master, true );
 }
 
-/*
-================
-idEntity::Event_BindPosition
-================
-*/
 void idEntity::Event_BindPosition( idEntity* master )
 {
 	Bind( master, false );
 }
 
-/*
-================
-idEntity::Event_Unbind
-================
-*/
 void idEntity::Event_Unbind()
 {
 	Unbind();
 }
 
-/*
-================
-idEntity::Event_SpawnBind
-================
-*/
 void idEntity::Event_SpawnBind()
 {
 	idEntity*	  parent;
@@ -4494,11 +3601,6 @@ void idEntity::Event_SpawnBind()
 	}
 }
 
-/*
-================
-idEntity::Event_SetOwner
-================
-*/
 void idEntity::Event_SetOwner( idEntity* owner )
 {
 	int i;
@@ -4508,32 +3610,17 @@ void idEntity::Event_SetOwner( idEntity* owner )
 	}
 }
 
-/*
-================
-idEntity::Event_SetModel
-================
-*/
 void idEntity::Event_SetModel( const char* modelname )
 {
 	SetModel( modelname );
 }
 
-/*
-================
-idEntity::Event_SetSkin
-================
-*/
 void idEntity::Event_SetSkin( const char* skinname )
 {
 	renderEntity.customSkin = declManager->FindSkin( skinname );
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::Event_GetShaderParm
-================
-*/
 void idEntity::Event_GetShaderParm( int parmnum )
 {
 	if( ( parmnum < 0 ) || ( parmnum >= MAX_ENTITY_SHADER_PARMS ) ) {
@@ -4554,11 +3641,6 @@ void idEntity::Event_SetShaderParm( int parmnum, float value )
 	SetShaderParm( parmnum, value );
 }
 
-/*
-================
-idEntity::Event_SetShaderParms
-================
-*/
 void idEntity::Event_SetShaderParms( float parm0, float parm1, float parm2, float parm3 )
 {
 	renderEntity.shaderParms[SHADERPARM_RED]   = parm0;
@@ -4568,21 +3650,11 @@ void idEntity::Event_SetShaderParms( float parm0, float parm1, float parm2, floa
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::Event_SetColor
-================
-*/
 void idEntity::Event_SetColor( float red, float green, float blue )
 {
 	SetColor( red, green, blue );
 }
 
-/*
-================
-idEntity::Event_GetColor
-================
-*/
 void idEntity::Event_GetColor()
 {
 	idVec3 out;
@@ -4591,51 +3663,26 @@ void idEntity::Event_GetColor()
 	idThread::ReturnVector( out );
 }
 
-/*
-================
-idEntity::Event_IsHidden
-================
-*/
 void idEntity::Event_IsHidden()
 {
 	idThread::ReturnInt( fl.hidden );
 }
 
-/*
-================
-idEntity::Event_Hide
-================
-*/
 void idEntity::Event_Hide()
 {
 	Hide();
 }
 
-/*
-================
-idEntity::Event_Show
-================
-*/
 void idEntity::Event_Show()
 {
 	Show();
 }
 
-/*
-================
-idEntity::Event_CacheSoundShader
-================
-*/
 void idEntity::Event_CacheSoundShader( const char* soundName )
 {
 	declManager->FindSound( soundName );
 }
 
-/*
-================
-idEntity::Event_StartSoundShader
-================
-*/
 void idEntity::Event_StartSoundShader( const char* soundName, int channel )
 {
 	int length = 0;
@@ -4647,21 +3694,11 @@ void idEntity::Event_StartSoundShader( const char* soundName, int channel )
 	idThread::ReturnFloat( MS2SEC( length ) );
 }
 
-/*
-================
-idEntity::Event_StopSound
-================
-*/
 void idEntity::Event_StopSound( int channel, int netSync )
 {
 	StopSound( channel, ( netSync != 0 ) );
 }
 
-/*
-================
-idEntity::Event_StartSound
-================
-*/
 void idEntity::Event_StartSound( const char* soundName, int channel, int netSync )
 {
 	int time;
@@ -4670,11 +3707,6 @@ void idEntity::Event_StartSound( const char* soundName, int channel, int netSync
 	idThread::ReturnFloat( MS2SEC( time ) );
 }
 
-/*
-================
-idEntity::Event_FadeSound
-================
-*/
 void idEntity::Event_FadeSound( int channel, float to, float over )
 {
 	if( refSound.referenceSound ) {
@@ -4682,123 +3714,63 @@ void idEntity::Event_FadeSound( int channel, float to, float over )
 	}
 }
 
-/*
-================
-idEntity::Event_GetWorldOrigin
-================
-*/
 void idEntity::Event_GetWorldOrigin()
 {
 	idThread::ReturnVector( GetPhysics()->GetOrigin() );
 }
 
-/*
-================
-idEntity::Event_SetWorldOrigin
-================
-*/
 void idEntity::Event_SetWorldOrigin( idVec3 const& org )
 {
 	idVec3 neworg = GetLocalCoordinates( org );
 	SetOrigin( neworg );
 }
 
-/*
-================
-idEntity::Event_SetOrigin
-================
-*/
 void idEntity::Event_SetOrigin( idVec3 const& org )
 {
 	SetOrigin( org );
 }
 
-/*
-================
-idEntity::Event_GetOrigin
-================
-*/
 void idEntity::Event_GetOrigin()
 {
 	idThread::ReturnVector( GetLocalCoordinates( GetPhysics()->GetOrigin() ) );
 }
 
-/*
-================
-idEntity::Event_SetAngles
-================
-*/
 void idEntity::Event_SetAngles( idAngles const& ang )
 {
 	SetAngles( ang );
 }
 
-/*
-================
-idEntity::Event_GetAngles
-================
-*/
 void idEntity::Event_GetAngles()
 {
 	idAngles ang = GetPhysics()->GetAxis().ToAngles();
 	idThread::ReturnVector( idVec3( ang[0], ang[1], ang[2] ) );
 }
 
-/*
-================
-idEntity::Event_SetLinearVelocity
-================
-*/
 void idEntity::Event_SetLinearVelocity( const idVec3& velocity )
 {
 	GetPhysics()->SetLinearVelocity( velocity );
 }
 
-/*
-================
-idEntity::Event_GetLinearVelocity
-================
-*/
 void idEntity::Event_GetLinearVelocity()
 {
 	idThread::ReturnVector( GetPhysics()->GetLinearVelocity() );
 }
 
-/*
-================
-idEntity::Event_SetAngularVelocity
-================
-*/
 void idEntity::Event_SetAngularVelocity( const idVec3& velocity )
 {
 	GetPhysics()->SetAngularVelocity( velocity );
 }
 
-/*
-================
-idEntity::Event_GetAngularVelocity
-================
-*/
 void idEntity::Event_GetAngularVelocity()
 {
 	idThread::ReturnVector( GetPhysics()->GetAngularVelocity() );
 }
 
-/*
-================
-idEntity::Event_SetSize
-================
-*/
 void idEntity::Event_SetSize( idVec3 const& mins, idVec3 const& maxs )
 {
 	GetPhysics()->SetClipBox( idBounds( mins, maxs ), 1.0f );
 }
 
-/*
-================
-idEntity::Event_GetSize
-================
-*/
 void idEntity::Event_GetSize()
 {
 	idBounds bounds;
@@ -4807,11 +3779,6 @@ void idEntity::Event_GetSize()
 	idThread::ReturnVector( bounds[1] - bounds[0] );
 }
 
-/*
-================
-idEntity::Event_GetSize
-================
-*/
 idVec3 idEntity::GetSize()
 {
 	idBounds bounds;
@@ -4820,31 +3787,16 @@ idVec3 idEntity::GetSize()
 	return ( bounds[1] - bounds[0] );
 }
 
-/*
-================
-idEntity::Event_GetMins
-================
-*/
 void idEntity::Event_GetMins()
 {
 	idThread::ReturnVector( GetPhysics()->GetBounds()[0] );
 }
 
-/*
-================
-idEntity::Event_GetMaxs
-================
-*/
 void idEntity::Event_GetMaxs()
 {
 	idThread::ReturnVector( GetPhysics()->GetBounds()[1] );
 }
 
-/*
-================
-idEntity::Event_Touches
-================
-*/
 bool idEntity::Touches( idEntity* ent )
 {
 	if( !ent ) {
@@ -4857,21 +3809,11 @@ bool idEntity::Touches( idEntity* ent )
 	return ( myBounds.IntersectsBounds( entBounds ) );
 }
 
-/*
-================
-idEntity::Event_Touches
-================
-*/
 void idEntity::Event_Touches( idEntity* ent )
 {
 	idThread::ReturnInt( Touches( ent ) );
 }
 
-/*
-================
-idEntity::Event_SetGuiParm
-================
-*/
 void idEntity::Event_SetGuiParm( const char* key, const char* val )
 {
 	for( int i = 0; i < MAX_RENDERENTITY_GUI; i++ ) {
@@ -4885,11 +3827,6 @@ void idEntity::Event_SetGuiParm( const char* key, const char* val )
 	}
 }
 
-/*
-================
-idEntity::Event_SetGuiParm
-================
-*/
 void idEntity::Event_SetGuiFloat( const char* key, float f )
 {
 	for( int i = 0; i < MAX_RENDERENTITY_GUI; i++ ) {
@@ -4900,11 +3837,6 @@ void idEntity::Event_SetGuiFloat( const char* key, float f )
 	}
 }
 
-/*
-================
-idEntity::Event_GetNextKey
-================
-*/
 void idEntity::Event_GetNextKey( const char* prefix, const char* lastMatch )
 {
 	const idKeyValue* kv;
@@ -4924,11 +3856,6 @@ void idEntity::Event_GetNextKey( const char* prefix, const char* lastMatch )
 	}
 }
 
-/*
-================
-idEntity::GetNextKey
-================
-*/
 idStr idEntity::GetNextKey( const char* prefix, const char* lastMatch )
 {
 	const idKeyValue* kv;
@@ -4947,22 +3874,12 @@ idStr idEntity::GetNextKey( const char* prefix, const char* lastMatch )
 	return kv->GetKey();
 }
 
-/*
-================
-idEntity::Event_SetKey
-================
-*/
 void idEntity::Event_SetKey( const char* key, const char* value )
 {
 	spawnArgs.Set( key, value );
 	UpdateChangeableSpawnArgs( NULL );
 }
 
-/*
-================
-idEntity::Event_GetKey
-================
-*/
 void idEntity::Event_GetKey( const char* key )
 {
 	const char* value;
@@ -4971,11 +3888,6 @@ void idEntity::Event_GetKey( const char* key )
 	idThread::ReturnString( value );
 }
 
-/*
-================
-idEntity::Event_GetIntKey
-================
-*/
 void idEntity::Event_GetIntKey( const char* key )
 {
 	int value;
@@ -4986,11 +3898,6 @@ void idEntity::Event_GetIntKey( const char* key )
 	idThread::ReturnFloat( value );
 }
 
-/*
-================
-idEntity::Event_GetFloatKey
-================
-*/
 void idEntity::Event_GetFloatKey( const char* key )
 {
 	float value;
@@ -4999,11 +3906,6 @@ void idEntity::Event_GetFloatKey( const char* key )
 	idThread::ReturnFloat( value );
 }
 
-/*
-================
-idEntity::Event_GetVectorKey
-================
-*/
 void idEntity::Event_GetVectorKey( const char* key )
 {
 	idVec3 value;
@@ -5012,11 +3914,6 @@ void idEntity::Event_GetVectorKey( const char* key )
 	idThread::ReturnVector( value );
 }
 
-/*
-================
-idEntity::GetEntityKey
-================
-*/
 idEntity* idEntity::GetEntityKey( const char* key )
 {
 	idEntity*	ent;
@@ -5035,21 +3932,11 @@ idEntity* idEntity::GetEntityKey( const char* key )
 	return ent;
 }
 
-/*
-================
-idEntity::Event_GetEntityKey
-================
-*/
 void idEntity::Event_GetEntityKey( const char* key )
 {
 	idThread::ReturnEntity( GetEntityKey( key ) );
 }
 
-/*
-================
-idEntity::Event_RestorePosition
-================
-*/
 void idEntity::Event_RestorePosition()
 {
 	idVec3	  org;
@@ -5084,11 +3971,6 @@ void idEntity::Event_RestorePosition()
 	}
 }
 
-/*
-================
-idEntity::Event_UpdateCameraTarget
-================
-*/
 void idEntity::Event_UpdateCameraTarget()
 {
 	const char*		  target;
@@ -5116,11 +3998,6 @@ void idEntity::Event_UpdateCameraTarget()
 	UpdateVisuals();
 }
 
-/*
-================
-idEntity::Event_DistanceTo
-================
-*/
 void idEntity::Event_DistanceTo( idEntity* ent )
 {
 	if( !ent ) {
@@ -5132,32 +4009,17 @@ void idEntity::Event_DistanceTo( idEntity* ent )
 	}
 }
 
-/*
-================
-idEntity::Event_DistanceToPoint
-================
-*/
 void idEntity::Event_DistanceToPoint( const idVec3& point )
 {
 	float dist = ( GetPhysics()->GetOrigin() - point ).LengthFast();
 	idThread::ReturnFloat( dist );
 }
 
-/*
-================
-idEntity::Event_StartFx
-================
-*/
 void idEntity::Event_StartFx( const char* fx )
 {
 	idEntityFx::StartFx( fx, NULL, NULL, this, true );
 }
 
-/*
-================
-idEntity::Event_WaitFrame
-================
-*/
 void idEntity::Event_WaitFrame()
 {
 	idThread* thread;
@@ -5168,11 +4030,6 @@ void idEntity::Event_WaitFrame()
 	}
 }
 
-/*
-=====================
-idEntity::Event_Wait
-=====================
-*/
 void idEntity::Event_Wait( float time )
 {
 	idThread* thread = idThread::CurrentThread();
@@ -5185,11 +4042,6 @@ void idEntity::Event_Wait( float time )
 	thread->WaitSec( time );
 }
 
-/*
-=====================
-idEntity::Event_HasFunction
-=====================
-*/
 void idEntity::Event_HasFunction( const char* name )
 {
 	const function_t* func;
@@ -5202,11 +4054,6 @@ void idEntity::Event_HasFunction( const char* name )
 	}
 }
 
-/*
-=====================
-idEntity::Event_CallFunction
-=====================
-*/
 void idEntity::Event_CallFunction( const char* funcname )
 {
 	const function_t* func;
@@ -5237,24 +4084,12 @@ void idEntity::Event_CallFunction( const char* funcname )
 	thread->CallFunction( this, func, false );
 }
 
-/*
-================
-idEntity::Event_SetNeverDormant
-================
-*/
 void idEntity::Event_SetNeverDormant( int enable )
 {
 	fl.neverDormant = ( enable != 0 );
 	dormantStart	= 0;
 }
 
-/*
-================
-idEntity::Event_SetGui
-================
-* BSM Nerve: Allows guis to be changed at runtime. Guis that are
-* loaded after the level loads should be precahced using PrecacheGui.
-*/
 void idEntity::Event_SetGui( int guiNum, const char* guiName )
 {
 	idUserInterface** gui = NULL;
@@ -5274,13 +4109,6 @@ void idEntity::Event_SetGui( int guiNum, const char* guiName )
 	}
 }
 
-/*
-================
-idEntity::Event_PrecacheGui
-================
-* BSM Nerve: Forces the engine to initialize a gui even if it is not specified as used in a level.
-* This is useful for preventing load hitches when switching guis during the game using "setGui"
-*/
 void idEntity::Event_PrecacheGui( const char* guiName )
 {
 	uiManager->FindGui( guiName, true, true );
@@ -5317,33 +4145,18 @@ void idEntity::Event_GuiNamedEvent( int guiNum, const char* event )
 
 ***********************************************************************/
 
-/*
-================
-idEntity::ClientThink
-================
-*/
 void idEntity::ClientThink( const int curTime, const float fraction, const bool predict )
 {
 	InterpolatePhysics( fraction );
 	Present();
 }
 
-/*
-================
-idEntity::ClientPredictionThink
-================
-*/
 void idEntity::ClientPredictionThink()
 {
 	RunPhysics();
 	Present();
 }
 
-/*
-================
-idEntity::WriteBindToSnapshot
-================
-*/
 void idEntity::WriteBindToSnapshot( idBitMsg& msg ) const
 {
 	int bindInfo;
@@ -5364,11 +4177,6 @@ void idEntity::WriteBindToSnapshot( idBitMsg& msg ) const
 	msg.WriteBits( bindInfo, GENTITYNUM_BITS + 3 + 9 );
 }
 
-/*
-================
-idEntity::ReadBindFromSnapshot
-================
-*/
 void idEntity::ReadBindFromSnapshot( const idBitMsg& msg )
 {
 	int		  bindInfo, bindEntityNum, bindPos;
@@ -5402,11 +4210,6 @@ void idEntity::ReadBindFromSnapshot( const idBitMsg& msg )
 	}
 }
 
-/*
-================
-idEntity::WriteColorToSnapshot
-================
-*/
 void idEntity::WriteColorToSnapshot( idBitMsg& msg ) const
 {
 	idVec4 color;
@@ -5418,11 +4221,6 @@ void idEntity::WriteColorToSnapshot( idBitMsg& msg ) const
 	msg.WriteLong( PackColor( color ) );
 }
 
-/*
-================
-idEntity::ReadColorFromSnapshot
-================
-*/
 void idEntity::ReadColorFromSnapshot( const idBitMsg& msg )
 {
 	idVec4 color;
@@ -5434,11 +4232,6 @@ void idEntity::ReadColorFromSnapshot( const idBitMsg& msg )
 	renderEntity.shaderParms[SHADERPARM_ALPHA] = color[3];
 }
 
-/*
-================
-idEntity::WriteGUIToSnapshot
-================
-*/
 void idEntity::WriteGUIToSnapshot( idBitMsg& msg ) const
 {
 	// no need to loop over MAX_RENDERENTITY_GUI at this time
@@ -5449,11 +4242,6 @@ void idEntity::WriteGUIToSnapshot( idBitMsg& msg ) const
 	}
 }
 
-/*
-================
-idEntity::ReadGUIFromSnapshot
-================
-*/
 void idEntity::ReadGUIFromSnapshot( const idBitMsg& msg )
 {
 	int				 state;
@@ -5467,43 +4255,20 @@ void idEntity::ReadGUIFromSnapshot( const idBitMsg& msg )
 	}
 }
 
-/*
-================
-idEntity::WriteToSnapshot
-================
-*/
 void idEntity::WriteToSnapshot( idBitMsg& msg ) const
 {
 }
 
-/*
-================
-idEntity::ReadFromSnapshot
-================
-*/
 void idEntity::ReadFromSnapshot( const idBitMsg& msg )
 {
 }
 
-/*
-================
-idEntity::ReadFromSnapshot_Ex
-Increments the snapshot counter for the entity.
-================
-*/
 void idEntity::ReadFromSnapshot_Ex( const idBitMsg& msg )
 {
 	snapshotsReceived += 1;
 	ReadFromSnapshot( msg );
 }
 
-/*
-================
-idEntity::FlagNewSnapshot
-Updates the interpolationBehavior so that subclasses will know if it's safe to interpolate.
-Only call this when a new snapshot has been received for this entity!
-================
-*/
 void idEntity::FlagNewSnapshot()
 {
 	switch( interpolationBehavior ) {
@@ -5521,14 +4286,6 @@ void idEntity::FlagNewSnapshot()
 	}
 }
 
-/*
-================
-idEntity::ServerSendEvent
-
-   Saved events are also sent to any client that connects late so all clients
-   always receive the events nomatter what time they join the game.
-================
-*/
 void idEntity::ServerSendEvent( int eventId, const idBitMsg* msg, bool saveEvent, lobbyUserID_t excluding ) const
 {
 	idBitMsg outMsg;
@@ -5567,11 +4324,6 @@ void idEntity::ServerSendEvent( int eventId, const idBitMsg* msg, bool saveEvent
 	}
 }
 
-/*
-================
-idEntity::ClientSendEvent
-================
-*/
 void idEntity::ClientSendEvent( int eventId, const idBitMsg* msg ) const
 {
 	idBitMsg outMsg;
@@ -5601,11 +4353,6 @@ void idEntity::ClientSendEvent( int eventId, const idBitMsg* msg ) const
 	session->GetActingGameStateLobbyBase().SendReliableToHost( GAME_RELIABLE_MESSAGE_EVENT, outMsg );
 }
 
-/*
-================
-idEntity::ServerReceiveEvent
-================
-*/
 bool idEntity::ServerReceiveEvent( int event, int time, const idBitMsg& msg )
 {
 	switch( event ) {
@@ -5617,11 +4364,6 @@ bool idEntity::ServerReceiveEvent( int event, int time, const idBitMsg& msg )
 	}
 }
 
-/*
-================
-idEntity::ClientReceiveEvent
-================
-*/
 bool idEntity::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 {
 	int					 index;
@@ -5658,11 +4400,6 @@ bool idEntity::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 	}
 }
 
-/*
-================
-idEntity::DetermineTimeGroup
-================
-*/
 void idEntity::DetermineTimeGroup( bool slowmo )
 {
 	if( slowmo || common->IsMultiplayer() ) {
@@ -5672,31 +4409,16 @@ void idEntity::DetermineTimeGroup( bool slowmo )
 	}
 }
 
-/*
-================
-idEntity::SetGrabbedState
-================
-*/
 void idEntity::SetGrabbedState( bool grabbed )
 {
 	fl.grabbed = grabbed;
 }
 
-/*
-================
-idEntity::IsGrabbed
-================
-*/
 bool idEntity::IsGrabbed()
 {
 	return fl.grabbed;
 }
 
-/*
-========================
-idEntity::DecayOriginAndAxisDelta
-========================
-*/
 void idEntity::DecayOriginAndAxisDelta()
 {
 	idVec3 delta  = vec3_zero - originDelta;
@@ -5720,11 +4442,6 @@ void idEntity::DecayOriginAndAxisDelta()
 	axisDelta = q.ToMat3();
 }
 
-/*
-========================
-idEntity::CreateDeltasFromOldOriginAndAxis
-========================
-*/
 void idEntity::CreateDeltasFromOldOriginAndAxis( const idVec3& oldOrigin, const idMat3& oldAxis )
 {
 	// Set smooth values so we transition from the old position/axis to what we are now (visual only)
@@ -5760,22 +4477,12 @@ EVENT( EV_GetJointPos, idAnimatedEntity::Event_GetJointPos )
 EVENT( EV_GetJointAngle, idAnimatedEntity::Event_GetJointAngle )
 END_CLASS
 
-/*
-================
-idAnimatedEntity::idAnimatedEntity
-================
-*/
 idAnimatedEntity::idAnimatedEntity()
 {
 	animator.SetEntity( this );
 	damageEffects = NULL;
 }
 
-/*
-================
-idAnimatedEntity::~idAnimatedEntity
-================
-*/
 idAnimatedEntity::~idAnimatedEntity()
 {
 	damageEffect_t* de;
@@ -5786,13 +4493,6 @@ idAnimatedEntity::~idAnimatedEntity()
 	}
 }
 
-/*
-================
-idAnimatedEntity::Save
-
-archives object for save game file
-================
-*/
 void idAnimatedEntity::Save( idSaveGame* savefile ) const
 {
 	animator.Save( savefile );
@@ -5801,13 +4501,6 @@ void idAnimatedEntity::Save( idSaveGame* savefile ) const
 	// damageEffect_t			*damageEffects;
 }
 
-/*
-================
-idAnimatedEntity::Restore
-
-unarchives object from save game file
-================
-*/
 void idAnimatedEntity::Restore( idRestoreGame* savefile )
 {
 	animator.Restore( savefile );
@@ -5824,11 +4517,6 @@ void idAnimatedEntity::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-================
-idAnimatedEntity::ClientPredictionThink
-================
-*/
 void idAnimatedEntity::ClientPredictionThink()
 {
 	RunPhysics();
@@ -5836,11 +4524,6 @@ void idAnimatedEntity::ClientPredictionThink()
 	Present();
 }
 
-/*
-================
-idAnimatedEntity::ClientThink
-================
-*/
 void idAnimatedEntity::ClientThink( const int curTime, const float fraction, const bool predict )
 {
 	InterpolatePhysics( fraction );
@@ -5848,11 +4531,6 @@ void idAnimatedEntity::ClientThink( const int curTime, const float fraction, con
 	Present();
 }
 
-/*
-================
-idAnimatedEntity::Think
-================
-*/
 void idAnimatedEntity::Think()
 {
 	RunPhysics();
@@ -5861,11 +4539,6 @@ void idAnimatedEntity::Think()
 	UpdateDamageEffects();
 }
 
-/*
-================
-idAnimatedEntity::UpdateAnimation
-================
-*/
 void idAnimatedEntity::UpdateAnimation()
 {
 	// don't do animations if they're not enabled
@@ -5903,21 +4576,11 @@ void idAnimatedEntity::UpdateAnimation()
 	animator.ClearForceUpdate();
 }
 
-/*
-================
-idAnimatedEntity::GetAnimator
-================
-*/
 idAnimator* idAnimatedEntity::GetAnimator()
 {
 	return &animator;
 }
 
-/*
-================
-idAnimatedEntity::SetModel
-================
-*/
 void idAnimatedEntity::SetModel( const char* modelname )
 {
 	FreeModelDef();
@@ -5940,11 +4603,6 @@ void idAnimatedEntity::SetModel( const char* modelname )
 	UpdateVisuals();
 }
 
-/*
-=====================
-idAnimatedEntity::GetJointWorldTransform
-=====================
-*/
 bool idAnimatedEntity::GetJointWorldTransform( jointHandle_t jointHandle, int currentTime, idVec3& offset, idMat3& axis )
 {
 	if( !animator.GetJointTransform( jointHandle, currentTime, offset, axis ) ) {
@@ -5955,11 +4613,6 @@ bool idAnimatedEntity::GetJointWorldTransform( jointHandle_t jointHandle, int cu
 	return true;
 }
 
-/*
-==============
-idAnimatedEntity::GetJointTransformForAnim
-==============
-*/
 bool idAnimatedEntity::GetJointTransformForAnim( jointHandle_t jointHandle, int animNum, int frameTime, idVec3& offset, idMat3& axis ) const
 {
 	const idAnim* anim;
@@ -5987,13 +4640,6 @@ bool idAnimatedEntity::GetJointTransformForAnim( jointHandle_t jointHandle, int 
 	return true;
 }
 
-/*
-==============
-idAnimatedEntity::AddDamageEffect
-
-  Dammage effects track the animating impact position, spitting out particles.
-==============
-*/
 void idAnimatedEntity::AddDamageEffect( const trace_t& collision, const idVec3& velocity, const char* damageDefName )
 {
 	jointHandle_t jointNum;
@@ -6027,21 +4673,11 @@ void idAnimatedEntity::AddDamageEffect( const trace_t& collision, const idVec3& 
 	AddLocalDamageEffect( jointNum, localOrigin, localNormal, localDir, def, collision.c.material );
 }
 
-/*
-==============
-idAnimatedEntity::GetDefaultSurfaceType
-==============
-*/
 int idAnimatedEntity::GetDefaultSurfaceType() const
 {
 	return SURFTYPE_METAL;
 }
 
-/*
-==============
-idAnimatedEntity::AddLocalDamageEffect
-==============
-*/
 void idAnimatedEntity::AddLocalDamageEffect(
 	jointHandle_t jointNum, const idVec3& localOrigin, const idVec3& localNormal, const idVec3& localDir, const idDeclEntityDef* def, const idMaterial* collisionMaterial )
 {
@@ -6117,11 +4753,6 @@ void idAnimatedEntity::AddLocalDamageEffect(
 	}
 }
 
-/*
-==============
-idAnimatedEntity::UpdateDamageEffects
-==============
-*/
 void idAnimatedEntity::UpdateDamageEffects()
 {
 	damageEffect_t *de, **prev;
@@ -6158,11 +4789,6 @@ void idAnimatedEntity::UpdateDamageEffects()
 	}
 }
 
-/*
-================
-idAnimatedEntity::ClientReceiveEvent
-================
-*/
 bool idAnimatedEntity::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 {
 	int			  damageDefIndex;
@@ -6191,13 +4817,6 @@ bool idAnimatedEntity::ClientReceiveEvent( int event, int time, const idBitMsg& 
 	}
 }
 
-/*
-================
-idAnimatedEntity::Event_GetJointHandle
-
-looks up the number of the specified joint.  returns INVALID_JOINT if the joint is not found.
-================
-*/
 void idAnimatedEntity::Event_GetJointHandle( const char* jointname )
 {
 	jointHandle_t joint;
@@ -6206,49 +4825,21 @@ void idAnimatedEntity::Event_GetJointHandle( const char* jointname )
 	idThread::ReturnInt( joint );
 }
 
-/*
-================
-idAnimatedEntity::Event_ClearAllJoints
-
-removes any custom transforms on all joints
-================
-*/
 void idAnimatedEntity::Event_ClearAllJoints()
 {
 	animator.ClearAllJoints();
 }
 
-/*
-================
-idAnimatedEntity::Event_ClearJoint
-
-removes any custom transforms on the specified joint
-================
-*/
 void idAnimatedEntity::Event_ClearJoint( jointHandle_t jointnum )
 {
 	animator.ClearJoint( jointnum );
 }
 
-/*
-================
-idAnimatedEntity::Event_SetJointPos
-
-modifies the position of the joint based on the transform type
-================
-*/
 void idAnimatedEntity::Event_SetJointPos( jointHandle_t jointnum, jointModTransform_t transform_type, const idVec3& pos )
 {
 	animator.SetJointPos( jointnum, transform_type, pos );
 }
 
-/*
-================
-idAnimatedEntity::Event_SetJointAngle
-
-modifies the orientation of the joint based on the transform type
-================
-*/
 void idAnimatedEntity::Event_SetJointAngle( jointHandle_t jointnum, jointModTransform_t transform_type, const idAngles& angles )
 {
 	idMat3 mat;
@@ -6257,13 +4848,6 @@ void idAnimatedEntity::Event_SetJointAngle( jointHandle_t jointnum, jointModTran
 	animator.SetJointAxis( jointnum, transform_type, mat );
 }
 
-/*
-================
-idAnimatedEntity::Event_GetJointPos
-
-returns the position of the joint in worldspace
-================
-*/
 void idAnimatedEntity::Event_GetJointPos( jointHandle_t jointnum )
 {
 	idVec3 offset;
@@ -6276,13 +4860,6 @@ void idAnimatedEntity::Event_GetJointPos( jointHandle_t jointnum )
 	idThread::ReturnVector( offset );
 }
 
-/*
-================
-idAnimatedEntity::Event_GetJointAngle
-
-returns the orientation of the joint in worldspace
-================
-*/
 void idAnimatedEntity::Event_GetJointAngle( jointHandle_t jointnum )
 {
 	idVec3 offset;

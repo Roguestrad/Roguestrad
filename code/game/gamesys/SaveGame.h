@@ -124,6 +124,8 @@ public:
 
 	//! Writes a dictionary to the save game file.
 	void WriteDict( const idDict* dict );
+
+	//! Writes the name of a material to the save game file, or an empty string if the material is null.
 	void WriteMaterial( const idMaterial* material );
 
 	//! Writes the name of a skin declaration to the save game file.
@@ -149,6 +151,8 @@ public:
 
 	//! Writes a render entity's data to the save game file.
 	void WriteRenderEntity( const renderEntity_t& renderEntity );
+
+	//! Writes a renderLight_t structure to the save game file
 	void WriteRenderLight( const renderLight_t& renderLight );
 
 	//! Writes a render environment probe definition to the save game file.

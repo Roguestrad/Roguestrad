@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idForce, idForce_Spring )
 END_CLASS
 
-/*
-================
-idForce_Spring::idForce_Spring
-================
-*/
 idForce_Spring::idForce_Spring()
 {
 	Kstretch   = 100.0f;
@@ -63,11 +58,6 @@ idForce_Spring::~idForce_Spring()
 {
 }
 
-/*
-================
-idForce_Spring::InitSpring
-================
-*/
 void idForce_Spring::InitSpring( float Kstretch, float Kcompress, float damping, float restLength )
 {
 	this->Kstretch	 = Kstretch;
@@ -76,11 +66,6 @@ void idForce_Spring::InitSpring( float Kstretch, float Kcompress, float damping,
 	this->restLength = restLength;
 }
 
-/*
-================
-idForce_Spring::SetPosition
-================
-*/
 void idForce_Spring::SetPosition( idPhysics* physics1, int id1, const idVec3& p1, idPhysics* physics2, int id2, const idVec3& p2 )
 {
 	this->physics1 = physics1;
@@ -91,11 +76,6 @@ void idForce_Spring::SetPosition( idPhysics* physics1, int id1, const idVec3& p1
 	this->p2	   = p2;
 }
 
-/*
-================
-idForce_Spring::Evaluate
-================
-*/
 void idForce_Spring::Evaluate( int time )
 {
 	float		 length;
@@ -155,11 +135,6 @@ void idForce_Spring::Evaluate( int time )
 	}
 }
 
-/*
-================
-idForce_Spring::RemovePhysics
-================
-*/
 void idForce_Spring::RemovePhysics( const idPhysics* phys )
 {
 	if( physics1 == phys ) {

@@ -37,31 +37,33 @@ enum browserCommand_t {
 
 static const int NUM_SERVER_LIST_ITEMS = 10;
 
-/*
-================================================
-idPair is is a template class Container composed of two objects, which can be of
-any type, and provides accessors to these objects as well as Pair equality operators. The main
-uses of Pairs in the engine are for the Tools and for callbacks.
-================================================
+/*!
+	\class idPair
+	\brief Template class for storing and managing pairs of elements of any type.
 */
 template<class T, class U>
 class idPair
 {
 public:
+	//! Constructs an empty idPair instance with default-initialized elements.
 	idPair()
 	{
 	}
+
+	//! Constructs an idPair object with the specified first and second elements.
 	idPair( const T& f, const U& s ) :
 		first( f ),
 		second( s )
 	{
 	}
 
+	//! Compares two idPair objects for equality based on their first and second members.
 	const bool operator==( const idPair<T, U>& rhs ) const
 	{
 		return ( rhs.first == first ) && ( rhs.second == second );
 	}
 
+	//! Compares this pair with another for inequality.
 	const bool operator!=( const idPair<T, U>& rhs ) const
 	{
 		return !( *this == rhs );
@@ -71,14 +73,14 @@ public:
 	U second;
 };
 
-/*
-================================================
-idSort_PlayerGamesList
-================================================
+/*!
+	\class idSort_PlayerGamesList
+	\brief Sorting implementation for server information pairs based on joinable status and game mode.
 */
 class idSort_PlayerGamesList : public idSort_Quick<idPair<serverInfo_t, int>, idSort_PlayerGamesList>
 {
 public:
+	//! Compares two server info pairs based on joinable status and game mode
 	int Compare( const idPair<serverInfo_t, int>& a, const idPair<serverInfo_t, int>& b ) const
 	{
 		if( a.first.joinable == b.first.joinable ) {
@@ -91,11 +93,6 @@ public:
 	}
 };
 
-/*
-========================
-idMenuScreen_Shell_GameBrowser::Initialize
-========================
-*/
 void idMenuScreen_Shell_GameBrowser::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -140,11 +137,6 @@ void idMenuScreen_Shell_GameBrowser::Initialize( idMenuHandler* data )
 	AddChild( btnBack );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameBrowser::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_GameBrowser::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );
@@ -190,11 +182,6 @@ void idMenuScreen_Shell_GameBrowser::ShowScreen( const mainMenuTransition_t tran
 	UpdateServerList();
 }
 
-/*
-========================
-idMenuScreen_Shell_GameBrowser::HideScreen
-========================
-*/
 void idMenuScreen_Shell_GameBrowser::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );
@@ -209,11 +196,6 @@ void idMenuScreen_Shell_GameBrowser::HideScreen( const mainMenuTransition_t tran
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameBrowser::UpdateServerList
-========================
-*/
 void idMenuScreen_Shell_GameBrowser::UpdateServerList()
 {
 	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );
@@ -235,11 +217,6 @@ void idMenuScreen_Shell_GameBrowser::UpdateServerList()
 	session->ListServers( MakeCallback( this, &idMenuScreen_Shell_GameBrowser::OnServerListReady ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameBrowser::OnServerListReady
-========================
-*/
 void idMenuScreen_Shell_GameBrowser::OnServerListReady()
 {
 	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );
@@ -314,11 +291,6 @@ void idMenuScreen_Shell_GameBrowser::OnServerListReady()
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_GameBrowser::DescribeServers
-========================
-*/
 void idMenuScreen_Shell_GameBrowser::DescribeServer( const serverInfo_t& server, const int index )
 {
 	idStr				  serverName;
@@ -356,11 +328,6 @@ void idMenuScreen_Shell_GameBrowser::DescribeServer( const serverInfo_t& server,
 	listWidget->AddGame( serverName, mapName, modeName, serverIndex, players, maxPlayers, joinable, validMap );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameBrowser::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_GameBrowser::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandle )
 {
 	idMenuHandler_Shell* const mgr = dynamic_cast<idMenuHandler_Shell*>( menuData );

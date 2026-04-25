@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int MAX_VIDEO_ITEMS = 5;
 
-/*
-========================
-idMenuScreen_PDA_VideoDisks::Initialize
-========================
-*/
 void			 idMenuScreen_PDA_VideoDisks::Initialize( idMenuHandler* data )
 {
 	if( data != NULL ) {
@@ -84,11 +79,6 @@ void			 idMenuScreen_PDA_VideoDisks::Initialize( idMenuHandler* data )
 	idMenuScreen::Initialize( data );
 }
 
-/*
-========================
-idMenuScreen_PDA_VideoDisks::Update
-========================
-*/
 void idMenuScreen_PDA_VideoDisks::Update()
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -163,11 +153,6 @@ void idMenuScreen_PDA_VideoDisks::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_PDA_VideoDisks::ShowScreen
-========================
-*/
 void idMenuScreen_PDA_VideoDisks::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	videoItems.Clear();
@@ -189,11 +174,6 @@ void idMenuScreen_PDA_VideoDisks::ShowScreen( const mainMenuTransition_t transit
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_PDA_VideoDisks::ToggleVideoDiskPlay
-========================
-*/
 void idMenuScreen_PDA_VideoDisks::ToggleVideoDiskPlay()
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -223,11 +203,6 @@ void idMenuScreen_PDA_VideoDisks::ToggleVideoDiskPlay()
 	}
 }
 
-/*
-========================
-idMenuScreen_PDA_VideoDisks::SelectedVideoToPlay
-========================
-*/
 void idMenuScreen_PDA_VideoDisks::SelectedVideoToPlay( int index )
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -259,21 +234,11 @@ void idMenuScreen_PDA_VideoDisks::SelectedVideoToPlay( int index )
 	player->PlayVideoDisk( video );
 }
 
-/*
-========================
-idMenuScreen_PDA_VideoDisks::HideScreen
-========================
-*/
 void idMenuScreen_PDA_VideoDisks::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_PDA_VideoDisks::HandleAction
-========================
-*/
 bool idMenuScreen_PDA_VideoDisks::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

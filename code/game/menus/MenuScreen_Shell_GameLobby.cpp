@@ -42,11 +42,6 @@ enum gameLobbyCmd_t {
 	GAME_CMD_TOGGLE_PRIVACY,
 };
 
-/*
-========================
-idMenuScreen_Shell_GameLobby::Initialize
-========================
-*/
 void idMenuScreen_Shell_GameLobby::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -110,11 +105,6 @@ void idMenuScreen_Shell_GameLobby::Initialize( idMenuHandler* data )
 	AddEventAction( WIDGET_EVENT_SCROLL_UP_RSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( lobby, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameLobby::Update
-========================
-*/
 void idMenuScreen_Shell_GameLobby::Update()
 {
 	idLobbyBase& activeLobby = session->GetActivePlatformLobbyBase();
@@ -263,11 +253,6 @@ void idMenuScreen_Shell_GameLobby::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_GameLobby::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_GameLobby::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	if( options != NULL ) {
@@ -330,21 +315,11 @@ void idMenuScreen_Shell_GameLobby::ShowScreen( const mainMenuTransition_t transi
 	session->UpdateMatchParms( matchParameters );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameLobby::HideScreen
-========================
-*/
 void idMenuScreen_Shell_GameLobby::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameLobby::CanKickSelectedPlayer
-========================
-*/
 bool idMenuScreen_Shell_GameLobby::CanKickSelectedPlayer( lobbyUserID_t& luid )
 {
 	idMatchParameters matchParameters = session->GetActivePlatformLobbyBase().GetMatchParms();
@@ -360,11 +335,6 @@ bool idMenuScreen_Shell_GameLobby::CanKickSelectedPlayer( lobbyUserID_t& luid )
 	return true;
 }
 
-/*
-========================
-idMenuScreen_Shell_GameLobby::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_GameLobby::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -536,11 +506,6 @@ bool idMenuScreen_Shell_GameLobby::HandleAction( idWidgetAction& action, const i
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameLobby::UpdateLobby
-========================
-*/
 void idMenuScreen_Shell_GameLobby::UpdateLobby()
 {
 	if( menuData != NULL && menuData->ActiveScreen() != SHELL_AREA_GAME_LOBBY ) {

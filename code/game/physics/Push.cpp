@@ -32,21 +32,11 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "../Game_local.h"
 
-/*
-============
-idPush::InitSavingPushedEntityPositions
-============
-*/
 void idPush::InitSavingPushedEntityPositions()
 {
 	numPushed = 0;
 }
 
-/*
-============
-idPush::SaveEntityPosition
-============
-*/
 void idPush::SaveEntityPosition( idEntity* ent )
 {
 	int i;
@@ -78,11 +68,6 @@ void idPush::SaveEntityPosition( idEntity* ent )
 	numPushed++;
 }
 
-/*
-============
-idPush::RestorePushedEntityPositions
-============
-*/
 void idPush::RestorePushedEntityPositions()
 {
 	int i;
@@ -99,11 +84,6 @@ void idPush::RestorePushedEntityPositions()
 	}
 }
 
-/*
-============
-idPush::RotateEntityToAxial
-============
-*/
 bool idPush::RotateEntityToAxial( idEntity* ent, idVec3 rotationPoint )
 {
 	int		   i;
@@ -655,11 +635,6 @@ enum {
 	PUSH_BLOCKED // blocked
 };
 
-/*
-============
-idPush::ClipEntityRotation
-============
-*/
 void idPush::ClipEntityRotation( trace_t& trace, const idEntity* ent, const idClipModel* clipModel, idClipModel* skip, const idRotation& rotation )
 {
 	if( skip ) {
@@ -673,11 +648,6 @@ void idPush::ClipEntityRotation( trace_t& trace, const idEntity* ent, const idCl
 	}
 }
 
-/*
-============
-idPush::ClipEntityTranslation
-============
-*/
 void idPush::ClipEntityTranslation( trace_t& trace, const idEntity* ent, const idClipModel* clipModel, idClipModel* skip, const idVec3& translation )
 {
 	if( skip ) {
@@ -970,11 +940,6 @@ int idPush::TryTranslatePushEntity( trace_t& results, idEntity* check, idClipMod
 	return PUSH_OK;
 }
 
-/*
-============
-idPush::DiscardEntities
-============
-*/
 int idPush::DiscardEntities( idEntity* entityList[], int numEntities, int flags, idEntity* pusher )
 {
 	int		  i, num;
@@ -1018,13 +983,6 @@ int idPush::DiscardEntities( idEntity* entityList[], int numEntities, int flags,
 	return num;
 }
 
-/*
-============
-idPush::ClipTranslationalPush
-
-  Try to push other entities by moving the given entity.
-============
-*/
 float idPush::ClipTranslationalPush( trace_t& results, idEntity* pusher, const int flags, const idVec3& newOrigin, const idVec3& translation )
 {
 	int			 i, listedEntities, res;
@@ -1194,13 +1152,6 @@ float idPush::ClipTranslationalPush( trace_t& results, idEntity* pusher, const i
 	return totalMass;
 }
 
-/*
-============
-idPush::ClipRotationalPush
-
-  Try to push other entities by moving the given entity.
-============
-*/
 float idPush::ClipRotationalPush( trace_t& results, idEntity* pusher, const int flags, const idMat3& newAxis, const idRotation& rotation )
 {
 	int			 i, listedEntities, res;
@@ -1355,15 +1306,6 @@ float idPush::ClipRotationalPush( trace_t& results, idEntity* pusher, const int 
 	return totalMass;
 }
 
-#endif /* !NEW_PUSH */
-
-/*
-============
-idPush::ClipPush
-
-  Try to push other entities by moving the given entity.
-============
-*/
 float idPush::ClipPush( trace_t& results, idEntity* pusher, const int flags, const idVec3& oldOrigin, const idMat3& oldAxis, idVec3& newOrigin, idMat3& newAxis )
 {
 	idVec3	   translation;

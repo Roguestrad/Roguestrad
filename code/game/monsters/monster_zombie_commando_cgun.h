@@ -30,26 +30,50 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
-//
-// iceMonsterZombieCommandoChaingun
-//
+/*!
+	\class iceMonsterZombieCommandoChaingun
+	\brief Represents anmonster zombie commando chaingun AI entity with specific combat behaviors and state management.
+
+	This class implements a specialized AI entity for anmonster zombie commando chaingun, inheriting from idAI. It manages the entity's behavior through various combat and idle states, including
+   dodging maneuvers, crouched and standing attacks, and enemy detection. The class handles initialization, state transitions, and attack execution. The AI system is designed to respond to enemy
+   presence with appropriate combat actions, utilizing dodge mechanics to avoid incoming attacks while maintaining offensive capabilities. The implementation includes state management for both idle
+   and combat scenarios, with specific behaviors for different attack types and movement patterns.
+
+*/
 class iceMonsterZombieCommandoChaingun : public idAI
 {
 	CLASS_PROTOTYPE( iceMonsterZombieCommandoChaingun );
 
 public:
+	//! Initializes the AI system for the monster zombie commando chaingun.
 	virtual void Init() override;
+
+	//! Initializes the monster zombie commando chaingun AI state.
 	virtual void AI_Begin() override;
 
+	//! Checks and returns available attack flags for the monster zombie commando chaingun
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action with the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the beginning state for the monster zombie commando chaingun.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for the monster zombie commando chaingun, transitioning to combat when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Executes a right dodge maneuver during combat for the monster zombie commando chaingun.
 	stateResult_t combat_dodge_right( stateParms_t* parms );
+
+	//! Executes a left dodge maneuver during combat for the monster zombie commando chaingun entity.
 	stateResult_t combat_dodge_left( stateParms_t* parms );
+
+	//! Handles the crouched attack state for the monster zombie commando chaingun enemy.
 	stateResult_t crouch_attack( stateParms_t* parms );
+
+	//! Handles the standing attack state for the ice zombie commando chaingun monster.
 	stateResult_t stand_attack( stateParms_t* parms );
 
 private:

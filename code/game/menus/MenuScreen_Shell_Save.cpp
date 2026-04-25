@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 const static int NUM_SAVE_OPTIONS = 10;
 
-/*
-========================
-idMenuScreen_Shell_Save::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_Save::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -95,11 +90,6 @@ void			 idMenuScreen_Shell_Save::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Save::Update
-========================
-*/
 void idMenuScreen_Shell_Save::Update()
 {
 	UpdateSaveEnumerations();
@@ -125,11 +115,6 @@ void idMenuScreen_Shell_Save::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Save::UpdateSaveEnumerations
-========================
-*/
 void idMenuScreen_Shell_Save::UpdateSaveEnumerations()
 {
 	const saveGameDetailsList_t& saveGameInfo = session->GetSaveGameManager().GetEnumeratedSavegames();
@@ -265,31 +250,16 @@ void idMenuScreen_Shell_Save::UpdateSaveEnumerations()
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Save::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Save::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Save::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Save::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Save::SaveGame
-========================
-*/
 void idMenuScreen_Shell_Save::SaveGame( int index )
 {
 	const saveGameDetailsList_t& saveGameInfo  = session->GetSaveGameManager().GetEnumeratedSavegames();
@@ -390,11 +360,6 @@ void idMenuScreen_Shell_Save::SaveGame( int index )
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Save::DeleteGame
-========================
-*/
 void idMenuScreen_Shell_Save::DeleteGame( int index )
 {
 	class idSWFScriptFunction_DeleteGame : public idSWFScriptFunction_RefCounted
@@ -445,11 +410,6 @@ void idMenuScreen_Shell_Save::DeleteGame( int index )
 		false );
 }
 
-/*
-========================
-idMenuScreen_Shell_Save::HandleAction
-========================
-*/
 bool idMenuScreen_Shell_Save::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

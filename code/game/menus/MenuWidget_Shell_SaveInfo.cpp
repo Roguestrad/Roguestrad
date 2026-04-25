@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuWidget_Shell_SaveInfo::Update
-========================
-*/
 void idMenuWidget_Shell_SaveInfo::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -125,11 +120,6 @@ void idMenuWidget_Shell_SaveInfo::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_Help::ObserveEvent
-========================
-*/
 void idMenuWidget_Shell_SaveInfo::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	const idMenuWidget_Button* const button = dynamic_cast<const idMenuWidget_Button*>( &widget );

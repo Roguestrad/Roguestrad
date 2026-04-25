@@ -35,11 +35,6 @@ extern idCVar	 g_nightmare;
 extern idCVar	 g_roeNightmare;
 extern idCVar	 g_leNightmare;
 extern idCVar	 g_skill;
-/*
-========================
-idMenuScreen_Shell_Difficulty::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_Difficulty::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -112,11 +107,6 @@ void			 idMenuScreen_Shell_Difficulty::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Difficulty::Update
-========================
-*/
 void idMenuScreen_Shell_Difficulty::Update()
 {
 	if( menuData != NULL ) {
@@ -159,11 +149,6 @@ void idMenuScreen_Shell_Difficulty::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Difficulty::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Difficulty::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::ShowScreen( transitionType );
@@ -196,21 +181,11 @@ void idMenuScreen_Shell_Difficulty::ShowScreen( const mainMenuTransition_t trans
 	options->SetViewIndex( options->GetViewOffset() + skill );
 }
 
-/*
-========================
-idMenuScreen_Shell_Difficulty::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Difficulty::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Difficulty::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_Difficulty::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

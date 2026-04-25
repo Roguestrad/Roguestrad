@@ -33,11 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 
 extern idCVar in_useJoystick;
 
-/*
-================================================
-idMenuHandler::~idMenuHandler
-================================================
-*/
 idMenuHandler::idMenuHandler()
 {
 	scrollingMenu = false;
@@ -56,21 +51,11 @@ idMenuHandler::idMenuHandler()
 	sounds.SetNum( NUM_GUI_SOUNDS );
 }
 
-/*
-================================================
-idMenuHandler::~idMenuHandler
-================================================
-*/
 idMenuHandler::~idMenuHandler()
 {
 	Cleanup();
 }
 
-/*
-================================================
-idMenuHandler::Initialize
-================================================
-*/
 void idMenuHandler::Initialize( const char* swfFile, idSoundWorld* sw )
 {
 	Cleanup();
@@ -79,11 +64,6 @@ void idMenuHandler::Initialize( const char* swfFile, idSoundWorld* sw )
 	platform = 2;
 }
 
-/*
-================================================
-idMenuHandler::AddChild
-================================================
-*/
 void idMenuHandler::AddChild( idMenuWidget* widget )
 {
 	widget->SetSWFObj( gui );
@@ -92,11 +72,6 @@ void idMenuHandler::AddChild( idMenuWidget* widget )
 	widget->AddRef();
 }
 
-/*
-================================================
-idMenuHandler::GetChildFromIndex
-================================================
-*/
 idMenuWidget* idMenuHandler::GetChildFromIndex( int index )
 {
 	if( children.Num() == 0 ) {
@@ -110,11 +85,6 @@ idMenuWidget* idMenuHandler::GetChildFromIndex( int index )
 	return children[index];
 }
 
-/*
-================================================
-idMenuHandler::GetPlatform
-================================================
-*/
 int idMenuHandler::GetPlatform( bool realPlatform )
 {
 	// Leyland VR: added vrSystem
@@ -125,11 +95,6 @@ int idMenuHandler::GetPlatform( bool realPlatform )
 	return platform;
 }
 
-/*
-================================================
-idMenuHandler::GetPlatform
-================================================
-*/
 void idMenuHandler::PlaySound( menuSounds_t type, int channel )
 {
 	if( gui == NULL ) {
@@ -152,21 +117,11 @@ void idMenuHandler::PlaySound( menuSounds_t type, int channel )
 	gui->PlaySound( sounds[type], c );
 }
 
-/*
-================================================
-idMenuHandler::StopSound
-================================================
-*/
 void idMenuHandler::StopSound( int channel )
 {
 	gui->StopSound();
 }
 
-/*
-================================================
-idMenuHandler::Cleanup
-================================================
-*/
 void idMenuHandler::Cleanup()
 {
 	for( int index = 0; index < children.Num(); ++index ) {
@@ -185,20 +140,10 @@ void idMenuHandler::Cleanup()
 	gui = NULL;
 }
 
-/*
-================================================
-idMenuHandler::TriggerMenu
-================================================
-*/
 void idMenuHandler::TriggerMenu()
 {
 }
 
-/*
-================================================
-idMenuHandler::IsActive
-================================================
-*/
 bool idMenuHandler::IsActive()
 {
 	if( gui == NULL ) {
@@ -208,11 +153,6 @@ bool idMenuHandler::IsActive()
 	return gui->IsActive();
 }
 
-/*
-================================================
-idMenuHandler::ActivateMenu
-================================================
-*/
 void idMenuHandler::ActivateMenu( bool show )
 {
 	if( gui == NULL ) {
@@ -273,11 +213,6 @@ void idMenuHandler::ActivateMenu( bool show )
 	gui->Activate( show );
 }
 
-/*
-================================================
-idMenuHandler::Update
-================================================
-*/
 void idMenuHandler::Update()
 {
 	PumpWidgetActionRepeater();
@@ -287,11 +222,6 @@ void idMenuHandler::Update()
 	}
 }
 
-/*
-================================================
-idMenuHandler::UpdateChildren
-================================================
-*/
 void idMenuHandler::UpdateChildren()
 {
 	for( int index = 0; index < children.Num(); ++index ) {
@@ -301,11 +231,6 @@ void idMenuHandler::UpdateChildren()
 	}
 }
 
-/*
-================================================
-idMenuHandler::UpdateMenuDisplay
-================================================
-*/
 void idMenuHandler::UpdateMenuDisplay( int menu )
 {
 	if( menuScreens[menu] != NULL ) {
@@ -315,11 +240,6 @@ void idMenuHandler::UpdateMenuDisplay( int menu )
 	UpdateChildren();
 }
 
-/*
-================================================
-idMenuHandler::Update
-================================================
-*/
 bool idMenuHandler::HandleGuiEvent( const sysEvent_t* sev )
 {
 	if( gui != NULL && activeScreen != -1 ) {
@@ -329,11 +249,6 @@ bool idMenuHandler::HandleGuiEvent( const sysEvent_t* sev )
 	return false;
 }
 
-/*
-================================================
-idMenuHandler::Update
-================================================
-*/
 bool idMenuHandler::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	widgetAction_t		 actionType = action.GetType();
@@ -392,11 +307,6 @@ bool idMenuHandler::HandleAction( idWidgetAction& action, const idWidgetEvent& e
 	return false;
 }
 
-/*
-========================
-idMenuHandler::StartWidgetActionRepeater
-========================
-*/
 void idMenuHandler::StartWidgetActionRepeater( idMenuWidget* widget, const idWidgetAction& action, const idWidgetEvent& event )
 {
 	if( actionRepeater.isActive && actionRepeater.action == action ) {
@@ -421,11 +331,6 @@ void idMenuHandler::StartWidgetActionRepeater( idMenuWidget* widget, const idWid
 	PumpWidgetActionRepeater();
 }
 
-/*
-========================
-idMenuHandler::PumpWidgetActionRepeater
-========================
-*/
 void idMenuHandler::PumpWidgetActionRepeater()
 {
 	if( !actionRepeater.isActive ) {
@@ -455,11 +360,6 @@ void idMenuHandler::PumpWidgetActionRepeater()
 	}
 }
 
-/*
-========================
-idMenuHandler::ClearWidgetActionRepeater
-========================
-*/
 void idMenuHandler::ClearWidgetActionRepeater()
 {
 	actionRepeater.isActive = false;

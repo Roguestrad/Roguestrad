@@ -456,6 +456,23 @@ public:
 		\return True if the event was successfully posted, false otherwise
 	*/
 	bool			 PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5 );
+
+	/*!
+		\brief Posts a timed event with up to six arguments for execution on the class instance
+
+		This function schedules an event to be executed at a specific time offset in milliseconds. It is a specialized version of the general PostEvent function that allows specifying up to six event
+	   arguments. The event will be posted to the class instance's event queue and executed asynchronously at the specified time.
+
+		\param ev The event definition to post
+		\param time The time offset in milliseconds when the event should be executed
+		\param arg1 First event argument
+		\param arg2 Second event argument
+		\param arg3 Third event argument
+		\param arg4 Fourth event argument
+		\param arg5 Fifth event argument
+		\param arg6 Sixth event argument
+		\return True if the event was successfully posted to the event queue, false otherwise
+	*/
 	bool			 PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6 );
 
 	/*!

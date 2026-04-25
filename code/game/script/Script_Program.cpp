@@ -42,14 +42,63 @@ idTypeDef type_namespace( ev_namespace, &def_namespace, "namespace", sizeof( int
 idTypeDef type_string( ev_string, &def_string, "string", MAX_STRING_LEN, NULL );
 idTypeDef type_float( ev_float, &def_float, "float", sizeof( intptr_t ), NULL );
 idTypeDef type_vector( ev_vector, &def_vector, "vector", E_EVENT_SIZEOF_VEC, NULL );
-idTypeDef type_entity( ev_entity, &def_entity, "entity", sizeof( intptr_t ), NULL ); // stored as entity number pointer
+
+/*!
+	\brief Creates and returns an idTypeDef for an entity type
+
+	This function initializes and returns an idTypeDef object that represents the entity type. The type is stored as an entity number pointer with a size of intptr_t. The function takes an event type,
+   a pointer to a definition entity, the type name as a string, the size of the entity pointer, and a null terminator.
+
+	\param def_entity Pointer to the definition entity
+	\return An idTypeDef object representing the entity type
+*/
+idTypeDef type_entity( ev_entity, &def_entity, "entity", sizeof( intptr_t ), NULL );
 idTypeDef type_field( ev_field, &def_field, "field", sizeof( intptr_t ), NULL );
 idTypeDef type_function( ev_function, &def_function, "function", sizeof( intptr_t ), &type_void );
 idTypeDef type_virtualfunction( ev_virtualfunction, &def_virtualfunction, "virtual function", sizeof( intptr_t ), NULL );
 idTypeDef type_pointer( ev_pointer, &def_pointer, "pointer", sizeof( intptr_t ), NULL );
-idTypeDef type_object( ev_object, &def_object, "object", sizeof( intptr_t ), NULL );			 // stored as entity number pointer
-idTypeDef type_jumpoffset( ev_jumpoffset, &def_jumpoffset, "<jump>", sizeof( intptr_t ), NULL ); // only used for jump opcodes
-idTypeDef type_argsize( ev_argsize, &def_argsize, "<argsize>", sizeof( intptr_t ), NULL );		 // only used for function call and thread opcodes
+
+/*!
+	\brief Creates and returns an idTypeDef object for a generic object type
+
+	This function initializes an idTypeDef object that represents a generic object type in the engine. The type is stored as an entity number pointer and uses sizeof(intptr_t) for its memory
+   footprint. The function is typically used to register object types within the engine's type system.
+
+	\param def_object Reference to the definition object for the type
+	\param ev_object The event type associated with the object
+	\return An idTypeDef object representing the registered object type
+*/
+idTypeDef type_object( ev_object, &def_object, "object", sizeof( intptr_t ), NULL );
+
+/*!
+	\brief Creates a type definition for jump offsets used in bytecode execution
+
+	This function initializes a type definition specifically for jump offset values used in the virtual machine's bytecode execution engine. The definition is configured to handle jump operations and
+   is only utilized for jump opcodes within the scripting system. The type is defined with the size of a pointer to support proper addressing of jump targets in the execution flow.
+
+	\param def_jumpoffset Reference to the definition object that will be initialized
+	\param <jump> String identifier for the jump type
+	\param NULL Additional parameters not used in this implementation
+	\param ev_jumpoffset The event type identifier for jump operations
+	\param sizeof(intptr_t) Size in bytes of the jump offset value
+	\return A type definition object that represents jump offset values for bytecode execution
+*/
+idTypeDef type_jumpoffset( ev_jumpoffset, &def_jumpoffset, "<jump>", sizeof( intptr_t ), NULL );
+
+/*!
+	\brief Creates and returns an idTypeDef object for argsize type used in function calls and thread operations
+
+	This function initializes an idTypeDef object with the specified parameters to define a type for argsize. It is specifically designed for use in function call and thread opcode operations within
+   the engine. The type is configured with the ev_argsize enumeration, a pointer to def_argsize, the string representation "<argsize>", the size of intptr_t, and a NULL terminator.
+
+	\param def_argsize Pointer to the definition for argsize type
+	\param <argsize> String representation of the argsize type
+	\param NULL Terminator for the type definition
+	\param ev_argsize The enumeration value for argsize type
+	\param sizeof(intptr_t) Size in bytes of the intptr_t type
+	\return An idTypeDef object configured for argsize type usage in function calls and thread operations
+*/
+idTypeDef type_argsize( ev_argsize, &def_argsize, "<argsize>", sizeof( intptr_t ), NULL );
 idTypeDef type_boolean( ev_boolean, &def_boolean, "boolean", sizeof( intptr_t ), NULL );
 // RB end
 
@@ -75,51 +124,26 @@ idVarDef  def_boolean( &type_boolean );
 
 ***********************************************************************/
 
-/*
-================
-function_t::function_t
-================
-*/
 function_t::function_t()
 {
 	Clear();
 }
 
-/*
-================
-function_t::Allocated
-================
-*/
 size_t function_t::Allocated() const
 {
 	return name.Allocated() + parmSize.Allocated();
 }
 
-/*
-================
-function_t::SetName
-================
-*/
 void function_t::SetName( const char* name )
 {
 	this->name = name;
 }
 
-/*
-================
-function_t::Name
-================
-*/
 const char* function_t::Name() const
 {
 	return name;
 }
 
-/*
-================
-function_t::Clear
-================
-*/
 void function_t::Clear()
 {
 	eventdef	   = NULL;
@@ -140,11 +164,6 @@ void function_t::Clear()
 
 ***********************************************************************/
 
-/*
-================
-idTypeDef::idTypeDef
-================
-*/
 idTypeDef::idTypeDef( etype_t etype, idVarDef* edef, const char* ename, int esize, idTypeDef* aux )
 {
 	name	= ename;
@@ -168,11 +187,6 @@ idTypeDef::idTypeDef( const idTypeDef& other )
 	*this = other;
 }
 
-/*
-================
-idTypeDef::operator=
-================
-*/
 void idTypeDef::operator=( const idTypeDef& other )
 {
 	type	  = other.type;
@@ -185,11 +199,6 @@ void idTypeDef::operator=( const idTypeDef& other )
 	functions = other.functions;
 }
 
-/*
-================
-idTypeDef::Allocated
-================
-*/
 size_t idTypeDef::Allocated() const
 {
 	size_t memsize;
@@ -203,13 +212,6 @@ size_t idTypeDef::Allocated() const
 	return memsize;
 }
 
-/*
-================
-idTypeDef::Inherits
-
-Returns true if basetype is an ancestor of this type.
-================
-*/
 bool idTypeDef::Inherits( const idTypeDef* basetype ) const
 {
 	idTypeDef* superType;
@@ -230,13 +232,6 @@ bool idTypeDef::Inherits( const idTypeDef* basetype ) const
 	return false;
 }
 
-/*
-================
-idTypeDef::MatchesType
-
-Returns true if both types' base types and parameters match
-================
-*/
 bool idTypeDef::MatchesType( const idTypeDef& matchtype ) const
 {
 	int i;
@@ -262,13 +257,6 @@ bool idTypeDef::MatchesType( const idTypeDef& matchtype ) const
 	return true;
 }
 
-/*
-================
-idTypeDef::MatchesVirtualFunction
-
-Returns true if both functions' base types and parameters match
-================
-*/
 bool idTypeDef::MatchesVirtualFunction( const idTypeDef& matchfunc ) const
 {
 	int i;
@@ -300,13 +288,6 @@ bool idTypeDef::MatchesVirtualFunction( const idTypeDef& matchfunc ) const
 	return true;
 }
 
-/*
-================
-idTypeDef::AddFunctionParm
-
-Adds a new parameter for a function type.
-================
-*/
 void idTypeDef::AddFunctionParm( idTypeDef* parmtype, const char* name )
 {
 	if( type != ev_function ) {
@@ -322,13 +303,6 @@ void idTypeDef::AddFunctionParm( idTypeDef* parmtype, const char* name )
 	parmName		= name;
 }
 
-/*
-================
-idTypeDef::AddField
-
-Adds a new field to an object type.
-================
-*/
 void idTypeDef::AddField( idTypeDef* fieldtype, const char* name )
 {
 	if( type != ev_object ) {
@@ -350,53 +324,26 @@ void idTypeDef::AddField( idTypeDef* fieldtype, const char* name )
 	}
 }
 
-/*
-================
-idTypeDef::SetName
-================
-*/
 void idTypeDef::SetName( const char* newname )
 {
 	name = newname;
 }
 
-/*
-================
-idTypeDef::Name
-================
-*/
 const char* idTypeDef::Name() const
 {
 	return name;
 }
 
-/*
-================
-idTypeDef::Type
-================
-*/
 etype_t idTypeDef::Type() const
 {
 	return type;
 }
 
-/*
-================
-idTypeDef::Size
-================
-*/
 int idTypeDef::Size() const
 {
 	return size;
 }
 
-/*
-================
-idTypeDef::SuperClass
-
-If type is an object, then returns the object's superclass
-================
-*/
 idTypeDef* idTypeDef::SuperClass() const
 {
 	if( type != ev_object ) {
@@ -410,13 +357,6 @@ idTypeDef* idTypeDef::SuperClass() const
 	return auxType;
 }
 
-/*
-================
-idTypeDef::ReturnType
-
-If type is a function, then returns the function's return type
-================
-*/
 idTypeDef* idTypeDef::ReturnType() const
 {
 	if( type != ev_function ) {
@@ -430,13 +370,6 @@ idTypeDef* idTypeDef::ReturnType() const
 	return auxType;
 }
 
-/*
-================
-idTypeDef::SetReturnType
-
-If type is a function, then sets the function's return type
-================
-*/
 void idTypeDef::SetReturnType( idTypeDef* returntype )
 {
 	if( type != ev_function ) {
@@ -450,13 +383,6 @@ void idTypeDef::SetReturnType( idTypeDef* returntype )
 	auxType = returntype;
 }
 
-/*
-================
-idTypeDef::FieldType
-
-If type is a field, then returns it's type
-================
-*/
 idTypeDef* idTypeDef::FieldType() const
 {
 	if( type != ev_field ) {
@@ -470,13 +396,6 @@ idTypeDef* idTypeDef::FieldType() const
 	return auxType;
 }
 
-/*
-================
-idTypeDef::SetFieldType
-
-If type is a field, then sets the function's return type
-================
-*/
 void idTypeDef::SetFieldType( idTypeDef* fieldtype )
 {
 	if( type != ev_field ) {
@@ -490,13 +409,6 @@ void idTypeDef::SetFieldType( idTypeDef* fieldtype )
 	auxType = fieldtype;
 }
 
-/*
-================
-idTypeDef::PointerType
-
-If type is a pointer, then returns the type it points to
-================
-*/
 idTypeDef* idTypeDef::PointerType() const
 {
 	if( type != ev_pointer ) {
@@ -510,13 +422,6 @@ idTypeDef* idTypeDef::PointerType() const
 	return auxType;
 }
 
-/*
-================
-idTypeDef::SetPointerType
-
-If type is a pointer, then sets the pointer's type
-================
-*/
 void idTypeDef::SetPointerType( idTypeDef* pointertype )
 {
 	if( type != ev_pointer ) {
@@ -530,21 +435,11 @@ void idTypeDef::SetPointerType( idTypeDef* pointertype )
 	auxType = pointertype;
 }
 
-/*
-================
-idTypeDef::NumParameters
-================
-*/
 int idTypeDef::NumParameters() const
 {
 	return parmTypes.Num();
 }
 
-/*
-================
-idTypeDef::GetParmType
-================
-*/
 idTypeDef* idTypeDef::GetParmType( int parmNumber ) const
 {
 	assert( parmNumber >= 0 );
@@ -552,11 +447,6 @@ idTypeDef* idTypeDef::GetParmType( int parmNumber ) const
 	return parmTypes[parmNumber];
 }
 
-/*
-================
-idTypeDef::GetParmName
-================
-*/
 const char* idTypeDef::GetParmName( int parmNumber ) const
 {
 	assert( parmNumber >= 0 );
@@ -564,21 +454,11 @@ const char* idTypeDef::GetParmName( int parmNumber ) const
 	return parmNames[parmNumber];
 }
 
-/*
-================
-idTypeDef::NumFunctions
-================
-*/
 int idTypeDef::NumFunctions() const
 {
 	return functions.Num();
 }
 
-/*
-================
-idTypeDef::GetFunctionNumber
-================
-*/
 int idTypeDef::GetFunctionNumber( const function_t* func ) const
 {
 	int i;
@@ -629,11 +509,6 @@ void idTypeDef::AddFunction( const function_t* func )
 
 ***********************************************************************/
 
-/*
-================
-idVarDef::idVarDef()
-================
-*/
 idVarDef::idVarDef( idTypeDef* typeptr )
 {
 	typeDef		= typeptr;
@@ -646,11 +521,6 @@ idVarDef::idVarDef( idTypeDef* typeptr )
 	next = NULL;
 }
 
-/*
-============
-idVarDef::~idVarDef
-============
-*/
 idVarDef::~idVarDef()
 {
 	if( name ) {
@@ -658,21 +528,11 @@ idVarDef::~idVarDef()
 	}
 }
 
-/*
-============
-idVarDef::Name
-============
-*/
 const char* idVarDef::Name() const
 {
 	return name->Name();
 }
 
-/*
-============
-idVarDef::GlobalName
-============
-*/
 const char* idVarDef::GlobalName() const
 {
 	if( scope != &def_namespace ) {
@@ -682,11 +542,6 @@ const char* idVarDef::GlobalName() const
 	}
 }
 
-/*
-============
-idVarDef::DepthOfScope
-============
-*/
 int idVarDef::DepthOfScope( const idVarDef* otherScope ) const
 {
 	const idVarDef* def;
@@ -703,11 +558,6 @@ int idVarDef::DepthOfScope( const idVarDef* otherScope ) const
 	return 0;
 }
 
-/*
-============
-idVarDef::SetFunction
-============
-*/
 void idVarDef::SetFunction( function_t* func )
 {
 	assert( typeDef );
@@ -716,11 +566,6 @@ void idVarDef::SetFunction( function_t* func )
 	value.functionPtr = func;
 }
 
-/*
-============
-idVarDef::SetObject
-============
-*/
 void idVarDef::SetObject( idScriptObject* object )
 {
 	assert( typeDef );
@@ -730,11 +575,6 @@ void idVarDef::SetObject( idScriptObject* object )
 	*value.objectPtrPtr = object;
 }
 
-/*
-============
-idVarDef::SetValue
-============
-*/
 void idVarDef::SetValue( const eval_t& _value, bool constant )
 {
 	assert( typeDef );
@@ -799,11 +639,6 @@ void idVarDef::SetValue( const eval_t& _value, bool constant )
 	}
 }
 
-/*
-============
-idVarDef::SetString
-============
-*/
 void idVarDef::SetString( const char* string, bool constant )
 {
 	if( constant ) {
@@ -816,11 +651,6 @@ void idVarDef::SetString( const char* string, bool constant )
 	idStr::Copynz( value.stringPtr, string, MAX_STRING_LEN );
 }
 
-/*
-============
-idVarDef::PrintInfo
-============
-*/
 void idVarDef::PrintInfo( idFile* file, int instructionPointer ) const
 {
 	statement_t* jumpst;
@@ -909,11 +739,6 @@ void idVarDef::PrintInfo( idFile* file, int instructionPointer ) const
 
 ***********************************************************************/
 
-/*
-============
-idVarDefName::AddDef
-============
-*/
 void idVarDefName::AddDef( idVarDef* def )
 {
 	assert( def->next == NULL );
@@ -922,11 +747,6 @@ void idVarDefName::AddDef( idVarDef* def )
 	defs	  = def;
 }
 
-/*
-============
-idVarDefName::RemoveDef
-============
-*/
 void idVarDefName::RemoveDef( idVarDef* def )
 {
 	if( defs == def ) {
@@ -949,32 +769,17 @@ void idVarDefName::RemoveDef( idVarDef* def )
 
 ***********************************************************************/
 
-/*
-============
-idScriptObject::idScriptObject
-============
-*/
 idScriptObject::idScriptObject()
 {
 	data = NULL;
 	type = &type_object;
 }
 
-/*
-============
-idScriptObject::~idScriptObject
-============
-*/
 idScriptObject::~idScriptObject()
 {
 	Free();
 }
 
-/*
-============
-idScriptObject::Free
-============
-*/
 void idScriptObject::Free()
 {
 	if( data ) {
@@ -985,11 +790,6 @@ void idScriptObject::Free()
 	type = &type_object;
 }
 
-/*
-================
-idScriptObject::Save
-================
-*/
 void idScriptObject::Save( idSaveGame* savefile ) const
 {
 	// RB: 64 bit fix, changed size_t to int
@@ -1007,11 +807,6 @@ void idScriptObject::Save( idSaveGame* savefile ) const
 	}
 }
 
-/*
-================
-idScriptObject::Restore
-================
-*/
 void idScriptObject::Restore( idRestoreGame* savefile )
 {
 	idStr typeName;
@@ -1040,13 +835,6 @@ void idScriptObject::Restore( idRestoreGame* savefile )
 	savefile->Read( data, size );
 }
 
-/*
-============
-idScriptObject::SetType
-
-Allocates an object and initializes memory.
-============
-*/
 bool idScriptObject::SetType( const char* typeName )
 {
 	size_t	   size;
@@ -1082,13 +870,6 @@ bool idScriptObject::SetType( const char* typeName )
 	return true;
 }
 
-/*
-============
-idScriptObject::ClearObject
-
-Resets the memory for the script object without changing its type.
-============
-*/
 void idScriptObject::ClearObject()
 {
 	size_t size;
@@ -1100,41 +881,21 @@ void idScriptObject::ClearObject()
 	}
 }
 
-/*
-============
-idScriptObject::HasObject
-============
-*/
 bool idScriptObject::HasObject() const
 {
 	return ( type != &type_object );
 }
 
-/*
-============
-idScriptObject::GetTypeDef
-============
-*/
 idTypeDef* idScriptObject::GetTypeDef() const
 {
 	return type;
 }
 
-/*
-============
-idScriptObject::GetTypeName
-============
-*/
 const char* idScriptObject::GetTypeName() const
 {
 	return type->Name();
 }
 
-/*
-============
-idScriptObject::GetConstructor
-============
-*/
 const function_t* idScriptObject::GetConstructor() const
 {
 	const function_t* func;
@@ -1143,11 +904,6 @@ const function_t* idScriptObject::GetConstructor() const
 	return func;
 }
 
-/*
-============
-idScriptObject::GetDestructor
-============
-*/
 const function_t* idScriptObject::GetDestructor() const
 {
 	const function_t* func;
@@ -1156,11 +912,6 @@ const function_t* idScriptObject::GetDestructor() const
 	return func;
 }
 
-/*
-============
-idScriptObject::GetFunction
-============
-*/
 const function_t* idScriptObject::GetFunction( const char* name ) const
 {
 	const function_t* func;
@@ -1173,11 +924,6 @@ const function_t* idScriptObject::GetFunction( const char* name ) const
 	return func;
 }
 
-/*
-============
-idScriptObject::GetVariable
-============
-*/
 byte* idScriptObject::GetVariable( const char* name, etype_t etype ) const
 {
 	int				 i;
@@ -1222,11 +968,6 @@ byte* idScriptObject::GetVariable( const char* name, etype_t etype ) const
 
 ***********************************************************************/
 
-/*
-============
-idProgram::AllocType
-============
-*/
 idTypeDef* idProgram::AllocType( idTypeDef& type )
 {
 	idTypeDef* newtype = new( TAG_SCRIPT ) idTypeDef( type );
@@ -1246,14 +987,6 @@ idTypeDef* idProgram::AllocType( etype_t etype, idVarDef* edef, const char* enam
 	return newtype;
 }
 
-/*
-============
-idProgram::GetType
-
-Returns a preexisting complex type that matches the parm, or allocates
-a new one and copies it out.
-============
-*/
 idTypeDef* idProgram::GetType( idTypeDef& type, bool allocate )
 {
 	for( int i = typesHash.First( idStr::Hash( type.Name() ) ); i != -1; i = typesHash.Next( i ) ) {
@@ -1270,13 +1003,6 @@ idTypeDef* idProgram::GetType( idTypeDef& type, bool allocate )
 	return AllocType( type );
 }
 
-/*
-============
-idProgram::FindType
-
-Returns a preexisting complex type that matches the name, or returns NULL if not found
-============
-*/
 idTypeDef* idProgram::FindType( const char* name )
 {
 	for( int i = typesHash.First( idStr::Hash( name ) ); i != -1; i = typesHash.Next( i ) ) {
@@ -1289,11 +1015,6 @@ idTypeDef* idProgram::FindType( const char* name )
 	return NULL;
 }
 
-/*
-============
-idProgram::GetDefList
-============
-*/
 idVarDef* idProgram::GetDefList( const char* name ) const
 {
 	int i, hash;
@@ -1307,11 +1028,6 @@ idVarDef* idProgram::GetDefList( const char* name ) const
 	return NULL;
 }
 
-/*
-============
-idProgram::AddDefToNameList
-============
-*/
 void idProgram::AddDefToNameList( idVarDef* def, const char* name )
 {
 	int i, hash;
@@ -1329,7 +1045,6 @@ void idProgram::AddDefToNameList( idVarDef* def, const char* name )
 	varDefNames[i]->AddDef( def );
 }
 
-// RB: moved from AllocDef
 byte* idProgram::ReserveDefMemory( int size )
 {
 	byte* mem = &variables[numVariables];
@@ -1346,9 +1061,7 @@ byte* idProgram::ReserveDefMemory( int size )
 
 	return mem;
 }
-// RB end
 
-// RB: moved from AllocDef
 idVarDef* idProgram::AllocVarDef( idTypeDef* type, const char* name, idVarDef* scope )
 {
 	// allocate a new def
@@ -1362,13 +1075,7 @@ idVarDef* idProgram::AllocVarDef( idTypeDef* type, const char* name, idVarDef* s
 
 	return def;
 }
-// RB end
 
-/*
-============
-idProgram::AllocDef
-============
-*/
 idVarDef* idProgram::AllocDef( idTypeDef* type, const char* name, idVarDef* scope, bool constant )
 {
 	idVarDef* def;
@@ -1535,11 +1242,6 @@ idVarDef* idProgram::GetDef( const idTypeDef* type, const char* name, const idVa
 	return bestDef;
 }
 
-/*
-============
-idProgram::FreeDef
-============
-*/
 void idProgram::FreeDef( idVarDef* def, const idVarDef* scope )
 {
 	idVarDef* e;
@@ -1575,11 +1277,6 @@ void idProgram::FreeDef( idVarDef* def, const idVarDef* scope )
 	delete def;
 }
 
-/*
-============
-idProgram::FindFreeResultDef
-============
-*/
 idVarDef* idProgram::FindFreeResultDef( idTypeDef* type, const char* name, idVarDef* scope, const idVarDef* a, const idVarDef* b )
 {
 	idVarDef* def;
@@ -1603,17 +1300,6 @@ idVarDef* idProgram::FindFreeResultDef( idTypeDef* type, const char* name, idVar
 	return AllocDef( type, name, scope, false );
 }
 
-/*
-================
-idProgram::FindFunction
-
-Searches for the specified function in the currently loaded script.  A full namespace should be
-specified if not in the global namespace.
-
-Returns 0 if function not found.
-Returns >0 if function found.
-================
-*/
 function_t* idProgram::FindFunction( const char* name ) const
 {
 	int		  start;
@@ -1686,11 +1372,6 @@ function_t* idProgram::FindFunction( const char* name, const idTypeDef* type ) c
 	return NULL;
 }
 
-/*
-================
-idProgram::AllocFunction
-================
-*/
 function_t& idProgram::AllocFunction( idVarDef* def )
 {
 	if( functions.Num() >= functions.Max() ) {
@@ -1719,11 +1400,6 @@ function_t& idProgram::AllocFunction( idVarDef* def )
 	return func;
 }
 
-/*
-================
-idProgram::SetEntity
-================
-*/
 void idProgram::SetEntity( const char* name, idEntity* ent )
 {
 	idVarDef* def;
@@ -1742,11 +1418,6 @@ void idProgram::SetEntity( const char* name, idEntity* ent )
 	}
 }
 
-/*
-================
-idProgram::AllocStatement
-================
-*/
 statement_t* idProgram::AllocStatement()
 {
 	if( statements.Num() >= statements.Max() ) {
@@ -1761,13 +1432,6 @@ statement_t* idProgram::AllocStatement()
 	return ret;
 }
 
-/*
-==============
-idProgram::BeginCompilation
-
-called before compiling a batch of files, clears the pr struct
-==============
-*/
 void idProgram::BeginCompilation()
 {
 	statement_t* statement;
@@ -1806,11 +1470,6 @@ void idProgram::BeginCompilation()
 #endif
 }
 
-/*
-==============
-idProgram::DisassembleStatement
-==============
-*/
 void idProgram::DisassembleStatement( idFile* file, int instructionPointer ) const
 {
 	// RB: added const
@@ -1873,13 +1532,6 @@ void idProgram::Disassemble() const
 	fileSystem->CloseFile( file );
 }
 
-/*
-==============
-idProgram::FinishCompilation
-
-Called after all files are compiled to check for errors
-==============
-*/
 void idProgram::FinishCompilation()
 {
 	int i;
@@ -1898,13 +1550,6 @@ void idProgram::FinishCompilation()
 	}
 }
 
-/*
-==============
-idProgram::CompileStats
-
-called after all files are compiled to report memory usage.
-==============
-*/
 void idProgram::CompileStats()
 {
 	int memused;
@@ -1955,11 +1600,6 @@ void idProgram::CompileStats()
 	gameLocal.Printf( " Thread size: %d bytes\n\n", sizeof( idThread ) );
 }
 
-/*
-================
-idProgram::CompileText
-================
-*/
 bool idProgram::CompileText( const char* source, const char* text, bool console )
 {
 	idCompiler compiler;
@@ -2009,11 +1649,6 @@ bool idProgram::CompileText( const char* source, const char* text, bool console 
 	return true;
 }
 
-/*
-================
-idProgram::CompileFunction
-================
-*/
 const function_t* idProgram::CompileFunction( const char* functionName, const char* text )
 {
 	bool result;
@@ -2031,11 +1666,6 @@ const function_t* idProgram::CompileFunction( const char* functionName, const ch
 	return FindFunction( functionName );
 }
 
-/*
-================
-idProgram::CompileFile
-================
-*/
 void idProgram::CompileFile( const char* filename )
 {
 	char* src;
@@ -2058,11 +1688,6 @@ void idProgram::CompileFile( const char* filename )
 	}
 }
 
-/*
-================
-idProgram::FreeData
-================
-*/
 void idProgram::FreeData()
 {
 	int i;
@@ -2104,11 +1729,6 @@ void idProgram::FreeData()
 	filename = "";
 }
 
-/*
-================
-idProgram::Startup
-================
-*/
 void idProgram::Startup( const char* defaultScript )
 {
 	gameLocal.Printf( "Initializing scripts\n" );
@@ -2127,11 +1747,6 @@ void idProgram::Startup( const char* defaultScript )
 	FinishCompilation();
 }
 
-/*
-================
-idProgram::Save
-================
-*/
 void idProgram::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -2161,11 +1776,6 @@ void idProgram::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( checksum );
 }
 
-/*
-================
-idProgram::Restore
-================
-*/
 bool idProgram::Restore( idRestoreGame* savefile )
 {
 	int	  i, num, index;
@@ -2203,11 +1813,6 @@ bool idProgram::Restore( idRestoreGame* savefile )
 	return result;
 }
 
-/*
-================
-idProgram::CalculateChecksum
-================
-*/
 int idProgram::CalculateChecksum( bool forOldSavegame ) const
 {
 	int i, result;
@@ -2274,13 +1879,6 @@ int idProgram::CalculateChecksum( bool forOldSavegame ) const
 	return result;
 }
 
-/*
-==============
-idProgram::Restart
-
-Restores all variables to their initial value
-==============
-*/
 void idProgram::Restart()
 {
 	int i;
@@ -2323,11 +1921,6 @@ void idProgram::Restart()
 	}
 }
 
-/*
-================
-idProgram::GetFilenum
-================
-*/
 int idProgram::GetFilenum( const char* name )
 {
 	if( filename == name ) {
@@ -2349,11 +1942,6 @@ int idProgram::GetFilenum( const char* name )
 	return filenum;
 }
 
-/*
-================
-idProgram::idProgram
-================
-*/
 idProgram::idProgram()
 {
 	varDefs.SetGranularity( 256 );
@@ -2362,21 +1950,11 @@ idProgram::idProgram()
 	FreeData();
 }
 
-/*
-================
-idProgram::~idProgram
-================
-*/
 idProgram::~idProgram()
 {
 	FreeData();
 }
 
-/*
-================
-idProgram::ReturnEntity
-================
-*/
 void idProgram::ReturnEntity( idEntity* ent )
 {
 	if( ent ) {

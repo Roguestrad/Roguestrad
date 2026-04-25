@@ -30,21 +30,11 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuWidget_NavBar::Initialize
-========================
-*/
 void idMenuWidget_NavBar::Initialize( idMenuHandler* data )
 {
 	idMenuWidget::Initialize( data );
 }
 
-/*
-========================
-idMenuWidget_NavBar::PrepareListElement
-========================
-*/
 void idMenuWidget_NavBar::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -108,11 +98,6 @@ void idMenuWidget_NavBar::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_NavBar::SetListHeadings
-========================
-*/
 void idMenuWidget_NavBar::SetListHeadings( idList<idStr>& list )
 {
 	headings.Clear();
@@ -121,21 +106,11 @@ void idMenuWidget_NavBar::SetListHeadings( idList<idStr>& list )
 	}
 }
 
-/*
-========================
-idMenuWidget_NavBar::GetTotalNumberOfOptions
-========================
-*/
 int idMenuWidget_NavBar::GetTotalNumberOfOptions() const
 {
 	return GetChildren().Num();
 }
 
-/*
-========================
-idMenuWidget_NavBar::PrepareListElement
-========================
-*/
 bool idMenuWidget_NavBar::PrepareListElement( idMenuWidget& widget, const int navIndex )
 {
 	if( navIndex >= GetNumVisibleOptions() || navIndex >= headings.Num() ) {

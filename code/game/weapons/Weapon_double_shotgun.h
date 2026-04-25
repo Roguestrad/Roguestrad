@@ -29,19 +29,39 @@ If you have questions concerning this license or the applicable additional terms
 */
 #pragma once
 
+/*!
+	\class iceWeaponDoubleShotgun
+	\brief A specialized weapon class that implements the behavior and states for a double shotgun weapon.
+
+	This class extends the base weapon object to provide specific functionality for a double shotgun weapon. It manages the weapon's operational states including raising, lowering, idling, firing, and
+   reloading. The class initializes with a provided weapon instance and handles animation states through defined callbacks. It also includes functionality for ejecting brass casings after firing. The
+   weapon follows a state machine pattern where each primary action is handled by a dedicated state handler function.
+
+*/
 class iceWeaponDoubleShotgun : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponDoubleShotgun );
 
+	//! Initializes the ice weapon double shotgun with the provided weapon instance.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Handles the raising animation state for the ice weapon double shotgun.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Sets the weapon to the lowering state and plays the putaway animation.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state logic for the ice weapon double shotgun.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Fires the double shotgun weapon, handling ammo management and animation states.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Reloads the double shotgun weapon by playing a reload animation and adding ammunition to the clip
 	stateResult_t Reload( stateParms_t* parms );
 
+	//! Ejects the brass casing from the double shotgun weapon.
 	void		  EjectBrass();
 
 private:

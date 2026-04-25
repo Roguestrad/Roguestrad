@@ -36,11 +36,6 @@ If you have questions concerning this license or the applicable additional terms
 // _D3XP : rename all gameLocal.time to gameLocal.slow.time for merge!
 
 const int IMPULSE_DELAY = 150;
-/*
-==============
-idPlayerView::idPlayerView
-==============
-*/
 idPlayerView::idPlayerView()
 {
 	memset( screenBlobs, 0, sizeof( screenBlobs ) );
@@ -73,20 +68,10 @@ idPlayerView::idPlayerView()
 	ClearEffects();
 }
 
-/*
-==============
-idPlayerView::~idPlayerView
-==============
-*/
 idPlayerView::~idPlayerView()
 {
 	delete fxManager;
 }
-/*
-==============
-idPlayerView::Save
-==============
-*/
 void idPlayerView::Save( idSaveGame* savefile ) const
 {
 	int					i;
@@ -137,11 +122,6 @@ void idPlayerView::Save( idSaveGame* savefile ) const
 	}
 }
 
-/*
-==============
-idPlayerView::Restore
-==============
-*/
 void idPlayerView::Restore( idRestoreGame* savefile )
 {
 	int			  i;
@@ -192,21 +172,11 @@ void idPlayerView::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-==============
-idPlayerView::SetPlayerEntity
-==============
-*/
 void idPlayerView::SetPlayerEntity( idPlayer* playerEnt )
 {
 	player = playerEnt;
 }
 
-/*
-==============
-idPlayerView::ClearEffects
-==============
-*/
 void idPlayerView::ClearEffects()
 {
 	lastDamageTime = MS2SEC( gameLocal.slow.time - 99999 );
@@ -222,11 +192,6 @@ void idPlayerView::ClearEffects()
 	bfgVision = false;
 }
 
-/*
-==============
-idPlayerView::GetScreenBlob
-==============
-*/
 screenBlob_t* idPlayerView::GetScreenBlob()
 {
 	screenBlob_t* oldest = &screenBlobs[0];
@@ -239,14 +204,6 @@ screenBlob_t* idPlayerView::GetScreenBlob()
 	return oldest;
 }
 
-/*
-==============
-idPlayerView::DamageImpulse
-
-LocalKickDir is the direction of force in the player's coordinate system,
-which will determine the head kick direction
-==============
-*/
 void idPlayerView::DamageImpulse( idVec3 localKickDir, const idDict* damageDef )
 {
 	// Leyland VR
@@ -331,13 +288,6 @@ void idPlayerView::DamageImpulse( idVec3 localKickDir, const idDict* damageDef )
 	lastDamageTime = MS2SEC( gameLocal.fast.time );
 }
 
-/*
-==================
-idPlayerView::WeaponFireFeedback
-
-Called when a weapon fires, generates head twitches, etc
-==================
-*/
 void idPlayerView::WeaponFireFeedback( const idDict* weaponDef )
 {
 	// Leyland VR
@@ -357,11 +307,6 @@ void idPlayerView::WeaponFireFeedback( const idDict* weaponDef )
 	}
 }
 
-/*
-===================
-idPlayerView::CalculateShake
-===================
-*/
 void idPlayerView::CalculateShake()
 {
 	float shakeVolume = gameSoundWorld->CurrentShakeAmplitude();
@@ -376,23 +321,11 @@ void idPlayerView::CalculateShake()
 	shakeAng[2] = gameLocal.random.CRandomFloat() * shakeVolume;
 }
 
-/*
-===================
-idPlayerView::ShakeAxis
-===================
-*/
 idMat3 idPlayerView::ShakeAxis() const
 {
 	return shakeAng.ToMat3();
 }
 
-/*
-===================
-idPlayerView::AngleOffset
-
-  kickVector, a world space direction that the attack should
-===================
-*/
 idAngles idPlayerView::AngleOffset() const
 {
 	idAngles ang( 0.0f, 0.0f, 0.0f );
@@ -413,11 +346,6 @@ idAngles idPlayerView::AngleOffset() const
 	return ang;
 }
 
-/*
-==================
-idPlayerView::SingleView
-==================
-*/
 void idPlayerView::SingleView( const renderView_t* view, idMenuHandler_HUD* hudManager )
 {
 	// normal rendering
@@ -570,27 +498,12 @@ void idPlayerView::SingleView( const renderView_t* view, idMenuHandler_HUD* hudM
 	// Leyland end
 }
 
-/*
-=================
-idPlayerView::Flash
-
-flashes the player view with the given color
-=================
-*/
 void idPlayerView::Flash( idVec4 color, int time )
 {
 	Fade( idVec4( 0.0f, 0.0f, 0.0f, 0.0f ), time );
 	fadeFromColor = colorWhite;
 }
 
-/*
-=================
-idPlayerView::Fade
-
-used for level transition fades
-assumes: color.w is 0 or 1
-=================
-*/
 void idPlayerView::Fade( idVec4 color, int time )
 {
 	SetTimeState ts( player->timeGroup );
@@ -617,11 +530,6 @@ void idPlayerView::Fade( idVec4 color, int time )
 	}
 }
 
-/*
-=================
-idPlayerView::ScreenFade
-=================
-*/
 void idPlayerView::ScreenFade()
 {
 	if( !fadeTime ) {
@@ -654,17 +562,20 @@ idCVar		  stereoRender_convergence( "stereoRender_convergence", "6", CVAR_RENDER
 extern idCVar stereoRender_screenSeparation; // screen units from center to eyes
 extern idCVar stereoRender_swapEyes;
 
+//! Converts a measurement in centimeters to inches.
 float		  CentimetersToInches( const float cm )
 {
 	return cm / 2.54f;
 }
 
+//! Converts a value from centimeters to world units.
 float CentimetersToWorldUnits( const float cm )
 {
 	// In Doom 3, one world unit == one inch
 	return CentimetersToInches( cm );
 }
 
+//! Calculates the world separation based on screen separation, convergence distance, and right field of view.
 float CalculateWorldSeparation( const float screenSeparation, const float convergenceDistance, const float fov_right )
 {
 	const float screen			= fov_right * fabs( screenSeparation );
@@ -673,7 +584,20 @@ float CalculateWorldSeparation( const float screenSeparation, const float conver
 	return worldSeparation;
 }
 
-stereoDistances_t CaclulateStereoDistances( const float interOcularCentimeters, // distance between two eyes, typically 6.0 - 7.0
+/*!
+	\brief Calculates stereo distances for 3D rendering based on inter-ocular distance, screen width, convergence, and field of view.
+
+	This function computes the necessary distances for stereo rendering in 3D graphics applications. It handles two distinct modes: head-mounted display mode when convergence is zero or VR system is
+   active, and 3DTV mode otherwise. In head-mounted display mode, the function uses VR system values for world and screen separation. In 3DTV mode, it calculates screen separation from the
+   inter-ocular distance and screen width, then computes world separation using a helper function. The computed distances are returned in a stereoDistances_t structure.
+
+	\param interOcularCentimeters Distance between the two eyes, typically ranging from 6.0 to 7.0 centimeters
+	\param screenWidthCentimeters Width of the display screen in centimeters, typically read from the operating system
+	\param convergenceWorldUnits Convergence distance in world units, pass 0 for head mounted display mode
+	\param fov_right Edge to edge horizontal field of view in degrees, typically ranging from 60 to 90 degrees
+	\return A stereoDistances_t structure containing calculated world separation and screen separation values for stereo rendering
+*/
+stereoDistances_t CaclulateStereoDistances( const float interOcularCentimeters,
 	const float											screenWidthCentimeters, // read from operating system
 	const float											convergenceWorldUnits,	// pass 0 for head mounted display mode
 	const float											fov_right )														// edge to edge horizontal field of view, typically 60 - 90
@@ -709,11 +633,6 @@ float GetScreenSeparationForGuis()
 	return dists.screenSeparation;
 }
 
-/*
-===================
-idPlayerView::EmitStereoEyeView
-===================
-*/
 void idPlayerView::EmitStereoEyeView( const int eye, idMenuHandler_HUD* hudManager )
 {
 	renderView_t* view = player->GetRenderView();
@@ -781,18 +700,12 @@ void idPlayerView::EmitStereoEyeView( const int eye, idMenuHandler_HUD* hudManag
 	SingleView( &eyeView, hudManager );
 }
 
-/*
-===================
-IsGameStereoRendered
-
-The crosshair is swapped for a laser sight in stereo rendering
-===================
-*/
 bool IsGameStereoRendered()
 {
 	return vrSystem->IsActive();
 }
 
+//! Returns -1 or 1 based on whether the current frame count is odd or even.
 int EyeForHalfRateFrame( const int frameCount )
 {
 	return ( renderSystem->GetFrameCount() & 1 ) ? -1 : 1;
@@ -806,7 +719,6 @@ idPlayerView::RenderPlayerView
 // Leyland VR
 idCVar vr_cinematicMode( "vr_cinematicMode", "0", CVAR_BOOL | CVAR_ARCHIVE | CVAR_NEW, "Adds a black frame around cinematics." );
 idCVar vr_blink( "vr_blink", "1", CVAR_FLOAT | CVAR_ARCHIVE | CVAR_NEW, "Darkens the screen when head bumps walls and objects." );
-// Leyland end
 
 void   idPlayerView::RenderPlayerView( idMenuHandler_HUD* hudManager )
 {
@@ -866,11 +778,6 @@ void   idPlayerView::RenderPlayerView( idMenuHandler_HUD* hudManager )
 	ScreenFade();
 }
 
-/*
-===================
-idPlayerView::WarpVision
-===================
-*/
 int idPlayerView::AddWarp( idVec3 worldOrigin, float centerx, float centery, float initialRadius, float durationMsec )
 {
 	FullscreenFX_Warp* fx = ( FullscreenFX_Warp* )( fxManager->FindFX( "warp" ) );
@@ -893,11 +800,6 @@ void idPlayerView::FreeWarp( int id )
 	}
 }
 
-/*
-==================
-FxFader::FxFader
-==================
-*/
 FxFader::FxFader()
 {
 	time  = 0;
@@ -906,11 +808,6 @@ FxFader::FxFader()
 	msec  = 1000;
 }
 
-/*
-==================
-FxFader::SetTriggerState
-==================
-*/
 bool FxFader::SetTriggerState( bool active )
 {
 	// handle on/off states
@@ -956,11 +853,6 @@ bool FxFader::SetTriggerState( bool active )
 	}
 }
 
-/*
-==================
-FxFader::Save
-==================
-*/
 void FxFader::Save( idSaveGame* savefile )
 {
 	savefile->WriteInt( time );
@@ -969,11 +861,6 @@ void FxFader::Save( idSaveGame* savefile )
 	savefile->WriteInt( msec );
 }
 
-/*
-==================
-FxFader::Restore
-==================
-*/
 void FxFader::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadInt( time );
@@ -982,31 +869,16 @@ void FxFader::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( msec );
 }
 
-/*
-==================
-FullscreenFX_Helltime::Save
-==================
-*/
 void FullscreenFX::Save( idSaveGame* savefile )
 {
 	fader.Save( savefile );
 }
 
-/*
-==================
-FullscreenFX_Helltime::Restore
-==================
-*/
 void FullscreenFX::Restore( idRestoreGame* savefile )
 {
 	fader.Restore( savefile );
 }
 
-/*
-==================
-FullscreenFX_Helltime::Initialize
-==================
-*/
 void FullscreenFX_Helltime::Initialize()
 {
 	initMaterial = declManager->FindMaterial( "textures/d3bfg/bloodorb/init" );
@@ -1019,11 +891,6 @@ void FullscreenFX_Helltime::Initialize()
 	clearAccumBuffer = true;
 }
 
-/*
-==================
-FullscreenFX_Helltime::DetermineLevel
-==================
-*/
 int FullscreenFX_Helltime::DetermineLevel()
 {
 	int testfx = g_testHelltimeFX.GetInteger();
@@ -1046,11 +913,6 @@ int FullscreenFX_Helltime::DetermineLevel()
 	return -1;
 }
 
-/*
-==================
-FullscreenFX_Helltime::Active
-==================
-*/
 bool FullscreenFX_Helltime::Active()
 {
 	if( gameLocal.inCinematic || common->IsMultiplayer() ) {
@@ -1069,11 +931,6 @@ bool FullscreenFX_Helltime::Active()
 	return false;
 }
 
-/*
-==================
-FullscreenFX_Helltime::AccumPass
-==================
-*/
 void FullscreenFX_Helltime::AccumPass( const renderView_t* view )
 {
 	int level = DetermineLevel();
@@ -1097,11 +954,6 @@ void FullscreenFX_Helltime::AccumPass( const renderView_t* view )
 	}
 }
 
-/*
-==================
-FullscreenFX_Helltime::HighQuality
-==================
-*/
 void FullscreenFX_Helltime::HighQuality()
 {
 	float t0 = 0.0f;
@@ -1111,11 +963,6 @@ void FullscreenFX_Helltime::HighQuality()
 	renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, t0, 1.0f, t1, drawMaterial );
 }
 
-/*
-==================
-FullscreenFX_Helltime::Restore
-==================
-*/
 void FullscreenFX_Helltime::Restore( idRestoreGame* savefile )
 {
 	FullscreenFX::Restore( savefile );
@@ -1124,11 +971,6 @@ void FullscreenFX_Helltime::Restore( idRestoreGame* savefile )
 	clearAccumBuffer = true;
 }
 
-/*
-==================
-FullscreenFX_Multiplayer::Initialize
-==================
-*/
 void FullscreenFX_Multiplayer::Initialize()
 {
 	initMaterial	 = declManager->FindMaterial( "textures/d3bfg/multiplayer/init" );
@@ -1137,11 +979,6 @@ void FullscreenFX_Multiplayer::Initialize()
 	clearAccumBuffer = true;
 }
 
-/*
-==================
-FullscreenFX_Multiplayer::DetermineLevel
-==================
-*/
 int FullscreenFX_Multiplayer::DetermineLevel()
 {
 	int testfx = g_testMultiplayerFX.GetInteger();
@@ -1166,11 +1003,6 @@ int FullscreenFX_Multiplayer::DetermineLevel()
 	return -1;
 }
 
-/*
-==================
-FullscreenFX_Multiplayer::Active
-==================
-*/
 bool FullscreenFX_Multiplayer::Active()
 {
 	if( !common->IsMultiplayer() && g_testMultiplayerFX.GetInteger() == -1 ) {
@@ -1189,11 +1021,6 @@ bool FullscreenFX_Multiplayer::Active()
 	return false;
 }
 
-/*
-==================
-FullscreenFX_Multiplayer::AccumPass
-==================
-*/
 void FullscreenFX_Multiplayer::AccumPass( const renderView_t* view )
 {
 	renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -1210,11 +1037,6 @@ void FullscreenFX_Multiplayer::AccumPass( const renderView_t* view )
 	}
 }
 
-/*
-==================
-FullscreenFX_Multiplayer::HighQuality
-==================
-*/
 void FullscreenFX_Multiplayer::HighQuality()
 {
 	float t0 = 0.0f;
@@ -1224,11 +1046,6 @@ void FullscreenFX_Multiplayer::HighQuality()
 	renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), 0.0f, t0, 1.0f, t1, drawMaterial );
 }
 
-/*
-==================
-FullscreenFX_Multiplayer::Restore
-==================
-*/
 void FullscreenFX_Multiplayer::Restore( idRestoreGame* savefile )
 {
 	FullscreenFX::Restore( savefile );
@@ -1237,11 +1054,6 @@ void FullscreenFX_Multiplayer::Restore( idRestoreGame* savefile )
 	clearAccumBuffer = true;
 }
 
-/*
-==================
-FullscreenFX_Warp::Initialize
-==================
-*/
 void FullscreenFX_Warp::Initialize()
 {
 	material	   = declManager->FindMaterial( "textures/d3bfg/warp" );
@@ -1249,11 +1061,6 @@ void FullscreenFX_Warp::Initialize()
 	startWarpTime  = 0;
 }
 
-/*
-==================
-FullscreenFX_Warp::Active
-==================
-*/
 bool FullscreenFX_Warp::Active()
 {
 	if( grabberEnabled ) {
@@ -1263,11 +1070,6 @@ bool FullscreenFX_Warp::Active()
 	return false;
 }
 
-/*
-==================
-FullscreenFX_Warp::Save
-==================
-*/
 void FullscreenFX_Warp::Save( idSaveGame* savefile )
 {
 	FullscreenFX::Save( savefile );
@@ -1276,11 +1078,6 @@ void FullscreenFX_Warp::Save( idSaveGame* savefile )
 	savefile->WriteInt( startWarpTime );
 }
 
-/*
-==================
-FullscreenFX_Warp::Restore
-==================
-*/
 void FullscreenFX_Warp::Restore( idRestoreGame* savefile )
 {
 	FullscreenFX::Restore( savefile );
@@ -1289,11 +1086,6 @@ void FullscreenFX_Warp::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( startWarpTime );
 }
 
-/*
-==================
-FullscreenFX_Warp::DrawWarp
-==================
-*/
 void FullscreenFX_Warp::DrawWarp( WarpPolygon_t wp, float interp )
 {
 	idVec4		  mid1_uv, mid2_uv;
@@ -1337,11 +1129,6 @@ void FullscreenFX_Warp::DrawWarp( WarpPolygon_t wp, float interp )
 	renderSystem->DrawStretchTri( drawPts[0], drawPts[1], drawPts[2], drawPts[3], drawPts[4], drawPts[5], material );
 }
 
-/*
-==================
-FullscreenFX_Warp::HighQuality
-==================
-*/
 void FullscreenFX_Warp::HighQuality()
 {
 	float  x1, y1, x2, y2, radius, interp;
@@ -1394,21 +1181,11 @@ void FullscreenFX_Warp::HighQuality()
 	}
 }
 
-/*
-==================
-FullscreenFX_EnviroSuit::Initialize
-==================
-*/
 void FullscreenFX_EnviroSuit::Initialize()
 {
 	material = declManager->FindMaterial( "textures/d3bfg/enviro_suit" );
 }
 
-/*
-==================
-FullscreenFX_EnviroSuit::Active
-==================
-*/
 bool FullscreenFX_EnviroSuit::Active()
 {
 	idPlayer* player = fxman->GetPlayer();
@@ -1420,11 +1197,6 @@ bool FullscreenFX_EnviroSuit::Active()
 	return false;
 }
 
-/*
-==================
-FullscreenFX_EnviroSuit::HighQuality
-==================
-*/
 void FullscreenFX_EnviroSuit::HighQuality()
 {
 	renderSystem->SetColor4( 1.0f, 1.0f, 1.0f, 1.0f );
@@ -1435,21 +1207,11 @@ void FullscreenFX_EnviroSuit::HighQuality()
 	renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), s0, t0, s1, t1, material );
 }
 
-/*
-==================
-FullscreenFX_DoubleVision::Initialize
-==================
-*/
 void FullscreenFX_DoubleVision::Initialize()
 {
 	material = declManager->FindMaterial( "textures/d3bfg/doubleVision" );
 }
 
-/*
-==================
-FullscreenFX_DoubleVision::Active
-==================
-*/
 bool FullscreenFX_DoubleVision::Active()
 {
 	if( gameLocal.fast.time < fxman->GetPlayerView()->dvFinishTime ) {
@@ -1459,11 +1221,6 @@ bool FullscreenFX_DoubleVision::Active()
 	return false;
 }
 
-/*
-==================
-FullscreenFX_DoubleVision::HighQuality
-==================
-*/
 void FullscreenFX_DoubleVision::HighQuality()
 {
 	int	  offset = fxman->GetPlayerView()->dvFinishTime - gameLocal.fast.time;
@@ -1525,20 +1282,10 @@ void FullscreenFX_DoubleVision::HighQuality()
 	renderSystem->DrawStretchPic( 0.0f, 0.0f, renderSystem->GetVirtualWidth(), renderSystem->GetVirtualHeight(), s0, t0, s1, t1, material );
 }
 
-/*
-==================
-FullscreenFX_InfluenceVision::Initialize
-==================
-*/
 void FullscreenFX_InfluenceVision::Initialize()
 {
 }
 
-/*
-==================
-FullscreenFX_InfluenceVision::Active
-==================
-*/
 bool FullscreenFX_InfluenceVision::Active()
 {
 	idPlayer* player = fxman->GetPlayer();
@@ -1550,11 +1297,6 @@ bool FullscreenFX_InfluenceVision::Active()
 	return false;
 }
 
-/*
-==================
-FullscreenFX_InfluenceVision::HighQuality
-==================
-*/
 void FullscreenFX_InfluenceVision::HighQuality()
 {
 	float	  distance = 0.0f;
@@ -1584,11 +1326,6 @@ void FullscreenFX_InfluenceVision::HighQuality()
 	}
 }
 
-/*
-==================
-FullscreenFX_Bloom::Initialize
-==================
-*/
 void FullscreenFX_Bloom::Initialize()
 {
 	drawMaterial = declManager->FindMaterial( "textures/d3bfg/bloom2/draw" );
@@ -1598,11 +1335,6 @@ void FullscreenFX_Bloom::Initialize()
 	targetIntensity	 = 0;
 }
 
-/*
-==================
-FullscreenFX_Bloom::Active
-==================
-*/
 bool FullscreenFX_Bloom::Active()
 {
 	idPlayer* player = fxman->GetPlayer();
@@ -1614,11 +1346,6 @@ bool FullscreenFX_Bloom::Active()
 	return false;
 }
 
-/*
-==================
-FullscreenFX_Bloom::HighQuality
-==================
-*/
 void FullscreenFX_Bloom::HighQuality()
 {
 	float	  shift	 = 1;
@@ -1683,11 +1410,6 @@ void FullscreenFX_Bloom::HighQuality()
 	}
 }
 
-/*
-==================
-FullscreenFX_Bloom::Save
-==================
-*/
 void FullscreenFX_Bloom::Save( idSaveGame* savefile )
 {
 	FullscreenFX::Save( savefile );
@@ -1695,11 +1417,6 @@ void FullscreenFX_Bloom::Save( idSaveGame* savefile )
 	savefile->WriteFloat( targetIntensity );
 }
 
-/*
-==================
-FullscreenFX_Bloom::Restore
-==================
-*/
 void FullscreenFX_Bloom::Restore( idRestoreGame* savefile )
 {
 	FullscreenFX::Restore( savefile );
@@ -1707,32 +1424,17 @@ void FullscreenFX_Bloom::Restore( idRestoreGame* savefile )
 	savefile->ReadFloat( targetIntensity );
 }
 
-/*
-==================
-FullscreenFXManager::FullscreenFXManager
-==================
-*/
 FullscreenFXManager::FullscreenFXManager()
 {
 	playerView		  = NULL;
 	blendBackMaterial = NULL;
 }
 
-/*
-==================
-FullscreenFXManager::~FullscreenFXManager
-==================
-*/
 FullscreenFXManager::~FullscreenFXManager()
 {
 	fx.DeleteContents();
 }
 
-/*
-==================
-FullscreenFXManager::FindFX
-==================
-*/
 FullscreenFX* FullscreenFXManager::FindFX( idStr name )
 {
 	for( int i = 0; i < fx.Num(); i++ ) {
@@ -1744,11 +1446,6 @@ FullscreenFX* FullscreenFXManager::FindFX( idStr name )
 	return NULL;
 }
 
-/*
-==================
-FullscreenFXManager::CreateFX
-==================
-*/
 void FullscreenFXManager::CreateFX( idStr name, idStr fxtype, int fade )
 {
 	FullscreenFX* pfx = NULL;
@@ -1780,11 +1477,6 @@ void FullscreenFXManager::CreateFX( idStr name, idStr fxtype, int fade )
 	}
 }
 
-/*
-==================
-FullscreenFXManager::Initialize
-==================
-*/
 void FullscreenFXManager::Initialize( idPlayerView* pv )
 {
 	// set the playerview
@@ -1808,11 +1500,6 @@ void FullscreenFXManager::Initialize( idPlayerView* pv )
 	renderSystem->CaptureRenderToImage( "_currentRender" );
 }
 
-/*
-==================
-FullscreenFXManager::Blendback
-==================
-*/
 void FullscreenFXManager::Blendback( float alpha )
 {
 	// alpha fade
@@ -1826,11 +1513,6 @@ void FullscreenFXManager::Blendback( float alpha )
 	}
 }
 
-/*
-==================
-FullscreenFXManager::Save
-==================
-*/
 void FullscreenFXManager::Save( idSaveGame* savefile )
 {
 	for( int i = 0; i < fx.Num(); i++ ) {
@@ -1839,11 +1521,6 @@ void FullscreenFXManager::Save( idSaveGame* savefile )
 	}
 }
 
-/*
-==================
-FullscreenFXManager::Restore
-==================
-*/
 void FullscreenFXManager::Restore( idRestoreGame* savefile )
 {
 	for( int i = 0; i < fx.Num(); i++ ) {
@@ -1854,11 +1531,6 @@ void FullscreenFXManager::Restore( idRestoreGame* savefile )
 
 idCVar player_allowScreenFXInStereo( "player_allowScreenFXInStereo", "1", CVAR_BOOL, "allow full screen fx in stereo mode" );
 
-/*
-==================
-FullscreenFXManager::Process
-==================
-*/
 void   FullscreenFXManager::Process( const renderView_t* view )
 {
 	bool allpass	  = false;

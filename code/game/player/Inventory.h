@@ -66,6 +66,15 @@ struct idLevelTriggerInfo {
 	idStr triggerName;
 };
 
+/*!
+	\class idInventory
+	\brief Manages player inventory including items, ammo, armor, and power-ups.
+
+	Handles the storage, retrieval, and modification of player inventory data such as weapons, ammo, armor, and temporary power-ups. Supports saving and restoring inventory states, giving and taking
+   items, managing ammo counts and weapon clips, and updating inventory display elements. Provides functionality for checking inventory limits, managing ammo consumption and replenishment, and
+   synchronizing inventory state across networked clients.
+
+*/
 class idInventory
 {
 public:
@@ -106,44 +115,104 @@ public:
 
 	idList<idLevelTriggerInfo, TAG_IDLIB_LIST_PLAYER> levelTriggers;
 
+	//! Initializes a new instance of the idInventory class.
 	idInventory() { Clear(); }
 	~idInventory() { Clear(); }
 
-	// save games
-	void					Save( idSaveGame* savefile ) const; // archives object for save game file
-	void					Restore( idRestoreGame* savefile ); // unarchives object from save game file
+	//! Saves the inventory state to a save game file.
+	void					Save( idSaveGame* savefile ) const;
 
+	//! Restores the inventory state from a save game file.
+	void					Restore( idRestoreGame* savefile );
+
+	//! Resets all inventory data to its initial state.
 	void					Clear();
+
+	//! Sets a power-up for the specified player with a duration in milliseconds.
 	void					GivePowerUp( idPlayer* player, int powerup, int msec );
+
+	//! Clears all power-ups by resetting their end times and disabling all active power-ups.
 	void					ClearPowerUps();
+
+	//! Populates a dictionary with persistent inventory data for saving.
 	void					GetPersistantData( idDict& dict );
+
+	//! Restores the inventory state for a player from a dictionary.
 	void					RestoreInventory( idPlayer* owner, const idDict& dict );
+
+	/*!
+		\brief Gives inventory items to a player based on the specified statname and value, with optional hud updates and weapon switching.
+
+		This function handles the distribution of various inventory items such as ammo, armor, power-ups, and weapons to a player. It supports different flags for updating game state and providing
+	   feedback. The function checks for maximum limits on ammo and armor and handles weapon pickup logic including setting ideal weapon and updating quick slots. It returns true if a weapon was
+	   picked up, false otherwise.
+
+		\param owner The player receiving the inventory item
+		\param spawnArgs Dictionary containing spawn arguments for entity definitions
+		\param statname Name of the stat being given (e.g., ammo_, armor, weapon)
+		\param value Value to be assigned or added for the specified stat
+		\param idealWeapon Pointer to predicted value for ideal weapon selection
+		\param updateHud Whether to update the HUD with the new item
+		\param giveFlags Flags that control how the item is given (state update, feedback)
+		\return True if a weapon was taken, false otherwise
+	*/
 	bool					Give( idPlayer* owner, const idDict& spawnArgs, const char* statname, const char* value, idPredictedValue<int>* idealWeapon, bool updateHud, unsigned int giveFlags );
+
+	//! Removes a weapon and its associated ammo from the inventory.
 	void					Drop( const idDict& spawnArgs, const char* weapon_classname, int weapon_index );
+
+	//! Returns the ammo index for the specified ammo class name.
 	ammo_t					AmmoIndexForAmmoClass( const char* ammo_classname ) const;
+
+	//! Returns the maximum ammo value for a given ammo class name from the owner's spawn arguments.
 	int						MaxAmmoForAmmoClass( const idPlayer* owner, const char* ammo_classname ) const;
+
+	//! Returns the weapon index for a given ammo class from spawn arguments.
 	int						WeaponIndexForAmmoClass( const idDict& spawnArgs, const char* ammo_classname ) const;
+
+	//! Returns the ammo index for a given weapon class name.
 	ammo_t					AmmoIndexForWeaponClass( const char* weapon_classname, int* ammoRequired );
+
+	//! Returns the ammo pickup name for the specified ammo index.
 	const char*				AmmoPickupNameForIndex( ammo_t ammonum ) const;
-	void					AddPickupName( const char* name, idPlayer* owner ); //_D3XP
 
+	//! Adds a pickup name to the inventory, avoiding duplicates.
+	void					AddPickupName( const char* name, idPlayer* owner );
+
+	//! Returns the number of shots that can be fired with the specified ammo type and amount.
 	int						HasAmmo( ammo_t type, int amount );
-	bool					UseAmmo( ammo_t type, int amount );
-	int						HasAmmo( const char* weapon_classname, bool includeClip = false, idPlayer* owner = NULL ); // _D3XP
 
+	//! Attempts to use the specified amount of ammo of the given type, returning true if successful.
+	bool					UseAmmo( ammo_t type, int amount );
+
+	//! Returns the total amount of ammo available for a specified weapon class, optionally including the ammo in the weapon's clip.
+	int						HasAmmo( const char* weapon_classname, bool includeClip = false, idPlayer* owner = NULL );
+
+	//! Determines if a weapon's clip is empty and cannot be refilled due to insufficient ammo.
 	bool					HasEmptyClipCannotRefill( const char* weapon_classname, idPlayer* owner );
 
+	//! Updates the armor value by depleting it over time based on configured rates and thresholds.
 	void					UpdateArmor();
 
+	//! Sets the ammo amount for a specific ammo type in the inventory.
 	void					SetInventoryAmmoForType( const int ammoType, const int amount );
+
+	//! Sets the clip ammo amount for a specified weapon
 	void					SetClipAmmoForWeapon( const int weapon, const int amount );
 
+	//! Retrieves the amount of ammo of the specified type stored in the inventory.
 	int						GetInventoryAmmoForType( const int ammoType ) const;
+
+	//! Returns the clip ammo amount for the specified weapon.
 	int						GetClipAmmoForWeapon( const int weapon ) const;
 
+	//! Writes all ammo and clip information to a snapshot message for network synchronization.
 	void					WriteAmmoToSnapshot( idBitMsg& msg ) const;
+
+	//! Reads ammo and clip data from a snapshot message for the specified owner entity
 	void					ReadAmmoFromSnapshot( const idBitMsg& msg, int ownerEntityNumber );
 
+	//! Sets the ammo count for all ammo types in the inventory to 999 for the specified owner entity.
 	void					SetRemoteClientAmmo( const int ownerEntityNumber );
 
 	int						nextItemPickup;
@@ -152,8 +221,25 @@ public:
 	idList<idStr>			pickupItemNames;
 	idList<idObjectiveInfo> objectiveNames;
 
+	//! Initializes recharge ammo values for the given player by parsing spawn arguments.
 	void					InitRechargeAmmo( idPlayer* owner );
+
+	//! Updates ammo amounts for types that recharge based on elapsed time since last recharge
 	void					RechargeAmmo( idPlayer* owner );
+
+	/*!
+		\brief Checks if the inventory can give a specified item or ammo to a player based on max ammo limits and statname conditions
+
+		This function determines whether an item or ammo can be given to a player by checking the statname against specific conditions. For the "ammo_bloodstone" statname, it evaluates whether the
+	   current ammo level is below the maximum allowed. If the maximum is exceeded, it sets the ammo to the maximum and returns false. For other statnames like "item", "icon", or "name", it returns
+	   false to prevent them from being considered successful gives. For all other cases, it returns true, allowing the item to be given
+
+		\param owner Player object that owns the inventory
+		\param spawnArgs Dictionary containing spawn arguments for the item being given
+		\param statname Name of the stat being checked
+		\param value Value associated with the stat being checked
+		\return True if the item or ammo can be given, false otherwise
+	*/
 	bool					CanGive( idPlayer* owner, const idDict& spawnArgs, const char* statname, const char* value );
 
 public:

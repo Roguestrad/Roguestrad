@@ -43,11 +43,6 @@ END_CLASS
 #define CHAINSAW_RAISE_TO_IDLE 4
 #define CHAINSAW_FIRE_TO_IDLE  4
 
-/*
-===============
-iceWeaponChainsaw::Init
-===============
-*/
 void iceWeaponChainsaw::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -55,11 +50,6 @@ void iceWeaponChainsaw::Init( idWeapon* weapon )
 	next_attack = 0;
 }
 
-/*
-===============
-iceWeaponChainsaw::Raise
-===============
-*/
 stateResult_t iceWeaponChainsaw::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -80,11 +70,6 @@ stateResult_t iceWeaponChainsaw::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponChainsaw::Lower
-===============
-*/
 stateResult_t iceWeaponChainsaw::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -106,11 +91,6 @@ stateResult_t iceWeaponChainsaw::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponChainsaw::Idle
-===============
-*/
 stateResult_t iceWeaponChainsaw::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -130,21 +110,11 @@ stateResult_t iceWeaponChainsaw::Idle( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponChainsaw::Reload
-===============
-*/
 stateResult_t iceWeaponChainsaw::Reload( stateParms_t* parms )
 {
 	return SRESULT_DONE;
 }
 
-/*
-===============
-iceWeaponChainsaw::Fire
-===============
-*/
 stateResult_t iceWeaponChainsaw::Fire( stateParms_t* parms )
 {
 	float currentTime;

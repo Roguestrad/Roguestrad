@@ -30,20 +30,40 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponBFG
+	\brief The iceWeaponBFG class implements the behavior and states for an ice-based BFG weapon.
+
+	This class extends iceWeaponObject to provide specific functionality for an ice weapon version of the BFG. It manages the complete weapon state machine including raising, lowering, idle, firing,
+   and reloading behaviors. The class initializes with a weapon object and maintains internal state variables for attack handling. The firing mechanism uses a fuse-based approach with multiple stages,
+   and includes an overcharge attack capability. Animation states are handled through dedicated methods for each phase of weapon operation, ensuring proper timing and transitions between states.
+
+*/
 class iceWeaponBFG : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponBFG );
 
+	//! Initializes the ice weapon BFG with the provided weapon object and resets all attack-related state variables.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Executes the raising animation state for the ice weapon BFG.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Handles the lowering animation state for the BFG weapon.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the BFG weapon, playing appropriate animations and managing ammo status.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Fires the BFG weapon with a fuse-based firing mechanism that handles different stages of the firing animation and cooldown.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Handles the reloading state for the BFG weapon, playing the reload animation and updating the clip count.
 	stateResult_t Reload( stateParms_t* parms );
 
 private:
+	//! Executes the overcharge attack for the ice weapon BFG.
 	void  OverCharge();
 
 	float spread;

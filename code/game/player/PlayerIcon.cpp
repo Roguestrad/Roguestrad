@@ -35,32 +35,17 @@ If you have questions concerning this license or the applicable additional terms
 
 static const char* iconKeys[ICON_NONE] = { "mtr_icon_lag", "mtr_icon_chat", "mtr_icon_redteam", "mtr_icon_blueteam" };
 
-/*
-===============
-idPlayerIcon::idPlayerIcon
-===============
-*/
 idPlayerIcon::idPlayerIcon()
 {
 	iconHandle = -1;
 	iconType   = ICON_NONE;
 }
 
-/*
-===============
-idPlayerIcon::~idPlayerIcon
-===============
-*/
 idPlayerIcon::~idPlayerIcon()
 {
 	FreeIcon();
 }
 
-/*
-===============
-idPlayerIcon::Draw
-===============
-*/
 void idPlayerIcon::Draw( idPlayer* player, jointHandle_t joint )
 {
 	idVec3 origin;
@@ -77,11 +62,6 @@ void idPlayerIcon::Draw( idPlayer* player, jointHandle_t joint )
 	Draw( player, origin );
 }
 
-/*
-===============
-idPlayerIcon::Draw
-===============
-*/
 void idPlayerIcon::Draw( idPlayer* player, const idVec3& origin )
 {
 	idPlayer* localPlayer = gameLocal.GetLocalPlayer();
@@ -113,11 +93,6 @@ void idPlayerIcon::Draw( idPlayer* player, const idVec3& origin )
 	}
 }
 
-/*
-===============
-idPlayerIcon::FreeIcon
-===============
-*/
 void idPlayerIcon::FreeIcon()
 {
 	if( iconHandle != -1 ) {
@@ -127,11 +102,6 @@ void idPlayerIcon::FreeIcon()
 	iconType = ICON_NONE;
 }
 
-/*
-===============
-idPlayerIcon::CreateIcon
-===============
-*/
 bool idPlayerIcon::CreateIcon( idPlayer* player, playerIconType_t type, const idVec3& origin, const idMat3& axis )
 {
 	assert( type < ICON_NONE );
@@ -139,11 +109,6 @@ bool idPlayerIcon::CreateIcon( idPlayer* player, playerIconType_t type, const id
 	return CreateIcon( player, type, mtr, origin, axis );
 }
 
-/*
-===============
-idPlayerIcon::CreateIcon
-===============
-*/
 bool idPlayerIcon::CreateIcon( idPlayer* player, playerIconType_t type, const char* mtr, const idVec3& origin, const idMat3& axis )
 {
 	assert( type != ICON_NONE );
@@ -180,11 +145,6 @@ bool idPlayerIcon::CreateIcon( idPlayer* player, playerIconType_t type, const ch
 	return true;
 }
 
-/*
-===============
-idPlayerIcon::UpdateIcon
-===============
-*/
 void idPlayerIcon::UpdateIcon( idPlayer* player, const idVec3& origin, const idMat3& axis )
 {
 	assert( iconHandle >= 0 );

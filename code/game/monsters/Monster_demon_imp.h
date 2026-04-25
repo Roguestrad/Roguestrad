@@ -30,24 +30,53 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterDemonImp
+	\brief Represents an monster demon imp AI entity with various combat and movement states.
+
+	This class implements the behavior and state management for anmonster demon imp AI entity. It inherits from idAI and provides specific implementations for initialization, state handling, and
+   combat actions. The AI supports multiple states including idle, combat melee, leap, range, and dodge maneuvers. The class uses a state machine approach to control the entity's behavior, with each
+   state handler managing transitions and actions based on the current game conditions. The implementation includes specialized methods for attack checking and execution, as well as initialization
+   routines for setting up the AI system and beginning the entity's behavior.
+
+*/
 class iceMonsterDemonImp : public idAI
 {
 	CLASS_PROTOTYPE( iceMonsterDemonImp );
 
 public:
+	//! Initializes the AI system for the monster demon imp.
 	virtual void Init() override;
+
+	//! Initializes the monster demon imp AI behavior.
 	virtual void AI_Begin() override;
 
+	//! Checks available attack flags for the monster demon imp.
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action based on the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the demon imp monster state by setting up idle animations and move type.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for the monster demon imp, transitioning to combat when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Executes a melee attack state for the monster demon imp.
 	stateResult_t combat_melee( stateParms_t* parms );
+
+	//! Performs a leaping attack movement for the monster demon imp
 	stateResult_t combat_leap( stateParms_t* parms );
+
+	//! Handles the combat range state for the monster demon imp, managing attack timing and animation.
 	stateResult_t combat_range( stateParms_t* parms );
+
+	//! Handles the left dodge combat state for the monster demon imp.
 	stateResult_t combat_dodge_left( stateParms_t* parms );
+
+	//! Executes a right dodge maneuver during combat for the monster demon imp.
 	stateResult_t combat_dodge_right( stateParms_t* parms );
 
 private:

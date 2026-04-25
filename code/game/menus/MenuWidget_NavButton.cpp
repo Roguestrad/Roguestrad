@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuWidget_NavButton::Update
-========================
-*/
 void idMenuWidget_NavButton::Update()
 {
 	if( GetSprite() == NULL ) {
@@ -84,11 +79,6 @@ void idMenuWidget_NavButton::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_NavButton::ExecuteEvent
-========================
-*/
 bool idMenuWidget_NavButton::ExecuteEvent( const idWidgetEvent& event )
 {
 	bool handled = false;
@@ -116,14 +106,6 @@ bool idMenuWidget_NavButton::ExecuteEvent( const idWidgetEvent& event )
 	return handled;
 }
 
-//*********************************************************************************************************
-// idMenuWidget_MenuButton
-
-/*
-========================
-idMenuWidget_NavButton::Update
-========================
-*/
 void idMenuWidget_MenuButton::Update()
 {
 	if( GetSprite() == NULL ) {

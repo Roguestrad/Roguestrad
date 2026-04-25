@@ -92,11 +92,6 @@ stateResult_t iceAI_Follower::state_talk_anim( stateParms_t* parms )
 	return SRESULT_WAIT;
 }
 
-/*
-================
-iceAI_Follower::state_follow
-================
-*/
 stateResult_t iceAI_Follower::state_follow( stateParms_t* parms )
 {
 	leader = talkTarget.GetEntity();

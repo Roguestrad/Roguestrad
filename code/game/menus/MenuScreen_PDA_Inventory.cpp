@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int NUM_INVENTORY_ITEMS_VISIBLE = 9;
 
-/*
-========================
-idMenuScreen_PDA_Inventory::Initialize
-========================
-*/
 void			 idMenuScreen_PDA_Inventory::Initialize( idMenuHandler* data )
 {
 	AddEventAction( WIDGET_EVENT_TAB_NEXT ).Set( new( TAG_SWF ) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_TAB_NEXT, WIDGET_EVENT_TAB_NEXT ) );
@@ -83,11 +78,6 @@ void			 idMenuScreen_PDA_Inventory::Initialize( idMenuHandler* data )
 	idMenuScreen::Initialize( data );
 }
 
-/*
-========================
-idMenuScreen_PDA_Inventory::ShowScreen
-========================
-*/
 void idMenuScreen_PDA_Inventory::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -135,21 +125,11 @@ void idMenuScreen_PDA_Inventory::ShowScreen( const mainMenuTransition_t transiti
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_PDA_Inventory::HideScreen
-========================
-*/
 void idMenuScreen_PDA_Inventory::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_PDA_Inventory::GetWeaponName
-========================
-*/
 const char* idMenuScreen_PDA_Inventory::GetWeaponName( int index )
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -165,11 +145,6 @@ const char* idMenuScreen_PDA_Inventory::GetWeaponName( int index )
 	return NULL;
 }
 
-/*
-========================
-idMenuScreen_PDA_Inventory::GetWeaponName
-========================
-*/
 bool idMenuScreen_PDA_Inventory::IsVisibleWeapon( int index )
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -184,11 +159,6 @@ bool idMenuScreen_PDA_Inventory::IsVisibleWeapon( int index )
 	return false;
 }
 
-/*
-========================
-idMenuScreen_PDA_Inventory::Update
-========================
-*/
 void idMenuScreen_PDA_Inventory::Update()
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -254,11 +224,6 @@ void idMenuScreen_PDA_Inventory::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_PDA_Inventory::EquipWeapon
-========================
-*/
 void idMenuScreen_PDA_Inventory::EquipWeapon()
 {
 	if( itemList.GetViewIndex() != itemList.GetMoveToIndex() ) {
@@ -292,11 +257,6 @@ void idMenuScreen_PDA_Inventory::EquipWeapon()
 	player->TogglePDA();
 }
 
-/*
-========================
-idMenuScreen_PDA_Inventory::HandleAction
-========================
-*/
 bool idMenuScreen_PDA_Inventory::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

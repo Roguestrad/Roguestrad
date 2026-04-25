@@ -33,11 +33,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../Game_local.h"
 #include "../PredictedValue_impl.h"
 
-/*
-==============
-idInventory::Clear
-==============
-*/
 void idInventory::Clear()
 {
 	maxHealth			 = 0;
@@ -89,22 +84,12 @@ void idInventory::Clear()
 	armorPulse	= false;
 }
 
-/*
-==============
-idInventory::GivePowerUp
-==============
-*/
 void idInventory::GivePowerUp( idPlayer* player, int powerup, int msec )
 {
 	powerups |= 1 << powerup;
 	powerupEndTime[powerup] = gameLocal.time + msec;
 }
 
-/*
-==============
-idInventory::ClearPowerUps
-==============
-*/
 void idInventory::ClearPowerUps()
 {
 	int i;
@@ -114,11 +99,6 @@ void idInventory::ClearPowerUps()
 	powerups = 0;
 }
 
-/*
-==============
-idInventory::GetPersistantData
-==============
-*/
 void idInventory::GetPersistantData( idDict& dict )
 {
 	int				  i;
@@ -208,11 +188,6 @@ void idInventory::GetPersistantData( idDict& dict )
 	}
 }
 
-/*
-==============
-idInventory::RestoreInventory
-==============
-*/
 void idInventory::RestoreInventory( idPlayer* owner, const idDict& dict )
 {
 	int				  i;
@@ -319,11 +294,6 @@ void idInventory::RestoreInventory( idPlayer* owner, const idDict& dict )
 	}
 }
 
-/*
-==============
-idInventory::Save
-==============
-*/
 void idInventory::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -420,11 +390,6 @@ void idInventory::Save( idSaveGame* savefile ) const
 	}
 }
 
-/*
-==============
-idInventory::Restore
-==============
-*/
 void idInventory::Restore( idRestoreGame* savefile )
 {
 	int num;
@@ -550,42 +515,21 @@ void idInventory::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-==============
-idInventory::AmmoIndexForAmmoClass
-==============
-*/
 ammo_t idInventory::AmmoIndexForAmmoClass( const char* ammo_classname ) const
 {
 	return idWeapon::GetAmmoNumForName( ammo_classname );
 }
 
-/*
-==============
-idInventory::AmmoIndexForAmmoClass
-==============
-*/
 int idInventory::MaxAmmoForAmmoClass( const idPlayer* owner, const char* ammo_classname ) const
 {
 	return owner->spawnArgs.GetInt( va( "max_%s", ammo_classname ), "0" );
 }
 
-/*
-==============
-idInventory::AmmoPickupNameForIndex
-==============
-*/
 const char* idInventory::AmmoPickupNameForIndex( ammo_t ammonum ) const
 {
 	return idWeapon::GetAmmoPickupNameForNum( ammonum );
 }
 
-/*
-==============
-idInventory::WeaponIndexForAmmoClass
-mapping could be prepared in the constructor
-==============
-*/
 int idInventory::WeaponIndexForAmmoClass( const idDict& spawnArgs, const char* ammo_classname ) const
 {
 	int			i;
@@ -606,11 +550,6 @@ int idInventory::WeaponIndexForAmmoClass( const idDict& spawnArgs, const char* a
 	return -1;
 }
 
-/*
-==============
-idInventory::AmmoIndexForWeaponClass
-==============
-*/
 ammo_t idInventory::AmmoIndexForWeaponClass( const char* weapon_classname, int* ammoRequired )
 {
 	const idDeclEntityDef* decl = gameLocal.FindEntityDef( weapon_classname, false );
@@ -625,11 +564,6 @@ ammo_t idInventory::AmmoIndexForWeaponClass( const char* weapon_classname, int* 
 	return ammo_i;
 }
 
-/*
-==============
-idInventory::AddPickupName
-==============
-*/
 void idInventory::AddPickupName( const char* name, idPlayer* owner ) //_D3XP
 {
 	int num = pickupItemNames.Num();
@@ -642,11 +576,6 @@ void idInventory::AddPickupName( const char* name, idPlayer* owner ) //_D3XP
 	}
 }
 
-/*
-==============
-idInventory::Give
-==============
-*/
 bool idInventory::Give( idPlayer* owner, const idDict& spawnArgs, const char* statname, const char* value, idPredictedValue<int>* idealWeapon, bool updateHud, unsigned int giveFlags )
 {
 	int					   i;
@@ -837,11 +766,6 @@ bool idInventory::Give( idPlayer* owner, const idDict& spawnArgs, const char* st
 	return true;
 }
 
-/*
-===============
-idInventoy::Drop
-===============
-*/
 void idInventory::Drop( const idDict& spawnArgs, const char* weapon_classname, int weapon_index )
 {
 	// remove the weapon bit
@@ -867,11 +791,6 @@ void idInventory::Drop( const idDict& spawnArgs, const char* weapon_classname, i
 	}
 }
 
-/*
-===============
-idInventory::HasAmmo
-===============
-*/
 int idInventory::HasAmmo( ammo_t type, int amount )
 {
 	if( ( type == 0 ) || !amount ) {
@@ -888,11 +807,6 @@ int idInventory::HasAmmo( ammo_t type, int amount )
 	return ammo[type].Get() / amount;
 }
 
-/*
-===============
-idInventory::HasAmmo
-===============
-*/
 int idInventory::HasAmmo( const char* weapon_classname, bool includeClip, idPlayer* owner ) //_D3XP
 {
 	int	   ammoRequired;
@@ -905,11 +819,6 @@ int idInventory::HasAmmo( const char* weapon_classname, bool includeClip, idPlay
 	return ammoCount;
 }
 
-/*
-===============
-idInventory::HasEmptyClipCannotRefill
-===============
-*/
 bool idInventory::HasEmptyClipCannotRefill( const char* weapon_classname, idPlayer* owner )
 {
 	int clipSize = clip[owner->SlotForWeapon( weapon_classname )].Get();
@@ -936,11 +845,6 @@ bool idInventory::HasEmptyClipCannotRefill( const char* weapon_classname, idPlay
 	return false;
 }
 
-/*
-===============
-idInventory::UseAmmo
-===============
-*/
 bool idInventory::UseAmmo( ammo_t type, int amount )
 {
 	if( g_infiniteAmmo.GetBool() ) {
@@ -960,11 +864,6 @@ bool idInventory::UseAmmo( ammo_t type, int amount )
 	return true;
 }
 
-/*
-===============
-idInventory::UpdateArmor
-===============
-*/
 void idInventory::UpdateArmor()
 {
 	if( deplete_armor != 0.0f && deplete_armor < armor ) {
@@ -980,12 +879,6 @@ void idInventory::UpdateArmor()
 	}
 }
 
-/*
-===============
-idInventory::InitRechargeAmmo
-===============
-* Loads any recharge ammo definitions from the ammo_types entity definitions.
-*/
 void idInventory::InitRechargeAmmo( idPlayer* owner )
 {
 	memset( rechargeAmmo, 0, sizeof( rechargeAmmo ) );
@@ -1001,12 +894,6 @@ void idInventory::InitRechargeAmmo( idPlayer* owner )
 	}
 }
 
-/*
-===============
-idInventory::RechargeAmmo
-===============
-* Called once per frame to update any ammo amount for ammo types that recharge.
-*/
 void idInventory::RechargeAmmo( idPlayer* owner )
 {
 	for( int i = 0; i < AMMO_NUMTYPES; i++ ) {
@@ -1032,11 +919,6 @@ void idInventory::RechargeAmmo( idPlayer* owner )
 	}
 }
 
-/*
-===============
-idInventory::CanGive
-===============
-*/
 bool idInventory::CanGive( idPlayer* owner, const idDict& spawnArgs, const char* statname, const char* value )
 {
 	if( !idStr::Icmp( statname, "ammo_bloodstone" ) ) {
@@ -1062,59 +944,26 @@ bool idInventory::CanGive( idPlayer* owner, const idDict& spawnArgs, const char*
 	return true;
 }
 
-/*
-===============
-idInventory::SetClipAmmoForWeapon
-
-Ammo is predicted on clients. This function ensures the frame the prediction occurs
-is stored so the predicted value doesn't get overwritten by snapshots. Of course
-the snapshot-reading function must check this value.
-===============
-*/
 void idInventory::SetClipAmmoForWeapon( const int weapon, const int amount )
 {
 	clip[weapon] = amount;
 }
 
-/*
-===============
-idInventory::SetInventoryAmmoForType
-
-Ammo is predicted on clients. This function ensures the frame the prediction occurs
-is stored so the predicted value doesn't get overwritten by snapshots. Of course
-the snapshot-reading function must check this value.
-===============
-*/
 void idInventory::SetInventoryAmmoForType( int ammoType, const int amount )
 {
 	ammo[ammoType] = amount;
 }
 
-/*
-===============
-idInventory::GetClipAmmoForWeapon
-===============
-*/
 int idInventory::GetClipAmmoForWeapon( const int weapon ) const
 {
 	return clip[weapon].Get();
 }
 
-/*
-===============
-idInventory::GetInventoryAmmoForType
-===============
-*/
 int idInventory::GetInventoryAmmoForType( const int ammoType ) const
 {
 	return ammo[ammoType].Get();
 }
 
-/*
-===============
-idInventory::WriteAmmoToSnapshot
-===============
-*/
 void idInventory::WriteAmmoToSnapshot( idBitMsg& msg ) const
 {
 	for( int i = 0; i < AMMO_NUMTYPES; i++ ) {
@@ -1125,11 +974,6 @@ void idInventory::WriteAmmoToSnapshot( idBitMsg& msg ) const
 	}
 }
 
-/*
-===============
-idInventory::ReadAmmoFromSnapshot
-===============
-*/
 void idInventory::ReadAmmoFromSnapshot( const idBitMsg& msg, const int ownerEntityNumber )
 {
 	for( int i = 0; i < ammo.Num(); i++ ) {
@@ -1142,13 +986,6 @@ void idInventory::ReadAmmoFromSnapshot( const idBitMsg& msg, const int ownerEnti
 	}
 }
 
-/*
-===============
-idInventory::ReadAmmoFromSnapshot
-
-Doesn't really matter what remote client's ammo count is, so just set it to 999.
-===============
-*/
 void idInventory::SetRemoteClientAmmo( const int ownerEntityNumber )
 {
 	for( int i = 0; i < ammo.Num(); ++i ) {

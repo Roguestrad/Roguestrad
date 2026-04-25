@@ -63,11 +63,6 @@ idCVar aa_targetFrictionOptimalRadius( "aa_targetFrictionOptimalRadius", "192.0"
 idCVar aa_targetFrictionMultiplierMin( "aa_targetFrictionMultiplierMin", "1.0", CVAR_FLOAT, "Minimum Friction Scalar" );
 idCVar aa_targetFrictionMultiplierMax( "aa_targetFrictionMultiplierMax", "0.4", CVAR_FLOAT, "Maximum Friction Scalar" );
 
-/*
-========================
-idAimAssist::Init
-========================
-*/
 void   idAimAssist::Init( idPlayer* player_ )
 {
 	player			= player_;
@@ -76,11 +71,6 @@ void   idAimAssist::Init( idPlayer* player_ )
 	lastTargetPos	= vec3_zero;
 }
 
-/*
-========================
-idAimAssist::Update
-========================
-*/
 void idAimAssist::Update()
 {
 	angleCorrection = ang_zero;
@@ -88,11 +78,6 @@ void idAimAssist::Update()
 	UpdateNewAimAssist();
 }
 
-/*
-========================
-idAimAssist::UpdateNewAimAssist
-========================
-*/
 void idAimAssist::UpdateNewAimAssist()
 {
 	angleCorrection		 = ang_zero;
@@ -134,11 +119,6 @@ void idAimAssist::UpdateNewAimAssist()
 	lastTargetPos = targetPos;
 }
 
-/*
-========================
-idAimAssist::FindAimAssistTarget
-========================
-*/
 idEntity* idAimAssist::FindAimAssistTarget( idVec3& targetPos )
 {
 	if( player == NULL ) {
@@ -247,11 +227,6 @@ idEntity* idAimAssist::FindAimAssistTarget( idVec3& targetPos )
 	return optimalTarget;
 }
 
-/*
-========================
-idAimAssist::ComputeEntityAimAssistScore
-========================
-*/
 float idAimAssist::ComputeEntityAimAssistScore( const idVec3& targetPos, const idVec3& cameraPos, const idMat3& cameraAxis )
 {
 	float  score = 0.0f;
@@ -281,11 +256,6 @@ float idAimAssist::ComputeEntityAimAssistScore( const idVec3& targetPos, const i
 	return score * 1000.0f;
 }
 
-/*
-========================
-idAimAssist::UpdateAdhesion
-========================
-*/
 void idAimAssist::UpdateAdhesion( idEntity* pTarget, const idVec3& targetPos )
 {
 	if( !aa_targetAdhesionEnable.GetBool() ) {
@@ -332,11 +302,6 @@ void idAimAssist::UpdateAdhesion( idEntity* pTarget, const idVec3& targetPos )
 	angleCorrection.pitch = aimAngles.pitch * contribution;
 }
 
-/*
-========================
-idAimAssist::ComputeFrictionRadius
-========================
-*/
 float idAimAssist::ComputeFrictionRadius( float distanceToTarget )
 {
 	if( ( distanceToTarget <= idMath::FLT_SMALLEST_NON_DENORMAL ) || distanceToTarget > aa_targetFrictionMaxDistance.GetFloat() ) {
@@ -355,11 +320,6 @@ float idAimAssist::ComputeFrictionRadius( float distanceToTarget )
 	return Lerp( aa_targetFrictionRadius.GetFloat(), aa_targetFrictionOptimalRadius.GetFloat(), distanceContributionScalar );
 }
 
-/*
-========================
-idAimAssist::UpdateFriction
-========================
-*/
 void idAimAssist::UpdateFriction( idEntity* pTarget, const idVec3& targetPos )
 {
 	if( !aa_targetFrictionEnable.GetBool() ) {
@@ -390,11 +350,6 @@ void idAimAssist::UpdateFriction( idEntity* pTarget, const idVec3& targetPos )
 	}
 }
 
-/*
-========================
-idAimAssist::ComputeTargetPos
-========================
-*/
 bool idAimAssist::ComputeTargetPos( idEntity* entity, idVec3& primaryTargetPos, idVec3& secondaryTargetPos )
 {
 	primaryTargetPos   = vec3_zero;

@@ -4319,11 +4319,6 @@ const idDeclModelDef* ANIM_GetModelDefFromEntityDef( const idDict* args )
 	return NULL;
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetModelFromEntityDef
-=====================
-*/
 idRenderModel* idGameEdit::ANIM_GetModelFromEntityDef( const idDict* args )
 {
 	idRenderModel*		  model;
@@ -4348,11 +4343,6 @@ idRenderModel* idGameEdit::ANIM_GetModelFromEntityDef( const idDict* args )
 	return model;
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetModelFromEntityDef
-=====================
-*/
 idRenderModel* idGameEdit::ANIM_GetModelFromEntityDef( const char* classname )
 {
 	const idDict* args;
@@ -4365,11 +4355,6 @@ idRenderModel* idGameEdit::ANIM_GetModelFromEntityDef( const char* classname )
 	return ANIM_GetModelFromEntityDef( args );
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetModelOffsetFromEntityDef
-=====================
-*/
 const idVec3& idGameEdit::ANIM_GetModelOffsetFromEntityDef( const char* classname )
 {
 	const idDict*		  args;
@@ -4388,11 +4373,6 @@ const idVec3& idGameEdit::ANIM_GetModelOffsetFromEntityDef( const char* classnam
 	return modelDef->GetVisualOffset();
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetModelFromName
-=====================
-*/
 idRenderModel* idGameEdit::ANIM_GetModelFromName( const char* modelName )
 {
 	const idDeclModelDef* modelDef;
@@ -4409,11 +4389,6 @@ idRenderModel* idGameEdit::ANIM_GetModelFromName( const char* modelName )
 	return model;
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetAnimFromEntityDef
-=====================
-*/
 const idMD5Anim* idGameEdit::ANIM_GetAnimFromEntityDef( const char* classname, const char* animname )
 {
 	const idDict*		  args;
@@ -4443,11 +4418,6 @@ const idMD5Anim* idGameEdit::ANIM_GetAnimFromEntityDef( const char* classname, c
 	return md5anim;
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetNumAnimsFromEntityDef
-=====================
-*/
 int idGameEdit::ANIM_GetNumAnimsFromEntityDef( const idDict* args )
 {
 	const char*			  modelname;
@@ -4461,11 +4431,6 @@ int idGameEdit::ANIM_GetNumAnimsFromEntityDef( const idDict* args )
 	return 0;
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetAnimNameFromEntityDef
-=====================
-*/
 const char* idGameEdit::ANIM_GetAnimNameFromEntityDef( const idDict* args, int animNum )
 {
 	const char*			  modelname;
@@ -4482,21 +4447,11 @@ const char* idGameEdit::ANIM_GetAnimNameFromEntityDef( const idDict* args, int a
 	return "";
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetAnim
-=====================
-*/
 const idMD5Anim* idGameEdit::ANIM_GetAnim( const char* fileName )
 {
 	return animationLib.GetAnim( fileName, NULL );
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetLength
-=====================
-*/
 int idGameEdit::ANIM_GetLength( const idMD5Anim* anim )
 {
 	if( !anim ) {
@@ -4505,11 +4460,6 @@ int idGameEdit::ANIM_GetLength( const idMD5Anim* anim )
 	return anim->Length();
 }
 
-/*
-=====================
-idGameEdit::ANIM_GetNumFrames
-=====================
-*/
 int idGameEdit::ANIM_GetNumFrames( const idMD5Anim* anim )
 {
 	if( !anim ) {
@@ -4518,11 +4468,6 @@ int idGameEdit::ANIM_GetNumFrames( const idMD5Anim* anim )
 	return anim->NumFrames();
 }
 
-/*
-=====================
-idGameEdit::ANIM_CreateAnimFrame
-=====================
-*/
 void idGameEdit::ANIM_CreateAnimFrame( const idRenderModel* model, const idMD5Anim* anim, int numJoints, idJointMat* joints, int time, const idVec3& offset, bool remove_origin_offset )
 {
 	int				  i;
@@ -4584,11 +4529,6 @@ void idGameEdit::ANIM_CreateAnimFrame( const idRenderModel* model, const idMD5An
 	}
 }
 
-/*
-=====================
-idGameEdit::ANIM_CreateMeshForAnim
-=====================
-*/
 idRenderModel* idGameEdit::ANIM_CreateMeshForAnim( idRenderModel* model, const char* classname, const char* animname, int frame, bool remove_origin_offset )
 {
 	renderEntity_t		  ent;

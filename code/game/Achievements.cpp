@@ -93,19 +93,6 @@ const struct achievementInfo_t {
 	{ 1, true },   // ACHIEVEMENT_MP_KILL_2_GUYS_IN_ROOM_WITH_BFG
 };
 
-/*
-================================================================================================
-
-	idAchievementManager
-
-================================================================================================
-*/
-
-/*
-========================
-idAchievementManager::idAchievementManager
-========================
-*/
 idAchievementManager::idAchievementManager() :
 	lastPlayerKilledTime( 0 ),
 	lastImpKilledTime( 0 ),
@@ -115,22 +102,12 @@ idAchievementManager::idAchievementManager() :
 	ResetHellTimeKills();
 }
 
-/*
-========================
-idAchievementManager::Init
-========================
-*/
 void idAchievementManager::Init( idPlayer* player )
 {
 	owner = player;
 	SyncAchievments();
 }
 
-/*
-========================
-idAchievementManager::SyncAchievments
-========================
-*/
 void idAchievementManager::SyncAchievments()
 {
 	idLocalUser* user = GetLocalUser();
@@ -148,11 +125,6 @@ void idAchievementManager::SyncAchievments()
 	}
 }
 
-/*
-========================
-idAchievementManager::GetLocalUser
-========================
-*/
 idLocalUser* idAchievementManager::GetLocalUser()
 {
 	if( !verify( owner != NULL ) ) {
@@ -161,11 +133,6 @@ idLocalUser* idAchievementManager::GetLocalUser()
 	return session->GetGameLobbyBase().GetLocalUserFromLobbyUser( gameLocal.lobbyUserIDs[owner->GetEntityNumber()] );
 }
 
-/*
-========================
-idAchievementManager::Save
-========================
-*/
 void idAchievementManager::Save( idSaveGame* savefile ) const
 {
 	owner.Save( savefile );
@@ -180,11 +147,6 @@ void idAchievementManager::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( currentHellTimeKills );
 }
 
-/*
-========================
-idAchievementManager::Restore
-========================
-*/
 void idAchievementManager::Restore( idRestoreGame* savefile )
 {
 	owner.Restore( savefile );
@@ -201,11 +163,6 @@ void idAchievementManager::Restore( idRestoreGame* savefile )
 	SyncAchievments();
 }
 
-/*
-========================
-idAchievementManager::EventCompletesAchievement
-========================
-*/
 void idAchievementManager::EventCompletesAchievement( const achievement_t eventId )
 {
 	if( g_demoMode.GetBool() ) {
@@ -262,11 +219,6 @@ void idAchievementManager::EventCompletesAchievement( const achievement_t eventI
 	}
 }
 
-/*
-========================
-idAchievementManager::IncrementHellTimeKills
-========================
-*/
 void idAchievementManager::IncrementHellTimeKills()
 {
 	currentHellTimeKills++;
@@ -275,11 +227,6 @@ void idAchievementManager::IncrementHellTimeKills()
 	}
 }
 
-/*
-========================
-idAchievementManager::SavePersistentData
-========================
-*/
 void idAchievementManager::SavePersistentData( idDict& playerInfo )
 {
 	for( int i = 0; i < ACHIEVEMENTS_NUM; ++i ) {
@@ -287,11 +234,6 @@ void idAchievementManager::SavePersistentData( idDict& playerInfo )
 	}
 }
 
-/*
-========================
-idAchievementManager::RestorePersistentData
-========================
-*/
 void idAchievementManager::RestorePersistentData( const idDict& spawnArgs )
 {
 	for( int i = 0; i < ACHIEVEMENTS_NUM; ++i ) {
@@ -299,11 +241,6 @@ void idAchievementManager::RestorePersistentData( const idDict& spawnArgs )
 	}
 }
 
-/*
-========================
-idAchievementManager::LocalUser_CompleteAchievement
-========================
-*/
 void idAchievementManager::LocalUser_CompleteAchievement( achievement_t id )
 {
 	idLocalUser* localUser = session->GetSignInManager().GetMasterLocalUser();
@@ -329,11 +266,7 @@ void idAchievementManager::LocalUser_CompleteAchievement( achievement_t id )
 	session->GetAchievementSystem().AchievementUnlock( localUser, id );
 }
 
-/*
-=================
-AchievementsReset
-=================
-*/
+//! Resets achievement statistics for the signed-in user.
 CONSOLE_COMMAND( AchievementsReset, "Lock an achievement", NULL )
 {
 	idLocalUser* user = session->GetSignInManager().GetMasterLocalUser();
@@ -354,11 +287,7 @@ CONSOLE_COMMAND( AchievementsReset, "Lock an achievement", NULL )
 	user->SaveProfileSettings();
 }
 
-/*
-=================
-AchievementsUnlock
-=================
-*/
+//! Unlocks achievements based on command line arguments.
 CONSOLE_COMMAND( AchievementsUnlock, "Unlock an achievement", NULL )
 {
 	idLocalUser* user = session->GetSignInManager().GetMasterLocalUser();
@@ -379,11 +308,7 @@ CONSOLE_COMMAND( AchievementsUnlock, "Unlock an achievement", NULL )
 	user->SaveProfileSettings();
 }
 
-/*
-=================
-AchievementsList
-=================
-*/
+//! Lists all achievements and their current status for the signed-in player.
 CONSOLE_COMMAND( AchievementsList, "Lists achievements and status", NULL )
 {
 	idPlayer*	 player = gameLocal.GetLocalPlayer();

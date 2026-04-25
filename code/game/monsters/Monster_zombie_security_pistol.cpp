@@ -54,11 +54,6 @@ END_CLASS
 
 #define ATTACK_ZSECP_CROUCHFIRE		   ATTACK_SPECIAL1
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::Init
-=====================
-*/
 void iceMonsterZombieSecurityPistol::Init()
 {
 	combat_node = NULL;
@@ -75,11 +70,6 @@ void iceMonsterZombieSecurityPistol::Init()
 	nextNoFOVAttack.LinkTo( scriptObject, "nextNoFOVAttack" );
 }
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::AI_Begin
-=====================
-*/
 void iceMonsterZombieSecurityPistol::AI_Begin()
 {
 	run_distance = ZSECP_RUNDISTANCE;
@@ -89,11 +79,6 @@ void iceMonsterZombieSecurityPistol::AI_Begin()
 	SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::state_Begin
-=====================
-*/
 stateResult_t iceMonsterZombieSecurityPistol::state_Begin( stateParms_t* parms )
 {
 	fire		= false;
@@ -106,11 +91,6 @@ stateResult_t iceMonsterZombieSecurityPistol::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::state_Idle
-=====================
-*/
 stateResult_t iceMonsterZombieSecurityPistol::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -129,11 +109,6 @@ stateResult_t iceMonsterZombieSecurityPistol::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::check_attacks
-=====================
-*/
 int iceMonsterZombieSecurityPistol::check_attacks()
 {
 	float currentTime;
@@ -194,11 +169,6 @@ int iceMonsterZombieSecurityPistol::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::do_attack
-=====================
-*/
 void iceMonsterZombieSecurityPistol::do_attack( int attack_flags )
 {
 	nextNoFOVAttack = gameLocal.SysScriptTime() + ZSECP_NOFOVTIME;
@@ -219,11 +189,6 @@ void iceMonsterZombieSecurityPistol::do_attack( int attack_flags )
 	}
 }
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::stand_attack
-=====================
-*/
 stateResult_t iceMonsterZombieSecurityPistol::stand_attack( stateParms_t* parms )
 {
 	// float endtime;
@@ -361,11 +326,6 @@ done:
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::crouch_attack
-=====================
-*/
 stateResult_t iceMonsterZombieSecurityPistol::crouch_attack( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -429,11 +389,6 @@ done:
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::combat_dodge_left
-=====================
-*/
 stateResult_t iceMonsterZombieSecurityPistol::combat_dodge_left( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -455,11 +410,6 @@ stateResult_t iceMonsterZombieSecurityPistol::combat_dodge_left( stateParms_t* p
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieSecurityPistol::combat_dodge_right
-=====================
-*/
 stateResult_t iceMonsterZombieSecurityPistol::combat_dodge_right( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {

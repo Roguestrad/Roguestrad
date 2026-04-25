@@ -30,21 +30,11 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuWidget_DynamicList::Initialize
-========================
-*/
 void idMenuWidget_DynamicList::Initialize( idMenuHandler* data )
 {
 	idMenuWidget::Initialize( data );
 }
 
-/*
-========================
-idMenuWidget_DynamicList::Update
-========================
-*/
 void idMenuWidget_DynamicList::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -103,11 +93,6 @@ void idMenuWidget_DynamicList::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_DynamicList::GetTotalNumberOfOptions
-========================
-*/
 int idMenuWidget_DynamicList::GetTotalNumberOfOptions() const
 {
 	if( controlList ) {
@@ -117,11 +102,6 @@ int idMenuWidget_DynamicList::GetTotalNumberOfOptions() const
 	return listItemInfo.Num();
 }
 
-/*
-========================
-idMenuWidget_DynamicList::PrepareListElement
-========================
-*/
 bool idMenuWidget_DynamicList::PrepareListElement( idMenuWidget& widget, const int childIndex )
 {
 	idMenuWidget_ScoreboardButton* const sbButton = dynamic_cast<idMenuWidget_ScoreboardButton*>( &widget );
@@ -149,11 +129,6 @@ bool idMenuWidget_DynamicList::PrepareListElement( idMenuWidget& widget, const i
 	return false;
 }
 
-/*
-========================
-idMenuWidget_DynamicList::SetListData
-========================
-*/
 void idMenuWidget_DynamicList::SetListData( idList<idList<idStr, TAG_IDLIB_LIST_MENU>, TAG_IDLIB_LIST_MENU>& list )
 {
 	listItemInfo.Clear();
@@ -166,11 +141,6 @@ void idMenuWidget_DynamicList::SetListData( idList<idList<idStr, TAG_IDLIB_LIST_
 	}
 }
 
-/*
-========================
-idMenuWidget_DynamicList::Recalculate
-========================
-*/
 void idMenuWidget_DynamicList::Recalculate()
 {
 	idSWF* swf = GetSWFObject();
@@ -190,11 +160,6 @@ void idMenuWidget_DynamicList::Recalculate()
 	}
 }
 
-/*
-========================
-idMenuWidget_ScoreboardList::Update
-========================
-*/
 void idMenuWidget_ScoreboardList::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -226,11 +191,6 @@ void idMenuWidget_ScoreboardList::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_ScoreboardList::GetTotalNumberOfOptions
-========================
-*/
 int idMenuWidget_ScoreboardList::GetTotalNumberOfOptions() const
 {
 	return GetChildren().Num();

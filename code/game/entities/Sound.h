@@ -30,32 +30,44 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __GAME_SOUND_H__
 #define __GAME_SOUND_H__
 
-/*
-===============================================================================
+/*!
+	\class idSound
+	\brief Manages sound playback and state for audio entities in the game.
 
-  Generic sound emitter.
+	The idSound class extends idEntity to provide functionality for sound management including playback control, state persistence, and integration with game timing systems. It handles the
+   initialization of sound emitters, updates from spawn arguments, and event-based triggering of sounds. The class supports saving and restoring sound states during game sessions, and manages the
+   timing of sound events through dedicated timer logic. Sound playback can be controlled through direct method calls or through game events that trigger on/off states.
 
-===============================================================================
 */
-
 class idSound : public idEntity
 {
 public:
 	CLASS_PROTOTYPE( idSound );
 
+	//! Initializes all member variables of the idSound class to their default values.
 	idSound();
 
+	//! Saves the sound state to a save file.
 	void		 Save( idSaveGame* savefile ) const;
+
+	//! Restores the sound state from a save file
 	void		 Restore( idRestoreGame* savefile );
 
+	//! Updates the sound emitter with changeable spawn arguments from the provided dictionary.
 	virtual void UpdateChangeableSpawnArgs( const idDict* source );
 
+	//! Initializes the sound object with spawn arguments and sets up timing and shaking parameters.
 	void		 Spawn();
 
 	void		 ToggleOnOff( idEntity* other, idEntity* activator );
+
+	//! Executes the sound's think logic, including physics updates and visual state management.
 	void		 Think();
+
+	//! Sets the sound shader for this sound emitter and starts playing it if not already playing.
 	void		 SetSound( const char* sound, int channel = SND_CHANNEL_ANY );
 
+	//! Shows the sound editing dialog.
 	virtual void ShowEditingDialog();
 
 private:
@@ -68,10 +80,19 @@ private:
 	idAngles shakeRotate;
 	int		 playingUntilTime;
 
+	//! Toggles the sound effect on and off based on timing and playback conditions.
 	void	 Event_Trigger( idEntity* activator );
+
+	//! Handles the sound timer event by playing the sound and scheduling the next timer event.
 	void	 Event_Timer();
+
+	//! Enables the sound event and schedules a timer if a wait time is specified.
 	void	 Event_On();
+
+	//! Stops the sound event and cancels any pending timer events.
 	void	 Event_Off();
+
+	//! Executes sound playback or stopping based on the play parameter.
 	void	 DoSound( bool play );
 };
 

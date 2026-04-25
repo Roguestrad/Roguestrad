@@ -38,11 +38,6 @@ END_CLASS
 staticPState_t			  defaultState;
 staticInterpolatePState_t defaultInterpolateState;
 
-/*
-================
-idPhysics_StaticMulti::idPhysics_StaticMulti
-================
-*/
 idPhysics_StaticMulti::idPhysics_StaticMulti()
 {
 	self		 = NULL;
@@ -69,11 +64,6 @@ idPhysics_StaticMulti::idPhysics_StaticMulti()
 	clipModels[0] = NULL;
 }
 
-/*
-================
-idPhysics_StaticMulti::~idPhysics_StaticMulti
-================
-*/
 idPhysics_StaticMulti::~idPhysics_StaticMulti()
 {
 	if( self && self->GetPhysics() == this ) {
@@ -85,11 +75,6 @@ idPhysics_StaticMulti::~idPhysics_StaticMulti()
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::Save
-================
-*/
 void idPhysics_StaticMulti::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -113,11 +98,6 @@ void idPhysics_StaticMulti::Save( idSaveGame* savefile ) const
 	savefile->WriteBool( isOrientated );
 }
 
-/*
-================
-idPhysics_StaticMulti::Restore
-================
-*/
 void idPhysics_StaticMulti::Restore( idRestoreGame* savefile )
 {
 	int i, num;
@@ -143,22 +123,12 @@ void idPhysics_StaticMulti::Restore( idRestoreGame* savefile )
 	savefile->ReadBool( isOrientated );
 }
 
-/*
-================
-idPhysics_StaticMulti::SetSelf
-================
-*/
 void idPhysics_StaticMulti::SetSelf( idEntity* e )
 {
 	assert( e );
 	self = e;
 }
 
-/*
-================
-idPhysics_StaticMulti::RemoveIndex
-================
-*/
 void idPhysics_StaticMulti::RemoveIndex( int id, bool freeClipModel )
 {
 	if( id < 0 || id >= clipModels.Num() ) {
@@ -172,11 +142,6 @@ void idPhysics_StaticMulti::RemoveIndex( int id, bool freeClipModel )
 	current.RemoveIndex( id );
 }
 
-/*
-================
-idPhysics_StaticMulti::SetClipModel
-================
-*/
 void idPhysics_StaticMulti::SetClipModel( idClipModel* model, float density, int id, bool freeOld )
 {
 	int i;
@@ -213,11 +178,6 @@ void idPhysics_StaticMulti::SetClipModel( idClipModel* model, float density, int
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::GetClipModel
-================
-*/
 idClipModel* idPhysics_StaticMulti::GetClipModel( int id ) const
 {
 	if( id >= 0 && id < clipModels.Num() && clipModels[id] ) {
@@ -226,40 +186,20 @@ idClipModel* idPhysics_StaticMulti::GetClipModel( int id ) const
 	return gameLocal.clip.DefaultClipModel();
 }
 
-/*
-================
-idPhysics_StaticMulti::GetNumClipModels
-================
-*/
 int idPhysics_StaticMulti::GetNumClipModels() const
 {
 	return clipModels.Num();
 }
 
-/*
-================
-idPhysics_StaticMulti::SetMass
-================
-*/
 void idPhysics_StaticMulti::SetMass( float mass, int id )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::GetMass
-================
-*/
 float idPhysics_StaticMulti::GetMass( int id ) const
 {
 	return 0.0f;
 }
 
-/*
-================
-idPhysics_StaticMulti::SetContents
-================
-*/
 void idPhysics_StaticMulti::SetContents( int contents, int id )
 {
 	int i;
@@ -277,11 +217,6 @@ void idPhysics_StaticMulti::SetContents( int contents, int id )
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::GetContents
-================
-*/
 int idPhysics_StaticMulti::GetContents( int id ) const
 {
 	int i, contents = 0;
@@ -300,30 +235,15 @@ int idPhysics_StaticMulti::GetContents( int id ) const
 	return contents;
 }
 
-/*
-================
-idPhysics_StaticMulti::SetClipMask
-================
-*/
 void idPhysics_StaticMulti::SetClipMask( int mask, int id )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::GetClipMask
-================
-*/
 int idPhysics_StaticMulti::GetClipMask( int id ) const
 {
 	return 0;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetBounds
-================
-*/
 const idBounds& idPhysics_StaticMulti::GetBounds( int id ) const
 {
 	int				i;
@@ -353,11 +273,6 @@ const idBounds& idPhysics_StaticMulti::GetBounds( int id ) const
 	return bounds_zero;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetAbsBounds
-================
-*/
 const idBounds& idPhysics_StaticMulti::GetAbsBounds( int id ) const
 {
 	int				i;
@@ -380,11 +295,6 @@ const idBounds& idPhysics_StaticMulti::GetAbsBounds( int id ) const
 	return bounds_zero;
 }
 
-/*
-================
-idPhysics_StaticMulti::Evaluate
-================
-*/
 bool idPhysics_StaticMulti::Evaluate( int timeStepMSec, int endTimeMSec )
 {
 	int	   i;
@@ -411,11 +321,6 @@ bool idPhysics_StaticMulti::Evaluate( int timeStepMSec, int endTimeMSec )
 	return false;
 }
 
-/*
-================
-idPhysics_StaticMulti::Interpolate
-================
-*/
 bool idPhysics_StaticMulti::Interpolate( const float fraction )
 {
 	// If the sizes don't match, just use the latest version.
@@ -435,124 +340,59 @@ bool idPhysics_StaticMulti::Interpolate( const float fraction )
 	return true;
 }
 
-/*
-================
-idPhysics_StaticMulti::UpdateTime
-================
-*/
 void idPhysics_StaticMulti::UpdateTime( int endTimeMSec )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::GetTime
-================
-*/
 int idPhysics_StaticMulti::GetTime() const
 {
 	return 0;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetImpactInfo
-================
-*/
 void idPhysics_StaticMulti::GetImpactInfo( const int id, const idVec3& point, impactInfo_t* info ) const
 {
 	memset( info, 0, sizeof( *info ) );
 }
 
-/*
-================
-idPhysics_StaticMulti::ApplyImpulse
-================
-*/
 void idPhysics_StaticMulti::ApplyImpulse( const int id, const idVec3& point, const idVec3& impulse )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::AddForce
-================
-*/
 void idPhysics_StaticMulti::AddForce( const int id, const idVec3& point, const idVec3& force )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::Activate
-================
-*/
 void idPhysics_StaticMulti::Activate()
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::PutToRest
-================
-*/
 void idPhysics_StaticMulti::PutToRest()
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::IsAtRest
-================
-*/
 bool idPhysics_StaticMulti::IsAtRest() const
 {
 	return true;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetRestStartTime
-================
-*/
 int idPhysics_StaticMulti::GetRestStartTime() const
 {
 	return 0;
 }
 
-/*
-================
-idPhysics_StaticMulti::IsPushable
-================
-*/
 bool idPhysics_StaticMulti::IsPushable() const
 {
 	return false;
 }
 
-/*
-================
-idPhysics_StaticMulti::SaveState
-================
-*/
 void idPhysics_StaticMulti::SaveState()
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::RestoreState
-================
-*/
 void idPhysics_StaticMulti::RestoreState()
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::SetOrigin
-================
-*/
 void idPhysics_StaticMulti::SetOrigin( const idVec3& newOrigin, int id )
 {
 	idVec3 masterOrigin;
@@ -579,11 +419,6 @@ void idPhysics_StaticMulti::SetOrigin( const idVec3& newOrigin, int id )
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::SetAxis
-================
-*/
 void idPhysics_StaticMulti::SetAxis( const idMat3& newAxis, int id )
 {
 	idVec3 masterOrigin;
@@ -617,11 +452,6 @@ void idPhysics_StaticMulti::SetAxis( const idMat3& newAxis, int id )
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::Translate
-================
-*/
 void idPhysics_StaticMulti::Translate( const idVec3& translation, int id )
 {
 	int i;
@@ -645,11 +475,6 @@ void idPhysics_StaticMulti::Translate( const idVec3& translation, int id )
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::Rotate
-================
-*/
 void idPhysics_StaticMulti::Rotate( const idRotation& rotation, int id )
 {
 	int	   i;
@@ -693,11 +518,6 @@ void idPhysics_StaticMulti::Rotate( const idRotation& rotation, int id )
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::GetOrigin
-================
-*/
 const idVec3& idPhysics_StaticMulti::GetOrigin( int id ) const
 {
 	if( id >= 0 && id < clipModels.Num() ) {
@@ -710,11 +530,6 @@ const idVec3& idPhysics_StaticMulti::GetOrigin( int id ) const
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::GetAxis
-================
-*/
 const idMat3& idPhysics_StaticMulti::GetAxis( int id ) const
 {
 	if( id >= 0 && id < clipModels.Num() ) {
@@ -727,102 +542,52 @@ const idMat3& idPhysics_StaticMulti::GetAxis( int id ) const
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::SetLinearVelocity
-================
-*/
 void idPhysics_StaticMulti::SetLinearVelocity( const idVec3& newLinearVelocity, int id )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::SetAngularVelocity
-================
-*/
 void idPhysics_StaticMulti::SetAngularVelocity( const idVec3& newAngularVelocity, int id )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::GetLinearVelocity
-================
-*/
 const idVec3& idPhysics_StaticMulti::GetLinearVelocity( int id ) const
 {
 	return vec3_origin;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetAngularVelocity
-================
-*/
 const idVec3& idPhysics_StaticMulti::GetAngularVelocity( int id ) const
 {
 	return vec3_origin;
 }
 
-/*
-================
-idPhysics_StaticMulti::SetGravity
-================
-*/
 void idPhysics_StaticMulti::SetGravity( const idVec3& newGravity )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::GetGravity
-================
-*/
 const idVec3& idPhysics_StaticMulti::GetGravity() const
 {
 	static idVec3 gravity( 0, 0, -g_gravity.GetFloat() );
 	return gravity;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetGravityNormal
-================
-*/
 const idVec3& idPhysics_StaticMulti::GetGravityNormal() const
 {
 	static idVec3 gravity( 0, 0, -1 );
 	return gravity;
 }
 
-/*
-================
-idPhysics_StaticMulti::ClipTranslation
-================
-*/
 void idPhysics_StaticMulti::ClipTranslation( trace_t& results, const idVec3& translation, const idClipModel* model ) const
 {
 	memset( &results, 0, sizeof( trace_t ) );
 	gameLocal.Warning( "idPhysics_StaticMulti::ClipTranslation called" );
 }
 
-/*
-================
-idPhysics_StaticMulti::ClipRotation
-================
-*/
 void idPhysics_StaticMulti::ClipRotation( trace_t& results, const idRotation& rotation, const idClipModel* model ) const
 {
 	memset( &results, 0, sizeof( trace_t ) );
 	gameLocal.Warning( "idPhysics_StaticMulti::ClipRotation called" );
 }
 
-/*
-================
-idPhysics_StaticMulti::ClipContents
-================
-*/
 int idPhysics_StaticMulti::ClipContents( const idClipModel* model ) const
 {
 	int i, contents;
@@ -840,11 +605,6 @@ int idPhysics_StaticMulti::ClipContents( const idClipModel* model ) const
 	return contents;
 }
 
-/*
-================
-idPhysics_StaticMulti::DisableClip
-================
-*/
 void idPhysics_StaticMulti::DisableClip()
 {
 	int i;
@@ -856,11 +616,6 @@ void idPhysics_StaticMulti::DisableClip()
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::EnableClip
-================
-*/
 void idPhysics_StaticMulti::EnableClip()
 {
 	int i;
@@ -872,11 +627,6 @@ void idPhysics_StaticMulti::EnableClip()
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::UnlinkClip
-================
-*/
 void idPhysics_StaticMulti::UnlinkClip()
 {
 	int i;
@@ -888,11 +638,6 @@ void idPhysics_StaticMulti::UnlinkClip()
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::LinkClip
-================
-*/
 void idPhysics_StaticMulti::LinkClip()
 {
 	int i;
@@ -904,31 +649,16 @@ void idPhysics_StaticMulti::LinkClip()
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::EvaluateContacts
-================
-*/
 bool idPhysics_StaticMulti::EvaluateContacts()
 {
 	return false;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetNumContacts
-================
-*/
 int idPhysics_StaticMulti::GetNumContacts() const
 {
 	return 0;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetContact
-================
-*/
 const contactInfo_t& idPhysics_StaticMulti::GetContact( int num ) const
 {
 	static contactInfo_t info;
@@ -936,97 +666,47 @@ const contactInfo_t& idPhysics_StaticMulti::GetContact( int num ) const
 	return info;
 }
 
-/*
-================
-idPhysics_StaticMulti::ClearContacts
-================
-*/
 void idPhysics_StaticMulti::ClearContacts()
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::AddContactEntity
-================
-*/
 void idPhysics_StaticMulti::AddContactEntity( idEntity* e )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::RemoveContactEntity
-================
-*/
 void idPhysics_StaticMulti::RemoveContactEntity( idEntity* e )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::HasGroundContacts
-================
-*/
 bool idPhysics_StaticMulti::HasGroundContacts() const
 {
 	return false;
 }
 
-/*
-================
-idPhysics_StaticMulti::IsGroundEntity
-================
-*/
 bool idPhysics_StaticMulti::IsGroundEntity( int entityNum ) const
 {
 	return false;
 }
 
-/*
-================
-idPhysics_StaticMulti::IsGroundClipModel
-================
-*/
 bool idPhysics_StaticMulti::IsGroundClipModel( int entityNum, int id ) const
 {
 	return false;
 }
 
-/*
-================
-idPhysics_StaticMulti::SetPushed
-================
-*/
 void idPhysics_StaticMulti::SetPushed( int deltaTime )
 {
 }
 
-/*
-================
-idPhysics_StaticMulti::GetPushedLinearVelocity
-================
-*/
 const idVec3& idPhysics_StaticMulti::GetPushedLinearVelocity( const int id ) const
 {
 	return vec3_origin;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetPushedAngularVelocity
-================
-*/
 const idVec3& idPhysics_StaticMulti::GetPushedAngularVelocity( const int id ) const
 {
 	return vec3_origin;
 }
 
-/*
-================
-idPhysics_StaticMulti::SetMaster
-================
-*/
 void idPhysics_StaticMulti::SetMaster( idEntity* master, const bool orientated )
 {
 	int	   i;
@@ -1055,51 +735,26 @@ void idPhysics_StaticMulti::SetMaster( idEntity* master, const bool orientated )
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::GetBlockingInfo
-================
-*/
 const trace_t* idPhysics_StaticMulti::GetBlockingInfo() const
 {
 	return NULL;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetBlockingEntity
-================
-*/
 idEntity* idPhysics_StaticMulti::GetBlockingEntity() const
 {
 	return NULL;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetLinearEndTime
-================
-*/
 int idPhysics_StaticMulti::GetLinearEndTime() const
 {
 	return 0;
 }
 
-/*
-================
-idPhysics_StaticMulti::GetAngularEndTime
-================
-*/
 int idPhysics_StaticMulti::GetAngularEndTime() const
 {
 	return 0;
 }
 
-/*
-================
-idPhysics_StaticMulti::WriteToSnapshot
-================
-*/
 void idPhysics_StaticMulti::WriteToSnapshot( idBitMsg& msg ) const
 {
 	int		i;
@@ -1126,11 +781,6 @@ void idPhysics_StaticMulti::WriteToSnapshot( idBitMsg& msg ) const
 	}
 }
 
-/*
-================
-idPhysics_StaticMulti::ReadFromSnapshot
-================
-*/
 void idPhysics_StaticMulti::ReadFromSnapshot( const idBitMsg& msg )
 {
 	int		i, num;

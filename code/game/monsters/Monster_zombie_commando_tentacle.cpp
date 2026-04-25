@@ -44,20 +44,10 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( iceMonsterZombie, iceMonsterZombieCommandoTentacle )
 END_CLASS
 
-/*
-=================
-iceMonsterZombieCommandoTentacle::Init
-=================
-*/
 void iceMonsterZombieCommandoTentacle::Init()
 {
 }
 
-/*
-=================
-iceMonsterZombieCommandoTentacle::AI_Begin
-=================
-*/
 void iceMonsterZombieCommandoTentacle::AI_Begin()
 {
 	run_distance = ZCT_RUNDISTANCE;
@@ -66,11 +56,6 @@ void iceMonsterZombieCommandoTentacle::AI_Begin()
 	Event_SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterZombieCommandoTentacle::state_Begin
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoTentacle::state_Begin( stateParms_t* parms )
 {
 	Event_AnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 8 );
@@ -81,11 +66,6 @@ stateResult_t iceMonsterZombieCommandoTentacle::state_Begin( stateParms_t* parms
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoTentacle::state_Idle
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoTentacle::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -104,11 +84,6 @@ stateResult_t iceMonsterZombieCommandoTentacle::state_Idle( stateParms_t* parms 
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-monster_zombie::combat_melee
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoTentacle::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -140,11 +115,6 @@ stateResult_t iceMonsterZombieCommandoTentacle::combat_melee( stateParms_t* parm
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-monster_zombie::combat_tentacle
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoTentacle::combat_tentacle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -175,11 +145,6 @@ stateResult_t iceMonsterZombieCommandoTentacle::combat_tentacle( stateParms_t* p
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoTentacle::check_attacks
-=====================
-*/
 int iceMonsterZombieCommandoTentacle::check_attacks()
 {
 	int	  attack_flags;
@@ -204,11 +169,6 @@ int iceMonsterZombieCommandoTentacle::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoTentacle::do_attack
-=====================
-*/
 void iceMonsterZombieCommandoTentacle::do_attack( int attack_flags )
 {
 	if( attack_flags & ATTACK_MELEE ) {
@@ -219,25 +179,11 @@ void iceMonsterZombieCommandoTentacle::do_attack( int attack_flags )
 	}
 }
 
-/*
-=====================
-iceMonsterZombieCommandoTentacle::tentacle_attack_start
-
-Called from md5Anim frame via TypeInfoGen invoke
-=====================
-*/
 void iceMonsterZombieCommandoTentacle::tentacle_attack_start()
 {
 	tentacleDamage = true;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoTentacle::tentacle_attack_end
-
-Called from md5Anim frame via TypeInfoGen invoke
-=====================
-*/
 void iceMonsterZombieCommandoTentacle::tentacle_attack_end()
 {
 	tentacleDamage = false;

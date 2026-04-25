@@ -41,11 +41,6 @@ enum settingMenuCmds_t {
 #endif
 };
 
-/*
-========================
-idMenuScreen_Shell_Settings::Initialize
-========================
-*/
 void idMenuScreen_Shell_Settings::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -128,11 +123,6 @@ void idMenuScreen_Shell_Settings::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Settings::Update
-========================
-*/
 void idMenuScreen_Shell_Settings::Update()
 {
 	if( menuData != NULL ) {
@@ -175,31 +165,16 @@ void idMenuScreen_Shell_Settings::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Settings::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Settings::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Settings::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Settings::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Settings::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_Settings::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

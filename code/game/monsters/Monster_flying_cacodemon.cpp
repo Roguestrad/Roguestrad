@@ -39,30 +39,15 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idAI, iceMonsterFlyingCacodemon )
 END_CLASS
 
-/*
-=================
-iceMonsterFlyingCacodemon::Init
-=================
-*/
 void iceMonsterFlyingCacodemon::Init()
 {
 }
 
-/*
-=================
-iceMonsterFlyingCacodemon::AI_Begin
-=================
-*/
 void iceMonsterFlyingCacodemon::AI_Begin()
 {
 	Event_SetState( "state_Idle" );
 }
 
-/*
-=====================
-iceMonsterFlyingCacodemon::state_Begin
-=====================
-*/
 stateResult_t iceMonsterFlyingCacodemon::state_Begin( stateParms_t* parms )
 {
 	Event_SetMoveType( MOVETYPE_FLY );
@@ -71,11 +56,6 @@ stateResult_t iceMonsterFlyingCacodemon::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterFlyingCacodemon::state_Idle
-=====================
-*/
 stateResult_t iceMonsterFlyingCacodemon::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -93,11 +73,6 @@ stateResult_t iceMonsterFlyingCacodemon::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterFlyingCacodemon::do_attack
-=====================
-*/
 void iceMonsterFlyingCacodemon::do_attack( int attack_flags )
 {
 	nextNoFOVAttack = gameLocal.SysScriptTime() + CACO_NOFOVTIME;
@@ -111,11 +86,6 @@ void iceMonsterFlyingCacodemon::do_attack( int attack_flags )
 	}
 }
 
-/*
-=====================
-iceMonsterFlyingCacodemon::check_attacks
-=====================
-*/
 int iceMonsterFlyingCacodemon::check_attacks()
 {
 	float currentTime;
@@ -148,11 +118,6 @@ int iceMonsterFlyingCacodemon::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-monster_zombie::combat_range
-=====================
-*/
 stateResult_t iceMonsterFlyingCacodemon::combat_range( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -177,11 +142,6 @@ stateResult_t iceMonsterFlyingCacodemon::combat_range( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-monster_zombie::combat_melee
-=====================
-*/
 stateResult_t iceMonsterFlyingCacodemon::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {

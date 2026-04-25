@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 extern idCVar	 g_demoMode;
 const static int NUM_MAIN_OPTIONS = 6;
-/*
-========================
-idMenuScreen_Shell_Root::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_Root::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -83,11 +78,6 @@ void			 idMenuScreen_Shell_Root::Initialize( idMenuHandler* data )
 	AddEventAction( WIDGET_EVENT_PRESS ).Set( WIDGET_ACTION_PRESS_FOCUSED, 0 );
 }
 
-/*
-========================
-idMenuScreen_Shell_Root::Update
-========================
-*/
 void idMenuScreen_Shell_Root::Update()
 {
 	if( menuData != NULL ) {
@@ -117,11 +107,6 @@ void idMenuScreen_Shell_Root::Update()
 
 enum rootMenuCmds_t { ROOT_CMD_START_DEMO, ROOT_CMD_START_DEMO2, ROOT_CMD_SETTINGS, ROOT_CMD_QUIT, ROOT_CMD_DEV, ROOT_CMD_CAMPAIGN, ROOT_CMD_MULTIPLAYER, ROOT_CMD_PLAYSTATION, ROOT_CMD_CREDITS };
 
-/*
-========================
-idMenuScreen_Shell_Root::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Root::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	if( menuData != NULL && menuData->GetPlatform() != 2 ) {
@@ -271,21 +256,11 @@ void idMenuScreen_Shell_Root::ShowScreen( const mainMenuTransition_t transitionT
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Root::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Root::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Root::HandleExitGameBtn
-========================
-*/
 void idMenuScreen_Shell_Root::HandleExitGameBtn()
 {
 	class idSWFScriptFunction_QuitDialog : public idSWFScriptFunction_RefCounted
@@ -331,11 +306,6 @@ void idMenuScreen_Shell_Root::HandleExitGameBtn()
 	common->Dialog().AddDynamicDialog( GDM_QUIT_GAME, callbacks, optionText, true, "" );
 }
 
-/*
-========================
-idMenuScreen_Shell_Root::GetRootIndex
-========================
-*/
 int idMenuScreen_Shell_Root::GetRootIndex()
 {
 	if( options != NULL ) {
@@ -345,11 +315,6 @@ int idMenuScreen_Shell_Root::GetRootIndex()
 	return 0;
 }
 
-/*
-========================
-idMenuScreen_Shell_Root::SetRootIndex
-========================
-*/
 void idMenuScreen_Shell_Root::SetRootIndex( int index )
 {
 	if( options != NULL ) {
@@ -357,11 +322,6 @@ void idMenuScreen_Shell_Root::SetRootIndex( int index )
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Root::HandleAction
-========================
-*/
 bool idMenuScreen_Shell_Root::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

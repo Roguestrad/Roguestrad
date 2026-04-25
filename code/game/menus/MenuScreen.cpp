@@ -40,11 +40,6 @@ idMenuScreen::~idMenuScreen()
 {
 }
 
-/*
-========================
-idMenuScreen::ObserveEvent
-========================
-*/
 void idMenuScreen::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	if( event.type == WIDGET_EVENT_COMMAND ) {
@@ -61,11 +56,6 @@ void idMenuScreen::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent
 	}
 }
 
-/*
-========================
-idMenuScreen::Update
-========================
-*/
 void idMenuScreen::Update()
 {
 	if( menuGUI == NULL ) {
@@ -84,11 +74,6 @@ void idMenuScreen::Update()
 	}
 }
 
-/*
-========================
-idMenuScreen::UpdateCmds
-========================
-*/
 void idMenuScreen::UpdateCmds()
 {
 	idSWF* const			 gui = menuGUI;
@@ -247,11 +232,6 @@ void idMenuScreen::UpdateCmds()
 	}
 }
 
-/*
-========================
-idMenuScreen::HideScreen
-========================
-*/
 void idMenuScreen::HideScreen( const mainMenuTransition_t transitionType )
 {
 	if( menuGUI == NULL ) {
@@ -273,11 +253,6 @@ void idMenuScreen::HideScreen( const mainMenuTransition_t transitionType )
 	Update();
 }
 
-/*
-========================
-idMenuScreen::ShowScreen
-========================
-*/
 void idMenuScreen::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	if( menuGUI == NULL ) {
@@ -311,15 +286,6 @@ void idMenuScreen::ShowScreen( const mainMenuTransition_t transitionType )
 	SetFocusIndex( GetFocusIndex(), true );
 }
 
-/*
-========================
-idMenuScreen::HandleMenu
-
-NOTE: This is holdover from the way the menu system was setup before.  It should be able to
-be removed when the old way is fully replaced, and instead events will just be sent directly
-to the screen.
-========================
-*/
 void idMenuScreen::HandleMenu( const mainMenuTransition_t type )
 {
 	if( type == MENU_TRANSITION_ADVANCE ) {

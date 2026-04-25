@@ -53,11 +53,6 @@ END_CLASS
 #define WARNING_BEEP_3			 2.50
 #define WARNING_BEEP_4			 2.75
 
-/*
-===============
-iceWeaponGrabber::Init
-===============
-*/
 void iceWeaponGrabber::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -76,11 +71,6 @@ void iceWeaponGrabber::Init( idWeapon* weapon )
 	grabberState = -1;
 }
 
-/*
-===============
-iceWeaponGrabber::Raise
-===============
-*/
 stateResult_t iceWeaponGrabber::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -101,11 +91,6 @@ stateResult_t iceWeaponGrabber::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponGrabber::Lower
-===============
-*/
 stateResult_t iceWeaponGrabber::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -126,31 +111,7 @@ stateResult_t iceWeaponGrabber::Lower( stateParms_t* parms )
 
 	return SRESULT_ERROR;
 }
-/*
-===============
-iceWeaponGrabber::CanFire
 
-Original grabber logic had this, so we prevent the fire action from going unless grabState is 1 or 2.
-
-grabState = grabberHasTarget();
-if ( grabState == 1 || grabState == 2 ) {
-	if(WEAPON_ATTACK) {
-		weaponState( "GrabberOpenFire", GRABBER_IDLE_TO_OPENFIRE );
-	}
-}
-===============
-*/
-// bool iceWeaponGrabber::CanFire()
-//{
-//	int grabState = owner->Event_GrabberHasTarget();
-//	return grabState == 1 || grabState == 2;
-// }
-
-/*
-===============
-iceWeaponGrabber::Idle
-===============
-*/
 stateResult_t iceWeaponGrabber::Idle( stateParms_t* parms )
 {
 	int grabState = 0;
@@ -221,11 +182,6 @@ stateResult_t iceWeaponGrabber::Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceWeaponGrabber::StartWarningSound
-=====================
-*/
 void iceWeaponGrabber::StartWarningSound()
 {
 	fireStartTime = gameLocal.realClientTime;
@@ -235,11 +191,6 @@ void iceWeaponGrabber::StartWarningSound()
 	warningBeep4  = false;
 }
 
-/*
-=====================
-iceWeaponGrabber::StartActive
-=====================
-*/
 void iceWeaponGrabber::StartActive()
 {
 	owner->Event_StartWeaponParticle( "barrel_upper" );
@@ -248,11 +199,6 @@ void iceWeaponGrabber::StartActive()
 	owner->Event_StartWeaponLight( "light_side" );
 }
 
-/*
-=====================
-iceWeaponGrabber::StopActive
-=====================
-*/
 void iceWeaponGrabber::StopActive()
 {
 	owner->Event_StopWeaponParticle( "barrel_upper" );
@@ -262,11 +208,6 @@ void iceWeaponGrabber::StopActive()
 	owner->Event_StopWeaponLight( "light_side" );
 }
 
-/*
-==================== =
-iceWeaponGrabber::UpdateGuiLight
-==================== =
-*/
 void iceWeaponGrabber::UpdateGuiLight()
 {
 	float newState = owner->Event_GrabberHasTarget();
@@ -290,11 +231,6 @@ void iceWeaponGrabber::UpdateGuiLight()
 	}
 }
 
-/*
-=====================
-iceWeaponGrabber::UpdateWarningSound
-=====================
-*/
 void iceWeaponGrabber::UpdateWarningSound()
 {
 	float currentTime;
@@ -321,11 +257,6 @@ void iceWeaponGrabber::UpdateWarningSound()
 	}
 }
 
-/*
-===============
-iceWeaponGrabber::Fire
-===============
-*/
 stateResult_t iceWeaponGrabber::Fire( stateParms_t* parms )
 {
 	// int grabState;
@@ -381,11 +312,6 @@ stateResult_t iceWeaponGrabber::Fire( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-===============
-iceWeaponGrabber::Reload
-===============
-*/
 stateResult_t iceWeaponGrabber::Reload( stateParms_t* parms )
 {
 	return SRESULT_DONE;

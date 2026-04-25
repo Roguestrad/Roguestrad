@@ -38,11 +38,6 @@ const float		 MAX_FOV = 100.0f;
 const float		 MIN_FOV_GUN = 3.0f;
 const float		 MAX_FOV_GUN = 0.0f;
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_GameOptions::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -145,11 +140,6 @@ void			 idMenuScreen_Shell_GameOptions::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::Update
-========================
-*/
 void idMenuScreen_Shell_GameOptions::Update()
 {
 	if( menuData != NULL ) {
@@ -189,22 +179,12 @@ void idMenuScreen_Shell_GameOptions::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_GameOptions::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	systemData.LoadData();
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::HideScreen
-========================
-*/
 void idMenuScreen_Shell_GameOptions::HideScreen( const mainMenuTransition_t transitionType )
 {
 	if( systemData.IsDataChanged() ) {
@@ -213,11 +193,6 @@ void idMenuScreen_Shell_GameOptions::HideScreen( const mainMenuTransition_t tran
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_GameOptions::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -283,22 +258,12 @@ extern idCVar g_checkpoints;
 extern idCVar ng_classicFlashlight;
 extern idCVar g_muzzleFlash;
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::idMenuDataSource_AudioSettings
-========================
-*/
 idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::idMenuDataSource_GameSettings()
 {
 	fields.SetNum( MAX_GAME_FIELDS );
 	originalFields.SetNum( MAX_GAME_FIELDS );
 }
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::LoadData
-========================
-*/
 void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::LoadData()
 {
 	fields[GAME_FIELD_FOV].SetInteger( g_fov.GetFloat() );
@@ -312,11 +277,6 @@ void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::LoadData()
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::CommitData
-========================
-*/
 void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::CommitData()
 {
 	g_fov.SetFloat( fields[GAME_FIELD_FOV].ToFloat() );
@@ -336,11 +296,6 @@ void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::CommitData()
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::AdjustField
-========================
-*/
 void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::AdjustField( const int fieldIndex, const int adjustAmount )
 {
 	if( fieldIndex == GAME_FIELD_FOV ) {
@@ -350,11 +305,6 @@ void idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::AdjustField(
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_GameOptions::idMenuDataSource_AudioSettings::IsDataChanged
-========================
-*/
 bool idMenuScreen_Shell_GameOptions::idMenuDataSource_GameSettings::IsDataChanged() const
 {
 	if( fields[GAME_FIELD_FOV].ToInteger() != originalFields[GAME_FIELD_FOV].ToInteger() ) {

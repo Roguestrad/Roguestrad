@@ -52,11 +52,6 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idEntity, idGrabber )
 END_CLASS
 
-/*
-==============
-idGrabber::idGrabber
-==============
-*/
 idGrabber::idGrabber()
 {
 	dragEnt			   = NULL;
@@ -74,11 +69,6 @@ idGrabber::idGrabber()
 	dragTraceDist	   = MAX_DRAG_TRACE_DISTANCE;
 }
 
-/*
-==============
-idGrabber::~idGrabber
-==============
-*/
 idGrabber::~idGrabber()
 {
 	StopDrag( true );
@@ -90,11 +80,6 @@ idGrabber::~idGrabber()
 	}
 }
 
-/*
-==============
-idGrabber::Save
-==============
-*/
 void idGrabber::Save( idSaveGame* savefile ) const
 {
 	dragEnt.Save( savefile );
@@ -124,11 +109,6 @@ void idGrabber::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( warpId );
 }
 
-/*
-==============
-idGrabber::Restore
-==============
-*/
 void idGrabber::Restore( idRestoreGame* savefile )
 {
 	// Spawn the beams
@@ -166,11 +146,6 @@ void idGrabber::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( warpId );
 }
 
-/*
-==============
-idGrabber::Initialize
-==============
-*/
 void idGrabber::Initialize()
 {
 	if( !common->IsMultiplayer() ) {
@@ -204,21 +179,11 @@ void idGrabber::Initialize()
 	};
 }
 
-/*
-==============
-idGrabber::SetDragDistance
-==============
-*/
 void idGrabber::SetDragDistance( float dist )
 {
 	dragTraceDist = dist;
 }
 
-/*
-==============
-idGrabber::StartDrag
-==============
-*/
 void idGrabber::StartDrag( idEntity* grabEnt, int id )
 {
 	int		  clipModelId = id;
@@ -317,11 +282,6 @@ void idGrabber::StartDrag( idEntity* grabEnt, int id )
 	// Leyland end
 }
 
-/*
-==============
-idGrabber::StopDrag
-==============
-*/
 void idGrabber::StopDrag( bool dropOnly )
 {
 	idPlayer* thePlayer = owner.GetEntity();
@@ -442,11 +402,6 @@ void idGrabber::StopDrag( bool dropOnly )
 	endTime		  = 0;
 }
 
-/*
-==============
-idGrabber::Update
-==============
-*/
 int idGrabber::Update( idPlayer* player, bool hide )
 {
 	trace_t	  trace;
@@ -671,11 +626,6 @@ int idGrabber::Update( idPlayer* player, bool hide )
 	return 0;
 }
 
-/*
-======================
-idGrabber::UpdateBeams
-======================
-*/
 void idGrabber::UpdateBeams()
 {
 	jointHandle_t	muzzle_joint;
@@ -710,11 +660,6 @@ void idGrabber::UpdateBeams()
 	}
 }
 
-/*
-==============
-idGrabber::ApplyShake
-==============
-*/
 void idGrabber::ApplyShake()
 {
 	float u = 1 - ( float )( endTime - gameLocal.time ) / ( g_grabberHoldSeconds.GetFloat() * 1000 );
@@ -746,11 +691,6 @@ void idGrabber::ApplyShake()
 	}
 }
 
-/*
-==============
-idGrabber::grabbableAI
-==============
-*/
 bool idGrabber::grabbableAI( const char* aiName )
 {
 	// skip "monster_"

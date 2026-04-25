@@ -48,11 +48,6 @@ EVENT( EV_Activate, idEntityFx::Event_Trigger )
 EVENT( EV_Fx_KillFx, idEntityFx::Event_ClearFx )
 END_CLASS
 
-/*
-================
-idEntityFx::Save
-================
-*/
 void idEntityFx::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -88,11 +83,6 @@ void idEntityFx::Save( idSaveGame* savefile ) const
 	}
 }
 
-/*
-================
-idEntityFx::Restore
-================
-*/
 void idEntityFx::Restore( idRestoreGame* savefile )
 {
 	int	 i;
@@ -139,11 +129,6 @@ void idEntityFx::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-================
-idEntityFx::Setup
-================
-*/
 void idEntityFx::Setup( const char* fx )
 {
 	if( started >= 0 ) {
@@ -187,31 +172,16 @@ void idEntityFx::Setup( const char* fx )
 	}
 }
 
-/*
-================
-idEntityFx::EffectName
-================
-*/
 const char* idEntityFx::EffectName()
 {
 	return fxEffect ? fxEffect->GetName() : NULL;
 }
 
-/*
-================
-idEntityFx::Joint
-================
-*/
 const char* idEntityFx::Joint()
 {
 	return fxEffect ? fxEffect->joint.c_str() : NULL;
 }
 
-/*
-================
-idEntityFx::CleanUp
-================
-*/
 void idEntityFx::CleanUp()
 {
 	if( !fxEffect ) {
@@ -224,11 +194,6 @@ void idEntityFx::CleanUp()
 	}
 }
 
-/*
-================
-idEntityFx::CleanUpSingleAction
-================
-*/
 void idEntityFx::CleanUpSingleAction( const idFXSingleAction& fxaction, idFXLocalAction& laction )
 {
 	if( laction.lightDefHandle != -1 && fxaction.sibling == -1 && fxaction.type != FX_ATTACHLIGHT ) {
@@ -242,11 +207,6 @@ void idEntityFx::CleanUpSingleAction( const idFXSingleAction& fxaction, idFXLoca
 	laction.start = -1;
 }
 
-/*
-================
-idEntityFx::Start
-================
-*/
 void idEntityFx::Start( int time )
 {
 	if( !fxEffect ) {
@@ -264,22 +224,12 @@ void idEntityFx::Start( int time )
 	}
 }
 
-/*
-================
-idEntityFx::Stop
-================
-*/
 void idEntityFx::Stop()
 {
 	CleanUp();
 	started = -1;
 }
 
-/*
-================
-idEntityFx::Duration
-================
-*/
 const int idEntityFx::Duration()
 {
 	int max = 0;
@@ -298,11 +248,6 @@ const int idEntityFx::Duration()
 	return max;
 }
 
-/*
-================
-idEntityFx::Done
-================
-*/
 const bool idEntityFx::Done()
 {
 	if( started > 0 && gameLocal.time > started + Duration() ) {
@@ -311,11 +256,6 @@ const bool idEntityFx::Done()
 	return false;
 }
 
-/*
-================
-idEntityFx::ApplyFade
-================
-*/
 void idEntityFx::ApplyFade( const idFXSingleAction& fxaction, idFXLocalAction& laction, const int time, const int actualStart )
 {
 	if( fxaction.fadeInTime || fxaction.fadeOutTime ) {
@@ -340,11 +280,6 @@ void idEntityFx::ApplyFade( const idFXSingleAction& fxaction, idFXLocalAction& l
 	}
 }
 
-/*
-================
-idEntityFx::Run
-================
-*/
 void idEntityFx::Run( int time )
 {
 	int			  ieff, j;
@@ -578,11 +513,6 @@ void idEntityFx::Run( int time )
 	}
 }
 
-/*
-================
-idEntityFx::idEntityFx
-================
-*/
 idEntityFx::idEntityFx()
 {
 	fxEffect		= NULL;
@@ -591,22 +521,12 @@ idEntityFx::idEntityFx()
 	fl.networkSync	= true;
 }
 
-/*
-================
-idEntityFx::~idEntityFx
-================
-*/
 idEntityFx::~idEntityFx()
 {
 	CleanUp();
 	fxEffect = NULL;
 }
 
-/*
-================
-idEntityFx::Spawn
-================
-*/
 void idEntityFx::Spawn()
 {
 	if( g_skipFX.GetBool() ) {
@@ -627,13 +547,6 @@ void idEntityFx::Spawn()
 	}
 }
 
-/*
-================
-idEntityFx::Think
-
-  Clears any visual fx started when {item,mob,player} was spawned
-================
-*/
 void idEntityFx::Think()
 {
 	if( g_skipFX.GetBool() ) {
@@ -648,13 +561,6 @@ void idEntityFx::Think()
 	Present();
 }
 
-/*
-================
-idEntityFx::Event_ClearFx
-
-  Clears any visual fx started when item(mob) was spawned
-================
-*/
 void idEntityFx::Event_ClearFx()
 {
 	if( g_skipFX.GetBool() ) {
@@ -680,11 +586,6 @@ void idEntityFx::Event_ClearFx()
 	}
 }
 
-/*
-================
-idEntityFx::Event_Trigger
-================
-*/
 void idEntityFx::Event_Trigger( idEntity* activator )
 {
 	if( g_skipFX.GetBool() ) {
@@ -715,11 +616,6 @@ void idEntityFx::Event_Trigger( idEntity* activator )
 	PostEventSec( &EV_Fx_Action, fxActionDelay, activator );
 }
 
-/*
-================
-idEntityFx::StartFx
-================
-*/
 idEntityFx* idEntityFx::StartFx( const char* fx, const idVec3* useOrigin, const idMat3* useAxis, idEntity* ent, bool bind )
 {
 	if( g_skipFX.GetBool() || !fx || !*fx ) {
@@ -748,11 +644,6 @@ idEntityFx* idEntityFx::StartFx( const char* fx, const idVec3* useOrigin, const 
 	return nfx;
 }
 
-/*
-=================
-idEntityFx::WriteToSnapshot
-=================
-*/
 void idEntityFx::WriteToSnapshot( idBitMsg& msg ) const
 {
 	GetPhysics()->WriteToSnapshot( msg );
@@ -761,11 +652,6 @@ void idEntityFx::WriteToSnapshot( idBitMsg& msg ) const
 	msg.WriteLong( started );
 }
 
-/*
-=================
-idEntityFx::ReadFromSnapshot
-=================
-*/
 void idEntityFx::ReadFromSnapshot( const idBitMsg& msg )
 {
 	int fx_index, start_time, max_lapse;
@@ -792,11 +678,6 @@ void idEntityFx::ReadFromSnapshot( const idBitMsg& msg )
 	}
 }
 
-/*
-=================
-idEntityFx::ClientThink
-=================
-*/
 void idEntityFx::ClientThink( const int curTime, const float fraction, const bool predict )
 {
 	if( gameLocal.isNewFrame ) {
@@ -807,11 +688,6 @@ void idEntityFx::ClientThink( const int curTime, const float fraction, const boo
 	Present();
 }
 
-/*
-=================
-idEntityFx::ClientPredictionThink
-=================
-*/
 void idEntityFx::ClientPredictionThink()
 {
 	if( gameLocal.isNewFrame ) {
@@ -833,11 +709,6 @@ CLASS_DECLARATION( idEntityFx, idTeleporter )
 EVENT( EV_Fx_Action, idTeleporter::Event_DoAction )
 END_CLASS
 
-/*
-================
-idTeleporter::Event_DoAction
-================
-*/
 void idTeleporter::Event_DoAction( idEntity* activator )
 {
 	float angle;

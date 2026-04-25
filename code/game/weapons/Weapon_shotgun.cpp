@@ -55,11 +55,6 @@ END_CLASS
 #define SHOTGUN_RELOAD_TO_FIRE	 4
 #define SHOTGUN_RELOAD_TO_LOWER	 2
 
-/*
-===============
-iceWeaponShotgun::Init
-===============
-*/
 void iceWeaponShotgun::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -69,11 +64,6 @@ void iceWeaponShotgun::Init( idWeapon* weapon )
 	snd_lowammo = FindSound( "snd_lowammo" );
 }
 
-/*
-===============
-iceWeaponShotgun::Raise
-===============
-*/
 stateResult_t iceWeaponShotgun::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -94,11 +84,6 @@ stateResult_t iceWeaponShotgun::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponShotgun::Lower
-===============
-*/
 stateResult_t iceWeaponShotgun::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -120,11 +105,6 @@ stateResult_t iceWeaponShotgun::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponShotgun::Idle
-===============
-*/
 stateResult_t iceWeaponShotgun::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -143,11 +123,6 @@ stateResult_t iceWeaponShotgun::Idle( stateParms_t* parms )
 
 	return SRESULT_ERROR;
 }
-/*
-===============
-iceWeaponShotgun::Fire
-===============
-*/
 stateResult_t iceWeaponShotgun::Fire( stateParms_t* parms )
 {
 	int ammoClip = owner->AmmoInClip();
@@ -185,11 +160,6 @@ stateResult_t iceWeaponShotgun::Fire( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponShotgun::Reload
-===============
-*/
 stateResult_t iceWeaponShotgun::Reload( stateParms_t* parms )
 {
 	float ammoClip;

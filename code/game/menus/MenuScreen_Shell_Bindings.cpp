@@ -82,11 +82,6 @@ static bindInfo_t keyboardBinds[] = {
 static const int numBinds = sizeof( keyboardBinds ) / sizeof( keyboardBinds[0] );
 
 static const int NUM_BIND_LISTINGS = 14;
-/*
-========================
-idMenuScreen_Shell_Bindings::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_Bindings::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -143,11 +138,6 @@ void			 idMenuScreen_Shell_Bindings::Initialize( idMenuHandler* data )
 	AddEventAction( WIDGET_EVENT_SCROLL_UP_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Bindings::Update
-========================
-*/
 void idMenuScreen_Shell_Bindings::Update()
 {
 	if( menuData != NULL ) {
@@ -187,11 +177,6 @@ void idMenuScreen_Shell_Bindings::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Bindings::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Bindings::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	if( options != NULL ) {
@@ -218,11 +203,6 @@ void idMenuScreen_Shell_Bindings::ShowScreen( const mainMenuTransition_t transit
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Bindings::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Bindings::HideScreen( const mainMenuTransition_t transitionType )
 {
 	if( bindingsChanged ) {
@@ -235,11 +215,6 @@ void idMenuScreen_Shell_Bindings::HideScreen( const mainMenuTransition_t transit
 
 extern idCVar in_useJoystick;
 
-/*
-========================
-idMenuScreen_Shell_Bindings::UpdateBindingDisplay
-========================
-*/
 void		  idMenuScreen_Shell_Bindings::UpdateBindingDisplay()
 {
 	idList<idList<idStr, TAG_IDLIB_LIST_MENU>, TAG_IDLIB_LIST_MENU> bindList;
@@ -319,11 +294,6 @@ void		  idMenuScreen_Shell_Bindings::UpdateBindingDisplay()
 	options->SetListData( bindList );
 }
 
-/*
-========================
-idMenuScreen_Shell_Bindings::ToggleWait
-========================
-*/
 void idMenuScreen_Shell_Bindings::ToggleWait( bool wait )
 {
 	if( wait ) {
@@ -368,11 +338,6 @@ void idMenuScreen_Shell_Bindings::ToggleWait( bool wait )
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Bindings::SetBinding
-========================
-*/
 void idMenuScreen_Shell_Bindings::SetBinding( int keyNum )
 {
 	int listIndex = options->GetViewIndex();
@@ -382,11 +347,6 @@ void idMenuScreen_Shell_Bindings::SetBinding( int keyNum )
 	Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Bindings::HandleRestoreDefaults
-========================
-*/
 void idMenuScreen_Shell_Bindings::HandleRestoreDefaults()
 {
 	class idSWFScriptFunction_Restore : public idSWFScriptFunction_RefCounted
@@ -427,11 +387,6 @@ void idMenuScreen_Shell_Bindings::HandleRestoreDefaults()
 		GDM_BINDINGS_RESTORE, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_Restore( GDM_BINDINGS_RESTORE, true, this ), new idSWFScriptFunction_Restore( GDM_BINDINGS_RESTORE, false, this ), false );
 }
 
-/*
-========================
-idMenuScreen_Shell_Bindings::HandleAction
-========================
-*/
 bool idMenuScreen_Shell_Bindings::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

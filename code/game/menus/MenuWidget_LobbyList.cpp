@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuWidget_LobbyList::Update
-========================
-*/
 void idMenuWidget_LobbyList::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -73,11 +68,6 @@ void idMenuWidget_LobbyList::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_LobbyList::PrepareListElement
-========================
-*/
 bool idMenuWidget_LobbyList::PrepareListElement( idMenuWidget& widget, const int childIndex )
 {
 	idMenuWidget_LobbyButton* const button = dynamic_cast<idMenuWidget_LobbyButton*>( &widget );
@@ -92,11 +82,6 @@ bool idMenuWidget_LobbyList::PrepareListElement( idMenuWidget& widget, const int
 	return true;
 }
 
-/*
-========================
-idMenuWidget_LobbyList::SetHeadingInfo
-========================
-*/
 void idMenuWidget_LobbyList::SetHeadingInfo( idList<idStr>& list )
 {
 	headings.Clear();
@@ -105,11 +90,6 @@ void idMenuWidget_LobbyList::SetHeadingInfo( idList<idStr>& list )
 	}
 }
 
-/*
-========================
-idMenuWidget_LobbyList::SetEntryData
-========================
-*/
 void idMenuWidget_LobbyList::SetEntryData( int index, idStr name, voiceStateDisplay_t voiceState )
 {
 	if( GetChildren().Num() == 0 || index >= GetChildren().Num() ) {

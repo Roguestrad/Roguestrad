@@ -46,11 +46,6 @@ enum pauseMenuCmds_t {
 	PAUSE_CMD_INVITE_FRIENDS
 };
 
-/*
-========================
-idMenuScreen_Shell_Pause::Initialize
-========================
-*/
 void idMenuScreen_Shell_Pause::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -90,11 +85,6 @@ void idMenuScreen_Shell_Pause::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Pause::Update
-========================
-*/
 void idMenuScreen_Shell_Pause::Update()
 {
 	if( menuData != NULL ) {
@@ -129,11 +119,6 @@ void idMenuScreen_Shell_Pause::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Pause::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Pause::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idList<idList<idStr, TAG_IDLIB_LIST_MENU>, TAG_IDLIB_LIST_MENU> menuOptions;
@@ -339,21 +324,11 @@ void idMenuScreen_Shell_Pause::ShowScreen( const mainMenuTransition_t transition
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Pause::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Pause::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Pause::HandleExitGameBtn
-========================
-*/
 void idMenuScreen_Shell_Pause::HandleExitGameBtn()
 {
 	class idSWFScriptFunction_QuitDialog : public idSWFScriptFunction_RefCounted
@@ -393,11 +368,6 @@ void idMenuScreen_Shell_Pause::HandleExitGameBtn()
 	common->Dialog().AddDialog( msg, DIALOG_ACCEPT_CANCEL, new idSWFScriptFunction_QuitDialog( this, msg, true ), new idSWFScriptFunction_QuitDialog( this, msg, false ), false );
 }
 
-/*
-========================
-idMenuScreen_Shell_Pause::HandleRestartBtn
-========================
-*/
 void idMenuScreen_Shell_Pause::HandleRestartBtn()
 {
 	class idSWFScriptFunction_RestartDialog : public idSWFScriptFunction_RefCounted
@@ -431,11 +401,6 @@ void idMenuScreen_Shell_Pause::HandleRestartBtn()
 		false );
 }
 
-/*
-========================
-idMenuScreen_Shell_Pause::HandleAction
-========================
-*/
 bool idMenuScreen_Shell_Pause::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

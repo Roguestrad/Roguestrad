@@ -240,11 +240,6 @@ const opcode_t idCompiler::opcodes[] = {
 	{ NULL }
 };
 
-/*
-================
-idCompiler::idCompiler()
-================
-*/
 idCompiler::idCompiler()
 {
 	// RB begin
@@ -280,13 +275,6 @@ idCompiler::idCompiler()
 	}
 }
 
-/*
-============
-idCompiler::Error
-
-Aborts the current file load
-============
-*/
 void idCompiler::Error( const char* message, ... ) const
 {
 	va_list argptr;
@@ -303,13 +291,6 @@ void idCompiler::Error( const char* message, ... ) const
 #endif
 }
 
-/*
-============
-idCompiler::Warning
-
-Prints a warning about the current line
-============
-*/
 void idCompiler::Warning( const char* message, ... ) const
 {
 	va_list argptr;
@@ -322,13 +303,6 @@ void idCompiler::Warning( const char* message, ... ) const
 	parserPtr->Warning( "%s", string );
 }
 
-/*
-============
-idCompiler::VirtualFunctionConstant
-
-Creates a def for an index into a virtual function table
-============
-*/
 ID_INLINE idVarDef* idCompiler::VirtualFunctionConstant( idVarDef* func )
 {
 	eval_t eval;
@@ -342,13 +316,6 @@ ID_INLINE idVarDef* idCompiler::VirtualFunctionConstant( idVarDef* func )
 	return GetImmediate( &type_virtualfunction, &eval, "" );
 }
 
-/*
-============
-idCompiler::SizeConstant
-
-Creates a def for a size constant
-============
-*/
 ID_INLINE idVarDef* idCompiler::SizeConstant( int size )
 {
 	eval_t eval;
@@ -358,13 +325,6 @@ ID_INLINE idVarDef* idCompiler::SizeConstant( int size )
 	return GetImmediate( &type_argsize, &eval, "" );
 }
 
-/*
-============
-idCompiler::JumpConstant
-
-Creates a def for a jump constant
-============
-*/
 ID_INLINE idVarDef* idCompiler::JumpConstant( int value )
 {
 	eval_t eval;
@@ -374,47 +334,21 @@ ID_INLINE idVarDef* idCompiler::JumpConstant( int value )
 	return GetImmediate( &type_jumpoffset, &eval, "" );
 }
 
-/*
-============
-idCompiler::JumpDef
-
-Creates a def for a relative jump from one code location to another
-============
-*/
 ID_INLINE idVarDef* idCompiler::JumpDef( int jumpfrom, int jumpto )
 {
 	return JumpConstant( jumpto - jumpfrom );
 }
 
-/*
-============
-idCompiler::JumpTo
-
-Creates a def for a relative jump from current code location
-============
-*/
 ID_INLINE idVarDef* idCompiler::JumpTo( int jumpto )
 {
 	return JumpDef( gameLocal.program.NumStatements(), jumpto );
 }
 
-/*
-============
-idCompiler::JumpFrom
-
-Creates a def for a relative jump from code location to current code location
-============
-*/
 ID_INLINE idVarDef* idCompiler::JumpFrom( int jumpfrom )
 {
 	return JumpDef( jumpfrom, gameLocal.program.NumStatements() );
 }
 
-/*
-============
-idCompiler::Divide
-============
-*/
 ID_INLINE float idCompiler::Divide( float numerator, float denominator )
 {
 	if( denominator == 0 ) {
@@ -425,13 +359,6 @@ ID_INLINE float idCompiler::Divide( float numerator, float denominator )
 	return numerator / denominator;
 }
 
-/*
-============
-idCompiler::FindImmediate
-
-tries to find an existing immediate with the same value
-============
-*/
 idVarDef* idCompiler::FindImmediate( const idTypeDef* type, const eval_t* eval, const char* string ) const
 {
 	idVarDef* def;
@@ -503,13 +430,6 @@ idVarDef* idCompiler::FindImmediate( const idTypeDef* type, const eval_t* eval, 
 	return NULL;
 }
 
-/*
-============
-idCompiler::GetImmediate
-
-returns an existing immediate with the same value, or allocates a new one
-============
-*/
 idVarDef* idCompiler::GetImmediate( idTypeDef* type, const eval_t* eval, const char* string )
 {
 	idVarDef* def;
@@ -530,13 +450,6 @@ idVarDef* idCompiler::GetImmediate( idTypeDef* type, const eval_t* eval, const c
 	return def;
 }
 
-/*
-============
-idCompiler::OptimizeOpcode
-
-try to optimize when the operator works on constants only
-============
-*/
 idVarDef* idCompiler::OptimizeOpcode( const opcode_t* op, idVarDef* var_a, idVarDef* var_b )
 {
 	eval_t	   c;
@@ -738,13 +651,6 @@ idVarDef* idCompiler::OptimizeOpcode( const opcode_t* op, idVarDef* var_a, idVar
 	return GetImmediate( type, &c, "" );
 }
 
-/*
-============
-idCompiler::EmitOpcode
-
-Emits a primitive statement, returning the var it places it's value in
-============
-*/
 idVarDef* idCompiler::EmitOpcode( const opcode_t* op, idVarDef* var_a, idVarDef* var_b )
 {
 	statement_t* statement;
@@ -789,25 +695,11 @@ idVarDef* idCompiler::EmitOpcode( const opcode_t* op, idVarDef* var_a, idVarDef*
 	return var_c;
 }
 
-/*
-============
-idCompiler::EmitOpcode
-
-Emits a primitive statement, returning the var it places it's value in
-============
-*/
 ID_INLINE idVarDef* idCompiler::EmitOpcode( int op, idVarDef* var_a, idVarDef* var_b )
 {
 	return EmitOpcode( &opcodes[op], var_a, var_b );
 }
 
-/*
-============
-idCompiler::EmitPush
-
-Emits an opcode to push the variable onto the stack.
-============
-*/
 bool idCompiler::EmitPush( idVarDef* expression, const idTypeDef* funcArg )
 {
 	// RB: added const
@@ -836,13 +728,6 @@ bool idCompiler::EmitPush( idVarDef* expression, const idTypeDef* funcArg )
 	return true;
 }
 
-/*
-==============
-idCompiler::NextToken
-
-Sets token, immediateType, and possibly immediate
-==============
-*/
 void idCompiler::NextToken()
 {
 	int i;
@@ -943,14 +828,6 @@ void idCompiler::NextToken()
 	}
 }
 
-/*
-=============
-idCompiler::ExpectToken
-
-Issues an Error if the current token isn't equal to string
-Gets the next token
-=============
-*/
 void idCompiler::ExpectToken( const char* string )
 {
 	if( token != string ) {
@@ -960,14 +837,6 @@ void idCompiler::ExpectToken( const char* string )
 	NextToken();
 }
 
-/*
-=============
-idCompiler::CheckToken
-
-Returns true and gets the next token if the current token equals string
-Returns false and does nothing otherwise
-=============
-*/
 bool idCompiler::CheckToken( const char* string )
 {
 	if( token != string ) {
@@ -979,13 +848,6 @@ bool idCompiler::CheckToken( const char* string )
 	return true;
 }
 
-/*
-============
-idCompiler::ParseName
-
-Checks to see if the current token is a valid name
-============
-*/
 void idCompiler::ParseName( idStr& name )
 {
 	if( token.type != TT_NAME ) {
@@ -996,13 +858,6 @@ void idCompiler::ParseName( idStr& name )
 	NextToken();
 }
 
-/*
-============
-idCompiler::SkipOutOfFunction
-
-For error recovery, pops out of nested braces
-============
-*/
 void idCompiler::SkipOutOfFunction()
 {
 	while( braceDepth ) {
@@ -1012,13 +867,6 @@ void idCompiler::SkipOutOfFunction()
 	NextToken();
 }
 
-/*
-============
-idCompiler::SkipToSemicolon
-
-For error recovery
-============
-*/
 void idCompiler::SkipToSemicolon()
 {
 	do {
@@ -1030,13 +878,6 @@ void idCompiler::SkipToSemicolon()
 	} while( !eof );
 }
 
-/*
-============
-idCompiler::CheckType
-
-Parses a variable type, including functions types
-============
-*/
 idTypeDef* idCompiler::CheckType()
 {
 	idTypeDef* type;
@@ -1069,13 +910,6 @@ idTypeDef* idCompiler::CheckType()
 	return type;
 }
 
-/*
-============
-idCompiler::ParseType
-
-Parses a variable type, including functions types
-============
-*/
 idTypeDef* idCompiler::ParseType()
 {
 	idTypeDef* type;
@@ -1098,13 +932,6 @@ idTypeDef* idCompiler::ParseType()
 	return type;
 }
 
-/*
-============
-idCompiler::ParseImmediate
-
-Looks for a preexisting constant
-============
-*/
 idVarDef* idCompiler::ParseImmediate()
 {
 	idVarDef* def;
@@ -1115,11 +942,6 @@ idVarDef* idCompiler::ParseImmediate()
 	return def;
 }
 
-/*
-============
-idCompiler::EmitFunctionParms
-============
-*/
 idVarDef* idCompiler::EmitFunctionParms( int op, idVarDef* func, int startarg, int startsize, idVarDef* object )
 {
 	idVarDef*		 e;
@@ -1256,11 +1078,6 @@ idVarDef* idCompiler::EmitFunctionParms( int op, idVarDef* func, int startarg, i
 	return resultDef;
 }
 
-/*
-============
-idCompiler::ParseFunctionCall
-============
-*/
 idVarDef* idCompiler::ParseFunctionCall( idVarDef* funcDef )
 {
 	assert( funcDef );
@@ -1299,11 +1116,6 @@ idVarDef* idCompiler::ParseFunctionCall( idVarDef* funcDef )
 	}
 }
 
-/*
-============
-idCompiler::ParseObjectCall
-============
-*/
 idVarDef* idCompiler::ParseObjectCall( idVarDef* object, idVarDef* func )
 {
 	EmitPush( object, object->TypeDef() );
@@ -1315,11 +1127,6 @@ idVarDef* idCompiler::ParseObjectCall( idVarDef* object, idVarDef* func )
 	}
 }
 
-/*
-============
-idCompiler::ParseEventCall
-============
-*/
 idVarDef* idCompiler::ParseEventCall( idVarDef* object, idVarDef* funcDef )
 {
 	if( callthread ) {
@@ -1343,11 +1150,6 @@ idVarDef* idCompiler::ParseEventCall( idVarDef* object, idVarDef* funcDef )
 	return EmitFunctionParms( OP_EVENTCALL, funcDef, 0, type_object.Size(), NULL );
 }
 
-/*
-============
-idCompiler::ParseSysObjectCall
-============
-*/
 idVarDef* idCompiler::ParseSysObjectCall( idVarDef* funcDef )
 {
 	if( callthread ) {
@@ -1370,11 +1172,6 @@ idVarDef* idCompiler::ParseSysObjectCall( idVarDef* funcDef )
 	return EmitFunctionParms( OP_SYSCALL, funcDef, 0, 0, NULL );
 }
 
-/*
-============
-idCompiler::LookupDef
-============
-*/
 idVarDef* idCompiler::LookupDef( const char* name, const idVarDef* baseobj )
 {
 	idVarDef*		def;
@@ -1460,13 +1257,6 @@ idVarDef* idCompiler::LookupDef( const char* name, const idVarDef* baseobj )
 	return def;
 }
 
-/*
-============
-idCompiler::ParseValue
-
-Returns the def for the current token
-============
-*/
 idVarDef* idCompiler::ParseValue()
 {
 	idVarDef* def;
@@ -1517,11 +1307,6 @@ idVarDef* idCompiler::ParseValue()
 	return def;
 }
 
-/*
-============
-idCompiler::GetTerm
-============
-*/
 idVarDef* idCompiler::GetTerm()
 {
 	idVarDef* e;
@@ -1650,11 +1435,6 @@ idVarDef* idCompiler::GetTerm()
 	return ParseValue();
 }
 
-/*
-==============
-idCompiler::TypeMatches
-==============
-*/
 bool idCompiler::TypeMatches( etype_t type1, etype_t type2 ) const
 {
 	if( type1 == type2 ) {
@@ -1672,11 +1452,6 @@ bool idCompiler::TypeMatches( etype_t type1, etype_t type2 ) const
 	return false;
 }
 
-/*
-==============
-idCompiler::GetExpression
-==============
-*/
 idVarDef* idCompiler::GetExpression( int priority )
 {
 	// RB: added const
@@ -1864,11 +1639,6 @@ idVarDef* idCompiler::GetExpression( int priority )
 	return e;
 }
 
-/*
-================
-idCompiler::PatchLoop
-================
-*/
 void idCompiler::PatchLoop( int start, int continuePos )
 {
 	int			 i;
@@ -1886,11 +1656,6 @@ void idCompiler::PatchLoop( int start, int continuePos )
 	}
 }
 
-/*
-================
-idCompiler::ParseReturnStatement
-================
-*/
 void idCompiler::ParseReturnStatement()
 {
 	idVarDef*		e;
@@ -1945,11 +1710,6 @@ void idCompiler::ParseReturnStatement()
 	EmitOpcode( OP_RETURN, 0, 0 );
 }
 
-/*
-================
-idCompiler::ParseWhileStatement
-================
-*/
 void idCompiler::ParseWhileStatement()
 {
 	idVarDef* e;
@@ -1982,47 +1742,44 @@ void idCompiler::ParseWhileStatement()
 	loopDepth--;
 }
 
-/*
-================
-idCompiler::ParseForStatement
-
-Form of for statement with a counter:
-
-	a = 0;
-start:					<< patch4
-	if ( !( a < 10 ) ) {
-		goto end;		<< patch1
-	} else {
-		goto process;	<< patch3
-	}
-
-increment:				<< patch2
-	a = a + 1;
-	goto start;			<< goto patch4
-
-process:
-	statements;
-	goto increment;		<< goto patch2
-
-end:
-
-Form of for statement without a counter:
-
-	a = 0;
-start:					<< patch2
-	if ( !( a < 10 ) ) {
-		goto end;		<< patch1
-	}
-
-process:
-	statements;
-	goto start;			<< goto patch2
-
-end:
-================
-*/
 void idCompiler::ParseForStatement()
 {
+	/*
+	Form of for statement with a counter:
+
+		a = 0;
+	start:					<< patch4
+		if ( !( a < 10 ) ) {
+			goto end;		<< patch1
+		} else {
+			goto process;	<< patch3
+		}
+
+	increment:				<< patch2
+		a = a + 1;
+		goto start;			<< goto patch4
+
+	process:
+		statements;
+		goto increment;		<< goto patch2
+
+	end:
+
+	Form of for statement without a counter:
+
+		a = 0;
+	start:					<< patch2
+		if ( !( a < 10 ) ) {
+			goto end;		<< patch1
+		}
+
+	process:
+		statements;
+		goto start;			<< goto patch2
+
+	end:
+	*/
+
 	idVarDef* e;
 	int		  start;
 	int		  patch1;
@@ -2089,11 +1846,6 @@ void idCompiler::ParseForStatement()
 	loopDepth--;
 }
 
-/*
-================
-idCompiler::ParseDoWhileStatement
-================
-*/
 void idCompiler::ParseDoWhileStatement()
 {
 	idVarDef* e;
@@ -2117,11 +1869,6 @@ void idCompiler::ParseDoWhileStatement()
 	loopDepth--;
 }
 
-/*
-================
-idCompiler::ParseIfStatement
-================
-*/
 void idCompiler::ParseIfStatement()
 {
 	idVarDef* e;
@@ -2149,11 +1896,6 @@ void idCompiler::ParseIfStatement()
 	}
 }
 
-/*
-============
-idCompiler::ParseStatement
-============
-*/
 void idCompiler::ParseStatement()
 {
 	if( CheckToken( ";" ) ) {
@@ -2221,11 +1963,6 @@ void idCompiler::ParseStatement()
 	ExpectToken( ";" );
 }
 
-/*
-================
-idCompiler::ParseObjectDef
-================
-*/
 void idCompiler::ParseObjectDef( const char* objname )
 {
 	idTypeDef*	objtype;
@@ -2303,13 +2040,6 @@ void idCompiler::ParseObjectDef( const char* objname )
 	ExpectToken( ";" );
 }
 
-/*
-============
-idCompiler::ParseFunction
-
-parse a function type
-============
-*/
 idTypeDef* idCompiler::ParseFunction( idTypeDef* returnType, const char* name )
 {
 	idTypeDef  newtype( ev_function, NULL, name, type_function.Size(), returnType );
@@ -2334,11 +2064,6 @@ idTypeDef* idCompiler::ParseFunction( idTypeDef* returnType, const char* name )
 	return gameLocal.program.GetType( newtype, true );
 }
 
-/*
-================
-idCompiler::ParseFunctionDef
-================
-*/
 void idCompiler::ParseFunctionDef( idTypeDef* returnType, const char* name )
 {
 	idTypeDef*		 type;
@@ -2508,11 +2233,6 @@ void idCompiler::ParseFunctionDef( idTypeDef* returnType, const char* name )
 	scope = oldscope;
 }
 
-/*
-================
-idCompiler::ParseVariableDef
-================
-*/
 void idCompiler::ParseVariableDef( idTypeDef* type, const char* name )
 {
 	idVarDef *def, *def2;
@@ -2595,11 +2315,6 @@ void idCompiler::ParseVariableDef( idTypeDef* type, const char* name )
 	}
 }
 
-/*
-================
-idCompiler::GetTypeForEventArg
-================
-*/
 idTypeDef* idCompiler::GetTypeForEventArg( char argType )
 {
 	idTypeDef* type;
@@ -2645,11 +2360,6 @@ idTypeDef* idCompiler::GetTypeForEventArg( char argType )
 	return type;
 }
 
-/*
-================
-idCompiler::ParseEventDef
-================
-*/
 void idCompiler::ParseEventDef( idTypeDef* returnType, const char* name )
 {
 	const idTypeDef*  expectedType;
@@ -2733,13 +2443,6 @@ void idCompiler::ParseEventDef( idTypeDef* returnType, const char* name )
 	}
 }
 
-/*
-================
-idCompiler::ParseDefs
-
-Called at the outer layer and when a local statement is hit
-================
-*/
 void idCompiler::ParseDefs()
 {
 	idStr	   name;
@@ -2795,13 +2498,6 @@ void idCompiler::ParseDefs()
 	}
 }
 
-/*
-================
-idCompiler::ParseNamespace
-
-Parses anything within a namespace definition
-================
-*/
 void idCompiler::ParseNamespace( idVarDef* newScope )
 {
 	idVarDef* oldscope;
@@ -2825,13 +2521,6 @@ void idCompiler::ParseNamespace( idVarDef* newScope )
 	scope = oldscope;
 }
 
-/*
-============
-idCompiler::CompileFile
-
-compiles the 0 terminated text, adding definitions to the program structure
-============
-*/
 void idCompiler::CompileFile( const char* text, const char* filename, bool toConsole )
 {
 	idTimer compile_time;

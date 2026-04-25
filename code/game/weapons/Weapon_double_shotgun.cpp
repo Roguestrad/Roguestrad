@@ -66,11 +66,6 @@ END_CLASS
 // #define SHOTGUN_BIG_WIDTH 25
 #define SHOTGUN_BIG_HEIGHT				15
 
-/*
-===============
-iceWeaponDoubleShotgun::Init
-===============
-*/
 void iceWeaponDoubleShotgun::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -78,11 +73,6 @@ void iceWeaponDoubleShotgun::Init( idWeapon* weapon )
 	next_attack = 0;
 }
 
-/*
-===============
-iceWeaponDoubleShotgun::Raise
-===============
-*/
 stateResult_t iceWeaponDoubleShotgun::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -103,11 +93,6 @@ stateResult_t iceWeaponDoubleShotgun::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponDoubleShotgun::Lower
-===============
-*/
 stateResult_t iceWeaponDoubleShotgun::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -129,11 +114,6 @@ stateResult_t iceWeaponDoubleShotgun::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponDoubleShotgun::Idle
-===============
-*/
 stateResult_t iceWeaponDoubleShotgun::Idle( stateParms_t* parms )
 {
 	// float currentTime = 0;
@@ -164,11 +144,6 @@ stateResult_t iceWeaponDoubleShotgun::Idle( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponDoubleShotgun::Fire
-===============
-*/
 stateResult_t iceWeaponDoubleShotgun::Fire( stateParms_t* parms )
 {
 	int ammoClip = owner->AmmoInClip();
@@ -207,11 +182,6 @@ stateResult_t iceWeaponDoubleShotgun::Fire( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponDoubleShotgun::Reload
-===============
-*/
 stateResult_t iceWeaponDoubleShotgun::Reload( stateParms_t* parms )
 {
 	enum RELOAD_State { RELOAD_NOTSET = 0, RELOAD_WAIT };
@@ -232,11 +202,6 @@ stateResult_t iceWeaponDoubleShotgun::Reload( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponDoubleShotgun::EjectBrass
-===============
-*/
 void iceWeaponDoubleShotgun::EjectBrass()
 {
 }

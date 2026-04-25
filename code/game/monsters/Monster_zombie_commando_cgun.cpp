@@ -54,11 +54,6 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idAI, iceMonsterZombieCommandoChaingun )
 END_CLASS
 
-/*
-========================
-iceMonsterZombieCommandoChaingun::Init
-========================
-*/
 void iceMonsterZombieCommandoChaingun::Init()
 {
 	fire.LinkTo( scriptObject, "fire" );
@@ -71,11 +66,6 @@ void iceMonsterZombieCommandoChaingun::Init()
 	combat_node = NULL;
 }
 
-/*
-========================
-iceMonsterZombieCommandoChaingun::AI_Begin
-========================
-*/
 void iceMonsterZombieCommandoChaingun::AI_Begin()
 {
 	run_distance = ZOMBIE_CGUN_RUNDISTANCE;
@@ -84,11 +74,6 @@ void iceMonsterZombieCommandoChaingun::AI_Begin()
 	Event_SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterZombieCommandoChaingun::state_Begin
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoChaingun::state_Begin( stateParms_t* parms )
 {
 	fire		= false;
@@ -103,11 +88,6 @@ stateResult_t iceMonsterZombieCommandoChaingun::state_Begin( stateParms_t* parms
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoChaingun::state_Idle
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoChaingun::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -126,11 +106,6 @@ stateResult_t iceMonsterZombieCommandoChaingun::state_Idle( stateParms_t* parms 
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoChaingun::do_attack
-=====================
-*/
 void iceMonsterZombieCommandoChaingun::do_attack( int attack_flags )
 {
 	nextNoFOVAttack = gameLocal.SysScriptTime() + ZOMBIE_CGUN_NOFOVTIME;
@@ -151,11 +126,6 @@ void iceMonsterZombieCommandoChaingun::do_attack( int attack_flags )
 	}
 }
 
-/*
-=====================
-iceMonsterZombieCommandoChaingun::check_attacks
-=====================
-*/
 int iceMonsterZombieCommandoChaingun::check_attacks()
 {
 	float currentTime;
@@ -215,11 +185,6 @@ int iceMonsterZombieCommandoChaingun::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoChaingun::stand_attack
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoChaingun::stand_attack( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -308,11 +273,6 @@ done:
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoChaingun::crouch_attack
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoChaingun::crouch_attack( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -374,11 +334,6 @@ done:
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoChaingun::combat_dodge_left
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoChaingun::combat_dodge_left( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -400,11 +355,6 @@ stateResult_t iceMonsterZombieCommandoChaingun::combat_dodge_left( stateParms_t*
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieCommandoChaingun::combat_dodge_right
-=====================
-*/
 stateResult_t iceMonsterZombieCommandoChaingun::combat_dodge_right( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {

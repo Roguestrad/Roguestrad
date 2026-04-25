@@ -30,34 +30,44 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __FORCE_DRAG_H__
 #define __FORCE_DRAG_H__
 
-/*
-===============================================================================
+/*!
+	\class idForce_Drag
+	\brief A force class that applies drag to physics objects, pulling them toward a specified position.
 
-	Drag force
+	This class implements a drag force that influences physics objects by pulling them toward a target position. It maintains a reference to a physics object and a drag position, and updates the
+   object's velocity based on the damping coefficient. The force is evaluated each frame to apply the appropriate drag effect. The class inherits from idForce and is designed to be used in conjunction
+   with physics simulation systems. It supports initialization with damping parameters, setting of physics objects and drag positions, and evaluation of the drag force during simulation updates.
 
-===============================================================================
 */
-
 class idForce_Drag : public idForce
 {
 public:
 	CLASS_PROTOTYPE( idForce_Drag );
 
+	//! Initializes a new instance of the idForce_Drag class with default values.
 	idForce_Drag();
 	virtual ~idForce_Drag();
-	// initialize the drag force
+
+	//! Initializes the drag force with the specified damping coefficient.
 	void		  Init( float damping );
-	// set physics object being dragged
+
+	//! Sets the physics object being dragged.
 	void		  SetPhysics( idPhysics* physics, int id, const idVec3& p );
-	// set position to drag towards
+
+	//! Sets the position to drag towards.
 	void		  SetDragPosition( const idVec3& pos );
-	// get the position dragged towards
+
+	//! Returns the position that the drag force is pulling towards.
 	const idVec3& GetDragPosition() const;
-	// get the position on the dragged physics object
+
+	//! Returns the position on the dragged physics object.
 	const idVec3  GetDraggedPosition() const;
 
 public: // common force interface
+		//! Updates the physics properties of a dragged object based on the drag force.
 	virtual void Evaluate( int time );
+
+	//! Removes the specified physics object from the drag force if it matches the current physics object.
 	virtual void RemovePhysics( const idPhysics* phys );
 
 private:

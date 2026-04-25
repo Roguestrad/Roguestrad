@@ -45,11 +45,6 @@ enum gamepadMenuCmds_t {
 	GAMEPAD_CMD_THRESHOLD,
 };
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::Initialize
-========================
-*/
 void idMenuScreen_Shell_Gamepad::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -166,11 +161,6 @@ void idMenuScreen_Shell_Gamepad::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::Update
-========================
-*/
 void idMenuScreen_Shell_Gamepad::Update()
 {
 	if( menuData != NULL ) {
@@ -213,22 +203,12 @@ void idMenuScreen_Shell_Gamepad::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Gamepad::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	gamepadData.LoadData();
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Gamepad::HideScreen( const mainMenuTransition_t transitionType )
 {
 	if( gamepadData.IsDataChanged() ) {
@@ -245,11 +225,6 @@ void idMenuScreen_Shell_Gamepad::HideScreen( const mainMenuTransition_t transiti
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::HandleAction
-========================
-*/
 bool idMenuScreen_Shell_Gamepad::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -359,22 +334,12 @@ extern idCVar joy_yawSpeed;
 extern idCVar joy_gammaLook;
 extern idCVar joy_mergedThreshold;
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::idMenuDataSource_AudioSettings::idMenuDataSource_AudioSettings
-========================
-*/
 idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::idMenuDataSource_GamepadSettings()
 {
 	fields.SetNum( MAX_GAMEPAD_FIELDS );
 	originalFields.SetNum( MAX_GAMEPAD_FIELDS );
 }
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::idMenuDataSource_AudioSettings::LoadData
-========================
-*/
 void idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::LoadData()
 {
 	idPlayerProfile* profile = session->GetProfileFromMasterLocalUser();
@@ -390,11 +355,6 @@ void idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::LoadData()
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::idMenuDataSource_AudioSettings::CommitData
-========================
-*/
 void idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::CommitData()
 {
 	in_invertLook.SetBool( fields[GAMEPAD_FIELD_INVERT].ToBool() );
@@ -414,11 +374,6 @@ void idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::CommitData()
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::idMenuDataSource_AudioSettings::AdjustField
-========================
-*/
 void idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::AdjustField( const int fieldIndex, const int adjustAmount )
 {
 	if( fieldIndex == GAMEPAD_FIELD_INVERT || fieldIndex == GAMEPAD_FIELD_LEFTY || fieldIndex == GAMEPAD_FIELD_VIBRATE || fieldIndex == GAMEPAD_FIELD_ACCELERATION ||
@@ -430,11 +385,6 @@ void idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::AdjustField( 
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Gamepad::idMenuDataSource_AudioSettings::IsDataChanged
-========================
-*/
 bool idMenuScreen_Shell_Gamepad::idMenuDataSource_GamepadSettings::IsDataChanged() const
 {
 	if( fields[GAMEPAD_FIELD_INVERT].ToBool() != originalFields[GAMEPAD_FIELD_INVERT].ToBool() ) {

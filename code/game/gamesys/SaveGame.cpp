@@ -312,11 +312,6 @@ void idSaveGame::WriteDict( const idDict* dict )
 	}
 }
 
-/*
-================
-idSaveGame::WriteMaterial
-================
-*/
 void idSaveGame::WriteMaterial( const idMaterial* material )
 {
 	if( !material ) {
@@ -454,11 +449,6 @@ void idSaveGame::WriteRenderEntity( const renderEntity_t& renderEntity )
 	WriteInt( renderEntity.xrayIndex );
 }
 
-/*
-================
-idSaveGame::WriteRenderLight
-================
-*/
 void idSaveGame::WriteRenderLight( const renderLight_t& renderLight )
 {
 	int i;

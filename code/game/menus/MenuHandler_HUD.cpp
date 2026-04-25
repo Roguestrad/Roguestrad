@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int TIP_DISPLAY_TIME = 5000;
 
-/*
-========================
-idMenuHandler_HUD::Update
-========================
-*/
 void			 idMenuHandler_HUD::Update()
 {
 	if( gui == NULL || !gui->IsActive() ) {
@@ -80,11 +75,6 @@ void			 idMenuHandler_HUD::Update()
 	idMenuHandler::Update();
 }
 
-/*
-========================
-idMenuHandler_HUD::ActivateMenu
-========================
-*/
 void idMenuHandler_HUD::ActivateMenu( bool show )
 {
 	idMenuHandler::ActivateMenu( show );
@@ -103,11 +93,6 @@ void idMenuHandler_HUD::ActivateMenu( bool show )
 	}
 }
 
-/*
-========================
-idMenuHandler_HUD::Initialize
-========================
-*/
 void idMenuHandler_HUD::Initialize( const char* swfFile, idSoundWorld* sw )
 {
 	idMenuHandler::Initialize( swfFile, sw );
@@ -127,11 +112,6 @@ void idMenuHandler_HUD::Initialize( const char* swfFile, idSoundWorld* sw )
 	BIND_HUD_SCREEN( HUD_AREA_PLAYING, idMenuScreen_HUD, this );
 }
 
-/*
-========================
-idMenuHandler_HUD::GetMenuScreen
-========================
-*/
 idMenuScreen* idMenuHandler_HUD::GetMenuScreen( int index )
 {
 	if( index < 0 || index >= HUD_NUM_AREAS ) {
@@ -141,22 +121,12 @@ idMenuScreen* idMenuHandler_HUD::GetMenuScreen( int index )
 	return menuScreens[index];
 }
 
-/*
-========================
-idMenuHandler_HUD::GetHud
-========================
-*/
 idMenuScreen_HUD* idMenuHandler_HUD::GetHud()
 {
 	idMenuScreen_HUD* screen = dynamic_cast<idMenuScreen_HUD*>( menuScreens[HUD_AREA_PLAYING] );
 	return screen;
 }
 
-/*
-========================
-idMenuHandler_HUD::ShowTip
-========================
-*/
 void idMenuHandler_HUD::ShowTip( const char* title, const char* tip, bool autoHide )
 {
 	// SRS - Changed to assign autoHide to autoHideTip vs. assign autoHideTip to itself
@@ -169,11 +139,6 @@ void idMenuHandler_HUD::ShowTip( const char* title, const char* tip, bool autoHi
 	}
 }
 
-/*
-========================
-idMenuHandler_HUD::HideTip
-========================
-*/
 void idMenuHandler_HUD::HideTip()
 {
 	idMenuScreen_HUD* screen = GetHud();

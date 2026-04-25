@@ -30,33 +30,42 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __GAME_WORLDSPAWN_H__
 #define __GAME_WORLDSPAWN_H__
 
-/*
-===============================================================================
+/*!
+	\class idWorldspawn
+	\brief The idWorldspawn class manages the main world entity and its initialization, saving, and restoration behavior.
 
-  World entity.
+	This class represents the primary world entity that is instantiated at the start of a map. It handles the setup of the game environment, including music track assignment and background music
+   playback. The class is responsible for maintaining the world's state during save and load operations. It inherits from idEntity and is designed to be a singleton-like entity that governs core game
+   world properties and behaviors. The class ensures proper cleanup of world references during destruction and provides mechanisms to handle the world's persistence.
 
-===============================================================================
 */
-
 class idWorldspawn : public idEntity
 {
 public:
 	CLASS_PROTOTYPE( idWorldspawn );
 
+	//! Destructor for the idWorldspawn class that clears the world reference in gameLocal.
 	~idWorldspawn();
 
+	//! Initializes the worldspawn entity and sets up the game environment.
 	void Spawn();
 
+	//! Saves the worldspawn state to the provided save file.
 	void Save( idSaveGame* savefile ) const;
+
+	//! Restores the worldspawn state from a save file.
 	void Restore( idRestoreGame* savefile );
 
+	//! Plays the background music track if one is set.
 	void Event_PlayBackgroundMusic();
 
 private:
+	//! Sets the music track for the worldspawn based on spawn arguments or scans for available tracks.
 	void  SetMusicTrack();
 
 	idStr musicTrack;
 
+	//! Error message when attempting to remove the world entity.
 	void  Event_Remove();
 };
 

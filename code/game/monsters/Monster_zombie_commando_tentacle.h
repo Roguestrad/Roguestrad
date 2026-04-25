@@ -30,24 +30,49 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterZombieCommandoTentacle
+	\brief Represents anmonster zombie commando tentacle AI entity with specialized attack behaviors.
+
+	This class implements a specialized AI entity that extends the base zombie AI functionality to include tentacle-specific attack patterns. The entity manages multiple states including idle, combat,
+   and attack execution, with distinct behaviors for tentacle attacks and melee combat. It handles initialization of the AI system, state management, and attack flag checking to determine available
+   actions. The tentacle attack functionality includes start and end methods that control damage infliction during combat sequences.
+
+*/
 class iceMonsterZombieCommandoTentacle : public iceMonsterZombie
 {
 	CLASS_PROTOTYPE( iceMonsterZombieCommandoTentacle );
 
 public:
+	//! Initializes the AI system
 	virtual void Init() override;
+
+	//! Initializes the monster zombie commando tentacle AI state.
 	virtual void AI_Begin() override;
 
+	//! Returns attack flags indicating which attacks are available for the tentacle.
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action with the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the zombie commando tentacle state by setting up idle animations and move type.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for the monster zombie commando tentacle, transitioning to combat when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Executes a tentacle attack state for the monster zombie commando.
 	stateResult_t combat_tentacle( stateParms_t* parms );
+
+	//! Executes a melee attack animation and handles damage for the zombie commander tentacle monster.
 	stateResult_t combat_melee( stateParms_t* parms );
 
+	//! Ends the tentacle attack by disabling tentacle damage.
 	void		  tentacle_attack_end();
+
+	//! Starts the tentacle attack by enabling damage infliction.
 	void		  tentacle_attack_start();
 
 private:

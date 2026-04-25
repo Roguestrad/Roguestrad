@@ -74,18 +74,6 @@ const columnGameMode_t gameMode_columnDefs[] = {
 	{ public_CaptureTheFlag, ARRAY_COUNT( public_CaptureTheFlag ), RANK_GREATEST_FIRST, false, false, "CTF" },	 // CAPTURE THE FLAG
 };
 
-/*
-=====================================
-RetreiveLeaderboardID
-
-Each map will move in blocks of n*modes.
-ex. map 0 will have 0 - 4 Leaderboard id's blocked out.
-	map 1 will have 5 - 10 leaderboard id's blocked out.
-
-	if gamemode is added it will move in blocks of ARRAY_COUNT( modes )
-
-=====================================
-*/
 int LeaderboardLocal_GetID( int mapIndex, int gametype )
 {
 	assert( gametype > GAME_RANDOM );
@@ -93,11 +81,6 @@ int LeaderboardLocal_GetID( int mapIndex, int gametype )
 	return mapIndex * ARRAY_COUNT( gameMode_columnDefs ) + gametype;
 }
 
-/*
-=====================================
-LeaderboardLocal_Init
-=====================================
-*/
 void LeaderboardLocal_Init()
 {
 	const idList<mpMap_t> maps = common->GetMapList();
@@ -133,11 +116,6 @@ void LeaderboardLocal_Init()
 	}
 }
 
-/*
-=====================================
-LeaderboardLocal_Shutdown
-=====================================
-*/
 void LeaderboardLocal_Shutdown()
 {
 	Sys_DestroyLeaderboardDefs();
@@ -230,8 +208,13 @@ void			 LeaderboardLocal_Upload( lobbyUserID_t lobbyUserID, int gameType, leader
 	}
 }
 
+/*!
+	\class idLeaderboardCallbackTest
+	\brief A test callback class for leaderboard data retrieval.
+*/
 class idLeaderboardCallbackTest : public idLeaderboardCallback
 {
+	//! Prints leaderboard information retrieved in a user callback.
 	void Call()
 	{
 		idLib::Printf( "Leaderboard information retrieved in user callback.\n" );
@@ -244,12 +227,15 @@ class idLeaderboardCallbackTest : public idLeaderboardCallback
 			idLib::Printf( "\n" );
 		}
 	}
+
+	//! Creates and returns a new instance of the idLeaderboardCallbackTest class as a clone of the current object.
 	idLeaderboardCallback* Clone() const
 	{
 		return new( TAG_PSN ) idLeaderboardCallbackTest( *this );
 	}
 };
 
+//! Tests downloading leaderboard data for a specified leaderboard ID, start, and end positions.
 CONSOLE_COMMAND( testLeaderboardDownload, "<id 0 - n > <start = 1> <end = 100>", 0 )
 {
 	idLeaderboardCallbackTest leaderboardCallbackTest;
@@ -279,6 +265,7 @@ CONSOLE_COMMAND( testLeaderboardDownload, "<id 0 - n > <start = 1> <end = 100>",
 	}
 }
 
+//! Uploads leaderboard statistics for a test game session.
 CONSOLE_COMMAND( testLeaderboardUpload, "<gameType 0 - 4 > <frags = 0> <wins = 1>", 0 )
 {
 	idLobbyBase&  lobby = session->GetActingGameStateLobbyBase();
@@ -307,6 +294,7 @@ CONSOLE_COMMAND( testLeaderboardUpload, "<gameType 0 - 4 > <frags = 0> <wins = 1
 	session->LeaderboardFlush();
 }
 
+//! Sends mock leaderboard statistics to all connected clients for testing purposes.
 CONSOLE_COMMAND( testLeaderboardUpload_SendToClients, "<gameType 0 - 4 > <frags = 0> <wins = 1>", 0 )
 {
 	for( int playerIdx = 0; playerIdx < gameLocal.numClients; playerIdx++ ) {

@@ -88,11 +88,6 @@ static const char* const CONTROL_SPRITE_NAMES[MAX_MENU_OPTION_TYPES] = {
 };
 compile_time_assert( sizeof( CONTROL_SPRITE_NAMES ) / sizeof( CONTROL_SPRITE_NAMES[0] ) == MAX_MENU_OPTION_TYPES );
 
-/*
-========================
-idMenuWidget_Button::Update
-========================
-*/
 void idMenuWidget_Button::Update()
 {
 	if( menuData != NULL && menuData->GetGUI() != NULL ) {
@@ -154,11 +149,6 @@ void idMenuWidget_Button::Update()
 	hitBox->Set( "onRollOut", new( TAG_SWF ) WrapWidgetSWFEvent( this, WIDGET_EVENT_ROLL_OUT, 0 ) );
 }
 
-/*
-========================
-idMenuWidget_Button::ExecuteEvent
-========================
-*/
 bool idMenuWidget_Button::ExecuteEvent( const idWidgetEvent& event )
 {
 	bool handled = false;
@@ -220,11 +210,6 @@ bool idMenuWidget_Button::ExecuteEvent( const idWidgetEvent& event )
 	return handled;
 }
 
-/*
-========================
-idMenuWidget_Button::AddValue
-========================
-*/
 void idMenuWidget_Button::SetValues( idList<idStr>& list )
 {
 	values.Clear();
@@ -233,21 +218,11 @@ void idMenuWidget_Button::SetValues( idList<idStr>& list )
 	}
 }
 
-/*
-========================
-idMenuWidget_Button::GetValue
-========================
-*/
 const idStr& idMenuWidget_Button::GetValue( int index ) const
 {
 	return values[index];
 }
 
-/*
-========================
-idMenuWidget_Button::SetupTransitionInfo
-========================
-*/
 void idMenuWidget_Button::SetupTransitionInfo( widgetTransition_t& trans, const widgetState_t buttonState, const animState_t sourceAnimState, const animState_t destAnimState ) const
 {
 	trans.prefixes.Clear();
@@ -263,13 +238,6 @@ void idMenuWidget_Button::SetupTransitionInfo( widgetTransition_t& trans, const 
 	trans.prefixes.Append( "" );
 }
 
-/*
-========================
-idMenuWidget_Button::AnimateToState
-
-Plays an animation from the current state to the target state.
-========================
-*/
 void idMenuWidget_Button::AnimateToState( const animState_t targetAnimState, const bool force )
 {
 	if( !force && targetAnimState == GetAnimState() ) {
@@ -305,12 +273,7 @@ void idMenuWidget_Button::AnimateToState( const animState_t targetAnimState, con
 
 //*****************************************************************************************************************
 // CONTROL BUTTON
-
-/*
-========================
-idMenuWidget_ControlButton::Update
-========================
-*/
+//*****************************************************************************************************************
 void idMenuWidget_ControlButton::Update()
 {
 	if( GetSprite() == NULL ) {
@@ -410,11 +373,6 @@ void idMenuWidget_ControlButton::Update()
 	hitBox->Set( "onRollOut", new( TAG_SWF ) WrapWidgetSWFEvent( this, WIDGET_EVENT_ROLL_OUT, 0 ) );
 }
 
-/*
-========================
-idMenuWidget_ControlButton::Update
-========================
-*/
 void idMenuWidget_ControlButton::SetupEvents( int delay, int index )
 {
 	AddEventAction( WIDGET_EVENT_SCROLL_LEFT ).Set( WIDGET_ACTION_START_REPEATER, WIDGET_ACTION_ADJUST_FIELD, -1, delay, index );
@@ -430,12 +388,6 @@ void idMenuWidget_ControlButton::SetupEvents( int delay, int index )
 //****************************************************************
 // SERVER BUTTON
 //****************************************************************
-
-/*
-========================
-idMenuWidget_ServerButton::Update
-========================
-*/
 void idMenuWidget_ServerButton::Update()
 {
 	if( GetSprite() == NULL ) {
@@ -463,11 +415,6 @@ void idMenuWidget_ServerButton::Update()
 	hitBox->Set( "onRollOut", new( TAG_SWF ) WrapWidgetSWFEvent( this, WIDGET_EVENT_ROLL_OUT, 0 ) );
 }
 
-/*
-========================
-idMenuWidget_ServerButton::SetButtonInfo
-========================
-*/
 void idMenuWidget_ServerButton::SetButtonInfo( idStr name_, idStrId mapName_, idStr modeName_, int index_, int players_, int maxPlayers_, bool joinable_, bool validMap_ )
 {
 	serverName = name_;
@@ -496,12 +443,6 @@ void idMenuWidget_ServerButton::SetButtonInfo( idStr name_, idStrId mapName_, id
 //****************************************************************
 // LOBBY BUTTON
 //****************************************************************
-
-/*
-========================
-idMenuWidget_LobbyButton::Update
-========================
-*/
 void idMenuWidget_LobbyButton::Update()
 {
 	if( GetSprite() == NULL ) {
@@ -534,11 +475,6 @@ void idMenuWidget_LobbyButton::Update()
 	hitBox->Set( "onRollOut", new( TAG_SWF ) WrapWidgetSWFEvent( this, WIDGET_EVENT_ROLL_OUT, 0 ) );
 }
 
-/*
-========================
-idMenuWidget_LobbyButton::SetButtonInfo
-========================
-*/
 void idMenuWidget_LobbyButton::SetButtonInfo( idStr name_, voiceStateDisplay_t voiceState_ )
 {
 	name	   = name_;
@@ -548,12 +484,6 @@ void idMenuWidget_LobbyButton::SetButtonInfo( idStr name_, voiceStateDisplay_t v
 //****************************************************************
 // SCOREBOARD BUTTON
 //****************************************************************
-
-/*
-========================
-idMenuWidget_ScoreboardButton::Update
-========================
-*/
 void idMenuWidget_ScoreboardButton::Update()
 {
 	if( GetSprite() == NULL ) {
@@ -598,11 +528,6 @@ void idMenuWidget_ScoreboardButton::Update()
 	hitBox->Set( "onRollOut", new( TAG_SWF ) WrapWidgetSWFEvent( this, WIDGET_EVENT_ROLL_OUT, 0 ) );
 }
 
-/*
-========================
-idMenuWidget_ScoreboardButton::SetButtonInfo
-========================
-*/
 void idMenuWidget_ScoreboardButton::SetButtonInfo( int index_, idList<idStr>& list, voiceStateDisplay_t voiceState_ )
 {
 	index	   = index_;

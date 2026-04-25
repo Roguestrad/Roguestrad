@@ -47,22 +47,12 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idAI, iceMonsterDemonImp )
 END_CLASS
 
-/*
-=================
-iceMonsterDemonImp::Init
-=================
-*/
 void iceMonsterDemonImp::Init()
 {
 	jumpVelocity.LinkTo( scriptObject, "jumpVelocity" );
 	range_attack_anim.LinkTo( scriptObject, "range_attack_anim" );
 }
 
-/*
-=================
-iceMonsterDemonImp::AI_Begin
-=================
-*/
 void iceMonsterDemonImp::AI_Begin()
 {
 	run_distance = IMP_RUNDISTANCE;
@@ -71,11 +61,6 @@ void iceMonsterDemonImp::AI_Begin()
 	Event_SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterDemonImp::state_Begin
-=====================
-*/
 stateResult_t iceMonsterDemonImp::state_Begin( stateParms_t* parms )
 {
 	Event_AnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 0 );
@@ -86,11 +71,6 @@ stateResult_t iceMonsterDemonImp::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterDemonImp::state_Idle
-=====================
-*/
 stateResult_t iceMonsterDemonImp::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -110,11 +90,6 @@ stateResult_t iceMonsterDemonImp::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterDemonImp::do_attack
-=====================
-*/
 void iceMonsterDemonImp::do_attack( int attack_flags )
 {
 	nextNoFOVAttack = gameLocal.SysScriptTime() + IMP_NOFOVTIME;
@@ -134,11 +109,6 @@ void iceMonsterDemonImp::do_attack( int attack_flags )
 	}
 }
 
-/*
-=====================
-iceMonsterDemonImp::check_attacks
-=====================
-*/
 int iceMonsterDemonImp::check_attacks()
 {
 	float  range;
@@ -222,11 +192,6 @@ int iceMonsterDemonImp::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-iceMonsterDemonImp::combat_range
-=====================
-*/
 stateResult_t iceMonsterDemonImp::combat_range( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -249,11 +214,6 @@ stateResult_t iceMonsterDemonImp::combat_range( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterDemonImp::combat_leap
-=====================
-*/
 stateResult_t iceMonsterDemonImp::combat_leap( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -275,11 +235,6 @@ stateResult_t iceMonsterDemonImp::combat_leap( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterDemonImp::combat_melee
-=====================
-*/
 stateResult_t iceMonsterDemonImp::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -302,11 +257,6 @@ stateResult_t iceMonsterDemonImp::combat_melee( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-monster_demon_imp::combat_dodge_left
-=====================
-*/
 stateResult_t iceMonsterDemonImp::combat_dodge_left( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -327,11 +277,6 @@ stateResult_t iceMonsterDemonImp::combat_dodge_left( stateParms_t* parms )
 	nextDodge = gameLocal.DelayTime( IMP_DODGE_RATE );
 }
 
-/*
-=====================
-monster_demon_imp::combat_dodge_right
-=====================
-*/
 stateResult_t iceMonsterDemonImp::combat_dodge_right( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {

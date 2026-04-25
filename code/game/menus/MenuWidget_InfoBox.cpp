@@ -30,21 +30,11 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuWidget_InfoBox::Update
-========================
-*/
 void idMenuWidget_InfoBox::Initialize( idMenuHandler* data )
 {
 	idMenuWidget::Initialize( data );
 }
 
-/*
-========================
-idMenuWidget_InfoBox::Update
-========================
-*/
 void idMenuWidget_InfoBox::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -79,11 +69,6 @@ void idMenuWidget_InfoBox::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_InfoBox::ObserveEvent
-========================
-*/
 void idMenuWidget_InfoBox::ResetInfoScroll()
 {
 	idSWFScriptObject& root = GetSWFObject()->GetRootObject();
@@ -101,11 +86,6 @@ void idMenuWidget_InfoBox::ResetInfoScroll()
 	}
 }
 
-/*
-========================
-idMenuWidget_InfoBox::Scroll
-========================
-*/
 void idMenuWidget_InfoBox::Scroll( int d )
 {
 	idSWFTextInstance* txtBody = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtBody" );
@@ -119,11 +99,6 @@ void idMenuWidget_InfoBox::Scroll( int d )
 	}
 }
 
-/*
-========================
-idMenuWidget_InfoBox::GetScroll
-========================
-*/
 int idMenuWidget_InfoBox::GetScroll()
 {
 	idSWFTextInstance* txtBody = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtBody" );
@@ -134,11 +109,6 @@ int idMenuWidget_InfoBox::GetScroll()
 	return 0;
 }
 
-/*
-========================
-idMenuWidget_InfoBox::GetMaxScroll
-========================
-*/
 int idMenuWidget_InfoBox::GetMaxScroll()
 {
 	idSWFTextInstance* txtBody = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtBody" );
@@ -149,11 +119,6 @@ int idMenuWidget_InfoBox::GetMaxScroll()
 	return 0;
 }
 
-/*
-========================
-idMenuWidget_InfoBox::SetScroll
-========================
-*/
 void idMenuWidget_InfoBox::SetScroll( int scroll )
 {
 	idSWFTextInstance* txtBody = GetSprite()->GetScriptObject()->GetNestedText( "info", "txtBody" );
@@ -163,21 +128,11 @@ void idMenuWidget_InfoBox::SetScroll( int scroll )
 	}
 }
 
-/*
-========================
-idMenuWidget_InfoBox::SetScrollbar
-========================
-*/
 void idMenuWidget_InfoBox::SetScrollbar( idMenuWidget_ScrollBar* bar )
 {
 	scrollbar = bar;
 }
 
-/*
-========================
-idMenuWidget_InfoBox::ObserveEvent
-========================
-*/
 bool idMenuWidget_InfoBox::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	const idSWFParmList& parms = action.GetParms();
@@ -193,11 +148,6 @@ bool idMenuWidget_InfoBox::HandleAction( idWidgetAction& action, const idWidgetE
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuWidget_InfoBox::ObserveEvent
-========================
-*/
 void idMenuWidget_InfoBox::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	switch( event.type ) {

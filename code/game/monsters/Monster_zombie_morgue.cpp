@@ -36,30 +36,15 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( iceMonsterZombie, iceMonsterZombieMorgue )
 END_CLASS
 
-/*
-=================
-iceMonsterZombieMorgue::Init
-=================
-*/
 void iceMonsterZombieMorgue::Init()
 {
 }
 
-/*
-=================
-iceMonsterZombieMorgue::AI_Begin
-=================
-*/
 void iceMonsterZombieMorgue::AI_Begin()
 {
 	Event_SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterZombieMorgue::state_Begin
-=====================
-*/
 stateResult_t iceMonsterZombieMorgue::state_Begin( stateParms_t* parms )
 {
 	Event_AnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 8 );
@@ -70,11 +55,6 @@ stateResult_t iceMonsterZombieMorgue::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieMorgue::state_Idle
-=====================
-*/
 stateResult_t iceMonsterZombieMorgue::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -89,11 +69,6 @@ stateResult_t iceMonsterZombieMorgue::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-monster_zombie::combat_melee
-=====================
-*/
 stateResult_t iceMonsterZombieMorgue::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -118,11 +93,6 @@ stateResult_t iceMonsterZombieMorgue::combat_melee( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieMorgue::check_attacks
-=====================
-*/
 int iceMonsterZombieMorgue::check_attacks()
 {
 	int attack_flags;
@@ -135,11 +105,6 @@ int iceMonsterZombieMorgue::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-iceMonsterZombieMorgue::do_attack
-=====================
-*/
 void iceMonsterZombieMorgue::do_attack( int attack_flags )
 {
 	if( attack_flags & ATTACK_MELEE ) {

@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../Game_local.h"
 
 const static int NUM_SINGLEPLAYER_OPTIONS = 8;
-/*
-========================
-idMenuScreen_Shell_Singleplayer::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_Singleplayer::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -84,11 +79,6 @@ void			 idMenuScreen_Shell_Singleplayer::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Singleplayer::Update
-========================
-*/
 void idMenuScreen_Shell_Singleplayer::Update()
 {
 	if( menuData != NULL ) {
@@ -131,11 +121,6 @@ void idMenuScreen_Shell_Singleplayer::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Singleplayer::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Singleplayer::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idList<idList<idStr, TAG_IDLIB_LIST_MENU>, TAG_IDLIB_LIST_MENU> menuOptions;
@@ -199,21 +184,11 @@ void idMenuScreen_Shell_Singleplayer::ShowScreen( const mainMenuTransition_t tra
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Singleplayer::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Singleplayer::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Singleplayer::ContinueGame
-========================
-*/
 void idMenuScreen_Shell_Singleplayer::ContinueGame()
 {
 	const saveGameDetailsList_t& saveGameInfo = session->GetSaveGameManager().GetEnumeratedSavegames();
@@ -243,11 +218,6 @@ void idMenuScreen_Shell_Singleplayer::ContinueGame()
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Singleplayer::HandleAction
-========================
-*/
 bool idMenuScreen_Shell_Singleplayer::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

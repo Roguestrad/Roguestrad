@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idForce, idForce_Grab )
 END_CLASS
 
-/*
-================
-idForce_Grab::Save
-================
-*/
 void idForce_Grab::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteFloat( damping );
@@ -48,11 +43,6 @@ void idForce_Grab::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( id );
 }
 
-/*
-================
-idForce_Grab::Restore
-================
-*/
 void idForce_Grab::Restore( idRestoreGame* savefile )
 {
 	// Note: Owner needs to call set physics
@@ -62,11 +52,6 @@ void idForce_Grab::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( id );
 }
 
-/*
-================
-idForce_Grab::idForce_Grab
-================
-*/
 idForce_Grab::idForce_Grab()
 {
 	damping = 0.5f;
@@ -83,11 +68,6 @@ idForce_Grab::~idForce_Grab()
 {
 }
 
-/*
-================
-idForce_Grab::Init
-================
-*/
 void idForce_Grab::Init( float damping )
 {
 	if( damping >= 0.0f && damping < 1.0f ) {
@@ -95,11 +75,6 @@ void idForce_Grab::Init( float damping )
 	}
 }
 
-/*
-================
-idForce_Grab::SetPhysics
-================
-*/
 void idForce_Grab::SetPhysics( idPhysics* phys, int id, const idVec3& goal )
 {
 	this->physics	   = phys;
@@ -107,31 +82,16 @@ void idForce_Grab::SetPhysics( idPhysics* phys, int id, const idVec3& goal )
 	this->goalPosition = goal;
 }
 
-/*
-================
-idForce_Grab::SetGoalPosition
-================
-*/
 void idForce_Grab::SetGoalPosition( const idVec3& goal )
 {
 	this->goalPosition = goal;
 }
 
-/*
-=================
-idForce_Grab::GetDistanceToGoal
-=================
-*/
 float idForce_Grab::GetDistanceToGoal()
 {
 	return distanceToGoal;
 }
 
-/*
-================
-idForce_Grab::Evaluate
-================
-*/
 void idForce_Grab::Evaluate( int time )
 {
 	if( !physics ) {
@@ -179,11 +139,6 @@ void idForce_Grab::Evaluate( int time )
 	}
 }
 
-/*
-================
-idForce_Grab::RemovePhysics
-================
-*/
 void idForce_Grab::RemovePhysics( const idPhysics* phys )
 {
 	if( physics == phys ) {

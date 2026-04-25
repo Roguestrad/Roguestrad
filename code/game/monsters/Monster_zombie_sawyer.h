@@ -30,19 +30,37 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterZombieSawyer
+	\brief A specialized zombie monster class implementing sawyer attack behavior.
+
+	This class extends the base zombie monster functionality to implement a specific attack pattern known as the sawyer behavior. The implementation includes initialization of AI states, handling of
+   idle and combat states, and execution of melee attacks with specific animation and effect handling. The class manages its own state transitions and attack execution based on combat conditions and
+   available attack flags.
+
+*/
 class iceMonsterZombieSawyer : public iceMonsterZombie
 {
 	CLASS_PROTOTYPE( iceMonsterZombieSawyer );
 
 public:
+	//! Initializes the monster zombie sawyer AI state.
 	virtual void AI_Begin() override;
 
+	//! Returns attack flags indicating which melee attacks are available
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action with the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the zombie sawyer monster state by setting up idle animations and move type.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for the monster zombie sawyer, transitioning to combat when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Performs a melee attack action for the monster zombie sawyer, handling animation states and hit effects.
 	stateResult_t combat_melee( stateParms_t* parms );
 
 	float		  next_hit_time;

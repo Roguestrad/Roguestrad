@@ -30,19 +30,40 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterZombieBernie
+	\brief A specialized zombie monster implementation with ice-themed abilities and AI behavior.
+
+	This class represents a zombie monster variant with ice-themed characteristics and specific AI behaviors. It inherits from iceMonsterZombie and implements custom states for initialization, idle
+   behavior, and combat actions. The class manages the monster's animation states and combat responses through overridden methods. The AI system is initialized through the Init and AI_Begin methods,
+   while combat functionality is handled via check_attacks and do_attack overrides. The state machine controls the monster's behavior flow from beginning states through idle periods to combat
+   engagement.
+
+*/
 class iceMonsterZombieBernie : public iceMonsterZombie
 {
 	CLASS_PROTOTYPE( iceMonsterZombieBernie );
 
 public:
+	//! Initializes the AI system.
 	virtual void Init() override;
+
+	//! Initializes the AI behavior for the monster zombie bernie.
 	virtual void AI_Begin() override;
 
+	//! Returns attack flags indicating which attacks are available.
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action with the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the zombie bernie monster state by setting up idle animations and move type.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for the monster zombie bernie, transitioning to combat when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Handles the melee combat state for the zombie monster, managing the animation and attack sequence.
 	stateResult_t combat_melee( stateParms_t* parms );
 };

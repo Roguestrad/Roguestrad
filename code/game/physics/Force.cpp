@@ -37,31 +37,16 @@ END_CLASS
 
 idList<idForce*, TAG_IDLIB_LIST_PHYSICS> idForce::forceList;
 
-/*
-================
-idForce::idForce
-================
-*/
 idForce::idForce()
 {
 	forceList.Append( this );
 }
 
-/*
-================
-idForce::~idForce
-================
-*/
 idForce::~idForce()
 {
 	forceList.Remove( this );
 }
 
-/*
-================
-idForce::DeletePhysics
-================
-*/
 void idForce::DeletePhysics( const idPhysics* phys )
 {
 	int i;
@@ -71,30 +56,15 @@ void idForce::DeletePhysics( const idPhysics* phys )
 	}
 }
 
-/*
-================
-idForce::ClearForceList
-================
-*/
 void idForce::ClearForceList()
 {
 	forceList.Clear();
 }
 
-/*
-================
-idForce::Evaluate
-================
-*/
 void idForce::Evaluate( int time )
 {
 }
 
-/*
-================
-idForce::RemovePhysics
-================
-*/
 void idForce::RemovePhysics( const idPhysics* phys )
 {
 }

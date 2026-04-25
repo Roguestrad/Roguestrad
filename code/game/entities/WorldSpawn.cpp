@@ -54,11 +54,6 @@ EVENT( EV_SafeRemove, idWorldspawn::Event_Remove )
 EVENT( EV_PlayBackgroundMusic, idWorldspawn::Event_PlayBackgroundMusic )
 END_CLASS
 
-/*
-================
-idWorldspawn::Spawn
-================
-*/
 void idWorldspawn::Spawn()
 {
 	idStr			  scriptname;
@@ -107,20 +102,10 @@ void idWorldspawn::Spawn()
 	}
 }
 
-/*
-=================
-idWorldspawn::Save
-=================
-*/
 void idWorldspawn::Save( idSaveGame* savefile ) const
 {
 }
 
-/*
-=================
-idWorldspawn::Restore
-=================
-*/
 void idWorldspawn::Restore( idRestoreGame* savefile )
 {
 	assert( gameLocal.world == this );
@@ -136,11 +121,6 @@ void idWorldspawn::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-================
-idWorldspawn::~idWorldspawn
-================
-*/
 idWorldspawn::~idWorldspawn()
 {
 	if( gameLocal.world == this ) {
@@ -148,17 +128,11 @@ idWorldspawn::~idWorldspawn()
 	}
 }
 
-/*
-================
-idWorldspawn::Event_Remove
-================
-*/
 void idWorldspawn::Event_Remove()
 {
 	gameLocal.Error( "Tried to remove world" );
 }
 
-// RB begin
 void idWorldspawn::SetMusicTrack()
 {
 	idStr music = spawnArgs.GetString( "music", "" );

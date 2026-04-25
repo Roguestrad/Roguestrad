@@ -54,11 +54,6 @@ EVENT( EV_RespawnItem, idItem::Event_Respawn )
 EVENT( EV_RespawnFx, idItem::Event_RespawnFx )
 END_CLASS
 
-/*
-================
-idItem::idItem
-================
-*/
 idItem::idItem() :
 	clientPredictPickupMilliseconds( 0 )
 {
@@ -74,11 +69,6 @@ idItem::idItem() :
 	fl.networkSync = true;
 }
 
-/*
-================
-idItem::~idItem
-================
-*/
 idItem::~idItem()
 {
 	// remove the highlight shell
@@ -87,11 +77,6 @@ idItem::~idItem()
 	}
 }
 
-/*
-================
-idItem::Save
-================
-*/
 void idItem::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteVec3( orgOrigin );
@@ -107,11 +92,6 @@ void idItem::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( lastRenderViewTime );
 }
 
-/*
-================
-idItem::Restore
-================
-*/
 void idItem::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadVec3( orgOrigin );
@@ -129,11 +109,6 @@ void idItem::Restore( idRestoreGame* savefile )
 	itemShellHandle = -1;
 }
 
-/*
-================
-idItem::UpdateRenderEntity
-================
-*/
 bool idItem::UpdateRenderEntity( renderEntity_s* renderEntity, const renderView_t* renderView ) const
 {
 	if( lastRenderViewTime == renderView->time[timeGroup] ) {
@@ -188,11 +163,6 @@ bool idItem::UpdateRenderEntity( renderEntity_s* renderEntity, const renderView_
 	return true;
 }
 
-/*
-================
-idItem::ModelCallback
-================
-*/
 bool idItem::ModelCallback( renderEntity_t* renderEntity, const renderView_t* renderView )
 {
 	const idItem* ent;
@@ -211,11 +181,6 @@ bool idItem::ModelCallback( renderEntity_t* renderEntity, const renderView_t* re
 	return ent->UpdateRenderEntity( renderEntity, renderView );
 }
 
-/*
-================
-idItem::Think
-================
-*/
 void idItem::Think()
 {
 	if( thinkFlags & TH_THINK ) {
@@ -238,11 +203,6 @@ void idItem::Think()
 	Present();
 }
 
-/*
-================
-idItem::Present
-================
-*/
 void idItem::Present()
 {
 	idEntity::Present();
@@ -266,11 +226,6 @@ void idItem::Present()
 	}
 }
 
-/*
-================
-idItem::Spawn
-================
-*/
 void idItem::Spawn()
 {
 	idStr	  giveTo;
@@ -328,11 +283,6 @@ void idItem::Spawn()
 	shellMaterial	= declManager->FindMaterial( "itemHighlightShell" );
 }
 
-/*
-================
-idItem::GetAttributes
-================
-*/
 void idItem::GetAttributes( idDict& attributes ) const
 {
 	int				  i;
@@ -346,11 +296,6 @@ void idItem::GetAttributes( idDict& attributes ) const
 	}
 }
 
-/*
-================
-idItem::GiveToPlayer
-================
-*/
 bool idItem::GiveToPlayer( idPlayer* player, unsigned int giveFlags )
 {
 	if( player == NULL ) {
@@ -364,11 +309,6 @@ bool idItem::GiveToPlayer( idPlayer* player, unsigned int giveFlags )
 	return player->GiveItem( this, giveFlags );
 }
 
-/*
-================
-idItem::Pickup
-================
-*/
 bool idItem::Pickup( idPlayer* player )
 {
 	const bool didGiveSucceed = GiveToPlayer( player, ITEM_GIVE_FEEDBACK );
@@ -438,11 +378,6 @@ bool idItem::Pickup( idPlayer* player )
 	return true;
 }
 
-/*
-================
-idItem::ClientThink
-================
-*/
 void idItem::ClientThink( const int curTime, const float fraction, const bool predict )
 {
 	// only think forward because the state is not synced through snapshots
@@ -452,11 +387,6 @@ void idItem::ClientThink( const int curTime, const float fraction, const bool pr
 	Think();
 }
 
-/*
-================
-idItem::ClientPredictionThink
-================
-*/
 void idItem::ClientPredictionThink()
 {
 	// only think forward because the state is not synced through snapshots
@@ -466,21 +396,11 @@ void idItem::ClientPredictionThink()
 	Think();
 }
 
-/*
-================
-idItem::WriteFromSnapshot
-================
-*/
 void idItem::WriteToSnapshot( idBitMsg& msg ) const
 {
 	msg.WriteBits( IsHidden(), 1 );
 }
 
-/*
-================
-idItem::ReadFromSnapshot
-================
-*/
 void idItem::ReadFromSnapshot( const idBitMsg& msg )
 {
 	if( msg.ReadBits( 1 ) ) {
@@ -496,11 +416,6 @@ void idItem::ReadFromSnapshot( const idBitMsg& msg )
 	}
 }
 
-/*
-================
-idItem::ClientReceiveEvent
-================
-*/
 bool idItem::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 {
 	switch( event ) {
@@ -518,11 +433,6 @@ bool idItem::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 	}
 }
 
-/*
-================
-idItem::Event_DropToFloor
-================
-*/
 void idItem::Event_DropToFloor()
 {
 	trace_t trace;
@@ -536,11 +446,6 @@ void idItem::Event_DropToFloor()
 	SetOrigin( trace.endpos );
 }
 
-/*
-================
-idItem::Event_Touch
-================
-*/
 void idItem::Event_Touch( idEntity* other, trace_t* trace )
 {
 	if( !other->IsType( idPlayer::Type ) ) {
@@ -554,11 +459,6 @@ void idItem::Event_Touch( idEntity* other, trace_t* trace )
 	Pickup( static_cast<idPlayer*>( other ) );
 }
 
-/*
-================
-idItem::Event_Trigger
-================
-*/
 void idItem::Event_Trigger( idEntity* activator )
 {
 	if( !canPickUp && spawnArgs.GetBool( "triggerFirst" ) ) {
@@ -571,11 +471,6 @@ void idItem::Event_Trigger( idEntity* activator )
 	}
 }
 
-/*
-================
-idItem::Event_Respawn
-================
-*/
 void idItem::Event_Respawn()
 {
 	if( common->IsServer() ) {
@@ -591,11 +486,6 @@ void idItem::Event_Respawn()
 	CancelEvents( &EV_RespawnItem ); // don't double respawn
 }
 
-/*
-================
-idItem::Event_RespawnFx
-================
-*/
 void idItem::Event_RespawnFx()
 {
 	if( common->IsServer() ) {
@@ -624,55 +514,30 @@ idItemPowerup
 CLASS_DECLARATION( idItem, idItemPowerup )
 END_CLASS
 
-/*
-================
-idItemPowerup::idItemPowerup
-================
-*/
 idItemPowerup::idItemPowerup()
 {
 	time = 0;
 	type = 0;
 }
 
-/*
-================
-idItemPowerup::Save
-================
-*/
 void idItemPowerup::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteInt( time );
 	savefile->WriteInt( type );
 }
 
-/*
-================
-idItemPowerup::Restore
-================
-*/
 void idItemPowerup::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadInt( time );
 	savefile->ReadInt( type );
 }
 
-/*
-================
-idItemPowerup::Spawn
-================
-*/
 void idItemPowerup::Spawn()
 {
 	time = spawnArgs.GetInt( "time", "30" );
 	type = spawnArgs.GetInt( "type", "0" );
 }
 
-/*
-================
-idItemPowerup::GiveToPlayer
-================
-*/
 bool idItemPowerup::GiveToPlayer( idPlayer* player, unsigned int giveFlags )
 {
 	if( player->spectating ) {
@@ -706,11 +571,6 @@ EVENT( EV_DropFlag, idItemTeam::Event_DropFlag )
 EVENT( EV_FlagCapture, idItemTeam::Event_FlagCapture )
 END_CLASS
 
-/*
-===============
-idItemTeam::idItemTeam
-===============
-*/
 idItemTeam::idItemTeam()
 {
 	team	 = -1;
@@ -732,20 +592,10 @@ idItemTeam::idItemTeam()
 	nuggetName	   = 0;
 }
 
-/*
-===============
-idItemTeam::~idItemTeam
-===============
-*/
 idItemTeam::~idItemTeam()
 {
 	FreeLightDef();
 }
-/*
-===============
-idItemTeam::Spawn
-===============
-*/
 void idItemTeam::Spawn()
 {
 	team		 = spawnArgs.GetInt( "team" );
@@ -806,11 +656,6 @@ void idItemTeam::Spawn()
 	physicsObj.SetGravity( idVec3( 0, 0, spawnArgs.GetInt( "gravity", "-30" ) ) );
 }
 
-/*
-===============
-idItemTeam::LoadScript
-===============
-*/
 function_t* idItemTeam::LoadScript( const char* script )
 {
 	function_t* function = NULL;
@@ -826,11 +671,6 @@ function_t* idItemTeam::LoadScript( const char* script )
 	return function;
 }
 
-/*
-===============
-idItemTeam::Think
-===============
-*/
 void idItemTeam::Think()
 {
 	idMoveableItem::Think();
@@ -861,11 +701,6 @@ void idItemTeam::Think()
 	}
 }
 
-/*
-===============
-idItemTeam::Pickup
-===============
-*/
 bool idItemTeam::Pickup( idPlayer* player )
 {
 	if( !gameLocal.mpGame.IsGametypeFlagBased() ) /* CTF */
@@ -898,11 +733,6 @@ bool idItemTeam::Pickup( idPlayer* player )
 	return false;
 }
 
-/*
-===============
-idItemTeam::ClientReceiveEvent
-===============
-*/
 bool idItemTeam::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 {
 	gameLocal.DPrintf( "ClientRecieveEvent: %i\n", event );
@@ -949,11 +779,6 @@ bool idItemTeam::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 	return false;
 }
 
-/*
-================
-idItemTeam::Drop
-================
-*/
 void idItemTeam::Drop( bool death )
 {
 	//	PostEventMS( &EV_DropFlag, 0, int(death == true) );
@@ -961,11 +786,6 @@ void idItemTeam::Drop( bool death )
 	Event_DropFlag( death );
 }
 
-/*
-================
-idItemTeam::Return
-================
-*/
 void idItemTeam::Return( idPlayer* player )
 {
 	if( team != 0 && team != 1 ) {
@@ -976,11 +796,6 @@ void idItemTeam::Return( idPlayer* player )
 	Event_FlagReturn();
 }
 
-/*
-================
-idItemTeam::Capture
-================
-*/
 void idItemTeam::Capture()
 {
 	if( team != 0 && team != 1 ) {
@@ -990,11 +805,6 @@ void idItemTeam::Capture()
 	PostEventMS( &EV_FlagCapture, 0 );
 }
 
-/*
-================
-idItemTeam::PrivateReturn
-================
-*/
 void idItemTeam::PrivateReturn()
 {
 	Unbind();
@@ -1032,11 +842,6 @@ void idItemTeam::PrivateReturn()
 	GetPhysics()->SetAngularVelocity( idVec3( 0, 0, 0 ) );
 }
 
-/*
-================
-idItemTeam::Event_TakeFlag
-================
-*/
 void idItemTeam::Event_TakeFlag( idPlayer* player )
 {
 	gameLocal.DPrintf( "Event_TakeFlag()!\n" );
@@ -1106,11 +911,6 @@ void idItemTeam::Event_TakeFlag( idPlayer* player )
 	}
 }
 
-/*
-================
-idItemTeam::Event_DropFlag
-================
-*/
 void idItemTeam::Event_DropFlag( bool death )
 {
 	gameLocal.DPrintf( "Event_DropFlag()!\n" );
@@ -1183,11 +983,6 @@ void idItemTeam::Event_DropFlag( bool death )
 	}
 }
 
-/*
-================
-idItemTeam::Event_FlagReturn
-================
-*/
 void idItemTeam::Event_FlagReturn( idPlayer* player )
 {
 	gameLocal.DPrintf( "Event_FlagReturn()!\n" );
@@ -1232,11 +1027,6 @@ void idItemTeam::Event_FlagReturn( idPlayer* player )
 	}
 }
 
-/*
-================
-idItemTeam::Event_FlagCapture
-================
-*/
 void idItemTeam::Event_FlagCapture()
 {
 	gameLocal.DPrintf( "Event_FlagCapture()!\n" );
@@ -1282,11 +1072,6 @@ void idItemTeam::Event_FlagCapture()
 	}
 }
 
-/*
-================
-idItemTeam::FreeLightDef
-================
-*/
 void idItemTeam::FreeLightDef()
 {
 	if( itemGlowHandle != -1 ) {
@@ -1295,11 +1080,6 @@ void idItemTeam::FreeLightDef()
 	}
 }
 
-/*
-================
-idItemTeam::SpawnNugget
-================
-*/
 void idItemTeam::SpawnNugget( idVec3 pos )
 {
 	idAngles angle( gameLocal.random.RandomInt( spawnArgs.GetInt( "nugget_pitch", "30" ) ), gameLocal.random.RandomInt( spawnArgs.GetInt( "nugget_yaw", "360" ) ), 0 );
@@ -1315,11 +1095,6 @@ void idItemTeam::SpawnNugget( idVec3 pos )
 	}
 }
 
-/*
-================
-idItemTeam::Event_FlagCapture
-================
-*/
 void idItemTeam::WriteToSnapshot( idBitMsg& msg ) const
 {
 	msg.WriteBits( carried, 1 );
@@ -1330,11 +1105,6 @@ void idItemTeam::WriteToSnapshot( idBitMsg& msg ) const
 	idMoveableItem::WriteToSnapshot( msg );
 }
 
-/*
-================
-idItemTeam::ReadFromSnapshot
-================
-*/
 void idItemTeam::ReadFromSnapshot( const idBitMsg& msg )
 {
 	carried = msg.ReadBits( 1 ) == 1;
@@ -1355,13 +1125,6 @@ void idItemTeam::ReadFromSnapshot( const idBitMsg& msg )
 	idMoveableItem::ReadFromSnapshot( msg );
 }
 
-/*
-================
-idItemTeam::UpdateGuis
-
-Update all client's huds wrt the flag status.
-================
-*/
 void idItemTeam::UpdateGuis()
 {
 	idPlayer* player;
@@ -1379,11 +1142,6 @@ void idItemTeam::UpdateGuis()
 	}
 }
 
-/*
-================
-idItemTeam::Present
-================
-*/
 void idItemTeam::Present()
 {
 	// hide the flag for localplayer if in first person
@@ -1413,43 +1171,23 @@ EVENT( EV_HideObjective, idObjective::Event_HideObjective )
 EVENT( EV_GetPlayerPos, idObjective::Event_GetPlayerPos )
 END_CLASS
 
-/*
-================
-idObjective::idObjective
-================
-*/
 idObjective::idObjective()
 {
 	playerPos.Zero();
 }
 
-/*
-================
-idObjective::Save
-================
-*/
 void idObjective::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteVec3( playerPos );
 	savefile->WriteMaterial( screenshot );
 }
 
-/*
-================
-idObjective::Restore
-================
-*/
 void idObjective::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadVec3( playerPos );
 	savefile->ReadMaterial( screenshot );
 }
 
-/*
-================
-idObjective::Spawn
-================
-*/
 void idObjective::Spawn()
 {
 	Hide();
@@ -1462,11 +1200,6 @@ void idObjective::Spawn()
 	screenshot = declManager->FindMaterial( shotName );
 }
 
-/*
-================
-idObjective::Event_Trigger
-================
-*/
 void idObjective::Event_Trigger( idEntity* activator )
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -1493,11 +1226,6 @@ void idObjective::Event_Trigger( idEntity* activator )
 	}
 }
 
-/*
-================
-idObjective::Event_GetPlayerPos
-================
-*/
 void idObjective::Event_GetPlayerPos()
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -1507,11 +1235,6 @@ void idObjective::Event_GetPlayerPos()
 	}
 }
 
-/*
-================
-idObjective::Event_HideObjective
-================
-*/
 void idObjective::Event_HideObjective( idEntity* e )
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -1537,11 +1260,6 @@ void idObjective::Event_HideObjective( idEntity* e )
 CLASS_DECLARATION( idItem, idVideoCDItem )
 END_CLASS
 
-/*
-================
-idVideoCDItem::GiveToPlayer
-================
-*/
 bool idVideoCDItem::GiveToPlayer( idPlayer* player, unsigned int giveFlags )
 {
 	if( player == NULL ) {
@@ -1557,7 +1275,6 @@ bool idVideoCDItem::GiveToPlayer( idPlayer* player, unsigned int giveFlags )
 	return true;
 }
 
-// Carl: Make the video discs a quarter the normal size, and touch the desk, so they look realistic in VR.
 bool idVideoCDItem::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis )
 {
 	const float			scale = 0.25f;
@@ -1579,11 +1296,6 @@ bool idVideoCDItem::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis )
 CLASS_DECLARATION( idItem, idPDAItem )
 END_CLASS
 
-/*
-================
-idPDAItem::GiveToPlayer
-================
-*/
 bool idPDAItem::GiveToPlayer( idPlayer* player, unsigned int giveFlags )
 {
 	if( player == NULL ) {
@@ -1620,11 +1332,6 @@ EVENT( EV_DropToFloor, idMoveableItem::Event_DropToFloor )
 EVENT( EV_Gib, idMoveableItem::Event_Gib )
 END_CLASS
 
-/*
-================
-idMoveableItem::idMoveableItem
-================
-*/
 idMoveableItem::idMoveableItem()
 {
 	trigger		  = NULL;
@@ -1634,11 +1341,6 @@ idMoveableItem::idMoveableItem()
 	repeatSmoke	  = false;
 }
 
-/*
-================
-idMoveableItem::~idMoveableItem
-================
-*/
 idMoveableItem::~idMoveableItem()
 {
 	if( trigger ) {
@@ -1646,11 +1348,6 @@ idMoveableItem::~idMoveableItem()
 	}
 }
 
-/*
-================
-idMoveableItem::Save
-================
-*/
 void idMoveableItem::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteStaticObject( physicsObj );
@@ -1662,11 +1359,6 @@ void idMoveableItem::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( nextSoundTime );
 }
 
-/*
-================
-idMoveableItem::Restore
-================
-*/
 void idMoveableItem::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadStaticObject( physicsObj );
@@ -1679,11 +1371,6 @@ void idMoveableItem::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( nextSoundTime );
 }
 
-/*
-================
-idMoveableItem::Spawn
-================
-*/
 void idMoveableItem::Spawn()
 {
 	idTraceModel trm;
@@ -1752,11 +1439,6 @@ void idMoveableItem::Spawn()
 	repeatSmoke = spawnArgs.GetBool( "repeatSmoke", "0" );
 }
 
-/*
-================
-idItem::ClientThink
-================
-*/
 void idMoveableItem::ClientThink( const int curTime, const float fraction, const bool predict )
 {
 	InterpolatePhysicsOnly( fraction );
@@ -1769,11 +1451,6 @@ void idMoveableItem::ClientThink( const int curTime, const float fraction, const
 	Present();
 }
 
-/*
-================
-idMoveableItem::Think
-================
-*/
 void idMoveableItem::Think()
 {
 	RunPhysics();
@@ -1797,11 +1474,6 @@ void idMoveableItem::Think()
 	Present();
 }
 
-/*
-=================
-idMoveableItem::Collide
-=================
-*/
 bool idMoveableItem::Collide( const trace_t& collision, const idVec3& velocity )
 {
 	float v, f;
@@ -1820,11 +1492,6 @@ bool idMoveableItem::Collide( const trace_t& collision, const idVec3& velocity )
 	return false;
 }
 
-/*
-================
-idMoveableItem::Pickup
-================
-*/
 bool idMoveableItem::Pickup( idPlayer* player )
 {
 	bool ret = idItem::Pickup( player );
@@ -1834,11 +1501,6 @@ bool idMoveableItem::Pickup( idPlayer* player )
 	return ret;
 }
 
-/*
-================
-idMoveableItem::DropItem
-================
-*/
 idEntity* idMoveableItem::DropItem( const char* classname, const idVec3& origin, const idMat3& axis, const idVec3& velocity, int activateDelay, int removeDelay )
 {
 	idDict	  args;
@@ -1873,24 +1535,6 @@ idEntity* idMoveableItem::DropItem( const char* classname, const idVec3& origin,
 	return item;
 }
 
-/*
-================
-idMoveableItem::DropItems
-
-  The entity should have the following key/value pairs set:
-	"def_drop<type>Item"			"item def"
-	"drop<type>ItemJoint"			"joint name"
-	"drop<type>ItemRotation"		"pitch yaw roll"
-	"drop<type>ItemOffset"			"x y z"
-	"skin_drop<type>"				"skin name"
-  To drop multiple items the following key/value pairs can be used:
-	"def_drop<type>Item<X>"			"item def"
-	"drop<type>Item<X>Joint"		"joint name"
-	"drop<type>Item<X>Rotation"		"pitch yaw roll"
-	"drop<type>Item<X>Offset"		"x y z"
-  where <X> is an aribtrary string.
-================
-*/
 void idMoveableItem::DropItems( idAnimatedEntity* ent, const char* type, idList<idEntity*>* list )
 {
 	const idKeyValue* kv;
@@ -1948,22 +1592,12 @@ void idMoveableItem::DropItems( idAnimatedEntity* ent, const char* type, idList<
 	}
 }
 
-/*
-======================
-idMoveableItem::WriteToSnapshot
-======================
-*/
 void idMoveableItem::WriteToSnapshot( idBitMsg& msg ) const
 {
 	physicsObj.WriteToSnapshot( msg );
 	msg.WriteBool( IsHidden() );
 }
 
-/*
-======================
-idMoveableItem::ReadFromSnapshot
-======================
-*/
 void idMoveableItem::ReadFromSnapshot( const idBitMsg& msg )
 {
 	physicsObj.ReadFromSnapshot( msg );
@@ -1984,11 +1618,6 @@ void idMoveableItem::ReadFromSnapshot( const idBitMsg& msg )
 	}
 }
 
-/*
-============
-idMoveableItem::Gib
-============
-*/
 void idMoveableItem::Gib( const idVec3& dir, const char* damageDefName )
 {
 	// spawn smoke puff
@@ -2001,21 +1630,11 @@ void idMoveableItem::Gib( const idVec3& dir, const char* damageDefName )
 	PostEventMS( &EV_Remove, 0 );
 }
 
-/*
-================
-idMoveableItem::Event_DropToFloor
-================
-*/
 void idMoveableItem::Event_DropToFloor()
 {
 	// the physics will drop the moveable to the floor
 }
 
-/*
-============
-idMoveableItem::Event_Gib
-============
-*/
 void idMoveableItem::Event_Gib( const char* damageDefName )
 {
 	Gib( idVec3( 0, 0, 1 ), damageDefName );
@@ -2032,11 +1651,6 @@ void idMoveableItem::Event_Gib( const char* damageDefName )
 CLASS_DECLARATION( idMoveableItem, idMoveablePDAItem )
 END_CLASS
 
-/*
-================
-idMoveablePDAItem::GiveToPlayer
-================
-*/
 bool idMoveablePDAItem::GiveToPlayer( idPlayer* player, unsigned int giveFlags )
 {
 	if( player == NULL ) {
@@ -2072,20 +1686,10 @@ CLASS_DECLARATION( idEntity, idItemRemover )
 EVENT( EV_Activate, idItemRemover::Event_Trigger )
 END_CLASS
 
-/*
-================
-idItemRemover::Spawn
-================
-*/
 void idItemRemover::Spawn()
 {
 }
 
-/*
-================
-idItemRemover::RemoveItem
-================
-*/
 void idItemRemover::RemoveItem( idPlayer* player )
 {
 	const char* remove;
@@ -2094,11 +1698,6 @@ void idItemRemover::RemoveItem( idPlayer* player )
 	player->RemoveInventoryItem( remove );
 }
 
-/*
-================
-idItemRemover::Event_Trigger
-================
-*/
 void idItemRemover::Event_Trigger( idEntity* activator )
 {
 	if( activator->IsType( idPlayer::Type ) ) {
@@ -2120,52 +1719,27 @@ EVENT( EV_HideObjective, idObjectiveComplete::Event_HideObjective )
 EVENT( EV_GetPlayerPos, idObjectiveComplete::Event_GetPlayerPos )
 END_CLASS
 
-/*
-================
-idObjectiveComplete::idObjectiveComplete
-================
-*/
 idObjectiveComplete::idObjectiveComplete()
 {
 	playerPos.Zero();
 }
 
-/*
-================
-idObjectiveComplete::Save
-================
-*/
 void idObjectiveComplete::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteVec3( playerPos );
 }
 
-/*
-================
-idObjectiveComplete::Restore
-================
-*/
 void idObjectiveComplete::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadVec3( playerPos );
 }
 
-/*
-================
-idObjectiveComplete::Spawn
-================
-*/
 void idObjectiveComplete::Spawn()
 {
 	spawnArgs.SetBool( "objEnabled", false );
 	Hide();
 }
 
-/*
-================
-idObjectiveComplete::Event_Trigger
-================
-*/
 void idObjectiveComplete::Event_Trigger( idEntity* activator )
 {
 	if( !spawnArgs.GetBool( "objEnabled" ) ) {
@@ -2182,11 +1756,6 @@ void idObjectiveComplete::Event_Trigger( idEntity* activator )
 	}
 }
 
-/*
-================
-idObjectiveComplete::Event_GetPlayerPos
-================
-*/
 void idObjectiveComplete::Event_GetPlayerPos()
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();
@@ -2196,11 +1765,6 @@ void idObjectiveComplete::Event_GetPlayerPos()
 	}
 }
 
-/*
-================
-idObjectiveComplete::Event_HideObjective
-================
-*/
 void idObjectiveComplete::Event_HideObjective( idEntity* e )
 {
 	idPlayer* player = gameLocal.GetLocalPlayer();

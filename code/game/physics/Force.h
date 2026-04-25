@@ -43,20 +43,38 @@ If you have questions concerning this license or the applicable additional terms
 class idEntity;
 class idPhysics;
 
+/*!
+	\class idForce
+	\brief Base class for implementing force fields that can be applied to physics objects.
+
+	This class serves as an abstract base for force implementations that can be applied to physics objects within the simulation. It maintains a list of active forces and provides mechanisms for
+   managing these forces, including adding, removing, and evaluating them over time. The class is designed to be inherited by concrete force implementations that define specific force behaviors. The
+   force list management allows for efficient cleanup when physics objects are removed or deleted, ensuring proper resource management. The Evaluate method provides the interface for force computation
+   at specific time steps, enabling integration with the physics simulation.
+
+*/
 class idForce : public idClass
 {
 public:
 	CLASS_PROTOTYPE( idForce );
 
+	//! Initializes an idForce object and appends it to the force list.
 	idForce();
+
+	//! Destructor for the idForce class that removes the force from the force list.
 	virtual ~idForce();
+
+	//! Removes a physics object from all force list entries.
 	static void DeletePhysics( const idPhysics* phys );
+
+	//! Clears all forces from the force list.
 	static void ClearForceList();
 
 public: // common force interface
-	// evalulate the force up to the given time
+		//! Evaluates the force up to the given time.
 	virtual void Evaluate( int time );
-	// removes any pointers to the physics object
+
+	//! Removes any pointers to the specified physics object.
 	virtual void RemovePhysics( const idPhysics* phys );
 
 private:

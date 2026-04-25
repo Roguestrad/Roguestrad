@@ -30,22 +30,46 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponChainGun
+	\brief A specialized weapon class implementing the chain gun weapon behavior with animation states and barrel rotation effects.
+
+	This class extends the base weapon object to implement specific behavior for a chain gun weapon, including handling various animation states such as raising, lowering, idle, firing, and reloading.
+   It manages the weapon's barrel rotation through spin-up and spin-down animations, and integrates with a weapon instance for initialization and operation. The class uses state machines to control
+   the weapon's behavior during different actions, ensuring proper sequencing of animations and logical operations.
+
+*/
 class iceWeaponChainGun : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponChainGun );
 
+	//! Initializes the ice weapon chain gun with the specified weapon instance.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Sets up and manages the raising animation state for the chaingun weapon.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Puts away the chain gun weapon by playing a putaway animation and transitioning to the holstered state.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the ice weapon chain gun, managing ammo status and animation playback.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Executes the firing state machine for the chain gun weapon
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Handles the reloading animation and logic for the chain gun weapon.
 	stateResult_t Reload( stateParms_t* parms );
 
 private:
+	//! Updates the barrel angle of the ice weapon chain gun based on the current rotation rate.
 	void UpdateBarrel();
+
+	//! Initializes the spinning up animation for the chain gun.
 	void SpinUp();
+
+	//! Stops the chain gun's spinning barrel animation by gradually decreasing its rotation rate.
 	void SpinDown();
 
 private:

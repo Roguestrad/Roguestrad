@@ -117,6 +117,8 @@ GetGameAPI
 #if __GNUC__ >= 4
 	#pragma GCC visibility push( default )
 #endif
+
+//! Returns the game API interface pointer after initializing the game with the provided import interface.
 extern "C" gameExport_t* GetGameAPI( gameImport_t* import )
 {
 #if __MWERKS__
@@ -156,11 +158,7 @@ extern "C" gameExport_t* GetGameAPI( gameImport_t* import )
 	#pragma GCC visibility pop
 #endif
 
-/*
-===========
-TestGameAPI
-============
-*/
+//! Initializes and tests the game API by setting up import and export structures.
 void TestGameAPI()
 {
 	gameImport_t testImport = {};
@@ -182,21 +180,11 @@ void TestGameAPI()
 	testExport = *GetGameAPI( &testImport );
 }
 
-/*
-===========
-idGameLocal::idGameLocal
-============
-*/
 idGameLocal::idGameLocal()
 {
 	Clear();
 }
 
-/*
-===========
-idGameLocal::Clear
-============
-*/
 void idGameLocal::Clear()
 {
 	int i;
@@ -280,13 +268,6 @@ void idGameLocal::Clear()
 	lastCmdRunTimeOnServer.Zero();
 }
 
-/*
-===========
-idGameLocal::Init
-
-  initialize the game object, only happens once at startup, not each level load
-============
-*/
 void idGameLocal::Init()
 {
 	const idDict* dict;
@@ -388,13 +369,6 @@ void idGameLocal::Init()
 	Printf( "--------------------------------------\n" );
 }
 
-/*
-===========
-idGameLocal::Shutdown
-
-  shut down the entire game
-============
-*/
 void idGameLocal::Shutdown()
 {
 	if( !common ) {
@@ -463,14 +437,6 @@ void idGameLocal::Shutdown()
 
 idCVar g_recordSaveGameTrace( "g_recordSaveGameTrace", "0", CVAR_BOOL, "" );
 
-/*
-===========
-idGameLocal::SaveGame
-
-save the current player state, level name, and level state
-the session may have written some data to the file already
-============
-*/
 void   idGameLocal::SaveGame( idFile* f, idFile* strings )
 {
 	int		  i;
@@ -671,11 +637,6 @@ void   idGameLocal::SaveGame( idFile* f, idFile* strings )
 	}
 }
 
-/*
-===========
-idGameLocal::GetSaveGameDetails
-============
-*/
 void idGameLocal::GetSaveGameDetails( idSaveGameDetails& gameDetails )
 {
 	idLocationEntity*		locationEnt = LocationForPoint( gameLocal.GetLocalPlayer()->GetEyePosition() );
@@ -705,11 +666,6 @@ void idGameLocal::GetSaveGameDetails( idSaveGameDetails& gameDetails )
 	gameDetails.date = ::time( NULL );
 }
 
-/*
-===========
-idGameLocal::GetPersistentPlayerInfo
-============
-*/
 const idDict& idGameLocal::GetPersistentPlayerInfo( int clientNum )
 {
 	idEntity* ent;
@@ -723,21 +679,11 @@ const idDict& idGameLocal::GetPersistentPlayerInfo( int clientNum )
 	return persistentPlayerInfo[clientNum];
 }
 
-/*
-===========
-idGameLocal::SetPersistentPlayerInfo
-============
-*/
 void idGameLocal::SetPersistentPlayerInfo( int clientNum, const idDict& playerInfo )
 {
 	persistentPlayerInfo[clientNum] = playerInfo;
 }
 
-/*
-============
-idGameLocal::Printf
-============
-*/
 void idGameLocal::Printf( const char* fmt, ... ) const // DG: FIXME: printf-annotation
 {
 	va_list argptr;
@@ -750,11 +696,6 @@ void idGameLocal::Printf( const char* fmt, ... ) const // DG: FIXME: printf-anno
 	common->Printf( "%s", text );
 }
 
-/*
-============
-idGameLocal::DPrintf
-============
-*/
 void idGameLocal::DPrintf( const char* fmt, ... ) const
 {
 	va_list argptr;
@@ -771,11 +712,6 @@ void idGameLocal::DPrintf( const char* fmt, ... ) const
 	common->Printf( "%s", text );
 }
 
-/*
-============
-idGameLocal::Warning
-============
-*/
 void idGameLocal::Warning( const char* fmt, ... ) const
 {
 	va_list	  argptr;
@@ -794,11 +730,6 @@ void idGameLocal::Warning( const char* fmt, ... ) const
 	}
 }
 
-/*
-============
-idGameLocal::DWarning
-============
-*/
 void idGameLocal::DWarning( const char* fmt, ... ) const
 {
 	va_list	  argptr;
@@ -821,11 +752,6 @@ void idGameLocal::DWarning( const char* fmt, ... ) const
 	}
 }
 
-/*
-============
-idGameLocal::Error
-============
-*/
 void idGameLocal::Error( const char* fmt, ... ) const
 {
 	va_list	  argptr;
@@ -844,11 +770,6 @@ void idGameLocal::Error( const char* fmt, ... ) const
 	}
 }
 
-/*
-===============
-gameError
-===============
-*/
 void gameError( const char* fmt, ... )
 {
 	va_list argptr;
@@ -861,32 +782,17 @@ void gameError( const char* fmt, ... )
 	gameLocal.Error( "%s", text );
 }
 
-/*
-========================
-idGameLocal::SetServerGameTimeMs
-========================
-*/
 void idGameLocal::SetServerGameTimeMs( const int time )
 {
 	previousServerTime = this->serverTime;
 	this->serverTime   = time;
 }
 
-/*
-========================
-idGameLocal::GetServerGameTimeMs
-========================
-*/
 int idGameLocal::GetServerGameTimeMs() const
 {
 	return serverTime;
 }
 
-/*
-===========
-idGameLocal::SetServerInfo
-============
-*/
 void idGameLocal::SetServerInfo( const idDict& _serverInfo )
 {
 	serverInfo = _serverInfo;
@@ -899,23 +805,11 @@ void idGameLocal::SetServerInfo( const idDict& _serverInfo )
 	}
 }
 
-/*
-===========
-idGameLocal::GetServerInfo
-============
-*/
 const idDict& idGameLocal::GetServerInfo()
 {
 	return serverInfo;
 }
 
-/*
-===================
-idGameLocal::LoadMap
-
-Initializes all map variables common to both save games and spawned games.
-===================
-*/
 void idGameLocal::LoadMap( const char* mapName, int randseed )
 {
 	bool sameMap = ( mapFile && idStr::Icmp( mapFileName, mapName ) == 0 );
@@ -1076,11 +970,6 @@ void idGameLocal::LoadMap( const char* mapName, int randseed )
 	}
 }
 
-/*
-===================
-idGameLocal::LocalMapRestart
-===================
-*/
 void idGameLocal::LocalMapRestart()
 {
 	int i, latchSpawnCount;
@@ -1140,11 +1029,6 @@ void idGameLocal::LocalMapRestart()
 	Printf( "--------------------------------------\n" );
 }
 
-/*
-===================
-idGameLocal::MapRestart
-===================
-*/
 void idGameLocal::MapRestart()
 {
 	if( common->IsClient() ) {
@@ -1162,11 +1046,6 @@ void idGameLocal::MapRestart()
 	}
 }
 
-/*
-===================
-idGameLocal::MapRestart_f
-===================
-*/
 void idGameLocal::MapRestart_f( const idCmdArgs& args )
 {
 	if( !common->IsMultiplayer() || common->IsClient() ) {
@@ -1178,11 +1057,6 @@ void idGameLocal::MapRestart_f( const idCmdArgs& args )
 	gameLocal.MapRestart();
 }
 
-/*
-===================
-idGameLocal::MapPopulate
-===================
-*/
 void idGameLocal::MapPopulate()
 {
 	if( common->IsMultiplayer() ) {
@@ -1212,11 +1086,6 @@ void idGameLocal::MapPopulate()
 	SetScriptFPS( com_engineHz_latched );
 }
 
-/*
-===================
-RB idGameLocal::PopulateEnvironmentProbes
-===================
-*/
 void idGameLocal::PopulateEnvironmentProbes()
 {
 	idEntity* ent;
@@ -1272,13 +1141,7 @@ void idGameLocal::PopulateEnvironmentProbes()
 		}
 	}
 }
-// RB end
 
-/*
-===================
-idGameLocal::InitFromNewMap
-===================
-*/
 void idGameLocal::InitFromNewMap( const char* mapName, idRenderWorld* renderWorld, idSoundWorld* soundWorld, int gameMode, int randseed )
 {
 	this->gameType = ( gameType_t )idMath::ClampInt( GAME_SP, GAME_COUNT - 1, gameMode );
@@ -1327,11 +1190,6 @@ void idGameLocal::InitFromNewMap( const char* mapName, idRenderWorld* renderWorl
 	Printf( "--------------------------------------\n" );
 }
 
-/*
-=================
-idGameLocal::InitFromSaveGame
-=================
-*/
 bool idGameLocal::InitFromSaveGame( const char* mapName, idRenderWorld* renderWorld, idSoundWorld* soundWorld, idFile* saveGameFile, idFile* stringTableFile, int saveGameVersion )
 {
 	int		  i;
@@ -1580,11 +1438,6 @@ bool idGameLocal::InitFromSaveGame( const char* mapName, idRenderWorld* renderWo
 	return true;
 }
 
-/*
-===========
-idGameLocal::MapClear
-===========
-*/
 void idGameLocal::MapClear( bool clearClients )
 {
 	int i;
@@ -1621,11 +1474,6 @@ void idGameLocal::MapClear( bool clearClients )
 	locationEntities = NULL;
 }
 
-/*
-===========
-idGameLocal::MapShutdown
-============
-*/
 void idGameLocal::MapShutdown()
 {
 	Printf( "--------- Game Map Shutdown ----------\n" );
@@ -1697,11 +1545,6 @@ void idGameLocal::MapShutdown()
 	Printf( "--------------------------------------\n" );
 }
 
-/*
-========================
-idGameLocal::GetAimAssistAngles
-========================
-*/
 void idGameLocal::GetAimAssistAngles( idAngles& angles )
 {
 	angles.Zero();
@@ -1720,11 +1563,6 @@ void idGameLocal::GetAimAssistAngles( idAngles& angles )
 	aimAssist->GetAngleCorrection( angles );
 }
 
-/*
-========================
-idGameLocal::GetAimAssistSensitivity
-========================
-*/
 float idGameLocal::GetAimAssistSensitivity()
 {
 	// Take a look at serializing this to the clients
@@ -1741,11 +1579,6 @@ float idGameLocal::GetAimAssistSensitivity()
 	return aimAssist->GetFrictionScalar();
 }
 
-/*
-========================
-idGameLocal::MapPeerToClient
-========================
-*/
 int idGameLocal::MapPeerToClient( int peer ) const
 {
 	idLobbyBase& lobby = session->GetActingGameStateLobbyBase();
@@ -1759,11 +1592,6 @@ int idGameLocal::MapPeerToClient( int peer ) const
 	return -1;
 }
 
-/*
-========================
-idGameLocal::GetLocalClientNum
-========================
-*/
 int idGameLocal::GetLocalClientNum() const
 {
 	localUserHandle_t localUserHandle = session->GetSignInManager().GetMasterLocalUserHandle();
@@ -1780,26 +1608,11 @@ int idGameLocal::GetLocalClientNum() const
 	return 0;
 }
 
-/*
-===================
-idGameLocal::Preload
-
-===================
-*/
 void idGameLocal::Preload( const idPreloadManifest& manifest )
 {
 	animationLib.Preload( manifest );
 }
 
-/*
-===================
-idGameLocal::CacheDictionaryMedia
-
-This is called after parsing an EntityDef and for each entity spawnArgs before
-merging the entitydef.  It could be done post-merge, but that would
-avoid the fast pre-cache check associated with each entityDef
-===================
-*/
 void idGameLocal::CacheDictionaryMedia( const idDict* dict )
 {
 	const idKeyValue* kv;
@@ -1979,11 +1792,6 @@ void idGameLocal::CacheDictionaryMedia( const idDict* dict )
 	}
 }
 
-/*
-===========
-idGameLocal::InitScriptForMap
-============
-*/
 void idGameLocal::InitScriptForMap()
 {
 	// create a thread to run frame commands on
@@ -2002,11 +1810,6 @@ void idGameLocal::InitScriptForMap()
 	}
 }
 
-/*
-===================
-idGameLocal::SetScriptFPS
-===================
-*/
 void idGameLocal::SetScriptFPS( const float engineHz )
 {
 	idVarDef* fpsDef = program.GetDef( &type_float, "GAME_FPS", &def_namespace );
@@ -2017,11 +1820,6 @@ void idGameLocal::SetScriptFPS( const float engineHz )
 	}
 }
 
-/*
-===========
-idGameLocal::GetMPPlayerDefName
-============
-*/
 const char* idGameLocal::GetMPPlayerDefName() const
 {
 	if( gameType == GAME_CTF ) {
@@ -2031,12 +1829,6 @@ const char* idGameLocal::GetMPPlayerDefName() const
 	return "player_doommarine_mp";
 }
 
-/*
-===========
-idGameLocal::SpawnPlayer
-============
-*/
-// jmarshall - bot support
 void idGameLocal::SpawnPlayer( int clientNum, bool isBot, const char* botName )
 // jmarshall end
 {
@@ -2084,11 +1876,6 @@ void idGameLocal::SpawnPlayer( int clientNum, bool isBot, const char* botName )
 	mpGame.SpawnPlayer( clientNum );
 }
 
-/*
-================
-idGameLocal::GetClientByNum
-================
-*/
 idPlayer* idGameLocal::GetClientByNum( int current ) const
 {
 	if( current < 0 || current >= numClients ) {
@@ -2100,11 +1887,6 @@ idPlayer* idGameLocal::GetClientByNum( int current ) const
 	return NULL;
 }
 
-/*
-================
-idGameLocal::GetNextClientNum
-================
-*/
 int idGameLocal::GetNextClientNum( int _current ) const
 {
 	int i, current;
@@ -2120,16 +1902,6 @@ int idGameLocal::GetNextClientNum( int _current ) const
 	return current;
 }
 
-/*
-================
-idGameLocal::GetLocalPlayer
-
-Nothing in the game tic should EVER make a decision based on what the
-local client number is, it shouldn't even be aware that there is a
-draw phase even happening.  This just returns client 0, which will
-be correct for single player.
-================
-*/
 idPlayer* idGameLocal::GetLocalPlayer() const
 {
 	if( GetLocalClientNum() < 0 ) {
@@ -2143,11 +1915,6 @@ idPlayer* idGameLocal::GetLocalPlayer() const
 	return static_cast<idPlayer*>( entities[GetLocalClientNum()] );
 }
 
-/*
-================
-idGameLocal::SetupClientPVS
-================
-*/
 pvsHandle_t idGameLocal::GetClientPVS( idPlayer* player, pvsType_t type )
 {
 	if( player->GetPrivateCameraView() ) {
@@ -2159,11 +1926,6 @@ pvsHandle_t idGameLocal::GetClientPVS( idPlayer* player, pvsType_t type )
 	}
 }
 
-/*
-================
-idGameLocal::SetupPlayerPVS
-================
-*/
 void idGameLocal::SetupPlayerPVS()
 {
 	int			i;
@@ -2219,11 +1981,6 @@ void idGameLocal::SetupPlayerPVS()
 	}
 }
 
-/*
-================
-idGameLocal::FreePlayerPVS
-================
-*/
 void idGameLocal::FreePlayerPVS()
 {
 	if( playerPVS.i != -1 ) {
@@ -2236,13 +1993,6 @@ void idGameLocal::FreePlayerPVS()
 	}
 }
 
-/*
-================
-idGameLocal::InPlayerPVS
-
-  should only be called during entity thinking and event handling
-================
-*/
 bool idGameLocal::InPlayerPVS( idEntity* ent ) const
 {
 	if( playerPVS.i == -1 ) {
@@ -2251,13 +2001,6 @@ bool idGameLocal::InPlayerPVS( idEntity* ent ) const
 	return pvs.InCurrentPVS( playerPVS, ent->GetPVSAreas(), ent->GetNumPVSAreas() );
 }
 
-/*
-================
-idGameLocal::InPlayerConnectedArea
-
-  should only be called during entity thinking and event handling
-================
-*/
 bool idGameLocal::InPlayerConnectedArea( idEntity* ent ) const
 {
 	if( playerConnectedAreas.i == -1 ) {
@@ -2266,11 +2009,6 @@ bool idGameLocal::InPlayerConnectedArea( idEntity* ent ) const
 	return pvs.InCurrentPVS( playerConnectedAreas, ent->GetPVSAreas(), ent->GetNumPVSAreas() );
 }
 
-/*
-================
-idGameLocal::UpdateGravity
-================
-*/
 void idGameLocal::UpdateGravity()
 {
 	idEntity* ent;
@@ -2294,24 +2032,11 @@ void idGameLocal::UpdateGravity()
 	}
 }
 
-/*
-================
-idGameLocal::GetGravity
-================
-*/
 const idVec3& idGameLocal::GetGravity() const
 {
 	return gravity;
 }
 
-/*
-================
-idGameLocal::SortActiveEntityList
-
-  Sorts the active entity list such that pushing entities come first,
-  actors come next and physics team slaves appear after their master.
-================
-*/
 void idGameLocal::SortActiveEntityList()
 {
 	idEntity *ent, *next_ent, *master, *part;
@@ -2371,11 +2096,6 @@ void idGameLocal::SortActiveEntityList()
 	sortPushers		= false;
 }
 
-/*
-========================
-idGameLocal::SetInterpolation
-========================
-*/
 void idGameLocal::SetInterpolation( const float fraction, const int serverGameMS, const int ssStartTime, const int ssEndTime )
 {
 	netInterpolationInfo.previousServerGameMs = netInterpolationInfo.serverGameMs;
@@ -2385,11 +2105,6 @@ void idGameLocal::SetInterpolation( const float fraction, const int serverGameMS
 	netInterpolationInfo.ssEndTime			  = ssEndTime;
 }
 
-/*
-================
-idGameLocal::RunTimeGroup2
-================
-*/
 void idGameLocal::RunTimeGroup2( idUserCmdMgr& userCmdMgr )
 {
 	idEntity* ent;
@@ -2408,11 +2123,6 @@ void idGameLocal::RunTimeGroup2( idUserCmdMgr& userCmdMgr )
 	SelectTimeGroup( false );
 }
 
-/*
-================
-idGameLocal::RunEntityThink
-================
-*/
 void idGameLocal::RunEntityThink( idEntity& ent, idUserCmdMgr& userCmdMgr )
 {
 	if( ent.entityNumber < MAX_PLAYERS ) {
@@ -2428,12 +2138,6 @@ void idGameLocal::RunEntityThink( idEntity& ent, idUserCmdMgr& userCmdMgr )
 
 idCVar g_recordTrace( "g_recordTrace", "0", CVAR_BOOL, "" );
 
-// jmarshall
-/*
-================
-idGameLocal::RunSharedThink
-================
-*/
 void   idGameLocal::RunSharedThink()
 {
 	idEntity* ent;
@@ -2441,13 +2145,7 @@ void   idGameLocal::RunSharedThink()
 		ent->SharedThink();
 	}
 }
-// jmarshall end
 
-/*
-================
-idGameLocal::RunFrame
-================
-*/
 void idGameLocal::RunFrame( idUserCmdMgr& cmdMgr, gameReturn_t& ret )
 {
 	SCOPED_PROFILE_EVENT( "RunFrame" );
@@ -2700,13 +2398,6 @@ void idGameLocal::RunFrame( idUserCmdMgr& cmdMgr, gameReturn_t& ret )
 	}
 }
 
-/*
-====================
-idGameLocal::BuildReturnValue
-
-Fills out gameReturn_t, called on server and clients.
-====================
-*/
 void idGameLocal::BuildReturnValue( gameReturn_t& ret )
 {
 	ret.sessionCommand[0] = 0;
@@ -2727,14 +2418,6 @@ void idGameLocal::BuildReturnValue( gameReturn_t& ret )
 	}
 }
 
-/*
-====================
-idGameLocal::RunSinglelUserCmd
-
-Runs a Think or a ClientThink for a player. Will write the client's
-position and firecount to the usercmd.
-====================
-*/
 void idGameLocal::RunSingleUserCmd( usercmd_t& cmd, idPlayer& player )
 {
 	player.HandleUserCmds( cmd );
@@ -2772,13 +2455,6 @@ void idGameLocal::RunSingleUserCmd( usercmd_t& cmd, idPlayer& player )
 	}
 }
 
-/*
-====================
-idGameLocal::RunAllUserCmdsForPlayer
-Runs a Think or ClientThink for each usercmd, but leaves a few cmds in the buffer
-so that we have something to process while we wait for more from the network.
-====================
-*/
 void idGameLocal::RunAllUserCmdsForPlayer( idUserCmdMgr& cmdMgr, const int playerNumber )
 {
 	// idLib::Printf( "Frame: %i = [%i-%i] ", gameLocal.framenum,
@@ -2907,21 +2583,6 @@ void idGameLocal::RunAllUserCmdsForPlayer( idUserCmdMgr& cmdMgr, const int playe
 	// idLib::Printf( "\n" );//!@#
 }
 
-/*
-======================================================================
-
-  Game view drawing
-
-======================================================================
-*/
-
-/*
-====================
-idGameLocal::CalcFov
-
-Calculates the horizontal and vertical field of view based on a horizontal field of view and custom aspect ratio
-====================
-*/
 void idGameLocal::CalcFov( float base_fov, float& fov_x, float& fov_y ) const
 {
 	const int width	 = renderSystem->GetWidth();
@@ -2946,13 +2607,6 @@ void idGameLocal::CalcFov( float base_fov, float& fov_x, float& fov_y ) const
 	fov_x				 = 2.0f * RAD2DEG( idMath::ATan( ratio_x * tanHalfY, ratio_y ) );
 }
 
-/*
-================
-idGameLocal::Draw
-
-makes rendering and sound system calls
-================
-*/
 bool idGameLocal::Draw( int clientNum )
 {
 	if( clientNum == -1 ) {
@@ -2978,11 +2632,6 @@ bool idGameLocal::Draw( int clientNum )
 	return true;
 }
 
-/*
-================
-idGameLocal::HandleGuiCommands
-================
-*/
 bool idGameLocal::HandlePlayerGuiEvent( const sysEvent_t* ev )
 {
 	idPlayer* player  = GetLocalPlayer();
@@ -2999,13 +2648,6 @@ bool idGameLocal::HandlePlayerGuiEvent( const sysEvent_t* ev )
 	return handled;
 }
 
-/*
-================
-idGameLocal::GetLevelMap
-
-  should only be used for in-game level editing
-================
-*/
 idMapFile* idGameLocal::GetLevelMap()
 {
 	if( mapFile && mapFile->HasPrimitiveData() ) {
@@ -3028,32 +2670,17 @@ idMapFile* idGameLocal::GetLevelMap()
 	return mapFile;
 }
 
-/*
-================
-idGameLocal::GetMapName
-================
-*/
 const char* idGameLocal::GetMapName() const
 {
 	return mapFileName.c_str();
 }
 
-/*
-================
-idGameLocal::CallFrameCommand
-================
-*/
 void idGameLocal::CallFrameCommand( idEntity* ent, const function_t* frameCommand )
 {
 	frameCommandThread->CallFunction( ent, frameCommand, true );
 	frameCommandThread->Execute();
 }
 
-/*
-================
-idGameLocal::CallObjectFrameCommand
-================
-*/
 void idGameLocal::CallObjectFrameCommand( idEntity* ent, const char* frameCommand )
 {
 	const function_t* func;
@@ -3081,11 +2708,6 @@ void idGameLocal::CallObjectFrameCommand( idEntity* ent, const char* frameComman
 	}
 }
 
-/*
-================
-idGameLocal::ShowTargets
-================
-*/
 void idGameLocal::ShowTargets()
 {
 	idMat3		  axis	  = GetLocalPlayer()->viewAngles.ToMat3();
@@ -3141,11 +2763,6 @@ void idGameLocal::ShowTargets()
 	}
 }
 
-/*
-================
-idGameLocal::RunDebugInfo
-================
-*/
 void idGameLocal::RunDebugInfo()
 {
 	idEntity* ent;
@@ -3293,21 +2910,11 @@ void idGameLocal::RunDebugInfo()
 	collisionModelManager->DebugOutput( player->GetEyePosition() );
 }
 
-/*
-==================
-idGameLocal::NumAAS
-==================
-*/
 int idGameLocal::NumAAS() const
 {
 	return aasList.Num();
 }
 
-/*
-==================
-idGameLocal::GetAAS
-==================
-*/
 idAAS* idGameLocal::GetAAS( int num ) const
 {
 	if( ( num >= 0 ) && ( num < aasList.Num() ) ) {
@@ -3318,11 +2925,6 @@ idAAS* idGameLocal::GetAAS( int num ) const
 	return NULL;
 }
 
-/*
-==================
-idGameLocal::GetAAS
-==================
-*/
 idAAS* idGameLocal::GetAAS( const char* name ) const
 {
 	int i;
@@ -3339,11 +2941,6 @@ idAAS* idGameLocal::GetAAS( const char* name ) const
 	return NULL;
 }
 
-/*
-==================
-idGameLocal::SetAASAreaState
-==================
-*/
 void idGameLocal::SetAASAreaState( const idBounds& bounds, const int areaContents, bool closed )
 {
 	int i;
@@ -3353,11 +2950,6 @@ void idGameLocal::SetAASAreaState( const idBounds& bounds, const int areaContent
 	}
 }
 
-/*
-==================
-idGameLocal::AddAASObstacle
-==================
-*/
 aasHandle_t idGameLocal::AddAASObstacle( const idBounds& bounds )
 {
 	int			i;
@@ -3377,11 +2969,6 @@ aasHandle_t idGameLocal::AddAASObstacle( const idBounds& bounds )
 	return obstacle;
 }
 
-/*
-==================
-idGameLocal::RemoveAASObstacle
-==================
-*/
 void idGameLocal::RemoveAASObstacle( const aasHandle_t handle )
 {
 	int i;
@@ -3391,11 +2978,6 @@ void idGameLocal::RemoveAASObstacle( const aasHandle_t handle )
 	}
 }
 
-/*
-==================
-idGameLocal::RemoveAllAASObstacles
-==================
-*/
 void idGameLocal::RemoveAllAASObstacles()
 {
 	int i;
@@ -3405,11 +2987,6 @@ void idGameLocal::RemoveAllAASObstacles()
 	}
 }
 
-/*
-==================
-idGameLocal::CheatsOk
-==================
-*/
 bool idGameLocal::CheatsOk( bool requirePlayer )
 {
 	extern idCVar net_allowCheats;
@@ -3432,11 +3009,6 @@ bool idGameLocal::CheatsOk( bool requirePlayer )
 	return false;
 }
 
-/*
-===================
-idGameLocal::RegisterEntity
-===================
-*/
 void idGameLocal::RegisterEntity( idEntity* ent, int forceSpawnId, const idDict& spawnArgsToCopy )
 {
 	int spawn_entnum;
@@ -3477,11 +3049,6 @@ void idGameLocal::RegisterEntity( idEntity* ent, int forceSpawnId, const idDict&
 	}
 }
 
-/*
-===================
-idGameLocal::UnregisterEntity
-===================
-*/
 void idGameLocal::UnregisterEntity( idEntity* ent )
 {
 	assert( ent );
@@ -3509,11 +3076,6 @@ void idGameLocal::UnregisterEntity( idEntity* ent )
 	}
 }
 
-/*
-================
-idGameLocal::SpawnEntityType
-================
-*/
 idEntity* idGameLocal::SpawnEntityType( const idTypeInfo& classdef, const idDict* args, bool bIsClientReadSnapshot )
 {
 	idClass* obj;
@@ -3546,14 +3108,6 @@ idEntity* idGameLocal::SpawnEntityType( const idTypeInfo& classdef, const idDict
 	return static_cast<idEntity*>( obj );
 }
 
-/*
-===================
-idGameLocal::SpawnEntityDef
-
-Finds the spawn function for the entity and calls it,
-returning false if not found
-===================
-*/
 bool idGameLocal::SpawnEntityDef( const idDict& args, idEntity** ent, bool setDefaults )
 {
 	const char* classname;
@@ -3640,11 +3194,6 @@ bool idGameLocal::SpawnEntityDef( const idDict& args, idEntity** ent, bool setDe
 	return false;
 }
 
-/*
-================
-idGameLocal::FindEntityDef
-================
-*/
 const idDeclEntityDef* idGameLocal::FindEntityDef( const char* name, bool makeDefault ) const
 {
 	const idDecl* decl = NULL;
@@ -3657,22 +3206,12 @@ const idDeclEntityDef* idGameLocal::FindEntityDef( const char* name, bool makeDe
 	return static_cast<const idDeclEntityDef*>( decl );
 }
 
-/*
-================
-idGameLocal::FindEntityDefDict
-================
-*/
 const idDict* idGameLocal::FindEntityDefDict( const char* name, bool makeDefault ) const
 {
 	const idDeclEntityDef* decl = FindEntityDef( name, makeDefault );
 	return decl ? &decl->dict : NULL;
 }
 
-/*
-================
-idGameLocal::InhibitEntitySpawn
-================
-*/
 bool idGameLocal::InhibitEntitySpawn( idDict& spawnArgs )
 {
 	bool result = false;
@@ -3719,25 +3258,11 @@ bool idGameLocal::InhibitEntitySpawn( idDict& spawnArgs )
 	return result;
 }
 
-/*
-==============
-idGameLocal::GameState
-
-Used to allow entities to know if they're being spawned during the initial spawn.
-==============
-*/
 gameState_t idGameLocal::GameState() const
 {
 	return gamestate;
 }
 
-/*
-==============
-idGameLocal::SpawnMapEntities
-
-Parses textual entity definitions out of an entstring and spawns gentities.
-==============
-*/
 void idGameLocal::SpawnMapEntities()
 {
 	int			 i;
@@ -3794,11 +3319,6 @@ void idGameLocal::SpawnMapEntities()
 	Printf( "...%i entities spawned, %i inhibited\n\n", num, inhibit );
 }
 
-/*
-================
-idGameLocal::AddEntityToHash
-================
-*/
 void idGameLocal::AddEntityToHash( const char* name, idEntity* ent )
 {
 	if( FindEntity( name ) ) {
@@ -3807,11 +3327,6 @@ void idGameLocal::AddEntityToHash( const char* name, idEntity* ent )
 	entityHash.Add( entityHash.GenerateKey( name, true ), ent->entityNumber );
 }
 
-/*
-================
-idGameLocal::RemoveEntityFromHash
-================
-*/
 bool idGameLocal::RemoveEntityFromHash( const char* name, idEntity* ent )
 {
 	int hash, i;
@@ -3826,11 +3341,6 @@ bool idGameLocal::RemoveEntityFromHash( const char* name, idEntity* ent )
 	return false;
 }
 
-/*
-================
-idGameLocal::GetTargets
-================
-*/
 int idGameLocal::GetTargets( const idDict& args, idList<idEntityPtr<idEntity>>& list, const char* ref ) const
 {
 	int				  i, num, refLength;
@@ -3855,13 +3365,6 @@ int idGameLocal::GetTargets( const idDict& args, idList<idEntityPtr<idEntity>>& 
 	return list.Num();
 }
 
-/*
-=============
-idGameLocal::GetTraceEntity
-
-returns the master entity of a trace.  for example, if the trace entity is the player's head, it will return the player.
-=============
-*/
 idEntity* idGameLocal::GetTraceEntity( const trace_t& trace ) const
 {
 	idEntity* master;
@@ -3876,13 +3379,6 @@ idEntity* idGameLocal::GetTraceEntity( const trace_t& trace ) const
 	return entities[trace.c.entityNum];
 }
 
-/*
-=============
-idGameLocal::ArgCompletion_EntityName
-
-Argument completion for entity names
-=============
-*/
 void idGameLocal::ArgCompletion_EntityName( const idCmdArgs& args, void ( *callback )( const char* s ) )
 {
 	int i;
@@ -3894,13 +3390,6 @@ void idGameLocal::ArgCompletion_EntityName( const idCmdArgs& args, void ( *callb
 	}
 }
 
-/*
-=============
-idGameLocal::FindEntity
-
-Returns the entity whose name matches the specified string.
-=============
-*/
 idEntity* idGameLocal::FindEntity( const char* name ) const
 {
 	int hash, i;
@@ -3915,16 +3404,6 @@ idEntity* idGameLocal::FindEntity( const char* name ) const
 	return NULL;
 }
 
-/*
-=============
-idGameLocal::FindEntityUsingDef
-
-Searches all active entities for the next one using the specified entityDef.
-
-Searches beginning at the entity after from, or the beginning if NULL
-NULL will be returned if the end of the list is reached.
-=============
-*/
 idEntity* idGameLocal::FindEntityUsingDef( idEntity* from, const char* match ) const
 {
 	idEntity* ent;
@@ -3945,14 +3424,6 @@ idEntity* idGameLocal::FindEntityUsingDef( idEntity* from, const char* match ) c
 	return NULL;
 }
 
-/*
-=============
-idGameLocal::FindTraceEntity
-
-Searches all active entities for the closest ( to start ) match that intersects
-the line start,end
-=============
-*/
 idEntity* idGameLocal::FindTraceEntity( idVec3 start, idVec3 end, const idTypeInfo& c, const idEntity* skip ) const
 {
 	idEntity* ent;
@@ -3988,11 +3459,6 @@ idEntity* idGameLocal::FindTraceEntity( idVec3 start, idVec3 end, const idTypeIn
 	return bestEnt;
 }
 
-/*
-================
-idGameLocal::EntitiesWithinRadius
-================
-*/
 int idGameLocal::EntitiesWithinRadius( const idVec3 org, float radius, idEntity** entityList, int maxCount ) const
 {
 	idEntity* ent;
@@ -4009,15 +3475,6 @@ int idGameLocal::EntitiesWithinRadius( const idVec3 org, float radius, idEntity*
 	return entCount;
 }
 
-/*
-=================
-idGameLocal::KillBox
-
-Kills all entities that would touch the proposed new positioning of ent. The ent itself will not being killed.
-Checks if player entities are in the teleporter, and marks them to die at teleport exit instead of immediately.
-If catch_teleport, this only marks teleport players for death on exit
-=================
-*/
 void idGameLocal::KillBox( idEntity* ent, bool catch_teleport )
 {
 	int			 i;
@@ -4067,11 +3524,6 @@ void idGameLocal::KillBox( idEntity* ent, bool catch_teleport )
 	}
 }
 
-/*
-================
-idGameLocal::RequirementMet
-================
-*/
 bool idGameLocal::RequirementMet( idEntity* activator, const idStr& requires, int removeItem )
 {
 	if( requires.Length() ) {
@@ -4092,11 +3544,6 @@ bool idGameLocal::RequirementMet( idEntity* activator, const idStr& requires, in
 	return true;
 }
 
-/*
-============
-idGameLocal::AlertAI
-============
-*/
 void idGameLocal::AlertAI( idEntity* ent )
 {
 	if( ent && ent->IsType( idActor::Type ) ) {
@@ -4116,11 +3563,6 @@ void idGameLocal::AlertAI( idEntity* ent )
 	}
 }
 
-/*
-============
-idGameLocal::GetAlertEntity
-============
-*/
 idActor* idGameLocal::GetAlertEntity()
 {
 	if( lastAIAlertTime >= framenum ) {
@@ -4130,11 +3572,6 @@ idActor* idGameLocal::GetAlertEntity()
 	return NULL;
 }
 
-/*
-============
-idGameLocal::RadiusDamage
-============
-*/
 void idGameLocal::RadiusDamage( const idVec3& origin, idEntity* inflictor, idEntity* attacker, idEntity* ignoreDamage, idEntity* ignorePush, const char* damageDefName, float dmgPower )
 {
 	float		  dist, damageScale, attackerDamageScale, attackerPushScale;
@@ -4264,11 +3701,6 @@ void idGameLocal::RadiusDamage( const idVec3& origin, idEntity* inflictor, idEnt
 	}
 }
 
-/*
-==============
-idGameLocal::RadiusPush
-==============
-*/
 void idGameLocal::RadiusPush( const idVec3& origin, const float radius, const float push, const idEntity* inflictor, const idEntity* ignore, float inflictorScale, const bool quake )
 {
 	int			 i, numListedClipModels;
@@ -4339,11 +3771,6 @@ void idGameLocal::RadiusPush( const idVec3& origin, const float radius, const fl
 	}
 }
 
-/*
-==============
-idGameLocal::RadiusPushClipModel
-==============
-*/
 void idGameLocal::RadiusPushClipModel( const idVec3& origin, const float push, const idClipModel* clipModel )
 {
 	int						i, j;
@@ -4397,11 +3824,6 @@ void idGameLocal::RadiusPushClipModel( const idVec3& origin, const float push, c
 	}
 }
 
-/*
-===============
-idGameLocal::ProjectDecal
-===============
-*/
 void idGameLocal::ProjectDecal( const idVec3& origin, const idVec3& dir, float depth, bool parallel, float size, const char* material, float angle )
 {
 	float		   s, c;
@@ -4442,11 +3864,6 @@ void idGameLocal::ProjectDecal( const idVec3& origin, const idVec3& dir, float d
 	gameRenderWorld->ProjectDecalOntoWorld( winding, projectionOrigin, parallel, depth * 0.5f, declManager->FindMaterial( material ), gameLocal.slow.time /* _D3XP */ );
 }
 
-/*
-==============
-idGameLocal::BloodSplat
-==============
-*/
 void idGameLocal::BloodSplat( const idVec3& origin, const idVec3& dir, float size, const char* material )
 {
 	float		 halfSize = size * 0.5f;
@@ -4467,11 +3884,6 @@ void idGameLocal::BloodSplat( const idVec3& origin, const idVec3& dir, float siz
 	ProjectDecal( results.endpos, dir, 2.0f * size, true, size, material );
 }
 
-/*
-=============
-idGameLocal::SetCamera
-=============
-*/
 void idGameLocal::SetCamera( idCamera* cam )
 {
 	int		  i;
@@ -4557,21 +3969,11 @@ void idGameLocal::SetCamera( idCamera* cam )
 	}
 }
 
-/*
-=============
-idGameLocal::GetCamera
-=============
-*/
 idCamera* idGameLocal::GetCamera() const
 {
 	return camera;
 }
 
-/*
-=============
-idGameLocal::SkipCinematic
-=============
-*/
 bool idGameLocal::SkipCinematic()
 {
 	if( camera ) {
@@ -4600,31 +4002,14 @@ bool idGameLocal::SkipCinematic()
 
 	return true;
 }
-/*
-=============
-idGameLocal::SkipCinematicScene
-=============
-*/
 bool idGameLocal::SkipCinematicScene()
 {
 	return SkipCinematic();
 }
-/*
-=============
-idGameLocal::CheckInCinematic
-=============
-*/
 bool idGameLocal::CheckInCinematic()
 {
 	return inCinematic;
 }
-/*
-======================
-idGameLocal::SpreadLocations
-
-Now that everything has been spawned, associate areas with location entities
-======================
-*/
 void idGameLocal::SpreadLocations()
 {
 	idEntity* ent;
@@ -4666,14 +4051,6 @@ void idGameLocal::SpreadLocations()
 	}
 }
 
-/*
-===================
-idGameLocal::LocationForPoint
-
-The player checks the location each frame to update the HUD text display
-May return NULL
-===================
-*/
 idLocationEntity* idGameLocal::LocationForPoint( const idVec3& point )
 {
 	if( !locationEntities ) {
@@ -4692,21 +4069,11 @@ idLocationEntity* idGameLocal::LocationForPoint( const idVec3& point )
 	return locationEntities[areaNum];
 }
 
-/*
-============
-idGameLocal::SetPortalState
-============
-*/
 void idGameLocal::SetPortalState( qhandle_t portal, int blockingBits )
 {
 	gameRenderWorld->SetPortalState( portal, blockingBits );
 }
 
-/*
-============
-idGameLocal::sortSpawnPoints
-============
-*/
 int idGameLocal::sortSpawnPoints( const void* ptr1, const void* ptr2 )
 {
 	const spawnSpot_t* spot1 = static_cast<const spawnSpot_t*>( ptr1 );
@@ -4723,13 +4090,6 @@ int idGameLocal::sortSpawnPoints( const void* ptr1, const void* ptr2 )
 	}
 }
 
-/*
-===========
-idGameLocal::RandomizeInitialSpawns
-randomize the order of the initial spawns
-prepare for a sequence of initial player spawns
-============
-*/
 void idGameLocal::RandomizeInitialSpawns()
 {
 	spawnSpot_t spot;
@@ -4845,15 +4205,6 @@ void idGameLocal::RandomizeInitialSpawns()
 	teamCurrentInitialSpot[1] = 0;
 }
 
-/*
-===========
-idGameLocal::SelectInitialSpawnPoint
-spectators are spawned randomly anywhere
-in-game clients are spawned based on distance to active players (randomized on the first half)
-upon map restart, initial spawns are used (randomized ordered list of spawns flagged "initial")
-  if there are more players than initial spots, overflow to regular spawning
-============
-*/
 idEntity* idGameLocal::SelectInitialSpawnPoint( idPlayer* player )
 {
 	int			i, j, which;
@@ -4977,61 +4328,31 @@ idEntity* idGameLocal::SelectInitialSpawnPoint( idPlayer* player )
 	return spot.ent;
 }
 
-/*
-================
-idGameLocal::SetGlobalMaterial
-================
-*/
 void idGameLocal::SetGlobalMaterial( const idMaterial* mat )
 {
 	globalMaterial = mat;
 }
 
-/*
-================
-idGameLocal::GetGlobalMaterial
-================
-*/
 const idMaterial* idGameLocal::GetGlobalMaterial()
 {
 	return globalMaterial;
 }
 
-/*
-================
-idGameLocal::GetSpawnId
-================
-*/
 int idGameLocal::GetSpawnId( const idEntity* ent ) const
 {
 	return ( gameLocal.spawnIds[ent->entityNumber] << GENTITYNUM_BITS ) | ent->entityNumber;
 }
 
-/*
-=================
-idPlayer::SetPortalSkyEnt
-=================
-*/
 void idGameLocal::SetPortalSkyEnt( idEntity* ent )
 {
 	portalSkyEnt = ent;
 }
 
-/*
-=================
-idPlayer::IsPortalSkyAcive
-=================
-*/
 bool idGameLocal::IsPortalSkyAcive()
 {
 	return portalSkyActive;
 }
 
-/*
-===========
-idGameLocal::SelectTimeGroup
-============
-*/
 void idGameLocal::SelectTimeGroup( int timeGroup )
 {
 	if( timeGroup ) {
@@ -5043,11 +4364,6 @@ void idGameLocal::SelectTimeGroup( int timeGroup )
 	selectedGroup = timeGroup;
 }
 
-/*
-===========
-idGameLocal::GetTimeGroupTime
-============
-*/
 int idGameLocal::GetTimeGroupTime( int timeGroup )
 {
 	if( timeGroup ) {
@@ -5057,11 +4373,6 @@ int idGameLocal::GetTimeGroupTime( int timeGroup )
 	}
 }
 
-/*
-===========
-idGameLocal::ComputeSlowScale
-============
-*/
 void idGameLocal::ComputeSlowScale()
 {
 	// check if we need to do a quick reset
@@ -5134,11 +4445,6 @@ void idGameLocal::ComputeSlowScale()
 	}
 }
 
-/*
-===========
-idGameLocal::ResetSlowTimeVars
-============
-*/
 void idGameLocal::ResetSlowTimeVars()
 {
 	slowmoScale = 1.0f;
@@ -5151,91 +4457,46 @@ void idGameLocal::ResetSlowTimeVars()
 	slow.time		  = 0;
 }
 
-/*
-===========
-idGameLocal::QuickSlowmoReset
-============
-*/
 void idGameLocal::QuickSlowmoReset()
 {
 	quickSlowmoReset = true;
 }
 
-/*
-================
-idGameLocal::GetClientStats
-================
-*/
 void idGameLocal::GetClientStats( int clientNum, char* data, const int len )
 {
 	mpGame.PlayerStats( clientNum, data, len );
 }
 
-/*
-================
-idGameLocal::GetMPGameModes
-================
-*/
 int idGameLocal::GetMPGameModes( const char*** gameModes, const char*** gameModesDisplay )
 {
 	return mpGame.GetGameModes( gameModes, gameModesDisplay );
 }
 
-/*
-========================
-idGameLocal::IsPDAOpen
-========================
-*/
 bool idGameLocal::IsPDAOpen() const
 {
 	return GetLocalPlayer() && GetLocalPlayer()->objectiveSystemOpen;
 }
 
-/*
-========================
-idGameLocal::IsPlayerChatting
-========================
-*/
 bool idGameLocal::IsPlayerChatting() const
 {
 	return GetLocalPlayer() && ( GetLocalPlayer()->isChatting > 0 ) && !GetLocalPlayer()->spectating;
 }
 
-/*
-========================
-idGameLocal::InhibitControls
-========================
-*/
 bool idGameLocal::InhibitControls()
 {
 	return ( Shell_IsActive() || IsPDAOpen() || IsPlayerChatting() || ( common->IsMultiplayer() && mpGame.IsScoreboardActive() ) );
 }
 
-/*
-===============================
-idGameLocal::Leaderboards_Init
-===============================
-*/
 void idGameLocal::Leaderboards_Init()
 {
 	LeaderboardLocal_Init();
 }
 
-/*
-===============================
-idGameLocal::Leaderboards_Shutdown
-===============================
-*/
 void idGameLocal::Leaderboards_Shutdown()
 {
 	LeaderboardLocal_Shutdown();
 }
 
-/*
-========================
-idGameLocal::Shell_ClearRepeater
-========================
-*/
 void idGameLocal::Shell_ClearRepeater()
 {
 	if( shellHandler != NULL ) {
@@ -5243,11 +4504,6 @@ void idGameLocal::Shell_ClearRepeater()
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_Init
-========================
-*/
 void idGameLocal::Shell_Init( const char* filename, idSoundWorld* sw )
 {
 	if( shellHandler != NULL ) {
@@ -5255,11 +4511,6 @@ void idGameLocal::Shell_Init( const char* filename, idSoundWorld* sw )
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_Init
-========================
-*/
 void idGameLocal::Shell_Cleanup()
 {
 	if( shellHandler != NULL ) {
@@ -5271,11 +4522,6 @@ void idGameLocal::Shell_Cleanup()
 	mpGame.CleanupScoreboard();
 }
 
-/*
-========================
-idGameLocal::Shell_CreateMenu
-========================
-*/
 void idGameLocal::Shell_CreateMenu( bool inGame )
 {
 	Shell_ResetMenu();
@@ -5295,11 +4541,6 @@ void idGameLocal::Shell_CreateMenu( bool inGame )
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_ClosePause
-========================
-*/
 void idGameLocal::Shell_ClosePause()
 {
 	if( shellHandler != NULL ) {
@@ -5315,11 +4556,6 @@ void idGameLocal::Shell_ClosePause()
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_Show
-========================
-*/
 void idGameLocal::Shell_Show( bool show )
 {
 	if( shellHandler != NULL ) {
@@ -5329,11 +4565,6 @@ void idGameLocal::Shell_Show( bool show )
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_IsActive
-========================
-*/
 bool idGameLocal::Shell_IsActive() const
 {
 	if( shellHandler != NULL ) {
@@ -5342,11 +4573,6 @@ bool idGameLocal::Shell_IsActive() const
 	return false;
 }
 
-/*
-========================
-idGameLocal::Shell_HandleGuiEvent
-========================
-*/
 bool idGameLocal::Shell_HandleGuiEvent( const sysEvent_t* sev )
 {
 	if( shellHandler != NULL ) {
@@ -5355,11 +4581,6 @@ bool idGameLocal::Shell_HandleGuiEvent( const sysEvent_t* sev )
 	return false;
 }
 
-/*
-========================
-idGameLocal::Shell_Render
-========================
-*/
 void idGameLocal::Shell_Render()
 {
 	if( shellHandler != NULL ) {
@@ -5368,11 +4589,6 @@ void idGameLocal::Shell_Render()
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_ResetMenu
-========================
-*/
 void idGameLocal::Shell_ResetMenu()
 {
 	if( shellHandler != NULL ) {
@@ -5382,11 +4598,6 @@ void idGameLocal::Shell_ResetMenu()
 	}
 }
 
-/*
-=================
-idGameLocal::Shell_SyncWithSession
-=================
-*/
 void idGameLocal::Shell_SyncWithSession()
 {
 	if( shellHandler == NULL ) {
@@ -5428,11 +4639,6 @@ void idGameLocal::Shell_SetGameComplete()
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_SetState_GameLobby
-========================
-*/
 void idGameLocal::Shell_UpdateSavedGames()
 {
 	if( shellHandler != NULL ) {
@@ -5440,11 +4646,6 @@ void idGameLocal::Shell_UpdateSavedGames()
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_SetCanContinue
-========================
-*/
 void idGameLocal::Shell_SetCanContinue( bool valid )
 {
 	if( shellHandler != NULL ) {
@@ -5452,11 +4653,6 @@ void idGameLocal::Shell_SetCanContinue( bool valid )
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_SetState_GameLobby
-========================
-*/
 void idGameLocal::Shell_UpdateClientCountdown( int countdown )
 {
 	if( shellHandler != NULL ) {
@@ -5464,11 +4660,6 @@ void idGameLocal::Shell_UpdateClientCountdown( int countdown )
 	}
 }
 
-/*
-========================
-idGameLocal::Shell_SetState_GameLobby
-========================
-*/
 void idGameLocal::Shell_UpdateLeaderboard( const idLeaderboardCallback* callback )
 {
 	if( shellHandler != NULL ) {
@@ -5476,11 +4667,6 @@ void idGameLocal::Shell_UpdateLeaderboard( const idLeaderboardCallback* callback
 	}
 }
 
-/*
-========================
-idGameLocal::SimulateProjectiles
-========================
-*/
 bool idGameLocal::SimulateProjectiles()
 {
 	bool moreProjectiles = false;
@@ -5510,12 +4696,6 @@ bool idGameLocal::SimulateProjectiles()
 	return moreProjectiles;
 }
 
-// jmarshall
-/*
-===============
-idGameLocal::DelayRemoveEntity
-===============
-*/
 void idGameLocal::DelayRemoveEntity( idEntity* entity, int delay )
 {
 	iceGameDelayRemoveEntry_t entry;
@@ -5523,13 +4703,7 @@ void idGameLocal::DelayRemoveEntity( idEntity* entity, int delay )
 	entry.removeTime = gameLocal.time + delay;
 	delayRemoveEntities.Append( entry );
 }
-// jmarshall end
 
-/*
-===============
-idGameLocal::InfluenceActive
-===============
-*/
 bool idGameLocal::InfluenceActive() const
 {
 	idPlayer* player;
@@ -5541,11 +4715,6 @@ bool idGameLocal::InfluenceActive() const
 
 	return false;
 }
-/*
-==================
-Random
-==================
-*/
 float idGameLocal::Random( float range )
 {
 	float result;
@@ -5554,11 +4723,6 @@ float idGameLocal::Random( float range )
 	return range * result;
 }
 
-/*
-==================
-RandomDelay
-==================
-*/
 float idGameLocal::RandomDelay( float min, float max )
 {
 	float t;
@@ -5569,11 +4733,6 @@ float idGameLocal::RandomDelay( float min, float max )
 	return t;
 }
 
-/*
-==================
-DelayTime
-==================
-*/
 float idGameLocal::DelayTime( float delay )
 {
 	float t;
@@ -5585,11 +4744,6 @@ float idGameLocal::DelayTime( float delay )
 	return t;
 }
 
-/*
-==================
-RandomTime
-==================
-*/
 float idGameLocal::RandomTime( float delay )
 {
 	float t;
@@ -5603,11 +4757,6 @@ float idGameLocal::RandomTime( float delay )
 	return t;
 }
 
-/*
-================
-idThread::Event_Spawn
-================
-*/
 idEntity* idGameLocal::Spawn( const char* classname )
 {
 	idEntity* ent;
@@ -5618,11 +4767,6 @@ idEntity* idGameLocal::Spawn( const char* classname )
 	return ent;
 }
 
-/*
-================
-idGameLocal::GetEntity
-================
-*/
 idEntity* idGameLocal::GetEntity( const char* name )
 {
 	int		  entnum;
@@ -5643,12 +4787,6 @@ idEntity* idGameLocal::GetEntity( const char* name )
 	}
 }
 
-/*
-================
-idGameLocal::AddBot
-================
-*/
-// jmarshall - bots
 void idGameLocal::AddBot( const char* name )
 {
 	if( !common->IsMultiplayer() ) {
@@ -5664,11 +4802,6 @@ void idGameLocal::AddBot( const char* name )
 	session->GetActingGameStateLobbyBase().AllocLobbyUserSlotForBot( name );
 }
 
-/*
-================
-idGameLocal::TravelTimeToGoal
-================
-*/
 int idGameLocal::TravelTimeToGoal( const idVec3& origin, const idVec3& goal )
 {
 	idAAS* aas = bot_aas;
@@ -5697,11 +4830,6 @@ int idGameLocal::TravelTimeToGoal( const idVec3& origin, const idVec3& goal )
 	return travelTime;
 }
 
-/*
-===============
-idGameLocal::GetBotItemEntry
-===============
-*/
 int idGameLocal::GetBotItemEntry( const char* name )
 {
 	const idKeyValue* keyvalue = botItemTable->dict.FindKey( name );
@@ -5713,11 +4841,6 @@ int idGameLocal::GetBotItemEntry( const char* name )
 	return botItemTable->dict.GetInt( name );
 }
 
-/*
-===============
-idGameLocal::Trace
-===============
-*/
 void idGameLocal::Trace( trace_t& results, const idVec3& start, const idVec3& end, int contentMask, int passEntity )
 {
 	idMat3 axis;
@@ -5730,11 +4853,6 @@ void idGameLocal::Trace( trace_t& results, const idVec3& start, const idVec3& en
 	}
 }
 
-/*
-===================
-idGameLocal::AlertBots
-===================
-*/
 void idGameLocal::AlertBots( idPlayer* player, idVec3 alert_position )
 {
 	for( int i = 0; i < MAX_CLIENTS; i++ ) {

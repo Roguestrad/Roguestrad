@@ -59,11 +59,6 @@ EVENT( EV_SecurityCam_Alert, idSecurityCamera::Event_Alert )
 EVENT( EV_SecurityCam_AddLight, idSecurityCamera::Event_AddLight )
 END_CLASS
 
-/*
-================
-idSecurityCamera::Save
-================
-*/
 void idSecurityCamera::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteFloat( angle );
@@ -88,11 +83,6 @@ void idSecurityCamera::Save( idSaveGame* savefile ) const
 	savefile->WriteTraceModel( trm );
 }
 
-/*
-================
-idSecurityCamera::Restore
-================
-*/
 void idSecurityCamera::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadFloat( angle );
@@ -117,11 +107,6 @@ void idSecurityCamera::Restore( idRestoreGame* savefile )
 	savefile->ReadTraceModel( trm );
 }
 
-/*
-================
-idSecurityCamera::Spawn
-================
-*/
 void idSecurityCamera::Spawn()
 {
 	idStr str;
@@ -181,11 +166,6 @@ void idSecurityCamera::Spawn()
 	UpdateChangeableSpawnArgs( NULL );
 }
 
-/*
-================
-idSecurityCamera::Event_AddLight
-================
-*/
 void idSecurityCamera::Event_AddLight()
 {
 	idDict	 args;
@@ -223,11 +203,6 @@ void idSecurityCamera::Event_AddLight()
 	spotLight->UpdateVisuals();
 }
 
-/*
-================
-idSecurityCamera::DrawFov
-================
-*/
 void idSecurityCamera::DrawFov()
 {
 	int	   i;
@@ -269,11 +244,6 @@ void idSecurityCamera::DrawFov()
 	}
 }
 
-/*
-================
-idSecurityCamera::GetRenderView
-================
-*/
 renderView_t* idSecurityCamera::GetRenderView()
 {
 	renderView_t* rv = idEntity::GetRenderView();
@@ -285,11 +255,6 @@ renderView_t* idSecurityCamera::GetRenderView()
 	return rv;
 }
 
-/*
-================
-idSecurityCamera::CanSeePlayer
-================
-*/
 bool idSecurityCamera::CanSeePlayer()
 {
 	int			i;
@@ -340,11 +305,6 @@ bool idSecurityCamera::CanSeePlayer()
 	return false;
 }
 
-/*
-================
-idSecurityCamera::SetAlertMode
-================
-*/
 void idSecurityCamera::SetAlertMode( int alert )
 {
 	if( alert >= SCANNING && alert <= ACTIVATED ) {
@@ -354,11 +314,6 @@ void idSecurityCamera::SetAlertMode( int alert )
 	UpdateVisuals();
 }
 
-/*
-================
-idSecurityCamera::Think
-================
-*/
 void idSecurityCamera::Think()
 {
 	float pct;
@@ -426,31 +381,16 @@ void idSecurityCamera::Think()
 	Present();
 }
 
-/*
-================
-idSecurityCamera::GetAxis
-================
-*/
 const idVec3 idSecurityCamera::GetAxis() const
 {
 	return ( flipAxis ) ? -GetPhysics()->GetAxis()[modelAxis] : GetPhysics()->GetAxis()[modelAxis];
 };
 
-/*
-================
-idSecurityCamera::SweepSpeed
-================
-*/
 float idSecurityCamera::SweepSpeed() const
 {
 	return spawnArgs.GetFloat( "sweepSpeed", "5" );
 }
 
-/*
-================
-idSecurityCamera::StartSweep
-================
-*/
 void idSecurityCamera::StartSweep()
 {
 	int speed;
@@ -463,11 +403,6 @@ void idSecurityCamera::StartSweep()
 	StartSound( "snd_moving", SND_CHANNEL_BODY, 0, false, NULL );
 }
 
-/*
-================
-idSecurityCamera::Event_ContinueSweep
-================
-*/
 void idSecurityCamera::Event_ContinueSweep()
 {
 	float pct = ( stopSweeping - sweepStart ) / ( sweepEnd - sweepStart );
@@ -483,11 +418,6 @@ void idSecurityCamera::Event_ContinueSweep()
 	sweeping = true;
 }
 
-/*
-================
-idSecurityCamera::Event_Alert
-================
-*/
 void idSecurityCamera::Event_Alert()
 {
 	float wait;
@@ -502,11 +432,6 @@ void idSecurityCamera::Event_Alert()
 	PostEventSec( &EV_SecurityCam_ContinueSweep, wait );
 }
 
-/*
-================
-idSecurityCamera::Event_ReverseSweep
-================
-*/
 void idSecurityCamera::Event_ReverseSweep()
 {
 	angle		  = GetPhysics()->GetAxis().ToAngles().yaw;
@@ -514,11 +439,6 @@ void idSecurityCamera::Event_ReverseSweep()
 	StartSweep();
 }
 
-/*
-================
-idSecurityCamera::Event_Pause
-================
-*/
 void idSecurityCamera::Event_Pause()
 {
 	float sweepWait;
@@ -530,11 +450,6 @@ void idSecurityCamera::Event_Pause()
 	PostEventSec( &EV_SecurityCam_ReverseSweep, sweepWait );
 }
 
-/*
-============
-idSecurityCamera::Killed
-============
-*/
 void idSecurityCamera::Killed( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 	sweeping = false;
@@ -557,11 +472,6 @@ void idSecurityCamera::Killed( idEntity* inflictor, idEntity* attacker, int dama
 	physicsObj.DropToFloor();
 }
 
-/*
-============
-idSecurityCamera::Pain
-============
-*/
 bool idSecurityCamera::Pain( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 	const char* fx = spawnArgs.GetString( "fx_damage" );
@@ -571,13 +481,6 @@ bool idSecurityCamera::Pain( idEntity* inflictor, idEntity* attacker, int damage
 	return true;
 }
 
-/*
-================
-idSecurityCamera::Present
-
-Present is called to allow entities to generate refEntities, lights, etc for the renderer.
-================
-*/
 void idSecurityCamera::Present()
 {
 	// don't present to the renderer if the entity hasn't changed

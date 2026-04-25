@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 static const int MAX_EMAIL_ITEMS = 7;
 
-/*
-========================
-idMenuWidget_PDA_EmailInbox::Initialize
-========================
-*/
 void			 idMenuWidget_PDA_EmailInbox::Initialize( idMenuHandler* data )
 {
 	idMenuWidget_ScrollBar* scrollbar = new( TAG_SWF ) idMenuWidget_ScrollBar();
@@ -61,11 +56,6 @@ void			 idMenuWidget_PDA_EmailInbox::Initialize( idMenuHandler* data )
 	AddChild( emailList );
 }
 
-/*
-========================
-idMenuWidget_PDA_EmailInbox::Update
-========================
-*/
 void idMenuWidget_PDA_EmailInbox::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -132,11 +122,6 @@ void idMenuWidget_PDA_EmailInbox::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_PDA_EmailInbox::ObserveEvent
-========================
-*/
 void idMenuWidget_PDA_EmailInbox::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	const idMenuWidget_Button* const button = dynamic_cast<const idMenuWidget_Button*>( &widget );

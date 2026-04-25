@@ -45,11 +45,6 @@ static const int   FLASHLIGHT_RELOAD_TO_IDLE = 4;
 
 static const float FLASHLIGHT_MIN_SKIN_INTENSITY = 0.2f;
 
-/*
-================
-iceWeaponFlashlight::Init
-================
-*/
 void			   iceWeaponFlashlight::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -69,21 +64,11 @@ void			   iceWeaponFlashlight::Init( idWeapon* weapon )
 	UpdateSkin();
 }
 
-/*
-================
-iceWeaponFlashlight::UpdateLightIntensity
-================
-*/
 void iceWeaponFlashlight::UpdateLightIntensity()
 {
 	// TODO this has to interact with scripts somehow
 }
 
-/*
-================
-iceWeaponFlashlight::UpdateSkin
-================
-*/
 void iceWeaponFlashlight::UpdateSkin()
 {
 	if( on && ( intensity > FLASHLIGHT_MIN_SKIN_INTENSITY ) ) {
@@ -101,11 +86,6 @@ void iceWeaponFlashlight::UpdateSkin()
 	}
 }
 
-/*
-================
-iceWeaponFlashlight::Raise
-================
-*/
 stateResult_t iceWeaponFlashlight::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -126,11 +106,6 @@ stateResult_t iceWeaponFlashlight::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-iceWeaponFlashlight::Lower
-================
-*/
 stateResult_t iceWeaponFlashlight::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -152,11 +127,6 @@ stateResult_t iceWeaponFlashlight::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-iceWeaponFlashlight::Idle
-================
-*/
 stateResult_t iceWeaponFlashlight::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -176,11 +146,6 @@ stateResult_t iceWeaponFlashlight::Idle( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-iceWeaponFlashlight::Fire
-================
-*/
 stateResult_t iceWeaponFlashlight::Fire( stateParms_t* parms )
 {
 	enum FIRE_State { FIRE_NOTSET = 0, FIRE_MELEE, FIRE_WAIT };
@@ -207,11 +172,6 @@ stateResult_t iceWeaponFlashlight::Fire( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-================
-iceWeaponFlashlight::Reload
-================
-*/
 stateResult_t iceWeaponFlashlight::Reload( stateParms_t* parms )
 {
 	enum RELOAD_State { RELOAD_NOTSET = 0, RELOAD_TOGGLEFLASHLIGHT, RELOAD_WAIT };

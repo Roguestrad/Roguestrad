@@ -222,11 +222,6 @@ void			 idMenuHandler_Shell::Update()
 	}
 }
 
-/*
-========================
-idMenuHandler_Shell::SetCanContinue
-========================
-*/
 void idMenuHandler_Shell::SetCanContinue( bool valid )
 {
 	idMenuScreen_Shell_Singleplayer* screen = dynamic_cast<idMenuScreen_Shell_Singleplayer*>( menuScreens[SHELL_AREA_CAMPAIGN] );
@@ -235,11 +230,6 @@ void idMenuHandler_Shell::SetCanContinue( bool valid )
 	}
 }
 
-/*
-========================
-idMenuHandler_Shell::HandleGuiEvent
-========================
-*/
 bool idMenuHandler_Shell::HandleGuiEvent( const sysEvent_t* sev )
 {
 	if( IsPacifierVisible() ) {
@@ -370,11 +360,6 @@ bool idMenuHandler_Shell::HandleGuiEvent( const sysEvent_t* sev )
 	return idMenuHandler::HandleGuiEvent( sev );
 }
 
-/*
-========================
-idMenuHandler_Shell::Initialize
-========================
-*/
 void idMenuHandler_Shell::Initialize( const char* swfFile, idSoundWorld* sw )
 {
 	idMenuHandler::Initialize( swfFile, sw );
@@ -548,11 +533,6 @@ void idMenuHandler_Shell::Initialize( const char* swfFile, idSoundWorld* sw )
 	}
 }
 
-/*
-========================
-idMenuHandler_Shell::Cleanup
-========================
-*/
 void idMenuHandler_Shell::Cleanup()
 {
 	idMenuHandler::Cleanup();
@@ -561,11 +541,6 @@ void idMenuHandler_Shell::Cleanup()
 	introGui = NULL;
 }
 
-/*
-========================
-idMenuHandler_Shell::ActivateMenu
-========================
-*/
 void idMenuHandler_Shell::ActivateMenu( bool show )
 {
 	if( show && gui != NULL && gui->IsActive() ) {
@@ -643,11 +618,6 @@ void idMenuHandler_Shell::ActivateMenu( bool show )
 
 enum shellCommandsPC_t { SHELL_CMD_DEMO0, SHELL_CMD_DEMO1, SHELL_CMD_DEV, SHELL_CMD_CAMPAIGN, SHELL_CMD_MULTIPLAYER, SHELL_CMD_SETTINGS, SHELL_CMD_CREDITS, SHELL_CMD_QUIT };
 
-/*
-========================
-idMenuHandler_Shell::SetPCOptionsVisible
-========================
-*/
 void idMenuHandler_Shell::SetupPCOptions()
 {
 	if( inGame ) {
@@ -773,11 +743,6 @@ void idMenuHandler_Shell::SetupPCOptions()
 	}
 }
 
-/*
-========================
-idMenuHandler_Shell::HandleExitGameBtn
-========================
-*/
 void idMenuHandler_Shell::HandleExitGameBtn()
 {
 	class idSWFScriptFunction_QuitDialog : public idSWFScriptFunction_RefCounted
@@ -815,11 +780,6 @@ void idMenuHandler_Shell::HandleExitGameBtn()
 	common->Dialog().AddDynamicDialog( GDM_QUIT_GAME, callbacks, optionText, true, "" );
 }
 
-/*
-========================
-idMenuHandler_Shell::HandleAction
-========================
-*/
 bool idMenuHandler_Shell::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( activeScreen == SHELL_AREA_INVALID ) {
@@ -929,11 +889,6 @@ bool idMenuHandler_Shell::HandleAction( idWidgetAction& action, const idWidgetEv
 	return idMenuHandler::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuHandler_Shell::GetMenuScreen
-========================
-*/
 idMenuScreen* idMenuHandler_Shell::GetMenuScreen( int index )
 {
 	if( index < 0 || index >= SHELL_NUM_AREAS ) {
@@ -943,11 +898,6 @@ idMenuScreen* idMenuHandler_Shell::GetMenuScreen( int index )
 	return menuScreens[index];
 }
 
-/*
-========================
-idMenuHandler_Shell::ShowSmallFrame
-========================
-*/
 void idMenuHandler_Shell::ShowSmallFrame( bool show )
 {
 	if( gui == NULL ) {
@@ -970,11 +920,6 @@ void idMenuHandler_Shell::ShowSmallFrame( bool show )
 	smallFrameShowing = show;
 }
 
-/*
-========================
-idMenuHandler_Shell::ShowMPFrame
-========================
-*/
 void idMenuHandler_Shell::ShowMPFrame( bool show )
 {
 	if( gui == NULL ) {
@@ -997,11 +942,6 @@ void idMenuHandler_Shell::ShowMPFrame( bool show )
 	largeFrameShowing = show;
 }
 
-/*
-========================
-idMenuHandler_Shell::ShowSmallFrame
-========================
-*/
 void idMenuHandler_Shell::ShowLogo( bool show )
 {
 	if( gui == NULL ) {
@@ -1029,11 +969,6 @@ void idMenuHandler_Shell::ShowLogo( bool show )
 	bgShowing = show;
 }
 
-/*
-========================
-idMenuHandler_Shell::UpdateSavedGames
-========================
-*/
 void idMenuHandler_Shell::UpdateSavedGames()
 {
 	if( activeScreen == SHELL_AREA_LOAD ) {
@@ -1049,11 +984,6 @@ void idMenuHandler_Shell::UpdateSavedGames()
 	}
 }
 
-/*
-========================
-idMenuHandler_Shell::UpdateBGState
-========================
-*/
 void idMenuHandler_Shell::UpdateBGState()
 {
 	if( smallFrameShowing ) {
@@ -1095,11 +1025,6 @@ void idMenuHandler_Shell::UpdateBGState()
 	}
 }
 
-/*
-========================
-idMenuHandler_Shell::UpdateLeaderboard
-========================
-*/
 void idMenuHandler_Shell::UpdateLeaderboard( const idLeaderboardCallback* callback )
 {
 	idMenuScreen_Shell_Leaderboards* screen = dynamic_cast<idMenuScreen_Shell_Leaderboards*>( menuScreens[SHELL_AREA_LEADERBOARDS] );
@@ -1108,11 +1033,6 @@ void idMenuHandler_Shell::UpdateLeaderboard( const idLeaderboardCallback* callba
 	}
 }
 
-/*
-========================
-idMenuManager_Shell::ShowPacifier
-========================
-*/
 void idMenuHandler_Shell::ShowPacifier( const idStr& msg )
 {
 	if( GetPacifier() != NULL && gui != NULL ) {
@@ -1121,11 +1041,6 @@ void idMenuHandler_Shell::ShowPacifier( const idStr& msg )
 	}
 }
 
-/*
-========================
-idMenuManager_Shell::HidePacifier
-========================
-*/
 void idMenuHandler_Shell::HidePacifier()
 {
 	if( GetPacifier() != NULL ) {
@@ -1133,11 +1048,6 @@ void idMenuHandler_Shell::HidePacifier()
 	}
 }
 
-/*
-========================
-idMenuHandler_Shell::CopySettingsFromSession
-========================
-*/
 void idMenuHandler_Shell::UpdateLobby( idMenuWidget_LobbyList* lobbyList )
 {
 	if( lobbyList == NULL ) {
@@ -1175,11 +1085,6 @@ void idMenuHandler_Shell::UpdateLobby( idMenuWidget_LobbyList* lobbyList )
 	lobbyList->SetNumEntries( lobbyPlayers.Num() );
 }
 
-/*
-========================
-idMenuHandler_Shell::StartGame
-========================
-*/
 void idMenuHandler_Shell::StartGame( int index )
 {
 	cmdSystem->AppendCommandText( va( "devmap %s %d\n", "testmaps/test_curvedbrushes", 0 ) );
@@ -1196,11 +1101,6 @@ void idMenuHandler_Shell::StartGame( int index )
 }
 
 static const int NUM_DOOM_INTRO_LINES = 7;
-/*
-========================
-idMenuHandler_Shell::ShowIntroVideo
-========================
-*/
 void			 idMenuHandler_Shell::ShowDoomIntro()
 {
 	StopSound();
@@ -1360,11 +1260,6 @@ void			 idMenuHandler_Shell::ShowDoomIntro()
 }
 
 static const int NUM_ROE_INTRO_LINES = 6;
-/*
-========================
-idMenuHandler_Shell::ShowROEIntro
-========================
-*/
 void			 idMenuHandler_Shell::ShowROEIntro()
 {
 	StopSound();
@@ -1512,11 +1407,6 @@ void			 idMenuHandler_Shell::ShowROEIntro()
 }
 
 static const int NUM_LE_INTRO_LINES = 1;
-/*
-========================
-idMenuHandler_Shell::ShowLEIntro
-========================
-*/
 void			 idMenuHandler_Shell::ShowLEIntro()
 {
 	StopSound();

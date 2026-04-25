@@ -51,11 +51,6 @@ EVENT( EV_Speaker_Off, idSound::Event_Off )
 EVENT( EV_Speaker_Timer, idSound::Event_Timer )
 END_CLASS
 
-/*
-================
-idSound::idSound
-================
-*/
 idSound::idSound()
 {
 	lastSoundVol = 0.0f;
@@ -68,11 +63,6 @@ idSound::idSound()
 	playingUntilTime = 0;
 }
 
-/*
-================
-idSound::Save
-================
-*/
 void idSound::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteFloat( lastSoundVol );
@@ -85,11 +75,6 @@ void idSound::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( playingUntilTime );
 }
 
-/*
-================
-idSound::Restore
-================
-*/
 void idSound::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadFloat( lastSoundVol );
@@ -102,11 +87,6 @@ void idSound::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( playingUntilTime );
 }
 
-/*
-================
-idSound::Spawn
-================
-*/
 void idSound::Spawn()
 {
 	spawnArgs.GetVector( "move", "0 0 0", shakeTranslate );
@@ -134,13 +114,6 @@ void idSound::Spawn()
 	}
 }
 
-/*
-================
-idSound::Event_Trigger
-
-this will toggle the idle idSound on and off
-================
-*/
 void idSound::Event_Trigger( idEntity* activator )
 {
 	if( wait > 0.0f ) {
@@ -169,22 +142,12 @@ void idSound::Event_Trigger( idEntity* activator )
 	}
 }
 
-/*
-================
-idSound::Event_Timer
-================
-*/
 void idSound::Event_Timer()
 {
 	DoSound( true );
 	PostEventSec( &EV_Speaker_Timer, wait + gameLocal.random.CRandomFloat() * random );
 }
 
-/*
-================
-idSound::Think
-================
-*/
 void idSound::Think()
 {
 	idAngles ang;
@@ -196,11 +159,6 @@ void idSound::Think()
 	BecomeInactive( TH_UPDATEVISUALS );
 }
 
-/*
-===============
-idSound::UpdateChangableSpawnArgs
-===============
-*/
 void idSound::UpdateChangeableSpawnArgs( const idDict* source )
 {
 	idEntity::UpdateChangeableSpawnArgs( source );
@@ -242,11 +200,6 @@ void idSound::UpdateChangeableSpawnArgs( const idDict* source )
 	}
 }
 
-/*
-===============
-idSound::SetSound
-===============
-*/
 void idSound::SetSound( const char* sound, int channel )
 {
 	const idSoundShader* shader = declManager->FindSound( sound );
@@ -261,11 +214,6 @@ void idSound::SetSound( const char* sound, int channel )
 	}
 }
 
-/*
-================
-idSound::DoSound
-================
-*/
 void idSound::DoSound( bool play )
 {
 	if( play ) {
@@ -277,11 +225,6 @@ void idSound::DoSound( bool play )
 	}
 }
 
-/*
-================
-idSound::Event_On
-================
-*/
 void idSound::Event_On()
 {
 	if( wait > 0.0f ) {
@@ -291,11 +234,6 @@ void idSound::Event_On()
 	DoSound( true );
 }
 
-/*
-================
-idSound::Event_Off
-================
-*/
 void idSound::Event_Off()
 {
 	if( timerOn ) {
@@ -305,11 +243,6 @@ void idSound::Event_Off()
 	DoSound( false );
 }
 
-/*
-===============
-idSound::ShowEditingDialog
-===============
-*/
 void idSound::ShowEditingDialog()
 {
 }

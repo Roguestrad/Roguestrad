@@ -36,21 +36,11 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( iceWeaponObject, iceWeaponPDA )
 END_CLASS
 
-/*
-================
-iceWeaponPDA::Init
-================
-*/
 void iceWeaponPDA::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
 }
 
-/*
-================
-iceWeaponPDA::Raise
-================
-*/
 stateResult_t iceWeaponPDA::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -71,11 +61,6 @@ stateResult_t iceWeaponPDA::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-iceWeaponPDA::Lower
-================
-*/
 stateResult_t iceWeaponPDA::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -97,11 +82,6 @@ stateResult_t iceWeaponPDA::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-iceWeaponPDA::Idle
-================
-*/
 stateResult_t iceWeaponPDA::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -122,21 +102,11 @@ stateResult_t iceWeaponPDA::Idle( stateParms_t* parms )
 	}
 }
 
-/*
-================
-iceWeaponPDA::Fire
-================
-*/
 stateResult_t iceWeaponPDA::Fire( stateParms_t* parms )
 {
 	return SRESULT_DONE;
 }
 
-/*
-================
-iceWeaponPDA::Reload
-================
-*/
 stateResult_t iceWeaponPDA::Reload( stateParms_t* parms )
 {
 	return SRESULT_DONE;

@@ -45,10 +45,18 @@ static int	   numRigidBodies = 0;
 static idTimer timer_total, timer_collision;
 #endif
 
-/*
-================
-RigidBodyDerivatives
-================
+/*!
+	\brief Computes the time derivatives of a rigid body's state variables for physics simulation
+
+	This function calculates the rates of change for linear velocity, angular matrix, force, and torque of a rigid body based on its current state and physical properties. It is used in numerical
+   integration for rigid body dynamics simulation. The function takes the current time, physics object data, current state values, and computes the derivatives that represent how the state will evolve
+   over time. The computation involves inverse inertia tensor calculations, skew-symmetric matrices, and applies friction forces and external forces to determine the rate of change of momentum and
+   orientation.
+
+	\param t Current simulation time
+	\param clientData Pointer to the rigid body physics object containing physical properties like mass, inertia tensor, friction coefficients, and external forces
+	\param state Current state of the rigid body containing linear momentum, angular momentum, and orientation
+	\param derivatives Output array containing computed derivatives for linear velocity, angular matrix, force, and torque
 */
 void RigidBodyDerivatives( const float t, const void* clientData, const float* state, float* derivatives )
 {
@@ -73,13 +81,6 @@ void RigidBodyDerivatives( const float t, const void* clientData, const float* s
 	d->torque		  = -p->angularFriction * s->angularMomentum + p->current.externalTorque;
 }
 
-/*
-================
-idPhysics_RigidBody::Integrate
-
-  Calculate next state from the current state using an integrator.
-================
-*/
 void idPhysics_RigidBody::Integrate( float deltaTime, rigidBodyPState_t& next_ )
 {
 	idVec3 position;
@@ -104,14 +105,6 @@ void idPhysics_RigidBody::Integrate( float deltaTime, rigidBodyPState_t& next_ )
 	next_.atRest = current.atRest;
 }
 
-/*
-================
-idPhysics_RigidBody::CollisionImpulse
-
-  Calculates the collision impulse using the velocity relative to the collision object.
-  The current state should be set to the moment of impact.
-================
-*/
 bool idPhysics_RigidBody::CollisionImpulse( const trace_t& collision, idVec3& impulse )
 {
 	idVec3		 r, linearVelocity, angularVelocity, velocity;
@@ -162,14 +155,6 @@ bool idPhysics_RigidBody::CollisionImpulse( const trace_t& collision, idVec3& im
 	return self->Collide( collision, velocity );
 }
 
-/*
-================
-idPhysics_RigidBody::CheckForCollisions
-
-  Check for collisions between the current and next state.
-  If there is a collision the next state is set to the state at the moment of impact.
-================
-*/
 bool idPhysics_RigidBody::CheckForCollisions( const float deltaTime, rigidBodyPState_t& next_, trace_t& collision )
 {
 	// #define TEST_COLLISION_DETECTION
@@ -208,14 +193,6 @@ bool idPhysics_RigidBody::CheckForCollisions( const float deltaTime, rigidBodyPS
 	return collided;
 }
 
-/*
-================
-idPhysics_RigidBody::ContactFriction
-
-  Does not solve friction for multiple simultaneous contacts but applies contact friction in isolation.
-  Uses absolute velocity at the contact points instead of the velocity relative to the contact object.
-================
-*/
 void idPhysics_RigidBody::ContactFriction( float deltaTime )
 {
 	int	   i;
@@ -265,14 +242,6 @@ void idPhysics_RigidBody::ContactFriction( float deltaTime )
 	}
 }
 
-/*
-================
-idPhysics_RigidBody::TestIfAtRest
-
-  Returns true if the body is considered at rest.
-  Does not catch all cases where the body is at rest but is generally good enough.
-================
-*/
 bool idPhysics_RigidBody::TestIfAtRest() const
 {
 	int			   i;
@@ -353,13 +322,6 @@ bool idPhysics_RigidBody::TestIfAtRest() const
 	return true;
 }
 
-/*
-================
-idPhysics_RigidBody::DropToFloorAndRest
-
-  Drops the object straight down to the floor and verifies if the object is at rest on the floor.
-================
-*/
 void idPhysics_RigidBody::DropToFloorAndRest()
 {
 	idVec3	down;
@@ -398,11 +360,6 @@ void idPhysics_RigidBody::DropToFloorAndRest()
 	}
 }
 
-/*
-================
-idPhysics_RigidBody::DebugDraw
-================
-*/
 void idPhysics_RigidBody::DebugDraw()
 {
 	if( rb_showBodies.GetBool() || ( rb_showActive.GetBool() && current.atRest < 0 ) ) {
@@ -428,11 +385,6 @@ void idPhysics_RigidBody::DebugDraw()
 	}
 }
 
-/*
-================
-idPhysics_RigidBody::idPhysics_RigidBody
-================
-*/
 idPhysics_RigidBody::idPhysics_RigidBody()
 {
 	// set default rigid body properties
@@ -473,11 +425,6 @@ idPhysics_RigidBody::idPhysics_RigidBody()
 #endif
 }
 
-/*
-================
-idPhysics_RigidBody::~idPhysics_RigidBody
-================
-*/
 idPhysics_RigidBody::~idPhysics_RigidBody()
 {
 	if( clipModel ) {
@@ -487,11 +434,7 @@ idPhysics_RigidBody::~idPhysics_RigidBody()
 	delete integrator;
 }
 
-/*
-================
-idPhysics_RigidBody_SavePState
-================
-*/
+//! Saves the rigid body physics state to a save file.
 void idPhysics_RigidBody_SavePState( idSaveGame* savefile, const rigidBodyPState_t& state )
 {
 	savefile->WriteInt( state.atRest );
@@ -508,11 +451,7 @@ void idPhysics_RigidBody_SavePState( idSaveGame* savefile, const rigidBodyPState
 	savefile->WriteVec3( state.i.angularMomentum );
 }
 
-/*
-================
-idPhysics_RigidBody_RestorePState
-================
-*/
+//! Restores the rigid body physics state from a save file.
 void idPhysics_RigidBody_RestorePState( idRestoreGame* savefile, rigidBodyPState_t& state )
 {
 	savefile->ReadInt( state.atRest );
@@ -529,11 +468,6 @@ void idPhysics_RigidBody_RestorePState( idRestoreGame* savefile, rigidBodyPState
 	savefile->ReadVec3( state.i.angularMomentum );
 }
 
-/*
-================
-idPhysics_RigidBody::Save
-================
-*/
 void idPhysics_RigidBody::Save( idSaveGame* savefile ) const
 {
 	idPhysics_RigidBody_SavePState( savefile, current );
@@ -560,11 +494,6 @@ void idPhysics_RigidBody::Save( idSaveGame* savefile ) const
 	savefile->WriteBool( isOrientated );
 }
 
-/*
-================
-idPhysics_RigidBody::Restore
-================
-*/
 void idPhysics_RigidBody::Restore( idRestoreGame* savefile )
 {
 	idPhysics_RigidBody_RestorePState( savefile, current );
@@ -647,31 +576,16 @@ void idPhysics_RigidBody::SetClipModel( idClipModel* model, const float density,
 	current.i.angularMomentum.Zero();
 }
 
-/*
-================
-idPhysics_RigidBody::GetClipModel
-================
-*/
 idClipModel* idPhysics_RigidBody::GetClipModel( int id ) const
 {
 	return clipModel;
 }
 
-/*
-================
-idPhysics_RigidBody::GetNumClipModels
-================
-*/
 int idPhysics_RigidBody::GetNumClipModels() const
 {
 	return 1;
 }
 
-/*
-================
-idPhysics_RigidBody::SetMass
-================
-*/
 void idPhysics_RigidBody::SetMass( float mass, int id )
 {
 	assert( mass > 0.0f );
@@ -681,21 +595,11 @@ void idPhysics_RigidBody::SetMass( float mass, int id )
 	inverseMass			 = 1.0f / mass;
 }
 
-/*
-================
-idPhysics_RigidBody::GetMass
-================
-*/
 float idPhysics_RigidBody::GetMass( int id ) const
 {
 	return mass;
 }
 
-/*
-================
-idPhysics_RigidBody::SetFriction
-================
-*/
 void idPhysics_RigidBody::SetFriction( const float linear, const float angular, const float contact )
 {
 	if( linear < 0.0f || linear > 1.0f || angular < 0.0f || angular > 1.0f || contact < 0.0f || contact > 1.0f ) {
@@ -706,11 +610,6 @@ void idPhysics_RigidBody::SetFriction( const float linear, const float angular, 
 	contactFriction = contact;
 }
 
-/*
-================
-idPhysics_RigidBody::SetBouncyness
-================
-*/
 void idPhysics_RigidBody::SetBouncyness( const float b )
 {
 	if( b < 0.0f || b > 1.0f ) {
@@ -719,11 +618,6 @@ void idPhysics_RigidBody::SetBouncyness( const float b )
 	bouncyness = b;
 }
 
-/*
-================
-idPhysics_RigidBody::Rest
-================
-*/
 void idPhysics_RigidBody::Rest()
 {
 	current.atRest = gameLocal.time;
@@ -732,119 +626,58 @@ void idPhysics_RigidBody::Rest()
 	self->BecomeInactive( TH_PHYSICS );
 }
 
-/*
-================
-idPhysics_RigidBody::DropToFloor
-================
-*/
 void idPhysics_RigidBody::DropToFloor()
 {
 	dropToFloor = true;
 	testSolid	= true;
 }
 
-/*
-================
-idPhysics_RigidBody::NoContact
-================
-*/
 void idPhysics_RigidBody::NoContact()
 {
 	noContact = true;
 }
 
-/*
-================
-idPhysics_RigidBody::Activate
-================
-*/
 void idPhysics_RigidBody::Activate()
 {
 	current.atRest = -1;
 	self->BecomeActive( TH_PHYSICS );
 }
 
-/*
-================
-idPhysics_RigidBody::PutToRest
-
-  put to rest untill something collides with this physics object
-================
-*/
 void idPhysics_RigidBody::PutToRest()
 {
 	Rest();
 }
 
-/*
-================
-idPhysics_RigidBody::EnableImpact
-================
-*/
 void idPhysics_RigidBody::EnableImpact()
 {
 	noImpact = false;
 }
 
-/*
-================
-idPhysics_RigidBody::DisableImpact
-================
-*/
 void idPhysics_RigidBody::DisableImpact()
 {
 	noImpact = true;
 }
 
-/*
-================
-idPhysics_RigidBody::SetContents
-================
-*/
 void idPhysics_RigidBody::SetContents( int contents, int id )
 {
 	clipModel->SetContents( contents );
 }
 
-/*
-================
-idPhysics_RigidBody::GetContents
-================
-*/
 int idPhysics_RigidBody::GetContents( int id ) const
 {
 	return clipModel->GetContents();
 }
 
-/*
-================
-idPhysics_RigidBody::GetBounds
-================
-*/
 const idBounds& idPhysics_RigidBody::GetBounds( int id ) const
 {
 	return clipModel->GetBounds();
 }
 
-/*
-================
-idPhysics_RigidBody::GetAbsBounds
-================
-*/
 const idBounds& idPhysics_RigidBody::GetAbsBounds( int id ) const
 {
 	return clipModel->GetAbsBounds();
 }
 
-/*
-================
-idPhysics_RigidBody::Evaluate
-
-  Evaluate the impulse based rigid body physics.
-  When a collision occurs an impulse is applied at the moment of impact but
-  the remaining time after the collision is ignored.
-================
-*/
 bool idPhysics_RigidBody::Evaluate( int timeStepMSec, int endTimeMSec )
 {
 	rigidBodyPState_t next_step;
@@ -1006,14 +839,6 @@ bool idPhysics_RigidBody::Evaluate( int timeStepMSec, int endTimeMSec )
 	return true;
 }
 
-/*
-================
-idPhysics_RigidBody::Interpolate
-
-  Simply interpolate between snapshots of the state of the rigid body
-  for MP clients.
-================
-*/
 bool idPhysics_RigidBody::Interpolate( const float fraction )
 {
 	if( !self ) {
@@ -1033,41 +858,21 @@ bool idPhysics_RigidBody::Interpolate( const float fraction )
 	return false;
 }
 
-/*
-================
-idPhysics_RigidBody::ResetInterpolationState
-================
-*/
 void idPhysics_RigidBody::ResetInterpolationState( const idVec3& origin, const idMat3& axis )
 {
 	previous = current;
 	next	 = current;
 }
 
-/*
-================
-idPhysics_RigidBody::UpdateTime
-================
-*/
 void idPhysics_RigidBody::UpdateTime( int endTimeMSec )
 {
 }
 
-/*
-================
-idPhysics_RigidBody::GetTime
-================
-*/
 int idPhysics_RigidBody::GetTime() const
 {
 	return gameLocal.time;
 }
 
-/*
-================
-idPhysics_RigidBody::GetImpactInfo
-================
-*/
 void idPhysics_RigidBody::GetImpactInfo( const int id, const idVec3& point, impactInfo_t* info ) const
 {
 	idVec3 linearVelocity, angularVelocity;
@@ -1083,11 +888,6 @@ void idPhysics_RigidBody::GetImpactInfo( const int id, const idVec3& point, impa
 	info->velocity		   = linearVelocity + angularVelocity.Cross( info->position );
 }
 
-/*
-================
-idPhysics_RigidBody::ApplyImpulse
-================
-*/
 void idPhysics_RigidBody::ApplyImpulse( const int id, const idVec3& point, const idVec3& impulse )
 {
 	if( noImpact ) {
@@ -1098,11 +898,6 @@ void idPhysics_RigidBody::ApplyImpulse( const int id, const idVec3& point, const
 	Activate();
 }
 
-/*
-================
-idPhysics_RigidBody::AddForce
-================
-*/
 void idPhysics_RigidBody::AddForce( const int id, const idVec3& point, const idVec3& force )
 {
 	if( noImpact ) {
@@ -1113,51 +908,26 @@ void idPhysics_RigidBody::AddForce( const int id, const idVec3& point, const idV
 	Activate();
 }
 
-/*
-================
-idPhysics_RigidBody::IsAtRest
-================
-*/
 bool idPhysics_RigidBody::IsAtRest() const
 {
 	return current.atRest >= 0;
 }
 
-/*
-================
-idPhysics_RigidBody::GetRestStartTime
-================
-*/
 int idPhysics_RigidBody::GetRestStartTime() const
 {
 	return current.atRest;
 }
 
-/*
-================
-idPhysics_RigidBody::IsPushable
-================
-*/
 bool idPhysics_RigidBody::IsPushable() const
 {
 	return ( !noImpact && !hasMaster );
 }
 
-/*
-================
-idPhysics_RigidBody::SaveState
-================
-*/
 void idPhysics_RigidBody::SaveState()
 {
 	saved = current;
 }
 
-/*
-================
-idPhysics_RigidBody::RestoreState
-================
-*/
 void idPhysics_RigidBody::RestoreState()
 {
 	current = saved;
@@ -1167,11 +937,6 @@ void idPhysics_RigidBody::RestoreState()
 	EvaluateContacts();
 }
 
-/*
-================
-idPhysics::SetOrigin
-================
-*/
 void idPhysics_RigidBody::SetOrigin( const idVec3& newOrigin, int id )
 {
 	idVec3 masterOrigin;
@@ -1190,11 +955,6 @@ void idPhysics_RigidBody::SetOrigin( const idVec3& newOrigin, int id )
 	Activate();
 }
 
-/*
-================
-idPhysics::SetAxis
-================
-*/
 void idPhysics_RigidBody::SetAxis( const idMat3& newAxis, int id )
 {
 	idVec3 masterOrigin;
@@ -1213,11 +973,6 @@ void idPhysics_RigidBody::SetAxis( const idMat3& newAxis, int id )
 	Activate();
 }
 
-/*
-================
-idPhysics::Move
-================
-*/
 void idPhysics_RigidBody::Translate( const idVec3& translation, int id )
 {
 	current.localOrigin += translation;
@@ -1228,11 +983,6 @@ void idPhysics_RigidBody::Translate( const idVec3& translation, int id )
 	Activate();
 }
 
-/*
-================
-idPhysics::Rotate
-================
-*/
 void idPhysics_RigidBody::Rotate( const idRotation& rotation, int id )
 {
 	idVec3 masterOrigin;
@@ -1255,53 +1005,28 @@ void idPhysics_RigidBody::Rotate( const idRotation& rotation, int id )
 	Activate();
 }
 
-/*
-================
-idPhysics_RigidBody::GetOrigin
-================
-*/
 const idVec3& idPhysics_RigidBody::GetOrigin( int id ) const
 {
 	return current.i.position;
 }
 
-/*
-================
-idPhysics_RigidBody::GetAxis
-================
-*/
 const idMat3& idPhysics_RigidBody::GetAxis( int id ) const
 {
 	return current.i.orientation;
 }
 
-/*
-================
-idPhysics_RigidBody::SetLinearVelocity
-================
-*/
 void idPhysics_RigidBody::SetLinearVelocity( const idVec3& newLinearVelocity, int id )
 {
 	current.i.linearMomentum = newLinearVelocity * mass;
 	Activate();
 }
 
-/*
-================
-idPhysics_RigidBody::SetAngularVelocity
-================
-*/
 void idPhysics_RigidBody::SetAngularVelocity( const idVec3& newAngularVelocity, int id )
 {
 	current.i.angularMomentum = newAngularVelocity * inertiaTensor;
 	Activate();
 }
 
-/*
-================
-idPhysics_RigidBody::GetLinearVelocity
-================
-*/
 const idVec3& idPhysics_RigidBody::GetLinearVelocity( int id ) const
 {
 	static idVec3 curLinearVelocity;
@@ -1309,11 +1034,6 @@ const idVec3& idPhysics_RigidBody::GetLinearVelocity( int id ) const
 	return curLinearVelocity;
 }
 
-/*
-================
-idPhysics_RigidBody::GetAngularVelocity
-================
-*/
 const idVec3& idPhysics_RigidBody::GetAngularVelocity( int id ) const
 {
 	static idVec3 curAngularVelocity;
@@ -1324,11 +1044,6 @@ const idVec3& idPhysics_RigidBody::GetAngularVelocity( int id ) const
 	return curAngularVelocity;
 }
 
-/*
-================
-idPhysics_RigidBody::ClipTranslation
-================
-*/
 void idPhysics_RigidBody::ClipTranslation( trace_t& results, const idVec3& translation, const idClipModel* model ) const
 {
 	if( model ) {
@@ -1339,11 +1054,6 @@ void idPhysics_RigidBody::ClipTranslation( trace_t& results, const idVec3& trans
 	}
 }
 
-/*
-================
-idPhysics_RigidBody::ClipRotation
-================
-*/
 void idPhysics_RigidBody::ClipRotation( trace_t& results, const idRotation& rotation, const idClipModel* model ) const
 {
 	if( model ) {
@@ -1353,11 +1063,6 @@ void idPhysics_RigidBody::ClipRotation( trace_t& results, const idRotation& rota
 	}
 }
 
-/*
-================
-idPhysics_RigidBody::ClipContents
-================
-*/
 int idPhysics_RigidBody::ClipContents( const idClipModel* model ) const
 {
 	if( model ) {
@@ -1367,51 +1072,26 @@ int idPhysics_RigidBody::ClipContents( const idClipModel* model ) const
 	}
 }
 
-/*
-================
-idPhysics_RigidBody::DisableClip
-================
-*/
 void idPhysics_RigidBody::DisableClip()
 {
 	clipModel->Disable();
 }
 
-/*
-================
-idPhysics_RigidBody::EnableClip
-================
-*/
 void idPhysics_RigidBody::EnableClip()
 {
 	clipModel->Enable();
 }
 
-/*
-================
-idPhysics_RigidBody::UnlinkClip
-================
-*/
 void idPhysics_RigidBody::UnlinkClip()
 {
 	clipModel->Unlink();
 }
 
-/*
-================
-idPhysics_RigidBody::LinkClip
-================
-*/
 void idPhysics_RigidBody::LinkClip()
 {
 	clipModel->Link( gameLocal.clip, self, clipModel->GetId(), current.i.position, current.i.orientation );
 }
 
-/*
-================
-idPhysics_RigidBody::EvaluateContacts
-================
-*/
 bool idPhysics_RigidBody::EvaluateContacts()
 {
 	idVec6 dir;
@@ -1433,11 +1113,6 @@ bool idPhysics_RigidBody::EvaluateContacts()
 	return ( contacts.Num() != 0 );
 }
 
-/*
-================
-idPhysics_RigidBody::SetPushed
-================
-*/
 void idPhysics_RigidBody::SetPushed( int deltaTime )
 {
 	idRotation rotation;
@@ -1449,31 +1124,16 @@ void idPhysics_RigidBody::SetPushed( int deltaTime )
 	current.pushVelocity.SubVec3( 1 ) += rotation.GetVec() * -DEG2RAD( rotation.GetAngle() ) / ( deltaTime * idMath::M_MS2SEC );
 }
 
-/*
-================
-idPhysics_RigidBody::GetPushedLinearVelocity
-================
-*/
 const idVec3& idPhysics_RigidBody::GetPushedLinearVelocity( const int id ) const
 {
 	return current.pushVelocity.SubVec3( 0 );
 }
 
-/*
-================
-idPhysics_RigidBody::GetPushedAngularVelocity
-================
-*/
 const idVec3& idPhysics_RigidBody::GetPushedAngularVelocity( const int id ) const
 {
 	return current.pushVelocity.SubVec3( 1 );
 }
 
-/*
-================
-idPhysics_RigidBody::SetMaster
-================
-*/
 void idPhysics_RigidBody::SetMaster( idEntity* master, const bool orientated )
 {
 	idVec3 masterOrigin;
@@ -1514,11 +1174,6 @@ const int	RB_FORCE_TOTAL_BITS		  = 16;
 const int	RB_FORCE_EXPONENT_BITS	  = idMath::BitsForInteger( idMath::BitsForFloat( RB_FORCE_MAX ) ) + 1;
 const int	RB_FORCE_MANTISSA_BITS	  = RB_FORCE_TOTAL_BITS - 1 - RB_FORCE_EXPONENT_BITS;
 
-/*
-================
-idPhysics_RigidBody::WriteToSnapshot
-================
-*/
 void		idPhysics_RigidBody::WriteToSnapshot( idBitMsg& msg ) const
 {
 	idCQuat quat, localQuat;
@@ -1536,11 +1191,6 @@ void		idPhysics_RigidBody::WriteToSnapshot( idBitMsg& msg ) const
 	msg.WriteFloat( current.i.linearMomentum[2], RB_MOMENTUM_EXPONENT_BITS, RB_MOMENTUM_MANTISSA_BITS );
 }
 
-/*
-================
-idPhysics_RigidBody::ReadFromSnapshot
-================
-*/
 void idPhysics_RigidBody::ReadFromSnapshot( const idBitMsg& msg )
 {
 	idCQuat quat, localQuat;

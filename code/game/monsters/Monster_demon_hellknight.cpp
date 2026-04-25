@@ -45,31 +45,16 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idAI, iceMonsterDemonHellknight )
 END_CLASS
 
-/*
-=================
-iceMonsterDemonHellknight::Init
-=================
-*/
 void iceMonsterDemonHellknight::Init()
 {
 	range_attack_anim.LinkTo( scriptObject, "range_attack_anim" );
 }
 
-/*
-=================
-iceMonsterDemonHellknight::AI_Begin
-=================
-*/
 void iceMonsterDemonHellknight::AI_Begin()
 {
 	Event_SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterDemonHellknight::state_Begin
-=====================
-*/
 stateResult_t iceMonsterDemonHellknight::state_Begin( stateParms_t* parms )
 {
 	Event_AnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 0 );
@@ -80,11 +65,6 @@ stateResult_t iceMonsterDemonHellknight::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterDemonHellknight::state_Idle
-=====================
-*/
 stateResult_t iceMonsterDemonHellknight::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -102,11 +82,6 @@ stateResult_t iceMonsterDemonHellknight::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterDemonHellknight::do_attack
-=====================
-*/
 void iceMonsterDemonHellknight::do_attack( int attack_flags )
 {
 	nextNoFOVAttack = gameLocal.SysScriptTime() + HELLKNIGHT_NOFOVTIME;
@@ -120,11 +95,6 @@ void iceMonsterDemonHellknight::do_attack( int attack_flags )
 	}
 }
 
-/*
-=====================
-iceMonsterDemonHellknight::check_attacks
-=====================
-*/
 int iceMonsterDemonHellknight::check_attacks()
 {
 	float  currentTime;
@@ -171,11 +141,6 @@ int iceMonsterDemonHellknight::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-monster_zombie::combat_range
-=====================
-*/
 stateResult_t iceMonsterDemonHellknight::combat_range( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -209,11 +174,6 @@ stateResult_t iceMonsterDemonHellknight::combat_range( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-monster_zombie::combat_melee
-=====================
-*/
 stateResult_t iceMonsterDemonHellknight::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {

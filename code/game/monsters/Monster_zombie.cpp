@@ -39,21 +39,11 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idAI, iceMonsterZombie )
 END_CLASS
 
-/*
-=================
-iceMonsterZombie::Init
-=================
-*/
 void iceMonsterZombie::Init()
 {
 	can_run.LinkTo( scriptObject, "can_run" );
 }
 
-/*
-=================
-iceMonsterZombie::AI_Begin
-=================
-*/
 void iceMonsterZombie::AI_Begin()
 {
 	run_distance = ZOMBIE_RUNDISTANCE;
@@ -64,11 +54,6 @@ void iceMonsterZombie::AI_Begin()
 	Event_SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterZombie::state_Begin
-=====================
-*/
 stateResult_t iceMonsterZombie::state_Begin( stateParms_t* parms )
 {
 	Event_AnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 8 );
@@ -79,11 +64,6 @@ stateResult_t iceMonsterZombie::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombie::state_Idle
-=====================
-*/
 stateResult_t iceMonsterZombie::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -98,11 +78,6 @@ stateResult_t iceMonsterZombie::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-monster_zombie::combat_melee
-=====================
-*/
 stateResult_t iceMonsterZombie::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -127,11 +102,6 @@ stateResult_t iceMonsterZombie::combat_melee( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombie::check_attacks
-=====================
-*/
 int iceMonsterZombie::check_attacks()
 {
 	int attack_flags;
@@ -144,11 +114,6 @@ int iceMonsterZombie::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-iceMonsterZombie::do_attack
-=====================
-*/
 void iceMonsterZombie::do_attack( int attack_flags )
 {
 	if( attack_flags & ATTACK_MELEE ) {

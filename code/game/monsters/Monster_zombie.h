@@ -30,20 +30,42 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterZombie
+	\brief A specialized AI monster class representing anmonster zombie with melee combat capabilities.
+
+	This class implements the behavior and state management for anmonster zombie entity. It extends the base idAI class to provide specific AI functionality including state transitions, combat
+   behaviors, and animation control. The implementation handles initialization, idle behavior, and melee combat states while integrating with the engine's AI system. The class manages state
+   transitions between beginning, idle, and combat states, with specific handling for enemy detection and melee attacks. The AI system initialization and beginning functions provide the framework for
+   the monster's behavior, while attack-related methods define how the monster engages in combat. The class is designed to work within a larger game engine framework that manages entity states and AI
+   behaviors.
+
+*/
 class iceMonsterZombie : public idAI
 {
 	CLASS_PROTOTYPE( iceMonsterZombie );
 
 public:
+	//! Initializes the AI system.
 	virtual void Init() override;
+
+	//! Initializes the zombie's AI state and parameters.
 	virtual void AI_Begin() override;
 
+	//! Returns attack flags indicating which melee attacks are available.
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action with the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	//! Initializes the zombie monster's state by setting up animations and movement type.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state for anmonster zombie, transitioning to combat state when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Handles the melee combat state for anmonster zombie, including looking at the enemy, facing the enemy, and performing a melee attack animation.
 	stateResult_t combat_melee( stateParms_t* parms );
 
 private:

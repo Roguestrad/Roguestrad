@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "PredictedValue.h"
 #include "player/Player.h"
 
-/*
-===============
-idPredictedValue::idPredictedValue
-===============
-*/
 template<class type_>
 idPredictedValue<type_>::idPredictedValue() :
 	value(),
@@ -44,11 +39,6 @@ idPredictedValue<type_>::idPredictedValue() :
 {
 }
 
-/*
-===============
-idPredictedValue::idPredictedValue
-===============
-*/
 template<class type_>
 idPredictedValue<type_>::idPredictedValue( const type_& value_ ) :
 	value( value_ ),
@@ -56,22 +46,12 @@ idPredictedValue<type_>::idPredictedValue( const type_& value_ ) :
 {
 }
 
-/*
-===============
-idPredictedValue::UpdatePredictionTime
-===============
-*/
 template<class type_>
 void idPredictedValue<type_>::UpdatePredictionTime()
 {
 	if( gameLocal.GetLocalPlayer() != NULL ) { clientPredictedMilliseconds = gameLocal.GetLocalPlayer()->usercmd.clientGameMilliseconds; }
 }
 
-/*
-===============
-idPredictedValue::Set
-===============
-*/
 template<class type_>
 void idPredictedValue<type_>::Set( const type_& newValue )
 {
@@ -79,11 +59,6 @@ void idPredictedValue<type_>::Set( const type_& newValue )
 	UpdatePredictionTime();
 }
 
-/*
-===============
-idPredictedValue::operator=
-===============
-*/
 template<class type_>
 idPredictedValue<type_>& idPredictedValue<type_>::operator=( const type_& newValue )
 {
@@ -91,11 +66,6 @@ idPredictedValue<type_>& idPredictedValue<type_>::operator=( const type_& newVal
 	return *this;
 }
 
-/*
-===============
-idPredictedValue::operator+=
-===============
-*/
 template<class type_>
 idPredictedValue<type_>& idPredictedValue<type_>::operator+=( const type_& toAdd )
 {
@@ -103,11 +73,6 @@ idPredictedValue<type_>& idPredictedValue<type_>::operator+=( const type_& toAdd
 	return *this;
 }
 
-/*
-===============
-idPredictedValue::operator-=
-===============
-*/
 template<class type_>
 idPredictedValue<type_>& idPredictedValue<type_>::operator-=( const type_& toSubtract )
 {
@@ -115,18 +80,6 @@ idPredictedValue<type_>& idPredictedValue<type_>::operator-=( const type_& toSub
 	return *this;
 }
 
-/*
-===============
-idPredictedValue::UpdateFromSnapshot
-
-Always updates the value for remote clients.
-
-Only updates the actual value if the snapshot usercmd frame is newer than the one in which
-the client predicted this value.
-
-Returns true if the value was set, false if not.
-===============
-*/
 template<class type_>
 bool idPredictedValue<type_>::UpdateFromSnapshot( const type_& valueFromSnapshot, int clientNumber )
 {
@@ -143,84 +96,42 @@ bool idPredictedValue<type_>::UpdateFromSnapshot( const type_& valueFromSnapshot
 	return false;
 }
 
-/*
-===============
-operator==
-
-Overload for idPredictedValue.
-We only care if the values are equal, not the frame number.
-===============
-*/
+//! Compares two idPredictedValue objects for equality based on their stored values regardless of frame numbers.
 template<class firstType_, class secondType_>
 bool operator==( const idPredictedValue<firstType_>& lhs, const idPredictedValue<secondType_>& rhs )
 {
 	return lhs.Get() == rhs.Get();
 }
 
-/*
-===============
-operator!=
-
-Overload for idPredictedValue.
-We only care if the values are equal, not the frame number.
-===============
-*/
+//! Checks if two idPredictedValue objects are not equal by comparing their stored values.
 template<class firstType_, class secondType_>
 bool operator!=( const idPredictedValue<firstType_>& lhs, const idPredictedValue<secondType_>& rhs )
 {
 	return lhs.Get() != rhs.Get();
 }
 
-/*
-===============
-operator==
-
-Overload for idPredictedValue.
-We only care if the values are equal, not the frame number.
-===============
-*/
+//! Compares a predicted value with another value for equality.
 template<class firstType_, class secondType_>
 bool operator==( const idPredictedValue<firstType_>& lhs, const secondType_& rhs )
 {
 	return lhs.Get() == rhs;
 }
 
-/*
-===============
-operator==
-
-Overload for idPredictedValue.
-We only care if the values are equal, not the frame number.
-===============
-*/
+//! Overloads the equality operator for comparing a value with an idPredictedValue instance
 template<class firstType_, class secondType_>
 bool operator==( const firstType_ lhs, const idPredictedValue<secondType_>& rhs )
 {
 	return lhs == rhs.Get();
 }
 
-/*
-===============
-operator!=
-
-Overload for idPredictedValue.
-We only care if the values are equal, not the frame number.
-===============
-*/
+//! Checks if an idPredictedValue and a value are not equal.
 template<class firstType_, class secondType_>
 bool operator!=( const idPredictedValue<firstType_>& lhs, const secondType_& rhs )
 {
 	return lhs.Get() != rhs;
 }
 
-/*
-===============
-operator!=
-
-Overload for idPredictedValue.
-We only care if the values are equal, not the frame number.
-===============
-*/
+//! Overloads the not equal operator for comparing a firstType_ value with an idPredictedValue<secondType_> instance.
 template<class firstType_, class secondType_>
 bool operator!=( const firstType_ lhs, const idPredictedValue<secondType_>& rhs )
 {

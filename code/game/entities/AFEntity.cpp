@@ -44,21 +44,11 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idEntity, idMultiModelAF )
 END_CLASS
 
-/*
-================
-idMultiModelAF::Spawn
-================
-*/
 void idMultiModelAF::Spawn()
 {
 	physicsObj.SetSelf( this );
 }
 
-/*
-================
-idMultiModelAF::~idMultiModelAF
-================
-*/
 idMultiModelAF::~idMultiModelAF()
 {
 	int i;
@@ -71,11 +61,6 @@ idMultiModelAF::~idMultiModelAF()
 	}
 }
 
-/*
-================
-idMultiModelAF::SetModelForId
-================
-*/
 void idMultiModelAF::SetModelForId( int id, const idStr& modelName )
 {
 	modelHandles.AssureSize( id + 1, NULL );
@@ -83,11 +68,6 @@ void idMultiModelAF::SetModelForId( int id, const idStr& modelName )
 	modelHandles[id] = renderModelManager->FindModel( modelName );
 }
 
-/*
-================
-idMultiModelAF::Present
-================
-*/
 void idMultiModelAF::Present()
 {
 	int i;
@@ -117,11 +97,6 @@ void idMultiModelAF::Present()
 	}
 }
 
-/*
-================
-idMultiModelAF::Think
-================
-*/
 void idMultiModelAF::Think()
 {
 	RunPhysics();
@@ -139,15 +114,6 @@ void idMultiModelAF::Think()
 CLASS_DECLARATION( idMultiModelAF, idChain )
 END_CLASS
 
-/*
-================
-idChain::BuildChain
-
-  builds a chain hanging down from the ceiling
-  the highest link is a child of the link below it etc.
-  this allows an object to be attached to multiple chains while keeping a single tree structure
-================
-*/
 void idChain::BuildChain( const idStr& name, const idVec3& origin, float linkLength, float linkWidth, float density, int numLinks, bool bindToWorld )
 {
 	int								   i;
@@ -207,11 +173,6 @@ void idChain::BuildChain( const idStr& name, const idVec3& origin, float linkLen
 	}
 }
 
-/*
-================
-idChain::Spawn
-================
-*/
 void idChain::Spawn()
 {
 	int	   numLinks;
@@ -247,11 +208,6 @@ void idChain::Spawn()
 CLASS_DECLARATION( idAnimatedEntity, idAFAttachment )
 END_CLASS
 
-/*
-=====================
-idAFAttachment::idAFAttachment
-=====================
-*/
 idAFAttachment::idAFAttachment()
 {
 	body		= NULL;
@@ -260,11 +216,6 @@ idAFAttachment::idAFAttachment()
 	attachJoint = INVALID_JOINT;
 }
 
-/*
-=====================
-idAFAttachment::~idAFAttachment
-=====================
-*/
 idAFAttachment::~idAFAttachment()
 {
 	StopSound( SND_CHANNEL_ANY, false );
@@ -273,21 +224,11 @@ idAFAttachment::~idAFAttachment()
 	combatModel = NULL;
 }
 
-/*
-=====================
-idAFAttachment::Spawn
-=====================
-*/
 void idAFAttachment::Spawn()
 {
 	idleAnim = animator.GetAnim( "idle" );
 }
 
-/*
-=====================
-idAFAttachment::SetBody
-=====================
-*/
 void idAFAttachment::SetBody( idEntity* bodyEnt, const char* model, jointHandle_t attachJoint )
 {
 	bool bleed;
@@ -301,11 +242,6 @@ void idAFAttachment::SetBody( idEntity* bodyEnt, const char* model, jointHandle_
 	spawnArgs.SetBool( "bleed", bleed );
 }
 
-/*
-=====================
-idAFAttachment::ClearBody
-=====================
-*/
 void idAFAttachment::ClearBody()
 {
 	body		= NULL;
@@ -313,23 +249,11 @@ void idAFAttachment::ClearBody()
 	Hide();
 }
 
-/*
-=====================
-idAFAttachment::GetBody
-=====================
-*/
 idEntity* idAFAttachment::GetBody() const
 {
 	return body;
 }
 
-/*
-================
-idAFAttachment::Save
-
-archive object for savegame file
-================
-*/
 void idAFAttachment::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteObject( body );
@@ -337,13 +261,6 @@ void idAFAttachment::Save( idSaveGame* savefile ) const
 	savefile->WriteJoint( attachJoint );
 }
 
-/*
-================
-idAFAttachment::Restore
-
-unarchives object from save game file
-================
-*/
 void idAFAttachment::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadObject( reinterpret_cast<idClass*&>( body ) );
@@ -354,35 +271,18 @@ void idAFAttachment::Restore( idRestoreGame* savefile )
 	LinkCombat();
 }
 
-/*
-================
-idAFAttachment::Hide
-================
-*/
 void idAFAttachment::Hide()
 {
 	idEntity::Hide();
 	UnlinkCombat();
 }
 
-/*
-================
-idAFAttachment::Show
-================
-*/
 void idAFAttachment::Show()
 {
 	idEntity::Show();
 	LinkCombat();
 }
 
-/*
-============
-idAFAttachment::Damage
-
-Pass damage to body at the bindjoint
-============
-*/
 void idAFAttachment::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir, const char* damageDefName, const float damageScale, const int location )
 {
 	if( body ) {
@@ -390,11 +290,6 @@ void idAFAttachment::Damage( idEntity* inflictor, idEntity* attacker, const idVe
 	}
 }
 
-/*
-================
-idAFAttachment::AddDamageEffect
-================
-*/
 void idAFAttachment::AddDamageEffect( const trace_t& collision, const idVec3& velocity, const char* damageDefName )
 {
 	if( body ) {
@@ -404,11 +299,6 @@ void idAFAttachment::AddDamageEffect( const trace_t& collision, const idVec3& ve
 	}
 }
 
-/*
-================
-idAFAttachment::GetImpactInfo
-================
-*/
 void idAFAttachment::GetImpactInfo( idEntity* ent, int id, const idVec3& point, impactInfo_t* info )
 {
 	if( body ) {
@@ -418,11 +308,6 @@ void idAFAttachment::GetImpactInfo( idEntity* ent, int id, const idVec3& point, 
 	}
 }
 
-/*
-================
-idAFAttachment::ApplyImpulse
-================
-*/
 void idAFAttachment::ApplyImpulse( idEntity* ent, int id, const idVec3& point, const idVec3& impulse )
 {
 	if( body ) {
@@ -432,11 +317,6 @@ void idAFAttachment::ApplyImpulse( idEntity* ent, int id, const idVec3& point, c
 	}
 }
 
-/*
-================
-idAFAttachment::AddForce
-================
-*/
 void idAFAttachment::AddForce( idEntity* ent, int id, const idVec3& point, const idVec3& force )
 {
 	if( body ) {
@@ -446,11 +326,6 @@ void idAFAttachment::AddForce( idEntity* ent, int id, const idVec3& point, const
 	}
 }
 
-/*
-================
-idAFAttachment::PlayIdleAnim
-================
-*/
 void idAFAttachment::PlayIdleAnim( int blendTime )
 {
 	if( idleAnim && ( idleAnim != animator.CurrentAnim( ANIMCHANNEL_ALL )->AnimNum() ) ) {
@@ -458,11 +333,6 @@ void idAFAttachment::PlayIdleAnim( int blendTime )
 	}
 }
 
-/*
-================
-idAfAttachment::Think
-================
-*/
 void idAFAttachment::Think()
 {
 	idAnimatedEntity::Think();
@@ -495,13 +365,7 @@ bool   idAFAttachment::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis
 
 	return false;
 }
-// Leyland end
 
-/*
-================
-idAFAttachment::SetCombatModel
-================
-*/
 void idAFAttachment::SetCombatModel()
 {
 	if( combatModel ) {
@@ -513,21 +377,11 @@ void idAFAttachment::SetCombatModel()
 	combatModel->SetOwner( body );
 }
 
-/*
-================
-idAFAttachment::GetCombatModel
-================
-*/
 idClipModel* idAFAttachment::GetCombatModel() const
 {
 	return combatModel;
 }
 
-/*
-================
-idAFAttachment::LinkCombat
-================
-*/
 void idAFAttachment::LinkCombat()
 {
 	if( fl.hidden ) {
@@ -539,11 +393,6 @@ void idAFAttachment::LinkCombat()
 	}
 }
 
-/*
-================
-idAFAttachment::UnlinkCombat
-================
-*/
 void idAFAttachment::UnlinkCombat()
 {
 	if( combatModel ) {
@@ -568,11 +417,6 @@ END_CLASS
 static const float BOUNCE_SOUND_MIN_VELOCITY = 80.0f;
 static const float BOUNCE_SOUND_MAX_VELOCITY = 200.0f;
 
-/*
-================
-idAFEntity_Base::idAFEntity_Base
-================
-*/
 idAFEntity_Base::idAFEntity_Base()
 {
 	combatModel			= NULL;
@@ -582,22 +426,12 @@ idAFEntity_Base::idAFEntity_Base()
 	spawnAxis.Identity();
 }
 
-/*
-================
-idAFEntity_Base::~idAFEntity_Base
-================
-*/
 idAFEntity_Base::~idAFEntity_Base()
 {
 	delete combatModel;
 	combatModel = NULL;
 }
 
-/*
-================
-idAFEntity_Base::Save
-================
-*/
 void idAFEntity_Base::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteInt( combatModelContents );
@@ -608,11 +442,6 @@ void idAFEntity_Base::Save( idSaveGame* savefile ) const
 	af.Save( savefile );
 }
 
-/*
-================
-idAFEntity_Base::Restore
-================
-*/
 void idAFEntity_Base::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadInt( combatModelContents );
@@ -625,11 +454,6 @@ void idAFEntity_Base::Restore( idRestoreGame* savefile )
 	af.Restore( savefile );
 }
 
-/*
-================
-idAFEntity_Base::Spawn
-================
-*/
 void idAFEntity_Base::Spawn()
 {
 	spawnOrigin	  = GetPhysics()->GetOrigin();
@@ -637,11 +461,6 @@ void idAFEntity_Base::Spawn()
 	nextSoundTime = 0;
 }
 
-/*
-================
-idAFEntity_Base::LoadAF
-================
-*/
 bool idAFEntity_Base::LoadAF()
 {
 	idStr fileName;
@@ -673,11 +492,6 @@ bool idAFEntity_Base::LoadAF()
 	return true;
 }
 
-/*
-================
-idAFEntity_Base::Think
-================
-*/
 void idAFEntity_Base::Think()
 {
 	RunPhysics();
@@ -688,21 +502,11 @@ void idAFEntity_Base::Think()
 	}
 }
 
-/*
-================
-idAFEntity_Base::BodyForClipModelId
-================
-*/
 int idAFEntity_Base::BodyForClipModelId( int id ) const
 {
 	return af.BodyForClipModelId( id );
 }
 
-/*
-================
-idAFEntity_Base::SaveState
-================
-*/
 void idAFEntity_Base::SaveState( idDict& args ) const
 {
 	const idKeyValue* kv;
@@ -732,51 +536,26 @@ void idAFEntity_Base::SaveState( idDict& args ) const
 	}
 }
 
-/*
-================
-idAFEntity_Base::LoadState
-================
-*/
 void idAFEntity_Base::LoadState( const idDict& args )
 {
 	af.LoadState( args );
 }
 
-/*
-================
-idAFEntity_Base::AddBindConstraints
-================
-*/
 void idAFEntity_Base::AddBindConstraints()
 {
 	af.AddBindConstraints();
 }
 
-/*
-================
-idAFEntity_Base::RemoveBindConstraints
-================
-*/
 void idAFEntity_Base::RemoveBindConstraints()
 {
 	af.RemoveBindConstraints();
 }
 
-/*
-================
-idAFEntity_Base::AddDamageEffect
-================
-*/
 void idAFEntity_Base::AddDamageEffect( const trace_t& collision, const idVec3& velocity, const char* damageDefName )
 {
 	idAnimatedEntity::AddDamageEffect( collision, velocity, damageDefName );
 }
 
-/*
-================
-idAFEntity_Base::GetImpactInfo
-================
-*/
 void idAFEntity_Base::GetImpactInfo( idEntity* ent, int id, const idVec3& point, impactInfo_t* info )
 {
 	if( af.IsActive() ) {
@@ -786,11 +565,6 @@ void idAFEntity_Base::GetImpactInfo( idEntity* ent, int id, const idVec3& point,
 	}
 }
 
-/*
-================
-idAFEntity_Base::ApplyImpulse
-================
-*/
 void idAFEntity_Base::ApplyImpulse( idEntity* ent, int id, const idVec3& point, const idVec3& impulse )
 {
 	if( af.IsLoaded() ) {
@@ -801,11 +575,6 @@ void idAFEntity_Base::ApplyImpulse( idEntity* ent, int id, const idVec3& point, 
 	}
 }
 
-/*
-================
-idAFEntity_Base::AddForce
-================
-*/
 void idAFEntity_Base::AddForce( idEntity* ent, int id, const idVec3& point, const idVec3& force )
 {
 	if( af.IsLoaded() ) {
@@ -816,11 +585,6 @@ void idAFEntity_Base::AddForce( idEntity* ent, int id, const idVec3& point, cons
 	}
 }
 
-/*
-================
-idAFEntity_Base::Collide
-================
-*/
 bool idAFEntity_Base::Collide( const trace_t& collision, const idVec3& velocity )
 {
 	float v, f;
@@ -841,11 +605,6 @@ bool idAFEntity_Base::Collide( const trace_t& collision, const idVec3& velocity 
 	return false;
 }
 
-/*
-================
-idAFEntity_Base::GetPhysicsToVisualTransform
-================
-*/
 bool idAFEntity_Base::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis )
 {
 	if( af.IsActive() ) {
@@ -855,11 +614,6 @@ bool idAFEntity_Base::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis 
 	return idEntity::GetPhysicsToVisualTransform( origin, axis );
 }
 
-/*
-================
-idAFEntity_Base::UpdateAnimationControllers
-================
-*/
 bool idAFEntity_Base::UpdateAnimationControllers()
 {
 	if( af.IsActive() ) {
@@ -870,11 +624,6 @@ bool idAFEntity_Base::UpdateAnimationControllers()
 	return false;
 }
 
-/*
-================
-idAFEntity_Base::SetCombatModel
-================
-*/
 void idAFEntity_Base::SetCombatModel()
 {
 	if( combatModel ) {
@@ -885,21 +634,11 @@ void idAFEntity_Base::SetCombatModel()
 	}
 }
 
-/*
-================
-idAFEntity_Base::GetCombatModel
-================
-*/
 idClipModel* idAFEntity_Base::GetCombatModel() const
 {
 	return combatModel;
 }
 
-/*
-================
-idAFEntity_Base::SetCombatContents
-================
-*/
 void idAFEntity_Base::SetCombatContents( bool enable )
 {
 	assert( combatModel );
@@ -914,11 +653,6 @@ void idAFEntity_Base::SetCombatContents( bool enable )
 	}
 }
 
-/*
-================
-idAFEntity_Base::LinkCombat
-================
-*/
 void idAFEntity_Base::LinkCombat()
 {
 	if( fl.hidden ) {
@@ -929,11 +663,6 @@ void idAFEntity_Base::LinkCombat()
 	}
 }
 
-/*
-================
-idAFEntity_Base::UnlinkCombat
-================
-*/
 void idAFEntity_Base::UnlinkCombat()
 {
 	if( combatModel ) {
@@ -941,38 +670,16 @@ void idAFEntity_Base::UnlinkCombat()
 	}
 }
 
-/*
-================
-idAFEntity_Base::FreeModelDef
-================
-*/
 void idAFEntity_Base::FreeModelDef()
 {
 	UnlinkCombat();
 	idEntity::FreeModelDef();
 }
 
-/*
-===============
-idAFEntity_Base::ShowEditingDialog
-===============
-*/
 void idAFEntity_Base::ShowEditingDialog()
 {
 }
 
-/*
-================
-idAFEntity_Base::DropAFs
-
-  The entity should have the following key/value pairs set:
-	"def_drop<type>AF"		"af def"
-	"drop<type>Skin"		"skin name"
-  To drop multiple articulated figures the following key/value pairs can be used:
-	"def_drop<type>AF*"		"af def"
-  where * is an aribtrary string.
-================
-*/
 void idAFEntity_Base::DropAFs( idEntity* ent, const char* type, idList<idEntity*>* list )
 {
 	const idKeyValue* kv;
@@ -1009,11 +716,6 @@ void idAFEntity_Base::DropAFs( idEntity* ent, const char* type, idList<idEntity*
 	}
 }
 
-/*
-================
-idAFEntity_Base::Event_SetConstraintPosition
-================
-*/
 void idAFEntity_Base::Event_SetConstraintPosition( const char* name, const idVec3& pos )
 {
 	af.SetConstraintPosition( name, pos );
@@ -1035,11 +737,6 @@ EVENT( EV_Gib, idAFEntity_Gibbable::Event_Gib )
 EVENT( EV_Gibbed, idAFEntity_Base::Event_Remove )
 END_CLASS
 
-/*
-================
-idAFEntity_Gibbable::idAFEntity_Gibbable
-================
-*/
 idAFEntity_Gibbable::idAFEntity_Gibbable()
 {
 	skeletonModel		   = NULL;
@@ -1048,11 +745,6 @@ idAFEntity_Gibbable::idAFEntity_Gibbable()
 	wasThrown			   = false;
 }
 
-/*
-================
-idAFEntity_Gibbable::~idAFEntity_Gibbable
-================
-*/
 idAFEntity_Gibbable::~idAFEntity_Gibbable()
 {
 	if( skeletonModelDefHandle != -1 ) {
@@ -1061,11 +753,6 @@ idAFEntity_Gibbable::~idAFEntity_Gibbable()
 	}
 }
 
-/*
-================
-idAFEntity_Gibbable::Save
-================
-*/
 void idAFEntity_Gibbable::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteBool( gibbed );
@@ -1073,11 +760,6 @@ void idAFEntity_Gibbable::Save( idSaveGame* savefile ) const
 	savefile->WriteBool( wasThrown );
 }
 
-/*
-================
-idAFEntity_Gibbable::Restore
-================
-*/
 void idAFEntity_Gibbable::Restore( idRestoreGame* savefile )
 {
 	bool hasCombatModel;
@@ -1094,11 +776,6 @@ void idAFEntity_Gibbable::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-================
-idAFEntity_Gibbable::Spawn
-================
-*/
 void idAFEntity_Gibbable::Spawn()
 {
 	InitSkeletonModel();
@@ -1107,11 +784,6 @@ void idAFEntity_Gibbable::Spawn()
 	wasThrown = false;
 }
 
-/*
-================
-idAFEntity_Gibbable::InitSkeletonModel
-================
-*/
 void idAFEntity_Gibbable::InitSkeletonModel()
 {
 	const char*			  modelName;
@@ -1138,11 +810,6 @@ void idAFEntity_Gibbable::InitSkeletonModel()
 	}
 }
 
-/*
-================
-idAFEntity_Gibbable::Present
-================
-*/
 void idAFEntity_Gibbable::Present()
 {
 	renderEntity_t skeleton;
@@ -1171,11 +838,6 @@ void idAFEntity_Gibbable::Present()
 	idEntity::Present();
 }
 
-/*
-================
-idAFEntity_Gibbable::Damage
-================
-*/
 void idAFEntity_Gibbable::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir, const char* damageDefName, const float damageScale, const int location )
 {
 	if( !fl.takedamage ) {
@@ -1187,11 +849,6 @@ void idAFEntity_Gibbable::Damage( idEntity* inflictor, idEntity* attacker, const
 	}
 }
 
-/*
-=====================
-idAFEntity_Gibbable::SetThrown
-=====================
-*/
 void idAFEntity_Gibbable::SetThrown( bool isThrown )
 {
 	if( isThrown ) {
@@ -1208,11 +865,6 @@ void idAFEntity_Gibbable::SetThrown( bool isThrown )
 	wasThrown = isThrown;
 }
 
-/*
-=====================
-idAFEntity_Gibbable::Collide
-=====================
-*/
 bool idAFEntity_Gibbable::Collide( const trace_t& collision, const idVec3& velocity )
 {
 	if( !gibbed && wasThrown ) {
@@ -1234,11 +886,6 @@ bool idAFEntity_Gibbable::Collide( const trace_t& collision, const idVec3& veloc
 	return idAFEntity_Base::Collide( collision, velocity );
 }
 
-/*
-=====================
-idAFEntity_Gibbable::SpawnGibs
-=====================
-*/
 void idAFEntity_Gibbable::SpawnGibs( const idVec3& dir, const char* damageDefName )
 {
 	int				  i;
@@ -1285,11 +932,6 @@ void idAFEntity_Gibbable::SpawnGibs( const idVec3& dir, const char* damageDefNam
 	}
 }
 
-/*
-============
-idAFEntity_Gibbable::Gib
-============
-*/
 void idAFEntity_Gibbable::Gib( const idVec3& dir, const char* damageDefName )
 {
 	// only gib once
@@ -1334,11 +976,6 @@ void idAFEntity_Gibbable::Gib( const idVec3& dir, const char* damageDefName )
 	PostEventSec( &EV_Gibbed, 4.0f );
 }
 
-/*
-============
-idAFEntity_Gibbable::Event_Gib
-============
-*/
 void idAFEntity_Gibbable::Event_Gib( const char* damageDefName )
 {
 	Gib( idVec3( 0, 0, 1 ), damageDefName );
@@ -1356,11 +993,6 @@ CLASS_DECLARATION( idAFEntity_Gibbable, idAFEntity_Generic )
 EVENT( EV_Activate, idAFEntity_Generic::Event_Activate )
 END_CLASS
 
-/*
-================
-idAFEntity_Generic::idAFEntity_Generic
-================
-*/
 idAFEntity_Generic::idAFEntity_Generic()
 {
 	keepRunningPhysics = false;
@@ -1375,31 +1007,16 @@ idAFEntity_Generic::~idAFEntity_Generic()
 {
 }
 
-/*
-================
-idAFEntity_Generic::Save
-================
-*/
 void idAFEntity_Generic::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteBool( keepRunningPhysics );
 }
 
-/*
-================
-idAFEntity_Generic::Restore
-================
-*/
 void idAFEntity_Generic::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadBool( keepRunningPhysics );
 }
 
-/*
-================
-idAFEntity_Generic::Think
-================
-*/
 void idAFEntity_Generic::Think()
 {
 	idAFEntity_Base::Think();
@@ -1409,11 +1026,6 @@ void idAFEntity_Generic::Think()
 	}
 }
 
-/*
-================
-idAFEntity_Generic::Spawn
-================
-*/
 void idAFEntity_Generic::Spawn()
 {
 	if( !LoadAF() ) {
@@ -1432,11 +1044,6 @@ void idAFEntity_Generic::Spawn()
 	fl.takedamage = true;
 }
 
-/*
-================
-idAFEntity_Generic::Event_Activate
-================
-*/
 void idAFEntity_Generic::Event_Activate( idEntity* activator )
 {
 	float  delay;
@@ -1478,21 +1085,11 @@ EVENT( EV_Gib, idAFEntity_WithAttachedHead::Event_Gib )
 EVENT( EV_Activate, idAFEntity_WithAttachedHead::Event_Activate )
 END_CLASS
 
-/*
-================
-idAFEntity_WithAttachedHead::idAFEntity_WithAttachedHead
-================
-*/
 idAFEntity_WithAttachedHead::idAFEntity_WithAttachedHead()
 {
 	head = NULL;
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::~idAFEntity_WithAttachedHead
-================
-*/
 idAFEntity_WithAttachedHead::~idAFEntity_WithAttachedHead()
 {
 	if( head.GetEntity() ) {
@@ -1501,11 +1098,6 @@ idAFEntity_WithAttachedHead::~idAFEntity_WithAttachedHead()
 	}
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::Spawn
-================
-*/
 void idAFEntity_WithAttachedHead::Spawn()
 {
 	SetupHead();
@@ -1532,31 +1124,16 @@ void idAFEntity_WithAttachedHead::Spawn()
 	}
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::Save
-================
-*/
 void idAFEntity_WithAttachedHead::Save( idSaveGame* savefile ) const
 {
 	head.Save( savefile );
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::Restore
-================
-*/
 void idAFEntity_WithAttachedHead::Restore( idRestoreGame* savefile )
 {
 	head.Restore( savefile );
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::SetupHead
-================
-*/
 void idAFEntity_WithAttachedHead::SetupHead()
 {
 	idAFAttachment* headEnt;
@@ -1593,21 +1170,11 @@ void idAFEntity_WithAttachedHead::SetupHead()
 	}
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::Think
-================
-*/
 void idAFEntity_WithAttachedHead::Think()
 {
 	idAFEntity_Base::Think();
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::LinkCombat
-================
-*/
 void idAFEntity_WithAttachedHead::LinkCombat()
 {
 	idAFAttachment* headEnt;
@@ -1625,11 +1192,6 @@ void idAFEntity_WithAttachedHead::LinkCombat()
 	}
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::UnlinkCombat
-================
-*/
 void idAFEntity_WithAttachedHead::UnlinkCombat()
 {
 	idAFAttachment* headEnt;
@@ -1643,11 +1205,6 @@ void idAFEntity_WithAttachedHead::UnlinkCombat()
 	}
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::Hide
-================
-*/
 void idAFEntity_WithAttachedHead::Hide()
 {
 	idAFEntity_Base::Hide();
@@ -1657,11 +1214,6 @@ void idAFEntity_WithAttachedHead::Hide()
 	UnlinkCombat();
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::Show
-================
-*/
 void idAFEntity_WithAttachedHead::Show()
 {
 	idAFEntity_Base::Show();
@@ -1671,11 +1223,6 @@ void idAFEntity_WithAttachedHead::Show()
 	LinkCombat();
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::ProjectOverlay
-================
-*/
 void idAFEntity_WithAttachedHead::ProjectOverlay( const idVec3& origin, const idVec3& dir, float size, const char* material )
 {
 	idEntity::ProjectOverlay( origin, dir, size, material );
@@ -1685,11 +1232,6 @@ void idAFEntity_WithAttachedHead::ProjectOverlay( const idVec3& origin, const id
 	}
 }
 
-/*
-============
-idAFEntity_WithAttachedHead::Gib
-============
-*/
 void idAFEntity_WithAttachedHead::Gib( const idVec3& dir, const char* damageDefName )
 {
 	// only gib once
@@ -1702,21 +1244,11 @@ void idAFEntity_WithAttachedHead::Gib( const idVec3& dir, const char* damageDefN
 	}
 }
 
-/*
-============
-idAFEntity_WithAttachedHead::Event_Gib
-============
-*/
 void idAFEntity_WithAttachedHead::Event_Gib( const char* damageDefName )
 {
 	Gib( idVec3( 0, 0, 1 ), damageDefName );
 }
 
-/*
-================
-idAFEntity_WithAttachedHead::Event_Activate
-================
-*/
 void idAFEntity_WithAttachedHead::Event_Activate( idEntity* activator )
 {
 	float  delay;
@@ -1756,11 +1288,6 @@ void idAFEntity_WithAttachedHead::Event_Activate( idEntity* activator )
 CLASS_DECLARATION( idAFEntity_Base, idAFEntity_Vehicle )
 END_CLASS
 
-/*
-================
-idAFEntity_Vehicle::idAFEntity_Vehicle
-================
-*/
 idAFEntity_Vehicle::idAFEntity_Vehicle()
 {
 	player			   = NULL;
@@ -1772,11 +1299,6 @@ idAFEntity_Vehicle::idAFEntity_Vehicle()
 	dustSmoke		   = NULL;
 }
 
-/*
-================
-idAFEntity_Vehicle::Spawn
-================
-*/
 void idAFEntity_Vehicle::Spawn()
 {
 	const char* eyesJointName		   = spawnArgs.GetString( "eyesJoint", "eyes" );
@@ -1811,11 +1333,6 @@ void idAFEntity_Vehicle::Spawn()
 	}
 }
 
-/*
-================
-idAFEntity_Vehicle::Use
-================
-*/
 void idAFEntity_Vehicle::Use( idPlayer* other )
 {
 	idVec3 origin;
@@ -1840,11 +1357,6 @@ void idAFEntity_Vehicle::Use( idPlayer* other )
 	}
 }
 
-/*
-================
-idAFEntity_Vehicle::GetSteerAngle
-================
-*/
 float idAFEntity_Vehicle::GetSteerAngle()
 {
 	float idealSteerAngle, angleDelta;
@@ -1874,11 +1386,6 @@ float idAFEntity_Vehicle::GetSteerAngle()
 CLASS_DECLARATION( idAFEntity_Vehicle, idAFEntity_VehicleSimple )
 END_CLASS
 
-/*
-================
-idAFEntity_VehicleSimple::idAFEntity_VehicleSimple
-================
-*/
 idAFEntity_VehicleSimple::idAFEntity_VehicleSimple()
 {
 	int i;
@@ -1887,22 +1394,12 @@ idAFEntity_VehicleSimple::idAFEntity_VehicleSimple()
 	}
 }
 
-/*
-================
-idAFEntity_VehicleSimple::~idAFEntity_VehicleSimple
-================
-*/
 idAFEntity_VehicleSimple::~idAFEntity_VehicleSimple()
 {
 	delete wheelModel;
 	wheelModel = NULL;
 }
 
-/*
-================
-idAFEntity_VehicleSimple::Spawn
-================
-*/
 void idAFEntity_VehicleSimple::Spawn()
 {
 	static const char* wheelJointKeys[] = { "wheelJointFrontLeft", "wheelJointFrontRight", "wheelJointRearLeft", "wheelJointRearRight" };
@@ -1942,11 +1439,6 @@ void idAFEntity_VehicleSimple::Spawn()
 	BecomeActive( TH_THINK );
 }
 
-/*
-================
-idAFEntity_VehicleSimple::Think
-================
-*/
 void idAFEntity_VehicleSimple::Think()
 {
 	int		   i;
@@ -2061,11 +1553,6 @@ void idAFEntity_VehicleSimple::Think()
 CLASS_DECLARATION( idAFEntity_Vehicle, idAFEntity_VehicleFourWheels )
 END_CLASS
 
-/*
-================
-idAFEntity_VehicleFourWheels::idAFEntity_VehicleFourWheels
-================
-*/
 idAFEntity_VehicleFourWheels::idAFEntity_VehicleFourWheels()
 {
 	int i;
@@ -2079,11 +1566,6 @@ idAFEntity_VehicleFourWheels::idAFEntity_VehicleFourWheels()
 	steering[1] = NULL;
 }
 
-/*
-================
-idAFEntity_VehicleFourWheels::Spawn
-================
-*/
 void idAFEntity_VehicleFourWheels::Spawn()
 {
 	int				   i;
@@ -2130,11 +1612,6 @@ void idAFEntity_VehicleFourWheels::Spawn()
 	BecomeActive( TH_THINK );
 }
 
-/*
-================
-idAFEntity_VehicleFourWheels::Think
-================
-*/
 void idAFEntity_VehicleFourWheels::Think()
 {
 	int		   i;
@@ -2228,11 +1705,6 @@ void idAFEntity_VehicleFourWheels::Think()
 CLASS_DECLARATION( idAFEntity_Vehicle, idAFEntity_VehicleSixWheels )
 END_CLASS
 
-/*
-================
-idAFEntity_VehicleSixWheels::idAFEntity_VehicleSixWheels
-================
-*/
 idAFEntity_VehicleSixWheels::idAFEntity_VehicleSixWheels()
 {
 	int i;
@@ -2248,11 +1720,6 @@ idAFEntity_VehicleSixWheels::idAFEntity_VehicleSixWheels()
 	steering[3] = NULL;
 }
 
-/*
-================
-idAFEntity_VehicleSixWheels::Spawn
-================
-*/
 void idAFEntity_VehicleSixWheels::Spawn()
 {
 	int				   i;
@@ -2296,11 +1763,6 @@ void idAFEntity_VehicleSixWheels::Spawn()
 	BecomeActive( TH_THINK );
 }
 
-/*
-================
-idAFEntity_VehicleSixWheels::Think
-================
-*/
 void idAFEntity_VehicleSixWheels::Think()
 {
 	int		   i;
@@ -2408,11 +1870,6 @@ EVENT( EV_Vehicle_setSteeringSpeed, idAFEntity_VehicleAutomated::Event_SetSteeri
 EVENT( EV_Vehicle_setWaypoint, idAFEntity_VehicleAutomated::Event_SetWayPoint )
 END_CLASS
 
-/*
-================
-idAFEntity_VehicleAutomated::Spawn
-================
-*/
 void idAFEntity_VehicleAutomated::Spawn()
 {
 	velocity = force = steerAngle = 0.f;
@@ -2428,11 +1885,6 @@ void idAFEntity_VehicleAutomated::Spawn()
 	PostEventMS( &EV_PostSpawn, 0 );
 }
 
-/*
-================
-idAFEntity_VehicleAutomated::PostSpawn
-================
-*/
 void idAFEntity_VehicleAutomated::PostSpawn()
 {
 	if( targets.Num() ) {
@@ -2440,51 +1892,26 @@ void idAFEntity_VehicleAutomated::PostSpawn()
 	}
 }
 
-/*
-================
-idAFEntity_VehicleAutomated::Event_SetVelocity
-================
-*/
 void idAFEntity_VehicleAutomated::Event_SetVelocity( float _velocity )
 {
 	velocity = _velocity;
 }
 
-/*
-================
-idAFEntity_VehicleAutomated::Event_SetTorque
-================
-*/
 void idAFEntity_VehicleAutomated::Event_SetTorque( float _torque )
 {
 	force = _torque;
 }
 
-/*
-================
-idAFEntity_VehicleAutomated::Event_SetSteeringSpeed
-================
-*/
 void idAFEntity_VehicleAutomated::Event_SetSteeringSpeed( float _steeringSpeed )
 {
 	steeringSpeed = _steeringSpeed;
 }
 
-/*
-================
-idAFEntity_VehicleAutomated::Event_SetWayPoint
-================
-*/
 void idAFEntity_VehicleAutomated::Event_SetWayPoint( idEntity* _waypoint )
 {
 	waypoint = _waypoint;
 }
 
-/*
-================
-idAFEntity_VehicleAutomated::Think
-================
-*/
 #define HIT_WAYPOINT_THRESHOLD 80.f
 
 void idAFEntity_VehicleAutomated::Think()
@@ -2596,11 +2023,6 @@ void idAFEntity_VehicleAutomated::Think()
 CLASS_DECLARATION( idAFEntity_Base, idAFEntity_SteamPipe )
 END_CLASS
 
-/*
-================
-idAFEntity_SteamPipe::idAFEntity_SteamPipe
-================
-*/
 idAFEntity_SteamPipe::idAFEntity_SteamPipe()
 {
 	steamBody			= 0;
@@ -2610,11 +2032,6 @@ idAFEntity_SteamPipe::idAFEntity_SteamPipe()
 	memset( &steamRenderEntity, 0, sizeof( steamRenderEntity ) );
 }
 
-/*
-================
-idAFEntity_SteamPipe::~idAFEntity_SteamPipe
-================
-*/
 idAFEntity_SteamPipe::~idAFEntity_SteamPipe()
 {
 	if( steamModelDefHandle >= 0 ) {
@@ -2622,30 +2039,15 @@ idAFEntity_SteamPipe::~idAFEntity_SteamPipe()
 	}
 }
 
-/*
-================
-idAFEntity_SteamPipe::Save
-================
-*/
 void idAFEntity_SteamPipe::Save( idSaveGame* savefile ) const
 {
 }
 
-/*
-================
-idAFEntity_SteamPipe::Restore
-================
-*/
 void idAFEntity_SteamPipe::Restore( idRestoreGame* savefile )
 {
 	Spawn();
 }
 
-/*
-================
-idAFEntity_SteamPipe::Spawn
-================
-*/
 void idAFEntity_SteamPipe::Spawn()
 {
 	idVec3		steamDir;
@@ -2672,11 +2074,6 @@ void idAFEntity_SteamPipe::Spawn()
 	BecomeActive( TH_THINK );
 }
 
-/*
-================
-idAFEntity_SteamPipe::InitSteamRenderEntity
-================
-*/
 void idAFEntity_SteamPipe::InitSteamRenderEntity()
 {
 	const char*			  temp;
@@ -2711,11 +2108,6 @@ void idAFEntity_SteamPipe::InitSteamRenderEntity()
 	}
 }
 
-/*
-================
-idAFEntity_SteamPipe::Think
-================
-*/
 void idAFEntity_SteamPipe::Think()
 {
 	idVec3 steamDir;
@@ -2756,11 +2148,6 @@ END_CLASS
 
 static const char* clawConstraintNames[] = { "claw1", "claw2", "claw3", "claw4" };
 
-/*
-================
-idAFEntity_ClawFourFingers::idAFEntity_ClawFourFingers
-================
-*/
 idAFEntity_ClawFourFingers::idAFEntity_ClawFourFingers()
 {
 	fingers[0] = NULL;
@@ -2769,11 +2156,6 @@ idAFEntity_ClawFourFingers::idAFEntity_ClawFourFingers()
 	fingers[3] = NULL;
 }
 
-/*
-================
-idAFEntity_ClawFourFingers::Save
-================
-*/
 void idAFEntity_ClawFourFingers::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -2783,11 +2165,6 @@ void idAFEntity_ClawFourFingers::Save( idSaveGame* savefile ) const
 	}
 }
 
-/*
-================
-idAFEntity_ClawFourFingers::Restore
-================
-*/
 void idAFEntity_ClawFourFingers::Restore( idRestoreGame* savefile )
 {
 	int i;
@@ -2801,11 +2178,6 @@ void idAFEntity_ClawFourFingers::Restore( idRestoreGame* savefile )
 	LinkCombat();
 }
 
-/*
-================
-idAFEntity_ClawFourFingers::Spawn
-================
-*/
 void idAFEntity_ClawFourFingers::Spawn()
 {
 	int i;
@@ -2828,11 +2200,6 @@ void idAFEntity_ClawFourFingers::Spawn()
 	}
 }
 
-/*
-================
-idAFEntity_ClawFourFingers::Event_SetFingerAngle
-================
-*/
 void idAFEntity_ClawFourFingers::Event_SetFingerAngle( float angle )
 {
 	int i;
@@ -2844,11 +2211,6 @@ void idAFEntity_ClawFourFingers::Event_SetFingerAngle( float angle )
 	af.GetPhysics()->Activate();
 }
 
-/*
-================
-idAFEntity_ClawFourFingers::Event_StopFingers
-================
-*/
 void idAFEntity_ClawFourFingers::Event_StopFingers()
 {
 	int i;
@@ -2858,19 +2220,6 @@ void idAFEntity_ClawFourFingers::Event_StopFingers()
 	}
 }
 
-/*
-===============================================================================
-
-  editor support routines
-
-===============================================================================
-*/
-
-/*
-================
-idGameEdit::AF_SpawnEntity
-================
-*/
 bool idGameEdit::AF_SpawnEntity( const char* fileName )
 {
 	idDict				args;
@@ -2917,11 +2266,6 @@ bool idGameEdit::AF_SpawnEntity( const char* fileName )
 	return true;
 }
 
-/*
-================
-idGameEdit::AF_UpdateEntities
-================
-*/
 void idGameEdit::AF_UpdateEntities( const char* fileName )
 {
 	idEntity*		 ent;
@@ -2943,11 +2287,6 @@ void idGameEdit::AF_UpdateEntities( const char* fileName )
 	}
 }
 
-/*
-================
-idGameEdit::AF_UndoChanges
-================
-*/
 void idGameEdit::AF_UndoChanges()
 {
 	int				 i, c;
@@ -2977,11 +2316,6 @@ void idGameEdit::AF_UndoChanges()
 	}
 }
 
-/*
-================
-GetJointTransform
-================
-*/
 typedef struct {
 	renderEntity_t*	  ent;
 	const idMD5Joint* joints;
@@ -3005,11 +2339,7 @@ static bool GetJointTransform( void* model, const idJointMat* frame, const char*
 	return true;
 }
 
-/*
-================
-GetArgString
-================
-*/
+//! Returns the string value of a specified key from the arguments dictionary, falling back to default arguments if not found.
 static const char* GetArgString( const idDict& args, const idDict* defArgs, const char* key )
 {
 	const char* s;
@@ -3021,11 +2351,6 @@ static const char* GetArgString( const idDict& args, const idDict* defArgs, cons
 	return s;
 }
 
-/*
-================
-idGameEdit::AF_CreateMesh
-================
-*/
 idRenderModel* idGameEdit::AF_CreateMesh( const idDict& args, idVec3& meshOrigin, idMat3& meshAxis, bool& poseIsSet )
 {
 	int					  i, jointNum;
@@ -3389,12 +2714,6 @@ void idHarvestable::Think()
 	}
 }
 
-/*
-================
-idAFEntity_Harvest::Gib
-Called when the parent object has been gibbed.
-================
-*/
 void idHarvestable::Gib()
 {
 	// Stop any looping sound that was playing
@@ -3407,11 +2726,6 @@ void idHarvestable::Gib()
 	}
 }
 
-/*
-================
-idAFEntity_Harvest::BeginBurn
-================
-*/
 void idHarvestable::BeginBurn()
 {
 	idEntity* parent = parentEnt.GetEntity();
@@ -3451,11 +2765,6 @@ void idHarvestable::BeginBurn()
 	}
 }
 
-/*
-================
-idAFEntity_Harvest::BeginFX
-================
-*/
 void idHarvestable::BeginFX()
 {
 	if( strlen( spawnArgs.GetString( "fx" ) ) <= 0 ) {
@@ -3471,11 +2780,6 @@ void idHarvestable::BeginFX()
 	fx = idEntityFx::StartFx( spawnArgs.GetString( "fx" ), NULL, orientAxis, this, spawnArgs.GetBool( "fx_bind" ) );
 }
 
-/*
-================
-idAFEntity_Harvest::CalcTriggerBounds
-================
-*/
 void idHarvestable::CalcTriggerBounds( float size, idBounds& bounds )
 {
 	idEntity* parent = parentEnt.GetEntity();
@@ -3558,11 +2862,6 @@ bool idHarvestable::GetFxOrientationAxis( idMat3& mat )
 	return false;
 }
 
-/*
-================
-idAFEntity_Harvest::Event_SpawnHarvestTrigger
-================
-*/
 void idHarvestable::Event_SpawnHarvestTrigger()
 {
 	idBounds  bounds;
@@ -3582,11 +2881,6 @@ void idHarvestable::Event_SpawnHarvestTrigger()
 	startTime = 0;
 }
 
-/*
-================
-idAFEntity_Harvest::Event_Touch
-================
-*/
 void idHarvestable::Event_Touch( idEntity* other, trace_t* trace )
 {
 	idEntity* parent = parentEnt.GetEntity();
@@ -3668,21 +2962,11 @@ CLASS_DECLARATION( idAFEntity_WithAttachedHead, idAFEntity_Harvest )
 EVENT( EV_Harvest_SpawnHarvestEntity, idAFEntity_Harvest::Event_SpawnHarvestEntity )
 END_CLASS
 
-/*
-================
-idAFEntity_Harvest::idAFEntity_Harvest
-================
-*/
 idAFEntity_Harvest::idAFEntity_Harvest()
 {
 	harvestEnt = NULL;
 }
 
-/*
-================
-idAFEntity_Harvest::~idAFEntity_Harvest
-================
-*/
 idAFEntity_Harvest::~idAFEntity_Harvest()
 {
 	if( harvestEnt.GetEntity() ) {
@@ -3690,21 +2974,11 @@ idAFEntity_Harvest::~idAFEntity_Harvest()
 	}
 }
 
-/*
-================
-idAFEntity_Harvest::Save
-================
-*/
 void idAFEntity_Harvest::Save( idSaveGame* savefile ) const
 {
 	harvestEnt.Save( savefile );
 }
 
-/*
-================
-idAFEntity_Harvest::Restore
-================
-*/
 void idAFEntity_Harvest::Restore( idRestoreGame* savefile )
 {
 	harvestEnt.Restore( savefile );
@@ -3713,21 +2987,11 @@ void idAFEntity_Harvest::Restore( idRestoreGame* savefile )
 	// }
 }
 
-/*
-================
-idAFEntity_Harvest::Spawn
-================
-*/
 void idAFEntity_Harvest::Spawn()
 {
 	PostEventMS( &EV_Harvest_SpawnHarvestEntity, 0 );
 }
 
-/*
-================
-idAFEntity_Harvest::Think
-================
-*/
 void idAFEntity_Harvest::Think()
 {
 	idAFEntity_WithAttachedHead::Think();

@@ -50,11 +50,6 @@ void idMenuWidget_ItemAssignment::FindFreeSpot()
 	}
 }
 
-/*
-========================
-idMenuWidget_ItemAssignment::Update
-========================
-*/
 void idMenuWidget_ItemAssignment::Update()
 {
 	if( GetSWFObject() == NULL ) {

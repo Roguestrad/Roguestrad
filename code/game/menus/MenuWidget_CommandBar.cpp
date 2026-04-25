@@ -52,11 +52,6 @@ COMMANDBAR
 static const char* const BUTTON_NAMES[] = { "joy1", "joy2", "joy3", "joy4", "joy10", "tab" };
 compile_time_assert( sizeof( BUTTON_NAMES ) / sizeof( BUTTON_NAMES[0] ) == idMenuWidget_CommandBar::MAX_BUTTONS );
 
-/*
-========================
-idMenuWidget_CommandBar::ClearAllButtons
-========================
-*/
 void idMenuWidget_CommandBar::ClearAllButtons()
 {
 	for( int index = 0; index < MAX_BUTTONS; ++index ) {
@@ -65,11 +60,6 @@ void idMenuWidget_CommandBar::ClearAllButtons()
 	}
 }
 
-/*
-========================
-idMenuWidget_CommandBar::Update
-========================
-*/
 void idMenuWidget_CommandBar::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -179,11 +169,6 @@ void idMenuWidget_CommandBar::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_CommandBar::ReceiveEvent
-========================
-*/
 bool idMenuWidget_CommandBar::ExecuteEvent( const idWidgetEvent& event )
 {
 	if( event.type == WIDGET_EVENT_COMMAND ) {

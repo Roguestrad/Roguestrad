@@ -73,16 +73,29 @@ typedef struct impactInfo_s {
 	idVec3 velocity;		 // velocity at the impact position
 } impactInfo_t;
 
+/*!
+	\class idPhysics
+	\brief Abstract base class for physics simulation within the engine.
+
+	This class defines the interface for physics simulation, providing methods to manage physical properties, collision detection, and state persistence. It serves as a foundation for various physics
+   implementations, handling entity positioning, velocity, gravity, and interaction with the game world. The class supports serialization through save and restore operations, and provides interfaces
+   for contact detection, clipping, and interpolation. It is designed to be extended by concrete physics implementations that provide the actual simulation logic.
+
+*/
 class idPhysics : public idClass
 {
 public:
 	ABSTRACT_PROTOTYPE( idPhysics );
 
 	virtual ~idPhysics();
+
+	//! Snaps the given time value to the nearest physics frame boundary.
 	static int SnapTimeToPhysicsFrame( int t );
 
-	// Must not be virtual
+	//! Saves the physics state to the provided save file
 	void	   Save( idSaveGame* savefile ) const;
+
+	//! Restores the physics state from a saved game file.
 	void	   Restore( idRestoreGame* savefile );
 
 public: // common physics interface
@@ -91,6 +104,8 @@ public: // common physics interface
 
 	// clip models
 	virtual void				 SetClipModel( idClipModel* model, float density, int id = 0, bool freeOld = true ) = 0;
+
+	//! Sets the clipping box for the physics object with the specified bounds and density.
 	virtual void				 SetClipBox( const idBounds& bounds, float density );
 	virtual idClipModel*		 GetClipModel( int id = 0 ) const = 0;
 	virtual int					 GetNumClipModels() const		  = 0;

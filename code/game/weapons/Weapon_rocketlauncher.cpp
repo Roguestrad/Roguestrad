@@ -49,11 +49,6 @@ END_CLASS
 #define ROCKETLAUNCHER_RELOAD_TO_IDLE 4
 #define ROCKETLAUNCHER_RELOAD_FRAME	  34 // how many frames from the end of "reload" to fill the clip
 
-/*
-===============
-iceWeaponRocketLauncher::Init
-===============
-*/
 void iceWeaponRocketLauncher::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -63,11 +58,6 @@ void iceWeaponRocketLauncher::Init( idWeapon* weapon )
 	skin_invisible = weapon->GetKey( "skin_invisible" );
 }
 
-/*
-===============
-iceWeaponRocketLauncher::UpdateSkin
-===============
-*/
 void iceWeaponRocketLauncher::UpdateSkin()
 {
 	idStr skinname;
@@ -89,11 +79,6 @@ void iceWeaponRocketLauncher::UpdateSkin()
 	owner->Event_SetSkin( skinname );
 }
 
-/*
-===============
-iceWeaponRocketLauncher::Raise
-===============
-*/
 stateResult_t iceWeaponRocketLauncher::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -114,11 +99,6 @@ stateResult_t iceWeaponRocketLauncher::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponRocketLauncher::Lower
-===============
-*/
 stateResult_t iceWeaponRocketLauncher::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -139,11 +119,6 @@ stateResult_t iceWeaponRocketLauncher::Lower( stateParms_t* parms )
 
 	return SRESULT_ERROR;
 }
-/*
-===============
-iceWeaponRocketLauncher::Idle
-===============
-*/
 stateResult_t iceWeaponRocketLauncher::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -163,11 +138,6 @@ stateResult_t iceWeaponRocketLauncher::Idle( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponRocketLauncher::Fire
-===============
-*/
 stateResult_t iceWeaponRocketLauncher::Fire( stateParms_t* parms )
 {
 	int ammoClip = owner->AmmoInClip();
@@ -200,11 +170,6 @@ stateResult_t iceWeaponRocketLauncher::Fire( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponRocketLauncher::Reload
-===============
-*/
 stateResult_t iceWeaponRocketLauncher::Reload( stateParms_t* parms )
 {
 	enum RELOAD_State { RELOAD_NOTSET = 0, RELOAD_WAIT };

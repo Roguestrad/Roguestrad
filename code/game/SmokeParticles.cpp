@@ -34,11 +34,6 @@ If you have questions concerning this license or the applicable additional terms
 
 static const char* smokeParticle_SnapshotName = "_SmokeParticle_Snapshot_";
 
-/*
-================
-idSmokeParticles::idSmokeParticles
-================
-*/
 idSmokeParticles::idSmokeParticles()
 {
 	initialized = false;
@@ -50,11 +45,6 @@ idSmokeParticles::idSmokeParticles()
 	currentParticleTime = -1;
 }
 
-/*
-================
-idSmokeParticles::Init
-================
-*/
 void idSmokeParticles::Init()
 {
 	if( initialized ) {
@@ -99,11 +89,6 @@ void idSmokeParticles::Init()
 	initialized = true;
 }
 
-/*
-================
-idSmokeParticles::Shutdown
-================
-*/
 void idSmokeParticles::Shutdown()
 {
 	// make sure the render entity is freed before the model is freed
@@ -118,11 +103,6 @@ void idSmokeParticles::Shutdown()
 	initialized = false;
 }
 
-/*
-================
-idSmokeParticles::FreeSmokes
-================
-*/
 void idSmokeParticles::FreeSmokes()
 {
 	for( int activeStageNum = 0; activeStageNum < activeStages.Num(); activeStageNum++ ) {
@@ -166,13 +146,6 @@ void idSmokeParticles::FreeSmokes()
 	}
 }
 
-/*
-================
-idSmokeParticles::EmitSmoke
-
-Called by game code to drop another particle into the list
-================
-*/
 bool idSmokeParticles::EmitSmoke( const idDeclParticle* smoke, const int systemStartTime, const float diversity, const idVec3& origin, const idMat3& axis, int timeGroup /*_D3XP*/ )
 {
 	bool		 continues = false;
@@ -294,11 +267,6 @@ bool idSmokeParticles::EmitSmoke( const idDeclParticle* smoke, const int systemS
 	return continues;
 }
 
-/*
-================
-idSmokeParticles::UpdateRenderEntity
-================
-*/
 bool idSmokeParticles::UpdateRenderEntity( renderEntity_s* renderEntity, const renderView_t* renderView )
 {
 	// this may be triggered by a model trace or other non-view related source,
@@ -422,11 +390,6 @@ bool idSmokeParticles::UpdateRenderEntity( renderEntity_s* renderEntity, const r
 	return true;
 }
 
-/*
-================
-idSmokeParticles::ModelCallback
-================
-*/
 bool idSmokeParticles::ModelCallback( renderEntity_s* renderEntity, const renderView_t* renderView )
 {
 	// update the particles

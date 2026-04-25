@@ -30,50 +30,69 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __GAME_EDIT_H__
 #define __GAME_EDIT_H__
 
-/*
-===============================================================================
-
-	Ingame cursor.
-
-===============================================================================
+/*!
+	\class idCursor3D
+	\brief 3D cursor entity for drag evaluation and visualization.
 */
-
 class idCursor3D : public idEntity
 {
 public:
 	CLASS_PROTOTYPE( idCursor3D );
 
+	//! Initializes a new instance of the idCursor3D class with the dragged position set to zero.
 	idCursor3D();
 	~idCursor3D();
 
+	//! Initializes the 3D cursor object.
 	void		 Spawn();
+
+	//! Renders a 3D cursor with debug arrows representing its orientation and drag position.
 	void		 Present();
+
+	//! Updates the cursor position based on drag evaluation and presents it.
 	void		 Think();
 
 	idForce_Drag drag;
 	idVec3		 draggedPosition;
 };
 
-/*
-===============================================================================
+/*!
+	\class idDragEntity
+	\brief Manages entity dragging operations including selection, binding, and deletion.
 
-	Allows entities to be dragged through the world with physics.
+	The idDragEntity class provides functionality for selecting, moving, and manipulating entities within the engine. It handles the entire drag operation lifecycle from selection to binding and
+   deletion. The class maintains state about the currently selected entity and manages the cursor used during dragging operations. It supports both binding entities to the world using constraints and
+   removing those constraints. The Update method processes input to move selected entities, while Clear and StopDrag methods handle cleanup operations.
 
-===============================================================================
 */
-
 class idDragEntity
 {
 public:
+	//! Constructs a new idDragEntity object and initializes its internal state.
 	idDragEntity();
+
+	//! Destructor for the idDragEntity class that stops dragging, clears selection, and deletes the cursor.
 	~idDragEntity();
 
+	//! Clears all member variables of the idDragEntity object
 	void	  Clear();
+
+	//! Updates the dragging state for an entity based on player input and view position.
 	void	  Update( idPlayer* player );
+
+	//! Sets the entity that is currently selected for dragging.
 	void	  SetSelected( idEntity* ent );
+
+	//! Returns the entity that is currently selected by this drag entity.
 	idEntity* GetSelected() const { return selected.GetEntity(); }
+
+	//! Deletes the currently selected entity and clears the selection.
 	void	  DeleteSelected();
+
+	//! Binds the selected entity to the world using a ballAndSocket constraint
 	void	  BindSelected();
+
+	//! Removes binding constraints from the currently selected entity.
 	void	  UnbindSelected();
 
 private:
@@ -86,6 +105,7 @@ private:
 	idCursor3D*			  cursor;			// cursor entity
 	idEntityPtr<idEntity> selected;			// last dragged entity
 
+	//! Stops the entity dragging operation and deactivates the cursor.
 	void				  StopDrag();
 };
 
@@ -101,15 +121,38 @@ typedef struct selectedTypeInfo_s {
 	idStr		textKey;
 } selectedTypeInfo_t;
 
+/*!
+	\class idEditEntities
+	\brief Manages entity selection and display in an editing environment.
+
+	The idEditEntities class provides functionality for selecting, managing, and displaying entities within an editor environment. It handles the logic for determining which entities are selectable,
+   maintaining a list of currently selected entities, and rendering entities based on the current edit mode. The class supports operations to add or remove entities from the selection, clear all
+   selections, and check the selectability of individual entities with optional visual feedback. The selection logic considers spatial positioning and direction to determine entity selection, and
+   provides methods to query selection state and visual properties of entities.
+
+*/
 class idEditEntities
 {
 public:
+	//! Initializes a new instance of the idEditEntities class.
 	idEditEntities();
+
+	//! Selects an entity at the given origin and direction, skipping a specified entity.
 	bool SelectEntity( const idVec3& origin, const idVec3& dir, const idEntity* skip );
+
+	//! Marks the specified entity as selected and adds it to the list of selected entities.
 	void AddSelectedEntity( idEntity* ent );
+
+	//! Removes the specified entity from the list of selected entities.
 	void RemoveSelectedEntity( idEntity* ent );
+
+	//! Clears the selection state of all entities in the editor.
 	void ClearSelectedEntities();
+
+	//! Displays selectable entities in the game world based on the current edit mode.
 	void DisplayEntities();
+
+	//! Checks if an entity is selectable and optionally retrieves its selection color and text label.
 	bool EntityIsSelectable( idEntity* ent, idVec4* color = NULL, idStr* text = NULL );
 
 private:

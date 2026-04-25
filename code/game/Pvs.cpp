@@ -60,11 +60,6 @@ typedef struct pvsStack_s {
 	byte*			   mightSee; // bit set for all portals that might be visible through this passage/portal stack
 } pvsStack_t;
 
-/*
-================
-idPVS::idPVS
-================
-*/
 idPVS::idPVS()
 {
 	int i;
@@ -86,21 +81,11 @@ idPVS::idPVS()
 	pvsPortals = NULL;
 }
 
-/*
-================
-idPVS::~idPVS
-================
-*/
 idPVS::~idPVS()
 {
 	Shutdown();
 }
 
-/*
-================
-idPVS::GetPortalCount
-================
-*/
 int idPVS::GetPortalCount() const
 {
 	int i, na, np;
@@ -113,11 +98,6 @@ int idPVS::GetPortalCount() const
 	return np;
 }
 
-/*
-================
-idPVS::CreatePVSData
-================
-*/
 void idPVS::CreatePVSData()
 {
 	int			 i, j, n, cp;
@@ -170,11 +150,6 @@ void idPVS::CreatePVSData()
 	}
 }
 
-/*
-================
-idPVS::DestroyPVSData
-================
-*/
 void idPVS::DestroyPVSData()
 {
 	int i;
@@ -202,11 +177,6 @@ void idPVS::DestroyPVSData()
 	pvsPortals = NULL;
 }
 
-/*
-================
-idPVS::FloodFrontPortalPVS_r
-================
-*/
 void idPVS::FloodFrontPortalPVS_r( pvsPortal_t* portal, int areaNum ) const
 {
 	int			 i, n;
@@ -233,11 +203,6 @@ void idPVS::FloodFrontPortalPVS_r( pvsPortal_t* portal, int areaNum ) const
 	}
 }
 
-/*
-================
-idPVS::FrontPortalPVS
-================
-*/
 void idPVS::FrontPortalPVS() const
 {
 	int			 i, j, k, n, p, side1, side2, areaSide;
@@ -317,11 +282,6 @@ void idPVS::FrontPortalPVS() const
 	}
 }
 
-/*
-===============
-idPVS::FloodPassagePVS_r
-===============
-*/
 pvsStack_t* idPVS::FloodPassagePVS_r( pvsPortal_t* source, const pvsPortal_t* portal, pvsStack_t* prevStack ) const
 {
 	int			  i, j, n, m;
@@ -412,11 +372,6 @@ pvsStack_t* idPVS::FloodPassagePVS_r( pvsPortal_t* source, const pvsPortal_t* po
 	return stack;
 }
 
-/*
-===============
-idPVS::PassagePVS
-===============
-*/
 void idPVS::PassagePVS() const
 {
 	int			 i;
@@ -450,11 +405,6 @@ void idPVS::PassagePVS() const
 	DestroyPassages();
 }
 
-/*
-===============
-idPVS::AddPassageBoundaries
-===============
-*/
 void idPVS::AddPassageBoundaries( const idWinding& source, const idWinding& pass, bool flipClip, idPlane* bounds, int& numBounds, int maxBounds ) const
 {
 	int		i, j, k, l;
@@ -685,11 +635,6 @@ void idPVS::CreatePassages() const
 	}
 }
 
-/*
-================
-idPVS::DestroyPassages
-================
-*/
 void idPVS::DestroyPassages() const
 {
 	int			 i, j;
@@ -708,11 +653,6 @@ void idPVS::DestroyPassages() const
 	}
 }
 
-/*
-================
-idPVS::CopyPortalPVSToMightSee
-================
-*/
 void idPVS::CopyPortalPVSToMightSee() const
 {
 	int			 i;
@@ -724,11 +664,6 @@ void idPVS::CopyPortalPVSToMightSee() const
 	}
 }
 
-/*
-================
-idPVS::AreaPVSFromPortalPVS
-================
-*/
 int idPVS::AreaPVSFromPortalPVS() const
 {
 	int		   i, j, k, areaNum, totalVisibleAreas;
@@ -795,11 +730,6 @@ int idPVS::AreaPVSFromPortalPVS() const
 	return totalVisibleAreas;
 }
 
-/*
-================
-idPVS::Init
-================
-*/
 void idPVS::Init()
 {
 	int totalVisibleAreas;
@@ -864,11 +794,6 @@ void idPVS::Init()
 	}
 }
 
-/*
-================
-idPVS::Shutdown
-================
-*/
 void idPVS::Shutdown()
 {
 	if( connectedAreas ) {
@@ -889,13 +814,6 @@ void idPVS::Shutdown()
 	}
 }
 
-/*
-================
-idPVS::GetConnectedAreas
-
-  assumes the 'areas' array is initialized to false
-================
-*/
 void idPVS::GetConnectedAreas( int srcArea, bool* areas ) const
 {
 	int			 curArea, nextArea;
@@ -932,31 +850,16 @@ void idPVS::GetConnectedAreas( int srcArea, bool* areas ) const
 	}
 }
 
-/*
-================
-idPVS::GetPVSArea
-================
-*/
 int idPVS::GetPVSArea( const idVec3& point ) const
 {
 	return gameRenderWorld->PointInArea( point );
 }
 
-/*
-================
-idPVS::GetPVSAreas
-================
-*/
 int idPVS::GetPVSAreas( const idBounds& bounds, int* areas, int maxAreas ) const
 {
 	return gameRenderWorld->BoundsInAreas( bounds, areas, maxAreas );
 }
 
-/*
-================
-idPVS::SetupCurrentPVS
-================
-*/
 pvsHandle_t idPVS::SetupCurrentPVS( const idVec3& source, const pvsType_t type ) const
 {
 	int sourceArea;
@@ -966,11 +869,6 @@ pvsHandle_t idPVS::SetupCurrentPVS( const idVec3& source, const pvsType_t type )
 	return SetupCurrentPVS( sourceArea, type );
 }
 
-/*
-================
-idPVS::SetupCurrentPVS
-================
-*/
 pvsHandle_t idPVS::SetupCurrentPVS( const idBounds& source, const pvsType_t type ) const
 {
 	int numSourceAreas, sourceAreas[MAX_BOUNDS_AREAS];
@@ -980,11 +878,6 @@ pvsHandle_t idPVS::SetupCurrentPVS( const idBounds& source, const pvsType_t type
 	return SetupCurrentPVS( sourceAreas, numSourceAreas, type );
 }
 
-/*
-================
-idPVS::SetupCurrentPVS
-================
-*/
 pvsHandle_t idPVS::SetupCurrentPVS( const int sourceArea, const pvsType_t type ) const
 {
 	int			i;
@@ -1020,11 +913,6 @@ pvsHandle_t idPVS::SetupCurrentPVS( const int sourceArea, const pvsType_t type )
 	return handle;
 }
 
-/*
-================
-idPVS::SetupCurrentPVS
-================
-*/
 pvsHandle_t idPVS::SetupCurrentPVS( const int* sourceAreas, const int numSourceAreas, const pvsType_t type ) const
 {
 	int			 i, j;
@@ -1086,11 +974,6 @@ pvsHandle_t idPVS::SetupCurrentPVS( const int* sourceAreas, const int numSourceA
 	return handle;
 }
 
-/*
-================
-idPVS::MergeCurrentPVS
-================
-*/
 pvsHandle_t idPVS::MergeCurrentPVS( pvsHandle_t pvs1, pvsHandle_t pvs2 ) const
 {
 	int			i;
@@ -1119,11 +1002,6 @@ pvsHandle_t idPVS::MergeCurrentPVS( pvsHandle_t pvs1, pvsHandle_t pvs2 ) const
 	return handle;
 }
 
-/*
-================
-idPVS::AllocCurrentPVS
-================
-*/
 pvsHandle_t idPVS::AllocCurrentPVS( unsigned int h ) const
 {
 	int			i;
@@ -1144,11 +1022,6 @@ pvsHandle_t idPVS::AllocCurrentPVS( unsigned int h ) const
 	return handle;
 }
 
-/*
-================
-idPVS::FreeCurrentPVS
-================
-*/
 void idPVS::FreeCurrentPVS( pvsHandle_t handle ) const
 {
 	if( handle.i < 0 || handle.i >= MAX_CURRENT_PVS || handle.h != currentPVS[handle.i].handle.h ) {
@@ -1158,11 +1031,6 @@ void idPVS::FreeCurrentPVS( pvsHandle_t handle ) const
 	currentPVS[handle.i].handle.i = -1;
 }
 
-/*
-================
-idPVS::InCurrentPVS
-================
-*/
 bool idPVS::InCurrentPVS( const pvsHandle_t handle, const idVec3& target ) const
 {
 	int targetArea;
@@ -1181,11 +1049,6 @@ bool idPVS::InCurrentPVS( const pvsHandle_t handle, const idVec3& target ) const
 	return ( ( currentPVS[handle.i].pvs[targetArea >> 3] & ( 1 << ( targetArea & 7 ) ) ) != 0 );
 }
 
-/*
-================
-idPVS::InCurrentPVS
-================
-*/
 bool idPVS::InCurrentPVS( const pvsHandle_t handle, const idBounds& target ) const
 {
 	int i, numTargetAreas, targetAreas[MAX_BOUNDS_AREAS];
@@ -1205,11 +1068,6 @@ bool idPVS::InCurrentPVS( const pvsHandle_t handle, const idBounds& target ) con
 	return false;
 }
 
-/*
-================
-idPVS::InCurrentPVS
-================
-*/
 bool idPVS::InCurrentPVS( const pvsHandle_t handle, const int targetArea ) const
 {
 	if( handle.i < 0 || handle.i >= MAX_CURRENT_PVS || handle.h != currentPVS[handle.i].handle.h ) {
@@ -1224,11 +1082,6 @@ bool idPVS::InCurrentPVS( const pvsHandle_t handle, const int targetArea ) const
 	return ( ( currentPVS[handle.i].pvs[targetArea >> 3] & ( 1 << ( targetArea & 7 ) ) ) != 0 );
 }
 
-/*
-================
-idPVS::InCurrentPVS
-================
-*/
 bool idPVS::InCurrentPVS( const pvsHandle_t handle, const int* targetAreas, int numTargetAreas ) const
 {
 	int i;
@@ -1249,11 +1102,6 @@ bool idPVS::InCurrentPVS( const pvsHandle_t handle, const int* targetAreas, int 
 	return false;
 }
 
-/*
-================
-idPVS::DrawPVS
-================
-*/
 void idPVS::DrawPVS( const idVec3& source, const pvsType_t type ) const
 {
 	int			  i, j, k, numPoints, n, sourceArea;
@@ -1301,11 +1149,6 @@ void idPVS::DrawPVS( const idVec3& source, const pvsType_t type ) const
 	FreeCurrentPVS( handle );
 }
 
-/*
-================
-idPVS::DrawPVS
-================
-*/
 void idPVS::DrawPVS( const idBounds& source, const pvsType_t type ) const
 {
 	int			 i, j, k, numPoints, n, num, areas[MAX_BOUNDS_AREAS];
@@ -1358,11 +1201,6 @@ void idPVS::DrawPVS( const idBounds& source, const pvsType_t type ) const
 	FreeCurrentPVS( handle );
 }
 
-/*
-================
-idPVS::DrawPVS
-================
-*/
 void idPVS::DrawCurrentPVS( const pvsHandle_t handle, const idVec3& source ) const
 {
 	int			 i, j, k, numPoints, n, sourceArea;
@@ -1410,11 +1248,6 @@ void idPVS::DrawCurrentPVS( const pvsHandle_t handle, const idVec3& source ) con
 	}
 }
 
-/*
-================
-idPVS::CheckAreasForPortalSky
-================
-*/
 bool idPVS::CheckAreasForPortalSky( const pvsHandle_t handle, const idVec3& origin )
 {
 	int j, sourceArea;

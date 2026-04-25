@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idForce, idForce_Drag )
 END_CLASS
 
-/*
-================
-idForce_Drag::idForce_Drag
-================
-*/
 idForce_Drag::idForce_Drag()
 {
 	damping		 = 0.5f;
@@ -58,11 +53,6 @@ idForce_Drag::~idForce_Drag()
 {
 }
 
-/*
-================
-idForce_Drag::Init
-================
-*/
 void idForce_Drag::Init( float damping )
 {
 	if( damping >= 0.0f && damping < 1.0f ) {
@@ -70,11 +60,6 @@ void idForce_Drag::Init( float damping )
 	}
 }
 
-/*
-================
-idForce_Drag::SetPhysics
-================
-*/
 void idForce_Drag::SetPhysics( idPhysics* phys, int id, const idVec3& p )
 {
 	this->physics = phys;
@@ -82,41 +67,21 @@ void idForce_Drag::SetPhysics( idPhysics* phys, int id, const idVec3& p )
 	this->p		  = p;
 }
 
-/*
-================
-idForce_Drag::SetDragPosition
-================
-*/
 void idForce_Drag::SetDragPosition( const idVec3& pos )
 {
 	this->dragPosition = pos;
 }
 
-/*
-================
-idForce_Drag::GetDragPosition
-================
-*/
 const idVec3& idForce_Drag::GetDragPosition() const
 {
 	return this->dragPosition;
 }
 
-/*
-================
-idForce_Drag::GetDraggedPosition
-================
-*/
 const idVec3 idForce_Drag::GetDraggedPosition() const
 {
 	return ( physics->GetOrigin( id ) + p * physics->GetAxis( id ) );
 }
 
-/*
-================
-idForce_Drag::Evaluate
-================
-*/
 void idForce_Drag::Evaluate( int time )
 {
 	float		 l1, l2, mass;
@@ -151,11 +116,6 @@ void idForce_Drag::Evaluate( int time )
 	physics->SetLinearVelocity( velocity, id );
 }
 
-/*
-================
-idForce_Drag::RemovePhysics
-================
-*/
 void idForce_Drag::RemovePhysics( const idPhysics* phys )
 {
 	if( physics == phys ) {

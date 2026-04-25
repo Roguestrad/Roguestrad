@@ -79,11 +79,6 @@ const static int			   TRACE_MODEL_SAVED = BIT( 16 );
 // SRS - statically define the default trace model used for the default clip model
 const static idTraceModel	   defaultTraceModel = idBounds( idVec3( 0, 0, 0 ) ).Expand( 8 );
 
-/*
-===============
-idClipModel::ClearTraceModelCache
-===============
-*/
 void						   idClipModel::ClearTraceModelCache()
 {
 	traceModelCache.DeleteContents( true );
@@ -92,21 +87,11 @@ void						   idClipModel::ClearTraceModelCache()
 	traceModelHash_Unsaved.Free();
 }
 
-/*
-===============
-idClipModel::TraceModelCacheSize
-===============
-*/
 int idClipModel::TraceModelCacheSize()
 {
 	return traceModelCache.Num() * sizeof( idTraceModel );
 }
 
-/*
-===============
-idClipModel::AllocTraceModel
-===============
-*/
 int idClipModel::AllocTraceModel( const idTraceModel& trm, bool persistantThroughSaves )
 {
 	int			i, hashKey, traceModelIndex;
@@ -156,11 +141,6 @@ int idClipModel::AllocTraceModel( const idTraceModel& trm, bool persistantThroug
 	return traceModelIndex;
 }
 
-/*
-===============
-idClipModel::FreeTraceModel
-===============
-*/
 void idClipModel::FreeTraceModel( int traceModelIndex )
 {
 	int realTraceModelIndex = traceModelIndex & ~TRACE_MODEL_SAVED;
@@ -182,11 +162,6 @@ void idClipModel::FreeTraceModel( int traceModelIndex )
 	}
 }
 
-/*
-===============
-idClipModel::GetCachedTraceModel
-===============
-*/
 idTraceModel* idClipModel::GetCachedTraceModel( int traceModelIndex )
 {
 	int realTraceModelIndex = traceModelIndex & ~TRACE_MODEL_SAVED;
@@ -198,11 +173,6 @@ idTraceModel* idClipModel::GetCachedTraceModel( int traceModelIndex )
 	}
 }
 
-/*
-===============
-idClipModel::GetCachedTraceModel
-===============
-*/
 trmCache_t* idClipModel::GetTraceModelEntry( int traceModelIndex )
 {
 	int realTraceModelIndex = traceModelIndex & ~TRACE_MODEL_SAVED;
@@ -214,22 +184,12 @@ trmCache_t* idClipModel::GetTraceModelEntry( int traceModelIndex )
 	}
 }
 
-/*
-===============
-idClipModel::GetTraceModelHashKey
-===============
-*/
 int idClipModel::GetTraceModelHashKey( const idTraceModel& trm )
 {
 	const idVec3& v = trm.bounds[0];
 	return ( trm.type << 8 ) ^ ( trm.numVerts << 4 ) ^ ( trm.numEdges << 2 ) ^ ( trm.numPolys << 0 ) ^ idMath::FloatHash( v.ToFloatPtr(), v.GetDimension() );
 }
 
-/*
-===============
-idClipModel::SaveTraceModels
-===============
-*/
 void idClipModel::SaveTraceModels( idSaveGame* savefile )
 {
 	int i;
@@ -245,11 +205,6 @@ void idClipModel::SaveTraceModels( idSaveGame* savefile )
 	}
 }
 
-/*
-===============
-idClipModel::RestoreTraceModels
-===============
-*/
 void idClipModel::RestoreTraceModels( idRestoreGame* savefile )
 {
 	int i, num;
@@ -277,19 +232,6 @@ void idClipModel::RestoreTraceModels( idRestoreGame* savefile )
 	gameLocal.clip.DefaultClipModel()->traceModelIndex = AllocTraceModel( defaultTraceModel );
 }
 
-/*
-===============================================================
-
-	idClipModel
-
-===============================================================
-*/
-
-/*
-================
-idClipModel::LoadModel
-================
-*/
 bool idClipModel::LoadModel( const char* name )
 {
 	renderModelHandle = -1;
@@ -308,11 +250,6 @@ bool idClipModel::LoadModel( const char* name )
 	}
 }
 
-/*
-================
-idClipModel::LoadModel
-================
-*/
 void idClipModel::LoadModel( const idTraceModel& trm, bool persistantThroughSave )
 {
 	collisionModelHandle = 0;
@@ -324,11 +261,6 @@ void idClipModel::LoadModel( const idTraceModel& trm, bool persistantThroughSave
 	bounds			= trm.bounds;
 }
 
-/*
-================
-idClipModel::LoadModel
-================
-*/
 void idClipModel::LoadModel( const int renderModelHandle )
 {
 	collisionModelHandle	= 0;
@@ -345,11 +277,6 @@ void idClipModel::LoadModel( const int renderModelHandle )
 	}
 }
 
-/*
-================
-idClipModel::Init
-================
-*/
 void idClipModel::Init()
 {
 	enabled = true;
@@ -369,54 +296,29 @@ void idClipModel::Init()
 	touchCount			 = -1;
 }
 
-/*
-================
-idClipModel::idClipModel
-================
-*/
 idClipModel::idClipModel()
 {
 	Init();
 }
 
-/*
-================
-idClipModel::idClipModel
-================
-*/
 idClipModel::idClipModel( const char* name )
 {
 	Init();
 	LoadModel( name );
 }
 
-/*
-================
-idClipModel::idClipModel
-================
-*/
 idClipModel::idClipModel( const idTraceModel& trm )
 {
 	Init();
 	LoadModel( trm, true );
 }
 
-/*
-================
-idClipModel::idClipModel
-================
-*/
 idClipModel::idClipModel( const idTraceModel& trm, bool persistantThroughSave )
 {
 	Init();
 	LoadModel( trm, persistantThroughSave );
 }
 
-/*
-================
-idClipModel::idClipModel
-================
-*/
 idClipModel::idClipModel( const int renderModelHandle )
 {
 	Init();
@@ -424,11 +326,6 @@ idClipModel::idClipModel( const int renderModelHandle )
 	LoadModel( renderModelHandle );
 }
 
-/*
-================
-idClipModel::idClipModel
-================
-*/
 idClipModel::idClipModel( const idClipModel* model )
 {
 	enabled				 = model->enabled;
@@ -451,11 +348,6 @@ idClipModel::idClipModel( const idClipModel* model )
 	touchCount		  = -1;
 }
 
-/*
-================
-idClipModel::~idClipModel
-================
-*/
 idClipModel::~idClipModel()
 {
 	// make sure the clip model is no longer linked
@@ -465,11 +357,6 @@ idClipModel::~idClipModel()
 	}
 }
 
-/*
-================
-idClipModel::Save
-================
-*/
 void idClipModel::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteBool( enabled );
@@ -493,11 +380,6 @@ void idClipModel::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( touchCount );
 }
 
-/*
-================
-idClipModel::Restore
-================
-*/
 void idClipModel::Restore( idRestoreGame* savefile )
 {
 	idStr collisionModelName;
@@ -538,11 +420,6 @@ void idClipModel::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-================
-idClipModel::SetPosition
-================
-*/
 void idClipModel::SetPosition( const idVec3& newOrigin, const idMat3& newAxis )
 {
 	if( clipLinks ) {
@@ -552,11 +429,6 @@ void idClipModel::SetPosition( const idVec3& newOrigin, const idMat3& newAxis )
 	axis   = newAxis;
 }
 
-/*
-================
-idClipModel::Handle
-================
-*/
 cmHandle_t idClipModel::Handle() const
 {
 	assert( renderModelHandle == -1 );
@@ -571,11 +443,6 @@ cmHandle_t idClipModel::Handle() const
 	}
 }
 
-/*
-================
-idClipModel::GetMassProperties
-================
-*/
 void idClipModel::GetMassProperties( const float density, float& mass, idVec3& centerOfMass, idMat3& inertiaTensor ) const
 {
 	if( traceModelIndex == -1 ) {
@@ -588,11 +455,6 @@ void idClipModel::GetMassProperties( const float density, float& mass, idVec3& c
 	inertiaTensor	  = density * entry->inertiaTensor;
 }
 
-/*
-===============
-idClipModel::Unlink
-===============
-*/
 void idClipModel::Unlink()
 {
 	clipLink_t* link;
@@ -611,11 +473,6 @@ void idClipModel::Unlink()
 	}
 }
 
-/*
-===============
-idClipModel::Link_r
-===============
-*/
 void idClipModel::Link_r( struct clipSector_s* node )
 {
 	clipLink_t* link;
@@ -644,11 +501,6 @@ void idClipModel::Link_r( struct clipSector_s* node )
 	clipLinks		= link;
 }
 
-/*
-===============
-idClipModel::Link
-===============
-*/
 void idClipModel::Link( idClip& clp )
 {
 	assert( idClipModel::entity );
@@ -682,11 +534,6 @@ void idClipModel::Link( idClip& clp )
 	Link_r( clp.clipSectors );
 }
 
-/*
-===============
-idClipModel::Link
-===============
-*/
 void idClipModel::Link( idClip& clp, idEntity* ent, int newId, const idVec3& newOrigin, const idMat3& newAxis, int renderModelHandle )
 {
 	this->entity = ent;
@@ -703,29 +550,11 @@ void idClipModel::Link( idClip& clp, idEntity* ent, int newId, const idVec3& new
 	this->Link( clp );
 }
 
-/*
-============
-idClipModel::CheckModel
-============
-*/
 cmHandle_t idClipModel::CheckModel( const char* name )
 {
 	return collisionModelManager->LoadModel( name, false );
 }
 
-/*
-===============================================================
-
-	idClip
-
-===============================================================
-*/
-
-/*
-===============
-idClip::idClip
-===============
-*/
 idClip::idClip()
 {
 	numClipSectors = 0;
@@ -734,13 +563,6 @@ idClip::idClip()
 	numRotations = numTranslations = numMotions = numRenderModelTraces = numContents = numContacts = 0;
 }
 
-/*
-===============
-idClip::CreateClipSectors_r
-
-Builds a uniformly subdivided tree for the given world size
-===============
-*/
 clipSector_t* idClip::CreateClipSectors_r( const int depth, const idBounds& bounds, idVec3& maxSector )
 {
 	int			  i;
@@ -785,11 +607,6 @@ clipSector_t* idClip::CreateClipSectors_r( const int depth, const idBounds& boun
 	return anode;
 }
 
-/*
-===============
-idClip::Init
-===============
-*/
 void idClip::Init()
 {
 	idVec3 size, maxSector = vec3_origin;
@@ -818,11 +635,6 @@ void idClip::Init()
 	numRotations = numTranslations = numMotions = numRenderModelTraces = numContents = numContacts = 0;
 }
 
-/*
-===============
-idClip::Shutdown
-===============
-*/
 void idClip::Shutdown()
 {
 	delete[] clipSectors;
@@ -904,11 +716,6 @@ void idClip::ClipModelsTouchingBounds_r( const struct clipSector_s* node, listPa
 	}
 }
 
-/*
-================
-idClip::ClipModelsTouchingBounds
-================
-*/
 int idClip::ClipModelsTouchingBounds( const idBounds& bounds, int contentMask, idClipModel** clipModelList, int maxCount ) const
 {
 	listParms_t parms;
@@ -932,11 +739,6 @@ int idClip::ClipModelsTouchingBounds( const idBounds& bounds, int contentMask, i
 	return parms.count;
 }
 
-/*
-================
-idClip::EntitiesTouchingBounds
-================
-*/
 int idClip::EntitiesTouchingBounds( const idBounds& bounds, int contentMask, idEntity** entityList, int maxCount ) const
 {
 	idClipModel* clipModelList[MAX_GENTITIES];
@@ -964,17 +766,6 @@ int idClip::EntitiesTouchingBounds( const idBounds& bounds, int contentMask, idE
 	return entCount;
 }
 
-/*
-====================
-idClip::GetTraceClipModels
-
-  an ent will be excluded from testing if:
-  cm->entity == passEntity ( don't clip against the pass entity )
-  cm->entity == passOwner ( missiles don't clip with owner )
-  cm->owner == passEntity ( don't interact with your own missiles )
-  cm->owner == passOwner ( don't interact with other missiles from same owner )
-====================
-*/
 int idClip::GetTraceClipModels( const idBounds& bounds, int contentMask, const idEntity* passEntity, idClipModel** clipModelList ) const
 {
 	int			 i, num;
@@ -1013,11 +804,6 @@ int idClip::GetTraceClipModels( const idBounds& bounds, int contentMask, const i
 	return num;
 }
 
-/*
-============
-idClip::TraceRenderModel
-============
-*/
 void idClip::TraceRenderModel( trace_t& trace, const idVec3& start, const idVec3& end, const float radius, const idMat3& axis, idClipModel* touch ) const
 {
 	trace.fraction = 1.0f;
@@ -1045,11 +831,6 @@ void idClip::TraceRenderModel( trace_t& trace, const idVec3& start, const idVec3
 	}
 }
 
-/*
-============
-idClip::TraceModelForClipModel
-============
-*/
 const idTraceModel* idClip::TraceModelForClipModel( const idClipModel* mdl ) const
 {
 	if( !mdl ) {
@@ -1066,10 +847,20 @@ const idTraceModel* idClip::TraceModelForClipModel( const idClipModel* mdl ) con
 	}
 }
 
-/*
-============
-idClip::TestHugeTranslation
-============
+/*!
+	\brief Tests if a translation vector exceeds the maximum trace distance and handles the case by setting up trace results and printing a warning.
+
+	This function checks whether the distance between the start and end positions exceeds the predefined maximum trace distance squared. If it does, the function sets the trace results to indicate no
+   movement occurred, prints a warning message with entity information if available, and returns true. Otherwise, it returns false. The function includes an assertion that is disabled in CTF builds to
+   allow for certain edge cases during player spawning.
+
+	\param results Reference to the trace results structure to be updated
+	\param mdl Pointer to the clip model being traced against
+	\param start Starting position of the translation
+	\param end Ending position of the translation
+	\param trmAxis The axis of the translation transformation
+	\return True if the translation distance exceeds the maximum allowed and results have been set, false otherwise.
+	\throws Asserts when a huge translation is detected, but this assertion is disabled in CTF builds.
 */
 ID_INLINE bool TestHugeTranslation( trace_t& results, const idClipModel* mdl, const idVec3& start, const idVec3& end, const idMat3& trmAxis )
 {
@@ -1098,11 +889,6 @@ ID_INLINE bool TestHugeTranslation( trace_t& results, const idClipModel* mdl, co
 	return false;
 }
 
-/*
-============
-idClip::TranslationEntities
-============
-*/
 void idClip::TranslationEntities( trace_t& results, const idVec3& start, const idVec3& end, const idClipModel* mdl, const idMat3& trmAxis, int contentMask, const idEntity* passEntity )
 {
 	int					i, num;
@@ -1231,11 +1017,6 @@ bool idClip::Translation( trace_t& results, const idVec3& start, const idVec3& e
 	return ( results.fraction < 1.0f );
 }
 
-/*
-============
-idClip::Rotation
-============
-*/
 bool idClip::Rotation( trace_t& results, const idVec3& start, const idRotation& rotation, const idClipModel* mdl, const idMat3& trmAxis, int contentMask, const idEntity* passEntity )
 {
 	int					i, num;
@@ -1297,11 +1078,6 @@ bool idClip::Rotation( trace_t& results, const idVec3& start, const idRotation& 
 	return ( results.fraction < 1.0f );
 }
 
-/*
-============
-idClip::Motion
-============
-*/
 bool idClip::Motion( trace_t& results, const idVec3& start, const idVec3& end, const idRotation& rotation, const idClipModel* mdl, const idMat3& trmAxis, int contentMask, const idEntity* passEntity )
 {
 	int					i, num;
@@ -1453,11 +1229,6 @@ bool idClip::Motion( trace_t& results, const idVec3& start, const idVec3& end, c
 	return ( translationalTrace.fraction < 1.0f || rotationalTrace.fraction < 1.0f );
 }
 
-/*
-============
-idClip::Contacts
-============
-*/
 int idClip::Contacts( contactInfo_t* contacts,
 	const int						 maxContacts,
 	const idVec3&					 start,
@@ -1530,12 +1301,6 @@ int idClip::Contacts( contactInfo_t* contacts,
 	return numContacts;
 }
 
-// jmarshall begin
-/*
-============
-idClip::PointContents
-============
-*/
 int idClip::PointContents( const idVec3 p )
 {
 	int contents = -1;
@@ -1556,13 +1321,7 @@ int idClip::PointContents( const idVec3 p )
 
 	return contents;
 }
-// jmarshall end
 
-/*
-============
-idClip::Contents
-============
-*/
 int idClip::Contents( const idVec3& start, const idClipModel* mdl, const idMat3& trmAxis, int contentMask, const idEntity* passEntity )
 {
 	int					i, num, contents;
@@ -1623,11 +1382,6 @@ int idClip::Contents( const idVec3& start, const idClipModel* mdl, const idMat3&
 	return contents;
 }
 
-/*
-============
-idClip::TranslationModel
-============
-*/
 void idClip::TranslationModel(
 	trace_t& results, const idVec3& start, const idVec3& end, const idClipModel* mdl, const idMat3& trmAxis, int contentMask, cmHandle_t model, const idVec3& modelOrigin, const idMat3& modelAxis )
 {
@@ -1636,11 +1390,6 @@ void idClip::TranslationModel(
 	collisionModelManager->Translation( &results, start, end, trm, trmAxis, contentMask, model, modelOrigin, modelAxis );
 }
 
-/*
-============
-idClip::RotationModel
-============
-*/
 void idClip::RotationModel( trace_t& results,
 	const idVec3&					 start,
 	const idRotation&				 rotation,
@@ -1656,11 +1405,6 @@ void idClip::RotationModel( trace_t& results,
 	collisionModelManager->Rotation( &results, start, rotation, trm, trmAxis, contentMask, model, modelOrigin, modelAxis );
 }
 
-/*
-============
-idClip::ContactsModel
-============
-*/
 int idClip::ContactsModel( contactInfo_t* contacts,
 	const int							  maxContacts,
 	const idVec3&						  start,
@@ -1678,11 +1422,6 @@ int idClip::ContactsModel( contactInfo_t* contacts,
 	return collisionModelManager->Contacts( contacts, maxContacts, start, dir, depth, trm, trmAxis, contentMask, model, modelOrigin, modelAxis );
 }
 
-/*
-============
-idClip::ContentsModel
-============
-*/
 int idClip::ContentsModel( const idVec3& start, const idClipModel* mdl, const idMat3& trmAxis, int contentMask, cmHandle_t model, const idVec3& modelOrigin, const idMat3& modelAxis )
 {
 	const idTraceModel* trm = TraceModelForClipModel( mdl );
@@ -1690,11 +1429,6 @@ int idClip::ContentsModel( const idVec3& start, const idClipModel* mdl, const id
 	return collisionModelManager->Contents( start, trm, trmAxis, contentMask, model, modelOrigin, modelAxis );
 }
 
-/*
-============
-idClip::GetModelContactFeature
-============
-*/
 bool idClip::GetModelContactFeature( const contactInfo_t& contact, const idClipModel* clipModel, idFixedWinding& winding ) const
 {
 	int		   i;
@@ -1752,22 +1486,12 @@ bool idClip::GetModelContactFeature( const contactInfo_t& contact, const idClipM
 	return true;
 }
 
-/*
-============
-idClip::PrintStatistics
-============
-*/
 void idClip::PrintStatistics()
 {
 	gameLocal.Printf( "t = %-3d, r = %-3d, m = %-3d, render = %-3d, contents = %-3d, contacts = %-3d\n", numTranslations, numRotations, numMotions, numRenderModelTraces, numContents, numContacts );
 	numRotations = numTranslations = numMotions = numRenderModelTraces = numContents = numContacts = 0;
 }
 
-/*
-============
-idClip::DrawClipModels
-============
-*/
 void idClip::DrawClipModels( const idVec3& eye, const float radius, const idEntity* passEntity )
 {
 	int			 i, num;
@@ -1792,11 +1516,6 @@ void idClip::DrawClipModels( const idVec3& eye, const float radius, const idEnti
 	}
 }
 
-/*
-============
-idClip::DrawModelContactFeature
-============
-*/
 bool idClip::DrawModelContactFeature( const contactInfo_t& contact, const idClipModel* clipModel, int lifetime ) const
 {
 	int			   i;

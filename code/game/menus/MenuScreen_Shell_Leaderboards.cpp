@@ -42,7 +42,7 @@ idMenuScreen_Shell_Leaderboards::~idMenuScreen_Shell_Leaderboards()
 	}
 }
 
-// Helper functions for formatting leaderboard columns
+//! Formats a time value into a string with minutes, seconds, and milliseconds.
 static idStr FormatTime( int64 time )
 {
 	int minutes	 = time / ( 1000 * 60 );
@@ -51,15 +51,19 @@ static idStr FormatTime( int64 time )
 	return idStr( va( "%02d:%02d.%03d", minutes, seconds, mseconds ) );
 }
 
+//! Formats a cash value into a string with proper formatting.
 static idStr FormatCash( int64 cash )
 {
 	return idStr::FormatCash( static_cast<int32>( cash ) );
 }
+
+//! Converts a 64-bit integer to a 32-bit integer
 static int32 FormatNumber( int64 number )
 {
 	return static_cast<int32>( number );
 }
 
+//! Formats a score value into a display string based on the column definition's display type
 static idSWFScriptVar FormatColumn( const columnDef_t* columnDef, int64 score )
 {
 	switch( columnDef->displayType ) {
@@ -72,11 +76,6 @@ static idSWFScriptVar FormatColumn( const columnDef_t* columnDef, int64 score )
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::Initialize
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -183,11 +182,6 @@ void idMenuScreen_Shell_Leaderboards::Initialize( idMenuHandler* data )
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::PumpLBCache
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::PumpLBCache()
 {
 	if( lbCache == NULL ) {
@@ -197,11 +191,6 @@ void idMenuScreen_Shell_Leaderboards::PumpLBCache()
 	lbCache->Pump();
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::ClearLeaderboard
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::ClearLeaderboard()
 {
 	if( lbCache == NULL ) {
@@ -211,11 +200,6 @@ void idMenuScreen_Shell_Leaderboards::ClearLeaderboard()
 	lbCache->Reset();
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::Update
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::Update()
 {
 	if( menuData != NULL ) {
@@ -264,11 +248,6 @@ void idMenuScreen_Shell_Leaderboards::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::ShowScreen( transitionType );
@@ -385,21 +364,11 @@ void idMenuScreen_Shell_Leaderboards::ShowScreen( const mainMenuTransition_t tra
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::HandleAction
-========================
-*/
 bool idMenuScreen_Shell_Leaderboards::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -490,11 +459,6 @@ bool idMenuScreen_Shell_Leaderboards::HandleAction( idWidgetAction& action, cons
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::UpdateLeaderboard
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::UpdateLeaderboard( const idLeaderboardCallback* callback )
 {
 	lbCache->Update( callback );
@@ -508,11 +472,6 @@ void idMenuScreen_Shell_Leaderboards::UpdateLeaderboard( const idLeaderboardCall
 	refreshLeaderboard = true;
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::SetLeaderboardIndex
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::SetLeaderboardIndex()
 {
 	if( lbIndex >= leaderboards.Num() ) {
@@ -533,11 +492,6 @@ void idMenuScreen_Shell_Leaderboards::SetLeaderboardIndex()
 	refreshLeaderboard = true;
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::RefreshLeaderboard
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::RefreshLeaderboard()
 {
 	if( refreshWhenMasterIsOnline ) {
@@ -632,11 +586,6 @@ void idMenuScreen_Shell_Leaderboards::RefreshLeaderboard()
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Leaderboards::ShowMessage
-========================
-*/
 void idMenuScreen_Shell_Leaderboards::ShowMessage( bool show, idStr message, bool spinner )
 {
 	if( !menuData || !menuData->GetGUI() ) {
@@ -678,33 +627,31 @@ void idMenuScreen_Shell_Leaderboards::ShowMessage( bool show, idStr message, boo
 	}
 }
 
-//*************************************************************************************************************************
-// LBCACHE
-//*************************************************************************************************************************
-
+/*!
+	\class LBCallback
+	\brief A callback handler for leaderboard state updates.
+*/
 class LBCallback : public idLeaderboardCallback
 {
 public:
+	//! Constructs a new LBCallback instance.
 	LBCallback()
 	{
 	}
 
+	//! Executes a callback to update the leaderboard with the current game state.
 	void Call()
 	{
 		gameLocal.Shell_UpdateLeaderboard( this );
 	}
 
+	//! Creates and returns a new instance of the LBCallback object by copying the current object.
 	LBCallback* Clone() const
 	{
 		return new LBCallback( *this );
 	}
 };
 
-/*
-========================
-idLBCache::Pump
-========================
-*/
 void idLBCache::Pump()
 {
 	if( loadingNewLeaderboard || requestingRows ) {
@@ -716,11 +663,6 @@ void idLBCache::Pump()
 	}
 }
 
-/*
-========================
-idLBCache::Reset
-========================
-*/
 void idLBCache::Reset()
 {
 	for( int i = 0; i < NUM_ROW_BLOCKS; i++ ) {
@@ -739,11 +681,6 @@ void idLBCache::Reset()
 	loadingNewLeaderboard = false;
 }
 
-/*
-========================
-idLBCache::SetLeaderboard
-========================
-*/
 void idLBCache::SetLeaderboard( const leaderboardDefinition_t* def_, leaderboardFilterMode_t filter_ )
 {
 	// If we are busy waiting on results from a previous request, queue up this request
@@ -780,11 +717,6 @@ void idLBCache::SetLeaderboard( const leaderboardDefinition_t* def_, leaderboard
 	}
 }
 
-/*
-========================
-idLBCache::CycleFilter
-========================
-*/
 void idLBCache::CycleFilter()
 {
 	// Set the proper filter
@@ -800,11 +732,6 @@ void idLBCache::CycleFilter()
 	SetLeaderboard( def, filter );
 }
 
-/*
-========================
-idLBCache::GetFilterStrType
-========================
-*/
 idStr idLBCache::GetFilterStrType()
 {
 	if( filter == LEADERBOARD_FILTER_FRIENDS ) {
@@ -816,11 +743,6 @@ idStr idLBCache::GetFilterStrType()
 	return idLocalization::GetString( "#str_swf_leaderboards_global_heading" );
 }
 
-/*
-========================
-idLBCache::Scroll
-========================
-*/
 bool idLBCache::Scroll( int amount )
 {
 	if( GetErrorCode() != LEADERBOARD_DISPLAY_ERROR_NONE ) {
@@ -853,11 +775,6 @@ bool idLBCache::Scroll( int amount )
 	return ( oldEntryIndex != entryIndex || oldRowOffset != rowOffset );
 }
 
-/*
-========================
-idLBCache::ScrollOffset
-========================
-*/
 bool idLBCache::ScrollOffset( int amount )
 {
 	if( GetErrorCode() != LEADERBOARD_DISPLAY_ERROR_NONE ) {
@@ -885,11 +802,6 @@ bool idLBCache::ScrollOffset( int amount )
 	return ( oldEntryIndex != entryIndex || oldRowOffset != rowOffset );
 }
 
-/*
-========================
-idLBCache::FindFreeRowBlock
-========================
-*/
 idLBRowBlock* idLBCache::FindFreeRowBlock()
 {
 	int bestTime	   = 0;
@@ -910,11 +822,6 @@ idLBRowBlock* idLBCache::FindFreeRowBlock()
 	return &rowBlocks[bestBlockIndex];
 }
 
-/*
-========================
-idLBCache::CallbackErrorToDisplayError
-========================
-*/
 leaderboardDisplayError_t idLBCache::CallbackErrorToDisplayError( leaderboardError_t errorCode )
 {
 	switch( errorCode ) {
@@ -925,11 +832,6 @@ leaderboardDisplayError_t idLBCache::CallbackErrorToDisplayError( leaderboardErr
 	}
 }
 
-/*
-========================
-idLBCache::Update
-========================
-*/
 void idLBCache::Update( const idLeaderboardCallback* callback )
 {
 	requestingRows = false;
@@ -1002,11 +904,6 @@ void idLBCache::Update( const idLeaderboardCallback* callback )
 	rowBlock->rows		 = callback->GetRows();
 }
 
-/*
-========================
-idLBCache::GetLeaderboardRow
-========================
-*/
 const idLeaderboardCallback::row_t* idLBCache::GetLeaderboardRow( int row )
 {
 	if( loadingNewLeaderboard ) {
@@ -1041,11 +938,6 @@ const idLeaderboardCallback::row_t* idLBCache::GetLeaderboardRow( int row )
 	return NULL;
 }
 
-/*
-========================
-idMainMenu::SetSPLeaderboardFromMenuSettings
-========================
-*/
 void idLBCache::DisplayGamerCardUI( const idLeaderboardCallback::row_t* row )
 {
 }

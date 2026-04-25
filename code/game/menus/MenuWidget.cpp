@@ -31,11 +31,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuWidget::idMenuWidget
-========================
-*/
 idMenuWidget::idMenuWidget() :
 	handlerIsParent( false ),
 	menuData( NULL ),
@@ -55,11 +50,6 @@ idMenuWidget::idMenuWidget() :
 	}
 }
 
-/*
-========================
-idMenuWidget::~idMenuWidget
-========================
-*/
 idMenuWidget::~idMenuWidget()
 {
 	Cleanup();
@@ -83,11 +73,6 @@ void idMenuWidget::Cleanup()
 	children.Clear();
 }
 
-/*
-========================
-idMenuWidget::AddChild
-========================
-*/
 void idMenuWidget::AddChild( idMenuWidget* widget )
 {
 	if( !verify( children.Find( widget ) == NULL ) ) {
@@ -104,11 +89,6 @@ void idMenuWidget::AddChild( idMenuWidget* widget )
 	children.Append( widget );
 }
 
-/*
-========================
-idMenuWidget::RemoveAllChildren
-========================
-*/
 void idMenuWidget::RemoveAllChildren()
 {
 	for( int i = 0; i < children.Num(); ++i ) {
@@ -121,11 +101,6 @@ void idMenuWidget::RemoveAllChildren()
 	children.Clear();
 }
 
-/*
-========================
-idMenuWidget::RemoveChild
-========================
-*/
 void idMenuWidget::RemoveChild( idMenuWidget* widget )
 {
 	assert( widget->GetParent() == this );
@@ -135,11 +110,6 @@ void idMenuWidget::RemoveChild( idMenuWidget* widget )
 	widget->Release();
 }
 
-/*
-========================
-idMenuWidget::RemoveChild
-========================
-*/
 bool idMenuWidget::HasChild( idMenuWidget* widget )
 {
 	for( int i = 0; i < children.Num(); ++i ) {
@@ -150,22 +120,6 @@ bool idMenuWidget::HasChild( idMenuWidget* widget )
 	return false;
 }
 
-/*
-========================
-idMenuWidget::ReceiveEvent
-
-Events received through this function are passed to the innermost focused widget first, and then
-propagates back through each widget within the focus chain.  The first widget that handles the
-event will stop propagation.
-
-Each widget along the way will fire off an event to its observers, whether or not it actually
-handles the event.
-
-Note: How the focus chain is calculated:
-Descend through GetFocus() calls until you reach a NULL focus.  The terminating widget is the
-innermost widget, while *this* widget is the outermost widget.
-========================
-*/
 void idMenuWidget::ReceiveEvent( const idWidgetEvent& event )
 {
 	idStaticList<idMenuWidget*, 16> focusChain;
@@ -189,15 +143,6 @@ void idMenuWidget::ReceiveEvent( const idWidgetEvent& event )
 	}
 }
 
-/*
-========================
-idMenuWidget::ExecuteEvent
-
-Handles the event directly, and doesn't pass it through the focus chain.
-
-This should only be used in very specific circumstances!  Most events should go to the focus.
-========================
-*/
 bool idMenuWidget::ExecuteEvent( const idWidgetEvent& event )
 {
 	idList<idWidgetAction, TAG_IDLIB_LIST_MENU>* const actions = GetEventActions( event.type );
@@ -213,13 +158,6 @@ bool idMenuWidget::ExecuteEvent( const idWidgetEvent& event )
 	return actions != NULL && actions->Num() > 0;
 }
 
-/*
-========================
-idMenuWidget::SendEventToObservers
-
-Sends an event to all the observers
-========================
-*/
 void idMenuWidget::SendEventToObservers( const idWidgetEvent& event )
 {
 	for( int i = 0; i < observers.Num(); ++i ) {
@@ -227,13 +165,6 @@ void idMenuWidget::SendEventToObservers( const idWidgetEvent& event )
 	}
 }
 
-/*
-========================
-idMenuWidget::RegisterEventObserver
-
-Adds an observer to our observers list
-========================
-*/
 void idMenuWidget::RegisterEventObserver( idMenuWidget* observer )
 {
 	if( !verify( observers.Find( observer ) == NULL ) ) {
@@ -244,11 +175,6 @@ void idMenuWidget::RegisterEventObserver( idMenuWidget* observer )
 	observers.Append( observer );
 }
 
-/*
-========================
-idMenuWidget::SetSpritePath
-========================
-*/
 void idMenuWidget::SetSpritePath( const char* arg1, const char* arg2, const char* arg3, const char* arg4, const char* arg5 )
 {
 	const char* args[]	= { arg1, arg2, arg3, arg4, arg5 };
@@ -262,11 +188,6 @@ void idMenuWidget::SetSpritePath( const char* arg1, const char* arg2, const char
 	}
 }
 
-/*
-========================
-idMenuWidget::SetSpritePath
-========================
-*/
 void idMenuWidget::SetSpritePath( const idList<idStr>& spritePath_, const char* arg1, const char* arg2, const char* arg3, const char* arg4, const char* arg5 )
 {
 	const char* args[]	= { arg1, arg2, arg3, arg4, arg5 };
@@ -280,11 +201,6 @@ void idMenuWidget::SetSpritePath( const idList<idStr>& spritePath_, const char* 
 	}
 }
 
-/*
-========================
-idMenuWidget::ClearSprite
-========================
-*/
 void idMenuWidget::ClearSprite()
 {
 	if( GetSprite() == NULL ) {
@@ -294,11 +210,6 @@ void idMenuWidget::ClearSprite()
 	boundSprite = NULL;
 }
 
-/*
-========================
-idMenuWidget::GetSWFObject
-========================
-*/
 idSWF* idMenuWidget::GetSWFObject()
 {
 	if( swfObj != NULL ) {
@@ -316,11 +227,6 @@ idSWF* idMenuWidget::GetSWFObject()
 	return NULL;
 }
 
-/*
-========================
-idMenuWidget::GetMenuData
-========================
-*/
 idMenuHandler* idMenuWidget::GetMenuData()
 {
 	if( parent != NULL ) {
@@ -330,16 +236,6 @@ idMenuHandler* idMenuWidget::GetMenuData()
 	return menuData;
 }
 
-/*
-========================
-idMenuWidget::BindSprite
-
-Takes the sprite path strings and resolves it to an actual sprite relative to a given root.
-
-This is setup in this manner, because we can't resolve from path -> sprite immediately since
-SWFs aren't necessarily loaded at the time widgets are instantiated.
-========================
-*/
 bool idMenuWidget::BindSprite( idSWFScriptObject& root )
 {
 	const char* args[6] = { NULL };
@@ -351,11 +247,6 @@ bool idMenuWidget::BindSprite( idSWFScriptObject& root )
 	return boundSprite != NULL;
 }
 
-/*
-========================
-idMenuWidget::Show
-========================
-*/
 void idMenuWidget::Show()
 {
 	if( GetSWFObject() == NULL ) {
@@ -377,11 +268,6 @@ void idMenuWidget::Show()
 	GetSprite()->PlayFrame( findFrame );
 }
 
-/*
-========================
-idMenuWidget::Hide
-========================
-*/
 void idMenuWidget::Hide()
 {
 	if( GetSWFObject() == NULL ) {
@@ -401,22 +287,12 @@ void idMenuWidget::Hide()
 	GetSprite()->PlayFrame( findFrame );
 }
 
-/*
-========================
-idMenuWidget::SetDataSource
-========================
-*/
 void idMenuWidget::SetDataSource( idMenuDataSource* dataSource_, const int fieldIndex )
 {
 	dataSource			 = dataSource_;
 	dataSourceFieldIndex = fieldIndex;
 }
 
-/*
-========================
-idMenuWidget::SetFocusIndex
-========================
-*/
 void idMenuWidget::SetFocusIndex( const int index, bool skipSound )
 {
 	if( GetChildren().Num() == 0 ) {
@@ -448,13 +324,6 @@ void idMenuWidget::SetFocusIndex( const int index, bool skipSound )
 	GetChildByIndex( index ).ReceiveEvent( idWidgetEvent( WIDGET_EVENT_FOCUS_ON, 0, NULL, parms ) );
 }
 
-/*
-========================
-idMenuWidget_Button::SetState
-
-Transitioning from the current button state to the new button state
-========================
-*/
 void idMenuWidget::SetState( const widgetState_t state )
 {
 	if( GetSprite() != NULL ) {
@@ -491,11 +360,6 @@ void idMenuWidget::SetState( const widgetState_t state )
 	widgetState = state;
 }
 
-/*
-========================
-idMenuWidget::HandleAction
-========================
-*/
 bool idMenuWidget::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	bool handled = false;
@@ -515,11 +379,6 @@ bool idMenuWidget::HandleAction( idWidgetAction& action, const idWidgetEvent& ev
 	return handled;
 }
 
-/*
-========================
-idMenuWidget::GetEventActions
-========================
-*/
 idList<idWidgetAction, TAG_IDLIB_LIST_MENU>* idMenuWidget::GetEventActions( const widgetEvent_t eventType )
 {
 	if( eventActionLookup[eventType] == INVALID_ACTION_INDEX ) {
@@ -528,11 +387,6 @@ idList<idWidgetAction, TAG_IDLIB_LIST_MENU>* idMenuWidget::GetEventActions( cons
 	return &eventActions[eventActionLookup[eventType]];
 }
 
-/*
-========================
-idMenuWidget::AddEventAction
-========================
-*/
 idWidgetAction& idMenuWidget::AddEventAction( const widgetEvent_t eventType )
 {
 	if( eventActionLookup[eventType] == INVALID_ACTION_INDEX ) {
@@ -542,11 +396,6 @@ idWidgetAction& idMenuWidget::AddEventAction( const widgetEvent_t eventType )
 	return eventActions[eventActionLookup[eventType]].Alloc();
 }
 
-/*
-========================
-idMenuWidget::ClearEventActions
-========================
-*/
 void idMenuWidget::ClearEventActions()
 {
 	eventActions.Clear();

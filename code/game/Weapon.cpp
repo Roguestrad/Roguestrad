@@ -47,11 +47,6 @@ CLASS_DECLARATION( idClass, iceWeaponObject )
 EVENT( EV_Weapon_Grabber_SetGrabDistance, idWeapon::Event_GrabberSetGrabDistance )
 END_CLASS
 
-/*
-==================
-iceWeaponObject::Init
-==================
-*/
 void iceWeaponObject::Init( idWeapon* weapon )
 {
 	next_attack = 0.0f;
@@ -62,11 +57,6 @@ void iceWeaponObject::Init( idWeapon* weapon )
 	idClass::Init();
 }
 
-/*
-==================
-iceWeaponObject::IsFiring
-==================
-*/
 bool iceWeaponObject::IsFiring()
 {
 	if( IsStateRunning( "Fire" ) ) {
@@ -80,11 +70,6 @@ bool iceWeaponObject::IsFiring()
 	return false;
 }
 
-/*
-==================
-iceWeaponObject::IsReloading
-==================
-*/
 bool iceWeaponObject::IsReloading()
 {
 	if( IsStateRunning( "Reload" ) ) {
@@ -94,11 +79,6 @@ bool iceWeaponObject::IsReloading()
 	return false;
 }
 
-/*
-==================
-iceWeaponObject::FindSound
-==================
-*/
 const idSoundShader* iceWeaponObject::FindSound( const char* name )
 {
 	const char* soundName = owner->GetKey( name );
@@ -128,11 +108,6 @@ extern idCVar cg_predictedSpawn_debug;
 
 ***********************************************************************/
 
-/*
-================
-idWeapon::idWeapon()
-================
-*/
 idWeapon::idWeapon()
 {
 	owner	   = NULL;
@@ -173,22 +148,12 @@ idWeapon::idWeapon()
 	fl.networkSync = true;
 }
 
-/*
-================
-idWeapon::~idWeapon()
-================
-*/
 idWeapon::~idWeapon()
 {
 	Clear();
 	delete worldModel.GetEntity();
 }
 
-/*
-================
-idWeapon::Spawn
-================
-*/
 void idWeapon::Spawn()
 {
 	if( !common->IsClient() ) {
@@ -206,13 +171,6 @@ void idWeapon::Spawn()
 	// thread->ManualControl();
 }
 
-/*
-================
-idWeapon::SetOwner
-
-Only called at player spawn time, not each weapon switch
-================
-*/
 void idWeapon::SetOwner( idPlayer* _owner )
 {
 	assert( !owner );
@@ -224,13 +182,6 @@ void idWeapon::SetOwner( idPlayer* _owner )
 	}
 }
 
-/*
-================
-idWeapon::SetFlashlightOwner
-
-Only called at player spawn time, not each weapon switch
-================
-*/
 void idWeapon::SetFlashlightOwner( idPlayer* _owner )
 {
 	assert( !owner );
@@ -244,24 +195,11 @@ void idWeapon::SetFlashlightOwner( idPlayer* _owner )
 	}
 }
 
-/*
-================
-idWeapon::ShouldConstructScriptObjectAtSpawn
-
-Called during idEntity::Spawn to see if it should construct the script object or not.
-Overridden by subclasses that need to spawn the script object themselves.
-================
-*/
 bool idWeapon::ShouldConstructScriptObjectAtSpawn() const
 {
 	return false;
 }
 
-/*
-================
-idWeapon::CacheWeapon
-================
-*/
 void idWeapon::CacheWeapon( const char* weaponName )
 {
 	const idDeclEntityDef* weaponDef;
@@ -295,11 +233,6 @@ void idWeapon::CacheWeapon( const char* weaponName )
 	}
 }
 
-/*
-================
-idWeapon::Save
-================
-*/
 void idWeapon::Save( idSaveGame* savefile ) const
 {
 	// jmarshall
@@ -455,11 +388,6 @@ void idWeapon::Save( idSaveGame* savefile ) const
 	}
 }
 
-/*
-================
-idWeapon::Restore
-================
-*/
 void idWeapon::Restore( idRestoreGame* savefile )
 {
 	// jmarshall
@@ -686,11 +614,6 @@ void idWeapon::Restore( idRestoreGame* savefile )
 
 ***********************************************************************/
 
-/*
-================
-idWeapon::Clear
-================
-*/
 void idWeapon::Clear()
 {
 	DeconstructScriptObject();
@@ -878,11 +801,6 @@ void idWeapon::Clear()
 	isFiring = false;
 }
 
-/*
-================
-idWeapon::InitWorldModel
-================
-*/
 void idWeapon::InitWorldModel( const idDeclEntityDef* def )
 {
 	idEntity* ent;
@@ -930,11 +848,6 @@ void idWeapon::InitWorldModel( const idDeclEntityDef* def )
 	ejectJointWorld	 = ent->GetAnimator()->GetJointHandle( "eject" );
 }
 
-/*
-================
-idWeapon::GetWeaponDef
-================
-*/
 void idWeapon::GetWeaponDef( const char* objectname, int ammoinclip )
 {
 	const char* shader;
@@ -1301,51 +1214,26 @@ void idWeapon::GetWeaponDef( const char* objectname, int ammoinclip )
 
 ***********************************************************************/
 
-/*
-================
-idWeapon::Icon
-================
-*/
 const char* idWeapon::Icon() const
 {
 	return icon;
 }
 
-/*
-================
-idWeapon::PdaIcon
-================
-*/
 const char* idWeapon::PdaIcon() const
 {
 	return pdaIcon;
 }
 
-/*
-================
-idWeapon::DisplayName
-================
-*/
 const char* idWeapon::DisplayName() const
 {
 	return idLocalization::GetString( displayName );
 }
 
-/*
-================
-idWeapon::Description
-================
-*/
 const char* idWeapon::Description() const
 {
 	return idLocalization::GetString( itemDesc );
 }
 
-/*
-================
-idWeapon::UpdateGUI
-================
-*/
 void idWeapon::UpdateGUI()
 {
 	if( !renderEntity.gui[0] ) {
@@ -1405,11 +1293,6 @@ void idWeapon::UpdateGUI()
 
 ***********************************************************************/
 
-/*
-================
-idWeapon::UpdateFlashPosition
-================
-*/
 void idWeapon::UpdateFlashPosition()
 {
 	// the flash has an explicit joint for locating it
@@ -1447,11 +1330,6 @@ void idWeapon::UpdateFlashPosition()
 	GetGlobalJointTransform( false, flashJointWorld, worldMuzzleFlash.origin, worldMuzzleFlash.axis );
 }
 
-/*
-================
-idWeapon::MuzzleFlashLight
-================
-*/
 void idWeapon::MuzzleFlashLight()
 {
 	if( !lightOn && ( !g_muzzleFlash.GetBool() || !muzzleFlash.lightRadius[0] ) ) {
@@ -1483,11 +1361,6 @@ void idWeapon::MuzzleFlashLight()
 	}
 }
 
-/*
-================
-idWeapon::UpdateSkin
-================
-*/
 bool idWeapon::UpdateSkin()
 {
 	// jmarshall
@@ -1511,11 +1384,6 @@ bool idWeapon::UpdateSkin()
 	return true;
 }
 
-/*
-================
-idWeapon::FlashlightOn
-================
-*/
 void idWeapon::FlashlightOn()
 {
 	// jmarshall
@@ -1539,11 +1407,6 @@ void idWeapon::FlashlightOn()
 	return;
 }
 
-/*
-================
-idWeapon::FlashlightOff
-================
-*/
 void idWeapon::FlashlightOff()
 {
 	// jmarshall
@@ -1567,11 +1430,6 @@ void idWeapon::FlashlightOff()
 	// jmarshall
 }
 
-/*
-================
-idWeapon::SetModel
-================
-*/
 void idWeapon::SetModel( const char* modelname )
 {
 	assert( modelname );
@@ -1595,13 +1453,6 @@ void idWeapon::SetModel( const char* modelname )
 	Hide();
 }
 
-/*
-================
-idWeapon::GetGlobalJointTransform
-
-This returns the offset and axis of a weapon bone in world space, suitable for attaching models or lights
-================
-*/
 bool idWeapon::GetGlobalJointTransform( bool viewModel, const jointHandle_t jointHandle, idVec3& offset, idMat3& axis )
 {
 	if( viewModel ) {
@@ -1624,11 +1475,6 @@ bool idWeapon::GetGlobalJointTransform( bool viewModel, const jointHandle_t join
 	return false;
 }
 
-/*
-================
-idWeapon::SetPushVelocity
-================
-*/
 void idWeapon::SetPushVelocity( const idVec3& pushVelocity )
 {
 	this->pushVelocity = pushVelocity;
@@ -1640,11 +1486,6 @@ void idWeapon::SetPushVelocity( const idVec3& pushVelocity )
 
 ***********************************************************************/
 
-/*
-================
-idWeapon::Think
-================
-*/
 void idWeapon::Think()
 {
 	if( isFlashLight ) {
@@ -1656,34 +1497,18 @@ void idWeapon::Think()
 	}
 }
 
-/*
-================
-idWeapon::Raise
-================
-*/
 void idWeapon::Raise()
 {
 	currentWeaponObject->SetState( "Raise" );
 	currentWeaponObject->AppendState( "Idle" );
 }
 
-/*
-================
-idWeapon::PutAway
-================
-*/
 void idWeapon::PutAway()
 {
 	hasBloodSplat = false;
 	currentWeaponObject->SetState( "Lower" );
 }
 
-/*
-================
-idWeapon::Reload
-NOTE: this is only for impulse-triggered reload, auto reload is scripted
-================
-*/
 void idWeapon::Reload()
 {
 	OutOfAmmo = false;
@@ -1693,11 +1518,6 @@ void idWeapon::Reload()
 	currentWeaponObject->AppendState( "Idle" );
 }
 
-/*
-================
-idWeapon::LowerWeapon
-================
-*/
 void idWeapon::LowerWeapon()
 {
 	if( !hide ) {
@@ -1712,11 +1532,6 @@ void idWeapon::LowerWeapon()
 	}
 }
 
-/*
-================
-idWeapon::RaiseWeapon
-================
-*/
 void idWeapon::RaiseWeapon()
 {
 	Show();
@@ -1733,11 +1548,6 @@ void idWeapon::RaiseWeapon()
 	}
 }
 
-/*
-================
-idWeapon::HideWeapon
-================
-*/
 void idWeapon::HideWeapon()
 {
 	Hide();
@@ -1747,11 +1557,6 @@ void idWeapon::HideWeapon()
 	muzzleFlashEnd = 0;
 }
 
-/*
-================
-idWeapon::ShowWeapon
-================
-*/
 void idWeapon::ShowWeapon()
 {
 	Show();
@@ -1763,11 +1568,6 @@ void idWeapon::ShowWeapon()
 	}
 }
 
-/*
-================
-idWeapon::HideWorldModel
-================
-*/
 void idWeapon::HideWorldModel()
 {
 	if( worldModel.GetEntity() ) {
@@ -1775,11 +1575,6 @@ void idWeapon::HideWorldModel()
 	}
 }
 
-/*
-================
-idWeapon::ShowWorldModel
-================
-*/
 void idWeapon::ShowWorldModel()
 {
 	if( worldModel.GetEntity() ) {
@@ -1787,11 +1582,6 @@ void idWeapon::ShowWorldModel()
 	}
 }
 
-/*
-================
-idWeapon::OwnerDied
-================
-*/
 void idWeapon::OwnerDied()
 {
 	currentWeaponObject->OwnerDied();
@@ -1810,11 +1600,6 @@ void idWeapon::OwnerDied()
 	}
 }
 
-/*
-================
-idWeapon::BeginAttack
-================
-*/
 void idWeapon::BeginAttack()
 {
 	if( !OutOfAmmo ) {
@@ -1835,31 +1620,16 @@ void idWeapon::BeginAttack()
 	isFiring = true;
 }
 
-/*
-================
-idWeapon::EndAttack
-================
-*/
 void idWeapon::EndAttack()
 {
 	isFiring = false;
 }
 
-/*
-================
-idWeapon::isReady
-================
-*/
 bool idWeapon::IsReady() const
 {
 	return !hide && !IsHidden() && !currentWeaponObject->IsRunning() && !IsHolstered() && !currentWeaponObject->IsStateRunning( "Lower" );
 }
 
-/*
-================
-idWeapon::IsReloading
-================
-*/
 bool idWeapon::IsReloading() const
 {
 	if( !currentWeaponObject ) {
@@ -1868,11 +1638,6 @@ bool idWeapon::IsReloading() const
 	return currentWeaponObject->IsStateRunning( "Reload" );
 }
 
-/*
-================
-idWeapon::IsHolstered
-================
-*/
 bool idWeapon::IsHolstered() const
 {
 	if( !currentWeaponObject ) {
@@ -1881,11 +1646,6 @@ bool idWeapon::IsHolstered() const
 	return currentWeaponObject->IsStateRunning( "Holstered" );
 }
 
-/*
-================
-idWeapon::ShowCrosshair
-================
-*/
 bool idWeapon::ShowCrosshair() const
 {
 	// JDC: this code would never function as written, I'm assuming they wanted the following behavior
@@ -1893,11 +1653,6 @@ bool idWeapon::ShowCrosshair() const
 	return !currentWeaponObject->IsRunning() || currentWeaponObject->IsStateRunning( "Fire" );
 }
 
-/*
-=====================
-idWeapon::CanDrop
-=====================
-*/
 bool idWeapon::CanDrop() const
 {
 	if( !weaponDef || !worldModel.GetEntity() ) {
@@ -1910,11 +1665,6 @@ bool idWeapon::CanDrop() const
 	return true;
 }
 
-/*
-================
-idWeapon::WeaponStolen
-================
-*/
 void idWeapon::WeaponStolen()
 {
 	assert( !common->IsClient() );
@@ -1928,11 +1678,6 @@ void idWeapon::WeaponStolen()
 	HideWeapon();
 }
 
-/*
-=====================
-idWeapon::DropItem
-=====================
-*/
 idEntity* idWeapon::DropItem( const idVec3& velocity, int activateDelay, int removeDelay, bool died )
 {
 	if( !weaponDef || !worldModel.GetEntity() ) {
@@ -1963,11 +1708,6 @@ idEntity* idWeapon::DropItem( const idVec3& velocity, int activateDelay, int rem
 
 ***********************************************************************/
 
-/*
-================
-idWeapon::UpdateNozzelFx
-================
-*/
 void idWeapon::UpdateNozzleFx()
 {
 	if( !nozzleFx ) {
@@ -2019,11 +1759,6 @@ void idWeapon::UpdateNozzleFx()
 	gameRenderWorld->UpdateLightDef( nozzleGlowHandle, &nozzleGlow );
 }
 
-/*
-================
-idWeapon::BloodSplat
-================
-*/
 bool idWeapon::BloodSplat( float size )
 {
 	float  s, c;
@@ -2082,13 +1817,6 @@ bool idWeapon::BloodSplat( float size )
 
 ***********************************************************************/
 
-/*
-================
-idWeapon::MuzzleRise
-
-The machinegun and chaingun will incrementally back up as they are being fired
-================
-*/
 void idWeapon::MuzzleRise( idVec3& origin, idMat3& axis )
 {
 	int		 time;
@@ -2117,11 +1845,6 @@ void idWeapon::MuzzleRise( idVec3& origin, idMat3& axis )
 	axis   = ang.ToMat3() * axis;
 }
 
-/*
-================
-idWeapon::AlertMonsters
-================
-*/
 void idWeapon::AlertMonsters()
 {
 	trace_t	  tr;
@@ -2164,22 +1887,6 @@ void idWeapon::AlertMonsters()
 	}
 }
 
-/*
-================
-idWeapon::GetMuzzlePositionWithHacks
-
-Some weapons that have a barrel joint either have it pointing in the wrong
-direction (rocket launcher), or don't animate it properly (pistol).
-
-For good 3D TV / head mounted display work, we need to display a laser sight
-in the world.
-
-Fixing the animated meshes would be ideal, but hacking it in code is
-the pragmatic move right now.
-
-Returns false for hands, grenades, and chainsaw.
-================
-*/
 bool idWeapon::GetMuzzlePositionWithHacks( idVec3& origin, idMat3& axis )
 {
 	// I couldn't find a simple enum to identify the weapons that need
@@ -2254,7 +1961,6 @@ bool idWeapon::GetMuzzlePositionWithHacks( idVec3& origin, idMat3& axis )
 	return true;
 }
 
-// Leyland VR
 bool idWeapon::GetMuzzlePosition( idVec3& origin, idMat3& axis )
 {
 	origin = muzzleOrigin;
@@ -2262,11 +1968,6 @@ bool idWeapon::GetMuzzlePosition( idVec3& origin, idMat3& axis )
 	return hasMuzzle;
 }
 
-/*
-================
-idWeapon::GetHandle
-================
-*/
 bool idWeapon::GetInverseHandle( idVec3& origin, idMat3& axis )
 {
 	const idStr& weaponIconName = pdaIcon;
@@ -2437,13 +2138,7 @@ bool idWeapon::GetInverseHandle( idVec3& origin, idMat3& axis )
 
 	return true;
 }
-// Leyland end
 
-/*
-================
-idWeapon::PresentWeapon
-================
-*/
 void idWeapon::PresentWeapon( bool showViewModel )
 {
 	playerViewOrigin = owner->firstPersonViewOrigin;
@@ -2768,11 +2463,6 @@ void idWeapon::PresentWeapon( bool showViewModel )
 	// Leyland VR
 }
 
-/*
-================
-idWeapon::RemoveMuzzleFlashlight
-================
-*/
 void idWeapon::RemoveMuzzleFlashlight()
 {
 	if( muzzleFlashHandle != -1 ) {
@@ -2785,11 +2475,6 @@ void idWeapon::RemoveMuzzleFlashlight()
 	}
 }
 
-/*
-================
-idWeapon::EnterCinematic
-================
-*/
 void idWeapon::EnterCinematic()
 {
 	StopSound( SND_CHANNEL_ANY, false );
@@ -2799,11 +2484,6 @@ void idWeapon::EnterCinematic()
 	LowerWeapon();
 }
 
-/*
-================
-idWeapon::ExitCinematic
-================
-*/
 void idWeapon::ExitCinematic()
 {
 	disabled = false;
@@ -2811,30 +2491,15 @@ void idWeapon::ExitCinematic()
 	RaiseWeapon();
 }
 
-/*
-================
-idWeapon::NetCatchup
-================
-*/
 void idWeapon::NetCatchup()
 {
 }
 
-/*
-================
-idWeapon::GetZoomFov
-================
-*/
 int idWeapon::GetZoomFov()
 {
 	return zoomFov;
 }
 
-/*
-================
-idWeapon::GetWeaponAngleOffsets
-================
-*/
 void idWeapon::GetWeaponAngleOffsets( int* average, float* scale, float* max )
 {
 	*average = weaponAngleOffsetAverages;
@@ -2842,11 +2507,6 @@ void idWeapon::GetWeaponAngleOffsets( int* average, float* scale, float* max )
 	*max	 = weaponAngleOffsetMax;
 }
 
-/*
-================
-idWeapon::GetWeaponTimeOffsets
-================
-*/
 void idWeapon::GetWeaponTimeOffsets( float* time, float* scale )
 {
 	*time  = weaponOffsetTime;
@@ -2859,11 +2519,6 @@ void idWeapon::GetWeaponTimeOffsets( float* time, float* scale )
 
 ***********************************************************************/
 
-/*
-================
-idWeapon::GetAmmoNumForName
-================
-*/
 ammo_t idWeapon::GetAmmoNumForName( const char* ammoname )
 {
 	int			  num;
@@ -2892,11 +2547,6 @@ ammo_t idWeapon::GetAmmoNumForName( const char* ammoname )
 	return ( ammo_t )num;
 }
 
-/*
-================
-idWeapon::GetAmmoNameForNum
-================
-*/
 const char* idWeapon::GetAmmoNameForNum( ammo_t ammonum )
 {
 	int				  i;
@@ -2924,11 +2574,6 @@ const char* idWeapon::GetAmmoNameForNum( ammo_t ammonum )
 	return NULL;
 }
 
-/*
-================
-idWeapon::GetAmmoPickupNameForNum
-================
-*/
 const char* idWeapon::GetAmmoPickupNameForNum( ammo_t ammonum )
 {
 	int				  i;
@@ -2956,11 +2601,6 @@ const char* idWeapon::GetAmmoPickupNameForNum( ammo_t ammonum )
 	return "";
 }
 
-/*
-================
-idWeapon::AmmoAvailable
-================
-*/
 int idWeapon::AmmoAvailable() const
 {
 	if( owner ) {
@@ -2974,85 +2614,41 @@ int idWeapon::AmmoAvailable() const
 	}
 }
 
-/*
-================
-idWeapon::AmmoInClip
-================
-*/
 int idWeapon::AmmoInClip() const
 {
 	return ammoClip.Get();
 }
 
-/*
-================
-idWeapon::ResetAmmoClip
-================
-*/
 void idWeapon::ResetAmmoClip()
 {
 	ammoClip = -1;
 }
 
-/*
-================
-idWeapon::GetAmmoType
-================
-*/
 ammo_t idWeapon::GetAmmoType() const
 {
 	return ammoType;
 }
 
-/*
-================
-idWeapon::ClipSize
-================
-*/
 int idWeapon::ClipSize() const
 {
 	return clipSize;
 }
 
-/*
-================
-idWeapon::LowAmmo
-================
-*/
 int idWeapon::LowAmmo() const
 {
 	return lowAmmo;
 }
 
-/*
-================
-idWeapon::AmmoRequired
-================
-*/
 int idWeapon::AmmoRequired() const
 {
 	return ammoRequired;
 }
 
-/*
-================
-idWeapon::GetGrabberState
-
-Returns the current grabberState
-================
-*/
 int idWeapon::GetGrabberState() const
 {
 	return grabberState;
 }
 
-/*
-================
-idWeapon::AmmoCount
-
-Returns the total number of rounds regardless of the required ammo
-================
-*/
 int idWeapon::AmmoCount() const
 {
 	if( owner ) {
@@ -3062,11 +2658,6 @@ int idWeapon::AmmoCount() const
 	}
 }
 
-/*
-================
-idWeapon::WriteToSnapshot
-================
-*/
 void idWeapon::WriteToSnapshot( idBitMsg& msg ) const
 {
 	msg.WriteBits( ammoClip.Get(), ASYNC_PLAYER_INV_CLIP_BITS );
@@ -3075,11 +2666,6 @@ void idWeapon::WriteToSnapshot( idBitMsg& msg ) const
 	msg.WriteBits( isFiring ? 1 : 0, 1 );
 }
 
-/*
-================
-idWeapon::ReadFromSnapshot
-================
-*/
 void idWeapon::ReadFromSnapshot( const idBitMsg& msg )
 {
 	const int snapshotAmmoClip = msg.ReadBits( ASYNC_PLAYER_INV_CLIP_BITS );
@@ -3121,11 +2707,6 @@ void idWeapon::ReadFromSnapshot( const idBitMsg& msg )
 	}
 }
 
-/*
-================
-idWeapon::ClientReceiveEvent
-================
-*/
 bool idWeapon::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 {
 	switch( event ) {
@@ -3167,31 +2748,16 @@ bool idWeapon::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 
 ***********************************************************************/
 
-/*
-===============
-idWeapon::Event_Clear
-===============
-*/
 void idWeapon::Event_Clear()
 {
 	Clear();
 }
 
-/*
-===============
-idWeapon::Event_GetOwner
-===============
-*/
 void idWeapon::Event_GetOwner()
 {
 	idThread::ReturnEntity( owner );
 }
 
-/*
-===============
-idWeapon::Event_WeaponReady
-===============
-*/
 void idWeapon::Event_WeaponReady()
 {
 	// status = WP_READY;
@@ -3206,11 +2772,6 @@ void idWeapon::Event_WeaponReady()
 	}
 }
 
-/*
-===============
-idWeapon::Event_WeaponOutOfAmmo
-===============
-*/
 void idWeapon::Event_WeaponOutOfAmmo()
 {
 	// status = WP_OUTOFAMMO;
@@ -3218,33 +2779,18 @@ void idWeapon::Event_WeaponOutOfAmmo()
 	idLib::PrintfIf( g_debugWeapon.GetBool(), "Weapon Status WP_OUTOFAMMO \n" );
 }
 
-/*
-===============
-idWeapon::Event_WeaponReloading
-===============
-*/
 void idWeapon::Event_WeaponReloading()
 {
 	Reload();
 	idLib::PrintfIf( g_debugWeapon.GetBool(), "Weapon Status WP_RELOAD \n" );
 }
 
-/*
-===============
-idWeapon::Event_WeaponHolstered
-===============
-*/
 void idWeapon::Event_WeaponHolstered()
 {
 	// status = WP_HOLSTERED;
 	idLib::PrintfIf( g_debugWeapon.GetBool(), "Weapon Status WP_HOLSTERED \n" );
 }
 
-/*
-===============
-idWeapon::Event_WeaponRising
-===============
-*/
 void idWeapon::Event_WeaponRising()
 {
 	Raise();
@@ -3252,11 +2798,6 @@ void idWeapon::Event_WeaponRising()
 	owner->WeaponRisingCallback();
 }
 
-/*
-===============
-idWeapon::Event_WeaponLowering
-===============
-*/
 void idWeapon::Event_WeaponLowering()
 {
 	LowerWeapon();
@@ -3264,11 +2805,6 @@ void idWeapon::Event_WeaponLowering()
 	owner->WeaponLoweringCallback();
 }
 
-/*
-===============
-idWeapon::Event_UseAmmo
-===============
-*/
 void idWeapon::Event_UseAmmo( int amount )
 {
 	if( owner == NULL || ( common->IsClient() && !owner->IsLocallyControlled() ) ) {
@@ -3284,11 +2820,6 @@ void idWeapon::Event_UseAmmo( int amount )
 	}
 }
 
-/*
-===============
-idWeapon::Event_AddToClip
-===============
-*/
 void idWeapon::Event_AddToClip( int amount )
 {
 	int ammoAvail;
@@ -3314,22 +2845,12 @@ void idWeapon::Event_AddToClip( int amount )
 	owner->inventory.UseAmmo( ammoType, usedAmmo );
 }
 
-/*
-===============
-idWeapon::Event_AmmoInClip
-===============
-*/
 void idWeapon::Event_AmmoInClip()
 {
 	int ammo = AmmoInClip();
 	idThread::ReturnFloat( ammo );
 }
 
-/*
-===============
-idWeapon::AmmoAvailable
-===============
-*/
 int idWeapon::AmmoAvailable()
 {
 	int ammoAvail = owner->inventory.HasAmmo( ammoType, ammoRequired );
@@ -3338,42 +2859,22 @@ int idWeapon::AmmoAvailable()
 	return ammoAvail;
 }
 
-/*
-===============
-idWeapon::Event_AmmoAvailable
-===============
-*/
 void idWeapon::Event_AmmoAvailable()
 {
 	idThread::ReturnFloat( AmmoAvailable() );
 }
 
-/*
-===============
-idWeapon::Event_TotalAmmoCount
-===============
-*/
 void idWeapon::Event_TotalAmmoCount()
 {
 	int ammoAvail = owner->inventory.HasAmmo( ammoType, 1 );
 	idThread::ReturnFloat( ammoAvail );
 }
 
-/*
-===============
-idWeapon::Event_ClipSize
-===============
-*/
 void idWeapon::Event_ClipSize()
 {
 	idThread::ReturnFloat( clipSize );
 }
 
-/*
-===============
-idWeapon::Event_AutoReload
-===============
-*/
 void idWeapon::Event_AutoReload()
 {
 	assert( owner );
@@ -3388,11 +2889,6 @@ void idWeapon::Event_AutoReload()
 	idThread::ReturnFloat( lobby.GetLobbyUserWeaponAutoReload( lobbyUserID ) );
 }
 
-/*
-===============
-idWeapon::Event_NetReload
-===============
-*/
 void idWeapon::Event_NetReload()
 {
 	assert( owner );
@@ -3401,11 +2897,6 @@ void idWeapon::Event_NetReload()
 	}
 }
 
-/*
-===============
-idWeapon::Event_NetEndReload
-===============
-*/
 void idWeapon::Event_NetEndReload()
 {
 	assert( owner );
@@ -3414,11 +2905,6 @@ void idWeapon::Event_NetEndReload()
 	}
 }
 
-/*
-===============
-idWeapon::Event_PlayAnim
-===============
-*/
 void idWeapon::Event_PlayAnim( int channel, const char* animname, bool loop )
 {
 	int anim;
@@ -3445,11 +2931,6 @@ void idWeapon::Event_PlayAnim( int channel, const char* animname, bool loop )
 	idThread::ReturnInt( 0 );
 }
 
-/*
-===============
-idWeapon::Event_PlayCycle
-===============
-*/
 void idWeapon::Event_PlayCycle( int channel, const char* animname )
 {
 	int anim;
@@ -3474,11 +2955,6 @@ void idWeapon::Event_PlayCycle( int channel, const char* animname )
 	idThread::ReturnInt( 0 );
 }
 
-/*
-===============
-idWeapon::Event_AnimDone
-===============
-*/
 bool idWeapon::Event_AnimDone( int channel, int blendFrames )
 {
 	if( animDoneTime - FRAME2MS( blendFrames ) <= gameLocal.time ) {
@@ -3487,42 +2963,22 @@ bool idWeapon::Event_AnimDone( int channel, int blendFrames )
 	return false;
 }
 
-/*
-===============
-idWeapon::Event_SetBlendFrames
-===============
-*/
 void idWeapon::Event_SetBlendFrames( int channel, int blendFrames )
 {
 	animBlendFrames = blendFrames;
 }
 
-/*
-===============
-idWeapon::Event_GetBlendFrames
-===============
-*/
 void idWeapon::Event_GetBlendFrames( int channel )
 {
 	idThread::ReturnInt( animBlendFrames );
 }
 
-/*
-================
-idWeapon::Event_Next
-================
-*/
 void idWeapon::Event_Next()
 {
 	// change to another weapon if possible
 	owner->NextBestWeapon();
 }
 
-/*
-================
-idWeapon::Event_SetSkin
-================
-*/
 void idWeapon::Event_SetSkin( const char* skinname )
 {
 	const idDeclSkin* skinDecl = NULL;
@@ -3564,11 +3020,6 @@ void idWeapon::Event_SetSkin( const char* skinname )
 	}
 }
 
-/*
-================
-idWeapon::Event_Flashlight
-================
-*/
 void idWeapon::Event_Flashlight( int enable )
 {
 	if( enable ) {
@@ -3580,11 +3031,6 @@ void idWeapon::Event_Flashlight( int enable )
 	}
 }
 
-/*
-================
-idWeapon::Event_GetLightParm
-================
-*/
 void idWeapon::Event_GetLightParm( int parmnum )
 {
 	if( ( parmnum < 0 ) || ( parmnum >= MAX_ENTITY_SHADER_PARMS ) ) {
@@ -3595,11 +3041,6 @@ void idWeapon::Event_GetLightParm( int parmnum )
 	idThread::ReturnFloat( muzzleFlash.shaderParms[parmnum] );
 }
 
-/*
-================
-idWeapon::Event_SetLightParm
-================
-*/
 void idWeapon::Event_SetLightParm( int parmnum, float value )
 {
 	if( ( parmnum < 0 ) || ( parmnum >= MAX_ENTITY_SHADER_PARMS ) ) {
@@ -3612,11 +3053,6 @@ void idWeapon::Event_SetLightParm( int parmnum, float value )
 	UpdateVisuals();
 }
 
-/*
-================
-idWeapon::Event_SetLightParms
-================
-*/
 void idWeapon::Event_SetLightParms( float parm0, float parm1, float parm2, float parm3 )
 {
 	muzzleFlash.shaderParms[SHADERPARM_RED]	  = parm0;
@@ -3632,11 +3068,6 @@ void idWeapon::Event_SetLightParms( float parm0, float parm1, float parm2, float
 	UpdateVisuals();
 }
 
-/*
-================
-idWeapon::Event_Grabber
-================
-*/
 void idWeapon::Event_Grabber( int enable )
 {
 	if( enable ) {
@@ -3646,31 +3077,16 @@ void idWeapon::Event_Grabber( int enable )
 	}
 }
 
-/*
-================
-idWeapon::Event_GrabberHasTarget
-================
-*/
 int idWeapon::Event_GrabberHasTarget()
 {
 	return grabberState;
 }
 
-/*
-================
-idWeapon::Event_GrabberSetGrabDistance
-================
-*/
 void idWeapon::Event_GrabberSetGrabDistance( float dist )
 {
 	grabber.SetDragDistance( dist );
 }
 
-/*
-================
-idWeapon::Event_CreateProjectile
-================
-*/
 idEntity* idWeapon::CreateProjectile()
 {
 	if( !common->IsClient() ) {
@@ -3687,21 +3103,11 @@ idEntity* idWeapon::CreateProjectile()
 	}
 }
 
-/*
-================
-idWeapon::Event_CreateProjectile
-================
-*/
 void idWeapon::Event_CreateProjectile()
 {
 	idThread::ReturnEntity( CreateProjectile() );
 }
 
-/*
-================
-idWeapon::Event_LaunchProjectiles
-================
-*/
 void idWeapon::Event_LaunchProjectiles( int num_projectiles, float spread, float fuseOffset, float launchPower, float dmgPower )
 {
 	idProjectile* proj;
@@ -3896,11 +3302,6 @@ void idWeapon::Event_LaunchProjectiles( int num_projectiles, float spread, float
 	weaponSmokeStartTime = gameLocal.realClientTime;
 }
 
-/*
-================
-idWeapon::Event_LaunchProjectilesEllipse
-================
-*/
 void idWeapon::Event_LaunchProjectilesEllipse( int num_projectiles, float spreada, float spreadb, float fuseOffset, float power )
 {
 	idProjectile* proj;
@@ -4134,11 +3535,6 @@ void idWeapon::Event_StopWeaponLight( const char* name )
 		}
 	}
 }
-/*
-=====================
-idWeapon::Event_Melee
-=====================
-*/
 void idWeapon::Event_Melee()
 {
 	idEntity* ent;
@@ -4269,21 +3665,11 @@ void idWeapon::Event_Melee()
 	owner->WeaponFireFeedback( &weaponDef->dict );
 }
 
-/*
-=====================
-idWeapon::Event_GetWorldModel
-=====================
-*/
 void idWeapon::Event_GetWorldModel()
 {
 	idThread::ReturnEntity( worldModel.GetEntity() );
 }
 
-/*
-=====================
-idWeapon::Event_AllowDrop
-=====================
-*/
 void idWeapon::Event_AllowDrop( int allow )
 {
 	if( allow ) {
@@ -4293,11 +3679,6 @@ void idWeapon::Event_AllowDrop( int allow )
 	}
 }
 
-/*
-=====================
-idWeapon::CallNativeEvent
-=====================
-*/
 void idWeapon::CallNativeEvent( idStr& name )
 {
 	if( name == "EjectBrass" ) {
@@ -4307,13 +3688,6 @@ void idWeapon::CallNativeEvent( idStr& name )
 	}
 }
 
-/*
-================
-idWeapon::Event_EjectBrass
-
-Toss a shell model out from the breach if the bone is present
-================
-*/
 void idWeapon::Event_EjectBrass()
 {
 	if( !g_showBrass.GetBool() || !owner->CanShowWeaponViewmodel() ) {
@@ -4351,11 +3725,6 @@ void idWeapon::Event_EjectBrass()
 	debris->GetPhysics()->SetAngularVelocity( angular_velocity );
 }
 
-/*
-===============
-idWeapon::Event_IsInvisible
-===============
-*/
 bool idWeapon::Event_IsInvisible()
 {
 	if( !owner ) {
@@ -4364,21 +3733,11 @@ bool idWeapon::Event_IsInvisible()
 	return owner->PowerUpActive( INVISIBILITY );
 }
 
-/*
-===============
-idWeapon::ClientThink
-===============
-*/
 void idWeapon::ClientThink( const int curTime, const float fraction, const bool predict )
 {
 	UpdateAnimation();
 }
 
-/*
-===============
-idWeapon::ClientPredictionThink
-===============
-*/
 void idWeapon::ClientPredictionThink()
 {
 	UpdateAnimation();

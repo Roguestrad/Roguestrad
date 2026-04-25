@@ -932,11 +932,6 @@ void idAI::InitMuzzleFlash()
 	worldMuzzleFlashHandle = -1;
 }
 
-/*
-===================
-idAI::List_f
-===================
-*/
 void idAI::List_f( const idCmdArgs& args )
 {
 	int			e;
@@ -1829,11 +1824,6 @@ void idAI::PlayCustomAnim( idStr animname, float blendIn, float blendOut )
 	scriptThread->PushFloat( blendOut );
 	scriptThread->CallFunction( scriptObject.GetFunction( "playCustomAnim" ), false );
 }
-/*
-================
-idAI::PlayCustomCycle
-================
-*/
 void idAI::PlayCustomCycle( idStr animname, float blendTime )
 {
 	scriptThread->ClearStack();

@@ -36,30 +36,15 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( iceMonsterZombie, iceMonsterZombieBernie )
 END_CLASS
 
-/*
-=================
-iceMonsterZombieBernie::Init
-=================
-*/
 void iceMonsterZombieBernie::Init()
 {
 }
 
-/*
-=================
-iceMonsterZombieBernie::AI_Begin
-=================
-*/
 void iceMonsterZombieBernie::AI_Begin()
 {
 	Event_SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterZombieBernie::state_Begin
-=====================
-*/
 stateResult_t iceMonsterZombieBernie::state_Begin( stateParms_t* parms )
 {
 	Event_AnimState( ANIMCHANNEL_TORSO, "Torso_Idle", 8 );
@@ -70,11 +55,6 @@ stateResult_t iceMonsterZombieBernie::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieBernie::state_Idle
-=====================
-*/
 stateResult_t iceMonsterZombieBernie::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -89,11 +69,6 @@ stateResult_t iceMonsterZombieBernie::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-monster_zombie::combat_melee
-=====================
-*/
 stateResult_t iceMonsterZombieBernie::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -118,11 +93,6 @@ stateResult_t iceMonsterZombieBernie::combat_melee( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterZombieBernie::check_attacks
-=====================
-*/
 int iceMonsterZombieBernie::check_attacks()
 {
 	int attack_flags;
@@ -135,11 +105,6 @@ int iceMonsterZombieBernie::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-iceMonsterZombieBernie::do_attack
-=====================
-*/
 void iceMonsterZombieBernie::do_attack( int attack_flags )
 {
 	if( attack_flags & ATTACK_MELEE ) {

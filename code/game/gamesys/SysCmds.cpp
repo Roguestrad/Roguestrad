@@ -2168,16 +2168,7 @@ void Cmd_ShowAfEditor_f( const idCmdArgs& args )
 		ImGuiTools::AfEditor::Instance().ShowIt( false );
 	}
 }
-// SP end
 
-/*
-=================
-idGameLocal::InitConsoleCommands
-
-Let the system know about all of our commands
-so it can perform tab completion
-=================
-*/
 void idGameLocal::InitConsoleCommands()
 {
 	cmdSystem->AddCommand( "game_memory", idClass::DisplayInfo_f, CMD_FL_GAME, "displays game class info" );
@@ -2284,11 +2275,6 @@ void idGameLocal::InitConsoleCommands()
 	cmdSystem->AddCommand( "setActorState", Cmd_SetActorState_f, CMD_FL_GAME | CMD_FL_CHEAT, "Manually sets an actors script state", idGameLocal::ArgCompletion_EntityName );
 }
 
-/*
-=================
-idGameLocal::ShutdownConsoleCommands
-=================
-*/
 void idGameLocal::ShutdownConsoleCommands()
 {
 	cmdSystem->RemoveFlaggedCommands( CMD_FL_GAME );

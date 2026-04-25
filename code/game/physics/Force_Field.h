@@ -42,34 +42,58 @@ enum forceFieldType { FORCEFIELD_UNIFORM, FORCEFIELD_EXPLOSION, FORCEFIELD_IMPLO
 
 enum forceFieldApplyType { FORCEFIELD_APPLY_FORCE, FORCEFIELD_APPLY_VELOCITY, FORCEFIELD_APPLY_IMPULSE };
 
+/*!
+	\class idForce_Field
+	\brief Represents a force field that applies various types of forces within a defined clip model boundary.
+
+	The idForce_Field class implements a force field that can apply different types of forces such as uniform, explosion, implosion, and random torque within the boundaries defined by a clip model. It
+   supports configuration of force application types including force, velocity, or impulse, and can be restricted to affect only players or monsters. The class provides methods to initialize,
+   configure, evaluate, and persist the force field state. It inherits from idForce and integrates with the engine's physics and save system through serialization methods.
+
+*/
 class idForce_Field : public idForce
 {
 public:
 	CLASS_PROTOTYPE( idForce_Field );
 
+	//! Saves the field force properties to a save file.
 	void Save( idSaveGame* savefile ) const;
+
+	//! Restores the field force state from a save file.
 	void Restore( idRestoreGame* savefile );
 
+	//! Initializes a new instance of the idForce_Field class with default values.
 	idForce_Field();
+
+	//! Destructor for the idForce_Field class that cleans up the associated clip model.
 	virtual ~idForce_Field();
-	// uniform constant force
+
+	//! Sets the force field to apply a uniform constant force.
 	void Uniform( const idVec3& force );
-	// explosion from clip model origin
+
+	//! Sets the explosion force magnitude and type for the force field.
 	void Explosion( float force );
-	// implosion towards clip model origin
+
+	//! Sets the force magnitude and type for an implosion effect towards the clip model origin.
 	void Implosion( float force );
-	// add random torque
+
+	//! Sets the magnitude of random torque to be applied.
 	void RandomTorque( float force );
-	// should the force field apply a force, velocity or impulse
+
+	//! Sets the application type for the force field to determine whether it applies force, velocity, or impulse.
 	void SetApplyType( const forceFieldApplyType type ) { applyType = type; }
-	// make the force field only push players
+
+	//! Sets whether the force field only affects players.
 	void SetPlayerOnly( bool set ) { playerOnly = set; }
-	// make the force field only push monsters
+
+	//! Configures the force field to only affect monsters.
 	void SetMonsterOnly( bool set ) { monsterOnly = set; }
-	// clip model describing the extents of the force field
+
+	//! Sets the clip model that defines the extents of the force field.
 	void SetClipModel( idClipModel* clipModel );
 
 public: // common force interface
+		//! Evaluates the force field at the specified time
 	virtual void Evaluate( int time );
 
 private:

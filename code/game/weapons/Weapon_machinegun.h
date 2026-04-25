@@ -30,17 +30,36 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponMachineGun
+	\brief A specialized machine gun weapon implementation that extends basic weapon object functionality with specific firing and animation behaviors.
+
+	This class represents a machine gun weapon that inherits from a base weapon object, providing specialized behavior for raising, lowering, idling, firing, and reloading states. The implementation
+   manages weapon-specific animation states and handles the interaction with a weapon instance through initialization and state transition methods. The class is designed to integrate with a larger
+   weapon system while maintaining distinct machine gun characteristics.
+
+*/
 class iceWeaponMachineGun : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponMachineGun );
 
+	//! Initializes the machine gun weapon object with the specified weapon instance.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Sets up the raising animation for the machine gun weapon.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Handles the lowering animation state for the ice weapon machine gun, transitioning from ready to holstered state.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the ice weapon machine gun, transitioning through stages and returning appropriate state results.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Fire function for the ice weapon machine gun that handles firing logic and animation states.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Handles the reloading animation and clip refilling for the machine gun weapon.
 	stateResult_t Reload( stateParms_t* parms );
 
 private:

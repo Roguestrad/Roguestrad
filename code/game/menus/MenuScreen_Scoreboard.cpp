@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 //***************************************************************
 static const int MAX_SCOREBOARD_SLOTS = 8;
 
-/*
-========================
-idMenuScreen_Scoreboard::Initialize
-========================
-*/
 void			 idMenuScreen_Scoreboard::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -74,11 +69,6 @@ void			 idMenuScreen_Scoreboard::Initialize( idMenuHandler* data )
 	AddEventAction( WIDGET_EVENT_SCROLL_UP_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Scoreboard::Update
-========================
-*/
 void idMenuScreen_Scoreboard::Update()
 {
 	if( menuData != NULL ) {
@@ -110,11 +100,6 @@ void idMenuScreen_Scoreboard::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Scoreboard::ShowScreen
-========================
-*/
 void idMenuScreen_Scoreboard::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::ShowScreen( transitionType );
@@ -196,11 +181,6 @@ void idMenuScreen_Scoreboard::ShowScreen( const mainMenuTransition_t transitionT
 	}
 }
 
-/*
-========================
-idMenuScreen_Scoreboard::SetPlayerData
-========================
-*/
 void idMenuScreen_Scoreboard::SetPlayerData( idList<scoreboardInfo_t, TAG_IDLIB_LIST_MENU> data )
 {
 	if( playerList != NULL ) {
@@ -216,11 +196,6 @@ void idMenuScreen_Scoreboard::SetPlayerData( idList<scoreboardInfo_t, TAG_IDLIB_
 	}
 }
 
-/*
-========================
-idMenuScreen_Scoreboard::UpdateGameInfo
-========================
-*/
 void idMenuScreen_Scoreboard::UpdateGameInfo( idStr gameInfo )
 {
 	if( GetSWFObject() ) {
@@ -235,11 +210,6 @@ void idMenuScreen_Scoreboard::UpdateGameInfo( idStr gameInfo )
 	}
 }
 
-/*
-========================
-idMenuScreen_Scoreboard::UpdateSpectating
-========================
-*/
 void idMenuScreen_Scoreboard::UpdateSpectating( idStr spectating, idStr follow )
 {
 	if( GetSWFObject() ) {
@@ -261,11 +231,6 @@ void idMenuScreen_Scoreboard::UpdateSpectating( idStr spectating, idStr follow )
 	}
 }
 
-/*
-========================
-idMenuScreen_Scoreboard::UpdateTeamScores
-========================
-*/
 void idMenuScreen_Scoreboard::UpdateTeamScores( int r, int b )
 {
 	if( GetSWFObject() ) {
@@ -286,11 +251,6 @@ void idMenuScreen_Scoreboard::UpdateTeamScores( int r, int b )
 	}
 }
 
-/*
-========================
-idMenuScreen_Scoreboard::UpdateHighlight
-========================
-*/
 void idMenuScreen_Scoreboard::UpdateHighlight()
 {
 	if( playerList == NULL || menuData == NULL ) {
@@ -329,11 +289,6 @@ void idMenuScreen_Scoreboard::UpdateHighlight()
 	}
 }
 
-/*
-========================
-idMenuScreen_Scoreboard::HandleAction
-========================
-*/
 bool idMenuScreen_Scoreboard::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -476,15 +431,6 @@ bool idMenuScreen_Scoreboard::HandleAction( idWidgetAction& action, const idWidg
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-//***************************************************************
-// CTF SCOREBOARD
-//***************************************************************
-
-/*
-========================
-idMenuScreen_Scoreboard_CTF::Initialize
-========================
-*/
 void idMenuScreen_Scoreboard_CTF::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -519,15 +465,6 @@ void idMenuScreen_Scoreboard_CTF::Initialize( idMenuHandler* data )
 	AddEventAction( WIDGET_EVENT_SCROLL_UP_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_RELEASE ) );
 }
 
-//***************************************************************
-// TEAM SCOREBOARD
-//***************************************************************
-
-/*
-========================
-idMenuScreen_Scoreboard_Team::Initialize
-========================
-*/
 void idMenuScreen_Scoreboard_Team::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );

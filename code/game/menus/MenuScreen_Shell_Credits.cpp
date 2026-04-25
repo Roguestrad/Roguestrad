@@ -725,11 +725,6 @@ void			 idMenuScreen_Shell_Credits::SetupCreditList()
 	creditList.Append( creditInfo_t( 0, "Kosuke Fujita" ) );
 };
 
-/*
-========================
-idMenuScreen_Shell_Credits::Initialize
-========================
-*/
 void idMenuScreen_Shell_Credits::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -750,11 +745,6 @@ void idMenuScreen_Shell_Credits::Initialize( idMenuHandler* data )
 	SetupCreditList();
 }
 
-/*
-========================
-idMenuScreen_Shell_Credits::Update
-========================
-*/
 void idMenuScreen_Shell_Credits::Update()
 {
 	if( menuData != NULL ) {
@@ -801,11 +791,6 @@ void idMenuScreen_Shell_Credits::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Credits::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Credits::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	if( menuData != NULL ) {
@@ -825,21 +810,11 @@ void idMenuScreen_Shell_Credits::ShowScreen( const mainMenuTransition_t transiti
 	UpdateCredits();
 }
 
-/*
-========================
-idMenuScreen_Shell_Credits::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Credits::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Credits::HandleAction
-========================
-*/
 bool idMenuScreen_Shell_Credits::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -872,11 +847,6 @@ bool idMenuScreen_Shell_Credits::HandleAction( idWidgetAction& action, const idW
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuScreen_Shell_Credits::UpdateCredits
-========================
-*/
 void idMenuScreen_Shell_Credits::UpdateCredits()
 {
 	if( menuData == NULL || GetSWFObject() == NULL ) {

@@ -41,11 +41,6 @@ idMenuWidget_PDA_AudioFiles::~idMenuWidget_PDA_AudioFiles()
 {
 }
 
-/*
-========================
-idMenuWidget_PDA_AudioFiles::Initialize
-========================
-*/
 void idMenuWidget_PDA_AudioFiles::Initialize( idMenuHandler* data )
 {
 	idMenuWidget_DynamicList* pdaAudioList = new( TAG_SWF ) idMenuWidget_DynamicList();
@@ -65,11 +60,6 @@ void idMenuWidget_PDA_AudioFiles::Initialize( idMenuHandler* data )
 	AddChild( pdaAudioList );
 }
 
-/*
-========================
-idMenuWidget_PDA_AudioFiles::Update
-========================
-*/
 void idMenuWidget_PDA_AudioFiles::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -135,11 +125,6 @@ void idMenuWidget_PDA_AudioFiles::Update()
 	// idSWFSpriteInstance * dataSprite = dataObj->GetSprite();
 }
 
-/*
-========================
-idMenuWidget_PDA_AudioFiles::ObserveEvent
-========================
-*/
 void idMenuWidget_PDA_AudioFiles::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	const idMenuWidget_Button* const button = dynamic_cast<const idMenuWidget_Button*>( &widget );

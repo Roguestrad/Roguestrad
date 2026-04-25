@@ -33,26 +33,69 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceMonsterBossVagary
+	\brief Represents a specialized AI boss entity with ranged and melee combat capabilities.
+
+	This class implements a boss-level AI entity that utilizes both melee and ranged attack strategies. The entity manages its own state machine for combat behaviors including idle, movement, dodging,
+   melee attacks, and ranged attacks using throwable objects. The AI system handles enemy detection, pathfinding, and tactical decision making. The class extends base AI functionality with specialized
+   combat behavior for a boss enemy type.
+
+*/
 class iceMonsterBossVagary : public idAI
 {
 public:
 	CLASS_PROTOTYPE( iceMonsterBossVagary );
+
+	//! Initializes the AI system
 	virtual void Init() override;
+
+	//! Sets the AI state to "state_Begin" for the monster boss.
 	virtual void AI_Begin() override;
 
+	//! Returns attack flags indicating which attacks are available for the monster boss.
 	virtual int	 check_attacks() override;
+
+	//! Performs an attack action based on the specified attack flags.
 	virtual void do_attack( int attack_flags ) override;
 
 private:
+	/*!
+		\brief Selects a suitable movable entity within specified bounds to throw at an enemy.
+
+		This function identifies movable entities within a given bounding volume that are not hidden and sufficiently distant from the enemy. It then evaluates the trajectory of each candidate entity
+	   to ensure a valid throw path can be calculated. The function returns a randomly selected entity from those that pass all checks, or NULL if no suitable entity is found.
+
+		\param mins Minimum bounds of the volume to check for entities
+		\param maxs Maximum bounds of the volume to check for entities
+		\param speed The speed at which the object will be thrown
+		\param minDist Minimum distance from the enemy for an object to be considered
+		\param offset Vertical offset applied to the object's position when calculating trajectory
+		\return A pointer to the chosen entity that can be thrown, or NULL if no suitable entity is found.
+		\throws NULL is returned if no valid entity is found, or if enemy is not valid.
+	*/
 	idEntity* ChooseObjectToThrow( const idVec3& mins, const idVec3& maxs, float speed, float minDist, float offset );
+
+	//! Throws an object at the enemy entity with the specified speed.
 	void	  ThrowObjectAtEnemy( idEntity* ent, float speed );
 
 private:
+	//! Initializes the boss vagary state by setting up animation states and move type.
 	stateResult_t state_Begin( stateParms_t* parms );
+
+	//! Handles the idle state logic for the monster boss, transitioning to combat state when an enemy is detected.
 	stateResult_t state_Idle( stateParms_t* parms );
+
+	//! Executes a right dodge combat move for the monster boss.
 	stateResult_t combat_dodge_right( stateParms_t* parms );
+
+	//! Executes a left dodge motion during combat for the monster boss vagary.
 	stateResult_t combat_dodge_left( stateParms_t* parms );
+
+	//! Executes a melee attack animation and state management for the monster boss vagary.
 	stateResult_t combat_melee( stateParms_t* parms );
+
+	//! Handles the combat range state logic for the monster boss vagary, managing throwing behavior and attack timing.
 	stateResult_t combat_range( stateParms_t* parms );
 
 private:

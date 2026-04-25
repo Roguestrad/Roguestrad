@@ -57,11 +57,6 @@ static gamepadBindInfo_t gamepadBinds[] = { { "txtJoy1", K_JOY1 },
 
 static const int		 numGamepadBinds = sizeof( gamepadBinds ) / sizeof( gamepadBinds[0] );
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::Initialize
-========================
-*/
 void					 idMenuScreen_Shell_ControllerLayout::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -96,11 +91,6 @@ void					 idMenuScreen_Shell_ControllerLayout::Initialize( idMenuHandler* data )
 	options->AddChild( control );
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::Update
-========================
-*/
 void idMenuScreen_Shell_ControllerLayout::Update()
 {
 	if( menuData != NULL ) {
@@ -154,11 +144,6 @@ void idMenuScreen_Shell_ControllerLayout::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_ControllerLayout::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	layoutData.LoadData();
@@ -180,22 +165,12 @@ void idMenuScreen_Shell_ControllerLayout::ShowScreen( const mainMenuTransition_t
 	UpdateBindingInfo();
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::HideScreen
-========================
-*/
 void idMenuScreen_Shell_ControllerLayout::HideScreen( const mainMenuTransition_t transitionType )
 {
 	layoutData.CommitData();
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::UpdateBindingInfo
-========================
-*/
 void idMenuScreen_Shell_ControllerLayout::UpdateBindingInfo()
 {
 	if( !GetSprite() ) {
@@ -227,11 +202,6 @@ void idMenuScreen_Shell_ControllerLayout::UpdateBindingInfo()
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_ControllerLayout::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -297,22 +267,12 @@ bool idMenuScreen_Shell_ControllerLayout::HandleAction( idWidgetAction& action, 
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::idMenuDataSource_AudioSettings::idMenuDataSource_AudioSettings
-========================
-*/
 idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::idMenuDataSource_LayoutSettings()
 {
 	fields.SetNum( MAX_LAYOUT_FIELDS );
 	originalFields.SetNum( MAX_LAYOUT_FIELDS );
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::idMenuDataSource_AudioSettings::LoadData
-========================
-*/
 void idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::LoadData()
 {
 	idPlayerProfile* profile = session->GetProfileFromMasterLocalUser();
@@ -327,11 +287,6 @@ void idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::LoadD
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::idMenuDataSource_AudioSettings::CommitData
-========================
-*/
 void idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::CommitData()
 {
 	if( IsDataChanged() ) {
@@ -342,11 +297,6 @@ void idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::Commi
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::idMenuDataSource_AudioSettings::AdjustField
-========================
-*/
 void idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::AdjustField( const int fieldIndex, const int adjustAmount )
 {
 	idPlayerProfile* profile = session->GetProfileFromMasterLocalUser();
@@ -370,11 +320,6 @@ void idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::Adjus
 	profile->SetConfig( configSet, false );
 }
 
-/*
-========================
-idMenuScreen_Shell_ControllerLayout::idMenuDataSource_AudioSettings::IsDataChanged
-========================
-*/
 bool idMenuScreen_Shell_ControllerLayout::idMenuDataSource_LayoutSettings::IsDataChanged() const
 {
 	bool hasLocalChanges = false;

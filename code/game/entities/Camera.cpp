@@ -52,20 +52,10 @@ static const idMat4 blenderToDoomTransform( idAngles( 0.0f, 0.0f, 90 ).ToMat3(),
 ABSTRACT_DECLARATION( idEntity, idCamera )
 END_CLASS
 
-/*
-=====================
-idCamera::Spawn
-=====================
-*/
 void idCamera::Spawn()
 {
 }
 
-/*
-=====================
-idCamera::GetRenderView
-=====================
-*/
 renderView_t* idCamera::GetRenderView()
 {
 	renderView_t* rv = idEntity::GetRenderView();
@@ -85,11 +75,6 @@ EVENT( EV_Activate, idCameraView::Event_Activate )
 EVENT( EV_Camera_SetAttachments, idCameraView::Event_SetAttachments )
 END_CLASS
 
-/*
-===============
-idCameraView::idCameraView
-================
-*/
 idCameraView::idCameraView()
 {
 	fov			 = 90.0f;
@@ -97,11 +82,6 @@ idCameraView::idCameraView()
 	attachedView = NULL;
 }
 
-/*
-===============
-idCameraView::Save
-================
-*/
 void idCameraView::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteFloat( fov );
@@ -109,11 +89,6 @@ void idCameraView::Save( idSaveGame* savefile ) const
 	savefile->WriteObject( attachedView );
 }
 
-/*
-===============
-idCameraView::Restore
-================
-*/
 void idCameraView::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadFloat( fov );
@@ -121,22 +96,12 @@ void idCameraView::Restore( idRestoreGame* savefile )
 	savefile->ReadObject( reinterpret_cast<idClass*&>( attachedView ) );
 }
 
-/*
-===============
-idCameraView::Event_SetAttachments
-================
-*/
 void idCameraView::Event_SetAttachments()
 {
 	SetAttachment( &attachedTo, "attachedTo" );
 	SetAttachment( &attachedView, "attachedView" );
 }
 
-/*
-===============
-idCameraView::Event_Activate
-================
-*/
 void idCameraView::Event_Activate( idEntity* activator )
 {
 	if( spawnArgs.GetBool( "trigger" ) ) {
@@ -155,11 +120,6 @@ void idCameraView::Event_Activate( idEntity* activator )
 	}
 }
 
-/*
-=====================
-idCameraView::Stop
-=====================
-*/
 void idCameraView::Stop()
 {
 	if( g_debugCinematic.GetBool() ) {
@@ -169,11 +129,6 @@ void idCameraView::Stop()
 	ActivateTargets( gameLocal.GetLocalPlayer() );
 }
 
-/*
-=====================
-idCameraView::Spawn
-=====================
-*/
 void idCameraView::SetAttachment( idEntity** e, const char* p )
 {
 	const char* cam = spawnArgs.GetString( p );
@@ -182,11 +137,6 @@ void idCameraView::SetAttachment( idEntity** e, const char* p )
 	}
 }
 
-/*
-=====================
-idCameraView::Spawn
-=====================
-*/
 void idCameraView::Spawn()
 {
 	// if no target specified use ourself
@@ -201,11 +151,6 @@ void idCameraView::Spawn()
 	UpdateChangeableSpawnArgs( NULL );
 }
 
-/*
-=====================
-idCameraView::GetViewParms
-=====================
-*/
 void idCameraView::GetViewParms( renderView_t* view )
 {
 	assert( view );
@@ -257,11 +202,6 @@ EVENT( EV_Camera_Start, idCameraAnim::Event_Start )
 EVENT( EV_Activate, idCameraAnim::Event_Activate )
 END_CLASS
 
-/*
-=====================
-idCameraAnim::idCameraAnim
-=====================
-*/
 idCameraAnim::idCameraAnim()
 {
 	threadNum = 0;
@@ -272,11 +212,6 @@ idCameraAnim::idCameraAnim()
 	activator = NULL;
 }
 
-/*
-=====================
-idCameraAnim::~idCameraAnim
-=====================
-*/
 idCameraAnim::~idCameraAnim()
 {
 	if( gameLocal.GetCamera() == this ) {
@@ -284,11 +219,6 @@ idCameraAnim::~idCameraAnim()
 	}
 }
 
-/*
-===============
-idCameraAnim::Save
-================
-*/
 void idCameraAnim::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteInt( threadNum );
@@ -299,11 +229,6 @@ void idCameraAnim::Save( idSaveGame* savefile ) const
 	activator.Save( savefile );
 }
 
-/*
-===============
-idCameraAnim::Restore
-================
-*/
 void idCameraAnim::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadInt( threadNum );
@@ -316,11 +241,6 @@ void idCameraAnim::Restore( idRestoreGame* savefile )
 	LoadAnim();
 }
 
-/*
-=====================
-idCameraAnim::Spawn
-=====================
-*/
 void idCameraAnim::Spawn()
 {
 	if( spawnArgs.GetVector( "old_origin", "0 0 0", offset ) ) {
@@ -335,11 +255,6 @@ void idCameraAnim::Spawn()
 	LoadAnim();
 }
 
-/*
-================
-idCameraAnim::Load
-================
-*/
 void idCameraAnim::LoadAnim()
 {
 	int			version;
@@ -470,11 +385,6 @@ void idCameraAnim::LoadAnim()
 	}
 }
 
-/*
-===============
-idCameraAnim::Start
-================
-*/
 void idCameraAnim::Start()
 {
 	cycle = spawnArgs.GetInt( "cycle" );
@@ -496,11 +406,6 @@ void idCameraAnim::Start()
 	}
 }
 
-/*
-=====================
-idCameraAnim::Stop
-=====================
-*/
 void idCameraAnim::Stop()
 {
 	if( gameLocal.GetCamera() == this ) {
@@ -518,20 +423,10 @@ void idCameraAnim::Stop()
 	}
 }
 
-/*
-=====================
-idCameraAnim::Think
-=====================
-*/
 void idCameraAnim::Think()
 {
 }
 
-/*
-=====================
-idCameraAnim::GetViewParms
-=====================
-*/
 void idCameraAnim::GetViewParms( renderView_t* view )
 {
 	int			   realFrame;
@@ -666,11 +561,6 @@ void idCameraAnim::GetViewParms( renderView_t* view )
 	}
 }
 
-/*
-===============
-idCameraAnim::Event_Activate
-================
-*/
 void idCameraAnim::Event_Activate( idEntity* _activator )
 {
 	activator = _activator;
@@ -681,7 +571,6 @@ void idCameraAnim::Event_Activate( idEntity* _activator )
 	}
 }
 
-// HarrievG begin
 void idCameraAnim::gltfLoadAnim( idStr gltfFileName, idStr animName )
 {
 	GLTF_Parser gltf;
@@ -856,33 +745,17 @@ bool idCameraAnim::LoadBinaryCamAnim( idFile* file, const ID_TIME_T sourceTimeSt
 
 	return false;
 }
-// HarrievG end
 
-/*
-===============
-idCameraAnim::Event_Start
-================
-*/
 void idCameraAnim::Event_Start()
 {
 	Start();
 }
 
-/*
-===============
-idCameraAnim::Event_Stop
-================
-*/
 void idCameraAnim::Event_Stop()
 {
 	Stop();
 }
 
-/*
-================
-idCameraAnim::Event_SetCallback
-================
-*/
 void idCameraAnim::Event_SetCallback()
 {
 	if( ( gameLocal.GetCamera() == this ) && !threadNum ) {

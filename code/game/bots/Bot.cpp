@@ -259,11 +259,6 @@ void iceBot::ServerThink()
 	bs.botinput.weapon	 = bs.weaponnum;
 }
 
-/*
-=======================
-iceBot::Damage
-=======================
-*/
 void iceBot::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& dir, const char* damageDefName, const float damageScale, const int location )
 {
 	idPlayer::Damage( inflictor, attacker, dir, damageDefName, damageScale, location );

@@ -464,6 +464,22 @@ def _suppress_body_fetch_warning(func_id: str) -> bool:
         "gltfSampler",
         "gltfSkin",
         "idSwap",
+        "type_void",
+        "type_scriptevent",
+        "type_namespace",
+        "type_string",
+        "type_float",
+        "type_vector",
+        "type_entity",
+        "type_field",
+        "type_function",
+        "type_virtualfunction",
+        "type_pointer",
+        "type_object",
+        "type_jumpoffset",
+        "type_argsize",
+        "type_boolean",
+        "As<eventCallback_",
     )
     return func_id.startswith(prefixes)
 

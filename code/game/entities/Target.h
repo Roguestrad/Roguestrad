@@ -30,193 +30,164 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __GAME_TARGET_H__
 #define __GAME_TARGET_H__
 
-/*
-===============================================================================
-
-idTarget
-
-===============================================================================
+/*!
+	\class idTarget
+	\brief Represents a target entity that can be referenced by other entities in the game.
 */
-
 class idTarget : public idEntity
 {
 public:
 	CLASS_PROTOTYPE( idTarget );
 };
 
-/*
-===============================================================================
-
-idTarget_Remove
-
-===============================================================================
+/*!
+	\class idTarget_Remove
+	\brief A target entity that removes all targeted entities and then destroys itself.
 */
-
 class idTarget_Remove : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_Remove );
 
 private:
+	//! Removes all target entities and then removes itself.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_Show
-
-===============================================================================
+/*!
+	\class idTarget_Show
+	\brief A target entity that shows all target entities and removes itself from the game when activated.
 */
-
 class idTarget_Show : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_Show );
 
 private:
+	//! Shows all target entities and removes itself from the game.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_Damage
-
-===============================================================================
+/*!
+	\class idTarget_Damage
+	\brief A target entity that damages other entities when activated.
 */
-
 class idTarget_Damage : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_Damage );
 
 private:
+	//! Handles the activation event to damage target entities.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_SessionCommand
-
-===============================================================================
+/*!
+	\class idTarget_SessionCommand
+	\brief A target entity that executes a session command upon activation.
 */
-
 class idTarget_SessionCommand : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_SessionCommand );
 
 private:
+	//! Sets the session command to be executed when the target is activated.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_EndLevel
-
-===============================================================================
+/*!
+	\class idTarget_EndLevel
+	\brief Handles the activation event for ending the current level, managing game flow and achievements.
 */
-
 class idTarget_EndLevel : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_EndLevel );
 
 private:
+	//! Handles the activation event for ending the current level, managing game flow and achievements based on the map and player state.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_WaitForButton
-
-===============================================================================
+/*!
+	\class idTarget_WaitForButton
+	\brief A target that waits for a button press event before activating other targets.
 */
-
 class idTarget_WaitForButton : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_WaitForButton );
 
+	//! Processes the waiting for a button press event and activates targets when the attack button is detected.
 	void Think();
 
 private:
+	//! Toggles the active state of the wait-for-button target based on its current state and cinematic settings.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_SetGlobalShaderTime
-
-===============================================================================
+/*!
+	\class idTarget_SetGlobalShaderTime
+	\brief A target entity that sets a global shader time parameter upon activation.
 */
-
 class idTarget_SetGlobalShaderTime : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_SetGlobalShaderTime );
 
 private:
+	//! Sets a global shader parameter to the negative time value when activated.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_SetShaderParm
-
-===============================================================================
+/*!
+	\class idTarget_SetShaderParm
+	\brief A target entity that sets shader parameters and color on other entities when activated.
 */
-
 class idTarget_SetShaderParm : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_SetShaderParm );
 
 private:
+	//! Sets shader parameters and color on target entities when activated.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_SetShaderTime
-
-===============================================================================
+/*!
+	\class idTarget_SetShaderTime
+	\brief A target entity that sets shader time offset on activated.
 */
-
 class idTarget_SetShaderTime : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_SetShaderTime );
 
 private:
+	//! Sets shader time offset for target entities when activated.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_FadeEntity
-
-===============================================================================
+/*!
+	\class idTarget_FadeEntity
+	\brief Manages fade animations for target entities.
 */
-
 class idTarget_FadeEntity : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_FadeEntity );
 
+	//! Initializes a new instance of the idTarget_FadeEntity class with default fade values.
 	idTarget_FadeEntity();
 
+	//! Saves the fade entity state to the provided save file
 	void Save( idSaveGame* savefile ) const;
+
+	//! Restores the fade entity state from a save file.
 	void Restore( idRestoreGame* savefile );
 
+	//! Updates the fade animation for target entities.
 	void Think();
 
 private:
@@ -224,95 +195,83 @@ private:
 	int	   fadeStart;
 	int	   fadeEnd;
 
+	//! Activates the fade entity effect on targeted entities.
 	void   Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_LightFadeIn
-
-===============================================================================
+/*!
+	\class idTarget_LightFadeIn
+	\brief A target entity that triggers a light fade-in effect on targeted lights.
 */
-
 class idTarget_LightFadeIn : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_LightFadeIn );
 
 private:
+	//! Activates the light fade-in effect on targeted light entities.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_LightFadeOut
-
-===============================================================================
+/*!
+	\class idTarget_LightFadeOut
+	\brief Manages activation of light fade out effects on targeted lights.
 */
-
 class idTarget_LightFadeOut : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_LightFadeOut );
 
 private:
+	//! Activates the light fade out effect on targeted lights.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_Give
-
-===============================================================================
+/*!
+	\class idTarget_Give
+	\brief Handles giving items to players when activated.
 */
-
 class idTarget_Give : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_Give );
 
+	//! Activates the target immediately if the 'onSpawn' spawn flag is set.
 	void Spawn();
 
 private:
+	//! Activates the target to give items to the player.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_GiveEmail
-
-===============================================================================
+/*!
+	\class idTarget_GiveEmail
+	\brief Handles the activation event to give an email to the player if a PDA is available.
 */
-
 class idTarget_GiveEmail : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_GiveEmail );
 
 private:
+	//! Handles the activation event to give an email to the player if a PDA is available.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_SetModel
-
-===============================================================================
+/*!
+	\class idTarget_SetModel
+	\brief Manages the dynamic model replacement of target entities.
 */
-
 class idTarget_SetModel : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_SetModel );
 
+	//! Initializes the target set model by loading the specified model if it doesn't already exist.
 	void Spawn();
 
 private:
+	//! Sets the model of target entities to a new model specified in the spawn arguments.
 	void Event_Activate( idEntity* activator );
 };
 
@@ -329,24 +288,49 @@ typedef struct SavedGui_s {
 	idUserInterface* gui[MAX_RENDERENTITY_GUI];
 } SavedGui_t;
 
+/*!
+	\class idTarget_SetInfluence
+	\brief Manages influence settings and entity interactions for targeted influence effects.
+
+	This class implements a target entity that controls influence behaviors, including setting influence levels, gathering nearby entities, and managing visual and audio effects. It handles activation
+   events to modify player influence, restore previous settings, and update the influence field of view. The class supports save and restore functionality for persistent influence states and includes
+   methods for collecting entities based on type and properties. It integrates with the game's entity system to trigger effects and manage player interactions within influence fields.
+
+*/
 class idTarget_SetInfluence : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_SetInfluence );
 
+	//! Constructs an idTarget_SetInfluence object with default values.
 	idTarget_SetInfluence();
 
+	//! Saves the influence target state to a save file.
 	void Save( idSaveGame* savefile ) const;
+
+	//! Restores the influence settings from a saved game file
 	void Restore( idRestoreGame* savefile );
 
+	//! Initializes the influence target entity and queues entity gathering.
 	void Spawn();
 
 private:
+	//! Handles the activation event for a target that sets influence, including triggering targets, fading sounds, updating visuals, and modifying player influence level.
 	void						   Event_Activate( idEntity* activator );
+
+	//! Restores influence settings and entity states after a demonic influence event.
 	void						   Event_RestoreInfluence();
+
+	//! Collects and categorizes entities within a specified radius based on their types and specific properties.
 	void						   Event_GatherEntities();
+
+	//! Sets the flash effect for the player's view.
 	void						   Event_Flash( float flash, int out );
+
+	//! Clears the flash effect on the player's view with the specified duration.
 	void						   Event_ClearFlash( float flash );
+
+	//! Updates the player's influence field of view based on the current settings and deactivates when done.
 	void						   Think();
 
 	idList<int, TAG_TARGET>		   lightList;
@@ -366,149 +350,144 @@ private:
 	idList<SavedGui_t, TAG_TARGET> savedGuiList;
 };
 
-/*
-===============================================================================
-
-idTarget_SetKeyVal
-
-===============================================================================
+/*!
+	\class idTarget_SetKeyVal
+	\brief A target entity that sets key-value pairs on other entities when activated.
 */
-
 class idTarget_SetKeyVal : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_SetKeyVal );
 
 private:
+	//! Sets key-value pairs on target entities when activated.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_SetFov
-
-===============================================================================
+/*!
+	\class idTarget_SetFov
+	\brief Manages field of view settings for target entities.
 */
-
 class idTarget_SetFov : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_SetFov );
 
+	//! Saves the field of view setting data to a save file.
 	void Save( idSaveGame* savefile ) const;
+
+	//! Restores the field of view settings from a save file.
 	void Restore( idRestoreGame* savefile );
 
+	//! Updates the player's field of influence based on the current FOV setting.
 	void Think();
 
 private:
 	idInterpolate<float> fovSetting;
 
+	//! Activates the field of view setting event for the target entity.
 	void				 Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_SetPrimaryObjective
-
-===============================================================================
+/*!
+	\class idTarget_SetPrimaryObjective
+	\brief A target entity that sets the primary objective for the local player upon activation.
 */
-
 class idTarget_SetPrimaryObjective : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_SetPrimaryObjective );
 
 private:
+	//! Sets the primary objective for the local player when activated.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_LockDoor
-
-===============================================================================
+/*!
+	\class idTarget_LockDoor
+	\brief A target entity that toggles the locked state of targeted doors.
 */
-
 class idTarget_LockDoor : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_LockDoor );
 
 private:
+	//! Toggles the locked state of doors targeted by this lock door entity.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_CallObjectFunction
-
-===============================================================================
+/*!
+	\class idTarget_CallObjectFunction
+	\brief A target entity that activates object functions on its targets when triggered.
 */
-
 class idTarget_CallObjectFunction : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_CallObjectFunction );
 
 private:
+	//! Activates the target object function by calling it on all valid targets with the specified function name.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_LockDoor
-
-===============================================================================
+/*!
+	\class idTarget_EnableLevelWeapons
+	\brief A target entity that enables or disables level weapons based on spawn arguments and client activation.
 */
-
 class idTarget_EnableLevelWeapons : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_EnableLevelWeapons );
 
 private:
+	//! Enables or disables level weapons based on the spawn arguments and activates the appropriate weapon for clients.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
+/*!
+	\class idTarget_Tip
+	\brief Manages tip messages displayed to players in response to entity activation.
 
-idTarget_Tip
+	The idTarget_Tip class handles the display and management of tip messages for players. It inherits from idTarget and provides functionality to show tip messages when activated, hide them based on
+   player distance, and manage player position tracking. The class supports save and restore operations for player position data, allowing the tip system to persist across save states. The tip display
+   logic includes scheduling follow-up events to manage visibility based on player proximity, ensuring tips are only shown when appropriate. The class is designed to work within an entity-based system
+   where activation events trigger tip display behavior.
 
-===============================================================================
 */
-
 class idTarget_Tip : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_Tip );
 
+	//! Initializes a new instance of the idTarget_Tip class with default values.
 	idTarget_Tip();
 
+	//! Initializes the idTarget_Tip entity.
 	void Spawn();
 
+	//! Saves the player position to the specified save file.
 	void Save( idSaveGame* savefile ) const;
+
+	//! Restores the player position from the save file.
 	void Restore( idRestoreGame* savefile );
 
 private:
 	idVec3 playerPos;
 
+	//! Displays a tip message to the player when the target is activated.
 	void   Event_Activate( idEntity* activator );
+
+	//! Hides the tip display for the local player if the player is far away, otherwise schedules another tip off event.
 	void   Event_TipOff();
+
+	//! Retrieves the player's position and schedules a follow-up event.
 	void   Event_GetPlayerPos();
 };
 
-/*
-===============================================================================
-
-idTarget_GiveSecurity
-
-===============================================================================
+/*!
+	\class idTarget_GiveSecurity
+	\brief A target that gives security to the player upon activation.
 */
 class idTarget_GiveSecurity : public idTarget
 {
@@ -516,15 +495,13 @@ public:
 	CLASS_PROTOTYPE( idTarget_GiveSecurity );
 
 private:
+	//! Handles the activation event to give security to the player.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_RemoveWeapons
-
-===============================================================================
+/*!
+	\class idTarget_RemoveWeapons
+	\brief Removes all non-essential weapons from players and selects the fists weapon.
 */
 class idTarget_RemoveWeapons : public idTarget
 {
@@ -532,15 +509,13 @@ public:
 	CLASS_PROTOTYPE( idTarget_RemoveWeapons );
 
 private:
+	//! Removes all non-essential weapons from all players and selects the fists weapon.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_LevelTrigger
-
-===============================================================================
+/*!
+	\class idTarget_LevelTrigger
+	\brief A target entity that triggers level-specific events for all players.
 */
 class idTarget_LevelTrigger : public idTarget
 {
@@ -548,15 +523,13 @@ public:
 	CLASS_PROTOTYPE( idTarget_LevelTrigger );
 
 private:
+	//! Sets the level trigger for all players when activated.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_Checkpoint
-
-===============================================================================
+/*!
+	\class idTarget_Checkpoint
+	\brief A checkpoint target that saves the game state when activated.
 */
 class idTarget_Checkpoint : public idTarget
 {
@@ -564,15 +537,13 @@ public:
 	CLASS_PROTOTYPE( idTarget_Checkpoint );
 
 private:
+	//! Saves the game to an autosave slot when the checkpoint target is activated and conditions are met.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_EnableStamina
-
-===============================================================================
+/*!
+	\class idTarget_EnableStamina
+	\brief A target entity that controls the player's stamina system.
 */
 class idTarget_EnableStamina : public idTarget
 {
@@ -580,15 +551,13 @@ public:
 	CLASS_PROTOTYPE( idTarget_EnableStamina );
 
 private:
+	//! Enables or disables player stamina based on the spawn argument setting.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_FadeSoundClass
-
-===============================================================================
+/*!
+	\class idTarget_FadeSoundClass
+	\brief Manages fading sound effects for specific sound classes.
 */
 class idTarget_FadeSoundClass : public idTarget
 {
@@ -596,41 +565,38 @@ public:
 	CLASS_PROTOTYPE( idTarget_FadeSoundClass );
 
 private:
+	//! Activates the sound fading effect for a specified sound class with optional fade duration.
 	void Event_Activate( idEntity* activator );
+
+	//! Restores the volume of sound classes by fading them back in.
 	void Event_RestoreVolume();
 };
 
-/*
-===============================================================================
-
-idTarget_RumbleJoystick
-
-===============================================================================
+/*!
+	\class idTarget_RumbleJoystick
+	\brief Class for controlling joystick rumble effects on local player.
 */
-
 class idTarget_RumbleJoystick : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_RumbleJoystick );
 
 private:
+	//! Activates joystick rumble effect on the local player based on spawn arguments.
 	void Event_Activate( idEntity* activator );
 };
 
-/*
-===============================================================================
-
-idTarget_Achievement
-
-===============================================================================
+/*!
+	\class idTarget_Achievement
+	\brief A target class for handling achievement activation events.
 */
-
 class idTarget_Achievement : public idTarget
 {
 public:
 	CLASS_PROTOTYPE( idTarget_Achievement );
 
 private:
+	//! Handles the activation event for an achievement target.
 	void Event_Activate( idEntity* activator );
 };
 

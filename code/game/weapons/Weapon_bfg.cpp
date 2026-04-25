@@ -51,11 +51,6 @@ END_CLASS
 #define BFG_FIRE_TO_IDLE   4
 #define BFG_RELOAD_TO_IDLE 4
 
-/*
-===============
-iceWeaponBFG::Init
-===============
-*/
 void iceWeaponBFG::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -70,11 +65,6 @@ void iceWeaponBFG::Init( idWeapon* weapon )
 	owner->Event_SetGuiFloat( "overcharge", 0 );
 }
 
-/*
-===============
-iceWeaponBFG::Raise
-===============
-*/
 stateResult_t iceWeaponBFG::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -95,11 +85,6 @@ stateResult_t iceWeaponBFG::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponBFG::Lower
-===============
-*/
 stateResult_t iceWeaponBFG::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -121,11 +106,6 @@ stateResult_t iceWeaponBFG::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponBFG::Idle
-===============
-*/
 stateResult_t iceWeaponBFG::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -151,11 +131,6 @@ stateResult_t iceWeaponBFG::Idle( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponBFG::Fire
-===============
-*/
 stateResult_t iceWeaponBFG::Fire( stateParms_t* parms )
 {
 	float time_held;
@@ -257,12 +232,6 @@ stateResult_t iceWeaponBFG::Fire( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponBFG::OverCharge
-===============
-*/
-
 void iceWeaponBFG::OverCharge()
 {
 	idStr	  entname;
@@ -295,11 +264,6 @@ void iceWeaponBFG::OverCharge()
 	gameLocal.RadiusDamage( owner->GetOrigin(), owner, owner->GetOwner(), nullptr, nullptr, "damage_bfg_overcharge", 1.0 );
 }
 
-/*
-===============
-iceWeaponBFG::Reload
-===============
-*/
 stateResult_t iceWeaponBFG::Reload( stateParms_t* parms )
 {
 	enum RELOAD_State { RELOAD_NOTSET = 0, RELOAD_WAIT };

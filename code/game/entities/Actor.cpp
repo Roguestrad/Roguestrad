@@ -39,11 +39,6 @@ If you have questions concerning this license or the applicable additional terms
 
 ***********************************************************************/
 
-/*
-=====================
-idAnimState::idAnimState
-=====================
-*/
 idAnimState::idAnimState()
 {
 	self				= NULL;
@@ -56,21 +51,11 @@ idAnimState::idAnimState()
 	lastAnimBlendFrames = 0;
 }
 
-/*
-=====================
-idAnimState::~idAnimState
-=====================
-*/
 idAnimState::~idAnimState()
 {
 	delete thread;
 }
 
-/*
-=====================
-idAnimState::Save
-=====================
-*/
 void idAnimState::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteObject( self );
@@ -89,11 +74,6 @@ void idAnimState::Save( idSaveGame* savefile ) const
 	savefile->WriteBool( disabled );
 }
 
-/*
-=====================
-idAnimState::Restore
-=====================
-*/
 void idAnimState::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadObject( reinterpret_cast<idClass*&>( self ) );
@@ -115,11 +95,6 @@ void idAnimState::Restore( idRestoreGame* savefile )
 	savefile->ReadBool( disabled );
 }
 
-/*
-=====================
-idAnimState::Init
-=====================
-*/
 void idAnimState::Init( idActor* owner, idAnimator* _animator, int animchannel )
 {
 	assert( owner );
@@ -138,22 +113,12 @@ void idAnimState::Init( idActor* owner, idAnimator* _animator, int animchannel )
 	stateThread.SetOwner( owner );
 }
 
-/*
-=====================
-idAnimState::Shutdown
-=====================
-*/
 void idAnimState::Shutdown()
 {
 	delete thread;
 	thread = NULL;
 }
 
-/*
-=====================
-idAnimState::SetState
-=====================
-*/
 void idAnimState::SetState( const char* statename, int blendFrames )
 {
 	bool			  hasNative = self->HasNativeFunction( statename );
@@ -186,22 +151,12 @@ void idAnimState::SetState( const char* statename, int blendFrames )
 	}
 }
 
-/*
-=====================
-idAnimState::StopAnim
-=====================
-*/
 void idAnimState::StopAnim( int frames )
 {
 	animBlendFrames = 0;
 	animator->Clear( channel, gameLocal.time, FRAME2MS( frames ) );
 }
 
-/*
-=====================
-idAnimState::PlayAnim
-=====================
-*/
 void idAnimState::PlayAnim( int anim )
 {
 	if( anim ) {
@@ -210,11 +165,6 @@ void idAnimState::PlayAnim( int anim )
 	animBlendFrames = 0;
 }
 
-/*
-=====================
-idAnimState::CycleAnim
-=====================
-*/
 void idAnimState::CycleAnim( int anim )
 {
 	if( anim ) {
@@ -223,31 +173,16 @@ void idAnimState::CycleAnim( int anim )
 	animBlendFrames = 0;
 }
 
-/*
-=====================
-idAnimState::BecomeIdle
-=====================
-*/
 void idAnimState::BecomeIdle()
 {
 	idleAnim = true;
 }
 
-/*
-=====================
-idAnimState::Disabled
-=====================
-*/
 bool idAnimState::Disabled() const
 {
 	return disabled;
 }
 
-/*
-=====================
-idAnimState::AnimDone
-=====================
-*/
 bool idAnimState::AnimDone( int blendFrames ) const
 {
 	int animDoneTime;
@@ -263,21 +198,11 @@ bool idAnimState::AnimDone( int blendFrames ) const
 	}
 }
 
-/*
-=====================
-idAnimState::IsIdle
-=====================
-*/
 bool idAnimState::IsIdle() const
 {
 	return disabled || idleAnim;
 }
 
-/*
-=====================
-idAnimState::GetAnimFlags
-=====================
-*/
 animFlags_t idAnimState::GetAnimFlags() const
 {
 	animFlags_t flags;
@@ -290,11 +215,6 @@ animFlags_t idAnimState::GetAnimFlags() const
 	return flags;
 }
 
-/*
-=====================
-idAnimState::Enable
-=====================
-*/
 void idAnimState::Enable( int blendFrames )
 {
 	if( disabled ) {
@@ -307,22 +227,12 @@ void idAnimState::Enable( int blendFrames )
 	}
 }
 
-/*
-=====================
-idAnimState::Disable
-=====================
-*/
 void idAnimState::Disable()
 {
 	disabled = true;
 	idleAnim = false;
 }
 
-/*
-=====================
-idAnimState::UpdateState
-=====================
-*/
 bool idAnimState::UpdateState()
 {
 	if( disabled ) {
@@ -448,11 +358,6 @@ EVENT( EV_SetWaitState, idActor::Event_SetWaitState )
 EVENT( EV_GetWaitState, idActor::Event_GetWaitState )
 END_CLASS
 
-/*
-=====================
-idActor::idActor
-=====================
-*/
 idActor::idActor()
 {
 	viewAxis.Identity();
@@ -505,11 +410,6 @@ idActor::idActor()
 	damageCap = -1;
 }
 
-/*
-=====================
-idActor::~idActor
-=====================
-*/
 idActor::~idActor()
 {
 	int		  i;
@@ -541,11 +441,6 @@ idActor::~idActor()
 	ShutdownThreads();
 }
 
-/*
-=====================
-idActor::Spawn
-=====================
-*/
 void idActor::Spawn()
 {
 	idEntity*	 ent;
@@ -684,11 +579,6 @@ void idActor::Spawn()
 	FinishSetup();
 }
 
-/*
-================
-idActor::FinishSetup
-================
-*/
 void idActor::FinishSetup()
 {
 	const char* scriptObjectName;
@@ -705,11 +595,6 @@ void idActor::FinishSetup()
 	SetupBody();
 }
 
-/*
-================
-idActor::SetupHead
-================
-*/
 void idActor::SetupHead()
 {
 	idAFAttachment*	  headEnt;
@@ -776,11 +661,6 @@ void idActor::SetupHead()
 	}
 }
 
-/*
-================
-idActor::CopyJointsFromBodyToHead
-================
-*/
 void idActor::CopyJointsFromBodyToHead()
 {
 	idEntity*	headEnt = head.GetEntity();
@@ -812,11 +692,6 @@ void idActor::CopyJointsFromBodyToHead()
 	}
 }
 
-/*
-================
-idActor::Restart
-================
-*/
 void idActor::Restart()
 {
 	assert( !head.GetEntity() );
@@ -824,13 +699,6 @@ void idActor::Restart()
 	FinishSetup();
 }
 
-/*
-================
-idActor::Save
-
-archive object for savegame file
-================
-*/
 void idActor::Save( idSaveGame* savefile ) const
 {
 	idActor* ent;
@@ -940,13 +808,6 @@ void idActor::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( damageCap );
 }
 
-/*
-================
-idActor::Restore
-
-unarchives object from save game file
-================
-*/
 void idActor::Restore( idRestoreGame* savefile )
 {
 	int		 i, num;
@@ -1051,11 +912,6 @@ void idActor::Restore( idRestoreGame* savefile )
 	savefile->ReadInt( damageCap );
 }
 
-/*
-================
-idActor::Hide
-================
-*/
 void idActor::Hide()
 {
 	idEntity* ent;
@@ -1078,11 +934,6 @@ void idActor::Hide()
 	UnlinkCombat();
 }
 
-/*
-================
-idActor::Show
-================
-*/
 void idActor::Show()
 {
 	idEntity* ent;
@@ -1106,21 +957,11 @@ void idActor::Show()
 	LinkCombat();
 }
 
-/*
-==============
-idActor::GetDefaultSurfaceType
-==============
-*/
 int idActor::GetDefaultSurfaceType() const
 {
 	return SURFTYPE_FLESH;
 }
 
-/*
-================
-idActor::ProjectOverlay
-================
-*/
 void idActor::ProjectOverlay( const idVec3& origin, const idVec3& dir, float size, const char* material )
 {
 	idEntity* ent;
@@ -1138,11 +979,6 @@ void idActor::ProjectOverlay( const idVec3& origin, const idVec3& dir, float siz
 	}
 }
 
-/*
-================
-idActor::LoadAF
-================
-*/
 bool idActor::LoadAF()
 {
 	idStr fileName;
@@ -1154,11 +990,6 @@ bool idActor::LoadAF()
 	return af.Load( this, fileName );
 }
 
-/*
-=====================
-idActor::SetupBody
-=====================
-*/
 void idActor::SetupBody()
 {
 	const char* jointname;
@@ -1226,11 +1057,6 @@ void idActor::SetupBody()
 	legsAnim.Init( this, &animator, ANIMCHANNEL_LEGS );
 }
 
-/*
-=====================
-idActor::CheckBlink
-=====================
-*/
 void idActor::CheckBlink()
 {
 	// check if it's time to blink
@@ -1249,11 +1075,6 @@ void idActor::CheckBlink()
 	blink_time = gameLocal.time + blink_min + gameLocal.random.RandomFloat() * ( blink_max - blink_min );
 }
 
-/*
-================
-idActor::GetPhysicsToVisualTransform
-================
-*/
 bool idActor::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis )
 {
 	if( af.IsActive() ) {
@@ -1265,11 +1086,6 @@ bool idActor::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis )
 	return true;
 }
 
-/*
-================
-idActor::GetPhysicsToSoundTransform
-================
-*/
 bool idActor::GetPhysicsToSoundTransform( idVec3& origin, idMat3& axis )
 {
 	if( soundJoint != INVALID_JOINT ) {
@@ -1289,11 +1105,6 @@ bool idActor::GetPhysicsToSoundTransform( idVec3& origin, idMat3& axis )
 
 ***********************************************************************/
 
-/*
-================
-idActor::ShutdownThreads
-================
-*/
 void idActor::ShutdownThreads()
 {
 	headAnim.Shutdown();
@@ -1308,27 +1119,11 @@ void idActor::ShutdownThreads()
 	}
 }
 
-/*
-================
-idActor::ShouldConstructScriptObjectAtSpawn
-
-Called during idEntity::Spawn to see if it should construct the script object or not.
-Overridden by subclasses that need to spawn the script object themselves.
-================
-*/
 bool idActor::ShouldConstructScriptObjectAtSpawn() const
 {
 	return false;
 }
 
-/*
-================
-idActor::ConstructScriptObject
-
-Called during idEntity::Spawn.  Calls the constructor on the script object.
-Can be overridden by subclasses when a thread doesn't need to be allocated.
-================
-*/
 idThread* idActor::ConstructScriptObject()
 {
 	const function_t* constructor;
@@ -1365,11 +1160,6 @@ idThread* idActor::ConstructScriptObject()
 	return scriptThread;
 }
 
-/*
-=====================
-idActor::GetScriptFunction
-=====================
-*/
 const function_t* idActor::GetScriptFunction( const char* funcname )
 {
 	const function_t* func;
@@ -1382,11 +1172,6 @@ const function_t* idActor::GetScriptFunction( const char* funcname )
 	return func;
 }
 
-/*
-=====================
-idActor::SetState
-=====================
-*/
 void idActor::SetState( const function_t* newState )
 {
 	if( newState == NULL ) {
@@ -1403,11 +1188,6 @@ void idActor::SetState( const function_t* newState )
 	scriptThread->CallFunction( this, state, true );
 }
 
-/*
-=====================
-idActor::SetState
-=====================
-*/
 void idActor::SetState( const char* statename )
 {
 	const function_t* newState;
@@ -1422,11 +1202,6 @@ void idActor::SetState( const char* statename )
 	// jmarshall end
 }
 
-/*
-=====================
-idActor::UpdateScript
-=====================
-*/
 void idActor::UpdateScript()
 {
 	int i;
@@ -1466,72 +1241,37 @@ void idActor::UpdateScript()
 
 ***********************************************************************/
 
-/*
-=====================
-idActor::setFov
-=====================
-*/
 void idActor::SetFOV( float fov )
 {
 	fovDot = ( float )cos( DEG2RAD( fov * 0.5f ) );
 }
 
-/*
-=====================
-idActor::SetEyeHeight
-=====================
-*/
 void idActor::SetEyeHeight( float height )
 {
 	eyeOffset.z = height;
 }
 
-/*
-=====================
-idActor::EyeHeight
-=====================
-*/
 float idActor::EyeHeight() const
 {
 	return eyeOffset.z;
 }
 
-/*
-=====================
-idActor::EyeOffset
-=====================
-*/
 idVec3 idActor::EyeOffset() const
 {
 	return GetPhysics()->GetGravityNormal() * -eyeOffset.z;
 }
 
-/*
-=====================
-idActor::GetEyePosition
-=====================
-*/
 idVec3 idActor::GetEyePosition() const
 {
 	return GetPhysics()->GetOrigin() + ( GetPhysics()->GetGravityNormal() * -eyeOffset.z );
 }
 
-/*
-=====================
-idActor::GetViewPos
-=====================
-*/
 void idActor::GetViewPos( idVec3& origin, idMat3& axis ) const
 {
 	origin = GetEyePosition();
 	axis   = viewAxis;
 }
 
-/*
-=====================
-idActor::CheckFOV
-=====================
-*/
 bool idActor::CheckFOV( const idVec3& pos ) const
 {
 	if( fovDot == 1.0f ) {
@@ -1555,11 +1295,6 @@ bool idActor::CheckFOV( const idVec3& pos ) const
 	return ( dot >= fovDot );
 }
 
-/*
-=====================
-idActor::CanSee
-=====================
-*/
 bool idActor::CanSee( idEntity* ent, bool useFov ) const
 {
 	trace_t tr;
@@ -1590,11 +1325,6 @@ bool idActor::CanSee( idEntity* ent, bool useFov ) const
 	return false;
 }
 
-/*
-=====================
-idActor::PointVisible
-=====================
-*/
 bool idActor::PointVisible( const idVec3& point ) const
 {
 	trace_t results;
@@ -1608,24 +1338,12 @@ bool idActor::PointVisible( const idVec3& point ) const
 	return ( results.fraction >= 1.0f );
 }
 
-/*
-=====================
-idActor::GetAIAimTargets
-
-Returns positions for the AI to aim at.
-=====================
-*/
 void idActor::GetAIAimTargets( const idVec3& lastSightPos, idVec3& headPos, idVec3& chestPos )
 {
 	headPos	 = lastSightPos + EyeOffset();
 	chestPos = ( headPos + lastSightPos + GetPhysics()->GetBounds().GetCenter() ) * 0.5f;
 }
 
-/*
-=====================
-idActor::GetRenderView
-=====================
-*/
 renderView_t* idActor::GetRenderView()
 {
 	renderView_t* rv			= idEntity::GetRenderView();
@@ -1640,11 +1358,6 @@ renderView_t* idActor::GetRenderView()
 
 ***********************************************************************/
 
-/*
-================
-idActor::SetCombatModel
-================
-*/
 void idActor::SetCombatModel()
 {
 	idAFAttachment* headEnt;
@@ -1664,21 +1377,11 @@ void idActor::SetCombatModel()
 	}
 }
 
-/*
-================
-idActor::GetCombatModel
-================
-*/
 idClipModel* idActor::GetCombatModel() const
 {
 	return combatModel;
 }
 
-/*
-================
-idActor::LinkCombat
-================
-*/
 void idActor::LinkCombat()
 {
 	idAFAttachment* headEnt;
@@ -1696,11 +1399,6 @@ void idActor::LinkCombat()
 	}
 }
 
-/*
-================
-idActor::UnlinkCombat
-================
-*/
 void idActor::UnlinkCombat()
 {
 	idAFAttachment* headEnt;
@@ -1714,11 +1412,6 @@ void idActor::UnlinkCombat()
 	}
 }
 
-/*
-================
-idActor::StartRagdoll
-================
-*/
 bool idActor::StartRagdoll()
 {
 	float slomoStart, slomoEnd;
@@ -1772,11 +1465,6 @@ bool idActor::StartRagdoll()
 	return true;
 }
 
-/*
-================
-idActor::StopRagdoll
-================
-*/
 void idActor::StopRagdoll()
 {
 	if( af.IsActive() ) {
@@ -1784,11 +1472,6 @@ void idActor::StopRagdoll()
 	}
 }
 
-/*
-================
-idActor::UpdateAnimationControllers
-================
-*/
 bool idActor::UpdateAnimationControllers()
 {
 	if( af.IsActive() ) {
@@ -1805,11 +1488,6 @@ bool idActor::UpdateAnimationControllers()
 	return false;
 }
 
-/*
-================
-idActor::RemoveAttachments
-================
-*/
 void idActor::RemoveAttachments()
 {
 	int		  i;
@@ -1824,11 +1502,6 @@ void idActor::RemoveAttachments()
 	}
 }
 
-/*
-================
-idActor::Attach
-================
-*/
 void idActor::Attach( idEntity* ent )
 {
 	idVec3		  origin;
@@ -1860,11 +1533,6 @@ void idActor::Attach( idEntity* ent )
 	ent->cinematic = cinematic;
 }
 
-/*
-================
-idActor::Teleport
-================
-*/
 void idActor::Teleport( const idVec3& origin, const idAngles& angles, idEntity* destination )
 {
 	GetPhysics()->SetOrigin( origin + idVec3( 0, 0, CM_CLIP_EPSILON ) );
@@ -1880,31 +1548,16 @@ void idActor::Teleport( const idVec3& origin, const idAngles& angles, idEntity* 
 	}
 }
 
-/*
-================
-idActor::GetDeltaViewAngles
-================
-*/
 const idAngles& idActor::GetDeltaViewAngles() const
 {
 	return deltaViewAngles;
 }
 
-/*
-================
-idActor::SetDeltaViewAngles
-================
-*/
 void idActor::SetDeltaViewAngles( const idAngles& delta )
 {
 	deltaViewAngles = delta;
 }
 
-/*
-================
-idActor::HasEnemies
-================
-*/
 bool idActor::HasEnemies() const
 {
 	idActor* ent;
@@ -1917,21 +1570,11 @@ bool idActor::HasEnemies() const
 
 	return false;
 }
-/*
-================
-idActor::AnimDone
-================
-*/
 bool idActor::AnimDone( int channel, int blendFrames )
 {
 	return GetAnimStateVar( channel ).AnimDone( blendFrames );
 }
 
-/*
-================
-idActor::ClosestEnemyToPoint
-================
-*/
 idActor* idActor::ClosestEnemyToPoint( const idVec3& pos )
 {
 	idActor* ent;
@@ -1957,11 +1600,6 @@ idActor* idActor::ClosestEnemyToPoint( const idVec3& pos )
 	return bestEnt;
 }
 
-/*
-================
-idActor::EnemyWithMostHealth
-================
-*/
 idActor* idActor::EnemyWithMostHealth()
 {
 	idActor* ent;
@@ -1978,21 +1616,11 @@ idActor* idActor::EnemyWithMostHealth()
 	return bestEnt;
 }
 
-/*
-================
-idActor::OnLadder
-================
-*/
 bool idActor::OnLadder() const
 {
 	return false;
 }
 
-/*
-==============
-idActor::GetAASLocation
-==============
-*/
 void idActor::GetAASLocation( idAAS* aas, idVec3& pos, int& areaNum ) const
 {
 	idVec3	 size;
@@ -2021,11 +1649,6 @@ void idActor::GetAASLocation( idAAS* aas, idVec3& pos, int& areaNum ) const
 
 ***********************************************************************/
 
-/*
-=====================
-idActor::SetAnimState
-=====================
-*/
 void idActor::SetAnimState( int channel, const char* statename, int blendFrames )
 {
 	const function_t* func;
@@ -2062,11 +1685,6 @@ void idActor::SetAnimState( int channel, const char* statename, int blendFrames 
 	}
 }
 
-/*
-=====================
-idActor::GetAnimState
-=====================
-*/
 const char* idActor::GetAnimState( int channel ) const
 {
 	switch( channel ) {
@@ -2089,11 +1707,6 @@ const char* idActor::GetAnimState( int channel ) const
 	}
 }
 
-/*
-=====================
-idActor::GetAnimStateVar
-=====================
-*/
 idAnimState& idActor::GetAnimStateVar( int channel )
 {
 	switch( channel ) {
@@ -2109,11 +1722,6 @@ idAnimState& idActor::GetAnimStateVar( int channel )
 	}
 }
 
-/*
-=====================
-idActor::InAnimState
-=====================
-*/
 bool idActor::InAnimState( int channel, const char* statename ) const
 {
 	switch( channel ) {
@@ -2143,11 +1751,6 @@ bool idActor::InAnimState( int channel, const char* statename ) const
 	return false;
 }
 
-/*
-=====================
-idActor::WaitState
-=====================
-*/
 const char* idActor::WaitState() const
 {
 	if( waitState.Length() ) {
@@ -2157,21 +1760,11 @@ const char* idActor::WaitState() const
 	}
 }
 
-/*
-=====================
-idActor::SetWaitState
-=====================
-*/
 void idActor::SetWaitState( const char* _waitstate )
 {
 	waitState = _waitstate;
 }
 
-/*
-=====================
-idActor::UpdateAnimState
-=====================
-*/
 void idActor::UpdateAnimState()
 {
 	headAnim.UpdateState();
@@ -2179,11 +1772,6 @@ void idActor::UpdateAnimState()
 	legsAnim.UpdateState();
 }
 
-/*
-=====================
-idActor::GetAnim
-=====================
-*/
 int idActor::GetAnim( int channel, const char* animname )
 {
 	int			anim;
@@ -2212,11 +1800,6 @@ int idActor::GetAnim( int channel, const char* animname )
 	return anim;
 }
 
-/*
-===============
-idActor::SyncAnimChannels
-===============
-*/
 void idActor::SyncAnimChannels( int channel, int syncToChannel, int blendFrames )
 {
 	idAnimator*		headAnimator;
@@ -2279,11 +1862,6 @@ void idActor::SyncAnimChannels( int channel, int syncToChannel, int blendFrames 
 
 ***********************************************************************/
 
-/*
-============
-idActor::Gib
-============
-*/
 void idActor::Gib( const idVec3& dir, const char* damageDefName )
 {
 	// no gibbing in multiplayer - by self damage or by moving objects
@@ -2493,21 +2071,11 @@ void   idActor::Damage( idEntity* inflictor, idEntity* attacker, const idVec3& d
 	}
 }
 
-/*
-=====================
-idActor::ClearPain
-=====================
-*/
 void idActor::ClearPain()
 {
 	pain_debounce_time = 0;
 }
 
-/*
-=====================
-idActor::Pain
-=====================
-*/
 bool idActor::Pain( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 	if( af.IsLoaded() ) {
@@ -2586,24 +2154,12 @@ bool idActor::Pain( idEntity* inflictor, idEntity* attacker, int damage, const i
 	return true;
 }
 
-/*
-=====================
-idActor::SpawnGibs
-=====================
-*/
 void idActor::SpawnGibs( const idVec3& dir, const char* damageDefName )
 {
 	idAFEntity_Gibbable::SpawnGibs( dir, damageDefName );
 	RemoveAttachments();
 }
 
-/*
-=====================
-idActor::SetupDamageGroups
-
-FIXME: only store group names once and store an index for each joint
-=====================
-*/
 void idActor::SetupDamageGroups()
 {
 	int					  i;
@@ -2663,11 +2219,6 @@ void idActor::SetupDamageGroups()
 	}
 }
 
-/*
-=====================
-idActor::GetDamageForLocation
-=====================
-*/
 int idActor::GetDamageForLocation( int damage, int location )
 {
 	if( ( location < 0 ) || ( location >= damageScale.Num() ) ) {
@@ -2677,11 +2228,6 @@ int idActor::GetDamageForLocation( int damage, int location )
 	return ( int )ceil( damage * damageScale[location] );
 }
 
-/*
-=====================
-idActor::GetDamageGroup
-=====================
-*/
 const char* idActor::GetDamageGroup( int location )
 {
 	if( ( location < 0 ) || ( location >= damageGroups.Num() ) ) {
@@ -2697,11 +2243,6 @@ const char* idActor::GetDamageGroup( int location )
 
 ***********************************************************************/
 
-/*
-=====================
-idActor::Event_EnableEyeFocus
-=====================
-*/
 void idActor::PlayFootStepSound()
 {
 	const char*		  sound = NULL;
@@ -2724,22 +2265,12 @@ void idActor::PlayFootStepSound()
 	}
 }
 
-/*
-=====================
-idActor::Event_EnableEyeFocus
-=====================
-*/
 void idActor::Event_EnableEyeFocus()
 {
 	allowEyeFocus = true;
 	blink_time	  = gameLocal.time + blink_min + gameLocal.random.RandomFloat() * ( blink_max - blink_min );
 }
 
-/*
-=====================
-idActor::Event_DisableEyeFocus
-=====================
-*/
 void idActor::Event_DisableEyeFocus()
 {
 	allowEyeFocus = false;
@@ -2752,91 +2283,46 @@ void idActor::Event_DisableEyeFocus()
 	}
 }
 
-/*
-===============
-idActor::Event_Footstep
-===============
-*/
 void idActor::Event_Footstep()
 {
 	PlayFootStepSound();
 }
 
-/*
-=====================
-idActor::Event_EnableWalkIK
-=====================
-*/
 void idActor::Event_EnableWalkIK()
 {
 	walkIK.EnableAll();
 }
 
-/*
-=====================
-idActor::Event_DisableWalkIK
-=====================
-*/
 void idActor::Event_DisableWalkIK()
 {
 	walkIK.DisableAll();
 }
 
-/*
-=====================
-idActor::Event_EnableLegIK
-=====================
-*/
 void idActor::Event_EnableLegIK( int num )
 {
 	walkIK.EnableLeg( num );
 }
 
-/*
-=====================
-idActor::Event_DisableLegIK
-=====================
-*/
 void idActor::Event_DisableLegIK( int num )
 {
 	walkIK.DisableLeg( num );
 }
 
-/*
-=====================
-idActor::Event_PreventPain
-=====================
-*/
 void idActor::Event_PreventPain( float duration )
 {
 	painTime = gameLocal.time + SEC2MS( duration );
 }
 
-/*
-===============
-idActor::Event_DisablePain
-===============
-*/
 void idActor::Event_DisablePain()
 {
 	allowPain = false;
 }
 
-/*
-===============
-idActor::Event_EnablePain
-===============
-*/
 void idActor::Event_EnablePain()
 {
 	allowPain = true;
 }
 
-/*
-=====================
-idActor::Event_GetPainAnim
-=====================
-*/
 void idActor::Event_GetPainAnim()
 {
 	if( !painAnim.Length() ) {
@@ -2846,21 +2332,11 @@ void idActor::Event_GetPainAnim()
 	}
 }
 
-/*
-=====================
-idActor::Event_SetAnimPrefix
-=====================
-*/
 void idActor::Event_SetAnimPrefix( const char* prefix )
 {
 	animPrefix = prefix;
 }
 
-/*
-===============
-idActor::Event_StopAnim
-===============
-*/
 void idActor::Event_StopAnim( int channel, int frames )
 {
 	switch( channel ) {
@@ -2882,11 +2358,6 @@ void idActor::Event_StopAnim( int channel, int frames )
 	}
 }
 
-/*
-===============
-idActor::Event_PlayAnim
-===============
-*/
 void idActor::Event_PlayAnim( int channel, const char* animname )
 {
 	animFlags_t flags;
@@ -2963,11 +2434,6 @@ void idActor::Event_PlayAnim( int channel, const char* animname )
 	idThread::ReturnInt( 1 );
 }
 
-/*
-===============
-idActor::Event_PlayCycle
-===============
-*/
 void idActor::Event_PlayCycle( int channel, const char* animname )
 {
 	animFlags_t flags;
@@ -3038,11 +2504,6 @@ void idActor::Event_PlayCycle( int channel, const char* animname )
 	idThread::ReturnInt( true );
 }
 
-/*
-===============
-idActor::Event_IdleAnim
-===============
-*/
 void idActor::Event_IdleAnim( int channel, const char* animname )
 {
 	int anim;
@@ -3146,11 +2607,6 @@ void idActor::Event_IdleAnim( int channel, const char* animname )
 	idThread::ReturnInt( true );
 }
 
-/*
-================
-idActor::Event_SetSyncedAnimWeight
-================
-*/
 void idActor::Event_SetSyncedAnimWeight( int channel, int anim, float weight )
 {
 	idEntity* headEnt;
@@ -3196,11 +2652,6 @@ void idActor::Event_SetSyncedAnimWeight( int channel, int anim, float weight )
 	}
 }
 
-/*
-===============
-idActor::Event_OverrideAnim
-===============
-*/
 void idActor::Event_OverrideAnim( int channel )
 {
 	switch( channel ) {
@@ -3232,11 +2683,6 @@ void idActor::Event_OverrideAnim( int channel )
 	}
 }
 
-/*
-===============
-idActor::Event_EnableAnim
-===============
-*/
 void idActor::Event_EnableAnim( int channel, int blendFrames )
 {
 	switch( channel ) {
@@ -3258,11 +2704,6 @@ void idActor::Event_EnableAnim( int channel, int blendFrames )
 	}
 }
 
-/*
-===============
-idActor::Event_SetBlendFrames
-===============
-*/
 void idActor::Event_SetBlendFrames( int channel, int blendFrames )
 {
 	switch( channel ) {
@@ -3287,11 +2728,6 @@ void idActor::Event_SetBlendFrames( int channel, int blendFrames )
 	}
 }
 
-/*
-===============
-idActor::Event_GetBlendFrames
-===============
-*/
 void idActor::Event_GetBlendFrames( int channel )
 {
 	switch( channel ) {
@@ -3313,21 +2749,11 @@ void idActor::Event_GetBlendFrames( int channel )
 	}
 }
 
-/*
-===============
-idActor::Event_AnimState
-===============
-*/
 void idActor::Event_AnimState( int channel, const char* statename, int blendFrames )
 {
 	SetAnimState( channel, statename, blendFrames );
 }
 
-/*
-===============
-idActor::Event_GetAnimState
-===============
-*/
 void idActor::Event_GetAnimState( int channel )
 {
 	const char* state;
@@ -3336,11 +2762,6 @@ void idActor::Event_GetAnimState( int channel )
 	idThread::ReturnString( state );
 }
 
-/*
-===============
-idActor::Event_InAnimState
-===============
-*/
 void idActor::Event_InAnimState( int channel, const char* statename )
 {
 	bool instate;
@@ -3349,11 +2770,6 @@ void idActor::Event_InAnimState( int channel, const char* statename )
 	idThread::ReturnInt( instate );
 }
 
-/*
-===============
-idActor::Event_FinishAction
-===============
-*/
 void idActor::Event_FinishAction( const char* actionname )
 {
 	if( waitState == actionname ) {
@@ -3361,21 +2777,11 @@ void idActor::Event_FinishAction( const char* actionname )
 	}
 }
 
-/*
-===============
-idActor::Event_AnimDone
-===============
-*/
 void idActor::Event_AnimDone( int channel, int blendFrames )
 {
 	idThread::ReturnInt( AnimDone( channel, blendFrames ) );
 }
 
-/*
-===============
-idActor::Event_AnimDone
-===============
-*/
 bool idActor::AnimDone( int channel, int blendFrames ) const
 {
 	bool result;
@@ -3400,11 +2806,6 @@ bool idActor::AnimDone( int channel, int blendFrames ) const
 	return result;
 }
 
-/*
-================
-idActor::Event_HasAnim
-================
-*/
 void idActor::Event_HasAnim( int channel, const char* animname )
 {
 	if( GetAnim( channel, animname ) != 0 ) {
@@ -3414,11 +2815,6 @@ void idActor::Event_HasAnim( int channel, const char* animname )
 	}
 }
 
-/*
-================
-idActor::Event_CheckAnim
-================
-*/
 void idActor::Event_CheckAnim( int channel, const char* animname )
 {
 	if( !GetAnim( channel, animname ) ) {
@@ -3430,11 +2826,6 @@ void idActor::Event_CheckAnim( int channel, const char* animname )
 	}
 }
 
-/*
-================
-idActor::ChooseAnim
-================
-*/
 idStr idActor::ChooseAnim( int channel, const char* animname )
 {
 	int anim;
@@ -3453,21 +2844,11 @@ idStr idActor::ChooseAnim( int channel, const char* animname )
 	return "";
 }
 
-/*
-================
-idActor::Event_ChooseAnim
-================
-*/
 void idActor::Event_ChooseAnim( int channel, const char* animname )
 {
 	idThread::ReturnString( ChooseAnim( channel, animname ) );
 }
 
-/*
-================
-idActor::Event_AnimLength
-================
-*/
 float idActor::AnimLength( int channel, const char* animname )
 {
 	int anim;
@@ -3486,21 +2867,11 @@ float idActor::AnimLength( int channel, const char* animname )
 	return ( 0.0f );
 }
 
-/*
-================
-idActor::Event_AnimLength
-================
-*/
 void idActor::Event_AnimLength( int channel, const char* animname )
 {
 	idThread::ReturnFloat( AnimLength( channel, animname ) );
 }
 
-/*
-================
-idActor::Event_AnimDistance
-================
-*/
 void idActor::Event_AnimDistance( int channel, const char* animname )
 {
 	int anim;
@@ -3521,11 +2892,6 @@ void idActor::Event_AnimDistance( int channel, const char* animname )
 	idThread::ReturnFloat( 0.0f );
 }
 
-/*
-================
-idActor::Event_HasEnemies
-================
-*/
 void idActor::Event_HasEnemies()
 {
 	bool hasEnemy;
@@ -3534,20 +2900,10 @@ void idActor::Event_HasEnemies()
 	idThread::ReturnInt( hasEnemy );
 }
 
-/*
-================
-idActor::Event_NextEnemy
-================
-*/
 void idActor::Event_NextEnemy( idEntity* ent )
 {
 	idThread::ReturnEntity( NextEnemy( ent ) );
 }
-/*
-================
-idActor::NextEnemy
-================
-*/
 idActor* idActor::NextEnemy( idEntity* ent )
 {
 	idActor* actor = NULL;
@@ -3574,22 +2930,12 @@ idActor* idActor::NextEnemy( idEntity* ent )
 	return NULL;
 }
 
-/*
-================
-idActor::Event_ClosestEnemyToPoint
-================
-*/
 void idActor::Event_ClosestEnemyToPoint( const idVec3& pos )
 {
 	idActor* bestEnt = ClosestEnemyToPoint( pos );
 	idThread::ReturnEntity( bestEnt );
 }
 
-/*
-================
-idActor::Event_StopSound
-================
-*/
 void idActor::Event_StopSound( int channel, int netSync )
 {
 	if( channel == SND_CHANNEL_VOICE ) {
@@ -3601,11 +2947,6 @@ void idActor::Event_StopSound( int channel, int netSync )
 	StopSound( channel, ( netSync != 0 ) );
 }
 
-/*
-=====================
-idActor::Event_SetNextState
-=====================
-*/
 void idActor::Event_SetNextState( const char* name )
 {
 	idealState = GetScriptFunction( name );
@@ -3614,11 +2955,6 @@ void idActor::Event_SetNextState( const char* name )
 	}
 }
 
-/*
-=====================
-idActor::Event_SetState
-=====================
-*/
 void idActor::Event_SetState( const char* name )
 {
 	// jmarshall begin
@@ -3635,11 +2971,6 @@ void idActor::Event_SetState( const char* name )
 	scriptThread->DoneProcessing();
 }
 
-/*
-=====================
-idActor::Event_GetState
-=====================
-*/
 void idActor::Event_GetState()
 {
 	if( state ) {
@@ -3649,21 +2980,11 @@ void idActor::Event_GetState()
 	}
 }
 
-/*
-=====================
-idActor::Event_GetHead
-=====================
-*/
 void idActor::Event_GetHead()
 {
 	idThread::ReturnEntity( head.GetEntity() );
 }
 
-/*
-================
-idActor::Event_SetDamageGroupScale
-================
-*/
 void idActor::Event_SetDamageGroupScale( const char* groupName, float scale )
 {
 	for( int i = 0; i < damageScale.Num(); i++ ) {
@@ -3673,11 +2994,6 @@ void idActor::Event_SetDamageGroupScale( const char* groupName, float scale )
 	}
 }
 
-/*
-================
-idActor::Event_SetDamageGroupScaleAll
-================
-*/
 void idActor::Event_SetDamageGroupScaleAll( float scale )
 {
 	for( int i = 0; i < damageScale.Num(); i++ ) {

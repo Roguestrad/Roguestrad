@@ -62,11 +62,6 @@ extern idCVar	 net_clientMaxPrediction;
 idCVar			 cg_predictedSpawn_debug( "cg_predictedSpawn_debug", "0", CVAR_BOOL, "Debug predictive spawning of presentables" );
 idCVar			 g_clientFire_checkLineOfSightDebug( "g_clientFire_checkLineOfSightDebug", "0", CVAR_BOOL, "" );
 
-/*
-================
-idGameLocal::InitAsyncNetwork
-================
-*/
 void			 idGameLocal::InitAsyncNetwork()
 {
 	eventQueue.Init();
@@ -84,42 +79,22 @@ void			 idGameLocal::InitAsyncNetwork()
 	usercmdLastClientMilliseconds.Zero();
 }
 
-/*
-================
-idGameLocal::ShutdownAsyncNetwork
-================
-*/
 void idGameLocal::ShutdownAsyncNetwork()
 {
 	eventQueue.Shutdown();
 	savedEventQueue.Shutdown();
 }
 
-/*
-================
-idGameLocal::ServerRemapDecl
-================
-*/
 int idGameLocal::ServerRemapDecl( int clientNum, declType_t type, int index )
 {
 	return index;
 }
 
-/*
-================
-idGameLocal::ClientRemapDecl
-================
-*/
 int idGameLocal::ClientRemapDecl( declType_t type, int index )
 {
 	return index;
 }
 
-/*
-================
-idGameLocal::SyncPlayersWithLobbyUsers
-================
-*/
 void idGameLocal::SyncPlayersWithLobbyUsers( bool initial )
 {
 	idLobbyBase& lobby = session->GetActingGameStateLobbyBase();
@@ -221,11 +196,6 @@ void idGameLocal::SyncPlayersWithLobbyUsers( bool initial )
 	}
 }
 
-/*
-================
-idGameLocal::ServerSendNetworkSyncCvars
-================
-*/
 void idGameLocal::ServerSendNetworkSyncCvars()
 {
 	if( ( cvarSystem->GetModifiedFlags() & CVAR_NETWORKSYNC ) == 0 ) {
@@ -249,13 +219,6 @@ void idGameLocal::ServerSendNetworkSyncCvars()
 	syncedCvars.Print();
 }
 
-/*
-================
-idGameLocal::ServerWriteInitialReliableMessages
-
-  Send reliable messages to initialize the client game up to a certain initial state.
-================
-*/
 void idGameLocal::ServerWriteInitialReliableMessages( int clientNum, lobbyUserID_t lobbyUserID )
 {
 	if( clientNum == GetLocalClientNum() ) {
@@ -295,11 +258,6 @@ void idGameLocal::ServerWriteInitialReliableMessages( int clientNum, lobbyUserID
 	mpGame.ServerWriteInitialReliableMessages( clientNum, lobbyUserID );
 }
 
-/*
-================
-idGameLocal::SaveEntityNetworkEvent
-================
-*/
 void idGameLocal::SaveEntityNetworkEvent( const idEntity* ent, int eventId, const idBitMsg* msg )
 {
 	entityNetEvent_t* event = savedEventQueue.Alloc();
@@ -316,13 +274,6 @@ void idGameLocal::SaveEntityNetworkEvent( const idEntity* ent, int eventId, cons
 	savedEventQueue.Enqueue( event, idEventQueue::OUTOFORDER_IGNORE );
 }
 
-/*
-================
-idGameLocal::ServerWriteSnapshot
-
-  Write a snapshot of the current game state
-================
-*/
 void idGameLocal::ServerWriteSnapshot( idSnapShot& ss )
 {
 	ss.SetTime( fast.time );
@@ -425,11 +376,6 @@ void idGameLocal::ServerWriteSnapshot( idSnapShot& ss )
 	}
 }
 
-/*
-================
-idGameLocal::NetworkEventWarning
-================
-*/
 void idGameLocal::NetworkEventWarning( const entityNetEvent_t* event, const char* fmt, ... )
 {
 	char	buf[1024];
@@ -448,11 +394,6 @@ void idGameLocal::NetworkEventWarning( const entityNetEvent_t* event, const char
 	common->DWarning( buf );
 }
 
-/*
-================
-idGameLocal::ServerProcessEntityNetworkEventQueue
-================
-*/
 void idGameLocal::ServerProcessEntityNetworkEventQueue()
 {
 	while( eventQueue.Start() ) {
@@ -485,11 +426,6 @@ void idGameLocal::ServerProcessEntityNetworkEventQueue()
 	}
 }
 
-/*
-================
-idGameLocal::ProcessReliableMessage
-================
-*/
 void idGameLocal::ProcessReliableMessage( int clientNum, int type, const idBitMsg& msg )
 {
 	if( session->GetActingGameStateLobbyBase().IsPeer() ) {
@@ -499,11 +435,6 @@ void idGameLocal::ProcessReliableMessage( int clientNum, int type, const idBitMs
 	}
 }
 
-/*
-================
-idGameLocal::ServerProcessReliableMessage
-================
-*/
 void idGameLocal::ServerProcessReliableMessage( int clientNum, int type, const idBitMsg& msg )
 {
 	if( clientNum < 0 ) {
@@ -637,11 +568,6 @@ void idGameLocal::ServerProcessReliableMessage( int clientNum, int type, const i
 	}
 }
 
-/*
-================
-idGameLocal::ClientReadSnapshot
-================
-*/
 void idGameLocal::ClientReadSnapshot( const idSnapShot& ss )
 {
 	if( GetLocalClientNum() < 0 ) {
@@ -894,11 +820,6 @@ void idGameLocal::ClientReadSnapshot( const idSnapShot& ss )
 	ClientProcessEntityNetworkEventQueue();
 }
 
-/*
-================
-idGameLocal::ClientProcessEntityNetworkEventQueue
-================
-*/
 void idGameLocal::ClientProcessEntityNetworkEventQueue()
 {
 	while( eventQueue.Start() ) {
@@ -934,11 +855,6 @@ void idGameLocal::ClientProcessEntityNetworkEventQueue()
 	}
 }
 
-/*
-================
-idGameLocal::ClientProcessReliableMessage
-================
-*/
 void idGameLocal::ClientProcessReliableMessage( int type, const idBitMsg& msg )
 {
 	switch( type ) {
@@ -1052,11 +968,6 @@ void idGameLocal::ClientProcessReliableMessage( int type, const idBitMsg& msg )
 	}
 }
 
-/*
-================
-idGameLocal::ClientRunFrame
-================
-*/
 void idGameLocal::ClientRunFrame( idUserCmdMgr& cmdMgr, bool lastPredictFrame, gameReturn_t& ret )
 {
 	idEntity* ent;
@@ -1119,11 +1030,6 @@ void idGameLocal::ClientRunFrame( idUserCmdMgr& cmdMgr, bool lastPredictFrame, g
 	BuildReturnValue( ret );
 }
 
-/*
-===============
-idGameLocal::Tokenize
-===============
-*/
 void idGameLocal::Tokenize( idStrList& out, const char* in )
 {
 	char  buf[MAX_STRING_CHARS];
@@ -1147,11 +1053,6 @@ void idGameLocal::Tokenize( idStrList& out, const char* in )
 	}
 }
 
-/*
-========================
-idGameLocal::FindPredictedEntity
-========================
-*/
 idEntity* idGameLocal::FindPredictedEntity( uint32 predictedKey, idTypeInfo* type )
 {
 	for( idEntity* predictedEntity = activeEntities.Next(); predictedEntity != NULL; predictedEntity = predictedEntity->activeNode.Next() ) {
@@ -1168,11 +1069,6 @@ idEntity* idGameLocal::FindPredictedEntity( uint32 predictedKey, idTypeInfo* typ
 	return NULL;
 }
 
-/*
-========================
-idGameLocal::GeneratePredictionKey
-========================
-*/
 uint32 idGameLocal::GeneratePredictionKey( idWeapon* weapon, idPlayer* playerAttacker, int overrideKey )
 {
 	if( overrideKey != -1 ) {
@@ -1219,11 +1115,6 @@ uint32 idGameLocal::GeneratePredictionKey( idWeapon* weapon, idPlayer* playerAtt
 	return predictedKey;
 }
 
-/*
-===============
-idEventQueue::Alloc
-===============
-*/
 entityNetEvent_t* idEventQueue::Alloc()
 {
 	entityNetEvent_t* event = eventAllocator.Alloc();
@@ -1232,11 +1123,6 @@ entityNetEvent_t* idEventQueue::Alloc()
 	return event;
 }
 
-/*
-===============
-idEventQueue::Free
-===============
-*/
 void idEventQueue::Free( entityNetEvent_t* event )
 {
 	// should only be called on an unlinked event!
@@ -1244,33 +1130,18 @@ void idEventQueue::Free( entityNetEvent_t* event )
 	eventAllocator.Free( event );
 }
 
-/*
-===============
-idEventQueue::Shutdown
-===============
-*/
 void idEventQueue::Shutdown()
 {
 	eventAllocator.Shutdown();
 	this->Init();
 }
 
-/*
-===============
-idEventQueue::Init
-===============
-*/
 void idEventQueue::Init()
 {
 	start = NULL;
 	end	  = NULL;
 }
 
-/*
-===============
-idEventQueue::Dequeue
-===============
-*/
 entityNetEvent_t* idEventQueue::Dequeue()
 {
 	entityNetEvent_t* event = start;
@@ -1292,11 +1163,6 @@ entityNetEvent_t* idEventQueue::Dequeue()
 	return event;
 }
 
-/*
-===============
-idEventQueue::RemoveLast
-===============
-*/
 entityNetEvent_t* idEventQueue::RemoveLast()
 {
 	entityNetEvent_t* event = end;
@@ -1318,11 +1184,6 @@ entityNetEvent_t* idEventQueue::RemoveLast()
 	return event;
 }
 
-/*
-===============
-idEventQueue::Enqueue
-===============
-*/
 void idEventQueue::Enqueue( entityNetEvent_t* event, outOfOrderBehaviour_t behaviour )
 {
 	if( behaviour == OUTOFORDER_DROP ) {
@@ -1374,12 +1235,6 @@ void idEventQueue::Enqueue( entityNetEvent_t* event, outOfOrderBehaviour_t behav
 	end = event;
 }
 
-// jmarshall
-/*
-================
-idGameLocal::RunBotFrame
-================
-*/
 void idGameLocal::RunBotFrame( idUserCmdMgr& cmdMgr )
 {
 	for( int i = 0; i < registeredBots.Num(); i++ ) {

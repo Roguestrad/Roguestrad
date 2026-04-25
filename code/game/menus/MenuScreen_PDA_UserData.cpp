@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuScreen_PDA_UserData::Initialize
-========================
-*/
 void idMenuScreen_PDA_UserData::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -75,11 +70,6 @@ void idMenuScreen_PDA_UserData::Initialize( idMenuHandler* data )
 	AddEventAction( WIDGET_EVENT_TAB_PREV ).Set( new( TAG_SWF ) idWidgetActionHandler( this, WIDGET_ACTION_EVENT_TAB_PREV, WIDGET_EVENT_TAB_PREV ) );
 }
 
-/*
-========================
-idMenuScreen_PDA_UserData::Update
-========================
-*/
 void idMenuScreen_PDA_UserData::Update()
 {
 	if( menuData != NULL ) {
@@ -127,11 +117,6 @@ void idMenuScreen_PDA_UserData::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_PDA_UserData::ShowScreen
-========================
-*/
 void idMenuScreen_PDA_UserData::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	if( menuGUI != NULL && menuData != NULL ) {
@@ -158,11 +143,6 @@ void idMenuScreen_PDA_UserData::ShowScreen( const mainMenuTransition_t transitio
 	}
 }
 
-/*
-========================
-idMenuScreen_PDA_UserData::HideScreen
-========================
-*/
 void idMenuScreen_PDA_UserData::HideScreen( const mainMenuTransition_t transitionType )
 {
 	if( menuGUI != NULL ) {
@@ -177,11 +157,6 @@ void idMenuScreen_PDA_UserData::HideScreen( const mainMenuTransition_t transitio
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_PDA_UserData::HandleAction
-========================
-*/
 bool idMenuScreen_PDA_UserData::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

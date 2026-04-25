@@ -735,11 +735,6 @@ void idAI::Event_EndAttack()
 	EndAttack();
 }
 
-/*
-=====================
-idAI::MeleeAttackToJoint
-=====================
-*/
 bool idAI::MeleeAttackToJoint( const char* jointname, const char* meleeDefName )
 {
 	jointHandle_t joint;
@@ -1003,11 +998,6 @@ void idAI::Event_FaceEnemy()
 	FaceEnemy();
 }
 
-/*
-=====================
-idAI::Event_FaceEntity
-=====================
-*/
 void idAI::Event_FaceEntity( idEntity* ent )
 {
 	FaceEntity( ent );
@@ -1754,11 +1744,6 @@ void idAI::Event_SetSmokeVisibility( int num, int on )
 	UpdateVisuals();
 }
 
-/*
-=====================
-idAI::Event_NumSmokeEmitters
-=====================
-*/
 void idAI::Event_NumSmokeEmitters()
 {
 	idThread::ReturnInt( particles.Num() );

@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuScreen_PDA_UserEmails::Initialize
-========================
-*/
 void idMenuScreen_PDA_UserEmails::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -122,11 +117,6 @@ void idMenuScreen_PDA_UserEmails::Initialize( idMenuHandler* data )
 	}
 }
 
-/*
-========================
-idMenuScreen_PDA_UserEmails::ShowScreen
-========================
-*/
 void idMenuScreen_PDA_UserEmails::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	if( menuGUI != NULL ) {
@@ -153,11 +143,6 @@ void idMenuScreen_PDA_UserEmails::ShowScreen( const mainMenuTransition_t transit
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_PDA_UserEmails::Update
-========================
-*/
 void idMenuScreen_PDA_UserEmails::Update()
 {
 	if( menuData != NULL ) {
@@ -216,11 +201,6 @@ void idMenuScreen_PDA_UserEmails::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_PDA_UserEmails::HideScreen
-========================
-*/
 void idMenuScreen_PDA_UserEmails::HideScreen( const mainMenuTransition_t transitionType )
 {
 	if( menuGUI != NULL ) {
@@ -244,11 +224,6 @@ void idMenuScreen_PDA_UserEmails::HideScreen( const mainMenuTransition_t transit
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_PDA_UserEmails::UpdateEmail
-========================
-*/
 void idMenuScreen_PDA_UserEmails::UpdateEmail()
 {
 	idMenuWidget_DynamicList* pdaList = dynamic_cast<idMenuWidget_DynamicList*>( menuData->GetChildFromIndex( PDA_WIDGET_PDA_LIST ) );
@@ -280,11 +255,6 @@ void idMenuScreen_PDA_UserEmails::UpdateEmail()
 	}
 }
 
-/*
-========================
-idMenuScreen_PDA_UserEmails::HandleAction
-========================
-*/
 bool idMenuScreen_PDA_UserEmails::ScrollCorrectList( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget )
 {
 	bool handled	= false;
@@ -323,11 +293,6 @@ bool idMenuScreen_PDA_UserEmails::ScrollCorrectList( idWidgetAction& action, con
 	return handled;
 }
 
-/*
-========================
-idMenuScreen_PDA_UserEmails::HandleAction
-========================
-*/
 void idMenuScreen_PDA_UserEmails::ShowEmail( bool show )
 {
 	idSWFSpriteInstance* pdaSprite = NULL;
@@ -379,11 +344,6 @@ void idMenuScreen_PDA_UserEmails::ShowEmail( bool show )
 	Update();
 }
 
-/*
-========================
-idMenuScreen_PDA_UserEmails::HandleAction
-========================
-*/
 bool idMenuScreen_PDA_UserEmails::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -444,11 +404,6 @@ bool idMenuScreen_PDA_UserEmails::HandleAction( idWidgetAction& action, const id
 	return idMenuWidget::HandleAction( action, event, widget, forceHandled );
 }
 
-/*
-========================
-idMenuScreen_PDA_UserEmails::ObserveEvent
-========================
-*/
 void idMenuScreen_PDA_UserEmails::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	if( menuData != NULL && menuData->ActiveScreen() != PDA_AREA_USER_EMAIL ) {

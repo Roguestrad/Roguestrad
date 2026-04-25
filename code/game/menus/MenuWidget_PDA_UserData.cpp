@@ -30,11 +30,6 @@ If you have questions concerning this license or the applicable additional terms
 #pragma hdrstop
 #include "../Game_local.h"
 
-/*
-========================
-idMenuWidget_PDA_UserData::Update
-========================
-*/
 void idMenuWidget_PDA_UserData::Update()
 {
 	if( GetSWFObject() == NULL ) {
@@ -117,11 +112,6 @@ void idMenuWidget_PDA_UserData::Update()
 	}
 }
 
-/*
-========================
-idMenuWidget_Help::ObserveEvent
-========================
-*/
 void idMenuWidget_PDA_UserData::ObserveEvent( const idMenuWidget& widget, const idWidgetEvent& event )
 {
 	const idMenuWidget_Button* const button = dynamic_cast<const idMenuWidget_Button*>( &widget );

@@ -30,17 +30,37 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponChainsaw
+	\brief A specialized chainsaw weapon implementation that extends basic weapon object functionality with specific animation and attack behaviors.
+
+	This class implements the behavior and state management for a chainsaw weapon, inheriting from a base weapon object class. It provides specific implementations for weapon states including raising,
+   lowering, idling, firing, and reloading. The class initializes with a weapon instance and manages the animation and action sequences through defined state handler methods. The design supports a
+   state machine pattern for weapon operations, allowing for distinct behaviors during different phases of weapon usage. The implementation focuses on the logical flow and transitions between weapon
+   states rather than memory management or object ownership details.
+
+*/
 class iceWeaponChainsaw : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponChainsaw );
 
+	//! Initializes the chainsaw weapon object with the provided weapon instance.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Handles the raising animation state for the chainsaw weapon.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Sets up the lowering animation for the chainsaw weapon.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the chainsaw weapon by managing the weapon's ready state and idle animation cycle.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Executes the chainsaw attack state machine for the ice weapon.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Completes the reload state transition for the chainsaw weapon.
 	stateResult_t Reload( stateParms_t* parms );
 
 private:

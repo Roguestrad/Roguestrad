@@ -30,17 +30,37 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponShotgun
+	\brief A specialized weapon class implementing the behavior and state management for an ice weapon shotgun.
+
+	This class extends the base weapon object functionality to provide specific implementation for an ice weapon shotgun. It handles the complete weapon state machine including raising, lowering,
+   idling, firing, and reloading behaviors. The class initializes its weapon properties through the provided weapon object and manages the transition between different animation states. Each state
+   handler returns a result indicating whether the state transition should continue, stop, or change to another state. The implementation supports the weapon's firing mechanics and reload procedures
+   while maintaining consistent behavior with the base weapon object.
+
+*/
 class iceWeaponShotgun : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponShotgun );
 
+	//! Initializes the ice weapon shotgun with the specified weapon object.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Returns the state result for raising the ice weapon shotgun.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Handles the lowering animation state for the ice weapon shotgun, transitioning from lowering to holstered state.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the ice weapon shotgun, transitioning through ready and idle cycle states.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Fires a shotgun projectile and handles the weapon state during the firing sequence.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Handles the reloading state for the ice weapon shotgun, managing animation and ammo updates during the reload process.
 	stateResult_t Reload( stateParms_t* parms );
 
 private:

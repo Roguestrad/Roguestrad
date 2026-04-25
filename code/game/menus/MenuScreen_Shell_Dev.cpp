@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 const static int NUM_DEV_OPTIONS = 8;
 
-/*
-========================
-idMenuScreen_Shell_Dev::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_Dev::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -82,11 +77,6 @@ void			 idMenuScreen_Shell_Dev::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Dev::SetupDevOptions
-========================
-*/
 void idMenuScreen_Shell_Dev::SetupDevOptions()
 {
 	devOptions.Clear();
@@ -155,11 +145,6 @@ void idMenuScreen_Shell_Dev::SetupDevOptions()
 	options->SetListData( menuOptions );
 }
 
-/*
-========================
-idMenuScreen_Shell_Dev::Update
-========================
-*/
 void idMenuScreen_Shell_Dev::Update()
 {
 	if( menuData != NULL ) {
@@ -202,31 +187,16 @@ void idMenuScreen_Shell_Dev::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Dev::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Dev::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Dev::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Dev::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Dev::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_Dev::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {

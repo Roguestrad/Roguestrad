@@ -30,17 +30,37 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponPistol
+	\brief A specialized pistol weapon implementation for ice-based weaponry.
+
+	This class represents a pistol weapon that inherits from iceWeaponObject, specifically designed for ice-based ammunition and mechanics. It manages the complete state machine for the pistol
+   including raising, lowering, idle, firing, and reloading behaviors. The implementation handles weapon initialization with provided weapon data and orchestrates the animation states through distinct
+   handler methods. Each state handler processes specific weapon behaviors and returns state transition results to control the flow of weapon operations. The class is intended to be used within a
+   broader weapon system where different weapon types can be instantiated and controlled through their respective state machines.
+
+*/
 class iceWeaponPistol : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponPistol );
 
+	//! Initializes the pistol weapon object with the provided weapon data.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Handles the raising animation state for the ice weapon pistol.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Moves the pistol to a lower state and waits for the animation to complete.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the ice weapon pistol, transitioning between idle animations and weapon readiness events.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Fires the pistol weapon, handling ammo management and animation states.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Handles the reloading state for the ice weapon pistol, playing the reload animation and updating the clip count.
 	stateResult_t Reload( stateParms_t* parms );
 
 private:

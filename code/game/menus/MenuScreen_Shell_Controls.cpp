@@ -34,11 +34,6 @@ const static int NUM_CONTROLS_OPTIONS = 8;
 
 enum contorlsMenuCmds_t { CONTROLS_CMD_BINDINGS, CONTROLS_CMD_GAMEPAD, CONTROLS_CMD_GAMEPAD_ENABLED, CONTROLS_CMD_INVERT, CONTROLS_CMD_MOUSE_SENS };
 
-/*
-========================
-idMenuScreen_Shell_Controls::Initialize
-========================
-*/
 void idMenuScreen_Shell_Controls::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -123,11 +118,6 @@ void idMenuScreen_Shell_Controls::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Controls::Update
-========================
-*/
 void idMenuScreen_Shell_Controls::Update()
 {
 	if( menuData != NULL ) {
@@ -172,22 +162,12 @@ void idMenuScreen_Shell_Controls::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Controls::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Controls::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	controlData.LoadData();
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Controls::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Controls::HideScreen( const mainMenuTransition_t transitionType )
 {
 	if( controlData.IsDataChanged() ) {
@@ -204,11 +184,6 @@ void idMenuScreen_Shell_Controls::HideScreen( const mainMenuTransition_t transit
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Controls::HandleAction
-========================
-*/
 bool idMenuScreen_Shell_Controls::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -304,22 +279,12 @@ extern idCVar in_mouseInvertLook;
 extern idCVar in_mouseSpeed;
 extern idCVar in_useJoystick;
 
-/*
-========================
-idMenuScreen_Shell_Controls::idMenuDataSource_AudioSettings::idMenuDataSource_AudioSettings
-========================
-*/
 idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::idMenuDataSource_ControlSettings()
 {
 	fields.SetNum( MAX_CONTROL_FIELDS );
 	originalFields.SetNum( MAX_CONTROL_FIELDS );
 }
 
-/*
-========================
-idMenuScreen_Shell_Controls::idMenuDataSource_AudioSettings::LoadData
-========================
-*/
 void idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::LoadData()
 {
 	fields[CONTROLS_FIELD_INVERT_MOUSE].SetBool( in_mouseInvertLook.GetBool() );
@@ -330,11 +295,6 @@ void idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::LoadData()
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_Controls::idMenuDataSource_AudioSettings::CommitData
-========================
-*/
 void idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::CommitData()
 {
 	in_mouseInvertLook.SetBool( fields[CONTROLS_FIELD_INVERT_MOUSE].ToBool() );
@@ -348,11 +308,6 @@ void idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::CommitData()
 	originalFields = fields;
 }
 
-/*
-========================
-idMenuScreen_Shell_Controls::idMenuDataSource_AudioSettings::AdjustField
-========================
-*/
 void idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::AdjustField( const int fieldIndex, const int adjustAmount )
 {
 	if( fieldIndex == CONTROLS_FIELD_INVERT_MOUSE || fieldIndex == CONTROLS_FIELD_GAMEPAD_ENABLED ) {
@@ -363,11 +318,6 @@ void idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::AdjustField(
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Controls::idMenuDataSource_AudioSettings::IsDataChanged
-========================
-*/
 bool idMenuScreen_Shell_Controls::idMenuDataSource_ControlSettings::IsDataChanged() const
 {
 	if( fields[CONTROLS_FIELD_INVERT_MOUSE].ToBool() != originalFields[CONTROLS_FIELD_INVERT_MOUSE].ToBool() ) {

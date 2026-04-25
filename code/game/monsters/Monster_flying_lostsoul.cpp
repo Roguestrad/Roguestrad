@@ -46,31 +46,16 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idAI, iceMonsterLostSoul )
 END_CLASS
 
-/*
-====================
-iceMonsterLostSoul::Init
-====================
-*/
 void iceMonsterLostSoul::Init()
 {
 }
 
-/*
-=================
-iceMonsterLostSoul::AI_Begin
-=================
-*/
 void iceMonsterLostSoul::AI_Begin()
 {
 	fly_offset = GetFloatKey( "fly_offset" );
 	Event_SetState( "state_Begin" );
 }
 
-/*
-=====================
-iceMonsterLostSoul::state_Begin
-=====================
-*/
 stateResult_t iceMonsterLostSoul::state_Begin( stateParms_t* parms )
 {
 	Event_SetMoveType( MOVETYPE_FLY );
@@ -80,11 +65,6 @@ stateResult_t iceMonsterLostSoul::state_Begin( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterLostSoul::state_Idle
-=====================
-*/
 stateResult_t iceMonsterLostSoul::state_Idle( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -102,11 +82,6 @@ stateResult_t iceMonsterLostSoul::state_Idle( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterLostSoul::do_attack
-=====================
-*/
 void iceMonsterLostSoul::do_attack( int attack_flags )
 {
 	nextNoFOVAttack = gameLocal.SysScriptTime() + LOSTSOUL_NOFOVTIME;
@@ -119,11 +94,6 @@ void iceMonsterLostSoul::do_attack( int attack_flags )
 	}
 }
 
-/*
-=====================
-iceMonsterLostSoul::check_attacks
-=====================
-*/
 int iceMonsterLostSoul::check_attacks()
 {
 	float range;
@@ -155,11 +125,6 @@ int iceMonsterLostSoul::check_attacks()
 	return attack_flags;
 }
 
-/*
-=====================
-iceMonsterLostSoul::combat_charge
-=====================
-*/
 stateResult_t iceMonsterLostSoul::combat_charge( stateParms_t* parms )
 {
 	// rise up a bit
@@ -215,11 +180,6 @@ stateResult_t iceMonsterLostSoul::combat_charge( stateParms_t* parms )
 
 	return SRESULT_DONE;
 }
-/*
-=====================
-iceMonsterLostSoul::combat_melee
-=====================
-*/
 stateResult_t iceMonsterLostSoul::combat_melee( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -237,11 +197,6 @@ stateResult_t iceMonsterLostSoul::combat_melee( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-=====================
-iceMonsterLostSoul::combat_retreat
-=====================
-*/
 stateResult_t iceMonsterLostSoul::combat_retreat( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {

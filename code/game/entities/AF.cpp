@@ -42,11 +42,6 @@ If you have questions concerning this license or the applicable additional terms
 #define ARTICULATED_FIGURE_ANIM "af_pose"
 #define POSE_BOUNDS_EXPANSION	5.0f
 
-/*
-================
-idAF::idAF
-================
-*/
 idAF::idAF()
 {
 	self		 = NULL;
@@ -70,11 +65,6 @@ idAF::~idAF()
 {
 }
 
-/*
-================
-idAF::Save
-================
-*/
 void idAF::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteObject( self );
@@ -89,11 +79,6 @@ void idAF::Save( idSaveGame* savefile ) const
 	savefile->WriteStaticObject( physicsObj );
 }
 
-/*
-================
-idAF::Restore
-================
-*/
 void idAF::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadObject( reinterpret_cast<idClass*&>( self ) );
@@ -133,11 +118,6 @@ void idAF::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-================
-idAF::UpdateAnimation
-================
-*/
 bool idAF::UpdateAnimation()
 {
 	int				i;
@@ -190,13 +170,6 @@ bool idAF::UpdateAnimation()
 	return true;
 }
 
-/*
-================
-idAF::GetBounds
-
-  returns bounds for the current pose
-================
-*/
 idBounds idAF::GetBounds() const
 {
 	int		  i;
@@ -227,13 +200,6 @@ idBounds idAF::GetBounds() const
 	return bounds;
 }
 
-/*
-================
-idAF::SetupPose
-
-  Transforms the articulated figure to match the current animation pose of the given entity.
-================
-*/
 void idAF::SetupPose( idEntity* ent, int time )
 {
 	int				i;
@@ -280,14 +246,6 @@ void idAF::SetupPose( idEntity* ent, int time )
 	}
 }
 
-/*
-================
-idAF::ChangePose
-
-   Change the articulated figure to match the current animation pose of the given entity
-   and set the velocity relative to the previous pose.
-================
-*/
 void idAF::ChangePose( idEntity* ent, int time )
 {
 	int				i;
@@ -336,11 +294,6 @@ void idAF::ChangePose( idEntity* ent, int time )
 	physicsObj.UpdateClipModels();
 }
 
-/*
-================
-idAF::EntitiesTouchingAF
-================
-*/
 int idAF::EntitiesTouchingAF( afTouch_t touchList[MAX_GENTITIES] ) const
 {
 	int			 i, j, numClipModels;
@@ -387,11 +340,6 @@ int idAF::EntitiesTouchingAF( afTouch_t touchList[MAX_GENTITIES] ) const
 	return numTouching;
 }
 
-/*
-================
-idAF::BodyForClipModelId
-================
-*/
 int idAF::BodyForClipModelId( int id ) const
 {
 	if( id >= 0 ) {
@@ -406,57 +354,30 @@ int idAF::BodyForClipModelId( int id ) const
 	}
 }
 
-/*
-================
-idAF::GetPhysicsToVisualTransform
-================
-*/
 void idAF::GetPhysicsToVisualTransform( idVec3& origin, idMat3& axis ) const
 {
 	origin = -baseOrigin;
 	axis   = baseAxis.Transpose();
 }
 
-/*
-================
-idAF::GetImpactInfo
-================
-*/
 void idAF::GetImpactInfo( idEntity* ent, int id, const idVec3& point, impactInfo_t* info )
 {
 	SetupPose( self, gameLocal.time );
 	physicsObj.GetImpactInfo( BodyForClipModelId( id ), point, info );
 }
 
-/*
-================
-idAF::ApplyImpulse
-================
-*/
 void idAF::ApplyImpulse( idEntity* ent, int id, const idVec3& point, const idVec3& impulse )
 {
 	SetupPose( self, gameLocal.time );
 	physicsObj.ApplyImpulse( BodyForClipModelId( id ), point, impulse );
 }
 
-/*
-================
-idAF::AddForce
-================
-*/
 void idAF::AddForce( idEntity* ent, int id, const idVec3& point, const idVec3& force )
 {
 	SetupPose( self, gameLocal.time );
 	physicsObj.AddForce( BodyForClipModelId( id ), point, force );
 }
 
-/*
-================
-idAF::AddBody
-
-  Adds a body.
-================
-*/
 void idAF::AddBody( idAFBody* body, const idJointMat* joints, const char* jointName, const AFJointModType_t mod )
 {
 	int			  index;
@@ -482,13 +403,6 @@ void idAF::AddBody( idAFBody* body, const idJointMat* joints, const char* jointN
 	jointMods[index].jointBodyAxis	 = body->GetWorldAxis() * axis.Transpose();
 }
 
-/*
-================
-idAF::SetBase
-
-  Sets the base body.
-================
-*/
 void idAF::SetBase( idAFBody* body, const idJointMat* joints )
 {
 	physicsObj.ForceBodyId( body, 0 );
@@ -497,11 +411,6 @@ void idAF::SetBase( idAFBody* body, const idJointMat* joints )
 	AddBody( body, joints, animator->GetJointName( animator->GetFirstChild( "origin" ) ), AF_JOINTMOD_AXIS );
 }
 
-/*
-================
-idAF::LoadBody
-================
-*/
 bool idAF::LoadBody( const idDeclAF_Body* fb, const idJointMat* joints )
 {
 	int							  id, i;
@@ -630,11 +539,6 @@ bool idAF::LoadBody( const idDeclAF_Body* fb, const idJointMat* joints )
 	return true;
 }
 
-/*
-================
-idAF::LoadConstraint
-================
-*/
 bool idAF::LoadConstraint( const idDeclAF_Constraint* fc )
 {
 	idAFBody *body1, *body2;
@@ -781,10 +685,18 @@ bool idAF::LoadConstraint( const idDeclAF_Constraint* fc )
 	return true;
 }
 
-/*
-================
-GetJointTransform
-================
+/*!
+	\brief Retrieves the transformation matrix for a specified joint from a given frame
+
+	This function looks up a joint by name in the provided animator model and retrieves its transformation data. It returns true if the joint exists and the data is successfully extracted, otherwise
+   it returns false. The function extracts both the origin (position) and axis (orientation) of the joint from the frame data
+
+	\param model Pointer to the animator model containing joint information
+	\param frame Array of joint transformation matrices
+	\param jointName Name of the joint to retrieve transformation for
+	\param origin Output parameter for the joint's position vector
+	\param axis Output parameter for the joint's orientation matrix
+	\return True if the joint was successfully found and transformation data was retrieved, false otherwise
 */
 static bool GetJointTransform( void* model, const idJointMat* frame, const char* jointName, idVec3& origin, idMat3& axis )
 {
@@ -959,11 +871,6 @@ bool idAF::Load( idEntity* ent, const char* fileName )
 	return true;
 }
 
-/*
-================
-idAF::Start
-================
-*/
 void idAF::Start()
 {
 	if( !IsLoaded() ) {
@@ -980,11 +887,6 @@ void idAF::Start()
 	isActive = true;
 }
 
-/*
-================
-idAF::TestSolid
-================
-*/
 bool idAF::TestSolid() const
 {
 	int		  i;
@@ -1024,11 +926,6 @@ bool idAF::TestSolid() const
 	return solid;
 }
 
-/*
-================
-idAF::StartFromCurrentPose
-================
-*/
 void idAF::StartFromCurrentPose( int inheritVelocityTime )
 {
 	if( !IsLoaded() ) {
@@ -1065,11 +962,6 @@ void idAF::StartFromCurrentPose( int inheritVelocityTime )
 	self->Present();
 }
 
-/*
-================
-idAF::Stop
-================
-*/
 void idAF::Stop()
 {
 	// disable the articulated figure for collision detection
@@ -1087,13 +979,6 @@ void idAF::Rest()
 	physicsObj.PutToRest();
 }
 
-/*
-================
-idAF::SetConstraintPosition
-
-  Only moves constraints that bind the entity to another entity.
-================
-*/
 void idAF::SetConstraintPosition( const char* name, const idVec3& pos )
 {
 	idAFConstraint* constraint;
@@ -1133,11 +1018,6 @@ void idAF::SetConstraintPosition( const char* name, const idVec3& pos )
 	}
 }
 
-/*
-================
-idAF::SaveState
-================
-*/
 void idAF::SaveState( idDict& args ) const
 {
 	int		  i;
@@ -1155,11 +1035,6 @@ void idAF::SaveState( idDict& args ) const
 	}
 }
 
-/*
-================
-idAF::LoadState
-================
-*/
 void idAF::LoadState( const idDict& args )
 {
 	const idKeyValue* kv;
@@ -1187,11 +1062,6 @@ void idAF::LoadState( const idDict& args )
 	physicsObj.UpdateClipModels();
 }
 
-/*
-================
-idAF::AddBindConstraints
-================
-*/
 void idAF::AddBindConstraints()
 {
 	const idKeyValue* kv;
@@ -1273,11 +1143,6 @@ void idAF::AddBindConstraints()
 	hasBindConstraints = true;
 }
 
-/*
-================
-idAF::RemoveBindConstraints
-================
-*/
 void idAF::RemoveBindConstraints()
 {
 	const idKeyValue* kv;

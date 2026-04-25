@@ -41,21 +41,11 @@ static const int FISTS_IDLE_TO_PUNCH = 0;
 static const int FISTS_RAISE_TO_IDLE = 4;
 static const int FISTS_PUNCH_TO_IDLE = 1;
 
-/*
-================
-iceWeaponFist::Init
-================
-*/
 void			 iceWeaponFist::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
 }
 
-/*
-================
-iceWeaponFist::Raise
-================
-*/
 stateResult_t iceWeaponFist::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -76,11 +66,6 @@ stateResult_t iceWeaponFist::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-iceWeaponFist::Lower
-================
-*/
 stateResult_t iceWeaponFist::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -102,11 +87,6 @@ stateResult_t iceWeaponFist::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-iceWeaponFist::Idle
-================
-*/
 stateResult_t iceWeaponFist::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -125,11 +105,6 @@ stateResult_t iceWeaponFist::Idle( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-iceWeaponFist::Fire
-================
-*/
 stateResult_t iceWeaponFist::Fire( stateParms_t* parms )
 {
 	enum FIRE_State { FIRE_NOTSET = 0, FIRE_MELEE, FIRE_WAIT };
@@ -157,21 +132,11 @@ stateResult_t iceWeaponFist::Fire( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-================
-iceWeaponFist::Reload
-================
-*/
 stateResult_t iceWeaponFist::Reload( stateParms_t* parms )
 {
 	return SRESULT_DONE;
 }
 
-/*
-================
-iceWeaponFist::GetFireAnim
-================
-*/
 const char* iceWeaponFist::GetFireAnim()
 {
 	if( side ) {

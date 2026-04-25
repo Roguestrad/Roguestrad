@@ -43,39 +43,19 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idEntity, idCursor3D )
 END_CLASS
 
-/*
-===============
-idCursor3D::idCursor3D
-===============
-*/
 idCursor3D::idCursor3D()
 {
 	draggedPosition.Zero();
 }
 
-/*
-===============
-idCursor3D::~idCursor3D
-===============
-*/
 idCursor3D::~idCursor3D()
 {
 }
 
-/*
-===============
-idCursor3D::Spawn
-===============
-*/
 void idCursor3D::Spawn()
 {
 }
 
-/*
-===============
-idCursor3D::Present
-===============
-*/
 void idCursor3D::Present()
 {
 	// don't present to the renderer if the entity hasn't changed
@@ -90,11 +70,6 @@ void idCursor3D::Present()
 	gameRenderWorld->DebugArrow( colorRed, origin, draggedPosition, 2 );
 }
 
-/*
-===============
-idCursor3D::Think
-===============
-*/
 void idCursor3D::Think()
 {
 	if( thinkFlags & TH_THINK ) {
@@ -113,22 +88,12 @@ void idCursor3D::Think()
 
 #define MAX_DRAG_TRACE_DISTANCE 2048.0f
 
-/*
-==============
-idDragEntity::idDragEntity
-==============
-*/
 idDragEntity::idDragEntity()
 {
 	cursor = NULL;
 	Clear();
 }
 
-/*
-==============
-idDragEntity::~idDragEntity
-==============
-*/
 idDragEntity::~idDragEntity()
 {
 	StopDrag();
@@ -137,11 +102,6 @@ idDragEntity::~idDragEntity()
 	cursor = NULL;
 }
 
-/*
-==============
-idDragEntity::Clear
-==============
-*/
 void idDragEntity::Clear()
 {
 	dragEnt = NULL;
@@ -153,11 +113,6 @@ void idDragEntity::Clear()
 	selected = NULL;
 }
 
-/*
-==============
-idDragEntity::StopDrag
-==============
-*/
 void idDragEntity::StopDrag()
 {
 	dragEnt = NULL;
@@ -166,11 +121,6 @@ void idDragEntity::StopDrag()
 	}
 }
 
-/*
-==============
-idDragEntity::Update
-==============
-*/
 void idDragEntity::Update( idPlayer* player )
 {
 	idVec3		  viewPoint, origin;
@@ -292,22 +242,12 @@ void idDragEntity::Update( idPlayer* player )
 	}
 }
 
-/*
-==============
-idDragEntity::SetSelected
-==============
-*/
 void idDragEntity::SetSelected( idEntity* ent )
 {
 	selected = ent;
 	StopDrag();
 }
 
-/*
-==============
-idDragEntity::DeleteSelected
-==============
-*/
 void idDragEntity::DeleteSelected()
 {
 	delete selected.GetEntity();
@@ -315,11 +255,6 @@ void idDragEntity::DeleteSelected()
 	StopDrag();
 }
 
-/*
-==============
-idDragEntity::BindSelected
-==============
-*/
 void idDragEntity::BindSelected()
 {
 	int				  num, largestNum;
@@ -372,11 +307,6 @@ void idDragEntity::BindSelected()
 	af->Bind( gameLocal.world, true );
 }
 
-/*
-==============
-idDragEntity::UnbindSelected
-==============
-*/
 void idDragEntity::UnbindSelected()
 {
 	const idKeyValue* kv;
@@ -411,23 +341,12 @@ void idDragEntity::UnbindSelected()
 
 ===============================================================================
 */
-
-/*
-==============
-idEditEntities::idEditEntities
-==============
-*/
 idEditEntities::idEditEntities()
 {
 	selectableEntityClasses.Clear();
 	nextSelectTime = 0;
 }
 
-/*
-=============
-idEditEntities::SelectEntity
-=============
-*/
 bool idEditEntities::SelectEntity( const idVec3& origin, const idVec3& dir, const idEntity* skip )
 {
 	idVec3	  end;
@@ -463,22 +382,12 @@ bool idEditEntities::SelectEntity( const idVec3& origin, const idVec3& dir, cons
 	return false;
 }
 
-/*
-=============
-idEditEntities::AddSelectedEntity
-=============
-*/
 void idEditEntities::AddSelectedEntity( idEntity* ent )
 {
 	ent->fl.selected = true;
 	selectedEntities.AddUnique( ent );
 }
 
-/*
-==============
-idEditEntities::RemoveSelectedEntity
-==============
-*/
 void idEditEntities::RemoveSelectedEntity( idEntity* ent )
 {
 	if( selectedEntities.Find( ent ) ) {
@@ -486,11 +395,6 @@ void idEditEntities::RemoveSelectedEntity( idEntity* ent )
 	}
 }
 
-/*
-=============
-idEditEntities::ClearSelectedEntities
-=============
-*/
 void idEditEntities::ClearSelectedEntities()
 {
 	int i, count;
@@ -502,11 +406,6 @@ void idEditEntities::ClearSelectedEntities()
 	selectedEntities.Clear();
 }
 
-/*
-=============
-idEditEntities::EntityIsSelectable
-=============
-*/
 bool idEditEntities::EntityIsSelectable( idEntity* ent, idVec4* color, idStr* text )
 {
 	for( int i = 0; i < selectableEntityClasses.Num(); i++ ) {
@@ -536,11 +435,6 @@ bool idEditEntities::EntityIsSelectable( idEntity* ent, idVec4* color, idStr* te
 	return false;
 }
 
-/*
-=============
-idEditEntities::DisplayEntities
-=============
-*/
 void idEditEntities::DisplayEntities()
 {
 	idEntity* ent;
@@ -715,11 +609,6 @@ void idEditEntities::DisplayEntities()
 idGameEdit	gameEditLocal;
 idGameEdit* gameEdit = &gameEditLocal;
 
-/*
-=============
-idGameEdit::GetSelectedEntities
-=============
-*/
 int			idGameEdit::GetSelectedEntities( idEntity* list[], int max )
 {
 	int		  num = 0;
@@ -736,11 +625,6 @@ int			idGameEdit::GetSelectedEntities( idEntity* list[], int max )
 	return num;
 }
 
-/*
-=============
-idGameEdit::TriggerSelected
-=============
-*/
 void idGameEdit::TriggerSelected()
 {
 	idEntity* ent;
@@ -751,11 +635,6 @@ void idGameEdit::TriggerSelected()
 	}
 }
 
-/*
-================
-idGameEdit::ClearEntitySelection
-================
-*/
 void idGameEdit::ClearEntitySelection()
 {
 	idEntity* ent;
@@ -766,11 +645,6 @@ void idGameEdit::ClearEntitySelection()
 	gameLocal.editEntities->ClearSelectedEntities();
 }
 
-/*
-================
-idGameEdit::AddSelectedEntity
-================
-*/
 void idGameEdit::AddSelectedEntity( idEntity* ent )
 {
 	if( ent ) {
@@ -778,43 +652,21 @@ void idGameEdit::AddSelectedEntity( idEntity* ent )
 	}
 }
 
-/*
-================
-idGameEdit::FindEntityDefDict
-================
-*/
 const idDict* idGameEdit::FindEntityDefDict( const char* name, bool makeDefault ) const
 {
 	return gameLocal.FindEntityDefDict( name, makeDefault );
 }
 
-/*
-================
-idGameEdit::SpawnEntityDef
-================
-*/
 void idGameEdit::SpawnEntityDef( const idDict& args, idEntity** ent )
 {
 	gameLocal.SpawnEntityDef( args, ent );
 }
 
-/*
-================
-idGameEdit::FindEntity
-================
-*/
 idEntity* idGameEdit::FindEntity( const char* name ) const
 {
 	return gameLocal.FindEntity( name );
 }
 
-/*
-=============
-idGameEdit::GetUniqueEntityName
-
-generates a unique name for a given classname
-=============
-*/
 const char* idGameEdit::GetUniqueEntityName( const char* classname ) const
 {
 	int			id;
@@ -833,11 +685,6 @@ const char* idGameEdit::GetUniqueEntityName( const char* classname ) const
 	return name;
 }
 
-/*
-================
-idGameEdit::EntityGetOrigin
-================
-*/
 void idGameEdit::EntityGetOrigin( idEntity* ent, idVec3& org ) const
 {
 	if( ent ) {
@@ -845,11 +692,6 @@ void idGameEdit::EntityGetOrigin( idEntity* ent, idVec3& org ) const
 	}
 }
 
-/*
-================
-idGameEdit::EntityGetAxis
-================
-*/
 void idGameEdit::EntityGetAxis( idEntity* ent, idMat3& axis ) const
 {
 	if( ent ) {
@@ -857,11 +699,6 @@ void idGameEdit::EntityGetAxis( idEntity* ent, idMat3& axis ) const
 	}
 }
 
-/*
-================
-idGameEdit::EntitySetOrigin
-================
-*/
 void idGameEdit::EntitySetOrigin( idEntity* ent, const idVec3& org )
 {
 	if( ent ) {
@@ -869,11 +706,6 @@ void idGameEdit::EntitySetOrigin( idEntity* ent, const idVec3& org )
 	}
 }
 
-/*
-================
-idGameEdit::EntitySetAxis
-================
-*/
 void idGameEdit::EntitySetAxis( idEntity* ent, const idMat3& axis )
 {
 	if( ent ) {
@@ -881,11 +713,6 @@ void idGameEdit::EntitySetAxis( idEntity* ent, const idMat3& axis )
 	}
 }
 
-/*
-================
-idGameEdit::EntitySetColor
-================
-*/
 void idGameEdit::EntitySetColor( idEntity* ent, const idVec3 color )
 {
 	if( ent ) {
@@ -893,11 +720,6 @@ void idGameEdit::EntitySetColor( idEntity* ent, const idVec3 color )
 	}
 }
 
-/*
-================
-idGameEdit::EntityTranslate
-================
-*/
 void idGameEdit::EntityTranslate( idEntity* ent, const idVec3& org )
 {
 	if( ent ) {
@@ -905,11 +727,6 @@ void idGameEdit::EntityTranslate( idEntity* ent, const idVec3& org )
 	}
 }
 
-/*
-================
-idGameEdit::EntityGetSpawnArgs
-================
-*/
 const idDict* idGameEdit::EntityGetSpawnArgs( idEntity* ent ) const
 {
 	if( ent ) {
@@ -918,11 +735,6 @@ const idDict* idGameEdit::EntityGetSpawnArgs( idEntity* ent ) const
 	return NULL;
 }
 
-/*
-================
-idGameEdit::EntityUpdateChangeableSpawnArgs
-================
-*/
 void idGameEdit::EntityUpdateChangeableSpawnArgs( idEntity* ent, const idDict* dict )
 {
 	if( ent ) {
@@ -930,11 +742,6 @@ void idGameEdit::EntityUpdateChangeableSpawnArgs( idEntity* ent, const idDict* d
 	}
 }
 
-/*
-================
-idGameEdit::EntityChangeSpawnArgs
-================
-*/
 void idGameEdit::EntityChangeSpawnArgs( idEntity* ent, const idDict* newArgs )
 {
 	if( ent ) {
@@ -950,11 +757,6 @@ void idGameEdit::EntityChangeSpawnArgs( idEntity* ent, const idDict* newArgs )
 	}
 }
 
-/*
-================
-idGameEdit::EntityUpdateVisuals
-================
-*/
 void idGameEdit::EntityUpdateVisuals( idEntity* ent )
 {
 	if( ent ) {
@@ -962,11 +764,6 @@ void idGameEdit::EntityUpdateVisuals( idEntity* ent )
 	}
 }
 
-/*
-================
-idGameEdit::EntitySetModel
-================
-*/
 void idGameEdit::EntitySetModel( idEntity* ent, const char* val )
 {
 	if( ent ) {
@@ -975,11 +772,6 @@ void idGameEdit::EntitySetModel( idEntity* ent, const char* val )
 	}
 }
 
-/*
-================
-idGameEdit::EntityStopSound
-================
-*/
 void idGameEdit::EntityStopSound( idEntity* ent )
 {
 	if( ent ) {
@@ -987,67 +779,36 @@ void idGameEdit::EntityStopSound( idEntity* ent )
 	}
 }
 
-/*
-================
-idGameEdit::EntityDelete
-================
-*/
 void idGameEdit::EntityDelete( idEntity* ent )
 {
 	delete ent;
 }
 
-/*
-================
-idGameEdit::PlayerIsValid
-================
-*/
 bool idGameEdit::PlayerIsValid() const
 {
 	return ( gameLocal.GetLocalPlayer() != NULL );
 }
 
-/*
-================
-idGameEdit::PlayerGetOrigin
-================
-*/
 void idGameEdit::PlayerGetOrigin( idVec3& org ) const
 {
 	org = gameLocal.GetLocalPlayer()->GetPhysics()->GetOrigin();
 }
 
-/*
-================
-idGameEdit::PlayerGetAxis
-================
-*/
 void idGameEdit::PlayerGetAxis( idMat3& axis ) const
 {
 	axis = gameLocal.GetLocalPlayer()->GetPhysics()->GetAxis();
 }
 
-/*
-================
-idGameEdit::PlayerGetViewAngles
-================
-*/
 void idGameEdit::PlayerGetViewAngles( idAngles& angles ) const
 {
 	angles = gameLocal.GetLocalPlayer()->viewAngles;
 }
 
-/*
-================
-idGameEdit::PlayerGetEyePosition
-================
-*/
 void idGameEdit::PlayerGetEyePosition( idVec3& org ) const
 {
 	org = gameLocal.GetLocalPlayer()->GetEyePosition();
 }
 
-// RB
 bool idGameEdit::PlayerGetRenderView( renderView_t& rv ) const
 {
 	renderView_t* view = gameLocal.GetLocalPlayer()->GetRenderView();
@@ -1059,11 +820,6 @@ bool idGameEdit::PlayerGetRenderView( renderView_t& rv ) const
 	return false;
 }
 
-/*
-================
-idGameEdit::MapGetEntityDict
-================
-*/
 const idDict* idGameEdit::MapGetEntityDict( const char* name ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();
@@ -1076,11 +832,6 @@ const idDict* idGameEdit::MapGetEntityDict( const char* name ) const
 	return NULL;
 }
 
-/*
-================
-idGameEdit::MapSave
-================
-*/
 void idGameEdit::MapSave( const char* path ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();
@@ -1100,11 +851,6 @@ void idGameEdit::MapSave( const char* path ) const
 	}
 }
 
-/*
-================
-idGameEdit::MapSetEntityKeyVal
-================
-*/
 void idGameEdit::MapSetEntityKeyVal( const char* name, const char* key, const char* val ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();
@@ -1116,11 +862,6 @@ void idGameEdit::MapSetEntityKeyVal( const char* name, const char* key, const ch
 	}
 }
 
-/*
-================
-idGameEdit::MapCopyDictToEntity
-================
-*/
 void idGameEdit::MapCopyDictToEntity( const char* name, const idDict* dict ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();
@@ -1145,11 +886,6 @@ void idGameEdit::MapCopyDictToEntity( const char* name, const idDict* dict ) con
 	}
 }
 
-/*
-================
-RB idGameEdit::MapCopyDictToEntityAtOrigin
-================
-*/
 void idGameEdit::MapCopyDictToEntityAtOrigin( const idVec3& origin, const idDict* dict ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();
@@ -1175,11 +911,6 @@ void idGameEdit::MapCopyDictToEntityAtOrigin( const idVec3& origin, const idDict
 	}
 }
 
-/*
-================
-idGameEdit::MapGetUniqueMatchingKeyVals
-================
-*/
 int idGameEdit::MapGetUniqueMatchingKeyVals( const char* key, const char* list[], int max ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();
@@ -1198,11 +929,6 @@ int idGameEdit::MapGetUniqueMatchingKeyVals( const char* key, const char* list[]
 	return count;
 }
 
-/*
-================
-idGameEdit::MapAddEntity
-================
-*/
 void idGameEdit::MapAddEntity( const idDict* dict ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();
@@ -1213,11 +939,6 @@ void idGameEdit::MapAddEntity( const idDict* dict ) const
 	}
 }
 
-/*
-================
-idGameEdit::MapRemoveEntity
-================
-*/
 void idGameEdit::MapRemoveEntity( const char* name ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();
@@ -1229,11 +950,6 @@ void idGameEdit::MapRemoveEntity( const char* name ) const
 	}
 }
 
-/*
-================
-idGameEdit::MapGetEntitiesMatchignClassWithString
-================
-*/
 int idGameEdit::MapGetEntitiesMatchingClassWithString( const char* classname, const char* match, const char* list[], const int max ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();
@@ -1260,11 +976,6 @@ int idGameEdit::MapGetEntitiesMatchingClassWithString( const char* classname, co
 	return count;
 }
 
-/*
-================
-idGameEdit::MapEntityTranslate
-================
-*/
 void idGameEdit::MapEntityTranslate( const char* name, const idVec3& v ) const
 {
 	idMapFile* mapFile = gameLocal.GetLevelMap();

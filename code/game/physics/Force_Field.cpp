@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idForce, idForce_Field )
 END_CLASS
 
-/*
-================
-idForce_Field::idForce_Field
-================
-*/
 idForce_Field::idForce_Field()
 {
 	type	  = FORCEFIELD_UNIFORM;
@@ -52,11 +47,6 @@ idForce_Field::idForce_Field()
 	clipModel	 = NULL;
 }
 
-/*
-================
-idForce_Field::~idForce_Field
-================
-*/
 idForce_Field::~idForce_Field()
 {
 	if( this->clipModel ) {
@@ -64,11 +54,6 @@ idForce_Field::~idForce_Field()
 	}
 }
 
-/*
-================
-idForce_Field::Save
-================
-*/
 void idForce_Field::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteInt( type );
@@ -81,11 +66,6 @@ void idForce_Field::Save( idSaveGame* savefile ) const
 	savefile->WriteClipModel( clipModel );
 }
 
-/*
-================
-idForce_Field::Restore
-================
-*/
 void idForce_Field::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadInt( ( int& )type );
@@ -98,11 +78,6 @@ void idForce_Field::Restore( idRestoreGame* savefile )
 	savefile->ReadClipModel( clipModel );
 }
 
-/*
-================
-idForce_Field::SetClipModel
-================
-*/
 void idForce_Field::SetClipModel( idClipModel* clipModel )
 {
 	if( this->clipModel && clipModel != this->clipModel ) {
@@ -111,11 +86,6 @@ void idForce_Field::SetClipModel( idClipModel* clipModel )
 	this->clipModel = clipModel;
 }
 
-/*
-================
-idForce_Field::Uniform
-================
-*/
 void idForce_Field::Uniform( const idVec3& force )
 {
 	dir		  = force;
@@ -123,43 +93,23 @@ void idForce_Field::Uniform( const idVec3& force )
 	type	  = FORCEFIELD_UNIFORM;
 }
 
-/*
-================
-idForce_Field::Explosion
-================
-*/
 void idForce_Field::Explosion( float force )
 {
 	magnitude = force;
 	type	  = FORCEFIELD_EXPLOSION;
 }
 
-/*
-================
-idForce_Field::Implosion
-================
-*/
 void idForce_Field::Implosion( float force )
 {
 	magnitude = force;
 	type	  = FORCEFIELD_IMPLOSION;
 }
 
-/*
-================
-idForce_Field::RandomTorque
-================
-*/
 void idForce_Field::RandomTorque( float force )
 {
 	randomTorque = force;
 }
 
-/*
-================
-idForce_Field::Evaluate
-================
-*/
 void idForce_Field::Evaluate( int time )
 {
 	int			 numClipModels, i;

@@ -42,11 +42,6 @@ const int		   SHARD_FADE_START = 2000;
 
 static const char* brittleFracture_SnapshotName = "_BrittleFracture_Snapshot_";
 
-/*
-================
-idBrittleFracture::idBrittleFracture
-================
-*/
 idBrittleFracture::idBrittleFracture()
 {
 	material			 = NULL;
@@ -74,11 +69,6 @@ idBrittleFracture::idBrittleFracture()
 	isXraySurface = false;
 }
 
-/*
-================
-idBrittleFracture::~idBrittleFracture
-================
-*/
 idBrittleFracture::~idBrittleFracture()
 {
 	int i;
@@ -96,11 +86,6 @@ idBrittleFracture::~idBrittleFracture()
 	storedEvents.Clear();
 }
 
-/*
-================
-idBrittleFracture::Save
-================
-*/
 void idBrittleFracture::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteInt( health );
@@ -142,11 +127,6 @@ void idBrittleFracture::Save( idSaveGame* savefile ) const
 	savefile->WriteBool( isXraySurface );
 }
 
-/*
-================
-idBrittleFracture::Restore
-================
-*/
 void idBrittleFracture::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadInt( health );
@@ -218,11 +198,6 @@ void idBrittleFracture::Restore( idRestoreGame* savefile )
 	savefile->ReadBool( isXraySurface );
 }
 
-/*
-================
-idBrittleFracture::Spawn
-================
-*/
 void idBrittleFracture::Spawn()
 {
 	// get shard properties
@@ -287,11 +262,6 @@ void idBrittleFracture::Spawn()
 	renderEntity.noDynamicInteractions = false;
 }
 
-/*
-================
-idBrittleFracture::AddShard
-================
-*/
 void idBrittleFracture::AddShard( idClipModel* clipModel, idFixedWinding& w )
 {
 	shard_t* shard	   = new( TAG_PARTICLE ) shard_t;
@@ -305,11 +275,6 @@ void idBrittleFracture::AddShard( idClipModel* clipModel, idFixedWinding& w )
 	shards.Append( shard );
 }
 
-/*
-================
-idBrittleFracture::RemoveShard
-================
-*/
 void idBrittleFracture::RemoveShard( int index )
 {
 	int i;
@@ -323,11 +288,6 @@ void idBrittleFracture::RemoveShard( int index )
 	}
 }
 
-/*
-================
-idBrittleFracture::UpdateRenderEntity
-================
-*/
 bool idBrittleFracture::UpdateRenderEntity( renderEntity_s* renderEntity, const renderView_t* renderView ) const
 {
 	int				i, j, k, n, msec, numTris, numDecalTris;
@@ -499,11 +459,6 @@ bool idBrittleFracture::UpdateRenderEntity( renderEntity_s* renderEntity, const 
 	return true;
 }
 
-/*
-================
-idBrittleFracture::ModelCallback
-================
-*/
 bool idBrittleFracture::ModelCallback( renderEntity_s* renderEntity, const renderView_t* renderView )
 {
 	const idBrittleFracture* ent;
@@ -517,11 +472,6 @@ bool idBrittleFracture::ModelCallback( renderEntity_s* renderEntity, const rende
 	return ent->UpdateRenderEntity( renderEntity, renderView );
 }
 
-/*
-================
-idBrittleFracture::Present
-================
-*/
 void idBrittleFracture::Present()
 {
 	// don't present to the renderer if the entity hasn't changed
@@ -547,11 +497,6 @@ void idBrittleFracture::Present()
 	changed = true;
 }
 
-/*
-================
-idBrittleFracture::Think
-================
-*/
 void idBrittleFracture::Think()
 {
 	int		 i, startTime, endTime, droppedTime;
@@ -619,11 +564,6 @@ void idBrittleFracture::Think()
 	Present();
 }
 
-/*
-================
-idBrittleFracture::ApplyImpulse
-================
-*/
 void idBrittleFracture::ApplyImpulse( idEntity* ent, int id, const idVec3& point, const idVec3& impulse )
 {
 	if( id < 0 || id >= shards.Num() ) {
@@ -637,11 +577,6 @@ void idBrittleFracture::ApplyImpulse( idEntity* ent, int id, const idVec3& point
 	}
 }
 
-/*
-================
-idBrittleFracture::AddForce
-================
-*/
 void idBrittleFracture::AddForce( idEntity* ent, int id, const idVec3& point, const idVec3& force )
 {
 	if( id < 0 || id >= shards.Num() ) {
@@ -655,11 +590,6 @@ void idBrittleFracture::AddForce( idEntity* ent, int id, const idVec3& point, co
 	}
 }
 
-/*
-================
-idBrittleFracture::ProjectDecal
-================
-*/
 void idBrittleFracture::ProjectDecal( const idVec3& point, const idVec3& dir, const int time, const char* damageDefName )
 {
 	int		i, j, bits, clipBits;
@@ -769,11 +699,6 @@ void idBrittleFracture::ProjectDecal( const idVec3& point, const idVec3& dir, co
 	BecomeActive( TH_UPDATEVISUALS );
 }
 
-/*
-================
-idBrittleFracture::DropShard
-================
-*/
 void idBrittleFracture::DropShard( shard_t* shard, const idVec3& point, const idVec3& dir, const float impulse, const int time )
 {
 	int		 i, j, clipModelId;
@@ -832,11 +757,6 @@ void idBrittleFracture::DropShard( shard_t* shard, const idVec3& point, const id
 	BecomeActive( TH_PHYSICS );
 }
 
-/*
-================
-idBrittleFracture::Shatter
-================
-*/
 void idBrittleFracture::Shatter( const idVec3& point, const idVec3& impulse, const int time )
 {
 	int		 i;
@@ -898,11 +818,6 @@ void idBrittleFracture::Shatter( const idVec3& point, const idVec3& impulse, con
 	DropFloatingIslands( point, impulse, time );
 }
 
-/*
-================
-idBrittleFracture::DropFloatingIslands
-================
-*/
 void idBrittleFracture::DropFloatingIslands( const idVec3& point, const idVec3& impulse, const int time )
 {
 	int		 i, j, numIslands;
@@ -970,32 +885,17 @@ void idBrittleFracture::DropFloatingIslands( const idVec3& point, const idVec3& 
 	}
 }
 
-/*
-================
-idBrittleFracture::Break
-================
-*/
 void idBrittleFracture::Break()
 {
 	fl.takedamage = false;
 	physicsObj.SetContents( CONTENTS_RENDERMODEL | CONTENTS_TRIGGER );
 }
 
-/*
-================
-idBrittleFracture::IsBroken
-================
-*/
 bool idBrittleFracture::IsBroken() const
 {
 	return ( fl.takedamage == false );
 }
 
-/*
-================
-idBrittleFracture::Killed
-================
-*/
 void idBrittleFracture::Killed( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 	if( !disableFracture ) {
@@ -1004,11 +904,6 @@ void idBrittleFracture::Killed( idEntity* inflictor, idEntity* attacker, int dam
 	}
 }
 
-/*
-================
-idBrittleFracture::AddDamageEffect
-================
-*/
 void idBrittleFracture::AddDamageEffect( const trace_t& collision, const idVec3& velocity, const char* damageDefName )
 {
 	if( !disableFracture ) {
@@ -1018,11 +913,6 @@ void idBrittleFracture::AddDamageEffect( const trace_t& collision, const idVec3&
 
 static float fractureSplitTable[] = { 1365.123f, 5.324f, 1125.34f, 50.34f, 555.252f, 100.12f, 230.53f, 10000.87f, 10000.87f };
 
-/*
-================
-idBrittleFracture::Fracture_r
-================
-*/
 void		 idBrittleFracture::Fracture_r( idFixedWinding& w, idRandom2& random )
 {
 	int			   i, j, bestPlane;
@@ -1097,11 +987,7 @@ void		 idBrittleFracture::Fracture_r( idFixedWinding& w, idRandom2& random )
 	AddShard( clipModel, w );
 }
 
-/*
-================
-CompareVec5
-================
-*/
+//! Compares two idVec5 vectors for equality by calculating the sum of squared differences between their components.
 bool CompareVec5( const idVec5& v0, const idVec5& v1 )
 {
 	float dx = v0.x - v1.x;
@@ -1113,11 +999,6 @@ bool CompareVec5( const idVec5& v0, const idVec5& v1 )
 	return ( d == 0.0f );
 }
 
-/*
-================
-idBrittleFracture::CreateFractures
-================
-*/
 void idBrittleFracture::CreateFractures( const idRenderModel* renderModel )
 {
 	if( !renderModel || renderModel->NumSurfaces() < 1 ) {
@@ -1199,11 +1080,6 @@ void idBrittleFracture::CreateFractures( const idRenderModel* renderModel )
 	SetPhysics( &physicsObj );
 }
 
-/*
-================
-idBrittleFracture::FindNeighbours
-================
-*/
 void idBrittleFracture::FindNeighbours()
 {
 	int		i, j, k, l;
@@ -1284,11 +1160,6 @@ void idBrittleFracture::FindNeighbours()
 	}
 }
 
-/*
-================
-idBrittleFracture::Event_Activate
-================
-*/
 void idBrittleFracture::Event_Activate( idEntity* activator )
 {
 	disableFracture = false;
@@ -1297,11 +1168,6 @@ void idBrittleFracture::Event_Activate( idEntity* activator )
 	}
 }
 
-/*
-================
-idBrittleFracture::Event_Touch
-================
-*/
 void idBrittleFracture::Event_Touch( idEntity* other, trace_t* trace )
 {
 	idVec3 point, impulse;
@@ -1325,11 +1191,6 @@ void idBrittleFracture::Event_Touch( idEntity* other, trace_t* trace )
 	Shatter( point, impulse, gameLocal.time );
 }
 
-/*
-================
-idBrittleFracture::ClientThink
-================
-*/
 void idBrittleFracture::ClientThink( const int curTime, const float fraction, const bool predict )
 {
 	// only think forward because the state is not synced through snapshots
@@ -1340,11 +1201,6 @@ void idBrittleFracture::ClientThink( const int curTime, const float fraction, co
 	Think();
 }
 
-/*
-================
-idBrittleFracture::ClientPredictionThink
-================
-*/
 void idBrittleFracture::ClientPredictionThink()
 {
 	// only think forward because the state is not synced through snapshots
@@ -1355,11 +1211,6 @@ void idBrittleFracture::ClientPredictionThink()
 	Think();
 }
 
-/*
-================
-idBrittleFracture::ClientReceiveEvent
-================
-*/
 bool idBrittleFracture::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 {
 	idVec3 point, dir;

@@ -30,26 +30,52 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponGrabber
+	\brief A class representing an ice weapon grabber that manages weapon states, visual effects, and sound behaviors.
+
+	This class extends iceWeaponObject to implement the behavior of an ice weapon grabber, handling various weapon states including raising, lowering, idle, firing, and reloading. It manages the
+   initialization and activation of visual effects such as particle systems and lighting, as well as warning sounds and GUI light updates. The class coordinates with weapon-related states and
+   animations to provide a complete interactive weapon experience.
+
+*/
 class iceWeaponGrabber : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponGrabber );
 
+	//! Initializes the ice weapon grabber with the specified weapon
 	virtual void  Init( idWeapon* weapon );
 
+	//! Raises the ice weapon grabber animation state.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Changes the weapon state to holstered after playing the putaway animation.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the ice weapon grabber, managing weapon animation and sound effects based on target detection and weapon state.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Executes the firing state logic for the ice weapon grabber.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Completes the reload state transition for the ice weapon grabber.
 	stateResult_t Reload( stateParms_t* parms );
 
 private:
+	//! Initializes and activates the weapon grabber's visual effects and lighting.
 	void				 StartActive();
+
+	//! Stops the active particle and light effects associated with the weapon grabber.
 	void				 StopActive();
 
+	//! Initializes the warning sound state for the ice weapon grabber.
 	void				 StartWarningSound();
+
+	//! Updates the warning sound for the ice weapon grabber based on elapsed time
 	void				 UpdateWarningSound();
 
+	//! Updates the GUI light state based on the grabber's target status
 	void				 UpdateGuiLight();
 
 	const idSoundShader* snd_fireloop;

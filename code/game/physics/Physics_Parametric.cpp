@@ -35,22 +35,12 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idPhysics_Base, idPhysics_Parametric )
 END_CLASS
 
-/*
-================
-idPhysics_Parametric::Activate
-================
-*/
 void idPhysics_Parametric::Activate()
 {
 	current.atRest = -1;
 	self->BecomeActive( TH_PHYSICS );
 }
 
-/*
-================
-idPhysics_Parametric::TestIfAtRest
-================
-*/
 bool idPhysics_Parametric::TestIfAtRest() const
 {
 	if( ( current.linearExtrapolation.GetExtrapolationType() & ~EXTRAPOLATION_NOSTOP ) == EXTRAPOLATION_NONE &&
@@ -82,22 +72,12 @@ bool idPhysics_Parametric::TestIfAtRest() const
 	return true;
 }
 
-/*
-================
-idPhysics_Parametric::Rest
-================
-*/
 void idPhysics_Parametric::Rest()
 {
 	current.atRest = gameLocal.time;
 	self->BecomeInactive( TH_PHYSICS );
 }
 
-/*
-================
-idPhysics_Parametric::idPhysics_Parametric
-================
-*/
 idPhysics_Parametric::idPhysics_Parametric()
 {
 	current.time			= gameLocal.time;
@@ -127,11 +107,6 @@ idPhysics_Parametric::idPhysics_Parametric()
 	isOrientated = false;
 }
 
-/*
-================
-idPhysics_Parametric::~idPhysics_Parametric
-================
-*/
 idPhysics_Parametric::~idPhysics_Parametric()
 {
 	if( clipModel != NULL ) {
@@ -144,11 +119,7 @@ idPhysics_Parametric::~idPhysics_Parametric()
 	}
 }
 
-/*
-================
-idPhysics_Parametric_SavePState
-================
-*/
+//! Saves the parametric physics state to a save file
 void idPhysics_Parametric_SavePState( idSaveGame* savefile, const parametricPState_t& state )
 {
 	savefile->WriteInt( state.time );
@@ -198,11 +169,7 @@ void idPhysics_Parametric_SavePState( idSaveGame* savefile, const parametricPSta
 	savefile->WriteFloat( state.splineInterpolate.GetEndValue() );
 }
 
-/*
-================
-idPhysics_Parametric_RestorePState
-================
-*/
+//! Restores the parametric physics state from a save file
 void idPhysics_Parametric_RestorePState( idRestoreGame* savefile, parametricPState_t& state )
 {
 	extrapolation_t etype;
@@ -267,11 +234,6 @@ void idPhysics_Parametric_RestorePState( idRestoreGame* savefile, parametricPSta
 	state.splineInterpolate.Init( startTime, accelTime, decelTime, duration, startValue, endValue );
 }
 
-/*
-================
-idPhysics_Parametric::Save
-================
-*/
 void idPhysics_Parametric::Save( idSaveGame* savefile ) const
 {
 	idPhysics_Parametric_SavePState( savefile, current );
@@ -288,11 +250,6 @@ void idPhysics_Parametric::Save( idSaveGame* savefile ) const
 	savefile->WriteBool( isOrientated );
 }
 
-/*
-================
-idPhysics_Parametric::Restore
-================
-*/
 void idPhysics_Parametric::Restore( idRestoreGame* savefile )
 {
 	idPhysics_Parametric_RestorePState( savefile, current );
@@ -309,11 +266,6 @@ void idPhysics_Parametric::Restore( idRestoreGame* savefile )
 	savefile->ReadBool( isOrientated );
 }
 
-/*
-================
-idPhysics_Parametric::SetPusher
-================
-*/
 void idPhysics_Parametric::SetPusher( int flags )
 {
 	assert( clipModel );
@@ -321,21 +273,11 @@ void idPhysics_Parametric::SetPusher( int flags )
 	pushFlags = flags;
 }
 
-/*
-================
-idPhysics_Parametric::IsPusher
-================
-*/
 bool idPhysics_Parametric::IsPusher() const
 {
 	return isPusher;
 }
 
-/*
-================
-idPhysics_Parametric::SetLinearExtrapolation
-================
-*/
 void idPhysics_Parametric::SetLinearExtrapolation( extrapolation_t type, int time, int duration, const idVec3& base, const idVec3& speed, const idVec3& baseSpeed )
 {
 	current.time = gameLocal.time;
@@ -344,11 +286,6 @@ void idPhysics_Parametric::SetLinearExtrapolation( extrapolation_t type, int tim
 	Activate();
 }
 
-/*
-================
-idPhysics_Parametric::SetAngularExtrapolation
-================
-*/
 void idPhysics_Parametric::SetAngularExtrapolation( extrapolation_t type, int time, int duration, const idAngles& base, const idAngles& speed, const idAngles& baseSpeed )
 {
 	current.time = gameLocal.time;
@@ -357,31 +294,16 @@ void idPhysics_Parametric::SetAngularExtrapolation( extrapolation_t type, int ti
 	Activate();
 }
 
-/*
-================
-idPhysics_Parametric::GetLinearExtrapolationType
-================
-*/
 extrapolation_t idPhysics_Parametric::GetLinearExtrapolationType() const
 {
 	return current.linearExtrapolation.GetExtrapolationType();
 }
 
-/*
-================
-idPhysics_Parametric::GetAngularExtrapolationType
-================
-*/
 extrapolation_t idPhysics_Parametric::GetAngularExtrapolationType() const
 {
 	return current.angularExtrapolation.GetExtrapolationType();
 }
 
-/*
-================
-idPhysics_Parametric::SetLinearInterpolation
-================
-*/
 void idPhysics_Parametric::SetLinearInterpolation( int time, int accelTime, int decelTime, int duration, const idVec3& startPos, const idVec3& endPos )
 {
 	current.time = gameLocal.time;
@@ -390,11 +312,6 @@ void idPhysics_Parametric::SetLinearInterpolation( int time, int accelTime, int 
 	Activate();
 }
 
-/*
-================
-idPhysics_Parametric::SetAngularInterpolation
-================
-*/
 void idPhysics_Parametric::SetAngularInterpolation( int time, int accelTime, int decelTime, int duration, const idAngles& startAng, const idAngles& endAng )
 {
 	current.time = gameLocal.time;
@@ -403,11 +320,6 @@ void idPhysics_Parametric::SetAngularInterpolation( int time, int accelTime, int
 	Activate();
 }
 
-/*
-================
-idPhysics_Parametric::SetSpline
-================
-*/
 void idPhysics_Parametric::SetSpline( idCurve_Spline<idVec3>* spline, int accelTime, int decelTime, bool useSplineAngles )
 {
 	if( current.spline != NULL ) {
@@ -425,71 +337,36 @@ void idPhysics_Parametric::SetSpline( idCurve_Spline<idVec3>* spline, int accelT
 	Activate();
 }
 
-/*
-================
-idPhysics_Parametric::GetSpline
-================
-*/
 idCurve_Spline<idVec3>* idPhysics_Parametric::GetSpline() const
 {
 	return current.spline;
 }
 
-/*
-================
-idPhysics_Parametric::GetSplineAcceleration
-================
-*/
 int idPhysics_Parametric::GetSplineAcceleration() const
 {
 	return current.splineInterpolate.GetAcceleration();
 }
 
-/*
-================
-idPhysics_Parametric::GetSplineDeceleration
-================
-*/
 int idPhysics_Parametric::GetSplineDeceleration() const
 {
 	return current.splineInterpolate.GetDeceleration();
 }
 
-/*
-================
-idPhysics_Parametric::UsingSplineAngles
-================
-*/
 bool idPhysics_Parametric::UsingSplineAngles() const
 {
 	return current.useSplineAngles;
 }
 
-/*
-================
-idPhysics_Parametric::GetLocalOrigin
-================
-*/
 void idPhysics_Parametric::GetLocalOrigin( idVec3& curOrigin ) const
 {
 	curOrigin = current.localOrigin;
 }
 
-/*
-================
-idPhysics_Parametric::GetLocalAngles
-================
-*/
 void idPhysics_Parametric::GetLocalAngles( idAngles& curAngles ) const
 {
 	curAngles = current.localAngles;
 }
 
-/*
-================
-idPhysics_Parametric::SetClipModel
-================
-*/
 void idPhysics_Parametric::SetClipModel( idClipModel* model, float density, int id, bool freeOld )
 {
 	assert( self );
@@ -502,50 +379,25 @@ void idPhysics_Parametric::SetClipModel( idClipModel* model, float density, int 
 	clipModel->Link( gameLocal.clip, self, 0, current.origin, current.axis );
 }
 
-/*
-================
-idPhysics_Parametric::GetClipModel
-================
-*/
 idClipModel* idPhysics_Parametric::GetClipModel( int id ) const
 {
 	return clipModel;
 }
 
-/*
-================
-idPhysics_Parametric::GetNumClipModels
-================
-*/
 int idPhysics_Parametric::GetNumClipModels() const
 {
 	return ( clipModel != NULL );
 }
 
-/*
-================
-idPhysics_Parametric::SetMass
-================
-*/
 void idPhysics_Parametric::SetMass( float mass, int id )
 {
 }
 
-/*
-================
-idPhysics_Parametric::GetMass
-================
-*/
 float idPhysics_Parametric::GetMass( int id ) const
 {
 	return 0.0f;
 }
 
-/*
-================
-idPhysics_Parametric::SetClipMask
-================
-*/
 void idPhysics_Parametric::SetContents( int contents, int id )
 {
 	if( clipModel ) {
@@ -553,11 +405,6 @@ void idPhysics_Parametric::SetContents( int contents, int id )
 	}
 }
 
-/*
-================
-idPhysics_Parametric::SetClipMask
-================
-*/
 int idPhysics_Parametric::GetContents( int id ) const
 {
 	if( clipModel ) {
@@ -566,11 +413,6 @@ int idPhysics_Parametric::GetContents( int id ) const
 	return 0;
 }
 
-/*
-================
-idPhysics_Parametric::GetBounds
-================
-*/
 const idBounds& idPhysics_Parametric::GetBounds( int id ) const
 {
 	if( clipModel ) {
@@ -579,11 +421,6 @@ const idBounds& idPhysics_Parametric::GetBounds( int id ) const
 	return idPhysics_Base::GetBounds();
 }
 
-/*
-================
-idPhysics_Parametric::GetAbsBounds
-================
-*/
 const idBounds& idPhysics_Parametric::GetAbsBounds( int id ) const
 {
 	if( clipModel ) {
@@ -592,11 +429,6 @@ const idBounds& idPhysics_Parametric::GetAbsBounds( int id ) const
 	return idPhysics_Base::GetAbsBounds();
 }
 
-/*
-================
-idPhysics_Parametric::Evaluate
-================
-*/
 bool idPhysics_Parametric::Evaluate( int timeStepMSec, int endTimeMSec )
 {
 	idVec3	 oldLocalOrigin, oldOrigin, masterOrigin;
@@ -681,11 +513,6 @@ bool idPhysics_Parametric::Evaluate( int timeStepMSec, int endTimeMSec )
 	return ( current.origin != oldOrigin || current.axis != oldAxis );
 }
 
-/*
-================
-Sets the currentInterpolated state based on previous, next, and the fraction.
-================
-*/
 bool idPhysics_Parametric::Interpolate( const float fraction )
 {
 	if( self->GetNumSnapshotsReceived() <= 1 ) {
@@ -706,11 +533,6 @@ bool idPhysics_Parametric::Interpolate( const float fraction )
 	return hasChanged;
 }
 
-/*
-================
-idPhysics_Parametric::UpdateTime
-================
-*/
 void idPhysics_Parametric::UpdateTime( int endTimeMSec )
 {
 	int timeLeap = endTimeMSec - current.time;
@@ -727,61 +549,31 @@ void idPhysics_Parametric::UpdateTime( int endTimeMSec )
 	}
 }
 
-/*
-================
-idPhysics_Parametric::GetTime
-================
-*/
 int idPhysics_Parametric::GetTime() const
 {
 	return current.time;
 }
 
-/*
-================
-idPhysics_Parametric::IsAtRest
-================
-*/
 bool idPhysics_Parametric::IsAtRest() const
 {
 	return current.atRest >= 0;
 }
 
-/*
-================
-idPhysics_Parametric::GetRestStartTime
-================
-*/
 int idPhysics_Parametric::GetRestStartTime() const
 {
 	return current.atRest;
 }
 
-/*
-================
-idPhysics_Parametric::IsPushable
-================
-*/
 bool idPhysics_Parametric::IsPushable() const
 {
 	return false;
 }
 
-/*
-================
-idPhysics_Parametric::SaveState
-================
-*/
 void idPhysics_Parametric::SaveState()
 {
 	saved = current;
 }
 
-/*
-================
-idPhysics_Parametric::RestoreState
-================
-*/
 void idPhysics_Parametric::RestoreState()
 {
 	current = saved;
@@ -791,11 +583,6 @@ void idPhysics_Parametric::RestoreState()
 	}
 }
 
-/*
-================
-idPhysics_Parametric::SetOrigin
-================
-*/
 void idPhysics_Parametric::SetOrigin( const idVec3& newOrigin, int id )
 {
 	idVec3 masterOrigin;
@@ -817,11 +604,6 @@ void idPhysics_Parametric::SetOrigin( const idVec3& newOrigin, int id )
 	Activate();
 }
 
-/*
-================
-idPhysics_Parametric::SetAxis
-================
-*/
 void idPhysics_Parametric::SetAxis( const idMat3& newAxis, int id )
 {
 	idVec3 masterOrigin;
@@ -847,59 +629,29 @@ void idPhysics_Parametric::SetAxis( const idMat3& newAxis, int id )
 	Activate();
 }
 
-/*
-================
-idPhysics_Parametric::Move
-================
-*/
 void idPhysics_Parametric::Translate( const idVec3& translation, int id )
 {
 }
 
-/*
-================
-idPhysics_Parametric::Rotate
-================
-*/
 void idPhysics_Parametric::Rotate( const idRotation& rotation, int id )
 {
 }
 
-/*
-================
-idPhysics_Parametric::GetOrigin
-================
-*/
 const idVec3& idPhysics_Parametric::GetOrigin( int id ) const
 {
 	return current.origin;
 }
 
-/*
-================
-idPhysics_Parametric::GetAxis
-================
-*/
 const idMat3& idPhysics_Parametric::GetAxis( int id ) const
 {
 	return current.axis;
 }
 
-/*
-================
-idPhysics_Parametric::GetAngles
-================
-*/
 void idPhysics_Parametric::GetAngles( idAngles& curAngles ) const
 {
 	curAngles = current.angles;
 }
 
-/*
-================
-idPhysics_Parametric::SetLinearVelocity
-================
-*/
 void idPhysics_Parametric::SetLinearVelocity( const idVec3& newLinearVelocity, int id )
 {
 	SetLinearExtrapolation( extrapolation_t( EXTRAPOLATION_LINEAR | EXTRAPOLATION_NOSTOP ), gameLocal.time, 0, current.origin, newLinearVelocity, vec3_origin );
@@ -907,11 +659,6 @@ void idPhysics_Parametric::SetLinearVelocity( const idVec3& newLinearVelocity, i
 	Activate();
 }
 
-/*
-================
-idPhysics_Parametric::SetAngularVelocity
-================
-*/
 void idPhysics_Parametric::SetAngularVelocity( const idVec3& newAngularVelocity, int id )
 {
 	idRotation rotation;
@@ -927,11 +674,6 @@ void idPhysics_Parametric::SetAngularVelocity( const idVec3& newAngularVelocity,
 	Activate();
 }
 
-/*
-================
-idPhysics_Parametric::GetLinearVelocity
-================
-*/
 const idVec3& idPhysics_Parametric::GetLinearVelocity( int id ) const
 {
 	static idVec3 curLinearVelocity;
@@ -940,11 +682,6 @@ const idVec3& idPhysics_Parametric::GetLinearVelocity( int id ) const
 	return curLinearVelocity;
 }
 
-/*
-================
-idPhysics_Parametric::GetAngularVelocity
-================
-*/
 const idVec3& idPhysics_Parametric::GetAngularVelocity( int id ) const
 {
 	static idVec3 curAngularVelocity;
@@ -955,11 +692,6 @@ const idVec3& idPhysics_Parametric::GetAngularVelocity( int id ) const
 	return curAngularVelocity;
 }
 
-/*
-================
-idPhysics_Parametric::DisableClip
-================
-*/
 void idPhysics_Parametric::DisableClip()
 {
 	if( clipModel ) {
@@ -967,11 +699,6 @@ void idPhysics_Parametric::DisableClip()
 	}
 }
 
-/*
-================
-idPhysics_Parametric::EnableClip
-================
-*/
 void idPhysics_Parametric::EnableClip()
 {
 	if( clipModel ) {
@@ -979,11 +706,6 @@ void idPhysics_Parametric::EnableClip()
 	}
 }
 
-/*
-================
-idPhysics_Parametric::UnlinkClip
-================
-*/
 void idPhysics_Parametric::UnlinkClip()
 {
 	if( clipModel ) {
@@ -991,11 +713,6 @@ void idPhysics_Parametric::UnlinkClip()
 	}
 }
 
-/*
-================
-idPhysics_Parametric::LinkClip
-================
-*/
 void idPhysics_Parametric::LinkClip()
 {
 	if( clipModel ) {
@@ -1003,21 +720,11 @@ void idPhysics_Parametric::LinkClip()
 	}
 }
 
-/*
-================
-idPhysics_Parametric::GetBlockingInfo
-================
-*/
 const trace_t* idPhysics_Parametric::GetBlockingInfo() const
 {
 	return ( isBlocked ? &pushResults : NULL );
 }
 
-/*
-================
-idPhysics_Parametric::GetBlockingEntity
-================
-*/
 idEntity* idPhysics_Parametric::GetBlockingEntity() const
 {
 	if( isBlocked ) {
@@ -1026,11 +733,6 @@ idEntity* idPhysics_Parametric::GetBlockingEntity() const
 	return NULL;
 }
 
-/*
-================
-idPhysics_Parametric::SetMaster
-================
-*/
 void idPhysics_Parametric::SetMaster( idEntity* master, const bool orientated )
 {
 	idVec3 masterOrigin;
@@ -1064,11 +766,6 @@ void idPhysics_Parametric::SetMaster( idEntity* master, const bool orientated )
 	}
 }
 
-/*
-================
-idPhysics_Parametric::GetLinearEndTime
-================
-*/
 int idPhysics_Parametric::GetLinearEndTime() const
 {
 	if( current.spline != NULL ) {
@@ -1084,11 +781,6 @@ int idPhysics_Parametric::GetLinearEndTime() const
 	}
 }
 
-/*
-================
-idPhysics_Parametric::GetAngularEndTime
-================
-*/
 int idPhysics_Parametric::GetAngularEndTime() const
 {
 	if( current.angularInterpolation.GetDuration() != 0 ) {
@@ -1098,11 +790,6 @@ int idPhysics_Parametric::GetAngularEndTime() const
 	}
 }
 
-/*
-================
-idPhysics_Parametric::WriteToSnapshot
-================
-*/
 void idPhysics_Parametric::WriteToSnapshot( idBitMsg& msg ) const
 {
 	const idQuat currentQuat = current.axis.ToQuat();
@@ -1111,11 +798,6 @@ void idPhysics_Parametric::WriteToSnapshot( idBitMsg& msg ) const
 	WriteFloatArray( msg, currentQuat );
 }
 
-/*
-================
-idPhysics_Parametric::ReadFromSnapshot
-================
-*/
 void idPhysics_Parametric::ReadFromSnapshot( const idBitMsg& msg )
 {
 	previous = next;

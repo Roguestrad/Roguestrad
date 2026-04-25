@@ -30,20 +30,40 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponFist
+	\brief The iceWeaponFist class implements the behavior and states for an ice weapon fist weapon.
+
+	This class extends iceWeaponObject to define the specific behavior of an ice weapon fist, including its initialization, raising, lowering, idle, firing, and reloading states. The class manages the
+   weapon's animation states and transitions between them based on game events. It supports different firing animations based on the weapon side and provides methods to handle each state of the
+   weapon's operation. The implementation uses a state machine approach to manage the weapon's behavior during various actions such as raising, firing, and reloading.
+
+*/
 class iceWeaponFist : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponFist );
 
+	//! Initializes the ice weapon fist with the provided weapon object.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Raises the ice weapon fist to idle position using animation.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Puts away the ice weapon fist by playing a putaway animation and transitioning to the holstered state.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the ice weapon fist, transitioning through stages and returning appropriate state results.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Executes the firing state of the ice weapon fist, handling animation playback and melee attack.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Completes the reload state operation for the ice weapon fist
 	stateResult_t Reload( stateParms_t* parms );
 
 private:
+	//! Returns the firing animation name for the ice weapon fist based on the side.
 	const char* GetFireAnim();
 	bool		side;
 };

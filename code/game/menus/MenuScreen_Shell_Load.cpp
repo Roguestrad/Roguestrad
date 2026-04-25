@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 const static int NUM_LOAD_OPTIONS = 10;
 
-/*
-========================
-idMenuScreen_Shell_Load::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_Load::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -99,11 +94,6 @@ void			 idMenuScreen_Shell_Load::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_Load::Update
-========================
-*/
 void idMenuScreen_Shell_Load::Update()
 {
 	UpdateSaveEnumerations();
@@ -129,11 +119,6 @@ void idMenuScreen_Shell_Load::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_Load::UpdateSaveEnumerations
-========================
-*/
 void idMenuScreen_Shell_Load::UpdateSaveEnumerations()
 {
 	const saveGameDetailsList_t& saveGameInfo = session->GetSaveGameManager().GetEnumeratedSavegames();
@@ -235,31 +220,16 @@ void idMenuScreen_Shell_Load::UpdateSaveEnumerations()
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Load::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_Load::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Load::HideScreen
-========================
-*/
 void idMenuScreen_Shell_Load::HideScreen( const mainMenuTransition_t transitionType )
 {
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_Load::LoadDamagedGame
-========================
-*/
 void idMenuScreen_Shell_Load::LoadDamagedGame( int index )
 {
 	if( index >= sortedSaves.Num() ) {
@@ -302,11 +272,6 @@ void idMenuScreen_Shell_Load::LoadDamagedGame( int index )
 	common->Dialog().AddDynamicDialog( GDM_LOAD_DAMAGED_FILE, callbacks, optionText, false, "" );
 }
 
-/*
-========================
-idMenuScreen_Shell_Load::LoadGame
-========================
-*/
 void idMenuScreen_Shell_Load::LoadGame( int index )
 {
 	if( menuData == NULL ) {
@@ -368,11 +333,6 @@ void idMenuScreen_Shell_Load::LoadGame( int index )
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_Save::DeleteGame
-========================
-*/
 void idMenuScreen_Shell_Load::DeleteGame( int index )
 {
 	class idSWFScriptFunction_DeleteGame : public idSWFScriptFunction_RefCounted
@@ -410,11 +370,6 @@ void idMenuScreen_Shell_Load::DeleteGame( int index )
 		false );
 }
 
-/*
-========================
-idMenuScreen_Shell_Load::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_Load::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData != NULL ) {

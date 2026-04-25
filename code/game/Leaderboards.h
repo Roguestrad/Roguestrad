@@ -46,24 +46,16 @@ struct columnGameMode_t {
 	const char*	 abrevName; // Leaderboard Game Mode Abrev.
 };
 
-/*
-================================================================================================
-
-	Leaderboards
-
-================================================================================================
-*/
-
-// creates and stores all the leaderboards inside the internal map ( see Sys_FindLeaderboardDef on retrieving definition )
+//! Initializes local leaderboard definitions for all available maps and game modes.
 void						  LeaderboardLocal_Init();
 
-// Destroys any leaderboard definitions allocated by LeaderboardLocal_Init()
+//! Destroys any leaderboard definitions allocated by LeaderboardLocal_Init().
 void						  LeaderboardLocal_Shutdown();
 
-// Gets a leaderboard ID with map index and game type.
+//! Gets a leaderboard ID using the map index and game type.
 int							  LeaderboardLocal_GetID( int mapIndex, int gametype );
 
-// Do it all function. Will create the column_t with the correct stats from the game type, and upload it to the leaderboard system.
+//! Uploads leaderboard statistics for a specific game type and lobby user ID
 void						  LeaderboardLocal_Upload( lobbyUserID_t lobbyUserID, int gameType, leaderboardStats_t& stats );
 
 extern const columnGameMode_t gameMode_columnDefs[];

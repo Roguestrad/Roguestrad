@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 CLASS_DECLARATION( idPhysics_Base, idPhysics_Actor )
 END_CLASS
 
-/*
-================
-idPhysics_Actor::idPhysics_Actor
-================
-*/
 idPhysics_Actor::idPhysics_Actor()
 {
 	clipModel = NULL;
@@ -52,11 +47,6 @@ idPhysics_Actor::idPhysics_Actor()
 	groundEntityPtr = NULL;
 }
 
-/*
-================
-idPhysics_Actor::~idPhysics_Actor
-================
-*/
 idPhysics_Actor::~idPhysics_Actor()
 {
 	if( clipModel ) {
@@ -65,11 +55,6 @@ idPhysics_Actor::~idPhysics_Actor()
 	}
 }
 
-/*
-================
-idPhysics_Actor::Save
-================
-*/
 void idPhysics_Actor::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteClipModel( clipModel );
@@ -85,11 +70,6 @@ void idPhysics_Actor::Save( idSaveGame* savefile ) const
 	groundEntityPtr.Save( savefile );
 }
 
-/*
-================
-idPhysics_Actor::Restore
-================
-*/
 void idPhysics_Actor::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadClipModel( clipModel );
@@ -105,11 +85,6 @@ void idPhysics_Actor::Restore( idRestoreGame* savefile )
 	groundEntityPtr.Restore( savefile );
 }
 
-/*
-================
-idPhysics_Actor::SetClipModelAxis
-================
-*/
 void idPhysics_Actor::SetClipModelAxis()
 {
 	// align clip model to gravity direction
@@ -126,41 +101,21 @@ void idPhysics_Actor::SetClipModelAxis()
 	}
 }
 
-/*
-================
-idPhysics_Actor::GetGravityAxis
-================
-*/
 const idMat3& idPhysics_Actor::GetGravityAxis() const
 {
 	return clipModelAxis;
 }
 
-/*
-================
-idPhysics_Actor::GetMasterDeltaYaw
-================
-*/
 float idPhysics_Actor::GetMasterDeltaYaw() const
 {
 	return masterDeltaYaw;
 }
 
-/*
-================
-idPhysics_Actor::GetGroundEntity
-================
-*/
 idEntity* idPhysics_Actor::GetGroundEntity() const
 {
 	return groundEntityPtr.GetEntity();
 }
 
-/*
-================
-idPhysics_Actor::SetClipModel
-================
-*/
 void idPhysics_Actor::SetClipModel( idClipModel* model, const float density, int id, bool freeOld )
 {
 	assert( self );
@@ -175,31 +130,16 @@ void idPhysics_Actor::SetClipModel( idClipModel* model, const float density, int
 	clipModel->Link( gameLocal.clip, self, 0, clipModel->GetOrigin(), clipModelAxis );
 }
 
-/*
-================
-idPhysics_Actor::GetClipModel
-================
-*/
 idClipModel* idPhysics_Actor::GetClipModel( int id ) const
 {
 	return clipModel;
 }
 
-/*
-================
-idPhysics_Actor::GetNumClipModels
-================
-*/
 int idPhysics_Actor::GetNumClipModels() const
 {
 	return 1;
 }
 
-/*
-================
-idPhysics_Actor::SetMass
-================
-*/
 void idPhysics_Actor::SetMass( float _mass, int id )
 {
 	assert( _mass > 0.0f );
@@ -207,91 +147,46 @@ void idPhysics_Actor::SetMass( float _mass, int id )
 	invMass = 1.0f / _mass;
 }
 
-/*
-================
-idPhysics_Actor::GetMass
-================
-*/
 float idPhysics_Actor::GetMass( int id ) const
 {
 	return mass;
 }
 
-/*
-================
-idPhysics_Actor::SetClipMask
-================
-*/
 void idPhysics_Actor::SetContents( int contents, int id )
 {
 	clipModel->SetContents( contents );
 }
 
-/*
-================
-idPhysics_Actor::SetClipMask
-================
-*/
 int idPhysics_Actor::GetContents( int id ) const
 {
 	return clipModel->GetContents();
 }
 
-/*
-================
-idPhysics_Actor::GetBounds
-================
-*/
 const idBounds& idPhysics_Actor::GetBounds( int id ) const
 {
 	return clipModel->GetBounds();
 }
 
-/*
-================
-idPhysics_Actor::GetAbsBounds
-================
-*/
 const idBounds& idPhysics_Actor::GetAbsBounds( int id ) const
 {
 	return clipModel->GetAbsBounds();
 }
 
-/*
-================
-idPhysics_Actor::IsPushable
-================
-*/
 bool idPhysics_Actor::IsPushable() const
 {
 	return ( masterEntity == NULL );
 }
 
-/*
-================
-idPhysics_Actor::GetOrigin
-================
-*/
 const idVec3& idPhysics_Actor::GetOrigin( int id ) const
 {
 	return clipModel->GetOrigin();
 }
 
-/*
-================
-idPhysics_Player::GetAxis
-================
-*/
 const idMat3& idPhysics_Actor::GetAxis( int id ) const
 {
 	return clipModel->GetAxis();
 }
 
-/*
-================
-idPhysics_Actor::SetGravity
-================
-*/
 void idPhysics_Actor::SetGravity( const idVec3& newGravity )
 {
 	if( newGravity != gravityVector ) {
@@ -300,11 +195,6 @@ void idPhysics_Actor::SetGravity( const idVec3& newGravity )
 	}
 }
 
-/*
-================
-idPhysics_Actor::ClipTranslation
-================
-*/
 void idPhysics_Actor::ClipTranslation( trace_t& results, const idVec3& translation, const idClipModel* model ) const
 {
 	if( model ) {
@@ -315,11 +205,6 @@ void idPhysics_Actor::ClipTranslation( trace_t& results, const idVec3& translati
 	}
 }
 
-/*
-================
-idPhysics_Actor::ClipRotation
-================
-*/
 void idPhysics_Actor::ClipRotation( trace_t& results, const idRotation& rotation, const idClipModel* model ) const
 {
 	if( model ) {
@@ -329,11 +214,6 @@ void idPhysics_Actor::ClipRotation( trace_t& results, const idRotation& rotation
 	}
 }
 
-/*
-================
-idPhysics_Actor::ClipContents
-================
-*/
 int idPhysics_Actor::ClipContents( const idClipModel* model ) const
 {
 	if( model ) {
@@ -343,51 +223,26 @@ int idPhysics_Actor::ClipContents( const idClipModel* model ) const
 	}
 }
 
-/*
-================
-idPhysics_Actor::DisableClip
-================
-*/
 void idPhysics_Actor::DisableClip()
 {
 	clipModel->Disable();
 }
 
-/*
-================
-idPhysics_Actor::EnableClip
-================
-*/
 void idPhysics_Actor::EnableClip()
 {
 	clipModel->Enable();
 }
 
-/*
-================
-idPhysics_Actor::UnlinkClip
-================
-*/
 void idPhysics_Actor::UnlinkClip()
 {
 	clipModel->Unlink();
 }
 
-/*
-================
-idPhysics_Actor::LinkClip
-================
-*/
 void idPhysics_Actor::LinkClip()
 {
 	clipModel->Link( gameLocal.clip, self, 0, clipModel->GetOrigin(), clipModel->GetAxis() );
 }
 
-/*
-================
-idPhysics_Actor::EvaluateContacts
-================
-*/
 bool idPhysics_Actor::EvaluateContacts()
 {
 	// get all the ground contacts

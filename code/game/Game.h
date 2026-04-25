@@ -46,6 +46,7 @@ If you have questions concerning this license or the applicable additional terms
 #define SCRIPT_DEFAULTFUNC "doom_main"
 
 struct gameReturn_t {
+	//! Default constructs a gameReturn_t object with default values for its members.
 	gameReturn_t() :
 		sessionCommand( "" ), // SRS - Explicitly init sessionCommand otherwise can be optimized out and skipped with gcc or Apple clang
 		syncNextGameFrame( false ),
@@ -64,6 +65,16 @@ struct gameReturn_t {
 #define TIME_GROUP1 0
 #define TIME_GROUP2 1
 
+/*!
+	\class idGame
+	\brief Abstract base class for game logic implementation.
+
+	This class defines the interface for game-specific logic and behavior. It provides methods for initializing and shutting down the game, managing server information and timing, handling player data
+   persistence, and processing game frames. The class serves as a contract for concrete game implementations, defining how different aspects of game operation should be handled. It includes methods
+   for both server and client operations, such as snapshot handling, input processing, and rendering. The interface supports various game modes, save/load functionality, and integration with user
+   interface systems.
+
+*/
 class idGame
 {
 public:
@@ -216,85 +227,243 @@ enum { TEST_PARTICLE_MODEL = 0, TEST_PARTICLE_IMPACT, TEST_PARTICLE_MUZZLE, TEST
 class idEntity;
 class idMD5Anim;
 
-// FIXME: this interface needs to be reworked but it properly separates code for the time being
+/*!
+	\class idGameEdit
+	\brief Provides editing and manipulation capabilities for game entities and their visual representations.
+
+	This class serves as a central interface for game editing operations, handling entity creation, modification, and visualization within the game world. It manages the parsing of spawn arguments
+   into rendering structures for lights, entities, and sound sources, as well as animation system interactions including model retrieval, animation loading, and frame creation. The class also supports
+   articulated figure functionality, enabling the spawning and updating of complex skeletal animations. Additionally, it provides entity selection, manipulation, and map management capabilities,
+   allowing for comprehensive editing of game content. The interface acts as a bridge between game logic and rendering, facilitating the creation and modification of entities with proper visual and
+   behavioral attributes.
+
+*/
 class idGameEdit
 {
 public:
 	virtual ~idGameEdit() { }
 
-	// These are the canonical idDict to parameter parsing routines used by both the game and tools.
+	//! Parses spawn arguments into a render light structure for game rendering
 	virtual void			 ParseSpawnArgsToRenderLight( const idDict* args, renderLight_t* renderLight );
+
+	//! Parses spawn arguments into a render entity structure for model, orientation, and appearance settings
 	virtual void			 ParseSpawnArgsToRenderEntity( const idDict* args, renderEntity_t* renderEntity, const idDeclEntityDef* def = NULL );
-	virtual void			 ParseSpawnArgsToRenderEnvprobe( const idDict* args, renderEnvironmentProbe_t* renderEnvprobe ); // RB
+
+	//! Parses spawn arguments into a render environment probe structure.
+	virtual void			 ParseSpawnArgsToRenderEnvprobe( const idDict* args, renderEnvironmentProbe_t* renderEnvprobe );
+
+	//! Parses sound parameters from spawn args into a reference sound structure
 	virtual void			 ParseSpawnArgsToRefSound( const idDict* args, refSound_t* refSound );
 
-	// Animation system calls for non-game based skeletal rendering.
+	//! Retrieves a render model from an entity definition by its class name for animation system usage.
 	virtual idRenderModel*	 ANIM_GetModelFromEntityDef( const char* classname );
+
+	//! Returns the visual offset of the model definition associated with the given entity class name.
 	virtual const idVec3&	 ANIM_GetModelOffsetFromEntityDef( const char* classname );
+
+	//! Retrieves a render model from an entity definition dictionary.
 	virtual idRenderModel*	 ANIM_GetModelFromEntityDef( const idDict* args );
+
+	//! Retrieves a render model from a given model name, checking both declaration definitions and the render model manager.
 	virtual idRenderModel*	 ANIM_GetModelFromName( const char* modelName );
+
+	//! Retrieves an MD5 animation from an entity definition by class name and animation name.
 	virtual const idMD5Anim* ANIM_GetAnimFromEntityDef( const char* classname, const char* animname );
+
+	//! Retrieves the number of animations associated with a model definition specified in the entity arguments.
 	virtual int				 ANIM_GetNumAnimsFromEntityDef( const idDict* args );
+
+	//! Retrieves the name of an animation from an entity definition's model definition using the animation number.
 	virtual const char*		 ANIM_GetAnimNameFromEntityDef( const idDict* args, int animNum );
+
+	//! Returns a pointer to an animation object loaded from the specified file.
 	virtual const idMD5Anim* ANIM_GetAnim( const char* fileName );
+
+	//! Returns the length of the specified animation in milliseconds.
 	virtual int				 ANIM_GetLength( const idMD5Anim* anim );
+
+	//! Returns the number of frames in the specified MD5 animation.
 	virtual int				 ANIM_GetNumFrames( const idMD5Anim* anim );
+
+	/*!
+		\brief Creates an animation frame by converting joint quaternions to joint matrices and applying transformations to the joint hierarchy
+
+		This function processes an animation frame from an MD5 animation and converts it into a joint matrix format suitable for rendering. It handles joint hierarchy transformations and applies
+	   offset adjustments to the root joint. The function performs validation checks on the input parameters and handles cases where the number of joints in the model and animation don't match. When
+	   joints don't match, it issues a warning and initializes joints with identity rotations and the specified offset. The function uses SIMD processing for efficient joint matrix conversion and
+	   properly handles the relationship between parent and child joints in the hierarchy.
+
+		\param model Pointer to the render model used for joint information
+		\param anim Pointer to the MD5 animation to process
+		\param numJoints Number of joints in the model and animation
+		\param frame Output array of joint matrices to be filled
+		\param time Animation time in milliseconds
+		\param offset Translation offset to apply to the root joint
+		\param remove_origin_offset Flag indicating whether to remove the origin offset from the root joint
+		\throws gameLocal.Error when there are mismatches between joint counts or when joints pointer is null
+	*/
 	virtual void			 ANIM_CreateAnimFrame( const idRenderModel* model, const idMD5Anim* anim, int numJoints, idJointMat* frame, int time, const idVec3& offset, bool remove_origin_offset );
+
+	/*!
+		\brief Creates a dynamic mesh for a given animation frame by instantiating a model with specified animation data
+
+		This function takes an existing render model and animates it using the provided animation data. It handles both cases where the animation is defined within a model definition and where it's a
+	   standalone animation. The function calculates joint transformations for the specified frame and creates a new dynamic model instance based on these transformations. The offset parameter can be
+	   used to remove the origin offset when creating the mesh
+
+		\param model The base render model to animate
+		\param classname The entity class name used to look up animation definitions
+		\param animname The name of the animation to use
+		\param frame The frame number to extract from the animation
+		\param remove_origin_offset Whether to remove the origin offset when creating the mesh
+		\return A new dynamic render model instance with the animation frame applied, or NULL if the operation fails
+	*/
 	virtual idRenderModel*	 ANIM_CreateMeshForAnim( idRenderModel* model, const char* classname, const char* animname, int frame, bool remove_origin_offset );
 
-	// Articulated Figure calls for AF editor and Radiant.
+	//! Spawns an articulated figure entity from a given file name
 	virtual bool			 AF_SpawnEntity( const char* fileName );
+
+	//! Updates articulated figure entities that use the specified file.
 	virtual void			 AF_UpdateEntities( const char* fileName );
+
+	//! Undoes changes made to articulated figure definitions by reloading affected entities.
 	virtual void			 AF_UndoChanges();
+
+	/*!
+		\brief Creates a render model for an articulated figure mesh using specified arguments and pose data.
+
+		This function constructs a render model for an articulated figure by loading the specified model and articulated figure definition. It sets up the initial pose using the 'af_pose' animation
+	   and applies any body transformations specified in the key-value arguments. The function returns a pointer to the created render model or NULL if the process fails. The mesh origin and axis are
+	   updated based on the pose data, and a flag indicates whether the pose has been successfully set.
+
+		\param args Dictionary containing entity arguments including model, articulated figure, and body transformation data
+		\param meshOrigin Output parameter that stores the origin of the mesh after pose processing
+		\param meshAxis Output parameter that stores the axis orientation of the mesh after pose processing
+		\param poseIsSet Output boolean flag indicating whether the pose was successfully set
+		\return Pointer to the created idRenderModel instance, or NULL if creation fails
+	*/
 	virtual idRenderModel*	 AF_CreateMesh( const idDict& args, idVec3& meshOrigin, idMat3& meshAxis, bool& poseIsSet );
 
-	// Entity selection.
+	//! Clears the selection state for all spawned entities and clears the edit entities selection list.
 	virtual void			 ClearEntitySelection();
+
+	//! Returns the number of selected entities in the game.
 	virtual int				 GetSelectedEntities( idEntity* list[], int max );
+
+	//! Adds the specified entity to the list of selected entities.
 	virtual void			 AddSelectedEntity( idEntity* ent );
 
-	// Selection methods
+	//! Triggers all selected entities in the game.
 	virtual void			 TriggerSelected();
 
-	// Entity defs and spawning.
+	//! Returns the dictionary associated with an entity definition by name, creating a default if specified.
 	virtual const idDict*	 FindEntityDefDict( const char* name, bool makeDefault = true ) const;
+
+	//! Spawns an entity from a dictionary of arguments and returns a pointer to the created entity.
 	virtual void			 SpawnEntityDef( const idDict& args, idEntity** ent );
+
+	//! Finds and returns a pointer to an entity with the specified name, or NULL if not found.
 	virtual idEntity*		 FindEntity( const char* name ) const;
+
+	//! Generates a unique entity name for a given classname
 	virtual const char*		 GetUniqueEntityName( const char* classname ) const;
 
-	// Entity methods.
+	//! Retrieves the origin position of the specified entity and stores it in the provided vector.
 	virtual void			 EntityGetOrigin( idEntity* ent, idVec3& org ) const;
+
+	//! Retrieves the axis of the specified entity and stores it in the provided matrix.
 	virtual void			 EntityGetAxis( idEntity* ent, idMat3& axis ) const;
+
+	//! Sets the origin of the specified entity to the given position.
 	virtual void			 EntitySetOrigin( idEntity* ent, const idVec3& org );
+
+	//! Sets the axis of the specified entity to the given matrix.
 	virtual void			 EntitySetAxis( idEntity* ent, const idMat3& axis );
+
+	//! Moves the specified entity by the given translation vector.
 	virtual void			 EntityTranslate( idEntity* ent, const idVec3& org );
+
+	//! Returns the spawn arguments dictionary for the specified entity.
 	virtual const idDict*	 EntityGetSpawnArgs( idEntity* ent ) const;
+
+	//! Updates the changeable spawn arguments of an entity with the provided dictionary.
 	virtual void			 EntityUpdateChangeableSpawnArgs( idEntity* ent, const idDict* dict );
+
+	//! Updates the spawn arguments of an entity with new key-value pairs from a dictionary
 	virtual void			 EntityChangeSpawnArgs( idEntity* ent, const idDict* newArgs );
+
+	//! Updates the visual representation of the specified entity.
 	virtual void			 EntityUpdateVisuals( idEntity* ent );
+
+	//! Sets the model of an entity to the specified value.
 	virtual void			 EntitySetModel( idEntity* ent, const char* val );
+
+	//! Stops all sounds for the specified entity.
 	virtual void			 EntityStopSound( idEntity* ent );
+
+	//! Deletes the specified entity.
 	virtual void			 EntityDelete( idEntity* ent );
+
+	//! Sets the color of the specified entity.
 	virtual void			 EntitySetColor( idEntity* ent, const idVec3 color );
 
-	// Player methods.
+	//! Checks if the local player is valid and currently active in the game.
 	virtual bool			 PlayerIsValid() const;
+
+	//! Retrieves the origin position of the local player and stores it in the provided vector.
 	virtual void			 PlayerGetOrigin( idVec3& org ) const;
+
+	//! Returns the view axis of the local player.
 	virtual void			 PlayerGetAxis( idMat3& axis ) const;
+
+	//! Retrieves the view angles of the local player and stores them in the provided angles parameter.
 	virtual void			 PlayerGetViewAngles( idAngles& angles ) const;
+
+	//! Retrieves the eye position of the local player and stores it in the provided vector.
 	virtual void			 PlayerGetEyePosition( idVec3& org ) const;
+
+	//! Retrieves the render view information for the local player
 	virtual bool			 PlayerGetRenderView( renderView_t& rv ) const;
 
-	// In game map editing support.
+	//! Retrieves the dictionary of properties for a specified entity from the game map.
 	virtual const idDict*	 MapGetEntityDict( const char* name ) const;
+
+	//! Saves the current map to a file.
 	virtual void			 MapSave( const char* path = NULL ) const;
+
+	//! Sets a key-value pair for an entity in the map.
 	virtual void			 MapSetEntityKeyVal( const char* name, const char* key, const char* val ) const;
+
+	//! Copies key-value pairs from a dictionary to a map entity.
 	virtual void			 MapCopyDictToEntity( const char* name, const idDict* dict ) const;
+
+	//! Copies key-value pairs from a dictionary to the entity at the specified origin in the map.
 	virtual void			 MapCopyDictToEntityAtOrigin( const idVec3& org, const idDict* dict ) const;
+
+	//! Returns the count of unique key-value pairs matching the specified key from the map entities.
 	virtual int				 MapGetUniqueMatchingKeyVals( const char* key, const char* list[], const int max ) const;
+
+	//! Adds a new entity to the current level map using the provided dictionary of key-value pairs.
 	virtual void			 MapAddEntity( const idDict* dict ) const;
+
+	/*!
+		\brief Retrieves names of map entities matching a specified class and optional string condition.
+
+		This function searches through all entities in the current map and returns the names of those that match the given classname. If a match string is provided, it further filters entities based
+	   on the 'soundgroup' key in their properties. The results are stored in the provided list array up to the maximum count specified by max.
+
+		\param classname The class name to match against entity class properties
+		\param match Optional string to match against the 'soundgroup' property of entities
+		\param list Array to store the names of matching entities
+		\param max Maximum number of entity names to store in the list array
+		\return The number of entities that matched the criteria and were stored in the list array
+	*/
 	virtual int				 MapGetEntitiesMatchingClassWithString( const char* classname, const char* match, const char* list[], const int max ) const;
+
+	//! Removes an entity with the specified name from the current map.
 	virtual void			 MapRemoveEntity( const char* name ) const;
+
+	//! Translates a map entity by the specified vector offset.
 	virtual void			 MapEntityTranslate( const char* name, const idVec3& v ) const;
 };
 

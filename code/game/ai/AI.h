@@ -313,7 +313,7 @@ public:
 	//! Activates the AI when touched by a flashlight if wakeOnFlashlight is enabled.
 	void		 TouchedByFlashlight( idActor* flashlight_owner );
 
-	// Outputs a list of all monsters to the console.
+	//! Outputs a list of all monsters to the console.
 	static void	 List_f( const idCmdArgs& args );
 
 	/*!
@@ -636,6 +636,8 @@ protected:
 
 	//! Plays a custom animation on the AI entity with specified blend times.
 	void				  PlayCustomAnim( idStr animname, float blendIn, float blendOut );
+
+	//! Executes a custom animation cycle on the AI entity using the specified animation name and blending time.
 	void				  PlayCustomCycle( idStr animname, float blendTime );
 
 	//! Triggers wakeup targets by finding and activating entities with the specified target names.
@@ -701,6 +703,8 @@ protected:
 
 	//! Moves the AI entity while sliding along surfaces and avoiding obstacles
 	void				  SlideMove();
+
+	//! Adjusts the flying angles of the AI based on its velocity and configured flight parameters.
 	void				  AdjustFlyingAngles();
 
 	//! Adds a fly bob motion to the provided velocity vector.
@@ -970,9 +974,7 @@ protected:
 	//! Updates the AI script and handles enemy hit detection and animation state.
 	void				  UpdateAIScript();
 
-	// jmarshall begin
-
-	//
+	//! Performs a melee attack from the AI's eye position to a specified joint on the AI's model.
 	bool				  MeleeAttackToJoint( const char* jointname, const char* meleeDefName );
 
 	//! Returns the closest hidden target entity of the specified type that is not visible to the enemy.
@@ -1225,6 +1227,8 @@ protected:
 
 	//! Makes the AI face its enemy.
 	void				  Event_FaceEnemy();
+
+	//! Makes the AI entity face the given entity.
 	void				  Event_FaceEntity( idEntity* ent );
 
 	//! Handles waiting for a specific action state in the AI system.
@@ -1328,6 +1332,8 @@ protected:
 
 	//! Sets the visibility state of smoke particles for the AI entity.
 	void				  Event_SetSmokeVisibility( int num, int on );
+
+	//! Returns the number of smoke emitters associated with this AI entity.
 	void				  Event_NumSmokeEmitters();
 
 	//! Stops the AI from thinking and marks the current thread as done processing.
@@ -1341,6 +1347,8 @@ protected:
 
 	//! Sets the movement type for the AI entity and updates the travel flags accordingly.
 	void				  Event_SetMoveType( int moveType );
+
+	//! Saves the current move state of the AI character.
 	void				  Event_SaveMove();
 
 	//! Restores the AI's movement state after a saved move command has been processed.
@@ -1366,6 +1374,8 @@ protected:
 
 	//! Enables AI push behavior for articulated figures.
 	void				  Event_EnableAFPush();
+
+	//! Disables the AF push moveables flag.
 	void				  Event_DisableAFPush();
 
 	//! Sets the flying speed of the AI entity.
@@ -1585,6 +1595,8 @@ private:
 
 	//! Handles the idle frame logic for the follower AI, potentially transitioning to a talking animation if AI_TALK is enabled.
 	stateResult_t state_idle_frame( stateParms_t* parms );
+
+	//! Handles the follow state for the ice AI follower entity.
 	stateResult_t state_follow( stateParms_t* parms );
 
 	//! Updates the follower AI state based on the leader's position and talk status.

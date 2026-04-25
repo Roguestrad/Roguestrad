@@ -30,16 +30,34 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponPDA
+	\brief A class that manages the behavior and state transitions of an ice weapon PDA.
+
+	This class extends iceWeaponObject to provide specific functionality for an ice weapon PDA, including initialization, state management, and animation control. It handles the raise, lower, idle,
+   fire, and reload states, with each method controlling specific aspects of the PDA's operation. The class is designed to integrate with a state machine for coordinated weapon behavior.
+
+*/
 class iceWeaponPDA : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponPDA );
 
+	//! Initializes the ice weapon PDA with the specified weapon
 	virtual void  Init( idWeapon* weapon );
 
+	//! Raises the ice weapon PDA with animation control
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Places the PDA weapon into the lowered state.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the ice weapon PDA, managing PDA opening and weapon lowering transitions.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Completes the fire state and returns a done result.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Completes the reload state operation and returns a done result
 	stateResult_t Reload( stateParms_t* parms );
 };

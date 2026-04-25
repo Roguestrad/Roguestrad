@@ -32,19 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "Game_local.h"
 
-/*
-===============================================================================
-
-  idIK
-
-===============================================================================
-*/
-
-/*
-================
-idIK::idIK
-================
-*/
 idIK::idIK()
 {
 	ik_activate	 = false;
@@ -55,20 +42,10 @@ idIK::idIK()
 	modelOffset.Zero();
 }
 
-/*
-================
-idIK::~idIK
-================
-*/
 idIK::~idIK()
 {
 }
 
-/*
-================
-idIK::Save
-================
-*/
 void idIK::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteBool( initialized );
@@ -78,11 +55,6 @@ void idIK::Save( idSaveGame* savefile ) const
 	savefile->WriteVec3( modelOffset );
 }
 
-/*
-================
-idIK::Restore
-================
-*/
 void idIK::Restore( idRestoreGame* savefile )
 {
 	idStr anim;
@@ -109,21 +81,11 @@ void idIK::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-================
-idIK::IsInitialized
-================
-*/
 bool idIK::IsInitialized() const
 {
 	return initialized && ik_enable.GetBool();
 }
 
-/*
-================
-idIK::Init
-================
-*/
 bool idIK::Init( idEntity* self, const char* anim, const idVec3& modelOffset )
 {
 	idRenderModel* model;
@@ -159,30 +121,15 @@ bool idIK::Init( idEntity* self, const char* anim, const idVec3& modelOffset )
 	return true;
 }
 
-/*
-================
-idIK::Evaluate
-================
-*/
 void idIK::Evaluate()
 {
 }
 
-/*
-================
-idIK::ClearJointMods
-================
-*/
 void idIK::ClearJointMods()
 {
 	ik_activate = false;
 }
 
-/*
-================
-idIK::SolveTwoBones
-================
-*/
 bool idIK::SolveTwoBones( const idVec3& startPos, const idVec3& endPos, const idVec3& dir, float len0, float len1, idVec3& jointPos )
 {
 	float  length, lengthSqr, lengthInv, x, y;
@@ -211,11 +158,6 @@ bool idIK::SolveTwoBones( const idVec3& startPos, const idVec3& endPos, const id
 	return true;
 }
 
-/*
-================
-idIK::GetBoneAxis
-================
-*/
 float idIK::GetBoneAxis( const idVec3& startPos, const idVec3& endPos, const idVec3& dir, idMat3& axis )
 {
 	float length;
@@ -227,19 +169,6 @@ float idIK::GetBoneAxis( const idVec3& startPos, const idVec3& endPos, const idV
 	return length;
 }
 
-/*
-===============================================================================
-
-  idIK_Walk
-
-===============================================================================
-*/
-
-/*
-================
-idIK_Walk::idIK_Walk
-================
-*/
 idIK_Walk::idIK_Walk()
 {
 	int i;
@@ -284,11 +213,6 @@ idIK_Walk::idIK_Walk()
 	waistOffset.Zero();
 }
 
-/*
-================
-idIK_Walk::~idIK_Walk
-================
-*/
 idIK_Walk::~idIK_Walk()
 {
 	if( footModel ) {
@@ -296,11 +220,6 @@ idIK_Walk::~idIK_Walk()
 	}
 }
 
-/*
-================
-idIK_Walk::Save
-================
-*/
 void idIK_Walk::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -371,11 +290,6 @@ void idIK_Walk::Save( idSaveGame* savefile ) const
 	savefile->WriteVec3( waistOffset );
 }
 
-/*
-================
-idIK_Walk::Restore
-================
-*/
 void idIK_Walk::Restore( idRestoreGame* savefile )
 {
 	int i;
@@ -446,11 +360,6 @@ void idIK_Walk::Restore( idRestoreGame* savefile )
 	savefile->ReadVec3( waistOffset );
 }
 
-/*
-================
-idIK_Walk::Init
-================
-*/
 bool idIK_Walk::Init( idEntity* self, const char* anim, const idVec3& modelOffset )
 {
 	int			  i;
@@ -582,11 +491,6 @@ bool idIK_Walk::Init( idEntity* self, const char* anim, const idVec3& modelOffse
 	return true;
 }
 
-/*
-================
-idIK_Walk::Evaluate
-================
-*/
 void idIK_Walk::Evaluate()
 {
 	int		i, newPivotFoot = -1;
@@ -795,11 +699,6 @@ void idIK_Walk::Evaluate()
 	ik_activate = true;
 }
 
-/*
-================
-idIK_Walk::ClearJointMods
-================
-*/
 void idIK_Walk::ClearJointMods()
 {
 	int i;
@@ -819,61 +718,28 @@ void idIK_Walk::ClearJointMods()
 	ik_activate = false;
 }
 
-/*
-================
-idIK_Walk::EnableAll
-================
-*/
 void idIK_Walk::EnableAll()
 {
 	enabledLegs		= ( 1 << numLegs ) - 1;
 	oldHeightsValid = false;
 }
 
-/*
-================
-idIK_Walk::DisableAll
-================
-*/
 void idIK_Walk::DisableAll()
 {
 	enabledLegs		= 0;
 	oldHeightsValid = false;
 }
 
-/*
-================
-idIK_Walk::EnableLeg
-================
-*/
 void idIK_Walk::EnableLeg( int num )
 {
 	enabledLegs |= 1 << num;
 }
 
-/*
-================
-idIK_Walk::DisableLeg
-================
-*/
 void idIK_Walk::DisableLeg( int num )
 {
 	enabledLegs &= ~( 1 << num );
 }
 
-/*
-===============================================================================
-
-  idIK_Reach
-
-===============================================================================
-*/
-
-/*
-================
-idIK_Reach::idIK_Reach
-================
-*/
 idIK_Reach::idIK_Reach()
 {
 	int i;
@@ -895,20 +761,10 @@ idIK_Reach::idIK_Reach()
 	}
 }
 
-/*
-================
-idIK_Reach::~idIK_Reach
-================
-*/
 idIK_Reach::~idIK_Reach()
 {
 }
 
-/*
-================
-idIK_Reach::Save
-================
-*/
 void idIK_Reach::Save( idSaveGame* savefile ) const
 {
 	int i;
@@ -951,11 +807,6 @@ void idIK_Reach::Save( idSaveGame* savefile ) const
 	}
 }
 
-/*
-================
-idIK_Reach::Restore
-================
-*/
 void idIK_Reach::Restore( idRestoreGame* savefile )
 {
 	int i;
@@ -998,11 +849,6 @@ void idIK_Reach::Restore( idRestoreGame* savefile )
 	}
 }
 
-/*
-================
-idIK_Reach::Init
-================
-*/
 bool idIK_Reach::Init( idEntity* self, const char* anim, const idVec3& modelOffset )
 {
 	int			 i;
@@ -1095,11 +941,6 @@ bool idIK_Reach::Init( idEntity* self, const char* anim, const idVec3& modelOffs
 	return true;
 }
 
-/*
-================
-idIK_Reach::Evaluate
-================
-*/
 void idIK_Reach::Evaluate()
 {
 	int		i;
@@ -1157,11 +998,6 @@ void idIK_Reach::Evaluate()
 	ik_activate = true;
 }
 
-/*
-================
-idIK_Reach::ClearJointMods
-================
-*/
 void idIK_Reach::ClearJointMods()
 {
 	int i;

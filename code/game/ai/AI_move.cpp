@@ -138,11 +138,6 @@ void idAI::Event_SetMoveType( int moveType )
 	}
 }
 
-/*
-=====================
-idAI::Event_SaveMove
-=====================
-*/
 void idAI::Event_SaveMove()
 {
 	savedMove = move;
@@ -1759,11 +1754,6 @@ void idAI::SlideMove()
 	}
 }
 
-/*
-=====================
-idAI::AdjustFlyingAngles
-=====================
-*/
 void idAI::AdjustFlyingAngles()
 {
 	idVec3 vel;

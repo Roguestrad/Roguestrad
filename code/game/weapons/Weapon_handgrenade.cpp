@@ -51,11 +51,6 @@ END_CLASS
 #define HANDGRENADE_RAISE_TO_IDLE	  4
 #define HANDGRENADE_FIRE_TO_IDLE	  4
 
-/*
-===============
-iceWeaponHandgrenade::Init
-===============
-*/
 void iceWeaponHandgrenade::Init( idWeapon* weapon )
 {
 	iceWeaponObject::Init( weapon );
@@ -70,33 +65,18 @@ void iceWeaponHandgrenade::Init( idWeapon* weapon )
 	GrenadeNade();
 }
 
-/*
-===============
-iceWeaponHandgrenade::GrenadeNade
-===============
-*/
 void iceWeaponHandgrenade::GrenadeNade()
 {
 	show_grenade = true;
 	UpdateSkin();
 }
 
-/*
-===============
-iceWeaponHandgrenade::GrenadeNoNade
-===============
-*/
 void iceWeaponHandgrenade::GrenadeNoNade()
 {
 	show_grenade = false;
 	UpdateSkin();
 }
 
-/*
-===============
-iceWeaponHandgrenade::GrenadeNoNade
-===============
-*/
 void iceWeaponHandgrenade::UpdateSkin()
 {
 	if( !show_grenade ) {
@@ -114,11 +94,6 @@ void iceWeaponHandgrenade::UpdateSkin()
 	}
 }
 
-/*
-===============
-iceWeaponHandgrenade::Raise
-===============
-*/
 stateResult_t iceWeaponHandgrenade::Raise( stateParms_t* parms )
 {
 	enum RisingState { RISING_NOTSET = 0, RISING_WAIT };
@@ -139,11 +114,6 @@ stateResult_t iceWeaponHandgrenade::Raise( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponHandgrenade::Lower
-===============
-*/
 stateResult_t iceWeaponHandgrenade::Lower( stateParms_t* parms )
 {
 	enum LoweringState { LOWERING_NOTSET = 0, LOWERING_WAIT };
@@ -165,11 +135,6 @@ stateResult_t iceWeaponHandgrenade::Lower( stateParms_t* parms )
 	return SRESULT_ERROR;
 }
 
-/*
-===============
-iceWeaponHandgrenade::Idle
-===============
-*/
 stateResult_t iceWeaponHandgrenade::Idle( stateParms_t* parms )
 {
 	enum IdleState { IDLE_NOTSET = 0, IDLE_WAIT };
@@ -188,11 +153,6 @@ stateResult_t iceWeaponHandgrenade::Idle( stateParms_t* parms )
 
 	return SRESULT_ERROR;
 }
-/*
-===============
-iceWeaponHandgrenade::OwnerDied
-===============
-*/
 void iceWeaponHandgrenade::OwnerDied()
 {
 	float time_held;
@@ -209,11 +169,6 @@ void iceWeaponHandgrenade::OwnerDied()
 	}
 }
 
-/*
-===============
-iceWeaponHandgrenade::Fire
-===============
-*/
 stateResult_t iceWeaponHandgrenade::Fire( stateParms_t* parms )
 {
 	if( parms->stage == 0 ) {
@@ -310,21 +265,11 @@ stateResult_t iceWeaponHandgrenade::Fire( stateParms_t* parms )
 	return SRESULT_DONE;
 }
 
-/*
-===============
-iceWeaponHandgrenade::Reload
-===============
-*/
 stateResult_t iceWeaponHandgrenade::Reload( stateParms_t* parms )
 {
 	return SRESULT_DONE;
 }
 
-/*
-===============
-iceWeaponHandgrenade::ExplodeInHand
-===============
-*/
 void iceWeaponHandgrenade::ExplodeInHand()
 {
 	idStr	  entname;

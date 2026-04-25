@@ -546,11 +546,6 @@ bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEv
 	return PostEventArgs( ev, time, 5, &arg1, &arg2, &arg3, &arg4, &arg5 );
 }
 
-/*
-================
-idClass::PostEventMS
-================
-*/
 bool idClass::PostEventMS( const idEventDef* ev, int time, idEventArg arg1, idEventArg arg2, idEventArg arg3, idEventArg arg4, idEventArg arg5, idEventArg arg6 )
 {
 	return PostEventArgs( ev, time, 6, &arg1, &arg2, &arg3, &arg4, &arg5, &arg6 );

@@ -30,8 +30,24 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __SMOKEPARTICLES_H__
 #define __SMOKEPARTICLES_H__
 
-/*
-===============================================================================
+typedef struct singleSmoke_s {
+	struct singleSmoke_s* next;
+	int					  privateStartTime; // start time for this particular particle
+	int					  index;			// particle index in system, 0 <= index < stage->totalParticles
+	idRandom			  random;
+	idVec3				  origin;
+	idMat3				  axis;
+	int					  timeGroup;
+} singleSmoke_t;
+
+typedef struct {
+	const idParticleStage* stage;
+	singleSmoke_t*		   smokes;
+} activeSmokeStage_t;
+
+/*!
+	\class idSmokeParticles
+	\brief Manages smoke particle effects for the rendering system.
 
 	Smoke systems are for particles that are emitted off of things that are
 	constantly changing position and orientation, like muzzle smoke coming
@@ -48,38 +64,37 @@ If you have questions concerning this license or the applicable additional terms
 
 	Each particle model has its own shaderparms, which can be used by the
 	particle materials.
-
-===============================================================================
 */
-
-typedef struct singleSmoke_s {
-	struct singleSmoke_s* next;
-	int					  privateStartTime; // start time for this particular particle
-	int					  index;			// particle index in system, 0 <= index < stage->totalParticles
-	idRandom			  random;
-	idVec3				  origin;
-	idMat3				  axis;
-	int					  timeGroup;
-} singleSmoke_t;
-
-typedef struct {
-	const idParticleStage* stage;
-	singleSmoke_t*		   smokes;
-} activeSmokeStage_t;
-
 class idSmokeParticles
 {
 public:
+	//! Initializes a new instance of the idSmokeParticles class.
 	idSmokeParticles();
 
-	// creats an entity covering the entire world that will call back each rendering
+	//! Initializes the smoke particles system
 	void Init();
+
+	//! Shuts down the smoke particles system by freeing associated render resources and marking the system as uninitialized.
 	void Shutdown();
 
-	// spits out a particle, returning false if the system will not emit any more particles in the future
-	bool EmitSmoke( const idDeclParticle* smoke, const int startTime, const float diversity, const idVec3& origin, const idMat3& axis, int timeGroup /*_D3XP*/ );
+	/*!
+		\brief Emits smoke particles from a specified source with given parameters.
 
-	// free old smokes
+		This function generates smoke particles based on a particle system definition. It handles the timing and distribution of particles across multiple stages of the smoke system. The function
+	   returns whether the smoke system will continue emitting particles in future frames. It performs various checks including validity of the smoke definition, game state, and client connection
+	   status before proceeding with particle generation. The function manages active smoke stages and allocates particles from a pool of free smoke entities.
+
+		\param smoke Pointer to the particle definition describing the smoke effect to emit
+		\param startTime The start time for the smoke system in game time units
+		\param diversity A factor controlling randomness in particle placement and timing
+		\param origin The 3D position where the smoke should originate
+		\param axis The orientation matrix defining the direction and rotation of the smoke
+		\param timeGroup Group identifier for time-based operations
+		\return True if the smoke system will continue emitting particles in future frames, false otherwise
+	*/
+	bool EmitSmoke( const idDeclParticle* smoke, const int startTime, const float diversity, const idVec3& origin, const idMat3& axis, int timeGroup );
+
+	//! Frees smoke particle objects that have exceeded their lifetime.
 	void FreeSmokes();
 
 private:
@@ -96,7 +111,10 @@ private:
 	int										 numActiveSmokes;
 	int										 currentParticleTime; // don't need to recalculate if == view time
 
+	//! Updates the render entity for smoke particle effects based on the current render view.
 	bool									 UpdateRenderEntity( renderEntity_s* renderEntity, const renderView_t* renderView );
+
+	//! Updates the smoke particles render entity based on the provided render view.
 	static bool								 ModelCallback( renderEntity_s* renderEntity, const renderView_t* renderView );
 };
 

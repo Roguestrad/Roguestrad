@@ -72,15 +72,6 @@ EVENT( EV_Light_FadeIn, idLight::Event_FadeIn )
 EVENT( EV_Light_UpdateModelTarget, idLight::Event_UpdateModelTarget )
 END_CLASS
 
-/*
-================
-idGameEdit::ParseSpawnArgsToRenderLight
-
-parse the light parameters
-this is the canonical renderLight parm parsing,
-which should be used by dmap and the editor
-================
-*/
 void idGameEdit::ParseSpawnArgsToRenderLight( const idDict* args, renderLight_t* renderLight )
 {
 	bool		gotTarget, gotUp, gotRight;
@@ -185,11 +176,6 @@ void idGameEdit::ParseSpawnArgsToRenderLight( const idDict* args, renderLight_t*
 	renderLight->shader = declManager->FindMaterial( texture, false );
 }
 
-/*
-================
-idLight::UpdateChangeableSpawnArgs
-================
-*/
 void idLight::UpdateChangeableSpawnArgs( const idDict* source )
 {
 	// jmarshall
@@ -233,11 +219,6 @@ void idLight::UpdateChangeableSpawnArgs( const idDict* source )
 	UpdateVisuals();
 }
 
-/*
-================
-idLight::idLight
-================
-*/
 idLight::idLight() :
 	previousBaseColor( vec3_zero ),
 	nextBaseColor( vec3_zero )
@@ -270,11 +251,6 @@ idLight::idLight() :
 	// RB end
 }
 
-/*
-================
-idLight::~idLight
-================
-*/
 idLight::~idLight()
 {
 	if( lightDefHandle != -1 ) {
@@ -282,13 +258,6 @@ idLight::~idLight()
 	}
 }
 
-/*
-================
-idLight::Save
-
-archives object for save game file
-================
-*/
 void idLight::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteRenderLight( renderLight );
@@ -319,13 +288,6 @@ void idLight::Save( idSaveGame* savefile ) const
 	modelTarget.Save( savefile );
 }
 
-/*
-================
-idLight::Restore
-
-unarchives object from save game file
-================
-*/
 void idLight::Restore( idRestoreGame* savefile )
 {
 	bool hadPrelightModel;
@@ -362,11 +324,6 @@ void idLight::Restore( idRestoreGame* savefile )
 	SetLightLevel();
 }
 
-/*
-================
-idLight::Spawn
-================
-*/
 void idLight::Spawn()
 {
 	bool		start_off;
@@ -510,11 +467,6 @@ void idLight::Spawn()
 	UpdateVisuals();
 }
 
-/*
-================
-idLight::SetLightLevel
-================
-*/
 void idLight::SetLightLevel()
 {
 	idVec3 color;
@@ -542,11 +494,6 @@ void idLight::SetLightLevel()
 	PresentModelDefChange();
 }
 
-/*
-================
-idLight::GetColor
-================
-*/
 void idLight::GetColor( idVec3& out ) const
 {
 	out[0] = renderLight.shaderParms[SHADERPARM_RED];
@@ -554,11 +501,6 @@ void idLight::GetColor( idVec3& out ) const
 	out[2] = renderLight.shaderParms[SHADERPARM_BLUE];
 }
 
-/*
-================
-idLight::GetColor
-================
-*/
 void idLight::GetColor( idVec4& out ) const
 {
 	out[0] = renderLight.shaderParms[SHADERPARM_RED];
@@ -567,22 +509,12 @@ void idLight::GetColor( idVec4& out ) const
 	out[3] = renderLight.shaderParms[SHADERPARM_ALPHA];
 }
 
-/*
-================
-idLight::SetColor
-================
-*/
 void idLight::SetColor( float red, float green, float blue )
 {
 	baseColor.Set( red, green, blue );
 	SetLightLevel();
 }
 
-/*
-================
-idLight::SetColor
-================
-*/
 void idLight::SetColor( const idVec4& color )
 {
 	baseColor								   = color.ToVec3();
@@ -591,22 +523,12 @@ void idLight::SetColor( const idVec4& color )
 	SetLightLevel();
 }
 
-/*
-================
-idLight::SetColor
-================
-*/
 void idLight::SetColor( const idVec3& color )
 {
 	baseColor = color;
 	SetLightLevel();
 }
 
-/*
-================
-idLight::SetShader
-================
-*/
 void idLight::SetShader( const char* shadername )
 {
 	// allow this to be NULL
@@ -614,11 +536,6 @@ void idLight::SetShader( const char* shadername )
 	PresentLightDefChange();
 }
 
-/*
-================
-idLight::SetLightParm
-================
-*/
 void idLight::SetLightParm( int parmnum, float value )
 {
 	if( ( parmnum < 0 ) || ( parmnum >= MAX_ENTITY_SHADER_PARMS ) ) {
@@ -630,11 +547,6 @@ void idLight::SetLightParm( int parmnum, float value )
 	PresentLightDefChange();
 }
 
-/*
-================
-idLight::SetLightParms
-================
-*/
 void idLight::SetLightParms( float parm0, float parm1, float parm2, float parm3 )
 {
 	renderLight.shaderParms[SHADERPARM_RED]	  = parm0;
@@ -659,11 +571,6 @@ void idLight::SetLightParms( float parm0, float parm1, float parm2, float parm3 
 	PresentModelDefChange();
 }
 
-/*
-================
-idLight::SetRadiusXYZ
-================
-*/
 void idLight::SetRadiusXYZ( float x, float y, float z )
 {
 	renderLight.lightRadius[0] = x;
@@ -672,22 +579,12 @@ void idLight::SetRadiusXYZ( float x, float y, float z )
 	PresentLightDefChange();
 }
 
-/*
-================
-idLight::SetRadius
-================
-*/
 void idLight::SetRadius( float radius )
 {
 	renderLight.lightRadius[0] = renderLight.lightRadius[1] = renderLight.lightRadius[2] = radius;
 	PresentLightDefChange();
 }
 
-/*
-================
-idLight::On
-================
-*/
 void idLight::On()
 {
 	currentLevel = levels;
@@ -702,11 +599,6 @@ void idLight::On()
 	BecomeActive( TH_UPDATEVISUALS );
 }
 
-/*
-================
-idLight::Off
-================
-*/
 void idLight::Off()
 {
 	currentLevel = 0;
@@ -720,11 +612,6 @@ void idLight::Off()
 	BecomeActive( TH_UPDATEVISUALS );
 }
 
-/*
-================
-idLight::Fade
-================
-*/
 void idLight::Fade( const idVec4& to, float fadeTime )
 {
 	GetColor( fadeFrom );
@@ -734,21 +621,11 @@ void idLight::Fade( const idVec4& to, float fadeTime )
 	BecomeActive( TH_THINK );
 }
 
-/*
-================
-idLight::FadeOut
-================
-*/
 void idLight::FadeOut( float time )
 {
 	Fade( colorBlack, time );
 }
 
-/*
-================
-idLight::FadeIn
-================
-*/
 void idLight::FadeIn( float time )
 {
 	idVec3 color;
@@ -760,21 +637,11 @@ void idLight::FadeIn( float time )
 	Fade( color4, time );
 }
 
-/*
-================
-idLight::Killed
-================
-*/
 void idLight::Killed( idEntity* inflictor, idEntity* attacker, int damage, const idVec3& dir, int location )
 {
 	BecomeBroken( attacker );
 }
 
-/*
-================
-idLight::BecomeBroken
-================
-*/
 void idLight::BecomeBroken( idEntity* activator )
 {
 	const char* damageDefName;
@@ -831,11 +698,6 @@ void idLight::BecomeBroken( idEntity* activator )
 	UpdateVisuals();
 }
 
-/*
-================
-idLight::PresentLightDefChange
-================
-*/
 void idLight::PresentLightDefChange()
 {
 	// let the renderer apply it to the world
@@ -846,11 +708,6 @@ void idLight::PresentLightDefChange()
 	}
 }
 
-/*
-================
-idLight::PresentModelDefChange
-================
-*/
 void idLight::PresentModelDefChange()
 {
 	if( modelTarget ) {
@@ -872,11 +729,6 @@ void idLight::PresentModelDefChange()
 	}
 }
 
-/*
-================
-idLight::Present
-================
-*/
 void idLight::Present()
 {
 	// don't present to the renderer if the entity hasn't changed
@@ -917,11 +769,6 @@ void idLight::Present()
 	PresentModelDefChange();
 }
 
-/*
-================
-idLight::Think
-================
-*/
 void idLight::Think()
 {
 	idVec4 color;
@@ -943,12 +790,6 @@ void idLight::Think()
 	Present();
 }
 
-/*
-================
-idLight::SharedThink
-================
-*/
-// jmarshall
 void idLight::SharedThink()
 {
 	float lightval;
@@ -1030,13 +871,7 @@ void idLight::SharedThink()
 
 	PresentLightDefChange();
 }
-// jmarshall end
 
-/*
-================
-idLight::ClientThink
-================
-*/
 void idLight::ClientThink( const int curTime, const float fraction, const bool predict )
 {
 	InterpolatePhysics( fraction );
@@ -1050,11 +885,6 @@ void idLight::ClientThink( const int curTime, const float fraction, const bool p
 	Present();
 }
 
-/*
-================
-idLight::GetPhysicsToSoundTransform
-================
-*/
 bool idLight::GetPhysicsToSoundTransform( idVec3& origin, idMat3& axis )
 {
 	origin = localLightOrigin + renderLight.lightCenter;
@@ -1062,17 +892,11 @@ bool idLight::GetPhysicsToSoundTransform( idVec3& origin, idMat3& axis )
 	return true;
 }
 
-// RB
 idVec3 idLight::GetEditOrigin() const
 {
 	return ( GetPhysics()->GetOrigin() + GetPhysics()->GetAxis() * localLightOrigin );
 }
 
-/*
-================
-idLight::FreeLightDef
-================
-*/
 void idLight::FreeLightDef()
 {
 	if( lightDefHandle != -1 ) {
@@ -1081,11 +905,6 @@ void idLight::FreeLightDef()
 	}
 }
 
-/*
-================
-idLight::SaveState
-================
-*/
 void idLight::SaveState( idDict* args )
 {
 	int i, c = spawnArgs.GetNumKeyVals();
@@ -1098,11 +917,6 @@ void idLight::SaveState( idDict* args )
 	}
 }
 
-/*
-===============
-idLight::ShowEditingDialog
-===============
-*/
 void idLight::ShowEditingDialog()
 {
 	if( g_editEntityMode.GetInteger() == 1 ) {
@@ -1112,21 +926,11 @@ void idLight::ShowEditingDialog()
 	}
 }
 
-/*
-================
-idLight::Event_SetShader
-================
-*/
 void idLight::Event_SetShader( const char* shadername )
 {
 	SetShader( shadername );
 }
 
-/*
-================
-idLight::Event_GetLightParm
-================
-*/
 void idLight::Event_GetLightParm( int parmnum )
 {
 	if( ( parmnum < 0 ) || ( parmnum >= MAX_ENTITY_SHADER_PARMS ) ) {
@@ -1137,51 +941,26 @@ void idLight::Event_GetLightParm( int parmnum )
 	idThread::ReturnFloat( renderLight.shaderParms[parmnum] );
 }
 
-/*
-================
-idLight::Event_SetLightParm
-================
-*/
 void idLight::Event_SetLightParm( int parmnum, float value )
 {
 	SetLightParm( parmnum, value );
 }
 
-/*
-================
-idLight::Event_SetLightParms
-================
-*/
 void idLight::Event_SetLightParms( float parm0, float parm1, float parm2, float parm3 )
 {
 	SetLightParms( parm0, parm1, parm2, parm3 );
 }
 
-/*
-================
-idLight::Event_SetRadiusXYZ
-================
-*/
 void idLight::Event_SetRadiusXYZ( float x, float y, float z )
 {
 	SetRadiusXYZ( x, y, z );
 }
 
-/*
-================
-idLight::Event_SetRadius
-================
-*/
 void idLight::Event_SetRadius( float radius )
 {
 	SetRadius( radius );
 }
 
-/*
-================
-idLight::Event_Hide
-================
-*/
 void idLight::Event_Hide()
 {
 	if( modelTarget ) {
@@ -1193,11 +972,6 @@ void idLight::Event_Hide()
 	Off();
 }
 
-/*
-================
-idLight::Event_Show
-================
-*/
 void idLight::Event_Show()
 {
 	if( modelTarget ) {
@@ -1209,31 +983,16 @@ void idLight::Event_Show()
 	On();
 }
 
-/*
-================
-idLight::Event_On
-================
-*/
 void idLight::Event_On()
 {
 	On();
 }
 
-/*
-================
-idLight::Event_Off
-================
-*/
 void idLight::Event_Off()
 {
 	Off();
 }
 
-/*
-================
-idLight::Event_ToggleOnOff
-================
-*/
 void idLight::Event_ToggleOnOff( idEntity* activator )
 {
 	triggercount++;
@@ -1262,13 +1021,6 @@ void idLight::Event_ToggleOnOff( idEntity* activator )
 	}
 }
 
-/*
-================
-idLight::Event_SetSoundHandles
-
-  set the same sound def handle on all targeted lights
-================
-*/
 void idLight::Event_SetSoundHandles()
 {
 	int		  i;
@@ -1296,41 +1048,21 @@ void idLight::Event_SetSoundHandles()
 	}
 }
 
-/*
-================
-idLight::Event_FadeOut
-================
-*/
 void idLight::Event_FadeOut( float time )
 {
 	FadeOut( time );
 }
 
-/*
-================
-idLight::Event_FadeIn
-================
-*/
 void idLight::Event_FadeIn( float time )
 {
 	FadeIn( time );
 }
 
-/*
-================
-idLight::ClientPredictionThink
-================
-*/
 void idLight::ClientPredictionThink()
 {
 	Think();
 }
 
-/*
-================
-idLight::WriteToSnapshot
-================
-*/
 void idLight::WriteToSnapshot( idBitMsg& msg ) const
 {
 	GetPhysics()->WriteToSnapshot( msg );
@@ -1363,11 +1095,6 @@ void idLight::WriteToSnapshot( idBitMsg& msg ) const
 	WriteColorToSnapshot( msg );
 }
 
-/*
-================
-idLight::ReadFromSnapshot
-================
-*/
 void idLight::ReadFromSnapshot( const idBitMsg& msg )
 {
 	idVec4 shaderColor;
@@ -1430,11 +1157,6 @@ void idLight::ReadFromSnapshot( const idBitMsg& msg )
 	}
 }
 
-/*
-================
-idLight::ClientReceiveEvent
-================
-*/
 bool idLight::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 {
 	switch( event ) {
@@ -1448,13 +1170,6 @@ bool idLight::ClientReceiveEvent( int event, int time, const idBitMsg& msg )
 	}
 }
 
-/*
-================
-RB idLight::Event_UpdateModelTarget
-
-connects this light to its original and separate brush/patch model
-================
-*/
 void idLight::Event_UpdateModelTarget()
 {
 	const char* target = spawnArgs.GetString( "modelTarget" );

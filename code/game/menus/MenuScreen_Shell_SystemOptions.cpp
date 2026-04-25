@@ -50,11 +50,6 @@ extern idCVar	 r_vidMode;
 
 bool			 R_GetModeListForDisplay( const int displayNum, idList<vidMode_t>& modeList );
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::Initialize
-========================
-*/
 void			 idMenuScreen_Shell_SystemOptions::Initialize( idMenuHandler* data )
 {
 	idMenuScreen::Initialize( data );
@@ -211,11 +206,6 @@ void			 idMenuScreen_Shell_SystemOptions::Initialize( idMenuHandler* data )
 	options->AddEventAction( WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ).Set( new( TAG_SWF ) idWidgetActionHandler( options, WIDGET_ACTION_EVENT_STOP_REPEATER, WIDGET_EVENT_SCROLL_UP_LSTICK_RELEASE ) );
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::Update
-========================
-*/
 void idMenuScreen_Shell_SystemOptions::Update()
 {
 	if( menuData != NULL ) {
@@ -255,11 +245,6 @@ void idMenuScreen_Shell_SystemOptions::Update()
 	idMenuScreen::Update();
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::ShowScreen
-========================
-*/
 void idMenuScreen_Shell_SystemOptions::ShowScreen( const mainMenuTransition_t transitionType )
 {
 	systemData.LoadData();
@@ -267,11 +252,6 @@ void idMenuScreen_Shell_SystemOptions::ShowScreen( const mainMenuTransition_t tr
 	idMenuScreen::ShowScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::HideScreen
-========================
-*/
 void idMenuScreen_Shell_SystemOptions::HideScreen( const mainMenuTransition_t transitionType )
 {
 	if( systemData.IsRestartRequired() ) {
@@ -315,11 +295,6 @@ void idMenuScreen_Shell_SystemOptions::HideScreen( const mainMenuTransition_t tr
 	idMenuScreen::HideScreen( transitionType );
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::HandleAction h
-========================
-*/
 bool idMenuScreen_Shell_SystemOptions::HandleAction( idWidgetAction& action, const idWidgetEvent& event, idMenuWidget* widget, bool forceHandled )
 {
 	if( menuData == NULL ) {
@@ -394,23 +369,12 @@ bool idMenuScreen_Shell_SystemOptions::HandleAction( idWidgetAction& action, con
 }
 
 /////////////////////////////////
-// SCREEN SETTINGS
 /////////////////////////////////
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::idMenuDataSource_SystemSettings
-========================
-*/
 idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::idMenuDataSource_SystemSettings()
 {
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::LoadData
-========================
-*/
 void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::LoadData()
 {
 	originalRenderAPI  = r_graphicsAPI.GetString();
@@ -436,11 +400,6 @@ void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::LoadData
 	}
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsRestartRequired
-========================
-*/
 bool idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsRestartRequired() const
 {
 	/*
@@ -461,21 +420,23 @@ bool idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsRestar
 	return false;
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::CommitData
-========================
-*/
 void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::CommitData()
 {
 	cvarSystem->SetModifiedFlags( CVAR_ARCHIVE );
 }
 
-/*
-========================
-AdjustOption
-Given a current value in an array of possible values, returns the next n value
-========================
+/*!
+	\brief Adjusts a current value to the next or previous value in a circular array based on the adjustment amount.
+
+	This function takes a current value from an array of possible values and adjusts it by a specified amount. The adjustment is applied in a circular manner, meaning that if the adjustment goes
+   beyond the array bounds, it wraps around to the opposite end. The function finds the index of the current value in the array, applies the adjustment, and returns the value at the new index after
+   handling wraparound.
+
+	\param currentValue The current value to be adjusted
+	\param values An array of possible values
+	\param numValues The number of elements in the values array
+	\param adjustment The amount to adjust the index by, can be positive or negative
+	\return The adjusted value from the values array based on the specified adjustment
 */
 int AdjustOption( int currentValue, const int values[], int numValues, int adjustment )
 {
@@ -494,22 +455,24 @@ int AdjustOption( int currentValue, const int values[], int numValues, int adjus
 	return values[index];
 }
 
-/*
-========================
-LinearAdjust
-Linearly converts a float from one scale to another
-========================
+/*!
+	\brief Linearly converts a float value from one range to another range.
+
+	This function performs a linear interpolation to map an input value from its current range to a desired range. It takes the input value and scales it proportionally from the current minimum and
+   maximum values to the desired minimum and maximum values. The formula used is ((input - currentMin) / (currentMax - currentMin)) * (desiredMax - desiredMin) + desiredMin.
+
+	\param input The value to be converted from the current range
+	\param currentMin The minimum value of the current range
+	\param currentMax The maximum value of the current range
+	\param desiredMin The minimum value of the desired range
+	\param desiredMax The maximum value of the desired range
+	\return The converted value mapped to the desired range
 */
 float LinearAdjust( float input, float currentMin, float currentMax, float desiredMin, float desiredMax )
 {
 	return ( ( input - currentMin ) / ( currentMax - currentMin ) ) * ( desiredMax - desiredMin ) + desiredMin;
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::AdjustField
-========================
-*/
 void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::AdjustField( const int fieldIndex, const int adjustAmount )
 {
 	switch( fieldIndex ) {
@@ -641,11 +604,6 @@ void idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::AdjustFi
 	cvarSystem->ClearModifiedFlags( CVAR_ARCHIVE );
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::GetField
-========================
-*/
 idSWFScriptVar idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::GetField( const int fieldIndex ) const
 {
 	switch( fieldIndex ) {
@@ -787,11 +745,6 @@ idSWFScriptVar idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings
 	return false;
 }
 
-/*
-========================
-idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsDataChanged
-========================
-*/
 bool idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsDataChanged() const
 {
 	if( idStr::Icmp( r_graphicsAPI.GetString(), originalRenderAPI ) != 0 ) {
@@ -845,7 +798,6 @@ bool idMenuScreen_Shell_SystemOptions::idMenuDataSource_SystemSettings::IsDataCh
 	return false;
 }
 
-// RB begin
 void idMenuWidget_SystemOptionsList::Update()
 {
 	if( GetSWFObject() == NULL ) {

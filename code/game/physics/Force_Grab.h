@@ -30,36 +30,49 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __FORCE_GRAB_H__
 #define __FORCE_GRAB_H__
 
-/*
-===============================================================================
+/*!
+	\class idForce_Grab
+	\brief Manages a grab force that attracts a physics object toward a specified goal position.
 
-	Drag force
+	The idForce_Grab class implements a force that pulls a physics object toward a target position, commonly used for grabbing or pulling entities within the simulation. It maintains a reference to a
+   physics object and updates its force application based on the object's current state and the specified goal position. The force includes damping to control the acceleration and smoothness of the
+   movement. The class supports initialization with damping parameters, setting the target physics object and goal position, and updating the force evaluation over time. It also provides methods to
+   save and restore the grab force state, as well as to remove the physics object when needed. The class inherits from idForce, indicating it is part of a force system that can be applied to physics
+   objects in the simulation.
 
-===============================================================================
 */
-
 class idForce_Grab : public idForce
 {
 public:
 	CLASS_PROTOTYPE( idForce_Grab );
 
+	//! Saves the grab force parameters to the specified save file
 	void Save( idSaveGame* savefile ) const;
+
+	//! Restores the grab force state from a save file.
 	void Restore( idRestoreGame* savefile );
 
+	//! Initializes a new instance of the idForce_Grab class.
 	idForce_Grab();
 	virtual ~idForce_Grab();
-	// initialize the drag force
+
+	//! Initializes the drag force with the specified damping value
 	void Init( float damping );
-	// set physics object being dragged
+
+	//! Sets the physics object being dragged along with its goal position.
 	void SetPhysics( idPhysics* physics, int id, const idVec3& goal );
-	// update the goal position
+
+	//! Updates the goal position for the grab force effect.
 	void SetGoalPosition( const idVec3& goal );
 
 public: // common force interface
+		//! Updates the grab force evaluation based on the current physics state and goal position.
 	virtual void Evaluate( int time );
+
+	//! Removes the specified physics object from the grab force if it matches the current physics object.
 	virtual void RemovePhysics( const idPhysics* phys );
 
-	// Get the distance from object to goal position
+	//! Returns the distance from the object to the goal position.
 	float		 GetDistanceToGoal();
 
 private:

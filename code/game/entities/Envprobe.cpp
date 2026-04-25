@@ -67,15 +67,6 @@ EVENT( EV_Envprobe_FadeOut, EnvironmentProbe::Event_FadeOut )
 EVENT( EV_Envprobe_FadeIn, EnvironmentProbe::Event_FadeIn )
 END_CLASS
 
-/*
-================
-idGameEdit::ParseSpawnArgsToRenderEnvprobe
-
-parse the light parameters
-this is the canonical renderLight parm parsing,
-which should be used by dmap and the editor
-================
-*/
 void idGameEdit::ParseSpawnArgsToRenderEnvprobe( const idDict* args, renderEnvironmentProbe_t* renderEnvprobe )
 {
 	idVec3 color;
@@ -100,11 +91,6 @@ void idGameEdit::ParseSpawnArgsToRenderEnvprobe( const idDict* args, renderEnvir
 	args->GetFloat( "shaderParm7", "0", renderEnvprobe->shaderParms[SHADERPARM_MODE] );
 }
 
-/*
-================
-EnvironmentProbe::UpdateChangeableSpawnArgs
-================
-*/
 void EnvironmentProbe::UpdateChangeableSpawnArgs( const idDict* source )
 {
 	idEntity::UpdateChangeableSpawnArgs( source );
@@ -118,11 +104,6 @@ void EnvironmentProbe::UpdateChangeableSpawnArgs( const idDict* source )
 	UpdateVisuals();
 }
 
-/*
-================
-EnvironmentProbe::EnvironmentProbe
-================
-*/
 EnvironmentProbe::EnvironmentProbe() :
 	previousBaseColor( vec3_zero ),
 	nextBaseColor( vec3_zero )
@@ -143,11 +124,6 @@ EnvironmentProbe::EnvironmentProbe() :
 	fadeEnd	  = 0;
 }
 
-/*
-================
-EnvironmentProbe::~idLight
-================
-*/
 EnvironmentProbe::~EnvironmentProbe()
 {
 	if( envprobeDefHandle != -1 ) {
@@ -155,13 +131,6 @@ EnvironmentProbe::~EnvironmentProbe()
 	}
 }
 
-/*
-================
-EnvironmentProbe::Save
-
-archives object for save game file
-================
-*/
 void EnvironmentProbe::Save( idSaveGame* savefile ) const
 {
 	savefile->WriteRenderEnvprobe( renderEnvprobe );
@@ -183,13 +152,6 @@ void EnvironmentProbe::Save( idSaveGame* savefile ) const
 	savefile->WriteInt( fadeEnd );
 }
 
-/*
-================
-EnvironmentProbe::Restore
-
-unarchives object from save game file
-================
-*/
 void EnvironmentProbe::Restore( idRestoreGame* savefile )
 {
 	savefile->ReadRenderEnvprobe( renderEnvprobe );
@@ -215,11 +177,6 @@ void EnvironmentProbe::Restore( idRestoreGame* savefile )
 	SetLightLevel();
 }
 
-/*
-================
-EnvironmentProbe::Spawn
-================
-*/
 void EnvironmentProbe::Spawn()
 {
 	bool start_off;
@@ -273,11 +230,6 @@ void EnvironmentProbe::Spawn()
 	UpdateVisuals();
 }
 
-/*
-================
-EnvironmentProbe::SetLightLevel
-================
-*/
 void EnvironmentProbe::SetLightLevel()
 {
 	idVec3 color;
@@ -292,11 +244,6 @@ void EnvironmentProbe::SetLightLevel()
 	PresentEnvprobeDefChange();
 }
 
-/*
-================
-EnvironmentProbe::GetColor
-================
-*/
 void EnvironmentProbe::GetColor( idVec3& out ) const
 {
 	out[0] = renderEnvprobe.shaderParms[SHADERPARM_RED];
@@ -304,11 +251,6 @@ void EnvironmentProbe::GetColor( idVec3& out ) const
 	out[2] = renderEnvprobe.shaderParms[SHADERPARM_BLUE];
 }
 
-/*
-================
-EnvironmentProbe::GetColor
-================
-*/
 void EnvironmentProbe::GetColor( idVec4& out ) const
 {
 	out[0] = renderEnvprobe.shaderParms[SHADERPARM_RED];
@@ -317,22 +259,12 @@ void EnvironmentProbe::GetColor( idVec4& out ) const
 	out[3] = renderEnvprobe.shaderParms[SHADERPARM_ALPHA];
 }
 
-/*
-================
-EnvironmentProbe::SetColor
-================
-*/
 void EnvironmentProbe::SetColor( float red, float green, float blue )
 {
 	baseColor.Set( red, green, blue );
 	SetLightLevel();
 }
 
-/*
-================
-EnvironmentProbe::SetColor
-================
-*/
 void EnvironmentProbe::SetColor( const idVec4& color )
 {
 	baseColor									 = color.ToVec3();
@@ -340,22 +272,12 @@ void EnvironmentProbe::SetColor( const idVec4& color )
 	SetLightLevel();
 }
 
-/*
-================
-EnvironmentProbe::SetColor
-================
-*/
 void EnvironmentProbe::SetColor( const idVec3& color )
 {
 	baseColor = color;
 	SetLightLevel();
 }
 
-/*
-================
-EnvironmentProbe::SetEnvprobeParm
-================
-*/
 void EnvironmentProbe::SetEnvprobeParm( int parmnum, float value )
 {
 	if( ( parmnum < 0 ) || ( parmnum >= MAX_ENTITY_SHADER_PARMS ) ) {
@@ -367,11 +289,6 @@ void EnvironmentProbe::SetEnvprobeParm( int parmnum, float value )
 	PresentEnvprobeDefChange();
 }
 
-/*
-================
-EnvironmentProbe::SetEnvprobeParms
-================
-*/
 void EnvironmentProbe::SetEnvprobeParms( float parm0, float parm1, float parm2, float parm3 )
 {
 	renderEnvprobe.shaderParms[SHADERPARM_RED]	 = parm0;
@@ -381,11 +298,6 @@ void EnvironmentProbe::SetEnvprobeParms( float parm0, float parm1, float parm2, 
 	PresentEnvprobeDefChange();
 }
 
-/*
-================
-EnvironmentProbe::On
-================
-*/
 void EnvironmentProbe::On()
 {
 	currentLevel = levels;
@@ -396,11 +308,6 @@ void EnvironmentProbe::On()
 	BecomeActive( TH_UPDATEVISUALS );
 }
 
-/*
-================
-EnvironmentProbe::Off
-================
-*/
 void EnvironmentProbe::Off()
 {
 	currentLevel = 0;
@@ -409,11 +316,6 @@ void EnvironmentProbe::Off()
 	BecomeActive( TH_UPDATEVISUALS );
 }
 
-/*
-================
-EnvironmentProbe::Fade
-================
-*/
 void EnvironmentProbe::Fade( const idVec4& to, float fadeTime )
 {
 	GetColor( fadeFrom );
@@ -423,21 +325,11 @@ void EnvironmentProbe::Fade( const idVec4& to, float fadeTime )
 	BecomeActive( TH_THINK );
 }
 
-/*
-================
-EnvironmentProbe::FadeOut
-================
-*/
 void EnvironmentProbe::FadeOut( float time )
 {
 	Fade( colorBlack, time );
 }
 
-/*
-================
-EnvironmentProbe::FadeIn
-================
-*/
 void EnvironmentProbe::FadeIn( float time )
 {
 	idVec3 color;
@@ -449,11 +341,6 @@ void EnvironmentProbe::FadeIn( float time )
 	Fade( color4, time );
 }
 
-/*
-================
-EnvironmentProbe::PresentEnvprobeDefChange
-================
-*/
 void EnvironmentProbe::PresentEnvprobeDefChange()
 {
 	// let the renderer apply it to the world
@@ -464,11 +351,6 @@ void EnvironmentProbe::PresentEnvprobeDefChange()
 	}
 }
 
-/*
-================
-EnvironmentProbe::Present
-================
-*/
 void EnvironmentProbe::Present()
 {
 	// don't present to the renderer if the entity hasn't changed
@@ -483,30 +365,9 @@ void EnvironmentProbe::Present()
 	//	renderEnvprobe.axis	= localEnvprobeAxis * GetPhysics()->GetAxis();
 	renderEnvprobe.origin = GetPhysics()->GetOrigin() + GetPhysics()->GetAxis() * localEnvprobeOrigin;
 
-	// reference the sound for shader synced effects
-	// FIXME TODO?
-	/*
-	if( lightParent )
-	{
-		renderLight.referenceSound = lightParent->GetSoundEmitter();
-		renderEntity.referenceSound = lightParent->GetSoundEmitter();
-	}
-	else
-	{
-		renderLight.referenceSound = refSound.referenceSound;
-		renderEntity.referenceSound = refSound.referenceSound;
-	}
-	*/
-
-	// update the renderLight and renderEntity to render the light and flare
 	PresentEnvprobeDefChange();
 }
 
-/*
-================
-EnvironmentProbe::Think
-================
-*/
 void EnvironmentProbe::Think()
 {
 	idVec4 color;
@@ -528,11 +389,6 @@ void EnvironmentProbe::Think()
 	Present();
 }
 
-/*
-================
-EnvironmentProbe::ClientThink
-================
-*/
 void EnvironmentProbe::ClientThink( const int curTime, const float fraction, const bool predict )
 {
 	InterpolatePhysics( fraction );
@@ -546,11 +402,6 @@ void EnvironmentProbe::ClientThink( const int curTime, const float fraction, con
 	Present();
 }
 
-/*
-================
-EnvironmentProbe::FreeEnvprobeDef
-================
-*/
 void EnvironmentProbe::FreeEnvprobeDef()
 {
 	if( envprobeDefHandle != -1 ) {
@@ -559,11 +410,6 @@ void EnvironmentProbe::FreeEnvprobeDef()
 	}
 }
 
-/*
-================
-EnvironmentProbe::SaveState
-================
-*/
 void EnvironmentProbe::SaveState( idDict* args )
 {
 	int i, c = spawnArgs.GetNumKeyVals();
@@ -576,20 +422,10 @@ void EnvironmentProbe::SaveState( idDict* args )
 	}
 }
 
-/*
-===============
-EnvironmentProbe::ShowEditingDialog
-===============
-*/
 void EnvironmentProbe::ShowEditingDialog()
 {
 }
 
-/*
-================
-EnvironmentProbe::Event_GetEnvprobeParm
-================
-*/
 void EnvironmentProbe::Event_GetEnvprobeParm( int parmnum )
 {
 	if( ( parmnum < 0 ) || ( parmnum >= MAX_ENTITY_SHADER_PARMS ) ) {
@@ -600,73 +436,38 @@ void EnvironmentProbe::Event_GetEnvprobeParm( int parmnum )
 	idThread::ReturnFloat( renderEnvprobe.shaderParms[parmnum] );
 }
 
-/*
-================
-EnvironmentProbe::Event_SetEnvprobeParm
-================
-*/
 void EnvironmentProbe::Event_SetEnvprobeParm( int parmnum, float value )
 {
 	SetEnvprobeParm( parmnum, value );
 }
 
-/*
-================
-EnvironmentProbe::Event_SetEnvprobetParms
-================
-*/
 void EnvironmentProbe::Event_SetEnvprobeParms( float parm0, float parm1, float parm2, float parm3 )
 {
 	SetEnvprobeParms( parm0, parm1, parm2, parm3 );
 }
 
-/*
-================
-EnvironmentProbe::Event_Hide
-================
-*/
 void EnvironmentProbe::Event_Hide()
 {
 	Hide();
 	Off();
 }
 
-/*
-================
-EnvironmentProbe::Event_Show
-================
-*/
 void EnvironmentProbe::Event_Show()
 {
 	Show();
 	On();
 }
 
-/*
-================
-EnvironmentProbe::Event_On
-================
-*/
 void EnvironmentProbe::Event_On()
 {
 	On();
 }
 
-/*
-================
-EnvironmentProbe::Event_Off
-================
-*/
 void EnvironmentProbe::Event_Off()
 {
 	Off();
 }
 
-/*
-================
-EnvironmentProbe::Event_ToggleOnOff
-================
-*/
 void EnvironmentProbe::Event_ToggleOnOff( idEntity* activator )
 {
 	triggercount++;
@@ -689,80 +490,21 @@ void EnvironmentProbe::Event_ToggleOnOff( idEntity* activator )
 	}
 }
 
-/*
-================
-EnvironmentProbe::Event_SetSoundHandles
-
-  set the same sound def handle on all targeted lights
-================
-*/
-/*
-void EnvironmentProbe::Event_SetSoundHandles()
-{
-	int i;
-	idEntity* targetEnt;
-
-	if( !refSound.referenceSound )
-	{
-		return;
-	}
-
-	for( i = 0; i < targets.Num(); i++ )
-	{
-		targetEnt = targets[ i ].GetEntity();
-		if( targetEnt != NULL && targetEnt->IsType( EnvironmentProbe::Type ) )
-		{
-			idLight*	light = static_cast<idLight*>( targetEnt );
-			light->lightParent = this;
-
-			// explicitly delete any sounds on the entity
-			light->FreeSoundEmitter( true );
-
-			// manually set the refSound to this light's refSound
-			light->renderEntity.referenceSound = renderEntity.referenceSound;
-
-			// update the renderEntity to the renderer
-			light->UpdateVisuals();
-		}
-	}
-}
-*/
-
-/*
-================
-EnvironmentProbe::Event_FadeOut
-================
-*/
 void EnvironmentProbe::Event_FadeOut( float time )
 {
 	FadeOut( time );
 }
 
-/*
-================
-EnvironmentProbe::Event_FadeIn
-================
-*/
 void EnvironmentProbe::Event_FadeIn( float time )
 {
 	FadeIn( time );
 }
 
-/*
-================
-EnvironmentProbe::ClientPredictionThink
-================
-*/
 void EnvironmentProbe::ClientPredictionThink()
 {
 	Think();
 }
 
-/*
-================
-EnvironmentProbe::WriteToSnapshot
-================
-*/
 void EnvironmentProbe::WriteToSnapshot( idBitMsg& msg ) const
 {
 	GetPhysics()->WriteToSnapshot( msg );
@@ -794,11 +536,6 @@ void EnvironmentProbe::WriteToSnapshot( idBitMsg& msg ) const
 	WriteColorToSnapshot( msg );
 }
 
-/*
-================
-EnvironmentProbe::ReadFromSnapshot
-================
-*/
 void EnvironmentProbe::ReadFromSnapshot( const idBitMsg& msg )
 {
 	idVec4 shaderColor;

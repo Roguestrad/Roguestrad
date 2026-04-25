@@ -30,20 +30,40 @@ If you have questions concerning this license or the applicable additional terms
 
 #pragma once
 
+/*!
+	\class iceWeaponRocketLauncher
+	\brief A weapon class that implements the behavior and states for a rocket launcher weapon.
+
+	This class extends the base weapon object functionality to provide specific implementation for a rocket launcher weapon. It handles the complete weapon state machine including raising, lowering,
+   idle, firing, and reloading behaviors. The class integrates with the weapon system to manage projectile firing, animation control, and visual feedback through skin updates. It initializes with a
+   weapon instance and maintains the state transitions required for proper weapon operation within the game's combat system.
+
+*/
 class iceWeaponRocketLauncher : public iceWeaponObject
 {
 public:
 	CLASS_PROTOTYPE( iceWeaponRocketLauncher );
 
+	//! Initializes the rocket launcher weapon object with the specified weapon instance.
 	virtual void  Init( idWeapon* weapon );
 
+	//! Raises the rocket launcher weapon by playing the raise animation and waiting for it to complete.
 	stateResult_t Raise( stateParms_t* parms );
+
+	//! Puts away the rocket launcher weapon by playing a putaway animation and transitioning to a holstered state.
 	stateResult_t Lower( stateParms_t* parms );
+
+	//! Handles the idle state for the rocket launcher weapon.
 	stateResult_t Idle( stateParms_t* parms );
+
+	//! Fires a rocket launcher projectile and handles the weapon's firing state.
 	stateResult_t Fire( stateParms_t* parms );
+
+	//! Handles the reload animation and clip refilling for the rocket launcher weapon.
 	stateResult_t Reload( stateParms_t* parms );
 
 private:
+	//! Updates the skin of the rocket launcher based on the remaining ammunition count.
 	void  UpdateSkin();
 
 	float spread;
