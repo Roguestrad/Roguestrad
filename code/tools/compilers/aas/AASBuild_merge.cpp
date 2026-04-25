@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AASBuild_local.h"
 
-/*
-============
-idAASBuild::AllGapsLeadToOtherNode
-============
-*/
 bool idAASBuild::AllGapsLeadToOtherNode( idBrushBSPNode* nodeWithGaps, idBrushBSPNode* otherNode )
 {
 	int				  s;
@@ -56,11 +51,6 @@ bool idAASBuild::AllGapsLeadToOtherNode( idBrushBSPNode* nodeWithGaps, idBrushBS
 	return true;
 }
 
-/*
-============
-idAASBuild::MergeWithAdjacentLeafNodes
-============
-*/
 bool idAASBuild::MergeWithAdjacentLeafNodes( idBrushBSP& bsp, idBrushBSPNode* node )
 {
 	int				  s, numMerges = 0, otherNodeFlags;
@@ -116,11 +106,6 @@ bool idAASBuild::MergeWithAdjacentLeafNodes( idBrushBSP& bsp, idBrushBSPNode* no
 	return false;
 }
 
-/*
-============
-idAASBuild::MergeLeafNodes_r
-============
-*/
 void idAASBuild::MergeLeafNodes_r( idBrushBSP& bsp, idBrushBSPNode* node )
 {
 	if( !node ) {
@@ -147,11 +132,6 @@ void idAASBuild::MergeLeafNodes_r( idBrushBSP& bsp, idBrushBSPNode* node )
 	return;
 }
 
-/*
-============
-idAASBuild::MergeLeafNodes
-============
-*/
 void idAASBuild::MergeLeafNodes( idBrushBSP& bsp )
 {
 	numMergedLeafNodes = 0;

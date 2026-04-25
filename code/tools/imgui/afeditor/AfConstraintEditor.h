@@ -35,14 +35,24 @@ If you have questions concerning this license or the applicable additional terms
 namespace ImGuiTools
 {
 
+/*!
+	\class ImGuiTools::AfConstraintEditor
+	\brief A tool for editing articulated figure constraint properties through an ImGui-based user interface.
+*/
 class AfConstraintEditor
 {
 public:
+	//! Initializes a new constraint editor for an articulated figure constraint.
 	AfConstraintEditor( idDeclAF* newDecl, idDeclAF_Constraint* newConstraint );
 	~AfConstraintEditor();
 
+	//! Displays and handles the user interface for editing animation constraint properties in the ImGui-based editor.
 	bool Do();
+
+	//! Edits the components of an afVector using ImGui controls based on its type.
 	bool InputAfVector( idAFVector* afVec );
+
+	//! Initializes the joint lists for the affine constraint editor by populating available joints from the associated model.
 	void InitJointLists();
 
 private:

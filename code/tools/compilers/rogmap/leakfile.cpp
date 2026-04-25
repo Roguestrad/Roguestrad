@@ -32,24 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "dmap.h"
 
-/*
-==============================================================================
-
-LEAF FILE GENERATION
-
-Save out name.line for qe3 to read
-==============================================================================
-*/
-
-/*
-=============
-LeakFile
-
-Finds the shortest possible chain of portals
-that leads from the outside leaf to a specifically
-occupied leaf
-=============
-*/
 void LeakFile( tree_t* tree )
 {
 	idVec3	mid;

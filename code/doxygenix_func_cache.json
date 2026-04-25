@@ -66628,6 +66628,2414 @@
     "void idSpawnableEntity::Spawn()": {
       "body_hash": "9a3fd4099dd7918581dbb9ff5bbba70e",
       "is_trivial": true
+    },
+    "idAASBuild::idAASBuild()": {
+      "body_hash": "556734b77186b6f0da157555751a5fff",
+      "is_trivial": true
+    },
+    "idAASBuild::~idAASBuild()": {
+      "body_hash": "b8c759f64989e65da355df73c083f589",
+      "is_trivial": true
+    },
+    "bool idAASBuild::Build(const idStr &fileName, const idAASSettings *settings)": {
+      "body_hash": "c8ccfeeffbd530b6f9cfeccac0a62749",
+      "is_trivial": true
+    },
+    "bool idAASBuild::BuildReachability(const idStr &fileName, const idAASSettings *settings)": {
+      "body_hash": "0172fb44dae04dac01673ec86c2957c5",
+      "is_trivial": true
+    },
+    "void idAASBuild::Shutdown()": {
+      "body_hash": "89ed26cc3842f0478375d351926cf742",
+      "is_trivial": true
+    },
+    "void idAASBuild::ParseProcNodes(idLexer *src)": {
+      "body_hash": "771c890fc55323e68d2641dcaf831497",
+      "is_trivial": true
+    },
+    "bool idAASBuild::LoadProcBSP(const char *name, ID_TIME_T minFileTime)": {
+      "body_hash": "8d9864430f3390b3d9670c0c2fb50f8f",
+      "is_trivial": true
+    },
+    "void idAASBuild::DeleteProcBSP()": {
+      "body_hash": "25bf17563c57398f4256c6930f9c8949",
+      "is_trivial": true
+    },
+    "bool idAASBuild::ChoppedAwayByProcBSP(int nodeNum, idFixedWinding *w, const idVec3 &normal, const idVec3 &origin, const float radius)": {
+      "body_hash": "e1715859da7fa78437f18b1825973268",
+      "is_trivial": false
+    },
+    "void idAASBuild::ClipBrushSidesWithProcBSP(idBrushList &brushList)": {
+      "body_hash": "dc505d68c4d468e58fcb8923fe7f998d",
+      "is_trivial": true
+    },
+    "int idAASBuild::ContentsForAAS(int contents)": {
+      "body_hash": "35353d422af250e0cf8a785479cfa1d2",
+      "is_trivial": true
+    },
+    "idBrushList idAASBuild::AddBrushesForMapBrush(const idMapBrush *mapBrush, const idVec3 &origin, const idMat3 &axis, int entityNum, int primitiveNum, idBrushList brushList)": {
+      "body_hash": "69b6e45c2e3eb649e520f7562c1bfdc9",
+      "is_trivial": false
+    },
+    "idBrushList idAASBuild::AddBrushesForMapPatch(const idMapPatch *mapPatch, const idVec3 &origin, const idMat3 &axis, int entityNum, int primitiveNum, idBrushList brushList)": {
+      "body_hash": "8db17b747694e0d7a248e9176382e9a0",
+      "is_trivial": false
+    },
+    "idBrushList idAASBuild::AddBrushesForMapPolygonMesh(const MapPolygonMesh *mapMesh, const idVec3 &origin, const idMat3 &axis, int entityNum, int primitiveNum, idBrushList brushList)": {
+      "body_hash": "6113ffc4438dd7372fe220df027f0bac",
+      "is_trivial": false
+    },
+    "idBrushList idAASBuild::AddBrushesForMapEntity(const idMapEntity *mapEnt, int entityNum, idBrushList brushList)": {
+      "body_hash": "243916fbcbaef944c57a44aca3956e6e",
+      "is_trivial": true
+    },
+    "idBrushList idAASBuild::AddBrushesForMapFile(const idMapFile *mapFile, idBrushList brushList)": {
+      "body_hash": "7005b772b8dafc3318d3df40c9309536",
+      "is_trivial": true
+    },
+    "bool idAASBuild::CheckForEntities(const idMapFile *mapFile, idStrList &entityClassNames) const": {
+      "body_hash": "06f7ae13b3c6139fcb09599b18f42d56",
+      "is_trivial": true
+    },
+    "void idAASBuild::ChangeMultipleBoundingBoxContents_r(idBrushBSPNode *node, int mask)": {
+      "body_hash": "98a1e8d71c19e79ffddaf79c411cb8c0",
+      "is_trivial": true
+    },
+    "void idAASBuild::SetPortalFlags_r(idBrushBSPNode *node)": {
+      "body_hash": "31588bf2dafa377caca0d3c80ad040d3",
+      "is_trivial": true
+    },
+    "bool idAASBuild::PortalIsGap(idBrushBSPPortal *portal, int side)": {
+      "body_hash": "a1a0c490be8fc33a49aee32609814e22",
+      "is_trivial": true
+    },
+    "void idAASBuild::GravSubdivLeafNode(idBrushBSPNode *node)": {
+      "body_hash": "89c7dd9669342c168a8a506a93b13329",
+      "is_trivial": true
+    },
+    "void idAASBuild::GravSubdiv_r(idBrushBSPNode *node)": {
+      "body_hash": "898d53ce55b8f71f1f16ab91a3d429b6",
+      "is_trivial": true
+    },
+    "void idAASBuild::GravitationalSubdivision(idBrushBSP &bsp)": {
+      "body_hash": "90060fb5a2a7b31e40317b0d48837b25",
+      "is_trivial": true
+    },
+    "void idAASBuild::LedgeSubdivFlood_r(idBrushBSPNode *node, const idLedge *ledge)": {
+      "body_hash": "9433ec67af7172f5119aa4cf1f21df27",
+      "is_trivial": true
+    },
+    "void idAASBuild::LedgeSubdivLeafNodes_r(idBrushBSPNode *node, const idLedge *ledge)": {
+      "body_hash": "92914b4377413c92e7af5d26853c9981",
+      "is_trivial": true
+    },
+    "void idAASBuild::LedgeSubdiv(idBrushBSPNode *root)": {
+      "body_hash": "d91508073f1bd372f879c2767c75ab30",
+      "is_trivial": true
+    },
+    "bool idAASBuild::IsLedgeSide_r(idBrushBSPNode *node, idFixedWinding *w, const idPlane &plane, const idVec3 &normal, const idVec3 &origin, const float radius)": {
+      "body_hash": "897419ea6a6c181ea3dc5fa519ace930",
+      "is_trivial": false
+    },
+    "void idAASBuild::AddLedge(const idVec3 &v1, const idVec3 &v2, idBrushBSPNode *node)": {
+      "body_hash": "6af403b182a655444d242c181cee9f40",
+      "is_trivial": true
+    },
+    "void idAASBuild::FindLeafNodeLedges(idBrushBSPNode *root, idBrushBSPNode *node)": {
+      "body_hash": "e44c3176830d7c8b7dfeb1d87fcf25b3",
+      "is_trivial": true
+    },
+    "void idAASBuild::FindLedges_r(idBrushBSPNode *root, idBrushBSPNode *node)": {
+      "body_hash": "3d23e8011e39b02daa776c187d9819a5",
+      "is_trivial": true
+    },
+    "void idAASBuild::LedgeSubdivision(idBrushBSP &bsp)": {
+      "body_hash": "5b02d8b322776263cba178739f9a5f38",
+      "is_trivial": true
+    },
+    "void idAASBuild::WriteLedgeMap(const idStr &fileName, const idStr &ext)": {
+      "body_hash": "f31817787c9f328a24195402f01eaaf3",
+      "is_trivial": true
+    },
+    "bool idAASBuild::AllGapsLeadToOtherNode(idBrushBSPNode *nodeWithGaps, idBrushBSPNode *otherNode)": {
+      "body_hash": "af59da7478bfe34ac4451a8ed8c8bd90",
+      "is_trivial": true
+    },
+    "bool idAASBuild::MergeWithAdjacentLeafNodes(idBrushBSP &bsp, idBrushBSPNode *node)": {
+      "body_hash": "65bba72158bf926e296e2cca957fa0ea",
+      "is_trivial": true
+    },
+    "void idAASBuild::MergeLeafNodes_r(idBrushBSP &bsp, idBrushBSPNode *node)": {
+      "body_hash": "c72b63060567c4b5715da24f0f1a09fc",
+      "is_trivial": true
+    },
+    "void idAASBuild::MergeLeafNodes(idBrushBSP &bsp)": {
+      "body_hash": "b333c203903ce54dd16fb76c27f36ebf",
+      "is_trivial": true
+    },
+    "void idAASBuild::SetupHash()": {
+      "body_hash": "033f26841eab0684bab0387ea0bcdfc8",
+      "is_trivial": true
+    },
+    "void idAASBuild::ShutdownHash()": {
+      "body_hash": "77ac1f350b120e579e20544b3a698425",
+      "is_trivial": true
+    },
+    "void idAASBuild::ClearHash(const idBounds &bounds)": {
+      "body_hash": "a1359da6d2c418ba22a1664d5a0351d0",
+      "is_trivial": true
+    },
+    "ID_INLINE int idAASBuild::HashVec(const idVec3 &vec)": {
+      "body_hash": "e9aff2e6d4e8f04a3e7482457aa55550",
+      "is_trivial": true
+    },
+    "bool idAASBuild::GetVertex(const idVec3 &v, int *vertexNum)": {
+      "body_hash": "30bf4ce6bc6b8e9c4c390afcec0172c0",
+      "is_trivial": true
+    },
+    "bool idAASBuild::GetEdge(const idVec3 &v1, const idVec3 &v2, int *edgeNum, int v1num)": {
+      "body_hash": "678278d6dd13b79c042927afe986db8e",
+      "is_trivial": false
+    },
+    "bool idAASBuild::GetFaceForPortal(idBrushBSPPortal *portal, int side, int *faceNum)": {
+      "body_hash": "e3830f25209568f8e16bf2acb1058556",
+      "is_trivial": true
+    },
+    "bool idAASBuild::GetAreaForLeafNode(idBrushBSPNode *node, int *areaNum)": {
+      "body_hash": "d975eb2814afa795f078d4c60a696c99",
+      "is_trivial": true
+    },
+    "int idAASBuild::StoreTree_r(idBrushBSPNode *node)": {
+      "body_hash": "ccc475594b9656d9465473ceb025133c",
+      "is_trivial": true
+    },
+    "void idAASBuild::GetSizeEstimate_r(idBrushBSPNode *parent, idBrushBSPNode *node, struct sizeEstimate_s &size)": {
+      "body_hash": "2c7bef066cd38fc409110026690af640",
+      "is_trivial": true
+    },
+    "void idAASBuild::SetSizeEstimate(const idBrushBSP &bsp, idAASFileLocal *file)": {
+      "body_hash": "d20fbe3836e4659e755fe2782e9e8237",
+      "is_trivial": true
+    },
+    "bool idAASBuild::StoreFile(const idBrushBSP &bsp)": {
+      "body_hash": "3b6df9670e7f043d34aa0d2b0dbffd46",
+      "is_trivial": true
+    },
+    "bool idAASCluster::Build(idAASFileLocal *file)": {
+      "body_hash": "b32de5565e2c26ee39e0defb0c0714d2",
+      "is_trivial": true
+    },
+    "bool idAASCluster::BuildSingleCluster(idAASFileLocal *file)": {
+      "body_hash": "98a5cee231dbaaa5c98d2097e1c1dc59",
+      "is_trivial": true
+    },
+    "bool idAASCluster::UpdatePortal(int areaNum, int clusterNum)": {
+      "body_hash": "7d807548e60c77958c25c7a0d9d3fbf0",
+      "is_trivial": true
+    },
+    "bool idAASCluster::FloodClusterAreas_r(int areaNum, int clusterNum)": {
+      "body_hash": "44b63236f5d440ff1158586a4f6606a6",
+      "is_trivial": true
+    },
+    "void idAASCluster::RemoveAreaClusterNumbers()": {
+      "body_hash": "ce8914ba344148a1bde9f2b7bd7e4118",
+      "is_trivial": true
+    },
+    "void idAASCluster::NumberClusterAreas(int clusterNum)": {
+      "body_hash": "7aff8506a4fce4088d97e6e0ae85ea19",
+      "is_trivial": true
+    },
+    "bool idAASCluster::FindClusters()": {
+      "body_hash": "eb75709628664cc6e9c91c4ca9b4df8e",
+      "is_trivial": true
+    },
+    "void idAASCluster::CreatePortals()": {
+      "body_hash": "ab856edd4221a6d73e0196dedfbeabd7",
+      "is_trivial": true
+    },
+    "bool idAASCluster::TestPortals()": {
+      "body_hash": "dd255febab87f319ea832b896aac484c",
+      "is_trivial": true
+    },
+    "void idAASCluster::RemoveInvalidPortals()": {
+      "body_hash": "a04351fcc251b998862d39074001cdf3",
+      "is_trivial": true
+    },
+    "bool idAASReach::Build(const idMapFile *mapFile, idAASFileLocal *file)": {
+      "body_hash": "b92904ded0b0b3f3926c58c13b0c03b8",
+      "is_trivial": true
+    },
+    "void idAASReach::FlagReachableAreas(idAASFileLocal *file)": {
+      "body_hash": "f839e7f570d9ecb68685820c90eb46d9",
+      "is_trivial": true
+    },
+    "bool idAASReach::ReachabilityExists(int fromAreaNum, int toAreaNum)": {
+      "body_hash": "666b115185b0e8a9b48fd546a1364b2b",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idAASReach::CanSwimInArea(int areaNum)": {
+      "body_hash": "1c7d8eb3c42189974aedebe9fb8019e5",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idAASReach::AreaHasFloor(int areaNum)": {
+      "body_hash": "7845fae6b73467d70c5e885e5b6672e9",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idAASReach::AreaIsClusterPortal(int areaNum)": {
+      "body_hash": "535751014e26a3537c114543c41e60c6",
+      "is_trivial": true
+    },
+    "void idAASReach::AddReachabilityToArea(idReachability *reach, int areaNum)": {
+      "body_hash": "cc651ba11880a8dfe1bcd5983f981314",
+      "is_trivial": true
+    },
+    "void idAASReach::Reachability_Fly(int areaNum)": {
+      "body_hash": "eecba033e1f21e87b2985bc885db14ba",
+      "is_trivial": true
+    },
+    "void idAASReach::Reachability_Swim(int areaNum)": {
+      "body_hash": "3b39d33b0339a9f0820d89d25db0a314",
+      "is_trivial": true
+    },
+    "void idAASReach::Reachability_EqualFloorHeight(int areaNum)": {
+      "body_hash": "8de2863ebf1c86e3616f29912f5187f0",
+      "is_trivial": true
+    },
+    "bool idAASReach::Reachability_Step_Barrier_WaterJump_WalkOffLedge(int fromAreaNum, int toAreaNum)": {
+      "body_hash": "b51deca7e505f0b6f998ce2a7c27969d",
+      "is_trivial": true
+    },
+    "void idAASReach::Reachability_WalkOffLedge(int areaNum)": {
+      "body_hash": "e45eec16f9f8a4d54a685382ed598519",
+      "is_trivial": true
+    },
+    "idBrush::idBrush()": {
+      "body_hash": "97b54f5099dc7dbc07b87d0a8580d4ce",
+      "is_trivial": true
+    },
+    "idBrush::~idBrush()": {
+      "body_hash": "393158b50c76563a3a046fa9e24a45dd",
+      "is_trivial": true
+    },
+    "int idBrush::GetFlags() const": {
+      "body_hash": "a0954453350814ccdc8a0d544f2680f4",
+      "is_trivial": true
+    },
+    "void idBrush::SetFlag(int flag)": {
+      "body_hash": "0c81697ecacf31d454364334e73ec081",
+      "is_trivial": true
+    },
+    "void idBrush::RemoveFlag(int flag)": {
+      "body_hash": "382199376da97598fed16edfabf9f4b0",
+      "is_trivial": true
+    },
+    "void idBrush::SetEntityNum(int num)": {
+      "body_hash": "178a76527465c065df632263e9853717",
+      "is_trivial": true
+    },
+    "void idBrush::SetPrimitiveNum(int num)": {
+      "body_hash": "0ae45a40264fb613f9f94b0d61d1f723",
+      "is_trivial": true
+    },
+    "void idBrush::SetContents(int contents)": {
+      "body_hash": "706e51a44d80780417cb173049971b00",
+      "is_trivial": true
+    },
+    "int idBrush::GetContents() const": {
+      "body_hash": "a3173f0967ed8024b755570d5ad5223d",
+      "is_trivial": true
+    },
+    "const idBounds & idBrush::GetBounds() const": {
+      "body_hash": "827bf34330532f3e784302c4e3ab9aa4",
+      "is_trivial": true
+    },
+    "float idBrush::GetVolume() const": {
+      "body_hash": "0815a5101c0b908ef4847c002891c255",
+      "is_trivial": true
+    },
+    "int idBrush::GetNumSides() const": {
+      "body_hash": "213d19e81100e72d7ada85d719ea2976",
+      "is_trivial": true
+    },
+    "idBrushSide * idBrush::GetSide(int i) const": {
+      "body_hash": "c6a586318a22c0605d32e26da62264cd",
+      "is_trivial": true
+    },
+    "void idBrush::SetPlaneSide(int s)": {
+      "body_hash": "9abdcbfce9dd3a96846d53d38bd587d4",
+      "is_trivial": true
+    },
+    "void idBrush::SavePlaneSide()": {
+      "body_hash": "9f7d71e7a438e8e23e7160abc751832e",
+      "is_trivial": true
+    },
+    "int idBrush::GetSavedPlaneSide() const": {
+      "body_hash": "5450fb0786b587822fe952cf2db46e68",
+      "is_trivial": true
+    },
+    "bool idBrush::FromSides(idList< idBrushSide * > &sideList)": {
+      "body_hash": "b2c7ae3634b27ff731d97aed70236e3e",
+      "is_trivial": true
+    },
+    "bool idBrush::FromWinding(const idWinding &w, const idPlane &windingPlane)": {
+      "body_hash": "b1d4f43f2d4c0fbe5b8d5cdf3230a4cf",
+      "is_trivial": true
+    },
+    "bool idBrush::FromBounds(const idBounds &bounds)": {
+      "body_hash": "36ee862e430da84694ead554de02de0b",
+      "is_trivial": true
+    },
+    "void idBrush::Transform(const idVec3 &origin, const idMat3 &axis)": {
+      "body_hash": "628719ebad487854bc67d5ddf83afa35",
+      "is_trivial": true
+    },
+    "idBrush * idBrush::Copy() const": {
+      "body_hash": "6a8e62e0a4533e5284de7008fa072176",
+      "is_trivial": true
+    },
+    "bool idBrush::TryMerge(const idBrush *brush, const idPlaneSet &planeList)": {
+      "body_hash": "e2760c89bbdf2e8f1007cf025aca9b16",
+      "is_trivial": true
+    },
+    "bool idBrush::Subtract(const idBrush *b, idBrushList &list) const": {
+      "body_hash": "3dfea1cef9e19b9be066769611d70ee3",
+      "is_trivial": true
+    },
+    "int idBrush::Split(const idPlane &plane, int planeNum, idBrush **front, idBrush **back) const": {
+      "body_hash": "fe984d7f1cfded4e916efc97deaa877f",
+      "is_trivial": false
+    },
+    "void idBrush::ExpandForAxialBox(const idBounds &bounds)": {
+      "body_hash": "a5348e20c4424a053abce2f2a5c8cbb0",
+      "is_trivial": true
+    },
+    "idBrush * idBrush::Next() const": {
+      "body_hash": "856f5422c5238030e6a83f2ef04607fd",
+      "is_trivial": true
+    },
+    "bool idBrush::CreateWindings()": {
+      "body_hash": "b609ab98f7ba061f25a16b4143735b5b",
+      "is_trivial": true
+    },
+    "void idBrush::BoundBrush(const idBrush *original=NULL)": {
+      "body_hash": "dd7780a61e453ea2ea990e20dc2de76d",
+      "is_trivial": true
+    },
+    "void idBrush::AddBevelsForAxialBox()": {
+      "body_hash": "5270a4a3fa3e6d006562fb8d25e83c69",
+      "is_trivial": true
+    },
+    "bool idBrush::RemoveSidesWithoutWinding()": {
+      "body_hash": "8fa7969f6d4ecb64fdbbcb236ce41b68",
+      "is_trivial": true
+    },
+    "idBrushBSP::idBrushBSP()": {
+      "body_hash": "2738ea363e3c177e06b3bcf9f2c993a4",
+      "is_trivial": true
+    },
+    "idBrushBSP::~idBrushBSP()": {
+      "body_hash": "e72cf2410ab5d6fd27ba1880c4ff6be3",
+      "is_trivial": true
+    },
+    "void idBrushBSP::Build(idBrushList brushList, int skipContents, bool(*ChopAllowed)(idBrush *b1, idBrush *b2), bool(*MergeAllowed)(idBrush *b1, idBrush *b2))": {
+      "body_hash": "faffb11fc283e124842c67f3cba6646e",
+      "is_trivial": false
+    },
+    "void idBrushBSP::PruneTree(int contents)": {
+      "body_hash": "33f11c757f625d4dc77dfc7f01ea2c8e",
+      "is_trivial": true
+    },
+    "void idBrushBSP::Portalize()": {
+      "body_hash": "7779cef2cd7399db199da372f1b2b401",
+      "is_trivial": true
+    },
+    "bool idBrushBSP::RemoveOutside(const idMapFile *mapFile, int contents, const idStrList &classNames)": {
+      "body_hash": "0a729a18e238204c755a52ebdce3b16d",
+      "is_trivial": true
+    },
+    "void idBrushBSP::LeakFile(const idStr &fileName)": {
+      "body_hash": "1367a7f1861776f607fc2659ee9d3ed6",
+      "is_trivial": true
+    },
+    "void idBrushBSP::MergePortals(int skipContents)": {
+      "body_hash": "7adddb65347528f92b7cb78b7aed4d19",
+      "is_trivial": true
+    },
+    "bool idBrushBSP::TryMergeLeafNodes(idBrushBSPPortal *portal, int side)": {
+      "body_hash": "4cddeac6e13766e3a2e528b0db50906e",
+      "is_trivial": true
+    },
+    "void idBrushBSP::PruneMergedTree_r(idBrushBSPNode *node)": {
+      "body_hash": "a8c90ba488e3ca67126e224a146335cf",
+      "is_trivial": true
+    },
+    "void idBrushBSP::MeltPortals(int skipContents)": {
+      "body_hash": "ed920aa6130bdb24c54ef7766108cda8",
+      "is_trivial": true
+    },
+    "void idBrushBSP::WriteBrushMap(const idStr &fileName, const idStr &ext, int contents)": {
+      "body_hash": "304c7f2428c2fca4c3183ec13efbb110",
+      "is_trivial": true
+    },
+    "const idBounds & idBrushBSP::GetTreeBounds() const": {
+      "body_hash": "654cf71ed5af4f1446e1fbcc78d538d9",
+      "is_trivial": true
+    },
+    "idBrushBSPNode * idBrushBSP::GetRootNode() const": {
+      "body_hash": "61b16e809e4dcfed90a8a71e35fa9873",
+      "is_trivial": true
+    },
+    "void idBrushBSP::RemoveMultipleLeafNodeReferences_r(idBrushBSPNode *node)": {
+      "body_hash": "6069b585865ffeef544db22937cfe101",
+      "is_trivial": true
+    },
+    "void idBrushBSP::Free_r(idBrushBSPNode *node)": {
+      "body_hash": "26f3aba1cbef805b2b7286e797b6da6b",
+      "is_trivial": true
+    },
+    "ID_INLINE bool idBrushBSP::IsValidSplitter(const idBrushSide *side)": {
+      "body_hash": "4b4d0fa3026029418a1cfee7c8a6a764",
+      "is_trivial": true
+    },
+    "int idBrushBSP::BrushSplitterStats(const idBrush *brush, int planeNum, const idPlaneSet &planeList, bool *testedPlanes, struct splitterStats_s &stats)": {
+      "body_hash": "880d4d4d6ffddd89672fd4d486fdc069",
+      "is_trivial": false
+    },
+    "int idBrushBSP::FindSplitter(idBrushBSPNode *node, const idPlaneSet &planeList, bool *testedPlanes, struct splitterStats_s &bestStats)": {
+      "body_hash": "1d8b60a478d0aefd266e2ca60edb5362",
+      "is_trivial": false
+    },
+    "void idBrushBSP::SetSplitterUsed(idBrushBSPNode *node, int planeNum)": {
+      "body_hash": "262964e31cd8e1b858ae6b57f710af22",
+      "is_trivial": true
+    },
+    "idBrushBSPNode * idBrushBSP::BuildBrushBSP_r(idBrushBSPNode *node, const idPlaneSet &planeList, bool *testedPlanes, int skipContents)": {
+      "body_hash": "db3e4a94cdedb3d549d1588d184ad587",
+      "is_trivial": false
+    },
+    "idBrushBSPNode * idBrushBSP::ProcessGridCell(idBrushBSPNode *node, int skipContents)": {
+      "body_hash": "8a68f0a59d21e0fa778d85ea83e9323e",
+      "is_trivial": true
+    },
+    "void idBrushBSP::BuildGrid_r(idList< idBrushBSPNode * > &gridCells, idBrushBSPNode *node)": {
+      "body_hash": "1eb43948812cda94c4ba83d1d8101f07",
+      "is_trivial": true
+    },
+    "void idBrushBSP::PruneTree_r(idBrushBSPNode *node, int contents)": {
+      "body_hash": "fa839d9979d815cf5bb4dd2b65be78f8",
+      "is_trivial": true
+    },
+    "void idBrushBSP::MakeOutsidePortals()": {
+      "body_hash": "087a5fcc0141cc5b1daec9e821b0d557",
+      "is_trivial": true
+    },
+    "idWinding * idBrushBSP::BaseWindingForNode(idBrushBSPNode *node)": {
+      "body_hash": "59e18a7492918fb5869e5f31243c9d83",
+      "is_trivial": true
+    },
+    "void idBrushBSP::MakeNodePortal(idBrushBSPNode *node)": {
+      "body_hash": "ce89144f421c8f79fed5353b691fe901",
+      "is_trivial": true
+    },
+    "void idBrushBSP::SplitNodePortals(idBrushBSPNode *node)": {
+      "body_hash": "e4c276b6f9558c011f063a2c9b394639",
+      "is_trivial": true
+    },
+    "void idBrushBSP::MakeTreePortals_r(idBrushBSPNode *node)": {
+      "body_hash": "fa73f50d00e952532841fa1c45b855a8",
+      "is_trivial": true
+    },
+    "void idBrushBSP::FloodThroughPortals_r(idBrushBSPNode *node, int contents, int depth)": {
+      "body_hash": "2915e9e9a052552ea3c79ab342826299",
+      "is_trivial": true
+    },
+    "bool idBrushBSP::FloodFromOrigin(const idVec3 &origin, int contents)": {
+      "body_hash": "828a4016ea972da23d5ba922ea372904",
+      "is_trivial": true
+    },
+    "bool idBrushBSP::FloodFromEntities(const idMapFile *mapFile, int contents, const idStrList &classNames)": {
+      "body_hash": "c5e5a0d9f0aaec17c6b2e27c85a880be",
+      "is_trivial": true
+    },
+    "void idBrushBSP::RemoveOutside_r(idBrushBSPNode *node, int contents)": {
+      "body_hash": "2d5187b681f5cc2a41219ef7aa4c9e35",
+      "is_trivial": true
+    },
+    "void idBrushBSP::SetPortalPlanes_r(idBrushBSPNode *node, idPlaneSet &planeList)": {
+      "body_hash": "254a2e1a697abfa2b5e665f311355952",
+      "is_trivial": true
+    },
+    "void idBrushBSP::SetPortalPlanes()": {
+      "body_hash": "739f12b963d54839351f693661777eb7",
+      "is_trivial": true
+    },
+    "void idBrushBSP::MergePortals_r(idBrushBSPNode *node, int skipContents)": {
+      "body_hash": "a21b72cc75b449f0f7367d50073b0bba",
+      "is_trivial": true
+    },
+    "void idBrushBSP::MergeLeafNodePortals(idBrushBSPNode *node, int skipContents)": {
+      "body_hash": "6710a387c1843ccefcb43b4508c4cdc4",
+      "is_trivial": true
+    },
+    "void idBrushBSP::RemoveLeafNodeColinearPoints(idBrushBSPNode *node)": {
+      "body_hash": "d1cb7584dc1523bb8a0451faa00e1ec8",
+      "is_trivial": true
+    },
+    "void idBrushBSP::RemoveColinearPoints_r(idBrushBSPNode *node, int skipContents)": {
+      "body_hash": "6547161b47473490d9dc25086dca41b8",
+      "is_trivial": true
+    },
+    "void idBrushBSP::MeltFlood_r(idBrushBSPNode *node, int skipContents, idBounds &bounds, idVectorSet< idVec3, 3 > &vertexList)": {
+      "body_hash": "f35ba6b731d722af4477d1141682a40f",
+      "is_trivial": false
+    },
+    "void idBrushBSP::MeltLeafNodePortals(idBrushBSPNode *node, int skipContents, idVectorSet< idVec3, 3 > &vertexList)": {
+      "body_hash": "6f2e5d7700485ffe906fc4cbf6f686e2",
+      "is_trivial": true
+    },
+    "void idBrushBSP::MeltPortals_r(idBrushBSPNode *node, int skipContents, idVectorSet< idVec3, 3 > &vertexList)": {
+      "body_hash": "ed652ab7dd7d2f4fdffc8e8f632a980c",
+      "is_trivial": true
+    },
+    "idBrushBSPNode::idBrushBSPNode()": {
+      "body_hash": "82469769f7677653b9c6a74163ab1e19",
+      "is_trivial": true
+    },
+    "idBrushBSPNode::~idBrushBSPNode()": {
+      "body_hash": "b0d4acf08ed4035cd96a448bf646c479",
+      "is_trivial": true
+    },
+    "void idBrushBSPNode::SetContentsFromBrushes()": {
+      "body_hash": "3998674ff4ecf945c4dab96089483ab7",
+      "is_trivial": true
+    },
+    "idBounds idBrushBSPNode::GetPortalBounds()": {
+      "body_hash": "a1c072d321d3b03c267ed0de772dd34f",
+      "is_trivial": true
+    },
+    "idBrushBSPNode * idBrushBSPNode::GetChild(int index) const": {
+      "body_hash": "f289624032170dd03e0789ce383d7499",
+      "is_trivial": true
+    },
+    "idBrushBSPNode * idBrushBSPNode::GetParent() const": {
+      "body_hash": "310d6c7d51c3dc113b5cdddac9e5d539",
+      "is_trivial": true
+    },
+    "void idBrushBSPNode::SetContents(int contents)": {
+      "body_hash": "706e51a44d80780417cb173049971b00",
+      "is_trivial": true
+    },
+    "int idBrushBSPNode::GetContents() const": {
+      "body_hash": "a3173f0967ed8024b755570d5ad5223d",
+      "is_trivial": true
+    },
+    "const idPlane & idBrushBSPNode::GetPlane() const": {
+      "body_hash": "3fbef76b029324d16c96be690c28c7f5",
+      "is_trivial": true
+    },
+    "idBrushBSPPortal * idBrushBSPNode::GetPortals() const": {
+      "body_hash": "8d3b0942f9045ba8a552fcb39b945a49",
+      "is_trivial": true
+    },
+    "void idBrushBSPNode::SetAreaNum(int num)": {
+      "body_hash": "1c6681c01f12541abc35752eeadb5abb",
+      "is_trivial": true
+    },
+    "int idBrushBSPNode::GetAreaNum() const": {
+      "body_hash": "0ffbbf382da90421e82ba65c71444963",
+      "is_trivial": true
+    },
+    "int idBrushBSPNode::GetFlags() const": {
+      "body_hash": "a0954453350814ccdc8a0d544f2680f4",
+      "is_trivial": true
+    },
+    "void idBrushBSPNode::SetFlag(int flag)": {
+      "body_hash": "0c81697ecacf31d454364334e73ec081",
+      "is_trivial": true
+    },
+    "void idBrushBSPNode::RemoveFlag(int flag)": {
+      "body_hash": "382199376da97598fed16edfabf9f4b0",
+      "is_trivial": true
+    },
+    "bool idBrushBSPNode::TestLeafNode()": {
+      "body_hash": "681d54ff7b859166a22cf257eac1e05e",
+      "is_trivial": true
+    },
+    "void idBrushBSPNode::RemoveFlagFlood(int flag)": {
+      "body_hash": "9536d1cb5d43858ce557a1de4d6ad4ed",
+      "is_trivial": true
+    },
+    "void idBrushBSPNode::RemoveFlagRecurse(int flag)": {
+      "body_hash": "767ada142e0edf89bba1be3e20a5bdc8",
+      "is_trivial": true
+    },
+    "void idBrushBSPNode::RemoveFlagRecurseFlood(int flag)": {
+      "body_hash": "a60580f061a165fad9983e4af32582d6",
+      "is_trivial": true
+    },
+    "int idBrushBSPNode::PlaneSide(const idPlane &plane, float epsilon=ON_EPSILON) const": {
+      "body_hash": "a34f1bb3d55ed9409065e4c23c8820da",
+      "is_trivial": true
+    },
+    "bool idBrushBSPNode::Split(const idPlane &splitPlane, int splitPlaneNum)": {
+      "body_hash": "3e9759b9ce140f5a24d68a8d7c2a5e8f",
+      "is_trivial": true
+    },
+    "idBrushBSPPortal::idBrushBSPPortal()": {
+      "body_hash": "32ba4cfa43dd764427f3d116f9e8da43",
+      "is_trivial": true
+    },
+    "idBrushBSPPortal::~idBrushBSPPortal()": {
+      "body_hash": "936d5dbe31b54364f3e49d57a9760a3f",
+      "is_trivial": true
+    },
+    "void idBrushBSPPortal::AddToNodes(idBrushBSPNode *front, idBrushBSPNode *back)": {
+      "body_hash": "3f8ba4a20e73f052974fde8758b08695",
+      "is_trivial": true
+    },
+    "void idBrushBSPPortal::RemoveFromNode(idBrushBSPNode *l)": {
+      "body_hash": "23182f3a11042082020fda1b77ceab72",
+      "is_trivial": true
+    },
+    "void idBrushBSPPortal::Flip()": {
+      "body_hash": "b201419f2028885458e4fa08911be522",
+      "is_trivial": true
+    },
+    "int idBrushBSPPortal::Split(const idPlane &splitPlane, idBrushBSPPortal **front, idBrushBSPPortal **back)": {
+      "body_hash": "18ec0deb45bcc8de8bd715c8a66e8213",
+      "is_trivial": true
+    },
+    "idWinding * idBrushBSPPortal::GetWinding() const": {
+      "body_hash": "d16d76375ccf4097874a92dd0df195e2",
+      "is_trivial": true
+    },
+    "const idPlane & idBrushBSPPortal::GetPlane() const": {
+      "body_hash": "3fbef76b029324d16c96be690c28c7f5",
+      "is_trivial": true
+    },
+    "void idBrushBSPPortal::SetFaceNum(int num)": {
+      "body_hash": "6b482a983dbe330bf6f06a7c7e86bcf6",
+      "is_trivial": true
+    },
+    "int idBrushBSPPortal::GetFaceNum() const": {
+      "body_hash": "8050ac4954426fe3af6f24eb84efaf27",
+      "is_trivial": true
+    },
+    "int idBrushBSPPortal::GetFlags() const": {
+      "body_hash": "a0954453350814ccdc8a0d544f2680f4",
+      "is_trivial": true
+    },
+    "void idBrushBSPPortal::SetFlag(int flag)": {
+      "body_hash": "0c81697ecacf31d454364334e73ec081",
+      "is_trivial": true
+    },
+    "void idBrushBSPPortal::RemoveFlag(int flag)": {
+      "body_hash": "382199376da97598fed16edfabf9f4b0",
+      "is_trivial": true
+    },
+    "idBrushBSPPortal * idBrushBSPPortal::Next(int side) const": {
+      "body_hash": "e4857d77c33b3db34468201588f27e5b",
+      "is_trivial": true
+    },
+    "idBrushBSPNode * idBrushBSPPortal::GetNode(int side) const": {
+      "body_hash": "47c2dff1ad231f5cc968336872f1e800",
+      "is_trivial": true
+    },
+    "idBrushList::idBrushList()": {
+      "body_hash": "fdeae5a26172b44e1b36d6b597aec1fc",
+      "is_trivial": true
+    },
+    "int idBrushList::Num() const": {
+      "body_hash": "337217ef4e801051b49010d9840fc236",
+      "is_trivial": true
+    },
+    "int idBrushList::NumSides() const": {
+      "body_hash": "0d140cdc84ab71d36811cd647c68c186",
+      "is_trivial": true
+    },
+    "idBrush * idBrushList::Head() const": {
+      "body_hash": "ff593c03e4fbe6eda5de24f8aa2dd782",
+      "is_trivial": true
+    },
+    "idBrush * idBrushList::Tail() const": {
+      "body_hash": "0c957b685ef5ebd7cf12c6dd136705c5",
+      "is_trivial": true
+    },
+    "void idBrushList::Clear()": {
+      "body_hash": "85cecc9b0d4228e249bb7943308d2907",
+      "is_trivial": true
+    },
+    "bool idBrushList::IsEmpty() const": {
+      "body_hash": "a4f8e633a8b5d7dbacc95154a96ebb07",
+      "is_trivial": true
+    },
+    "idBounds idBrushList::GetBounds() const": {
+      "body_hash": "f429231a9fc0ae9a3531659f9c44dc77",
+      "is_trivial": true
+    },
+    "void idBrushList::AddToTail(idBrush *brush)": {
+      "body_hash": "bfe8eed7291f7a3c8f8d3254eda02dea",
+      "is_trivial": true
+    },
+    "void idBrushList::AddToTail(idBrushList &list)": {
+      "body_hash": "d121d7dd3b6c7d76a44ee9d13dfeb7f8",
+      "is_trivial": true
+    },
+    "void idBrushList::AddToFront(idBrush *brush)": {
+      "body_hash": "cfd4c95f6a014624b973b23dec65ff96",
+      "is_trivial": true
+    },
+    "void idBrushList::AddToFront(idBrushList &list)": {
+      "body_hash": "e7a3cfde151d84b4b19af66702071e9d",
+      "is_trivial": true
+    },
+    "void idBrushList::Remove(idBrush *brush)": {
+      "body_hash": "77978658d261438a31d3c977a1dcca20",
+      "is_trivial": true
+    },
+    "void idBrushList::Delete(idBrush *brush)": {
+      "body_hash": "9f3a65c760c0fe4fc77da8a85b78e046",
+      "is_trivial": true
+    },
+    "idBrushList * idBrushList::Copy() const": {
+      "body_hash": "9dc5105fabb2a04689a7f285284e7349",
+      "is_trivial": true
+    },
+    "void idBrushList::Free()": {
+      "body_hash": "fc07297beff684f1b95e6e991a04fa57",
+      "is_trivial": true
+    },
+    "void idBrushList::Split(const idPlane &plane, int planeNum, idBrushList &frontList, idBrushList &backList, bool useBrushSavedPlaneSide=false)": {
+      "body_hash": "47f42ac6b28848e3ccdab3c946281049",
+      "is_trivial": false
+    },
+    "void idBrushList::Chop(bool(*ChopAllowed)(idBrush *b1, idBrush *b2))": {
+      "body_hash": "0814cfdd3077c029dd55044be9cd419b",
+      "is_trivial": true
+    },
+    "void idBrushList::Merge(bool(*MergeAllowed)(idBrush *b1, idBrush *b2))": {
+      "body_hash": "bf8674a02bc7344178a8ff00f546b8c2",
+      "is_trivial": true
+    },
+    "void idBrushList::SetFlagOnFacingBrushSides(const idPlane &plane, int flag)": {
+      "body_hash": "359d58b80e95b8dc986c6c79def0530f",
+      "is_trivial": true
+    },
+    "void idBrushList::CreatePlaneList(idPlaneSet &planeList) const": {
+      "body_hash": "d212db99847716c34407493f16f6f80b",
+      "is_trivial": true
+    },
+    "void idBrushList::WriteBrushMap(const idStr &fileName, const idStr &ext) const": {
+      "body_hash": "92262686fea909fc457f63b10f386c02",
+      "is_trivial": true
+    },
+    "idBrushMap::idBrushMap(const idStr &fileName, const idStr &ext)": {
+      "body_hash": "1afecb42ba41df9ead7f0e228518d703",
+      "is_trivial": true
+    },
+    "idBrushMap::~idBrushMap()": {
+      "body_hash": "9fd258b51bc76e49e5ea05659aabaf40",
+      "is_trivial": true
+    },
+    "void idBrushMap::SetTexture(const idStr &textureName)": {
+      "body_hash": "1cff5f1a6d296ed725b4e59315c0b070",
+      "is_trivial": true
+    },
+    "void idBrushMap::WriteBrush(const idBrush *brush)": {
+      "body_hash": "64f6b940bf846d294f9cee0a176f7965",
+      "is_trivial": true
+    },
+    "void idBrushMap::WriteBrushList(const idBrushList &brushList)": {
+      "body_hash": "7604a4e121e26857113b12ab48a5e8a6",
+      "is_trivial": true
+    },
+    "idBrushSide::idBrushSide()": {
+      "body_hash": "d8bdd1dc2ee6ac629c86449978c3ea30",
+      "is_trivial": true
+    },
+    "idBrushSide::idBrushSide(const idPlane &plane, int planeNum)": {
+      "body_hash": "5bd627f5087e5246b1d681bd57319862",
+      "is_trivial": true
+    },
+    "idBrushSide::~idBrushSide()": {
+      "body_hash": "0924cd9ee10702c5df71cfce910cfb09",
+      "is_trivial": true
+    },
+    "int idBrushSide::GetFlags() const": {
+      "body_hash": "a0954453350814ccdc8a0d544f2680f4",
+      "is_trivial": true
+    },
+    "void idBrushSide::SetFlag(int flag)": {
+      "body_hash": "0c81697ecacf31d454364334e73ec081",
+      "is_trivial": true
+    },
+    "void idBrushSide::RemoveFlag(int flag)": {
+      "body_hash": "382199376da97598fed16edfabf9f4b0",
+      "is_trivial": true
+    },
+    "const idPlane & idBrushSide::GetPlane() const": {
+      "body_hash": "3fbef76b029324d16c96be690c28c7f5",
+      "is_trivial": true
+    },
+    "void idBrushSide::SetPlaneNum(int num)": {
+      "body_hash": "58e58abb34f4fa2efa1772547f6e72b0",
+      "is_trivial": true
+    },
+    "int idBrushSide::GetPlaneNum()": {
+      "body_hash": "6ee6d372dbdb50b9f92ff0ac9c2aa74b",
+      "is_trivial": true
+    },
+    "const idWinding * idBrushSide::GetWinding() const": {
+      "body_hash": "d5d7fd4a91feaf59cdcfbe4fee536083",
+      "is_trivial": true
+    },
+    "idBrushSide * idBrushSide::Copy() const": {
+      "body_hash": "a24abb2e971e00f93358d4cbf5cba66e",
+      "is_trivial": true
+    },
+    "int idBrushSide::Split(const idPlane &splitPlane, idBrushSide **front, idBrushSide **back) const": {
+      "body_hash": "64c1d88f38a8c967abf9e4c176ce8415",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::Init(int argc, const char *const *argv, const char *cmdline)": {
+      "body_hash": "534644c2e440e8f698713b9a95946111",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::Shutdown()": {
+      "body_hash": "9c1abf0b04a019f648d51af02cce8713",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::CreateMainMenu()": {
+      "body_hash": "99b0e37ebe93b5929919046292744444",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::Quit()": {
+      "body_hash": "2ce185ad5cd1dc88a10211a77d54519f",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::Frame()": {
+      "body_hash": "f328c13292e8996674de52f14fd3af02",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::UpdateLevelLoadPacifier()": {
+      "body_hash": "1626701160b638450aab881d7fca9cb9",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::LoadPacifierInfo(VERIFY_FORMAT_STRING const char *fmt,...)": {
+      "body_hash": "fb9dc97560545c1dded330adde60ae91",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::LoadPacifierProgressTotal(int total)": {
+      "body_hash": "17c5b65a5c268a2941580e991a207a48",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::LoadPacifierProgressIncrement(int step)": {
+      "body_hash": "57285dd8a7416020e70eca93c07acbcf",
+      "is_trivial": true
+    },
+    "virtual bool idCommonLocal::LoadPacifierRunning()": {
+      "body_hash": "88471a9a7ae9ee3169221abbb2f8a142",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::StartupVariable(const char *match)": {
+      "body_hash": "c59053ce7711eaa1bf49cd3e755379a4",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::BeginRedirect(char *buffer, int buffersize, void(*flush)(const char *))": {
+      "body_hash": "583fe7936066f2f9c9eb681508708c82",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::EndRedirect()": {
+      "body_hash": "3b3ed7a59e84f57883168c9e7656eb2d",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::SetRefreshOnPrint(bool set)": {
+      "body_hash": "4f24bdbae4b175462e2b7651671a0dd6",
+      "is_trivial": true
+    },
+    "void idCommonLocal::Printf(const char *fmt,...)": {
+      "body_hash": "921d8127486d30f4bfa168f90bfbe018",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::VPrintf(const char *fmt, va_list arg)": {
+      "body_hash": "e73e44c03495959337cb2dc4e69d3f9c",
+      "is_trivial": true
+    },
+    "void idCommonLocal::DPrintf(const char *fmt,...)": {
+      "body_hash": "a92636ffdf8114e5255dc38c5e8c22b8",
+      "is_trivial": true
+    },
+    "void idCommonLocal::VerbosePrintf(const char *fmt,...)": {
+      "body_hash": "f69384e811f6eaf34e0407c7b373d687",
+      "is_trivial": true
+    },
+    "void idCommonLocal::Warning(const char *fmt,...)": {
+      "body_hash": "7192d33ea4eb19fa16e7291b14f718cd",
+      "is_trivial": true
+    },
+    "void idCommonLocal::DWarning(const char *fmt,...)": {
+      "body_hash": "dda7fd6e8cf997b637de23055436bf9f",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::PrintWarnings()": {
+      "body_hash": "17a88292b8aabcfdd83243efa58b8d33",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::ClearWarnings(const char *reason)": {
+      "body_hash": "490f3e420a554b4f52f939cb6352a6bb",
+      "is_trivial": true
+    },
+    "void idCommonLocal::Error(const char *fmt,...)": {
+      "body_hash": "781b460d3c5a64b7b3f1c6821696e53c",
+      "is_trivial": true
+    },
+    "void idCommonLocal::FatalError(const char *fmt,...)": {
+      "body_hash": "45617c3df42da32b6360535ce5133f05",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::OnSaveCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "6b3e5a64df2113a380b7690519d93a03",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::OnLoadCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "90bcbf01cf430eb5f6f39bf2c7ff38c8",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::OnLoadFilesCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "119c295eedc7d60bdd59f5058c30ff73",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::OnEnumerationCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "49635c84e6e80d5fb21a352ab5a25952",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::OnDeleteCompleted(idSaveLoadParms &parms)": {
+      "body_hash": "1f859b0122a31d7574c238da40f1faf0",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::TriggerScreenWipe(const char *_wipeMaterial, bool hold)": {
+      "body_hash": "63500804e118d589b14c8e1c112101f6",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::OnStartHosting(idMatchParameters &parms)": {
+      "body_hash": "f108be87403468698b9f4baec4b4e2be",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::ResetPlayerInput(int playerIndex)": {
+      "body_hash": "525d6f5936988112a9cf4d31b125ce64",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::InitTool(const toolFlag_t, const idDict *, idEntity *)": {
+      "body_hash": "21c8c1d26ddacf5a152e55972ed46410",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::LoadPacifierBinarizeFilename(const char *filename, const char *reason)": {
+      "body_hash": "806dbf6af2774fe316bf5e9297519b8a",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::LoadPacifierBinarizeInfo(const char *info)": {
+      "body_hash": "51274dc8e9b2a889819ae97330240793",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::LoadPacifierBinarizeMiplevel(int level, int maxLevel)": {
+      "body_hash": "3aced4cc1896fcd1515a5ee8b37480bf",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::LoadPacifierBinarizeProgress(float progress)": {
+      "body_hash": "e3d3e3a16840957fad86df564b2d07e0",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::LoadPacifierBinarizeProgressTotal(int total)": {
+      "body_hash": "904ec0381071660702edc6a61d40b194",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::LoadPacifierBinarizeProgressIncrement(int step)": {
+      "body_hash": "a0d339466f80d7a84b8dc069b5e06d0f",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::Printf(const char *fmt,...)": {
+      "body_hash": "921d8127486d30f4bfa168f90bfbe018",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::DPrintf(const char *fmt,...)": {
+      "body_hash": "a92636ffdf8114e5255dc38c5e8c22b8",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::VerbosePrintf(const char *fmt,...)": {
+      "body_hash": "f69384e811f6eaf34e0407c7b373d687",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::Warning(const char *fmt,...)": {
+      "body_hash": "7192d33ea4eb19fa16e7291b14f718cd",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::DWarning(const char *fmt,...)": {
+      "body_hash": "dda7fd6e8cf997b637de23055436bf9f",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::Error(const char *fmt,...)": {
+      "body_hash": "781b460d3c5a64b7b3f1c6821696e53c",
+      "is_trivial": true
+    },
+    "virtual void idCommonLocal::FatalError(const char *fmt,...)": {
+      "body_hash": "45617c3df42da32b6360535ce5133f05",
+      "is_trivial": true
+    },
+    "idLedge::idLedge()": {
+      "body_hash": "2f4e7ab21e826058871c8fbee93d74f7",
+      "is_trivial": true
+    },
+    "idLedge::idLedge(const idVec3 &v1, const idVec3 &v2, const idVec3 &gravityDir, idBrushBSPNode *n)": {
+      "body_hash": "861db41e6ceac15f346d4fdab4c4f43a",
+      "is_trivial": false
+    },
+    "void idLedge::AddPoint(const idVec3 &v)": {
+      "body_hash": "a812dcede2eab1406f0f01266581c8c6",
+      "is_trivial": true
+    },
+    "void idLedge::CreateBevels(const idVec3 &gravityDir)": {
+      "body_hash": "119b970be1c7aeee22b463f6bdae9204",
+      "is_trivial": true
+    },
+    "void idLedge::Expand(const idBounds &bounds, float maxStepHeight)": {
+      "body_hash": "178815cdd1e71c972fbcfc303fc09783",
+      "is_trivial": true
+    },
+    "idWinding * idLedge::ChopWinding(const idWinding *winding) const": {
+      "body_hash": "89ed6ea91ca4291647ff1315cb580809",
+      "is_trivial": true
+    },
+    "bool idLedge::PointBetweenBounds(const idVec3 &v) const": {
+      "body_hash": "9c86bc44480df9caf62115139f917ea1",
+      "is_trivial": true
+    },
+    "virtual void idSysCmdline::DebugPrintf(VERIFY_FORMAT_STRING const char *fmt,...)": {
+      "body_hash": "9b0c51a868ad97ae28fa08a9fb4aaa8f",
+      "is_trivial": true
+    },
+    "virtual void idSysCmdline::DebugVPrintf(const char *fmt, va_list arg)": {
+      "body_hash": "33c8ab7f4e51cef65a2b224a5d41dbe1",
+      "is_trivial": true
+    },
+    "virtual double idSysCmdline::GetClockTicks()": {
+      "body_hash": "a8a8392852f530bb1d4b50bd76f6220d",
+      "is_trivial": true
+    },
+    "virtual double idSysCmdline::ClockTicksPerSecond()": {
+      "body_hash": "8ee605e9d79e3998626a6f74c5f8efc6",
+      "is_trivial": true
+    },
+    "virtual cpuid_t idSysCmdline::GetProcessorId()": {
+      "body_hash": "5baf3a4d94deb8dbbf225b3d25cf3284",
+      "is_trivial": true
+    },
+    "virtual const char * idSysCmdline::GetProcessorString()": {
+      "body_hash": "ffbb443202747138a8fa83d0e334e571",
+      "is_trivial": true
+    },
+    "virtual const char * idSysCmdline::FPU_GetState()": {
+      "body_hash": "6be160031cd6a5244b6c1622f25a4922",
+      "is_trivial": true
+    },
+    "virtual bool idSysCmdline::FPU_StackIsEmpty()": {
+      "body_hash": "568938cb15f095b1e5194019e91d4a8c",
+      "is_trivial": true
+    },
+    "virtual void idSysCmdline::FPU_SetFTZ(bool enable)": {
+      "body_hash": "2262337892c96fc690a3d27e61907b0c",
+      "is_trivial": true
+    },
+    "virtual void idSysCmdline::FPU_SetDAZ(bool enable)": {
+      "body_hash": "b269d963d44df72fed9c4226fd131adf",
+      "is_trivial": true
+    },
+    "virtual void idSysCmdline::FPU_EnableExceptions(int exceptions)": {
+      "body_hash": "2d71817abb9e0560497593a38c2b66c1",
+      "is_trivial": true
+    },
+    "virtual bool idSysCmdline::LockMemory(void *ptr, int bytes)": {
+      "body_hash": "f6ee33d1a73773fd8a2b62a02ad375b1",
+      "is_trivial": true
+    },
+    "virtual bool idSysCmdline::UnlockMemory(void *ptr, int bytes)": {
+      "body_hash": "623df0e4e6594e73a398611b2f943136",
+      "is_trivial": true
+    },
+    "virtual int idSysCmdline::DLL_Load(const char *dllName)": {
+      "body_hash": "5c6eafa727597d658699270cec86cdfa",
+      "is_trivial": true
+    },
+    "virtual void * idSysCmdline::DLL_GetProcAddress(int dllHandle, const char *procName)": {
+      "body_hash": "b2a58df65e4d25ec1900025421dddf97",
+      "is_trivial": true
+    },
+    "virtual void idSysCmdline::DLL_Unload(int dllHandle)": {
+      "body_hash": "13f572f63ba7b0eaf8a21b8727771cc0",
+      "is_trivial": true
+    },
+    "virtual void idSysCmdline::DLL_GetFileName(const char *baseName, char *dllName, int maxLength)": {
+      "body_hash": "1ee1f043056d63057ce8d1a945a20d3a",
+      "is_trivial": true
+    },
+    "virtual sysEvent_t idSysCmdline::GenerateMouseButtonEvent(int button, bool down)": {
+      "body_hash": "cdf53ed9022a6fd8341181e96bcded16",
+      "is_trivial": true
+    },
+    "virtual sysEvent_t idSysCmdline::GenerateMouseMoveEvent(int deltax, int deltay)": {
+      "body_hash": "7b0d0956c24dd9dd370a87c4a37cd9e9",
+      "is_trivial": true
+    },
+    "virtual void idSysCmdline::OpenURL(const char *url, bool quit)": {
+      "body_hash": "2f7a9fe240327dfec04906b50e2ad603",
+      "is_trivial": true
+    },
+    "virtual void idSysCmdline::StartProcess(const char *exeName, bool quit)": {
+      "body_hash": "e74f0842d841806b454512fe29c0633b",
+      "is_trivial": true
+    },
+    "idTypeInfoGen::idTypeInfoGen()": {
+      "body_hash": "ba9178d23563771dbfe9e18b22265a20",
+      "is_trivial": true
+    },
+    "idTypeInfoGen::~idTypeInfoGen()": {
+      "body_hash": "9cc028bd1d7236bed240e3f4eb038536",
+      "is_trivial": true
+    },
+    "void idTypeInfoGen::AddDefine(const char *define)": {
+      "body_hash": "f1072a91ad699f82b45731e6487e0881",
+      "is_trivial": true
+    },
+    "void idTypeInfoGen::CreateTypeInfo(const char *path)": {
+      "body_hash": "eac73738a1850ea17265372b0848d8b3",
+      "is_trivial": true
+    },
+    "void idTypeInfoGen::WriteTypeInfo(const char *fileName) const": {
+      "body_hash": "759f152b785ae2ee351953e9f850bdb6",
+      "is_trivial": true
+    },
+    "int idTypeInfoGen::GetInheritance(const char *typeName) const": {
+      "body_hash": "33430612d859e6e423c938941e04f752",
+      "is_trivial": true
+    },
+    "int idTypeInfoGen::EvaluateIntegerString(const idStr &string)": {
+      "body_hash": "b8d6f753463fe16a1ed4d76d13109b7b",
+      "is_trivial": true
+    },
+    "float idTypeInfoGen::EvaluateFloatString(const idStr &string)": {
+      "body_hash": "c1099bc1447651f85e1154ebfbbcbe0f",
+      "is_trivial": true
+    },
+    "idConstantInfo * idTypeInfoGen::FindConstant(const char *name)": {
+      "body_hash": "018010d162ae72b4f71fc5f358e3ca7d",
+      "is_trivial": true
+    },
+    "int idTypeInfoGen::GetIntegerConstant(const char *scope, const char *name, idParser &src)": {
+      "body_hash": "5ff6c2f76a08b53ad7c4a899a28208e6",
+      "is_trivial": true
+    },
+    "float idTypeInfoGen::GetFloatConstant(const char *scope, const char *name, idParser &src)": {
+      "body_hash": "a1b8c793ab19295e32174180f9371843",
+      "is_trivial": true
+    },
+    "int idTypeInfoGen::ParseArraySize(const char *scope, idParser &src)": {
+      "body_hash": "fb7022f701848a207f307d691597f61a",
+      "is_trivial": true
+    },
+    "void idTypeInfoGen::ParseConstantValue(const char *scope, idParser &src, idStr &value)": {
+      "body_hash": "2ababf764bb1939f8797094bf8ef5f4a",
+      "is_trivial": true
+    },
+    "idEnumTypeInfo * idTypeInfoGen::ParseEnumType(const char *scope, bool isTemplate, bool typeDef, idParser &src)": {
+      "body_hash": "befdb15d580dc4cc2bae171298804ac2",
+      "is_trivial": false
+    },
+    "idClassTypeInfo * idTypeInfoGen::ParseClassType(const char *scope, const char *templateArgs, bool isTemplate, bool typeDef, idParser &src)": {
+      "body_hash": "aea81a9567a5b281f73b0394bff2f006",
+      "is_trivial": false
+    },
+    "void idTypeInfoGen::ParseScope(const char *scope, bool isTemplate, idParser &src, idClassTypeInfo *typeInfo)": {
+      "body_hash": "37d0cd3443960ce455b4f9bb0e999cae",
+      "is_trivial": false
+    },
+    "ImGuiTools::AfBodyEditor::AfBodyEditor(idDeclAF *newDecl, idDeclAF_Body *newBody)": {
+      "body_hash": "6b06a6a49ee160a30bd67f3b5d3ee7fe",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfBodyEditor::Do()": {
+      "body_hash": "aed55ef735dd90354975ea5e374e1ff5",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfBodyEditor::InitJointLists()": {
+      "body_hash": "8236ac21f4620530302fe741f13da026",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfBodyEditor::Position()": {
+      "body_hash": "41fb5819fa9f51ae3e45bef86415dca8",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfBodyEditor::PositionProperty()": {
+      "body_hash": "59a34437469213002dc3af38917a7a7a",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfBodyEditor::PitchYawRoll()": {
+      "body_hash": "a09d68fc25914037d00ca41dcbb51eb7",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfBodyEditor::CollisionModel()": {
+      "body_hash": "1e22214d8e9f9a47829b69dcbdbe57ad",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfBodyEditor::CollisionModelSize()": {
+      "body_hash": "64f3b674aa66c16577e1e3d5e99c2e6d",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfBodyEditor::InputAfVector(const char *label, idAFVector *vec)": {
+      "body_hash": "901e7834823ce1f35b9869deba58da24",
+      "is_trivial": true
+    },
+    "ImGuiTools::AfConstraintEditor::AfConstraintEditor(idDeclAF *newDecl, idDeclAF_Constraint *newConstraint)": {
+      "body_hash": "0a9f47d3afe8ed53c6a4bceb59fe14b3",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfConstraintEditor::Do()": {
+      "body_hash": "b04440579f98184c3f833b4169a5420a",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfConstraintEditor::InputAfVector(idAFVector *afVec)": {
+      "body_hash": "f5f5cb7125a1306b1899582e49f2ea7b",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfConstraintEditor::InitJointLists()": {
+      "body_hash": "e5a6c0534cfc7e0f0bb445ca005e2b27",
+      "is_trivial": true
+    },
+    "ImGuiTools::AfEditor::~AfEditor()": {
+      "body_hash": "94b4b56dc0bd6cf2391899bad5c3b68c",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfEditor::Init()": {
+      "body_hash": "0f294d2c975567c746745c8e42aafd89",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfEditor::ShowIt(bool show)": {
+      "body_hash": "0c6ea8d86ac3a03de749731e3a70b2e8",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfEditor::IsShown() const": {
+      "body_hash": "008dfc66585369540db6e56924aa0f1b",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfEditor::Draw()": {
+      "body_hash": "c9c0bff8e11eb0501e39dddb984defed",
+      "is_trivial": true
+    },
+    "AfEditor & ImGuiTools::AfEditor::Instance()": {
+      "body_hash": "b071eed107566d0e608bd54bb1f3f3e0",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfEditor::Enable(const idCmdArgs &args)": {
+      "body_hash": "7ca9211af03a82d416d1d835ba883e3a",
+      "is_trivial": true
+    },
+    "ImGuiTools::AfEditor::AfEditor()": {
+      "body_hash": "e48453310725bef883b2f08e642022cf",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfEditor::OnNewDecl(idDeclAF *newDecl)": {
+      "body_hash": "a4eabd3d8fccca0884a0b494c19925a6",
+      "is_trivial": true
+    },
+    "ImGuiTools::AfPropertyEditor::AfPropertyEditor(idDeclAF *newDecl)": {
+      "body_hash": "00cb36fe325a3da98371eaddb1b313d9",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AfPropertyEditor::Do()": {
+      "body_hash": "edd92dc92aaf61ae60f7f3bc3ec2f515",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfPropertyEditor::UpdateModelDefList()": {
+      "body_hash": "b0e9524c99e29c6847fcc28802d737ea",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::LoadLightStyles()": {
+      "body_hash": "a6c27095fcb105780a648299e8ce4c70",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::Init(const idDict *dict, idEntity *light)": {
+      "body_hash": "fa589ded8bea3b43dd1d5e9084a15323",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::Reset()": {
+      "body_hash": "f4cc9b09ab9531f9c0cb2ee9fc81a7f4",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::LoadLightTextures()": {
+      "body_hash": "f1d91aa95a78dd97c2f6d864bb19528c",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::LoadCurrentTexture()": {
+      "body_hash": "e0f8034cc923a0c07e6e8b071385a770",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::TempApplyChanges()": {
+      "body_hash": "eca7126dbc2d5ec73c6c9ed20a2e41d9",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::SaveChanges(bool saveMap)": {
+      "body_hash": "8161a396401a16882a91148b1997ed15",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::CancelChanges()": {
+      "body_hash": "565d6dc0033835a4deda58f54be35a73",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::DuplicateLight()": {
+      "body_hash": "a482931924e015c7c52c9c69bbba4d20",
+      "is_trivial": true
+    },
+    "ImGuiTools::LightEditor::LightEditor()": {
+      "body_hash": "7180389167b4c237241d1899fd424475",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::LightEditor::StyleItemsGetter(void *data, int idx, const char **out_text)": {
+      "body_hash": "49e62082f8a6f8c75a356739732deb47",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::LightEditor::TextureItemsGetter(void *data, int idx, const char **out_text)": {
+      "body_hash": "8a89a8c474a96214e4eed9d1bc5f042f",
+      "is_trivial": true
+    },
+    "LightEditor & ImGuiTools::LightEditor::Instance()": {
+      "body_hash": "6d95254fe38473e709834b5fb8d44c8f",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::ReInit(const idDict *dict, idEntity *light)": {
+      "body_hash": "3bfe29d08aa001066cc549022b966e99",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::ShowIt(bool show)": {
+      "body_hash": "09a292022847810abcd6f0f1efead1b3",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::LightEditor::IsShown() const": {
+      "body_hash": "21e0bfd18ba1207525c177386fba5f47",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditor::Draw()": {
+      "body_hash": "4576d7c8ece8c94eeb4107ef72e37745",
+      "is_trivial": true
+    },
+    "ImGuiTools::LightInfo::LightInfo()": {
+      "body_hash": "ea1db973c30d19de97b898aa952c573e",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightInfo::Defaults()": {
+      "body_hash": "bfe8e62cbf3bae64fe56989593357ce1",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightInfo::DefaultPoint()": {
+      "body_hash": "ab195ab9dc8172d086fa97f0376d93f9",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightInfo::DefaultProjected()": {
+      "body_hash": "4c4ad8f8f9dcad2f29f67f7a5a12b195",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightInfo::DefaultSun()": {
+      "body_hash": "70a8203000e429842fda57d844fa6094",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightInfo::FromDict(const idDict *e)": {
+      "body_hash": "5c7f2e6239dfab2f8d88475432f21e07",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightInfo::ToDict(idDict *e)": {
+      "body_hash": "28c441bde678da6c0fc6faa20868d0d5",
+      "is_trivial": true
+    },
+    "MultiSelectWidget::MultiSelectWidget(const char **aNames, int *contentMapping, int aNumEntries)": {
+      "body_hash": "bc91d06304c58a06c99cb997d76f3242",
+      "is_trivial": true
+    },
+    "MultiSelectWidget::~MultiSelectWidget()": {
+      "body_hash": "e44c04086711624cffde9451728e84c2",
+      "is_trivial": true
+    },
+    "void MultiSelectWidget::Update(int index, bool value)": {
+      "body_hash": "6d64bf1b90c92fc8935a179baaa6147f",
+      "is_trivial": true
+    },
+    "void MultiSelectWidget::UpdateWithBitFlags(int bitFlags)": {
+      "body_hash": "aaa333bc26d20a5145c99f628fc5f8e2",
+      "is_trivial": true
+    },
+    "const char * Sys_Lang(int)": {
+      "body_hash": "bd31d5e90031d7cc1e7830f73dac0af7",
+      "is_trivial": true
+    },
+    "int Rogmap_NoGui(int argc, char **argv)": {
+      "body_hash": "44c4198457d05be54f0b357f4162efd0",
+      "is_trivial": true
+    },
+    "int main(int argc, char **argv)": {
+      "body_hash": "8a204534ee3cbef0b7a18dedb21a5d04",
+      "is_trivial": true
+    },
+    "void Rogmap_f(const idCmdArgs &args)": {
+      "body_hash": "fa1da4249e430bba3112cf4bd033aa9c",
+      "is_trivial": true
+    },
+    "void RunAASDir_f(const idCmdArgs &args)": {
+      "body_hash": "e46b663182117e90394d3b8a9901b5aa",
+      "is_trivial": true
+    },
+    "void RunReach_f(const idCmdArgs &args)": {
+      "body_hash": "e9f394922f2f83c7b6da58df6d9b19bd",
+      "is_trivial": true
+    },
+    "bool ProcessModel(uEntity_t *e, bool floodFillWorld)": {
+      "body_hash": "6d56b4ff4e2b66bdbffb4ac3004e9621",
+      "is_trivial": true
+    },
+    "bool ProcessModels()": {
+      "body_hash": "b8042b6c960b80ed9b6ff83dba7bf94e",
+      "is_trivial": true
+    },
+    "void RogmapHelp()": {
+      "body_hash": "a5d42bc8a88ba577e1da37032292b6d6",
+      "is_trivial": true
+    },
+    "void ResetRogmapGlobals()": {
+      "body_hash": "364818d4c43416f0a9c77a49e93923a8",
+      "is_trivial": true
+    },
+    "void Rogmap(const idCmdArgs &args)": {
+      "body_hash": "8548ecda33a5b074d0f4c819b0a31a5b",
+      "is_trivial": true
+    },
+    "int FindFloatPlane(const idPlane &plane, bool *fixedDegeneracies=NULL)": {
+      "body_hash": "4781f52792dff26d40ffc10b0142853c",
+      "is_trivial": true
+    },
+    "int CountBrushList(uBrush_t *brushes)": {
+      "body_hash": "4874dde7224955e6b5d61d412d0f176c",
+      "is_trivial": true
+    },
+    "uBrush_t * AllocBrush(int numsides)": {
+      "body_hash": "987ee346c0edaf2e791fec9728802639",
+      "is_trivial": true
+    },
+    "void FreeBrush(uBrush_t *brushes)": {
+      "body_hash": "4845fd2a0b5dbb10d676b12a8a343b2e",
+      "is_trivial": true
+    },
+    "void FreeBrushList(uBrush_t *brushes)": {
+      "body_hash": "0a566f42fe8ec1f5caf2d546b0641487",
+      "is_trivial": true
+    },
+    "uBrush_t * CopyBrush(uBrush_t *brush)": {
+      "body_hash": "4ea94551132cede516c219f14804de02",
+      "is_trivial": true
+    },
+    "void PrintBrush(uBrush_t *brush)": {
+      "body_hash": "7c4173a46c12ce0590b4538ada65ae78",
+      "is_trivial": true
+    },
+    "bool BoundBrush(uBrush_t *brush)": {
+      "body_hash": "579d16be0b3c3f7bb4ef2200308ae001",
+      "is_trivial": true
+    },
+    "bool CreateBrushWindings(uBrush_t *brush)": {
+      "body_hash": "a80f47295c0676de1622ec562e9d9f31",
+      "is_trivial": true
+    },
+    "uBrush_t * BrushFromBounds(const idBounds &bounds)": {
+      "body_hash": "29c895470e892198f1c836d3f3187bbd",
+      "is_trivial": true
+    },
+    "float BrushVolume(uBrush_t *brush)": {
+      "body_hash": "417a5d6dd0442cfbf75592c27cc45af0",
+      "is_trivial": true
+    },
+    "void WriteBspBrushMap(const char *name, uBrush_t *list)": {
+      "body_hash": "b3b3680332b55166c99ff7eed93d4838",
+      "is_trivial": true
+    },
+    "void FilterBrushesIntoTree(uEntity_t *e)": {
+      "body_hash": "370179db4e861765a09089270200cc40",
+      "is_trivial": true
+    },
+    "node_t * AllocNode()": {
+      "body_hash": "bf65f8baeaffa337054e452253fbfcb6",
+      "is_trivial": true
+    },
+    "bool LoadDMapFile(const char *filename)": {
+      "body_hash": "e66334768bc353734d015bec25f0063f",
+      "is_trivial": true
+    },
+    "void FreeOptimizeGroupList(optimizeGroup_t *groups)": {
+      "body_hash": "d1f1b33491989638bad080ac1d80641f",
+      "is_trivial": true
+    },
+    "void FreeDMapFile()": {
+      "body_hash": "22bf6dfe86b6f7ce1b9ed74df65a38ed",
+      "is_trivial": true
+    },
+    "bool PlaceOccupant(node_t *headnode, idVec3 origin, uEntity_t *occupant)": {
+      "body_hash": "8414bd9d806814611b5dd12ca925e5e5",
+      "is_trivial": true
+    },
+    "bool FloodEntities(tree_t *tree)": {
+      "body_hash": "69219731a78de2dd5d2835b218e942c4",
+      "is_trivial": true
+    },
+    "void FillOutside(uEntity_t *e)": {
+      "body_hash": "55fe26e179c85f76ed066136d4be00e2",
+      "is_trivial": true
+    },
+    "void FloodAreas(uEntity_t *e)": {
+      "body_hash": "34ac3dc54c2dbfedfb7d363bacc5afec",
+      "is_trivial": true
+    },
+    "void MakeTreePortals(tree_t *tree)": {
+      "body_hash": "a7a93603d6200c6e732d53aa7c2117d3",
+      "is_trivial": true
+    },
+    "void FreePortal(uPortal_t *p)": {
+      "body_hash": "b381a927e2548a92566f9ab6b74f14c1",
+      "is_trivial": true
+    },
+    "bool Portal_Passable(uPortal_t *p)": {
+      "body_hash": "5c0c1853444e4e0a6252181a22a7692b",
+      "is_trivial": true
+    },
+    "idVec4 PickDebugColor(int area)": {
+      "body_hash": "691cd6030f132797b91bdee9e3540de6",
+      "is_trivial": true
+    },
+    "void WriteGLViewBSP(tree_t *tree, const char *source, int entityNum, bool force=false)": {
+      "body_hash": "44e92918eea09ef6dd4a2d4fc0d487b5",
+      "is_trivial": false
+    },
+    "void WriteGLViewFacelist(bspFace_t *list, const char *source, bool force=false)": {
+      "body_hash": "a9096bae8fdf0d84e6ea70a9cbfa5636",
+      "is_trivial": true
+    },
+    "void LeakFile(tree_t *tree)": {
+      "body_hash": "ae5213a2d70baf3b97d0b72ee828c258",
+      "is_trivial": true
+    },
+    "tree_t * AllocTree()": {
+      "body_hash": "afa9959c096928339111cd393ff42398",
+      "is_trivial": true
+    },
+    "void FreeTree(tree_t *tree)": {
+      "body_hash": "63c7fa9becce9f8e528664e0d9710d34",
+      "is_trivial": true
+    },
+    "void FreeTree_r(node_t *node)": {
+      "body_hash": "280c4419b26f74f70c426ed1fbbaea9a",
+      "is_trivial": true
+    },
+    "void FreeTreePortals_r(node_t *node)": {
+      "body_hash": "9c87bbcfbe8bf44d3cfe292cf8a49621",
+      "is_trivial": true
+    },
+    "void PrintTree_r(node_t *node, int depth)": {
+      "body_hash": "5c42ab8acfbdbfa34c04205b6afa79ff",
+      "is_trivial": true
+    },
+    "bspFace_t * MakeStructuralBspFaceList(primitive_t *list)": {
+      "body_hash": "3843d447e543ca731010b8a4eb39791a",
+      "is_trivial": true
+    },
+    "tree_t * FaceBSP(bspFace_t *list)": {
+      "body_hash": "cf9793408a212af28194f92e7eb6702b",
+      "is_trivial": true
+    },
+    "node_t * NodeForPoint(node_t *node, const idVec3 &origin)": {
+      "body_hash": "fc119af971c196fc8e8e560fa6d2af38",
+      "is_trivial": true
+    },
+    "void ClipSidesByTree(uEntity_t *e)": {
+      "body_hash": "6b28751940050eff585725e4bfa23c3e",
+      "is_trivial": true
+    },
+    "void PutPrimitivesInAreas(uEntity_t *e)": {
+      "body_hash": "94519872618938da576f2f3bbad9f086",
+      "is_trivial": true
+    },
+    "void Prelight(uEntity_t *e)": {
+      "body_hash": "c230d48df27e210645a2ee158b4fb79c",
+      "is_trivial": true
+    },
+    "void FilterMeshesIntoTree(uEntity_t *e)": {
+      "body_hash": "eb9a2ccbe3aeae9742eafb07350bf607",
+      "is_trivial": true
+    },
+    "struct hashVert_s * GetHashVert(idVec3 &v)": {
+      "body_hash": "c13cfd4f948046b60571105deb53201f",
+      "is_trivial": true
+    },
+    "void HashTriangles(optimizeGroup_t *groupList)": {
+      "body_hash": "344aa40c717a1571f74bc73e648ed7f8",
+      "is_trivial": true
+    },
+    "void FreeTJunctionHash()": {
+      "body_hash": "e430653adadfdd4de170b08380048413",
+      "is_trivial": true
+    },
+    "int CountGroupListTris(const optimizeGroup_t *groupList)": {
+      "body_hash": "55501c333fdc2480440c3f5c6f6a5fd3",
+      "is_trivial": true
+    },
+    "void FixEntityTjunctions(uEntity_t *e)": {
+      "body_hash": "0bd857c8c9a8b08734a693d03434be1e",
+      "is_trivial": true
+    },
+    "void FixAreaGroupsTjunctions(optimizeGroup_t *groupList)": {
+      "body_hash": "c1c2159ac6a0a00515a106d29a5f233c",
+      "is_trivial": true
+    },
+    "void FixGlobalTjunctions(uEntity_t *e)": {
+      "body_hash": "56930efa0e4ca697e84924cc11d4057c",
+      "is_trivial": true
+    },
+    "void OptimizeEntity(uEntity_t *e)": {
+      "body_hash": "adfbe28d02c3ba1abc2bdd34f0816f87",
+      "is_trivial": true
+    },
+    "void OptimizeGroupList(optimizeGroup_t *groupList)": {
+      "body_hash": "b045b9c2c230c473c832cdaa5b545601",
+      "is_trivial": true
+    },
+    "mapTri_t * AllocTri()": {
+      "body_hash": "9b4cde158c0412519c1c7cc7b42d6153",
+      "is_trivial": true
+    },
+    "void FreeTri(mapTri_t *tri)": {
+      "body_hash": "d66c39b13e6b7ac4aeabc72a239c59d4",
+      "is_trivial": true
+    },
+    "int CountTriList(const mapTri_t *list)": {
+      "body_hash": "f75e20758fa8fbac42f4fa2b68dab452",
+      "is_trivial": true
+    },
+    "mapTri_t * MergeTriLists(mapTri_t *a, mapTri_t *b)": {
+      "body_hash": "0e32bc58bdaf7b9bdc1dd259675c7a46",
+      "is_trivial": true
+    },
+    "mapTri_t * CopyTriList(const mapTri_t *a)": {
+      "body_hash": "8e31bd98ec8ee5166196cc7be7682786",
+      "is_trivial": true
+    },
+    "void FreeTriList(mapTri_t *a)": {
+      "body_hash": "406395bee5de9cb36dece7d1228bdbcf",
+      "is_trivial": true
+    },
+    "mapTri_t * CopyMapTri(const mapTri_t *tri)": {
+      "body_hash": "083026af2276ff82a9ce712d578e1c7c",
+      "is_trivial": true
+    },
+    "mapTri_t * RemoveBadTris(const mapTri_t *tri)": {
+      "body_hash": "3d5f5d90867fb9e9a6ed72401d39a7ae",
+      "is_trivial": true
+    },
+    "void BoundTriList(const mapTri_t *list, idBounds &b)": {
+      "body_hash": "9a61fc8703463eb9a0a4dde2e612236c",
+      "is_trivial": true
+    },
+    "void FlipTriList(mapTri_t *tris)": {
+      "body_hash": "5a2100fb85b2eec3ba255c6f65266b1e",
+      "is_trivial": true
+    },
+    "void TriVertsFromOriginal(mapTri_t *tri, const mapTri_t *original)": {
+      "body_hash": "09260dd7829929bff7615be12100f184",
+      "is_trivial": true
+    },
+    "void PlaneForTri(const mapTri_t *tri, idPlane &plane)": {
+      "body_hash": "cf16cf28919bddddc3f8558244c2ebf0",
+      "is_trivial": true
+    },
+    "idWinding * WindingForTri(const mapTri_t *tri)": {
+      "body_hash": "b228608acdd9bf649485935726c62aec",
+      "is_trivial": true
+    },
+    "mapTri_t * WindingToTriList(const idWinding *w, const mapTri_t *originalTri)": {
+      "body_hash": "acb9aee3fa76814273779584077c6aab",
+      "is_trivial": true
+    },
+    "int NumberNodes_r(node_t *node, int nextNode, int &nextLeaf)": {
+      "body_hash": "08c35a0fbfb8b1c7410c5537458b85c3",
+      "is_trivial": true
+    },
+    "int NumberNodes_r(node_t *node, int nextNumber)": {
+      "body_hash": "3fc206290f47cc1a6171071daa74b968",
+      "is_trivial": true
+    },
+    "srfTriangles_t * ShareMapTriVerts(const mapTri_t *tris)": {
+      "body_hash": "981c2d7da4fe1596086e8b582c904692",
+      "is_trivial": true
+    },
+    "void WriteOutputFile()": {
+      "body_hash": "d8cfc971c035077a33dd12a58a4cf977",
+      "is_trivial": true
+    },
+    "void RemovePortalFromNode(uPortal_t *portal, node_t *l)": {
+      "body_hash": "10048ef7f72bd78ac6ceb7b2fbc97b47",
+      "is_trivial": true
+    },
+    "bspFace_t * AllocBspFace()": {
+      "body_hash": "a227ace862a757e0175d86c8d07de8d0",
+      "is_trivial": true
+    },
+    "void FreeBspFace(bspFace_t *f)": {
+      "body_hash": "7a83f200f199d17cb36ebbc7008aa47e",
+      "is_trivial": true
+    },
+    "int SelectSplitPlaneNum(node_t *node, bspFace_t *list)": {
+      "body_hash": "03b44a7f4be0f76aef73ade58704531b",
+      "is_trivial": true
+    },
+    "void BuildFaceTree_r(node_t *node, bspFace_t *list)": {
+      "body_hash": "99f8a298e3d5123b64701b79a69355a2",
+      "is_trivial": true
+    },
+    "static GlyphMetrics CalcOldSTB(const stbtt_fontinfo *font, int cp, float scale)": {
+      "body_hash": "20a94840cb597206e704bdb144bfcb6b",
+      "is_trivial": true
+    },
+    "static GlyphMetrics CalcFT26Ex(const stbtt_fontinfo *font, int cp, float scale, TopStrategy topStrat)": {
+      "body_hash": "47315d3618d8245ec770d95b08b0e92a",
+      "is_trivial": false
+    },
+    "static GlyphMetrics CalcFT26(const stbtt_fontinfo *font, int cp, float scale)": {
+      "body_hash": "8207e71188c5d0b215e5b90cbb083b07",
+      "is_trivial": true
+    },
+    "static void DumpFT26Detail(const stbtt_fontinfo *font, int cp, float scale)": {
+      "body_hash": "28b6adcf3f09d76cbcf032d393ea9e41",
+      "is_trivial": true
+    },
+    "static int CountRefGlyphs(const RefGlyph *refs)": {
+      "body_hash": "83422d54060077aa863497f2ff753b51",
+      "is_trivial": true
+    },
+    "static int ParseIntField(const char *start, const char *end, const char *key, int *outValue)": {
+      "body_hash": "327fe6506d2a9e13916ad7e564fcc0f5",
+      "is_trivial": false
+    },
+    "static int LoadRefFromDebugJson(const char *path, RefGlyph **outRefs, int *outCount)": {
+      "body_hash": "f6590726ed9c1d0b638ead3e77903684",
+      "is_trivial": true
+    },
+    "int PortalVisibleSides(uPortal_t *p)": {
+      "body_hash": "f553fc3139d195e3fa5a147bcd926aca",
+      "is_trivial": true
+    },
+    "void OutputWinding(idWinding *w, OBJGroup &group, int area, bool reverse)": {
+      "body_hash": "e3e7d91cc18b4b31c832cdd54586040e",
+      "is_trivial": false
+    },
+    "void OutputPortal(uPortal_t *p, OBJGroup &group, bool touchingVoid)": {
+      "body_hash": "21370ea679543c2077fce96057e90e41",
+      "is_trivial": true
+    },
+    "void CollectOutsidePortals_r(node_t *node, OBJGroup &group)": {
+      "body_hash": "b3731e66f501b3d093f244e46c14f12f",
+      "is_trivial": true
+    },
+    "void CollectPortals_r(node_t *node, OBJGroup &group)": {
+      "body_hash": "f1dc66ebe1cc1f88b06cc1dfe408a589",
+      "is_trivial": true
+    },
+    "void CollectFaces_r(node_t *node, OBJGroup &group)": {
+      "body_hash": "3fa58c378ae8b4370acfbd9b4ba9e114",
+      "is_trivial": true
+    },
+    "void OutputQuad(const idVec3 verts[4], OBJGroup *group, bool reverse)": {
+      "body_hash": "a40f3979a441c356535fc0182458df76",
+      "is_trivial": true
+    },
+    "void OutputNode(const node_t *node, idList< OBJGroup > &groups)": {
+      "body_hash": "3ac41cc68aa152ee238628498c8b5d8f",
+      "is_trivial": true
+    },
+    "void OutputSplitPlane(const node_t *node, idList< OBJGroup > &groups)": {
+      "body_hash": "8e39bd99b52df85f195548e2c5118d2b",
+      "is_trivial": true
+    },
+    "void OutputAreaPortalTriangles(const node_t *node, idList< OBJGroup > &groups)": {
+      "body_hash": "302c8ca909151dac74dbd5020dd73676",
+      "is_trivial": true
+    },
+    "void CollectNodes_r(node_t *node, idList< OBJGroup > &groups)": {
+      "body_hash": "0c3888d9f1010a7c2815958cb468a391",
+      "is_trivial": true
+    },
+    "void CollectAreaPortals(idList< OBJGroup > &groups)": {
+      "body_hash": "dde56443a9d6c9af8e8eba3ca132dcae",
+      "is_trivial": true
+    },
+    "void WriteGLViewBSP(tree_t *tree, const char *source, int entityNum, bool force)": {
+      "body_hash": "44e92918eea09ef6dd4a2d4fc0d487b5",
+      "is_trivial": false
+    },
+    "void WriteGLViewFacelist(bspFace_t *list, const char *source, bool force)": {
+      "body_hash": "a9096bae8fdf0d84e6ea70a9cbfa5636",
+      "is_trivial": true
+    },
+    "int FindFloatPlane(const idPlane &plane, bool *fixedDegeneracies)": {
+      "body_hash": "4781f52792dff26d40ffc10b0142853c",
+      "is_trivial": true
+    },
+    "static void SetBrushContents(uBrush_t *b)": {
+      "body_hash": "cd027526cc9e9f056564e2d5474dfc8c",
+      "is_trivial": true
+    },
+    "static void FreeBuildBrush()": {
+      "body_hash": "0632f3208abbc613d79b968b72b5d262",
+      "is_trivial": true
+    },
+    "static uBrush_t * FinishBrush()": {
+      "body_hash": "f67ed6c471f0e24c73c000626c9b8602",
+      "is_trivial": true
+    },
+    "static bool RemoveDuplicateBrushPlanes(uBrush_t *b)": {
+      "body_hash": "352047f80f61041978b7716f481eb375",
+      "is_trivial": true
+    },
+    "static void ParseBrush(const idMapBrush *mapBrush, int primitiveNum)": {
+      "body_hash": "6162af6687fb1172ac33a4ed57f0b41d",
+      "is_trivial": true
+    },
+    "static void ParseSurface(const idMapPatch *patch, const idSurface *surface, const idMaterial *material)": {
+      "body_hash": "e7b8cb9896a2dafd3a2f4a9999d687ed",
+      "is_trivial": true
+    },
+    "static void ParsePatch(const idMapPatch *patch, int primitiveNum)": {
+      "body_hash": "1da81fdacca8d0c26fa5aded1c91767b",
+      "is_trivial": true
+    },
+    "static int ParsePolygonMesh(const MapPolygonMesh *mesh, int primitiveNum, int numPolygons)": {
+      "body_hash": "59dc37c53d62d48cdb752dbaaad1b82b",
+      "is_trivial": true
+    },
+    "static bool ProcessMapEntity(idMapEntity *mapEnt)": {
+      "body_hash": "b3a49fa4aa00788f33eedb08fa7bf77e",
+      "is_trivial": true
+    },
+    "static void CreateMapLight(const idMapEntity *mapEnt)": {
+      "body_hash": "841f24e8324fdd7df4261b61f8b351b0",
+      "is_trivial": true
+    },
+    "static void CreateMapLights(const idMapFile *dmapFile)": {
+      "body_hash": "cb0a969ae7aca309a6b85ffd5bb7e746",
+      "is_trivial": true
+    },
+    "void ImGuiTools::SetReleaseToolMouse(bool doRelease)": {
+      "body_hash": "f1f82e162561d40a0d66986b19a39e09",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::ReleaseMouseForTools()": {
+      "body_hash": "f611c4e2b5759744451e8736370c43ab",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::AreEditorsActive()": {
+      "body_hash": "3213cfc1eacbee5b2881441545162045",
+      "is_trivial": true
+    },
+    "void ImGuiTools::DrawToolWindows()": {
+      "body_hash": "182c8b7a543d63055ffc83ffadd8d54f",
+      "is_trivial": true
+    },
+    "void ImGuiTools::LightEditorInit(const idDict *dict, idEntity *entity)": {
+      "body_hash": "52f38cda23be27d49af8eba3d6c10370",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfEditorInit()": {
+      "body_hash": "b99537685dc11be1b0eff9994af357d6",
+      "is_trivial": true
+    },
+    "static bool ImGuiTools::BodyItemGetter(void *data, int index, const char **out)": {
+      "body_hash": "45dd6951c51716d278392bdbf47757dd",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::ConstraintLimitTypeGetter(void *data, int index, const char **out)": {
+      "body_hash": "4f6761f659f4a44d259bece28b7d3855",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::BodyItemGetter(void *data, int index, const char **items)": {
+      "body_hash": "9acf29e83c5dc98fc21642ad3dab7752",
+      "is_trivial": true
+    },
+    "bool ImGuiTools::ConstraintItemGetter(void *data, int index, const char **items)": {
+      "body_hash": "619a06c8373ac626d160e4a69ad27ff5",
+      "is_trivial": true
+    },
+    "static bool ImGuiTools::CVarCheckBox(const char *label, idCVar *cvar)": {
+      "body_hash": "a251765cd7af84328f1f9ae510282868",
+      "is_trivial": true
+    },
+    "static float * ImGuiTools::vecToArr(idVec3 &v)": {
+      "body_hash": "6c3fb23bff31bf9ca2e0db4bddf5a652",
+      "is_trivial": true
+    },
+    "static bool IsTriangleValid(const optVertex_t *v1, const optVertex_t *v2, const optVertex_t *v3)": {
+      "body_hash": "1011e01ef9f019255e325ca104a6d26b",
+      "is_trivial": true
+    },
+    "static bool IsTriangleDegenerate(const optVertex_t *v1, const optVertex_t *v2, const optVertex_t *v3)": {
+      "body_hash": "8c6741b39b21d7651a511aa25bb13fc1",
+      "is_trivial": true
+    },
+    "static void ValidateEdgeCounts(optIsland_t *island)": {
+      "body_hash": "ad745933e0c56fb1b40232c6b3c4d24d",
+      "is_trivial": true
+    },
+    "static optEdge_t * AllocEdge()": {
+      "body_hash": "f27662a4e1ee7d2c26fafbe301e9a570",
+      "is_trivial": true
+    },
+    "static void RemoveEdgeFromVert(optEdge_t *e1, optVertex_t *vert)": {
+      "body_hash": "76a5efae52b103b1cc57773d7de34978",
+      "is_trivial": true
+    },
+    "static void LinkEdge(optEdge_t *e)": {
+      "body_hash": "98896bc6afb11430eb0057ee78fa766c",
+      "is_trivial": true
+    },
+    "static optVertex_t * FindOptVertex(idDrawVert *v, optimizeGroup_t *opt)": {
+      "body_hash": "ae89c2f2138f44bc678e2f31b1a88973",
+      "is_trivial": true
+    },
+    "static void DrawAllEdges()": {
+      "body_hash": "02c2ee4ae20522d58f4250e766f3ff85",
+      "is_trivial": true
+    },
+    "static void DrawVerts(optIsland_t *island)": {
+      "body_hash": "2b2bb03035862223942a2eb1e0efe840",
+      "is_trivial": true
+    },
+    "static void DrawEdges(optIsland_t *island)": {
+      "body_hash": "3caf5a91023039a2b9784aa6ed699b6b",
+      "is_trivial": true
+    },
+    "static bool VertexBetween(const optVertex_t *p1, const optVertex_t *v1, const optVertex_t *v2)": {
+      "body_hash": "575708d5c5701d4bc1d258e43591b87b",
+      "is_trivial": true
+    },
+    "static optVertex_t * EdgeIntersection(const optVertex_t *p1, const optVertex_t *p2, const optVertex_t *l1, const optVertex_t *l2, optimizeGroup_t *opt)": {
+      "body_hash": "dbebd691ffd329b62fc6853abb63932d",
+      "is_trivial": false
+    },
+    "static bool PointsStraddleLine(optVertex_t *p1, optVertex_t *p2, optVertex_t *l1, optVertex_t *l2)": {
+      "body_hash": "62154c4efd7edc2ec812cb2336ffd645",
+      "is_trivial": false
+    },
+    "static bool EdgesCross(optVertex_t *a1, optVertex_t *a2, optVertex_t *b1, optVertex_t *b2)": {
+      "body_hash": "81460181a6dcbd6f55306c129b54b004",
+      "is_trivial": false
+    },
+    "static bool TryAddNewEdge(optVertex_t *v1, optVertex_t *v2, optIsland_t *island)": {
+      "body_hash": "14e1d37f65c87c2b9902f0399f900e4c",
+      "is_trivial": true
+    },
+    "static int LengthSort(const void *a, const void *b)": {
+      "body_hash": "94095e7877713c4a954f171c3c506d1e",
+      "is_trivial": true
+    },
+    "static void AddInteriorEdges(optIsland_t *island)": {
+      "body_hash": "2d735a666ec9892d45646cec7e117c82",
+      "is_trivial": true
+    },
+    "static void RemoveIfColinear(optVertex_t *ov, optIsland_t *island)": {
+      "body_hash": "01a616d8fd8d65ea0ed9b0cab0ed80f4",
+      "is_trivial": true
+    },
+    "static void CombineColinearEdges(optIsland_t *island)": {
+      "body_hash": "6222202eb1650d42b02f85a4c426879a",
+      "is_trivial": true
+    },
+    "static void FreeOptTriangles(optIsland_t *island)": {
+      "body_hash": "aed58e5c659e68160916ace6d78385b3",
+      "is_trivial": true
+    },
+    "static bool PointInTri(const idVec3 &p, const mapTri_t *tri, optIsland_t *island)": {
+      "body_hash": "7d3b1fe2e717d47a7684d60d01780cf7",
+      "is_trivial": true
+    },
+    "static void LinkTriToEdge(optTri_t *optTri, optEdge_t *edge)": {
+      "body_hash": "abf86a1d77568c5c0ede3e07c714eb9a",
+      "is_trivial": true
+    },
+    "static void CreateOptTri(optVertex_t *first, optEdge_t *e1, optEdge_t *e2, optIsland_t *island)": {
+      "body_hash": "964bd05d8a3eee2641036b156ebe79a7",
+      "is_trivial": false
+    },
+    "static void BuildOptTriangles(optIsland_t *island)": {
+      "body_hash": "6388a68c8cd2afce8e6f467fd69b1a9b",
+      "is_trivial": true
+    },
+    "static void RegenerateTriangles(optIsland_t *island)": {
+      "body_hash": "6a17a967027c008e6a02fcb8b2a99b93",
+      "is_trivial": true
+    },
+    "static void RemoveInteriorEdges(optIsland_t *island)": {
+      "body_hash": "e8eee9806a847f39c6ec3ed8acf4f4bb",
+      "is_trivial": true
+    },
+    "void AddEdgeIfNotAlready(optVertex_t *v1, optVertex_t *v2)": {
+      "body_hash": "1eb23792dbdb5d5792ec22c7b0d45032",
+      "is_trivial": true
+    },
+    "static void DrawOriginalEdges(int numOriginalEdges, originalEdges_t *originalEdges)": {
+      "body_hash": "6b028d25da34a8eb7120396a691f4c1a",
+      "is_trivial": true
+    },
+    "static void AddOriginalTriangle(optVertex_t *v[3])": {
+      "body_hash": "57691db3a4ebdd7a32a9161c675fdb6a",
+      "is_trivial": true
+    },
+    "static void AddOriginalEdges(optimizeGroup_t *opt)": {
+      "body_hash": "67e77a6c4cb5b214a1589f27dd3411d0",
+      "is_trivial": true
+    },
+    "void SplitOriginalEdgesAtCrossings(optimizeGroup_t *opt)": {
+      "body_hash": "e57e7465037437063d086bfaeada2c4c",
+      "is_trivial": true
+    },
+    "static void CullUnusedVerts(optIsland_t *island)": {
+      "body_hash": "dba9eeb12b8997631d02cf1e54503a00",
+      "is_trivial": true
+    },
+    "static void OptimizeIsland(optIsland_t *island)": {
+      "body_hash": "588ef91c13d7c2755bca7ed3905f7394",
+      "is_trivial": true
+    },
+    "static void AddVertexToIsland_r(optVertex_t *vert, optIsland_t *island)": {
+      "body_hash": "e6b144779a5d2f68e838332fc7bbad11",
+      "is_trivial": true
+    },
+    "static void DontSeparateIslands(optimizeGroup_t *opt)": {
+      "body_hash": "da6f11ecc817f87418447e3da4b8dc5c",
+      "is_trivial": true
+    },
+    "static void OptimizeOptList(optimizeGroup_t *opt)": {
+      "body_hash": "6653d3255982cf30431d782d9327ddae",
+      "is_trivial": true
+    },
+    "void SetGroupTriPlaneNums(optimizeGroup_t *groups)": {
+      "body_hash": "90a81356271bf796953f86d80ff48ae4",
+      "is_trivial": true
+    },
+    "int PruneNodes_r(node_t *node)": {
+      "body_hash": "e212c960ed716bb2dc7c63657157926a",
+      "is_trivial": true
+    },
+    "static void WriteFloat(idFile *f, float v)": {
+      "body_hash": "af63b6def9b449d5e5557bb7958749ed",
+      "is_trivial": true
+    },
+    "void Write1DMatrix(idFile *f, int x, float *m)": {
+      "body_hash": "f65e25eefdf53b2d297856ddcb2b302e",
+      "is_trivial": true
+    },
+    "static int CountUniqueShaders(optimizeGroup_t *groups)": {
+      "body_hash": "13020ac4f3cf1a72cf408d7758163620",
+      "is_trivial": true
+    },
+    "static bool MatchVert(const idDrawVert *a, const idDrawVert *b)": {
+      "body_hash": "b9279938fd814797c9b01a22522d5102",
+      "is_trivial": true
+    },
+    "static void CleanupUTriangles(srfTriangles_t *tri)": {
+      "body_hash": "36f185864d5a50d44e151edca54a850b",
+      "is_trivial": true
+    },
+    "static void WriteUTriangles(idFile *procFile, const srfTriangles_t *uTris, const idVec3 &offsetOrigin=vec3_origin)": {
+      "body_hash": "0e6284bfe42b0cc39829e9fe2e474f86",
+      "is_trivial": true
+    },
+    "static void WriteObjTriangles(idFile *objFile, int area, const srfTriangles_t *uTris, const idMat4 &entityToWorldTransform, const char *materialName)": {
+      "body_hash": "2c51188b41fe2849411c8bc19c3004e1",
+      "is_trivial": false
+    },
+    "static bool GroupsAreSurfaceCompatible(const optimizeGroup_t *a, const optimizeGroup_t *b)": {
+      "body_hash": "07496e5c5ec5f8ee319240984b5bd077",
+      "is_trivial": true
+    },
+    "static void WriteOutputSurfaces(int entityNum, int areaNum, idFile *procFile, idFile *objFile)": {
+      "body_hash": "4346ff571b6b2c03f3aa10e807fdc998",
+      "is_trivial": false
+    },
+    "static void WriteNode_r(node_t *node, idFile *procFile)": {
+      "body_hash": "f7cc1f8dd390969a2b851bf7278d7f6d",
+      "is_trivial": true
+    },
+    "static int WriteASCIIArtNode_r(node_t *node, bool is_left, int offset, int depth, char s[20][2048], idFile *procFile)": {
+      "body_hash": "1a936a254c20758eed16fc8df318d1a1",
+      "is_trivial": false
+    },
+    "static void WriteVisualBSPTree(node_t *node, idFile *procFile)": {
+      "body_hash": "8d1ff53556084f4eb3fb40a8c8124553",
+      "is_trivial": true
+    },
+    "static void WriteOutputNodes(node_t *node, idFile *procFile)": {
+      "body_hash": "94527951461eb730db63a41c7f171a32",
+      "is_trivial": true
+    },
+    "static void WriteOutputPortals(uEntity_t *e, idFile *procFile)": {
+      "body_hash": "a82fb51222bf3d80d6e35b0e401c59ac",
+      "is_trivial": true
+    },
+    "static void WriteObjOutputPortals(uEntity_t *e, idFile *objFile)": {
+      "body_hash": "f8c92c98fd7e75119d402d547db761a4",
+      "is_trivial": true
+    },
+    "static void WriteOutputEntity(int entityNum, idFile *procFile, idFile *objFile)": {
+      "body_hash": "7a0b05361183fab2363ee285745ca3e4",
+      "is_trivial": true
+    },
+    "uPortal_t * AllocPortal()": {
+      "body_hash": "73412682b5dbaf85fafb74d8be6d544a",
+      "is_trivial": true
+    },
+    "void AddPortalToNodes(uPortal_t *p, node_t *front, node_t *back)": {
+      "body_hash": "d96849c7c0c3bc17151b8a27113de99a",
+      "is_trivial": true
+    },
+    "void PrintPortal(uPortal_t *p)": {
+      "body_hash": "1e65053967152ec58da3fa167026cae0",
+      "is_trivial": true
+    },
+    "static void MakeHeadnodePortals(tree_t *tree)": {
+      "body_hash": "ce37d7f675c1abc200d0b3a886047030",
+      "is_trivial": true
+    },
+    "idWinding * BaseWindingForNode(node_t *node)": {
+      "body_hash": "2c765c67bcff6077df2a7d2f1b06d846",
+      "is_trivial": true
+    },
+    "static void MakeNodePortal(node_t *node)": {
+      "body_hash": "745053cf369dd32b70a48af5a7975128",
+      "is_trivial": true
+    },
+    "static void SplitNodePortals(node_t *node)": {
+      "body_hash": "1799849cee379ab2e71de72915b38f52",
+      "is_trivial": true
+    },
+    "void CalcNodeBounds(node_t *node)": {
+      "body_hash": "3ae210175f0b89caa8dd8566917b8b4b",
+      "is_trivial": true
+    },
+    "void MakeTreePortals_r(node_t *node)": {
+      "body_hash": "33e20925115deb0fb49c1e83322f1f8c",
+      "is_trivial": true
+    },
+    "void FloodPortals_r(node_t *node, int dist)": {
+      "body_hash": "457b7219f39eecde6c9d3e58950a2909",
+      "is_trivial": true
+    },
+    "static side_t * FindSideForPortal(uPortal_t *p)": {
+      "body_hash": "5d247a2b19bb4495ccb2817d80175eff",
+      "is_trivial": true
+    },
+    "static bool CheckTrianglesForPortal(uPortal_t *p)": {
+      "body_hash": "a8fb23b3fc7e437514d22f33c10ad537",
+      "is_trivial": true
+    },
+    "static bool FindTrianglesForPortal(uPortal_t *p, idList< mapTri_t * > &tris)": {
+      "body_hash": "73b3c3b8426991f6d312cf1ab47c57a3",
+      "is_trivial": true
+    },
+    "void FloodAreas_r(node_t *node)": {
+      "body_hash": "c948ed447d3474c37af945d45f36ae13",
+      "is_trivial": true
+    },
+    "void FindAreas_r(node_t *node)": {
+      "body_hash": "86d9cd978762aa08ccec80fefd422044",
+      "is_trivial": true
+    },
+    "void CheckAreas_r(node_t *node)": {
+      "body_hash": "56f90ff14b0c57f0cafac7c537cee4a8",
+      "is_trivial": true
+    },
+    "void ClearAreas_r(node_t *node)": {
+      "body_hash": "9d161290ad483c040a263dca58f8e255",
+      "is_trivial": true
+    },
+    "static void FindInterAreaPortals_r(node_t *node)": {
+      "body_hash": "d723fc62dfd3850a8fe8da883ab80587",
+      "is_trivial": true
+    },
+    "void FillOutside_r(node_t *node)": {
+      "body_hash": "0ecd25f0cc566280adda4c71034cba17",
+      "is_trivial": true
+    },
+    "interAreaPortal_t::interAreaPortal_t()": {
+      "body_hash": "3c6df63e15ce3002bf90d3831db8c7a4",
+      "is_trivial": true
+    },
+    "ImGuiTools::AfEditor::AfList::AfList()": {
+      "body_hash": "7dff03ec98a8c97d11c2abd8204c3120",
+      "is_trivial": true
+    },
+    "void ImGuiTools::AfEditor::AfList::populate()": {
+      "body_hash": "a78c1a1c9bc9f3cbccf1956519771228",
+      "is_trivial": true
+    },
+    "MyAppLog::MyAppLog()": {
+      "body_hash": "ee7787d03b95f3d406fa2fac89c555ec",
+      "is_trivial": true
+    },
+    "void MyAppLog::Clear()": {
+      "body_hash": "414c87d5e2eda8e33d2d210cd123363f",
+      "is_trivial": true
+    },
+    "void MyAppLog::AddLog(const char *fmt,...) IM_FMTARGS(2)": {
+      "body_hash": "7907fec12da78c3737fd806f714514ed",
+      "is_trivial": true
+    },
+    "void MyAppLog::Draw(const char *title, bool *p_open=NULL)": {
+      "body_hash": "50b6bde1f1c2542158a72da294f18913",
+      "is_trivial": true
+    },
+    "OBJFace::OBJFace()": {
+      "body_hash": "df77d365d91a7cd04d43c7e5bcf99958",
+      "is_trivial": true
+    },
+    "void UI::State::ChangeColorScheme(bool inc=true)": {
+      "body_hash": "baeacfa3f8da2d18425174670cca8398",
+      "is_trivial": true
+    },
+    "static void HashBlocksForTri(const mapTri_t *tri, int blocks[2][3])": {
+      "body_hash": "b8e31447cd272dee119fed787d348ec9",
+      "is_trivial": true
+    },
+    "static mapTri_t * FixTriangleAgainstHashVert(const mapTri_t *a, const hashVert_t *hv)": {
+      "body_hash": "604424e7c0aab2e7d90c8e21ba25eef1",
+      "is_trivial": true
+    },
+    "static mapTri_t * FixTriangleAgainstHash(const mapTri_t *tri)": {
+      "body_hash": "d0601e415c3a5e97bca44c8e3308326f",
+      "is_trivial": true
+    },
+    "int CountTriList(const mapTri_t *tri)": {
+      "body_hash": "f75e20758fa8fbac42f4fa2b68dab452",
+      "is_trivial": true
+    },
+    "mapTri_t * RemoveBadTris(const mapTri_t *list)": {
+      "body_hash": "3d5f5d90867fb9e9a6ed72401d39a7ae",
+      "is_trivial": true
+    },
+    "int BrushSizeForSides(int numsides)": {
+      "body_hash": "5f4453393518c69801ac6f9490db1a92",
+      "is_trivial": true
+    },
+    "int FilterBrushIntoTree_r(uBrush_t *b, node_t *node)": {
+      "body_hash": "88bd876cb6562086254ee672b1f79ff0",
+      "is_trivial": true
+    },
+    "int BrushMostlyOnSide(uBrush_t *brush, idPlane &plane)": {
+      "body_hash": "46045a25575de64f976f6f73976f351e",
+      "is_trivial": true
+    },
+    "static void AddTriListToArea(uEntity_t *e, mapTri_t *triList, int planeNum, int areaNum, textureVectors_t *texVec)": {
+      "body_hash": "0349393d9985bde602dd5f07cb005400",
+      "is_trivial": false
+    },
+    "static void TexVecForTri(textureVectors_t *texVec, mapTri_t *tri)": {
+      "body_hash": "7ed3db1cd52d4dad1faa4223e8bd380d",
+      "is_trivial": true
+    },
+    "mapTri_t * TriListForSide(const side_t *s, const idWinding *w)": {
+      "body_hash": "0d5f17fe46d7d18c22f1d57ce4f75307",
+      "is_trivial": true
+    },
+    "static void ClipSideByTree_r(idWinding *w, side_t *side, node_t *node)": {
+      "body_hash": "b17f12bba5e640b263ae960ef693c3ee",
+      "is_trivial": true
+    },
+    "void ClipTriIntoTree_r(idWinding *w, mapTri_t *originalTri, uEntity_t *e, node_t *node)": {
+      "body_hash": "6be57b7155d7d5b162da325af3c6a19e",
+      "is_trivial": false
+    },
+    "static int CheckWindingInAreas_r(const idWinding *w, node_t *node)": {
+      "body_hash": "6341a3f046f4d95bc21471c2ec96578a",
+      "is_trivial": true
+    },
+    "static void PutWindingIntoAreas_r(uEntity_t *e, const idWinding *w, side_t *side, node_t *node)": {
+      "body_hash": "ca009a75067d2fcaa5e1e1226dad1710",
+      "is_trivial": false
+    },
+    "void AddMapTriToAreas(mapTri_t *tri, uEntity_t *e)": {
+      "body_hash": "0f6ac8748f112fa6ece39f87c6242b35",
+      "is_trivial": true
+    },
+    "int FilterMeshesIntoTree_r(idWinding *w, mapTri_t *originalTri, node_t *node)": {
+      "body_hash": "2ee526f98b202deb8891a13b9649b895",
+      "is_trivial": true
+    },
+    "static void ClipTriByLight(const mapLight_t *light, const mapTri_t *tri, mapTri_t **in, mapTri_t **out)": {
+      "body_hash": "691551d96b1c6d236005d718901c4828",
+      "is_trivial": false
+    },
+    "static void BoundOptimizeGroup(optimizeGroup_t *group)": {
+      "body_hash": "9130d328e8853bd7e4323d64221124c4",
+      "is_trivial": true
+    },
+    "static void CarveGroupsByLight(uEntity_t *e, mapLight_t *light)": {
+      "body_hash": "30b029b4e6a9d7b61773ee7ecded902f",
+      "is_trivial": true
+    },
+    "static bool ModelTypeItemGetter(void *data, int index, const char **out)": {
+      "body_hash": "a3ca5497628665aacd6d450b7fdafd8e",
+      "is_trivial": true
+    },
+    "bool MergeAllowed(idBrush *b1, idBrush *b2)": {
+      "body_hash": "035aa15cfd72534f050351cdd3f89e24",
+      "is_trivial": true
+    },
+    "bool ExpandedChopAllowed(idBrush *b1, idBrush *b2)": {
+      "body_hash": "4ef9ef841c5446286b6ab963df960952",
+      "is_trivial": true
+    },
+    "bool ExpandedMergeAllowed(idBrush *b1, idBrush *b2)": {
+      "body_hash": "0096409a7354590d164fa6772817d57d",
+      "is_trivial": true
+    },
+    "int ParseOptions(const idCmdArgs &args, idAASSettings &settings)": {
+      "body_hash": "4db2fdebe8f1fff18380a51896acb80d",
+      "is_trivial": true
+    },
+    "static const idDict * FindEntityDefDict(const char *name, bool makeDefault)": {
+      "body_hash": "367e2558f121a338dc2fd29a47c2a7f9",
+      "is_trivial": true
+    },
+    "void DisplayRealTimeString(const char *string,...)": {
+      "body_hash": "f383074f1530f0bc5417048ea7316220",
+      "is_trivial": true
+    },
+    "bool DoMultiSelect(MultiSelectWidget *widget, int *contents)": {
+      "body_hash": "07139f73818bf3240dfc0ffc6aa7a67d",
+      "is_trivial": true
+    },
+    "void HelpMarker(const char *desc)": {
+      "body_hash": "b212e97bf2272f9a91217e1694c2486e",
+      "is_trivial": true
+    },
+    "bool StringListItemGetter(void *data, int index, const char **outText)": {
+      "body_hash": "a7bdc4fb3739a8ffdee548da5f2c766d",
+      "is_trivial": true
+    },
+    "MultiSelectWidget MakePhysicsContentsSelector()": {
+      "body_hash": "d88f66347b187033be81049f28d7e8c0",
+      "is_trivial": true
+    },
+    "void CleanName(idStr &name)": {
+      "body_hash": "ac2739a297f191c71902d1d6ef66eb15",
+      "is_trivial": true
     }
   }
 }

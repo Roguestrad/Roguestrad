@@ -41,11 +41,6 @@ If you have questions concerning this license or the applicable additional terms
 #define INSIDEUNITS_FLYEND	  0.5f
 #define INSIDEUNITS_WATERJUMP 15.0f
 
-/*
-================
-idAASReach::ReachabilityExists
-================
-*/
 bool idAASReach::ReachabilityExists( int fromAreaNum, int toAreaNum )
 {
 	aasArea_t*		area;
@@ -60,41 +55,21 @@ bool idAASReach::ReachabilityExists( int fromAreaNum, int toAreaNum )
 	return false;
 }
 
-/*
-================
-idAASReach::CanSwimInArea
-================
-*/
 ID_INLINE bool idAASReach::CanSwimInArea( int areaNum )
 {
 	return ( file->areas[areaNum].contents & AREACONTENTS_WATER ) != 0;
 }
 
-/*
-================
-idAASReach::AreaHasFloor
-================
-*/
 ID_INLINE bool idAASReach::AreaHasFloor( int areaNum )
 {
 	return ( file->areas[areaNum].flags & AREA_FLOOR ) != 0;
 }
 
-/*
-================
-idAASReach::AreaIsClusterPortal
-================
-*/
 ID_INLINE bool idAASReach::AreaIsClusterPortal( int areaNum )
 {
 	return ( file->areas[areaNum].contents & AREACONTENTS_CLUSTERPORTAL ) != 0;
 }
 
-/*
-================
-idAASReach::AddReachabilityToArea
-================
-*/
 void idAASReach::AddReachabilityToArea( idReachability* reach, int areaNum )
 {
 	aasArea_t* area;
@@ -105,11 +80,6 @@ void idAASReach::AddReachabilityToArea( idReachability* reach, int areaNum )
 	numReachabilities++;
 }
 
-/*
-================
-idAASReach::Reachability_Fly
-================
-*/
 void idAASReach::Reachability_Fly( int areaNum )
 {
 	int					i, faceNum, otherAreaNum;
@@ -150,11 +120,6 @@ void idAASReach::Reachability_Fly( int areaNum )
 	}
 }
 
-/*
-================
-idAASReach::Reachability_Swim
-================
-*/
 void idAASReach::Reachability_Swim( int areaNum )
 {
 	int					 i, faceNum, otherAreaNum;
@@ -203,11 +168,6 @@ void idAASReach::Reachability_Swim( int areaNum )
 	}
 }
 
-/*
-================
-idAASReach::Reachability_EqualFloorHeight
-================
-*/
 void idAASReach::Reachability_EqualFloorHeight( int areaNum )
 {
 	int					 i, k, l, m, n, faceNum, face1Num, face2Num, otherAreaNum, edge1Num = 0, edge2Num;
@@ -286,11 +246,6 @@ void idAASReach::Reachability_EqualFloorHeight( int areaNum )
 	}
 }
 
-/*
-================
-idAASReach::Reachability_Step_Barrier_WaterJump_WalkOffLedge
-================
-*/
 bool idAASReach::Reachability_Step_Barrier_WaterJump_WalkOffLedge( int area1num, int area2num )
 {
 	int							 i, j, k, l, edge1Num, edge2Num, areas[10];
@@ -761,11 +716,6 @@ bool idAASReach::Reachability_Step_Barrier_WaterJump_WalkOffLedge( int area1num,
 	return false;
 }
 
-/*
-================
-idAASReach::Reachability_WalkOffLedge
-================
-*/
 void idAASReach::Reachability_WalkOffLedge( int areaNum )
 {
 	int							 i, j, faceNum, edgeNum, side, reachAreaNum, p, areas[10];
@@ -854,11 +804,6 @@ void idAASReach::Reachability_WalkOffLedge( int areaNum )
 	}
 }
 
-/*
-================
-idAASReach::FlagReachableAreas
-================
-*/
 void idAASReach::FlagReachableAreas( idAASFileLocal* file )
 {
 	int i, numReachableAreas;
@@ -877,11 +822,6 @@ void idAASReach::FlagReachableAreas( idAASFileLocal* file )
 	common->Printf( "%6d reachable areas\n", numReachableAreas );
 }
 
-/*
-================
-idAASReach::Build
-================
-*/
 bool idAASReach::Build( const idMapFile* mapFile, idAASFileLocal* file )
 {
 	int i, j, lastPercent;

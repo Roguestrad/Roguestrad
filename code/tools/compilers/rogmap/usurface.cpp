@@ -36,14 +36,18 @@ If you have questions concerning this license or the applicable additional terms
 #define TEXTURE_OFFSET_EQUAL_EPSILON 0.005
 #define TEXTURE_VECTOR_EQUAL_EPSILON 0.001
 
-/*
-===============
-AddTriListToArea
+/*!
+	\brief Adds a triangle list to the appropriate optimization group for a given area, creating a new group if necessary.
 
-The triList is appended to the apropriate optimzeGroup_t,
-creating a new one if needed.
-The entire list is assumed to come from the same planar primitive
-===============
+	This function appends a triangle list to an existing optimization group within a specified area, or creates a new group if no matching group is found. The function ensures that groups are only
+   merged when they share the same material, plane number, and merge group. Texture vectors are compared with specific epsilon values to determine if groups are compatible. If a new group is created,
+   it is initialized with the provided parameters and linked to the area's group list.
+
+	\param e Pointer to the entity containing the areas
+	\param triList Pointer to the triangle list to be added
+	\param planeNum The plane number associated with the triangle list
+	\param areaNum The index of the area in the entity where the triangle list should be added
+	\param texVec Pointer to the texture vectors used for comparison
 */
 static void AddTriListToArea( uEntity_t* e, mapTri_t* triList, int planeNum, int areaNum, textureVectors_t* texVec )
 {
@@ -95,11 +99,7 @@ static void AddTriListToArea( uEntity_t* e, mapTri_t* triList, int planeNum, int
 	group->triList = MergeTriLists( group->triList, triList );
 }
 
-/*
-===================
-TexVecForTri
-===================
-*/
+//! Computes texture vectors for a triangle using its vertex coordinates and texture coordinates.
 static void TexVecForTri( textureVectors_t* texVec, mapTri_t* tri )
 {
 	float		area, inva;
@@ -157,6 +157,7 @@ TriListForSide
 #define SNAP_FLOAT_TO_INT 256
 #define SNAP_INT_TO_FLOAT ( 1.0 / SNAP_FLOAT_TO_INT )
 
+//! Creates a list of triangles for a given side and winding.
 mapTri_t* TriListForSide( const side_t* s, const idWinding* w )
 {
 	int				  i, j;
@@ -286,15 +287,7 @@ mapTri_t* TriListForSide( const side_t* s, const idWinding* w )
 	return triList;
 }
 
-//=================================================================================
-
-/*
-====================
-ClipSideByTree_r
-
-Adds non-opaque leaf fragments to the convex hull
-====================
-*/
+//! Clips a winding by a BSP tree node and adds non-opaque leaf fragments to a convex hull.
 static void ClipSideByTree_r( idWinding* w, side_t* side, node_t* node )
 {
 	idWinding *front, *back;
@@ -335,17 +328,6 @@ static void ClipSideByTree_r( idWinding* w, side_t* side, node_t* node )
 	return;
 }
 
-/*
-=====================
-ClipSidesByTree
-
-Creates side->visibleHull for all visible sides
-
-The visible hull for a side will consist of the convex hull of
-all points in non-opaque clusters, which allows overlaps
-to be trimmed off automatically.
-=====================
-*/
 void ClipSidesByTree( uEntity_t* e )
 {
 	uBrush_t*	 b;
@@ -380,15 +362,17 @@ void ClipSidesByTree( uEntity_t* e )
 	}
 }
 
-//=================================================================================
+/*!
+	\brief Recursively clips a triangle winding against a BSP tree node and adds the resulting triangles to the appropriate area
 
-/*
-====================
-ClipTriIntoTree_r
+	This function performs recursive clipping of a triangle winding against a BSP tree structure. It splits the winding using the current node's plane if the node is not a leaf, then recursively
+   processes the front and back children. When a leaf node is reached, it converts the winding to a triangle list, computes the plane, texture vectors, and adds the triangles to the appropriate area
+   in the entity. The input winding is always freed before the function returns, whether it's a leaf or internal node.
 
-This is used for adding curve triangles
-The winding will be freed before it returns
-====================
+	\param w Input winding to clip, will be freed upon return
+	\param originalTri Original triangle data used for plane and texture vector calculations
+	\param e Entity to which the resulting triangles will be added
+	\param node Current BSP tree node for clipping and traversal
 */
 void ClipTriIntoTree_r( idWinding* w, mapTri_t* originalTri, uEntity_t* e, node_t* node )
 {
@@ -433,17 +417,7 @@ void ClipTriIntoTree_r( idWinding* w, mapTri_t* originalTri, uEntity_t* e, node_
 	return;
 }
 
-//=============================================================
-
-/*
-====================
-CheckWindingInAreas_r
-
-Returns the area number that the winding is in, or
--2 if it crosses multiple areas.
-
-====================
-*/
+//! Recursively checks which area a winding belongs to within a BSP tree.
 static int CheckWindingInAreas_r( const idWinding* w, node_t* node )
 {
 	idWinding *front, *back;
@@ -490,13 +464,18 @@ static int CheckWindingInAreas_r( const idWinding* w, node_t* node )
 	return node->area;
 }
 
-/*
-====================
-PutWindingIntoAreas_r
+/*!
+	\brief Recursively clips a winding against a BSP tree and distributes the resulting triangles into appropriate areas
 
-Clips a winding down into the bsp tree, then converts
-the fragments to triangles and adds them to the area lists
-====================
+	This function processes a winding by recursively traversing a BSP tree structure. It splits the winding against the current node's plane if necessary, and then distributes the resulting fragments
+   into areas based on the winding's position relative to the BSP nodes. The function handles both leaf and non-leaf nodes in the tree. For leaf nodes, it converts the winding into triangles using the
+   surface's material properties and adds them to the appropriate area in the entity's triangle list. For internal nodes, it continues recursively processing the front and back fragments. The function
+   also supports an optimization flag that prevents fragmenting large surfaces, such as sky boxes, to avoid excessive triangle splitting.
+
+	\param e Pointer to the entity that will contain the resulting triangles
+	\param w Pointer to the winding that needs to be processed and clipped
+	\param side Pointer to the side structure defining the surface properties for the winding
+	\param node Pointer to the current BSP node in the recursive traversal
 */
 static void PutWindingIntoAreas_r( uEntity_t* e, const idWinding* w, side_t* side, node_t* node )
 {
@@ -559,13 +538,7 @@ static void PutWindingIntoAreas_r( uEntity_t* e, const idWinding* w, side_t* sid
 	}
 }
 
-/*
-==================
-AddMapTriToAreas
-
-Used for curves and inlined models
-==================
-*/
+//! Adds a triangular patch to the appropriate areas based on its spatial relationship with the entity's BSP tree.
 void AddMapTriToAreas( mapTri_t* tri, uEntity_t* e )
 {
 	int		   area;
@@ -614,11 +587,6 @@ void AddMapTriToAreas( mapTri_t* tri, uEntity_t* e )
 	}
 }
 
-/*
-=====================
-PutPrimitivesInAreas
-=====================
-*/
 void PutPrimitivesInAreas( uEntity_t* e )
 {
 	uBrush_t*	 b;
@@ -820,9 +788,7 @@ void PutPrimitivesInAreas( uEntity_t* e )
 #endif
 }
 
-//============================================================================
-
-// RB begin
+//! Recursively filters mesh triangles into a BSP tree based on node planes and returns the count of processed triangles.
 int FilterMeshesIntoTree_r( idWinding* w, mapTri_t* originalTri, node_t* node )
 {
 	idWinding *front, *back;
@@ -863,15 +829,6 @@ int FilterMeshesIntoTree_r( idWinding* w, mapTri_t* originalTri, node_t* node )
 	return c;
 }
 
-/*
-=====================
-FilterMeshesIntoTree
-
-Mark the leafs as opaque and areaportals and put mesh
-fragments in each leaf so portal surfaces can be matched
-to materials
-=====================
-*/
 void FilterMeshesIntoTree( uEntity_t* e )
 {
 	uBrush_t*	 b;
@@ -903,24 +860,18 @@ void FilterMeshesIntoTree( uEntity_t* e )
 	common->VerbosePrintf( "%5i total BSP triangles\n", c_unique );
 	common->VerbosePrintf( "%5i cluster references\n", c_clusters );
 }
-// RB end
 
-//============================================================================
+/*!
+	\brief Clips a triangle by a light's frustum planes and returns the inside and outside fragments.
 
-/*
-=================
-ClipTriByLight
+	This function clips a triangle against the six frustum planes of a light source. It handles three cases: when the triangle is entirely outside the light frustum, entirely inside the light frustum,
+   or partially clipped by the frustum. The inside fragment is returned via the in parameter, and the outside fragments are returned via the out parameter. The function manages memory allocation and
+   deallocation for the resulting triangle lists, ensuring proper cleanup of intermediate winding objects.
 
-Carves a triangle by the frustom planes of a light, producing
-a (possibly empty) list of triangles on the inside and outside.
-
-The original triangle is not modified.
-
-If no clipping is required, the result will be a copy of the original.
-
-If clipping was required, the outside fragments will be planar clips, which
-will benefit from re-optimization.
-=================
+	\param light pointer to the light source with frustum planes for clipping
+	\param tri pointer to the triangle to be clipped
+	\param in pointer to a pointer where the inside clipped triangle list will be stored
+	\param out pointer to a pointer where the outside clipped triangle list will be stored
 */
 static void ClipTriByLight( const mapLight_t* light, const mapTri_t* tri, mapTri_t** in, mapTri_t** out )
 {
@@ -994,11 +945,7 @@ static void ClipTriByLight( const mapLight_t* light, const mapTri_t* tri, mapTri
 	}
 }
 
-/*
-=================
-BoundOptimizeGroup
-=================
-*/
+//! Updates the bounding box for an optimization group by encompassing all triangle vertices.
 static void BoundOptimizeGroup( optimizeGroup_t* group )
 {
 	group->bounds.Clear();
@@ -1009,14 +956,7 @@ static void BoundOptimizeGroup( optimizeGroup_t* group )
 	}
 }
 
-/*
-====================
-CarveGroupsByLight
-
-Divide each group into an inside group and an outside group, based
-on which fragments are illuminated by the light's beam tree
-====================
-*/
+//! Divides entity groups into inside and outside portions based on light illumination
 static void CarveGroupsByLight( uEntity_t* e, mapLight_t* light )
 {
 	int				 i;
@@ -1093,14 +1033,6 @@ static void CarveGroupsByLight( uEntity_t* e, mapLight_t* light )
 	}
 }
 
-/*
-=====================
-Prelight
-
-Break optimize groups up into additional groups at light boundaries, so
-optimization won't cross light bounds
-=====================
-*/
 void Prelight( uEntity_t* e )
 {
 	int			i;

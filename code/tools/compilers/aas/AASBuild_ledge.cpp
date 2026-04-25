@@ -34,26 +34,10 @@ If you have questions concerning this license or the applicable additional terms
 
 #define LEDGE_EPSILON 0.1f
 
-//===============================================================
-//
-//	idLedge
-//
-//===============================================================
-
-/*
-============
-idLedge::idLedge
-============
-*/
 idLedge::idLedge()
 {
 }
 
-/*
-============
-idLedge::idLedge
-============
-*/
 idLedge::idLedge( const idVec3& v1, const idVec3& v2, const idVec3& gravityDir, idBrushBSPNode* n )
 {
 	start	  = v1;
@@ -74,11 +58,6 @@ idLedge::idLedge( const idVec3& v1, const idVec3& v2, const idVec3& gravityDir, 
 	planes[3].FitThroughPoint( v2 );
 }
 
-/*
-============
-idLedge::AddPoint
-============
-*/
 void idLedge::AddPoint( const idVec3& v )
 {
 	if( planes[2].Distance( v ) > 0.0f ) {
@@ -91,13 +70,6 @@ void idLedge::AddPoint( const idVec3& v )
 	}
 }
 
-/*
-============
-idLedge::CreateBevels
-
-  NOTE: this assumes the gravity is vertical
-============
-*/
 void idLedge::CreateBevels( const idVec3& gravityDir )
 {
 	int		 i, j;
@@ -148,11 +120,6 @@ void idLedge::CreateBevels( const idVec3& gravityDir )
 	numPlanes = numSplitPlanes + 2;
 }
 
-/*
-============
-idLedge::Expand
-============
-*/
 void idLedge::Expand( const idBounds& bounds, float maxStepHeight )
 {
 	int	   i, j;
@@ -174,11 +141,6 @@ void idLedge::Expand( const idBounds& bounds, float maxStepHeight )
 	planes[numSplitPlanes + 1].SetDist( planes[numSplitPlanes + 1].Dist() + 1.0f );
 }
 
-/*
-============
-idLedge::ChopWinding
-============
-*/
 idWinding* idLedge::ChopWinding( const idWinding* winding ) const
 {
 	int		   i;
@@ -191,27 +153,11 @@ idWinding* idLedge::ChopWinding( const idWinding* winding ) const
 	return w;
 }
 
-/*
-============
-idLedge::PointBetweenBounds
-============
-*/
 bool idLedge::PointBetweenBounds( const idVec3& v ) const
 {
 	return ( planes[2].Distance( v ) < LEDGE_EPSILON ) && ( planes[3].Distance( v ) < LEDGE_EPSILON );
 }
 
-//===============================================================
-//
-//	idAASBuild
-//
-//===============================================================
-
-/*
-============
-idAASBuild::LedgeSubdivFlood_r
-============
-*/
 void idAASBuild::LedgeSubdivFlood_r( idBrushBSPNode* node, const idLedge* ledge )
 {
 	int						s1, i;
@@ -284,14 +230,6 @@ void idAASBuild::LedgeSubdivFlood_r( idBrushBSPNode* node, const idLedge* ledge 
 	}
 }
 
-/*
-============
-idAASBuild::LedgeSubdivLeafNodes_r
-
-  The node the ledge was originally part of might be split by other ledges.
-  Here we recurse down the tree from the original node to find all the new leaf nodes the ledge might be part of.
-============
-*/
 void idAASBuild::LedgeSubdivLeafNodes_r( idBrushBSPNode* node, const idLedge* ledge )
 {
 	if( !node ) {
@@ -305,11 +243,6 @@ void idAASBuild::LedgeSubdivLeafNodes_r( idBrushBSPNode* node, const idLedge* le
 	LedgeSubdivLeafNodes_r( node->GetChild( 1 ), ledge );
 }
 
-/*
-============
-idAASBuild::LedgeSubdiv
-============
-*/
 void idAASBuild::LedgeSubdiv( idBrushBSPNode* root )
 {
 	int					 i, j;
@@ -344,11 +277,6 @@ void idAASBuild::LedgeSubdiv( idBrushBSPNode* root )
 	}
 }
 
-/*
-============
-idAASBuild::IsLedgeSide_r
-============
-*/
 bool idAASBuild::IsLedgeSide_r( idBrushBSPNode* node, idFixedWinding* w, const idPlane& plane, const idVec3& normal, const idVec3& origin, const float radius )
 {
 	int			   res, i;
@@ -400,11 +328,6 @@ bool idAASBuild::IsLedgeSide_r( idBrushBSPNode* node, idFixedWinding* w, const i
 	return false;
 }
 
-/*
-============
-idAASBuild::AddLedge
-============
-*/
 void idAASBuild::AddLedge( const idVec3& v1, const idVec3& v2, idBrushBSPNode* node )
 {
 	int i, j, merged;
@@ -446,11 +369,6 @@ void idAASBuild::AddLedge( const idVec3& v1, const idVec3& v2, idBrushBSPNode* n
 	}
 }
 
-/*
-============
-idAASBuild::FindLeafNodeLedges
-============
-*/
 void idAASBuild::FindLeafNodeLedges( idBrushBSPNode* root, idBrushBSPNode* node )
 {
 	int				  s1, i;
@@ -511,11 +429,6 @@ void idAASBuild::FindLeafNodeLedges( idBrushBSPNode* root, idBrushBSPNode* node 
 	}
 }
 
-/*
-============
-idAASBuild::FindLedges_r
-============
-*/
 void idAASBuild::FindLedges_r( idBrushBSPNode* root, idBrushBSPNode* node )
 {
 	if( !node ) {
@@ -539,25 +452,12 @@ void idAASBuild::FindLedges_r( idBrushBSPNode* root, idBrushBSPNode* node )
 	FindLedges_r( root, node->GetChild( 1 ) );
 }
 
-/*
-============
-idAASBuild::WriteLedgeMap
-============
-*/
 void idAASBuild::WriteLedgeMap( const idStr& fileName, const idStr& ext )
 {
 	ledgeMap = new idBrushMap( fileName, ext );
 	ledgeMap->SetTexture( "textures/base_trim/bluetex4q_ed" );
 }
 
-/*
-============
-idAASBuild::LedgeSubdivision
-
-  NOTE: this assumes the bounding box is higher than the maximum step height
-		only ledges with vertical sides are considered
-============
-*/
 void idAASBuild::LedgeSubdivision( idBrushBSP& bsp )
 {
 	numLedgeSubdivisions = 0;

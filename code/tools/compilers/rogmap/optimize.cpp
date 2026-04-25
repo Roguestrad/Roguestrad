@@ -63,11 +63,7 @@ static bool		 IsTriangleDegenerate( const optVertex_t* v1, const optVertex_t* v2
 
 static idRandom	 orandom;
 
-/*
-==============
-ValidateEdgeCounts
-==============
-*/
+//! Validates that each vertex in an optimization island has exactly two edges, except at diamond intersections.
 static void		 ValidateEdgeCounts( optIsland_t* island )
 {
 	optVertex_t* vert;
@@ -93,11 +89,7 @@ static void		 ValidateEdgeCounts( optIsland_t* island )
 	}
 }
 
-/*
-====================
-AllocEdge
-====================
-*/
+//! Allocates and returns a new edge from the global edge pool.
 static optEdge_t* AllocEdge()
 {
 	optEdge_t* e;
@@ -112,11 +104,7 @@ static optEdge_t* AllocEdge()
 	return e;
 }
 
-/*
-====================
-RemoveEdgeFromVert
-====================
-*/
+//! Removes a specified edge from a vertex's edge list
 static void RemoveEdgeFromVert( optEdge_t* e1, optVertex_t* vert )
 {
 	optEdge_t** prev;
@@ -171,11 +159,7 @@ static void UnlinkEdge( optEdge_t* e, optIsland_t* island )
 	common->Error( "RemoveEdgeFromIsland: couldn't free edge" );
 }
 
-/*
-====================
-LinkEdge
-====================
-*/
+//! Links an edge to the edge lists of both vertices it connects.
 static void LinkEdge( optEdge_t* e )
 {
 	e->v1link	 = e->v1->edges;
@@ -185,11 +169,7 @@ static void LinkEdge( optEdge_t* e )
 	e->v2->edges = e;
 }
 
-/*
-================
-FindOptVertex
-================
-*/
+//! Finds or creates an optimized vertex for a given draw vertex and optimization group.
 static optVertex_t* FindOptVertex( idDrawVert* v, optimizeGroup_t* opt )
 {
 	int			 i;
@@ -226,11 +206,7 @@ static optVertex_t* FindOptVertex( idDrawVert* v, optimizeGroup_t* opt )
 	return vert;
 }
 
-/*
-================
-DrawAllEdges
-================
-*/
+//! Draws all edges when the draw flag is enabled
 static void DrawAllEdges()
 {
 	//	int		i;
@@ -259,11 +235,7 @@ static void DrawAllEdges()
 #endif
 }
 
-/*
-================
-DrawVerts
-================
-*/
+//! Draws the vertices of an optimalization island if drawing is enabled.
 static void DrawVerts( optIsland_t* island )
 {
 	//	optVertex_t	*vert;
@@ -288,11 +260,7 @@ static void DrawVerts( optIsland_t* island )
 #endif
 }
 
-/*
-================
-DrawEdges
-================
-*/
+//! Draws the edges of an optimization island if the drawing flag is enabled.
 static void DrawEdges( optIsland_t* island )
 {
 	//	optEdge_t	*edge;
@@ -321,13 +289,7 @@ static void DrawEdges( optIsland_t* island )
 #endif
 }
 
-//=================================================================
-
-/*
-=================
-VertexBetween
-=================
-*/
+//! Determines if a vertex lies between two other vertices on a line segment.
 static bool VertexBetween( const optVertex_t* p1, const optVertex_t* v1, const optVertex_t* v2 )
 {
 	idVec3 d1, d2;
@@ -342,15 +304,20 @@ static bool VertexBetween( const optVertex_t* p1, const optVertex_t* v1, const o
 	return false;
 }
 
-/*
-====================
-EdgeIntersection
+/*!
+	\brief Computes the intersection point of two edges and returns a optimized vertex for that point.
 
-Creates a new optVertex_t where the line segments cross.
-This should only be called if PointsStraddleLine returned true
+	This function calculates the intersection of two edges defined by their vertex points. It uses the cross product to determine if the edges intersect and computes a weighted average of the vertex
+   properties (position, normal, texture coordinates) from the two edges. The resulting vertex is then looked up in the optimization group to return a canonical vertex. Returns NULL if the edges are
+   collinear.
 
-Will return NULL if the lines are colinear
-====================
+	\param p1 First vertex of the first edge
+	\param p2 Second vertex of the first edge
+	\param l1 First vertex of the second edge
+	\param l2 Second vertex of the second edge
+	\param opt Optimization group to which the resulting vertex belongs
+	\return Optimized vertex at the intersection point, or NULL if the edges are collinear
+	\throws NULL is returned when the edges are collinear, indicating no intersection
 */
 static optVertex_t* EdgeIntersection( const optVertex_t* p1, const optVertex_t* p2, const optVertex_t* l1, const optVertex_t* l2, optimizeGroup_t* opt )
 {
@@ -389,12 +356,18 @@ static optVertex_t* EdgeIntersection( const optVertex_t* p1, const optVertex_t* 
 	return FindOptVertex( v, opt );
 }
 
-/*
-====================
-PointsStraddleLine
+/*!
+	\brief Determines if two line segments straddle each other, returning true if they cross or are colinear.
 
-Colinear is considdered crossing.
-====================
+	This function checks whether two line segments defined by their vertices straddle each other in 3D space. It handles three cases: when the segments are colinear, when they share vertices, and when
+   they are fully separate. For colinear segments, it performs a more detailed check to determine if the segments overlap or cross. The function is used to determine if two edges in a mesh intersect
+   or cross each other during optimization operations.
+
+	\param p1 First vertex of the first line segment
+	\param p2 Second vertex of the first line segment
+	\param l1 First vertex of the second line segment
+	\param l2 Second vertex of the second line segment
+	\return True if the line segments cross or are colinear, false otherwise
 */
 static bool PointsStraddleLine( optVertex_t* p1, optVertex_t* p2, optVertex_t* l1, optVertex_t* l2 )
 {
@@ -448,10 +421,18 @@ static bool PointsStraddleLine( optVertex_t* p1, optVertex_t* p2, optVertex_t* l
 	}
 }
 
-/*
-====================
-EdgesCross
-====================
+/*!
+	\brief Determines whether two line segments defined by vertices a1-a2 and b1-b2 cross each other.
+
+	The function checks if two line segments intersect in 3D space. It first handles special cases where the segments are identical or reversed, returning true immediately. For general cases, it uses
+   the PointsStraddleLine function to determine if the endpoints of each segment lie on opposite sides of the other segment. If both conditions are met, the segments are considered to cross. The
+   function also accounts for colinear cases that might still be considered crossing.
+
+	\param a1 First vertex of the first line segment
+	\param a2 Second vertex of the first line segment
+	\param b1 First vertex of the second line segment
+	\param b2 Second vertex of the second line segment
+	\return True if the two line segments cross each other, false otherwise
 */
 static bool EdgesCross( optVertex_t* a1, optVertex_t* a2, optVertex_t* b1, optVertex_t* b2 )
 {
@@ -477,12 +458,7 @@ static bool EdgesCross( optVertex_t* a1, optVertex_t* a2, optVertex_t* b1, optVe
 	return true;
 }
 
-/*
-====================
-TryAddNewEdge
-
-====================
-*/
+//! Attempts to add a new edge between two vertices in an optimization island, checking for edge crossings before adding.
 static bool TryAddNewEdge( optVertex_t* v1, optVertex_t* v2, optIsland_t* island )
 {
 	optEdge_t* e;
@@ -525,6 +501,7 @@ typedef struct {
 	float		 length;
 } edgeLength_t;
 
+//! Compares two edge length structures for sorting based on their length values.
 static int LengthSort( const void* a, const void* b )
 {
 	const edgeLength_t *ea, *eb;
@@ -540,13 +517,7 @@ static int LengthSort( const void* a, const void* b )
 	return 0;
 }
 
-/*
-==================
-AddInteriorEdges
-
-Add all possible edges between the verts
-==================
-*/
+//! Adds interior edges between vertices in the specified island
 static void AddInteriorEdges( optIsland_t* island )
 {
 	int			  c_addedEdges;
@@ -614,6 +585,8 @@ RemoveIfColinear
 ====================
 */
 #define COLINEAR_EPSILON 0.1
+
+//! Removes a vertex from an island if it is colinear with adjacent vertices and merges the connecting edges
 static void RemoveIfColinear( optVertex_t* ov, optIsland_t* island )
 {
 	optEdge_t *	 e, *e1, *e2;
@@ -754,11 +727,7 @@ static void RemoveIfColinear( optVertex_t* ov, optIsland_t* island )
 	RemoveIfColinear( v3, island );
 }
 
-/*
-====================
-CombineColinearEdges
-====================
-*/
+//! Combines colinear edges in the specified optimization island.
 static void CombineColinearEdges( optIsland_t* island )
 {
 	int			 c_edges;
@@ -782,14 +751,7 @@ static void CombineColinearEdges( optIsland_t* island )
 	common->VerbosePrintf( "%6i optimized exterior edges\n", c_edges );
 }
 
-//==================================================================
-
-/*
-===================
-FreeOptTriangles
-
-===================
-*/
+//! Frees all triangle memory in the specified optimization island.
 static void FreeOptTriangles( optIsland_t* island )
 {
 	optTri_t *opt, *next;
@@ -802,16 +764,7 @@ static void FreeOptTriangles( optIsland_t* island )
 	island->tris = NULL;
 }
 
-/*
-=================
-IsTriangleValid
-
-empty area will be considered invalid.
-Due to some truly aweful epsilon issues, a triangle can switch between
-valid and invalid depending on which order you look at the verts, so
-consider it invalid if any one of the possibilities is invalid.
-=================
-*/
+//! Checks if a triangle formed by three vertices is valid based on cross product calculations.
 static bool IsTriangleValid( const optVertex_t* v1, const optVertex_t* v2, const optVertex_t* v3 )
 {
 	idVec3 d1, d2, normal;
@@ -840,13 +793,7 @@ static bool IsTriangleValid( const optVertex_t* v1, const optVertex_t* v2, const
 	return true;
 }
 
-/*
-=================
-IsTriangleDegenerate
-
-Returns false if it is either front or back facing
-=================
-*/
+//! Checks if a triangle formed by three vertices is degenerate by testing if its normal has a zero z-component
 static bool IsTriangleDegenerate( const optVertex_t* v1, const optVertex_t* v2, const optVertex_t* v3 )
 {
 #if 1
@@ -864,13 +811,7 @@ static bool IsTriangleDegenerate( const optVertex_t* v1, const optVertex_t* v2, 
 #endif
 }
 
-/*
-==================
-PointInTri
-
-Tests if a 2D point is inside an original triangle
-==================
-*/
+//! Tests if a 2D point is inside an original triangle
 static bool PointInTri( const idVec3& p, const mapTri_t* tri, optIsland_t* island )
 {
 	idVec3 d1, d2, normal;
@@ -902,12 +843,7 @@ static bool PointInTri( const idVec3& p, const mapTri_t* tri, optIsland_t* islan
 	return true;
 }
 
-/*
-====================
-LinkTriToEdge
-
-====================
-*/
+//! Links a triangle to an edge, determining whether the triangle should be linked as front or back.
 static void LinkTriToEdge( optTri_t* optTri, optEdge_t* edge )
 {
 	if( ( edge->v1 == optTri->v[0] && edge->v2 == optTri->v[1] ) || ( edge->v1 == optTri->v[1] && edge->v2 == optTri->v[2] ) || ( edge->v1 == optTri->v[2] && edge->v2 == optTri->v[0] ) ) {
@@ -929,10 +865,18 @@ static void LinkTriToEdge( optTri_t* optTri, optEdge_t* edge )
 	common->Error( "LinkTriToEdge: edge not found on tri" );
 }
 
-/*
-===============
-CreateOptTri
-===============
+/*!
+	\brief Creates an optimized triangle from three vertices connected by edges within an island.
+
+	This function constructs a new optimized triangle using three vertices and three edges. It validates that the vertices form a valid triangle and determines the third edge by traversing the
+   adjacency list of the second vertex. The function also calculates the midpoint of the triangle and determines whether it is filled by checking if it lies inside any of the original triangles. The
+   resulting triangle is linked to the edges and added to the island's triangle list.
+
+	\param first The first vertex of the triangle
+	\param e1 First edge of the triangle
+	\param e2 Second edge of the triangle
+	\param island The island containing the triangle
+	\throws Error if the edges are mislinked or the triangle is invalid
 */
 static void CreateOptTri( optVertex_t* first, optEdge_t* e1, optEdge_t* e2, optIsland_t* island )
 {
@@ -1073,13 +1017,7 @@ static void CreateOptTri( optVertex_t* first, optEdge_t* e1, optEdge_t* e2, optI
 	LinkTriToEdge( optTri, opposite );
 }
 
-/*
-====================
-BuildOptTriangles
-
-Generate a new list of triangles from the optEdeges
-====================
-*/
+//! Builds optimized triangles from the edges of an optimization island
 static void BuildOptTriangles( optIsland_t* island )
 {
 	optVertex_t *ov = NULL, *second = NULL, *third = NULL, *middle = NULL;
@@ -1204,13 +1142,7 @@ static void BuildOptTriangles( optIsland_t* island )
 	}
 }
 
-/*
-====================
-RegenerateTriangles
-
-Add new triangles to the group's regeneratedTris
-====================
-*/
+//! Generates new triangles for a given optimization island and adds them to the group's regenerated triangles list
 static void RegenerateTriangles( optIsland_t* island )
 {
 	optTri_t* optTri;
@@ -1255,16 +1187,7 @@ static void RegenerateTriangles( optIsland_t* island )
 	common->VerbosePrintf( "%6i tris out\n", c_out );
 }
 
-//===========================================================================
-
-/*
-====================
-RemoveInteriorEdges
-
-Edges that have triangles of the same type (filled / empty)
-on both sides will be removed
-====================
-*/
+//! Removes interior edges from an optimization island based on triangle filling status.
 static void RemoveInteriorEdges( optIsland_t* island )
 {
 	int		   c_interiorEdges;
@@ -1309,11 +1232,7 @@ typedef struct {
 	optVertex_t *v1, *v2;
 } originalEdges_t;
 
-/*
-=================
-AddEdgeIfNotAlready
-=================
-*/
+//! Adds an edge between two vertices if it doesn't already exist
 void AddEdgeIfNotAlready( optVertex_t* v1, optVertex_t* v2 )
 {
 	optEdge_t* e;
@@ -1343,11 +1262,7 @@ void AddEdgeIfNotAlready( optVertex_t* v1, optVertex_t* v2 )
 	LinkEdge( e );
 }
 
-/*
-=================
-DrawOriginalEdges
-=================
-*/
+//! Draws the original edges of a mesh for debugging purposes.
 static void DrawOriginalEdges( int numOriginalEdges, originalEdges_t* originalEdges )
 {
 	//	int		i;
@@ -1380,11 +1295,7 @@ typedef struct edgeCrossing_s {
 static originalEdges_t* originalEdges;
 static int				numOriginalEdges;
 
-/*
-=================
-AddOriginalTriangle
-=================
-*/
+//! Adds a triangle to the list of original edges by processing its three vertices.
 static void				AddOriginalTriangle( optVertex_t* v[3] )
 {
 	optVertex_t *v1, *v2;
@@ -1425,11 +1336,7 @@ static void				AddOriginalTriangle( optVertex_t* v[3] )
 	}
 }
 
-/*
-=================
-AddOriginalEdges
-=================
-*/
+//! Adds original triangle edges to the optimization group.
 static void AddOriginalEdges( optimizeGroup_t* opt )
 {
 	mapTri_t*	 tri;
@@ -1458,11 +1365,7 @@ static void AddOriginalEdges( optimizeGroup_t* opt )
 	}
 }
 
-/*
-=====================
-SplitOriginalEdgesAtCrossings
-=====================
-*/
+//! Splits original edges at crossing points and creates new optimized edges
 void SplitOriginalEdgesAtCrossings( optimizeGroup_t* opt )
 {
 	int				 i, j, k, l;
@@ -1645,16 +1548,7 @@ void SplitOriginalEdgesAtCrossings( optimizeGroup_t* opt )
 	common->VerbosePrintf( "%6i vertexes after splits\n", numOptVerts );
 }
 
-//=================================================================
-
-/*
-===================
-CullUnusedVerts
-
-Unlink any verts with no edges, so they
-won't be used in the retriangulation
-===================
-*/
+//! Removes vertices from an optimization island that have no connected edges
 static void CullUnusedVerts( optIsland_t* island )
 {
 	optVertex_t **prev, *vert;
@@ -1692,17 +1586,7 @@ static void CullUnusedVerts( optIsland_t* island )
 	common->VerbosePrintf( "%6i verts freed\n", c_free );
 }
 
-/*
-====================
-OptimizeIsland
-
-At this point, all needed vertexes are already in the
-list, including any that were added at crossing points.
-
-Interior and colinear vertexes will be removed, and
-a new triangulation will be created.
-====================
-*/
+//! Optimizes an island by removing interior and colinear vertexes and creating a new triangulation.
 static void OptimizeIsland( optIsland_t* island )
 {
 	// add space-filling fake edges so we have a complete
@@ -1739,11 +1623,7 @@ static void OptimizeIsland( optIsland_t* island )
 	RegenerateTriangles( island );
 }
 
-/*
-================
-AddVertexToIsland_r
-================
-*/
+//! Adds a vertex and its connected edges to an island during optimization.
 static void AddVertexToIsland_r( optVertex_t* vert, optIsland_t* island )
 {
 	optEdge_t* e;
@@ -1779,6 +1659,7 @@ static void AddVertexToIsland_r( optVertex_t* vert, optIsland_t* island )
 	}
 }
 
+//! Links all vertices and edges together into a single island for optimization
 static void DontSeparateIslands( optimizeGroup_t* opt )
 {
 	int			i;
@@ -1803,11 +1684,7 @@ static void DontSeparateIslands( optimizeGroup_t* opt )
 	OptimizeIsland( &island );
 }
 
-/*
-====================
-OptimizeOptList
-====================
-*/
+//! Optimizes a list of geometry groups by fixing T-junctions and regenerating triangles.
 static void OptimizeOptList( optimizeGroup_t* opt )
 {
 	optimizeGroup_t* oldNext;
@@ -1843,13 +1720,7 @@ static void OptimizeOptList( optimizeGroup_t* opt )
 	opt->regeneratedTris = NULL;
 }
 
-/*
-==================
-SetGroupTriPlaneNums
-
-Copies the group planeNum to every triangle in each group
-==================
-*/
+//! Sets the plane number for all triangles in each group to match the group's plane number.
 void SetGroupTriPlaneNums( optimizeGroup_t* groups )
 {
 	mapTri_t*		 tri;
@@ -1862,14 +1733,6 @@ void SetGroupTriPlaneNums( optimizeGroup_t* groups )
 	}
 }
 
-/*
-===================
-OptimizeGroupList
-
-This will also fix tjunctions
-
-===================
-*/
 void OptimizeGroupList( optimizeGroup_t* groupList )
 {
 	int				 c_in, c_edge, c_tjunc2;
@@ -1901,11 +1764,6 @@ void OptimizeGroupList( optimizeGroup_t* groupList )
 	common->VerbosePrintf( "%6i tris after final t junction fixing\n", c_tjunc2 );
 }
 
-/*
-==================
-OptimizeEntity
-==================
-*/
 void OptimizeEntity( uEntity_t* e )
 {
 	int i;

@@ -35,22 +35,46 @@ If you have questions concerning this license or the applicable additional terms
 namespace ImGuiTools
 {
 
+/*!
+	\class ImGuiTools::AfBodyEditor
+	\brief Provides a user interface for editing rigid body properties within an affine field system.
+
+	The AfBodyEditor class offers a graphical interface for modifying the properties of rigid bodies in an affine field context. It supports editing position, orientation, and collision model settings
+   through interactive ImGui controls. The editor initializes joint lists from associated render models and tracks changes to body properties. The class is designed to be used within a larger editor
+   framework where affine field declarations and their constituent bodies can be modified visually. The UI components provide feedback on modification status through return values from various
+   property editing functions.
+
+*/
 class AfBodyEditor
 {
 public:
+	//! Constructs an AfBodyEditor instance initialized with the provided declaration and body.
 	AfBodyEditor( idDeclAF* newDecl, idDeclAF_Body* newBody );
 	~AfBodyEditor();
 
+	//! Displays and handles the UI for editing a rigid body's properties in the AfEditor.
 	bool Do();
 
 private:
+	//! Initializes the joint lists for the body editor by populating them with joint names from the associated render model.
 	void			  InitJointLists();
 
+	//! Returns true if the position properties of the body have been modified.
 	bool			  Position();
+
+	//! Displays and handles the UI controls for editing a body's position property.
 	bool			  PositionProperty();
+
+	//! Returns true if any of the pitch, yaw, or roll values have been modified.
 	bool			  PitchYawRoll();
+
+	//! Returns true if any collision model properties were modified
 	bool			  CollisionModel();
+
+	//! Displays and handles user input for collision model size parameters based on the model type
 	bool			  CollisionModelSize();
+
+	//! Displays an ImGui drag float3 input field for editing an idAFVector value.
 	bool			  InputAfVector( const char* label, idAFVector* vec );
 
 	idDeclAF*		  decl;

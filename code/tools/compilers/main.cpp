@@ -54,11 +54,13 @@ struct MyAppLog {
 	ImGuiTextFilter Filter;
 	ImVector<int>	LineOffsets; // Index to lines offset. We maintain this with AddLog() calls, allowing us to have a random access on lines
 
+	//! Initializes a new instance of the MyAppLog class.
 	MyAppLog()
 	{
 		Clear();
 	}
 
+	//! Clears all data from the log buffer and resets the line offsets.
 	void Clear()
 	{
 		Buf.clear();
@@ -66,6 +68,7 @@ struct MyAppLog {
 		LineOffsets.push_back( 0 );
 	}
 
+	//! Adds a formatted log message to the internal buffer and updates line offsets for efficient line access.
 	void AddLog( const char* fmt, ... ) IM_FMTARGS( 2 )
 	{
 		int		old_size = Buf.size();
@@ -79,6 +82,7 @@ struct MyAppLog {
 			}
 	}
 
+	//! Displays a window with log text using ImGui.
 	void Draw( const char* title, bool* p_open = NULL )
 	{
 		{
@@ -180,12 +184,6 @@ idCVar com_productionMode( "com_productionMode", "0", CVAR_SYSTEM | CVAR_BOOL, "
 ==============================================================
 */
 
-/*
-==============
-Sys_Printf
-==============
-*/
-
 void   Sys_Printf( const char* fmt, ... )
 {
 	char	msg[MAXPRINTMSG];
@@ -202,11 +200,6 @@ void   Sys_Printf( const char* fmt, ... )
 	tuiLog.AddLog( "%s", msg );
 }
 
-/*
-==============
-Sys_VPrintf
-==============
-*/
 void Sys_VPrintf( const char* fmt, va_list arg )
 {
 	char msg[MAXPRINTMSG];
@@ -275,11 +268,6 @@ wchar_t* MakeWindowsLongPathW( const char* utf8Path )
 }
 // RB end
 
-/*
-==============
-Sys_Mkdir
-==============
-*/
 void Sys_Mkdir( const char* path )
 {
 	// RB: support paths longer than 260 characters
@@ -308,11 +296,6 @@ void Sys_Mkdir( const char* path )
 	// RB end
 }
 
-/*
-========================
-Sys_Rmdir
-========================
-*/
 bool Sys_Rmdir( const char* path )
 {
 	// RB: support paths longer than 260 characters
@@ -332,11 +315,6 @@ bool Sys_Rmdir( const char* path )
 	return success != 0;
 }
 
-/*
-==============
-Sys_EXEPath
-==============
-*/
 const char* Sys_EXEPath()
 {
 	static char exe[MAX_OSPATH];
@@ -344,11 +322,6 @@ const char* Sys_EXEPath()
 	return exe;
 }
 
-/*
-==============
-Sys_ListFiles
-==============
-*/
 static void ListFilesRecursive( const wchar_t* baseDir, const wchar_t* pattern, idStrList& list, size_t baseLen )
 {
 	wchar_t searchPath[MAX_OSPATH];
@@ -477,11 +450,6 @@ int idEventLoop::JournalLevel() const
 	return 0;
 }
 
-/*
-========================
-Sys_IsFolder
-========================
-*/
 sysFolder_t Sys_IsFolder( const char* path )
 {
 	wchar_t* wPath = MakeWindowsLongPathW( path );
@@ -504,16 +472,12 @@ const char* Sys_DefaultSavePath()
 	return "";
 }
 
+//! Returns the language name at the specified index.
 const char* Sys_Lang( int )
 {
 	return "";
 }
 
-/*
-=================
-Sys_FileTimeStamp
-=================
-*/
 ID_TIME_T Sys_FileTimeStamp( idFileHandle fp )
 {
 	FILETIME writeTime;
@@ -549,11 +513,6 @@ ID_TIME_T Sys_FileTimeStamp( idFileHandle fp )
 	return itime.QuadPart;
 }
 
-/*
-================
-Sys_GetClockTicks
-================
-*/
 double Sys_GetClockTicks()
 {
 	LARGE_INTEGER li;
@@ -562,11 +521,6 @@ double Sys_GetClockTicks()
 	return ( double )li.LowPart + ( double )0xFFFFFFFF * li.HighPart;
 }
 
-/*
-================
-Sys_ClockTicksPerSecond
-================
-*/
 double Sys_ClockTicksPerSecond()
 {
 	static double ticks = 0;
@@ -580,11 +534,6 @@ double Sys_ClockTicksPerSecond()
 	return ticks;
 }
 
-/*
-==============
-Sys_Cwd
-==============
-*/
 const char* Sys_Cwd()
 {
 	static char cwd[MAX_OSPATH];
@@ -595,11 +544,6 @@ const char* Sys_Cwd()
 	return cwd;
 }
 
-/*
-==============
-Sys_DefaultBasePath
-==============
-*/
 const char* Sys_DefaultBasePath()
 {
 	return Sys_Cwd();
@@ -610,22 +554,12 @@ int Sys_NumLangs()
 	return 0;
 }
 
-/*
-================
-Sys_Milliseconds
-================
-*/
 int Sys_Milliseconds()
 {
 	static DWORD sys_timeBase = timeGetTime();
 	return timeGetTime() - sys_timeBase;
 }
 
-/*
-================
-Sys_Microseconds
-================
-*/
 uint64 Sys_Microseconds()
 {
 	static uint64 ticksPerMicrosecondTimes1024 = 0;
@@ -638,18 +572,6 @@ uint64 Sys_Microseconds()
 	return ( ( uint64 )( ( int64 )Sys_GetClockTicks() << 10 ) ) / ticksPerMicrosecondTimes1024;
 }
 
-/*
-========================
-Sys_CPUCount
-
-TODO: This is a dummy function;
-If required I recommend using SDL_CpuCount();
-
-numLogicalCPUCores      - the number of logical CPU per core
-numPhysicalCPUCores     - the total number of cores per package
-numCPUPackages          - the total number of packages (physical processors)
-========================
-*/
 void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCPUPackages )
 {
 	numPhysicalCPUCores = 1;
@@ -657,9 +579,20 @@ void Sys_CPUCount( int& numLogicalCPUCores, int& numPhysicalCPUCores, int& numCP
 	numCPUPackages		= 1;
 }
 
+/*!
+	\class idSysCmdline
+	\brief A system interface for low-level platform-specific operations and resource management.
+
+	This class provides an interface for system-level functionality including timing, processor identification, FPU control, memory management, dynamic library loading, and system events. It serves as
+   a platform abstraction layer that allows higher-level code to interact with system resources without direct platform dependencies. The class inherits from idSys, indicating it extends base system
+   functionality. It handles various system operations such as retrieving clock tick information for high-resolution timing, managing floating-point unit states, controlling memory locking, and
+   working with dynamic libraries. The interface also supports generating system events for input handling and provides methods for launching external processes and opening URLs.
+
+*/
 class idSysCmdline : public idSys
 {
 public:
+	//! Outputs a formatted debug message to the system
 	virtual void DebugPrintf( VERIFY_FORMAT_STRING const char* fmt, ... )
 	{
 		va_list argptr;
@@ -669,79 +602,106 @@ public:
 		va_end( argptr );
 	}
 
+	//! Outputs a formatted debug message using a variable argument list.
 	virtual void DebugVPrintf( const char* fmt, va_list arg )
 	{
 		Sys_VPrintf( fmt, arg );
 	}
 
+	//! Returns the current value of the high-resolution performance counter in clock ticks.
 	virtual double GetClockTicks()
 	{
 		return Sys_GetClockTicks();
 	}
 
+	//! Returns the number of clock ticks per second available from the system.
 	virtual double ClockTicksPerSecond()
 	{
 		return Sys_ClockTicksPerSecond();
 	}
 
+	//! Returns the processor ID constant CPUID_NONE
 	virtual cpuid_t GetProcessorId()
 	{
 		return CPUID_NONE;
 	}
 
+	//! Returns a string describing the processor architecture.
 	virtual const char* GetProcessorString()
 	{
 		return NULL;
 	}
+
+	//! Returns the current FPU state as a null-terminated string.
 	virtual const char* FPU_GetState()
 	{
 		return NULL;
 	}
+
+	//! Checks if the FPU stack is empty.
 	virtual bool FPU_StackIsEmpty()
 	{
 		return false;
 	}
+
+	//! Sets the FPU flush-to-zero flag state.
 	virtual void FPU_SetFTZ( bool enable )
 	{
 	}
+
+	//! Sets the FPU DAZ (Denormalized Accumulation Mode) flag based on the enable parameter
 	virtual void FPU_SetDAZ( bool enable )
 	{
 	}
 
+	//! Enables FPU exceptions for the specified exception mask.
 	virtual void FPU_EnableExceptions( int exceptions )
 	{
 	}
 
+	//! Locks a specified memory region into physical memory.
 	virtual bool LockMemory( void* ptr, int bytes )
 	{
 		return false;
 	}
+
+	//! Unlocks a previously locked memory region.
 	virtual bool UnlockMemory( void* ptr, int bytes )
 	{
 		return false;
 	}
 
+	//! Loads a dynamic library by its file name and returns a handle to it.
 	virtual int DLL_Load( const char* dllName )
 	{
 		return 0;
 	}
+
+	//! Retrieves the address of a procedure from a loaded dynamic library.
 	virtual void* DLL_GetProcAddress( int dllHandle, const char* procName )
 	{
 		return NULL;
 	}
+
+	//! Unloads a dynamic link library using the provided handle.
 	virtual void DLL_Unload( int dllHandle )
 	{
 	}
+
+	//! Constructs a dynamic library file name based on a base name and system-specific extensions.
 	virtual void DLL_GetFileName( const char* baseName, char* dllName, int maxLength )
 	{
 	}
 
+	//! Generates a system event for a mouse button action.
 	virtual sysEvent_t GenerateMouseButtonEvent( int button, bool down )
 	{
 		sysEvent_t ev;
 		ev.evType = SE_NONE;
 		return ev;
 	}
+
+	//! Generates a mouse move event with the specified delta values
 	virtual sysEvent_t GenerateMouseMoveEvent( int deltax, int deltay )
 	{
 		sysEvent_t ev;
@@ -749,9 +709,12 @@ public:
 		return ev;
 	}
 
+	//! Opens a URL in the default web browser.
 	virtual void OpenURL( const char* url, bool quit )
 	{
 	}
+
+	//! Starts an external process using the specified executable name and quit behavior.
 	virtual void StartProcess( const char* exeName, bool quit )
 	{
 	}
@@ -794,6 +757,7 @@ struct State {
 
 	float						  progress = 1.0f;
 
+	//! Changes the color scheme of the UI to the next scheme in the sequence when inc is true.
 	void						  ChangeColorScheme( bool inc = true )
 	{
 		if( inc ) {
@@ -849,6 +813,14 @@ struct State {
 
 }
 
+/*
+==============================================================
+
+	idCommon
+
+==============================================================
+*/
+
 // UI state
 UI::State stateUI;
 
@@ -864,14 +836,12 @@ public:
 	bool			com_refreshOnPrint = true; // update the screen every print for dmap
 	ImTui::TScreen* screen;
 
-	// Initialize everything.
-	// if the OS allows, pass argc/argv directly (without executable name)
-	// otherwise pass the command line in a single string (without executable name)
+	//! Initializes the common framework with command line arguments.
 	virtual void	Init( int argc, const char* const* argv, const char* cmdline )
 	{
 	}
 
-	// Shuts down everything.
+	//! Shuts down all engine systems and frees allocated resources.
 	virtual void Shutdown()
 	{
 	}
@@ -880,11 +850,12 @@ public:
 		return false;
 	};
 
+	//! Creates the main menu for the application.
 	virtual void CreateMainMenu()
 	{
 	}
 
-	// Shuts down everything.
+	//! Shuts down everything.
 	virtual void Quit()
 	{
 	}
@@ -895,7 +866,7 @@ public:
 		return true;
 	};
 
-	// Called repeatedly as the foreground thread for rendering and game logic.
+	//! Called repeatedly as the foreground thread for rendering and game logic.
 	virtual void Frame()
 	{
 	}
@@ -904,46 +875,54 @@ public:
 	// in a modal manner outside the normal frame loop
 	virtual void UpdateScreen( bool captureToImage, bool releaseMouse = true );
 
+	//! Updates the level load pacifier display.
 	virtual void UpdateLevelLoadPacifier()
 	{
 	}
+
+	//! Loads pacifier information with formatted string arguments
 	virtual void LoadPacifierInfo( VERIFY_FORMAT_STRING const char* fmt, ... )
 	{
 	}
+
+	//! Sets the total progress value for the loading pacifier.
 	virtual void LoadPacifierProgressTotal( int total )
 	{
 	}
+
+	//! Increments the pacifier progress indicator by the specified step amount
 	virtual void LoadPacifierProgressIncrement( int step )
 	{
 	}
+
+	//! Returns whether a pacifier is currently running for loading operations.
 	virtual bool LoadPacifierRunning()
 	{
 		return false;
 	}
 
-	// Checks for and removes command line "+set var arg" constructs.
-	// If match is NULL, all set commands will be executed, otherwise
-	// only a set with the exact name.
+	//! Processes command line "+set var arg" constructs and executes matching set commands.
 	virtual void StartupVariable( const char* match )
 	{
 	}
 
-	// Begins redirection of console output to the given buffer.
+	//! Begins redirection of console output to the given buffer.
 	virtual void BeginRedirect( char* buffer, int buffersize, void ( *flush )( const char* ) )
 	{
 	}
 
-	// Stops redirection of console output.
+	//! Stops redirection of console output.
 	virtual void EndRedirect()
 	{
 	}
 
-	// Update the screen with every message printed.
+	//! Sets whether the screen should be updated with every message printed.
 	virtual void SetRefreshOnPrint( bool set )
 	{
 		// com_refreshOnPrint = set;
 	}
 
+	//! Prints a formatted message to the console, with optional screen refresh.
 	virtual void Printf( const char* fmt, ... )
 	{
 		STDIO_PRINT( "", "" );
@@ -953,6 +932,7 @@ public:
 		}
 	}
 
+	//! Formats and prints a message to the console, updating the screen if com_refreshOnPrint is set
 	virtual void VPrintf( const char* fmt, va_list arg )
 	{
 		Sys_VPrintf( fmt, arg );
@@ -962,6 +942,7 @@ public:
 		}
 	}
 
+	//! Outputs debug print information to the console when the developer flag is enabled.
 	virtual void DPrintf( const char* fmt, ... )
 	{
 		if( com_developer.GetBool() ) {
@@ -973,6 +954,7 @@ public:
 		}
 	}
 
+	//! Prints a verbose message to the console when the dmap_verbose cvar is set
 	virtual void VerbosePrintf( const char* fmt, ... )
 	{
 		if( dmap_verbose.GetBool() ) {
@@ -984,6 +966,7 @@ public:
 		}
 	}
 
+	//! Outputs a formatted warning message to the console.
 	virtual void Warning( const char* fmt, ... )
 	{
 		STDIO_PRINT( "WARNING: ", "\n" );
@@ -993,6 +976,7 @@ public:
 		}
 	}
 
+	//! Prints a warning message that only appears when the developer console variable is enabled.
 	virtual void DWarning( const char* fmt, ... )
 	{
 		if( com_developer.GetBool() ) {
@@ -1004,16 +988,17 @@ public:
 		}
 	}
 
-	// Prints all queued warnings.
+	//! Prints all queued warnings.
 	virtual void PrintWarnings()
 	{
 	}
 
-	// Removes all queued warnings.
+	//! Removes all queued warnings.
 	virtual void ClearWarnings( const char* reason )
 	{
 	}
 
+	//! Terminates the program execution and prints an error message
 	virtual void Error( const char* fmt, ... )
 	{
 		STDIO_PRINT( "ERROR: ", "\n" );
@@ -1023,6 +1008,8 @@ public:
 		}
 		exit( 0 );
 	}
+
+	//! Terminates the application with a fatal error message.
 	virtual void FatalError( const char* fmt, ... )
 	{
 		STDIO_PRINT( "FATAL ERROR: ", "\n" );
@@ -1129,25 +1116,37 @@ public:
 		return useless;
 	};
 
+	//! Handles completion of a save operation
 	virtual void OnSaveCompleted( idSaveLoadParms& parms )
 	{
 	}
+
+	//! Handles completion of a load operation with the provided save/load parameters
 	virtual void OnLoadCompleted( idSaveLoadParms& parms )
 	{
 	}
+
+	//! This function is called when file loading operations have been completed during a savegame load process.
 	virtual void OnLoadFilesCompleted( idSaveLoadParms& parms )
 	{
 	}
+
+	//! Handles completion of save game enumeration.
 	virtual void OnEnumerationCompleted( idSaveLoadParms& parms )
 	{
 	}
+
+	//! Handles completion of a save game deletion operation
 	virtual void OnDeleteCompleted( idSaveLoadParms& parms )
 	{
 	}
+
+	//! Triggers a screen wipe effect using the specified material and hold setting.
 	virtual void TriggerScreenWipe( const char* _wipeMaterial, bool hold )
 	{
 	}
 
+	//! Handles the event when hosting starts with the specified match parameters
 	virtual void OnStartHosting( idMatchParameters& parms )
 	{
 	}
@@ -1176,6 +1175,7 @@ public:
 		return useless;
 	};
 
+	//! Resets the input state for the specified player
 	virtual void ResetPlayerInput( int playerIndex )
 	{
 	}
@@ -1186,26 +1186,39 @@ public:
 	};
 
 	virtual void QueueShowShell() {}; // Will activate the shell on the next frame.
+
+	//! Initializes a tool with the specified parameters.
 	virtual void InitTool( const toolFlag_t, const idDict*, idEntity* )
 	{
 	}
 
+	//! Records a filename that is being binarized by the pacifier along with a reason for the operation.
 	virtual void LoadPacifierBinarizeFilename( const char* filename, const char* reason )
 	{
 	}
+
+	//! Loads pacifier binarize information from the provided string
 	virtual void LoadPacifierBinarizeInfo( const char* info )
 	{
 	}
+
+	//! Sets the miplevel for pacifier binarization.
 	virtual void LoadPacifierBinarizeMiplevel( int level, int maxLevel )
 	{
 	}
+
+	//! Updates the progress indicator for the pacifier binarization process
 	virtual void LoadPacifierBinarizeProgress( float progress )
 	{
 	}
 	virtual void LoadPacifierBinarizeEnd() {};
+
+	//! Sets the total progress count for the pacifier binarization process
 	virtual void LoadPacifierBinarizeProgressTotal( int total )
 	{
 	}
+
+	//! Increments the pacifier binarization progress by the specified step value
 	virtual void LoadPacifierBinarizeProgressIncrement( int step )
 	{
 	}
@@ -1290,6 +1303,7 @@ int			  com_editors = 0;
 ==============================================================
 */
 
+//! Initializes the Roguestrad engine without GUI and processes command line arguments for map compilation.
 int			  Rogmap_NoGui( int argc, char** argv )
 {
 	commonLocal.com_refreshOnPrint = false;
@@ -1398,6 +1412,7 @@ void idCommonLocal::UpdateScreen( bool captureToImage, bool releaseMouse )
 	ImTui_ImplNcurses_DrawScreen();
 }
 
+//! Main entry point for the Roguestrad application that initializes the game environment and handles command line arguments.
 int main( int argc, char** argv )
 {
 	for( int i = 0; i < argc; i++ ) {

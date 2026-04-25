@@ -313,6 +313,7 @@ void AfConstraintEditor::InitJointLists()
 	}
 }
 
+//! Populates a body name at the specified index from an AF declaration for use in a ImGui list widget
 static bool BodyItemGetter( void* data, int index, const char** out )
 {
 	idDeclAF* decl = reinterpret_cast<idDeclAF*>( data );
@@ -324,6 +325,7 @@ static bool BodyItemGetter( void* data, int index, const char** out )
 	return true;
 }
 
+//! Returns the constraint limit type name at the specified index.
 bool ConstraintLimitTypeGetter( void* data, int index, const char** out )
 {
 	index += 1;

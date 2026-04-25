@@ -32,17 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "dmap.h"
 
-/*
-
-  All triangle list functions should behave reasonably with NULL lists.
-
-*/
-
-/*
-===============
-AllocTri
-===============
-*/
 mapTri_t* AllocTri()
 {
 	mapTri_t* tri;
@@ -52,23 +41,11 @@ mapTri_t* AllocTri()
 	return tri;
 }
 
-/*
-===============
-FreeTri
-===============
-*/
 void FreeTri( mapTri_t* tri )
 {
 	Mem_Free( tri );
 }
 
-/*
-===============
-MergeTriLists
-
-This does not copy any tris, it just relinks them
-===============
-*/
 mapTri_t* MergeTriLists( mapTri_t* a, mapTri_t* b )
 {
 	mapTri_t** prev;
@@ -83,11 +60,6 @@ mapTri_t* MergeTriLists( mapTri_t* a, mapTri_t* b )
 	return a;
 }
 
-/*
-===============
-FreeTriList
-===============
-*/
 void FreeTriList( mapTri_t* a )
 {
 	mapTri_t* next;
@@ -98,11 +70,6 @@ void FreeTriList( mapTri_t* a )
 	}
 }
 
-/*
-===============
-CopyTriList
-===============
-*/
 mapTri_t* CopyTriList( const mapTri_t* a )
 {
 	mapTri_t*		testList;
@@ -120,11 +87,7 @@ mapTri_t* CopyTriList( const mapTri_t* a )
 	return testList;
 }
 
-/*
-=============
-CountTriList
-=============
-*/
+//! Counts the number of triangles in a linked list starting from the given triangle.
 int CountTriList( const mapTri_t* tri )
 {
 	int c;
@@ -138,11 +101,6 @@ int CountTriList( const mapTri_t* tri )
 	return c;
 }
 
-/*
-===============
-CopyMapTri
-===============
-*/
 mapTri_t* CopyMapTri( const mapTri_t* tri )
 {
 	mapTri_t* t;
@@ -163,13 +121,7 @@ float MapTriArea( const mapTri_t* tri )
 	return idWinding::TriangleArea( tri->v[0].xyz, tri->v[1].xyz, tri->v[2].xyz );
 }
 
-/*
-===============
-RemoveBadTris
-
-Return a new list with any zero or negative area triangles removed
-===============
-*/
+//! Returns a new list with zero or negative area triangles removed from the input list.
 mapTri_t* RemoveBadTris( const mapTri_t* list )
 {
 	mapTri_t*		newList;
@@ -189,11 +141,6 @@ mapTri_t* RemoveBadTris( const mapTri_t* list )
 	return newList;
 }
 
-/*
-================
-BoundTriList
-================
-*/
 void BoundTriList( const mapTri_t* list, idBounds& b )
 {
 	b.Clear();
@@ -204,13 +151,6 @@ void BoundTriList( const mapTri_t* list, idBounds& b )
 	}
 }
 
-/*
-================
-FlipTriList
-
-Swaps the vertex order
-================
-*/
 void FlipTriList( mapTri_t* tris )
 {
 	mapTri_t* tri;
@@ -234,11 +174,6 @@ void FlipTriList( mapTri_t* tris )
 	}
 }
 
-/*
-================
-WindingForTri
-================
-*/
 idWinding* WindingForTri( const mapTri_t* tri )
 {
 	idWinding* w;
@@ -251,13 +186,6 @@ idWinding* WindingForTri( const mapTri_t* tri )
 	return w;
 }
 
-/*
-================
-TriVertsFromOriginal
-
-Regenerate the texcoords and colors on a fragmented tri from the plane equations
-================
-*/
 void TriVertsFromOriginal( mapTri_t* tri, const mapTri_t* original )
 {
 	int	  i, j;
@@ -295,16 +223,6 @@ void TriVertsFromOriginal( mapTri_t* tri, const mapTri_t* original )
 	}
 }
 
-/*
-================
-WindingToTriList
-
-Generates a new list of triangles with proper texcoords from a winding
-created by clipping the originalTri
-
-OriginalTri can be NULL if you don't care about texCoords
-================
-*/
 mapTri_t* WindingToTriList( const idWinding* w, const mapTri_t* originalTri )
 {
 	mapTri_t*	  tri;

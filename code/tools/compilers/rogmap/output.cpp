@@ -50,17 +50,8 @@ should we try and snap values very close to 0.5, 0.25, 0.125, etc ?
 static int c_totalObjVerts = 0;
 
 #define AREANUM_DIFFERENT -2
-/*
-=============
-PruneNodes_r
 
-Any nodes that have all children with the same
-area can be combined into a single leaf node
-
-Returns the area number of all children, or
-AREANUM_DIFFERENT if not the same.
-=============
-*/
+//! Returns the area number of all children or AREANUM_DIFFERENT if they differ.
 int PruneNodes_r( node_t* node )
 {
 	int a1, a2;
@@ -89,6 +80,7 @@ int PruneNodes_r( node_t* node )
 	return a1;
 }
 
+//! Writes a float value to the specified file, using an integer format if the value is close to an integer.
 static void WriteFloat( idFile* f, float v )
 {
 	if( idMath::Fabs( v - idMath::Rint( v ) ) < 0.001 ) {
@@ -98,6 +90,7 @@ static void WriteFloat( idFile* f, float v )
 	}
 }
 
+//! Writes a 1D matrix of floating-point values to a file with parentheses formatting.
 void Write1DMatrix( idFile* f, int x, float* m )
 {
 	int i;
@@ -111,6 +104,7 @@ void Write1DMatrix( idFile* f, int x, float* m )
 	f->WriteFloatString( ") " );
 }
 
+//! Counts the number of unique shaders in a list of optimization groups
 static int CountUniqueShaders( optimizeGroup_t* groups )
 {
 	optimizeGroup_t *a, *b;
@@ -152,6 +146,7 @@ MatchVert
 #define ST_EPSILON	   0.001
 #define COSINE_EPSILON 0.999
 
+//! Compares two draw vertices for equality considering position, texture coordinates, and normal vectors within epsilon tolerance
 static bool MatchVert( const idDrawVert* a, const idDrawVert* b )
 {
 	if( idMath::Fabs( a->xyz[0] - b->xyz[0] ) > XYZ_EPSILON ) {
@@ -186,13 +181,6 @@ static bool MatchVert( const idDrawVert* a, const idDrawVert* b )
 	return true;
 }
 
-/*
-====================
-ShareMapTriVerts
-
-Converts independent triangles to shared vertex triangles
-====================
-*/
 srfTriangles_t* ShareMapTriVerts( const mapTri_t* tris )
 {
 	const mapTri_t* step;
@@ -244,11 +232,7 @@ srfTriangles_t* ShareMapTriVerts( const mapTri_t* tris )
 	return uTri;
 }
 
-/*
-==================
-CleanupUTriangles
-==================
-*/
+//! Performs cleanup operations on triangle data
 static void CleanupUTriangles( srfTriangles_t* tri )
 {
 	// perform cleanup operations
@@ -262,13 +246,7 @@ static void CleanupUTriangles( srfTriangles_t* tri )
 	R_FreeStaticTriSurfSilIndexes( tri );
 }
 
-/*
-====================
-WriteUTriangles
-
-Writes text verts and indexes to procfile
-====================
-*/
+//! Writes vertex and index data to a file for procedural generation
 static void WriteUTriangles( idFile* procFile, const srfTriangles_t* uTris, const idVec3& offsetOrigin = vec3_origin )
 {
 	int col;
@@ -324,7 +302,19 @@ static void WriteUTriangles( idFile* procFile, const srfTriangles_t* uTris, cons
 	}
 }
 
-// RB begin
+/*!
+	\brief Writes OBJ format triangle data including vertices, texture coordinates, normals, and face indices to a file
+
+	This function exports triangle mesh data from a surface triangle structure into OBJ format. It processes vertex positions, texture coordinates, and normals, applying a transformation to convert
+   vertices from entity space to world space. The function writes material information, vertex data, and face indices to the provided file. The vertex indices are adjusted to use 1-based indexing as
+   required by OBJ format, and the face winding order is flipped to match OBJ conventions. A running total of vertices is maintained to ensure proper index tracking across multiple calls.
+
+	\param objFile Output file handle for writing OBJ data
+	\param area Area identifier used for debug color selection
+	\param uTris Pointer to the triangle surface data structure containing vertices and indices
+	\param entityToWorldTransform Transformation matrix to convert entity space coordinates to world space
+	\param materialName Name of the material to be used for the OBJ geometry
+*/
 static void WriteObjTriangles( idFile* objFile, int area, const srfTriangles_t* uTris, const idMat4& entityToWorldTransform, const char* materialName )
 {
 	idVec4 c = PickDebugColor( area );
@@ -366,16 +356,8 @@ static void WriteObjTriangles( idFile* objFile, int area, const srfTriangles_t* 
 
 	objFile->Printf( "\n\n" );
 }
-// RB end
 
-/*
-=======================
-GroupsAreSurfaceCompatible
-
-Planes, texcoords, and groupLights can differ,
-but the material and mergegroup must match
-=======================
-*/
+//! Determines if two optimize groups can be combined into a single surface based on material and merge group compatibility.
 static bool GroupsAreSurfaceCompatible( const optimizeGroup_t* a, const optimizeGroup_t* b )
 {
 	if( a->material != b->material ) {
@@ -387,10 +369,18 @@ static bool GroupsAreSurfaceCompatible( const optimizeGroup_t* a, const optimize
 	return true;
 }
 
-/*
-====================
-WriteOutputSurfaces
-====================
+/*!
+	\brief Writes surface data for a specified entity and area to the provided output files.
+
+	This function processes the groups of surfaces within a specified area of an entity and writes the surface data to both a procedural file and an optional OBJ file. For the first entity (entityNum
+   == 0), it writes the data using a generic area name, otherwise it uses the entity's name. It handles the combination of compatible groups into surfaces and manages lighting interactions. The
+   function ensures that surfaces are only written once and performs necessary transformations when writing to the OBJ file.
+
+	\param entityNum The index of the entity in the dmapGlobals.uEntities array
+	\param areaNum The index of the area within the specified entity
+	\param procFile The file handle for writing procedural surface data
+	\param objFile The file handle for writing OBJ format surface data, can be NULL
+	\throws Throws an error if the entity has surfaces but no name key, or if surfaceNum exceeds the expected number of surfaces
 */
 static void WriteOutputSurfaces( int entityNum, int areaNum, idFile* procFile, idFile* objFile )
 {
@@ -557,12 +547,7 @@ static void WriteOutputSurfaces( int entityNum, int areaNum, idFile* procFile, i
 	procFile->WriteFloatString( "}\n\n" );
 }
 
-/*
-===============
-WriteNode_r
-
-===============
-*/
+//! Writes a node and its children to the output file in a specific format
 static void WriteNode_r( node_t* node, idFile* procFile )
 {
 	int		 child[2];
@@ -611,9 +596,21 @@ int NumberNodes_r( node_t* node, int nextNumber )
 	return nextNumber;
 }
 
-// RB begin
-// https://stackoverflow.com/questions/801740/c-how-to-draw-a-binary-tree-to-the-console
-//
+/*!
+	\brief Writes ASCII art representation of a binary tree node structure to a character array and file
+
+	This function recursively traverses a binary tree structure and generates an ASCII art visualization of the tree. It writes node information to a 2D character array and also outputs the result to
+   a file. The function handles both leaf nodes and internal nodes differently, with leaf nodes showing their area number and internal nodes showing their node number. The tree structure is visualized
+   with connecting lines between parent and child nodes.
+
+	\param node Pointer to the current tree node being processed
+	\param is_left Boolean flag indicating if current node is a left child
+	\param offset Horizontal offset position in the character array
+	\param depth Vertical depth level in the tree visualization
+	\param s 2D character array where the ASCII art is stored
+	\param procFile File pointer to write the final ASCII art output
+	\return The total width of the current node and its children for proper spacing in the tree visualization
+*/
 static int WriteASCIIArtNode_r( node_t* node, bool is_left, int offset, int depth, char s[20][2048], idFile* procFile )
 {
 	char b[20];
@@ -688,6 +685,7 @@ static int WriteASCIIArtNode_r( node_t* node, bool is_left, int offset, int dept
 	return left + width + right;
 }
 
+//! Writes a visual representation of a BSP tree to the specified file.
 static void WriteVisualBSPTree( node_t* node, idFile* procFile )
 {
 	// TODO calculuate depth instead of assuming 20
@@ -710,13 +708,8 @@ static void WriteVisualBSPTree( node_t* node, idFile* procFile )
 
 	procFile->WriteFloatString( "*/\n\n" );
 }
-// RB end
 
-/*
-====================
-WriteOutputNodes
-====================
-*/
+//! Writes BSP tree nodes to a file for output processing.
 static void WriteOutputNodes( node_t* node, idFile* procFile )
 {
 	int numNodes;
@@ -742,11 +735,7 @@ static void WriteOutputNodes( node_t* node, idFile* procFile )
 	procFile->WriteFloatString( "}\n\n" );
 }
 
-/*
-====================
-WriteOutputPortals
-====================
-*/
+//! Writes inter-area portal data to a file for entity processing.
 static void WriteOutputPortals( uEntity_t* e, idFile* procFile )
 {
 	int				   i, j;
@@ -776,7 +765,7 @@ static void WriteOutputPortals( uEntity_t* e, idFile* procFile )
 	procFile->WriteFloatString( "}\n\n" );
 }
 
-// RB begin
+//! Writes OBJ format output portal data for inter-area portals to the specified file
 static void WriteObjOutputPortals( uEntity_t* e, idFile* objFile )
 {
 	int				   i, j;
@@ -815,13 +804,8 @@ static void WriteObjOutputPortals( uEntity_t* e, idFile* objFile )
 		objFile->Printf( "\n\n" );
 	}
 }
-// RB end
 
-/*
-====================
-WriteOutputEntity
-====================
-*/
+//! Writes output entity data to the specified files.
 static void WriteOutputEntity( int entityNum, idFile* procFile, idFile* objFile )
 {
 	int		   i;
@@ -851,11 +835,6 @@ static void WriteOutputEntity( int entityNum, idFile* procFile, idFile* objFile 
 	}
 }
 
-/*
-====================
-WriteOutputFile
-====================
-*/
 void WriteOutputFile()
 {
 	int		   i;

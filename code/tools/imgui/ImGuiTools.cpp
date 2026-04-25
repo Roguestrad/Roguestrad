@@ -44,22 +44,26 @@ static bool	  releaseMouse = false;
 namespace ImGuiTools
 {
 
+//! Sets whether the mouse should be released by the tool.
 void SetReleaseToolMouse( bool doRelease )
 {
 	releaseMouse = doRelease;
 }
 
+//! Checks if any editors are currently active.
 bool AreEditorsActive()
 {
 	return g_editEntityMode.GetInteger() > 0 || com_editors != 0;
 }
 
+//! Determines whether the mouse should be released for tool usage
 bool ReleaseMouseForTools()
 {
 	// RB: ignore everything as long right mouse button is pressed
 	return AreEditorsActive() && releaseMouse && !ImGuiHook::RightMouseActive();
 }
 
+//! Draws the tool windows for the ImGui tools if the editors are active.
 void DrawToolWindows()
 {
 	if( !AreEditorsActive() ) {
@@ -73,6 +77,7 @@ void DrawToolWindows()
 	}
 }
 
+//! Initializes the light editor with the provided dictionary and entity.
 void LightEditorInit( const idDict* dict, idEntity* ent )
 {
 	if( dict == NULL || ent == NULL ) {
@@ -89,6 +94,7 @@ void LightEditorInit( const idDict* dict, idEntity* ent )
 	LightEditor::ReInit( dict, ent );
 }
 
+//! Initializes the AfEditor and enables mouse control for the release tool.
 void AfEditorInit()
 {
 	AfEditor::Instance().ShowIt( true );

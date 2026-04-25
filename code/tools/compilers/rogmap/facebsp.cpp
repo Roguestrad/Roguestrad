@@ -37,6 +37,7 @@ int		   c_faceLeafs;
 
 extern int c_nodes;
 
+//! Removes a portal from a node's portal list.
 void	   RemovePortalFromNode( uPortal_t* portal, node_t* l );
 
 node_t*	   NodeForPoint( node_t* node, const idVec3& origin )
@@ -55,11 +56,6 @@ node_t*	   NodeForPoint( node_t* node, const idVec3& origin )
 	return node;
 }
 
-/*
-=============
-FreeTreePortals_r
-=============
-*/
 void FreeTreePortals_r( node_t* node )
 {
 	uPortal_t *p, *nextp;
@@ -82,11 +78,6 @@ void FreeTreePortals_r( node_t* node )
 	node->portals = NULL;
 }
 
-/*
-=============
-FreeTree_r
-=============
-*/
 void FreeTree_r( node_t* node )
 {
 	// free children
@@ -117,8 +108,6 @@ void FreeTree( tree_t* tree )
 	FreeTree_r( tree->headnode );
 	Mem_Free( tree );
 }
-
-//===============================================================
 
 void PrintTree_r( node_t* node, int depth )
 {
@@ -163,11 +152,7 @@ void PrintTree_r( node_t* node, int depth )
 	PrintTree_r( node->children[1], depth + 1 );
 }
 
-/*
-================
-AllocBspFace
-================
-*/
+//! Allocates and initializes a new BSP face structure.
 bspFace_t* AllocBspFace()
 {
 	bspFace_t* f;
@@ -178,11 +163,7 @@ bspFace_t* AllocBspFace()
 	return f;
 }
 
-/*
-================
-FreeBspFace
-================
-*/
+//! Frees the memory allocated for a BSP face, including its associated winding.
 void FreeBspFace( bspFace_t* f )
 {
 	if( f->w ) {
@@ -191,13 +172,7 @@ void FreeBspFace( bspFace_t* f )
 	Mem_Free( f );
 }
 
-/*
-================
-SelectSplitPlaneNum  (revised)
-- Two-stage approach: strict (portal + axial + wall) -> relaxed (portal + axial) -> fallback (original-like)
-- Prioritizes axial/wall/portal planes, penalizes excessive split winding crosses and highly unbalanced partitions.
-================
-*/
+//! Selects the best split plane number for a node based on heuristics evaluating face list properties.
 int SelectSplitPlaneNum( node_t* node, bspFace_t* list )
 {
 	// ---- Tunable heuristics (adjust as needed, or move into dmapGlobals) ----
@@ -532,11 +507,7 @@ int SelectSplitPlaneNum( node_t* node, bspFace_t* list )
 	return bestSplit->planenum;
 }
 
-/*
-================
-BuildFaceTree_r
-================
-*/
+//! Recursively builds a face tree by partitioning BSP faces based on a selected split plane
 void BuildFaceTree_r( node_t* node, bspFace_t* list )
 {
 	bspFace_t* split;
@@ -628,13 +599,6 @@ void BuildFaceTree_r( node_t* node, bspFace_t* list )
 	}
 }
 
-/*
-================
-FaceBSP
-
-List will be freed before returning
-================
-*/
 tree_t* FaceBSP( bspFace_t* list )
 {
 	tree_t*	   tree;
@@ -705,13 +669,6 @@ tree_t* FaceBSP( bspFace_t* list )
 	return tree;
 }
 
-//==========================================================================
-
-/*
-=================
-MakeStructuralBspFaceList
-=================
-*/
 bspFace_t* MakeStructuralBspFaceList( primitive_t* list )
 {
 	uBrush_t*	 b;

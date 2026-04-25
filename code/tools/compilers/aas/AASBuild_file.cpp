@@ -47,33 +47,18 @@ idHashIndex* aas_edgeHash;
 idBounds	 aas_vertexBounds;
 int			 aas_vertexShift;
 
-/*
-================
-idAASBuild::SetupHash
-================
-*/
 void		 idAASBuild::SetupHash()
 {
 	aas_vertexHash = new idHashIndex( VERTEX_HASH_SIZE, 1024 );
 	aas_edgeHash   = new idHashIndex( EDGE_HASH_SIZE, 1024 );
 }
 
-/*
-================
-idAASBuild::ShutdownHash
-================
-*/
 void idAASBuild::ShutdownHash()
 {
 	delete aas_vertexHash;
 	delete aas_edgeHash;
 }
 
-/*
-================
-idAASBuild::ClearHash
-================
-*/
 void idAASBuild::ClearHash( const idBounds& bounds )
 {
 	int	  i;
@@ -98,11 +83,6 @@ void idAASBuild::ClearHash( const idBounds& bounds )
 	}
 }
 
-/*
-================
-idAASBuild::HashVec
-================
-*/
 ID_INLINE int idAASBuild::HashVec( const idVec3& vec )
 {
 	int x, y;
@@ -112,11 +92,6 @@ ID_INLINE int idAASBuild::HashVec( const idVec3& vec )
 	return ( x + y * VERTEX_HASH_BOXSIZE ) & ( VERTEX_HASH_SIZE - 1 );
 }
 
-/*
-================
-idAASBuild::GetVertex
-================
-*/
 bool idAASBuild::GetVertex( const idVec3& v, int* vertexNum )
 {
 	int			i, hashKey, vn;
@@ -148,11 +123,6 @@ bool idAASBuild::GetVertex( const idVec3& v, int* vertexNum )
 	return false;
 }
 
-/*
-================
-idAASBuild::GetEdge
-================
-*/
 bool idAASBuild::GetEdge( const idVec3& v1, const idVec3& v2, int* edgeNum, int v1num )
 {
 	int		  v2num, hashKey, e;
@@ -206,11 +176,6 @@ bool idAASBuild::GetEdge( const idVec3& v1, const idVec3& v2, int* edgeNum, int 
 	return false;
 }
 
-/*
-================
-idAASBuild::GetFaceForPortal
-================
-*/
 bool idAASBuild::GetFaceForPortal( idBrushBSPPortal* portal, int side, int* faceNum )
 {
 	int		   i, j, v1num;
@@ -277,11 +242,6 @@ bool idAASBuild::GetFaceForPortal( idBrushBSPPortal* portal, int side, int* face
 	return true;
 }
 
-/*
-================
-idAASBuild::GetAreaForLeafNode
-================
-*/
 bool idAASBuild::GetAreaForLeafNode( idBrushBSPNode* node, int* areaNum )
 {
 	int				  s, faceNum;
@@ -338,11 +298,6 @@ bool idAASBuild::GetAreaForLeafNode( idBrushBSPNode* node, int* areaNum )
 	return true;
 }
 
-/*
-================
-idAASBuild::StoreTree_r
-================
-*/
 int idAASBuild::StoreTree_r( idBrushBSPNode* node )
 {
 	int		  areaNum, nodeNum, child0, child1;
@@ -425,11 +380,6 @@ void idAASBuild::GetSizeEstimate_r( idBrushBSPNode* parent, idBrushBSPNode* node
 	GetSizeEstimate_r( node, node->GetChild( 1 ), size );
 }
 
-/*
-================
-idAASBuild::SetSizeEstimate
-================
-*/
 void idAASBuild::SetSizeEstimate( const idBrushBSP& bsp, idAASFileLocal* file )
 {
 	sizeEstimate_t size;
@@ -451,11 +401,6 @@ void idAASBuild::SetSizeEstimate( const idBrushBSP& bsp, idAASFileLocal* file )
 	file->nodes.Resize( size.numNodes, 1024 );
 }
 
-/*
-================
-idAASBuild::StoreFile
-================
-*/
 bool idAASBuild::StoreFile( const idBrushBSP& bsp )
 {
 	aasEdge_t edge;

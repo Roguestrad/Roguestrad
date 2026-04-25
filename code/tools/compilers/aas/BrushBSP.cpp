@@ -48,12 +48,6 @@ If you have questions concerning this license or the applicable additional terms
 //	idBrushBSPPortal
 //
 //===============================================================
-
-/*
-============
-idBrushBSPPortal::idBrushBSPPortal
-============
-*/
 idBrushBSPPortal::idBrushBSPPortal()
 {
 	planeNum = -1;
@@ -64,11 +58,6 @@ idBrushBSPPortal::idBrushBSPPortal()
 	flags			  = 0;
 }
 
-/*
-============
-idBrushBSPPortal::~idBrushBSPPortal
-============
-*/
 idBrushBSPPortal::~idBrushBSPPortal()
 {
 	if( winding ) {
@@ -76,11 +65,6 @@ idBrushBSPPortal::~idBrushBSPPortal()
 	}
 }
 
-/*
-============
-idBrushBSPPortal::AddToNodes
-============
-*/
 void idBrushBSPPortal::AddToNodes( idBrushBSPNode* front, idBrushBSPNode* back )
 {
 	if( nodes[0] || nodes[1] ) {
@@ -98,11 +82,6 @@ void idBrushBSPPortal::AddToNodes( idBrushBSPNode* front, idBrushBSPNode* back )
 	back->portals = this;
 }
 
-/*
-============
-idBrushBSPPortal::RemoveFromNode
-============
-*/
 void idBrushBSPPortal::RemoveFromNode( idBrushBSPNode* l )
 {
 	idBrushBSPPortal **pp, *t;
@@ -139,11 +118,6 @@ void idBrushBSPPortal::RemoveFromNode( idBrushBSPNode* l )
 	}
 }
 
-/*
-============
-idBrushBSPPortal::Flip
-============
-*/
 void idBrushBSPPortal::Flip()
 {
 	idBrushBSPNode *frontNode, *backNode;
@@ -164,11 +138,6 @@ void idBrushBSPPortal::Flip()
 	winding->ReverseSelf();
 }
 
-/*
-============
-idBrushBSPPortal::Split
-============
-*/
 int idBrushBSPPortal::Split( const idPlane& splitPlane, idBrushBSPPortal** front, idBrushBSPPortal** back )
 {
 	idWinding *frontWinding, *backWinding;
@@ -204,12 +173,6 @@ int idBrushBSPPortal::Split( const idPlane& splitPlane, idBrushBSPPortal** front
 //	idBrushBSPNode
 //
 //===============================================================
-
-/*
-============
-idBrushBSPNode::idBrushBSPNode
-============
-*/
 idBrushBSPNode::idBrushBSPNode()
 {
 	brushList.Clear();
@@ -222,11 +185,6 @@ idBrushBSPNode::idBrushBSPNode()
 	occupied				  = 0;
 }
 
-/*
-============
-idBrushBSPNode::~idBrushBSPNode
-============
-*/
 idBrushBSPNode::~idBrushBSPNode()
 {
 	idBrushBSPPortal* p;
@@ -248,11 +206,6 @@ idBrushBSPNode::~idBrushBSPNode()
 	}
 }
 
-/*
-============
-idBrushBSPNode::SetContentsFromBrushes
-============
-*/
 void idBrushBSPNode::SetContentsFromBrushes()
 {
 	idBrush* brush;
@@ -263,11 +216,6 @@ void idBrushBSPNode::SetContentsFromBrushes()
 	}
 }
 
-/*
-============
-idBrushBSPNode::GetPortalBounds
-============
-*/
 idBounds idBrushBSPNode::GetPortalBounds()
 {
 	int				  s, i;
@@ -285,11 +233,6 @@ idBounds idBrushBSPNode::GetPortalBounds()
 	return bounds;
 }
 
-/*
-============
-idBrushBSPNode::TestLeafNode
-============
-*/
 bool idBrushBSPNode::TestLeafNode()
 {
 	int				  s, n;
@@ -323,11 +266,6 @@ bool idBrushBSPNode::TestLeafNode()
 	return true;
 }
 
-/*
-============
-idBrushBSPNode::Split
-============
-*/
 bool idBrushBSPNode::Split( const idPlane& splitPlane, int splitPlaneNum )
 {
 	int				  s, i;
@@ -391,11 +329,6 @@ bool idBrushBSPNode::Split( const idPlane& splitPlane, int splitPlaneNum )
 	return true;
 }
 
-/*
-============
-idBrushBSPNode::PlaneSide
-============
-*/
 int idBrushBSPNode::PlaneSide( const idPlane& plane, float epsilon ) const
 {
 	int				  s, side;
@@ -430,11 +363,6 @@ int idBrushBSPNode::PlaneSide( const idPlane& plane, float epsilon ) const
 	return SIDE_BACK;
 }
 
-/*
-============
-idBrushBSPNode::RemoveFlagFlood
-============
-*/
 void idBrushBSPNode::RemoveFlagFlood( int flag )
 {
 	int				  s;
@@ -453,11 +381,6 @@ void idBrushBSPNode::RemoveFlagFlood( int flag )
 	}
 }
 
-/*
-============
-idBrushBSPNode::RemoveFlagRecurse
-============
-*/
 void idBrushBSPNode::RemoveFlagRecurse( int flag )
 {
 	RemoveFlag( flag );
@@ -469,11 +392,6 @@ void idBrushBSPNode::RemoveFlagRecurse( int flag )
 	}
 }
 
-/*
-============
-idBrushBSPNode::RemoveFlagRecurseFlood
-============
-*/
 void idBrushBSPNode::RemoveFlagRecurseFlood( int flag )
 {
 	RemoveFlag( flag );
@@ -489,17 +407,6 @@ void idBrushBSPNode::RemoveFlagRecurseFlood( int flag )
 	}
 }
 
-//===============================================================
-//
-//	idBrushBSP
-//
-//===============================================================
-
-/*
-============
-idBrushBSP::idBrushBSP
-============
-*/
 idBrushBSP::idBrushBSP()
 {
 	root = outside = NULL;
@@ -508,11 +415,6 @@ idBrushBSP::idBrushBSP()
 	brushMap					= NULL;
 }
 
-/*
-============
-idBrushBSP::~idBrushBSP
-============
-*/
 idBrushBSP::~idBrushBSP()
 {
 	RemoveMultipleLeafNodeReferences_r( root );
@@ -523,11 +425,6 @@ idBrushBSP::~idBrushBSP()
 	}
 }
 
-/*
-============
-idBrushBSP::RemoveMultipleLeafNodeReferences_r
-============
-*/
 void idBrushBSP::RemoveMultipleLeafNodeReferences_r( idBrushBSPNode* node )
 {
 	if( !node ) {
@@ -550,11 +447,6 @@ void idBrushBSP::RemoveMultipleLeafNodeReferences_r( idBrushBSPNode* node )
 	}
 }
 
-/*
-============
-idBrushBSP::Free_r
-============
-*/
 void idBrushBSP::Free_r( idBrushBSPNode* node )
 {
 	if( !node ) {
@@ -567,11 +459,6 @@ void idBrushBSP::Free_r( idBrushBSPNode* node )
 	delete node;
 }
 
-/*
-============
-idBrushBSP::IsValidSplitter
-============
-*/
 ID_INLINE bool idBrushBSP::IsValidSplitter( const idBrushSide* side )
 {
 	return !( side->GetFlags() & ( SFL_SPLIT | SFL_USED_SPLITTER ) );
@@ -671,11 +558,6 @@ int idBrushBSP::BrushSplitterStats( const idBrush* brush, int planeNum, const id
 	return BRUSH_PLANESIDE_BOTH;
 }
 
-/*
-============
-idBrushBSP::FindSplitter
-============
-*/
 int idBrushBSP::FindSplitter( idBrushBSPNode* node, const idPlaneSet& planeList, bool* testedPlanes, struct splitterStats_s& bestStats )
 {
 	int				i, planeNum, bestSplitter, value, bestValue, f, numBrushSides;
@@ -751,11 +633,6 @@ int idBrushBSP::FindSplitter( idBrushBSPNode* node, const idPlaneSet& planeList,
 	return bestSplitter;
 }
 
-/*
-============
-idBrushBSP::SetSplitterUsed
-============
-*/
 void idBrushBSP::SetSplitterUsed( idBrushBSPNode* node, int planeNum )
 {
 	int		 i, numValidBrushSplitters;
@@ -779,11 +656,6 @@ void idBrushBSP::SetSplitterUsed( idBrushBSPNode* node, int planeNum )
 	}
 }
 
-/*
-============
-idBrushBSP::BuildBrushBSP_r
-============
-*/
 idBrushBSPNode* idBrushBSP::BuildBrushBSP_r( idBrushBSPNode* node, const idPlaneSet& planeList, bool* testedPlanes, int skipContents )
 {
 	int				planeNum;
@@ -848,11 +720,6 @@ idBrushBSPNode* idBrushBSP::BuildBrushBSP_r( idBrushBSPNode* node, const idPlane
 	return node;
 }
 
-/*
-============
-idBrushBSP::ProcessGridCell
-============
-*/
 idBrushBSPNode* idBrushBSP::ProcessGridCell( idBrushBSPNode* node, int skipContents )
 {
 	idPlaneSet planeList;
@@ -891,11 +758,6 @@ idBrushBSPNode* idBrushBSP::ProcessGridCell( idBrushBSPNode* node, int skipConte
 	return node;
 }
 
-/*
-============
-idBrushBSP::BuildGrid_r
-============
-*/
 void idBrushBSP::BuildGrid_r( idList<idBrushBSPNode*>& gridCells, idBrushBSPNode* node )
 {
 	int		 axis;
@@ -955,11 +817,6 @@ void idBrushBSP::BuildGrid_r( idList<idBrushBSPNode*>& gridCells, idBrushBSPNode
 	BuildGrid_r( gridCells, node->children[1] );
 }
 
-/*
-============
-idBrushBSP::Build
-============
-*/
 void idBrushBSP::Build( idBrushList brushList, int skipContents, bool ( *ChopAllowed )( idBrush* b1, idBrush* b2 ), bool ( *MergeAllowed )( idBrush* b1, idBrush* b2 ) )
 {
 	int						i;
@@ -1003,22 +860,12 @@ void idBrushBSP::Build( idBrushList brushList, int skipContents, bool ( *ChopAll
 	}
 }
 
-/*
-============
-idBrushBSP::WriteBrushMap
-============
-*/
 void idBrushBSP::WriteBrushMap( const idStr& fileName, const idStr& ext, int contents )
 {
 	brushMap		 = new idBrushMap( fileName, ext );
 	brushMapContents = contents;
 }
 
-/*
-============
-idBrushBSP::PruneTree_r
-============
-*/
 void idBrushBSP::PruneTree_r( idBrushBSPNode* node, int contents )
 {
 	int				  i, s;
@@ -1060,11 +907,6 @@ void idBrushBSP::PruneTree_r( idBrushBSPNode* node, int contents )
 	}
 }
 
-/*
-============
-idBrushBSP::PruneTree
-============
-*/
 void idBrushBSP::PruneTree( int contents )
 {
 	numPrunedSplits = 0;
@@ -1102,14 +944,6 @@ idWinding* idBrushBSP::BaseWindingForNode( idBrushBSPNode* node )
 	return w;
 }
 
-/*
-============
-idBrushBSP::MakeNodePortal
-
-  create the new portal by taking the full plane winding for the cutting
-  plane and clipping it by all of parents of this node
-============
-*/
 void idBrushBSP::MakeNodePortal( idBrushBSPNode* node )
 {
 	idBrushBSPPortal *newPortal, *p;
@@ -1239,11 +1073,6 @@ void idBrushBSP::SplitNodePortals( idBrushBSPNode* node )
 	node->portals = NULL;
 }
 
-/*
-============
-idBrushBSP::MakeTreePortals_r
-============
-*/
 void idBrushBSP::MakeTreePortals_r( idBrushBSPNode* node )
 {
 	int		 i;
@@ -1276,11 +1105,6 @@ void idBrushBSP::MakeTreePortals_r( idBrushBSPNode* node )
 	MakeTreePortals_r( node->children[1] );
 }
 
-/*
-============
-idBrushBSP::MakeOutsidePortals
-============
-*/
 void idBrushBSP::MakeOutsidePortals()
 {
 	int				  i, j, n;
@@ -1331,11 +1155,6 @@ void idBrushBSP::MakeOutsidePortals()
 	}
 }
 
-/*
-============
-idBrushBSP::Portalize
-============
-*/
 void idBrushBSP::Portalize()
 {
 	common->Printf( "[Portalize BSP]\n" );
@@ -1346,14 +1165,6 @@ void idBrushBSP::Portalize()
 	common->Printf( "\r%6d nodes portalized\n", numPortals );
 }
 
-/*
-=============
-LeakFile
-
-Finds the shortest possible chain of portals that
-leads from the outside leaf to a specific occupied leaf.
-=============
-*/
 void idBrushBSP::LeakFile( const idStr& fileName )
 {
 	int				  count, next, s;
@@ -1403,11 +1214,6 @@ void idBrushBSP::LeakFile( const idStr& fileName )
 	fileSystem->CloseFile( lineFile );
 }
 
-/*
-============
-idBrushBSP::FloodThroughPortals_r
-============
-*/
 void idBrushBSP::FloodThroughPortals_r( idBrushBSPNode* node, int contents, int depth )
 {
 	idBrushBSPPortal* p;
@@ -1445,11 +1251,6 @@ void idBrushBSP::FloodThroughPortals_r( idBrushBSPNode* node, int contents, int 
 	}
 }
 
-/*
-============
-idBrushBSP::FloodFromOrigin
-============
-*/
 bool idBrushBSP::FloodFromOrigin( const idVec3& origin, int contents )
 {
 	idBrushBSPNode* node;
@@ -1483,13 +1284,6 @@ bool idBrushBSP::FloodFromOrigin( const idVec3& origin, int contents )
 	return true;
 }
 
-/*
-============
-idBrushBSP::FloodFromEntities
-
-  Marks all nodes that can be reached by entites.
-============
-*/
 bool idBrushBSP::FloodFromEntities( const idMapFile* mapFile, int contents, const idStrList& classNames )
 {
 	int			 i, j;
@@ -1545,11 +1339,6 @@ bool idBrushBSP::FloodFromEntities( const idMapFile* mapFile, int contents, cons
 	return ( inside && !outside->occupied );
 }
 
-/*
-============
-idBrushBSP::RemoveOutside_r
-============
-*/
 void idBrushBSP::RemoveOutside_r( idBrushBSPNode* node, int contents )
 {
 	if( !node ) {
@@ -1574,11 +1363,6 @@ void idBrushBSP::RemoveOutside_r( idBrushBSPNode* node, int contents )
 	}
 }
 
-/*
-============
-idBrushBSP::RemoveOutside
-============
-*/
 bool idBrushBSP::RemoveOutside( const idMapFile* mapFile, int contents, const idStrList& classNames )
 {
 	common->Printf( "[Remove Outside]\n" );
@@ -1600,11 +1384,6 @@ bool idBrushBSP::RemoveOutside( const idMapFile* mapFile, int contents, const id
 	return true;
 }
 
-/*
-============
-idBrushBSP::SetPortalPlanes_r
-============
-*/
 void idBrushBSP::SetPortalPlanes_r( idBrushBSPNode* node, idPlaneSet& planeList )
 {
 	int				  s;
@@ -1624,23 +1403,11 @@ void idBrushBSP::SetPortalPlanes_r( idBrushBSPNode* node, idPlaneSet& planeList 
 	SetPortalPlanes_r( node->children[1], planeList );
 }
 
-/*
-============
-idBrushBSP::SetPortalPlanes
-
-  give all portals a plane number
-============
-*/
 void idBrushBSP::SetPortalPlanes()
 {
 	SetPortalPlanes_r( root, portalPlanes );
 }
 
-/*
-============
-idBrushBSP::MergeLeafNodePortals
-============
-*/
 void idBrushBSP::MergeLeafNodePortals( idBrushBSPNode* node, int skipContents )
 {
 	int				  s1, s2;
@@ -1773,11 +1540,6 @@ void idBrushBSP::MergeLeafNodePortals( idBrushBSPNode* node, int skipContents )
 	}
 }
 
-/*
-============
-idBrushBSP::MergePortals_r
-============
-*/
 void idBrushBSP::MergePortals_r( idBrushBSPNode* node, int skipContents )
 {
 	if( !node ) {
@@ -1797,11 +1559,6 @@ void idBrushBSP::MergePortals_r( idBrushBSPNode* node, int skipContents )
 	MergePortals_r( node->children[1], skipContents );
 }
 
-/*
-============
-idBrushBSP::MergePortals
-============
-*/
 void idBrushBSP::MergePortals( int skipContents )
 {
 	numMergedPortals = 0;
@@ -1811,11 +1568,6 @@ void idBrushBSP::MergePortals( int skipContents )
 	common->Printf( "%6d portals merged\n", numMergedPortals );
 }
 
-/*
-============
-idBrushBSP::PruneMergedTree_r
-============
-*/
 void idBrushBSP::PruneMergedTree_r( idBrushBSPNode* node )
 {
 	int				i;
@@ -1842,11 +1594,6 @@ void idBrushBSP::PruneMergedTree_r( idBrushBSPNode* node )
 	}
 }
 
-/*
-============
-idBrushBSP::UpdateTreeAfterMerge_r
-============
-*/
 void idBrushBSP::UpdateTreeAfterMerge_r( idBrushBSPNode* node, const idBounds& bounds, idBrushBSPNode* oldNode, idBrushBSPNode* newNode )
 {
 	if( !node ) {
@@ -1878,13 +1625,6 @@ void idBrushBSP::UpdateTreeAfterMerge_r( idBrushBSPNode* node, const idBounds& b
 	}
 }
 
-/*
-============
-idBrushBSP::TryMergeLeafNodes
-
-  NOTE: multiple brances of the BSP tree might point to the same leaf node after merging
-============
-*/
 bool idBrushBSP::TryMergeLeafNodes( idBrushBSPPortal* portal, int side )
 {
 	int				  i, j, k, s1, s2, s;
@@ -1975,13 +1715,6 @@ bool idBrushBSP::TryMergeLeafNodes( idBrushBSPPortal* portal, int side )
 	return true;
 }
 
-/*
-============
-idBrushBSP::MeltFloor_r
-
-  flood through portals touching the bounds to find all vertices that might be inside the bounds
-============
-*/
 void idBrushBSP::MeltFlood_r( idBrushBSPNode* node, int skipContents, idBounds& bounds, idVectorSet<idVec3, 3>& vertexList )
 {
 	int				  s1, i;
@@ -2029,11 +1762,6 @@ void idBrushBSP::MeltFlood_r( idBrushBSPNode* node, int skipContents, idBounds& 
 	}
 }
 
-/*
-============
-idBrushBSP::MeltLeafNodePortals
-============
-*/
 void idBrushBSP::MeltLeafNodePortals( idBrushBSPNode* node, int skipContents, idVectorSet<idVec3, 3>& vertexList )
 {
 	int				  s1, i;
@@ -2071,11 +1799,6 @@ void idBrushBSP::MeltLeafNodePortals( idBrushBSPNode* node, int skipContents, id
 	DisplayRealTimeString( "\r%6d", numInsertedPoints );
 }
 
-/*
-============
-idBrushBSP::MeltPortals_r
-============
-*/
 void idBrushBSP::MeltPortals_r( idBrushBSPNode* node, int skipContents, idVectorSet<idVec3, 3>& vertexList )
 {
 	if( !node ) {
@@ -2095,11 +1818,6 @@ void idBrushBSP::MeltPortals_r( idBrushBSPNode* node, int skipContents, idVector
 	MeltPortals_r( node->children[1], skipContents, vertexList );
 }
 
-/*
-============
-idBrushBSP::RemoveLeafNodeColinearPoints
-============
-*/
 void idBrushBSP::RemoveLeafNodeColinearPoints( idBrushBSPNode* node )
 {
 	int				  s1;
@@ -2112,11 +1830,6 @@ void idBrushBSP::RemoveLeafNodeColinearPoints( idBrushBSPNode* node )
 	}
 }
 
-/*
-============
-idBrushBSP::RemoveColinearPoints_r
-============
-*/
 void idBrushBSP::RemoveColinearPoints_r( idBrushBSPNode* node, int skipContents )
 {
 	if( !node ) {
@@ -2136,11 +1849,6 @@ void idBrushBSP::RemoveColinearPoints_r( idBrushBSPNode* node, int skipContents 
 	RemoveColinearPoints_r( node->children[1], skipContents );
 }
 
-/*
-============
-idBrushBSP::MeltPortals
-============
-*/
 void idBrushBSP::MeltPortals( int skipContents )
 {
 	idVectorSet<idVec3, 3> vertexList;

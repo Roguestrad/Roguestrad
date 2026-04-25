@@ -37,11 +37,7 @@ idCVar		  dmap_verbose( "dmap_verbose", "0", CVAR_BOOL | CVAR_SYSTEM | CVAR_NEW,
 
 dmapGlobals_t dmapGlobals;
 
-/*
-============
-ProcessModel
-============
-*/
+//! Processes a model entity by building a BSP tree and performing flood filling operations.
 bool		  ProcessModel( uEntity_t* e, bool floodFillWorld )
 {
 	bspFace_t* faces;
@@ -141,11 +137,7 @@ bool		  ProcessModel( uEntity_t* e, bool floodFillWorld )
 	return true;
 }
 
-/*
-============
-ProcessModels
-============
-*/
+//! Processes all entities in the map to compile their models.
 bool ProcessModels()
 {
 	bool oldVerbose = dmap_verbose.GetBool();
@@ -193,11 +185,7 @@ bool ProcessModels()
 	return true;
 }
 
-/*
-============
-RogmapHelp
-============
-*/
+//! Displays usage information and options for the rogmap command-line tool.
 void RogmapHelp()
 {
 	common->Printf( "Usage: rogmap [options] mapfile\n"
@@ -212,11 +200,7 @@ void RogmapHelp()
 					"" );
 }
 
-/*
-============
-ResetRogmapGlobals
-============
-*/
+//! Resets all global variables in the Rogmap system to their default values.
 void ResetRogmapGlobals()
 {
 	dmapGlobals.mapFileBase[0] = '\0';
@@ -248,11 +232,7 @@ void ResetRogmapGlobals()
 	dmapGlobals.totalInlinedModels		 = 0;
 }
 
-/*
-============
-Rogmap
-============
-*/
+//! Processes map files for BSP compilation and collision model generation with various configuration options.
 void Rogmap( const idCmdArgs& args )
 {
 	int	  i;

@@ -301,6 +301,7 @@ bool AfBodyEditor::InputAfVector( const char* label, idAFVector* vec )
 
 }
 
+//! Retrieves a model type name at the specified index
 static bool ModelTypeItemGetter( void* data, int index, const char** out )
 {
 	if( index < 0 || index >= ARRAY_COUNT( bodyTypeNames ) ) {

@@ -34,11 +34,6 @@ If you have questions concerning this license or the applicable additional terms
 #include "../../../engine/aas/AASFile_local.h"
 #include "AASCluster.h"
 
-/*
-================
-idAASCluster::UpdatePortal
-================
-*/
 bool idAASCluster::UpdatePortal( int areaNum, int clusterNum )
 {
 	int			 portalNum;
@@ -87,11 +82,6 @@ bool idAASCluster::UpdatePortal( int areaNum, int clusterNum )
 	return true;
 }
 
-/*
-================
-idAASCluster::FloodClusterAreas_r
-================
-*/
 bool idAASCluster::FloodClusterAreas_r( int areaNum, int clusterNum )
 {
 	aasArea_t*		area;
@@ -157,11 +147,6 @@ bool idAASCluster::FloodClusterAreas_r( int areaNum, int clusterNum )
 	return true;
 }
 
-/*
-================
-idAASCluster::RemoveAreaClusterNumbers
-================
-*/
 void idAASCluster::RemoveAreaClusterNumbers()
 {
 	int i;
@@ -171,11 +156,6 @@ void idAASCluster::RemoveAreaClusterNumbers()
 	}
 }
 
-/*
-================
-idAASCluster::NumberClusterAreas
-================
-*/
 void idAASCluster::NumberClusterAreas( int clusterNum )
 {
 	int			  i, portalNum;
@@ -247,11 +227,6 @@ void idAASCluster::NumberClusterAreas( int clusterNum )
 	}
 }
 
-/*
-================
-idAASCluster::FindClusters
-================
-*/
 bool idAASCluster::FindClusters()
 {
 	int			 i, clusterNum;
@@ -295,11 +270,6 @@ bool idAASCluster::FindClusters()
 	return true;
 }
 
-/*
-================
-idAASCluster::CreatePortals
-================
-*/
 void idAASCluster::CreatePortals()
 {
 	int			i;
@@ -316,11 +286,6 @@ void idAASCluster::CreatePortals()
 	}
 }
 
-/*
-================
-idAASCluster::TestPortals
-================
-*/
 bool idAASCluster::TestPortals()
 {
 	int				i;
@@ -407,11 +372,6 @@ bool idAASCluster::TestPortals()
 	return ok;
 }
 
-/*
-================
-idAASCluster::RemoveInvalidPortals
-================
-*/
 void idAASCluster::RemoveInvalidPortals()
 {
 	int		   i, j, k, face1Num, face2Num, otherAreaNum, numOpenAreas, numInvalidPortals;
@@ -458,11 +418,6 @@ void idAASCluster::RemoveInvalidPortals()
 	common->Printf( "\r%6d invalid portals removed\n", numInvalidPortals );
 }
 
-/*
-================
-idAASCluster::Build
-================
-*/
 bool idAASCluster::Build( idAASFileLocal* file )
 {
 	common->Printf( "[Clustering]\n" );
@@ -506,11 +461,6 @@ bool idAASCluster::Build( idAASFileLocal* file )
 	return true;
 }
 
-/*
-================
-idAASCluster::BuildSingleCluster
-================
-*/
 bool idAASCluster::BuildSingleCluster( idAASFileLocal* file )
 {
 	int			 i, numAreas;

@@ -38,13 +38,7 @@ If you have questions concerning this license or the applicable additional terms
 
 #define OUTPUT_UPDATE_TIME		   500 // update every 500 msec
 
-// #define OUTPUT_CHOP_STATS
-
-/*
-============
-DisplayRealTimeString
-============
-*/
+//! Displays a formatted time-stamped string message.
 void DisplayRealTimeString( const char* string, ... )
 {
 	va_list	   argPtr;
@@ -62,17 +56,6 @@ void DisplayRealTimeString( const char* string, ... )
 	}
 }
 
-//===============================================================
-//
-//	idBrushSide
-//
-//===============================================================
-
-/*
-============
-idBrushSide::idBrushSide
-============
-*/
 idBrushSide::idBrushSide()
 {
 	flags	 = 0;
@@ -80,11 +63,6 @@ idBrushSide::idBrushSide()
 	winding	 = NULL;
 }
 
-/*
-============
-idBrushSide::idBrushSide
-============
-*/
 idBrushSide::idBrushSide( const idPlane& plane, int planeNum )
 {
 	this->flags	   = 0;
@@ -93,11 +71,6 @@ idBrushSide::idBrushSide( const idPlane& plane, int planeNum )
 	this->winding  = NULL;
 }
 
-/*
-============
-idBrushSide::~idBrushSide
-============
-*/
 idBrushSide::~idBrushSide()
 {
 	if( winding ) {
@@ -105,11 +78,6 @@ idBrushSide::~idBrushSide()
 	}
 }
 
-/*
-============
-idBrushSide::Copy
-============
-*/
 idBrushSide* idBrushSide::Copy() const
 {
 	idBrushSide* side;
@@ -124,11 +92,6 @@ idBrushSide* idBrushSide::Copy() const
 	return side;
 }
 
-/*
-============
-idBrushSide::Split
-============
-*/
 int idBrushSide::Split( const idPlane& splitPlane, idBrushSide** front, idBrushSide** back ) const
 {
 	idWinding *frontWinding, *backWinding;
@@ -160,17 +123,6 @@ int idBrushSide::Split( const idPlane& splitPlane, idBrushSide** front, idBrushS
 	}
 }
 
-//===============================================================
-//
-//	idBrushSide
-//
-//===============================================================
-
-/*
-============
-idBrush::idBrush
-============
-*/
 idBrush::idBrush()
 {
 	contents = flags = 0;
@@ -179,11 +131,6 @@ idBrush::idBrush()
 	windingsValid = false;
 }
 
-/*
-============
-idBrush::~idBrush
-============
-*/
 idBrush::~idBrush()
 {
 	for( int i = 0; i < sides.Num(); i++ ) {
@@ -191,11 +138,6 @@ idBrush::~idBrush()
 	}
 }
 
-/*
-============
-idBrush::RemoveSidesWithoutWinding
-============
-*/
 bool idBrush::RemoveSidesWithoutWinding()
 {
 	int i;
@@ -212,11 +154,6 @@ bool idBrush::RemoveSidesWithoutWinding()
 	return ( sides.Num() >= 4 );
 }
 
-/*
-============
-idBrush::CreateWindings
-============
-*/
 bool idBrush::CreateWindings()
 {
 	int			 i, j;
@@ -261,11 +198,6 @@ bool idBrush::CreateWindings()
 	return true;
 }
 
-/*
-============
-idBrush::BoundBrush
-============
-*/
 void idBrush::BoundBrush( const idBrush* original )
 {
 	int			 i, j;
@@ -310,11 +242,6 @@ void idBrush::BoundBrush( const idBrush* original )
 	}
 }
 
-/*
-============
-idBrush::FromSides
-============
-*/
 bool idBrush::FromSides( idList<idBrushSide*>& sideList )
 {
 	int i;
@@ -328,11 +255,6 @@ bool idBrush::FromSides( idList<idBrushSide*>& sideList )
 	return CreateWindings();
 }
 
-/*
-============
-idBrush::FromWinding
-============
-*/
 bool idBrush::FromWinding( const idWinding& w, const idPlane& windingPlane )
 {
 	int		i, j, bestAxis;
@@ -381,11 +303,6 @@ bool idBrush::FromWinding( const idWinding& w, const idPlane& windingPlane )
 	return true;
 }
 
-/*
-============
-idBrush::FromBounds
-============
-*/
 bool idBrush::FromBounds( const idBounds& bounds )
 {
 	int		axis, dir;
@@ -405,11 +322,6 @@ bool idBrush::FromBounds( const idBounds& bounds )
 	return CreateWindings();
 }
 
-/*
-============
-idBrush::Transform
-============
-*/
 void idBrush::Transform( const idVec3& origin, const idMat3& axis )
 {
 	int	 i;
@@ -432,11 +344,6 @@ void idBrush::Transform( const idVec3& origin, const idMat3& axis )
 	}
 }
 
-/*
-============
-idBrush::GetVolume
-============
-*/
 float idBrush::GetVolume() const
 {
 	int		   i;
@@ -472,11 +379,6 @@ float idBrush::GetVolume() const
 	return ( volume * ( 1.0f / 3.0f ) );
 }
 
-/*
-============
-idBrush::Subtract
-============
-*/
 bool idBrush::Subtract( const idBrush* b, idBrushList& list ) const
 {
 	int			   i;
@@ -506,11 +408,6 @@ bool idBrush::Subtract( const idBrush* b, idBrushList& list ) const
 	return true;
 }
 
-/*
-============
-idBrush::TryMerge
-============
-*/
 bool idBrush::TryMerge( const idBrush* brush, const idPlaneSet& planeList )
 {
 	int				 i, j, k, l, m, seperatingPlane;
@@ -617,11 +514,6 @@ bool idBrush::TryMerge( const idBrush* brush, const idPlaneSet& planeList )
 	return true;
 }
 
-/*
-============
-idBrush::Split
-============
-*/
 int idBrush::Split( const idPlane& plane, int planeNum, idBrush** front, idBrush** back ) const
 {
 	int			 res, i, j;
@@ -947,11 +839,6 @@ void idBrush::AddBevelsForAxialBox()
 	}
 }
 
-/*
-============
-idBrush::ExpandForAxialBox
-============
-*/
 void idBrush::ExpandForAxialBox( const idBounds& bounds )
 {
 	int			 i, j;
@@ -991,11 +878,6 @@ void idBrush::ExpandForAxialBox( const idBounds& bounds )
 	*/
 }
 
-/*
-============
-idBrush::Copy
-============
-*/
 idBrush* idBrush::Copy() const
 {
 	int		 i;
@@ -1018,12 +900,6 @@ idBrush* idBrush::Copy() const
 //	idBrushList
 //
 //===============================================================
-
-/*
-============
-idBrushList::idBrushList
-============
-*/
 idBrushList::idBrushList()
 {
 	numBrushes = numBrushSides = 0;
@@ -1039,11 +915,6 @@ idBrushList::~idBrushList()
 {
 }
 
-/*
-============
-idBrushList::GetBounds
-============
-*/
 idBounds idBrushList::GetBounds() const
 {
 	idBounds bounds;
@@ -1056,11 +927,6 @@ idBounds idBrushList::GetBounds() const
 	return bounds;
 }
 
-/*
-============
-idBrushList::AddToTail
-============
-*/
 void idBrushList::AddToTail( idBrush* brush )
 {
 	brush->next = NULL;
@@ -1075,11 +941,6 @@ void idBrushList::AddToTail( idBrush* brush )
 	numBrushSides += brush->sides.Num();
 }
 
-/*
-============
-idBrushList::AddToTail
-============
-*/
 void idBrushList::AddToTail( idBrushList& list )
 {
 	idBrush *brush, *next;
@@ -1101,11 +962,6 @@ void idBrushList::AddToTail( idBrushList& list )
 	list.numBrushes		  = 0;
 }
 
-/*
-============
-idBrushList::AddToFront
-============
-*/
 void idBrushList::AddToFront( idBrush* brush )
 {
 	brush->next = head;
@@ -1117,11 +973,6 @@ void idBrushList::AddToFront( idBrush* brush )
 	numBrushSides += brush->sides.Num();
 }
 
-/*
-============
-idBrushList::AddToFront
-============
-*/
 void idBrushList::AddToFront( idBrushList& list )
 {
 	idBrush *brush, *next;
@@ -1140,11 +991,6 @@ void idBrushList::AddToFront( idBrushList& list )
 	list.numBrushes		  = 0;
 }
 
-/*
-============
-idBrushList::Remove
-============
-*/
 void idBrushList::Remove( idBrush* brush )
 {
 	idBrush *b, *last;
@@ -1168,11 +1014,6 @@ void idBrushList::Remove( idBrush* brush )
 	}
 }
 
-/*
-============
-idBrushList::Delete
-============
-*/
 void idBrushList::Delete( idBrush* brush )
 {
 	idBrush *b, *last;
@@ -1197,11 +1038,6 @@ void idBrushList::Delete( idBrush* brush )
 	}
 }
 
-/*
-============
-idBrushList::Copy
-============
-*/
 idBrushList* idBrushList::Copy() const
 {
 	idBrush*	 brush;
@@ -1215,11 +1051,6 @@ idBrushList* idBrushList::Copy() const
 	return list;
 }
 
-/*
-============
-idBrushList::Free
-============
-*/
 void idBrushList::Free()
 {
 	idBrush *brush, *next;
@@ -1232,11 +1063,6 @@ void idBrushList::Free()
 	numBrushes = numBrushSides = 0;
 }
 
-/*
-============
-idBrushList::Split
-============
-*/
 void idBrushList::Split( const idPlane& plane, int planeNum, idBrushList& frontList, idBrushList& backList, bool useBrushSavedPlaneSide )
 {
 	idBrush *b, *front, *back;
@@ -1274,11 +1100,6 @@ void idBrushList::Split( const idPlane& plane, int planeNum, idBrushList& frontL
 	}
 }
 
-/*
-============
-idBrushList::Chop
-============
-*/
 void idBrushList::Chop( bool ( *ChopAllowed )( idBrush* b1, idBrush* b2 ) )
 {
 	idBrush *	b1, *b2, *next;
@@ -1400,11 +1221,6 @@ void idBrushList::Chop( bool ( *ChopAllowed )( idBrush* b1, idBrush* b2 ) )
 #endif
 }
 
-/*
-============
-idBrushList::Merge
-============
-*/
 void idBrushList::Merge( bool ( *MergeAllowed )( idBrush* b1, idBrush* b2 ) )
 {
 	idPlaneSet planeList;
@@ -1440,11 +1256,6 @@ void idBrushList::Merge( bool ( *MergeAllowed )( idBrush* b1, idBrush* b2 ) )
 	common->Printf( "\r%6d brushes merged\n", numMerges );
 }
 
-/*
-============
-idBrushList::SetFlagOnFacingBrushSides
-============
-*/
 void idBrushList::SetFlagOnFacingBrushSides( const idPlane& plane, int flag )
 {
 	int				 i;
@@ -1470,11 +1281,6 @@ void idBrushList::SetFlagOnFacingBrushSides( const idPlane& plane, int flag )
 	}
 }
 
-/*
-============
-idBrushList::CreatePlaneList
-============
-*/
 void idBrushList::CreatePlaneList( idPlaneSet& planeList ) const
 {
 	int			 i;
@@ -1490,11 +1296,6 @@ void idBrushList::CreatePlaneList( idPlaneSet& planeList ) const
 	}
 }
 
-/*
-============
-idBrushList::CreatePlaneList
-============
-*/
 void idBrushList::WriteBrushMap( const idStr& fileName, const idStr& ext ) const
 {
 	idBrushMap* map;
@@ -1509,12 +1310,6 @@ void idBrushList::WriteBrushMap( const idStr& fileName, const idStr& ext ) const
 //	idBrushMap
 //
 //===============================================================
-
-/*
-============
-idBrushMap::idBrushMap
-============
-*/
 idBrushMap::idBrushMap( const idStr& fileName, const idStr& ext )
 {
 	idStr qpath;
@@ -1541,11 +1336,6 @@ idBrushMap::idBrushMap( const idStr& fileName, const idStr& ext )
 	brushCount = 0;
 }
 
-/*
-============
-idBrushMap::~idBrushMap
-============
-*/
 idBrushMap::~idBrushMap()
 {
 	if( !fp ) {
@@ -1555,11 +1345,6 @@ idBrushMap::~idBrushMap()
 	fileSystem->CloseFile( fp );
 }
 
-/*
-============
-idBrushMap::WriteBrush
-============
-*/
 void idBrushMap::WriteBrush( const idBrush* brush )
 {
 	int			 i;
@@ -1579,11 +1364,6 @@ void idBrushMap::WriteBrush( const idBrush* brush )
 	fp->WriteFloatString( "}\n}\n" );
 }
 
-/*
-============
-idBrushMap::WriteBrushList
-============
-*/
 void idBrushMap::WriteBrushList( const idBrushList& brushList )
 {
 	idBrush* b;

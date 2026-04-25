@@ -100,13 +100,6 @@ static hashVert_t* hashVerts[HASH_BINS][HASH_BINS][HASH_BINS];
 static int		   numHashVerts, numTotalVerts;
 static int		   hashIntMins[3], hashIntScale[3];
 
-/*
-===============
-GetHashVert
-
-Also modifies the original vert to the snapped value
-===============
-*/
 struct hashVert_s* GetHashVert( idVec3& v )
 {
 	int			iv[3];
@@ -164,14 +157,7 @@ struct hashVert_s* GetHashVert( idVec3& v )
 	return hv;
 }
 
-/*
-==================
-HashBlocksForTri
-
-Returns an inclusive bounding box of hash
-bins that should hold the triangle
-==================
-*/
+//! Computes the hash bins that contain the triangle's bounding box with a slop margin
 static void HashBlocksForTri( const mapTri_t* tri, int blocks[2][3] )
 {
 	idBounds bounds;
@@ -200,13 +186,6 @@ static void HashBlocksForTri( const mapTri_t* tri, int blocks[2][3] )
 	}
 }
 
-/*
-=================
-HashTriangles
-
-Removes triangles that are degenerated or flipped backwards
-=================
-*/
 void HashTriangles( optimizeGroup_t* groupList )
 {
 	mapTri_t*		 a;
@@ -257,14 +236,6 @@ void HashTriangles( optimizeGroup_t* groupList )
 	}
 }
 
-/*
-=================
-FreeTJunctionHash
-
-The optimizer may add some more crossing verts
-after t junction processing
-=================
-*/
 void FreeTJunctionHash()
 {
 	int			i, j, k;
@@ -283,14 +254,7 @@ void FreeTJunctionHash()
 	memset( hashVerts, 0, sizeof( hashVerts ) );
 }
 
-/*
-==================
-FixTriangleAgainstHashVert
-
-Returns a list of two new mapTri if the hashVert is
-on an edge of the given mapTri, otherwise returns NULL.
-==================
-*/
+//! Splits a triangle into two triangles if a hash vertex lies on one of its edges.
 static mapTri_t* FixTriangleAgainstHashVert( const mapTri_t* a, const hashVert_t* hv )
 {
 	int				  i;
@@ -391,13 +355,7 @@ static mapTri_t* FixTriangleAgainstHashVert( const mapTri_t* a, const hashVert_t
 	return NULL;
 }
 
-/*
-==================
-FixTriangleAgainstHash
-
-Potentially splits a triangle into a list of triangles based on tjunctions
-==================
-*/
+//! Fixes a triangle against hash vertices to resolve triangle-junction issues
 static mapTri_t* FixTriangleAgainstHash( const mapTri_t* tri )
 {
 	mapTri_t*	fixed;
@@ -446,11 +404,6 @@ static mapTri_t* FixTriangleAgainstHash( const mapTri_t* tri )
 	return fixed;
 }
 
-/*
-==================
-CountGroupListTris
-==================
-*/
 int CountGroupListTris( const optimizeGroup_t* groupList )
 {
 	int c;
@@ -463,11 +416,6 @@ int CountGroupListTris( const optimizeGroup_t* groupList )
 	return c;
 }
 
-/*
-==================
-FixAreaGroupsTjunctions
-==================
-*/
 void FixAreaGroupsTjunctions( optimizeGroup_t* groupList )
 {
 	const mapTri_t*	 tri;
@@ -510,11 +458,6 @@ void FixAreaGroupsTjunctions( optimizeGroup_t* groupList )
 	common->VerbosePrintf( "%6i triangles out\n", endCount );
 }
 
-/*
-==================
-FixEntityTjunctions
-==================
-*/
 void FixEntityTjunctions( uEntity_t* e )
 {
 	int i;
@@ -525,11 +468,6 @@ void FixEntityTjunctions( uEntity_t* e )
 	}
 }
 
-/*
-==================
-FixGlobalTjunctions
-==================
-*/
 void FixGlobalTjunctions( uEntity_t* e )
 {
 	mapTri_t*		 a;

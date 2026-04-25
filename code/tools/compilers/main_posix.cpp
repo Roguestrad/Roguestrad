@@ -927,6 +927,7 @@ public:
 		// com_refreshOnPrint = set;
 	}
 
+	//! Prints a formatted message to the console
 	virtual void Printf( const char* fmt, ... )
 	{
 		STDIO_PRINT( "", "" );
@@ -945,6 +946,7 @@ public:
 		}
 	}
 
+	//! Logs debug messages to the console when the developer console is enabled
 	virtual void DPrintf( const char* fmt, ... )
 	{
 		if( com_developer.GetBool() ) {
@@ -956,6 +958,7 @@ public:
 		}
 	}
 
+	//! Prints a message to the console when the dmap_verbose cvar is set, with optional screen update.
 	virtual void VerbosePrintf( const char* fmt, ... )
 	{
 		if( dmap_verbose.GetBool() ) {
@@ -967,6 +970,7 @@ public:
 		}
 	}
 
+	//! Outputs a formatted warning message to the console.
 	virtual void Warning( const char* fmt, ... )
 	{
 		STDIO_PRINT( "WARNING: ", "\n" );
@@ -976,6 +980,7 @@ public:
 		}
 	}
 
+	//! Prints a warning message that only appears when the developer console variable is enabled.
 	virtual void DWarning( const char* fmt, ... )
 	{
 		if( com_developer.GetBool() ) {
@@ -997,6 +1002,7 @@ public:
 	{
 	}
 
+	//! Terminates the program with an error message
 	virtual void Error( const char* fmt, ... )
 	{
 		STDIO_PRINT( "ERROR: ", "\n" );
@@ -1006,6 +1012,8 @@ public:
 		}
 		exit( 0 );
 	}
+
+	//! Terminates the application immediately after printing a fatal error message.
 	virtual void FatalError( const char* fmt, ... )
 	{
 		STDIO_PRINT( "FATAL ERROR: ", "\n" );

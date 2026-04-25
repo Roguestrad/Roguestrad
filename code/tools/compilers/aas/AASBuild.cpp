@@ -36,17 +36,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #define BFL_PATCH 0x1000
 
-//===============================================================
-//
-//	idAASBuild
-//
-//===============================================================
-
-/*
-============
-idAASBuild::idAASBuild
-============
-*/
 idAASBuild::idAASBuild()
 {
 	file						 = NULL;
@@ -58,21 +47,11 @@ idAASBuild::idAASBuild()
 	ledgeMap					 = NULL;
 }
 
-/*
-============
-idAASBuild::~idAASBuild
-============
-*/
 idAASBuild::~idAASBuild()
 {
 	Shutdown();
 }
 
-/*
-================
-idAASBuild::Shutdown
-================
-*/
 void idAASBuild::Shutdown()
 {
 	aasSettings = NULL;
@@ -91,11 +70,6 @@ void idAASBuild::Shutdown()
 	}
 }
 
-/*
-================
-idAASBuild::ParseProcNodes
-================
-*/
 void idAASBuild::ParseProcNodes( idLexer* src )
 {
 	int i;
@@ -121,11 +95,6 @@ void idAASBuild::ParseProcNodes( idLexer* src )
 	src->ExpectTokenString( "}" );
 }
 
-/*
-================
-idAASBuild::LoadProcBSP
-================
-*/
 bool idAASBuild::LoadProcBSP( const char* name, ID_TIME_T minFileTime )
 {
 	idStr	 fileName;
@@ -188,11 +157,6 @@ bool idAASBuild::LoadProcBSP( const char* name, ID_TIME_T minFileTime )
 	return true;
 }
 
-/*
-============
-idAASBuild::DeleteProcBSP
-============
-*/
 void idAASBuild::DeleteProcBSP()
 {
 	if( procNodes ) {
@@ -202,11 +166,6 @@ void idAASBuild::DeleteProcBSP()
 	numProcNodes = 0;
 }
 
-/*
-============
-idAASBuild::ChoppedAwayByProcBSP
-============
-*/
 bool idAASBuild::ChoppedAwayByProcBSP( int nodeNum, idFixedWinding* w, const idVec3& normal, const idVec3& origin, const float radius )
 {
 	int			   res;
@@ -255,11 +214,6 @@ bool idAASBuild::ChoppedAwayByProcBSP( int nodeNum, idFixedWinding* w, const idV
 	return true;
 }
 
-/*
-============
-idAASBuild::ClipBrushSidesWithProcBSP
-============
-*/
 void idAASBuild::ClipBrushSidesWithProcBSP( idBrushList& brushList )
 {
 	int			   i, clippedSides;
@@ -298,11 +252,6 @@ void idAASBuild::ClipBrushSidesWithProcBSP( idBrushList& brushList )
 	common->Printf( "%6d brush sides clipped\n", clippedSides );
 }
 
-/*
-============
-idAASBuild::ContentsForAAS
-============
-*/
 int idAASBuild::ContentsForAAS( int contents )
 {
 	int c;
@@ -323,11 +272,6 @@ int idAASBuild::ContentsForAAS( int contents )
 	return c;
 }
 
-/*
-============
-idAASBuild::AddBrushForMapBrush
-============
-*/
 idBrushList idAASBuild::AddBrushesForMapBrush( const idMapBrush* mapBrush, const idVec3& origin, const idMat3& axis, int entityNum, int primitiveNum, idBrushList brushList )
 {
 	int					 contents, i;
@@ -371,11 +315,6 @@ idBrushList idAASBuild::AddBrushesForMapBrush( const idMapBrush* mapBrush, const
 
 	return brushList;
 }
-/*
-============
-idAASBuild::AddBrushesForMapPolygonMesh
-============
-*/
 
 idBrushList idAASBuild::AddBrushesForMapPolygonMesh( const MapPolygonMesh* mapMesh, const idVec3& origin, const idMat3& axis, int entityNum, int primitiveNum, idBrushList brushList )
 {
@@ -438,11 +377,6 @@ idBrushList idAASBuild::AddBrushesForMapPolygonMesh( const MapPolygonMesh* mapMe
 	return brushList;
 }
 
-/*
-============
-idAASBuild::AddBrushesForPatch
-============
-*/
 idBrushList idAASBuild::AddBrushesForMapPatch( const idMapPatch* mapPatch, const idVec3& origin, const idMat3& axis, int entityNum, int primitiveNum, idBrushList brushList )
 {
 	int				  i, j, contents, validBrushes;
@@ -563,11 +497,6 @@ idBrushList idAASBuild::AddBrushesForMapPatch( const idMapPatch* mapPatch, const
 	return brushList;
 }
 
-/*
-============
-idAASBuild::AddBrushesForMapEntity
-============
-*/
 idBrushList idAASBuild::AddBrushesForMapEntity( const idMapEntity* mapEnt, int entityNum, idBrushList brushList )
 {
 	int	   i;
@@ -611,11 +540,6 @@ idBrushList idAASBuild::AddBrushesForMapEntity( const idMapEntity* mapEnt, int e
 	return brushList;
 }
 
-/*
-============
-idAASBuild::AddBrushesForMapFile
-============
-*/
 idBrushList idAASBuild::AddBrushesForMapFile( const idMapFile* mapFile, idBrushList brushList )
 {
 	int i;
@@ -637,11 +561,6 @@ idBrushList idAASBuild::AddBrushesForMapFile( const idMapFile* mapFile, idBrushL
 	return brushList;
 }
 
-/*
-============
-idAASBuild::CheckForEntities
-============
-*/
 bool idAASBuild::CheckForEntities( const idMapFile* mapFile, idStrList& entityClassNames ) const
 {
 	int	  i;
@@ -664,41 +583,24 @@ bool idAASBuild::CheckForEntities( const idMapFile* mapFile, idStrList& entityCl
 	return ( entityClassNames.Num() != 0 );
 }
 
-/*
-============
-MergeAllowed
-============
-*/
+//! Determines if two brushes can be merged based on their contents and flags.
 bool MergeAllowed( idBrush* b1, idBrush* b2 )
 {
 	return ( b1->GetContents() == b2->GetContents() && !( ( b1->GetFlags() | b2->GetFlags() ) & BFL_PATCH ) );
 }
 
-/*
-============
-ExpandedChopAllowed
-============
-*/
+//! Returns true if both brushes have the same contents, indicating they are allowed to be chopped together.
 bool ExpandedChopAllowed( idBrush* b1, idBrush* b2 )
 {
 	return ( b1->GetContents() == b2->GetContents() );
 }
 
-/*
-============
-ExpandedMergeAllowed
-============
-*/
+//! Checks if two brushes can be merged based on their contents.
 bool ExpandedMergeAllowed( idBrush* b1, idBrush* b2 )
 {
 	return ( b1->GetContents() == b2->GetContents() );
 }
 
-/*
-============
-idAASBuild::ChangeMultipleBoundingBoxContents
-============
-*/
 void idAASBuild::ChangeMultipleBoundingBoxContents_r( idBrushBSPNode* node, int mask )
 {
 	while( node ) {
@@ -710,11 +612,6 @@ void idAASBuild::ChangeMultipleBoundingBoxContents_r( idBrushBSPNode* node, int 
 	}
 }
 
-/*
-============
-idAASBuild::Build
-============
-*/
 bool idAASBuild::Build( const idStr& fileName, const idAASSettings* settings )
 {
 	int					 i, bit, mask, startTime;
@@ -871,11 +768,6 @@ bool idAASBuild::Build( const idStr& fileName, const idAASSettings* settings )
 	return true;
 }
 
-/*
-============
-idAASBuild::BuildReachability
-============
-*/
 bool idAASBuild::BuildReachability( const idStr& fileName, const idAASSettings* settings )
 {
 	int			 startTime;
@@ -926,11 +818,7 @@ bool idAASBuild::BuildReachability( const idStr& fileName, const idAASSettings* 
 	return true;
 }
 
-/*
-============
-ParseOptions
-============
-*/
+//! Parses command line arguments to configure AAS settings
 int ParseOptions( const idCmdArgs& args, idAASSettings& settings )
 {
 	int	  i;
@@ -957,7 +845,7 @@ int ParseOptions( const idCmdArgs& args, idAASSettings& settings )
 	return args.Argc() - 1;
 }
 
-// RB begin
+//! Finds and returns the entity definition dictionary for the specified name, creating a default if requested.
 static const idDict* FindEntityDefDict( const char* name, bool makeDefault )
 {
 #if defined( DMAP )
@@ -1025,11 +913,6 @@ void RunAAS_f( const idCmdArgs& args )
 	common->PrintWarnings();
 }
 
-/*
-============
-RunAASDir_f
-============
-*/
 void RunAASDir_f( const idCmdArgs& args )
 {
 	int			  i;
@@ -1084,11 +967,6 @@ void RunAASDir_f( const idCmdArgs& args )
 	common->PrintWarnings();
 }
 
-/*
-============
-RunReach_f
-============
-*/
 void RunReach_f( const idCmdArgs& args )
 {
 	int			  i;

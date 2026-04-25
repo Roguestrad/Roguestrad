@@ -46,18 +46,26 @@ namespace ImGuiTools
 class AfEditor
 {
 public:
+	//! Destructor for the AfEditor class that cleans up allocated resources.
 	virtual ~AfEditor();
 
+	//! Initializes the AfEditor interface.
 	void Init();
 
+	//! Sets the visibility state of the AfEditor.
 	void ShowIt( bool show );
 
+	//! Returns true if the AfEditor is currently shown, false otherwise.
 	bool IsShown() const;
 
+	//! Displays the Articulated Figure editor UI in the ImGui interface.
 	void Draw();
 
 public:
+	//! Returns the singleton instance of the AfEditor class.
 	static AfEditor& Instance();
+
+	//! Enables the AfEditor UI by showing it.
 	static void		 Enable( const idCmdArgs& args );
 
 public:
@@ -66,19 +74,24 @@ public:
 
 private:
 	struct AfList {
+		//! Initializes a new instance of the AfList class.
 		AfList() :
 			names(),
 			shouldPopulate( false )
 		{
 		}
+
+		//! Populates the list of animation family names from the declaration manager.
 		void		  populate();
 
 		idList<idStr> names;
 		bool		  shouldPopulate;
 	};
 
+	//! Constructs a new AfEditor instance with all members initialized to default values.
 	AfEditor();
 
+	//! Initializes the editor with a new acceleration field declaration and sets up associated body and constraint editors.
 	void						OnNewDecl( idDeclAF* newDecl );
 
 	bool						isShown;

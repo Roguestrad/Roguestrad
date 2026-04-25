@@ -611,7 +611,7 @@ void LightEditor::DuplicateLight()
 	}
 }
 
-// a kinda ugly hack to get a float* (as used by imgui) from idVec3
+//! Converts an idVec3 reference to a float pointer for use with ImGui functions
 static float* vecToArr( idVec3& v )
 {
 	return &v.x;

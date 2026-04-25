@@ -34,6 +34,7 @@ If you have questions concerning this license or the applicable additional terms
 #include "dmap.h"
 
 struct OBJFace {
+	//! Initializes a new instance of the OBJFace class with a null material pointer.
 	OBJFace()
 	{
 		material = nullptr;
@@ -52,6 +53,7 @@ struct OBJGroup {
 	int				area = -1;
 };
 
+//! Determines which sides of a portal are visible based on node opacity settings.
 int PortalVisibleSides( uPortal_t* p )
 {
 	int fcon, bcon;
@@ -124,6 +126,18 @@ idVec4 PickDebugColor( int area )
 	return color;
 }
 
+/*!
+	\brief Outputs a winding to an OBJ group with specified area and optional vertex order reversal
+
+	This function takes a winding object and adds its vertices to an OBJ group face, applying a debug color based on the area. The winding vertices can be added in normal or reversed order depending
+   on the reverse flag. The function allocates a new face in the group and populates it with vertices from the winding. Each vertex is assigned the debug color and its XYZ coordinates are copied from
+   the winding points. The normal is not set in the current implementation.
+
+	\param w Pointer to the winding object containing the vertices to output
+	\param group Reference to the OBJ group where the face will be added
+	\param area Area identifier used to select a debug color for the vertices
+	\param reverse Flag indicating whether to reverse the vertex order when adding to the face
+*/
 void OutputWinding( idWinding* w, OBJGroup& group, int area, bool reverse )
 {
 	idVec4	 color	= PickDebugColor( area );
@@ -158,11 +172,7 @@ void OutputWinding( idWinding* w, OBJGroup& group, int area, bool reverse )
 	}
 }
 
-/*
-=============
-OutputPortal
-=============
-*/
+//! Outputs the winding of a portal into an OBJ group, handling visibility and area connections.
 void OutputPortal( uPortal_t* p, OBJGroup& group, bool touchingVoid )
 {
 	idWinding* w;
@@ -207,7 +217,7 @@ void OutputPortal( uPortal_t* p, OBJGroup& group, bool touchingVoid )
 	}
 }
 
-// RB: this does not work in all maps
+//! Recursively collects outside portals from a BSP node and adds them to the specified object group.
 void CollectOutsidePortals_r( node_t* node, OBJGroup& group )
 {
 	uPortal_t *p, *nextp;
@@ -235,8 +245,7 @@ void CollectOutsidePortals_r( node_t* node, OBJGroup& group )
 	}
 }
 
-// like q3map WritePortalFile_r
-// collect all portals within the BSP that you can walk through
+//! Collects passable portals from a BSP node and adds them to the output group.
 void CollectPortals_r( node_t* node, OBJGroup& group )
 {
 	uPortal_t *p, *nextp;
@@ -270,7 +279,7 @@ void CollectPortals_r( node_t* node, OBJGroup& group )
 	}
 }
 
-// like q3map WriteFaceFile_r
+//! Recursively collects and processes face data from a BSP node into an OBJ group
 void CollectFaces_r( node_t* node, OBJGroup& group )
 {
 	if( node->planenum != PLANENUM_LEAF ) {
@@ -318,6 +327,7 @@ void CollectFaces_r( node_t* node, OBJGroup& group )
 #endif
 }
 
+//! Outputs a quad defined by four vertices into the specified OBJ group
 void OutputQuad( const idVec3 verts[4], OBJGroup* group, bool reverse )
 {
 	OBJFace& face  = group->faces.Alloc();
@@ -349,6 +359,7 @@ void OutputQuad( const idVec3 verts[4], OBJGroup* group, bool reverse )
 	}
 }
 
+//! Outputs the geometry of a node to the specified groups.
 void OutputNode( const node_t* node, idList<OBJGroup>& groups )
 {
 	const idBounds& bounds = node->bounds;
@@ -417,6 +428,7 @@ void OutputNode( const node_t* node, idList<OBJGroup>& groups )
 	}
 }
 
+//! Outputs a split plane for a given node if it meets certain criteria.
 void OutputSplitPlane( const node_t* node, idList<OBJGroup>& groups )
 {
 	const idBounds& bounds = node->bounds;
@@ -463,6 +475,7 @@ void OutputSplitPlane( const node_t* node, idList<OBJGroup>& groups )
 	}
 }
 
+//! Outputs area portal triangles from a given node into the specified groups list
 void OutputAreaPortalTriangles( const node_t* node, idList<OBJGroup>& groups )
 {
 	const idBounds& bounds = node->bounds;
@@ -487,6 +500,7 @@ void OutputAreaPortalTriangles( const node_t* node, idList<OBJGroup>& groups )
 	}
 }
 
+//! Recursively collects node data into a list of object groups.
 void CollectNodes_r( node_t* node, idList<OBJGroup>& groups )
 {
 	if( node->planenum != PLANENUM_LEAF ) {
@@ -502,7 +516,6 @@ void CollectNodes_r( node_t* node, idList<OBJGroup>& groups )
 	// OutputAreaPortalTriangles( node, groups );
 }
 
-// RB: slightly changed variant from output.cpp to number both nodes and leafs
 int NumberNodes_r( node_t* node, int nextNode, int& nextLeaf )
 {
 	if( node->planenum == PLANENUM_LEAF ) {
@@ -518,6 +531,7 @@ int NumberNodes_r( node_t* node, int nextNode, int& nextLeaf )
 	return nextNode;
 }
 
+//! Collects area portal data into a list of groups for export.
 void CollectAreaPortals( idList<OBJGroup>& groups )
 {
 	int				   i;
@@ -539,10 +553,17 @@ void CollectAreaPortals( idList<OBJGroup>& groups )
 	}
 }
 
-/*
-=============
-WriteGLView
-=============
+/*!
+	\brief Writes BSP data to an OBJ file for visualization, with options to filter by entity number and force writing.
+
+	This function outputs BSP (Binary Space Partitioning) data to an OBJ file format for visualization purposes. The output includes portal data and optionally face data depending on compilation
+   flags. It supports filtering by entity number, and can be forced to write regardless of the entity number. The function uses a temporary file path constructed from the map file base name, source
+   identifier, and entity number. Vertex data includes position and color information, and faces are written as either polygons or lines depending on their draw mode.
+
+	\param tree The BSP tree to write to the OBJ file
+	\param source Identifier string used in constructing the output file name
+	\param entityNum Entity number to determine if writing should be skipped
+	\param force Flag to force writing the file regardless of entity number
 */
 void WriteGLViewBSP( tree_t* tree, const char* source, int entityNum, bool force )
 {
@@ -628,6 +649,7 @@ void WriteGLViewBSP( tree_t* tree, const char* source, int entityNum, bool force
 	}
 }
 
+//! Writes a Wavefront OBJ file representation of the given BSP face list for debugging purposes
 void WriteGLViewFacelist( bspFace_t* list, const char* source, bool force )
 {
 	if( dmapGlobals.entityNum != 0 && !force ) {

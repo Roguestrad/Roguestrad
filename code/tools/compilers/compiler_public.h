@@ -40,12 +40,16 @@ If you have questions concerning this license or the applicable additional terms
 
 extern idCVar dmap_verbose;
 
-// map processing (also see SuperOptimizeOccluders in tr_local.h)
+//! Processes map data for rogue mode with warning handling and screen refresh control.
 void		  Rogmap_f( const idCmdArgs& args );
 
 // AAS file compiler
 void		  RunAAS_f( const idCmdArgs& args );
+
+//! Compiles AAS files for all .map files in the specified directory using various AAS settings.
 void		  RunAASDir_f( const idCmdArgs& args );
+
+//! Builds AAS reachability for the specified map file using given command line arguments.
 void		  RunReach_f( const idCmdArgs& args );
 
 #endif /* !__COMPILER_PUBLIC_H__ */

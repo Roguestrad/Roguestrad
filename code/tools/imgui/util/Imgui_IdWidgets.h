@@ -37,11 +37,16 @@ If you have questions concerning this license or the applicable additional terms
 class MultiSelectWidget
 {
 public:
+	//! Initializes a MultiSelectWidget with the provided names, content mapping, and number of entries.
 	MultiSelectWidget( const char** aNames, int* contentMapping, int aNumEntries );
+
+	//! Destroys the MultiSelectWidget and frees its memory.
 	~MultiSelectWidget();
 
+	//! Updates the selection state of an entry at the specified index
 	void Update( int index, bool value );
 
+	//! Updates the widget state based on the provided bit flags.
 	void UpdateWithBitFlags( int bitFlags );
 
 public:
@@ -51,10 +56,14 @@ public:
 	bool*		 selectables;
 };
 
+//! Processes multi-selection widget interactions and updates content flags based on user selections.
 bool			  DoMultiSelect( MultiSelectWidget* widget, int* contents );
 
+//! Displays a help marker that shows a tooltip with the provided description when hovered
 void			  HelpMarker( const char* desc );
 
+//! Retrieves a string item from a list by index and returns true.
 bool			  StringListItemGetter( void* data, int index, const char** outText );
 
+//! Creates and returns a MultiSelectWidget configured for physics contents selection
 MultiSelectWidget MakePhysicsContentsSelector();

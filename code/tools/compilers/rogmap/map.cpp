@@ -67,11 +67,7 @@ static uBrush_t*  buildBrush;
 #define NORMAL_EPSILON 0.00001f
 #define DIST_EPSILON   0.01f
 
-/*
-===========
-FindFloatPlane
-===========
-*/
+//! Finds a floating-point plane in the map planes collection, optionally marking if degeneracies were fixed.
 int FindFloatPlane( const idPlane& plane, bool* fixedDegeneracies )
 {
 	idPlane p	  = plane;
@@ -82,14 +78,7 @@ int FindFloatPlane( const idPlane& plane, bool* fixedDegeneracies )
 	return dmapGlobals.mapPlanes.FindPlane( p, NORMAL_EPSILON, DIST_EPSILON );
 }
 
-/*
-===========
-SetBrushContents
-
-The contents on all sides of a brush should be the same
-Sets contentsShader, contents, opaque
-===========
-*/
+//! Sets the contents, shader, and opacity properties of a brush based on its sides.
 static void SetBrushContents( uBrush_t* b )
 {
 	int		contents, c2;
@@ -131,13 +120,7 @@ static void SetBrushContents( uBrush_t* b )
 	b->contents = contents;
 }
 
-//============================================================================
-
-/*
-===============
-FreeBuildBrush
-===============
-*/
+//! Frees the memory allocated for the sides of a build brush.
 static void FreeBuildBrush()
 {
 	int i;
@@ -150,14 +133,7 @@ static void FreeBuildBrush()
 	buildBrush->numsides = 0;
 }
 
-/*
-===============
-FinishBrush
-
-Produces a final brush based on the buildBrush->sides array
-and links it to the current entity
-===============
-*/
+//! Creates a final brush from the build brush and links it to the current entity.
 static uBrush_t* FinishBrush()
 {
 	uBrush_t*	 b;
@@ -198,58 +174,7 @@ static uBrush_t* FinishBrush()
 	return b;
 }
 
-/*
-================
-AdjustEntityForOrigin
-================
-*/
-/*
-static void AdjustEntityForOrigin( uEntity_t* ent )
-{
-	primitive_t*	prim;
-	uBrush_t*	b;
-	int			i;
-	side_t*		s;
-
-	for( prim = ent->primitives ; prim ; prim = prim->next )
-	{
-		b = prim->brush;
-		if( !b )
-		{
-			continue;
-		}
-		for( i = 0; i < b->numsides; i++ )
-		{
-			idPlane plane;
-
-			s = &b->sides[i];
-
-			plane = dmapGlobals.mapPlanes[s->planenum];
-			plane[3] += plane.Normal() * ent->origin;
-
-			s->planenum = FindFloatPlane( plane );
-
-			s->texVec.v[0][3] += DotProduct( ent->origin, s->texVec.v[0] );
-			s->texVec.v[1][3] += DotProduct( ent->origin, s->texVec.v[1] );
-
-			// remove any integral shift
-			s->texVec.v[0][3] -= floor( s->texVec.v[0][3] );
-			s->texVec.v[1][3] -= floor( s->texVec.v[1][3] );
-		}
-		CreateBrushWindings( b );
-	}
-}
-*/
-
-/*
-=================
-RemoveDuplicateBrushPlanes
-
-Returns false if the brush has a mirrored set of planes,
-meaning it encloses no volume.
-Also removes planes without any normal
-=================
-*/
+//! Removes duplicate and degenerate planes from a brush, returning false if mirrored planes are found.
 static bool RemoveDuplicateBrushPlanes( uBrush_t* b )
 {
 	int		i, j, k;
@@ -293,11 +218,7 @@ static bool RemoveDuplicateBrushPlanes( uBrush_t* b )
 	return true;
 }
 
-/*
-=================
-ParseBrush
-=================
-*/
+//! Parses a map brush and converts it into a build brush structure
 static void ParseBrush( const idMapBrush* mapBrush, int primitiveNum )
 {
 	uBrush_t*			  b;
@@ -360,11 +281,7 @@ static void ParseBrush( const idMapBrush* mapBrush, int primitiveNum )
 	}
 }
 
-/*
-================
-ParseSurface
-================
-*/
+//! Parses a surface from a patch and associates it with a material
 static void ParseSurface( const idMapPatch* patch, const idSurface* surface, const idMaterial* material )
 {
 	int			 i;
@@ -397,11 +314,7 @@ static void ParseSurface( const idMapPatch* patch, const idSurface* surface, con
 	}
 }
 
-/*
-================
-ParsePatch
-================
-*/
+//! Parses a map patch and converts it into a surface for rendering.
 static void ParsePatch( const idMapPatch* patch, int primitiveNum )
 {
 	const idMaterial* mat;
@@ -427,7 +340,7 @@ static void ParsePatch( const idMapPatch* patch, int primitiveNum )
 	delete cp;
 }
 
-// RB begin
+//! Parses a polygon mesh from a map primitive and converts it into triangle primitives for rendering.
 static int ParsePolygonMesh( const MapPolygonMesh* mesh, int primitiveNum, int numPolygons )
 {
 	primitive_t* prim = ( primitive_t* )Mem_Alloc( sizeof( *prim ), TAG_TOOLS );
@@ -529,13 +442,8 @@ static int ParsePolygonMesh( const MapPolygonMesh* mesh, int primitiveNum, int n
 
 	return mesh->GetNumPolygons();
 }
-// RB end
 
-/*
-================
-ProcessMapEntity
-================
-*/
+//! Processes a map entity and initializes its data structures.
 static bool ProcessMapEntity( idMapEntity* mapEnt )
 {
 	idMapPrimitive* prim;
@@ -687,11 +595,7 @@ static void ParseSpawnArgsToRenderLight( const idDict* args, renderLight_t* rend
 }
 #endif
 
-/*
-==============
-CreateMapLight
-==============
-*/
+//! Creates a map light from a map entity, skipping dynamic lights marked with noPrelight flag.
 static void CreateMapLight( const idMapEntity* mapEnt )
 {
 	mapLight_t* light;
@@ -738,12 +642,7 @@ static void CreateMapLight( const idMapEntity* mapEnt )
 	dmapGlobals.mapLights.Append( light );
 }
 
-/*
-==============
-CreateMapLights
-
-==============
-*/
+//! Creates map lights from the provided map file by iterating through its entities and processing those with the classname 'light'.
 static void CreateMapLights( const idMapFile* dmapFile )
 {
 	int				   i;
@@ -759,11 +658,6 @@ static void CreateMapLights( const idMapFile* dmapFile )
 	}
 }
 
-/*
-================
-LoadDMapFile
-================
-*/
 bool LoadDMapFile( const char* filename )
 {
 	primitive_t* prim;

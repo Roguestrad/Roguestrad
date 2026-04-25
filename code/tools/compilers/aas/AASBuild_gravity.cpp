@@ -32,11 +32,6 @@ If you have questions concerning this license or the applicable additional terms
 
 #include "AASBuild_local.h"
 
-/*
-============
-idAASBuild::SetPortalFlags_r
-============
-*/
 void idAASBuild::SetPortalFlags_r( idBrushBSPNode* node )
 {
 	int				  s;
@@ -76,11 +71,6 @@ void idAASBuild::SetPortalFlags_r( idBrushBSPNode* node )
 	SetPortalFlags_r( node->GetChild( 1 ) );
 }
 
-/*
-============
-idAASBuild::PortalIsGap
-============
-*/
 bool idAASBuild::PortalIsGap( idBrushBSPPortal* portal, int side )
 {
 	idVec3 normal;
@@ -313,11 +303,6 @@ void idAASBuild::GravSubdivLeafNode( idBrushBSPNode* node )
 	GravSubdivLeafNode( node->GetChild( 1 ) );
 }
 
-/*
-============
-idAASBuild::GravSubdiv_r
-============
-*/
 void idAASBuild::GravSubdiv_r( idBrushBSPNode* node )
 {
 	if( !node ) {
@@ -337,11 +322,6 @@ void idAASBuild::GravSubdiv_r( idBrushBSPNode* node )
 	GravSubdiv_r( node->GetChild( 1 ) );
 }
 
-/*
-============
-idAASBuild::GravitationalSubdivision
-============
-*/
 void idAASBuild::GravitationalSubdivision( idBrushBSP& bsp )
 {
 	numGravitationalSubdivisions = 0;

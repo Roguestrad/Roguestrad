@@ -283,6 +283,7 @@ typedef struct {
 
 extern dmapGlobals_t dmapGlobals;
 
+//! Finds a floating-point plane in the map planes collection, optionally reporting if degeneracies were fixed.
 int					 FindFloatPlane( const idPlane& plane, bool* fixedDegeneracies = NULL );
 
 //=============================================================================
@@ -298,29 +299,58 @@ int					 FindFloatPlane( const idPlane& plane, bool* fixedDegeneracies = NULL );
 #define PSIDE_BOTH	 ( PSIDE_FRONT | PSIDE_BACK )
 #define PSIDE_FACING 4
 
+//! Counts the number of brushes in a linked list starting from the given brush.
 int		  CountBrushList( uBrush_t* brushes );
+
+//! Allocates memory for a brush with the specified number of sides.
 uBrush_t* AllocBrush( int numsides );
+
+//! Frees the memory associated with a brush and its sides
 void	  FreeBrush( uBrush_t* brushes );
+
+//! Frees all brushes in a linked list by iterating through each node and calling FreeBrush on it.
 void	  FreeBrushList( uBrush_t* brushes );
+
+//! Creates a deep copy of a brush including its sides and windings
 uBrush_t* CopyBrush( uBrush_t* brush );
+
+//! Prints the contents of a brush including its sides and windings.
 void	  PrintBrush( uBrush_t* brush );
+
+//! Computes the bounding box of a brush from its side windings and validates its volume.
 bool	  BoundBrush( uBrush_t* brush );
+
+//! Creates windings for brush sides and bounds for the brush, returning false if the brush doesn't enclose a valid volume
 bool	  CreateBrushWindings( uBrush_t* brush );
+
+//! Creates a new axial brush from the given bounding box.
 uBrush_t* BrushFromBounds( const idBounds& bounds );
+
+//! Computes the volume of a 3D brush geometry using tetrahedral decomposition
 float	  BrushVolume( uBrush_t* brush );
+
+//! Writes a BSP brush map to a file in a specific format.
 void	  WriteBspBrushMap( const char* name, uBrush_t* list );
 
+//! Filters brushes from an entity into a spatial tree structure.
 void	  FilterBrushesIntoTree( uEntity_t* e );
 
 void	  SplitBrush( uBrush_t* brush, int planenum, uBrush_t** front, uBrush_t** back );
+
+//! Allocates and initializes a new collision model node.
 node_t*	  AllocNode();
 
 //=============================================================================
 
 // map.cpp
 
+//! Loads and parses a map file into a canonical form for further processing
 bool	  LoadDMapFile( const char* filename );
+
+//! Frees all memory allocated for a list of optimization groups.
 void	  FreeOptimizeGroupList( optimizeGroup_t* groups );
+
+//! Frees all memory associated with the current DMap file, including entities, brushes, primitives, and map lights.
 void	  FreeDMapFile();
 
 //=============================================================================
@@ -336,51 +366,87 @@ struct interAreaPortal_t {
 	// RB begin
 	int			   polygonId;
 	idFixedWinding w;
-	// RB end
 
+	//! Initializes an interAreaPortal_t object with its side pointer set to NULL.
 	interAreaPortal_t() { side = NULL; }
 };
 
 extern idList<interAreaPortal_t> interAreaPortals;
 
+//! Places an occupant into a leaf node of the BSP tree based on the given origin
 bool							 PlaceOccupant( node_t* headnode, idVec3 origin, uEntity_t* occupant );
+
+//! Floods entities into the BSP tree to mark accessible nodes and detect leaks.
 bool							 FloodEntities( tree_t* tree );
+
+//! Fills outside leafs by setting node opaque flag for entities that cannot be reached.
 void							 FillOutside( uEntity_t* e );
+
+//! Marks each leaf with an area bounded by CONTENTS_AREAPORTAL and sets the number of areas for the given entity.
 void							 FloodAreas( uEntity_t* e );
+
+//! Creates portals for the given tree structure.
 void							 MakeTreePortals( tree_t* tree );
+
+//! Frees the memory allocated for a portal object and its associated winding.
 void							 FreePortal( uPortal_t* p );
+
+//! Returns true if the portal has non-opaque leafs on both sides
 bool							 Portal_Passable( uPortal_t* p );
 
-//=============================================================================
-
-// glfile.cpp -- write a debug file to be viewd with glview.exe
-
+//! Returns a debug color for visualization purposes, with variation based on the input area index.
 idVec4							 PickDebugColor( int area );
+
+/*!
+	\brief Writes BSP data to an OBJ file for visualization purposes
+
+	This function writes BSP (Binary Space Partitioning) tree data to an OBJ file format for visualization in 3D modeling tools. It collects portal and face data from the BSP tree and outputs it in
+   OBJ format with vertex colors. The function only processes the BSP data when entityNum is 0 or when force is true. It uses a global map file base name and the provided source identifier to
+   construct the output file path.
+
+	\param tree Pointer to the BSP tree structure to be written
+	\param source Source identifier string used in the output filename
+	\param entityNum Entity number to determine if processing should occur
+	\param force Flag to force processing regardless of entityNum value
+*/
 void							 WriteGLViewBSP( tree_t* tree, const char* source, int entityNum, bool force = false );
+
+//! Writes BSP face list data to an OBJ file for visualization
 void							 WriteGLViewFacelist( bspFace_t* list, const char* source, bool force = false );
 
 //=============================================================================
 
 // leakfile.cpp
 
+//! Writes the leak file for the given tree by tracing the outside node path and recording point coordinates.
 void							 LeakFile( tree_t* tree );
 
 //=============================================================================
 
 // facebsp.cpp
 
+//! Allocates and initializes a new tree structure for BSP operations.
 tree_t*							 AllocTree();
+
+//! Frees all memory allocated for a tree structure.
 void							 FreeTree( tree_t* tree );
 
+//! Recursively frees all memory associated with a node and its children in a BSP tree.
 void							 FreeTree_r( node_t* node );
+
+//! Recursively frees all portals associated with a BSP tree node and its children.
 void							 FreeTreePortals_r( node_t* node );
 
+//! Prints a recursive representation of a node tree with indentation based on depth
 void							 PrintTree_r( node_t* node, int depth );
 
+//! Creates a list of BSP faces from structural primitives for BSP tree construction
 bspFace_t*						 MakeStructuralBspFaceList( primitive_t* list );
-// bspface_t*	MakeVisibleBspFaceList( primitive_t* list );
+
+//! Creates a BSP tree from a list of faces for structural brush modeling.
 tree_t*							 FaceBSP( bspFace_t* list );
 
+//! Finds the leaf node containing the given point in a binary space partitioning tree.
 node_t*							 NodeForPoint( node_t* node, const idVec3& origin );
 
 //=============================================================================
@@ -388,25 +454,42 @@ node_t*							 NodeForPoint( node_t* node, const idVec3& origin );
 // surface.cpp
 
 mapTri_t*						 CullTrisInOpaqueLeafs( mapTri_t* triList, tree_t* tree );
+
+//! Clips the sides of brushes in an entity by traversing a tree structure.
 void							 ClipSidesByTree( uEntity_t* e );
 void							 SplitTrisToSurfaces( mapTri_t* triList, tree_t* tree );
+
+//! Populates areas with primitives from the given entity.
 void							 PutPrimitivesInAreas( uEntity_t* e );
+
+//! Breaks optimize groups into additional groups at light boundaries to prevent optimization across light bounds.
 void							 Prelight( uEntity_t* e );
 
-// RB begin
+//! Filters mesh primitives into the entity's spatial tree structure.
 void							 FilterMeshesIntoTree( uEntity_t* e );
-// RB end
-
 //=============================================================================
 
 // tritjunction.cpp
 
+//! Returns a hashed vertex structure for the given vector, creating a new one if necessary.
 struct hashVert_s*				 GetHashVert( idVec3& v );
+
+//! Initializes hash tables and processes triangles from the provided group list for spatial hashing.
 void							 HashTriangles( optimizeGroup_t* groupList );
+
+//! Frees all memory allocated for the hash vertex structure used in t-junction processing
 void							 FreeTJunctionHash();
+
+//! Counts the total number of triangles in a list of optimization groups
 int								 CountGroupListTris( const optimizeGroup_t* groupList );
+
+//! Fixes T-junctions for all areas within the given entity.
 void							 FixEntityTjunctions( uEntity_t* e );
+
+//! Fixes T-junctions in area groups by processing triangle lists against a hash table.
 void							 FixAreaGroupsTjunctions( optimizeGroup_t* groupList );
+
+//! Fixes T-junctions in the global map geometry by hashing vertices and merging triangle lists
 void							 FixGlobalTjunctions( uEntity_t* e );
 
 //=============================================================================
@@ -449,27 +532,57 @@ typedef struct {
 	optTri_t*		 tris;
 } optIsland_t;
 
+//! Optimizes the entity by processing each of its areas and optimizing their group lists.
 void			OptimizeEntity( uEntity_t* e );
+
+//! Optimizes a list of polygon groups by removing colinear edges and fixing t-junctions.
 void			OptimizeGroupList( optimizeGroup_t* groupList );
 
 //=============================================================================
 
 // tritools.cpp
 
+//! Allocates and initializes a new triangle structure for map processing.
 mapTri_t*		AllocTri();
+
+//! Frees the memory allocated for a map triangle structure.
 void			FreeTri( mapTri_t* tri );
+
+//! Counts the number of triangles in a linked list starting from the given triangle
 int				CountTriList( const mapTri_t* list );
+
+//! Merges two linked lists of mapTri_t structures by appending the second list to the end of the first.
 mapTri_t*		MergeTriLists( mapTri_t* a, mapTri_t* b );
+
+//! Creates a deep copy of a linked list of mapTri_t structures
 mapTri_t*		CopyTriList( const mapTri_t* a );
+
+//! Frees all elements in a linked list of mapTri_t structures.
 void			FreeTriList( mapTri_t* a );
+
+//! Creates a copy of a map triangle structure
 mapTri_t*		CopyMapTri( const mapTri_t* tri );
 float			MapTriArea( const mapTri_t* tri );
+
+//! Returns a new list with zero or negative area triangles removed from the input list.
 mapTri_t*		RemoveBadTris( const mapTri_t* tri );
+
+//! Calculates the bounding box for a list of triangle vertices.
 void			BoundTriList( const mapTri_t* list, idBounds& b );
+
+//! Swaps the vertex order of triangle list
 void			FlipTriList( mapTri_t* tris );
+
+//! Regenerates texture coordinates and normals for a triangle from original triangle data using barycentric interpolation.
 void			TriVertsFromOriginal( mapTri_t* tri, const mapTri_t* original );
+
+//! Computes the plane equation for a triangle defined by three vertices.
 void			PlaneForTri( const mapTri_t* tri, idPlane& plane );
+
+//! Creates a winding from a triangular mesh face.
 idWinding*		WindingForTri( const mapTri_t* tri );
+
+//! Converts a winding into a list of triangles
 mapTri_t*		WindingToTriList( const idWinding* w, const mapTri_t* originalTri );
 void			ClipTriList( const mapTri_t* list, const idPlane& plane, float epsilon, mapTri_t** front, mapTri_t** back );
 
@@ -477,11 +590,14 @@ void			ClipTriList( const mapTri_t* list, const idPlane& plane, float epsilon, m
 
 // output.cpp
 
-// RB: slightly changed variant from output.cpp to number both nodes and leafs
+//! Numbers nodes and leaves in a binary BSP tree structure
 int				NumberNodes_r( node_t* node, int nextNode, int& nextLeaf );
+
+//! Numbers nodes and leafs in a BSP tree starting from a given number.
 int				NumberNodes_r( node_t* node, int nextNumber );
 
+//! Converts independent triangles to shared vertex triangles
 srfTriangles_t* ShareMapTriVerts( const mapTri_t* tris );
-void			WriteOutputFile();
 
-//=============================================================================
+//! Writes the output file with entity models and information.
+void			WriteOutputFile();

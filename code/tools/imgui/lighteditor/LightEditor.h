@@ -46,6 +46,15 @@ namespace ImGuiTools
 
 enum ELightType { LIGHT_POINT, LIGHT_SPOT, LIGHT_SUN };
 
+/*!
+	\class ImGuiTools::LightInfo
+	\brief Provides light configuration and management for ImGui-based tools.
+
+	The LightInfo class encapsulates lighting parameters and provides functionality to initialize, modify, and serialize lighting settings. It supports various light types including point, projected,
+   and sun lights, with methods to set default values and populate data from or to dictionaries. This class is designed to facilitate lighting configuration within an ImGui-based interface, allowing
+   for easy manipulation and persistence of lighting data. The class maintains light properties such as color and origin while supporting different light type initializations.
+
+*/
 class LightInfo
 {
 public:
@@ -73,16 +82,39 @@ public:
 	bool	   hasCenter;
 	int		   lightStyle; // RBDOOM specific, saved to map as "style"
 
+	//! Initializes a new instance of the LightInfo class with default values.
 	LightInfo();
 
+	//! Initializes all lighting information to default values.
 	void Defaults();
+
+	//! Initializes a point light with default properties while preserving color and light origin settings.
 	void DefaultPoint();
+
+	//! Initializes default projected light settings while preserving color and light origin information.
 	void DefaultProjected();
+
+	//! Initializes the light information with default sun settings while preserving color and light origin.
 	void DefaultSun();
+
+	//! Populates light information from a dictionary.
 	void FromDict( const idDict* e );
+
+	//! Converts light information to a dictionary for entity storage.
 	void ToDict( idDict* e );
 };
 
+/*!
+	\class ImGuiTools::LightEditor
+	\brief Provides a user interface for editing light entity properties and configurations.
+
+	The LightEditor class serves as a dedicated editor for manipulating light entities within a graphical interface. It manages the display and interaction of light properties such as styles,
+   textures, and spawn arguments. The class supports initializing with specific light entities, loading style definitions, handling texture loading, applying temporary changes, and saving or reverting
+   modifications. It includes functionality for duplicating lights and managing the visibility of the editor UI. The class is implemented as a singleton to ensure a single instance controls the
+   editing interface. The editor integrates with ImGui for rendering its user interface and provides methods for retrieving item names for combo boxes, enabling users to select from available light
+   styles and textures.
+
+*/
 class LightEditor
 {
 private:
@@ -122,22 +154,40 @@ private:
 	bool				shortcutSaveMapEnabled;
 	bool				shortcutDuplicateLightEnabled;
 
+	//! Loads light style definitions from the light entity definition or uses predefined Quake 1 styles as a fallback.
 	void				LoadLightStyles();
+
+	//! Retrieves the name of a light style item for use in an ImGui combo box.
 	static bool			StyleItemsGetter( void* data, int idx, const char** out_text );
 
+	//! Initializes the light editor with the specified dictionary and light entity.
 	void				Init( const idDict* dict, idEntity* light );
+
+	//! Resets the light editor state to its default values
 	void				Reset();
 
+	//! Loads and processes light texture names from material declarations for the light editor
 	void				LoadLightTextures();
+
+	//! Populates the texture items getter with texture names for the light editor
 	static bool			TextureItemsGetter( void* data, int idx, const char** out_text );
+
+	//! Loads the current texture for the light editor based on the active texture index and material.
 	void				LoadCurrentTexture();
 
+	//! Applies temporary changes to a light entity in the editor
 	void				TempApplyChanges();
+
+	//! Saves the current light editor changes to the map.
 	void				SaveChanges( bool saveMap );
+
+	//! Reverts the light entity's spawn arguments to their original values.
 	void				CancelChanges();
 
+	//! Duplicates the currently selected light entity in the editor.
 	void				DuplicateLight();
 
+	//! Initializes a new instance of the LightEditor class and resets its state.
 	LightEditor()
 	{
 		isShown = false;
@@ -146,13 +196,19 @@ private:
 	}
 
 public:
+	//! Returns the singleton instance of the LightEditor class.
 	static LightEditor& Instance();
+
+	//! Reinitializes the light editor with the provided dictionary and light entity.
 	static void			ReInit( const idDict* dict, idEntity* light );
 
+	//! Sets the visibility state of the light editor UI element.
 	inline void			ShowIt( bool show ) { isShown = show; }
 
+	//! Returns whether the light editor window is currently shown.
 	inline bool			IsShown() const { return isShown; }
 
+	//! Displays the light editor interface in the ImGui window
 	void				Draw();
 };
 

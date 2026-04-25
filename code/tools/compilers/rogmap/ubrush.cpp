@@ -39,13 +39,7 @@ int c_nodes;
 // if a brush just barely pokes onto the other side,
 // let it slide by without chopping
 #define PLANESIDE_EPSILON 0.001
-// 0.1
 
-/*
-================
-CountBrushList
-================
-*/
 int CountBrushList( uBrush_t* brushes )
 {
 	int c;
@@ -57,6 +51,7 @@ int CountBrushList( uBrush_t* brushes )
 	return c;
 }
 
+//! Calculates the memory size required for a brush structure with a specified number of sides
 int BrushSizeForSides( int numsides )
 {
 	int c;
@@ -68,11 +63,6 @@ int BrushSizeForSides( int numsides )
 	return c;
 }
 
-/*
-================
-AllocBrush
-================
-*/
 uBrush_t* AllocBrush( int numsides )
 {
 	uBrush_t* bb;
@@ -86,11 +76,6 @@ uBrush_t* AllocBrush( int numsides )
 	return bb;
 }
 
-/*
-================
-FreeBrush
-================
-*/
 void FreeBrush( uBrush_t* brushes )
 {
 	int i;
@@ -107,11 +92,6 @@ void FreeBrush( uBrush_t* brushes )
 	c_active_brushes--;
 }
 
-/*
-================
-FreeBrushList
-================
-*/
 void FreeBrushList( uBrush_t* brushes )
 {
 	uBrush_t* next;
@@ -123,13 +103,6 @@ void FreeBrushList( uBrush_t* brushes )
 	}
 }
 
-/*
-==================
-CopyBrush
-
-Duplicates the brush, the sides, and the windings
-==================
-*/
 uBrush_t* CopyBrush( uBrush_t* brush )
 {
 	uBrush_t* newbrush;
@@ -150,11 +123,6 @@ uBrush_t* CopyBrush( uBrush_t* brush )
 	return newbrush;
 }
 
-/*
-=============
-PrintBrush
-=============
-*/
 void PrintBrush( uBrush_t* brush )
 {
 	int i;
@@ -166,14 +134,6 @@ void PrintBrush( uBrush_t* brush )
 	}
 }
 
-/*
-==================
-BoundBrush
-
-Sets the mins/maxs based on the windings
-returns false if the brush doesn't enclose a valid volume
-==================
-*/
 bool BoundBrush( uBrush_t* brush )
 {
 	int		   i, j;
@@ -199,14 +159,6 @@ bool BoundBrush( uBrush_t* brush )
 	return true;
 }
 
-/*
-==================
-CreateBrushWindings
-
-makes basewindigs for sides and mins / maxs for the brush
-returns false if the brush doesn't enclose a valid volume
-==================
-*/
 bool CreateBrushWindings( uBrush_t* brush )
 {
 	int		   i, j;
@@ -237,13 +189,6 @@ bool CreateBrushWindings( uBrush_t* brush )
 	return BoundBrush( brush );
 }
 
-/*
-==================
-BrushFromBounds
-
-Creates a new axial brush
-==================
-*/
 uBrush_t* BrushFromBounds( const idBounds& bounds )
 {
 	uBrush_t* b;
@@ -268,12 +213,6 @@ uBrush_t* BrushFromBounds( const idBounds& bounds )
 	return b;
 }
 
-/*
-==================
-BrushVolume
-
-==================
-*/
 float BrushVolume( uBrush_t* brush )
 {
 	int		   i;
@@ -318,13 +257,6 @@ float BrushVolume( uBrush_t* brush )
 	return volume;
 }
 
-/*
-==================
-WriteBspBrushMap
-
-FIXME: use new brush format
-==================
-*/
 void WriteBspBrushMap( const char* name, uBrush_t* list )
 {
 	idFile*	   f;
@@ -360,13 +292,7 @@ void WriteBspBrushMap( const char* name, uBrush_t* list )
 	fileSystem->CloseFile( f );
 }
 
-//=====================================================================================
-
-/*
-====================
-FilterBrushIntoTree_r
-====================
-*/
+//! Filters a brush into a BSP tree node recursively
 int FilterBrushIntoTree_r( uBrush_t* b, node_t* node )
 {
 	uBrush_t *front, *back;
@@ -403,15 +329,6 @@ int FilterBrushIntoTree_r( uBrush_t* b, node_t* node )
 	return c;
 }
 
-/*
-=====================
-FilterBrushesIntoTree
-
-Mark the leafs as opaque and areaportals and put brush
-fragments in each leaf so portal surfaces can be matched
-to materials
-=====================
-*/
 void FilterBrushesIntoTree( uEntity_t* e )
 {
 	primitive_t* prim;
@@ -438,11 +355,6 @@ void FilterBrushesIntoTree( uEntity_t* e )
 	common->VerbosePrintf( "%5i cluster references\n", c_clusters );
 }
 
-/*
-================
-AllocTree
-================
-*/
 tree_t* AllocTree()
 {
 	tree_t* tree;
@@ -454,11 +366,6 @@ tree_t* AllocTree()
 	return tree;
 }
 
-/*
-================
-AllocNode
-================
-*/
 node_t* AllocNode()
 {
 	node_t* node;
@@ -469,14 +376,7 @@ node_t* AllocNode()
 	return node;
 }
 
-//============================================================
-
-/*
-==================
-BrushMostlyOnSide
-
-==================
-*/
+//! Determines which side of a plane a brush is mostly on by evaluating the maximum distance of its winding points.
 int BrushMostlyOnSide( uBrush_t* brush, idPlane& plane )
 {
 	int		   i, j;

@@ -114,6 +114,7 @@ static const char* anchorTypeNames[2] = { "joint", "coorindates" };
 namespace ImGuiTools
 {
 
+//! Retrieves the name of a body item from a declaration asset file at the specified index.
 static bool BodyItemGetter( void* data, int index, const char** items );
 static bool ConstraintItemGetter( void* data, int index, const char** items );
 
@@ -529,6 +530,7 @@ bool BodyItemGetter( void* data, int index, const char** itemName )
 	return true;
 }
 
+//! Retrieves the name of a constraint from an animation file declaration for use in a UI dropdown.
 bool ConstraintItemGetter( void* data, int index, const char** items )
 {
 	idDeclAF* decl = reinterpret_cast<idDeclAF*>( data );
@@ -547,6 +549,7 @@ bool ConstraintItemGetter( void* data, int index, const char** items )
 	return true;
 }
 
+//! Returns true if the checkbox value was changed, false otherwise.
 static bool CVarCheckBox( const char* label, idCVar* cvar )
 {
 	bool value = cvar->GetBool();

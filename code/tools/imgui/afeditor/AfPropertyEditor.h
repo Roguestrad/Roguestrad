@@ -36,15 +36,22 @@ If you have questions concerning this license or the applicable additional terms
 namespace ImGuiTools
 {
 
+/*!
+	\class ImGuiTools::AfPropertyEditor
+	\brief A property editor for articulated figure declarations.
+*/
 class AfPropertyEditor
 {
 public:
+	//! Initializes a new AfPropertyEditor instance with the specified declaration
 	AfPropertyEditor( idDeclAF* newDecl );
 	~AfPropertyEditor();
 
+	//! Displays and handles the user interface for editing articulated figure properties.
 	bool Do();
 
 private:
+	//! Updates the list of model definitions in the property editor.
 	void			  UpdateModelDefList();
 
 	idDeclAF*		  decl;

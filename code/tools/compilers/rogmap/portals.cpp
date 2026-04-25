@@ -38,11 +38,7 @@ idList<interAreaPortal_t> interAreaPortals;
 int						  c_active_portals;
 int						  c_peak_portals;
 
-/*
-===========
-AllocPortal
-===========
-*/
+//! Allocates and returns a new portal structure with initialized memory.
 uPortal_t*				  AllocPortal()
 {
 	uPortal_t* p;
@@ -67,15 +63,6 @@ void FreePortal( uPortal_t* p )
 	Mem_Free( p );
 }
 
-//==============================================================
-
-/*
-=============
-Portal_Passable
-
-Returns true if the portal has non-opaque leafs on both sides
-=============
-*/
 bool Portal_Passable( uPortal_t* p )
 {
 	if( !p->onnode ) {
@@ -97,11 +84,7 @@ bool Portal_Passable( uPortal_t* p )
 
 int	 c_tinyportals;
 
-/*
-=============
-AddPortalToNodes
-=============
-*/
+//! Adds a portal to the node lists for both front and back nodes.
 void AddPortalToNodes( uPortal_t* p, node_t* front, node_t* back )
 {
 	if( p->nodes[0] || p->nodes[1] ) {
@@ -117,11 +100,6 @@ void AddPortalToNodes( uPortal_t* p, node_t* front, node_t* back )
 	back->portals = p;
 }
 
-/*
-=============
-RemovePortalFromNode
-=============
-*/
 void RemovePortalFromNode( uPortal_t* portal, node_t* l )
 {
 	uPortal_t **pp, *t;
@@ -158,8 +136,7 @@ void RemovePortalFromNode( uPortal_t* portal, node_t* l )
 	}
 }
 
-//============================================================================
-
+//! Prints the coordinates of each point in the portal's winding to the common output.
 void PrintPortal( uPortal_t* p )
 {
 	int		   i;
@@ -179,6 +156,8 @@ The created portals will face the global outside_node
 ================
 */
 #define SIDESPACE 8
+
+//! Initializes portal boundaries for the head node of a BSP tree
 static void MakeHeadnodePortals( tree_t* tree )
 {
 	idBounds   bounds;
@@ -251,6 +230,7 @@ BaseWindingForNode
 #define BASE_WINDING_EPSILON  0.001f
 #define SPLIT_WINDING_EPSILON 0.001f
 
+//! Creates a base winding for a BSP node by clipping a plane winding with its parent nodes.
 idWinding* BaseWindingForNode( node_t* node )
 {
 	idWinding* w;
@@ -277,16 +257,7 @@ idWinding* BaseWindingForNode( node_t* node )
 	return w;
 }
 
-//============================================================
-
-/*
-==================
-MakeNodePortal
-
-create the new portal by taking the full plane winding for the cutting plane
-and clipping it by all of parents of this node
-==================
-*/
+//! Creates a portal for a node by clipping its winding with parent portals.
 static void MakeNodePortal( node_t* node )
 {
 	uPortal_t *new_portal, *p;
@@ -331,14 +302,7 @@ static void MakeNodePortal( node_t* node )
 	AddPortalToNodes( new_portal, node->children[0], node->children[1] );
 }
 
-/*
-==============
-SplitNodePortals
-
-Move or split the portals that bound node so that the node's
-children have portals instead of node.
-==============
-*/
+//! Splits the portals of a node between its two child nodes.
 static void SplitNodePortals( node_t* node )
 {
 	uPortal_t *p, *next_portal, *new_portal;
@@ -426,11 +390,7 @@ static void SplitNodePortals( node_t* node )
 	node->portals = NULL;
 }
 
-/*
-================
-CalcNodeBounds
-================
-*/
+//! Calculates the bounding box for a node based on its portal windings.
 void CalcNodeBounds( node_t* node )
 {
 	uPortal_t* p;
@@ -447,11 +407,7 @@ void CalcNodeBounds( node_t* node )
 	}
 }
 
-/*
-==================
-MakeTreePortals_r
-==================
-*/
+//! Recursively processes a node to create tree portals and split node portals.
 void MakeTreePortals_r( node_t* node )
 {
 	int i;
@@ -480,11 +436,6 @@ void MakeTreePortals_r( node_t* node )
 	MakeTreePortals_r( node->children[1] );
 }
 
-/*
-==================
-MakeTreePortals
-==================
-*/
 void MakeTreePortals( tree_t* tree )
 {
 	common->VerbosePrintf( "----- MakeTreePortals -----\n" );
@@ -502,11 +453,7 @@ FLOOD ENTITIES
 
 int	 c_floodedleafs;
 
-/*
-=============
-FloodPortals_r
-=============
-*/
+//! Flood fills portals recursively from the given node up to the specified distance
 void FloodPortals_r( node_t* node, int dist )
 {
 	uPortal_t* p;
@@ -529,11 +476,6 @@ void FloodPortals_r( node_t* node, int dist )
 	}
 }
 
-/*
-=============
-PlaceOccupant
-=============
-*/
 bool PlaceOccupant( node_t* headnode, idVec3 origin, uEntity_t* occupant )
 {
 	node_t*	 node;
@@ -562,13 +504,6 @@ bool PlaceOccupant( node_t* headnode, idVec3 origin, uEntity_t* occupant )
 	return true;
 }
 
-/*
-=============
-FloodEntities
-
-Marks all nodes that can be reached by entites
-=============
-*/
 bool FloodEntities( tree_t* tree )
 {
 	int			i;
@@ -662,11 +597,7 @@ FLOOD AREAS
 static int	   c_areas;
 static int	   c_areaFloods;
 
-/*
-=================
-FindSideForPortal
-=================
-*/
+//! Finds and returns the side of a portal brush that corresponds to the given portal
 static side_t* FindSideForPortal( uPortal_t* p )
 {
 	int		  i, j, k;
@@ -717,7 +648,7 @@ static side_t* FindSideForPortal( uPortal_t* p )
 	return NULL;
 }
 
-// RB: extra function to avoid many allocations
+//! Checks if a portal has associated area portal triangles that share the same plane.
 static bool CheckTrianglesForPortal( uPortal_t* p )
 {
 	int		  i;
@@ -743,6 +674,7 @@ static bool CheckTrianglesForPortal( uPortal_t* p )
 	return false;
 }
 
+//! Determines if a portal has associated triangles and returns true if triangles are found.
 static bool FindTrianglesForPortal( uPortal_t* p, idList<mapTri_t*>& tris )
 {
 	int		  i;
@@ -769,13 +701,8 @@ static bool FindTrianglesForPortal( uPortal_t* p, idList<mapTri_t*>& tris )
 
 	return tris.Num() > 0;
 }
-// RB end
 
-/*
-=============
-FloodAreas_r
-=============
-*/
+//! Recursively floods and assigns area identifiers to nodes in a portal tree structure.
 void FloodAreas_r( node_t* node )
 {
 	uPortal_t* p;
@@ -815,14 +742,7 @@ void FloodAreas_r( node_t* node )
 	}
 }
 
-/*
-=============
-FindAreas_r
-
-Just decend the tree, and for each node that hasn't had an
-area set, flood fill out from there
-=============
-*/
+//! Finds areas by recursively traversing the tree and flooding fill from unassigned nodes
 void FindAreas_r( node_t* node )
 {
 	if( node->planenum != PLANENUM_LEAF ) {
@@ -845,11 +765,7 @@ void FindAreas_r( node_t* node )
 	c_areas++;
 }
 
-/*
-============
-CheckAreas_r
-============
-*/
+//! Checks areas recursively starting from the given node and reports an error if an invalid area is found.
 void CheckAreas_r( node_t* node )
 {
 	if( node->planenum != PLANENUM_LEAF ) {
@@ -862,13 +778,7 @@ void CheckAreas_r( node_t* node )
 	}
 }
 
-/*
-============
-ClearAreas_r
-
-Set all the areas to -1 before filling
-============
-*/
+//! Clears the area values in the BSP tree nodes by setting them to -1.
 void ClearAreas_r( node_t* node )
 {
 	if( node->planenum != PLANENUM_LEAF ) {
@@ -879,13 +789,7 @@ void ClearAreas_r( node_t* node )
 	node->area = -1;
 }
 
-//=============================================================
-
-/*
-=================
-FindInterAreaPortals_r
-=================
-*/
+//! Recursively finds inter-area portals for the given node
 static void FindInterAreaPortals_r( node_t* node )
 {
 	uPortal_t*		   p;
@@ -1020,14 +924,6 @@ static void FindInterAreaPortals_r( node_t* node )
 	// RB end
 }
 
-/*
-=============
-FloodAreas
-
-Mark each leaf with an area, bounded by CONTENTS_AREAPORTAL
-Sets e->areas.numAreas
-=============
-*/
 void FloodAreas( uEntity_t* e )
 {
 	if( e == &dmapGlobals.uEntities[0] ) {
@@ -1068,6 +964,7 @@ static int c_outside;
 static int c_inside;
 static int c_solid;
 
+//! Recursively fills outside areas of a node tree that are not occupied by entities.
 void	   FillOutside_r( node_t* node )
 {
 	if( node->planenum != PLANENUM_LEAF ) {

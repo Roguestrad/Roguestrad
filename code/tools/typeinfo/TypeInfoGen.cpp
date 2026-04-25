@@ -33,20 +33,10 @@ If you have questions concerning this license or the applicable additional terms
 
 #define TYPE_INFO_GEN_VERSION "1.1"
 
-/*
-================
-idTypeInfoGen::idTypeInfoGen
-================
-*/
 idTypeInfoGen::idTypeInfoGen()
 {
 }
 
-/*
-================
-idTypeInfoGen::~idTypeInfoGen
-================
-*/
 idTypeInfoGen::~idTypeInfoGen()
 {
 	constants.DeleteContents( true );
@@ -54,11 +44,6 @@ idTypeInfoGen::~idTypeInfoGen()
 	classes.DeleteContents( true );
 }
 
-/*
-================
-idTypeInfoGen::GetInheritance
-================
-*/
 int idTypeInfoGen::GetInheritance( const char* typeName ) const
 {
 	int i;
@@ -74,11 +59,6 @@ int idTypeInfoGen::GetInheritance( const char* typeName ) const
 	return 0;
 }
 
-/*
-================
-idTypeInfoGen::EvaluateIntegerString
-================
-*/
 int idTypeInfoGen::EvaluateIntegerString( const idStr& string )
 {
 	idParser src;
@@ -92,11 +72,6 @@ int idTypeInfoGen::EvaluateIntegerString( const idStr& string )
 	return src.ParseInt();
 }
 
-/*
-================
-idTypeInfoGen::EvaluateFloatString
-================
-*/
 float idTypeInfoGen::EvaluateFloatString( const idStr& string )
 {
 	idParser src;
@@ -110,11 +85,6 @@ float idTypeInfoGen::EvaluateFloatString( const idStr& string )
 	return src.ParseFloat();
 }
 
-/*
-================
-idTypeInfoGen::FindConstant
-================
-*/
 idConstantInfo* idTypeInfoGen::FindConstant( const char* name )
 {
 	int i;
@@ -127,11 +97,6 @@ idConstantInfo* idTypeInfoGen::FindConstant( const char* name )
 	return NULL;
 }
 
-/*
-================
-idTypeInfoGen::GetIntegerConstant
-================
-*/
 int idTypeInfoGen::GetIntegerConstant( const char* scope, const char* name, idParser& src )
 {
 	idConstantInfo* constant = FindConstant( idStr( scope ) + name );
@@ -145,11 +110,6 @@ int idTypeInfoGen::GetIntegerConstant( const char* scope, const char* name, idPa
 	return 0;
 }
 
-/*
-================
-idTypeInfoGen::GetFloatConstant
-================
-*/
 float idTypeInfoGen::GetFloatConstant( const char* scope, const char* name, idParser& src )
 {
 	idConstantInfo* constant = FindConstant( idStr( scope ) + name );
@@ -163,11 +123,6 @@ float idTypeInfoGen::GetFloatConstant( const char* scope, const char* name, idPa
 	return 0;
 }
 
-/*
-================
-idTypeInfoGen::ParseArraySize
-================
-*/
 int idTypeInfoGen::ParseArraySize( const char* scope, idParser& src )
 {
 	idToken token;
@@ -207,11 +162,6 @@ int idTypeInfoGen::ParseArraySize( const char* scope, idParser& src )
 	return totalSize;
 }
 
-/*
-================
-idTypeInfoGen::ParseConstantValue
-================
-*/
 void idTypeInfoGen::ParseConstantValue( const char* scope, idParser& src, idStr& value )
 {
 	idToken token;
@@ -239,11 +189,6 @@ void idTypeInfoGen::ParseConstantValue( const char* scope, idParser& src, idStr&
 	}
 }
 
-/*
-================
-idTypeInfoGen::ParseEnumType
-================
-*/
 idEnumTypeInfo* idTypeInfoGen::ParseEnumType( const char* scope, bool isTemplate, bool typeDef, idParser& src )
 {
 	int				value;
@@ -314,11 +259,6 @@ idEnumTypeInfo* idTypeInfoGen::ParseEnumType( const char* scope, bool isTemplate
 	return typeInfo;
 }
 
-/*
-================
-idTypeInfoGen::ParseClassType
-================
-*/
 idClassTypeInfo* idTypeInfoGen::ParseClassType( const char* scope, const char* templateArgs, bool isTemplate, bool typeDef, idParser& src )
 {
 	idToken			 token;
@@ -402,11 +342,6 @@ idClassTypeInfo* idTypeInfoGen::ParseClassType( const char* scope, const char* t
 	return typeInfo;
 }
 
-/*
-================
-idTypeInfoGen::ParseScope
-================
-*/
 void idTypeInfoGen::ParseScope( const char* scope, bool isTemplate, idParser& src, idClassTypeInfo* typeInfo )
 {
 	int				 indent;
@@ -796,21 +731,11 @@ void idTypeInfoGen::ParseScope( const char* scope, bool isTemplate, idParser& sr
 	}
 }
 
-/*
-================
-idTypeInfoGen::AddDefine
-================
-*/
 void idTypeInfoGen::AddDefine( const char* define )
 {
 	defines.Append( define );
 }
 
-/*
-================
-idTypeInfoGen::CreateTypeInfo
-================
-*/
 void idTypeInfoGen::CreateTypeInfo( const char* path )
 {
 	int		 i, j, inheritance;
@@ -867,11 +792,7 @@ void idTypeInfoGen::CreateTypeInfo( const char* path )
 	common->Printf( "%d max inheritance level for '%s'\n", maxInheritance, maxInheritanceClass.c_str() );
 }
 
-/*
-================
-CleanName
-================
-*/
+//! Replaces special characters and spaces in the input string with underscores.
 void CleanName( idStr& name )
 {
 	name.Replace( "::", "_" );
@@ -881,11 +802,6 @@ void CleanName( idStr& name )
 	name.Replace( " ", "_" );
 }
 
-/*
-================
-idTypeInfoGen::WriteTypeInfo
-================
-*/
 void idTypeInfoGen::WriteTypeInfo( const char* fileName ) const
 {
 	int		i, j;
