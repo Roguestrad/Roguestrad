@@ -77,8 +77,10 @@ public:
 	*/
 	void SetPosition( idPhysics* physics1, int id1, const idVec3& p1, idPhysics* physics2, int id2, const idVec3& p2 );
 
-public: // common force interface
-		//! Evaluates the spring force between two points based on their positions and velocities at the given time.
+public:
+	// common force interface ---------------------
+
+	//! Evaluates the spring force between two points based on their positions and velocities at the given time.
 	virtual void Evaluate( int time );
 
 	//! Removes a physics object from the spring force.

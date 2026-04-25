@@ -196,19 +196,21 @@ public:
 	//! Copies the current angular values into the provided idAngles object.
 	void					GetAngles( idAngles& curAngles ) const;
 
-public: // common physics interface
-		/*!
-			\brief Sets the collision model for the parametric physics object with specified density and linking parameters.
-	
-			This function assigns a collision model to the physics object and links it to the game world. It handles the removal of the previous collision model if it differs from the new one and the
-		   freeOld parameter is true. The function ensures the new model is properly linked with the object's current position and orientation.
-	
-			\param model The collision model to be set for this physics object
-			\param density The density value to be used for the physics calculations
-			\param id An identifier for the collision model, default is 0
-			\param freeOld Flag indicating whether to free the old collision model if it differs from the new one
-			\throws assertion failure if self or model is null
-		*/
+public:
+	// common physics interface ----------------------
+
+	/*!
+		\brief Sets the collision model for the parametric physics object with specified density and linking parameters.
+
+		This function assigns a collision model to the physics object and links it to the game world. It handles the removal of the previous collision model if it differs from the new one and the
+	   freeOld parameter is true. The function ensures the new model is properly linked with the object's current position and orientation.
+
+		\param model The collision model to be set for this physics object
+		\param density The density value to be used for the physics calculations
+		\param id An identifier for the collision model, default is 0
+		\param freeOld Flag indicating whether to free the old collision model if it differs from the new one
+		\throws assertion failure if self or model is null
+	*/
 	void			SetClipModel( idClipModel* model, float density, int id = 0, bool freeOld = true );
 
 	//! Returns the clip model associated with this parametric physics object.

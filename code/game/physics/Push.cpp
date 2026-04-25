@@ -1306,6 +1306,7 @@ float idPush::ClipRotationalPush( trace_t& results, idEntity* pusher, const int 
 	return totalMass;
 }
 
+#endif /* !NEW_PUSH */
 float idPush::ClipPush( trace_t& results, idEntity* pusher, const int flags, const idVec3& oldOrigin, const idMat3& oldAxis, idVec3& newOrigin, idMat3& newAxis )
 {
 	idVec3	   translation;

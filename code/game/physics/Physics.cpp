@@ -35,11 +35,6 @@ If you have questions concerning this license or the applicable additional terms
 ABSTRACT_DECLARATION( idClass, idPhysics )
 END_CLASS
 
-/*
-================
-idPhysics::~idPhysics
-================
-*/
 idPhysics::~idPhysics()
 {
 }

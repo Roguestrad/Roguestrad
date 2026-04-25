@@ -1709,18 +1709,20 @@ public:
 	//! Updates the positions of all clip models for the physics articulated figure.
 	void			UpdateClipModels();
 
-public: // common physics interface
-		/*!
-			\brief Sets the collision model for the articulated figure physics object with specified density and identifier.
-	
-			This function configures the collision model used by the articulated figure physics system. It allows specifying a custom clip model, its density for physics calculations, an identifier for
-		   the model, and whether to free the previous model. The density parameter influences how the physics engine treats the mass and interaction of the collision model.
-	
-			\param model Pointer to the clip model to be used for collision detection
-			\param density Density value used for physics calculations, affects mass and interaction
-			\param id Identifier for the clip model, default is 0
-			\param freeOld Flag indicating whether to free the previous clip model, default is true
-		*/
+public:
+	// common physics interface ----------------------
+
+	/*!
+		\brief Sets the collision model for the articulated figure physics object with specified density and identifier.
+
+		This function configures the collision model used by the articulated figure physics system. It allows specifying a custom clip model, its density for physics calculations, an identifier for
+	   the model, and whether to free the previous model. The density parameter influences how the physics engine treats the mass and interaction of the collision model.
+
+		\param model Pointer to the clip model to be used for collision detection
+		\param density Density value used for physics calculations, affects mass and interaction
+		\param id Identifier for the clip model, default is 0
+		\param freeOld Flag indicating whether to free the previous clip model, default is true
+	*/
 	void			SetClipModel( idClipModel* model, float density, int id = 0, bool freeOld = true );
 
 	//! Returns the clip model for the specified body index.

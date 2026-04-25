@@ -67,8 +67,10 @@ public:
 	//! Restores the physics state from a saved game file.
 	void Restore( idRestoreGame* savefile );
 
-public: // common physics interface
-		//! Sets the entity that this physics object is associated with.
+public:
+	// common physics interface ----------------------
+
+	//! Sets the entity that this physics object is associated with.
 	void				 SetSelf( idEntity* e );
 
 	/*!

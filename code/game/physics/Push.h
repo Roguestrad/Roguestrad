@@ -38,6 +38,8 @@ If you have questions concerning this license or the applicable additional terms
 ===============================================================================
 */
 
+// #define NEW_PUSH
+
 #define PUSHFL_ONLYMOVEABLE		1  // only push moveable entities
 #define PUSHFL_NOGROUNDENTITIES 2  // don't push entities the clip model rests upon
 #define PUSHFL_CLIP				4  // also clip against all non-moveable entities

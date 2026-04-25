@@ -555,6 +555,13 @@ cmHandle_t idClipModel::CheckModel( const char* name )
 	return collisionModelManager->LoadModel( name, false );
 }
 
+/*
+===============================================================
+
+	idClip
+
+===============================================================
+*/
 idClip::idClip()
 {
 	numClipSectors = 0;

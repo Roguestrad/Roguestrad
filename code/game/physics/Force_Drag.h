@@ -63,8 +63,10 @@ public:
 	//! Returns the position on the dragged physics object.
 	const idVec3  GetDraggedPosition() const;
 
-public: // common force interface
-		//! Updates the physics properties of a dragged object based on the drag force.
+public:
+	// common force interface ---------------------
+
+	//! Updates the physics properties of a dragged object based on the drag force.
 	virtual void Evaluate( int time );
 
 	//! Removes the specified physics object from the drag force if it matches the current physics object.

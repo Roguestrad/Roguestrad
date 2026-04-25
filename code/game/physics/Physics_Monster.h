@@ -110,8 +110,10 @@ public:
 	//! Disables the impact functionality for the monster physics object.
 	void				DisableImpact();
 
-public: // common physics interface
-		//! Evaluates the monster's physics state and updates its position and velocity over a given time step.
+public:
+	// common physics interface ----------------------
+
+	//! Evaluates the monster's physics state and updates its position and velocity over a given time step.
 	bool		  Evaluate( int timeStepMSec, int endTimeMSec );
 
 	//! Updates the physics simulation time to the specified end time in milliseconds.

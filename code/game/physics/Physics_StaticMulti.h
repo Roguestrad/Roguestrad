@@ -61,8 +61,10 @@ public:
 	//! Removes a clip model at the specified index from the static multi physics system
 	void RemoveIndex( int id = 0, bool freeClipModel = true );
 
-public: // common physics interface
-		//! Sets the entity that this physics object is associated with.
+public:
+	// common physics interface ----------------------
+
+	//! Sets the entity that this physics object is associated with.
 	void				 SetSelf( idEntity* e );
 
 	/*!

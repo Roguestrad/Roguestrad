@@ -92,8 +92,10 @@ public:
 	//! Sets the clip model that defines the extents of the force field.
 	void SetClipModel( idClipModel* clipModel );
 
-public: // common force interface
-		//! Evaluates the force field at the specified time
+public:
+	// common force interface ---------------------
+
+	//! Evaluates the force field at the specified time
 	virtual void Evaluate( int time );
 
 private:

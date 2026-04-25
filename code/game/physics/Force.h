@@ -70,8 +70,10 @@ public:
 	//! Clears all forces from the force list.
 	static void ClearForceList();
 
-public: // common force interface
-		//! Evaluates the force up to the given time.
+public:
+	// common force interface ---------------------
+
+	//! Evaluates the force up to the given time.
 	virtual void Evaluate( int time );
 
 	//! Removes any pointers to the specified physics object.

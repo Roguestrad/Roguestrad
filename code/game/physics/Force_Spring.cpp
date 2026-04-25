@@ -49,11 +49,6 @@ idForce_Spring::idForce_Spring()
 	p2		   = vec3_zero;
 }
 
-/*
-================
-idForce_Spring::~idForce_Spring
-================
-*/
 idForce_Spring::~idForce_Spring()
 {
 }

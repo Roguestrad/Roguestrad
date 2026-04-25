@@ -30,10 +30,24 @@ If you have questions concerning this license or the applicable additional terms
 #ifndef __PHYSICS_H__
 #define __PHYSICS_H__
 
-/*
-===============================================================================
+#define CONTACT_EPSILON 0.25f // maximum contact seperation distance
 
-	Physics abstract class
+class idEntity;
+
+typedef struct impactInfo_s {
+	float  invMass;			 // inverse mass
+	idMat3 invInertiaTensor; // inverse inertia tensor
+	idVec3 position;		 // impact position relative to center of mass
+	idVec3 velocity;		 // velocity at the impact position
+} impactInfo_t;
+
+/*!
+	\class idPhysics
+	\brief Abstract base class for physics simulation within the engine.
+
+	This class defines the interface for physics simulation, providing methods to manage physical properties, collision detection, and state persistence. It serves as a foundation for various physics
+   implementations, handling entity positioning, velocity, gravity, and interaction with the game world. The class supports serialization through save and restore operations, and provides interfaces
+   for contact detection, clipping, and interpolation. It is designed to be extended by concrete physics implementations that provide the actual simulation logic.
 
 	A physics object is a tool to manipulate the position and orientation of
 	an entity. The physics object is a container for idClipModels used for
@@ -59,28 +73,6 @@ If you have questions concerning this license or the applicable additional terms
 	and axis are updated first and the entity updates it's visual position
 	from the physics.
 
-===============================================================================
-*/
-
-#define CONTACT_EPSILON 0.25f // maximum contact seperation distance
-
-class idEntity;
-
-typedef struct impactInfo_s {
-	float  invMass;			 // inverse mass
-	idMat3 invInertiaTensor; // inverse inertia tensor
-	idVec3 position;		 // impact position relative to center of mass
-	idVec3 velocity;		 // velocity at the impact position
-} impactInfo_t;
-
-/*!
-	\class idPhysics
-	\brief Abstract base class for physics simulation within the engine.
-
-	This class defines the interface for physics simulation, providing methods to manage physical properties, collision detection, and state persistence. It serves as a foundation for various physics
-   implementations, handling entity positioning, velocity, gravity, and interaction with the game world. The class supports serialization through save and restore operations, and provides interfaces
-   for contact detection, clipping, and interpolation. It is designed to be extended by concrete physics implementations that provide the actual simulation logic.
-
 */
 class idPhysics : public idClass
 {
@@ -98,7 +90,9 @@ public:
 	//! Restores the physics state from a saved game file.
 	void	   Restore( idRestoreGame* savefile );
 
-public: // common physics interface
+public:
+	// common physics interface ----------------------
+
 	// set pointer to entity using physics
 	virtual void				 SetSelf( idEntity* e ) = 0;
 

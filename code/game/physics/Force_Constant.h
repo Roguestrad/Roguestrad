@@ -63,8 +63,10 @@ public:
 	//! Sets the physics simulation for the constant force.
 	void SetPhysics( idPhysics* physics );
 
-public: // common force interface
-		//! Applies a constant force to a physics object at the specified time.
+public:
+	// common force interface ---------------------
+
+	//! Applies a constant force to a physics object at the specified time.
 	virtual void Evaluate( int time );
 
 	//! Removes the association with the specified physics object if it matches the current physics object.

@@ -66,19 +66,21 @@ public:
 	//! Aligns the clip model with the gravity direction.
 	void	  SetClipModelAxis();
 
-public: // common physics interface
-		/*!
-			\brief Sets the collision model for the actor with the specified density and linking parameters.
-	
-			This function assigns a clip model to the actor physics object. It ensures that the provided clip model is valid and is a trace model. If there is an existing clip model that is different from
-		   the new one and the freeOld parameter is true, the old model is deleted. The new clip model is then linked to the game world with the actor's origin and orientation.
-	
-			\param model The clip model to be used for collision detection
-			\param density The density value used for physics calculations
-			\param id An identifier for the clip model, defaults to 0
-			\param freeOld Flag indicating whether to delete the old clip model if different
-			\throws assertion failures if self, model, or density are invalid
-		*/
+public:
+	// common physics interface ----------------------
+
+	/*!
+		\brief Sets the collision model for the actor with the specified density and linking parameters.
+
+		This function assigns a clip model to the actor physics object. It ensures that the provided clip model is valid and is a trace model. If there is an existing clip model that is different from
+	   the new one and the freeOld parameter is true, the old model is deleted. The new clip model is then linked to the game world with the actor's origin and orientation.
+
+		\param model The clip model to be used for collision detection
+		\param density The density value used for physics calculations
+		\param id An identifier for the clip model, defaults to 0
+		\param freeOld Flag indicating whether to delete the old clip model if different
+		\throws assertion failures if self, model, or density are invalid
+	*/
 	void			SetClipModel( idClipModel* model, float density, int id = 0, bool freeOld = true );
 
 	//! Returns the clip model associated with this physics actor.

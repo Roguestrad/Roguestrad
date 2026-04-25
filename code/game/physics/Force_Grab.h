@@ -65,8 +65,10 @@ public:
 	//! Updates the goal position for the grab force effect.
 	void SetGoalPosition( const idVec3& goal );
 
-public: // common force interface
-		//! Updates the grab force evaluation based on the current physics state and goal position.
+public:
+	// common force interface ---------------------
+
+	//! Updates the grab force evaluation based on the current physics state and goal position.
 	virtual void Evaluate( int time );
 
 	//! Removes the specified physics object from the grab force if it matches the current physics object.
