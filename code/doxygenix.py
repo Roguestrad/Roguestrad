@@ -480,8 +480,11 @@ def _suppress_body_fetch_warning(func_id: str) -> bool:
         "type_argsize",
         "type_boolean",
         "As<eventCallback_",
+        "DEFAULT_GRAVITY_VEC3",
     )
-    return func_id.startswith(prefixes)
+    suffices = ("::CLASS_PROTOTYPE", "::ABSTRACT_PROTOTYPE")
+
+    return func_id.startswith(prefixes) or func_id.endswith(suffices)
 
 
 # -----------------------------------------------------------------------------
@@ -2572,21 +2575,12 @@ def generate_doxygen_comments(
         if func.name in ("compile_time_assert", "assert_sizeof", "assert_offsetof"):
             continue
 
-        if func.name.startswith("As<eventCallback_"):
-            continue
-
         if func.is_pure_virtual:
             continue
 
-        # HACK: only use files whose path contains 'Angles'
+        # HACK: filter files or functions for debugging
         # if (
-        #     "Plane" != fpath.stem
-        #     and "Str" != fpath.stem
-        #     and "Vector" != fpath.stem
-        #     and "BTree" != fpath.stem
-        #     and "ParallelJobList" != fpath.stem
-        #     and "Timer" != fpath.stem
-        #     and "Parser" != fpath.stem
+        #     "Angles" != fpath.stem
         #     and "Dict" != fpath.stem
         # ):
         #     continue
@@ -2595,6 +2589,8 @@ def generate_doxygen_comments(
         #     continue
 
         func_id = get_func_identifier(func)
+        if _suppress_body_fetch_warning(func_id):
+            continue
         func_key = make_func_key(func, func_id)
 
         # Only process the canonical target for this signature
@@ -2613,15 +2609,14 @@ def generate_doxygen_comments(
             continue
 
         if impl.endswith(";"):
-            if not _suppress_body_fetch_warning(func_id):
-                print(
-                    colored(
-                        f" Could not fetch body for {func_id}\n",
-                        "red",
-                        "on_black",
-                        ["bold", "blink"],
-                    )
+            print(
+                colored(
+                    f" Could not fetch body for {func_id}\n",
+                    "red",
+                    "on_black",
+                    ["bold", "blink"],
                 )
+            )
             # impl = extract_implementation(func, repo_root, max_chars=maximpl)
             continue
 
