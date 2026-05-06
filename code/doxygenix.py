@@ -3121,10 +3121,18 @@ def generate_header_summaries(
                 md_hash_matches = True
 
         if (
-            summarize_mode != "missing"
+            summarize_mode == "all"
             and md_hash_matches
             and existing
             and existing[2] == file_sha
+        ):
+            if verbose:
+                print(f"  [skip] {rel_path} (unchanged)")
+            continue
+
+        if (
+            summarize_mode == "markdown-only"
+            and md_hash_matches
         ):
             if verbose:
                 print(f"  [skip] {rel_path} (unchanged)")
